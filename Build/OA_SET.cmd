@@ -23,7 +23,7 @@ set ResourceCompiler="%ToolPath:"=%\Windows Kits\10\bin\10.0.18362.0\x64\rc.exe"
 set MidlCompiler="%ToolPath:"=%\Windows Kits\10\bin\10.0.18362.0\x64\midl.exe"
 set UICCompiler="%WINKIT_PATH%\x86\UICC.exe"
 set EfiImageConverter="%EFI_TOOLKIT_PATH%\build\tools\bin\fwimage.exe"
-set Debugger="%ToolPath:"=%\Microsoft Visual Studio\2019\Community\Common7\IDE\devenv.exe"
+set Debugger="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe"
 if %SYSTEM_BITNESS%==32 (
   set Assembler="!OBJASM_PATH!\Build\Tools\UASM32.exe"
 ) else (

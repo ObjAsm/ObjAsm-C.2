@@ -16,8 +16,8 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SystemUsesLightTheme
-; Purpose:    Determine of Light Mode for the System is enabled.
-; Arguments:  None
+; Purpose:    Checks whether the "Light mode" is activated for the system.
+; Arguments:  None.
 ; Return:     eax = TRUE or FALSE.
 
 % include &ObjMemPath&Common\SystemUsesLightTheme_TX.inc

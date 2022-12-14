@@ -10,8 +10,8 @@
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SystemUsesLightTheme
-; Purpose:    Determine of Light Mode for the System is enabled.
-; Arguments:  None
+; Purpose:    Checks whether the "Light mode" is activated for the system.
+; Arguments:  None.
 ; Return:     eax = TRUE or FALSE.
 
 align ALIGN_CODE
@@ -22,9 +22,12 @@ SystemUsesLightTheme proc
   mov dValueSize, sizeof(dValue)
   invoke RegOpenKeyExW, HKEY_CURRENT_USER, \
                        $OfsCStrW("Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"), \
-                       0, KEY_ALL_ACCESS, addr hKey
-  invoke RegQueryValueExW, hKey, $OfsCStrW("SystemUsesLightTheme"), NULL, addr dValueType, \
-                          addr dValue, addr dValueSize
+                       0, KEY_QUERY_VALUE, addr hKey
+  .if eax == ERROR_SUCCESS
+    invoke RegQueryValueExW, hKey, $OfsCStrW("SystemUsesLightTheme"), NULL, addr dValueType, \
+                             addr dValue, addr dValueSize
+    invoke RegCloseKey, hKey
+  .endif
   mov eax, dValue
   ret
 SystemUsesLightTheme endp

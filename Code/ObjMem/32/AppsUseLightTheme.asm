@@ -16,8 +16,8 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  AppsUseLightTheme
-; Purpose:    Determine of Light Mode for Apps is enabled.
-; Arguments:  None
+; Purpose:    Checks whether the "Light mode" is activated for the applications.
+; Arguments:  None.
 ; Return:     eax = TRUE or FALSE.
 
 % include &ObjMemPath&Common\AppsUseLightTheme_TX.inc

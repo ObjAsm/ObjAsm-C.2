@@ -411,7 +411,7 @@ Method DataPool.NewItem, uses xbx xsi
     .endif
   .endif
 
-;    DbgWarning "Allocating new blob"
+;  DbgWarning "Allocating new blob"
   invoke VirtualAlloc, NULL, [xsi].dAllocSize, MEM_RESERVE or MEM_COMMIT, PAGE_READWRITE
   .if xax != NULL
     ;Put the new blob at the end of the linked list

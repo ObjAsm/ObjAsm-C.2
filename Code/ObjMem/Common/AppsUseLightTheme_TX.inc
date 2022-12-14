@@ -10,8 +10,8 @@
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  AppsUseLightTheme
-; Purpose:    Determine of Light Mode for Apps is enabled.
-; Arguments:  None
+; Purpose:    Checks whether the "Light mode" is activated for the applications.
+; Arguments:  None.
 ; Return:     eax = TRUE or FALSE.
 
 align ALIGN_CODE
@@ -22,9 +22,12 @@ AppsUseLightTheme proc
   mov dValueSize, sizeof(dValue)
   invoke RegOpenKeyExW, HKEY_CURRENT_USER, \
                        $OfsCStrW("Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"), \
-                       0, KEY_ALL_ACCESS, addr hKey
-  invoke RegQueryValueExW, hKey, $OfsCStrW("AppsUseLightTheme"), NULL, addr dValueType, \
-                          addr dValue, addr dValueSize
+                       0, KEY_QUERY_VALUE, addr hKey
+  .if eax == ERROR_SUCCESS
+    invoke RegQueryValueExW, hKey, $OfsCStrW("AppsUseLightTheme"), NULL, addr dValueType, \
+                             addr dValue, addr dValueSize
+    invoke RegCloseKey, hKey
+  .endif
   mov eax, dValue
   ret
 AppsUseLightTheme endp

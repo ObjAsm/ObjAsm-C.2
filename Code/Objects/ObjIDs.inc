@@ -208,9 +208,6 @@ SplashID                          equ     0000000620
 NTCompressorID                    equ     0000000630
 NTFileCompressorID                equ     0000000640
 
-;Fireworks
-FireworksID                       equ     0000000650
-
 ;Pixelmap
 PixelmapID                        equ     0000000660
 
