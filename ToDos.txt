@@ -1,4 +1,0 @@
-Write WndProc in std way
-Reduce common error codes in ObjErrs.inc
-
-

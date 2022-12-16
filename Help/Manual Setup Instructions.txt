@@ -2,28 +2,31 @@ ObjAsm manual setup:
 
 If you are installing the package manually, then follow these instructions:
 
-If you have the proper tool chain, skip to point 3
+If you have the proper tool chain, skip to point 4
 1. Get Visual Studio Community from https://www.visualstudio.com/ and install to get an x64-debugger and the latest Tool chain.
 2. Get Windows Kits SDK from https://developer.microsoft.com/de-de/windows/downloads/windows-10-sdk and install to get additional tools.
+3. Get EFI Toolkit II from https://github.com/tianocore/tianocore.github.io/wiki/EDK-II and follow the instructions from http://www.terraspace.co.uk/UASM%20UEFI%20Guide.pdf
 
-3. Get the ObjAsm package from http://objasm.x10host.com and install it. Depending on the installation drive and subdirectory, some paths have to be adjusted.
+4. Get the ObjAsm package from http://objasm.x10host.com and install it. Depending on the installation drive and subdirectory, some paths have to be adjusted.
 
 The ObjAsm installer comes with the latest UASM version available at the time the installer was created, version 2.56.
-4. Get the the most recent UASM64.exe and UASM32.exe from http://www.terraspace.co.uk/uasm.html and install it in the "...\ObjAsm\Build\Tools" folder.
+5. Get the the most recent UASM64.exe and UASM32.exe from http://www.terraspace.co.uk/uasm.html and install it in the "...\ObjAsm\Build\Tools" directory.
 
-5. Create or update the following environment variables and set the paths according to your installation. E.g.:
-     OBJASM_PATH = C:\ObjAsm
-     MSVS_PATH = C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin
-     WINKIT_PATH = C:\Program Files (x86)\Windows Kits\10\bin\10.0.16299.0
+6. Create or update the following environment variables and set the paths according to your installation. E.g.:
+     (MUST) OBJASM_PATH = C:\ObjAsm
+     (OPT)  MSVS_PATH = C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin
+     (OPT)  WINKIT_PATH = C:\Program Files (x86)\Windows Kits\10\bin\10.0.16299.0
+     (OPT)  EFI_TOOLKIT_PATH = D:\EFI_Toolkit_2.0
+     
    Reboot if necessary.
 
-6. Adjust the paths in the file "...\ObjAsm\Build\OA_SET.cmd" as needed.
+7. Adjust the paths in the file "...\ObjAsm\Build\OA_SET.cmd" to the location of your resource compiler, linker, etc.
 
-7. Register DebugCenter.exe by running it once.
+8. Register DebugCenter.exe by running it once. (...\ObjAsm\Projects\X\DebugCenter\DebugCenter.exe)
 
-8. Compile the ObjMem library using the file "...\ObjAsm\Code\ObjMem\MakeObjMem3264.cmd"
-9. Optionally compile the objects using the file "...\ObjAsm\Code\Objects\Build\MakeObjects3264AW.cmd"
-10. Optionally compile the Examples and Projects using "...\ObjAsm\Examples\MakeAll.cmd" and "...\ObjAsm\Projects\MakeAll.cmd".
+9. Optionally Compile the ObjMem library using the file "...\ObjAsm\Code\ObjMem\MakeObjMem3264.cmd"
+10. Optionally compile the objects using the file "...\ObjAsm\Code\Objects\Build\MakeObjects3264AW.cmd"
+11. Optionally compile the Examples and Projects using "...\ObjAsm\Examples\MakeAll.cmd" and "...\ObjAsm\Projects\MakeAll.cmd".
 
 
 December 2022

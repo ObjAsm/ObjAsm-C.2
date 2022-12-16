@@ -25,9 +25,9 @@ set UICCompiler="%WINKIT_PATH%\x86\UICC.exe"
 set EfiImageConverter="%EFI_TOOLKIT_PATH%\build\tools\bin\fwimage.exe"
 set Debugger="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe"
 if %SYSTEM_BITNESS%==32 (
-  set Assembler="!OBJASM_PATH!\Build\Tools\UASM32.exe"
+  set Assembler="%OBJASM_PATH%\Build\Tools\UASM32.exe"
 ) else (
-  set Assembler="!OBJASM_PATH!\Build\Tools\UASM64.exe"
+  set Assembler="%OBJASM_PATH%\Build\Tools\UASM64.exe"
 )
 
 exit /b 0

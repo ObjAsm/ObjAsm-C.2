@@ -1,0 +1,17 @@
+//RC-file created by Inc2RC from FireworksApp_Shared.inc on 2022-12-15,  9:27:00,20
+
+#define APP_TITLE "Fireworks"
+#define ABOUT_TEXT "Fireworks"
+#define COPYRIGHT "G. Friedrich   July 2006"
+#define VER_FILEVERSION 1,0,0,0
+#define VER_FILEVERSION_STR "1.0"
+#define VER_PRODUCTVERSION 1,0,0,0
+#define VER_PRODUCTVERSION_STR "1.0"
+#define BUILD_NUMBER 2
+#define BUILD_DATE_STR "2022-12-15"
+#define BUILD_BITNESS 64
+#define BUILD_MODE RLS
+#define IDM_EXIT 1000
+#define IDM_DIALOG 1001
+#define IDM_HELP 2000
+#define IDM_ABOUT 2001
