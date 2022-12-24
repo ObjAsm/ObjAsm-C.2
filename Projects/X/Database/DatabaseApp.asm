@@ -59,7 +59,7 @@ MakeObjects MsgInterceptor, DialogModalIndirect, XMenu, Image
 MakeObjects WinControl, ListView, Toolbar, Statusbar, ScrollBar, Progressbar
 MakeObjects WinApp, SdiApp
 
-MakeObjects \OA_Dev\Code\Objects\Database
+LoadObjects Database
 MakeObjects DB_RecordEditor, DB_RecordEditorDlg
 MakeObjects DB_StructEditor, DB_StructEditorDlg, DB_NewTableDlg
 MakeObjects DB_SeekDlg, DB_QueryDlg, DB_IndexDlg

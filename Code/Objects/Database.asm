@@ -12,6 +12,7 @@
 
 % include &MacPath&ConstDiv.inc
 % include &MacPath&QuadWord.inc
+% include &MacPath&fMath.inc
 % include &IncPath&Windows\Shlwapi.inc
 
 ;Add here all files that build the inheritance path and referenced objects
