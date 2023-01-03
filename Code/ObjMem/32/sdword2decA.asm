@@ -1,10 +1,12 @@
 ; ==================================================================================================
 ; Title:      sdword2decA.asm
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.2.1
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
 ;               - Based on Lingo's optimization of Paul Dixon's algorithm.
+;             Version C.2.1, January 2023
+;               - ZTC bug corrected.
 ; ==================================================================================================
 
 
@@ -127,12 +129,11 @@ sdword2decA proc pBuffer:POINTER, sdValue:SDWORD
   ja @@07
   lea eax, [edx + 30h]
   mov [ecx], ax
-  m2z BYTE ptr [ecx + 2]
   pop esi
   pop edi
   pop edx
   sub ecx, edx
-  lea eax, [ecx + 3]
+  lea eax, [ecx + 2]
   ret 8
 sdword2decA endp
 

@@ -1,9 +1,11 @@
 ; ==================================================================================================
 ; Title:      udword2decA.asm
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.2.1
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
+;             Version C.2.1, January 2023
+;               - ZTC bug corrected.
 ; ==================================================================================================
 
 
@@ -120,12 +122,11 @@ udword2decA proc pBuffer:POINTER, dValue:DWORD
   ja @@07
   lea eax, [edx + 30h]
   mov [ecx], ax
-  m2z BYTE ptr [ecx + 2]
   pop edx
   pop esi
   sub ecx, edx
   pop edi
-  lea eax, [ecx + 3]
+  lea eax, [ecx + 2]
   ret 8
 udword2decA endp
 
