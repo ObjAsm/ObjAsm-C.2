@@ -1,0 +1,47 @@
+; ==================================================================================================
+; Title:      IcmpApp.rc
+; Author:     G. Friedrich
+; Version:    C.2.0
+; Purpose:    ObjAsm resource file.
+; Notes:      Version C.2.0, December 2022
+;               - First release.
+; ==================================================================================================
+
+
+#include "Resource.h"               //Windows resource definitions
+#include "IcmpApp_Shared.rc"        //Application shared definitions
+#include "VER\Version.rc"           //Application version definition
+#include "MFT\Manifest_Invoker.rc"  //Application manifest definition
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+
+// Icons ------------------------------------------------------------------------------------------
+ICON_APP  ICON DISCARDABLE "ICO\OA.ico"
+
+
+// Bitmaps ----------------------------------------------------------------------------------------
+BMP_BACKGROUND  BITMAP "BMP\WndBkgnd.bmp"
+
+
+// Dialogs ----------------------------------------------------------------------------------------
+#include "DLG\DialogAbout.rc"
+#include "Res\DestinationDlgDlg.rc"
+
+
+// Menus ------------------------------------------------------------------------------------------
+MENU_APP MENUEX DISCARDABLE
+BEGIN
+  POPUP "&File",            0,                MFT_STRING, MFS_ENABLED
+  BEGIN
+    MENUITEM "&Exit",       IDM_EXIT,         MFT_STRING, MFS_ENABLED
+  END
+  MENUITEM "&Destination",  IDM_DESTINATION,  MFT_STRING, MFS_DISABLED
+  MENUITEM "&Ping",         IDM_PING,         MFT_STRING, MFS_DISABLED
+  MENUITEM "&Trace",        IDM_TRACE,        MFT_STRING, MFS_DISABLED
+  POPUP "&Help",            0,                MFT_STRING, MFS_ENABLED
+  BEGIN
+    MENUITEM "&Help",       IDM_HELP,         MFT_STRING, MFS_ENABLED
+    MENUITEM "&About",      IDM_ABOUT,        MFT_STRING, MFS_ENABLED
+  END
+END

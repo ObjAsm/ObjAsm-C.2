@@ -25,7 +25,7 @@
 ;             - f_SCI: Scientific output format
 ;             - f_TRIM: Trim zeros on the right
 ;             - f_ALIGN: Add a heading space to align the output with other negative numbers
-;             - f_PLUS: like f_ALIGN, but using a + character.
+;             - f_PLUS: like f_ALIGN, but using a "+" character.
 
 align ALIGN_CODE
 St0ToStrW proc uses xdi xsi pBuffer:POINTER, dPadding:DWORD, dDecimals:DWORD, dFlags:DWORD
@@ -347,30 +347,30 @@ St0ToStrW proc uses xdi xsi pBuffer:POINTER, dPadding:DWORD, dDecimals:DWORD, dF
 
   mov xcx, pBuffer
   .if eax == 0
-    FillString [xcx], <Error>
+    FillStringW [xcx], <Error>
     mov eax, f_ERROR
   .elseif eax == 1
-    FillString [xcx], <NAN>
+    FillStringW [xcx], <NAN>
     mov eax, f_NAN
   .elseif eax == 2
-    FillString [xcx], <Failed>
+    FillStringW [xcx], <Failed>
     mov eax, f_ERROR
   .elseif eax == 3
     .ifBitSet wStatusWord, mask fC1
-      FillString [xcx], <-Inf>
+      FillStringW [xcx], <-Inf>
       mov eax, f_INFN
     .else
-      FillString [xcx], <+Inf>
+      FillStringW [xcx], <+Inf>
       mov eax, f_INFP
     .endif
   .elseif eax == 4
-    FillString [xcx], <Null>
+    FillStringW [xcx], <Null>
     mov eax, f_ERROR
   .elseif eax == 5
-    FillString [xcx], <Empty>
+    FillStringW [xcx], <Empty>
     mov eax, f_ERROR
   .elseif eax == 6
-    FillString [xcx], <Denor>
+    FillStringW [xcx], <Denor>
     mov eax, f_DENOR
   .endif
   fclex                                                 ;Clear FPU exception flags

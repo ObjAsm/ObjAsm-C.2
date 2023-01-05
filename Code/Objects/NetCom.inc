@@ -180,7 +180,7 @@ SO_UPDATE_CONNECT_CONTEXT     equ   7010h
 
 NETCOMADDR struc                                        ;Needed for NetComAddrCollection
   union
-    SOCKADDR                  {}                        ;IPv4 & IPv6
+    SOCKADDR                  {}                        ;IPv4
     SOCKADDR_IN               {}                        ;IPv4 only
     SOCKADDR_IN6              {}                        ;IPv6 only
     SOCKADDR_STORAGE          {}                        ;IPv4, IPv6, NetBIOS, infrared or Bluetooth

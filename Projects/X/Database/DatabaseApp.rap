@@ -232,7 +232,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=23
+MilestoneOnDateDate=5
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -269,7 +269,7 @@ ProductVer4Range=0
 [Size]
 2=0,0,1914,602,240
 3=0,0,0,0,166
-1=453,0,453,706,1535
+1=453,0,453,706,2448
 4=0,0,0,0,234
 1001=0,0,0,0,460
 5=0,0,0,0,4506
@@ -320,14 +320,14 @@ ProductVer4Range=0
 42=708,0,708,304,1981
 52=0,0,1840,601,3320
 53=0,0,0,0,5631
-54=0,0,0,0,8229
+54=0,0,0,0,3941
 28=0,0,1839,628,37633
 55=0,0,1839,628,20002
-56=0,0,1839,628,888
+56=0,0,1839,628,16516
 58=0,0,0,0
 57=0,0,0,0,242
 60=0,0,1897,628,218
-59=0,0,0,0,6586
+59=0,0,0,0,5242
 61=0,0,0,0
 62=0,0,0,0,1243
 64=0,0,0,0,699
@@ -336,11 +336,11 @@ ProductVer4Range=0
 67=0,0,0,0,318
 68=0,0,0,0,1098
 72=0,0,1839,628,464
-70=0,0,1783,628,50841
+70=0,0,1783,628,2820
 71=0,0,0,0,21121
 69=0,0,0,0,9532
 73=0,0,0,0,14139
-74=0,0,0,0,13257
+74=0,0,0,0,11221
 75=0,0,0,0
 76=0,0,0,0,8
 77=0,0,0,0,2197
@@ -360,16 +360,16 @@ ProductVer4Range=0
 9=
 
 [Find]
-1="[xsi].MutationInfo.dPrvParam"
-2="o"
-3="SetFocus"
-4="SendMessage"
-5="IDC_STRUC_BTN_CLOSE"
-6="addr [xsi].AppSetup"
-7="[xsi].Table::DB_Table.Init"
-8="StdFieldLookupTable"
-9="MUT_FpuToChr8"
-10="SFF_READ_ONLY"
+1="DL_HEADER.MaxSize"
+2="StrucDlgChildrenInfo"
+3="IndexDlgChildrenInfo"
+4="MaxSize"
+5="DL_HEADER "
+6="DL_HEADER"
+7="DLF_LOAD_MIN_INISIZE"
+8="DLF_LOAD_MINMAX_INISIZE"
+9="[xsi].MutationInfo.dPrvParam"
+10="o"
 [Collapse]
 2=6750208,128
 1=
@@ -449,7 +449,7 @@ ProductVer4Range=0
 [BreakPoint]
 0=
 [AutoLoad]
-AutoLoad=1,3,74,2,56,70,71,28
+AutoLoad=1
 [RADebugBP]
 2=
 50=
@@ -516,7 +516,7 @@ AutoLoad=1,3,74,2,56,70,71,28
 74=
 77=
 [PTimer]
-PTimer=634818362
+PTimer=635775221
 [GroupExpand]
 GroupExpand=0,1,1,1,0,1,1,0
 [TLink]

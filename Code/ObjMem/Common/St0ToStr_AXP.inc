@@ -1,12 +1,14 @@
 ; ==================================================================================================
 ; Title:      St0ToStr_AXP.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
+; Version:    C.2.0
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
 ;               - Bitness and platform independent code.
-;             Version C.1.0, July 2022
+;             Version C.1.1, July 2022
 ;               - Support for f_ALIGN and f_PLUS added.
+;             Version C.2.0, January 2023
+;               - Missing ret added. Bug reported by a1sbofo.
 ; ==================================================================================================
 
 
@@ -25,7 +27,7 @@
 ;             - f_SCI: Scientific output format
 ;             - f_TRIM: Trim zeros on the right
 ;             - f_ALIGN: Add a heading space to align the output with other negative numbers
-;             - f_PLUS: like f_ALIGN, but using a + character.
+;             - f_PLUS: like f_ALIGN, but using a "+" character.
 
 align ALIGN_CODE
 St0ToStrA proc uses xdi xsi pBuffer:POINTER, dPadding:DWORD, dDecimals:DWORD, dFlags:DWORD
@@ -320,31 +322,32 @@ St0ToStrA proc uses xdi xsi pBuffer:POINTER, dPadding:DWORD, dDecimals:DWORD, dF
 
   mov xcx, pBuffer
   .if eax == 0
-    FillString [xcx], <Error>
+    FillStringA [xcx], <Error>
     mov eax, f_ERROR
   .elseif eax == 1
-    FillString [xcx], <NAN>
+    FillStringA [xcx], <NAN>
     mov eax, f_NAN
   .elseif eax == 2
-    FillString [xcx], <Failed>
+    FillStringA [xcx], <Failed>
     mov eax, f_ERROR
   .elseif eax == 3
     .ifBitSet wStatusWord, mask fC1
-      FillString [xcx], <-Inf>
+      FillStringA [xcx], <-Inf>
       mov eax, f_INFN
     .else
-      FillString [xcx], <+Inf>
+      FillStringA [xcx], <+Inf>
       mov eax, f_INFP
     .endif
   .elseif eax == 4
-    FillString [xcx], <Null>
+    FillStringA [xcx], <Null>
     mov eax, f_ERROR
   .elseif eax == 5
-    FillString [xcx], <Empty>
+    FillStringA [xcx], <Empty>
     mov eax, f_ERROR
   .elseif eax == 6
-    FillString [xcx], <Denor>
+    FillStringA [xcx], <Denor>
     mov eax, f_DENOR
   .endif
   fclex                                                 ;Clear FPU exception flags
+  ret
 St0ToStrA endp

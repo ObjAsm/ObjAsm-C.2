@@ -1,16 +1,18 @@
 ; ==================================================================================================
 ; Title:      Window.inc
 ; Author:     G. Friedrich
-; Version:    C.1.2
+; Version:    C.2.0
 ; Purpose:    ObjAsm support of Window objects.
-; Notes:      Version C.1.2, October 2020
+; Notes:      Version C.1.0, October 2017
+;               - First release.
+;             Version C.1.1, January 2020
+;               - Dynamic Layout support added.
+;             Version C.1.2, October 2020
 ;               - dResizeRequest added to MoveChildWndInfo structure to hide the gripper when the
 ;                 parent window is maximized.
 ;               - if the window is minimized, MoveChildWnd is skipped.
-;             Version C.1.1, January 2020
-;               - Dynamic Layout support added.
-;             Version C.1.0, October 2017
-;               - First release.
+;             Version C.2.0, January 2022
+;               - Flags modified and functionality extended. 
 ; ==================================================================================================
 
 
@@ -22,43 +24,47 @@
 ; - Make sure that the window has the following window styles set:
 ;     WS_CAPTION, WS_SIZEBOX, WS_POPUP, WS_THICKFRAME.
 ; - Avoid control superposition. It leads to ugly glitches and deteriorates the usability
-; - To setup a Dynamic Layout, create in writable memory a sequence this structures:
+; - To setup a Dynamic Layout, create in writable memory a sequence of structures:
 ;     DL_HEADER + n * DL_CHILD_INFO
 ;   where n is the number of controls in the window.
 ;   The initialization is done calling OnCreateWindow. This method is called by Dialogs
 ;   automatically.
-;   The DL_CHILD_INFO order corresponds to the window tab sequence.
+;   The DL_CHILD_INFO sequence order corresponds to the window tab sequence order.
 ; - Depending on the flags set in the DL_HEADER.dFlags field, additional information must be set.
-;     DLF_USE_INISIZE => IniSize.cx_ & IniSize.cy
-;     DLF_USE_MINSIZE_X or DLF_USE_MINSIZE_Y => MinSize.cx_ & MinSize.cy
-;     DLF_USE_MAXSIZE_X or DLF_USE_MAXSIZE_Y => MaxSize.cx_ & MaxSize.cy
-; - If the gripper is added using the DLF_ADD_GRIPPER flag, no additional DL_CHILD_INFO is needed.
+;     DLF_LIMIT_MIN => MinSize.cx_ & MinSize.cy
+;     DLF_LIMIT_MAX => MaxSize.cx_ & MaxSize.cy
+; - If the gripper is added using the DLF_ADD_GRIPPER flag, no explicit DL_CHILD_INFO is needed.
 ;   The gripper is not controlled by the resizing rules. Check always that it doesn't overlap
 ;   other controls.
 ; - Layout information is not serialized. It can be reconstructed during initialization.
 ; - Set CS_HREDRAW and CS_VREDRAW flags in the WNDCLASSEX to redraw the complete client area.
-;   this avoids flicker when resized from the left edge (WM_MOVE!! + WM_SIZE).
+;   this avoids flickering when resized from the left edge (WM_MOVE!! + WM_SIZE).
 
 
 ;Dynamic Layout flags
-DLF_USE_INISIZE         equ   BIT00   ;Use the initial size rather than the template size
-DLF_LOAD_MIN_INISIZE    equ   BIT01   ;Use the initial size / template size as minimal size
-DLF_LOAD_MAX_INISIZE    equ   BIT02   ;Use the initial size / template size as maximal size
-DLF_USE_MINSIZE_X       equ   BIT03   ;Limit the minimal width
-DLF_USE_MINSIZE_Y       equ   BIT04   ;Limit the minimal height
-DLF_USE_MAXSIZE_X       equ   BIT05   ;Limit the maximal width
-DLF_USE_MAXSIZE_Y       equ   BIT06   ;Limit the maximal height
-DLF_ADD_GRIPPER         equ   BIT07   ;If this flag is used, add an additional DL_CHILD_INFO struc
+DLF_LOAD_MIN_X      equ   BIT00   ;Load minimal width with template width
+DLF_LOAD_MIN_Y      equ   BIT01   ;Load minimal height with template height
+DLF_LOAD_MAX_X      equ   BIT02   ;Load maximal width with template width
+DLF_LOAD_MAX_Y      equ   BIT03   ;Load maximal height with template height
+
+DLF_LIMIT_MIN_X     equ   BIT04   ;Limit the minimal width
+DLF_LIMIT_MIN_Y     equ   BIT05   ;Limit the minimal height
+DLF_LIMIT_MAX_X     equ   BIT06   ;Limit the maximal width
+DLF_LIMIT_MAX_Y     equ   BIT07   ;Limit the maximal height
+
+DLF_ADD_GRIPPER     equ   BIT08   ;If this flag is used, add an additional DL_CHILD_INFO struc
 
 ;Convenience flags
-DLF_USE_MAXSIZE         equ   DLF_USE_MAXSIZE_X or DLF_USE_MAXSIZE_Y
-DLF_USE_MINSIZE         equ   DLF_USE_MINSIZE_X or DLF_USE_MINSIZE_Y
-DLF_USE_MINMAXSIZE      equ   DLF_USE_MINSIZE or DLF_USE_MAXSIZE
-DLF_USE_MINMAXSIZE_X    equ   DLF_USE_MINSIZE_X or DLF_USE_MAXSIZE_X
-DLF_USE_MINMAXSIZE_Y    equ   DLF_USE_MINSIZE_Y or DLF_USE_MAXSIZE_Y
-DLF_LOAD_MINMAX_INISIZE equ   DLF_LOAD_MIN_INISIZE or DLF_LOAD_MAX_INISIZE
+DLF_LOAD_MIN        equ   DLF_LOAD_MIN_X or DLF_LOAD_MIN_Y
+DLF_LOAD_MAX        equ   DLF_LOAD_MAX_X or DLF_LOAD_MAX_Y
+DLF_LOAD_MINMAX     equ   DLF_LOAD_MIN or DLF_LOAD_MAX
+DLF_LIMIT_MIN       equ   DLF_LIMIT_MIN_X or DLF_LIMIT_MIN_Y
+DLF_LIMIT_MAX       equ   DLF_LIMIT_MAX_X or DLF_LIMIT_MAX_Y
+DLF_LIMIT_MINMAX    equ   DLF_LIMIT_MIN or DLF_LIMIT_MAX
+DLF_LIMIT_MINMAX_X  equ   DLF_LIMIT_MIN_X or DLF_LIMIT_MAX_X
+DLF_LIMIT_MINMAX_Y  equ   DLF_LIMIT_MIN_Y or DLF_LIMIT_MAX_Y
 
-IDC__GRIPPER_         equ   -1
+IDC__GRIPPER_       equ   -1
 
 
 DL_CHILD_INFO struct
@@ -69,9 +75,9 @@ PChildWndInfo typedef ptr DL_CHILD_INFO
 
 DL_HEADER struct
   dFlags          DWORD   ?           ;DLF_xxx
-  IniSize         POINT   {}          ;Input: Initial client size
   MinSize         POINT   {}          ;Input: Min client width & height
   MaxSize         POINT   {}          ;Input: Max client width & height
+  IniSize         POINT   {}          ;Used internally, don't fill it
   dChildCount     DWORD   ?           ;Used internally, don't fill it
   ChildInfo       DL_CHILD_INFO 0 dup (?)  ;-> As many structures as Window children are present
 DL_HEADER ends
@@ -133,28 +139,28 @@ Method Window.OnGetMinMaxInfo, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     invoke GetWindowRect, [xsi].hWnd, addr WRect
     invoke GetClientRect, [xsi].hWnd, addr CRect
     mov xdx, lParam                                     ;xdx -> MINMAXINFO
-    .ifBitSet [xbx].DL_HEADER.dFlags, DLF_USE_MINSIZE_X
+    .ifBitSet [xbx].DL_HEADER.dFlags, DLF_LIMIT_MIN_X
       mov eax, [xbx].DL_HEADER.MinSize.x
       add eax, WRect.right
       sub eax, WRect.left
       sub eax, CRect.right
       mov [xdx].MINMAXINFO.ptMinTrackSize.x, eax
     .endif
-    .ifBitSet [xbx].DL_HEADER.dFlags, DLF_USE_MINSIZE_Y
+    .ifBitSet [xbx].DL_HEADER.dFlags, DLF_LIMIT_MIN_Y
       mov eax, [xbx].DL_HEADER.MinSize.y
       add eax, WRect.bottom
       sub eax, WRect.top
       sub eax, CRect.bottom
       mov [xdx].MINMAXINFO.ptMinTrackSize.y, eax
     .endif
-    .ifBitSet [xbx].DL_HEADER.dFlags, DLF_USE_MAXSIZE_X
+    .ifBitSet [xbx].DL_HEADER.dFlags, DLF_LIMIT_MAX_X
       mov eax, [xbx].DL_HEADER.MaxSize.x
       add eax, WRect.right
       sub eax, WRect.left
       sub eax, CRect.right
       mov [xdx].MINMAXINFO.ptMaxTrackSize.x, eax
     .endif
-    .ifBitSet [xbx].DL_HEADER.dFlags, DLF_USE_MAXSIZE_Y
+    .ifBitSet [xbx].DL_HEADER.dFlags, DLF_LIMIT_MAX_Y
       mov eax, [xbx].DL_HEADER.MaxSize.y
       add eax, WRect.bottom
       sub eax, WRect.top
@@ -195,7 +201,7 @@ GetChildInfo proc uses xbx xsi hWnd:HWND, pGetChildWndInfo:PGetChildWndInfo
 GetChildInfo endp
 
 Method Window.InitWindow, uses xbx xsi
-  local CRect:RECT, GCWI:GetChildWndInfo, IniSize:SIZE_, Gripper:RECT
+  local CRect:RECT, GCWI:GetChildWndInfo, Gripper:RECT
 
   ;DbgText "Window.OnInitWindow"
   SetObject xsi
@@ -203,9 +209,21 @@ Method Window.InitWindow, uses xbx xsi
   .if xbx != NULL
 
     ;Get the initial dialog size to use it as a reference to calculate the size changes.
-    s2s IniSize, [xbx].DL_HEADER.IniSize, xax, xcx
     invoke GetClientRect, [xsi].hWnd, addr CRect
-    s2s [xbx].DL_HEADER.IniSize, POINT ptr CRect.right, xax, xcx
+    mrm [xbx].DL_HEADER.IniSize.x, CRect.right, eax
+    mrm [xbx].DL_HEADER.IniSize.y, CRect.bottom, ecx
+    .ifBitSet [xbx].DL_HEADER.dFlags, DLF_LOAD_MIN_X
+      mov [xbx].DL_HEADER.MinSize.x, eax
+    .endif
+    .ifBitSet [xbx].DL_HEADER.dFlags, DLF_LOAD_MIN_Y
+      mov [xbx].DL_HEADER.MinSize.y, ecx
+    .endif
+    .ifBitSet [xbx].DL_HEADER.dFlags, DLF_LOAD_MAX_X
+      mov [xbx].DL_HEADER.MaxSize.x, eax
+    .endif
+    .ifBitSet [xbx].DL_HEADER.dFlags, DLF_LOAD_MAX_Y
+      mov [xbx].DL_HEADER.MaxSize.y, ecx
+    .endif
 
     .ifBitSet [xbx].DL_HEADER.dFlags, DLF_ADD_GRIPPER
       ;Calculate Gripper position and size
@@ -224,12 +242,6 @@ Method Window.InitWindow, uses xbx xsi
                              WS_CHILD or WS_VISIBLE or SBS_HORZ or SBS_SIZEGRIP, \
                              Gripper.left, Gripper.top, Gripper.right, Gripper.bottom, \
                              [xsi].hWnd, IDC__GRIPPER_, hInstance, 0
-    .endif
-    .ifBitSet [xbx].DL_HEADER.dFlags, DLF_LOAD_MIN_INISIZE
-      s2s [xbx].DL_HEADER.MinSize, [xbx].DL_HEADER.IniSize, xax, xcx
-    .endif
-    .ifBitSet [xbx].DL_HEADER.dFlags, DLF_LOAD_MAX_INISIZE
-      s2s [xbx].DL_HEADER.MaxSize, [xbx].DL_HEADER.IniSize, xax, xcx
     .endif
     m2m GCWI.hParent, [xsi].hWnd, xcx
     lea xax, [xbx + sizeof(DL_HEADER)]                    ;xax -> first DL_CHILD_INFO structure
@@ -279,26 +291,27 @@ MoveChildWnd proc uses xbx xsi hWnd:HWND, pMoveChildWndInfo:PMoveChildWndInfo
     invoke GetParent, hWnd
     .if xax == [xbx].MoveChildWndInfo.hParent
       ;Calculate the new child window position according to the passed parameters.
+      mov ecx, 100
       mov eax, [xbx].MoveChildWndInfo.dDeltaX
-      mul [xsi].DL_CHILD_INFO.ChangeInfo.left
-      cdiv 100
-      add edx, [xsi].DL_CHILD_INFO.PositionInfo.left
-      mov WRect.left, edx
+      imul [xsi].DL_CHILD_INFO.ChangeInfo.left
+      idiv ecx
+      add eax, [xsi].DL_CHILD_INFO.PositionInfo.left
+      mov WRect.left, eax
       mov eax, [xbx].MoveChildWndInfo.dDeltaY
-      mul [xsi].DL_CHILD_INFO.ChangeInfo.top
-      cdiv 100
-      add edx, [xsi].DL_CHILD_INFO.PositionInfo.top
-      mov WRect.top, edx
+      imul [xsi].DL_CHILD_INFO.ChangeInfo.top
+      idiv ecx
+      add eax, [xsi].DL_CHILD_INFO.PositionInfo.top
+      mov WRect.top, eax
       mov eax, [xbx].MoveChildWndInfo.dDeltaX
-      mul [xsi].DL_CHILD_INFO.ChangeInfo.right
-      cdiv 100
-      add edx, [xsi].DL_CHILD_INFO.PositionInfo.right
-      mov WRect.right, edx
+      imul [xsi].DL_CHILD_INFO.ChangeInfo.right
+      idiv ecx
+      add eax, [xsi].DL_CHILD_INFO.PositionInfo.right
+      mov WRect.right, eax
       mov eax, [xbx].MoveChildWndInfo.dDeltaY
-      mul [xsi].DL_CHILD_INFO.ChangeInfo.bottom
-      cdiv 100
-      add edx, [xsi].DL_CHILD_INFO.PositionInfo.bottom
-      mov WRect.bottom, edx
+      imul [xsi].DL_CHILD_INFO.ChangeInfo.bottom
+      idiv ecx
+      add eax, [xsi].DL_CHILD_INFO.PositionInfo.bottom
+      mov WRect.bottom, eax
 
       invoke DeferWindowPos, [xbx].MoveChildWndInfo.hDWP, hWnd, 0, \
                              WRect.left, WRect.top, WRect.right, WRect.bottom, \
@@ -317,7 +330,6 @@ MoveChildWnd endp
 Method Window.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   local MCWI:MoveChildWndInfo
 
-;  DbgText "Window.OnSize"
   SetObject xsi
   .if wParam != SIZE_MINIMIZED
     mov xdx, [xsi].pDynamicLayout
@@ -325,16 +337,10 @@ Method Window.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
       mov xcx, lParam
       movsx eax, cx                                       ;eax = new client x size
       sub eax, [xdx].DL_HEADER.IniSize.x
-      .if SIGN?
-        xor eax, eax
-      .endif
       mov MCWI.dDeltaX, eax
       shr ecx, 16
       movsx eax, cx                                       ;eax = new client y size
       sub eax, [xdx].DL_HEADER.IniSize.y
-      .if SIGN?
-        xor eax, eax
-      .endif
       mov MCWI.dDeltaY, eax
 
       lea xax, [xdx + sizeof(DL_HEADER)]                  ;xax -> first DL_CHILD_INFO structure

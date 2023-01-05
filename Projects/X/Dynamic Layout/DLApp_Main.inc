@@ -34,8 +34,7 @@ ObjectEnd                                               ;Ends object definition
 .data
 align ALIGN_DATA
 AppChildrenInfo label DL_HEADER
-DL_HEADER     {DLF_LOAD_MIN_INISIZE or DLF_USE_MINSIZE or DLF_ADD_GRIPPER, \
-               {}, {300, 200}, {}}
+DL_HEADER     {DLF_LIMIT_MIN or DLF_ADD_GRIPPER, {300,200}, {}}
 DL_CHILD_INFO {{100, 100, 000, 000}}
 
 WATERMERK_WIDTH   equ 180
@@ -66,7 +65,6 @@ Method DLApp.Init, uses xsi
   invoke CreateWindowEx, 0, \
                          $OfsCStr("Static"), $OfsCStr("  The ObjAsm Company  "), \
                          WS_VISIBLE or WS_CHILD or SS_CENTER or SS_CENTERIMAGE, \
-;                         dWndWidth, dWndHeight, WATERMERK_WIDTH, WATERMERK_HEIGHT, \
                          CRect.right, CRect.bottom, WATERMERK_WIDTH, WATERMERK_HEIGHT, \
                          [xsi].hWnd, 10, hInstance, 0
 
@@ -87,10 +85,9 @@ MethodEnd
 .data
 align ALIGN_DATA
 DlgChildrenInfo label DL_HEADER
-DL_HEADER     {DLF_LOAD_MIN_INISIZE or DLF_USE_MINMAXSIZE or DLF_ADD_GRIPPER, \
-               {500, 300}, {367, 204}, {600, 400}}
-DL_CHILD_INFO {{100, 100, 000, 000}}     ;Ok Button
-DL_CHILD_INFO {{000, 000, 100, 100}}
+DL_HEADER     {DLF_LOAD_MIN or DLF_LIMIT_MINMAX or DLF_ADD_GRIPPER, {}, {600, 400}}
+DL_CHILD_INFO {{100, 100, 000, 000}}      ;Ok Button
+DL_CHILD_INFO {{000, 000, 100, 100}}      ;R
 DL_CHILD_INFO {{000, 000, 000, 000}}
 DL_CHILD_INFO {{000, 000, 000, 000}}
 DL_CHILD_INFO {{000, 000, 100, 100}}
