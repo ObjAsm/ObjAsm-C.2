@@ -260,7 +260,7 @@ JsonEscEncode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCount
       stosd
       xor eax, eax
       mov al, dh
-      lea xcx, HexCharTableW
+      mov xcx, HexCharTableW
       mov eax, [xcx + sizeof(DCHRW)*xax]
       stosd
       movzx xax, dl

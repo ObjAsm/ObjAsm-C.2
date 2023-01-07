@@ -1085,7 +1085,7 @@ endif
 ;             Arg2: Optional destination Window name.
 ;             Arg3: Quoted format string.
 ;             Arg 4..n: optional arguments.
-; Note:       Dont use xbx as argument register. it is used internally!
+; Note:       Don't use xbx as argument register. it is used internally!
 
 DbgWriteFA macro Color:=<DbgColorForeground>, Dest, Format, Args:vararg
   local bBuffer
@@ -1099,7 +1099,7 @@ DbgWriteFA macro Color:=<DbgColorForeground>, Dest, Format, Args:vararg
     DbgSetDestWnd Dest
     lea xbx, bBuffer
     WriteF xbx, Format, Args
-    invoke DbgOutTextA, xbx, Color, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+    invoke DbgOutTextA, addr bBuffer, Color, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     DbgShowSrcInfo ??DbgDstWnd
     DbgLoadContext
   endif
@@ -1125,7 +1125,7 @@ DbgWriteFW macro Color:=<DbgColorForeground>, Dest, Format, Args:vararg
     DbgSetDestWnd Dest
     lea xbx, wBuffer
     WriteF xbx, Format, Args
-    invoke DbgOutTextW, xbx, Color, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+    invoke DbgOutTextW, addr wBuffer, Color, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     DbgShowSrcInfo ??DbgDstWnd
     DbgLoadContext
   endif

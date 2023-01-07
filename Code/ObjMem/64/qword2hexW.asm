@@ -29,7 +29,7 @@ align ALIGN_CODE
 qword2hexW proc pBuffer:POINTER, qValue:QWORD
   ;rcx -> Buffer, edx = dValue
   lea r10, HexCharTableW
-  
+
   ofs = 24
   repeat 4
     movzx rax, dl

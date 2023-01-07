@@ -683,30 +683,30 @@ endm
 ;             It doesn't work with QWORDs.
 ; Arguments:  Arg1: String to be filled.
 ;             Arg2: Text.
-; Return:     Nothing.
+; Return:     $$Len = Number of copied chars, excluding the ZTC.
 ; Example:    FillStringA myString, <Hello>
 
 FillStringA macro StrVar:req, Text:req
-  $$i = 0
+  $$Len = 0
   $$j = 0
   %forc $$Char, <Text>
-    $$j = ('&$$Char' shl (($$i and 3) * 8)) + $$j
-    if ($$i and 3) eq 3
-      mov DWORD ptr StrVar[($$i and -4)], $$j
+    $$j = ('&$$Char' shl (($$Len and 3) * 8)) + $$j
+    if ($$Len and 3) eq 3
+      mov DWORD ptr StrVar[($$Len and -4)], $$j
       $$j = 0
     endif
-    $$i = $$i + 1
+    $$Len = $$Len + 1
   endm
 
-  if ($$i and 3) eq 0
-    m2z BYTE ptr StrVar[$$i]
-  elseif ($$i and 3) eq 1
-    mov WORD ptr StrVar[$$i - 1], $$j
-  elseif ($$i and 3) eq 2
-    mov WORD ptr StrVar[$$i - 2], $$j
-    m2z BYTE ptr StrVar[$$i]
+  if ($$Len and 3) eq 0
+    m2z BYTE ptr StrVar[$$Len]
+  elseif ($$Len and 3) eq 1
+    mov WORD ptr StrVar[$$Len - 1], $$j
+  elseif ($$Len and 3) eq 2
+    mov WORD ptr StrVar[$$Len - 2], $$j
+    m2z BYTE ptr StrVar[$$Len]
   else
-    mov DWORD ptr StrVar[($$i - 3)], $$j
+    mov DWORD ptr StrVar[($$Len - 3)], $$j
   endif
 endm
 
@@ -716,28 +716,28 @@ endm
 ;             It doesn't work with QWORDs.
 ; Arguments:  Arg1: String to be filled.
 ;             Arg2: Text.
-; Return:     Nothing.
+; Return:     $$Len = Number of copied chars, excluding the ZTC.
 ; Example:    FillStringB myString, <Hello>
 
 FillStringB macro StrVar:req, Text:req
-  $$i = 0
+  $$Len = 0
   $$j = 0
   %forc $$Char, <Text>
-    $$j = ('&$$Char' shl (($$i and 1) * 16)) + $$j
-    if ($$i and 1) eq 1
-      mov DWORD ptr StrVar[($$i and -2)*2 + 4], $$j
+    $$j = ('&$$Char' shl (($$Len and 1) * 16)) + $$j
+    if ($$Len and 1) eq 1
+      mov DWORD ptr StrVar[($$Len and -2)*2 + 4], $$j
       $$j = 0
     endif
-    $$i = $$i + 1
+    $$Len = $$Len + 1
   endm
 
-  if ($$i and 1) eq 0
-    m2z WORD ptr StrVar[$$i*2 + 4]
-  elseif ($$i and 1) eq 1
-    mov DWORD ptr StrVar[($$i - 1)*2 + 4], $$j
+  if ($$Len and 1) eq 0
+    m2z WORD ptr StrVar[$$Len*2 + 4]
+  elseif ($$Len and 1) eq 1
+    mov DWORD ptr StrVar[($$Len - 1)*2 + 4], $$j
   endif
 
-  mov DWORD ptr StrVar[0], 2*$$i                        ;;Set byte count
+  mov DWORD ptr StrVar[0], 2*$$Len                      ;;Set byte count
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -746,25 +746,25 @@ endm
 ;             instructions.
 ; Arguments:  Arg1: String to be filled.
 ;             Arg2: Text.
-; Return:     Nothing.
+; Return:     $$Len = Number of copied chars, excluding the ZTC.
 ; Example:    FillStringW myString, <Hello>
 
 FillStringW macro StrVar:req, Text:req
-  $$i = 0
+  $$Len = 0
   $$j = 0
   %forc $$Char, <Text>
-    $$j = ('&$$Char' shl (($$i and 1) * 16)) + $$j
-    if ($$i and 1) eq 1
-      mov DWORD ptr StrVar[($$i and -2)*2], $$j
+    $$j = ('&$$Char' shl (($$Len and 1) * 16)) + $$j
+    if ($$Len and 1) eq 1
+      mov DWORD ptr StrVar[($$Len and -2)*2], $$j
       $$j = 0
     endif
-    $$i = $$i + 1
+    $$Len = $$Len + 1
   endm
 
-  if ($$i and 1) eq 0
-    m2z WORD ptr StrVar[$$i*2]
-  elseif ($$i and 1) eq 1
-    mov DWORD ptr StrVar[($$i - 1)*2], $$j
+  if ($$Len and 1) eq 0
+    m2z WORD ptr StrVar[$$Len*2]
+  elseif ($$Len and 1) eq 1
+    mov DWORD ptr StrVar[($$Len - 1)*2], $$j
   endif
 endm
 
@@ -784,28 +784,28 @@ endif
 ;             It doesn't work with QWORDs.
 ; Arguments:  Arg1: String to be filled.
 ;             Arg2: Text.
-; Return:     Nothing.
+; Return:     $$Len = Number of copied chars.
 ; Example:    FillWordA myBuffer, <Hello>
 
 FillWordA macro StrVar:req, Text:req
-  $$i = 0
+  $$Len = 0
   $$j = 0
   %forc $$Char, <Text>
-    $$j = ('&$$Char' shl (($$i and 3) * 8)) + $$j
-    if ($$i and 3) eq 3
-      mov DWORD ptr StrVar[($$i and -4)], $$j
+    $$j = ('&$$Char' shl (($$Len and 3) * 8)) + $$j
+    if ($$Len and 3) eq 3
+      mov DWORD ptr StrVar[($$Len and -4)], $$j
       $$j = 0
     endif
-    $$i = $$i + 1
+    $$Len = $$Len + 1
   endm
 
-  if ($$i and 3) eq 1
-    mov BYTE ptr StrVar[$$i - 1], $$j
-  elseif ($$i and 3) eq 2
-    mov WORD ptr StrVar[$$i - 2], $$j
-  elseif ($$i and 3) eq 3
-    mov WORD ptr StrVar[$$i - 3], $$j and 0FFFFh
-    mov BYTE ptr StrVar[$$i - 1], $$j shr 16
+  if ($$Len and 3) eq 1
+    mov BYTE ptr StrVar[$$Len - 1], $$j
+  elseif ($$Len and 3) eq 2
+    mov WORD ptr StrVar[$$Len - 2], $$j
+  elseif ($$Len and 3) eq 3
+    mov WORD ptr StrVar[$$Len - 3], $$j and 0FFFFh
+    mov BYTE ptr StrVar[$$Len - 1], $$j shr 16
   endif
 endm
 
@@ -815,23 +815,23 @@ endm
 ;             It doesn't work with QWORDs.
 ; Arguments:  Arg1: String to be filled.
 ;             Arg2: Text.
-; Return:     Nothing.
+; Return:     $$Len = Number of copied chars.
 ; Example:    FillWordW myBuffer, <Hello>
 
 FillWordW macro StrVar:req, Text:req
-  $$i = 0
+  $$Len = 0
   $$j = 0
   %forc $$Char, <Text>
-    $$j = ('&$$Char' shl (($$i and 1) * 16)) + $$j
-    if ($$i and 1) eq 1
-      mov DWORD ptr StrVar[($$i and -2)*2], $$j
+    $$j = ('&$$Char' shl (($$Len and 1) * 16)) + $$j
+    if ($$Len and 1) eq 1
+      mov DWORD ptr StrVar[($$Len and -2)*2], $$j
       $$j = 0
     endif
-    $$i = $$i + 1
+    $$Len = $$Len + 1
   endm
 
-  if ($$i and 1) eq 1
-    mov WORD ptr StrVar[($$i - 1)*2], $$j
+  if ($$Len and 1) eq 1
+    mov WORD ptr StrVar[($$Len - 1)*2], $$j
   endif
 endm
 
@@ -1094,6 +1094,7 @@ endif
 ;                   subsequent arguments.
 ;             Arg3-N: Additional arguments. Must be non-volatile registers, FPU registers or
 ;                   memory symbols.
+; Return:     On return, Arg1 is pointing to the ZTC to append other strings.
 ; Notes:      - Format specifiers:
 ;                 SB signed BYTE as decimal
 ;                 SW signed WORD as decimal
@@ -1135,46 +1136,27 @@ endif
 ;                 \  "\" character
 ;
 ;             - Format specifiers and escape sequences are case sensitive.
+;             - To use V4/V6 add the following lines in the asm file:
+;                 % includelib &LibPath&Windows\Ntdll.lib
+;                 % include &IncPath&Windows\ip2string.inc
 ;
 ; Example:    WriteF xdi, "Memory at ¦H8h: ¦F3", xsi, REAL4 ptr [xsi]
 ;
 
-HelperRemoveLeadingZeros macro DstReg:req, AddChars:req
-  .if CHR ptr [DstReg] == '0'
-    .if CHR ptr [DstReg + sizeof(CHR)] == '0'
-      .if CHR ptr [DstReg + 2*sizeof(CHR)] == '0'
-        m2m CHR ptr [DstReg], CHR ptr [DstReg + 3*sizeof(CHR)], $SubReg(eax, sizeof(CHR))
-        add DstReg, (AddChars + 1)*sizeof(CHR)
-      .else
-        m2m DCHR ptr [DstReg], DCHR ptr [DstReg + sizeof(DCHR)], $SubReg(eax, sizeof(DCHR))
-        add DstReg, (AddChars + 2)*sizeof(CHR)
-      .endif
-    .else
-      mov $SubReg(eax, sizeof(CHR)), [DstReg + sizeof(CHR)]
-      mov $SubReg(ecx, sizeof(DCHR)), [DstReg + sizeof(DCHR)]
-      mov [DstReg], $SubReg(eax, sizeof(CHR))
-      mov [DstReg + sizeof(CHR)], $SubReg(ecx, sizeof(DCHR))
-      add DstReg, (AddChars + 3)*sizeof(CHR)
-    .endif
-  .else
-    add DstReg, (AddChars + 4)*sizeof(CHR)
-  .endif
-endm
-
 WriteF macro DstReg:req, Format:req, Args:vararg
-  local pPos, pBegin
-
-  .data
-    pBegin  POINTER   NULL
-
+  local pBegin
+  
+  .data?
+    pBegin  POINTER   ?
+    
   .code
+  mov pBegin, DstReg
+
   $$Count = 0
   for Arg, <Args>
     @CatStr(<$$WF_Arg>, %$$Count) textequ <Arg>
     $$Count = $$Count + 1
   endm
-
-  mov pBegin, DstReg
 
   $$WF_ArgCount = 0
   $$WF_Text textequ <>
@@ -1195,7 +1177,9 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           $$WF_ReplType Catstr $$WF_ReplType, <$$WF_Character>   ;;Append second char
           FillWord [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
-          add DstReg, $$i*sizeof(CHR)
+          if $$Len ne 0
+            add DstReg, $$Len*sizeof(CHR)
+          endif
           ifidn $$WF_ReplType, <SB>
             movsx eax, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             invoke sdword2dec, DstReg, eax
@@ -1349,43 +1333,13 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <V4>
-            invoke udword2dec, DstReg, BYTE ptr @CatStr(<$$WF_Arg>, %$$WF_ArgCount)[0]
-            lea DstReg, [DstReg + xax]
-            mov CHR ptr [DstReg - sizeof(CHR)], "."
-            invoke udword2dec, DstReg, BYTE ptr @CatStr(<$$WF_Arg>, %$$WF_ArgCount)[1]
-            lea DstReg, [DstReg + xax]
-            mov CHR ptr [DstReg - sizeof(CHR)], "."
-            invoke udword2dec, DstReg, BYTE ptr @CatStr(<$$WF_Arg>, %$$WF_ArgCount)[2]
-            lea DstReg, [DstReg + xax]
-            mov CHR ptr [DstReg - sizeof(CHR)], "."
-            invoke udword2dec, DstReg, BYTE ptr @CatStr(<$$WF_Arg>, %$$WF_ArgCount)[3]
-            lea DstReg, [DstReg + xax - sizeof(CHR)]
+            invoke RtlIpv4AddressToString, @CatStr(<$$WF_Arg>, %$$WF_ArgCount), DstReg
+            mov DstReg, xax
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <V6>
-            invoke word2hex, DstReg, WORD ptr @CatStr(<$$WF_Arg>, %$$WF_ArgCount)[0]
-            HelperRemoveLeadingZeros DstReg, 1
-            mov CHR ptr [DstReg - sizeof(CHR)], ":"
-            invoke word2hex, DstReg, WORD ptr @CatStr(<$$WF_Arg>, %$$WF_ArgCount)[2]
-            HelperRemoveLeadingZeros DstReg, 1
-            mov CHR ptr [DstReg - sizeof(CHR)], ":"
-            invoke word2hex, DstReg, WORD ptr @CatStr(<$$WF_Arg>, %$$WF_ArgCount)[4]
-            HelperRemoveLeadingZeros DstReg, 1
-            mov CHR ptr [DstReg - sizeof(CHR)], ":"
-            invoke word2hex, DstReg, WORD ptr @CatStr(<$$WF_Arg>, %$$WF_ArgCount)[6]
-            HelperRemoveLeadingZeros DstReg, 1
-            mov CHR ptr [DstReg - sizeof(CHR)], ":"
-            invoke word2hex, DstReg, WORD ptr @CatStr(<$$WF_Arg>, %$$WF_ArgCount)[8]
-            HelperRemoveLeadingZeros DstReg, 1
-            mov CHR ptr [DstReg - sizeof(CHR)], ":"
-            invoke word2hex, DstReg, WORD ptr @CatStr(<$$WF_Arg>, %$$WF_ArgCount)[10]
-            HelperRemoveLeadingZeros DstReg, 1
-            mov CHR ptr [DstReg - sizeof(CHR)], ":"
-            invoke word2hex, DstReg, WORD ptr @CatStr(<$$WF_Arg>, %$$WF_ArgCount)[12]
-            HelperRemoveLeadingZeros DstReg, 1
-            mov CHR ptr [DstReg - sizeof(CHR)], ":"
-            invoke word2hex, DstReg, WORD ptr @CatStr(<$$WF_Arg>, %$$WF_ArgCount)[14]
-            HelperRemoveLeadingZeros DstReg, 0
+            invoke RtlIpv6AddressToString, @CatStr(<$$WF_Arg>, %$$WF_ArgCount), DstReg
+            mov DstReg, xax
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <AT>
@@ -1401,7 +1355,6 @@ WriteF macro DstReg:req, Format:req, Args:vararg
                 mov DCHRW ptr [DstReg], " " shl 16 + " "
                 add DstReg, sizeof(DCHRW)
                 sub eax, 2
-                cmp eax, 1
               .endw
             else
               .while SDWORD ptr eax > 3               ;;Fill with spaces
@@ -1445,10 +1398,6 @@ WriteF macro DstReg:req, Format:req, Args:vararg
                   add DstReg, sizeof(DCHRW)
                   sub eax, 2
                 .endw
-                .if ZERO?
-                  mov CHRW ptr [DstReg], " "
-                  add DstReg, sizeof(CHRW)
-                .endif
               else
                 .while SDWORD ptr eax > 3               ;;Fill with spaces
                   mov QCHRA ptr [DstReg], "    "
@@ -1459,12 +1408,13 @@ WriteF macro DstReg:req, Format:req, Args:vararg
                   mov DCHRA ptr [DstReg], "  "
                   add DstReg, sizeof(DCHRA)
                   sub eax, 2
-                .endif
-                .if ZERO?
-                  mov CHRA ptr [DstReg], " "
-                  add DstReg, sizeof(CHRA)
+                  cmp eax, 1
                 .endif
               endif
+              .if ZERO?
+                mov CHR ptr [DstReg], " "
+                add DstReg, sizeof(CHR)
+              .endif
             .endif
             $$WF_ArgCount = $$WF_ArgCount + 1
 
@@ -1480,7 +1430,9 @@ WriteF macro DstReg:req, Format:req, Args:vararg
         $$WF_Escape = 0
         FillWord [DstReg], <%$$WF_Text>
         $$WF_Text textequ <>
-        add DstReg, $$i*sizeof(CHR)
+        if $$Len ne 0
+          add DstReg, $$Len*sizeof(CHR)
+        endif
         ifidn <$$WF_Character>, <n>
           mov DCHR ptr [DstReg], 10 shl (8*sizeof(CHR)) + 13
           add DstReg, 2*sizeof(CHR)
@@ -1526,8 +1478,10 @@ WriteF macro DstReg:req, Format:req, Args:vararg
     endif
   endm
 
-  FillString [DstReg], %$$WF_Text
-  mov DstReg, pBegin
+  FillString [DstReg], %$$WF_Text                       ;;If there is something in the buffer,
+  if $$Len ne 0
+    add DstReg, $$Len*sizeof(CHR)
+  endif
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

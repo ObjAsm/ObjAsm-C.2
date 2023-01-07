@@ -25,9 +25,9 @@ OPTION PROC:NONE
 align ALIGN_CODE
 Mem2HexW proc pBuffer:POINTER, pMem:POINTER, dCount:DWORD
   ;rcx -> Buffer, rdx -> Mem, r8d = dCount
+  mov r10, offset HexCharTableW
   .while r8d != 0
     movzx eax, BYTE ptr [rdx]
-    mov r10, offset HexCharTableW
     mov eax, DCHRW ptr [r10 + sizeof(DCHRW)*rax]
     mov [rcx], eax
     add rcx, sizeof(DCHRW)

@@ -226,7 +226,7 @@ Method WebTextTranslator.Translate, uses xbx xdi xsi, pSrcText:PSTRING, pHint:PS
       .else
         WriteF xdi, '/m?hl=en&tl=¦ST&sl=¦ST&q=¦ST "¦ST"', [xsi].pDstLang, [xsi].pSrcLang, pHint, pSrcText
       .endif
-      invoke HttpOpenRequest, [xsi].hConnect, NULL, xdi, NULL, NULL, NULL, \
+      invoke HttpOpenRequest, [xsi].hConnect, NULL, addr cURI, NULL, NULL, NULL, \
                               INTERNET_FLAG_RELOAD or INTERNET_FLAG_EXISTING_CONNECT or \
                               INTERNET_FLAG_SECURE, NULL
       .if xax != 0

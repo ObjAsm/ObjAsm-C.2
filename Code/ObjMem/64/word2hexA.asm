@@ -27,11 +27,11 @@ OPTION PROC:NONE
 align ALIGN_CODE
 word2hexA proc pBuffer:POINTER, wValue:WORD
   ;rcx -> Buffer, dx = wValue
-  lea r10, HexCharTableA
-  movzx eax, dl
+  mov r10, HexCharTableA
+  movzx rax, dl
   mov r8w, DCHRA ptr [r10 + sizeof(DCHRA)*rax]
   shl r8, 16
-  movzx eax, dh
+  movzx rax, dh
   mov r8w, DCHRA ptr [r10 + sizeof(DCHRA)*rax]
   mov [rcx], r8d
   m2z CHRA ptr [rcx + 4*sizeof(CHRA)]                   ;Set ZTC

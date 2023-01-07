@@ -150,7 +150,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=5
+MilestoneOnDateDate=7
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -185,17 +185,17 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,1087
-1=0,0,0,0,1057
+2=0,0,0,0,8374
+1=0,0,0,0,1306
 6=0,0,1456,414,59484
 4=0,0,0,0,1888
 31=0,0,1213,691,923
 8=0,0,777,591,18185
 7=0,0,0,0,2805
-9=0,0,0,0,39076
+9=0,0,1804,629,47587
 10=0,0,0,0,8243
-5=0,0,0,0,40093
-3=0,0,0,0,885
+5=0,0,0,0,40874
+3=0,0,0,0,1147
 11=0,0,0,0,6921
 15=0,0,0,0,1300
 14=0,0,0,0,814
@@ -236,16 +236,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="IcmpSendEcho"
-2="www.google"
-3="dTimeout"
-4="cErrDest"
-5="DLF_USE_MIN"
-6="DLF_USE_MINSIZE"
-7="DLF_USE_INI"
-8="DLF_USE_INI_X"
-9="DLF_LOAD_MIN_INISIZE_X"
-10="IDC__GRIPPER_"
+1="DstReg"
+2="pBegin"
+3="WriteF"
+4="DbgWriteF"
+5="$$i"
+6="add DstReg"
+7="$$WF_Text"
+8="IcmpSendEcho"
+9="www.google"
+10="dTimeout"
 [Collapse]
 1=
 2=
@@ -360,7 +360,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=3,11,2
 [PTimer]
-PTimer=1245200514
+PTimer=1255558389
 [GroupExpand]
 GroupExpand=1,1,1,1,0,1,1,0
 [RADebugBP]

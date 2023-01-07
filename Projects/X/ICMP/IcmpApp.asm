@@ -15,6 +15,7 @@ SysSetup OOP, WIN32, ANSI_STRING, DEBUG(CON)            ;Load OOP files and OS r
 
 % include &IncPath&Windows\commctrl.inc
 % include &IncPath&Windows\ShellApi.inc
+% include &IncPath&Windows\ip2string.inc
 
 % include &IncPath&Windows\WinSock2.inc
 % include &IncPath&Windows\IPExport.inc
@@ -24,6 +25,7 @@ SysSetup OOP, WIN32, ANSI_STRING, DEBUG(CON)            ;Load OOP files and OS r
 % includelib &LibPath&Windows\Shell32.lib
 % includelib &LibPath&Windows\Shlwapi.lib
 % includelib &LibPath&Windows\Iphlpapi.lib
+% includelib &LibPath&Windows\Ntdll.lib
 
 include IcmpApp_Globals.inc                             ;Application globals
 

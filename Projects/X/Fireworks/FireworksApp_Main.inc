@@ -98,13 +98,11 @@ Method FireworksApp.OnTimer, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
 
   SetObject xsi
   lea xdi, cBuffer
-  WriteF xdi, "¦ST, FPS = ¦UD ", offset szAppTitle, [xsi].Fwks.dFrameCount
+  %WriteF xdi, "&APP_TITLE, FPS = ¦UD ", [xsi].Fwks.dFrameCount
   .if [xsi].dFlipFlop == FALSE
-    mov [xsi].dFlipFlop, TRUE
-    invoke StrCatChar, addr cBuffer, "*"
-  .else
-    m2z [xsi].dFlipFlop
+    FillString [xdi], <*>
   .endif
+  xor [xsi].dFlipFlop, TRUE                             ;Toggle dFlipFlop 
   invoke SetWindowText, [xsi].hWnd, addr cBuffer
   m2z [xsi].Fwks.dFrameCount
 MethodEnd

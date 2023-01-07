@@ -106,7 +106,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=12
+MilestoneOnDateDate=7
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -142,9 +142,9 @@ ProductVer4Range=0
 
 [Size]
 2=0,0,0,0,273
-3=0,0,0,0,2145
+3=0,0,0,0,3268
 1=0,0,0,0,1281
-4=0,0,0,0,127
+4=0,0,0,0,426
 1001=0,0,0,0,460
 16=0,0,0,0,0
 11=
@@ -154,7 +154,7 @@ ProductVer4Range=0
 13=0,0,0,0,8057
 12=
 7=0,0,0,0,15248
-10=0,0,0,0,5090
+10=0,0,0,0,50584
 14=
 17=0,0,0,0,7336
 18=0,0,0,0,9053
@@ -178,16 +178,16 @@ ProductVer4Range=0
 [BreakPoint]
 0=
 [Find]
-1="FPS"
-2="dFadeLevelHigh"
-3="ebp"
-4="xbp"
-5="xsp"
-6="push"
-7="??StackBase"
-8="Fire"
-9="FireShellExpodeOS"
-10="Method Fireworks.FireShellExpodeOS, uses xdi, pFireShell:POINTER"
+1="szAppTitle"
+2="WriteF"
+3="FPS"
+4="dFadeLevelHigh"
+5="ebp"
+6="xbp"
+7="xsp"
+8="push"
+9="??StackBase"
+10="Fire"
 [Collapse]
 10=,,,
 6=,
@@ -205,9 +205,9 @@ ProductVer4Range=0
 2=
 4=
 [AutoLoad]
-AutoLoad=1,3,6
+AutoLoad=1,3,6,10,4
 [PTimer]
-PTimer=29707988
+PTimer=30400410
 [RADebugBP]
 3=
 1=

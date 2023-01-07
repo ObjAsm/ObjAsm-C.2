@@ -26,7 +26,7 @@ OPTION PROC:NONE
 align ALIGN_CODE
 qword2hexA proc pBuffer:POINTER, qValue:QWORD
   ;rcx -> Buffer, rdx = qValue
-  lea r10, HexCharTableA
+  mov r10, HexCharTableA
   movzx rax, dl
   mov r8w, DCHRA ptr [r10 + sizeof(DCHRA)*rax]
   shr rdx, 8

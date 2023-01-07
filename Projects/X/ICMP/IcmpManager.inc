@@ -199,7 +199,7 @@ MethodEnd
 ; Return:     eax = 1 if succeeded, otherwise 0.
 ; Links:      https://en.wikipedia.org/wiki/Traceroute
 
-Method IcmpManager.Trace, uses xbx xsi
+Method IcmpManager.Trace, uses xbx xdi xsi
   local hIcmp:HANDLE, HI:HopInfo, Options:IP_OPTION_INFORMATION
   local SendBuffer[SEND_PAYLOAD_SIZE]:BYTE, RecvBuffer:IcmpReplayBuffer
 
@@ -238,13 +238,14 @@ Method IcmpManager.Trace, uses xbx xsi
     .if HI.pHostName == NULL
       mov HI.pHostName, $invoke(StrNew, $OfsCStrA("No response"))
     .endif
+    lea xdi, RecvBuffer.Address
     DbgWriteF ,, "Hop 各D: 吁D/吁D/吁D ms 再T向4 再T吁A", Options.Ttl, \
               HI.dRoundTripTime[0], HI.dRoundTripTime[4], HI.dRoundTripTime[8], \
-              22, RecvBuffer.Address, 40, HI.HopInfo.pHostName
+              22, xdi, 40, HI.HopInfo.pHostName
 
 ;    DbgWriteF ,, "Hop 各D: 吁D/吁D/吁D ms 再T向6 再T吁A", Options.Ttl, \
 ;              HI.dRoundTripTime[0], HI.dRoundTripTime[4], HI.dRoundTripTime[8], \
-;              22, RecvBuffer.Address, 64, HI.HopInfo.pHostName
+;              22, xdi, 64, HI.HopInfo.pHostName
 
     invoke StrDispose, HI.pHostName
     inc Options.Ttl                                     ;Add one Hop more

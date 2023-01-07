@@ -26,7 +26,7 @@ OPTION PROC:NONE
 align ALIGN_CODE
 dword2hexW proc pBuffer:POINTER, dValue:DWORD
   ;rcx -> Buffer, edx = dValue
-  lea r10, HexCharTableW
+  mov r10, HexCharTableW
   movzx rax, dl
   mov r8d, DCHRW ptr [r10 + sizeof(DCHRW)*rax]
   shr edx, 8

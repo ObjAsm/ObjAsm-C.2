@@ -10,8 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-externdef HexCharTableW:WORD
-
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetFileHashW
