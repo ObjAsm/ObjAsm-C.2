@@ -153,7 +153,7 @@ UrlEscEncode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCount:
 @@@:
     movzx edx, ax
     mov ax, '%'
-    mov xcx, HexCharTableW
+    mov xcx, offset HexCharTableW
     stosw
     mov eax, [xcx + sizeof(DCHRW)*xdx]
     stosd

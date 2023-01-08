@@ -16,9 +16,9 @@ for /F "delims=¬" %%a in (~List~.txt) do (
   cd "%%a"
   if exist Make.cmd (
     call Make.cmd
-    @echo.
+    echo.
   ) else (
-    @echo "%%a" has no Make.cmd
+    echo "%%a" has no Make.cmd
   )
 )
 
@@ -28,14 +28,14 @@ if exist ~List~.txt del ~List~.txt
 if "%1" equ "NOPAUSE" Goto TheEnd
 
 if !SuccCounter! gtr 0 (
-  @echo !SuccCounter! Demo(s^) compiled successfully.
+  echo !SuccCounter! Demo(s^) compiled successfully.
 )
 if !FailCounter! gtr 0 (
-  @echo Unfortunately !FailCounter! Demo(s^) didn't compile^^!
+  echo Unfortunately !FailCounter! Demo(s^) didn't compile^^!
 )
 
-@echo.
-@echo Press any key to close this window.
+echo.
+echo [96m --- Press any key to close this window --- [0m
 pause > nul
 goto TheEnd
 

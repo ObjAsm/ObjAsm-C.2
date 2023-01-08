@@ -20,14 +20,16 @@ if exist !FileName!.obj del !FileName!.obj
 if exist !FileName!.lib del !FileName!.lib
 
 REM Start assembling all files in current directory
-@echo Assembling !FileName! for !TARGET_BITNESS! bit ...
+@echo [96mAssembling !FileName! for !TARGET_BITNESS! bit ...[0m
 call %OBJASM_PATH%\Build\OA_SET.cmd
 call !Assembler! @"%OBJASM_PATH%\Build\Options\OPT_ASM_LIB_!TARGET_BITNESS!.txt" !FileName!
 if exist *.err (
-  echo -- Error compiling !FileName! source -- Press any key to close this window
+  echo. --- Error compiling !FileName! source ---
+  echo. --- Press any key to close this window ---
   pause > nul
 ) else (
-  echo Assembling succeeded^^!  -- Press any key to close this window
+  echo Assembling succeeded^^!
+  echo. --- Press any key to close this window ---
   pause > nul
 )
 popd

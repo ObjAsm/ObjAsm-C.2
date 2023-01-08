@@ -684,6 +684,7 @@ endm
 ; Arguments:  Arg1: String to be filled.
 ;             Arg2: Text.
 ; Return:     $$Len = Number of copied chars, excluding the ZTC.
+;             $$Size = Number of BYTEs copied, including the ZTC.
 ; Example:    FillStringA myString, <Hello>
 
 FillStringA macro StrVar:req, Text:req
@@ -708,6 +709,7 @@ FillStringA macro StrVar:req, Text:req
   else
     mov DWORD ptr StrVar[($$Len - 3)], $$j
   endif
+  $$Size = $$Len + 1
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -717,6 +719,7 @@ endm
 ; Arguments:  Arg1: String to be filled.
 ;             Arg2: Text.
 ; Return:     $$Len = Number of copied chars, excluding the ZTC.
+;             $$Size = Number of BYTEs copied, including the ZTC and header DWORD.
 ; Example:    FillStringB myString, <Hello>
 
 FillStringB macro StrVar:req, Text:req
@@ -738,6 +741,7 @@ FillStringB macro StrVar:req, Text:req
   endif
 
   mov DWORD ptr StrVar[0], 2*$$Len                      ;;Set byte count
+  $$Size = sizeof(WORD)*($$Len + 1) + sizeof(DWORD)
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -747,6 +751,7 @@ endm
 ; Arguments:  Arg1: String to be filled.
 ;             Arg2: Text.
 ; Return:     $$Len = Number of copied chars, excluding the ZTC.
+;             $$Size = Number of BYTEs copied, including the ZTC.
 ; Example:    FillStringW myString, <Hello>
 
 FillStringW macro StrVar:req, Text:req
@@ -766,6 +771,7 @@ FillStringW macro StrVar:req, Text:req
   elseif ($$Len and 1) eq 1
     mov DWORD ptr StrVar[($$Len - 1)*2], $$j
   endif
+  $$Size = sizeof(WORD)*($$Len + 1)
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -785,6 +791,7 @@ endif
 ; Arguments:  Arg1: String to be filled.
 ;             Arg2: Text.
 ; Return:     $$Len = Number of copied chars.
+;             $$Size = Number of BYTEs copied.
 ; Example:    FillWordA myBuffer, <Hello>
 
 FillWordA macro StrVar:req, Text:req
@@ -807,6 +814,7 @@ FillWordA macro StrVar:req, Text:req
     mov WORD ptr StrVar[$$Len - 3], $$j and 0FFFFh
     mov BYTE ptr StrVar[$$Len - 1], $$j shr 16
   endif
+  $$Size = $$Len
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -816,6 +824,7 @@ endm
 ; Arguments:  Arg1: String to be filled.
 ;             Arg2: Text.
 ; Return:     $$Len = Number of copied chars.
+;             $$Size = Number of BYTEs copied.
 ; Example:    FillWordW myBuffer, <Hello>
 
 FillWordW macro StrVar:req, Text:req
@@ -833,6 +842,7 @@ FillWordW macro StrVar:req, Text:req
   if ($$Len and 1) eq 1
     mov WORD ptr StrVar[($$Len - 1)*2], $$j
   endif
+  $$Size = sizeof(WORD)*$$Len
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -855,6 +865,7 @@ endif
 ;             ZERO? indicates that the word matches.
 ; Example:    DoesWordMatchA? myWord, <Hello>
 ;             DoesWordMatchA? myWord, !<  >
+; Note:       Arg1 must have read access for the size of Arg2!
 
 DoesWordMatchA? macro StrVar:req, Text:req, NoMatchLabel
   local ExitLabel
@@ -913,6 +924,7 @@ endm
 ;             ZERO? indicates that the word matches.
 ; Example:    DoesWordMatchW? myWord, <Hello>
 ;             DoesWordMatchW? myWord, !<  >
+; Note:       Arg1 must have read access for the size of Arg2!
 
 DoesWordMatchW? macro StrVar:req, Text:req, NoMatchLabel
   local ExitLabel
@@ -972,6 +984,7 @@ endif
 ; Return:     In case that NoMatchLabel is not specified use the flags.
 ;             Zero indicates that the word matches.
 ; Example:    DoesStringMatchA? myString, <Hello>
+; Note:       Arg1 must have read access for the size of Arg2!
 
 DoesStringMatchA? macro StrVar:req, Text:req, NoMatchLabel
   local ExitLabel
@@ -1030,6 +1043,7 @@ endm
 ; Return:     In case that NoMatchLabel is not specified use the flags.
 ;             Zero indicates that the word matches.
 ; Example:    DoesStringMatchW? myString, <Hello>
+; Note:       Arg1 must have read access for the size of Arg2!
 
 DoesStringMatchW? macro StrVar:req, Text:req, NoMatchLabel
   local ExitLabel

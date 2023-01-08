@@ -213,6 +213,7 @@ Method IcmpManager.Trace, uses xbx xdi xsi
   mov Options.Flags, 0
   mov Options.OptionsSize, 0
   mov Options.OptionsData, NULL
+  lea xdi, RecvBuffer.Address
 
   .repeat
     xor ebx, ebx
@@ -238,7 +239,6 @@ Method IcmpManager.Trace, uses xbx xdi xsi
     .if HI.pHostName == NULL
       mov HI.pHostName, $invoke(StrNew, $OfsCStrA("No response"))
     .endif
-    lea xdi, RecvBuffer.Address
     DbgWriteF ,, "Hop 各D: 吁D/吁D/吁D ms 再T向4 再T吁A", Options.Ttl, \
               HI.dRoundTripTime[0], HI.dRoundTripTime[4], HI.dRoundTripTime[8], \
               22, xdi, 40, HI.HopInfo.pHostName

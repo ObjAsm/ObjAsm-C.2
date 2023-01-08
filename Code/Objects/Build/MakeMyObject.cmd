@@ -20,8 +20,9 @@ call %OBJASM_PATH%\Build\OA_SET.cmd
 echo Building !FileName! object ...>!LogFile!
 call %Assembler% @"%OBJASM_PATH%\Build\Options\OPT_ASM_LIB_!TARGET_BITNESS!.txt" "!FileName!.asm">>!LogFile! 
 if exist !FileName!.err (
-  echo -- Error compiling source files>>!LogFile!
-  echo -- Error compiling source files -- Press any key to close this window
+  echo --- Error compiling source files --->>!LogFile!
+  echo. --- Error compiling source file ---
+  echo. --- Press any key to close this window ---
   pause>nul
 ) else (
   REM Create the .lib file
@@ -33,8 +34,9 @@ if exist !FileName!.err (
     echo.
     timeout /T 5
   ) else (
-    echo Failed building library library !FileName!.lib>>!LogFile!
-    echo Failed building library library !FileName!.lib -- Press any key to close this window
+    echo --- Failed building library library !FileName!.lib --->>!LogFile!
+    echo. --- Failed building library library !FileName!.lib ---
+    echo. --- Press any key to close this window ---
     pause>nul
   )
 )

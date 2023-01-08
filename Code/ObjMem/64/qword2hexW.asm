@@ -28,15 +28,15 @@ OPTION PROC:NONE
 align ALIGN_CODE
 qword2hexW proc pBuffer:POINTER, qValue:QWORD
   ;rcx -> Buffer, edx = dValue
-  lea r10, HexCharTableW
+  mov r10, offset HexCharTableW
 
   ofs = 24
   repeat 4
-    movzx rax, dl
+    movzx eax, dl
     mov r8d, DCHRW ptr [r10 + sizeof(DCHRW)*rax]
     shr rdx, 8
     shl r8, 32
-    movzx rax, dl
+    movzx eax, dl
     mov r9d, DCHRW ptr [r10 + sizeof(DCHRW)*rax]
     shr rdx, 8
     or r8, r9

@@ -27,8 +27,8 @@ OPTION PROC:NONE
 align ALIGN_CODE
 byte2hexA proc pBuffer:POINTER, bValue:BYTE
   ;rcx -> Buffer, dl = bValue
-  mov r10, HexCharTableA
-  movzx rax, dl
+  mov r10, offset HexCharTableA
+  movzx eax, dl
   mov r8w, DCHRA ptr [r10 + sizeof(DCHRA)*rax]
   mov [rcx], r8w
   m2z CHRA ptr [rcx + 2*sizeof(CHRA)]                   ;Set ZTC

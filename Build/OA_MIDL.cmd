@@ -6,7 +6,7 @@ if exist !ProjectName!.idl (
     if exist !MidlCompiler! (
       call !MidlCompiler! /I %OBJASM_PATH%\Code\Inc\COM\IDL @"%OBJASM_PATH%\Build\Options\OPT_MIDL_!TARGET_BITNESS!.txt" !ProjectName!.idl
     ) else (
-      echo ERROR: MidlCompiler not found
+      echo [93;101mERROR: MidlCompiler not found[0m
       exit /b 1
     )
   ) else (

@@ -5,7 +5,7 @@ if exist !ProjectName!.rc (
     if exist !ResourceCompiler! (
       call !ResourceCompiler! /nologo /v /r /x /w /i"%OBJASM_PATH%\Resources" !ProjectName!.rc
     ) else (
-      echo ERROR: Resource Compiler not found
+      echo [93;101mERROR: Resource Compiler not found[0m
       exit /b 1
     )
   ) else (

@@ -4,7 +4,7 @@ if exist !ProjectName!.asm (
     if exist !Assembler! (
       call !Assembler! @"%OBJASM_PATH%\Build\Options\OPT_ASM_!TARGET_MODE!_!TARGET_BITNESS!.txt" !ProjectName!.asm
     ) else (
-      echo ERROR: Assembler not found
+      echo [93;101mERROR: Assembler not found[0m
       exit /b 1
     )
   ) else (

@@ -9,7 +9,7 @@ if exist *.asm (
   set LogFile=Make.log
 
   REM Dispaly some information
-  echo Building !ProjectName! project ...
+  echo [96mBuilding !ProjectName! project ...[0m
   echo Building !ProjectName! project ...> !LogFile!
   echo.
   echo.>> !LogFile!
@@ -19,13 +19,13 @@ if exist *.asm (
   if errorlevel 1 goto Error
 
   REM Display targets on screen
-  echo Platform:       !TARGET_PLATFORM!
-  echo User Interface: !TARGET_USER_INTERFACE!
-  echo Binary Format:  !TARGET_BIN_FORMAT!
-  echo Bitness:        !TARGET_BITNESS!
-  echo OOP support:    !TARGET_SUPPORT_OOP!
-  echo String Type:    !TARGET_STRING_TYPE!
-  echo Mode:           !TARGET_MODE_STR!
+  echo.  Platform:       [93m!TARGET_PLATFORM![0m
+  echo.  User Interface: [93m!TARGET_USER_INTERFACE![0m
+  echo.  Binary Format:  [93m!TARGET_BIN_FORMAT![0m
+  echo.  Bitness:        [93m!TARGET_BITNESS![0m
+  echo.  OOP support:    [93m!TARGET_SUPPORT_OOP![0m
+  echo.  String Type:    [93m!TARGET_STRING_TYPE![0m
+  echo.  Mode:           [93m!TARGET_MODE_STR![0m
   echo.
 
   REM Set known tools.

@@ -2,11 +2,12 @@
 
 setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
 
-echo Building %TARGET_BITNESS% bit %TARGET_STR_NAME% Objects
+echo [96mBuilding %TARGET_BITNESS% bit %TARGET_STR_NAME% Objects ...[0m
+
 echo.
 
 if [%TARGET_BITNESS%] == [] (
-  echo Missing targets...
+  echo [93;101mMissing targets...[0m
   call %OBJASM_PATH%\Build\OA_ERROR.cmd
 ) else (
   pushd

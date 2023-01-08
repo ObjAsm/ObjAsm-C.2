@@ -26,20 +26,20 @@ OPTION PROC:NONE
 align ALIGN_CODE
 dword2hexA proc pBuffer:POINTER, dValue:DWORD
   ;rcx -> Buffer, edx = dValue
-  mov r10, HexCharTableA
+  mov r10, offset HexCharTableA
   movzx rax, dl
   mov r8w, DCHRA ptr [r10 + sizeof(DCHRA)*rax]
   shr edx, 8
   shl r8, 16
-  movzx rax, dl
+  movzx eax, dl
   mov r8w, DCHRA ptr [r10 + sizeof(DCHRA)*rax]
   shr edx, 8
   shl r8, 16
-  movzx rax, dl
+  movzx eax, dl
   mov r8w, DCHRA ptr [r10 + sizeof(DCHRA)*rax]
   shr edx, 8
   shl r8, 16
-  movzx rax, dl
+  movzx eax, dl
   mov r8w, DCHRA ptr [r10 + sizeof(DCHRA)*rax]
   mov [rcx], r8
   m2z CHRA ptr [rcx + 8*sizeof(CHRA)]                   ;Set ZTC
