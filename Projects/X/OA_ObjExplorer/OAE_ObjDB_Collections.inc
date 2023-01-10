@@ -231,7 +231,7 @@ MethodEnd
 
 Method FilesCollection.PutItem, uses xbx, pStream:$ObjPtr(Stream), pItem:PFILEINFORMATION
   mov xbx, pItem
-  OCall pStream::Stream.%StrWrite, [xbx].FILEINFORMATION.pFileName
+  OCall pStream::Stream.StrWrite, [xbx].FILEINFORMATION.pFileName
   OCall pStream::Stream.BinWrite, addr [xbx].FILEINFORMATION.LastWrite, sizeof FILETIME
 MethodEnd
 

@@ -57,7 +57,7 @@ start proc uses xbx xdi xsi
     inc ebx
   .endw
   OCall SW::StopWatch.Stop
-  OCall SW::StopWatch.%GetTimeStr, addr cBuffer
+  OCall SW::StopWatch.GetTimeStr, addr cBuffer
   DbgStr cBuffer, "µS"
   DbgDec Dict.dBucketsUsed
   DbgDec Dict.dCollisionCount
@@ -91,7 +91,7 @@ start proc uses xbx xdi xsi
     inc ebx
   .endw
   OCall SW::StopWatch.Stop
-  OCall SW::StopWatch.%GetTimeStr, addr cBuffer
+  OCall SW::StopWatch.GetTimeStr, addr cBuffer
   DbgStr cBuffer, "µS"
   DbgText "Dictionary item search ready"
 ;  DbgLine
@@ -107,7 +107,7 @@ start proc uses xbx xdi xsi
 ;    inc ebx
 ;  .endw
 ;  OCall SW::StopWatch.Stop
-;  OCall SW::StopWatch.%GetTimeStr, addr cBuffer
+;  OCall SW::StopWatch.GetTimeStr, addr cBuffer
 ;  DbgStr cBuffer, "µS"
 ;  DbgDec Dict.dTombstones
 ;  DbgText "Dictionary item deletion ready"
@@ -137,7 +137,7 @@ start proc uses xbx xdi xsi
   DbgDec Dict.dBucketsUsed
   DbgDec Dict.dCollisionCount
   OCall SW::StopWatch.Stop
-  OCall SW::StopWatch.%GetTimeStr, addr cBuffer
+  OCall SW::StopWatch.GetTimeStr, addr cBuffer
   DbgStr cBuffer, "µS"
   DbgLine
 
@@ -152,7 +152,7 @@ start proc uses xbx xdi xsi
     inc ebx
   .endw
   OCall SW::StopWatch.Stop
-  OCall SW::StopWatch.%GetTimeStr, addr cBuffer
+  OCall SW::StopWatch.GetTimeStr, addr cBuffer
   DbgStr cBuffer, "µS"
   DbgText "Dictionary item search ready after resize"
 
@@ -176,7 +176,7 @@ start proc uses xbx xdi xsi
 ;    inc ebx
 ;  .endw
 ;  OCall SW::StopWatch.Stop
-;  OCall SW::StopWatch.%GetTimeStr, addr cBuffer
+;  OCall SW::StopWatch.GetTimeStr, addr cBuffer
 ;  DbgStr cBuffer, "µS"
 ;  DbgText "Collection item insertion ready"
 ;  DbgLine
@@ -192,7 +192,7 @@ start proc uses xbx xdi xsi
 ;    inc ebx
 ;  .endw
 ;  OCall SW::StopWatch.Stop
-;  OCall SW::StopWatch.%GetTimeStr, addr cBuffer
+;  OCall SW::StopWatch.GetTimeStr, addr cBuffer
 ;  DbgStr cBuffer, "µS"
 ;  DbgText "Items search ready"
 ;  DbgLine
@@ -208,7 +208,7 @@ start proc uses xbx xdi xsi
 ;    inc ebx
 ;  .endw
 ;  OCall SW::StopWatch.Stop
-;  OCall SW::StopWatch.%GetTimeStr, addr cBuffer
+;  OCall SW::StopWatch.GetTimeStr, addr cBuffer
 ;  DbgStr cBuffer, "µS"
 ;  DbgText "Item deletion ready"
 ;  DbgLine

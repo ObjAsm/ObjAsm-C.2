@@ -362,7 +362,7 @@ Method OA_ObjDB.Open, uses xbx xdi xsi, pFileName:PSTRING
     lea xdi, DeserInfo
     OCall DLUT::DesLUT.Init, xsi, 100, 100, COL_MAX_CAPACITY
     DbgText "Reading Database..."
-    OCall xbx::DiskStream.%BinReadX
+    OCall xbx::DiskStream.BinReadX
     DbgHex xax
     OCall DLUT::DesLUT.Insert, xax, xsi               ;Set Collection owner in the LUT
     OCall xbx::DiskStream.BinRead32                   ;eax = Object Class ID
@@ -398,7 +398,7 @@ Method OA_ObjDB.Save, uses xbx xsi, pFileName:PSTRING
   mov xbx, $New(DskStm::DiskStream)
   OCall xbx::DiskStream.Init, xsi, pFileName, 0, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
   OCall xbx::DiskStream.BinWrite32, DATABASE_VERSION
-  OCall xbx::DiskStream.%BinWriteX, xsi                 ;Store -> OA_ObjDB for later use
+  OCall xbx::DiskStream.BinWriteX, xsi                  ;Store -> OA_ObjDB for later use
   OCall xbx::DiskStream.Put, addr [xsi].FilesColl
   OCall xbx::DiskStream.Put, addr [xsi].ObjectColl
   OCall xbx::DiskStream.Put, addr [xsi].ObjMethodColl

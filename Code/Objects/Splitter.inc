@@ -181,7 +181,7 @@ Method Splitter.Load, uses xbx xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_I
   mov [xsi].dFlags, $32($OCall(pStream::Stream.BinRead32))
   mov [xsi].dHoverTime, $32($OCall(pStream::Stream.BinRead32))
   mov [xsi].dThickness, $32($OCall(pStream::Stream.BinRead32))
-  OCall pStream::Stream.%BinReadX                       ;Previous hParent
+  OCall pStream::Stream.BinReadX                        ;Previous hParent
   OCall xbx::DesLUT.Find, xax
   .if eax == OBJ_OK
     mov [xsi].hParent, xcx
@@ -727,7 +727,7 @@ Method Splitter.Store, uses xsi, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.BinWrite32, [xsi].dFlags
   OCall pStream::Stream.BinWrite32, [xsi].dHoverTime
   OCall pStream::Stream.BinWrite32, [xsi].dThickness
-  OCall pStream::Stream.%BinWriteX, [xsi].hParent
+  OCall pStream::Stream.BinWriteX, [xsi].hParent
   OCall pStream::Stream.BinWrite32, [xsi].sdMouseFstPos
   OCall pStream::Stream.BinWrite32, [xsi].sdMouseLstPos
   OCall pStream::Stream.BinWrite32, [xsi].sdLastPos

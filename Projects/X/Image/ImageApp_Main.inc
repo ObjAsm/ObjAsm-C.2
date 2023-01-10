@@ -65,9 +65,9 @@ Method ImagApp.Init, uses xsi
   mov dWndPosY, $32($invoke(CenterForm, dWndHeight, $32($invoke(GetSystemMetrics, SM_CYSCREEN))))
 
   OCall [xsi].Img1::Image.Init, xsi
-  OCall [xsi].Img1::Image.%LoadFromRes, $OfsCStr("IMG1")
+  OCall [xsi].Img1::Image.LoadFromRes, $OfsCStr("IMG1")
   OCall [xsi].Img2::Image.Init, xsi
-  OCall [xsi].Img2::Image.%LoadFromRes, $OfsCStr("IMG2")
+  OCall [xsi].Img2::Image.LoadFromRes, $OfsCStr("IMG2")
 
   invoke CreateWindowEx, WS_EX_LEFT or WS_EX_APPWINDOW, \
                          offset szImagApp, offset szAppTitle, WS_OVERLAPPEDWINDOW, \

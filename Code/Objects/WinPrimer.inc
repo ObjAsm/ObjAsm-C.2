@@ -77,7 +77,7 @@ MethodEnd
 Method WinPrimer.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   SetObject xsi
   ACall xsi.Load, pStream, pDeserInfo
-  OCall pStream::Stream.%BinReadX
+  OCall pStream::Stream.BinReadX
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -180,7 +180,7 @@ MethodEnd
 Method WinPrimer.Store, uses xsi, pStream:$ObjPtr(Stream)
   SetObject xsi
   ACall xsi.Store, pStream
-  OCall pStream::Stream.%BinWriteX, [xsi].hWnd
+  OCall pStream::Stream.BinWriteX, [xsi].hWnd
 MethodEnd
 
 endif

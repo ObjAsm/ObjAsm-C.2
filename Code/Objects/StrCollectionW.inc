@@ -52,7 +52,7 @@ MethodEnd
 ; Return:     xax -> WIDE string.
 
 Method StrCollectionW.GetItem,, pStream:$ObjPtr(Stream)
-  OCall pStream::Stream.%StrReadW
+  OCall pStream::Stream.StrReadW
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

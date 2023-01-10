@@ -235,7 +235,7 @@ Method Application.OnNotify, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
       .if [xdi].TVNM_DRAW.dID == 1
         New Img::Image
         OCall Img::Image.Init, xsi
-        OCall Img::Image.%LoadFromRes, $OfsCStr("DISCOUNT")
+        OCall Img::Image.LoadFromRes, $OfsCStr("DISCOUNT")
         mov DstRect.left, 170
         mov DstRect.top, 150
         mov DstRect.right, 110

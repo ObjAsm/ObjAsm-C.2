@@ -98,11 +98,11 @@ start proc uses xbx xdi xsi
 
   MemFree pMemBlock
 
+  lea xsi, cBuffer
   fdivrp st(1), st(0)
-  invoke St0ToStr, addr cBuffer, 0, 5, f_NOR
+  invoke St0ToStr, xsi, 0, 5, f_NOR
   fUnload
-
-  DbgWriteF DbgColorBlue,, "Performance ratio = ¦ST", addr cBuffer 
+  DbgWriteF DbgColorBlue,, "Performance ratio = ¦ST", xsi
 
 ;    OCall [xsi].pPool::DataPool.Shrink
 

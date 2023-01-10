@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      Debug.inc
 ; Author:     G. Friedrich
-; Version:    C.1.3
+; Version:    C.2.0
 ; Purpose:    ObjAsm debug macros.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
@@ -20,6 +20,8 @@
 ;               - DbgZoomIn, DbgZoomInTxt, DbgZoomInBmp, DbgZoomOut, DbgZoomOutTxt, DbgZoomOutBmp
 ;               - DbgCloseWnd, DbgPinWnd, DbgFrontWnd, DbgFront, DbgFrontTxt, DbgFrontBmp added.
 ;               - Color variables introduced. Setup is done by SysInit.
+;             Version C.2.0, January 2023
+;               - Register restoration bug in DbgSaveContext (64 bit) corrected.
 ; ==================================================================================================
 
 ;Supported debugging macros:
@@ -325,9 +327,9 @@ DbgSaveContext macro VarIsRef:=<FALSE>, Var
     push esp                                            ;;Save FPU storage pointer
     push edi                                            ;;Save address to restore CPU registers
     ifb <Var>                                           ;;If not Var is supplied, restore regs
-      mov eax, [edi +  7*4]                             ;;Restore volatile registers
-      mov ecx, [edi +  6*4]
-      mov edx, [edi +  5*4]
+      mov eax, [edi +  7*sizeof(DWORD)]                 ;;Restore volatile registers
+      mov ecx, [edi +  6*sizeof(DWORD)]                 ;;  EnterCriticalSection may have
+      mov edx, [edi +  5*sizeof(DWORD)]                 ;;  changed them
       mov edi, [edi]                                    ;;Restore edi from pushed register values
     endif
   else
@@ -340,15 +342,15 @@ DbgSaveContext macro VarIsRef:=<FALSE>, Var
     fxsave [rsp]                                        ;;This instruction reinitializes the XMM
     push rsp                                            ;;Save FPU storage pointer
     push rdi                                            ;;Save address to restore CPU registers
-    ifb <Var>                                           ;;If not Var is supplied, restore regs
-      mov rax, [rdi + 11*8]                             ;;Restore volatile registers
-      mov rcx, [rdi + 10*8]
-      mov rdx, [rdi +  9*8]
-      mov r8,  [rdi +  7*8]
-      mov r9,  [rdi +  6*8]
-      mov r10, [rdi +  5*8]
-      mov r11, [rdi +  4*8]
-      mov rdi, [rdi +  8*8]                             ;;Restore rdi from pushed register values
+    ifb <Var>                                           ;;If Var is not supplied, restore vol. regs
+      mov rax, [rdi + 15*sizeof(QWORD)]                 ;;Restore volatile registers
+      mov rcx, [rdi + 14*sizeof(QWORD)]                 ;;  EnterCriticalSection may have
+      mov rdx, [rdi + 13*sizeof(QWORD)]                 ;;  changed them
+      mov r8,  [rdi +  7*sizeof(QWORD)]
+      mov r9,  [rdi +  6*sizeof(QWORD)]
+      mov r10, [rdi +  5*sizeof(QWORD)]
+      mov r11, [rdi +  4*sizeof(QWORD)]
+      mov rdi, [rdi +  8*sizeof(QWORD)]                 ;;Restore rdi from pushed register values
     endif
 
     sub rsp, 40h                                        ;;Add a homing area and argument space
@@ -645,9 +647,9 @@ DbgTextF macro Color:=<DbgColorForeground>, Dest, Message:req, Args:vararg
       DbgSaveContext
       DbgSetDestWnd Dest
       ifnb <Args>
-        S_DATA segment
-         DebugTextBuffer CHRA 1024 dup(?)
-        S_DATA ends
+        bss segment
+          DebugTextBuffer CHRA 1024 dup(?)
+        bss ends
 
         invoke wsprintf, offset DebugTextBuffer, $OfsCStrA($Esc(Message)), Args
         invoke DbgOutText, offset DebugTextBuffer, Color, DbgColorBackground, DBG_EFFECT_NEWLINE, ??DbgDstWnd
@@ -1071,61 +1073,50 @@ DbgWriteW macro Var, Color:=<DbgColorForeground>, Dest
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-
-if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  DbgWriteF textequ <DbgWriteFA>
-else
-  DbgWriteF textequ <DbgWriteFW>
-endif
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      DbgWriteFA
+; Macro:      DbgWrite
 ; Purpose:    Output a string on the debug device.
 ; Arguments:  Arg1: Optinal text color.
 ;             Arg2: Optional destination Window name.
 ;             Arg3: Quoted format string.
 ;             Arg 4..n: optional arguments.
-; Note:       Don't use xbx as argument register. it is used internally!
+; Note:       All registers are allowed as parameters, even indirect references of the form
+;             [xbx].POINT.x
 
-DbgWriteFA macro Color:=<DbgColorForeground>, Dest, Format, Args:vararg
-  local bBuffer
-
+DbgWriteF macro Color:=<DbgColorForeground>, Dest, Format, Args:vararg
   if DEBUGGING
-    S_DATA segment
-     bBuffer CHRA 4096 dup(?)
-    S_DATA ends
-
     DbgSaveContext
     DbgSetDestWnd Dest
-    lea xbx, bBuffer
-    WriteF xbx, Format, Args
-    invoke DbgOutTextA, addr bBuffer, Color, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
-    DbgShowSrcInfo ??DbgDstWnd
-    DbgLoadContext
-  endif
-endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      DbgWriteFW
-; Purpose:    Output a string on the debug device.
-; Arguments:  Arg1: Optinal text color.
-;             Arg2: Optional destination Window name.
-;             Arg3: Quoted format string.
-;             Arg 4..n: optional arguments.
+    ;;Replace register arguments with their memory equivalents
+    $$sz2 textequ <>                                    ;;Clear new argument list
+    ifnb <Args>
+      for $$Arg, <Args>
+        $$Attributes = opattr($$Arg)
+        ;;%echo $ToStr(%$$Attributes)
 
-DbgWriteFW macro Color:=<DbgColorForeground>, Dest, Format, Args:vararg
-  local wBuffer
+        $$sz1 textequ <$$Arg>                           ;;Set default value
+        if ($$Attributes eq (OAT_NO_ERROR or OAT_RELOCATABLE))    ;;E.g. [xax]
+          $$sz1 textequ GetData?(type(XWORD))
+          push XWORD ptr $$Arg                          ;;Avoid the use of a register
+          pop XWORD ptr $$sz1                           ;;$$sz1 is not SS-Relative
+        elseif ($$Attributes eq (OAT_NO_ERROR or OAT_REGISTER))   ;;Register
+          $$sz1 textequ GetData?(type($$Arg))
+          mov $$sz1, $$Arg
+        endif
 
-  if DEBUGGING
-    S_DATA segment
-     wBuffer CHRW 4096 dup(?)
-    S_DATA ends
+        ;;Build new argument list
+        ifb $$sz2
+          $$sz2 textequ $$sz1                           ;;Start the argument list
+        else
+          $$sz2 catstr $$sz2, <!,>, $$sz1               ;;Extend the argument list
+        endif
+      endm
+    endif
 
-    DbgSaveContext
-    DbgSetDestWnd Dest
-    lea xbx, wBuffer
-    WriteF xbx, Format, Args
-    invoke DbgOutTextW, addr wBuffer, Color, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+    $$sz1 textequ GetData?(1024*sizeof(CHR))            ;;Get a buffer to write the string
+    mov xbx, offset $$sz1
+    %WriteF xbx, Format, $$sz2
+    invoke DbgOutText, offset $$sz1, Color, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     DbgShowSrcInfo ??DbgDstWnd
     DbgLoadContext
   endif

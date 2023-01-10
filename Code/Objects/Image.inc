@@ -87,11 +87,11 @@ Object Image, ImageID, Primer
 ObjectEnd
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  LoadFromFile equ LoadFromFileA
-  LoadFromRes  equ LoadFromResA
+  $ObjMthd(LoadFromFile) textequ $ObjMthd(LoadFromFileA)
+  $ObjMthd(LoadFromRes)  textequ $ObjMthd(LoadFromResA)
 else
-  LoadFromFile equ LoadFromFileW
-  LoadFromRes  equ LoadFromResW
+  $ObjMthd(LoadFromFile) textequ $ObjMthd(LoadFromFileW)
+  $ObjMthd(LoadFromRes)  textequ $ObjMthd(LoadFromResW)
 endif
 
 

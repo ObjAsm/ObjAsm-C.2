@@ -29,7 +29,7 @@ if exist !ProjectName!.asm (
   goto :EOF
 
   :Error
-  call "%OBJASM_PATH%\Build\OA_ERROR.cmd" NOPAUSE
+  call "%OBJASM_PATH%\Build\RA_ERROR.cmd" NOPAUSE
   goto :EOF
 
 ) else (
@@ -38,6 +38,6 @@ if exist !ProjectName!.asm (
   if not [!LogFile!] == [] (
     echo No assembler file found^^!> !LogFile!
   )
-  call "%OBJASM_PATH%\Build\OA_ERROR.cmd" NOPAUSE
+  call "%OBJASM_PATH%\Build\RA_ERROR.cmd" NOPAUSE
 )
 

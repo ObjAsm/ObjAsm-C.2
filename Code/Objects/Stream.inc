@@ -82,21 +82,21 @@ Object Stream, StreamID, Primer
 ObjectEnd
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  StrWrite textequ <StrWriteA>
+  $ObjMthd(StrWrite) textequ $ObjMthd(StrWriteA)
 else
-  StrWrite textequ <StrWriteW>
+  $ObjMthd(StrWrite) textequ $ObjMthd(StrWriteW)
 endif
 
 if TARGET_BITNESS eq 32
-  BinReadX  textequ <BinRead32>
-  BinWriteX textequ <BinWrite32>
+  $ObjMthd(BinReadX)  textequ $ObjMthd(BinRead32)
+  $ObjMthd(BinWriteX) textequ $ObjMthd(BinWrite32)
 else
-  BinReadX  textequ <BinRead64>
-  BinWriteX textequ <BinWrite64>
+  $ObjMthd(BinReadX)  textequ $ObjMthd(BinRead64)
+  $ObjMthd(BinWriteX) textequ $ObjMthd(BinWrite64)
 endif
 
-StrReadA textequ <StrRead>
-StrReadW textequ <StrRead>
+$ObjMthd(StrReadA) textequ $ObjMthd(StrRead)
+$ObjMthd(StrReadW) textequ $ObjMthd(StrRead)
 
 STM_BEGIN   equ FILE_BEGIN
 STM_CURRENT equ FILE_CURRENT
@@ -522,17 +522,17 @@ Method Streamable.Load, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pDeserInfo:PD
   SetObject xsi
   mov xdi, pStream
   mov xbx, pDeserInfo
-  OCall xdi::Stream.%BinReadX                           ;Old pSelf
+  OCall xdi::Stream.BinReadX                           ;Old pSelf
   OCall [xbx].DESER_INFO.pDesLUT::DesLUT.Insert, xax, xsi
 
-  OCall xdi::Stream.%BinReadX                           ;Old pOwner
+  OCall xdi::Stream.BinReadX                           ;Old pOwner
   .if $OCall([xbx].DESER_INFO.pDesLUT::DesLUT.Find, xax) == OBJ_OK
     mov [xsi].pOwner, xcx
     OCall xdi::Stream.BinRead32
     mov [xsi].dErrorCode, eax
 
     ;This POINTER must be deserialized, since the information may not be present at this moment
-    mov [xsi].pErrorCaller, $OCall(xdi::Stream.%BinReadX)
+    mov [xsi].pErrorCaller, $OCall(xdi::Stream.BinReadX)
     xor eax, eax
   .endif
 MethodEnd
@@ -558,10 +558,10 @@ MethodEnd
 Method Streamable.Store, uses xdi xsi, pStream:$ObjPtr(Stream)
   SetObject xsi
   mov xdi, pStream
-  OCall xdi::Stream.%BinWriteX, xsi
-  OCall xdi::Stream.%BinWriteX, [xsi].pOwner
+  OCall xdi::Stream.BinWriteX, xsi
+  OCall xdi::Stream.BinWriteX, [xsi].pOwner
   OCall xdi::Stream.BinWrite32, [xsi].dErrorCode
-  OCall xdi::Stream.%BinWriteX, [xsi].pErrorCaller
+  OCall xdi::Stream.BinWriteX, [xsi].pErrorCaller
 MethodEnd
 
 endif

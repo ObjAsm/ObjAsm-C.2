@@ -52,7 +52,7 @@ MethodEnd
 ; Return:     Xax -> ANSI string.
 
 Method StrCollectionA.GetItem,, pStream:$ObjPtr(Stream)
-  OCall pStream::Stream.%StrReadA
+  OCall pStream::Stream.StrReadA
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

@@ -213,7 +213,7 @@ Method DialogAbout.OnNotify, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
       .if [xdi].TVNM_DRAW.dID == 0
         New Img::Image
         OCall Img::Image.Init, xsi
-        OCall Img::Image.%LoadFromRes, $OfsCStr("PNG_DEBUGCENTER")
+        OCall Img::Image.LoadFromRes, $OfsCStr("PNG_DEBUGCENTER")
         mov DstRect.left, 40                            ;X-Coord. inside draw area, padding excl.
         mov DstRect.top, 15                             ;Y-Coord. inside draw area, padding excl.
         mov DstRect.right, 100                          ;Width

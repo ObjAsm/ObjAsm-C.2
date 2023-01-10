@@ -355,7 +355,7 @@ Method DebugCenter.Init, uses xbx xdi xsi
     OCall pRegKey::RegKey.Create
   .endif
   invoke Parse, addr cBuffer, [xsi].pCommandLine, 0
-  OCall pRegKey::RegKey.%ValueSetStr, offset szPath, addr cBuffer
+  OCall pRegKey::RegKey.ValueSetStr, offset szPath, addr cBuffer
 
   OCall pRegKey::RegKey.ValueGetDW, offset szState
   .if [xsi].dErrorCode == OBJ_OK
@@ -1506,8 +1506,8 @@ Method DebugCenter.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   OCall pRegKey::RegKey.ValueSetDW, offset szLanguage, [xsi].dLanguage
   OCall pRegKey::RegKey.ValueSetDW, offset szTxtZoom,  [xsi].dTxtZoomFactor
   OCall pRegKey::RegKey.ValueSetDW, offset szBmpZoom,  [xsi].dBmpZoomFactor
-  OCall pRegKey::RegKey.%ValueSetStr, offset szDirectory, [xsi].pDirectory
-  OCall pRegKey::RegKey.%ValueSetStr, offset szVersion, $OfsCStr("&VER_PRODUCTVERSION_STR")
+  OCall pRegKey::RegKey.ValueSetStr, offset szDirectory, [xsi].pDirectory
+  OCall pRegKey::RegKey.ValueSetStr, offset szVersion, $OfsCStr("&VER_PRODUCTVERSION_STR")
   OCall pRegKey::RegKey.Close
   Destroy pRegKey
 MethodEnd

@@ -848,13 +848,13 @@ Method ObjPropWnd.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       OCall Img::Image.Init, xsi
 
       .if [xdi].TVNM_DRAW.dID == VARIABLETYPE_UNKNOWN
-        OCall Img::Image.%LoadFromRes, $OfsCStr("PngVarUnk")
+        OCall Img::Image.LoadFromRes, $OfsCStr("PngVarUnk")
       .elseif [xdi].TVNM_DRAW.dID == VARIABLETYPE_REGULAR
-        OCall Img::Image.%LoadFromRes, $OfsCStr("PngVarReg")
+        OCall Img::Image.LoadFromRes, $OfsCStr("PngVarReg")
       .elseif [xdi].TVNM_DRAW.dID == VARIABLETYPE_REDEFINED
-        OCall Img::Image.%LoadFromRes, $OfsCStr("PngVarRed")
+        OCall Img::Image.LoadFromRes, $OfsCStr("PngVarRed")
       .elseif [xdi].TVNM_DRAW.dID == VARIABLETYPE_OBJECT
-        OCall Img::Image.%LoadFromRes, $OfsCStr("PngVarObj")
+        OCall Img::Image.LoadFromRes, $OfsCStr("PngVarObj")
       .endif
       m2m DstRect.left, [xdi].TVNM_DRAW.Position.x, eax
       m2m DstRect.top, [xdi].TVNM_DRAW.Position.y, ecx

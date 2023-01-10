@@ -75,25 +75,25 @@ RBT_COLOR_TEXT  equ   $RGB(170,170,170)
 ;                                     NULL
 ;                                      |
 ;                                      |
-;                                     óóó
+;                                     óóÅE
 ;                                    | 4 |     Root Node (always black)
-;                                     óóó
+;                                     óóÅE
 ;                                   /     \
 ;                                  /       \
 ;                                 /         \
 ;                           / ...             ... \
 ;             Parent Node  /                       \
 ;                         /                         \
-;                       óóó                         óóó
+;                       óóÅE                        óóÅE
 ;   Node with key = 2  | 2 |                       | 6 |
-;                       óóó                         óóó
+;                       óóÅE                        óóÅE
 ;                     /     \                     /     \
 ;         Left Node  /       \  Right Node       /       \
 ;                   /         \                 /         \
 ;                  /           \               /           \
-;                óóó           óóó           óóó           óóó
+;                óóÅE          óóÅE          óóÅE          óóÅE
 ;               | 1 |         | 3 |         | 5 |         | 7 |
-;                óóó           óóó           óóó           óóó
+;                óóÅE          óóÅE          óóÅE          óóÅE
 ;              /     \       /     \       /     \       /     \
 ;             /       \     /       \     /       \     /       \
 ;           NULL     NULL NULL     NULL NULL     NULL NULL     NULL    Leave Nodes (always black)
@@ -1055,7 +1055,7 @@ Method RedBlackTree.Load, uses xbx xsi, pStream:$ObjPtr(Stream), pOwner:POINTER
   mov xbx, pStream
   OCall xsi.Init, pOwner, 0
   mov [xsi].dErrorCode, $32($OCall(xbx::Stream.BinRead32))
-  mov [xsi].xNodeOffset, $OCall(xbx::Stream.%BinReadX)
+  mov [xsi].xNodeOffset, $OCall(xbx::Stream.BinReadX)
   mov [xsi].dCount, $32($OCall(xbx::Stream.BinRead32))
   .if [xsi].dCount != 0
     invoke LoadRBSubtree, NULL
@@ -1107,7 +1107,7 @@ Method RedBlackTree.Store, uses xbx xsi, pStream:$ObjPtr(Stream)
   SetObject xsi
   mov xbx, pStream
   OCall xbx::Stream.BinWrite32, [xsi].dErrorCode
-  OCall xbx::Stream.%BinWriteX, [xsi].xNodeOffset
+  OCall xbx::Stream.BinWriteX, [xsi].xNodeOffset
   OCall xbx::Stream.BinWrite32, [xsi].dCount
   .if [xsi].dCount != 0
     invoke StoreRBSubtree, [xsi].pRootNode

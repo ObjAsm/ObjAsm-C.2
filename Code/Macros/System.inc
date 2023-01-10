@@ -9,6 +9,8 @@
 ;               - WriteF macro added.
 ;             Version C.2.0, December 2022
 ;               - WriteF macro bug using AT corrected and V4/V6 added.
+;               - lodsc macro added (a1sbofo).
+;               - GetData? macro added.
 ; ==================================================================================================
 
 
@@ -43,18 +45,20 @@ R13_SUBREGS textequ <-R13-R13D-R13W-R13B->
 R14_SUBREGS textequ <-R14-R14D-R14W-R14B->
 R15_SUBREGS textequ <-R15-R15D-R15W-R15B->
 
-;Segment definitions
-S_CONST   segment para readonly public
+;Segment definitions:
+;https://learn.microsoft.com/en-en/windows/win32/debug/pe-format
+;Use different sections to cluster the data in each section and merge them using the linker
+S_CONST   segment para readonly public                  ;.rdata, initialized
 S_CONST   ends
-S_TEXT    segment para readonly public
+S_TEXT    segment para readonly public                  ;like S_CONST
 S_TEXT    ends
-S_DATA    segment para public                           ;Read/Write
+S_DATA    segment para public                           ;Read/Write = .data, initialized
 S_DATA    ends
-S_OBJID   segment para readonly public
+S_OBJID   segment para readonly public                  ;Object IDs = .rdata, initialized
 S_OBJID   ends
-S_OBJERR  segment para readonly public
+S_OBJERR  segment para readonly public                  ;Object Errors = .rdata, initialized
 S_OBJERR  ends
-S_PROF    segment para public                           ;Read/Write
+S_PROF    segment para public                           ;Read/Write - Profile data = .data, uninit.
 S_PROF    ends
 
 ??WordChars textequ <ABCDEFGHIJKLMNOPQRSTUVWXYZ_?@>
@@ -118,13 +122,13 @@ OAT_BIT_14        equ 0100000000000000b
 OAT_BIT_15        equ 1000000000000000b
 
 ; Notes:
-;             036 = 0000 0000 0010 0100y = immediate operand or constant
-;             037 = 0000 0000 0010 0101y = label, either local or global
-;             042 = 0000 0000 0010 1010y = GLOBAL var
-;             098 = 0000 0000 0110 0000y = LOCAL  var
-;             048 = 0000 0000 0011 0000y = register
-;             805 = 0000 0011 0010 0101y = local procedure in code
-;             933 = 0000 0011 1010 0101y = external procedure or API call
+;   036 = 0000 0000 0010 0100y = immediate operand or constant
+;   037 = 0000 0000 0010 0101y = label, either local or global
+;   042 = 0000 0000 0010 1010y = GLOBAL var
+;   098 = 0000 0000 0110 0000y = LOCAL  var
+;   048 = 0000 0000 0011 0000y = register
+;   805 = 0000 0011 0010 0101y = local procedure in code
+;   933 = 0000 0011 1010 0101y = external procedure or API call
 
 
 if TARGET_BITNESS eq 64
@@ -155,6 +159,29 @@ xdi equ XDI
 xsi equ XSI
 xbp equ XBP
 xsp equ XSP
+
+if TARGET_BITNESS eq 32 
+  CPU_REGISTER union
+    byte_     BYTE  ?
+    word_     WORD  ?
+    dword_    DWORD ?
+    struct
+      byte_lo BYTE  ?
+      byte_hi BYTE  ?
+    ends
+  CPU_REGISTER ends
+else
+  CPU_REGISTER union
+    byte_     BYTE  ?
+    word_     WORD  ?
+    dword_    DWORD ?
+    qword_    QWORD ?
+    struct
+      byte_lo BYTE  ?
+      byte_hi BYTE  ?
+    ends
+  CPU_REGISTER ends
+endif
 
 ; ==================================================================================================
 ;    Macro implementation
@@ -1108,7 +1135,7 @@ endif
 ;                   subsequent arguments.
 ;             Arg3-N: Additional arguments. Must be non-volatile registers, FPU registers or
 ;                   memory symbols.
-; Return:     On return, Arg1 is pointing to the ZTC to append other strings.
+; Return:     On return Arg1 points to the ZTC, which helps appending other strings.
 ; Notes:      - Format specifiers:
 ;                 SB signed BYTE as decimal
 ;                 SW signed WORD as decimal
@@ -1653,7 +1680,7 @@ endm
 ; Macro:      (C/D)Real??
 ; Purpose:    Declare a named floating point value in the data/const memory segment.
 ; Arguments:  Arg1: Name of the floating point variable.
-;             Arg2: Value of the floating point variable. May be ?.
+;             Arg2: Value of the floating point variable.
 
 DReal4 macro Name, Value
   S_DATA segment
@@ -3722,22 +3749,22 @@ endif
 ; Note:       rsp is not the value of the instruction begin, like it is using pushad.
 
 pushaq macro
-  push rax
-  push rcx
-  push rdx
-  push rbx
-  push rsp
-  push rbp
-  push rsi
-  push rdi
-  push r8
-  push r9
-  push r10
-  push r11
-  push r12
-  push r13
-  push r14
-  push r15
+  push rax                                              ;;15
+  push rcx                                              ;;14
+  push rdx                                              ;;13
+  push rbx                                              ;;12
+  push rsp                                              ;;11
+  push rbp                                              ;;10
+  push rsi                                              ;; 9
+  push rdi                                              ;; 8
+  push r8                                               ;; 7
+  push r9                                               ;; 6
+  push r10                                              ;; 5
+  push r11                                              ;; 4
+  push r12                                              ;; 3
+  push r13                                              ;; 2
+  push r14                                              ;; 1
+  push r15                                              ;; 0
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -3831,6 +3858,17 @@ else
 endif
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      lodsc
+; Purpose:    Compile lodsb or lodsw according to TARGET_STR_TYPE.
+; Arguments:  None.
+
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  lodsc equ <lodsb>
+else
+  lodsc equ <lodsw>
+endif
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      @Random
 ; Purpose:    Compile-time random number generator.
 ; Arguments:  Arg1: Range.
@@ -3853,5 +3891,35 @@ endm
 
 @Err macro Text:=<>
   %echo Text
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      GetData?
+; Purpose:    Reserve a data block in the .data? segment (bss).
+; Arguments:  Arg1: Data size
+; Return:     Symbol name.
+
+GetData? macro DataSize:= <0>
+  local DataName
+
+  bss segment
+  align @WordSize
+  if DataSize eq 0
+    .err <Invalid argument in GetData?>
+  elseif DataSize eq 1
+    DataName BYTE ?
+  elseif DataSize eq 2
+    DataName WORD ?
+  elseif DataSize eq 4
+    DataName DWORD ?
+  elseif DataSize eq 8
+    DataName QWORD ?
+  elseif DataSize eq 16
+    DataName OWORD ?
+  else
+    DataName BYTE DataSize dup(?)
+  endif
+  bss ends
+  exitm <DataName>
 endm
 

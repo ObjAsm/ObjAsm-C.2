@@ -166,7 +166,7 @@ Method FlipBox.Load, uses xbx xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_IN
   OCall xbx::DesLUT.Insert, xax, [xsi].hWnd
 
   mov [xsi].dFlags, $32($OCall(pStream::Stream.BinRead32))
-  OCall pStream::Stream.%BinReadX                       ;Previous hParent
+  OCall pStream::Stream.BinReadX                       ;Previous hParent
   OCall xbx::DesLUT.Find, xax
   .if eax == OBJ_OK
     mov [xsi].hParent, xcx
@@ -185,7 +185,7 @@ Method FlipBox.Store, uses xsi, pStream:$ObjPtr(Stream)
   ACall xsi.Store, pStream                              ;Store pSelf, ..., hWnd
 
   OCall pStream::Stream.BinWrite32, [xsi].dFlags
-  OCall pStream::Stream.%BinWriteX, [xsi].hParent
+  OCall pStream::Stream.BinWriteX, [xsi].hParent
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

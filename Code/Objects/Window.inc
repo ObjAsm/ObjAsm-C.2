@@ -12,7 +12,8 @@
 ;                 parent window is maximized.
 ;               - if the window is minimized, MoveChildWnd is skipped.
 ;             Version C.2.0, January 2022
-;               - Flags modified and functionality extended. 
+;               - Flags modified and functionality extended.
+;               - Width and height calculation corrected in GetChildInfo. 
 ; ==================================================================================================
 
 
@@ -186,10 +187,15 @@ GetChildInfo proc uses xbx xsi hWnd:HWND, pGetChildWndInfo:PGetChildWndInfo
     invoke GetParent, hWnd
     .if xax == [xbx].GetChildWndInfo.hParent
       invoke GetWindowRect, hWnd, addr [xsi].DL_CHILD_INFO.PositionInfo
+      ;Convert to width and height values.
+      mov eax, [xsi].DL_CHILD_INFO.PositionInfo.right
+      mov ecx, [xsi].DL_CHILD_INFO.PositionInfo.bottom
+      sub eax, [xsi].DL_CHILD_INFO.PositionInfo.left
+      sub ecx, [xsi].DL_CHILD_INFO.PositionInfo.top
+      mov [xsi].DL_CHILD_INFO.PositionInfo.right, eax
+      mov [xsi].DL_CHILD_INFO.PositionInfo.bottom, ecx
       ;Convert to x/y coordinates relative to the parent.
       invoke ScreenToClient, [xbx].GetChildWndInfo.hParent, addr [xsi].DL_CHILD_INFO.PositionInfo.left
-      ;Convert to width and height values.
-      invoke ScreenToClient, hWnd, addr [xsi].DL_CHILD_INFO.PositionInfo.right
       ;Move to the next DL_CHILD_INFO.
       mov xcx, sizeof(DL_CHILD_INFO)
       add [xbx].GetChildWndInfo.pInfo, xcx
@@ -313,6 +319,7 @@ MoveChildWnd proc uses xbx xsi hWnd:HWND, pMoveChildWndInfo:PMoveChildWndInfo
       add eax, [xsi].DL_CHILD_INFO.PositionInfo.bottom
       mov WRect.bottom, eax
 
+      mov ecx, WRect.bottom
       invoke DeferWindowPos, [xbx].MoveChildWndInfo.hDWP, hWnd, 0, \
                              WRect.left, WRect.top, WRect.right, WRect.bottom, \
                              SWP_NOOWNERZORDER or SWP_NOZORDER

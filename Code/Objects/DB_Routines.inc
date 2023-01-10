@@ -1876,7 +1876,7 @@ MemoGetBmp endp
 
 ;Example:
 ;  OCall [xsi].Img1::Image.Init, xsi
-;  OCall [xsi].Img1::Image.%LoadFromRes, $OfsCStr("IMG1")
+;  OCall [xsi].Img1::Image.LoadFromRes, $OfsCStr("IMG1")
 ;
 ;  OCall [xsi].Table.Memo::DB_Memo.Init, xsi
 ;  OCall [xsi].Table.Memo::DB_Memo.New, $OfsCStr("Memo.dbt"), DB_DEFAULT_MEMO_BLOCK_LEN, TRUE

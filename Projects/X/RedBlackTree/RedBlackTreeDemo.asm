@@ -119,9 +119,9 @@ MethodEnd
 
 Method DataHost.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   SetObject xsi
-  mov [xsi].pOwner, $OCall(pStream::Stream.%BinReadX)               ;Must be deserialized
+  mov [xsi].pOwner, $OCall(pStream::Stream.BinReadX)               ;Must be deserialized
   mov [xsi].dErrorCode, $32($OCall(pStream::Stream.BinRead32))
-  mov [xsi].pErrorCaller, $OCall(pStream::Stream.%BinReadX)         ;Must be deserialized
+  mov [xsi].pErrorCaller, $OCall(pStream::Stream.BinReadX)         ;Must be deserialized
   mov [xsi].dKey, $32($OCall(pStream::Stream.BinRead32))
 MethodEnd
 
@@ -133,9 +133,9 @@ MethodEnd
 
 Method DataHost.Store, uses xsi, pStream:$ObjPtr(Stream)
   SetObject xsi
-  OCall pStream::Stream.%BinWriteX, [xsi].pOwner
+  OCall pStream::Stream.BinWriteX, [xsi].pOwner
   OCall pStream::Stream.BinWrite32, [xsi].dErrorCode
-  OCall pStream::Stream.%BinWriteX, [xsi].pErrorCaller
+  OCall pStream::Stream.BinWriteX, [xsi].pErrorCaller
   OCall pStream::Stream.BinWrite32, [xsi].dKey
 MethodEnd
 

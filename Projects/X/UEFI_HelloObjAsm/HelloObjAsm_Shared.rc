@@ -1,4 +1,4 @@
-//RC-file created by Inc2RC from HelloObjAsm_Shared.inc on 2023-01-05, 19:27:42,02
+//RC-file created by Inc2RC from HelloObjAsm_Shared.inc on 2023-01-10, 23:12:41,74
 
 #define APP_TITLE "HelloObjAsm"
 #define ABOUT_TEXT "HelloObjAsm"
@@ -7,7 +7,7 @@
 #define VER_FILEVERSION_STR "2.0"
 #define VER_PRODUCTVERSION 2,0,0,0
 #define VER_PRODUCTVERSION_STR "2.0"
-#define BUILD_NUMBER 130
-#define BUILD_DATE_STR "2023-01-05"
+#define BUILD_NUMBER 131
+#define BUILD_DATE_STR "2023-01-10"
 #define BUILD_BITNESS 64
 #define BUILD_MODE DBG

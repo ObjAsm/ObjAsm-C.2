@@ -1731,9 +1731,9 @@ MethodEnd
 
 Method DataBufferXY.Store, uses xsi, pStream:$ObjPtr(Stream)
   SetObject xsi
-  OCall pStream::Stream.%StrWrite, [xsi].pName
-  OCall pStream::Stream.%StrWrite, [xsi].pDesc
-  OCall pStream::Stream.%StrWrite, [xsi].pUnit
+  OCall pStream::Stream.StrWrite, [xsi].pName
+  OCall pStream::Stream.StrWrite, [xsi].pDesc
+  OCall pStream::Stream.StrWrite, [xsi].pUnit
 
   OCall pStream::Stream.BinWrite32, [xsi].dDateStamp
   OCall pStream::Stream.BinWrite32, [xsi].dTimeStamp

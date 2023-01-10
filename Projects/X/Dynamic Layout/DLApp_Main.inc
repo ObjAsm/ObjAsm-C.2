@@ -86,12 +86,12 @@ MethodEnd
 align ALIGN_DATA
 DlgChildrenInfo label DL_HEADER
 DL_HEADER     {DLF_LOAD_MIN or DLF_LIMIT_MINMAX or DLF_ADD_GRIPPER, {}, {600, 400}}
-DL_CHILD_INFO {{100, 100, 000, 000}}      ;Ok Button
-DL_CHILD_INFO {{000, 000, 100, 100}}      ;R
-DL_CHILD_INFO {{000, 000, 000, 000}}
-DL_CHILD_INFO {{000, 000, 000, 000}}
-DL_CHILD_INFO {{000, 000, 100, 100}}
-DL_CHILD_INFO {{100, 100, 000, 000}}
+DL_CHILD_INFO {{100, 100, 000, 000}}      ;Ok button
+DL_CHILD_INFO {{000, 000, 100, 100}}      ;Group
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button 1
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button 1
+DL_CHILD_INFO {{000, 000, 100, 100}}      ;Edit control
+DL_CHILD_INFO {{100, 100, 000, 000}}      ;Cancel button
 
 .code
 Method DLApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM

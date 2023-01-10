@@ -243,10 +243,10 @@ ObjectEnd
 
 ; Layout:
 ;
-;           ———————————————————————————————————————————————————————————————
+;           ——————————————————————————————————————————————————————————————E
 ;          |           /\  Top                                             |<--Extent
 ;          |           \/  Padding                                         |
-;          |     —————————————————————————————————————————————————————     |
+;          |     ————————————————————————————————————————————————————E    |
 ;          |    |    <-------------- Line Length -------------------->|    |
 ;          |    |<-->Lorem ipsum dolor sit amet, consetetur sadipscing|<-------DrawExtent
 ;          |    |  ¦     <------------ Line Length ------------------>|    |
@@ -261,10 +261,10 @@ ObjectEnd
 ;          |    |                                                     |    |
 ;          |    |                                                     |    |
 ;          |    |                                                     |    |
-;          |     —————————————————————————————————————————————————————     |
+;          |     ————————————————————————————————————————————————————E    |
 ;          |           /\ Bottom                                           |
 ;          |           \/ Padding                                          |
-;           ———————————————————————————————————————————————————————————————
+;           ——————————————————————————————————————————————————————————————E
 ;
 ;
 ; Sizeing strategy (pseudo code):
@@ -840,7 +840,7 @@ Method TextView.Calc, uses xbx xdi xsi
     m2z CurLinePos.x
     m2z dAdjacentTextItems
 
-    ;Get the metric of the current line ———————————————————————————————————————
+    ;Get the metric of the current line ——————————————————————————————————————E
     .while TRUE
       mov edx, dCurEntryIdx
       .break .if edx >= [xsi].Entries.dCount
@@ -852,7 +852,7 @@ Method TextView.Calc, uses xbx xdi xsi
       jz @@EndHandler
       jmp POINTER ptr [xax].TVCTAG.pCalcHandler
 
-      ; —————————————————————————————————————————————————————————————
+      ; ————————————————————————————————————————————————————————————E
       ; Routines:   TVCH_xxx
       ; Purpose:    Handler for TextView Commands.
       ; Arguments:  xsi -> TextView
@@ -958,7 +958,7 @@ Method TextView.Calc, uses xbx xdi xsi
     TVCCH_DRAW::                                        ;Evaluated in Draw method
 
       ;##/
-      ; —————————————————————————————————————————————————————————————
+      ; ————————————————————————————————————————————————————————————E
 @@EndHandler:
 
       mov xcx, [xdi].TVENTRY.pStyle
@@ -1029,7 +1029,7 @@ Method TextView.Calc, uses xbx xdi xsi
       .endif
 
     .endw
-    ;End line metric analysis —————————————————————————————————————————————————
+    ;End line metric analysis ————————————————————————————————————————————————E
 
     ;Update IdealDrawExtent.x
     .ifBitClr [xsi].dOptions, TVO_AUTO_LINEBREAK
@@ -1096,7 +1096,7 @@ Method TextView.Calc, uses xbx xdi xsi
   m2m [xsi].IdealDrawExtent.y, CurLinePos.y, edx
 
 ;  OCall SW::StopWatch.Stop
-;  OCall SW::StopWatch.%GetTimeStr, addr cBuffer
+;  OCall SW::StopWatch.GetTimeStr, addr cBuffer
 ;  DbgStr cBuffer, "Calc"
 
   mov eax, TRUE
@@ -1329,7 +1329,7 @@ Method TextView.Draw, uses xbx xdi xsi
       jz @@EndHandler
       jmp POINTER ptr [xax].TVCTAG.pDrawHandler
 
-      ; —————————————————————————————————————————————————————————————
+      ; ————————————————————————————————————————————————————————————E
       ; Routines:   TVCH_xxx
       ; Purpose:    Handler for TextView Commands.
       ; Arguments:  xsi -> TextView
@@ -1399,7 +1399,7 @@ Method TextView.Draw, uses xbx xdi xsi
     TVCDH_TABR::
     TVCDH_TABCLR::
       ;##/
-      ; —————————————————————————————————————————————————————————————
+      ; ————————————————————————————————————————————————————————————E
 @@EndHandler:
 
       mov xbx, [xdi].TVENTRY.pStyle                    ;xbx -> TVSTYLE
@@ -1471,7 +1471,7 @@ Method TextView.Draw, uses xbx xdi xsi
   .endfor
 
 ;  OCall SW::StopWatch.Stop
-;  OCall SW::StopWatch.%GetTimeStr, addr cBuffer
+;  OCall SW::StopWatch.GetTimeStr, addr cBuffer
 ;  DbgStr cBuffer, "Draw"
 
   mov eax, TRUE
@@ -3643,7 +3643,7 @@ Method TextView.Parse, uses xdi xsi
   mov [xsi].hCanvasBrush, $invoke(CreateSolidBrush, [xsi].CanvasColor)
 
 ;  OCall SW::StopWatch.Stop
-;  OCall SW::StopWatch.%GetTimeStr, addr cBuffer
+;  OCall SW::StopWatch.GetTimeStr, addr cBuffer
 ;  DbgStr cBuffer, "Parsing"
 
   mov eax, TRUE

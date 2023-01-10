@@ -39,11 +39,11 @@ Object StopWatch, StopWatchID, Primer
   DefineVariable    dStatus,        DWORD,      SWS_STOPPED
 ObjectEnd
 
-IF TARGET_STR_TYPE eq STR_TYPE_ANSI
-  GetTimeStr textequ <GetTimeStrA>
-ELSE
-  GetTimeStr textequ <GetTimeStrW>
-ENDIF
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  $ObjMthd(GetTimeStr) textequ $ObjMthd(GetTimeStrA)
+else
+  $ObjMthd(GetTimeStr) textequ $ObjMthd(GetTimeStrW)
+endif
 
 ; ==================================================================================================
 

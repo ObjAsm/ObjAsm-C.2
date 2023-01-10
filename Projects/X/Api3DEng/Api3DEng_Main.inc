@@ -252,7 +252,7 @@ Method Api3DEngApp.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         OCall xdi::DiskStream.Init, xsi, offset szScene, 0, 0, NULL, 0, 0, 0
         OCall xdi::DiskStream.BinRead8                  ;Stored object bitness
         .if al == @WordSize
-          OCall xdi::DiskStream.%BinReadX               ;Read prev. appl instance
+          OCall xdi::DiskStream.BinReadX               ;Read prev. appl instance
           OCall xbx::DesLUT.Insert, xax, xsi            ;Feed with new appl. instance
           Destroy [xsi].pScene
           OCall xdi::DiskStream.Get, addr DeserInfo
@@ -294,7 +294,7 @@ Method Api3DEngApp.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     New xdi::DiskStream
     OCall xdi::DiskStream.Init, xsi, offset szScene, 0, 0, NULL, 0, 0, 0
     OCall xdi::DiskStream.BinWrite8, @WordSize
-    OCall xdi::DiskStream.%BinWriteX, xsi               ;Save application instance
+    OCall xdi::DiskStream.BinWriteX, xsi                ;Save application instance
     OCall [xsi].pScene::D3Scene.Serialize
     OCall xdi::DiskStream.Put, [xsi].pScene
     OCall xdi::DiskStream.BinWrite, addr [xsi].RotVector1,   sizeof(D3Vector)

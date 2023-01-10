@@ -1160,7 +1160,7 @@ Method MyChildWnd.Store, uses xsi, pStream:$ObjPtr(Stream)
   ACall xsi.Store, pStream                              ;Store pSelf, ..., hWnd
   OCall pStream::Stream.BinWrite32, [xsi].dColorIndex
   invoke GetWindowText, [xsi].hWnd, addr cBuffer, lengthof cBuffer
-  OCall pStream::Stream.%StrWrite, addr cBuffer
+  OCall pStream::Stream.StrWrite, addr cBuffer
   mov WP.length_, sizeof WP
   invoke GetWindowPlacement, [xsi].hWnd, addr WP
   OCall pStream::Stream.BinWrite, addr WP, sizeof WP

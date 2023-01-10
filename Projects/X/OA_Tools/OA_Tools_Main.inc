@@ -698,11 +698,11 @@ Method OAT_App.Init, uses xbx xdi xsi
   .endif
   mov WP.rcNormalPosition.bottom, eax
 
-  OCall pRegKey::RegKey.%ValueGetStrW, offset szWinWorkDirectoryW, NULL, 0
+  OCall pRegKey::RegKey.ValueGetStrW, offset szWinWorkDirectoryW, NULL, 0
   .if [xsi].dErrorCode == OBJ_OK
     mov edi, eax
     mov [xsi].pWorkDirectoryW, $invoke(StrAllocW, eax)
-    OCall pRegKey::RegKey.%ValueGetStrW, offset szWinWorkDirectoryW, [xsi].pWorkDirectoryW, edi
+    OCall pRegKey::RegKey.ValueGetStrW, offset szWinWorkDirectoryW, [xsi].pWorkDirectoryW, edi
   .else
     OCall xsi.ErrorClear
     m2z CHRW ptr [cBuffer]
@@ -1420,29 +1420,29 @@ Method OAT_App.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   OCall pRegKey::RegKey.ValueSetDW,   offset szMainZoomfactor,        [xsi].Setup.dZoomfactor
   OCall pRegKey::RegKey.ValueSetDW,   offset szMainLineTerminator,    [xsi].Setup.dLineTerminator
   OCall pRegKey::RegKey.ValueSetDW,   offset szMainFontSize,          [xsi].Setup.dFontSize
-  OCall pRegKey::RegKey.%ValueSetStr, offset szMainFontFaceName,      addr [xsi].Setup.cFontFaceName
-  OCall pRegKey::RegKey.%ValueSetStr, offset szMainExternalEditor,    [xsi].Setup.pExternalEditor
+  OCall pRegKey::RegKey.ValueSetStr,  offset szMainFontFaceName,      addr [xsi].Setup.cFontFaceName
+  OCall pRegKey::RegKey.ValueSetStr,  offset szMainExternalEditor,    [xsi].Setup.pExternalEditor
 
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool0Name,             [xsi].Setup.Tool0.pName
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool0Cmd,              [xsi].Setup.Tool0.pCommand
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool1Name,             [xsi].Setup.Tool1.pName
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool1Cmd,              [xsi].Setup.Tool1.pCommand
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool2Name,             [xsi].Setup.Tool2.pName
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool2Cmd,              [xsi].Setup.Tool2.pCommand
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool3Name,             [xsi].Setup.Tool3.pName
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool3Cmd,              [xsi].Setup.Tool3.pCommand
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool4Name,             [xsi].Setup.Tool4.pName
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool4Cmd,              [xsi].Setup.Tool4.pCommand
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool5Name,             [xsi].Setup.Tool5.pName
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool5Cmd,              [xsi].Setup.Tool5.pCommand
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool6Name,             [xsi].Setup.Tool6.pName
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool6Cmd,              [xsi].Setup.Tool6.pCommand
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool7Name,             [xsi].Setup.Tool7.pName
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool7Cmd,              [xsi].Setup.Tool7.pCommand
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool8Name,             [xsi].Setup.Tool8.pName
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool8Cmd,              [xsi].Setup.Tool8.pCommand
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool9Name,             [xsi].Setup.Tool9.pName
-  OCall pRegKey::RegKey.%ValueSetStr, offset szTool9Cmd,              [xsi].Setup.Tool9.pCommand
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool0Name,             [xsi].Setup.Tool0.pName
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool0Cmd,              [xsi].Setup.Tool0.pCommand
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool1Name,             [xsi].Setup.Tool1.pName
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool1Cmd,              [xsi].Setup.Tool1.pCommand
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool2Name,             [xsi].Setup.Tool2.pName
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool2Cmd,              [xsi].Setup.Tool2.pCommand
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool3Name,             [xsi].Setup.Tool3.pName
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool3Cmd,              [xsi].Setup.Tool3.pCommand
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool4Name,             [xsi].Setup.Tool4.pName
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool4Cmd,              [xsi].Setup.Tool4.pCommand
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool5Name,             [xsi].Setup.Tool5.pName
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool5Cmd,              [xsi].Setup.Tool5.pCommand
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool6Name,             [xsi].Setup.Tool6.pName
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool6Cmd,              [xsi].Setup.Tool6.pCommand
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool7Name,             [xsi].Setup.Tool7.pName
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool7Cmd,              [xsi].Setup.Tool7.pCommand
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool8Name,             [xsi].Setup.Tool8.pName
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool8Cmd,              [xsi].Setup.Tool8.pCommand
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool9Name,             [xsi].Setup.Tool9.pName
+  OCall pRegKey::RegKey.ValueSetStr,  offset szTool9Cmd,              [xsi].Setup.Tool9.pCommand
 
   OCall pRegKey::RegKey.ValueSetDW,  offset szColorNotification,      [xsi].Setup.Color.Notification
   OCall pRegKey::RegKey.ValueSetDW,  offset szColorInformation,       [xsi].Setup.Color.Information

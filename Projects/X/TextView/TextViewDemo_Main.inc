@@ -173,7 +173,7 @@ Method Application.OnNotify, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
       .if [xdi].TVNM_DRAW.dID == 0
         New Img::Image
         OCall Img::Image.Init, xsi
-        OCall Img::Image.%LoadFromRes, $OfsCStr("OA")
+        OCall Img::Image.LoadFromRes, $OfsCStr("OA")
         mov DstRect.left, 15                            ;X-Coord. inside draw area, padding excl.
         mov DstRect.top, 15                             ;Y-Coord. inside draw area, padding excl.
         mov DstRect.right, 100                          ;Width

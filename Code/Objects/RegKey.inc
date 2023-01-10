@@ -102,13 +102,13 @@ Object RegKey, RegKeyID, Primer
 ObjectEnd
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  ValueSetStr equ ValueSetStrA
+  $ObjMthd(ValueSetStr) textequ $ObjMthd(ValueSetStrA)
 else
-  ValueSetStr equ ValueSetStrW
+  $ObjMthd(ValueSetStr) textequ $ObjMthd(ValueSetStrW)
 endif
 
-ValueGetStrA equ ValueGetStr
-ValueGetStrW equ ValueGetStr
+$ObjMthd(ValueGetStrA)  textequ $ObjMthd(ValueGetStr)
+$ObjMthd(ValueGetStrW)  textequ $ObjMthd(ValueGetStr)
 
 
 ; ==================================================================================================

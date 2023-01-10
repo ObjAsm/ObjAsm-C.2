@@ -184,8 +184,8 @@ MethodEnd
 Method ChartSeries.Store, uses xsi, pStream:$ObjPtr(Stream)
   SetObject xsi
   ACall xsi.Store, pStream
-  OCall pStream::Stream.%StrWrite, [xsi].pName
-  OCall pStream::Stream.%StrWrite, [xsi].pDescription
+  OCall pStream::Stream.StrWrite, [xsi].pName
+  OCall pStream::Stream.StrWrite, [xsi].pDescription
   OCall pStream::Stream.BinWrite32, [xsi].dDataMaxXIndex
   OCall pStream::Stream.BinWrite32, [xsi].dDataMinXIndex
   OCall pStream::Stream.BinWrite32, [xsi].dDataMaxYIndex

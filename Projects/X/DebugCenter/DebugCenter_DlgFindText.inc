@@ -95,7 +95,7 @@ Method DialogFindText.CtlsGet, uses xbx xdi xsi
       add eax, sizeof(CHR)                              ;Add room for the ZTC
       mov pBuffer, $MemAlloc(eax)
       invoke SendMessage, xbx, CB_GETLBTEXT, edi, pBuffer
-      OCall [xsi].pStream::Stream.%StrWrite, pBuffer
+      OCall [xsi].pStream::Stream.StrWrite, pBuffer
       MemFree pBuffer
       inc edi
     .endw
