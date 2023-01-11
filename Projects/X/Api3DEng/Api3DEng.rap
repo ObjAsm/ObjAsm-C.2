@@ -184,7 +184,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=3
+MilestoneOnDateDate=11
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -228,7 +228,7 @@ ProductVer4Range=0
 6=0,0,0,0,13544
 7=0,0,0,0,127417
 8=0,0,0,0,3241
-9=0,0,1800,599,2246
+9=0,0,1800,599,406
 11=0,0,0,0,36958
 13=0,0,0,0,6633
 14=0,0,0,0,1749
@@ -288,16 +288,16 @@ ProductVer4Range=0
 9=
 
 [Find]
-1="VARARG"
-2="vmovd"
-3="SortedTriData.Compare"
-4=".Compare"
-5="CloneRect"
-6="s2s"
-7="SubRegMM"
-8="SubReg"
-9="LoadImage"
-10="SortedTriData"
+1="VER_FILEVERSION"
+2="VARARG"
+3="vmovd"
+4="SortedTriData.Compare"
+5=".Compare"
+6="CloneRect"
+7="s2s"
+8="SubRegMM"
+9="SubReg"
+10="LoadImage"
 [Collapse]
 2=,
 1=
@@ -356,7 +356,7 @@ ProductVer4Range=0
 [BreakPoint]
 0=
 [AutoLoad]
-AutoLoad=1,2,5
+AutoLoad=1,2
 [RADebugBP]
 2=
 50=
@@ -398,6 +398,6 @@ AutoLoad=1,2,5
 28=
 20=
 [PTimer]
-PTimer=2115015455
+PTimer=2115338283
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0

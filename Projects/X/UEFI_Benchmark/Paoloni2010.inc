@@ -30,17 +30,17 @@ Benchmark proc uses rbx rdi rsi
   mov rsi, pBootServices
   invoke [rsi].EFI_BOOT_SERVICES.AllocatePool, EFI_MEMORY_UC, BOUND_OF_LOOP*sizeof(REAL8), addr pVariances
   .if pVariances == NULL
-    PrintC "%EUnable to allocate memory for pVariances"
+    PrintC "%EUnable to allocate memory for Variances"
     mov rax, EFI_ABORTED
   .else
     invoke [rsi].EFI_BOOT_SERVICES.AllocatePool, EFI_MEMORY_UC, BOUND_OF_LOOP*sizeof(QWORD), addr pMinValues
     .if pMinValues == NULL
-      PrintC "%EUnable to allocate memory for pMinValues"
+      PrintC "%EUnable to allocate memory for MinValues"
       invoke [rsi].EFI_BOOT_SERVICES.FreePool, pVariances
     .else
       invoke [rsi].EFI_BOOT_SERVICES.AllocatePool, EFI_MEMORY_UC, BOUND_OF_LOOP*sizeof(POINTER), addr pTimes
       .if pTimes == NULL
-        PrintC "%EUnable to allocate memory for pTimes"
+        PrintC "%EUnable to allocate memory for Times"
         invoke [rsi].EFI_BOOT_SERVICES.FreePool, pMinValues
         invoke [rsi].EFI_BOOT_SERVICES.FreePool, pVariances
         mov rax, EFI_ABORTED

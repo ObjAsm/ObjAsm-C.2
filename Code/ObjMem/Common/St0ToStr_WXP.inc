@@ -1,12 +1,14 @@
 ; ==================================================================================================
 ; Title:      St0ToStr_WXP.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
+; Version:    C.2.0
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
 ;               - Bitness and platform independent code.
 ;             Version C.1.0, July 2022
 ;               - Support for f_ALIGN and f_PLUS added.
+;             Version C.2.0, January 2023
+;               - "-" sign positioning error corrected.
 ; ==================================================================================================
 
 
@@ -262,7 +264,7 @@ St0ToStrW proc uses xdi xsi pBuffer:POINTER, dPadding:DWORD, dDecimals:DWORD, dF
     .endif
     test ecx, ecx
     .if SIGN?
-      mov ax, "-"
+      mov eax, "E" + "-" shl 16
       neg ecx                                           ;Make number positive
     .endif
     stosd                                               ;Emit with proper sign

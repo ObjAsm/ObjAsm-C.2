@@ -4,7 +4,7 @@
 ; Version:    C.1.1
 ; Purpose:    ObjAsm support of Primer objects.
 ; Notes:      Version C.1.1, October 2022
-;               - ErrorSet and ErrorReport return the error value. Bug in ErrorReport corrected. 
+;               - ErrorSet and ErrorReport return the error value. Bug in ErrorReport corrected.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
 ; ==================================================================================================
@@ -102,7 +102,8 @@ Method Primer.ErrorSet, uses xbx xdi xsi, dErrorCode:DWORD
 
     ;Output Object ID
     invoke wsprintfA, xbx, $OfsCStrA("Object ID = %I32ut"), eax
-    invoke DbgOutTextA, xbx, DbgColorError, DbgColorBackground, DBG_EFFECT_NORMAL, offset(szDbgObjErr)
+    invoke DbgOutTextA, xbx, DbgColorError, DbgColorBackground, DBG_EFFECT_NORMAL, \
+                        offset(szDbgObjErr)
     mov eax, edi
   
     ;Search the object name using the object ID (xax) and if found, output it
@@ -111,7 +112,8 @@ Method Primer.ErrorSet, uses xbx xdi xsi, dErrorCode:DWORD
     .while ecx < dObjIDTableCount
       .if [xdi] == eax
         invoke wsprintfA, xbx, $OfsCStrA(" (%s)"), POINTER ptr [xdi + sizeof(DWORD)]
-        invoke DbgOutTextA, xbx, DbgColorComment, DbgColorBackground, DBG_EFFECT_NORMAL, offset(szDbgObjErr)
+        invoke DbgOutTextA, xbx, DbgColorComment, DbgColorBackground, DBG_EFFECT_NORMAL, \
+                            offset(szDbgObjErr)
         .break
       .endif
       add xdi, sizeof(DWORD) + sizeof(POINTER)          ;Object type ID + PSTRING
@@ -120,7 +122,8 @@ Method Primer.ErrorSet, uses xbx xdi xsi, dErrorCode:DWORD
   
     ;Output the error code
     invoke wsprintfA, xbx, $OfsCStrA(", Error Code = %I32ut"), [xsi].dErrorCode
-    invoke DbgOutTextA, xbx, DbgColorError, DbgColorBackground, DBG_EFFECT_NORMAL, offset(szDbgObjErr)
+    invoke DbgOutTextA, xbx, DbgColorError, DbgColorBackground, DBG_EFFECT_NORMAL, \
+                        offset(szDbgObjErr)
   
     ;Search the error code description and if found, output it
     mov xdi, pObjErrTableStart
@@ -129,14 +132,16 @@ Method Primer.ErrorSet, uses xbx xdi xsi, dErrorCode:DWORD
     .while ecx < dObjErrTableCount
       .if [xdi] == eax
         invoke wsprintfA, xbx, $OfsCStrA(" (%s)"), POINTER ptr [xdi + sizeof(DWORD)]
-        invoke DbgOutTextA, xbx, DbgColorComment, DbgColorBackground, DBG_EFFECT_NORMAL, offset(szDbgObjErr)
+        invoke DbgOutTextA, xbx, DbgColorComment, DbgColorBackground, DBG_EFFECT_NORMAL, \
+                            offset(szDbgObjErr)
         .break
       .endif
       add xdi, sizeof(DWORD) + sizeof(POINTER)          ;Object error ID + PSTRING
       inc ecx
     .endw
   
-    invoke DbgOutTextA, offset(bCRLF), DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, offset(szDbgObjErr)
+    invoke DbgOutTextA, offset(bCRLF), DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, \
+                        offset(szDbgObjErr)
   endif
   mov eax, dErrorCode
 MethodEnd
@@ -150,7 +155,7 @@ MethodEnd
 
 endif
 
-; —————————————————————————————————————————————————————————————————————————————————————————————————
+; —————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Primer.Init
 ; Purpose:    Set the owner of the object.
 ; Arguments:  Arg1: -> Owner object.

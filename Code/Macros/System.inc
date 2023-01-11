@@ -10,7 +10,7 @@
 ;             Version C.2.0, December 2022
 ;               - WriteF macro bug using AT corrected and V4/V6 added.
 ;               - lodsc macro added (a1sbofo).
-;               - GetData? macro added.
+;               - GetMemBSS macro added.
 ; ==================================================================================================
 
 
@@ -160,7 +160,7 @@ xsi equ XSI
 xbp equ XBP
 xsp equ XSP
 
-if TARGET_BITNESS eq 32 
+if TARGET_BITNESS eq 32
   CPU_REGISTER union
     byte_     BYTE  ?
     word_     WORD  ?
@@ -1186,10 +1186,10 @@ endif
 
 WriteF macro DstReg:req, Format:req, Args:vararg
   local pBegin
-  
+
   .data?
     pBegin  POINTER   ?
-    
+
   .code
   mov pBegin, DstReg
 
@@ -3894,18 +3894,19 @@ endm
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      GetData?
-; Purpose:    Reserve a data block in the .data? segment (bss).
-; Arguments:  Arg1: Data size
+; Macro:      GetMemBSS
+; Purpose:    Reserve a data block from the bss segment (block starting symbol).
+;             bss is equivalent to .data? and contains uninitialized static variables.
+; Arguments:  Arg1: Data size.
 ; Return:     Symbol name.
 
-GetData? macro DataSize:= <0>
+GetMemBSS macro DataSize:= <0>
   local DataName
 
   bss segment
   align @WordSize
   if DataSize eq 0
-    .err <Invalid argument in GetData?>
+    .err <Invalid argument in GetMemBSS>
   elseif DataSize eq 1
     DataName BYTE ?
   elseif DataSize eq 2
