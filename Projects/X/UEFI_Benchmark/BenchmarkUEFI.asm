@@ -133,9 +133,10 @@ FillTimes proc uses rbx rdi rsi r12 r13 r14 pTimes:POINTER
         sub rax, rdx
       .endif
       
-;      ;* Test ********************************************
+;      ;* Test [A=200, B=140]******************************
 ;      mov rax, 200
-;      mul rsi
+;      lea rcx, [rsi + 1]                                ;First point is at X = 1
+;      mul rcx
 ;      add rax, 140
 ;      ;***************************************************
 

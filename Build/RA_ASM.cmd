@@ -14,30 +14,19 @@ if not [!LogFile!] == [] (
   echo.>> !LogFile!
 )
 
-if exist !ProjectName!.asm (
-  REM Set build targets.
-  call "%OBJASM_PATH%\Build\OA_TARGET.cmd" %*
-  if errorlevel 1 goto Error
+REM Set build targets.
+call "%OBJASM_PATH%\Build\OA_TARGET.cmd" %*
+if errorlevel 1 goto Error
 
-  REM Set known tools.
-  call "%OBJASM_PATH%\Build\OA_SET.cmd" %*
-  REM if errorlevel 1 goto Error
+REM Set known tools.
+call "%OBJASM_PATH%\Build\OA_SET.cmd" %*
+REM if errorlevel 1 goto Error
 
-  REM Assemble project
-  call "%OBJASM_PATH%\Build\OA_ASM.cmd" %*
-  if errorlevel 1 goto Error
-  goto :EOF
+REM Assemble project
+call "%OBJASM_PATH%\Build\OA_ASM.cmd" %*
+if errorlevel 1 goto Error
+goto :EOF
 
-  :Error
-  call "%OBJASM_PATH%\Build\RA_ERROR.cmd" NOPAUSE
-  goto :EOF
-
-) else (
-
-  echo No assembler file found^^!
-  if not [!LogFile!] == [] (
-    echo No assembler file found^^!> !LogFile!
-  )
-  call "%OBJASM_PATH%\Build\RA_ERROR.cmd" NOPAUSE
-)
+:Error
+call "%OBJASM_PATH%\Build\RA_ERROR.cmd" NOPAUSE
 

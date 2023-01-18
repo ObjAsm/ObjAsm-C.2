@@ -13,7 +13,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN64, ANSI_STRING, DEBUG(WND)            ;Load OOP files and basic OS support
+SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND)            ;Load OOP files and basic OS support
 
 % include &MacPath&fMath.inc
 
@@ -33,8 +33,8 @@ SysSetup OOP, WIN64, ANSI_STRING, DEBUG(WND)            ;Load OOP files and basi
 ;                ————————      —————————————————————————————————      ————————      ————————
 ;                              QWORDs                                 QWORDs        REAL8s
 
-SIZE_OF_STAT  equ 10000
-BOUND_OF_LOOP equ 100
+SIZE_OF_STAT  equ 10000     ;Determins the statistical relevance
+BOUND_OF_LOOP equ 100       ;Must be > 1
 
 
 ;Values for performance test
@@ -95,7 +95,7 @@ endm
 ; Return:     Nothing.
 
 FillTimes proc uses rbx rdi rsi r12 r13 r14 pTimes:POINTER
-  local qStart:QWORD, qStop:QWORD, qPrevPriority:QWORD  ;Previous Task Priority
+  local qStart:QWORD, qStop:QWORD
 
   SetTaskPriority
 
@@ -147,9 +147,10 @@ FillTimes proc uses rbx rdi rsi r12 r13 r14 pTimes:POINTER
         sub rax, rdx
       .endif
 
-;      ;* Test ********************************************
+;      ;* Test [A=200, B=140]******************************
 ;      mov rax, 200
-;      mul rsi
+;      lea rcx, [rsi + 1]                                ;First point is at X = 1
+;      mul rcx
 ;      add rax, 140
 ;      ;***************************************************
 

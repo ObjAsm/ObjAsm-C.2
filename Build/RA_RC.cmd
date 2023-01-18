@@ -37,7 +37,7 @@ if exist !ProjectName!.rc (
   goto :EOF
 
   :Error
-  REM call "%OBJASM_PATH%\Build\OA_ERROR.cmd" NOPAUSE
+  REM call "%OBJASM_PATH%\Build\RA_ERROR.cmd" NOPAUSE
   goto :EOF
 
 ) else (
@@ -46,6 +46,6 @@ if exist !ProjectName!.rc (
   if not [!LogFile!] == [] (
     echo No project file found^^!> !LogFile!
   )
-  call "%OBJASM_PATH%\Build\OA_ERROR.cmd" NOPAUSE
+  call "%OBJASM_PATH%\Build\RA_ERROR.cmd" NOPAUSE
 )
 

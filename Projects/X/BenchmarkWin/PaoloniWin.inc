@@ -20,7 +20,7 @@
 ;  MeanVar =     2.344E+0005 [Tick^2]   Mean Variance
 ;  VarOfVars =   1.289E+0011 [Tick^4]   Variance of Variances
 ;  MinsMSE =     4.826E+0001 [Tick^2]   Linear Regression MSE
-;  R2 =          9.994E-0001 [-]        Determination Coeficient
+;  R² =          9.994E-0001 [-]        Determination Coeficient
 ;  Overhead =    26.7        [Tick]     Measurement Overhead
 ;  Measure =     9.5         [Tick]     Code Execution Time
 
@@ -151,7 +151,9 @@ Benchmark proc uses rbx rdi rsi
           invoke SLR_Init, addr SlrData
           invoke SLR_Calc_AB_MSE_QW, addr SlrData
           m2m r8Measure, SlrData.r8Slope, xax
-          m2m r8Overhead, SlrData.r8Intercept, xax
+          fld SlrData.r8Intercept                       ;Since the first data point is at X=1
+          fsub r8Measure                                ; we have to correct one position for X=0
+          fstp r8Overhead
           m2m r8MinsMSE, SlrData.r8MSE, xax
 
           invoke CalcVarianceQW, pMinValues, BOUND_OF_LOOP, addr r8VarMins
@@ -169,7 +171,7 @@ Benchmark proc uses rbx rdi rsi
           DbgWriteF ,, "MeanVar = ¦AT¦E3 ¦AT[Tick^2]¦ATMean Variance", ALIGN_1, r8MeanVar, ALIGN_2, ALIGN_3
           DbgWriteF ,, "VarOfVars = ¦AT¦E3 ¦AT[Tick^4]¦ATVariance of Variances", ALIGN_1, r8VarOfVars, ALIGN_2, ALIGN_3
           DbgWriteF ,, "MinsMSE = ¦AT¦E3 ¦AT[Tick^2]¦ATLinear Regression MSE", ALIGN_1,  r8MinsMSE, ALIGN_2, ALIGN_3
-          DbgWriteF ,, "R2 = ¦AT¦E3 ¦AT[-]¦ATDetermination Coeficient", ALIGN_1,  r8R2, ALIGN_2, ALIGN_3
+          DbgWriteF ,, "R² = ¦AT¦E3 ¦AT[-]¦ATDetermination Coeficient", ALIGN_1,  r8R2, ALIGN_2, ALIGN_3
           DbgWriteF ,, "Overhead = ¦AT¦F1 ¦AT[Tick]¦ATMeasurement Overhead", ALIGN_1,  r8Overhead, ALIGN_2, ALIGN_3
           DbgWriteF DbgColorBlue,, "Measure = ¦AT¦F1 ¦AT[Tick]¦ATCode Execution Time", ALIGN_1,  r8Measure, ALIGN_2, ALIGN_3
           DbgLine

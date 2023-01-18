@@ -35,9 +35,9 @@ ProcName proc pSlrData:PSLR_DATA
       fldz                          ;   x    ,   1    ,   XY   ,   Y
       .while !ZERO?
         ifidn @SubStr(%SRC_TYPE, 1, 1), <R>
-          fld SRC_TYPE ptr [xdx]    ;   y    ,   x    ,   1    ,   XY   ,   Y      Load FP value
+          fld SRC_TYPE ptr [xdx]    ;   y    ,   x    ,   1    ,   XY   ,   Y     Load FP value
         else
-          fild SRC_TYPE ptr [xdx]   ;   y    ,   x    ,   1    ,   XY   ,   Y      Load Integer value
+          fild SRC_TYPE ptr [xdx]   ;   y    ,   x    ,   1    ,   XY   ,   Y     Load Integer value
         endif
         fadd st(4), st(0)           ;   y    ,   x    ,   1    ,   XY   ,   Y     Cummulate y on Y
         fmul st(0), st(1)           ;  x*y   ,   x    ,   1    ,   XY   ,   Y
@@ -79,11 +79,11 @@ ProcName proc pSlrData:PSLR_DATA
     .endif
     if TARGET_BITNESS eq 32
       mov edx, R4_NAN
-      mov DWORD ptr [ecx].SLR_DATA.r8Slope, 0
+      mov DWORD ptr [ecx].SLR_DATA.r8Slope, 0           ;Fill upper part of REAL8 with 0
       mov DWORD ptr [ecx + sizeof DWORD].SLR_DATA.r8Slope, edx
-      mov DWORD ptr [ecx].SLR_DATA.r8Intercept, 0
+      mov DWORD ptr [ecx].SLR_DATA.r8Intercept, 0       ;Fill upper part of REAL8 with 0
       mov DWORD ptr [ecx + sizeof DWORD].SLR_DATA.r8Intercept, edx
-      mov DWORD ptr [ecx].SLR_DATA.r8MSE, 0
+      mov DWORD ptr [ecx].SLR_DATA.r8MSE, 0             ;Fill upper part of REAL8 with 0
       mov DWORD ptr [ecx + sizeof DWORD].SLR_DATA.r8MSE, edx
     else
       mov rdx, R8_NAN

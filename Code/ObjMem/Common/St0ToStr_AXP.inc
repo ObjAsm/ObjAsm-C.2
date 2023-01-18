@@ -194,7 +194,7 @@ St0ToStrA proc uses xdi xsi pBuffer:POINTER, dPadding:DWORD, dDecimals:DWORD, dF
     mov eax, dDecimals
     sub xsi, xax
     sub xsi, xcx
-    add xsi, 19                                         ;esi -> 1st digit to display
+    add xsi, 19                                         ;xsi -> 1st digit to display
     .if BYTE ptr [xsi - 1] == "1"
       dec xsi
       inc xcx
@@ -227,7 +227,7 @@ St0ToStrA proc uses xdi xsi pBuffer:POINTER, dPadding:DWORD, dDecimals:DWORD, dF
     mov eax, 18
     sub eax, ecx
     add xsi, xax
-    cmp CHRA ptr [xsi - 1], "1"
+    cmp BYTE ptr [xsi - 1], "1"
     pushfx                                              ;Save flags for extra "1"
     .if ZERO?
       sub xsi, 1

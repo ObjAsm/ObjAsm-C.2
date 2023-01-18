@@ -117,11 +117,11 @@ ProcName proc pSlrData:PSLR_DATA
 @Error:
     if TARGET_BITNESS eq 32
       mov edx, R4_NAN
-      mov DWORD ptr [ecx].SLR_DATA.r8Slope, 0
+      mov DWORD ptr [ecx].SLR_DATA.r8Slope, 0           ;Fill upper part of REAL8 with 0
       mov DWORD ptr [ecx + sizeof DWORD].SLR_DATA.r8Slope, edx
-      mov DWORD ptr [ecx].SLR_DATA.r8Intercept, 0
+      mov DWORD ptr [ecx].SLR_DATA.r8Intercept, 0       ;Fill upper part of REAL8 with 0
       mov DWORD ptr [ecx + sizeof DWORD].SLR_DATA.r8Intercept, edx
-      mov DWORD ptr [ecx].SLR_DATA.r8MSE, 0
+      mov DWORD ptr [ecx].SLR_DATA.r8MSE, 0             ;Fill upper part of REAL8 with 0
       mov DWORD ptr [ecx + sizeof DWORD].SLR_DATA.r8MSE, edx
     else
       mov rdx, R8_NAN

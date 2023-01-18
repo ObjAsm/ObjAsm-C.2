@@ -3599,7 +3599,10 @@ endm
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      LocReg
 ; Purpose:    Declares the use of a symbol as a register or as a local.
+;             if TARGET_BITNESS eq 64, all occurences of the symbol are replaced by the register
+;             name, otherwise the local is used.
 ; Arguments:  Expression of the form SymbolName1:Register1, SymbolName2:Register2...
+; Example:    LocReg pOwner:rdx
 
 LocReg macro ExpressionList:vararg
   ifb <??ObjectContext>
@@ -3624,7 +3627,7 @@ LocReg macro ExpressionList:vararg
         %elseifidni <$$RName>, <$SubReg($$RName, 4)>
           %local $$SName:DWORD
         %elseifidni <$$RName>, <$SubReg($$RName, 8)>
-          local $$SName:DWORD
+          local $$SName:QWORD
         else
           echo $$RName - Unknown register size
         endif
@@ -3665,8 +3668,11 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      ArgReg
-; Purpose:    Declares the use of a symbol as a register or as an argument.
+; Purpose:    Declares the use of a symbol as a register or as an method argument argument.
+;             If TARGET_BITNESS eq 64, all occurences of the symbol are replaced by the register
+;             name, otherwise the method argument is used.
 ; Arguments:  Expression of the form SymbolName1:Register1, SymbolName2:Register2...
+; Example:    ArgReg pOwner:rdx
 
 ArgReg macro ExpressionList:vararg
   ifb <??ObjectContext>

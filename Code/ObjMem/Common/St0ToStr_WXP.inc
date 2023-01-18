@@ -9,6 +9,7 @@
 ;               - Support for f_ALIGN and f_PLUS added.
 ;             Version C.2.0, January 2023
 ;               - "-" sign positioning error corrected.
+;               - Edge case 0.99999... corrected.
 ; ==================================================================================================
 
 
@@ -239,10 +240,10 @@ St0ToStrW proc uses xdi xsi pBuffer:POINTER, dPadding:DWORD, dDecimals:DWORD, dF
     mov eax, 18
     sub eax, ecx
     add xsi, xax
-    cmp CHRA ptr [xsi - 2], "1"
+    cmp BYTE ptr [xsi - 1], "1"
     pushfx                                              ;Save flags for extra "1"
     .if ZERO?
-      sub xsi, 2
+      sub xsi, 1
     .endif
     xor eax, eax
     lodsb

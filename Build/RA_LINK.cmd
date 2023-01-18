@@ -29,7 +29,7 @@ if exist !ProjectName!.obj (
   goto :EOF
 
   :Error
-  call "%OBJASM_PATH%\Build\OA_ERROR.cmd" NOPAUSE
+  call "%OBJASM_PATH%\Build\RA_ERROR.cmd" NOPAUSE
   goto :EOF
 
 ) else (
@@ -38,6 +38,6 @@ if exist !ProjectName!.obj (
   if not [!LogFile!] == [] (
     echo No object file found^^!> !LogFile!
   )
-  call "%OBJASM_PATH%\Build\OA_ERROR.cmd" NOPAUSE
+  call "%OBJASM_PATH%\Build\RA_ERROR.cmd" NOPAUSE
 )
 

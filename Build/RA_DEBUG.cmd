@@ -15,7 +15,7 @@ if exist !ProjectName!.exe (
   call "%OBJASM_PATH%\Build\OA_SET.cmd" %*
   !Debugger! %*
 ) else (
-  echo [93;101mNo executable found^^![0m
-  call "%OBJASM_PATH%\Build\OA_ERROR.cmd" NOPAUSE
+  echo No executable found^^!
+  call "%OBJASM_PATH%\Build\RA_ERROR.cmd" NOPAUSE
 )
 

@@ -298,6 +298,7 @@ endm
 ; Purpose:    Convert the POINTS contained in PntS to DWORD values in the eax and ecx registers.
 ; Arguments:  POINTS, Reg32
 ; Return:     eax = x, Reg32 = y.
+; Example:    PntS2Regs lParam
 
 PntS2Regs macro PntS:req, Reg32:=<ecx>
   ifidni <PntS>, <eax>

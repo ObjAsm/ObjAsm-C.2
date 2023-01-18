@@ -17,4 +17,10 @@ if exist !ProjectName!.asm (
       exit /b 1
     )
   )
+) else (
+  echo No assembler file ^(*.asm^) found^^!
+  if not [!LogFile!] == [] (
+    echo No assembler file ^(*.asm^) found^^!> !LogFile!
+  )
+  exit /b 1
 )
