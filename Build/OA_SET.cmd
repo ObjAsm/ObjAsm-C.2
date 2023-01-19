@@ -13,7 +13,7 @@ set Inc2RC="%OBJASM_PATH%\Build\Tools\Inc2RC.cmd"
 set MidlCompiler="%WINKIT_PATH%\x64\midl.exe"
 set UICCompiler="%WINKIT_PATH%\x86\UICC.exe"
 set ResourceCompiler="%OBJASM_PATH%\Build\Tools\ResourceCompiler\rc.exe"
-set EfiImageConverter="%EFI_TOOLKIT_PATH%\build\tools\bin\fwimage"
+set EfiImageConverter="%EFI_TOOLKIT_PATH%\build\tools\bin\fwimage.exe"
 REM set Debugger="%MSVS_PATH%\..\..\..\..\..\..\..\Common7\IDE\devenv.exe"
 set Debugger="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\devenv.exe"
 if %SYSTEM_BITNESS%==32 (

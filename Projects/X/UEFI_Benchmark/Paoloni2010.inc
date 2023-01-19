@@ -129,9 +129,7 @@ Benchmark proc uses rbx rdi rsi
           invoke SLR_Init, addr SlrData
           invoke SLR_Calc_AB_MSE_QW, addr SlrData
           m2m r8Measure, SlrData.r8Slope, xax
-          fld SlrData.r8Intercept                       ;Since the first data point is at X=1
-          fsub r8Measure                                ; we have to correct one position for X=0
-          fstp r8Overhead
+          m2m r8Overhead, SlrData.r8Intercept, xcx
           m2m r8MinsMSE, SlrData.r8MSE, xax
 
           PrintLn "Spurious min. values  = %d", qSpurious
