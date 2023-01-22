@@ -1712,16 +1712,12 @@ SetObject macro Register:req, ObjName:=<>, pInstance
     endif
 
     ifb <pInstance>
-      if TARGET_BITNESS eq 32
-        $$InstPtr equ <pSelf>
-      else
-        $$InstPtr equ <pSelf>
-      endif
+      $$InstPtr equ <pSelf>
     else
       $$InstPtr equ pInstance
     endif
 
-    if type($$InstPtr) le @WordSize
+    if type($$InstPtr) eq @WordSize
       ifdifi <Register>, <$$InstPtr>
         mov Register, $$InstPtr
       endif

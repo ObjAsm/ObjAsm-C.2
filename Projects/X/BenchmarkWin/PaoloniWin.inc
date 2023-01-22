@@ -31,7 +31,7 @@
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Benchmark
-; Purpose:    Perform the Paolini benchmark.
+; Purpose:    Perform the Paoloni benchmark.
 ; Arguments:  None.
 ; Return:     rax = Error code.
 
