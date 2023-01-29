@@ -44,6 +44,7 @@
 ;  - ResGuard_Show, ResGuard_Start, ResGuard_Stop
 ;  - DbgIMT, DbgSMT
 ;  - DbgAttach, DbgBreak
+;  - DbgVec2, DbgVec3, DbgVec4, dbgPlane, DbgQuaternion
 
 ;DEBUGGING  = TRUE / FALSE   ;Turns debugging output ON or OFF.
 ;TRACING    = TRUE / FALSE   ;Turns trace output ON or OFF.
@@ -1096,7 +1097,6 @@ DbgWriteF macro Color:=<DbgColorForeground>, Dest, Format, Args:vararg
     ifnb <Args>
       for $$Arg, <Args>
         $$Attributes = opattr($$Arg)
-        ;;%echo $ToStr(%$$Attributes)
 
         if ($$Attributes eq (OAT_NO_ERROR or OAT_RELOCATABLE))    ;;E.g. [xax]
           $$sz1 textequ GetMemBSS(type(XWORD))
@@ -2427,5 +2427,110 @@ DbgInterface macro Var:req, InfoText, Dest
         DbgLoadContext
       endif
     endif
+  endif
+endm
+
+
+; ==================================================================================================
+;   3D debugging macros
+; ==================================================================================================
+
+DbgPlane      equ DbgVec4
+DbgQuaternion equ DbgVec4
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DbgVec2
+; Purpose:    Outputs the components of the D3DXVECTOR2 vector.
+; Arguments:  Arg1: -> Vector2
+;             Arg2: Additional information.
+;             Arg3: Destination Window name.
+
+DbgVec2 macro Var:req, InfoText, Dest
+  if DEBUGGING
+    if type(Var) eq @WordSize                           ;;Check if Var is a POINTER or characters
+      DbgSaveContext FALSE, Var                         ;;Pass Var as a value
+      DbgSetDestWnd Dest
+      invoke DbgOutTextA, $OfsCStrA("&Var -> "), DbgColorDefaultPre, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+    else
+      DbgSaveContext TRUE, Var                          ;;Pass Var as a reference
+      DbgSetDestWnd Dest
+      invoke DbgOutTextA, $OfsCStrA("&Var = "), DbgColorDefaultPre, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+    endif
+    DbgSetDestWnd Dest
+    $$sz1 textequ GetMemBSS(128*sizeof(CHR))
+    mov xdi, offset $$sz1
+    WriteF xdi, "[¦F4, ¦F4]", \
+                REAL4 ptr [xbx + 0*sizeof(REAL4)], REAL4 ptr [xbx + 1*sizeof(REAL4)]
+    invoke DbgOutText, offset $$sz1, DbgColorFPU, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+    DbgShowTxtInfo InfoText, ??DbgDstWnd
+    DbgShowSrcInfo ??DbgDstWnd
+    DbgLoadContext
+  endif
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:     DbgVec3
+; Purpose:   Outputs the components of the D3DXVECTOR3 vector.
+; Arguments: Arg1: -> Vector3
+;            Arg2: Additional information.
+;            Arg3: Destination Window name.
+
+DbgVec3 macro Var:req, InfoText, Dest
+  if DEBUGGING
+    if type(Var) eq @WordSize                           ;;Check if Var is a POINTER or characters
+      DbgSaveContext FALSE, Var                         ;;Pass Var as a value
+      DbgSetDestWnd Dest
+      invoke DbgOutTextA, $OfsCStrA("&Var -> "), DbgColorDefaultPre, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+    else
+      DbgSaveContext TRUE, Var                          ;;Pass Var as a reference
+      DbgSetDestWnd Dest
+      invoke DbgOutTextA, $OfsCStrA("&Var = "), DbgColorDefaultPre, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+    endif
+    DbgSetDestWnd Dest
+    $$sz1 textequ GetMemBSS(128*sizeof(CHR))
+    mov xdi, offset $$sz1
+    WriteF xdi, "[¦F4, ¦F4, ¦F4]", \
+                REAL4 ptr [xbx + 0*sizeof(REAL4)], REAL4 ptr [xbx + 1*sizeof(REAL4)], \
+                REAL4 ptr [xbx + 2*sizeof(REAL4)] 
+    invoke DbgOutText, offset $$sz1, DbgColorFPU, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+    DbgShowTxtInfo InfoText, ??DbgDstWnd
+    DbgShowSrcInfo ??DbgDstWnd
+    DbgLoadContext
+  endif
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:     DbgVec4
+; Purpose:   Outputs the components of the D3DXVECTOR4 vector.
+; Arguments: Arg1: -> Vector4
+;            Arg2: Additional information.
+;            Arg3: Destination Window name.
+
+DbgVec4 macro Var:req, InfoText, Dest
+  if DEBUGGING
+    if type(Var) eq @WordSize                           ;;Check if Var is a POINTER or characters
+      DbgSaveContext FALSE, Var                         ;;Pass Var as a value
+      DbgSetDestWnd Dest
+      invoke DbgOutTextA, $OfsCStrA("&Var -> "), DbgColorDefaultPre, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+    else
+      DbgSaveContext TRUE, Var                          ;;Pass Var as a reference
+      DbgSetDestWnd Dest
+      invoke DbgOutTextA, $OfsCStrA("&Var = "), DbgColorDefaultPre, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+    endif
+    $$sz1 textequ GetMemBSS(128*sizeof(CHR))
+    mov xdi, offset $$sz1
+    WriteF xdi, "[¦F4, ¦F4, ¦F4, ¦F4]", \
+                REAL4 ptr [xbx + 0*sizeof(REAL4)], REAL4 ptr [xbx + 1*sizeof(REAL4)], \
+                REAL4 ptr [xbx + 2*sizeof(REAL4)], REAL4 ptr [xbx + 3*sizeof(REAL4)] 
+    invoke DbgOutText, offset $$sz1, DbgColorFPU, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+    DbgShowTxtInfo InfoText, ??DbgDstWnd
+    DbgShowSrcInfo ??DbgDstWnd
+    DbgLoadContext
   endif
 endm

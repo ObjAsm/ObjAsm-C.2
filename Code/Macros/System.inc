@@ -3930,3 +3930,17 @@ GetMemBSS macro DataSize:= <0>
   exitm <DataName>
 endm
 
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      Enum
+; Purpose:    Implement the well known Enum functionality.
+; Arguments:  Arg1: Enumeration start.
+;             Arg2..n: Enumeration list.
+; Example:    Enum <Pepa, Pepe, Pepi>, 1
+
+Enum macro Args, InitCount:=<0>
+  $$Count = InitCount
+  for $$Arg, <Args>
+    $$Arg equ $$Count
+    $$Count = $$Count + 1
+  endm
+endm
