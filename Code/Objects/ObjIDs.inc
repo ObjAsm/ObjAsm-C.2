@@ -458,3 +458,6 @@ WebTextTranslatorID               equ     0000012590
 
 ;Math
 FFTID                             equ     0000012600
+
+;ODBC
+ODBCID                            equ     0000012700

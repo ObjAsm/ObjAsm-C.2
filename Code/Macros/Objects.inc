@@ -2411,24 +2411,26 @@ ExitMethod macro Expression
     %ifb <Expression>
       jmp @@EOM
     else
-      ifidni @SubStr(Expression, 1, 3),  <.if>
-        Expression
-          jmp @@EOM
-        @CatStr(<.endif>)                               ;;Hide this line
+      if @SizeStr(Expression) ge 3
+        ifidni @SubStr(Expression, 1),  <.if>
+          Expression
+            jmp @@EOM
+          @CatStr(<.endif>)                               ;;Hide this line
+        endif
       else
-  
-        if Expression eq 0
+        ifidn <Expression>, <0>
           xor eax, eax
+          echo 1111111111111
         elseifidni <Expression>, <xax>                  ;;Skip all these possibilities
         elseifidni <Expression>, <rax>
         elseifidni <Expression>, <eax>
         elseifidni <Expression>, <ax>
-        elseifidni <Expression>, <ah>
         elseifidni <Expression>, <al>
         else
           mov xax, Expression
         endif
         jmp @@EOM
+        echo ******************
       endif
     endif
   endif

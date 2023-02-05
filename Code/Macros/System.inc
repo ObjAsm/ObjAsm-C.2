@@ -1153,7 +1153,7 @@ endif
 ;                 H8 QWORD as hexadecimal
 ;                 HX DWORD/QWORD as hexadecimal
 ;                 SA ANSI string
-;                 SW WIDE string
+;                 SU WIDE string (Unicode)
 ;                 ST ANSI/WIDE string
 ;                 GD GUID
 ;                 WE Windows API Error as description string
@@ -1318,7 +1318,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
               $$WF_ArgCount = $$WF_ArgCount + 1
             endif
 
-          elseifidn $$WF_ReplType, <SW>
+          elseifidn $$WF_ReplType, <SU>
             if TARGET_STR_TYPE eq STR_TYPE_WIDE
               invoke StrCopyW, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
               lea DstReg, [DstReg + xax - sizeof(CHRW)]
