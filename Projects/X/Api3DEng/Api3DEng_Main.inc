@@ -142,7 +142,7 @@ Method Api3DEngApp.Init, uses xbx xdi xsi
   ;Obtain handles for possible menus and submenus
   mov [xsi].hMenuInit, $invoke(LoadMenu, hInstance, $OfsCStr("MENUINIT"))
 
-  mov [xsi].hAccelerators, $invoke(LoadAccelerators, hInstance, $OfsCStr("MDIACCEL"))
+  mov [xsi].hAccelerators, $invoke(LoadAccelerators, hInstance, $OfsCStr("ACCELS"))
 
   mov dWndWidth, 600
   mov dWndHeight, 550

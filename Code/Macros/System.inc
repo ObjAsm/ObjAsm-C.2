@@ -1135,7 +1135,8 @@ endif
 ;                   subsequent arguments.
 ;             Arg3-N: Additional arguments. Must be non-volatile registers, FPU registers or
 ;                   memory symbols.
-; Return:     On return Arg1 points to the ZTC, which helps appending other strings.
+; Return:     On return Arg1 points to the ZTC, which helps appending other strings 
+;             or calculate the number of written bytes.
 ; Notes:      - Format specifiers:
 ;                 SB signed BYTE as decimal
 ;                 SW signed WORD as decimal
@@ -1216,81 +1217,146 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           $$WF_ReplType Catstr <$$WF_Character>         ;;Get first char
         else
           $$WF_ReplType Catstr $$WF_ReplType, <$$WF_Character>   ;;Append second char
-          FillWord [DstReg], <%$$WF_Text>
-          $$WF_Text textequ <>
-          if $$Len ne 0
-            add DstReg, $$Len*sizeof(CHR)
-          endif
           ifidn $$WF_ReplType, <SB>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             movsx eax, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             invoke sdword2dec, DstReg, eax
             lea DstReg, [DstReg + xax - sizeof(CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SW>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             movsx eax, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             invoke sdword2dec, DstReg, eax
             lea DstReg, [DstReg + xax - sizeof(CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SD>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             invoke sdword2dec, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             lea DstReg, [DstReg + xax - sizeof(CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SQ>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             invoke sqword2dec, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             lea DstReg, [DstReg + xax - sizeof(CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SX>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             invoke sxword2dec, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             lea DstReg, [DstReg + xax - sizeof(CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UB>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             movzx eax, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             invoke udword2dec, DstReg, eax
             lea DstReg, [DstReg + xax - sizeof(CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UW>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             movzx eax, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             invoke udword2dec, DstReg, eax
             lea DstReg, [DstReg + xax - sizeof(CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UD>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             invoke udword2dec, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             lea DstReg, [DstReg + xax - sizeof(CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UQ>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             invoke uqword2dec, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             lea DstReg, [DstReg + xax - sizeof(CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UX>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             invoke uxword2dec, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             lea DstReg, [DstReg + xax - sizeof(CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <H4>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             invoke dword2hex, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             add DstReg, (DWORD2HEX_MAX_CHARS - 1)*sizeof(CHR)
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <H8>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             invoke qword2hex, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             add DstReg, (QWORD2HEX_MAX_CHARS - 1)*sizeof(CHR)
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <HX>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             invoke xword2hex, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             add DstReg, 2*@WordSize*sizeof(CHR)
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn @SubStr(<%$$WF_ReplType>, 1, 1), <F>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             fld @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             invoke St0ToStr, DstReg, 0, @CatStr(<0>, @SubStr(<%$$WF_ReplType>, 2, 1), <h>), f_NOR
             fUnload
@@ -1299,6 +1365,11 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn @SubStr(<%$$WF_ReplType>, 1, 1), <E>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             fld @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             invoke St0ToStr, DstReg, 0, @CatStr(<0>, @SubStr(<%$$WF_ReplType>, 2, 1), <h>), f_SCI
             fUnload
@@ -1307,6 +1378,11 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SA>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             if TARGET_STR_TYPE eq STR_TYPE_WIDE
               invoke StrA2StrW, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
               invoke StrSizeW, DstReg
@@ -1319,6 +1395,11 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <SU>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             if TARGET_STR_TYPE eq STR_TYPE_WIDE
               invoke StrCopyW, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
               lea DstReg, [DstReg + xax - sizeof(CHRW)]
@@ -1331,16 +1412,31 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <ST>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             invoke StrCopy, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             lea DstReg, [DstReg + xax - sizeof(CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <GD>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             invoke GUID2Str, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             add DstReg, (GUID2STR_MAX_CHARS - 1)*sizeof(CHR)
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <WE>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             if TARGET_PLATFORM eq PLATFORM_WINDOWS
               invoke FormatMessage, FORMAT_MESSAGE_FROM_SYSTEM, 0, @CatStr(<$$WF_Arg>, %$$WF_ArgCount), 0, DstReg, 256, 0
               .if eax != 0
@@ -1352,6 +1448,11 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <CE>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             if TARGET_PLATFORM eq PLATFORM_WINDOWS
               invoke ComGetErrStr, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
               .if xax != NULL
@@ -1363,6 +1464,11 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <UE>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             if TARGET_PLATFORM eq PLATFORM_UEFI
               invoke UefiGetErrStr, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
               .if xax != NULL
@@ -1374,16 +1480,31 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <V4>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             invoke RtlIpv4AddressToString, @CatStr(<$$WF_Arg>, %$$WF_ArgCount), DstReg
             mov DstReg, xax
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <V6>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             invoke RtlIpv6AddressToString, @CatStr(<$$WF_Arg>, %$$WF_ArgCount), DstReg
             mov DstReg, xax
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <AT>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             mov xax, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             mov xcx, DstReg
             sub xcx, pBegin
@@ -1417,6 +1538,11 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <MT>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
             mov xax, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
             mov xcx, DstReg
             sub xcx, pBegin
@@ -1468,45 +1594,89 @@ WriteF macro DstReg:req, Format:req, Args:vararg
         endif
 
       elseif $$WF_Escape
-        $$WF_Escape = 0
-        FillWord [DstReg], <%$$WF_Text>
-        $$WF_Text textequ <>
-        if $$Len ne 0
-          add DstReg, $$Len*sizeof(CHR)
-        endif
+        $$WF_Escape = 0                                 ;;Reset escape flag
         ifidn <$$WF_Character>, <n>
+          FillWord [DstReg], <%$$WF_Text>
+          $$WF_Text textequ <>
+          if $$Len ne 0
+            add DstReg, $$Len*sizeof(CHR)
+          endif
           mov DCHR ptr [DstReg], 10 shl (8*sizeof(CHR)) + 13
           add DstReg, 2*sizeof(CHR)
         elseifidn <$$WF_Character>, <r>
+          FillWord [DstReg], <%$$WF_Text>
+          $$WF_Text textequ <>
+          if $$Len ne 0
+            add DstReg, $$Len*sizeof(CHR)
+          endif
           mov CHR ptr [DstReg], 13
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <l>
+          FillWord [DstReg], <%$$WF_Text>
+          $$WF_Text textequ <>
+          if $$Len ne 0
+            add DstReg, $$Len*sizeof(CHR)
+          endif
           mov CHR ptr [DstReg], 10
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <0>
+          FillWord [DstReg], <%$$WF_Text>
+          $$WF_Text textequ <>
+          if $$Len ne 0
+            add DstReg, $$Len*sizeof(CHR)
+          endif
           mov CHR ptr [DstReg], 0
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <t>
+          FillWord [DstReg], <%$$WF_Text>
+          $$WF_Text textequ <>
+          if $$Len ne 0
+            add DstReg, $$Len*sizeof(CHR)
+          endif
           mov CHR ptr [DstReg], 9
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <[>
+          FillWord [DstReg], <%$$WF_Text>
+          $$WF_Text textequ <>
+          if $$Len ne 0
+            add DstReg, $$Len*sizeof(CHR)
+          endif
           mov CHR ptr [DstReg], '<'
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <]>
+          FillWord [DstReg], <%$$WF_Text>
+          $$WF_Text textequ <>
+          if $$Len ne 0
+            add DstReg, $$Len*sizeof(CHR)
+          endif
           mov CHR ptr [DstReg], '>'
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <:>
+          FillWord [DstReg], <%$$WF_Text>
+          $$WF_Text textequ <>
+          if $$Len ne 0
+            add DstReg, $$Len*sizeof(CHR)
+          endif
           mov CHR ptr [DstReg], '!'
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <´>
+          FillWord [DstReg], <%$$WF_Text>
+          $$WF_Text textequ <>
+          if $$Len ne 0
+            add DstReg, $$Len*sizeof(CHR)
+          endif
           mov CHR ptr [DstReg], "'"
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <\>
           $$WF_Text CatStr $$WF_Text, <\>
         else
-          $$WF_Text CatStr $$WF_Text, <\>, <&$$WF_Character>
+          $$WF_Text CatStr $$WF_Text, <\>;, <&$$WF_Character>
+          ifidn <&$$WF_Character>, <¦>
+            $$WF_Replace = 1                            ;;Set replace flag
+          else
+            $$WF_Text CatStr $$WF_Text, <&$$WF_Character>
+          endif
         endif
-        $$WF_Escape = 0                                 ;;Reset escape flag
       else
         ifidn <&$$WF_Character>, <¦>
           $$WF_Replace = 1                              ;;Set replace flag

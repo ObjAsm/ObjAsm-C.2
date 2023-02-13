@@ -114,7 +114,7 @@ END
 
 
 // Accelerators ------------------------------------------------------------------------------------
-MDIACCEL ACCELERATORS DISCARDABLE
+ACCELS ACCELERATORS DISCARDABLE
 BEGIN
   VK_F1, IDM_HELP_HELP,       VIRTKEY, SHIFT,   NOINVERT
   "O",   IDM_FILE_OPEN,       VIRTKEY, CONTROL, NOINVERT

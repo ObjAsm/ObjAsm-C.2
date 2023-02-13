@@ -38,6 +38,7 @@ Object ExcelHost, ExcelHostID, Primer
   StaticMethod      NewChart,                 DWORD, DWORD, BSTR
   StaticMethod      NewSheet,                 POINTER, BSTR
   StaticMethod      Open,                     BSTR
+  StaticMethod      PrintSheet,               POINTER
   StaticMethod      SaveAs,                   POINTER, BSTR
   StaticMethod      SelectRange,              POINTER
   StaticMethod      SetCalculation,           SDWORD
@@ -944,6 +945,32 @@ Method ExcelHost.Open,, pXlFileName:BSTR
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     ExcelHost.PrintSheet
+; Purpose:    Print the sheet onto the printer..
+; Arguments:  Arg1: -> Sheet.
+; Return:
+
+XLH_PRINT_ARG struc                                      ;Arguments are passed in REVERSE order
+  vFrom             VARIANT   {}
+  vTo               VARIANT   {}
+  vCopies           VARIANT   {}
+  vPreview          VARIANT   {}
+  vActivePrinter    VARIANT   {}
+  vPrintToFile      VARIANT   {}
+  vCollate          VARIANT   {}
+  vPrToFileName     VARIANT   {}
+  vIgnorePrintAreas VARIANT   {}
+XLH_PRINT_ARG ends
+
+Method ExcelHost.PrintSheet,, pIXlWorksheet:POINTER
+  local PntArg:XLH_PRINT_ARG, vRet:VARIANT
+
+  TypeMissing PntArg.vFrom, PntArg.vTo, PntArg.vCopies, PntArg.vPreview, PntArg.vActivePrinter, \
+              PntArg.vPrintToFile, PntArg.vCollate, PntArg.vPrToFileName, PntArg.vIgnorePrintAreas
+  COM_Dispatch pIXlWorksheet::_Worksheet._PrintOut, addr PntArg, addr vRet
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     ExcelHost.SaveAs
 ; Purpose:    Save a specified Workbook.
 ; Arguments:  Arg1: -> Workbook.
@@ -965,7 +992,7 @@ XLH_SAVEAS_ARG struc                                      ;Arguments are passed 
   vFileName         VARIANT   {}
 XLH_SAVEAS_ARG ends
 
-Method ExcelHost.SaveAs, uses xbx, pIXlWorkbook:POINTER, pName:BSTR
+Method ExcelHost.SaveAs, uses xbx, pIXlWorkbook:POINTER, pFileName:BSTR
   local Args:XLH_SAVEAS_ARG, pICurWorkbook:POINTER
 
   .if pIXlWorkbook == NULL
@@ -980,10 +1007,10 @@ Method ExcelHost.SaveAs, uses xbx, pIXlWorkbook:POINTER, pName:BSTR
   .endif
 
   mov Args.vFileName.vt, VT_BSTR
-  m2m Args.vFileName.bstrVal, pName, xax
+  m2m Args.vFileName.bstrVal, pFileName, xax
   mov Args.vConflictResol.vt, VT_I4
-  mov Args.vConflictResol.lVal, xlLocalSessionChanges 
-  
+  mov Args.vConflictResol.lVal, xlLocalSessionChanges
+
   TypeMissing Args.vLocal, Args.vTextVisualLayout, Args.vTextCodepage, Args.vAddToMru
   TypeMissing Args.vAccessMode, Args.vCreateBackup, Args.vReadOnlyRecom
   TypeMissing Args.vWriteResPassword, Args.vPassword, Args.vFileFormat

@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      Json.inc
 ; Author:     G. Friedrich
-; Version:    C.1.2
+; Version:    C.2.1
 ; Purpose:    ObjAsm support of JSON (JavaScript Object Notation) objects.
 ; Links:      https://www.json.org/json-en.html
 ;             https://www.rfc-editor.org/rfc/rfc8259
@@ -19,6 +19,9 @@
 ;               - BOM reading added.
 ;               - Empty Arrays/Objects are written in one line.
 ;               - Description corrected.  
+;             Version C.2.1, February 2023.
+;               - String encoding and decoding always active.
+;               - JsonEscEncode and JsonEscDecode modified JsonEscEncodeSize corrected.
 ; ==================================================================================================
 
 
@@ -87,10 +90,11 @@ externdef HexCharTableW:CHRW
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  JsonEscDecode
 ; Purpose:    Translate a wide string containig JSON escape sequences to a plain wide string.
-; Arguments:  Arg1: -> Input wide string.
-;             Arg2: -> Output Buffer.
-;             Arg3: Output Buffer size in bytes.
-; Return:     eax = Number of chars written, including the ZTC.
+; Arguments:  Arg1: -> Input WIDE string.
+;             Arg2: -> Output WIDE buffer. 
+;             Arg3: Input WIDE chars.
+; Return:     eax = Number of chars written.
+; Note:       The output buffer only contains a ZTC if it is part of the input string.
 
 JsonEscDecodeGetHex macro
   .if (ax >= "0" && ax <= "9")
@@ -105,15 +109,14 @@ JsonEscDecodeGetHex macro
   .endif
 endm
 
-JsonEscDecode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCount:DWORD
+JsonEscDecode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCharCount:DWORD
 .const
   JsonEscDecodeJumpTable POINTER @@0, @@1, @@2, @@3, @@4, @@5
 
 .code
   mov xsi, pInputStr
   mov xdi, pBuffer
-  mov ebx, dCount
-  shr ebx, 1
+  mov ebx, dCharCount
   xor ecx, ecx
   if TARGET_BITNESS eq 64
     lea r8, JsonEscDecodeJumpTable
@@ -146,33 +149,33 @@ JsonEscDecode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCount
     xor ecx, ecx
     .if ax == '"'
       stosw
-      dec ebx
+      sub ebx, 2
     .elseif ax == '\'
       stosw
-      dec ebx
+      sub ebx, 2
     .elseif ax == '/'
       stosw
-      dec ebx
+      sub ebx, 2
     .elseif ax == 'b'
       mov CHRW ptr [xdi], 08                            ;Backspace
       add xdi, sizeof(CHRW)
-      dec ebx
+      sub ebx, 2
     .elseif ax == 'f'
       mov CHRW ptr [xdi], 12                            ;Formfeed
       add xdi, sizeof(CHRW)
-      dec ebx
+      sub ebx, 2
     .elseif ax == 'n'
       mov CHRW ptr [xdi], 10                            ;Linefeed
       add xdi, sizeof(CHRW)
-      dec ebx
+      sub ebx, 2
     .elseif ax == 'r'
       mov CHRW ptr [xdi], 13                            ;Carriage return
       add xdi, sizeof(CHRW)
-      dec ebx
+      sub ebx, 2
     .elseif ax == 't'
       mov CHRW ptr [xdi], 09                            ;Horizontal tab
       add xdi, sizeof(CHRW)
-      dec ebx
+      sub ebx, 2
     .elseif ax == 'u'
       mov ecx, 2                                        ;4 hex digits
     .else
@@ -206,9 +209,9 @@ JsonEscDecode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCount
     dec ebx
   .endw
 
-  mov eax, dCount
+  mov xax, xdi
+  sub xax, pBuffer
   shr eax, 1
-  sub eax, ebx
 @@Exit:
   ret
 JsonEscDecode endp
@@ -216,12 +219,13 @@ JsonEscDecode endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  JsonEscEncode
 ; Purpose:    Translate a plain wide string to a wide string containig JSON escape sequences.
-; Arguments:  Arg1: -> Input wide string.
-;             Arg2: -> Output Buffer.
-;             Arg3: Output Buffer size in bytes.
+; Arguments:  Arg1: -> Input ANSI/WIDE string accoring to TARGET_STR_TYPE.
+;             Arg2: -> Output WIDE buffer.
+;             Arg3: Input chars.
 ; Return:     eax = Number of chars written.
+; Note:       The output buffer only contains a ZTC if it is part of the input string.
 
-JsonEscEncode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCount:DWORD
+JsonEscEncode proc uses xbx xdi xsi pInputStr:PSTRING, pBuffer:PSTRINGW, dCharCount:DWORD
 .const
   JsonEscEncodeJumpTable label POINTER
   ;       NUL  SOH  STX  ETX  EDT  ENQ  ACK  BEL  BS   TAB  LF   VF   FF   CR   SO   SI
@@ -244,15 +248,18 @@ JsonEscEncode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCount
 .code
   mov xsi, pInputStr
   mov xdi, pBuffer
-  mov ebx, dCount
-  shr ebx, 1
+  mov ebx, dCharCount
   if TARGET_BITNESS eq 64
     lea r8, JsonEscEncodeJumpTable
   endif
 
   .while ebx != 0
     xor eax, eax
-    lodsw                                               ;ax = [xsi]; add xsi, 2
+    if TARGET_STR_TYPE eq STR_TYPE_WIDE
+      lodsw                                             ;ax = [xsi]; add xsi, 2
+    else
+      lodsb                                             ;ax = [xsi]; add xsi, 1
+    endif
 
     .if ax > 127
       movzx edx, ax
@@ -283,52 +290,52 @@ JsonEscEncode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCount
 @@1:
     mov eax, '\'*65536 + '\'
     stosd
-    sub ebx, 2
+    dec ebx
     .continue
 @@2:
     mov eax, '/'*65536 + '\'
     stosd
-    sub ebx, 2
+    dec ebx
     .continue
 @@b:
     mov eax, 'b'*65536 + '\'
     stosd
-    sub ebx, 2
+    dec ebx
     .continue
 @@f:
     mov eax, 'f'*65536 + '\'
     stosd
-    sub ebx, 2
+    dec ebx
     .continue
 @@n:
     mov eax, 'n'*65536 + '\'
     stosd
-    sub ebx, 2
+    dec ebx
     .continue
 @@r:
     mov eax, 'r'*65536 + '\'
     stosd
-    sub ebx, 2
+    dec ebx
     .continue
 @@t:
     mov eax, 't'*65536 + '\'
     stosd
-    sub ebx, 2
+    dec ebx
   .endw
 
-  mov eax, dCount
+  mov xax, xdi
+  sub xax, pBuffer
   shr eax, 1
-  sub eax, ebx
   ret
 JsonEscEncode endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     JsonEscEncodeSize
 ; Purpose:    Calculates the requiered buffer size for JsonEscEncode method.
-; Arguments:  Arg1: -> Input wide string.
-; Return:     eax = Number of bytes requierd, including the ZTC.
+; Arguments:  Arg1: -> Input ANSI/WIDE string accoring to TARGET_STR_TYPE.
+; Return:     eax = Number of bytes requierd, including the ZTC, to hole the output STRINGW.
 
-JsonEscEncodeSize proc uses xsi pInputStr:PSTRINGW
+JsonEscEncodeSize proc uses xsi pInputStr:PSTRING
 .const
   JsonEscEncodeSizeTable label POINTER
   ;       NUL  SOH  STX  ETX  EDT  ENQ  ACK  BEL  BS   TAB  LF   VF   FF   CR   SO   SI
@@ -357,7 +364,11 @@ JsonEscEncodeSize proc uses xsi pInputStr:PSTRINGW
   endif
 
   .while TRUE
-    lodsw                                               ;ax = [xsi]; add xsi, 2
+    if TARGET_STR_TYPE eq STR_TYPE_WIDE
+      lodsw                                             ;ax = [xsi]; add xsi, 2
+    else
+      lodsb                                             ;ax = [xsi]; add xsi, 1
+    endif
     .if ax < 128
       if TARGET_BITNESS eq 32
         movzx edx, BYTE ptr [JsonEscEncodeSizeTable + xax]
@@ -367,7 +378,7 @@ JsonEscEncodeSize proc uses xsi pInputStr:PSTRINGW
       add ecx, edx
       .break .if ax == 0
     .else
-      add ecx, 6
+      inc ecx
     .endif
   .endw
 
@@ -583,7 +594,6 @@ Method Json.GetProperty, uses xbx, pParent:PJSON_PROPERTY, pName:PSTRING
       mov xax, [xbx].JSON_PROPERTY.Siblings.pLinkFwrd
     .endw
   .endif
-;  DbgHex xax, "GetProperty"
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -810,7 +820,7 @@ JsonGetNumberEnd endp
 
 JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
   ANNOTATION prv:xbx xdi xsi                            ;xbx -> last byte, xsi -> cur. byte in Buff
-  local pBegin:POINTER, pValue:POINTER, dSize:DWORD
+  local pBegin:POINTER, pValue:POINTER, dSize:DWORD, dLen:DWORD
 
   invoke JsonSkipBlanks
   .if xsi == xbx
@@ -840,17 +850,18 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
     jz @@Exit
     mov xax, xsi
     sub xax, pBegin
-    shr eax, $Log2(CHRW)
+    shr eax, 1
     dec eax
+    invoke JsonEscDecode, pBegin, pBegin, eax
+    mov dLen, eax
     if TARGET_STR_TYPE eq STR_TYPE_ANSI
-      mov dSize, eax
-      mov pValue, $invoke(StrAllocA, eax)
-      invoke WideCharToMultiByte, CP_ACP, 0, pBegin, dSize, pValue, dSize, NULL, NULL
+      mov pValue, $invoke(StrAllocA, dLen)
+      invoke WideCharToMultiByte, CP_ACP, 0, pBegin, dLen, pValue, dSize, NULL, NULL
       mov xdx, pValue
       mov CHRA ptr [xdx + xax], 0                       ;Set the ZTC
       mov [xdi].JSON_PROPERTY.pValue, xdx
     else
-      mov [xdi].JSON_PROPERTY.pValue, $invoke(StrCNewW, pBegin, eax)
+      mov [xdi].JSON_PROPERTY.pValue, $invoke(StrCNewW, pBegin, Len)
     endif
     ;DbgStr [xdi].JSON_PROPERTY.pValue
     invoke JsonSkipBlanks
@@ -1016,6 +1027,8 @@ endm
 
 Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:PJSON_PROPERTY, \
                                              pIndentation:POINTER
+  local pBufferW:POINTER, pEncBuffer:POINTER
+
   mov xbx, pProperty
   mov xdi, pIndentation
   IndentNow
@@ -1044,16 +1057,16 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
     .else
       ;Write all children recursively
       OCall pStream::Stream.BinWrite, $OfsCStrA("{", 13, 10), ??StrLength
-      add DWORD ptr [xdi], INDENTATION_STEP               ;Increment indentation
+      add DWORD ptr [xdi], INDENTATION_STEP             ;Increment indentation
       .while xsi != NULL
-        lea xax, [xsi - offset JSON_PROPERTY.Siblings]    ;xax -> JSON_PROPERTY
+        lea xax, [xsi - offset JSON_PROPERTY.Siblings]  ;xax -> JSON_PROPERTY
         OCall pSelf::Json.WriteProperty, pStream, xax, xdi
         mov xsi, [xsi].LDLL_MEMBER.pLinkFwrd
         .if xsi != 0
           OCall pStream::Stream.BinWrite, $OfsCStrA(",", 13, 10), ??StrLength
         .endif
       .endw
-      sub DWORD ptr [xdi], INDENTATION_STEP               ;Decrement indentation
+      sub DWORD ptr [xdi], INDENTATION_STEP             ;Decrement indentation
       OCall pStream::Stream.BinWrite, $OfsCStrA(13, 10), ??StrLength
       IndentNow
       OCall pStream::Stream.BinWrite8, "}"
@@ -1065,16 +1078,16 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
       OCall pStream::Stream.BinWrite, $OfsCStrA("[]"), ??StrLength
     .else
       OCall pStream::Stream.BinWrite, $OfsCStrA("[", 13, 10), ??StrLength
-      add DWORD ptr [xdi], INDENTATION_STEP               ;Increment indentation
+      add DWORD ptr [xdi], INDENTATION_STEP             ;Increment indentation
       .while xsi != NULL
-        lea xax, [xsi - offset JSON_PROPERTY.Siblings]    ;xax -> JSON_PROPERTY
+        lea xax, [xsi - offset JSON_PROPERTY.Siblings]  ;xax -> JSON_PROPERTY
         OCall pSelf::Json.WriteProperty, pStream, xax, xdi
         mov xsi, [xsi].LDLL_MEMBER.pLinkFwrd
         .if xsi != 0
           OCall pStream::Stream.BinWrite, $OfsCStrA(",", 13, 10), ??StrLength
         .endif
       .endw
-      sub DWORD ptr [xdi], INDENTATION_STEP               ;Decrement indentation
+      sub DWORD ptr [xdi], INDENTATION_STEP             ;Decrement indentation
       OCall pStream::Stream.BinWrite, $OfsCStrA(13, 10), ??StrLength
       IndentNow
       OCall pStream::Stream.BinWrite8, "]"
@@ -1084,17 +1097,24 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
     OCall pStream::Stream.BinWrite8, '"'
     .if [xbx].JSON_PROPERTY.pValue != NULL
       invoke StrSize, [xbx].JSON_PROPERTY.pValue
+      mov edi, eax
       if TARGET_STR_TYPE eq STR_TYPE_WIDE
-        shl eax, 1                                      ;Each UTF8 char can have at max 4 bytes
-        mov xsi, $MemAlloc(eax)
-        invoke WideToUTF8, xsi, [xbx].JSON_PROPERTY.pValue, -1
-        dec eax                                         ;Discard ZTC
-        OCall pStream::Stream.BinWrite, xsi, eax
-        MemFree xsi
+        shl eax, 1                                      ;Each char can have max 2 escape chars
       else
-        dec eax                                         ;Discard ZTC
-        OCall pStream::Stream.BinWrite, [xbx].JSON_PROPERTY.pValue, eax
+        shl eax, 2                                      ;ANSI => WIDE + each char can have max 2 escape chars
+      endif  
+      mov pEncBuffer, $MemAlloc(eax)                    ;We use the same Buffer to encode the string
+      if TARGET_STR_TYPE eq STR_TYPE_WIDE
+        shr edi, 1                                      ;Chars, incl ZTC
       endif
+      invoke JsonEscEncode, [xbx].JSON_PROPERTY.pValue, pEncBuffer, edi
+      shl eax, 2                                        ;Each UTF8 char can have max 4 bytes  
+      mov xsi, $MemAlloc(eax)                           ;We use the same Buffer to encode the string
+      invoke WideToUTF8, xsi, pEncBuffer, -1
+      dec eax                                           ;Discard ZTC
+      OCall pStream::Stream.BinWrite, xsi, eax
+      MemFree xsi
+      MemFree pEncBuffer
     .endif
     OCall pStream::Stream.BinWrite8, '"'
 
