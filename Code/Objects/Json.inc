@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      Json.inc
 ; Author:     G. Friedrich
-; Version:    C.2.1
+; Version:    C.2.2
 ; Purpose:    ObjAsm support of JSON (JavaScript Object Notation) objects.
 ; Links:      https://www.json.org/json-en.html
 ;             https://www.rfc-editor.org/rfc/rfc8259
@@ -18,10 +18,12 @@
 ;             Version C.1.2, December 2022.
 ;               - BOM reading added.
 ;               - Empty Arrays/Objects are written in one line.
-;               - Description corrected.  
+;               - Description corrected.
 ;             Version C.2.1, February 2023.
 ;               - String encoding and decoding always active.
 ;               - JsonEscEncode and JsonEscDecode modified JsonEscEncodeSize corrected.
+;             Version C.2.2, February 2023.
+;               - Bug in JsonGetValue detected by HSE.
 ; ==================================================================================================
 
 
@@ -60,7 +62,7 @@ JSON_PROPERTY ends
 ;             - JSON is encoded using UTF-8 => https://www.rfc-editor.org/rfc/rfc8259#section-8.1
 ;               It is strongly recommended to compile this object using WIDE strings. Using ANSI
 ;               strings may lead to data loss when converting to ANSI.
-;             - In this implementation, a propety is a Key/Value pair. 
+;             - In this implementation, a propety is a Key/Value pair.
 ;             - The root property is always unnamed.
 
 Object Json, JsonID, Streamable
@@ -91,7 +93,7 @@ externdef HexCharTableW:CHRW
 ; Procedure:  JsonEscDecode
 ; Purpose:    Translate a wide string containig JSON escape sequences to a plain wide string.
 ; Arguments:  Arg1: -> Input WIDE string.
-;             Arg2: -> Output WIDE buffer. 
+;             Arg2: -> Output WIDE buffer.
 ;             Arg3: Input WIDE chars.
 ; Return:     eax = Number of chars written.
 ; Note:       The output buffer only contains a ZTC if it is part of the input string.
@@ -820,7 +822,7 @@ JsonGetNumberEnd endp
 
 JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
   ANNOTATION prv:xbx xdi xsi                            ;xbx -> last byte, xsi -> cur. byte in Buff
-  local pBegin:POINTER, pValue:POINTER, dSize:DWORD, dLen:DWORD
+  local pBegin:POINTER, pValue:POINTER, dLen:DWORD
 
   invoke JsonSkipBlanks
   .if xsi == xbx
@@ -853,15 +855,15 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
     shr eax, 1
     dec eax
     invoke JsonEscDecode, pBegin, pBegin, eax
-    mov dLen, eax
     if TARGET_STR_TYPE eq STR_TYPE_ANSI
-      mov pValue, $invoke(StrAllocA, dLen)
-      invoke WideCharToMultiByte, CP_ACP, 0, pBegin, dLen, pValue, dSize, NULL, NULL
+      mov dLen, eax
+      mov pValue, $invoke(StrAllocA, eax)
+      invoke WideCharToMultiByte, CP_ACP, 0, pBegin, dLen, pValue, dLen, NULL, NULL
       mov xdx, pValue
       mov CHRA ptr [xdx + xax], 0                       ;Set the ZTC
       mov [xdi].JSON_PROPERTY.pValue, xdx
     else
-      mov [xdi].JSON_PROPERTY.pValue, $invoke(StrCNewW, pBegin, Len)
+      mov [xdi].JSON_PROPERTY.pValue, $invoke(StrCNewW, pBegin, eax)
     endif
     ;DbgStr [xdi].JSON_PROPERTY.pValue
     invoke JsonSkipBlanks
@@ -878,9 +880,9 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
     sub xax, pBegin
     shr eax, $Log2(CHRW)
     if TARGET_STR_TYPE eq STR_TYPE_ANSI
-      mov dSize, eax
+      mov dLen, eax
       mov pValue, $invoke(StrAllocA, eax)
-      invoke WideCharToMultiByte, CP_ACP, 0, pBegin, dSize, pValue, dSize, NULL, NULL
+      invoke WideCharToMultiByte, CP_ACP, 0, pBegin, dLen, pValue, dLen, NULL, NULL
       mov xdx, pValue
       mov CHRA ptr [xdx + xax], 0                       ;Set the ZTC
       mov [xdi].JSON_PROPERTY.pValue, xdx
@@ -1102,13 +1104,13 @@ Method Json.WriteProperty, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pProperty:
         shl eax, 1                                      ;Each char can have max 2 escape chars
       else
         shl eax, 2                                      ;ANSI => WIDE + each char can have max 2 escape chars
-      endif  
+      endif
       mov pEncBuffer, $MemAlloc(eax)                    ;We use the same Buffer to encode the string
       if TARGET_STR_TYPE eq STR_TYPE_WIDE
         shr edi, 1                                      ;Chars, incl ZTC
       endif
       invoke JsonEscEncode, [xbx].JSON_PROPERTY.pValue, pEncBuffer, edi
-      shl eax, 2                                        ;Each UTF8 char can have max 4 bytes  
+      shl eax, 2                                        ;Each UTF8 char can have max 4 bytes
       mov xsi, $MemAlloc(eax)                           ;We use the same Buffer to encode the string
       invoke WideToUTF8, xsi, pEncBuffer, -1
       dec eax                                           ;Discard ZTC
