@@ -118,6 +118,7 @@ f_NAN               equ   4
 f_DENOR             equ   5
 
 f_NOR               equ   0
+f_STD               equ   0
 f_SCI               equ   BIT00
 f_TRIM              equ   BIT01
 f_ALIGN             equ   BIT02

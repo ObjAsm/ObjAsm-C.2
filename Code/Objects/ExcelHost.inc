@@ -1,10 +1,12 @@
 ; ==================================================================================================
 ; Title:      ExcelHost.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.2.0
 ; Purpose:    ObjAsm support of Excel Host objects.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
+;             Version C.2.0, February 2023
+;               - PrintSheet added.
 ; ==================================================================================================
 
 
@@ -38,7 +40,7 @@ Object ExcelHost, ExcelHostID, Primer
   StaticMethod      NewChart,                 DWORD, DWORD, BSTR
   StaticMethod      NewSheet,                 POINTER, BSTR
   StaticMethod      Open,                     BSTR
-  StaticMethod      PrintSheet,               POINTER
+  StaticMethod      PrintSheet,               POINTER, BSTR
   StaticMethod      SaveAs,                   POINTER, BSTR
   StaticMethod      SelectRange,              POINTER
   StaticMethod      SetCalculation,           SDWORD
@@ -946,28 +948,35 @@ MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     ExcelHost.PrintSheet
-; Purpose:    Print the sheet onto the printer..
+; Purpose:    Print the sheet onto the printer.
 ; Arguments:  Arg1: -> Sheet.
+;             Arg2: -> BSTR Printer name. NULL to use the default printer.
 ; Return:
 
-XLH_PRINT_ARG struc                                      ;Arguments are passed in REVERSE order
-  vFrom             VARIANT   {}
+XLH_PRINT_ARG struc                                     ;Arguments are passed in REVERSE order
+  vFrom             VARIANT   {}                        ;DISPID = 0x389!!!
   vTo               VARIANT   {}
   vCopies           VARIANT   {}
   vPreview          VARIANT   {}
   vActivePrinter    VARIANT   {}
   vPrintToFile      VARIANT   {}
   vCollate          VARIANT   {}
-  vPrToFileName     VARIANT   {}
-  vIgnorePrintAreas VARIANT   {}
 XLH_PRINT_ARG ends
 
-Method ExcelHost.PrintSheet,, pIXlWorksheet:POINTER
-  local PntArg:XLH_PRINT_ARG, vRet:VARIANT
+Method ExcelHost.PrintSheet,, pIXlWorksheet:POINTER, pPrinterName:BSTR
+  local Args:XLH_PRINT_ARG, vRet:VARIANT
 
-  TypeMissing PntArg.vFrom, PntArg.vTo, PntArg.vCopies, PntArg.vPreview, PntArg.vActivePrinter, \
-              PntArg.vPrintToFile, PntArg.vCollate, PntArg.vPrToFileName, PntArg.vIgnorePrintAreas
-  COM_Dispatch pIXlWorksheet::_Worksheet._PrintOut, addr PntArg, addr vRet
+  TypeMissing Args.vFrom, Args.vTo, Args.vCopies, Args.vPreview, \
+              Args.vPrintToFile, Args.vCollate
+
+  .if pPrinterName == NULL
+    TypeMissing Args.vActivePrinter
+  .else
+    mov Args.vActivePrinter.vt, VT_BSTR
+    m2m Args.vActivePrinter.bstrVal, pPrinterName, xax
+  .endif
+
+  COM_Dispatch pIXlWorksheet::_Worksheet._PrintOut, addr Args, addr vRet
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
