@@ -733,7 +733,7 @@ Method ChildWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov [xdi].$Obj(ChartXYSeries).Setup.dMarkerSize, 9
   mov [xdi].$Obj(ChartXYSeries).Setup.dMarkerBorderWidth, 2
   mov [xdi].$Obj(ChartXYSeries).Setup.dMarkerShape, CHTXY_MARKER_SQUARE
-  mov [xdi].$Obj(ChartXYSeries).dFlags, CHT_SERIES_SHOW_DEPICTION or CHT_SERIES_SHOW_MARKER or CHT_SERIES_SHOW_TAB or CHT_SERIES_USE_Y2
+  mov [xdi].$Obj(ChartXYSeries).dFlags, CHT_SERIES_SHOW_DEPICTION or CHT_SERIES_SHOW_MARKER or CHT_SERIES_SHOW_TAB or CHT_SERIES_USE_Y2 or CHT_SERIES_SHOW_Y2_CHK
 
   OCall xdi::ChartSeries.ItemAt, 0, 0                   ;Return a pointer to a CHT_FLOAT
   s2s CHT_FLOAT ptr [xax], $CFloat(0.0), xcx, xdx

@@ -27,13 +27,22 @@ IDC_CHT_SETUP_BTN_PREVIEW   equ   5001
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method ChartSetup.CtlsGet, uses xbx xsi
+Method ChartSetup.CtlsGet, uses xbx xdi xsi
   SetObject xsi
+  mov xdi, [xsi].pOwner
   ACall xsi.CtlsGet
-  OCall [xsi].TabGeneral::ChartTabGeneral.CtlsGet
-  OCall [xsi].TabScaleX::ChartTabScale.CtlsGet
-  OCall [xsi].TabScaleY1::ChartTabScale.CtlsGet
-  OCall [xsi].TabScaleY2::ChartTabScale.CtlsGet
+  .ifBitSet [xdi].$Obj(ChartWnd).dFlags, CHT_WND_SHOW_GENERAL_TAB
+    OCall [xsi].TabGeneral::ChartTabGeneral.CtlsGet
+  .endif
+  .ifBitSet [xdi].$Obj(ChartWnd).ScaleX.dFlags, CHT_SCALE_SHOW_TAB
+    OCall [xsi].TabScaleX::ChartTabScale.CtlsGet
+  .endif
+  .ifBitSet [xdi].$Obj(ChartWnd).ScaleY1.dFlags, CHT_SCALE_SHOW_TAB
+    OCall [xsi].TabScaleY1::ChartTabScale.CtlsGet
+  .endif
+  .ifBitSet [xdi].$Obj(ChartWnd).ScaleY2.dFlags, CHT_SCALE_SHOW_TAB
+    OCall [xsi].TabScaleY2::ChartTabScale.CtlsGet
+  .endif
   xor ebx, ebx
   .while ebx < [xsi].TabSeriesColl.dCount
     OCall [xsi].TabSeriesColl::Collection.ItemAt, ebx
@@ -50,13 +59,22 @@ MethodEnd
 ;                   the control specified by hwndFocus. Otherwise, it should return FALSE to prevent
 ;                   Windows from setting the default keyboard focus.
 
-Method ChartSetup.CtlsSet, uses xbx xsi
+Method ChartSetup.CtlsSet, uses xbx xdi xsi
   SetObject xsi
   ACall xsi.CtlsSet
-  OCall [xsi].TabGeneral::ChartTabGeneral.CtlsSet
-  OCall [xsi].TabScaleX::ChartTabScale.CtlsSet
-  OCall [xsi].TabScaleY1::ChartTabScale.CtlsSet
-  OCall [xsi].TabScaleY2::ChartTabScale.CtlsSet
+  mov xdi, [xsi].pOwner
+  .ifBitSet [xdi].$Obj(ChartWnd).dFlags, CHT_WND_SHOW_GENERAL_TAB
+    OCall [xsi].TabGeneral::ChartTabGeneral.CtlsSet
+  .endif
+  .ifBitSet [xdi].$Obj(ChartWnd).ScaleX.dFlags, CHT_SCALE_SHOW_TAB
+    OCall [xsi].TabScaleX::ChartTabScale.CtlsSet
+  .endif
+  .ifBitSet [xdi].$Obj(ChartWnd).ScaleY1.dFlags, CHT_SCALE_SHOW_TAB
+    OCall [xsi].TabScaleY1::ChartTabScale.CtlsSet
+  .endif
+  .ifBitSet [xdi].$Obj(ChartWnd).ScaleY2.dFlags, CHT_SCALE_SHOW_TAB
+    OCall [xsi].TabScaleY2::ChartTabScale.CtlsSet
+  .endif
   xor ebx, ebx
   .while ebx < [xsi].TabSeriesColl.dCount
     OCall [xsi].TabSeriesColl::Collection.ItemAt, ebx
@@ -88,13 +106,13 @@ MethodEnd
 ; Purpose:    Initialaize a ChartSetup object.
 ; Arguments:  Arg1: -> Owner object (ChartWnd).
 ;             Arg2: -> Parent window HANDLE.
-;             Arg3: Selected Tab ID.
+;             Arg3: ID of the selected chart element.
 ; Return:     Nothing.
 
-Method ChartSetup.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, dSelectedTabID:DWORD
+Method ChartSetup.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, sdSelElementID:DWORD
   SetObject xsi
   ACall xsi.Init, pOwner, hParent, IDD_CHT_SETUP
-  m2m [xsi].dSelectedTabID, dSelectedTabID, eax
+  m2m [xsi].sdSelElementID, sdSelElementID, eax
 
   lea xbx, [xsi].IconImageList
   OCall xbx::MaskedImageList.Init, xsi, 16, 16, 10
@@ -175,7 +193,7 @@ Method ChartSetup.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke ShowWindow, [xsi].TabGeneral.hWnd, SW_HIDE
     OCall [xsi].TabControl::TabCtrl.Insert, [xsi].dTabCount, [xsi].TabGeneral.hWnd, \
                                             $OfsCStr("General"), 0
-    .if [xsi].dSelectedTabID == CHT_ID_NONE || [xsi].dSelectedTabID == CHT_ID_PLOT
+    .if [xsi].sdSelElementID == CHT_ID_NONE || [xsi].sdSelElementID == CHT_ID_PLOT
       mov [xsi].dSelTabIndex, eax
       m2m [xsi].hSelTabWnd, [xsi].TabGeneral.hWnd, ecx
     .endif
@@ -190,7 +208,7 @@ Method ChartSetup.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke ShowWindow, [xsi].TabScaleX.hWnd, SW_HIDE
     OCall [xsi].TabControl::TabCtrl.Insert, [xsi].dTabCount, [xsi].TabScaleX.hWnd, \
                                             $OfsCStr("X"), 1
-    .if [xsi].dSelectedTabID == CHT_ID_SCALEX
+    .if [xsi].sdSelElementID == CHT_ID_SCALEX
       mov [xsi].dSelTabIndex, eax
       m2m [xsi].hSelTabWnd, [xsi].TabScaleX.hWnd, ecx
     .endif
@@ -205,7 +223,7 @@ Method ChartSetup.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke ShowWindow, [xsi].TabScaleY1.hWnd, SW_HIDE
     OCall [xsi].TabControl::TabCtrl.Insert, [xsi].dTabCount, [xsi].TabScaleY1.hWnd, \
                                             $OfsCStr("Y1"), 2
-    .if [xsi].dSelectedTabID == CHT_ID_SCALEY1
+    .if [xsi].sdSelElementID == CHT_ID_SCALEY1
       mov [xsi].dSelTabIndex, eax
       m2m [xsi].hSelTabWnd, [xsi].TabScaleY1.hWnd, ecx
     .endif
@@ -220,7 +238,7 @@ Method ChartSetup.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke ShowWindow, [xsi].TabScaleY2.hWnd, SW_HIDE
     OCall [xsi].TabControl::TabCtrl.Insert, [xsi].dTabCount, [xsi].TabScaleY2.hWnd, \
                                             $OfsCStr("Y2"), 3
-    .if [xsi].dSelectedTabID == CHT_ID_SCALEY2
+    .if [xsi].sdSelElementID == CHT_ID_SCALEY2
       mov [xsi].dSelTabIndex, eax
       m2m [xsi].hSelTabWnd, [xsi].TabScaleY2.hWnd, ecx
     .endif
@@ -238,23 +256,25 @@ Method ChartSetup.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor ebx, ebx
   .while ebx < [xdi].$Obj(Collection).dCount
     OCall xdi::Collection.ItemAt, ebx
-    OCall xax::ChartSeries.GetSetupDialogTab, [xsi].TabControl.hWnd, pIconImageList
-    mov pSeriesTab, xax
-    OCall xax::ChartTabSeries.Show
-    OCall [xsi].TabSeriesColl::Collection.Insert, pSeriesTab
-    invoke ShowWindow, [xax].$Obj(ChartTabSeries).hWnd, SW_HIDE
-    lea edx, [ebx + 1]
-    invoke dword2dec, pBuffer, edx
-    mov xax, pSeriesTab
-    OCall [xsi].TabControl::TabCtrl.Insert, [xsi].dTabCount, [xax].$Obj(ChartTabSeries).hWnd, \
-                                            pBuffer, [xax].$Obj(ChartTabSeries).dIconIndex
-    .if [xsi].dSelectedTabID == ebx
-      mov [xsi].dSelTabIndex, eax
-      mov xcx, pSeriesTab
-      m2m [xsi].hSelTabWnd, [xcx].$Obj(ChartTabSeries).hWnd, edx
-    .endif
-    .if eax != -1
-      inc [xsi].dTabCount
+    .ifBitSet [xax].$Obj(ChartSeries).dFlags, CHT_SERIES_SHOW_TAB
+      OCall xax::ChartSeries.GetSetupDialogTab, [xsi].TabControl.hWnd, pIconImageList
+      mov pSeriesTab, xax
+      OCall xax::ChartTabSeries.Show
+      OCall [xsi].TabSeriesColl::Collection.Insert, pSeriesTab
+      invoke ShowWindow, [xax].$Obj(ChartTabSeries).hWnd, SW_HIDE
+      lea edx, [ebx + 1]
+      invoke dword2dec, pBuffer, edx
+      mov xax, pSeriesTab
+      OCall [xsi].TabControl::TabCtrl.Insert, [xsi].dTabCount, [xax].$Obj(ChartTabSeries).hWnd, \
+                                              pBuffer, [xax].$Obj(ChartTabSeries).dIconIndex
+      .if [xsi].sdSelElementID == ebx
+        mov [xsi].dSelTabIndex, eax
+        mov xcx, pSeriesTab
+        m2m [xsi].hSelTabWnd, [xcx].$Obj(ChartTabSeries).hWnd, edx
+      .endif
+      .if eax != -1
+        inc [xsi].dTabCount
+      .endif
     .endif
     inc ebx
   .endw
@@ -273,12 +293,21 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method ChartSetup.Restore, uses xbx xsi
+Method ChartSetup.Restore, uses xbx xdi xsi
   SetObject xsi
-  OCall [xsi].TabGeneral::ChartTabGeneral.Restore
-  OCall [xsi].TabScaleX::ChartTabScale.Restore
-  OCall [xsi].TabScaleY1::ChartTabScale.Restore
-  OCall [xsi].TabScaleY2::ChartTabScale.Restore
+  mov xdi, [xsi].pOwner
+  .ifBitSet [xdi].$Obj(ChartWnd).dFlags, CHT_WND_SHOW_GENERAL_TAB
+    OCall [xsi].TabGeneral::ChartTabGeneral.Restore
+  .endif
+  .ifBitSet [xdi].$Obj(ChartWnd).ScaleX.dFlags, CHT_SCALE_SHOW_TAB
+    OCall [xsi].TabScaleX::ChartTabScale.Restore
+  .endif
+  .ifBitSet [xdi].$Obj(ChartWnd).ScaleY1.dFlags, CHT_SCALE_SHOW_TAB
+    OCall [xsi].TabScaleY1::ChartTabScale.Restore
+  .endif
+  .ifBitSet [xdi].$Obj(ChartWnd).ScaleY2.dFlags, CHT_SCALE_SHOW_TAB
+    OCall [xsi].TabScaleY2::ChartTabScale.Restore
+  .endif
   xor ebx, ebx
   .while ebx < [xsi].TabSeriesColl.dCount
     OCall [xsi].TabSeriesColl::Collection.ItemAt, ebx

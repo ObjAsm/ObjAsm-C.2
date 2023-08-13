@@ -358,9 +358,9 @@ ProductVer4Range=0
 25=
 27=,
 [AutoLoad]
-AutoLoad=3,11,2,30,32,22
+AutoLoad=3,11,2,30,32
 [PTimer]
-PTimer=1255834170
+PTimer=1258545451
 [GroupExpand]
 GroupExpand=1,1,1,1,0,1,1,0
 [RADebugBP]

@@ -648,6 +648,7 @@ Method ChartWnd.DrawScaleX, uses xbx xdi xsi, hDC:HDC
   invoke ExtCreatePen, ecx, [xsi].ScaleX.dGridMnrLineSize, addr PenBrush, 0, NULL
   mov hMnrGridPen, xax
 
+  ;Start drawing
   mov edx, [xsi].PlotRect.left
   .if SDWORD ptr edx < [xsi].PlotRect.right
     mov eax, [xsi].PlotRect.bottom
@@ -667,6 +668,8 @@ Method ChartWnd.DrawScaleX, uses xbx xdi xsi, hDC:HDC
     ;FPU Stack: ScaleMin | DivFirst | MnrStep | MjrStep | ScaleFactor
     lea xax, LabelInfo
     mov pCurLabelInfo, xax
+
+    ;Draw divisions & grid
     xor edi, edi
     .repeat
       mov dMjrCount, edi
@@ -690,8 +693,15 @@ Method ChartWnd.DrawScaleX, uses xbx xdi xsi, hDC:HDC
       ;Draw major division
       SaveFpuContext FpuContext
       invoke SelectObject, hDC, hDivPen
-      invoke MoveToEx, hDC, sdPosition, [xsi].PlotRect.bottom, addr LastPoint
-      invoke LineTo, hDC, sdPosition, dDivMjrEnd
+      .ifBitSet [xsi].ScaleX.dFlags, CHT_SCALE_SHOW_MJR_DIV
+        invoke MoveToEx, hDC, sdPosition, [xsi].PlotRect.bottom, addr LastPoint
+        invoke LineTo, hDC, sdPosition, dDivMjrEnd
+      .else 
+        .ifBitSet [xsi].ScaleX.dFlags, CHT_SCALE_SHOW_MNR_DIV
+          invoke MoveToEx, hDC, sdPosition, [xsi].PlotRect.bottom, addr LastPoint
+          invoke LineTo, hDC, sdPosition, dDivMnrEnd
+        .endif 
+      .endif
 
       ;Draw major grid lines
       .ifBitSet [xsi].ScaleX.dFlags, CHT_SCALE_SHOW_MJR_GRID
@@ -707,7 +717,7 @@ Method ChartWnd.DrawScaleX, uses xbx xdi xsi, hDC:HDC
       .endif
       LoadFpuContext FpuContext
 
-      ;Draw minor divisions
+      ;Draw minor divisions & grid
       mov dTempEDI, edi
       mov edi, 1
       .while edi < [xsi].ScaleX.dDivMnrCount
@@ -724,10 +734,15 @@ Method ChartWnd.DrawScaleX, uses xbx xdi xsi, hDC:HDC
         add eax, [xsi].PlotRect.left
         .break .if SDWORD ptr eax > [xsi].PlotRect.right
         mov sdPosition, eax
+
+        ;Draw major division
         SaveFpuContext FpuContext
-        invoke SelectObject, hDC, hDivPen
-        invoke MoveToEx, hDC, sdPosition, [xsi].PlotRect.bottom, addr LastPoint
-        invoke LineTo, hDC, sdPosition, dDivMnrEnd
+        .ifBitSet [xsi].ScaleX.dFlags, CHT_SCALE_SHOW_MNR_DIV
+          invoke SelectObject, hDC, hDivPen
+          invoke MoveToEx, hDC, sdPosition, [xsi].PlotRect.bottom, addr LastPoint
+          invoke LineTo, hDC, sdPosition, dDivMnrEnd
+        .endif
+
         ;Draw minor grid lines
         .ifBitSet [xsi].ScaleX.dFlags, CHT_SCALE_SHOW_MNR_GRID
           mov ecx, sdPosition
@@ -964,6 +979,7 @@ Method ChartWnd.DrawScaleY1, uses xbx xdi xsi, hDC:HDC
   invoke ExtCreatePen, ecx, [xsi].ScaleY1.dGridMnrLineSize, addr PenBrush, 0, NULL
   mov hMnrGridPen, xax
 
+  ;Start drawing
   mov edx, [xsi].PlotRect.top
   .if SDWORD ptr edx < [xsi].PlotRect.bottom
     mov eax, [xsi].PlotRect.left
@@ -1222,6 +1238,7 @@ Method ChartWnd.DrawScaleY2, uses xbx xdi xsi, hDC:HDC
   invoke ExtCreatePen, ecx, [xsi].ScaleY2.dGridMnrLineSize, addr PenBrush, 0, NULL
   mov hMnrGridPen, xax
 
+  ;Start drawing
   mov edx, [xsi].PlotRect.top
   .if SDWORD ptr edx < [xsi].PlotRect.bottom
     mov eax, [xsi].PlotRect.right
@@ -1269,7 +1286,7 @@ Method ChartWnd.DrawScaleY2, uses xbx xdi xsi, hDC:HDC
         invoke LineTo, hDC, dDivMjrEnd, sdPosition
       .else
         .ifBitSet [xsi].ScaleY2.dFlags, CHT_SCALE_SHOW_MNR_DIV
-          invoke MoveToEx, hDC, [xsi].PlotRect.left, sdPosition, addr LastPoint
+          invoke MoveToEx, hDC, [xsi].PlotRect.right, sdPosition, addr LastPoint
           invoke LineTo, hDC, dDivMnrEnd, sdPosition
         .endif
       .endif
@@ -1558,12 +1575,13 @@ Method ChartWnd.OnButtonDblClk, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .endif
   .else
     ;Check if a series was clicked
+    DbgDec [xsi].InfoAreas.dCount
     xor ebx, ebx
     .while ebx != [xsi].InfoAreas.dCount
       mov xdi, $OCall([xsi].InfoAreas::DataCollection.ItemAt, ebx)
-      invoke PtInRect, addr [xdi].InfoArea.Rect, DblClkPnt
+      invoke PtInRect, addr [xdi].ChartInfoArea.Rect, DblClkPnt
       .if eax != FALSE
-        mov xdx, [xdi].InfoArea.pSeries
+        mov xdx, [xdi].ChartInfoArea.pSeries
         .ifBitSet [xdx].$Obj(ChartSeries).dFlags, CHT_SERIES_SHOW_TAB
           OCall [xsi].Data::Collection.IndexOf, xdx
           ;eax is the same index on ChartSetup.TabSeriesColl
@@ -1658,7 +1676,7 @@ Method ChartWnd.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   ;DbgText "ChartWnd.OnCreate"
   SetObject xsi
 
-  ;Create a ToolTip window to display popup information when hoovering over an InfoArea
+  ;Create a ToolTip window to display popup information when hoovering over an ChartInfoArea
   invoke CreateWindowEx, WS_EX_TOPMOST, $OfsCStr("tooltips_class32"), NULL, \
                          WS_POPUP or TTS_NOPREFIX or TTS_ALWAYSTIP or TTS_BALLOON, \
                          CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, \
@@ -2083,16 +2101,16 @@ Method ChartWnd.OnMouseMove, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         dec ebx
         .while !SIGN?
           mov xdi, $OCall([xsi].InfoAreas::DataCollection.ItemAt, ebx)
-          invoke PtInRect, addr [xdi].InfoArea.Rect, MouseClientPos
+          invoke PtInRect, addr [xdi].ChartInfoArea.Rect, MouseClientPos
           .break .if eax != FALSE
           dec ebx
         .endw
 
         .ifBitClr [xsi].dFlags, CHT_WND_TOOLTIP_ACTIVE
           .if ebx != -1
-            OCall [xdi].InfoArea.pSeries::ChartSeries.GetToolTipText, addr cBuffer, [xdi].InfoArea.dDataIndex
+            OCall [xdi].ChartInfoArea.pSeries::ChartSeries.GetToolTipText, addr cBuffer, [xdi].ChartInfoArea.dDataIndex
             .if CHR ptr cBuffer[0] != 0
-              m2m [xsi].pPrvInfoAreaSeries, [xdi].InfoArea.pSeries, xax
+              m2m [xsi].pPrvInfoAreaSeries, [xdi].ChartInfoArea.pSeries, xax
               mov ToolInfo.cbSize, sizeof(ToolInfo)
               lea xax, cBuffer
               m2m ToolInfo.lpszText, xax
@@ -2109,7 +2127,7 @@ Method ChartWnd.OnMouseMove, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           m2z [xsi].pPrvInfoAreaSeries
         .else
           mov xax, [xsi].pPrvInfoAreaSeries
-          .if xax != [xdi].InfoArea.pSeries || ebx == -1
+          .if xax != [xdi].ChartInfoArea.pSeries || ebx == -1
             invoke SendMessage, [xsi].hToolTip, TTM_ACTIVATE, FALSE, 0
             BitClr [xsi].dFlags, CHT_WND_TOOLTIP_ACTIVE
             m2z [xsi].pPrvInfoAreaSeries
@@ -2123,12 +2141,14 @@ Method ChartWnd.OnMouseMove, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .ifBitClr [xsi].dFlags, CHT_WND_TOOLTIP_SHOW
       mov xCursor, IDC_HELP
     .endif
-  .elseif [xsi].sbButtonDownOn == CHT_ID_SCALEX
-    mov xCursor, IDC_SIZEWE                             ;Moving horz direction
-  .elseif [xsi].sbButtonDownOn == CHT_ID_SCALEY1 || [xsi].sbButtonDownOn == CHT_ID_SCALEY2
-    mov xCursor, IDC_SIZENS                             ;Moving vert direction
-  .elseif [xsi].sbButtonDownOn == CHT_ID_PLOT
-    mov xCursor, IDC_SIZEALL                            ;Moving all directions
+  .elseIfBitSet [xsi].dFlags, CHT_WND_PANABLE
+    .if [xsi].sbButtonDownOn == CHT_ID_SCALEX
+      mov xCursor, IDC_SIZEWE                           ;Moving horz direction
+    .elseif [xsi].sbButtonDownOn == CHT_ID_SCALEY1 || [xsi].sbButtonDownOn == CHT_ID_SCALEY2
+      mov xCursor, IDC_SIZENS                           ;Moving vert direction
+    .elseif [xsi].sbButtonDownOn == CHT_ID_PLOT
+      mov xCursor, IDC_SIZEALL                          ;Moving all directions
+    .endif
   .endif
 @@:
   invoke SetCursor, $invoke(LoadCursor, 0, xCursor)
@@ -2476,7 +2496,7 @@ Method ChartWnd.Show, uses xbx xdi xsi, hDC:HDC, pRect:PRECT
   .endif
 
   ;Draw all series
-  OCall [xsi].InfoAreas::DataCollection.DisposeAll      ;Dispose all previous InfoAreas
+  OCall [xsi].InfoAreas::DataCollection.DisposeAll      ;Dispose all previous ChartInfoAreas
   mov eax, [xsi].PlotRect.right
   mov ecx, [xsi].PlotRect.bottom
   .if (SDWORD ptr eax > [xsi].PlotRect.left) && (SDWORD ptr ecx > [xsi].PlotRect.top)
@@ -2502,20 +2522,21 @@ MethodEnd
 ; Purpose:    Displays the chart setup dialog.
 ; Arguments:  Arg1: Dialog popup X position on screen.
 ;             Arg2: Dialog popup Y position on screen.
-;             Arg3: Selected tab on the dialog.
+;             Arg3: ID of the selected chart element.
 ; Return:     Nothing.
 
-Method ChartWnd.ShowSetupDlg, uses xsi, sdPosX:SDWORD, sdPosY:SDWORD, dTabIndex:DWORD
+ifdef INCLUDE_CHART_SETUP_DIALOG
+Method ChartWnd.ShowSetupDlg, uses xsi, sdPosX:SDWORD, sdPosY:SDWORD, sdSelElementID:SDWORD
   local SetupDlg:$Obj(ChartSetup)
 
   ;DbgText "ChartWnd.ShowSetupDlg"
   SetObject xsi
   New SetupDlg::ChartSetup
-  OCall SetupDlg::ChartSetup.Init, xsi, [xsi].hWnd, dTabIndex
+  OCall SetupDlg::ChartSetup.Init, xsi, [xsi].hWnd, sdSelElementID
   OCall SetupDlg::ChartSetup.ShowAt, sdPosX, sdPosY
   OCall SetupDlg::ChartSetup.Done
 MethodEnd
-
+endif
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     ChartWnd.Store
 ; Purpose:    Store buffer data to a stream object.

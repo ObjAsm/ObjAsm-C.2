@@ -83,7 +83,7 @@ Method ProjectWnd.Init, uses xsi, pOwner:POINTER, hParent:HWND
   ACall xsi.Init, pOwner, NULL                          ;hWnd is set in WndProc
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, offset szProjectWnd, $OfsCStr("Project"), \
                          WS_CHILD, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, \
-                         hParent, NULL, hInstance, pSelf
+                         hParent, 0, hInstance, xsi
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
 MethodEnd
 

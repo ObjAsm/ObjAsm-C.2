@@ -730,8 +730,8 @@ Method ChartXYSeries.Draw, uses xbx xdi xsi, hDC:HDC
       jg @F
       OCall xsi.DrawMarkerAt, hDC, Pnt0.x, Pnt0.y
 
-      ;Create an InfoArea for each visible marker
-      MemAlloc sizeof(InfoArea)
+      ;Create an ChartInfoArea for each visible marker
+      MemAlloc sizeof(ChartInfoArea)
       OCall [xdi].InfoAreas::DataCollection.Insert, xax
 
       ;Calc bounding square RECT
@@ -739,18 +739,18 @@ Method ChartXYSeries.Draw, uses xbx xdi xsi, hDC:HDC
       mov ecx, Pnt0.x
       shr edx, 1
       sub ecx, edx
-      mov [xax].InfoArea.Rect.left, ecx
+      mov [xax].ChartInfoArea.Rect.left, ecx
       add ecx, [xsi].Setup.dMarkerSize
-      mov [xax].InfoArea.Rect.right, ecx
+      mov [xax].ChartInfoArea.Rect.right, ecx
       mov ecx, Pnt0.y
       sub ecx, edx
-      mov [xax].InfoArea.Rect.top, ecx
+      mov [xax].ChartInfoArea.Rect.top, ecx
       add ecx, [xsi].Setup.dMarkerSize
-      mov [xax].InfoArea.Rect.bottom, ecx
+      mov [xax].ChartInfoArea.Rect.bottom, ecx
 
       ;Save additional information
-      m2m [xax].InfoArea.dDataIndex, dDataIndex, ecx
-      mov [xax].InfoArea.pSeries, xsi
+      m2m [xax].ChartInfoArea.dDataIndex, dDataIndex, ecx
+      mov [xax].ChartInfoArea.pSeries, xsi
 
     @@:
       dec dDataIndex

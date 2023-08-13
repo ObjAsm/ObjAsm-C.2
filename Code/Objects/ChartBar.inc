@@ -24,6 +24,7 @@ SeriesSetupBar ends
 ; Object:     ChartBarTabSeries
 ; Purpose:    Series Tab of ChartSetup.
 
+ifdef INCLUDE_CHART_SETUP_DIALOG
 Object ChartBarTabSeries, , ChartTabSeries
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
@@ -34,6 +35,7 @@ Object ChartBarTabSeries, , ChartTabSeries
 
   DefineVariable    LocalSetup,         SeriesSetupBar,   {}
 ObjectEnd
+endif
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Object:  ChartBarSeries
@@ -58,7 +60,9 @@ if IMPLEMENT
 
 BAR_FILL_STYLE_SOLID  equ   HS_DIAGCROSS + 1            ;HS_DIAGCROSS is the last item in the enum.
 
+ifdef INCLUDE_CHART_SETUP_DIALOG
 % include &ObjPath&ChartBarTabSeries.inc
+endif
 % include &ObjPath&ChartBarSeries.inc
 
 endif

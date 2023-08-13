@@ -100,7 +100,7 @@ Method PropertiesWnd.Init, uses xsi, pOwner:POINTER, hParent:HWND
   SetObject xsi
   ACall xsi.Init, pOwner, NULL                          ;hWnd is set in WndProc
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, offset szPropertiesWnd, $OfsCStr("Properties"), \
-                         WS_CHILD, 0, 0, 0, 0, hParent, NULL, hInstance, pSelf
+                         WS_CHILD, 0, 0, 0, 0, hParent, 0, hInstance, xsi
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
 MethodEnd
 

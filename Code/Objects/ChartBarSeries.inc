@@ -130,15 +130,15 @@ Method ChartBarSeries.Draw, uses xbx xdi xsi, hDC:HDC
       add ecx, [xsi].Setup.dBorderWidth
       mov Bounds.bottom, ecx
 
+      ;Create an ChartInfoArea for each visible bar
       invoke IntersectRect, addr Intersection, addr [xdi].PlotRect, addr Bounds
       .if eax != 0
-        ;Create an InfoArea for each visible marker
-        MemAlloc sizeof(InfoArea)
+        MemAlloc sizeof(ChartInfoArea)
         OCall [xdi].InfoAreas::DataCollection.Insert, xax
-        s2s [xax].InfoArea.Rect, Bounds, xcx, xdx, xmm0, xmm1
+        s2s [xax].ChartInfoArea.Rect, Intersection, xcx, xdx, xmm0, xmm1
         ;Save additional information
-        mov [xax].InfoArea.pSeries, xsi
-        mov [xax].InfoArea.dDataIndex, ebx
+        mov [xax].ChartInfoArea.pSeries, xsi
+        mov [xax].ChartInfoArea.dDataIndex, ebx
       .endif
       dec ebx
     .endw

@@ -152,14 +152,16 @@ Method ChartXYTabSeries.CtlsSet, uses xbx xdi xsi
   invoke SetDlgItemText, [xsi].hWnd, IDC_CHT_SER_XY_NAME_EDT, [xdi].pName
   invoke SetDlgItemText, [xsi].hWnd, IDC_CHT_SER_XY_DESC_EDT, [xdi].pDescription
 
-  .ifBitSet [xdi].dFlags, CHT_SERIES_SHOW_Y2_CHK
-    .ifBitSet [xdi].dFlags, CHT_SERIES_USE_Y2
-      invoke CheckDlgButton, [xsi].hWnd, IDC_CHT_SER_XY_Y2_CHK, BST_CHECKED
-    .else
-      invoke CheckDlgButton, [xsi].hWnd, IDC_CHT_SER_XY_Y2_CHK, BST_UNCHECKED
-    .endif
+  .ifBitSet [xdi].dFlags, CHT_SERIES_USE_Y2
+    invoke CheckDlgButton, [xsi].hWnd, IDC_CHT_SER_XY_Y2_CHK, BST_CHECKED
   .else
-    invoke GetDlgItem, [xsi].hWnd, IDC_CHT_SER_XY_Y2_CHK
+    invoke CheckDlgButton, [xsi].hWnd, IDC_CHT_SER_XY_Y2_CHK, BST_UNCHECKED
+  .endif
+
+  invoke GetDlgItem, [xsi].hWnd, IDC_CHT_SER_XY_Y2_CHK
+  .ifBitSet [xdi].dFlags, CHT_SERIES_SHOW_Y2_CHK
+    invoke ShowWindow, xax, SW_SHOW
+  .else
     invoke ShowWindow, xax, SW_HIDE
   .endif
 

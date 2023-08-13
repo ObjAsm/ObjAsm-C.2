@@ -31,6 +31,8 @@ SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)
 % includelib &LibPath&Windows\Ole32.lib
 % includelib &LibPath&Windows\Msimg32.lib
 
+INCLUDE_CHART_SETUP_DIALOG = TRUE
+ 
 ;Load or build the following objects
 MakeObjects Primer, Stream
 MakeObjects Collection, DataCollection, SortedCollection, SortedDataCollection, XWCollection

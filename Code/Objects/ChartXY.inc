@@ -43,6 +43,7 @@ SeriesSetupXY ends
 ; Object:     ChartXYTabSeries
 ; Purpose:    Series Tab of ChartSetup.
 
+ifdef INCLUDE_CHART_SETUP_DIALOG
 Object ChartXYTabSeries, , ChartTabSeries
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
@@ -53,6 +54,7 @@ Object ChartXYTabSeries, , ChartTabSeries
 
   DefineVariable    LocalSetup,         SeriesSetupXY,    {}
 ObjectEnd
+endif
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Object:  ChartXYSeries
@@ -76,7 +78,9 @@ ObjectEnd
 
 if IMPLEMENT
 
+ifdef INCLUDE_CHART_SETUP_DIALOG
 % include &ObjPath&ChartXYTabSeries.inc
+endif
 % include &ObjPath&ChartXYSeries.inc
 
 endif

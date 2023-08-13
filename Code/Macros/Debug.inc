@@ -1078,7 +1078,7 @@ DbgWriteW macro Var, Color:=<DbgColorForeground>, Dest
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      DbgWrite
+; Macro:      DbgWriteF
 ; Purpose:    Output a string on the debug device.
 ; Arguments:  Arg1: Optinal text color.
 ;             Arg2: Optional destination Window name.

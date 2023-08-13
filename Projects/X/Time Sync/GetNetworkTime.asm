@@ -49,11 +49,10 @@ NTPMSG ends
 
 .data?
   NetTime   SYSTEMTIME  <>
-  Delay     DWORD       ?
 
 .const
   qNs1900   QWORD 014F373BFDE04000h                     ;SystemTimeToFileTime(01.01.1900 UTC)
-  dTimeout  DWORD 500                                   ;Max 500ms to receive response
+  dTimeout  DWORD 1000                                   ;Max 500ms to receive response
 
 CStr cFormat, "%02d.%02d.%04d %02d:%02d:%02d.%03d"
 
@@ -82,6 +81,8 @@ GetNetworkTime proc pTimeServerName:PSTRING, pNetTime:PSYSTEMTIME
   mov Hints.ai_addr, NULL
   mov Hints.ai_next, NULL
   invoke GetAddrInfo, pTimeServerName, $OfsCStr("ntp"), addr Hints, addr pResult
+  or eax, eax
+  jnz ErrorWSA
   mov xax, pResult
   lea xcx, ServerAddr
   invoke MemClone, xcx, [xax].ADDRINFOT.ai_addr, DWORD ptr [xax].ADDRINFOT.ai_addrlen
@@ -99,7 +100,7 @@ GetNetworkTime proc pTimeServerName:PSTRING, pNetTime:PSYSTEMTIME
   je ErrorWSA
   invoke GetTickCount
   mov dT0, eax
-  invoke send, hSocket, addr NtpMsg, sizeof NtpMsg, 0         ;Returns number bytes sent or SOCKET_ERROR
+  invoke send, hSocket, addr NtpMsg, sizeof NtpMsg, 0   ;Returns number bytes sent or SOCKET_ERROR
   cmp eax, SOCKET_ERROR
   je ErrorWSA
   invoke recv, hSocket, addr NtpMsg, sizeof NtpMsg, MSG_PEEK
@@ -131,8 +132,7 @@ GetNetworkTime proc pTimeServerName:PSTRING, pNetTime:PSYSTEMTIME
 
   mov edx, dT3
   sub edx, dT0
-  mov Delay, edx
-  DbgDec Delay, "[ms]"
+  DbgWriteF ,, "Delay = ¦UD ms", edx
   xor eax, eax
   mov ecx, 1000
   div ecx                                               ;eax = T3-T0 in ntp fractional units
@@ -165,14 +165,15 @@ GetNetworkTime proc pTimeServerName:PSTRING, pNetTime:PSYSTEMTIME
   ret
 
 ErrorWSA:
-  DbgWarning "WSA Error"
   invoke WSAGetLastError
-  ret
+  jmp ErrorExit
 ErrorParam:
   mov eax, WSA_INVALID_PARAMETER
-  ret
+  jmp ErrorExit
 ErrorNoData:
   mov eax, WSANO_DATA
+ErrorExit:
+  DbgWriteF ,, "WSA Error ¦UD", eax
   ret
 GetNetworkTime endp
 
@@ -184,8 +185,6 @@ GetTimeInfo macro ServerName
       invoke wsprintf, addr ServerTime, addr cFormat, NetTime.wDay, NetTime.wMonth, NetTime.wYear, \
                        NetTime.wHour, NetTime.wMinute, NetTime.wSecond, NetTime.wMilliseconds
       DbgStr ServerTime
-    .else
-      DbgDec eax
     .endif
   endm
   DbgLine
@@ -199,15 +198,16 @@ start proc
   DbgClearAll
   BitClr dDbgOpt, DBG_OPT_SHOWINFO
 
-  GetTimeInfo "pool.ntp.org"
-  GetTimeInfo "time.nist.gov"
-  GetTimeInfo "time-c.nist.gov"
-  GetTimeInfo "tick.usno.navy.mil"
-  GetTimeInfo "ut1-wwv.nist.gov"
-  GetTimeInfo "ntp0.cornell.edu"
-  GetTimeInfo "time.google.com"
-  GetTimeInfo "time.windows.com"
-  GetTimeInfo "time.euro.apple.com"
+  GetTimeInfo "ntp01.vzug.com"
+;  GetTimeInfo "pool.ntp.org"
+;  GetTimeInfo "time.nist.gov"
+;  GetTimeInfo "time-c.nist.gov"
+;  GetTimeInfo "tick.usno.navy.mil"
+;  GetTimeInfo "ut1-wwv.nist.gov"
+;  GetTimeInfo "ntp0.cornell.edu"
+;  GetTimeInfo "time.google.com"
+;  GetTimeInfo "time.windows.com"
+;  GetTimeInfo "time.euro.apple.com"
   
   invoke MessageBox, 0, $OfsCStr("NTP-Server requests ready.", CRLF, "Check the GetNetworkTime.dbg file to see the results."), $OfsCStr("Information"), MB_OK or MB_ICONINFORMATION   
   SysDone
