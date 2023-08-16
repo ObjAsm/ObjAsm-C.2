@@ -45,7 +45,9 @@ endif
 
 Object ChartBarSeries, ChartBarSeriesID, ChartSeries
   RedefineMethod    Draw,               HDC
+  ifdef INCLUDE_CHART_SETUP_DIALOG
   RedefineMethod    GetSetupDialogTab,  HWND, $ObjPtr(MaskedImageList)
+  endif
   RedefineMethod    Load,               $ObjPtr(Stream)             ;-> Stream
   RedefineMethod    Store,              $ObjPtr(Stream)             ;-> Stream
 

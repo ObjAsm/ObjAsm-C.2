@@ -1553,6 +1553,7 @@ Method ChartWnd.OnButtonDblClk, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .endif
   .endif
 
+ifdef INCLUDE_CHART_SETUP_DIALOG
   ;Get doubleclick client coordinates
   add PopupPnt.x, 10                                   ;Place the Dialog 10 px at the right
   add PopupPnt.y, 20                                   ;Place the Dialog 20 px below
@@ -1598,6 +1599,7 @@ Method ChartWnd.OnButtonDblClk, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .endif
     .endif
   .endif
+endif
   xor eax, eax
 MethodEnd
 

@@ -189,7 +189,9 @@ Object ChartSeries, ChartSeriesID, Array
   RedefineMethod    Done                                            ;Release allocated resources
   DynamicAbstract   Draw,               HDC
   DynamicMethod     GetToolTipText,     PSTRING, DWORD
+  ifdef INCLUDE_CHART_SETUP_DIALOG
   DynamicAbstract   GetSetupDialogTab,  HWND, $ObjPtr(MaskedImageList)
+  endif
   RedefineMethod    Init,               POINTER, DWORD              ;-> Owner, Capacity
   RedefineMethod    Load,               $ObjPtr(Stream)             ;-> Stream
   DynamicMethod     Scan,               DWORD, DWORD                ;Scan the buffer from, count
