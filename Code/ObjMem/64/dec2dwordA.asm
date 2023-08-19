@@ -1,9 +1,11 @@
 ; ==================================================================================================
 ; Title:      dec2dwordA.asm
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.1.1
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
+;             Version C.1.1 August 2023
+;               - Proc frame bug corrected.
 ; ==================================================================================================
 
 
@@ -43,6 +45,7 @@ dec2dwordA proc pStringA:POINTER
     .if al > 9
       xor eax, eax
       mov rcx, -1                                       ;Failed => exit now
+      pop rsi
       ret
     .endif
     lea rcx, DWORD ptr [rcx + 4*rcx]

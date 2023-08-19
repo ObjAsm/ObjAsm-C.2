@@ -232,7 +232,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=11
+MilestoneOnDateDate=19
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -268,8 +268,8 @@ ProductVer4Range=0
 
 [Size]
 2=0,0,1914,602,240
-3=0,0,0,0,166
-1=453,0,453,706,2448
+3=0,0,0,0,1122
+1=453,0,453,706,483
 4=0,0,0,0,234
 1001=0,0,0,0,460
 5=0,0,0,0,4506
@@ -516,7 +516,7 @@ AutoLoad=1
 74=
 77=
 [PTimer]
-PTimer=635833643
+PTimer=640298159
 [GroupExpand]
 GroupExpand=0,1,1,1,0,1,1,0
 [TLink]
