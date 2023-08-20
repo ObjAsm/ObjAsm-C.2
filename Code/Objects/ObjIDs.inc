@@ -184,7 +184,7 @@ IDLID                             equ     0000000480
 
 ;Hooking objects
 IAT32HookID                       equ     0000000490
-Api32HookID                       equ     0000000491
+IAT64HookID                       equ     0000000491
 
 ;RadASM objects
 RA_AddinID                        equ     0000000500

@@ -1,0 +1,20 @@
+; ==================================================================================================
+; Title:      ResGuard.rc
+; Author:     G. Friedrich
+; Version:    C.1.0
+; Purpose:    ObjAsm resource file.
+; Notes:      Version C.1.0, August 2023
+;               - First release.
+; ==================================================================================================
+
+
+#include "Resource.h"               //Windows resource definitions
+#include "ResGuard_Shared.rc"       //Application shared definitions
+#include "VER\Version.rc"           //Application version definition
+#include "MFT\Manifest_Invoker.rc"  //Application manifest definition
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+// Icons ------------------------------------------------------------------------------------------
+
+ICON_DLL_16  ICON DISCARDABLE "ICO\Gear_16x16_04.ico"

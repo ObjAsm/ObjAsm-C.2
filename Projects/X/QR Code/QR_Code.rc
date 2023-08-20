@@ -9,7 +9,7 @@
 
 
 #include "Resource.h"               //Windows resource definitions
-#include "QR_Code_Shared.rc"   //Application shared definitions
+#include "QR_Code_Shared.rc"        //Application shared definitions
 #include "VER\Version.rc"           //Application version definition
 #include "MFT\Manifest_Invoker.rc"  //Application manifest definition
 

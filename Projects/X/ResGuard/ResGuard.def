@@ -1,0 +1,4 @@
+EXPORTS
+	ResGuardStart   @1
+	ResGuardStop    @2
+	ResGuardShow    @3

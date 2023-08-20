@@ -419,3 +419,8 @@ AddErrMsg CEV_OUT_OF_MEMORY,          "No more memory available"
 ;CodeEditor
 ERROR_BASE = BIT29 + 790
 AddErrMsg CED_OUT_OF_MEMORY,          "No more memory available"
+
+;IAT_Hook
+ERROR_BASE = BIT29 + 800
+AddErrMsg IHK_MEMWRITEERROR,          "Memory write error"
+AddErrMsg IHK_PROCNOTFOUND,           "IAT procedure entry not found" 

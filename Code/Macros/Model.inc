@@ -438,8 +438,12 @@ SysSetup macro Arguments:vararg
 
     %for $$Arg, <$$DbgArgs>
       ifidni <$$Arg>, <RESGUARD>
-        ;IncludeAPIs ResGuard                           ;;Load ResGuard.dll
-        % include &IncPath&ObjAsm\\ResGuard.inc
+        % include &IncPath&ObjAsm\ResGuard.inc
+        if TARGET_BITNESS eq 32
+          % includelib &LibPath&ObjAsm\ResGuard32.lib
+        else
+          % includelib &LibPath&ObjAsm\ResGuard64.lib
+        endif
         RESGUARD_LOADED = TRUE
       elseifidni <$$Arg>, <STKGUARD>
         STKGUARDING = TRUE
