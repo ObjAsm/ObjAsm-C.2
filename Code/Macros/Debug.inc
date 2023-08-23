@@ -2350,7 +2350,7 @@ ResGuard_Start macro
   if DEBUGGING
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
       DbgSaveContext
-      invoke DbgOutTextA, $OfsCStrA("Started "), \
+      invoke DbgOutTextA, $OfsCStrA("Started"), \
                           DbgColorForeground, DbgColorBackground, \
                           DBG_EFFECT_BOLD, offset(szLeakReport)
       DbgShowSrcInfo offset(szLeakReport)

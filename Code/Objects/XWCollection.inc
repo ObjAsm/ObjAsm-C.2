@@ -61,7 +61,7 @@ Method XWCollection.Insert, uses xbx xsi, xItem:XWORD
     .if eax == -1
       ACall xsi.Insert, xbx
     .else
-      mov eax, ebx
+      mov xax, xbx
     .endif
   .else
     ACall xsi.Insert, xdx

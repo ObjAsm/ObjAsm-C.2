@@ -1,0 +1,104 @@
+ntp01.vzug.com
+Delay = 15 ms
+ServerTime = 23.08.2023 13:01:26.111
+Delay = 15 ms
+ServerTime = 23.08.2023 13:01:26.159
+Delay = 16 ms
+ServerTime = 23.08.2023 13:01:26.207
+Delay = 0 ms
+ServerTime = 23.08.2023 13:01:26.755
+WSA Error 11004
+-------------------------------------------------------
+pool.ntp.org
+Delay = 16 ms
+ServerTime = 23.08.2023 13:01:26.384
+Delay = 0 ms
+ServerTime = 23.08.2023 13:01:26.925
+Delay = 15 ms
+ServerTime = 23.08.2023 13:01:26.489
+Delay = 15 ms
+ServerTime = 23.08.2023 13:01:26.538
+Delay = 32 ms
+ServerTime = 23.08.2023 13:01:26.595
+-------------------------------------------------------
+time.nist.gov
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+-------------------------------------------------------
+time-c.nist.gov
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+-------------------------------------------------------
+tick.usno.navy.mil
+Delay = 110 ms
+ServerTime = 23.08.2023 13:01:36.895
+Delay = 109 ms
+ServerTime = 23.08.2023 13:01:37.010
+Delay = 109 ms
+ServerTime = 23.08.2023 13:01:37.125
+Delay = 109 ms
+ServerTime = 23.08.2023 13:01:37.240
+Delay = 109 ms
+ServerTime = 23.08.2023 13:01:37.360
+-------------------------------------------------------
+ut1-wwv.nist.gov
+WSA Error 11001
+WSA Error 11001
+WSA Error 11001
+WSA Error 11001
+WSA Error 11001
+-------------------------------------------------------
+ntp0.cornell.edu
+Delay = 110 ms
+ServerTime = 23.08.2023 13:01:37.849
+Delay = 109 ms
+ServerTime = 23.08.2023 13:01:37.956
+Delay = 109 ms
+ServerTime = 23.08.2023 13:01:38.063
+Delay = 110 ms
+ServerTime = 23.08.2023 13:01:38.179
+Delay = 94 ms
+ServerTime = 23.08.2023 13:01:38.285
+-------------------------------------------------------
+time.google.com
+Delay = 31 ms
+ServerTime = 23.08.2023 13:01:38.329
+Delay = 16 ms
+ServerTime = 23.08.2023 13:01:38.348
+Delay = 16 ms
+ServerTime = 23.08.2023 13:01:38.376
+Delay = 31 ms
+ServerTime = 23.08.2023 13:01:38.409
+Delay = 31 ms
+ServerTime = 23.08.2023 13:01:38.439
+-------------------------------------------------------
+time.windows.com
+Delay = 31 ms
+ServerTime = 23.08.2023 13:01:38.487
+Delay = 32 ms
+ServerTime = 23.08.2023 13:01:38.527
+Delay = 31 ms
+ServerTime = 23.08.2023 13:01:38.565
+Delay = 32 ms
+ServerTime = 23.08.2023 13:01:38.603
+Delay = 31 ms
+ServerTime = 23.08.2023 13:01:38.639
+-------------------------------------------------------
+time.euro.apple.com
+Delay = 15 ms
+ServerTime = 23.08.2023 13:01:38.663
+Delay = 15 ms
+ServerTime = 23.08.2023 13:01:38.689
+Delay = 32 ms
+ServerTime = 23.08.2023 13:01:38.723
+Delay = 15 ms
+ServerTime = 23.08.2023 13:01:38.740
+Delay = 16 ms
+ServerTime = 23.08.2023 13:01:38.768
+-------------------------------------------------------

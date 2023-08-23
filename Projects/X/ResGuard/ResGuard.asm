@@ -10,51 +10,57 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, DLL32, ANSI_STRING, DEBUG(WND)
+SysSetup OOP, DLL64, WIDE_STRING, DEBUG(WND)
 
 % include &IncPath&Windows\ImageHlp.inc
 
 % includelib &LibPath&Windows\ImageHlp.lib
 
 
-CStr cLeakReport, "Resource Leakage Report"
-CStr cDebugStart, "Use the debugger to find the lines of", CR, LF, \
-                  "code that use the listed resources.", CR, LF, CR, LF,\
-                  "Do you want to start the debugger now?"
+CStrW wLeakReport, "Resource Leakage Report"
+CStrW wDebugStart, "Use the debugger to find the lines of", CR, LF, \
+                   "code that use the listed resources.", CR, LF, CR, LF,\
+                   "Do you want to start the debugger now?"
 
 HookCount = 0
 
-.data
-  dResGuardEnabled    DWORD     FALSE
-  pHookColl           POINTER   NULL
-  pRcrcColl           POINTER   NULL
-  pErrColl            POINTER   NULL
-  xBasePointer        XWORD     0
+MakeObjects Primer, Stream, Collection, XWCollection, IAT_Hook
 
-MakeObjects Primer, Stream, Collection, DataCollection, IAT_Hook
+.data
+  pAppBaseFrame     POINTER   NULL
+  dResGuardEnabled  DWORD     FALSE
+  HookColl          $ObjInst(Collection)                  ;Collection of IAT_Hook objects
+  RcrcColl          $ObjInst(Collection)                  ;Collection of RTC_Collection objects
+  FailColl          $ObjInst(Collection)                  ;Collection of failed API calls (GetCallStack)
 
 if TARGET_BITNESS eq 32
-  % include &MacPath&Exception32.inc                      ;Exception Handling macros
+  % include &MacPath&Exception32.inc                      ;Exception macros
 else
-  % include &MacPath&Exception64.inc                      ;Exception Handling macros
+  % include &MacPath&Exception64.inc                      ;Exception macros
 endif
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Object:     CallData
+; Purpose:    Store all relevant info about a specific API call, like the call stack and an system
+;             identification like a HANDLE, ID, etc.
 
 Object CallData,, Primer
-  RedefineMethod  Init,         POINTER, POINTER, XWORD
+  RedefineMethod  Init,         POINTER, $ObjPtr(XWCollection), XWORD
 
-  DefineVariable  pCallerColl,  POINTER,  NULL
+  DefineVariable  pCallStack,   $ObjPtr(XWCollection),  NULL  ;GetCallStack returns an XWCollection
   DefineVariable  xData,        XWORD,    0
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Object:     RTC_Collection (RTC: Resource Type Call, RTCC: RTC Collection)
+; Purpose:    Collection of CallData Objects aggregated by system resource type (e.g. Brush).
+; Example:    pRTC_CollBrush
 
-Object ResCollection,, Collection
-  RedefineMethod  InsertAt,     DWORD, POINTER
+Object RTC_Collection,, Collection
+  RedefineMethod  Insert,       $ObjPtr(CallData)
 
-  DefineVariable  dMaxCount,    DWORD,    0
-  DefineVariable  dTotCount,    DWORD,    0
+  DefineVariable  dMaxCount,    DWORD,    0               ;Maximal count to check the system load 
+  DefineVariable  dTotCount,    DWORD,    0               ;Cummulated number of calls
 ObjectEnd
 
 
@@ -63,76 +69,134 @@ ObjectEnd
 ;    CallData implementation
 ; ==================================================================================================
 
-Method CallData.Init, uses xsi, pOwner:POINTER, pCallerColl:POINTER, xData:XWORD
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     CallData.Init
+; Purpose:    Initialize the CallData object. 
+; Arguments:  Arg1: -> Owner object (generic Collection).
+;             Arg2: -> XWCollection. 
+;             Arg3: Data identifying the call (HANDLE, ID, etc.).
+; Return:     Nothing.
+
+Method CallData.Init, uses xsi, pOwner:POINTER, pCallStack:$ObjPtr(XWCollection), xData:XWORD
   SetObject xsi
   ACall xsi.Init, pOwner
-  m2m [xsi].pCallerColl, pCallerColl, xax
+  m2m [xsi].pCallStack, pCallStack, xax
   m2m [xsi].xData, xData, xcx
 MethodEnd
 
 
 ; ==================================================================================================
-;    ResCollection implementation
+;    RTC_Collection implementation
 ; ==================================================================================================
 
-Method ResCollection.InsertAt, uses xsi, dIndex:DWORD, pItem:POINTER
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     RTC_Collection.Insert
+; Purpose:    Insert item at the end of the collection.
+; Arguments:  Arg1: -> CallData to store.
+; Return:     xax -> Inserted item or NULL if failed.
+
+Method RTC_Collection.Insert, uses xsi, pCallData:$ObjPtr(CallData)
   SetObject xsi
-  ACall xsi.InsertAt, dIndex, pItem
+  ACall xsi.Insert, pCallData
   inc [xsi].dTotCount
-  mov eax, [xsi].dCount
-  .if eax > [xsi].dMaxCount
-    mov [xsi].dMaxCount, eax
+  mov ecx, [xsi].dCount
+  .if ecx > [xsi].dMaxCount
+    mov [xsi].dMaxCount, ecx
   .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  GetCallStack
+; Purpose:    Return the calling address chain in an XWCollection.
+; Arguments:  xbp -> Stack.
+; Return:     xax -> XWCollection.
 
-;CreateExceptionHandler GetCallSequence_ExceptionHandler, , EXCEPTION_ACCESS_VIOLATION
+if TARGET_BITNESS eq 32
+CreateExceptionHandler GetCallSequence_ExceptionHandler, , EXCEPTION_ACCESS_VIOLATION
 
-GetCallSequence proc
-  local pCallerColl:POINTER
+GetCallStack proc uses ebx
+  local pCallStack:$ObjPtr(XWCollection)
 
-;  Try GetCallSequence_ExceptionHandler
-    mov pCallerColl, $New(DataCollection)
-    OCall xax::DataCollection.Init, NULL, 10, 10, COL_MAX_CAPACITY
-    mov xax, [xbp]                                        ;Remove last caller of the current proc
-    .while (xax != xBasePointer)                             ;App start reached
-      push [xax]                                          ;Exceptions can occure here!
-      OCall pCallerColl::DataCollection.Insert, POINTER ptr [xax + sizeof(XWORD)] ;Store return address
-      pop xax                                             ;Get previous EBP in EAX
+  .try GetCallSequence_ExceptionHandler
+    mov pCallStack, $New(XWCollection)
+    OCall eax::XWCollection.Init, NULL, 10, 10, COL_MAX_CAPACITY
+    mov eax, [ebp]                                        ;Remove last caller of the current proc
+    .while (eax != pAppBaseFrame && eax != NULL)          ;App start stack frame reached or frame lost
+      mov ebx, [eax]                                      ;Exceptions can occure here!
+      OCall pCallStack::XWCollection.Insert, POINTER ptr [eax + sizeof(DWORD)] ;Store return address
+      mov eax, ebx                                        ;Get previous xbp in xax
     .endw
-;  Catch GetCallSequence_ExceptionHandler
-    OCall pCallerColl::DataCollection.Insert, NULL
-;  endc GetCallSequence_ExceptionHandler
-  mov xax, pCallerColl                                    ;Return -> caller collection
+  .catch GetCallSequence_ExceptionHandler
+    OCall pCallStack::XWCollection.Insert, NULL
+  .endcatch GetCallSequence_ExceptionHandler
+  mov eax, pCallStack                                     ;Return -> caller collection
   ret
-GetCallSequence endp
+GetCallStack endp
+
+else
+
+;https://www.ired.team/miscellaneous-reversing-forensics/windows-kernel-internals/windows-x64-calling-convention-stack-frame
+;https://learn.microsoft.com/en-us/windows/win32/api/dbghelp/nf-dbghelp-stackwalk
+;https://learn.microsoft.com/en-us/windows/win32/api/dbghelp/nf-dbghelp-stackwalk64
+;https://stackoverflow.com/questions/5705650/stackwalk64-on-windows-get-symbol-name
+
+GetCallStack proc uses rbx
+  local pCallStack:$ObjPtr(XWCollection)
+
+  .try
+    mov pCallStack, $New(XWCollection)
+    OCall rax::XWCollection.Init, NULL, 10, 10, COL_MAX_CAPACITY
+    mov rax, [rsp]                                        ;Remove last caller of the current proc
+;    .while (rax != pAppBaseFrame && rax != NULL)          ;App start xbp reached or frame lost
+      mov rbx, [rax]                                      ;Exceptions can occure here!
+      OCall pCallStack::XWCollection.Insert, POINTER ptr [rax] ;Store return address
+      mov rax, rbx                                        ;Get previous xbp in xax
+;    .endw
+  .catch
+    OCall pCallStack::XWCollection.Insert, NULL
+  .endcatch
+  .finally
+  mov rax, pCallStack                                     ;Return -> caller collection
+  ret
+GetCallStack endp
+
+endif
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  EntryCreate
+; Purpose:    Create an entry (CallData) for the RTC_Collection.
+; Arguments:  Arg1: -> RTC_Collection.
+;             Arg2: -> XWCollection (Call stack).
+;             Arg3: Additional argument to identify the call (HANDLE, ID, etc.).
+; Return:     Nothing.
 
-EntryCreate proc pCallDataColl:POINTER, pCallerColl:POINTER, xData:XWORD
-  New CallData
-  OCall pCallDataColl::Collection.Insert, xax
-  OCall xax::CallData.Init, pCallDataColl, pCallerColl, xData
+EntryCreate proc pRTC_Coll:$ObjPtr(RTC_Collection), pCallStack:$ObjPtr(XWCollection), xData:XWORD
+  OCall pRTC_Coll::Collection.Insert, $New(CallData)
+  OCall xax::CallData.Init, pRTC_Coll, pCallStack, xData
   ret
 EntryCreate endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  EntryDelete
+; Purpose:    Delete an entry (CallData) from the RTC_Collection based on the call identifier.
+; Arguments:  Arg1: -> RTC_Collection.
+;             Arg2: Argument passed as Arg3 on CreateEntry.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-EntryIsIt proc pItem:POINTER, xData:XWORD
-  mov xcx, pItem
+EntryCompare proc pCallData:$ObjPtr(CallData), xData:XWORD
+  mov xcx, pCallData
   xor eax, eax
   mov xdx, xData
   .if xdx == [xcx].$Obj(CallData).xData
     inc eax
   .endif
   ret
-EntryIsIt endp
+EntryCompare endp
 
-EntryDelete proc pCallDataColl:POINTER, xData:XWORD
-  OCall pCallDataColl::Collection.LastThat, offset EntryIsIt, xData, NULL
+EntryDelete proc pRTC_Coll:$ObjPtr(RTC_Collection), xData:XWORD
+  OCall pRTC_Coll::RTC_Collection.LastThat, offset EntryCompare, xData, NULL
   .if xax
-    OCall pCallDataColl::Collection.Dispose, xax
+    OCall pRTC_Coll::RTC_Collection.Dispose, xax
     xor eax, eax
     inc eax
   .endif
@@ -140,13 +204,20 @@ EntryDelete proc pCallDataColl:POINTER, xData:XWORD
 EntryDelete endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  ShowCaller
+; Purpose:    Display on the a chain member of the call sequence on the "LeakReport" 
+;             DebugCenter child Window
+; Arguments:  Arg1: -> Caller address.
+;             Arg2: -> Last caller address.
+;             Arg3: Dummy.
+; Return:     eax = TRUE if the end was reached, otherwise FALSE.
 
-ShowCaller proc uses xbx pCaller:POINTER, pLastCaller:POINTER
-  local bBuffer[256]:byte
+ShowCaller proc uses xbx pCaller:POINTER, pLastCaller:POINTER, xDummy:XWORD
+  local cBuffer[256]:CHR
 
-  lea xbx, bBuffer
+  lea xbx, cBuffer
   .if pCaller == NULL
-    invoke StrCopy, xbx, $OfsCStr(" EOS")
+    FillString [xbx], < EOS>
   .else
     invoke wsprintf, xbx, $OfsCStr(" %08Xh"), pCaller
   .endif
@@ -154,7 +225,8 @@ ShowCaller proc uses xbx pCaller:POINTER, pLastCaller:POINTER
   .if xcx != pLastCaller
     invoke StrCat, xbx, $OfsCStr(" «")
   .endif
-  invoke DbgOutText, xbx, DbgColorComment, DbgColorBackground, DBG_EFFECT_NORMAL, offset cLeakReport
+  invoke DbgOutText, xbx, DbgColorWarning, DbgColorBackground, \
+                     DBG_EFFECT_NORMAL, offset wLeakReport
   xor eax, eax
   .if pCaller == NULL
     inc eax
@@ -163,70 +235,97 @@ ShowCaller proc uses xbx pCaller:POINTER, pLastCaller:POINTER
 ShowCaller endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  ShowCallers
+; Purpose:    Callback procedure to display on the a chain member of the call sequence on the  
+;             "LeakReport" DebugCenter child Window.
+; Arguments:  Arg1: -> Caller Collection.
+;             Arg2: Dummy argument.
+;             Arg3: Dummy argument.
+; Return:     Nothing.
 
-ShowCallers proc uses xsi pCallerColl:POINTER, xDummy1:XWORD, xDummy2:XWORD
-  mov xsi, pCallerColl
-  .if [xsi].$Obj(Collection).dCount > 0
-    invoke DbgOutText, $OfsCStr(" ·"), DbgColorComment, DbgColorBackground, DBG_EFFECT_NORMAL, offset cLeakReport
-    mov eax, [xsi].$Obj(Collection).dCount
+ShowCallers proc uses xsi pCallStack:$ObjPtr(XWCollection), xDummy1:XWORD, xDummy2:XWORD
+  mov xsi, pCallStack
+  .if [xsi].$Obj(XWCollection).dCount > 0
+    invoke DbgOutText, $OfsCStr(" •"), DbgColorWarning, DbgColorBackground, \
+                       DBG_EFFECT_NORMAL, offset wLeakReport
+    mov eax, [xsi].$Obj(XWCollection).dCount
     dec eax
-    OCall xsi::DataCollection.ItemAt, eax
-    OCall xsi::DataCollection.FirstThat, offset ShowCaller, xax, NULL
-    invoke DbgOutText, offset cCRLF, DbgColorComment, DbgColorBackground, DBG_EFFECT_NORMAL, offset cLeakReport
+    OCall xsi::XWCollection.ItemAt, eax
+    OCall xsi::XWCollection.FirstThat, offset ShowCaller, xax, NULL
+    invoke DbgOutText, offset cCRLF, DbgColorForeground, DbgColorBackground, \
+                       DBG_EFFECT_NORMAL, offset wLeakReport
   .endif
   ret
 ShowCallers endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  EntryShowCallers
+; Purpose:    Callback procedure to display on the a chain member of the call sequence on the  
+;             "LeakReport" DebugCenter child Window.
+; Arguments:  Arg1: -> CallData objct.
+;             Arg2: Dummy argument.
+;             Arg3: Dummy argument.
+; Return:     Nothing.
 
-EntryShowCallers proc pCallData:POINTER, xDummy1:XWORD, xDummy2:XWORD
+EntryShowCallers proc pCallData:$ObjPtr(CallData), xDummy1:XWORD, xDummy2:XWORD
   mov xcx, pCallData
-  invoke ShowCallers, [xcx].$Obj(CallData).pCallerColl, xDummy1, xDummy2
+  invoke ShowCallers, [xcx].$Obj(CallData).pCallStack, xDummy1, xDummy2
   ret
 EntryShowCallers endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      CreateStdHook
+; Purpose:    Create a standard hook.
+; Arguments:  Arg1: Hook name.
+;             Arg2: API argument count.
+;             Arg3: ID = x:
+;                     x > 0 : Argument x
+;                     x = 0 : [xsp]
+;                     x < 0 : [Argument -x]
+;             Arg4: API success condition.
+;             Arg5: RTCD_Coll pointer.
+; Return:     Nothing.
 
-StdCreateHook macro HookName:req, Args:req, IDArg:req, SuccessCond:req, HookColl:req
+CreateStdHook macro HookName:req, ArgCount:req, IDArg:req, SuccessCond:req, pRTC_Coll:req
   local ArgStr, Cnt
 
   HookCount = HookCount + 1                               ;;Keep track of the hook count
-  externdef HookColl:POINTER                              ;;HookColl will be definend later
+  externdef pRTC_Coll:$ObjPtr(RTC_Collection)             ;;The RTC_Collection will be definend later
   .data
-  pHook&HookName&   POINTER   NULL
+  pHook&HookName&   $ObjPtr(IAT_Hook)   NULL
 
   ArgStr textequ <>                                       ;;Prepare argument list
   Cnt = 0
-  repeat Args
+  repeat ArgCount
     Cnt = Cnt + 1
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
   endm
 
   .code
   My&HookName& proc ArgStr                                ;;Procedure declaration
-    repeat Args                                           ;;Push arguments
+    repeat ArgCount                                       ;;Push arguments
       @CatStr(<push Arg>, %Cnt)
       Cnt = Cnt - 1
     endm
     mov xax, pHook&HookName&
-    call [xax].$Obj(IAT_Hook).pEntry                      ;;Call API
+    call [xax].$Obj(IAT_Hook).pEntry                      ;;Call original API
     .if dResGuardEnabled == TRUE
       push xax                                            ;;Store API return value
-      and dResGuardEnabled, FALSE
+      m2z dResGuardEnabled
       .if xax SuccessCond
-        invoke GetCallSequence                            ;;Generate Caller collection
+        invoke GetCallStack                               ;;Returns an XWCollection in xax
         if IDArg gt 0
-          invoke EntryCreate, HookColl, xax, Arg&IDArg&
+          invoke EntryCreate, pRTC_Coll, xax, Arg&IDArg&
         elseif IDArg eq 0
-          invoke EntryCreate, HookColl, xax, [xsp]
+          invoke EntryCreate, pRTC_Coll, xax, [xsp]
         else
           Cnt = 0 - IDArg
           mov xdx, xax
           mov xax, @CatStr(<Arg>, %Cnt)
-          invoke EntryCreate, HookColl, xdx, [xax]
+          invoke EntryCreate, pRTC_Coll, xdx, [xax]
         endif
       .else
-        OCall pErrColl::Collection.Insert, $invoke(GetCallSequence)
+        OCall FailColl::Collection.Insert, $invoke(GetCallStack)  ;Insert a XWCollection
       .endif
       mov dResGuardEnabled, TRUE
       pop xax                                             ;;Restore API return value
@@ -237,23 +336,23 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdDestroyHook macro HookName:req, Args:req, IDArg:req, SuccessCond:=<>, HookColls:vararg
+DestroyStdHook macro HookName:req, ArgCount:req, IDArg:req, SuccessCond:=<>, pRTC_Coll_List:vararg
   local ArgStr, Cnt, Coll, @@
 
   HookCount = HookCount + 1                               ;;Keep track of the hook count
   .data
-  pHook&HookName&   POINTER   NULL
+  pHook&HookName&   $ObjPtr(IAT_Hook)   NULL
 
   ArgStr textequ <>
   Cnt = 0
-  repeat Args
+  repeat ArgCount
     Cnt = Cnt + 1
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
   endm
 
   .code
   My&HookName& proc ArgStr                                ;;Procedure declaration
-    repeat Args
+    repeat ArgCount
       @CatStr(<push Arg>, %Cnt)
       Cnt = Cnt - 1
     endm
@@ -262,26 +361,24 @@ StdDestroyHook macro HookName:req, Args:req, IDArg:req, SuccessCond:=<>, HookCol
 
     .if dResGuardEnabled == TRUE
       push xax                                            ;;Store API return value
-      and dResGuardEnabled, FALSE
+      m2z dResGuardEnabled
       ifnb <SuccessCond>
         ;Check success condition
         .if xax SuccessCond
-          for Coll, <HookColls>                           ;;Search in all specified collections
-            @CatStr(<invoke EntryDelete, >, Coll, <, Arg>, IDArg)
-            .if eax
-              jmp @@                                      ;;Exit if found
-            .endif
+          for pColl, <pRTC_Coll_List>                     ;;Search in all specified RTC_Collection objects
+            @CatStr(<invoke EntryDelete, >, pColl, <, Arg>, IDArg)
+            test eax, eax
+            jnz @@                                        ;;Exit if found
           endm
         .else
-          OCall pErrColl::Collection.Insert, $invoke(GetCallSequence)
+          OCall FailColl::Collection.Insert, $invoke(GetCallStack)
         .endif
       else
         ;Always succeed
-        for Coll, <HookColls>                             ;;Search in all specified collections
-          @CatStr(<invoke EntryDelete, >, Coll, <, Arg>, IDArg)
-          .if eax
-            jmp @@                                        ;;Exit if found
-          .endif
+        for pColl, <pRTC_Coll_List>                       ;;Search in all specified RTC_Collection objects
+          @CatStr(<invoke EntryDelete, >, pColl, <, Arg>, IDArg)
+          test eax, eax
+          jnz @@                                          ;;Exit if found
         endm
       endif
 @@:
@@ -294,16 +391,16 @@ endm
 
 ; ==================================================================================================
 
-StdCreateHook HeapAlloc, 3, 0, <!!= NULL>, pCollHeapMemBlock
-StdDestroyHook HeapFree, 3, 3, <!!= FALSE>, pCollHeapMemBlock
+CreateStdHook HeapAlloc, 3, 0, <!!= NULL>, pRTCC_HeapMemBlock
+DestroyStdHook HeapFree, 3, 3, <!!= FALSE>, pRTCC_HeapMemBlock
 
 HookCount = HookCount + 1
 .data
-pHookHeapReAlloc  POINTER  NULL
+pHookHeapReAlloc  $ObjPtr(IAT_Hook)   NULL
 
 .code
 MyHeapReAlloc proc hHeap:HANDLE, dFlags:DWORD, pMem:POINTER, dBytes:DWORD
-  push XWORD ptr dBytes                                             ;Prepare stack frame
+  push XWORD ptr dBytes                                   ;Prepare stack frame
   push pMem
   push XWORD ptr dFlags
   push hHeap
@@ -311,12 +408,12 @@ MyHeapReAlloc proc hHeap:HANDLE, dFlags:DWORD, pMem:POINTER, dBytes:DWORD
   call [xax].$Obj(IAT_Hook).pEntry
   .if dResGuardEnabled == TRUE
     .if eax != FALSE
-      and dResGuardEnabled, FALSE
+      m2z dResGuardEnabled
       push xax
-      invoke EntryDelete, pCollHeapMemBlock, pMem           ;First delete that Entry
-      invoke EntryCreate, pCollHeapMemBlock, $invoke(GetCallSequence), [xsp]
+      invoke EntryDelete, pRTCC_HeapMemBlock, pMem        ;First delete that Entry
+      invoke EntryCreate, pRTCC_HeapMemBlock, $invoke(GetCallStack), [xsp]
     .else
-      OCall pErrColl::Collection.Insert, $invoke(GetCallSequence)
+      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
     .endif
     pop xax
     mov dResGuardEnabled, TRUE
@@ -326,28 +423,28 @@ MyHeapReAlloc endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook GlobalAlloc, 2, 0, <!!= NULL>, pCollGlobalMemBlock
-StdDestroyHook GlobalFree, 1, 1, <== NULL>, pCollGlobalMemBlock
+CreateStdHook GlobalAlloc, 2, 0, <!!= NULL>, pRTCC_GlobalMemBlock
+DestroyStdHook GlobalFree, 1, 1, <== NULL>, pRTCC_GlobalMemBlock
 
 HookCount = HookCount + 1
 .data
-pHookGlobalReAlloc  POINTER NULL
+pHookGlobalReAlloc  $ObjPtr(IAT_Hook)   NULL
 
 .code
 MyGlobalReAlloc proc hMem:POINTER, dBytes:DWORD, dFlags:DWORD
   push XWORD ptr dFlags
-  push XWORD ptr dBytes                                             ;Prepare stack frame
+  push XWORD ptr dBytes                                   ;Prepare stack frame
   push hMem
   mov xax, pHookGlobalReAlloc
   call [xax].$Obj(IAT_Hook).pEntry
   .if dResGuardEnabled == TRUE
     push xax
-    and dResGuardEnabled, FALSE
+    m2z dResGuardEnabled
     .if eax != FALSE
-      invoke EntryDelete, pCollGlobalMemBlock, hMem       ;First delete that Entry
-      invoke EntryCreate, pCollGlobalMemBlock, $invoke(GetCallSequence), [xsp]
+      invoke EntryDelete, pRTCC_GlobalMemBlock, hMem      ;First delete that Entry
+      invoke EntryCreate, pRTCC_GlobalMemBlock, $invoke(GetCallStack), [xsp]
     .else
-      OCall pErrColl::Collection.Insert, $invoke(GetCallSequence)
+      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
     .endif
     mov dResGuardEnabled, TRUE
     pop xax
@@ -357,28 +454,28 @@ MyGlobalReAlloc endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook LocalAlloc, 2, 0, <!!= NULL>, pCollLocalMemBlock
-StdDestroyHook LocalFree, 1, 1, <== NULL>, pCollLocalMemBlock
+CreateStdHook LocalAlloc, 2, 0, <!!= NULL>, pRTCC_LocalMemBlock
+DestroyStdHook LocalFree, 1, 1, <== NULL>, pRTCC_LocalMemBlock
 
 HookCount = HookCount + 1
 .data
-pHookLocalReAlloc  POINTER NULL
+pHookLocalReAlloc  $ObjPtr(IAT_Hook)  NULL
 
 .code
 MyLocalReAlloc proc hMem:POINTER, dBytes:DWORD, dFlags:DWORD
   push XWORD ptr dFlags
-  push XWORD ptr dBytes                                             ;Prepare stack frame
+  push XWORD ptr dBytes                                   ;Prepare stack frame
   push hMem
   mov xax, pHookLocalReAlloc
   call [xax].$Obj(IAT_Hook).pEntry
   .if dResGuardEnabled == TRUE
     push xax
-    and dResGuardEnabled, FALSE
+    m2z dResGuardEnabled
     .if eax != FALSE
-      invoke EntryDelete, pCollLocalMemBlock, hMem        ;First delete that Entry
-      invoke EntryCreate, pCollLocalMemBlock, $invoke(GetCallSequence), [xsp]
+      invoke EntryDelete, pRTCC_LocalMemBlock, hMem       ;First delete that Entry
+      invoke EntryCreate, pRTCC_LocalMemBlock, $invoke(GetCallStack), [xsp]
     .else
-      OCall pErrColl::Collection.Insert, $invoke(GetCallSequence)
+      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
     .endif
     mov dResGuardEnabled, TRUE
     pop xax
@@ -388,27 +485,27 @@ MyLocalReAlloc endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook CoTaskMemAlloc, 1, 0, <!!= NULL>, pCollCoTaskMemBlock
-StdDestroyHook CoTaskMemFree, 1, 1, <>, pCollCoTaskMemBlock
+CreateStdHook CoTaskMemAlloc, 1, 0, <!!= NULL>, pRTCC_CoTaskMemBlock
+DestroyStdHook CoTaskMemFree, 1, 1, <>, pRTCC_CoTaskMemBlock
 
 HookCount = HookCount + 1
 .data
-pHookCoTaskMemRealloc  POINTER NULL
+pHookCoTaskMemRealloc  $ObjPtr(IAT_Hook)  NULL
 
 .code
 MyCoTaskMemRealloc proc pMem:POINTER, dBytes:DWORD
-  push XWORD ptr dBytes                                             ;Prepare stack frame
+  push XWORD ptr dBytes                                   ;Prepare stack frame
   push XWORD ptr pMem
   mov xax, pHookCoTaskMemRealloc
   call [xax].$Obj(IAT_Hook).pEntry
   .if dResGuardEnabled == TRUE
     push xax
-    and dResGuardEnabled, FALSE
+    m2z dResGuardEnabled
     .if eax != NULL
-      invoke EntryDelete, pCollCoTaskMemBlock, pMem        ;First delete that Entry
-      invoke EntryCreate, pCollCoTaskMemBlock, $invoke(GetCallSequence), [xsp]
+      invoke EntryDelete, pRTCC_CoTaskMemBlock, pMem      ;First delete that Entry
+      invoke EntryCreate, pRTCC_CoTaskMemBlock, $invoke(GetCallStack), [xsp]
     .else
-      OCall pErrColl::Collection.Insert, $invoke(GetCallSequence)
+      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
     .endif
     mov dResGuardEnabled, TRUE
     pop xax
@@ -418,96 +515,97 @@ MyCoTaskMemRealloc endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook VirtualAlloc, 4, 0, <!!= NULL>, pCollVirtualMemBlock
-StdDestroyHook VirtualFree, 3, 1, <!!= FALSE>, pCollVirtualMemBlock
+CreateStdHook VirtualAlloc, 4, 0, <!!= NULL>, pRTCC_VirtualMemBlock
+DestroyStdHook VirtualFree, 3, 1, <!!= FALSE>, pRTCC_VirtualMemBlock
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook SysAllocString, 1, 0, <!!= NULL>, pCollSysString
-StdCreateHook SysAllocStringLen, 2, 0, <!!= NULL>, pCollSysString
-StdCreateHook SysAllocStringByteLen, 2, 0, <!!= NULL>, pCollSysString
-StdCreateHook SysReAllocString, 2, 0, <!!= FALSE>, pCollSysString
-StdCreateHook SysReAllocStringLen, 3, 0, <!!= FALSE>, pCollSysString
-StdDestroyHook SysFreeString, 1, 1, <!!= FALSE>, pCollSysString
+CreateStdHook SysAllocString, 1, 0, <!!= NULL>, pRTCC_SysString
+CreateStdHook SysAllocStringLen, 2, 0, <!!= NULL>, pRTCC_SysString
+CreateStdHook SysAllocStringByteLen, 2, 0, <!!= NULL>, pRTCC_SysString
+CreateStdHook SysReAllocString, 2, 0, <!!= FALSE>, pRTCC_SysString
+CreateStdHook SysReAllocStringLen, 3, 0, <!!= FALSE>, pRTCC_SysString
+DestroyStdHook SysFreeString, 1, 1, <!!= FALSE>, pRTCC_SysString
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook BeginPaint, 2, 2, <!!= NULL>, pCollPaintStruct
-StdDestroyHook EndPaint, 2, 2, <!!= FALSE>, pCollPaintStruct
+CreateStdHook BeginPaint, 2, 2, <!!= NULL>, pRTCC_PaintStruct
+DestroyStdHook EndPaint, 2, 2, <!!= FALSE>, pRTCC_PaintStruct
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook CreatePen, 3, 0, <!!= NULL>, pCollPen
-StdCreateHook CreatePenIndirect, 1, 0, <!!= NULL>, pCollPen
+CreateStdHook CreatePen, 3, 0, <!!= NULL>, pRTCC_Pen
+CreateStdHook CreatePenIndirect, 1, 0, <!!= NULL>, pRTCC_Pen
 
 ; ------------------------------------------------------------------------------
 
-StdCreateHook CreateSolidBrush, 1, 0, <!!= NULL>, pCollBrush
-StdCreateHook CreateDIBPatternBrush, 2, 0, <!!= NULL>, pCollBrush
-StdCreateHook CreateDIBPatternBrushPt, 2, 0, <!!= NULL>, pCollBrush
-StdCreateHook CreateHatchBrush, 2, 0, <!!= NULL>, pCollBrush
-StdCreateHook CreatePatternBrush, 1, 0, <!!= NULL>, pCollBrush
-StdCreateHook CreateBrushIndirect, 1, 0, <!!= NULL>, pCollBrush
+CreateStdHook CreateSolidBrush, 1, 0, <!!= NULL>, pRTCC_Brush
+CreateStdHook CreateDIBPatternBrush, 2, 0, <!!= NULL>, pRTCC_Brush
+CreateStdHook CreateDIBPatternBrushPt, 2, 0, <!!= NULL>, pRTCC_Brush
+CreateStdHook CreateHatchBrush, 2, 0, <!!= NULL>, pRTCC_Brush
+CreateStdHook CreatePatternBrush, 1, 0, <!!= NULL>, pRTCC_Brush
+CreateStdHook CreateBrushIndirect, 1, 0, <!!= NULL>, pRTCC_Brush
 
 ; ------------------------------------------------------------------------------
 
-StdCreateHook CreateBitmap, 5, 0, <!!= NULL>, pCollBitmap
-StdCreateHook CreateBitmapIndirect, 1, 0, <!!= NULL>, pCollBitmap
-StdCreateHook CreateCompatibleBitmap, 3, 0, <!!= NULL>, pCollBitmap
-StdCreateHook CreateDIBitmap, 6, 0, <!!= NULL>, pCollBitmap
-StdCreateHook CreateDIBSection, 6, 0, <!!= NULL>, pCollBitmap
-StdCreateHook CreateDiscardableBitmap, 3, 0, <!!= NULL>, pCollBitmap
-StdCreateHook LoadBitmapA, 2, 0, <!!= NULL>, pCollBitmap
-StdCreateHook LoadBitmapW, 2, 0, <!!= NULL>, pCollBitmap
+CreateStdHook CreateBitmap, 5, 0, <!!= NULL>, pRTCC_Bitmap
+CreateStdHook CreateBitmapIndirect, 1, 0, <!!= NULL>, pRTCC_Bitmap
+CreateStdHook CreateCompatibleBitmap, 3, 0, <!!= NULL>, pRTCC_Bitmap
+CreateStdHook CreateDIBitmap, 6, 0, <!!= NULL>, pRTCC_Bitmap
+CreateStdHook CreateDIBSection, 6, 0, <!!= NULL>, pRTCC_Bitmap
+CreateStdHook CreateDiscardableBitmap, 3, 0, <!!= NULL>, pRTCC_Bitmap
+CreateStdHook LoadBitmapA, 2, 0, <!!= NULL>, pRTCC_Bitmap
+CreateStdHook LoadBitmapW, 2, 0, <!!= NULL>, pRTCC_Bitmap
 
 ; ------------------------------------------------------------------------------
 
-StdCreateHook CreateEllipticRgn, 4, 0, <!!= NULL>, pCollRegion
-StdCreateHook CreateEllipticRgnIndirect, 1, 0, <!!= NULL>, pCollRegion
-StdCreateHook CreatePenDataRegion, 2, 0, <!!= NULL>, pCollRegion
-StdCreateHook CreatePolygonRgn, 3, 0, <!!= NULL>, pCollRegion
-StdCreateHook CreatePolyPolygonRgn, 4, 0, <!!= NULL>, pCollRegion
-StdCreateHook CreateRectRgn, 4, 0, <!!= NULL>, pCollRegion
-StdCreateHook CreateRectRgnIndirect, 1, 0, <!!= NULL>, pCollRegion
-StdCreateHook CreateRoundRectRgn, 6, 0, <!!= NULL>, pCollRegion
-StdDestroyHook SetWindowRgn, 3, 2, <!!= FALSE>, pCollRegion      ;This region is destroyed by the window!
+CreateStdHook CreateEllipticRgn, 4, 0, <!!= NULL>, pRTCC_Region
+CreateStdHook CreateEllipticRgnIndirect, 1, 0, <!!= NULL>, pRTCC_Region
+CreateStdHook CreatePenDataRegion, 2, 0, <!!= NULL>, pRTCC_Region
+CreateStdHook CreatePolygonRgn, 3, 0, <!!= NULL>, pRTCC_Region
+CreateStdHook CreatePolyPolygonRgn, 4, 0, <!!= NULL>, pRTCC_Region
+CreateStdHook CreateRectRgn, 4, 0, <!!= NULL>, pRTCC_Region
+CreateStdHook CreateRectRgnIndirect, 1, 0, <!!= NULL>, pRTCC_Region
+CreateStdHook CreateRoundRectRgn, 6, 0, <!!= NULL>, pRTCC_Region
+DestroyStdHook SetWindowRgn, 3, 2, <!!= FALSE>, pRTCC_Region      ;This region is destroyed by the window!
 
 ; ------------------------------------------------------------------------------
 
-StdCreateHook CopyImage, 5, 0, <!!= NULL>, pCollImage
-StdCreateHook LoadImageA, 6, 0, <!!= NULL>, pCollImage
-StdCreateHook LoadImageW, 6, 0, <!!= NULL>, pCollImage
+CreateStdHook CopyImage, 5, 0, <!!= NULL>, pRTCC_Image
+CreateStdHook LoadImageA, 6, 0, <!!= NULL>, pRTCC_Image
+CreateStdHook LoadImageW, 6, 0, <!!= NULL>, pRTCC_Image
 
 ; ------------------------------------------------------------------------------
 
-StdCreateHook CreateFontA, 14, 0, <!!= NULL>, pCollFont
-StdCreateHook CreateFontW, 14, 0, <!!= NULL>, pCollFont
-StdCreateHook CreateFontIndirectA, 1, 0, <!!= NULL>, pCollFont
-StdCreateHook CreateFontIndirectW, 1, 0, <!!= NULL>, pCollFont
+CreateStdHook CreateFontA, 14, 0, <!!= NULL>, pRTCC_Font
+CreateStdHook CreateFontW, 14, 0, <!!= NULL>, pRTCC_Font
+CreateStdHook CreateFontIndirectA, 1, 0, <!!= NULL>, pRTCC_Font
+CreateStdHook CreateFontIndirectW, 1, 0, <!!= NULL>, pRTCC_Font
 
 ; ------------------------------------------------------------------------------
 
-StdCreateHook CreatePalette, 1, 0, <!!= NULL>, pCollPalette
-StdCreateHook CreateHalftonePalette, 1, 0, <!!= NULL>, pCollPalette
+CreateStdHook CreatePalette, 1, 0, <!!= NULL>, pRTCC_Palette
+CreateStdHook CreateHalftonePalette, 1, 0, <!!= NULL>, pRTCC_Palette
 
 ; ------------------------------------------------------------------------------
 
-StdCreateHook CreateColorSpaceA, 1, 0, <!!= NULL>, pCollColorSpace
-StdCreateHook CreateColorSpaceW, 1, 0, <!!= NULL>, pCollColorSpace
+CreateStdHook CreateColorSpaceA, 1, 0, <!!= NULL>, pRTCC_ColorSpace
+CreateStdHook CreateColorSpaceW, 1, 0, <!!= NULL>, pRTCC_ColorSpace
 
 ; ------------------------------------------------------------------------------
 
-StdDestroyHook DeleteObject, 1, 1, <!!= FALSE>, pCollPen, pCollBrush, pCollBitmap, pCollRegion,  \
-                             pCollFont, pCollPalette, pCollColorSpace, pCollImage
+DestroyStdHook DeleteObject, 1, 1, <!!= FALSE>, pRTCC_Pen, pRTCC_Brush, pRTCC_Bitmap, \
+                                                pRTCC_Region, pRTCC_Font, pRTCC_Palette, \
+                                                pRTCC_ColorSpace, pRTCC_Image
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook CreateCursor, 7, 0, <!!= NULL>, pCollCursor
+CreateStdHook CreateCursor, 7, 0, <!!= NULL>, pRTCC_Cursor
 
 HookCount = HookCount + 1
-externdef pCollCursor:POINTER
+externdef pRTCC_Cursor:$ObjPtr(RTC_Collection)
 .data
-pHookLoadCursorA   POINTER   NULL
+pHookLoadCursorA   $ObjPtr(IAT_Hook)    NULL
 
 .code
 
@@ -518,13 +616,13 @@ MyLoadCursorA proc hInst:HANDLE, pCursorName:POINTER
   call [xax].$Obj(IAT_Hook).pEntry
   .if dResGuardEnabled == TRUE
     push xax
-    and dResGuardEnabled, FALSE
+    m2z dResGuardEnabled
     .if eax != NULL
       .if hInst != NULL
-        invoke EntryCreate, pCollCursor, $invoke(GetCallSequence), [xsp]
+        invoke EntryCreate, pRTCC_Cursor, $invoke(GetCallStack), [xsp]
       .endif
     .else
-      OCall pErrColl::Collection.Insert, $invoke(GetCallSequence)
+      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
     .endif
     mov dResGuardEnabled, TRUE
     pop xax
@@ -533,9 +631,9 @@ MyLoadCursorA proc hInst:HANDLE, pCursorName:POINTER
 MyLoadCursorA endp
 
 HookCount = HookCount + 1
-externdef pCollCursor:POINTER
+externdef pRTCC_Cursor:$ObjPtr(RTC_Collection)
 .data
-pHookLoadCursorW   POINTER   NULL
+pHookLoadCursorW   $ObjPtr(IAT_Hook)    NULL
 
 .code
 MyLoadCursorW proc hInst:HANDLE, pCursorName:POINTER
@@ -545,13 +643,13 @@ MyLoadCursorW proc hInst:HANDLE, pCursorName:POINTER
   call [xax].$Obj(IAT_Hook).pEntry
   .if dResGuardEnabled == TRUE
     push xax
-    and dResGuardEnabled, FALSE
+    m2z dResGuardEnabled
     .if eax != NULL
       .if hInst != NULL
-        invoke EntryCreate, pCollCursor, $invoke(GetCallSequence), [xsp]
+        invoke EntryCreate, pRTCC_Cursor, $invoke(GetCallStack), [xsp]
       .endif
     .else
-      OCall pErrColl::Collection.Insert, $invoke(GetCallSequence)
+      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
     .endif
     mov dResGuardEnabled, TRUE
     pop xax
@@ -559,113 +657,113 @@ MyLoadCursorW proc hInst:HANDLE, pCursorName:POINTER
   ret
 MyLoadCursorW endp
 
-StdCreateHook LoadCursorFromFileA, 1, 0, <!!= NULL>, pCollCursor
-StdCreateHook LoadCursorFromFileW, 1, 0, <!!= NULL>, pCollCursor
+CreateStdHook LoadCursorFromFileA, 1, 0, <!!= NULL>, pRTCC_Cursor
+CreateStdHook LoadCursorFromFileW, 1, 0, <!!= NULL>, pRTCC_Cursor
 
 externdef pCollIcon:POINTER
 ;DestroyCursor and DestroyIcon use the same API
-StdDestroyHook DestroyCursor, 1, 1, <!!= FALSE>, pCollCursor, pCollIcon, pCollImage
+DestroyStdHook DestroyCursor, 1, 1, <!!= FALSE>, pRTCC_Cursor, pRTCC_Icon, pRTCC_Image
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook CreateIcon, 7, 0, <!!= NULL>, pCollIcon
-StdCreateHook CreateIconIndirect, 1, 0, <!!= NULL>, pCollIcon
-StdCreateHook CreateIconFromResource, 4, 0, <!!= NULL>, pCollIcon
-StdCreateHook CreateIconFromResourceEx, 7, 0, <!!= NULL>, pCollIcon
-StdCreateHook LoadIconA, 2, 0, <!!= NULL>, pCollIcon
-StdCreateHook LoadIconW, 2, 0, <!!= NULL>, pCollIcon
-StdCreateHook ExtractAssociatedIconA, 3, 0, <!!= NULL>, pCollIcon
-StdCreateHook ExtractAssociatedIconW, 3, 0, <!!= NULL>, pCollIcon
+CreateStdHook CreateIcon, 7, 0, <!!= NULL>, pRTCC_Icon
+CreateStdHook CreateIconIndirect, 1, 0, <!!= NULL>, pRTCC_Icon
+CreateStdHook CreateIconFromResource, 4, 0, <!!= NULL>, pRTCC_Icon
+CreateStdHook CreateIconFromResourceEx, 7, 0, <!!= NULL>, pRTCC_Icon
+CreateStdHook LoadIconA, 2, 0, <!!= NULL>, pRTCC_Icon
+CreateStdHook LoadIconW, 2, 0, <!!= NULL>, pRTCC_Icon
+CreateStdHook ExtractAssociatedIconA, 3, 0, <!!= NULL>, pRTCC_Icon
+CreateStdHook ExtractAssociatedIconW, 3, 0, <!!= NULL>, pRTCC_Icon
 ;DestroyCursor and DestroyIcon use the same API
-StdDestroyHook DestroyIcon, 1, 1, <!!= FALSE>, pCollIcon, pCollCursor, pCollImage
+DestroyStdHook DestroyIcon, 1, 1, <!!= FALSE>, pRTCC_Icon, pRTCC_Cursor, pRTCC_Image
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook CreateMenu, 0, 0, <!!= NULL>, pCollMenu
-StdCreateHook CreatePopupMenu, 0, 0, <!!= NULL>, pCollMenu
-StdCreateHook LoadMenuA, 2, 0, <!!= NULL>, pCollMenu
-StdCreateHook LoadMenuW, 2, 0, <!!= NULL>, pCollMenu
-StdCreateHook LoadMenuIndirectA, 1, 0, <!!= NULL>, pCollMenu
-StdCreateHook LoadMenuIndirectW, 1, 0, <!!= NULL>, pCollMenu
-StdDestroyHook DestroyMenu, 1, 1, <!!= FALSE>, pCollMenu
+CreateStdHook CreateMenu, 0, 0, <!!= NULL>, pRTCC_Menu
+CreateStdHook CreatePopupMenu, 0, 0, <!!= NULL>, pRTCC_Menu
+CreateStdHook LoadMenuA, 2, 0, <!!= NULL>, pRTCC_Menu
+CreateStdHook LoadMenuW, 2, 0, <!!= NULL>, pRTCC_Menu
+CreateStdHook LoadMenuIndirectA, 1, 0, <!!= NULL>, pRTCC_Menu
+CreateStdHook LoadMenuIndirectW, 1, 0, <!!= NULL>, pRTCC_Menu
+DestroyStdHook DestroyMenu, 1, 1, <!!= FALSE>, pRTCC_Menu
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook CreateMetaFileA, 1, 0, <!!= NULL>, pCollMetaFile
-StdCreateHook CreateMetaFileW, 1, 0, <!!= NULL>, pCollMetaFile
-StdCreateHook GetMetaFileA, 1, 0, <!!= NULL>, pCollMetaFile
-StdCreateHook GetMetaFileW, 1, 0, <!!= NULL>, pCollMetaFile
-StdDestroyHook DeleteMetaFile, 1, 1, <!!= FALSE>, pCollMetaFile
+CreateStdHook CreateMetaFileA, 1, 0, <!!= NULL>, pRTCC_MetaFile
+CreateStdHook CreateMetaFileW, 1, 0, <!!= NULL>, pRTCC_MetaFile
+CreateStdHook GetMetaFileA, 1, 0, <!!= NULL>, pRTCC_MetaFile
+CreateStdHook GetMetaFileW, 1, 0, <!!= NULL>, pRTCC_MetaFile
+DestroyStdHook DeleteMetaFile, 1, 1, <!!= FALSE>, pRTCC_MetaFile
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook CreateEnhMetaFileA, 1, 0, <!!= NULL>, pCollEnhMetaFile
-StdCreateHook CreateEnhMetaFileW, 1, 0, <!!= NULL>, pCollEnhMetaFile
-StdCreateHook GetEnhMetaFileA, 1, 0, <!!= NULL>, pCollEnhMetaFile
-StdCreateHook GetEnhMetaFileW, 1, 0, <!!= NULL>, pCollEnhMetaFile
-StdDestroyHook DeleteEnhMetaFile, 1, 1, <!!= FALSE>, pCollEnhMetaFile
+CreateStdHook CreateEnhMetaFileA, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
+CreateStdHook CreateEnhMetaFileW, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
+CreateStdHook GetEnhMetaFileA, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
+CreateStdHook GetEnhMetaFileW, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
+DestroyStdHook DeleteEnhMetaFile, 1, 1, <!!= FALSE>, pRTCC_EnhMetaFile
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook CreateDCA, 4, 0, <!!= NULL>, pCollDeviceContext
-StdCreateHook CreateDCW, 4, 0, <!!= NULL>, pCollDeviceContext
-StdCreateHook CreateCompatibleDC, 1, 0, <!!= NULL>, pCollDeviceContext
-StdCreateHook CreateICA, 4, 0, <!!= NULL>, pCollDeviceContext
-StdCreateHook CreateICW, 4, 0, <!!= NULL>, pCollDeviceContext
-StdDestroyHook DeleteDC, 1, 1, <!!= FALSE>, pCollDeviceContext
+CreateStdHook CreateDCA, 4, 0, <!!= NULL>, pRTCC_DeviceContext
+CreateStdHook CreateDCW, 4, 0, <!!= NULL>, pRTCC_DeviceContext
+CreateStdHook CreateCompatibleDC, 1, 0, <!!= NULL>, pRTCC_DeviceContext
+CreateStdHook CreateICA, 4, 0, <!!= NULL>, pRTCC_DeviceContext
+CreateStdHook CreateICW, 4, 0, <!!= NULL>, pRTCC_DeviceContext
+DestroyStdHook DeleteDC, 1, 1, <!!= FALSE>, pRTCC_DeviceContext
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook CreateAcceleratorTableA, 2, 0, <!!= NULL>, pCollAccTable
-StdCreateHook CreateAcceleratorTableW, 2, 0, <!!= NULL>, pCollAccTable
-StdCreateHook CopyAcceleratorTableA, 3, 0, <!!= NULL>, pCollAccTable
-StdCreateHook CopyAcceleratorTableW, 3, 0, <!!= NULL>, pCollAccTable
-StdCreateHook LoadAcceleratorsA, 2, 0, <!!= NULL>, pCollAccTable
-StdCreateHook LoadAcceleratorsW, 2, 0, <!!= NULL>, pCollAccTable
-StdDestroyHook DestroyAcceleratorTable, 1, 1, <!!= FALSE>, pCollAccTable
+CreateStdHook CreateAcceleratorTableA, 2, 0, <!!= NULL>, pRTCC_AccTable
+CreateStdHook CreateAcceleratorTableW, 2, 0, <!!= NULL>, pRTCC_AccTable
+CreateStdHook CopyAcceleratorTableA, 3, 0, <!!= NULL>, pRTCC_AccTable
+CreateStdHook CopyAcceleratorTableW, 3, 0, <!!= NULL>, pRTCC_AccTable
+CreateStdHook LoadAcceleratorsA, 2, 0, <!!= NULL>, pRTCC_AccTable
+CreateStdHook LoadAcceleratorsW, 2, 0, <!!= NULL>, pRTCC_AccTable
+DestroyStdHook DestroyAcceleratorTable, 1, 1, <!!= FALSE>, pRTCC_AccTable
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook CreateDesktopA, 6, 0, <!!= NULL>, pCollDesktop
-StdCreateHook CreateDesktopW, 6, 0, <!!= NULL>, pCollDesktop
-StdDestroyHook CloseDesktop, 1, 1, <!!= FALSE>, pCollDesktop
+CreateStdHook CreateDesktopA, 6, 0, <!!= NULL>, pRTCC_Desktop
+CreateStdHook CreateDesktopW, 6, 0, <!!= NULL>, pRTCC_Desktop
+DestroyStdHook CloseDesktop, 1, 1, <!!= FALSE>, pRTCC_Desktop
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook CreateWindowStationA, 4, 0, <!!= NULL>, pCollWindowStation
-StdCreateHook CreateWindowStationW, 4, 0, <!!= NULL>, pCollWindowStation
-StdDestroyHook CloseWindowStation, 1, 1, <!!= FALSE>, pCollWindowStation
+CreateStdHook CreateWindowStationA, 4, 0, <!!= NULL>, pRTCC_WindowStation
+CreateStdHook CreateWindowStationW, 4, 0, <!!= NULL>, pRTCC_WindowStation
+DestroyStdHook CloseWindowStation, 1, 1, <!!= FALSE>, pRTCC_WindowStation
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook CreateFileA, 7, 0, <!!= INVALID_HANDLE_VALUE>, pCollFile
-StdCreateHook CreateFileW, 7, 0, <!!= INVALID_HANDLE_VALUE>, pCollFile
+CreateStdHook CreateFileA, 7, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_File
+CreateStdHook CreateFileW, 7, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_File
 
 ; ------------------------------------------------------------------------------
 
-StdCreateHook CreateEventA, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pCollEvent
-StdCreateHook CreateEventW, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pCollEvent
-StdCreateHook OpenEventA, 3, 0, <!!= NULL>, pCollEvent
-StdCreateHook OpenEventW, 3, 0, <!!= NULL>, pCollEvent
+CreateStdHook CreateEventA, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Event
+CreateStdHook CreateEventW, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Event
+CreateStdHook OpenEventA, 3, 0, <!!= NULL>, pRTCC_Event
+CreateStdHook OpenEventW, 3, 0, <!!= NULL>, pRTCC_Event
 
 ; ------------------------------------------------------------------------------
 
-StdCreateHook CreateFileMappingA, 6, 0, <!!= ERROR_ALREADY_EXISTS>, pCollFileMapping
-StdCreateHook CreateFileMappingW, 6, 0, <!!= ERROR_ALREADY_EXISTS>, pCollFileMapping
+CreateStdHook CreateFileMappingA, 6, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_FileMapping
+CreateStdHook CreateFileMappingW, 6, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_FileMapping
 
 ; ------------------------------------------------------------------------------
 
-StdCreateHook CreateMutexA, 3, 0, <!!= ERROR_ALREADY_EXISTS>, pCollMutex
-StdCreateHook CreateMutexW, 3, 0, <!!= ERROR_ALREADY_EXISTS>, pCollMutex
-StdCreateHook OpenMutexA, 3, 0, <!!= NULL>, pCollMutex
-StdCreateHook OpenMutexW, 3, 0, <!!= NULL>, pCollMutex
+CreateStdHook CreateMutexA, 3, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Mutex
+CreateStdHook CreateMutexW, 3, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Mutex
+CreateStdHook OpenMutexA, 3, 0, <!!= NULL>, pRTCC_Mutex
+CreateStdHook OpenMutexW, 3, 0, <!!= NULL>, pRTCC_Mutex
 
 ; ------------------------------------------------------------------------------
 
 HookCount = HookCount + 1
-externdef pCollPipe:POINTER
+externdef pRTCC_Pipe:$ObjPtr(RTC_Collection)
 .data
-pHookCreatePipe   POINTER   NULL
+pHookCreatePipe   $ObjPtr(IAT_Hook)     NULL
 
 .code
 MyCreatePipe proc hReadPipe:HANDLE, hWritePipe:HANDLE, pPipeAttr:POINTER, dSize:DWORD
@@ -677,12 +775,12 @@ MyCreatePipe proc hReadPipe:HANDLE, hWritePipe:HANDLE, pPipeAttr:POINTER, dSize:
   call [xax].$Obj(IAT_Hook).pEntry
   .if dResGuardEnabled == TRUE
     push xax
-    and dResGuardEnabled, FALSE
+    m2z dResGuardEnabled
     .if eax != FALSE
-      invoke EntryCreate, pCollPipe, $invoke(GetCallSequence), hReadPipe
-      invoke EntryCreate, pCollPipe, $invoke(GetCallSequence), hWritePipe
+      invoke EntryCreate, pRTCC_Pipe, $invoke(GetCallStack), hReadPipe
+      invoke EntryCreate, pRTCC_Pipe, $invoke(GetCallStack), hWritePipe
     .else
-      OCall pErrColl::Collection.Insert, $invoke(GetCallSequence)
+      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
     .endif
     mov dResGuardEnabled, TRUE
     pop xax
@@ -690,39 +788,39 @@ MyCreatePipe proc hReadPipe:HANDLE, hWritePipe:HANDLE, pPipeAttr:POINTER, dSize:
   ret
 MyCreatePipe endp
 
-StdCreateHook CreateNamedPipeA, 8, 0, <!!= INVALID_HANDLE_VALUE>, pCollPipe
-StdCreateHook CreateNamedPipeW, 8, 0, <!!= INVALID_HANDLE_VALUE>, pCollPipe
+CreateStdHook CreateNamedPipeA, 8, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Pipe
+CreateStdHook CreateNamedPipeW, 8, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Pipe
 
 ; ------------------------------------------------------------------------------
 
-StdCreateHook CreateProcessA, 10, -10, <!!= FALSE>, pCollProcess
-StdCreateHook CreateProcessW, 10, -10, <!!= FALSE>, pCollProcess
-StdCreateHook OpenProcess, 3, 0, <!!= NULL>, pCollProcess
+CreateStdHook CreateProcessA, 10, -10, <!!= FALSE>, pRTCC_Process
+CreateStdHook CreateProcessW, 10, -10, <!!= FALSE>, pRTCC_Process
+CreateStdHook OpenProcess, 3, 0, <!!= NULL>, pRTCC_Process
 
 ; ------------------------------------------------------------------------------
 
-StdCreateHook CreateThread, 6, 0, <!!= NULL>, pCollThread
-StdCreateHook CreateRemoteThread, 3, 0, <!!= NULL>, pCollThread
+CreateStdHook CreateThread, 6, 0, <!!= NULL>, pRTCC_Thread
+CreateStdHook CreateRemoteThread, 3, 0, <!!= NULL>, pRTCC_Thread
 
 ; ------------------------------------------------------------------------------
 
-StdCreateHook CreateSemaphoreA, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pCollSemaphore
-StdCreateHook CreateSemaphoreW, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pCollSemaphore
-StdCreateHook OpenSemaphoreA, 3, 0, <!!= NULL>, pCollSemaphore
-StdCreateHook OpenSemaphoreW, 3, 0, <!!= NULL>, pCollSemaphore
+CreateStdHook CreateSemaphoreA, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Semaphore
+CreateStdHook CreateSemaphoreW, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Semaphore
+CreateStdHook OpenSemaphoreA, 3, 0, <!!= NULL>, pRTCC_Semaphore
+CreateStdHook OpenSemaphoreW, 3, 0, <!!= NULL>, pRTCC_Semaphore
 
 ; ------------------------------------------------------------------------------
 
-StdDestroyHook CloseHandle, 1, 1, <!!= FALSE>, \
-               pCollFile, pCollEvent, pCollFileMapping, pCollMutex, pCollPipe, pCollProcess, \
-               pCollThread, pCollSemaphore
+DestroyStdHook CloseHandle, 1, 1, <!!= FALSE>, \
+               pRTCC_File, pRTCC_Event, pRTCC_FileMapping, pRTCC_Mutex, pRTCC_Pipe, pRTCC_Process, \
+               pRTCC_Thread, pRTCC_Semaphore
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
 HookCount = HookCount + 1
-externdef pCollTimer:POINTER
+externdef pRTCC_Timer:$ObjPtr(RTC_Collection)
 .data
-pHookSetTimer  POINTER NULL
+pHookSetTimer   $ObjPtr(IAT_Hook)   NULL
 
 .code
 MySetTimer proc uses xbx hWnd:HANDLE, idTimer:DWORD, uTimeout:DWORD, tmprc:POINTER
@@ -734,17 +832,17 @@ MySetTimer proc uses xbx hWnd:HANDLE, idTimer:DWORD, uTimeout:DWORD, tmprc:POINT
   call [xax].$Obj(IAT_Hook).pEntry
   .if dResGuardEnabled == TRUE
     push xax
-    and dResGuardEnabled, FALSE
+    m2z dResGuardEnabled
     .if eax != NULL
-      invoke GetCallSequence
+      invoke GetCallStack
       .if hWnd == NULL
         mov ebx, [xsp]
       .else
         mov ebx, idTimer
       .endif
-      invoke EntryCreate, pCollTimer, xax, xbx
+      invoke EntryCreate, pRTCC_Timer, xax, xbx
     .else
-      OCall pErrColl::Collection.Insert, $invoke(GetCallSequence)
+      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
     .endif
     mov dResGuardEnabled, TRUE
     pop xax
@@ -752,94 +850,94 @@ MySetTimer proc uses xbx hWnd:HANDLE, idTimer:DWORD, uTimeout:DWORD, tmprc:POINT
   ret
 MySetTimer endp
 
-StdDestroyHook KillTimer, 2, 2, <!!= FALSE>, pCollTimer
+DestroyStdHook KillTimer, 2, 2, <!!= FALSE>, pRTCC_Timer
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook GetDC, 1, 0, <!!= NULL>, pCollDisplayDeviceContext
-StdCreateHook GetDCEx, 3, 0, <!!= NULL>, pCollDisplayDeviceContext
-StdCreateHook GetWindowDC, 1, 0, <!!= NULL>, pCollDisplayDeviceContext
-StdDestroyHook ReleaseDC, 2, 2, <!!= FALSE>, pCollDisplayDeviceContext
+CreateStdHook GetDC, 1, 0, <!!= NULL>, pRTCC_DisplayDeviceContext
+CreateStdHook GetDCEx, 3, 0, <!!= NULL>, pRTCC_DisplayDeviceContext
+CreateStdHook GetWindowDC, 1, 0, <!!= NULL>, pRTCC_DisplayDeviceContext
+DestroyStdHook ReleaseDC, 2, 2, <!!= FALSE>, pRTCC_DisplayDeviceContext
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook LoadKeyboardLayoutA, 2, 0, <!!= NULL>, pCollKeyboardLayout
-StdCreateHook LoadKeyboardLayoutW, 2, 0, <!!= NULL>, pCollKeyboardLayout
-StdDestroyHook UnloadKeyboardLayout, 1, 1, <!!= FALSE>, pCollKeyboardLayout
+CreateStdHook LoadKeyboardLayoutA, 2, 0, <!!= NULL>, pRTCC_KeyboardLayout
+CreateStdHook LoadKeyboardLayoutW, 2, 0, <!!= NULL>, pRTCC_KeyboardLayout
+DestroyStdHook UnloadKeyboardLayout, 1, 1, <!!= FALSE>, pRTCC_KeyboardLayout
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook LoadLibraryA, 1, 0, <!!= NULL>, pCollLibrary
-StdCreateHook LoadLibraryW, 1, 0, <!!= NULL>, pCollLibrary
-StdCreateHook LoadLibraryExA, 3, 0, <!!= NULL>, pCollLibrary
-StdCreateHook LoadLibraryExW, 3, 0, <!!= NULL>, pCollLibrary
-StdDestroyHook FreeLibrary, 1, 1, <!!= FALSE>, pCollLibrary
+CreateStdHook LoadLibraryA, 1, 0, <!!= NULL>, pRTCC_Library
+CreateStdHook LoadLibraryW, 1, 0, <!!= NULL>, pRTCC_Library
+CreateStdHook LoadLibraryExA, 3, 0, <!!= NULL>, pRTCC_Library
+CreateStdHook LoadLibraryExW, 3, 0, <!!= NULL>, pRTCC_Library
+DestroyStdHook FreeLibrary, 1, 1, <!!= FALSE>, pRTCC_Library
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook OpenPrinterA, 3, 0, <!!= NULL>, pCollPrinter
-StdCreateHook OpenPrinterW, 3, 0, <!!= NULL>, pCollPrinter
-StdCreateHook AddPrinterA, 3, 0, <!!= NULL>, pCollPrinter
-StdCreateHook AddPrinterW, 3, 0, <!!= NULL>, pCollPrinter
-StdDestroyHook ClosePrinter, 1, 1, <!!= FALSE>, pCollPrinter
+CreateStdHook OpenPrinterA, 3, 0, <!!= NULL>, pRTCC_Printer
+CreateStdHook OpenPrinterW, 3, 0, <!!= NULL>, pRTCC_Printer
+CreateStdHook AddPrinterA, 3, 0, <!!= NULL>, pRTCC_Printer
+CreateStdHook AddPrinterW, 3, 0, <!!= NULL>, pRTCC_Printer
+DestroyStdHook ClosePrinter, 1, 1, <!!= FALSE>, pRTCC_Printer
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook RegCreateKeyA, 3, -3, <== ERROR_SUCCESS>, pCollRegKey
-StdCreateHook RegCreateKeyW, 3, -3, <== ERROR_SUCCESS>, pCollRegKey
-StdCreateHook RegCreateKeyExA, 9, -8, <== ERROR_SUCCESS>, pCollRegKey
-StdCreateHook RegCreateKeyExW, 9, -8, <== ERROR_SUCCESS>, pCollRegKey
-StdDestroyHook RegCloseKey, 1, 1, <== ERROR_SUCCESS>, pCollRegKey
+CreateStdHook RegCreateKeyA, 3, -3, <== ERROR_SUCCESS>, pRTCC_RegKey
+CreateStdHook RegCreateKeyW, 3, -3, <== ERROR_SUCCESS>, pRTCC_RegKey
+CreateStdHook RegCreateKeyExA, 9, -8, <== ERROR_SUCCESS>, pRTCC_RegKey
+CreateStdHook RegCreateKeyExW, 9, -8, <== ERROR_SUCCESS>, pRTCC_RegKey
+DestroyStdHook RegCloseKey, 1, 1, <== ERROR_SUCCESS>, pRTCC_RegKey
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook BeginUpdateResourceA, 2, 0, <!!= NULL>, pCollUpdateResource
-StdCreateHook BeginUpdateResourceW, 2, 0, <!!= NULL>, pCollUpdateResource
-StdDestroyHook EndUpdateResourceA, 2, 1, <!!= FALSE>, pCollUpdateResource
-StdDestroyHook EndUpdateResourceW, 2, 1, <!!= FALSE>, pCollUpdateResource
+CreateStdHook BeginUpdateResourceA, 2, 0, <!!= NULL>, pRTCC_UpdateResource
+CreateStdHook BeginUpdateResourceW, 2, 0, <!!= NULL>, pRTCC_UpdateResource
+DestroyStdHook EndUpdateResourceA, 2, 1, <!!= FALSE>, pRTCC_UpdateResource
+DestroyStdHook EndUpdateResourceW, 2, 1, <!!= FALSE>, pRTCC_UpdateResource
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook CreateMailslotA, 4, 0, <!!= INVALID_HANDLE_VALUE>, pCollMailslot
-StdCreateHook CreateMailslotW, 4, 0, <!!= INVALID_HANDLE_VALUE>, pCollMailslot
+CreateStdHook CreateMailslotA, 4, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Mailslot
+CreateStdHook CreateMailslotW, 4, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Mailslot
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook FindFirstFileA, 2, 0, <!!= INVALID_HANDLE_VALUE>, pCollFindFirst
-StdCreateHook FindFirstFileW, 2, 0, <!!= INVALID_HANDLE_VALUE>, pCollFindFirst
-StdDestroyHook FindClose, 1, 1, <!!= FALSE>, pCollFindFirst
+CreateStdHook FindFirstFileA, 2, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_FindFirst
+CreateStdHook FindFirstFileW, 2, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_FindFirst
+DestroyStdHook FindClose, 1, 1, <!!= FALSE>, pRTCC_FindFirst
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook OpenEventLogA, 2, 0, <!!= NULL>, pCollEventLog
-StdCreateHook OpenEventLogW, 2, 0, <!!= NULL>, pCollEventLog
-StdDestroyHook CloseEventLog, 1, 1, <!!= FALSE>, pCollEventLog
+CreateStdHook OpenEventLogA, 2, 0, <!!= NULL>, pRTCC_EventLog
+CreateStdHook OpenEventLogW, 2, 0, <!!= NULL>, pRTCC_EventLog
+DestroyStdHook CloseEventLog, 1, 1, <!!= FALSE>, pRTCC_EventLog
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateHook InitializeCriticalSection, 1, 1, <|| 0FFFFFFFFh>, pCollCriticalSection
-StdDestroyHook DeleteCriticalSection, 1, 1, <|| 0FFFFFFFFh>, pCollCriticalSection
+CreateStdHook InitializeCriticalSection, 1, 1, <|| 0FFFFFFFFh>, pRTCC_CriticalSection
+DestroyStdHook DeleteCriticalSection, 1, 1, <|| 0FFFFFFFFh>, pRTCC_CriticalSection
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdCreateCountedHook macro HookName:req, Args:req, Counter:req, SuccessCond:req, HookColl:req
+CreateCountedHook macro HookName:req, ArgCount:req, Counter:req, SuccessCond:req, pRTC_Coll:req
   local ArgStr, Cnt
 
   HookCount = HookCount + 1                               ;;Keep track of the hook count
-  externdef HookColl:POINTER                              ;;HookColl will be definend later
+  externdef pRTC_Coll:$ObjPtr(RTC_Collection)             ;;The RTC_Collection will be definend later
   .data
-  pHook&HookName&   POINTER   NULL
+  pHook&HookName&   $ObjPtr(IAT_Hook)   NULL
 
   ArgStr textequ <>                                       ;;Prepare argument list
   Cnt = 0
-  repeat Args
+  repeat ArgCount
     Cnt = Cnt + 1
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
   endm
 
   .code
   My&HookName& proc ArgStr                                ;;Procedure declaration
-    repeat Args                                           ;;Push arguments
+    repeat ArgCount                                       ;;Push arguments
       @CatStr(<push Arg>, %Cnt)
       Cnt = Cnt - 1
     endm
@@ -847,13 +945,13 @@ StdCreateCountedHook macro HookName:req, Args:req, Counter:req, SuccessCond:req,
     call [xax].$Obj(IAT_Hook).pEntry                      ;;Call API
     .if dResGuardEnabled == TRUE
       push xax                                            ;;Store API return value
-      and dResGuardEnabled, FALSE
+      m2z dResGuardEnabled
       .if eax SuccessCond
-        invoke GetCallSequence                            ;;Generate Caller collection
-        invoke EntryCreate, HookColl, xax, Counter
+        invoke GetCallStack                               ;;Generate Caller collection
+        invoke EntryCreate, pRTC_Coll, xax, Counter
         inc Counter
       .else
-        OCall pErrColl::Collection.Insert, $invoke(GetCallSequence)
+        OCall FailColl::Collection.Insert, $invoke(GetCallStack)
       .endif
       mov dResGuardEnabled, TRUE
       pop xax                                             ;;Restore API return value
@@ -864,23 +962,23 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-StdDestroyCountedHook macro HookName:req, Args:req, Counter:req, SuccessCond:req, HookColls:vararg
+DestroyCountedHook macro HookName:req, ArgCount:req, Counter:req, SuccessCond:req, pRTC_Coll_List:vararg
   local ArgStr, Cnt, Coll, @@
 
   HookCount = HookCount + 1                               ;;Keep track of the hook count
   .data
-  pHook&HookName&   POINTER   NULL
+  pHook&HookName&   $ObjPtr(IAT_Hook)   NULL
 
   ArgStr textequ <>
   Cnt = 0
-  repeat Args
+  repeat ArgCount
     Cnt = Cnt + 1
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:DWORD>
   endm
 
   .code
   My&HookName& proc ArgStr                                ;;Procedure declaration
-    repeat Args
+    repeat ArgCount
       @CatStr(<push Arg>, %Cnt)
       Cnt = Cnt - 1
     endm
@@ -889,17 +987,16 @@ StdDestroyCountedHook macro HookName:req, Args:req, Counter:req, SuccessCond:req
 
     .if dResGuardEnabled == TRUE
       push xax                                            ;;Store API return value
-      and dResGuardEnabled, FALSE
+      m2z dResGuardEnabled
       .if eax SuccessCond
         dec Counter
-        for Coll, <HookColls>                             ;;Search in all specified collections
-          @CatStr(<invoke EntryDelete, >, Coll, <, >, Counter)
-          .if eax
-            jmp @@                                        ;;Exit if found
-          .endif
+        for pColl, <pRTC_Coll_List>                      ;;Search in all specified RTC_Collection objects
+          @CatStr(<invoke EntryDelete, >, pColl, <, >, Counter)
+          test eax, eax
+          jnz @@                                          ;;Exit if found
         endm
       .else
-        OCall pErrColl::Collection.Insert, $invoke(GetCallSequence)
+        OCall FailColl::Collection.Insert, $invoke(GetCallStack)
       .endif
 @@:
       mov dResGuardEnabled, TRUE
@@ -914,17 +1011,17 @@ endm
 OleInitializeCount  DWORD  0
 
 .code
-StdCreateCountedHook OleInitialize, 1, OleInitializeCount, <== S_OK>, pCollOleInitialization
-StdDestroyCountedHook OleUninitialize, 0, OleInitializeCount, <|| 0FFFFFFFFh>, pCollOleInitialization
+CreateCountedHook OleInitialize, 1, OleInitializeCount, <== S_OK>, pRTCC_OleInitialization
+DestroyCountedHook OleUninitialize, 0, OleInitializeCount, <|| 0FFFFFFFFh>, pRTCC_OleInitialization
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 .data
 CoInitializeCount  DWORD  0
 
 .code
-StdCreateCountedHook CoInitialize, 1, CoInitializeCount, <== S_OK>, pCollCoInitialization
-StdCreateCountedHook CoInitializeEx, 2, CoInitializeCount, <== S_OK>, pCollCoInitialization
-StdDestroyCountedHook CoUninitialize, 0, CoInitializeCount, <|| 0FFFFFFFFh>, pCollCoInitialization
+CreateCountedHook CoInitialize, 1, CoInitializeCount, <== S_OK>, pRTCC_CoInitialization
+CreateCountedHook CoInitializeEx, 2, CoInitializeCount, <== S_OK>, pRTCC_CoInitialization
+DestroyCountedHook CoUninitialize, 0, CoInitializeCount, <|| 0FFFFFFFFh>, pRTCC_CoInitialization
 
 ; ==================================================================================================
 
@@ -941,7 +1038,7 @@ StdDestroyCountedHook CoUninitialize, 0, CoInitializeCount, <|| 0FFFFFFFFh>, pCo
 ;ValidateHook proc uses xbx pModuleName:POINTER, pProcName:POINTER
 ;  invoke GetProcAddress, $invoke(GetModuleHandle, pModuleName), pProcName
 ;  .if xax
-;    OCall pHookColl::Collection.FirstThat, offset CheckApiHook, xax
+;    OCall pRTC_Coll::Collection.FirstThat, offset CheckApiHook, xax
 ;    .if xax
 ;      DbgStr pProcName
 ;      DbgText "API already hooked"
@@ -956,24 +1053,25 @@ NewHook macro HookProc:req, HookLib:req
 ;  invoke ValidateHook, "&HookLib&.dll", "&HookProc&"
 % New IAT_Hook
   mov pHook&HookProc&, xax                                ;;Save the IAT_Hook in this var
-  OCall xax::IAT_Hook.Init, pHookColl, $OfsCStr("&HookLib&.dll"), $OfsCStr("&HookProc&"), offset My&HookProc&, FALSE
+  OCall xax::IAT_Hook.Init, offset HookColl, $OfsCStrA("&HookLib&.dll"), $OfsCStrA("&HookProc&"), \
+                            offset My&HookProc&, FALSE
   mov xax, pHook&HookProc&
   .if [xax].$Obj(IAT_Hook).dErrorCode != OBJ_OK
     Destroy xax
   .else
-    OCall pHookColl::Collection.Insert, xax               ;;  and in a collection (pHookColl)
+    OCall HookColl::Collection.Insert, xax                ;;and in a dedicated HookColl collection
   .endif
 endm
 
-NewColl macro ResCollName:req, ColSize:req
+NewRTCC macro ResTypeName:req, ColSize:req
   .data
-  pColl&ResCollName&  POINTER  NULL
+  pRTCC_&ResTypeName&  $ObjPtr(RTC_Collection)  NULL
 
   .code
-  New ResCollection
-  mov pColl&ResCollName&, xax
-  OCall pRcrcColl::Collection.Insert, xax
-  OCall xax::ResCollection.Init, pRcrcColl, %ColSize, %ColSize, COL_MAX_CAPACITY
+  New RTC_Collection
+  mov pRTCC_&ResTypeName&, xax
+  OCall RcrcColl::Collection.Insert, xax
+  OCall xax::RTC_Collection.Init, offset RcrcColl, %ColSize, %ColSize, COL_MAX_CAPACITY
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -984,10 +1082,10 @@ endm
 ; Return:    Nothing.
 
 ResGuardDone proc
-  and dResGuardEnabled, FALSE
-  Destroy pHookColl                                       ;Destroy all Hooks and restore APIs
-  Destroy pRcrcColl                                       ;Destroy collected resorces data
-  Destroy pErrColl                                        ;Destroy Error collection
+  m2z dResGuardEnabled
+  OCall HookColl::Collection.Done                         ;Destroy all Hooks and restore APIs
+  OCall RcrcColl::Collection.Done                         ;Destroy collected resorces data
+  OCall FailColl::Collection.Done                         ;Destroy Error collection
   ret
 ResGuardDone endp
 
@@ -998,26 +1096,21 @@ ResGuardDone endp
 ; Return:    Nothing.
 
 ResGuardInit proc
-  and dResGuardEnabled, FALSE
+  m2z dResGuardEnabled
 
-  mov xBasePointer, xbp
+  OCall HookColl::Collection.Init, NULL, HookCount, 10, COL_MAX_CAPACITY
+  OCall RcrcColl::Collection.Init, NULL, HookCount, 10, COL_MAX_CAPACITY
+  OCall FailColl::Collection.Init, NULL, 10, 10, COL_MAX_CAPACITY
 
-  mov pHookColl, $New(Collection)
-  OCall xax::Collection.Init, NULL, HookCount, 10, COL_MAX_CAPACITY
-  mov pRcrcColl, $New(Collection)
-  OCall xax::Collection.Init, NULL, HookCount, 10, COL_MAX_CAPACITY
-  mov pErrColl, $New(Collection)
-  OCall xax::Collection.Init, NULL, 10, 10, COL_MAX_CAPACITY
-
-  NewColl PaintStruct, 10
+  NewRTCC PaintStruct, 10
   NewHook BeginPaint, User32
   NewHook EndPaint, User32
 
-  NewColl Pen, 10
+  NewRTCC Pen, 10
   NewHook CreatePen, GDI32
   NewHook CreatePenIndirect, GDI32
 
-  NewColl Brush, 10
+  NewRTCC Brush, 10
   NewHook CreateSolidBrush, GDI32
   NewHook CreateDIBPatternBrush, GDI32
   NewHook CreateDIBPatternBrushPt, GDI32
@@ -1025,7 +1118,7 @@ ResGuardInit proc
   NewHook CreatePatternBrush, GDI32
   NewHook CreateBrushIndirect, GDI32
 
-  NewColl Bitmap, 10
+  NewRTCC Bitmap, 10
   NewHook CreateBitmap, GDI32
   NewHook CreateBitmapIndirect, GDI32
   NewHook CreateCompatibleBitmap, GDI32
@@ -1035,12 +1128,12 @@ ResGuardInit proc
   NewHook LoadBitmapA, User32
   NewHook LoadBitmapW, User32
 
-  NewColl Image, 10
+  NewRTCC Image, 10
   NewHook LoadImageA, User32
   NewHook LoadImageW, User32
   NewHook CopyImage, User32
 
-  NewColl Region, 10
+  NewRTCC Region, 10
   NewHook CreateEllipticRgn, GDI32
   NewHook CreateEllipticRgnIndirect, GDI32
   NewHook CreatePenDataRegion, GDI32
@@ -1051,27 +1144,27 @@ ResGuardInit proc
   NewHook CreateRoundRectRgn, GDI32
   NewHook SetWindowRgn, User32
 
-  NewColl Font, 10
+  NewRTCC Font, 10
   NewHook CreateFontA, GDI32
   NewHook CreateFontW, GDI32
   NewHook CreateFontIndirectA, GDI32
   NewHook CreateFontIndirectW, GDI32
 
-  NewColl Palette, 10
+  NewRTCC Palette, 10
   NewHook CreatePalette, GDI32
   NewHook CreateHalftonePalette, GDI32
 
-  NewColl ColorSpace, 10
+  NewRTCC ColorSpace, 10
   NewHook CreateColorSpaceA, GDI32
   NewHook CreateColorSpaceW, GDI32
 
   NewHook DeleteObject, GDI32
 
-  NewColl Cursor, 10
+  NewRTCC Cursor, 10
   NewHook CreateCursor, User32
   NewHook DestroyCursor, User32                 ;DestroyIcon and DestroyCursor use the same API!
 
-  NewColl Icon, 10
+  NewRTCC Icon, 10
   NewHook CreateIcon, User32
   NewHook CreateIconIndirect, User32
   NewHook CreateIconFromResource, User32
@@ -1082,7 +1175,7 @@ ResGuardInit proc
   NewHook ExtractAssociatedIconW, Shell32
   NewHook DestroyIcon, User32                   ;DestroyIcon and DestroyCursor use the same API!
 
-  NewColl Menu, 10
+  NewRTCC Menu, 10
   NewHook CreateMenu, User32
   NewHook CreatePopupMenu, User32
   NewHook LoadMenuA, User32
@@ -1091,25 +1184,25 @@ ResGuardInit proc
   NewHook LoadMenuIndirectW, User32
   NewHook DestroyMenu, User32
 
-  NewColl Timer, 10
+  NewRTCC Timer, 10
   NewHook SetTimer, User32
   NewHook KillTimer, User32
 
-  NewColl MetaFile, 10
+  NewRTCC MetaFile, 10
   NewHook CreateMetaFileA, GDI32
   NewHook CreateMetaFileW, GDI32
   NewHook GetMetaFileA, GDI32
   NewHook GetMetaFileW, GDI32
   NewHook DeleteMetaFile, GDI32
 
-  NewColl EnhMetaFile, 10
+  NewRTCC EnhMetaFile, 10
   NewHook CreateEnhMetaFileA, GDI32
   NewHook CreateEnhMetaFileW, GDI32
   NewHook GetEnhMetaFileA, GDI32
   NewHook GetEnhMetaFileW, GDI32
   NewHook DeleteEnhMetaFile, GDI32
 
-  NewColl DeviceContext, 10
+  NewRTCC DeviceContext, 10
   NewHook CreateDCA, GDI32
   NewHook CreateDCW, GDI32
   NewHook CreateCompatibleDC, GDI32
@@ -1117,13 +1210,13 @@ ResGuardInit proc
   NewHook CreateICW, GDI32
   NewHook DeleteDC, GDI32
 
-  NewColl DisplayDeviceContext, 10
+  NewRTCC DisplayDeviceContext, 10
   NewHook GetDC, User32
   NewHook GetDCEx, User32
   NewHook GetWindowDC, User32
   NewHook ReleaseDC, User32
 
-  NewColl AccTable, 10
+  NewRTCC AccTable, 10
   NewHook CreateAcceleratorTableA, User32
   NewHook CreateAcceleratorTableW, User32
   NewHook CopyAcceleratorTableA, User32
@@ -1132,63 +1225,63 @@ ResGuardInit proc
   NewHook LoadAcceleratorsW, User32
   NewHook DestroyAcceleratorTable, User32
 
-  NewColl KeyboardLayout, 10
+  NewRTCC KeyboardLayout, 10
   NewHook LoadKeyboardLayoutA, User32
   NewHook LoadKeyboardLayoutW, User32
   NewHook UnloadKeyboardLayout, User32
 
-  NewColl Desktop, 10
+  NewRTCC Desktop, 10
   NewHook CreateDesktopA, User32
   NewHook CreateDesktopW, User32
   NewHook CloseDesktop, User32
 
-  NewColl Library, 10
+  NewRTCC Library, 10
   NewHook LoadLibraryA, Kernel32
   NewHook LoadLibraryW, Kernel32
   NewHook LoadLibraryExA, Kernel32
   NewHook LoadLibraryExW, Kernel32
   NewHook FreeLibrary, Kernel32
 
-  NewColl WindowStation, 10
+  NewRTCC WindowStation, 10
   NewHook CreateWindowStationA, User32
   NewHook CreateWindowStationW, User32
   NewHook CloseWindowStation, User32
 
-  NewColl File, 10
+  NewRTCC File, 10
   NewHook CreateFileA, Kernel32
   NewHook CreateFileW, Kernel32
 
-  NewColl Event, 10
+  NewRTCC Event, 10
   NewHook CreateEventA, Kernel32
   NewHook CreateEventW, Kernel32
   NewHook OpenEventA, Kernel32
   NewHook OpenEventW, Kernel32
 
-  NewColl FileMapping, 10
+  NewRTCC FileMapping, 10
   NewHook CreateFileMappingA, Kernel32
   NewHook CreateFileMappingW, Kernel32
 
-  NewColl Mutex, 10
+  NewRTCC Mutex, 10
   NewHook CreateMutexA, Kernel32
   NewHook CreateMutexW, Kernel32
   NewHook OpenMutexA, Kernel32
   NewHook OpenMutexW, Kernel32
 
-  NewColl Pipe, 10
+  NewRTCC Pipe, 10
   NewHook CreatePipe, Kernel32
   NewHook CreateNamedPipeA, Kernel32
   NewHook CreateNamedPipeW, Kernel32
 
-  NewColl Process, 10
+  NewRTCC Process, 10
   NewHook CreateProcessA, Kernel32
   NewHook CreateProcessW, Kernel32
   NewHook OpenProcess, Kernel32
 
-  NewColl Thread, 10
+  NewRTCC Thread, 10
   NewHook CreateThread, Kernel32
   NewHook CreateRemoteThread, Kernel32
 
-  NewColl Semaphore, 10
+  NewRTCC Semaphore, 10
   NewHook CreateSemaphoreA, Kernel32
   NewHook CreateSemaphoreW, Kernel32
   NewHook OpenSemaphoreA, Kernel32
@@ -1196,54 +1289,54 @@ ResGuardInit proc
 
   NewHook CloseHandle, Kernel32
 
-  NewColl Printer, 10
+  NewRTCC Printer, 10
   NewHook OpenPrinterA, WinSpool
   NewHook OpenPrinterW, WinSpool
   NewHook AddPrinterA, WinSpool
   NewHook AddPrinterW, WinSpool
   NewHook ClosePrinter, WinSpool
 
-  NewColl RegKey, 10
+  NewRTCC RegKey, 10
   NewHook RegCreateKeyA, AdvApi32
   NewHook RegCreateKeyW, AdvApi32
   NewHook RegCreateKeyExA, AdvApi32
   NewHook RegCreateKeyExW, AdvApi32
   NewHook RegCloseKey, AdvApi32
 
-  NewColl UpdateResource, 10
+  NewRTCC UpdateResource, 10
   NewHook BeginUpdateResourceA, Kernel32
   NewHook BeginUpdateResourceW, Kernel32
   NewHook EndUpdateResourceA, Kernel32
   NewHook EndUpdateResourceW, Kernel32
 
-  NewColl Mailslot, 10
+  NewRTCC Mailslot, 10
   NewHook CreateMailslotA, Kernel32
   NewHook CreateMailslotW, Kernel32
 
-  NewColl FindFirst, 10
+  NewRTCC FindFirst, 10
   NewHook FindFirstFileA, Kernel32
   NewHook FindFirstFileW, Kernel32
   NewHook FindClose, Kernel32
 
-  NewColl EventLog, 10
+  NewRTCC EventLog, 10
   NewHook OpenEventLogA, Kernel32
   NewHook OpenEventLogW, Kernel32
   NewHook CloseEventLog, Kernel32
 
-  NewColl CriticalSection, 10
+  NewRTCC CriticalSection, 10
   NewHook InitializeCriticalSection, Kernel32
   NewHook DeleteCriticalSection, Kernel32
 
-  NewColl OleInitialization, 10
+  NewRTCC OleInitialization, 10
   NewHook OleInitialize, Ole32
   NewHook OleUninitialize, Ole32
 
-  NewColl CoInitialization, 10
+  NewRTCC CoInitialization, 10
   NewHook CoInitialize, Ole32
   NewHook CoInitializeEx, Ole32
   NewHook CoUninitialize, Ole32
 
-  NewColl SysString, 10
+  NewRTCC SysString, 10
   NewHook SysAllocString, OleAuto
   NewHook SysAllocStringLen, OleAuto
   NewHook SysAllocStringByteLen, OleAuto
@@ -1251,26 +1344,26 @@ ResGuardInit proc
   NewHook SysReAllocStringLen, OleAuto
   NewHook SysFreeString, OleAuto
 
-  NewColl CoTaskMemBlock, 100
+  NewRTCC CoTaskMemBlock, 100
   NewHook CoTaskMemAlloc, Ole32
   NewHook CoTaskMemRealloc, Ole32
   NewHook CoTaskMemFree, Ole32
 
-  NewColl VirtualMemBlock, 100
+  NewRTCC VirtualMemBlock, 100
   NewHook VirtualAlloc, Kernel32
   NewHook VirtualFree, Kernel32
 
-  NewColl LocalMemBlock, 100
+  NewRTCC LocalMemBlock, 100
   NewHook LocalFree, Kernel32
   NewHook LocalReAlloc, Kernel32
   NewHook LocalAlloc, Kernel32
 
-  NewColl GlobalMemBlock, 100
+  NewRTCC GlobalMemBlock, 100
   NewHook GlobalFree, Kernel32
   NewHook GlobalReAlloc, Kernel32
   NewHook GlobalAlloc, Kernel32
 
-  NewColl HeapMemBlock, 100
+  NewRTCC HeapMemBlock, 100
   NewHook HeapFree, Kernel32
   NewHook HeapReAlloc, Kernel32
   NewHook HeapAlloc, Kernel32
@@ -1289,90 +1382,88 @@ ShowCollectionData macro ResCollectionPointer, NamePointer
 
   CStr szLeakOutput, NamePointer, " cur. = %3li, max. = %5li, tot. = %5li"
   mov xdi, ResCollectionPointer
-  .if (dHasLeaks == FALSE) && ([xdi].$Obj(ResCollection).dCount > 0)
+  .if (dHasLeaks == FALSE) && ([xdi].$Obj(RTC_Collection).dCount > 0)
     inc dHasLeaks
   .endif
-  .if ([xdi].$Obj(ResCollection).dTotCount > 0)
-    invoke wsprintf, xbx, offset szLeakOutput, [xdi].$Obj(ResCollection).dCount, \
-                     [xdi].$Obj(ResCollection).dMaxCount, [xdi].$Obj(ResCollection).dTotCount
-    invoke DbgOutText, xbx, DbgColorComment, DbgColorBackground, \
-                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, \
-                       offset cLeakReport
-    OCall xdi::ResCollection.ForEach, offset EntryShowCallers, NULL, NULL
+  .if ([xdi].$Obj(RTC_Collection).dTotCount > 0)
+    invoke wsprintf, xbx, offset szLeakOutput, [xdi].$Obj(RTC_Collection).dCount, \
+                     [xdi].$Obj(RTC_Collection).dMaxCount, [xdi].$Obj(RTC_Collection).dTotCount
+    invoke DbgOutText, xbx, DbgColorForeground, DbgColorBackground, \
+                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wLeakReport
+    OCall xdi::RTC_Collection.ForEach, offset EntryShowCallers, NULL, NULL
   .endif
 endm
 
 ResGuardShow proc uses xbx xdi
   local cBuffer[256]:CHR, dHasLeaks:DWORD
 
-  and dResGuardEnabled, FALSE
-  and dHasLeaks, FALSE
+  m2z dResGuardEnabled
+  m2z dHasLeaks
   lea xbx, cBuffer
 
   ; -----------------------------------------------------------------------------------
-  ShowCollectionData pCollVirtualMemBlock,      "Virtual Mem-Blocks:"
-  ShowCollectionData pCollGlobalMemBlock,       "Global Mem-Blocks: "
-  ShowCollectionData pCollLocalMemBlock,        "Local Mem-Blocks:  "
-  ShowCollectionData pCollHeapMemBlock,         "Heap Mem-Blocks:   "
-  ShowCollectionData pCollCoTaskMemBlock,       "CoTaskMem-Blocks:  "
-  ShowCollectionData pCollSysString,            "System BStrings:   "
-  ShowCollectionData pCollPen,                  "GDI Pens:          "
-  ShowCollectionData pCollBrush,                "GDI Brushes:       "
-  ShowCollectionData pCollBitmap,               "GDI Bitmaps:       "
-  ShowCollectionData pCollImage,                "GDI Images:        "
-  ShowCollectionData pCollRegion,               "GDI Regions:       "
-  ShowCollectionData pCollFont,                 "GDI Fonts:         "
-  ShowCollectionData pCollPalette,              "GDI Palettes:      "
-  ShowCollectionData pCollColorSpace,           "GDI Color Spaces:  "
-  ShowCollectionData pCollMetaFile,             "GDI MetaFiles:     "
-  ShowCollectionData pCollEnhMetaFile,          "GDI EnhMetaFiles:  "
-  ShowCollectionData pCollCursor,               "Cursors:           "
-  ShowCollectionData pCollIcon,                 "Icons:             "
-  ShowCollectionData pCollMenu,                 "Menus:             "
-  ShowCollectionData pCollTimer,                "Timers:            "
-  ShowCollectionData pCollAccTable,             "Accelerator Tables:"
-  ShowCollectionData pCollDeviceContext,        "Device Contexts:   "
-  ShowCollectionData pCollDisplayDeviceContext, "Display DCs:       "
-  ShowCollectionData pCollPaintStruct,          "Paint Structures:  "
-  ShowCollectionData pCollDesktop,              "Desktops:          "
-  ShowCollectionData pCollKeyboardLayout,       "Keyboard Layouts:  "
-  ShowCollectionData pCollWindowStation,        "Window Stations:   "
-;  ShowCollectionData pCollLibrary,              "Libraries:         "
-  ShowCollectionData pCollFile,                 "Files:             "
-  ShowCollectionData pCollFileMapping,          "File Mappings:     "
-  ShowCollectionData pCollEvent,                "Events:            "
-  ShowCollectionData pCollMutex,                "Mutexes:           "
-  ShowCollectionData pCollProcess,              "Processes:         "
-  ShowCollectionData pCollThread,               "Threads:           "
-  ShowCollectionData pCollSemaphore,            "Semaphores:        "
-  ShowCollectionData pCollPrinter,              "Printers:          "
-  ShowCollectionData pCollRegKey,               "Registry Keys:     "
-  ShowCollectionData pCollUpdateResource,       "File Resources:    "
-  ShowCollectionData pCollMailslot,             "Mail Slots:        "
-  ShowCollectionData pCollFindFirst,            "Find First:        "
-  ShowCollectionData pCollEventLog,             "Event Logs:        "
-  ShowCollectionData pCollCriticalSection,      "Critical Sections: "
-  ShowCollectionData pCollOleInitialization,    "OLE active library:"
-  ShowCollectionData pCollCoInitialization,     "COM active library:"
+  ShowCollectionData pRTCC_VirtualMemBlock,      "Virtual Mem-Blocks:"
+  ShowCollectionData pRTCC_GlobalMemBlock,       "Global Mem-Blocks: "
+  ShowCollectionData pRTCC_LocalMemBlock,        "Local Mem-Blocks:  "
+  ShowCollectionData pRTCC_HeapMemBlock,         "Heap Mem-Blocks:   "
+  ShowCollectionData pRTCC_CoTaskMemBlock,       "CoTaskMem-Blocks:  "
+  ShowCollectionData pRTCC_SysString,            "System BStrings:   "
+  ShowCollectionData pRTCC_Pen,                  "GDI Pens:          "
+  ShowCollectionData pRTCC_Brush,                "GDI Brushes:       "
+  ShowCollectionData pRTCC_Bitmap,               "GDI Bitmaps:       "
+  ShowCollectionData pRTCC_Image,                "GDI Images:        "
+  ShowCollectionData pRTCC_Region,               "GDI Regions:       "
+  ShowCollectionData pRTCC_Font,                 "GDI Fonts:         "
+  ShowCollectionData pRTCC_Palette,              "GDI Palettes:      "
+  ShowCollectionData pRTCC_ColorSpace,           "GDI Color Spaces:  "
+  ShowCollectionData pRTCC_MetaFile,             "GDI MetaFiles:     "
+  ShowCollectionData pRTCC_EnhMetaFile,          "GDI EnhMetaFiles:  "
+  ShowCollectionData pRTCC_Cursor,               "Cursors:           "
+  ShowCollectionData pRTCC_Icon,                 "Icons:             "
+  ShowCollectionData pRTCC_Menu,                 "Menus:             "
+  ShowCollectionData pRTCC_Timer,                "Timers:            "
+  ShowCollectionData pRTCC_AccTable,             "Accelerator Tables:"
+  ShowCollectionData pRTCC_DeviceContext,        "Device Contexts:   "
+  ShowCollectionData pRTCC_DisplayDeviceContext, "Display DCs:       "
+  ShowCollectionData pRTCC_PaintStruct,          "Paint Structures:  "
+  ShowCollectionData pRTCC_Desktop,              "Desktops:          "
+  ShowCollectionData pRTCC_KeyboardLayout,       "Keyboard Layouts:  "
+  ShowCollectionData pRTCC_WindowStation,        "Window Stations:   "
+  ShowCollectionData pRTCC_Library,              "Libraries:         "
+  ShowCollectionData pRTCC_File,                 "Files:             "
+  ShowCollectionData pRTCC_FileMapping,          "File Mappings:     "
+  ShowCollectionData pRTCC_Event,                "Events:            "
+  ShowCollectionData pRTCC_Mutex,                "Mutexes:           "
+  ShowCollectionData pRTCC_Process,              "Processes:         "
+  ShowCollectionData pRTCC_Thread,               "Threads:           "
+  ShowCollectionData pRTCC_Semaphore,            "Semaphores:        "
+  ShowCollectionData pRTCC_Printer,              "Printers:          "
+  ShowCollectionData pRTCC_RegKey,               "Registry Keys:     "
+  ShowCollectionData pRTCC_UpdateResource,       "File Resources:    "
+  ShowCollectionData pRTCC_Mailslot,             "Mail Slots:        "
+  ShowCollectionData pRTCC_FindFirst,            "Find First:        "
+  ShowCollectionData pRTCC_EventLog,             "Event Logs:        "
+  ShowCollectionData pRTCC_CriticalSection,      "Critical Sections: "
+  ShowCollectionData pRTCC_OleInitialization,    "OLE active library:"
+  ShowCollectionData pRTCC_CoInitialization,     "COM active library:"
   ; -----------------------------------------------------------------------------------
 
-  mov xdi, pErrColl
+  lea xdi, FailColl
   .if ([xdi].$Obj(Collection).dCount > 0)
     invoke wsprintf, xbx, $OfsCStr("Hooked API fails:   %li"), [xdi].$Obj(Collection).dCount
-    invoke DbgOutText, xbx, DbgColorComment, DbgColorBackground, \
-                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, \
-                       offset cLeakReport
-    OCall xdi::Collection.ForEach, offset ShowCallers, NULL, NULL
+    invoke DbgOutText, xbx, DbgColorForeground, DbgColorBackground, \
+                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wLeakReport
+    OCall FailColl::Collection.ForEach, offset ShowCallers, NULL, NULL
   .endif
   .if (dHasLeaks == FALSE) && ([xdi].$Obj(Collection).dCount > 0)
     inc dHasLeaks
   .endif
 
-  DbgLine offset cLeakReport
+  DbgLine offset wLeakReport
   mov dResGuardEnabled, TRUE
 
   .if dHasLeaks
-    invoke MessageBox, 0, offset cDebugStart, offset cLeakReport, MB_YESNO or MB_ICONEXCLAMATION
+    invoke MessageBoxW, 0, offset wDebugStart, offset wLeakReport, MB_YESNO or MB_ICONEXCLAMATION
     .if eax == IDYES
       int 3
     .endif
@@ -1387,21 +1478,23 @@ ResGuardShow endp
 ; Arguments: None.
 ; Return:    Nothing.
 
-ResetCollData proc pResColl:POINTER, xDummy1:XWORD, xDummy2:XWORD
-  OCall pResColl::ResCollection.DisposeAll
+ResetCollData proc pResColl:$ObjPtr(RTC_Collection), xDummy1:XWORD, xDummy2:XWORD
+  OCall pResColl::RTC_Collection.DisposeAll
   mov xcx, pResColl
   xor eax, eax
-  mov [xcx].$Obj(ResCollection).dMaxCount, eax
-  mov [xcx].$Obj(ResCollection).dTotCount, eax
+  mov [xcx].$Obj(RTC_Collection).dMaxCount, eax
+  mov [xcx].$Obj(RTC_Collection).dTotCount, eax
   ret
 ResetCollData endp
 
 ResGuardStart proc
-  and dResGuardEnabled, FALSE
-  OCall pRcrcColl::Collection.ForEach, offset ResetCollData, NULL, NULL
-  invoke DbgOutText, $OfsCStr("ResGuard started"), \
-                     DbgColorComment, DbgColorBackground, \
-                     DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset cLeakReport
+  if TARGET_BITNESS eq 32
+    mov pAppBaseFrame, ebp
+  else
+    mov pAppBaseFrame, rsp
+  endif
+  m2z dResGuardEnabled
+  OCall RcrcColl::Collection.ForEach, offset ResetCollData, NULL, NULL
   mov dResGuardEnabled, TRUE
   ret
 ResGuardStart endp
@@ -1414,9 +1507,6 @@ ResGuardStart endp
 
 ResGuardStop proc
   m2z dResGuardEnabled
-  invoke DbgOutText, $OfsCStr("ResGuard stopped"), \
-                     DbgColorComment, DbgColorBackground, \
-                     DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset cLeakReport
   ret
 ResGuardStop endp
 

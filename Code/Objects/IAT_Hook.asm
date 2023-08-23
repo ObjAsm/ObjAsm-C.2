@@ -1,23 +1,21 @@
 ; =================================================================================================
-; Title:   IAT32Hook.asm
-; Author:  G. Friedrich
-; Version: 1.0.1
-; Purpose: ObjAsm32 compilation file for IAT32Hook object.
-; Notes:   Version 1.0.0, March 2005
+; Title:      IAT_Hook.asm
+; Author:     G. Friedrich
+; Version:    C.1.0
+; Purpose:    ObjAsm compilation file for IAT_Hook object.
+; Notes:      Version C.1.0, August 2023
 ;            - First release.
-;          Version 1.0.1, August 2008
-;            - SysSetup introduced.
 ; =================================================================================================
 
-%include @Environ(OA32_PATH)\\Code\\Macros\\Model.inc
-SysSetup OOP_OBJECT_LIB
+
+% include Objects.cop
 
 % include &IncPath&ImageHlp.inc
 
 ;Add here all files that build the inheritance path and referenced objects
-include Primer.inc
+LoadObjects Primer
 
 ;Add here the file that defines the object(s) to be included in the library
-MakeObjects IAT32Hook
+MakeObjects IAT_Hook
 
 end

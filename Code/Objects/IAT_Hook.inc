@@ -17,7 +17,7 @@ IAT_HookID  CatStr <IAT>, %TARGET_BITNESS, <HookID>
 
 Object IAT_Hook, %IAT_HookID, Primer
   RedefineMethod    Done
-  RedefineMethod    Init,           POINTER, POINTER, POINTER, POINTER, DWORD
+  RedefineMethod    Init,           POINTER, PSTRINGA, PSTRINGA, POINTER, DWORD
 
   DefineVariable    pEntry,         POINTER,      NULL
   DefineVariable    pImgThunkData,  POINTER,      NULL
@@ -61,31 +61,30 @@ MethodEnd
 ; Method:    IAT_Hook.Init
 ; Purpose:   Initializes the IAT_Hook object & redirects an imported procedure to a specified addr.
 ; Arguments: Arg1: -> Owner.
-;            Arg2: -> Module name.
-;            Arg3: -> Procedure name to hook.
+;            Arg2: -> ANSI module name.
+;            Arg3: -> ANSI procedure name to hook.
 ;            Arg4: -> New replacing procedure.
 ;            Arg5: Error report flag (TRUE / FALSE).
 ; Return:    Nothing.
 
-Method IAT_Hook.Init, uses xbx xdi xsi, pOwner:POINTER, pModuleName:POINTER, pProcName:POINTER, \
+Method IAT_Hook.Init, uses xbx xdi xsi, pOwner:POINTER, pModuleNameA:PSTRINGA, pProcNameA:PSTRINGA, \
                                         pNewProc:POINTER, dReportFailure:DWORD
   local MBI:MEMORY_BASIC_INFORMATION, dPrvProtect:DWORD
   local dSize:DWORD, pApiProc:POINTER, hModuleInstance:HANDLE
 
   SetObject xsi
   
-  invoke GetProcAddress, $invoke(GetModuleHandle, pModuleName), pProcName
+  invoke GetProcAddress, $invoke(GetModuleHandleA, pModuleNameA), pProcNameA
   .if xax
     mov pApiProc, xax
     mov hModuleInstance, $invoke(GetModuleHandle, NULL)
-    lea eax, dSize
-    invoke ImageDirectoryEntryToData, hModuleInstance, TRUE, IMAGE_DIRECTORY_ENTRY_IMPORT, xax
+    invoke ImageDirectoryEntryToData, hModuleInstance, TRUE, IMAGE_DIRECTORY_ENTRY_IMPORT, addr dSize
     mov xbx, xax
 
     .while [xbx].IMAGE_IMPORT_DESCRIPTOR.Name_
       mov eax, [xbx].IMAGE_IMPORT_DESCRIPTOR.Name_
-      add xax, hModuleInstance
-      invoke StrIComp, pModuleName, xax
+      add xax, hModuleInstance                              ;xax -> ANSI module name!
+      invoke StrICompA, pModuleNameA, xax
       .if eax == 0
         mov edi, [xbx].IMAGE_IMPORT_DESCRIPTOR.FirstThunk
         add xdi, hModuleInstance

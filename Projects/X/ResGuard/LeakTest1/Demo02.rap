@@ -61,13 +61,13 @@ Debug=0
 [MakeDef]
 Menu=1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0
 
-1=4,O,$B\RA_RC.cmd,1
-2=3,O,$B\RA_ASM.cmd,2
-3=5,O,$B\RA_LINK.cmd,3
+1=4,O,$B\..\..\Build\RA_RC.cmd,1
+2=3,O,$B\..\..\Build\RA_ASM.cmd,2
+3=5,O,$B\..\..\Build\RA_LINK.cmd,3
 4=0,0,,5
-7=0,O,$B\RA_DEBUG.cmd,5
-5=rsrc.obj,O,$B\CVTRES.EXE,rsrc.res
-6=*.obj,O,$B\Tools\UASM64.EXE /c /coff /Cp /nologo /I"$I",*.asm
+7=0,O,$B\..\..\Build\RA_DEBUG.cmd,5
+5=rsrc.obj,O,$B\..\..\Build\CVTRES.EXE,rsrc.res
+6=*.obj,O,$B\..\..\Build\Tools\UASM64.EXE /c /coff /Cp /nologo /I"$I",*.asm
 
 11=4,O,$B\RA_RC.cmd,1
 12=3,O,$B\RA_ASM.cmd,2
@@ -136,7 +136,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=20
+MilestoneOnDateDate=23
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -171,8 +171,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,1247
-1=0,0,0,0,1181
+2=0,0,0,0,1606
+1=0,0,0,0,624
 6=0,0,1456,414,59484
 4=0,0,0,0,266
 31=0,0,1213,691,1416
@@ -197,7 +197,7 @@ ProductVer4Range=0
 25=0,0,0,0,1955
 21=0,0,0,0,575
 22=0,0,0,0,14635
-26=
+26=0,0,1811,629,91097
 27=
 
 [BookMark]
@@ -217,16 +217,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="ResGuard"
-2="szAppClassName"
-3="szDemoApp02"
-4="APP_CLS_STYLE"
-5="CLSSTYLE"
-6="DemoApp02"
-7="MENU_APP"
-8="; Return:    "
-9=";            Arg2:"
-10="; Arguments: "
+1="Started"
+2="ResGuard"
+3="szAppClassName"
+4="szDemoApp02"
+5="APP_CLS_STYLE"
+6="CLSSTYLE"
+7="DemoApp02"
+8="MENU_APP"
+9="; Return:    "
+10=";            Arg2:"
 [Collapse]
 1=
 2=
@@ -321,7 +321,7 @@ ProductVer4Range=0
 33=
 29=
 28=
-26=
+26=,,
 24=
 22=
 21=
@@ -339,9 +339,9 @@ ProductVer4Range=0
 25=
 27=
 [AutoLoad]
-AutoLoad=1,2
+AutoLoad=1
 [PTimer]
-PTimer=928583528
+PTimer=947136888
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

@@ -9,7 +9,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN32, WIDE_STRING, DEBUG(WND, RESGUARD)  ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, RESGUARD)  ;Load OOP files and OS related objects
 
 % includelib &LibPath&Windows\shell32.lib
 % includelib &LibPath&Windows\shlwapi.lib
@@ -33,6 +33,7 @@ start proc                                              ;Program entry point
   OCall $ObjTmpl(Application)::Application.Run          ;Execute application
   OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
   ResGuard_Show                                         ;Shows ResGuard results
+  ResGuard_Stop
 
   SysDone                                               ;Runtime finalization of the OOP model
   invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS

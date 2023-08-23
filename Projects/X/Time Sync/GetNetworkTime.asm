@@ -199,15 +199,15 @@ start proc
   BitClr dDbgOpt, DBG_OPT_SHOWINFO
 
   GetTimeInfo "ntp01.vzug.com"
-;  GetTimeInfo "pool.ntp.org"
-;  GetTimeInfo "time.nist.gov"
-;  GetTimeInfo "time-c.nist.gov"
-;  GetTimeInfo "tick.usno.navy.mil"
-;  GetTimeInfo "ut1-wwv.nist.gov"
-;  GetTimeInfo "ntp0.cornell.edu"
-;  GetTimeInfo "time.google.com"
-;  GetTimeInfo "time.windows.com"
-;  GetTimeInfo "time.euro.apple.com"
+  GetTimeInfo "pool.ntp.org"
+  GetTimeInfo "time.nist.gov"
+  GetTimeInfo "time-c.nist.gov"
+  GetTimeInfo "tick.usno.navy.mil"
+  GetTimeInfo "ut1-wwv.nist.gov"
+  GetTimeInfo "ntp0.cornell.edu"
+  GetTimeInfo "time.google.com"
+  GetTimeInfo "time.windows.com"
+  GetTimeInfo "time.euro.apple.com"
   
   invoke MessageBox, 0, $OfsCStr("NTP-Server requests ready.", CRLF, "Check the GetNetworkTime.dbg file to see the results."), $OfsCStr("Information"), MB_OK or MB_ICONINFORMATION   
   SysDone
