@@ -6,38 +6,57 @@
 ; Notes:      http://www.microsoft.com/msj/0498/hood0498.aspx
 ;             Version C.1.0, August 2023
 ;               - First release.
+; Links:      https://www.ired.team/miscellaneous-reversing-forensics/windows-kernel-internals/windows-x64-calling-convention-stack-frame
+;             https://learn.microsoft.com/en-us/windows/win32/api/dbghelp/nf-dbghelp-stackwalk
+;             https://learn.microsoft.com/en-us/windows/win32/api/dbghelp/nf-dbghelp-stackwalk64
+;             https://stackoverflow.com/questions/5705650/stackwalk64-on-windows-get-symbol-name
 ; ==================================================================================================
 
 
+_IMAGEHLP_SOURCE_ equ 0
+SYM_NAME_LENGTH   equ 255
+CALLER_MAX_DEEP   equ 10
+
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, DLL64, WIDE_STRING, DEBUG(WND)
+SysSetup OOP, DLL64, WIDE_STRING, DEBUG(WND), SUFFIX
 
-% include &IncPath&Windows\ImageHlp.inc
+% includelib &LibPath&Windows\DbgHelp.lib
 
-% includelib &LibPath&Windows\ImageHlp.lib
+% include &IncPath&Windows\DbgHelp.inc
 
-
-CStrW wLeakReport, "Resource Leakage Report"
-CStrW wDebugStart, "Use the debugger to find the lines of", CR, LF, \
-                   "code that use the listed resources.", CR, LF, CR, LF,\
-                   "Do you want to start the debugger now?"
+CStrW wCaption,    "ResGuard"
+CStrW wDebugStart, "Use the debugger to find the lines of", CRLF, \
+                   "code that use the listed resources.", CRLF, CRLF,\
+                   "Do you want to start the debugger now?", CRLF
 
 HookCount = 0
 
-MakeObjects Primer, Stream, Collection, XWCollection, IAT_Hook
-
-.data
-  pAppBaseFrame     POINTER   NULL
-  dResGuardEnabled  DWORD     FALSE
-  HookColl          $ObjInst(Collection)                  ;Collection of IAT_Hook objects
-  RcrcColl          $ObjInst(Collection)                  ;Collection of RTC_Collection objects
-  FailColl          $ObjInst(Collection)                  ;Collection of failed API calls (GetCallStack)
+MakeObjects Primer, Stream, Collection, IAT_Hook
 
 if TARGET_BITNESS eq 32
-  % include &MacPath&Exception32.inc                      ;Exception macros
+  STACK textequ <STACKFRAME>
+
+  SYMBOL struct
+    IMAGEHLP_SYMBOL   {}
+    CHRA              SYM_NAME_LENGTH dup(?)
+  SYMBOL ends
+
+  SymGetSymFromAddrX textequ <SymGetSymFromAddr>
 else
-  % include &MacPath&Exception64.inc                      ;Exception macros
+  STACK textequ <STACKFRAME64>
+
+  SYMBOL struct
+    IMAGEHLP_SYMBOL64 {}
+    CHRA              SYM_NAME_LENGTH dup(?)
+  SYMBOL ends
+
+  SymGetSymFromAddrX textequ <SymGetSymFromAddr64>
 endif
+
+CALLER_INFO struct
+  xRetAddr    XWORD   ?
+  xInstrAddr  XWORD   ?
+CALLER_INFO ends
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Object:     CallData
@@ -45,43 +64,92 @@ endif
 ;             identification like a HANDLE, ID, etc.
 
 Object CallData,, Primer
-  RedefineMethod  Init,         POINTER, $ObjPtr(XWCollection), XWORD
+  VirtualMethod   Show,       XWORD, XWORD              ;Callback method
 
-  DefineVariable  pCallStack,   $ObjPtr(XWCollection),  NULL  ;GetCallStack returns an XWCollection
-  DefineVariable  xData,        XWORD,    0
+  DefineVariable  xData1,     XWORD,        0           ;Primary data
+  DefineVariable  xData2,     XWORD,        0           ;Auxiliary data
+  DefineVariable  cProcName,  CHRA,         SYM_NAME_LENGTH dup(0)
+  DefineVariable  dCount,     DWORD,        0           ;Number if filled CALLER_INFO structures
+  DefineVariable  CallStack,  CALLER_INFO,  CALLER_MAX_DEEP dup({0, 0})
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Object:     RTC_Collection (RTC: Resource Type Call, RTCC: RTC Collection)
-; Purpose:    Collection of CallData Objects aggregated by system resource type (e.g. Brush).
-; Example:    pRTC_CollBrush
+; Purpose:    Collection of CallData Objects aggregated by system resource type.
+; Example:    For a resource of type Brush, CallData for CreateSolidBrush, CreateDIBPatternBrush,
+;             CreateDIBPatternBrushPt, etc. are aggregated in pRTCC_Brush.
 
 Object RTC_Collection,, Collection
-  RedefineMethod  Insert,       $ObjPtr(CallData)
+  RedefineMethod  Insert,     $ObjPtr(CallData)
+  VirtualMethod   Remove,     XWORD, XWORD
 
-  DefineVariable  dMaxCount,    DWORD,    0               ;Maximal count to check the system load 
-  DefineVariable  dTotCount,    DWORD,    0               ;Cummulated number of calls
+  DefineVariable  dMaxCount,  DWORD,    0               ;Maximal count to check the system load
+  DefineVariable  dTotCount,  DWORD,    0               ;Cummulated number of calls
 ObjectEnd
 
-
+.data                                                   ;Non exported data
+  hProcess          HANDLE    0
+  xAppRefAddr       XWORD     0
+  dResGuardEnabled  DWORD     FALSE
+  HookColl          $ObjInst(Collection)                ;Collection of IAT_Hook objects
+  RcrcColl          $ObjInst(Collection)                ;Collection of RTC_Collection objects
+  FailColl          $ObjInst(RTC_Collection)            ;Collection of failed API calls; it acts
+                                                        ;  like a RTC_Collection
 .code
 ; ==================================================================================================
 ;    CallData implementation
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     CallData.Init
-; Purpose:    Initialize the CallData object. 
-; Arguments:  Arg1: -> Owner object (generic Collection).
-;             Arg2: -> XWCollection. 
-;             Arg3: Data identifying the call (HANDLE, ID, etc.).
+; Method:     CallData.Show
+; Purpose:    Callback procedure to display the gattered call data on the "LeakReport" DebugCenter
+;             child Window.
+; Arguments:  Arg1: Dummy argument.
+;             Arg2: Dummy argument.
 ; Return:     Nothing.
 
-Method CallData.Init, uses xsi, pOwner:POINTER, pCallStack:$ObjPtr(XWCollection), xData:XWORD
+Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
+  local Symbol:SYMBOL, xDisplacement:XWORD
+  local cBuffer[SYM_NAME_LENGTH]:CHRA
+
   SetObject xsi
-  ACall xsi.Init, pOwner
-  m2m [xsi].pCallStack, pCallStack, xax
-  m2m [xsi].xData, xData, xcx
+  invoke DbgOutTextW, $OfsCStrW(" ", 2022h, " "), DbgColorString, DbgColorBackground, \
+                     DBG_EFFECT_NORMAL, offset wCaption
+  invoke DbgOutTextA, addr [xsi].$Obj(CallData).cProcName, DbgColorString, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, offset wCaption
+  xor ebx, ebx
+  lea xdi, [xsi].CallStack                              ;xdi -> CallData.CallStack
+  .while ebx != [xsi].$Obj(CallData).dCount
+    invoke DbgOutTextW, $OfsCStrW(" ", 2190h, " "), DbgColorWarning, DbgColorBackground, \  ;Arrow
+                        DBG_EFFECT_NORMAL, offset wCaption
+    mov Symbol.MaxNameLength, SYM_NAME_LENGTH
+    mov Symbol.SizeOfStruct, sizeof SYMBOL
+    invoke SymGetSymFromAddrX, hProcess, [xdi].CALLER_INFO.xInstrAddr,
+                               addr xDisplacement, addr Symbol
+    .if eax != FALSE
+      invoke UnDecorateSymbolName, addr Symbol.Name_, addr cBuffer, SYM_NAME_LENGTH, UNDNAME_COMPLETE
+      .if eax != FALSE
+        invoke DbgOutTextA, addr cBuffer, DbgColorWarning, DbgColorBackground, \
+                            DBG_EFFECT_NORMAL, offset wCaption
+        FillStringA cBuffer, <(>
+        lea xcx, [cBuffer + 1]
+        invoke xword2hexA, xcx, [xdi].CALLER_INFO.xRetAddr
+        invoke StrCatA, addr cBuffer, $OfsCStrA("h)")
+        invoke DbgOutTextA, addr cBuffer, DbgColorComment, DbgColorBackground, \
+                            DBG_EFFECT_NORMAL, offset wCaption
+      .endif
+    .endif
+    add xdi, sizeof CALLER_INFO
+    inc ebx
+  .endw
+
+  .if ebx == 0
+    invoke DbgOutText, $OfsCStr("No data"), DbgColorError, DbgColorBackground, \
+                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+  .else
+    invoke DbgOutText, offset cCRLF, DbgColorForeground, DbgColorBackground, \
+                       DBG_EFFECT_NORMAL, offset wCaption
+  .endif
 MethodEnd
 
 
@@ -106,195 +174,177 @@ Method RTC_Collection.Insert, uses xsi, pCallData:$ObjPtr(CallData)
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  GetCallStack
-; Purpose:    Return the calling address chain in an XWCollection.
-; Arguments:  xbp -> Stack.
-; Return:     xax -> XWCollection.
-
-if TARGET_BITNESS eq 32
-CreateExceptionHandler GetCallSequence_ExceptionHandler, , EXCEPTION_ACCESS_VIOLATION
-
-GetCallStack proc uses ebx
-  local pCallStack:$ObjPtr(XWCollection)
-
-  .try GetCallSequence_ExceptionHandler
-    mov pCallStack, $New(XWCollection)
-    OCall eax::XWCollection.Init, NULL, 10, 10, COL_MAX_CAPACITY
-    mov eax, [ebp]                                        ;Remove last caller of the current proc
-    .while (eax != pAppBaseFrame && eax != NULL)          ;App start stack frame reached or frame lost
-      mov ebx, [eax]                                      ;Exceptions can occure here!
-      OCall pCallStack::XWCollection.Insert, POINTER ptr [eax + sizeof(DWORD)] ;Store return address
-      mov eax, ebx                                        ;Get previous xbp in xax
-    .endw
-  .catch GetCallSequence_ExceptionHandler
-    OCall pCallStack::XWCollection.Insert, NULL
-  .endcatch GetCallSequence_ExceptionHandler
-  mov eax, pCallStack                                     ;Return -> caller collection
-  ret
-GetCallStack endp
-
-else
-
-;https://www.ired.team/miscellaneous-reversing-forensics/windows-kernel-internals/windows-x64-calling-convention-stack-frame
-;https://learn.microsoft.com/en-us/windows/win32/api/dbghelp/nf-dbghelp-stackwalk
-;https://learn.microsoft.com/en-us/windows/win32/api/dbghelp/nf-dbghelp-stackwalk64
-;https://stackoverflow.com/questions/5705650/stackwalk64-on-windows-get-symbol-name
-
-GetCallStack proc uses rbx
-  local pCallStack:$ObjPtr(XWCollection)
-
-  .try
-    mov pCallStack, $New(XWCollection)
-    OCall rax::XWCollection.Init, NULL, 10, 10, COL_MAX_CAPACITY
-    mov rax, [rsp]                                        ;Remove last caller of the current proc
-;    .while (rax != pAppBaseFrame && rax != NULL)          ;App start xbp reached or frame lost
-      mov rbx, [rax]                                      ;Exceptions can occure here!
-      OCall pCallStack::XWCollection.Insert, POINTER ptr [rax] ;Store return address
-      mov rax, rbx                                        ;Get previous xbp in xax
-;    .endw
-  .catch
-    OCall pCallStack::XWCollection.Insert, NULL
-  .endcatch
-  .finally
-  mov rax, pCallStack                                     ;Return -> caller collection
-  ret
-GetCallStack endp
-
-endif
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  EntryCreate
-; Purpose:    Create an entry (CallData) for the RTC_Collection.
-; Arguments:  Arg1: -> RTC_Collection.
-;             Arg2: -> XWCollection (Call stack).
-;             Arg3: Additional argument to identify the call (HANDLE, ID, etc.).
-; Return:     Nothing.
-
-EntryCreate proc pRTC_Coll:$ObjPtr(RTC_Collection), pCallStack:$ObjPtr(XWCollection), xData:XWORD
-  OCall pRTC_Coll::Collection.Insert, $New(CallData)
-  OCall xax::CallData.Init, pRTC_Coll, pCallStack, xData
-  ret
-EntryCreate endp
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  EntryDelete
-; Purpose:    Delete an entry (CallData) from the RTC_Collection based on the call identifier.
-; Arguments:  Arg1: -> RTC_Collection.
-;             Arg2: Argument passed as Arg3 on CreateEntry.
+; Method:     RTC_Collection.Remove
+; Purpose:    Remove CallData identified by xData1 and xData2 from the collection.
+; Arguments:  Arg1: xData1
+;             Arg2: xData2
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-EntryCompare proc pCallData:$ObjPtr(CallData), xData:XWORD
-  mov xcx, pCallData
+xDataCompare proc pCallData:$ObjPtr(CallData), xData1:XWORD, xData2:XWORD
+  ?mov ecx, pCallData
+  ?mov edx, xData1
   xor eax, eax
-  mov xdx, xData
-  .if xdx == [xcx].$Obj(CallData).xData
-    inc eax
+  .if xdx == [xcx].$Obj(CallData).xData1
+    mov xdx, xData2
+    .if xdx == [xcx].$Obj(CallData).xData2
+      inc eax
+    .endif
   .endif
   ret
-EntryCompare endp
+xDataCompare endp
 
-EntryDelete proc pRTC_Coll:$ObjPtr(RTC_Collection), xData:XWORD
-  OCall pRTC_Coll::RTC_Collection.LastThat, offset EntryCompare, xData, NULL
+Method RTC_Collection.Remove, uses xsi, xData1:XWORD, xData2:XWORD
+  SetObject xsi
+  OCall xsi.LastThat, offset xDataCompare, xData1, xData2
   .if xax
-    OCall pRTC_Coll::RTC_Collection.Dispose, xax
+    OCall xsi.Dispose, xax
     xor eax, eax
     inc eax
   .endif
   ret
-EntryDelete endp
+MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  ShowCaller
-; Purpose:    Display on the a chain member of the call sequence on the "LeakReport" 
-;             DebugCenter child Window
-; Arguments:  Arg1: -> Caller address.
-;             Arg2: -> Last caller address.
-;             Arg3: Dummy.
-; Return:     eax = TRUE if the end was reached, otherwise FALSE.
-
-ShowCaller proc uses xbx pCaller:POINTER, pLastCaller:POINTER, xDummy:XWORD
-  local cBuffer[256]:CHR
-
-  lea xbx, cBuffer
-  .if pCaller == NULL
-    FillString [xbx], < EOS>
-  .else
-    invoke wsprintf, xbx, $OfsCStr(" %08Xh"), pCaller
-  .endif
-  mov xcx, pCaller
-  .if xcx != pLastCaller
-    invoke StrCat, xbx, $OfsCStr(" «")
-  .endif
-  invoke DbgOutText, xbx, DbgColorWarning, DbgColorBackground, \
-                     DBG_EFFECT_NORMAL, offset wLeakReport
-  xor eax, eax
-  .if pCaller == NULL
-    inc eax
-  .endif
-  ret
-ShowCaller endp
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  ShowCallers
-; Purpose:    Callback procedure to display on the a chain member of the call sequence on the  
-;             "LeakReport" DebugCenter child Window.
-; Arguments:  Arg1: -> Caller Collection.
-;             Arg2: Dummy argument.
-;             Arg3: Dummy argument.
+; Macro:      InvokeOriginalAPI
+; Purpose:    Invoke the original API (before hooking), regarless of the target bittness.
+; Arguments:  None.
 ; Return:     Nothing.
 
-ShowCallers proc uses xsi pCallStack:$ObjPtr(XWCollection), xDummy1:XWORD, xDummy2:XWORD
-  mov xsi, pCallStack
-  .if [xsi].$Obj(XWCollection).dCount > 0
-    invoke DbgOutText, $OfsCStr(" •"), DbgColorWarning, DbgColorBackground, \
-                       DBG_EFFECT_NORMAL, offset wLeakReport
-    mov eax, [xsi].$Obj(XWCollection).dCount
-    dec eax
-    OCall xsi::XWCollection.ItemAt, eax
-    OCall xsi::XWCollection.FirstThat, offset ShowCaller, xax, NULL
-    invoke DbgOutText, offset cCRLF, DbgColorForeground, DbgColorBackground, \
-                       DBG_EFFECT_NORMAL, offset wLeakReport
-  .endif
-  ret
-ShowCallers endp
+InvokeOriginalAPI macro ApiName, ArgCount
+  ;At this point, all args are stored on the stack. In 64 bit mode, this was done by the compiler
+  if TARGET_BITNESS eq 32
+    Cnt = ArgCount
+    repeat ArgCount                                     ;;Push all arguments creating a new call stack
+      @CatStr(<push Arg>, %Cnt)
+      Cnt = Cnt - 1
+    endm
+  else
+    if ArgCount gt 4
+      Cnt = ArgCount
+      repeat ArgCount - 4                               ;;Push higher arguments creating a new call stack
+        m2m XWORD ptr [rsp + (Cnt - 1)*sizeof(XWORD)], @CatStr(<Arg>, %Cnt), xax
+        Cnt = Cnt - 1
+      endm
+    endif
+  ;;rcx, rdx, r8 & r9 were not changed; Stack reservation (20h) remains unchanged
+  endif
+  mov xax, pHook&ApiName&
+  call [xax].$Obj(IAT_Hook).pEntry                      ;;Call original API
+endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  EntryShowCallers
-; Purpose:    Callback procedure to display on the a chain member of the call sequence on the  
-;             "LeakReport" DebugCenter child Window.
-; Arguments:  Arg1: -> CallData objct.
-;             Arg2: Dummy argument.
-;             Arg3: Dummy argument.
+; Macro:      WalkTheStack
+; Purpose:    StackWalk(64) bitness neutral substitute.
+; Arguments:  None.
 ; Return:     Nothing.
 
-EntryShowCallers proc pCallData:$ObjPtr(CallData), xDummy1:XWORD, xDummy2:XWORD
-  mov xcx, pCallData
-  invoke ShowCallers, [xcx].$Obj(CallData).pCallStack, xDummy1, xDummy2
-  ret
-EntryShowCallers endp
+WalkTheStack macro
+  if TARGET_BITNESS eq 32
+    m2m Stack.AddrPC.Offset_,     Context.Eip_, rax
+    m2m Stack.AddrFrame.Offset_,  Context.Ebp_, rcx
+    m2m Stack.AddrStack.Offset_,  Context.Esp_, rdx
+    invoke StackWalk,   IMAGE_FILE_MACHINE_I386, hProcess, hThread, \
+                        addr Stack, addr Context, \
+                        NULL, SymFunctionTableAccess, SymGetModuleBase, NULL
+  else
+    m2m Stack.AddrPC.Offset_,     Context.Rip_, rax
+    m2m Stack.AddrFrame.Offset_,  Context.Rbp_, rcx
+    m2m Stack.AddrStack.Offset_,  Context.Rsp_, rdx
+    invoke StackWalk64, IMAGE_FILE_MACHINE_AMD64, hProcess, hThread, \
+                        addr Stack, addr Context, \
+                        NULL, SymFunctionTableAccess64, SymGetModuleBase64, NULL
+  endif
+endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      CreateStdHook
-; Purpose:    Create a standard hook.
-; Arguments:  Arg1: Hook name.
+; Macro:      AnalyseStack
+; Purpose:    Analize the stack starting from the current context.
+; Arguments:  None.
+; Return:     xbx -> CallData object.
+; Note:       uses xbx xdi
+
+AnalyseStack macro
+  mov xbx, $New(CallData)
+  OCall xbx::CallData.Init, NULL
+
+  mov hThread, $invoke(GetCurrentThread())
+
+  invoke MemZero, addr Stack, sizeof STACK
+
+  invoke RtlCaptureContext, addr Context
+  mov Stack.AddrPC.Mode,     AddrModeFlat
+  mov Stack.AddrFrame.Mode,  AddrModeFlat
+  mov Stack.AddrStack.Mode,  AddrModeFlat
+  mov Stack.AddrReturn.Mode, AddrModeFlat
+
+  lea xdi, [xbx].$Obj(CallData).CallStack               ;;xdi -> CallData.CallStack
+
+  if TARGET_BITNESS eq 32
+    mov edx, [ebp + sizeof DWORD]                       ;;Get Ret addr from stack
+    mov [edi].CALLER_INFO.xRetAddr, edx
+    m2m [edi].CALLER_INFO.xInstrAddr, Context.Eip_, ecx
+    add edi, sizeof CALLER_INFO
+    inc [ebx].$Obj(CallData).dCount
+    WalkTheStack                                        ;;Get first frame of the detour proc
+    .if eax != 0
+      .repeat
+        mov edx, Stack.AddrReturn.Offset_
+        mov [edi].CALLER_INFO.xRetAddr, edx
+        WalkTheStack
+        .break .if eax == 0
+        mov edx, Stack.AddrPC.Offset_
+        mov [edi].CALLER_INFO.xInstrAddr, edx
+        inc [ebx].$Obj(CallData).dCount
+        add edi, sizeof CALLER_INFO
+        mov eax, Stack.AddrFrame.Offset_                ;;Use the stack pointer
+      .until eax == xAppRefAddr || [ebx].$Obj(CallData).dCount == CALLER_MAX_DEEP
+    .endif
+  else
+    WalkTheStack                                        ;;Get first frame of the detour proc
+    .if eax != 0
+      .repeat
+        mov rdx, Stack.AddrReturn.Offset_
+        mov [rdi].CALLER_INFO.xRetAddr, rdx
+        WalkTheStack
+        .break .if eax == 0
+        mov rdx, Stack.AddrPC.Offset_
+        mov [rdi].CALLER_INFO.xInstrAddr, rdx
+        inc [rbx].$Obj(CallData).dCount
+        add rdi, sizeof CALLER_INFO
+        mov rax, Stack.AddrStack.Offset_                ;;Use the stack pointer
+      .until rax == xAppRefAddr || [rbx].$Obj(CallData).dCount == CALLER_MAX_DEEP
+    .endif
+  endif
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DetourStdCreate
+; Purpose:    Create a standard detour procedure to intercept allocation APIs.
+; Arguments:  Arg1: API name.
 ;             Arg2: API argument count.
 ;             Arg3: ID = x:
 ;                     x > 0 : Argument x
-;                     x = 0 : [xsp]
+;                     x = 0 : API result (return value)
 ;                     x < 0 : [Argument -x]
 ;             Arg4: API success condition.
 ;             Arg5: RTCD_Coll pointer.
+;             Arg6: (optional) Remove argument index. This is meant for APIs like HeapRealloc,
+;                   where the previous HANDLE/POINTER must be removed first.
+;             Arg7: (optional) Condition to bypass registering the successful API call. This is
+;                   meant for APIs like LoadCursorA/W with Arg1 = 0, where the resource must not
+;                   be released.
 ; Return:     Nothing.
 
-CreateStdHook macro HookName:req, ArgCount:req, IDArg:req, SuccessCond:req, pRTC_Coll:req
+DetourStdCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req,
+                      pRTC_Coll:req, RemoveArgIndex, PassCond
   local ArgStr, Cnt
 
-  HookCount = HookCount + 1                               ;;Keep track of the hook count
-  externdef pRTC_Coll:$ObjPtr(RTC_Collection)             ;;The RTC_Collection will be definend later
+  HookCount = HookCount + 1                             ;;Keep track of the hook count
+  externdef pRTC_Coll:$ObjPtr(RTC_Collection)           ;;The RTC_Collection will be definend later
   .data
-  pHook&HookName&   $ObjPtr(IAT_Hook)   NULL
+  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
 
-  ArgStr textequ <>                                       ;;Prepare argument list
+  ArgStr textequ <>                                     ;;Prepare argument list
   Cnt = 0
   repeat ArgCount
     Cnt = Cnt + 1
@@ -302,46 +352,76 @@ CreateStdHook macro HookName:req, ArgCount:req, IDArg:req, SuccessCond:req, pRTC
   endm
 
   .code
-  My&HookName& proc ArgStr                                ;;Procedure declaration
-    repeat ArgCount                                       ;;Push arguments
-      @CatStr(<push Arg>, %Cnt)
-      Cnt = Cnt - 1
-    endm
-    mov xax, pHook&HookName&
-    call [xax].$Obj(IAT_Hook).pEntry                      ;;Call original API
-    .if dResGuardEnabled == TRUE
-      push xax                                            ;;Store API return value
-      m2z dResGuardEnabled
-      .if xax SuccessCond
-        invoke GetCallStack                               ;;Returns an XWCollection in xax
-        if IDArg gt 0
-          invoke EntryCreate, pRTC_Coll, xax, Arg&IDArg&
-        elseif IDArg eq 0
-          invoke EntryCreate, pRTC_Coll, xax, [xsp]
+  Dtr&ApiName& proc uses xbx xdi ArgStr                 ;;Procedure declaration
+    local xApiResult:XWORD, hThread:HANDLE
+    local Context:CONTEXT, Stack:STACK
+
+    InvokeOriginalAPI ApiName, ArgCount
+
+    .if dResGuardEnabled != FALSE
+      mov xApiResult, xax
+      m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
+
+      AnalyseStack
+      FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+      if CallIdentifier gt 0
+        mov xcx, Arg&CallIdentifier&
+      elseif CallIdentifier eq 0
+        mov xcx, xApiResult
+      else
+        mov xax, @CatStr(<Arg>, %(-CallIdentifier))
+        .if xax != NULL
+          mov xcx, [xax]
+        .else
+          xor ecx, ecx
+        .endif
+      endif
+      mov [xbx].$Obj(CallData).xData1, xcx
+
+      .if xApiResult SuccessCond
+        ifb <PassCond>
+          ifnb <RemoveArgIndex>
+            @CatStr(<OCall >, pRTC_Coll, <::RTC_Collection.Remove, Arg>, RemoveArgIndex, <, 0>)
+          endif
+          OCall pRTC_Coll::Collection.Insert, xbx
+          mov xax, pRTC_Coll
+          mov [xbx].$Obj(CallData).pOwner, xax
         else
-          Cnt = 0 - IDArg
-          mov xdx, xax
-          mov xax, @CatStr(<Arg>, %Cnt)
-          invoke EntryCreate, pRTC_Coll, xdx, [xax]
+          Destroy xbx
         endif
       .else
-        OCall FailColl::Collection.Insert, $invoke(GetCallStack)  ;Insert a XWCollection
+        lea xax, FailColl
+        mov [xbx].$Obj(CallData).pOwner, xax
+        OCall xax::Collection.Insert, xbx
       .endif
+
       mov dResGuardEnabled, TRUE
-      pop xax                                             ;;Restore API return value
+      mov xax, xApiResult                               ;;Restore API return value
     .endif
     ret
-  My&HookName& endp
+  Dtr&ApiName& endp
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DetourStdDestroy
+; Purpose:    Create a standard detour procedure to intercept deallocation APIs.
+; Arguments:  Arg1: API name.
+;             Arg2: API argument count.
+;             Arg3: ID = x:
+;                     x > 0 : Argument x
+;                     x = 0 : [xsp]
+;                     x < 0 : [Argument -x]
+;             Arg4: API success condition.
+;             Arg5: RTCD_Coll pointer list (One deallocation API for several allocation APIs).
+; Return:     Nothing.
 
-DestroyStdHook macro HookName:req, ArgCount:req, IDArg:req, SuccessCond:=<>, pRTC_Coll_List:vararg
-  local ArgStr, Cnt, Coll, @@
+DetourStdDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req,
+                       pRTC_Coll_List:vararg
+  local ArgStr, Cnt, Coll, @@Exit
 
-  HookCount = HookCount + 1                               ;;Keep track of the hook count
+  HookCount = HookCount + 1                             ;;Keep track of the hook count
   .data
-  pHook&HookName&   $ObjPtr(IAT_Hook)   NULL
+  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
 
   ArgStr textequ <>
   Cnt = 0
@@ -351,412 +431,280 @@ DestroyStdHook macro HookName:req, ArgCount:req, IDArg:req, SuccessCond:=<>, pRT
   endm
 
   .code
-  My&HookName& proc ArgStr                                ;;Procedure declaration
-    repeat ArgCount
-      @CatStr(<push Arg>, %Cnt)
-      Cnt = Cnt - 1
-    endm
-    mov xax, pHook&HookName&
-    call [xax].$Obj(IAT_Hook).pEntry                      ;;Call API
+  Dtr&ApiName& proc uses xbx xdi ArgStr                 ;;Procedure declaration
+    local xApiResult:XWORD, hThread:HANDLE
+    local Context:CONTEXT, Stack:STACK
 
-    .if dResGuardEnabled == TRUE
-      push xax                                            ;;Store API return value
-      m2z dResGuardEnabled
+    InvokeOriginalAPI ApiName, ArgCount
+
+    .if dResGuardEnabled != FALSE
+      mov xApiResult, xax
+      m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
+
       ifnb <SuccessCond>
-        ;Check success condition
         .if xax SuccessCond
-          for pColl, <pRTC_Coll_List>                     ;;Search in all specified RTC_Collection objects
-            @CatStr(<invoke EntryDelete, >, pColl, <, Arg>, IDArg)
+          for pColl, <pRTC_Coll_List>                   ;;Search in all specified RTC_Collection objects
+            @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, Arg>, CallIdentifier, <, 0>)
             test eax, eax
-            jnz @@                                        ;;Exit if found
+            jnz @@Exit                                  ;;Exit if found
           endm
-        .else
-          OCall FailColl::Collection.Insert, $invoke(GetCallStack)
+          invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed to remove call data"),
+                             DbgColorError, DbgColorBackground, \
+                             DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+          jmp @@Exit
         .endif
+        AnalyseStack
+        FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+        if CallIdentifier gt 0
+          mov xcx, Arg&CallIdentifier&
+        elseif CallIdentifier eq 0
+          mov xcx, xApiResult
+        else
+          mov xax, @CatStr(<Arg>, %(-CallIdentifier))
+          .if xax != NULL
+            mov xcx, [xax]
+          .else
+            xor ecx, ecx
+          .endif
+        endif
+        mov [xbx].$Obj(CallData).xData1, xcx
+
+        lea xax, FailColl
+        mov [xbx].$Obj(CallData).pOwner, xax
+        OCall xax::RTC_Collection.Insert, xbx
       else
-        ;Always succeed
-        for pColl, <pRTC_Coll_List>                       ;;Search in all specified RTC_Collection objects
-          @CatStr(<invoke EntryDelete, >, pColl, <, Arg>, IDArg)
+        for pColl, <pRTC_Coll_List>                     ;;Search in all specified RTC_Collection objects
+          @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, Arg>, CallIdentifier, <, 0>)
           test eax, eax
-          jnz @@                                          ;;Exit if found
+          jnz @@Exit                                    ;;Exit if found
         endm
+        invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed to remove call data"),
+                           DbgColorError, DbgColorBackground, \
+                           DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
       endif
-@@:
+@@Exit:
       mov dResGuardEnabled, TRUE
-      pop xax                                             ;;Restore API return value
+      mov xax, xApiResult                               ;;Restore API return value
     .endif
     ret
-  My&HookName& endp
+  Dtr&ApiName& endp
 endm
 
 ; ==================================================================================================
 
-CreateStdHook HeapAlloc, 3, 0, <!!= NULL>, pRTCC_HeapMemBlock
-DestroyStdHook HeapFree, 3, 3, <!!= FALSE>, pRTCC_HeapMemBlock
-
-HookCount = HookCount + 1
-.data
-pHookHeapReAlloc  $ObjPtr(IAT_Hook)   NULL
-
-.code
-MyHeapReAlloc proc hHeap:HANDLE, dFlags:DWORD, pMem:POINTER, dBytes:DWORD
-  push XWORD ptr dBytes                                   ;Prepare stack frame
-  push pMem
-  push XWORD ptr dFlags
-  push hHeap
-  mov xax, pHookHeapReAlloc
-  call [xax].$Obj(IAT_Hook).pEntry
-  .if dResGuardEnabled == TRUE
-    .if eax != FALSE
-      m2z dResGuardEnabled
-      push xax
-      invoke EntryDelete, pRTCC_HeapMemBlock, pMem        ;First delete that Entry
-      invoke EntryCreate, pRTCC_HeapMemBlock, $invoke(GetCallStack), [xsp]
-    .else
-      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
-    .endif
-    pop xax
-    mov dResGuardEnabled, TRUE
-  .endif
-  ret
-MyHeapReAlloc endp
+DetourStdCreate HeapAlloc, 3, 0, <!!= NULL>, pRTCC_HeapMemBlock
+DetourStdCreate HeapReAlloc, 4, 0, <!!= NULL>, pRTCC_HeapMemBlock, 3
+DetourStdDestroy HeapFree, 3, 3, <!!= FALSE>, pRTCC_HeapMemBlock
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook GlobalAlloc, 2, 0, <!!= NULL>, pRTCC_GlobalMemBlock
-DestroyStdHook GlobalFree, 1, 1, <== NULL>, pRTCC_GlobalMemBlock
-
-HookCount = HookCount + 1
-.data
-pHookGlobalReAlloc  $ObjPtr(IAT_Hook)   NULL
-
-.code
-MyGlobalReAlloc proc hMem:POINTER, dBytes:DWORD, dFlags:DWORD
-  push XWORD ptr dFlags
-  push XWORD ptr dBytes                                   ;Prepare stack frame
-  push hMem
-  mov xax, pHookGlobalReAlloc
-  call [xax].$Obj(IAT_Hook).pEntry
-  .if dResGuardEnabled == TRUE
-    push xax
-    m2z dResGuardEnabled
-    .if eax != FALSE
-      invoke EntryDelete, pRTCC_GlobalMemBlock, hMem      ;First delete that Entry
-      invoke EntryCreate, pRTCC_GlobalMemBlock, $invoke(GetCallStack), [xsp]
-    .else
-      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
-    .endif
-    mov dResGuardEnabled, TRUE
-    pop xax
-  .endif
-  ret
-MyGlobalReAlloc endp
+DetourStdCreate GlobalAlloc, 2, 0, <!!= NULL>, pRTCC_GlobalMemBlock
+DetourStdCreate GlobalReAlloc, 3, 0, <!!= NULL>, pRTCC_GlobalMemBlock, 1
+DetourStdDestroy GlobalFree, 1, 1, <== NULL>, pRTCC_GlobalMemBlock
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook LocalAlloc, 2, 0, <!!= NULL>, pRTCC_LocalMemBlock
-DestroyStdHook LocalFree, 1, 1, <== NULL>, pRTCC_LocalMemBlock
-
-HookCount = HookCount + 1
-.data
-pHookLocalReAlloc  $ObjPtr(IAT_Hook)  NULL
-
-.code
-MyLocalReAlloc proc hMem:POINTER, dBytes:DWORD, dFlags:DWORD
-  push XWORD ptr dFlags
-  push XWORD ptr dBytes                                   ;Prepare stack frame
-  push hMem
-  mov xax, pHookLocalReAlloc
-  call [xax].$Obj(IAT_Hook).pEntry
-  .if dResGuardEnabled == TRUE
-    push xax
-    m2z dResGuardEnabled
-    .if eax != FALSE
-      invoke EntryDelete, pRTCC_LocalMemBlock, hMem       ;First delete that Entry
-      invoke EntryCreate, pRTCC_LocalMemBlock, $invoke(GetCallStack), [xsp]
-    .else
-      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
-    .endif
-    mov dResGuardEnabled, TRUE
-    pop xax
-  .endif
-  ret
-MyLocalReAlloc endp
+DetourStdCreate LocalAlloc, 2, 0, <!!= NULL>, pRTCC_LocalMemBlock
+DetourStdCreate LocalReAlloc, 3, 0, <!!= NULL>, pRTCC_LocalMemBlock, 1
+DetourStdDestroy LocalFree, 1, 1, <== NULL>, pRTCC_LocalMemBlock
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook CoTaskMemAlloc, 1, 0, <!!= NULL>, pRTCC_CoTaskMemBlock
-DestroyStdHook CoTaskMemFree, 1, 1, <>, pRTCC_CoTaskMemBlock
-
-HookCount = HookCount + 1
-.data
-pHookCoTaskMemRealloc  $ObjPtr(IAT_Hook)  NULL
-
-.code
-MyCoTaskMemRealloc proc pMem:POINTER, dBytes:DWORD
-  push XWORD ptr dBytes                                   ;Prepare stack frame
-  push XWORD ptr pMem
-  mov xax, pHookCoTaskMemRealloc
-  call [xax].$Obj(IAT_Hook).pEntry
-  .if dResGuardEnabled == TRUE
-    push xax
-    m2z dResGuardEnabled
-    .if eax != NULL
-      invoke EntryDelete, pRTCC_CoTaskMemBlock, pMem      ;First delete that Entry
-      invoke EntryCreate, pRTCC_CoTaskMemBlock, $invoke(GetCallStack), [xsp]
-    .else
-      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
-    .endif
-    mov dResGuardEnabled, TRUE
-    pop xax
-  .endif
-  ret
-MyCoTaskMemRealloc endp
+DetourStdCreate CoTaskMemAlloc, 1, 0, <!!= NULL>, pRTCC_CoTaskMemBlock
+DetourStdCreate CoTaskMemRealloc, 1, 0, <!!= NULL>, pRTCC_CoTaskMemBlock, 1
+DetourStdDestroy CoTaskMemFree, 1, 1, <>, pRTCC_CoTaskMemBlock
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook VirtualAlloc, 4, 0, <!!= NULL>, pRTCC_VirtualMemBlock
-DestroyStdHook VirtualFree, 3, 1, <!!= FALSE>, pRTCC_VirtualMemBlock
+DetourStdCreate VirtualAlloc, 4, 0, <!!= NULL>, pRTCC_VirtualMemBlock
+DetourStdDestroy VirtualFree, 3, 1, <!!= FALSE>, pRTCC_VirtualMemBlock
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook SysAllocString, 1, 0, <!!= NULL>, pRTCC_SysString
-CreateStdHook SysAllocStringLen, 2, 0, <!!= NULL>, pRTCC_SysString
-CreateStdHook SysAllocStringByteLen, 2, 0, <!!= NULL>, pRTCC_SysString
-CreateStdHook SysReAllocString, 2, 0, <!!= FALSE>, pRTCC_SysString
-CreateStdHook SysReAllocStringLen, 3, 0, <!!= FALSE>, pRTCC_SysString
-DestroyStdHook SysFreeString, 1, 1, <!!= FALSE>, pRTCC_SysString
+DetourStdCreate SysAllocString, 1, 0, <!!= NULL>, pRTCC_SysString
+DetourStdCreate SysAllocStringLen, 2, 0, <!!= NULL>, pRTCC_SysString
+DetourStdCreate SysAllocStringByteLen, 2, 0, <!!= NULL>, pRTCC_SysString
+DetourStdCreate SysReAllocString, 2, 0, <!!= FALSE>, pRTCC_SysString
+DetourStdCreate SysReAllocStringLen, 3, 0, <!!= FALSE>, pRTCC_SysString
+DetourStdDestroy SysFreeString, 1, 1, <!!= FALSE>, pRTCC_SysString
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook BeginPaint, 2, 2, <!!= NULL>, pRTCC_PaintStruct
-DestroyStdHook EndPaint, 2, 2, <!!= FALSE>, pRTCC_PaintStruct
+DetourStdCreate BeginPaint, 2, 2, <!!= NULL>, pRTCC_PaintStruct
+DetourStdDestroy EndPaint, 2, 2, <!!= FALSE>, pRTCC_PaintStruct
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook CreatePen, 3, 0, <!!= NULL>, pRTCC_Pen
-CreateStdHook CreatePenIndirect, 1, 0, <!!= NULL>, pRTCC_Pen
+DetourStdCreate CreatePen, 3, 0, <!!= NULL>, pRTCC_Pen
+DetourStdCreate CreatePenIndirect, 1, 0, <!!= NULL>, pRTCC_Pen
 
 ; ------------------------------------------------------------------------------
 
-CreateStdHook CreateSolidBrush, 1, 0, <!!= NULL>, pRTCC_Brush
-CreateStdHook CreateDIBPatternBrush, 2, 0, <!!= NULL>, pRTCC_Brush
-CreateStdHook CreateDIBPatternBrushPt, 2, 0, <!!= NULL>, pRTCC_Brush
-CreateStdHook CreateHatchBrush, 2, 0, <!!= NULL>, pRTCC_Brush
-CreateStdHook CreatePatternBrush, 1, 0, <!!= NULL>, pRTCC_Brush
-CreateStdHook CreateBrushIndirect, 1, 0, <!!= NULL>, pRTCC_Brush
+DetourStdCreate CreateSolidBrush, 1, 0, <!!= NULL>, pRTCC_Brush
+DetourStdCreate CreateDIBPatternBrush, 2, 0, <!!= NULL>, pRTCC_Brush
+DetourStdCreate CreateDIBPatternBrushPt, 2, 0, <!!= NULL>, pRTCC_Brush
+DetourStdCreate CreateHatchBrush, 2, 0, <!!= NULL>, pRTCC_Brush
+DetourStdCreate CreatePatternBrush, 1, 0, <!!= NULL>, pRTCC_Brush
+DetourStdCreate CreateBrushIndirect, 1, 0, <!!= NULL>, pRTCC_Brush
 
 ; ------------------------------------------------------------------------------
 
-CreateStdHook CreateBitmap, 5, 0, <!!= NULL>, pRTCC_Bitmap
-CreateStdHook CreateBitmapIndirect, 1, 0, <!!= NULL>, pRTCC_Bitmap
-CreateStdHook CreateCompatibleBitmap, 3, 0, <!!= NULL>, pRTCC_Bitmap
-CreateStdHook CreateDIBitmap, 6, 0, <!!= NULL>, pRTCC_Bitmap
-CreateStdHook CreateDIBSection, 6, 0, <!!= NULL>, pRTCC_Bitmap
-CreateStdHook CreateDiscardableBitmap, 3, 0, <!!= NULL>, pRTCC_Bitmap
-CreateStdHook LoadBitmapA, 2, 0, <!!= NULL>, pRTCC_Bitmap
-CreateStdHook LoadBitmapW, 2, 0, <!!= NULL>, pRTCC_Bitmap
+DetourStdCreate CreateBitmap, 5, 0, <!!= NULL>, pRTCC_Bitmap
+DetourStdCreate CreateBitmapIndirect, 1, 0, <!!= NULL>, pRTCC_Bitmap
+DetourStdCreate CreateCompatibleBitmap, 3, 0, <!!= NULL>, pRTCC_Bitmap
+DetourStdCreate CreateDIBitmap, 6, 0, <!!= NULL>, pRTCC_Bitmap
+DetourStdCreate CreateDIBSection, 6, 0, <!!= NULL>, pRTCC_Bitmap
+DetourStdCreate CreateDiscardableBitmap, 3, 0, <!!= NULL>, pRTCC_Bitmap
+DetourStdCreate LoadBitmapA, 2, 0, <!!= NULL>, pRTCC_Bitmap
+DetourStdCreate LoadBitmapW, 2, 0, <!!= NULL>, pRTCC_Bitmap
 
 ; ------------------------------------------------------------------------------
 
-CreateStdHook CreateEllipticRgn, 4, 0, <!!= NULL>, pRTCC_Region
-CreateStdHook CreateEllipticRgnIndirect, 1, 0, <!!= NULL>, pRTCC_Region
-CreateStdHook CreatePenDataRegion, 2, 0, <!!= NULL>, pRTCC_Region
-CreateStdHook CreatePolygonRgn, 3, 0, <!!= NULL>, pRTCC_Region
-CreateStdHook CreatePolyPolygonRgn, 4, 0, <!!= NULL>, pRTCC_Region
-CreateStdHook CreateRectRgn, 4, 0, <!!= NULL>, pRTCC_Region
-CreateStdHook CreateRectRgnIndirect, 1, 0, <!!= NULL>, pRTCC_Region
-CreateStdHook CreateRoundRectRgn, 6, 0, <!!= NULL>, pRTCC_Region
-DestroyStdHook SetWindowRgn, 3, 2, <!!= FALSE>, pRTCC_Region      ;This region is destroyed by the window!
+DetourStdCreate CreateEllipticRgn, 4, 0, <!!= NULL>, pRTCC_Region
+DetourStdCreate CreateEllipticRgnIndirect, 1, 0, <!!= NULL>, pRTCC_Region
+DetourStdCreate CreatePenDataRegion, 2, 0, <!!= NULL>, pRTCC_Region
+DetourStdCreate CreatePolygonRgn, 3, 0, <!!= NULL>, pRTCC_Region
+DetourStdCreate CreatePolyPolygonRgn, 4, 0, <!!= NULL>, pRTCC_Region
+DetourStdCreate CreateRectRgn, 4, 0, <!!= NULL>, pRTCC_Region
+DetourStdCreate CreateRectRgnIndirect, 1, 0, <!!= NULL>, pRTCC_Region
+DetourStdCreate CreateRoundRectRgn, 6, 0, <!!= NULL>, pRTCC_Region
+DetourStdDestroy SetWindowRgn, 3, 2, <!!= FALSE>, pRTCC_Region  ;This region is destroyed by the window!
 
 ; ------------------------------------------------------------------------------
 
-CreateStdHook CopyImage, 5, 0, <!!= NULL>, pRTCC_Image
-CreateStdHook LoadImageA, 6, 0, <!!= NULL>, pRTCC_Image
-CreateStdHook LoadImageW, 6, 0, <!!= NULL>, pRTCC_Image
+DetourStdCreate CopyImage, 5, 0, <!!= NULL>, pRTCC_Image
+DetourStdCreate LoadImageA, 6, 0, <!!= NULL>, pRTCC_Image
+DetourStdCreate LoadImageW, 6, 0, <!!= NULL>, pRTCC_Image
 
 ; ------------------------------------------------------------------------------
 
-CreateStdHook CreateFontA, 14, 0, <!!= NULL>, pRTCC_Font
-CreateStdHook CreateFontW, 14, 0, <!!= NULL>, pRTCC_Font
-CreateStdHook CreateFontIndirectA, 1, 0, <!!= NULL>, pRTCC_Font
-CreateStdHook CreateFontIndirectW, 1, 0, <!!= NULL>, pRTCC_Font
+DetourStdCreate CreateFontA, 14, 0, <!!= NULL>, pRTCC_Font
+DetourStdCreate CreateFontW, 14, 0, <!!= NULL>, pRTCC_Font
+DetourStdCreate CreateFontIndirectA, 1, 0, <!!= NULL>, pRTCC_Font
+DetourStdCreate CreateFontIndirectW, 1, 0, <!!= NULL>, pRTCC_Font
 
 ; ------------------------------------------------------------------------------
 
-CreateStdHook CreatePalette, 1, 0, <!!= NULL>, pRTCC_Palette
-CreateStdHook CreateHalftonePalette, 1, 0, <!!= NULL>, pRTCC_Palette
+DetourStdCreate CreatePalette, 1, 0, <!!= NULL>, pRTCC_Palette
+DetourStdCreate CreateHalftonePalette, 1, 0, <!!= NULL>, pRTCC_Palette
 
 ; ------------------------------------------------------------------------------
 
-CreateStdHook CreateColorSpaceA, 1, 0, <!!= NULL>, pRTCC_ColorSpace
-CreateStdHook CreateColorSpaceW, 1, 0, <!!= NULL>, pRTCC_ColorSpace
+DetourStdCreate CreateColorSpaceA, 1, 0, <!!= NULL>, pRTCC_ColorSpace
+DetourStdCreate CreateColorSpaceW, 1, 0, <!!= NULL>, pRTCC_ColorSpace
 
 ; ------------------------------------------------------------------------------
 
-DestroyStdHook DeleteObject, 1, 1, <!!= FALSE>, pRTCC_Pen, pRTCC_Brush, pRTCC_Bitmap, \
+DetourStdDestroy DeleteObject, 1, 1, <!!= FALSE>, pRTCC_Pen, pRTCC_Brush, pRTCC_Bitmap, \
                                                 pRTCC_Region, pRTCC_Font, pRTCC_Palette, \
                                                 pRTCC_ColorSpace, pRTCC_Image
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook CreateCursor, 7, 0, <!!= NULL>, pRTCC_Cursor
+DetourStdCreate CreateCursor, 7, 0, <!!= NULL>, pRTCC_Cursor
+DetourStdCreate LoadCursorA, 2, 0, <!!= NULL>, pRTCC_Cursor,, <Arg1 != NULL>
+DetourStdCreate LoadCursorW, 2, 0, <!!= NULL>, pRTCC_Cursor,, <Arg1 != NULL>
 
-HookCount = HookCount + 1
-externdef pRTCC_Cursor:$ObjPtr(RTC_Collection)
-.data
-pHookLoadCursorA   $ObjPtr(IAT_Hook)    NULL
+DetourStdCreate LoadCursorFromFileA, 1, 0, <!!= NULL>, pRTCC_Cursor
+DetourStdCreate LoadCursorFromFileW, 1, 0, <!!= NULL>, pRTCC_Cursor
 
-.code
-
-MyLoadCursorA proc hInst:HANDLE, pCursorName:POINTER
-  push pCursorName
-  push hInst
-  mov xax, pHookLoadCursorA
-  call [xax].$Obj(IAT_Hook).pEntry
-  .if dResGuardEnabled == TRUE
-    push xax
-    m2z dResGuardEnabled
-    .if eax != NULL
-      .if hInst != NULL
-        invoke EntryCreate, pRTCC_Cursor, $invoke(GetCallStack), [xsp]
-      .endif
-    .else
-      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
-    .endif
-    mov dResGuardEnabled, TRUE
-    pop xax
-  .endif
-  ret
-MyLoadCursorA endp
-
-HookCount = HookCount + 1
-externdef pRTCC_Cursor:$ObjPtr(RTC_Collection)
-.data
-pHookLoadCursorW   $ObjPtr(IAT_Hook)    NULL
-
-.code
-MyLoadCursorW proc hInst:HANDLE, pCursorName:POINTER
-  push pCursorName
-  push hInst
-  mov xax, pHookLoadCursorW
-  call [xax].$Obj(IAT_Hook).pEntry
-  .if dResGuardEnabled == TRUE
-    push xax
-    m2z dResGuardEnabled
-    .if eax != NULL
-      .if hInst != NULL
-        invoke EntryCreate, pRTCC_Cursor, $invoke(GetCallStack), [xsp]
-      .endif
-    .else
-      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
-    .endif
-    mov dResGuardEnabled, TRUE
-    pop xax
-  .endif
-  ret
-MyLoadCursorW endp
-
-CreateStdHook LoadCursorFromFileA, 1, 0, <!!= NULL>, pRTCC_Cursor
-CreateStdHook LoadCursorFromFileW, 1, 0, <!!= NULL>, pRTCC_Cursor
-
-externdef pCollIcon:POINTER
+externdef pRTCC_Icon:$ObjPtr(RTC_Collection)
 ;DestroyCursor and DestroyIcon use the same API
-DestroyStdHook DestroyCursor, 1, 1, <!!= FALSE>, pRTCC_Cursor, pRTCC_Icon, pRTCC_Image
+DetourStdDestroy DestroyCursor, 1, 1, <!!= FALSE>, pRTCC_Cursor, pRTCC_Icon, pRTCC_Image
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook CreateIcon, 7, 0, <!!= NULL>, pRTCC_Icon
-CreateStdHook CreateIconIndirect, 1, 0, <!!= NULL>, pRTCC_Icon
-CreateStdHook CreateIconFromResource, 4, 0, <!!= NULL>, pRTCC_Icon
-CreateStdHook CreateIconFromResourceEx, 7, 0, <!!= NULL>, pRTCC_Icon
-CreateStdHook LoadIconA, 2, 0, <!!= NULL>, pRTCC_Icon
-CreateStdHook LoadIconW, 2, 0, <!!= NULL>, pRTCC_Icon
-CreateStdHook ExtractAssociatedIconA, 3, 0, <!!= NULL>, pRTCC_Icon
-CreateStdHook ExtractAssociatedIconW, 3, 0, <!!= NULL>, pRTCC_Icon
+DetourStdCreate CreateIcon, 7, 0, <!!= NULL>, pRTCC_Icon
+DetourStdCreate CreateIconIndirect, 1, 0, <!!= NULL>, pRTCC_Icon
+DetourStdCreate CreateIconFromResource, 4, 0, <!!= NULL>, pRTCC_Icon
+DetourStdCreate CreateIconFromResourceEx, 7, 0, <!!= NULL>, pRTCC_Icon
+DetourStdCreate LoadIconA, 2, 0, <!!= NULL>, pRTCC_Icon
+DetourStdCreate LoadIconW, 2, 0, <!!= NULL>, pRTCC_Icon
+DetourStdCreate ExtractAssociatedIconA, 3, 0, <!!= NULL>, pRTCC_Icon
+DetourStdCreate ExtractAssociatedIconW, 3, 0, <!!= NULL>, pRTCC_Icon
 ;DestroyCursor and DestroyIcon use the same API
-DestroyStdHook DestroyIcon, 1, 1, <!!= FALSE>, pRTCC_Icon, pRTCC_Cursor, pRTCC_Image
+DetourStdDestroy DestroyIcon, 1, 1, <!!= FALSE>, pRTCC_Icon, pRTCC_Cursor, pRTCC_Image
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook CreateMenu, 0, 0, <!!= NULL>, pRTCC_Menu
-CreateStdHook CreatePopupMenu, 0, 0, <!!= NULL>, pRTCC_Menu
-CreateStdHook LoadMenuA, 2, 0, <!!= NULL>, pRTCC_Menu
-CreateStdHook LoadMenuW, 2, 0, <!!= NULL>, pRTCC_Menu
-CreateStdHook LoadMenuIndirectA, 1, 0, <!!= NULL>, pRTCC_Menu
-CreateStdHook LoadMenuIndirectW, 1, 0, <!!= NULL>, pRTCC_Menu
-DestroyStdHook DestroyMenu, 1, 1, <!!= FALSE>, pRTCC_Menu
+DetourStdCreate CreateMenu, 0, 0, <!!= NULL>, pRTCC_Menu
+DetourStdCreate CreatePopupMenu, 0, 0, <!!= NULL>, pRTCC_Menu
+DetourStdCreate LoadMenuA, 2, 0, <!!= NULL>, pRTCC_Menu
+DetourStdCreate LoadMenuW, 2, 0, <!!= NULL>, pRTCC_Menu
+DetourStdCreate LoadMenuIndirectA, 1, 0, <!!= NULL>, pRTCC_Menu
+DetourStdCreate LoadMenuIndirectW, 1, 0, <!!= NULL>, pRTCC_Menu
+DetourStdDestroy DestroyMenu, 1, 1, <!!= FALSE>, pRTCC_Menu
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook CreateMetaFileA, 1, 0, <!!= NULL>, pRTCC_MetaFile
-CreateStdHook CreateMetaFileW, 1, 0, <!!= NULL>, pRTCC_MetaFile
-CreateStdHook GetMetaFileA, 1, 0, <!!= NULL>, pRTCC_MetaFile
-CreateStdHook GetMetaFileW, 1, 0, <!!= NULL>, pRTCC_MetaFile
-DestroyStdHook DeleteMetaFile, 1, 1, <!!= FALSE>, pRTCC_MetaFile
+DetourStdCreate CreateMetaFileA, 1, 0, <!!= NULL>, pRTCC_MetaFile
+DetourStdCreate CreateMetaFileW, 1, 0, <!!= NULL>, pRTCC_MetaFile
+DetourStdCreate GetMetaFileA, 1, 0, <!!= NULL>, pRTCC_MetaFile
+DetourStdCreate GetMetaFileW, 1, 0, <!!= NULL>, pRTCC_MetaFile
+DetourStdDestroy DeleteMetaFile, 1, 1, <!!= FALSE>, pRTCC_MetaFile
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook CreateEnhMetaFileA, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
-CreateStdHook CreateEnhMetaFileW, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
-CreateStdHook GetEnhMetaFileA, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
-CreateStdHook GetEnhMetaFileW, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
-DestroyStdHook DeleteEnhMetaFile, 1, 1, <!!= FALSE>, pRTCC_EnhMetaFile
+DetourStdCreate CreateEnhMetaFileA, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
+DetourStdCreate CreateEnhMetaFileW, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
+DetourStdCreate GetEnhMetaFileA, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
+DetourStdCreate GetEnhMetaFileW, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
+DetourStdDestroy DeleteEnhMetaFile, 1, 1, <!!= FALSE>, pRTCC_EnhMetaFile
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook CreateDCA, 4, 0, <!!= NULL>, pRTCC_DeviceContext
-CreateStdHook CreateDCW, 4, 0, <!!= NULL>, pRTCC_DeviceContext
-CreateStdHook CreateCompatibleDC, 1, 0, <!!= NULL>, pRTCC_DeviceContext
-CreateStdHook CreateICA, 4, 0, <!!= NULL>, pRTCC_DeviceContext
-CreateStdHook CreateICW, 4, 0, <!!= NULL>, pRTCC_DeviceContext
-DestroyStdHook DeleteDC, 1, 1, <!!= FALSE>, pRTCC_DeviceContext
+DetourStdCreate CreateDCA, 4, 0, <!!= NULL>, pRTCC_DeviceContext
+DetourStdCreate CreateDCW, 4, 0, <!!= NULL>, pRTCC_DeviceContext
+DetourStdCreate CreateCompatibleDC, 1, 0, <!!= NULL>, pRTCC_DeviceContext
+DetourStdCreate CreateICA, 4, 0, <!!= NULL>, pRTCC_DeviceContext
+DetourStdCreate CreateICW, 4, 0, <!!= NULL>, pRTCC_DeviceContext
+DetourStdDestroy DeleteDC, 1, 1, <!!= FALSE>, pRTCC_DeviceContext
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook CreateAcceleratorTableA, 2, 0, <!!= NULL>, pRTCC_AccTable
-CreateStdHook CreateAcceleratorTableW, 2, 0, <!!= NULL>, pRTCC_AccTable
-CreateStdHook CopyAcceleratorTableA, 3, 0, <!!= NULL>, pRTCC_AccTable
-CreateStdHook CopyAcceleratorTableW, 3, 0, <!!= NULL>, pRTCC_AccTable
-CreateStdHook LoadAcceleratorsA, 2, 0, <!!= NULL>, pRTCC_AccTable
-CreateStdHook LoadAcceleratorsW, 2, 0, <!!= NULL>, pRTCC_AccTable
-DestroyStdHook DestroyAcceleratorTable, 1, 1, <!!= FALSE>, pRTCC_AccTable
+DetourStdCreate CreateAcceleratorTableA, 2, 0, <!!= NULL>, pRTCC_AccTable
+DetourStdCreate CreateAcceleratorTableW, 2, 0, <!!= NULL>, pRTCC_AccTable
+DetourStdCreate CopyAcceleratorTableA, 3, 0, <!!= NULL>, pRTCC_AccTable
+DetourStdCreate CopyAcceleratorTableW, 3, 0, <!!= NULL>, pRTCC_AccTable
+DetourStdCreate LoadAcceleratorsA, 2, 0, <!!= NULL>, pRTCC_AccTable
+DetourStdCreate LoadAcceleratorsW, 2, 0, <!!= NULL>, pRTCC_AccTable
+DetourStdDestroy DestroyAcceleratorTable, 1, 1, <!!= FALSE>, pRTCC_AccTable
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook CreateDesktopA, 6, 0, <!!= NULL>, pRTCC_Desktop
-CreateStdHook CreateDesktopW, 6, 0, <!!= NULL>, pRTCC_Desktop
-DestroyStdHook CloseDesktop, 1, 1, <!!= FALSE>, pRTCC_Desktop
+DetourStdCreate CreateDesktopA, 6, 0, <!!= NULL>, pRTCC_Desktop
+DetourStdCreate CreateDesktopW, 6, 0, <!!= NULL>, pRTCC_Desktop
+DetourStdDestroy CloseDesktop, 1, 1, <!!= FALSE>, pRTCC_Desktop
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook CreateWindowStationA, 4, 0, <!!= NULL>, pRTCC_WindowStation
-CreateStdHook CreateWindowStationW, 4, 0, <!!= NULL>, pRTCC_WindowStation
-DestroyStdHook CloseWindowStation, 1, 1, <!!= FALSE>, pRTCC_WindowStation
+DetourStdCreate CreateWindowStationA, 4, 0, <!!= NULL>, pRTCC_WindowStation
+DetourStdCreate CreateWindowStationW, 4, 0, <!!= NULL>, pRTCC_WindowStation
+DetourStdDestroy CloseWindowStation, 1, 1, <!!= FALSE>, pRTCC_WindowStation
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook CreateFileA, 7, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_File
-CreateStdHook CreateFileW, 7, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_File
+DetourStdCreate CreateFileA, 7, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_File
+DetourStdCreate CreateFileW, 7, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_File
 
 ; ------------------------------------------------------------------------------
 
-CreateStdHook CreateEventA, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Event
-CreateStdHook CreateEventW, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Event
-CreateStdHook OpenEventA, 3, 0, <!!= NULL>, pRTCC_Event
-CreateStdHook OpenEventW, 3, 0, <!!= NULL>, pRTCC_Event
+DetourStdCreate CreateEventA, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Event
+DetourStdCreate CreateEventW, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Event
+DetourStdCreate OpenEventA, 3, 0, <!!= NULL>, pRTCC_Event
+DetourStdCreate OpenEventW, 3, 0, <!!= NULL>, pRTCC_Event
 
 ; ------------------------------------------------------------------------------
 
-CreateStdHook CreateFileMappingA, 6, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_FileMapping
-CreateStdHook CreateFileMappingW, 6, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_FileMapping
+DetourStdCreate CreateFileMappingA, 6, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_FileMapping
+DetourStdCreate CreateFileMappingW, 6, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_FileMapping
 
 ; ------------------------------------------------------------------------------
 
-CreateStdHook CreateMutexA, 3, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Mutex
-CreateStdHook CreateMutexW, 3, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Mutex
-CreateStdHook OpenMutexA, 3, 0, <!!= NULL>, pRTCC_Mutex
-CreateStdHook OpenMutexW, 3, 0, <!!= NULL>, pRTCC_Mutex
+DetourStdCreate CreateMutexA, 3, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Mutex
+DetourStdCreate CreateMutexW, 3, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Mutex
+DetourStdCreate OpenMutexA, 3, 0, <!!= NULL>, pRTCC_Mutex
+DetourStdCreate OpenMutexW, 3, 0, <!!= NULL>, pRTCC_Mutex
 
 ; ------------------------------------------------------------------------------
 
@@ -766,169 +714,248 @@ externdef pRTCC_Pipe:$ObjPtr(RTC_Collection)
 pHookCreatePipe   $ObjPtr(IAT_Hook)     NULL
 
 .code
-MyCreatePipe proc hReadPipe:HANDLE, hWritePipe:HANDLE, pPipeAttr:POINTER, dSize:DWORD
-  push XWORD ptr dSize
-  push pPipeAttr
-  push hWritePipe
-  push hReadPipe
-  mov xax, pHookCreatePipe
-  call [xax].$Obj(IAT_Hook).pEntry
-  .if dResGuardEnabled == TRUE
-    push xax
-    m2z dResGuardEnabled
-    .if eax != FALSE
-      invoke EntryCreate, pRTCC_Pipe, $invoke(GetCallStack), hReadPipe
-      invoke EntryCreate, pRTCC_Pipe, $invoke(GetCallStack), hWritePipe
+DtrCreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
+  local xApiResult:XWORD, hThread:HANDLE
+  local Context:CONTEXT, Stack:STACK
+
+  InvokeOriginalAPI CreatePipe, 4
+
+  .if dResGuardEnabled != FALSE
+    ;Start analysis
+    mov xApiResult, xax
+    m2z dResGuardEnabled                                ;Shut Resguard off while analysis is in progress
+
+    AnalyseStack
+    FillStringA [xbx].$Obj(CallData).cProcName, <CreatePipe>
+
+    .if xApiResult != 0
+      mov xcx, Arg1                                     ;-> hReadPipe
+      .if xcx != NULL
+        m2m [xbx].$Obj(CallData).xData1, [xcx], xdx
+        OCall pRTCC_Pipe::Collection.Insert, xbx
+        mov xax, pRTCC_Pipe
+        mov [xbx].$Obj(CallData).pOwner, xax
+        OCall xax::Collection.Insert, xbx
+        .if Arg2 != NULL
+          ;Clone existing CallData
+          mov xdi, $MemAlloc(sizeof $Obj(CallData))
+          s2s $Obj(CallData) ptr [xdi], $Obj(CallData) ptr [xbx], xmm1, xmm2, xax, xcx
+          mov xcx, Arg2                                 ;-> hWritePipe
+          m2m [xdi].$Obj(CallData).xData1, [xcx], xdx
+          mov xax, pRTCC_Pipe
+          mov [xdi].$Obj(CallData).pOwner, xax
+          OCall xax::Collection.Insert, xdi
+        .endif
+      .else
+        Destroy xbx
+      .endif
     .else
-      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
+      lea xax, FailColl
+      mov [xbx].$Obj(CallData).pOwner, xax
+      OCall xax::Collection.Insert, xbx
     .endif
+
     mov dResGuardEnabled, TRUE
-    pop xax
+    mov xax, xApiResult                                 ;Restore API return value
   .endif
   ret
-MyCreatePipe endp
+DtrCreatePipe endp
 
-CreateStdHook CreateNamedPipeA, 8, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Pipe
-CreateStdHook CreateNamedPipeW, 8, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Pipe
-
-; ------------------------------------------------------------------------------
-
-CreateStdHook CreateProcessA, 10, -10, <!!= FALSE>, pRTCC_Process
-CreateStdHook CreateProcessW, 10, -10, <!!= FALSE>, pRTCC_Process
-CreateStdHook OpenProcess, 3, 0, <!!= NULL>, pRTCC_Process
+DetourStdCreate CreateNamedPipeA, 8, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Pipe
+DetourStdCreate CreateNamedPipeW, 8, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Pipe
 
 ; ------------------------------------------------------------------------------
 
-CreateStdHook CreateThread, 6, 0, <!!= NULL>, pRTCC_Thread
-CreateStdHook CreateRemoteThread, 3, 0, <!!= NULL>, pRTCC_Thread
+DetourStdCreate CreateProcessA, 10, -10, <!!= FALSE>, pRTCC_Process
+DetourStdCreate CreateProcessW, 10, -10, <!!= FALSE>, pRTCC_Process
+DetourStdCreate OpenProcess, 3, 0, <!!= NULL>, pRTCC_Process
 
 ; ------------------------------------------------------------------------------
 
-CreateStdHook CreateSemaphoreA, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Semaphore
-CreateStdHook CreateSemaphoreW, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Semaphore
-CreateStdHook OpenSemaphoreA, 3, 0, <!!= NULL>, pRTCC_Semaphore
-CreateStdHook OpenSemaphoreW, 3, 0, <!!= NULL>, pRTCC_Semaphore
+DetourStdCreate CreateThread, 6, 0, <!!= NULL>, pRTCC_Thread
+DetourStdCreate CreateRemoteThread, 3, 0, <!!= NULL>, pRTCC_Thread
 
 ; ------------------------------------------------------------------------------
 
-DestroyStdHook CloseHandle, 1, 1, <!!= FALSE>, \
-               pRTCC_File, pRTCC_Event, pRTCC_FileMapping, pRTCC_Mutex, pRTCC_Pipe, pRTCC_Process, \
-               pRTCC_Thread, pRTCC_Semaphore
+DetourStdCreate CreateSemaphoreA, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Semaphore
+DetourStdCreate CreateSemaphoreW, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Semaphore
+DetourStdCreate OpenSemaphoreA, 3, 0, <!!= NULL>, pRTCC_Semaphore
+DetourStdCreate OpenSemaphoreW, 3, 0, <!!= NULL>, pRTCC_Semaphore
+
+; ------------------------------------------------------------------------------
+
+DetourStdDestroy CloseHandle, 1, 1, <!!= FALSE>, \
+                 pRTCC_File, pRTCC_Event, pRTCC_FileMapping, pRTCC_Mutex, pRTCC_Pipe, \
+                 pRTCC_Process, pRTCC_Thread, pRTCC_Semaphore
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-HookCount = HookCount + 1
+HookCount = HookCount + 2
 externdef pRTCC_Timer:$ObjPtr(RTC_Collection)
 .data
 pHookSetTimer   $ObjPtr(IAT_Hook)   NULL
+pHookKillTimer  $ObjPtr(IAT_Hook)   NULL
 
 .code
-MySetTimer proc uses xbx hWnd:HANDLE, idTimer:DWORD, uTimeout:DWORD, tmprc:POINTER
-  push tmprc
-  push XWORD ptr uTimeout
-  push XWORD ptr idTimer
-  push hWnd
-  mov xax, pHookSetTimer
-  call [xax].$Obj(IAT_Hook).pEntry
-  .if dResGuardEnabled == TRUE
-    push xax
-    m2z dResGuardEnabled
-    .if eax != NULL
-      invoke GetCallStack
-      .if hWnd == NULL
-        mov ebx, [xsp]
+DtrSetTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
+  local xApiResult:XWORD, hThread:HANDLE
+  local Context:CONTEXT, Stack:STACK
+
+  InvokeOriginalAPI SetTimer, 4
+
+  .if dResGuardEnabled != FALSE
+    mov xApiResult, xax
+    m2z dResGuardEnabled                                ;Shut Resguard off while analysis is in progress
+
+    AnalyseStack
+    FillStringA [xbx].$Obj(CallData).cProcName, <SetTimer>
+
+    .if xApiResult != 0
+      ;Check if we replace a Window Timer
+      OCall pRTCC_Timer::RTC_Collection.Remove, Arg2, Arg1
+
+      m2m [xbx].$Obj(CallData).xData2, Arg1, xdx        ;Store hWnd
+      .if xax == FALSE                                  ;=> new Timer
+        mov xcx, Arg2                                   ;uIDEvent
       .else
-        mov ebx, idTimer
+        mov xcx, xApiResult                             ;New Timer ID
       .endif
-      invoke EntryCreate, pRTCC_Timer, xax, xbx
+      m2m [xbx].$Obj(CallData).xData1, xcx              ;uIDEvent
+
+      mov xax, pRTCC_Timer
+      mov [xbx].$Obj(CallData).pOwner, xax
+      OCall xax::RTC_Collection.Insert, xbx
+
     .else
-      OCall FailColl::Collection.Insert, $invoke(GetCallStack)
+      lea xax, FailColl
+      mov [xbx].$Obj(CallData).pOwner, xax
+      OCall xax::Collection.Insert, xbx
     .endif
+
     mov dResGuardEnabled, TRUE
-    pop xax
+    mov xax, xApiResult                                 ;Restore API return value
   .endif
   ret
-MySetTimer endp
+DtrSetTimer endp
+DtrKillTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD
+  local xApiResult:XWORD, hThread:HANDLE
+  local Context:CONTEXT, Stack:STACK
 
-DestroyStdHook KillTimer, 2, 2, <!!= FALSE>, pRTCC_Timer
+  InvokeOriginalAPI KillTimer, 2
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+  .if dResGuardEnabled != FALSE
+    mov xApiResult, xax
+    m2z dResGuardEnabled                                ;Shut Resguard off while analysis is in progress
 
-CreateStdHook GetDC, 1, 0, <!!= NULL>, pRTCC_DisplayDeviceContext
-CreateStdHook GetDCEx, 3, 0, <!!= NULL>, pRTCC_DisplayDeviceContext
-CreateStdHook GetWindowDC, 1, 0, <!!= NULL>, pRTCC_DisplayDeviceContext
-DestroyStdHook ReleaseDC, 2, 2, <!!= FALSE>, pRTCC_DisplayDeviceContext
+    .if xax != 0
+      OCall pRTCC_Timer::RTC_Collection.Remove, Arg2, Arg1
+      test eax, eax
+      jnz @@Exit                                        ;Exit if found
+      invoke DbgOutText, $OfsCStr("DtrKillTimer failed to remove call data"),
+                         DbgColorError, DbgColorBackground, \
+                         DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+    .else
+      AnalyseStack
+      FillStringA [xbx].$Obj(CallData).cProcName, <KillTimer>
+      m2m [xbx].$Obj(CallData).xData2, Arg1, xdx        ;Store hWnd
+      m2m [xbx].$Obj(CallData).xData1, Arg2, xdx        ;uIDEvent
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-
-CreateStdHook LoadKeyboardLayoutA, 2, 0, <!!= NULL>, pRTCC_KeyboardLayout
-CreateStdHook LoadKeyboardLayoutW, 2, 0, <!!= NULL>, pRTCC_KeyboardLayout
-DestroyStdHook UnloadKeyboardLayout, 1, 1, <!!= FALSE>, pRTCC_KeyboardLayout
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-
-CreateStdHook LoadLibraryA, 1, 0, <!!= NULL>, pRTCC_Library
-CreateStdHook LoadLibraryW, 1, 0, <!!= NULL>, pRTCC_Library
-CreateStdHook LoadLibraryExA, 3, 0, <!!= NULL>, pRTCC_Library
-CreateStdHook LoadLibraryExW, 3, 0, <!!= NULL>, pRTCC_Library
-DestroyStdHook FreeLibrary, 1, 1, <!!= FALSE>, pRTCC_Library
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-
-CreateStdHook OpenPrinterA, 3, 0, <!!= NULL>, pRTCC_Printer
-CreateStdHook OpenPrinterW, 3, 0, <!!= NULL>, pRTCC_Printer
-CreateStdHook AddPrinterA, 3, 0, <!!= NULL>, pRTCC_Printer
-CreateStdHook AddPrinterW, 3, 0, <!!= NULL>, pRTCC_Printer
-DestroyStdHook ClosePrinter, 1, 1, <!!= FALSE>, pRTCC_Printer
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-
-CreateStdHook RegCreateKeyA, 3, -3, <== ERROR_SUCCESS>, pRTCC_RegKey
-CreateStdHook RegCreateKeyW, 3, -3, <== ERROR_SUCCESS>, pRTCC_RegKey
-CreateStdHook RegCreateKeyExA, 9, -8, <== ERROR_SUCCESS>, pRTCC_RegKey
-CreateStdHook RegCreateKeyExW, 9, -8, <== ERROR_SUCCESS>, pRTCC_RegKey
-DestroyStdHook RegCloseKey, 1, 1, <== ERROR_SUCCESS>, pRTCC_RegKey
+      lea xax, FailColl
+      mov [xbx].$Obj(CallData).pOwner, xax
+      OCall xax::RTC_Collection.Insert, xbx
+    .endif
+@@Exit:
+    mov dResGuardEnabled, TRUE
+    mov xax, xApiResult                                 ;Restore API return value
+  .endif
+  ret
+DtrKillTimer endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook BeginUpdateResourceA, 2, 0, <!!= NULL>, pRTCC_UpdateResource
-CreateStdHook BeginUpdateResourceW, 2, 0, <!!= NULL>, pRTCC_UpdateResource
-DestroyStdHook EndUpdateResourceA, 2, 1, <!!= FALSE>, pRTCC_UpdateResource
-DestroyStdHook EndUpdateResourceW, 2, 1, <!!= FALSE>, pRTCC_UpdateResource
+DetourStdCreate GetDC, 1, 0, <!!= NULL>, pRTCC_DisplayDeviceContext
+DetourStdCreate GetDCEx, 3, 0, <!!= NULL>, pRTCC_DisplayDeviceContext
+DetourStdCreate GetWindowDC, 1, 0, <!!= NULL>, pRTCC_DisplayDeviceContext
+DetourStdDestroy ReleaseDC, 2, 2, <!!= FALSE>, pRTCC_DisplayDeviceContext
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook CreateMailslotA, 4, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Mailslot
-CreateStdHook CreateMailslotW, 4, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Mailslot
+DetourStdCreate LoadKeyboardLayoutA, 2, 0, <!!= NULL>, pRTCC_KeyboardLayout
+DetourStdCreate LoadKeyboardLayoutW, 2, 0, <!!= NULL>, pRTCC_KeyboardLayout
+DetourStdDestroy UnloadKeyboardLayout, 1, 1, <!!= FALSE>, pRTCC_KeyboardLayout
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook FindFirstFileA, 2, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_FindFirst
-CreateStdHook FindFirstFileW, 2, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_FindFirst
-DestroyStdHook FindClose, 1, 1, <!!= FALSE>, pRTCC_FindFirst
+DetourStdCreate LoadLibraryA, 1, 0, <!!= NULL>, pRTCC_Library
+DetourStdCreate LoadLibraryW, 1, 0, <!!= NULL>, pRTCC_Library
+DetourStdCreate LoadLibraryExA, 3, 0, <!!= NULL>, pRTCC_Library
+DetourStdCreate LoadLibraryExW, 3, 0, <!!= NULL>, pRTCC_Library
+DetourStdDestroy FreeLibrary, 1, 1, <!!= FALSE>, pRTCC_Library
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook OpenEventLogA, 2, 0, <!!= NULL>, pRTCC_EventLog
-CreateStdHook OpenEventLogW, 2, 0, <!!= NULL>, pRTCC_EventLog
-DestroyStdHook CloseEventLog, 1, 1, <!!= FALSE>, pRTCC_EventLog
+DetourStdCreate OpenPrinterA, 3, 0, <!!= NULL>, pRTCC_Printer
+DetourStdCreate OpenPrinterW, 3, 0, <!!= NULL>, pRTCC_Printer
+DetourStdCreate AddPrinterA, 3, 0, <!!= NULL>, pRTCC_Printer
+DetourStdCreate AddPrinterW, 3, 0, <!!= NULL>, pRTCC_Printer
+DetourStdDestroy ClosePrinter, 1, 1, <!!= FALSE>, pRTCC_Printer
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateStdHook InitializeCriticalSection, 1, 1, <|| 0FFFFFFFFh>, pRTCC_CriticalSection
-DestroyStdHook DeleteCriticalSection, 1, 1, <|| 0FFFFFFFFh>, pRTCC_CriticalSection
+DetourStdCreate RegCreateKeyA, 3, -3, <== ERROR_SUCCESS>, pRTCC_RegKey
+DetourStdCreate RegCreateKeyW, 3, -3, <== ERROR_SUCCESS>, pRTCC_RegKey
+DetourStdCreate RegCreateKeyExA, 9, -8, <== ERROR_SUCCESS>, pRTCC_RegKey
+DetourStdCreate RegCreateKeyExW, 9, -8, <== ERROR_SUCCESS>, pRTCC_RegKey
+DetourStdDestroy RegCloseKey, 1, 1, <== ERROR_SUCCESS>, pRTCC_RegKey
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-CreateCountedHook macro HookName:req, ArgCount:req, Counter:req, SuccessCond:req, pRTC_Coll:req
+DetourStdCreate BeginUpdateResourceA, 2, 0, <!!= NULL>, pRTCC_UpdateResource
+DetourStdCreate BeginUpdateResourceW, 2, 0, <!!= NULL>, pRTCC_UpdateResource
+DetourStdDestroy EndUpdateResourceA, 2, 1, <!!= FALSE>, pRTCC_UpdateResource
+DetourStdDestroy EndUpdateResourceW, 2, 1, <!!= FALSE>, pRTCC_UpdateResource
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+
+DetourStdCreate CreateMailslotA, 4, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Mailslot
+DetourStdCreate CreateMailslotW, 4, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Mailslot
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+
+DetourStdCreate FindFirstFileA, 2, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_FindFirst
+DetourStdCreate FindFirstFileW, 2, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_FindFirst
+DetourStdDestroy FindClose, 1, 1, <!!= FALSE>, pRTCC_FindFirst
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+
+DetourStdCreate OpenEventLogA, 2, 0, <!!= NULL>, pRTCC_EventLog
+DetourStdCreate OpenEventLogW, 2, 0, <!!= NULL>, pRTCC_EventLog
+DetourStdDestroy CloseEventLog, 1, 1, <!!= FALSE>, pRTCC_EventLog
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+
+DetourStdCreate InitializeCriticalSection, 1, 1, <|| 0FFFFFFFFh>, pRTCC_CriticalSection
+DetourStdDestroy DeleteCriticalSection, 1, 1, <|| 0FFFFFFFFh>, pRTCC_CriticalSection
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DetourCntCreate
+; Purpose:    Create a counted detour procedure to intercept allocation APIs.
+; Arguments:  Arg1: API name.
+;             Arg2: API argument count.
+;             Arg3: Counter name.
+;             Arg4: API success condition.
+;             Arg5: RTCD_Coll pointer.
+; Return:     Nothing.
+
+DetourCntCreate macro ApiName:req, ArgCount:req, CounterName:req, SuccessCond:req, pRTC_Coll:req
   local ArgStr, Cnt
 
-  HookCount = HookCount + 1                               ;;Keep track of the hook count
-  externdef pRTC_Coll:$ObjPtr(RTC_Collection)             ;;The RTC_Collection will be definend later
+  HookCount = HookCount + 1                             ;;Keep track of the hook count
+  externdef pRTC_Coll:$ObjPtr(RTC_Collection)           ;;The RTC_Collection will be definend later
   .data
-  pHook&HookName&   $ObjPtr(IAT_Hook)   NULL
+  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
 
-  ArgStr textequ <>                                       ;;Prepare argument list
+  ArgStr textequ <>                                     ;;Prepare argument list
   Cnt = 0
   repeat ArgCount
     Cnt = Cnt + 1
@@ -936,38 +963,55 @@ CreateCountedHook macro HookName:req, ArgCount:req, Counter:req, SuccessCond:req
   endm
 
   .code
-  My&HookName& proc ArgStr                                ;;Procedure declaration
-    repeat ArgCount                                       ;;Push arguments
-      @CatStr(<push Arg>, %Cnt)
-      Cnt = Cnt - 1
-    endm
-    mov xax, pHook&HookName&
-    call [xax].$Obj(IAT_Hook).pEntry                      ;;Call API
-    .if dResGuardEnabled == TRUE
-      push xax                                            ;;Store API return value
-      m2z dResGuardEnabled
-      .if eax SuccessCond
-        invoke GetCallStack                               ;;Generate Caller collection
-        invoke EntryCreate, pRTC_Coll, xax, Counter
-        inc Counter
+  Dtr&ApiName& proc ArgStr                              ;;Procedure declaration
+    local xApiResult:XWORD, hThread:HANDLE
+    local Context:CONTEXT, Stack:STACK
+
+    InvokeOriginalAPI ApiName, ArgCount
+
+    .if dResGuardEnabled != FALSE
+      mov xApiResult, xax
+      m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
+
+      AnalyseStack
+      FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+
+      .if xApiResult SuccessCond
+        m2m [xbx].$Obj(CallData).xData1, CounterName, xax
+        inc CounterName
+        OCall pRTC_Coll::Collection.Insert, xbx
+        mov xax, pRTC_Coll
+        mov [xbx].$Obj(CallData).pOwner, xax
       .else
-        OCall FailColl::Collection.Insert, $invoke(GetCallStack)
+        mov [xbx].$Obj(CallData).xData1, -1
+        lea xax, FailColl
+        mov [xbx].$Obj(CallData).pOwner, xax
+        OCall xax::Collection.Insert, xbx
       .endif
+
       mov dResGuardEnabled, TRUE
-      pop xax                                             ;;Restore API return value
+      mov xax, xApiResult                               ;;Restore API return value
     .endif
     ret
-  My&HookName& endp
+  Dtr&ApiName& endp
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DetourCntDestroy
+; Purpose:    Create a counted detour procedure to intercept deallocation APIs.
+; Arguments:  Arg1: API name.
+;             Arg2: API argument count.
+;             Arg3: Counter name.
+;             Arg4: API success condition.
+;             Arg5: RTCD_Coll pointer list (One deallocation API for several allocation APIs).
+; Return:     Nothing.
 
-DestroyCountedHook macro HookName:req, ArgCount:req, Counter:req, SuccessCond:req, pRTC_Coll_List:vararg
-  local ArgStr, Cnt, Coll, @@
+DetourCntDestroy macro ApiName:req, ArgCount:req, CounterName:req, SuccessCond:req, pRTC_Coll_List:vararg
+  local ArgStr, Cnt, Coll, @@Exit
 
-  HookCount = HookCount + 1                               ;;Keep track of the hook count
+  HookCount = HookCount + 1                             ;;Keep track of the hook count
   .data
-  pHook&HookName&   $ObjPtr(IAT_Hook)   NULL
+  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
 
   ArgStr textequ <>
   Cnt = 0
@@ -977,33 +1021,53 @@ DestroyCountedHook macro HookName:req, ArgCount:req, Counter:req, SuccessCond:re
   endm
 
   .code
-  My&HookName& proc ArgStr                                ;;Procedure declaration
-    repeat ArgCount
-      @CatStr(<push Arg>, %Cnt)
-      Cnt = Cnt - 1
-    endm
-    mov xax, pHook&HookName&
-    call [xax].$Obj(IAT_Hook).pEntry                      ;;Call API
+  Dtr&ApiName& proc ArgStr                              ;;Procedure declaration
+    local xApiResult:XWORD, hThread:HANDLE
+    local Context:CONTEXT, Stack:STACK
 
-    .if dResGuardEnabled == TRUE
-      push xax                                            ;;Store API return value
-      m2z dResGuardEnabled
-      .if eax SuccessCond
-        dec Counter
-        for pColl, <pRTC_Coll_List>                      ;;Search in all specified RTC_Collection objects
-          @CatStr(<invoke EntryDelete, >, pColl, <, >, Counter)
+    InvokeOriginalAPI ApiName, ArgCount
+
+    .if dResGuardEnabled != FALSE
+      mov xApiResult, xax
+      m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
+
+      ifnb <SuccessCond>
+        .if xax SuccessCond
+          for pColl, <pRTC_Coll_List>                   ;;Search in all specified RTC_Collection objects
+            @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, >, CounterName, <, 0>)
+            dec CounterName
+            test eax, eax
+            jnz @@Exit                                  ;;Exit if found
+          endm
+          invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed to remove call data"),
+                             DbgColorError, DbgColorBackground, \
+                             DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+          jmp @@Exit
+        .endif
+        AnalyseStack
+        FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+        m2m [xbx].$Obj(CallData).xData1, -1, xcx
+
+        lea xax, FailColl
+        mov [xbx].$Obj(CallData).pOwner, xax
+        OCall xax::RTC_Collection.Insert, xbx
+      else
+        for pColl, <pRTC_Coll_List>                     ;;Search in all specified RTC_Collection objects
+          @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, >, CounterName, <, 0>)
+          dec CounterName
           test eax, eax
-          jnz @@                                          ;;Exit if found
+          jnz @@Exit                                    ;;Exit if found
         endm
-      .else
-        OCall FailColl::Collection.Insert, $invoke(GetCallStack)
-      .endif
-@@:
+        invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed to remove call data"),
+                           DbgColorError, DbgColorBackground, \
+                           DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+      endif
+@@Exit:
       mov dResGuardEnabled, TRUE
-      pop xax                                             ;;Restore API return value
+      mov xax, xApiResult                               ;;Restore API return value
     .endif
     ret
-  My&HookName& endp
+  Dtr&ApiName& endp
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1011,57 +1075,46 @@ endm
 OleInitializeCount  DWORD  0
 
 .code
-CreateCountedHook OleInitialize, 1, OleInitializeCount, <== S_OK>, pRTCC_OleInitialization
-DestroyCountedHook OleUninitialize, 0, OleInitializeCount, <|| 0FFFFFFFFh>, pRTCC_OleInitialization
+DetourCntCreate OleInitialize, 1, OleInitializeCount, <== S_OK>, pRTCC_OleInitialization
+DetourCntDestroy OleUninitialize, 0, OleInitializeCount, <|| 0FFFFFFFFh>, pRTCC_OleInitialization
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 .data
 CoInitializeCount  DWORD  0
 
 .code
-CreateCountedHook CoInitialize, 1, CoInitializeCount, <== S_OK>, pRTCC_CoInitialization
-CreateCountedHook CoInitializeEx, 2, CoInitializeCount, <== S_OK>, pRTCC_CoInitialization
-DestroyCountedHook CoUninitialize, 0, CoInitializeCount, <|| 0FFFFFFFFh>, pRTCC_CoInitialization
+DetourCntCreate CoInitialize, 1, CoInitializeCount, <== S_OK>, pRTCC_CoInitialization
+DetourCntCreate CoInitializeEx, 2, CoInitializeCount, <== S_OK>, pRTCC_CoInitialization
+DetourCntDestroy CoUninitialize, 0, CoInitializeCount, <|| 0FFFFFFFFh>, pRTCC_CoInitialization
 
 ; ==================================================================================================
 
-;CheckApiHook proc pIAT32Hook:POINTER, pAPI:POINTER
-;  mov xcx, pIAT_Hook
-;  xor eax, eax
-;  mov xdx, [xcx].$Obj(IAT_Hook).pEntry
-;  .if xdx == pAPI
-;    inc eax
-;  .endif
-;  ret
-;CheckApiHook endp
-;
-;ValidateHook proc uses xbx pModuleName:POINTER, pProcName:POINTER
-;  invoke GetProcAddress, $invoke(GetModuleHandle, pModuleName), pProcName
-;  .if xax
-;    OCall pRTC_Coll::Collection.FirstThat, offset CheckApiHook, xax
-;    .if xax
-;      DbgStr pProcName
-;      DbgText "API already hooked"
-;    .endif
-;  .endif
-;  ret
-;ValidateHook endp
-
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      NewHook
+; Purpose:    Create a new hook.
+; Arguments:  Arg1: API procedure name.
+;             Arg2: API library name.
+; Return:     Nothing.
 
-NewHook macro HookProc:req, HookLib:req
-;  invoke ValidateHook, "&HookLib&.dll", "&HookProc&"
+NewHook macro ProcName:req, LibName:req
 % New IAT_Hook
-  mov pHook&HookProc&, xax                                ;;Save the IAT_Hook in this var
-  OCall xax::IAT_Hook.Init, offset HookColl, $OfsCStrA("&HookLib&.dll"), $OfsCStrA("&HookProc&"), \
-                            offset My&HookProc&, FALSE
-  mov xax, pHook&HookProc&
+  mov pHook&ProcName&, xax                              ;;Save the IAT_Hook in this var
+  OCall xax::IAT_Hook.Init, offset HookColl, $OfsCStrA("&LibName&.dll"), $OfsCStrA("&ProcName&"), \
+                            offset Dtr&ProcName&, FALSE
+  mov xax, pHook&ProcName&
   .if [xax].$Obj(IAT_Hook).dErrorCode != OBJ_OK
     Destroy xax
   .else
-    OCall HookColl::Collection.Insert, xax                ;;and in a dedicated HookColl collection
+    OCall HookColl::Collection.Insert, xax              ;;and in a dedicated HookColl collection
   .endif
 endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      NewRTCC
+; Purpose:    Create a new RTC_Collection.
+; Arguments:  Arg1: Resource type name.
+;             Arg2: Initial collection size.
+; Return:     Nothing.
 
 NewRTCC macro ResTypeName:req, ColSize:req
   .data
@@ -1075,32 +1128,36 @@ NewRTCC macro ResTypeName:req, ColSize:req
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Name:      ResGuardDone
+; Procedure: DllDone
 ; Purpose:   RegGuard finalization and freeing of allocated resorces.
 ;            It restores the original APIs.
 ; Arguments: None.
 ; Return:    Nothing.
 
-ResGuardDone proc
+DllDone proc
   m2z dResGuardEnabled
-  OCall HookColl::Collection.Done                         ;Destroy all Hooks and restore APIs
-  OCall RcrcColl::Collection.Done                         ;Destroy collected resorces data
-  OCall FailColl::Collection.Done                         ;Destroy Error collection
+  OCall HookColl::Collection.Done                       ;Destroy all IAT_Hooks and restore IAT
+  OCall RcrcColl::Collection.Done                       ;Destroy all leaked CallData objects in RTC_Collections
+  OCall FailColl::RTC_Collection.Done                   ;Destroy all failed CallData objects
   ret
-ResGuardDone endp
+DllDone endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Name:      ResGuardInit
+; Procedure: DllInit
 ; Purpose:   ResGuard initialization. It hooks the following APIs from the IAT.
 ; Arguments: None.
 ; Return:    Nothing.
 
-ResGuardInit proc
+DllInit proc
   m2z dResGuardEnabled
+
+  mov hProcess, $invoke(GetCurrentProcess())
+  invoke SymSetOptions, SYMOPT_UNDNAME or SYMOPT_DEFERRED_LOADS
+  invoke SymInitialize, hProcess, NULL, TRUE
 
   OCall HookColl::Collection.Init, NULL, HookCount, 10, COL_MAX_CAPACITY
   OCall RcrcColl::Collection.Init, NULL, HookCount, 10, COL_MAX_CAPACITY
-  OCall FailColl::Collection.Init, NULL, 10, 10, COL_MAX_CAPACITY
+  OCall FailColl::RTC_Collection.Init, NULL, 10, 10, COL_MAX_CAPACITY
 
   NewRTCC PaintStruct, 10
   NewHook BeginPaint, User32
@@ -1369,33 +1426,46 @@ ResGuardInit proc
   NewHook HeapAlloc, Kernel32
 
   ret
+DllInit endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: ResGuardInit (expoerted)
+; Purpose:   Initialize monitoring.
+; Arguments: Arg1: Application reference address to stop stack analysis.
+; Return:    Nothing.
+
+ResGuardInit proc xRefAddr:XWORD
+  m2m xAppRefAddr, xRefAddr, xax
+  ret
 ResGuardInit endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Name:      ResGuardShow
+; Procedure: ResGuardShow (expoerted)
 ; Purpose:   Visualisation of resource usage.
-; Arguments: xbx -> output ANSI buffer.
+; Arguments: Arg1: -> RTC_Collection.
+;            Arg2: Resource type caption.
+;            xbx -> Output ANSI buffer.
 ; Return:    Nothing.
 
-ShowCollectionData macro ResCollectionPointer, NamePointer
-  local szLeakOutput
+ShowCollectionData macro pRTC_Collection:req, ResTypeCaption:req
+  local szLeakCaption
 
-  CStr szLeakOutput, NamePointer, " cur. = %3li, max. = %5li, tot. = %5li"
-  mov xdi, ResCollectionPointer
+  CStr szLeakCaption, ResTypeCaption, " cur. = %3li, max. = %5li, tot. = %5li"
+  mov xdi, pRTC_Collection
   .if (dHasLeaks == FALSE) && ([xdi].$Obj(RTC_Collection).dCount > 0)
     inc dHasLeaks
   .endif
-  .if ([xdi].$Obj(RTC_Collection).dTotCount > 0)
-    invoke wsprintf, xbx, offset szLeakOutput, [xdi].$Obj(RTC_Collection).dCount, \
+  .if ([xdi].$Obj(RTC_Collection).dCount > 0)
+    invoke wsprintf, xbx, offset szLeakCaption, [xdi].$Obj(RTC_Collection).dCount, \
                      [xdi].$Obj(RTC_Collection).dMaxCount, [xdi].$Obj(RTC_Collection).dTotCount
     invoke DbgOutText, xbx, DbgColorForeground, DbgColorBackground, \
-                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wLeakReport
-    OCall xdi::RTC_Collection.ForEach, offset EntryShowCallers, NULL, NULL
+                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+    OCall xdi::RTC_Collection.ForEach, $MethodAddr(CallData.Show), NULL, NULL
   .endif
 endm
 
 ResGuardShow proc uses xbx xdi
-  local cBuffer[256]:CHR, dHasLeaks:DWORD
+  local cBuffer[256]:CHRA, dHasLeaks:DWORD
 
   m2z dResGuardEnabled
   m2z dHasLeaks
@@ -1449,21 +1519,20 @@ ResGuardShow proc uses xbx xdi
   ; -----------------------------------------------------------------------------------
 
   lea xdi, FailColl
-  .if ([xdi].$Obj(Collection).dCount > 0)
-    invoke wsprintf, xbx, $OfsCStr("Hooked API fails:   %li"), [xdi].$Obj(Collection).dCount
+  .if ([xdi].$Obj(RTC_Collection).dCount > 0)
+    invoke wsprintf, xbx, $OfsCStr("Failed API calls:   %li"), [xdi].$Obj(Collection).dCount
     invoke DbgOutText, xbx, DbgColorForeground, DbgColorBackground, \
-                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wLeakReport
-    OCall FailColl::Collection.ForEach, offset ShowCallers, NULL, NULL
+                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+    OCall FailColl::RTC_Collection.ForEach, $MethodAddr(CallData.Show), NULL, NULL
   .endif
   .if (dHasLeaks == FALSE) && ([xdi].$Obj(Collection).dCount > 0)
     inc dHasLeaks
   .endif
 
-  DbgLine offset wLeakReport
   mov dResGuardEnabled, TRUE
 
   .if dHasLeaks
-    invoke MessageBoxW, 0, offset wDebugStart, offset wLeakReport, MB_YESNO or MB_ICONEXCLAMATION
+    invoke MessageBoxW, 0, offset wDebugStart, offset wCaption, MB_YESNO or MB_ICONEXCLAMATION
     .if eax == IDYES
       int 3
     .endif
@@ -1473,35 +1542,28 @@ ResGuardShow proc uses xbx xdi
 ResGuardShow endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Name:      ResGuardStart
+; Procedure: ResGuardStart (expoerted)
 ; Purpose:   Begins resource monitoring.
 ; Arguments: None.
 ; Return:    Nothing.
 
-ResetCollData proc pResColl:$ObjPtr(RTC_Collection), xDummy1:XWORD, xDummy2:XWORD
-  OCall pResColl::RTC_Collection.DisposeAll
-  mov xcx, pResColl
-  xor eax, eax
-  mov [xcx].$Obj(RTC_Collection).dMaxCount, eax
-  mov [xcx].$Obj(RTC_Collection).dTotCount, eax
-  ret
-ResetCollData endp
-
-ResGuardStart proc
-  if TARGET_BITNESS eq 32
-    mov pAppBaseFrame, ebp
-  else
-    mov pAppBaseFrame, rsp
-  endif
+ResGuardStart proc uses xbx
   m2z dResGuardEnabled
-  OCall RcrcColl::Collection.ForEach, offset ResetCollData, NULL, NULL
+  xor ebx, ebx
+  .while ebx < RcrcColl.dCount
+    OCall RcrcColl::Collection.ItemAt, ebx
+    m2z [xax].$Obj(RTC_Collection).dMaxCount
+    m2z [xax].$Obj(RTC_Collection).dTotCount
+    OCall xax::RTC_Collection.DisposeAll
+    inc ebx
+  .endw
   mov dResGuardEnabled, TRUE
   ret
 ResGuardStart endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Name:      ResGuardStop
-; Purpose:   Ends resource monitoring.
+; Procedure: ResGuardStop (exported)
+; Purpose:   End resource monitoring.
 ; Arguments: None.
 ; Return:    Nothing.
 
@@ -1511,8 +1573,8 @@ ResGuardStop proc
 ResGuardStop endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Name:      Start (DllMain)
-; Purpose:   Entry procedure in the DLL.
+; Procedure: start (exported)
+; Purpose:   Entry procedure in the DLL (DllMain).
 ; Arguments: Arg1: Instance handle.
 ;            Arg2: Call reason.
 ;            Arg3: Reserved.
@@ -1522,10 +1584,10 @@ start proc public hDllInstance:HANDLE, dReason:DWORD, xReserved:XWORD
   mov eax, dReason
   .if eax == DLL_PROCESS_ATTACH
     SysInit hDllInstance
-    invoke ResGuardInit
+    invoke DllInit
   .elseif eax == DLL_PROCESS_DETACH
+    invoke DllDone
     SysDone
-    invoke ResGuardDone
   .endif
   xor eax, eax
   inc eax

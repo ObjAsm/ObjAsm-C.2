@@ -1,5 +1,6 @@
 EXPORTS
-	ResGuardStart   @1
-	ResGuardStop    @2
-	ResGuardShow    @3
+  ResGuardInit    @1
+	ResGuardStart   @2
+	ResGuardStop    @3
+	ResGuardShow    @4
 

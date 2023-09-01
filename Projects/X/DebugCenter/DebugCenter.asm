@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      DebugCenter.asm
 ; Authors:    G. Friedrich
-; Version     2.2.0
+; Version     2.2.1
 ; Purpose:    ObjAsm DebugCenter application.
 ; Notes:      Version 1.1.0, October 2017
 ;               - First release. Ported to BNC.
@@ -14,6 +14,9 @@
 ;             Version 2.2.0, September 2022
 ;               - Background color command added.
 ;               - Some miscellaneous commands added (see Debug.inc for a complete list).
+;             Version 2.2.1, September 2023
+;               - Background color corrected when a text file is loaded.
+;               - ChildText MDI behaviour corrected.
 ; ==================================================================================================
 
 

@@ -760,6 +760,15 @@ SysInit macro Arg1, Arg2
   if TARGET_OOP eq OOP_ENABLED
     ObjectsInit
   endif
+  
+  if RESGUARD_LOADED ne FALSE
+    if TARGET_BITNESS eq 32
+      invoke ResGuardInit, xbp
+    else
+      invoke ResGuardInit, xsp
+    endif
+  endif
+
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

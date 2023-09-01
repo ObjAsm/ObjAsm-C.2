@@ -758,7 +758,7 @@ Method DebugCenter.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         invoke StrIComp, xdi, offset szRtfExt
         .if eax == 0
           mov xdi, $New(DbgMdiChildTxt)
-          OCall xdi::DbgMdiChildTxt.Init, [xsi].pClientWnd, addr cFileName, [xsi].hFont, DBG_COLOR_FOREGROUND_WND_LIGHT
+          OCall xdi::DbgMdiChildTxt.Init, [xsi].pClientWnd, addr cFileName, [xsi].hFont, DBG_COLOR_BACKGROUND_WND_LIGHT
           OCall xdi::DbgMdiChildTxt.Open, addr cFileName
         .else
           invoke StrIComp, xdi, offset szBmpExt
@@ -1762,7 +1762,7 @@ Method DbgMdiClient.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .if $invoke(StrComp, xdi, offset szRtfExt) == 0
         mov xdi, $New(DbgMdiChildTxt)
         mov xax, [xsi].pOwner
-        OCall xdi::DbgMdiChildTxt.Init, xsi, pFileName, [xax].$Obj(DebugCenter).hFont, DBG_COLOR_FOREGROUND_WND_LIGHT
+        OCall xdi::DbgMdiChildTxt.Init, xsi, pFileName, [xax].$Obj(DebugCenter).hFont, DBG_COLOR_BACKGROUND_WND_LIGHT
         OCall xdi::DbgMdiChildTxt.Open, pFileName
       .else
         .if $invoke(StrComp, xdi, offset szBmpExt) == 0

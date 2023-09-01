@@ -638,6 +638,7 @@ s2s macro Dst:req, Src:req, RegList:vararg
       $$RegCntGP = $$RegCntGP + 1
     endif
   endm
+
   if @SizeStr(%$$LstRegMM) ne 0
     $$LstRegMM SubStr $$LstRegMM, 2
   endif
@@ -648,9 +649,11 @@ s2s macro Dst:req, Src:req, RegList:vararg
   ;Start copying
   $$SrcStrucSize = type(Src)
   $$DstStrucSize = type(Dst)
-  ;*************************
-  $$RegCntMM = 0                  ;Skip MM regs for older CPUs that don't support vector instructions
-  ;*************************
+
+  ;*************************************************************************************************
+  ;$$RegCntMM = 0   ;Uncomment to skip MM regs for older CPUs that don't support vector instructions
+  ;*************************************************************************************************
+
   if $$SrcStrucSize eq $$DstStrucSize
     $$SrcOffset = 0
     $$DstOffset = 0
@@ -736,7 +739,7 @@ endm
 FillStringA macro StrVar:req, Text:req
   $$Len = 0
   $$j = 0
-  %forc $$Char, <Text>
+  forc $$Char, <Text>
     $$j = ('&$$Char' shl (($$Len and 3) * 8)) + $$j
     if ($$Len and 3) eq 3
       mov DWORD ptr StrVar[($$Len and -4)], $$j
@@ -771,7 +774,7 @@ endm
 FillStringB macro StrVar:req, Text:req
   $$Len = 0
   $$j = 0
-  %forc $$Char, <Text>
+  forc $$Char, <Text>
     $$j = ('&$$Char' shl (($$Len and 1) * 16)) + $$j
     if ($$Len and 1) eq 1
       mov DWORD ptr StrVar[($$Len and -2)*2 + 4], $$j
@@ -803,7 +806,7 @@ endm
 FillStringW macro StrVar:req, Text:req
   $$Len = 0
   $$j = 0
-  %forc $$Char, <Text>
+  forc $$Char, <Text>
     $$j = ('&$$Char' shl (($$Len and 1) * 16)) + $$j
     if ($$Len and 1) eq 1
       mov DWORD ptr StrVar[($$Len and -2)*2], $$j
@@ -843,7 +846,7 @@ endif
 FillWordA macro StrVar:req, Text:req
   $$Len = 0
   $$j = 0
-  %forc $$Char, <Text>
+  forc $$Char, <Text>
     $$j = ('&$$Char' shl (($$Len and 3) * 8)) + $$j
     if ($$Len and 3) eq 3
       mov DWORD ptr StrVar[($$Len and -4)], $$j
@@ -876,7 +879,7 @@ endm
 FillWordW macro StrVar:req, Text:req
   $$Len = 0
   $$j = 0
-  %forc $$Char, <Text>
+  forc $$Char, <Text>
     $$j = ('&$$Char' shl (($$Len and 1) * 16)) + $$j
     if ($$Len and 1) eq 1
       mov DWORD ptr StrVar[($$Len and -2)*2], $$j
@@ -918,8 +921,8 @@ DoesWordMatchA? macro StrVar:req, Text:req, NoMatchLabel
 
   $$i = 0
   $$j = 0
-  $$k SizeStr <&Text>
-  forc $$Char, <&Text>
+  $$k SizeStr <Text>
+  forc $$Char, <Text>
     $$j = ('&$$Char' shl (($$i and 3)*8)) + $$j
 
     if ($$i and 3) eq 3
@@ -977,8 +980,8 @@ DoesWordMatchW? macro StrVar:req, Text:req, NoMatchLabel
 
   $$i = 0
   $$j = 0
-  $$k SizeStr <&Text>
-  forc $$Char, <&Text>
+  $$k SizeStr <Text>
+  forc $$Char, <Text>
     $$j = ('&$$Char' shl (($$i and 1)*16)) + $$j
 
     if ($$i and 1) eq 1
@@ -1037,7 +1040,7 @@ DoesStringMatchA? macro StrVar:req, Text:req, NoMatchLabel
 
   $$i = 0
   $$j = 0
-  forc $$Char, <&Text>
+  forc $$Char, <Text>
     $$j = ('&$$Char' shl (($$i and 3)*8)) + $$j
 
     if ($$i and 3) eq 3
@@ -1096,7 +1099,7 @@ DoesStringMatchW? macro StrVar:req, Text:req, NoMatchLabel
 
   $$i = 0
   $$j = 0
-  forc $$Char, <&Text>
+  forc $$Char, <Text>
     $$j = ('&$$Char' shl (($$i and 1)*16)) + $$j
 
     if ($$i and 1) eq 1

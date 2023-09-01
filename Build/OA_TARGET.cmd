@@ -74,6 +74,8 @@ for /f "tokens=1,* eol=;" %%X in (!ProjectName!.asm) do (
           set TARGET_STRING_TYPE=ANSI
         ) else if %%A == WIDE_STRING (
           set TARGET_STRING_TYPE=WIDE
+        ) else if %%A == SUFFIX (
+          set TARGET_SUFFIX=!TARGET_BITNESS!
         ) else (
           for /f "tokens=1-9 delims=(,)" %%M in ("%%A") do (
             if %%M == DEBUG (

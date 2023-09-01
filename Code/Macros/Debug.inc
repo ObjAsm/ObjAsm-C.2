@@ -189,13 +189,13 @@ if DEBUGGING
   CStrW szDbgErr,         "Debug Error"
   CStrW szDbgObjErr,      "Object Error"
   CStrW szDbgComErr,      "DebugCenter communication failed due to low system resources"
-  CStrW szLeakReport,     "Resource Leakage Report"
+  CStrW szResGuard,       "ResGuard"
 
   externdef dDbgDev:DWORD                 ;Exports dDbgDev symbol, defined in SysSetup
 
   if TARGET_PLATFORM eq PLATFORM_WINDOWS
-    CStrA szDbgInvalid,     "????"
-    CStrW szDbgCtrCls,      &DEBUG_CENTER_CLASS
+    CStrA szDbgInvalid,   "????"
+    CStrW szDbgCtrCls,    &DEBUG_CENTER_CLASS
 
     externdef hDbgDev:HANDLE
     .data?
@@ -2331,10 +2331,10 @@ ResGuard_Show macro
   if DEBUGGING
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
       DbgSaveContext
-      invoke DbgOutTextA, $OfsCStrA("Report  "), \
+      invoke DbgOutTextA, $OfsCStrA("Leak Report:"), \
                           DbgColorForeground, DbgColorBackground, \
-                          DBG_EFFECT_BOLD, offset(szLeakReport)
-      DbgShowSrcInfo offset(szLeakReport)
+                          DBG_EFFECT_BOLD, offset(szResGuard)
+      DbgShowSrcInfo offset(szResGuard)
       invoke ResGuardShow
       DbgLoadContext
     endif
@@ -2352,8 +2352,8 @@ ResGuard_Start macro
       DbgSaveContext
       invoke DbgOutTextA, $OfsCStrA("Started"), \
                           DbgColorForeground, DbgColorBackground, \
-                          DBG_EFFECT_BOLD, offset(szLeakReport)
-      DbgShowSrcInfo offset(szLeakReport)
+                          DBG_EFFECT_BOLD, offset(szResGuard)
+      DbgShowSrcInfo offset(szResGuard)
       invoke ResGuardStart
       DbgLoadContext
     endif
@@ -2369,10 +2369,10 @@ ResGuard_Stop macro
   if DEBUGGING
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
       DbgSaveContext
-      invoke DbgOutTextA, $OfsCStrA("Stopped "), \
+      invoke DbgOutTextA, $OfsCStrA("Stopped"), \
                           DbgColorForeground, DbgColorBackground, \
-                          DBG_EFFECT_BOLD, offset(szLeakReport)
-      DbgShowSrcInfo offset(szLeakReport)
+                          DBG_EFFECT_BOLD, offset(szResGuard)
+      DbgShowSrcInfo offset(szResGuard)
       invoke ResGuardStop
       DbgLoadContext
     endif

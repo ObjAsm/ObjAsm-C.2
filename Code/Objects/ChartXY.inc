@@ -65,7 +65,9 @@ endif
 Object ChartXYSeries, ChartXYSeriesID, ChartSeries
   RedefineMethod    Draw,               HDC
   VirtualMethod     DrawMarkerAt,       HDC, SDWORD, SDWORD
-  RedefineMethod    GetSetupDialogTab,  HWND, $ObjPtr(MaskedImageList)
+  ifdef INCLUDE_CHART_SETUP_DIALOG
+    RedefineMethod    GetSetupDialogTab,  HWND, $ObjPtr(MaskedImageList)
+  endif
   RedefineMethod    Load,               $ObjPtr(Stream)             ;-> Stream
   RedefineMethod    Store,              $ObjPtr(Stream)             ;-> Stream
 

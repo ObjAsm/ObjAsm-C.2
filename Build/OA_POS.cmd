@@ -12,10 +12,6 @@ if !TARGET_MODE! == RLS (
   if !TARGET_PLATFORM! == UEFI (
     if exist !ProjectName!.dll del !ProjectName!.dll
   )
-) else (
-  echo Ready^^!>> !LogFile!
 )
-
-echo Ready^^!
 
 set /a SuccCounter+=1

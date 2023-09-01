@@ -136,7 +136,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=23
+MilestoneOnDateDate=1
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -171,12 +171,12 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,1606
-1=0,0,0,0,624
-6=0,0,1456,414,59484
+2=0,0,0,0,4593
+1=0,0,0,0,511
+6=0,0,1456,414,40005
 4=0,0,0,0,266
 31=0,0,1213,691,1416
-8=0,0,777,591,18084
+8=0,0,777,591,30046
 7=0,0,0,0,151
 9=0,0,0,0,80187
 10=0,0,0,0,8243
@@ -185,7 +185,7 @@ ProductVer4Range=0
 11=0,0,1783,588,1361
 15=0,0,0,0,5891
 14=0,0,0,0,814
-13=0,0,0,0,7167
+13=0,0,0,0,5339
 12=0,0,0,0,738
 16=
 17=0,0,0,0,456
@@ -197,7 +197,7 @@ ProductVer4Range=0
 25=0,0,0,0,1955
 21=0,0,0,0,575
 22=0,0,0,0,14635
-26=0,0,1811,629,91097
+26=0,0,1811,629,91888
 27=
 
 [BookMark]
@@ -217,16 +217,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="Started"
-2="ResGuard"
-3="szAppClassName"
-4="szDemoApp02"
-5="APP_CLS_STYLE"
-6="CLSSTYLE"
-7="DemoApp02"
-8="MENU_APP"
-9="; Return:    "
-10=";            Arg2:"
+1="proto"
+2="ResGuardStop"
+3="ResGuardStart"
+4="ResGuard"
+5="SysInit"
+6="Started"
+7="szAppClassName"
+8="szDemoApp02"
+9="APP_CLS_STYLE"
+10="CLSSTYLE"
 [Collapse]
 1=
 2=
@@ -339,9 +339,9 @@ ProductVer4Range=0
 25=
 27=
 [AutoLoad]
-AutoLoad=1
+AutoLoad=1,2
 [PTimer]
-PTimer=947136888
+PTimer=1113948276
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

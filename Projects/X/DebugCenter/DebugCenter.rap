@@ -175,7 +175,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=15
+MilestoneOnDateDate=1
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -210,32 +210,32 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,806,424,7230
+2=0,0,806,424,71287
 3=0,0,2127,589,1011
-1=0,0,694,487,1162
-4=0,0,706,573,48937
+1=0,0,694,487,1330
+4=0,0,706,573,6431
 1001=0,0,0,0,460
-5=0,0,0,0,1763
+5=0,0,0,0,13769
 6=0,0,601,582,50388
-7=0,0,0,0,1862
+7=0,0,0,0,1061
 8=0,0,0,0,25796
 11=0,0,706,600,3939
 10=0,0,0,0,4696
 9=0,0,0,0,2776
 12=0,0,848,586,4374
-13=0,0,738,582,2719
+13=0,0,738,582,36790
 14=
 15=0,0,0,0,4702
 16=0,0,0,0,30
 17=
-18=0,0,0,0,392
+18=0,0,0,0,4451
 19=
 20=0,0,0,0,3179
 21=0,0,0,0,98635
 22=0,0,1939,424,10958
 23=0,0,0,0,1331
 25=0,0,802,423,26700
-26=0,0,0,0,36813
+26=0,0,0,0,22024
 43=0,0,0,0,4159
 42=0,0,0,0,23946
 44=0,0,0,0,633
@@ -264,7 +264,7 @@ ProductVer4Range=0
 51=0,0,0,0,11857
 52=0,0,0,0,5057
 53=0,0,0,0,0
-54=0,0,1300,620,549
+54=0,0,1300,620,740
 
 [BookMark]
 0=
@@ -283,16 +283,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="ValueGetDW"
-2="DEBUG_CENTER_REGKEY"
-3="cDbgRegKey"
-4="_WND_LIGHT"
-5="DBG_COLOR_BACKGROUND_WND"
-6="_WND"
-7="_LIGHT"
-8="DBG_CMD_CLOSE_WND"
-9="102"
-10="DBG_CMD_PIN_WND"
+1="s2s m"
+2="DbgMdiChildTxt.Init"
+3="IDM_FILE_OPEN"
+4="Open"
+5="OnSize"
+6="OnMdiActivate"
+7="DbgCloseWnd"
+8="ICON_APP_CHILD_TXT"
+9="szDbgMdiChildTxtClass"
+10="OAC_DbgMdiChildTxt"
 "
 [Collapse]
 7=,,
@@ -349,9 +349,9 @@ ProductVer4Range=0
 53=
 54=
 [AutoLoad]
-AutoLoad=1,2,3,10
+AutoLoad=1,18,5,7,4,2,25,26,54
 [PTimer]
-PTimer=2137049996
+PTimer=2144860559
 [RADebugBP]
 5=
 2=

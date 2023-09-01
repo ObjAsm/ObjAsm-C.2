@@ -10,14 +10,14 @@
 APP_TITLE                     textequ   <Debug Center>
 ABOUT_TEXT                    textequ   <Debug Center>
 COPYRIGHT                     textequ   <G. Friedrich   October 2017> 
-VER_FILEVERSION               equ       2,2,0,0
-VER_FILEVERSION_STR           textequ   <2.2.0>
-VER_PRODUCTVERSION            equ       2,2,0,0
-VER_PRODUCTVERSION_STR        textequ   <2.2.0>
+VER_FILEVERSION               equ       2,2,1,0
+VER_FILEVERSION_STR           textequ   <2.2.1>
+VER_PRODUCTVERSION            equ       2,2,1,0
+VER_PRODUCTVERSION_STR        textequ   <2.2.1>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       14
-BUILD_DATE_STR                textequ   <2023-01-15>
+BUILD_NUMBER                  equ       22
+BUILD_DATE_STR                textequ   <2023-09-01>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       RLS
 

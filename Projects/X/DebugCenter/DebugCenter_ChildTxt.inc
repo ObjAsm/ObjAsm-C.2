@@ -468,7 +468,7 @@ Method DbgMdiChildTxt.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
     invoke GetClientRect, [xsi].hWnd, addr CRect
     invoke MoveWindow, [xsi].hEdit, 0, 0, CRect.right, CRect.bottom, TRUE
   .endif
-  xor eax, eax
+  invoke DefMDIChildProc, [xsi].hWnd, WM_SIZE, wParam, lParam
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -719,7 +719,7 @@ Method DbgMdiChildTxt.Startup
   m2m WC.lpfnWndProc, $MethodAddr(DbgMdiChildTxt.WndProc), xax
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
-  m2m WC.hInstance, hInstance, edx
+  m2m WC.hInstance, hInstance, xax
   m2z WC.hbrBackground
   m2z WC.lpszMenuName
   c2m WC.lpszClassName, offset szDbgMdiChildTxtClass, xax

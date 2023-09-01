@@ -772,6 +772,7 @@ MethodEnd
 ;             Arg2: -> MaskedImageList.
 ; Return:     xax -> ChartXYTabSeries.
 
+ifdef INCLUDE_CHART_SETUP_DIALOG
 Method ChartXYSeries.GetSetupDialogTab, uses xbx, hParent:HWND, pImageList:$ObjPtr(MaskedImageList)
   ;Create a new modeless dialog
   ;It is destroyed when it is disposed from the parent collection.
@@ -779,6 +780,7 @@ Method ChartXYSeries.GetSetupDialogTab, uses xbx, hParent:HWND, pImageList:$ObjP
   OCall xbx::ChartXYTabSeries.Init, pSelf, hParent, pImageList
   mov xax, xbx
 MethodEnd
+endif
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     ChartXYSeries.Load

@@ -26,7 +26,9 @@ ObjectEnd                                               ;Ends object definition
 
 CStr szAppClassName, "OAC_Application"                  ;Creates szAppClassName string in .const
 
-P2 proc Arg1:dword
+P2 proc uses xsi Arg1:dword
+  invoke CreateFile, $OfsCStr("TestFile.txt"), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_ARCHIVE, 0
+  mov esi, Arg1
   MemAlloc 100
   invoke CreateSolidBrush, $RGB(250, 125, 45)
 ;  invoke DeleteObject, xax
@@ -43,7 +45,7 @@ P2 proc Arg1:dword
 P2 endp
 
 P1 proc Arg1:dword
-  invoke P2, 12345678h
+  invoke P2, 123  
   ret
 P1 endp
 
@@ -75,6 +77,10 @@ Method Application.Init, uses xsi
 
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL          ;Show the window
   invoke UpdateWindow, [xsi].hWnd                       ;Update if necessary
+  invoke SetTimer, [xsi].hWnd, 123, 500, NULL
+  invoke SetTimer, [xsi].hWnd, 123, 1000, NULL          ;Replace Timer
+  invoke KillTimer, [xsi].hWnd, 123
+  invoke KillTimer, [xsi].hWnd, 123
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
