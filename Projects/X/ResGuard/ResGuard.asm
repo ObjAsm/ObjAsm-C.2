@@ -18,7 +18,7 @@ SYM_NAME_LENGTH   equ 255
 CALLER_MAX_DEEP   equ 10
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, DLL64, WIDE_STRING, DEBUG(WND), SUFFIX
+SysSetup OOP, DLL32, WIDE_STRING, DEBUG(WND), SUFFIX
 
 % includelib &LibPath&Windows\DbgHelp.lib
 
@@ -131,14 +131,14 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
       .if eax != FALSE
         invoke DbgOutTextA, addr cBuffer, DbgColorWarning, DbgColorBackground, \
                             DBG_EFFECT_NORMAL, offset wCaption
-        FillStringA cBuffer, <(>
-        lea xcx, [cBuffer + 1]
-        invoke xword2hexA, xcx, [xdi].CALLER_INFO.xRetAddr
-        invoke StrCatA, addr cBuffer, $OfsCStrA("h)")
-        invoke DbgOutTextA, addr cBuffer, DbgColorComment, DbgColorBackground, \
-                            DBG_EFFECT_NORMAL, offset wCaption
       .endif
     .endif
+    FillStringA cBuffer, <(>
+    lea xcx, [cBuffer + 1]
+    invoke xword2hexA, xcx, [xdi].CALLER_INFO.xRetAddr
+    invoke StrCatA, addr cBuffer, $OfsCStrA("h)")
+    invoke DbgOutTextA, addr cBuffer, DbgColorComment, DbgColorBackground, \
+                        DBG_EFFECT_NORMAL, offset wCaption
     add xdi, sizeof CALLER_INFO
     inc ebx
   .endw
