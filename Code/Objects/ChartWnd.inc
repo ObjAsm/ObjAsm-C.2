@@ -104,8 +104,8 @@ Method ChartWnd.Calc, uses xbx xdi xsi, hDC:HWND, pOutRect:PRECT
   ;Set scale titles -------------------------------------------------
   lea xdi, cBuffer
   SetScaleTitle [xsi].ScaleX
-  SetScaleTitle [xsi].ScaleY1
-  SetScaleTitle [xsi].ScaleY2
+  SetScaleTitle [xsi].ScaleY1           ;§§§
+  SetScaleTitle [xsi].ScaleY2           ;§§§
 
   ;Calculate scale internal factors ---------------------------------
   CalcScaleInternalValues [xsi].ScaleX
@@ -516,6 +516,11 @@ MethodEnd
 
 Method ChartWnd.Done, uses xsi
   SetObject xsi
+
+  .if [xsi].hWnd != 0
+    invoke DestroyWindow, [xsi].hWnd
+    mov [xsi].hWnd, 0
+  .endif
 
   invoke StrDispose, [xsi].ScaleX.pTitle
   invoke StrDispose, [xsi].ScaleX.pDescription
@@ -1456,7 +1461,7 @@ Method ChartWnd.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PDEF
   ;DbgText "ChartBarWnd.Init"
   SetObject xsi
   OCall [xsi].Data::Collection.Init, xsi, 10, 10, COL_MAX_CAPACITY
-  OCall [xsi].InfoAreas::DataCollection.Init, xsi, 100, 100, COL_MAX_CAPACITY
+  OCall [xsi].InfoAreas::DataCollection.Init, xsi, 100, 100, COL_MAX_CAPACITY     ;§§§
   mov xbx, pDefStruc
   assume xbx:PDEF_CHART
   mov eax, [xbx].dStyle

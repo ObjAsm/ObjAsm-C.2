@@ -36,6 +36,7 @@ Debug=0
 25=..\..\..\Code\Objects\ObjErrs.inc
 26=..\..\..\Code\Objects\XWCollection.inc
 27=..\..\..\Code\Objects\StackWalker.inc
+28=..\..\Private\TestRoomObserver V4\TestRoomObserver.exe
 
 [MakeFiles]
 0=ResGuard.rap
@@ -117,6 +118,7 @@ Group=Added files,Assembly,Resources,Misc,Modules,Objects,Macros
 25=2
 26=6
 27=6
+28=1
 
 [VerInf]
 FV=1.0.0.0
@@ -147,7 +149,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=2
+MilestoneOnDateDate=3
 MilestoneOnDateTimeYear=2004
 MilestoneOnDateTimeMonth=6
 MilestoneOnDateTimeDate=8
@@ -184,7 +186,7 @@ ProductVer4Range=0
 [Size]
 2=0,0,480,367,514
 3=0,0,0,0,88
-1=480,488,480,244,1064
+1=480,488,480,244,24026
 4=0,0,0,0,30126
 1001=0,0,0,0,460
 6=0,0,0,0,40304
@@ -237,18 +239,18 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="lea xdi, [xbx].$Obj(CallData).CallStack"
-2="xFrameAddr"
-3="SymGetSymFromAddr3264"
-4="CallData.Show"
-5="API_CALL"
-6="Message"
-7="WalkTheStack"
-8="xAppRefAddr"
-9="xAppStackAddr"
-10="Counter"
+1="DetourCntDestroy"
+2="DetourCntCreate"
+3="DetourNamedCreate"
+4="DetourStdDestroy"
+5="DetourStdCreate"
+6="LoadCursorW"
+7="CreateJobObjectW"
+8="CreateNamedPipeA"
+9="CreateFileMappingNumaA"
+10="CreateFileMappingA"
 [Collapse]
-1=538230806,33686604,21121
+1=71348246,273171076,8728080,
 8=
 15=
 14=
@@ -277,7 +279,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=1
 [PTimer]
-PTimer=497695183
+PTimer=563325542
 [RADebugBP]
 1=
 14=

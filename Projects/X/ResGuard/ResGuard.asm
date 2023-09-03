@@ -18,7 +18,7 @@ SYM_NAME_LENGTH   equ 255
 CALLER_MAX_DEEP   equ 10
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, DLL32, WIDE_STRING, DEBUG(WND), SUFFIX
+SysSetup OOP, DLL64, WIDE_STRING, DEBUG(WND), SUFFIX
 
 % includelib &LibPath&Windows\DbgHelp.lib
 
@@ -318,7 +318,7 @@ AnalyseStack macro
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      DetourStdCreate
+; Macro:      DetourCreate
 ; Purpose:    Create a standard detour procedure to intercept allocation APIs.
 ; Arguments:  Arg1: API name.
 ;             Arg2: API argument count.
@@ -335,7 +335,7 @@ endm
 ;                   be released.
 ; Return:     Nothing.
 
-DetourStdCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req,
+DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req, \
                       pRTC_Coll:req, RemoveArgIndex, PassCond
   local ArgStr, Cnt
 
@@ -364,36 +364,44 @@ DetourStdCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond
 
       AnalyseStack
       FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
-      if CallIdentifier gt 0
-        mov xcx, Arg&CallIdentifier&
-      elseif CallIdentifier eq 0
-        mov xcx, xApiResult
-      else
-        mov xax, @CatStr(<Arg>, %(-CallIdentifier))
-        .if xax != NULL
-          mov xcx, [xax]
-        .else
-          xor ecx, ecx
-        .endif
-      endif
+  if CallIdentifier gt 0
+      mov xcx, Arg&CallIdentifier&
+  elseif CallIdentifier eq 0
+      mov xcx, xApiResult
+  else
+      mov xax, @CatStr(<Arg>, %(-CallIdentifier))
+      .if xax != NULL
+        mov xcx, [xax]
+      .else
+        xor ecx, ecx
+      .endif
+  endif
       mov [xbx].$Obj(CallData).xData1, xcx
 
-      .if xApiResult SuccessCond
-        ifb <PassCond>
-          ifnb <RemoveArgIndex>
-            @CatStr(<OCall >, pRTC_Coll, <::RTC_Collection.Remove, Arg>, RemoveArgIndex, <, 0>)
-          endif
-          OCall pRTC_Coll::Collection.Insert, xbx
+  ifnb <SuccessCond>
+      .if SuccessCond
+  endif
+  ifnb <PassCond>
+        .if PassCond
+          Destroy xbx
+        .else
+  endif      
+  ifnb <RemoveArgIndex>
+          @CatStr(<OCall >, pRTC_Coll, <::RTC_Collection.Remove, Arg>, RemoveArgIndex, <, 0>)
+  endif
+          OCall pRTC_Coll::RTC_Collection.Insert, xbx
           mov xax, pRTC_Coll
           mov [xbx].$Obj(CallData).pOwner, xax
-        else
-          Destroy xbx
-        endif
+  ifnb <PassCond>
+        .endif
+  endif
+  ifnb <SuccessCond>
       .else
         lea xax, FailColl
         mov [xbx].$Obj(CallData).pOwner, xax
         OCall xax::Collection.Insert, xbx
       .endif
+  endif
 
       mov dResGuardEnabled, TRUE
       mov xax, xApiResult                               ;;Restore API return value
@@ -403,7 +411,7 @@ DetourStdCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      DetourStdDestroy
+; Macro:      DetourDestroy
 ; Purpose:    Create a standard detour procedure to intercept deallocation APIs.
 ; Arguments:  Arg1: API name.
 ;             Arg2: API argument count.
@@ -415,7 +423,7 @@ endm
 ;             Arg5: RTCD_Coll pointer list (One deallocation API for several allocation APIs).
 ; Return:     Nothing.
 
-DetourStdDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req,
+DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req,
                        pRTC_Coll_List:vararg
   local ArgStr, Cnt, Coll, @@Exit
 
@@ -441,8 +449,8 @@ DetourStdDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCon
       mov xApiResult, xax
       m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
 
-      ifnb <SuccessCond>
-        .if xax SuccessCond
+  ifnb <SuccessCond>
+        .if SuccessCond
           for pColl, <pRTC_Coll_List>                   ;;Search in all specified RTC_Collection objects
             @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, Arg>, CallIdentifier, <, 0>)
             test eax, eax
@@ -455,24 +463,25 @@ DetourStdDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCon
         .endif
         AnalyseStack
         FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
-        if CallIdentifier gt 0
+    if CallIdentifier gt 0
           mov xcx, Arg&CallIdentifier&
-        elseif CallIdentifier eq 0
+    elseif CallIdentifier eq 0
           mov xcx, xApiResult
-        else
+    else
           mov xax, @CatStr(<Arg>, %(-CallIdentifier))
           .if xax != NULL
             mov xcx, [xax]
           .else
             xor ecx, ecx
           .endif
-        endif
+    endif
         mov [xbx].$Obj(CallData).xData1, xcx
+        mov [xbx].$Obj(CallData).xData2, 0
 
         lea xax, FailColl
         mov [xbx].$Obj(CallData).pOwner, xax
         OCall xax::RTC_Collection.Insert, xbx
-      else
+  else
         for pColl, <pRTC_Coll_List>                     ;;Search in all specified RTC_Collection objects
           @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, Arg>, CallIdentifier, <, 0>)
           test eax, eax
@@ -481,7 +490,7 @@ DetourStdDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCon
         invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed to remove call data"),
                            DbgColorError, DbgColorBackground, \
                            DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
-      endif
+  endif
 @@Exit:
       mov dResGuardEnabled, TRUE
       mov xax, xApiResult                               ;;Restore API return value
@@ -490,221 +499,515 @@ DetourStdDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCon
   Dtr&ApiName& endp
 endm
 
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DetourCreateNamed
+; Purpose:    Create a standard detour procedure to intercept allocation named APIs.
+; Arguments:  Arg1: API name.
+;             Arg2: API argument count.
+;             Arg3: ID = x:
+;                     x > 0 : Argument x
+;                     x = 0 : API result (return value)
+;                     x < 0 : [Argument -x]
+;             Arg4: API success condition.
+;             Arg5: RTCD_Coll pointer.
+; Return:     Nothing.
+
+DetourCreateNamed macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req, pRTC_Coll:req
+  local ArgStr, Cnt
+
+  HookCount = HookCount + 1                             ;;Keep track of the hook count
+  externdef pRTC_Coll:$ObjPtr(RTC_Collection)           ;;The RTC_Collection will be definend later
+  .data
+  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
+
+  ArgStr textequ <>                                     ;;Prepare argument list
+  Cnt = 0
+  repeat ArgCount
+    Cnt = Cnt + 1
+    ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
+  endm
+
+  .code
+  Dtr&ApiName& proc uses xbx xdi ArgStr                 ;;Procedure declaration
+    local xApiResult:XWORD, hThread:HANDLE
+    local Context:CONTEXT, Stack:STACK
+
+    InvokeOriginalAPI ApiName, ArgCount
+
+    .if dResGuardEnabled != FALSE
+      mov xApiResult, xax
+      m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
+
+      AnalyseStack
+      FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+  if CallIdentifier gt 0
+      mov xcx, Arg&CallIdentifier&
+  elseif CallIdentifier eq 0
+      mov xcx, xApiResult
+  else
+      mov xax, @CatStr(<Arg>, %(-CallIdentifier))
+      .if xax != NULL
+        mov xcx, [xax]
+      .else
+        xor ecx, ecx
+      .endif
+  endif
+      mov [xbx].$Obj(CallData).xData1, xcx
+      mov [xbx].$Obj(CallData).xData2, 0
+
+      .if SuccessCond
+        ;In case that this named API was called previously, we remove this call data
+        OCall pRTC_Coll::RTC_Collection.Remove, [xbx].$Obj(CallData).xData1, [xbx].$Obj(CallData).xData2
+
+        OCall pRTC_Coll::RTC_Collection.Insert, xbx
+        mov xax, pRTC_Coll
+        mov [xbx].$Obj(CallData).pOwner, xax
+      .else
+        lea xax, FailColl
+        mov [xbx].$Obj(CallData).pOwner, xax
+        OCall xax::Collection.Insert, xbx
+      .endif
+
+      mov dResGuardEnabled, TRUE
+      mov xax, xApiResult                               ;;Restore API return value
+    .endif
+    ret
+  Dtr&ApiName& endp
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DetourCreateCounted
+; Purpose:    Create a counted detour procedure to intercept allocation APIs.
+; Arguments:  Arg1: API name.
+;             Arg2: API argument count.
+;             Arg3: Counter name.
+;             Arg4: API success condition.
+;             Arg5: RTCD_Coll pointer.
+; Return:     Nothing.
+
+DetourCreateCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCond:req, pRTC_Coll:req
+  local ArgStr, Cnt
+
+  HookCount = HookCount + 1                             ;;Keep track of the hook count
+  externdef pRTC_Coll:$ObjPtr(RTC_Collection)           ;;The RTC_Collection will be definend later
+  .data
+  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
+
+  ArgStr textequ <>                                     ;;Prepare argument list
+  Cnt = 0
+  repeat ArgCount
+    Cnt = Cnt + 1
+    ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
+  endm
+
+  .code
+  Dtr&ApiName& proc ArgStr                              ;;Procedure declaration
+    local xApiResult:XWORD, hThread:HANDLE
+    local Context:CONTEXT, Stack:STACK
+
+    InvokeOriginalAPI ApiName, ArgCount
+
+    .if dResGuardEnabled != FALSE
+      mov xApiResult, xax
+      m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
+
+      AnalyseStack
+      FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+
+      .if SuccessCond
+        m2m [xbx].$Obj(CallData).xData1, CounterName, xax
+        inc CounterName
+        OCall pRTC_Coll::RTC_Collection.Insert, xbx
+        mov xax, pRTC_Coll
+        mov [xbx].$Obj(CallData).pOwner, xax
+      .else
+        mov [xbx].$Obj(CallData).xData1, -1
+        lea xax, FailColl
+        mov [xbx].$Obj(CallData).pOwner, xax
+        OCall xax::Collection.Insert, xbx
+      .endif
+
+      mov dResGuardEnabled, TRUE
+      mov xax, xApiResult                               ;;Restore API return value
+    .endif
+    ret
+  Dtr&ApiName& endp
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DetourDestroyCounted
+; Purpose:    Create a counted detour procedure to intercept deallocation APIs.
+; Arguments:  Arg1: API name.
+;             Arg2: API argument count.
+;             Arg3: Counter name.
+;             Arg4: API success condition.
+;             Arg5: RTCD_Coll pointer list (One deallocation API for several allocation APIs).
+; Return:     Nothing.
+
+DetourDestroyCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCond:req, pRTC_Coll_List:vararg
+  local ArgStr, Cnt, Coll, @@Exit
+
+  HookCount = HookCount + 1                             ;;Keep track of the hook count
+  .data
+  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
+
+  ArgStr textequ <>
+  Cnt = 0
+  repeat ArgCount
+    Cnt = Cnt + 1
+    ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:DWORD>
+  endm
+
+  .code
+  Dtr&ApiName& proc ArgStr                              ;;Procedure declaration
+    local xApiResult:XWORD, hThread:HANDLE
+    local Context:CONTEXT, Stack:STACK
+
+    InvokeOriginalAPI ApiName, ArgCount
+
+    .if dResGuardEnabled != FALSE
+      mov xApiResult, xax
+      m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
+
+  ifnb <SuccessCond>
+        .if SuccessCond
+          for pColl, <pRTC_Coll_List>                   ;;Search in all specified RTC_Collection objects
+            @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, >, CounterName, <, 0>)
+            dec CounterName
+            test eax, eax
+            jnz @@Exit                                  ;;Exit if found
+          endm
+          invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed to remove call data"),
+                             DbgColorError, DbgColorBackground, \
+                             DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+          jmp @@Exit
+        .endif
+        AnalyseStack
+        FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+        m2m [xbx].$Obj(CallData).xData1, -1, xcx
+
+        lea xax, FailColl
+        mov [xbx].$Obj(CallData).pOwner, xax
+        OCall xax::RTC_Collection.Insert, xbx
+  else
+        for pColl, <pRTC_Coll_List>                     ;;Search in all specified RTC_Collection objects
+          @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, >, CounterName, <, 0>)
+          dec CounterName
+          test eax, eax
+          jnz @@Exit                                    ;;Exit if found
+        endm
+        invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed to remove call data"),
+                           DbgColorError, DbgColorBackground, \
+                           DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+  endif
+@@Exit:
+      mov dResGuardEnabled, TRUE
+      mov xax, xApiResult                               ;;Restore API return value
+    .endif
+    ret
+  Dtr&ApiName& endp
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      NewHook
+; Purpose:    Create a new hook.
+; Arguments:  Arg1: API procedure name.
+;             Arg2: API library name.
+; Return:     Nothing.
+
+NewHook macro ProcName:req, LibName:req
+% New IAT_Hook
+  mov pHook&ProcName&, xax                              ;;Save the IAT_Hook in this var
+  OCall xax::IAT_Hook.Init, offset HookColl, $OfsCStrA("&LibName&.dll"), $OfsCStrA("&ProcName&"), \
+                            offset Dtr&ProcName&, FALSE
+  mov xax, pHook&ProcName&
+  .if [xax].$Obj(IAT_Hook).dErrorCode != OBJ_OK
+    Destroy xax
+  .else
+    OCall HookColl::Collection.Insert, xax              ;;and in a dedicated HookColl collection
+  .endif
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      NewRTCC
+; Purpose:    Create a new RTC_Collection.
+; Arguments:  Arg1: Resource type name.
+;             Arg2: Initial collection size.
+; Return:     Nothing.
+
+NewRTCC macro ResTypeName:req, ColSize:req
+  .data
+  pRTCC_&ResTypeName&  $ObjPtr(RTC_Collection)  NULL
+
+  .code
+  New RTC_Collection
+  mov pRTCC_&ResTypeName&, xax
+  OCall RcrcColl::Collection.Insert, xax
+  OCall xax::RTC_Collection.Init, offset RcrcColl, %ColSize, %ColSize, COL_MAX_CAPACITY
+endm
+
 ; ==================================================================================================
 
-DetourStdCreate HeapAlloc, 3, 0, <!!= NULL>, pRTCC_HeapMemBlock
-DetourStdCreate HeapReAlloc, 4, 0, <!!= NULL>, pRTCC_HeapMemBlock, 3
-DetourStdDestroy HeapFree, 3, 3, <!!= FALSE>, pRTCC_HeapMemBlock
+DetourCreate CreateJobObjectA, 2, 0, <xApiResult !!= NULL>, pRTCC_Job
+DetourCreate CreateJobObjectW, 2, 0, <xApiResult !!= NULL>, pRTCC_Job
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate GlobalAlloc, 2, 0, <!!= NULL>, pRTCC_GlobalMemBlock
-DetourStdCreate GlobalReAlloc, 3, 0, <!!= NULL>, pRTCC_GlobalMemBlock, 1
-DetourStdDestroy GlobalFree, 1, 1, <== NULL>, pRTCC_GlobalMemBlock
+DetourCreate CreateTransactionA, 7, 0, <xApiResult !!= NULL>, pRTCC_Transaction
+DetourCreate CreateTransactionW, 7, 0, <xApiResult !!= NULL>, pRTCC_Transaction
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate LocalAlloc, 2, 0, <!!= NULL>, pRTCC_LocalMemBlock
-DetourStdCreate LocalReAlloc, 3, 0, <!!= NULL>, pRTCC_LocalMemBlock, 1
-DetourStdDestroy LocalFree, 1, 1, <== NULL>, pRTCC_LocalMemBlock
+DetourCreate CreatePrivateNamespaceA, 3, 0, <xApiResult !!= NULL>, pRTCC_PrivateNamespace
+DetourCreate CreatePrivateNamespaceW, 3, 0, <xApiResult !!= NULL>, pRTCC_PrivateNamespace
+DetourDestroy ClosePrivateNamespace, 3, 3, <xApiResult !!= FALSE>, pRTCC_PrivateNamespace
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate CoTaskMemAlloc, 1, 0, <!!= NULL>, pRTCC_CoTaskMemBlock
-DetourStdCreate CoTaskMemRealloc, 1, 0, <!!= NULL>, pRTCC_CoTaskMemBlock, 1
-DetourStdDestroy CoTaskMemFree, 1, 1, <>, pRTCC_CoTaskMemBlock
+DetourCreate HeapAlloc, 3, 0, <xApiResult !!= NULL>, pRTCC_HeapMemBlock
+DetourCreate HeapReAlloc, 4, 0, <xApiResult !!= NULL>, pRTCC_HeapMemBlock, 3
+DetourDestroy HeapFree, 3, 3, <xApiResult !!= FALSE>, pRTCC_HeapMemBlock
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate VirtualAlloc, 4, 0, <!!= NULL>, pRTCC_VirtualMemBlock
-DetourStdDestroy VirtualFree, 3, 1, <!!= FALSE>, pRTCC_VirtualMemBlock
+DetourCreate GlobalAlloc, 2, 0, <xApiResult !!= NULL>, pRTCC_GlobalMemBlock
+DetourCreate GlobalReAlloc, 3, 0, <xApiResult !!= NULL>, pRTCC_GlobalMemBlock, 1
+DetourDestroy GlobalFree, 1, 1, <xApiResult == NULL>, pRTCC_GlobalMemBlock
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate SysAllocString, 1, 0, <!!= NULL>, pRTCC_SysString
-DetourStdCreate SysAllocStringLen, 2, 0, <!!= NULL>, pRTCC_SysString
-DetourStdCreate SysAllocStringByteLen, 2, 0, <!!= NULL>, pRTCC_SysString
-DetourStdCreate SysReAllocString, 2, 0, <!!= FALSE>, pRTCC_SysString
-DetourStdCreate SysReAllocStringLen, 3, 0, <!!= FALSE>, pRTCC_SysString
-DetourStdDestroy SysFreeString, 1, 1, <!!= FALSE>, pRTCC_SysString
+DetourCreate LocalAlloc, 2, 0, <xApiResult !!= NULL>, pRTCC_LocalMemBlock
+DetourCreate LocalReAlloc, 3, 0, <xApiResult !!= NULL>, pRTCC_LocalMemBlock, 1
+DetourDestroy LocalFree, 1, 1, <xApiResult == NULL>, pRTCC_LocalMemBlock
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate BeginPaint, 2, 2, <!!= NULL>, pRTCC_PaintStruct
-DetourStdDestroy EndPaint, 2, 2, <!!= FALSE>, pRTCC_PaintStruct
+DetourCreate CoTaskMemAlloc, 1, 0, <xApiResult !!= NULL>, pRTCC_CoTaskMemBlock
+DetourCreate CoTaskMemRealloc, 1, 0, <xApiResult !!= NULL>, pRTCC_CoTaskMemBlock, 1
+DetourDestroy CoTaskMemFree, 1, 1, <>, pRTCC_CoTaskMemBlock
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate CreatePen, 3, 0, <!!= NULL>, pRTCC_Pen
-DetourStdCreate CreatePenIndirect, 1, 0, <!!= NULL>, pRTCC_Pen
+DetourCreate VirtualAlloc, 4, 0, <xApiResult !!= NULL>, pRTCC_VirtualMemBlock
+DetourDestroy VirtualFree, 3, 1, <xApiResult !!= FALSE>, pRTCC_VirtualMemBlock
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+
+DetourCreate SysAllocString, 1, 0, <xApiResult !!= NULL>, pRTCC_SysString
+DetourCreate SysAllocStringLen, 2, 0, <xApiResult !!= NULL>, pRTCC_SysString
+DetourCreate SysAllocStringByteLen, 2, 0, <xApiResult !!= NULL>, pRTCC_SysString
+DetourCreate SysReAllocString, 2, 0, <xApiResult !!= FALSE>, pRTCC_SysString
+DetourCreate SysReAllocStringLen, 3, 0, <xApiResult !!= FALSE>, pRTCC_SysString
+DetourDestroy SysFreeString, 1, 1, <xApiResult !!= FALSE>, pRTCC_SysString
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+
+DetourCreate BeginPaint, 2, 2, <xApiResult !!= NULL>, pRTCC_PaintStruct
+DetourDestroy EndPaint, 2, 2, <xApiResult !!= FALSE>, pRTCC_PaintStruct
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+
+DetourCreate CreatePen, 3, 0, <xApiResult !!= NULL>, pRTCC_Pen
+DetourCreate CreatePenIndirect, 1, 0, <xApiResult !!= NULL>, pRTCC_Pen
+DetourCreate ExtCreatePen, 5, 0, <xApiResult !!= NULL>, pRTCC_Pen
 
 ; ------------------------------------------------------------------------------
 
-DetourStdCreate CreateSolidBrush, 1, 0, <!!= NULL>, pRTCC_Brush
-DetourStdCreate CreateDIBPatternBrush, 2, 0, <!!= NULL>, pRTCC_Brush
-DetourStdCreate CreateDIBPatternBrushPt, 2, 0, <!!= NULL>, pRTCC_Brush
-DetourStdCreate CreateHatchBrush, 2, 0, <!!= NULL>, pRTCC_Brush
-DetourStdCreate CreatePatternBrush, 1, 0, <!!= NULL>, pRTCC_Brush
-DetourStdCreate CreateBrushIndirect, 1, 0, <!!= NULL>, pRTCC_Brush
+DetourCreate CreateSolidBrush, 1, 0, <xApiResult !!= NULL>, pRTCC_Brush
+DetourCreate CreateDIBPatternBrush, 2, 0, <xApiResult !!= NULL>, pRTCC_Brush
+DetourCreate CreateDIBPatternBrushPt, 2, 0, <xApiResult !!= NULL>, pRTCC_Brush
+DetourCreate CreateHatchBrush, 2, 0, <xApiResult !!= NULL>, pRTCC_Brush
+DetourCreate CreatePatternBrush, 1, 0, <xApiResult !!= NULL>, pRTCC_Brush
+DetourCreate CreateBrushIndirect, 1, 0, <xApiResult !!= NULL>, pRTCC_Brush
 
 ; ------------------------------------------------------------------------------
 
-DetourStdCreate CreateBitmap, 5, 0, <!!= NULL>, pRTCC_Bitmap
-DetourStdCreate CreateBitmapIndirect, 1, 0, <!!= NULL>, pRTCC_Bitmap
-DetourStdCreate CreateCompatibleBitmap, 3, 0, <!!= NULL>, pRTCC_Bitmap
-DetourStdCreate CreateDIBitmap, 6, 0, <!!= NULL>, pRTCC_Bitmap
-DetourStdCreate CreateDIBSection, 6, 0, <!!= NULL>, pRTCC_Bitmap
-DetourStdCreate CreateDiscardableBitmap, 3, 0, <!!= NULL>, pRTCC_Bitmap
-DetourStdCreate LoadBitmapA, 2, 0, <!!= NULL>, pRTCC_Bitmap
-DetourStdCreate LoadBitmapW, 2, 0, <!!= NULL>, pRTCC_Bitmap
+DetourCreate CreateBitmap, 5, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
+DetourCreate CreateBitmapIndirect, 1, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
+DetourCreate CreateCompatibleBitmap, 3, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
+DetourCreate CreateDIBitmap, 6, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
+DetourCreate CreateDIBSection, 6, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
+DetourCreate CreateDiscardableBitmap, 3, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
+DetourCreate LoadBitmapA, 2, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
+DetourCreate LoadBitmapW, 2, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
 
 ; ------------------------------------------------------------------------------
 
-DetourStdCreate CreateEllipticRgn, 4, 0, <!!= NULL>, pRTCC_Region
-DetourStdCreate CreateEllipticRgnIndirect, 1, 0, <!!= NULL>, pRTCC_Region
-DetourStdCreate CreatePenDataRegion, 2, 0, <!!= NULL>, pRTCC_Region
-DetourStdCreate CreatePolygonRgn, 3, 0, <!!= NULL>, pRTCC_Region
-DetourStdCreate CreatePolyPolygonRgn, 4, 0, <!!= NULL>, pRTCC_Region
-DetourStdCreate CreateRectRgn, 4, 0, <!!= NULL>, pRTCC_Region
-DetourStdCreate CreateRectRgnIndirect, 1, 0, <!!= NULL>, pRTCC_Region
-DetourStdCreate CreateRoundRectRgn, 6, 0, <!!= NULL>, pRTCC_Region
-DetourStdDestroy SetWindowRgn, 3, 2, <!!= FALSE>, pRTCC_Region  ;This region is destroyed by the window!
+DetourCreate CreateEllipticRgn, 4, 0, <xApiResult !!= NULL>, pRTCC_Region
+DetourCreate CreateEllipticRgnIndirect, 1, 0, <xApiResult !!= NULL>, pRTCC_Region
+DetourCreate CreatePenDataRegion, 2, 0, <xApiResult !!= NULL>, pRTCC_Region
+DetourCreate CreatePolygonRgn, 3, 0, <xApiResult !!= NULL>, pRTCC_Region
+DetourCreate CreatePolyPolygonRgn, 4, 0, <xApiResult !!= NULL>, pRTCC_Region
+DetourCreate CreateRectRgn, 4, 0, <xApiResult !!= NULL>, pRTCC_Region
+DetourCreate CreateRectRgnIndirect, 1, 0, <xApiResult !!= NULL>, pRTCC_Region
+DetourCreate CreateRoundRectRgn, 6, 0, <xApiResult !!= NULL>, pRTCC_Region
+DetourCreate ExtCreateRegion, 3, 0, <xApiResult !!= NULL>, pRTCC_Region
+DetourDestroy SetWindowRgn, 3, 2, <xApiResult !!= FALSE>, pRTCC_Region  ;This region is destroyed by the window!
 
 ; ------------------------------------------------------------------------------
 
-DetourStdCreate CopyImage, 5, 0, <!!= NULL>, pRTCC_Image
-DetourStdCreate LoadImageA, 6, 0, <!!= NULL>, pRTCC_Image
-DetourStdCreate LoadImageW, 6, 0, <!!= NULL>, pRTCC_Image
+DetourCreate CopyImage, 5, 0, <xApiResult !!= NULL>, pRTCC_Image
+DetourCreate LoadImageA, 6, 0, <xApiResult !!= NULL>, pRTCC_Image
+DetourCreate LoadImageW, 6, 0, <xApiResult !!= NULL>, pRTCC_Image
 
 ; ------------------------------------------------------------------------------
 
-DetourStdCreate CreateFontA, 14, 0, <!!= NULL>, pRTCC_Font
-DetourStdCreate CreateFontW, 14, 0, <!!= NULL>, pRTCC_Font
-DetourStdCreate CreateFontIndirectA, 1, 0, <!!= NULL>, pRTCC_Font
-DetourStdCreate CreateFontIndirectW, 1, 0, <!!= NULL>, pRTCC_Font
+DetourCreate CreateFontA, 14, 0, <xApiResult !!= NULL>, pRTCC_Font
+DetourCreate CreateFontW, 14, 0, <xApiResult !!= NULL>, pRTCC_Font
+DetourCreate CreateFontIndirectA, 1, 0, <xApiResult !!= NULL>, pRTCC_Font
+DetourCreate CreateFontIndirectW, 1, 0, <xApiResult !!= NULL>, pRTCC_Font
+DetourCreate CreateFontIndirectExA, 1, 0, <xApiResult !!= NULL>, pRTCC_Font
+DetourCreate CreateFontIndirectExW, 1, 0, <xApiResult !!= NULL>, pRTCC_Font
 
 ; ------------------------------------------------------------------------------
 
-DetourStdCreate CreatePalette, 1, 0, <!!= NULL>, pRTCC_Palette
-DetourStdCreate CreateHalftonePalette, 1, 0, <!!= NULL>, pRTCC_Palette
+DetourCreate CreatePalette, 1, 0, <xApiResult !!= NULL>, pRTCC_Palette
+DetourCreate CreateHalftonePalette, 1, 0, <xApiResult !!= NULL>, pRTCC_Palette
 
 ; ------------------------------------------------------------------------------
 
-DetourStdCreate CreateColorSpaceA, 1, 0, <!!= NULL>, pRTCC_ColorSpace
-DetourStdCreate CreateColorSpaceW, 1, 0, <!!= NULL>, pRTCC_ColorSpace
+DetourCreate CreateColorSpaceA, 1, 0, <xApiResult !!= NULL>, pRTCC_ColorSpace
+DetourCreate CreateColorSpaceW, 1, 0, <xApiResult !!= NULL>, pRTCC_ColorSpace
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+
+DetourCreate GetStockObject, 1, 0, <xApiResult !!= NULL>, pRTCC_StockObject
 
 ; ------------------------------------------------------------------------------
 
-DetourStdDestroy DeleteObject, 1, 1, <!!= FALSE>, pRTCC_Pen, pRTCC_Brush, pRTCC_Bitmap, \
+DetourDestroy DeleteObject, 1, 1, <xApiResult !!= FALSE>, pRTCC_Pen, pRTCC_Brush, pRTCC_Bitmap, \
                                                 pRTCC_Region, pRTCC_Font, pRTCC_Palette, \
-                                                pRTCC_ColorSpace, pRTCC_Image
+                                                pRTCC_ColorSpace, pRTCC_Image, pRTCC_StockObject
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate CreateCursor, 7, 0, <!!= NULL>, pRTCC_Cursor
-DetourStdCreate LoadCursorA, 2, 0, <!!= NULL>, pRTCC_Cursor,, <Arg1 != NULL>
-DetourStdCreate LoadCursorW, 2, 0, <!!= NULL>, pRTCC_Cursor,, <Arg1 != NULL>
-
-DetourStdCreate LoadCursorFromFileA, 1, 0, <!!= NULL>, pRTCC_Cursor
-DetourStdCreate LoadCursorFromFileW, 1, 0, <!!= NULL>, pRTCC_Cursor
+DetourCreate CreateCursor, 7, 0, <xApiResult !!= NULL>, pRTCC_Cursor
+DetourCreate CopyCursor, 1, 1, <>, pRTCC_Cursor
+DetourCreate LoadCursorA, 2, 0, <xApiResult !!= NULL>, pRTCC_Cursor,, <Arg1 == NULL>
+DetourCreate LoadCursorW, 2, 0, <xApiResult !!= NULL>, pRTCC_Cursor,, <Arg1 == NULL>
+DetourCreate LoadCursorFromFileA, 1, 0, <xApiResult !!= NULL>, pRTCC_Cursor
+DetourCreate LoadCursorFromFileW, 1, 0, <xApiResult !!= NULL>, pRTCC_Cursor
+DetourDestroy SetSystemCursor, 2, 1, <xApiResult !!= FALSE>, pRTCC_Cursor       ;;Destroys src Cursor
 
 externdef pRTCC_Icon:$ObjPtr(RTC_Collection)
 ;DestroyCursor and DestroyIcon use the same API
-DetourStdDestroy DestroyCursor, 1, 1, <!!= FALSE>, pRTCC_Cursor, pRTCC_Icon, pRTCC_Image
+DetourDestroy DestroyCursor, 1, 1, <xApiResult !!= FALSE>, pRTCC_Cursor, pRTCC_Icon, pRTCC_Image
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate CreateIcon, 7, 0, <!!= NULL>, pRTCC_Icon
-DetourStdCreate CreateIconIndirect, 1, 0, <!!= NULL>, pRTCC_Icon
-DetourStdCreate CreateIconFromResource, 4, 0, <!!= NULL>, pRTCC_Icon
-DetourStdCreate CreateIconFromResourceEx, 7, 0, <!!= NULL>, pRTCC_Icon
-DetourStdCreate LoadIconA, 2, 0, <!!= NULL>, pRTCC_Icon
-DetourStdCreate LoadIconW, 2, 0, <!!= NULL>, pRTCC_Icon
-DetourStdCreate ExtractAssociatedIconA, 3, 0, <!!= NULL>, pRTCC_Icon
-DetourStdCreate ExtractAssociatedIconW, 3, 0, <!!= NULL>, pRTCC_Icon
+DetourCreate CopyIcon, 1, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate CreateIcon, 7, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate CreateIconIndirect, 1, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate CreateIconFromResource, 4, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate CreateIconFromResourceEx, 7, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate DuplicateIcon, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate ExtractIconA, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate ExtractIconW, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate ExtractIconExA, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate ExtractIconExW, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate ExtractAssociatedIconA, 3, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate ExtractAssociatedIconW, 3, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate LoadIconA, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate LoadIconW, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
 ;DestroyCursor and DestroyIcon use the same API
-DetourStdDestroy DestroyIcon, 1, 1, <!!= FALSE>, pRTCC_Icon, pRTCC_Cursor, pRTCC_Image
+DetourDestroy DestroyIcon, 1, 1, <xApiResult !!= FALSE>, pRTCC_Icon, pRTCC_Cursor, pRTCC_Image
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate CreateMenu, 0, 0, <!!= NULL>, pRTCC_Menu
-DetourStdCreate CreatePopupMenu, 0, 0, <!!= NULL>, pRTCC_Menu
-DetourStdCreate LoadMenuA, 2, 0, <!!= NULL>, pRTCC_Menu
-DetourStdCreate LoadMenuW, 2, 0, <!!= NULL>, pRTCC_Menu
-DetourStdCreate LoadMenuIndirectA, 1, 0, <!!= NULL>, pRTCC_Menu
-DetourStdCreate LoadMenuIndirectW, 1, 0, <!!= NULL>, pRTCC_Menu
-DetourStdDestroy DestroyMenu, 1, 1, <!!= FALSE>, pRTCC_Menu
+DetourCreate CreateMenu, 0, 0, <xApiResult !!= NULL>, pRTCC_Menu
+DetourCreate CreatePopupMenu, 0, 0, <xApiResult !!= NULL>, pRTCC_Menu
+DetourCreate LoadMenuA, 2, 0, <xApiResult !!= NULL>, pRTCC_Menu
+DetourCreate LoadMenuW, 2, 0, <xApiResult !!= NULL>, pRTCC_Menu
+DetourCreate LoadMenuIndirectA, 1, 0, <xApiResult !!= NULL>, pRTCC_Menu
+DetourCreate LoadMenuIndirectW, 1, 0, <xApiResult !!= NULL>, pRTCC_Menu
+DetourDestroy DestroyMenu, 1, 1, <xApiResult !!= FALSE>, pRTCC_Menu
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate CreateMetaFileA, 1, 0, <!!= NULL>, pRTCC_MetaFile
-DetourStdCreate CreateMetaFileW, 1, 0, <!!= NULL>, pRTCC_MetaFile
-DetourStdCreate GetMetaFileA, 1, 0, <!!= NULL>, pRTCC_MetaFile
-DetourStdCreate GetMetaFileW, 1, 0, <!!= NULL>, pRTCC_MetaFile
-DetourStdDestroy DeleteMetaFile, 1, 1, <!!= FALSE>, pRTCC_MetaFile
+DetourCreate CloseMetaFile, 1, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
+DetourCreate CopyMetaFileA, 2, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
+DetourCreate CopyMetaFileW, 2, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
+DetourCreate CreateMetaFileA, 1, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
+DetourCreate CreateMetaFileW, 1, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
+DetourCreate GetMetaFileA, 1, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
+DetourCreate GetMetaFileW, 1, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
+DetourDestroy DeleteMetaFile, 1, 1, <xApiResult !!= FALSE>, pRTCC_MetaFile
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate CreateEnhMetaFileA, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
-DetourStdCreate CreateEnhMetaFileW, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
-DetourStdCreate GetEnhMetaFileA, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
-DetourStdCreate GetEnhMetaFileW, 1, 0, <!!= NULL>, pRTCC_EnhMetaFile
-DetourStdDestroy DeleteEnhMetaFile, 1, 1, <!!= FALSE>, pRTCC_EnhMetaFile
+DetourCreate CloseEnhMetaFile, 1, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
+DetourCreate CopyEnhMetaFileA, 2, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
+DetourCreate CopyEnhMetaFileW, 2, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
+DetourCreate CreateEnhMetaFileA, 1, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
+DetourCreate CreateEnhMetaFileW, 1, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
+DetourCreate GetEnhMetaFileA, 1, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
+DetourCreate GetEnhMetaFileW, 1, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
+DetourDestroy DeleteEnhMetaFile, 1, 1, <xApiResult !!= FALSE>, pRTCC_EnhMetaFile
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate CreateDCA, 4, 0, <!!= NULL>, pRTCC_DeviceContext
-DetourStdCreate CreateDCW, 4, 0, <!!= NULL>, pRTCC_DeviceContext
-DetourStdCreate CreateCompatibleDC, 1, 0, <!!= NULL>, pRTCC_DeviceContext
-DetourStdCreate CreateICA, 4, 0, <!!= NULL>, pRTCC_DeviceContext
-DetourStdCreate CreateICW, 4, 0, <!!= NULL>, pRTCC_DeviceContext
-DetourStdDestroy DeleteDC, 1, 1, <!!= FALSE>, pRTCC_DeviceContext
+DetourCreate CreateDCA, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
+DetourCreate CreateDCW, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
+DetourCreate CreateCompatibleDC, 1, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
+DetourCreate CreateICA, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
+DetourCreate CreateICW, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
+DetourDestroy DeleteDC, 1, 1, <xApiResult !!= FALSE>, pRTCC_DeviceContext
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate CreateAcceleratorTableA, 2, 0, <!!= NULL>, pRTCC_AccTable
-DetourStdCreate CreateAcceleratorTableW, 2, 0, <!!= NULL>, pRTCC_AccTable
-DetourStdCreate CopyAcceleratorTableA, 3, 0, <!!= NULL>, pRTCC_AccTable
-DetourStdCreate CopyAcceleratorTableW, 3, 0, <!!= NULL>, pRTCC_AccTable
-DetourStdCreate LoadAcceleratorsA, 2, 0, <!!= NULL>, pRTCC_AccTable
-DetourStdCreate LoadAcceleratorsW, 2, 0, <!!= NULL>, pRTCC_AccTable
-DetourStdDestroy DestroyAcceleratorTable, 1, 1, <!!= FALSE>, pRTCC_AccTable
+DetourCreate CreateAcceleratorTableA, 2, 0, <xApiResult !!= NULL>, pRTCC_AccTable
+DetourCreate CreateAcceleratorTableW, 2, 0, <xApiResult !!= NULL>, pRTCC_AccTable
+DetourCreate CopyAcceleratorTableA, 3, 0, <xApiResult !!= NULL>, pRTCC_AccTable
+DetourCreate CopyAcceleratorTableW, 3, 0, <xApiResult !!= NULL>, pRTCC_AccTable
+DetourCreate LoadAcceleratorsA, 2, 0, <xApiResult !!= NULL>, pRTCC_AccTable
+DetourCreate LoadAcceleratorsW, 2, 0, <xApiResult !!= NULL>, pRTCC_AccTable
+DetourDestroy DestroyAcceleratorTable, 1, 1, <xApiResult !!= FALSE>, pRTCC_AccTable
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate CreateDesktopA, 6, 0, <!!= NULL>, pRTCC_Desktop
-DetourStdCreate CreateDesktopW, 6, 0, <!!= NULL>, pRTCC_Desktop
-DetourStdDestroy CloseDesktop, 1, 1, <!!= FALSE>, pRTCC_Desktop
+DetourCreate CreateDesktopA, 6, 0, <xApiResult !!= NULL>, pRTCC_Desktop
+DetourCreate CreateDesktopW, 6, 0, <xApiResult !!= NULL>, pRTCC_Desktop
+DetourCreate CreateDesktopExA, 8, 0, <xApiResult !!= NULL>, pRTCC_Desktop
+DetourCreate CreateDesktopExW, 8, 0, <xApiResult !!= NULL>, pRTCC_Desktop
+DetourDestroy CloseDesktop, 1, 1, <xApiResult !!= FALSE>, pRTCC_Desktop
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate CreateWindowStationA, 4, 0, <!!= NULL>, pRTCC_WindowStation
-DetourStdCreate CreateWindowStationW, 4, 0, <!!= NULL>, pRTCC_WindowStation
-DetourStdDestroy CloseWindowStation, 1, 1, <!!= FALSE>, pRTCC_WindowStation
+DetourCreate CreateWindowStationA, 4, 0, <xApiResult !!= NULL>, pRTCC_WindowStation
+DetourCreate CreateWindowStationW, 4, 0, <xApiResult !!= NULL>, pRTCC_WindowStation
+DetourCreate OpenWindowStationA, 3, 0, <xApiResult !!= NULL>, pRTCC_WindowStation
+DetourCreate OpenWindowStationW, 3, 0, <xApiResult !!= NULL>, pRTCC_WindowStation
+DetourDestroy CloseWindowStation, 1, 1, <xApiResult !!= FALSE>, pRTCC_WindowStation
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate CreateFileA, 7, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_File
-DetourStdCreate CreateFileW, 7, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_File
+DetourCreate CreateFileA, 7, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_File
+DetourCreate CreateFileW, 7, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_File
+DetourCreate CreateFileTransactedA, 10, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_File
+DetourCreate CreateFileTransactedW, 10, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_File
 
 ; ------------------------------------------------------------------------------
 
-DetourStdCreate CreateEventA, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Event
-DetourStdCreate CreateEventW, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Event
-DetourStdCreate OpenEventA, 3, 0, <!!= NULL>, pRTCC_Event
-DetourStdCreate OpenEventW, 3, 0, <!!= NULL>, pRTCC_Event
+DetourCreate CreateEventA, 4, 0, <xApiResult !!= NULL>, pRTCC_Event
+DetourCreate CreateEventW, 4, 0, <xApiResult !!= NULL>, pRTCC_Event
+DetourCreateNamed CreateEventExA, 4, 0, <xApiResult !!= NULL>, pRTCC_Event
+DetourCreateNamed CreateEventExW, 4, 0, <xApiResult !!= NULL>, pRTCC_Event
+DetourCreate OpenEventA, 3, 0, <xApiResult !!= NULL>, pRTCC_Event
+DetourCreate OpenEventW, 3, 0, <xApiResult !!= NULL>, pRTCC_Event
 
 ; ------------------------------------------------------------------------------
 
-DetourStdCreate CreateFileMappingA, 6, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_FileMapping
-DetourStdCreate CreateFileMappingW, 6, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_FileMapping
+DetourCreateNamed CreateFileMappingA, 6, 0, <xApiResult !!= NULL>, pRTCC_FileMapping
+DetourCreateNamed CreateFileMappingW, 6, 0, <xApiResult !!= NULL>, pRTCC_FileMapping
+DetourCreateNamed CreateFileMappingNumaA, 7, 0, <xApiResult !!= NULL>, pRTCC_FileMapping
+DetourCreateNamed CreateFileMappingNumaW, 7, 0, <xApiResult !!= NULL>, pRTCC_FileMapping
 
 ; ------------------------------------------------------------------------------
 
-DetourStdCreate CreateMutexA, 3, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Mutex
-DetourStdCreate CreateMutexW, 3, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Mutex
-DetourStdCreate OpenMutexA, 3, 0, <!!= NULL>, pRTCC_Mutex
-DetourStdCreate OpenMutexW, 3, 0, <!!= NULL>, pRTCC_Mutex
+DetourCreate CreateMutexA, 3, 0, <xApiResult !!= NULL>, pRTCC_Mutex
+DetourCreate CreateMutexW, 3, 0, <xApiResult !!= NULL>, pRTCC_Mutex
+DetourCreate OpenMutexA, 3, 0, <xApiResult !!= NULL>, pRTCC_Mutex
+DetourCreate OpenMutexW, 3, 0, <xApiResult !!= NULL>, pRTCC_Mutex
 
 ; ------------------------------------------------------------------------------
 
@@ -714,6 +1017,7 @@ externdef pRTCC_Pipe:$ObjPtr(RTC_Collection)
 pHookCreatePipe   $ObjPtr(IAT_Hook)     NULL
 
 .code
+;This detour proc handles the Read and Write HANDLEs 
 DtrCreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
   local xApiResult:XWORD, hThread:HANDLE
   local Context:CONTEXT, Stack:STACK
@@ -761,34 +1065,47 @@ DtrCreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
   ret
 DtrCreatePipe endp
 
-DetourStdCreate CreateNamedPipeA, 8, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Pipe
-DetourStdCreate CreateNamedPipeW, 8, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Pipe
+DetourCreateNamed CreateNamedPipeA, 8, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_Pipe
+DetourCreateNamed CreateNamedPipeW, 8, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_Pipe
 
 ; ------------------------------------------------------------------------------
 
-DetourStdCreate CreateProcessA, 10, -10, <!!= FALSE>, pRTCC_Process
-DetourStdCreate CreateProcessW, 10, -10, <!!= FALSE>, pRTCC_Process
-DetourStdCreate OpenProcess, 3, 0, <!!= NULL>, pRTCC_Process
+DetourCreate CreateProcessA, 10, -10, <xApiResult !!= FALSE>, pRTCC_Process
+DetourCreate CreateProcessW, 10, -10, <xApiResult !!= FALSE>, pRTCC_Process
+DetourCreate CreateProcessAsUserA, 11, -11, <xApiResult !!= FALSE>, pRTCC_Process
+DetourCreate CreateProcessAsUserW, 11, -11, <xApiResult !!= FALSE>, pRTCC_Process
+DetourCreate CreateProcessWithLogonA, 11, -11, <xApiResult !!= FALSE>, pRTCC_Process
+DetourCreate CreateProcessWithLogonW, 11, -11, <xApiResult !!= FALSE>, pRTCC_Process
+DetourCreate OpenProcess, 3, 0, <xApiResult !!= NULL>, pRTCC_Process
 
 ; ------------------------------------------------------------------------------
 
-DetourStdCreate CreateThread, 6, 0, <!!= NULL>, pRTCC_Thread
-DetourStdCreate CreateRemoteThread, 3, 0, <!!= NULL>, pRTCC_Thread
+DetourCreate CreateThread, 6, 0, <xApiResult !!= NULL>, pRTCC_Thread
+DetourCreate CreateRemoteThread, 3, 0, <xApiResult !!= NULL>, pRTCC_Thread
 
 ; ------------------------------------------------------------------------------
 
-DetourStdCreate CreateSemaphoreA, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Semaphore
-DetourStdCreate CreateSemaphoreW, 4, 0, <!!= ERROR_ALREADY_EXISTS>, pRTCC_Semaphore
-DetourStdCreate OpenSemaphoreA, 3, 0, <!!= NULL>, pRTCC_Semaphore
-DetourStdCreate OpenSemaphoreW, 3, 0, <!!= NULL>, pRTCC_Semaphore
+DetourCreate CreateSemaphoreA, 4, 0, <xApiResult !!= NULL>, pRTCC_Semaphore
+DetourCreate CreateSemaphoreW, 4, 0, <xApiResult !!= NULL>, pRTCC_Semaphore
+DetourCreate CreateSemaphoreExA, 6, 0, <xApiResult !!= NULL>, pRTCC_Semaphore
+DetourCreate CreateSemaphoreExW, 6, 0, <xApiResult !!= NULL>, pRTCC_Semaphore
+DetourCreate OpenSemaphoreA, 3, 0, <xApiResult !!= NULL>, pRTCC_Semaphore
+DetourCreate OpenSemaphoreW, 3, 0, <xApiResult !!= NULL>, pRTCC_Semaphore
 
 ; ------------------------------------------------------------------------------
 
-DetourStdDestroy CloseHandle, 1, 1, <!!= FALSE>, \
-                 pRTCC_File, pRTCC_Event, pRTCC_FileMapping, pRTCC_Mutex, pRTCC_Pipe, \
-                 pRTCC_Process, pRTCC_Thread, pRTCC_Semaphore
+DetourDestroy CloseHandle, 1, 1, <xApiResult !!= FALSE>, \
+                 pRTCC_File, pRTCC_FileMapping, pRTCC_Event, \
+                 pRTCC_Mutex, pRTCC_Semaphore, \
+                 pRTCC_Pipe, \
+                 pRTCC_Thread, pRTCC_Process, pRTCC_Job
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+
+DetourCreateNamed CreateWaitableTimerA, 3, 0, <xApiResult !!= NULL>, pRTCC_Timer
+DetourCreateNamed CreateWaitableTimerW, 3, 0, <xApiResult !!= NULL>, pRTCC_Timer
+DetourCreateNamed CreateWaitableTimerExA, 4, 0, <xApiResult !!= NULL>, pRTCC_Timer
+DetourCreateNamed CreateWaitableTimerExW, 4, 0, <xApiResult !!= NULL>, pRTCC_Timer
 
 HookCount = HookCount + 2
 externdef pRTCC_Timer:$ObjPtr(RTC_Collection)
@@ -873,259 +1190,109 @@ DtrKillTimer endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate GetDC, 1, 0, <!!= NULL>, pRTCC_DisplayDeviceContext
-DetourStdCreate GetDCEx, 3, 0, <!!= NULL>, pRTCC_DisplayDeviceContext
-DetourStdCreate GetWindowDC, 1, 0, <!!= NULL>, pRTCC_DisplayDeviceContext
-DetourStdDestroy ReleaseDC, 2, 2, <!!= FALSE>, pRTCC_DisplayDeviceContext
+DetourCreate GetDC, 1, 0, <xApiResult !!= NULL>, pRTCC_DisplayDeviceContext
+DetourCreate GetDCEx, 3, 0, <xApiResult !!= NULL>, pRTCC_DisplayDeviceContext
+DetourCreate GetWindowDC, 1, 0, <xApiResult !!= NULL>, pRTCC_DisplayDeviceContext
+DetourDestroy ReleaseDC, 2, 2, <xApiResult !!= FALSE>, pRTCC_DisplayDeviceContext
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate LoadKeyboardLayoutA, 2, 0, <!!= NULL>, pRTCC_KeyboardLayout
-DetourStdCreate LoadKeyboardLayoutW, 2, 0, <!!= NULL>, pRTCC_KeyboardLayout
-DetourStdDestroy UnloadKeyboardLayout, 1, 1, <!!= FALSE>, pRTCC_KeyboardLayout
+DetourCreate LoadKeyboardLayoutA, 2, 0, <xApiResult !!= NULL>, pRTCC_KeyboardLayout
+DetourCreate LoadKeyboardLayoutW, 2, 0, <xApiResult !!= NULL>, pRTCC_KeyboardLayout
+DetourDestroy UnloadKeyboardLayout, 1, 1, <xApiResult !!= FALSE>, pRTCC_KeyboardLayout
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate LoadLibraryA, 1, 0, <!!= NULL>, pRTCC_Library
-DetourStdCreate LoadLibraryW, 1, 0, <!!= NULL>, pRTCC_Library
-DetourStdCreate LoadLibraryExA, 3, 0, <!!= NULL>, pRTCC_Library
-DetourStdCreate LoadLibraryExW, 3, 0, <!!= NULL>, pRTCC_Library
-DetourStdDestroy FreeLibrary, 1, 1, <!!= FALSE>, pRTCC_Library
+DetourCreate LoadLibraryA, 1, 0, <xApiResult !!= NULL>, pRTCC_Library
+DetourCreate LoadLibraryW, 1, 0, <xApiResult !!= NULL>, pRTCC_Library
+DetourCreate LoadLibraryExA, 3, 0, <xApiResult !!= NULL>, pRTCC_Library
+DetourCreate LoadLibraryExW, 3, 0, <xApiResult !!= NULL>, pRTCC_Library
+DetourDestroy FreeLibrary, 1, 1, <xApiResult !!= FALSE>, pRTCC_Library
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate OpenPrinterA, 3, 0, <!!= NULL>, pRTCC_Printer
-DetourStdCreate OpenPrinterW, 3, 0, <!!= NULL>, pRTCC_Printer
-DetourStdCreate AddPrinterA, 3, 0, <!!= NULL>, pRTCC_Printer
-DetourStdCreate AddPrinterW, 3, 0, <!!= NULL>, pRTCC_Printer
-DetourStdDestroy ClosePrinter, 1, 1, <!!= FALSE>, pRTCC_Printer
+DetourCreate OpenPrinterA, 3, -2, <xApiResult !!= NULL>, pRTCC_Printer
+DetourCreate OpenPrinterW, 3, -2, <xApiResult !!= NULL>, pRTCC_Printer
+DetourCreate OpenPrinter2A, 4, -2, <xApiResult !!= NULL>, pRTCC_Printer
+DetourCreate OpenPrinter2W, 4, -2, <xApiResult !!= NULL>, pRTCC_Printer
+DetourCreate AddPrinterA, 3, 0, <xApiResult !!= NULL>, pRTCC_Printer
+DetourCreate AddPrinterW, 3, 0, <xApiResult !!= NULL>, pRTCC_Printer
+DetourDestroy ClosePrinter, 1, 1, <xApiResult !!= FALSE>, pRTCC_Printer
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate RegCreateKeyA, 3, -3, <== ERROR_SUCCESS>, pRTCC_RegKey
-DetourStdCreate RegCreateKeyW, 3, -3, <== ERROR_SUCCESS>, pRTCC_RegKey
-DetourStdCreate RegCreateKeyExA, 9, -8, <== ERROR_SUCCESS>, pRTCC_RegKey
-DetourStdCreate RegCreateKeyExW, 9, -8, <== ERROR_SUCCESS>, pRTCC_RegKey
-DetourStdDestroy RegCloseKey, 1, 1, <== ERROR_SUCCESS>, pRTCC_RegKey
+DetourCreate RegCreateKeyA, 3, -3, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
+DetourCreate RegCreateKeyW, 3, -3, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
+DetourCreate RegCreateKeyExA, 9, -8, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
+DetourCreate RegCreateKeyExW, 9, -8, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
+DetourCreate RegOpenKeyA, 3, -3, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
+DetourCreate RegOpenKeyW, 3, -3, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
+DetourCreate RegOpenKeyExA, 5, -5, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
+DetourCreate RegOpenKeyExW, 5, -5, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
+DetourCreate RegOpenKeyTransactedA, 7, -5, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
+DetourCreate RegOpenKeyTransactedW, 7, -5, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
+DetourDestroy RegCloseKey, 1, 1, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate BeginUpdateResourceA, 2, 0, <!!= NULL>, pRTCC_UpdateResource
-DetourStdCreate BeginUpdateResourceW, 2, 0, <!!= NULL>, pRTCC_UpdateResource
-DetourStdDestroy EndUpdateResourceA, 2, 1, <!!= FALSE>, pRTCC_UpdateResource
-DetourStdDestroy EndUpdateResourceW, 2, 1, <!!= FALSE>, pRTCC_UpdateResource
+DetourCreate BeginUpdateResourceA, 2, 0, <xApiResult !!= NULL>, pRTCC_UpdateResource
+DetourCreate BeginUpdateResourceW, 2, 0, <xApiResult !!= NULL>, pRTCC_UpdateResource
+DetourDestroy EndUpdateResourceA, 2, 1, <xApiResult !!= FALSE>, pRTCC_UpdateResource
+DetourDestroy EndUpdateResourceW, 2, 1, <xApiResult !!= FALSE>, pRTCC_UpdateResource
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate CreateMailslotA, 4, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Mailslot
-DetourStdCreate CreateMailslotW, 4, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_Mailslot
+DetourCreate CreateMailslotA, 4, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_Mailslot
+DetourCreate CreateMailslotW, 4, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_Mailslot
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate FindFirstFileA, 2, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_FindFirst
-DetourStdCreate FindFirstFileW, 2, 0, <!!= INVALID_HANDLE_VALUE>, pRTCC_FindFirst
-DetourStdDestroy FindClose, 1, 1, <!!= FALSE>, pRTCC_FindFirst
+DetourCreate FindFirstFileA, 2, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
+DetourCreate FindFirstFileW, 2, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
+DetourCreate FindFirstFileExA, 6, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
+DetourCreate FindFirstFileExW, 6, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
+DetourCreate FindFirstFileNameA, 4, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
+DetourCreate FindFirstFileNameW, 4, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
+DetourCreate FindFirstFileTransactedA, 7, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
+DetourCreate FindFirstFileTransactedW, 7, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
+DetourDestroy FindClose, 1, 1, <xApiResult !!= FALSE>, pRTCC_FindFirstFile
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate OpenEventLogA, 2, 0, <!!= NULL>, pRTCC_EventLog
-DetourStdCreate OpenEventLogW, 2, 0, <!!= NULL>, pRTCC_EventLog
-DetourStdDestroy CloseEventLog, 1, 1, <!!= FALSE>, pRTCC_EventLog
+DetourCreate FindFirstChangeNotificationA, 3, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstChangeNotif
+DetourCreate FindFirstChangeNotificationW, 3, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstChangeNotif
+DetourDestroy FindCloseChangeNotification, 1, 1, <xApiResult !!= FALSE>, pRTCC_FindFirstFile
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourStdCreate InitializeCriticalSection, 1, 1, <|| 0FFFFFFFFh>, pRTCC_CriticalSection
-DetourStdDestroy DeleteCriticalSection, 1, 1, <|| 0FFFFFFFFh>, pRTCC_CriticalSection
+DetourCreate OpenEventLogA, 2, 0, <xApiResult !!= NULL>, pRTCC_EventLog
+DetourCreate OpenEventLogW, 2, 0, <xApiResult !!= NULL>, pRTCC_EventLog
+DetourDestroy CloseEventLog, 1, 1, <xApiResult !!= FALSE>, pRTCC_EventLog
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      DetourCntCreate
-; Purpose:    Create a counted detour procedure to intercept allocation APIs.
-; Arguments:  Arg1: API name.
-;             Arg2: API argument count.
-;             Arg3: Counter name.
-;             Arg4: API success condition.
-;             Arg5: RTCD_Coll pointer.
-; Return:     Nothing.
 
-DetourCntCreate macro ApiName:req, ArgCount:req, CounterName:req, SuccessCond:req, pRTC_Coll:req
-  local ArgStr, Cnt
-
-  HookCount = HookCount + 1                             ;;Keep track of the hook count
-  externdef pRTC_Coll:$ObjPtr(RTC_Collection)           ;;The RTC_Collection will be definend later
-  .data
-  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
-
-  ArgStr textequ <>                                     ;;Prepare argument list
-  Cnt = 0
-  repeat ArgCount
-    Cnt = Cnt + 1
-    ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
-  endm
-
-  .code
-  Dtr&ApiName& proc ArgStr                              ;;Procedure declaration
-    local xApiResult:XWORD, hThread:HANDLE
-    local Context:CONTEXT, Stack:STACK
-
-    InvokeOriginalAPI ApiName, ArgCount
-
-    .if dResGuardEnabled != FALSE
-      mov xApiResult, xax
-      m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
-
-      AnalyseStack
-      FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
-
-      .if xApiResult SuccessCond
-        m2m [xbx].$Obj(CallData).xData1, CounterName, xax
-        inc CounterName
-        OCall pRTC_Coll::Collection.Insert, xbx
-        mov xax, pRTC_Coll
-        mov [xbx].$Obj(CallData).pOwner, xax
-      .else
-        mov [xbx].$Obj(CallData).xData1, -1
-        lea xax, FailColl
-        mov [xbx].$Obj(CallData).pOwner, xax
-        OCall xax::Collection.Insert, xbx
-      .endif
-
-      mov dResGuardEnabled, TRUE
-      mov xax, xApiResult                               ;;Restore API return value
-    .endif
-    ret
-  Dtr&ApiName& endp
-endm
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      DetourCntDestroy
-; Purpose:    Create a counted detour procedure to intercept deallocation APIs.
-; Arguments:  Arg1: API name.
-;             Arg2: API argument count.
-;             Arg3: Counter name.
-;             Arg4: API success condition.
-;             Arg5: RTCD_Coll pointer list (One deallocation API for several allocation APIs).
-; Return:     Nothing.
-
-DetourCntDestroy macro ApiName:req, ArgCount:req, CounterName:req, SuccessCond:req, pRTC_Coll_List:vararg
-  local ArgStr, Cnt, Coll, @@Exit
-
-  HookCount = HookCount + 1                             ;;Keep track of the hook count
-  .data
-  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
-
-  ArgStr textequ <>
-  Cnt = 0
-  repeat ArgCount
-    Cnt = Cnt + 1
-    ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:DWORD>
-  endm
-
-  .code
-  Dtr&ApiName& proc ArgStr                              ;;Procedure declaration
-    local xApiResult:XWORD, hThread:HANDLE
-    local Context:CONTEXT, Stack:STACK
-
-    InvokeOriginalAPI ApiName, ArgCount
-
-    .if dResGuardEnabled != FALSE
-      mov xApiResult, xax
-      m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
-
-      ifnb <SuccessCond>
-        .if xax SuccessCond
-          for pColl, <pRTC_Coll_List>                   ;;Search in all specified RTC_Collection objects
-            @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, >, CounterName, <, 0>)
-            dec CounterName
-            test eax, eax
-            jnz @@Exit                                  ;;Exit if found
-          endm
-          invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed to remove call data"),
-                             DbgColorError, DbgColorBackground, \
-                             DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
-          jmp @@Exit
-        .endif
-        AnalyseStack
-        FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
-        m2m [xbx].$Obj(CallData).xData1, -1, xcx
-
-        lea xax, FailColl
-        mov [xbx].$Obj(CallData).pOwner, xax
-        OCall xax::RTC_Collection.Insert, xbx
-      else
-        for pColl, <pRTC_Coll_List>                     ;;Search in all specified RTC_Collection objects
-          @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, >, CounterName, <, 0>)
-          dec CounterName
-          test eax, eax
-          jnz @@Exit                                    ;;Exit if found
-        endm
-        invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed to remove call data"),
-                           DbgColorError, DbgColorBackground, \
-                           DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
-      endif
-@@Exit:
-      mov dResGuardEnabled, TRUE
-      mov xax, xApiResult                               ;;Restore API return value
-    .endif
-    ret
-  Dtr&ApiName& endp
-endm
+DetourCreate InitializeCriticalSection, 1, 1, <>, pRTCC_CriticalSection
+DetourCreate InitializeCriticalSectionAndSpinCount, 2, 1, <>, pRTCC_CriticalSection
+DetourDestroy DeleteCriticalSection, 1, 1, <>, pRTCC_CriticalSection
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 .data
 OleInitializeCount  DWORD  0
 
 .code
-DetourCntCreate OleInitialize, 1, OleInitializeCount, <== S_OK>, pRTCC_OleInitialization
-DetourCntDestroy OleUninitialize, 0, OleInitializeCount, <|| 0FFFFFFFFh>, pRTCC_OleInitialization
+DetourCreateCounted OleInitialize, 1, OleInitializeCount, <xApiResult == S_OK>, pRTCC_OleInitialization
+DetourDestroyCounted OleUninitialize, 0, OleInitializeCount, <>, pRTCC_OleInitialization
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 .data
 CoInitializeCount  DWORD  0
 
 .code
-DetourCntCreate CoInitialize, 1, CoInitializeCount, <== S_OK>, pRTCC_CoInitialization
-DetourCntCreate CoInitializeEx, 2, CoInitializeCount, <== S_OK>, pRTCC_CoInitialization
-DetourCntDestroy CoUninitialize, 0, CoInitializeCount, <|| 0FFFFFFFFh>, pRTCC_CoInitialization
+DetourCreateCounted CoInitialize, 1, CoInitializeCount, <xApiResult == S_OK>, pRTCC_CoInitialization
+DetourCreateCounted CoInitializeEx, 2, CoInitializeCount, <xApiResult == S_OK>, pRTCC_CoInitialization
+DetourDestroyCounted CoUninitialize, 0, CoInitializeCount, <>, pRTCC_CoInitialization
 
 ; ==================================================================================================
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      NewHook
-; Purpose:    Create a new hook.
-; Arguments:  Arg1: API procedure name.
-;             Arg2: API library name.
-; Return:     Nothing.
-
-NewHook macro ProcName:req, LibName:req
-% New IAT_Hook
-  mov pHook&ProcName&, xax                              ;;Save the IAT_Hook in this var
-  OCall xax::IAT_Hook.Init, offset HookColl, $OfsCStrA("&LibName&.dll"), $OfsCStrA("&ProcName&"), \
-                            offset Dtr&ProcName&, FALSE
-  mov xax, pHook&ProcName&
-  .if [xax].$Obj(IAT_Hook).dErrorCode != OBJ_OK
-    Destroy xax
-  .else
-    OCall HookColl::Collection.Insert, xax              ;;and in a dedicated HookColl collection
-  .endif
-endm
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      NewRTCC
-; Purpose:    Create a new RTC_Collection.
-; Arguments:  Arg1: Resource type name.
-;             Arg2: Initial collection size.
-; Return:     Nothing.
-
-NewRTCC macro ResTypeName:req, ColSize:req
-  .data
-  pRTCC_&ResTypeName&  $ObjPtr(RTC_Collection)  NULL
-
-  .code
-  New RTC_Collection
-  mov pRTCC_&ResTypeName&, xax
-  OCall RcrcColl::Collection.Insert, xax
-  OCall xax::RTC_Collection.Init, offset RcrcColl, %ColSize, %ColSize, COL_MAX_CAPACITY
-endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure: DllDone
@@ -1166,6 +1333,7 @@ DllInit proc
   NewRTCC Pen, 10
   NewHook CreatePen, GDI32
   NewHook CreatePenIndirect, GDI32
+  NewHook ExtCreatePen, GDI32
 
   NewRTCC Brush, 10
   NewHook CreateSolidBrush, GDI32
@@ -1199,6 +1367,7 @@ DllInit proc
   NewHook CreateRectRgn, GDI32
   NewHook CreateRectRgnIndirect, GDI32
   NewHook CreateRoundRectRgn, GDI32
+  NewHook ExtCreateRegion, GDI32
   NewHook SetWindowRgn, User32
 
   NewRTCC Font, 10
@@ -1206,6 +1375,8 @@ DllInit proc
   NewHook CreateFontW, GDI32
   NewHook CreateFontIndirectA, GDI32
   NewHook CreateFontIndirectW, GDI32
+  NewHook CreateFontIndirectExA, GDI32
+  NewHook CreateFontIndirectExW, GDI32
 
   NewRTCC Palette, 10
   NewHook CreatePalette, GDI32
@@ -1219,17 +1390,31 @@ DllInit proc
 
   NewRTCC Cursor, 10
   NewHook CreateCursor, User32
+  NewHook CopyCursor, User32
+  NewHook LoadCursorA, User32
+  NewHook LoadCursorW, User32
+  NewHook LoadCursorFromFileA, User32
+  NewHook LoadCursorFromFileW, User32
+  NewHook SetSystemCursor, User32
   NewHook DestroyCursor, User32                 ;DestroyIcon and DestroyCursor use the same API!
 
   NewRTCC Icon, 10
+  NewHook CopyIcon, User32
   NewHook CreateIcon, User32
   NewHook CreateIconIndirect, User32
   NewHook CreateIconFromResource, User32
   NewHook CreateIconFromResourceEx, User32
-  NewHook LoadIconA, User32
-  NewHook LoadIconW, User32
+  NewHook DuplicateIcon, User32
+  NewHook ExtractIconA, Shell32
+  NewHook ExtractIconW, Shell32
+  NewHook ExtractIconExA, Shell32
+  NewHook ExtractIconExW, Shell32
   NewHook ExtractAssociatedIconA, Shell32
   NewHook ExtractAssociatedIconW, Shell32
+  NewHook LoadIconA, User32
+  NewHook LoadIconW, User32
+;  NewHook PrivateExtractIconsA, User32          ;Requires a special handler
+;  NewHook PrivateExtractIconsW, User32
   NewHook DestroyIcon, User32                   ;DestroyIcon and DestroyCursor use the same API!
 
   NewRTCC Menu, 10
@@ -1239,13 +1424,21 @@ DllInit proc
   NewHook LoadMenuW, User32
   NewHook LoadMenuIndirectA, User32
   NewHook LoadMenuIndirectW, User32
+;  NewHook DeleteMenu, User32                    ;Destroys submenus!
   NewHook DestroyMenu, User32
 
   NewRTCC Timer, 10
   NewHook SetTimer, User32
+  NewHook CreateWaitableTimerA, User32
+  NewHook CreateWaitableTimerW, User32
+  NewHook CreateWaitableTimerExA, User32
+  NewHook CreateWaitableTimerExW, User32
   NewHook KillTimer, User32
 
   NewRTCC MetaFile, 10
+  NewHook CloseMetaFile, GDI32
+  NewHook CopyMetaFileA, GDI32
+  NewHook CopyMetaFileW, GDI32
   NewHook CreateMetaFileA, GDI32
   NewHook CreateMetaFileW, GDI32
   NewHook GetMetaFileA, GDI32
@@ -1253,6 +1446,9 @@ DllInit proc
   NewHook DeleteMetaFile, GDI32
 
   NewRTCC EnhMetaFile, 10
+  NewHook CloseEnhMetaFile, GDI32
+  NewHook CopyEnhMetaFileA, GDI32
+  NewHook CopyEnhMetaFileW, GDI32
   NewHook CreateEnhMetaFileA, GDI32
   NewHook CreateEnhMetaFileW, GDI32
   NewHook GetEnhMetaFileA, GDI32
@@ -1272,6 +1468,9 @@ DllInit proc
   NewHook GetDCEx, User32
   NewHook GetWindowDC, User32
   NewHook ReleaseDC, User32
+  
+  NewRTCC StockObject, 10
+  NewHook GetStockObject, User32      ;It is not necessary (but it is not harmful) to delete stock objects by calling DeleteObject.
 
   NewRTCC AccTable, 10
   NewHook CreateAcceleratorTableA, User32
@@ -1290,6 +1489,8 @@ DllInit proc
   NewRTCC Desktop, 10
   NewHook CreateDesktopA, User32
   NewHook CreateDesktopW, User32
+  NewHook CreateDesktopExA, User32
+  NewHook CreateDesktopExW, User32
   NewHook CloseDesktop, User32
 
   NewRTCC Library, 10
@@ -1302,21 +1503,29 @@ DllInit proc
   NewRTCC WindowStation, 10
   NewHook CreateWindowStationA, User32
   NewHook CreateWindowStationW, User32
+  NewHook OpenWindowStationA, User32
+  NewHook OpenWindowStationW, User32
   NewHook CloseWindowStation, User32
 
   NewRTCC File, 10
   NewHook CreateFileA, Kernel32
   NewHook CreateFileW, Kernel32
+  NewHook CreateFileTransactedA, Kernel32
+  NewHook CreateFileTransactedW, Kernel32
 
   NewRTCC Event, 10
   NewHook CreateEventA, Kernel32
   NewHook CreateEventW, Kernel32
+  NewHook CreateEventExA, Kernel32
+  NewHook CreateEventExW, Kernel32
   NewHook OpenEventA, Kernel32
   NewHook OpenEventW, Kernel32
 
   NewRTCC FileMapping, 10
   NewHook CreateFileMappingA, Kernel32
   NewHook CreateFileMappingW, Kernel32
+  NewHook CreateFileMappingNumaA, Kernel32
+  NewHook CreateFileMappingNumaW, Kernel32
 
   NewRTCC Mutex, 10
   NewHook CreateMutexA, Kernel32
@@ -1332,6 +1541,10 @@ DllInit proc
   NewRTCC Process, 10
   NewHook CreateProcessA, Kernel32
   NewHook CreateProcessW, Kernel32
+  NewHook CreateProcessAsUserA, Kernel32
+  NewHook CreateProcessAsUserW, Kernel32
+  NewHook CreateProcessWithLogonA, Kernel32
+  NewHook CreateProcessWithLogonW, Kernel32
   NewHook OpenProcess, Kernel32
 
   NewRTCC Thread, 10
@@ -1341,6 +1554,8 @@ DllInit proc
   NewRTCC Semaphore, 10
   NewHook CreateSemaphoreA, Kernel32
   NewHook CreateSemaphoreW, Kernel32
+  NewHook CreateSemaphoreExA, Kernel32
+  NewHook CreateSemaphoreExW, Kernel32
   NewHook OpenSemaphoreA, Kernel32
   NewHook OpenSemaphoreW, Kernel32
 
@@ -1349,6 +1564,8 @@ DllInit proc
   NewRTCC Printer, 10
   NewHook OpenPrinterA, WinSpool
   NewHook OpenPrinterW, WinSpool
+  NewHook OpenPrinter2A, WinSpool
+  NewHook OpenPrinter2W, WinSpool
   NewHook AddPrinterA, WinSpool
   NewHook AddPrinterW, WinSpool
   NewHook ClosePrinter, WinSpool
@@ -1358,6 +1575,12 @@ DllInit proc
   NewHook RegCreateKeyW, AdvApi32
   NewHook RegCreateKeyExA, AdvApi32
   NewHook RegCreateKeyExW, AdvApi32
+  NewHook RegOpenKeyA, AdvApi32
+  NewHook RegOpenKeyW, AdvApi32
+  NewHook RegOpenKeyExA, AdvApi32
+  NewHook RegOpenKeyExW, AdvApi32
+  NewHook RegOpenKeyTransactedA, AdvApi32
+  NewHook RegOpenKeyTransactedW, AdvApi32
   NewHook RegCloseKey, AdvApi32
 
   NewRTCC UpdateResource, 10
@@ -1370,10 +1593,21 @@ DllInit proc
   NewHook CreateMailslotA, Kernel32
   NewHook CreateMailslotW, Kernel32
 
-  NewRTCC FindFirst, 10
+  NewRTCC FindFirstFile, 10
   NewHook FindFirstFileA, Kernel32
   NewHook FindFirstFileW, Kernel32
+  NewHook FindFirstFileExA, Kernel32
+  NewHook FindFirstFileExW, Kernel32
+  NewHook FindFirstFileNameA, Kernel32
+  NewHook FindFirstFileNameW, Kernel32
+  NewHook FindFirstFileTransactedA, Kernel32
+  NewHook FindFirstFileTransactedW, Kernel32
   NewHook FindClose, Kernel32
+
+  NewRTCC FindFirstChangeNotif, 10
+  NewHook FindFirstChangeNotificationA, Kernel32
+  NewHook FindFirstChangeNotificationW, Kernel32
+  NewHook FindCloseChangeNotification, Kernel32
 
   NewRTCC EventLog, 10
   NewHook OpenEventLogA, Kernel32
@@ -1382,6 +1616,7 @@ DllInit proc
 
   NewRTCC CriticalSection, 10
   NewHook InitializeCriticalSection, Kernel32
+  NewHook InitializeCriticalSectionAndSpinCount, Kernel32
   NewHook DeleteCriticalSection, Kernel32
 
   NewRTCC OleInitialization, 10
@@ -1411,19 +1646,34 @@ DllInit proc
   NewHook VirtualFree, Kernel32
 
   NewRTCC LocalMemBlock, 100
+  NewHook LocalAlloc, Kernel32
   NewHook LocalFree, Kernel32
   NewHook LocalReAlloc, Kernel32
-  NewHook LocalAlloc, Kernel32
 
   NewRTCC GlobalMemBlock, 100
+  NewHook GlobalAlloc, Kernel32
   NewHook GlobalFree, Kernel32
   NewHook GlobalReAlloc, Kernel32
-  NewHook GlobalAlloc, Kernel32
 
   NewRTCC HeapMemBlock, 100
+  NewHook HeapAlloc, Kernel32
   NewHook HeapFree, Kernel32
   NewHook HeapReAlloc, Kernel32
-  NewHook HeapAlloc, Kernel32
+
+  NewRTCC PrivateNamespace, 2
+  NewHook CreatePrivateNamespaceA, Kernel32
+  NewHook CreatePrivateNamespaceW, Kernel32
+  
+  NewRTCC Job, 2
+  NewHook CreateJobObjectA, Kernel32
+  NewHook CreateJobObjectW, Kernel32
+
+  NewRTCC Transaction, 2
+  NewHook CreateTransactionA, KtmW32
+  NewHook CreateTransactionW, KtmW32
+
+;  NewHook DuplicateHandle, Kernel32
+;  https://learn.microsoft.com/en-us/windows/win32/sync/object-names
 
   ret
 DllInit endp
@@ -1472,50 +1722,56 @@ ResGuardShow proc uses xbx xdi
   lea xbx, cBuffer
 
   ; -----------------------------------------------------------------------------------
-  ShowCollectionData pRTCC_VirtualMemBlock,      "Virtual Mem-Blocks:"
-  ShowCollectionData pRTCC_GlobalMemBlock,       "Global Mem-Blocks: "
-  ShowCollectionData pRTCC_LocalMemBlock,        "Local Mem-Blocks:  "
-  ShowCollectionData pRTCC_HeapMemBlock,         "Heap Mem-Blocks:   "
-  ShowCollectionData pRTCC_CoTaskMemBlock,       "CoTaskMem-Blocks:  "
-  ShowCollectionData pRTCC_SysString,            "System BStrings:   "
-  ShowCollectionData pRTCC_Pen,                  "GDI Pens:          "
-  ShowCollectionData pRTCC_Brush,                "GDI Brushes:       "
-  ShowCollectionData pRTCC_Bitmap,               "GDI Bitmaps:       "
-  ShowCollectionData pRTCC_Image,                "GDI Images:        "
-  ShowCollectionData pRTCC_Region,               "GDI Regions:       "
-  ShowCollectionData pRTCC_Font,                 "GDI Fonts:         "
-  ShowCollectionData pRTCC_Palette,              "GDI Palettes:      "
-  ShowCollectionData pRTCC_ColorSpace,           "GDI Color Spaces:  "
-  ShowCollectionData pRTCC_MetaFile,             "GDI MetaFiles:     "
-  ShowCollectionData pRTCC_EnhMetaFile,          "GDI EnhMetaFiles:  "
-  ShowCollectionData pRTCC_Cursor,               "Cursors:           "
-  ShowCollectionData pRTCC_Icon,                 "Icons:             "
-  ShowCollectionData pRTCC_Menu,                 "Menus:             "
-  ShowCollectionData pRTCC_Timer,                "Timers:            "
-  ShowCollectionData pRTCC_AccTable,             "Accelerator Tables:"
-  ShowCollectionData pRTCC_DeviceContext,        "Device Contexts:   "
-  ShowCollectionData pRTCC_DisplayDeviceContext, "Display DCs:       "
-  ShowCollectionData pRTCC_PaintStruct,          "Paint Structures:  "
-  ShowCollectionData pRTCC_Desktop,              "Desktops:          "
-  ShowCollectionData pRTCC_KeyboardLayout,       "Keyboard Layouts:  "
-  ShowCollectionData pRTCC_WindowStation,        "Window Stations:   "
-  ShowCollectionData pRTCC_Library,              "Libraries:         "
-  ShowCollectionData pRTCC_File,                 "Files:             "
-  ShowCollectionData pRTCC_FileMapping,          "File Mappings:     "
-  ShowCollectionData pRTCC_Event,                "Events:            "
-  ShowCollectionData pRTCC_Mutex,                "Mutexes:           "
-  ShowCollectionData pRTCC_Process,              "Processes:         "
-  ShowCollectionData pRTCC_Thread,               "Threads:           "
-  ShowCollectionData pRTCC_Semaphore,            "Semaphores:        "
-  ShowCollectionData pRTCC_Printer,              "Printers:          "
-  ShowCollectionData pRTCC_RegKey,               "Registry Keys:     "
-  ShowCollectionData pRTCC_UpdateResource,       "File Resources:    "
-  ShowCollectionData pRTCC_Mailslot,             "Mail Slots:        "
-  ShowCollectionData pRTCC_FindFirst,            "Find First:        "
-  ShowCollectionData pRTCC_EventLog,             "Event Logs:        "
-  ShowCollectionData pRTCC_CriticalSection,      "Critical Sections: "
-  ShowCollectionData pRTCC_OleInitialization,    "OLE active library:"
-  ShowCollectionData pRTCC_CoInitialization,     "COM active library:"
+  ; Note: don't show data for StockObject!
+  ShowCollectionData pRTCC_VirtualMemBlock,      "Virtual Mem-Blocks: "
+  ShowCollectionData pRTCC_GlobalMemBlock,       "Global Mem-Blocks:  "
+  ShowCollectionData pRTCC_LocalMemBlock,        "Local Mem-Blocks:   "
+  ShowCollectionData pRTCC_HeapMemBlock,         "Heap Mem-Blocks:    "
+  ShowCollectionData pRTCC_CoTaskMemBlock,       "CoTaskMem-Blocks:   "
+
+  ShowCollectionData pRTCC_AccTable,             "Accelerator Tables: "
+  ShowCollectionData pRTCC_Bitmap,               "Bitmaps:            "
+  ShowCollectionData pRTCC_Brush,                "Brushes:            "
+  ShowCollectionData pRTCC_FindFirstChangeNotif, "Change Notification:"
+  ShowCollectionData pRTCC_ColorSpace,           "Color Spaces:       "
+  ShowCollectionData pRTCC_CriticalSection,      "Critical Sections:  "
+  ShowCollectionData pRTCC_Cursor,               "Cursors:            "
+  ShowCollectionData pRTCC_Desktop,              "Desktops:           "
+  ShowCollectionData pRTCC_DeviceContext,        "Device Contexts:    "
+  ShowCollectionData pRTCC_DisplayDeviceContext, "Display DCs:        "
+  ShowCollectionData pRTCC_EnhMetaFile,          "EnhMetaFiles:       "
+  ShowCollectionData pRTCC_Event,                "Events:             "
+  ShowCollectionData pRTCC_EventLog,             "Event Logs:         "
+  ShowCollectionData pRTCC_File,                 "Files:              "
+  ShowCollectionData pRTCC_FileMapping,          "File Mappings:      "
+  ShowCollectionData pRTCC_UpdateResource,       "File Resources:     "
+  ShowCollectionData pRTCC_FindFirstFile,        "Find First File:    "
+  ShowCollectionData pRTCC_Font,                 "Fonts:              "
+  ShowCollectionData pRTCC_Icon,                 "Icons:              "
+  ShowCollectionData pRTCC_Image,                "Images:             "
+  ShowCollectionData pRTCC_KeyboardLayout,       "Keyboard Layouts:   "
+  ShowCollectionData pRTCC_Library,              "Libraries:          "
+  ShowCollectionData pRTCC_Mailslot,             "Mail Slots:         "
+  ShowCollectionData pRTCC_Menu,                 "Menus:              "
+  ShowCollectionData pRTCC_MetaFile,             "MetaFiles:          "
+  ShowCollectionData pRTCC_Mutex,                "Mutexes:            "
+  ShowCollectionData pRTCC_Palette,              "Palettes:           "
+  ShowCollectionData pRTCC_PaintStruct,          "Paint Structures:   "
+  ShowCollectionData pRTCC_Pen,                  "Pens:               "
+  ShowCollectionData pRTCC_Printer,              "Printers:           "
+  ShowCollectionData pRTCC_PrivateNamespace,     "Private Namespaces: "
+  ShowCollectionData pRTCC_Process,              "Processes:          "
+  ShowCollectionData pRTCC_Region,               "Regions:            "
+  ShowCollectionData pRTCC_RegKey,               "Registry Keys:      "
+  ShowCollectionData pRTCC_Semaphore,            "Semaphores:         "
+  ShowCollectionData pRTCC_SysString,            "System BStrings:    "
+  ShowCollectionData pRTCC_Thread,               "Threads:            "
+  ShowCollectionData pRTCC_Timer,                "Timers:             "
+  ShowCollectionData pRTCC_Transaction,          "Transactions:       "
+  ShowCollectionData pRTCC_WindowStation,        "Window Stations:    "
+
+  ShowCollectionData pRTCC_OleInitialization,    "OLE library init.:  "
+  ShowCollectionData pRTCC_CoInitialization,     "COM library init.:  "
   ; -----------------------------------------------------------------------------------
 
   lea xdi, FailColl

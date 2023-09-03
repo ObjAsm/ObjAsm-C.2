@@ -133,7 +133,7 @@ Method ChartBarSeries.Draw, uses xbx xdi xsi, hDC:HDC
       ;Create an ChartInfoArea for each visible bar
       invoke IntersectRect, addr Intersection, addr [xdi].PlotRect, addr Bounds
       .if eax != 0
-        MemAlloc sizeof(ChartInfoArea)
+        MemAlloc sizeof(ChartInfoArea)                                          ;§§§
         OCall [xdi].InfoAreas::DataCollection.Insert, xax
         s2s [xax].ChartInfoArea.Rect, Intersection, xcx, xdx, xmm0, xmm1
         ;Save additional information
