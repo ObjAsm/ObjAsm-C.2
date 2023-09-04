@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-ResGuardInit  proto :POINTER
+ResGuardInit  proto :ptr
 ResGuardStart proto
 ResGuardStop  proto
 ResGuardShow  proto

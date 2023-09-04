@@ -222,7 +222,7 @@ MethodEnd
 
 Method Api3DEngApp.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout)
-  local DskStm:$Obj(DiskStream), DLUT:$Obj(DesLUT), DeserInfo:DESER_INFO
+  local DskStm:$Obj(DiskStream), DLUT:$Obj(DesLUT), DeserInfo:DESER_INFO, hIcon:HICON
 
   SetObject xsi
   mov xax, wParam
@@ -234,10 +234,11 @@ Method Api3DEngApp.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif ax == IDM_HELP_ABOUT
     New Dlg::DialogAbout
-    invoke LoadIcon, hInstance, $OfsCStr("ICON_APP")
-    OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, xax, offset szAboutText
+    mov hIcon, $invoke(LoadIcon, hInstance, $OfsCStr("ICON_APP"))
+    OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, hIcon, offset szAboutText
     OCall Dlg::DialogAbout.Show
     OCall Dlg::DialogAbout.Done
+    invoke DestroyIcon, hIcon
     xor eax, eax
 
     .elseif ax == IDM_FILE_OPEN

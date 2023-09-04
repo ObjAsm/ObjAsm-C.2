@@ -457,7 +457,7 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method DemoApp10.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
-  local hChildWnd:HWND, AboutDlg:$Obj(DialogAbout), SetupDlg:$Obj(DialogSetup)
+  local hChildWnd:HWND, AboutDlg:$Obj(DialogAbout), SetupDlg:$Obj(DialogSetup), hIcon:HICON
   local cBuffer[MAX_PATH]:CHR
 
   SetObject xsi
@@ -532,10 +532,11 @@ Method DemoApp10.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif ax == IDM_HELP_ABOUT
     New AboutDlg::DialogAbout
-    invoke LoadIcon, hInstance, $OfsCStr("ICON_APP")
-    OCall AboutDlg::DialogAbout.Init, xsi, [xsi].hWnd, xax, offset szAboutText
+    mov hIcon, $invoke(LoadIcon, hInstance, $OfsCStr("ICON_APP"))
+    OCall AboutDlg::DialogAbout.Init, xsi, [xsi].hWnd, hIcon, offset szAboutText
     OCall AboutDlg::DialogAbout.Show
     OCall AboutDlg::DialogAbout.Done
+    invoke DestroyIcon, hIcon
     xor eax, eax
 
   ;Serialization messages

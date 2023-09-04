@@ -58,7 +58,7 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method TranslucentWindow.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
-  local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout)
+  local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout), hIcon:HICON
 
   SetObject xsi
   mov xax, wParam
@@ -68,10 +68,11 @@ Method TranslucentWindow.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif ax == IDM_ABOUT
     mov xbx, $New(DialogAbout)
-    invoke LoadIcon, hInstance, $OfsCStr("ICON_APP")
-    OCall xbx::DialogAbout.Init, xsi, [xsi].hWnd, xax, offset szAboutText
+    mov hIcon, $invoke(LoadIcon, hInstance, $OfsCStr("ICON_APP"))
+    OCall xbx::DialogAbout.Init, xsi, [xsi].hWnd, hIcon, offset szAboutText
     OCall xbx::DialogAbout.Show
     OCall xbx::DialogAbout.Done
+    invoke DestroyIcon, hIcon
     xor eax, eax
 
   .elseif ax == IDM_HELP

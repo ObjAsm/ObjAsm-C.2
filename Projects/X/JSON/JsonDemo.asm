@@ -29,10 +29,13 @@ include JsonDemo_Main.inc
 start proc
   SysInit
 
+  ResGuard_Start
   DbgClearAll
   OCall $ObjTmpl(JsonDemoApp)::JsonDemoApp.Init
   OCall $ObjTmpl(JsonDemoApp)::JsonDemoApp.Run
   OCall $ObjTmpl(JsonDemoApp)::JsonDemoApp.Done
+  ResGuard_Show
+  ResGuard_Stop
 
   SysDone
   invoke ExitProcess, 0

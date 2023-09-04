@@ -387,12 +387,13 @@ MethodEnd
 HS_STYLE equ DT_LEFT or DT_VCENTER or DT_SINGLELINE or DT_END_ELLIPSIS
 
 Method Hyperlink.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
-  local PS:PAINTSTRUCT, dPrvColor:DWORD, dPrvBackMode:DWORD, hPrvFont:HFONT, hBgBrush:HBRUSH
+  local PS:PAINTSTRUCT, dPrvColor:DWORD, dPrvBackMode:DWORD, hPrvFont:HFONT 
+  local hBgBrush:HBRUSH, hStcBrush:HBRUSH
 
   SetObject xsi
 
   invoke GetParent, [xsi].hWnd
-  invoke SendMessage, xax, WM_CTLCOLORSTATIC, [xsi].hMemDC, [xsi].hWnd
+  mov hStcBrush, $invoke(SendMessage, xax, WM_CTLCOLORSTATIC, [xsi].hMemDC, [xsi].hWnd)
   .if xax == 0
     invoke CreateSolidBrush, [xsi].dBkgndColor
   .endif
@@ -448,7 +449,9 @@ Method Hyperlink.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke BeginPaint, [xsi].hWnd, addr PS
   invoke BitBlt, PS.hdc, 0, 0, [xsi].FaceRect.right, [xsi].FaceRect.bottom, \
                  [xsi].hMemDC, 0, 0, SRCCOPY
-  invoke DeleteObject, hBgBrush
+  .if hStcBrush == 0
+    invoke DeleteObject, hBgBrush
+  .endif
   invoke EndPaint, [xsi].hWnd, addr PS
   xor eax, eax
 MethodEnd

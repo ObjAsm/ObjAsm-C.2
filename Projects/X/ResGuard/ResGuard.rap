@@ -36,7 +36,7 @@ Debug=0
 25=..\..\..\Code\Objects\ObjErrs.inc
 26=..\..\..\Code\Objects\XWCollection.inc
 27=..\..\..\Code\Objects\StackWalker.inc
-28=..\..\Private\TestRoomObserver V4\TestRoomObserver.exe
+28=
 
 [MakeFiles]
 0=ResGuard.rap
@@ -118,7 +118,7 @@ Group=Added files,Assembly,Resources,Misc,Modules,Objects,Macros
 25=2
 26=6
 27=6
-28=1
+28=
 
 [VerInf]
 FV=1.0.0.0
@@ -149,7 +149,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=3
+MilestoneOnDateDate=4
 MilestoneOnDateTimeYear=2004
 MilestoneOnDateTimeMonth=6
 MilestoneOnDateTimeDate=8
@@ -186,8 +186,8 @@ ProductVer4Range=0
 [Size]
 2=0,0,480,367,514
 3=0,0,0,0,88
-1=480,488,480,244,24026
-4=0,0,0,0,30126
+1=480,488,480,244,75812
+4=0,0,0,0,30072
 1001=0,0,0,0,460
 6=0,0,0,0,40304
 7=
@@ -217,7 +217,7 @@ ProductVer4Range=0
 31=0,0,0,0,0
 32=0,0,0,0,2045
 33=0,0,0,0,3257
-28=0,0,0,0,1977
+28=
 34=0,0,0,0,2275
 35=0,0,0,0,4030
 36=0,0,0,0,0
@@ -239,18 +239,18 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="DetourCntDestroy"
-2="DetourCntCreate"
-3="DetourNamedCreate"
-4="DetourStdDestroy"
-5="DetourStdCreate"
-6="LoadCursorW"
-7="CreateJobObjectW"
-8="CreateNamedPipeA"
-9="CreateFileMappingNumaA"
-10="CreateFileMappingA"
+1="wCaption"
+2="to remove"
+3="DeleteObj"
+4="DetourDestroyCounted m"
+5="CoInitialize"
+6="ArgStr"
+7="xData1"
+8="CallData"
+9="ArgCount"
+10="ArgCnt"
 [Collapse]
-1=71348246,273171076,8728080,
+1=100704278,536872225,46586
 8=
 15=
 14=
@@ -277,9 +277,9 @@ ProductVer4Range=0
 26=
 27=
 [AutoLoad]
-AutoLoad=1
+AutoLoad=1,4
 [PTimer]
-PTimer=563325542
+PTimer=578123386
 [RADebugBP]
 1=
 14=
@@ -295,5 +295,6 @@ PTimer=563325542
 8=
 27=
 2=
+4=
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0

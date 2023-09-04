@@ -12,6 +12,7 @@ CStr szDLApp, "OAC_DynLayoutApplication"                ;Creates szDLApp string 
 
 
 Object DLApp, MySdiAppID, SdiApp                        ;Single Document Interface App.
+  RedefineMethod    Done
   RedefineMethod    Init
   StaticMethod      Startup
 
@@ -24,6 +25,18 @@ ObjectEnd                                               ;Ends object definition
 ; ==================================================================================================
 ;    DLApp implementation
 ; ==================================================================================================
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     DLApp.Done
+; Purpose:    Finalize the SDI application object.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method DLApp.Done, uses xsi
+  SetObject xsi
+  invoke DestroyAcceleratorTable, [xsi].hAccelerators
+  ACall xsi.Done
+MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     DLApp.Init
@@ -95,7 +108,7 @@ DL_CHILD_INFO {{100, 100, 000, 000}}      ;Cancel button
 
 .code
 Method DLApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
-  local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout), DLW:$Obj(DialogModal)
+  local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout), DLW:$Obj(DialogModal), hIcon:HICON
 
   SetObject xsi
   mov xax, wParam
@@ -113,10 +126,11 @@ Method DLApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif ax == IDM_ABOUT
     New Dlg::DialogAbout
-    invoke LoadIcon, hInstance, offset szIcoName
-    OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, xax, offset szAboutText
+    mov hIcon, $invoke(LoadIcon, hInstance, offset szIcoName)
+    OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, hIcon, offset szAboutText
     OCall Dlg::DialogAbout.Show
     OCall Dlg::DialogAbout.Done
+    invoke DestroyIcon, hIcon
     xor eax, eax
 
   .elseif ax == IDM_HELP

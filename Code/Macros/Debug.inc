@@ -1361,11 +1361,11 @@ DbgDec macro Var:req, InfoText, Dest
     invoke DbgOutTextA, $OfsCStrA("&Var = "), DbgColorDefaultPre, DbgColorBackground, \
                         DBG_EFFECT_NORMAL, ??DbgDstWnd
     if TARGET_BITNESS eq 32
-      $$Buffersize = 0Ch                                ;;10 + "t" + ZTC + Padding(0) = 0Ch
+      $$Buffersize = 0Ch                                ;;SDWORD2DEC_MAX_CHARS = 0Ch
       sub esp, $$Buffersize                             ;;Reserve a buffer on the stack.
       mov edi, esp                                      ;;Get a pointer to the buffer
     else
-      $$Buffersize = 44h                                ;;20 + "y" + ZTC + Padding(4) + Homing(28h)
+      $$Buffersize = 40h                                ;;2*SDWORD2DEC_MAX_CHARS + Homing(28h) = 40h
       sub rsp, $$Buffersize                             ;;Reserve a buffer on the stack.
       lea rdi, [rsp + 28h]                              ;;Get a POINTER to the output buffer
     endif
@@ -2330,13 +2330,15 @@ endm
 ResGuard_Show macro
   if DEBUGGING
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
-      DbgSaveContext
-      invoke DbgOutTextA, $OfsCStrA("Leak Report:"), \
-                          DbgColorForeground, DbgColorBackground, \
-                          DBG_EFFECT_BOLD, offset(szResGuard)
-      DbgShowSrcInfo offset(szResGuard)
-      invoke ResGuardShow
-      DbgLoadContext
+      if RESGUARD_LOADED ne FALSE      
+        DbgSaveContext
+        invoke DbgOutTextA, $OfsCStrA("Leak Report:"), \
+                            DbgColorForeground, DbgColorBackground, \
+                            DBG_EFFECT_BOLD, offset(szResGuard)
+        DbgShowSrcInfo offset(szResGuard)
+        invoke ResGuardShow
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -2349,13 +2351,15 @@ endm
 ResGuard_Start macro
   if DEBUGGING
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
-      DbgSaveContext
-      invoke DbgOutTextA, $OfsCStrA("Started"), \
-                          DbgColorForeground, DbgColorBackground, \
-                          DBG_EFFECT_BOLD, offset(szResGuard)
-      DbgShowSrcInfo offset(szResGuard)
-      invoke ResGuardStart
-      DbgLoadContext
+      if RESGUARD_LOADED ne FALSE
+        DbgSaveContext
+        invoke DbgOutTextA, $OfsCStrA("Started"), \
+                            DbgColorForeground, DbgColorBackground, \
+                            DBG_EFFECT_BOLD, offset(szResGuard)
+        DbgShowSrcInfo offset(szResGuard)
+        invoke ResGuardStart
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -2368,13 +2372,15 @@ endm
 ResGuard_Stop macro
   if DEBUGGING
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
-      DbgSaveContext
-      invoke DbgOutTextA, $OfsCStrA("Stopped"), \
-                          DbgColorForeground, DbgColorBackground, \
-                          DBG_EFFECT_BOLD, offset(szResGuard)
-      DbgShowSrcInfo offset(szResGuard)
-      invoke ResGuardStop
-      DbgLoadContext
+      if RESGUARD_LOADED ne FALSE
+        DbgSaveContext
+        invoke DbgOutTextA, $OfsCStrA("Stopped"), \
+                            DbgColorForeground, DbgColorBackground, \
+                            DBG_EFFECT_BOLD, offset(szResGuard)
+        DbgShowSrcInfo offset(szResGuard)
+        invoke ResGuardStop
+        DbgLoadContext
+      endif
     endif
   endif
 endm

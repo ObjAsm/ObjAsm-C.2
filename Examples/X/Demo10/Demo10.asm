@@ -9,7 +9,7 @@
 
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)            ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, ResGuard)  ;Load OOP files and OS related objects
 
 % include &MacPath&DlgTmpl.inc                          ;Dialog Template macros for XMenu
 % include &MacPath&ConstDiv.inc
@@ -39,9 +39,12 @@ include Demo10_Main.inc                                 ;Application object
 start proc                                              ;Program entry point
   SysInit                                               ;Runtime initialization of OOP model
 
+  ResGuard_Start
   OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
   OCall $ObjTmpl(Application)::Application.Run          ;Execute application
   OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
+  ResGuard_Show
+  ResGuard_Stop
 
   SysDone                                               ;Runtime finalization of the OOP model
   invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS

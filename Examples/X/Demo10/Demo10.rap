@@ -47,6 +47,7 @@ Debug=1
 36=..\..\..\Code\Objects\MsgInterceptor.inc
 37=..\..\..\Code\Objects\FlipBox.inc
 38=..\..\..\Code\Objects\Stream.inc
+39=..\..\..\Code\Objects\DialogAbout.inc
 
 [MakeFiles]
 0=Demo10.rap
@@ -122,6 +123,7 @@ Group=Added files,Assembly,Resources,Misc,Modules,Objects,Macros
 36=6
 37=6
 38=6
+39=6
 
 [VerInf]
 FV=1.0.0.0
@@ -152,7 +154,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=12
+MilestoneOnDateDate=4
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -187,9 +189,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1909,599,2729
+2=0,0,1909,599,20801
 3=0,0,0,0,269
-1=453,0,453,706,1999
+1=453,0,453,706,526
 4=1098,0,1098,443,8350
 1001=0,0,0,0,460
 5=0,0,0,0,577
@@ -204,7 +206,7 @@ ProductVer4Range=0
 10=0,0,0,0,4415
 12=0,0,0,0,597
 16=0,0,1909,599,12309
-17=0,0,799,609,21950
+17=0,0,799,609,69560
 18=0,0,0,0,10838
 20=0,0,0,0,2546
 19=0,0,0,0,3746
@@ -217,15 +219,16 @@ ProductVer4Range=0
 24=0,0,0,0,416
 28=0,0,0,0,9217
 29=0,0,0,0,3220
-30=0,0,0,0,3938
+30=0,0,1602,629,3938
 31=0,0,0,0,4535
 32=0,0,0,0,6797
-33=0,0,0,0,1269
+33=0,0,0,0,16167
 36=0,0,0,0,1497
 35=0,0,0,0,4093
 34=0,0,0,0,2127
 37=0,0,562,490,10285
 38=0,0,0,0,3600
+39=0,0,0,0,0
 
 [BookMark]
 0=
@@ -283,10 +286,11 @@ ProductVer4Range=0
 37=
 38=,
 33=,
+39=
 [AutoLoad]
-AutoLoad=1,30,7,6
+AutoLoad=1
 [PTimer]
-PTimer=1170376255
+PTimer=1174231161
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]
@@ -316,14 +320,15 @@ GroupExpand=1,1,1,0,0,1,1,0
 37=
 20=
 35=
+33=
 [Find]
-1="szChildClassName"
-2="szDemoChild10"
-3="szAppClassName"
-4="szDemoApp10"
-5="TCSTYLE"
-6="SBSTYLE"
-7="TBSTYLE"
-8="DemoApp10"
-9="onNotify"
-10="31"
+1="Method Hyperlink.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM"
+2="DeleteObject"
+3="SetMenuBarBkColor"
+4="XMenu.SetMenuBarBkColor"
+5="szChildClassName"
+6="szDemoChild10"
+7="szAppClassName"
+8="szDemoApp10"
+9="TCSTYLE"
+10="SBSTYLE"

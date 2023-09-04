@@ -169,7 +169,7 @@ MethodEnd
 ; Return:    Zero if handled.
 
 Method MemLeak.OnCommand, uses esi, wParam:dword, lParam:dword
-    local AboutDlg:DialogAbout
+    local AboutDlg:DialogAbout, hIcon:HICON
 
     SetObject esi
     mov eax, wParam
@@ -193,10 +193,11 @@ Method MemLeak.OnCommand, uses esi, wParam:dword, lParam:dword
       invoke SendMessage, [esi].hWnd, WM_SYSCOMMAND, SC_CLOSE, NULL
       xor eax, eax
     .elseif ax == IDM_ABOUT
-      invoke LoadIcon, hInstance, $OfsCStr("ICON_APP_32")
-      New AboutDlg::DialogAbout.Init, esi, [esi].hWnd, eax, offset szAboutText
+      mov hIcon, $invoke(LoadIcon, hInstance, $OfsCStr("ICON_APP_32"))
+      New AboutDlg::DialogAbout.Init, esi, [esi].hWnd, hIcon, offset szAboutText
       OCall AboutDlg::DialogAbout.Show
       OCall AboutDlg::DialogAbout.Done
+      invoke DestroyIcon, hIcon
       xor eax, eax
     .else
       invoke DefWindowProc, [esi].hWnd, WM_COMMAND, wParam, lParam

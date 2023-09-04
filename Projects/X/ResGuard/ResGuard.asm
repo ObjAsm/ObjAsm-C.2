@@ -12,6 +12,7 @@
 ;             https://stackoverflow.com/questions/5705650/stackwalk64-on-windows-get-symbol-name
 ; ==================================================================================================
 
+;Todo: when CallData can not be removed => show call stack  
 
 _IMAGEHLP_SOURCE_ equ 0
 SYM_NAME_LENGTH   equ 255
@@ -24,7 +25,7 @@ SysSetup OOP, DLL64, WIDE_STRING, DEBUG(WND), SUFFIX
 
 % include &IncPath&Windows\DbgHelp.inc
 
-CStrW wCaption,    "ResGuard"
+CStrW wWndCaption,    "ResGuard"
 CStrW wDebugStart, "Use the debugger to find the lines of", CRLF, \
                    "code that use the listed resources.", CRLF, CRLF,\
                    "Do you want to start the debugger now?", CRLF
@@ -114,14 +115,14 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
 
   SetObject xsi
   invoke DbgOutTextW, $OfsCStrW(" ", 2022h, " "), DbgColorString, DbgColorBackground, \
-                     DBG_EFFECT_NORMAL, offset wCaption
+                     DBG_EFFECT_NORMAL, offset wWndCaption
   invoke DbgOutTextA, addr [xsi].$Obj(CallData).cProcName, DbgColorString, DbgColorBackground, \
-                      DBG_EFFECT_NORMAL, offset wCaption
+                      DBG_EFFECT_NORMAL, offset wWndCaption
   xor ebx, ebx
   lea xdi, [xsi].CallStack                              ;xdi -> CallData.CallStack
   .while ebx != [xsi].$Obj(CallData).dCount
     invoke DbgOutTextW, $OfsCStrW(" ", 2190h, " "), DbgColorWarning, DbgColorBackground, \  ;Arrow
-                        DBG_EFFECT_NORMAL, offset wCaption
+                        DBG_EFFECT_NORMAL, offset wWndCaption
     mov Symbol.MaxNameLength, SYM_NAME_LENGTH
     mov Symbol.SizeOfStruct, sizeof SYMBOL
     invoke SymGetSymFromAddrX, hProcess, [xdi].CALLER_INFO.xInstrAddr,
@@ -130,7 +131,7 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
       invoke UnDecorateSymbolName, addr Symbol.Name_, addr cBuffer, SYM_NAME_LENGTH, UNDNAME_COMPLETE
       .if eax != FALSE
         invoke DbgOutTextA, addr cBuffer, DbgColorWarning, DbgColorBackground, \
-                            DBG_EFFECT_NORMAL, offset wCaption
+                            DBG_EFFECT_NORMAL, offset wWndCaption
       .endif
     .endif
     FillStringA cBuffer, <(>
@@ -138,17 +139,17 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
     invoke xword2hexA, xcx, [xdi].CALLER_INFO.xRetAddr
     invoke StrCatA, addr cBuffer, $OfsCStrA("h)")
     invoke DbgOutTextA, addr cBuffer, DbgColorComment, DbgColorBackground, \
-                        DBG_EFFECT_NORMAL, offset wCaption
+                        DBG_EFFECT_NORMAL, offset wWndCaption
     add xdi, sizeof CALLER_INFO
     inc ebx
   .endw
 
   .if ebx == 0
     invoke DbgOutText, $OfsCStr("No data"), DbgColorError, DbgColorBackground, \
-                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
   .else
     invoke DbgOutText, offset cCRLF, DbgColorForeground, DbgColorBackground, \
-                       DBG_EFFECT_NORMAL, offset wCaption
+                       DBG_EFFECT_NORMAL, offset wWndCaption
   .endif
 MethodEnd
 
@@ -318,6 +319,23 @@ AnalyseStack macro
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DefineHook
+; Purpose:    Define the Hook pointer and do some administration stuff.
+; Arguments:  Arg1: API name.
+;             Arg2: (optional) RTCD_Coll pointer.
+; Return:     Nothing.
+
+DefineHook macro ApiName:req, pRTC_Coll
+  HookCount = HookCount + 1                             ;;Keep track of the hook count
+  ifnb <pRTC_Coll>
+    externdef pRTC_Coll:$ObjPtr(RTC_Collection)         ;;The RTC_Collection will be definend later
+  endif
+  .data
+  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
+  .code
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      DetourCreate
 ; Purpose:    Create a standard detour procedure to intercept allocation APIs.
 ; Arguments:  Arg1: API name.
@@ -339,10 +357,7 @@ DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:re
                       pRTC_Coll:req, RemoveArgIndex, PassCond
   local ArgStr, Cnt
 
-  HookCount = HookCount + 1                             ;;Keep track of the hook count
-  externdef pRTC_Coll:$ObjPtr(RTC_Collection)           ;;The RTC_Collection will be definend later
-  .data
-  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
+  DefineHook ApiName, pRTC_Coll
 
   ArgStr textequ <>                                     ;;Prepare argument list
   Cnt = 0
@@ -351,7 +366,6 @@ DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:re
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
   endm
 
-  .code
   Dtr&ApiName& proc uses xbx xdi ArgStr                 ;;Procedure declaration
     local xApiResult:XWORD, hThread:HANDLE
     local Context:CONTEXT, Stack:STACK
@@ -377,6 +391,7 @@ DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:re
       .endif
   endif
       mov [xbx].$Obj(CallData).xData1, xcx
+      mov [xbx].$Obj(CallData).xData2, 0
 
   ifnb <SuccessCond>
       .if SuccessCond
@@ -399,7 +414,7 @@ DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:re
       .else
         lea xax, FailColl
         mov [xbx].$Obj(CallData).pOwner, xax
-        OCall xax::Collection.Insert, xbx
+        OCall xax::RTC_Collection.Insert, xbx
       .endif
   endif
 
@@ -423,13 +438,11 @@ endm
 ;             Arg5: RTCD_Coll pointer list (One deallocation API for several allocation APIs).
 ; Return:     Nothing.
 
-DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req,
-                       pRTC_Coll_List:vararg
+DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req, 
+                    pRTC_Coll_List:vararg
   local ArgStr, Cnt, Coll, @@Exit
 
-  HookCount = HookCount + 1                             ;;Keep track of the hook count
-  .data
-  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
+  DefineHook ApiName
 
   ArgStr textequ <>
   Cnt = 0
@@ -438,7 +451,6 @@ DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:r
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
   endm
 
-  .code
   Dtr&ApiName& proc uses xbx xdi ArgStr                 ;;Procedure declaration
     local xApiResult:XWORD, hThread:HANDLE
     local Context:CONTEXT, Stack:STACK
@@ -456,24 +468,24 @@ DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:r
             test eax, eax
             jnz @@Exit                                  ;;Exit if found
           endm
-          invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed to remove call data"),
+          invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed removing call data"),
                              DbgColorError, DbgColorBackground, \
-                             DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+                             DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
           jmp @@Exit
         .endif
         AnalyseStack
         FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
     if CallIdentifier gt 0
-          mov xcx, Arg&CallIdentifier&
+        mov xcx, Arg&CallIdentifier&
     elseif CallIdentifier eq 0
-          mov xcx, xApiResult
+        mov xcx, xApiResult
     else
-          mov xax, @CatStr(<Arg>, %(-CallIdentifier))
-          .if xax != NULL
-            mov xcx, [xax]
-          .else
-            xor ecx, ecx
-          .endif
+        mov xax, @CatStr(<Arg>, %(-CallIdentifier))
+        .if xax != NULL
+          mov xcx, [xax]
+        .else
+          xor ecx, ecx
+        .endif
     endif
         mov [xbx].$Obj(CallData).xData1, xcx
         mov [xbx].$Obj(CallData).xData2, 0
@@ -487,9 +499,9 @@ DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:r
           test eax, eax
           jnz @@Exit                                    ;;Exit if found
         endm
-        invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed to remove call data"),
+        invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed removing call data"),
                            DbgColorError, DbgColorBackground, \
-                           DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+                           DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
   endif
 @@Exit:
       mov dResGuardEnabled, TRUE
@@ -515,10 +527,7 @@ endm
 DetourCreateNamed macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req, pRTC_Coll:req
   local ArgStr, Cnt
 
-  HookCount = HookCount + 1                             ;;Keep track of the hook count
-  externdef pRTC_Coll:$ObjPtr(RTC_Collection)           ;;The RTC_Collection will be definend later
-  .data
-  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
+  DefineHook ApiName, pRTC_Coll
 
   ArgStr textequ <>                                     ;;Prepare argument list
   Cnt = 0
@@ -527,7 +536,6 @@ DetourCreateNamed macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCo
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
   endm
 
-  .code
   Dtr&ApiName& proc uses xbx xdi ArgStr                 ;;Procedure declaration
     local xApiResult:XWORD, hThread:HANDLE
     local Context:CONTEXT, Stack:STACK
@@ -565,7 +573,7 @@ DetourCreateNamed macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCo
       .else
         lea xax, FailColl
         mov [xbx].$Obj(CallData).pOwner, xax
-        OCall xax::Collection.Insert, xbx
+        OCall xax::RTC_Collection.Insert, xbx
       .endif
 
       mov dResGuardEnabled, TRUE
@@ -588,10 +596,7 @@ endm
 DetourCreateCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCond:req, pRTC_Coll:req
   local ArgStr, Cnt
 
-  HookCount = HookCount + 1                             ;;Keep track of the hook count
-  externdef pRTC_Coll:$ObjPtr(RTC_Collection)           ;;The RTC_Collection will be definend later
-  .data
-  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
+  DefineHook ApiName, pRTC_Coll
 
   ArgStr textequ <>                                     ;;Prepare argument list
   Cnt = 0
@@ -600,7 +605,6 @@ DetourCreateCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCon
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
   endm
 
-  .code
   Dtr&ApiName& proc ArgStr                              ;;Procedure declaration
     local xApiResult:XWORD, hThread:HANDLE
     local Context:CONTEXT, Stack:STACK
@@ -615,8 +619,9 @@ DetourCreateCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCon
       FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
 
       .if SuccessCond
-        m2m [xbx].$Obj(CallData).xData1, CounterName, xax
         inc CounterName
+        m2m [xbx].$Obj(CallData).xData1, CounterName, xax
+        mov [xbx].$Obj(CallData).xData2, 0
         OCall pRTC_Coll::RTC_Collection.Insert, xbx
         mov xax, pRTC_Coll
         mov [xbx].$Obj(CallData).pOwner, xax
@@ -624,7 +629,7 @@ DetourCreateCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCon
         mov [xbx].$Obj(CallData).xData1, -1
         lea xax, FailColl
         mov [xbx].$Obj(CallData).pOwner, xax
-        OCall xax::Collection.Insert, xbx
+        OCall xax::RTC_Collection.Insert, xbx
       .endif
 
       mov dResGuardEnabled, TRUE
@@ -647,9 +652,7 @@ endm
 DetourDestroyCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCond:req, pRTC_Coll_List:vararg
   local ArgStr, Cnt, Coll, @@Exit
 
-  HookCount = HookCount + 1                             ;;Keep track of the hook count
-  .data
-  pHook&ApiName&   $ObjPtr(IAT_Hook)   NULL
+  DefineHook ApiName
 
   ArgStr textequ <>
   Cnt = 0
@@ -658,7 +661,6 @@ DetourDestroyCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCo
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:DWORD>
   endm
 
-  .code
   Dtr&ApiName& proc ArgStr                              ;;Procedure declaration
     local xApiResult:XWORD, hThread:HANDLE
     local Context:CONTEXT, Stack:STACK
@@ -677,9 +679,9 @@ DetourDestroyCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCo
             test eax, eax
             jnz @@Exit                                  ;;Exit if found
           endm
-          invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed to remove call data"),
+          invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed removing call data"),
                              DbgColorError, DbgColorBackground, \
-                             DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+                             DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
           jmp @@Exit
         .endif
         AnalyseStack
@@ -696,9 +698,9 @@ DetourDestroyCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCo
           test eax, eax
           jnz @@Exit                                    ;;Exit if found
         endm
-        invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed to remove call data"),
+        invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed removing call data"),
                            DbgColorError, DbgColorBackground, \
-                           DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+                           DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
   endif
 @@Exit:
       mov dResGuardEnabled, TRUE
@@ -909,6 +911,72 @@ DetourCreate ExtractAssociatedIconA, 3, 0, <xApiResult !!= NULL>, pRTCC_Icon
 DetourCreate ExtractAssociatedIconW, 3, 0, <xApiResult !!= NULL>, pRTCC_Icon
 DetourCreate LoadIconA, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
 DetourCreate LoadIconW, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DetourPrivateExtractIconsX
+; Purpose:    Create a standard detour procedure to intercept allocation APIs.
+; Arguments:  Arg1: API name.
+; Return:     Nothing.
+
+DetourPrivateExtractIconsX macro ApiName:req
+  local ArgStr, Cnt
+
+  DefineHook ApiName, pRTCC_Icon
+
+  ArgStr textequ <>                                     ;;Prepare argument list
+  Cnt = 0
+  repeat 8
+    Cnt = Cnt + 1
+    ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
+  endm
+
+  Dtr&ApiName& proc uses xbx xdi xsi ArgStr                 ;;Procedure declaration
+    local xApiResult:XWORD, hThread:HANDLE
+    local Context:CONTEXT, Stack:STACK
+
+    InvokeOriginalAPI ApiName, 8
+
+    .if dResGuardEnabled != FALSE
+      mov xApiResult, xax
+      .if xApiResult == 0
+        Destroy xbx
+      .else
+        m2z dResGuardEnabled                            ;;Shut Resguard off while analysis is in progress
+        FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+        AnalyseStack
+        .if xApiResult == 0xFFFFFFFF                    ;;File is not found
+          lea xax, FailColl
+          mov [xbx].$Obj(CallData).pOwner, xax
+          OCall xax::RTC_Collection.Insert, xbx
+        .else
+          xor esi, esi
+          .while xsi < xApiResult
+            MemAlloc sizeof($Obj(CallData))
+            s2s $Obj(CallData) ptr [xax], $Obj(CallData) ptr [xbx], xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7, xcx, xdx
+            mov xdx, Arg5                               ;;phicon
+            m2m [xax].$Obj(CallData).xData1, [xdx + xsi*sizeof(HANDLE)], xcx
+            mov [xax].$Obj(CallData).xData2, 0
+            mov [xax].$Obj(CallData).pOwner, xcx
+            OCall pRTCC_Icon::RTC_Collection.Insert, xax
+            inc esi
+          .endw
+          Destroy xbx
+        .endif
+        mov dResGuardEnabled, TRUE
+      .endif
+
+      mov xax, xApiResult                               ;;Restore API return value
+    .endif
+    ret
+  Dtr&ApiName& endp
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+
+DetourPrivateExtractIconsX PrivateExtractIconsA
+
+DetourPrivateExtractIconsX PrivateExtractIconsW
+
 ;DestroyCursor and DestroyIcon use the same API
 DetourDestroy DestroyIcon, 1, 1, <xApiResult !!= FALSE>, pRTCC_Icon, pRTCC_Cursor, pRTCC_Image
 
@@ -1011,12 +1079,8 @@ DetourCreate OpenMutexW, 3, 0, <xApiResult !!= NULL>, pRTCC_Mutex
 
 ; ------------------------------------------------------------------------------
 
-HookCount = HookCount + 1
-externdef pRTCC_Pipe:$ObjPtr(RTC_Collection)
-.data
-pHookCreatePipe   $ObjPtr(IAT_Hook)     NULL
+DefineHook CreatePipe, pRTCC_Pipe
 
-.code
 ;This detour proc handles the Read and Write HANDLEs 
 DtrCreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
   local xApiResult:XWORD, hThread:HANDLE
@@ -1036,6 +1100,7 @@ DtrCreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
       mov xcx, Arg1                                     ;-> hReadPipe
       .if xcx != NULL
         m2m [xbx].$Obj(CallData).xData1, [xcx], xdx
+        mov [xbx].$Obj(CallData).xData2, 0
         OCall pRTCC_Pipe::Collection.Insert, xbx
         mov xax, pRTCC_Pipe
         mov [xbx].$Obj(CallData).pOwner, xax
@@ -1043,9 +1108,10 @@ DtrCreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
         .if Arg2 != NULL
           ;Clone existing CallData
           mov xdi, $MemAlloc(sizeof $Obj(CallData))
-          s2s $Obj(CallData) ptr [xdi], $Obj(CallData) ptr [xbx], xmm1, xmm2, xax, xcx
+          s2s $Obj(CallData) ptr [xdi], $Obj(CallData) ptr [xbx], xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7, xax, xcx
           mov xcx, Arg2                                 ;-> hWritePipe
           m2m [xdi].$Obj(CallData).xData1, [xcx], xdx
+          mov [xdi].$Obj(CallData).xData2, 0
           mov xax, pRTCC_Pipe
           mov [xdi].$Obj(CallData).pOwner, xax
           OCall xax::Collection.Insert, xdi
@@ -1056,7 +1122,7 @@ DtrCreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
     .else
       lea xax, FailColl
       mov [xbx].$Obj(CallData).pOwner, xax
-      OCall xax::Collection.Insert, xbx
+      OCall xax::RTC_Collection.Insert, xbx
     .endif
 
     mov dResGuardEnabled, TRUE
@@ -1107,13 +1173,8 @@ DetourCreateNamed CreateWaitableTimerW, 3, 0, <xApiResult !!= NULL>, pRTCC_Timer
 DetourCreateNamed CreateWaitableTimerExA, 4, 0, <xApiResult !!= NULL>, pRTCC_Timer
 DetourCreateNamed CreateWaitableTimerExW, 4, 0, <xApiResult !!= NULL>, pRTCC_Timer
 
-HookCount = HookCount + 2
-externdef pRTCC_Timer:$ObjPtr(RTC_Collection)
-.data
-pHookSetTimer   $ObjPtr(IAT_Hook)   NULL
-pHookKillTimer  $ObjPtr(IAT_Hook)   NULL
+DefineHook SetTimer, pRTCC_Timer
 
-.code
 DtrSetTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
   local xApiResult:XWORD, hThread:HANDLE
   local Context:CONTEXT, Stack:STACK
@@ -1146,7 +1207,7 @@ DtrSetTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
     .else
       lea xax, FailColl
       mov [xbx].$Obj(CallData).pOwner, xax
-      OCall xax::Collection.Insert, xbx
+      OCall xax::RTC_Collection.Insert, xbx
     .endif
 
     mov dResGuardEnabled, TRUE
@@ -1154,6 +1215,9 @@ DtrSetTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
   .endif
   ret
 DtrSetTimer endp
+
+DefineHook KillTimer, pRTCC_Timer
+
 DtrKillTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD
   local xApiResult:XWORD, hThread:HANDLE
   local Context:CONTEXT, Stack:STACK
@@ -1168,9 +1232,9 @@ DtrKillTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD
       OCall pRTCC_Timer::RTC_Collection.Remove, Arg2, Arg1
       test eax, eax
       jnz @@Exit                                        ;Exit if found
-      invoke DbgOutText, $OfsCStr("DtrKillTimer failed to remove call data"),
+      invoke DbgOutText, $OfsCStr("DtrKillTimer failed removing call data"),
                          DbgColorError, DbgColorBackground, \
-                         DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+                         DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
     .else
       AnalyseStack
       FillStringA [xbx].$Obj(CallData).cProcName, <KillTimer>
@@ -1413,8 +1477,8 @@ DllInit proc
   NewHook ExtractAssociatedIconW, Shell32
   NewHook LoadIconA, User32
   NewHook LoadIconW, User32
-;  NewHook PrivateExtractIconsA, User32          ;Requires a special handler
-;  NewHook PrivateExtractIconsW, User32
+  NewHook PrivateExtractIconsA, User32
+  NewHook PrivateExtractIconsW, User32
   NewHook DestroyIcon, User32                   ;DestroyIcon and DestroyCursor use the same API!
 
   NewRTCC Menu, 10
@@ -1709,7 +1773,7 @@ ShowCollectionData macro pRTC_Collection:req, ResTypeCaption:req
     invoke wsprintf, xbx, offset szLeakCaption, [xdi].$Obj(RTC_Collection).dCount, \
                      [xdi].$Obj(RTC_Collection).dMaxCount, [xdi].$Obj(RTC_Collection).dTotCount
     invoke DbgOutText, xbx, DbgColorForeground, DbgColorBackground, \
-                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
     OCall xdi::RTC_Collection.ForEach, $MethodAddr(CallData.Show), NULL, NULL
   .endif
 endm
@@ -1776,22 +1840,26 @@ ResGuardShow proc uses xbx xdi
 
   lea xdi, FailColl
   .if ([xdi].$Obj(RTC_Collection).dCount > 0)
-    invoke wsprintf, xbx, $OfsCStr("Failed API calls:   %li"), [xdi].$Obj(Collection).dCount
+    invoke wsprintf, xbx, $OfsCStr("Failed API calls:   %li"), [xdi].$Obj(RTC_Collection).dCount
     invoke DbgOutText, xbx, DbgColorForeground, DbgColorBackground, \
-                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wCaption
+                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
     OCall FailColl::RTC_Collection.ForEach, $MethodAddr(CallData.Show), NULL, NULL
   .endif
-  .if (dHasLeaks == FALSE) && ([xdi].$Obj(Collection).dCount > 0)
-    inc dHasLeaks
+  .if [xdi].$Obj(RTC_Collection).dCount > 0
+    mov dHasLeaks, TRUE
   .endif
-
+  
   mov dResGuardEnabled, TRUE
 
   .if dHasLeaks
-    invoke MessageBoxW, 0, offset wDebugStart, offset wCaption, MB_YESNO or MB_ICONEXCLAMATION
+    invoke MessageBoxW, 0, offset wDebugStart, offset wWndCaption, MB_YESNO or MB_ICONEXCLAMATION
     .if eax == IDYES
       int 3
     .endif
+  .else
+    invoke DbgOutText, $OfsCStr("No leaks or failures detected"), \ 
+                       DbgColorForeground, DbgColorBackground, \
+                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
   .endif
 
   ret

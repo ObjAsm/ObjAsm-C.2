@@ -367,7 +367,7 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
-  local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout)
+  local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout), hIcon:HICON
 
   SetObject xsi
   mov xax, wParam
@@ -377,10 +377,11 @@ Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif ax == IDM_ABOUT
     New Dlg::DialogAbout
-    invoke LoadIcon, hInstance, $OfsCStr("ICON_APP")
-    OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, xax, offset szAboutText
+    mov hIcon, $invoke(LoadIcon, hInstance, $OfsCStr("ICON_APP"))
+    OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, hIcon, offset szAboutText
     OCall Dlg::DialogAbout.Show
     OCall Dlg::DialogAbout.Done
+    invoke DestroyIcon, hIcon
     xor eax, eax
 
   .elseif ax == IDM_HELP

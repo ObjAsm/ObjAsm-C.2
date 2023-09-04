@@ -74,7 +74,7 @@ MethodEnd
 
 Method WebCamApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout)
-  local CapDrvCaps:CAPDRIVERCAPS, CaptureParms:CAPTUREPARMS
+  local CapDrvCaps:CAPDRIVERCAPS, CaptureParms:CAPTUREPARMS, hIcon:HICON
 
   SetObject xsi
   mov xax, wParam
@@ -134,10 +134,11 @@ Method WebCamApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif ax == IDM_HELP_ABOUT
     New Dlg::DialogAbout
-    invoke LoadIcon, hInstance, offset szIcoName
-    OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, xax, offset szAboutText
+    mov hIcon, $invoke(LoadIcon, hInstance, offset szIcoName)
+    OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, hIcon, offset szAboutText
     OCall Dlg::DialogAbout.Show
     OCall Dlg::DialogAbout.Done
+    invoke DestroyIcon, hIcon
     xor eax, eax
 
   .else

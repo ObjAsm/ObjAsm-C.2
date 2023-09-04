@@ -140,7 +140,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=10
+MilestoneOnDateDate=4
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -175,7 +175,7 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1839,628,3743
+2=0,0,1839,628,4789
 1=0,0,1839,628,532
 6=0,0,1456,414,19153
 4=0,0,0,0,958
@@ -223,16 +223,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="DLF_USE_INI_X"
-2="DLF_LOAD_INI_X"
-3="IniSize"
-4="dDeltaX"
-5="DL_HEADER"
-6="OnInitWindow"
-7="WM_CREATE"
-8="DlgChildrenInfo"
-9="MoveChildWndInfo"
-10="MCWI"
+1="LoadAccelerators"
+2=" LoadAccelerators"
+3="DLF_USE_INI_X"
+4="DLF_LOAD_INI_X"
+5="IniSize"
+6="dDeltaX"
+7="DL_HEADER"
+8="OnInitWindow"
+9="WM_CREATE"
+10="DlgChildrenInfo"
 [Collapse]
 1=
 2=4
@@ -347,7 +347,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=1,2,29,27,12,7,14,23
 [PTimer]
-PTimer=1332724260
+PTimer=1333336322
 [GroupExpand]
 GroupExpand=1,1,1,1,0,1,1,0
 [RADebugBP]

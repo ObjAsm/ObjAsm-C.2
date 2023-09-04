@@ -111,7 +111,7 @@ DL_CHILD_INFO {{100, 100, 000, 000}}      ;IDCANCEL
 DL_CHILD_INFO {{000, 100, 100, 000}}      ;IDC_GRP
 
 Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
-  local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout), DstDlg:$Obj(DstDialog)
+  local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout), hIcon:HICON, DstDlg:$Obj(DstDialog)
 
   SetObject xsi
   mov xax, wParam
@@ -165,10 +165,11 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif ax == IDM_ABOUT
     New Dlg::DialogAbout
-    invoke LoadIcon, hInstance, offset szIcoName
-    OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, xax, offset szAboutText
+    mov hIcon, $invoke(LoadIcon, hInstance, offset szIcoName)
+    OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, hIcon, offset szAboutText
     OCall Dlg::DialogAbout.Show
     OCall Dlg::DialogAbout.Done
+    invoke DestroyIcon, hIcon
     xor eax, eax
 
   .elseif ax == IDM_HELP

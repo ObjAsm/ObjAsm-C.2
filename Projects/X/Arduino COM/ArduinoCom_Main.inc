@@ -69,7 +69,7 @@ MethodEnd
 Method ArduinoApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[MAX_PATH]:CHR
   local ComDCB:DCB                                      ;device-control block
-  local AboutDlg:$Obj(DialogAbout)
+  local AboutDlg:$Obj(DialogAbout), hIcon:HICON
   local ComPortSelDlg:$Obj(DialogComPortSelection)
   local dBytesWritten:DWORD, dBytesRead:DWORD
 
@@ -161,10 +161,11 @@ Method ArduinoApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif ax == IDM_ABOUT
     New AboutDlg::DialogAbout
-    invoke LoadIcon, hInstance, offset szIcoName
-    OCall AboutDlg::DialogAbout.Init, xsi, [xsi].hWnd, xax, offset szAboutText
+    mov hIcon, $invoke(LoadIcon, hInstance, offset szIcoName)
+    OCall AboutDlg::DialogAbout.Init, xsi, [xsi].hWnd, hIcon, offset szAboutText
     OCall AboutDlg::DialogAbout.Show
     OCall AboutDlg::DialogAbout.Done
+    invoke DestroyIcon, hIcon
     xor eax, eax
 
   .elseif ax == IDM_HELP

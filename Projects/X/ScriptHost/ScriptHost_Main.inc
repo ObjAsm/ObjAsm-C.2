@@ -217,7 +217,7 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method ScriptHostApp.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
-  local AbtDlg:$Obj(DialogAbout)
+  local AbtDlg:$Obj(DialogAbout), hIcon:HICON
   local OpenFileName:OPENFILENAME, cFileName[MAX_PATH*sizeof CHR]:CHR, cBuffer[1024*sizeof CHR]:CHR
   local pContent:PSTRINGW, pScript:PSTRINGW
 
@@ -251,10 +251,11 @@ Method ScriptHostApp.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif ax == IDC_BTN_ABOUT
     New AbtDlg::DialogAbout
-    invoke LoadIcon, hInstance, $OfsCStr("ICON_APP")
-    OCall AbtDlg::DialogAbout.Init, xsi, [xsi].hWnd, xax, offset szAboutText
+    mov hIcon, $invoke(LoadIcon, hInstance, $OfsCStr("ICON_APP"))
+    OCall AbtDlg::DialogAbout.Init, xsi, [xsi].hWnd, hIcon, offset szAboutText
     OCall AbtDlg::DialogAbout.Show
     OCall AbtDlg::DialogAbout.Done
+    invoke DestroyIcon, hIcon
     xor eax, eax
 
   .elseif ax == IDCANCEL

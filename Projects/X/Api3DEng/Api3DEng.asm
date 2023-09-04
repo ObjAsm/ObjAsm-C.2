@@ -9,7 +9,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND)
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, ResGuard)
 
 % include &MacPath&fMath.inc
 % include &MacPath&DlgTmpl.inc
@@ -38,9 +38,12 @@ include Api3DEng_Main.inc
 start proc
   SysInit
 
+  ResGuard_Start
   OCall $ObjTmpl(Api3DEngApp)::Api3DEngApp.Init
   OCall $ObjTmpl(Api3DEngApp)::Api3DEngApp.Run
   OCall $ObjTmpl(Api3DEngApp)::Api3DEngApp.Done
+  ResGuard_Show
+  ResGuard_Stop
 
   SysDone
   invoke ExitProcess, 0

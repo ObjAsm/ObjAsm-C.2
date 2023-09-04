@@ -48,7 +48,7 @@
 ;        - TPL_: Object template
 ;        - $: macro that returns a text or a number
 ;        - s: user symbols (sIID_xxx)
-;        - $$: hidden symbols, but reused by macros to save space on the symbol table
+;        - $$: hidden symbols, but reused by macros (save space on the symbol table)
 ;        - ??: hidden symbols, but shared between macros
 
 ;  3. Macro parameters are usually InsName, ObjName, MtdMame, VarName, IfcName, Args, ...
@@ -763,9 +763,9 @@ SysInit macro Arg1, Arg2
   
   if RESGUARD_LOADED ne FALSE
     if TARGET_BITNESS eq 32
-      invoke ResGuardInit, xbp
+      invoke ResGuardInit, ebp
     else
-      invoke ResGuardInit, xsp
+      invoke ResGuardInit, rsp
     endif
   endif
 

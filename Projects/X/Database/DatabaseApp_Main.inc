@@ -294,7 +294,7 @@ ShowStatus macro
 endm
 
 Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
-  local AbtDlg:$Obj(DialogAbout), SW:$Obj(StopWatch)
+  local AbtDlg:$Obj(DialogAbout), hIcon:HICON, SW:$Obj(StopWatch)
   local RecDlg:$Obj(DB_RecordEditorDlg), StrucDlg:$Obj(DB_StructEditorDlg)
   local IndexDlg:$Obj(DB_IndexDlg), SeekDlg:$Obj(DB_SeekDlg), NewTableDlg:$Obj(DB_NewTableDlg);, QueryDlg:$Obj(DB_QueryDlg)
   local bTimeStr[30]:BYTE, dPriorityClass:DWORD
@@ -661,10 +661,11 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif ax == IDM_ABOUT
     New AbtDlg::DialogAbout
-    invoke LoadIcon, hInstance, $OfsCStr("ICON_APP")
-    OCall AbtDlg::DialogAbout.Init, xsi, [xsi].hWnd, xax, offset(szAboutText)
+    mov hIcon, $invoke(LoadIcon, hInstance, $OfsCStr("ICON_APP"))
+    OCall AbtDlg::DialogAbout.Init, xsi, [xsi].hWnd, hIcon, offset(szAboutText)
     OCall AbtDlg::DialogAbout.Show
     OCall AbtDlg::DialogAbout.Done
+    invoke DestroyIcon, hIcon
     xor eax, eax
 
   .else

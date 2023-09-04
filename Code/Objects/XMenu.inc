@@ -1785,7 +1785,7 @@ Method XMenu.SetMenuBarBkColor, uses xsi, Color:RGBQUAD
 
   SetObject xsi
   m2m [xsi].MenuBarBkColor, Color, eax
-  invoke CreateSolidBrush, eax                          ;This Brush will be managed by the system
+  invoke CreateSolidBrush, eax
   mov MenuInfo.cbSize, sizeof(MenuInfo)
   mov MenuInfo.hbrBack, xax
   mov MenuInfo.fMask, MIM_BACKGROUND
@@ -1793,6 +1793,7 @@ Method XMenu.SetMenuBarBkColor, uses xsi, Color:RGBQUAD
   invoke GetMenu, [xsi].hWnd
   lea xdx, MenuInfo
   invoke SetMenuInfo, xax, xdx
+  invoke DeleteObject, MenuInfo.hbrBack 
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
