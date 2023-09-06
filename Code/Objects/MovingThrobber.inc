@@ -92,6 +92,7 @@ Method MovingThrobber.AddBmpFromRes, uses xsi, pBmpName:PSTRING
   local BMP:BITMAP
 
   SetObject xsi
+  m2z [xsi].dIndex
   .if [xsi].phBitmaps == NULL
     MemAlloc sizeof(HBITMAP)
   .else
@@ -139,6 +140,7 @@ Method MovingThrobber.AddBmpFromResList, uses xbx xdi xsi, pList:POINTER, dCount
   local BMP:BITMAP, dSuccessCount:DWORD
 
   SetObject xsi
+  m2z [xsi].dIndex
 
   ;Allocate necessary memory
   mov eax, [xsi].dBitmapCount
@@ -203,6 +205,8 @@ Method MovingThrobber.AddPngFromRes, uses xsi, pPngName:PSTRING
   local BMP:BITMAP
 
   SetObject xsi
+  m2z [xsi].dIndex
+
   .if [xsi].phBitmaps == NULL
     MemAlloc sizeof(HBITMAP)
   .else
@@ -290,6 +294,7 @@ Method MovingThrobber.AddPngFromResList, uses xbx xdi xsi, pList:POINTER, dListC
   local BMP:BITMAP, dSuccessCount:DWORD
 
   SetObject xsi
+  m2z [xsi].dIndex
 
   ;Allocate necessary memory
   mov eax, [xsi].dBitmapCount
@@ -350,8 +355,7 @@ Method MovingThrobber.AddPngFromResList, uses xbx xdi xsi, pList:POINTER, dListC
             inc edx
             mov [xsi].dBitmapCount, edx
             .if edx == 1                                      ;Only if it is the 1st image
-              mov xcx, xax
-              invoke GetObject, xcx, sizeof BMP, addr BMP
+              invoke GetObject, hBmp, sizeof BMP, addr BMP
               .if eax != 0
                 mov ecx, BMP.bmWidth
                 mov edx, BMP.bmHeight
@@ -385,9 +389,10 @@ MethodEnd
 
 Method MovingThrobber.Animate, uses xbx xsi
   local hSrcDC:HDC, hPrvSrcBmp:HBITMAP, hDstDC:HDC
-  local hModDC:HDC, hPrvModBmp:HBITMAP, hPrvModBrush:HBRUSH
+  local hModDC:HDC, hPrvModBmp:HBITMAP
   local xform:XFORM, bfn:BLENDFUNCTION
   local PtSize:POINT, PtZero:POINT
+  local hModBmp:HBITMAP
 
   SetObject xsi
   mov PtZero.x, 0
@@ -415,6 +420,8 @@ Method MovingThrobber.Animate, uses xbx xsi
       .else
         xor edx, edx
       .endif
+      DbgBmp xdx, "SRC"
+      DbgDec ebx,, "SRC"
       mov hPrvSrcBmp, $invoke(SelectObject, hSrcDC, xdx)
       inc ebx
       .if ebx >= [xsi].dBitmapCount
@@ -423,6 +430,7 @@ Method MovingThrobber.Animate, uses xbx xsi
       mov [xsi].dIndex, ebx
 
       invoke CreateCompatibleBitmap, hDstDC, [xsi].BmpSize.x, [xsi].BmpSize.y
+      mov hModBmp, xax
       mov hPrvModBmp, $invoke(SelectObject, hModDC, xax)
 
       .if [xsi].dStatus != TBR_STATUS_STOPPED
@@ -466,7 +474,7 @@ Method MovingThrobber.Animate, uses xbx xsi
           fldz
           fcom
           fGetFlags
-          .if !CARRY?
+          .if !CARRY?                                   ;Carry if st(0) < source
             mov [xsi].dStatus, TBR_STATUS_STOPPED
             fstp [xsi].r4Scaling
             fUnload 3
@@ -501,7 +509,6 @@ Method MovingThrobber.Animate, uses xbx xsi
         shr eax, 1
         neg eax
         invoke BitBlt, hModDC, edx, eax, [xsi].BmpSize.x, [xsi].BmpSize.y, hSrcDC, 0, 0, SRCCOPY
-        invoke DeleteObject, $invoke(SelectObject, hModDC, hPrvModBrush)
       .endif
 
     @@:
@@ -531,15 +538,16 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method MovingThrobber.Dispose, uses xbx xsi
+Method MovingThrobber.Dispose, uses xbx xdi xsi
   SetObject xsi
   .if [xsi].phBitmaps != NULL
     xor ebx, ebx
+    mov xdi, [xsi].phBitmaps
     .while ebx < [xsi].dBitmapCount
-      invoke DeleteObject, [xsi + xbx*sizeof(HBITMAP)].phBitmaps
+      invoke DeleteObject, HBITMAP ptr [xdi + xbx*sizeof(HBITMAP)]
       inc xbx
     .endw
-    MemFree [xsi].phBitmaps
+    MemFree xdi
     mov [xsi].phBitmaps, NULL
     m2z [xsi].dBitmapCount
     m2z [xsi].dIndex

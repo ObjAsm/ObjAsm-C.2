@@ -23,7 +23,7 @@ PWTT_TRANSLATION typedef ptr WTT_TRANSLATION
 
 Object WebTextTranslator, WebTextTranslatorID, SortedCollection
   RedefineMethod    Compare,            PSTRINGW, PSTRINGW
-  RedefineMethod    DestroyItem,        POINTER
+  RedefineMethod    DestroyItem,        PWTT_TRANSLATION
   RedefineMethod    Done
   RedefineMethod    Init,               POINTER, PSTRING, PSTRING
   VirtualMethod     Translate,          PSTRING, PSTRING
@@ -82,7 +82,7 @@ MethodEnd
 ; Arguments:  Arg1: -> Item.
 ; Return:     Nothing.
 
-Method WebTextTranslator.DestroyItem, uses xbx, pItem:POINTER
+Method WebTextTranslator.DestroyItem, uses xbx, pItem:PWTT_TRANSLATION
   .if pItem != NULL
     mov xbx, pItem
     invoke StrDispose, [xbx].WTT_TRANSLATION.pText

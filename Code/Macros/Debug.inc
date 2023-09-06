@@ -2332,7 +2332,7 @@ ResGuard_Show macro
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
       if RESGUARD_LOADED ne FALSE      
         DbgSaveContext
-        invoke DbgOutTextA, $OfsCStrA("Leak Report:"), \
+        invoke DbgOutTextA, $OfsCStrA("Report:"), \
                             DbgColorForeground, DbgColorBackground, \
                             DBG_EFFECT_BOLD, offset(szResGuard)
         DbgShowSrcInfo offset(szResGuard)

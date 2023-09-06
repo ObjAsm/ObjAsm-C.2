@@ -12,7 +12,7 @@
 ;             https://stackoverflow.com/questions/5705650/stackwalk64-on-windows-get-symbol-name
 ; ==================================================================================================
 
-;Todo: when CallData can not be removed => show call stack  
+;Todo: add GDI+ procs
 
 _IMAGEHLP_SOURCE_ equ 0
 SYM_NAME_LENGTH   equ 255
@@ -25,7 +25,7 @@ SysSetup OOP, DLL64, WIDE_STRING, DEBUG(WND), SUFFIX
 
 % include &IncPath&Windows\DbgHelp.inc
 
-CStrW wWndCaption,    "ResGuard"
+CStrW wWndCaption, "ResGuard"
 CStrW wDebugStart, "Use the debugger to find the lines of", CRLF, \
                    "code that use the listed resources.", CRLF, CRLF,\
                    "Do you want to start the debugger now?", CRLF
@@ -91,11 +91,12 @@ ObjectEnd
 .data                                                   ;Non exported data
   hProcess          HANDLE    0
   xAppRefAddr       XWORD     0
-  dResGuardEnabled  DWORD     FALSE
   HookColl          $ObjInst(Collection)                ;Collection of IAT_Hook objects
   RcrcColl          $ObjInst(Collection)                ;Collection of RTC_Collection objects
-  FailColl          $ObjInst(RTC_Collection)            ;Collection of failed API calls; it acts
-                                                        ;  like a RTC_Collection
+  FailColl          $ObjInst(RTC_Collection)            ;Failed API calls
+  LogiColl          $ObjInst(RTC_Collection)            ;API calls where a logic error was detected
+  dResGuardEnabled  DWORD     FALSE
+
 .code
 ; ==================================================================================================
 ;    CallData implementation
@@ -134,8 +135,8 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
                             DBG_EFFECT_NORMAL, offset wWndCaption
       .endif
     .endif
-    FillStringA cBuffer, <(>
-    lea xcx, [cBuffer + 1]
+    FillStringA cBuffer, < (>
+    lea xcx, [cBuffer + 2]
     invoke xword2hexA, xcx, [xdi].CALLER_INFO.xRetAddr
     invoke StrCatA, addr cBuffer, $OfsCStrA("h)")
     invoke DbgOutTextA, addr cBuffer, DbgColorComment, DbgColorBackground, \
@@ -355,7 +356,7 @@ endm
 
 DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req, \
                       pRTC_Coll:req, RemoveArgIndex, PassCond
-  local ArgStr, Cnt
+  local ArgStr, Cnt, @@Exit
 
   DefineHook ApiName, pRTC_Coll
 
@@ -374,7 +375,6 @@ DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:re
 
     .if dResGuardEnabled != FALSE
       mov xApiResult, xax
-      m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
 
       AnalyseStack
       FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
@@ -403,6 +403,12 @@ DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:re
   endif      
   ifnb <RemoveArgIndex>
           @CatStr(<OCall >, pRTC_Coll, <::RTC_Collection.Remove, Arg>, RemoveArgIndex, <, 0>)
+          .if eax == 0
+            lea xax, LogiColl
+            mov [xbx].$Obj(CallData).pOwner, xax
+            OCall xax::RTC_Collection.Insert, xbx
+            jmp @@Exit
+          .endif
   endif
           OCall pRTC_Coll::RTC_Collection.Insert, xbx
           mov xax, pRTC_Coll
@@ -417,8 +423,7 @@ DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:re
         OCall xax::RTC_Collection.Insert, xbx
       .endif
   endif
-
-      mov dResGuardEnabled, TRUE
+@@Exit:
       mov xax, xApiResult                               ;;Restore API return value
     .endif
     ret
@@ -459,52 +464,45 @@ DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:r
 
     .if dResGuardEnabled != FALSE
       mov xApiResult, xax
-      m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
+
+      AnalyseStack
+      FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+  if CallIdentifier gt 0
+      mov xcx, Arg&CallIdentifier&
+  elseif CallIdentifier eq 0
+      mov xcx, xApiResult
+  else
+      mov xax, @CatStr(<Arg>, %(-CallIdentifier))
+      .if xax != NULL
+        mov xcx, [xax]
+      .else
+        xor ecx, ecx
+      .endif
+  endif
+      mov [xbx].$Obj(CallData).xData1, xcx
+      mov [xbx].$Obj(CallData).xData2, 0
 
   ifnb <SuccessCond>
-        .if SuccessCond
-          for pColl, <pRTC_Coll_List>                   ;;Search in all specified RTC_Collection objects
-            @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, Arg>, CallIdentifier, <, 0>)
-            test eax, eax
-            jnz @@Exit                                  ;;Exit if found
-          endm
-          invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed removing call data"),
-                             DbgColorError, DbgColorBackground, \
-                             DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
-          jmp @@Exit
-        .endif
-        AnalyseStack
-        FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
-    if CallIdentifier gt 0
-        mov xcx, Arg&CallIdentifier&
-    elseif CallIdentifier eq 0
-        mov xcx, xApiResult
-    else
-        mov xax, @CatStr(<Arg>, %(-CallIdentifier))
-        .if xax != NULL
-          mov xcx, [xax]
-        .else
-          xor ecx, ecx
-        .endif
-    endif
-        mov [xbx].$Obj(CallData).xData1, xcx
-        mov [xbx].$Obj(CallData).xData2, 0
-
-        lea xax, FailColl
-        mov [xbx].$Obj(CallData).pOwner, xax
-        OCall xax::RTC_Collection.Insert, xbx
-  else
-        for pColl, <pRTC_Coll_List>                     ;;Search in all specified RTC_Collection objects
+      .if SuccessCond
+  endif
+        for pColl, <pRTC_Coll_List>                   ;;Search in all specified RTC_Collection objects
           @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, Arg>, CallIdentifier, <, 0>)
           test eax, eax
-          jnz @@Exit                                    ;;Exit if found
+          jnz @@Exit                                  ;;Exit if found
         endm
-        invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed removing call data"),
-                           DbgColorError, DbgColorBackground, \
-                           DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
+        lea xax, LogiColl
+        mov [xbx].$Obj(CallData).pOwner, xax
+        OCall xax::RTC_Collection.Insert, xbx
+       
+  ifnb <SuccessCond>
+        jmp @@Exit
+      .endif
+
+      lea xax, FailColl
+      mov [xbx].$Obj(CallData).pOwner, xax
+      OCall xax::RTC_Collection.Insert, xbx
   endif
 @@Exit:
-      mov dResGuardEnabled, TRUE
       mov xax, xApiResult                               ;;Restore API return value
     .endif
     ret
@@ -544,7 +542,6 @@ DetourCreateNamed macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCo
 
     .if dResGuardEnabled != FALSE
       mov xApiResult, xax
-      m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
 
       AnalyseStack
       FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
@@ -576,7 +573,6 @@ DetourCreateNamed macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCo
         OCall xax::RTC_Collection.Insert, xbx
       .endif
 
-      mov dResGuardEnabled, TRUE
       mov xax, xApiResult                               ;;Restore API return value
     .endif
     ret
@@ -613,7 +609,6 @@ DetourCreateCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCon
 
     .if dResGuardEnabled != FALSE
       mov xApiResult, xax
-      m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
 
       AnalyseStack
       FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
@@ -632,7 +627,6 @@ DetourCreateCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCon
         OCall xax::RTC_Collection.Insert, xbx
       .endif
 
-      mov dResGuardEnabled, TRUE
       mov xax, xApiResult                               ;;Restore API return value
     .endif
     ret
@@ -669,41 +663,33 @@ DetourDestroyCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCo
 
     .if dResGuardEnabled != FALSE
       mov xApiResult, xax
-      m2z dResGuardEnabled                              ;;Shut Resguard off while analysis is in progress
+
+      AnalyseStack
+      FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
+      m2m [xbx].$Obj(CallData).xData1, CounterName, xcx
+      mov [xbx].$Obj(CallData).xData2, 0
 
   ifnb <SuccessCond>
-        .if SuccessCond
-          for pColl, <pRTC_Coll_List>                   ;;Search in all specified RTC_Collection objects
-            @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, >, CounterName, <, 0>)
-            dec CounterName
-            test eax, eax
-            jnz @@Exit                                  ;;Exit if found
-          endm
-          invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed removing call data"),
-                             DbgColorError, DbgColorBackground, \
-                             DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
-          jmp @@Exit
-        .endif
-        AnalyseStack
-        FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
-        m2m [xbx].$Obj(CallData).xData1, -1, xcx
-
-        lea xax, FailColl
-        mov [xbx].$Obj(CallData).pOwner, xax
-        OCall xax::RTC_Collection.Insert, xbx
-  else
+      .if SuccessCond
+  endif
         for pColl, <pRTC_Coll_List>                     ;;Search in all specified RTC_Collection objects
           @CatStr(<OCall >, pColl, <::RTC_Collection.Remove, >, CounterName, <, 0>)
-          dec CounterName
-          test eax, eax
-          jnz @@Exit                                    ;;Exit if found
+          .if eax != FALSE
+            dec CounterName
+            jmp @@Exit                                  ;;Exit if found
+          .endif
         endm
-        invoke DbgOutText, $OfsCStr("Dtr&ApiName& failed removing call data"),
-                           DbgColorError, DbgColorBackground, \
-                           DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
+        lea xax, LogiColl
+        mov [xbx].$Obj(CallData).pOwner, xax
+        OCall xax::RTC_Collection.Insert, xbx
+  ifnb <SuccessCond>
+        jmp @@Exit
+      .endif
+      lea xax, FailColl
+      mov [xbx].$Obj(CallData).pOwner, xax
+      OCall xax::RTC_Collection.Insert, xbx
   endif
 @@Exit:
-      mov dResGuardEnabled, TRUE
       mov xax, xApiResult                               ;;Restore API return value
     .endif
     ret
@@ -832,6 +818,7 @@ DetourCreate CreateDIBSection, 6, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
 DetourCreate CreateDiscardableBitmap, 3, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
 DetourCreate LoadBitmapA, 2, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
 DetourCreate LoadBitmapW, 2, 0, <xApiResult !!= NULL>, pRTCC_Bitmap
+DetourCreate GdipCreateHBITMAPFromBitmap, 3, -2, <xApiResult == 0>, pRTCC_Bitmap
 
 ; ------------------------------------------------------------------------------
 
@@ -930,7 +917,7 @@ DetourPrivateExtractIconsX macro ApiName:req
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
   endm
 
-  Dtr&ApiName& proc uses xbx xdi xsi ArgStr                 ;;Procedure declaration
+  Dtr&ApiName& proc uses xbx xdi xsi ArgStr             ;;Procedure declaration
     local xApiResult:XWORD, hThread:HANDLE
     local Context:CONTEXT, Stack:STACK
 
@@ -938,10 +925,10 @@ DetourPrivateExtractIconsX macro ApiName:req
 
     .if dResGuardEnabled != FALSE
       mov xApiResult, xax
+
       .if xApiResult == 0
         Destroy xbx
       .else
-        m2z dResGuardEnabled                            ;;Shut Resguard off while analysis is in progress
         FillStringA [xbx].$Obj(CallData).cProcName, <ApiName>
         AnalyseStack
         .if xApiResult == 0xFFFFFFFF                    ;;File is not found
@@ -962,9 +949,7 @@ DetourPrivateExtractIconsX macro ApiName:req
           .endw
           Destroy xbx
         .endif
-        mov dResGuardEnabled, TRUE
       .endif
-
       mov xax, xApiResult                               ;;Restore API return value
     .endif
     ret
@@ -1089,9 +1074,7 @@ DtrCreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
   InvokeOriginalAPI CreatePipe, 4
 
   .if dResGuardEnabled != FALSE
-    ;Start analysis
     mov xApiResult, xax
-    m2z dResGuardEnabled                                ;Shut Resguard off while analysis is in progress
 
     AnalyseStack
     FillStringA [xbx].$Obj(CallData).cProcName, <CreatePipe>
@@ -1125,7 +1108,6 @@ DtrCreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
       OCall xax::RTC_Collection.Insert, xbx
     .endif
 
-    mov dResGuardEnabled, TRUE
     mov xax, xApiResult                                 ;Restore API return value
   .endif
   ret
@@ -1183,7 +1165,6 @@ DtrSetTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
 
   .if dResGuardEnabled != FALSE
     mov xApiResult, xax
-    m2z dResGuardEnabled                                ;Shut Resguard off while analysis is in progress
 
     AnalyseStack
     FillStringA [xbx].$Obj(CallData).cProcName, <SetTimer>
@@ -1210,7 +1191,6 @@ DtrSetTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
       OCall xax::RTC_Collection.Insert, xbx
     .endif
 
-    mov dResGuardEnabled, TRUE
     mov xax, xApiResult                                 ;Restore API return value
   .endif
   ret
@@ -1226,7 +1206,6 @@ DtrKillTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD
 
   .if dResGuardEnabled != FALSE
     mov xApiResult, xax
-    m2z dResGuardEnabled                                ;Shut Resguard off while analysis is in progress
 
     .if xax != 0
       OCall pRTCC_Timer::RTC_Collection.Remove, Arg2, Arg1
@@ -1246,7 +1225,6 @@ DtrKillTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD
       OCall xax::RTC_Collection.Insert, xbx
     .endif
 @@Exit:
-    mov dResGuardEnabled, TRUE
     mov xax, xApiResult                                 ;Restore API return value
   .endif
   ret
@@ -1370,6 +1348,7 @@ DllDone proc
   OCall HookColl::Collection.Done                       ;Destroy all IAT_Hooks and restore IAT
   OCall RcrcColl::Collection.Done                       ;Destroy all leaked CallData objects in RTC_Collections
   OCall FailColl::RTC_Collection.Done                   ;Destroy all failed CallData objects
+  OCall LogiColl::RTC_Collection.Done                   ;Destroy all failed CallData objects
   ret
 DllDone endp
 
@@ -1389,6 +1368,7 @@ DllInit proc
   OCall HookColl::Collection.Init, NULL, HookCount, 10, COL_MAX_CAPACITY
   OCall RcrcColl::Collection.Init, NULL, HookCount, 10, COL_MAX_CAPACITY
   OCall FailColl::RTC_Collection.Init, NULL, 10, 10, COL_MAX_CAPACITY
+  OCall LogiColl::RTC_Collection.Init, NULL, 10, 10, COL_MAX_CAPACITY
 
   NewRTCC PaintStruct, 10
   NewHook BeginPaint, User32
@@ -1416,6 +1396,7 @@ DllInit proc
   NewHook CreateDiscardableBitmap, GDI32
   NewHook LoadBitmapA, User32
   NewHook LoadBitmapW, User32
+  NewHook GdipCreateHBITMAPFromBitmap, Gdiplus
 
   NewRTCC Image, 10
   NewHook LoadImageA, User32
@@ -1766,9 +1747,6 @@ ShowCollectionData macro pRTC_Collection:req, ResTypeCaption:req
 
   CStr szLeakCaption, ResTypeCaption, " cur. = %3li, max. = %5li, tot. = %5li"
   mov xdi, pRTC_Collection
-  .if (dHasLeaks == FALSE) && ([xdi].$Obj(RTC_Collection).dCount > 0)
-    inc dHasLeaks
-  .endif
   .if ([xdi].$Obj(RTC_Collection).dCount > 0)
     invoke wsprintf, xbx, offset szLeakCaption, [xdi].$Obj(RTC_Collection).dCount, \
                      [xdi].$Obj(RTC_Collection).dMaxCount, [xdi].$Obj(RTC_Collection).dTotCount
@@ -1778,86 +1756,107 @@ ShowCollectionData macro pRTC_Collection:req, ResTypeCaption:req
   .endif
 endm
 
+RTCC_AddLeaks proc pRTC_Collection:$ObjPtr(RTC_Collection), pLeaks:POINTER, xDummy:XWORD
+  ?mov xcx, pRTC_Collection
+  ?mov xdx, pLeaks
+  mov eax, [xcx].$Obj(RTC_Collection).dCount
+  add DWORD ptr [xdx], eax
+  ret
+RTCC_AddLeaks endp
+
 ResGuardShow proc uses xbx xdi
-  local cBuffer[256]:CHRA, dHasLeaks:DWORD
+  local cBuffer[256]:CHRA, dLeaks:DWORD, dFails:DWORD, dLogis:DWORD
 
-  m2z dResGuardEnabled
-  m2z dHasLeaks
   lea xbx, cBuffer
+  m2z dResGuardEnabled
+  m2z dLeaks
+  OCall RcrcColl::Collection.ForEach, offset RTCC_AddLeaks, addr dLeaks, NULL
 
-  ; -----------------------------------------------------------------------------------
-  ; Note: don't show data for StockObject!
-  ShowCollectionData pRTCC_VirtualMemBlock,      "Virtual Mem-Blocks: "
-  ShowCollectionData pRTCC_GlobalMemBlock,       "Global Mem-Blocks:  "
-  ShowCollectionData pRTCC_LocalMemBlock,        "Local Mem-Blocks:   "
-  ShowCollectionData pRTCC_HeapMemBlock,         "Heap Mem-Blocks:    "
-  ShowCollectionData pRTCC_CoTaskMemBlock,       "CoTaskMem-Blocks:   "
-
-  ShowCollectionData pRTCC_AccTable,             "Accelerator Tables: "
-  ShowCollectionData pRTCC_Bitmap,               "Bitmaps:            "
-  ShowCollectionData pRTCC_Brush,                "Brushes:            "
-  ShowCollectionData pRTCC_FindFirstChangeNotif, "Change Notification:"
-  ShowCollectionData pRTCC_ColorSpace,           "Color Spaces:       "
-  ShowCollectionData pRTCC_CriticalSection,      "Critical Sections:  "
-  ShowCollectionData pRTCC_Cursor,               "Cursors:            "
-  ShowCollectionData pRTCC_Desktop,              "Desktops:           "
-  ShowCollectionData pRTCC_DeviceContext,        "Device Contexts:    "
-  ShowCollectionData pRTCC_DisplayDeviceContext, "Display DCs:        "
-  ShowCollectionData pRTCC_EnhMetaFile,          "EnhMetaFiles:       "
-  ShowCollectionData pRTCC_Event,                "Events:             "
-  ShowCollectionData pRTCC_EventLog,             "Event Logs:         "
-  ShowCollectionData pRTCC_File,                 "Files:              "
-  ShowCollectionData pRTCC_FileMapping,          "File Mappings:      "
-  ShowCollectionData pRTCC_UpdateResource,       "File Resources:     "
-  ShowCollectionData pRTCC_FindFirstFile,        "Find First File:    "
-  ShowCollectionData pRTCC_Font,                 "Fonts:              "
-  ShowCollectionData pRTCC_Icon,                 "Icons:              "
-  ShowCollectionData pRTCC_Image,                "Images:             "
-  ShowCollectionData pRTCC_KeyboardLayout,       "Keyboard Layouts:   "
-  ShowCollectionData pRTCC_Library,              "Libraries:          "
-  ShowCollectionData pRTCC_Mailslot,             "Mail Slots:         "
-  ShowCollectionData pRTCC_Menu,                 "Menus:              "
-  ShowCollectionData pRTCC_MetaFile,             "MetaFiles:          "
-  ShowCollectionData pRTCC_Mutex,                "Mutexes:            "
-  ShowCollectionData pRTCC_Palette,              "Palettes:           "
-  ShowCollectionData pRTCC_PaintStruct,          "Paint Structures:   "
-  ShowCollectionData pRTCC_Pen,                  "Pens:               "
-  ShowCollectionData pRTCC_Printer,              "Printers:           "
-  ShowCollectionData pRTCC_PrivateNamespace,     "Private Namespaces: "
-  ShowCollectionData pRTCC_Process,              "Processes:          "
-  ShowCollectionData pRTCC_Region,               "Regions:            "
-  ShowCollectionData pRTCC_RegKey,               "Registry Keys:      "
-  ShowCollectionData pRTCC_Semaphore,            "Semaphores:         "
-  ShowCollectionData pRTCC_SysString,            "System BStrings:    "
-  ShowCollectionData pRTCC_Thread,               "Threads:            "
-  ShowCollectionData pRTCC_Timer,                "Timers:             "
-  ShowCollectionData pRTCC_Transaction,          "Transactions:       "
-  ShowCollectionData pRTCC_WindowStation,        "Window Stations:    "
-
-  ShowCollectionData pRTCC_OleInitialization,    "OLE library init.:  "
-  ShowCollectionData pRTCC_CoInitialization,     "COM library init.:  "
-  ; -----------------------------------------------------------------------------------
-
-  lea xdi, FailColl
-  .if ([xdi].$Obj(RTC_Collection).dCount > 0)
-    invoke wsprintf, xbx, $OfsCStr("Failed API calls:   %li"), [xdi].$Obj(RTC_Collection).dCount
+  .if dLeaks != 0
+    invoke wsprintf, xbx, $OfsCStr("Detected Leaks: %li"), dLeaks
     invoke DbgOutText, xbx, DbgColorForeground, DbgColorBackground, \
                        DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
-    OCall FailColl::RTC_Collection.ForEach, $MethodAddr(CallData.Show), NULL, NULL
-  .endif
-  .if [xdi].$Obj(RTC_Collection).dCount > 0
-    mov dHasLeaks, TRUE
-  .endif
+    
+    ; -----------------------------------------------------------------------------------
+    ; Note: don't show data for StockObject!
+    ShowCollectionData pRTCC_VirtualMemBlock,      "Virtual Mem-Blocks: "
+    ShowCollectionData pRTCC_GlobalMemBlock,       "Global Mem-Blocks:  "
+    ShowCollectionData pRTCC_LocalMemBlock,        "Local Mem-Blocks:   "
+    ShowCollectionData pRTCC_HeapMemBlock,         "Heap Mem-Blocks:    "
+    ShowCollectionData pRTCC_CoTaskMemBlock,       "CoTaskMem-Blocks:   "
   
-  mov dResGuardEnabled, TRUE
+    ShowCollectionData pRTCC_AccTable,             "Accelerator Tables: "
+    ShowCollectionData pRTCC_Bitmap,               "Bitmaps:            "
+    ShowCollectionData pRTCC_Brush,                "Brushes:            "
+    ShowCollectionData pRTCC_FindFirstChangeNotif, "Change Notification:"
+    ShowCollectionData pRTCC_ColorSpace,           "Color Spaces:       "
+    ShowCollectionData pRTCC_CriticalSection,      "Critical Sections:  "
+    ShowCollectionData pRTCC_Cursor,               "Cursors:            "
+    ShowCollectionData pRTCC_Desktop,              "Desktops:           "
+    ShowCollectionData pRTCC_DeviceContext,        "Device Contexts:    "
+    ShowCollectionData pRTCC_DisplayDeviceContext, "Display DCs:        "
+    ShowCollectionData pRTCC_EnhMetaFile,          "EnhMetaFiles:       "
+    ShowCollectionData pRTCC_Event,                "Events:             "
+    ShowCollectionData pRTCC_EventLog,             "Event Logs:         "
+    ShowCollectionData pRTCC_File,                 "Files:              "
+    ShowCollectionData pRTCC_FileMapping,          "File Mappings:      "
+    ShowCollectionData pRTCC_UpdateResource,       "File Resources:     "
+    ShowCollectionData pRTCC_FindFirstFile,        "Find First File:    "
+    ShowCollectionData pRTCC_Font,                 "Fonts:              "
+    ShowCollectionData pRTCC_Icon,                 "Icons:              "
+    ShowCollectionData pRTCC_Image,                "Images:             "
+    ShowCollectionData pRTCC_KeyboardLayout,       "Keyboard Layouts:   "
+    ShowCollectionData pRTCC_Library,              "Libraries:          "
+    ShowCollectionData pRTCC_Mailslot,             "Mail Slots:         "
+    ShowCollectionData pRTCC_Menu,                 "Menus:              "
+    ShowCollectionData pRTCC_MetaFile,             "MetaFiles:          "
+    ShowCollectionData pRTCC_Mutex,                "Mutexes:            "
+    ShowCollectionData pRTCC_Palette,              "Palettes:           "
+    ShowCollectionData pRTCC_PaintStruct,          "Paint Structures:   "
+    ShowCollectionData pRTCC_Pen,                  "Pens:               "
+    ShowCollectionData pRTCC_Printer,              "Printers:           "
+    ShowCollectionData pRTCC_PrivateNamespace,     "Private Namespaces: "
+    ShowCollectionData pRTCC_Process,              "Processes:          "
+    ShowCollectionData pRTCC_Region,               "Regions:            "
+    ShowCollectionData pRTCC_RegKey,               "Registry Keys:      "
+    ShowCollectionData pRTCC_Semaphore,            "Semaphores:         "
+    ShowCollectionData pRTCC_SysString,            "System BStrings:    "
+    ShowCollectionData pRTCC_Thread,               "Threads:            "
+    ShowCollectionData pRTCC_Timer,                "Timers:             "
+    ShowCollectionData pRTCC_Transaction,          "Transactions:       "
+    ShowCollectionData pRTCC_WindowStation,        "Window Stations:    "
+  
+    ShowCollectionData pRTCC_OleInitialization,    "OLE library init.:  "
+    ShowCollectionData pRTCC_CoInitialization,     "COM library init.:  "
+    ; -----------------------------------------------------------------------------------
+  .endif
 
-  .if dHasLeaks
+  lea xdi, FailColl
+  m2m dFails, [xdi].$Obj(RTC_Collection).dCount, eax
+  .if (eax != 0)
+    invoke wsprintf, xbx, $OfsCStr("Failed Calls:   %li"), dFails
+    invoke DbgOutText, xbx, DbgColorForeground, DbgColorBackground, \
+                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
+    OCall xdi::RTC_Collection.ForEach, $MethodAddr(CallData.Show), NULL, NULL
+  .endif
+
+  lea xdi, LogiColl
+  m2m dLogis, [xdi].$Obj(RTC_Collection).dCount, eax
+  .if (eax != 0)
+    invoke wsprintf, xbx, $OfsCStr("Logic Errors:   %li"), dLogis
+    invoke DbgOutText, xbx, DbgColorForeground, DbgColorBackground, \
+                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
+    OCall xdi::RTC_Collection.ForEach, $MethodAddr(CallData.Show), NULL, NULL
+  .endif
+
+  .if (dLeaks != 0 || dFails != 0 || dLogis != 0)
     invoke MessageBoxW, 0, offset wDebugStart, offset wWndCaption, MB_YESNO or MB_ICONEXCLAMATION
     .if eax == IDYES
+      mov dResGuardEnabled, TRUE
       int 3
     .endif
   .else
-    invoke DbgOutText, $OfsCStr("No leaks or failures detected"), \ 
+    invoke DbgOutText, $OfsCStr("No leaks, failures or logic errors detected."), \ 
                        DbgColorForeground, DbgColorBackground, \
                        DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
   .endif

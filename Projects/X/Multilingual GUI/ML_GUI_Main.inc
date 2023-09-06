@@ -14,10 +14,11 @@ CStr szApplication, "Application"                       ;Creates szApplication s
 
 
 Object Application, MySdiAppID, SdiApp                  ;Single Document Interface App.
-  RedefineMethod    Init                                ;Init method redefinition
+  RedefineMethod    Init
   StaticMethod      Startup
 
   VirtualEvent      OnCommand,  WM_COMMAND
+  VirtualEvent      OnDestroy,  WM_DESTROY
   VirtualEvent      OnClose,    WM_CLOSE, WM_QUERYENDSESSION
   VirtualEvent      OnPaint,    WM_PAINT
 
@@ -106,7 +107,6 @@ TranslateMenu proc hMenu:HMENU, pDstLanguageCode:PSTRING, hParent:HWND
   OCall DST::DiskStream.Init, NULL, offset szTranslationFile, 0, 0, NULL, 0, 0, 0
   OCall WTT::WebTextTranslator.Store, addr DST
   OCall DST::DiskStream.Done
-
   OCall WTT::WebTextTranslator.Done
 
   .if dMajorVersion >= 8
@@ -147,14 +147,16 @@ Method Application.Init, uses xsi
     New DLUT::DesLUT
     New WTT::WebTextTranslator
     New DST::DiskStream
-    OCall DLUT::DesLUT.Init, NULL, 10, 10, COL_MAX_CAPACITY
+    OCall DLUT::DesLUT.Init, NULL, 1000, 1000, COL_MAX_CAPACITY
     lea xax, DLUT
     mov DSI.pDesLUT, xax
     OCall DST::DiskStream.Init, NULL, offset szTranslationFile, 0, 0, NULL, 0, 0, 0
     OCall WTT::WebTextTranslator.Init, NULL, offset szSrcLanguageCode, offset szSrcLanguageCode
     OCall WTT::WebTextTranslator.Load, addr DST, addr DSI
-    OCall DST::DiskStream.Done
     invoke TranslateSubMenu, hMenu, addr WTT
+    OCall DLUT::DesLUT.Done
+    OCall DST::DiskStream.Done
+    OCall WTT::WebTextTranslator.Done
   .endif
   invoke SetMenu, [xsi].hWnd, hMenu
   invoke DrawMenuBar, [xsi].hWnd
@@ -186,7 +188,7 @@ AddLanguage macro LangCmd, Code
 endm
 
 Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
-  local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout)
+  local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout), hIcon:HICON
 
   SetObject xsi
   mov xax, wParam
@@ -217,10 +219,11 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif ax == IDM_APPABOUT
     New Dlg::DialogAbout
-    invoke LoadIcon, hInstance, offset szIcoName
-    OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, xax, offset szAboutText
+    mov hIcon, $invoke(LoadIcon, hInstance, offset szIcoName)
+    OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, hIcon, offset szAboutText
     OCall Dlg::DialogAbout.Show
     OCall Dlg::DialogAbout.Done
+    invoke DestroyIcon, hIcon
     xor eax, eax
 
   .elseif ax == IDM_HELP
@@ -250,6 +253,20 @@ Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   .else
     invoke DefWindowProc, [xsi].hWnd, WM_CLOSE, wParam, lParam
   .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Application.OnDestroy
+; Purpose:    Event procedure for WM_DESTROY message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = Zero if handled.
+
+Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
+  SetObject xsi
+  invoke GetMenu, [xsi].hWnd
+  invoke DestroyMenu, xax
+  xor eax, eax
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

@@ -158,7 +158,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=11
+MilestoneOnDateDate=6
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -193,8 +193,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,1399
-1=0,0,0,0,2216
+2=0,0,0,0,7913
+1=0,0,0,0,519
 6=0,0,1456,414,103789
 4=0,0,0,0,396
 31=0,0,1213,691,1030
@@ -203,11 +203,11 @@ ProductVer4Range=0
 9=0,0,0,0,30773
 10=0,0,0,0,8243
 5=0,0,0,0,17164
-3=0,0,1687,629,5093
+3=0,0,1687,629,1155
 11=0,0,1783,588,1620
 15=0,0,0,0,5891
 14=0,0,0,0,814
-13=0,0,0,0,971
+13=0,0,0,0,11047
 12=0,0,0,0,738
 16=0,0,0,0,17958
 17=0,0,0,0,456
@@ -219,16 +219,16 @@ ProductVer4Range=0
 25=0,0,0,0,1955
 21=0,0,0,0,575
 22=0,0,0,0,14635
-26=
+26=0,0,0,0,14541
 27=
-30=0,0,0,0,985
-29=0,0,0,0,444
+30=0,0,0,0,1169
+29=0,0,0,0,6307
 32=0,0,0,0,2659
-33=0,0,0,0,407
+33=0,0,0,0,400
 34=0,0,0,0,10463
 35=0,0,0,0,67475
-37=0,0,0,0,1080
-36=0,0,0,0,15829
+37=0,0,0,0,2963
+36=0,0,0,0,9146
 38=0,0,0,0,294
 
 [BookMark]
@@ -248,16 +248,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="Res"
-2="MIC_07"
-3="TranslateMenu"
-4="pDstLang"
-5=""en""
-6="Done"
-7="Exist"
-8="TBR_STATUS_STOPPING"
-9="int 3"
-10="IDM_LANG_SPANISH"
+1="LoadMenu"
+2="DestroyMenu"
+3="Method WebTextTranslator.Init, uses xsi, pOwner:"
+4="r4ScalingChange"
+5="dIndex"
+6="[xsi].dIndex"
+7="BmpSize"
+8="invoke UpdateLayeredWindow, [xsi].hWnd, hDstDC, NULL, addr PtSize, \"
+9="AddPngFromResList"
+10="SpinnerList0"
 [Collapse]
 1=
 2=
@@ -352,7 +352,7 @@ ProductVer4Range=0
 33=,
 29=,
 28=
-26=
+26=,,
 24=
 22=
 21=
@@ -373,9 +373,9 @@ ProductVer4Range=0
 37=
 38=
 [AutoLoad]
-AutoLoad=1,2,29
+AutoLoad=1,2
 [PTimer]
-PTimer=1093793822
+PTimer=1165543712
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]
@@ -406,3 +406,5 @@ GroupExpand=1,1,1,0,0,1,1,0
 34=
 37=
 38=
+36=
+33=

@@ -149,7 +149,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=4
+MilestoneOnDateDate=6
 MilestoneOnDateTimeYear=2004
 MilestoneOnDateTimeMonth=6
 MilestoneOnDateTimeDate=8
@@ -186,7 +186,7 @@ ProductVer4Range=0
 [Size]
 2=0,0,480,367,514
 3=0,0,0,0,88
-1=480,488,480,244,75812
+1=480,488,480,244,38240
 4=0,0,0,0,30072
 1001=0,0,0,0,460
 6=0,0,0,0,40304
@@ -194,12 +194,12 @@ ProductVer4Range=0
 8=0,0,0,0,429
 9=
 10=0,0,0,0,5859
-12=0,0,0,0,90723
+12=0,0,0,0,90470
 11=0,0,0,0,4760
 14=0,0,0,0,3004
 13=0,0,0,0,2778
 15=0,0,0,0,857
-16=0,0,0,0,7957
+16=0,0,0,0,9835
 5=0,0,0,0,956
 17=0,0,0,0,1586
 18=0,0,0,0,7748
@@ -239,18 +239,18 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="wCaption"
-2="to remove"
-3="DeleteObj"
-4="DetourDestroyCounted m"
-5="CoInitialize"
-6="ArgStr"
-7="xData1"
-8="CallData"
-9="ArgCount"
-10="ArgCnt"
+1="pRTCC_Menu"
+2="LoadMenu"
+3="LoadBitmapW"
+4="LoadImage"
+5="CreateCompatibleBitmap"
+6="dResGuardEnabled"
+7="DetourCreate m"
+8="DetourCreate"
+9="HeapFree"
+10="DetourDestroy m"
 [Collapse]
-1=100704278,536872225,46586
+1=16386,2048,8760336,
 8=
 15=
 14=
@@ -277,9 +277,9 @@ ProductVer4Range=0
 26=
 27=
 [AutoLoad]
-AutoLoad=1,4
+AutoLoad=1,4,12,16
 [PTimer]
-PTimer=578123386
+PTimer=629364635
 [RADebugBP]
 1=
 14=

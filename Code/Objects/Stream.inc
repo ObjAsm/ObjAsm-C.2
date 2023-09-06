@@ -307,7 +307,7 @@ Method DesLUT.SetLimit, uses xbx xdi xsi, dNewLimit:DWORD
       mov xdi, [xsi].pItems
       test xdi, xdi
       .if ZERO?
-       MemAlloc xax
+        MemAlloc xax
       .else
         MemReAlloc xdi, xax
       .endif

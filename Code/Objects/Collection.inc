@@ -1,10 +1,12 @@
 ; ==================================================================================================
 ; Title:      Collection.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.1.1
 ; Purpose:    ObjAsm support of Collection objects.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
+;             Version C.1.1, September 2023
+;               - Mem-Leak in Load method corrected.
 ; ==================================================================================================
 
 
@@ -602,7 +604,6 @@ Method Collection.Load, uses xbx xdi xsi r12, pStream:$ObjPtr(Stream), pDeserInf
   mov [xsi].dMaxCapacity, eax
 
   xor eax, eax
-  mov [xsi].pItems, xax
   mov [xsi].dCount, eax
   mov [xsi].dLimit, eax
   OCall xsi.SetLimit, $LocReg(dLimit)

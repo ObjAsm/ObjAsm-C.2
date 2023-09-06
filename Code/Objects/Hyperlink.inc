@@ -18,7 +18,7 @@ PDEF_HYPERLINK  textequ <PDEF_BUTTON>
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Object:     Hyperlink
-; Purpose:    Implent a thin wrapper around the GDI Hyperlink control.
+; Purpose:    Implement a thin wrapper around the GDI Hyperlink control.
 ; Layout:
 ;
 ;          Face
