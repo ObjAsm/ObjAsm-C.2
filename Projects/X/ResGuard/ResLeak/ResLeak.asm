@@ -22,11 +22,24 @@ includelib \Masm32\Lib\Gdi32.lib
 includelib \Masm32\Lib\Kernel32.lib
 
 .code
-start:
+
+LeakProc2 proc
+  invoke CreatePen, PS_SOLID, 5, 255
+  ret
+LeakProc2 endp
+
+LeakProc1 proc
+  invoke LeakProc2
+  ret
+LeakProc1 endp
+
+start proc
   invoke ResGuardInit, ebp
   invoke ResGuardStart
-  invoke CreatePen, PS_SOLID, 5, 255
+  invoke LeakProc1
   invoke ResGuardShow
   invoke ResGuardStop
   invoke ExitProcess, 0
+start endp
+
 end start

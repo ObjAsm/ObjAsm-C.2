@@ -602,7 +602,7 @@ elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
-ST0TOSTR_MAX_CHARS equ 35
+ST0TOSTR_MAX_CHARS equ 35                               ;ZTC included
 
 BStrToSt0 proto :POINTER
 StrToSt0A proto :POINTER
@@ -625,7 +625,7 @@ elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
-GUID2STR_MAX_CHARS equ 37
+GUID2STR_MAX_CHARS equ 37                               ;ZTC included
 
 sdword2decA proto :POINTER, :SDWORD
 sdword2decW proto :POINTER, :SDWORD
@@ -636,7 +636,7 @@ elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
-SDWORD2DEC_MAX_CHARS equ 12
+SDWORD2DEC_MAX_CHARS equ 12                             ;ZTC included
 
 udword2decA proto :POINTER, :DWORD
 udword2decW proto :POINTER, :DWORD
@@ -651,7 +651,7 @@ else
 endif
 dword2decA textequ <udword2decA>                        ;Compatibility
 dword2decW textequ <udword2decW>                        ;Compatibility
-DWORD2DEC_MAX_CHARS equ 11
+DWORD2DEC_MAX_CHARS equ 11                              ;ZTC included
 
 sqword2decA proto :POINTER, :SQWORD
 sqword2decW proto :POINTER, :SQWORD
@@ -662,7 +662,7 @@ elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
-SQWORD2DEC_MAX_CHARS equ 21
+SQWORD2DEC_MAX_CHARS equ 21                             ;ZTC included
 
 uqword2decA proto :POINTER, :QWORD
 uqword2decW proto :POINTER, :QWORD
@@ -677,7 +677,7 @@ else
 endif
 qword2decA textequ <uqword2decA>                        ;Compatibility
 qword2decW textequ <uqword2decW>                        ;Compatibility
-QWORD2DEC_MAX_CHARS equ 21
+QWORD2DEC_MAX_CHARS equ 21                              ;ZTC included
 
 dword2binA proto :POINTER, :DWORD
 dword2binW proto :POINTER, :DWORD
@@ -688,7 +688,7 @@ elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
-DWORD2BIN_MAX_CHARS equ 33
+DWORD2BIN_MAX_CHARS equ 33                              ;ZTC included
 
 word2hexA proto :POINTER, :WORD
 word2hexW proto :POINTER, :WORD
@@ -699,7 +699,7 @@ elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
-WORD2HEX_MAX_CHARS equ 5
+WORD2HEX_MAX_CHARS equ 5                                ;ZTC included
 
 byte2hexA proto :POINTER, :BYTE
 byte2hexW proto :POINTER, :BYTE
@@ -710,7 +710,7 @@ elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
-BYTE2HEX_MAX_CHARS equ 3
+BYTE2HEX_MAX_CHARS equ 3                                ;ZTC included
 
 dword2hexA proto :POINTER, :DWORD
 dword2hexW proto :POINTER, :DWORD
@@ -721,7 +721,7 @@ elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
-DWORD2HEX_MAX_CHARS equ 9
+DWORD2HEX_MAX_CHARS equ 9                               ;ZTC included
 
 dec2dwordA proto :POINTER
 dec2dwordW proto :POINTER
@@ -762,7 +762,7 @@ elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
-QWORD2BIN_MAX_CHARS equ 65
+QWORD2BIN_MAX_CHARS equ 65                              ;ZTC included
 
 qword2hexA proto :POINTER, :QWORD
 qword2hexW proto :POINTER, :QWORD
@@ -773,7 +773,7 @@ elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
-QWORD2HEX_MAX_CHARS equ 17
+QWORD2HEX_MAX_CHARS equ 17                              ;ZTC included
 
 Mem2HexA proto :POINTER, :POINTER, :DWORD
 Mem2HexW proto :POINTER, :POINTER, :DWORD
@@ -831,7 +831,7 @@ if TARGET_BITNESS eq 32
   uxword2decW textequ <udword2decW>
   xword2decW textequ <udword2decW>
 
-  XWORD2HEX_MAX_CHARS textequ <DWORD2HEX_MAX_CHARS> 
+  XWORD2HEX_MAX_CHARS textequ <DWORD2HEX_MAX_CHARS>
   XWORD2BIN_MAX_CHARS textequ <DWORD2BIN_MAX_CHARS>
   XWORD2DEC_MAX_CHARS textequ <DWORD2DEC_MAX_CHARS>
   SXWORD2DEC_MAX_CHARS textequ <SDWORD2DEC_MAX_CHARS>
@@ -860,7 +860,7 @@ elseif TARGET_BITNESS eq 64
   uxword2decW textequ <uqword2decW>
   xword2decW textequ <uqword2decW>
 
-  XWORD2HEX_MAX_CHARS textequ <QWORD2HEX_MAX_CHARS> 
+  XWORD2HEX_MAX_CHARS textequ <QWORD2HEX_MAX_CHARS>
   XWORD2BIN_MAX_CHARS textequ <QWORD2BIN_MAX_CHARS>
   XWORD2DEC_MAX_CHARS textequ <QWORD2DEC_MAX_CHARS>
   SXWORD2DEC_MAX_CHARS textequ <SQWORD2DEC_MAX_CHARS>
@@ -874,7 +874,7 @@ if TARGET_PLATFORM eq PLATFORM_WINDOWS
   ComEventsAdvice proto :POINTER, :POINTER, :POINTER, :POINTER, :POINTER
   ComEventsUnadvice proto :POINTER, :DWORD
   ComPtrAssign proto :POINTER, :POINTER
-  
+
   ComGetErrStrA proto :DWORD
   ComGetErrStrW proto :DWORD
   if TARGET_STR_TYPE eq STR_TYPE_ANSI

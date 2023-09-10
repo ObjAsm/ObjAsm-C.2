@@ -67,8 +67,10 @@ CALLER_INFO ends
 Object CallData,, Primer
   VirtualMethod   Show,       XWORD, XWORD              ;Callback method
 
+  DefineVariable  dReps,      DWORD,        0           ;After Aggregate, it holds the repetitions
   DefineVariable  xData1,     XWORD,        0           ;Primary data
   DefineVariable  xData2,     XWORD,        0           ;Auxiliary data
+  ;Don't change the following 3 vars. They must alwas be together.
   DefineVariable  cProcName,  CHRA,         SYM_NAME_LENGTH dup(0)
   DefineVariable  dCount,     DWORD,        0           ;Number if filled CALLER_INFO structures
   DefineVariable  CallStack,  CALLER_INFO,  CALLER_MAX_DEEP dup({0, 0})
@@ -81,6 +83,7 @@ ObjectEnd
 ;             CreateDIBPatternBrushPt, etc. are aggregated in pRTCC_Brush.
 
 Object RTC_Collection,, Collection
+  VirtualMethod   Aggregate
   RedefineMethod  Insert,     $ObjPtr(CallData)
   VirtualMethod   Remove,     XWORD, XWORD
 
@@ -116,9 +119,21 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
 
   SetObject xsi
   invoke DbgOutTextW, $OfsCStrW(" ", 2022h, " "), DbgColorString, DbgColorBackground, \
-                     DBG_EFFECT_NORMAL, offset wWndCaption
+                      DBG_EFFECT_NORMAL, offset wWndCaption
+
   invoke DbgOutTextA, addr [xsi].$Obj(CallData).cProcName, DbgColorString, DbgColorBackground, \
                       DBG_EFFECT_NORMAL, offset wWndCaption
+
+  mov edx, [xsi].dReps
+  inc edx
+  lea xbx, cBuffer
+  FillWordA [xbx], < [>
+  lea xcx, [xbx + $$Size]
+  invoke dword2decA, xcx, edx
+  FillStringA [xbx + xax + $$Size - 1], <]>
+  invoke DbgOutTextA, addr cBuffer, DbgColorString, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, offset wWndCaption
+
   xor ebx, ebx
   lea xdi, [xsi].CallStack                              ;xdi -> CallData.CallStack
   .while ebx != [xsi].$Obj(CallData).dCount
@@ -158,6 +173,51 @@ MethodEnd
 ; ==================================================================================================
 ;    RTC_Collection implementation
 ; ==================================================================================================
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     RTC_Collection.Aggregate
+; Purpose:    Removes identical calls and add up CallData.Reps.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method RTC_Collection.Aggregate, uses xbx xdi xsi
+  local dOuterIndex:DWORD, dInnerIndex:DWORD
+
+  SetObject xsi
+  xor edx, edx
+  .while edx != [xsi].dCount
+    mov dOuterIndex, edx
+    lea edi, [edx + 1]
+    mov xbx, $OCall(xsi.ItemAt, edx)                    ;xbx -> CallData
+    .while edi != [xsi].dCount
+      mov dInnerIndex, edi
+      mov xdi, $OCall(xsi.ItemAt, edi)                  ;xdi -> CallData
+      lea xcx, [xbx].$Obj(CallData).cProcName
+      lea xdx, [xdi].$Obj(CallData).cProcName
+      invoke StrCompA, xcx, xdx                         ;Check the API name
+      .if eax == 0
+        mov ecx, [xbx].$Obj(CallData).dCount            ;Check the call data
+        .if ecx == [xdi].$Obj(CallData).dCount
+          mov eax, sizeof(CALLER_INFO)
+          mul ecx
+          lea xcx, [xbx].$Obj(CallData).CallStack
+          lea xdx, [xdi].$Obj(CallData).CallStack
+          invoke MemComp, xcx, xdx, eax
+          .if eax == 0
+            OCall xsi.DisposeAt, dInnerIndex            ;Dispose the duplicate
+            inc [xbx].$Obj(CallData).dReps              ;Increment dReps count
+            mov edi, dInnerIndex
+            .continue
+          .endif
+        .endif
+      .endif
+      mov edi, dInnerIndex
+      inc edi
+    .endw
+    mov edx, dOuterIndex
+    inc edx
+  .endw
+MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     RTC_Collection.Insert
@@ -400,7 +460,7 @@ DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:re
         .if PassCond
           Destroy xbx
         .else
-  endif      
+  endif
   ifnb <RemoveArgIndex>
           @CatStr(<OCall >, pRTC_Coll, <::RTC_Collection.Remove, Arg>, RemoveArgIndex, <, 0>)
           .if eax == 0
@@ -443,7 +503,7 @@ endm
 ;             Arg5: RTCD_Coll pointer list (One deallocation API for several allocation APIs).
 ; Return:     Nothing.
 
-DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req, 
+DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req,
                     pRTC_Coll_List:vararg
   local ArgStr, Cnt, Coll, @@Exit
 
@@ -493,7 +553,7 @@ DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:r
         lea xax, LogiColl
         mov [xbx].$Obj(CallData).pOwner, xax
         OCall xax::RTC_Collection.Insert, xbx
-       
+
   ifnb <SuccessCond>
         jmp @@Exit
       .endif
@@ -862,11 +922,21 @@ DetourCreate CreateColorSpaceW, 1, 0, <xApiResult !!= NULL>, pRTCC_ColorSpace
 
 DetourCreate GetStockObject, 1, 0, <xApiResult !!= NULL>, pRTCC_StockObject
 
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+
+DetourCreate CreateDCA, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
+DetourCreate CreateDCW, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
+DetourCreate CreateCompatibleDC, 1, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
+DetourCreate CreateICA, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
+DetourCreate CreateICW, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
+DetourDestroy DeleteDC, 1, 1, <xApiResult !!= FALSE>, pRTCC_DeviceContext
+
 ; ------------------------------------------------------------------------------
 
 DetourDestroy DeleteObject, 1, 1, <xApiResult !!= FALSE>, pRTCC_Pen, pRTCC_Brush, pRTCC_Bitmap, \
                                                 pRTCC_Region, pRTCC_Font, pRTCC_Palette, \
-                                                pRTCC_ColorSpace, pRTCC_Image, pRTCC_StockObject
+                                                pRTCC_ColorSpace, pRTCC_Image, pRTCC_StockObject, \
+                                                pRTCC_DeviceContext
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -898,6 +968,7 @@ DetourCreate ExtractAssociatedIconA, 3, 0, <xApiResult !!= NULL>, pRTCC_Icon
 DetourCreate ExtractAssociatedIconW, 3, 0, <xApiResult !!= NULL>, pRTCC_Icon
 DetourCreate LoadIconA, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
 DetourCreate LoadIconW, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate GdipCreateHICONFromBitmap, 2, -2, <xApiResult == 0>, pRTCC_Icon
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      DetourPrivateExtractIconsX
@@ -999,15 +1070,6 @@ DetourDestroy DeleteEnhMetaFile, 1, 1, <xApiResult !!= FALSE>, pRTCC_EnhMetaFile
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-DetourCreate CreateDCA, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
-DetourCreate CreateDCW, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
-DetourCreate CreateCompatibleDC, 1, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
-DetourCreate CreateICA, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
-DetourCreate CreateICW, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
-DetourDestroy DeleteDC, 1, 1, <xApiResult !!= FALSE>, pRTCC_DeviceContext
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-
 DetourCreate CreateAcceleratorTableA, 2, 0, <xApiResult !!= NULL>, pRTCC_AccTable
 DetourCreate CreateAcceleratorTableW, 2, 0, <xApiResult !!= NULL>, pRTCC_AccTable
 DetourCreate CopyAcceleratorTableA, 3, 0, <xApiResult !!= NULL>, pRTCC_AccTable
@@ -1066,7 +1128,7 @@ DetourCreate OpenMutexW, 3, 0, <xApiResult !!= NULL>, pRTCC_Mutex
 
 DefineHook CreatePipe, pRTCC_Pipe
 
-;This detour proc handles the Read and Write HANDLEs 
+;This detour proc handles the Read and Write HANDLEs
 DtrCreatePipe proc uses xbx xdi Arg1:XWORD, Arg2:XWORD, Arg3:XWORD, Arg4:XWORD
   local xApiResult:XWORD, hThread:HANDLE
   local Context:CONTEXT, Stack:STACK
@@ -1239,6 +1301,10 @@ DetourDestroy ReleaseDC, 2, 2, <xApiResult !!= FALSE>, pRTCC_DisplayDeviceContex
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
+DetourCreate GdipGetDC, 2, -2, <xApiResult !!= 0>, pRTCC_GdipDisplayDeviceContext
+DetourDestroy GdipReleaseDC, 2, 2, <xApiResult !!= 0>, pRTCC_GdipDisplayDeviceContext
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 DetourCreate LoadKeyboardLayoutA, 2, 0, <xApiResult !!= NULL>, pRTCC_KeyboardLayout
 DetourCreate LoadKeyboardLayoutW, 2, 0, <xApiResult !!= NULL>, pRTCC_KeyboardLayout
 DetourDestroy UnloadKeyboardLayout, 1, 1, <xApiResult !!= FALSE>, pRTCC_KeyboardLayout
@@ -1458,6 +1524,7 @@ DllInit proc
   NewHook ExtractAssociatedIconW, Shell32
   NewHook LoadIconA, User32
   NewHook LoadIconW, User32
+  NewHook GdipCreateHICONFromBitmap, Gdiplus
   NewHook PrivateExtractIconsA, User32
   NewHook PrivateExtractIconsW, User32
   NewHook DestroyIcon, User32                   ;DestroyIcon and DestroyCursor use the same API!
@@ -1513,7 +1580,11 @@ DllInit proc
   NewHook GetDCEx, User32
   NewHook GetWindowDC, User32
   NewHook ReleaseDC, User32
-  
+
+  NewRTCC GdipDisplayDeviceContext, 10
+  NewHook GdipGetDC, Gdiplus
+  NewHook GdipReleaseDC, Gdiplus
+
   NewRTCC StockObject, 10
   NewHook GetStockObject, User32      ;It is not necessary (but it is not harmful) to delete stock objects by calling DeleteObject.
 
@@ -1708,7 +1779,7 @@ DllInit proc
   NewRTCC PrivateNamespace, 2
   NewHook CreatePrivateNamespaceA, Kernel32
   NewHook CreatePrivateNamespaceW, Kernel32
-  
+
   NewRTCC Job, 2
   NewHook CreateJobObjectA, Kernel32
   NewHook CreateJobObjectW, Kernel32
@@ -1745,13 +1816,14 @@ ResGuardInit endp
 ShowCollectionData macro pRTC_Collection:req, ResTypeCaption:req
   local szLeakCaption
 
-  CStr szLeakCaption, ResTypeCaption, " cur. = %3li, max. = %5li, tot. = %5li"
+  CStr szLeakCaption, ResTypeCaption, ": current = %li, maximum = %li, total = %li"
   mov xdi, pRTC_Collection
   .if ([xdi].$Obj(RTC_Collection).dCount > 0)
     invoke wsprintf, xbx, offset szLeakCaption, [xdi].$Obj(RTC_Collection).dCount, \
                      [xdi].$Obj(RTC_Collection).dMaxCount, [xdi].$Obj(RTC_Collection).dTotCount
     invoke DbgOutText, xbx, DbgColorForeground, DbgColorBackground, \
                        DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
+    OCall xdi::RTC_Collection.Aggregate
     OCall xdi::RTC_Collection.ForEach, $MethodAddr(CallData.Show), NULL, NULL
   .endif
 endm
@@ -1776,58 +1848,59 @@ ResGuardShow proc uses xbx xdi
     invoke wsprintf, xbx, $OfsCStr("Detected Leaks: %li"), dLeaks
     invoke DbgOutText, xbx, DbgColorForeground, DbgColorBackground, \
                        DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
-    
+
     ; -----------------------------------------------------------------------------------
     ; Note: don't show data for StockObject!
-    ShowCollectionData pRTCC_VirtualMemBlock,      "Virtual Mem-Blocks: "
-    ShowCollectionData pRTCC_GlobalMemBlock,       "Global Mem-Blocks:  "
-    ShowCollectionData pRTCC_LocalMemBlock,        "Local Mem-Blocks:   "
-    ShowCollectionData pRTCC_HeapMemBlock,         "Heap Mem-Blocks:    "
-    ShowCollectionData pRTCC_CoTaskMemBlock,       "CoTaskMem-Blocks:   "
-  
-    ShowCollectionData pRTCC_AccTable,             "Accelerator Tables: "
-    ShowCollectionData pRTCC_Bitmap,               "Bitmaps:            "
-    ShowCollectionData pRTCC_Brush,                "Brushes:            "
-    ShowCollectionData pRTCC_FindFirstChangeNotif, "Change Notification:"
-    ShowCollectionData pRTCC_ColorSpace,           "Color Spaces:       "
-    ShowCollectionData pRTCC_CriticalSection,      "Critical Sections:  "
-    ShowCollectionData pRTCC_Cursor,               "Cursors:            "
-    ShowCollectionData pRTCC_Desktop,              "Desktops:           "
-    ShowCollectionData pRTCC_DeviceContext,        "Device Contexts:    "
-    ShowCollectionData pRTCC_DisplayDeviceContext, "Display DCs:        "
-    ShowCollectionData pRTCC_EnhMetaFile,          "EnhMetaFiles:       "
-    ShowCollectionData pRTCC_Event,                "Events:             "
-    ShowCollectionData pRTCC_EventLog,             "Event Logs:         "
-    ShowCollectionData pRTCC_File,                 "Files:              "
-    ShowCollectionData pRTCC_FileMapping,          "File Mappings:      "
-    ShowCollectionData pRTCC_UpdateResource,       "File Resources:     "
-    ShowCollectionData pRTCC_FindFirstFile,        "Find First File:    "
-    ShowCollectionData pRTCC_Font,                 "Fonts:              "
-    ShowCollectionData pRTCC_Icon,                 "Icons:              "
-    ShowCollectionData pRTCC_Image,                "Images:             "
-    ShowCollectionData pRTCC_KeyboardLayout,       "Keyboard Layouts:   "
-    ShowCollectionData pRTCC_Library,              "Libraries:          "
-    ShowCollectionData pRTCC_Mailslot,             "Mail Slots:         "
-    ShowCollectionData pRTCC_Menu,                 "Menus:              "
-    ShowCollectionData pRTCC_MetaFile,             "MetaFiles:          "
-    ShowCollectionData pRTCC_Mutex,                "Mutexes:            "
-    ShowCollectionData pRTCC_Palette,              "Palettes:           "
-    ShowCollectionData pRTCC_PaintStruct,          "Paint Structures:   "
-    ShowCollectionData pRTCC_Pen,                  "Pens:               "
-    ShowCollectionData pRTCC_Printer,              "Printers:           "
-    ShowCollectionData pRTCC_PrivateNamespace,     "Private Namespaces: "
-    ShowCollectionData pRTCC_Process,              "Processes:          "
-    ShowCollectionData pRTCC_Region,               "Regions:            "
-    ShowCollectionData pRTCC_RegKey,               "Registry Keys:      "
-    ShowCollectionData pRTCC_Semaphore,            "Semaphores:         "
-    ShowCollectionData pRTCC_SysString,            "System BStrings:    "
-    ShowCollectionData pRTCC_Thread,               "Threads:            "
-    ShowCollectionData pRTCC_Timer,                "Timers:             "
-    ShowCollectionData pRTCC_Transaction,          "Transactions:       "
-    ShowCollectionData pRTCC_WindowStation,        "Window Stations:    "
-  
-    ShowCollectionData pRTCC_OleInitialization,    "OLE library init.:  "
-    ShowCollectionData pRTCC_CoInitialization,     "COM library init.:  "
+    ShowCollectionData pRTCC_VirtualMemBlock,         "Virtual Mem-Blocks"
+    ShowCollectionData pRTCC_GlobalMemBlock,          "Global Mem-Blocks"
+    ShowCollectionData pRTCC_LocalMemBlock,           "Local Mem-Blocks"
+    ShowCollectionData pRTCC_HeapMemBlock,            "Heap Mem-Blocks"
+    ShowCollectionData pRTCC_CoTaskMemBlock,          "CoTaskMem-Blocks"
+
+    ShowCollectionData pRTCC_AccTable,                "Accelerator Tables"
+    ShowCollectionData pRTCC_Bitmap,                  "Bitmaps"
+    ShowCollectionData pRTCC_Brush,                   "Brushes"
+    ShowCollectionData pRTCC_FindFirstChangeNotif,    "FindFirst Change Notification"
+    ShowCollectionData pRTCC_ColorSpace,              "Color Spaces"
+    ShowCollectionData pRTCC_CriticalSection,         "Critical Sections"
+    ShowCollectionData pRTCC_Cursor,                  "Cursors"
+    ShowCollectionData pRTCC_Desktop,                 "Desktops"
+    ShowCollectionData pRTCC_DeviceContext,           "Device Contexts"
+    ShowCollectionData pRTCC_DisplayDeviceContext,    "Display DCs"
+    ShowCollectionData pRTCC_GdipDisplayDeviceContext,"GDI+ Display DCs"
+    ShowCollectionData pRTCC_EnhMetaFile,             "EnhMetaFiles"
+    ShowCollectionData pRTCC_Event,                   "Events"
+    ShowCollectionData pRTCC_EventLog,                "Event Logs"
+    ShowCollectionData pRTCC_File,                    "Files"
+    ShowCollectionData pRTCC_FileMapping,             "File Mappings"
+    ShowCollectionData pRTCC_UpdateResource,          "File Resources"
+    ShowCollectionData pRTCC_FindFirstFile,           "Find First File"
+    ShowCollectionData pRTCC_Font,                    "Fonts"
+    ShowCollectionData pRTCC_Icon,                    "Icons"
+    ShowCollectionData pRTCC_Image,                   "Images"
+    ShowCollectionData pRTCC_KeyboardLayout,          "Keyboard Layouts"
+    ShowCollectionData pRTCC_Library,                 "Libraries"
+    ShowCollectionData pRTCC_Mailslot,                "Mail Slots"
+    ShowCollectionData pRTCC_Menu,                    "Menus"
+    ShowCollectionData pRTCC_MetaFile,                "MetaFiles"
+    ShowCollectionData pRTCC_Mutex,                   "Mutexes"
+    ShowCollectionData pRTCC_Palette,                 "Palettes"
+    ShowCollectionData pRTCC_PaintStruct,             "Paint Structures"
+    ShowCollectionData pRTCC_Pen,                     "Pens"
+    ShowCollectionData pRTCC_Printer,                 "Printers"
+    ShowCollectionData pRTCC_PrivateNamespace,        "Private Namespaces"
+    ShowCollectionData pRTCC_Process,                 "Processes"
+    ShowCollectionData pRTCC_Region,                  "Regions"
+    ShowCollectionData pRTCC_RegKey,                  "Registry Keys"
+    ShowCollectionData pRTCC_Semaphore,               "Semaphores"
+    ShowCollectionData pRTCC_SysString,               "System BStrings"
+    ShowCollectionData pRTCC_Thread,                  "Threads"
+    ShowCollectionData pRTCC_Timer,                   "Timers"
+    ShowCollectionData pRTCC_Transaction,             "Transactions"
+    ShowCollectionData pRTCC_WindowStation,           "Window Stations"
+
+    ShowCollectionData pRTCC_OleInitialization,       "OLE library initialization"
+    ShowCollectionData pRTCC_CoInitialization,        "COM library initialization"
     ; -----------------------------------------------------------------------------------
   .endif
 
@@ -1837,6 +1910,7 @@ ResGuardShow proc uses xbx xdi
     invoke wsprintf, xbx, $OfsCStr("Failed Calls:   %li"), dFails
     invoke DbgOutText, xbx, DbgColorForeground, DbgColorBackground, \
                        DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
+    OCall xdi::RTC_Collection.Aggregate
     OCall xdi::RTC_Collection.ForEach, $MethodAddr(CallData.Show), NULL, NULL
   .endif
 
@@ -1846,6 +1920,7 @@ ResGuardShow proc uses xbx xdi
     invoke wsprintf, xbx, $OfsCStr("Logic Errors:   %li"), dLogis
     invoke DbgOutText, xbx, DbgColorForeground, DbgColorBackground, \
                        DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
+    OCall xdi::RTC_Collection.Aggregate
     OCall xdi::RTC_Collection.ForEach, $MethodAddr(CallData.Show), NULL, NULL
   .endif
 
@@ -1856,7 +1931,7 @@ ResGuardShow proc uses xbx xdi
       int 3
     .endif
   .else
-    invoke DbgOutText, $OfsCStr("No leaks, failures or logic errors detected."), \ 
+    invoke DbgOutText, $OfsCStr("No leaks, failures or logic errors detected."), \
                        DbgColorForeground, DbgColorBackground, \
                        DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
   .endif

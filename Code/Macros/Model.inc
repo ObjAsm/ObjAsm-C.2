@@ -274,6 +274,9 @@ SysSetup macro Arguments:vararg
       TARGET_BITNESS = 64
       TARGET_PLATFORM = PLATFORM_UEFI
 
+    elseifidni <Argument>, <SUFFIX>
+      ;Skip it
+
     else
       echo SysSetup - Invalid argument
       echo

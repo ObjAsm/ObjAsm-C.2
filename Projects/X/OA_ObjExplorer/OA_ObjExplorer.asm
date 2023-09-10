@@ -21,7 +21,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, WIN64, ANSI_STRING;, DEBUG(WND)           ;MUST be ANSI!!!
+SysSetup OOP, WIN64, ANSI_STRING, DEBUG(WND, ResGuard)           ;MUST be ANSI!!!
 
 % includelib &LibPath&Windows\Kernel32.lib
 % includelib &LibPath&Windows\Shell32.lib
@@ -85,12 +85,16 @@ include OAE_FindInfoDlg.inc
 start proc
   SysInit
 
+  ResGuard_Start
   DbgClearAll
   invoke CoInitialize, 0                                ;Required for Image object
   OCall $ObjTmpl(Application)::Application.Init
   OCall $ObjTmpl(Application)::Application.Run
   OCall $ObjTmpl(Application)::Application.Done
   invoke CoUninitialize
+  ResGuard_Show
+  ResGuard_Stop
+
   SysDone
   invoke ExitProcess, 0
 start endp

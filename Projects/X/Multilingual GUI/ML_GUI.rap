@@ -158,7 +158,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=6
+MilestoneOnDateDate=10
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -193,8 +193,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,7913
-1=0,0,0,0,519
+2=0,0,0,0,1985
+1=0,0,0,0,879
 6=0,0,1456,414,103789
 4=0,0,0,0,396
 31=0,0,1213,691,1030
@@ -228,7 +228,7 @@ ProductVer4Range=0
 34=0,0,0,0,10463
 35=0,0,0,0,67475
 37=0,0,0,0,2963
-36=0,0,0,0,9146
+36=0,0,0,0,14614
 38=0,0,0,0,294
 
 [BookMark]
@@ -248,16 +248,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="LoadMenu"
-2="DestroyMenu"
-3="Method WebTextTranslator.Init, uses xsi, pOwner:"
-4="r4ScalingChange"
-5="dIndex"
-6="[xsi].dIndex"
-7="BmpSize"
-8="invoke UpdateLayeredWindow, [xsi].hWnd, hDstDC, NULL, addr PtSize, \"
-9="AddPngFromResList"
-10="SpinnerList0"
+1="DbgStr cMenuText"
+2=""SRC""
+3="LoadMenu"
+4="DestroyMenu"
+5="Method WebTextTranslator.Init, uses xsi, pOwner:"
+6="r4ScalingChange"
+7="dIndex"
+8="[xsi].dIndex"
+9="BmpSize"
+10="invoke UpdateLayeredWindow, [xsi].hWnd, hDstDC, NULL, addr PtSize, \"
 [Collapse]
 1=
 2=
@@ -373,9 +373,9 @@ ProductVer4Range=0
 37=
 38=
 [AutoLoad]
-AutoLoad=1,2
+AutoLoad=1,2,36
 [PTimer]
-PTimer=1165543712
+PTimer=1165705087
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

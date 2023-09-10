@@ -88,8 +88,7 @@ PXTVN_DISP_INFO typedef ptr XTVN_DISP_INFO
 ; Purpose:    Implement node of the XTreeView.
 ;
 ; Node layout:
-; 覧覧覧覧覧・
-;
+; 覧覧覧覧覧・;
 ;
 ;  |<------ Node indent ----->|<----- Node width ----->|
 ;  |                          |                        |
@@ -117,8 +116,7 @@ PXTVN_DISP_INFO typedef ptr XTVN_DISP_INFO
 ;  |       ｦ      ｦ              ----|      Last Child      |     |      ｦ
 ;  |       ｦ      ｦ                  |                      |     |      ｦ
 ;  |       ｦ      ｦ                   覧覧覧覧覧覧覧覧覧覧覧      |     \ｦ/
-;   覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧     覧覧・
-;
+;   覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧     覧覧・;
 ;
 ;  |                                 |                          | |
 ;  |                                 |                          | |
@@ -477,7 +475,14 @@ endm
 
 if IMPLEMENT
 
-CStr szXTV_Class, "XTreeView"
+CStr cXTV_ClassName,   "XTreeView"
+CStr cXTV_CursorArrow, "CURSOR_XTV_ARROW"
+CStr cXTV_CursorNo,    "CURSOR_XTV_NO"
+CStr cXTV_CursorNode,  "CURSOR_XTV_ARROWNODE"
+CStr cXTV_CursorFirst, "CURSOR_XTV_ARROWFIRST"
+CStr cXTV_CursorLast,  "CURSOR_XTV_ARROWLAST"
+CStr cXTV_CursorPrev,  "CURSOR_XTV_ARROWPREV"
+CStr cXTV_CursorNext,  "CURSOR_XTV_ARROWNEXT"
 
 .data
 
@@ -1534,7 +1539,6 @@ MethodEnd
 ;  |                  覧覧覧覧覧覧覧覧覧覧覧      |     \ｦ/
 ;   覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧    覧覧覧・
 
-
 Method XTreeView.Find1stVisibleNode, uses xbx xsi, dNewTotalOffset:DWORD
   SetObject xsi
   mov eax, dNewTotalOffset
@@ -1694,7 +1698,7 @@ Method XTreeView.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PDE
   assume xbx:PDEF_XTV
   mov eax, [xbx].dStyle
   or eax, WS_CHILD or WS_VISIBLE or WS_TABSTOP
-  invoke CreateWindowEx, [xbx].dExStyle, offset szXTV_Class, [xbx].pTitle, \
+  invoke CreateWindowEx, [xbx].dExStyle, offset cXTV_ClassName, [xbx].pTitle, \
                          eax, [xbx].sdPosX, [xbx].sdPosY, [xbx].dWidth, [xbx].dHeight, \
                          hParent, [xbx].xCtlID, hInstance, pSelf
   assume xbx:NOTHING
@@ -2120,13 +2124,27 @@ Method XTreeView.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
 
   ;Some initialization
-  mov [xsi].hCursorArrow, $invoke(LoadCursor, hInstance, $OfsCStr("CURSOR_XTV_ARROW"))
-  mov [xsi].hCursorNo,    $invoke(LoadCursor, hInstance, $OfsCStr("CURSOR_XTV_NO"))
-  mov [xsi].hCursorNode,  $invoke(LoadCursor, hInstance, $OfsCStr("CURSOR_XTV_ARROWNODE"))
-  mov [xsi].hCursorFirst, $invoke(LoadCursor, hInstance, $OfsCStr("CURSOR_XTV_ARROWFIRST"))
-  mov [xsi].hCursorLast,  $invoke(LoadCursor, hInstance, $OfsCStr("CURSOR_XTV_ARROWLAST"))
-  mov [xsi].hCursorPrev,  $invoke(LoadCursor, hInstance, $OfsCStr("CURSOR_XTV_ARROWPREV"))
-  mov [xsi].hCursorNext,  $invoke(LoadCursor, hInstance, $OfsCStr("CURSOR_XTV_ARROWNEXT"))
+  .if $invoke(FindResource, hInstance, offset cXTV_CursorArrow, RT_CURSOR)
+    mov [xsi].hCursorArrow, $invoke(LoadCursor, hInstance, offset cXTV_CursorArrow)
+  .endif
+  .if $invoke(FindResource, hInstance, offset cXTV_CursorNo, RT_CURSOR)
+    mov [xsi].hCursorNo,    $invoke(LoadCursor, hInstance, offset cXTV_CursorNo)
+  .endif
+  .if $invoke(FindResource, hInstance, offset cXTV_CursorNode, RT_CURSOR)
+    mov [xsi].hCursorNode,  $invoke(LoadCursor, hInstance, offset cXTV_CursorNode)
+  .endif
+  .if $invoke(FindResource, hInstance, offset cXTV_CursorFirst, RT_CURSOR)
+    mov [xsi].hCursorFirst, $invoke(LoadCursor, hInstance, offset cXTV_CursorFirst)
+  .endif
+  .if $invoke(FindResource, hInstance, offset cXTV_CursorLast, RT_CURSOR)
+    mov [xsi].hCursorLast,  $invoke(LoadCursor, hInstance, offset cXTV_CursorLast)
+  .endif
+  .if $invoke(FindResource, hInstance, offset cXTV_CursorPrev, RT_CURSOR)
+    mov [xsi].hCursorPrev,  $invoke(LoadCursor, hInstance, offset cXTV_CursorPrev)
+  .endif
+  .if $invoke(FindResource, hInstance, offset cXTV_CursorNext, RT_CURSOR)
+    mov [xsi].hCursorNext,  $invoke(LoadCursor, hInstance, offset cXTV_CursorNext)
+  .endif
   OCall [xsi].DispInfoColl::XWCollection.Init, xsi, 20, 10, COL_MAX_CAPACITY
   OCall [xsi].DispInfoPool::DataPool.Init, xsi, [xsi].dDispInfoSize, 1000, 4
   lea xcx, [xsi].DispInfoColl
@@ -2199,13 +2217,27 @@ Method XTreeView.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DeleteObject, [xsi].hPenToggler
   invoke DeleteObject, [xsi].hFontText
 
-  invoke DestroyCursor, [xsi].hCursorArrow
-  invoke DestroyCursor, [xsi].hCursorNo
-  invoke DestroyCursor, [xsi].hCursorNode
-  invoke DestroyCursor, [xsi].hCursorFirst
-  invoke DestroyCursor, [xsi].hCursorLast
-  invoke DestroyCursor, [xsi].hCursorPrev
-  invoke DestroyCursor, [xsi].hCursorNext
+  .if [xsi].hCursorArrow
+    invoke DestroyCursor, [xsi].hCursorArrow
+  .endif
+  .if [xsi].hCursorNo
+    invoke DestroyCursor, [xsi].hCursorNo
+  .endif
+  .if [xsi].hCursorNode
+    invoke DestroyCursor, [xsi].hCursorNode
+  .endif
+  .if [xsi].hCursorFirst
+    invoke DestroyCursor, [xsi].hCursorFirst
+  .endif
+  .if [xsi].hCursorLast
+    invoke DestroyCursor, [xsi].hCursorLast
+  .endif
+  .if [xsi].hCursorPrev
+    invoke DestroyCursor, [xsi].hCursorPrev
+  .endif
+  .if [xsi].hCursorNext
+    invoke DestroyCursor, [xsi].hCursorNext
+  .endif
 
   .if [xsi].hBackBuffer != 0
     invoke DeleteObject, $invoke(SelectObject, [xsi].hMemDC, [xsi].hBmpPrv)
@@ -3656,7 +3688,7 @@ Method XTreeView.Startup
   m2m WC.hInstance, hInstance, xax
   m2z WC.hbrBackground
   m2z WC.lpszMenuName
-  c2m WC.lpszClassName, offset szXTV_Class, xax
+  c2m WC.lpszClassName, offset cXTV_ClassName, xax
   m2z WC.hIcon
 
   mov WC.hCursor, $invoke(LoadCursor, hInstance, $OfsCStr("CURSOR_ARROW"))

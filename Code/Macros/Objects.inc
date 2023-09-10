@@ -1802,6 +1802,7 @@ endm
 ; Arguments:  Arg1: Instance::Object.Method
 ;             Arg2: Object.Method or procedure address.
 ; Note:       Don't use r11 to pass a procedure address! It is used internally.
+; Example:    Override [xsi].GdiObjects::XWCollection.DestroyItem, GdiObjects.DestroyItem
 
 Override macro DstExpression:req, SrcExpression:req
   PreParseExpr SrcExpression

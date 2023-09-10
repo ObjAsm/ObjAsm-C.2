@@ -420,8 +420,6 @@ Method MovingThrobber.Animate, uses xbx xsi
       .else
         xor edx, edx
       .endif
-      DbgBmp xdx, "SRC"
-      DbgDec ebx,, "SRC"
       mov hPrvSrcBmp, $invoke(SelectObject, hSrcDC, xdx)
       inc ebx
       .if ebx >= [xsi].dBitmapCount

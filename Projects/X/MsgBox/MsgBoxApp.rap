@@ -166,7 +166,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=5
+MilestoneOnDateDate=10
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -201,8 +201,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=1045,608,1045,304,2238
-1=1045,304,1045,304,985
+2=1045,608,1045,304,4498
+1=1045,304,1045,304,587
 6=0,0,1456,414,66847
 4=0,0,0,0,229
 31=0,0,1213,691,1416
@@ -227,7 +227,7 @@ ProductVer4Range=0
 25=0,0,0,0,1955
 21=0,0,0,0,575
 22=0,0,0,0,14555
-26=0,0,0,0,4103
+26=0,0,0,0,143297
 27=0,0,0,0,9336
 32=0,0,0,0,6558
 28=0,0,0,0,2959
@@ -260,16 +260,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="DefaultBackColor"
-2="Warning"
-3="Warning!"
-4="cHlpMsg"
-5="C:\_MySoftware_\ObjAsm\Code\Lib\64\ObjAsm\\ObjMem64.lib"
-6="cErrMsg"
-7="int 3"
-8="IsDelimiterChar"
-9="DbgDec [xsi].DrawExtent.x"
-10="GetSingleTVStyleName"
+1=".Done"
+2="DefaultBackColor"
+3="Warning"
+4="Warning!"
+5="cHlpMsg"
+6="C:\_MySoftware_\ObjAsm\Code\Lib\64\ObjAsm\\ObjMem64.lib"
+7="cErrMsg"
+8="int 3"
+9="IsDelimiterChar"
+10="DbgDec [xsi].DrawExtent.x"
 [Collapse]
 1=
 2=40973
@@ -387,7 +387,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=1,2
 [PTimer]
-PTimer=2126288548
+PTimer=2127472329
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

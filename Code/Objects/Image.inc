@@ -116,14 +116,14 @@ DefGUID CLSID_IImgCtx, %sCLSID_IImgCtx
 ; Return:     eax = 0 if succeeded, otherwise -1.
 
 Method Image.AlphaDraw, uses xsi, hDC:HDC, dSrcAlpha:DWORD, pDstRect:PRECT
-  local hTmpDC:HDC, hTmpBmp:HBITMAP, hPrvBmp:HBITMAP, bfn:BLENDFUNCTION, dReturn:DWORD
+  local hTmpDC:HDC, hPrvBmp:HBITMAP, bfn:BLENDFUNCTION, dReturn:DWORD
 
   SetObject xsi
   mov dReturn, -1
   .ifBitSet [xsi].dState, IMGLOAD_COMPLETE
     mov hTmpDC, $invoke(CreateCompatibleDC, hDC)
-    mov hTmpBmp, $invoke(CreateCompatibleBitmap, hDC, [xsi].ImgSize.x, [xsi].ImgSize.y)
-    mov hPrvBmp, $invoke(SelectObject, hTmpDC, hTmpBmp)
+    invoke CreateCompatibleBitmap, hDC, [xsi].ImgSize.x, [xsi].ImgSize.y
+    mov hPrvBmp, $invoke(SelectObject, hTmpDC, xax)
     ICall [xsi].pIImgCtx::IImgCtx.Draw, hTmpDC, addr [xsi].ImgSize.Rect
     .if SUCCEEDED(eax)
       mov bfn.BlendOp, AC_SRC_OVER
@@ -140,8 +140,8 @@ Method Image.AlphaDraw, uses xsi, hDC:HDC, dSrcAlpha:DWORD, pDstRect:PRECT
       .endif
     .endif
     invoke SelectObject, hTmpDC, hPrvBmp
-    invoke DeleteObject, hTmpBmp
-    invoke DeleteObject, hTmpDC
+    invoke DeleteObject, xax
+    invoke DeleteDC, hTmpDC
   .endif
   mov eax, dReturn
 MethodEnd

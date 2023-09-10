@@ -217,7 +217,8 @@ Method OA_ObjDB.Done, uses xsi
   OCall [xsi].ScanExclude::DataCollection.Done
 
   %OCall [xsi].Parser::RegEx.Done
-
+  
+  ACall xsi.Done
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -244,12 +245,21 @@ RemoveUnusedInfo endp
 ;             Arg2: -> IniFile object.
 ; Return:     Nothing.
 
+Method Scan.DestroyItem,, pItem:POINTER
+  .if pItem != NULL
+    invoke StrDispose, pItem
+  .endif
+MethodEnd
+
 Method OA_ObjDB.Init, uses xbx xdi xsi, pOwner:POINTER, pIniFile:$ObjPtr(IniFile)
   local dHasChanged:DWORD
   local cBuffer[1024]:CHR
 
   SetObject xsi
   ACall xsi.Init, pOwner
+  
+  Override [xsi].ScanInclude::DataCollection.DestroyItem, Scan.DestroyItem
+  Override [xsi].ScanExclude::DataCollection.DestroyItem, Scan.DestroyItem
 
   lea xbx, [xsi].FilesColl
   OCall xbx::FilesCollection.Init, xsi, 50, 25, COL_MAX_CAPACITY
@@ -304,6 +314,7 @@ Method OA_ObjDB.Init, uses xbx xdi xsi, pOwner:POINTER, pIniFile:$ObjPtr(IniFile
     invoke ExpandEnvironmentStrings, xbx, addr cBuffer, lengthof(cBuffer) - 1
     invoke StrNew, addr cBuffer
     OCall [xsi].ScanExclude::DataCollection.Insert, xax
+    invoke StrDispose, xbx
     inc edi
   .until FALSE
 
@@ -361,9 +372,9 @@ Method OA_ObjDB.Open, uses xbx xdi xsi, pFileName:PSTRING
     mov DeserInfo.pDesLUT, xax
     lea xdi, DeserInfo
     OCall DLUT::DesLUT.Init, xsi, 100, 100, COL_MAX_CAPACITY
-    DbgText "Reading Database..."
+    ;DbgText "Reading Database..."
     OCall xbx::DiskStream.BinReadX
-    DbgHex xax
+    ;DbgHex xax
     OCall DLUT::DesLUT.Insert, xax, xsi               ;Set Collection owner in the LUT
     OCall xbx::DiskStream.BinRead32                   ;eax = Object Class ID
     OCall [xsi].FilesColl::FilesCollection.Load, xbx, xdi

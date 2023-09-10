@@ -52,12 +52,10 @@ TranslateSubMenu proc uses xbx hMenu:HMENU, pWTT:$ObjPtr(WebTextTranslator)
         .break .if eax == 0
       .endif
     .endif
-    DbgStr cMenuText
     OCall pWTT::WebTextTranslator.Translate, addr cMenuText, $OfsCStr("Menu")
     .if xax == NULL
       .break
     .endif
-    DbgStr xax
     mov MII.fMask, MIIM_STRING
     mov MII.dwTypeData, xax
     invoke SetMenuItemInfo, hMenu, ebx, TRUE, addr MII

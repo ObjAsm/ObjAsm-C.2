@@ -45,8 +45,8 @@ MBX_DlgInfo struc
   Buttons     MBX_ButtonInfo MBX_BTN_MAX_COUNT DUP({?})       ;Button information
 MBX_DlgInfo ends
 
-MBX_CaptionHeader     equ <MsgBoxData@>
-MBX_CaptionHeaderSize equ 11
+MBX_CAPTION_HEADER       equ <MsgBoxData@>
+MBX_CAPTION_HEADER_CHARS = @SizeStr(%MBX_CAPTION_HEADER)
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MsgBoxA / MsgBoxW
@@ -60,7 +60,7 @@ MBX_CaptionHeaderSize equ 11
 ;             the address of a MsgBoxInfo structure in text form.
 
 ProcName proc uses xbx hParent:HANDLE, pText:POINTER, pCaption:POINTER, dFlags:DWORD
-  local cTransferInfo[MBX_CaptionHeaderSize + 2*sizeof(POINTER) + 1]:CHR, MBX_Info:MBX_DlgInfo
+  local cTransferInfo[MBX_CAPTION_HEADER_CHARS + XWORD2HEX_MAX_CHARS]:CHR, MBX_Info:MBX_DlgInfo
 
   ;Set system hook
   invoke SetWindowsHookEx, WH_CALLWNDPROC, offset MBX_HookProc, 0, $32($invoke(GetCurrentThreadId))
@@ -69,8 +69,8 @@ ProcName proc uses xbx hParent:HANDLE, pText:POINTER, pCaption:POINTER, dFlags:D
   mov MBX_Info.hHook, xax
   m2m MBX_Info.pText, pText, xcx
   m2m MBX_Info.pCaption, pCaption, xdx
-  FillWord cTransferInfo, MBX_CaptionHeader
-  invoke xword2hex, addr [cTransferInfo + MBX_CaptionHeaderSize*sizeof(CHR)], addr MBX_Info
+% FillWord cTransferInfo, MBX_CAPTION_HEADER
+  invoke xword2hex, addr [cTransferInfo + MBX_CAPTION_HEADER_CHARS*sizeof(CHR)], addr MBX_Info
 
   ;Use the caption to pass the pointer to MBX_DlgInfo in form of a string.
   ;MessageBoxIndirect can be used for more options.
@@ -129,7 +129,7 @@ MBX_WndProc proc private uses xbx xdi xsi hDlg:HWND, uMsg:DWORD, wParam:WPARAM, 
 ;  DbgMessage uMsg, "MsgBoxBlgProc.WndProc"
   .if uMsg == WM_INITDIALOG
 
-    %mov xdx, offset cMBX_Prop_&TARGET_SUFFIX
+%   mov xdx, offset cMBX_Prop_&TARGET_SUFFIX
     mov xdi, $invoke(GetProp, hDlg, xdx)
     mov [xdi].MBX_DlgInfo.dFlags, 0
 
@@ -258,15 +258,22 @@ MBX_WndProc proc private uses xbx xdi xsi hDlg:HWND, uMsg:DWORD, wParam:WPARAM, 
     ret
 
   .elseif uMsg == WM_DESTROY
-    %mov xdi, offset cMBX_Prop_&TARGET_SUFFIX
-    invoke GetDlgItem, hDlg, MBX_TEXTVIEW_CTLID
-    invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    ;Set the parent of the icon control to the original hDlg
+    mov xbx, $invoke(GetDlgItem, hDlg, MBX_TEXTVIEW_CTLID)
+    invoke GetDlgItem, xbx, 14h                         ;14h = icon control ID
+    .if xax != 0
+      invoke SetParent, xax, hDlg                       ;Restore original parent
+    .endif
+
+    ;Destroy the TextView control
+    invoke SendMessage, xbx, WM_GETOBJECTINSTANCE, 0, 0
     .if xax != NULL
-      Destroy xax
+      Destroy xax                                       ;Destroy TextView object
     .endif
 
   .elseif uMsg == WM_NCDESTROY                          ;Last message recieved
-    %invoke RemoveProp, hDlg, offset cMBX_Prop_&TARGET_SUFFIX
+    invoke GetDlgItem, hDlg, MBX_TEXTVIEW_CTLID
+%   invoke RemoveProp, hDlg, offset cMBX_Prop_&TARGET_SUFFIX
 
   .endif
   invoke DefDlgProc, hDlg, uMsg, wParam, lParam
@@ -283,7 +290,7 @@ MBX_WndProc endp
 ; Return:     eax = Zero if handled.
 
 MBX_HookProc proc private uses xbx xdi dCode:DWORD, wParam:WPARAM, lParam:LPARAM
-  local cTransferInfo[MBX_CaptionHeaderSize + 2*sizeof(POINTER) + 1]:CHR
+  local cTransferInfo[MBX_CAPTION_HEADER_CHARS + 2*sizeof(POINTER) + 1]:CHR
 
   .if dCode == HC_ACTION                               ;Ignore the rest
     mov xbx, lParam
@@ -291,10 +298,10 @@ MBX_HookProc proc private uses xbx xdi dCode:DWORD, wParam:WPARAM, lParam:LPARAM
     ;It is the first dialog message where the caption is set
     .if [xbx].CWPSTRUCT.message == WM_NCCALCSIZE
       invoke GetWindowText, [xbx].CWPSTRUCT.hwnd, addr cTransferInfo, lengthof(cTransferInfo)
-      .if $DoesWordMatch?(cTransferInfo, MBX_CaptionHeader)
-        mov xdi, $invoke(hex2xword, addr [cTransferInfo + MBX_CaptionHeaderSize*sizeof(CHR)])
+%     .if $DoesWordMatch?(cTransferInfo, MBX_CAPTION_HEADER)
+        mov xdi, $invoke(hex2xword, addr [cTransferInfo + MBX_CAPTION_HEADER_CHARS*sizeof(CHR)])
         ;Save a pointer to MBX_DlgInfo as a window property
-        %invoke SetProp, [xbx].CWPSTRUCT.hwnd, offset cMBX_Prop_&TARGET_SUFFIX, xdi
+%       invoke SetProp, [xbx].CWPSTRUCT.hwnd, offset cMBX_Prop_&TARGET_SUFFIX, xdi
         ;Release the hook
         invoke UnhookWindowsHookEx, [xdi].MBX_DlgInfo.hHook
         ;Set correct caption

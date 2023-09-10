@@ -184,6 +184,7 @@ Object TextView, TextViewID, Window
   VirtualEvent      OnCommand,          WM_COMMAND         ;Parent forwarded
   VirtualEvent      OnCreate,           WM_CREATE
   VirtualEvent      OnCtlColorStatic,   WM_CTLCOLORSTATIC
+  VirtualEvent      OnDestroy,          WM_DESTROY
   VirtualEvent      OnGesture,          WM_GESTURE
   VirtualEvent      OnGetFont,          WM_GETFONT
   VirtualEvent      OnGetZoom,          EM_GETZOOM
@@ -243,10 +244,10 @@ ObjectEnd
 
 ; Layout:
 ;
-;           ——————————————————————————————————————————————————————————————E
+;           ———————————————————————————————————————————————————————————————
 ;          |           /\  Top                                             |<--Extent
 ;          |           \/  Padding                                         |
-;          |     ————————————————————————————————————————————————————E    |
+;          |     —————————————————————————————————————————————————————     |
 ;          |    |    <-------------- Line Length -------------------->|    |
 ;          |    |<-->Lorem ipsum dolor sit amet, consetetur sadipscing|<-------DrawExtent
 ;          |    |  ¦     <------------ Line Length ------------------>|    |
@@ -261,10 +262,10 @@ ObjectEnd
 ;          |    |                                                     |    |
 ;          |    |                                                     |    |
 ;          |    |                                                     |    |
-;          |     ————————————————————————————————————————————————————E    |
+;          |     —————————————————————————————————————————————————————     |
 ;          |           /\ Bottom                                           |
 ;          |           \/ Padding                                          |
-;           ——————————————————————————————————————————————————————————————E
+;           ——————————————————————————————————————————————————————————————— 
 ;
 ;
 ; Sizeing strategy (pseudo code):
@@ -697,6 +698,7 @@ Method Entries.DestroyItem,, pItem:POINTER
   .if pItem != NULL
     mov xcx, pItem
     invoke StrDispose, [xcx].TVENTRY.pString            ;Safe if pString = NULL
+    MemFree pItem
   .endif
 MethodEnd
 
@@ -840,7 +842,7 @@ Method TextView.Calc, uses xbx xdi xsi
     m2z CurLinePos.x
     m2z dAdjacentTextItems
 
-    ;Get the metric of the current line ——————————————————————————————————————E
+    ;Get the metric of the current line ——————————————————————————————————————— 
     .while TRUE
       mov edx, dCurEntryIdx
       .break .if edx >= [xsi].Entries.dCount
@@ -852,7 +854,7 @@ Method TextView.Calc, uses xbx xdi xsi
       jz @@EndHandler
       jmp POINTER ptr [xax].TVCTAG.pCalcHandler
 
-      ; ————————————————————————————————————————————————————————————E
+      ; ————————————————————————————————————————————————————————————— 
       ; Routines:   TVCH_xxx
       ; Purpose:    Handler for TextView Commands.
       ; Arguments:  xsi -> TextView
@@ -958,7 +960,7 @@ Method TextView.Calc, uses xbx xdi xsi
     TVCCH_DRAW::                                        ;Evaluated in Draw method
 
       ;##/
-      ; ————————————————————————————————————————————————————————————E
+      ; ————————————————————————————————————————————————————————————— 
 @@EndHandler:
 
       mov xcx, [xdi].TVENTRY.pStyle
@@ -1029,7 +1031,7 @@ Method TextView.Calc, uses xbx xdi xsi
       .endif
 
     .endw
-    ;End line metric analysis ————————————————————————————————————————————————E
+    ;End line metric analysis ————————————————————————————————————————————————— 
 
     ;Update IdealDrawExtent.x
     .ifBitClr [xsi].dOptions, TVO_AUTO_LINEBREAK
@@ -1125,21 +1127,7 @@ MethodEnd
 
 Method TextView.Done, uses xsi
   SetObject xsi
-  invoke StrDispose, [xsi].pMarkupText
-
-  invoke SelectObject, [xsi].hMemDC, [xsi].hPrvBmp
-  invoke DeleteObject, xax
-  invoke SelectObject, [xsi].hMemDC, [xsi].hPrvBrush
-  invoke SelectObject, [xsi].hMemDC, [xsi].hPrvFont
-  invoke DeleteDC, [xsi].hMemDC
-
-  OCall xsi.Reset
-
-  invoke DestroyWindow, [xsi].hToolTip
-  invoke SetWindowLong, [xsi].hWnd, GWL_USERDATA, NULL
-
-  invoke StrDispose, [xsi].pDefaultFontFace
-
+  invoke DestroyWindow, [xsi].hWnd
   ACall xsi.Done
 MethodEnd
 
@@ -1329,7 +1317,7 @@ Method TextView.Draw, uses xbx xdi xsi
       jz @@EndHandler
       jmp POINTER ptr [xax].TVCTAG.pDrawHandler
 
-      ; ————————————————————————————————————————————————————————————E
+      ; ————————————————————————————————————————————————————————————— 
       ; Routines:   TVCH_xxx
       ; Purpose:    Handler for TextView Commands.
       ; Arguments:  xsi -> TextView
@@ -1399,7 +1387,7 @@ Method TextView.Draw, uses xbx xdi xsi
     TVCDH_TABR::
     TVCDH_TABCLR::
       ;##/
-      ; ————————————————————————————————————————————————————————————E
+      ; ————————————————————————————————————————————————————————————— 
 @@EndHandler:
 
       mov xbx, [xdi].TVENTRY.pStyle                    ;xbx -> TVSTYLE
@@ -1748,6 +1736,42 @@ Method TextView.OnCtlColorStatic, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke SetBkColor, wParam, [xsi].DefaultBackColor
   ;After a Render call, this collection item holds the background brush
   OCall [xsi].GdiObjects::XWCollection.ItemAt, 1
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     TextView.OnDestroy
+; Purpose:    Event handler for WM_DESTROY message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = Zero.
+
+Method TextView.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
+;  DbgText "TextView.OnDestroy"
+  SetObject xsi
+  OCall [xsi].Entries::DataCollection.Done
+  OCall [xsi].ActiveAreas::XWCollection.Done
+  OCall [xsi].InfoAreas::XWCollection.Done
+  OCall [xsi].Styles::DataCollection.Done
+  OCall [xsi].StyleStack::XWCollection.Done
+  OCall [xsi].TabStops::SortedDataCollection.Done
+  OCall [xsi].GdiObjects::XWCollection.Done
+  OCall [xsi].CoverTasks::DataCollection.Done
+  OCall [xsi].LineInfos::DataCollection.Done
+
+  invoke DeleteObject, [xsi].hCanvasBrush
+
+  invoke StrDispose, [xsi].pMarkupText
+
+  invoke SelectObject, [xsi].hMemDC, [xsi].hPrvBmp
+  invoke DeleteObject, xax
+  invoke SelectObject, [xsi].hMemDC, [xsi].hPrvBrush
+  invoke SelectObject, [xsi].hMemDC, [xsi].hPrvFont
+  invoke DeleteDC, [xsi].hMemDC
+
+  invoke DestroyWindow, [xsi].hToolTip
+  invoke StrDispose, [xsi].pDefaultFontFace
+
+  xor eax, eax
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -3845,7 +3869,8 @@ Method TextView.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
       OCall xsi::TextView.Dispatch, pSelf, uMsg, wParam, lParam
       .if uMsg == WM_NCDESTROY
         .ifBitSet [xsi].$Obj(TextView).dFlags, TVIF_SELF_INST
-          Destroy xsi
+          ACall xsi::TextView.Done
+          MemFree xsi 
         .endif
       .endif
     .endif

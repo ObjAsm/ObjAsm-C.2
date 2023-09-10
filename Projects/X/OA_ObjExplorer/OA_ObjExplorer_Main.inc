@@ -199,6 +199,7 @@ Object Application, OAE_ApplicationID, MdiApp           ;MDI application.
   DefineVariable    dShowRedefVars,     DWORD,      TRUE
 ObjectEnd
 
+
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
 .code
@@ -385,6 +386,7 @@ Method Application.Done, uses xsi
   OCall [xsi].SetupFile::IniFile.SetDWord,  offset cSetup, offset cLanguage, [xsi].dLanguage
   OCall [xsi].SetupFile::IniFile.SetDWord,  offset cSetup, offset cShowRedefMtds, [xsi].dShowRedefMtds
   OCall [xsi].SetupFile::IniFile.SetDWord,  offset cSetup, offset cShowRedefVars, [xsi].dShowRedefVars
+  OCall [xsi].SetupFile::IniFile.Done
 
   invoke StrDispose, [xsi].pViewerApp
 
@@ -900,6 +902,9 @@ Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
   .if [xsi].hMenuChild
     invoke DestroyMenu, [xsi].hMenuChild
+  .endif
+  .if [xsi].hMenuContext
+    invoke DestroyMenu, [xsi].hMenuContext
   .endif
   .if [xsi].hAccelerators
     invoke DestroyAcceleratorTable, [xsi].hAccelerators
