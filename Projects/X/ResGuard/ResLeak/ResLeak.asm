@@ -34,9 +34,11 @@ LeakProc1 proc
 LeakProc1 endp
 
 start proc
+  int 3
   invoke ResGuardInit, ebp
   invoke ResGuardStart
-  invoke LeakProc1
+  invoke CreatePen, PS_SOLID, 5, 255
+;  invoke LeakProc1
   invoke ResGuardShow
   invoke ResGuardStop
   invoke ExitProcess, 0

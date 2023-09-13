@@ -2374,11 +2374,11 @@ ResGuard_Stop macro
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
       if RESGUARD_LOADED ne FALSE
         DbgSaveContext
+        invoke ResGuardStop
         invoke DbgOutTextA, $OfsCStrA("Stopped"), \
                             DbgColorForeground, DbgColorBackground, \
                             DBG_EFFECT_BOLD, offset(szResGuard)
         DbgShowSrcInfo offset(szResGuard)
-        invoke ResGuardStop
         DbgLoadContext
       endif
     endif

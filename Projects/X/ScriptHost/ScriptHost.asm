@@ -9,7 +9,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, ResGuard)
 
 % include &MacPath&Strings.inc                              ;Wide string support
 % include &MacPath&BStrings.inc                             ;BSTR support
@@ -74,6 +74,9 @@ include ScriptHost_Main.inc
 
 start proc uses xbx
   SysInit
+  
+  ResGuard_Start
+
   DbgClearAll
 
   invoke InitCommonControls
@@ -84,6 +87,9 @@ start proc uses xbx
   OCall $ObjTmpl(ScriptHostApp)::ScriptHostApp.Done
 
   invoke FreeLibrary, xbx
+
+  ResGuard_Show
+  ResGuard_Stop
 
   SysDone
   invoke ExitProcess, 0

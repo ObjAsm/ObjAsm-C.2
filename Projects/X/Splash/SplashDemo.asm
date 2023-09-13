@@ -9,7 +9,7 @@
 
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)            ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, ResGuard)  ;Load OOP files and OS related objects
 
 GDIPVER equ 0100h
 
@@ -40,6 +40,8 @@ start proc
 
   SysInit
 
+  ResGuard_Start
+
   invoke LoadPngFromResource, $OfsCStr("PNG_SPLASH")
   mov hBmp, xax
   OCall $ObjTmpl(Splash)::Splash.Init, NULL, xax, $RGB(255, 0, 255)
@@ -52,6 +54,9 @@ start proc
   invoke DeleteObject, hBmp
   OCall $ObjTmpl(SplashDemo)::SplashDemo.Run
   OCall $ObjTmpl(SplashDemo)::SplashDemo.Done
+
+  ResGuard_Show
+  ResGuard_Stop
 
   SysDone
   invoke ExitProcess, 0

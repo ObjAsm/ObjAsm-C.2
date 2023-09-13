@@ -9,7 +9,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND)
+SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND);, ResGuard)
 
 % includelib &LibPath&Windows\shell32.lib
 % includelib &LibPath&Windows\shlwapi.lib
@@ -29,11 +29,13 @@ include JsonDemo_Main.inc
 start proc
   SysInit
 
-  ResGuard_Start
   DbgClearAll
+  ResGuard_Start
+
   OCall $ObjTmpl(JsonDemoApp)::JsonDemoApp.Init
   OCall $ObjTmpl(JsonDemoApp)::JsonDemoApp.Run
   OCall $ObjTmpl(JsonDemoApp)::JsonDemoApp.Done
+
   ResGuard_Show
   ResGuard_Stop
 

@@ -1456,6 +1456,28 @@ Method OAT_App.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   OCall pRegKey::RegKey.Close
   Destroy pRegKey
 
+  invoke StrDispose, [xsi].Setup.pExternalEditor
+  invoke StrDispose, [xsi].Setup.Tool0.pName
+  invoke StrDispose, [xsi].Setup.Tool0.pCommand
+  invoke StrDispose, [xsi].Setup.Tool1.pName
+  invoke StrDispose, [xsi].Setup.Tool1.pCommand
+  invoke StrDispose, [xsi].Setup.Tool2.pName
+  invoke StrDispose, [xsi].Setup.Tool2.pCommand
+  invoke StrDispose, [xsi].Setup.Tool3.pName
+  invoke StrDispose, [xsi].Setup.Tool3.pCommand
+  invoke StrDispose, [xsi].Setup.Tool4.pName
+  invoke StrDispose, [xsi].Setup.Tool4.pCommand
+  invoke StrDispose, [xsi].Setup.Tool5.pName
+  invoke StrDispose, [xsi].Setup.Tool5.pCommand
+  invoke StrDispose, [xsi].Setup.Tool6.pName
+  invoke StrDispose, [xsi].Setup.Tool6.pCommand
+  invoke StrDispose, [xsi].Setup.Tool7.pName
+  invoke StrDispose, [xsi].Setup.Tool7.pCommand
+  invoke StrDispose, [xsi].Setup.Tool8.pName
+  invoke StrDispose, [xsi].Setup.Tool8.pCommand
+  invoke StrDispose, [xsi].Setup.Tool9.pName
+  invoke StrDispose, [xsi].Setup.Tool9.pCommand
+
   OCall [xsi].Menu::XMenu.Done
 
   .if [xsi].hMenuInit

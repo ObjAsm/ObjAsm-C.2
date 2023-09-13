@@ -10,7 +10,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, ResGuard)
 
 COM_MTD_STD textequ <STD_METHOD>
 
@@ -54,6 +54,8 @@ include RibbonApp_Main.inc
 
 start proc
   SysInit
+
+  ResGuard_Start
   invoke CoInitialize, 0
   invoke InitCommonControls
 
@@ -63,6 +65,10 @@ start proc
   OCall $ObjTmpl(RibbonApp)::RibbonApp.Done
 
   invoke CoUninitialize
+
+  ResGuard_Show
+  ResGuard_Stop
+
   SysDone
 
   invoke ExitProcess, 0

@@ -9,7 +9,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)            ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, ResGuard)  ;Load OOP files and OS related objects
 
 % include &COMPath&COM.inc
 % include &COMPath&COM_Dispatch.inc
@@ -34,9 +34,12 @@ include PixelmapApp_Main.inc                            ;Include PixelmapApp obj
 start proc                                              ;Program entry point
   SysInit                                               ;Runtime initialization of OOP model
 
+  ResGuard_Start
   OCall $ObjTmpl(PixelmapApp)::PixelmapApp.Init         ;Initialize the object data
   OCall $ObjTmpl(PixelmapApp)::PixelmapApp.Run          ;Execute the application
   OCall $ObjTmpl(PixelmapApp)::PixelmapApp.Done         ;Finalize it
+  ResGuard_Show
+  ResGuard_Stop
 
   SysDone                                               ;Runtime finalization of the OOP model
   invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS

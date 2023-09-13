@@ -9,7 +9,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)            ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, ResGuard)  ;Load OOP files and OS related objects
 
 GDIPVER equ 0100h
 
@@ -38,8 +38,8 @@ MakeObjects Collection, DataCollection, SortedCollection, SortedDataCollection, 
 MakeObjects TextView
 
 
-include SpinningThrobber_Globals.inc     ;Application globals
-include SpinningThrobber_Main.inc        ;Application object
+include SpinningThrobber_Globals.inc                    ;Application globals
+include SpinningThrobber_Main.inc                       ;Application object
 
 .code
 start proc                                              ;Program entry point
@@ -47,6 +47,7 @@ start proc                                              ;Program entry point
   SysInit                                               ;Runtime initialization of OOP model
 
   DbgClearAll
+  ResGuard_Start
 
   invoke GetWinVersion, addr dMajorVersion, NULL, NULL
   .if dMajorVersion < 8
@@ -58,6 +59,9 @@ start proc                                              ;Program entry point
     OCall $ObjTmpl(Application)::Application.Done       ;Finalize application
     invoke CoUninitialize
   .endif
+
+  ResGuard_Show
+  ResGuard_Stop
 
   SysDone                                               ;Runtime finalization of the OOP model
   invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS

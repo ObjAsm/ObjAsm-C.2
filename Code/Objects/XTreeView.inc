@@ -1657,7 +1657,7 @@ Method XTreeView.GetDispInfo,, pNode:$ObjPtr(XTreeViewNode)
   local dIndex:DWORD
 
   SetObject xcx
-  
+
 ;  m2z dData
   OCall [xcx].DispInfoColl::XWCollection.FirstThat, \
                             offset XTV_IsNodeInDispData, pNode, addr dIndex
@@ -2124,25 +2124,25 @@ Method XTreeView.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
 
   ;Some initialization
-  .if $invoke(FindResource, hInstance, offset cXTV_CursorArrow, RT_CURSOR)
+  .if $invoke(FindResource, hInstance, offset cXTV_CursorArrow, RT_GROUP_CURSOR)
     mov [xsi].hCursorArrow, $invoke(LoadCursor, hInstance, offset cXTV_CursorArrow)
   .endif
-  .if $invoke(FindResource, hInstance, offset cXTV_CursorNo, RT_CURSOR)
+  .if $invoke(FindResource, hInstance, offset cXTV_CursorNo, RT_GROUP_CURSOR)
     mov [xsi].hCursorNo,    $invoke(LoadCursor, hInstance, offset cXTV_CursorNo)
   .endif
-  .if $invoke(FindResource, hInstance, offset cXTV_CursorNode, RT_CURSOR)
+  .if $invoke(FindResource, hInstance, offset cXTV_CursorNode, RT_GROUP_CURSOR)
     mov [xsi].hCursorNode,  $invoke(LoadCursor, hInstance, offset cXTV_CursorNode)
   .endif
-  .if $invoke(FindResource, hInstance, offset cXTV_CursorFirst, RT_CURSOR)
+  .if $invoke(FindResource, hInstance, offset cXTV_CursorFirst, RT_GROUP_CURSOR)
     mov [xsi].hCursorFirst, $invoke(LoadCursor, hInstance, offset cXTV_CursorFirst)
   .endif
-  .if $invoke(FindResource, hInstance, offset cXTV_CursorLast, RT_CURSOR)
+  .if $invoke(FindResource, hInstance, offset cXTV_CursorLast, RT_GROUP_CURSOR)
     mov [xsi].hCursorLast,  $invoke(LoadCursor, hInstance, offset cXTV_CursorLast)
   .endif
-  .if $invoke(FindResource, hInstance, offset cXTV_CursorPrev, RT_CURSOR)
+  .if $invoke(FindResource, hInstance, offset cXTV_CursorPrev, RT_GROUP_CURSOR)
     mov [xsi].hCursorPrev,  $invoke(LoadCursor, hInstance, offset cXTV_CursorPrev)
   .endif
-  .if $invoke(FindResource, hInstance, offset cXTV_CursorNext, RT_CURSOR)
+  .if $invoke(FindResource, hInstance, offset cXTV_CursorNext, RT_GROUP_CURSOR)
     mov [xsi].hCursorNext,  $invoke(LoadCursor, hInstance, offset cXTV_CursorNext)
   .endif
   OCall [xsi].DispInfoColl::XWCollection.Init, xsi, 20, 10, COL_MAX_CAPACITY
@@ -2955,13 +2955,13 @@ Method XTreeView.OnMouseWheel, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     .if !ZERO?                                          ;Exit if no increment
       .if SIGN?                                         ;Is eax negative?
         dec edx                                         ;Sign extend edx for idiv
-      .endif                                            
+      .endif
       .ifBitSet WORD ptr [wParam], MK_SHIFT             ;Is <Shift> key pressed?
         mov ecx, 2                                      ;/120 * 15
-      .else                                             
+      .else
         mov ecx, 8                                      ;/120 * 60
-      .endif                                            
-      idiv ecx                                          
+      .endif
+      idiv ecx
       neg eax                                           ;Change sign to toggle scroll direction
 
       mov ecx, [xsi].TotalSize.x
@@ -2971,7 +2971,7 @@ Method XTreeView.OnMouseWheel, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
         mov ebx, ecx
         sub ecx, [xsi].ClientSize.x
         js @@Exit                                       ;Nothing to draw, avoid flicker
-        add eax, [xsi].TotalOffset.x                    
+        add eax, [xsi].TotalOffset.x
         .if SIGN?                                       ;Is it negative?
           xor eax, eax                                  ;No negative values allowed!
         .else
@@ -3163,7 +3163,7 @@ Method XTreeView.OnRButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     .if xax != NULL
       mov xbx, xax
       invoke ClientToScreen, [xsi].hWnd, addr CursorPos
-      OCall [xbx].XTVN_DISP_INFO.pNode::XTreeViewNode.ContextPopup, CursorPos.x, CursorPos.y 
+      OCall [xbx].XTVN_DISP_INFO.pNode::XTreeViewNode.ContextPopup, CursorPos.x, CursorPos.y
     .endif
   .endif
 

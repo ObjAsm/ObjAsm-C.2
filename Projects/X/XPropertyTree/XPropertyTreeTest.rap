@@ -118,7 +118,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=5
+MilestoneOnDateDate=13
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -153,9 +153,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,480,367,2048
+2=0,0,480,367,9349
 3=0,0,0,0,420
-1=480,488,480,244,605
+1=480,488,480,244,1323
 4=0,0,0,0,814
 1001=0,0,0,0,460
 5=0,0,634,581,14739
@@ -169,7 +169,7 @@ ProductVer4Range=0
 13=0,0,0,0,2830
 14=0,0,760,423,6001
 15=
-16=0,0,760,423,73419
+16=0,0,760,423,22711
 17=
 18=0,0,760,423,4281
 19=0,0,0,0,4522
@@ -193,16 +193,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="XPropertyTree.OnDrawItem"
-2="OnDrawItem"
-3="HC"
-4="HC:"
-5="dColorBackground"
-6="RenderBackground"
-7="dSystemIndex"
-8="XPT_SYS_COLOR_ENTRY"
-9=""Hot"
-10="szAppTitle"
+1="hIconStrItem"
+2="OnCreate"
+3="invoke DestroyIcon, [xsi].hIcon"
+4="XPropertyTree.OnDrawItem"
+5="OnDrawItem"
+6="HC"
+7="HC:"
+8="dColorBackground"
+9="RenderBackground"
+10="dSystemIndex"
 [Collapse]
 1=
 2=2356
@@ -219,7 +219,7 @@ ProductVer4Range=0
 13=
 14=
 15=
-16=,,,,,805308416,
+16=,,,,,536872960,
 18=
 17=
 19=
@@ -248,6 +248,6 @@ AutoLoad=1,2,16
 12=
 11=
 [PTimer]
-PTimer=1157521122
+PTimer=1158363434
 [GroupExpand]
 GroupExpand=0,1,1,0,0,1,1,0

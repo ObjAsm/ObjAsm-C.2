@@ -59,6 +59,8 @@ CALLER_INFO struct
   xInstrAddr  XWORD   ?
 CALLER_INFO ends
 
+CDF_AGGREGATED  equ   BIT00                             ;Set if it is aggregated into another 
+
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Object:     CallData
 ; Purpose:    Store all relevant info about a specific API call, like the call stack and an system
@@ -67,10 +69,10 @@ CALLER_INFO ends
 Object CallData,, Primer
   VirtualMethod   Show,       XWORD, XWORD              ;Callback method
 
+  DefineVariable  dFlags,     DWORD,        0
   DefineVariable  dReps,      DWORD,        0           ;After Aggregate, it holds the repetitions
   DefineVariable  xData1,     XWORD,        0           ;Primary data
   DefineVariable  xData2,     XWORD,        0           ;Auxiliary data
-  ;Don't change the following 3 vars. They must alwas be together.
   DefineVariable  cProcName,  CHRA,         SYM_NAME_LENGTH dup(0)
   DefineVariable  dCount,     DWORD,        0           ;Number if filled CALLER_INFO structures
   DefineVariable  CallStack,  CALLER_INFO,  CALLER_MAX_DEEP dup({0, 0})
@@ -84,6 +86,7 @@ ObjectEnd
 
 Object RTC_Collection,, Collection
   VirtualMethod   Aggregate
+  VirtualMethod   Deaggregate
   RedefineMethod  Insert,     $ObjPtr(CallData)
   VirtualMethod   Remove,     XWORD, XWORD
 
@@ -118,54 +121,58 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
   local cBuffer[SYM_NAME_LENGTH]:CHRA
 
   SetObject xsi
-  invoke DbgOutTextW, $OfsCStrW(" ", 2022h, " "), DbgColorString, DbgColorBackground, \
-                      DBG_EFFECT_NORMAL, offset wWndCaption
-
-  invoke DbgOutTextA, addr [xsi].$Obj(CallData).cProcName, DbgColorString, DbgColorBackground, \
-                      DBG_EFFECT_NORMAL, offset wWndCaption
-
-  mov edx, [xsi].dReps
-  inc edx
-  lea xbx, cBuffer
-  FillWordA [xbx], < [>
-  lea xcx, [xbx + $$Size]
-  invoke dword2decA, xcx, edx
-  FillStringA [xbx + xax + $$Size - 1], <]>
-  invoke DbgOutTextA, addr cBuffer, DbgColorString, DbgColorBackground, \
-                      DBG_EFFECT_NORMAL, offset wWndCaption
-
-  xor ebx, ebx
-  lea xdi, [xsi].CallStack                              ;xdi -> CallData.CallStack
-  .while ebx != [xsi].$Obj(CallData).dCount
-    invoke DbgOutTextW, $OfsCStrW(" ", 2190h, " "), DbgColorWarning, DbgColorBackground, \  ;Arrow
+  ;Show a bullet
+  .ifBitClr [xsi].dFlags, CDF_AGGREGATED
+    invoke DbgOutTextW, $OfsCStrW(" ", 2022h, " "), DbgColorString, DbgColorBackground, \
                         DBG_EFFECT_NORMAL, offset wWndCaption
-    mov Symbol.MaxNameLength, SYM_NAME_LENGTH
-    mov Symbol.SizeOfStruct, sizeof SYMBOL
-    invoke SymGetSymFromAddrX, hProcess, [xdi].CALLER_INFO.xInstrAddr,
-                               addr xDisplacement, addr Symbol
-    .if eax != FALSE
-      invoke UnDecorateSymbolName, addr Symbol.Name_, addr cBuffer, SYM_NAME_LENGTH, UNDNAME_COMPLETE
+  
+    invoke DbgOutTextA, addr [xsi].$Obj(CallData).cProcName, DbgColorString, DbgColorBackground, \
+                        DBG_EFFECT_NORMAL, offset wWndCaption
+  
+    mov edx, [xsi].dReps
+    inc edx
+    lea xbx, cBuffer
+    FillWordA [xbx], < [>
+    lea xcx, [xbx + $$Size]
+    invoke dword2decA, xcx, edx
+    FillStringA [xbx + xax + $$Size - 1], <]>
+    invoke DbgOutTextA, addr cBuffer, DbgColorString, DbgColorBackground, \
+                        DBG_EFFECT_NORMAL, offset wWndCaption
+  
+    xor ebx, ebx
+    lea xdi, [xsi].CallStack                            ;xdi -> CallData.CallStack
+    .while ebx != [xsi].$Obj(CallData).dCount
+      ;Show an arrow
+      invoke DbgOutTextW, $OfsCStrW(" ", 2190h, " "), DbgColorWarning, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, offset wWndCaption
+      mov Symbol.MaxNameLength, SYM_NAME_LENGTH
+      mov Symbol.SizeOfStruct, sizeof SYMBOL
+      invoke SymGetSymFromAddrX, hProcess, [xdi].CALLER_INFO.xInstrAddr,
+                                 addr xDisplacement, addr Symbol
       .if eax != FALSE
-        invoke DbgOutTextA, addr cBuffer, DbgColorWarning, DbgColorBackground, \
-                            DBG_EFFECT_NORMAL, offset wWndCaption
+        invoke UnDecorateSymbolName, addr Symbol.Name_, addr cBuffer, SYM_NAME_LENGTH, UNDNAME_COMPLETE
+        .if eax != FALSE
+          invoke DbgOutTextA, addr cBuffer, DbgColorWarning, DbgColorBackground, \
+                              DBG_EFFECT_NORMAL, offset wWndCaption
+        .endif
       .endif
+      FillStringA cBuffer, < (>
+      lea xcx, [cBuffer + 2]
+      invoke xword2hexA, xcx, [xdi].CALLER_INFO.xRetAddr
+      invoke StrCatA, addr cBuffer, $OfsCStrA("h)")
+      invoke DbgOutTextA, addr cBuffer, DbgColorComment, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, offset wWndCaption
+      add xdi, sizeof CALLER_INFO
+      inc ebx
+    .endw
+  
+    .if ebx == 0
+      invoke DbgOutText, $OfsCStr("No data"), DbgColorError, DbgColorBackground, \
+                         DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
+    .else
+      invoke DbgOutText, offset cCRLF, DbgColorForeground, DbgColorBackground, \
+                         DBG_EFFECT_NORMAL, offset wWndCaption
     .endif
-    FillStringA cBuffer, < (>
-    lea xcx, [cBuffer + 2]
-    invoke xword2hexA, xcx, [xdi].CALLER_INFO.xRetAddr
-    invoke StrCatA, addr cBuffer, $OfsCStrA("h)")
-    invoke DbgOutTextA, addr cBuffer, DbgColorComment, DbgColorBackground, \
-                        DBG_EFFECT_NORMAL, offset wWndCaption
-    add xdi, sizeof CALLER_INFO
-    inc ebx
-  .endw
-
-  .if ebx == 0
-    invoke DbgOutText, $OfsCStr("No data"), DbgColorError, DbgColorBackground, \
-                       DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
-  .else
-    invoke DbgOutText, offset cCRLF, DbgColorForeground, DbgColorBackground, \
-                       DBG_EFFECT_NORMAL, offset wWndCaption
   .endif
 MethodEnd
 
@@ -176,7 +183,7 @@ MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     RTC_Collection.Aggregate
-; Purpose:    Removes identical calls and add up CallData.Reps.
+; Purpose:    Mark identical calls and add up CallData.Reps.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -189,32 +196,53 @@ Method RTC_Collection.Aggregate, uses xbx xdi xsi
     mov dOuterIndex, edx
     lea edi, [edx + 1]
     mov xbx, $OCall(xsi.ItemAt, edx)                    ;xbx -> CallData
-    .while edi != [xsi].dCount
-      mov dInnerIndex, edi
-      mov xdi, $OCall(xsi.ItemAt, edi)                  ;xdi -> CallData
-      lea xcx, [xbx].$Obj(CallData).cProcName
-      lea xdx, [xdi].$Obj(CallData).cProcName
-      invoke StrCompA, xcx, xdx                         ;Check the API name
-      .if eax == 0
-        mov ecx, [xbx].$Obj(CallData).dCount            ;Check the call data
-        .if ecx == [xdi].$Obj(CallData).dCount
-          mov eax, sizeof(CALLER_INFO)
-          mul ecx
-          lea xcx, [xbx].$Obj(CallData).CallStack
-          lea xdx, [xdi].$Obj(CallData).CallStack
-          invoke MemComp, xcx, xdx, eax
+    .ifBitClr [xbx].$Obj(CallData).dFlags, CDF_AGGREGATED
+      .while edi != [xsi].dCount
+        mov dInnerIndex, edi
+        mov xdi, $OCall(xsi.ItemAt, edi)                ;xdi -> CallData
+        .ifBitClr [xdi].$Obj(CallData).dFlags, CDF_AGGREGATED
+          lea xcx, [xbx].$Obj(CallData).cProcName
+          lea xdx, [xdi].$Obj(CallData).cProcName
+          invoke StrCompA, xcx, xdx                     ;Check the API name
           .if eax == 0
-            OCall xsi.DisposeAt, dInnerIndex            ;Dispose the duplicate
-            inc [xbx].$Obj(CallData).dReps              ;Increment dReps count
-            mov edi, dInnerIndex
-            .continue
+            mov ecx, [xbx].$Obj(CallData).dCount        ;Check the call data
+            .if ecx == [xdi].$Obj(CallData).dCount
+              mov eax, sizeof(CALLER_INFO)
+              mul ecx
+              lea xcx, [xbx].$Obj(CallData).CallStack
+              lea xdx, [xdi].$Obj(CallData).CallStack
+              invoke MemComp, xcx, xdx, eax
+              .if eax == 0
+                BitSet [xdi].$Obj(CallData).dFlags, CDF_AGGREGATED
+                inc [xbx].$Obj(CallData).dReps          ;Increment dReps count
+              .endif
+            .endif
           .endif
         .endif
-      .endif
-      mov edi, dInnerIndex
-      inc edi
-    .endw
+        mov edi, dInnerIndex
+        inc edi
+      .endw
+    .endif
     mov edx, dOuterIndex
+    inc edx
+  .endw
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     RTC_Collection.Deaggregate
+; Purpose:    Reset marks and CallData.Reps.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method RTC_Collection.Deaggregate, uses xsi
+  SetObject xsi
+  xor edx, edx
+  mov xax, [xsi].pItems
+  .while edx != [xsi].dCount
+    mov xcx, [xax]
+    mov [xcx].$Obj(CallData).dFlags, 0
+    mov [xcx].$Obj(CallData).dReps, 0
+    add xax, sizeof(POINTER)
     inc edx
   .endw
 MethodEnd
@@ -661,7 +689,7 @@ DetourCreateCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCon
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:XWORD>
   endm
 
-  Dtr&ApiName& proc ArgStr                              ;;Procedure declaration
+  Dtr&ApiName& proc uses xbx xdi ArgStr                 ;;Procedure declaration
     local xApiResult:XWORD, hThread:HANDLE
     local Context:CONTEXT, Stack:STACK
 
@@ -715,7 +743,7 @@ DetourDestroyCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCo
     ArgStr CatStr ArgStr, <, >, <Arg>, %Cnt, <:DWORD>
   endm
 
-  Dtr&ApiName& proc ArgStr                              ;;Procedure declaration
+  Dtr&ApiName& proc uses xbx xdi ArgStr                 ;;Procedure declaration
     local xApiResult:XWORD, hThread:HANDLE
     local Context:CONTEXT, Stack:STACK
 
@@ -1825,6 +1853,7 @@ ShowCollectionData macro pRTC_Collection:req, ResTypeCaption:req
                        DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
     OCall xdi::RTC_Collection.Aggregate
     OCall xdi::RTC_Collection.ForEach, $MethodAddr(CallData.Show), NULL, NULL
+    OCall xdi::RTC_Collection.Deaggregate
   .endif
 endm
 
@@ -1912,6 +1941,7 @@ ResGuardShow proc uses xbx xdi
                        DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
     OCall xdi::RTC_Collection.Aggregate
     OCall xdi::RTC_Collection.ForEach, $MethodAddr(CallData.Show), NULL, NULL
+    OCall xdi::RTC_Collection.Deaggregate
   .endif
 
   lea xdi, LogiColl
@@ -1922,6 +1952,7 @@ ResGuardShow proc uses xbx xdi
                        DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
     OCall xdi::RTC_Collection.Aggregate
     OCall xdi::RTC_Collection.ForEach, $MethodAddr(CallData.Show), NULL, NULL
+    OCall xdi::RTC_Collection.Deaggregate
   .endif
 
   .if (dLeaks != 0 || dFails != 0 || dLogis != 0)
@@ -1946,15 +1977,6 @@ ResGuardShow endp
 ; Return:    Nothing.
 
 ResGuardStart proc uses xbx
-  m2z dResGuardEnabled
-  xor ebx, ebx
-  .while ebx < RcrcColl.dCount
-    OCall RcrcColl::Collection.ItemAt, ebx
-    m2z [xax].$Obj(RTC_Collection).dMaxCount
-    m2z [xax].$Obj(RTC_Collection).dTotCount
-    OCall xax::RTC_Collection.DisposeAll
-    inc ebx
-  .endw
   mov dResGuardEnabled, TRUE
   ret
 ResGuardStart endp

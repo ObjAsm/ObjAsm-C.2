@@ -149,7 +149,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=10
+MilestoneOnDateDate=13
 MilestoneOnDateTimeYear=2004
 MilestoneOnDateTimeMonth=6
 MilestoneOnDateTimeDate=8
@@ -186,7 +186,7 @@ ProductVer4Range=0
 [Size]
 2=0,0,480,367,514
 3=0,0,0,0,88
-1=480,488,480,244,77180
+1=480,488,480,244,960
 4=0,0,0,0,10809
 1001=0,0,0,0,460
 6=0,0,0,0,28282
@@ -239,18 +239,18 @@ ProductVer4Range=0
 0=
 
 [Find]
-1=".Show"
-2="GdipGetDC"
-3="pRTCC_DisplayDeviceContext"
-4="ReleaseDC"
-5="pRTCC_DeviceContext"
-6="GdipCreateHICONFromBitmap"
-7="HBITMAP"
-8="LoadIconW"
-9="GetDC"
-10="HICON"
+1="NewHook"
+2="DefineHook"
+3="DetourCreateCounted"
+4="RcrcColl"
+5="DllDone"
+6="Aggregate"
+7="RegOpenKey"
+8="DetourCreateCounted m"
+9="DetourCreateCounted CoInitialize, 1, CoInitializeCount, <xApiResult == S_OK>, pRTCC_CoInitialization"
+10=".Show"
 [Collapse]
-1=16386,71305280,520465938,
+1=71303168,102907905,118297,
 8=
 15=
 14=
@@ -279,7 +279,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=1
 [PTimer]
-PTimer=659422260
+PTimer=691683978
 [RADebugBP]
 1=
 14=

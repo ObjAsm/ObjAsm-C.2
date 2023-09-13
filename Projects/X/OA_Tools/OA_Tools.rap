@@ -204,7 +204,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=15
+MilestoneOnDateDate=11
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -239,9 +239,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1177,636,65252
+2=0,0,1177,636,58618
 3=0,0,0,0,3090
-1=0,0,694,487,636
+1=0,0,694,487,604
 4=0,0,1202,621,3045
 1001=0,0,0,0,460
 8=0,0,0,0,6676
@@ -320,19 +320,19 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="szOAT_App"
-2="OnSetColor"
-3="hLinkPen"
-4="WM_CTLCOLORDLG"
-5="Tools for ObjAsm"
-6="CtrlSetup"
-7="ICON_OK"
-8="SETUP_TAB_MAIN"
-9="LF"
-10=".Run"
+1="DetourCreateCounted CoInitialize, 1, CoInitializeCount, <xApiResult == S_OK>, pRTCC_CoInitialization"
+2="pExternalEditor"
+3="ReadStr"
+4="szOAT_App"
+5="OnSetColor"
+6="hLinkPen"
+7="WM_CTLCOLORDLG"
+8="Tools for ObjAsm"
+9="CtrlSetup"
+10="ICON_OK"
 [Collapse]
 4=
-2=3995945,1413820672,2092993195,513
+2=2128169,1413820672,2092959915,513
 6=,
 7=,
 14=,,872431616,2147451227,1048555271,239
@@ -393,7 +393,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=1,2,3
 [PTimer]
-PTimer=1979216909
+PTimer=2002273065
 [GroupExpand]
 GroupExpand=1,1,0,1,1,1,1,0
 [RADebugBP]

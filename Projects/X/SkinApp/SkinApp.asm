@@ -9,7 +9,7 @@
 
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, ResGuard)
 
 % include &MacPath&Strings.inc                          ;Load WIDE string support
 % include &MacPath&DlgTmpl.inc                          ;Load tempate dialog support
@@ -38,11 +38,16 @@ include SkinApp_Main.inc                                ;Include SkinApp referen
 start proc                                              ;Program entry point
   SysInit                                               ;Runtime initialization of OOP model
 
+  ResGuard_Start
+
   invoke CoInitializeEx, NULL, COINIT_APARTMENTTHREADED or COINIT_DISABLE_OLE1DDE
   OCall $ObjTmpl(SkinApp)::SkinApp.Init                 ;Initialize the object data
   OCall $ObjTmpl(SkinApp)::SkinApp.Run                  ;Execute the application
   OCall $ObjTmpl(SkinApp)::SkinApp.Done                 ;Finalize it
   invoke CoUninitialize
+
+  ResGuard_Show
+  ResGuard_Stop
 
   SysDone                                               ;Runtime finalization of the OOP model
   invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS

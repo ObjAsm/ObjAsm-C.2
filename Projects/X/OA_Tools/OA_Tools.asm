@@ -11,7 +11,7 @@
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc ;Include & initialize standard modules
 
 ;ANSI_STRING will not work on languages that use UNICODE characters, like chinese or russian.
-SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND)
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, ResGuard)
 
 GDIPVER equ 0100h
 
@@ -70,8 +70,10 @@ include OA_Tools_Globals.inc                            ;Include application glo
 include OA_Tools_Main.inc                               ;Include OAT_App object
 
 start proc uses xbx                                     ;Program entry point
-  mov xbx, $invoke(LoadLibrary, $OfsCStr("RichEd20.dll"))
   SysInit                                               ;Runtime initialization of OOP model
+  ResGuard_Start
+
+  mov xbx, $invoke(LoadLibrary, $OfsCStr("RichEd20.dll"))
 
   invoke CoInitialize, 0
   invoke InitCommonControls
@@ -81,8 +83,12 @@ start proc uses xbx                                     ;Program entry point
   OCall $ObjTmpl(OAT_App)::OAT_App.Done                 ;Finalize it
 
   invoke CoUninitialize
-  SysDone                                               ;Runtime finalization of the OOP model
   invoke FreeLibrary, xbx                               ;Unload RichEdit library
+
+  ResGuard_Show
+  ResGuard_Stop
+
+  SysDone                                               ;Runtime finalization of the OOP model
   invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS
 start endp
 

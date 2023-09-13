@@ -9,7 +9,7 @@
 
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)            ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, ResGuard)  ;Load OOP files and OS related objects
 
 % include &MacPath&fMath.inc
 % include &MacPath&SDLL.inc
@@ -40,9 +40,14 @@ include XPropertyTreeTest_Main.inc
 start proc
   SysInit
 
+  ResGuard_Start
+
   OCall $ObjTmpl(Application)::Application.Init
   OCall $ObjTmpl(Application)::Application.Run
   OCall $ObjTmpl(Application)::Application.Done
+
+  ResGuard_Show
+  ResGuard_Stop
 
   SysDone
   invoke ExitProcess, 0

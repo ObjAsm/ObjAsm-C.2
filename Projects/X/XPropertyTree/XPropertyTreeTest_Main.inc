@@ -151,7 +151,7 @@ Validate endp
 
 Method Application.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local pNodeCat:ptr $Obj(XPT_CategoryNode), pNodePrp:ptr $Obj(XPT_PropertyNode)
-  local hIconStrMain:HICON, hIconStrItem:HICON
+  local hIconStrMain:HICON, hIconStrItem:HICON, hIconStrItem2:HICON
   local hIconSize:HICON, hIconWidth:HICON, hIconHeight:HICON, hIconAverage:HICON
   local hIconStyle:HICON, hIconColor:HICON, hIconBorder:HICON, hIconMode:HICON
   local hIconBehavior:HICON, hIconRedraw:HICON, hIconClip:HICON, hIconDrawStyle:HICON
@@ -198,11 +198,11 @@ Method Application.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
                                            addr [xsi].cCaption, XPT_VAR_TYPE_STRING, 50
     mov xax, pNodePrp
     BitSet [xax].$Obj(XPT_PropertyNode).dState, XTVNS_DISABLED
-    invoke CopyIcon, hIconStrItem
+    mov hIconStrItem2, $invoke(CopyIcon, hIconStrItem)
 
     mov pNodePrp, $New(XPT_PropertyNode)
     OCall xbx::XPropertyTree.Insert, xax, pNodeCat, XTVN_INSERT_AS_LAST_CHILD
-    OCall pNodePrp::XPT_PropertyNode.Init, xbx, hIconStrItem, $OfsCStr("Description"), \
+    OCall pNodePrp::XPT_PropertyNode.Init, xbx, hIconStrItem2, $OfsCStr("Description"), \
                                            HEIGHT_LEVEL_2, DIVIDER_WIDTH, XTVNS_EXPANDED, \
                                            addr [xsi].cDescription, XPT_VAR_TYPE_STRING, 200
 
