@@ -23,22 +23,38 @@ includelib \Masm32\Lib\Kernel32.lib
 
 .code
 
-LeakProc2 proc
+LeakProc4 proc
   invoke CreatePen, PS_SOLID, 5, 255
+  ret
+LeakProc4 endp
+
+LeakProc3 proc
+  invoke LeakProc4
+  ret
+LeakProc3 endp
+
+LeakProc2 proc uses esi
+  local Count2:DWORD
+
+  invoke CreatePen, PS_SOLID, 5, 255
+  add Count2, 2
   ret
 LeakProc2 endp
 
-LeakProc1 proc
+LeakProc1 proc uses ebx
+  local Count:DWORD
+
   invoke LeakProc2
+  inc Count
   ret
 LeakProc1 endp
 
 start proc
-  int 3
-  invoke ResGuardInit, ebp
+  invoke ResGuardInit
   invoke ResGuardStart
   invoke CreatePen, PS_SOLID, 5, 255
-;  invoke LeakProc1
+  invoke LeakProc1
+  invoke LeakProc3
   invoke ResGuardShow
   invoke ResGuardStop
   invoke ExitProcess, 0

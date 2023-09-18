@@ -19,7 +19,7 @@ SYM_NAME_LENGTH   equ 255
 CALLER_MAX_DEEP   equ 10
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, DLL64, WIDE_STRING, DEBUG(WND), SUFFIX
+SysSetup OOP, DLL32, SUFFIX, WIDE_STRING, DEBUG(WND)
 
 % includelib &LibPath&Windows\DbgHelp.lib
 
@@ -39,7 +39,7 @@ if TARGET_BITNESS eq 32
 
   SYMBOL struct
     IMAGEHLP_SYMBOL   {}
-    CHRA              SYM_NAME_LENGTH dup(?)
+    CHRA              SYM_NAME_LENGTH dup(?)            ;Only ANSI names
   SYMBOL ends
 
   SymGetSymFromAddrX textequ <SymGetSymFromAddr>
@@ -48,7 +48,7 @@ else
 
   SYMBOL struct
     IMAGEHLP_SYMBOL64 {}
-    CHRA              SYM_NAME_LENGTH dup(?)
+    CHRA              SYM_NAME_LENGTH dup(?)            ;Only ANSI names
   SYMBOL ends
 
   SymGetSymFromAddrX textequ <SymGetSymFromAddr64>
@@ -59,7 +59,7 @@ CALLER_INFO struct
   xInstrAddr  XWORD   ?
 CALLER_INFO ends
 
-CDF_AGGREGATED  equ   BIT00                             ;Set if it is aggregated into another 
+CDF_AGGREGATED  equ   BIT00                             ;Set if it is aggregated into another
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Object:     CallData
@@ -125,10 +125,10 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
   .ifBitClr [xsi].dFlags, CDF_AGGREGATED
     invoke DbgOutTextW, $OfsCStrW(" ", 2022h, " "), DbgColorString, DbgColorBackground, \
                         DBG_EFFECT_NORMAL, offset wWndCaption
-  
+
     invoke DbgOutTextA, addr [xsi].$Obj(CallData).cProcName, DbgColorString, DbgColorBackground, \
                         DBG_EFFECT_NORMAL, offset wWndCaption
-  
+
     mov edx, [xsi].dReps
     inc edx
     lea xbx, cBuffer
@@ -138,7 +138,7 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
     FillStringA [xbx + xax + $$Size - 1], <]>
     invoke DbgOutTextA, addr cBuffer, DbgColorString, DbgColorBackground, \
                         DBG_EFFECT_NORMAL, offset wWndCaption
-  
+
     xor ebx, ebx
     lea xdi, [xsi].CallStack                            ;xdi -> CallData.CallStack
     .while ebx != [xsi].$Obj(CallData).dCount
@@ -165,9 +165,11 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
       add xdi, sizeof CALLER_INFO
       inc ebx
     .endw
-  
+
     .if ebx == 0
-      invoke DbgOutText, $OfsCStr("No data"), DbgColorError, DbgColorBackground, \
+      invoke DbgOutTextW, $OfsCStrW(" ", 2190h, " "), DbgColorWarning, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, offset wWndCaption
+      invoke DbgOutText, $OfsCStr("no data"), DbgColorError, DbgColorBackground, \
                          DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, offset wWndCaption
     .else
       invoke DbgOutText, offset cCRLF, DbgColorForeground, DbgColorBackground, \
@@ -324,7 +326,8 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      WalkTheStack
-; Purpose:    StackWalk(64) bitness neutral substitute.
+; Purpose:    StackWalk(64) bitness neutral substitute. Starting from Context returns the next stack
+;             frame into Stack structure.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -361,44 +364,37 @@ AnalyseStack macro
 
   invoke MemZero, addr Stack, sizeof STACK
 
-  invoke RtlCaptureContext, addr Context
+  invoke RtlCaptureContext, addr Context                ;;Capture current CPU context in Context
+  ;;Context.Xbp_ = [xbp]                                Since RtlCaptureContext does change xbp,
+  ;;Context.Xsp_ = lea [xbp + 4/8]                      the returned values correspond to the
+  ;;Context.Xip_ = [xbp + 4/8] (ret address)            calling procedure
+
   mov Stack.AddrPC.Mode,     AddrModeFlat
   mov Stack.AddrFrame.Mode,  AddrModeFlat
   mov Stack.AddrStack.Mode,  AddrModeFlat
   mov Stack.AddrReturn.Mode, AddrModeFlat
 
-  lea xdi, [xbx].$Obj(CallData).CallStack               ;;xdi -> CallData.CallStack
+  lea xdi, [xbx].$Obj(CallData).CallStack               ;;xdi -> CallData first CallStack
 
   if TARGET_BITNESS eq 32
-    mov edx, [ebp + sizeof DWORD]                       ;;Get Ret addr from stack
-    mov [edi].CALLER_INFO.xRetAddr, edx
-    m2m [edi].CALLER_INFO.xInstrAddr, Context.Eip_, ecx
-    add edi, sizeof CALLER_INFO
-    inc [ebx].$Obj(CallData).dCount
-    WalkTheStack                                        ;;Get first frame of the detour proc
-    .if eax != 0
-      .repeat
-        mov edx, Stack.AddrReturn.Offset_
-        mov [edi].CALLER_INFO.xRetAddr, edx
-        WalkTheStack
-        .break .if eax == 0
-        mov edx, Stack.AddrPC.Offset_
-        mov [edi].CALLER_INFO.xInstrAddr, edx
-        inc [ebx].$Obj(CallData).dCount
-        add edi, sizeof CALLER_INFO
-        mov eax, Stack.AddrFrame.Offset_                ;;Use the stack pointer
-      .until eax == xAppRefAddr || [ebx].$Obj(CallData).dCount == CALLER_MAX_DEEP
-    .endif
+    .repeat
+      WalkTheStack
+      .break .if eax == 0
+      m2m [edi].CALLER_INFO.xRetAddr, Context.Eip_, edx
+      m2m Context.Eip_, Stack.AddrReturn.Offset_, ecx   ;;Temp storage for next iteration
+      m2m [edi].CALLER_INFO.xInstrAddr, Stack.AddrPC.Offset_, edx
+      inc [ebx].$Obj(CallData).dCount
+      add edi, sizeof CALLER_INFO
+      mov eax, Stack.AddrFrame.Offset_                  ;;Use the frame pointer
+    .until eax == xAppRefAddr || [ebx].$Obj(CallData).dCount == CALLER_MAX_DEEP
   else
     WalkTheStack                                        ;;Get first frame of the detour proc
     .if eax != 0
       .repeat
-        mov rdx, Stack.AddrReturn.Offset_
-        mov [rdi].CALLER_INFO.xRetAddr, rdx
+        m2m [rdi].CALLER_INFO.xRetAddr, Stack.AddrReturn.Offset_, rdx
         WalkTheStack
         .break .if eax == 0
-        mov rdx, Stack.AddrPC.Offset_
-        mov [rdi].CALLER_INFO.xInstrAddr, rdx
+        m2m [rdi].CALLER_INFO.xInstrAddr, Stack.AddrPC.Offset_, rdx
         inc [rbx].$Obj(CallData).dCount
         add rdi, sizeof CALLER_INFO
         mov rax, Stack.AddrStack.Offset_                ;;Use the stack pointer
@@ -443,7 +439,7 @@ endm
 ; Return:     Nothing.
 
 DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:req, \
-                      pRTC_Coll:req, RemoveArgIndex, PassCond
+                   pRTC_Coll:req, RemoveArgIndex, PassCond
   local ArgStr, Cnt, @@Exit
 
   DefineHook ApiName, pRTC_Coll
@@ -974,6 +970,7 @@ DetourCreate LoadCursorA, 2, 0, <xApiResult !!= NULL>, pRTCC_Cursor,, <Arg1 == N
 DetourCreate LoadCursorW, 2, 0, <xApiResult !!= NULL>, pRTCC_Cursor,, <Arg1 == NULL>
 DetourCreate LoadCursorFromFileA, 1, 0, <xApiResult !!= NULL>, pRTCC_Cursor
 DetourCreate LoadCursorFromFileW, 1, 0, <xApiResult !!= NULL>, pRTCC_Cursor
+
 DetourDestroy SetSystemCursor, 2, 1, <xApiResult !!= FALSE>, pRTCC_Cursor       ;;Destroys src Cursor
 
 externdef pRTCC_Icon:$ObjPtr(RTC_Collection)
@@ -996,6 +993,8 @@ DetourCreate ExtractAssociatedIconA, 3, 0, <xApiResult !!= NULL>, pRTCC_Icon
 DetourCreate ExtractAssociatedIconW, 3, 0, <xApiResult !!= NULL>, pRTCC_Icon
 DetourCreate LoadIconA, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
 DetourCreate LoadIconW, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
+DetourCreate LoadIconMetric, 4, -4, <xApiResult == S_OK>, pRTCC_Icon
+DetourCreate LoadIconWithScaleDown, 5, -5, <xApiResult == S_OK>, pRTCC_Icon
 DetourCreate GdipCreateHICONFromBitmap, 2, -2, <xApiResult == 0>, pRTCC_Icon
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1232,11 +1231,16 @@ DetourCreate OpenSemaphoreW, 3, 0, <xApiResult !!= NULL>, pRTCC_Semaphore
 
 ; ------------------------------------------------------------------------------
 
+DetourCreate DuplicateHandle, 7, -4, <xApiResult !!= 0>, pRTCC_DuplicateHandle
+
+; ------------------------------------------------------------------------------
+
 DetourDestroy CloseHandle, 1, 1, <xApiResult !!= FALSE>, \
                  pRTCC_File, pRTCC_FileMapping, pRTCC_Event, \
                  pRTCC_Mutex, pRTCC_Semaphore, \
                  pRTCC_Pipe, \
-                 pRTCC_Thread, pRTCC_Process, pRTCC_Job
+                 pRTCC_Thread, pRTCC_Process, pRTCC_Job, \
+                 pRTCC_DuplicateHandle
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -1555,6 +1559,8 @@ DllInit proc
   NewHook GdipCreateHICONFromBitmap, Gdiplus
   NewHook PrivateExtractIconsA, User32
   NewHook PrivateExtractIconsW, User32
+  NewHook LoadIconMetric, Comctl32
+  NewHook LoadIconWithScaleDown, Comctl32
   NewHook DestroyIcon, User32                   ;DestroyIcon and DestroyCursor use the same API!
 
   NewRTCC Menu, 10
@@ -1816,25 +1822,31 @@ DllInit proc
   NewHook CreateTransactionA, KtmW32
   NewHook CreateTransactionW, KtmW32
 
-;  NewHook DuplicateHandle, Kernel32
-;  https://learn.microsoft.com/en-us/windows/win32/sync/object-names
+  NewRTCC DuplicateHandle, 2
+  NewHook DuplicateHandle, Kernel32
+  ;https://learn.microsoft.com/en-us/windows/win32/sync/object-names
 
   ret
 DllInit endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: ResGuardInit (expoerted)
-; Purpose:   Initialize monitoring.
-; Arguments: Arg1: Application reference address to stop stack analysis.
+; Procedure: ResGuardInit (exported)
+; Purpose:   Initialize monitoring and remembers where to stop the stack tracing.
+; Arguments: None.
 ; Return:    Nothing.
 
-ResGuardInit proc xRefAddr:XWORD
-  m2m xAppRefAddr, xRefAddr, xax
+ResGuardInit proc
+  if TARGET_BITNESS eq 32
+    mov xAppRefAddr, ebp
+  else
+    mov xAppRefAddr, rsp
+    add xAppRefAddr, 2*sizeof(POINTER)                 ;Discard ret addr and frame
+  endif
   ret
 ResGuardInit endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: ResGuardShow (expoerted)
+; Procedure: ResGuardShow (exported)
 ; Purpose:   Visualisation of resource usage.
 ; Arguments: Arg1: -> RTC_Collection.
 ;            Arg2: Resource type caption.
@@ -1956,7 +1968,7 @@ ResGuardShow proc uses xbx xdi
   .endif
 
   .if (dLeaks != 0 || dFails != 0 || dLogis != 0)
-    invoke MessageBoxW, 0, offset wDebugStart, offset wWndCaption, MB_YESNO or MB_ICONEXCLAMATION
+    invoke MessageBoxW, 0, offset wDebugStart, offset wWndCaption, MB_YESNO or MB_ICONEXCLAMATION or MB_TOPMOST
     .if eax == IDYES
       mov dResGuardEnabled, TRUE
       int 3
@@ -1971,12 +1983,12 @@ ResGuardShow proc uses xbx xdi
 ResGuardShow endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: ResGuardStart (expoerted)
+; Procedure: ResGuardStart (exported)
 ; Purpose:   Begins resource monitoring.
 ; Arguments: None.
 ; Return:    Nothing.
 
-ResGuardStart proc uses xbx
+ResGuardStart proc
   mov dResGuardEnabled, TRUE
   ret
 ResGuardStart endp

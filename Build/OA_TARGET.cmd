@@ -8,10 +8,12 @@ REM TARGET_STRING_TYPE: ANSI, WIDE
 REM TARGET_SUPPORT_OOP: ENABLED, DISABLED
 REM TARGET_MODE: RLS, DBG
 REM TARGET_MODE_STR: RELEASE, DEBUG
+REM TARGET_SUFFIX_STR: , 32, 64
 
 set TARGET_SUPPORT_OOP=DISABLED
 set TARGET_MODE=RLS
 set TARGET_MODE_STR=RELEASE
+set TARGET_SUFFIX_STR=
 
 REM Read main project file and get build targets
 for /f "tokens=1,* eol=;" %%X in (!ProjectName!.asm) do (
@@ -75,7 +77,7 @@ for /f "tokens=1,* eol=;" %%X in (!ProjectName!.asm) do (
         ) else if %%A == WIDE_STRING (
           set TARGET_STRING_TYPE=WIDE
         ) else if %%A == SUFFIX (
-          set TARGET_SUFFIX=!TARGET_BITNESS!
+          set TARGET_SUFFIX_STR=!TARGET_BITNESS!
         ) else (
           for /f "tokens=1-9 delims=(,)" %%M in ("%%A") do (
             if %%M == DEBUG (

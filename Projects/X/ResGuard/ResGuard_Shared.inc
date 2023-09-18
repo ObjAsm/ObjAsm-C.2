@@ -9,14 +9,17 @@
 ;General information
 APP_TITLE                     textequ   <ResGuard>
 ABOUT_TEXT                    textequ   <ResGuard>
-COPYRIGHT                     textequ   <G. Friedrich   October 2017> 
-VER_FILEVERSION               equ       2,0,0,0
-VER_FILEVERSION_STR           textequ   <2.0>
-VER_PRODUCTVERSION            equ       2,0,0,0
-VER_PRODUCTVERSION_STR        textequ   <2.0>
+COPYRIGHT                     textequ   <G. Friedrich   August 2023> 
+VER_FILEVERSION               equ       3,1,0,0
+VER_FILEVERSION_STR           textequ   <3.1>
+VER_PRODUCTVERSION            equ       3,1,0,0
+VER_PRODUCTVERSION_STR        textequ   <3.1>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       60
-BUILD_DATE_STR                textequ   <2023-09-13>
-BUILD_BITNESS                 equ       64
+BUILD_NUMBER                  equ       27
+BUILD_DATE_STR                textequ   <2023-09-18>
+BUILD_BITNESS                 equ       32
 BUILD_MODE                    equ       DBG
+
+BUILD_BIN_FORMAT              equ       DLL
+BUILD_BIN_SUFFIX_STR          textequ   <32>

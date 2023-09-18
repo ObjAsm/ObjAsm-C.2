@@ -275,7 +275,7 @@ SysSetup macro Arguments:vararg
       TARGET_PLATFORM = PLATFORM_UEFI
 
     elseifidni <Argument>, <SUFFIX>
-      ;Skip it
+      ;Skip it now, it is processed by OA_TARGET.cmd
 
     else
       echo SysSetup - Invalid argument
@@ -577,7 +577,7 @@ SysSetup macro Arguments:vararg
   endif
   % include &MacPath&Debug.inc
 
-  TARGET_SUFFIX CatStr $ToStr(%TARGET_BITNESS), TARGET_STR_AFFIX
+  TARGET_SUFFIX CatStr $ToStr(%TARGET_BITNESS), TARGET_STR_AFFIX    ;;§§
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -765,11 +765,7 @@ SysInit macro Arg1, Arg2
   endif
   
   if RESGUARD_LOADED ne FALSE
-    if TARGET_BITNESS eq 32
-      invoke ResGuardInit, ebp
-    else
-      invoke ResGuardInit, rsp
-    endif
+    invoke ResGuardInit
   endif
 
 endm

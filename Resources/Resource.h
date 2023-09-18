@@ -1366,5 +1366,9 @@
     #define RLS                         0x0
     #define DBG                         0x1
 
+    #define EXE                         0x0
+    #define DLL                         0x1
+    #define LIB                         0x2
+
     #define IMAGE                       2110
 

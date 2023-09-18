@@ -6,7 +6,7 @@ Backup=$P\Bak\
 Group=1
 GroupExpand=1
 Ver.rc=1
-Debug=0
+Debug=1
 
 [Files]
 1=Demo02.asm
@@ -136,7 +136,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=10
+MilestoneOnDateDate=18
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -172,11 +172,11 @@ ProductVer4Range=0
 
 [Size]
 2=0,0,0,0,4593
-1=0,0,0,0,1436
+1=0,0,0,0,672
 6=0,0,1456,414,40005
 4=0,0,0,0,266
 31=0,0,1213,691,1416
-8=0,0,777,591,30046
+8=0,0,777,591,30114
 7=0,0,0,0,151
 9=0,0,0,0,80187
 10=0,0,0,0,8243
@@ -339,9 +339,9 @@ ProductVer4Range=0
 25=
 27=
 [AutoLoad]
-AutoLoad=1,2
+AutoLoad=1,2,8
 [PTimer]
-PTimer=1114748042
+PTimer=1122334104
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

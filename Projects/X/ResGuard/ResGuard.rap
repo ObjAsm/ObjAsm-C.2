@@ -149,7 +149,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=13
+MilestoneOnDateDate=18
 MilestoneOnDateTimeYear=2004
 MilestoneOnDateTimeMonth=6
 MilestoneOnDateTimeDate=8
@@ -184,10 +184,10 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,480,367,514
-3=0,0,0,0,88
-1=480,488,480,244,960
-4=0,0,0,0,10809
+2=0,0,480,367,448
+3=0,0,0,0,10
+1=480,488,480,244,18166
+4=0,0,0,0,13023
 1001=0,0,0,0,460
 6=0,0,0,0,28282
 7=
@@ -200,7 +200,7 @@ ProductVer4Range=0
 13=0,0,0,0,2778
 15=0,0,0,0,857
 16=0,0,0,0,8723
-5=0,0,0,0,956
+5=0,0,1259,628,952
 17=0,0,0,0,1586
 18=0,0,0,0,7748
 19=0,0,0,0,62137
@@ -239,18 +239,18 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="NewHook"
-2="DefineHook"
-3="DetourCreateCounted"
-4="RcrcColl"
-5="DllDone"
-6="Aggregate"
-7="RegOpenKey"
-8="DetourCreateCounted m"
-9="DetourCreateCounted CoInitialize, 1, CoInitializeCount, <xApiResult == S_OK>, pRTCC_CoInitialization"
-10=".Show"
+1="Duplicate"
+2="CreatePen"
+3="TARGET_BIN_FORMAT"
+4="BIN_FORMAT"
+5="DBG"
+6="BUILD_BIN_FORMAT"
+7="TARGET_SUFFIX"
+8="SUFFIX"
+9="TARGET_STR_AFFIX"
+10="expoerted"
 [Collapse]
-1=71303168,102907905,118297,
+1=71308288,102909185,143384456,
 8=
 15=
 14=
@@ -277,9 +277,9 @@ ProductVer4Range=0
 26=
 27=
 [AutoLoad]
-AutoLoad=1
+AutoLoad=1,15
 [PTimer]
-PTimer=691683978
+PTimer=823884679
 [RADebugBP]
 1=
 14=

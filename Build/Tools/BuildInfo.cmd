@@ -1,8 +1,8 @@
 @echo off
 REM Usage: BuildInfo InfoFile Token=Value ...
-REM Increments, decrements, sets or replaces a token value declared declared in the InfoFile.
-REM Tokens not found in the InfoFile are added at its end.
-REM Declarations must follow this syntax:
+REM Increments, decrements, sets or replaces a token value declared in the InfoFile.
+REM Tokens that are not found in the info file are added to the end of the file.
+REM Declarations have to follow this syntax:
 REM   Token textequ <Value>
 REM   Token equ     Value
 REM   Token =       Value
