@@ -1593,3 +1593,6 @@ else
   XWordVector equ DWordVector
   XVEC_MAX_CAPACITY equ VEC32_MAX_CAPACITY
 endif
+
+
+

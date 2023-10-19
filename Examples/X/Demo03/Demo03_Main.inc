@@ -45,7 +45,6 @@ Object Application, MySdiAppID, SdiApp                ;Single Document Interface
   RedefineMethod    Init
   StaticMethod      Startup
   RedefineMethod    OnSize,         WPARAM, LPARAM
-;  VirtualEvent      OnSize,         WM_SIZE
 
   VirtualEvent      OnClose,        WM_CLOSE, WM_QUERYENDSESSION
   VirtualEvent      OnCommand,      WM_COMMAND

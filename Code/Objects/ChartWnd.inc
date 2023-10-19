@@ -51,28 +51,29 @@ CalcScaleInternalValues macro Scale
 endm
 
 SetScaleTitle macro Scale
+  lea xdi, cBuffer
+  mov ebx, sizeof cBuffer - sizeof(CHR)
   m2z CHR ptr [xdi]                                     ;Set first CHR to zero
   .if Scale.pDescription != NULL
-    .if $invoke(StrLength, Scale.pDescription)
-      invoke StrCCopy, xdi, Scale.pDescription, lengthof cBuffer
+    mov xax, Scale.pDescription
+    .if CHR ptr [xax] != 0
+      invoke StrCCopy, xdi, xax, ebx
+      sub eax, sizeof(CHR)
+      add xdi, xax
+      sub ebx, eax
     .endif
   .endif
-  .if Scale.pUnit != NULL
-    .if $invoke(StrLength, Scale.pUnit)
-      .if Scale.pDescription != NULL
-        .if $invoke(StrLength, Scale.pDescription)
-          invoke StrCCatChar, xdi, " ", lengthof cBuffer
-        .endif
-      .endif
-      invoke StrCCatChar, xdi, "[", lengthof cBuffer
-      invoke StrCCat, xdi, Scale.pUnit, lengthof cBuffer
-      invoke StrCCatChar, xdi, "]", lengthof cBuffer
+  .if ebx != 0 && Scale.pUnit != NULL
+    invoke StrSize, Scale.pUnit
+    add eax, (2-1)*sizeof(CHR)                         ;2 chars - ZTC
+    .if eax < ebx
+      WriteF xdi, " [¦ST]", Scale.pUnit
     .endif
   .endif
 
   invoke StrDispose, Scale.pTitle
   .if Scale.pDescription != NULL || Scale.pUnit != NULL
-    mov Scale.pTitle, $invoke(StrNew, xdi)
+    mov Scale.pTitle, $invoke(StrNew, addr cBuffer)
   .else
     mov Scale.pTitle, NULL
   .endif
@@ -102,7 +103,6 @@ Method ChartWnd.Calc, uses xbx xdi xsi, hDC:HWND, pOutRect:PRECT
   mov [xsi].DrawRect.bottom, eax
 
   ;Set scale titles -------------------------------------------------
-  lea xdi, cBuffer
   SetScaleTitle [xsi].ScaleX
   SetScaleTitle [xsi].ScaleY1           ;§§§
   SetScaleTitle [xsi].ScaleY2           ;§§§

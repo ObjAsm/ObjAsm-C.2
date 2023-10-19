@@ -31,7 +31,7 @@ Object SimpleImageList, SimpleImageListID, Streamable
   VirtualMethod       RemoveAll
   VirtualMethod       Replace,          DWORD, HBITMAP
 
-  DefineVariable      hImageList,       HANDLE, 0     ;HIMAGELIST
+  DefineVariable      hImageList,       HIMAGELIST,   0
 ObjectEnd
 
 

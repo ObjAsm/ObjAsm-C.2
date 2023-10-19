@@ -149,7 +149,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=18
+MilestoneOnDateDate=23
 MilestoneOnDateTimeYear=2004
 MilestoneOnDateTimeMonth=6
 MilestoneOnDateTimeDate=8
@@ -186,7 +186,7 @@ ProductVer4Range=0
 [Size]
 2=0,0,480,367,448
 3=0,0,0,0,10
-1=480,488,480,244,18166
+1=480,488,480,244,64693
 4=0,0,0,0,13023
 1001=0,0,0,0,460
 6=0,0,0,0,28282
@@ -239,18 +239,18 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="Duplicate"
-2="CreatePen"
-3="TARGET_BIN_FORMAT"
-4="BIN_FORMAT"
-5="DBG"
-6="BUILD_BIN_FORMAT"
-7="TARGET_SUFFIX"
-8="SUFFIX"
-9="TARGET_STR_AFFIX"
-10="expoerted"
+1="LoadIconW"
+2="ImageList_GetIcon "
+3="Duplicate"
+4="CreatePen"
+5="TARGET_BIN_FORMAT"
+6="BIN_FORMAT"
+7="DBG"
+8="BUILD_BIN_FORMAT"
+9="TARGET_SUFFIX"
+10="SUFFIX"
 [Collapse]
-1=71308288,102909185,143384456,
+1=71308288,102909185,143384457,
 8=
 15=
 14=
@@ -279,7 +279,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=1,15
 [PTimer]
-PTimer=823884679
+PTimer=824053492
 [RADebugBP]
 1=
 14=

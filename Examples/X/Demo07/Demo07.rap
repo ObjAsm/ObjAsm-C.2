@@ -178,7 +178,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=5
+MilestoneOnDateDate=26
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -213,10 +213,10 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,5507
+2=0,0,0,0,21058
 3=0,0,0,0,0
-1=0,0,1840,631,1212
-4=0,0,0,0,1166
+1=0,0,1840,631,1001
+4=0,0,0,0,2764
 1001=0,0,0,0,460
 5=0,0,0,0,0
 6=0,0,0,0,25186
@@ -248,7 +248,7 @@ ProductVer4Range=0
 20=0,0,0,0,9515
 33=0,0,0,0,5546
 35=0,0,1840,631,1776
-34=0,0,1840,631,1969
+34=0,0,1840,631,12411
 36=0,0,0,0,4125
 37=0,0,0,0,2253
 39=0,0,1834,423,750
@@ -258,7 +258,7 @@ ProductVer4Range=0
 48=
 45=0,0,0,0
 46=0,0,0,0
-49=0,0,1840,631,85027
+49=0,0,1840,631,52874
 47=0,0,0,0,10793
 41=0,0,1667,628,3447
 50=0,0,0,0,11681
@@ -283,16 +283,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="cFloatMin"
-2=".Scan"
-3="OnSize"
-4="TabCtrl"
-5="Chart"
-6="ChartXYSeries.Draw"
-7="DWORD2HEX_MAX_CHARS"
-8="SDWORD2HEX_MAX_CHARS"
-9="DWORD2"
-10="#"
+1="OnPaint"
+2="OnCreate"
+3="ChartDef"
+4="Chart"
+5="cFloatMin"
+6=".Scan"
+7="OnSize"
+8="TabCtrl"
+9="ChartXYSeries.Draw"
+10="DWORD2HEX_MAX_CHARS"
 [Collapse]
 1=
 8=
@@ -333,7 +333,7 @@ ProductVer4Range=0
 37=
 48=
 39=
-49=251851,2147482720,2147458047,2147468287,536870911,536870911,2146959430,4218895
+49=251851,2147482720,2147458047,2147402751,536870911,536870911,2146959430,4218895
 47=
 41=
 42=
@@ -342,7 +342,7 @@ ProductVer4Range=0
 40=
 38=
 [AutoLoad]
-AutoLoad=50,7,2,49,34,1
+AutoLoad=50,7,2,49,34,1,4
 [RADebugBP]
 2=
 5=
@@ -383,6 +383,6 @@ AutoLoad=50,7,2,49,34,1
 27=
 50=
 [PTimer]
-PTimer=1675710612
+PTimer=1680725455
 [GroupExpand]
 GroupExpand=0,1,1,1,0,1,1,0

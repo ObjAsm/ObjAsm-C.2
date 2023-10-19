@@ -1,25 +1,16 @@
 ntp01.vzug.com
-Delay = 15 ms
-ServerTime = 23.08.2023 13:01:26.111
-Delay = 15 ms
-ServerTime = 23.08.2023 13:01:26.159
-Delay = 16 ms
-ServerTime = 23.08.2023 13:01:26.207
-Delay = 0 ms
-ServerTime = 23.08.2023 13:01:26.755
-WSA Error 11004
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
 -------------------------------------------------------
 pool.ntp.org
-Delay = 16 ms
-ServerTime = 23.08.2023 13:01:26.384
-Delay = 0 ms
-ServerTime = 23.08.2023 13:01:26.925
-Delay = 15 ms
-ServerTime = 23.08.2023 13:01:26.489
-Delay = 15 ms
-ServerTime = 23.08.2023 13:01:26.538
-Delay = 32 ms
-ServerTime = 23.08.2023 13:01:26.595
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
 -------------------------------------------------------
 time.nist.gov
 WSA Error 10060
@@ -36,36 +27,53 @@ WSA Error 10060
 WSA Error 10060
 -------------------------------------------------------
 tick.usno.navy.mil
-Delay = 110 ms
-ServerTime = 23.08.2023 13:01:36.895
-Delay = 109 ms
-ServerTime = 23.08.2023 13:01:37.010
-Delay = 109 ms
-ServerTime = 23.08.2023 13:01:37.125
-Delay = 109 ms
-ServerTime = 23.08.2023 13:01:37.240
-Delay = 109 ms
-ServerTime = 23.08.2023 13:01:37.360
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
 -------------------------------------------------------
 ut1-wwv.nist.gov
-WSA Error 11001
-WSA Error 11001
-WSA Error 11001
-WSA Error 11001
-WSA Error 11001
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
 -------------------------------------------------------
 ntp0.cornell.edu
-Delay = 110 ms
-ServerTime = 23.08.2023 13:01:37.849
-Delay = 109 ms
-ServerTime = 23.08.2023 13:01:37.956
-Delay = 109 ms
-ServerTime = 23.08.2023 13:01:38.063
-Delay = 110 ms
-ServerTime = 23.08.2023 13:01:38.179
-Delay = 94 ms
-ServerTime = 23.08.2023 13:01:38.285
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
 -------------------------------------------------------
+time.google.com
+Delay = 15 ms
+ServerTime = 26.09.2023 06:12:06.740
+Delay = 16 ms
+ServerTime = 26.09.2023 06:12:06.765
+Delay = 15 ms
+ServerTime = 26.09.2023 06:12:06.787
+Delay = 16 ms
+ServerTime = 26.09.2023 06:12:06.810
+Delay = 31 ms
+ServerTime = 26.09.2023 06:12:06.840
+-------------------------------------------------------
+time.windows.com
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+-------------------------------------------------------
+time.euro.apple.com
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+WSA Error 10060
+-------------------------------------------------------
+---------------------------
 time.google.com
 Delay = 31 ms
 ServerTime = 23.08.2023 13:01:38.329

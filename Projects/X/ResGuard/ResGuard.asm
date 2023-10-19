@@ -19,7 +19,7 @@ SYM_NAME_LENGTH   equ 255
 CALLER_MAX_DEEP   equ 10
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, DLL32, SUFFIX, WIDE_STRING, DEBUG(WND)
+SysSetup OOP, DLL64, SUFFIX, WIDE_STRING, DEBUG(WND)
 
 % includelib &LibPath&Windows\DbgHelp.lib
 
@@ -995,6 +995,7 @@ DetourCreate LoadIconA, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
 DetourCreate LoadIconW, 2, 0, <xApiResult !!= NULL>, pRTCC_Icon
 DetourCreate LoadIconMetric, 4, -4, <xApiResult == S_OK>, pRTCC_Icon
 DetourCreate LoadIconWithScaleDown, 5, -5, <xApiResult == S_OK>, pRTCC_Icon
+DetourCreate ImageList_GetIcon, 3, 0, <xApiResult !!= NULL>, pRTCC_Icon
 DetourCreate GdipCreateHICONFromBitmap, 2, -2, <xApiResult == 0>, pRTCC_Icon
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1057,7 +1058,6 @@ endm
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
 DetourPrivateExtractIconsX PrivateExtractIconsA
-
 DetourPrivateExtractIconsX PrivateExtractIconsW
 
 ;DestroyCursor and DestroyIcon use the same API
@@ -1561,6 +1561,7 @@ DllInit proc
   NewHook PrivateExtractIconsW, User32
   NewHook LoadIconMetric, Comctl32
   NewHook LoadIconWithScaleDown, Comctl32
+  NewHook ImageList_GetIcon, Comctl32
   NewHook DestroyIcon, User32                   ;DestroyIcon and DestroyCursor use the same API!
 
   NewRTCC Menu, 10

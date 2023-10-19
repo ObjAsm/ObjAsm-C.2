@@ -1,12 +1,14 @@
 ; ==================================================================================================
 ; Title:      Array.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
+; Version:    C.1.2
 ; Purpose:    ObjAsm support of array objects.
 ; Notes:      Version C.1.0, November 2017
 ;               - First release.
 ;             Version C.1.1 August 2021
 ;               - Indexing bug in 64 bit corrected.
+;             Version C.1.2 September 2023
+;               - DimResize bug corrected.
 ; ==================================================================================================
 
 
@@ -143,7 +145,7 @@ MethodEnd
 
 Method Array.DimResize, uses xbx xdi xsi, dIndex:DWORD, dNewWidth:DWORD, dFlags:DWORD
   local dOldWidth:DWORD, pNewMemBlock:POINTER, dNewMemSize:DWORD
-  local dStepOld:DWORD, dStepNew:DWORD, dCopyWidth:DWORD
+  local dStepOld:DWORD, dStepNew:DWORD, dCopyWidth:DWORD, dSubDimStride:DWORD
 
   SetObject xsi
   mov eax, dIndex
@@ -173,11 +175,11 @@ Method Array.DimResize, uses xbx xdi xsi, dIndex:DWORD, dNewWidth:DWORD, dFlags:
           mul DWORD ptr [xbx]
           inc ecx
         .endw
-        push xax
+        mov dSubDimStride, eax
         mul dNewWidth
         mul [xsi].dItemSize
         mov dStepNew, eax
-        pop xax
+        mov eax, dSubDimStride
         mul dOldWidth
         mul [xsi].dItemSize
         mov dStepOld, eax

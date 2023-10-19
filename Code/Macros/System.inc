@@ -8,7 +8,7 @@
 ;             Version C.1.1, August 2022
 ;               - WriteF macro added.
 ;             Version C.2.0, December 2022
-;               - WriteF macro bug using AT corrected and V4/V6 added.
+;               - WriteF macro bug using AT corrected, V4/V6 & BI/BN/BZ added.
 ;               - lodsc macro added (a1sbofo).
 ;               - GetMemBSS macro added.
 ; ==================================================================================================
@@ -1184,8 +1184,14 @@ endif
 ;                 UE UEFI Error as description string
 ;                 MT Move to character position
 ;                 AT fill with spaces up to character position
-;                 V4 IPv4 address in the format xxx.xxx.xxx.xxx, input has to be in NBO.
-;                 V6 IPv6 address in the format xxxx:xxxx:... , input has to be in NBO.
+;                 V4 IPv4 address in the format xxx.xxx.xxx.xxx, input has to be in NBO
+;                 V6 IPv6 address in the format xxxx:xxxx:... , input has to be in NBO
+;                 CA ANSI Character
+;                 CW WIDE Character
+;                 CT ANSI/WIDE Character
+;                 BI Build in a macro. Use <<...>> to define the included code. Arg1 -> dest. buffer
+;                 BN Build in a macro that returns in eax the nr of bytes written, excluding the ZTC
+;                 BZ Build in a macro that returns in eax the nr of bytes written, including the ZTC
 ;
 ;             - Escape sequences:
 ;                 n  Carriage Return and Line Feed
@@ -1205,17 +1211,57 @@ endif
 ;                 % include &IncPath&Windows\ip2string.inc
 ;
 ; Example:    WriteF xdi, "Memory at ¦H8h: ¦F3", xsi, REAL4 ptr [xsi]
-;
+;             WriteF xdi, "The value is: ¦BZ Units", <<invoke udword2dec, xdi, 15>>
+
 
 WriteF macro DstReg:req, Format:req, Args:vararg
   local pBegin
 
-  .data?
-    pBegin  POINTER   ?
+  ;;Scan for ¦AT, ¦MT or ¦BI. They require pBegin 
+  $$WF_Replace = 0                                      ;;Replace flag
+  $$WF_CharCount = 0
+  $$WF_ReplType textequ <>
+  $$BeginRequired = 0
+  forc $$WF_Character, <Format>
+    if $$BeginRequired eq 0
+      $$WF_CharCount = $$WF_CharCount + 1
+      if $$WF_CharCount eq 1                            ;;Ignore first character = "
+      elseif $$WF_CharCount ne @SizeStr(Format)         ;;Ignore $$WF_LastChar character = "
+        $$WF_LastChar Catstr <$$WF_Character>
+        if $$WF_Replace
+          if @SizeStr(%$$WF_ReplType) eq 0
+            $$WF_ReplType Catstr <$$WF_Character>       ;;Get first char
+          else
+            $$WF_ReplType Catstr $$WF_ReplType, <$$WF_Character>   ;;Append second char
+            ifidn $$WF_ReplType, <AT>
+              $$BeginRequired = 1
+            elseifidn $$WF_ReplType, <MT>
+              $$BeginRequired = 1
+            elseifidn $$WF_ReplType, <BI>
+              $$BeginRequired = 1
+            endif
+            $$WF_ReplType textequ <>                    ;;Reset replace type
+            $$WF_Replace = 0
+          endif
+        else
+          ifidn <&$$WF_Character>, <¦>
+            $$WF_Replace = 1                            ;;Set replace flag
+          endif
+        endif
+      endif
+    endif
+  endm
 
+  if $$BeginRequired eq 1
+    .data?
+      pBegin  POINTER   ?
+  
+    .code
+    mov pBegin, DstReg
+  endif
+  
+  ;;Start doing the job
   .code
-  mov pBegin, DstReg
-
   $$Count = 0
   for Arg, <Args>
     @CatStr(<$$WF_Arg>, %$$Count) textequ <Arg>
@@ -1443,6 +1489,18 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             lea DstReg, [DstReg + xax - sizeof(CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
+          elseifidn $$WF_ReplType, <CA>
+            m2m CHRA ptr [DstReg], @CatStr(<$$WF_Arg>, %$$WF_ArgCount), eax
+            add DstReg, sizeof(CHRA)
+
+          elseifidn $$WF_ReplType, <CW>
+            m2m CHRW ptr [DstReg], @CatStr(<$$WF_Arg>, %$$WF_ArgCount), eax
+            add DstReg, sizeof(CHRW)
+
+          elseifidn $$WF_ReplType, <CT>
+            m2m CHR ptr [DstReg], @CatStr(<$$WF_Arg>, %$$WF_ArgCount), eax
+            add DstReg, sizeof(CHR)
+
           elseifidn $$WF_ReplType, <GD>
             FillWord [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
@@ -1521,6 +1579,37 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             mov DstReg, xax
             $$WF_ArgCount = $$WF_ArgCount + 1
 
+          elseifidn $$WF_ReplType, <BI>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
+            @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
+            invoke StrEnd, pBegin
+            mov DstReg, xax
+            $$WF_ArgCount = $$WF_ArgCount + 1
+
+          elseifidn $$WF_ReplType, <BN>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
+            @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
+            add DstReg, xax
+            $$WF_ArgCount = $$WF_ArgCount + 1
+
+          elseifidn $$WF_ReplType, <BZ>
+            FillWord [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if $$Len ne 0
+              add DstReg, $$Len*sizeof(CHR)
+            endif
+            @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
+            lea DstReg, [DstReg + xax - sizeof(CHR)]
+            $$WF_ArgCount = $$WF_ArgCount + 1
+
           elseifidn $$WF_ReplType, <AT>
             FillWord [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
@@ -1579,7 +1668,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
                 shl xcx, 1
               endif
               add DstReg, xcx
-              m2z CHR ptr [DstReg]                         ;;Set ZTC
+              m2z CHR ptr [DstReg]                      ;;Set ZTC
             .else
               if TARGET_STR_TYPE eq STR_TYPE_WIDE
                 .while SDWORD ptr eax > 1               ;;Fill with spaces
@@ -3549,8 +3638,8 @@ endm
 ; Arguments:  Arg1: (optional) Destination memory where the count should be stored (QWORD).
 ; Return:     rax = tick count.
 
-if TARGET_BITNESS eq 32
-  GetInterruptTicks macro Dest
+GetInterruptTicks macro Dest
+  if TARGET_BITNESS eq 32
     mov ecx, 7FFE0000h + 8                              ;KUSER_SHARED_DATA.InterruptTime @ MM_SHARED_USER_DATA_VA
     .while TRUE
       mov edx, [ecx + 4]                                ;KSYSTEM_TIME.High1Time
@@ -3561,16 +3650,14 @@ if TARGET_BITNESS eq 32
       mov DWORD ptr [Dest], eax
       mov DWORD ptr [Dest + 4], edx
     endif
-  endm
-else
-  GetInterruptTicks macro Dest
+  else
     mov r11d, 7FFE0000h + 8                             ;KUSER_SHARED_DATA.InterruptTime @ MM_SHARED_USER_DATA_VA
     mov rax, [r11]                                      ;KSYSTEM_TIME.High1Time
     ifnb <Dest>
       mov QWORD ptr [Dest], rax
     endif
-  endm
-endif
+  endif
+endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      $Log2
@@ -3647,7 +3734,7 @@ else
         add rsp, &AdditionalSpace
       endif
       pop r15
-      mov rsp, r15                                        ;;Restore esp
+      mov rsp, r15                                        ;;Restore rsp
       ??StackAlignCount = ??StackAlignCount - 1           ;;Decrement counter
     else
       .err <StackRestore - invalid alignment.>

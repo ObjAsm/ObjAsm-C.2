@@ -109,7 +109,7 @@ MethodEnd
 ;             longer needed.
 ; Arguments:  Arg1: Index into MaskedImageList.
 ;             Arg2: Icon creation flags.
-; Return:     eax = Icon index into control. -1 if failed.
+; Return:     xax = Icon HANDLE or zero if failed.
 
 Method MaskedImageList.IconCreate,, dIndex:DWORD, dFlags:DWORD
   SetObject xcx
@@ -119,17 +119,17 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     MaskedImageList.IconLoadResource
 ; Purpose:    Load a new icon from a resource.
-; Arguments:  Arg1: -> Resourece name.
+; Arguments:  Arg1: -> Resource name.
 ; Return:     eax = Icon index into control. -1 if failed.
 
-Method MaskedImageList.IconLoadResource, uses xbx xdi xsi, pResName:POINTER
+Method MaskedImageList.IconLoadResource, uses xbx xsi, pResName:POINTER
   SetObject xsi
   invoke LoadIcon, hInstance, pResName
   mov xbx, xax
   invoke ImageList_ReplaceIcon, [xsi].hImageList, -1, xbx
-  mov xdi, xax
+  mov xsi, xax
   invoke DestroyIcon, xbx
-  mov xax, xdi
+  mov xax, xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -139,7 +139,7 @@ MethodEnd
 ;           	Arg2: Image X size in pixels.
 ;           	Arg3: Image Y size in pixels.
 ;           	Arg4: Number of images that the image list initially may contain.
-; Return:   	xax = ImageList handle.
+; Return:   	xax = HIMAGELIST.
 
 Method MaskedImageList.Init, uses xsi, pOwner:POINTER, dSX:DWORD, dSY:DWORD, dInitCount:DWORD
   SetObject xsi

@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      Json.inc
 ; Author:     G. Friedrich
-; Version:    C.2.2
+; Version:    C.2.3
 ; Purpose:    ObjAsm support of JSON (JavaScript Object Notation) objects.
 ; Links:      https://www.json.org/json-en.html
 ;             https://www.rfc-editor.org/rfc/rfc8259
@@ -24,6 +24,8 @@
 ;               - JsonEscEncode and JsonEscDecode modified JsonEscEncodeSize corrected.
 ;             Version C.2.2, February 2023.
 ;               - Bug in JsonGetValue detected by HSE.
+;             Version C.2.3, September 2023.
+;               - JsonGetNumberEnd bug corrected.
 ; ==================================================================================================
 
 
@@ -537,7 +539,6 @@ Method Json.GetArrayItem,, pParent:PJSON_PROPERTY, dIndex:DWORD
       dec edx
     .endw
   .endif
-;  DbgHex xax, "GetArrayItem"
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -554,7 +555,6 @@ Method Json.GetPrevProperty,, pProperty:PJSON_PROPERTY
       lea xax, [xax - offset JSON_PROPERTY.Siblings]    ;xax -> JSON_PROPERTY
     .endif
   .endif
-;  DbgHex xax, "GetNextProperty"
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -571,7 +571,6 @@ Method Json.GetNextProperty,, pProperty:PJSON_PROPERTY
       lea xax, [xax - offset JSON_PROPERTY.Siblings]    ;xax -> JSON_PROPERTY
     .endif
   .endif
-;  DbgHex xax, "GetNextProperty"
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -786,9 +785,7 @@ JsonGetNumberEnd proc                                   ;On entry, xsi -> first 
       mov cx, [xsi]
       .break .if cx < "0" || cx > "9"
       add xsi, sizeof(CHRW)
-      .if cx >= "1" && cx <= "9"
-        inc edx
-      .endif
+      inc edx
     .endw
     test edx, edx
     jz @@Exit
