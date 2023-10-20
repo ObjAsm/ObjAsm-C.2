@@ -469,8 +469,17 @@ m2m macro DstMem:req, SrcMem:req, AuxReg
           endif
         else
           if $$DstSize eq $$SrcSize
-            mov $SubReg(AuxReg, $$SrcSize), SrcMem      ;;Use mov in combination with AuxReg
-            mov DstMem, $SubReg(AuxReg, $$DstSize)
+            if (opattr SrcMem) and (OAT_IMMEDIATE or OAT_REFERENCE)
+              if $$DstSize le 4
+                mov DstMem, SrcMem
+              else
+                mov $SubReg(AuxReg, $$SrcSize), SrcMem  ;;Use mov in combination with AuxReg
+                mov DstMem, $SubReg(AuxReg, $$DstSize)
+              endif
+            else
+              mov $SubReg(AuxReg, $$SrcSize), SrcMem    ;;Use mov in combination with AuxReg
+              mov DstMem, $SubReg(AuxReg, $$DstSize)
+            endif
           elseif $$DstSize gt $$SrcSize
             if $$DstSize eq 8
               if $$SrcSize eq 4
@@ -490,7 +499,6 @@ m2m macro DstMem:req, SrcMem:req, AuxReg
     endif
   endif
 endm
-
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      mrm
 ; Purpose:    Move a QWORD, DWORD, WORD or BYTE value from a memory address to another using
