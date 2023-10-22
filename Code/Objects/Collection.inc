@@ -1,12 +1,14 @@
 ; ==================================================================================================
 ; Title:      Collection.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
+; Version:    C.1.2
 ; Purpose:    ObjAsm support of Collection objects.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
 ;             Version C.1.1, September 2023
 ;               - Mem-Leak in Load method corrected.
+;             Version C.1.2, October 2023
+;               - .ColForEach, .ColForEachRev and .ColNext macros added.
 ; ==================================================================================================
 
 
@@ -70,6 +72,80 @@ ObjectEnd
 
 
 ; ==================================================================================================
+
+??ForEach_ID = 0
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      .ColForEach
+; Purpose:    Loop through all items of the collection.
+; Arguments:  Arg1: Collection.
+;             Arg2: Optional 32 bit index variable/register. Can not be eax!
+; Return:     Nothing.
+; Note:       On each loop xax -> collection item.
+; Example:    .ColForEach MyColl
+;               DbgHex [xax].$Obj(Primer).pOwner
+;             .ColNext
+
+.ColForEach macro Coll:req, Index
+  ??ForEach_ID = ??ForEach_ID + 1
+  @CatStr(<??ForEach_ItemReg_>, %??ForEach_ID) textequ <ItemReg>
+  @CatStr(<??ForEach_Counter_>, %??ForEach_ID) textequ GetMemBSS(4)
+  ifb <Index>
+    @CatStr(<??ForEach_Counter_>, %??ForEach_ID) textequ GetMemBSS(4)
+  else
+    @CatStr(<??ForEach_Counter_>, %??ForEach_ID) textequ <Index>
+  endif
+  @CatStr(<??ForEach_Step_>, %??ForEach_ID) equ +1 
+  xor eax, eax
+  mov @CatStr(<??ForEach_Counter_>, %??ForEach_ID), eax
+  .while eax != Coll.$Obj(Collection).dCount
+    lea xax, [sizeof(POINTER)*xax]
+    add xax, Coll.$Obj(Collection).pItems
+    mov xax, POINTER ptr [xax]
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      .ColForEach
+; Purpose:    Loop through all items of the collection in reverse order.
+; Arguments:  Arg1: Collection.
+;             Arg2: Optional 32 bit index variable/register. Can not be eax!
+; Return:     Nothing.
+; Note:       On each loop xax -> collection item.
+
+.ColForEachRev macro Coll:req, Index
+  ??ForEach_ID = ??ForEach_ID + 1
+  @CatStr(<??ForEach_ItemReg_>, %??ForEach_ID) textequ <ItemReg>
+  ifb <Index>
+    @CatStr(<??ForEach_Counter_>, %??ForEach_ID) textequ GetMemBSS(4)
+  else
+    @CatStr(<??ForEach_Counter_>, %??ForEach_ID) textequ <Index>
+  endif
+  @CatStr(<??ForEach_Step_>, %??ForEach_ID) equ -1 
+  mov eax, Coll.$Obj(Collection).dCount
+  mov @CatStr(<??ForEach_Counter_>, %??ForEach_ID), eax
+  .while eax != 0
+    lea xax, [sizeof(POINTER)*xax - sizeof(POINTER)]
+    add xax, Coll.$Obj(Collection).pItems
+    mov xax, POINTER ptr [xax]
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      .ColNext
+; Purpose:    Move to the next collection item.
+; Arguments:  None
+; Return:     Nothing.
+
+.ColNext macro
+    if @CatStr(<??ForEach_Step_>, %??ForEach_ID) eq +1
+      inc @CatStr(<??ForEach_Counter_>, %??ForEach_ID)
+    else
+      dec @CatStr(<??ForEach_Counter_>, %??ForEach_ID)
+    endif
+    mov eax, @CatStr(<??ForEach_Counter_>, %??ForEach_ID)
+  .endw
+  ??ForEach_ID = ??ForEach_ID - 1
+endm
+
 
 if IMPLEMENT
 

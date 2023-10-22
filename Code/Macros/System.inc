@@ -4219,7 +4219,7 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      Enum
-; Purpose:    Implement the well known Enum functionality.
+; Purpose:    Implement the well known Enum C-functionality.
 ; Arguments:  Arg1: Enumeration start.
 ;             Arg2..n: Enumeration list.
 ; Example:    Enum <Pepa, Pepe, Pepi>, 1
