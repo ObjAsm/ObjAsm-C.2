@@ -73,7 +73,7 @@ ObjectEnd
 
 ; ==================================================================================================
 
-??ForEach_ID = 0
+??ColForEach_ID = 0
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      .ColForEach
@@ -87,17 +87,17 @@ ObjectEnd
 ;             .ColNext
 
 .ColForEach macro Coll:req, Index
-  ??ForEach_ID = ??ForEach_ID + 1
-  @CatStr(<??ForEach_ItemReg_>, %??ForEach_ID) textequ <ItemReg>
-  @CatStr(<??ForEach_Counter_>, %??ForEach_ID) textequ GetMemBSS(4)
+  ??ColForEach_ID = ??ColForEach_ID + 1
+  @CatStr(<??ColForEach_ItemReg_>, %??ColForEach_ID) textequ <ItemReg>
+  @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID) textequ GetMemBSS(4)
   ifb <Index>
-    @CatStr(<??ForEach_Counter_>, %??ForEach_ID) textequ GetMemBSS(4)
+    @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID) textequ GetMemBSS(4)
   else
-    @CatStr(<??ForEach_Counter_>, %??ForEach_ID) textequ <Index>
+    @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID) textequ <Index>
   endif
-  @CatStr(<??ForEach_Step_>, %??ForEach_ID) equ +1 
+  @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) equ +1 
   xor eax, eax
-  mov @CatStr(<??ForEach_Counter_>, %??ForEach_ID), eax
+  mov @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID), eax
   .while eax != Coll.$Obj(Collection).dCount
     lea xax, [sizeof(POINTER)*xax]
     add xax, Coll.$Obj(Collection).pItems
@@ -113,16 +113,16 @@ endm
 ; Note:       On each loop xax -> collection item.
 
 .ColForEachRev macro Coll:req, Index
-  ??ForEach_ID = ??ForEach_ID + 1
-  @CatStr(<??ForEach_ItemReg_>, %??ForEach_ID) textequ <ItemReg>
+  ??ColForEach_ID = ??ColForEach_ID + 1
+  @CatStr(<??ColForEach_ItemReg_>, %??ColForEach_ID) textequ <ItemReg>
   ifb <Index>
-    @CatStr(<??ForEach_Counter_>, %??ForEach_ID) textequ GetMemBSS(4)
+    @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID) textequ GetMemBSS(4)
   else
-    @CatStr(<??ForEach_Counter_>, %??ForEach_ID) textequ <Index>
+    @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID) textequ <Index>
   endif
-  @CatStr(<??ForEach_Step_>, %??ForEach_ID) equ -1 
+  @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) equ -1 
   mov eax, Coll.$Obj(Collection).dCount
-  mov @CatStr(<??ForEach_Counter_>, %??ForEach_ID), eax
+  mov @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID), eax
   .while eax != 0
     lea xax, [sizeof(POINTER)*xax - sizeof(POINTER)]
     add xax, Coll.$Obj(Collection).pItems
@@ -136,16 +136,18 @@ endm
 ; Return:     Nothing.
 
 .ColNext macro
-    if @CatStr(<??ForEach_Step_>, %??ForEach_ID) eq +1
-      inc @CatStr(<??ForEach_Counter_>, %??ForEach_ID)
+    if @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) eq +1
+      inc @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID)
     else
-      dec @CatStr(<??ForEach_Counter_>, %??ForEach_ID)
+      dec @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID)
     endif
-    mov eax, @CatStr(<??ForEach_Counter_>, %??ForEach_ID)
+    mov eax, @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID)
   .endw
-  ??ForEach_ID = ??ForEach_ID - 1
+  ??ColForEach_ID = ??ColForEach_ID - 1
 endm
 
+
+; ==================================================================================================
 
 if IMPLEMENT
 

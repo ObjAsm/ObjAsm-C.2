@@ -1,10 +1,12 @@
 ; ==================================================================================================
 ; Title:      TVector.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.1.1
 ; Purpose:    ObjAsm support of TVector object templates.
 ; Notes:      Version C.1.0, September 2021
 ;               - First release.
+;             Version C.1.1, October 2023
+;               - .VecForEach, .VecForEachRev and .VecNext macros added.
 ; ==================================================================================================
 
 
@@ -47,6 +49,82 @@
   DefineVariable    dMaxCapacity,   DWORD,        0
   DefineVariable    ObjLock,        OBJECT_LOCK,  {}    ;Locking structure for multithreaded access
 ObjectEnd
+
+
+; ==================================================================================================
+
+??VecForEach_ID = 0
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      .VecForEach
+; Purpose:    Loop through all items of the TVector.
+; Arguments:  Arg1: TVector.
+;             Arg2: Optional 32 bit index variable/register. Can not be eax!
+; Return:     Nothing.
+; Note:       On each loop $SubReg(xax) = TVector item.
+; Example:    .VecForEach MyVector
+;               DbgDec xax
+;             .VecNext
+
+.VecForEach macro Coll:req, Index
+  ??VecForEach_ID = ??VecForEach_ID + 1
+  @CatStr(<??VecForEach_ItemReg_>, %??VecForEach_ID) textequ <ItemReg>
+  @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID) textequ GetMemBSS(4)
+  ifb <Index>
+    @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID) textequ GetMemBSS(4)
+  else
+    @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID) textequ <Index>
+  endif
+  @CatStr(<??VecForEach_Step_>, %??VecForEach_ID) equ +1 
+  xor eax, eax
+  mov @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID), eax
+  .while eax != Coll.$Obj(Collection).dCount
+    lea xax, [sizeof(TVEC_DATA_TYPE)*xax]
+    add xax, Coll.$Obj(Collection).pItems
+    mov $SubReg(xax, sizeof(TVEC_DATA_TYPE)), TVEC_DATA_TYPE ptr [xax]
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      .VecForEach
+; Purpose:    Loop through all items of the TVector in reverse order.
+; Arguments:  Arg1: TVector.
+;             Arg2: Optional 32 bit index variable/register. Can not be eax!
+; Return:     Nothing.
+; Note:       On each loop $SubReg(xax) = TVector item.
+
+.VecForEachRev macro Coll:req, Index
+  ??VecForEach_ID = ??VecForEach_ID + 1
+  @CatStr(<??VecForEach_ItemReg_>, %??VecForEach_ID) textequ <ItemReg>
+  ifb <Index>
+    @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID) textequ GetMemBSS(4)
+  else
+    @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID) textequ <Index>
+  endif
+  @CatStr(<??VecForEach_Step_>, %??VecForEach_ID) equ -1 
+  mov eax, Coll.$Obj(Collection).dCount
+  mov @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID), eax
+  .while eax != 0
+    lea xax, [sizeof(TVEC_DATA_TYPE)*xax - sizeof(TVEC_DATA_TYPE)]
+    add xax, Coll.$Obj(Collection).pItems
+    mov $SubReg(xax, sizeof(TVEC_DATA_TYPE)), TVEC_DATA_TYPE ptr [xax]
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      .VecNext
+; Purpose:    Move to the next TVector item.
+; Arguments:  None
+; Return:     Nothing.
+
+.VecNext macro
+    if @CatStr(<??VecForEach_Step_>, %??VecForEach_ID) eq +1
+      inc @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID)
+    else
+      dec @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID)
+    endif
+    mov eax, @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID)
+  .endw
+  ??VecForEach_ID = ??VecForEach_ID - 1
+endm
 
 
 ; ==================================================================================================
