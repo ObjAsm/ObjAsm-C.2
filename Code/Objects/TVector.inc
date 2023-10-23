@@ -61,15 +61,13 @@ ObjectEnd
 ; Arguments:  Arg1: TVector.
 ;             Arg2: Optional 32 bit index variable/register. Can not be eax!
 ; Return:     Nothing.
-; Note:       On each loop $SubReg(xax) = TVector item.
+; Note:       On each loop xax -> TVector item.
 ; Example:    .VecForEach MyVector
-;               DbgDec xax
+;               DbgDec TVEC_DATA_TYPE ptr [xax]
 ;             .VecNext
 
-.VecForEach macro Coll:req, Index
+.VecForEach macro TVec:req, Index
   ??VecForEach_ID = ??VecForEach_ID + 1
-  @CatStr(<??VecForEach_ItemReg_>, %??VecForEach_ID) textequ <ItemReg>
-  @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID) textequ GetMemBSS(4)
   ifb <Index>
     @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID) textequ GetMemBSS(4)
   else
@@ -78,35 +76,32 @@ ObjectEnd
   @CatStr(<??VecForEach_Step_>, %??VecForEach_ID) equ +1 
   xor eax, eax
   mov @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID), eax
-  .while eax != Coll.$Obj(Collection).dCount
+  .while eax != TVec.$Obj(%TVectorName).dCount
     lea xax, [sizeof(TVEC_DATA_TYPE)*xax]
-    add xax, Coll.$Obj(Collection).pItems
-    mov $SubReg(xax, sizeof(TVEC_DATA_TYPE)), TVEC_DATA_TYPE ptr [xax]
+    add xax, TVec.$Obj(%TVectorName).pItems
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      .VecForEach
+; Macro:      .VecForEachRev
 ; Purpose:    Loop through all items of the TVector in reverse order.
 ; Arguments:  Arg1: TVector.
 ;             Arg2: Optional 32 bit index variable/register. Can not be eax!
 ; Return:     Nothing.
-; Note:       On each loop $SubReg(xax) = TVector item.
+; Note:       On each loop xax -> TVector item.
 
-.VecForEachRev macro Coll:req, Index
+.VecForEachRev macro TVec:req, Index
   ??VecForEach_ID = ??VecForEach_ID + 1
-  @CatStr(<??VecForEach_ItemReg_>, %??VecForEach_ID) textequ <ItemReg>
   ifb <Index>
     @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID) textequ GetMemBSS(4)
   else
     @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID) textequ <Index>
   endif
   @CatStr(<??VecForEach_Step_>, %??VecForEach_ID) equ -1 
-  mov eax, Coll.$Obj(Collection).dCount
+  mov eax, TVec.$Obj(%TVectorName).dCount
   mov @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID), eax
   .while eax != 0
     lea xax, [sizeof(TVEC_DATA_TYPE)*xax - sizeof(TVEC_DATA_TYPE)]
-    add xax, Coll.$Obj(Collection).pItems
-    mov $SubReg(xax, sizeof(TVEC_DATA_TYPE)), TVEC_DATA_TYPE ptr [xax]
+    add xax, TVec.$Obj(%TVectorName).pItems
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

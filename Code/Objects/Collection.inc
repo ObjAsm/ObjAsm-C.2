@@ -88,8 +88,6 @@ ObjectEnd
 
 .ColForEach macro Coll:req, Index
   ??ColForEach_ID = ??ColForEach_ID + 1
-  @CatStr(<??ColForEach_ItemReg_>, %??ColForEach_ID) textequ <ItemReg>
-  @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID) textequ GetMemBSS(4)
   ifb <Index>
     @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID) textequ GetMemBSS(4)
   else
@@ -105,7 +103,7 @@ ObjectEnd
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      .ColForEach
+; Macro:      .ColForEachRev
 ; Purpose:    Loop through all items of the collection in reverse order.
 ; Arguments:  Arg1: Collection.
 ;             Arg2: Optional 32 bit index variable/register. Can not be eax!
@@ -114,7 +112,6 @@ endm
 
 .ColForEachRev macro Coll:req, Index
   ??ColForEach_ID = ??ColForEach_ID + 1
-  @CatStr(<??ColForEach_ItemReg_>, %??ColForEach_ID) textequ <ItemReg>
   ifb <Index>
     @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID) textequ GetMemBSS(4)
   else
