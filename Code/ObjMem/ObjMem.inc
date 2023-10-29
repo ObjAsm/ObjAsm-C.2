@@ -963,6 +963,9 @@ if TARGET_PLATFORM eq PLATFORM_WINDOWS
   WndFadeIn proto :HANDLE, :DWORD, :DWORD, :DWORD, :DWORD
   WndFadeOut proto :HANDLE, :DWORD, :DWORD, :DWORD, :DWORD
   DrawTransparentBitmap proto :HANDLE, :HANDLE, :DWORD, :DWORD, :DWORD
+  CreateBitmapFromFileInMem proto :POINTER
+  CreateBitmapFromCompressedFileInRes proto :HINSTANCE, :XWORD
+  CreateIconFromCompressedFileInRes proto :HINSTANCE, :XWORD, :DWORD, :DWORD
   Bmp2Rgn proto :HANDLE, :DWORD
   AreVisualStylesEnabled proto
   SetClientSize proto :HANDLE, :DWORD, :DWORD
@@ -976,7 +979,12 @@ if TARGET_PLATFORM eq PLATFORM_WINDOWS
   IsScrollBarVisible proto :HANDLE, :DWORD
   GetDlgBaseUnits proto :HANDLE
   SendChildrenMessage proto :HANDLE, :DWORD, :WPARAM, :LPARAM
-
+  CompressMem proto :POINTER, :DWORD, :DWORD 
+  CompressMemToFile proto :POINTER, :DWORD, :DWORD, :HANDLE
+  DecompressFromFile proto :HANDLE
+  DecompressMem proto :POINTER, :DWORD, :DWORD
+  DecompressFileFromRes proto :HINSTANCE, :XWORD
+  DecompressFileInMem proto :POINTER, :DWORD
   ErrorMessageBoxA proto :HANDLE, :POINTER, :WORD, :DWORD
   ErrorMessageBoxW proto :HANDLE, :POINTER, :WORD, :DWORD
   if TARGET_STR_TYPE eq STR_TYPE_ANSI

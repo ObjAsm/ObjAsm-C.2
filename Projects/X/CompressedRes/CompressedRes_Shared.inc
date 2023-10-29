@@ -1,30 +1,34 @@
 ; ==================================================================================================
-; Title:      SkinApp_Shared.inc
+; Title:      CompressedRes_Shared.inc
 ; Author:     G. Friedrich
-; Version:    See SkinApp.asm
-; Purpose:    ObjAsm Skined Application.
+; Version:    C.1.0
+; Purpose:    ObjAsm Compressed Resources.
+; Notes:      Version C.1.0, October 2023
+;               - First release.
 ; ==================================================================================================
 
 
 ;General information
-APP_TITLE                     textequ   <Skin Application>
-ABOUT_TEXT                    textequ   <Elastic Skin Engine Demo>
-COPYRIGHT                     textequ   <G. Friedrich   November 2017> 
+APP_TITLE                     textequ   <Compressed Resources>
+ABOUT_TEXT                    textequ   <Compressed Resources>
+COPYRIGHT                     textequ   <G. Friedrich   October 2023> 
 VER_FILEVERSION               equ       1,0,0,0
 VER_FILEVERSION_STR           textequ   <1.0>
 VER_PRODUCTVERSION            equ       1,0,0,0
-VER_PRODUCTVERSION_STR        textequ   <1.0>
+VER_PRODUCTVERSION_STR        equ       <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       21
-BUILD_DATE_STR                textequ   <27.10.2023>
+BUILD_NUMBER                  equ       34
+BUILD_DATE_STR                textequ   <2023-10-29>
 BUILD_BITNESS                 equ       64
-BUILD_MODE                    equ       RLS
+BUILD_MODE                    equ       DBG
 
 ;Menu IDs
 IDM_EXIT                      equ       1000
+IDM_HELP                      equ       1001
 IDM_ABOUT                     equ       1999
 
+IDC_TEXT_ABOUT                equ       100
 
 BUILD_BIN_FORMAT              equ       EXE
 BUILD_BIN_SUFFIX_STR          textequ   <>

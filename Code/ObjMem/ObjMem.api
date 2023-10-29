@@ -458,6 +458,9 @@ IsAdmin
 GetWinVersion, pMajorVarsion, pMinorVersion, pBuildNumber
 LoadCommonControls, dFlags
 DrawTransparentBitmap, hDC, hBitmap, dXStart, dYStart, dTransparentColor
+CreateBitmapFromFileInMem, pBitmapData
+CreateBitmapFromCompressedFileInRes, hInst, xResourceID
+CreateIconFromCompressedFileInRes, hInst, xResourceID, dWidth, dHeight
 Bmp2Rgn, hDC, hRegion, dCombineMode, dTransparentColor
 SysShutdown, dType, dReason
 SysStandby
@@ -482,6 +485,12 @@ NewObjInst, dObjID
 IsScrollBarVisible, hWnd, dScrollbarType
 GetDlgBaseUnits, hDC
 SendChildrenMessage, hWnd, MsgID, wParam, lParam
+CompressMem, pUncompressedData, dUncompressedDataSize, dCompressionAlgorithm
+CompressMemToFile, pUncompressedData, dUncompressedDataSize, dCompressionAlgorithm, hFile
+DecompressFromFile, hFile
+DecompressMem, pCompressedData, dCompressedDataSize, dDecompressionAlgorithm
+DecompressFileFromRes, hInst, xFileResID
+DecompressFileInMem, pCompressedBuffer, dCompressedBufferSize
 UTF8ToWide, pDestination, pSource, dDestBufferSize
 WideToUTF8, pDestination, pSource, dDestBufferSize
 Real4ToHalf, real4

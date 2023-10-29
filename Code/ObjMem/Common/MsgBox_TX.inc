@@ -59,7 +59,7 @@ MBX_CAPTION_HEADER_CHARS = @SizeStr(%MBX_CAPTION_HEADER)
 ; Note:       Caption, text etc. are transferred via a caption string which contains a header and
 ;             the address of a MsgBoxInfo structure in text form.
 
-ProcName proc uses xbx hParent:HANDLE, pText:POINTER, pCaption:POINTER, dFlags:DWORD
+ProcName proc hParent:HANDLE, pText:POINTER, pCaption:POINTER, dFlags:DWORD
   local cTransferInfo[MBX_CAPTION_HEADER_CHARS + XWORD2HEX_MAX_CHARS]:CHR, MBX_Info:MBX_DlgInfo
 
   ;Set system hook

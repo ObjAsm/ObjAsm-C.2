@@ -15,7 +15,7 @@ set UICCompiler="%WINKIT_PATH%\x86\UICC.exe"
 set ResourceCompiler="%OBJASM_PATH%\Build\Tools\ResourceCompiler\rc.exe"
 set EfiImageConverter="%EFI_TOOLKIT_PATH%\build\tools\bin\fwimage.exe"
 REM set Debugger="%MSVS_PATH%\..\..\..\..\..\..\..\Common7\IDE\devenv.exe"
-set Debugger="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\devenv.exe"
+set Debugger="C:\Program Files (x86)\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe"
 if %SYSTEM_BITNESS%==32 (
   set Assembler="%OBJASM_PATH%\Build\Tools\Assembler\UASM32.exe"
 ) else (
