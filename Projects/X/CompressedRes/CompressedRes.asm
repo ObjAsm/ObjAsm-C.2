@@ -33,7 +33,7 @@ include CompressedRes_Main.inc                          ;Application object
 .code
 start proc                                              ;Program entry point
   SysInit                                               ;Runtime initialization of OOP model
-;  DbgClearAll
+  DbgClearAll
 
   OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
   OCall $ObjTmpl(Application)::Application.Run          ;Execute application

@@ -146,7 +146,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=29
+MilestoneOnDateDate=4
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -183,14 +183,14 @@ CompressionLevel=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,7544
-1=0,0,0,0,855
+2=0,0,0,0,9880
+1=0,0,0,0,529
 6=0,0,1456,414,31853
-4=0,0,0,0,863
+4=0,0,0,0,256
 31=0,0,1213,691,1243
 8=0,0,777,591,20469
 7=0,0,0,0,151
-9=0,0,0,0,153
+9=0,0,0,0,0
 10=0,0,0,0,8243
 5=0,0,0,0,152
 3=0,0,0,0,202
@@ -210,7 +210,7 @@ CompressionLevel=0
 21=0,0,0,0,146
 22=0,0,0,0,153
 26=
-27=
+27=0,0,0,0,1127
 29=
 30=
 32=0,0,0,0,17666
@@ -232,16 +232,16 @@ CompressionLevel=0
 0=
 
 [Find]
-1="ICON_SIZE"
-2="$OfsCStr("ICON_LZMS")"
-3="ObjAsm CompressedRes"
-4="CompRes_"
-5="CompRes"
-6="xDataSize"
-7="dDataSize"
-8="pData"
-9="xCompressedRessedDataSize"
-10="DeCompressedRessFileRes"
+1="OnPaint"
+2="pRsrcDirectory"
+3="pRsrcIconDirectory"
+4="pRsrcCursorDirectory"
+5="Icon"
+6="hIcon"
+7="CreateIconFromCompressedFileInRes"
+8="cursor"
+9="ObjAsm CompressedRes"
+10="CompRes_"
 [Collapse]
 1=
 2=
@@ -352,12 +352,12 @@ CompressionLevel=0
 5=,,
 15=
 25=
-27=
+27=,
 32=,,
 [AutoLoad]
-AutoLoad=1,2,4,3,11
+AutoLoad=1,2,4,3
 [PTimer]
-PTimer=1070019761
+PTimer=1069215260
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

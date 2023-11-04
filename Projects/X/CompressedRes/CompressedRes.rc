@@ -3,13 +3,13 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Purpose:    ObjAsm resource file.
-; Notes:      Version C.1.0, October 2017
+; Notes:      Version C.1.0, October 2023
 ;               - First release.
 ; ==================================================================================================
 
 
 #include "Resource.h"               //Windows resource definitions
-#include "CompressedRes_Shared.rc"        //Application shared definitions
+#include "CompressedRes_Shared.rc"  //Application shared definitions
 #include "VER\Version.rc"           //Application version definition
 #include "MFT\Manifest_Invoker.rc"  //Application manifest definition
 
@@ -18,10 +18,18 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 // Icons ------------------------------------------------------------------------------------------
 ICON_APP    ICON    DISCARDABLE   "ICO\OA.ico"
+
+
+// Compressed Icons -------------------------------------------------------------------------------
 ICON_LZMS   RCDATA  DISCARDABLE   "Res\GroupRsrc.ico.lzms"
 
-// Bitmaps ----------------------------------------------------------------------------------------
+
+// Compressed Bitmaps -----------------------------------------------------------------------------
 BMP_BACKGROUND_HUFF RCDATA DISCARDABLE "Res\WndBkgnd.bmp.huff"
+
+
+// Compressed Cursors -----------------------------------------------------------------------------
+CUR_PERSON_LZMS RCDATA DISCARDABLE "Res\Person_l.cur.lzms"
 
 
 // Dialogs ----------------------------------------------------------------------------------------

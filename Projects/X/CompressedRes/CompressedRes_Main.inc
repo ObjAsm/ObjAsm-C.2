@@ -17,9 +17,10 @@ Object Application, MySdiAppID, SdiApp
   RedefineMethod    Init
   StaticMethod      Startup
 
-  VirtualEvent      OnCommand,  WM_COMMAND
-  VirtualEvent      OnClose,    WM_CLOSE, WM_QUERYENDSESSION
-  VirtualEvent      OnPaint,    WM_PAINT
+  VirtualEvent      OnCommand,    WM_COMMAND
+  VirtualEvent      OnClose,      WM_CLOSE, WM_QUERYENDSESSION
+  VirtualEvent      OnMouseWheel, WM_MOUSEWHEEL
+  VirtualEvent      OnPaint,      WM_PAINT
 
   DefineVariable    hIcon256,      HICON,    0
   DefineVariable    hIcon128,      HICON,    0
@@ -29,7 +30,13 @@ Object Application, MySdiAppID, SdiApp
   DefineVariable    hIcon32,       HICON,    0
   DefineVariable    hIcon24,       HICON,    0
   DefineVariable    hIcon16,       HICON,    0
+
+  DefineVariable    dCursorSizeIndex,   DWORD,   0
+  DefineVariable    dCursorSize,   DWORD,   32
+
 ObjectEnd                                               ;Ends object definition
+
+ICON_SIZE equ 0
 
 .code
 ; ==================================================================================================
@@ -61,8 +68,9 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method Application.Init, uses xbx xsi
+Method Application.Init, uses xsi
   local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD
+;  local hFileSrc:HANDLE, hFileDst:HANDLE, dSrcDataSize:DWORD, pSrcDataBuffer:POINTER, pDstDataBuffer:POINTER, dDstDataSize:DWORD
 
   SetObject xsi
   ACall xsi.Init
@@ -76,15 +84,14 @@ Method Application.Init, uses xbx xsi
                          offset szApplication, offset szAppTitle, WS_OVERLAPPEDWINDOW, \
                          dWndPosX, dWndPosY, dWndWidth, dWndHeight, NULL, NULL, hInstance, pSelf
 
-  mov xbx, $OfsCStr("ICON_LZMS")
-  mov [xsi].hIcon256, $invoke(CreateIconFromCompressedFileInRes, hInstance, xbx, 256, 256)
-  mov [xsi].hIcon128, $invoke(CreateIconFromCompressedFileInRes, hInstance, xbx, 128, 128)
-  mov [xsi].hIcon96,  $invoke(CreateIconFromCompressedFileInRes, hInstance, xbx,  96,  96)
-  mov [xsi].hIcon64,  $invoke(CreateIconFromCompressedFileInRes, hInstance, xbx,  64,  64)
-  mov [xsi].hIcon48,  $invoke(CreateIconFromCompressedFileInRes, hInstance, xbx,  48,  48)
-  mov [xsi].hIcon32,  $invoke(CreateIconFromCompressedFileInRes, hInstance, xbx,  32,  32)
-  mov [xsi].hIcon24,  $invoke(CreateIconFromCompressedFileInRes, hInstance, xbx,  24,  24)
-  mov [xsi].hIcon16,  $invoke(CreateIconFromCompressedFileInRes, hInstance, xbx,  16,  16)
+  mov [xsi].hIcon256, $invoke(CreateIconFromCompressedFileInRes, hInstance, $OfsCStr("ICON_LZMS"), 256, 256)
+  mov [xsi].hIcon128, $invoke(CreateIconFromCompressedFileInRes, hInstance, $OfsCStr("ICON_LZMS"), 128, 128)
+  mov [xsi].hIcon96,  $invoke(CreateIconFromCompressedFileInRes, hInstance, $OfsCStr("ICON_LZMS"),  96,  96)
+  mov [xsi].hIcon64,  $invoke(CreateIconFromCompressedFileInRes, hInstance, $OfsCStr("ICON_LZMS"),  64,  64)
+  mov [xsi].hIcon48,  $invoke(CreateIconFromCompressedFileInRes, hInstance, $OfsCStr("ICON_LZMS"),  48,  48)
+  mov [xsi].hIcon32,  $invoke(CreateIconFromCompressedFileInRes, hInstance, $OfsCStr("ICON_LZMS"),  32,  32)
+  mov [xsi].hIcon24,  $invoke(CreateIconFromCompressedFileInRes, hInstance, $OfsCStr("ICON_LZMS"),  24,  24)
+  mov [xsi].hIcon16,  $invoke(CreateIconFromCompressedFileInRes, hInstance, $OfsCStr("ICON_LZMS"),  16,  16)
 
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL          ;Show the window
   invoke UpdateWindow, [xsi].hWnd                       ;Update if necessary
@@ -144,6 +151,40 @@ Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Application.OnMouseWheel
+; Purpose:    Event procedure for WM_MOUSEWHEEL message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = Zero if handled.
+
+Method Application.OnMouseWheel, uses xsi, wParam:WPARAM, lParam:LPARAM
+  local Pnt:POINT, PntS:POINTS
+
+  SetObject xsi
+  mov xcx, wParam
+  sar ecx, 16
+  .if SDWORD ptr ecx > 0
+    .if [xsi].dCursorSize < 512
+      inc [xsi].dCursorSize
+    .endif
+  .else
+    .if [xsi].dCursorSize > 16
+      dec [xsi].dCursorSize
+    .endif
+  .endif
+  mov eax, [xsi].dCursorSize
+  invoke CreateCursorFromCompressedFileInRes, hInstance, $OfsCStr("CUR_PERSON_LZMS"), eax, eax
+  invoke SetClassLongPtr, [xsi].hWnd, GCLP_HCURSOR, xax
+  invoke DestroyCursor, xax
+
+  ;Show the new cursor shape
+  invoke GetCursorPos, addr Pnt
+  invoke SetCursorPos, Pnt.x, Pnt.y
+
+  xor eax, eax
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -158,25 +199,25 @@ Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
 
   invoke GetClientRect, [xsi].hWnd, addr Rct
   invoke DrawEdge, hDC, addr Rct, EDGE_SUNKEN, BF_RECT
-  
+
   PositionX = 20
   PositionY = 10
-  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon256, 0, 0, 0, 0, DI_NORMAL
+  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon256, ICON_SIZE, ICON_SIZE, 0, 0, DI_NORMAL
   PositionX = PositionX + 256 + 30
-  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon128, 0, 0, 0, 0, DI_NORMAL
+  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon128, ICON_SIZE, ICON_SIZE, 0, 0, DI_NORMAL
   PositionY = PositionY + 128 + 10
-  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon96, 0, 0, 0, 0, DI_NORMAL
+  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon96, ICON_SIZE, ICON_SIZE, 0, 0, DI_NORMAL
   PositionX = PositionX + 128 + 30
   PositionY = 10
-  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon64, 0, 0, 0, 0, DI_NORMAL
+  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon64, ICON_SIZE, ICON_SIZE, 0, 0, DI_NORMAL
   PositionY = PositionY + 64 + 10
-  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon48, 0, 0, 0, 0, DI_NORMAL
+  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon48, ICON_SIZE, ICON_SIZE, 0, 0, DI_NORMAL
   PositionY = PositionY + 48 + 10
-  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon32, 0, 0, 0, 0, DI_NORMAL
+  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon32, ICON_SIZE, ICON_SIZE, 0, 0, DI_NORMAL
   PositionY = PositionY + 32 + 10
-  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon24, 0, 0, 0, 0, DI_NORMAL
+  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon24, ICON_SIZE, ICON_SIZE, 0, 0, DI_NORMAL
   PositionY = PositionY + 24 + 10
-  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon16, 0, 0, 0, 0, DI_NORMAL
+  invoke DrawIconEx, hDC, PositionX, PositionY, [xsi].hIcon16, ICON_SIZE, ICON_SIZE, 0, 0, DI_NORMAL
 
   invoke EndPaint, [xsi].hWnd, addr PS
   xor eax, eax
@@ -197,14 +238,14 @@ Method Application.Startup
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
   m2m WC.hInstance, hInstance, xax
-;  invoke LoadBitmap, hInstance, $OfsCStr("BMP_BACKGROUND")
   invoke CreateBitmapFromCompressedFileInRes, hInstance, $OfsCStr("BMP_BACKGROUND_HUFF")
   mov WC.hbrBackground, $invoke(CreatePatternBrush, xax)
   c2m WC.lpszMenuName, $OfsCStr("MENU_APP"), rax
   c2m WC.lpszClassName, offset szApplication, rax
   mov WC.hIcon, $invoke(LoadIcon, hInstance, offset szIcoName)
+  invoke CreateCursorFromCompressedFileInRes, hInstance, $OfsCStr("CUR_PERSON_LZMS"), 32, 32
+  mov WC.hCursor, xax
 
-  mov WC.hCursor, $invoke(LoadCursor, 0, IDC_ARROW)
   m2z WC.hIconSm
 
   invoke RegisterClassEx, addr WC
