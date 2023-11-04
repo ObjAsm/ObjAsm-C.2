@@ -34,7 +34,7 @@ WSF_DEBUG             equ   BIT00
 ; Object:   ScriptHost
 ; Purpose:  Implement a host container object for MS-Script engine.
 ;
-; links:    http://msdn.microsoft.com/en-us/library/ms950396.aspx
+; Links:    http://msdn.microsoft.com/en-us/library/ms950396.aspx
 ;           http://www.microsoft.com/technet/scriptcenter/hubs/vista.mspx
 ;           http://www.codeproject.com/KB/COM/com_in_c6.aspx
 ;           http://www.codeguru.com/cpp/com-tech/activex/scripting/article.php/c2583

@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      CreateIconFromCompressedFileInRes_X.inc
+; Title:      CreateCursorFromCompressedFileInRes_X.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2023
@@ -13,23 +13,23 @@
 % include &ObjMemPath&Common\CursorIconStructs.inc
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  CreateIconFromCompressedFileInRes
-; Purpose:    Create an icon from a compressed icon file stored as RCDATA resource. 
+; Procedure:  CreateCursorFromCompressedFileInRes
+; Purpose:    Create an cursor from a compressed cursor file stored as RCDATA resource. 
 ;             Compression should be done using a Microsoft compression algorithm: XPRESS, XPRESS
 ;             with Huffman encoding, MSZIP or LZMS.
 ; Arguments:  Arg1: hInstance.
 ;             Arg2: Resource ID.
-;             Arg3: Desired icon width.
-;             Arg3: Desired icon height.
-; Return:     xax = Icon HANDLE.
+;             Arg3: Desired cursor width.
+;             Arg3: Desired cursor height.
+; Return:     xax = Cursor HANDLE.
 
 align ALIGN_CODE
-CreateIconFromCompressedFileInRes proc uses xbx xdi xsi hInst:HINSTANCE, xResourceID:XWORD, \
-                                                        dDesiredCx:DWORD, dDesiredCy:DWORD
+CreateCursorFromCompressedFileInRes proc uses xbx xdi xsi hInst:HINSTANCE, xResourceID:XWORD, \
+                                                          dDesiredCx:DWORD, dDesiredCy:DWORD
   local pFileData:POINTER, dFileDataSize:DWORD
-  local hIcon:HICON, pRsrcDirectory:PGRP_HEADER
+  local hCursor:HCURSOR, pRsrcDirectory:PGRP_HEADER
 
-  mov hIcon, 0
+  mov hCursor, 0
 if TARGET_BITNESS eq 32
   invoke DecompressFileFromRes, hInst, xResourceID
 else
@@ -39,7 +39,7 @@ endif
     mov pFileData, xax
     mov xsi, xax
     mov dFileDataSize, ecx
-    .if WORD ptr [xsi].GRP_HEADER.wResType == RES_ICON
+    .if WORD ptr [xsi].GRP_HEADER.wResType == RES_CURSOR
       ;Replicate in memory the structure created by the resource compiler
       movzx edi, [xsi].GRP_HEADER.wResCount
       mov eax, sizeof(GRP_RSRC_ENTRY)
@@ -59,7 +59,7 @@ endif
           add xsi, sizeof(GRP_FILE_ENTRY)
           inc ebx
         .endw
-        invoke LookupIconIdFromDirectoryEx, pRsrcDirectory, TRUE, \
+        invoke LookupIconIdFromDirectoryEx, pRsrcDirectory, FALSE, \
                                             dDesiredCx, dDesiredCy, LR_DEFAULTCOLOR
         mov ecx, sizeof(GRP_FILE_ENTRY)
         mul xcx
@@ -67,14 +67,20 @@ endif
         add xax, sizeof(GRP_HEADER)
         mov ecx, [xax].GRP_FILE_ENTRY.dOffset
         add xcx, pFileData
-        invoke CreateIconFromResourceEx, xcx, [xax].GRP_FILE_ENTRY.dwBytesInRes, TRUE, 30000h, \
+        ;Prepend LOCALHEADER to the cursor data & adjust the data size
+        sub xcx, sizeof LOCALHEADER
+        m2m [xcx].LOCALHEADER.wHotSpotX, [xax].GRP_FILE_ENTRY.wHotSpotX, dx
+        m2m [xcx].LOCALHEADER.wHotSpotY, [xax].GRP_FILE_ENTRY.wHotSpotY, dx
+        mov edx, [xax].GRP_FILE_ENTRY.dwBytesInRes
+        add edx, sizeof LOCALHEADER 
+        invoke CreateIconFromResourceEx, xcx, edx, FALSE, 30000h, \
                                          dDesiredCx, dDesiredCy, LR_DEFAULTCOLOR or LR_SHARED
-        mov hIcon, xax
+        mov hCursor, xax
         MemFree pRsrcDirectory
       .endif
       MemFree pFileData
     .endif
   .endif
-  mov xax, hIcon
+  mov xax, hCursor
   ret
-CreateIconFromCompressedFileInRes endp
+CreateCursorFromCompressedFileInRes endp

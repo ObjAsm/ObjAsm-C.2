@@ -965,6 +965,7 @@ if TARGET_PLATFORM eq PLATFORM_WINDOWS
   DrawTransparentBitmap proto :HANDLE, :HANDLE, :DWORD, :DWORD, :DWORD
   CreateBitmapFromFileInMem proto :POINTER
   CreateBitmapFromCompressedFileInRes proto :HINSTANCE, :XWORD
+  CreateCursorFromCompressedFileInRes proto :HINSTANCE, :XWORD, :DWORD, :DWORD
   CreateIconFromCompressedFileInRes proto :HINSTANCE, :XWORD, :DWORD, :DWORD
   Bmp2Rgn proto :HANDLE, :DWORD
   AreVisualStylesEnabled proto
