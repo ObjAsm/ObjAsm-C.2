@@ -122,8 +122,11 @@ Object DebugCenter, DEBUG_CENTER_ID, MdiApp                     ;MDI application
   DefineVariable    dBmpZoomFactor,     DWORD,      BMP_ZOOM_DEFAULT
 
   DefineVariable    PrintMargin,        RECT,       {2500, 1000, 1000, 1000}
-  DefineVariable    hDevMode,           HANDLE,     0
-  DefineVariable    hDevNames,          HANDLE,     0
+  DefineVariable    hDevMode,           HGLOBAL,    0
+  DefineVariable    hDevNames,          HGLOBAL,    0
+
+  Embed   Server,   HttpServer
+
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -249,6 +252,8 @@ Method DebugCenter.Done, uses xsi
   Destroy [xsi].pToolbarWindow
   Destroy [xsi].pXMenu
   Destroy [xsi].pMagnetism
+  
+  OCall [xsi].Server::HttpServer.Done
 
   ACall xsi.Done
 MethodEnd
@@ -455,6 +460,12 @@ Method DebugCenter.Init, uses xbx xdi xsi
                          0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT, \
                          NULL, [xsi].hMenuInit, hInstance, pSelf
   .if eax != 0                                          ;Check if we could create the main window
+    ;Since DebugCenter can be executed with elevated privileges, e.g. to run the
+    ;built-in HTTP server, the elevated process no longer receives messages from
+    ;less privileged processes. ChangeWindowMessageFilterEx opens a loophole for
+    ;WM_COPYDATA so that it can be recieved again.
+    invoke ChangeWindowMessageFilterEx, [xsi].hWnd, WM_COPYDATA, MSGFLT_ALLOW, NULL
+
     ;Create Client window
     mov [xsi].pClientWnd, $New(DbgMdiClient)
     OCall [xsi].pClientWnd::DbgMdiClient.Init, xsi
@@ -488,6 +499,13 @@ Method DebugCenter.Init, uses xbx xdi xsi
     OCall [xsi].pMagnetism::Magnetism.Init, xsi, [xsi].hWnd, 10
 
     OCall xsi.ManageOptions, 0
+
+    OCall [xsi].Server::HttpServer.Init, xsi
+    ;Current PC IP-address
+    OCall [xsi].Server::HttpServer.AddURL, $OfsCStrW("http://+:&DBG_IP_PORT&/")
+    .if [xsi].Server.dErrorCode == OBJ_OK
+      OCall [xsi].Server::HttpServer.Run
+    .endif
   .endif
 MethodEnd
 
@@ -1108,6 +1126,7 @@ Method DebugCenter.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local CFD:CHARFORMAT, DCI:DBG_CHILD_INFO, dDbgCmd:DWORD, dParam1:DWORD, dParam2:DWORD, FWI:FLASHWINFO
 
   SetObject xsi
+  
   mov xcx, lParam
   .if [xcx].COPYDATASTRUCT.dwData == DGB_MSG_ID         ;Yes!, our message...
     mov xbx, [xcx].COPYDATASTRUCT.lpData
@@ -1315,6 +1334,7 @@ Method DebugCenter.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
         .elseif eax == DBG_CMD_CLOSE_WND
           invoke Shell_NotifyIcon, NIM_DELETE, addr [xsi].NotifyIconData  ;If exist, delete Tray Icon
+          ;Bypass the Close dialog window
           invoke DefFrameProc, [xsi].hWnd, [xdi].$Obj(DbgMdiClient).hWnd, WM_CLOSE, 0, 0
 
         .endif

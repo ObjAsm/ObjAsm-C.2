@@ -400,12 +400,12 @@ ifndef __HTTP_H__
       _HTTP_BYTE_RANGE typedef HTTP_BYTE_RANGE
       PHTTP_BYTE_RANGE typedef ptr HTTP_BYTE_RANGE
       
-      HTTP_VERSION struct 8
+      HTTP_VERSION_ struct 8
         MajorVersion USHORT ?
         MinorVersion USHORT ?
-      HTTP_VERSION ends
-      _HTTP_VERSION typedef HTTP_VERSION
-      PHTTP_VERSION typedef ptr HTTP_VERSION
+      HTTP_VERSION_ ends
+      _HTTP_VERSION typedef HTTP_VERSION_
+      PHTTP_VERSION typedef ptr HTTP_VERSION_
       
       HTTP_VERSION_UNKNOWN equ { 0, 0 }
       HTTP_VERSION_0_9 equ { 0, 9 }
@@ -850,7 +850,7 @@ ifndef __HTTP_H__
         ConnectionId HTTP_CONNECTION_ID ?
         RequestId HTTP_REQUEST_ID ?
         UrlContext HTTP_URL_CONTEXT ?
-        Version HTTP_VERSION <>
+        Version HTTP_VERSION_ <>
         Verb HTTP_VERB ?
         UnknownVerbLength USHORT ?
         RawUrlLength USHORT ?
@@ -888,7 +888,7 @@ ifndef __HTTP_H__
       HTTP_REQUEST_FLAG_HTTP2 equ 00000004h
       HTTP_RESPONSE_V1 struct 8
         Flags ULONG ?
-        Version HTTP_VERSION <>
+        Version HTTP_VERSION_ <>
         StatusCode USHORT ?
         ReasonLength USHORT ?
         pReason PCSTR ?

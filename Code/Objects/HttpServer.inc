@@ -128,9 +128,9 @@ InitHttpResponse macro Response, StatusCode, pReason
   mov Response.ReasonLength, ax
 endm
 
-AddKnownHeader macro Response, HeaderId, pRawVal
-  m2m Response.Headers.KnownHeaders[HeaderId*sizeof(HTTP_KNOWN_HEADER)].pRawValue, pRawVal, xcx
-  invoke StrSizeA, pRawVal                              ;Size in bytes including ZTC
+AddKnownHeader macro Response, HeaderId, pRawValA
+  m2m Response.Headers.KnownHeaders[HeaderId*sizeof(HTTP_KNOWN_HEADER)].pRawValue, pRawValA, xcx
+  invoke StrSizeA, pRawValA                             ;Size in bytes including ZTC
   dec eax                                               ;Discard the ZTC
   mov Response.Headers.KnownHeaders[HeaderId*sizeof(HTTP_KNOWN_HEADER)].RawValueLength, ax
 endm
@@ -233,6 +233,7 @@ Method HttpServer.ReceiveRequests, uses xsi
                                   $OfsCStrA("OK"), $OfsCStrA("Hey, you hit the server.", 10, 13)
 
         .elseif [xcx].HTTP_REQUEST.Verb == HttpVerbPOST
+          int 3
           OCall xsi.SendPostResponse, pRequest
 
         .else

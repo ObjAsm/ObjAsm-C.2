@@ -148,9 +148,11 @@ DBG_DEV_NUL               equ   00h
 DBG_DEV_WIN_LOG           equ   01h
 DBG_DEV_WIN_CON           equ   02h
 DBG_DEV_WIN_DC            equ   03h       ;DebugCenter Windows application
-DBG_DEV_UEFI_CON          equ   04h
-;DBG_DEV_UEFI_LOG          equ   05h
-;DBG_DEV_UEFI_HTTP         equ   06h       ;Remote connection via HTTP, not implemented
+DBG_DEV_WIN_NET           equ   04h       ;Remote connection via HTTP
+
+DBG_DEV_UEFI_CON          equ   10h
+;DBG_DEV_UEFI_LOG          equ   11h
+;DBG_DEV_UEFI_NET          equ   12h       ;Remote connection via HTTP, not implemented
 
 ;Debug options
 DBG_OPT_NONE              equ   00h
@@ -188,7 +190,7 @@ DBG_FLOAT_BUFFERSIZE      equ   32        ;(DBG_FLOAT_RESOLUTION + 9) to keep th
 if DEBUGGING
   CStrW szDbgErr,         "Debug Error"
   CStrW szDbgObjErr,      "Object Error"
-  CStrW szDbgComErr,      "DebugCenter communication failed due to low system resources"
+  CStrW szDbgComErr,      "DebugCenter communication failed"
   CStrW szResGuard,       "ResGuard"
 
   externdef dDbgDev:DWORD                 ;Exports dDbgDev symbol, defined in SysSetup
@@ -450,7 +452,7 @@ endm
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      DbgOutHex
 ; Purpose:    Output a number in hexadecimal on the debug output device.
-; Arguments:  Arg1: Text displayed befor the value.
+; Arguments:  Arg1: Text displayed before the value.
 ;             Arg2: Output color of PreText (defaut is black).
 ;             Arg3: Symbol. Value or address must be stored in rbx/ebx/bx/bl.
 ;             Arg4: Output color (default = black).
@@ -580,15 +582,25 @@ endm
 
 DbgLine macro Dest
   if DEBUGGING
-    DbgSaveContext
-    DbgSetDestWnd Dest
-    ifidn DBG_DEVICE, <WND>
-      invoke DbgOutCmd, DBG_CMD_SINGLE_LINE, DbgColorLine, DbgColorBackground, ??DbgDstWnd
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_SINGLE_LINE, DbgColorLine, DbgColorBackground, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_SINGLE_LINE, DbgColorLine, DbgColorBackground, ??DbgDstWnd
+        DbgLoadContext
+      endif
     else
+      DbgSaveContext
+      DbgSetDestWnd Dest
       invoke DbgOutTextA, $OfsCStrA("-------------------------------------------------------"), \
                           DbgColorLine, DbgColorBackground, DBG_EFFECT_NEWLINE, ??DbgDstWnd
+      DbgLoadContext
     endif
-    DbgLoadContext
   endif
 endm
 
@@ -599,15 +611,25 @@ endm
 
 DbgLine2 macro Dest
   if DEBUGGING
-    DbgSaveContext
-    DbgSetDestWnd Dest
-    ifidn DBG_DEVICE, <WND>
-      invoke DbgOutCmd, DBG_CMD_DOUBLE_LINE, DbgColorLine, DbgColorBackground, ??DbgDstWnd
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_DOUBLE_LINE, DbgColorLine, DbgColorBackground, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_DOUBLE_LINE, DbgColorLine, DbgColorBackground, ??DbgDstWnd
+        DbgLoadContext
+      endif
     else
+      DbgSaveContext
+      DbgSetDestWnd Dest
       invoke DbgOutTextA, $OfsCStrA("======================================================="), \
                           DbgColorLine, DbgColorBackground, DBG_EFFECT_NEWLINE, ??DbgDstWnd
+      DbgLoadContext
     endif
-    DbgLoadContext
   endif
 endm
 
@@ -619,17 +641,19 @@ endm
 
 DbgText macro Var, Dest
   if DEBUGGING
-    DbgSaveContext
-    DbgSetDestWnd Dest
-    ifb <&Var>
-      invoke DbgOutTextA, $OfsCStrA(@CatStr(<!">,<%@FileCur>,<!">)), \
-                          DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
-    else
-      invoke DbgOutTextA, $OfsCStrA($Esc(<&Var>)), \
-                          DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      DbgSaveContext
+      DbgSetDestWnd Dest
+      ifb <&Var>
+        invoke DbgOutTextA, $OfsCStrA(@CatStr(<!">,<%@FileCur>,<!">)), \
+                            DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+      else
+        invoke DbgOutTextA, $OfsCStrA($Esc(<&Var>)), \
+                            DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+      endif
+      DbgShowSrcInfo ??DbgDstWnd
+      DbgLoadContext
     endif
-    DbgShowSrcInfo ??DbgDstWnd
-    DbgLoadContext
   endif
 endm
 
@@ -700,11 +724,18 @@ endm
 
 DbgBkgndTxt macro NewBackColor:=<DbgColorBackground>, Dest
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      DbgSetDestWnd Dest
-      invoke DbgOutCmd, DBG_CMD_SET_BKGND_TXT, NewBackColor, 0, ??DbgDstWnd
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_SET_BKGND_TXT, NewBackColor, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_SET_BKGND_TXT, NewBackColor, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -717,11 +748,18 @@ endm
 
 DbgBkgndBmp macro NewBackColor:=<DbgColorBackground>, Dest
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      DbgSetDestWnd Dest
-      invoke DbgOutCmd, DBG_CMD_SET_BKGND_BMP, NewBackColor, 0, ??DbgDstWnd
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_SET_BKGND_BMP, NewBackColor, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_SET_BKGND_BMP, NewBackColor, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -734,12 +772,20 @@ endm
 
 DbgBkgnd macro NewBackColor:=<DbgColorBackground>, Dest
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      DbgSetDestWnd Dest
-      invoke DbgOutCmd, DBG_CMD_SET_BKGND_TXT, NewBackColor, 0, ??DbgDstWnd
-      invoke DbgOutCmd, DBG_CMD_SET_BKGND_BMP, NewBackColor, 0, ??DbgDstWnd
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_SET_BKGND_TXT, NewBackColor, 0, ??DbgDstWnd
+        invoke DbgOutCmd, DBG_CMD_SET_BKGND_BMP, NewBackColor, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_SET_BKGND_TXT, NewBackColor, 0, ??DbgDstWnd
+        invoke DbgOutCmd, DBG_CMD_SET_BKGND_BMP, NewBackColor, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -752,10 +798,16 @@ endm
 
 DbgFlashWnd macro Flags, Reps
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      invoke DbgOutCmd, DBG_CMD_FLASH_WINDOW, Flags, Reps, NULL
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_FLASH_WINDOW, Flags, Reps, NULL
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_FLASH_WINDOW, Flags, Reps, NULL
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -768,10 +820,16 @@ endm
 
 DbgFlashMenu macro MenuColor, Reps, Dest
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      invoke DbgOutCmd, DBG_CMD_FLASH_MENU, MenuColor, Reps, NULL
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_FLASH_MENU, MenuColor, Reps, NULL
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_FLASH_MENU, MenuColor, Reps, NULL
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -783,10 +841,16 @@ endm
 
 DbgTileHor macro
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      invoke DbgOutCmd, DBG_CMD_CHILDREN_TILE_HOR, 0, 0, NULL
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_CHILDREN_TILE_HOR, 0, 0, NULL
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_CHILDREN_TILE_HOR, 0, 0, NULL
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -798,10 +862,16 @@ endm
 
 DbgTileVer macro
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      invoke DbgOutCmd, DBG_CMD_CHILDREN_TILE_VER, 0, 0, NULL
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_CHILDREN_TILE_VER, 0, 0, NULL
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_CHILDREN_TILE_VER, 0, 0, NULL
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -813,10 +883,16 @@ endm
 
 DbgCascade macro
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      invoke DbgOutCmd, DBG_CMD_CHILDREN_CASCADE, 0, 0, NULL
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_CHILDREN_CASCADE, 0, 0, NULL
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_CHILDREN_CASCADE, 0, 0, NULL
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -828,10 +904,16 @@ endm
 
 DbgArrange macro
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      invoke DbgOutCmd, DBG_CMD_ICONS_ARRANGE, 0, 0, NULL
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_ICONS_ARRANGE, 0, 0, NULL
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_ICONS_ARRANGE, 0, 0, NULL
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -843,11 +925,18 @@ endm
 
 DbgZoomInTxt macro Dest
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      DbgSetDestWnd Dest
-      invoke DbgOutCmd, DBG_CMD_ZOOM_IN_TXT, 0, 0, ??DbgDstWnd
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_ZOOM_IN_TXT, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_ZOOM_IN_TXT, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -859,11 +948,18 @@ endm
 
 DbgZoomInBmp macro Dest
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      DbgSetDestWnd Dest
-      invoke DbgOutCmd, DBG_CMD_ZOOM_IN_BMP, 0, 0, ??DbgDstWnd
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_ZOOM_IN_BMP, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_ZOOM_IN_BMP, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -875,12 +971,20 @@ endm
 
 DbgZoomIn macro Dest
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      DbgSetDestWnd Dest
-      invoke DbgOutCmd, DBG_CMD_ZOOM_IN_TXT, 0, 0, ??DbgDstWnd
-      invoke DbgOutCmd, DBG_CMD_ZOOM_IN_BMP, 0, 0, ??DbgDstWnd
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_ZOOM_IN_TXT, 0, 0, ??DbgDstWnd
+        invoke DbgOutCmd, DBG_CMD_ZOOM_IN_BMP, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_ZOOM_IN_TXT, 0, 0, ??DbgDstWnd
+        invoke DbgOutCmd, DBG_CMD_ZOOM_IN_BMP, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -892,11 +996,18 @@ endm
 
 DbgZoomOutTxt macro Dest
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      DbgSetDestWnd Dest
-      invoke DbgOutCmd, DBG_CMD_ZOOM_OUT_TXT, 0, 0, ??DbgDstWnd
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_ZOOM_OUT_TXT, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_ZOOM_OUT_TXT, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -908,11 +1019,18 @@ endm
 
 DbgZoomOutBmp macro Dest
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      DbgSetDestWnd Dest
-      invoke DbgOutCmd, DBG_CMD_ZOOM_OUT_BMP, 0, 0, ??DbgDstWnd
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_ZOOM_OUT_BMP, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_ZOOM_OUT_BMP, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -924,12 +1042,20 @@ endm
 
 DbgZoomOut macro Dest
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      DbgSetDestWnd Dest
-      invoke DbgOutCmd, DBG_CMD_ZOOM_OUT_TXT, 0, 0, ??DbgDstWnd
-      invoke DbgOutCmd, DBG_CMD_ZOOM_OUT_BMP, 0, 0, ??DbgDstWnd
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_ZOOM_OUT_TXT, 0, 0, ??DbgDstWnd
+        invoke DbgOutCmd, DBG_CMD_ZOOM_OUT_BMP, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_ZOOM_OUT_TXT, 0, 0, ??DbgDstWnd
+        invoke DbgOutCmd, DBG_CMD_ZOOM_OUT_BMP, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -941,11 +1067,18 @@ endm
 
 DbgFrontTxt macro Dest
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      DbgSetDestWnd Dest
-      invoke DbgOutCmd, DBG_CMD_FRONT_TXT, 0, 0, ??DbgDstWnd
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_FRONT_TXT, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_FRONT_TXT, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -957,11 +1090,18 @@ endm
 
 DbgFrontBmp macro Dest
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      DbgSetDestWnd Dest
-      invoke DbgOutCmd, DBG_CMD_FRONT_BMP, 0, 0, ??DbgDstWnd
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_FRONT_BMP, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_FRONT_BMP, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -973,12 +1113,20 @@ endm
 
 DbgFront macro Dest
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      DbgSetDestWnd Dest
-      invoke DbgOutCmd, DBG_CMD_FRONT_BMP, 0, 0, ??DbgDstWnd
-      invoke DbgOutCmd, DBG_CMD_FRONT_TXT, 0, 0, ??DbgDstWnd
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_FRONT_BMP, 0, 0, ??DbgDstWnd
+        invoke DbgOutCmd, DBG_CMD_FRONT_TXT, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_FRONT_BMP, 0, 0, ??DbgDstWnd
+        invoke DbgOutCmd, DBG_CMD_FRONT_TXT, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -990,10 +1138,16 @@ endm
 
 DbgCloseWnd macro Arg:=<TRUE>
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      invoke DbgOutCmd, DBG_CMD_CLOSE_WND, 0, 0, NULL
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_CLOSE_WND, 0, 0, NULL
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_CLOSE_WND, 0, 0, NULL
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -1005,10 +1159,16 @@ endm
 
 DbgPinWnd macro Arg:=<TRUE>
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      invoke DbgOutCmd, DBG_CMD_PIN_WND, Arg, 0, NULL
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_PIN_WND, Arg, 0, NULL
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_PIN_WND, Arg, 0, NULL
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -1020,11 +1180,18 @@ endm
 
 DbgFrontWnd macro Dest
   if DEBUGGING
-    ifidn DBG_DEVICE, <WND>
-      DbgSaveContext
-      DbgSetDestWnd Dest
-      invoke DbgOutCmd, DBG_CMD_FRONT_WND, 0, 0, ??DbgDstWnd
-      DbgLoadContext
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_FRONT_WND, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_FRONT_WND, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     endif
   endif
 endm
@@ -1413,8 +1580,8 @@ DbgFloat macro Var:req, InfoText, Dest
       else
         DbgSaveContext TRUE, Var
         DbgSetDestWnd Dest
-        fInit
-        if ??DbgDataSize eq 4
+        fInit                                           ;;Reset FPU to be sure that all
+        if ??DbgDataSize eq 4                           ;;comming computations are performed well
           fld REAL4 ptr [xbx]
         elseif ??DbgDataSize eq 8
           fld REAL8 ptr [xbx]
@@ -1422,13 +1589,13 @@ DbgFloat macro Var:req, InfoText, Dest
           fld REAL10 ptr [xbx]
         endif
         mov xdi, xsp
-        sub xsp, DBG_FLOAT_BUFFERSIZE + 28h             ;;Reserve a buffer for the number
-        lea xsi, [xsp + 28h]                            ;; Keep stack aligned!
+        sub xsp, DBG_FLOAT_BUFFERSIZE + 28h + 8h        ;;Reserve a buffer for the number
+        lea xsi, [xsp + 28h + 8]                        ;; Keep stack aligned!
         invoke DbgOutTextA, $OfsCStrA("&Var = "), DbgColorDefaultPre, DbgColorBackground, \
                             DBG_EFFECT_NORMAL, ??DbgDstWnd
         invoke St0ToStrA, xsi, 0, DBG_FLOAT_RESOLUTION, 1
         invoke DbgOutTextA, xsi, DbgColorFPU, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
-        add xsp, DBG_FLOAT_BUFFERSIZE + 28h             ;;Restore stack
+        mov xsp, xdi
         DbgShowTxtInfo InfoText, ??DbgDstWnd
         DbgShowSrcInfo ??DbgDstWnd
         DbgLoadContext
@@ -1536,17 +1703,19 @@ DbgBmp macro hBmp:req, Dest
   if DEBUGGING
     DbgSaveContext FALSE, hBmp
     DbgSetDestWnd Dest
+    .if ??VarXBX == 0
+      invoke DbgOutTextA, $OfsCStrA("Invalid bitmap HANDLE"), \
+                          DbgColorError, DbgColorBackground, DBG_EFFECT_NEWLINE, ??DbgDstWnd
+    .else
     ifidn DBG_DEVICE, <WND>
-      .if ??VarXBX != 0
-        invoke DbgOutBitmap, ??VarXBX, DbgColorBackground, ??DbgDstWnd
-      .else
-        invoke DbgOutTextA, $OfsCStrA("Invalid bitmap HANDLE"), \
-                            DbgColorError, DbgColorBackground, DBG_EFFECT_NEWLINE, ??DbgDstWnd
-      .endif
+      invoke DbgOutBitmap, ??VarXBX, DbgColorBackground, ??DbgDstWnd
+    elseifidn DBG_DEVICE, <NET>
+      invoke DbgOutBitmap, ??VarXBX, DbgColorBackground, ??DbgDstWnd
     else
       invoke DbgOutTextA, $OfsCStrA("Bitmap can not be shown on this device"), \
                           DbgColorError, DbgColorBackground, DBG_EFFECT_NEWLINE, ??DbgDstWnd
     endif
+    .endif
     DbgLoadContext
   endif
 endm
@@ -1562,6 +1731,9 @@ DbgBmpFromDC macro hDC:req, Dest
     DbgSaveContext FALSE, hDC
     DbgSetDestWnd Dest
     ifidn DBG_DEVICE, <WND>
+      invoke GetCurrentObject, hDC, OBJ_BITMAP
+      invoke DbgOutBitmap, xax, DbgColorBackground, ??DbgDstWnd
+    elseifidn DBG_DEVICE, <NET>
       invoke GetCurrentObject, hDC, OBJ_BITMAP
       invoke DbgOutBitmap, xax, DbgColorBackground, ??DbgDstWnd
     else
@@ -1611,9 +1783,9 @@ DbgGlobalMemUsage macro InfoText, Dest
     DbgSaveContext
     DbgSetDestWnd Dest
     mov xbx, xsp                                        ;;Save stack pointer
-    sub xsp, 96                                         ;;Keep stack aligned!
+    sub xsp, 96                                         ;;Keep stack aligned to 16!
     mov xsi, xsp
-    sub xsp, sizeof(MEMORYSTATUS)                       ;;Keep stack aligned!
+    sub xsp, (sizeof(MEMORYSTATUS)/16 + 1)*16           ;;Keep stack aligned to 16!
     mov xdi, xsp
     assume xdi:ptr MEMORYSTATUS
     if TARGET_BITNESS eq 64
@@ -1744,6 +1916,57 @@ endm
 ; Return:     Nothing.
 ; Note:       ebp is assumed to nothing!
 
+;DbgObject macro Expression, InfoText, Dest
+;  if DEBUGGING
+;    PreParseExpr Expression
+;    if $ParseInstExpr(Expression) eq FALSE or ??Pos3 ne 0
+;      .err <DbgObject - invalid syntax: Expression>
+;    else
+;      %ifndef ??ObjExpr
+;        %.err <DbgObject - unknown object: ??ObjExpr>
+;      else
+;        DbgSaveContext TRUE, ??InsExpr
+;        DbgSetDestWnd Dest
+;        invoke DbgShowObjectHeader, $OfsCStrA(<!"%??ObjExpr!">), xbx, \
+;                                    DbgColorObject, DbgColorBackground, ??DbgDstWnd
+;        DbgShowTxtInfo InfoText, ??DbgDstWnd
+;        DbgShowSrcInfo ??DbgDstWnd
+;        mov xdi, xbx
+;
+;        %for ??TestObject, @CatStr(<!<>, %??ObjExpr, <_InherFrwPath!>>)
+;          $$ACount = 0
+;          %repeat @CatStr(<??TestObject>, <_VCount>)
+;            $$ACount = $$ACount + 1
+;            $$sz1 textequ @CatStr(<??TestObject>, <_VarName_>, %$$ACount)
+;            $$sz2 textequ @CatStr(<??TestObject>, <_VarType_>, %$$ACount)
+;            if @InStr(1, <%$$sz2>, <??>) eq 1
+;              $$Pos2 InStr 3, $$sz2, <_Init>
+;              if $$Pos2 gt 3
+;                $$sz2 CatStr @SubStr(<%$$sz2>, 3, $$Pos2 - 3)
+;              endif
+;            endif
+;            lea xbx, @CatStr(<[xdi].>, <??TestObject>, <.>, %$$sz1)
+;            push xdi
+;            %DbgOutHex < - &$$sz1 = >, DbgColorObject, \
+;                       @CatStr(<[xdi].>, <??TestObject>, <.>, %$$sz1),, ??DbgDstWnd
+;            pop xdi
+;;            %ifidn <??TestObject>, <??ObjExpr>
+;;              invoke DbgOutTextA, $OfsCStrA(<!" (%$$sz2)!">), \
+;;                                   DbgColorObject, DbgColorBackground, \
+;;                                   DBG_EFFECT_NEWLINE, ??DbgDstWnd
+;;            else
+;;              invoke DbgOutTextA, $OfsCStrA(<!" (%$$sz2 from &??TestObject)!">), \
+;;                                   DbgColorObject, DbgColorBackground, \
+;;                                   DBG_EFFECT_NEWLINE, ??DbgDstWnd
+;;            endif
+;          endm
+;        endm
+;        DbgLoadContext
+;      endif
+;    endif
+;  endif
+;endm
+
 DbgObject macro Expression, InfoText, Dest
   if DEBUGGING
     PreParseExpr Expression
@@ -1773,10 +1996,16 @@ DbgObject macro Expression, InfoText, Dest
                 $$sz2 CatStr @SubStr(<%$$sz2>, 3, $$Pos2 - 3)
               endif
             endif
-            lea xbx, @CatStr(<[xdi].>, <??TestObject>, <.>, %$$sz1)
-            push xdi
+            lea xbx, @CatStr(<[xdi].>, <??TestObject>, <.>, %$$sz1) ;Arg. for DbgOutHex 
+            push xdi                                    ;Preserve xdi
+          if TARGET_BITNESS eq 64
+            push rdi                                    ;Keep stack aligned to 16!
+          endif
             %DbgOutHex < - &$$sz1 = >, DbgColorObject, \
                        @CatStr(<[xdi].>, <??TestObject>, <.>, %$$sz1),, ??DbgDstWnd
+          if TARGET_BITNESS eq 64
+            pop rdi
+          endif
             pop xdi
             %ifidn <??TestObject>, <??ObjExpr>
               invoke DbgOutTextA, $OfsCStrA(<!" (%$$sz2)!">), \
@@ -1893,37 +2122,37 @@ DbgIMT macro Expression, InfoText, Dest
   endif
 endm
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
-;; Macro:      DbgTraceObject
-;; Purpose:    Start tracing of an object instance.
-;; Arguments:  Arg1: Instance POINTER.
-;
-;DbgTraceObject macro IName:req
-;  if DEBUGGING
-;    if TRACING
-;      DbgSaveContext TRUE, IName
-;      if type(IName) eq @WordSize             ;;If true, then it's not an Object instance!
-;        if (opattr IName) and OAT_REGISTER    ;;Is ??DbgIName a register?
-;          mov ??pDbgTraceInstance, IName
-;        else
-;          mrm ??pDbgTraceInstance, IName, xax
-;        endif
-;      else
-;        ??Attributes = opattr(IName)
-;        if ??Attributes eq 00100010y or ??Attributes eq 01100010y
-;          lea xcx, IName
-;          mov ??pDbgTraceInstance, xcx
-;        else
-;          mov ??pDbgTraceInstance, offset(IName)
-;        endif
-;      endif
-;      DbgLoadContext
-;    else
-;      %echo @CatStr(<WARNING: TRACE debug option is not active (>, %@FileCur, <, >, %@Line, <).>)
-;    endif
-;  endif
-;endm
-;
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DbgTraceObject
+; Purpose:    Start tracing of an object instance.
+; Arguments:  Arg1: Instance POINTER.
+
+DbgTraceObject macro IName:req
+  if DEBUGGING
+    if TRACING
+      DbgSaveContext TRUE, IName
+      if type(IName) eq @WordSize             ;;If true, then it's not an Object instance!
+        if (opattr IName) and OAT_REGISTER    ;;Is ??DbgIName a register?
+          mov ??pDbgTraceInstance, IName
+        else
+          mrm ??pDbgTraceInstance, IName, xax
+        endif
+      else
+        ??Attributes = opattr(IName)
+        if ??Attributes eq 00100010y or ??Attributes eq 01100010y
+          lea xcx, IName
+          mov ??pDbgTraceInstance, xcx
+        else
+          m2m ??pDbgTraceInstance, offset(IName), xax
+        endif
+      endif
+      DbgLoadContext
+    else
+      %echo @CatStr(<WARNING: TRACE debug option is not active (>, %@FileCur, <, >, %@Line, <).>)
+    endif
+  endif
+endm
+
 ;; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ;; Macro:      DbgTraceShow
 ;; Purpose:    Display gattered trace information.
@@ -2125,6 +2354,10 @@ DbgCloseAll macro
         DbgSaveContext
         invoke DbgOutCmd, DBG_CMD_CLOSE_ALL, 0, 0, NULL
         DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_CLOSE_ALL, 0, 0, NULL
+        DbgLoadContext
       endif
     endif
   endif
@@ -2144,6 +2377,13 @@ DbgClose macro Dest
         invoke DbgOutCmd, DBG_CMD_CLOSE_TXT, 0, 0, ??DbgDstWnd
         invoke DbgOutCmd, DBG_CMD_CLOSE_BMP, 0, 0, ??DbgDstWnd
         DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_CLOSE_TXT, 0, 0, ??DbgDstWnd
+        invoke DbgOutCmd, DBG_CMD_CLOSE_BMP, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
       endif
     endif
   endif
@@ -2158,6 +2398,11 @@ DbgCloseTxt macro Dest
   if DEBUGGING
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
       ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_CLOSE_TXT, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
         DbgSaveContext
         DbgSetDestWnd Dest
         invoke DbgOutCmd, DBG_CMD_CLOSE_TXT, 0, 0, ??DbgDstWnd
@@ -2180,6 +2425,11 @@ DbgCloseBmp macro Dest
         DbgSetDestWnd Dest
         invoke DbgOutCmd, DBG_CMD_CLOSE_BMP, 0, 0, ??DbgDstWnd
         DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_CLOSE_BMP, 0, 0, ??DbgDstWnd
+        DbgLoadContext
       endif
     endif
   endif
@@ -2193,18 +2443,24 @@ endm
 DbgClearAll macro
   if DEBUGGING
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
-      DbgSaveContext
       ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
         invoke DbgOutCmd, DBG_CMD_CLEAR_ALL, DbgColorBackground, 0, NULL
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        invoke DbgOutCmd, DBG_CMD_CLEAR_ALL, DbgColorBackground, 0, NULL
+        DbgLoadContext
       elseifidn DBG_DEVICE, <CON>
         ;... cls
       elseifidn DBG_DEVICE, <LOG>
         ;... close and delete file
       endif
-      DbgLoadContext
     elseif TARGET_PLATFORM eq PLATFORM_UEFI
+      DbgSaveContext
       mov xcx, pConsoleOut
       invoke [xcx].ConOut.ClearScreen, xcx
+      DbgLoadContext
     endif
   endif
 endm
@@ -2218,6 +2474,12 @@ DbgClear macro Dest
   if DEBUGGING
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
       ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_CLEAR_TXT, DbgColorBackground, 0, ??DbgDstWnd
+        invoke DbgOutCmd, DBG_CMD_CLEAR_BMP, DbgColorBackground, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
         DbgSaveContext
         DbgSetDestWnd Dest
         invoke DbgOutCmd, DBG_CMD_CLEAR_TXT, DbgColorBackground, 0, ??DbgDstWnd
@@ -2241,6 +2503,11 @@ DbgClearTxt macro Dest
         DbgSetDestWnd Dest
         invoke DbgOutCmd, DBG_CMD_CLEAR_TXT, DbgColorBackground, 0, ??DbgDstWnd
         DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_CLEAR_TXT, DbgColorBackground, 0, ??DbgDstWnd
+        DbgLoadContext
       endif
     endif
   endif
@@ -2255,6 +2522,11 @@ DbgClearBmp macro Dest
   if DEBUGGING
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
       ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_CLEAR_BMP, DbgColorBackground, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
         DbgSaveContext
         DbgSetDestWnd Dest
         invoke DbgOutCmd, DBG_CMD_CLEAR_BMP, DbgColorBackground, 0, ??DbgDstWnd

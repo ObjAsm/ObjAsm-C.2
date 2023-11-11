@@ -20,12 +20,12 @@ GRP_HEADER struct 2
 GRP_HEADER ends
 PGRP_HEADER typedef ptr GRP_HEADER
 
-LOCALHEADER struct            ;https://learn.microsoft.com/en-us/windows/win32/menurc/localheader
+LOCALHEADER struct 2          ;https://learn.microsoft.com/en-us/windows/win32/menurc/localheader
   wHotSpotX     WORD  ?
   wHotSpotY     WORD  ?
 LOCALHEADER ends
 
-GRP_ENTRY_BEG struct 2        ;Common structure for File and Rsrc 
+GRP_ENTRY_BEG struct 1        ;Common structure for File and Rsrc 
   bWidth        BYTE  ?
   bHeight       BYTE  ?
   bColorCount   BYTE  ?
@@ -35,10 +35,7 @@ GRP_ENTRY_BEG struct 2        ;Common structure for File and Rsrc
       wPlanes   WORD  ?
       wBitCount WORD  ?
     ends
-    struct                    ;Cursors
-      wHotSpotX WORD  ?
-      wHotSpotY WORD  ?
-    ends
+    HotSpot LOCALHEADER {}    ;Cursors
   ends
   dwBytesInRes  DWORD ?
 GRP_ENTRY_BEG ends

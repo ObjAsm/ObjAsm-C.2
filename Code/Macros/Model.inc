@@ -103,7 +103,7 @@
 ; 24. The "CHR", "PCHR" and "PSTRING" types change their meaning according the string compilation
 ;     target (ANSI_STRING or WIDE_STRING).
 ; 25. Debugging macros are enabled when DEBUG() is added to the SysSetup macro. The destination
-;     of the debug information is directed using the Debug auguments WND, CON, LOG or PRN.
+;     of the debug information is directed using the Debug auguments WND, CON, LOG or NET.
 ; 26. If a string procedure name contain one of the following characters, it behaves as follows:
 ;       - A: ANSI procedure
 ;       - W: WIDE procedure
@@ -433,7 +433,7 @@ SysSetup macro Arguments:vararg
     DBG_SAVE_XMM_CONTEXT = TRUE                         ;;Debug macros preserve the XMM context
     DBG_SAVE_FPU_CONTEXT = TRUE                         ;;Debug macros preserve the FPU context
 
-    DBG_DEVICE textequ <WIN_WND>                        ;;Default debug device
+    DBG_DEVICE textequ <WND>                            ;;Default debug device
     DBG_TRACE = FALSE
     DBG_INFO  = FALSE
     DBG_SHOW_TIME_STAMP = FALSE
@@ -456,6 +456,8 @@ SysSetup macro Arguments:vararg
         DBG_DEVICE textequ <CON>
       elseifidni <$$Arg>, <LOG>
         DBG_DEVICE textequ <LOG>
+      elseifidni <$$Arg>, <NET>
+        DBG_DEVICE textequ <NET>
       elseifidni <$$Arg>, <INFO>
         DBG_INFO = TRUE
       elseifidni <$$Arg>, <TRACE>
@@ -471,6 +473,9 @@ SysSetup macro Arguments:vararg
 
     externdef dDbgDev:DWORD                           ;;Export dDbgDev symbol
     externdef dDbgOpt:DWORD                           ;;Export dDbgOpt symbol
+    externdef hDbgInternet:HANDLE    
+    externdef pDbgIpStrA:PSTRINGA
+    externdef wDbgIpPort:WORD
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
       externdef DbgCritSect:CRITICAL_SECTION          ;;Export DbgCritSect symbol
     endif
@@ -519,6 +524,8 @@ SysSetup macro Arguments:vararg
           dDbgDev   DWORD   DBG_DEV_WIN_CON
         %elseifidn <DBG_DEVICE>, <LOG>
           dDbgDev   DWORD   DBG_DEV_WIN_LOG
+        %elseifidn <DBG_DEVICE>, <NET>
+          dDbgDev   DWORD   DBG_DEV_WIN_NET
         endif
       elseif TARGET_PLATFORM eq PLATFORM_UEFI
         dDbgDev   DWORD   DBG_DEV_UEFI_CON
@@ -577,7 +584,7 @@ SysSetup macro Arguments:vararg
   endif
   % include &MacPath&Debug.inc
 
-  TARGET_SUFFIX CatStr $ToStr(%TARGET_BITNESS), TARGET_STR_AFFIX    ;;§§
+  TARGET_SUFFIX CatStr $ToStr(%TARGET_BITNESS), TARGET_STR_AFFIX
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -596,6 +603,15 @@ SysInit macro Arg1, Arg2
   if TARGET_PLATFORM eq PLATFORM_WINDOWS
     hInstance         HINSTANCE   0                     ;;Module instance
     hProcessHeap      HANDLE      0                     ;;Process Heap HANDLE
+    ifidn DBG_DEVICE, <NET>
+      pDbgIpStrA    PSTRINGA    $OfsCStrA(DBG_IP_ADDR)
+      wDbgIpPort    WORD        DBG_IP_PORT
+      hDbgInternet  HINTERNET   0                       
+    else
+      pDbgIpStrA    PSTRINGA    NULL
+      wDbgIpPort    WORD        0
+      hDbgInternet  HANDLE      0                       ;;HINTERNET but defined as HANDLE to avoid
+    endif                                               ;;inclusion of unnecessary headers
   elseif TARGET_PLATFORM eq PLATFORM_UEFI
     hImage            EFI_HANDLE  0
     pSystemTable      POINTER     NULL
@@ -666,7 +682,7 @@ SysInit macro Arg1, Arg2
         mov DbgColorRed, DBG_COLOR_RED_WND_LIGHT
         mov DbgColorGreen, DBG_COLOR_GREEN_WND_LIGHT
         mov DbgColorBlue, DBG_COLOR_BLUE_WND_LIGHT
-      else
+      elseifidn DBG_DEVICE, <WND>
         mov DbgHighContrast.cbSize, sizeof(HIGHCONTRAST)
         mov DbgHighContrast.dwFlags, 0                  ;;Just in case the API fails
         invoke SystemParametersInfo, SPI_GETHIGHCONTRAST, 0, addr DbgHighContrast, FALSE
@@ -731,6 +747,31 @@ SysInit macro Arg1, Arg2
             mov DbgColorBlue, DBG_COLOR_BLUE_WND_DARK
           .endif
         .endif
+      elseifidn DBG_DEVICE, <NET>
+        invoke InternetOpen, NULL, INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0
+        .if xax
+          mov hDbgInternet, xax
+        .else
+          invoke MessageBox, 0, $OfsCStr("No Network connection"), $OfsCStr("Error"), MB_ICONERROR
+        .endif 
+        mov DbgColorForeground, DBG_COLOR_FOREGROUND_WND_LIGHT
+        mov DbgColorBackground, DBG_COLOR_BACKGROUND_WND_LIGHT
+        mov DbgColorComment, DBG_COLOR_COMMENT_WND_LIGHT
+        mov DbgColorWarning, DBG_COLOR_WARNING_WND_LIGHT
+        mov DbgColorError, DBG_COLOR_ERROR_WND_LIGHT
+        mov DbgColorString, DBG_COLOR_STRING_WND_LIGHT
+        mov DbgColorMessage, DBG_COLOR_MESSAGE_WND_LIGHT
+        mov DbgColorObject, DBG_COLOR_OBJECT_WND_LIGHT
+        mov DbgColorInterface, DBG_COLOR_INTERFACE_WND_LIGHT
+        mov DbgColorVMT, DBG_COLOR_VMT_WND_LIGHT
+        mov DbgColorFPU, DBG_COLOR_FPU_WND_LIGHT
+        mov DbgColorMemory, DBG_COLOR_MEMORY_WND_LIGHT
+        mov DbgColorDefaultPre, DBG_COLOR_DEFAULT_PRE_WND_LIGHT
+        mov DbgColorDefaultVar, DBG_COLOR_DEFAULT_VAR_WND_LIGHT
+        mov DbgColorLine, DBG_COLOR_LINE_WND_LIGHT
+        mov DbgColorRed, DBG_COLOR_RED_WND_LIGHT
+        mov DbgColorGreen, DBG_COLOR_GREEN_WND_LIGHT
+        mov DbgColorBlue, DBG_COLOR_BLUE_WND_LIGHT
       endif
     endif
 

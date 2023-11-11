@@ -7,14 +7,25 @@
 ;               - First release.
 ; ==================================================================================================
 
+WIN32_LEAN_AND_MEAN         equ 1                       ;Necessary to exclude WinSock.inc
+INTERNET_PROTOCOL_VERSION   equ 4
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO, TRACE, STKGUARD, "DC_Test Project")
+;SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO, TRACE, STKGUARD)
+SysSetup OOP, WIN64, WIDE_STRING, DEBUG(NET, INFO, TRACE, STKGUARD)
+DBG_IP_ADDR textequ <"localhost">
+DBG_IP_PORT textequ <8080>
+
 
 % includelib &LibPath&Windows\shell32.lib
 % includelib &LibPath&Windows\shlwapi.lib
+% includelib &LibPath&Windows\Wininet.lib
+% includelib &LibPath&Windows\Crypt32.lib
 
 % include &MacPath&fMath.inc
+% include &IncPath&Windows\ShellApi.inc
+% include &IncPath&Windows\wininet.inc
+
 
 CStr szMyStr, "Here is my string"
 CReal4 r4MyFloat1, 12.3456789
@@ -27,15 +38,14 @@ MakeObjects Primer, Stream
 MakeObjects WinPrimer, Window, Button, Hyperlink, Dialog, DialogModal, DialogAbout
 MakeObjects WinApp, SdiApp
 
-.code
 include DC_Test_Globals.inc
 include DC_Test_Main.inc
-
 
 pApp equ offset $ObjTmpl(DC_Test)
 
 start proc
   SysInit
+
   DbgCloseAll
   invoke AppsUseLightTheme
   DbgDec eax, "AppsUseLightTheme"
@@ -46,11 +56,12 @@ start proc
   mov xax, offset szMyStr
   DbgStr xax
   DbgStr szMyStr
-  
-;  DbgBkgndTxt $RGB(128,255,255)
+
+  DbgBkgndTxt $RGB(128,255,255)
   DbgText "aaa", "bbb"
-  DbgComError 08007000Eh, "COM error"
   DbgComError 000000000h, "COM error"
+  DbgComError 08000FFFFh, "COM error"
+  DbgComError 08007000Eh, "COM error"
   DbgComError 0FFFFFFFFh, "COM error"
   DbgLine
   DbgText "Hello friends"
@@ -66,7 +77,8 @@ start proc
   DbgBmp xax, "BMP2"
   DbgTileHor
 
-;  DbgTraceObject $ObjTmpl(DC_Test)
+  DbgLine2
+  DbgTraceObject $ObjTmpl(DC_Test)
   OCall $ObjTmpl(DC_Test)::DC_Test.Init                         ;Initialize the object data
   OCall $ObjTmpl(DC_Test)::DC_Test.ErrorSet, STM_OPEN_ERROR     ;20000014h
   DbgObject $ObjTmpl(DC_Test)::DC_Test                          ;Check the dErrorCode value! 
@@ -115,18 +127,16 @@ start proc
   DbgLine
   xor ecx, ecx
   ASSERT ecx, "ecx should not be zero here"
-  DbgComError 08000FFFFh
-  DbgComError 0
   DbgText "Test ready. Bye..."
   DbgFrontBmp "BMP1"
   DbgBkgndBmp $RGB(128,255,255), "BMP1"
   DbgFlashMenu $RGB(255,0,0), 5
   DbgZoomIn "BMP2"
   DbgFrontWnd
-;  DbgClearTxt "Performance data"
-;  DbgClearBmp "BMP1"
+  DbgClearTxt "Performance data"
+  DbgClearBmp "BMP1"
   DbgPinWnd FALSE
-  DbgCloseWnd
+;  DbgCloseWnd
 
   SysDone
 

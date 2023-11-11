@@ -152,7 +152,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=1
+MilestoneOnDateDate=4
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -187,10 +187,10 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,2705
-1=0,0,0,0,1335
+2=0,0,1403,897,3697
+1=0,0,1403,897,1810
 6=0,0,1456,414,265
-4=0,0,0,0,223
+4=0,0,0,0,602
 31=0,0,1213,691,15971
 8=0,0,777,591,20469
 7=0,0,0,0,151
@@ -198,7 +198,7 @@ ProductVer4Range=0
 10=0,0,0,0,8243
 5=0,0,0,0,25838
 3=0,0,0,0,265
-11=0,0,1783,588,1099
+11=0,0,1783,588,1187
 15=0,0,0,0,5891
 14=0,0,0,0,814
 13=0,0,0,0,7167
@@ -240,16 +240,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="InitHttpResponse"
-2="HTTP_BYTE_RANGE_TO_EOF"
-3="HTTP_BYTE_RANGE"
-4="HTTP_DATA_CHUNK"
-5="INCL_WINSOCK_API_PROTOTYPES"
-6="ForEach"
-7="struct"
-8="  local Response:HTTP_RESPONSE, DataChunk:HTTP_DATA_CHUNK, dResult:DWORD, dBytesSent:DWORD"
-9="HTTP_RESPONSE"
-10="HTTP_CONNECTION_ID"
+1="HttpServerApp"
+2="Server"
+3="InitHttpResponse"
+4="HTTP_BYTE_RANGE_TO_EOF"
+5="HTTP_BYTE_RANGE"
+6="HTTP_DATA_CHUNK"
+7="INCL_WINSOCK_API_PROTOTYPES"
+8="ForEach"
+9="struct"
+10="  local Response:HTTP_RESPONSE, DataChunk:HTTP_DATA_CHUNK, dResult:DWORD, dBytesSent:DWORD"
 [Collapse]
 1=
 2=
@@ -365,7 +365,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=1,2,33,3,4,11
 [PTimer]
-PTimer=1016618073
+PTimer=1021116605
 [GroupExpand]
 GroupExpand=1,1,1,0,1,1,1,0
 [RADebugBP]

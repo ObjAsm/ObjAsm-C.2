@@ -527,34 +527,40 @@ DbgOpenWnd
 DbgOpenCon
 DbgOpenLog
 DbgCloseDevice
-DbgOutCmd, bCommand, dParam1, dParam2, pDestWndName
-DbgOutText, pString, dForeColor, dBackColor, dEffects, pDestWndName
-DbgOutTextA, pStringA, dForeColor, dBackColor, dEffects, pDestWndName
-DbgOutTextW, pStringW, dForeColor, dBackColor, dEffects, pDestWndName
-DbgOutText_UEFI, pString, dForeColor, dBackColor, dEffects, pDestWndName
-DbgOutTextA_UEFI, pStringA, dForeColor, dBackColor, dEffects, pDestWndName
-DbgOutTextW_UEFI, pStringW, dForeColor, dBackColor, dEffects, pDestWndName
-DbgOutTextC, pString, dCount, dForeColor, dBackColor, dEffects, pDestWndName
-DbgOutTextCA, pStringA, dCount, dForeColor, dBackColor, dEffects, pDestWndName
-DbgOutTextCW, pStringW, dCount, dForeColor, dBackColor, dEffects, pDestWndName
-DbgOutTextC_UEFI, pString, dCount, dForeColor, dBackColor, dEffects, pDestWndName
-DbgOutTextCA_UEFI, pStringA, dCount, dForeColor, dBackColor, dEffects, pDestWndName
-DbgOutTextCW_UEFI, pStringW, dCount, dForeColor, dBackColor, dEffects, pDestWndName
-DbgOutBitmap, hBitmap, dBackColor, pDestWndName
-DbgOutMem, pMemory, dCount, dType, dMemColor, dRepColor, dBackColor, pDestWndName
-DbgOutMem_UEFI, pMemory, dCount, dType, dForeColor, dBackColor, pDestWndName
-DbgOutMsg, dMsgID, dForeColor, dBackColor, pDestWndName
-DbgOutApiErr, dError, dForeColor, dBackColor, pDestWndName
-DbgOutComErr, dError, dForeColor, dBackColor, pDestWndName
-DbgOutInterface, pGUID, dForeColor, dBackColor, pDestWndName
-DbgOutInterfaceName, pGUID, dForeColor, dBackColor, pDestWndName
-DbgOutComponent, pGUID, dForeColor, dBackColor, pDestWndName
-DbgOutComponentName, pGUID, dForeColor, dBackColor, pDestWndName
-DbgShowObjectHeader, pObjectName, pInstance, dForeColor, dBackColor, pDestWndName
-DbgShowObjectHeader_UEFI, pObjectName, pInstance, dForeColor, dBackColor, pDestWndName
-DbgShowTraceMethod, pMName, dCount, pTicks, pDestWndName
-DbgOutFPU, dForeColor, dBackColor, pDestWndName
-DbgOutFPU_UEFI, dForeColor, dBackColor, pDestWndName
+DbgPostServer, pData, DataSize
+DbgOutCmd, bCommand, dParam1, dParam2, pDestWndNameW
+DbgOutText, pString, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgOutTextA, pStringA, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgOutTextW, pStringW, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgBuildCmdMsg, bCommand, dParam1, dParam2, DestWndNameW
+DbgBuildBmpMsg, hBmp, dBackColor, pDestWndNameW
+DbgBuildStrMsg, pString, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgBuildStrMsgA, pStringA, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgBuildStrMsgW, pStringW, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgOutText_UEFI, pString, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgOutTextA_UEFI, pStringA, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgOutTextW_UEFI, pStringW, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgOutTextC, pString, dCount, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgOutTextCA, pStringA, dCount, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgOutTextCW, pStringW, dCount, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgOutTextC_UEFI, pString, dCount, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgOutTextCA_UEFI, pStringA, dCount, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgOutTextCW_UEFI, pStringW, dCount, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgOutBitmap, hBitmap, dBackColor, pDestWndNameW
+DbgOutMem, pMemory, dCount, dType, dMemColor, dRepColor, dBackColor, pDestWndNameW
+DbgOutMem_UEFI, pMemory, dCount, dType, dForeColor, dBackColor, pDestWndNameW
+DbgOutMsg, dMsgID, dForeColor, dBackColor, pDestWndNameW
+DbgOutApiErr, dError, dForeColor, dBackColor, pDestWndNameW
+DbgOutComErr, dError, dForeColor, dBackColor, pDestWndNameW
+DbgOutInterface, pGUID, dForeColor, dBackColor, pDestWndNameW
+DbgOutInterfaceName, pGUID, dForeColor, dBackColor, pDestWndNameW
+DbgOutComponent, pGUID, dForeColor, dBackColor, pDestWndNameW
+DbgOutComponentName, pGUID, dForeColor, dBackColor, pDestWndNameW
+DbgShowObjectHeader, pObjectName, pInstance, dForeColor, dBackColor, pDestWndNameW
+DbgShowObjectHeader_UEFI, pObjectName, pInstance, dForeColor, dBackColor, pDestWndNameW
+DbgShowTraceMethod, pMName, dCount, pTicks, pDestWndNameW
+DbgOutFPU, dForeColor, dBackColor, pDestWndNameW
+DbgOutFPU_UEFI, dForeColor, dBackColor, pDestWndNameW
 
 RGB24To16ColorIndex, dForeColor, dBackColor
 

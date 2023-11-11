@@ -8,7 +8,6 @@
 ; ==================================================================================================
 
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DecompressFromFile
 ; Purpose:    Decompress file data that was previously compressed with one of the Cabinet

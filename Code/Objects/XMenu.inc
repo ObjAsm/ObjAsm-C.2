@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      XMenu.inc
 ; Author:     G. Friedrich.
-; Version:    C.1.1
+; Version:    C.1.2
 ; Purpose:    ObjAsm support of extended menu objects.
 ; Links:      - http://www.microsoft.com/msj/0198/coolmenu.aspx
 ; Note:       Required files:
@@ -10,6 +10,8 @@
 ;              - DialogModalIndirect.inc
 ;             This object requires unique MenuItemIDs to work properly!
 ;             NEVER use a command ID = 0! (The OS has problems with the first MenuBar item).
+;             Version C.1.2, November 2023
+;               - Flashing test added to Done method.
 ;             Version C.1.1, December 2020
 ;               - Minor changes to avaoid this probem http://masm32.com/board/index.php?topic=8928.0
 ;             Version C.1.0, October 2017
@@ -697,6 +699,10 @@ MethodEnd
 Method XMenu.Done, uses xsi
 ;  DbgText "XMenu.Done"
   SetObject xsi
+  .while ([xsi].dFlags & XMF_FLASHING)
+    invoke Sleep, 250
+  .endw
+
   invoke DeleteObject, [xsi].hFontSep
   invoke DeleteObject, [xsi].hFontTxtNorm
   invoke DeleteObject, [xsi].hFontTxtBold

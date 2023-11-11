@@ -424,3 +424,7 @@ AddErrMsg CED_OUT_OF_MEMORY,          "No more memory available"
 ERROR_BASE = BIT29 + 800
 AddErrMsg IHK_MEMWRITEERROR,          "Memory write error"
 AddErrMsg IHK_PROCNOTFOUND,           "IAT procedure entry not found" 
+
+;HTTP Server
+ERROR_BASE = BIT29 + 810
+AddErrMsg HSV_ADDR_REG_ERROR,         "Fails to add a new address to the listener"

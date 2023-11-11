@@ -35,5 +35,3 @@ DbgOutComponentName proc uses xbx pIID:ptr GUID, dForeColor:DWORD, dBackColor:DW
   .endif
   ret
 DbgOutComponentName endp
-
-end

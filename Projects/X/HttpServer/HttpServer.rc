@@ -9,8 +9,8 @@
 #include "Resource.h"               //Windows resource definitions
 #include "HttpServer_Shared.rc"     //Application shared definitions
 #include "VER\Version.rc"           //Application version definition
-#include "MFT\Manifest_Admin.rc"    //Application manifest definition
-;#include "MFT\Manifest_Invoker.rc"  //Application manifest definition
+;#include "MFT\Manifest_Admin.rc"    //Application manifest definition
+#include "MFT\Manifest_Invoker.rc"  //Application manifest definition
 
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 

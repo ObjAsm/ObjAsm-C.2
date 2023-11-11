@@ -69,8 +69,7 @@ endif
         add xcx, pFileData
         ;Prepend LOCALHEADER to the cursor data & adjust the data size
         sub xcx, sizeof LOCALHEADER
-        m2m [xcx].LOCALHEADER.wHotSpotX, [xax].GRP_FILE_ENTRY.wHotSpotX, dx
-        m2m [xcx].LOCALHEADER.wHotSpotY, [xax].GRP_FILE_ENTRY.wHotSpotY, dx
+        s2s LOCALHEADER ptr [xcx], [xax].GRP_FILE_ENTRY.HotSpot, edx
         mov edx, [xax].GRP_FILE_ENTRY.dwBytesInRes
         add edx, sizeof LOCALHEADER 
         invoke CreateIconFromResourceEx, xcx, edx, FALSE, 30000h, \

@@ -10,7 +10,6 @@
 ; ==================================================================================================
 
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutComErr 
 ; Purpose:    Identify a COM error with a string.
@@ -28,7 +27,7 @@ DbgOutComErr proc uses xbx dErrCode:DWORD, dForeColor:DWORD, dBackColor:DWORD, p
   invoke DbgOutTextA, xax, dForeColor, dBackColor, DBG_EFFECT_NORMAL, pDest
   lea xbx, bHexBuffer
   FillWordA [xbx], < [>
-  add xbx, 2*sizeof(CHRA)
+  add xbx, $$Size
   invoke dword2hexA, xbx, dErrCode
   FillStringA [xbx + (DWORD2HEX_MAX_CHARS - 1)*sizeof(CHRA)], <h]>
   invoke DbgOutTextA, addr bHexBuffer, dForeColor, dBackColor, DBG_EFFECT_NORMAL, pDest

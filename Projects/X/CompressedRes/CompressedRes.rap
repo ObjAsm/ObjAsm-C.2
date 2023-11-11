@@ -146,7 +146,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=4
+MilestoneOnDateDate=9
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -183,10 +183,10 @@ CompressionLevel=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,9880
-1=0,0,0,0,529
+2=0,0,0,0,10083
+1=0,0,0,0,1280
 6=0,0,1456,414,31853
-4=0,0,0,0,256
+4=0,0,0,0,1019
 31=0,0,1213,691,1243
 8=0,0,777,591,20469
 7=0,0,0,0,151
@@ -232,16 +232,16 @@ CompressionLevel=0
 0=
 
 [Find]
-1="OnPaint"
-2="pRsrcDirectory"
-3="pRsrcIconDirectory"
-4="pRsrcCursorDirectory"
-5="Icon"
-6="hIcon"
-7="CreateIconFromCompressedFileInRes"
-8="cursor"
-9="ObjAsm CompressedRes"
-10="CompRes_"
+1="CreateCursorFromCompressedFileInRes2"
+2="OnPaint"
+3="pRsrcDirectory"
+4="pRsrcIconDirectory"
+5="pRsrcCursorDirectory"
+6="Icon"
+7="hIcon"
+8="CreateIconFromCompressedFileInRes"
+9="cursor"
+10="ObjAsm CompressedRes"
 [Collapse]
 1=
 2=
@@ -355,9 +355,9 @@ CompressionLevel=0
 27=,
 32=,,
 [AutoLoad]
-AutoLoad=1,2,4,3
+AutoLoad=1,2,4
 [PTimer]
-PTimer=1069215260
+PTimer=1070479854
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

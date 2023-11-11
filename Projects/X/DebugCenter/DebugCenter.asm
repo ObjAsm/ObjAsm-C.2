@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      DebugCenter.asm
 ; Authors:    G. Friedrich
-; Version     2.2.1
+; Version     2.3.0
 ; Purpose:    ObjAsm DebugCenter application.
 ; Notes:      Version 1.1.0, October 2017
 ;               - First release. Ported to BNC.
@@ -17,12 +17,18 @@
 ;             Version 2.2.1, September 2023
 ;               - Background color corrected when a text file is loaded.
 ;               - ChildText MDI behaviour corrected.
+;             Version 2.3.0, November 2023
+;               - Communication via HTTP-Server added.
 ; ==================================================================================================
 
+;Wishlist:
+;- translate some strings from Globals to resource definitions
+;- upgrade resource definitions like OA_Tools
+;- restore MFT_RIGHTJUSTIFY to Help item in menu bar => flashing problem in XMenu object
 
-;TODO: translate some strings from Globals to resource definitions
-;TODO: upgrade resource definitions like OA_Tools
 
+WIN32_LEAN_AND_MEAN         equ 1                       ;Necessary to exclude WinSock.inc
+INTERNET_PROTOCOL_VERSION   equ 4
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
 SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS related objects
@@ -39,7 +45,15 @@ SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS r
 % include &IncPath&Windows\IImgCtx.inc
 % include &IncPath&Windows\UxTheme.inc
 % include &IncPath&Windows\vsstyle.inc
+% include &IncPath&Windows\WinSock2.inc
 
+% include &IncPath&Windows\wininet.inc
+% include &IncPath&Windows\http.inc
+% include &IncPath&Windows\wincrypt.inc
+% include &IncPath&Windows\winnt.inc
+
+
+% includelib &LibPath&Windows\Kernel32.lib
 % includelib &LibPath&Windows\Shell32.lib
 % includelib &LibPath&Windows\OLE32.lib
 % includelib &LibPath&Windows\Comctl32.lib
@@ -47,6 +61,10 @@ SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS r
 % includelib &LibPath&Windows\shlwapi.lib
 % includelib &LibPath&Windows\Msimg32.lib
 % includelib &LibPath&Windows\UxTheme.lib
+
+% includelib &LibPath&Windows\httpapi.lib
+% includelib &LibPath&Windows\Crypt32.lib
+% includelib &LibPath&Windows\wininet.lib
 
 if DEBUGGING eq FALSE
   % include &MacPath&DebugShare.inc
@@ -65,6 +83,7 @@ MakeObjects WinControl, Toolbar, Rebar, Statusbar, Tooltip, TextView, Image
 
 include DebugCenter_Globals.inc                         ;Include application globals
 include DebugCenter_DlgFindText.inc
+include DebugCenter_HttpServer.inc
 include DebugCenter_Main.inc                            ;Include DebugCenter main object
 
 start proc uses xbx                                     ;Program entry point

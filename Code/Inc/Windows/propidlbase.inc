@@ -393,7 +393,7 @@ ifndef __propidlbase_h__
             DeletePropertyNames PIPropertyStorageVtbl_DeletePropertyNames ?
             Commit PIPropertyStorageVtbl_Commit ?
             Revert PIPropertyStorageVtbl_Revert ?
-            Enum PIPropertyStorageVtbl_Enum ?
+            Enum_ PIPropertyStorageVtbl_Enum ?
             SetTimes PIPropertyStorageVtbl_SetTimes ?
             SetClass PIPropertyStorageVtbl_SetClass ?
             Stat PIPropertyStorageVtbl_Stat ?
@@ -438,7 +438,7 @@ ifndef __propidlbase_h__
             Create PIPropertySetStorageVtbl_Create ?
             Open PIPropertySetStorageVtbl_Open ?
             Delete PIPropertySetStorageVtbl_Delete ?
-            Enum PIPropertySetStorageVtbl_Enum ?
+            Enum_ PIPropertySetStorageVtbl_Enum ?
             ??Interface equ <>
             END_INTERFACE
           IPropertySetStorageVtbl ends

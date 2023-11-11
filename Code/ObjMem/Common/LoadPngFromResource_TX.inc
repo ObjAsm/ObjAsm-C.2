@@ -15,7 +15,6 @@ GDIPVER equ 0100h
 % include &IncPath&Windows\GdiplusGpStubs.inc
 % include &IncPath&Windows\GdiPlusFlat.inc
 
-
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  LoadPngFromResourceA / LoadPngFromResourceW
 ; Purpose:    Load a PNG resource and return a bitmap HANDLE.

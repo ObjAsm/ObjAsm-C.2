@@ -48,6 +48,7 @@ MBX_DlgInfo ends
 MBX_CAPTION_HEADER       equ <MsgBoxData@>
 MBX_CAPTION_HEADER_CHARS = @SizeStr(%MBX_CAPTION_HEADER)
 
+.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MsgBoxA / MsgBoxW
 ; Purpose:    Show a customized MessageBox.
@@ -59,6 +60,7 @@ MBX_CAPTION_HEADER_CHARS = @SizeStr(%MBX_CAPTION_HEADER)
 ; Note:       Caption, text etc. are transferred via a caption string which contains a header and
 ;             the address of a MsgBoxInfo structure in text form.
 
+align ALIGN_CODE
 ProcName proc hParent:HANDLE, pText:POINTER, pCaption:POINTER, dFlags:DWORD
   local cTransferInfo[MBX_CAPTION_HEADER_CHARS + XWORD2HEX_MAX_CHARS]:CHR, MBX_Info:MBX_DlgInfo
 
@@ -93,6 +95,7 @@ MBX_TEXTVIEW_CTLID  equ 0FFFFh                          ;Reuse the ID of the sta
 
 MBXF_JUST_DRAWN     equ BIT00
 
+align ALIGN_CODE
 MBX_EnumDlgItems proc private uses xbx xdi hItem:HWND, lParam:LPARAM
   mov xbx, lParam
   .if [xbx].MBX_DlgInfo.dBtnCount < MBX_BTN_MAX_COUNT
@@ -123,6 +126,7 @@ MBX_EnumDlgItems proc private uses xbx xdi hItem:HWND, lParam:LPARAM
 MBX_EnumDlgItems endp
 
 
+align ALIGN_CODE
 MBX_WndProc proc private uses xbx xdi xsi hDlg:HWND, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
   local TVDef:DEF_TEXTVIEW, CRect:RECT, WRect:RECT, WndSize:POINT, CtlOfs:POINT
 
@@ -289,6 +293,7 @@ MBX_WndProc endp
 ;             Arg3: -> CWPSTRUCT.
 ; Return:     eax = Zero if handled.
 
+align ALIGN_CODE
 MBX_HookProc proc private uses xbx xdi dCode:DWORD, wParam:WPARAM, lParam:LPARAM
   local cTransferInfo[MBX_CAPTION_HEADER_CHARS + 2*sizeof(POINTER) + 1]:CHR
 

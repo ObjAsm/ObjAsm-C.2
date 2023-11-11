@@ -696,4 +696,3 @@ ProcName proc uses xbx xdi xsi, pStart:POINTER, dSize:DWORD, dRepresentationForm
   .endw
   ret
 ProcName endp
-

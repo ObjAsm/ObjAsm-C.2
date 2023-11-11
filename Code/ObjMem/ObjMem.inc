@@ -885,11 +885,14 @@ if TARGET_PLATFORM eq PLATFORM_WINDOWS
     echo Warning: incompatible TARGET_STR_TYPE
   endif
 
-; DebugCenter procedures contained in DebugProcs.asm
+; DebugCenter procedures
   DbgOpenWnd proto
   DbgOpenCon proto
   DbgOpenLog proto
+  DbgPostServer proto :POINTER, :DWORD
   DbgCloseDevice proto
+  DbgBuildCmdMsg proto :BYTE, :DWORD, :DWORD, :POINTER, :DWORD, :POINTER
+  DbgBuildBmpMsg proto :HANDLE, :DWORD, :POINTER
   DbgOutCmd proto :BYTE, :DWORD, :DWORD, :POINTER
   DbgOutBitmap proto :HANDLE, :DWORD, :POINTER
   DbgOutApiErr proto :DWORD, :DWORD, :DWORD, :POINTER
@@ -925,20 +928,36 @@ elseif TARGET_PLATFORM eq PLATFORM_UEFI
   DbgShowObjectHeader textequ <DbgShowObjectHeader_UEFI>
 endif
 
-DbgOutTextA proto :POINTER, :DWORD, :DWORD, :DWORD, :POINTER
-DbgOutTextW proto :POINTER, :DWORD, :DWORD, :DWORD, :POINTER
-DbgOutTextCA proto :POINTER, :DWORD, :DWORD, :DWORD, :DWORD, :POINTER
-DbgOutTextCW proto :POINTER, :DWORD, :DWORD, :DWORD, :DWORD, :POINTER
 DbgOutMem proto :POINTER, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :POINTER
 DbgOutFPU proto :POINTER, :DWORD, :DWORD
 DbgShowObjectHeader proto :POINTER, :POINTER, :DWORD, :DWORD, :POINTER
 
+DbgOutTextA proto :POINTER, :DWORD, :DWORD, :DWORD, :POINTER
+DbgOutTextW proto :POINTER, :DWORD, :DWORD, :DWORD, :POINTER
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
   DbgOutText textequ <DbgOutTextA>
-  DbgOutTextC textequ <DbgOutTextCA>
 elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
   DbgOutText textequ <DbgOutTextW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
+DbgOutTextCA proto :POINTER, :DWORD, :DWORD, :DWORD, :DWORD, :POINTER
+DbgOutTextCW proto :POINTER, :DWORD, :DWORD, :DWORD, :DWORD, :POINTER
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  DbgOutTextC textequ <DbgOutTextCA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
   DbgOutTextC textequ <DbgOutTextCW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
+DbgBuildStrMsgA proto :POINTER, :DWORD, :DWORD, :DWORD, :POINTER
+DbgBuildStrMsgW proto :POINTER, :DWORD, :DWORD, :DWORD, :POINTER
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  DbgBuildStrMsg textequ <DbgBuildStrMsgA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  DbgBuildStrMsg textequ <DbgBuildStrMsgW>
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif

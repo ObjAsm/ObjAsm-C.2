@@ -21,6 +21,7 @@
 ;             X2 = X*(2*N - 1)/3
 ;             Q = N^2*(N^2-1)/12
 
+align ALIGN_CODE
 SLR_Init proc pSlrData:PSLR_DATA
   ?mov ecx, pSlrData
   xor eax, eax

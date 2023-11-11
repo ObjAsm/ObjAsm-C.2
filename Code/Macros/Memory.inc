@@ -189,7 +189,7 @@ endm
 ;             Arg2: New memory block size.
 ;             Arg3: Optional memory allocation flags:
 ;                   MEM_INIT_ZERO, MEM_GENERATE_EXEPTION, MEM_NO_SERIALIZE, MEM_NO_MOVE
-; Return:     rax -> allocated memory block. NULL or exception if failed.
+; Return:     xax -> allocated memory block. NULL or exception if failed.
 
 MemReAlloc macro MemPtr:req, MemSize:req, Flags:=<0>
   if TARGET_PLATFORM eq PLATFORM_WINDOWS

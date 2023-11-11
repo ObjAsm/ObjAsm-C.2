@@ -8,7 +8,6 @@
 ; ==================================================================================================
 
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  CreateBitmapFromCompressedFileInRes
 ; Purpose:    Create a bitmap from a compressed bitmap file stored as RCDATA resource.

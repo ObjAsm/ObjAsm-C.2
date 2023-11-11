@@ -19,15 +19,15 @@
 aCRC32C proc uses xbx pAlignedMem:POINTER, dByteCount:DWORD
 .const
 DigestPosBytesJumpTableA label POINTER
-POINTER @@Digest0PosBytes
-POINTER @@Digest1PosBytes
-POINTER @@Digest2PosBytes
-POINTER @@Digest3PosBytes
+  POINTER @@Digest0PosBytes
+  POINTER @@Digest1PosBytes
+  POINTER @@Digest2PosBytes
+  POINTER @@Digest3PosBytes
 if TARGET_BITNESS eq 64
-POINTER @@Digest4PosBytes
-POINTER @@Digest5PosBytes
-POINTER @@Digest6PosBytes
-POINTER @@Digest7PosBytes
+  POINTER @@Digest4PosBytes
+  POINTER @@Digest5PosBytes
+  POINTER @@Digest6PosBytes
+  POINTER @@Digest7PosBytes
 endif
 
 .code

@@ -11,7 +11,6 @@
 % include &IncPath&Windows\compressapi.inc
 % include &ObjMemPath&Common\CompressSignatures.inc
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  CompressMemToFile
 ; Purpose:    Compress memory with one of the Cabinet compression algorithms & save it to a file.

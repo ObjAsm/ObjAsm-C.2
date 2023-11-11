@@ -48,9 +48,9 @@ start proc
   SysInit
 
   DbgClearAll
-  OCall $ObjTmpl(HttpServerApp)::HttpServerApp.Init
-  OCall $ObjTmpl(HttpServerApp)::HttpServerApp.Run
-  OCall $ObjTmpl(HttpServerApp)::HttpServerApp.Done
+  OCall $ObjTmpl(Application)::Application.Init
+  OCall $ObjTmpl(Application)::Application.Run
+  OCall $ObjTmpl(Application)::Application.Done
 
   SysDone
   invoke ExitProcess, 0

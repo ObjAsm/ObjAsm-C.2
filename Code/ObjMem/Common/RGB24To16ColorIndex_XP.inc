@@ -25,7 +25,6 @@ COLOR_LIGHTMAGENTA  equ 0x0D
 COLOR_YELLOW        equ 0x0E
 COLOR_WHITE         equ 0x0F
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RGB24To16Colors
 ; Purpose:    Map a 24 bit RGB color to a 16 color palette index.

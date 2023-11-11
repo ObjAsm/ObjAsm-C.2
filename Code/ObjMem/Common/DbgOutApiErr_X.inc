@@ -27,7 +27,7 @@ DbgOutApiErr proc dErrorCode:DWORD, dForeColor:DWORD, dBackColor:DWORD, pDest:PO
     add xax, pBuffer
     m2z CHRA ptr [xax - 2*sizeof(CHRA)]                 ;Remove the CRLF ending characters.
     invoke DbgOutTextA, pBuffer, dForeColor, dBackColor, DBG_EFFECT_NORMAL, pDest
-    invoke LocalFree, pBuffer
+    invoke LocalFree, pBuffer                           ;Required by FormatMessageA API
     mov DCHRA ptr [cHexBuffer], 5B20h  ;< [>
     invoke dword2hexA, addr [cHexBuffer + 2*sizeof(CHRA)], dErrorCode
     FillStringA [cHexBuffer + 10*sizeof(CHRA)], <h]>

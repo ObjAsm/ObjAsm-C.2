@@ -11,7 +11,6 @@
 % include &IncPath&Windows\compressapi.inc
 % include &ObjMemPath&Common\CompressSignatures.inc
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DecompressFileInMem
 ; Purpose:    Decompress file data that was previously compressed with one of the Cabinet

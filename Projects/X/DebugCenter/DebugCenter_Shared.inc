@@ -16,8 +16,8 @@ VER_PRODUCTVERSION            equ       2,2,1,0
 VER_PRODUCTVERSION_STR        textequ   <2.2.1>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       22
-BUILD_DATE_STR                textequ   <2023-09-01>
+BUILD_NUMBER                  equ       46
+BUILD_DATE_STR                textequ   <2023-11-11>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       RLS
 
@@ -70,3 +70,6 @@ IDM_HELP_ABOUT                equ       992
 IDM_SYSTRAY                   equ       950
 IDM_CONTEXT                   equ       960
 IDM_RESTORE                   equ       0F6CAh
+
+BUILD_BIN_FORMAT              equ       EXE
+BUILD_BIN_SUFFIX_STR          textequ   <>

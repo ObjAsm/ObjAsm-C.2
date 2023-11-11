@@ -24,6 +24,7 @@
 ;             B = (Y-A*X)/N
 ;             MSE = (Y2 - 2*A*XY - 2*B*Y + A^2*X2 + 2*A*B*X)/N + B^2
 
+align ALIGN_CODE
 ProcName proc pSlrData:PSLR_DATA
   ?mov ecx, pSlrData
   .if xcx != NULL

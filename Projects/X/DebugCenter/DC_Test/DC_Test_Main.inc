@@ -69,7 +69,7 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method DC_Test.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
-  local cBuffer[MAX_PATH]:CHR, cFileName[1024]:CHR, Dlg:$Obj(DialogAbout), hIcon:HICON
+  local cFileName[1024]:CHR, Dlg:$Obj(DialogAbout), hIcon:HICON
 
   SetObject xsi
   mov xax, wParam
@@ -78,6 +78,7 @@ Method DC_Test.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_ABOUT
+    DbgText "Hallo1...","Test Window 2"
     New Dlg::DialogAbout
     mov hIcon, $invoke(LoadIcon, hInstance, $OfsCStr("ICON_APP"))
     OCall Dlg::DialogAbout.Init, xsi, [xsi].hWnd, hIcon, offset szAboutText

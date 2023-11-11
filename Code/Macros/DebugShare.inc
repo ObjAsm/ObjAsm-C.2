@@ -80,33 +80,42 @@ DBG_CMD_CLOSE_WND         equ   24
 SMTO_TIMEOUT              equ   5000          ;Timeout of a WM_COPYDATA message
 
 
-IDM_DEBUG_CENTER_RESTORE  equ   0F6CAh      ;Random number
+IDM_DEBUG_CENTER_RESTORE  equ   0F6CAh        ;Random number
 
+DBG_IP_PORT textequ <8080>                    ;Default value
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Info:
+;   The message sent to the DebugCenter Server looks like:
+;
+;      ————————————————————————————————————————————————————————————————————————
+;     | DBG_HEADER_INFO | Destination Window Name | DBG_XXX_INFO |   Payload   |
+;      ————————————————————————————————————————————————————————————————————————
+;       DBG_MSG_HDR                                 DBG_MSG_XXX
 
-DBG_HEADER_INFO struc 1
+
+DBG_HEADER_INFO struc 1                       ;Size = 6t
   bBlockID    BYTE    DBG_MSG_HDR
-  bInfo       BYTE    ?                     ;Not used
-  dBlockLen   DWORD   ?                     ;Size of this structure + payload size
+  bInfo       BYTE    ?                       ;Not used
+  dBlockLen   DWORD   ?                       ;Size of this structure + payload size
 DBG_HEADER_INFO ends
-;Source WIDE string & ZTC follow this structure
+;Destination WIDE string & ZTC follow this structure
 
-DBG_STR_INFO struc 1
+DBG_STR_INFO struc 1                          ;Size = 18t = 12h
               DBG_HEADER_INFO {DBG_MSG_STR}
   dForeColor  DWORD   ?
   dBackColor  DWORD   ?
-  dEffects    DWORD   ?                     ;Text effects & flags
+  dEffects    DWORD   ?                       ;Text effects & flags
 DBG_STR_INFO ends
-;WIDE characters & ZTC (WIDE string) follow this structure
+;String characters & ZTC (ANSI/WIDE string) follow this structure
 
 if TARGET_PLATFORM eq PLATFORM_WINDOWS
-  DBG_CMD_INFO struc 1
+  DBG_CMD_INFO struc 1                        ;Size = 14t = 0Eh
                 DBG_HEADER_INFO {DBG_MSG_CMD}
-    dParam1     DWORD   ?                   ;First parameter
-    dParam2     DWORD   ?                   ;Second parameter
+    dParam1     DWORD   ?                     ;First parameter
+    dParam2     DWORD   ?                     ;Second parameter
   DBG_CMD_INFO ends
-  ;Data bytes may follow this structure
+  ;Additional data bytes may follow this structure
 
   DBG_BMP_INFO struc 1
                 DBG_HEADER_INFO {DBG_MSG_BMP}

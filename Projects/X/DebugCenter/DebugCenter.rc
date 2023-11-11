@@ -10,6 +10,7 @@
 #include "DebugCenter_Shared.rc"      //Application shared definitions
 #include "VER\Version.rc"             //Application version definition
 #include "MFT\Manifest_Invoker.rc"    //Application manifest definition
+//#include "MFT\Manifest_Admin.rc"    //Application manifest definition
 
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
@@ -114,7 +115,7 @@ BEGIN
     MENUITEM "o$44",    IDM_LANGUAGE_RUSSIAN,   MFT_STRING, MFS_ENABLED
     MENUITEM "o$45",    IDM_LANGUAGE_SPANISH,   MFT_STRING, MFS_ENABLED
   END
-  POPUP "$60",          IDM_HELP,               MFT_STRING | MFT_RIGHTJUSTIFY, MFS_ENABLED
+  POPUP "$60",          IDM_HELP,               MFT_STRING | MFS_ENABLED
   BEGIN
     MENUITEM "30$61",   IDM_HELP_HELP,          MFT_STRING, MFS_ENABLED
     MENUITEM "31$62",   IDM_HELP_ABOUT,         MFT_STRING, MFS_ENABLED
@@ -173,7 +174,7 @@ END
     MENUITEM "06$04",   IDM_FILE_CLOSE,         MFT_STRING, MFS_ENABLED
     MENUITEM "29$59",   IDM_WINDOW_CLOSEALL,    MFT_STRING, MFS_ENABLED
   END
-  POPUP "$60",          IDM_HELP,               MFT_STRING | MFT_RIGHTJUSTIFY, MFS_ENABLED
+  POPUP "$60",          IDM_HELP,               MFT_STRING | MFS_ENABLED
   BEGIN
     MENUITEM "30$61",   IDM_HELP_HELP,          MFT_STRING, MFS_ENABLED
     MENUITEM "31$62",   IDM_HELP_ABOUT,         MFT_STRING, MFS_ENABLED
