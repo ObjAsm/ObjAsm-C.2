@@ -285,46 +285,48 @@ SysSetup macro Arguments:vararg
 
 
   if TARGET_BITNESS eq 32
-    % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
+    % include @Environ(OBJASM_PATH)\Code\OA_Setup32.inc
   else
-    % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
+    % include @Environ(OBJASM_PATH)\Code\OA_Setup64.inc
   endif
 
   .nolist
   .nocref
 
   if TARGET_PLATFORM eq PLATFORM_WINDOWS
-    % include &IncPath&Windows\\Windows.inc
+    % include &IncPath&Windows\Windows.inc
     % include &MacPath&System.inc
     % include &MacPath&Memory.inc
     % include &MacPath&Strings.inc
     % include &MacPath&WinHelpers.inc
-    % include &IncPath&ObjAsm\\ObjMem.inc
+    % include &IncPath&ObjAsm\ObjMem.inc
   elseif TARGET_PLATFORM eq PLATFORM_UEFI
     % include &MacPath&UefiMac.inc
-    % include &IncPath&UEFI\\UefiBase.inc
+    % include &IncPath&UEFI\UefiBase.inc
     % include &MacPath&System.inc
     % include &MacPath&Memory.inc
     % include &MacPath&Strings.inc
-    % include &IncPath&ObjAsm\\ObjMem.inc
-    % include &IncPath&UEFI\\UefiGUID.inc
-    % include &IncPath&UEFI\\UefiUtil.inc
+    % include &IncPath&ObjAsm\ObjMem.inc
+    % include &IncPath&UEFI\UefiGUID.inc
+    % include &IncPath&UEFI\UefiUtil.inc
   endif
   % include &MacPath&ConstDiv.inc
 
   if TARGET_PLATFORM eq PLATFORM_WINDOWS
     if TARGET_BIN_FORMAT ne BIN_FORMAT_LIB                ;;Only load libs when target is not a lib
-      % includelib &LibPath&Windows\\GDI32.lib
-      % includelib &LibPath&Windows\\Kernel32.lib
-      % includelib &LibPath&Windows\\User32.lib
-      % includelib &LibPath&Windows\\Advapi32.lib
+      % includelib &LibPath&Windows\GDI32.lib
+      % includelib &LibPath&Windows\Kernel32.lib
+      % includelib &LibPath&Windows\User32.lib
+      % includelib &LibPath&Windows\Advapi32.lib
+      % includelib &LibPath&Windows\Wininet.lib
+      % includelib &LibPath&Windows\Crypt32.lib
     endif
   endif
   if TARGET_BIN_FORMAT ne BIN_FORMAT_LIB
     if TARGET_BITNESS eq 32
-      % includelib &LibPath&ObjAsm\\ObjMem32.lib
+      % includelib &LibPath&ObjAsm\ObjMem32.lib
     else
-      % includelib &LibPath&ObjAsm\\ObjMem64.lib
+      % includelib &LibPath&ObjAsm\ObjMem64.lib
     endif
   endif
 
