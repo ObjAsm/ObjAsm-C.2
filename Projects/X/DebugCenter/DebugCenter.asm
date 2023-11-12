@@ -19,6 +19,16 @@
 ;               - ChildText MDI behaviour corrected.
 ;             Version 2.3.0, November 2023
 ;               - Communication via HTTP-Server added.
+;
+;             The URL registration for Http.sys requires extended rights. 
+;             To avoid having to start DebugCenter with admin rights every time, a permanent
+;             registration can be carried out using NETSH. NETSH must be executed from a 
+;             command console with admin rights. Enter the following command in the console:
+;             netsh http add urlacl url=http://+:8080/ sddl=D:(A;;GX;;;;S-1-1-0) listen=yes delegate=no
+;             "sddl=D:(A;;GX;;;;S-1-1-0)" is the replacement for the localised EVERYONE.
+;             A registration for the currently logged in user can be done by entering:
+;             netsh http add urlacl url=http://+:8080/ user=%USERDOMAIN%\%USERNAME%
+;             The URL must be exacly the same as the used in the code!
 ; ==================================================================================================
 
 ;Wishlist:
