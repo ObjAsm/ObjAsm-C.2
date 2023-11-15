@@ -56,11 +56,8 @@ SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS r
 % include &IncPath&Windows\UxTheme.inc
 % include &IncPath&Windows\vsstyle.inc
 % include &IncPath&Windows\WinSock2.inc
-
 % include &IncPath&Windows\wininet.inc
 % include &IncPath&Windows\http.inc
-% include &IncPath&Windows\wincrypt.inc
-% include &IncPath&Windows\winnt.inc
 
 
 % includelib &LibPath&Windows\Kernel32.lib
@@ -71,9 +68,7 @@ SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS r
 % includelib &LibPath&Windows\shlwapi.lib
 % includelib &LibPath&Windows\Msimg32.lib
 % includelib &LibPath&Windows\UxTheme.lib
-
 % includelib &LibPath&Windows\httpapi.lib
-% includelib &LibPath&Windows\Crypt32.lib
 % includelib &LibPath&Windows\wininet.lib
 
 if DEBUGGING eq FALSE

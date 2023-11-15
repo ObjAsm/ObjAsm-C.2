@@ -249,21 +249,15 @@ MethodEnd
 
 Method HttpServer.HandlePostRequest, uses xbx xdi xsi, pRequest:PHTTP_REQUEST
   local dResult:DWORD, dBytesSent:DWORD
-  local pEntityBuffer:PSTRING, dEntityBufferSize:DWORD, dBytesRead:DWORD
-  local dTotalBytesRead:DWORD, TotalBytesToRead:DWORD
-  local pUnencryptedBuffer:POINTER, dTotalUnencryptedSize:DWORD, dUnencryptedSize:DWORD
-  local Response:HTTP_RESPONSE
+  local pEntityBuffer:PSTRING, dEntityBufferSize:DWORD, dBytesRead:DWORD, dTotalBytesRead:DWORD
+  local Response:HTTP_RESPONSE, CDS:COPYDATASTRUCT
   local Chuncks:$Obj(Collection)
-  local CDS:COPYDATASTRUCT
 
   CHUNK_SIZE = 2048
 
   SetObject xsi
   mov dBytesRead, 0
-  mov TotalBytesToRead, 0
   mov dTotalBytesRead, 0
-  mov pUnencryptedBuffer, NULL
-  mov dTotalUnencryptedSize, 0
 
   New Chuncks::Collection
   OCall Chuncks::Collection.Init, xsi, 10, 10, COL_MAX_CAPACITY
@@ -318,17 +312,15 @@ Method HttpServer.HandlePostRequest, uses xbx xdi xsi, pRequest:PHTTP_REQUEST
             add xbx, xdi
           .ColNext
 
-          invoke CryptStringToBinaryA, pEntityBuffer, dTotalBytesRead, CRYPT_STRING_BASE64, NULL, addr dUnencryptedSize, NULL, NULL
-          MemAlloc dUnencryptedSize
+          invoke Base64Decode, pEntityBuffer, dTotalBytesRead
           .if xax
-            mov pUnencryptedBuffer, xax
-            invoke CryptStringToBinaryA, pEntityBuffer, dTotalBytesRead, CRYPT_STRING_BASE64, pUnencryptedBuffer, addr dUnencryptedSize, NULL, NULL
-            mov xcx, [xsi].pOwner
+            mov xbx, xax
             mov CDS.dwData, DGB_MSG_ID                        ;Set DebugCenter identifier
-            m2m CDS.lpData, pUnencryptedBuffer, xax
-            m2m CDS.cbData, dUnencryptedSize, eax
+            mov CDS.lpData, xax
+            mov CDS.cbData, ecx
+            mov xcx, [xsi].pOwner
             invoke SendMessage, [xcx].$Obj(Window).hWnd, WM_COPYDATA, -1, addr CDS
-            MemFree pUnencryptedBuffer
+            MemFree xbx
           .endif
 
           OCall xsi.SendResponse, pRequest, HSC_OK, \
@@ -354,6 +346,120 @@ Method HttpServer.HandlePostRequest, uses xbx xdi xsi, pRequest:PHTTP_REQUEST
   .endif
 MethodEnd
 
+;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; Method:     HttpServer.HandlePostRequest
+;; Purpose:    Handle an HTTP Post response.
+;; Arguments:  Arg1: -> HTTP_REQUEST.
+;; Return:     eax = NO_ERROR if succeeded, otherwise a system error code.
+;; Link:       https://learn.microsoft.com/de-de/windows/win32/http/http-server-sample-application
+;
+;Method HttpServer.HandlePostRequest, uses xbx xdi xsi, pRequest:PHTTP_REQUEST
+;  local dResult:DWORD, dBytesSent:DWORD
+;  local pEntityBuffer:PSTRING, dEntityBufferSize:DWORD, dBytesRead:DWORD
+;  local dTotalBytesRead:DWORD, TotalBytesToRead:DWORD
+;  local pUnencryptedBuffer:POINTER, dTotalUnencryptedSize:DWORD, dUnencryptedSize:DWORD
+;  local Response:HTTP_RESPONSE
+;  local Chuncks:$Obj(Collection)
+;  local CDS:COPYDATASTRUCT
+;
+;  CHUNK_SIZE = 2048
+;
+;  SetObject xsi
+;  mov dBytesRead, 0
+;  mov TotalBytesToRead, 0
+;  mov dTotalBytesRead, 0
+;  mov pUnencryptedBuffer, NULL
+;  mov dTotalUnencryptedSize, 0
+;
+;  New Chuncks::Collection
+;  OCall Chuncks::Collection.Init, xsi, 10, 10, COL_MAX_CAPACITY
+;
+;  ;Allocate space for an entity buffer. Buffer can be increased on demand.
+;  New DataChunk
+;  .if xax
+;    OCall Chuncks::Collection.Insert, xax
+;    mov xdi, xax
+;    OCall xax::DataChunk.Init, xsi, CHUNK_SIZE
+;
+;    ;Initialize the HTTP response structure
+;    InitHttpResponse Response, 200, $OfsCStrA("OK")
+;
+;    ;For POST, echo back the entity from the client
+;    ;NOTE: If the HTTP_RECEIVE_REQUEST_FLAG_COPY_BODY flag had been passed with
+;    ;      HttpReceiveHttpRequest(), the entity would have been a part of HTTP_REQUEST
+;    ;      (using the pEntityChunks field). Because that flag was not passed, there
+;    ;      are no o entity bodies in HTTP_REQUEST.
+;
+;    mov xbx, pRequest
+;    .ifBitSet [xbx].HTTP_REQUEST.Flags, HTTP_REQUEST_FLAG_MORE_ENTITY_BODY_EXISTS
+;      ;The entity body is sent over multiple calls. Collect them in mem and send back.
+;      .while TRUE
+;        ;Read the entity chunk from the request.
+;        invoke HttpReceiveRequestEntityBody, [xsi].hRequestQueue, [xbx].HTTP_REQUEST.RequestId, 0, \
+;                                             [xdi].$Obj(DataChunk).pBuffer, \
+;                                             [xdi].$Obj(DataChunk).dBufferSize, \
+;                                             addr [xdi].$Obj(DataChunk).dBufferUsed, NULL
+;        .if eax == NO_ERROR
+;          .if [xdi].$Obj(DataChunk).dBufferUsed != 0
+;            mov eax, [xdi].$Obj(DataChunk).dBufferUsed
+;            add dTotalBytesRead, eax
+;            New DataChunk
+;            .break .if !xax
+;            OCall Chuncks::Collection.Insert, xax
+;            mov xdi, xax
+;            OCall xax::DataChunk.Init, xsi, CHUNK_SIZE
+;          .endif
+;
+;        .elseif eax == ERROR_HANDLE_EOF
+;          ;The last request entity body has been read. Send back a response.
+;          ;To illustrate entity sends via HttpSendResponseEntityBody, the response will be
+;          ;sent over multiple calls. To do this, pass the HTTP_SEND_RESPONSE_FLAG_MORE_DATA flag.
+;          MemAlloc dTotalBytesRead
+;          .break .if !xax
+;          mov pEntityBuffer, xax
+;          mov xbx, xax
+;          .ColForEach Chuncks
+;            mov edi, [xax].$Obj(DataChunk).dBufferUsed
+;            invoke MemClone, xbx, [xax].$Obj(DataChunk).pBuffer, edi
+;            add xbx, xdi
+;          .ColNext
+;
+;          invoke CryptStringToBinaryA, pEntityBuffer, dTotalBytesRead, CRYPT_STRING_BASE64, NULL, addr dUnencryptedSize, NULL, NULL
+;          MemAlloc dUnencryptedSize
+;          .if xax
+;            mov pUnencryptedBuffer, xax
+;            invoke CryptStringToBinaryA, pEntityBuffer, dTotalBytesRead, CRYPT_STRING_BASE64, pUnencryptedBuffer, addr dUnencryptedSize, NULL, NULL
+;            mov xcx, [xsi].pOwner
+;            mov CDS.dwData, DGB_MSG_ID                        ;Set DebugCenter identifier
+;            m2m CDS.lpData, pUnencryptedBuffer, xax
+;            m2m CDS.cbData, dUnencryptedSize, eax
+;            invoke SendMessage, [xcx].$Obj(Window).hWnd, WM_COPYDATA, -1, addr CDS
+;            MemFree pUnencryptedBuffer
+;          .endif
+;
+;          OCall xsi.SendResponse, pRequest, HSC_OK, \
+;                                  $OfsCStrA("OK"), $OfsCStrA("Post request served.", CRLF)
+;          xor eax, eax
+;          mov dResult, eax
+;          MemFree pEntityBuffer
+;          mov eax, dResult
+;          .break
+;        .else
+;          mov eax, NO_ERROR                             ;Ignore the rest
+;          .break
+;
+;        .endif
+;      .endw
+;
+;    .else
+;      ;This request does not have an entity body.
+;      invoke HttpSendHttpResponse, [xsi].hRequestQueue, [xbx].HTTP_REQUEST.RequestId, 0, \
+;                                   addr Response, NULL, addr dBytesSent,
+;                                   NULL, 0, NULL, NULL
+;    .endif
+;  .endif
+;MethodEnd
+;
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     HttpServer.Init
 ; Purpose:    Initialize the server.

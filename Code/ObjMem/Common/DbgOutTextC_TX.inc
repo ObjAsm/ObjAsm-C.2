@@ -7,7 +7,8 @@
 ; ==================================================================================================
 
 
-.code
+externdef DbgColorError:DWORD
+
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutTextCA/DbgOutTextCW
 ; Purpose:    Send a counted string to the debug output device.
@@ -24,11 +25,21 @@ ProcName proc pString:POINTER, dMaxLength:DWORD, dForeColor:DWORD, dBackColor:DW
               dEffects:DWORD, pDest:POINTER
   local pBuffer:POINTER, dStrSize:DWORD
 
+  .if pString == NULL
+    invoke DbgOutTextA, $OfsCStrA("NULL pointer"), DbgColorError, dBackColor, DBG_EFFECT_NORMAL, pDest
+    ret
+  .endif
+  mov ebx, dMaxLength
+  .if ebx == NULL
+    invoke DbgOutTextA, $OfsCStrA("Zero size"), DbgColorError, dBackColor, DBG_EFFECT_NORMAL, pDest
+    ret
+  .endif
+
   invoke StrLength, pString
-  .if eax <= dLength
+  .if eax <= dMaxLength
     invoke DbgOutText, pString, dForeColor, dBackColor, dEffects, pDest
   .else
-    mov eax, dLength
+    mov eax, dMaxLength
   if TARGET_STR_TYPE eq STR_TYPE_WIDE
     add eax, eax
   endif
@@ -40,7 +51,7 @@ ProcName proc pString:POINTER, dMaxLength:DWORD, dForeColor:DWORD, dBackColor:DW
       invoke MemClone, xax, pString, dStrSize
       mov eax, dStrSize
       add xax, pBuffer
-      mov [xax], 0                                        ;Set ZTC
+      mov CHR ptr [xax], 0                                ;Set ZTC
       invoke DbgOutText, pBuffer, dForeColor, dBackColor, dEffects, pDest
       MemFree pBuffer
     .endif

@@ -1567,6 +1567,8 @@ CalcVarianceQW    proto :POINTER, :XWORD, :POINTER
 CalcVarianceR4    proto :POINTER, :XWORD, :POINTER
 CalcVarianceR8    proto :POINTER, :XWORD, :POINTER
 
+Base64Encode  proto :POINTER, :DWORD
+Base64Decode  proto :POINTER, :DWORD
 
 _chkstk proto c
 _alloca_probe_8 proto c

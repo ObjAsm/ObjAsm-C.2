@@ -28,7 +28,7 @@ ProcName proc uses xbx pString:POINTER, dForeColor:DWORD, dBackColor:DWORD, dEff
 
   mov dResult, FALSE
   .if pString == NULL
-    c2m pString, $OfsCStr("NULL Pointer"), xax
+    c2m pString, $OfsCStr("NULL pointer"), xax
     m2m dForeColor, DbgColorError, edx
   .endif
 

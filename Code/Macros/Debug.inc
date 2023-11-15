@@ -178,7 +178,7 @@ DBG_MEM_H32               equ   115       ;DWORD Integer in hexadecimal format
 DBG_MEM_H64               equ   116       ;QWORD Integer in hexadecimal format
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  DBG_MEM_STR equ DBG_MEM_STRA
+  DBG_MEM_STR equ 
 else
   DBG_MEM_STR equ DBG_MEM_STRW
 endif

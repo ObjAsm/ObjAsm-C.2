@@ -177,7 +177,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=11
+MilestoneOnDateDate=14
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -212,9 +212,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,806,424,55321
+2=0,0,806,424,20842
 3=0,0,2127,589,4723
-1=0,0,694,487,910
+1=0,0,694,487,3301
 4=0,0,706,573,9402
 1001=0,0,0,0,460
 5=0,0,0,0,13769
@@ -231,7 +231,7 @@ ProductVer4Range=0
 16=0,0,0,0,30
 17=
 18=0,0,0,0,4451
-19=0,0,1603,627,14168
+19=0,0,1603,627,10859
 20=0,0,0,0,3179
 21=0,0,0,0,96311
 22=0,0,1939,424,10958
@@ -285,16 +285,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="DBG_FLOAT_BUFFERSIZE"
-2="DBG_FLOAT_RESOLUTION"
-3="DbgFloat"
-4="Dbg"
-5="DBG_CMD_CLOSE_WND"
-6="DbgCloseWnd"
-7="Close"
-8="AddURL"
-9="Http"
-10="WM_CLOSE"
+1="dTotalUnencryptedSize"
+2="TotalBytesToRead"
+3="pUnencryptedBuffer"
+4="dUnencryptedSize"
+5="DBG_FLOAT_BUFFERSIZE"
+6="DBG_FLOAT_RESOLUTION"
+7="DbgFloat"
+8="Dbg"
+9="DBG_CMD_CLOSE_WND"
+10="DbgCloseWnd"
 "
 [Collapse]
 7=,,
@@ -351,9 +351,9 @@ ProductVer4Range=0
 53=
 54=
 [AutoLoad]
-AutoLoad=1
+AutoLoad=1,19,2
 [PTimer]
-PTimer=2316801779
+PTimer=2331065560
 [RADebugBP]
 5=
 2=

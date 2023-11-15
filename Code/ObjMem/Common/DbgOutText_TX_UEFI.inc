@@ -22,7 +22,7 @@ externdef DbgColorError:DWORD
 align ALIGN_CODE
 ProcName proc uses xbx pString:POINTER, dForeColor:DWORD, dBackColor:DWORD, dEffects:DWORD, pDest:POINTER
   .if pString == NULL
-    mov xax, $OfsCStr("NULL Pointer")
+    mov xax, $OfsCStr("NULL pointer")
     mov pString, xax
     m2m dForeColor, DbgColorError, edx
   .endif

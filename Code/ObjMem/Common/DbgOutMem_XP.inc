@@ -10,6 +10,8 @@
 ; ==================================================================================================
 
 
+externdef DbgColorError:DWORD
+
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutMem / DbgOutMem_UEFI
 ; Purpose:    Output the content of a memory block.
@@ -29,7 +31,15 @@ ProcName proc uses xbx xdi xsi, pStart:POINTER, dSize:DWORD, dRepresentationForm
   local .xsi:XWORD, .xbx:XWORD, .ecx:DWORD
 
   mov xsi, pStart
+  .if xsi == NULL
+    invoke DbgOutTextA, $OfsCStrA("NULL pointer"), DbgColorError, dBackColor, DBG_EFFECT_NEWLINE, pDest
+    ret
+  .endif
   mov ebx, dSize
+  .if ebx == NULL
+    invoke DbgOutTextA, $OfsCStrA("Zero size"), DbgColorError, dBackColor, DBG_EFFECT_NEWLINE, pDest
+    ret
+  .endif
   mov dHeaderCount, BYTES_PER_LINE
   .if ebx < BYTES_PER_LINE
     mov dHeaderCount, ebx
