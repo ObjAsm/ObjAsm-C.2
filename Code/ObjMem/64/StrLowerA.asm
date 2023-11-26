@@ -1,43 +1,27 @@
 ; ==================================================================================================
 ; Title:      StrLowerA.asm
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.2.0
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
+;             Version C.2.0, November 2023
+;               - Speedup using a lookup table.
 ; ==================================================================================================
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
+TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
+
+ProcName equ <StrLowerA>
 
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrLowerA
-; Purpose:    Convert all ANSI string characters into lowercase.
+; Purpose:    Convert all ANSI string characters into uppercase.
 ; Arguments:  Arg1: -> Source ANSI string.
 ; Return:     rax -> String.
 
-OPTION PROC:NONE
-align ALIGN_CODE
-StrLowerA proc pStringA:POINTER
-  push rcx                                              ;rcx -> StringA
-  dec rcx
-@@:
-  inc rcx
-  mov al, [rcx]
-  or al, al
-  je @F                                                 ;End of string
-  cmp al, 'A'
-  jb @B
-  cmp al, 'Z'
-  ja @B
-  add al, 20H
-  mov [rcx], al
-  jmp @B
-@@:
-  pop rax                                               ;Return string address
-  ret
-StrLowerA endp
-OPTION PROC:DEFAULT
+% include &ObjMemPath&Common\StrLower_TX.inc
 
 end

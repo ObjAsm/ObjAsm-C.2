@@ -1,47 +1,27 @@
 ; ==================================================================================================
 ; Title:      StrUpperW.asm
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.2.0
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
+;             Version C.2.0, November 2023
+;               - Speedup using a lookup table.
 ; ==================================================================================================
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
+TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
+
+ProcName equ <StrUpperW>
 
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrUpperW
 ; Purpose:    Convert all WIDE string characters into uppercase.
 ; Arguments:  Arg1: -> Source WIDE string.
-; Return:     eax -> String.
+; Return:     rax -> String.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
-
-align ALIGN_CODE
-StrUpperW proc pStringW:POINTER
-  mov ecx, [esp + 4]                                    ;ecx -> StringW
-  sub ecx, sizeof(CHRW)
-@@:
-  add ecx, sizeof(CHRW)
-  mov ax, [ecx]
-  or ax, ax
-  je @F                                                 ;End of string
-  cmp ax, 'a'
-  jb @B
-  cmp ax, 'z'
-  ja @B
-  sub ax, 20H
-  mov [ecx], ax
-  jmp @B
-@@:
-  mov eax, [esp + 4]                                    ;Return string address
-  ret 4
-StrUpperW endp
-
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+% include &ObjMemPath&Common\StrUpper_TX.inc
 
 end

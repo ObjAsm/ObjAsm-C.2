@@ -3669,9 +3669,9 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      $Log2
-; Purpose:    Return the Log2 of a value at compile time.
-; Arguments:  Arg1: Input value.
-; Return:     Log value.
+; Purpose:    Return the Log2 of a Number at compile time.
+; Arguments:  Arg1: Input Number.
+; Return:     Log base 2 of Number.
 
 $Log2 macro Number:req
   $$Text textequ <>
@@ -3853,10 +3853,48 @@ endm
 ; Macro:      $ToStr
 ; Purpose:    Used to echo a numeric symbol.
 ; Arguments:  Symbol name.
-; Use:        %echo This is a test using $ToStr(%Number1)
+; Use:        %echo $ToStr(%Number)
 
 $ToStr macro Num
   exitm <Num>
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      $HexYY and variations
+; Purpose:    Used to echo a numeric symbol in hexadecimal notation.
+; Arguments:  Symbol name.
+; Use:        %echo $Hex32(%Number)
+
+$Hex32 macro Num32
+  pushcontext radix
+  .radix 16
+  ??HexStr catstr %Num32, <h>
+  popcontext radix
+  exitm ??HexStr
+endm
+
+$Hex64 macro Num64
+  pushcontext radix
+  .radix 16
+  ??HexStr catstr %HIGH32 Num64, %LOW32 Num64, <h>
+  popcontext radix
+  exitm ??HexStr
+endm
+
+$Hex64Lo macro Num64
+  pushcontext radix
+  .radix 16
+  ??HexStr catstr %LOW32 Num64, <h>
+  popcontext radix
+  exitm ??HexStr
+endm
+
+$Hex64Hi macro Num64
+  pushcontext radix
+  .radix 16
+  ??HexStr catstr %HIGH32 Num64, <h>
+  popcontext radix
+  exitm ??HexStr
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -3866,9 +3904,9 @@ endm
 ;             Arg2: Second mov.
 
 ?mov macro Arg1:req, Arg2:req
-  if TARGET_BITNESS eq 32
-    mov Arg1, Arg2
-  endif
+if TARGET_BITNESS eq 32
+  mov Arg1, Arg2
+endif
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

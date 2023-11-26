@@ -41,6 +41,7 @@
 BASE64_CHARS CHRA "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
 .code
+align ALIGN_CODE
 Base64Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD
   local pEncodedDataBuffer:POINTER, dEncodedDataSize:DWORD, dRemainder:DWORD
 

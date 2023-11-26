@@ -68,6 +68,7 @@ B64GetCharInto macro Reg32:req
 endm
 
 .code
+align ALIGN_CODE
 Base64Decode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD
   local pDecodedDataBuffer:POINTER, dDecodedDataSize:DWORD, dCount:DWORD
 

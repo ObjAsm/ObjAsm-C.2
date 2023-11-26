@@ -1,47 +1,27 @@
 ; ==================================================================================================
 ; Title:      StrUpperA.asm
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.2.0
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
+;             Version C.2.0, November 2023
+;               - Speedup using a lookup table.
 ; ==================================================================================================
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
+TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
+
+ProcName equ <StrUpperA>
 
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrUpperA
 ; Purpose:    Convert all ANSI string characters into uppercase.
 ; Arguments:  Arg1: -> Source ANSI string.
-; Return:     eax -> String.
+; Return:     rax -> String.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
-
-align ALIGN_CODE
-StrUpperA proc pStringA:POINTER
-  mov ecx, [esp + 4]                                    ;ecx -> StringA
-  dec ecx
-@@:
-  inc ecx
-  mov al, [ecx]
-  or al, al
-  je @F                                                 ;End of string
-  cmp al, 'a'
-  jb @B
-  cmp al, 'z'
-  ja @B
-  sub al, 20H
-  mov [ecx], al
-  jmp @B
-@@:
-  mov eax, [esp + 4]                                    ;Return string address
-  ret 4
-StrUpperA endp
-
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+% include &ObjMemPath&Common\StrUpper_TX.inc
 
 end
