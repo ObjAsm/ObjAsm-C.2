@@ -2,42 +2,26 @@
 ; Title:      bin2dwordA.asm
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Notes:      Version C.1.0, October 2017
+; Notes:      Version C.1.0, November 2023
 ;               - First release.
 ; ==================================================================================================
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
+TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-NextCharA macro
-  movzx rdx, BYTE ptr [rcx]
-  inc rcx
-  sub rdx, "0"
-  cmp rdx, 1
-  ja @F
-  rcl rax, 1
-endm
+ProcName equ <bin2dwordA>
+BIT_COUNT = 32
 
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  bin2dwordA
-; Purpose:    Load an ANSI string binary representation of a DWORD.
-; Arguments:  Arg1: -> ANSI binary string.
-; Return:     eax = DWORD.
+; Purpose:    Conversion of an ANSI input string that contains a binary number in the form of a 
+;             sequence of "0" and "1" into a DWORD.
+; Arguments:  Arg1: -> Input string.
+; Return:     eax = Number.
 
-OPTION PROC:NONE
-align ALIGN_CODE
-bin2dwordA proc pBuffer:POINTER
-  xor eax, eax                                          ;rcx -> Buffer
-  not rax
-  repeat 32
-    NextCharA
-  endm
-@@:
-  not rax
-  ret
-bin2dwordA endp
-OPTION PROC:DEFAULT
+% include &ObjMemPath&Common\bin2reg_TX.inc
 
 end

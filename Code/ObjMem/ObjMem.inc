@@ -733,6 +733,26 @@ else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
 
+bin2byteA proto :POINTER
+bin2byteW proto :POINTER
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  bin2byte textequ <bin2byteA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  bin2byte textequ <bin2byteW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
+bin2wordA proto :POINTER
+bin2wordW proto :POINTER
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  bin2word textequ <bin2wordA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  bin2word textequ <bin2wordW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
 bin2dwordA proto :POINTER
 bin2dwordW proto :POINTER
 if TARGET_STR_TYPE eq STR_TYPE_ANSI

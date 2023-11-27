@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      bin2dwordW.asm
+; Title:      bin2wordW.asm
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, November 2023
@@ -7,18 +7,18 @@
 ; ==================================================================================================
 
 
-% include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
+% include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <bin2dwordW>
-BIT_COUNT = 32
+ProcName equ <bin2wordW>
+BIT_COUNT = 16
 
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  bin2dwordW
+; Procedure:  bin2wordW
 ; Purpose:    Conversion of an WIDE input string that contains a binary number in the form of a 
-;             sequence of "0" and "1" into a DWORD.
+;             sequence of "0" and "1" into a WORD.
 ; Arguments:  Arg1: -> Input string.
 ; Return:     eax = Number.
 

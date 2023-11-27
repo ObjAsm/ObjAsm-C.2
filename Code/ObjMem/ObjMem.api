@@ -289,6 +289,14 @@ dword2hex, pHexString, dword
 dword2hexA, pHexStringA, dword
 dword2hexW, pHexStringW, dword
 
+bin2byte, pBinString
+bin2byteA, pBinStringA
+bin2dbyteW, pBinStringW
+
+bin2word, pBinString
+bin2wordA, pBinStringA
+bin2wordW, pBinStringW
+
 bin2dword, pBinString
 bin2dwordA, pBinStringA
 bin2dwordW, pBinStringW

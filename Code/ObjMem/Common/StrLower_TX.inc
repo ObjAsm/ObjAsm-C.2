@@ -14,6 +14,7 @@
 ; Arguments:  Arg1: -> Source string.
 ; Return:     xax -> String.
 
+OPTION PROC:NONE
 align ALIGN_CODE
 ProcName proc pString:POINTER
 
@@ -46,7 +47,7 @@ align ALIGN_DATA
   db 000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000
 
 .code
-  ?mov ecx, pString
+  ?mov ecx, [esp + 4]                                   ;xcx -> pString
   mov xax, offset UPPER_CASE_TABLE
   .repeat
     movzx edx, CHR ptr [xcx]
@@ -65,3 +66,4 @@ align ALIGN_DATA
   mov xax, pString
   ret
 ProcName endp
+OPTION PROC:DEFAULT

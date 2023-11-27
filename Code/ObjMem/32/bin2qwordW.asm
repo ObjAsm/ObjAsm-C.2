@@ -11,13 +11,13 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 NextCharW macro
-  movzx ecx, WORD ptr [ebx]
+  movzx ecx, CHRW ptr [ebx]
   add ebx, 2
-  sub ecx, WORD ptr "0"
+  sub ecx, CHRW ptr "0"
   cmp ecx, 1
   ja @F
   rcl eax, 1
-  rcl edx, 1
+  rcl edx, 1                                            ;Pass the carry from prev operation
 endm
 
 .code
