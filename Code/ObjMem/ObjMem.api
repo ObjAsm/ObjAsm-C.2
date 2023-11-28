@@ -261,9 +261,21 @@ GUID2StrA, pStringA, pGUID
 GUID2StrW, pStringW, pGUID
 GUID2BStr, pBStr, pGUID
 
+byte2bin, pBinString, byte
+byte2binA, pBinStringA, byte
+byte2binW, pBinStringW, byte
+
+word2bin, pBinString, word
+word2binA, pBinStringA, word
+word2binW, pBinStringW, word
+
 dword2bin, pBinString, dword
 dword2binA, pBinStringA, dword
 dword2binW, pBinStringW, dword
+
+qword2bin, pBinString, qword
+qword2binA, pBinStringA, qword
+qword2binW, pBinStringW, qword
 
 dword2dec, pDecString, dword
 dword2decA, pDecStringA, dword
@@ -308,10 +320,6 @@ bin2qwordW, pBinStringW
 dec2dword, pDecString
 dec2dwordA, pDecStringA
 dec2dwordW, pDecStringW
-
-qword2bin, pBinString, qword
-qword2binA, pBinStringA, qword
-qword2binW, pBinStringW, qword
 
 qword2dec, pDecString, qword
 qword2decA, pDecStringA, qword

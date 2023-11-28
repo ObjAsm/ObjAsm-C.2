@@ -20,9 +20,7 @@
 ; Return:     eax = Converted DWORD.
 ;             ecx = Conversion result. Zero if succeeded, otherwise failed.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
-
+OPTION PROC:NONE
 align ALIGN_CODE
 dec2dwordA proc pStringA:POINTER
   push esi
@@ -61,8 +59,6 @@ dec2dwordA proc pStringA:POINTER
   pop esi
   ret 4
 dec2dwordA endp
-
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

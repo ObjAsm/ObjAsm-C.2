@@ -12,7 +12,7 @@
 
 .code
 
-SetDword macro z
+Set4BinCharsA macro Index
   mov eax, "0000"
   rcl edx, 1                                            ;Set bit in carry flag
   jnc @F                                                ;Test carry flag
@@ -30,17 +30,17 @@ SetDword macro z
   jnc @F                                                ;Test carry flag
   add eax, 01000000h                                    ;Set "1"
 @@:
-  mov [ecx + z*4], eax
+  mov [ecx + 4*sizeof(CHRA)*Index], eax
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: qword2binA
-; Purpose:   Convert a QWORD to its binary ANSI string representation.
-; Arguments: Arg1: -> Destination buffer.
-;            Arg2: QWORD value.
-; Return:    Nothing.
-; Note:      The destination buffer must be at least 65 BYTEs large to allocate the output string
-;            (64 character BYTEs + ZTC = 65 BYTEs).
+; Procedure:  qword2binA
+; Purpose:    Convert a QWORD to its binary ANSI string representation.
+; Arguments:  Arg1: -> Destination buffer.
+;             Arg2: Value.
+; Return:     Nothing.
+; Notes:      To allocate the output string, the destination buffer must be at least 65 BYTEs large.
+;             (64 character BYTEs + ZTC = 65 BYTEs).
 
 OPTION PROLOGUE:NONE
 OPTION EPILOGUE:NONE
@@ -49,24 +49,24 @@ align ALIGN_CODE
 qword2binA proc pBuffer:POINTER, qValue:QWORD
   mov ecx, [esp + 4]                                    ;ecx -> Buffer
   mov edx, [esp + 12]                                   ;edx = (QuadWord ptr qValue).HiDWord
-  SetDword 0
-  SetDword 1
-  SetDword 2
-  SetDword 3
-  SetDword 4
-  SetDword 5
-  SetDword 6
-  SetDword 7
+  Set4BinCharsA 0
+  Set4BinCharsA 1
+  Set4BinCharsA 2
+  Set4BinCharsA 3
+  Set4BinCharsA 4
+  Set4BinCharsA 5
+  Set4BinCharsA 6
+  Set4BinCharsA 7
   mov edx, [esp + 8]                                    ;edx = (QuadWord ptr qValue).LoDWord
-  SetDword 8
-  SetDword 9
-  SetDword 10
-  SetDword 11
-  SetDword 12
-  SetDword 13
-  SetDword 14
-  SetDword 15
-  m2z BYTE ptr [ecx + 64]                               ;Set terminator zero
+  Set4BinCharsA 8
+  Set4BinCharsA 9
+  Set4BinCharsA 10
+  Set4BinCharsA 11
+  Set4BinCharsA 12
+  Set4BinCharsA 13
+  Set4BinCharsA 14
+  Set4BinCharsA 15
+  m2z BYTE ptr [ecx + sizeof(CHRA)*64]                  ;Set ZTC
   ret 12
 qword2binA endp
 

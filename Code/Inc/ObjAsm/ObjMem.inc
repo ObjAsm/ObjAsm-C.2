@@ -651,7 +651,7 @@ else
 endif
 dword2decA textequ <udword2decA>                        ;Compatibility
 dword2decW textequ <udword2decW>                        ;Compatibility
-DWORD2DEC_MAX_CHARS equ 11                              ;ZTC included
+UDWORD2DEC_MAX_CHARS equ 11                             ;ZTC included
 
 sqword2decA proto :POINTER, :SQWORD
 sqword2decW proto :POINTER, :SQWORD
@@ -677,7 +677,29 @@ else
 endif
 qword2decA textequ <uqword2decA>                        ;Compatibility
 qword2decW textequ <uqword2decW>                        ;Compatibility
-QWORD2DEC_MAX_CHARS equ 21                              ;ZTC included
+UQWORD2DEC_MAX_CHARS equ 21                             ;ZTC included
+
+byte2binA proto :POINTER, :BYTE
+byte2binW proto :POINTER, :BYTE
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  byte2bin textequ <byte2binA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  byte2bin textequ <byte2binW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE using byte2bin
+endif
+BYTE2BIN_MAX_CHARS equ 9                                ;ZTC included
+
+word2binA proto :POINTER, :WORD
+word2binW proto :POINTER, :WORD
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  word2bin textequ <word2binA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  word2bin textequ <word2binW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE word2bin
+endif
+WORD2BIN_MAX_CHARS equ 17                               ;ZTC included
 
 dword2binA proto :POINTER, :DWORD
 dword2binW proto :POINTER, :DWORD
@@ -686,20 +708,20 @@ if TARGET_STR_TYPE eq STR_TYPE_ANSI
 elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
   dword2bin textequ <dword2binW>
 else
-  echo Warning: incompatible TARGET_STR_TYPE
+  echo Warning: incompatible TARGET_STR_TYPE using dword2bin
 endif
 DWORD2BIN_MAX_CHARS equ 33                              ;ZTC included
 
-word2hexA proto :POINTER, :WORD
-word2hexW proto :POINTER, :WORD
+qword2binA proto :POINTER, :QWORD
+qword2binW proto :POINTER, :QWORD
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  word2hex textequ <word2hexA>
+  qword2bin textequ <qword2binA>
 elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
-  word2hex textequ <word2hexW>
+  qword2bin textequ <qword2binW>
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
-WORD2HEX_MAX_CHARS equ 5                                ;ZTC included
+QWORD2BIN_MAX_CHARS equ 65                              ;ZTC included
 
 byte2hexA proto :POINTER, :BYTE
 byte2hexW proto :POINTER, :BYTE
@@ -712,6 +734,17 @@ else
 endif
 BYTE2HEX_MAX_CHARS equ 3                                ;ZTC included
 
+word2hexA proto :POINTER, :WORD
+word2hexW proto :POINTER, :WORD
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  word2hex textequ <word2hexA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  word2hex textequ <word2hexW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+WORD2HEX_MAX_CHARS equ 5                                ;ZTC included
+
 dword2hexA proto :POINTER, :DWORD
 dword2hexW proto :POINTER, :DWORD
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
@@ -722,6 +755,17 @@ else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
 DWORD2HEX_MAX_CHARS equ 9                               ;ZTC included
+
+qword2hexA proto :POINTER, :QWORD
+qword2hexW proto :POINTER, :QWORD
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  qword2hex textequ <qword2hexA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  qword2hex textequ <qword2hexW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+QWORD2HEX_MAX_CHARS equ 17                              ;ZTC included
 
 dec2dwordA proto :POINTER
 dec2dwordW proto :POINTER
@@ -772,28 +816,6 @@ elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
-
-qword2binA proto :POINTER, :QWORD
-qword2binW proto :POINTER, :QWORD
-if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  qword2bin textequ <qword2binA>
-elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
-  qword2bin textequ <qword2binW>
-else
-  echo Warning: incompatible TARGET_STR_TYPE
-endif
-QWORD2BIN_MAX_CHARS equ 65                              ;ZTC included
-
-qword2hexA proto :POINTER, :QWORD
-qword2hexW proto :POINTER, :QWORD
-if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  qword2hex textequ <qword2hexA>
-elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
-  qword2hex textequ <qword2hexW>
-else
-  echo Warning: incompatible TARGET_STR_TYPE
-endif
-QWORD2HEX_MAX_CHARS equ 17                              ;ZTC included
 
 Mem2HexA proto :POINTER, :POINTER, :DWORD
 Mem2HexW proto :POINTER, :POINTER, :DWORD

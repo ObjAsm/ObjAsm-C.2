@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      dword2binA.asm
+; Title:      word2binW.asm
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, November 2023
@@ -7,23 +7,23 @@
 ; ==================================================================================================
 
 
-% include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
-TARGET_STR_TYPE = STR_TYPE_ANSI
+% include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
+TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <dword2binA>
-VALUE_TYPE textequ <DWORD>
+ProcName equ <word2binW>
+VALUE_TYPE textequ <WORD>
 
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  dword2binA
-; Purpose:    Convert a DWORD to its binary ANSI string representation.
+; Procedure:  word2binW
+; Purpose:    Convert a WORD to its binary WIDE string representation.
 ; Arguments:  Arg1: -> Destination buffer.
 ;             Arg2: Value.
 ; Return:     Nothing.
-; Notes:      To allocate the output string, the destination buffer must be at least 33 BYTEs large.
-;             (32 character BYTEs + ZTC = 33 BYTEs).
+; Notes:      To allocate the output string, the destination buffer must be at least 34 BYTEs large.
+;             (16 character WORDs + ZTC = 34 BYTEs).
 
-% include &ObjMemPath&Common\reg2binA_32.inc
+% include &ObjMemPath&Common\reg2binW_64.inc
 
 end
