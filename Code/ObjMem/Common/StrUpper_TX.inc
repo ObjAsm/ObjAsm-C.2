@@ -48,6 +48,7 @@ align ALIGN_DATA
 
 .code
   ?mov ecx, [esp + 4]
+  ??mov r8, rcx
   mov xax, offset LOWER_CASE_TABLE
   .repeat
     movzx edx, CHR ptr [xcx]
@@ -63,7 +64,12 @@ align ALIGN_DATA
   endif
     add xcx, sizeof CHR
   .until FALSE
-  mov xax, pString
+if TARGET_BITNESS eq 32
+  mov eax, [esp + 4]                                    ;pString
+  ret 4
+else
+  mov rax, r8
   ret
+endif
 ProcName endp
 OPTION PROC:DEFAULT

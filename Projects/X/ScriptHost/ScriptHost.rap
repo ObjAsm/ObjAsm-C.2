@@ -377,16 +377,16 @@ ProductVer4Range=0
 25=
 44=
 [Find]
-1="IScriptOutput"
-2="IID_IScriptOutput"
-3="ResGuard"
-4="mov xbx, $New(Component)"
-5="OCall [xsi].Interfaces::Collection.Init, xsi, 2, 1, COL_MAX_CAPACITY ;Min 2 interfaces"
-6="LF"
-7="IScriptOutput.Color"
-8="Method ScriptHost.Run, uses xbx xdi xsi"
-9="StrIComp"
-10="IScriptInterface"
+1="WSH"
+2="IScriptOutput"
+3="IID_IScriptOutput"
+4="ResGuard"
+5="mov xbx, $New(Component)"
+6="OCall [xsi].Interfaces::Collection.Init, xsi, 2, 1, COL_MAX_CAPACITY ;Min 2 interfaces"
+7="LF"
+8="IScriptOutput.Color"
+9="Method ScriptHost.Run, uses xbx xdi xsi"
+10="StrIComp"
 [AutoLoad]
 AutoLoad=1,2,16,30,3,21,31,4
 [RADebugBP]
