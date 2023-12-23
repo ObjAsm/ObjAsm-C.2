@@ -636,7 +636,7 @@ Method ScriptHost.Done, uses xsi
     invoke ResumeThread, [xsi].hThread
     invoke WaitForSingleObject, [xsi].hThread, 4000
     .if eax == WAIT_TIMEOUT
-      DbgWarning "Script thead was forced to terminate; some resources were not released."
+      DbgWarning "Script thread was forced to terminate; some resources were not released."
       invoke TerminateThread, [xsi].hThread, -1
     .endif
     invoke CloseHandle, [xsi].hThread
@@ -650,7 +650,7 @@ MethodEnd
 ; Arguments:  Arg1: -> Owner Object.
 ;             Arg2: Window handle to report.
 ;             Arg3: -> CLSID of the script engine to use (i.e. offset CLSID_VBScript).
-;             Arg4: Window handle to report.
+;             Arg4: Flags, e.g WSF_DEBUG.
 ; Return:     eax = TRUE is succeeded, otherwise FALSE.
 
 Method ScriptHost.Init, uses xbx xsi, pOwner:POINTER, hWnd:HWND, pCLSID_Engine:REFGUID, dFlags:DWORD

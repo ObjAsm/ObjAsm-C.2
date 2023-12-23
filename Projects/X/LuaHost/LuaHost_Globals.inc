@@ -1,12 +1,12 @@
 ; ==================================================================================================
-; Title:      ScriptHost_Globals.inc
+; Title:      LuaHost_Globals.inc
 ; Author:     G. Friedrich
-; Version:    See ScriptHost.asm
-; Purpose:    ObjAsm ScriptHost Application.
+; Version:    See LuaHost.asm
+; Purpose:    ObjAsm LuaHost Application.
 ; ==================================================================================================
 
 
-include ScriptHost_Shared.inc
+include LuaHost_Shared.inc
 
 %CStr szAppTitle, "&APP_TITLE"
 %CStr szAboutText,"&ABOUT_TEXT", 13, 10, \
@@ -20,7 +20,7 @@ include ScriptHost_Shared.inc
 IDC_TEXT_ABOUT      equ   100
 
 IDD_MAIN            equ   1000
-IDC_RED_SCRIPT        equ   1001
+IDC_RED_SCRIPT      equ   1001
 IDC_RED_OUTPUT      equ   1002
 IDC_BTN_LOAD        equ   1003
 IDC_BTN_SAVE        equ   1004
@@ -30,7 +30,7 @@ IDC_BTN_ABOUT       equ   1007
 IDC_SBR_GRIPPER     equ   1008
 
 
-CStr szCaption,     "ObjAsm  - ScriptHost Demonstration -  "
-CStr szLoadFilter,  "Script files (*.vbs)", 0, "*.vbs", 0
+CStr szCaption,     "ObjAsm  - LuaHost Demonstration -  "
+CStr szLoadFilter,  "Lua files (*.lua)", 0, "*.lua", 0
 CStr szFileTypeErr, "Error: Unknown file type."
-CStr szVbsExt,      ".vbs"
+CStr szLuaExt,      ".lua"

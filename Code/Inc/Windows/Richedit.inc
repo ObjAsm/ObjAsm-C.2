@@ -517,7 +517,7 @@ ifndef _RICHEDIT_
     if Defined(__cplusplus)
       ;[...]
     else
-      CHARFORMAT2W struct
+      CHARFORMAT2W struct 4
         cbSize UINT ?
         dwMask DWORD ?
         dwEffects DWORD ?
@@ -549,7 +549,7 @@ ifndef _RICHEDIT_
         endif
       CHARFORMAT2W ends
       _charformat2w typedef CHARFORMAT2W
-      CHARFORMAT2A struct
+      CHARFORMAT2A struct 4
         cbSize UINT ?
         dwMask DWORD ?
         dwEffects DWORD ?

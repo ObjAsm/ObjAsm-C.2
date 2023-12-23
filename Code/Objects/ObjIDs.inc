@@ -362,6 +362,9 @@ IActiveScriptSiteWindowID         equ     0000012002
 IActiveScriptSiteDebugID          equ     0000012003
 IScriptInterfaceID                equ     0000012004
 
+;Lua Host
+LuaHostID                         equ     0000012008
+
 ;OCX container
 OcxContainerID                    equ     0000012010
 OcxClientSiteID                   equ     0000012011

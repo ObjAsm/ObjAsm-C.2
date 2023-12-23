@@ -1,0 +1,36 @@
+; ==================================================================================================
+; Title:      LuaHost.asm
+; Author:     G. Friedrich
+; Version:    See LuaHost.asm
+; Purpose:    ObjAsm LuaHost Application resource file.
+; Notes:      Version C.1.0, October 2017
+;               - First release.
+; ==================================================================================================
+
+
+#include "Resource.h"               //Windows resource definitions
+#include "LuaHost_Shared.rc"     //Application shared definitions
+#include "VER\Version.rc"           //Application version definition
+#include "MFT\Manifest_Invoker.rc"  //Application manifest definition
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+
+// Icons ------------------------------------------------------------------------------------------
+ICON_APP              ICON DISCARDABLE "Res\OA_Lua.ico"
+
+
+// DialogAboutEx icons
+ICON_LINK             ICON DISCARDABLE "ICO\Link_16x16_04.ico"
+ICON_MAIL             ICON DISCARDABLE "ICO\Mail_16x16_04.ico"
+
+
+// Cursors ----------------------------------------------------------------------------------------
+
+CURSOR_HAND           CURSOR DISCARDABLE "CUR\Hand.cur"         ;Used by DialogAboutEx
+CURSOR_SPLITHOR       CURSOR DISCARDABLE "CUR\SplitHor.cur"
+
+
+// Dialogs ----------------------------------------------------------------------------------------
+#include "DLG\DialogAboutEx.rc"
+#include "Res\LuaHostDlg.rc"
