@@ -169,6 +169,7 @@ USER_INTERFACE_CLI      equ       3                     ;Command line interface
 TARGET_USER_INTERFACE   =         USER_INTERFACE_GUI    ;Default: Window
 
 TARGET_BITNESS          =         32                    ;Default 32-bit
+TARGET_ARCH_STRING      textequ   <x86>
 
 PLATFORM_NONE           equ       1
 PLATFORM_UEFI           equ       2
@@ -180,7 +181,7 @@ MODE_RLS                equ       1
 MODE_DBG                equ       2
 TARGET_MODE             =         MODE_RLS
 TARGET_MODE_STR         textequ   <R>
-
+TARGET_MODE_STRING      textequ   <RELEASE>
 DEBUGGING               =         0
 
 ??ObjectContext         textequ   <>
@@ -201,16 +202,19 @@ SysSetup macro Arguments:vararg
         DEBUGGING = 1
         TARGET_MODE = MODE_DBG
         TARGET_MODE_STR textequ <D>
+        TARGET_MODE_STRING textequ <DEBUG>
       else
         DEBUGGING = 0
         TARGET_MODE = MODE_RLS
         TARGET_MODE_STR textequ <R>
+        TARGET_MODE_STRING textequ <RELEASE>
       endif
 
     elseifidni <Argument>, <DEBUG_FALSE>
       DEBUGGING = 0
       TARGET_MODE = MODE_RLS
       TARGET_MODE_STR textequ <R>
+      TARGET_MODE_STRING textequ <RELEASE>
 
     elseifidni <Argument>, <OOP>
       TARGET_OOP = OOP_ENABLED
@@ -218,60 +222,72 @@ SysSetup macro Arguments:vararg
     elseifidni <Argument>, <NUI32>
       TARGET_USER_INTERFACE = USER_INTERFACE_NONE
       TARGET_BITNESS = 32
+      TARGET_ARCH_STRING textequ <x86>
     elseifidni  <Argument>, <NUI64>
       TARGET_USER_INTERFACE = USER_INTERFACE_NONE
       TARGET_BITNESS = 64
+      TARGET_ARCH_STRING textequ <x64>
 
     elseifidni <Argument>, <WIN32>
       TARGET_PLATFORM = PLATFORM_WINDOWS
       TARGET_USER_INTERFACE = USER_INTERFACE_GUI
       TARGET_BITNESS = 32
+      TARGET_ARCH_STRING textequ <x86>
     elseifidni <Argument>, <WIN64>
       TARGET_PLATFORM = PLATFORM_WINDOWS
       TARGET_USER_INTERFACE = USER_INTERFACE_GUI
       TARGET_BITNESS = 64
+      TARGET_ARCH_STRING textequ <x64>
 
     elseifidni <Argument>, <CON32>
       TARGET_PLATFORM = PLATFORM_WINDOWS
       TARGET_USER_INTERFACE = USER_INTERFACE_CLI
       TARGET_BITNESS = 32
+      TARGET_ARCH_STRING textequ <x86>
     elseifidni <Argument>, <CON64>
       TARGET_PLATFORM = PLATFORM_WINDOWS
       TARGET_USER_INTERFACE = USER_INTERFACE_CLI
       TARGET_BITNESS = 64
+      TARGET_ARCH_STRING textequ <x64>
 
     elseifidni  <Argument>, <LIB32>
       TARGET_PLATFORM = PLATFORM_WINDOWS
       TARGET_BIN_FORMAT = BIN_FORMAT_LIB
       TARGET_USER_INTERFACE = USER_INTERFACE_NONE
       TARGET_BITNESS = 32
+      TARGET_ARCH_STRING textequ <x86>
     elseifidni  <Argument>, <LIB64>
       TARGET_PLATFORM = PLATFORM_WINDOWS
       TARGET_BIN_FORMAT = BIN_FORMAT_LIB
       TARGET_USER_INTERFACE = USER_INTERFACE_NONE
       TARGET_BITNESS = 64
+      TARGET_ARCH_STRING textequ <x64>
 
     elseifidni <Argument>, <DLL32>
       TARGET_PLATFORM = PLATFORM_WINDOWS
       TARGET_BIN_FORMAT = BIN_FORMAT_DLL
       TARGET_USER_INTERFACE = USER_INTERFACE_NONE
       TARGET_BITNESS = 32
+      TARGET_ARCH_STRING textequ <x86>
     elseifidni <Argument>, <DLL64>
       TARGET_PLATFORM = PLATFORM_WINDOWS
       TARGET_BIN_FORMAT = BIN_FORMAT_DLL
       TARGET_USER_INTERFACE = USER_INTERFACE_NONE
       TARGET_BITNESS = 64
+      TARGET_ARCH_STRING textequ <x64>
 
     elseifidni <Argument>, <UEFI32>
       TARGET_BIN_FORMAT = BIN_FORMAT_DLL
       TARGET_USER_INTERFACE = USER_INTERFACE_CLI
       TARGET_BITNESS = 32
+      TARGET_ARCH_STRING textequ <x86>
       TARGET_PLATFORM = PLATFORM_UEFI
 
     elseifidni <Argument>, <UEFI64>
       TARGET_BIN_FORMAT = BIN_FORMAT_DLL
       TARGET_USER_INTERFACE = USER_INTERFACE_CLI
       TARGET_BITNESS = 64
+      TARGET_ARCH_STRING textequ <x64>
       TARGET_PLATFORM = PLATFORM_UEFI
 
     elseifidni <Argument>, <SUFFIX>

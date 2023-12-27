@@ -32,6 +32,11 @@ if exist *.asm (
   call "%OBJASM_PATH%\Build\OA_SET.cmd" %*
   if errorlevel 1 goto Error
 
+  if exist BUILD_PRE.cmd (
+    call "BUILD_PRE.cmd" %*
+    if errorlevel 1 goto Error
+  )
+
   REM Prepare for build
   call "%OBJASM_PATH%\Build\OA_PRE.cmd" %*
   if errorlevel 1 goto Error
@@ -60,6 +65,11 @@ if exist *.asm (
 
   REM Housekeeping
   call "%OBJASM_PATH%\Build\OA_POS.cmd" %*
+
+  if exist BUILD_POS.cmd (
+    call "BUILD_POS.cmd" %*
+  )
+
   goto :EOF
 
   :Error

@@ -308,7 +308,7 @@ ifndef _INC_WINASM
         ??CallConv equ <&CallConv>
       endif
 
-      ifidn <ApiQual>, <DllImport>                      ;;Call [IAT], a bit faster
+      %ifidn <ApiQual>, <DllImport>                     ;;Call [IAT], a bit faster
         TYPE_&ProcName typedef proto ??CallConv Params
         externdef __imp_&ProcName: ptr TYPE_&ProcName
         ProcName&NameSuffix equ <__imp_&ProcName>
@@ -321,7 +321,7 @@ ifndef _INC_WINASM
     WIN_STD_CALL_CONV equ <stdcall>
     @DefProto macro ApiQual, ProcName, CallConv, NameSuffix, Params, DecorSuffix
 
-      ifidn <ApiQual>, <DllImport>                      ;;Call [IAT], a bit faster
+      %ifidn <ApiQual>, <DllImport>                     ;;Call [IAT], a bit faster
         TYPE_&ProcName typedef proto CallConv Params
         ifnb <DecorSuffix>
           externdef CallConv _imp__&ProcName&@&DecorSuffix: ptr TYPE_&ProcName

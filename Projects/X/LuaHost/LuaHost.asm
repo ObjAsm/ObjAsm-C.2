@@ -9,7 +9,9 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, WIN32, ANSI_STRING;, DEBUG(WND);, ResGuard)
+SysSetup OOP, WIN32, WIDE_STRING;, DEBUG(WND)
+
+LUA_DLL_IMPORT equ 1
 
 % include &IncPath&Windows\Shlwapi.inc
 % include &IncPath&Windows\Richedit.inc
@@ -23,7 +25,7 @@ SysSetup OOP, WIN32, ANSI_STRING;, DEBUG(WND);, ResGuard)
 % includelib &LibPath&Windows\Shell32.lib
 % includelib &LibPath&Windows\Comdlg32.lib
 % includelib &LibPath&Windows\Shlwapi.lib
-% includelib &LibPath&Lua\lua546.lib
+% includelib &LibPath&Lua\TARGET_MODE_STRING\lua546.lib
 
 ;Load or build the following objects
 MakeObjects Primer, Stream

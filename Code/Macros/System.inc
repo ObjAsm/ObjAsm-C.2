@@ -4075,7 +4075,7 @@ endif
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      pushaq
-; Purpose:    Simil to pushad but for 64 bit. Order of pushed values equal to pushad.
+; Purpose:    Simile to pushad but for 64 bit. Order of pushed values equal to pushad.
 ; Arguments:  None.
 ; Note:       rsp is not the value of the instruction begin, like it is using pushad.
 
@@ -4100,7 +4100,7 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      popaq
-; Purpose:    Simil to popaq but for 64 bit.
+; Purpose:    Simile to popaq but for 64 bit.
 ; Arguments:  None.
 
 popaq macro

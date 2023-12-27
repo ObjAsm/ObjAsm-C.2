@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      Debug.inc
 ; Author:     G. Friedrich
-; Version:    C.2.0
+; Version:    C.2.1
 ; Purpose:    ObjAsm debug macros.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
@@ -19,9 +19,11 @@
 ;               - DbgFlashWnd, DbgFlashMenu, DbgTileHor, DbgTileVer, DbgCascade, DbgArrange
 ;               - DbgZoomIn, DbgZoomInTxt, DbgZoomInBmp, DbgZoomOut, DbgZoomOutTxt, DbgZoomOutBmp
 ;               - DbgCloseWnd, DbgPinWnd, DbgFrontWnd, DbgFront, DbgFrontTxt, DbgFrontBmp added.
-;               - Color variables introduced. Setup is done by SysInit.
+;               - Color variables introduced. Setup is done in SysInit.
 ;             Version C.2.0, January 2023
 ;               - Register restoration bug in DbgSaveContext (64 bit) corrected.
+;             Version C.2.1, December 2023
+;               - DbgCpuFlags added.
 ; ==================================================================================================
 
 ;Supported debugging macros:
@@ -37,7 +39,7 @@
 ;  - DbgARGB
 ;  - DbgStr, DbgStrA, DbgStrW, DbgStrCA, DbgStrCW
 ;  - DbgBin, DbgDec, DbgHex, DbgFloat, DbgGUID
-;  - DbgMem, DbgGlobalMemUsage, DbgFPU
+;  - DbgMem, DbgGlobalMemUsage, DbgFPU, DbgCpuFlags
 ;  - DbgBmp, DbgBmpFromDC
 ;  - DbgApiError, DbgComError, DbgMessage
 ;  - DbgObject, DbgTraceObject, DbgTraceShow
@@ -140,8 +142,8 @@ DBG_COLOR_GREEN_CON             equ   $RGB(000,255,000)
 DBG_COLOR_BLUE_CON              equ   $RGB(000,000,255)
 
 ;Debug font
-DBG_FONT_TEXT             textequ <Courier New>
-;DBG_FONT_TEXT             textequ <Fixedsys>
+DBG_FONT_TEXT             textequ <Courier New>   ;Monospaced slab-serif font
+;DBG_FONT_TEXT             textequ <Fixedsys>      ;Monospaced sans-Serif raster font
 
 ;Debug device
 DBG_DEV_NUL               equ   00h
@@ -178,7 +180,7 @@ DBG_MEM_H32               equ   115       ;DWORD Integer in hexadecimal format
 DBG_MEM_H64               equ   116       ;QWORD Integer in hexadecimal format
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  DBG_MEM_STR equ 
+  DBG_MEM_STR equ
 else
   DBG_MEM_STR equ DBG_MEM_STRW
 endif
@@ -269,6 +271,8 @@ endif
 ; Return:     Nothing.
 ; Note:       On entry, the stack doesn't need to be aligned!
 
+DBG_HOMING_SIZE equ 40h
+
 DbgSaveContext macro VarIsRef:=<FALSE>, Var
   pushcontext assumes
   pushfx                                                ;;Save CPU flags
@@ -356,7 +360,7 @@ DbgSaveContext macro VarIsRef:=<FALSE>, Var
       mov rdi, [rdi +  8*sizeof(QWORD)]                 ;;Restore rdi from pushed register values
     endif
 
-    sub rsp, 40h                                        ;;Add a homing area and argument space
+    sub rsp, DBG_HOMING_SIZE                            ;;Add a homing area and argument space
   endif                                                 ;; for the comming calls
 endm
 
@@ -372,7 +376,7 @@ DbgLoadContext macro
     pop ebx
     fxrstor [ebx]                                       ;;Read XMM content back
   else
-    add rsp, 40h                                        ;;Remove homing area and argument space
+    add rsp, DBG_HOMING_SIZE                            ;;Remove homing area and argument space
     pop rbp
     pop rbx
     fxrstor [rbx]                                       ;;Read XMM content back
@@ -1838,6 +1842,71 @@ DbgFPU macro InfoText, Dest
   endif
 endm
 
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DbgCpuFlags
+; Purpose:    Output the content of the CPU Flags on the debug device.
+; Arguments:  Arg1: Additional information.
+;             Arg2: Optional destination Window name.
+; Links:      https://en.wikipedia.org/wiki/FLAGS_register
+
+DbgTestFlagBit macro TestBit, BitName, BitDesc
+% .ifBitSet xbx, TestBit
+%   ifb <BitDesc>
+%     invoke DbgOutTextA, $OfsCStrA("    ", BitName, " = 1 (set)"), \
+                          DbgColorFPU, DbgColorBackground, DBG_EFFECT_BOLD or DBG_EFFECT_NEWLINE, ??DbgDstWnd
+    else
+%     invoke DbgOutTextA, $OfsCStrA("    ", BitName, " = 1 (", BitDesc, " set)"), \
+                          DbgColorFPU, DbgColorBackground, DBG_EFFECT_BOLD or DBG_EFFECT_NEWLINE, ??DbgDstWnd
+    endif
+  .else
+%   ifb <BitDesc>
+%     invoke DbgOutTextA, $OfsCStrA("    ", BitName, " = 0 (clear)"), \
+                          DbgColorFPU, DbgColorBackground, DBG_EFFECT_NEWLINE, ??DbgDstWnd
+    else
+%     invoke DbgOutTextA, $OfsCStrA("    ", BitName, " = 0 (", BitDesc, " clear)"), \
+                          DbgColorFPU, DbgColorBackground, DBG_EFFECT_NEWLINE, ??DbgDstWnd
+    endif
+  .endif
+endm
+
+DbgCpuFlags macro InfoText, Dest
+  if DEBUGGING
+    DbgSaveContext FALSE, XWORD ptr [xsp + TARGET_BITNESS/4*sizeof(XWORD)] 
+
+    DbgHex ebx
+    invoke DbgOutTextA, $OfsCStrA("CPU Flags "), DbgColorFPU, DbgColorBackground, \
+                        DBG_EFFECT_BOLD, ??DbgDstWnd
+    DbgOutHex , DbgColorFPU, xbx, DbgColorFPU, ??DbgDstWnd
+    DbgShowTxtInfo InfoText, ??DbgDstWnd
+    DbgShowSrcInfo ??DbgDstWnd
+
+    DbgTestFlagBit BIT00, "CF ", "Carry Flag"
+    DbgTestFlagBit BIT01, "#01",
+    DbgTestFlagBit BIT02, "PF ", "Parity Flag"
+    DbgTestFlagBit BIT03, "#03"
+    DbgTestFlagBit BIT04, "AF ", "AuxCarry Flag"
+    DbgTestFlagBit BIT05, "#05"
+    DbgTestFlagBit BIT06, "ZF ", "Zero Flag"
+    DbgTestFlagBit BIT07, "SF ", "Sign Flag"
+    DbgTestFlagBit BIT08, "TF ", "Trap Flag"
+    DbgTestFlagBit BIT09, "IF ", "Interrupt enable Flag"
+    DbgTestFlagBit BIT10, "DF ", "Direction Flag"
+    DbgTestFlagBit BIT11, "OF ", "Overflow Flag"
+    DbgTestFlagBit BIT12, "PL0", "IOPL BIT00"
+    DbgTestFlagBit BIT13, "PL1", "IOPL BIT01"
+    DbgTestFlagBit BIT14, "OF ", "Nested-Task Flag"
+    DbgTestFlagBit BIT15, "MD ", "Mode"
+    DbgTestFlagBit BIT16, "RF ", "Resume Flag"
+    DbgTestFlagBit BIT17, "VM ", "Virtual 8086 Mode"
+    DbgTestFlagBit BIT18, "AC ", "Alignment Check"
+    DbgTestFlagBit BIT19, "VIF", "Virtual Interrupt Flag"
+    DbgTestFlagBit BIT20, "VIP", "Virtual Interrupt Pending"
+    DbgTestFlagBit BIT21, "ID ", "CPUID enabled"
+
+    DbgLoadContext
+  endif
+endm
+
 ; ==================================================================================================
 ;   OS debugging macros
 ; ==================================================================================================
@@ -1996,7 +2065,7 @@ DbgObject macro Expression, InfoText, Dest
                 $$sz2 CatStr @SubStr(<%$$sz2>, 3, $$Pos2 - 3)
               endif
             endif
-            lea xbx, @CatStr(<[xdi].>, <??TestObject>, <.>, %$$sz1) ;Arg. for DbgOutHex 
+            lea xbx, @CatStr(<[xdi].>, <??TestObject>, <.>, %$$sz1) ;Arg. for DbgOutHex
             push xdi                                    ;Preserve xdi
           if TARGET_BITNESS eq 64
             push rdi                                    ;Keep stack aligned to 16!
@@ -2602,7 +2671,7 @@ endm
 ResGuard_Show macro
   if DEBUGGING
     if TARGET_PLATFORM eq PLATFORM_WINDOWS
-      if RESGUARD_LOADED ne FALSE      
+      if RESGUARD_LOADED ne FALSE
         DbgSaveContext
         invoke DbgOutTextA, $OfsCStrA("Report:"), \
                             DbgColorForeground, DbgColorBackground, \
@@ -2773,7 +2842,7 @@ DbgVec3 macro Var:req, InfoText, Dest
     mov xdi, offset $$sz1
     WriteF xdi, "[¦F4, ¦F4, ¦F4]", \
                 REAL4 ptr [xbx + 0*sizeof(REAL4)], REAL4 ptr [xbx + 1*sizeof(REAL4)], \
-                REAL4 ptr [xbx + 2*sizeof(REAL4)] 
+                REAL4 ptr [xbx + 2*sizeof(REAL4)]
     invoke DbgOutText, offset $$sz1, DbgColorFPU, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     DbgShowTxtInfo InfoText, ??DbgDstWnd
     DbgShowSrcInfo ??DbgDstWnd
@@ -2805,7 +2874,7 @@ DbgVec4 macro Var:req, InfoText, Dest
     mov xdi, offset $$sz1
     WriteF xdi, "[¦F4, ¦F4, ¦F4, ¦F4]", \
                 REAL4 ptr [xbx + 0*sizeof(REAL4)], REAL4 ptr [xbx + 1*sizeof(REAL4)], \
-                REAL4 ptr [xbx + 2*sizeof(REAL4)], REAL4 ptr [xbx + 3*sizeof(REAL4)] 
+                REAL4 ptr [xbx + 2*sizeof(REAL4)], REAL4 ptr [xbx + 3*sizeof(REAL4)]
     invoke DbgOutText, offset $$sz1, DbgColorFPU, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     DbgShowTxtInfo InfoText, ??DbgDstWnd
     DbgShowSrcInfo ??DbgDstWnd
