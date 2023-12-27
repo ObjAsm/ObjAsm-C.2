@@ -64,11 +64,10 @@ if exist *.asm (
   )
 
   REM Housekeeping
-  call "%OBJASM_PATH%\Build\OA_POS.cmd" %*
-
   if exist BUILD_POS.cmd (
     call "BUILD_POS.cmd" %*
   )
+  call "%OBJASM_PATH%\Build\OA_POS.cmd" %*
 
   goto :EOF
 
