@@ -62,7 +62,7 @@ Method SharedMemoryObject.Init, uses xbx xsi, pOwner:POINTER, pName:POINTER, \
   SetObject xsi
   ACall xsi.Init, pOwner
 
-  invoke CreateFileMapping, INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, \
+  invoke CreateFileMapping, INVALID_HANDLE_VALUE, NULL, PAGE_EXECUTE_READWRITE, \
                             0, dSize, pName
   .if xax != NULL
     mov xbx, xax

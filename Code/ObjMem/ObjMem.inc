@@ -503,6 +503,17 @@ else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
 
+BStrTitle textequ <StrTitleW>
+StrTitleA proto :POINTER
+StrTitleW proto :POINTER
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  StrTitle textequ <StrTitleA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  StrTitle textequ <StrTitleW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
 BStrMid proto :POINTER, :POINTER, :DWORD, :DWORD
 StrMidA proto :POINTER, :POINTER, :DWORD, :DWORD
 StrMidW proto :POINTER, :POINTER, :DWORD, :DWORD

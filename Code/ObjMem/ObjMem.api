@@ -187,6 +187,11 @@ StrLowerA, pStringA
 StrLowerW, pStringW
 BStrLower, pBStr
 
+StrTitle, pString
+StrTitleA, pStringA
+StrTitleW, pStringW
+BStrTitle, pBStr
+
 StrFilter, pString, pPattern
 StrFilterA, pStringA, pPatternA
 StrFilterW, pStringW, pPatternW

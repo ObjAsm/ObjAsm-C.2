@@ -11,7 +11,7 @@
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
 SysSetup OOP, WIN32, WIDE_STRING;, DEBUG(WND)
 
-LUA_DLL_IMPORT equ 1
+DEFINE LUA_DLL_IMPORT
 
 % include &IncPath&Windows\Shlwapi.inc
 % include &IncPath&Windows\Richedit.inc
