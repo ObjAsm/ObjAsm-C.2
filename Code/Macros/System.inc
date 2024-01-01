@@ -3778,64 +3778,58 @@ endm
 EchoOpAttr macro Value
   $$Attr = opattr(Value)
   if $$Attr and OAT_REFERENCE
-    echo OpAttr(Value) = Bit0 set: References a code label
+    echo OpAttr(Value) = BIT00 set: References a code label
   endif
   if $$Attr and OAT_RELOCATABLE
-    echo OpAttr(Value) = Bit1 set: Is a memory variable or has a relocatable data label
+    echo OpAttr(Value) = BIT01 set: Is a memory variable or has a relocatable data label
   endif
   if $$Attr and OAT_IMMEDIATE
-    echo OpAttr(Value) = Bit2 set: Is an immediate value
+    echo OpAttr(Value) = BIT02 set: Is an immediate value
   endif
   if $$Attr and OAT_DIRECT_MEM
-    echo OpAttr(Value) = Bit3 set: Uses direct memory addressing
+    echo OpAttr(Value) = BIT03 set: Uses direct memory addressing
   endif
   if $$Attr and OAT_REGISTER
-    echo OpAttr(Value) = Bit4 set: Is a register value
+    echo OpAttr(Value) = BIT04 set: Is a register value
   endif
   if $$Attr and OAT_NO_ERROR
-    echo OpAttr(Value) = Bit5 set: References no undefined symbols and is without error
+    echo OpAttr(Value) = BIT05 set: References no undefined symbols and is without error
   endif
   if $$Attr and OAT_SS_RELATIVE
-    echo OpAttr(Value) = Bit6 set: Is relative to SS
+    echo OpAttr(Value) = BIT06 set: Is relative to SS
   endif
   if $$Attr and OAT_EXTERNAL
-    echo OpAttr(Value) = Bit7 set: References an external label
+    echo OpAttr(Value) = BIT07 set: References an external label
   endif
-  if $$Attr and OAT_LANGUAGE eq OAT_LANG_NONE
-    echo OpAttr(Value) = Bit8-10: No language type
+
+  if ($$Attr and OAT_LANGUAGE) eq OAT_LANG_C
+    echo OpAttr(Value) = BIT08..BIT10: C language
+  elseif ($$Attr and OAT_LANGUAGE) eq OAT_LANG_SYSCALL
+    echo OpAttr(Value) = BIT08..BIT10: SYSCALL language
+  elseif ($$Attr and OAT_LANGUAGE) eq OAT_LANG_STDCALL
+    echo OpAttr(Value) = BIT08..BIT10: STDCALL language
+  elseif ($$Attr and OAT_LANGUAGE) eq OAT_LANG_PASCAL
+    echo OpAttr(Value) = BIT08..BIT10: Pascal language
+  elseif ($$Attr and OAT_LANGUAGE) eq OAT_LANG_FORTRAN
+    echo OpAttr(Value) = BIT08..BIT10: Fortran language
+  elseif ($$Attr and OAT_LANGUAGE) eq OAT_LANG_BASIC
+    echo OpAttr(Value) = BIT08..BIT10: Basic language
   endif
-  if $$Attr and OAT_LANGUAGE eq OAT_LANG_C
-    echo OpAttr(Value) = Bit8-10: C language
-  endif
-  if $$Attr and OAT_LANGUAGE eq OAT_LANG_SYSCALL
-    echo OpAttr(Value) = Bit8-10: SYSCALL language
-  endif
-  if $$Attr and OAT_LANGUAGE eq OAT_LANG_STDCALL
-    echo OpAttr(Value) = Bit8-10: STDCALL language
-  endif
-  if $$Attr and OAT_LANGUAGE eq OAT_LANG_PASCAL
-    echo OpAttr(Value) = Bit8-10: Pascal language
-  endif
-  if $$Attr and OAT_LANGUAGE eq OAT_LANG_FORTRAN
-    echo OpAttr(Value) = Bit8-10: Fortran language
-  endif
-  if $$Attr and OAT_LANGUAGE eq OAT_LANG_BASIC
-    echo OpAttr(Value) = Bit8-10= Basic language
-  endif
+
   if $$Attr and OAT_BIT_11
-    echo OpAttr(Value) = Bit11 set
+    echo OpAttr(Value) = BIT11 set
   endif
   if $$Attr and OAT_BIT_12
-    echo OpAttr(Value) = Bit12 set
+    echo OpAttr(Value) = BIT12 set
   endif
   if $$Attr and OAT_BIT_13
-    echo OpAttr(Value) = Bit13 set
+    echo OpAttr(Value) = BIT13 set
   endif
   if $$Attr and OAT_BIT_14
-    echo OpAttr(Value) = Bit14 set
+    echo OpAttr(Value) = BIT14 set
   endif
   if $$Attr and OAT_BIT_15
-    echo OpAttr(Value) = Bit15 set
+    echo OpAttr(Value) = BIT15 set
   endif
 endm
 

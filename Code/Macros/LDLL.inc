@@ -44,7 +44,7 @@ LDLL_MEMBER struc
 LDLL_MEMBER ends
 
 PLDLL_CONTROL typedef ptr LDLL_CONTROL
-LDLL_CONTROL struc
+LDLL_CONTROL struc                                      ;AKA List Head
   pFirstMember  PLDLL_MEMBER  ?                         ;-> First member
   pLastMember   PLDLL_MEMBER  ?                         ;-> Last member
 LDLL_CONTROL ends
