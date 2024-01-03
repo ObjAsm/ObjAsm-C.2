@@ -3921,7 +3921,8 @@ endm
 ;             if TARGET_BITNESS eq 64, all occurences of the symbol are replaced by the register
 ;             name, otherwise the local is used.
 ; Arguments:  Expression of the form SymbolName1:Register1, SymbolName2:Register2...
-; Example:    LocReg pOwner:rdx
+; Example:    LocReg pOwner:xdx
+;             LocReg pMemBlock:$SubReg(r14, @WordSize)
 
 LocReg macro ExpressionList:vararg
   ifb <??ObjectContext>

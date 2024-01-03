@@ -18,8 +18,8 @@ VER_PRODUCTVERSION            equ       2,0,0,0
 VER_PRODUCTVERSION_STR        equ       <2.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       160
-BUILD_DATE_STR                textequ   <2023-09-04>
+BUILD_NUMBER                  equ       161
+BUILD_DATE_STR                textequ   <2024-01-03>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       RLS
 
@@ -108,3 +108,6 @@ LANGUAGE_STEP                 equ       100
 
 ID_MDI_MORE                   equ       50009
 ID_MDI_LIST                   equ       50010
+
+BUILD_BIN_FORMAT              equ       EXE
+BUILD_BIN_SUFFIX_STR          textequ   <>

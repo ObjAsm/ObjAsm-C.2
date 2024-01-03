@@ -21,7 +21,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, WIN64, ANSI_STRING, DEBUG(WND, ResGuard)           ;MUST be ANSI!!!
+SysSetup OOP, WIN64, ANSI_STRING;, DEBUG(WND, ResGuard)           ;MUST be ANSI!!!
 
 % includelib &LibPath&Windows\Kernel32.lib
 % includelib &LibPath&Windows\Shell32.lib
@@ -47,6 +47,7 @@ SysSetup OOP, WIN64, ANSI_STRING, DEBUG(WND, ResGuard)           ;MUST be ANSI!!
 % include &IncPath&PCRE\PCRE844S.inc
 
 % include &MacPath&DlgTmpl.inc                          ;Include Dlg Template macros for XMenu
+% include &MacPath&ConstDiv.inc
 % include &MacPath&SDLL.inc
 % include &MacPath&fMath.inc
 

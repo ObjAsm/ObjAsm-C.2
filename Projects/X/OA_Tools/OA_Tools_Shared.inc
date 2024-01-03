@@ -16,10 +16,10 @@ VER_PRODUCTVERSION            equ       1,0,0,0
 VER_PRODUCTVERSION_STR        textequ   <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       30
-BUILD_DATE_STR                textequ   <2023-09-11>
+BUILD_NUMBER                  equ       31
+BUILD_DATE_STR                textequ   <2024-01-03>
 BUILD_BITNESS                 equ       64
-BUILD_MODE                    equ       DBG
+BUILD_MODE                    equ       RLS
 
 ;Menu IDs - Never start with 0
 IDM_APPLICATION               equ       1
@@ -432,3 +432,6 @@ IDC_STC_COPYRIGHT             equ       1050
 IDC_STC_DESCRIPTION           equ       1060
 IDC_UDC_EMAIL                 equ       1070
 IDC_UDC_HOMEPAGE              equ       1080
+
+BUILD_BIN_FORMAT              equ       EXE
+BUILD_BIN_SUFFIX_STR          textequ   <>

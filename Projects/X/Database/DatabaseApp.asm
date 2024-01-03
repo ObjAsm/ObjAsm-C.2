@@ -14,6 +14,7 @@ SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)
 % include &COMPath&COM.inc                              ;COM basic support
 
 % include &MacPath&fMath.inc
+% include &MacPath&ConstDiv.inc
 % include &MacPath&DlgTmpl.inc
 % include &MacPath&QuadWord.inc
 % include &IncPath&Windows\sGUID.inc

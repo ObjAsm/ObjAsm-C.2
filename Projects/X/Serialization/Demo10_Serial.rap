@@ -10,8 +10,8 @@ Debug=1
 
 [Files]
 1=Demo10_Serial.asm
-2=Demo10_Main_Serial.inc
-3=Demo10_Globals_Serial.inc
+2=Demo10_Serial_Main.inc
+3=Demo10_Serial_Globals.inc
 4=Demo10_Serial.rc
 5=..\..\..\Code\Macros\Debug.inc
 6=..\..\..\Code\Objects\ProjectWnd.inc
@@ -30,7 +30,7 @@ Debug=1
 19=..\..\..\Code\Macros\DlgTmpl.inc
 20=..\..\..\Code\Objects\ObjIDs.inc
 21=..\..\..\Code\Objects\Button.inc
-22=Demo10_Shared_Serial.inc
+22=Demo10_Serial_Shared.inc
 23=
 24=..\..\..\Code\Macros\WinHelpers.inc
 25=..\..\..\Code\Macros\System.inc
@@ -144,7 +144,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=13
+MilestoneOnDateDate=3
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -179,10 +179,10 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,7703
-3=0,0,0,0,396
-1=453,0,453,706,1057
-4=0,0,0,0,268
+2=0,0,0,0,7707
+3=0,0,0,0,590
+1=453,0,453,706,1534
+4=0,0,0,0,609
 1001=0,0,0,0,460
 5=0,0,0,0,29060
 6=0,0,0,0,6934
@@ -201,11 +201,11 @@ ProductVer4Range=0
 20=0,0,0,0,13553
 19=0,0,0,0,3746
 21=0,0,0,0,8604
-22=0,0,0,0,3593
+22=0,0,1603,627,115
 23=0,0,0,0,0
 26=0,0,0,0,1501
 25=0,0,0,0,108009
-27=0,0,0,0,0
+27=0,0,0,0,22870
 24=0,0,0,0,17065
 28=0,0,0,0,2320
 29=0,0,0,0,3220
@@ -232,16 +232,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="Notif"
-2="FBF_BACK_ENABLED"
-3="FBN_SHIFT_PRESSED"
-4="FBN_CONTROL_PRESSED"
-5="FBN_CONTROL"
-6="FBN_SHIFT"
-7="FBN_HIDE"
-8="FBN_FADE_OUT"
-9="FBN_FRWD"
-10="FBN_BACK"
+1="BUILD_BIN_EXTENSION_STR"
+2="APP_TITLE"
+3="SUFFIX"
+4="SUFFIX_STR"
+5="BUILD_BIN_SUFFIX_STR"
+6="Notif"
+7="FBF_BACK_ENABLED"
+8="FBN_SHIFT_PRESSED"
+9="FBN_CONTROL_PRESSED"
+10="FBN_CONTROL"
 [Collapse]
 2=207979925,1037567297,25100
 8=,,
@@ -278,9 +278,9 @@ ProductVer4Range=0
 32=
 34=
 [AutoLoad]
-AutoLoad=1,2,4,3,22
+AutoLoad=1
 [PTimer]
-PTimer=553542680
+PTimer=554380993
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

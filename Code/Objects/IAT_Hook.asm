@@ -10,7 +10,11 @@
 
 % include Objects.cop
 
-% include &IncPath&ImageHlp.inc
+_IMAGEHLP_SOURCE_ equ 0
+SYM_NAME_LENGTH   equ 255
+CALLER_MAX_DEEP   equ 10
+
+% include &IncPath&Windows\DbgHelp.inc
 
 ;Add here all files that build the inheritance path and referenced objects
 LoadObjects Primer

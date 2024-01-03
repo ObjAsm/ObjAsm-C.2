@@ -13,6 +13,7 @@
 SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)            ;Load OOP files and OS related objects
 
 % include &MacPath&DlgTmpl.inc                          ;Dialog Template macros for XMenu
+% include &MacPath&ConstDiv.inc
 
 % includelib &LibPath&Windows\shlwapi.lib
 % includelib &LibPath&Windows\Comctl32.lib

@@ -16,8 +16,8 @@ VER_PRODUCTVERSION            equ       1,0,0,0
 VER_PRODUCTVERSION_STR        textequ   <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       65
-BUILD_DATE_STR                textequ   <2023-01-10>
+BUILD_NUMBER                  equ       66
+BUILD_DATE_STR                textequ   <2024-01-03>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       RLS
 
@@ -33,3 +33,6 @@ IDM_WEBCAM_DLG_SOURCE         equ       2006
 
 IDM_HELP_HELP                 equ       5001
 IDM_HELP_ABOUT                equ       5002
+
+BUILD_BIN_FORMAT              equ       EXE
+BUILD_BIN_SUFFIX_STR          textequ   <>

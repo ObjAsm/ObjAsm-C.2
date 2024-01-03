@@ -50,10 +50,8 @@ IConnectionPointContainer
 ISupportErrorInfo
 IDocHostUIHandler
 OcxContainer
-ScriptHost
 ExcelHost
 WordHost
-
 Window
 WinPrimer
 WinControl
@@ -85,6 +83,7 @@ Throbber
 SpinningThrobber
 MovingThrobber
 TextView
+GridView
 
 Dialog
 DialogAbout
@@ -119,3 +118,5 @@ XPropertyTree
 XTreeView
 
 EnumVARIANT
+IAT_Hook
+WebTextTranslator

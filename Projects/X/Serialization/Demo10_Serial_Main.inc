@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      Demo10_Main_Serial.inc
+; Title:      Demo10_Serial_Main.inc
 ; Author:     G. Friedrich
 ; Version:    See Demo10_Serial.asm
 ; Purpose:    ObjAsm Demo Application 10 with serialization.

@@ -16,8 +16,8 @@ VER_PRODUCTVERSION            equ       1,0,0,0
 VER_PRODUCTVERSION_STR        textequ   <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       14
-BUILD_DATE_STR                textequ   <2023-01-10>
+BUILD_NUMBER                  equ       15
+BUILD_DATE_STR                textequ   <2024-01-03>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       RLS
 
@@ -35,3 +35,6 @@ IDC_EDT_CONNECTIONS           equ       2007
 IDC_BTN_SEND                  equ       3001
 IDC_EDT_DATA                  equ       3002
 IDC_EDT_REPETITIONS           equ       3004
+
+BUILD_BIN_FORMAT              equ       EXE
+BUILD_BIN_SUFFIX_STR          textequ   <>

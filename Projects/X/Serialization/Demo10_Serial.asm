@@ -34,8 +34,8 @@ MakeObjects WinControl, Toolbar, Rebar, Statusbar, ComboBox, TreeView, ListView,
 MakeObjects FlipBox, Splitter, ProjectWnd, PropertiesWnd
 MakeObjects WinApp, MdiApp
 
-include Demo10_Globals_Serial.inc                       ;Application globals
-include Demo10_Main_Serial.inc                          ;DemoApp10 object
+include Demo10_Serial_Globals.inc                       ;Application globals
+include Demo10_Serial_Main.inc                          ;DemoApp10 object
 
 start proc                                              ;Program entry point
   SysInit                                               ;Runtime initialization of OOP model

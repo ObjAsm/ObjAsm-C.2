@@ -44,6 +44,7 @@ INTERNET_PROTOCOL_VERSION   equ 4
 SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS related objects
 
 % include &MacPath&DlgTmpl.inc                          ;Load dialog tempate support
+% include &MacPath&ConstDiv.inc
 % include &COMPath&COM.inc
 
 % include &IncPath&Windows\ole2.inc

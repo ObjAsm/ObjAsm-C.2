@@ -13,7 +13,7 @@
 ; Return:     eax = TRUE if the check was successfull.
 
 Method Application.Check1, uses xbx xdi xsi r12
-  LocReg pPos:r12
+  LocReg pPos:$SubReg(r12, @WordSize)
 ;  local cBuffer[100*sizeof(CHR)]:CHR
 ;  local cNumber[20*sizeof(CHR)]:CHR
 ;  local cField[100*sizeof(CHR)]:CHR
@@ -124,7 +124,7 @@ MethodEnd
 ; Return:     eax = TRUE if the check was successfull.
 
 Method Application.Check3, uses xbx xdi xsi r12 r13
-  LocReg pData:r12, dDataSize:r13d
+  LocReg pData:$SubReg(r12, @WordSize), dDataSize:r13d
   local bBuffer[1000]:CHRA, dFieldIndex:DWORD
 
   SetObject xsi
