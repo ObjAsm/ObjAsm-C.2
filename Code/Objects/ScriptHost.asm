@@ -12,6 +12,10 @@
 
 % include &COMPath&COM.inc
 % include &COMPath&COM_Dispatch.inc
+% include &IncPath&Windows\Shlwapi.inc
+% include &IncPath&Windows\ActivScp.inc
+% include &IncPath&Windows\ActivDbg.inc
+
 
 ;Add here all files that build the inheritance path and referenced objects
 LoadObjects Primer

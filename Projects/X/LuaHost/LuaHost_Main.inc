@@ -11,6 +11,7 @@ Object Application, -1, DialogModal
   VirtualMethod     FileLoad,         PSTRING
   VirtualMethod     FileSave,         PSTRING, POINTER, DWORD
 
+  RedefineMethod    Init
   RedefineMethod    OnCommand,        WPARAM, LPARAM
   RedefineMethod    OnDestroy,        WPARAM, LPARAM
   RedefineMethod    OnInitDialog,     WPARAM, LPARAM
@@ -29,6 +30,70 @@ ObjectEnd
 
 
 .code
+
+; ==================================================================================================
+;    Host implementation
+; ==================================================================================================
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Host.ScriptInit
+; Purpose:    Script custom initialization.
+; Arguments:  Arg1: -> lua_State.
+; Return:     eax = LUA_OK if succeeded, otherwise an error code.
+
+Method Host.ScriptInit,, plua_State:Plua_State
+  DbgText "Host.ScriptInit"
+
+  ;Create the Output object (table)
+  invoke lua_createtable, plua_State, 0, 0
+
+  invoke lua_pushstring, plua_State, $OfsCStrA("SetFont")
+  invoke lua_pushcclosure, plua_State, addr OutputSetFont, 0
+  invoke lua_settable, plua_State, -3
+
+  invoke lua_pushstring, plua_State, $OfsCStrA("SetBackColor")
+  invoke lua_pushcclosure, plua_State, addr OutputSetBackColor, 0
+  invoke lua_settable, plua_State, -3
+
+  invoke lua_pushstring, plua_State, $OfsCStrA("SetTextColor")
+  invoke lua_pushcclosure, plua_State, addr OutputSetTextColor, 0
+  invoke lua_settable, plua_State, -3
+
+  invoke lua_pushstring, plua_State, $OfsCStrA("Write")
+  invoke lua_pushcclosure, plua_State, addr OutputWrite, 0
+  invoke lua_settable, plua_State, -3
+
+  invoke lua_pushstring, plua_State, $OfsCStrA("WriteLn")
+  invoke lua_pushcclosure, plua_State, addr OutputWriteLn, 0
+  invoke lua_settable, plua_State, -3
+
+  invoke lua_pushstring, plua_State, $OfsCStrA("Clear")
+  invoke lua_pushcclosure, plua_State, addr OutputClear, 0
+  invoke lua_settable, plua_State, -3
+
+  invoke lua_setglobal, plua_State, $OfsCStrA("Output")
+
+  ;Create the RGB global function
+  invoke lua_pushcclosure, plua_State, addr lua_RGB, 0
+  invoke lua_setglobal, plua_State, $OfsCStrA("RGB")
+
+  ;Create the font effect constants
+  invoke lua_pushinteger, plua_State, CFM_BOLD
+  invoke lua_setglobal, plua_State, $OfsCStrA("FONT_BOLD")
+  invoke lua_pushinteger, plua_State, CFM_ITALIC
+  invoke lua_setglobal, plua_State, $OfsCStrA("FONT_ITALIC")
+  invoke lua_pushinteger, plua_State, CFM_UNDERLINE
+  invoke lua_setglobal, plua_State, $OfsCStrA("FONT_UNDERLINE")
+  invoke lua_pushinteger, plua_State, CFM_STRIKEOUT
+  invoke lua_setglobal, plua_State, $OfsCStrA("FONT_STRIKEOUT")
+  invoke lua_pushinteger, plua_State, CFM_SUBSCRIPT
+  invoke lua_setglobal, plua_State, $OfsCStrA("FONT_SUBSCRIPT")
+  invoke lua_pushinteger, plua_State, CFM_SUPERSCRIPT
+  invoke lua_setglobal, plua_State, $OfsCStrA("FONT_SUPERSCRIPT")
+
+  mov eax, LUA_OK
+MethodEnd
+
 
 ; ==================================================================================================
 ;    Application implementation
@@ -168,6 +233,18 @@ Method Application.FileSave, uses xsi, pFileName:PSTRING, pMemBlock:POINTER, dMe
 @@Exit:
     xor eax, eax
   .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Application.Init
+; Purpose:    Initialize the Dialog object.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method Application.Init, uses xsi
+  SetObject xsi
+  ACall xsi.Init, NULL, 0, IDD_MAIN
+  Override [xsi].Host::LuaHost.ScriptInit, Host.ScriptInit 
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

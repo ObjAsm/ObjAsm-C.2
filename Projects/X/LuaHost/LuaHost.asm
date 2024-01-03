@@ -37,6 +37,7 @@ MakeObjects LuaHost
 
 .code
 include LuaHost_Globals.inc
+include LuaHost_Routines.inc
 include LuaHost_Main.inc
 
 start proc uses xbx
@@ -49,7 +50,7 @@ start proc uses xbx
   invoke InitCommonControls
   mov xbx, $invoke(LoadLibrary, $OfsCStr("RichEd20.dll"))
 
-  OCall $ObjTmpl(Application)::Application.Init, NULL, 0, IDD_MAIN
+  OCall $ObjTmpl(Application)::Application.Init
   OCall $ObjTmpl(Application)::Application.Show
   OCall $ObjTmpl(Application)::Application.Done
 

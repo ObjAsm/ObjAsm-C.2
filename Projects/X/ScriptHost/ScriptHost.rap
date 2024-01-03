@@ -165,7 +165,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=23
+MilestoneOnDateDate=3
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -201,7 +201,7 @@ ProductVer4Range=0
 
 [Size]
 2=0,0,0,0,1578
-1=0,0,0,0,2415
+1=0,0,0,0,861
 6=0,0,0,0,63073
 4=0,0,0,0,1597
 31=0,0,1213,691,24722
@@ -233,7 +233,7 @@ ProductVer4Range=0
 35=0,0,0,0,25176
 20=0,0,0,0,28390
 21=0,0,1706,628,989
-16=0,0,747,576,27290
+16=0,0,747,576,16258
 37=0,0,0,0,302
 41=0,0,0,0,80
 42=0,0,0,0,76
@@ -377,16 +377,16 @@ ProductVer4Range=0
 25=
 44=
 [Find]
-1="WSF_DEBUG"
-2="WSH"
-3="IScriptOutput"
-4="IID_IScriptOutput"
-5="ResGuard"
-6="mov xbx, $New(Component)"
-7="OCall [xsi].Interfaces::Collection.Init, xsi, 2, 1, COL_MAX_CAPACITY ;Min 2 interfaces"
-8="LF"
-9="IScriptOutput.Color"
-10="Method ScriptHost.Run, uses xbx xdi xsi"
+1="IActiveScriptSite"
+2="WSF_DEBUG"
+3="WSH"
+4="IScriptOutput"
+5="IID_IScriptOutput"
+6="ResGuard"
+7="mov xbx, $New(Component)"
+8="OCall [xsi].Interfaces::Collection.Init, xsi, 2, 1, COL_MAX_CAPACITY ;Min 2 interfaces"
+9="LF"
+10="IScriptOutput.Color"
 [AutoLoad]
 AutoLoad=1,2,16,3
 [RADebugBP]
@@ -410,6 +410,6 @@ AutoLoad=1,2,16,3
 33=
 5=
 [PTimer]
-PTimer=552865725
+PTimer=553590194
 [GroupExpand]
 GroupExpand=1,1,0,1,0,0,1,1,1,1,0

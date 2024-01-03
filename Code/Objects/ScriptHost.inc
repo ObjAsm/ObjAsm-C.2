@@ -382,7 +382,7 @@ Method IActiveScriptSite.OnScriptError,, pIActiveScriptError:POINTER
         mov pString, xax
         invoke WideCharToMultiByte, CP_ACP, 0, addr wOutput, dStrSize, pString, dStrSize, NULL, NULL
         mov xax, pSelf
-        mov xcx, [xax].IActiveScriptSite.pOwner         ;Component
+        mov xcx, [xax].$Obj(IActiveScriptSite).pOwner   ;Component
         mov xdx, [xcx].$Obj(Component).pOwner           ;ScriptHost
         invoke PostMessage, [xdx].$Obj(ScriptHost).hWnd, SHM_ERROR, pString, 0
         ;The callee must dispose the string, but if the last API fails, we should do it

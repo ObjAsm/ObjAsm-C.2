@@ -26,7 +26,7 @@ LUA_ERRERR equ 5
 
 lua_State struct
 lua_State ends
-plua_State typedef ptr lua_State
+Plua_State typedef ptr lua_State
 
 LUA_TNONE equ -1
 LUA_TNIL equ 0

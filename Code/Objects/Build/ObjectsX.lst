@@ -55,6 +55,8 @@ WordHost
 Window
 WinPrimer
 WinControl
+ScriptHost
+LuaHost
 
 Button
 ColorButton

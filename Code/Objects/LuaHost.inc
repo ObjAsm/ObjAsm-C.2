@@ -23,6 +23,7 @@ Object LuaHost, LuaHostID, Streamable
   VirtualMethod     Run
   VirtualMethod     Start,            PSTRINGA
   VirtualMethod     Stop
+  DynamicMethod     ScriptInit,       Plua_State
 
   DefineVariable    hThread,          HANDLE,       0
   DefineVariable    dFlags,           DWORD,        0
@@ -62,153 +63,6 @@ lua_HookProc proc uses xbx pLuaState:ptr lua_State, plua_Debug:ptr lua_Debug
   xor eax, eax
   ret
 lua_HookProc endp
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     lua_RGB
-; Purpose:    Return a decimal value from an rgb triplet.
-; Arguments:  Arg1: -> lua_State
-; Return:     eax = Number of arguments passed on the lua stack.
-
-lua_RGB proc uses xbx pLuaState:ptr lua_State
-  invoke luaL_checkinteger, pLuaState, 1                ;Get first stack argument and check it
-  and eax, 255
-  mov ebx, eax
-  invoke luaL_checkinteger, pLuaState, 2                ;Get second stack argument and check it
-  and eax, 255
-  shl eax, 8
-  add ebx, eax
-  invoke luaL_checkinteger, pLuaState, 3                ;Get third stack argument and check it
-  and eax, 255
-  shl eax, 16
-  add ebx, eax
-  invoke lua_pushinteger, pLuaState, ebx
-
-  mov eax, 1
-  ret
-lua_RGB endp
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OutputClear
-; Purpose:    Clear Output RichEdit control content.
-; Arguments:  Arg1: -> lua_State
-; Return:     eax = Number of arguments passed on the lua stack.
-
-OutputClear proc uses xbx pLuaState:ptr lua_State
-  invoke lua_getglobal, pLuaState, $OfsCStrA("pLuaHost")  ;Retrieve -> LuaHost
-  invoke lua_tointegerx, pLuaState, -1, NULL
-  mov xcx, [xax].$Obj(LuaHost).pOwner
-  mov xbx, $invoke(GetDlgItem, [xcx].$Obj(Application).hWnd, IDC_RED_OUTPUT)
-  invoke SendMessageA, xbx, EM_SETSEL, 0, -1
-  invoke SendMessageA, xbx, WM_CLEAR, 0, 0
-  invoke SendMessageA, xbx, EM_SCROLLCARET, 0, 0        ;Move caret into view
-  xor eax, eax                                          ;No arguments
-  ret
-OutputClear endp
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OutputSetBackColor
-; Purpose:    Set the background color of the Output RichEdit control.
-; Arguments:  Arg1: -> lua_State
-; Return:     eax = Number of arguments passed on the lua stack.
-
-OutputSetBackColor proc uses xbx pLuaState:ptr lua_State
-  invoke lua_getglobal, pLuaState, $OfsCStrA("pLuaHost")  ;Retrieve -> LuaHost
-  invoke lua_tointegerx, pLuaState, -1, NULL
-  mov xbx, [xax].$Obj(LuaHost).pOwner
-  invoke luaL_checkinteger, pLuaState, 1                ;Get first stack argument and check for str
-  mov [xbx].$Obj(Application).CFD.crBackColor, eax
-  xor eax, eax                                          ;No arguments
-  ret
-OutputSetBackColor endp
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OutputSetTextColor
-; Purpose:    Set the text color of the Output RichEdit control.
-; Arguments:  Arg1: -> lua_State
-; Return:     eax = Number of arguments passed on the lua stack.
-
-OutputSetTextColor proc uses xbx pLuaState:ptr lua_State
-  invoke lua_getglobal, pLuaState, $OfsCStrA("pLuaHost")  ;Retrieve -> LuaHost
-  invoke lua_tointegerx, pLuaState, -1, NULL
-  mov xbx, [xax].$Obj(LuaHost).pOwner
-  invoke luaL_checkinteger, pLuaState, 1                ;Get first stack argument and check for str
-  mov [xbx].$Obj(Application).CFD.crTextColor, eax
-  xor eax, eax                                          ;No arguments
-  ret
-OutputSetTextColor endp
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OutputSetFont
-; Purpose:    Set the text font of the Output RichEdit control.
-; Arguments:  Arg1: -> lua_State
-; Return:     eax = Number of arguments passed on the lua stack.
-
-OutputSetFont proc uses xbx xdi xsi pLuaState:ptr lua_State
-  local hDC:HDC
-
-  invoke lua_getglobal, pLuaState, $OfsCStrA("pLuaHost")  ;Retrieve -> LuaHost
-  invoke lua_tointegerx, pLuaState, -1, NULL
-  mov xbx, [xax].$Obj(LuaHost).pOwner
-
-  invoke luaL_checklstring, pLuaState, 1, NULL          ;Get first stack argument and check it
-  lea xcx, [xbx].$Obj(Application).CFD.szFaceName
-  invoke StrCopyA, xcx, xax
-
-  mov xsi, $invoke(GetDlgItem, [xbx].$Obj(Application).hWnd, IDC_RED_OUTPUT)
-  mov hDC, $invoke(GetWindowDC, xax)
-  mov edi, $32($invoke(GetDeviceCaps, xax, LOGPIXELSY))
-  invoke luaL_checkinteger, pLuaState, 2                ;Get second stack argument and check it
-  invoke MulDiv, eax, 1920, edi
-  mov [xbx].$Obj(Application).CFD.yHeight, eax
-  invoke ReleaseDC, xsi, hDC
-
-  invoke luaL_checkinteger, pLuaState, 3                ;Get third stack argument and check it
-  mov [xbx].$Obj(Application).CFD.dwEffects, eax
-
-  xor eax, eax                                          ;No arguments
-  ret
-OutputSetFont endp
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OutputWrite
-; Purpose:    Writes a string on the Output RichEdit control.
-; Arguments:  Arg1: -> lua_State
-; Return:     eax = Number of arguments passed on the lua stack.
-
-OutputWrite proc uses xbx pLuaState:ptr lua_State
-  invoke lua_getglobal, pLuaState, $OfsCStrA("pLuaHost")  ;Retrieve -> LuaHost
-  invoke lua_tointegerx, pLuaState, -1, NULL
-  mov xcx, [xax].$Obj(LuaHost).pOwner
-  mov xbx, $invoke(GetDlgItem, [xcx].$Obj(Application).hWnd, IDC_RED_OUTPUT)
-
-  invoke SendMessageA, xbx, EM_SETCHARFORMAT, SCF_SELECTION, offset $ObjTmpl(Application).CFD
-  invoke luaL_checklstring, pLuaState, 1, NULL          ;Get first stack argument and check for str
-  invoke SendMessageA, xbx, EM_REPLACESEL, TRUE, xax
-  invoke SendMessageA, xbx, EM_SCROLLCARET, 0, 0        ;Move caret into view
-  xor eax, eax                                          ;No arguments
-  ret
-OutputWrite endp
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OutputWriteLn
-; Purpose:    Writes a string on the Output RichEdit control with a CRLF at the end.
-; Arguments:  Arg1: -> lua_State
-; Return:     eax = Number of arguments passed on the lua stack.
-
-OutputWriteLn proc uses xbx pLuaState:ptr lua_State
-  invoke lua_getglobal, pLuaState, $OfsCStrA("pLuaHost")  ;Retrieve -> LuaHost
-  invoke lua_tointegerx, pLuaState, -1, NULL
-  mov xcx, [xax].$Obj(LuaHost).pOwner
-  mov xbx, $invoke(GetDlgItem, [xcx].$Obj(Application).hWnd, IDC_RED_OUTPUT)
-
-  invoke SendMessageA, xbx, EM_SETCHARFORMAT, SCF_SELECTION, offset $ObjTmpl(Application).CFD
-  invoke luaL_checklstring, pLuaState, 1, NULL          ;Get first stack argument and check for str
-  invoke SendMessageA, xbx, EM_REPLACESEL, TRUE, xax
-  invoke SendMessageA, xbx, EM_REPLACESEL, TRUE, offset bCRLF
-  invoke SendMessageA, xbx, EM_SCROLLCARET, 0, 0        ;Move caret into view
-  xor eax, eax                                          ;No arguments
-  ret
-OutputWriteLn endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     LuaHost.Done
@@ -254,53 +108,10 @@ Method LuaHost.Run, uses xbx xsi
 
   ;Set the call hook
   invoke lua_sethook, xbx, addr lua_HookProc, LUA_MASKLINE, 0
-
-  ;Create the Output object (table)
-  invoke lua_createtable, xbx, 0, 0
-
-  invoke lua_pushstring, xbx, $OfsCStrA("SetFont")
-  invoke lua_pushcclosure, xbx, addr OutputSetFont, 0
-  invoke lua_settable, xbx, -3
-
-  invoke lua_pushstring, xbx, $OfsCStrA("SetBackColor")
-  invoke lua_pushcclosure, xbx, addr OutputSetBackColor, 0
-  invoke lua_settable, xbx, -3
-
-  invoke lua_pushstring, xbx, $OfsCStrA("SetTextColor")
-  invoke lua_pushcclosure, xbx, addr OutputSetTextColor, 0
-  invoke lua_settable, xbx, -3
-
-  invoke lua_pushstring, xbx, $OfsCStrA("Write")
-  invoke lua_pushcclosure, xbx, addr OutputWrite, 0
-  invoke lua_settable, xbx, -3
-
-  invoke lua_pushstring, xbx, $OfsCStrA("WriteLn")
-  invoke lua_pushcclosure, xbx, addr OutputWriteLn, 0
-  invoke lua_settable, xbx, -3
-
-  invoke lua_pushstring, xbx, $OfsCStrA("Clear")
-  invoke lua_pushcclosure, xbx, addr OutputClear, 0
-  invoke lua_settable, xbx, -3
-
-  invoke lua_setglobal, xbx, $OfsCStrA("Output")
-
-  ;Create the RGB global function
-  invoke lua_pushcclosure, xbx, addr lua_RGB, 0
-  invoke lua_setglobal, xbx, $OfsCStrA("RGB")
-
-  ;Create the font effect constants
-  invoke lua_pushinteger, xbx, CFM_BOLD
-  invoke lua_setglobal, xbx, $OfsCStrA("FONT_BOLD")
-  invoke lua_pushinteger, xbx, CFM_ITALIC
-  invoke lua_setglobal, xbx, $OfsCStrA("FONT_ITALIC")
-  invoke lua_pushinteger, xbx, CFM_UNDERLINE
-  invoke lua_setglobal, xbx, $OfsCStrA("FONT_UNDERLINE")
-  invoke lua_pushinteger, xbx, CFM_STRIKEOUT
-  invoke lua_setglobal, xbx, $OfsCStrA("FONT_STRIKEOUT")
-  invoke lua_pushinteger, xbx, CFM_SUBSCRIPT
-  invoke lua_setglobal, xbx, $OfsCStrA("FONT_SUBSCRIPT")
-  invoke lua_pushinteger, xbx, CFM_SUPERSCRIPT
-  invoke lua_setglobal, xbx, $OfsCStrA("FONT_SUPERSCRIPT")
+  
+  OCall xsi.ScriptInit, xbx
+  cmp eax, LUA_OK
+  jnz @@Error
 
   ;Load the script
   invoke luaL_loadstring, xbx, [xsi].pScript
@@ -320,9 +131,20 @@ Method LuaHost.Run, uses xbx xsi
 
   ;Inform the main Application that the script has finished and pass an result value 
   mov xax, [xsi].pOwner
-  invoke PostMessage, [xax].$Obj(Application).hWnd, LHM_SCRIPT_FINISHED, dRetVal, 0
+  invoke PostMessage, [xax].$Obj(WinPrimer).hWnd, LHM_SCRIPT_FINISHED, dRetVal, 0
   invoke CloseHandle, [xsi].hThread                     ;Decrement HANDLE count to release hThrend
   mov eax, dRetVal                                      ; when terminated
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     LuaHost.ScriptInit
+; Purpose:    Script custom initialization.
+; Arguments:  Arg1: -> lua_State.
+; Return:     eax = LUA_OK if succeeded, otherwise an error code.
+
+Method LuaHost.ScriptInit,, plua_State:Plua_State
+  DbgText "LuaHost.ScriptInit"
+  mov eax, LUA_OK
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
