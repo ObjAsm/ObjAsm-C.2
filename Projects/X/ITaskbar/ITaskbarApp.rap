@@ -1,7 +1,7 @@
 [Project]
 Assembler=masm
 Type=Win32 App
-Description=ObjAsm Demo02
+Description=ObjAsm ITaskbar Demo
 Backup=$P\Bak\
 Group=1
 GroupExpand=1
@@ -9,17 +9,17 @@ Ver.rc=1
 Debug=0
 
 [Files]
-1=Demo02.asm
-2=Demo02_Main.inc
-3=Demo02_Globals.inc
-4=Demo02.rc
+1=ITaskbarApp.asm
+2=ITaskbarApp_Main.inc
+3=ITaskbarApp_Globals.inc
+4=ITaskbarApp.rc
 5=..\..\..\Code\Macros\Debug.inc
 6=..\..\..\Code\Macros\Objects.inc
 7=..\..\..\Code\Objects\WinPrimer.inc
 8=..\..\..\Code\Macros\Model.inc
 9=..\..\..\Code\Macros\System.inc
 10=..\..\..\Code\Objects\ObjErrs.inc
-11=Demo02_Shared.inc
+11=ITaskbarApp_Shared.inc
 12=..\..\..\Code\Objects\WinApp.inc
 13=..\..\..\Code\Objects\Stream.inc
 14=..\..\..\Code\Objects\SdiApp.inc
@@ -29,34 +29,34 @@ Debug=0
 18=..\..\..\Code\Objects\Dialog.inc
 19=..\..\..\Code\Objects\DialogAbout.inc
 20=..\..\..\Code\Objects\DialogModal.inc
-21=..\..\..\Resources\DLG\DialogAbout.rc
+21=..\..\..\Code\Inc\COM\COM.inc
 22=..\..\..\Code\Objects\Window.inc
 23=..\..\..\Code\Objects\MdiApp.inc
-24=..\..\..\Resources\Resource.h
+24=..\..\..\Code\Inc\COM\COM_Interfaces.inc
 25=..\..\..\Code\Objects\DlgApp.inc
-26=
-27=
+26=..\..\..\Code\Inc\Windows\shobjidl.inc
+27=..\..\..\Code\Inc\Windows\shobjidl_core.inc
 
 
 [MakeFiles]
-0=Demo02.rap
-1=Demo02.rc
-2=Demo02.asm
-3=Demo02.obj
-4=Demo02.res
-5=Demo02.exe
-6=Demo02.def
-7=Demo02.dll
-8=Demo02.txt
-9=Demo02.lib
-10=Demo02.mak
-11=Demo02.hla
-12=Demo02.com
-13=Demo02.ocx
-14=Demo02.idl
-15=Demo02.tlb
-16=Demo02.sys
-17=Demo02.rco
+0=ITaskbarApp.rap
+1=ITaskbarApp.rc
+2=ITaskbarApp.asm
+3=ITaskbarApp.obj
+4=ITaskbarApp.res
+5=ITaskbarApp.exe
+6=ITaskbarApp.def
+7=ITaskbarApp.dll
+8=ITaskbarApp.txt
+9=ITaskbarApp.lib
+10=ITaskbarApp.mak
+11=ITaskbarApp.hla
+12=ITaskbarApp.com
+13=ITaskbarApp.ocx
+14=ITaskbarApp.idl
+15=ITaskbarApp.tlb
+16=ITaskbarApp.sys
+17=ITaskbarApp.rco
 
 [MakeDef]
 Menu=1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0
@@ -99,13 +99,13 @@ Group=Added files,Assembly,Resources,Misc,Modules,Objects,Macros
 18=6
 19=6
 20=6
-21=3
+21=1
 22=6
 23=6
-24=3
+24=1
 25=6
-26=
-27=
+26=1
+27=1
 
 [VerInf]
 FV=1.0.0.0
@@ -123,7 +123,7 @@ OriginalFilename=
 LegalTrademarks=
 LegalCopyright=
 InternalName=
-FileDescription=ObjAsm Demo02
+FileDescription=ObjAsm ITaskbar Demo
 CompanyName=
 
 [VersionControl]
@@ -172,17 +172,17 @@ ProductVer4Range=0
 
 [Size]
 2=0,0,0,0,1070
-1=0,0,0,0,525
+1=0,0,0,0,115
 6=0,0,1456,414,59484
-4=0,0,0,0,266
+4=0,0,0,0,982
 31=0,0,1213,691,1416
 8=0,0,777,591,20469
 7=0,0,0,0,151
-9=0,0,0,0,80187
+9=0,0,0,0,27532
 10=0,0,0,0,8243
-5=0,0,0,0,4185
-3=0,0,0,0,250
-11=0,0,1783,588,1361
+5=0,0,0,0,110994
+3=0,0,0,0,126
+11=0,0,1783,588,791
 15=0,0,0,0,5891
 14=0,0,0,0,814
 13=0,0,0,0,7167
@@ -193,12 +193,12 @@ ProductVer4Range=0
 18=0,0,0,0,1317
 19=0,0,0,0,2360
 23=0,0,0,0,5451
-24=0,0,0,0,0
+24=0,0,0,0,22270
 25=0,0,0,0,1955
-21=0,0,0,0,575
+21=0,0,0,0,0
 22=0,0,0,0,14635
-26=
-27=
+26=0,0,0,0,315
+27=0,0,0,0,175330
 
 [BookMark]
 0=
@@ -217,16 +217,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="szAppClassName"
-2="szDemoApp02"
-3="APP_CLS_STYLE"
-4="CLSSTYLE"
-5="DemoApp02"
-6="MENU_APP"
-7="; Return:    "
-8=";            Arg2:"
-9="; Arguments: "
-10="; Purpose:   "
+1="ST"
+2="WriteF"
+3="c43dc798-95d1-4bea-9030-bb99e2983a1a"
+4="ITaskbarList4"
+5="ITaskbarList"
+6="TaskbarList"
+7="IID_ITaskbarList"
+8="sIID_ITaskbarList"
+9="COMPath"
+10="szAppClassName"
 [Collapse]
 1=
 2=
@@ -235,7 +235,7 @@ ProductVer4Range=0
 7=
 8=
 3=
-9=,,
+9=,,,
 162=,,,,,,,,,,,
 100=
 43=,,
@@ -321,7 +321,7 @@ ProductVer4Range=0
 33=
 29=
 28=
-26=
+26=,,,
 24=
 22=
 21=
@@ -334,14 +334,14 @@ ProductVer4Range=0
 12=
 11=
 10=
-5=,
+5=,,
 15=
 25=
-27=
+27=,,,,,,,,,,,,
 [AutoLoad]
-AutoLoad=1
+AutoLoad=1,4,3,11
 [PTimer]
-PTimer=915127496
+PTimer=918381590
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]
@@ -367,3 +367,4 @@ GroupExpand=1,1,1,0,0,1,1,0
 13=
 23=
 22=
+24=

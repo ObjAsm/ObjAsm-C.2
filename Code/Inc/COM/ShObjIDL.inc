@@ -1624,6 +1624,8 @@ DOGIF_ONLY_IF_ONE   equ 8
 ;                [out] WIN32_FIND_DATAW *pfd);
 ;}
 ;
+
+
 ;/*****************************************************************************
 ; *    ITaskbarList interface
 ; */
@@ -1632,6 +1634,15 @@ DOGIF_ONLY_IF_ONE   equ 8
 ;    uuid(56FDF342-FD6D-11d0-958A-006097C9A090),
 ;    pointer_default(unique)
 ;]
+
+COM_INTERFACE_BEG ITaskbarList, IUnknown, <56FDF342-FD6D-11D0-958A-006097C9A090>
+  COM_MTD_STD   HrInit
+  COM_MTD_STD   AddTab,                       HANDLE
+  COM_MTD_STD   DeleteTab,                    HANDLE
+  COM_MTD_STD   ActivateTab,                  HANDLE
+  COM_MTD_STD   SetActiveAlt,                 HANDLE
+COM_INTERFACE_END
+
 ;interface ITaskbarList : IUnknown
 ;{
 ;  COM_MTD_STD HrInit();
@@ -1649,6 +1660,7 @@ DOGIF_ONLY_IF_ONE   equ 8
 ;        [in] HWND hwnd);
 ;}
 ;
+
 ;/*****************************************************************************
 ; *    ITaskbarList2 interface
 ; */
@@ -1657,6 +1669,11 @@ DOGIF_ONLY_IF_ONE   equ 8
 ;    uuid(602D4995-B13A-429B-A66E-1935E44F4317),
 ;    pointer_default(unique)
 ;]
+
+COM_INTERFACE_BEG ITaskbarList2, ITaskbarList, <602D4995-B13A-429B-A66E-1935E44F4317>
+  COM_MTD_STD   MarkFullscreenWindow,         HANDLE, BOOL
+COM_INTERFACE_END
+
 ;interface ITaskbarList2 : ITaskbarList
 ;{
 ;  COM_MTD_STD MarkFullscreenWindow(
@@ -1668,6 +1685,15 @@ DOGIF_ONLY_IF_ONE   equ 8
 ;typedef IUnknown* HIMAGELIST;
 ;cpp_quote("#endif")
 ;
+
+THBF_ENABLED         equ 0000h
+THBF_DISABLED        equ 0001h
+THBF_DISMISSONCLICK  equ 0002h
+THBF_NOBACKGROUND    equ 0004h
+THBF_HIDDEN          equ 0008h
+THBF_NONINTERACTIVE  equ 0010h
+
+
 ;typedef [v1_enum] enum THUMBBUTTONFLAGS {
 ;    THBF_ENABLED         = 0x0000,
 ;    THBF_DISABLED        = 0x0001,
@@ -1679,6 +1705,12 @@ DOGIF_ONLY_IF_ONE   equ 8
 ;
 ;cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(THUMBBUTTONFLAGS)")
 ;
+
+THB_BITMAP   equ  0001h
+THB_ICON     equ  0002h
+THB_TOOLTIP  equ  0004h
+THB_FLAGS    equ  0008h
+
 ;typedef [v1_enum] enum THUMBBUTTONMASK {
 ;    THB_BITMAP   = 0x0001,
 ;    THB_ICON     = 0x0002,
@@ -1703,6 +1735,13 @@ DOGIF_ONLY_IF_ONE   equ 8
 ;    uuid(ea1afb91-9e28-4b86-90e9-9e9f8a5eefaf),
 ;    object
 ;]
+
+TBPF_NOPROGRESS     equ   0000h
+TBPF_INDETERMINATE  equ   0001h
+TBPF_NORMAL         equ   0002h
+TBPF_ERROR          equ   0004h
+TBPF_PAUSED         equ   0008h
+
 ;interface ITaskbarList3 : ITaskbarList2
 ;{
 ;    typedef [v1_enum] enum TBPFLAG {
@@ -1714,7 +1753,23 @@ DOGIF_ONLY_IF_ONE   equ 8
 ;    } TBPFLAG;
 ;
 ;    cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(TBPFLAG)")
-;
+
+COM_INTERFACE_BEG ITaskbarList3, ITaskbarList2, <ea1afb91-9e28-4b86-90e9-9e9f8a5eefaf>
+  COM_MTD_STD   SetProgressValue,         HWND, ULONGLONG, ULONGLONG
+  COM_MTD_STD   SetProgressState,         HWND, SDWORD
+  COM_MTD_STD   RegisterTab,              HWND, HWND
+  COM_MTD_STD   UnregisterTab,            HWND
+  COM_MTD_STD   SetTabOrder,              HWND, HWND
+  COM_MTD_STD   SetTabActive,             HWND, HWND, DWORD
+  COM_MTD_STD   ThumbBarAddButtons,       HWND, UINT, POINTER
+  COM_MTD_STD   ThumbBarUpdateButtons,    HWND, UINT, POINTER
+  COM_MTD_STD   ThumbBarSetImageList,     HWND, HIMAGELIST
+  COM_MTD_STD   SetOverlayIcon,           HWND, HICON, POINTER
+  COM_MTD_STD   SetThumbnailTooltip,      HWND, POINTER
+  COM_MTD_STD   SetThumbnailClip,         HWND, PRECT
+COM_INTERFACE_END
+
+
 ;  COM_MTD_STD SetProgressValue(
 ;            [in] HWND hwnd,
 ;            [in] ULONGLONG ullCompleted,
@@ -1771,6 +1826,18 @@ DOGIF_ONLY_IF_ONE   equ 8
 ;    uuid(c43dc798-95d1-4bea-9030-bb99e2983a1a),
 ;    object
 ;]
+
+COM_INTERFACE_BEG ITaskbarList4, ITaskbarList3, <c43dc798-95d1-4bea-9030-bb99e2983a1a>
+  COM_MTD_STD   SetTabProperties,         HWND, DWORD
+COM_INTERFACE_END
+
+STPF_NONE                       equ   0000h
+STPF_USEAPPTHUMBNAILALWAYS      equ   0001h
+STPF_USEAPPTHUMBNAILWHENACTIVE  equ   0002h
+STPF_USEAPPPEEKALWAYS           equ   0004h
+STPF_USEAPPPEEKWHENACTIVE       equ   0008h
+
+
 ;interface ITaskbarList4 : ITaskbarList3
 ;{
 ;    typedef [v1_enum] enum STPFLAG {
