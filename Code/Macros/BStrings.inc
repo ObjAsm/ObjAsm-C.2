@@ -10,10 +10,10 @@
 
 ; BSTR format as defined in the OLE 2.0 specification (MS ActiveX).
 ;
-;          4 bytes      2 bytes per character        2 bytes
-;      ———————————————————————————————————————————————————————————————————
-;  ... | Byte Lenght | UNICODE character array | Zero termination marker | ...
-;      ———————————————————————————————————————————————————————————————————
+;          4 bytes      2 bytes per character             2 bytes
+;       ————————————————————————————————————————————————————————————————————
+;  ... | Byte Lenght | UNICODE character array | Zero Termination Character | ...
+;       ————————————————————————————————————————————————————————————————————
 ;                    ^
 ;                    BSTR points here!
 
@@ -25,9 +25,10 @@
 ;                            if the "$" prefix was used.
 ; $Ofs(C/T/D/J)BStr:         Same as ($C/$T/$D/$J)BStr, but returns the symbolic string offset.
 ;
-; Note: Use ??StrSize (byte count including the ZTC) or  
-;           ??StrLength (character count without the ZTC).
-;           Both values do not include the byte length header (DWORD).
+; Note: - Use ??StrSize (byte count including the ZTC) or  
+;         ??StrLength (character count without the ZTC).
+;         Both values do not include the byte length header (DWORD).
+;       - The "Byte Lenght" prefix includes the ZTC.
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

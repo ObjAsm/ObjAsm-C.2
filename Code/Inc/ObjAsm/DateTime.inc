@@ -260,26 +260,26 @@ PrependZeros macro Var, Count
   if Count eq 4
     .if &Var < 10
       FillWord CHR ptr [xdi], <000>
-      add xdi, $$Size
+      add xdi, ??StrSize
     .elseif &Var < 100
       FillWord CHR ptr [xdi], <00>
-      add xdi, $$Size
+      add xdi, ??StrSize
     .elseif &Var < 1000
       FillWord CHR ptr [xdi], <0>
-      add xdi, $$Size
+      add xdi, ??StrSize
     .endif
   elseif Count eq 3
     .if &Var < 10
       FillWord CHR ptr [xdi], <00>
-      add xdi, $$Size
+      add xdi, ??StrSize
     .elseif &Var < 100
       FillWord CHR ptr [xdi], <0>
-      add xdi, $$Size
+      add xdi, ??StrSize
     .endif
   else
     .if &Var < 10
       FillWord CHR ptr [xdi], <0>
-      add xdi, $$Size
+      add xdi, ??StrSize
     .endif
   endif
 endm
@@ -478,7 +478,7 @@ D2S_JumpTableEntries = ($ - D2S_JumpTable)/sizeof(POINTER)
 @@Error:
     mov xdx, pDest
     FillString [xdi], <?>
-    mov eax, $$Size
+    mov eax, ??StrSize
   .endif
 
   ret
@@ -572,7 +572,7 @@ TimeToStr proc uses xdi xsi pDest:PSTRING, dFormat:DWORD, pHMST:PDTL_TIME
     .else
       FillString [xdi], < PM>
     .endif
-    add xdi, $$Size
+    add xdi, ??StrSize
   .endif
 
   mov xax, xdi
@@ -583,7 +583,7 @@ TimeToStr proc uses xdi xsi pDest:PSTRING, dFormat:DWORD, pHMST:PDTL_TIME
 @@Error:
   mov xdx, pDest
   FillString [xdi], <?>
-  mov eax, $$Size
+  mov eax, ??StrSize
   ret
 TimeToStr endp
 

@@ -128,7 +128,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=16
+MilestoneOnDateDate=10
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -163,9 +163,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,802,423,83754
+2=0,0,802,423,93258
 3=0,0,0,0,388
-1=480,488,480,244,794
+1=480,488,480,244,2964
 4=0,0,0,0,442
 1001=0,0,0,0,460
 5=0,0,0,0,6732
@@ -213,16 +213,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="FillWordA"
-2="DbgComError"
-3="BMP1"
-4="DbgOutHex"
-5="DbgObject"
-6="DbgTraceObject"
-7="DbgGlobalMemUsage"
-8="xbx"
-9="DBG_FLOAT_BUFFERSIZE"
-10="DbgFloat"
+1="DbgTraceShow"
+2="FillWordA"
+3="DbgComError"
+4="BMP1"
+5="DbgOutHex"
+6="DbgObject"
+7="DbgTraceObject"
+8="DbgGlobalMemUsage"
+9="xbx"
+10="DBG_FLOAT_BUFFERSIZE"
 [Collapse]
 1=
 2=,,
@@ -253,7 +253,7 @@ ProductVer4Range=0
 20=
 21=
 [AutoLoad]
-AutoLoad=1
+AutoLoad=1,2
 [RADebugBP]
 1=
 2=
@@ -274,6 +274,6 @@ AutoLoad=1
 21=
 19=
 [PTimer]
-PTimer=571819165
+PTimer=573919603
 [GroupExpand]
 GroupExpand=0,1,1,0,0,1,1,0

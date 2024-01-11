@@ -2,42 +2,25 @@
 ; Title:      StrRTrimA.asm
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Notes:      Version C.1.0, October 2017
+; Notes:      Version C.1.0, January 2023
 ;               - First release.
 ; ==================================================================================================
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
+TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
+
+ProcName equ <StrRTrimA>
 
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrRTrimA
 ; Purpose:    Trim blank characters from the end of an ANSI string.
-; Arguments:  Arg1: -> Destination ANSI character buffer.
+; Arguments:  Arg1: -> Destination buffer.
 ;             Arg2: -> Source ANSI string.
-; Return:     Nothing.
+; Return:     eax = Number of characters copied into the destination buffer (not counting the ZTC).
 
-align ALIGN_CODE
-StrRTrimA proc uses rbx rdi rsi pDstStringA:POINTER, pSrcStringA:POINTER
-  mov rdi, rcx
-  mov rsi, rdx
-  invoke StrEndA, rsi                                   ;pSrcStringA
-@@:
-  dec rax
-  mov cl, [rax]
-  cmp cl, ' '                                           ;Loop if space
-  je @B
-  cmp cl, 9                                             ;Loop if tab
-  je @B
-  sub rax, rsi                                          ;pSrcStringA
-  inc rax
-  lea rbx, [rdi + rax]
-  .if rdi != rsi || eax == 0
-    invoke MemClone, rdi, rsi, eax
-  .endif
-  m2z CHRA ptr [rbx]                                    ;Set ZTC
-  ret
-StrRTrimA endp
+% include &ObjMemPath&Common\StrRTrim_TX.inc
 
 end

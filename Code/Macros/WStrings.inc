@@ -24,9 +24,9 @@
 
 
 ; ==================================================================================================
-; (($)C/($)D/($)J)WStr: Defines an WIDE string in (C) const, (D) data or (J) code
+; (($)C|($)D|($)J)WStr: Defines an WIDE string in (C) const, (D) data or (J) code
 ;                  segment returning a reference to it if the "$" prefix was used.
-; $Ofs(C/D/J)WStr: Same as ($C/$D/$J)WStr, but returns the string offset.
+; $Ofs(C|D|J)WStr: Same as ($C|$D|$J)WStr, but returns the string offset.
 
 ; Note: Use ??StrSize (byte count including the ZTC) or  
 ;           ??StrLength (character count without the ZTC).
@@ -237,7 +237,7 @@ $JStrW macro QuotedText:vararg
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      $Ofs(C/T/D/J)WStr
+; Macro:      $Ofs(C|T|D|J)WStr
 ; Purpose:    Place an WIDE string in the S_CONST, S_TEXT, S_DATA segment.
 ; Arguments:  Arg1: Quoted string text.
 ; Return:     String offset.

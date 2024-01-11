@@ -2,43 +2,25 @@
 ; Title:      StrRTrimW.asm
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Notes:      Version C.1.0, October 2017
+; Notes:      Version C.1.0, January 2023
 ;               - First release.
 ; ==================================================================================================
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
+TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
+
+ProcName equ <StrRTrimW>
 
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrRTrimW
 ; Purpose:    Trim blank characters from the end of a WIDE string.
-; Arguments:  Arg1: -> Destination WIDE character buffer.
+; Arguments:  Arg1: -> Destination buffer.
 ;             Arg2: -> Source WIDE string.
-; Return:     eax = Number of characters in destination buffer.
+; Return:     eax = Number of characters copied into the destination buffer (not counting the ZTC).
 
-align ALIGN_CODE
-StrRTrimW proc uses rbx rdi rsi pDstStringW:POINTER, pSrcStringW:POINTER
-  mov rdi, rcx
-  mov rsi, rdx
-  invoke StrEndW, rsi                                   ;pSrcStringW
-@@:
-  sub rax, 2
-  mov cx, [rax]
-  cmp cx, ' '                                           ;Loop if space
-  je @B
-  cmp cx, 9                                             ;Loop if tab
-  je @B
-  sub rax, rsi                                          ;pSrcStringW
-  add rax, 2
-  lea rbx, [rdi + rax]
-  .if rdi != rsi || eax == 0
-    invoke MemShift, rdi, rsi, eax
-  .endif
-  m2z CHRW ptr [rbx]                                    ;Set ZTC
-  shr rax, 1                                            ;Return number of chars.
-  ret
-StrRTrimW endp
+% include &ObjMemPath&Common\StrRTrim_TX.inc
 
 end

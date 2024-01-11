@@ -2,46 +2,25 @@
 ; Title:      StrRTrimW.asm
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Notes:      Version C.1.0, October 2017
+; Notes:      Version C.1.0, January 2023
 ;               - First release.
 ; ==================================================================================================
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
+TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
+
+ProcName equ <StrRTrimW>
 
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrRTrimW
 ; Purpose:    Trim blank characters from the end of a WIDE string.
-; Arguments:  Arg1: -> Destination WIDE character buffer.
+; Arguments:  Arg1: -> Destination buffer.
 ;             Arg2: -> Source WIDE string.
-; Return:     Nothing.
+; Return:     eax = Number of characters copied into the destination buffer (not counting the ZTC).
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
-
-align ALIGN_CODE
-StrRTrimW proc pBuffer:POINTER, pSrcStringW:POINTER
-  invoke StrEndW, [esp + 8]                             ;pSrcStringW
-@@:
-  sub eax, 2
-  mov cx, [eax]
-  cmp cx, ' '                                           ;Loop if space
-  je @B
-  cmp cx, 9                                             ;Loop if tab
-  je @B
-  sub eax, [esp + 8]                                    ;pSrcStringW
-  add eax, 2
-  push eax
-  invoke MemShift, [esp + 16], [esp + 16], eax
-  pop eax
-  add eax, [esp + 4]
-  m2z CHRW ptr [eax]                                    ;Set ZTC
-  ret 8
-StrRTrimW endp
-
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+% include &ObjMemPath&Common\StrRTrim_TX.inc
 
 end

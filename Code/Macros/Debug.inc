@@ -180,7 +180,7 @@ DBG_MEM_H32               equ   115       ;DWORD Integer in hexadecimal format
 DBG_MEM_H64               equ   116       ;QWORD Integer in hexadecimal format
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  DBG_MEM_STR equ
+  DBG_MEM_STR equ DBG_MEM_STRA
 else
   DBG_MEM_STR equ DBG_MEM_STRW
 endif
@@ -518,26 +518,15 @@ DbgOutHex macro PreText:=<>, PreColor:=<DbgColorDefaultPre>, Var:req, \
     endif
     if (opattr Var) and OAT_REGISTER                    ;;Is Var a register?
       mov esi, esp                                      ;;+ 2 padding bytes = 0Ch
-      invoke dword2hexA, esi, ebx
+      invoke dword2hexA, esi, Var
       mov DCHRA ptr [esi + DWORD2HEX_MAX_CHARS - 1], "h";;Set "h" + ZTC
       if ??DbgDataSize lt sizeof(DWORD)
         add esi, 2*(sizeof(DWORD) - ??DbgDataSize)      ;;Skip unnecessary zeros
       endif
     else
-      if TARGET_PLATFORM eq PLATFORM_WINDOWS
-        invoke IsBadReadPtr, ebx, DWORD ptr ??DbgDataSize
-        .if eax != 0
-          mov esi, offset(szDbgInvalid)
-        .else
-          mov edi, esp
-          mov esi, edi
-          OutHexAux
-        .endif
-      else
-        mov edi, esp
-        mov esi, edi
-        OutHexAux
-      endif
+      mov edi, esp
+      mov esi, edi
+      OutHexAux
     endif
     invoke DbgOutTextA, esi, VarColor, DbgColorBackground, DBG_EFFECT_NORMAL, Dest
     add esp, 28h                                        ;;Restore stack
@@ -549,21 +538,16 @@ DbgOutHex macro PreText:=<>, PreColor:=<DbgColorDefaultPre>, Var:req, \
     endif
     if (opattr Var) and OAT_REGISTER                    ;;Is Var a register?
       lea rsi, [rsp + 28h]
-      invoke qword2hexA, rsi, rbx
+      invoke qword2hexA, rsi, Var
       mov DCHRA ptr [rsi + QWORD2HEX_MAX_CHARS - 1], "h";;Set "h" + ZTC
       if ??DbgDataSize lt sizeof(QWORD)
         add rsi, 2*(sizeof(QWORD) - ??DbgDataSize)      ;;Skip unnecessary zeros
       endif
     else
       if TARGET_PLATFORM eq PLATFORM_WINDOWS
-        invoke IsBadReadPtr, rbx, DWORD ptr ??DbgDataSize
-        .if rax != 0
-          mov rsi, offset(szDbgInvalid)
-        .else
-          lea rdi, [rsp + 28h]
-          mov rsi, rdi
-          OutHexAux
-        .endif
+        lea rdi, [rsp + 28h]
+        mov rsi, rdi
+        OutHexAux
       else
         lea rdi, [rsp + 28h]
         mov rsi, rdi
@@ -1668,21 +1652,21 @@ DbgARGB macro Var:req, InfoText, Dest
     endif
     mov edi, ebx
     shr ebx, 24
-    DbgOutHex <Var = [A:>, DbgColorDefaultPre, al, DbgColorForeground, ??DbgDstWnd
+    DbgOutHex <Var = [A:>, DbgColorDefaultPre, bl, DbgColorForeground, ??DbgDstWnd
     invoke DbgOutTextA, $OfsCStrA(", "), DbgColorForeground, DbgColorBackground, \
                         DBG_EFFECT_NORMAL, ??DbgDstWnd
     mov ebx, edi
-    DbgOutHex <R:>, DBG_COLOR_RED, al, DBG_COLOR_RED, ??DbgDstWnd
+    DbgOutHex <R:>, DbgColorRed, bl, DbgColorRed, ??DbgDstWnd
     invoke DbgOutTextA, $OfsCStrA(", "), DbgColorForeground, DbgColorBackground, \
                         DBG_EFFECT_NORMAL, ??DbgDstWnd
     mov ebx, edi
     shr ebx, 8
-    DbgOutHex <G:>, DBG_COLOR_GREEN, al, DBG_COLOR_GREEN, ??DbgDstWnd
+    DbgOutHex <G:>, DbgColorGreen, bl, DbgColorGreen, ??DbgDstWnd
     invoke DbgOutTextA, $OfsCStrA(", "), DbgColorForeground, DbgColorBackground, \
                         DBG_EFFECT_NORMAL, ??DbgDstWnd
     mov ebx, edi
     shr ebx, 16
-    DbgOutHex <B:>, DBG_COLOR_BLUE, al, DBG_COLOR_BLUE, ??DbgDstWnd
+    DbgOutHex <B:>, DbgColorBlue, bl, DbgColorBlue, ??DbgDstWnd
     invoke DbgOutTextA, $OfsCStrA("]"), DbgColorForeground, DbgColorBackground, \
                         DBG_EFFECT_NORMAL, ??DbgDstWnd
 

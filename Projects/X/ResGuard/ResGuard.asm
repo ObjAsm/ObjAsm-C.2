@@ -133,9 +133,9 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
     inc edx
     lea xbx, cBuffer
     FillWordA [xbx], < [>
-    lea xcx, [xbx + $$Size]
+    lea xcx, [xbx + ??StrSize]
     invoke dword2decA, xcx, edx
-    FillStringA [xbx + xax + $$Size - 1], <]>
+    FillStringA [xbx + xax + ??StrSize - 1], <]>
     invoke DbgOutTextA, addr cBuffer, DbgColorString, DbgColorBackground, \
                         DBG_EFFECT_NORMAL, offset wWndCaption
 

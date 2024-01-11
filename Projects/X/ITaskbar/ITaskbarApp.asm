@@ -85,7 +85,7 @@ TaskBarAnimation proc uses xbx xdi xsi hWnd:HWND
     lea xdi, wBuffer
     invoke GetCurrentProcessId
     FillStringW wBuffer, <ITaskbarApp - ProcessID: >
-    invoke udword2decW, addr [wBuffer + $$Size - 2], eax
+    invoke udword2decW, addr [wBuffer + ??StrSize - 2], eax
     ICall pTBL::ITaskbarList4.SetThumbnailTooltip, hWnd, addr wBuffer
 
     ;Add the 4 Thumbbar buttons

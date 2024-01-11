@@ -11,7 +11,7 @@
 ; ==================================================================================================
 ; (($)X)Str:  Defines an ANSI string in (X = C) S_CONST, (X = T) S_TEXT, (X = D) S_DATA or
 ;             (X = J) code segment returning a reference to it if the "$" prefix was used.
-; $Ofs(X)Str: Same as ($C/$T/$D/$J)Str, but returns the string offset.
+; $Ofs(X)Str: Same as ($C|$T|$D|$J)Str, but returns the string offset.
 ;
 ; Note: Use ??StrSize (byte count including the ZTC) or  
 ;           ??StrLength (character count without the ZTC).
@@ -115,7 +115,7 @@ $JStrA macro QuotedText:vararg
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      $Ofs(C/T/D/J)StrA
+; Macro:      $Ofs(C|T|D|J)StrA
 ; Purpose:    Place an ANSI string in the S_CONST, S_DATA or S_TEXT segment.
 ; Arguments:  Arg1: Quoted string text.
 ; Return:     String offset.

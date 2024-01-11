@@ -22,10 +22,10 @@ DbgOutInterfaceName proc uses xbx pIID:ptr GUID, dForeColor:DWORD, dBackColor:DW
   local hKey:HANDLE, SubKey[260]:CHRA, dSubKeyLenght:DWORD
 
   lea xbx, SubKey
-	FillStringA [xbx], <Interface\{>                       ;$$Len = 11
-	invoke GUID2StrA, addr SubKey[$$Len], pIID
-  invoke DbgOutTextA, addr SubKey[$$Len] , dForeColor, dBackColor, DBG_EFFECT_NORMAL, pDestWnd
-  mov DCHRA ptr [xbx + $$Len + GUID2STR_MAX_CHARS - 1], "}"
+	FillStringA [xbx], <Interface\{>                       ;??StrLen = 11
+	invoke GUID2StrA, addr SubKey[??StrLen], pIID
+  invoke DbgOutTextA, addr SubKey[??StrLen] , dForeColor, dBackColor, DBG_EFFECT_NORMAL, pDestWnd
+  mov DCHRA ptr [xbx + ??StrLen + GUID2STR_MAX_CHARS - 1], "}"
   m2z hKey
   invoke RegOpenKeyA, HKEY_CLASSES_ROOT, xbx, addr hKey
   .if eax == ERROR_SUCCESS

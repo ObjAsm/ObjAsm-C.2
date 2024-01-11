@@ -112,6 +112,8 @@
 ;       - I: case insensitive
 ;       - L: operation starts from left
 ;       - R: operation starts from right
+; 27. Versioning is almost according to SemVer 2.0 (https://semver.org/)
+;     Majors (packages) are identified using capital letters. 
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
