@@ -377,14 +377,14 @@ SysSetup macro Arguments:vararg
     % include &MacPath&Objects.inc                      ;;Here is our OOP support! => ObjAsm
 
     if DEBUGGING
-      S_OBJID segment                                   ;;Define a new segment
+      SEG_OBJID segment                                   ;;Define a new segment
         ??ObjIDTableStart equ $
-      S_OBJID ends                                      ;;Switch back to previous segment
+      SEG_OBJID ends                                      ;;Switch back to previous segment
       ??ObjIDTableCount = 0
 
-      S_OBJERR segment                                  ;;Define a new segment
+      SEG_OBJERR segment                                  ;;Define a new segment
         ??ObjErrTableStart equ $
-      S_OBJERR ends                                     ;;Switch back to previous segment
+      SEG_OBJERR ends                                     ;;Switch back to previous segment
       ??ObjErrTableCount = 0
 
     endif
@@ -564,9 +564,9 @@ SysSetup macro Arguments:vararg
       if DBG_TRACE
         TRACING = TRUE
 
-        S_PROF segment
+        SEG_PROF segment
           ??pDbgTraceInstance  POINTER  NULL
-        S_PROF ends
+        SEG_PROF ends
       else
         TRACING = FALSE
       endif

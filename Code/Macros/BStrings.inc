@@ -20,8 +20,8 @@
 
 
 ; ==================================================================================================
-; (($)C/($)T/($)D/($)J)BStr: Defines an BSTR string in (C) S_CONST, (T) S_TEXT,  (D) S_DATA or
-;                            (J) code segment, returning a reference to it,
+; (($)C/($)T/($)D/($)J)BStr: Defines an BSTR string in (C) CONST, (T) CTEXT,  (D) _DATA or
+;                            (J) _TEXT segment, returning a reference to it,
 ;                            if the "$" prefix was used.
 ; $Ofs(C/T/D/J)BStr:         Same as ($C/$T/$D/$J)BStr, but returns the symbolic string offset.
 ;
@@ -33,7 +33,7 @@
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      BString / ($)CBStr / ($)TBStr / ($)DBStr / ($)JBStr
-; Purpose:    Place an BSTR string in the S_CONST, S_DATA or S_TEXT segment.
+; Purpose:    Place an BSTR string in the CONST, CTEXT, _DATA or _TEXT segment.
 ; Arguments:  Arg1: Reference name (optional).
 ;             Arg2: Quoted string text.
 ; Return:     Nothing / Reference to the string.
@@ -119,26 +119,26 @@ endm
 
 CBStr macro TextReference:req, QuotedText:vararg
   externdef TextReference:WORD
-  S_CONST Segment
+  .SegConst
     align @WordSize
     BString <TextReference>, <QuotedText>
-  S_CONST ends
+  .SegRestore
 endm
 
 TBStr macro TextReference:req, QuotedText:vararg
   externdef TextReference:WORD
-  S_TEXT Segment
+  SEG_TEXT Segment
     align @WordSize
     BString <TextReference>, <QuotedText>
-  S_TEXT ends
+  SEG_TEXT ends
 endm
 
 DBStr macro TextReference:req, QuotedText:vararg
   externdef TextReference:WORD
-  S_DATA Segment
+  .SegData
     align @WordSize
     BString <TextReference>, <QuotedText>
-  S_DATA ends
+  .SegRestore
 endm
 
 JBStr macro TextReference, QuotedText:vararg
@@ -152,31 +152,31 @@ endm
 
 $CBStr macro QuotedText:vararg
   local ??StrLocation
-  S_CONST Segment
+  .SegConst
     align @WordSize
     ??StrLocation = $
     BString <>, <QuotedText>
-  S_CONST ends
+  .SegRestore
   exitm <??StrLocation + 4>
 endm
 
 $TBStr macro QuotedText:vararg
   local ??StrLocation
-  S_TEXT Segment
+  SEG_TEXT Segment
     align @WordSize
     ??StrLocation = $
     BString <>, <QuotedText>
-  S_TEXT ends
+  SEG_TEXT ends
   exitm <??StrLocation + 4>
 endm
 
 $DBStr macro QuotedText:vararg
   local ??StrLocation
-  S_DATA Segment
+  .SegData
     align @WordSize
     ??StrLocation = $
     BString <>, <QuotedText>
-  S_DATA ends
+  .SegRestore
   exitm <??StrLocation + 4>
 endm
 
@@ -194,37 +194,37 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      $Ofs(C/T/D/J)BStr
-; Purpose:    Place an BSTR string in the S_CONST, S_TEXT, S_DATA segment.
+; Purpose:    Place an BSTR string in the CONST, CTEXT, _DATA or _TEXT segment.
 ; Arguments:  Arg1: Quoted string text.
 ; Return:     String offset.
 
 $OfsCBStr macro QuotedText:vararg
   local ??StrLocation
-  S_CONST Segment
+  .SegConst
     align @WordSize
     ??StrLocation = $
     BString <>, <QuotedText>
-  S_CONST ends
+  .SegRestore
   exitm <offset ??StrLocation + 4>
 endm
 
 $OfsTBStr macro QuotedText:vararg
   local ??StrLocation
-  S_TEXT Segment
+  SEG_TEXT Segment
     align @WordSize
     ??StrLocation = $
     BString <>, <QuotedText>
-  S_TEXT ends
+  SEG_TEXT ends
   exitm <offset ??StrLocation + 4>
 endm
 
 $OfsDBStr macro QuotedText:vararg
   local ??StrLocation
-  S_DATA Segment
+  .SegData
     align @WordSize
     ??StrLocation = $
     BString <>, <QuotedText>
-  S_DATA ends
+  .SegRestore
   exitm <offset ??StrLocation + 4>
 endm
 

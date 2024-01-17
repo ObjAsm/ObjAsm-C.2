@@ -9,8 +9,8 @@
 
 
 ; ==================================================================================================
-; (($)X)Str:  Defines an ANSI string in (X = C) S_CONST, (X = T) S_TEXT, (X = D) S_DATA or
-;             (X = J) code segment returning a reference to it if the "$" prefix was used.
+; (($)X)Str:  Defines an ANSI string in (X = C) CONST, (X = T) CTEXT, (X = D) _DATA or
+;             (X = J) _TEXT segment returning a reference to it if the "$" prefix was used.
 ; $Ofs(X)Str: Same as ($C|$T|$D|$J)Str, but returns the string offset.
 ;
 ; Note: Use ??StrSize (byte count including the ZTC) or  
@@ -39,26 +39,26 @@ endm
 
 CStrA macro TextReference:req, QuotedText:vararg
   public TextReference
-  S_CONST segment
+  .SegConst
     align @WordSize
     StringA <TextReference>, <QuotedText>
-  S_CONST ends
+  .SegRestore
 endm
 
 TStrA macro TextReference:req, QuotedText:vararg
   public TextReference
-  S_TEXT segment
+  SEG_TEXT segment
     align @WordSize
     StringA <TextReference>, <QuotedText>
-  S_TEXT ends
+  SEG_TEXT ends
 endm
 
 DStrA macro TextReference:req, QuotedText:vararg
   public TextReference
-  S_DATA segment
+  .SegData
     align @WordSize
     StringA <TextReference>, <QuotedText>
-  S_DATA ends
+  .SegRestore
 endm
 
 JStrA macro TextReference:req, QuotedText:vararg
@@ -73,31 +73,31 @@ endm
 
 $CStrA macro QuotedText:vararg
   local ??StrLocation
-  S_CONST segment
+  .SegConst
     align @WordSize
     ??StrLocation = $
     StringA <TextReference>, <QuotedText>
-  S_CONST ends
+  .SegRestore
   exitm <??StrLocation>
 endm
 
 $TStrA macro QuotedText:vararg
   local ??StrLocation
-  S_TEXT segment
+  SEG_TEXT segment
     align @WordSize
     ??StrLocation = $
     StringA <TextReference>, <QuotedText>
-  S_TEXT ends
+  SEG_TEXT ends
   exitm <??StrLocation>
 endm
 
 $DStrA macro QuotedText:vararg
   local ??StrLocation
-  S_DATA segment
+  .SegData
     align @WordSize
     ??StrLocation = $
     StringA <TextReference>, <QuotedText>
-  S_DATA ends
+  .SegRestore
   exitm <??StrLocation>
 endm
 
@@ -116,37 +116,37 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      $Ofs(C|T|D|J)StrA
-; Purpose:    Place an ANSI string in the S_CONST, S_DATA or S_TEXT segment.
+; Purpose:    Place an ANSI string in the CONST, CTEXT, _DATA or _TEXT segment
 ; Arguments:  Arg1: Quoted string text.
 ; Return:     String offset.
 
 $OfsCStrA macro QuotedText:vararg
   local ??StrLocation
-  S_CONST segment
+  .SegConst
     align @WordSize
     ??StrLocation = $
     StringA <>, <QuotedText>
-  S_CONST ends
+  .SegRestore
   exitm <offset ??StrLocation>
 endm
 
 $OfsTStrA macro QuotedText:vararg
   local ??StrLocation
-  S_TEXT segment
+  SEG_TEXT segment
     align @WordSize
     ??StrLocation = $
     StringA <>, <QuotedText>
-  S_TEXT ends
+  SEG_TEXT ends
   exitm <offset ??StrLocation>
 endm
 
 $OfsDStrA macro QuotedText:vararg
   local ??StrLocation
-  S_DATA segment
+  .SegData
     align @WordSize
     ??StrLocation = $
     StringA <>, <QuotedText>
-  S_DATA ends
+  .SegRestore
   exitm <offset ??StrLocation>
 endm
 

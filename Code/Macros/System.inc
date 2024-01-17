@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      System.inc
 ; Author:     G. Friedrich
-; Version:    C.2.0
+; Version:    C.2.1
 ; Purpose:    ObjAsm collection of useful macros.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
@@ -11,11 +11,13 @@
 ;               - WriteF macro bug using AT corrected, V4/V6 & BI/BN/BZ added.
 ;               - lodsc macro added (a1sbofo).
 ;               - GetMemBSS macro added.
+;             Version C.2.1, January 2023
+;               - Segment management added (Segxxx & SegRestore).
 ; ==================================================================================================
 
 
 ; WinDef.h definitions:
-; 
+;
 ; Type                        | S/U | x86    | x64
 ; ----------------------------+-----+--------+-------
 ; BYTE, BOOLEAN               |  U  | 8 bit  | 8 bit
@@ -66,19 +68,27 @@ R15_SUBREGS textequ <-R15-R15D-R15W-R15B->
 
 ;Segment definitions:
 ;https://learn.microsoft.com/en-en/windows/win32/debug/pe-format
-;Use different sections to cluster the data in each section and merge them using the linker
-S_CONST   segment para readonly public                  ;.rdata, initialized
-S_CONST   ends
-S_TEXT    segment para readonly public                  ;like S_CONST
-S_TEXT    ends
-S_DATA    segment para public                           ;Read/Write = .data, initialized
-S_DATA    ends
-S_OBJID   segment para readonly public                  ;Object IDs = .rdata, initialized
-S_OBJID   ends
-S_OBJERR  segment para readonly public                  ;Object Errors = .rdata, initialized
-S_OBJERR  ends
-S_PROF    segment para public                           ;Read/Write - Profile data = .data, uninit.
-S_PROF    ends
+;https://www.plantation-productions.com/Webster/www.artofasm.com/DOS/ch08/CH08-2.html#HEADING2-1
+
+;Use different sections to cluster the data in each seg. and merge them using the linker (/merge)
+;Note: after the linker merged the segments, they lose their original alignment!
+
+SEG_TEXT    segment readonly public 'CONST'             ;.rdata, initialized, merged
+SEG_TEXT    ends
+SEG_OBJID   segment readonly public 'CONST'             ;Obj. IDs = .rdata, initialized, merged
+SEG_OBJID   ends
+SEG_OBJERR  segment readonly public 'CONST'             ;Obj. Errors = .rdata, initialized, merged
+SEG_OBJERR  ends
+SEG_PROF    segment public 'DATA'                       ;Read/Write - Profile data = .data, uninit.
+SEG_PROF    ends                                        ;§§ should be moved to the .data? segment
+
+;The following segment not merged by the linker.
+;This guarantees that the segment is loaded with proper alignment (the default is the page size
+;for the architecture).
+;https://learn.microsoft.com/en-us/windows/win32/debug/pe-format
+SEG_TEXT_ALIGN  segment readonly public                 ;Like SEG_TEXT but it is not merged by the
+SEG_TEXT_ALIGN  ends                                    ;linker otherwise it'll lose its alignment
+
 
 ??WordChars textequ <ABCDEFGHIJKLMNOPQRSTUVWXYZ_?@>
 
@@ -103,15 +113,15 @@ FPU_CONTEXT struc 1
   tST5          TBYTE   ?
   tST6          TBYTE   ?
   tST7          TBYTE   ?
-  Filler        DWORD   ?     ;108 + 4 = 112 => multiple of 16!
+  Filler        DWORD   ?                 ;108 + 4 = 112 => multiple of 16!
 FPU_CONTEXT ends
 PFPU_CONTEXT typedef ptr FPU_CONTEXT
 
 FPU_CONTEXT_SIZE = sizeof(FPU_CONTEXT)
 
-XMM_CONTEXT_SIZE = 512        ;Storage memory must be aligned to 16
+XMM_CONTEXT_SIZE = 512                    ;Storage memory must be aligned to 16
 
-??StackAlignCount = 0         ;Used with StackAlign & StackRestore
+??StackAlignCount = 0                     ;Used with StackAlign & StackRestore
 
 
 ;OpAttr test values   '   '   '   '
@@ -223,6 +233,105 @@ $ArgRev macro ArgList:vararg
   endif
 
   exitm <$$RevList>
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      .Segxxx / .SegRestore
+; Purpose:    Switches to another segment keeping track of the current segment, so that
+;             .SegRestore can switch back (1 level only).
+; Arguments:  None.
+; Return:     Nothing.
+
+.SegCode macro
+  ??PrvSeg textequ @CurSeg
+% ifnb <??PrvSeg>
+%   ifidn <??PrvSeg>, <SEG_TEXT>
+      SEG_TEXT ends
+%   elseifidn <??PrvSeg>, <SEG_TEXT_ALIGN>
+      SEG_TEXT_ALIGN ends
+    endif
+  endif
+  .code
+endm
+
+.SegData macro
+  ??PrvSeg textequ @CurSeg
+% ifnb <??PrvSeg>
+%   ifidn <??PrvSeg>, <SEG_TEXT>
+      SEG_TEXT ends
+%   elseifidn <??PrvSeg>, <SEG_TEXT_ALIGN>
+      SEG_TEXT_ALIGN ends
+    endif
+  endif
+  .data
+endm
+
+.SegData? macro
+  ??PrvSeg textequ @CurSeg
+% ifnb <??PrvSeg>
+%   ifidn <??PrvSeg>, <SEG_TEXT>
+      SEG_TEXT ends
+%   elseifidn <??PrvSeg>, <SEG_TEXT_ALIGN>
+      SEG_TEXT_ALIGN ends
+    endif
+  endif
+  .data?
+endm
+
+.SegConst macro
+  ??PrvSeg textequ @CurSeg
+% ifnb <??PrvSeg>
+%   ifidn <??PrvSeg>, <SEG_TEXT>
+      SEG_TEXT ends
+%   elseifidn <??PrvSeg>, <SEG_TEXT_ALIGN>
+      SEG_TEXT_ALIGN ends
+    endif
+  endif
+  .const
+endm
+
+.SegText macro
+  ??PrvSeg textequ @CurSeg
+% ifnb <??PrvSeg>
+%   ifidn <??PrvSeg>, <SEG_TEXT>
+      SEG_TEXT ends
+%   elseifidn <??PrvSeg>, <SEG_TEXT_ALIGN>
+      SEG_TEXT_ALIGN ends
+    endif
+  endif
+  SEG_TEXT segment
+endm
+
+.SegTextAlign macro
+  ??PrvSeg textequ @CurSeg
+% ifnb <??PrvSeg>
+%   ifidn <??PrvSeg>, <SEG_TEXT>
+      SEG_TEXT ends
+%   elseifidn <??PrvSeg>, <SEG_TEXT_ALIGN>
+      SEG_TEXT_ALIGN ends
+    endif
+  endif
+  SEG_TEXT_ALIGN segment
+endm
+
+.SegRestore macro
+% ifnb <??PrvSeg>
+%   ifidn <??PrvSeg>, <_TEXT>
+      .SegCode
+%   elseifidn <??PrvSeg>, <_DATA>
+      .SegData
+%   elseifidn <??PrvSeg>, <_BSS>
+      .SegData?
+%   elseifidn <??PrvSeg>, <CONST>
+      .SegConst
+%   elseifidn <??PrvSeg>, <SEG_TEXT>
+      .SegText
+%   elseifidn <??PrvSeg>, <SEG_TEXT_ALIGN>
+      .SegTextAlign
+    else
+      .err <Unknown segment name>
+    endif
+  endif
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -770,6 +879,41 @@ FillStringA macro StrVar:req, Text:req
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      FillQuotedStringA
+; Purpose:    Fill an ANSI quoted text using a series of mov DWORD/WORD/BYTE instructions.
+;             It doesn't work with QWORDs.
+; Arguments:  Arg1: String to be filled.
+;             Arg2: Quoted text.
+; Return:     ??StrLen = Number of copied chars, excluding the ZTC.
+;             ??StrSize = Number of BYTEs copied, including the ZTC.
+; Example:    FillQuotedStringA myString, "Hello", CRLF
+
+FillQuotedStringA macro StrVar:req, QuotedText:vararg
+  ??StrLen = 0
+  $$j = 0
+% for $$Char, <$QuotedText(QuotedText)>
+    $$j = (&$$Char shl ((??StrLen and 3) * 8)) + $$j
+    if (??StrLen and 3) eq 3
+      mov DWORD ptr StrVar[(??StrLen and -4)], $$j
+      $$j = 0
+    endif
+    ??StrLen = ??StrLen + 1
+  endm
+
+  if (??StrLen and 3) eq 0
+    m2z BYTE ptr StrVar[??StrLen]
+  elseif (??StrLen and 3) eq 1
+    mov WORD ptr StrVar[??StrLen - 1], $$j
+  elseif (??StrLen and 3) eq 2
+    mov WORD ptr StrVar[??StrLen - 2], $$j
+    m2z BYTE ptr StrVar[??StrLen]
+  else
+    mov DWORD ptr StrVar[(??StrLen - 3)], $$j
+  endif
+  ??StrSize = ??StrLen + 1
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      FillStringB
 ; Purpose:    Fill a BSTR string with text using a series of mov DWORD/WORD/BYTE instructions.
 ;             It doesn't work with QWORDs.
@@ -832,11 +976,43 @@ FillStringW macro StrVar:req, Text:req
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      FillQuotedStringW
+; Purpose:    Fill an WIDE quoted text using a series of mov DWORD/WORD/BYTE instructions.
+;             It doesn't work with QWORDs.
+; Arguments:  Arg1: String to be filled.
+;             Arg2: Quoted text.
+; Return:     ??StrLen = Number of copied chars, excluding the ZTC.
+;             ??StrSize = Number of BYTEs copied, including the ZTC.
+; Example:    FillQuotedStringW myString, "Hello", CRLF
+
+FillQuotedStringW macro StrVar:req, QuotedText:vararg
+  ??StrLen = 0
+  $$j = 0
+% for $$Char, <$QuotedText(QuotedText)>
+    $$j = (&$$Char shl ((??StrLen and 1) * 16)) + $$j
+    if (??StrLen and 1) eq 1
+      mov DWORD ptr StrVar[(??StrLen and -2)*2], $$j
+      $$j = 0
+    endif
+    ??StrLen = ??StrLen + 1
+  endm
+
+  if (??StrLen and 1) eq 0
+    m2z WORD ptr StrVar[??StrLen*2]
+  elseif (??StrLen and 1) eq 1
+    mov DWORD ptr StrVar[(??StrLen - 1)*2], $$j
+  endif
+  ??StrSize = sizeof(CHRW)*(??StrLen + 1)
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
   FillString equ FillStringA
+  FillQuotedString equ FillQuotedStringA
 elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
   FillString equ FillStringW
+  FillQuotedString equ FillQuotedStringW
 else
   .echo <FillString is undefined>
 endif
@@ -1165,7 +1341,7 @@ endif
 ;                   subsequent arguments.
 ;             Arg3-N: Additional arguments. Must be non-volatile registers, FPU registers or
 ;                   memory symbols.
-; Return:     On return Arg1 points to the ZTC, which helps appending other strings 
+; Return:     On return Arg1 points to the ZTC, which helps appending other strings
 ;             or calculate the number of written bytes.
 ; Notes:      - Format specifiers:
 ;                 SB signed BYTE as decimal
@@ -1225,7 +1401,7 @@ endif
 WriteF macro DstReg:req, Format:req, Args:vararg
   local pBegin
 
-  ;;Scan for ¦AT, ¦MT or ¦BI. They require pBegin 
+  ;;Scan for ¦AT, ¦MT or ¦BI. They require pBegin
   $$WF_Replace = 0                                      ;;Replace flag
   $$WF_CharCount = 0
   $$WF_ReplType textequ <>
@@ -1263,11 +1439,11 @@ WriteF macro DstReg:req, Format:req, Args:vararg
   if $$BeginRequired eq 1
     .data?
       pBegin  POINTER   ?
-  
+
     .code
     mov pBegin, DstReg
   endif
-  
+
   ;;Start doing the job
   .code
   $$Count = 0
@@ -1972,45 +2148,45 @@ endm
 ;             Arg2: Value of the floating point variable.
 
 DReal4 macro Name, Value
-  S_DATA segment
-  align @WordSize
-  Name REAL4 Value
-  S_DATA ends
+  .SegData
+    align @WordSize
+    Name REAL4 Value
+  .SegRestore
 endm
 
 DReal8 macro Name, Value
-  S_DATA segment
-  align @WordSize
-  Name REAL8 Value
-  S_DATA ends
+  .SegData
+    align @WordSize
+    Name REAL8 Value
+  .SegRestore
 endm
 
 DReal10 macro Name, Value
-  S_DATA segment
-  align @WordSize
-  Name REAL10 Value
-  S_DATA ends
+  .SegData
+    align @WordSize
+    Name REAL10 Value
+  .SegRestore
 endm
 
 CReal4 macro Name, Value
-  S_CONST segment
-  align @WordSize
-  Name REAL4 Value
-  S_CONST ends
+  .SegConst
+    align @WordSize
+    Name REAL4 Value
+  .SegRestore
 endm
 
 CReal8 macro Name, Value
-  S_CONST Segment
-  align @WordSize
-  Name REAL8 Value
-  S_CONST ends
+  .SegConst
+    align @WordSize
+    Name REAL8 Value
+  .SegRestore
 endm
 
 CReal10 macro Name, Value
-  S_CONST segment
-  align @WordSize
-  Name REAL10 Value
-  S_CONST ends
+  .SegConst
+    align @WordSize
+    Name REAL10 Value
+  .SegRestore
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -2070,7 +2246,7 @@ $CReal4 macro Value
 
   ;;Check if it does exist
 %   ifndef $$RealName
-    S_CONST segment
+    .SegConst
       align @WordSize
       if $$RealDotPos eq 0
 ;;        %echo @CatStr(<Defining CONST REAL4=>, Value, <.0 using >, %$$RealName, < symbol name at line >, %@Line, < of >, @FileCur)
@@ -2079,7 +2255,7 @@ $CReal4 macro Value
 ;;        %echo @CatStr(<Defining CONST REAL4=>, Value, < using >, %$$RealName, < symbol name at line >, %@Line, < of >, @FileCur)
         $$RealName REAL4 Value
       endif
-    S_CONST ends
+    .SegRestore
 ;;    else
 ;;      %echo @CatStr(<Reusing  CONST REAL4=>, Value, < using >, %$$RealName, < symbol name at line >, %@Line, < of >, @FileCur)
   endif
@@ -2134,7 +2310,7 @@ $CReal8 macro Value
 
   ;;Check if it does exist
 %   ifndef $$RealName
-    S_CONST segment
+    .SegConst
       align @WordSize
       if $$RealDotPos eq 0
 ;;        %echo @CatStr(<Defining CONST REAL8=>, Value, <.0 using >, %$$RealName, < symbol name at line >, %@Line, < of >, @FileCur)
@@ -2143,7 +2319,7 @@ $CReal8 macro Value
 ;;        %echo @CatStr(<Defining CONST REAL8=>, Value, < using >, %$$RealName, < symbol name at line >, %@Line, < of >, @FileCur)
         $$RealName REAL8 Value
       endif
-    S_CONST ends
+    .SegRestore
 ;;    else
 ;;      %echo @CatStr(<Reusing  CONST REAL8=>, Value, < using >, %$$RealName, < symbol name at line >, %@Line, < of >, @FileCur)
   endif
@@ -2198,7 +2374,7 @@ $CReal10 macro Value
 
   ;;Check if it does exist
 %   ifndef $$RealName
-    S_CONST segment
+    .SegConst
       align @WordSize
       if $$RealDotPos eq 0
 ;;        %echo @CatStr(<Defining CONST REAL10=>, Value, <.0 using >, %$$RealName, < symbol name at line >, %@Line, < of >, @FileCur)
@@ -2207,7 +2383,7 @@ $CReal10 macro Value
 ;;        %echo @CatStr(<Defining CONST REAL10=>, Value, < using >, %$$RealName, < symbol name at line >, %@Line, < of >, @FileCur)
         $$RealName REAL10 Value
       endif
-    S_CONST ends
+    .SegRestore
 ;;    else
 ;;      %echo @CatStr(<Reusing  CONST REAL10=>, Value, < using >, %$$RealName, < symbol name at line >, %@Line, < of >, @FileCur)
   endif
@@ -3201,12 +3377,12 @@ endm
 ;      ??DbgTracePrcCount CatStr <PrcCnt_>, <ProcName>
 ;      ??DbgTracePrcTicks CatStr <PrcTck_>, <ProcName>
 ;
-;      ;;Create trace variables in the S_PROF
+;      ;;Create trace variables in the SEG_PROF
 ;      %ifndef ??DbgTracePrcCount
-;        S_PROF segment
+;        SEG_PROF segment
 ;          ??DbgTracePrcCount  DWORD  0
 ;          ??DbgTracePrcTicks  QWORD  0
-;        S_PROF ends
+;        SEG_PROF ends
 ;      endif
 ;      inc ??DbgTracePrcCount                          ;;Increment access counter
 ;      ;push eax

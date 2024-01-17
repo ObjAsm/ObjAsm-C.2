@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      Debug.inc
 ; Author:     G. Friedrich
-; Version:    C.2.1
+; Version:    C.2.2
 ; Purpose:    ObjAsm debug macros.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
@@ -24,6 +24,8 @@
 ;               - Register restoration bug in DbgSaveContext (64 bit) corrected.
 ;             Version C.2.1, December 2023
 ;               - DbgCpuFlags added.
+;             Version C.2.1, January 2024
+;               - DbgMemBlock added.
 ; ==================================================================================================
 
 ;Supported debugging macros:
@@ -2863,5 +2865,46 @@ DbgVec4 macro Var:req, InfoText, Dest
     DbgShowTxtInfo InfoText, ??DbgDstWnd
     DbgShowSrcInfo ??DbgDstWnd
     DbgLoadContext
+  endif
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:     DbgMemBlock
+; Purpose:   Output MemBlock information and warn about unaligned payload.
+; Arguments: Arg1: -> MemBlock.bPayload
+;            Arg2: Additional information.
+;            Arg3: Destination Window name.
+
+DbgMemBlock macro Var:req, InfoText, Dest
+  if DEBUGGING
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      DbgSaveContext FALSE, Var
+      DbgSetDestWnd Dest
+      mov di, [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.wOffset
+      DbgOutHex <Offset=>,, di,, ??DbgDstWnd
+      mov di, [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.wFlags
+      DbgOutHex <, Flags=>,, di,, ??DbgDstWnd
+      mov edi, [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dSize
+      DbgOutHex <, Size=>,, edi,, ??DbgDstWnd
+      mov edi, [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+      DbgOutHex <, Used=>,, edi,, ??DbgDstWnd
+      invoke DbgOutTextA, $OfsCStrA(" Payload="), DbgColorDefaultPre, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+      .if [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed != 0
+        invoke DbgOutText, xbx, DbgColorString, DbgColorBackground, \
+                           DBG_EFFECT_NORMAL, ??DbgDstWnd
+      .endif
+      ;;Check Payload alignment
+      mov xdi, xbx
+      and xdi, MEMBLOCK_PAYLOAD_ALIGNMENT - 1
+      .if xdi
+        invoke DbgOutText, $OfsCStr(CRLF, "ERROR: MemBlock Payload is NOT aligned", 21h, CRLF), \
+                           DbgColorWarning, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+        DbgHex xbx, "Payload address"
+      .endif
+      DbgShowTxtInfo InfoText, ??DbgDstWnd
+      DbgShowSrcInfo ??DbgDstWnd      
+      DbgLoadContext
+    endif
   endif
 endm

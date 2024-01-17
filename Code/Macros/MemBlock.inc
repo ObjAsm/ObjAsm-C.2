@@ -9,68 +9,84 @@
 
 
 ; MemBlock format:
-;                                                MemBlock points here!
-;          4 bytes       4 bytes      4 bytes    v
-;       ——————————————————————————————————————————————————————————————————
-;  ... |    Flags    |  BYTE Size  | BYTE Usage  | BYTE Payload           | ...
-;       ——————————————————————————————————————————————————————————————————
-;      ^                                         ^
-;      Alignment 8/16                            Alignment 4
+;                                                              MemBlock points here!
+;        Offset BYTEs    WORD     WORD      DWORD         DWORD    v
+;       ————————————————————————————————————————————————————————————————————————————————————
+;  ... |  Padding     | Offset | Flags |  BYTE Size  | BYTE Usage  | BYTE Payload           | ...
+;       ————————————————————————————————————————————————————————————————————————————————————
+;      ^                                                       ^
+;      Heap Alignment 8/16                                     Alignment 4/8/16/32/...
 ;
-;                                   <------------------------------------>
-;                                    BSTR if the payload is a WIDE string
+;                                                     <------------------------------------>
+;                                                      BSTR if the payload is a WIDE string
 
 
 ; ==================================================================================================
 
-;https://www.labri.fr/perso/betrema/winnt/heapmm.html
-MEMBLOCK_ALLOC_GRANULARITY = 16*sizeof(CHR)             ;Heap allocation granularity is 16 BYTEs
-
-;The MemBlock alignment is 8 on 32 bit and 16 on 64 bit, matching the alignment of Heap allocations. 
-MEMBLOCK_ALIGN = 2*@WordSize
 
 ;MemBlock Flags
 ;The remainig bits are left for application specific use
-MBF_WRITABLE  equ BIT31
-MBF_DYNAMIC   equ BIT30
+MBF_WRITABLE  equ BIT00
+MBF_DYNAMIC   equ BIT01
 
 MemBlockHeader struct
-  dFlags    DWORD ?
-  dSize     DWORD ?
-  dUsed     DWORD ?
+  wOffset   WORD  ?           ;Offset from start of heap allocation to start of the MemBlockHeader
+  wFlags    WORD  ?           ;Flags
+  dSize     DWORD ?           ;Payload size in BYTEs
+  dUsed     DWORD ?           ;Payload usage (incl. ZTC) in BYTEs
 MemBlockHeader ends
+MEMBLOCK_HEADER_SIZE equ sizeof(MemBlockHeader)
 
 MemBlock struct
   MemBlockHeader  <>
-  bPayload  BYTE  0 DUP (?)
+  bPayload  BYTE  0 dup(?)
 MemBlock ends
 
+;The heap allocation granularity is 8 for 32-bit applications and 16 for a 64-bit applications.
+;https://techcommunity.microsoft.com/t5/ask-the-performance-team/what-a-heap-of-part-one/ba-p/372424
+HEAP_ALLOC_GRANULARITY = TARGET_BITNESS/4
+
+;The heap allocation alignment is 8 for 32-bit applications and 16 for 64-bit applications.
+HEAP_ALLOC_ALIGNMENT = TARGET_BITNESS/4
+
+;For heap allocations, padding bytes are required to control payload alignment.
+;This value can be changed according to the requirements of the architecture, such as SSE or AVX.
+MEMBLOCK_PAYLOAD_ALIGNMENT = 16                 ;SSE architecture, PARA alignment
+MEMBLOCK_PAYLOAD_GRANULARITY = 16*sizeof(CHR)   ;At least 128-bit for XMM register access
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MemBlockAlloc
 ; Purpose:    Allocate a MemBlock with a given payload size.
-; Arguments:  Arg1: Payload size in BYTEs.
-; Return:     xax -> MemBlock.bPayload.
+; Arguments:  Arg1: Min. payload size in BYTEs.
+; Return:     xax -> MemBlock.bPayload or NULL if failed.
 ; Note:       The allocated memory size is a multiple of MEMBLOCK_ALLOC_GRANULARITY
 ;             and the free space on the payload is at least equal to MEMBLOCK_ALLOC_GRANULARITY.
 .code
 align ALIGN_CODE
-MemBlockAlloc_X proc uses xbx dPayloadSize:DWORD
-  ?mov ecx, dPayloadSize
-  lea ebx, [ecx + sizeof(MemBlockHeader) + 2*MEMBLOCK_ALLOC_GRANULARITY - 1]
-  and ebx, -MEMBLOCK_ALLOC_GRANULARITY
+MemBlockAlloc_X proc uses xbx dMinPayloadSize:DWORD
+  ?mov ecx, dMinPayloadSize
+  lea ebx, [MEMBLOCK_PAYLOAD_ALIGNMENT + MEMBLOCK_HEADER_SIZE + ecx + MEMBLOCK_PAYLOAD_GRANULARITY]
+  and ebx, -HEAP_ALLOC_GRANULARITY
+  DbgDec ebx
   MemAlloc xbx
-  mov [xax].MemBlockHeader.dFlags, MBF_DYNAMIC or MBF_WRITABLE
+  test xax, xax
+  jz @@Error
+  lea xcx, [xax + MEMBLOCK_HEADER_SIZE + MEMBLOCK_PAYLOAD_ALIGNMENT]
+  and xcx, -MEMBLOCK_PAYLOAD_ALIGNMENT
+  sub xcx, xax
+  sub xcx, MEMBLOCK_HEADER_SIZE
+  .while SIGN?
+    add xcx, MEMBLOCK_PAYLOAD_ALIGNMENT
+  .endw
+  add xax, xcx
+  mov [xax].MemBlockHeader.wFlags, MBF_DYNAMIC or MBF_WRITABLE
+  mov [xax].MemBlockHeader.wOffset, cx
+  sub ebx, MEMBLOCK_HEADER_SIZE
+  sub ebx, ecx
   mov [xax].MemBlockHeader.dSize, ebx
   mov [xax].MemBlockHeader.dUsed, 0
-  if MEMBLOCK_ALLOC_GRANULARITY ge 2
-    mov CHRW ptr [xax].MemBlock.bPayload, 0             ;Just in case
-  elseif MEMBLOCK_ALLOC_GRANULARITY eq 1
-    mov CHRA ptr [xax].MemBlock.bPayload, 0             ;Just in case
-  else
-    .err <MEMBLOCK_ALLOC_GRANULARITY can NOT be zero>
-  endif
-  add xax, sizeof(MemBlockHeader)
+  add xax, MEMBLOCK_HEADER_SIZE
+@@Error:
   ret
 MemBlockAlloc_X endp
 
@@ -84,8 +100,10 @@ MemBlockAlloc_X endp
 align ALIGN_CODE
 MemBlockFree_X proc pMemBlockPayload:POINTER
   ?mov xcx, pMemBlockPayload
-  lea xax, [xcx - sizeof(MemBlockHeader)]
-  .ifBitSet [xax].MemBlockHeader.dFlags, MBF_DYNAMIC
+  lea xax, [xcx - MEMBLOCK_HEADER_SIZE]
+  .ifBitSet [xax].MemBlockHeader.wFlags, MBF_DYNAMIC
+    movzx xcx, [xax].MemBlockHeader.wOffset
+    sub xax, xcx
     MemFree xax
   .else
     DbgWarning "MemBlock is not DYNAMIC"
@@ -98,31 +116,31 @@ MemBlockFree_X endp
 ; Purpose:    Clone a MemBlock.
 ; Arguments:  Arg1: -> MemBlock.bPayload.
 ; Return:     xax -> Cloned MemBlock.bPayload.
-; Note:       MemBlockHeader.dFlags are set to MBF_DYNAMIC || MBF_WRITABLE.
+; Note:       MemBlockHeader.wFlags are set to MBF_DYNAMIC || MBF_WRITABLE.
 
 .code
 align ALIGN_CODE
 MemBlockClone_X proc uses xbx xdi pMemBlockPayload:POINTER
   ?mov xcx, pMemBlockPayload
-  lea xax, [xcx - sizeof(MemBlockHeader)]
+  lea xax, [xcx - MEMBLOCK_HEADER_SIZE]
   mov ebx, [xax].MemBlockHeader.dSize
-  add ebx, sizeof(MemBlockHeader)
+  add ebx, MEMBLOCK_HEADER_SIZE
   MemAlloc xbx
   test xax, xax
   jz @@Error
   mov xdi, xax
   mov xcx, pMemBlockPayload
-  lea xdx, [xcx - sizeof(MemBlockHeader)]
+  lea xdx, [xcx - MEMBLOCK_HEADER_SIZE]
   invoke MemClone, xax, xdx, ebx
   mov xax, xdi
-  mov [xdi].MemBlockHeader.dFlags, MBF_DYNAMIC or MBF_WRITABLE
+  mov [xdi].MemBlockHeader.wFlags, MBF_DYNAMIC or MBF_WRITABLE
 @@Error:
   ret
 MemBlockClone_X endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      BlockA / BlockW
-; Purpose:    Construct an MemBlock structure in any segment
+; Macro:      MemBlockA / MemBlockW
+; Purpose:    Construct an MemBlock structure in the current segment.
 ; Arguments:  Arg1: (optional) MemBlock flags (MBF_xxx)
 ;             Arg2: (optional) Minimal payload size.
 ;             Arg3: Symbol name.
@@ -134,48 +152,37 @@ MemBlockClone_X endp
 ;             - Empty input strings ("" or '') causes an error.
 ;             - Numeric inputs in word range are possible.
 ;             - sizeof and length of directives work with this macro.
-; Example:    BlockA MBF_WRITEABLE, 100, MyString, "Hello World", CRLF
+; Example:    MemBlockA MBF_WRITEABLE, 100, MyString, "Hello World", CRLF
 
-BlockA macro Flags:=<0>, MinAlloc:=<0>, TextReference:req, QuotedText:vararg
-  align MEMBLOCK_ALIGN
-  ??BlockBase = $
-  ??BlockPayload = $ + sizeof(MemBlockHeader)
-  org ??BlockPayload                                    ;;Move to MemBlock.Payload begin
-  StringA <TextReference>, <QuotedText>                 ;;Set MemBlock.Payload = WIDE String
-  org ??BlockBase
-  dd Flags                                              ;;Set MemBlock.dFlags
-  ??Size = ??StrSize
-  ifnb <MinAlloc>                                       ;;If MinAlloc is specified
-    if MinAlloc gt ??StrSize                            ;; and is bigger than ??StrSize
-      ??Size = MinAlloc                                 ;; then use it
-    endif
-  endif
-  ??Size = sizeof(MemBlockHeader) + ??Size + 2*MEMBLOCK_ALLOC_GRANULARITY - 1
-  ??Size = ??Size and -MEMBLOCK_ALLOC_GRANULARITY
+MemBlockA macro Flags:=<0>, MinFreeSize:=<0>, TextReference:req, QuotedText:vararg
+  org $ + MEMBLOCK_HEADER_SIZE
+  align MEMBLOCK_PAYLOAD_ALIGNMENT
+  ??MemBlockPayloadPosition = $                         ;;Remember this position
+  StringA <TextReference>, <QuotedText>                 ;;Set MemBlock.bPayload = ANSI String
+  ??Size = ((??StrSize + MinFreeSize + MEMBLOCK_PAYLOAD_GRANULARITY)/ \
+            MEMBLOCK_PAYLOAD_GRANULARITY)*MEMBLOCK_PAYLOAD_GRANULARITY
+  org ??MemBlockPayloadPosition - MEMBLOCK_HEADER_SIZE
+  dw 0                                                  ;;wOffset = 0
+  dw Flags
   dd ??Size                                             ;;Set MemBlock.dSize
-  dd ??StrSize                                          ;;Set MemBlock.dUsed = Current usage
-  org ??BlockPayload + ??Size                           ;;Move to the end of the MemBlock
+  dd ??StrSize
+  org $ + ??Size
 endm
 
-BlockW macro Flags:=<0>, MinAlloc:=<0>, TextReference:req, QuotedText:vararg
-  align MEMBLOCK_ALIGN
-  ??BlockBase = $
-  ??BlockPayload = $ + sizeof(MemBlockHeader)
-  org ??BlockPayload                                    ;;Move to MemBlock.Payload begin
-  StringW <TextReference>, <QuotedText>                 ;;Set MemBlock.Payload = WIDE String
-  org ??BlockBase
-  dd Flags                                              ;;Set MemBlock.dFlags
-  ??Size = ??StrSize
-  ifnb <MinAlloc>                                       ;;If MinAlloc is specified
-    if MinAlloc gt ??StrSize                            ;; and is bigger than ??StrSize
-      ??Size = MinAlloc                                 ;; then use it
-    endif
-  endif
+MemBlockW macro Flags:=<0>, MinFreeSize:=<0>, TextReference:req, QuotedText:vararg
+  org $ + MEMBLOCK_HEADER_SIZE
+  align MEMBLOCK_PAYLOAD_ALIGNMENT
+  ??MemBlockPayloadPosition = $                         ;;Remember this position
+  StringW <TextReference>, <QuotedText>                 ;;Set MemBlock.bPayload = WIDE String
+  ??Size = ((??StrSize + MinFreeSize + MEMBLOCK_PAYLOAD_GRANULARITY)/ \
+            MEMBLOCK_PAYLOAD_GRANULARITY)*MEMBLOCK_PAYLOAD_GRANULARITY
+  org ??MemBlockPayloadPosition - MEMBLOCK_HEADER_SIZE
+  dw 0                                                  ;;wOffset = 0
+  dw Flags
   dd ??Size                                             ;;Set MemBlock.dSize
-  dd ??StrSize                                          ;;Set MemBlock.dUsed = Current usage
-  org ??BlockPayload + ??Size                           ;;Move to the end of the MemBlock
+  dd ??StrSize
+  org $ + ??Size
 endm
-
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      (C|T|D)Block(A|B|W) / $Ofs(C|T|D)Block(A|B|W)
@@ -193,34 +200,33 @@ endm
 ;             - sizeof and length of directives work with this macro.
 ; Example:    mov xax, $OfsCBlockA("Hello World", CRLF)
 
-
 CBlockA macro TextReference:req, QuotedText:vararg
   public TextReference
-  S_CONST segment
-    BlockA 0, <>, <TextReference>, <QuotedText>
-  S_CONST ends
+  .SegConst
+    MemBlockA 0, <>, <TextReference>, <QuotedText>
+  .SegRestore
 endm
 
 $OfsCBlockA macro QuotedText:vararg
-  S_CONST segment
-    BlockA 0, <>, <>, <QuotedText>
-  S_CONST ends
-  exitm <offset(??BlockPayload)>
+  .SegConst
+    MemBlockA 0, <>, <>, <QuotedText>
+  .SegRestore
+  exitm <offset ??MemBlockPayloadPosition>
 endm
 
 
 CBlockW macro TextReference:req, QuotedText:vararg
   public TextReference
-  S_CONST segment
-    BlockW 0, <>, <TextReference>, <QuotedText>
-  S_CONST ends
+  .SegConst
+    MemBlockW 0, <>, <TextReference>, <QuotedText>
+  .SegRestore
 endm
 
 $OfsCBlockW macro QuotedText:vararg
-  S_CONST segment
-    BlockW 0, <>, <>, <QuotedText>
-  S_CONST ends
-  exitm <offset(??BlockPayload)>
+  .SegConst
+    MemBlockW 0, <>, <>, <QuotedText>
+  .SegRestore
+  exitm <offset ??MemBlockPayloadPosition>
 endm
 
 
@@ -239,33 +245,33 @@ endif
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
 
-DBlockA macro MinSize:req, TextReference:req, QuotedText:vararg
+DBlockA macro MinFreeSize:req, TextReference:req, QuotedText:vararg
   public TextReference
-  S_DATA segment
-    BlockA MBF_WRITABLE, MinSize, <TextReference>, <QuotedText>
-  S_DATA ends
+  .SegData
+    MemBlockA MBF_WRITABLE, MinFreeSize, <TextReference>, <QuotedText>
+  .SegRestore
 endm
 
-$OfsDBlockA macro MinSize:req, QuotedText:vararg
-  S_DATA segment
-    BlockA MBF_WRITABLE, MinSize, <>, <QuotedText>
-  S_DATA ends
-  exitm <offset(??BlockPayload)>
+$OfsDBlockA macro MinFreeSize:req, QuotedText:vararg
+  .SegData
+    MemBlockA MBF_WRITABLE, MinFreeSize, <>, <QuotedText>
+  .SegRestore
+  exitm <offset ??MemBlockPayloadPosition>
 endm
 
 
-DBlockW macro MinSize:req, TextReference:req, QuotedText:vararg
+DBlockW macro MinFreeSize:req, TextReference:req, QuotedText:vararg
   public TextReference
-  S_DATA segment
-    BlockW MBF_WRITABLE, MinSize, <TextReference>, <QuotedText>
-  S_DATA ends
+  .SegData
+    MemBlockW MBF_WRITABLE, MinFreeSize, <TextReference>, <QuotedText>
+  .SegRestore
 endm
 
-$OfsDBlockW macro MinSize:req, QuotedText:vararg
-  S_DATA segment
-    BlockW MBF_WRITABLE, MinSize, <>, <QuotedText>
-  S_DATA ends
-  exitm <offset(??BlockPayload)>
+$OfsDBlockW macro MinFreeSize:req, QuotedText:vararg
+  .SegData
+    MemBlockW MBF_WRITABLE, MinFreeSize, <>, <QuotedText>
+  .SegRestore
+  exitm <offset ??MemBlockPayloadPosition>
 endm
 
 
@@ -285,33 +291,33 @@ endif
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
 
-TBlockA macro MinSize:req, TextReference:req, QuotedText:vararg
+TBlockA macro MinFreeSize:req, TextReference:req, QuotedText:vararg
   public TextReference
-  S_TEXT segment
-    BlockA MBF_WRITABLE, MinSize, <TextReference>, <QuotedText>
-  S_TEXT ends
+  .SegTestIsol
+    MemBlockA MBF_WRITABLE, MinFreeSize, <TextReference>, <QuotedText>
+  .SegRestore
 endm
 
-$OfsTBlockA macro MinSize:req, QuotedText:vararg
-  S_TEXT segment
-    BlockA MBF_WRITABLE, MinSize, <>, <QuotedText>
-  S_TEXT ends
-  exitm <offset(??BlockPayload)>
+$OfsTBlockA macro MinFreeSize:req, QuotedText:vararg
+  .SegTestIsol
+    MemBlockA MBF_WRITABLE, MinFreeSize, <>, <QuotedText>
+  .SegRestore
+  exitm <offset ??MemBlockPayloadPosition>
 endm
 
 
-TBlockW macro MinSize:req, TextReference:req, QuotedText:vararg
+TBlockW macro MinFreeSize:req, TextReference:req, QuotedText:vararg
   public TextReference
-  S_TEXT segment
-    BlockW MBF_WRITABLE, MinSize, <TextReference>, <QuotedText>
-  S_TEXT ends
+  .SegTestIsol
+    MemBlockW MBF_WRITABLE, MinFreeSize, <TextReference>, <QuotedText>
+  .SegRestore
 endm
 
-$OfsTBlockW macro MinSize:req, QuotedText:vararg
-  S_TEXT segment
-    BlockW MBF_WRITABLE, MinSize, <>, <QuotedText>
-  S_TEXT ends
-  exitm <offset(??BlockPayload)>
+$OfsTBlockW macro MinFreeSize:req, QuotedText:vararg
+  .SegTestIsol
+    MemBlockW MBF_WRITABLE, MinFreeSize, <>, <QuotedText>
+  .SegRestore
+  exitm <offset ??MemBlockPayloadPosition>
 endm
 
 
@@ -328,7 +334,7 @@ else
 endif
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      $MStr
+; Macro:      $MStr / $MStrInit
 ; Purpose:    Allocate an MStr on the stack.
 ; Arguments:  Arg1: Variable name
 ;             Arg2: MStr capacity in chars.
@@ -337,19 +343,31 @@ endif
 ;             ...
 ;             mov xcx, $MStrInit(MyStr, <Hello>)
 
-
 $MStr macro TextReference:req, Chars:req
-  %exitm <TextReference[sizeof(MemBlockHeader) + sizeof(CHR)*Chars]:BYTE>
+  ??Size = MEMBLOCK_PAYLOAD_ALIGNMENT + MEMBLOCK_HEADER_SIZE + sizeof(CHR)*Chars + MEMBLOCK_PAYLOAD_GRANULARITY
+  %exitm <TextReference[MEMBLOCK_HEADER_SIZE + ??Size]:BYTE>
 endm
 
-$MStrInit macro TextReference:req, StrValue
-  ??PayloadSize = sizeof(TextReference) - sizeof(MemBlockHeader)
-  lea xax, TextReference.MemBlock.bPayload
+$MStrInit macro TextReference:req, QuotedText:vararg
+;  ??PayloadSize = sizeof(TextReference) - MEMBLOCK_HEADER_SIZE
+  lea xax, [TextReference.MemBlock.bPayload + MEMBLOCK_PAYLOAD_ALIGNMENT] 
+  and xax, -MEMBLOCK_PAYLOAD_ALIGNMENT
+  lea xcx, TextReference
+  add xcx, sizeof(TextReference)
+  sub xcx, xax
   ifnb <StrValue>
-    %FillString [xax], <StrValue>
+    %FillQuotedString [xax], QuotedText
   endif
-  mov TextReference.MemBlockHeader.dFlags, MBF_WRITABLE
-  mov TextReference.MemBlockHeader.dSize, ??PayloadSize
-  mov TextReference.MemBlockHeader.dUsed, ??StrSize
+if DEBUGGING
+  lea xdx, [TextReference]
+  sub xdx, xax
+  neg xdx
+  mov [xax - MEMBLOCK_HEADER_SIZE].MemBlockHeader.wOffset, dx
+else  
+  mov [xax - MEMBLOCK_HEADER_SIZE].MemBlockHeader.wOffset, 0
+endif
+  mov [xax - MEMBLOCK_HEADER_SIZE].MemBlockHeader.wFlags, MBF_WRITABLE
+  mov [xax - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dSize, ecx
+  mov [xax - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed, ??StrSize
   exitm <xax>
 endm

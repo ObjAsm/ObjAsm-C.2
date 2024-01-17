@@ -18,7 +18,7 @@
 
 
 ; ==================================================================================================
-; (($)C/($)T/($)D/($)J)BStrA: Defines an BSTR string in (C) S_CONST, (T) S_TEXT,  (D) S_DATA or
+; (($)C/($)T/($)D/($)J)BStrA: Defines an BSTR string in (C) SEG_CONST, (T) SEG_TEXT,  (D) SEG_DATA or
 ;                             (J) code segment, returning a reference to it,
 ;                             if the "$" prefix was used.
 ; $Ofs(C/T/D/J)BStrA:         Same as ($C/$T/$D/$J)BStr, but returns the symbolic string offset.
@@ -26,7 +26,7 @@
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      BStrA / ($)CBStrA / ($)TBStrA / ($)DBStrA / ($)JBStrA
-; Purpose:    Place an BSTR string in the S_CONST, S_DATA or S_TEXT segment.
+; Purpose:    Place an BSTR string in the SEG_CONST, SEG_DATA or SEG_TEXT segment.
 ; Arguments:  Arg1: Reference name (optional).
 ;             Arg2: Quoted string text.
 ; Returns:    Nothing / Reference to the string.
@@ -113,26 +113,26 @@ endm
 
 CBStrA macro TextReference:req, QuotedText:vararg
     externdef TextReference:BYTE
-    S_CONST Segment
+    SEG_CONST Segment
       align 4
       BStrA <TextReference>, <QuotedText>
-    S_CONST ends
+    SEG_CONST ends
 endm
 
 TBStrA macro TextReference:req, QuotedText:vararg
     externdef TextReference:BYTE
-    S_TEXT Segment
+    SEG_TEXT Segment
       align 4
       BStrA <TextReference>, <QuotedText>
-    S_TEXT ends
+    SEG_TEXT ends
 endm
 
 DBStrA macro TextReference:req, QuotedText:vararg
     externdef TextReference:BYTE
-    S_DATA Segment
+    SEG_DATA Segment
       align 4
       BStrA <TextReference>, <QuotedText>
-    S_DATA ends
+    SEG_DATA ends
 endm
 
 JBStrA macro TextReference, QuotedText:vararg
@@ -146,31 +146,31 @@ endm
 
 $CBStrA macro QuotedText:vararg
     local ??StrLocation
-    S_CONST Segment
+    SEG_CONST Segment
       align 4
       ??StrLocation = $
       BStrA <>, <QuotedText>
-    S_CONST ends
+    SEG_CONST ends
     exitm <??StrLocation + 4>
 endm
 
 $TBStrA macro QuotedText:vararg
     local ??StrLocation
-    S_TEXT Segment
+    SEG_TEXT Segment
       align 4
       ??StrLocation = $
       BStrA <>, <QuotedText>
-    S_TEXT ends
+    SEG_TEXT ends
     exitm <??StrLocation + 4>
 endm
 
 $DBStrA macro QuotedText:vararg
     local ??StrLocation
-    S_DATA Segment
+    SEG_DATA Segment
       align 4
       ??StrLocation = $
       BStrA <>, <QuotedText>
-    S_DATA ends
+    SEG_DATA ends
     exitm <??StrLocation + 4>
 endm
 
@@ -188,37 +188,37 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      $Ofs(C/T/D/J)BStrA
-; Purpose:    Place an BSTR string in the S_CONST, S_TEXT, S_DATA segment.
+; Purpose:    Place an BSTR string in the SEG_CONST, SEG_TEXT, SEG_DATA segment.
 ; Arguments:  Arg1: Quoted string text.
 ; Returns:    String offset.
 
 $OfsCBStrA macro QuotedText:vararg
     local ??StrLocation
-    S_CONST Segment
+    SEG_CONST Segment
       align 4
       ??StrLocation = $
       BStrA <>, <QuotedText>
-    S_CONST ends
+    SEG_CONST ends
     exitm <offset ??StrLocation + 4>
 endm
 
 $OfsTBStrA macro QuotedText:vararg
     local ??StrLocation
-    S_TEXT Segment
+    SEG_TEXT Segment
       align 4
       ??StrLocation = $
       BStrA <>, <QuotedText>
-    S_TEXT ends
+    SEG_TEXT ends
     exitm <offset ??StrLocation + 4>
 endm
 
 $OfsDBStrA macro QuotedText:vararg
     local ??StrLocation
-    S_DATA Segment
+    SEG_DATA Segment
       align 4
       ??StrLocation = $
       BStrA <>, <QuotedText>
-    S_DATA ends
+    SEG_DATA ends
     exitm <offset ??StrLocation + 4>
 endm
 

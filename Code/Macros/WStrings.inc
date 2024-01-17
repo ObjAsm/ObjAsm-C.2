@@ -161,26 +161,26 @@ endm
 
 CStrW macro TextReference:req, QuotedText:vararg
   public TextReference
-  S_CONST segment
+  .SegConst
     align @WordSize
     StringW <TextReference>, <QuotedText>
-  S_CONST ends
+  .SegRestore
 endm
 
 TStrW macro TextReference:req, QuotedText:vararg
   public TextReference
-  S_TEXT segment
+  SEG_TEXT segment
     align @WordSize
     StringW <TextReference>, <QuotedText>
-  S_TEXT ends
+  SEG_TEXT ends
 endm
 
 DStrW macro TextReference:req, QuotedText:vararg
   public TextReference
-  S_DATA segment
+  .SegData
     align @WordSize
     StringW <TextReference>, <QuotedText>
-  S_DATA ends
+  .SegRestore
 endm
 
 JStrW macro TextReference, QuotedText:vararg
@@ -195,31 +195,31 @@ endm
 
 $CStrW macro QuotedText:vararg
   local ??StrLocation
-  S_CONST segment
+  .SegConst
     align @WordSize
     ??StrLocation = $
     StringW <>, <QuotedText>
-  S_CONST ends
+  .SegRestore
   exitm <??StrLocation>
 endm
 
 $TStrW macro QuotedText:vararg
   local ??StrLocation
-  S_TEXT segment
+  SEG_TEXT segment
     align @WordSize
     ??StrLocation = $
     StringW <>, <QuotedText>
-  S_TEXT ends
+  SEG_TEXT ends
   exitm <??StrLocation>
 endm
 
 $DStrW macro QuotedText:vararg
   local ??StrLocation
-  S_DATA segment
+  .SegData
     align @WordSize
     ??StrLocation = $
     StringW <>, <QuotedText>
-  S_DATA ends
+  .SegRestore
   exitm <??StrLocation>
 endm
 
@@ -238,37 +238,37 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      $Ofs(C|T|D|J)WStr
-; Purpose:    Place an WIDE string in the S_CONST, S_TEXT, S_DATA segment.
+; Purpose:    Place an WIDE string in the CONST, CTEXT, _DATA or _TEXT segment.
 ; Arguments:  Arg1: Quoted string text.
 ; Return:     String offset.
 
 $OfsCStrW macro QuotedText:vararg
   local ??StrLocation
-  S_CONST segment
+  .SegConst
     align @WordSize
     ??StrLocation = $
     StringW <>, <QuotedText>
-  S_CONST ends
+  .SegRestore
   exitm <offset(??StrLocation)>
 endm
 
 $OfsTStrW macro QuotedText:vararg
   local ??StrLocation
-  S_TEXT segment
+  SEG_TEXT segment
     align @WordSize
     ??StrLocation = $
     StringW <>, <QuotedText>
-  S_TEXT ends
+  SEG_TEXT ends
   exitm <offset(??StrLocation)>
 endm
 
 $OfsDStrW macro QuotedText:vararg
   local ??StrLocation
-  S_DATA segment
+  .SegData
     align @WordSize
     ??StrLocation = $
     StringW <>, <QuotedText>
-  S_DATA ends
+  .SegRestore
   exitm <offset(??StrLocation)>
 endm
 

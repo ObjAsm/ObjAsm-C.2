@@ -328,10 +328,10 @@ Object macro ObjExpr:req, ObjTypeID:=<0>, AncExpr:=<>
     ;Build a Object-ID to Object-Name lookup table for debugging purposes
     if DEBUGGING
       if ObjTypeID ne 0
-        S_OBJID segment
+        SEG_OBJID segment
           DWORD    ObjTypeID
           POINTER  $OfsTStrA(@CatStr(<!">, %??ObjName, <!">))
-        S_OBJID ends
+        SEG_OBJID ends
         ??ObjIDTableCount = ??ObjIDTableCount + 1
       endif
     endif
@@ -1943,12 +1943,12 @@ $MethodPrologue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserPa
     ??DbgTraceMtdCount CatStr <MtdCnt_>, <ProcName>
     ??DbgTraceMtdTicks CatStr <MtdTck_>, <ProcName>
 
-    ;;Create trace variables in the S_PROF
+    ;;Create trace variables in the SEG_PROF
     %ifndef ??DbgTraceMtdCount
-      S_PROF segment
+      SEG_PROF segment
         ??DbgTraceMtdCount  DWORD  0
         ??DbgTraceMtdTicks  QWORD  0
-      S_PROF ends
+      SEG_PROF ends
     endif
 
     ;;Do the tracing job
@@ -2125,12 +2125,12 @@ $NoFramePrologue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserP
     ??DbgTraceMtdCount CatStr <MtdCnt_>, <ProcName>
     ??DbgTraceMtdTicks CatStr <MtdTck_>, <ProcName>
 
-    ;;Create trace variables in the S_PROF
+    ;;Create trace variables in the SEG_PROF
     %ifndef ??DbgTraceMtdCount
-      S_PROF segment
+      SEG_PROF segment
         ??DbgTraceMtdCount  DWORD  0
         ??DbgTraceMtdTicks  QWORD  0
-      S_PROF ends
+      SEG_PROF ends
     endif
 
     ;;Do the tracing job
@@ -3505,14 +3505,14 @@ AddErrMsg macro SymName:req, Description:=<>, ErrID:=<>
 
   if DEBUGGING
     ??ObjErrTableCount = ??ObjErrTableCount + 1         ;;Track the number of error table entries
-    S_OBJERR segment
+    SEG_OBJERR segment
       DWORD ERROR_BASE                                  ;;Add the ID to the object error table
       ifnb <Description>                                ;;If a description was specified,
         PSTRING $OfsTStrA("&SymName&: ", &Description)  ;; => add it into the 2nd const segment
       else
         PSTRING $OfsTStrA("&SymName&")                  ;; => alternatively store the Err name only
       endif
-    S_OBJERR ends
+    SEG_OBJERR ends
   endif
 
   SymName equ ERROR_BASE                                ;;Declare the symbol

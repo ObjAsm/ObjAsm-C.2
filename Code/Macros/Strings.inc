@@ -180,6 +180,67 @@ $Esc macro Text:req
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      $QuotedText / $QuotedString
+; Purpose:    Convert a sequence of quoted strings/numbers in a sequence of chars and numbers.
+; Arguments:  Arg1: Quoted text sequence
+; Return:     Processed text.
+;             ??CharCount = number of chars.
+; Example:    $QuotedString("example") returns "e","x","a","m","p","l","e",0  
+
+$QuotedText macro Text:vararg
+  $$Sentence textequ <>
+  $$TextLine textequ <>
+  ??CharCount = 0
+
+  if TARGET_STR_TYPE eq STR_TYPE_ANSI
+    $$Max = 0FFh          ;;Maximum 1 bytes
+  else
+    $$Max = 0FFFFh        ;;Maximum 2 bytes
+  endif
+
+  ;;Continue regular processing
+% for $$SubText, <Text>
+    $$NumFlag textequ <0>
+    $$QuotationMark SubStr <$$SubText>, 1, 1
+%   ifdif <$$QuotationMark>, <">
+%     ifdif <$$QuotationMark>, <'>
+        $$NumFlag textequ <1>
+        if $$SubText gt $$Max
+          .err <Numeric input out of range>
+        endif
+        $$Sentence textequ @CatStr(%$$TextLine, <$$SubText>, <,>)
+        $$TextLine textequ $$Sentence
+        ??CharCount = ??CharCount + 1 
+      endif
+    endif
+
+%   ifidn <$$NumFlag>, <0>
+      if @SizeStr(<$$SubText>) ne 2
+        $$Count = 0
+%       forc $$Char, <$$SubText>
+          ;;Strip quotation marks
+%         if ($$Count ne 0) and ($$Count ne (@SizeStr(<$$SubText>) - 1))
+            $$QChar CatStr $$QuotationMark, <$$Char>, $$QuotationMark
+            $$Sentence textequ @CatStr(%$$TextLine, <$$QChar>, <,>)
+            $$TextLine textequ $$Sentence
+            ??CharCount = ??CharCount + 1 
+          endif
+          $$Count = $$Count + 1
+        endm
+      else
+        .err <Wrong string definition>
+      endif
+    endif
+
+  endm
+  exitm <@SubStr(%$$Sentence, 1, @SizeStr(%$$Sentence) - 1)>
+endm
+
+$QuotedString macro Text:vararg
+% exitm <$QuotedText(Text, 0)>
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      $RepChr
 ; Purpose:    Repeat a character N times.
 ; Arguments:  Arg1: Character to repeat
@@ -353,13 +414,13 @@ endm
 $PCG_RndStr macro n
   local ??StrLocation
 
-  S_CONST segment
+  .SegConst
     align @WordSize
     ??StrLocation = $
     repeat n
       CHR $PCG_RndChr()
     endm
     CHR 0
-  S_CONST ends
+  .SegRestore
   exitm <??StrLocation>
 endm
