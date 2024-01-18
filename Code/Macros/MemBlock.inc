@@ -8,14 +8,14 @@
 ; ==================================================================================================
 
 
-; MemBlock format:
+; MemBlock layout:
 ;                                                              MemBlock points here!
 ;        Offset BYTEs    WORD     WORD      DWORD         DWORD    v
 ;       ————————————————————————————————————————————————————————————————————————————————————
 ;  ... |  Padding     | Offset | Flags |  BYTE Size  | BYTE Usage  | BYTE Payload           | ...
 ;       ————————————————————————————————————————————————————————————————————————————————————
-;      ^                                                       ^
-;      Heap Alignment 8/16                                     Alignment 4/8/16/32/...
+;      ^                                                           ^
+;      Heap Alignment 8/16                                         Alignment 4/8/16/32/...
 ;
 ;                                                     <------------------------------------>
 ;                                                      BSTR if the payload is a WIDE string
@@ -106,7 +106,7 @@ MemBlockFree_X proc pMemBlockPayload:POINTER
     sub xax, xcx
     MemFree xax
   .else
-    DbgWarning "MemBlock is not DYNAMIC"
+    DbgWarning "MemBlockFree: MemBlock is not DYNAMIC"
   .endif
   ret
 MemBlockFree_X endp
@@ -140,11 +140,11 @@ MemBlockClone_X endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      MemBlockA / MemBlockW
-; Purpose:    Construct an MemBlock structure in the current segment.
+; Purpose:    Build a MemBlock structure in the current segment.
 ; Arguments:  Arg1: (optional) MemBlock flags (MBF_xxx)
 ;             Arg2: (optional) Minimal payload size.
 ;             Arg3: Symbol name.
-;             Arg4: Quoted string that fills the payload.
+;             Arg4: Quoted text that fills the payload.
 ; Return:     Symbol reference to the payload.
 ; Notes:      - Quotation marks can be used as usual. See example.
 ;             - Partial input strings can be separated by commas.
@@ -349,7 +349,6 @@ $MStr macro TextReference:req, Chars:req
 endm
 
 $MStrInit macro TextReference:req, QuotedText:vararg
-;  ??PayloadSize = sizeof(TextReference) - MEMBLOCK_HEADER_SIZE
   lea xax, [TextReference.MemBlock.bPayload + MEMBLOCK_PAYLOAD_ALIGNMENT] 
   and xax, -MEMBLOCK_PAYLOAD_ALIGNMENT
   lea xcx, TextReference

@@ -25,8 +25,8 @@ OPTION PROLOGUE:NONE
 OPTION EPILOGUE:NONE
 
 align ALIGN_CODE
-MemFillW proc pMem:POINTER, dCount:DWORD, wFillWord:WORD
-  mov ax, [esp + 12]                                    ;ax = FillWord
+MemFillW proc pMem:POINTER, dCount:DWORD, wFillText:WORD
+  mov ax, [esp + 12]                                    ;ax = FillText
   mov cx, ax
   shl eax, 16
   mov ax, cx

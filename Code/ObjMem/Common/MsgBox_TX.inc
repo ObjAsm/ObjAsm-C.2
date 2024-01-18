@@ -71,7 +71,7 @@ ProcName proc hParent:HANDLE, pText:POINTER, pCaption:POINTER, dFlags:DWORD
   mov MBX_Info.hHook, xax
   m2m MBX_Info.pText, pText, xcx
   m2m MBX_Info.pCaption, pCaption, xdx
-% FillWord cTransferInfo, MBX_CAPTION_HEADER
+% FillText cTransferInfo, MBX_CAPTION_HEADER
   invoke xword2hex, addr [cTransferInfo + MBX_CAPTION_HEADER_CHARS*sizeof(CHR)], addr MBX_Info
 
   ;Use the caption to pass the pointer to MBX_DlgInfo in form of a string.
@@ -303,7 +303,7 @@ MBX_HookProc proc private uses xbx xdi dCode:DWORD, wParam:WPARAM, lParam:LPARAM
     ;It is the first dialog message where the caption is set
     .if [xbx].CWPSTRUCT.message == WM_NCCALCSIZE
       invoke GetWindowText, [xbx].CWPSTRUCT.hwnd, addr cTransferInfo, lengthof(cTransferInfo)
-%     .if $DoesWordMatch?(cTransferInfo, MBX_CAPTION_HEADER)
+%     .if $DoesTextMatch?(cTransferInfo, MBX_CAPTION_HEADER)
         mov xdi, $invoke(hex2xword, addr [cTransferInfo + MBX_CAPTION_HEADER_CHARS*sizeof(CHR)])
         ;Save a pointer to MBX_DlgInfo as a window property
 %       invoke SetProp, [xbx].CWPSTRUCT.hwnd, offset cMBX_Prop_&TARGET_SUFFIX, xdi

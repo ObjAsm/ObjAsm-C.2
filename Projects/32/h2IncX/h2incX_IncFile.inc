@@ -769,7 +769,7 @@ Method IncFile.ParseHeaderLine, uses ebx edi esi, pLine:PSTRINGA, bWeak:DWORD
         inc edi
         inc ecx
         .if ecx == 2 && bIsPreProc != FALSE
-          .if $DoesWordMatchA?([edx], <define>)
+          .if $DoesTextMatchA?([edx], <define>)
             mov bIsDefine, TRUE
           .endif
         .endif

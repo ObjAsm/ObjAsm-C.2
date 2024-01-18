@@ -132,7 +132,7 @@ Method CallData.Show, uses xbx xdi xsi, xDummy1:XWORD, xDummy2:XWORD
     mov edx, [xsi].dReps
     inc edx
     lea xbx, cBuffer
-    FillWordA [xbx], < [>
+    FillTextA [xbx], < [>
     lea xcx, [xbx + ??StrSize]
     invoke dword2decA, xcx, edx
     FillStringA [xbx + xax + ??StrSize - 1], <]>

@@ -911,7 +911,7 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
     jmp @@Exit
   .endif
 
-  DoesWordMatchW? [xsi], <true>
+  DoesTextMatchW? [xsi], <true>
   .if ZERO?
     mov [xdi].JSON_PROPERTY.dType, JSON_TYPE_BOOLEAN
     mov [xdi].JSON_PROPERTY.pValue, $invoke(StrNew, offset JSON_TRUE)
@@ -922,7 +922,7 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
     jmp @@Exit
   .endif
 
-  DoesWordMatchW? [xsi], <false>
+  DoesTextMatchW? [xsi], <false>
   .if ZERO?
     mov [xdi].JSON_PROPERTY.dType, JSON_TYPE_BOOLEAN
     mov [xdi].JSON_PROPERTY.pValue, $invoke(StrNew, offset JSON_FALSE)
@@ -933,7 +933,7 @@ JsonGetValue proc pParent:PJSON_PROPERTY, pName:PSTRING
     jmp @@Exit
   .endif
 
-  DoesWordMatchW? [xsi], <null>
+  DoesTextMatchW? [xsi], <null>
   .if ZERO?
     mov [xdi].JSON_PROPERTY.dType, JSON_TYPE_NULL
     mov [xdi].JSON_PROPERTY.pValue, $invoke(StrNew, offset JSON_NULL)

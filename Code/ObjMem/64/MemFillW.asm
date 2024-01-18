@@ -23,7 +23,7 @@
 
 OPTION PROC:NONE
 align ALIGN_CODE
-MemFillW proc pMem:POINTER, dCount:DWORD, wFillWord:WORD
+MemFillW proc pMem:POINTER, dCount:DWORD, wFillText:WORD
   ;rcx -> Memory block, edx = dCount; r8w = fill WORD
   xor r9, r9
   mov ax, r8w

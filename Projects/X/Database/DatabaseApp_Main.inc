@@ -816,7 +816,7 @@ Method Application.Pack, uses xbx xdi xsi
   mov [xdi].TaskSetup.xParam1, 0
   mov [xdi].TaskSetup.xParam2, 0
   ProgressText textequ <{\rtf1\b Task:\b0  Deleted records on table \ul >
-  FillWordA cBuffer, <%ProgressText>
+  FillTextA cBuffer, <%ProgressText>
   invoke PathFindFileName, [xsi].Table.pFileName
   lea xcx, [cBuffer + @SizeStr(%ProgressText)]
   if TARGET_STR_TYPE eq STR_TYPE_ANSI
@@ -851,7 +851,7 @@ Method Application.Pack, uses xbx xdi xsi
 
       invoke PathFindFileNameA, addr bBuffer
       ProgressText textequ <{\rtf1\b Task:\b0  Index \ul >
-      FillWordA bMsgBuffer, <%ProgressText>
+      FillTextA bMsgBuffer, <%ProgressText>
       lea xcx, [bMsgBuffer + @SizeStr(%ProgressText)]
       invoke StrECopyA, xcx, xax
       ProgressText textequ <\ul0  of table field >

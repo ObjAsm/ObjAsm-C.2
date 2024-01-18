@@ -532,7 +532,7 @@ Method OcxClientSite.GetName, uses xsi
   endif
 
   SetObject xsi
-  FillWordW cText, <CLSID\>
+  FillTextW cText, <CLSID\>
   lea xdx, [cText + 12]
   invoke StringFromGUID2, [xsi].pCtrlClsID, xdx, lengthof(cText) - 6
   IF TARGET_STR_TYPE eq STR_TYPE_ANSI

@@ -675,7 +675,7 @@ Method DB_RecordEditorDlg.UpdateStatusbar, uses xbx xsi
 
   SetObject xsi
   lea xbx, cBuffer
-  FillWord [xbx], < Record >
+  FillText [xbx], < Record >
   add xbx, 8*sizeof(CHR)
   invoke dword2dec, xbx, [xsi].dRecNo
   invoke StrECat, xbx, $OfsCStr(" of ")

@@ -90,7 +90,7 @@ Method Application.Check2, uses xbx xdi xsi
 ;    lea xax, bNumber
 ;    invoke StrLRTrim, xax, xax
 ;    invoke StrECat, xdi, addr bNumber
-;    FillWord [xax], < = >
+;    FillText [xax], < = >
 ;    lea xcx, [xax + 3*sizeof(CHR)]
 ;    if TARGET_STR_TYPE eq STR_TYPE_WIDE
 ;      invoke StrA2StrW, xcx, addr bBuffer2

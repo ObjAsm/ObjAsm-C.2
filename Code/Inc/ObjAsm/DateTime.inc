@@ -259,26 +259,26 @@ GetUtcHnsecs endp
 PrependZeros macro Var, Count
   if Count eq 4
     .if &Var < 10
-      FillWord CHR ptr [xdi], <000>
+      FillText CHR ptr [xdi], <000>
       add xdi, ??StrSize
     .elseif &Var < 100
-      FillWord CHR ptr [xdi], <00>
+      FillText CHR ptr [xdi], <00>
       add xdi, ??StrSize
     .elseif &Var < 1000
-      FillWord CHR ptr [xdi], <0>
+      FillText CHR ptr [xdi], <0>
       add xdi, ??StrSize
     .endif
   elseif Count eq 3
     .if &Var < 10
-      FillWord CHR ptr [xdi], <00>
+      FillText CHR ptr [xdi], <00>
       add xdi, ??StrSize
     .elseif &Var < 100
-      FillWord CHR ptr [xdi], <0>
+      FillText CHR ptr [xdi], <0>
       add xdi, ??StrSize
     .endif
   else
     .if &Var < 10
-      FillWord CHR ptr [xdi], <0>
+      FillText CHR ptr [xdi], <0>
       add xdi, ??StrSize
     .endif
   endif

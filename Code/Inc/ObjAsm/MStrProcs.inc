@@ -1,0 +1,386 @@
+; ==================================================================================================
+; Title:      MStrProcs.inc
+; Author:     G. Friedrich
+; Version:    C.1.0
+; Purpose:    ObjAsm Managed String (MStr) procedures.
+; Notes:      Version C.1.0, January 2023
+;               - First release.
+; ==================================================================================================
+
+
+MSTR_ALL equ 7FFFFFFFh
+
+.code
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  MStrNewFromMem
+; Purpose:    Create a new dynamic MStr and copy the content pointed to by pMem to the payload.
+; Arguments:  Arg1: Mininal payload size.
+;             Arg2: -> Source memory.
+;             Arg3: Source memory size. In case of a regular string, include the ZTC in the count.
+; Return:     xax -> New MemBlock.bPayload.
+; Note:       The allocated memory size is a multiple of MEMBLOCK_ALLOC_GRANULARITY
+;             and the free space on the payload is at least equal to MEMBLOCK_ALLOC_GRANULARITY.
+
+MStrNewFromMem_XT proc uses xbx xdi dMinSize:DWORD, pMem:POINTER, dMemSize:DWORD
+  ?mov ecx, dMinSize
+  mov ebx, dMemSize
+  cmp ecx, ebx
+  cmovl ecx, ebx                                        ;ecx = Max(ebx, ecx)
+  invoke MemBlockAlloc_X, ecx                           ;xax -> Payload
+  test xax, xax
+  jz @@Error
+  m2m [xax - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed, ebx
+  mov xdx, pMem
+  .if xdx != NULL
+    mov xdi, xax
+    invoke MemClone, xax, xdx, ebx
+    mov xax, xdi
+  .endif
+@@Error:
+  ret
+MStrNewFromMem_XT endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  MStrNew
+; Purpose:    Create a new dynamic MStr and copy the content from a source MStr.
+; Arguments:  Arg1: Mininal payload size.
+;             Arg2: -> Source MStr.
+; Return:     xax -> New MemBlock.bPayload.
+; Note:       The allocated memory size is a multiple of MEMBLOCK_ALLOC_GRANULARITY
+;             and the free space on the payload is at least equal to MEMBLOCK_ALLOC_GRANULARITY.
+
+MStrNew_X proc dMinSize:DWORD, pSrcMStrPayload:PSTRING
+  ?mov edx, pSrcMStrPayload
+  invoke MStrNewFromMem_XT, dMinSize, xdx, [xdx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+  ret
+MStrNew_X endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  MStrCat
+; Purpose:    Concatenate 2 MStr's.
+; Arguments:  Arg1: -> Destination MStr.
+;             Arg2: -> Source MStr.
+; Return:     xax -> Updated/New MemBlock.bPayload.
+; Note:       If the destination MStr is dynamic and writable and has not the capacity to hold
+;             the concatenated string, then the payload is resized.
+;             If the destination MStr is NOT dynamic, writabe but too short, a new dynamic MStr
+;             with the necessary capacity is allocated.
+;             In any case, the first attempt on a writable MStr is to do the operation in place.
+
+MStrCat_XT proc uses xbx xsi pDstMStrPayload:PSTRING, pSrcMStrPayload:PSTRING
+  ?mov ecx, pDstMStrPayload
+  mov xsi, pSrcMStrPayload
+  mov eax, [xcx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+  add eax, [xsi - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+  sub eax, sizeof(CHR)                                  ;1 ZTC less
+  .if eax > [xcx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dSize
+    lea ebx, [eax + MEMBLOCK_HEADER_SIZE + 2*HEAP_ALLOC_GRANULARITY - 1]
+    and ebx, -HEAP_ALLOC_GRANULARITY
+    .ifBitSet [xcx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.wFlags, MBF_WRITABLE
+      .ifBitSet [xcx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.wFlags, MBF_DYNAMIC
+        ;Enlarge destiantion MStr
+        lea xax, [xcx - MEMBLOCK_HEADER_SIZE]
+        MemReAlloc xax, xbx
+        test xax, xax
+        jz @@Error
+        jmp @F
+      .endif
+    .endif
+    ;Not writable => create a copy and append to it
+    invoke MStrNew_X, ebx, pDstMStrPayload                         ;xax -> MemBlock.bPayload
+    test xax, xax
+    jz @@Error
+    sub xax, MEMBLOCK_HEADER_SIZE
+@@:
+    mov [xax].MemBlockHeader.dSize, ebx
+    mov ebx, [xsi - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+    mov ecx, [xax].MemBlockHeader.dUsed
+    add [xax].MemBlockHeader.dUsed, ebx
+    sub [xax].MemBlockHeader.dUsed, sizeof(CHR)
+    add xax, MEMBLOCK_HEADER_SIZE
+    mov pDstMStrPayload, xax
+  .else
+    .ifBitSet [xcx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.wFlags, MBF_WRITABLE
+      ;Append in place
+      mov ebx, [xsi - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+      mov eax, [xcx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+      add [xcx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed, ebx
+      sub [xcx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed, sizeof(CHR)
+      mov pDstMStrPayload, xcx
+    .else
+      ;Not writable => create a copy and append to it
+      invoke MStrNew_X, eax, pDstMStrPayload                       ;xax -> MemBlock.bPayload
+      test xax, xax
+      jz @@Error
+      mov ebx, [xsi - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+      lea edx, [xbx - sizeof(CHR)]
+      mov ecx, [xax - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+      add [xax - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed, edx
+      mov pDstMStrPayload, xax
+    .endif
+  .endif
+  invoke MemClone, addr [xcx + xax - sizeof(CHR)], xsi, ebx
+  mov xax, pDstMStrPayload
+
+@@Error:
+  ret
+MStrCat_XT endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  MStrCatChr
+; Purpose:    Concatenate a char to a MStr.
+; Arguments:  Arg1: -> Destination MStr.
+;             Arg2: Character.
+; Return:     xax -> Updated/New MemBlock.bPayload.
+; Note:       If the destination MStr is dynamic and writable and has not the capacity to hold
+;             the concatenated string, then the payload is resized.
+;             If the destination MStr is NOT dynamic, writabe but too short, a new dynamic MStr
+;             with the necessary capacity is allocated.
+;             In any case, the first attempt on a writable MStr is to do the operation in place.
+
+MStrCatChr_XT proc pDstMStrPayload:PSTRING, Char:CHR
+  local $MStr(MStrChar, 2*sizeof(CHR))                  ;Local (temporary) MStr that holds the Char
+
+  movzx $SubReg(edx, 2*sizeof(CHR)), Char               ;Load the ZTC at the same time
+  mov MStrChar.MemBlockHeader.dUsed, 2*sizeof(CHR)      ;Set the size
+  mov DCHR ptr MStrChar.MemBlock.bPayload[0], $SubReg(xdx, 2*sizeof(CHR))   ;Store the Payload
+  invoke MStrCat_XT, pDstMStrPayload, addr MStrChar.MemBlock.bPayload       ;Append the local MStr
+  ret
+MStrCatChr_XT endp
+
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  MStrMid
+; Purpose:    Extract a subMStr from an MStr.
+; Arguments:  Arg1: -> Source MStr.
+;             Arg2: From position. If negative, the counting starts from the end.
+;             Arg3: Character count.
+; Return:     xax -> New dynamic MemBlock.bPayload.
+
+MStrMid_TX proc uses xbx xdi xsi pSrcMStrPayload:PSTRINGA, sdFromChar:SDWORD, dCharCount:DWORD
+  mov xsi, pSrcMStrPayload
+  mov eax, sdFromChar
+  mov ebx, dCharCount
+  .if SDWORD ptr eax >= 0                               ;Counting from the left, starting with 0
+    mov ecx, [xsi - MEMBLOCK_HEADER_SIZE].MemBlock.dUsed
+  if TARGET_STR_TYPE eq STR_TYPE_WIDE
+    shr ecx, 1
+  endif
+    dec ecx                                             ;ZTC
+    .if SIGN? || eax < ecx
+      add eax, ebx
+      .if eax > ecx
+        mov eax, ecx
+        sub eax, sdFromChar
+        mov ebx, eax
+      .endif
+  if TARGET_STR_TYPE eq STR_TYPE_ANSI
+      inc ebx
+  else
+      lea ebx, [sizeof(CHRW)*ebx + sizeof(CHRW)]
+  endif
+      invoke MemBlockAlloc_X, ebx
+      mov xdi, xax
+      mov [xax - MEMBLOCK_HEADER_SIZE].MemBlock.dUsed, ebx
+      sub ebx, sizeof(CHR)
+      mov edx, sdFromChar
+      m2z CHR ptr [xax + xbx]
+      lea xdx, [xsi + sizeof(CHR)*xdx]
+      invoke MemClone, xax, xdx, ebx
+      mov xax, xdi
+    .else
+      invoke MemBlockAlloc_X, 0
+    .endif
+
+  .else
+    mov ecx, [xsi - MEMBLOCK_HEADER_SIZE].MemBlock.dUsed
+  if TARGET_STR_TYPE eq STR_TYPE_WIDE
+    shr ecx, 1
+  endif
+    dec ecx
+    add eax, ecx
+    mov sdFromChar, eax
+
+    .if !SIGN?
+      add eax, ebx
+      .if eax > ecx
+        mov eax, ecx
+        sub eax, sdFromChar
+        mov ebx, eax
+      .endif
+  if TARGET_STR_TYPE eq STR_TYPE_ANSI
+      inc ebx
+  else
+      lea ebx, [sizeof(CHRW)*ebx + sizeof(CHRW)]
+  endif
+      invoke MemBlockAlloc_X, ebx
+      mov xdi, xax
+      mov [xax - MEMBLOCK_HEADER_SIZE].MemBlock.dUsed, ebx
+      sub ebx, sizeof(CHR)
+      m2z CHR ptr [xax + xbx]
+      mov edx, sdFromChar
+      lea xdx, [xsi + sizeof(CHR)*xdx]
+      invoke MemClone, xax, xdx, ebx
+      mov xax, xdi
+    .else
+      add eax, ebx
+      .if !SIGN?
+        lea ebx, [sizeof(CHR)*eax + sizeof(CHR)]
+        invoke MemBlockAlloc_X, ebx
+        mov xdi, xax
+        mov [xax - MEMBLOCK_HEADER_SIZE].MemBlock.dUsed, ebx
+        sub ebx, sizeof(CHR)
+        m2z CHRA ptr [xax + xbx]
+        invoke MemClone, xax, xsi, ebx
+        mov xax, xdi
+      .else
+        invoke MemBlockAlloc_X, 0
+      .endif
+    .endif
+  .endif
+  ret
+MStrMid_TX endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  MStrSize
+; Purpose:    Get the payload byte size of a MStr.
+; Arguments:  Arg1: -> Source MStr.
+; Return:     eax = Payload byte size (including the ZTC).
+
+MStrSize proc pSrcMStrPayload:PSTRING
+  ?mov ecx, pSrcMStrPayload
+  mov eax, [xcx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+  ret
+MStrSize endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  MStrLength
+; Purpose:    Get the payload String length of a MStr.
+; Arguments:  Arg1: -> Source MStr.
+; Return:     eax = Payload String character count (NOT including the ZTC).
+
+MStrLength_TX proc pSrcMStrPayload:PSTRING
+  ?mov ecx, pSrcMStrPayload
+  mov eax, [xcx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+  .if eax >= sizeof(CHR)
+    sub eax, sizeof(CHR)
+  .else
+    xor eax, eax                                        ;Just in case when STR_TYPE_WIDE and eax = 1
+  .endif
+  ret
+MStrLength_TX endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  MStrRTrim
+; Purpose:    Get the right trimmed MStr of a given MStr.
+; Arguments:  Arg1: -> Source MStr.
+; Return:     xax -> Right trimmed MStr.
+
+MStrRTrim_TX proc pSrcMStrPayload:PSTRING
+  $$ChrReg equ $SubReg(ecx, sizeof(CHR))
+
+if TARGET_BITNESS eq 32
+  mov edx, pSrcMStrPayload
+else
+  mov rdx, rcx
+endif
+  mov eax, [xdx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+  lea xax, [xdx + xax - sizeof(CHR)]
+@@:
+  sub xax, sizeof(CHR)                                  ;Move to prev char
+  cmp xax, xdx
+  jb @F
+  mov $$ChrReg, [xax]
+  cmp $$ChrReg, ' '                                     ;Loop if space
+  je @B
+  cmp $$ChrReg, TAB                                     ;Loop if tab
+  je @B
+@@:
+  sub xax, xdx                                          ;pSrcString
+  add xax, sizeof(CHR)
+  m2z CHR ptr [xax + xdx]
+  invoke MStrNewFromMem_XT, 0, xdx, eax
+  ret
+MStrRTrim_TX endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  MStrLTrim
+; Purpose:    Get the left trimmed MStr of a given MStr.
+; Arguments:  Arg1: -> Source MStr.
+; Return:     xax -> Left trimmed MStr.
+
+MStrLTrim_TX proc pSrcMStrPayload:PSTRING
+  $$ChrReg equ $SubReg(eax, sizeof(CHR))
+
+if TARGET_BITNESS eq 32
+  mov ecx, pSrcMStrPayload
+endif
+  mov xdx, xcx
+@@:
+  mov $$ChrReg, [xdx]
+  add xdx, sizeof(CHR)                                  ;Move to next char
+  cmp $$ChrReg, 0                                       ;ZTC?
+  je @F
+  cmp $$ChrReg, ' '                                     ;Loop if space
+  je @B
+  cmp $$ChrReg, TAB                                     ;Loop if tab
+  je @B
+@@:
+  sub xdx, sizeof(CHR)
+  mov eax, [xcx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+  sub xax, xdx
+  add xax, xcx
+  invoke MStrNewFromMem_XT, 0, xdx, eax
+  ret
+MStrLTrim_TX endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  MStrTrim
+; Purpose:    Get the left & right trimmed MStr of a given MStr.
+; Arguments:  Arg1: -> Source MStr.
+; Return:     xax -> Left & right trimmed MStr.
+
+MStrTrim_TX proc pSrcMStrPayload:PSTRING
+  $$ChrReg equ $SubReg(eax, sizeof(CHR))
+
+if TARGET_BITNESS eq 32
+  mov ecx, pSrcMStrPayload
+endif
+  mov xdx, xcx
+@@:
+  mov $$ChrReg, [xdx]
+  add xdx, sizeof(CHR)                                  ;Move to next char
+  cmp $$ChrReg, 0                                       ;ZTC?
+  je @F
+  cmp $$ChrReg, ' '                                     ;Loop if space
+  je @B
+  cmp $$ChrReg, TAB                                     ;Loop if tab
+  je @B
+@@:
+  sub xdx, sizeof(CHR)
+  mov eax, [xcx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+  sub xax, xdx
+  add xax, xcx                                          ;xdx -> 1st char; eax = # bytes
+
+  $$ChrReg equ $SubReg(ecx, sizeof(CHR))
+
+  lea xax, [xax + xdx - sizeof(CHR)]                    ;xax -> ZTC
+@@:
+  sub xax, sizeof(CHR)                                  ;Move to prev char
+  cmp xax, xdx
+  jb @F
+  mov $$ChrReg, [xax]
+  cmp $$ChrReg, ' '                                     ;Loop if space
+  je @B
+  cmp $$ChrReg, TAB                                     ;Loop if tab
+  je @B
+@@:
+  sub xax, xdx                                          ;pSrcString
+  add xax, sizeof(CHR)
+  invoke MStrNewFromMem_XT, 0, xdx, eax
+  mov ecx, [xax - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+  add [xax - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed, sizeof(CHR)
+  m2z CHR ptr [xax + xcx]
+  ret
+MStrTrim_TX endp

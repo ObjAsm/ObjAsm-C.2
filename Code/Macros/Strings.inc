@@ -181,11 +181,12 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      $QuotedText / $QuotedString
-; Purpose:    Convert a sequence of quoted strings/numbers in a sequence of chars and numbers.
-; Arguments:  Arg1: Quoted text sequence
+; Purpose:    Convert a sequence of quoted strings/numbers in a list of chars and numbers.
+;             $QuotedString appends a zero to the end.
+; Arguments:  Arg1: Quoted text or numbers.
 ; Return:     Processed text.
-;             ??CharCount = number of chars.
-; Example:    $QuotedString("example") returns "e","x","a","m","p","l","e",0  
+;             ??CharCount = number of chars in the list.
+; Example:    $QuotedString("example", 10, 13) returns "e","x","a","m","p","l","e",10,13,0
 
 $QuotedText macro Text:vararg
   $$Sentence textequ <>
@@ -193,7 +194,7 @@ $QuotedText macro Text:vararg
   ??CharCount = 0
 
   if TARGET_STR_TYPE eq STR_TYPE_ANSI
-    $$Max = 0FFh          ;;Maximum 1 bytes
+    $$Max = 0FFh          ;;Maximum 1 byte
   else
     $$Max = 0FFFFh        ;;Maximum 2 bytes
   endif
@@ -206,11 +207,11 @@ $QuotedText macro Text:vararg
 %     ifdif <$$QuotationMark>, <'>
         $$NumFlag textequ <1>
         if $$SubText gt $$Max
-          .err <Numeric input out of range>
+          .err <$QuotedText: Numeric input out of range>
         endif
         $$Sentence textequ @CatStr(%$$TextLine, <$$SubText>, <,>)
         $$TextLine textequ $$Sentence
-        ??CharCount = ??CharCount + 1 
+        ??CharCount = ??CharCount + 1
       endif
     endif
 
@@ -223,12 +224,12 @@ $QuotedText macro Text:vararg
             $$QChar CatStr $$QuotationMark, <$$Char>, $$QuotationMark
             $$Sentence textequ @CatStr(%$$TextLine, <$$QChar>, <,>)
             $$TextLine textequ $$Sentence
-            ??CharCount = ??CharCount + 1 
+            ??CharCount = ??CharCount + 1
           endif
           $$Count = $$Count + 1
         endm
       else
-        .err <Wrong string definition>
+        .err <$QuotedText: Wrong string definition>
       endif
     endif
 
@@ -337,7 +338,7 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      $Ofs(C/T/D/J)Str
-; Purpose:    Place an ANSI or UNICODE string in the CONST, _DATA or _TEXT Segment.
+; Purpose:    Place an ANSI or UNICODE string in the CONST, SEG_TEXT, _DATA or _TEXT Segment.
 ; Arguments:  Arg1: Quoted string text.
 ; Return:     String offset.
 

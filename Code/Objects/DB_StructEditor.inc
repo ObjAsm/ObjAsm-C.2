@@ -287,7 +287,7 @@ Method DB_StructEditorLine.CtlsRead, uses xbx xdi xsi
   .if [xsi].MutationInfo.bActType == FDT_CHAR_WIDE
     .ifBitSet bl, BIT00
       MessageText textequ <Invalid length in WIDE Char field >
-      FillWordA cBuffer, <%MessageText>
+      FillTextA cBuffer, <%MessageText>
       invoke GetWindowTextA, [xsi].hEdtFieldName, addr [xdi + @SizeStr(%MessageText)], \
                             LOCAL_BUFFER_SIZE - @SizeStr(%MessageText)
       invoke StrCatA, xdi, $OfsCStrA(".", 10, 13, "Increasing length by 1.")
@@ -302,7 +302,7 @@ Method DB_StructEditorLine.CtlsRead, uses xbx xdi xsi
   .else
     .if bl == 0
       MessageText textequ <Invalid length in field >
-      FillWordA cBuffer, <%MessageText>
+      FillTextA cBuffer, <%MessageText>
       invoke GetWindowTextA, [xsi].hEdtFieldName, addr [xdi + @SizeStr(%MessageText)], \
                             LOCAL_BUFFER_SIZE - @SizeStr(%MessageText)
       invoke StrCatA, xdi, $OfsCStrA(".", 10, 13, "Correcting to length 1.")
@@ -336,7 +336,7 @@ Method DB_StructEditorLine.CtlsRead, uses xbx xdi xsi
       invoke SetWindowTextA, [xsi].hEdtFieldParam, addr bDwordBuffer
 
       MessageText textequ <Invalid decimals in NUMERIC field >
-      FillWordA cBuffer, <%MessageText>
+      FillTextA cBuffer, <%MessageText>
       invoke GetWindowTextA, [xsi].hEdtFieldName, addr [xdi + @SizeStr(%MessageText)], \
                              LOCAL_BUFFER_SIZE - @SizeStr(%MessageText)
       invoke StrECatA, xdi, $OfsCStrA(".", 10, 13, "Correcting to ")

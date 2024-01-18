@@ -24,21 +24,21 @@
 
 
 ; ==================================================================================================
-; (($)C|($)D|($)J)WStr: Defines an WIDE string in (C) const, (D) data or (J) code
+; (($)C|($)D|($)J)WStr: Defines an WIDE string in (C) CONST, (D) _DATA or (J) _TEXT
 ;                  segment returning a reference to it if the "$" prefix was used.
 ; $Ofs(C|D|J)WStr: Same as ($C|$D|$J)WStr, but returns the string offset.
 
-; Note: Use ??StrSize (byte count including the ZTC) or  
-;           ??StrLength (character count without the ZTC).
+; Note:   ??StrSize = BYTE count including the ZTC
+;         ??StrLength = Character count without the ZTC
 ; ==================================================================================================
 
 
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      StringW / ($)CStrW / ($)TStrW / ($)DStrW / ($)JStrW
-; Purpose:    Place an WIDE string in the .const, .text, .data or .code segment.
+; Purpose:    Place an WIDE string in the CONST, SEG_TEXT, _DATA or _TEXT segment.
 ; Arguments:  Arg1: Reference name (optional).
-;             Arg2: Quoted string text.
+;             Arg2: Quoted text.
 ; Return:     Nothing / Reference to the string.
 ; Notes:      - Quotation marks can be used as usual. See example.
 ;             - Partial input strings can be separated by commas.
@@ -155,7 +155,7 @@ StringW macro StrName, QuotedText:vararg
   endm
   ;;Set ZTC
   CHRW 0
-  ??StrSize = $ - $$StrStart                            ;;??StrSize includes the ZTC 
+  ??StrSize = $ - $$StrStart                            ;;??StrSize includes the ZTC
   ??StrLength = ??StrSize/2 - 1                         ;;??StrLength = character count without ZTC
 endm
 
@@ -238,8 +238,8 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      $Ofs(C|T|D|J)WStr
-; Purpose:    Place an WIDE string in the CONST, CTEXT, _DATA or _TEXT segment.
-; Arguments:  Arg1: Quoted string text.
+; Purpose:    Place an WIDE string in the CONST, SEG_TEXT, _DATA or _TEXT segment.
+; Arguments:  Arg1: Quoted text.
 ; Return:     String offset.
 
 $OfsCStrW macro QuotedText:vararg
@@ -302,7 +302,7 @@ UTF16LE_BOM     textequ <0FFh,0FEh>                     ;Little Endian  (used by
 
 IsSurrogateHigh macro CharReg:req
   and CharReg, SURROGATE_MASK
-  cmp CharReg, SURROGATE_HIGH 
+  cmp CharReg, SURROGATE_HIGH
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -313,5 +313,5 @@ endm
 
 IsSurrogateLow macro CharReg:req
   and CharReg, SURROGATE_MASK
-  cmp CharReg, SURROGATE_LOW 
+  cmp CharReg, SURROGATE_LOW
 endm

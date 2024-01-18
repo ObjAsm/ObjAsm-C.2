@@ -20,12 +20,12 @@
 
 
 ; ==================================================================================================
-; (($)C/($)T/($)D/($)J)BStr: Defines an BSTR string in (C) CONST, (T) CTEXT,  (D) _DATA or
-;                            (J) _TEXT segment, returning a reference to it,
-;                            if the "$" prefix was used.
-; $Ofs(C/T/D/J)BStr:         Same as ($C/$T/$D/$J)BStr, but returns the symbolic string offset.
+; (($)C/($)T/($)D/($)J)BStr: Defines an BSTR string in (C) CONST, (T) SEG_TEXT, (D) _DATA or
+;                            (J) _TEXT segment, returning a reference to it, if the "$" prefix was
+;                            used.
+; $Ofs(C/T/D/J)BStr:         Same as ($C/$T/$D/$J)BStr, but returns the string offset.
 ;
-; Note: - Use ??StrSize (byte count including the ZTC) or  
+; Note: - Use ??StrSize (byte count including the ZTC) or
 ;         ??StrLength (character count without the ZTC).
 ;         Both values do not include the byte length header (DWORD).
 ;       - The "Byte Lenght" prefix includes the ZTC.
@@ -33,9 +33,9 @@
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      BString / ($)CBStr / ($)TBStr / ($)DBStr / ($)JBStr
-; Purpose:    Place an BSTR string in the CONST, CTEXT, _DATA or _TEXT segment.
+; Purpose:    Place an BSTR string in the CONST, SEG_TEXT, _DATA or _TEXT segment.
 ; Arguments:  Arg1: Reference name (optional).
-;             Arg2: Quoted string text.
+;             Arg2: Quoted text.
 ; Return:     Nothing / Reference to the string.
 ; Notes:      - Quotation marks can be used as usual. See example.
 ;             - Partial input strings can be separated by commas.
@@ -113,7 +113,7 @@ BString macro StrName, QuotedText:vararg
   endm
   ;;Set zero termination mark
   dw 0
-  ??StrSize = $ - $$StrStart                            ;;??StrSize includes the ZTC 
+  ??StrSize = $ - $$StrStart                            ;;??StrSize includes the ZTC
   ??StrLength = ??StrSize/2 - 1                         ;;??StrLength = character count without ZTC
 endm
 
@@ -194,8 +194,8 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      $Ofs(C/T/D/J)BStr
-; Purpose:    Place an BSTR string in the CONST, CTEXT, _DATA or _TEXT segment.
-; Arguments:  Arg1: Quoted string text.
+; Purpose:    Place an BSTR string in the CONST, SEG_TEXT, _DATA or _TEXT segment.
+; Arguments:  Arg1: Quoted text.
 ; Return:     String offset.
 
 $OfsCBStr macro QuotedText:vararg

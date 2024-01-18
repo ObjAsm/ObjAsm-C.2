@@ -1018,16 +1018,16 @@ else
 endif
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      FillWordA
-; Purpose:    Fill with a sequence of ANSI characters using a series of mov DWORD/WORD/BYTE.
+; Macro:      FillTextA
+; Purpose:    Fill memory with a sequence of ANSI characters using a series of mov DWORD/WORD/BYTE.
 ;             It doesn't work with QWORDs.
 ; Arguments:  Arg1: String to be filled.
 ;             Arg2: Text.
 ; Return:     ??StrLen = Number of copied chars.
 ;             ??StrSize = Number of BYTEs copied.
-; Example:    FillWordA myBuffer, <Hello>
+; Example:    FillTextA myBuffer, <Hello>
 
-FillWordA macro StrVar:req, Text:req
+FillTextA macro StrVar:req, Text:req
   ??StrLen = 0
   $$j = 0
   forc $$Char, <Text>
@@ -1051,16 +1051,16 @@ FillWordA macro StrVar:req, Text:req
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      FillWordW
-; Purpose:    Fill with a sequence of WIDE characters using a series of mov DWORD/WORD.
+; Macro:      FillTextW
+; Purpose:    Fill memory with a sequence of WIDE characters using a series of mov DWORD/WORD.
 ;             It doesn't work with QWORDs.
 ; Arguments:  Arg1: String to be filled.
 ;             Arg2: Text.
 ; Return:     ??StrLen = Number of copied chars.
 ;             ??StrSize = Number of BYTEs copied.
-; Example:    FillWordW myBuffer, <Hello>
+; Example:    FillTextW myBuffer, <Hello>
 
-FillWordW macro StrVar:req, Text:req
+FillTextW macro StrVar:req, Text:req
   ??StrLen = 0
   $$j = 0
   forc $$Char, <Text>
@@ -1081,26 +1081,26 @@ endm
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  FillWord equ FillWordA
+  FillText equ FillTextA
 elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
-  FillWord equ FillWordW
+  FillText equ FillTextW
 else
-  .echo <FillWord is undefined>
+  .echo <FillText is undefined>
 endif
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      DoesWordMatchA?
-; Purpose:    Compare a sequence of ANSI characters with a text using a series of
+; Macro:      DoesTextMatchA?
+; Purpose:    Compare a sequence of ANSI characters with a given text using a series of
 ;             cmp DWORD/WORD/BYTE instructions.
-; Arguments:  Arg1: Location containing the word to be compared.
-;             Arg2: Text.
+; Arguments:  Arg1: Location containing the text to be compared.
+;             Arg2: Text to compare with.
 ; Return:     In case that NoMatchLabel is not specified use the flags.
 ;             ZERO? indicates that the word matches.
-; Example:    DoesWordMatchA? myWord, <Hello>
-;             DoesWordMatchA? myWord, !<  >
+; Example:    DoesTextMatchA? myWord, <Hello>
+;             DoesTextMatchA? myWord, !<  >
 ; Note:       Arg1 must have read access for the size of Arg2!
 
-DoesWordMatchA? macro StrVar:req, Text:req, NoMatchLabel
+DoesTextMatchA? macro StrVar:req, Text:req, NoMatchLabel
   local ExitLabel
 
   $$i = 0
@@ -1142,24 +1142,24 @@ DoesWordMatchA? macro StrVar:req, Text:req, NoMatchLabel
 ExitLabel:
 endm
 
-$DoesWordMatchA? macro StrVar:req, Text:req
-  DoesWordMatchA? StrVar, Text
+$DoesTextMatchA? macro StrVar:req, Text:req
+  DoesTextMatchA? StrVar, Text
   exitm <ZERO?>
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      DoesWordMatchW?
+; Macro:      DoesTextMatchW?
 ; Purpose:    Compare a sequence of WIDE characters with a text using a series of
 ;             cmp DWORD/WORD instructions.
-; Arguments:  Arg1: Location containing the word to be compared.
-;             Arg2: Text.
+; Arguments:  Arg1: Location containing the text to be compared.
+;             Arg2: Text to compare with.
 ; Return:     In case that NoMatchLabel is not specified use the flags.
 ;             ZERO? indicates that the word matches.
-; Example:    DoesWordMatchW? myWord, <Hello>
-;             DoesWordMatchW? myWord, !<  >
+; Example:    DoesTextMatchW? myWord, <Hello>
+;             DoesTextMatchW? myWord, !<  >
 ; Note:       Arg1 must have read access for the size of Arg2!
 
-DoesWordMatchW? macro StrVar:req, Text:req, NoMatchLabel
+DoesTextMatchW? macro StrVar:req, Text:req, NoMatchLabel
   local ExitLabel
 
   $$i = 0
@@ -1191,21 +1191,21 @@ DoesWordMatchW? macro StrVar:req, Text:req, NoMatchLabel
 ExitLabel:
 endm
 
-$DoesWordMatchW? macro StrVar:req, Text:req
-  DoesWordMatchW? StrVar, Text
+$DoesTextMatchW? macro StrVar:req, Text:req
+  DoesTextMatchW? StrVar, Text
   exitm <ZERO?>
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  DoesWordMatch? equ DoesWordMatchA?
-  $DoesWordMatch? equ $DoesWordMatchA?
+  DoesTextMatch? equ DoesTextMatchA?
+  $DoesTextMatch? equ $DoesTextMatchA?
 elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
-  DoesWordMatch? equ DoesWordMatchW?
-  $DoesWordMatch? equ $DoesWordMatchW?
+  DoesTextMatch? equ DoesTextMatchW?
+  $DoesTextMatch? equ $DoesTextMatchW?
 else
-  .echo <DoesWordMatch? is undefined>
+  .echo <DoesTextMatch? is undefined>
 endif
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1213,7 +1213,7 @@ endif
 ; Purpose:    Compare a string of ANSI characters with a text using a series of
 ;             cmp DWORD/WORD/BYTE instructions. The ZTC is included in the comparison.
 ; Arguments:  Arg1: Location containing the string to be compared.
-;             Arg2: Text.
+;             Arg2: String to compare with.
 ; Return:     In case that NoMatchLabel is not specified use the flags.
 ;             Zero indicates that the word matches.
 ; Example:    DoesStringMatchA? myString, <Hello>
@@ -1272,7 +1272,7 @@ endm
 ; Purpose:    Compare a string of WIDE characters with a text using a series of
 ;             cmp DWORD/WORD instructions. The ZTC is included in the comparison.
 ; Arguments:  Arg1: Location containing the string to be compared.
-;             Arg2: Text.
+;             Arg2: String to compare with.
 ; Return:     In case that NoMatchLabel is not specified use the flags.
 ;             Zero indicates that the word matches.
 ; Example:    DoesStringMatchW? myString, <Hello>
@@ -1470,7 +1470,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
         else
           $$WF_ReplType Catstr $$WF_ReplType, <$$WF_Character>   ;;Append second char
           ifidn $$WF_ReplType, <SB>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1481,7 +1481,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SW>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1492,7 +1492,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SD>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1502,7 +1502,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SQ>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1512,7 +1512,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SX>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1522,7 +1522,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UB>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1533,7 +1533,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UW>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1544,7 +1544,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UD>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1554,7 +1554,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UQ>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1564,7 +1564,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UX>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1574,7 +1574,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <H4>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1584,7 +1584,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <H8>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1594,7 +1594,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <HX>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1604,7 +1604,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn @SubStr(<%$$WF_ReplType>, 1, 1), <F>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1617,7 +1617,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn @SubStr(<%$$WF_ReplType>, 1, 1), <E>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1630,7 +1630,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SA>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1647,7 +1647,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <SU>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1664,7 +1664,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <ST>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1686,7 +1686,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             add DstReg, sizeof(CHR)
 
           elseifidn $$WF_ReplType, <GD>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1696,7 +1696,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <WE>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1712,7 +1712,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <CE>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1728,7 +1728,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <UE>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1744,7 +1744,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <V4>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1754,7 +1754,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <V6>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1764,7 +1764,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <BI>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1775,7 +1775,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <BN>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1785,7 +1785,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <BZ>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1795,7 +1795,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <AT>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1833,7 +1833,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <MT>
-            FillWord [DstReg], <%$$WF_Text>
+            FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof(CHR)
@@ -1891,7 +1891,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
       elseif $$WF_Escape
         $$WF_Escape = 0                                 ;;Reset escape flag
         ifidn <$$WF_Character>, <n>
-          FillWord [DstReg], <%$$WF_Text>
+          FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof(CHR)
@@ -1899,7 +1899,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov DCHR ptr [DstReg], 10 shl (8*sizeof(CHR)) + 13
           add DstReg, 2*sizeof(CHR)
         elseifidn <$$WF_Character>, <r>
-          FillWord [DstReg], <%$$WF_Text>
+          FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof(CHR)
@@ -1907,7 +1907,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov CHR ptr [DstReg], 13
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <l>
-          FillWord [DstReg], <%$$WF_Text>
+          FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof(CHR)
@@ -1915,7 +1915,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov CHR ptr [DstReg], 10
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <0>
-          FillWord [DstReg], <%$$WF_Text>
+          FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof(CHR)
@@ -1923,7 +1923,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov CHR ptr [DstReg], 0
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <t>
-          FillWord [DstReg], <%$$WF_Text>
+          FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof(CHR)
@@ -1931,7 +1931,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov CHR ptr [DstReg], 9
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <[>
-          FillWord [DstReg], <%$$WF_Text>
+          FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof(CHR)
@@ -1939,7 +1939,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov CHR ptr [DstReg], '<'
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <]>
-          FillWord [DstReg], <%$$WF_Text>
+          FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof(CHR)
@@ -1947,7 +1947,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov CHR ptr [DstReg], '>'
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <:>
-          FillWord [DstReg], <%$$WF_Text>
+          FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof(CHR)
@@ -1955,7 +1955,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov CHR ptr [DstReg], '!'
           add DstReg, sizeof(CHR)
         elseifidn <$$WF_Character>, <´>
-          FillWord [DstReg], <%$$WF_Text>
+          FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof(CHR)
@@ -4397,7 +4397,7 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      GetMemBSS
-; Purpose:    Reserve a data block from the bss segment (block starting symbol).
+; Purpose:    Reserve a data block from the bss segment.
 ;             bss is equivalent to .data? and contains uninitialized static variables.
 ; Arguments:  Arg1: Data size.
 ; Return:     Symbol name.

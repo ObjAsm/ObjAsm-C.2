@@ -168,7 +168,7 @@ ProcName proc uses xbx xdi xsi, pStart:POINTER, dSize:DWORD, dRepresentationForm
           dec ebx
           inc xsi
           mov .ecx, ecx
-          FillWordA [bAuxBuffer], <00>
+          FillTextA [bAuxBuffer], <00>
           invoke udword2decA, addr [bAuxBuffer + 2], edx
           invoke StrEndA, addr [bAuxBuffer + 2]
           mov BYTE ptr [xax], ' '
@@ -202,7 +202,7 @@ ProcName proc uses xbx xdi xsi, pStart:POINTER, dSize:DWORD, dRepresentationForm
           add xsi, sizeof(WORD)
 
           mov .ecx, ecx
-          FillWordA [bAuxBuffer], <0000>
+          FillTextA [bAuxBuffer], <0000>
           invoke udword2decA, addr [bAuxBuffer + 4], edx
           invoke StrEndA, addr [bAuxBuffer + 4]
           mov BYTE ptr [xax], ' '
@@ -240,7 +240,7 @@ ProcName proc uses xbx xdi xsi, pStart:POINTER, dSize:DWORD, dRepresentationForm
           add xsi, sizeof(DWORD)
 
           mov .ecx, ecx
-          FillWordA [bAuxBuffer], <0000000000>
+          FillTextA [bAuxBuffer], <0000000000>
           invoke udword2decA, addr [bAuxBuffer + 10], edx
           invoke StrEndA, addr [bAuxBuffer + 10]
           mov BYTE ptr [xax], ' '
@@ -277,7 +277,7 @@ ProcName proc uses xbx xdi xsi, pStart:POINTER, dSize:DWORD, dRepresentationForm
           dec ebx
           inc xsi
           mov .ecx, ecx
-          FillWordA [bAuxBuffer], <00>
+          FillTextA [bAuxBuffer], <00>
           .ifBitSet al, BIT07
             neg al
             movzx edx, al
@@ -319,7 +319,7 @@ ProcName proc uses xbx xdi xsi, pStart:POINTER, dSize:DWORD, dRepresentationForm
           sub ebx, sizeof(WORD)
           add xsi, sizeof(WORD)
           mov .ecx, ecx
-          FillWordA [bAuxBuffer], <0000>
+          FillTextA [bAuxBuffer], <0000>
           .ifBitSet ax, BIT15
             neg ax
             movzx edx, ax
@@ -366,7 +366,7 @@ ProcName proc uses xbx xdi xsi, pStart:POINTER, dSize:DWORD, dRepresentationForm
           add xsi, sizeof(SDWORD)
 
           mov .ecx, ecx
-          FillWordA [bAuxBuffer], <0000000000>
+          FillTextA [bAuxBuffer], <0000000000>
           .ifBitSet edx, BIT31
             neg edx
             invoke sdword2decA, addr [bAuxBuffer + 10], edx
@@ -617,7 +617,7 @@ ProcName proc uses xbx xdi xsi, pStart:POINTER, dSize:DWORD, dRepresentationForm
           add xsi, sizeof(QWORD)
 
           mov .ecx, ecx
-          FillWordA [bAuxBuffer], <0000000000000000000>
+          FillTextA [bAuxBuffer], <0000000000000000000>
           invoke uqword2decA, addr [bAuxBuffer + 19], rdx
           invoke StrEndA, addr [bAuxBuffer + 19]
           mov BYTE ptr [xax], ' '
@@ -655,7 +655,7 @@ ProcName proc uses xbx xdi xsi, pStart:POINTER, dSize:DWORD, dRepresentationForm
           add xsi, sizeof(SQWORD)
 
           mov .ecx, ecx
-          FillWordA [bAuxBuffer], <0000000000000000000>
+          FillTextA [bAuxBuffer], <0000000000000000000>
           mov rcx, BIT63
           .ifBitSet rdx, rcx
             neg rdx

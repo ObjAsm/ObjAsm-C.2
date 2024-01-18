@@ -9,18 +9,18 @@
 
 
 ; ==================================================================================================
-; (($)X)Str:  Defines an ANSI string in (X = C) CONST, (X = T) CTEXT, (X = D) _DATA or
+; (($)X)Str:  Defines an ANSI string in (X = C) CONST, (X = T) SEG_TEXT, (X = D) _DATA or
 ;             (X = J) _TEXT segment returning a reference to it if the "$" prefix was used.
 ; $Ofs(X)Str: Same as ($C|$T|$D|$J)Str, but returns the string offset.
 ;
-; Note: Use ??StrSize (byte count including the ZTC) or  
-;           ??StrLength (character count without the ZTC).
+; Note:   ??StrSize = BYTE count including the ZTC
+;         ??StrLength = Character count without the ZTC
 ; ==================================================================================================
 
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      StringA / ($)CStrA / ($)DStrA / ($)JStrA
-; Purpose:    Place an ANSI string in the .const, .data or .code segment.
+; Purpose:    Place an ANSI string in the CONST, _DATA or _TEXT segment.
 ; Arguments:  Arg1: Reference name (optional).
 ;             Arg2: Quoted string text.
 ; Return:     Nothing / Reference to the string.
@@ -33,7 +33,7 @@ StringA macro StrName, QuotedText:vararg
     $$StrLabel textequ <>                               ;;Set to blank for the next loop
   endm
   CHRA 0                                                ;;Set ZTC
-  ??StrSize = $ - $$StrStart                            ;;??StrSize includes the ZTC 
+  ??StrSize = $ - $$StrStart                            ;;??StrSize includes the ZTC
   ??StrLength = ??StrSize - 1                           ;;??StrLength = character count without ZTC
 endm
 
@@ -116,7 +116,7 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      $Ofs(C|T|D|J)StrA
-; Purpose:    Place an ANSI string in the CONST, CTEXT, _DATA or _TEXT segment
+; Purpose:    Place an ANSI string in the CONST, SEG_TEXT, _DATA or _TEXT segment
 ; Arguments:  Arg1: Quoted string text.
 ; Return:     String offset.
 

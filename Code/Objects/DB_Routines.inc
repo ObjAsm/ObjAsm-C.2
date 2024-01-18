@@ -1187,7 +1187,7 @@ DB_TimestampToStr proc pDstString:PSTRING, pTimeStamp:POINTER
   local dHours:DWORD, dMinutes:DWORD, dSeconds:DWORD, dMilliSeconds:DWORD
 
   ?mov xdx, pTimeStamp
-  .if $DoesWordMatch?([xdx], !<        >)
+  .if $DoesTextMatch?([xdx], !<        >)
     ?mov xcx, pDstString
     m2z CHR ptr [xcx]
   .else
@@ -1343,7 +1343,7 @@ MUT_DateToFpu proc uses xbx pOut:POINTER, pIn:POINTER, pMutInfo:PFIELD_MUTATION
   local bBuffer[100]:CHRA, dYear:DWORD, dMonth:DWORD, dDay:DWORD, dJDN:DWORD
 
   mov xbx, pIn
-  .if $DoesWordMatchA?([xbx], !<        >)
+  .if $DoesTextMatchA?([xbx], !<        >)
     mov eax, -1
   .else
     mov eax, [xbx]
@@ -1440,7 +1440,7 @@ MUT_NumToNum endp
 align ALIGN_CODE
 MUT_R4ToFpu proc pOut:POINTER, pIn:POINTER, pMutInfo:PFIELD_MUTATION
   mov xcx, pIn
-  .if $DoesWordMatchA?([xcx], !<    >)
+  .if $DoesTextMatchA?([xcx], !<    >)
     mov eax, -1
   .else
     fld REAL4 ptr [xcx]
@@ -1452,7 +1452,7 @@ MUT_R4ToFpu endp
 align ALIGN_CODE
 MUT_R8ToFpu proc pOut:POINTER, pIn:POINTER, pMutInfo:PFIELD_MUTATION
   mov xcx, pIn
-  .if $DoesWordMatchA?([xcx], !<        >)
+  .if $DoesTextMatchA?([xcx], !<        >)
     mov eax, -1
   .else
     fld REAL8 ptr [xcx]
@@ -1464,7 +1464,7 @@ MUT_R8ToFpu endp
 align ALIGN_CODE
 MUT_R10ToFpu proc pOut:POINTER, pIn:POINTER, pMutInfo:PFIELD_MUTATION
   mov xcx, pIn
-  .if $DoesWordMatchA?([xcx], !<          >)
+  .if $DoesTextMatchA?([xcx], !<          >)
     mov eax, -1
   .else
     fld REAL10 ptr [xcx]
@@ -1493,7 +1493,7 @@ MUT_BoolToFpu endp
 align ALIGN_CODE
 MUT_Int32ToFpu proc pOut:POINTER, pIn:POINTER, pMutInfo:PFIELD_MUTATION
   mov xcx, pIn
-  .if $DoesWordMatchA?([xcx], !<    >)
+  .if $DoesTextMatchA?([xcx], !<    >)
     mov eax, -1
   .else
     fild DWORD ptr [xcx]
@@ -1505,7 +1505,7 @@ MUT_Int32ToFpu endp
 align ALIGN_CODE
 MUT_UInt32ToFpu proc pOut:POINTER, pIn:POINTER, pMutInfo:PFIELD_MUTATION
   mov xcx, pIn
-  .if $DoesWordMatchA?([xcx], !<    >)
+  .if $DoesTextMatchA?([xcx], !<    >)
     mov eax, -1
   .else
     fild DWORD ptr [xcx]

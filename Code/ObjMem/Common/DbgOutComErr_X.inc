@@ -26,7 +26,7 @@ DbgOutComErr proc uses xbx dErrCode:DWORD, dForeColor:DWORD, dBackColor:DWORD, p
   invoke ComGetErrStrA, dErrCode
   invoke DbgOutTextA, xax, dForeColor, dBackColor, DBG_EFFECT_NORMAL, pDest
   lea xbx, bHexBuffer
-  FillWordA [xbx], < [>
+  FillTextA [xbx], < [>
   add xbx, ??StrSize
   invoke dword2hexA, xbx, dErrCode
   FillStringA [xbx + (DWORD2HEX_MAX_CHARS - 1)*sizeof(CHRA)], <h]>

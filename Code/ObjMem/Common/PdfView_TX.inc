@@ -29,11 +29,11 @@ ProcName proc uses xbx hParent:HWND, pFileName:POINTER, pDestination:POINTER
     .if eax == S_OK
       .if pDestination != NULL
         lea xbx, [cCommand + sizeof(cCommand)]
-        FillWord cCommand, </A "nameddest=>
+        FillText cCommand, </A "nameddest=>
         invoke StrCECopy, addr(cCommand + sizeof(CHR)*14), pDestination, lengthof(cCommand) - 14 - 1
         lea xcx, [xax + 3*sizeof(CHR)]
         .if xcx < xbx
-          FillWord [xax], <" ">
+          FillText [xax], <" ">
           mov xax, xbx
           sub xax, xcx
           if TARGET_STR_TYPE eq STR_TYPE_WIDE

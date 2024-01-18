@@ -1059,7 +1059,7 @@ Method Evaluator.GetNextEvalToken, uses edi esi
     .endif
 
     ;Check if it is an immediate number
-    .if $DoesWordMatchA?([eax], <0x>)
+    .if $DoesTextMatchA?([eax], <0x>)
 ;      DbgText "Hex Number"
       mov EvalArg2.wType, ETT_IMMEDIATE
       mov EvalArg2.wGenus, EGN_NUMBER

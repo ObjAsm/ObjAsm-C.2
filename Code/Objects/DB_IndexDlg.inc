@@ -182,10 +182,10 @@ Method DB_IndexDlg.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         mov NdxTask.Indexing.xParam2, xbx               ;pFileName
   
         ProgressText textequ <{\rtf1\b Task:\b0  Creating Index \ul > 
-        FillWordA bMsgBuffer, <%ProgressText>
+        FillTextA bMsgBuffer, <%ProgressText>
         invoke StrECopyA, addr [bMsgBuffer + @SizeStr(%ProgressText)], xdi 
         ProgressText textequ <\ul0  for table field >
-        FillWordA [xax], <%ProgressText>
+        FillTextA [xax], <%ProgressText>
         mov xdx, NdxTask.Indexing.xParam1               ;xdx -> DB_Field
         invoke StrECopyA, addr [xax + @SizeStr(%ProgressText)], \
                           addr [xdx].$Obj(DB_Field).Descriptor.bName
@@ -342,15 +342,15 @@ Method DB_IndexDlg.UpdateStatusbar, uses xbx xdi xsi
   SetObject xsi
   lea xbx, cBuffer
   mov xdi, [xsi].pTable
-  FillWord [xbx], < Table: >
+  FillText [xbx], < Table: >
   add xbx, 8*sizeof(CHR)
   invoke StrECopy, xbx, [xdi].$Obj(DB_Table).pFileName
-  FillWord [xax], < (Size: >
+  FillText [xax], < (Size: >
   lea xbx, [xax + 8*sizeof(CHR)]
   invoke GetFileSizeEx, [xdi].$Obj(DB_Table).hFile, addr qFileSize
   invoke qword2dec, xbx, qFileSize
   invoke StrEnd, xbx
-  FillWord [xax], < bytes, Records: >
+  FillText [xax], < bytes, Records: >
   lea xbx, [xax + 17*sizeof(CHR)]
   invoke dword2dec, xbx, [xdi].$Obj(DB_Table).Descriptor.dNumRecs
   invoke StrEnd, xbx

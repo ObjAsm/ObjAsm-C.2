@@ -536,7 +536,7 @@ Method DB_StructEditorDlg.Mutate, uses xbx xdi xsi
       mov [xdi].TaskSetup.xParam1, 0
       mov [xdi].TaskSetup.xParam2, 0
       ProgressText textequ <{\rtf1\b Task:\b0  Data on table \ul >
-      FillWordA cBuffer, <%ProgressText>
+      FillTextA cBuffer, <%ProgressText>
       mov xdx, [xsi].pTable
       invoke PathFindFileName, [xdx].$Obj(DB_Table).pFileName
       lea xcx, [cBuffer + @SizeStr(%ProgressText)]
@@ -574,7 +574,7 @@ Method DB_StructEditorDlg.Mutate, uses xbx xdi xsi
         mov [xdi].TaskSetup.xParam2, xbx                ;Index
 
         ProgressText textequ <{\rtf1\b Task:\b0  Index \ul >
-        FillWordA bMsgBuffer, <%ProgressText>
+        FillTextA bMsgBuffer, <%ProgressText>
         lea xcx, [bMsgBuffer + @SizeStr(%ProgressText)]
         invoke StrECopyA, xcx, xax
         ProgressText textequ <\ul0  for table field >
@@ -1271,17 +1271,17 @@ Method DB_StructEditorDlg.UpdateStatusbar, uses xbx xdi xsi
   SetObject xsi
   lea xbx, cBuffer
   mov xdi, [xsi].pTable
-  FillWord [xbx], < Table: >
+  FillText [xbx], < Table: >
   add xbx, 8*sizeof(CHR)
 ;  mov xcx, [xsi].pTable
 ;  invoke GetFinalPathNameByHandle, [xcx].$Obj(DB_Table).hFile, xbx, lengthof(cBuffer), FILE_NAME_NORMALIZED
   invoke StrECopy, xbx, [xdi].$Obj(DB_Table).pFileName
-  FillWord [xax], < (Size: >
+  FillText [xax], < (Size: >
   lea xbx, [xax + 8*sizeof(CHR)]
   invoke GetFileSizeEx, [xdi].$Obj(DB_Table).hFile, addr qFileSize
   invoke qword2dec, xbx, qFileSize
   invoke StrEnd, xbx
-  FillWord [xax], < bytes, Records: >
+  FillText [xax], < bytes, Records: >
   lea xbx, [xax + 17*sizeof(CHR)]
   invoke dword2dec, xbx, [xdi].$Obj(DB_Table).Descriptor.dNumRecs
   invoke StrEnd, xbx
