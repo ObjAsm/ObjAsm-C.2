@@ -25,7 +25,7 @@
 ;             Version C.2.1, December 2023
 ;               - DbgCpuFlags added.
 ;             Version C.2.1, January 2024
-;               - DbgMemBlock added.
+;               - DbgMemBlock / DbgMStr added.
 ; ==================================================================================================
 
 ;Supported debugging macros:
@@ -1858,8 +1858,6 @@ endm
 DbgCpuFlags macro InfoText, Dest
   if DEBUGGING
     DbgSaveContext FALSE, XWORD ptr [xsp + TARGET_BITNESS/4*sizeof(XWORD)] 
-
-    DbgHex ebx
     invoke DbgOutTextA, $OfsCStrA("CPU Flags "), DbgColorFPU, DbgColorBackground, \
                         DBG_EFFECT_BOLD, ??DbgDstWnd
     DbgOutHex , DbgColorFPU, xbx, DbgColorFPU, ??DbgDstWnd
@@ -2888,19 +2886,19 @@ DbgMemBlock macro Var:req, InfoText, Dest
       DbgOutHex <, Size=>,, edi,, ??DbgDstWnd
       mov edi, [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
       DbgOutHex <, Used=>,, edi,, ??DbgDstWnd
-      invoke DbgOutTextA, $OfsCStrA(" Payload="), DbgColorDefaultPre, DbgColorBackground, \
-                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+      invoke DbgOutTextA, $OfsCStrA(", Payload="), DbgColorDefaultPre, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, ??DbgDstWnd
       .if [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed != 0
-        invoke DbgOutText, xbx, DbgColorString, DbgColorBackground, \
-                           DBG_EFFECT_NORMAL, ??DbgDstWnd
+        invoke DbgOutMem, xbx, [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed, DBG_MEM_NONE, \
+                          DbgColorMemory, DbgColorForeground, DbgColorBackground, ??DbgDstWnd 
       .endif
       ;;Check Payload alignment
       mov xdi, xbx
       and xdi, MEMBLOCK_PAYLOAD_ALIGNMENT - 1
       .if xdi
-        invoke DbgOutText, $OfsCStr(CRLF, "ERROR: MemBlock Payload is NOT aligned", 21h, CRLF), \
-                           DbgColorWarning, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
-        DbgHex xbx, "Payload address"
+        invoke DbgOutText, $OfsCStr("ERROR: MemBlock Payload is NOT aligned", 21h), \
+                           DbgColorWarning, DbgColorBackground, \
+                           DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, ??DbgDstWnd
       .endif
       DbgShowTxtInfo InfoText, ??DbgDstWnd
       DbgShowSrcInfo ??DbgDstWnd      
@@ -2908,3 +2906,47 @@ DbgMemBlock macro Var:req, InfoText, Dest
     endif
   endif
 endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:     DbgMStr
+; Purpose:   Output MemBlock / DbgMStr information and warn about unaligned payload.
+; Arguments: Arg1: -> MemBlock.bPayload
+;            Arg2: Additional information.
+;            Arg3: Destination Window name.
+
+DbgMStr macro Var:req, InfoText, Dest
+  if DEBUGGING
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      DbgSaveContext FALSE, Var
+      DbgSetDestWnd Dest
+      mov di, [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.wOffset
+      DbgOutHex <Offset=>,, di,, ??DbgDstWnd
+      mov di, [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.wFlags
+      DbgOutHex <, Flags=>,, di,, ??DbgDstWnd
+      mov edi, [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dSize
+      DbgOutHex <, Size=>,, edi,, ??DbgDstWnd
+      mov edi, [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed
+      DbgOutHex <, Used=>,, edi,, ??DbgDstWnd
+      invoke DbgOutTextA, $OfsCStrA(", Payload="), DbgColorDefaultPre, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+      .if [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed != sizeof(CHR)
+        invoke DbgOutText, xbx, DbgColorString, DbgColorBackground, \
+                           DBG_EFFECT_NORMAL, ??DbgDstWnd
+      .endif
+      ;;Check Payload alignment
+      mov xdi, xbx
+      and xdi, MEMBLOCK_PAYLOAD_ALIGNMENT - 1
+      .if xdi
+        invoke DbgOutText, $OfsCStr(CRLF, "ERROR: MStr Payload is NOT aligned", 21h), \
+                           DbgColorWarning, DbgColorBackground, \
+                           DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, ??DbgDstWnd
+        DbgWriteF DbgColorWarning,, "Payload address=¦HXh", xbx
+      .endif
+
+      DbgShowTxtInfo InfoText, ??DbgDstWnd
+      DbgShowSrcInfo ??DbgDstWnd      
+      DbgLoadContext
+    endif
+  endif
+endm
+
