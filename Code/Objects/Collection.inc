@@ -89,17 +89,29 @@ ObjectEnd
 .ColForEach macro Coll:req, Index
   ??ColForEach_ID = ??ColForEach_ID + 1
   ifb <Index>
-    @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID) textequ GetMemBSS(4)
+    @CatStr(<??ColForEach_Index_>, %??ColForEach_ID) textequ GetMemBSS(4)
   else
-    @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID) textequ <Index>
+    @CatStr(<??ColForEach_Index_>, %??ColForEach_ID) textequ <Index>
   endif
   @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) equ +1 
-  xor eax, eax
-  mov @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID), eax
-  .while eax != Coll.$Obj(Collection).dCount
-    lea xax, [sizeof(POINTER)*xax]
-    add xax, Coll.$Obj(Collection).pItems
-    mov xax, POINTER ptr [xax]
+
+  if (opattr Index) and OAT_REGISTER
+    if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0
+      .err <.ColForEachRev: invalid index register>
+    endif
+    xor Index, Index
+    .while Index != Coll.$Obj(Collection).dCount
+      lea eax, [sizeof(POINTER)*Index]
+      add xax, Coll.$Obj(Collection).pItems
+      mov xax, POINTER ptr [xax]
+  else
+    xor eax, eax
+    mov @CatStr(<??ColForEach_Index_>, %??ColForEach_ID), eax
+    .while eax != Coll.$Obj(Collection).dCount
+      lea eax, [sizeof(POINTER)*eax]
+      add xax, Coll.$Obj(Collection).pItems
+      mov xax, POINTER ptr [xax]
+  endif
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -113,17 +125,31 @@ endm
 .ColForEachRev macro Coll:req, Index
   ??ColForEach_ID = ??ColForEach_ID + 1
   ifb <Index>
-    @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID) textequ GetMemBSS(4)
+    @CatStr(<??ColForEach_Index_>, %??ColForEach_ID) textequ GetMemBSS(4)
   else
-    @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID) textequ <Index>
+    @CatStr(<??ColForEach_Index_>, %??ColForEach_ID) textequ <Index>
   endif
   @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) equ -1 
-  mov eax, Coll.$Obj(Collection).dCount
-  mov @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID), eax
-  .while eax != 0
-    lea xax, [sizeof(POINTER)*xax - sizeof(POINTER)]
-    add xax, Coll.$Obj(Collection).pItems
-    mov xax, POINTER ptr [xax]
+
+  if (opattr Index) and OAT_REGISTER
+    if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0
+      .err <.ColForEachRev: invalid index register>
+    endif
+    mov Index, Coll.$Obj(Collection).dCount
+    dec Index
+    .while !SIGN?
+      lea eax, [sizeof(POINTER)*Index]
+      add xax, Coll.$Obj(Collection).pItems
+      mov xax, POINTER ptr [xax]
+  else
+    mov eax, Coll.$Obj(Collection).dCount
+    dec eax
+    mov @CatStr(<??ColForEach_Index_>, %??ColForEach_ID), eax
+    .while !SIGN?
+      lea eax, [sizeof(POINTER)*eax]
+      add xax, Coll.$Obj(Collection).pItems
+      mov xax, POINTER ptr [xax]
+  endif
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -134,11 +160,11 @@ endm
 
 .ColNext macro
     if @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) eq +1
-      inc @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID)
+      inc @CatStr(<??ColForEach_Index_>, %??ColForEach_ID)
     else
-      dec @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID)
+      dec @CatStr(<??ColForEach_Index_>, %??ColForEach_ID)
     endif
-    mov eax, @CatStr(<??ColForEach_Counter_>, %??ColForEach_ID)
+    mov eax, @CatStr(<??ColForEach_Index_>, %??ColForEach_ID)
   .endw
   ??ColForEach_ID = ??ColForEach_ID - 1
 endm

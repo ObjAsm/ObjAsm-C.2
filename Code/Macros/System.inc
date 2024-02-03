@@ -1095,7 +1095,7 @@ endif
 ; Arguments:  Arg1: Location containing the text to be compared.
 ;             Arg2: Text to compare with.
 ; Return:     In case that NoMatchLabel is not specified use the flags.
-;             ZERO? indicates that the word matches.
+;             ZERO? indicates that the text match.
 ; Example:    DoesTextMatchA? myWord, <Hello>
 ;             DoesTextMatchA? myWord, !<  >
 ; Note:       Arg1 must have read access for the size of Arg2!
@@ -1154,7 +1154,7 @@ endm
 ; Arguments:  Arg1: Location containing the text to be compared.
 ;             Arg2: Text to compare with.
 ; Return:     In case that NoMatchLabel is not specified use the flags.
-;             ZERO? indicates that the word matches.
+;             ZERO? indicates that the test match.
 ; Example:    DoesTextMatchW? myWord, <Hello>
 ;             DoesTextMatchW? myWord, !<  >
 ; Note:       Arg1 must have read access for the size of Arg2!
@@ -1215,7 +1215,7 @@ endif
 ; Arguments:  Arg1: Location containing the string to be compared.
 ;             Arg2: String to compare with.
 ; Return:     In case that NoMatchLabel is not specified use the flags.
-;             Zero indicates that the word matches.
+;             Zero indicates that the String match.
 ; Example:    DoesStringMatchA? myString, <Hello>
 ; Note:       Arg1 must have read access for the size of Arg2!
 
@@ -1274,7 +1274,7 @@ endm
 ; Arguments:  Arg1: Location containing the string to be compared.
 ;             Arg2: String to compare with.
 ; Return:     In case that NoMatchLabel is not specified use the flags.
-;             Zero indicates that the word matches.
+;             Zero indicates that the String match.
 ; Example:    DoesStringMatchW? myString, <Hello>
 ; Note:       Arg1 must have read access for the size of Arg2!
 

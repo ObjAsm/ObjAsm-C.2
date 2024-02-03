@@ -2646,7 +2646,7 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
                 ??Count = (($$ArgSize + 3)/4)*4
                 if ??Count eq 0
                   %echo @CatStr(<$PushMethodArgs32 - Error on line >, %@Line, < of >, @FileCur)
-                  @Err <$PushMethodArgs32 Error: undefined symbol ($$Arg).>
+                  @Err <$PushMethodArgs32 Error: undefined symbol ($$Arg)>
                 else
                   repeat ($$ArgSize + 3)/4
                     ??Count = ??Count - 4

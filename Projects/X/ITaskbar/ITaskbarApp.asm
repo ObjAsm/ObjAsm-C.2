@@ -40,7 +40,7 @@ TaskBarAnimation proc uses xbx xdi xsi hWnd:HWND
 
   ;ThumbButtons setup
   lea xbx, ThumbButtonArray
-  invoke LoadIcon, hInstance, $OfsCStr("RED_DOT")
+  invoke LoadIcon, hInstance, $OfsCStr("ICON_RED_DOT")
   mov [xbx].THUMBBUTTON.dwMask, THB_ICON or THB_TOOLTIP or THB_FLAGS
   mov [xbx].THUMBBUTTON.iId, 1
   mov [xbx].THUMBBUTTON.hIcon, xax
@@ -48,7 +48,7 @@ TaskBarAnimation proc uses xbx xdi xsi hWnd:HWND
   mov [xbx].THUMBBUTTON.dwFlags, THBF_ENABLED
 
   add xbx, sizeof(THUMBBUTTON)
-  invoke LoadIcon, hInstance, $OfsCStr("GREEN_DOT")
+  invoke LoadIcon, hInstance, $OfsCStr("ICON_GREEN_DOT")
   mov [xbx].THUMBBUTTON.dwMask, THB_ICON or THB_TOOLTIP or THB_FLAGS
   mov [xbx].THUMBBUTTON.iId, 2
   mov [xbx].THUMBBUTTON.hIcon, xax
@@ -56,7 +56,7 @@ TaskBarAnimation proc uses xbx xdi xsi hWnd:HWND
   mov [xbx].THUMBBUTTON.dwFlags, THBF_ENABLED
 
   add xbx, sizeof(THUMBBUTTON)
-  invoke LoadIcon, hInstance, $OfsCStr("YELLOW_DOT")
+  invoke LoadIcon, hInstance, $OfsCStr("ICON_YELLOW_DOT")
   mov [xbx].THUMBBUTTON.dwMask, THB_ICON or THB_TOOLTIP or THB_FLAGS
   mov [xbx].THUMBBUTTON.iId, 3
   mov [xbx].THUMBBUTTON.hIcon, xax
@@ -64,7 +64,7 @@ TaskBarAnimation proc uses xbx xdi xsi hWnd:HWND
   mov [xbx].THUMBBUTTON.dwFlags, THBF_ENABLED
 
   add xbx, sizeof(THUMBBUTTON)
-  invoke LoadIcon, hInstance, $OfsCStr("BLUE_DOT")
+  invoke LoadIcon, hInstance, $OfsCStr("ICON_BLUE_DOT")
   mov [xbx].THUMBBUTTON.dwMask, THB_ICON or THB_TOOLTIP or THB_FLAGS
   mov [xbx].THUMBBUTTON.iId, 4
   mov [xbx].THUMBBUTTON.hIcon, xax
@@ -101,7 +101,7 @@ TaskBarAnimation proc uses xbx xdi xsi hWnd:HWND
     invoke Sleep, 200
 
     ;Control the red dot animation in the lower right corner of the Taskbar Tab
-    invoke LoadIcon, hInstance, $OfsCStr("RED_DOT_SM_LR")
+    invoke LoadIcon, hInstance, $OfsCStr("ICON_RED_DOT_SM_LR")
     mov hIcon, xax
     .for(xbx = 0: ebx != 5: ebx ++)
       ICall pTBL::ITaskbarList4.SetOverlayIcon, hWnd, hIcon, $OfsCStrW("Attention")
@@ -112,7 +112,7 @@ TaskBarAnimation proc uses xbx xdi xsi hWnd:HWND
     invoke DestroyIcon, hIcon
 
     ;Control the final stage of the animation - green dot
-    invoke LoadIcon, hInstance, $OfsCStr("GREEN_DOT_SM_LR")
+    invoke LoadIcon, hInstance, $OfsCStr("ICON_GREEN_DOT_SM_LR")
     mov hIcon, xax
     ICall pTBL::ITaskbarList4.SetOverlayIcon, hWnd, hIcon, NULL
     invoke Sleep, 2500

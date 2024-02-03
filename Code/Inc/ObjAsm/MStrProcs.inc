@@ -10,7 +10,7 @@
 
 MSTR_ALL equ 7FFFFFFFh
 
-MemMStrFree_X textequ <MemBlockFree_X>
+MStrFree_X textequ <MemBlockFree_X>
 
 .code
 

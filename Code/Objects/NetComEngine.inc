@@ -25,7 +25,7 @@ if IMPLEMENT
 Method ListenerCollection.DestroyItem, uses xbx, pListener:PLISTENER
   local MyLinger:linger
 
-  ;DbgText "ListenerCollection.DestroyItem"
+  DbgText "ListenerCollection.DestroyItem"
   mov xbx, pListener
   .if xbx != NULL
     .if [xbx].LISTENER.hSocket != INVALID_SOCKET
@@ -629,7 +629,7 @@ Method NetComEngine.Worker, uses xbx xdi xsi
   .until ([xsi].dShuttingDown == SDN_CLOSE_WORKERS && [xsi].IOJobs.dCount == 0) || \
           [xsi].dShuttingDown == SDN_QUIT_WORKERS       ;Abortive close
 
-  DbgText "NetComEngine worker death"
+;  DbgText "NetComEngine worker death"
 MethodEnd
 
 endif

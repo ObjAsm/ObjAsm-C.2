@@ -296,7 +296,7 @@ DbgSaveContext macro VarIsRef:=<FALSE>, Var
       endif
       ??VarXBX textequ <xbx>
     else
-      if @InStr(1, RBX_SUBREGS, <$Upper(Var)>) eq 0
+      if @InStr(1, %RBX_SUBREGS, <$Upper(Var)>) eq 0
         if type(Var) eq 8
           mov rbx, Var
           ??VarXBX textequ <rbx>
@@ -1243,6 +1243,7 @@ endm
 ;             Arg 4..n: optional arguments.
 ; Note:       All registers are allowed as parameters, even indirect references of the form
 ;             [xbx].POINT.x
+;             REAL8 can not be used combined with TARGET_BITNESS = 32.
 
 DbgWriteF macro Color:=<DbgColorForeground>, Dest, Format, Args:vararg
   if DEBUGGING
@@ -1256,7 +1257,8 @@ DbgWriteF macro Color:=<DbgColorForeground>, Dest, Format, Args:vararg
         $$Attributes = opattr($$Arg)
 
         if ($$Attributes eq (OAT_NO_ERROR or OAT_RELOCATABLE))    ;;E.g. [xax]
-          $$sz1 textequ GetMemBSS(type(XWORD))
+          $$sz1 textequ GetMemBSS(type($$Arg))          ;;The type is passed along with the symbol
+          ;GetMemBSS is XWORD aligned => enough memory for the pop XWORD
           push XWORD ptr $$Arg                          ;;Avoid using a register
           pop XWORD ptr $$sz1                           ;;$$sz1 is not SS-Relative
         elseif ($$Attributes eq (OAT_NO_ERROR or OAT_REGISTER))   ;;Register
@@ -1277,6 +1279,7 @@ DbgWriteF macro Color:=<DbgColorForeground>, Dest, Format, Args:vararg
 
     $$sz1 textequ GetMemBSS(1024*sizeof(CHR))           ;;Get a buffer to write the string
     mov xbx, offset $$sz1
+    
     %WriteF xbx, Format, $$sz2
     invoke DbgOutText, offset $$sz1, Color, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     DbgShowSrcInfo ??DbgDstWnd

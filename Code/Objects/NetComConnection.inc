@@ -24,7 +24,7 @@ if IMPLEMENT
 
 Method NetComConnection.QueueClose
   SetObject xcx
-  DbgHex xcx, "NetComConnection.QueueClose"
+;  DbgHex xcx, "NetComConnection.QueueClose"
   xBitSet [xcx].dFlags, NCC_CLOSE_MARKED
 MethodEnd
 
@@ -36,7 +36,7 @@ MethodEnd
 
 Method NetComConnection.Disconnect, uses xsi, dType:DWORD
   SetObject xsi
-  DbgHex xsi, "NetComConnection.Disconnect"
+;  DbgHex xsi, "NetComConnection.Disconnect"
   .ifBitClr [xsi].dFlags, NCC_DISCONNECTED_LOCAL or NCC_CLOSED
     OCall [xsi].pProtocol::NetComProtocol.OnDisconnect, xsi
     .ifBitClr [xsi].dFlags, NCC_DISCONNECTED_REMOTE
@@ -56,7 +56,7 @@ MethodEnd
 
 Method NetComConnection.Done, uses xsi
   SetObject xsi
-  DbgHex xsi, "NetComConnection.Done"
+;  DbgHex xsi, "NetComConnection.Done"
   OCall [xsi].pProtocol::NetComProtocol.OnClose, xsi    ;Inform protocol object
   .if [xsi].hSocket != INVALID_SOCKET
     OCall xsi.OnClose
@@ -110,7 +110,7 @@ MethodEnd
 Method NetComConnection.DoWrite, uses xbx xsi, pIOSockJob:PIO_SOCKJOB
   local dLen:DWORD
 
-  ;DbgText "NetComConnection.DoWrite"
+;  DbgText "NetComConnection.DoWrite"
   SetObject xsi
   mov xbx, pIOSockJob
   mov dLen, sizeof NETCOMADDR
@@ -139,7 +139,7 @@ Method NetComConnection.FreeIOJobs, uses xbx xdi xsi
   local pItem:POINTER
 
   SetObject xsi
-  DbgHex xsi, "NetComConnection.FreeIOJobs"
+;  DbgHex xsi, "NetComConnection.FreeIOJobs"
 
   ;Iterate the RcvIOChain Linked List in reverse order.
   ;Since the socket is closed, no new IOSockJobs are queued
@@ -299,7 +299,7 @@ Method NetComConnection.OnClose, uses xsi
   local MyLinger:linger
 
   SetObject xsi
-  DbgHex xsi, "NetComConnection.OnClose"
+;  DbgHex xsi, "NetComConnection.OnClose"
   .ifBitClr [xsi].dFlags, NCC_CLOSED
     .if [xsi].hSocket != INVALID_SOCKET
       ;Perform an "abortive close" of the socket, just in case.
@@ -348,23 +348,23 @@ DbgOnError macro WarningText:req, Error:req, InfoText, Dest
   if DEBUGGING
     DbgSaveContext FALSE, Error
     DbgSetDestWnd Dest
-    invoke DbgOutCmd, DBG_CMD_SINGLE_LINE, 0, 0, ??DbgDstWnd
-    invoke DbgOutTextA, $OfsCStrA($Esc(<WarningText>)), DbgColorWarning, DbgColorBackground, DBG_EFFECT_NORMAL, \
-                        ??DbgDstWnd
+    invoke DbgOutCmd, DBG_CMD_SINGLE_LINE, DbgColorLine, DbgColorBackground, ??DbgDstWnd
+    invoke DbgOutTextA, $OfsCStrA($Esc(<WarningText>)), DbgColorWarning, DbgColorBackground, \
+                        DBG_EFFECT_NORMAL, ??DbgDstWnd
     $$Buffersize = 1024
     sub xsp, $$Buffersize                               ;;Reserve a buffer on the stack.
     if TARGET_BITNESS eq 32
       mov edi, esp                                      ;;Get a pointer to the buffer
     else
-      lea rdi, [rsp + 20h]                              ;;Get a POINTER to the output buffer
+      lea rdi, [rsp + 28h]                              ;;Get a POINTER to the output buffer
     endif
     invoke wsprintfA, xdi, $OfsCStrA(" - WSA error code: %lit"), ebx
     invoke DbgOutTextA, xdi, DbgColorWarning, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
-    invoke NetErr2Str, ebx, xdi, $$Buffersize - 20h     ;Get the error message
-    add xsp, 1024                                       ;Retrieve the string room
+    invoke NetErr2Str, ebx, xdi, $$Buffersize - 28h     ;;Get the error message
+    add xsp, 1024                                       ;;Retrieve the string space
     DbgShowTxtInfo InfoText, ??DbgDstWnd
     DbgShowSrcInfo ??DbgDstWnd
-    invoke DbgOutCmd, DBG_CMD_SINGLE_LINE, 0, 0, ??DbgDstWnd
+    invoke DbgOutCmd, DBG_CMD_SINGLE_LINE, DbgColorLine, DbgColorBackground, ??DbgDstWnd
     DbgLoadContext
   endif
 endm
@@ -387,7 +387,7 @@ Method NetComConnection.OnError, uses xbx xdi xsi, pIOSockJob:PIO_SOCKJOB, dErro
       OCall xsi.ErrorSet, dError
       OCall [xsi].pProtocol::NetComProtocol.OnError, xsi, xbx, dError
       mov dProtocolCommand, eax
-      ;Frreing of this IOJob must be done before QueueFree 
+      ;Freeing of this IOJob must be done before QueueFree 
       OCall [xdi].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOSockJobPool.FreeItem, xbx
       .if dProtocolCommand == PROT_CMD_REJECT_CONNECTION
         OCall xsi.Disconnect, SD_SEND
@@ -475,7 +475,7 @@ MethodEnd
 
 Method NetComConnection.OnFree, uses xsi
   SetObject xsi
-  DbgHex xsi, "NetComConnection.OnFree"
+;  DbgHex xsi, "NetComConnection.OnFree"
   OCall xsi.Done
   xBitSet [xsi].dFlags, NCC_FREED
 MethodEnd
@@ -492,7 +492,7 @@ Method NetComConnection.OnRead, uses xbx xdi xsi, pIOSockJob:PIO_SOCKJOB
   SetObject xsi
 ;  DbgHex xsi, "NetComConnection.OnRead"
   ?mov xdx, pIOSockJob
-
+  
   lock inc [xsi].dCompletedIOJobs
   lock dec [xsi].dPendingIOJobs
   xBitSet [xdx].IO_SOCKJOB.wFlags, IOF_JOB_ENGAGED
@@ -536,6 +536,7 @@ Method NetComConnection.OnRead, uses xbx xdi xsi, pIOSockJob:PIO_SOCKJOB
         lea xdi, [xsi].RcvIOChain                       ;Sentinel
         mov xbx, [xdi].SDLL_SENTINEL.pFirstItem         ;Get first item
         .while xbx != xdi && dConsumed != 0
+;          DbgStr [xbx - IO_HEADER_SIZE].IO_SOCKJOB.WSABuf.buf
           mov edx, [xbx - IO_HEADER_SIZE].IO_SOCKJOB.dBytesConsumed
           .if edx <= dConsumed
             sub dConsumed, edx

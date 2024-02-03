@@ -17,13 +17,13 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 
 // Icons ------------------------------------------------------------------------------------------
-ICON_APP        ICON DISCARDABLE "ICO\OA.ico"
-RED_DOT_SM_LR   ICON DISCARDABLE "Res\RedDotSmLR_16x16_32.ico"
-GREEN_DOT_SM_LR ICON DISCARDABLE "Res\GreenDotSmLR_16x16_32.ico"
-RED_DOT         ICON DISCARDABLE "Res\RedDot_16x16_32.ico"
-GREEN_DOT       ICON DISCARDABLE "Res\GreenDot_16x16_32.ico"
-YELLOW_DOT      ICON DISCARDABLE "Res\YellowDot_16x16_32.ico"
-BLUE_DOT        ICON DISCARDABLE "Res\BlueDot_16x16_32.ico"
+ICON_APP              ICON DISCARDABLE "ICO\OA.ico"           ;1st in alpha order  
+ICON_RED_DOT_SM_LR    ICON DISCARDABLE "Res\RedDotSmLR_16x16_32.ico"
+ICON_GREEN_DOT_SM_LR  ICON DISCARDABLE "Res\GreenDotSmLR_16x16_32.ico"
+ICON_RED_DOT          ICON DISCARDABLE "Res\RedDot_16x16_32.ico"
+ICON_GREEN_DOT        ICON DISCARDABLE "Res\GreenDot_16x16_32.ico"
+ICON_YELLOW_DOT       ICON DISCARDABLE "Res\YellowDot_16x16_32.ico"
+ICON_BLUE_DOT         ICON DISCARDABLE "Res\BlueDot_16x16_32.ico"
 
 
 // Bitmaps ----------------------------------------------------------------------------------------

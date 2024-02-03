@@ -136,7 +136,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=5
+MilestoneOnDateDate=20
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -172,16 +172,16 @@ ProductVer4Range=0
 
 [Size]
 2=0,0,0,0,3197
-1=0,0,0,0,3229
+1=0,0,0,0,2583
 6=0,0,1456,414,59484
-4=0,0,0,0,1101
+4=0,0,0,0,892
 31=0,0,1213,691,1416
 8=0,0,777,591,20469
 7=0,0,0,0,151
 9=0,0,0,0,27532
 10=0,0,0,0,8243
 5=0,0,0,0,110994
-3=0,0,0,0,126
+3=0,0,0,0,451
 11=0,0,1783,588,791
 15=0,0,0,0,5891
 14=0,0,0,0,814
@@ -217,16 +217,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="ST"
-2="WriteF"
-3="c43dc798-95d1-4bea-9030-bb99e2983a1a"
-4="ITaskbarList4"
-5="ITaskbarList"
-6="TaskbarList"
-7="IID_ITaskbarList"
-8="sIID_ITaskbarList"
-9="COMPath"
-10="szAppClassName"
+1="BLUE_DOT"
+2="YELLOW_DOT"
+3="GREEN_DOT"
+4="RED_DOT"
+5="RED_DOT_SM_LR"
+6="GREEN_DOT_SM_LR"
+7="_ICON_APP_"
+8="ST"
+9="WriteF"
+10="c43dc798-95d1-4bea-9030-bb99e2983a1a"
 [Collapse]
 1=
 2=
@@ -339,9 +339,9 @@ ProductVer4Range=0
 25=
 27=,,,,,,,,,,,,
 [AutoLoad]
-AutoLoad=1,4
+AutoLoad=1,3,4
 [PTimer]
-PTimer=968523448
+PTimer=970090433
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

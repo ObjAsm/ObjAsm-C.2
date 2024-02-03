@@ -577,8 +577,7 @@ MethodEnd
 ; Method:     Json.GetProperty
 ; Purpose:    Find the JSON_PROPERTY with a specific name.
 ; Arguments:  Arg1: -> Parent JSON_PROPERTY.
-;             Arg2: Property type [JSON_TYPE_STRING, JSON_TYPE_NUMBER, JSON_TYPE_BOOLEAN].
-;             Arg3: -> String representation of the value.
+;             Arg2: -> String representation of the value.
 ; Return:     xax -> JSON_PROPERTY or NULL if not found.
 
 Method Json.GetProperty, uses xbx, pParent:PJSON_PROPERTY, pName:PSTRING

@@ -132,7 +132,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=28
+MilestoneOnDateDate=21
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -167,16 +167,16 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,4053
-1=0,0,1959,628,2335
+2=0,0,0,0,325
+1=0,0,1959,628,1230
 6=0,0,0,0,95879
 4=0,0,0,0,236
 31=0,0,1213,691,1416
 8=0,0,460,538,4080
 5=0,0,0,0,7508
-9=0,0,458,581,10017
-7=0,0,458,581,13993
-14=0,0,755,592,23725
+9=0,0,458,581,2721
+7=0,0,458,581,12379
+14=0,0,755,592,20032
 13=0,0,458,581,30459
 12=0,0,0,0,1054
 11=0,0,0,0,2941
@@ -191,8 +191,8 @@ ProductVer4Range=0
 21=
 23=0,0,0,0,3070
 24=0,0,1834,628,1347
-26=0,0,0,0,60791
-25=0,0,0,0,5258
+26=0,0,0,0,48382
+25=0,0,0,0,12624
 27=0,0,0,0,4555
 28=0,0,0,0,1514
 22=
@@ -212,16 +212,16 @@ ProductVer4Range=0
 [BreakPoint]
 0=
 [Find]
-1="DbgSockError"
-2="Dbg"
-3="gethostbyname"
-4="#Work"
-5="DbgHex"
-6="RcvIOChain"
-7="&PROTOCOL_WND_NAME"
-8="25773"
-9="NETCOMADDR"
-10="LocalHostAddr"
+1="pServiceName"
+2="GetAddrInfo"
+3="pResult"
+4="bind"
+5="inet_addr"
+6="XWCollection"
+7="mov Hints.ai_flags, 0"
+8="OnInitDialog"
+9="dWorkerCount"
+10="NETCOMADDR"
 [Collapse]
 13=544,16,
 2=
@@ -251,7 +251,7 @@ ProductVer4Range=0
 27=,
 28=
 [AutoLoad]
-AutoLoad=1,2,7,14
+AutoLoad=1,2,7,14,25,26,9
 [RADebugBP]
 1=
 18=
@@ -275,6 +275,6 @@ AutoLoad=1,2,7,14
 25=
 20=
 [PTimer]
-PTimer=820930999
+PTimer=849310186
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0

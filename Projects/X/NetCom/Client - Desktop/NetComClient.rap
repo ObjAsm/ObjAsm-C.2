@@ -148,7 +148,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=5
+MilestoneOnDateDate=22
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -183,7 +183,7 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,1374
+2=0,0,0,0,5967
 1=0,0,0,0,791
 6=0,0,0,0,90797
 4=0,0,0,0,667
@@ -203,7 +203,7 @@ ProductVer4Range=0
 18=0,0,0,0
 10=0,0,0,0,17373
 19=0,0,0,0,10077
-20=0,0,0,0,5232
+20=0,0,0,0,601
 23=0,0,0,0,492
 22=0,0,0,0,1849
 26=0,0,834,619,7519
@@ -219,16 +219,16 @@ ProductVer4Range=0
 36=0,0,0,0,1301
 30=0,0,0,0,0
 [Find]
-1="OnTimer"
-2="printf"
-3="NCC_DISCONNECTED_LOCAL"
-4="NCC_DISCONNECTED_LOCAL or NCC_DISCONNECTED_REMOTE"
-5="CaptureDesktopImage"
-6="SendDlg.CtlsGet"
-7="NetComClientProtocol.Init"
-8="%li"
-9="OCall $ObjTmpl(NetComClientProtocol)::NetComClientProtocol.Init, xsi, $NetworkPort(25773)"
-10="ConnectTo"
+1="25773"
+2="OnTimer"
+3="printf"
+4="NCC_DISCONNECTED_LOCAL"
+5="NCC_DISCONNECTED_LOCAL or NCC_DISCONNECTED_REMOTE"
+6="CaptureDesktopImage"
+7="SendDlg.CtlsGet"
+8="NetComClientProtocol.Init"
+9="%li"
+10="OCall $ObjTmpl(NetComClientProtocol)::NetComClientProtocol.Init, xsi, $NetworkPort(25773)"
 [Collapse]
 17=,
 14=,
@@ -247,7 +247,7 @@ ProductVer4Range=0
 11=,,
 15=,,
 5=
-10=,,
+10=,,,
 23=
 22=,
 16=
@@ -280,7 +280,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=1,2,20,3,9,10
 [PTimer]
-PTimer=650170308
+PTimer=651396402
 [GroupExpand]
 GroupExpand=1,1,1,1,0,0,1,1,0
 [RADebugBP]

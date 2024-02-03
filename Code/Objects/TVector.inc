@@ -1,27 +1,47 @@
 ; ==================================================================================================
 ; Title:      TVector.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
+; Version:    C.1.2
 ; Purpose:    ObjAsm support of TVector object templates.
 ; Notes:      Version C.1.0, September 2021
 ;               - First release.
 ;             Version C.1.1, October 2023
 ;               - .VecForEach, .VecForEachRev and .VecNext macros added.
+;             Version C.1.2, January 2024
+;               - InsertAt bug detected by HSE corrected.
+;               - TVector extended to support .VecForEach(Rev) of dif. element sizes simultaneously.
+;               - Automatic symbol definitions for ItemType, PVecProc & MaxCapacity.
 ; ==================================================================================================
 
 
-% PVecProc typedef proto :TVEC_DATA_TYPE, :XWORD, :XWORD
-
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Object:     TVector
-; Purpose:    TVector is a template for a BYTE, WORD, DWORD or QWORD data item container.
-;             The data size is defined at compile time using e.g. TVEC_DATA_TYPE typedef DWORD.
-;             This implementation does support all Collection like features but not xItem
-;             serialization and destruction, since they are not needed for data items.
-; Note:       A QWORD Vector is only supported if TARGET_BITNESS eq 64.
+; Purpose:    TVector is an object template for a BYTE, WORD, DWORD, QWORD, REAL4 or REAL8 data
+;             item container.
+;             The data size is defined at compile time using e.g. TVEC_ITEM_TYPE textequ <DWORD>
+;             This implementation supports all collection-like features, but not Item serialisation
+;             and destruction, as these are not needed for data items.
+; Note:       QWORD and REAL8 Vectors are only supported if TARGET_BITNESS is equal to 64.
+;             Vector metadata is computed at compiletime and stored in the following symbols:
+;               Item Type: <NameSpace>_<ObjName>_ItemType
+;               Capacity: <NameSpace>_<ObjName>_MaxCapacity
+;               Callback proto: <NameSpace>_<ObjName>__PVecProc
+;
+; Example:    TVEC_ITEM_TYPE textequ <POINTER>
+;             TVectorName textequ <PtrVec>
+;             TVectorID = 120
+;             % include &ObjPath&TVector.inc
+;             ...
+;             New PtrVec
+;             OCall xax::PtrVec.Init, NULL, 10, 10, OA_PtrVec_MaxCapacity
 
 %Object TVectorName, TVectorID, Streamable
-  VirtualMethod     Delete,         TVEC_DATA_TYPE        ;xItem
+
+% &??ObjName&_ItemType  textequ <TVEC_ITEM_TYPE>
+% &??ObjName&_PVecProc  typedef proto :TVEC_ITEM_TYPE, :XWORD, :XWORD
+% &??ObjName&_MaxCapacity equ   0FFFFFFFFh/sizeof(TVEC_ITEM_TYPE)
+
+  VirtualMethod     Delete,         TVEC_ITEM_TYPE        ;xItem
   VirtualMethod     DeleteAt,       DWORD                 ;Index in range [0..Count-1]
   VirtualMethod     DeleteAll
   RedefineMethod    Done
@@ -29,15 +49,15 @@
   VirtualMethod     FirstThatNot,   POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
   VirtualMethod     ForEach,        POINTER, XWORD, XWORD ;-> Proc, 2 x Parameter
   VirtualMethod     ForEachRev,     POINTER, XWORD, XWORD ;-> Proc, 2 x Parameter, reverse order
-  VirtualMethod     IndexOf,        TVEC_DATA_TYPE        ;xItem
+  VirtualMethod     IndexOf,        TVEC_ITEM_TYPE        ;xItem
   RedefineMethod    Init,           POINTER, DWORD, DWORD, DWORD ;-> Owner, Count, Delta, Max Capa.
-  VirtualMethod     Insert,         TVEC_DATA_TYPE        ;xItem
-  VirtualMethod     InsertAt,       DWORD, TVEC_DATA_TYPE ;Index, xItem
+  VirtualMethod     Insert,         TVEC_ITEM_TYPE        ;xItem
+  VirtualMethod     InsertAt,       DWORD, TVEC_ITEM_TYPE ;Index, xItem
   VirtualMethod     ItemAt,         DWORD                 ;Index in range [0..Count-1]
   VirtualMethod     LastThat,       POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
   VirtualMethod     LastThatNot,    POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
   RedefineMethod    Load,           $ObjPtr(Stream), PDESER_INFO
-  VirtualMethod     PutAt,          DWORD, TVEC_DATA_TYPE ;Index, xItem
+  VirtualMethod     PutAt,          DWORD, TVEC_ITEM_TYPE ;Index, xItem
   RedefineMethod    Store,          $ObjPtr(Stream)       ;-> Stream
   Private
   VirtualMethod     SetLimit,       DWORD                 ;Set new limit (private method)
@@ -59,49 +79,153 @@ ObjectEnd
 ; Macro:      .VecForEach
 ; Purpose:    Loop through all items of the TVector.
 ; Arguments:  Arg1: TVector.
-;             Arg2: Optional 32 bit index variable/register. Can not be eax!
+;             Arg2: Optional 32 bit index variable/register. It can not be eax!
 ; Return:     Nothing.
 ; Note:       On each loop xax -> TVector item.
 ; Example:    .VecForEach MyVector
-;               DbgDec TVEC_DATA_TYPE ptr [xax]
+;               DbgDec TVEC_ITEM_TYPE ptr [xax]
 ;             .VecNext
 
-.VecForEach macro TVec:req, Index
+.VecForEach macro Expression:req, Index
   ??VecForEach_ID = ??VecForEach_ID + 1
   ifb <Index>
-    @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID) textequ GetMemBSS(4)
+    @CatStr(<??VecForEach_Index_>, %??VecForEach_ID) textequ GetMemBSS(4)
   else
-    @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID) textequ <Index>
+    @CatStr(<??VecForEach_Index_>, %??VecForEach_ID) textequ <Index>
   endif
-  @CatStr(<??VecForEach_Step_>, %??VecForEach_ID) equ +1 
-  xor eax, eax
-  mov @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID), eax
-  .while eax != TVec.$Obj(%TVectorName).dCount
-    lea xax, [sizeof(TVEC_DATA_TYPE)*xax]
-    add xax, TVec.$Obj(%TVectorName).pItems
-endm
+  @CatStr(<??VecForEach_Step_>, %??VecForEach_ID) equ +1
+
+  PreParseExpr Expression
+
+  ;;Get ??MtdExpr
+  if ??Pos3 ne 0
+    @Err <.VecForEach Error: method Expression not allowed>
+    exitm
+  endif
+
+  ;;Get ??ObjExpr
+  if ??Pos1 ne 0
+    if ??Pos2 ne 0
+      ??ObjExpr CatStr @SubStr(<Expression>, ??Pos1 + 2, ??Pos2 - ??Pos1 - 2), \
+                       ??ObjPfxSep, \
+                       @SubStr(<Expression>, ??Pos2 + 1)
+    else
+      ??ObjExpr CatStr ??ObjPfx, @SubStr(<Expression>, ??Pos1 + 2)
+    endif
+  else
+    if ??Pos2 ne 0
+      ??ObjExpr CatStr @SubStr(<Expression>, 1, ??Pos2 - 1), \
+                       ??ObjPfxSep, \
+                       @SubStr(<Expression>, ??Pos2 + 1)
+    else
+      ??ObjExpr CatStr ??ObjPfx, <Expression>
+    endif
+  endif
+
+  ;;Get ??InsExpr
+  if ??Pos1 ne 0
+    ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
+  endif
+
+  %ifdef ??ObjExpr
+    if @CatStr(%??ObjExpr, <_Error>) eq ??OBJERR_NONE
+
+      if (opattr Index) and OAT_REGISTER
+        if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0
+          .err <.VecForEach Error: invalid index register>
+        endif
+        xor Index, Index
+        .while Index != ??InsExpr.??ObjExpr.dCount
+%         lea xax, [Index*sizeof(&??ObjExpr&_ItemType)]
+          add xax, ??InsExpr.??ObjExpr.pItems
+      else
+        xor eax, eax
+        mov @CatStr(<??VecForEach_Index_>, %??VecForEach_ID), eax
+        .while eax != ??InsExpr.??ObjExpr.dCount
+%         lea xax, [xax*sizeof(&??ObjExpr&_ItemType)]
+          add xax, ??InsExpr.??ObjExpr.pItems
+      endif
+    endif
+
+  else
+    @Err <.VecForEach Error: undefined object Expression>
+  endif
+endm                                                    ;;xax -> allocated object instance
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      .VecForEachRev
 ; Purpose:    Loop through all items of the TVector in reverse order.
 ; Arguments:  Arg1: TVector.
-;             Arg2: Optional 32 bit index variable/register. Can not be eax!
+;             Arg2: Optional 32 bit index variable/register. It can not be eax!
 ; Return:     Nothing.
 ; Note:       On each loop xax -> TVector item.
 
-.VecForEachRev macro TVec:req, Index
+.VecForEachRev macro Expression:req, Index
   ??VecForEach_ID = ??VecForEach_ID + 1
   ifb <Index>
-    @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID) textequ GetMemBSS(4)
+    @CatStr(<??VecForEach_Index_>, %??VecForEach_ID) textequ GetMemBSS(4)
   else
-    @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID) textequ <Index>
+    @CatStr(<??VecForEach_Index_>, %??VecForEach_ID) textequ <Index>
   endif
-  @CatStr(<??VecForEach_Step_>, %??VecForEach_ID) equ -1 
-  mov eax, TVec.$Obj(%TVectorName).dCount
-  mov @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID), eax
-  .while eax != 0
-    lea xax, [sizeof(TVEC_DATA_TYPE)*xax - sizeof(TVEC_DATA_TYPE)]
-    add xax, TVec.$Obj(%TVectorName).pItems
+  @CatStr(<??VecForEach_Step_>, %??VecForEach_ID) equ -1
+
+  PreParseExpr Expression
+
+  ;;Get ??MtdExpr
+  if ??Pos3 ne 0
+    @Err <.VecForEachRev Error: method Expression not allowed>
+    exitm
+  endif
+
+  ;;Get ??ObjExpr
+  if ??Pos1 ne 0
+    if ??Pos2 ne 0
+      ??ObjExpr CatStr @SubStr(<Expression>, ??Pos1 + 2, ??Pos2 - ??Pos1 - 2), \
+                       ??ObjPfxSep, \
+                       @SubStr(<Expression>, ??Pos2 + 1)
+    else
+      ??ObjExpr CatStr ??ObjPfx, @SubStr(<Expression>, ??Pos1 + 2)
+    endif
+  else
+    if ??Pos2 ne 0
+      ??ObjExpr CatStr @SubStr(<Expression>, 1, ??Pos2 - 1), \
+                       ??ObjPfxSep, \
+                       @SubStr(<Expression>, ??Pos2 + 1)
+    else
+      ??ObjExpr CatStr ??ObjPfx, <Expression>
+    endif
+  endif
+
+  ;;Get ??InsExpr
+  if ??Pos1 ne 0
+    ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
+  endif
+
+  %ifdef ??ObjExpr
+    if @CatStr(%??ObjExpr, <_Error>) eq ??OBJERR_NONE
+
+      if (opattr Index) and OAT_REGISTER
+        if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0
+          .err <.VecForEachRev: invalid index register>
+        endif
+        mov Index, ??InsExpr.??ObjExpr.dCount
+        dec Index
+        .while !SIGN?
+%         lea xax, [Index*sizeof(&??ObjExpr&_ItemType)]
+          add xax, ??InsExpr.??ObjExpr.pItems
+      else
+        mov eax, ??InsExpr.??ObjExpr.dCount
+        dec eax
+        mov @CatStr(<??VecForEach_Index_>, %??VecForEach_ID), eax
+        .while !SIGN?
+%         lea xax, [xax*sizeof(&??ObjExpr&_ItemType)]
+          add xax, ??InsExpr.??ObjExpr.pItems
+      endif
+    endif
+
+  else
+    @Err <.VecForEachRev Error: undefined object Expression>
+  endif
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -112,11 +236,13 @@ endm
 
 .VecNext macro
     if @CatStr(<??VecForEach_Step_>, %??VecForEach_ID) eq +1
-      inc @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID)
+      inc @CatStr(<??VecForEach_Index_>, %??VecForEach_ID)
     else
-      dec @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID)
+      dec @CatStr(<??VecForEach_Index_>, %??VecForEach_ID)
     endif
-    mov eax, @CatStr(<??VecForEach_Counter_>, %??VecForEach_ID)
+    if not (opattr @CatStr(<??VecForEach_Index_>, %??VecForEach_ID)) and OAT_REGISTER
+      mov eax, @CatStr(<??VecForEach_Index_>, %??VecForEach_ID)
+    endif
   .endw
   ??VecForEach_ID = ??VecForEach_ID - 1
 endm
@@ -132,8 +258,8 @@ if IMPLEMENT
 ; Arguments:  Arg1: xItem.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-%Method TVectorName.Delete, uses xsi, xItem:TVEC_DATA_TYPE
-  ArgReg xItem:$SubReg(rdx, type(TVEC_DATA_TYPE))
+%Method TVectorName.Delete, uses xsi, xItem:TVEC_ITEM_TYPE
+  ArgReg xItem:$SubReg(rdx, type(TVEC_ITEM_TYPE))
 
   SetObject xsi
   OCall xsi.IndexOf, $ArgReg(xItem)
@@ -158,14 +284,14 @@ MethodEnd
     sub ecx, eax
     .if !ZERO?
       mov xsi, [xdi].pItems
-      lea xdi, [xsi + sizeof(TVEC_DATA_TYPE)*xax]
-      shl ecx, $Log2(sizeof(TVEC_DATA_TYPE))            ;ecx = byte count
-      lea xsi, [xdi + sizeof(TVEC_DATA_TYPE)]
+      lea xdi, [xsi + sizeof(TVEC_ITEM_TYPE)*xax]
+      shl ecx, $Log2(sizeof(TVEC_ITEM_TYPE))            ;ecx = byte count
+      lea xsi, [xdi + sizeof(TVEC_ITEM_TYPE)]
       mov eax, ecx
       if TARGET_BITNESS eq 64
         shr ecx, $Log2(sizeof(QWORD))
         rep movsq
-        if type(TVEC_DATA_TYPE) lt type(QWORD)
+        if type(TVEC_ITEM_TYPE) lt type(QWORD)
           test eax, BIT02
           jz @F
           movsd
@@ -175,12 +301,12 @@ MethodEnd
         rep movsd
       endif
 
-      if type(TVEC_DATA_TYPE) lt type(DWORD)
+      if type(TVEC_ITEM_TYPE) lt type(DWORD)
       @@:
         test eax, BIT01
         jz @F
         movsw
-        if type(TVEC_DATA_TYPE) lt type(WORD)
+        if type(TVEC_ITEM_TYPE) lt type(WORD)
         @@:
           test eax, BIT00
           jz @F
@@ -240,10 +366,10 @@ MethodEnd
   ReleaseObject
   test ebx, ebx
   .while !ZERO?
-%   invoke PVecProc ptr xdi, TVEC_DATA_TYPE ptr [xsi], xArg1, xArg2
+%   invoke &??ObjName&_PVecProc ptr xdi, TVEC_ITEM_TYPE ptr [xsi], xArg1, xArg2
     test xax, xax                                       ;Check return value for FALSE
     jnz @F
-    add xsi, sizeof(TVEC_DATA_TYPE)                     ;xsi -> Next xItem in the Vector
+    add xsi, sizeof(TVEC_ITEM_TYPE)                     ;xsi -> Next xItem in the Vector
     dec ebx
   .endw
   xor eax, eax                                          ;In case that dCount = 0
@@ -269,10 +395,10 @@ MethodEnd
   ReleaseObject
   test ebx, ebx
   .while !ZERO?
-%   invoke PVecProc ptr xdi, TVEC_DATA_TYPE ptr [xsi], xArg1, xArg2
+%   invoke &??ObjName&_PVecProc ptr xdi, TVEC_ITEM_TYPE ptr [xsi], xArg1, xArg2
     test xax, xax                                       ;Check return value for FALSE
     jz @F
-    add xsi, sizeof(TVEC_DATA_TYPE)                     ;xsi -> Next xItem in the Vector
+    add xsi, sizeof(TVEC_ITEM_TYPE)                     ;xsi -> Next xItem in the Vector
     dec ebx
   .endw
   xor eax, eax                                          ;In case that dCount = 0
@@ -299,8 +425,8 @@ MethodEnd
   ReleaseObject
   test ebx, ebx
   .while !ZERO?
-%   invoke PVecProc ptr xdi, TVEC_DATA_TYPE ptr [xsi], xArg1, xArg2
-    add xsi, sizeof(TVEC_DATA_TYPE)                     ;xsi -> Next xItem in the Vector
+%   invoke &??ObjName&_PVecProc ptr xdi, TVEC_ITEM_TYPE ptr [xsi], xArg1, xArg2
+    add xsi, sizeof(TVEC_ITEM_TYPE)                     ;xsi -> Next xItem in the Vector
     dec ebx
   .endw
 MethodEnd
@@ -320,12 +446,12 @@ MethodEnd
   mov xdi, $ArgReg(pActionProc)
   mov xax, [xcx].pItems
   mov ebx, [xcx].dCount
-  lea xsi, [xax + sizeof(TVEC_DATA_TYPE)*xbx - sizeof(TVEC_DATA_TYPE)]  ;xsi -> Last xItem in the Vector
+  lea xsi, [xax + sizeof(TVEC_ITEM_TYPE)*xbx - sizeof(TVEC_ITEM_TYPE)]  ;xsi -> Last xItem in the Vector
   ReleaseObject
   test ebx, ebx
   .while !ZERO?
-%   invoke PVecProc ptr xdi, TVEC_DATA_TYPE ptr [xsi], xArg1, xArg2
-    sub xsi, sizeof(TVEC_DATA_TYPE)                            ;xsi -> Next xItem in the Vector
+%   invoke &??ObjName&_PVecProc ptr xdi, TVEC_ITEM_TYPE ptr [xsi], xArg1, xArg2
+    sub xsi, sizeof(TVEC_ITEM_TYPE)                            ;xsi -> Next xItem in the Vector
     dec ebx
   .endw
 MethodEnd
@@ -336,22 +462,22 @@ MethodEnd
 ; Arguments:  Arg1: xItem.
 ; Return:     eax = Index. If the xItem wasn't found, the return value is -1!
 
-%Method TVectorName.IndexOf, uses xdi, xItem:TVEC_DATA_TYPE
+%Method TVectorName.IndexOf, uses xdi, xItem:TVEC_ITEM_TYPE
   SetObject xdx
   mov ecx, [xdx].dCount
   jecxz @F
   mov xdi, [xdx].pItems
-  mov $SubReg(xax, type(TVEC_DATA_TYPE)), xItem
-  if type(TVEC_DATA_TYPE) eq 1
+  mov $SubReg(xax, type(TVEC_ITEM_TYPE)), xItem
+  if type(TVEC_ITEM_TYPE) eq 1
     repne scasb
-  elseif type(TVEC_DATA_TYPE) eq 2
+  elseif type(TVEC_ITEM_TYPE) eq 2
     repne scasw
-  elseif type(TVEC_DATA_TYPE) eq 4
+  elseif type(TVEC_ITEM_TYPE) eq 4
     repne scasd
-  elseif type(TVEC_DATA_TYPE) eq 8
+  elseif type(TVEC_ITEM_TYPE) eq 8
     repne scasq
   else
-    echo TVEC_DATA_TYPE not supported
+    echo TVEC_ITEM_TYPE not supported
   endif
   jne @F
   mov eax, [xdx].dCount
@@ -387,7 +513,7 @@ MethodEnd
   .if eax != dMaxCapacity
     mov edx, dMaxCapacity
   .else
-    mov edx, 0FFFFFFFFh/sizeof(TVEC_DATA_TYPE)
+    mov edx, 0FFFFFFFFh/sizeof(TVEC_ITEM_TYPE)
   .endif
   mov [xsi].dMaxCapacity, edx
   mov eax, dLimit
@@ -407,7 +533,7 @@ MethodEnd
 ; Arguments:  Arg1: New xItem.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-%Method TVectorName.Insert, uses xsi, xItem:TVEC_DATA_TYPE
+%Method TVectorName.Insert, uses xsi, xItem:TVEC_ITEM_TYPE
   SetObject xsi
   mov edx, [xsi].dCount
   .if edx == [xsi].dLimit
@@ -422,7 +548,7 @@ MethodEnd
   .endif
   inc [xsi].dCount
   mov xcx, [xsi].pItems
-  mrm [xcx + sizeof(TVEC_DATA_TYPE)*xdx], xItem, xax
+  mrm [xcx + sizeof(TVEC_ITEM_TYPE)*xdx], xItem, xax
   mov eax, TRUE
   ret
 @@:
@@ -437,9 +563,7 @@ MethodEnd
 ;             Arg2: New xItem.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-%Method TVectorName.InsertAt, uses xdi xsi, dIndex:DWORD, xItem:TVEC_DATA_TYPE
-  ArgReg xItem:$SubReg(r8, type(TVEC_DATA_TYPE))
-
+%Method TVectorName.InsertAt, uses xdi xsi, dIndex:DWORD, xItem:TVEC_ITEM_TYPE
   SetObject xdi
   mov ecx, [xdi].dCount
   .if ecx == [xdi].dLimit
@@ -456,12 +580,12 @@ MethodEnd
   .if eax <= ecx
     inc [xdi].dCount
     sub ecx, eax                                        ;ecx = # of xItems to move
+    mov xsi, [xdi].pItems
+    lea xdx, [xsi + xax*sizeof(TVEC_ITEM_TYPE)]
     .if !ZERO?                                          ;Make room for new xItem
       std
-      mov xsi, [xdi].pItems
-      lea xdx, [xsi + xax*sizeof(TVEC_DATA_TYPE)]
-      if type(TVEC_DATA_TYPE) gt type(BYTE)
-        lea xax, [xcx*sizeof(TVEC_DATA_TYPE)]             ;xax = BYTE count
+      if type(TVEC_ITEM_TYPE) gt type(BYTE)
+        lea xax, [xcx*sizeof(TVEC_ITEM_TYPE)]           ;xax = BYTE count
         mov xcx, xax
       else
         mov xax, xcx
@@ -470,9 +594,9 @@ MethodEnd
       if TARGET_BITNESS eq 64
         lea xsi, [xdx + xax - sizeof(QWORD)]
         shr ecx, $Log2(sizeof(QWORD))
-        lea xdi, [xsi + sizeof(TVEC_DATA_TYPE)]
+        lea xdi, [xsi + sizeof(TVEC_ITEM_TYPE)]
         rep movsq
-        if type(TVEC_DATA_TYPE) lt type(QWORD)
+        if type(TVEC_ITEM_TYPE) lt type(QWORD)
           add xdi, sizeof(DWORD)
           add xsi, sizeof(DWORD)
           .ifBitSet eax, BIT02
@@ -482,16 +606,16 @@ MethodEnd
       else
         lea xsi, [xdx + xax - sizeof(DWORD)]
         shr ecx, $Log2(sizeof(DWORD))
-        lea xdi, [xsi + sizeof(TVEC_DATA_TYPE)]
+        lea xdi, [xsi + sizeof(TVEC_ITEM_TYPE)]
         rep movsd
       endif
-      if type(TVEC_DATA_TYPE) lt type(DWORD)
+      if type(TVEC_ITEM_TYPE) lt type(DWORD)
         add xdi, sizeof(WORD)
         add xsi, sizeof(WORD)
         .ifBitSet eax, BIT01
           movsw
         .endif
-        if type(TVEC_DATA_TYPE) lt type(WORD)
+        if type(TVEC_ITEM_TYPE) lt type(WORD)
           add xdi, sizeof(BYTE)
           add xsi, sizeof(BYTE)
           .ifBitSet eax, BIT00
@@ -500,10 +624,8 @@ MethodEnd
         endif
       endif
       cld
-
-      m2m [xdx], $ArgReg(xItem), xax
-
     .endif
+    m2m [xdx], xItem, xax
     ret
   .endif
   mov eax, COL_INDEX_ERROR
@@ -526,7 +648,7 @@ MethodEnd
   ?mov edx, dIndex
   .if edx < [xcx].dCount
     mov xcx, [xcx].pItems
-    lea xax, [xcx + sizeof(TVEC_DATA_TYPE)*xdx]         ;xax -> xItem
+    lea xax, [xcx + sizeof(TVEC_ITEM_TYPE)*xdx]         ;xax -> xItem
   .else
     OCall xcx.ErrorReport, NULL, COL_INDEX_ERROR
     xor eax, eax                                        ;Return NULL
@@ -547,14 +669,14 @@ MethodEnd
   mov xdi, $ArgReg(pTestFunc)
   mov xax, [xcx].pItems
   mov ebx, [xcx].dCount
-  lea xsi, [xax + sizeof(TVEC_DATA_TYPE)*xbx - sizeof(TVEC_DATA_TYPE)];xsi -> Last xItem in the Vector
+  lea xsi, [xax + sizeof(TVEC_ITEM_TYPE)*xbx - sizeof(TVEC_ITEM_TYPE)]  ;xsi -> Last xItem
   ReleaseObject
   test ebx, ebx
   .while !ZERO?
-%   invoke PVecProc ptr xdi, TVEC_DATA_TYPE ptr [xsi], xArg1, xArg2
+%   invoke &??ObjName&_PVecProc ptr xdi, TVEC_ITEM_TYPE ptr [xsi], xArg1, xArg2
     test xax, xax                                       ;Check return value for FALSE
     jnz @F
-    sub xsi, sizeof(TVEC_DATA_TYPE)                     ;xsi -> previous xItem in the Vector
+    sub xsi, sizeof(TVEC_ITEM_TYPE)                     ;xsi -> previous xItem in the Vector
     dec ebx
   .endw                                                 ;At the end of the loop, xax = 0
   xor eax, eax                                          ;In case that dCount = 0
@@ -577,14 +699,14 @@ MethodEnd
   mov xdi, $ArgReg(pTestFunc)
   mov xax, [xcx].pItems
   mov ebx, [xcx].dCount
-  lea xsi, [xax + sizeof(TVEC_DATA_TYPE)*xbx - sizeof(TVEC_DATA_TYPE)]  ;xsi -> Last xItem in the Vector
+  lea xsi, [xax + sizeof(TVEC_ITEM_TYPE)*xbx - sizeof(TVEC_ITEM_TYPE)]  ;xsi -> Last xItem
   ReleaseObject
   test ebx, ebx
   .while !ZERO?
-%   invoke PVecProc ptr xdi, TVEC_DATA_TYPE ptr [xsi], xArg1, xArg2
+%   invoke &??ObjName&_PVecProc ptr xdi, TVEC_ITEM_TYPE ptr [xsi], xArg1, xArg2
     test xax, xax                                       ;Check return value for FALSE
     jz @F
-    sub xsi, sizeof(TVEC_DATA_TYPE)                     ;xsi -> previous xItem in the Vector
+    sub xsi, sizeof(TVEC_ITEM_TYPE)                     ;xsi -> previous xItem in the Vector
     dec ebx
   .endw                                                 ;At the end of the loop, xax = 0
   xor eax, eax                                          ;In case that dCount = 0
@@ -624,7 +746,7 @@ MethodEnd
   test eax, eax                                         ;Test for OBJ_OK
   jne @@Error
   mov [xsi].dCount, edi
-  OCall pStream::Stream.BinRead, [xsi].pItems, addr [sizeof(TVEC_DATA_TYPE)*edi]
+  OCall pStream::Stream.BinRead, [xsi].pItems, addr [sizeof(TVEC_ITEM_TYPE)*edi]
   ret
 @@Error:
   OCall xsi.ErrorReport, NULL, eax
@@ -637,14 +759,14 @@ MethodEnd
 ;             Arg2: New xItem.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-%Method TVectorName.PutAt,, dIndex:DWORD, xItem:TVEC_DATA_TYPE
-  ArgReg xItem:$SubReg(r8, type(TVEC_DATA_TYPE))
+%Method TVectorName.PutAt,, dIndex:DWORD, xItem:TVEC_ITEM_TYPE
+  ArgReg xItem:$SubReg(r8, type(TVEC_ITEM_TYPE))
 
   SetObject xcx
   ?mov edx, dIndex
   .if edx < [xcx].dCount
     mov xcx, [xcx].pItems
-    m2m [xcx + sizeof(TVEC_DATA_TYPE)*xdx], $ArgReg(xItem), xdx
+    m2m [xcx + sizeof(TVEC_ITEM_TYPE)*xdx], $ArgReg(xItem), xdx
     mov eax, TRUE
   .else
     OCall xcx.ErrorReport, NULL, COL_INDEX_ERROR
@@ -690,7 +812,7 @@ MethodEnd
 
 @@4:
   mov edi, ebx
-  shl edi, $Log2(sizeof(TVEC_DATA_TYPE))                ;xdx*sizeof(TVEC_DATA_TYPE)
+  shl edi, $Log2(sizeof(TVEC_ITEM_TYPE))                ;xdx*sizeof(TVEC_ITEM_TYPE)
   mov xax, [xsi].pItems
   test xax, xax
   jne @@5
@@ -733,7 +855,7 @@ MethodEnd
   OCall xdi::Stream.BinWrite32, [xsi].dMaxCapacity
 
   mov eax, [xsi].dCount
-  OCall xdi::Stream.BinWrite, [xsi].pItems, addr [sizeof(TVEC_DATA_TYPE)*eax]
+  OCall xdi::Stream.BinWrite, [xsi].pItems, addr [sizeof(TVEC_ITEM_TYPE)*eax]
 MethodEnd
 
 endif

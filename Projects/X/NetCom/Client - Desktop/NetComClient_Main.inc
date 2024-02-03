@@ -245,7 +245,7 @@ Method NetComClient.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov xbx, $invoke(GetDC, [xsi].hWnd)
   invoke GetSysColor, COLOR_WINDOWTEXT
   invoke SetTextColor, xbx, eax
-  invoke SetBkMode, xbx, TRANSPARENT
+;  invoke SetBkMode, xbx, TRANSPARENT
 
   lea xdi, cBuffer
 

@@ -439,11 +439,6 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      CheckSockError
-; Purpose:    Helper macro to display an WSA error.
-; Arguments:  Arg1: Text to display
-
 DbgSockError macro WarningText:req, InfoText, Dest
   if DEBUGGING
     DbgSaveContext
@@ -451,16 +446,18 @@ DbgSockError macro WarningText:req, InfoText, Dest
     invoke DbgOutTextA, $OfsCStrA($Esc(<WarningText>)), DbgColorWarning, DbgColorBackground, DBG_EFFECT_NORMAL, \
                         ??DbgDstWnd
     invoke WSAGetLastError
+    mov ebx, eax
     $$Buffersize = 1024
     sub xsp, $$Buffersize                               ;;Reserve a buffer on the stack.
     if TARGET_BITNESS eq 32
       mov edi, esp                                      ;;Get a pointer to the buffer
     else
-      lea rdi, [rsp + 20h]                              ;;Get a POINTER to the output buffer
+      lea rdi, [rsp + 28h]                              ;;Get a POINTER to the output buffer
     endif
-    invoke wsprintfA, xdi, $OfsCStrA(" - WSA error code: %lit"), eax
+    invoke wsprintfA, xdi, $OfsCStrA(" - WSA error code: %lit - "), ebx
     invoke DbgOutTextA, xdi, DbgColorWarning, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
-    invoke NetErr2Str, eax, xdi, $$Buffersize - 20h     ;Get the error message
+    invoke NetErr2Str, ebx, xdi, $$Buffersize - 28h     ;Get the error message
+    invoke DbgOutTextA, xdi, DbgColorWarning, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     add xsp, 1024                                       ;Retrieve the string room
     DbgShowTxtInfo InfoText, ??DbgDstWnd
     DbgShowSrcInfo ??DbgDstWnd
@@ -468,10 +465,10 @@ DbgSockError macro WarningText:req, InfoText, Dest
   endif
 endm
 
-CheckSockError macro WarningText:req, InfoText, Dest
+CheckSockError macro QuotedWarningText:req, InfoText, Dest
   if DEBUGGING
     .if eax == SOCKET_ERROR
-      DbgSockError WarningText, InfoText, Dest
+      DbgSockError QuotedWarningText, InfoText, Dest
     .endif
   endif
 endm

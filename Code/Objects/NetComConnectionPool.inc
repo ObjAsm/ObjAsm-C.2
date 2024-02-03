@@ -23,7 +23,7 @@ if IMPLEMENT
 ; Return:     Nothing.
 
 Method NetComConnectionPool.FreeItem, uses xsi, pConnection:$ObjPtr(NetComConnection)
-  DbgHex pConnection, "NetComConnectionPool.FreeItem"
+;  DbgHex pConnection, "NetComConnectionPool.FreeItem"
   SetObject xsi
   LockObjectAccess [xsi].$Obj(NetComConnectionPool)
     dec [xsi].dCount

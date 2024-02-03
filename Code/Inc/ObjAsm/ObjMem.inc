@@ -8,6 +8,8 @@
 ; ==================================================================================================
 
 
+xword textequ <XWORD>
+
 ;String constants
 externdef bCRLF:CHRA
 externdef wCRLF:CHRW
