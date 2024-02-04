@@ -1,100 +1,101 @@
 ntp01.vzug.com
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
--------------------------------------------------------
+Delay = 31 ms
+ServerTime = 03.02.2024 21:23:29.288
+Delay = 16 ms
+ServerTime = 03.02.2024 21:23:29.306
+Delay = 15 ms
+ServerTime = 03.02.2024 21:23:29.325
+Delay = 16 ms
+ServerTime = 03.02.2024 21:23:29.345
+Delay = 16 ms
+ServerTime = 03.02.2024 21:23:29.364
 pool.ntp.org
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
--------------------------------------------------------
+Delay = 31 ms
+ServerTime = 03.02.2024 21:23:29.405
+Delay = 16 ms
+ServerTime = 03.02.2024 21:23:29.426
+Delay = 15 ms
+ServerTime = 03.02.2024 21:23:29.451
+Delay = 32 ms
+ServerTime = 03.02.2024 21:23:29.490
+Delay = 31 ms
+ServerTime = 03.02.2024 21:23:29.519
 time.nist.gov
+Delay = 188 ms
+ServerTime = 03.02.2024 21:23:29.708
 WSA Error 10060
+Delay = 187 ms
+ServerTime = 03.02.2024 21:23:30.916
 WSA Error 10060
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
--------------------------------------------------------
+Delay = 187 ms
+ServerTime = 03.02.2024 21:23:32.122
 time-c.nist.gov
+Delay = 140 ms
+ServerTime = 03.02.2024 21:23:32.279
 WSA Error 10060
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
--------------------------------------------------------
+Delay = 141 ms
+ServerTime = 03.02.2024 21:23:33.438
+Delay = 141 ms
+ServerTime = 03.02.2024 21:23:33.582
+Delay = 141 ms
+ServerTime = 03.02.2024 21:23:33.727
 tick.usno.navy.mil
 WSA Error 10060
 WSA Error 10060
 WSA Error 10060
 WSA Error 10060
 WSA Error 10060
--------------------------------------------------------
 ut1-wwv.nist.gov
 WSA Error 10060
 WSA Error 10060
 WSA Error 10060
 WSA Error 10060
 WSA Error 10060
--------------------------------------------------------
 ntp0.cornell.edu
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
--------------------------------------------------------
+Delay = 141 ms
+ServerTime = 03.02.2024 21:23:44.251
+Delay = 140 ms
+ServerTime = 03.02.2024 21:23:44.395
+Delay = 141 ms
+ServerTime = 03.02.2024 21:23:44.538
+Delay = 140 ms
+ServerTime = 03.02.2024 21:23:44.682
+Delay = 141 ms
+ServerTime = 03.02.2024 21:23:44.823
 time.google.com
-Delay = 15 ms
-ServerTime = 26.09.2023 06:12:06.740
-Delay = 16 ms
-ServerTime = 26.09.2023 06:12:06.765
-Delay = 15 ms
-ServerTime = 26.09.2023 06:12:06.787
-Delay = 16 ms
-ServerTime = 26.09.2023 06:12:06.810
 Delay = 31 ms
-ServerTime = 26.09.2023 06:12:06.840
--------------------------------------------------------
+ServerTime = 03.02.2024 21:23:44.887
+Delay = 31 ms
+ServerTime = 03.02.2024 21:23:44.920
+Delay = 31 ms
+ServerTime = 03.02.2024 21:23:44.951
+Delay = 32 ms
+ServerTime = 03.02.2024 21:23:44.982
+Delay = 15 ms
+ServerTime = 03.02.2024 21:23:45.004
 time.windows.com
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
--------------------------------------------------------
+Delay = 32 ms
+ServerTime = 03.02.2024 21:23:45.070
+Delay = 31 ms
+ServerTime = 03.02.2024 21:23:45.100
+Delay = 47 ms
+ServerTime = 03.02.2024 21:23:45.152
+Delay = 31 ms
+ServerTime = 03.02.2024 21:23:45.177
+Delay = 31 ms
+ServerTime = 03.02.2024 21:23:45.206
 time.euro.apple.com
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
-WSA Error 10060
--------------------------------------------------------
----------------------------
-time.google.com
 Delay = 31 ms
-ServerTime = 23.08.2023 13:01:38.329
-Delay = 16 ms
-ServerTime = 23.08.2023 13:01:38.348
-Delay = 16 ms
-ServerTime = 23.08.2023 13:01:38.376
+ServerTime = 03.02.2024 21:23:45.250
 Delay = 31 ms
-ServerTime = 23.08.2023 13:01:38.409
-Delay = 31 ms
-ServerTime = 23.08.2023 13:01:38.439
--------------------------------------------------------
-time.windows.com
-Delay = 31 ms
-ServerTime = 23.08.2023 13:01:38.487
+ServerTime = 03.02.2024 21:23:45.284
 Delay = 32 ms
-ServerTime = 23.08.2023 13:01:38.527
+ServerTime = 03.02.2024 21:23:45.319
 Delay = 31 ms
-ServerTime = 23.08.2023 13:01:38.565
-Delay = 32 ms
-ServerTime = 23.08.2023 13:01:38.603
+ServerTime = 03.02.2024 21:23:45.349
+Delay = 31 ms
+ServerTime = 03.02.2024 21:23:45.381
+03
 Delay = 31 ms
 ServerTime = 23.08.2023 13:01:38.639
 -------------------------------------------------------

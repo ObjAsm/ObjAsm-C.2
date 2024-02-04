@@ -2,7 +2,7 @@
 ; Title:      TVector.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.2
-; Purpose:    ObjAsm support of TVector object templates.
+; Purpose:    ObjAsm support of TVector object template.
 ; Notes:      Version C.1.0, September 2021
 ;               - First release.
 ;             Version C.1.1, October 2023
