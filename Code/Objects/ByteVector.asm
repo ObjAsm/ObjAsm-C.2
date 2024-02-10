@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Purpose:    ObjAsm compilation file for ByteVector object.
-; Notes:      Version C.1.0, September 2021
+; Notes:      Version C.1.0, February 2024
 ;             - First release.
 ; ==================================================================================================
 

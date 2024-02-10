@@ -53,6 +53,27 @@ IniFileID                         equ     0000000050
 CRC_16ID                          equ     0000000060
 CRC_32ID                          equ     0000000061
 
+;Vector Objects
+VectorID                          equ     0000000070
+ByteVectorID                      equ     0000000071
+WordVectorID                      equ     0000000072
+DWordVectorID                     equ     0000000073
+QWordVectorID                     equ     0000000074
+OWordVectorID                     equ     0000000075
+Real4VectorID                     equ     0000000076
+Real8VectorID                     equ     0000000077
+DataVectorID                      equ     0000000078
+
+SortedVectorID                    equ     0000000080
+SortedByteVectorID                equ     0000000081
+SortedWordVectorID                equ     0000000082
+SortedDWordVectorID               equ     0000000083
+SortedQWordVectorID               equ     0000000084
+SortedOWordVectorID               equ     0000000085
+SortedReal4VectorID               equ     0000000086
+SortedReal8VectorID               equ     0000000087
+SortedDataVectorID                equ     0000000088
+
 ;Windows primer objects
 WinPrimerID                       equ     0000000100
 MsgInterceptorID                  equ     0000000101
@@ -448,15 +469,10 @@ HttpServerID                      equ     0000012550
 ;WindowBackground
 WindowBackgroundID                equ     0000012560
 
-;Vectors
-BitVectorID                       equ     0000012570
-ByteVectorID                      equ     0000012571
-WordVectorID                      equ     0000012572
-DWordVectorID                     equ     0000012573
-QWordVectorID                     equ     0000012574
-
+;Dictionary
 DictionaryID                      equ     0000012580
 
+;WebTranslator
 WebTextTranslatorID               equ     0000012590
 
 ;Math

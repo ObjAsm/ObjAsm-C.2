@@ -3,15 +3,13 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Purpose:    ObjAsm support of QWordVector objects.
-; Notes:      Version C.1.0, September 2021
+; Notes:      Version C.1.0, February 2024
 ;               - First release.
 ; ==================================================================================================
 
 
 TVectorName         textequ   <QWordVector>
 TVectorID           textequ   <QWordVectorID>
-TVEC_DATA_TYPE      textequ   <QWORD>
-PVecProc            textequ   <PVecProc64>
-VEC64_MAX_CAPACITY  equ       0FFFFFFFFh/sizeof(TVEC_DATA_TYPE)
+TVEC_ITEM_TYPE      textequ   <QWORD>
 
 include .\TVector.inc                                   ;Template file

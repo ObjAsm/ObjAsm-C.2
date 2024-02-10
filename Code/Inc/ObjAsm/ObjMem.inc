@@ -1675,10 +1675,14 @@ IHFP_SSE3   equ   32    ;Availability of SSE3 technology
 
 ;Objects
 if TARGET_BITNESS eq 64
-  XWordVector equ QWordVector
+  PointerVector textequ <QWordVector>
+  PTRVEC_MAX_CAPACITY equ VEC64_MAX_CAPACITY
+  XWordVector textequ <QWordVector>
   XVEC_MAX_CAPACITY equ VEC64_MAX_CAPACITY
 else
-  XWordVector equ DWordVector
+  PointerVector textequ <DWordVector>
+  PTRVEC_MAX_CAPACITY equ VEC32_MAX_CAPACITY
+  XWordVector textequ <DWordVector>
   XVEC_MAX_CAPACITY equ VEC32_MAX_CAPACITY
 endif
 

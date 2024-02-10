@@ -317,7 +317,7 @@ MethodEnd
     .endif
     mov eax, TRUE
   .else
-    OCall xdi.ErrorReport, NULL, COL_INDEX_ERROR
+    OCall xdi.ErrorReport, NULL, VEC_INDEX_ERROR
     xor eax, eax
   .endif
 MethodEnd
@@ -523,7 +523,7 @@ MethodEnd
       OCall xsi.ErrorReport, NULL, eax
     .endif
   .else
-    OCall xsi.ErrorReport, NULL, COL_SETUP_ERROR
+    OCall xsi.ErrorReport, NULL, VEC_SETUP_ERROR
   .endif
 MethodEnd
 
@@ -543,7 +543,7 @@ MethodEnd
     jnz @F
     mov edx, [xsi].dCount
     cmp edx, [xsi].dLimit
-    mov eax, COL_OVERFLOW
+    mov eax, VEC_OVERFLOW
     jz @F
   .endif
   inc [xsi].dCount
@@ -628,10 +628,10 @@ MethodEnd
     m2m [xdx], xItem, xax
     ret
   .endif
-  mov eax, COL_INDEX_ERROR
+  mov eax, VEC_INDEX_ERROR
   jmp @@2
 @@1:
-  mov eax, COL_OVERFLOW
+  mov eax, VEC_OVERFLOW
 @@2:
   OCall xdi.ErrorReport, NULL, eax
   xor eax, eax                                          ;Return NULL
@@ -650,7 +650,7 @@ MethodEnd
     mov xcx, [xcx].pItems
     lea xax, [xcx + sizeof(TVEC_ITEM_TYPE)*xdx]         ;xax -> xItem
   .else
-    OCall xcx.ErrorReport, NULL, COL_INDEX_ERROR
+    OCall xcx.ErrorReport, NULL, VEC_INDEX_ERROR
     xor eax, eax                                        ;Return NULL
   .endif
 MethodEnd
@@ -722,16 +722,15 @@ MethodEnd
 ;             Arg2: -> DESER_INFO.
 ; Return:     Nothing.
 
-%Method TVectorName.Load, uses xbx xdi xsi r12, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
+%Method TVectorName.Load, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   ArgReg pStream:rdx, pDeserInfo:r8
-  LocReg dLimit:r12d
 
   SetObject xsi
   ACall xsi.Load, $ArgReg(pStream), $ArgReg(pDeserInfo)
   OCall pStream::Stream.BinRead32                       ;Read count
   mov edi, eax                                          ;edi = Count
   OCall pStream::Stream.BinRead32                       ;Read dLimit
-  mov $LocReg(dLimit), eax
+  mov ebx, eax
 
   OCall pStream::Stream.BinRead32                       ;Read dDelta
   mov [xsi].dDelta, eax
@@ -742,7 +741,7 @@ MethodEnd
   mov [xsi].pItems, xax
   mov [xsi].dCount, eax
   mov [xsi].dLimit, eax
-  OCall xsi.SetLimit, $LocReg(dLimit)
+  OCall xsi.SetLimit, ebx
   test eax, eax                                         ;Test for OBJ_OK
   jne @@Error
   mov [xsi].dCount, edi
@@ -769,7 +768,7 @@ MethodEnd
     m2m [xcx + sizeof(TVEC_ITEM_TYPE)*xdx], $ArgReg(xItem), xdx
     mov eax, TRUE
   .else
-    OCall xcx.ErrorReport, NULL, COL_INDEX_ERROR
+    OCall xcx.ErrorReport, NULL, VEC_INDEX_ERROR
     xor eax, eax                                        ;Return NULL
   .endif
 MethodEnd
@@ -834,7 +833,7 @@ MethodEnd
   ret
 
 @@Error:
-  mov eax, COL_OUT_OF_MEMORY                            ;Return value
+  mov eax, VEC_OUT_OF_MEMORY                            ;Return value
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

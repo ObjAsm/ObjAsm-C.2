@@ -61,6 +61,13 @@ ERROR_BASE = BIT29 + 60
 AddErrMsg ARR_OUT_OF_MEMORY,          "No more memory available"
 AddErrMsg ARR_INDEX_OUT_OF_RANGE,     "Index not in range"
 
+;Vector
+ERROR_BASE = BIT29 + 70
+AddErrMsg VEC_OUT_OF_MEMORY,          "There is no more free memory"
+AddErrMsg VEC_INDEX_ERROR,            "Index not in range [0..Count-1]"
+AddErrMsg VEC_OVERFLOW,               "Limit greater than maximal capacity"
+AddErrMsg VEC_SETUP_ERROR,            "Configuration parameter error (Check Init method)"
+
 ;RegKey
 ERROR_BASE = BIT29 + 80
 AddErrMsg RKY_CREATE_FAILED,          "Registry key creation failed"

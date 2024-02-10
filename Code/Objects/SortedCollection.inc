@@ -40,11 +40,11 @@
 ;
 
 Object SortedCollection, SortedCollectionID, Collection
-  DynamicAbstract   Compare,      POINTER, POINTER      ;Key1, Key2
-  RedefineMethod    Insert,       POINTER
-  DynamicMethod     KeyOf,        POINTER
+  DynamicAbstract   Compare,      XWORD, XWORD          ;Key1, Key2
+  RedefineMethod    Insert,       POINTER               ;-> Item
+  DynamicMethod     KeyOf,        POINTER               ;-> Item
   RedefineMethod    Load,         $ObjPtr(Stream), PDESER_INFO
-  VirtualMethod     Search,       POINTER               ;-> Searched item
+  VirtualMethod     Search,       XWORD                 ;Key to search for
   VirtualMethod     Sort
   RedefineMethod    Store,        $ObjPtr(Stream)
 
@@ -67,7 +67,7 @@ if IMPLEMENT
 Method SortedCollection.Insert, uses xsi, pItem:POINTER
   SetObject xsi
   OCall xsi.KeyOf, pItem
-  OCall xsi.Search, xax                                 ;eax = success (TRUE/FALSE), ecx = index
+  OCall xsi.Search, xax                                 ;eax = Found (TRUE/FALSE), ecx = Index
   .if eax != FALSE
     xor eax, eax                                        ;xax = NULL (exit value)
     cmp [xsi].dDuplicates, eax
@@ -105,13 +105,13 @@ MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     SortedCollection.Search
-; Purpose:    Search an item based on its key.
-; Arguments:  Arg1: -> Item to be found.
-; Return:     eax: Success condition (TRUE/FALSE).
+; Purpose:    Search for an item by its key.
+; Arguments:  Arg1: Item key to seach for.
+; Return:     eax: TRUE if found, otherwise FALSE.
 ;             ecx: Index in the range [0..Count]. If the item is not found, ecx is set to the
 ;                  index where the item would be placed if inserted.
 
-Method SortedCollection.Search, uses xbx xdi xsi r12 r13, pKey:POINTER
+Method SortedCollection.Search, uses xbx xdi xsi r12 r13, xKey:XWORD
   LocReg dFound:r12d, dLowIndex:r13d
 
   SetObject xbx
@@ -129,7 +129,7 @@ Method SortedCollection.Search, uses xbx xdi xsi r12 r13, pKey:POINTER
   shr xdi, 1                                            ;(L+H)/2
   mov xdx, [xbx].pItems
   OCall xbx.KeyOf, POINTER ptr [xdx + sizeof(POINTER)*xdi]
-  OCall xbx.Compare, xax, pKey
+  OCall xbx.Compare, xax, xKey
   cmp eax, 0                                            ;Can NOT be replaced with "or eax, eax"
   jg @@2                                                ;> signed compare  (ZF=0 and SF=OF)
   jl @@3                                                ;                  (ZF=1)

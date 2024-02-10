@@ -17,6 +17,13 @@ XWCollection
 ByteVector
 WordVector
 DWordVector
+SortedByteVector
+SortedWordVector
+SortedDWordVector
+Real4Vector
+SortedReal4Vector
+DataVector
+SortedDataVector
 DataPool
 IniFile
 IDL
