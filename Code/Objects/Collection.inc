@@ -93,7 +93,7 @@ ObjectEnd
   else
     @CatStr(<??ColForEach_Index_>, %??ColForEach_ID) textequ <Index>
   endif
-  @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) equ +1 
+  @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) equ +1
 
   if (opattr Index) and OAT_REGISTER
     if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0
@@ -129,7 +129,7 @@ endm
   else
     @CatStr(<??ColForEach_Index_>, %??ColForEach_ID) textequ <Index>
   endif
-  @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) equ -1 
+  @CatStr(<??ColForEach_Step_>, %??ColForEach_ID) equ -1
 
   if (opattr Index) and OAT_REGISTER
     if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0
@@ -228,7 +228,7 @@ MethodEnd
 
 Method Collection.DeleteAll
   SetObject xcx
-  m2z [xcx].$Obj(Collection).dCount
+  m2z [xcx].dCount
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

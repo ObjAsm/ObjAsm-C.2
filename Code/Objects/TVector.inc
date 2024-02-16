@@ -16,13 +16,13 @@
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Object:     TVector
-; Purpose:    TVector is an object template for a BYTE, WORD, DWORD, QWORD, REAL4 or REAL8 data
-;             item container.
-;             The data size is defined at compile time using e.g. TVEC_ITEM_TYPE textequ <DWORD>
+; Purpose:    TVector is a container object template for BYTE, WORD, DWORD, QWORD, REAL4 or REAL8
+;             items.
+;             The item size is defined at compile time using e.g. TVEC_ITEM_TYPE textequ <DWORD>
 ;             This implementation supports all collection-like features, but not Item serialisation
 ;             and destruction, as these are not needed for data items.
 ; Note:       QWORD and REAL8 Vectors are only supported if TARGET_BITNESS is equal to 64.
-;             Vector metadata is computed at compiletime and stored in the following symbols:
+;             The Vector metadata is computed at compiletime and stored in the following symbols:
 ;               Item Type: <NameSpace>_<ObjName>_ItemType
 ;               Capacity: <NameSpace>_<ObjName>_MaxCapacity
 ;               Callback proto: <NameSpace>_<ObjName>__PVecProc
@@ -35,217 +35,33 @@
 ;             New PtrVec
 ;             OCall xax::PtrVec.Init, NULL, 10, 10, OA_PtrVec_MaxCapacity
 
-%Object TVectorName, TVectorID, Streamable
+%Object TVectorName, TVectorID, Vector
 
 % &??ObjName&_ItemType  textequ <TVEC_ITEM_TYPE>
 % &??ObjName&_PVecProc  typedef proto :TVEC_ITEM_TYPE, :XWORD, :XWORD
 % &??ObjName&_MaxCapacity equ   0FFFFFFFFh/sizeof(TVEC_ITEM_TYPE)
 
-  VirtualMethod     Delete,         TVEC_ITEM_TYPE        ;xItem
-  VirtualMethod     DeleteAt,       DWORD                 ;Index in range [0..Count-1]
-  VirtualMethod     DeleteAll
+  RedefineMethod    Delete,         TVEC_ITEM_TYPE        ;xItem
+  RedefineMethod    DeleteAt,       DWORD                 ;Index in range [0..Count-1]
+  RedefineMethod    DeleteAll
   RedefineMethod    Done
-  VirtualMethod     FirstThat,      POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
-  VirtualMethod     FirstThatNot,   POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
-  VirtualMethod     ForEach,        POINTER, XWORD, XWORD ;-> Proc, 2 x Parameter
-  VirtualMethod     ForEachRev,     POINTER, XWORD, XWORD ;-> Proc, 2 x Parameter, reverse order
-  VirtualMethod     IndexOf,        TVEC_ITEM_TYPE        ;xItem
+  RedefineMethod    FirstThat,      POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
+  RedefineMethod    FirstThatNot,   POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
+  RedefineMethod    ForEach,        POINTER, XWORD, XWORD ;-> Proc, 2 x Parameter
+  RedefineMethod    ForEachRev,     POINTER, XWORD, XWORD ;-> Proc, 2 x Parameter, reverse order
+  RedefineMethod    IndexOf,        TVEC_ITEM_TYPE        ;xItem
   RedefineMethod    Init,           POINTER, DWORD, DWORD, DWORD ;-> Owner, Count, Delta, Max Capa.
-  VirtualMethod     Insert,         TVEC_ITEM_TYPE        ;xItem
-  VirtualMethod     InsertAt,       DWORD, TVEC_ITEM_TYPE ;Index, xItem
-  VirtualMethod     ItemAt,         DWORD                 ;Index in range [0..Count-1]
-  VirtualMethod     LastThat,       POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
-  VirtualMethod     LastThatNot,    POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
+  RedefineMethod    Insert,         TVEC_ITEM_TYPE        ;xItem
+  RedefineMethod    InsertAt,       DWORD, TVEC_ITEM_TYPE ;Index, xItem
+  RedefineMethod    ItemAt,         DWORD                 ;Index in range [0..Count-1]
+  RedefineMethod    LastThat,       POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
+  RedefineMethod    LastThatNot,    POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
   RedefineMethod    Load,           $ObjPtr(Stream), PDESER_INFO
-  VirtualMethod     PutAt,          DWORD, TVEC_ITEM_TYPE ;Index, xItem
+  RedefineMethod    PutAt,          DWORD, TVEC_ITEM_TYPE ;Index, xItem
   RedefineMethod    Store,          $ObjPtr(Stream)       ;-> Stream
   Private
-  VirtualMethod     SetLimit,       DWORD                 ;Set new limit (private method)
-
-  DefineVariable    pItems,         POINTER,      NULL
-  DefineVariable    dCount,         DWORD,        0
-  DefineVariable    dLimit,         DWORD,        0
-  DefineVariable    dDelta,         DWORD,        0
-  DefineVariable    dMaxCapacity,   DWORD,        0
-  DefineVariable    ObjLock,        OBJECT_LOCK,  {}    ;Locking structure for multithreaded access
+  RedefineMethod    SetLimit,       DWORD                 ;Set new limit (private method)
 ObjectEnd
-
-
-; ==================================================================================================
-
-??VecForEach_ID = 0
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      .VecForEach
-; Purpose:    Loop through all items of the TVector.
-; Arguments:  Arg1: TVector.
-;             Arg2: Optional 32 bit index variable/register. It can not be eax!
-; Return:     Nothing.
-; Note:       On each loop xax -> TVector item.
-; Example:    .VecForEach MyVector
-;               DbgDec TVEC_ITEM_TYPE ptr [xax]
-;             .VecNext
-
-.VecForEach macro Expression:req, Index
-  ??VecForEach_ID = ??VecForEach_ID + 1
-  ifb <Index>
-    @CatStr(<??VecForEach_Index_>, %??VecForEach_ID) textequ GetMemBSS(4)
-  else
-    @CatStr(<??VecForEach_Index_>, %??VecForEach_ID) textequ <Index>
-  endif
-  @CatStr(<??VecForEach_Step_>, %??VecForEach_ID) equ +1
-
-  PreParseExpr Expression
-
-  ;;Get ??MtdExpr
-  if ??Pos3 ne 0
-    @Err <.VecForEach Error: method Expression not allowed>
-    exitm
-  endif
-
-  ;;Get ??ObjExpr
-  if ??Pos1 ne 0
-    if ??Pos2 ne 0
-      ??ObjExpr CatStr @SubStr(<Expression>, ??Pos1 + 2, ??Pos2 - ??Pos1 - 2), \
-                       ??ObjPfxSep, \
-                       @SubStr(<Expression>, ??Pos2 + 1)
-    else
-      ??ObjExpr CatStr ??ObjPfx, @SubStr(<Expression>, ??Pos1 + 2)
-    endif
-  else
-    if ??Pos2 ne 0
-      ??ObjExpr CatStr @SubStr(<Expression>, 1, ??Pos2 - 1), \
-                       ??ObjPfxSep, \
-                       @SubStr(<Expression>, ??Pos2 + 1)
-    else
-      ??ObjExpr CatStr ??ObjPfx, <Expression>
-    endif
-  endif
-
-  ;;Get ??InsExpr
-  if ??Pos1 ne 0
-    ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
-  endif
-
-  %ifdef ??ObjExpr
-    if @CatStr(%??ObjExpr, <_Error>) eq ??OBJERR_NONE
-
-      if (opattr Index) and OAT_REGISTER
-        if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0
-          .err <.VecForEach Error: invalid index register>
-        endif
-        xor Index, Index
-        .while Index != ??InsExpr.??ObjExpr.dCount
-%         lea xax, [Index*sizeof(&??ObjExpr&_ItemType)]
-          add xax, ??InsExpr.??ObjExpr.pItems
-      else
-        xor eax, eax
-        mov @CatStr(<??VecForEach_Index_>, %??VecForEach_ID), eax
-        .while eax != ??InsExpr.??ObjExpr.dCount
-%         lea xax, [xax*sizeof(&??ObjExpr&_ItemType)]
-          add xax, ??InsExpr.??ObjExpr.pItems
-      endif
-    endif
-
-  else
-    @Err <.VecForEach Error: undefined object Expression>
-  endif
-endm                                                    ;;xax -> allocated object instance
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      .VecForEachRev
-; Purpose:    Loop through all items of the TVector in reverse order.
-; Arguments:  Arg1: TVector.
-;             Arg2: Optional 32 bit index variable/register. It can not be eax!
-; Return:     Nothing.
-; Note:       On each loop xax -> TVector item.
-
-.VecForEachRev macro Expression:req, Index
-  ??VecForEach_ID = ??VecForEach_ID + 1
-  ifb <Index>
-    @CatStr(<??VecForEach_Index_>, %??VecForEach_ID) textequ GetMemBSS(4)
-  else
-    @CatStr(<??VecForEach_Index_>, %??VecForEach_ID) textequ <Index>
-  endif
-  @CatStr(<??VecForEach_Step_>, %??VecForEach_ID) equ -1
-
-  PreParseExpr Expression
-
-  ;;Get ??MtdExpr
-  if ??Pos3 ne 0
-    @Err <.VecForEachRev Error: method Expression not allowed>
-    exitm
-  endif
-
-  ;;Get ??ObjExpr
-  if ??Pos1 ne 0
-    if ??Pos2 ne 0
-      ??ObjExpr CatStr @SubStr(<Expression>, ??Pos1 + 2, ??Pos2 - ??Pos1 - 2), \
-                       ??ObjPfxSep, \
-                       @SubStr(<Expression>, ??Pos2 + 1)
-    else
-      ??ObjExpr CatStr ??ObjPfx, @SubStr(<Expression>, ??Pos1 + 2)
-    endif
-  else
-    if ??Pos2 ne 0
-      ??ObjExpr CatStr @SubStr(<Expression>, 1, ??Pos2 - 1), \
-                       ??ObjPfxSep, \
-                       @SubStr(<Expression>, ??Pos2 + 1)
-    else
-      ??ObjExpr CatStr ??ObjPfx, <Expression>
-    endif
-  endif
-
-  ;;Get ??InsExpr
-  if ??Pos1 ne 0
-    ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
-  endif
-
-  %ifdef ??ObjExpr
-    if @CatStr(%??ObjExpr, <_Error>) eq ??OBJERR_NONE
-
-      if (opattr Index) and OAT_REGISTER
-        if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0
-          .err <.VecForEachRev: invalid index register>
-        endif
-        mov Index, ??InsExpr.??ObjExpr.dCount
-        dec Index
-        .while !SIGN?
-%         lea xax, [Index*sizeof(&??ObjExpr&_ItemType)]
-          add xax, ??InsExpr.??ObjExpr.pItems
-      else
-        mov eax, ??InsExpr.??ObjExpr.dCount
-        dec eax
-        mov @CatStr(<??VecForEach_Index_>, %??VecForEach_ID), eax
-        .while !SIGN?
-%         lea xax, [xax*sizeof(&??ObjExpr&_ItemType)]
-          add xax, ??InsExpr.??ObjExpr.pItems
-      endif
-    endif
-
-  else
-    @Err <.VecForEachRev Error: undefined object Expression>
-  endif
-endm
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      .VecNext
-; Purpose:    Move to the next TVector item.
-; Arguments:  None
-; Return:     Nothing.
-
-.VecNext macro
-    if @CatStr(<??VecForEach_Step_>, %??VecForEach_ID) eq +1
-      inc @CatStr(<??VecForEach_Index_>, %??VecForEach_ID)
-    else
-      dec @CatStr(<??VecForEach_Index_>, %??VecForEach_ID)
-    endif
-    if not (opattr @CatStr(<??VecForEach_Index_>, %??VecForEach_ID)) and OAT_REGISTER
-      mov eax, @CatStr(<??VecForEach_Index_>, %??VecForEach_ID)
-    endif
-  .endw
-  ??VecForEach_ID = ??VecForEach_ID - 1
-endm
 
 
 ; ==================================================================================================
@@ -727,28 +543,11 @@ MethodEnd
 
   SetObject xsi
   ACall xsi.Load, $ArgReg(pStream), $ArgReg(pDeserInfo)
-  OCall pStream::Stream.BinRead32                       ;Read count
-  mov edi, eax                                          ;edi = Count
-  OCall pStream::Stream.BinRead32                       ;Read dLimit
-  mov ebx, eax
-
-  OCall pStream::Stream.BinRead32                       ;Read dDelta
-  mov [xsi].dDelta, eax
-  OCall pStream::Stream.BinRead32                       ;Read dMaxCapacity
-  mov [xsi].dMaxCapacity, eax
-
-  xor eax, eax
-  mov [xsi].pItems, xax
-  mov [xsi].dCount, eax
-  mov [xsi].dLimit, eax
-  OCall xsi.SetLimit, ebx
-  test eax, eax                                         ;Test for OBJ_OK
-  jne @@Error
-  mov [xsi].dCount, edi
-  OCall pStream::Stream.BinRead, [xsi].pItems, addr [sizeof(TVEC_ITEM_TYPE)*edi]
+  .if [xsi].dErrorCode == OBJ_OK
+    mov eax, [xsi].dCount
+    OCall pStream::Stream.BinRead, [xsi].pItems, addr [sizeof(TVEC_ITEM_TYPE)*eax]
+  .endif
   ret
-@@Error:
-  OCall xsi.ErrorReport, NULL, eax
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -848,11 +647,6 @@ MethodEnd
   SetObject xsi
   mov xdi, $ArgReg(pStream)
   ACall xsi.Store, $ArgReg(pStream)
-  OCall xdi::Stream.BinWrite32, [xsi].dCount
-  OCall xdi::Stream.BinWrite32, [xsi].dLimit
-  OCall xdi::Stream.BinWrite32, [xsi].dDelta
-  OCall xdi::Stream.BinWrite32, [xsi].dMaxCapacity
-
   mov eax, [xsi].dCount
   OCall xdi::Stream.BinWrite, [xsi].pItems, addr [sizeof(TVEC_ITEM_TYPE)*eax]
 MethodEnd

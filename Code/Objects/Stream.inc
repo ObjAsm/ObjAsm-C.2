@@ -12,6 +12,34 @@
 ; Object:     DesLUT
 ; Purpose:    Implement a deserialization lookup table.
 ; Notes:      - This object and all descendants are thread safe using the OA multithreading support.
+; Example:
+;
+;  local MyVec:$Obj(Vector), MyDiskStream:$Obj(DiskStream)
+;  local DLUT:$Obj(DesLUT), DeserInfo:DESER_INFO
+;
+;  ...
+;
+;  ;Storage
+;  New MyDiskStream::DiskStream
+;  OCall MyDiskStream::DiskStream.Init, NULL, $OfsCStr("MyStream.stm"), 0, 0, \
+;                                       NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+;  OCall MyVec::Vector.Store, addr MyDiskStream
+;  OCall MyDiskStream::DiskStream.Done
+;
+;  ...
+;
+;  ;Recovery
+;  New DLUT::DesLUT
+;  lea xcx, DLUT
+;  mov DeserInfo.pDesLUT, xcx
+;  OCall xcx::DesLUT.Init, NULL, 10, 10, 0FFFFFFFFh/sizeof(POINTER)
+;
+;  New MyDiskStream::DiskStream
+;  OCall MyDiskStream::DiskStream.Init, NULL, $OfsCStr("MyStream.stm"), 0, 0, \
+;                                       NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0
+;  OCall MyVec::Vector.Load, addr MyDiskStream, addr DeserInfo
+;  OCall MyDiskStream::DiskStream.Done
+;  OCall DLUT::DesLUT.Done
 
 Object DesLUT, DesLUTID, Primer
   RedefineMethod    Done

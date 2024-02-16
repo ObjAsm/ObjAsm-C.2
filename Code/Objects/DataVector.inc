@@ -14,223 +14,39 @@ PDataVecProc  typedef proto :POINTER, :XWORD, :XWORD      ;If required, return v
 ; Object:     DataVector
 ; Purpose:    DataVector is an container whose Item capacity ist larger than a XWORD.
 ;             Vectors with a smaller item size have dedicated objects that implement specific code
-;             for that item size. 
+;             for that item size.
 ;             Since the data size can be different for each object instance, it it stored as a0
-;             object variable. 
+;             object variable.
 ;             The implementation supports all collection-like features, but not Item serialisation
 ;             and destruction, as these are not needed for data items.
 ;
 ; Example:    New DataVector
 ;             OCall xax::DataVector.Init, NULL, DataStrucSize, 10, 10, 0FFFFFFFFh/DataStrucSize
 
-Object DataVector, DataVectorID, Streamable
-  VirtualMethod     Delete,         POINTER
-  VirtualMethod     DeleteAt,       DWORD                 ;Index in range [0..Count-1]
-  VirtualMethod     DeleteAll
+Object DataVector, DataVectorID, Vector
+  RedefineMethod    Delete,         POINTER
+  RedefineMethod    DeleteAt,       DWORD                 ;Index in range [0..Count-1]
+  RedefineMethod    DeleteAll
   RedefineMethod    Done
-  VirtualMethod     FirstThat,      POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
-  VirtualMethod     FirstThatNot,   POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
-  VirtualMethod     ForEach,        POINTER, XWORD, XWORD ;-> Proc, 2 x Parameter
-  VirtualMethod     ForEachRev,     POINTER, XWORD, XWORD ;-> Proc, 2 x Parameter, reverse order
-  VirtualMethod     IndexOf,        POINTER
+  RedefineMethod    FirstThat,      POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
+  RedefineMethod    FirstThatNot,   POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
+  RedefineMethod    ForEach,        POINTER, XWORD, XWORD ;-> Proc, 2 x Parameter
+  RedefineMethod    ForEachRev,     POINTER, XWORD, XWORD ;-> Proc, 2 x Parameter, reverse order
+  RedefineMethod    IndexOf,        POINTER
   RedefineMethod    Init,           POINTER, DWORD, DWORD, DWORD, DWORD ;-> Owner, ItemSize, ...
-  VirtualMethod     Insert,         POINTER               ;-> Item
-  VirtualMethod     InsertAt,       DWORD, POINTER        ;Index, -> Item
-  VirtualMethod     ItemAt,         DWORD                 ;Index in range [0..Count-1]
-  VirtualMethod     LastThat,       POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
-  VirtualMethod     LastThatNot,    POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
+  RedefineMethod    Insert,         POINTER               ;-> Item
+  RedefineMethod    InsertAt,       DWORD, POINTER        ;Index, -> Item
+  RedefineMethod    ItemAt,         DWORD                 ;Index in range [0..Count-1]
+  RedefineMethod    LastThat,       POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
+  RedefineMethod    LastThatNot,    POINTER, XWORD, XWORD ;-> Func, 2 x Parameter
   RedefineMethod    Load,           $ObjPtr(Stream), PDESER_INFO
-  VirtualMethod     PutAt,          DWORD, POINTER        ;Index, -> Item
+  RedefineMethod    PutAt,          DWORD, POINTER        ;Index, -> Item
   RedefineMethod    Store,          $ObjPtr(Stream)       ;-> Stream
   Private
-  VirtualMethod     SetLimit,       DWORD                 ;Set new limit (private method)
+  RedefineMethod    SetLimit,       DWORD                 ;Set new limit (private method)
 
-  DefineVariable    pItems,         POINTER,      NULL
-  DefineVariable    dCount,         DWORD,        0
-  DefineVariable    dLimit,         DWORD,        0
-  DefineVariable    dDelta,         DWORD,        0
-  DefineVariable    dMaxCapacity,   DWORD,        0
-  DefineVariable    ObjLock,        OBJECT_LOCK,  {}    ;Locking structure for multithreaded access
   DefineVariable    dItemSize,      DWORD,        0
 ObjectEnd
-
-
-; ==================================================================================================
-
-??DataVecForEach_ID = 0
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      .DataVecForEach
-; Purpose:    Loop through all items of the DataVector.
-; Arguments:  Arg1: DataVector.
-;             Arg2: Optional 32 bit index variable/register. It can not be eax!
-; Return:     Nothing.
-; Note:       On each loop xax -> DataVector item.
-; Example:    .VecForEach MyVector
-;               DbgDec ... [xax]
-;             .VecNext
-
-.DataVecForEach macro Expression:req, Index
-  ??DataVecForEach_ID = ??DataVecForEach_ID + 1
-  ifb <Index>
-    @CatStr(<??VecForEach_Index_>, %??DataVecForEach_ID) textequ GetMemBSS(4)
-  else
-    @CatStr(<??VecForEach_Index_>, %??DataVecForEach_ID) textequ <Index>
-  endif
-  @CatStr(<??VecForEach_Step_>, %??DataVecForEach_ID) equ +1
-
-  PreParseExpr Expression
-
-  ;;Get ??MtdExpr
-  if ??Pos3 ne 0
-    @Err <.VecForEach Error: method Expression not allowed>
-    exitm
-  endif
-
-  ;;Get ??ObjExpr
-  if ??Pos1 ne 0
-    if ??Pos2 ne 0
-      ??ObjExpr CatStr @SubStr(<Expression>, ??Pos1 + 2, ??Pos2 - ??Pos1 - 2), \
-                       ??ObjPfxSep, \
-                       @SubStr(<Expression>, ??Pos2 + 1)
-    else
-      ??ObjExpr CatStr ??ObjPfx, @SubStr(<Expression>, ??Pos1 + 2)
-    endif
-  else
-    if ??Pos2 ne 0
-      ??ObjExpr CatStr @SubStr(<Expression>, 1, ??Pos2 - 1), \
-                       ??ObjPfxSep, \
-                       @SubStr(<Expression>, ??Pos2 + 1)
-    else
-      ??ObjExpr CatStr ??ObjPfx, <Expression>
-    endif
-  endif
-
-  ;;Get ??InsExpr
-  if ??Pos1 ne 0
-    ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
-  endif
-
-  %ifdef ??ObjExpr
-    if @CatStr(%??ObjExpr, <_Error>) eq ??OBJERR_NONE
-
-      if (opattr Index) and OAT_REGISTER
-        if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0
-          .err <.VecForEach Error: invalid index register>
-        endif
-        xor Index, Index
-        .while Index != ??InsExpr.??ObjExpr.dCount
-          mov eax, Index
-          mul ??InsExpr.??ObjExpr.dItemSize
-          add xax, ??InsExpr.??ObjExpr.pItems
-      else
-        xor eax, eax
-        mov @CatStr(<??VecForEach_Index_>, %??DataVecForEach_ID), eax
-        .while eax != ??InsExpr.??ObjExpr.dCount
-          mul ??InsExpr.??ObjExpr.dItemType
-          add xax, ??InsExpr.??ObjExpr.pItems
-      endif
-    endif
-
-  else
-    @Err <.DataVecForEach Error: undefined object Expression>
-  endif
-endm                                                    ;;xax -> allocated object instance
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      .DataVecForEachRev
-; Purpose:    Loop through all items of the DataVector in reverse order.
-; Arguments:  Arg1: DataVector.
-;             Arg2: Optional 32 bit index variable/register. It can not be eax!
-; Return:     Nothing.
-; Note:       On each loop xax -> DataVector item.
-
-.DataVecForEachRev macro Expression:req, Index
-  ??DataVecForEach_ID = ??DataVecForEach_ID + 1
-  ifb <Index>
-    @CatStr(<??VecForEach_Index_>, %??DataVecForEach_ID) textequ GetMemBSS(4)
-  else
-    @CatStr(<??VecForEach_Index_>, %??DataVecForEach_ID) textequ <Index>
-  endif
-  @CatStr(<??VecForEach_Step_>, %??DataVecForEach_ID) equ -1
-
-  PreParseExpr Expression
-
-  ;;Get ??MtdExpr
-  if ??Pos3 ne 0
-    @Err <.VecForEachRev Error: method Expression not allowed>
-    exitm
-  endif
-
-  ;;Get ??ObjExpr
-  if ??Pos1 ne 0
-    if ??Pos2 ne 0
-      ??ObjExpr CatStr @SubStr(<Expression>, ??Pos1 + 2, ??Pos2 - ??Pos1 - 2), \
-                       ??ObjPfxSep, \
-                       @SubStr(<Expression>, ??Pos2 + 1)
-    else
-      ??ObjExpr CatStr ??ObjPfx, @SubStr(<Expression>, ??Pos1 + 2)
-    endif
-  else
-    if ??Pos2 ne 0
-      ??ObjExpr CatStr @SubStr(<Expression>, 1, ??Pos2 - 1), \
-                       ??ObjPfxSep, \
-                       @SubStr(<Expression>, ??Pos2 + 1)
-    else
-      ??ObjExpr CatStr ??ObjPfx, <Expression>
-    endif
-  endif
-
-  ;;Get ??InsExpr
-  if ??Pos1 ne 0
-    ??InsExpr SubStr <Expression>, 1, ??Pos1 - 1
-  endif
-
-  %ifdef ??ObjExpr
-    if @CatStr(%??ObjExpr, <_Error>) eq ??OBJERR_NONE
-
-      if (opattr Index) and OAT_REGISTER
-        if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0
-          .err <.VecForEachRev: invalid index register>
-        endif
-        mov Index, ??InsExpr.??ObjExpr.dCount
-        dec Index
-        .while !SIGN?
-%         lea xax, [Index*sizeof(&??ObjExpr&_ItemType)]
-          add xax, ??InsExpr.??ObjExpr.pItems
-      else
-        mov eax, ??InsExpr.??ObjExpr.dCount
-        dec eax
-        mov @CatStr(<??VecForEach_Index_>, %??DataVecForEach_ID), eax
-        .while !SIGN?
-%         lea xax, [xax*sizeof(&??ObjExpr&_ItemType)]
-          add xax, ??InsExpr.??ObjExpr.pItems
-      endif
-    endif
-
-  else
-    @Err <.DataVecForEachRev Error: undefined object Expression>
-  endif
-endm
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      .VecNext
-; Purpose:    Move to the next DataVector item.
-; Arguments:  None
-; Return:     Nothing.
-
-.VecNext macro
-    if @CatStr(<??VecForEach_Step_>, %??DataVecForEach_ID) eq +1
-      inc @CatStr(<??VecForEach_Index_>, %??DataVecForEach_ID)
-    else
-      dec @CatStr(<??VecForEach_Index_>, %??DataVecForEach_ID)
-    endif
-    if not (opattr @CatStr(<??VecForEach_Index_>, %??DataVecForEach_ID)) and OAT_REGISTER
-      mov eax, @CatStr(<??VecForEach_Index_>, %??DataVecForEach_ID)
-    endif
-  .endw
-  ??DataVecForEach_ID = ??DataVecForEach_ID - 1
-endm
 
 
 ; ==================================================================================================
@@ -268,8 +84,8 @@ Method DataVector.DeleteAt, uses xdi xsi, dIndex:DWORD
     mov [xsi].dCount, ecx
     sub ecx, eax
     .if !ZERO?
-      mov ecx, [xsi].dItemSize 
-      mul ecx 
+      mov ecx, [xsi].dItemSize
+      mul ecx
       mov edx, [xsi].dCount
       sub edx, dIndex
       add xax, [xsi].pItems
@@ -342,7 +158,7 @@ MethodEnd
 Method DataVector.FirstThat, uses xbx xdi xsi, pTestFunc:POINTER, xArg1:XWORD, xArg2:XWORD
   SetObject xsi
   mov ebx, [xsi].dCount
-  .if ebx != 0 
+  .if ebx != 0
     mov xdi, [xsi].pItems
     .repeat
       invoke PDataVecProc ptr pTestFunc, xdi, xArg1, xArg2
@@ -368,7 +184,7 @@ MethodEnd
 Method DataVector.FirstThatNot, uses xbx xdi xsi, pTestFunc:POINTER, xArg1:XWORD, xArg2:XWORD
   SetObject xsi
   mov ebx, [xsi].dCount
-  .if ebx != 0 
+  .if ebx != 0
     mov xdi, [xsi].pItems
     .repeat
       invoke PDataVecProc ptr pTestFunc, xdi, xArg1, xArg2
@@ -435,15 +251,17 @@ MethodEnd
 ; Arguments:  Arg1: -> Item.
 ; Return:     eax = Index. If the xItem wasn't found, the return value is -1!
 
-Method DataVector.IndexOf, uses xsi, pItem:POINTER
+Method DataVector.IndexOf, uses xbx xdi xsi, pItem:POINTER
   SetObject xsi
-  mov xdx, [xsi].pItems
+  ?mov xdx, pItem
+  mov xbx, [xsi].pItems
   mov ecx, [xsi].dItemSize
+  mov edi, [xsi].dCount
   xor eax, eax
-  .while eax != [xsi].dCount
-    test xdx, pItem
+  .while eax != edi
+    cmp xbx, xdx
     jz @@EOM
-    add xdx, xcx                                      ;xdx -> Next Item in the Vector
+    add xbx, xcx                                      ;xbx -> Next Item in the Vector
     inc eax
   .endw
 @@:
@@ -467,7 +285,7 @@ Method DataVector.Init, uses xsi, pOwner:POINTER, dItemSize:DWORD, \
 
   SetObject xsi
   ACall xsi.Init, $ArgReg(pOwner)
-  m2m [xsi].dItemSize, dItemSize, eax  
+  m2m [xsi].dItemSize, dItemSize, eax
   xor eax, eax
   mov [xsi].pItems, xax
   mov [xsi].dCount, eax
@@ -532,7 +350,7 @@ Method DataVector.Insert, uses xdi xsi, pItem:POINTER
   test eax, BIT00
   jz @F
   movsb
-@@:  
+@@:
   mov eax, TRUE
   ret
 @@Error:
@@ -746,33 +564,13 @@ Method DataVector.Load, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pDeserInfo:PD
 
   SetObject xsi
   ACall xsi.Load, $ArgReg(pStream), $ArgReg(pDeserInfo)
-  OCall pStream::Stream.BinRead32                       ;Read count
-  mov edi, eax                                          ;edi = Count
-  OCall pStream::Stream.BinRead32                       ;Read dLimit
-  mov ebx, eax
-
-  OCall pStream::Stream.BinRead32                       ;Read dDelta
-  mov [xsi].dDelta, eax
-  OCall pStream::Stream.BinRead32                       ;Read dMaxCapacity
-  mov [xsi].dMaxCapacity, eax
-
-  xor eax, eax
-  mov [xsi].pItems, xax
-  mov [xsi].dCount, eax
-  mov [xsi].dLimit, eax
-  OCall xsi.SetLimit, ebx
-  test eax, eax                                         ;Test for OBJ_OK
-  jne @@Error
-
-  OCall pStream::Stream.BinRead32
-  mov [xsi].dItemSize, eax
-  
-  mov [xsi].dCount, edi
-  mul edi
-  OCall pStream::Stream.BinRead, [xsi].pItems, eax
+  .if [xsi].dErrorCode == OBJ_OK
+    OCall pStream::Stream.BinRead32
+    mov [xsi].dItemSize, eax
+    mul [xsi].dCount
+    OCall pStream::Stream.BinRead, [xsi].pItems, eax
+  .endif
   ret
-@@Error:
-  OCall xsi.ErrorReport, NULL, eax
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -891,18 +689,13 @@ MethodEnd
 ; Arguments:  Arg1: -> Stream object.
 ; Return:     Nothing.
 
-Method DataVector.Store, uses  xdi xsi, pStream:$ObjPtr(Stream)
+Method DataVector.Store, uses xdi xsi, pStream:$ObjPtr(Stream)
   ArgReg pStream:rdx
 
   SetObject xsi
   mov xdi, $ArgReg(pStream)
   ACall xsi.Store, $ArgReg(pStream)
-  OCall xdi::Stream.BinWrite32, [xsi].dCount
-  OCall xdi::Stream.BinWrite32, [xsi].dLimit
-  OCall xdi::Stream.BinWrite32, [xsi].dDelta
-  OCall xdi::Stream.BinWrite32, [xsi].dMaxCapacity
   OCall xdi::Stream.BinWrite32, [xsi].dItemSize
-
   mov eax, [xsi].dCount
   mul [xsi].dItemSize
   OCall xdi::Stream.BinWrite, [xsi].pItems, eax

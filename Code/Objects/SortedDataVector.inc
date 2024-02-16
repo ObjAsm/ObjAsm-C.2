@@ -95,8 +95,10 @@ MethodEnd
 Method SortedDataVector.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   SetObject xsi
   ACall xsi.Load, pStream, pDeserInfo
-  OCall pStream::Stream.BinRead32
-  mov [xsi].dDuplicates, eax
+  .if [xsi].dErrorCode == OBJ_OK
+    OCall pStream::Stream.BinRead32
+    mov [xsi].dDuplicates, eax
+  .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -165,36 +167,44 @@ MethodEnd
 ; Method:     SortedDataVector.Sort
 ; Purpose:    Resort the collection in place, i.e. if the compare method was changed.
 ; Arguments:  None.
-; Return:     eax = TRUE if succeeded, otherwise FALSE.
+; Return:     Nothing.
 
 Method SortedDataVector.Sort, uses xbx xdi xsi
-  local pItem:POINTER
-
   SetObject xsi
+  if TARGET_BITNESS eq 32
+    sub esp, [xsi].dItemSize                            ;Probing?
+  else
+    mov eax, [xsi].dItemSize
+    sub xsp, xax                                        ;Probing?
+  endif
   mov ebx, [xsi].dCount
   xor eax, eax
   test ebx, ebx
   setnz al                                              ;If exists, skip first item
   mov [xsi].dCount, eax                                 ;Set list new initial count
   .if !ZERO?
-    MemAlloc [xsi].dItemSize
-    .if xax != NULL
-      mov pItem, xax
-      mov xdi, [xsi].pItems
-      .while TRUE
-        dec ebx
-        .break .if ZERO?
-        mov eax, [xsi].dItemSize
-        add xdi, xax                                    ;Move to next item
-        invoke MemClone, pItem, xdi, [xsi].dItemSize
-        OCall xsi.Insert, pItem                         ;Insert item from that position in the Vect
-      .endw
-      MemFree pItem
-      mov eax, TRUE
-    .endif
-  .else
-    mov eax, TRUE
+    mov xdi, [xsi].pItems
+    .while TRUE
+      dec ebx
+      .break .if ZERO?
+      mov eax, [xsi].dItemSize
+      add xdi, xax                                      ;Move to next item
+      if TARGET_BITNESS eq 32
+        mov ecx, esp
+        invoke MemClone, ecx, edi, [esi].dItemSize      ;Store item on a temp location on the stack
+        OCall esi.Insert, esp                           ;Insert it
+      else
+        invoke MemClone, addr [rsp + 28h], xdi, [xsi].dItemSize ;Store item on a temp location
+        OCall xsi.Insert, addr [rsp + 28h]              ;Insert it
+      endif
+    .endw
   .endif
+  if TARGET_BITNESS eq 32
+    add esp, [xsi].dItemSize
+  else
+    mov eax, [xsi].dItemSize
+    add xsp, xax
+  endif
 MethodEnd
 
 endif

@@ -44,9 +44,9 @@ TSV_MODIFIABLE  equ   2
 
 %Object TSortedVectorName, TSortedVectorID, AncestorVectorName
 
-;%ifb <AncestorVectorName>
-;  .err <TSortedVector error: Ancestor required.>
-;else
+%ifb <AncestorVectorName>
+  .err <TSortedVector error: Ancestor required.>
+else
   TVEC_ITEM_TYPE  equ @CatStr(<%??AncName>, <_ItemType>)
   % &??ObjName&_ItemType    textequ <TVEC_ITEM_TYPE>
   % &??ObjName&_PVecProc    textequ <&??AncName&_PVecProc>
@@ -55,7 +55,7 @@ TSV_MODIFIABLE  equ   2
   DynamicMethod     Compare,      TVEC_ITEM_TYPE, TVEC_ITEM_TYPE
   RedefineMethod    Insert,       TVEC_ITEM_TYPE
   RedefineMethod    Load,         $ObjPtr(Stream), PDESER_INFO
-  VirtualMethod     Search,       TVEC_ITEM_TYPE        ;-> Searched item
+  VirtualMethod     Search,       TVEC_ITEM_TYPE        ;Item to search for
   VirtualMethod     Sort
   RedefineMethod    Store,        $ObjPtr(Stream)
 
@@ -66,7 +66,7 @@ TSV_MODIFIABLE  equ   2
   if TVectorOrdering eq TSV_MODIFIABLE
     DefineVariable    dOrdering,    DWORD, TVectorOrdInit
   endif
-;endif 
+endif
 ObjectEnd
 
 
@@ -120,8 +120,8 @@ if IMPLEMENT
 	  elseif TVectorOrdering eq TSV_DESCENDING
 	    mov $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem2
 	    sub $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem1
-	  endif  
-  endif  
+	  endif
+  endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -135,7 +135,7 @@ MethodEnd
 %Method TSortedVectorName.Insert, uses xsi, xItem:TVEC_ITEM_TYPE
   SetObject xsi
   OCall xsi.Search, xItem                               ;eax = success (TRUE/FALSE), ecx = index
-  if TVectorDupCheck  
+  if TVectorDupCheck
     .if eax != FALSE
       xor eax, eax                                      ;xax = NULL (exit value)
       cmp [xsi].dDuplicates, eax
@@ -157,7 +157,7 @@ MethodEnd
 %Method TSortedVectorName.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   SetObject xsi
   ACall xsi.Load, pStream, pDeserInfo
-  if TVectorDupCheck  
+  if TVectorDupCheck
     OCall pStream::Stream.BinRead32
     mov [xsi].dDuplicates, eax
   endif
@@ -197,10 +197,10 @@ MethodEnd
   jg @@2                                                ;> signed compare  (ZF=0 and SF=OF)
   jl @@3                                                ;                  (ZF=1)
   mov $LocReg(dFound), TRUE                             ;Found flag = TRUE
-  if TVectorDupCheck  
+  if TVectorDupCheck
     cmp [xbx].dDuplicates, FALSE
     je @@Exit
-  endif 
+  endif
 @@2:
   lea esi, [edi - 1]                                    ;H = Index - 1
   jmp @@0
@@ -225,9 +225,9 @@ MethodEnd
 %Method TSortedVectorName.Store, uses xsi, pStream:$ObjPtr(Stream)
   SetObject xsi
   ACall xsi.Store, pStream
-   if TVectorDupCheck  
+   if TVectorDupCheck
     OCall pStream::Stream.BinWrite32, [xsi].dDuplicates
-   endif   
+   endif
   if TVectorOrdering eq TSV_MODIFIABLE
     OCall pStream::Stream.BinWrite32, [xsi].dOrdering
   endif

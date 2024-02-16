@@ -105,7 +105,7 @@ Method Primer.ErrorSet, uses xbx xdi xsi, dErrorCode:DWORD
     invoke DbgOutTextA, xbx, DbgColorError, DbgColorBackground, DBG_EFFECT_NORMAL, \
                         offset(szDbgObjErr)
     mov eax, edi
-  
+
     ;Search the object name using the object ID (xax) and if found, output it
     mov xdi, pObjIDTableStart
     xor ecx, ecx
@@ -119,12 +119,12 @@ Method Primer.ErrorSet, uses xbx xdi xsi, dErrorCode:DWORD
       add xdi, sizeof(DWORD) + sizeof(POINTER)          ;Object type ID + PSTRING
       inc ecx
     .endw
-  
+
     ;Output the error code
     invoke wsprintfA, xbx, $OfsCStrA(", Error Code = %I32ut"), [xsi].dErrorCode
     invoke DbgOutTextA, xbx, DbgColorError, DbgColorBackground, DBG_EFFECT_NORMAL, \
                         offset(szDbgObjErr)
-  
+
     ;Search the error code description and if found, output it
     mov xdi, pObjErrTableStart
     xor ecx, ecx
@@ -139,7 +139,7 @@ Method Primer.ErrorSet, uses xbx xdi xsi, dErrorCode:DWORD
       add xdi, sizeof(DWORD) + sizeof(POINTER)          ;Object error ID + PSTRING
       inc ecx
     .endw
-  
+
     invoke DbgOutTextA, offset(bCRLF), DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, \
                         offset(szDbgObjErr)
   endif
@@ -155,8 +155,7 @@ MethodEnd
 
 endif
 
-; —————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Primer.Init
+; —————————————————————————————————————————————————————————————————————————————————————————————————; Method:     Primer.Init
 ; Purpose:    Set the owner of the object.
 ; Arguments:  Arg1: -> Owner object.
 ; Return:     Nothing.
