@@ -177,7 +177,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=20
+MilestoneOnDateDate=28
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -213,11 +213,11 @@ ProductVer4Range=0
 
 [Size]
 2=0,0,806,424,20842
-3=0,0,2127,589,4723
+3=0,0,2127,589,1095
 1=0,0,694,487,2510
 4=0,0,706,573,9402
 1001=0,0,0,0,460
-5=0,0,0,0,8256
+5=0,0,0,0,38966
 6=0,0,601,582,379
 7=0,0,0,0,2249
 8=0,0,0,0,4906
@@ -285,16 +285,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="ClpBrdClear"
-2="Erase"
-3="dTotalUnencryptedSize"
-4="TotalBytesToRead"
-5="pUnencryptedBuffer"
-6="dUnencryptedSize"
-7="DBG_FLOAT_BUFFERSIZE"
-8="DBG_FLOAT_RESOLUTION"
-9="DbgFloat"
-10="Dbg"
+1="hCalcPrc"
+2="szCalcPath"
+3="calc.exe"
+4="ClpBrdClear"
+5="Erase"
+6="dTotalUnencryptedSize"
+7="TotalBytesToRead"
+8="pUnencryptedBuffer"
+9="dUnencryptedSize"
+10="DBG_FLOAT_BUFFERSIZE"
 "
 [Collapse]
 7=,,
@@ -351,9 +351,9 @@ ProductVer4Range=0
 53=
 54=
 [AutoLoad]
-AutoLoad=1,2,18,5,7
+AutoLoad=1,2,18,5,7,3
 [PTimer]
-PTimer=2331300560
+PTimer=2343299294
 [RADebugBP]
 5=
 2=
