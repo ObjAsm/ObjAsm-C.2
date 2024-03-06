@@ -95,7 +95,7 @@ MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:    ChartSeries.Scan
-; Purpose:   Scan the buffers X and Y data to find the min and max values => Min & Max indices are set.
+; Purpose:   Scan the X & Y data to find the min and max values => Min & Max indices are set.
 ; Arguments: Arg1: First element index, starting from 0 to dCapacity - 1.
 ;            Arg2: Element count.
 ; Return:    Nothing.

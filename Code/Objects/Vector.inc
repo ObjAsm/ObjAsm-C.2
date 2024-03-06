@@ -51,8 +51,8 @@ ObjectEnd
 ; Arguments:  Arg1: TVector.
 ;             Arg2: Optional 32 bit index variable/register. It can not be eax!
 ; Return:     Nothing.
-; Note:       On each loop xax -> TVector item.
-; Example:    .VecForEach MyVector
+; Note:       On each loop xax -> Vector item.
+; Example:    .VecForEach MyVector::SortedDataVector
 ;               DbgDec TVEC_ITEM_TYPE ptr [xax]
 ;             .VecNext
 
@@ -106,29 +106,29 @@ ObjectEnd
 
 %       ifdef ??ObjExpr.dItemSize
           xor Index, Index
-          .while Index != ??InsExpr.??ObjExpr.dCount
+          .while Index != (??ObjExpr ptr ??InsExpr).dCount
             mov eax, Index
-            mul ??InsExpr.??ObjExpr.dItemSize
-            add xax, ??InsExpr.??ObjExpr.pItems
+            mul (??ObjExpr ptr ??InsExpr).dItemSize
+            add xax, (??ObjExpr ptr ??InsExpr).pItems
         else
           xor Index, Index
-          .while Index != ??InsExpr.??ObjExpr.dCount
+          .while Index != (??ObjExpr ptr ??InsExpr).dCount
 %           lea xax, [Index*sizeof(&??ObjExpr&_ItemType)]
-            add xax, ??InsExpr.??ObjExpr.pItems
+            add xax, (??ObjExpr ptr ??InsExpr).pItems
         endif
       else
 %       ifdef ??ObjExpr.dItemSize
           xor eax, eax
           mov @CatStr(<??VecForEach_Index_>, %??DataVecForEach_ID), eax
-          .while eax != ??InsExpr.??ObjExpr.dCount
-            mul ??InsExpr.??ObjExpr.dItemType
-            add xax, ??InsExpr.??ObjExpr.pItems
+          .while eax != (??ObjExpr ptr ??InsExpr).dCount
+            mul (??ObjExpr ptr ??InsExpr).dItemType
+            add xax, (??ObjExpr ptr ??InsExpr).pItems
         else
           xor eax, eax
           mov @CatStr(<??VecForEach_Index_>, %??VecForEach_ID), eax
-          .while eax != ??InsExpr.??ObjExpr.dCount
+          .while eax != (??ObjExpr ptr ??InsExpr).dCount
 %           lea xax, [xax*sizeof(&??ObjExpr&_ItemType)]
-            add xax, ??InsExpr.??ObjExpr.pItems
+            add xax, (??ObjExpr ptr ??InsExpr).pItems
         endif
       endif
     endif
@@ -195,34 +195,34 @@ endm                                                    ;;xax -> allocated objec
         endif
 
 %       ifdef ??ObjExpr.dItemSize
-          mov Index, ??InsExpr.??ObjExpr.dCount
+          mov Index, (??ObjExpr ptr ??InsExpr).dCount
           dec Index
           .while !SIGN?
             mov eax, Index
-            mul ??InsExpr.??ObjExpr.dItemSize
-            add xax, ??InsExpr.??ObjExpr.pItems
+            mul (??ObjExpr ptr ??InsExpr).dItemSize
+            add xax, (??ObjExpr ptr ??InsExpr).pItems
         else
-          mov Index, ??InsExpr.??ObjExpr.dCount
+          mov Index, (??ObjExpr ptr ??InsExpr).dCount
           dec Index
           .while !SIGN?
 %           lea xax, [Index*sizeof(&??ObjExpr&_ItemType)]
-            add xax, ??InsExpr.??ObjExpr.pItems
+            add xax, (??ObjExpr ptr ??InsExpr).pItems
         endif
       else
 %       ifdef ??ObjExpr.dItemSize
-          mov eax, ??InsExpr.??ObjExpr.dCount
+          mov eax, (??ObjExpr ptr ??InsExpr).dCount
           dec eax
           mov @CatStr(<??VecForEach_Index_>, %??VecForEach_ID), eax
           .while !SIGN?
-            mul ??InsExpr.??ObjExpr.dItemType
-            add xax, ??InsExpr.??ObjExpr.pItems
+            mul (??ObjExpr ptr ??InsExpr).dItemType
+            add xax, (??ObjExpr ptr ??InsExpr).pItems
         else
-          mov eax, ??InsExpr.??ObjExpr.dCount
+          mov eax, (??ObjExpr ptr ??InsExpr).dCount
           dec eax
           mov @CatStr(<??VecForEach_Index_>, %??VecForEach_ID), eax
           .while !SIGN?
 %           lea xax, [xax*sizeof(&??ObjExpr&_ItemType)]
-            add xax, ??InsExpr.??ObjExpr.pItems
+            add xax, (??ObjExpr ptr ??InsExpr).pItems
         endif
       endif
     endif

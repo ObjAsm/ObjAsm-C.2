@@ -326,6 +326,14 @@ dec2dword, pDecString
 dec2dwordA, pDecStringA
 dec2dwordW, pDecStringW
 
+dec2qword, pDecString
+dec2qwordA, pDecStringA
+dec2qwordW, pDecStringW
+
+dec2xword, pDecString
+dec2xwordA, pDecStringA
+dec2xwordW, pDecStringW
+
 qword2dec, pDecString, qword
 qword2decA, pDecStringA, qword
 qword2decW, pDecStringW, qword

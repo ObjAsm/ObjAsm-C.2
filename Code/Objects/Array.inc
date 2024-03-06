@@ -138,9 +138,9 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Array.DimResize
 ; Purpose:    Resize an existing dimension of an array object.
-; Arguments:  Arg1: Dimension index
+; Arguments:  Arg1: Dimension index [0..n-1].
 ;             Arg2: New dimension size.
-;             Arg3: Initialization flags. (Valid flags: ARR_MEM_ZERO, ARR_PRESERVE)
+;             Arg3: Initialization flags (Valid flags: ARR_MEM_ZERO, ARR_PRESERVE).
 ; Return:     Nothing.
 
 Method Array.DimResize, uses xbx xdi xsi, dIndex:DWORD, dNewWidth:DWORD, dFlags:DWORD

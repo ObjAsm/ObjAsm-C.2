@@ -100,16 +100,16 @@ ObjectEnd
       .err <.ColForEachRev: invalid index register>
     endif
     xor Index, Index
-    .while Index != Coll.$Obj(Collection).dCount
+    .while Index != ($Obj(Collection) ptr Coll).dCount
       lea eax, [sizeof(POINTER)*Index]
-      add xax, Coll.$Obj(Collection).pItems
+      add xax, ($Obj(Collection) ptr Coll).pItems
       mov xax, POINTER ptr [xax]
   else
     xor eax, eax
     mov @CatStr(<??ColForEach_Index_>, %??ColForEach_ID), eax
-    .while eax != Coll.$Obj(Collection).dCount
+%   .while eax != ($Obj(Collection) ptr Coll).dCount
       lea eax, [sizeof(POINTER)*eax]
-      add xax, Coll.$Obj(Collection).pItems
+%     add xax, ($Obj(Collection) ptr Coll).pItems
       mov xax, POINTER ptr [xax]
   endif
 endm
@@ -135,19 +135,19 @@ endm
     if @InStr(1, %RAX_SUBREGS, $Upper(&Index)) ne 0
       .err <.ColForEachRev: invalid index register>
     endif
-    mov Index, Coll.$Obj(Collection).dCount
+    mov Index, ($Obj(Collection) ptr Coll).dCount
     dec Index
     .while !SIGN?
       lea eax, [sizeof(POINTER)*Index]
-      add xax, Coll.$Obj(Collection).pItems
+      add xax, ($Obj(Collection) ptr Coll).pItems
       mov xax, POINTER ptr [xax]
   else
-    mov eax, Coll.$Obj(Collection).dCount
+    mov eax, ($Obj(Collection) ptr Coll).dCount
     dec eax
     mov @CatStr(<??ColForEach_Index_>, %??ColForEach_ID), eax
     .while !SIGN?
       lea eax, [sizeof(POINTER)*eax]
-      add xax, Coll.$Obj(Collection).pItems
+      add xax, ($Obj(Collection) ptr Coll).pItems
       mov xax, POINTER ptr [xax]
   endif
 endm

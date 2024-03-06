@@ -9,7 +9,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
-SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, ResGuard)
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, ResGuard)
 
 % includelib &LibPath&Windows\shell32.lib
 % includelib &LibPath&Windows\shlwapi.lib

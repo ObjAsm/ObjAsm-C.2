@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      Json.inc
 ; Author:     G. Friedrich
-; Version:    C.2.3
+; Version:    C.2.4
 ; Purpose:    ObjAsm support of JSON (JavaScript Object Notation) objects.
 ; Links:      https://www.json.org/json-en.html
 ;             https://www.rfc-editor.org/rfc/rfc8259
@@ -26,6 +26,8 @@
 ;               - Bug in JsonGetValue detected by HSE.
 ;             Version C.2.3, September 2023.
 ;               - JsonGetNumberEnd bug corrected.
+;             Version C.2.4, March 2024.
+;               - JSON_TYPE_NULL leack corrected.
 ; ==================================================================================================
 
 
@@ -497,7 +499,8 @@ Method Json.DelProperty, uses xbx xsi, pProperty:PJSON_PROPERTY
   mov xbx, pProperty
   .if xbx != NULL
     mov eax, [xbx].JSON_PROPERTY.dType
-    .if eax == JSON_TYPE_STRING || eax == JSON_TYPE_NUMBER || eax == JSON_TYPE_BOOLEAN
+    .if eax == JSON_TYPE_STRING || eax == JSON_TYPE_NUMBER || \
+        eax == JSON_TYPE_BOOLEAN || eax == JSON_TYPE_NULL
       invoke StrDispose, [xbx].JSON_PROPERTY.pValue
     .elseif eax == JSON_TYPE_ARRAY || eax == JSON_TYPE_OBJECT
       ;Delete all children recursively

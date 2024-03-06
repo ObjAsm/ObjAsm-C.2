@@ -790,6 +790,16 @@ else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
 
+dec2qwordA proto :POINTER
+dec2qwordW proto :POINTER
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  dec2qword textequ <dec2qwordA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  dec2qword textequ <dec2qwordW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
 bin2byteA proto :POINTER
 bin2byteW proto :POINTER
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
@@ -888,6 +898,9 @@ if TARGET_BITNESS eq 32
   sxword2decW textequ <sdword2decW>
   uxword2decW textequ <udword2decW>
   xword2decW textequ <udword2decW>
+  
+  dec2xwordA textequ <dec2dwordA>
+  dec2xwordW textequ <dec2dwordW>
 
   XWORD2HEX_MAX_CHARS textequ <DWORD2HEX_MAX_CHARS>
   XWORD2BIN_MAX_CHARS textequ <DWORD2BIN_MAX_CHARS>
@@ -918,12 +931,23 @@ elseif TARGET_BITNESS eq 64
   uxword2decW textequ <uqword2decW>
   xword2decW textequ <uqword2decW>
 
+  dec2xwordA textequ <dec2qwordA>
+  dec2xwordW textequ <dec2qwordW>
+
   XWORD2HEX_MAX_CHARS textequ <QWORD2HEX_MAX_CHARS>
   XWORD2BIN_MAX_CHARS textequ <QWORD2BIN_MAX_CHARS>
   XWORD2DEC_MAX_CHARS textequ <QWORD2DEC_MAX_CHARS>
   SXWORD2DEC_MAX_CHARS textequ <SQWORD2DEC_MAX_CHARS>
 else
   %echo Warning: incompatible Bitness: $ToStr(%TARGET_BITNESS)
+endif
+
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  dec2xword textequ <dec2xwordA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  dec2xword textequ <dec2xwordW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
 endif
 
 
