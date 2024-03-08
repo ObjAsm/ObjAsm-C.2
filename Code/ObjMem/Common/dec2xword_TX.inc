@@ -59,7 +59,7 @@ endif
     lea xcx, [xcx + 4*xcx]
     lea xcx, [xax + 2*xcx]                              ;xcx = xax + 10*xcx
 @@:
-    lodsb
+    lodsc
     or CharReg, CharReg                                 ;Check for ZTC
   .until ZERO?
 

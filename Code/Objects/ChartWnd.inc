@@ -1581,7 +1581,6 @@ ifdef INCLUDE_CHART_SETUP_DIALOG
     .endif
   .else
     ;Check if a series was clicked
-    DbgDec [xsi].InfoAreas.dCount
     xor ebx, ebx
     .while ebx != [xsi].InfoAreas.dCount
       mov xdi, $OCall([xsi].InfoAreas::DataCollection.ItemAt, ebx)

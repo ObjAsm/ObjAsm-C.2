@@ -9,10 +9,10 @@ echo.
 
 if [!TARGET_BITNESS!] == [] (
   echo [93;101mMissing targets...[0m
-  call %OBJASM_PATH%\Build\OA_ERROR.cmd
+  call "%OBJASM_PATH%\Build\OA_ERROR.cmd"
 ) else (
   pushd
-  cd %OBJASM_PATH%\Code\ObjMem\!TARGET_BITNESS!
+  cd "%OBJASM_PATH%\Code\ObjMem\!TARGET_BITNESS!"
   
   REM delete all leftover .obj, .lib & .err files that can disturb the build process
   if exist *.err del *.err
@@ -21,7 +21,7 @@ if [!TARGET_BITNESS!] == [] (
   
   REM Start assembling all files in current directory
   echo Assembling files ...
-  call %OBJASM_PATH%\Build\OA_SET.cmd
+  call "%OBJASM_PATH%\Build\OA_SET.cmd"
   call !Assembler! @"%OBJASM_PATH%\Build\Options\OPT_ASM_LIB_!TARGET_BITNESS!.txt" *.asm
   if exist *.err (
     echo [93;101m --- Error compiling source files --- [0m
