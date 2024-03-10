@@ -16,10 +16,10 @@ VER_PRODUCTVERSION            equ       2,2,1,0
 VER_PRODUCTVERSION_STR        textequ   <2.2.1>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       52
-BUILD_DATE_STR                textequ   <2024-01-18>
+BUILD_NUMBER                  equ       53
+BUILD_DATE_STR                textequ   <2024-03-09>
 BUILD_BITNESS                 equ       64
-BUILD_MODE                    equ       RLS
+BUILD_MODE                    equ       DBG
 
 ;Menu IDs
 IDM_FILE                      equ       050

@@ -875,6 +875,14 @@ RGB24To16ColorIndex proto :DWORD
 DWORD2DEC_MAX_CHARS textequ <UDWORD2DEC_MAX_CHARS>
 QWORD2DEC_MAX_CHARS textequ <UQWORD2DEC_MAX_CHARS>
 
+sqwordDiv proto :SQWORD, :SQWORD
+sqwordMul proto :SQWORD, :SQWORD
+
+sowordDiv proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
+sowordMul proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
+
+MulDiv64 proto :SQWORD, :SQWORD, :SQWORD
+
 if TARGET_BITNESS eq 32
   xword2hex textequ <dword2hex>
   hex2xword textequ <hex2dword>
@@ -898,7 +906,7 @@ if TARGET_BITNESS eq 32
   sxword2decW textequ <sdword2decW>
   uxword2decW textequ <udword2decW>
   xword2decW textequ <udword2decW>
-  
+
   dec2xwordA textequ <dec2dwordA>
   dec2xwordW textequ <dec2dwordW>
 
@@ -938,6 +946,7 @@ elseif TARGET_BITNESS eq 64
   XWORD2BIN_MAX_CHARS textequ <QWORD2BIN_MAX_CHARS>
   XWORD2DEC_MAX_CHARS textequ <QWORD2DEC_MAX_CHARS>
   SXWORD2DEC_MAX_CHARS textequ <SQWORD2DEC_MAX_CHARS>
+
 else
   %echo Warning: incompatible Bitness: $ToStr(%TARGET_BITNESS)
 endif
@@ -1081,7 +1090,7 @@ if TARGET_PLATFORM eq PLATFORM_WINDOWS
   IsScrollBarVisible proto :HANDLE, :DWORD
   GetDlgBaseUnits proto :HANDLE
   SendChildrenMessage proto :HANDLE, :DWORD, :WPARAM, :LPARAM
-  CompressMem proto :POINTER, :DWORD, :DWORD 
+  CompressMem proto :POINTER, :DWORD, :DWORD
   CompressMemToFile proto :POINTER, :DWORD, :DWORD, :HANDLE
   DecompressFromFile proto :HANDLE
   DecompressMem proto :POINTER, :DWORD, :DWORD

@@ -615,3 +615,7 @@ CalcVarianceR8, pArray, xCount, pVariance
 Base64Encode, pDataBuffer, dDataSize
 Base64Decode, pDataBuffer, dDataSize
 
+sqwordDiv, sqDividend, sqDivisor
+sqwordMul, sqMultiplicand, sqMultiplicator
+
+MulDiv64, sqMultiplicand, sqMultiplicator, sqDivisor
