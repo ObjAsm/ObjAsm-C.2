@@ -877,9 +877,31 @@ QWORD2DEC_MAX_CHARS textequ <UQWORD2DEC_MAX_CHARS>
 
 sqwordDiv proto :SQWORD, :SQWORD
 sqwordMul proto :SQWORD, :SQWORD
+sqwordDivRem proto :SQWORD, :SQWORD
+sqwordRem proto :SQWORD, :SQWORD
+sqwordShl proto
+sqwordShr proto
+
+uqwordDiv proto :QWORD, :QWORD
+uqwordMul proto :QWORD, :QWORD
+uqwordDivRem proto :QWORD, :QWORD
+uqwordRem proto :QWORD, :QWORD
+uqwordShl proto
+uqwordShr proto
 
 sowordDiv proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
 sowordMul proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
+sowordDivRem proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
+sowordRem proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
+sowordShl proto
+sowordShr proto
+
+uowordDiv proto :QWORD, :QWORD, :QWORD, :QWORD
+uowordMul proto :QWORD, :QWORD, :QWORD, :QWORD
+uowordDivRem proto :QWORD, :QWORD, :QWORD, :QWORD
+uowordRem proto :QWORD, :QWORD, :QWORD, :QWORD
+uowordShl proto
+uowordShr proto
 
 MulDiv64 proto :SQWORD, :SQWORD, :SQWORD
 

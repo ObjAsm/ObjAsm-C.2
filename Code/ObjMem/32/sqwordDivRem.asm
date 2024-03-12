@@ -1,10 +1,10 @@
 ; ==================================================================================================
-; Title:      sqwordDiv.asm
+; Title:      sqwordDivRem.asm
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, March 2024.
 ;               - First release.
-;               - Inspired by Microsoft's lldiv.asm (nt5src-master).
+;               - Inspired by Microsoft's lldvrm.asm (nt5src-master).
 ; ==================================================================================================
 
 
@@ -13,23 +13,30 @@
 
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  sqwordDiv
+; Procedure:  sqwordDivRem
 ; Purpose:    Divide 2 signed QWORDs.
 ; Arguments:  Arg1: Dividend.
 ;             Arg2: Divisor.
 ; Return:     edx:eax = Quotient.
+;             ebx:ecx = Remainder.
+; Note:       Don't include ebx in the uses clause.
 
 HIGH_OFFSET = sizeof(DWORD)
 
 align ALIGN_CODE
-sqwordDiv proc uses ebx edi esi sqDividend:SQWORD, sqDivisor:SQWORD
+sqwordDivRem proc uses edi esi sqDividend:SQWORD, sqDivisor:SQWORD
+  local dSign:DWORD
+
 ; Determine sign of the result (edi = 0 if result is positive, non-zero otherwise)
 ; and make operands positive.
   xor edi, edi                                          ;Result sign assumed positive
+  mov dSign, edi                                        ;Result sign assumed positive
+
   mov eax, SDWORD ptr (sqDividend + HIGH_OFFSET)        ;hi-word of dividend
   or eax, eax                                           ;Test to see if signed
   jge short L1                                          ;Skip rest if dividend is already positive
   inc edi                                               ;Complement result sign flag
+  inc dSign                                             ;Complement result sign flag
   mov edx, SDWORD ptr (sqDividend)                      ;lo-word of dividend
   neg eax                                               ;Make dividend positive
   neg edx
@@ -63,10 +70,18 @@ L2:
   mov ebx, eax                                          ;Save high bits of quotient
   mov eax, SDWORD ptr (sqDividend)                      ;edx:eax <- remainder:lo-word of dividend
   div ecx                                               ;eax <- low order bits of quotient
-  mov edx, ebx                                          ;edx:eax <- quotient
-  jmp short L4                                          ;Set sign, restore stack and return
+  mov esi, eax                                          ;ebx:esi <- quotient
 
-; Here we do it the hard way. Remember, eax contains the high word of sqDivisor
+; Now we need to do a multiply so that we can compute the remainder.
+  mov eax, ebx                                          ;Set up high word of quotient
+  mul SDWORD ptr (sqDivisor)                            ;Hi-word QUOT * divisor
+  mov ecx, eax                                          ;Save the result in ecx
+  mov eax, esi                                          ;Set up lo-word of quotient
+  mul SDWORD ptr (sqDivisor)                            ;Lo-word(QUOT) * divisor
+  add edx, ecx                                          ;edx:eax = QUOT * divisor
+  jmp short L4                                          ;Complete remainder calculation
+
+; Here we do it the hard way. Remember, eax contains the high word of divisor
 L3:
   mov ebx, eax                                          ;ebx:ecx <- divisor
   mov ecx, SDWORD ptr (sqDivisor)
@@ -103,13 +118,38 @@ L5:
   jbe short L7                                          ;If less or equal we are ok, else subtract
 L6:
   dec esi                                               ;Subtract 1 from quotient
+  sub eax, SDWORD ptr (sqDivisor)                       ; subtract divisor from result
+  sbb edx, SDWORD ptr (sqDivisor + HIGH_OFFSET)
 L7:
-  xor edx, edx                                          ;edx:eax <- quotient
+  xor  ebx, ebx                                         ;ebx:esi <- quotient
+
+L4:
+; Calculate remainder by subtracting the result from the original dividend.
+; Since the result is already in a register, we will do the subtract in the
+; opposite direction and negate the result if necessary.
+  sub eax, SDWORD ptr (sqDividend)                      ;Subtract dividend from result
+  sbb edx, SDWORD ptr (sqDividend + HIGH_OFFSET)
+
+; Now check the result sign flag to see if the result is supposed to be positive
+; or negative.  It is currently negated (because we subtracted in the 'wrong'
+; direction), so if the sign flag is set we are done, otherwise we must negate
+; the result to make it positive again.
+  dec dSign                                             ;Check result sign flag
+  jns short L9                                          ;Result is ok, set up the quotient
+  neg edx                                               ; otherwise, negate the result
+  neg eax
+  sbb edx, 0
+
+L9:
+; Now we need to get the quotient into edx:eax and the remainder into ebx:ecx.
+  mov ecx, edx
+  mov edx, ebx
+  mov ebx, ecx
+  mov ecx, eax
   mov eax, esi
 
-; Just the cleanup left to do. edx:eax contains the quotient.
-; Set the sign according to the saved value and return.
-L4:
+; Just the cleanup left to do. edx:eax contains the quotient. 
+; Set the sign according to the save value and return.
   dec edi                                               ;Check to see if result is negative
   jnz short L8                                          ;If edi == 0, result should be negative
   neg edx                                               ; otherwise, negate the result
@@ -118,6 +158,6 @@ L4:
 
 L8:
   ret
-sqwordDiv endp
+sqwordDivRem endp
 
 end

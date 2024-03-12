@@ -615,7 +615,32 @@ CalcVarianceR8, pArray, xCount, pVariance
 Base64Encode, pDataBuffer, dDataSize
 Base64Decode, pDataBuffer, dDataSize
 
-sqwordDiv, sqDividend, sqDivisor
 sqwordMul, sqMultiplicand, sqMultiplicator
+sqwordDiv, sqDividend, sqDivisor
+sqwordDivRem, sqDividend, sqDivisor
+sqwordRem, sqDividend, sqDivisor
+sqwordShl
+sqwordShr
+
+uqwordMul, qMultiplicand, qMultiplicator
+uqwordDiv, qDividend, qDivisor
+uqwordDivRem, qDividend, qDivisor
+uqwordRem, qDividend, qDivisor
+uqwordShl
+uqwordShr
+
+sowordMul, sqMultiplicandLo, sqMultiplicandHi, sqMultiplicatorLo, sqMultiplicatorHi
+sowordDiv, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
+sowordDivRem, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
+sowordRem, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
+sowordShl
+sowordShr
+
+uowordMul, qMultiplicandLo, qMultiplicandHi, qMultiplicatorLo, qMultiplicatorHi
+uowordDiv, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
+uowordDivRem, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
+uowordRem, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
+uowordShl
+uowordShr
 
 MulDiv64, sqMultiplicand, sqMultiplicator, sqDivisor
