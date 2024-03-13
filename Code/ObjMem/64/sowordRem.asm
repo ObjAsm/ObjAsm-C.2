@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-% include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
+% include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
 .code
@@ -20,7 +20,7 @@
 ; Return:     rdx:rax = Remainder.
 
 align ALIGN_CODE
-sowordRem proc uses rdi rsi sqDividendLo:SQWORD, qDividendHi:SQWORD, \
+sowordRem proc uses rdi rsi sqDividendLo:SQWORD, sqDividendHi:SQWORD, \
                             sqDivisorLo:SQWORD, sqDivisorHi:SQWORD
 ; Determine sign of the result (edi = 0 if result is positive, non-zero otherwise)
 ; and make operands positive.

@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-% include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
+% include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
 .code
@@ -26,7 +26,7 @@ sowordShr proc
   .if cl < 128
     .if cl < 64
       ;Handle shifts of between 0 and 63 bits
-      shrq rax, rdx, cl
+      shrd rax, rdx, cl
       sar rdx, cl
       ret
     .endif

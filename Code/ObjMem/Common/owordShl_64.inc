@@ -22,7 +22,7 @@ ProcName proc
   .if cl < 128
     ;Handle shifts of between 0 and 63 bits
     .if cl < 64
-      shlq rdx, rax, cl
+      shld rdx, rax, cl
       shl rax, cl
       ret
     .endif

@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-% include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
+% include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
 .code
@@ -22,7 +22,7 @@
 ; Note:       Don't include rbx in the uses clause.
 
 align ALIGN_CODE
-sowordDivRem proc uses rdi rsi sqDividendLo:SQWORD, qDividendHi:SQWORD, \
+sowordDivRem proc uses rdi rsi sqDividendLo:SQWORD, sqDividendHi:SQWORD, \
                                sqDivisorLo:SQWORD, sqDivisorHi:SQWORD
   local dSign:DWORD
 
@@ -43,16 +43,16 @@ sowordDivRem proc uses rdi rsi sqDividendLo:SQWORD, qDividendHi:SQWORD, \
   mov sqDividendHi, rax                                 ;Save positive value
   mov sqDividendLo, rdx
 L1:
-  mov eax, sqDivisorHi                                  ;Hi-word of divisor
-  or eax, eax                                           ;Test to see if signed
+  mov rax, sqDivisorHi                                  ;Hi-word of divisor
+  or rax, rax                                           ;Test to see if signed
   jge short L2                                          ;Skip rest if divisor is already positive
-  inc edi                                               ;Complement the result sign flag
-  mov edx, sqDivisorLo)                                 ;Lo-word of dividend
-  neg eax                                               ;Make divisor positive
-  neg edx
-  sbb eax, 0
-  mov sqDivisorHi), eax                                 ;Save positive value
-  mov sqDivisorLo), edx
+  inc rdi                                               ;Complement the result sign flag
+  mov rdx, sqDivisorLo                                  ;Lo-word of dividend
+  neg rax                                               ;Make divisor positive
+  neg rdx
+  sbb rax, 0
+  mov sqDivisorHi, rax                                  ;Save positive value
+  mov sqDivisorLo, rdx
 L2:
 
 ; Now do the divide. First look to see if the divisor is less than 18446744073G.
@@ -60,10 +60,10 @@ L2:
 ; things get a little more complex.
 ;
 ; NOTE - eax currently contains the high order word of sqDivisor
-  or eax, eax                                           ;Check to see if divisor < 18446744073G
+  or rax, rax                                           ;Check to see if divisor < 18446744073G
   jnz short L3                                          ;Nope, gotta do this the hard way
-  mov ecx, sqDivisorLo                                  ;Load divisor
-  mov eax, sqDividendHi                                 ;Load hi-word of dividend
+  mov rcx, sqDivisorLo                                  ;Load divisor
+  mov rax, sqDividendHi                                 ;Load hi-word of dividend
   xor edx, edx
   div rcx                                               ;rax <= high order bits of quotient
   mov rbx, rax                                          ;Save high bits of quotient
@@ -100,7 +100,7 @@ L5:
 ; by the divisor and check the result against the orignal dividend
 ; Note that we must also check for overflow, which can occur if the
 ; dividend is close to 2**64 and the quotient is off by 1.
-  mul sqDivisorHi              ;QUOT * hi-word(divisor)
+  mul sqDivisorHi                                       ;QUOT * hi-word(divisor)
   mov rcx, rax
   mov rax, sqDivisorLo
   mul rsi                                               ;QUOT * lo-word(divisor)
@@ -147,7 +147,7 @@ L9:
   mov rcx, rax
   mov rax, rsi
 
-; Just the cleanup left to do. rdx:rax contains the quotient. 
+; Just the cleanup left to do. rdx:rax contains the quotient.
 ; Set the sign according to the save value and return.
   dec rdi                                               ;Check to see if result is negative
   jnz short L8                                          ;If edi == 0, result should be negative
