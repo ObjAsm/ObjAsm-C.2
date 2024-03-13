@@ -26,18 +26,18 @@ sqwordDiv proc uses ebx edi esi sqDividend:SQWORD, sqDivisor:SQWORD
 ; Determine sign of the result (edi = 0 if result is positive, non-zero otherwise)
 ; and make operands positive.
   xor edi, edi                                          ;Result sign assumed positive
-  mov eax, SDWORD ptr (sqDividend + HIGH_OFFSET)        ;hi-word of dividend
+  mov eax, SDWORD ptr (sqDividend + HIGH_OFFSET)        ;Hi-word of dividend
   or eax, eax                                           ;Test to see if signed
   jge short L1                                          ;Skip rest if dividend is already positive
   inc edi                                               ;Complement result sign flag
-  mov edx, SDWORD ptr (sqDividend)                      ;lo-word of dividend
+  mov edx, SDWORD ptr (sqDividend)                      ;Lo-word of dividend
   neg eax                                               ;Make dividend positive
   neg edx
   sbb eax, 0
   mov SDWORD ptr (sqDividend + HIGH_OFFSET), eax        ;Save positive value
   mov SDWORD ptr (sqDividend), edx
 L1:
-  mov eax, SDWORD ptr (sqDivisor + HIGH_OFFSET)         ;hi-word of divisor
+  mov eax, SDWORD ptr (sqDivisor + HIGH_OFFSET)         ;Hi-word of divisor
   or eax, eax                                           ;Test to see if signed
   jge short L2                                          ;Skip rest if divisor is already positive
   inc edi                                               ;Complement the result sign flag
@@ -57,20 +57,20 @@ L2:
   or eax, eax                                           ;Check to see if divisor < 4194304K
   jnz short L3                                          ;Nope, gotta do this the hard way
   mov ecx, SDWORD ptr (sqDivisor)                       ;Load divisor
-  mov eax, SDWORD ptr (sqDividend + HIGH_OFFSET)        ;Load high word of dividend
+  mov eax, SDWORD ptr (sqDividend + HIGH_OFFSET)        ;Load hi-word of dividend
   xor edx, edx
-  div ecx                                               ;eax <- high order bits of quotient
+  div ecx                                               ;eax <= high order bits of quotient
   mov ebx, eax                                          ;Save high bits of quotient
-  mov eax, SDWORD ptr (sqDividend)                      ;edx:eax <- remainder:lo-word of dividend
-  div ecx                                               ;eax <- low order bits of quotient
-  mov edx, ebx                                          ;edx:eax <- quotient
+  mov eax, SDWORD ptr (sqDividend)                      ;edx:eax <= remainder: lo-word of dividend
+  div ecx                                               ;eax <= low order bits of quotient
+  mov edx, ebx                                          ;edx:eax <= quotient
   jmp short L4                                          ;Set sign, restore stack and return
 
-; Here we do it the hard way. Remember, eax contains the high word of sqDivisor
+; Here we do it the hard way. Remember, eax contains the hi-word of sqDivisor
 L3:
-  mov ebx, eax                                          ;ebx:ecx <- divisor
+  mov ebx, eax                                          ;ebx:ecx <= divisor
   mov ecx, SDWORD ptr (sqDivisor)
-  mov edx, SDWORD ptr (sqDividend + HIGH_OFFSET)        ;edx:eax <- dividend
+  mov edx, SDWORD ptr (sqDividend + HIGH_OFFSET)        ;edx:eax <= dividend
   mov eax, SDWORD ptr (sqDividend)
 L5:
   shr ebx, 1                                            ;Shift divisor right one bit
@@ -99,12 +99,12 @@ L5:
   cmp edx, SDWORD ptr (sqDividend + HIGH_OFFSET)        ;Compare hi words of result and original
   ja short L6                                           ;If result > original, do subtract
   jb short L7                                           ;If result < original, we are ok
-  cmp eax, SDWORD ptr (sqDividend)                      ;hi words are equal, compare lo words
+  cmp eax, SDWORD ptr (sqDividend)                      ;Hi-words are equal, compare lo words
   jbe short L7                                          ;If less or equal we are ok, else subtract
 L6:
   dec esi                                               ;Subtract 1 from quotient
 L7:
-  xor edx, edx                                          ;edx:eax <- quotient
+  xor edx, edx                                          ;edx:eax <= quotient
   mov eax, esi
 
 ; Just the cleanup left to do. edx:eax contains the quotient.

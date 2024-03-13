@@ -4,11 +4,15 @@
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, March 2024.
 ;               - First release.
+;               - Inspired llmul.asm (nt5src-master).
 ; ==================================================================================================
 
 
-% include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
+% include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
+
+ProcName equ <sowordMul>
+TypeArg equ <SQWORD>
 
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -16,36 +20,10 @@
 ; Purpose:    Multiply 2 signed OWORDs.
 ; Arguments:  Arg1: Multiplicand.
 ;             Arg2: Multiplier.
-; Return:     rdx:rax = Product. OF set on overflow.
+; Return:     rdx:rax = Product.
+; Note:       Both signed and unsigned routines are the same, since multiply's
+;             work out the same in 2's complement.
 
-align ALIGN_CODE
-sowordMul proc uses rbx sqMultiplicandLo:SQWORD, sqMultiplicandHi:SQWORD, \
-                        sqMultiplierLo:SQWORD, sqMultiplierHi:SQWORD
-	mov	rax, sqMultiplicandHi
-	mov	rcx, sqMultiplierHi
-  or rcx, rax                                           ;Test for both hi-words zero.
-  mov rcx, sqMultiplierLo
-  jnz short hard                                        ;both are zero, just mul ALO and BLO
-
-  mov rax, sqMultiplicandLo
-  mul rcx                                               ;Result in rdx:rax
-
-  ret
-
-hard:
-  mul rcx                                               ;rax has AHI, rcx has BLO, so AHI * BLO
-  mov rbx, rax                                          ;Save result
-
-  mov rax, sqMultiplicandLo
-  mul sqMultiplierHi                                    ;ALO * BHI
-  add rbx, rax                                          ;rbx = ((ALO * BHI) + (AHI * BLO))
-
-  mov rax, sqMultiplicandLo                             ;rcx = BLO
-  mul rcx                                               ;So rdx:rax = ALO*BLO
-  add rdx, rbx                                          ;Now rdx has all the LO*HI stuff
-
-  ret                                                   ;Result in rdx:rax, OF set on overflow.
-sowordMul endp
+% include &ObjMemPath&Common\owordMul_64.inc
 
 end
-

@@ -32,18 +32,18 @@ uqwordDiv proc uses ebx esi qDividend:QWORD, qDivisor:QWORD
   mov ecx, DWORD ptr (qDivisor)                         ;Load divisor
   mov eax, DWORD ptr (qDividend + HIGH_OFFSET)          ;Load hi-word of dividend
   xor edx, edx
-  div ecx                                               ;eax <- high order bits of quotient
+  div ecx                                               ;eax <= high order bits of quotient
   mov ebx, eax                                          ;Save high bits of quotient
-  mov eax, DWORD ptr (qDividend)                        ;edx:eax <- remainder:lo-word of dividend
-  div ecx                                               ;eax <- low order bits of quotient
-  mov edx, ebx                                          ;edx:eax <- quotient
+  mov eax, DWORD ptr (qDividend)                        ;edx:eax <= remainder: lo-word of dividend
+  div ecx                                               ;eax <= low order bits of quotient
+  mov edx, ebx                                          ;edx:eax <= quotient
   jmp short L2                                          ;Set sign, restore stack and return
 
-; Here we do it the hard way. Remember, eax contains the high word of qDivisor
+; Here we do it the hard way. Remember, eax contains the hi-word of qDivisor
 L1:
-  mov ecx, eax                                          ;ecx:ebx <- divisor
+  mov ecx, eax                                          ;ecx:ebx <= divisor
   mov ebx, DWORD ptr (qDivisor)
-  mov edx, DWORD ptr (qDividend + HIGH_OFFSET)          ;edx:eax <- dividend
+  mov edx, DWORD ptr (qDividend + HIGH_OFFSET)          ;edx:eax <= dividend
   mov eax, DWORD ptr (qDividend)
 L3:
   shr ecx, 1                                            ;Shift divisor right one bit
@@ -72,12 +72,12 @@ L3:
   cmp edx, DWORD ptr (qDividend + HIGH_OFFSET)          ;Compare hi words of result and original
   ja short L4                                           ;If result > original, do subtract
   jb short L5                                           ;If result < original, we are ok
-  cmp eax, DWORD ptr (qDividend)                        ;hi words are equal, compare lo words
+  cmp eax, DWORD ptr (qDividend)                        ;Hi-words are equal, compare lo words
   jbe short L5                                          ;If less or equal we are ok, else subtract
 L4:
   dec esi                                               ;Subtract 1 from quotient
 L5:
-  xor edx, edx                                          ;edx:eax <- quotient
+  xor edx, edx                                          ;edx:eax <= quotient
   mov eax, esi
 
 ; Just the cleanup left to do. edx:eax contains the quotient.
