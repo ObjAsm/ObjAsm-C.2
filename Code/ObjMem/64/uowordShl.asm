@@ -21,6 +21,6 @@ ProcName equ <uowordShl>
 ;             Arg2: Shift count in cl.
 ; Return:     rdx:rax Shifted value.
 
-% include &ObjMemPath&Common\qwordShl_32.inc
+% include &ObjMemPath&Common\owordShl_64.inc
 
 end

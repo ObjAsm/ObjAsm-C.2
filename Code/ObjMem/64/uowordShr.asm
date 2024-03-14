@@ -32,7 +32,7 @@ uowordShr proc
     .endif
     ;Handle shifts of between 64 and 127 bits
     mov rax, rdx
-    xor rdx, rdx
+    xor edx, edx
     and cl, 63
     shr rax, cl
     ret

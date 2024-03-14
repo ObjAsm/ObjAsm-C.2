@@ -1356,8 +1356,10 @@ endif
 ;                 UX unsigned DWORD/QWORD as decimal
 ;                 Fn Floating Point with n decimals, regular notation. n ranges from 0 to F
 ;                 En Floating Point with n decimals, scientific notation. n ranges from 0 to F
-;                 H4 DWORD as hexadecimal
-;                 H8 QWORD as hexadecimal
+;                 HB BYTE as hexadecimal
+;                 HW WORD as hexadecimal
+;                 HD DWORD as hexadecimal
+;                 HQ QWORD as hexadecimal
 ;                 HX DWORD/QWORD as hexadecimal
 ;                 SA ANSI string
 ;                 SU WIDE string (Unicode)
@@ -1394,7 +1396,7 @@ endif
 ;                 % includelib &LibPath&Windows\Ntdll.lib
 ;                 % include &IncPath&Windows\ip2string.inc
 ;
-; Example:    WriteF xdi, "Memory at ¦H8h: ¦F3", xsi, REAL4 ptr [xsi]
+; Example:    WriteF xdi, "Memory at ¦HXh: ¦F3", xsi, REAL4 ptr [xsi]
 ;             WriteF xdi, "The value is: ¦BZ Units", <<invoke udword2dec, xdi, 15>>
 
 
@@ -1619,7 +1621,35 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             lea DstReg, [DstReg + xax - sizeof($$CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
-          elseifidn $$WF_ReplType, <H4>
+          elseifidn $$WF_ReplType, <HB>
+            FillText [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if ??StrLen ne 0
+              add DstReg, ??StrLen*sizeof($$CHR)
+            endif
+            if TARGET_STR_TYPE eq STR_TYPE_ANSI
+              invoke byte2hexA, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
+            else
+              invoke byte2hexW, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
+            endif
+            add DstReg, (BYTE2HEX_MAX_CHARS - 1)*sizeof($$CHR)
+            $$WF_ArgCount = $$WF_ArgCount + 1
+
+          elseifidn $$WF_ReplType, <HW>
+            FillText [DstReg], <%$$WF_Text>
+            $$WF_Text textequ <>
+            if ??StrLen ne 0
+              add DstReg, ??StrLen*sizeof($$CHR)
+            endif
+            if TARGET_STR_TYPE eq STR_TYPE_ANSI
+              invoke word2hexA, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
+            else
+              invoke word2hexW, DstReg, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
+            endif
+            add DstReg, (WORD2HEX_MAX_CHARS - 1)*sizeof($$CHR)
+            $$WF_ArgCount = $$WF_ArgCount + 1
+
+          elseifidn $$WF_ReplType, <HD>
             FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
@@ -1633,7 +1663,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             add DstReg, (DWORD2HEX_MAX_CHARS - 1)*sizeof($$CHR)
             $$WF_ArgCount = $$WF_ArgCount + 1
 
-          elseifidn $$WF_ReplType, <H8>
+          elseifidn $$WF_ReplType, <HQ>
             FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
