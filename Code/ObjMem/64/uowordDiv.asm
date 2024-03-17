@@ -15,8 +15,10 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uowordDiv
 ; Purpose:    Divide 2 unsigned OWORDs.
-; Arguments:  Arg1: Dividend.
-;             Arg2: Divisor.
+; Arguments:  Arg1: Dividend unsigned low word.
+;             Arg2: Dividend unsigned high word.
+;             Arg3: Divisor unsigned low word.
+;             Arg4: Divisor unsigned high word.
 ; Return:     rdx:rax = Quotient.
 
 align ALIGN_CODE

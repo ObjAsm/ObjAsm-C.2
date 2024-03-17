@@ -15,25 +15,26 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uqwordRem
 ; Purpose:    Calculate the remainder of the division of 2 unsigned QWORDs.
-; Arguments:  Arg1: Dividend.
-;             Arg2: Divisor.
+; Arguments:  Arg1: Dividend unsigned low word.
+;             Arg2: Dividend unsigned high word.
+;             Arg3: Divisor unsigned low word.
+;             Arg4: Divisor unsigned high word.
 ; Return:     edx:eax = Remainder.
 
-HIGH_OFFSET = sizeof(DWORD)
-
 align ALIGN_CODE
-uqwordRem proc uses ebx qDividend:QWORD, qDivisor:QWORD
+uqwordRem proc uses ebx dDividendLo:DWORD, dDividendHi:DWORD, \
+                        dDivisorLo:DWORD, dDivisorHi:DWORD
 ; Now do the divide. First look to see if the divisor is less than 4194304K.
 ; If so, then we can use a simple algorithm with word divides, otherwise
 ; things get a little more complex.
-  mov eax, DWORD ptr (qDivisor + HIGH_OFFSET)           ;Load hi-word of divisor
+  mov eax, dDivisorHi                                   ;Load hi-word of divisor
   or eax, eax                                           ;Check to see if divisor < 4194304K
   jnz short L1                                          ;Nope, gotta do this the hard way
-  mov ecx, DWORD ptr (qDivisor)                         ;Load divisor
-  mov eax, DWORD ptr (qDividend + HIGH_OFFSET)          ;Load hi-word of dividend
+  mov ecx, dDivisorLo                                   ;Load divisor
+  mov eax, dDividendHi                                  ;Load hi-word of dividend
   xor edx, edx
   div ecx                                               ;eax <= high order bits of quotient
-  mov eax, DWORD ptr (qDividend)                        ;edx:eax <= remainder: lo-word of dividend
+  mov eax, dDividendLo                                  ;edx:eax <= remainder: lo-word of dividend
   div ecx                                               ;eax <= low order bits of quotient
   mov eax, edx                                          ;edx:eax <= remainder
   xor edx, edx
@@ -42,9 +43,9 @@ uqwordRem proc uses ebx qDividend:QWORD, qDivisor:QWORD
 ; Here we do it the hard way. Remember, eax contains the hi-word of divisor
 L1:
   mov ecx, eax                                          ;ecx:ebx <= divisor
-  mov ebx, DWORD ptr (qDivisor)
-  mov edx, DWORD ptr (qDividend + HIGH_OFFSET)          ;edx:eax <= dividend
-  mov eax, DWORD ptr (qDividend)
+  mov ebx, dDivisorLo
+  mov edx, dDividendHi                                  ;edx:eax <= dividend
+  mov eax, dDividendLo
 L3:
   shr ecx, 1                                            ;Shift divisor right one bit
   rcr ebx, 1
@@ -59,30 +60,30 @@ L3:
 ; Note that we must also check for overflow, which can occur if the
 ; dividend is close to 2**64 and the quotient is off by 1.
   mov ecx, eax
-  mul DWORD ptr (qDivisor + HIGH_OFFSET)                ;QUOT * hi-word(divisor)
+  mul dDivisorHi                                        ;QUOT * hi-word(divisor)
   xchg ecx, eax                                         ;Put partial product in ecx, get quotient in eax
-  mul DWORD ptr (qDivisor)
-  add edx, ecx                                          ;edx:eax = QUOT * divisor                                         ;edx:eax = QUOT * divisor
+  mul dDivisorLo
+  add edx, ecx                                          ;edx:eax = QUOT * divisor
   jc short L4                                           ;Carry means quotient is off by 1
 
 ; Do long compare here between original dividend and the result of the
 ; multiply in edx:eax. If original is larger or equal, we are ok, otherwise
 ; subtract one (1) from the quotient.
-  cmp edx, DWORD ptr (qDividend + HIGH_OFFSET)          ;Compare hi words of result and original
+  cmp edx, dDividendHi                                  ;Compare hi words of result and original
   ja short L4                                           ;If result > original, do subtract
   jb short L5                                           ;If result < original, we are ok
-  cmp eax, DWORD ptr (qDividend)                        ;Hi-words are equal, compare lo words
+  cmp eax, dDividendLo                                  ;Hi-words are equal, compare lo words
   jbe short L5                                          ;If less or equal we are ok, else subtract
 L4:
-  sub eax, DWORD ptr (qDivisor)                         ; subtract divisor from result
-  sbb edx, DWORD ptr (qDivisor + HIGH_OFFSET)
+  sub eax, dDivisorLo                                   ;Subtract divisor from result
+  sbb edx, dDivisorHi
 L5:
 
 ; Calculate remainder by subtracting the result from the original dividend.
 ; Since the result is already in a register, we will do the subtract in the
 ; opposite direction and negate the result if necessary.
-  sub eax, DWORD ptr (qDividend)                        ;Subtract dividend from result
-  sbb edx, DWORD ptr (qDividend + HIGH_OFFSET)
+  sub eax, dDividendLo                                  ;Subtract dividend from result
+  sbb edx, dDividendHi
   neg edx
   neg eax
   sbb edx, 0

@@ -615,19 +615,23 @@ CalcVarianceR8, pArray, xCount, pVariance
 Base64Encode, pDataBuffer, dDataSize
 Base64Decode, pDataBuffer, dDataSize
 
-sqwordMul, sqMultiplicand, sqMultiplicator
-sqwordDiv, sqDividend, sqDivisor
-sqwordDivRem, sqDividend, sqDivisor
-sqwordRem, sqDividend, sqDivisor
+sqwordMul, sdMultiplicandLo, sdMultiplicandHi, sdMultiplicatorLo, sdMultiplicatorHi
+sqwordDiv, sdDividendLo, sdDividendHi, sdDivisorLo, sdDivisorHi
+sqwordDivRem, sdDividendLo, sdDividendHi, sdDivisorLo, sdDivisorHi
+sqwordRem, sdDividendLo, sdDividendHi, sdDivisorLo, sdDivisorHi
 sqwordShl
 sqwordShr
+sqwordMulEx, sdMultiplicandLo, sdMultiplicandHi, sdMultiplicatorLo, sdMultiplicatorHi
+sqwordDivEx, sdDividendLo, sdDividendHi, sdDivisorLo, sdDivisorHi
 
-uqwordMul, qMultiplicand, qMultiplicator
-uqwordDiv, qDividend, qDivisor
-uqwordDivRem, qDividend, qDivisor
-uqwordRem, qDividend, qDivisor
+uqwordMul, dMultiplicandLo, dMultiplicandHi, dMultiplicatorLo, dMultiplicatorHi
+uqwordDiv, dDividendLo, dDividendHi, dDivisorLo, dDivisorHi
+uqwordDivRem, dDividendLo, dDividendHi, dDivisorLo, dDivisorHi
+uqwordRem, dDividendLo, dDividendHi, dDivisorLo, dDivisorHi
 uqwordShl
 uqwordShr
+uqwordMulEx, dMultiplicandLo, dMultiplicandHi, dMultiplicatorLo, dMultiplicatorHi
+uqwordDivEx, dDividendLo, dDividendHi, dDivisorLo, dDivisorHi
 
 sowordMul, sqMultiplicandLo, sqMultiplicandHi, sqMultiplicatorLo, sqMultiplicatorHi
 sowordDiv, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
@@ -635,6 +639,8 @@ sowordDivRem, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
 sowordRem, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
 sowordShl
 sowordShr
+sowordMulEx, sqMultiplicandLo, sqMultiplicandHi, sqMultiplicatorLo, sqMultiplicatorHi
+sowordDivEx, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
 
 uowordMul, qMultiplicandLo, qMultiplicandHi, qMultiplicatorLo, qMultiplicatorHi
 uowordDiv, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
@@ -642,5 +648,7 @@ uowordDivRem, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
 uowordRem, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
 uowordShl
 uowordShr
+uowordMulEx, qMultiplicandLo, qMultiplicandHi, qMultiplicatorLo, qMultiplicatorHi
+uowordDivEx, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
 
 MulDiv64, sqMultiplicand, sqMultiplicator, sqDivisor

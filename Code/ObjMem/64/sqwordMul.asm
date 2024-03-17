@@ -14,14 +14,17 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  sqwordMul
 ; Purpose:    Multiply 2 signed QWORDs.
-; Arguments:  Arg1: Multiplicand.
-;             Arg2: Multiplier.
+; Arguments:  Arg1: Multiplicand low signed word.
+;             Arg2 Multiplicand high signed word.
+;             Arg3 Multiplier low signed word.
+;             Arg4 Multiplier high signed word.
 ; Return:     rdx:rax = Product.
 
 align ALIGN_CODE
-sqwordMul proc sqMultiplicand:SQWORD, sqMultiplier:SQWORD
-  mov rax, sqMultiplicand
-  imul sqMultiplier
+sqwordMul proc sdMultiplicandLo:SDWORD, sdMultiplicandHi:SDWORD, \
+               sdMultiplierLo:SDWORD, sdMultiplierHi:SDWORD
+  mov rax, SQWORD ptr sdMultiplicandLo
+  imul SQWORD ptr sqMultiplierLo
   ret
 sqwordMul endp
 

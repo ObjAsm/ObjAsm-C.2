@@ -875,19 +875,23 @@ RGB24To16ColorIndex proto :DWORD
 DWORD2DEC_MAX_CHARS textequ <UDWORD2DEC_MAX_CHARS>
 QWORD2DEC_MAX_CHARS textequ <UQWORD2DEC_MAX_CHARS>
 
-sqwordDiv proto :SQWORD, :SQWORD
-sqwordMul proto :SQWORD, :SQWORD
-sqwordDivRem proto :SQWORD, :SQWORD
-sqwordRem proto :SQWORD, :SQWORD
+sqwordDiv proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
+sqwordMul proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
+sqwordDivRem proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
+sqwordRem proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
 sqwordShl proto
 sqwordShr proto
+sqwordDivEx proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
+sqwordMulEx proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
 
-uqwordDiv proto :QWORD, :QWORD
-uqwordMul proto :QWORD, :QWORD
-uqwordDivRem proto :QWORD, :QWORD
-uqwordRem proto :QWORD, :QWORD
+uqwordDiv proto :DWORD, :DWORD, :DWORD, :DWORD
+uqwordMul proto :DWORD, :DWORD, :DWORD, :DWORD
+uqwordDivRem proto :DWORD, :DWORD, :DWORD, :DWORD
+uqwordRem proto :DWORD, :DWORD, :DWORD, :DWORD
 uqwordShl proto
 uqwordShr proto
+uqwordDivEx proto :DWORD, :DWORD, :DWORD, :DWORD
+uqwordMulEx proto :DWORD, :DWORD, :DWORD, :DWORD
 
 sowordDiv proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
 sowordMul proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
@@ -895,6 +899,8 @@ sowordDivRem proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
 sowordRem proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
 sowordShl proto
 sowordShr proto
+sowordDivEx proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
+sowordMulEx proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
 
 uowordDiv proto :QWORD, :QWORD, :QWORD, :QWORD
 uowordMul proto :QWORD, :QWORD, :QWORD, :QWORD
@@ -902,6 +908,8 @@ uowordDivRem proto :QWORD, :QWORD, :QWORD, :QWORD
 uowordRem proto :QWORD, :QWORD, :QWORD, :QWORD
 uowordShl proto
 uowordShr proto
+uowordDivEx proto :QWORD, :QWORD, :QWORD, :QWORD
+uowordMulEx proto :QWORD, :QWORD, :QWORD, :QWORD
 
 MulDiv64 proto :SQWORD, :SQWORD, :SQWORD
 

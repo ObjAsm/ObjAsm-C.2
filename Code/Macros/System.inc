@@ -3438,7 +3438,7 @@ endm
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      ClearLocals
 ; Purpose:    Clear all locals.
-; Note:       Source of Edgar Harris (Donkey).
+; Note:       Source from Edgar Harris (Donkey).
 
 ClearLocals macro
   mov xdx, xdi                                          ;;Preserve xdi

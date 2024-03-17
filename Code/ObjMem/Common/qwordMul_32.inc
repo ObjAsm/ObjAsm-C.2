@@ -12,38 +12,39 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uqwordMul/sqwordMul
 ; Purpose:    Multiply 2 signed/unsigned QWORDs.
-; Arguments:  Arg1: Multiplicand.
-;             Arg2: Multiplier.
+; Arguments:  Arg1: Multiplicand low signed/unsigned word.
+;             Arg2 Multiplicand high signed/unsigned word.
+;             Arg3 Multiplier low signed/unsigned word.
+;             Arg4 Multiplier high signed/unsigned word.
 ; Return:     adx:eax = Product.
 ; Note:       Both signed and unsigned routines are the same, since multiply's
 ;             work out the same in 2's complement.
 
-HIGH_OFFSET = sizeof(DWORD)
-
 align ALIGN_CODE
-ProcName proc uses ebx qMultiplicand:TypeArg, qMultiplier:TypeArg
-  mov eax, DWORD ptr (qMultiplicand + HIGH_OFFSET)
-  mov ecx, DWORD ptr (qMultiplier + HIGH_OFFSET)
+ProcName proc uses ebx dMultiplicandLo:TypeArg, dMultiplicandHi:TypeArg, \
+                       dMultiplierLo:TypeArg, dMultiplierHi:TypeArg
+  mov eax, dMultiplicandHi
+  mov ecx, dMultiplierHi
   or ecx, eax                                           ;Test for both hi-words zero.
-  mov ecx, DWORD ptr (qMultiplier)
-  jnz short hard                                        ;both are zero, just mul ALO and BLO
+  mov ecx, dMultiplierLo
+  jnz short hard                                        ;Both are zero, just mul lo-words
 
-  mov eax, DWORD ptr (qMultiplicand)
+  mov eax, dMultiplierLo
   mul ecx
 
   ret
 
 hard:
-  mul ecx                                               ;eax has AHI, ecx has BLO, so AHI * BLO
+  mul ecx                                               ;eax = dMultiplicandHi, ecx = dMultiplierLo
   mov ebx, eax                                          ;Save result
 
-  mov eax, DWORD ptr (qMultiplicand)
-  mul DWORD ptr (qMultiplier + HIGH_OFFSET)             ;ALO * BHI
-  add ebx, eax                                          ;ebx = ((ALO * BHI) + (AHI * BLO))
-
-  mov eax, DWORD ptr (qMultiplicand)                    ;ecx = BLO
-  mul ecx                                               ;So edx:eax = ALO*BLO
-  add edx, ebx                                          ;Now edx has all the LO*HI stuff
+  mov eax, dMultiplierLo
+  mul dMultiplierHi                                     ;dMultiplicandLo*dMultiplierHi
+  add ebx, eax                                          ;ebx = ((dMultiplicandLo * dMultiplierHi) +
+                                                        ;       (dMultiplicandHi * dMultiplierLo))
+  mov eax, dMultiplierLo                                ;ecx = dMultiplierLo
+  mul ecx                                               ;So edx:eax = dMultiplicandLo*dMultiplierLo
+  add edx, ebx                                          ;Now edx has all the lo-word*hi-word stuff
 
   ret
 ProcName endp

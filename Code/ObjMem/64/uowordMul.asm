@@ -18,8 +18,10 @@ TypeArg equ <QWORD>
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uowordMul
 ; Purpose:    Multiply 2 unsigned OWORDs.
-; Arguments:  Arg1: Multiplicand.
-;             Arg2: Multiplier.
+; Arguments:  Arg1: Multiplicand low unsigned word.
+;             Arg2 Multiplicand high unsigned word.
+;             Arg3 Multiplier low unsigned word.
+;             Arg4 Multiplier high unsigned word.
 ; Return:     rdx:rax = Product.
 ; Note:       Both signed and unsigned routines are the same, since multiply's
 ;             work out the same in 2's complement.

@@ -15,8 +15,10 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  sowordDivRem
 ; Purpose:    Divide 2 signed OWORDs.
-; Arguments:  Arg1: Dividend.
-;             Arg2: Divisor.
+; Arguments:  Arg1: Dividend signed low word.
+;             Arg2: Dividend signed high word.
+;             Arg3: Divisor signed low word.
+;             Arg4: Divisor signed high word.
 ; Return:     rdx:rax = Quotient.
 ;             rbx:rcx = Remainder.
 ; Note:       Don't include rbx in the uses clause.
@@ -32,7 +34,7 @@ sowordDivRem proc uses rdi rsi sqDividendLo:SQWORD, sqDividendHi:SQWORD, \
   mov dSign, edi                                        ;Result sign assumed positive
 
   mov rax, sqDividendHi                                 ;Hi-word of dividend
-  or eax, eax                                           ;Test to see if signed
+  or rax, rax                                           ;Test to see if signed
   jge short L1                                          ;Skip rest if dividend is already positive
   inc rdi                                               ;Complement result sign flag
   inc dSign                                             ;Complement result sign flag

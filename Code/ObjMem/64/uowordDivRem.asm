@@ -15,8 +15,10 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uowordDivRem
 ; Purpose:    Divide 2 unsigned OWORDs.
-; Arguments:  Arg1: Dividend.
-;             Arg2: Divisor.
+; Arguments:  Arg1: Dividend unsigned low word.
+;             Arg2: Dividend unsigned high word.
+;             Arg3: Divisor unsigned low word.
+;             Arg4: Divisor unsigned high word.
 ; Return:     rdx:rax = Quotient.
 ;             rbx:rcx = Remainder.
 ; Note:       Don't include rbx in the uses clause.
@@ -68,7 +70,7 @@ L3:
 ; by the divisor and check the result against the orignal dividend
 ; Note that we must also check for overflow, which can occur if the
 ; dividend is close to 2**64 and the quotient is off by 1.
-  mul qDivisorHi                ;QUOT * hi-word(divisor)
+  mul qDivisorHi                                        ;QUOT * hi-word(divisor)
   mov rcx, rax
   mov rax, qDivisorLo
   mul rsi                                               ;QUOT * lo-word(divisor)

@@ -11,8 +11,10 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uowordMul/sowordMul
 ; Purpose:    Multiply 2 signed/unsigned OWORDs.
-; Arguments:  Arg1: Multiplicand.
-;             Arg2: Multiplier.
+; Arguments:  Arg1: Multiplicand low signed/unsigned word.
+;             Arg2 Multiplicand high signed/unsigned word.
+;             Arg3 Multiplier low signed/unsigned word.
+;             Arg4 Multiplier high signed/unsigned word.
 ; Return:     rdx:rax = Product.
 ; Note:       Both signed and unsigned routines are the same, since multiply's
 ;             work out the same in 2's complement.
@@ -22,9 +24,9 @@ ProcName proc uses rbx qMultiplicandLo:TypeArg, qMultiplicandHi:TypeArg, \
                        qMultiplierLo:TypeArg, qMultiplierHi:TypeArg
   mov rax, qMultiplicandHi
   mov rcx, qMultiplierHi
-  or ecx, eax                                           ;Test for both hi-words zero.
+  or rcx, rax                                           ;Test for both hi-words zero.
   mov rcx, qMultiplierLo
-  jnz short hard                                        ;both are zero, just mul ALO and BLO
+  jnz short hard                                        ;both are zero, just mul Lo-words
 
   mov rax, qMultiplicandLo
   mul rcx
@@ -32,16 +34,16 @@ ProcName proc uses rbx qMultiplicandLo:TypeArg, qMultiplicandHi:TypeArg, \
   ret
 
 hard:
-  mul rcx                                               ;eax has AHI, ecx has BLO, so AHI * BLO
+  mul rcx                                               ;eax = qMultiplicandHi, ecx = qMultiplierLo
   mov rbx, rax                                          ;Save result
 
   mov rax, qMultiplicandLo
-  mul qMultiplierHi                                     ;ALO * BHI
-  add rbx, rax                                          ;rbx = ((ALO * BHI) + (AHI * BLO))
-
-  mov rax, qMultiplicandLo                              ;rcx = BLO
-  mul rcx                                               ;So rdx:rax = ALO*BLO
-  add rdx, rbx                                          ;Now edx has all the LO*HI stuff
+  mul qMultiplierHi                                     ;qMultiplicandLo*qMultiplierHi
+  add rbx, rax                                          ;rbx = ((qMultiplicandLo * qMultiplierHi) +
+                                                        ;       (qMultiplicandHi * qMultiplierLo))
+  mov rax, qMultiplicandLo                              ;rcx = qMultiplierLo
+  mul rcx                                               ;So rdx:rax = qMultiplicandLo*qMultiplierLo
+  add rdx, rbx                                          ;Now edx has all the Lo-word*hi-word stuff
 
   ret
 ProcName endp

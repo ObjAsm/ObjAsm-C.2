@@ -15,38 +15,39 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  sqwordDiv
 ; Purpose:    Divide 2 signed QWORDs.
-; Arguments:  Arg1: Dividend.
-;             Arg2: Divisor.
+; Arguments:  Arg1: Dividend signed low word.
+;             Arg2: Dividend signed high word.
+;             Arg3: Divisor signed low word.
+;             Arg4: Divisor signed high word.
 ; Return:     edx:eax = Quotient.
 
-HIGH_OFFSET = sizeof(DWORD)
-
 align ALIGN_CODE
-sqwordDiv proc uses ebx edi esi sqDividend:SQWORD, sqDivisor:SQWORD
+sqwordDiv proc uses ebx edi esi sdDividendLo:SDWORD, sdDividendHi:SDWORD, \
+                                sdDivisorLo:SDWORD, sdDivisorHi:SDWORD
 ; Determine sign of the result (edi = 0 if result is positive, non-zero otherwise)
 ; and make operands positive.
   xor edi, edi                                          ;Result sign assumed positive
-  mov eax, SDWORD ptr (sqDividend + HIGH_OFFSET)        ;Hi-word of dividend
+  mov eax, sdDividendHi                                 ;Hi-word of dividend
   or eax, eax                                           ;Test to see if signed
   jge short L1                                          ;Skip rest if dividend is already positive
   inc edi                                               ;Complement result sign flag
-  mov edx, SDWORD ptr (sqDividend)                      ;Lo-word of dividend
+  mov edx, sdDividendLo                                 ;Lo-word of dividend
   neg eax                                               ;Make dividend positive
   neg edx
   sbb eax, 0
-  mov SDWORD ptr (sqDividend + HIGH_OFFSET), eax        ;Save positive value
-  mov SDWORD ptr (sqDividend), edx
+  mov sdDividendHi, eax                                 ;Save positive value
+  mov sdDividendLo, edx
 L1:
-  mov eax, SDWORD ptr (sqDivisor + HIGH_OFFSET)         ;Hi-word of divisor
+  mov eax, sdDivisorHi                                  ;Hi-word of divisor
   or eax, eax                                           ;Test to see if signed
   jge short L2                                          ;Skip rest if divisor is already positive
   inc edi                                               ;Complement the result sign flag
-  mov edx, SDWORD ptr (sqDivisor)                       ;Lo-word of dividend
+  mov edx, sdDivisorLo                                  ;Lo-word of dividend
   neg eax                                               ;Make divisor positive
   neg edx
   sbb eax, 0
-  mov SDWORD ptr (sqDivisor + HIGH_OFFSET), eax         ;Save positive value
-  mov SDWORD ptr (sqDivisor), edx
+  mov sdDivisorHi, eax                                  ;Save positive value
+  mov sdDivisorLo, edx
 L2:
 
 ; Now do the divide. First look to see if the divisor is less than 4194304K.
@@ -56,12 +57,12 @@ L2:
 ; NOTE - eax currently contains the high order word of sqDivisor
   or eax, eax                                           ;Check to see if divisor < 4194304K
   jnz short L3                                          ;Nope, gotta do this the hard way
-  mov ecx, SDWORD ptr (sqDivisor)                       ;Load divisor
-  mov eax, SDWORD ptr (sqDividend + HIGH_OFFSET)        ;Load hi-word of dividend
+  mov ecx, sdDivisorLo                                  ;Load divisor
+  mov eax, sdDividendHi                                 ;Load hi-word of dividend
   xor edx, edx
   div ecx                                               ;eax <= high order bits of quotient
   mov ebx, eax                                          ;Save high bits of quotient
-  mov eax, SDWORD ptr (sqDividend)                      ;edx:eax <= remainder: lo-word of dividend
+  mov eax, sdDividendLo                                 ;edx:eax <= remainder: lo-word of dividend
   div ecx                                               ;eax <= low order bits of quotient
   mov edx, ebx                                          ;edx:eax <= quotient
   jmp short L4                                          ;Set sign, restore stack and return
@@ -69,9 +70,9 @@ L2:
 ; Here we do it the hard way. Remember, eax contains the hi-word of sqDivisor
 L3:
   mov ebx, eax                                          ;ebx:ecx <= divisor
-  mov ecx, SDWORD ptr (sqDivisor)
-  mov edx, SDWORD ptr (sqDividend + HIGH_OFFSET)        ;edx:eax <= dividend
-  mov eax, SDWORD ptr (sqDividend)
+  mov ecx, sdDivisorLo
+  mov edx, sdDividendHi                                 ;edx:eax <= dividend
+  mov eax, sdDividendLo
 L5:
   shr ebx, 1                                            ;Shift divisor right one bit
   rcr ecx, 1
@@ -86,9 +87,9 @@ L5:
 ; by the divisor and check the result against the orignal dividend
 ; Note that we must also check for overflow, which can occur if the
 ; dividend is close to 2**64 and the quotient is off by 1.
-  mul SDWORD ptr (sqDivisor + HIGH_OFFSET)              ;QUOT * hi-word(divisor)
+  mul sdDivisorHi                                       ;QUOT * hi-word(divisor)
   mov ecx, eax
-  mov eax, SDWORD ptr (sqDivisor)
+  mov eax, sdDivisorLo
   mul esi                                               ;QUOT * lo-word(divisor)
   add edx, ecx                                          ;edx:eax = QUOT * divisor
   jc short L6                                           ;Carry means quotient is off by 1
@@ -96,10 +97,10 @@ L5:
 ; Do long compare here between original dividend and the result of the
 ; multiply in edx:eax. If original is larger or equal, we are ok, otherwise
 ; subtract one (1) from the quotient.
-  cmp edx, SDWORD ptr (sqDividend + HIGH_OFFSET)        ;Compare hi words of result and original
+  cmp edx, sdDividendHi                                 ;Compare hi words of result and original
   ja short L6                                           ;If result > original, do subtract
   jb short L7                                           ;If result < original, we are ok
-  cmp eax, SDWORD ptr (sqDividend)                      ;Hi-words are equal, compare lo words
+  cmp eax, sdDividendLo                                 ;Hi-words are equal, compare lo words
   jbe short L7                                          ;If less or equal we are ok, else subtract
 L6:
   dec esi                                               ;Subtract 1 from quotient

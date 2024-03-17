@@ -15,8 +15,10 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  sowordRem
 ; Purpose:    Calculate the remainder of the division of 2 signed OWORDs.
-; Arguments:  Arg1: Dividend.
-;             Arg2: Divisor.
+; Arguments:  Arg1: Dividend signed low word.
+;             Arg2: Dividend signed high word.
+;             Arg3: Divisor signed low word.
+;             Arg4: Divisor signed high word.
 ; Return:     rdx:rax = Remainder.
 
 align ALIGN_CODE
