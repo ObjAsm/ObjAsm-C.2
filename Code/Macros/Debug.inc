@@ -1861,6 +1861,7 @@ endm
 DbgCpuFlags macro InfoText, Dest
   if DEBUGGING
     DbgSaveContext FALSE, XWORD ptr [xsp + TARGET_BITNESS/4*sizeof(XWORD)] 
+    DbgSetDestWnd Dest
     invoke DbgOutTextA, $OfsCStrA("CPU Flags "), DbgColorFPU, DbgColorBackground, \
                         DBG_EFFECT_BOLD, ??DbgDstWnd
     DbgOutHex , DbgColorFPU, xbx, DbgColorFPU, ??DbgDstWnd
