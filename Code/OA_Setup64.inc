@@ -3,7 +3,7 @@
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Purpose:    ObjAsm Model Setup for 64 bit.
-; Notes:      Version 1.0.0, October 2017
+; Notes:      Version C.1.0, October 2017
 ;             - First release.
 ; ==================================================================================================
 

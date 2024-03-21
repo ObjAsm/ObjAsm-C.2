@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      sqwordMul.asm
+; Title:      sqwordMulEx.asm
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, March 2024.
@@ -7,26 +7,21 @@
 ; ==================================================================================================
 
 
-% include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
+% include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
+
+ProcName equ <sqwordMulEx>
 
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  sqwordMul
-; Purpose:    Multiply 2 signed QWORDs.
+; Procedure:  sqwordMulEx
+; Purpose:    Multiply 2 signed OWORDs with extended precision.
 ; Arguments:  Arg1: Multiplicand low signed word.
 ;             Arg2 Multiplicand high signed word.
 ;             Arg3 Multiplier low signed word.
 ;             Arg4 Multiplier high signed word.
-; Return:     rdx:rax = Product.
+; Return:     ebx:ecx:edx:eax = Signed product (128 bit).
 
-align ALIGN_CODE
-sqwordMul proc sdMultiplicandLo:SDWORD, sdMultiplicandHi:SDWORD, \
-               sdMultiplierLo:SDWORD, sdMultiplierHi:SDWORD
-  mov rax, SQWORD ptr sdMultiplicandLo
-  imul SQWORD ptr sdMultiplierLo
-  ret
-sqwordMul endp
+% include &ObjMemPath&Common\sxwordMulEx_XP.inc
 
 end
-

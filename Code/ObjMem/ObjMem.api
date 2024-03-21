@@ -622,7 +622,7 @@ sqwordRem, sdDividendLo, sdDividendHi, sdDivisorLo, sdDivisorHi
 sqwordShl
 sqwordShr
 sqwordMulEx, sdMultiplicandLo, sdMultiplicandHi, sdMultiplicatorLo, sdMultiplicatorHi
-sqwordDivEx, sdDividendLo, sdDividendHi, sdDivisorLo, sdDivisorHi
+sqwordDivRemEx, sdDividendLoLo, sdDividendHiLo, sdDividendLoHi, sdDividendHiHi, sdDivisorLo, sdDivisorHi
 
 uqwordMul, dMultiplicandLo, dMultiplicandHi, dMultiplicatorLo, dMultiplicatorHi
 uqwordDiv, dDividendLo, dDividendHi, dDivisorLo, dDivisorHi
@@ -631,7 +631,7 @@ uqwordRem, dDividendLo, dDividendHi, dDivisorLo, dDivisorHi
 uqwordShl
 uqwordShr
 uqwordMulEx, dMultiplicandLo, dMultiplicandHi, dMultiplicatorLo, dMultiplicatorHi
-uqwordDivEx, dDividendLo, dDividendHi, dDivisorLo, dDivisorHi
+uqwordDivRemEx, dDividendLoLo, dDividendHiLo, dDividendLoHi, dDividendHiHi, dDivisorLo, dDivisorHi
 
 sowordMul, sqMultiplicandLo, sqMultiplicandHi, sqMultiplicatorLo, sqMultiplicatorHi
 sowordDiv, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
@@ -640,7 +640,7 @@ sowordRem, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
 sowordShl
 sowordShr
 sowordMulEx, sqMultiplicandLo, sqMultiplicandHi, sqMultiplicatorLo, sqMultiplicatorHi
-sowordDivEx, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
+sowordDivRemEx, sqDividendLoLo, sqDividendHiLo, sqDividendLoHi, sqDividendHiHi, sqDivisorLo, sqDivisorHi
 
 uowordMul, qMultiplicandLo, qMultiplicandHi, qMultiplicatorLo, qMultiplicatorHi
 uowordDiv, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
@@ -649,6 +649,11 @@ uowordRem, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
 uowordShl
 uowordShr
 uowordMulEx, qMultiplicandLo, qMultiplicandHi, qMultiplicatorLo, qMultiplicatorHi
-uowordDivEx, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
+uowordDivRemEx, qDividendLoLo, qDividendHiLo, qDividendLoHi, qDividendHiHi, qDivisorLo, qDivisorHi
 
+uxwordMulEx, uxMultiplicandLo, uxMultiplicandHi, uxMultiplicatorLo, uxMultiplicatorHi
+sxwordMulEx, sxMultiplicandLo, sxMultiplicandHi, sxMultiplicatorLo, sxMultiplicatorHi
+uxwordDivRemEx, uxDividendLoLo, uxDividendHiLo, uxDividendLoHi, uxDividendHiHi, uxDivisorLo, uxDivisorHi
+sxwordDivRemEx, sxDividendLoLo, sxDividendHiLo, sxDividendLoHi, sxDividendHiHi, sxDivisorLo, sxDivisorHi
+  
 MulDiv64, sqMultiplicand, sqMultiplicator, sqDivisor

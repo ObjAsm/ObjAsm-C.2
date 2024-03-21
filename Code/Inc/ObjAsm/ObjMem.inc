@@ -881,7 +881,7 @@ sqwordDivRem proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
 sqwordRem proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
 sqwordShl proto
 sqwordShr proto
-sqwordDivEx proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
+sqwordDivRemEx proto :SDWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD
 sqwordMulEx proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
 
 uqwordDiv proto :DWORD, :DWORD, :DWORD, :DWORD
@@ -890,7 +890,7 @@ uqwordDivRem proto :DWORD, :DWORD, :DWORD, :DWORD
 uqwordRem proto :DWORD, :DWORD, :DWORD, :DWORD
 uqwordShl proto
 uqwordShr proto
-uqwordDivEx proto :DWORD, :DWORD, :DWORD, :DWORD
+uqwordDivRemEx proto :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD
 uqwordMulEx proto :DWORD, :DWORD, :DWORD, :DWORD
 
 sowordDiv proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
@@ -899,7 +899,7 @@ sowordDivRem proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
 sowordRem proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
 sowordShl proto
 sowordShr proto
-sowordDivEx proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
+sowordDivRemEx proto :SQWORD, :SQWORD, :SQWORD, :SQWORD, :SQWORD, :SQWORD
 sowordMulEx proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
 
 uowordDiv proto :QWORD, :QWORD, :QWORD, :QWORD
@@ -908,8 +908,9 @@ uowordDivRem proto :QWORD, :QWORD, :QWORD, :QWORD
 uowordRem proto :QWORD, :QWORD, :QWORD, :QWORD
 uowordShl proto
 uowordShr proto
-uowordDivEx proto :QWORD, :QWORD, :QWORD, :QWORD
+uowordDivRemEx proto :QWORD, :QWORD, :QWORD, :QWORD, :QWORD, :QWORD
 uowordMulEx proto :QWORD, :QWORD, :QWORD, :QWORD
+
 
 MulDiv64 proto :SQWORD, :SQWORD, :SQWORD
 
@@ -945,6 +946,11 @@ if TARGET_BITNESS eq 32
   XWORD2DEC_MAX_CHARS textequ <UDWORD2DEC_MAX_CHARS>
   SXWORD2DEC_MAX_CHARS textequ <SDWORD2DEC_MAX_CHARS>
 
+  uxwordMulEx textequ <uqwordMulEx>
+  sxwordMulEx textequ <sqwordMulEx>
+  uxwordDivRemEx textequ <uqwordDivRemEx>
+  sxwordDivRemEx textequ <sqwordDivRemEx>
+ 
 elseif TARGET_BITNESS eq 64
   xword2hex textequ <qword2hex>
   hex2xword textequ <hex2qword>
@@ -977,6 +983,10 @@ elseif TARGET_BITNESS eq 64
   XWORD2DEC_MAX_CHARS textequ <QWORD2DEC_MAX_CHARS>
   SXWORD2DEC_MAX_CHARS textequ <SQWORD2DEC_MAX_CHARS>
 
+  uxwordMulEx textequ <uowordMulEx>
+  sxwordMulEx textequ <sowordMulEx>
+  uxwordDivRemEx textequ <uowordDivRemEx>
+  sxwordDivRemEx textequ <sowordDivRemEx>
 else
   %echo Warning: incompatible Bitness: $ToStr(%TARGET_BITNESS)
 endif
