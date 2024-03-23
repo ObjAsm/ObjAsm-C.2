@@ -13,10 +13,14 @@
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MulDiv64
-; Purpose:    Multiply 2 SQWORDs and divide the product by another SQWORD with 128 bit precision.
-; Arguments:  Arg1: Multiplicand.
-;             Arg2: Multiplier.
-; Return:     rdx:rax = Product.
+; Purpose:    Multiply 2 signed QWORDs and divide the product by another signed QWORD 
+;             with 128 bit precision.
+;             (64 bit) Multiplicand multiplied by (64 bit) Multiplier divided by (64 bit) Divisor = 
+;             (128 bit) Result. 
+; Arguments:  Arg1: Signed multiplicand.
+;             Arg2: Signed multiplier.
+;             Arg3: Signed divisor.
+; Return:     rdx:rax = Signed result.
 
 MulDiv64 proc uses rbx sqMultiplicand:SQWORD, sqMultiplier:SQWORD, sqDivisor:SQWORD
   mov rax, sqMultiplier
@@ -25,14 +29,14 @@ MulDiv64 proc uses rbx sqMultiplicand:SQWORD, sqMultiplier:SQWORD, sqDivisor:SQW
   mov rax, sqMultiplicand
   cqo                                                 ;Sign extend to rdx:rax
 
-  invoke sowordMul, sqMultiplicand, rdx, sqMultiplier, rbx
+  invoke soooMul, sqMultiplicand, rdx, sqMultiplier, rbx
   mov rcx, rax
   mov rbx, rdx
   mov rax, sqDivisor
   cqo                                                 ;Sign extend to rdx:rax
   mov rax, rdx
 
-  invoke sowordDiv, rcx, rbx, sqDivisor, rax
+  invoke soooDiv, rcx, rbx, sqDivisor, rax
   ret
 MulDiv64 endp
 

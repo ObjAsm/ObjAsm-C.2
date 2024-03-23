@@ -875,42 +875,41 @@ RGB24To16ColorIndex proto :DWORD
 DWORD2DEC_MAX_CHARS textequ <UDWORD2DEC_MAX_CHARS>
 QWORD2DEC_MAX_CHARS textequ <UQWORD2DEC_MAX_CHARS>
 
-sqwordDiv proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
-sqwordMul proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
-sqwordDivRem proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
-sqwordRem proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
-sqwordShl proto
-sqwordShr proto
-sqwordDivRemEx proto :SDWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD
-sqwordMulEx proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
+sqqqDiv proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
+sqqqMul proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
+sqqqDivRem proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
+sqqqRem proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
+sqShl proto
+sqShr proto
+sqoqDivRem proto :SDWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD
+soqqMul proto :SDWORD, :SDWORD, :SDWORD, :SDWORD
 
-uqwordDiv proto :DWORD, :DWORD, :DWORD, :DWORD
-uqwordMul proto :DWORD, :DWORD, :DWORD, :DWORD
-uqwordDivRem proto :DWORD, :DWORD, :DWORD, :DWORD
-uqwordRem proto :DWORD, :DWORD, :DWORD, :DWORD
-uqwordShl proto
-uqwordShr proto
-uqwordDivRemEx proto :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD
-uqwordMulEx proto :DWORD, :DWORD, :DWORD, :DWORD
+uqqqDiv proto :DWORD, :DWORD, :DWORD, :DWORD
+uqqqMul proto :DWORD, :DWORD, :DWORD, :DWORD
+uqqqDivRem proto :DWORD, :DWORD, :DWORD, :DWORD
+uqqqRem proto :DWORD, :DWORD, :DWORD, :DWORD
+uqShl proto
+uqShr proto
+uqoqDivRem proto :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD
+uoqqMul proto :DWORD, :DWORD, :DWORD, :DWORD
 
-sowordDiv proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
-sowordMul proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
-sowordDivRem proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
-sowordRem proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
-sowordShl proto
-sowordShr proto
-sowordDivRemEx proto :SQWORD, :SQWORD, :SQWORD, :SQWORD, :SQWORD, :SQWORD
-sowordMulEx proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
+soooDiv proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
+soooMul proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
+soooDivRem proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
+soooRem proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
+soShl proto
+soShr proto
+soyoDivRem proto :SQWORD, :SQWORD, :SQWORD, :SQWORD, :SQWORD, :SQWORD
+syooMul proto :SQWORD, :SQWORD, :SQWORD, :SQWORD
 
-uowordDiv proto :QWORD, :QWORD, :QWORD, :QWORD
-uowordMul proto :QWORD, :QWORD, :QWORD, :QWORD
-uowordDivRem proto :QWORD, :QWORD, :QWORD, :QWORD
-uowordRem proto :QWORD, :QWORD, :QWORD, :QWORD
-uowordShl proto
-uowordShr proto
-uowordDivRemEx proto :QWORD, :QWORD, :QWORD, :QWORD, :QWORD, :QWORD
-uowordMulEx proto :QWORD, :QWORD, :QWORD, :QWORD
-
+uoooDiv proto :QWORD, :QWORD, :QWORD, :QWORD
+uoooMul proto :QWORD, :QWORD, :QWORD, :QWORD
+uoooDivRem proto :QWORD, :QWORD, :QWORD, :QWORD
+uoooRem proto :QWORD, :QWORD, :QWORD, :QWORD
+uoShl proto
+uoShr proto
+uoyoDivRem proto :QWORD, :QWORD, :QWORD, :QWORD, :QWORD, :QWORD
+uyooMul proto :QWORD, :QWORD, :QWORD, :QWORD
 
 MulDiv64 proto :SQWORD, :SQWORD, :SQWORD
 
@@ -946,10 +945,17 @@ if TARGET_BITNESS eq 32
   XWORD2DEC_MAX_CHARS textequ <UDWORD2DEC_MAX_CHARS>
   SXWORD2DEC_MAX_CHARS textequ <SDWORD2DEC_MAX_CHARS>
 
-  uxwordMulEx textequ <uqwordMulEx>
-  sxwordMulEx textequ <sqwordMulEx>
-  uxwordDivRemEx textequ <uqwordDivRemEx>
-  sxwordDivRemEx textequ <sqwordDivRemEx>
+  uxMulEx textequ <uqqqMul>
+  sxMulEx textequ <sqqqMul>
+  uxDivRemEx textequ <uqqqDivRem>
+  sxDivRemEx textequ <sqqqDivRem>
+  uxDivRemExEx textequ <uqoqDivRem>
+  sxDivRemExEx textequ <sqoqDivRem>
+  uxShl textequ <uqShl>
+  sxShl textequ <sqShl>
+  uxShr textequ <uqShr>
+  sxShr textequ <sqShr>
+  
  
 elseif TARGET_BITNESS eq 64
   xword2hex textequ <qword2hex>
@@ -983,10 +989,16 @@ elseif TARGET_BITNESS eq 64
   XWORD2DEC_MAX_CHARS textequ <QWORD2DEC_MAX_CHARS>
   SXWORD2DEC_MAX_CHARS textequ <SQWORD2DEC_MAX_CHARS>
 
-  uxwordMulEx textequ <uowordMulEx>
-  sxwordMulEx textequ <sowordMulEx>
-  uxwordDivRemEx textequ <uowordDivRemEx>
-  sxwordDivRemEx textequ <sowordDivRemEx>
+  uxMulEx textequ <uoooMul>
+  sxMulEx textequ <soooMul>
+  uxDivRemEx textequ <uoooDivRem>
+  sxDivRemEx textequ <soooDivRem>
+  uxDivRemExEx textequ <uoyoDivRem>
+  sxDivRemExEx textequ <soyoDivRem>
+  uxShl textequ <uoShl>
+  sxShl textequ <soShl>
+  uxShr textequ <uoShr>
+  sxShr textequ <soShr>
 else
   %echo Warning: incompatible Bitness: $ToStr(%TARGET_BITNESS)
 endif

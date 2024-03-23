@@ -615,45 +615,56 @@ CalcVarianceR8, pArray, xCount, pVariance
 Base64Encode, pDataBuffer, dDataSize
 Base64Decode, pDataBuffer, dDataSize
 
-sqwordMul, sdMultiplicandLo, sdMultiplicandHi, sdMultiplicatorLo, sdMultiplicatorHi
-sqwordDiv, sdDividendLo, sdDividendHi, sdDivisorLo, sdDivisorHi
-sqwordDivRem, sdDividendLo, sdDividendHi, sdDivisorLo, sdDivisorHi
-sqwordRem, sdDividendLo, sdDividendHi, sdDivisorLo, sdDivisorHi
-sqwordShl
-sqwordShr
-sqwordMulEx, sdMultiplicandLo, sdMultiplicandHi, sdMultiplicatorLo, sdMultiplicatorHi
-sqwordDivRemEx, sdDividendLoLo, sdDividendHiLo, sdDividendLoHi, sdDividendHiHi, sdDivisorLo, sdDivisorHi
+sqqqMul, sdMultiplicandLo, sdMultiplicandHi, sdMultiplicatorLo, sdMultiplicatorHi
+sqqqDiv, sdDividendLo, sdDividendHi, sdDivisorLo, sdDivisorHi
+sqqqDivRem, sdDividendLo, sdDividendHi, sdDivisorLo, sdDivisorHi
+sqqqRem, sdDividendLo, sdDividendHi, sdDivisorLo, sdDivisorHi
+sqShl
+sqShr
+soqqMul, sdMultiplicandLo, sdMultiplicandHi, sdMultiplicatorLo, sdMultiplicatorHi
+sqoqDivRem, sdDividendLoLo, sdDividendHiLo, sdDividendLoHi, sdDividendHiHi, sdDivisorLo, sdDivisorHi
 
-uqwordMul, dMultiplicandLo, dMultiplicandHi, dMultiplicatorLo, dMultiplicatorHi
-uqwordDiv, dDividendLo, dDividendHi, dDivisorLo, dDivisorHi
-uqwordDivRem, dDividendLo, dDividendHi, dDivisorLo, dDivisorHi
-uqwordRem, dDividendLo, dDividendHi, dDivisorLo, dDivisorHi
-uqwordShl
-uqwordShr
-uqwordMulEx, dMultiplicandLo, dMultiplicandHi, dMultiplicatorLo, dMultiplicatorHi
-uqwordDivRemEx, dDividendLoLo, dDividendHiLo, dDividendLoHi, dDividendHiHi, dDivisorLo, dDivisorHi
+uqqqMul, dMultiplicandLo, dMultiplicandHi, dMultiplicatorLo, dMultiplicatorHi
+uqqqDiv, dDividendLo, dDividendHi, dDivisorLo, dDivisorHi
+uqqqDivRem, dDividendLo, dDividendHi, dDivisorLo, dDivisorHi
+uqqqRem, dDividendLo, dDividendHi, dDivisorLo, dDivisorHi
+uqShl
+uqShr
+uoqqMul, dMultiplicandLo, dMultiplicandHi, dMultiplicatorLo, dMultiplicatorHi
+uqoqDivRem, dDividendLoLo, dDividendHiLo, dDividendLoHi, dDividendHiHi, dDivisorLo, dDivisorHi
 
-sowordMul, sqMultiplicandLo, sqMultiplicandHi, sqMultiplicatorLo, sqMultiplicatorHi
-sowordDiv, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
-sowordDivRem, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
-sowordRem, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
-sowordShl
-sowordShr
-sowordMulEx, sqMultiplicandLo, sqMultiplicandHi, sqMultiplicatorLo, sqMultiplicatorHi
-sowordDivRemEx, sqDividendLoLo, sqDividendHiLo, sqDividendLoHi, sqDividendHiHi, sqDivisorLo, sqDivisorHi
+soooMul, sqMultiplicandLo, sqMultiplicandHi, sqMultiplicatorLo, sqMultiplicatorHi
+soooDiv, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
+soooDivRem, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
+soooRem, sqDividendLo, sqDividendHi, sqDivisorLo, sqDivisorHi
+soShl
+soShr
+syooMul, sqMultiplicandLo, sqMultiplicandHi, sqMultiplicatorLo, sqMultiplicatorHi
+soyoDivRem, sqDividendLoLo, sqDividendHiLo, sqDividendLoHi, sqDividendHiHi, sqDivisorLo, sqDivisorHi
 
-uowordMul, qMultiplicandLo, qMultiplicandHi, qMultiplicatorLo, qMultiplicatorHi
-uowordDiv, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
-uowordDivRem, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
-uowordRem, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
-uowordShl
-uowordShr
-uowordMulEx, qMultiplicandLo, qMultiplicandHi, qMultiplicatorLo, qMultiplicatorHi
-uowordDivRemEx, qDividendLoLo, qDividendHiLo, qDividendLoHi, qDividendHiHi, qDivisorLo, qDivisorHi
+uoooMul, qMultiplicandLo, qMultiplicandHi, qMultiplicatorLo, qMultiplicatorHi
+uoooDiv, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
+uoooDivRem, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
+uoooRem, qDividendLo, qDividendHi, qDivisorLo, qDivisorHi
+uoShl
+uoShr
+uyooMul, qMultiplicandLo, qMultiplicandHi, qMultiplicatorLo, qMultiplicatorHi
+uoyoDivRem, qDividendLoLo, qDividendHiLo, qDividendLoHi, qDividendHiHi, qDivisorLo, qDivisorHi
 
-uxwordMulEx, uxMultiplicandLo, uxMultiplicandHi, uxMultiplicatorLo, uxMultiplicatorHi
-sxwordMulEx, sxMultiplicandLo, sxMultiplicandHi, sxMultiplicatorLo, sxMultiplicatorHi
-uxwordDivRemEx, uxDividendLoLo, uxDividendHiLo, uxDividendLoHi, uxDividendHiHi, uxDivisorLo, uxDivisorHi
-sxwordDivRemEx, sxDividendLoLo, sxDividendHiLo, sxDividendLoHi, sxDividendHiHi, sxDivisorLo, sxDivisorHi
+uxMulEx, uxMultiplicandLo, uxMultiplicandHi, uxMultiplicatorLo, uxMultiplicatorHi
+sxMulEx, sxMultiplicandLo, sxMultiplicandHi, sxMultiplicatorLo, sxMultiplicatorHi
+uxDivRemEx, uxDividendLo, uxDividendHi, uxDivisorLo, uxDivisorHi
+sxDivRemEx, sxDividendLo, sxDividendHi, sxDivisorLo, sxDivisorHi
+uxDivRemExEx, uxDividendLoLo, uxDividendHiLo, uxDividendLoHi, uxDividendHiHi, uxDivisorLo, uxDivisorHi
+sxDivRemExEx, sxDividendLoLo, sxDividendHiLo, sxDividendLoHi, sxDividendHiHi, sxDivisorLo, sxDivisorHi
+
+uxShl
+uxShl
+sxShl
+sxShl
+uxShr
+uxShr
+sxShr
+sxShr
   
 MulDiv64, sqMultiplicand, sqMultiplicator, sqDivisor
