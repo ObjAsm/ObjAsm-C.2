@@ -1,0 +1,16 @@
+CONST=
+FAR=
+NEAR=
+OPTIONAL=
+PASCAL=
+RESTRICT=
+UNALIGNED=
+VOLATILE=
+_Atomic=
+__RPC_FAR=
+const=
+far=
+near=
+restrict=
+unaligned=
+volatile=

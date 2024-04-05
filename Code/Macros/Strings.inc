@@ -51,6 +51,7 @@ PSTRING   typedef ptr CHR                               ;Generic string POINTER 
 TAB   equ 9
 CR    equ 13
 LF    equ 10
+SPC   equ 32
 CRLF  equ <13,10>
 
 ;Now include ANSI and WIDE string support

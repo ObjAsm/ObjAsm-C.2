@@ -2443,6 +2443,7 @@ endm
 ; Arguments:  Arg1: Instance name.
 ;             Arg2: Object expression (Namespace:ObjectName).
 ; Note:       - Never call Destroy to free an embedded object. Only call "Done".
+; Example:    Embed MyColl, Collection
 
 Embed macro InsName:req, ObjExpr:req
   if @CatStr(%??ObjName, <_Error>) eq ??OBJERR_NONE

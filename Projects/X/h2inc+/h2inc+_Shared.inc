@@ -1,0 +1,27 @@
+; ==================================================================================================
+; Title:      h2inc+_Shared.inc
+; Author:     G. Friedrich
+; Version:    C.2.0
+; Purpose:    Share some values with rc.exe.
+; Notes:      Version C.2.0, April, 2024
+;               - First release.
+; ==================================================================================================
+
+
+;General information
+APP_TITLE                     textequ   <h2inc+>
+VERSION                       textequ   <C.2.0>
+COPYRIGHT                     textequ   <(C) G. Friedrich April 2024>
+VER_FILEVERSION               equ       2,0,0,0
+VER_FILEVERSION_STR           textequ   <2.0>
+VER_PRODUCTVERSION            equ       2,0,0,0
+VER_PRODUCTVERSION_STR        textequ   <2.0>
+
+;Build information - updated automatically -
+BUILD_NUMBER                  equ       1
+BUILD_DATE_STR                textequ   <2024-03-30>
+BUILD_BITNESS                 equ       64
+BUILD_MODE                    equ       DBG
+
+BUILD_BIN_FORMAT              equ       EXE
+BUILD_BIN_SUFFIX_STR          textequ   <>

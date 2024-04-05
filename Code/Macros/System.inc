@@ -1370,8 +1370,8 @@ endif
 ;                 UE UEFI Error as description string
 ;                 MT Move to character position
 ;                 AT fill with spaces up to character position
-;                 V4 IPv4 address in the format xxx.xxx.xxx.xxx, input has to be in NBO
-;                 V6 IPv6 address in the format xxxx:xxxx:... , input has to be in NBO
+;                 V4 IPv4 address in the format xxx.xxx.xxx.xxx, input must be in NBO
+;                 V6 IPv6 address in the format xxxx:xxxx:... , input must be in NBO
 ;                 CA ANSI Character
 ;                 CW WIDE Character
 ;                 CT ANSI/WIDE Character
@@ -1389,6 +1389,7 @@ endif
 ;                 ]  ">" character
 ;                 :  "!" character
 ;                 ´  "'" character
+;                 `  """ character
 ;                 \  "\" character
 ;
 ;             - Format specifiers and escape sequences are case sensitive.
@@ -1397,10 +1398,10 @@ endif
 ;                 % include &IncPath&Windows\ip2string.inc
 ;
 ; Example:    WriteF xdi, "Memory at ¦HXh: ¦F3", xsi, REAL4 ptr [xsi]
-;             WriteF xdi, "The value is: ¦BZ Units", <<invoke udword2dec, xdi, 15>>
+;             WriteF xdi, "The value is: ¦BZ ¦SU", <<<invoke udword2dec, xdi, 15>>>, addr cUnit
 
 
-WriteF macro DstReg:req, Format:req, Args:vararg
+WriteFT macro DstReg:req, Format:req, Args:vararg
   local pBegin
   
   if TARGET_STR_TYPE eq STR_TYPE_ANSI
@@ -1478,7 +1479,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
         else
           $$WF_ReplType Catstr $$WF_ReplType, <$$WF_Character>   ;;Append second char
           ifidn $$WF_ReplType, <SB>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1493,7 +1494,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SW>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1508,7 +1509,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SD>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1522,7 +1523,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SQ>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1536,7 +1537,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SX>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1550,7 +1551,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UB>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1565,7 +1566,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UW>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1580,7 +1581,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UD>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1594,7 +1595,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UQ>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1608,7 +1609,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <UX>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1622,7 +1623,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <HB>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1636,7 +1637,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <HW>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1650,7 +1651,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <HD>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1664,7 +1665,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <HQ>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1678,7 +1679,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <HX>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1692,7 +1693,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn @SubStr(<%$$WF_ReplType>, 1, 1), <F>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1711,7 +1712,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn @SubStr(<%$$WF_ReplType>, 1, 1), <E>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1730,7 +1731,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <SA>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1747,7 +1748,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <SU>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1764,7 +1765,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <ST>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1786,7 +1787,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             add DstReg, sizeof($$CHR)
 
           elseifidn $$WF_ReplType, <GD>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1800,7 +1801,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <WE>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1820,7 +1821,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <CE>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1840,7 +1841,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <UE>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1860,7 +1861,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             endif
 
           elseifidn $$WF_ReplType, <V4>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1874,7 +1875,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <V6>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1888,7 +1889,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <BI>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1903,27 +1904,27 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <BN>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
             endif
-            @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
+            @CatStr(<$$WF_Arg>, %$$WF_ArgCount)                               ;Call the macro
             add DstReg, xax
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <BZ>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
             endif
-            @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
+            @CatStr(<$$WF_Arg>, %$$WF_ArgCount)                               ;Call the macro
             lea DstReg, [DstReg + xax - sizeof($$CHR)]
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <AT>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1937,7 +1938,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             sub xax, xcx
             if TARGET_STR_TYPE eq STR_TYPE_WIDE
               .while SDWORD ptr eax > 1               ;;Fill with spaces
-                mov DCHRW ptr [DstReg], " " shl 16 + " "
+                mov DCHRW ptr [DstReg], SPC shl 16 + SPC
                 add DstReg, sizeof(DCHRW)
                 sub eax, 2
               .endw
@@ -1955,13 +1956,13 @@ WriteF macro DstReg:req, Format:req, Args:vararg
               .endif
             endif
             .if ZERO?
-              mov $$CHR ptr [DstReg], " "
+              mov $$CHR ptr [DstReg], SPC
               add DstReg, sizeof($$CHR)
             .endif
             $$WF_ArgCount = $$WF_ArgCount + 1
 
           elseifidn $$WF_ReplType, <MT>
-            FillText [DstReg], <%$$WF_Text>
+            $$FillText [DstReg], <%$$WF_Text>
             $$WF_Text textequ <>
             if ??StrLen ne 0
               add DstReg, ??StrLen*sizeof($$CHR)
@@ -1984,7 +1985,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
             .else
               if TARGET_STR_TYPE eq STR_TYPE_WIDE
                 .while SDWORD ptr eax > 1               ;;Fill with spaces
-                  mov DCHRW ptr [DstReg], " " shl 16 + " "
+                  mov DCHRW ptr [DstReg], SPC shl 16 + SPC
                   add DstReg, sizeof(DCHRW)
                   sub eax, 2
                 .endw
@@ -2002,7 +2003,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
                 .endif
               endif
               .if ZERO?
-                mov $$CHR ptr [DstReg], " "
+                mov $$CHR ptr [DstReg], SPC
                 add DstReg, sizeof($$CHR)
               .endif
             .endif
@@ -2019,7 +2020,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
       elseif $$WF_Escape
         $$WF_Escape = 0                                 ;;Reset escape flag
         ifidn <$$WF_Character>, <n>
-          FillText [DstReg], <%$$WF_Text>
+          $$FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof($$CHR)
@@ -2027,7 +2028,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov DCHR ptr [DstReg], 10 shl (8*sizeof($$CHR)) + 13
           add DstReg, 2*sizeof($$CHR)
         elseifidn <$$WF_Character>, <r>
-          FillText [DstReg], <%$$WF_Text>
+          $$FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof($$CHR)
@@ -2035,7 +2036,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov $$CHR ptr [DstReg], 13
           add DstReg, sizeof($$CHR)
         elseifidn <$$WF_Character>, <l>
-          FillText [DstReg], <%$$WF_Text>
+          $$FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof($$CHR)
@@ -2043,7 +2044,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov $$CHR ptr [DstReg], 10
           add DstReg, sizeof($$CHR)
         elseifidn <$$WF_Character>, <0>
-          FillText [DstReg], <%$$WF_Text>
+          $$FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof($$CHR)
@@ -2051,7 +2052,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov $$CHR ptr [DstReg], 0
           add DstReg, sizeof($$CHR)
         elseifidn <$$WF_Character>, <t>
-          FillText [DstReg], <%$$WF_Text>
+          $$FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof($$CHR)
@@ -2059,7 +2060,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov $$CHR ptr [DstReg], 9
           add DstReg, sizeof($$CHR)
         elseifidn <$$WF_Character>, <[>
-          FillText [DstReg], <%$$WF_Text>
+          $$FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof($$CHR)
@@ -2067,7 +2068,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov $$CHR ptr [DstReg], '<'
           add DstReg, sizeof($$CHR)
         elseifidn <$$WF_Character>, <]>
-          FillText [DstReg], <%$$WF_Text>
+          $$FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof($$CHR)
@@ -2075,7 +2076,7 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov $$CHR ptr [DstReg], '>'
           add DstReg, sizeof($$CHR)
         elseifidn <$$WF_Character>, <:>
-          FillText [DstReg], <%$$WF_Text>
+          $$FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof($$CHR)
@@ -2083,12 +2084,20 @@ WriteF macro DstReg:req, Format:req, Args:vararg
           mov $$CHR ptr [DstReg], '!'
           add DstReg, sizeof($$CHR)
         elseifidn <$$WF_Character>, <´>
-          FillText [DstReg], <%$$WF_Text>
+          $$FillText [DstReg], <%$$WF_Text>
           $$WF_Text textequ <>
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof($$CHR)
           endif
           mov $$CHR ptr [DstReg], "'"
+          add DstReg, sizeof($$CHR)
+        elseifidn <$$WF_Character>, <`>
+          $$FillText [DstReg], <%$$WF_Text>
+          $$WF_Text textequ <>
+          if ??StrLen ne 0
+            add DstReg, ??StrLen*sizeof($$CHR)
+          endif
+          mov $$CHR ptr [DstReg], '"'
           add DstReg, sizeof($$CHR)
         elseifidn <$$WF_Character>, <\>
           $$WF_Text CatStr $$WF_Text, <\>
@@ -2106,31 +2115,41 @@ WriteF macro DstReg:req, Format:req, Args:vararg
         elseifidn <&$$WF_Character>, <\>
           $$WF_Escape = 1                               ;;Set escape flag
         else
-          $$WF_Text CatStr $$WF_Text, <&$$WF_Character>
+          $$WF_Text CatStr $$WF_Text, <$$WF_Character>
         endif
       endif
     endif
   endm
 
-  FillString [DstReg], %$$WF_Text                       ;;If there is something in the buffer
+  $$FillString [DstReg], %$$WF_Text                     ;;If there is something in the buffer
   if ??StrLen ne 0
     add DstReg, ??StrLen*sizeof($$CHR)
   endif
 endm
 
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  WriteF textequ <WriteFA>
+else
+  WriteF textequ <WriteFW>
+endif
+
 WriteFA macro DstReg:req, Format:req, Args:vararg
   $$TARGET_STR_TYPE = TARGET_STR_TYPE
   TARGET_STR_TYPE = STR_TYPE_ANSI
-  $$CHR equ CHRA
-  WriteF DstReg, Format, Args
+  $$CHR textequ <CHRA>
+  $$FillText textequ <FillTextA>
+  $$FillString textequ <FillStringA>
+  WriteFT DstReg, Format, Args
   TARGET_STR_TYPE = $$TARGET_STR_TYPE
 endm
 
 WriteFW macro DstReg:req, Format:req, Args:vararg
   $$TARGET_STR_TYPE = TARGET_STR_TYPE
   TARGET_STR_TYPE = STR_TYPE_WIDE
-  $$CHR equ CHRW
-  WriteF DstReg, Format, Args
+  $$CHR textequ <CHRW>
+  $$FillText textequ <FillTextW>
+  $$FillString textequ <FillStringW>
+  WriteFT DstReg, Format, Args
   TARGET_STR_TYPE = $$TARGET_STR_TYPE
 endm
 

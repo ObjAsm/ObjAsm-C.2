@@ -109,6 +109,7 @@ WinApp
 DlgApp
 MdiApp
 SdiApp
+ConsoleApp
 
 Chart
 ChartXY

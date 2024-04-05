@@ -654,7 +654,7 @@ endm
 ;             Arg2: Optional destination Window name.
 ;             Arg3: Quoted format string.
 ;             Arg 4..n: optional arguments.
-; Example:    DbgTextF "Output", $RGB(000,000,000), "Data = '%s'", xax
+; Example:    DbgTextF "Output", $RGB(000,000,000), "Data = ¦SA", xax
 
 DbgTextF macro Color:=<DbgColorForeground>, Dest, Message:req, Args:vararg
   local DebugTextBuffer

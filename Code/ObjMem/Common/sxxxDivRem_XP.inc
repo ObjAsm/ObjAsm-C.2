@@ -26,7 +26,7 @@ REM_SIGN  equ 2
 ;             Arg6: Divisor signed high word.
 ; Return:     xdx:xax = Signed quotient.
 ;             xbx:xcx = Signed remainder.
-;             OF set on division overlow. Register contents are invalid.
+;             OF set on division overlow and the content of the registers is undetermined.
 ; Note:       Non-integral results are truncated (chopped) towards 0. 
 ;             The remainder is always less than the divisor in magnitude.
 ;             Don't include xbx in the uses clause.

@@ -413,7 +413,7 @@ SysSetup macro Arguments:vararg
   elseif TARGET_USER_INTERFACE eq USER_INTERFACE_GUI
     echo User Interface: GRAPHIC
   elseif TARGET_USER_INTERFACE eq USER_INTERFACE_CLI
-    echo User Interface: COMMAND LINE
+    echo User Interface: CONSOLE
   endif
 
   if TARGET_BIN_FORMAT eq BIN_FORMAT_EXE

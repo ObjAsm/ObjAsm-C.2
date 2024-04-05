@@ -1,0 +1,4 @@
+EXTERN_C=extern
+interface=struct
+length_is=lengthof
+size_is=sizeof

@@ -25,7 +25,7 @@ ProcName equ <uoyoDivRem>
 ;             Arg6: Divisor unsigned high word.
 ; Return:     rdx:rax = Unsigned quotient.
 ;             rbx:rcx = Unsigned remainder.
-;             OF set on division overlow. Register contents are invalid.
+;             OF set on division overlow and the content of the registers is undetermined.
 ; Note:       Non-integral results are truncated (chopped) towards 0. 
 ;             The remainder is always less than the divisor in magnitude.
 

@@ -1,0 +1,1726 @@
+; ==================================================================================================
+; Title:    h2inc+_IncFile_Proc.inc
+; Author:   G. Friedrich
+; Version:  C.2.0
+; Purpose:  ObjAsm h2inc+ IncFile procs.
+; Notes:    See h2inc+.asm
+; ==================================================================================================
+
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: BStrCompA
+; Purpose:   Comparison routine for BStrA strings.
+; Arguments: Arg1 -> String 1.
+;            Arg2 -> String 2.
+; Return:    eax: comparison result. Zero if strings are identical.
+
+BStrCompA proc uses xdi xsi pBStrA:PSTRINGA, pStrA:PSTRINGA
+  mov xsi, pBStrA
+  mov xdi, pStrA
+  mov ecx, [xsi - sizeof DWORD]                       ;Load string size
+  repz cmpsb
+  mov eax, 0
+  .if SIGN?
+    dec eax
+  .elseif !ZERO?
+    inc eax
+  .endif
+  ret
+BStrCompA endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: InsertStrg, InsertAttr, InsertEqui
+; Purpose:   Add an Item to a List.
+; Arguments: Arg1 -> List.
+;            Arg2 -> Identifier string.
+;            Arg3: additional Paramters.
+;            xbx -> IncFile
+; Return:    xax -> Identifier string.
+
+InsertStrg proc pList:POINTER, pStr:PSTRINGA, dSize:DWORD
+  local dInsIndex:DWORD
+
+  OCall pList::List.Search, pStr
+  .if eax == FALSE
+    mov dInsIndex, ecx
+    OCall $ObjTmpl(Application).MemHeap::MemoryHeap.AddBStrA, pStr, dSize
+    .if xax != NULL
+      OCall pList::List.InsertAt, dInsIndex, xax
+      ret
+    .endif
+    OCall xbx::IncFile.ShowError, offset szOutOfSpace
+    mov $ObjTmpl(Application).bTerminate, TRUE
+    xor eax, eax
+  .else
+    OCall pList::List.ItemAt, ecx
+  .endif
+  ret
+InsertStrg endp
+
+InsertAttr proc pList:POINTER, pStr:PSTRINGA, dSize:DWORD, dAttr:DWORD
+  local dInsIndex:DWORD
+
+  OCall pList::List.Search, pStr
+  .if eax == FALSE
+    mov dInsIndex, ecx
+    OCall $ObjTmpl(Application).MemHeap::MemoryHeap.AddBStrA, pStr, dSize
+    .if xax != NULL
+      OCall pList::List.InsertAt, dInsIndex, xax
+      OCall $ObjTmpl(Application).MemHeap::MemoryHeap.AddDword, dAttr
+      .if xax != NULL
+        ret
+      .endif
+    .endif
+    OCall xbx::IncFile.ShowError, offset szOutOfSpace
+    mov $ObjTmpl(Application).bTerminate, TRUE
+    xor eax, eax
+  .else
+    OCall pList::List.ItemAt, ecx
+  .endif
+  ret
+InsertAttr endp
+
+InsertEqui proc pList:POINTER, pStr:PSTRINGA, dStrSize:DWORD, pStrEqui:PSTRINGA, dEquSize:DWORD
+  local dInsIndex:DWORD
+
+  OCall pList::List.Search, pStr
+  .if eax == FALSE
+    mov dInsIndex, ecx
+    OCall $ObjTmpl(Application).MemHeap::MemoryHeap.AddBStrA, pStr, dStrSize
+    .if xax != NULL
+      OCall pList::List.InsertAt, dInsIndex, xax
+      OCall $ObjTmpl(Application).MemHeap::MemoryHeap.AddBStrA, pStrEqui, dEquSize
+      .if xax != NULL
+        ret
+      .endif
+    .endif
+    OCall xbx::IncFile.ShowError, offset szOutOfSpace
+    mov $ObjTmpl(Application).bTerminate, TRUE
+    xor eax, eax
+  .else
+    OCall pList::List.ItemAt, ecx
+  .endif
+  ret
+InsertEqui endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: InsertDefItem
+; Purpose:   Add a prototype to a list.
+; Arguments: Arg1 -> Function Name.
+;            Arg2: Parameter bytes.
+; Return:    Nothing.
+
+InsertDefItem proc uses xdi pFuncName:PSTRINGA, dParamBytes:DWORD
+  local cProto[1024]:CHRA
+
+  mov cProto, 0
+  lea xdi, cProto
+  .ifBitSet [xbx].$Obj(IncFile).dQualifiers, PTQ_STDCALL
+    WriteFA xdi, "_¦SA@¦UD", pFuncName, dParamBytes
+  .elseIfBitSet [xbx].$Obj(IncFile).dQualifiers, PTQ_CDECL
+    WriteFA xdi, "_¦SA", pFuncName
+  .else
+    WriteFA xdi, "¦SA", pFuncName
+  .endif
+  lea xdx, cProto
+  sub xdi, xdx
+  inc xdi
+  OCall $ObjTmpl(Application).MemHeap::MemoryHeap.AddBStrA, xdx, edi
+  .if xax != NULL
+    OCall [xbx].$Obj(IncFile).pDefs::List.Insert, xax
+    .if xax == NULL
+      OCall xbx::IncFile.ShowError, offset szOutOfSpace
+      mov $ObjTmpl(Application).bTerminate, TRUE
+      xor eax, eax
+    .endif
+  .endif
+  ret
+InsertDefItem endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: IsLogOperator?
+; Purpose:   Check if character in al/ax/eax is a logical operator (comparison & logical)
+; Arguments: al/ax/eax = character(s) to test.
+; Return:    eax = TRUE or FALSE.
+; Note:      No other register is changed.
+
+IsLogOperator? proc dChars:DWORD
+  mov eax, dChars
+
+  and eax, 0FFFFh
+  cmp eax, "=="
+  jz @IsTrue
+  cmp eax, "!="
+  jz @IsTrue
+  cmp eax, "<="
+  jz @IsTrue
+  cmp eax, ">="
+  jz @IsTrue
+  cmp eax, "&&"
+  jz @IsTrue
+  cmp eax, "||"
+  jz @IsTrue
+
+  and eax, 0FFh
+  cmp eax, "<"
+  jz @IsTrue
+  cmp eax, ">"
+  jz @IsTrue
+  cmp eax, "!"
+  jz @IsTrue
+
+  xor eax, eax
+  ret
+@IsTrue:
+  mov eax, TRUE
+  ret
+IsLogOperator? endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: IsNumOperator?
+; Purpose:   Check if character in al/ax/eax is a numeric operator (assignment & arithmetic).
+; Arguments: al/ax/eax = character(s) to test.
+; Return:    eax = TRUE or FALSE.
+; Note:      No other register is changed.
+
+IsNumOperator? proc dChars:DWORD
+  mov eax, dChars
+
+  and eax, 0FFFFFFh
+  cmp eax, "<<="
+  jz @IsTrue
+  xor eax, eax
+  cmp eax, ">>="
+  jz @IsTrue
+
+  and eax, 0FFFFh
+  cmp eax, ">>"
+  jz @IsTrue
+  cmp eax, "<<"
+  jz @IsTrue
+  cmp eax, "--"
+  jz @IsTrue
+  cmp eax, "++"
+  jz @IsTrue
+  cmp eax, "-="
+  jz @IsTrue
+  cmp eax, "+="
+  jz @IsTrue
+  cmp eax, "*="
+  jz @IsTrue
+  cmp eax, "/="
+  jz @IsTrue
+  cmp eax, "&="
+  jz @IsTrue
+  cmp eax, "%="
+  jz @IsTrue
+  cmp eax, "|="
+  jz @IsTrue
+  cmp eax, "^="
+  jz @IsTrue
+
+  and eax, 0FFh
+  cmp eax, "="
+  jz @IsTrue
+  cmp eax, "-"
+  jz @IsTrue
+  cmp eax, "+"
+  jz @IsTrue
+  cmp eax, "*"
+  jz @IsTrue
+  cmp eax, "/"
+  jz @IsTrue
+  cmp eax, "|"
+  jz @IsTrue
+  cmp eax, "&"
+  jz @IsTrue
+  cmp eax, "%"
+  jz @IsTrue
+  cmp eax, "^"
+  jz @IsTrue
+
+  xor eax, eax
+  ret
+@IsTrue:
+  mov eax, TRUE
+  ret
+IsNumOperator? endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: IsReservedWord?
+; Purpose:   Check if token is a reserved word.
+; Arguments: Arg1 -> token to check.
+; Return:    eax = FALSE if token is not reserved.
+
+IsReservedWord? proc pToken:PTOKEN
+  local szWord[128]:CHRA
+
+  invoke StrCCopyA, addr szWord, pToken, sizeof szWord - 1
+  invoke StrLowerA, addr szWord
+  OCall pReservedWords::List.Search, xax
+  ret
+IsReservedWord? endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: IsMacro?
+; Purpose:   Check if token is a macro.
+; Arguments: Arg1 -> token to check.
+; Return:    eax = 0 if FALSE, 1 if macros was previously defined, 2 if it is a known macro.
+;            ecx = Index in the range [0..Count].
+
+IsMacro? proc pToken:PTOKEN
+  OCall pKnownMacros::List.Search, pToken
+  .if eax == FALSE
+    OCall pMacros::List.Search, pToken
+  .else
+    inc eax
+  .endif
+  ret
+IsMacro? endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: IsEquate
+; Purpose:   Check if token is an equate.
+; Arguments: Arg1 -> token to check.
+; Return:    eax = 0 if FALSE, 1 if macros was previously defined, 2 if it is a known equate.
+;            ecx = Index in the range [0..Count].
+
+IsEquate? proc pToken:PTOKEN
+  OCall pKnownEquates::List.Search, pToken
+  .if eax == FALSE
+    OCall pEquates::List.Search, pToken
+  .else
+    inc eax
+  .endif
+  ret
+IsEquate? endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: IsQualifier?
+; Purpose:   Check if token is a qualifier.
+; Arguments: Arg1 -> token to check.
+; Return:    eax = 0 if FALSE, 1 if qualifier was previously defined, 2 if it is a known qualifier.
+;            ecx = Index in the range [0..Count-1].
+
+IsQualifier? proc uses xsi pToken:PTOKEN
+  OCall pKnownQualifiers::List.Search, pToken
+  .if eax == FALSE
+    OCall pQualifiers::List.Search, pToken
+  .else
+    inc eax
+  .endif
+  ret
+IsQualifier? endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: IsString?
+; Purpose:   Check if token is a string.
+; Arguments: Arg1 -> token to check.
+; Return:    eax = TRUE if token is a string, otherwise FALSE.
+
+IsString? proc pToken:PTOKEN
+  mov xcx, pToken
+  mov al, [xcx]
+  .if al == '"'
+    jmp @IsTrue
+  .elseif al >= "0" && al <= "9"
+    inc ecx
+    .while CHRA ptr [xcx] != 0
+      .if CHRA ptr [xcx] == ","
+        jmp @IsTrue
+      .endif
+      inc ecx
+    .endw
+  .endif
+  xor eax, eax
+  ret
+@IsTrue:
+  mov eax, TRUE
+  ret
+IsString? endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: IsCObjMacro?
+; Purpose:   Check the presence of "CObjMacro".
+; Arguments: None.
+; Return:    If present, xax -> Name of THIS, xdx -> method name.
+; Syntax:    (THIS)->lpVtbl-><method>(THIS,...)
+
+IsCObjMacro? proc uses xsi xdi
+  local InpStat:INP_STAT
+
+  OCall xbx::IncFile.SaveInputStatus, addr InpStat
+  OCall xbx::IncFile.GetNextTokenFromPPLine
+  .if xax == NULL || CHRA ptr [xax] != "("
+    jmp @Exit
+  .endif
+  OCall xbx::IncFile.GetNextTokenFromPPLine           ;get name of THIS
+  test xax, xax
+  jz @Exit
+  mov xsi, xax
+  IsName? xax
+  test xax, xax
+  jz @Exit
+  OCall xbx::IncFile.GetNextTokenFromPPLine
+  .if xax == NULL || CHRA ptr [xax] != ")"
+    jmp @Exit
+  .endif
+  OCall xbx::IncFile.GetNextTokenFromPPLine
+  .if xax == NULL || DCHRA ptr [xax] != ">-"
+    jmp @Exit
+  .endif
+  OCall xbx::IncFile.GetNextTokenFromPPLine
+  test xax, xax
+  jz @Exit
+  DoesStringMatchA? [xax], <lpVtbl>
+  jz @Exit
+  OCall xbx::IncFile.GetNextTokenFromPPLine
+  .if xax == NULL || DCHRA ptr [xax] != ">-"
+    jmp @Exit
+  .endif
+  OCall xbx::IncFile.GetNextTokenFromPPLine           ;get method name
+  test xax, xax
+  jz @Exit
+  mov xdi, xax
+  OCall xbx::IncFile.GetNextTokenFromPPLine
+  .if xax == NULL || CHRA ptr [xax] != "("
+    jmp @Exit
+  .endif
+  OCall xbx::IncFile.GetNextTokenFromPPLine
+  test xax, xax
+  jz @Exit
+  invoke StrCompA, xax, xsi  ;is THIS?
+  test eax, eax
+  jz @Exit
+  mov xax, xsi
+  mov xdx, xdi
+  ret
+@Exit:
+  OCall xbx::IncFile.LoadInputStatus, addr InpStat
+  xor eax, eax
+  ret
+IsCObjMacro? endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: IsFunction?
+; Purpose:   Determine if current item is a "function" declaration.
+;            Required if keyword "struct" has been found in input stream.
+;            May be a struct declaration or a function returning a struct (ptr).
+;            Workaround:
+;              + if "*" is found before next ";" or ",", then it is a function.
+;              + if "(" is found before next ";" or ",", then it is a function.
+;              + if "{" is found before next ";" or ",", then it is a structure.
+; Arguments: None.
+; Return:    eax = TRUE if it is a function, otherwise FALSE.
+
+IsFunction? proc
+  local dReturn:DWORD
+  local InpStat:INP_STAT
+
+  OCall xbx::IncFile.SaveInputStatus, addr InpStat
+  inc [xbx].$Obj(IncFile).bSkipScanPP
+  mov dReturn, FALSE
+  .while TRUE
+    OCall xbx::IncFile.GetNextToken
+    .break .if xax == NULL
+    .continue .if !IsIfLevelActive?(InpStat)
+    mov cl, [xax]
+    .break .if cl == ";" || cl == ")" || cl == "{"
+    .if cl == "," || cl == "*" || cl == "("
+      mov dReturn, TRUE
+      .break
+    .endif
+  .endw
+
+@Exit:
+  dec [xbx].$Obj(IncFile).bSkipScanPP
+  OCall xbx::IncFile.LoadInputStatus, addr InpStat
+  mov eax, dReturn
+  ret
+IsFunction? endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: IsFunctionPtr?
+; Purpose:   Determine if it is a "function" or "function ptr" declaration.
+; Arguments: None.
+; Return:    eax = TRUE if present, otherwise FALSE.
+; Syntax:    ...(...)(...)
+
+IsFunctionPtr? proc
+  local dParenthesesCount:DWORD, dReturn:DWORD, InpStat:INP_STAT
+
+  OCall xbx::IncFile.SaveInputStatus, addr InpStat
+  inc [xbx].$Obj(IncFile).bSkipScanPP
+  mov dParenthesesCount, 1
+  mov dReturn, FALSE
+  .while dParenthesesCount != 0
+    OCall xbx::IncFile.GetNextToken
+    .break .if xax == NULL
+    .continue .if !IsIfLevelActive?(InpStat)
+    .if CHRA ptr [xax] == "("
+      inc dParenthesesCount
+    .elseif CHRA ptr [xax] == ")"
+      dec dParenthesesCount
+    .endif
+  .endw
+  .if xax != NULL                                     ;Last Token != NULL
+    OCall xbx::IncFile.GetNextToken
+    .if xax != NULL && CHRA ptr [xax] == "("
+      mov dReturn, TRUE
+    .endif
+  .else
+    DbgPrintF , "¦UD: IsFunctionPtr? - unexpected EOF", [xbx].$Obj(IncFile).dLineNumber
+  .endif
+
+@Exit:
+  dec [xbx].$Obj(IncFile).bSkipScanPP
+  OCall xbx::IncFile.LoadInputStatus, addr InpStat
+  mov eax, dReturn
+  ret
+IsFunctionPtr? endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: IsUnionStructClass?
+; Purpose:   Check if token is "union", "struct" or "class".
+; Arguments: Arg1 -> token.
+; Return:    eax = TRUE if found, otherwise FALSE.
+;            edx = TRUE if token = "class".
+
+IsUnionStructClass? proc uses xsi pToken:PTOKEN
+  xor edx, edx
+  mov eax, TRUE
+  mov xcx, pToken
+  .if !$DoesStringMatchA?([xcx], <struct>)
+    .if !$DoesStringMatchA?([xcx], <union>)
+      .if !$DoesStringMatchA?([xcx], <class>)
+        xor eax, eax
+      .else
+        inc edx
+      .endif
+    .endif
+  .endif
+  ret
+IsUnionStructClass? endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: HasVTable?
+; Purpose:   Check presence of VTable.
+; Arguments: None.
+; Return:    eax = TRUE if present, otherwise FALSE.
+
+HasVTable? proc
+  local dReturn:DWORD, dBraceCount:DWORD
+  local InpStat:INP_STAT
+
+  DbgPrintF , "¦UD: HasVTable? - enter", [xbx].$Obj(IncFile).dLineNumber
+  OCall xbx::IncFile.SaveInputStatus, addr InpStat
+  inc [xbx].$Obj(IncFile).bSkipScanPP
+  mov dBraceCount, 1
+  mov dReturn, FALSE
+  .while dBraceCount != 0
+    OCall xbx::IncFile.GetNextToken
+    .break .if xax == NULL
+    .continue .if !IsIfLevelActive?(InpStat)
+    .if CHRA ptr [xax] == "{"
+      inc dBraceCount
+    .elseif CHRA ptr [xax] == "}"
+      dec dBraceCount
+    .elseif dBraceCount == 1
+      .if $DoesStringMatchA?([xax], <virtual>)
+        mov dReturn, TRUE
+        .break
+      .endif
+    .endif
+  .endw
+  dec [xbx].$Obj(IncFile).bSkipScanPP
+  OCall xbx::IncFile.LoadInputStatus, addr InpStat
+  mov eax, dReturn
+  ret
+HasVTable? endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: HasVirtualBase?
+; Purpose:   Check presence of "virtual" token.
+; Arguments: Arg1 -> Inherit.
+; Return:    eax = TRUE if it is a function ptr, otherwise FALSE.
+
+HasVirtualBase? proc uses xsi pInherit:ptr
+  mov edx, $GetCount@Stacklist(pInherit)
+  xor esi, esi
+  test edx, edx
+  .while !ZERO?
+    mov xax, $GetItem@Stacklist(pInherit, esi)
+    .if $DoesStringMatchA?([xax], <virtual>)
+      mov eax, TRUE
+      ret
+    .endif
+    inc esi
+    dec edx
+  .endw
+  xor eax, eax
+  ret
+HasVirtualBase? endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: TranslateToken
+; Purpose:   Translate tokens like "__export" or "__stdcall".
+; Arguments: Arg1 -> Token.
+; Return:    xax -> translated Token.
+;            edx = FASLE if no translation occured.
+
+TranslateToken proc pToken:PTOKEN
+  OCall pConvertTokens::List.Search, pToken
+  .if eax != FALSE
+    OCall pConvertTokens::List.ItemAt, ecx
+    mov edx, [xax - sizeof DWORD]
+    lea xax, [xax + xdx + sizeof DWORD]
+  .else
+    xor edx, edx
+    mov xax, pToken
+  .endif
+  ret
+TranslateToken endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: TranslateReservedWord
+; Purpose:   Check if token is a reserved name, if yes, add a "_" suffix
+; Arguments: Arg1: -> Token.
+;            Arg2: -> Output stream. If NULL, global buffer is used.
+; Return:    xax -> translated token.
+;            edx: TRUE if translation occured, otherwise FALSE.
+
+TranslateReservedWord proc uses xsi pToken:PTOKEN, pBuffer:POINTER
+  invoke IsReservedWord?, pToken
+  .if eax != FALSE
+    mov xsi, pBuffer
+    .if xsi == NULL
+      ;mov xsi, offset g_szTemp
+    .endif
+    invoke StrECopyA, xsi, pToken
+    invoke StrCopyA, xax, offset szResWordSuffix
+    mov xax, xsi
+    mov edx, TRUE
+    ret
+  .endif
+  xor edx, edx
+  mov xax, pToken
+  ret
+TranslateReservedWord endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: TranslateType
+; Purpose:   Translate known type.
+; Arguments: Arg1 -> Token.
+;            Arg2: Mode: 0 for TYPES, 1 for STRUCTS.
+; Return:    xax -> translated type.
+;            edx = FALSE if no macht found.
+
+TranslateType proc uses xdi pToken:PTOKEN, bMode:DWORD
+  OCall pConvertTypes1::List.Search, pToken             ;Common for TYPES & STRUCTS
+  .if eax != FALSE
+    OCall pConvertTypes1::List.ItemAt, ecx
+    mov edx, [xax - sizeof DWORD]                       ;edx = length
+    lea xax, [xax + xdx + sizeof DWORD]
+  .else
+    .if bMode == 0
+      mov xdi, pConvertTypes2                           ;TYPE
+    .else
+      mov xdi, pConvertTypes3                           ;STRUCT
+    .endif
+
+    OCall xdi::List.Search, pToken
+    .if eax != FALSE
+      OCall xdi::List.ItemAt, ecx
+      mov edx, [xax - sizeof DWORD]                     ;edx = length
+      lea xax, [xax + xdx + sizeof DWORD]
+    .else
+      xor edx, edx
+      .if bMode == 0                                    ;TYPE
+        mov xax, pToken
+      .else                                             ;STRUCT
+        mov xax, offset szUnkType
+      .endif
+    .endif
+  .endif
+  ret
+TranslateType endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: TranslateTypeQualifier
+; Purpose:   Convert type qualifiers.
+; Arguments: Arg1 -> Type qualifier.
+; Return:    xax -> Converted type qualifier.
+;            edx = FASLE if no translation occured.
+
+TranslateTypeQualifier proc pTypeQual:PTOKEN
+  OCall pConvertTypeQual::List.Search, pTypeQual
+  .if eax != FALSE
+    OCall pConvertTypeQual::List.ItemAt, ecx
+    mov edx, [xax - sizeof DWORD]                       ;edx = length
+    lea xax, [xax + xdx + sizeof DWORD]                 ;xax -> converted string
+  .else
+    xor edx, edx
+    mov xax, pTypeQual
+  .endif
+  ret
+TranslateTypeQualifier endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: TranslateNumOperator
+; Purpose:   Translate operator in #define lines.
+; Arguments: Arg1 -> Token.
+; Return:    xax -> translated or original Token.
+;            edx: TRUE if translated, otherwise FALSE.
+
+TranslateNumOperator proc pToken:PTOKEN
+  mov xax, pToken
+  mov eax, [xax]
+
+  mov edx, TRUE
+  and eax, 0FFFFh
+  .if eax == ">>"
+    mov xax, $OfsCStrA("shr")
+  .elseif (eax == "<<")
+    mov xax, $OfsCStrA("shl")
+  .else
+    and eax, 0FFh
+    .if eax == "-"
+      mov xax, $OfsCStrA("-")
+    .elseif eax == "+"
+      mov xax, $OfsCStrA("+")
+    .elseif eax == "*"
+      mov xax, $OfsCStrA("*")
+    .elseif eax == "/"
+      mov xax, $OfsCStrA("/")
+    .elseif eax == "|"
+      mov xax, $OfsCStrA("or")
+    .elseif eax == "&"
+      mov xax, $OfsCStrA("and")
+    .elseif (ax == "~")
+      mov xax, $OfsCStrA("not")
+    .else
+      mov xax, pToken
+      xor edx, edx
+    .endif
+  .endif
+  ret
+TranslateNumOperator endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: TranslateLogOperator
+; Purpose:   Translate operator in #define lines.
+; Arguments: Arg1 -> Token.
+; Return:    xax -> translated or original Token.
+;            edx: TRUE if translated, otherwise FALSE.
+
+TranslateLogOperator proc pToken:PTOKEN
+  mov xax, pToken
+  mov eax, [xax]
+  mov edx, TRUE
+
+  and eax, 0FFFFh
+  .if eax == "=="
+    mov xax, $OfsCStrA("eq")
+  .elseif (eax == "!=")
+    mov xax, $OfsCStrA("ne")
+  .elseif (eax == "<=")
+    mov xax, $OfsCStrA("le")
+  .elseif (eax == ">=")
+    mov xax, $OfsCStrA("ge")
+  .elseif (eax == "&&")
+    mov xax, $OfsCStrA("and")
+  .elseif (eax == "||")
+    mov xax, $OfsCStrA("or")
+  .else
+    and eax, 0FFFFh
+    .if eax == "<"
+      mov xax, $OfsCStrA("lt")
+    .elseif eax == ">"
+      mov xax, $OfsCStrA("gt")
+    .elseif eax == "!"
+      mov xax, $OfsCStrA("not")
+    .else
+      mov xax, pToken
+      xor edx, eax
+    .endif
+  .endif
+  ret
+TranslateLogOperator endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: ConvBasicTypeC
+; Purpose:   Convert a basic "C" type to an "asm" type.
+; Arguments: Arg1: C type specifier (see CTS_xxx equates)
+; Return:    xax -> asm type string or NULL if not found.
+
+ConvBasicTypeC proc dTypeSpecC:DWORD
+  mov xcx, offset g_ConvertBasicType
+  xor eax, eax
+  .while TRUE
+    mov edx, [xcx].CONV_BASIC_TYPE_ENTRY.dSpec
+    .break .if xdx == NULL
+    .if edx == dTypeSpecC
+      mov xax, [xcx].CONV_BASIC_TYPE_ENTRY.pName
+      ret
+    .endif
+    add xcx, sizeof CONV_BASIC_TYPE_ENTRY
+  .endw
+  ret
+ConvBasicTypeC endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: DeleteSimpleBraces
+; Purpose:   Delete surrounding braces.
+; Arguments: None.
+; Return:    Nothing.
+
+DeleteSimpleBraces proc uses xsi
+  local InpStat:INP_STAT
+
+  OCall xbx::IncFile.SaveInputStatus, addr InpStat
+  OCall xbx::IncFile.GetNextTokenFromPPLine
+  .if xax != NULL && CHRA ptr [xax] == "("
+    mov xsi, xax
+    OCall xbx::IncFile.GetNextTokenFromPPLine
+    .if xax != NULL
+      .if CHRA ptr [xax] == "-"
+        OCall xbx::IncFile.GetNextTokenFromPPLine
+        test xax, xax
+        jz @Exit
+      .endif
+      mov cl, [xax]
+      .if cl >= "0" && cl <= "9"
+        OCall xbx::IncFile.GetNextTokenFromPPLine
+        .if xax != NULL && CHRA ptr [xax] == ")"
+          mov BYTE ptr [xsi], PCT_IGNORE
+          mov BYTE ptr [xax], PCT_IGNORE
+        .endif
+      .endif
+    .endif
+  .endif
+@Exit:
+  OCall xbx::IncFile.LoadInputStatus, addr InpStat
+  ret
+DeleteSimpleBraces endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: SkipCasts
+; Purpose:   Skip typecasts in preprocessor lines.
+; Arguments: None.
+; Return:    Nothing.
+
+SkipCasts proc uses xdi
+  local pToken: PTOKEN, pCastStack:POINTER, bIsName:DWORD, InpStat:INP_STAT
+
+  mov pCastStack, NULL
+  mov bIsName, FALSE
+  OCall xbx::IncFile.SaveInputStatus, addr InpStat
+  .while TRUE
+    OCall xbx::IncFile.GetNextTokenFromPPLine
+    .break .if xax == NULL
+    mov pToken, xax
+
+    ;Skip MACRO(type) patterns ----------------------------------------------
+    .if bIsName == FALSE
+      IsName? pToken
+      .if eax != FALSE
+        mov bIsName, TRUE
+      .endif
+    .endif
+
+    mov xax, pToken
+    .if CHRA ptr [xax] == "(" && bIsName != FALSE
+      mov bIsName, FALSE
+      .continue
+    .endif
+
+    ;Check for "(" ... <*> ")" pattern --------------------------------------
+    mov xax, pToken
+    .if CHRA ptr [xax] == "("
+      .if pCastStack == NULL
+        mov pCastStack, $Create@Stacklist()
+      .else
+        Reset@Stacklist pCastStack
+      .endif
+      Add@Stacklist pCastStack, xax                   ;Save "("
+      .continue
+    .endif
+
+    .if pCastStack != NULL
+      .if CHRA ptr [xax] == ")"
+        mov BYTE ptr [xax], PCT_IGNORE                ;Mark ")"
+        mov edi, $GetCount@Stacklist(pCastStack)
+        .while edi != 0
+          dec edi
+          mov xax, $GetItem@Stacklist(pCastStack, edi)
+          mov BYTE ptr [xax], PCT_IGNORE              ;Mark all tokens in the stack
+        .endw
+        Destroy@Stacklist pCastStack
+        mov pCastStack, NULL
+        mov bIsName, FALSE
+        .continue
+      .endif
+
+      OCall pSimpleTypes::List.Search, pToken
+      .if eax == FALSE                                ;Only Simple Types allowed betw. parenthesis
+        Destroy@Stacklist pCastStack
+        mov pCastStack, NULL
+      .else
+        Add@Stacklist pCastStack, pToken
+      .endif
+    .else
+      IsName? pToken
+      mov bIsName, eax
+    .endif
+  .endw
+@Error:
+  OCall xbx::IncFile.LoadInputStatus, addr InpStat
+  Destroy@Stacklist pCastStack
+  ret
+SkipCasts endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: SkipSimpleBraces
+; Purpose:   Skip braces of "(" <number> ")" pattern.
+; Arguments: None.
+; Return:    Nothing.
+
+SkipSimpleBraces proc
+  local InpStat:INP_STAT
+
+  OCall xbx::IncFile.SaveInputStatus, addr InpStat
+  .repeat
+    IsName? [xbx].$Obj(IncFile).pStmInpPos
+    .if eax != FALSE
+      OCall xbx::IncFile.GetNextTokenFromPPLine
+      .break .if xax == NULL
+    .else
+      invoke DeleteSimpleBraces
+    .endif
+    OCall xbx::IncFile.GetNextTokenFromPPLine
+  .until xax == NULL
+  OCall xbx::IncFile.LoadInputStatus, addr InpStat
+  ret
+SkipSimpleBraces endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: SkipBraces
+; Purpose:   Skip all Tokens between braces.
+; Arguments: Arg1: opening brace.
+;            Arg2: closing brace.
+; Return:    xax -> last Token or NULL.
+
+SkipBraces proc uses xsi cOpenBrace:CHRA, cCloseBrace:CHRA
+  mov esi, 1
+  .repeat
+    OCall xbx::IncFile.GetNextToken
+    .break .if xax == NULL
+    mov cl, [xax]
+    .if cl == cOpenBrace
+      inc esi
+    .elseif cl == cCloseBrace
+      dec esi
+    .endif
+  .until ZERO?
+  ret
+SkipBraces endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: GetInterfaceName
+; Purpose:   Get the name of an interface.
+; Arguments: Arg1: -> Source Name.
+;            Arg2: -> Destination Interface.
+; Return:    Nothing.
+
+GetInterfaceName proc uses xdi xsi pName:PSTRINGA, pInterface:PSTRINGA
+  mov xsi, pName
+  mov xdi, pInterface
+  mov cl, 0
+  .repeat
+    lodsb
+    .if al != "_"
+      inc cl
+    .elseif cl != 0
+      mov al, 0
+    .endif
+    stosb
+  .until al == 0
+  ret
+GetInterfaceName endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: SkipName
+; Purpose:   Skip name of a struct/union.
+; Arguments: Arg1 -> Name.
+;            Arg2: Name flags. if != 0 => skip parentheses.
+; Return:    Nothing.
+
+SkipName proc pName:PSTRINGA, dFlags:DWORD
+  .if pName != NULL
+    OCall xbx::IncFile.GetNextToken                   ;skip name
+    mov eax, dFlags
+    .if eax != 0
+      OCall xbx::IncFile.PeekNextToken
+      .if xax != NULL && CHRA ptr [xax] == "("
+        .while TRUE
+          OCall xbx::IncFile.GetNextToken
+          .break .if xax == NULL
+          .break .if CHRA ptr [xax] == ")"
+        .endw
+      .endif
+    .endif
+  .endif
+  ret
+SkipName endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: SkipAnnotations
+; Purpose:   Skip all comming annotations.
+; Arguments: Arg1 -> Token.
+; Return:    xax -> next Token or NULL.
+
+SkipAnnotations proc pToken:PTOKEN
+  OCall pAnnotations::List.Search, pToken
+  .if eax != FALSE
+    OCall xbx::IncFile.GetNextToken
+    .if xax != NULL
+      .if CHRA ptr [xax] == "("
+        invoke SkipBraces, "(", ")"
+        OCall xbx::IncFile.GetNextToken
+      .endif
+      .if xax != NULL
+        invoke SkipAnnotations, xax                   ;Check next Token recursively
+      .endif
+    .endif
+  .else
+    mov xax, pToken                                   ;If no annotation found, return old Token
+  .endif
+  ret
+SkipAnnotations endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: SkipMacros
+; Purpose:   Skip all comming macros.
+; Arguments: Arg1 -> Token.
+; Return:    xax -> next Token or NULL.
+
+SkipMacros proc uses xsi pToken:PTOKEN
+  invoke IsMacro?, pToken
+  .if eax != 0
+    OCall xbx::IncFile.GetNextToken
+    .if xax != NULL
+      .if CHRA ptr [xax] == "("
+        invoke SkipBraces, "(", ")"
+        OCall xbx::IncFile.GetNextToken
+      .endif
+      .if xax != NULL
+        invoke SkipMacros, xax                        ;Check next Token
+      .endif
+    .endif
+  .else
+    mov xax, pToken
+  .endif
+  ret
+SkipMacros endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: If_ElIf
+; Purpose:   Process "#if"/"#elif" lines.
+; Arguments: Arg1: PP conditional type: "#if" or "#elif".
+; Return:    Nothing.
+
+If_ElIf proc uses xsi bCondType:DWORD
+  local Evtor:$Obj(Evaluator)
+  local InpStat:INP_STAT, bIfResult:BYTE
+
+  movzx esi, [xbx].$Obj(IncFile).bIfLevel
+  mrm bIfResult, [xbx].$Obj(IncFile).bIfResult[xsi - 1], al       ;Get current result
+  .if bCondType == PCT_IF || (bCondType == PCT_ELIF && al != PPR_TRUE)
+    OCall xbx::IncFile.SaveInputStatus, addr InpStat
+    New Evtor::Evaluator
+    OCall Evtor::Evaluator.Init, xbx
+    OCall Evtor::Evaluator.Evaluate                               ;Evaluate conditional expression
+    mov bIfResult, al
+    OCall Evtor::Evaluator.Done
+    OCall xbx::IncFile.LoadInputStatus, addr InpStat
+
+    mrm [xbx].$Obj(IncFile).bIfResult[xsi - 1], bIfResult, al     ;Store result
+    .if bCondType == PCT_IF
+      mov [xbx].$Obj(IncFile).bIfHistory[xsi - 1], al             ;Store result in history stack
+    .else
+      mov cl, [xbx].$Obj(IncFile).bIfHistory[xsi - 1]
+      .if al > cl
+        mov [xbx].$Obj(IncFile).bIfHistory[xsi - 1], al           ;Store result in history stack
+      .endif
+    .endif
+  .endif
+
+  ;Write conditional sentence
+  .if bCondType == PCT_IF
+    OCall xbx::IncFile.StmWrite, $OfsCStrA("if ")
+  .else
+    OCall xbx::IncFile.StmWrite, $OfsCStrA("elseif ")
+  .endif
+  mov [xbx].$Obj(IncFile).bSkipUselessCode, FALSE
+
+  .while TRUE
+    OCall xbx::IncFile.GetNextTokenFromPPLine
+    .break .if xax == NULL
+    mov xsi, xax
+    .if $DoesStringMatchA?([xsi], <defined>)
+      OCall xbx::IncFile.StmWrite, $OfsCBStrA("Defined")
+      OCall xbx::IncFile.GetNextTokenFromPPLine       ;Read "("
+      .break .if xax == NULL
+      mov xsi, xax
+      .if CHRA ptr [xsi] == "("                       ;It is written defined or defiend(...)
+        OCall xbx::IncFile.StmWrite, xsi
+        OCall xbx::IncFile.GetNextTokenFromPPLine
+        .break .if xax == NULL
+        OCall xbx::IncFile.StmWrite, xax
+        OCall xbx::IncFile.GetNextTokenFromPPLine
+        .break .if xax == NULL
+        OCall xbx::IncFile.StmWrite, xax
+      .else
+        OCall xbx::IncFile.StmWriteChar, 28h          ;"("
+        OCall xbx::IncFile.StmWrite, xsi
+        OCall xbx::IncFile.StmWriteChar, 29h          ;")"
+      .endif
+    .else
+      mov dl, [xsi]
+      .if dl >= "0" && dl <= "9"                      ;Check if number (begins with 0..9)
+        OCall xbx::IncFile.StmWrite, xsi
+      .else
+        ;Translate operators in an "#if" expression.
+        mov ecx, OpConvTabEntries
+        lea xax, OpConvTable
+        test ecx, ecx
+        .while !ZERO?
+          mov dx, DCHRA ptr [xax].OP_CONV_ENTRY.wOp
+          .if [xsi] == dx
+            mov xsi, [xax].OP_CONV_ENTRY.pSubst
+            .break
+          .endif
+          add xax, sizeof OP_CONV_ENTRY
+          dec ecx
+        .endw
+
+        OCall xbx::IncFile.StmWrite, xsi
+      .endif
+    .endif
+  .endw
+  OCall xbx::IncFile.StmWriteEOL
+
+  .if bIfResult == PPR_FALSE
+    mov [xbx].$Obj(IncFile).bSkipLogiPP, TRUE                   ;Swap the PP-command dispatcher tables
+    mov [xbx].$Obj(IncFile).bSkipC, TRUE
+  .else
+    mov [xbx].$Obj(IncFile).bSkipLogiPP, FALSE
+    mov [xbx].$Obj(IncFile).bSkipC, FALSE
+  .endif
+
+  ret
+If_ElIf endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: Ifdef_Ifndef
+; Purpose:   Process "#ifdef"/"#ifndef" lines.
+; Arguments: Arg1: PP conditional type: "#ifdef" or "#ifndef".
+; Return:    Nothing.
+
+Ifdef_Ifndef proc uses xdi xsi bCondType:DWORD
+  local pToken:PTOKEN, bIfResult:BYTE, cTransBuffer[128]:CHRA
+
+  movzx esi, [xbx].$Obj(IncFile).bIfLevel
+  mrm bIfResult, [xbx].$Obj(IncFile).bIfResult[xsi - 1], al       ;Get current result
+  .if al != PPR_TRUE
+    OCall xbx::IncFile.GetNextTokenFromPPLine
+    test xax, xax
+    jz @Error
+    mov pToken, xax
+
+    ;Check if it is a known symbol
+    mov xdi, offset g_EvalKnownSymbol
+    .while [xdi].EVAL_KNOWN_SYMBOL.pToken != NULL
+      invoke StrCompA, pToken, [xdi].EVAL_KNOWN_SYMBOL.pToken
+      .if eax == 0
+        .if bCondType == PCT_IFDEF
+          .if [xdi].EVAL_KNOWN_SYMBOL.wGenus == EGN_UNDEF
+            mov bIfResult, PPR_FALSE
+          .elseif [xdi].EVAL_KNOWN_SYMBOL.wGenus == EGN_UNKNOWN
+            mov bIfResult, PPR_UNKNOWN
+          .else
+            mov bIfResult, PPR_TRUE
+          .endif
+        .elseif bCondType == PCT_IFNDEF
+          .if [xdi].EVAL_KNOWN_SYMBOL.wGenus == EGN_UNDEF
+            mov bIfResult, PPR_TRUE
+          .elseif [xdi].EVAL_KNOWN_SYMBOL.wGenus == EGN_UNKNOWN
+            mov bIfResult, PPR_UNKNOWN
+          .else
+            mov bIfResult, PPR_FALSE
+          .endif
+        .else
+          mov bIfResult, PPR_UNKNOWN
+        .endif
+        jmp @Found
+      .endif
+      add xdi, sizeof EVAL_KNOWN_SYMBOL
+    .endw
+    mov bIfResult, PPR_UNKNOWN
+
+@Found:
+    mrm [xbx].$Obj(IncFile).bIfResult[xsi - 1], bIfResult, al     ;Store result
+    mov [xbx].$Obj(IncFile).bIfHistory[xsi - 1], al               ;Store result in history stack
+
+    .if bCondType == PCT_IFDEF
+      OCall xbx::IncFile.StmWrite, $OfsCStrA("ifdef ")
+    .else
+      OCall xbx::IncFile.StmWrite, $OfsCStrA("ifndef ")
+    .endif
+    invoke TranslateReservedWord, pToken, addr cTransBuffer
+    OCall xbx::IncFile.StmWrite, xax
+    OCall xbx::IncFile.StmCopyRestOfPPLine
+    mov [xbx].$Obj(IncFile).bSkipUselessCode, FALSE
+  .else
+    SkipPPLine
+  .endif
+
+  .if bIfResult == PPR_FALSE
+    mov [xbx].$Obj(IncFile).bSkipLogiPP, TRUE                   ;Swap the PP-command dispatcher tables
+    mov [xbx].$Obj(IncFile).bSkipC, TRUE
+  .else
+    mov [xbx].$Obj(IncFile).bSkipLogiPP, FALSE
+    mov [xbx].$Obj(IncFile).bSkipC, FALSE
+  .endif
+  ret
+
+@Error:
+  OCall xbx::IncFile.ShowError, $OfsCStr("unexpected EOL")
+  OCall xbx::IncFile.StmWrite, $OfsCStr("if 0; unexpected EOL")
+  SkipPPLine
+  ret
+Ifdef_Ifndef endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: WriteInherit
+; Purpose:
+; Arguments: Arg1 -> Inherit StackList.
+;            Arg2 -> previous class.
+; Return:    Nothing.
+
+WriteInherit proc uses xdi xsi pInherit:ptr, bPreClass:BOOL
+  local bVirtual:DWORD, bVbtable:DWORD, pToken:PTOKEN
+
+  mov edi, $GetCount@Stacklist(pInherit)
+  xor esi, esi
+  mov bVirtual, FALSE
+  mov bVbtable, FALSE
+  test edi, edi
+  .while !ZERO?
+    mov xax, $GetItem@Stacklist(pInherit, esi)
+    mov pToken, xax
+    .if $DoesStringMatchA?([xax], <virtual>)
+      .if bPreClass != FALSE && bVbtable == FALSE
+        OCall xbx::IncFile.StmWrite, $OfsCStrA(" POINTER ?  ;'vbtable'")
+        OCall xbx::IncFile.StmWriteEOL
+        mov bVbtable, TRUE
+      .endif
+      mov bVirtual, TRUE
+    .else
+      IsPublicPrivateProtected? pToken
+      .if eax != FALSE
+        .if bPreClass != FALSE
+          OCall xbx::IncFile.StmWriteF, $OfsCStrA(";%s:"), pToken
+          OCall xbx::IncFile.StmWriteEOL
+        .endif
+      .else
+        .if bVirtual != FALSE
+          .if bPreClass == FALSE
+            OCall xbx::IncFile.StmWriteF, $OfsCStrA(" %s <>"), pToken
+            OCall xbx::IncFile.StmWriteEOL
+          .endif
+        .elseif (bPreClass)
+          OCall xbx::IncFile.StmWriteF, $OfsCStrA(" %s <>"), pToken
+          OCall xbx::IncFile.StmWriteEOL
+        .endif
+        mov bVirtual, FALSE
+      .endif
+    .endif
+    inc esi
+    dec edi
+  .endw
+  ret
+WriteInherit endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: WriteStackList
+; Purpose:   Writes tokens contained in a StackList to the output stream.
+; Arguments: Arg1 -> StackList.
+; Return:    Nothing.
+
+WriteStackList proc uses xdi xsi pStackList:POINTER
+  local bAddSpace:DWORD
+
+  mov edi, $GetCount@Stacklist(pStackList)
+  .if edi != 0
+    xor esi, esi
+    mov bAddSpace, FALSE
+    .while edi != 0
+      mov xax, $GetItem@Stacklist(pStackList, esi)
+      inc esi
+      .if CHRA ptr [xax] == "("
+        mov bAddSpace, FALSE
+      .else
+        push xax
+        mov eax, $GetCount@Stacklist(pStackList)
+        .if esi >= eax
+          mov bAddSpace, FALSE
+        .else
+          mov xax, $GetItem@Stacklist(pStackList, esi)
+          .if CHRA ptr [xax] == ")" || CHRA ptr [xax] == "."
+            mov bAddSpace, FALSE
+          .else
+            mov bAddSpace, TRUE
+          .endif
+        .endif
+        pop xax
+        invoke TranslateNumOperator, xax
+      .endif
+      OCall xbx::IncFile.StmWrite, xax
+      .if bAddSpace != FALSE
+        OCall xbx::IncFile.StmWriteChar, SPC
+      .endif
+      dec edi
+    .endw
+  .else
+    OCall xbx::IncFile.StmWriteChar, "0"
+  .endif
+  ret
+WriteStackList endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: GetCallConvString
+; Purpose:   Return the correct calling convention.
+; Arguments: Arg1 -> CallConv qualifier (PTQ_xxx).
+; Return:    xax -> CallConv string. Can not be NULL.
+
+GetCallConvString proc dQualifiers:DWORD
+  mov ecx, dQualifiers
+  .ifBitSet ecx, PTQ_CDECL
+    mov xax, $OfsCStrA("c")
+  .elseIfBitSet ecx, PTQ_SYSCALL
+    mov xax, $OfsCStrA("syscall")
+  .elseIfBitSet ecx, PTQ_FASTCALL
+    mov xax, $OfsCStrA("fastcall")
+  .elseIfBitSet ecx, PTQ_VECTORCALL
+    mov xax, $OfsCStrA("vectorcall")
+  .elseIfBitSet ecx, PTQ_PASCAL
+    mov xax, $OfsCStrA("pascal")
+  .else
+    mov xax, $OfsCStrA("WIN_STD_CALL_CONV")
+  .endif
+  ret
+GetCallConvString endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: GetProtoQualifier
+; Purpose:   Check proto qualifier.
+; Arguments: Arg1 -> Token.
+; Return:    xax -> List item or NULL if not found.
+
+GetProtoQualifier proc uses xsi pToken:PTOKEN
+  local InpStat:INP_STAT
+
+  invoke BStrCompA, $OfsCBStrA("__declspec"), pToken
+  .if eax == 0
+    OCall xbx::IncFile.SaveInputStatus, addr InpStat
+    OCall xbx::IncFile.GetNextToken
+    .if xax != NULL && CHRA ptr [xax] == "("
+      OCall xbx::IncFile.GetNextToken
+      .if xax != NULL
+        mov pToken, xax
+        OCall xbx::IncFile.GetNextToken               ;")"
+      .endif
+    .else
+      OCall xbx::IncFile.LoadInputStatus, addr InpStat
+    .endif
+  .endif
+
+  OCall pKnownQualifiers::List.Search, pToken
+  .if eax != FALSE
+    OCall pKnownQualifiers::List.ItemAt, ecx
+  .else
+    OCall pQualifiers::List.Search, pToken
+    .if eax != FALSE
+      OCall pQualifiers::List.ItemAt, ecx
+    .endif
+  .endif
+
+  ret
+GetProtoQualifier endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: GetBlockName
+; Purpose:   Find name of a struct/union, if any.
+; Arguments: Arg1 -> Buffer used when the name is a macro invocation.
+; Return:    xax -> Block Name or NULL.
+;            edx = flags (if name is a macro).
+
+GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
+  local dBraceCount:DWORD, dFlags:DWORD
+  local pName:PSTRINGA, cBuffer[1024]:CHRA
+  local InpStat:INP_STAT
+
+  DbgPrintF , "¦UD: GetBlockName - enter", [xbx].$Obj(IncFile).dLineNumber
+
+  mov pName, NULL
+  mov dFlags, FALSE
+  OCall xbx::IncFile.SaveInputStatus, addr InpStat
+  inc [xbx].$Obj(IncFile).bSkipScanPP
+
+  ;Skip declaration ---------------------------------------------------------
+  mov dBraceCount, 1
+  .while dBraceCount != 0
+    OCall xbx::IncFile.GetNextToken
+    .break .if xax == NULL
+    .continue .if !IsIfLevelActive?(InpStat)
+    .if CHRA ptr [xax] == "{"
+      inc dBraceCount
+    .elseif CHRA ptr [xax] == "}"
+      dec dBraceCount
+    .endif
+  .endw
+
+  .if xax != NULL
+    OCall xbx::IncFile.GetNextToken
+    .if xax != NULL && CHRA ptr [xax] != ";"            ;Statement terminator
+      .if CHRA ptr [xax] == "*"
+        jmp @Exit
+      .endif
+      mov pName, xax
+
+      ;There may come a type qualifier or a "*" in which case there is no name
+      invoke TranslateTypeQualifier, xax
+      .if CHRA ptr [xax] == 0
+        mov pName, NULL
+        jmp @Exit
+      .endif
+
+      invoke IsMacro?, pName
+      .if eax != 0
+        mov dFlags, TRUE
+        .if eax == 2
+          OCall pKnownMacros::List.ItemAt, ecx
+          mov edx, [xax - sizeof DWORD]                 ;edx = length
+          mov ecx, [xax + xdx]
+          BitSet ecx, MCF_KNOWN                         ;Just in case
+        .else
+          xor ecx, ecx
+        .endif
+        mov xsi, [xbx].$Obj(IncFile).pStmOutPos
+        mov edi, [xbx].$Obj(IncFile).dStmOutEOL
+        m2m [xbx].$Obj(IncFile).pStmOutPos, pMacroNameBuffer, eax
+        mov edx, ecx
+        invoke ParseMacroCall, pName, edx, FALSE
+        mov [xbx].$Obj(IncFile).dStmOutEOL, edi
+        mov [xbx].$Obj(IncFile).pStmOutPos, xsi
+        m2m pName, pMacroNameBuffer, eax
+      .endif
+
+      DbgPrintF , "¦UD: GetBlockName - end of struct ¦SA found", [xbx].$Obj(IncFile).dLineNumber, pName
+    .endif
+  .endif
+  .if pName == NULL
+    DbgPrintF , "¦UD: GetBlockName - no name found", [xbx].$Obj(IncFile).dLineNumber
+  .endif
+
+@Exit:
+  DbgPrintF , "¦UD: GetBlockName - exit", [xbx].$Obj(IncFile).dLineNumber
+  dec [xbx].$Obj(IncFile).bSkipScanPP
+  OCall xbx::IncFile.LoadInputStatus, addr InpStat
+  mov xax, pName
+  mov edx, dFlags
+  ret
+GetBlockName endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: ConvertNumber
+; Purpose:   Converts number from C syntax to MASM syntax.
+; Arguments: xsi -> Input stream.
+;            xdi -> Output stream.
+; Return:    Nothing.
+; Note:      Must preserve ecx edx.
+
+ConvertNumber proc uses xcx xdx
+  xor eax, eax
+  mov cx, [xsi]
+  .if cx == "x0" || cx == "X0"
+    add xsi, 2
+    .if CHRA ptr [xsi] > "9"
+      mov al, "0"
+      stosb
+    .endif
+    mov dl, 1
+  .else
+    mov dl, 0
+  .endif
+  xor ecx, ecx
+  .while TRUE
+    mov al, [xsi]
+    ;Is alphanumeric?
+    .if al != "?" && al != "@" && al != "_"
+      .if al < "A" || al > "Z"
+        .if al < "a" || al > "z"
+          .if al < "0" || al > "9"
+            ;FALSE
+            .if al == "."
+              or dl, 2
+            .else
+              .break
+            .endif
+          .endif
+        .endif
+      .endif
+    .endif
+    movsb
+    inc ecx
+  .endw
+  mov dh, 0
+  .if ecx > 3
+    mov ax, [xdi - 3]
+    or ax, 2020h
+    .if al == "i"
+      mov ax, [xdi - 2]
+      .if ax == "46" || ax == "23" || eax == "61"
+        lea xdi, [xdi - 3]
+        inc dh
+      .endif
+    .elseif ah == "i" && CHRA ptr [xdi - 1] == "8"
+      lea xdi, [xdi - 2]
+      inc dh
+    .elseif ecx > 4
+      mov eax, [xdi - 4]
+      or al, 20h
+      .if eax == "821i"
+        lea xdi, [xdi - 4]
+        inc dh
+      .endif
+    .endif
+    .if dh != 0
+      mov al, [xdi - 1]
+      or al, 20h
+      .if al == "u"
+        dec xdi
+      .endif
+      jmp @Skip
+    .endif
+  .endif
+  .if ecx > 1
+    mov al, [xdi - 1]
+    or al, 20h
+    .if al == "l" || al == "u"
+      dec xdi
+      .if ecx > 2
+        mov ah, [xdi - 1]
+        or ah, 20h
+        .if ah != al && ah == "u"
+          dec xdi
+        .endif
+      .endif
+    .elseif al == "e"
+      test dl, 2
+      .if !ZERO?
+        mov CHRA ptr [xdi - 1], "E"
+        mov al, [xsi]
+        .if al == "-" || al == "+"
+          movsb
+          .while TRUE
+            mov al, [xsi]
+            .if al >= "A"
+              or al, 20h
+            .endif
+            .if (((al >= "0") && (al <= "9")) || (al == "f") || (al == "l"))
+              movsb
+            .else
+              .break
+            .endif
+          .endw
+        .endif
+      .endif
+    .endif
+    test dl, 2
+    .if !ZERO?
+      mov al, [xdi - 1]
+      or al,20h
+      .if (al == "f") || (al == "l")
+        dec xdi
+      .endif
+    .endif
+  .endif
+@Skip:
+  test dl, 1
+  .if !ZERO?
+    mov al, "h"
+    stosb
+  .endif
+  ret
+ConvertNumber endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: AddEscStr
+; Purpose:   Add some chars to the output stream.
+; Arguments: xsi -> Input stream.
+;            xdi -> Output stream.
+; Return:    Nothing.
+; Note:      Must preserve ecx edx.
+;            ch: bit 0 = 1: previous item is enclosed in '"'
+;                bit 1 = 1: no previous char
+
+AddEscStr proc
+  push xax
+  .if ch == 0
+    mov al, '"'
+    stosb
+  .endif
+  .if !(ch & 2)
+    mov al, ","
+    stosb
+  .endif
+  pop xax
+  xchg al, ah
+  stosw
+  mov al, "h"
+  stosb
+  ret
+AddEscStr endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure: GetStringLiteral
+; Purpose:   String processing.
+; Arguments: xsi -> Input stream.
+;            xdi -> Output stream.
+; Return:    Nothing.
+; Note:      Must preserve ecx edx.
+;            ch: bit 0 = 1: previous item is enclosed in '"'
+;                bit 1 = 1: no previous char
+
+GetStringLiteral proc uses xcx
+  mov ch, 2
+  .repeat
+    lodsb
+    .if al == "\"
+      lodsb
+      .if al >= "0" && al <= "7"
+        .if ch == 0
+          mov al, '"'
+          stosb
+        .endif
+        mov al, ","
+        stosb
+        dec xsi
+        mov cl, 3
+        .while cl != 0
+          mov al, [xsi]
+          .if al >= "0" && al <= "7"
+            stosb
+          .else
+            .break
+          .endif
+          inc xsi
+          dec cl
+        .endw
+        .if cl != 3
+          mov al, "o"
+          stosb
+        .endif
+      .elseif al == "a"
+        mov ax, BELL
+        invoke AddEscStr
+      .elseif al == "b"
+        mov ax, BACK
+        invoke AddEscStr
+      .elseif al == "f"
+        mov ax, FF
+        invoke AddEscStr
+      .elseif al == "n"
+        mov ax, LF
+        invoke AddEscStr
+      .elseif al == "r"
+        mov ax, CR
+        invoke AddEscStr
+      .elseif al == "t"
+        mov ax, HTAB
+        invoke AddEscStr
+      .elseif al == "v"
+        mov ax, VTAB
+        invoke AddEscStr
+      .elseif al == "x"
+        .if ch == 0
+          mov al, '"'
+          stosb
+        .endif
+        mov al, ","
+        stosb
+        mov cl, 3
+        .while cl != 0
+          mov al, [xsi]
+          or al, 20h
+          .if al >= "0" && al <= "9"
+            stosb
+          .elseif al >= "a" && al <= "f"
+            .if cl == 3
+              mov CHRA ptr [xdi], "0"
+              inc xdi
+            .endif
+            stosb
+          .else
+            .break
+          .endif
+          inc xsi
+          dec cl
+        .endw
+        .if cl != 3
+          mov al, "h"
+          stosb
+        .endif
+      .elseif al == '"'
+        .if ch != 0
+          mov al, ","
+          stosb
+          mov al, '"'
+          stosb
+        .endif
+        stosb
+        stosb
+        mov ch, 0
+        .continue
+      .else
+        jmp @NormalChar
+      .endif
+      mov ch, 1
+      .continue
+    .endif
+@NormalChar:
+    .if ch != 0
+      .if al == '"'
+        .break
+      .else
+        mov ah, al
+        .if ch & 1
+          mov al, ","
+          stosb
+        .endif
+        mov al, '"'
+        stosb
+        mov al, ah
+      .endif
+    .endif
+    .if al == 0
+      dec xsi
+      mov al, '"'
+    .endif
+    stosb
+    mov ch, 0
+  .until al == '"'
+  ret
+GetStringLiteral endp
