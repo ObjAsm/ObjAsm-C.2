@@ -1,13 +1,14 @@
 ; ==================================================================================================
-; Title:    h2inc+_Main.inc
-; Author:   G. Friedrich
-; Version:  C.2.0
-; Purpose:  Creates MASM include files (.inc) from C header files (.h).
+; Title:      h2inc+_Main.inc
+; Author:     G. Friedrich
+; Version:    C.2.0
+; Purpose:    Creates MASM include files (.inc) from C header files (.h).
 ;
 ; ==================================================================================================
 
 
 .code
+
 ; ==================================================================================================
 ;    Application implementation
 ; ==================================================================================================
@@ -24,7 +25,7 @@ Method Application.Done, uses xbx xsi
   .if [xbx].bTerminate == FALSE
     ;Save all lists
     OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Saving file lists...")
-    mov xsi, offset PersistConvTable
+    lea xsi, PersistConvTable
     .while POINTER ptr [xsi] != NULL
       .if [xsi].CONV_TAB_ENTRY.pFileName != NULL
 ;        OCall [xsi].CONV_TAB_ENTRY.pList::List.SaveToFile, [xsi].CONV_TAB_ENTRY.pFileName
@@ -38,6 +39,7 @@ Method Application.Done, uses xbx xsi
   OCall [xbx].MemHeap::MemoryHeap.Done
   OCall [xbx].IniReader::IniFileReader.Done
   OCall [xbx].SearchPathColl::StrCollectionW.Done
+  OCall [xbx].ProcessedFiles::SortedStrCollectionW.Done
 
   invoke LocalFree, [xbx].pCL_Args
   invoke LocalFree, [xbx].pEV_Args
@@ -59,7 +61,7 @@ Method Application.GetOption, uses xbx xdi xsi, pArgument:PSTRINGW
   mov ax, [xsi]
   .if ax == "/" || ax == "-"
     movzx ecx, CHRW ptr [xsi + sizeof(CHRW)]
-    mov xdi, offset CmdLineSwitchTable
+    lea xdi, CmdLineSwitchTable
     .while TRUE
       movzx eax, [xdi].CMDLINE_SWITCH_ENTRY.wSwitch
       cmp eax, 0                                        ;Table end marker
@@ -175,8 +177,8 @@ Method Application.Init, uses xbx xdi xsi
   .endif
 
   OCall [xbx].IniReader::IniFileReader.Init, xbx, addr [xbx].MemHeap
-
   OCall [xbx].SearchPathColl::StrCollectionW.Init, xbx, 10, 10, 0FFFFFFFFh/sizeof(PSTRINGW)
+  OCall [xbx].ProcessedFiles::SortedStrCollectionW.Init, xbx, 500, 100, 0FFFFFFFFh/sizeof(PSTRINGW)
 
   cmp [xbx].bTerminate, FALSE
   jne @@EOM
@@ -316,11 +318,11 @@ Method Application.Init, uses xbx xdi xsi
   .endif
 
   ;Load the lists
-  mov xsi, offset PersistConvTable
+  lea xsi, PersistConvTable
   .if [xbx].Options.bLoadLists == FALSE
     OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Loading ini-file lists...")
     .while POINTER ptr [xsi] != NULL
-      mov [xsi].CONV_TAB_ENTRY.pList, $New(List)
+      mov [xsi].CONV_TAB_ENTRY.pList, $New(List)        ;Create the list
       OCall xax::List.Init, NULL, [xsi].CONV_TAB_ENTRY.dAlloc, \
                                   [xsi].CONV_TAB_ENTRY.dIncr, [xsi].CONV_TAB_ENTRY.dFlags
       .ifBitSet [xsi].CONV_TAB_ENTRY.dFlags, CF_INIF
@@ -356,84 +358,92 @@ MethodEnd
 ;             Arg2: -> Parent IncFile that calls ProcessFile due to an "include" PP command.
 ; Return:     eax = TRUE if succeded, otherwise FALSE.
 
-Method Application.ProcessFile, uses xbx xdi xsi, pFileName:PSTRINGW, pParent:$ObjPtr(IncFile)
-  local IncludeFile:$Obj(IncFile), pFilePart:PSTRINGA, dResult:DWORD
-  local cHeaderFullFileName[MAX_PATH]:CHRW, cIncludeFullFileName[MAX_PATH]:CHRW, cMessage[1024]:CHR
-  local cSearchPathFullFileName[MAX_PATH]:CHRW
+ITF_SKIPPED     equ   0
+ITF_NOT_FOUND   equ   1
+ITF_JUST_PROC   equ   2
+ITF_REPROC      equ   3
+
+Method Application.ProcessFile, uses xbx xdi xsi, \
+                      pHeaderFilePath: PSTRINGW, pHeaderFileName:PSTRINGW, pParent:$ObjPtr(IncFile)
+  local IncludeFile:$Obj(IncFile), dResult:DWORD, cMessage[1024]:CHR
+  local cHeaderFullFileName[MAX_PATH]:CHRW, cIncludeFullFileName[MAX_PATH]:CHRW
+  local cSearchFullFileName[MAX_PATH]:CHRW
 
   SetObject xbx
 
-;if DEBUGGING
-;  DbgSaveContext
-;  DbgSetDestWnd "Include Tree"
-;  mov ecx, [xbx].dIncNestingLevel
-;  lea xdi, cMessage
-;  .if SDWORD ptr ecx < 0                                ;Just in case something goes wrong
-;    mov [xbx].dIncNestingLevel, 0
-;  .else
-;    shl ecx, 1
-;    mov ax, SPC
-;    rep stosw                                           ;Indentation
-;  .endif
-;  WriteF xdi, "¦SU [", pFileName
-;  invoke DbgOutTextW, addr cMessage, DbgColorForeground, DbgColorBackground, \
-;                      DBG_EFFECT_NORMAL, ??DbgDstWnd
-;  DbgLoadContext
-;  inc [xbx].dIncNestingLevel
-;endif
+if DEBUGGING
+  DbgSaveContext
+  DbgSetDestWnd "Include Tree"
+  mov ecx, [xbx].dIncNestingLevel
+  lea xdi, cMessage
+  .if SDWORD ptr ecx <= 0                               ;Just in case something goes wrong
+    mov [xbx].dIncNestingLevel, 0
+  .else
+    WriteF xdi, "\n"
+    shl ecx, 1
+    mov ax, SPC
+    rep stosw                                           ;Indentation
+  .endif
+  WriteF xdi, "¦SU", pHeaderFileName
+  invoke DbgOutTextW, addr cMessage, DbgColorForeground, DbgColorBackground, \
+                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+  DbgLoadContext
+  inc [xbx].dIncNestingLevel
+endif
 
   mov dResult, FALSE
-  invoke GetFullPathNameW, pFileName, lengthof cHeaderFullFileName, addr cHeaderFullFileName, addr pFilePart
+  invoke PathCombineW, addr cHeaderFullFileName, pHeaderFilePath, pHeaderFileName
   invoke FileExistW, addr cHeaderFullFileName
   .if eax == FALSE
     ;Try to find the file in all search paths
     .ColForEach [xbx].SearchPathColl, edi
-      invoke StrECopyW, addr cSearchPathFullFileName, xax   ;xax -> ZTC
+      invoke StrECopyW, addr cSearchFullFileName, xax   ;xax -> ZTC
       .if CHRW ptr [xax - sizeof CHRW] != '\'
         mov CHRW ptr [xax], '\'
         add xax, sizeof CHRW
       .endif
-      invoke StrCopyW, xax, pFilePart
-      invoke FileExistW, addr cSearchPathFullFileName
+      invoke StrCopyW, xax, pHeaderFileName
+      invoke FileExistW, addr cSearchFullFileName
       .if eax != FALSE
-        invoke StrCopyW, addr cHeaderFullFileName, addr cSearchPathFullFileName
+        invoke StrCopyW, addr cHeaderFullFileName, addr cSearchFullFileName
         .break
       .endif
     .ColNext
 
     .if edi == [xbx].SearchPathColl.dCount              ;Not found => show message
       lea xdi, cMessage
-      WriteF xdi, "Warning: the header file \`¦SU\`", pFileName
+      WriteF xdi, "Warning: the header file \`¦SU\`", addr cHeaderFullFileName
       .if pParent != NULL
         mov xsi, pParent
         WriteF xdi, " included from file \`¦SU\` at line ¦UD", \
-               [xsi].$Obj(IncFile).pFileName, [xsi].$Obj(IncFile).dLineNumber
+               addr cHeaderFullFileName, [xsi].$Obj(IncFile).dLineNumber
       .endif
       WriteF xdi, " could not be found"
-      OCall xbx.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
-      xor eax, eax
-      jmp @@EOM                                         ;Exit
+      OCall xbx.ShowInfo, VERBOSITY_NORMAL, addr cMessage
+      mov dResult, FALSE
+      mov ecx, ITF_NOT_FOUND
+      jmp @F
     .endif
   .endif
 
+  ;Don't process files more than once!
   invoke StrLowerW, addr cHeaderFullFileName            ;Convert to LC to avoid case sensitivity
-  ;-- Don't process files more than once --
-  OCall pInpFiles::List.Search, addr cHeaderFullFileName
+  OCall [xbx].ProcessedFiles::SortedStrCollectionW.Search, addr cHeaderFullFileName
   .if eax == FALSE                                      ;Not found in the list!
-    OCall [xbx].MemHeap::MemoryHeap.AddStrW, addr cHeaderFullFileName
-    OCall pInpFiles::List.Insert, xax
+    invoke StrNewW, addr cHeaderFullFileName
+    OCall [xbx].ProcessedFiles::SortedStrCollectionW.Insert, xax
 
     lea xdi, cMessage
     .if pParent != NULL
       mov xsi, pParent
-      WriteF xdi, "¦SU(¦UD): ", [xsi].$Obj(IncFile).pFileName, [xsi].$Obj(IncFile).dLineNumber
+      WriteF xdi, "¦SU(¦UD): ", [xsi].$Obj(IncFile).pHeaderFileName, [xsi].$Obj(IncFile).dLineNumber
     .endif
-    WriteF xdi, "Include header file \`¦SU\`", pFileName
-    OCall xbx.ShowInfo, VERBOSITY_NORMAL, addr cMessage
+    WriteF xdi, "Include header file \`¦SU\`", addr cHeaderFullFileName
+    OCall xbx.ShowInfo, VERBOSITY_IMPORTANT, addr cMessage
 
     ;Create output FileName
     lea xdi, cIncludeFullFileName
-    WriteFW xdi, "¦SU\\¦SU", addr [xbx].cOutputDir, pFilePart
+    WriteFW xdi, "¦SU\\¦SU", addr [xbx].cOutputDir, pHeaderFileName
     invoke StrRScanW, addr cIncludeFullFileName, "."
     .if xax == NULL
       invoke StrEndW, addr cIncludeFullFileName
@@ -449,28 +459,28 @@ Method Application.ProcessFile, uses xbx xdi xsi, pFileName:PSTRINGW, pParent:$O
             lea xdi, cMessage
             .if pParent != NULL
               mov xsi, pParent
-              WriteF xdi, "¦SU(¦UD): ", [xsi].$Obj(IncFile).pFileName, [xsi].$Obj(IncFile).dLineNumber
+              WriteF xdi, "¦SU(¦UD): ", [xsi].$Obj(IncFile).pHeaderFileName, [xsi].$Obj(IncFile).dLineNumber
             .endif
-            WriteF xsi, "\`¦SU\` file already exists, file \`¦SU\` skipped", addr cIncludeFullFileName, pFileName
+            WriteF xsi, "\`¦SU\` file already exists, file \`¦SU\` skipped", addr cIncludeFullFileName, addr cHeaderFullFileName
             OCall xbx.ShowInfo, VERBOSITY_NORMAL, addr cMessage
           .endif
-          xor eax, eax                                    ;FALSE
-          jmp @@EOM
-        .endif
-
-        lea xdi, cMessage
-        WriteF xdi, "File \`¦SU\` already exists, overwrite it?", addr cIncludeFullFileName
-        OCall xbx.ShowQuestion, addr cMessage
-        .if eax == "C"
-          mov [xbx].bTerminate, TRUE
-          xor eax, eax
-          jmp @@EOM
-        .elseif eax == "N"
+        .else
           lea xdi, cMessage
-          WriteF xdi, "File \`¦SU\` not processed.", addr cHeaderFullFileName
-          OCall xbx.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
-          xor eax, eax
-          jmp @@EOM
+          WriteF xdi, "File \`¦SU\` already exists, overwrite it?", addr cIncludeFullFileName
+          OCall xbx.ShowQuestion, addr cMessage
+          .if eax == "C"
+            mov [xbx].bTerminate, TRUE
+            mov dResult, FALSE
+            mov ecx, ITF_SKIPPED
+            jmp @F
+          .elseif eax == "N"
+            lea xdi, cMessage
+            WriteF xdi, "File \`¦SU\` not processed.", addr cHeaderFullFileName
+            OCall xbx.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
+            mov dResult, FALSE
+            mov ecx, ITF_SKIPPED
+            jmp @F
+          .endif
         .endif
       .endif
     .endif
@@ -479,41 +489,71 @@ Method Application.ProcessFile, uses xbx xdi xsi, pFileName:PSTRINGW, pParent:$O
     New IncludeFile::IncFile
     OCall IncludeFile::IncFile.Init, xbx, addr cHeaderFullFileName, pParent
     .if eax != FALSE
-;      if DEBUGGING
-;        DbgSaveContext
-;        DbgSetDestWnd "Include Tree"
-;        invoke DbgOutTextA, $OfsCStrA("processed]"), DbgColorForeground, DbgColorBackground, \
-;                            DBG_EFFECT_NEWLINE, ??DbgDstWnd
-;        DbgLoadContext
-;      endif
       ;Start real processing
       OCall IncludeFile::IncFile.ParseHeaderFile
       OCall IncludeFile::IncFile.Analyse                  ;Reset volatile lists
       OCall IncludeFile::IncFile.Save, addr cIncludeFullFileName      ;Save inc-file
       mov dResult, eax
       OCall IncludeFile::IncFile.CreateDefFile, addr cIncludeFullFileName
+      if DEBUGGING
+        DbgSaveContext
+        DbgSetDestWnd "Include Tree"
+        invoke DbgOutTextA, $OfsCStrA(" "), DbgColorForeground, DbgColorBackground, \
+                            0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     .else
-      mov dResult, eax
-;      if DEBUGGING
-;        DbgSaveContext
-;        DbgSetDestWnd "Include Tree"
-;        invoke DbgOutTextA, $OfsCStrA("failed"), DbgColorError, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
-;        invoke DbgOutTextA, $OfsCStrA("]"), DbgColorForeground, DbgColorBackground, DBG_EFFECT_NEWLINE, ??DbgDstWnd
-;        DbgLoadContext
-;      endif
+      mov dResult, FALSE
+      if DEBUGGING
+        DbgSaveContext
+        DbgSetDestWnd "Include Tree"
+        .if ecx == ITF_SKIPPED
+          mov xcx, $OfsCStrA(" - Skipped by user")
+          invoke DbgOutTextA, xcx, DbgColorGreen, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+        .elseif ecx == ITF_NOT_FOUND
+          mov xcx, $OfsCStrA(" - not found")
+          invoke DbgOutTextA, xcx, DbgColorRed, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+        .elseif ecx == ITF_JUST_PROC
+          mov xcx, $OfsCStrA(" - just processed")
+          invoke DbgOutTextA, xcx, DbgColorBlue, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+        .elseif ecx == ITF_REPROC
+          mov xcx, $OfsCStrA(" - reprocessed")
+          invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+        .else
+          mov xcx, $OfsCStrA("???")
+        .endif
+        invoke DbgOutTextA, $OfsCStrA(" "), DbgColorForeground, DbgColorBackground, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     .endif
     OCall IncludeFile::IncFile.Done
 
-;if DEBUGGING
-;  .else
-;    DbgSaveContext
-;    DbgSetDestWnd "Include Tree"
-;    invoke DbgOutTextA, $OfsCStrA("skipped"), DbgColorBlue, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
-;    invoke DbgOutTextA, $OfsCStrA("]"), DbgColorForeground, DbgColorBackground, DBG_EFFECT_NEWLINE, ??DbgDstWnd
-;    DbgLoadContext
-;endif
+if DEBUGGING
+  .else
+    mov ecx, ITF_JUST_PROC
+@@:
+    DbgSaveContext
+    DbgSetDestWnd "Include Tree"
+    .if ecx == ITF_SKIPPED
+      mov xcx, $OfsCStrA(" - Skipped by user")
+      invoke DbgOutTextA, xcx, DbgColorGreen, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+    .elseif ecx == ITF_NOT_FOUND
+      mov xcx, $OfsCStrA(" - not found")
+      invoke DbgOutTextA, xcx, DbgColorRed, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+    .elseif ecx == ITF_JUST_PROC
+      mov xcx, $OfsCStrA(" - just processed")
+      invoke DbgOutTextA, xcx, DbgColorBlue, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+    .elseif ecx == ITF_REPROC
+      mov xcx, $OfsCStrA(" - reprocessed")
+      invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+    .else
+      mov xcx, $OfsCStrA("???")
+    .endif
+    invoke DbgOutTextA, $OfsCStrA(" "), DbgColorForeground, DbgColorBackground, 0, ??DbgDstWnd
+    DbgLoadContext
+endif
   .endif
-@Exit:
+
 if DEBUGGING
   dec [xbx].dIncNestingLevel
 endif
@@ -527,10 +567,12 @@ MethodEnd
 ; Return:     Nothing.
 
 Method Application.ProcessFiles, uses xbx xdi xsi, pFileSpec:PSTRINGW
-  local hFFHandle:HANDLE, cMessage[1024]:CHR, cFileSpec[MAX_PATH]:CHR
+  local hFFHandle:HANDLE, cMessage[1024]:CHR, cFilePath[MAX_PATH]:CHR
   local FindData:WIN32_FIND_DATAW, cFullFileSpec[MAX_PATH]:CHRW, pFilePart:PSTRINGW
 
   SetObject xbx
+  
+  ;GetFullPathName resolves the path using the current directory! Everything else is the FilePart
   invoke GetFullPathNameW, pFileSpec, lengthof(cFullFileSpec), addr cFullFileSpec, addr pFilePart 
   invoke FindFirstFileW, pFileSpec, addr FindData
   .if xax != INVALID_HANDLE_VALUE
@@ -556,26 +598,23 @@ Method Application.ProcessFiles, uses xbx xdi xsi, pFileSpec:PSTRINGW
         .if eax == "C"
           mov [xbx].bTerminate, TRUE
         .elseif eax == 'Y'
-          invoke StrCopyW, addr cFileSpec, pFileSpec
-          invoke StrRScanW, addr cFileSpec, "\"
+          invoke StrRScanW, addr cFullFileSpec, "\"
           .if xax != NULL
             mov CHRW ptr [xax], 0
           .endif
           mov xdi, xax
           WriteFW xdi, "\¦SU\*.h", addr FindData.cFileName
-          OCall xbx.ProcessFiles, addr cFileSpec
+          OCall xbx.ProcessFiles, addr cFullFileSpec
         .endif
         jmp @F
       .endif
 
-      invoke StrCopyW, addr cFileSpec, pFileSpec
-      invoke StrRScanW, addr cFileSpec, "\"
+      invoke StrRScanW, addr cFullFileSpec, "\"
       .if xax != NULL
         mov CHRW ptr [xax], 0
       .endif
       mov xdi, xax
-      WriteFW xdi, "\¦SU", addr FindData.cFileName
-      OCall xbx.ProcessFile, addr cFileSpec, NULL
+      OCall xbx.ProcessFile, addr cFullFileSpec, addr FindData.cFileName, NULL
 
 @@:
       .break .if [xbx].bTerminate != FALSE
@@ -597,9 +636,9 @@ Method Application.Run, uses xbx
   SetObject xbx
   .if [xbx].Options.bShowUsage == TRUE
     OCall xbx.SetColor, COLOR_HEADER
-    OCall xbx.Print, offset cUsageHeader
+    OCall xbx.Print, addr cUsageHeader
     OCall xbx.SetColor, COLOR_REGULAR
-    OCall xbx.Print, offset cUsageText
+    OCall xbx.Print, addr cUsageText
   .endif
 
   .if [xbx].bTerminate == FALSE

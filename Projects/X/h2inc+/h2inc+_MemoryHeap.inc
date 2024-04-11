@@ -47,7 +47,7 @@ DbgShowMemoryHeapStatus macro
     mov xcx, [xsi].pMemBlock
     sub xax, xcx
     WriteF xbx, "¦UD", eax
-    invoke DbgOutTextW, offset DebugMessage, DbgColorForeground, DbgColorBackground, DBG_EFFECT_NEWLINE, ??DbgDstWnd
+    invoke DbgOutTextW, addr DebugMessage, DbgColorForeground, DbgColorBackground, DBG_EFFECT_NEWLINE, ??DbgDstWnd
     DbgLoadContext
   endif
 endm

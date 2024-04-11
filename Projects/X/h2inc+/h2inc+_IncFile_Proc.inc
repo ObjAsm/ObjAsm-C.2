@@ -48,11 +48,12 @@ InsertStrg proc pList:POINTER, pStr:PSTRINGA, dSize:DWORD
       OCall pList::List.InsertAt, dInsIndex, xax
       ret
     .endif
-    OCall xbx::IncFile.ShowError, offset szOutOfSpace
+    OCall xbx::IncFile.ShowError, addr szOutOfSpace
     mov $ObjTmpl(Application).bTerminate, TRUE
     xor eax, eax
   .else
-    OCall pList::List.ItemAt, ecx
+    mov edx, ecx
+    OCall pList::List.ItemAt, edx
   .endif
   ret
 InsertStrg endp
@@ -71,11 +72,12 @@ InsertAttr proc pList:POINTER, pStr:PSTRINGA, dSize:DWORD, dAttr:DWORD
         ret
       .endif
     .endif
-    OCall xbx::IncFile.ShowError, offset szOutOfSpace
+    OCall xbx::IncFile.ShowError, addr szOutOfSpace
     mov $ObjTmpl(Application).bTerminate, TRUE
     xor eax, eax
   .else
-    OCall pList::List.ItemAt, ecx
+    mov edx, ecx
+    OCall pList::List.ItemAt, edx
   .endif
   ret
 InsertAttr endp
@@ -94,11 +96,12 @@ InsertEqui proc pList:POINTER, pStr:PSTRINGA, dStrSize:DWORD, pStrEqui:PSTRINGA,
         ret
       .endif
     .endif
-    OCall xbx::IncFile.ShowError, offset szOutOfSpace
+    OCall xbx::IncFile.ShowError, addr szOutOfSpace
     mov $ObjTmpl(Application).bTerminate, TRUE
     xor eax, eax
   .else
-    OCall pList::List.ItemAt, ecx
+    mov edx, ecx
+    OCall pList::List.ItemAt, edx
   .endif
   ret
 InsertEqui endp
@@ -129,7 +132,7 @@ InsertDefItem proc uses xdi pFuncName:PSTRINGA, dParamBytes:DWORD
   .if xax != NULL
     OCall [xbx].$Obj(IncFile).pDefs::List.Insert, xax
     .if xax == NULL
-      OCall xbx::IncFile.ShowError, offset szOutOfSpace
+      OCall xbx::IncFile.ShowError, addr szOutOfSpace
       mov $ObjTmpl(Application).bTerminate, TRUE
       xor eax, eax
     .endif
@@ -324,12 +327,12 @@ IsString? proc pToken:PTOKEN
   .if al == '"'
     jmp @IsTrue
   .elseif al >= "0" && al <= "9"
-    inc ecx
+    inc xcx
     .while CHRA ptr [xcx] != 0
       .if CHRA ptr [xcx] == ","
         jmp @IsTrue
       .endif
-      inc ecx
+      inc xcx
     .endw
   .endif
   xor eax, eax
@@ -422,7 +425,7 @@ IsFunction? proc
   mov dReturn, FALSE
   .while TRUE
     OCall xbx::IncFile.GetNextToken
-    .break .if xax == NULL
+    .break .if ZERO?
     .continue .if !IsIfLevelActive?(InpStat)
     mov cl, [xax]
     .break .if cl == ";" || cl == ")" || cl == "{"
@@ -455,7 +458,7 @@ IsFunctionPtr? proc
   mov dReturn, FALSE
   .while dParenthesesCount != 0
     OCall xbx::IncFile.GetNextToken
-    .break .if xax == NULL
+    .break .if ZERO?
     .continue .if !IsIfLevelActive?(InpStat)
     .if CHRA ptr [xax] == "("
       inc dParenthesesCount
@@ -465,7 +468,7 @@ IsFunctionPtr? proc
   .endw
   .if xax != NULL                                     ;Last Token != NULL
     OCall xbx::IncFile.GetNextToken
-    .if xax != NULL && CHRA ptr [xax] == "("
+    .if !ZERO? && CHRA ptr [xax] == "("
       mov dReturn, TRUE
     .endif
   .else
@@ -519,7 +522,7 @@ HasVTable? proc
   mov dReturn, FALSE
   .while dBraceCount != 0
     OCall xbx::IncFile.GetNextToken
-    .break .if xax == NULL
+    .break .if ZERO?
     .continue .if !IsIfLevelActive?(InpStat)
     .if CHRA ptr [xax] == "{"
       inc dBraceCount
@@ -571,7 +574,8 @@ HasVirtualBase? endp
 TranslateToken proc pToken:PTOKEN
   OCall pConvertTokens::List.Search, pToken
   .if eax != FALSE
-    OCall pConvertTokens::List.ItemAt, ecx
+    mov edx, ecx
+    OCall pConvertTokens::List.ItemAt, edx
     mov edx, [xax - sizeof DWORD]
     lea xax, [xax + xdx + sizeof DWORD]
   .else
@@ -593,11 +597,8 @@ TranslateReservedWord proc uses xsi pToken:PTOKEN, pBuffer:POINTER
   invoke IsReservedWord?, pToken
   .if eax != FALSE
     mov xsi, pBuffer
-    .if xsi == NULL
-      ;mov xsi, offset g_szTemp
-    .endif
     invoke StrECopyA, xsi, pToken
-    invoke StrCopyA, xax, offset szResWordSuffix
+    invoke StrCopyA, xax, addr szResWordSuffix
     mov xax, xsi
     mov edx, TRUE
     ret
@@ -618,7 +619,8 @@ TranslateReservedWord endp
 TranslateType proc uses xdi pToken:PTOKEN, bMode:DWORD
   OCall pConvertTypes1::List.Search, pToken             ;Common for TYPES & STRUCTS
   .if eax != FALSE
-    OCall pConvertTypes1::List.ItemAt, ecx
+    mov edx, ecx
+    OCall pConvertTypes1::List.ItemAt, edx
     mov edx, [xax - sizeof DWORD]                       ;edx = length
     lea xax, [xax + xdx + sizeof DWORD]
   .else
@@ -630,7 +632,8 @@ TranslateType proc uses xdi pToken:PTOKEN, bMode:DWORD
 
     OCall xdi::List.Search, pToken
     .if eax != FALSE
-      OCall xdi::List.ItemAt, ecx
+      mov edx, ecx
+      OCall xdi::List.ItemAt, edx
       mov edx, [xax - sizeof DWORD]                     ;edx = length
       lea xax, [xax + xdx + sizeof DWORD]
     .else
@@ -638,7 +641,7 @@ TranslateType proc uses xdi pToken:PTOKEN, bMode:DWORD
       .if bMode == 0                                    ;TYPE
         mov xax, pToken
       .else                                             ;STRUCT
-        mov xax, offset szUnkType
+        lea xax, szUnkType
       .endif
     .endif
   .endif
@@ -651,11 +654,13 @@ TranslateType endp
 ; Arguments: Arg1 -> Type qualifier.
 ; Return:    xax -> Converted type qualifier.
 ;            edx = FASLE if no translation occured.
+; Note:      edx is never used. All uses test for [xax] == 0
 
 TranslateTypeQualifier proc pTypeQual:PTOKEN
-  OCall pConvertTypeQual::List.Search, pTypeQual
+  OCall pConvertTypeQual::List.Search, pTypeQual        ;Ret: eax: TRUE/FALSE, ecx: Index [0..Count]
   .if eax != FALSE
-    OCall pConvertTypeQual::List.ItemAt, ecx
+    mov edx, ecx
+    OCall pConvertTypeQual::List.ItemAt, edx            
     mov edx, [xax - sizeof DWORD]                       ;edx = length
     lea xax, [xax + xdx + sizeof DWORD]                 ;xax -> converted string
   .else
@@ -754,7 +759,7 @@ TranslateLogOperator endp
 ; Return:    xax -> asm type string or NULL if not found.
 
 ConvBasicTypeC proc dTypeSpecC:DWORD
-  mov xcx, offset g_ConvertBasicType
+  lea xcx, ConvertBasicTypeTable
   xor eax, eax
   .while TRUE
     mov edx, [xcx].CONV_BASIC_TYPE_ENTRY.dSpec
@@ -842,7 +847,7 @@ SkipCasts proc uses xdi
       .else
         Reset@Stacklist pCastStack
       .endif
-      Add@Stacklist pCastStack, xax                   ;Save "("
+      Add@Stacklist pCastStack, xax, xdx              ;Save "("
       .continue
     .endif
 
@@ -908,13 +913,13 @@ SkipSimpleBraces endp
 ; Purpose:   Skip all Tokens between braces.
 ; Arguments: Arg1: opening brace.
 ;            Arg2: closing brace.
-; Return:    xax -> last Token or NULL.
+; Return:    xax -> Last Token or NULL.
 
 SkipBraces proc uses xsi cOpenBrace:CHRA, cCloseBrace:CHRA
   mov esi, 1
   .repeat
     OCall xbx::IncFile.GetNextToken
-    .break .if xax == NULL
+    .break .if ZERO?
     mov cl, [xax]
     .if cl == cOpenBrace
       inc esi
@@ -964,7 +969,7 @@ SkipName proc pName:PSTRINGA, dFlags:DWORD
       .if xax != NULL && CHRA ptr [xax] == "("
         .while TRUE
           OCall xbx::IncFile.GetNextToken
-          .break .if xax == NULL
+          .break .if ZERO?
           .break .if CHRA ptr [xax] == ")"
         .endw
       .endif
@@ -974,51 +979,55 @@ SkipName proc pName:PSTRINGA, dFlags:DWORD
 SkipName endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: SkipAnnotations
-; Purpose:   Skip all comming annotations.
-; Arguments: Arg1 -> Token.
-; Return:    xax -> next Token or NULL.
+; Procedure:  SkipAnnotations
+; Purpose:    Skip all comming annotations.
+; Arguments:  Arg1 -> Token.
+;             xbx -> IncFile.
+; Return:     xax -> Next Token or NULL. If xax == NULL, ZERO is set.
 
 SkipAnnotations proc pToken:PTOKEN
   OCall pAnnotations::List.Search, pToken
   .if eax != FALSE
     OCall xbx::IncFile.GetNextToken
-    .if xax != NULL
+    .if !ZERO?
       .if CHRA ptr [xax] == "("
         invoke SkipBraces, "(", ")"
         OCall xbx::IncFile.GetNextToken
       .endif
       .if xax != NULL
-        invoke SkipAnnotations, xax                   ;Check next Token recursively
+        invoke SkipAnnotations, xax                     ;Check next Token recursively
       .endif
     .endif
   .else
-    mov xax, pToken                                   ;If no annotation found, return old Token
+    mov xax, pToken                                     ;If no annotation found, return old Token
+    cmp xax, NULL
   .endif
   ret
 SkipAnnotations endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: SkipMacros
-; Purpose:   Skip all comming macros.
-; Arguments: Arg1 -> Token.
-; Return:    xax -> next Token or NULL.
+; Procedure:  SkipMacros
+; Purpose:    Skip all comming macros.
+; Arguments:  Arg1 -> Token.
+;             xbx -> IncFile.
+; Return:     xax -> Next Token or NULL. If xax == NULL, ZERO is set.
 
-SkipMacros proc uses xsi pToken:PTOKEN
+SkipMacros proc pToken:PTOKEN
   invoke IsMacro?, pToken
   .if eax != 0
     OCall xbx::IncFile.GetNextToken
-    .if xax != NULL
+    .if !ZERO?
       .if CHRA ptr [xax] == "("
         invoke SkipBraces, "(", ")"
         OCall xbx::IncFile.GetNextToken
       .endif
       .if xax != NULL
-        invoke SkipMacros, xax                        ;Check next Token
+        invoke SkipMacros, xax                          ;Check next Token recursively
       .endif
     .endif
   .else
     mov xax, pToken
+    cmp xax, NULL
   .endif
   ret
 SkipMacros endp
@@ -1139,7 +1148,7 @@ Ifdef_Ifndef proc uses xdi xsi bCondType:DWORD
     mov pToken, xax
 
     ;Check if it is a known symbol
-    mov xdi, offset g_EvalKnownSymbol
+    lea xdi, EvalKnownSymbolTable
     .while [xdi].EVAL_KNOWN_SYMBOL.pToken != NULL
       invoke StrCompA, pToken, [xdi].EVAL_KNOWN_SYMBOL.pToken
       .if eax == 0
@@ -1259,7 +1268,7 @@ WriteInherit endp
 ; Return:    Nothing.
 
 WriteStackList proc uses xdi xsi pStackList:POINTER
-  local bAddSpace:DWORD
+  local bAddSpace:DWORD, pToken:PTOKEN
 
   mov edi, $GetCount@Stacklist(pStackList)
   .if edi != 0
@@ -1271,7 +1280,7 @@ WriteStackList proc uses xdi xsi pStackList:POINTER
       .if CHRA ptr [xax] == "("
         mov bAddSpace, FALSE
       .else
-        push xax
+        mov xax, pToken
         mov eax, $GetCount@Stacklist(pStackList)
         .if esi >= eax
           mov bAddSpace, FALSE
@@ -1283,8 +1292,7 @@ WriteStackList proc uses xdi xsi pStackList:POINTER
             mov bAddSpace, TRUE
           .endif
         .endif
-        pop xax
-        invoke TranslateNumOperator, xax
+        invoke TranslateNumOperator, pToken
       .endif
       OCall xbx::IncFile.StmWrite, xax
       .if bAddSpace != FALSE
@@ -1335,9 +1343,9 @@ GetProtoQualifier proc uses xsi pToken:PTOKEN
   .if eax == 0
     OCall xbx::IncFile.SaveInputStatus, addr InpStat
     OCall xbx::IncFile.GetNextToken
-    .if xax != NULL && CHRA ptr [xax] == "("
+    .if !ZERO? && CHRA ptr [xax] == "("
       OCall xbx::IncFile.GetNextToken
-      .if xax != NULL
+      .if !ZERO?
         mov pToken, xax
         OCall xbx::IncFile.GetNextToken               ;")"
       .endif
@@ -1348,11 +1356,13 @@ GetProtoQualifier proc uses xsi pToken:PTOKEN
 
   OCall pKnownQualifiers::List.Search, pToken
   .if eax != FALSE
-    OCall pKnownQualifiers::List.ItemAt, ecx
+    mov edx, ecx
+    OCall pKnownQualifiers::List.ItemAt, edx
   .else
     OCall pQualifiers::List.Search, pToken
     .if eax != FALSE
-      OCall pQualifiers::List.ItemAt, ecx
+      mov edx, ecx
+      OCall pQualifiers::List.ItemAt, edx
     .endif
   .endif
 
@@ -1382,7 +1392,7 @@ GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
   mov dBraceCount, 1
   .while dBraceCount != 0
     OCall xbx::IncFile.GetNextToken
-    .break .if xax == NULL
+    .break .if !ZERO?
     .continue .if !IsIfLevelActive?(InpStat)
     .if CHRA ptr [xax] == "{"
       inc dBraceCount
@@ -1393,7 +1403,7 @@ GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
 
   .if xax != NULL
     OCall xbx::IncFile.GetNextToken
-    .if xax != NULL && CHRA ptr [xax] != ";"            ;Statement terminator
+    .if !ZERO? && CHRA ptr [xax] != ";"            ;Statement terminator
       .if CHRA ptr [xax] == "*"
         jmp @Exit
       .endif
@@ -1410,7 +1420,8 @@ GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
       .if eax != 0
         mov dFlags, TRUE
         .if eax == 2
-          OCall pKnownMacros::List.ItemAt, ecx
+          mov edx, ecx
+          OCall pKnownMacros::List.ItemAt, edx
           mov edx, [xax - sizeof DWORD]                 ;edx = length
           mov ecx, [xax + xdx]
           BitSet ecx, MCF_KNOWN                         ;Just in case

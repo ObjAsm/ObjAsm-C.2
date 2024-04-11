@@ -14,7 +14,7 @@ LST_OPEN_FILE_ERROR equ 125473
 ; Object:   List
 ; Purpose:  Mantain a sorted list of items in the Memory Heap.
 
-Object List, 123321, SortedStrCollectionA
+Object List, , SortedStrCollectionA
   RedefineMethod    Init,         POINTER, DWORD, DWORD, DWORD ;-> Owner, Count, Increment, Flags
   RedefineMethod    DestroyItem,  PSTRINGA
   StaticMethod      LoadFromFile, PSTRINGW
@@ -23,6 +23,8 @@ Object List, 123321, SortedStrCollectionA
   DefineVariable    dFlags,       DWORD
 ObjectEnd
 
+
+; ==================================================================================================
 
 if IMPLEMENT
 
@@ -55,15 +57,16 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:    List.LoadFromFile
 ; Purpose:   Load list content from file.
-; Arguments: Arg1: -> WIDE File Name.
+; Arguments: Arg1: -> WIDE Full File Name.
 ; Return:    eax = TRUE if succeeded, otherwise FALSE.
 
-Method List.LoadFromFile, uses xbx xdi xsi, pFileName:PSTRINGW
+Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
   local hFile:HANDLE, dBytesRead:DWORD
   local dFileSize:DWORD, dMemSize:DWORD, pMemBlock:POINTER, dSize:DWORD
+  local dCount:DWORD, bChar:CHRA, pToken:PTOKEN, dCounter:DWORD
 
   SetObject xdi
-  invoke CreateFileW, pFileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_ARCHIVE, 0
+  invoke CreateFileW, pFullFileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_ARCHIVE, 0
   .if xax != INVALID_HANDLE_VALUE
     mov hFile, xax
     invoke GetFileSize, xax, NULL
@@ -103,20 +106,16 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFileName:PSTRINGW
         .if al != "="
           inc xsi                                     ;Skip LF
         .endif
+        mov dCount, ecx
+        mov bChar, al
 
         .ifBitSet [xdi].dFlags, CF_CASE
-          push xax
-          push xcx
           invoke StrLowerA, xbx
-          pop xcx
-          pop xax
         .endif
 
         .ifBitSet [xdi].dFlags, CF_SNGL
-          push xax
-          mov eax, ecx
-          invoke InsertStrg, xdi, xbx, eax
-          pop xax
+          invoke InsertStrg, xdi, xbx, dCount
+          mov al, bChar
           .if al == "="                               ;Malformed input
             .repeat                                   ;Skip chars until CR or Zero
               lodsb
@@ -129,16 +128,16 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFileName:PSTRINGW
 
         .elseIfBitSet [xdi].dFlags, CF_ATTR
           mov dSize, ecx
+          mov al, bChar
           .if al == "="
-            push xsi
+            mov pToken, xsi
             .repeat
               lodsb
             .until (al == CR) || (al == 0)
             .break .if al == 0
             mov CHRA ptr [xsi - 1], 0                 ;Set ZTC
             inc xsi                                   ;Skip LF
-            pop xcx
-            invoke dec2dword, xcx
+            invoke dec2dword, pToken
           .else
             xor eax, eax                              ;Missing Attribute => assume 0
           .endif
@@ -146,22 +145,23 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFileName:PSTRINGW
 
         .elseIfBitSet [xdi].dFlags, CF_EQUI
           mov dSize, ecx
+          mov al, bChar
           .if al == "="
-            push xsi
-            xor edi, edi
+            mov pToken, xsi
+            mov dCounter, 0
             .repeat
               lodsb
-              inc edi
+              inc dCounter
             .until (al == CR) || (al == 0)
             .break .if al == 0
             mov CHRA ptr [xsi - 1], 0                 ;Set ZTC
             inc xsi                                   ;Skip LF
-            pop xax
+            mov xax, pToken
           .else
-            mov xax, offset szEmpty
-            mov edi, 1
+            lea xax, szEmpty
+            mov dCounter, 1
           .endif
-          invoke InsertEqui, xdi, xbx, dSize, xax, edi
+          invoke InsertEqui, xdi, xbx, dSize, xax, dCounter
         .endif
 
         mov xbx, xsi
@@ -179,14 +179,14 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:    List.SaveToFile
 ; Purpose:   Save list content to file.
-; Arguments: Arg1: -> WIDE File Name.
+; Arguments: Arg1: -> WIDE Full FileName.
 ; Return:    Nothing.
 
-Method List.SaveToFile, uses xbx xdi xsi, pFileName:PSTRINGW
+Method List.SaveToFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
   local hFile:HANDLE, cBuffer[1024]:CHRA, dBytesWritten:DWORD
 
   SetObject xsi
-  invoke CreateFileW, pFileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_ARCHIVE, 0
+  invoke CreateFileW, pFullFileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_ARCHIVE, 0
   .if xax != INVALID_HANDLE_VALUE
     mov hFile, xax
     .ifBitSet [xsi].dFlags, CF_EQUI

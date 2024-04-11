@@ -36,7 +36,7 @@ PreProcCmdHandlerTable label PP_CMD_HANDLER_ENTRY
   POINTER NULL
 
 ;Table used when IncFile.bSkipScanPP(2) == TRUE
-PreProcCmdNPHandlerTab label PP_CMD_HANDLER_ENTRY
+PreProcCmdNPHandlerTable label PP_CMD_HANDLER_ENTRY
   PP_CMD_HANDLER_ENTRY <$OfsCBStrA("if"),      offset PPCH_IfNP>
   PP_CMD_HANDLER_ENTRY <$OfsCBStrA("elif"),    offset PPCH_ElIf>
   PP_CMD_HANDLER_ENTRY <$OfsCBStrA("else"),    offset PPCH_Else>
@@ -81,10 +81,10 @@ d3CharOps dd ">>=", "<<="
 .code
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.AddComment
-; Purpose:   Stores the comment for later output.
-; Arguments: Arg1 -> Comment string
-; Return:    Nothing.
+; Method:     IncFile.AddComment
+; Purpose:    Stores the comment for later output.
+; Arguments:  Arg1 -> Comment string
+; Return:     Nothing.
 
 Method IncFile.AddComment, uses xsi, pCommentText:PSTRINGA
   SetObject xsi
@@ -95,11 +95,11 @@ Method IncFile.AddComment, uses xsi, pCommentText:PSTRINGA
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.Analyse
-; Purpose:   Start analysis of header file.
-; Arguments: Arg1 -> FileName.
-;            Arg2 -> Parent.
-; Return:    eax = 0 if error occured.
+; Method:     IncFile.Analyse
+; Purpose:    Start analysis of header file.
+; Arguments:  Arg1 -> FileName.
+;             Arg2 -> Parent.
+; Return:     eax = 0 if error occured.
 
 Method IncFile.Analyse, uses xbx xdi xsi
   local cMessage[1024]:CHRA
@@ -107,7 +107,7 @@ Method IncFile.Analyse, uses xbx xdi xsi
 
   SetObject xbx
   lea xdi, cMessage
-  WriteF xdi, "Analysis of \`¦SU\` started", [xbx].pFileName
+  WriteF xdi, "Analysis of \`¦SU\` started", [xbx].pHeaderFileName
   OCall [xbx].pOwner::Application.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
 
   mrm [xbx].pStmInpPos, [xbx].pStmBuffer1, xdi
@@ -131,14 +131,15 @@ Method IncFile.Analyse, uses xbx xdi xsi
   mov [xbx].dLineNumber, 1
   mov [xbx].bNewLine, TRUE
 
-  mov xsi, offset g_VolatilConvTable
+  ;Reset volatile data lists
+  lea xsi, VolatilConvTable
   .while POINTER ptr [xsi] != NULL
     OCall [xsi].CONV_TAB_ENTRY.pList::List.DeleteAll
     add xsi, sizeof CONV_TAB_ENTRY
   .endw
 
   .repeat
-    invoke ParseC
+    invoke ParseC                                       ;xbx is passed implicitly
   .until eax == FALSE
 
   .if [xbx].bIfLevel != 0
@@ -146,15 +147,15 @@ Method IncFile.Analyse, uses xbx xdi xsi
   .endif
 
   lea xdi, cMessage
-  WriteF xdi, "Analysis of \`¦SU\` completed", [xbx].pFileName
+  WriteF xdi, "Analysis of \`¦SU\` completed", [xbx].pHeaderFileName
   OCall [xbx].pOwner::Application.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.CreateDefFile
-; Purpose:   Create a new .def file.
-; Arguments: Arg1 -> FileName.
-; Return:    eax = TRUE if succeeded, otherwise FALSE.
+; Method:     IncFile.CreateDefFile
+; Purpose:    Create a new .def file.
+; Arguments:  Arg1 -> FileName.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method IncFile.CreateDefFile, uses xbx xdi xsi, pFileName:PSTRINGW
   local hFile:HANDLE, Result:DWORD, dBytesWritten:DWORD
@@ -212,20 +213,20 @@ Method IncFile.CreateDefFile, uses xbx xdi xsi, pFileName:PSTRINGW
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.Done
-; Purpose:   Destructor
-; Arguments: None.
-; Return:    Nothing.
+; Method:     IncFile.Done
+; Purpose:    Destructor
+; Arguments:  None.
+; Return:     Nothing.
 
 Method IncFile.Done, uses xbx
   SetObject xbx
-  DbgPrintF , "Free StmBuffer1 ¦HX for ¦SU", [xbx].pStmBuffer1, [xbx].pFileName
+  DbgPrintF , "Free StmBuffer1 ¦HX for ¦SU", [xbx].pStmBuffer1, [xbx].pHeaderFileName
   invoke VirtualFree, [xbx].pStmBuffer2, 0, MEM_RELEASE
-  DbgPrintF , "Free StmBuffer2 ¦HX for ¦SU", [xbx].pStmBuffer2, [xbx].pFileName
+  DbgPrintF , "Free StmBuffer2 ¦HX for ¦SU", [xbx].pStmBuffer2, [xbx].pHeaderFileName
   invoke VirtualFree, [xbx].pStmBuffer1, 0, MEM_RELEASE
 
-  invoke StrDisposeW, [xbx].pFullPath
-  invoke StrDisposeW, [xbx].pFileName
+  invoke StrDisposeW, [xbx].pHeaderFilePath
+  invoke StrDisposeW, [xbx].pHeaderFileName
 
   .if [xbx].pDefs != NULL
     Destroy [xbx].pDefs
@@ -234,10 +235,10 @@ Method IncFile.Done, uses xbx
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.GetNextToken
-; Purpose:   Returns the next token from input stream. Comments are handled automatically.
-; Arguments: None.
-; Return:    xax -> Token or NULL if EOF reached.
+; Method:     IncFile.GetNextToken
+; Purpose:    Returns the next token from input stream. Comments are handled automatically.
+; Arguments:  None.
+; Return:     xax -> Token or NULL if EOF reached. ZERO flag set if xax == NULL.
 
 Method IncFile.GetNextToken, uses xbx xdi
   SetObject xbx
@@ -253,7 +254,7 @@ Method IncFile.GetNextToken, uses xbx xdi
     not ecx
     dec ecx                                           ;ecx = character count
     .if ecx == 0
-      xor eax, eax                                    ;Return NULL
+      xor eax, eax                                    ;Return NULL, ZF set
       jmp @Exit
     .endif
     mov xax, xdi
@@ -299,16 +300,17 @@ Method IncFile.GetNextToken, uses xbx xdi
       jmp @TryAgain
     .endif
   .endif
+  cmp xax, NULL
 
 @Exit:
   mov [xbx].bNewLine, FALSE
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.GetNextTokenFromPPLine
-; Purpose:   Returns the next token from within a PP command. Comments are handled automatically.
-; Arguments: None.
-; Return:    xax -> Token or NULL if Token = PCT_EOL or EOF reached.
+; Method:     IncFile.GetNextTokenFromPPLine
+; Purpose:    Returns the next token from within a PP command. Comments are handled automatically.
+; Arguments:  None.
+; Return:     xax -> Token or NULL if Token = PCT_EOL or EOF reached.
 
 Method IncFile.GetNextTokenFromPPLine, uses xbx xdi
   SetObject xbx
@@ -345,10 +347,10 @@ Method IncFile.GetNextTokenFromPPLine, uses xbx xdi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.PeekNextToken
-; Purpose:   Peeks the next token.
-; Arguments: None.
-; Return:    eax = token.
+; Method:     IncFile.PeekNextToken
+; Purpose:    Peeks the next token.
+; Arguments:  None.
+; Return:     eax = Token.
 
 Method IncFile.PeekNextToken, uses xbx
   local InpStat:INP_STAT, pToken:PTOKEN
@@ -364,11 +366,11 @@ Method IncFile.PeekNextToken, uses xbx
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.Init
-; Purpose:   Constructor
-; Arguments: Arg1 -> Full Path and FileName of the h-file.
-;            Arg2 -> Parent IncFile object that created (included) this instance or NULL.
-; Return:    eax = TRUE if succeeded, otherwise FALSE.
+; Method:     IncFile.Init
+; Purpose:    Constructor
+; Arguments:  Arg1 -> Full Path and FileName of the h-file.
+;             Arg2 -> Parent IncFile object that created (included) this instance or NULL.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method IncFile.Init, uses xbx xdi xsi, pOwner:POINTER, pFileName:PSTRINGW, pParent:$ObjPtr(IncFile)
   local hFile:HANDLE, dFileSize:DWORD, dBytesRead:DWORD, dSysError:DWORD, pErrMsgBuffer:PSTRINGA
@@ -386,8 +388,8 @@ Method IncFile.Init, uses xbx xdi xsi, pOwner:POINTER, pFileName:PSTRINGW, pPare
 
   ;Extract the FileName
   invoke GetFullPathNameW, pFileName, lengthof(cFullFileName), addr cFullFileName, addr pName
-  mov [xbx].pFullPath, $invoke(StrNewW, addr cFullFileName)
-  m2m [xbx].pFileName, $invoke(StrNewW, pName)
+  mov [xbx].pHeaderFilePath, $invoke(StrNewW, addr cFullFileName)
+  m2m [xbx].pHeaderFileName, $invoke(StrNewW, pName)
 
   ;Try to open the file
   invoke CreateFileW, addr cFullFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, 0
@@ -396,9 +398,9 @@ Method IncFile.Init, uses xbx xdi xsi, pOwner:POINTER, pFileName:PSTRINGW, pPare
     .if eax == ERROR_FILE_NOT_FOUND
       .if [xdi].$Obj(Application).Options.pIncludeDirs != NULL
         ;Check if the file exist in the include directory
-        invoke StrECopy, addr cFullIncPathName, [xdi].$Obj(Application).Options.pIncludeDirs
+        invoke StrECopyW, addr cFullIncPathName, [xdi].$Obj(Application).Options.pIncludeDirs
         lea xdx, pName
-        invoke StrECopy, xax, xdx
+        invoke StrECopyW, xax, xdx
         invoke CreateFileW, addr cFullIncPathName, GENERIC_READ, FILE_SHARE_READ, NULL, \
                             OPEN_EXISTING, 0, 0
         .if xax != INVALID_HANDLE_VALUE
@@ -416,7 +418,7 @@ Method IncFile.Init, uses xbx xdi xsi, pOwner:POINTER, pFileName:PSTRINGW, pPare
     .if pParent != NULL
       mov xsi, pParent
       WriteF xdi, " included from file \`¦SU\` at line ¦UD failed", \
-             [xsi].$Obj(IncFile).pFileName, [xsi].$Obj(IncFile).dLineNumber
+             [xsi].$Obj(IncFile).pHeaderFileName, [xsi].$Obj(IncFile).dLineNumber
     .endif
     WriteF xdi, " [Error ¦UD = ", dSysError
     lea xax, cMessage
@@ -464,7 +466,7 @@ endif
     jmp @@EOM
   .endif
   lea xsi, cMessage
-  WriteF xsi, "Allocating buffers for \`¦SU\`\n", [xbx].pFileName
+  WriteF xsi, "Allocating buffers for \`¦SU\`\n", [xbx].pHeaderFileName
   WriteF xsi, "StmBuffer1 at memory ¦HXh\n", [xbx].pStmBuffer1
   WriteF xsi, "StmBuffer2 at memory ¦HXh", [xbx].pStmBuffer2
   OCall [xbx].pOwner::Application.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
@@ -489,16 +491,16 @@ endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.ParseHeaderFile
-; Purpose:   Input is C header source, output is tokenized, that is:
-;             + each token is an ASCII string
-;             + numeric literals (numbers) are converted to ASM format on the fly
-;             + comments are marked as such
-;             Example:
-;               Input stream:  "#define VAR1 0xA+2"\r\n
-;               Output stream: "#",0,"define",0,"VAR1",0,"0Ah",0,"+",0,"2",0,PCT_EOL,0
-; Arguments: None.
-; Return:    xax -> End of Stream.
+; Method:     IncFile.ParseHeaderFile
+; Purpose:    Input is C header source, output is tokenized, that is:
+;              + each token is an ASCII string
+;              + numeric literals (numbers) are converted to ASM format on the fly
+;              + comments are marked as such
+;              Example:
+;                Input stream:  "#define VAR1 0xA+2"\r\n
+;                Output stream: "#",0,"define",0,"VAR1",0,"0Ah",0,"+",0,"2",0,PCT_EOL,0
+; Arguments:  None.
+; Return:     xax -> End of Stream.
 
 Method IncFile.ParseHeaderFile, uses xbx xdi xsi
   local dPPLineContinuation:DWORD
@@ -568,11 +570,11 @@ Method IncFile.ParseHeaderFile, uses xbx xdi xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.ParseHeaderLine
-; Purpose:   Process a source text line
-; Arguments: Arg1 -> Text line into input buffer.
-;            Arg2: Weak Line End flag.
-; Return:    Nothing.
+; Method:     IncFile.ParseHeaderLine
+; Purpose:    Process a source text line
+; Arguments:  Arg1 -> Text line into input buffer.
+;             Arg2: Weak Line End flag.
+; Return:     Nothing.
 
 Method IncFile.ParseHeaderLine, uses xbx xdi xsi, pLine:PSTRINGA, bWeak:DWORD
   local bIsPreProc:DWORD, bIsDefine:DWORD, dTokenCounter:DWORD
@@ -628,7 +630,7 @@ Method IncFile.ParseHeaderLine, uses xbx xdi xsi, pLine:PSTRINGA, bWeak:DWORD
 
       ;Check if content of al is a delimiter
       push xdi
-      mov xdi, offset bDelim
+      lea xdi, bDelim
       mov ecx, sizeof bDelim
       repnz scasb
       pop xdi
@@ -648,7 +650,7 @@ Method IncFile.ParseHeaderLine, uses xbx xdi xsi, pLine:PSTRINGA, bWeak:DWORD
           ;check if context of ax is a 2 char operand
           push xdi
           xchg al, ah
-          mov xdi, offset w2CharOps
+          lea xdi, w2CharOps
           mov ecx, sizeof(w2CharOps)/sizeof(WORD)
           repnz scasw
           pop xdi
@@ -683,12 +685,12 @@ Method IncFile.ParseHeaderLine, uses xbx xdi xsi, pLine:PSTRINGA, bWeak:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.Save
-; Purpose:   Write output buffer to file.
-; Arguments: Arg1 -> Full Path and FileName of the inc-file.
-; Return:    eax = TRUE is succeded, otherwise FALSE.
+; Method:     IncFile.Save
+; Purpose:    Write output buffer to file.
+; Arguments:  Arg1 -> Full Path and FileName of the inc-file.
+; Return:     eax = TRUE is succeded, otherwise FALSE.
 
-Method IncFile.Save, uses xbx xdi xsi, pFileName:PSTRINGW
+Method IncFile.Save, uses xbx xdi xsi, pFullFileName:PSTRINGW
   local Result:DWORD, hFile:HANDLE, dBytesWritten:DWORD, cMessage[1024]:CHR
   local cIncHeader[2024]:CHRA, dStmBufferContent2:DWORD
   local CreationSysTime:SYSTEMTIME, LastWriteSysTime:SYSTEMTIME
@@ -697,7 +699,7 @@ Method IncFile.Save, uses xbx xdi xsi, pFileName:PSTRINGW
   mov Result, FALSE
   invoke StrSizeA, [xbx].pStmBuffer2
   mov dStmBufferContent2, eax
-  invoke CreateFileW, pFileName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, \
+  invoke CreateFileW, pFullFileName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, \
                       CREATE_ALWAYS, FILE_ATTRIBUTE_ARCHIVE, 0
   .if xax != INVALID_HANDLE_VALUE
     mov hFile, xax
@@ -712,7 +714,7 @@ Method IncFile.Save, uses xbx xdi xsi, pFileName:PSTRINGW
 
     invoke FileTimeToSystemTime, addr [xbx].CreationFileTime, addr CreationSysTime
     invoke FileTimeToSystemTime, addr [xbx].LastWriteFileTime, addr LastWriteSysTime
-    WriteFA xdi, ";Source file: ¦SU\n", [xbx].pFullPath
+    WriteFA xdi, ";Source file: ¦SU\¦SU\n", [xbx].pHeaderFilePath, [xbx].pHeaderFileName
     WriteFA xdi, ";             Created on (UTC) ¦BN¦UW/¦BN¦UW/¦BN¦UW ¦BN¦UW:¦BN¦UW:¦BN¦UW\n", \
                  <<<PrependZerosA(CreationSysTime.wDay, 2)>>>,     CreationSysTime.wDay, \
                  <<<PrependZerosA(CreationSysTime.wMonth, 2)>>>,   CreationSysTime.wMonth, \
@@ -749,7 +751,7 @@ Method IncFile.Save, uses xbx xdi xsi, pFileName:PSTRINGW
       invoke GetLastError
       mov esi, eax
       lea xdi, cMessage
-      WriteF xdi, "saving file \`¦SU\`", pFileName
+      WriteF xdi, "saving file \`¦SU\`", pFullFileName
       OCall xbx.ShowSysError, addr cMessage, esi
     .endif
 
@@ -759,17 +761,17 @@ Method IncFile.Save, uses xbx xdi xsi, pFileName:PSTRINGW
     invoke GetLastError
     mov esi, eax
     lea xdi, cMessage
-    WriteF xdi, "creating file \`¦SU\`", pFileName
+    WriteF xdi, "creating file \`¦SU\`", pFullFileName
     OCall xbx.ShowSysError, addr cMessage, esi
   .endif
   mov eax, Result
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.SkipComments
-; Purpose:   Skip comments "/* ... */" in a line
-; Arguments: Arg1: -> Line
-; Return:    None.
+; Method:     IncFile.SkipComments
+; Purpose:    Skip comments "/* ... */" in a line
+; Arguments:  Arg1: -> Line
+; Return:     None.
 
 Method IncFile.SkipComments, uses xbx xdi xsi, pLine:PSTRINGA
   SetObject xbx
@@ -812,29 +814,30 @@ Method IncFile.SkipComments, uses xbx xdi xsi, pLine:PSTRINGA
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.StmCopyRestOfPPLine
-; Purpose:   copy rest of line to the output stream.
-; Arguments: None.
-; Return:    eax = TRUE if succeeded, otherwise FALSE.
+; Method:     IncFile.StmCopyRestOfPPLine
+; Purpose:    copy rest of line to the output stream.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method IncFile.StmCopyRestOfPPLine
+  local pToken:PTOKEN
+
   .while TRUE
     OCall pSelf::IncFile.GetNextTokenFromPPLine
     .break .if xax == NULL
-    push xax
-    OCall pSelf::IncFile.StmWriteChar, SPC
-    pop xax
-    OCall pSelf::IncFile.StmWrite, xax
+    mov pToken, xax
+    OCall pSelf::IncFile.StmWriteChar, " "
+    OCall pSelf::IncFile.StmWrite, pToken
   .endw
   OCall pSelf::IncFile.StmWriteComment
   OCall pSelf::IncFile.StmWriteEOL
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.StmSkipRestOfPPLine
-; Purpose:   Skip the rest of line.
-; Arguments: None.
-; Return:    eax = TRUE if succeeded, otherwise FALSE.
+; Method:     IncFile.StmSkipRestOfPPLine
+; Purpose:    Skip the rest of line.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method IncFile.StmSkipRestOfPPLine
   SkipPPLine
@@ -843,25 +846,25 @@ Method IncFile.StmSkipRestOfPPLine
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.StmDeleteLastSpace
-; Purpose:   Deletes last space from output stream.
-; Arguments: None.
-; Return:    eax = TRUE if succeeded, otherwise FALSE.
+; Method:     IncFile.StmDeleteLastSpace
+; Purpose:    Deletes last space from output stream.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method IncFile.StmDeleteLastSpace, uses xbx
-  SetObject xbx
-  mov xax, [xbx].pStmOutPos
-  .if CHRA ptr [xax - 1] == SPC
+Method IncFile.StmDeleteLastSpace
+  SetObject xcx
+  mov xax, [xcx].pStmOutPos
+  .if CHRA ptr [xax - 1] == " "
     mov CHRA ptr [xax - 1], 0
-    dec [xbx].pStmOutPos
+    dec [xcx].pStmOutPos
   .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.StmWrite
-; Purpose:   Write a string to the output stream. Indentation is implemented here.
-; Arguments: Arg1 -> Text.
-; Return:    xax -> current StreamOut position.
+; Method:     IncFile.StmWrite
+; Purpose:    Write a string to the output stream. Indentation is implemented here.
+; Arguments:  Arg1 -> Text.
+; Return:     xax -> current StreamOut position.
 
 Method IncFile.StmWrite, uses xbx, pText:PSTRINGA
   SetObject xbx
@@ -874,10 +877,10 @@ Method IncFile.StmWrite, uses xbx, pText:PSTRINGA
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.StmWriteComment
-; Purpose:   Writes the current comments to the output stream.
-; Arguments: None.
-; Return:    eax = TRUE if succeeded, otherwise FALSE.
+; Method:     IncFile.StmWriteComment
+; Purpose:    Writes the current comments to the output stream.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method IncFile.StmWriteComment, uses xsi
   SetObject xsi
@@ -891,10 +894,10 @@ Method IncFile.StmWriteComment, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.StmWriteChar
-; Purpose:   Write a character to the output stream.
-; Arguments: Arg1: ANSI Character.
-; Return:    xax -> current StreamOut position.
+; Method:     IncFile.StmWriteChar
+; Purpose:    Write a character to the output stream.
+; Arguments:  Arg1: ANSI Character.
+; Return:     xax -> current StreamOut position.
 
 Method IncFile.StmWriteChar, uses xbx, bChar:CHRA
   SetObject xbx
@@ -909,11 +912,11 @@ Method IncFile.StmWriteChar, uses xbx, bChar:CHRA
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.StmWriteF
-; Purpose:   Write a formated string to the output stream.
-; Arguments: Arg1: -> Format.
-;            Arg2: -> Arguments.
-; Return:    xax -> current StreamOut position.
+; Method:     IncFile.StmWriteF
+; Purpose:    Write a formated string to the output stream.
+; Arguments:  Arg1: -> Format.
+;             Arg2: -> Arguments.
+; Return:     xax -> current StreamOut position.
 
 Method IncFile.StmWriteF, uses xbx, pFormat:PSTRINGA, Args:vararg
   SetObject xbx
@@ -926,10 +929,10 @@ Method IncFile.StmWriteF, uses xbx, pFormat:PSTRINGA, Args:vararg
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.StmWriteEOL
-; Purpose:   Write a <CRLF> sequence (End of Line) to the output stream.
-; Arguments: None.
-; Return:    xax -> current StreamOut position.
+; Method:     IncFile.StmWriteEOL
+; Purpose:    Write a <CRLF> sequence (End of Line) to the output stream.
+; Arguments:  None.
+; Return:     xax -> current StreamOut position.
 
 Method IncFile.StmWriteEOL, uses xbx
   SetObject xbx
@@ -943,10 +946,10 @@ Method IncFile.StmWriteEOL, uses xbx
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.StmWriteIndent
-; Purpose:   Write code indentation
-; Arguments: None.
-; Return:    Nothing.
+; Method:     IncFile.StmWriteIndent
+; Purpose:    Write code indentation
+; Arguments:  None.
+; Return:     Nothing.
 
 Method IncFile.StmWriteIndent, uses xbx xsi
   SetObject xbx
@@ -963,10 +966,10 @@ Method IncFile.StmWriteIndent, uses xbx xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.LoadInputStatus
-; Purpose:   Load the input status from an INP_STAT structure.
-; Arguments: Arg1: -> INP_STAT.
-; Return:    Nothing.
+; Method:     IncFile.LoadInputStatus
+; Purpose:    Load the input status from an INP_STAT structure.
+; Arguments:  Arg1: -> INP_STAT.
+; Return:     Nothing.
 
 Method IncFile.LoadInputStatus, uses xbx xdi xsi, pStatus:P_INP_STAT
   SetObject xbx
@@ -1002,10 +1005,10 @@ Method IncFile.LoadInputStatus, uses xbx xdi xsi, pStatus:P_INP_STAT
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.SaveInputStatus
-; Purpose:   Save the input status in an INP_STAT structure.
-; Arguments: Arg1: -> INP_STAT.
-; Return:    Nothing.
+; Method:     IncFile.SaveInputStatus
+; Purpose:    Save the input status in an INP_STAT structure.
+; Arguments:  Arg1: -> INP_STAT.
+; Return:     Nothing.
 
 Method IncFile.SaveInputStatus, uses xbx xdi xsi, pStatus:P_INP_STAT
   SetObject xbx
@@ -1041,11 +1044,11 @@ Method IncFile.SaveInputStatus, uses xbx xdi xsi, pStatus:P_INP_STAT
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.ShowError
-; Purpose:   Shows an error condition.
-; Arguments: Arg1: -> Format String.
-;            Arg2-n: Format arguments
-; Return:    Nothing.
+; Method:     IncFile.ShowError
+; Purpose:    Shows an error condition.
+; Arguments:  Arg1: -> Format String.
+;             Arg2-n: Format arguments
+; Return:     Nothing.
 
 Method IncFile.ShowError, uses xbx xdi, pFormat:PSTRING, Args:vararg
   local cMessage[1024]:CHR
@@ -1053,17 +1056,17 @@ Method IncFile.ShowError, uses xbx xdi, pFormat:PSTRING, Args:vararg
   SetObject xbx
   inc [xbx].dErrorCount
   lea xdi, cMessage
-  WriteF xdi, "¦SU(¦UD) - Error = ", [xbx].pFileName, [xbx].dLineNumber
+  WriteF xdi, "¦SU(¦UD) - Error = ", [xbx].pHeaderFileName, [xbx].dLineNumber
   invoke wsprintf, xdi, pFormat, addr Args
   OCall [xbx].pOwner::Application.ShowError, addr cMessage
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.ShowSysError
-; Purpose:   Shows a system error condition.
-; Arguments: Arg1: -> Info String.
-;            Arg2: Error Code.
-; Return:    Nothing.
+; Method:     IncFile.ShowSysError
+; Purpose:    Shows a system error condition.
+; Arguments:  Arg1: -> Info String.
+;             Arg2: Error Code.
+; Return:     Nothing.
 
 Method IncFile.ShowSysError, uses xbx xdi, pInfo:PSTRING, dErrorCode:DWORD
   local cMessage[1024]:CHR
@@ -1089,12 +1092,12 @@ Method IncFile.ShowSysError, uses xbx xdi, pInfo:PSTRING, dErrorCode:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IncFile.ShowWarning
-; Purpose:   Shows a warning condition.
-; Arguments: Arg1: Level [0..3].
-;            Arg2: -> Format String.
-;            Arg2-n: Format arguments
-; Return:    Nothing.
+; Method:     IncFile.ShowWarning
+; Purpose:    Shows a warning condition.
+; Arguments:  Arg1: Level [0..3].
+;             Arg2: -> Format String.
+;             Arg2-n: Format arguments
+; Return:     Nothing.
 
 Method IncFile.ShowWarning, uses xbx xdi, dWarningLevel:DWORD, pFormat:PSTRING, Args:vararg
   local cMessage[1024]:CHR
@@ -1102,7 +1105,7 @@ Method IncFile.ShowWarning, uses xbx xdi, dWarningLevel:DWORD, pFormat:PSTRING, 
   SetObject xbx
   inc [xbx].dWarningCount
   lea xdi, cMessage
-  WriteF xdi, "¦SU(¦UD) = ", [xbx].pFileName, [xbx].dLineNumber
+  WriteF xdi, "¦SU(¦UD) = ", [xbx].pHeaderFileName, [xbx].dLineNumber
   invoke wsprintf, xdi, pFormat, addr Args
   OCall [xbx].pOwner::Application.ShowWarning, dWarningLevel, addr cMessage
 MethodEnd

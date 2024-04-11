@@ -77,7 +77,7 @@ EvalOperatorTable label POINTER
   POINTER NULL
 
 ;Link: https://naughter.wordpress.com/2017/02/14/changes-in-the-windows-v10-0-15021-sdk-compared-to-windows-v10-0-14393-sdk-part-one/
-g_EvalKnownSymbol label POINTER
+EvalKnownSymbolTable label POINTER
   EVAL_KNOWN_SYMBOL <$OfsCBStrA("__cplusplus"),           EGN_UNDEF,  NULL> ;C++
   EVAL_KNOWN_SYMBOL <$OfsCBStrA("__cplusplus_winrt"),     EGN_UNDEF,  NULL> ;C++
   EVAL_KNOWN_SYMBOL <$OfsCBStrA("_CPPRTTI"),              EGN_UNDEF,  NULL> ;C++
@@ -166,18 +166,16 @@ Method Evaluator.Done, uses xsi
     .while TRUE
       lea xcx, [xsi].Queue
       .break .if [xcx].LDLL_CONTROL.pFirstMember == NULL
-      mov xcx, [xsi].Queue.pLastMember
-      LDLL_RemoveLast [xsi].Queue, xax
-      mov xax, xcx
+      mov xax, [xsi].Queue.pLastMember
+      LDLL_RemoveLast [xsi].Queue, xcx
       MemFree xax
     .endw
 
     .while TRUE
       lea xcx, [xsi].Stack
       .break .if [xcx].LDLL_CONTROL.pFirstMember == NULL
-      mov xcx, [xsi].Queue.pLastMember
-      LDLL_RemoveLast [xsi].Queue, xax
-      mov xax, xcx
+      mov xax, [xsi].Queue.pLastMember
+      LDLL_RemoveLast [xsi].Queue, xcx
       MemFree xax
     .endw
 MethodEnd
@@ -284,21 +282,19 @@ Method Evaluator.Evaluate, uses xdi xsi
 
     ;Now we decide if the result be used to discard a block of definitions in the .h file
     mov edi, PPR_FALSE
-    mov xcx, [xsi].Queue.pFirstMember
-    mov dx, [xcx].EVAL_TOKEN.wGenus
+    mov xax, [xsi].Queue.pFirstMember
+    mov dx, [xax].EVAL_TOKEN.wGenus
     .if dx == EGN_UNKNOWN || dx == EGN_ERROR
       mov edi, PPR_UNKNOWN
     .else
-      .if [xcx].EVAL_TOKEN.dValue != FALSE
+      .if [xax].EVAL_TOKEN.dValue != FALSE
         mov edi, PPR_TRUE
       .endif
     .endif
 
-    LDLL_RemoveFirst [xsi].Queue, xax
-    mov xax, xcx
+    LDLL_RemoveFirst [xsi].Queue, xcx
     MemFree xax
     mov eax, edi
-;    DbgHex eax
 
 @Error:
 
@@ -1111,7 +1107,7 @@ Method Evaluator.GetNextEvalToken, uses xdi xsi
   .endif
 
   ;Check if it is a known symbol
-  mov xsi, offset g_EvalKnownSymbol
+  lea xsi, EvalKnownSymbolTable
   .while [xsi].EVAL_KNOWN_SYMBOL.pToken != NULL
     invoke StrCompA, [xsi].EVAL_KNOWN_SYMBOL.pToken, EvalArg2.pToken
     .if eax == 0

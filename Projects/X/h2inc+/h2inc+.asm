@@ -41,7 +41,8 @@ include h2inc+_Globals.inc
 % include &MacPath&LDLL.inc
 % include &MacPath&LSLL.inc
 
-MakeObjects Primer, Stream, Collection, SortedCollection, SortedStrCollectionA, StrCollectionW 
+MakeObjects Primer, Stream, Collection, SortedCollection, StrCollectionA
+MakeObjects SortedStrCollectionA, StrCollectionW, SortedStrCollectionW 
 MakeObjects ConsoleApp
 
 include h2inc+_MemoryHeap.inc
@@ -97,14 +98,16 @@ Object IncFile,, Primer
   DefineVariable  pStmBuffer2,        PSTRINGA, NULL    ;-> Header file & Output stream buffer
   DefineVariable  pStmInpPos,         PSTRINGA, NULL    ;-> Current input stream position
   DefineVariable  pStmOutPos,         PSTRINGA, NULL    ;-> Current output stream position
-  DefineVariable  pFileName,          PSTRINGW, NULL    ;-> File name
-  DefineVariable  pFullPath,          PSTRINGW, NULL    ;-> Full path
+  DefineVariable  dErrorCount,        DWORD,    0       ;Errors occured in this file conversion
+  DefineVariable  dWarningCount,      DWORD,    0       ;Warnings occured in this file conversion
+  DefineVariable  pHeaderFileName,    PSTRINGW, NULL    ;-> File name (FileName.h)
+  DefineVariable  pHeaderFilePath,    PSTRINGW, NULL    ;-> File path (C:\...)
   DefineVariable  pPrevToken,         PSTRINGA, NULL
   DefineVariable  pImportSpec,        PSTRINGA, NULL
+  DefineVariable  pContainerName,     PSTRINGA, NULL    ;-> Current struct/union/class name
   DefineVariable  pCallConv,          PSTRINGA, NULL
   DefineVariable  pEndMacro,          PSTRINGA, NULL
-  DefineVariable  pStructName,        PSTRINGA, NULL    ;-> Current struct/union/class name
-  DefineVariable  pDefs,              $ObjPtr(List), NULL    ;-> .DEF file content
+  DefineVariable  pDefs,              $ObjPtr(List), NULL    ;-> .def file content
   DefineVariable  pParent,            $ObjPtr(IncFile), NULL ;-> Parent IncFile (if any)
   DefineVariable  CreationFileTime,   FILETIME, {}      ;Stores the creation FILETIME of .h file
   DefineVariable  LastWriteFileTime,  FILETIME, {}      ;Stores the last write FILETIME of .h file
@@ -112,8 +115,6 @@ Object IncFile,, Primer
   DefineVariable  dQualifiers,        DWORD,    0       ;Current qualifiers
   DefineVariable  dLineNumber,        DWORD,    0       ;Current line number
   DefineVariable  dEnumValue,         DWORD,    0       ;Counter for enums
-  DefineVariable  dErrorCount,        DWORD,    0       ;Errors occured in this file conversion
-  DefineVariable  dWarningCount,      DWORD,    0       ;Warnings occured in this file conversion
   DefineVariable  dBraces,            DWORD,    0       ;Curly brackets count => Block deep
   DefineVariable  dIndentation,       DWORD,    0       ;Indentation level: 0..n
   DefineVariable  dStmOutEOL,         DWORD,    FALSE   ;StmOut line ended. It MUST be a DWORD!
@@ -147,7 +148,7 @@ Object Application, MyConsoleAppID, ConsoleApp          ;Console Interface App.
   StaticMethod    GetOption,          PSTRINGW
   StaticMethod    GetOptions,         POINTER, DWORD, DWORD, PSTRING
   RedefineMethod  Init
-  StaticMethod    ProcessFile,        PSTRINGW, $ObjPtr(IncFile)
+  StaticMethod    ProcessFile,        PSTRINGW, PSTRINGW, $ObjPtr(IncFile)
   StaticMethod    ProcessFiles,       PSTRINGW
   RedefineMethod  Run
   StaticMethod    ShowError,          PSTRING
@@ -173,9 +174,10 @@ Object Application, MyConsoleAppID, ConsoleApp          ;Console Interface App.
 
   DefineVariable  cIncCreationTime,   CHRA,     24 dup(0) ;Creation time for all converted .h files
 
-  Embed    MemHeap,     MemoryHeap                      ;Memory Pool (like a heap)
-  Embed    IniReader,   IniFileReader                   ;Ini-File Reader
-  Embed    SearchPathColl,  StrCollectionW                  ;Collection of additional include directories
+  Embed   MemHeap,          MemoryHeap                  ;Memory Pool (like a heap)
+  Embed   IniReader,        IniFileReader               ;Ini-File Reader
+  Embed   SearchPathColl,   StrCollectionW              ;Collection of additional include directories
+  Embed   ProcessedFiles,   SortedStrCollectionW        ;Collection of processed files to avoid repetition
 
 ObjectEnd
 

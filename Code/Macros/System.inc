@@ -1833,7 +1833,7 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
                 invoke ComGetErrStrW, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
               endif
               .if xax != NULL
-                mov DstReg, $invoke(StrECopy, DstReg, xax)
+                mov DstReg, $invoke(StrECopyA, DstReg, xax)
                 $$WF_ArgCount = $$WF_ArgCount + 1
               .endif
             else
@@ -1853,7 +1853,7 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
                 invoke UefiGetErrStrW, @CatStr(<$$WF_Arg>, %$$WF_ArgCount)
               endif
               .if xax != NULL
-                mov DstReg, $invoke(StrECopy, DstReg, xax)
+                mov DstReg, $invoke(StrECopyA, DstReg, xax)
                 $$WF_ArgCount = $$WF_ArgCount + 1
               .endif
             else

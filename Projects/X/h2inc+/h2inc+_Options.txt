@@ -1,1 +1,1 @@
--d3 -i -V3 -W3 -I",,  ,,   .\h\MoreFiles, D:\ObjAsm\Code\Objects  ,, ," -o".\inc" ".\h\*.*"
+-y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\Test.h"

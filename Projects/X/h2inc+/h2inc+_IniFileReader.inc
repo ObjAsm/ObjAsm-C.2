@@ -52,7 +52,7 @@ Method IniFileReader.Init, uses xbx xdi xsi, pOwner:POINTER, pMemHeap:$ObjPtr(Me
     sub xcx, sizeof CHR
   .endw
   add xcx, sizeof CHR
-  invoke StrCopy, xcx, offset szIniFileName
+  invoke StrCopy, xcx, addr szIniFileName
   invoke CreateFileW, addr cName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, \
                      FILE_ATTRIBUTE_ARCHIVE, 0
   .if xax != INVALID_HANDLE_VALUE

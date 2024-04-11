@@ -7,50 +7,9 @@
 ; ==================================================================================================
 
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
-;; Macros:    xxx@Stacklist
-;; Purpose:   Local stack list.
-;
-;$Create@Stacklist macro
-;  push 0                                              ;Stack count
-;  exitm <xsp>                                         ;-> Stack reference (-> Count)
-;endm
-;
-;Destroy@Stacklist macro pStackRef
-;  .if pStackRef != NULL
-;    mov xsp, pStackRef
-;    add xsp, sizeof(DWORD)                            ;Dispose Count
-;  .endif
-;endm
-;
-;Reset@Stacklist macro pStackRef
-;  mov xsp, pStackRef                                  ;Reset stack
-;  mov DWORD ptr [xsp], 0                              ;Reset count
-;endm
-;
-;Add@Stacklist macro pStackRef, pItem
-;  push pItem                                          ;Save item
-;  mov xcx, pStackRef
-;  inc DWORD ptr [xcx]                                 ;Increment count
-;endm
-;
-;$GetCount@Stacklist macro pStackRef
-;  mov xax, pStackRef
-;  exitm <DWORD ptr [xax]>                             ;Return count
-;endm
-;
-;$GetItem@Stacklist macro pStackRef, dIndex
-;  mov xax, pStackRef
-;  mov ecx, dIndex
-;  shl ecx, 2
-;  sub xax, xcx
-;  exitm <XWORD ptr [xax - sizeof(DWORD)]>
-;endm
-
-
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macros:    xxx@Stacklist
-; Purpose:   Stack list.
+; Purpose:   Memory list implemented like a stack. Total max capacity 1024 entries.  
 
 .data?
 StackList XWORD 1024 dup(?)                           ;1024 entries should be enough
@@ -58,48 +17,48 @@ StackList XWORD 1024 dup(?)                           ;1024 entries should be en
 .data
 StackListPtr POINTER offset StackList                 ;-> Next free (XWORD) slot
 
-$Create@Stacklist macro
-  mov xax, StackListPtr 
-  exitm <xax>                                         ;-> Stack reference
+$Create@Stacklist macro AuxReg:=<xax>
+  mov AuxReg, StackListPtr 
+  exitm <AuxReg>                                      ;-> Stack reference
 endm
 
-Destroy@Stacklist macro pStackRef
+Destroy@Stacklist macro pStackRef:req, AuxReg:=<xax>
   .if pStackRef != NULL
-    mov xax, pStackRef
-    mov StackListPtr, xax
+    mov AuxReg, pStackRef
+    mov StackListPtr, AuxReg
   .endif
 endm
 
-Reset@Stacklist macro pStackRef
+Reset@Stacklist macro pStackRef:req, AuxReg:=<xax>
   .if pStackRef != NULL
-    mov xax, pStackRef
-    mov StackListPtr, xax
+    mov AuxReg, pStackRef
+    mov StackListPtr, AuxReg
   .endif
 endm
 
-Add@Stacklist macro pStackRef, pItem
-  mov xax, StackListPtr
+Add@Stacklist macro pStackRef:req, pItem:req, AuxReg:=<xax>
+  mov AuxReg, StackListPtr
   if (opattr pItem) and OAT_REGISTER
-    mov [xax], pItem                                  ;Save item
+    mov [AuxReg], pItem                               ;Save item
   else
     push pItem
-    pop [xax]                                         ;Save item
+    pop [AuxReg]                                      ;Save item
   endif
   add StackListPtr, sizeof(XWORD)
 endm
 
-$GetCount@Stacklist macro pStackRef
-  mov xax, StackListPtr
-  sub xax, pStackRef
-  shr eax, $Log2(Sizeof(XWORD))
-  exitm <eax>                                         ;Return count
+$GetCount@Stacklist macro pStackRef:req, AuxReg:=<xax>
+  mov AuxReg, StackListPtr
+  sub AuxReg, pStackRef
+  shr $SubReg(AuxReg, sizeof(DWORD)), $Log2(Sizeof(XWORD))
+  exitm <$SubReg(AuxReg, sizeof(DWORD))>              ;Return count
 endm
 
-$GetItem@Stacklist macro pStackRef, dIndex
-  mov xax, pStackRef
-  mov ecx, dIndex
-  shl ecx, $Log2(Sizeof(XWORD))
-  exitm <XWORD ptr [xax + xcx]>
+$GetItem@Stacklist macro pStackRef:req, dIndex:req, AuxReg1:=<xax>, AuxReg2:=<xcx>
+  mov AuxReg1, pStackRef
+  mov $SubReg(AuxReg2, sizeof(DWORD)), dIndex
+  shl $SubReg(AuxReg2, sizeof(DWORD)), $Log2(Sizeof(XWORD))
+  exitm <XWORD ptr [AuxReg1 + AuxReg2]>
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -108,7 +67,7 @@ endm
 
 WritePtr macro
   .while dPtrCount != 0
-    OCall xbx::IncFile.StmWrite, offset szPtrSpace
+    OCall xbx::IncFile.StmWrite, addr szPtrSpace
     dec dPtrCount
   .endw
 endm
@@ -116,10 +75,10 @@ endm
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:     IsStructure?
 ; Purpose:   Check if token is a structure name.
-; Arguments: Arg1 -> Token to test. Must be a Var or a non volatile register.
+; Arguments:  Arg1 -> Token to be tested. Must be a Var or a non volatile register.
 ; Return:    eax = TRUE if token is a known structure name, otherwise FALSE
 
-IsStructure? macro pToken
+IsStructure? macro pToken:req
   OCall pKnownStructs::List.Search, pToken
   .if eax == FALSE
     OCall pStructs::List.Search, pToken
@@ -129,10 +88,10 @@ endm
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:     IsName?
 ; Purpose:   Check if token is a valid name.
-; Arguments: Arg1 -> Token to test.
+; Arguments:  Arg1 -> Token to be tested.
 ; Return:    eax = TRUE if valid, otherwise FALSE.
 
-IsName? macro pToken
+IsName? macro pToken:req
   mov xcx, pToken
   mov eax, TRUE
   mov cl, [xcx]
@@ -152,7 +111,7 @@ endm
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:     BasicTypeCScan
 ; Purpose:   Helper macro to identifiy basic C types. It sets a variable using CTS_xxx.
-; Arguments: xax -> current Token.
+; Arguments: xax -> Current token.
 
 BasicTypeCScan macro
   mov dTypeCSpec, 0                                    ;Reset dTypeCSpec
@@ -160,14 +119,12 @@ BasicTypeCScan macro
   .if $DoesStringMatchA?([xax], <unsigned>)
     BitSet dTypeCSpec, CTS_unsigned
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <signed>)
     BitSet dTypeCSpec, CTS_signed
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
@@ -175,14 +132,12 @@ BasicTypeCScan macro
   .if $DoesStringMatchA?([xax], <long>)
     BitSet dTypeCSpec, CTS_long
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <short>)
     BitSet dTypeCSpec, CTS_short
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
@@ -190,7 +145,6 @@ BasicTypeCScan macro
   .if $DoesStringMatchA?([xax], <long>)
     BitSet dTypeCSpec, CTS_long2
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
@@ -198,77 +152,66 @@ BasicTypeCScan macro
   .if $DoesStringMatchA?([xax], <void>)
     BitSet dTypeCSpec, CTS_void
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <char>)
     BitSet dTypeCSpec, CTS_char
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <bool>)
     BitSet dTypeCSpec, CTS_bool
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <int>)
     BitSet dTypeCSpec, CTS_int
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <float>)
     BitSet dTypeCSpec, CTS_float
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <double>)
     BitSet dTypeCSpec, CTS_double
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <__int8>)
     BitSet dTypeCSpec, CTS___int8
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <__int16>)
     BitSet dTypeCSpec, CTS___int16
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <__int32>)
     BitSet dTypeCSpec, CTS___int32
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <__int64>)
     BitSet dTypeCSpec, CTS___int64
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <__wchar_t>)
     BitSet dTypeCSpec, CTS___wchar_t
     OCall xbx::IncFile.GetNextToken
-    test xax, xax
     jz @Error
 ;      jmp @F
   .endif
@@ -279,6 +222,7 @@ endm
 ; Macro:     IsIfLevelActive?
 ; Purpose:   Check if a given If-Level is active.
 ; Arguments: Arg1: INP_STAT variable.
+;             xbx -> IncFile.
 ; Return:    ZERO set if current if level is NOT active.
 
 IsIfLevelActive? macro InpStat
@@ -314,7 +258,7 @@ endm
 
 IncIfLevel macro
   .if [xbx].$Obj(IncFile).bIfLevel == MAX_IF_LEVEL
-    OCall xbx::IncFile.ShowError, offset szNesting2Deep
+    OCall xbx::IncFile.ShowError, addr szNesting2Deep
   .else
     inc [xbx].$Obj(IncFile).bIfLevel
     movzx eax, [xbx].$Obj(IncFile).bIfLevel
@@ -335,28 +279,28 @@ IncElseLevel macro
   .if eax != 0
     inc [xbx].$Obj(IncFile).bIfStructure[xax - 1]
   .else
-    OCall xbx::IncFile.ShowError, offset szElseWoIf
+    OCall xbx::IncFile.ShowError, addr szElseWoIf
   .endif
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:     DecIfLevel
 ; Purpose:   Decrement '#if' level.
-; Arguments: None.
+; Arguments:  xbx -> IncFile.
 ; Return:    Nothing.
 
 DecIfLevel macro
   .if [xbx].$Obj(IncFile).bIfLevel != 0
     dec [xbx].$Obj(IncFile).bIfLevel
   .else
-    OCall xbx::IncFile.ShowError, offset szEndifWoIf
+    OCall xbx::IncFile.ShowError, addr szEndifWoIf
   .endif
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:     SkipPPLine
 ; Purpose:   Skip PP tokens until EOL.
-; Arguments: None.
+; Arguments:  xbx -> IncFile.
 ; Return:    Nothing.
 
 SkipPPLine macro

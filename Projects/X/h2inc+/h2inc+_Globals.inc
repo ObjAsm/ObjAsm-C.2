@@ -16,7 +16,7 @@ WARNING_SEVERE      equ 1
 WARNING_MAYOR       equ 2
 WARNING_MINOR       equ 3
 
-MAX_VERBOSITY_LEVEL equ 3       ;Max value for -Wn switch
+MAX_VERBOSITY_LEVEL equ 3       ;Max value for -Vn switch
 VERBOSITY_SILENT    equ 0
 VERBOSITY_IMPORTANT equ 1
 VERBOSITY_NORMAL    equ 2
@@ -40,8 +40,21 @@ ParsePP             proto
 ParseC              proto
 GetStringLiteral    proto
 ConvertNumber       proto
-ParseMacroCall      proto :PTOKEN, :DWORD, :DWORD
 ParseBlock          proto :PTOKEN, :DWORD
+ParseContainerItem  proto :PTOKEN, :PSTRINGA
+ParseEnumItem       proto :PTOKEN
+ParseEqu            proto :PSTRINGA
+ParseExtern         proto
+ParseExternItem     proto :PTOKEN
+ParseFurtherTypes   proto :PSTRINGA, :PSTRINGA, :PTOKEN
+ParseInterfaceBlock proto :PSTRINGA
+ParseMacroCall      proto :PSTRINGA, :DWORD, :DWORD
+ParsePrototype      proto :PSTRINGA, :PSTRINGA, :PSTRINGA
+ParseTypedef        proto
+ParseTypedefFunction    proto :PSTRINGA, :DWORD, :PSTRINGA
+ParseTypedefFunctionPtr proto :PSTRINGA
+ParseTypedefEnum        proto :BOOL
+ParseTypedefContainer   proto :PSTRINGA, :BOOL
 
 ;ASCII Codes
 BELL                equ <07>
@@ -97,7 +110,7 @@ CTS___int64         equ 10
 CTS___wchar_t       equ 11
 
 ;Types for ParseBlock()
-PBT_MEM_LAYOUT      equ 0       ;struct/union
+PBT_CONTAINER       equ 0       ;struct/union
 PBT_EXTERN          equ 1       ;extern
 PBT_ENUM            equ 2       ;enum
 
@@ -171,9 +184,9 @@ CStrA szREAL4,        "REAL4"
 CStrA szREAL8,        "REAL8"
 CStrA szREAL10,       "REAL10"
 
-CStr szNesting2Deep, "'if' nesting level too deep"
-CStr szElseWoIf,     "'else'/'elif' without 'if'"
-CStr szEndifWoIf,    "'endif' without 'if'"
+CStr szNesting2Deep,  "'if' nesting level too deep"
+CStr szElseWoIf,      "'else'/'elif' without 'if'"
+CStr szEndifWoIf,     "'endif' without 'if'"
 
 
 DebugMessage    CHRA  512 dup (?)
@@ -283,7 +296,7 @@ DefineConvTabEntry macro EName:req, Alloc:req, Incr:req, Flags:=<>, FName:= <>, 
   else
 %   EName CONV_TAB_ENTRY <offset szEmpty, NULL, Alloc, Incr, Flags, FN, NULL>
   endif
-  p&EName textequ <&EName.pList>
+  p&EName textequ <&EName.pList>                        ;;Define a commodity equate
 endm
 
 PersistConvTable label POINTER
@@ -301,8 +314,7 @@ DefineConvTabEntry  ConvertTokens,   1000, 100, CF_EQUI or CF_INIF, <TokenConv>,
 DefineConvTabEntry  Alignments,      1000, 100, CF_ATTR or CF_INIF, <Alignment>, <Alignment>
 DefineConvTabEntry  TypeSize,        1000, 100, CF_ATTR or CF_INIF, <TypeSizes>, <Type Size>
 DefineConvTabEntry  Annotations,     1000, 100, CF_SNGL or CF_INIF, <KnwAnnots>, <Annotations>
-g_VolatilConvTable label POINTER
-DefineConvTabEntry  InpFiles,         100,  10, CF_SNGL, <ConvFiles>
+VolatilConvTable label POINTER
 DefineConvTabEntry  Macros,          1000, 100, CF_ATTR, <NewMacros>
 DefineConvTabEntry  Equates,         1000, 100, CF_ATTR, <NewEquate>
 DefineConvTabEntry  Structs,         1000, 100, CF_SNGL, <NewStruct>
@@ -487,7 +499,7 @@ DefaultReservedWordsTable label POINTER
 DefaultAnnotationsTable label POINTER
   POINTER NULL
 
-g_ConvertBasicType label DWORD
+ConvertBasicTypeTable label DWORD
 CONV_BASIC_TYPE_ENTRY <CTS_char,                                          offset szSBYTE>
 CONV_BASIC_TYPE_ENTRY <CTS_signed or CTS_char,                            offset szSBYTE>
 CONV_BASIC_TYPE_ENTRY <CTS_unsigned or CTS_char,                          offset szBYTE>

@@ -196,7 +196,7 @@ PPCH_Include proc uses xsi xdi
         mov al, 0
         stosb
         invoke StrA2StrW, addr cIncludeFile, [xbx].$Obj(IncFile).pStmOutPos
-        OCall $ObjTmpl(Application)::Application.ProcessFile, addr cIncludeFile, xbx   ;Ignore result and continue
+        OCall $ObjTmpl(Application)::Application.ProcessFile, [xbx].$Obj(IncFile).pHeaderFilePath, addr cIncludeFile, xbx   ;Ignore result and continue
         popax
       .endif
       dec xdi
@@ -221,17 +221,18 @@ PPCH_Include endp
 ; Return:    Nothing.
 
 PPCH_Error proc uses xsi
-  OCall xbx::IncFile.StmWrite, $OfsCStrA(".err ", 3Ch)  ;"<"
+  local pToken:PTOKEN
+
+  OCall xbx::IncFile.StmWrite, $OfsCStr(".err ", 3Ch)   ;"<"
   xor esi, esi
   .while TRUE
     OCall xbx::IncFile.GetNextTokenFromPPLine
     .break .if xax == NULL
+    mov pToken, xax
     .if esi != 0
-      push xax
-      OCall xbx::IncFile.StmWriteChar, SPC
-      pop xax
+      OCall xbx::IncFile.StmWriteChar, " "
     .endif
-    OCall xbx::IncFile.StmWrite, xax
+    OCall xbx::IncFile.StmWrite, pToken
     inc esi
   .endw
   OCall xbx::IncFile.StmWriteChar, 3Eh                ;">"
@@ -246,7 +247,7 @@ PPCH_Error endp
 ; Return:    Nothing.
 
 PPCH_Pragma proc uses xsi
-  local InpStat:INP_STAT, dParenthesesCount:DWORD
+  local InpStat:INP_STAT, dParenthesesCount:DWORD, pToken:PTOKEN
 
   OCall xbx::IncFile.SaveInputStatus, addr InpStat
   OCall xbx::IncFile.GetNextTokenFromPPLine
@@ -270,15 +271,15 @@ PPCH_Pragma proc uses xsi
       .endif
       .break .if ZERO? || xax == NULL
       .if esi == 0
-        push xax
-        OCall xbx::IncFile.StmWriteChar, SPC
-        pop xax
+        mov pToken, xax
+        OCall xbx::IncFile.StmWriteChar, " "
+        mov xax, pToken
       .endif
       .if CHRA ptr [xax] == '"'
         inc xax
-        push xax
+        mov pToken, xax
         invoke StrLengthA, xax
-        pop xcx
+        mov xcx, pToken
         mov CHRA ptr [xcx + xax - 1], 0
         mov xax, xcx
       .endif
