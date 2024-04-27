@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      h2inc+_ParseEnumItem.inc
+; Title:      h2inc+_RenderEnumMember.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
 ; Purpose:  
@@ -9,14 +9,14 @@
 .code
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  ParseEnumItem
-; Purpose:    Get an enum item declaration.
+; Procedure:  RenderEnumMember
+; Purpose:    Render an enumerator declaration (member of an enumeration).
 ; Arguments:  Arg1 -> Token.
 ;             xbx -> IncFile.
-; Return:     xax -> Last Token, usually ';' or NULL if failed.
-; Idea:       linear code, not looping.
+; Return:     xax -> Last Token, usually ';' or NULL if failed and ZF set.
+; Idea:       Linear code, not looping.
 
-ParseEnumItem proc uses xdi pToken:PTOKEN
+RenderEnumMember proc pToken:PTOKEN
   GED_MacroInvocation macro
     invoke IsMacro?, pToken
     .if eax != 0
@@ -26,8 +26,8 @@ ParseEnumItem proc uses xdi pToken:PTOKEN
       .else
         OCall pKnownMacros::List.ItemAt, edx
       .endif
-      mov edx, [xax - sizeof DWORD]                 ;edx = length
-      invoke ParseMacroCall, pToken, DWORD ptr [xax + xdx], FALSE
+      mov edx, [xax - sizeof(DWORD)]                    ;edx = length
+      invoke RenderMacroCall, pToken, DWORD ptr [xax + xdx], FALSE
       mov bFirstToken, FALSE
       jmp @GetNextToken
     .endif
@@ -131,19 +131,21 @@ ParseEnumItem proc uses xdi pToken:PTOKEN
       .endif
 
 @GetNextToken:
-      mov pToken, $OCall(xbx::IncFile.GetNextToken)
+      mov pToken, $OCall(xbx::IncFile.GetNextTokenC)
     .endw
     mov xax, pToken
     .break .if CHRA ptr [xax] == "}"                    ;Statment terminator
-    mov pToken, $OCall(xbx::IncFile.GetNextToken)
+    mov pToken, $OCall(xbx::IncFile.GetNextTokenC)
   .endw
 
   mov xax, pToken
+  test xax, xax
   ret
 
 @Error:
-  DbgErrorF , "¦SU(¦UD): ParseEnumItem - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+  DbgErrorF , "¦SU(¦UD): RenderEnumMember - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
   OCall xbx::IncFile.ShowError, $OfsCStrA("unexpected enum item = %s"), pToken
   mov xax, pToken
+  test xax, xax
   ret
-ParseEnumItem endp
+RenderEnumMember endp

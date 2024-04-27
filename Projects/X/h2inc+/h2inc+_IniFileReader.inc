@@ -44,14 +44,14 @@ Method IniFileReader.Init, uses xbx xdi xsi, pOwner:POINTER, pMemHeap:$ObjPtr(Me
   SetObject xsi
   ACall xsi.Init, pOwner
   m2m [xsi].pMemHeap, pMemHeap, xax
-  invoke GetModuleFileName, NULL, addr cName, lengthof cName  ;eax = char count, not including ZTC
+  invoke GetModuleFileName, NULL, addr cName, lengthof(cName)  ;eax = char count, not including ZTC
   lea xdx, cName
   lea xcx, [xdx + sizeof(CHR)*xax - sizeof(CHR)]
   .while xcx >= xdx
     .break .if (CHR ptr [xcx] == "\") || (CHR ptr [xcx] == "/") || (CHR ptr [xcx] == ":")
-    sub xcx, sizeof CHR
+    sub xcx, sizeof(CHR)
   .endw
-  add xcx, sizeof CHR
+  add xcx, sizeof(CHR)
   invoke StrCopy, xcx, addr szIniFileName
   invoke CreateFileW, addr cName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, \
                      FILE_ATTRIBUTE_ARCHIVE, 0
@@ -102,7 +102,7 @@ Method IniFileReader.LoadList, uses xbx xdi xsi, pConTabEntry:PCONV_TAB_ENTRY
   ;Find section
   mov xax, pConTabEntry
   mrm pSectionName, [xax].CONV_TAB_ENTRY.pSectionName, xdx
-  mov eax, DWORD ptr [xdx - sizeof DWORD]             ;Get string size
+  mov eax, DWORD ptr [xdx - sizeof(DWORD)]            ;Get string size
   dec eax                                             ;Calculate the length discarding the ZTC
   mov dStrLen, eax
 
@@ -145,21 +145,21 @@ Method IniFileReader.LoadList, uses xbx xdi xsi, pConTabEntry:PCONV_TAB_ENTRY
   mov xsi, [xdi].CONV_TAB_ENTRY.pDefault
   .while POINTER ptr [xsi] != NULL
     mov xbx, [xsi]
-    OCall pMemHeap::MemoryHeap.AddBStrA, POINTER ptr [xsi], DWORD ptr [xbx - sizeof DWORD]
+    OCall pMemHeap::MemoryHeap.AddBStrA, POINTER ptr [xsi], DWORD ptr [xbx - sizeof(DWORD)]
     mov pWord, xax
     .ifBitSet [xdi].CONV_TAB_ENTRY.dFlags, CF_CASE
       invoke StrLowerA, xax
     .endif
     OCall [xdi].CONV_TAB_ENTRY.pList::List.Insert, xax
     .if xax != NULL
-      add xsi, sizeof POINTER
+      add xsi, sizeof(POINTER)
       .ifBitSet [xdi].CONV_TAB_ENTRY.dFlags, CF_ATTR
         OCall pMemHeap::MemoryHeap.AddDword, DWORD ptr [xsi]
-        add xsi, sizeof DWORD
+        add xsi, sizeof(DWORD)
       .elseIfBitSet [xdi].CONV_TAB_ENTRY.dFlags, CF_EQUI
         mov xbx, [xsi]
-        OCall pMemHeap::MemoryHeap.AddBStrA, POINTER ptr [xsi], DWORD ptr [xbx - sizeof DWORD]
-        add xsi, sizeof POINTER
+        OCall pMemHeap::MemoryHeap.AddBStrA, POINTER ptr [xsi], DWORD ptr [xbx - sizeof(DWORD)]
+        add xsi, sizeof(POINTER)
       .endif
     .else
       lea xbx, cMessage

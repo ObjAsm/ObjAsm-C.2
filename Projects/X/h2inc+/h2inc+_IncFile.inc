@@ -35,7 +35,7 @@ PreProcCmdHandlerTable label PP_CMD_HANDLER_ENTRY
   PP_CMD_HANDLER_ENTRY <$OfsCBStrA("ifndef"),  offset PPCH_Ifndef>
   POINTER NULL
 
-;Table used when IncFile.bSkipScanPP(2) == TRUE
+;Table used when IncFile.bSkipLogiPP == TRUE
 PreProcCmdNPHandlerTable label PP_CMD_HANDLER_ENTRY
   PP_CMD_HANDLER_ENTRY <$OfsCBStrA("if"),      offset PPCH_IfNP>
   PP_CMD_HANDLER_ENTRY <$OfsCBStrA("elif"),    offset PPCH_ElIf>
@@ -65,7 +65,7 @@ OpConvTable label DWORD
   OP_CONV_ENTRY <{21h, 00h}, $OfsCBStrA(" not ")>       ;"!"
   OP_CONV_ENTRY <{3Ch, 3Ch}, $OfsCBStrA(" shl ")>       ;"<<"
   OP_CONV_ENTRY <{3Eh, 3Eh}, $OfsCBStrA(" shr ")>       ;">>"
-OpConvTabEntries equ ($ - offset OpConvTable) / sizeof OP_CONV_ENTRY
+OpConvTabEntries equ ($ - offset(OpConvTable)) / sizeof(OP_CONV_ENTRY)
 
 .const
 
@@ -82,7 +82,7 @@ d3CharOps dd ">>=", "<<="
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.AddComment
-; Purpose:    Stores the comment for later output.
+; Purpose:    Store the comment for later output.
 ; Arguments:  Arg1 -> Comment string
 ; Return:     Nothing.
 
@@ -92,63 +92,6 @@ Method IncFile.AddComment, uses xsi, pCommentText:PSTRINGA
   inc xdx
   invoke StrCopyA, addr [[xsi].cComment + 1], xdx
   mov [[xsi].cComment], ';'
-MethodEnd
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     IncFile.Analyse
-; Purpose:    Start analysis of header file.
-; Arguments:  Arg1 -> FileName.
-;             Arg2 -> Parent.
-; Return:     eax = 0 if error occured.
-
-Method IncFile.Analyse, uses xbx xdi xsi
-  local cMessage[1024]:CHRA
-;  local dBytesWritten:DWORD
-
-  SetObject xbx
-  lea xdi, cMessage
-  WriteF xdi, "Analysis of \`¦SU\` started", [xbx].pHeaderFileName
-  OCall [xbx].pOwner::Application.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
-
-  mrm [xbx].pStmInpPos, [xbx].pStmBuffer1, xdi
-
-;  if DEBUGGING
-;    invoke CreateFileW, $OfsCStrA("~parsed.tmp"), GENERIC_WRITE, FILE_SHARE_WRITE, NULL, \
-;                        CREATE_ALWAYS, FILE_ATTRIBUTE_ARCHIVE, 0
-;    .if xax != INVALID_HANDLE_VALUE
-;      mov xsi, xax
-;      mov xcx, [xbx].pStmOutPos
-;      sub xcx, xdi
-;      invoke WriteFile, xsi, xdi, xcx, addr dBytesWritten, NULL
-;      invoke CloseHandle, xsi
-;    .endif
-;  endif
-
-  mrm [xbx].pStmOutPos, [xbx].pStmBuffer2, xdi
-  mov CHRA ptr [xdi], 0
-  mov [xbx].bComment, FALSE
-  mov [xbx].bSkipScanPP, 0
-  mov [xbx].dLineNumber, 1
-  mov [xbx].bNewLine, TRUE
-
-  ;Reset volatile data lists
-  lea xsi, VolatilConvTable
-  .while POINTER ptr [xsi] != NULL
-    OCall [xsi].CONV_TAB_ENTRY.pList::List.DeleteAll
-    add xsi, sizeof CONV_TAB_ENTRY
-  .endw
-
-  .repeat
-    invoke ParseC                                       ;xbx is passed implicitly
-  .until eax == FALSE
-
-  .if [xbx].bIfLevel != 0
-    OCall xbx::IncFile.ShowError, $OfsCStr("unmatching if/endif")
-  .endif
-
-  lea xdi, cMessage
-  WriteF xdi, "Analysis of \`¦SU\` completed", [xbx].pHeaderFileName
-  OCall [xbx].pOwner::Application.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -182,7 +125,7 @@ Method IncFile.CreateDefFile, uses xbx xdi xsi, pFileName:PSTRINGW
       jmp @Exit
     .endif
     mov pFileName, xcx
-    FillStringW [xcx + xax - 6], <def>
+    FillStringW [xcx + xax - 6], <def>                  ;Replace extension
 
     invoke CreateFileW, pFileName,GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, \
                         FILE_ATTRIBUTE_ARCHIVE, 0
@@ -235,15 +178,23 @@ Method IncFile.Done, uses xbx
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     IncFile.GetNextToken
-; Purpose:    Returns the next token from input stream. Comments are handled automatically.
+; Method:     IncFile.GetNextTokenC
+; Purpose:    Return the next C token from input stream. Comments are handled automatically.
 ; Arguments:  None.
-; Return:     xax -> Token or NULL if EOF reached. ZERO flag set if xax == NULL.
+; Return:     xax -> Token or NULL if EOF is reached. ZERO flag set if xax == NULL.
 
-Method IncFile.GetNextToken, uses xbx xdi
+Method IncFile.GetNextTokenC, uses xbx xdi
   SetObject xbx
+  
+  .if [xbx].bEOF != FALSE                               ;Don't cross EOF
+    if DEBUGGING
+      int 3
+    endif
+    xor eax, eax
+    ret
+  .endif
   .if [xbx].bUsePrevToken != FALSE
-    mov [xbx].bUsePrevToken, FALSE
+    mov [xbx].bUsePrevToken, FALSE                      ;Reset the flag
     mov xax, [xbx].pPrevToken
   .else
 @TryAgain:
@@ -251,36 +202,30 @@ Method IncFile.GetNextToken, uses xbx xdi
     mov ecx, -1
     mov al, 0
     repnz scasb
-    not ecx
-    dec ecx                                           ;ecx = character count
+    not ecx                                             ;neg????
+    dec ecx                                             ;ecx = character count
     .if ecx == 0
-      xor eax, eax                                    ;Return NULL, ZF set
+      xor eax, eax                                      ;Return NULL, ZF set
       jmp @Exit
     .endif
     mov xax, xdi
     xchg xax, [xbx].pStmInpPos
-    .if DCHRA ptr [xax] == PCT_EOL                    ;Check for EOL
+    .if DCHRA ptr [xax] == PCT_EOL                      ;Check for EOL
       inc [xbx].dLineNumber
-      mov [xbx].bNewLine, TRUE                        ;Set StreamIn new line maker
-      .if [xbx].dStmOutEOL != FALSE                   ;Check Stream out EOL
+      mov [xbx].bNewLine, TRUE                          ;Set StreamIn new line maker
+      .if [xbx].dStmOutEOL != FALSE                     ;Check Stream out EOL
         OCall xbx::IncFile.StmWriteComment
-        .if eax != FALSE
-          OCall xbx::IncFile.StmWriteEOL
-        .endif
       .endif
-      jmp @TryAgain                                   ;Take the next Token
+      jmp @TryAgain                                     ;Take the next Token
     .endif
 
-    .if CHRA ptr [xax] == "\"                         ;Check for C continuation => combine lines
-      inc [xbx].dLineNumber                              ;  This should happen while tokenizing
-      mov [xbx].bNewLine, TRUE                        ;Set StreamIn new line maker
-      .if [xbx].dStmOutEOL != FALSE                   ;Check Stream out EOL
+    .if CHRA ptr [xax] == "\"                           ;Check for C continuation => combine lines
+      inc [xbx].dLineNumber                                ;  This should happen while tokenizing
+      mov [xbx].bNewLine, TRUE                          ;Set StreamIn new line maker
+      .if [xbx].dStmOutEOL != FALSE                     ;Check Stream out EOL
         OCall xbx::IncFile.StmWriteComment
-        .if eax != FALSE
-          OCall xbx::IncFile.StmWriteEOL
-        .endif
       .endif
-      jmp @TryAgain                                   ;Take the next Token
+      jmp @TryAgain                                     ;Take the next Token
     .endif
 
     .if DCHRA ptr [xax] == PCT_COMMENT
@@ -293,26 +238,24 @@ Method IncFile.GetNextToken, uses xbx xdi
     ;Each time a new line is started from input stream, check if we have a PP command
     .if [xbx].bNewLine != FALSE && CHRA ptr [xax] == '#'
       OCall xbx::IncFile.StmWriteComment
-      .if eax != FALSE
-        OCall xbx::IncFile.StmWriteEOL
-      .endif
-      invoke ParsePP
+      invoke RenderPP
       jmp @TryAgain
     .endif
   .endif
-  cmp xax, NULL
+  test xax, xax
+  setz [xbx].bEOF
 
 @Exit:
   mov [xbx].bNewLine, FALSE
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     IncFile.GetNextTokenFromPPLine
+; Method:     IncFile.GetNextTokenPP
 ; Purpose:    Returns the next token from within a PP command. Comments are handled automatically.
 ; Arguments:  None.
-; Return:     xax -> Token or NULL if Token = PCT_EOL or EOF reached.
+; Return:     xax -> Token or NULL if token = PCT_EOL or EOF reached. ZERO flag set if xax == NULL.
 
-Method IncFile.GetNextTokenFromPPLine, uses xbx xdi
+Method IncFile.GetNextTokenPP, uses xbx xdi
   SetObject xbx
   mov xdi, [xbx].pStmInpPos
 @NextToken:
@@ -344,38 +287,122 @@ Method IncFile.GetNextTokenFromPPLine, uses xbx xdi
       .endif
     .endif
   .endif
+  test xax, xax
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     IncFile.PeekNextToken
-; Purpose:    Peeks the next token.
-; Arguments:  None.
-; Return:     eax = Token.
+; Method:     IncFile.InputStatusLoad
+; Purpose:    Load the input status from an INP_STAT structure.
+; Arguments:  Arg1: -> INP_STAT structure.
+; Return:     Nothing.
 
-Method IncFile.PeekNextToken, uses xbx
+Method IncFile.InputStatusLoad, uses xbx xdi xsi, pStatus:P_INP_STAT
+  SetObject xbx
+  mov xsi, pStatus
+  mov xax, [xsi].INP_STAT.pIn
+  mov ecx, [xsi].INP_STAT.dLineNumber
+  mov dl, [xsi].INP_STAT.bNewLine
+  mov dh, [xsi].INP_STAT.bCondIfLevel
+  mov [xbx].pStmInpPos, xax
+  mov [xbx].dLineNumber, ecx
+  mov [xbx].bNewLine, dl
+  mov [xbx].bCondIfLevel, dh
+  mov dl, [xsi].INP_STAT.bSkipC
+  mov dh, [xsi].INP_STAT.bSkipScanPP
+  mov [xbx].bSkipC, dl
+  mov [xbx].bSkipScanPP, dh
+
+  mov xax, xsi
+  lea xdi, [xbx].bCondElseLevel
+  lea xsi, [xax].INP_STAT.bCondElseLevel
+  mov ecx, MAX_COND_LEVEL/sizeof(DWORD)
+  rep movsd
+
+  lea xdi, [xbx].bCondResult
+  lea xsi, [xax].INP_STAT.bCondResult
+  mov ecx, MAX_COND_LEVEL/sizeof(DWORD)
+  rep movsd
+
+  lea xdi, [xbx].bCondHistory
+  lea xsi, [xax].INP_STAT.bCondHistory
+  mov ecx, MAX_COND_LEVEL/sizeof(DWORD)
+  rep movsd
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     IncFile.InputStatusSave
+; Purpose:    Save the input status in an INP_STAT structure.
+; Arguments:  Arg1: -> INP_STAT structure.
+; Return:     Nothing.
+
+Method IncFile.InputStatusSave, uses xbx xdi xsi, pStatus:P_INP_STAT
+  SetObject xbx
+  mov xsi, pStatus
+  mov xax, [xbx].pStmInpPos
+  mov ecx, [xbx].dLineNumber
+  mov dl, [xbx].bNewLine
+  mov dh, [xbx].bCondIfLevel
+  mov [xsi].INP_STAT.pIn, xax
+  mov [xsi].INP_STAT.dLineNumber, ecx
+  mov [xsi].INP_STAT.bNewLine, dl
+  mov [xsi].INP_STAT.bCondIfLevel, dh
+  mov dl, [xbx].bSkipC
+  mov dh, [xbx].bSkipScanPP
+  mov [xsi].INP_STAT.bSkipC, dl
+  mov [xsi].INP_STAT.bSkipScanPP, dh
+
+  mov xax, xsi
+  lea xdi, [xax].INP_STAT.bCondElseLevel
+  lea xsi, [xbx].bCondElseLevel
+  mov ecx, MAX_COND_LEVEL/sizeof(DWORD)
+  rep movsd
+
+  lea xdi, [xax].INP_STAT.bCondResult
+  lea xsi, [xbx].bCondResult
+  mov ecx, MAX_COND_LEVEL/sizeof(DWORD)
+  rep movsd
+
+  lea xdi, [xax].INP_STAT.bCondHistory
+  lea xsi, [xbx].bCondHistory
+  mov ecx, MAX_COND_LEVEL/sizeof(DWORD)
+  rep movsd
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     IncFile.PeekNextTokenC
+; Purpose:    Peek the next C token.
+; Arguments:  None.
+; Return:     xax -> Token. ZERO flag set if xax == NULL.
+
+Method IncFile.PeekNextTokenC, uses xbx
   local InpStat:INP_STAT, pToken:PTOKEN
 
   SetObject xbx
-  OCall xbx::IncFile.SaveInputStatus, addr InpStat
+  OCall xbx::IncFile.InputStatusSave, addr InpStat
   inc [xbx].bSkipScanPP
-  OCall xbx::IncFile.GetNextToken
+  OCall xbx::IncFile.GetNextTokenC
   mov pToken, xax
   dec [xbx].bSkipScanPP
-  OCall xbx::IncFile.LoadInputStatus, addr InpStat
+  OCall xbx::IncFile.InputStatusLoad, addr InpStat
   mov xax, pToken
+  test xax, xax
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.Init
-; Purpose:    Constructor
+; Purpose:    Instance initialization.
 ; Arguments:  Arg1 -> Full Path and FileName of the h-file.
 ;             Arg2 -> Parent IncFile object that created (included) this instance or NULL.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
+.data?
+dStmBufSize DWORD ?
+.code
+
 Method IncFile.Init, uses xbx xdi xsi, pOwner:POINTER, pFileName:PSTRINGW, pParent:$ObjPtr(IncFile)
-  local hFile:HANDLE, dFileSize:DWORD, dBytesRead:DWORD, dSysError:DWORD, pErrMsgBuffer:PSTRINGA
+  local hFile:HANDLE, dFileSize:DWORD, dBytesRead:DWORD, dSysError:DWORD
   local cFullFileName[MAX_PATH]:CHRW, cFullIncPathName[MAX_PATH]:CHRW, cMessage[1024]:CHR
-  local pName:PSTRINGW, dStmBufSize:DWORD
+  local pName:PSTRINGW;, dStmBufSize:DWORD
 
   SetObject xbx
   ACall xbx::IncFile.Init, pOwner
@@ -493,9 +520,9 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.ParseHeaderFile
 ; Purpose:    Input is C header source, output is tokenized, that is:
-;              + each token is an ASCII string
-;              + numeric literals (numbers) are converted to ASM format on the fly
-;              + comments are marked as such
+;              + Each token is an ASCII string.
+;              + Numeric literals (numbers) are converted to ASM format on the fly.
+;              + Comments are marked as such.
 ;              Example:
 ;                Input stream:  "#define VAR1 0xA+2"\r\n
 ;                Output stream: "#",0,"define",0,"VAR1",0,"0Ah",0,"+",0,"2",0,PCT_EOL,0
@@ -631,7 +658,7 @@ Method IncFile.ParseHeaderLine, uses xbx xdi xsi, pLine:PSTRINGA, bWeak:DWORD
       ;Check if content of al is a delimiter
       push xdi
       lea xdi, bDelim
-      mov ecx, sizeof bDelim
+      mov ecx, sizeof(bDelim)
       repnz scasb
       pop xdi
       .if ZERO?                                       ;Delimiter found
@@ -682,6 +709,65 @@ Method IncFile.ParseHeaderLine, uses xbx xdi xsi, pLine:PSTRINGA, bWeak:DWORD
   .endif
   stosw
   mov [xbx].pStmOutPos, xdi
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     IncFile.Render
+; Purpose:    Start translation of header file into an MASM include file.
+; Arguments:  None.
+; Return:     eax = 0 if error occured.
+
+Method IncFile.Render, uses xbx xdi xsi
+  local cMessage[1024]:CHRA
+;  local dBytesWritten:DWORD
+
+  SetObject xbx
+
+  ;Initial message
+  lea xdi, cMessage
+  WriteF xdi, "Analysis of \`¦SU\` started", [xbx].pHeaderFileName
+  OCall [xbx].pOwner::Application.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
+
+  ;Prepare buffers
+  mrm [xbx].pStmInpPos, [xbx].pStmBuffer1, xdi
+
+;  if DEBUGGING
+;    invoke CreateFileW, $OfsCStrA("~parsed.tmp"), GENERIC_WRITE, FILE_SHARE_WRITE, NULL, \
+;                        CREATE_ALWAYS, FILE_ATTRIBUTE_ARCHIVE, 0
+;    .if xax != INVALID_HANDLE_VALUE
+;      mov xsi, xax
+;      mov xcx, [xbx].pStmOutPos
+;      sub xcx, xdi
+;      invoke WriteFile, xsi, xdi, xcx, addr dBytesWritten, NULL
+;      invoke CloseHandle, xsi
+;    .endif
+;  endif
+
+  mrm [xbx].pStmOutPos, [xbx].pStmBuffer2, xdi
+  mov CHRA ptr [xdi], 0
+  if DEBUGGING
+    invoke MemZero, xdi, dStmBufSize
+  endif 
+
+  ;Reset volatile data lists
+  lea xsi, VolatilConvTable
+  .while POINTER ptr [xsi] != NULL
+    OCall [xsi].CONV_TAB_ENTRY.pList::List.DeleteAll
+    add xsi, sizeof(CONV_TAB_ENTRY)
+  .endw
+
+  ;Start translation
+  invoke RenderC                                         ;xbx is passed implicitly
+
+  ;Check if level
+  .if [xbx].bCondIfLevel != 0
+    OCall xbx::IncFile.ShowError, $OfsCStr("unmatching if/endif")
+  .endif
+
+  ;Final message
+  lea xdi, cMessage
+  WriteF xdi, "Analysis of \`¦SU\` completed", [xbx].pHeaderFileName
+  OCall [xbx].pOwner::Application.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -823,14 +909,13 @@ Method IncFile.StmCopyRestOfPPLine
   local pToken:PTOKEN
 
   .while TRUE
-    OCall pSelf::IncFile.GetNextTokenFromPPLine
-    .break .if xax == NULL
+    OCall pSelf::IncFile.GetNextTokenPP
+    .break .if ZERO?
     mov pToken, xax
     OCall pSelf::IncFile.StmWriteChar, " "
     OCall pSelf::IncFile.StmWrite, pToken
   .endw
   OCall pSelf::IncFile.StmWriteComment
-  OCall pSelf::IncFile.StmWriteEOL
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -842,7 +927,6 @@ MethodEnd
 Method IncFile.StmSkipRestOfPPLine
   SkipPPLine
   OCall pSelf::IncFile.StmWriteComment
-  OCall pSelf::IncFile.StmWriteEOL
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -880,7 +964,7 @@ MethodEnd
 ; Method:     IncFile.StmWriteComment
 ; Purpose:    Writes the current comments to the output stream.
 ; Arguments:  None.
-; Return:     eax = TRUE if succeeded, otherwise FALSE.
+; Return:     Nothing.
 
 Method IncFile.StmWriteComment, uses xsi
   SetObject xsi
@@ -889,7 +973,7 @@ Method IncFile.StmWriteComment, uses xsi
   .if [xcx].$Obj(Application).Options.bIncludeComments != FALSE && CHRA ptr [[xsi].cComment + 1] != 0
     OCall xsi::IncFile.StmWrite, addr [xsi].cComment
     mov CHRA ptr [[xsi].cComment + 1], 0                 ;Set ZTC after ";"
-    mov eax, TRUE
+    OCall xbx::IncFile.StmWriteEOL
   .endif
 MethodEnd
 
@@ -909,6 +993,18 @@ Method IncFile.StmWriteChar, uses xbx, bChar:CHRA
   movzx cx, bChar
   mov [xax], cx                                       ;Write also a ZTC
   inc [xbx].pStmOutPos
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     IncFile.StmWriteError
+; Purpose:    Write an error line to the output stream.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method IncFile.StmWriteError, uses xbx
+  SetObject xbx
+  OCall xbx.StmWrite, $OfsCStrA(CRLF, " ********* ERROR ********* ")
+  OCall xbx.StmWriteEOL
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -940,7 +1036,7 @@ Method IncFile.StmWriteEOL, uses xbx
     mov [xbx].dStmOutEOL, FALSE
     OCall xbx::IncFile.StmWriteIndent
   .endif
-  invoke StrECopyA, [xbx].pStmOutPos, $OfsCStr(CRLF)
+  invoke StrECopyA, [xbx].pStmOutPos, $OfsCStrA(CRLF)
   mov [xbx].pStmOutPos, xax
   mov [xbx].dStmOutEOL, TRUE
 MethodEnd
@@ -963,84 +1059,6 @@ Method IncFile.StmWriteIndent, uses xbx xsi
       dec esi
     .endw
   .endif
-MethodEnd
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     IncFile.LoadInputStatus
-; Purpose:    Load the input status from an INP_STAT structure.
-; Arguments:  Arg1: -> INP_STAT.
-; Return:     Nothing.
-
-Method IncFile.LoadInputStatus, uses xbx xdi xsi, pStatus:P_INP_STAT
-  SetObject xbx
-  mov xsi, pStatus
-  mov xax, [xsi].INP_STAT.pIn
-  mov ecx, [xsi].INP_STAT.dLineNumber
-  mov dl, [xsi].INP_STAT.bNewLine
-  mov dh, [xsi].INP_STAT.bIfLevel
-  mov [xbx].pStmInpPos, xax
-  mov [xbx].dLineNumber, ecx
-  mov [xbx].bNewLine, dl
-  mov [xbx].bIfLevel, dh
-  mov dl, [xsi].INP_STAT.bSkipC
-  mov dh, [xsi].INP_STAT.bSkipScanPP
-  mov [xbx].bSkipC, dl
-  mov [xbx].bSkipScanPP, dh
-
-  mov xax, xsi
-  lea xdi, [xbx].bIfStructure
-  lea xsi, [xax].INP_STAT.bIfStructure
-  mov ecx, MAX_IF_LEVEL/sizeof(DWORD)
-  rep movsd
-
-  lea xdi, [xbx].bIfResult
-  lea xsi, [xax].INP_STAT.bIfResult
-  mov ecx, MAX_IF_LEVEL/sizeof(DWORD)
-  rep movsd
-
-  lea xdi, [xbx].bIfHistory
-  lea xsi, [xax].INP_STAT.bIfHistory
-  mov ecx, MAX_IF_LEVEL/sizeof(DWORD)
-  rep movsd
-MethodEnd
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     IncFile.SaveInputStatus
-; Purpose:    Save the input status in an INP_STAT structure.
-; Arguments:  Arg1: -> INP_STAT.
-; Return:     Nothing.
-
-Method IncFile.SaveInputStatus, uses xbx xdi xsi, pStatus:P_INP_STAT
-  SetObject xbx
-  mov xsi, pStatus
-  mov xax, [xbx].pStmInpPos
-  mov ecx, [xbx].dLineNumber
-  mov dl, [xbx].bNewLine
-  mov dh, [xbx].bIfLevel
-  mov [xsi].INP_STAT.pIn, xax
-  mov [xsi].INP_STAT.dLineNumber, ecx
-  mov [xsi].INP_STAT.bNewLine, dl
-  mov [xsi].INP_STAT.bIfLevel, dh
-  mov dl, [xbx].bSkipC
-  mov dh, [xbx].bSkipScanPP
-  mov [xsi].INP_STAT.bSkipC, dl
-  mov [xsi].INP_STAT.bSkipScanPP, dh
-
-  mov xax, xsi
-  lea xdi, [xax].INP_STAT.bIfStructure
-  lea xsi, [xbx].bIfStructure
-  mov ecx, MAX_IF_LEVEL/sizeof(DWORD)
-  rep movsd
-
-  lea xdi, [xax].INP_STAT.bIfResult
-  lea xsi, [xbx].bIfResult
-  mov ecx, MAX_IF_LEVEL/sizeof(DWORD)
-  rep movsd
-
-  lea xdi, [xax].INP_STAT.bIfHistory
-  lea xsi, [xbx].bIfHistory
-  mov ecx, MAX_IF_LEVEL/sizeof(DWORD)
-  rep movsd
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

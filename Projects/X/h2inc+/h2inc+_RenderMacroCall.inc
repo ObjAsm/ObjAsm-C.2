@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      h2inc+_ParseMacroCall.inc
+; Title:      h2inc+_RenderMacroCall.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
 ; Purpose:  
@@ -9,7 +9,7 @@
 .code
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  ParseMacroCall
+; Procedure:  RenderMacroCall
 ; Purpose:    A known macro has been found.
 ; Arguments:  Arg1 -> Macro Name
 ;             Arg2: Macro Flags (MCF_xxx).
@@ -18,7 +18,7 @@
 ; Return:     eax = returns TRUE if macro was invoked, otherwise FALSE (turned out to be
 ;             NO macro invocation).
 
-ParseMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
+RenderMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
   local pToken:PTOKEN, pType:PSTRINGA, pName:PSTRINGA, pStmOutPos:PSTRINGA, bAddSpace:DWORD
   local dPtrCount:DWORD, dParenthesesCount:DWORD, bSkipTheRest:DWORd, pCurrToken:PTOKEN
   local dTypeCSpec:DWORD, dScanStep:DWORD, pArgStack:POINTER, cTransBuffer[128]:CHRA
@@ -26,14 +26,14 @@ ParseMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
 
   m2m pStmOutPos, [xbx].$Obj(IncFile).pStmOutPos, xax
 
-  DbgPrintF , "¦UD: ParseMacroCall - found: ¦SA", \
+  DbgPrintF , "¦UD: RenderMacroCall - found: ¦SA", \
             [xbx].$Obj(IncFile).dLineNumber, pMacroName
 
   .ifBitSet dMacroFlags, MCF_SKIP_INVOKATION
-    OCall xbx::IncFile.PeekNextToken
-    .if xax != NULL
+    OCall xbx::IncFile.PeekNextTokenC
+    .if !ZERO?
       .if CHRA ptr [xax] == "("
-        OCall xbx::IncFile.GetNextToken                 ;Consume it
+        OCall xbx::IncFile.GetNextTokenC                 ;Consume it
         invoke SkipBraces, "(", ")"
       .endif
     .endif
@@ -49,10 +49,10 @@ ParseMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
     mov [xbx].$Obj(IncFile).bInsideInterface, FALSE
   .endif
 
-  OCall xbx::IncFile.PeekNextToken
-  .if xax != NULL && CHRA ptr [xax] == "("
+  OCall xbx::IncFile.PeekNextTokenC
+  .if !ZERO? && CHRA ptr [xax] == "("
     OCall xbx::IncFile.StmWrite, pMacroName
-    OCall xbx::IncFile.GetNextToken                   ;Can NOT fail, we peeked a token previously
+    OCall xbx::IncFile.GetNextTokenC                   ;Can NOT fail, we peeked a token previously
     .ifBitClr dMacroFlags, MCF_SKIP_BRACES
       OCall xbx::IncFile.StmWrite, xax
     .else
@@ -61,7 +61,7 @@ ParseMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
     mov dParenthesesCount, 1
     mov bAddSpace, FALSE
     .while TRUE
-      OCall xbx::IncFile.GetNextToken
+      OCall xbx::IncFile.GetNextTokenC
       .break .if ZERO?
       Add@Stacklist pArgStack, xax, xdx
       .if CHRA ptr [xax] == "("
@@ -82,7 +82,7 @@ ParseMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
             invoke TranslateReservedWord, xax, addr cTransBuffer   ;Arguments can not be reserved words
           .endif
           invoke TranslateNumOperator, xax
-          DbgPrintF , "¦UD: ParseMacroCall - Parameter = ¦SA", [xbx].$Obj(IncFile).dLineNumber, xax
+          DbgPrintF , "¦UD: RenderMacroCall - Parameter = ¦SA", [xbx].$Obj(IncFile).dLineNumber, xax
           mov bAddSpace, TRUE
         .endif
       .endif
@@ -103,11 +103,11 @@ ParseMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
       mov bSkipTheRest, FALSE
       .while TRUE
         .ifBitSet dMacroFlags, MCF_PARAMS_FOLLOW
-          OCall xbx::IncFile.GetNextToken
+          OCall xbx::IncFile.GetNextTokenC
           .break .if ZERO? || CHRA ptr [xax] == ";"     ;Statement terminator
         .else
-          OCall xbx::IncFile.GetNextTokenFromPPLine
-          .break .if xax == NULL
+          OCall xbx::IncFile.GetNextTokenPP
+          .break .if ZERO?
         .endif
         .continue .if bSkipTheRest != FALSE
 
@@ -120,7 +120,7 @@ ParseMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
             test xax, xax
             cmovz xax, pName
             .if xax != NULL
-              DbgPrintF , "¦UD: ParseMacroCall - Param = ¦SA", [xbx].$Obj(IncFile).dLineNumber, xax
+              DbgPrintF , "¦UD: RenderMacroCall - Param = ¦SA", [xbx].$Obj(IncFile).dLineNumber, xax
               mov pStr, xax
               OCall xbx::IncFile.StmWrite, $OfsCStrA(", :")
               WritePtr
@@ -233,10 +233,10 @@ ParseMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
 
   .ifBitSet dMacroFlags, MCF_STRUCT_BEG
     inc [xbx].$Obj(IncFile).dIndentation
-    OCall xbx::IncFile.GetNextToken
+    OCall xbx::IncFile.GetNextTokenC
     .if CHRA ptr [xax] == "{"
       mov xcx, $GetItem@Stacklist(pArgStack, 0)
-      invoke ParseBlock, xcx, PBT_CONTAINER
+      invoke RenderBlock, xcx, RBT_CONTAINER
       invoke ParseInterfaceBlock, xcx
       dec [xbx].$Obj(IncFile).dIndentation
       OCall xbx::IncFile.StmWriteF, $OfsCStrA("END_%s"), pMacroName
@@ -252,10 +252,11 @@ ParseMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
   ret
 
 @Error:
-  DbgErrorF , "¦SU(¦UD): ParseMacroCall - error", \
+@ErrorEoF:
+  DbgErrorF , "¦SU(¦UD): RenderMacroCall - error", \
               [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
   Destroy@Stacklist pArgStack
   xor eax, eax
   ret
-ParseMacroCall endp
+RenderMacroCall endp
 

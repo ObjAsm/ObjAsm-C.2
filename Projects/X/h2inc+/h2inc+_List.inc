@@ -62,7 +62,7 @@ MethodEnd
 
 Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
   local hFile:HANDLE, dBytesRead:DWORD
-  local dFileSize:DWORD, dMemSize:DWORD, pMemBlock:POINTER, dSize:DWORD
+  local dFileSize:DWORD, dMemSize:DWORD, pMemBlock:POINTER, dLength:DWORD
   local dCount:DWORD, bChar:CHRA, pToken:PTOKEN, dCounter:DWORD
 
   SetObject xdi
@@ -102,10 +102,11 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
           inc ecx
         .until (al == CR) || (al == 0) || (al == "=")
         .break .if al == 0 || ecx == 1
-        mov CHRA ptr [xsi - 1], 0                     ;Set ZTC
+;        mov CHRA ptr [xsi - 1], 0                     ;Set ZTC
         .if al != "="
           inc xsi                                     ;Skip LF
         .endif
+        dec ecx
         mov dCount, ecx
         mov bChar, al
 
@@ -127,7 +128,7 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
           .endif
 
         .elseIfBitSet [xdi].dFlags, CF_ATTR
-          mov dSize, ecx
+          mov dLength, ecx
           mov al, bChar
           .if al == "="
             mov pToken, xsi
@@ -137,14 +138,14 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
             .break .if al == 0
             mov CHRA ptr [xsi - 1], 0                 ;Set ZTC
             inc xsi                                   ;Skip LF
-            invoke dec2dword, pToken
+            invoke dec2dwordA, pToken
           .else
             xor eax, eax                              ;Missing Attribute => assume 0
           .endif
-          invoke InsertAttr, xdi, xbx, dSize, eax
+          invoke InsertAttr, xdi, xbx, dLength, eax
 
         .elseIfBitSet [xdi].dFlags, CF_EQUI
-          mov dSize, ecx
+          mov dLength, ecx
           mov al, bChar
           .if al == "="
             mov pToken, xsi
@@ -161,7 +162,7 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
             lea xax, szEmpty
             mov dCounter, 1
           .endif
-          invoke InsertEqui, xdi, xbx, dSize, xax, dCounter
+          invoke InsertEqui, xdi, xbx, dLength, xax, dCounter
         .endif
 
         mov xbx, xsi
@@ -192,9 +193,9 @@ Method List.SaveToFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
     .ifBitSet [xsi].dFlags, CF_EQUI
       .ColForEach pSelf
         mov xsi, xax
-        mov edx, [xax - sizeof DWORD]                       ;Get the size
+        mov edx, [xax - sizeof(DWORD)]                      ;Get the size
         lea xdi, cBuffer
-        lea xbx, [xax + xdx + sizeof DWORD]                 ;Next string
+        lea xbx, [xax + xdx + sizeof(DWORD)]                ;Next string
         WriteF xdi, "¦SA=¦SA\n", xsi, xbx
         lea xax, cBuffer
         mov xdx, xax

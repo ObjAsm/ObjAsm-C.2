@@ -24,6 +24,21 @@
 ;             - Ported to dual bitness.
 ; ==================================================================================================
 
+;-l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\um_10.0.22621.0\dde.h"
+
+;ToDo:
+; 1. CRLF in Optionsfile produces a problem with FileSpec
+
+
+
+; Rules:
+;  1. When a proc returns a pToken, the ZF must be set accordingly
+;  2. Returned tokens are the last processed ones. 
+
+
+;Class Storage Specifiers: auto, extern, register, static
+;Type Qualifiers: const, volatile
+
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc
 SysSetup OOP, NUI64, WIDE_STRING, DEBUG(WND);, RESGUARD)
@@ -35,18 +50,56 @@ SysSetup OOP, NUI64, WIDE_STRING, DEBUG(WND);, RESGUARD)
 % includelib &LibPath&Windows\shell32.lib
 % includelib &LibPath&Windows\shlwapi.lib
 
-include h2inc+_Shared.inc
-include h2inc+_BStrA.inc
-include h2inc+_Globals.inc
 % include &MacPath&LDLL.inc
 % include &MacPath&LSLL.inc
 
 MakeObjects Primer, Stream, Collection, SortedCollection, StrCollectionA
 MakeObjects SortedStrCollectionA, StrCollectionW, SortedStrCollectionW 
 MakeObjects ConsoleApp
+MakeObjects Vector, %XWordVector
 
-include h2inc+_MemoryHeap.inc
+PTOKEN  typedef     ptr CHRA
+
+include h2inc+_Shared.inc
+include h2inc+_BStrA.inc
+include h2inc+_Globals.inc
 include h2inc+_List.inc
+include h2inc+_MemoryHeap.inc
+
+
+;DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGSX struct
+;  union
+;    struct
+;      qqq1 DWORD  ?
+;      qqq2 DWORD  ?
+;    ends 
+;    value DWORD  ?
+;  ends
+;DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGSX ends
+;
+;Pepe struct
+;  DUMMYSTRUCTNAME000 record DUMMYSTRUCTNAME_R0_reserved:29, DUMMYSTRUCTNAME_R0_edidIdsValid:1, DUMMYSTRUCTNAME_R0_friendlyNameForced:1, DUMMYSTRUCTNAME_R0_friendlyNameFromEdid:1
+;  DUMMYSTRUCTNAME DUMMYSTRUCTNAME000 <>
+;  value UINT32 ?
+;Pepe ends
+;
+;Pepa struct
+;  DUMMYSTRUCTNAME000 record DUMMYSTRUCTNAME_R0_reserved:29, DUMMYSTRUCTNAME_R0_edidIdsValid:1, DUMMYSTRUCTNAME_R0_friendlyNameForced:1, DUMMYSTRUCTNAME_R0_friendlyNameFromEdid:1
+;  DUMMYSTRUCTNAME DUMMYSTRUCTNAME000 <>
+;  value UINT32 ?
+;Pepa ends
+;
+;Status struct 
+;  Status_REC record xxx:1,
+;ifndef VERSION2
+;    fBusy:1,
+;else
+;    fAck:1,
+;    fBusy:1,
+;endif
+;    reserved:6
+;  Status_R0 Status_REC <>
+;Status ends
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Object:   IniFileReader
@@ -67,17 +120,19 @@ ObjectEnd
 ; Purpose:  Handle all actions to generate an .inc file.
 
 Object IncFile,, Primer
-  StaticMethod    Analyse
+  StaticMethod    AddComment,         PSTRINGA
   StaticMethod    CreateDefFile,      PSTRINGW
   RedefineMethod  Done
   RedefineMethod  Init,               POINTER, PSTRINGW, $ObjPtr(IncFile)
-  StaticMethod    GetNextToken
-  StaticMethod    GetNextTokenFromPPLine
-  StaticMethod    PeekNextToken
+  StaticMethod    InputStatusLoad,    P_INP_STAT
+  StaticMethod    InputStatusSave,    P_INP_STAT
+  StaticMethod    GetNextTokenC
+  StaticMethod    GetNextTokenPP
+  StaticMethod    PeekNextTokenC
   StaticMethod    ParseHeaderFile
   StaticMethod    ParseHeaderLine,    PSTRINGA, DWORD
+  StaticMethod    Render
   StaticMethod    Save,               PSTRINGW
-  StaticMethod    AddComment,         PSTRINGA
   StaticMethod    SkipComments,       PSTRINGA
   StaticMethod    StmCopyRestOfPPLine
   StaticMethod    StmSkipRestOfPPLine
@@ -85,11 +140,10 @@ Object IncFile,, Primer
   StaticMethod    StmWrite,           PSTRINGA
   StaticMethod    StmWriteChar,       CHRA
   StaticMethod    StmWriteComment
+  StaticMethod    StmWriteError
   StaticMethod    StmWriteF,          PSTRINGA, ?
   StaticMethod    StmWriteEOL
   StaticMethod    StmWriteIndent
-  StaticMethod    LoadInputStatus,    P_INP_STAT
-  StaticMethod    SaveInputStatus,    P_INP_STAT
   StaticMethod    ShowError,          PSTRING, ?
   StaticMethod    ShowSysError,       PSTRING, DWORD
   StaticMethod    ShowWarning,        DWORD, PSTRING, ?
@@ -123,15 +177,15 @@ Object IncFile,, Primer
   DefineVariable  bSkipC,             BYTE,     FALSE   ;>0 => don't parse C lines in StmInp
   DefineVariable  bNewLine,           BYTE,     FALSE   ;Last token was a PCT_EOL
   DefineVariable  bComment,           BYTE,     FALSE   ;Comment flag for "/*" and "*/"
-  DefineVariable  bUsePrevToken,      BYTE,     FALSE   ;GetNextToken returns pPrevToken
+  DefineVariable  bUsePrevToken,      BYTE,     FALSE   ;GetNextTokenC returns pPrevToken
   DefineVariable  bExternC,           BYTE,     FALSE   ;Extern "C" occured
-  DefineVariable  bInsideClass,       BYTE,     FALSE   ;Inside a class definition
   DefineVariable  bInsideInterface,   BYTE,     FALSE   ;Inside an interface definition
   DefineVariable  bSkipUselessCode,   BYTE,     FALSE   ;Flag to avoid [...] repetitions
-  DefineVariable  bIfLevel,           BYTE,     0       ;Current 'if' level
-  DefineVariable  bIfStructure,       BYTE,     MAX_IF_LEVEL dup(0) ;If structure stack
-  DefineVariable  bIfResult,          BYTE,     MAX_IF_LEVEL dup(0) ;If result stack
-  DefineVariable  bIfHistory,         BYTE,     MAX_IF_LEVEL dup(0) ;If history stack
+  DefineVariable  bCondIfLevel,       BYTE,     0       ;Current 'if' level
+  DefineVariable  bCondElseLevel,     BYTE,     MAX_COND_LEVEL dup(0) ;Else stack
+  DefineVariable  bCondResult,        BYTE,     MAX_COND_LEVEL dup(0) ;If result stack
+  DefineVariable  bCondHistory,       BYTE,     MAX_COND_LEVEL dup(0) ;If history stack
+  DefineVariable  bEOF,               BYTE,     FALSE
   DefineVariable  cComment,           CHRA,     1024 dup (0) ;Comment buffer
 
 ObjectEnd
@@ -156,16 +210,15 @@ Object Application, MyConsoleAppID, ConsoleApp          ;Console Interface App.
   StaticMethod    ShowQuestion,       PSTRING
   StaticMethod    ShowWarning,        DWORD, PSTRING
 
-  DefineVariable  dRecordNameSufix,   DWORD,    0       ;Added at the end of record and field names
-  DefineVariable  dStructNameSufix,   DWORD,    0       ;Added at the end of DUMMYSTRUCTNAME
-  DefineVariable  dUnionNameSufix,    DWORD,    0       ;Added at the end of DUMMYUNIONNAME
-  DefineVariable  dStructSuffix,      DWORD,    0       ;Used for nameless structures => STRUCT_xxxx
+  DefineVariable  dRecordNameSuffix,  DWORD,    0       ;Added at the end of record and field names
+  DefineVariable  dStrucNameSuffix,   DWORD,    0       ;Added at the end of DUMMYSTRUCTNAME/nameless 
+  DefineVariable  dUnionNameSuffix,   DWORD,    0       ;Added at the end of DUMMYUNIONNAME/nameless
   if DEBUGGING
   DefineVariable  dIncNestingLevel,   DWORD,    0
   endif
   DefineVariable  bTerminate,         BYTE,     FALSE   ;TRUE => terminate application as soon as possible
 
-  DefineVariable  pFilespec,          PSTRINGA, NULL
+  DefineVariable  pFilespec,          PSTRINGW, NULL
   DefineVariable  cOutputDir,         CHRW,     MAX_PATH dup(0)
 
   DefineVariable  Options,            OPTIONS,  {}
@@ -187,8 +240,8 @@ include h2inc+_Evaluator.inc
 include h2inc+_IncFile_Mac.inc
 include h2inc+_IncFile.inc
 include h2inc+_IncFile_Proc.inc
-include h2inc+_IncFile_Parse.inc
-include h2inc+_Handler.inc
+include h2inc+_IncFile_Render.inc
+include h2inc+_PPCHandler.inc                           ;PP command handler
 include h2inc+_Main.inc
 
 start proc                                              ;Program entry point

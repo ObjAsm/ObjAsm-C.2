@@ -18,11 +18,11 @@ ParseExtern proc
   local pToken:PTOKEN
 
   .while TRUE
-    OCall xbx::IncFile.GetNextToken
+    OCall xbx::IncFile.GetNextTokenC
     .break .if xax == NULL
     .break .if ZERO? || CHRA ptr [xax] == ";"           ;Statement terminator
     mov pToken, xax
-    .if DWORD ptr [xax] == ',"C"' && DCHRA ptr [xax + sizeof DWORD] == "0"
+    .if DWORD ptr [xax] == ',"C"' && DCHRA ptr [xax + sizeof(DWORD)] == "0"
       OCall xbx::IncFile.StmWrite, $OfsCStrA(";extern ", 22h, "C", 22h)   ;"   C linkage
       OCall xbx::IncFile.StmWriteEOL
       mov [xbx].$Obj(IncFile).bExternC, TRUE
@@ -36,7 +36,7 @@ ParseExtern proc
     .if [xbx].$Obj(IncFile).bExternC != FALSE
       OCall xbx::IncFile.StmWrite, $OfsCStrA("c ")
     .endif
-    invoke ParseExternItem, pToken
+    invoke RenderExternMember, pToken
     .break
   .endw
 

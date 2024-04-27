@@ -22,19 +22,18 @@
 ;             we returned from the last recursive call.
 
 ParseTypedefFunctionPtr proc uses xdi pParent:PSTRINGA
-  local pToken:PTOKEN, pName:PSTRINGA, pType:PSTRINGA
+  local pToken:PTOKEN, pName:PSTRINGA, pType:PSTRINGA, dTypeCSpec:DWORD
   local dQualifier:DWORD, dPtrCount:DWORD, bFirstParam:DWORD
-  local dTypeCSpec:DWORD, dScanStep:DWORD
-  local szPrototype[1024*3]:CHRA, szType[128]:CHRA, cTransBuffer[128]:CHRA, dInside:DWORD
+  local cPrototype[1024*3]:CHRA, cType[128]:CHRA, cTransBuffer[128]:CHRA, dInside:DWORD
 
   mov dPtrCount, 0
   mov dQualifier, 0
-  mov szPrototype, 0
+  mov cPrototype, 0
   mov pName, NULL
 
   ;Get Qualifiers & Name ----------------------------------------------------
   .while TRUE
-    OCall xbx::IncFile.GetNextToken
+    OCall xbx::IncFile.GetNextTokenC
     jz @Error
     invoke SkipAnnotations, xax
     jz @Error
@@ -52,7 +51,7 @@ ParseTypedefFunctionPtr proc uses xdi pParent:PSTRINGA
     .else
       invoke GetProtoQualifier, xax
       .if xax != NULL
-        mov edx, [xax - sizeof DWORD]
+        mov edx, [xax - sizeof(DWORD)]
         mov eax, [xax + xdx]
         or dQualifier, eax
       .else
@@ -64,25 +63,25 @@ ParseTypedefFunctionPtr proc uses xdi pParent:PSTRINGA
   DbgPrintF , "¦UD: ParseTypedefFunctionPtr - ¦SA", [xbx].$Obj(IncFile).dLineNumber, pName
 
   ;Parse function header ----------------------------------------------------
-  OCall xbx::IncFile.GetNextToken
+  OCall xbx::IncFile.GetNextTokenC
   jz @Error
   invoke SkipAnnotations, xax
   jz @Error
   cmp CHRA ptr [xax], "("
   jnz @Error
 
-  lea xdi, szPrototype                                ;xdi -> Buffer
+  lea xdi, cPrototype                                ;xdi -> Buffer
   xor eax, eax
   .if pName != NULL
     .if ([xbx].$Obj(IncFile).bInsideInterface != FALSE); && (dQualifier & PTQ_STDCALL || dQualifier & PTQ_FASTCALL)
       invoke TranslateReservedWord, pName, NULL
-      invoke wsprintf, xdi, $OfsCStr("STD_METHOD %s, "), xax ;Use asm adhoc macro
+      invoke wsprintfA, xdi, $OfsCStrA("STD_METHOD %s, "), xax ;Use asm adhoc macro
     .else
       invoke GetCallConvString, dQualifier
       .if pParent != NULL
-        invoke wsprintf, xdi, $OfsCStr("TYPE_%s_%s typedef proto %s "), pParent, pName, xax
+        invoke wsprintfA, xdi, $OfsCStrA("TYPE_%s_%s typedef proto %s "), pParent, pName, xax
       .else
-        invoke wsprintf, xdi, $OfsCStr("TYPE_%s typedef proto %s "), pName, xax
+        invoke wsprintfA, xdi, $OfsCStrA("TYPE_%s typedef proto %s "), pName, xax
       .endif
     .endif
     add xdi, xax                                        ;Move pointer to the end
@@ -93,7 +92,7 @@ ParseTypedefFunctionPtr proc uses xdi pParent:PSTRINGA
   mov pType, NULL
   mov bFirstParam, TRUE
   .while TRUE
-    OCall xbx::IncFile.GetNextToken
+    OCall xbx::IncFile.GetNextTokenC
 @ProcessToken:
     jz @Error
     invoke SkipAnnotations, xax
@@ -112,7 +111,7 @@ ParseTypedefFunctionPtr proc uses xdi pParent:PSTRINGA
     .if CHRA ptr [xax] == "["
       inc dPtrCount
       .repeat
-        OCall xbx::IncFile.GetNextToken
+        OCall xbx::IncFile.GetNextTokenC
       .until ZERO? || CHRA ptr [xax] == "]" || CHRA ptr [xax] == ";"
       .continue
     .endif
@@ -128,8 +127,8 @@ ParseTypedefFunctionPtr proc uses xdi pParent:PSTRINGA
         mov pToken, xax
       mov eax, dInside
         mov [xbx].$Obj(IncFile).bInsideInterface, al
-        ;invoke sprintf, addr szType, $OfsCStrA("P¦SA_¦SA"), pName, edx
-        lea eax, szType
+        ;invoke sprintf, addr cType, $OfsCStrA("P¦SA_¦SA"), pName, edx
+        lea xax, cType
         mov pType, xax
         mov xax, pToken
         .break .if CHRA ptr [xax] == ";"
@@ -208,12 +207,12 @@ ParseTypedefFunctionPtr proc uses xdi pParent:PSTRINGA
   .endw
 
   .while CHRA ptr [xax] != ";" && CHRA ptr [xax] != ","     ;Consume the rest up to ';' or ','
-    OCall xbx::IncFile.GetNextToken
+    OCall xbx::IncFile.GetNextTokenC
   .endw
   mov pToken, xax
 
   .if pName != NULL
-    OCall xbx::IncFile.StmWrite, addr szPrototype
+    OCall xbx::IncFile.StmWrite, addr cPrototype
     OCall xbx::IncFile.StmDeleteLastSpace
     OCall xbx::IncFile.StmWriteEOL
 
@@ -233,11 +232,11 @@ ParseTypedefFunctionPtr proc uses xdi pParent:PSTRINGA
       OCall xbx::IncFile.StmWriteEOL
 
       .if pParent != NULL
-        OCall xbx::IncFile.StmWriteF, $OfsCStr("%s "), pName
-        OCall xbx::IncFile.StmWriteF, $OfsCStr("P%s_%s ?"), pParent, pName
+        OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s "), pName
+        OCall xbx::IncFile.StmWriteF, $OfsCStrA("P%s_%s ?"), pParent, pName
 ;      .else
 ;        invoke TranslateReservedWord, pName, NULL
-;        OCall xbx::IncFile.StmWriteF, $OfsCStr("%s ?"), xax
+;        OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s ?"), xax
       .endif
       OCall xbx::IncFile.StmWriteEOL
     .endif
@@ -248,6 +247,7 @@ ParseTypedefFunctionPtr proc uses xdi pParent:PSTRINGA
   ret
 
 @Error:
+@ErrorEoF:
   DbgErrorF , "¦SU(¦UD): ParseTypedefFunctionPtr - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
   mov xdx, pName
   mov xax, pToken

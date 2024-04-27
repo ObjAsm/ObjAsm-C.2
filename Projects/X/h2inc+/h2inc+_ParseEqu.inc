@@ -21,13 +21,13 @@ ParseEqu proc uses xdi xsi pName:PSTRINGA
 
   mov pItems, NULL
   invoke SkipCasts
-  OCall xbx::IncFile.GetNextTokenFromPPLine
-  .if xax == NULL
+  OCall xbx::IncFile.GetNextTokenPP
+  .if ZERO?
     OCall xbx::IncFile.StmWrite, $OfsCStrA("<>")        ;Terminate the equ line
   .else
     ;Find out if the line is an expression ----------------------------------
     mov pToken, xax
-    OCall xbx::IncFile.SaveInputStatus, addr InpStat
+    OCall xbx::IncFile.InputStatusSave, addr InpStat
     mov bExpression, FALSE
     mov xax, pToken
 
@@ -61,9 +61,9 @@ ParseEqu proc uses xdi xsi pName:PSTRINGA
           .endif
         .endif
       .endif
-      OCall xbx::IncFile.GetNextTokenFromPPLine
+      OCall xbx::IncFile.GetNextTokenPP
     .endw
-    OCall xbx::IncFile.LoadInputStatus, addr InpStat
+    OCall xbx::IncFile.InputStatusLoad, addr InpStat
 
     ;Write items from PP-Line to the output stream --------------------------
     .if bExpression == FALSE
@@ -108,7 +108,7 @@ ParseEqu proc uses xdi xsi pName:PSTRINGA
           mov edx, ecx
           OCall pKnownMacros::List.ItemAt, edx
         .endif
-        mov edx, [xax - sizeof DWORD]
+        mov edx, [xax - sizeof(DWORD)]
         mov ecx, DWORD ptr [xax + xdx]
         xor eax, eax
         .ifBitSet ecx, MCF_HAS_PARAMS
@@ -133,7 +133,7 @@ ParseEqu proc uses xdi xsi pName:PSTRINGA
       OCall xbx::IncFile.StmWrite, xax
 
 @NextTokenPP:
-      OCall xbx::IncFile.GetNextTokenFromPPLine
+      OCall xbx::IncFile.GetNextTokenPP
     .endw
 
     OCall xbx::IncFile.StmDeleteLastSpace
@@ -159,7 +159,7 @@ ParseEqu proc uses xdi xsi pName:PSTRINGA
             mov xcx, pKnownQualifiers
           .endif
           OCall xcx::List.ItemAt, edx
-          mov edx, [xax - sizeof DWORD]                 ;edx = length
+          mov edx, [xax - sizeof(DWORD)]                ;edx = length
           BitSet edi, [xax + xdx]                       ;Get ATTR = PTQ_IMPORT...
         .endif
       .endw
@@ -172,19 +172,19 @@ ParseEqu proc uses xdi xsi pName:PSTRINGA
         .elseif eax == 1
           mov edx, ecx
           OCall pQualifiers::List.ItemAt, edx
-          mov edx, [xax - sizeof DWORD]
+          mov edx, [xax - sizeof(DWORD)]
           BitSet [xax + xdx], edi                       ;Combine with prev qualifiers
         .endif
       .endif
     .endif
   .endif
   OCall xbx::IncFile.StmWriteComment
-  OCall xbx::IncFile.StmWriteEOL
 
   Destroy@Stacklist pItems                              ;Restore stack
   ret
 
 @Error:
+@ErrorEoF:
   DbgErrorF , "¦SU(¦UD): ParseEqu - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
   Destroy@Stacklist pItems                              ;Restore stack
   ret

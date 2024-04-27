@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      h2inc+_ParseTypedefEnum.inc
+; Title:      h2inc+_RenderEnum.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
 ; Purpose:  
@@ -9,17 +9,16 @@
 .code
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  ParseTypedefEnum
-; Purpose:    Parse 'typedef enum'.
-; Arguments:  Arg1: Typedef flag.
-;             xbx -> IncFile.
+; Procedure:  RenderEnum
+; Purpose:    Parse 'enum'.
+; Arguments:  xbx -> IncFile.
 ; Return:     TRUE if succeeded, otherwise FALSE
 ; Syntax:     <typedef> <qualifiers> enum <tname> {x<=a>,y<=b>,...} name<,*name>;
 ;             <typedef> <qualifiers> enum <tname> <:type> {x<=a>,y<=b>,...} name<,*name>;
 ;             <typedef> <qualifiers> enum <class> <tname> <: type> {x<=a>,y<=b>,...} name<,*name>;
 ;             simplest form is "enum {x = a, y = b};"
 
-ParseTypedefEnum proc bIsTypedef:BOOL
+RenderEnum proc
   local pTag:PTOKEN, pName:PTOKEN, pType:PSTRINGA, pToken:PTOKEN, pCurrToken:PTOKEN
   local cWorkBuffer[MAX_BLOCK_NAME]:CHRA, dTypeCSpec:DWORD
 
@@ -64,11 +63,7 @@ ParseTypedefEnum proc bIsTypedef:BOOL
 
   mov xax, pToken
   .if xax != NULL && CHRA ptr [xax] == "{"
-    .if bIsTypedef != FALSE
-      invoke GetBlockName, addr cWorkBuffer           ;xax -> Block Name or NULL
-    .else
-      xor eax, eax
-    .endif
+    xor eax, eax
     mov pName, xax
     test xax, xax
     cmovz xax, pTag                                   ;if no name found, use the tag
@@ -90,9 +85,6 @@ ParseTypedefEnum proc bIsTypedef:BOOL
       .endif
     .endif
 
-    .if bIsTypedef != FALSE
-      OCall xbx::IncFile.GetNextTokenC                 ;Skip enum name
-    .endif
     OCall xbx::IncFile.GetNextTokenC
     .if !ZERO? && pName != NULL && CHRA ptr [xax] != ";"
       invoke RenderFurtherTypes, pName, NULL, xax
@@ -127,6 +119,6 @@ ParseTypedefEnum proc bIsTypedef:BOOL
 
 @Error:
 @ErrorEoF:
-  DbgErrorF , "¦SU(¦UD): ParseTypedefEnum - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+  DbgErrorF , "¦SU(¦UD): RenderEnum - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
   ret
-ParseTypedefEnum endp
+RenderEnum endp

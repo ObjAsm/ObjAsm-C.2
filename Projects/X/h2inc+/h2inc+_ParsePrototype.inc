@@ -13,16 +13,15 @@
 ; Purpose:    Parse a function prototype.
 ; Arguments:  Arg1 -> Function name.
 ;             Arg2 -> Import specification (for example WINOLEAPI). Can be NULL.
-;             Arg3 -> Call convention (for example WINAPI). Can be NULL.
 ;             xbx -> IncFile.
 ; Return:     Nothing.
 ; Link:       https://msdn.microsoft.com/en-us/library/zw3za17w.aspx
 ; Format:     [Annotation] [Import-Spec] return-type [Call-Conv] Function-Name[(Argument-List)]
 
-ParsePrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA, pCallConv:PSTRINGA
+ParsePrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
   local pName:PSTRINGA, pToken:PTOKEN, pPrefix:PSTRINGA, pCallConvStr:PSTRINGA
   local bFunctionPtr:DWORD, dPtrCount:DWORD, dParenthesisCount:DWORD, dParamBytes:DWORD
-  local InpStat:INP_STAT, szSuffix[8]:CHRA, szBuffer[512]:CHRA
+  local InpStat:INP_STAT, szSuffix[8]:CHRA
   local dTypeCSpec:DWORD, pType:PSTRINGA, cTransBuffer[128]:CHRA
   local pStmOutPos:POINTER, dStmOutEOL:DWORD
 
@@ -44,11 +43,11 @@ ParsePrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA, pCallConv
   .endif
 
   .if $ObjTmpl(Application).Options.dDllImport == DLLIMPORT_DEFPROTO && pImportSpec != NULL
-    OCall xbx::IncFile.StmWriteF, $OfsCStr("@DefProto %s, %s, %s,"), pImportSpec, pProcName, pCallConvStr
+    OCall xbx::IncFile.StmWriteF, $OfsCStrA("@DefProto %s, %s, %s,"), pImportSpec, pProcName, pCallConvStr
     invoke IsReservedWord?, pProcName
     .if eax != FALSE
       OCall xbx::IncFile.ShowWarning, WARNING_MINOR, $OfsCStr("reserved word '%s' used as prototype"), pProcName
-      OCall xbx::IncFile.StmWriteF, $OfsCStr(" %s"), addr szResWordSuffix    ;ProcName suffix
+      OCall xbx::IncFile.StmWriteF, $OfsCStrA(" %s"), addr szResWordSuffix    ;ProcName suffix
     .endif
     OCall xbx::IncFile.StmWrite, $OfsCStrA(", ", 3Ch)  ;", <"
   .else
@@ -74,7 +73,7 @@ ParsePrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA, pCallConv
   mov dParamBytes, 0
   mov dParenthesisCount, 1
   .while dParenthesisCount != 0
-    OCall xbx::IncFile.GetNextToken
+    OCall xbx::IncFile.GetNextTokenC
 @ProcessToken:
     .break .if ZERO? || CHRA ptr [xax] == ";"           ;Statement terminator
     invoke SkipAnnotations, xax
@@ -99,17 +98,17 @@ ParsePrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA, pCallConv
           .endif
           OCall xbx::IncFile.StmWrite, addr szColon
           .if dPtrCount != 0
-            mov eax, sizeof DWORD                       ;Size of a 32 bit POINTER
+            mov eax, sizeof(DWORD)                      ;Size of a 32 bit POINTER
           .else
             ;Get type sizes (for structures used as parameters). Only relevant for 32 bit!
             OCall pTypeSize::List.Search, pType
             .if eax != FALSE
             	mov edx, ecx
               OCall pTypeSize::List.ItemAt, edx
-              mov edx, [xax - sizeof DWORD]
+              mov edx, [xax - sizeof(DWORD)]
               mov eax, [xax + xdx]
             .else
-              mov eax, sizeof DWORD                     ;Default for 32 bit!
+              mov eax, sizeof(DWORD)                    ;Default for 32 bit!
             .endif
           .endif
           add dParamBytes, eax
@@ -139,7 +138,7 @@ ParsePrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA, pCallConv
     .elseif CHRA ptr [xax] == "["
       inc dPtrCount
       .repeat
-        OCall xbx::IncFile.GetNextToken
+        OCall xbx::IncFile.GetNextTokenC
       .until xax == NULL || CHRA ptr [xax] == "]" || CHRA ptr [xax] == ";"
 
     .elseif CHRA ptr [xax] == "("
@@ -153,7 +152,7 @@ ParsePrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA, pCallConv
         m2m [xbx].$Obj(IncFile).dStmOutEOL, dStmOutEOL, ecx
         ;Alternative code without explicit declaration of the Function pointer
         invoke SkipBraces, "(", ")"
-        OCall xbx::IncFile.GetNextToken
+        OCall xbx::IncFile.GetNextTokenC
         invoke SkipBraces, "(", ")"
         mov dPtrCount, TRUE
         mov pName, NULL
@@ -196,7 +195,7 @@ ParsePrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA, pCallConv
         .endif
       .endif
 
-      lea xdx, szBuffer
+      lea xdx, cTransBuffer
       invoke TranslateReservedWord, xax, xdx
       .if pType == NULL
         mov pType, xax
@@ -238,13 +237,13 @@ ParsePrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA, pCallConv
                                     pPrefix, pProcName, addr szSuffix, pProcName
       OCall xbx::IncFile.StmWriteEOL
       invoke TranslateReservedWord, pProcName, addr cTransBuffer
-      mov ecx, eax
+      mov xcx, xax
       OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s equ ", 3Ch, "_imp_%s%s%s", 3Eh), \     ;"<" ">"
                                     xcx, pPrefix, pProcName, addr szSuffix
       OCall xbx::IncFile.StmWriteEOL
     .endif
   .endif
-  invoke StrSizeA, pProcName
+  invoke StrLengthA, pProcName
   invoke InsertStrg, pPrototypes, pProcName, eax
 
   .if $ObjTmpl(Application).Options.bCreateDefs != FALSE
@@ -252,12 +251,12 @@ ParsePrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA, pCallConv
   .endif
   .ifBitSet [xbx].$Obj(IncFile).dQualifiers, PTQ_INLINE
     ;Skip inline C-code block
-    OCall xbx::IncFile.SaveInputStatus, addr InpStat
-    OCall xbx::IncFile.GetNextToken
+    OCall xbx::IncFile.InputStatusSave, addr InpStat
+    OCall xbx::IncFile.GetNextTokenC
     .if !ZERO? && CHRA ptr [xax] == "{"
       invoke SkipBraces, "{", "}"
     .else
-      OCall xbx::IncFile.LoadInputStatus, addr InpStat
+      OCall xbx::IncFile.InputStatusLoad, addr InpStat
     .endif
   .endif
 
@@ -265,6 +264,7 @@ ParsePrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA, pCallConv
   ret
 
 @Error:
+@ErrorEoF:
   DbgErrorF , "¦SU(¦UD): ParsePrototype - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
   ret
 ParsePrototype endp

@@ -1049,12 +1049,11 @@ EvalHandler_nop endp
 Method Evaluator.GetNextEvalToken, uses xdi xsi
   local pToken:PTOKEN
   
-  OCall xbx::IncFile.GetNextTokenFromPPLine
+  OCall xbx::IncFile.GetNextTokenPP
 ;  DbgStr eax
-  test xax, xax
   jz @@EOM
   mov pToken, xax
-  MemAlloc sizeof EVAL_TOKEN, MEM_INIT_ZERO
+  MemAlloc sizeof(EVAL_TOKEN), MEM_INIT_ZERO
   mov xdi, xax
   m2m EvalArg2.pToken, pToken, xcx
 
@@ -1069,7 +1068,7 @@ Method Evaluator.GetNextEvalToken, uses xdi xsi
       mov EvalArg2.pOperator, xsi
       jmp @Done
     .endif
-    add xsi, sizeof EVAL_OPTOR
+    add xsi, sizeof(EVAL_OPTOR)
   .endw
 
   ;Check if it is a parenthesis
@@ -1089,7 +1088,7 @@ Method Evaluator.GetNextEvalToken, uses xdi xsi
     mov EvalArg2.wGenus, EGN_NUMBER
     mov xcx, EvalArg2.pToken
     add xcx, 2
-    invoke hex2dword, xax
+    invoke hex2dwordA, xax
     mov EvalArg2.dValue, eax
 ;    DbgHex eax
     jmp @Done
@@ -1099,7 +1098,7 @@ Method Evaluator.GetNextEvalToken, uses xdi xsi
 ;      DbgText "Dec Number"
       mov EvalArg2.wType, ETT_IMMEDIATE
       mov EvalArg2.wGenus, EGN_NUMBER
-      invoke dec2dword, EvalArg2.pToken
+      invoke dec2dwordA, EvalArg2.pToken
       mov EvalArg2.dValue, eax
 ;      DbgDec eax
       jmp @Done
@@ -1117,7 +1116,7 @@ Method Evaluator.GetNextEvalToken, uses xdi xsi
       m2m XWORD ptr EvalArg2.dValue, [xsi].EVAL_KNOWN_SYMBOL.Value, xax
       jmp @Done
     .endif
-    add xsi, sizeof EVAL_KNOWN_SYMBOL
+    add xsi, sizeof(EVAL_KNOWN_SYMBOL)
   .endw
 
   ;If nothing else fits, the it is an unknown symbol

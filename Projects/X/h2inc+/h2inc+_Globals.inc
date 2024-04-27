@@ -7,191 +7,190 @@
 ; ==================================================================================================
 
 
-PTOKEN  typedef     ptr CHRA
-
 ;General equates
-MAX_WARNING_LEVEL   equ 3       ;Max value for -Wn switch
-WARNING_MAX         equ 0
-WARNING_SEVERE      equ 1
-WARNING_MAYOR       equ 2
-WARNING_MINOR       equ 3
+MAX_WARNING_LEVEL       equ 3       ;Max value for -Wn switch
+WARNING_MAX             equ 0
+WARNING_SEVERE          equ 1
+WARNING_MAYOR           equ 2
+WARNING_MINOR           equ 3
 
-MAX_VERBOSITY_LEVEL equ 3       ;Max value for -Vn switch
-VERBOSITY_SILENT    equ 0
-VERBOSITY_IMPORTANT equ 1
-VERBOSITY_NORMAL    equ 2
-VERBOSITY_DEAFENING equ 3
+MAX_VERBOSITY_LEVEL     equ 3       ;Max value for -Vn switch
+VERBOSITY_SILENT        equ 0
+VERBOSITY_IMPORTANT     equ 1
+VERBOSITY_NORMAL        equ 2
+VERBOSITY_DEAFENING     equ 3
 
-MAX_IF_LEVEL        equ 32      ;Must be a multiple of 4
-MAX_BLOCK_NAME      equ 128     ;Buffer size for struct, union, etc. names.
-ADD_50_PERCENT      equ 0       ;0 = buffer size 100% larger than file size
+MAX_COND_LEVEL          equ 32      ;Must be a multiple of 4!
+MAX_BLOCK_NAME          equ 128     ;Buffer size for struct, union, etc. names.
+ADD_50_PERCENT          equ 0       ;0 = buffer size 100% larger than file size
 
-COLOR_HEADER        equ FOREGROUND_BLUE or FOREGROUND_GREEN or FOREGROUND_RED or FOREGROUND_INTENSITY
-COLOR_REGULAR       equ FOREGROUND_BLUE or FOREGROUND_GREEN or FOREGROUND_RED
-COLOR_WARNING       equ FOREGROUND_RED
-COLOR_ERROR         equ FOREGROUND_RED or FOREGROUND_INTENSITY
-COLOR_QUESTION      equ FOREGROUND_GREEN or FOREGROUND_INTENSITY
+COLOR_HEADER            equ FOREGROUND_BLUE or FOREGROUND_GREEN or FOREGROUND_RED or FOREGROUND_INTENSITY
+COLOR_REGULAR           equ FOREGROUND_BLUE or FOREGROUND_GREEN or FOREGROUND_RED
+COLOR_WARNING           equ FOREGROUND_RED
+COLOR_ERROR             equ FOREGROUND_RED or FOREGROUND_INTENSITY
+COLOR_QUESTION          equ FOREGROUND_GREEN or FOREGROUND_INTENSITY
 
 ;Prototypes
-InsertStrg          proto :POINTER, :PSTRINGA, :DWORD
-InsertAttr          proto :POINTER, :PSTRINGA, :DWORD, :DWORD
-InsertEqui          proto :POINTER, :PSTRINGA, :DWORD, :PSTRINGA, :DWORD
-ParsePP             proto
-ParseC              proto
-GetStringLiteral    proto
-ConvertNumber       proto
-ParseBlock          proto :PTOKEN, :DWORD
-ParseContainerItem  proto :PTOKEN, :PSTRINGA
-ParseEnumItem       proto :PTOKEN
-ParseEqu            proto :PSTRINGA
-ParseExtern         proto
-ParseExternItem     proto :PTOKEN
-ParseFurtherTypes   proto :PSTRINGA, :PSTRINGA, :PTOKEN
-ParseInterfaceBlock proto :PSTRINGA
-ParseMacroCall      proto :PSTRINGA, :DWORD, :DWORD
-ParsePrototype      proto :PSTRINGA, :PSTRINGA, :PSTRINGA
-ParseTypedef        proto
-ParseTypedefFunction    proto :PSTRINGA, :DWORD, :PSTRINGA
+InsertStrg              proto :POINTER, :PSTRINGA, :DWORD
+InsertAttr              proto :POINTER, :PSTRINGA, :DWORD, :DWORD
+InsertEqui              proto :POINTER, :PSTRINGA, :DWORD, :PSTRINGA, :DWORD
+RenderPP                proto
+GetStringLiteral        proto
+ConvertNumber           proto
+RenderC                 proto
+RenderBitField          proto :PSTRINGA, :PSTRINGA, :PTOKEN, :PSTRINGA
+RenderBlock             proto :PTOKEN, :DWORD
+RenderContainerMember   proto :PTOKEN, :PSTRINGA
+RenderEnumMember        proto :PTOKEN
+ParseEqu                proto :PSTRINGA
+ParseExtern             proto
+RenderExternMember      proto :PTOKEN
+RenderFurtherTypes      proto :PSTRINGA, :PSTRINGA, :PTOKEN
+ParseInterfaceBlock     proto :PSTRINGA
+RenderMacroCall         proto :PSTRINGA, :DWORD, :DWORD
+ParsePrototype          proto :PSTRINGA, :PSTRINGA
+RenderTypedef           proto
+ParseTypedefFunction    proto :PSTRINGA, :DWORD
 ParseTypedefFunctionPtr proto :PSTRINGA
 ParseTypedefEnum        proto :BOOL
-ParseTypedefContainer   proto :PSTRINGA, :BOOL
+RenderTypedefContainer  proto :PSTRINGA
 
 ;ASCII Codes
-BELL                equ <07>
-BACK                equ <"08">
-HTAB                equ <"09">
-VTAB                equ <"0B">
-FF                  equ <"0C">
+BELL                    equ <07>
+BACK                    equ <"08">
+HTAB                    equ <"09">
+VTAB                    equ <"0B">
+FF                      equ <"0C">
 
-DLLIMPORT_DEFAULT   equ 0
-DLLIMPORT_ASSUME    equ 1
-DLLIMPORT_IGNORE    equ 2
-DLLIMPORT_DEFPROTO  equ 2
+DLLIMPORT_DEFAULT       equ 0
+DLLIMPORT_ASSUME        equ 1
+DLLIMPORT_IGNORE        equ 2
+DLLIMPORT_DEFPROTO      equ 2
 
-OUTPUT_CONSTANTS    equ BIT00
-OUTPUT_PROTOTYPES   equ BIT01
-OUTPUT_TYPEDEFS     equ BIT02
-OUTPUT_EXTERNALS    equ BIT03
+OUTPUT_CONSTANTS        equ BIT00
+OUTPUT_PROTOTYPES       equ BIT01
+OUTPUT_TYPEDEFS         equ BIT02
+OUTPUT_CONTAINERS       equ BIT03
+OUTPUT_EXTERNALS        equ BIT04
 
-CALLCONV_CDECL      equ 0
-CALLCONV_STDCALL    equ 1
-CALLCONV_PASCAL     equ 2
-CALLCONV_SYSCALL    equ 3
-CALLCONV_FASTCALL   equ 4
-CALLCONV_VECTORCALL equ 5
+CALLCONV_CDECL          equ 0
+CALLCONV_STDCALL        equ 1
+CALLCONV_PASCAL         equ 2
+CALLCONV_SYSCALL        equ 3
+CALLCONV_FASTCALL       equ 4
+CALLCONV_VECTORCALL     equ 5
 
 ;Prototype qualifiers
-PTQ_CDECL           equ 0001h   ;cdecl
-PTQ_STDCALL         equ 0002h   ;stdcall
-PTQ_INLINE          equ 0004h   ;inline
-PTQ_IMPORT          equ 0008h   ;declspec(dllimport)
-PTQ_SYSCALL         equ 0010h   ;syscall
-PTQ_PASCAL          equ 0020h   ;pascal
-PTQ_FASTCALL        equ 0040h   ;fastcall
-PTQ_VECTORCALL      equ 0080h   ;vectorcall
-PTQ_STATIC          equ 1000h   ;static
+PTQ_CDECL               equ 0001h   ;cdecl
+PTQ_STDCALL             equ 0002h   ;stdcall
+PTQ_INLINE              equ 0004h   ;inline
+PTQ_IMPORT              equ 0008h   ;declspec(dllimport)
+PTQ_SYSCALL             equ 0010h   ;syscall
+PTQ_PASCAL              equ 0020h   ;pascal
+PTQ_FASTCALL            equ 0040h   ;fastcall
+PTQ_VECTORCALL          equ 0080h   ;vectorcall
+PTQ_STATIC              equ 1000h   ;static
 
 ;C Basic Type Specifier
-CTS_signed          equ BIT04
-CTS_unsigned        equ CTS_signed shl 1
-CTS_short           equ CTS_unsigned shl 1
-CTS_long            equ CTS_short shl 1
-CTS_long2           equ CTS_long shl 1
-CTS_void            equ 01
-CTS_char            equ 02
-CTS_bool            equ 03
-CTS_int             equ 04
-CTS_float           equ 05
-CTS_double          equ 06
-CTS___int8          equ 07
-CTS___int16         equ 08
-CTS___int32         equ 09
-CTS___int64         equ 10
-CTS___wchar_t       equ 11
+CTS_signed              equ BIT04
+CTS_unsigned            equ CTS_signed shl 1
+CTS_short               equ CTS_unsigned shl 1
+CTS_long                equ CTS_short shl 1
+CTS_long2               equ CTS_long shl 1
+CTS_void                equ 01
+CTS_char                equ 02
+CTS_bool                equ 03
+CTS_int                 equ 04
+CTS_float               equ 05
+CTS_double              equ 06
+CTS___int8              equ 07
+CTS___int16             equ 08
+CTS___int32             equ 09
+CTS___int64             equ 10
+CTS___wchar_t           equ 11
 
-;Types for ParseBlock()
-PBT_CONTAINER       equ 0       ;struct/union
-PBT_EXTERN          equ 1       ;extern
-PBT_ENUM            equ 2       ;enum
+;Types for RenderBlock()
+RBT_CONTAINER           equ 0       ;struct/union
+RBT_EXTERN              equ 1       ;extern
+RBT_ENUM                equ 2       ;enum
 
 ;Parser output ctrl codes
-PCT_EOL             equ 0E0h    ;(à) End of Line
-PCT_WEAKEOL         equ 0E1h    ;(á) "\" at the end of preprocessor lines
-PCT_COMMENT         equ 0E2h    ;(â) Comment token
-PCT_IGNORE          equ 0E3h    ;(ã) Ignore token
-PCT_MACRO           equ 0E4h    ;(ä) Is a macro
+PCT_EOL                 equ 0E0h    ;(à) End of Line
+PCT_WEAKEOL             equ 0E1h    ;(á) "\" at the end of preprocessor lines
+PCT_COMMENT             equ 0E2h    ;(â) Comment token
+PCT_IGNORE              equ 0E3h    ;(ã) Ignore token
+PCT_MACRO               equ 0E4h    ;(ä) Is a macro
 
-;Flag values in [Known Macros]
-MCF_KNOWN           equ 001h    ;Known macro comming from Ini-File or default values
-MCF_HAS_PARAMS      equ 002h    ;Macro has parameters
-MCF_SKIP_BRACES     equ 004h    ;Skip first and last parenthesis in macro invocation
-MCF_COPY_LINE       equ 008h    ;Assume rest of line belongs to macro invocation
-MCF_PARAMS_FOLLOW   equ 010h    ;Assume method parameters coming after macro invocation
-MCF_END_MACRO       equ 020h    ;End next block with a ???_END macro invocation
-MCF_STRUCT_BEG      equ 040h    ;Macro begins a struct/union definition
-MCF_INTERFACE_BEG   equ 080h    ;Add an "??Interface equ <xxx>" line
-MCF_INTERFACE_END   equ 100h    ;Add an "??Interface equ <>" line
-MCF_ARG_EXPRESSION  equ 200h    ;Force argument handling as an expression
-MCF_SKIP_INVOKATION equ 400h    ;Skip macro invocation
+;Flag values for Known-Macros
+MCF_KNOWN               equ 001h    ;Known macro comming from Ini-File or default values
+MCF_HAS_PARAMS          equ 002h    ;Macro has parameters
+MCF_SKIP_BRACES         equ 004h    ;Skip first and last parenthesis in macro invocation
+MCF_COPY_LINE           equ 008h    ;Assume rest of line belongs to macro invocation
+MCF_PARAMS_FOLLOW       equ 010h    ;Assume method parameters coming after macro invocation
+MCF_END_MACRO           equ 020h    ;End next block with a ???_END macro invocation
+MCF_STRUCT_BEG          equ 040h    ;Macro begins a struct/union definition
+MCF_INTERFACE_BEG       equ 080h    ;Add an "??Interface equ <xxx>" line
+MCF_INTERFACE_END       equ 100h    ;Add an "??Interface equ <>" line
+MCF_ARG_EXPRESSION      equ 200h    ;Force argument handling as an expression
+MCF_SKIP_INVOKATION     equ 400h    ;Skip macro invocation
 
-;Flag values in [Known Equates]
-EQF_KNOWN           equ 001h    ;Known equate comming from Ini-File or default values
-EQF_HAS_EOL         equ 002h
+;Flag values for Known-Equates
+EQF_KNOWN               equ 001h    ;Known equate comming from Ini-File or default values
+EQF_HAS_EOL             equ 002h
 
 ;PP conditional types
-PCT_IF              equ 000h    ;"#if"
-PCT_ELIF            equ 001h    ;"#elif"
-PCT_IFDEF           equ 002h    ;"#ifdef"
-PCT_IFNDEF          equ 003h    ;"#ifndef"
+PCT_IF                  equ 000h    ;"#if"
+PCT_ELIF                equ 001h    ;"#elif"
+PCT_IFDEF               equ 002h    ;"#ifdef"
+PCT_IFNDEF              equ 003h    ;"#ifndef"
 
 ;PP conditional result
-PPR_FALSE           equ 0
-PPR_TRUE            equ 1
-PPR_UNKNOWN         equ 2
+PPR_FALSE               equ 0
+PPR_TRUE                equ 1
+PPR_UNKNOWN             equ 2
 
 .const
-CStr szIniFileName,   "h2inc+.ini"
-szEmpty CHRA          0
-CBStrA szUnsigned,    "unsigned"
-CBStrA szSigned,      "signed"
-CBStrA szStruct,      "struct"
-CBStrA szUnion,       "union"
-CBStrA szClass,       "class"
-CBStrA szEnum,        "enum"
-CBStrA szVoid,        "void"
-CStrA szSpace,        " "
-CStrA szComma,        ","
-CStrA szColon,        ":"
-CStrA szSemiColon,    ";"
-CStrA szUnderscore,   "_"
-CStrA szResWordSuffix,"_"
-CStrA szDllImport,    "DllImport"
-CStrA szPtrSpace,     "ptr "
-CStrA szUnkType,      "??TYPE"
-CStr  szOutOfSpace,   "out of symbol space"
+szEmpty CHRA            0
+CStr szIniFileName,     "h2inc+.ini"
+CBStrA szUnsigned,      "unsigned"
+CBStrA szSigned,        "signed"
+CBStrA szStruct,        "struct"
+CBStrA szUnion,         "union"
+CBStrA szClass,         "class"
+CBStrA szEnum,          "enum"
+CBStrA szVoid,          "void"
+CStrA szSpace,          " "
+CStrA szComma,          ","
+CStrA szColon,          ":"
+CStrA szSemiColon,      ";"
+CStrA szUnderscore,     "_"
+CStrA szResWordSuffix,  "_"
+CStrA szDllImport,      "DllImport"
+CStrA szPtrSpace,       "ptr "
+CStrA szUnkType,        "??TYPE"
+CStr  szOutOfSpace,     "out of symbol space"
 
-CStrA szBYTE,         "BYTE"
-CStrA szSBYTE,        "SBYTE"
-CStrA szWORD,         "WORD"
-CStrA szSWORD,        "SWORD"
-CStrA szDWORD,        "DWORD"
-CStrA szSDWORD,       "SDWORD"
-CStrA szQWORD,        "QWORD"
-CStrA szSQWORD,       "SQWORD"
-CStrA szOWORD,        "OWORD"
-CStrA szSOWORD,       "SOWORD"
-CStrA szREAL4,        "REAL4"
-CStrA szREAL8,        "REAL8"
-CStrA szREAL10,       "REAL10"
+CStrA szBYTE,           "BYTE"
+CStrA szSBYTE,          "SBYTE"
+CStrA szWORD,           "WORD"
+CStrA szSWORD,          "SWORD"
+CStrA szDWORD,          "DWORD"
+CStrA szSDWORD,         "SDWORD"
+CStrA szQWORD,          "QWORD"
+CStrA szSQWORD,         "SQWORD"
+CStrA szOWORD,          "OWORD"
+CStrA szSOWORD,         "SOWORD"
+CStrA szREAL4,          "REAL4"
+CStrA szREAL8,          "REAL8"
+CStrA szREAL10,         "REAL10"
 
-CStr szNesting2Deep,  "'if' nesting level too deep"
-CStr szElseWoIf,      "'else'/'elif' without 'if'"
-CStr szEndifWoIf,     "'endif' without 'if'"
+CStr szNesting2Deep,    "'if' nesting level too deep"
+CStr szElseWoIf,        "'else'/'elif' without 'if'"
+CStr szEndifWoIf,       "'endif' without 'if'"
 
 
-DebugMessage    CHRA  512 dup (?)
-
-DebugCaption PSTRINGA ?
+DebugMessage CHRA       512 dup (?)
+DebugCaption PSTRINGA   ?
 
 DbgPrintF macro Color:=<DbgColorForeground>, Message:req, Args:vararg
   if 1
@@ -236,15 +235,15 @@ PrependZerosA macro Var, Count
 endm
 
 INP_STAT struc
-  pIn             POINTER ?
-  dLineNumber        DWORD   ?
-  bNewLine        BYTE    ?
-  bIfLevel        BYTE    ?
-  bSkipC          BYTE    ?
-  bSkipScanPP     BYTE    ?
-  bIfStructure    BYTE    MAX_IF_LEVEL dup (?)
-  bIfResult       BYTE    MAX_IF_LEVEL dup (?)
-  bIfHistory      BYTE    MAX_IF_LEVEL dup (?)
+  pIn             POINTER   ?
+  dLineNumber     DWORD     ?
+  bNewLine        BYTE      ?
+  bSkipC          BYTE      ?
+  bSkipScanPP     BYTE      ?
+  bCondIfLevel    BYTE      ?
+  bCondElseLevel  BYTE      MAX_COND_LEVEL dup (?)
+  bCondResult     BYTE      MAX_COND_LEVEL dup (?)
+  bCondHistory    BYTE      MAX_COND_LEVEL dup (?)
 INP_STAT ends
 P_INP_STAT typedef ptr INP_STAT
 
@@ -252,21 +251,21 @@ P_INP_STAT typedef ptr INP_STAT
 ;--- table for sections to read from h2inc+.ini
 
 CONV_TAB_ENTRY struct
-  pSectionName  PSTRINGA  ?   ;-> ini section name
-  pList         POINTER   ?   ;-> List
-  dAlloc        DWORD     ?   ;List memory allocation count
-  dIncr         DWORD     ?   ;List memory increment count
-  dFlags        DWORD     ?   ;List flags
-  pFileName     PSTRINGW  ?   ;Load/Save Filename
-  pDefault      POINTER   ?   ;-> default table
+  pSectionName    PSTRINGA  ?   ;-> ini section name
+  pList           POINTER   ?   ;-> List
+  dAlloc          DWORD     ?   ;List memory allocation count
+  dIncr           DWORD     ?   ;List memory increment count
+  dFlags          DWORD     ?   ;List flags
+  pFileName       PSTRINGW  ?   ;Load/Save Filename
+  pDefault        POINTER   ?   ;-> default table
 CONV_TAB_ENTRY ends
 PCONV_TAB_ENTRY typedef ptr CONV_TAB_ENTRY
 
-CF_SNGL   equ 0001h           ;Single string
-CF_CASE   equ 0002h           ;Single lowercase string
-CF_EQUI   equ 0004h           ;string -> string conversion
-CF_ATTR   equ 0008h           ;string -> DWORD conversion
-CF_INIF   equ 0010h           ;Load from Ini-File
+CF_SNGL   equ 0001h             ;Single string
+CF_CASE   equ 0002h             ;Single lowercase string
+CF_EQUI   equ 0004h             ;string -> string conversion
+CF_ATTR   equ 0008h             ;string -> DWORD conversion
+CF_INIF   equ 0010h             ;Load from Ini-File
 
 CONV_ATTR_ENTRY struc
   pName   PSTRINGA ?
@@ -415,11 +414,33 @@ DefaultKnownQualifiersTable label POINTER
 
 ;Structure sizes. required if a structure is a parameter with size > 4.
 DefaultTypeSizeTable label POINTER
+  CONV_ATTR_ENTRY <$OfsCBStrA("BYTE"),       01>
+  CONV_ATTR_ENTRY <$OfsCBStrA("CHAR"),       01>
   CONV_ATTR_ENTRY <$OfsCBStrA("CY"),         08>
   CONV_ATTR_ENTRY <$OfsCBStrA("DATE"),       08>
   CONV_ATTR_ENTRY <$OfsCBStrA("DOUBLE"),     08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DWORD"),      04>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DWORD64"),    08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DWORDLONG"),  08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DWORD_PTR"),  08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("INT64"),      08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("LONG64"),     08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("LONGLONG"),   08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("LONG_PTR"),   08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("OWORD"),      16>
   CONV_ATTR_ENTRY <$OfsCBStrA("POINT"),      08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("PROPVARIANT"),16>
+  CONV_ATTR_ENTRY <$OfsCBStrA("QWORD"),      08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("SHORT"),      02>
+  CONV_ATTR_ENTRY <$OfsCBStrA("UINT32"),     04>
+  CONV_ATTR_ENTRY <$OfsCBStrA("UINT64"),     08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("ULONG64"),    08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("ULONGLONG"),  08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("ULONG_PTR"),  08>
   CONV_ATTR_ENTRY <$OfsCBStrA("VARIANT"),    16>
+  CONV_ATTR_ENTRY <$OfsCBStrA("VARIANTARG"), 16>
+  CONV_ATTR_ENTRY <$OfsCBStrA("WCHAR"),      02>
+  CONV_ATTR_ENTRY <$OfsCBStrA("WORD"),       02>
   POINTER NULL
 
 ;Simple types default, usually not used, since defined in h2inc+.ini.
@@ -573,10 +594,8 @@ OPTIONS struct
   bLoadLists          BYTE      FALSE         ;-l command line switch
   bUntypedMembers     BYTE      FALSE         ;-m command line switch
   pOutDir             PSTRINGW  NULL          ;-o command line switch
-  bNoRecords          BYTE      FALSE         ;-q command line switch
-  bRecordsInUnions    BYTE      FALSE         ;-r command line switch
+  bUntypedParams      BYTE      FALSE         ;-p command line switch; STRUCTS = TRUE  TYPES = FALSE
   dSelectiveOutput    DWORD     0             ;-s command line switch
-  bUntypedParams      BYTE      FALSE         ;-u command line switch; STRUCTS = TRUE  TYPES = FALSE
   dVerbosityLevel     DWORD     0             ;-v command line switch
   dWarningLevel       DWORD     0             ;-W command line switch
   bOverwrite          BYTE      FALSE         ;-y command line switch
@@ -597,10 +616,8 @@ CmdLineSwitchTable label BYTE
   CMDLINE_SWITCH_ENTRY <"l", CLS_IS_BOOL,   offset OPTIONS.bLoadLists>
   CMDLINE_SWITCH_ENTRY <"m", CLS_IS_BOOL,   offset OPTIONS.bUntypedMembers>
   CMDLINE_SWITCH_ENTRY <"o", CLS_IS_STRING, offset OPTIONS.pOutDir>
-  CMDLINE_SWITCH_ENTRY <"q", CLS_IS_BOOL,   offset OPTIONS.bNoRecords>
-  CMDLINE_SWITCH_ENTRY <"r", CLS_IS_BOOL,   offset OPTIONS.bRecordsInUnions>
+  CMDLINE_SWITCH_ENTRY <"p", CLS_IS_BOOL,   offset OPTIONS.bUntypedParams>
   CMDLINE_SWITCH_ENTRY <"s", CLS_IS_BIT,    offset OPTIONS.dSelectiveOutput>
-  CMDLINE_SWITCH_ENTRY <"u", CLS_IS_BOOL,   offset OPTIONS.bUntypedParams>
   CMDLINE_SWITCH_ENTRY <"V", CLS_IS_NUMBER, offset OPTIONS.dVerbosityLevel>
   CMDLINE_SWITCH_ENTRY <"W", CLS_IS_NUMBER, offset OPTIONS.dWarningLevel>
   CMDLINE_SWITCH_ENTRY <"y", CLS_IS_BOOL,   offset OPTIONS.bOverwrite>
@@ -633,14 +650,13 @@ String cUsageText,  "Usage: h2inc+ [Options] Filespec", CRLF
   ExtendString      "    -l: Load previously generated lists, default is from ini-file", CRLF
   ExtendString      "    -m: generate untyped structure members (DWORDs/QWORDs)", CRLF
   ExtendString      "    -o[directory]: set the output directory (default is the current directory)", CRLF
-  ExtendString      "    -q: avoid RECORD definitions", CRLF
-  ExtendString      "    -r: create size-safe RECORD definitions", CRLF
-  ExtendString      "    -s[0|1|2|3]: selective output (default = none)", CRLF
-  ExtendString      "      0: constants", CRLF
+  ExtendString      "    -p: generate untyped parameters (DWORDs/QWORDs) in prototypes", CRLF
+  ExtendString      "    -s[0|1|2|3|4]: selective output (default = all)", CRLF
+  ExtendString      "      0: constants and enums", CRLF
   ExtendString      "      1: prototypes", CRLF
   ExtendString      "      2: typedefs", CRLF
-  ExtendString      "      3: externals", CRLF
-  ExtendString      "    -u: generate untyped parameters (DWORDs/QWORDs) in prototypes", CRLF
+  ExtendString      "      3: structs/unions", CRLF
+  ExtendString      "      4: externals", CRLF
   ExtendString      "    -V[0|1|2|3]: verbosity (default = 0)", CRLF
   ExtendString      "      0: Silent.", CRLF
   ExtendString      "      1: Important messages only", CRLF
@@ -654,4 +670,3 @@ String cUsageText,  "Usage: h2inc+ [Options] Filespec", CRLF
   ExtendString      "    -y: overwrite existing .inc files without confirmation", CRLF
   ExtendString      " Filespec:", CRLF
   ExtendString      "  e.g. .\h\*.h", CRLF
-

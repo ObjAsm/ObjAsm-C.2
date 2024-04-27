@@ -2,7 +2,7 @@
 ; Title:      h2inc+_Main.inc
 ; Author:     G. Friedrich
 ; Version:    C.2.0
-; Purpose:    Creates MASM include files (.inc) from C header files (.h).
+; Purpose:    Create MASM include files (.inc) from C header files (.h).
 ;
 ; ==================================================================================================
 
@@ -31,7 +31,7 @@ Method Application.Done, uses xbx xsi
 ;        OCall [xsi].CONV_TAB_ENTRY.pList::List.SaveToFile, [xsi].CONV_TAB_ENTRY.pFileName
       .endif
       Destroy [xsi].CONV_TAB_ENTRY.pList::List.Done
-      add xsi, sizeof CONV_TAB_ENTRY
+      add xsi, sizeof(CONV_TAB_ENTRY)
     .endw
   .endif
 
@@ -212,7 +212,7 @@ Method Application.Init, uses xbx xdi xsi
   ;--- Get EV arguments ---
   mov CHR ptr cEnvVar, 0
   .if [xbx].Options.pEnvVar != NULL
-    invoke GetEnvironmentVariableW, [xbx].Options.pEnvVar, addr cEnvVar, lengthof cEnvVar
+    invoke GetEnvironmentVariableW, [xbx].Options.pEnvVar, addr cEnvVar, lengthof(cEnvVar)
     .if eax == 0
       invoke CreateFileW, [xbx].Options.pEnvVar, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, \
                           FILE_ATTRIBUTE_ARCHIVE, 0
@@ -224,7 +224,7 @@ Method Application.Init, uses xbx xdi xsi
         jmp @F
       .endif
       mov hFile, xax
-      invoke ReadFile, hFile, addr cReadBuffer, sizeof cReadBuffer, addr dBytesRead, NULL
+      invoke ReadFile, hFile, addr cReadBuffer, sizeof(cReadBuffer), addr dBytesRead, NULL
       invoke CloseHandle, hFile
       .if dBytesRead == sizeof(cReadBuffer)
         lea xsi, cMessage
@@ -281,7 +281,7 @@ Method Application.Init, uses xbx xdi xsi
       .endif
       invoke StrLRTrimW, xsi, xsi
       .if CHRW ptr [xsi] != 0
-        invoke GetFullPathNameW, xsi, lengthof cFullSearchPath, addr cFullSearchPath, NULL
+        invoke GetFullPathNameW, xsi, lengthof(cFullSearchPath), addr cFullSearchPath, NULL
         invoke FileExistW, addr cFullSearchPath
         .if eax == FALSE
           lea xsi, cMessage
@@ -333,12 +333,15 @@ Method Application.Init, uses xbx xdi xsi
           jmp @@EOM
         .endif
       .endif
-      add xsi, sizeof CONV_TAB_ENTRY
+      add xsi, sizeof(CONV_TAB_ENTRY)
     .endw
   .else
     OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Loading file lists...")
     .while POINTER ptr [xsi] != NULL
-      OCall xax::List.LoadFromFile, [xsi].CONV_TAB_ENTRY.pFileName
+      mov [xsi].CONV_TAB_ENTRY.pList, $New(List)        ;Create the list
+      OCall xax::List.Init, NULL, [xsi].CONV_TAB_ENTRY.dAlloc, \
+                                  [xsi].CONV_TAB_ENTRY.dIncr, [xsi].CONV_TAB_ENTRY.dFlags
+      OCall [xsi].CONV_TAB_ENTRY.pList::List.LoadFromFile, [xsi].CONV_TAB_ENTRY.pFileName
       .if eax == FALSE
         lea xdi, cMessage
         WriteF xdi, "list file \`¦SU\`corrupt", [xsi].CONV_TAB_ENTRY.pFileName
@@ -346,8 +349,13 @@ Method Application.Init, uses xbx xdi xsi
         mov [xbx].bTerminate, TRUE
         jmp @@EOM
       .endif
-      add xsi, sizeof CONV_TAB_ENTRY
+      add xsi, sizeof(CONV_TAB_ENTRY)
     .endw
+  .endif
+  
+  ;If no dSelectiveOutput is marked, all are selected
+  .if [xbx].Options.dSelectiveOutput == 0
+    mov [xbx].Options.dSelectiveOutput, -1
   .endif
 MethodEnd
 
@@ -398,9 +406,9 @@ endif
     ;Try to find the file in all search paths
     .ColForEach [xbx].SearchPathColl, edi
       invoke StrECopyW, addr cSearchFullFileName, xax   ;xax -> ZTC
-      .if CHRW ptr [xax - sizeof CHRW] != '\'
+      .if CHRW ptr [xax - sizeof(CHRW)] != '\'
         mov CHRW ptr [xax], '\'
-        add xax, sizeof CHRW
+        add xax, sizeof(CHRW)
       .endif
       invoke StrCopyW, xax, pHeaderFileName
       invoke FileExistW, addr cSearchFullFileName
@@ -491,8 +499,8 @@ endif
     .if eax != FALSE
       ;Start real processing
       OCall IncludeFile::IncFile.ParseHeaderFile
-      OCall IncludeFile::IncFile.Analyse                  ;Reset volatile lists
-      OCall IncludeFile::IncFile.Save, addr cIncludeFullFileName      ;Save inc-file
+      OCall IncludeFile::IncFile.Render                 ;Reset volatile lists and start rendering
+      OCall IncludeFile::IncFile.Save, addr cIncludeFullFileName  ;Save include file
       mov dResult, eax
       OCall IncludeFile::IncFile.CreateDefFile, addr cIncludeFullFileName
       if DEBUGGING
@@ -567,14 +575,16 @@ MethodEnd
 ; Return:     Nothing.
 
 Method Application.ProcessFiles, uses xbx xdi xsi, pFileSpec:PSTRINGW
-  local hFFHandle:HANDLE, cMessage[1024]:CHR, cFilePath[MAX_PATH]:CHR
+  local hFFHandle:HANDLE, cMessage[1024]:CHR
   local FindData:WIN32_FIND_DATAW, cFullFileSpec[MAX_PATH]:CHRW, pFilePart:PSTRINGW
 
   SetObject xbx
-  
   ;GetFullPathName resolves the path using the current directory! Everything else is the FilePart
-  invoke GetFullPathNameW, pFileSpec, lengthof(cFullFileSpec), addr cFullFileSpec, addr pFilePart 
+  invoke GetFullPathNameW, pFileSpec, lengthof(cFullFileSpec), addr cFullFileSpec, addr pFilePart
+  DbgStrW pFileSpec
+  DbgStrW cFullFileSpec
   invoke FindFirstFileW, pFileSpec, addr FindData
+  DbgApiError
   .if xax != INVALID_HANDLE_VALUE
     mov hFFHandle, xax
     .repeat

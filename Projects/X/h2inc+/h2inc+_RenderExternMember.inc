@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      h2inc+_ParseExternItem.inc
+; Title:      h2inc+_RenderExternMember.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
 ; Purpose:    
@@ -9,13 +9,13 @@
 .code
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  ParseExternItem
+; Procedure:  RenderExternMember
 ; Purpose:    Get an extern declaration.
-; Arguments:  Arg1 -> First Token.
+; Arguments:  Arg1 -> First token.
 ;             xbx -> IncFile.
-; Return:     xax -> Next Token.
+; Return:     xax -> Next token, NULL if failed and ZF set.
 
-ParseExternItem proc uses xdi pToken:PTOKEN
+RenderExternMember proc pToken:PTOKEN
   local dTypeCSpec:DWORD, bFunction:DWORD, bStatic:DWORD, bConst:DWORD
   local pType:PSTRINGA, pName:PSTRINGA, cTransBuffer[128]:CHRA
 
@@ -23,6 +23,7 @@ ParseExternItem proc uses xdi pToken:PTOKEN
   mov pName, NULL
   mov bStatic, FALSE
   mov bFunction, FALSE
+  mov bConst, FALSE
 
   mov xax, pToken                                       ;Use token passed in to this proc
   .while TRUE
@@ -55,8 +56,8 @@ ParseExternItem proc uses xdi pToken:PTOKEN
       .else
         OCall pKnownMacros::List.ItemAt, edx
       .endif
-      mov edx, [xax - sizeof DWORD]
-      invoke ParseMacroCall, pToken, DWORD ptr [xax + xdx], TRUE
+      mov edx, [xax - sizeof(DWORD)]
+      invoke RenderMacroCall, pToken, DWORD ptr [xax + xdx], TRUE
       .if eax != FALSE
         jmp @GetNextToken
       .endif
@@ -66,7 +67,7 @@ ParseExternItem proc uses xdi pToken:PTOKEN
     .if CHRA ptr [xax] == "("
       mov xax, pName
       .if xax != NULL
-        DbgPrintF , "¦UD: ParseExternItem, function ¦SA found", [xbx].$Obj(IncFile).dLineNumber, pName
+        DbgPrintF , "¦UD: RenderExternMember, function ¦SA found", [xbx].$Obj(IncFile).dLineNumber, pName
       .else
         jmp @Error
       .endif
@@ -104,19 +105,19 @@ ParseExternItem proc uses xdi pToken:PTOKEN
     mov cl, CHRA ptr [xax]
     .if cl == "[" && pName != NULL                      ;"[]" should only come after a valid name
       .repeat                                           ;Ignore it
-        OCall xbx::IncFile.GetNextToken
+        OCall xbx::IncFile.GetNextTokenC
       .until ZERO? || CHRA ptr [xax] == ";"
       .break
     .endif
 
     .if cl == "="
       .repeat
-        OCall xbx::IncFile.GetNextToken
+        OCall xbx::IncFile.GetNextTokenC
       .until ZERO? || CHRA ptr [xax] == ";"
       .break
     .endif
 
-    IsName? pToken
+    IsValidName? pToken
     .if eax != FALSE
       mov xax, pToken
       .if pType == NULL
@@ -124,38 +125,38 @@ ParseExternItem proc uses xdi pToken:PTOKEN
       .elseif pName == NULL
         mov pName, xax
       .else
-        DbgErrorF , "¦SU(¦UD): ParseExternItem - unknown Token 1 ¦SA", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber, pToken
+        DbgErrorF , "¦SU(¦UD): RenderExternMember - unknown Token 1 ¦SA", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber, pToken
         jmp @Error
       .endif
     .else
-      DbgErrorF , "¦SU(¦UD): ParseExternItem - unknown Token 2 ¦SA", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber, pToken
+      DbgErrorF , "¦SU(¦UD): RenderExternMember - unknown Token 2 ¦SA", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber, pToken
       jmp @Error
     .endif
 
 @GetNextToken:
-    OCall xbx::IncFile.GetNextToken
+    OCall xbx::IncFile.GetNextTokenC
     mov pToken, xax
   .endw
 
-  .if pName != NULL
-    invoke TranslateReservedWord, pName, addr cTransBuffer
-    .if bFunction != FALSE
-      mov xcx, $OfsCStrA("near")
-    .else
-      mov xcx, pType
-    .endif
-    OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s:%s"), xax, xcx
-    OCall xbx::IncFile.StmWriteEOL
-    mov xax, pToken
+  cmp pName, NULL
+  jz @Error
+  invoke TranslateReservedWord, pName, addr cTransBuffer
+  .if bFunction != FALSE
+    mov xcx, $OfsCStrA("near")
   .else
-    xor eax, eax
-    jmp @Error
+    mov xcx, pType
   .endif
+  OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s:%s"), xax, xcx
+  OCall xbx::IncFile.StmWriteEOL
+  mov xax, pToken
 
 @Exit:
+  test xax, xax
   ret
 
 @Error:
-  DbgErrorF , "¦SU(¦UD): ParseExternItem - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+@ErrorEoF:
+  DbgErrorF , "¦SU(¦UD): RenderExternMember - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+  xor eax, eax
   ret
-ParseExternItem endp
+RenderExternMember endp

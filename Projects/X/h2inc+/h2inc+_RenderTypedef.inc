@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      h2inc+_ParseTypedef.inc
+; Title:      h2inc+_RenderTypedef.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
 ; Purpose:  
@@ -9,11 +9,10 @@
 .code
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  ParseTypedef
+; Procedure:  RenderTypedef
 ; Purpose:    Typedef analysis and translation. 
 ;             "typedef" occured in the header and triggered this proc.
 ; Arguments:  xbx -> IncFile.
-;             xsi -> Tokens following the "typedef"
 ; Return:     Nothing.
 ; Syntax:     typedef <annotations><qualifiers> type <<far|near> *> newname<[]>;
 ;             typedef struct/union <macro> <tname> {} name;
@@ -22,17 +21,17 @@
 ;             typedef <annotations><qualifiers> returntype (<qualifiers> *name)(<parameters>);
 ;             typedef <annotations><qualifiers> returntype name(<parameters>);
 
-ParseTypedef proc
+RenderTypedef proc
   local pToken:PTOKEN, pName:PSTRINGA, pType:PSTRINGA, pDup:PSTRINGA
   local dSquareBracketCount:DWORD, dPtrCount:DWORD, bValid:DWORD, dTypeCSpec:DWORD
-  local szTmpType[256]:CHRA, szBuffer[256]:CHRA, cTransBuffer[128]:CHRA
-  local InpStat:INP_STAT, pCurrToken:PTOKEN, dSize:DWORD, p1:POINTER, p2:POINTER
+  local cBuffer[256]:CHRA, cTransBuffer[128]:CHRA
+  local pCurrToken:PTOKEN, dSize:DWORD, p1:POINTER, p2:POINTER
 
-  DbgPrintF , "¦UD: ParseTypedef - begin", [xbx].$Obj(IncFile).dLineNumber
   mov pType, NULL
 
 @GetNextToken:
-  OCall xbx::IncFile.GetNextToken
+  OCall xbx::IncFile.GetNextTokenC
+
 @ProcessToken:
   .if !ZERO?
     invoke SkipAnnotations, xax
@@ -47,65 +46,66 @@ ParseTypedef proc
   .endif
   mov pToken, xax
   test xax, xax
-  jz @Error
+  jz @ErrorEoF
 
   cmp CHRA ptr [xax], ";"                             ;Statement terminator?
-  jz @Error                                           ; Yes => error
+  jz @ErrorSyntax                                     ; Yes => error
 
-  .if CHRA ptr [xax] == "["
-    DbgPrintF , "¦UD: ParseTypedef - \´[\´ found", [xbx].$Obj(IncFile).dLineNumber
-    OCall xbx::IncFile.SaveInputStatus, addr InpStat
-    OCall xbx::IncFile.GetNextToken
-    .if !ZERO?
-      .if $DoesStringMatchA?([xax], <public>)
-        OCall xbx::IncFile.GetNextToken
-        .if !ZERO? && CHRA ptr [xax] == "]"
-          DbgPrintF , "¦UD: ParseTypedef - \´]\´ found", [xbx].$Obj(IncFile).dLineNumber
-          jmp @GetNextToken                                ;Sure????
-        .endif
-      .endif
-    .endif
-    OCall xbx::IncFile.LoadInputStatus, addr InpStat
-  .endif
+;  .if CHRA ptr [xax] == "["
+;    DbgPrintF , "¦UD: RenderTypedef - \´[\´ found", [xbx].$Obj(IncFile).dLineNumber
+;    OCall xbx::IncFile.InputStatusSave, addr InpStat
+;    OCall xbx::IncFile.GetNextTokenC
+;    .if !ZERO?
+;      .if $DoesStringMatchA?([xax], <public>)
+;        OCall xbx::IncFile.GetNextTokenC
+;        .if !ZERO? && CHRA ptr [xax] == "]"
+;          DbgPrintF , "¦UD: RenderTypedef - \´]\´ found", [xbx].$Obj(IncFile).dLineNumber
+;          jmp @GetNextToken                                ;Sure????
+;        .endif
+;      .endif
+;    .endif
+;    OCall xbx::IncFile.InputStatusLoad, addr InpStat
+;  .endif
 
   ;syntax: "typedef <macro()> xxx"
-  invoke IsMacro?, pToken                             ;Check if it is an already known macro
-  .if eax != 0                                        ;0, 1, ...
-    DbgPrintF , "¦UD: ParseTypedef - macro invocation ¦SA", [xbx].$Obj(IncFile).dLineNumber, pToken
+  invoke IsMacro?, pToken                               ;Check if it is an already known macro
+  .if eax != 0                                          ;0, 1, ...
+    DbgPrintF , "¦UD: RenderTypedef - macro invocation ¦SA", [xbx].$Obj(IncFile).dLineNumber, pToken
     mov edx, ecx
     .if eax == 1
       OCall pMacros::List.ItemAt, edx
     .else
       OCall pKnownMacros::List.ItemAt, edx
     .endif
-    mov edx, [xax - sizeof DWORD]                       ;Get offset to Macro-Attr
-    invoke ParseMacroCall, pToken, DWORD ptr [xax + xdx], TRUE
+    mov edx, [xax - sizeof(DWORD)]                      ;Get offset to Macro-Attr
+    invoke RenderMacroCall, pToken, DWORD ptr [xax + xdx], TRUE
     test xax, xax                                       ;FALSE if it was not a macro
     jnz @GetNextToken
   .endif
 
   ;Syntax: "typedef union|struct"?
-  invoke IsUnionStructClass?, pToken
-  .if eax != 0
-    DbgPrintF , "¦UD: ParseTypedef - ¦SA found", [xbx].$Obj(IncFile).dLineNumber, pToken
-    invoke ParseTypedefContainer, pToken, edx
-    xor eax, eax
-    jmp @Exit
-  .endif
-
-  ;Syntax: "typedef enum"?
   mov xax, pToken
-  .if $DoesStringMatchA?([xax], <enum>)
-    DbgPrintF , "¦UD: ParseTypedef - \´enum\´ found", [xbx].$Obj(IncFile).dLineNumber
-    invoke ParseTypedefEnum, TRUE
-    xor eax, eax
-    jmp @Exit
+  .if !$DoesStringMatchA?([xax], <struct>)
+    DoesStringMatchA? [xax], <union>
+    jnz @F
   .endif
+  invoke RenderContainer, pToken
+  jmp @Exit
 
+@@:
+  ;Syntax: "typedef enum"?
+  .if !$DoesStringMatchA?([xax], <enum>)
+    DoesStringMatchA? [xax], <ENUM>
+    jnz @F
+  .endif
+  invoke ParseTypedefEnum, TRUE
+  jmp @Exit
+
+@@:
   .if pType == NULL
     ;pToken may be a basic C type
     mov xax, pToken
-    BasicTypeCScan
+    BasicTypeCScan                                      ;Set dTypeCSpec
     mov pToken, xax                                     ;Last gattered Token
     .if dTypeCSpec != 0
       invoke ConvBasicTypeC, dTypeCSpec
@@ -116,11 +116,10 @@ ParseTypedef proc
       mov xax, pToken
       test xax, xax
       jmp @ProcessToken                                 ;Process the last gattered Token in eax
-    .else
-      lea xdx, szBuffer
-      mov pType, $invoke(TranslateReservedWord, xax, xdx)
-      jmp @GetNextToken
     .endif
+    lea xdx, cBuffer
+    mov pType, $invoke(TranslateReservedWord, xax, xdx)
+    jmp @GetNextToken
   .endif
 
   ;Get the new Name and write all to the output stream
@@ -133,6 +132,7 @@ ParseTypedef proc
     .if CHRA ptr [xax] == "," || CHRA ptr [xax] == ";"
       .if pName != NULL
         mov bValid, TRUE
+
         ;Don't add "<newname> typedef <oldname>" entries if <newname> == <oldname>
         .if dPtrCount == 0
           invoke StrCompA, pName, pType
@@ -147,7 +147,7 @@ ParseTypedef proc
           .endif
           m2m pName, pCurrToken, xdx                    ;Assign translated name
         .endif
-        DbgPrintF , "¦UD: ParseTypedef - new typedef ¦SA = ¦SA", [xbx].$Obj(IncFile).dLineNumber, pName, pType
+        DbgPrintF , "¦UD: RenderTypedef - new typedef ¦SA = ¦SA", [xbx].$Obj(IncFile).dLineNumber, pName, pType
 
         .if bValid != FALSE
           .if dPtrCount == 0
@@ -155,7 +155,7 @@ ParseTypedef proc
             .if eax != FALSE                            ;  then the new type is it too
               IsStructure? pName                        ;Check if it already exist
               .if eax == FALSE
-                invoke StrSizeA, pName
+                invoke StrLengthA, pName
                 invoke InsertStrg, pStructs, pName, eax
               .endif
             .endif
@@ -194,7 +194,7 @@ ParseTypedef proc
             .endif
             OCall xbx::IncFile.StmWriteEOL
 
-            invoke StrSizeA, pName
+            invoke StrLengthA, pName
             invoke InsertStrg, pTypedefs, pName, eax
           .endif
         .endif
@@ -216,7 +216,7 @@ ParseTypedef proc
           mov xax, pName
           test xax, xax
           cmovz xax, pType
-          invoke ParseTypedefFunction, xax, FALSE, NULL
+          invoke ParseTypedefFunction, xax, FALSE
         .endif
       .endif
       mov pName, NULL
@@ -227,11 +227,11 @@ ParseTypedef proc
       inc dPtrCount
 
     .elseif CHRA ptr [xax] == "["
-      DbgPrintF , "¦UD: ParseTypedef - \´[\´ found", [xbx].$Obj(IncFile).dLineNumber
+      DbgPrintF , "¦UD: RenderTypedef - \´[\´ found", [xbx].$Obj(IncFile).dLineNumber
       inc dSquareBracketCount
 
     .elseif CHRA ptr [xax] == "]"
-      DbgPrintF , "¦UD: ParseTypedef - \´]\´ found", [xbx].$Obj(IncFile).dLineNumber
+      DbgPrintF , "¦UD: RenderTypedef - \´]\´ found", [xbx].$Obj(IncFile).dLineNumber
       dec dSquareBracketCount
 
     .else
@@ -259,10 +259,10 @@ ParseTypedef proc
           invoke StrNewA, xax
           mov pDup, xax
         .endif
-        DbgPrintF , "¦UD: ParseTypedef - array size ¦SA found", [xbx].$Obj(IncFile).dLineNumber, xax
+        DbgPrintF , "¦UD: RenderTypedef - array size ¦SA found", [xbx].$Obj(IncFile).dLineNumber, xax
       .else
         mov pToken, xax
-        IsName? xax
+        IsValidName? xax
         .if eax != FALSE
           mov xax, pToken
           mov pName, xax
@@ -270,21 +270,28 @@ ParseTypedef proc
       .endif
     .endif
 
-    OCall xbx::IncFile.GetNextToken
-    jz @Error
+    OCall xbx::IncFile.GetNextTokenC
+    jz @ErrorEoF
     invoke SkipAnnotations, xax
-    jz @Error                                           ;No more tokens? => error
+    jz @ErrorEoF                                           ;No more tokens? => error
     mov pToken, xax
   .endw
 
 @Exit:
+  mov xax, pToken
   ret
 
-@Error:
-  .if xax != NULL
-    OCall xbx::IncFile.ShowError, $OfsCStrA("unexpected item %s in typedef [¦UD]"), pToken, eax
-  .endif
-  DbgErrorF , "¦SU(¦UD): ParseTypedef - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+@ErrorSyntax:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.StmWriteError
+  invoke GotoNextToken, ';'
   ret
-ParseTypedef endp
+
+@ErrorEoF:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.StmWriteError
+  xor eax, eax
+  ret
+
+RenderTypedef endp
 

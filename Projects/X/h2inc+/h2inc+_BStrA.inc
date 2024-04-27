@@ -1,9 +1,9 @@
 ; ==================================================================================================
-; Title:    h2inc+_BStrA.inc
-; Authors:  G. Friedrich
-; Version:  C.2.0
-; Purpose:  ObjAsm support of BStrA string handling macros.
-; Notes:    See h2inc+.asm
+; Title:      h2inc+_BStrA.inc
+; Authors:    G. Friedrich
+; Version:    C.2.0
+; Purpose:    ObjAsm support of BStrA string handling macros.
+; Notes:      See h2inc+.asm
 ; ==================================================================================================
 
 

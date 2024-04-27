@@ -20,13 +20,13 @@ ParseInterfaceBlock proc pName:PSTRINGA
   mov [xbx].$Obj(IncFile).bInsideInterface, TRUE
   .repeat
     invoke ParseTypedefFunctionPtr, NULL
-;    invoke ParseContainerItem, xax, pName
+    invoke RenderContainerMember, xax, pName
     .break .if xax == NULL
     .if CHRA ptr [xax] == ";"
-      OCall xbx::IncFile.PeekNextToken
-      .break .if xax == NULL
+      OCall xbx::IncFile.PeekNextTokenC
+      .break .if ZERO?
       .if CHRA ptr [xax] == "}"
-        OCall xbx::IncFile.GetNextToken               ;Consume it
+        OCall xbx::IncFile.GetNextTokenC               ;Consume it
         .break
       .endif
     .else

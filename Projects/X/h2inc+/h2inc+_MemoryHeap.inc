@@ -55,33 +55,34 @@ endm
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:    MemoryHeap.AddBStrA
 ; Purpose:   Add a BStrA into the MemoryHeap.
-; Arguments: Arg1 -> Original string, must not be zero terminated.
-;            Arg2: String size, inclusive ZTC.
-; Return:    xax -> new string in MemoryHeap.
+; Arguments: Arg1 -> Original string, must NOT be zero terminated.
+;            Arg2: String length, not including the ZTC, if any.
+; Return:    xax -> New string in MemoryHeap.
 
-Method MemoryHeap.AddBStrA, uses xdi xsi, pStrA:PSTRINGA, dSize:DWORD
+Method MemoryHeap.AddBStrA, uses xdi xsi, pStrA:PSTRINGA, dLength:DWORD
   SetObject xsi
 @Retry:
   mov xdi, [xsi].pMemFree
-  mov eax, dSize
-  lea xcx, [xdi + xax + sizeof DWORD]
+  mov eax, dLength
+  inc eax                                               ;Include ZTC
+  lea xcx, [xdi + xax + sizeof(DWORD)]
   .if xcx > [xsi].pMemMax
     mov eax, [xsi].dMemSize
     add eax, [xsi].dIncrement
     OCall xsi.SetMemMax, eax
     test xax, xax
-    jz @Retry                           ;ZERO => OK
-    xor eax, eax                        ;Return NULL
+    jz @Retry                                           ;ZERO => OK
+    xor eax, eax                                        ;Return NULL
     ret
   .endif
-  stosd                                 ;Save string length
-  invoke MemClone, xdi, pStrA, dSize    ;Copy string
-  mov eax, dSize
+  stosd                                                 ;Save string size (incl ZTC)
+  invoke MemClone, xdi, pStrA, dLength                  ;Copy string
+  mov eax, dLength
   add xax, xdi
-  m2z CHRA ptr [xax]                    ;Set ZTC
-  inc xax                               ;Skip ZTC
-  mov [xsi].pMemFree, xax               ;Set Free-Pointer
-  mov xax, xdi                          ;Return -> allocated string
+  m2z CHRA ptr [xax]                                    ;Set ZTC
+  inc xax                                               ;Skip ZTC
+  mov [xsi].pMemFree, xax                               ;Set Free-Pointer
+  mov xax, xdi                                          ;Return -> allocated string
 ;  DbgShowMemoryHeapStatus
 MethodEnd
 
@@ -95,7 +96,7 @@ Method MemoryHeap.AddDword, uses xdi xsi, dValue:DWORD
   SetObject xsi
 @Retry:
   mov xdi, [xsi].pMemFree
-  lea xcx, [xdi + sizeof DWORD]
+  lea xcx, [xdi + sizeof(DWORD)]
   .if xcx > [xsi].pMemMax
     mov eax, [xsi].dMemSize
     add eax, [xsi].dIncrement

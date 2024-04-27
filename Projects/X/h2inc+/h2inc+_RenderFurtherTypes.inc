@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      h2inc+_ParseFurtherTypes.inc
+; Title:      h2inc+_RenderFurtherTypes.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
 ; Purpose:    
@@ -9,7 +9,7 @@
 .code
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  ParseFurtherTypes
+; Procedure:  RenderFurtherTypes
 ; Purpose:    Check out if there come some pointer definitions behind.
 ; Arguments:  Arg1 -> Type.
 ;             Arg2 -> Tag.
@@ -17,9 +17,8 @@
 ;             xbx -> IncFile.
 ; Return:     xax -> Next Token.
 
-ParseFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
-  local dPtrCount:DWORD, pName:PSTRINGA, pCurrToken:PTOKEN
-  local cBuffer[1024]:CHRA, cTransBuffer[128]:CHRA
+RenderFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
+  local dPtrCount:DWORD, pName:PSTRINGA, pCurrToken:PTOKEN, cTransBuffer[128]:CHRA
 
   mov dPtrCount, 0
   mov pName, NULL
@@ -32,7 +31,7 @@ ParseFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
         .if xdi == NULL
           mov xdi, pTag
         .endif
-        DbgPrintF , "¦UD: ParseFurtherTypes - ¦SA ¦SA", [xbx].$Obj(IncFile).dLineNumber, pName, xdi
+        DbgPrintF , "¦UD: RenderFurtherTypes - ¦SA ¦SA", [xbx].$Obj(IncFile).dLineNumber, pName, xdi
         ;Comment out forward declarations
         .if dPtrCount == 0
           invoke StrCompA, pName, xdi
@@ -47,7 +46,7 @@ ParseFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
           .if eax != FALSE                              ;  then the new type is it too
             IsStructure? pName                          ;Check if it already exist
             .if eax == FALSE
-              invoke StrSizeA, pName
+              invoke StrLengthA, pName
               invoke InsertStrg, pStructs, pName, eax
             .endif
           .endif
@@ -71,7 +70,7 @@ ParseFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
         mov pName, xax
       .endif
     .endif
-    OCall xbx::IncFile.GetNextToken
+    OCall xbx::IncFile.GetNextTokenC
     jz @Error
     mov pToken, xax
   .endw
@@ -82,6 +81,6 @@ ParseFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
   ret
 
 @Error:
-  DbgErrorF , "¦SU(¦UD): ParseFurtherTypes - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+  DbgErrorF , "¦SU(¦UD): RenderFurtherTypes - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
   ret
-ParseFurtherTypes endp
+RenderFurtherTypes endp
