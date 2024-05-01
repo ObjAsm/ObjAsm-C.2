@@ -2,21 +2,89 @@
 ; Title:      h2inc+_RenderContainerMember.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
-; Purpose:  
+; Purpose:    ObjAsm h2inc+ translation procedures.
 ; ==================================================================================================
 
-;Example:
+;Example 1:
 ;struct Point{
 ;  int x;
 ;  int y;
 ;};
 ;
+;Example 2:
 ;typedef struct Point{
 ;  int x;
 ;  int y;
 ;} Point;
 
 .code
+
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  WriteContainerMember
+; Purpose:    Write member to the output stream.
+; Arguments:  Arg1 -> Member name.
+;             Arg2 -> Member type.
+;             Arg3 -> List with collected DUP info.
+;             Arg4: Number of indirections. 
+; Return:     Nothing
+
+WriteContainerMember proc pName:PTOKEN, pType:PTOKEN, pDupList:POINTER, dPtrCount:DWORD
+  local cTransBuffer[128]:CHRA
+  
+  .if pName != NULL
+    ;Write regular struct/union member --------------------------------------------------
+    .if dPtrCount != 0
+      c2m pType, $OfsCStrA("POINTER"), xax
+    .else
+      .if pType == NULL
+        IsStructure? pName
+        .if eax != FALSE
+          xor eax, eax
+          xchg xax, pName
+          mov pType, xax
+        .endif
+      .endif
+    .endif
+
+    ;Write member name or skip if it is annonymous -------------------------------------
+    .if pName != NULL
+      invoke TranslateReservedWord, pName, addr cTransBuffer
+      OCall xbx::IncFile.StmWrite, xax
+    .endif
+
+    ;Write member type and initializer -------------------------------------------------
+    .if pType != NULL
+      OCall xbx::IncFile.StmWriteChar, SPC
+      invoke TranslateReservedWord, pType, addr cTransBuffer
+      OCall xbx::IncFile.StmWrite, xax
+      .if pDupList != NULL
+        OCall xbx::IncFile.StmWriteChar, SPC
+        invoke WriteStackList, pDupList
+        OCall xbx::IncFile.StmWrite, $OfsCStrA($Esc(" dup \{"))
+      .else
+        OCall xbx::IncFile.StmWriteChar, SPC
+      .endif
+
+      IsStructure? pType
+      .if eax != FALSE
+        OCall xbx::IncFile.StmWrite, $OfsCStrA("<>")
+      .else
+        OCall xbx::IncFile.StmWriteChar, "?"
+      .endif
+
+      .if pDupList != NULL
+        OCall xbx::IncFile.StmWriteChar, ")"
+      .endif
+
+      OCall xbx::IncFile.StmWriteEoL
+
+    .endif
+    OCall xbx::IncFile.StmWriteComment
+
+  .endif
+  ret
+WriteContainerMember endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderContainerMember
@@ -29,19 +97,15 @@
 ; Idea:       Replace _??xx with the name of the parent struct.
 
 RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
-  local dTypeCSpec:DWORD, bStruct:DWORD, pPrvName:PSTRINGA
+  local dTypeCSpec:DWORD, bStruct:DWORD
   local dRes:DWORD, dPtrCount:DWORD, dNameFlags:DWORD
   local pType:PSTRINGA, pName:PSTRINGA, pDupList:POINTER, pEndToken:PSTRINGA
-  local cTransBuffer[128]:CHRA, pCurrToken:PTOKEN
-  local cMacroBuffer[MAX_BLOCK_NAME]:CHRA, DupList:$Obj(%XWordVector)
-  
-  local cMember[128]:CHRA, cSuffix[UDWORD2DEC_MAX_CHARS]:CHRA
+  local pCurrToken:PTOKEN
+  local cMacroBuffer[MAX_BLOCK_NAME]:CHRA
+  local cMember[128]:CHRA, cSuffix[UDWORD2DEC_MAX_CHARS]:CHRA, dSquareBracketCount:DWORD
 
-  ;Initialize 
-  m2m pPrvName, [xbx].$Obj(IncFile).pContainerName, xax
+  ;Initialize ---------------------------------------------------------------------------
   m2m [xbx].$Obj(IncFile).pContainerName, pContainerName, xcx
-  New DupList::%XWordVector
-  OCall DupList::%XWordVector.Init, xbx, 10, 10, 0FFFFFFFFh/sizeof(POINTER)
 
   mov bStruct, FALSE
   mov dRes, 0
@@ -59,6 +123,11 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
     jz @ErrorEoF
     .break .if CHRA ptr [xax] == ";"                    ;End of declaration reached
     mov pToken, xax
+
+    .if CHRA ptr [xax] == '}'
+      mov pEndToken, xax
+      jmp @Exit
+    .endif
 
     .if $DoesStringMatchA?([xax], <struct>)             ;New structure inside this container?
       ;Name management
@@ -82,7 +151,6 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
       jmp @Exit
     .endif
 
-
     .if $DoesStringMatchA?([xax], <union>)              ;New union inside this container?
       ;Name management
       mov xax, pContainerName
@@ -104,167 +172,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
       jmp @Exit
     .endif
 
-;##\
-;    ;union ------------------------------------------------------------------
-;    .if $DoesStringMatchA?([xax], <union>)
-;      DbgPrintF , "¦UD: RenderContainerMember - ¦SA.union found", [xbx].$Obj(IncFile).dLineNumber, pContainerName
-;      OCall xbx::IncFile.StmWrite, addr szUnion
-;      inc [xbx].$Obj(IncFile).dIndentation
-;      OCall xbx::IncFile.GetNextTokenC
-;      test xax, xax
-;      jz @Error
-;      mov pToken, xax
-;      IsValidName? xax
-;      .if eax != FALSE
-;        OCall xbx::IncFile.GetNextTokenC
-;        test xax, xax
-;        jz @Error
-;      .else
-;        mov xax, pToken
-;      .endif
-;      .if CHRA ptr [xax] == "{"
-;        invoke GetBlockName, addr cMacroBuffer
-;        .if xax != NULL
-;          mov pName, xax
-;        .endif
-;        mov dNameFlags, edx
-;
-;        .if xax != NULL
-;          .if !$DoesStringMatchA?([xax], <DUMMYUNIONNAME>)  ;Don't write in case of an
-;            OCall xbx::IncFile.StmWriteChar, SPC            ; embedded union & DUMMY name
-;            invoke TranslateReservedWord, pName, addr cTransBuffer
-;            OCall xbx::IncFile.StmWrite, xax
-;          .endif
-;        .endif
-;        OCall xbx::IncFile.StmWriteEOL
-;
-;        invoke RenderBlock, pName, RBT_CONTAINER
-;        test xax, xax
-;        jz @Exit
-;        invoke SkipName, pName, dNameFlags
-;      .else
-;        OCall xbx::IncFile.ShowError, $OfsCStrA("union without block")
-;        OCall xbx::IncFile.StmWriteEOL
-;      .endif
-;      mov pType, NULL
-;      mov pName, NULL
-;      dec [xbx].$Obj(IncFile).dIndentation
-;      OCall xbx::IncFile.StmWrite, $OfsCStrA("ends")
-;      OCall xbx::IncFile.StmWriteEOL
-;
-;      DbgPrintF , "¦UD: RenderContainerMember - end of union", [xbx].$Obj(IncFile).dLineNumber
-;      jmp @GetNextToken
-;    .endif
-;
-;    ;struct -----------------------------------------------------------------
-;    .if $DoesStringMatchA?([xax], <struct>)
-;      DbgPrintF , "¦UD: RenderContainerMember - ¦SA.struct found", [xbx].$Obj(IncFile).dLineNumber, pContainerName
-;      OCall xbx::IncFile.GetNextTokenC
-;      .if xax == NULL || CHRA ptr [xax] == ";"          ;Statement terminator
-;        jmp @Error
-;      .endif
-;      DbgPrintF , "¦UD: RenderContainerMember - ¦SA.struct, next token ¦SA", [xbx].$Obj(IncFile).dLineNumber, pContainerName, xax
-;      .if CHRA ptr [xax] != "{"
-;        mov pName, xax
-;        OCall xbx::IncFile.PeekNextTokenC
-;        .if !ZERO? && CHRA ptr [xax] == "{"
-;          OCall xbx::IncFile.GetNextTokenC
-;        .else
-;          mov xax, pName
-;          mov pName, NULL
-;        .endif
-;      .endif
-;      .if CHRA ptr [xax] == "{"
-;        OCall xbx::IncFile.StmWrite, addr szStruct
-;        inc [xbx].$Obj(IncFile).dIndentation
-;        invoke GetBlockName, addr cMacroBuffer          ;xax -> Name, edx = flags (if name is a macro)
-;        .if xax != NULL
-;          mov pName, xax
-;        .endif
-;        mov dNameFlags, edx
-;
-;        .if xax != NULL
-;          .if !$DoesStringMatchA?([xax], <DUMMYSTRUCTNAME>) ;Don't write in case of an
-;            OCall xbx::IncFile.StmWriteChar, SPC            ; embedded structure & DUMMY name
-;            invoke TranslateReservedWord, pName, addr cTransBuffer
-;            OCall xbx::IncFile.StmWrite, xax
-;          .endif
-;        .endif
-;        OCall xbx::IncFile.StmWriteEOL
-;
-;        invoke RenderBlock, pName, RBT_CONTAINER
-;        test xax, xax
-;        jz @Exit
-;
-;        invoke SkipName, pName, dNameFlags
-;
-;        ;In case that the structure is repeated [...], we ignore it ---------
-;        OCall xbx::IncFile.PeekNextTokenC
-;        .if !ZERO? && CHRA ptr [xax] == "["
-;          OCall xbx::IncFile.GetNextTokenC
-;          invoke SkipBraces, "[", "]"
-;        .endif
-;
-;        dec [xbx].$Obj(IncFile).dIndentation
-;        OCall xbx::IncFile.StmWrite, $OfsCStrA("ends")
-;        OCall xbx::IncFile.StmWriteEOL
-;        DbgPrintF , "¦UD: RenderContainerMember - end of struct", [xbx].$Obj(IncFile).dLineNumber
-;
-;      .elseif CHRA ptr [xax] == "*"
-;        inc dPtrCount
-;
-;      .else
-;        ;Found struct tag ---------------------------------------------------
-;        mov pType, xax                                  ;Name of structure
-;        mov pName, NULL
-;        mov dPtrCount, 0
-;        IsValidName? xax
-;        .if eax != FALSE
-;          .while TRUE
-;            OCall xbx::IncFile.GetNextTokenC
-;            jz @Error
-;            mov cl, [xax]
-;            .if cl == "["                               ;It is an array of structures!
-;              jmp @DUP
-;            .endif
-;            .break .if cl == ";" || cl == ","
-;            .if CHRA ptr [xax] == "*"
-;              inc dPtrCount
-;            .else
-;              invoke TranslateTypeQualifier, xax
-;              .continue .if CHRA ptr [xax] == 0
-;              mov pCurrToken, xax
-;              IsValidName? xax
-;              mov xcx, pCurrToken
-;              .if eax != FALSE
-;                mov pName, xcx
-;              .endif
-;            .endif
-;          .endw
-;          .if pName != NULL
-;            .if pType != NULL && dPtrCount == 0
-;              OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s %s <>"), pName, pType
-;              OCall xbx::IncFile.StmWriteEOL
-;            .else
-;              OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s POINTER ?"), pName
-;              OCall xbx::IncFile.StmWriteEOL
-;            .endif
-;          .else
-;            mov bStruct, TRUE
-;            jmp @GetNextToken
-;          .endif
-;        .else
-;          OCall xbx::IncFile.ShowError, $OfsCStrA("unexpected ContainerItem %s after 'struct'"), pType
-;        .endif
-;      .endif
-;      mov pType, NULL
-;      mov pName, NULL
-;      mov dPtrCount, 0
-;      jmp @GetNextToken
-;    .endif
-;##/
-
-    ;Skip the following keywords --------------------------------------------
+    ;Skip the following keywords --------------------------------------------------------
     .if $DoesStringMatchA?([xax], <static>)
       jmp @GetNextToken
     .endif
@@ -285,7 +193,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
       jmp @GetNextToken
     .endif
 
-    ;private, public or protected -------------------------------------------
+    ;private, public or protected -------------------------------------------------------
     IsPublicPrivateProtected? xax                       ;Check for 'private', 'public', 'protected'
     .if eax != FALSE
       OCall xbx::IncFile.PeekNextTokenC
@@ -295,7 +203,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
       .endif
     .endif
 
-    ;macro ------------------------------------------------------------------
+    ;macro ------------------------------------------------------------------------------
     invoke IsMacro?, pToken                             ;Check in the macro lists
     .if eax != 0
       mov edx, ecx
@@ -311,7 +219,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
       .endif
     .endif
 
-    ;equate containing items ------------------------------------------------
+    ;Equate containing items ------------------------------------------------------------
     invoke IsEquate?, pToken
     .if eax != 0
       mov edx, ecx
@@ -324,12 +232,12 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
 
       .ifBitSet DWORD ptr [xax + xdx], EQF_HAS_EOL      ;Force an EOL
         OCall xbx::IncFile.StmWrite, pToken
-        OCall xbx::IncFile.StmWriteEOL
+        OCall xbx::IncFile.StmWriteEoL
         jmp @GetNextToken
       .endif
     .endif
 
-    ;Record -----------------------------------------------------------------
+    ;Record -----------------------------------------------------------------------------
     mov xax, pToken
     .if CHRA ptr [xax] == ":"                           ;Record field detected
       ;Name management
@@ -355,12 +263,12 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
       jmp @Exit
     .endif
 
-    ;Function or FunctionPtr ------------------------------------------------
+    ;Function or FunctionPtr ------------------------------------------------------------
     mov xax, pToken
     .if CHRA ptr [xax] == "("
       invoke IsFunctionPtr?
       .if eax != FALSE
-        invoke ParseTypedefFunctionPtr, NULL
+        invoke RenderTypedefFuncPtr, NULL
         .continue
       .else
         invoke IsFunction?
@@ -368,37 +276,40 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
           mov xax, pName
           test xax, xax
           cmovz xax, pType
-          invoke ParseTypedefFunction, xax, FALSE       ;No return value
+          invoke RenderTypedefFunction, xax, FALSE       ;No return value
           .continue
         .endif
       .endif
     .endif
 
-    ;Array ------------------------------------------------------------------
+    ;Array ------------------------------------------------------------------------------
     mov xax, pToken
     .if CHRA ptr [xax] == "["                           ;Array => DUP
-@DUP:
       .if pType != NULL || pName != NULL                ;Only of we have a Type & a Name
         mov pDupList, $Create@Stacklist()
+        mov dSquareBracketCount, 1
         .while TRUE
           OCall xbx::IncFile.GetNextTokenC
-          .if ZERO? || CHRA ptr [xax] == ";"            ;Statement terminator
-            jmp @Error
+          jz @ErrorEoF
+          .if CHRA ptr [xax] == ';'                     ;Statement terminator
+            .break .if dSquareBracketCount == 0
+            jmp @ErrorSyntax
           .endif
-          .break .if CHRA ptr [xax] == "]"
-          Add@Stacklist pDupList, xax, xdx              ;Add Tokens to the DUP-List
-          .if CHRA ptr [xax] == "]"
-            OCall DupList::%XWordVector.Insert, $OfsCStrA(")")
-            .break
+          .if CHRA ptr [xax] == ']'
+            dec dSquareBracketCount
+            .continue
           .endif
-;          DbgStr xax,, "DUPs"
-          OCall DupList::%XWordVector.Insert, xax       ;Add Tokens to the DUP-List
+          .if CHRA ptr [xax] == '['
+            inc dSquareBracketCount
+            mov xax, $OfsCStrA("*")
+          .endif
+          Add@Stacklist pDupList, xax, xdx
         .endw
-        jmp @GetNextToken
+        .continue
       .endif
     .endif
 
-    ;Pointer ----------------------------------------------------------------
+    ;Pointer ----------------------------------------------------------------------------
     mov xax, pToken
     mov cl, [xax]
     .if cl == "*" || cl == "&"
@@ -411,7 +322,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
     jz @GetNextToken
     mov pToken, xax
 
-    ;pToken may be a basic C type -------------------------------------------
+    ;Token may be a basic C type --------------------------------------------------------
     .if pType == NULL
       BasicTypeCScan                                    ;Sets dTypeCSpec
       mov pToken, xax                                   ;Last gattered token
@@ -426,6 +337,14 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
       .endif
     .endif
     
+    ;Multiple definition ---------------------------------------------------------------
+    mov xax, pToken
+    .if CHRA ptr [xax] == ","
+      invoke WriteContainerMember, pName, pType, pDupList, dPtrCount
+      mov pName, NULL
+      jmp @GetNextToken
+    .endif
+
     IsValidName? pToken
     .if eax != FALSE
       mov xcx, pToken
@@ -445,201 +364,28 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
   .endw
   mov pEndToken, xax
 
+  invoke WriteContainerMember, pName, pType, pDupList, dPtrCount
 
-
-
-
-  ;Write member to stream ---------------------------------------------------
-  .if FALSE;cRecBitBuffer != 0                                ;Check for bit field => record
-;##\
-;    int 3
-;    .if pName == NULL                                   ;It is possible that NO name is supplied!
-;      lea xax, cBuffer                                 ;=> create one
-;      mov pName, xax
-;      invoke wsprintf, xax, $OfsCStrA("Bitfield%u"), dFieldCount
-;    .endif
-
-;    ;Write record declaration -----------------------------------------------
-;    DbgPrintF , "¦UD: RenderContainerMember - new Bitfield: ¦SA", [xbx].$Obj(IncFile).dLineNumber, pType
-;    mov xdx, $OfsCStrA("DUMMYRECORDNAME")               ;Set Default
-;    mov xax, pContainerName
-;    .if xax != NULL                                     ;Unnamed struct or union
-;      .if !$DoesStringMatchA?([xax], <DUMMYSTRUCTNAME>)
-;        .if !$DoesStringMatchA?([xax], <DUMMYUNIONNAME>)
-;          mov xdx, xax
-;        .endif
-;      .endif
-;    .endif
-;    
-;    lea xdi, szRecord
-;    WriteFA xdi, "¦SA_REC¦UD", xdx, $ObjTmpl(Application).dRecordNameSuffix
-;    .if $ObjTmpl(Application).Options.bNoRecords == FALSE
-;      OCall xbx::IncFile.StmWrite, addr szRecord
-;      OCall xbx::IncFile.StmWrite, $OfsCStrA(" record ")
-;    .endif
-;
-;    .if $ObjTmpl(Application).Options.bNoRecords == FALSE
-;      DbgPrintF , "¦UD: RenderContainerMember - new bits: ¦SA", [xbx].$Obj(IncFile).dLineNumber, pName
-;      OCall xbx::IncFile.StmWrite, addr cRecBitBuffer
-;    .else
-;      invoke dec2dwordA, addr cRecBitBuffer
-;      mov ecx, dBits
-;      xor edx, edx
-;      .while eax != 0
-;        bts edx, ecx
-;        inc ecx
-;        dec eax
-;      .endw
-;      mov dBits, ecx
-;      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s_%s equ 0%xh"), addr szRecord, pName, edx
-;      OCall xbx::IncFile.StmWriteEOL
-;    .endif
-;
-;    ;Determine if we are at the end of a record declaration -----------------
-;    OCall xbx::IncFile.InputStatusSave, addr InpStat
-;    inc [xbx].$Obj(IncFile).bSkipScanPP
-;    mov dReturn, TRUE
-;    .while TRUE
-;      OCall xbx::IncFile.GetNextTokenC
-;      .break .if ZERO?
-;      .continue .if !IsIfLevelActive?(InpStat)
-;      mov cl, [xax]
-;      .break .if cl == "," || cl == ";"                 ;Statement terminator
-;      .if cl == ":"
-;        mov dReturn, FALSE
-;        .break
-;      .endif
-;    .endw
-;    dec [xbx].$Obj(IncFile).bSkipScanPP
-;    OCall xbx::IncFile.InputStatusLoad, addr InpStat
-;
-;    .if dReturn != FALSE
-;      inc $ObjTmpl(Application).dRecordNameSuffix
-;      .if $ObjTmpl(Application).Options.bNoRecords == FALSE
-;        OCall xbx::IncFile.StmWriteEOL
-;      .endif
-;      .if $ObjTmpl(Application).Options.bRecordsInUnions != FALSE
-;        OCall xbx::IncFile.StmWrite, addr szUnion
-;        OCall xbx::IncFile.StmWriteEOL
-;        ;Tab here
-;        OCall xbx::IncFile.StmWrite, pType
-;        OCall xbx::IncFile.StmWrite, $OfsCStrA(" ?")
-;        OCall xbx::IncFile.StmWriteEOL
-;      .elseif $ObjTmpl(Application).Options.bNoRecords != FALSE
-;        OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s "), addr szRecord 
-;        IsStructure? pType
-;        .if eax != FALSE
-;          OCall xbx::IncFile.StmWrite, $OfsCStrA("<>")
-;        .else
-;          OCall xbx::IncFile.StmWriteChar, "?"
-;        .endif
-;        OCall xbx::IncFile.StmWriteEOL
-;      .endif
-;
-;      .if $ObjTmpl(Application).Options.bNoRecords == FALSE
-;        OCall xbx::IncFile.StmWrite, addr szRecord
-;        OCall xbx::IncFile.StmWrite, $OfsCStrA(" <>")
-;
-;        ;Write Bit fields in reverse order (MASM and C differs in the order)
-;        inc [xbx].$Obj(IncFile).dIndentation
-;        .while RecTypeBits.$Obj(StrCollectionA).dCount != 0
-;          mov edx, RecTypeBits.$Obj(StrCollectionA).dCount
-;          dec edx
-;          OCall RecTypeBits::StrCollectionA.ItemAt, edx
-;          OCall xbx::IncFile.StmWrite, xax
-;          mov edx, RecTypeBits.$Obj(StrCollectionA).dCount
-;          dec edx
-;          OCall RecTypeBits::StrCollectionA.DisposeAt, edx
-;          .if RecTypeBits.$Obj(StrCollectionA).dCount != 0
-;            OCall xbx::IncFile.StmWrite, $OfsCStrA(",")
-;          .else
-;            dec [xbx].$Obj(IncFile).dIndentation
-;          .endif
-;          OCall xbx::IncFile.StmWriteEOL
-;        .endw
-;        OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s_REC%u %s_RTP%u ", 3Ch, 3Eh), \
-;                                      pMemberBaseName, $ObjTmpl(Application).dRecordNameSuffix,\
-;                                      pMemberBaseName, $ObjTmpl(Application).dRecordNameSuffix
-;        OCall xbx::IncFile.StmWriteEOL
-;      .endif
-;      .if $ObjTmpl(Application).Options.bRecordsInUnions != FALSE
-;        OCall xbx::IncFile.StmWrite, $OfsCStrA("ends")
-;        OCall xbx::IncFile.StmWriteEOL
-;      .endif
-;
-;    .else
-;      .if $ObjTmpl(Application).Options.bNoRecords == FALSE
-;        OCall xbx::IncFile.StmWrite, $OfsCStrA(", ")
-;      .endif
-;      inc dFieldCount
-;      mov pToken, $OCall(xbx::IncFile.GetNextTokenC)
-;      jmp @NextMember
-;    .endif
-;##/
-
-  .elseif pName != NULL
-    ;Write regular struct/union member --------------------------------------
-    .if dPtrCount != 0
-      c2m pType, $OfsCStrA("POINTER"), xax
-    .else
-      .if pType == NULL
-        IsStructure? pName
-        .if eax != FALSE
-          xor eax, eax
-          xchg xax, pName
-          mov pType, xax
-        .endif
-      .endif
-    .endif
-
-    .if pName != NULL
-      invoke TranslateReservedWord, pName, addr cTransBuffer
-      OCall xbx::IncFile.StmWrite, xax
-    .endif
-
-    .if pType != NULL
-      OCall xbx::IncFile.StmWriteChar, SPC
-      invoke TranslateReservedWord, pType, addr cTransBuffer
-      OCall xbx::IncFile.StmWrite, xax
-      .if pDupList != NULL
-        OCall xbx::IncFile.StmWriteChar, SPC
-        invoke WriteStackList, pDupList
-        OCall xbx::IncFile.StmWrite, $OfsCStrA($Esc(" dup \{"))
-      .else
-        OCall xbx::IncFile.StmWriteChar, SPC
-      .endif
-
-      IsStructure? pType
-      .if eax != FALSE
-        OCall xbx::IncFile.StmWrite, $OfsCStrA("<>")
-      .else
-        OCall xbx::IncFile.StmWriteChar, "?"
-      .endif
-      .if pDupList != NULL
-        OCall xbx::IncFile.StmWriteChar, ")"
-      .endif
-      OCall xbx::IncFile.StmWriteEOL
-
-    .endif
-    OCall xbx::IncFile.StmWriteComment
-    ;------------------------------------------------------------------------
-
-  .endif
+  ;--------------------------------------------------------------------------------------
 
 @Exit:
   Destroy@Stacklist pDupList
-  OCall DupList::%XWordVector.Done
   mov xax, pEndToken
   test xax, xax
   ret
 
-@ErrorSyntax:             ;Search last ";"
-@Error:
-@ErrorEoF:
-  DbgErrorF , "¦SU(¦UD): RenderContainerMember - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
-  m2m [xbx].$Obj(IncFile).pContainerName, pPrvName, xax
-  OCall xbx::IncFile.ShowError, $OfsCStrA("unexpected '%s' ContainerItem: %s"), pContainerName, pToken
-  mov xax, pEndToken
-  test xax, xax
+@ErrorSyntax:
+  Destroy@Stacklist pDupList
+  OCall xbx::IncFile.ShowError, $OfsCStr("unexpected '%hs' ContainerItem: %hs"), pContainerName, pToken
+  OCall xbx::IncFile.StmWriteError
+  invoke GotoNextToken, addr szSemiColon
   ret
+
+@ErrorEoF:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  Destroy@Stacklist pDupList
+  OCall xbx::IncFile.StmWriteError
+  xor eax, eax
+  ret
+
 RenderContainerMember endp

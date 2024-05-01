@@ -1,9 +1,8 @@
 ; ==================================================================================================
-; Title:    h2inc+_IniFileReader.inc
-; Author:   G. Friedrich
-; Version:  C.2.0
-; Purpose:  ObjAsm support of h2inc+ IniFiles.
-; Notes:    See h2inc+.asm
+; Title:      h2inc+_IniFileReader.inc
+; Author:     G. Friedrich
+; Version:    See h2inc+.asm
+; Purpose:    ObjAsm support of h2inc+ IniFiles.
 ; ==================================================================================================
 
 
@@ -18,10 +17,10 @@ IFR_SECTION_NOT_FOUND   equ   180004
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IniFileReader.Done
-; Purpose:   Finalizes the object.
-; Arguments: None.
-; Return:    Nothing.
+; Method:     IniFileReader.Done
+; Purpose:    Finalizes the object.
+; Arguments:  None.
+; Return:     Nothing.
 
 Method IniFileReader.Done, uses xsi
   SetObject xsi
@@ -32,11 +31,11 @@ Method IniFileReader.Done, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IniFileReader.Init
-; Purpose:   Initializes the object.
-; Arguments: Arg1 -> Owner.
-;            Arg2 -> MemoryHeap.
-; Return:    eax = BYTEs read.
+; Method:     IniFileReader.Init
+; Purpose:    Initializes the object.
+; Arguments:  Arg1 -> Owner.
+;             Arg2 -> MemoryHeap.
+; Return:     eax = BYTEs read.
 
 Method IniFileReader.Init, uses xbx xdi xsi, pOwner:POINTER, pMemHeap:$ObjPtr(MemoryHeap)
   local hFile:HANDLE, dBytesRead:DWORD, cName[MAX_PATH]:CHR, dFileSize:DWORD, cMessage[1024]:CHR
@@ -87,10 +86,10 @@ Method IniFileReader.Init, uses xbx xdi xsi, pOwner:POINTER, pMemHeap:$ObjPtr(Me
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    IniFileReader.LoadList
-; Purpose:   Scans h2inc+.ini for a given section.
-; Arguments: Arg1 -> CONV_TAB_ENTRY of that list.
-; Return:    eax = TRUE if succeeded, otherwise FALSE.
+; Method:     IniFileReader.LoadList
+; Purpose:    Scans h2inc+.ini for a given section.
+; Arguments:  Arg1 -> CONV_TAB_ENTRY of that list.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method IniFileReader.LoadList, uses xbx xdi xsi, pConTabEntry:PCONV_TAB_ENTRY
   local pMemHeap:$ObjPtr(MemoryHeap), pSectionName:PSTRINGA, dStrLen:DWORD

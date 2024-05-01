@@ -2,7 +2,7 @@
 ; Title:      h2inc+_RenderBlock.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
-; Purpose:  
+; Purpose:    ObjAsm h2inc+ translation procedures.
 ; ==================================================================================================
 
 

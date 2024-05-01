@@ -1,10 +1,8 @@
 ; ==================================================================================================
-; Title:    h2inc+_Evaluator.inc
-; Author:   G. Friedrich
-; Version:  C.2.0
-; Purpose:  ObjAsm support of an Evaluator using the 'Shuntng Yard' algorithm.
-; Notes:    Version C.2.0, Apil 2024
-;             - First release.
+; Title:      h2inc+_Evaluator.inc
+; Author:     G. Friedrich
+; Version:    See h2inc+.asm
+; Purpose:    ObjAsm support of an Evaluator using the 'Shuntng Yard' algorithm.
 ; ==================================================================================================
 
 
@@ -155,10 +153,10 @@ if IMPLEMENT
 
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    Evaluator.Done
-; Purpose:   Finalize the object.
-; Arguments: None.
-; Return:    Nothing.
+; Method:     Evaluator.Done
+; Purpose:    Finalize the object.
+; Arguments:  None.
+; Return:     Nothing.
 
 Method Evaluator.Done, uses xsi
     SetObject xsi
@@ -181,11 +179,11 @@ Method Evaluator.Done, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    Evaluator.Evaluate
-; Purpose:   Evaluate the PreProcessor #if expression.
-; Arguments: None.
-; Return:    eax = PPR_FALSE, PPR_TRUE or PPR_UNKNOWN (evaluation result).
-; Link:      https://en.wikipedia.org/wiki/Shunting-yard_algorithm
+; Method:     Evaluator.Evaluate
+; Purpose:    Evaluate the PreProcessor #if expression.
+; Arguments:  None.
+; Return:     eax = PPR_FALSE, PPR_TRUE or PPR_UNKNOWN (evaluation result).
+; Link:       https://en.wikipedia.org/wiki/Shunting-yard_algorithm
 
 Method Evaluator.Evaluate, uses xdi xsi
     local pAuxToken:PTOKEN
@@ -301,10 +299,10 @@ Method Evaluator.Evaluate, uses xdi xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: EvlHandler_xxx
-; Purpose:   Evaluate mathematical or logical expressions.
-; Arguments: xax -> EVAL_TOKEN.
-; Return:    Nothing.
+; Procedure:  EvlHandler_xxx
+; Purpose:    Evaluate mathematical or logical expressions.
+; Arguments:  xax -> EVAL_TOKEN.
+; Return:     Nothing.
 
 EvalArg1    equ <[xdx].EVAL_TOKEN>
 EvalArg2    equ <[xdi].EVAL_TOKEN>

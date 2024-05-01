@@ -2,7 +2,7 @@
 ; Title:      h2inc+_RenderMacroCall.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
-; Purpose:  
+; Purpose:    ObjAsm h2inc+ translation procedures.
 ; ==================================================================================================
 
 
@@ -25,7 +25,7 @@ RenderMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
   local pStr:PSTRINGA
 
   m2m pStmOutPos, [xbx].$Obj(IncFile).pStmOutPos, xax
-
+  
   DbgPrintF , "¦UD: RenderMacroCall - found: ¦SA", \
             [xbx].$Obj(IncFile).dLineNumber, pMacroName
 
@@ -45,7 +45,7 @@ RenderMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
 
   .ifBitSet dMacroFlags, MCF_INTERFACE_END
     OCall xbx::IncFile.StmWrite, $OfsCStrA("??Interface equ <>")  ;Reset ??Interface symbol
-    OCall xbx::IncFile.StmWriteEOL
+    OCall xbx::IncFile.StmWriteEoL
     mov [xbx].$Obj(IncFile).bInsideInterface, FALSE
   .endif
 
@@ -195,7 +195,7 @@ RenderMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
             mov pName, xax
             .continue
           .endif
-          jmp @Error
+          jmp @ErrorSyntax
         .endif
         OCall xbx::IncFile.StmWrite, xax
       .endw
@@ -217,12 +217,12 @@ RenderMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
 
 @Done:
   .if bWriteLF != FALSE
-    OCall xbx::IncFile.StmWriteEOL
+    OCall xbx::IncFile.StmWriteEoL
   .endif
   .ifBitSet dMacroFlags, MCF_INTERFACE_BEG
     .if [xbx].$Obj(IncFile).pContainerName != NULL
-      OCall xbx::IncFile.StmWriteF, $OfsCStrA("??Interface equ <%s>"), [xbx].$Obj(IncFile).pContainerName
-      OCall xbx::IncFile.StmWriteEOL
+      OCall xbx::IncFile.StmWriteF, $OfsCStrA("??Interface equ <%ls>"), [xbx].$Obj(IncFile).pContainerName
+      OCall xbx::IncFile.StmWriteEoL
       mov [xbx].$Obj(IncFile).bInsideInterface, TRUE
     .endif
   .endif
@@ -237,21 +237,21 @@ RenderMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
     .if CHRA ptr [xax] == "{"
       mov xcx, $GetItem@Stacklist(pArgStack, 0)
       invoke RenderBlock, xcx, RBT_CONTAINER
-      invoke ParseInterfaceBlock, xcx
+      invoke RenderInterfaceBlock, xcx
       dec [xbx].$Obj(IncFile).dIndentation
-      OCall xbx::IncFile.StmWriteF, $OfsCStrA("END_%s"), pMacroName
-      OCall xbx::IncFile.StmWriteEOL
+      OCall xbx::IncFile.StmWriteF, $OfsCStrA("END_%hs"), pMacroName
+      OCall xbx::IncFile.StmWriteEoL
     .else
-      jmp @Error
+      jmp @ErrorSyntax
     .endif
   .endif
   mov eax, TRUE
 
 @Exit:
-  Destroy@Stacklist pArgStack
+  Destroy@Stacklist pArgStack, xcx                      ;Dont trash xax
   ret
 
-@Error:
+@ErrorSyntax:
 @ErrorEoF:
   DbgErrorF , "¦SU(¦UD): RenderMacroCall - error", \
               [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber

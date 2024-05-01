@@ -1,9 +1,8 @@
 ; ==================================================================================================
 ; Title:      h2inc+_IncFile_Mac.inc
 ; Author:     G. Friedrich
-; Version:    C.2.0
+; Version:    See h2inc+.asm
 ; Purpose:    ObjAsm h2inc+ IncFile macros.
-; Notes:      See h2inc+.asm
 ; ==================================================================================================
 
 

@@ -2,7 +2,7 @@
 ; Title:      h2inc+_RenderContainer.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
-; Purpose:  
+; Purpose:    ObjAsm h2inc+ translation procedures.
 ; ==================================================================================================
 
 
@@ -13,7 +13,7 @@
 ; Purpose:    Render a structure or union.
 ; Arguments:  Arg1 -> ContainerType ("struct" or "union").
 ;             xbx -> IncFile.
-; Return:     Nothing.
+; Return:     xax -> Last token.
 ; Syntax:     struct/union <macro> TagName Name;
 ;             struct/union <macro> <TagName> {...} Name;
 ;             struct/union <macro> <TagName> * Name;
@@ -23,13 +23,13 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA
   local bSkipName:DWORD
   local cName[256]:CHRA, cTagName[256]:CHRA, cContainerName[MAX_BLOCK_NAME]:CHRA
 
+  ;Initialization ----------------------------------------------------------------------- 
   mov cContainerName, 0
   mov cTagName, 0
   mov cName, 0
   mov pTagName, NULL
   mov pName, NULL
 
-  DbgPrintF , "¦UD: RenderContainer - ¦SA", [xbx].$Obj(IncFile).dLineNumber, pContainerType
   OCall xbx::IncFile.GetNextTokenC
   jz @ErrorEoF
   invoke SkipAnnotations, xax
@@ -39,7 +39,6 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA
 
   mov cl, [xax]
   .if cl != '{' && cl != '*'
-    DbgPrintF , "¦UD: RenderContainer - token ¦SA assumed tag", [xbx].$Obj(IncFile).dLineNumber, xax
     lea xdx, cTagName
     mov pTagName, $invoke(TranslateReservedWord, xax, xdx)
     mov pName, xax                                      ;Assume for the moment that Name = TagName
@@ -54,8 +53,8 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA
       mov xax, pTagName
     .else
       mov bSkipName, TRUE
-      .if !$DoesTextMatchA?([xax], <DUMMYSTRUCTNAME>) ;May have a number at the end
-        .if !$DoesTextMatchA?([xax], <DUMMYUNIONNAME>);May have a number at the end
+      .if !$DoesTextMatchA?([xax], <DUMMYSTRUCTNAME>)   ;May have a number at the end
+        .if !$DoesTextMatchA?([xax], <DUMMYUNIONNAME>)  ;May have a number at the end
           jmp @F
         .endif
       .endif
@@ -76,9 +75,9 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA
 ;      lea xax, cContainerName
 ;    .endif
 
-    ;********** Start container definition **********
+    ;Start container definition ---------------------------------------------------------
     .if xax == NULL
-      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s"), pContainerType
+      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs"), pContainerType
     
     .else
       lea xdx, cName
@@ -89,7 +88,7 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA
         invoke InsertStrg, pStructs, pName, eax
       .endif
   
-      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s %s"), pName, pContainerType
+      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs %hs"), pName, pContainerType
 
       ;Get known structure alignment
       OCall pAlignments::List.Search, pName
@@ -107,28 +106,28 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA
     .endif
 
     inc [xbx].$Obj(IncFile).dIndentation
-    OCall xbx::IncFile.StmWriteEOL
+    OCall xbx::IncFile.StmWriteEoL
 
     ;Entry: Next token after "{"
     ;Exit: Next Token after "}"
     invoke RenderBlock, pName, RBT_CONTAINER
     jz @ErrorEoF
 
-    ;********** Terminate container definition **********
+    ;Terminate container definition -----------------------------------------------------
     dec [xbx].$Obj(IncFile).dIndentation
     .if pName != NULL
-      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s ends", LF), pName
+      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs ends", LF), pName
     .else
       OCall xbx::IncFile.StmWrite, $OfsCStrA("ends", LF)
     .endif
-    OCall xbx::IncFile.StmWriteEOL
+    OCall xbx::IncFile.StmWriteEoL
 
-    ;Create a typedef in case that the TageName and Name are different
+    ;Create a typedef in case that the TageName and Name are different ------------------
     .if pTagName != NULL && pName != NULL
       invoke StrCompA, pTagName, pName
       .if eax != 0
-        OCall xbx::IncFile.StmWriteF,$OfsCStrA("%s typedef %s"), pTagName, pName
-        OCall xbx::IncFile.StmWriteEOL
+        OCall xbx::IncFile.StmWriteF,$OfsCStrA("%hs typedef %hs"), pTagName, pName
+        OCall xbx::IncFile.StmWriteEoL
       .endif
     .endif
 
@@ -144,11 +143,12 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA
     mov pEndToken, xax
   .endif
 
-;  .if xax != NULL
-;    invoke RenderFurtherTypes, pName, pTagName, xax
-;    mov pEndToken, xax
-;  .endif
+  .if xax != NULL
+    invoke RenderFurtherTypes, pName, pTagName, xax
+    mov pEndToken, xax
+  .endif
 
+  ;Exit ---------------------------------------------------------------------------------
 @Exit:
   mov xax, pEndToken
   test eax, eax                                         ;Set/Reset ZF
@@ -161,6 +161,6 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA
 @ErrorSyntax:
   inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.StmWriteError
-  invoke GotoNextToken, ';'
+  invoke GotoNextToken, addr szSemiColon
   ret
 RenderContainer endp

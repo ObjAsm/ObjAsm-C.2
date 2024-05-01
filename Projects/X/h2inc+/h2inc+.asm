@@ -22,10 +22,13 @@
 ;           Version C.2.0, April 2024
 ;             - Project renamed to h2inc+.
 ;             - Ported to dual bitness.
+;             - Support for multidimesional arrays added.
+;             - Record bit reversal added.
 ; ==================================================================================================
 
+;-l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\Masterinclude.h"
 ;-l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\um_10.0.22621.0\dde.h"
-
+;-l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\Test.h"
 ;ToDo:
 ; 1. CRLF in Optionsfile produces a problem with FileSpec
 
@@ -101,6 +104,13 @@ include h2inc+_MemoryHeap.inc
 ;  Status_R0 Status_REC <>
 ;Status ends
 
+;include C:\Users\frge\OneDrive - Metall Zug AG\_MySoftware_\ObjAsm\Projects\X\h2inc+\inc\dde.inc
+
+MYS struct
+  SSS REAL4 ?
+  SSS1 REAL4 ? 
+MYS ends
+
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Object:   IniFileReader
 ; Purpose:  Ini file reader.
@@ -126,11 +136,15 @@ Object IncFile,, Primer
   RedefineMethod  Init,               POINTER, PSTRINGW, $ObjPtr(IncFile)
   StaticMethod    InputStatusLoad,    P_INP_STAT
   StaticMethod    InputStatusSave,    P_INP_STAT
+  StaticMethod    GetNextToken
   StaticMethod    GetNextTokenC
+  StaticMethod    GetNextTokenLogicC
   StaticMethod    GetNextTokenPP
-  StaticMethod    PeekNextTokenC
+  StaticMethod    JumpEndIfPP
   StaticMethod    ParseHeaderFile
   StaticMethod    ParseHeaderLine,    PSTRINGA, DWORD
+  StaticMethod    PeekNextTokenC
+  StaticMethod    PeekNextTokenLogicC
   StaticMethod    Render
   StaticMethod    Save,               PSTRINGW
   StaticMethod    SkipComments,       PSTRINGA
@@ -142,7 +156,7 @@ Object IncFile,, Primer
   StaticMethod    StmWriteComment
   StaticMethod    StmWriteError
   StaticMethod    StmWriteF,          PSTRINGA, ?
-  StaticMethod    StmWriteEOL
+  StaticMethod    StmWriteEoL
   StaticMethod    StmWriteIndent
   StaticMethod    ShowError,          PSTRING, ?
   StaticMethod    ShowSysError,       PSTRING, DWORD
@@ -171,16 +185,16 @@ Object IncFile,, Primer
   DefineVariable  dEnumValue,         DWORD,    0       ;Counter for enums
   DefineVariable  dBraces,            DWORD,    0       ;Curly brackets count => Block deep
   DefineVariable  dIndentation,       DWORD,    0       ;Indentation level: 0..n
-  DefineVariable  dStmOutEOL,         DWORD,    FALSE   ;StmOut line ended. It MUST be a DWORD!
-  DefineVariable  bSkipScanPP,        BYTE,     FALSE   ;>0 => don't parse PP lines in StmInp
-  DefineVariable  bSkipLogiPP,        BYTE,     FALSE   ;TRUE => don't parse PP lines in StmInp
-  DefineVariable  bSkipC,             BYTE,     FALSE   ;>0 => don't parse C lines in StmInp
+  DefineVariable  dStmOutEoL,         DWORD,    FALSE   ;StmOut line ended. It MUST be a DWORD!
+  DefineVariable  bSkipLineC,         BYTE,     FALSE   ;>0 => don't parse C lines in StmInp
+  DefineVariable  bSkipLinePP,        BYTE,     FALSE   ;>0 => don't parse PP lines
+  DefineVariable  bSkipCondPP,        BYTE,     FALSE   ;TRUE => don't parse conditional PP lines
   DefineVariable  bNewLine,           BYTE,     FALSE   ;Last token was a PCT_EOL
   DefineVariable  bComment,           BYTE,     FALSE   ;Comment flag for "/*" and "*/"
   DefineVariable  bUsePrevToken,      BYTE,     FALSE   ;GetNextTokenC returns pPrevToken
   DefineVariable  bExternC,           BYTE,     FALSE   ;Extern "C" occured
   DefineVariable  bInsideInterface,   BYTE,     FALSE   ;Inside an interface definition
-  DefineVariable  bSkipUselessCode,   BYTE,     FALSE   ;Flag to avoid [...] repetitions
+  DefineVariable  bEnableNFCodeLabel, BYTE,     FALSE   ;Flag to avoid [...] repetitions (Non-Functional Code)
   DefineVariable  bCondIfLevel,       BYTE,     0       ;Current 'if' level
   DefineVariable  bCondElseLevel,     BYTE,     MAX_COND_LEVEL dup(0) ;Else stack
   DefineVariable  bCondResult,        BYTE,     MAX_COND_LEVEL dup(0) ;If result stack

@@ -2,7 +2,7 @@
 ; Title:      h2inc+_RenderEnum.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
-; Purpose:  
+; Purpose:    ObjAsm h2inc+ translation procedures.
 ; ==================================================================================================
 
 
@@ -69,8 +69,8 @@ RenderEnum proc
     cmovz xax, pTag                                   ;if no name found, use the tag
     .if xax != NULL
       mov pName, xax
-      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s typedef %s"), pName, pType
-      OCall xbx::IncFile.StmWriteEOL
+      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs typedef %hs"), pName, pType
+      OCall xbx::IncFile.StmWriteEoL
     .endif
     mov [xbx].$Obj(IncFile).dEnumValue, 0
     invoke RenderBlock, pName, RBT_ENUM
@@ -80,8 +80,8 @@ RenderEnum proc
     .if xax != NULL && pTag != NULL
       invoke StrCompA, pName, pTag
       .if eax != 0
-        OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s typedef %s"), pTag, pName
-        OCall xbx::IncFile.StmWriteEOL
+        OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs typedef %hs"), pTag, pName
+        OCall xbx::IncFile.StmWriteEoL
       .endif
     .endif
 
@@ -89,7 +89,7 @@ RenderEnum proc
     .if !ZERO? && pName != NULL && CHRA ptr [xax] != ";"
       invoke RenderFurtherTypes, pName, NULL, xax
     .else
-      OCall xbx::IncFile.StmWriteEOL                  ;Separator line
+      OCall xbx::IncFile.StmWriteEoL                  ;Separator line
     .endif
 
     mov eax, TRUE
@@ -100,14 +100,14 @@ RenderEnum proc
     IsValidName? xax
     mov xcx, pCurrToken
     .if eax != FALSE
-      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s typedef %s"), xcx, pType
-      OCall xbx::IncFile.StmWriteEOL
+      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs typedef %hs"), xcx, pType
+      OCall xbx::IncFile.StmWriteEoL
       mov eax, TRUE
     .elseif CHRA ptr [xcx] == "*"
       OCall xbx::IncFile.GetNextTokenC
       .if !ZERO?
-        OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s typedef ptr %s"), xax, pType
-        OCall xbx::IncFile.StmWriteEOL
+        OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs typedef ptr %hs"), xax, pType
+        OCall xbx::IncFile.StmWriteEoL
       .endif
       mov eax, TRUE
     .else

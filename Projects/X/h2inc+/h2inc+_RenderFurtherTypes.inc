@@ -2,7 +2,7 @@
 ; Title:      h2inc+_RenderFurtherTypes.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
-; Purpose:    
+; Purpose:    ObjAsm h2inc+ translation procedures.
 ; ==================================================================================================
 
 
@@ -56,7 +56,7 @@ RenderFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
         OCall xbx::IncFile.StmWrite, $OfsCStrA(" typedef ")
         WritePtr
         OCall xbx::IncFile.StmWrite, xdi
-        OCall xbx::IncFile.StmWriteEOL
+        OCall xbx::IncFile.StmWriteEoL
         mov xax, pCurrToken
       .endif
       .break .if CHRA ptr [xax] == ";"                ;Statement terminator
@@ -75,7 +75,7 @@ RenderFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
     mov pToken, xax
   .endw
   .if pName != NULL
-    OCall xbx::IncFile.StmWriteEOL
+    OCall xbx::IncFile.StmWriteEoL
   .endif
 
   ret

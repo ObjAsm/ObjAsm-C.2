@@ -2,7 +2,7 @@
 ; Title:      h2inc+_RenderExternMember.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
-; Purpose:    
+; Purpose:    ObjAsm h2inc+ translation procedures.
 ; ==================================================================================================
 
 
@@ -146,8 +146,8 @@ RenderExternMember proc pToken:PTOKEN
   .else
     mov xcx, pType
   .endif
-  OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s:%s"), xax, xcx
-  OCall xbx::IncFile.StmWriteEOL
+  OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs:%hs"), xax, xcx
+  OCall xbx::IncFile.StmWriteEoL
   mov xax, pToken
 
 @Exit:

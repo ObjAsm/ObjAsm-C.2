@@ -1,18 +1,17 @@
 ; ==================================================================================================
-; Title:    h2inc+_IncFile_Proc.inc
-; Author:   G. Friedrich
-; Version:  C.2.0
-; Purpose:  ObjAsm h2inc+ IncFile procs.
-; Notes:    See h2inc+.asm
+; Title:      h2inc+_IncFile_Proc.inc
+; Author:     G. Friedrich
+; Version:    See h2inc+.asm
+; Purpose:    ObjAsm h2inc+ IncFile procs.
 ; ==================================================================================================
 
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: BStrCompA
-; Purpose:   Comparison routine for BStrA strings.
-; Arguments: Arg1 -> String 1.
-;            Arg2 -> String 2.
-; Return:    eax: comparison result. Zero if strings are identical.
+; Procedure:  BStrCompA
+; Purpose:    Comparison routine for BStrA strings.
+; Arguments:  Arg1 -> String 1.
+;             Arg2 -> String 2.
+; Return:     eax: comparison result. Zero if strings are identical.
 
 BStrCompA proc uses xdi xsi pBStrA:PSTRINGA, pStrA:PSTRINGA
   mov xsi, pBStrA
@@ -29,13 +28,13 @@ BStrCompA proc uses xdi xsi pBStrA:PSTRINGA, pStrA:PSTRINGA
 BStrCompA endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: InsertStrg, InsertAttr, InsertEqui
-; Purpose:   Add an Item to a List.
-; Arguments: Arg1: -> List
-;            Arg2: String length (without ZTC)
-;            Arg3: ...
-;            xbx -> IncFile
-; Return:    xax -> Identifier string.
+; Procedure:  InsertStrg, InsertAttr, InsertEqui
+; Purpose:    Add an Item to a List.
+; Arguments:  Arg1: -> List
+;             Arg2: String length (without ZTC)
+;             Arg3: ...
+;             xbx -> IncFile
+; Return:     xax -> Identifier string.
 
 InsertStrg proc pList:POINTER, pStr:PSTRINGA, dLength:DWORD
   local dInsIndex:DWORD
@@ -107,11 +106,11 @@ InsertEqui proc pList:POINTER, pStr:PSTRINGA, dLength:DWORD, pStrEqui:PSTRINGA, 
 InsertEqui endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: InsertDefItem
-; Purpose:   Add a prototype to a list.
-; Arguments: Arg1 -> Function Name.
-;            Arg2: Parameter bytes.
-; Return:    Nothing.
+; Procedure:  InsertDefItem
+; Purpose:    Add a prototype to a list.
+; Arguments:  Arg1 -> Function Name.
+;             Arg2: Parameter bytes.
+; Return:     Nothing.
 
 InsertDefItem proc uses xdi pFuncName:PSTRINGA, dParamBytes:DWORD
   local cProto[1024]:CHRA
@@ -141,11 +140,11 @@ InsertDefItem proc uses xdi pFuncName:PSTRINGA, dParamBytes:DWORD
 InsertDefItem endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: IsLogOperator?
-; Purpose:   Check if character in al/ax/eax is a logical operator (comparison & logical)
-; Arguments: al/ax/eax = character(s) to test.
-; Return:    eax = TRUE or FALSE.
-; Note:      No other register is changed.
+; Procedure:  IsLogOperator?
+; Purpose:    Check if character in al/ax/eax is a logical operator (comparison & logical)
+; Arguments:  al/ax/eax = character(s) to test.
+; Return:     eax = TRUE or FALSE.
+; Note:       No other register is changed.
 
 IsLogOperator? proc dChars:DWORD
   mov eax, dChars
@@ -180,11 +179,11 @@ IsLogOperator? proc dChars:DWORD
 IsLogOperator? endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: IsNumOperator?
-; Purpose:   Check if character in al/ax/eax is a numeric operator (assignment & arithmetic).
-; Arguments: al/ax/eax = character(s) to test.
-; Return:    eax = TRUE or FALSE.
-; Note:      No other register is changed.
+; Procedure:  IsNumOperator?
+; Purpose:    Check if character in al/ax/eax is a numeric operator (assignment & arithmetic).
+; Arguments:  al/ax/eax = character(s) to test.
+; Return:     eax = TRUE or FALSE.
+; Note:       No other register is changed.
 
 IsNumOperator? proc dChars:DWORD
   mov eax, dChars
@@ -250,10 +249,10 @@ IsNumOperator? proc dChars:DWORD
 IsNumOperator? endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: IsReservedWord?
-; Purpose:   Check if token is a reserved word.
-; Arguments: Arg1 -> token to check.
-; Return:    eax = FALSE if token is not reserved.
+; Procedure:  IsReservedWord?
+; Purpose:    Check if token is a reserved word.
+; Arguments:  Arg1 -> token to check.
+; Return:     eax = FALSE if token is not reserved.
 
 IsReservedWord? proc pToken:PTOKEN
   local cWord[128]:CHRA
@@ -265,11 +264,11 @@ IsReservedWord? proc pToken:PTOKEN
 IsReservedWord? endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: IsMacro?
-; Purpose:   Check if token is a macro.
-; Arguments: Arg1 -> token to check.
-; Return:    eax = 0 if FALSE, 1 if macro was previously defined, 2 if it is a known macro.
-;            ecx = Index in the range [0..Count].
+; Procedure:  IsMacro?
+; Purpose:    Check if token is a macro.
+; Arguments:  Arg1 -> token to check.
+; Return:     eax = 0 if FALSE, 1 if macro was previously defined, 2 if it is a known macro.
+;             ecx = Index in the range [0..Count].
 
 IsMacro? proc pToken:PTOKEN
   OCall pKnownMacros::List.Search, pToken
@@ -282,11 +281,11 @@ IsMacro? proc pToken:PTOKEN
 IsMacro? endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: IsEquate
-; Purpose:   Check if token is an equate.
-; Arguments: Arg1 -> token to check.
-; Return:    eax = 0 if FALSE, 1 if macros was previously defined, 2 if it is a known equate.
-;            ecx = Index in the range [0..Count].
+; Procedure:  IsEquate
+; Purpose:    Check if token is an equate.
+; Arguments:  Arg1 -> token to check.
+; Return:     eax = 0 if FALSE, 1 if macros was previously defined, 2 if it is a known equate.
+;             ecx = Index in the range [0..Count].
 
 IsEquate? proc pToken:PTOKEN
   OCall pKnownEquates::List.Search, pToken
@@ -299,11 +298,11 @@ IsEquate? proc pToken:PTOKEN
 IsEquate? endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: IsQualifier?
-; Purpose:   Check if token is a qualifier.
-; Arguments: Arg1 -> token to check.
-; Return:    eax = 0 if FALSE, 1 if qualifier was previously defined, 2 if it is a known qualifier.
-;            ecx = Index in the range [0..Count-1].
+; Procedure:  IsQualifier?
+; Purpose:    Check if token is a qualifier.
+; Arguments:  Arg1 -> token to check.
+; Return:     eax = 0 if FALSE, 1 if qualifier was previously defined, 2 if it is a known qualifier.
+;             ecx = Index in the range [0..Count-1].
 
 IsQualifier? proc pToken:PTOKEN
   OCall pKnownQualifiers::List.Search, pToken
@@ -316,10 +315,10 @@ IsQualifier? proc pToken:PTOKEN
 IsQualifier? endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: IsString?
-; Purpose:   Check if token is a string.
-; Arguments: Arg1 -> token to check.
-; Return:    eax = TRUE if token is a string, otherwise FALSE.
+; Procedure:  IsString?
+; Purpose:    Check if token is a string.
+; Arguments:  Arg1 -> token to check.
+; Return:     eax = TRUE if token is a string, otherwise FALSE.
 
 IsString? proc pToken:PTOKEN
   mov xcx, pToken
@@ -343,80 +342,22 @@ IsString? proc pToken:PTOKEN
 IsString? endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: IsCObjMacro?
-; Purpose:   Check the presence of "CObjMacro".
-; Arguments: None.
-; Return:    If present, xax -> Name of THIS, xdx -> method name.
-; Syntax:    (THIS)->lpVtbl-><method>(THIS,...)
-
-IsCObjMacro? proc uses xsi xdi
-  local InpStat:INP_STAT
-
-  OCall xbx::IncFile.InputStatusSave, addr InpStat
-  OCall xbx::IncFile.GetNextTokenPP
-  .if ZERO? || CHRA ptr [xax] != "("
-    jmp @Exit
-  .endif
-  OCall xbx::IncFile.GetNextTokenPP                     ;Get name of THIS
-  jz @Exit
-  mov xsi, xax
-  IsValidName? xax
-  test eax, eax
-  jz @Exit
-  OCall xbx::IncFile.GetNextTokenPP
-  .if ZERO? || CHRA ptr [xax] != ")"
-    jmp @Exit
-  .endif
-  OCall xbx::IncFile.GetNextTokenPP
-  .if ZERO? || DCHRA ptr [xax] != ">-"
-    jmp @Exit
-  .endif
-  OCall xbx::IncFile.GetNextTokenPP
-  jz @Exit
-  DoesStringMatchA? [xax], <lpVtbl>
-  jz @Exit
-  OCall xbx::IncFile.GetNextTokenPP
-  .if ZERO? || DCHRA ptr [xax] != ">-"
-    jmp @Exit
-  .endif
-  OCall xbx::IncFile.GetNextTokenPP                     ;Get method name
-  jz @Exit
-  mov xdi, xax
-  OCall xbx::IncFile.GetNextTokenPP
-  .if ZERO? || CHRA ptr [xax] != "("
-    jmp @Exit
-  .endif
-  OCall xbx::IncFile.GetNextTokenPP
-  jz @Exit
-  invoke StrCompA, xax, xsi  ;is THIS?
-  test eax, eax
-  jz @Exit
-  mov xax, xsi
-  mov xdx, xdi
-  ret
-@Exit:
-  OCall xbx::IncFile.InputStatusLoad, addr InpStat
-  xor eax, eax
-  ret
-IsCObjMacro? endp
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: IsFunction?
-; Purpose:   Determine if current item is a "function" declaration.
-;            Required if keyword "struct" has been found in input stream.
-;            May be a struct declaration or a function returning a struct (ptr).
-;            Workaround:
-;              + if "*" is found before next ";" or ",", then it is a function.
-;              + if "(" is found before next ";" or ",", then it is a function.
-;              + if "{" is found before next ";" or ",", then it is a structure.
-; Arguments: None.
-; Return:    eax = TRUE if it is a function, otherwise FALSE.
+; Procedure:  IsFunction?
+; Purpose:    Determine if current item is a "function" declaration.
+;             Required if keyword "struct" has been found in input stream.
+;             May be a struct declaration or a function returning a struct (ptr).
+;             Workaround:
+;               + if "*" is found before next ";" or ",", then it is a function.
+;               + if "(" is found before next ";" or ",", then it is a function.
+;               + if "{" is found before next ";" or ",", then it is a structure.
+; Arguments:  None.
+; Return:     eax = TRUE if it is a function, otherwise FALSE.
 
 IsFunction? proc
   local dReturn:DWORD, InpStat:INP_STAT
 
   OCall xbx::IncFile.InputStatusSave, addr InpStat
-  inc [xbx].$Obj(IncFile).bSkipScanPP
+  inc [xbx].$Obj(IncFile).bSkipLinePP
   mov dReturn, FALSE
   .while TRUE
     OCall xbx::IncFile.GetNextTokenC
@@ -431,24 +372,24 @@ IsFunction? proc
   .endw
 
 @Exit:
-  dec [xbx].$Obj(IncFile).bSkipScanPP
+  dec [xbx].$Obj(IncFile).bSkipLinePP
   OCall xbx::IncFile.InputStatusLoad, addr InpStat
   mov eax, dReturn
   ret
 IsFunction? endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: IsFunctionPtr?
-; Purpose:   Determine if it is a "function" or "function ptr" declaration.
-; Arguments: None.
-; Return:    eax = TRUE if present, otherwise FALSE.
-; Syntax:    ...(...)(...)
+; Procedure:  IsFunctionPtr?
+; Purpose:    Determine if it is a "function" or "function ptr" declaration.
+; Arguments:  None.
+; Return:     eax = TRUE if present, otherwise FALSE.
+; Syntax:     ...(...)(...)
 
 IsFunctionPtr? proc
   local dParenthesesCount:DWORD, dReturn:DWORD, InpStat:INP_STAT
 
   OCall xbx::IncFile.InputStatusSave, addr InpStat
-  inc [xbx].$Obj(IncFile).bSkipScanPP
+  inc [xbx].$Obj(IncFile).bSkipLinePP
   mov dParenthesesCount, 1
   mov dReturn, FALSE
   .while dParenthesesCount != 0
@@ -471,17 +412,17 @@ IsFunctionPtr? proc
   .endif
 
 @Exit:
-  dec [xbx].$Obj(IncFile).bSkipScanPP
+  dec [xbx].$Obj(IncFile).bSkipLinePP
   OCall xbx::IncFile.InputStatusLoad, addr InpStat
   mov eax, dReturn
   ret
 IsFunctionPtr? endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: IsUnionStruct?
-; Purpose:   Check if token is "union" or "struct".
-; Arguments: Arg1 -> token.
-; Return:    eax = TRUE if found, otherwise FALSE.
+; Procedure:  IsUnionStruct?
+; Purpose:    Check if token is "union" or "struct".
+; Arguments:  Arg1 -> token.
+; Return:     eax = TRUE if found, otherwise FALSE.
 
 IsUnionStruct? proc pToken:PTOKEN
   mov eax, TRUE
@@ -495,11 +436,11 @@ IsUnionStruct? proc pToken:PTOKEN
 IsUnionStruct? endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: TranslateToken
-; Purpose:   Translate tokens like "__export" or "__stdcall".
-; Arguments: Arg1 -> Token.
-; Return:    xax -> translated Token.
-;            edx = FASLE if no translation occured.
+; Procedure:  TranslateToken
+; Purpose:    Translate tokens like "__export" or "__stdcall".
+; Arguments:  Arg1 -> Token.
+; Return:     xax -> translated Token.
+;             edx = FASLE if no translation occured.
 
 TranslateToken proc pToken:PTOKEN
   OCall pConvertTokens::List.Search, pToken
@@ -516,12 +457,12 @@ TranslateToken proc pToken:PTOKEN
 TranslateToken endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: TranslateReservedWord
-; Purpose:   Check if token is a reserved name, if yes, add a "_" suffix
-; Arguments: Arg1: -> Token.
-;            Arg2: -> Buffer for translation. Holds translated token + suffix. 
-; Return:    xax -> Translated token.
-;            edx: TRUE if translation occured, otherwise FALSE.
+; Procedure:  TranslateReservedWord
+; Purpose:    Check if token is a reserved name, if yes, add a "_" suffix
+; Arguments:  Arg1: -> Token.
+;             Arg2: -> Buffer for translation. Holds translated token + suffix. 
+; Return:     xax -> Translated token.
+;             edx: TRUE if translation occured, otherwise FALSE.
 
 TranslateReservedWord proc pToken:PTOKEN, pTransBuffer:PSTRINGA
   invoke IsReservedWord?, pToken
@@ -538,12 +479,12 @@ TranslateReservedWord proc pToken:PTOKEN, pTransBuffer:PSTRINGA
 TranslateReservedWord endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: TranslateType
-; Purpose:   Translate known type.
-; Arguments: Arg1 -> Token.
-;            Arg2: Mode: 0 for TYPES, 1 for STRUCTS.
-; Return:    xax -> translated type.
-;            edx = FALSE if no macht found.
+; Procedure:  TranslateType
+; Purpose:    Translate known type.
+; Arguments:  Arg1 -> Token.
+;             Arg2: Mode: 0 for TYPES, 1 for STRUCTS.
+; Return:     xax -> translated type.
+;             edx = FALSE if no macht found.
 
 TranslateType proc uses xdi pToken:PTOKEN, bMode:DWORD
   OCall pConvertTypes1::List.Search, pToken             ;Common for TYPES & STRUCTS
@@ -578,12 +519,12 @@ TranslateType proc uses xdi pToken:PTOKEN, bMode:DWORD
 TranslateType endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: TranslateTypeQualifier
-; Purpose:   Convert type qualifiers.
-; Arguments: Arg1 -> Type qualifier.
-; Return:    xax -> Converted type qualifier.
-;            edx = FASLE if no translation occured.
-; Note:      edx is never used. All uses test for [xax] == 0
+; Procedure:  TranslateTypeQualifier
+; Purpose:    Convert type qualifiers.
+; Arguments:  Arg1 -> Type qualifier.
+; Return:     xax -> Converted type qualifier.
+;             edx = FASLE if no translation occured.
+; Note:       edx is never used. All uses test for [xax] == 0
 
 TranslateTypeQualifier proc pTypeQual:PTOKEN
   OCall pConvertTypeQual::List.Search, pTypeQual        ;Ret: eax: TRUE/FALSE, ecx: Index [0..Count]
@@ -600,11 +541,11 @@ TranslateTypeQualifier proc pTypeQual:PTOKEN
 TranslateTypeQualifier endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: TranslateNumOperator
-; Purpose:   Translate operator in #define lines.
-; Arguments: Arg1 -> Token.
-; Return:    xax -> translated or original Token.
-;            edx: TRUE if translated, otherwise FALSE.
+; Procedure:  TranslateNumOperator
+; Purpose:    Translate operator in #define lines.
+; Arguments:  Arg1 -> Token.
+; Return:     xax -> translated or original Token.
+;             edx: TRUE if translated, otherwise FALSE.
 
 TranslateNumOperator proc pToken:PTOKEN
   mov xax, pToken
@@ -641,11 +582,11 @@ TranslateNumOperator proc pToken:PTOKEN
 TranslateNumOperator endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: TranslateLogOperator
-; Purpose:   Translate operator in #define lines.
-; Arguments: Arg1 -> Token.
-; Return:    xax -> translated or original Token.
-;            edx: TRUE if translated, otherwise FALSE.
+; Procedure:  TranslateLogOperator
+; Purpose:    Translate operator in #define lines.
+; Arguments:  Arg1 -> Token.
+; Return:     xax -> translated or original Token.
+;             edx: TRUE if translated, otherwise FALSE.
 
 TranslateLogOperator proc pToken:PTOKEN
   mov xax, pToken
@@ -682,10 +623,10 @@ TranslateLogOperator proc pToken:PTOKEN
 TranslateLogOperator endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: ConvBasicTypeC
-; Purpose:   Convert a basic "C" type to an "asm" type.
-; Arguments: Arg1: C type specifier (see CTS_xxx equates)
-; Return:    xax -> asm type string or NULL if not found.
+; Procedure:  ConvBasicTypeC
+; Purpose:    Convert a basic "C" type to an "asm" type.
+; Arguments:  Arg1: C type specifier (see CTS_xxx equates)
+; Return:     xax -> asm type string or NULL if not found.
 
 ConvBasicTypeC proc dTypeSpecC:DWORD
   lea xcx, ConvertBasicTypeTable
@@ -703,10 +644,10 @@ ConvBasicTypeC proc dTypeSpecC:DWORD
 ConvBasicTypeC endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: DeleteSimpleBraces
-; Purpose:   Delete surrounding braces.
-; Arguments: None.
-; Return:    Nothing.
+; Procedure:  DeleteSimpleBraces
+; Purpose:    Delete surrounding braces.
+; Arguments:  None.
+; Return:     Nothing.
 
 DeleteSimpleBraces proc uses xsi
   local InpStat:INP_STAT
@@ -737,10 +678,10 @@ DeleteSimpleBraces proc uses xsi
 DeleteSimpleBraces endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: SkipCasts
-; Purpose:   Skip typecasts in preprocessor lines.
-; Arguments: None.
-; Return:    Nothing.
+; Procedure:  SkipCasts
+; Purpose:    Skip typecasts in preprocessor lines.
+; Arguments:  None.
+; Return:     Nothing.
 
 SkipCasts proc uses xdi
   local pToken: PTOKEN, pCastStack:POINTER, bIsName:DWORD, InpStat:INP_STAT
@@ -813,10 +754,10 @@ SkipCasts proc uses xdi
 SkipCasts endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: SkipSimpleBraces
-; Purpose:   Skip braces of "(" <number> ")" pattern.
-; Arguments: None.
-; Return:    Nothing.
+; Procedure:  SkipSimpleBraces
+; Purpose:    Skip braces of "(" <number> ")" pattern.
+; Arguments:  None.
+; Return:     Nothing.
 
 SkipSimpleBraces proc
   local InpStat:INP_STAT
@@ -837,11 +778,11 @@ SkipSimpleBraces proc
 SkipSimpleBraces endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: SkipBraces
-; Purpose:   Skip all Tokens between braces.
-; Arguments: Arg1: opening brace.
-;            Arg2: closing brace.
-; Return:    xax -> Last Token or NULL.
+; Procedure:  SkipBraces
+; Purpose:    Skip all Tokens between braces.
+; Arguments:  Arg1: opening brace.
+;             Arg2: closing brace.
+; Return:     xax -> Last Token or NULL.
 
 SkipBraces proc uses xsi cOpenBrace:CHRA, cCloseBrace:CHRA
   mov esi, 1
@@ -859,11 +800,11 @@ SkipBraces proc uses xsi cOpenBrace:CHRA, cCloseBrace:CHRA
 SkipBraces endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: GetInterfaceName
-; Purpose:   Get the name of an interface.
-; Arguments: Arg1: -> Source Name.
-;            Arg2: -> Destination Interface.
-; Return:    Nothing.
+; Procedure:  GetInterfaceName
+; Purpose:    Get the name of an interface.
+; Arguments:  Arg1: -> Source Name.
+;             Arg2: -> Destination Interface.
+; Return:     Nothing.
 
 GetInterfaceName proc uses xdi xsi pName:PSTRINGA, pInterface:PSTRINGA
   mov xsi, pName
@@ -882,11 +823,11 @@ GetInterfaceName proc uses xdi xsi pName:PSTRINGA, pInterface:PSTRINGA
 GetInterfaceName endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: SkipName
-; Purpose:   Skip name of a struct/union.
-; Arguments: Arg1 -> Name.
-;            Arg2: Name flags. if != 0 => skip parentheses.
-; Return:    Nothing.
+; Procedure:  SkipName
+; Purpose:    Skip name of a struct/union.
+; Arguments:  Arg1 -> Name.
+;             Arg2: Name flags. if != 0 => skip parentheses.
+; Return:     Nothing.
 
 SkipName proc pName:PSTRINGA, dFlags:DWORD
   .if pName != NULL
@@ -961,33 +902,33 @@ SkipMacros proc pToken:PTOKEN
 SkipMacros endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: If_ElIf
-; Purpose:   Process "#if"/"#elif" lines.
-; Arguments: Arg1: PP conditional type: "#if" or "#elif".
-; Return:    Nothing.
+; Procedure:  If_ElIf
+; Purpose:    Process "#if"/"#elif" lines.
+; Arguments:  Arg1: PP conditional type: "#if" or "#elif".
+; Return:     Nothing.
 
 If_ElIf proc uses xsi bCondType:DWORD
   local Evtor:$Obj(Evaluator)
   local InpStat:INP_STAT, bCondResult:BYTE
 
   movzx esi, [xbx].$Obj(IncFile).bCondIfLevel
-  mrm bCondResult, [xbx].$Obj(IncFile).bCondResult[xsi - 1], al     ;Get current result
+  mrm bCondResult, [xbx].$Obj(IncFile).bCondResult[xsi - 1], al   ;Get current result
   .if bCondType == PCT_IF || (bCondType == PCT_ELIF && al != PPR_TRUE)
     OCall xbx::IncFile.InputStatusSave, addr InpStat
     New Evtor::Evaluator
     OCall Evtor::Evaluator.Init, xbx
-    OCall Evtor::Evaluator.Evaluate                        ;Evaluate conditional expression
-    mov bCondResult, al
+    OCall Evtor::Evaluator.Evaluate                     ;Evaluate conditional expression
+    mov bCondResult, al                                 ;al = PPR_FALSE, PPR_TRUE or PPR_UNKNOWN
     OCall Evtor::Evaluator.Done
     OCall xbx::IncFile.InputStatusLoad, addr InpStat
 
-    mrm [xbx].$Obj(IncFile).bCondResult[xsi - 1], bCondResult, al   ;Store result
+    mrm [xbx].$Obj(IncFile).bCondResult[xsi - 1], bCondResult, al ;Store result
     .if bCondType == PCT_IF
-      mov [xbx].$Obj(IncFile).bCondHistory[xsi - 1], al    ;Store result in history stack
+      mov [xbx].$Obj(IncFile).bCondHistory[xsi - 1], al   ;Store result in history stack
     .else
       mov cl, [xbx].$Obj(IncFile).bCondHistory[xsi - 1]
       .if al > cl
-        mov [xbx].$Obj(IncFile).bCondHistory[xsi - 1], al  ;Store result in history stack
+        mov [xbx].$Obj(IncFile).bCondHistory[xsi - 1], al ;Store result in history stack
       .endif
     .endif
   .endif
@@ -998,7 +939,7 @@ If_ElIf proc uses xsi bCondType:DWORD
   .else
     OCall xbx::IncFile.StmWrite, $OfsCStrA("elseif ")
   .endif
-  mov [xbx].$Obj(IncFile).bSkipUselessCode, FALSE
+  mov [xbx].$Obj(IncFile).bEnableNFCodeLabel, TRUE
 
   .while TRUE
     OCall xbx::IncFile.GetNextTokenPP
@@ -1045,29 +986,28 @@ If_ElIf proc uses xsi bCondType:DWORD
       .endif
     .endif
   .endw
-  OCall xbx::IncFile.StmWriteEOL
+  OCall xbx::IncFile.StmWriteEoL
 
   .if bCondResult == PPR_FALSE
-    mov [xbx].$Obj(IncFile).bSkipLogiPP, TRUE           ;Swap the PP-command dispatcher tables
-    mov [xbx].$Obj(IncFile).bSkipC, TRUE
+    mov [xbx].$Obj(IncFile).bSkipCondPP, TRUE           ;Swap the PP-command dispatcher tables
+    mov [xbx].$Obj(IncFile).bSkipLineC, TRUE
   .else
-    mov [xbx].$Obj(IncFile).bSkipLogiPP, FALSE
-    mov [xbx].$Obj(IncFile).bSkipC, FALSE
+    mov [xbx].$Obj(IncFile).bSkipCondPP, FALSE
+    mov [xbx].$Obj(IncFile).bSkipLineC, FALSE
   .endif
 
   ret
 If_ElIf endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: Ifdef_Ifndef
-; Purpose:   Process "#ifdef"/"#ifndef" lines.
-; Arguments: Arg1: PP conditional type: "#ifdef" or "#ifndef".
-; Return:    Nothing.
+; Procedure:  Ifdef_Ifndef
+; Purpose:    Process "#ifdef"/"#ifndef" lines.
+; Arguments:  Arg1: PP conditional type: "#ifdef" or "#ifndef".
+; Return:     Nothing.
 
 Ifdef_Ifndef proc uses xdi xsi bCondType:DWORD
   local pToken:PTOKEN, bCondResult:BYTE, cTransBuffer[128]:CHRA
 
-  int 3
   movzx esi, [xbx].$Obj(IncFile).bCondIfLevel
   mrm bCondResult, [xbx].$Obj(IncFile).bCondResult[xsi - 1], al ;Get current result
   .if al != PPR_TRUE
@@ -1117,17 +1057,18 @@ Ifdef_Ifndef proc uses xdi xsi bCondType:DWORD
     invoke TranslateReservedWord, pToken, addr cTransBuffer
     OCall xbx::IncFile.StmWrite, xax
     OCall xbx::IncFile.StmCopyRestOfPPLine
-    mov [xbx].$Obj(IncFile).bSkipUselessCode, FALSE
+    OCall xbx::IncFile.StmWriteEoL
+    mov [xbx].$Obj(IncFile).bEnableNFCodeLabel, TRUE
   .else
     SkipPPLine
   .endif
 
   .if bCondResult == PPR_FALSE
-    mov [xbx].$Obj(IncFile).bSkipLogiPP, TRUE           ;Swap the PP-command dispatcher tables
-    mov [xbx].$Obj(IncFile).bSkipC, TRUE
+    mov [xbx].$Obj(IncFile).bSkipCondPP, TRUE           ;Swap the PP-command dispatcher tables
+    mov [xbx].$Obj(IncFile).bSkipLineC, TRUE
   .else
-    mov [xbx].$Obj(IncFile).bSkipLogiPP, FALSE
-    mov [xbx].$Obj(IncFile).bSkipC, FALSE
+    mov [xbx].$Obj(IncFile).bSkipCondPP, FALSE
+    mov [xbx].$Obj(IncFile).bSkipLineC, FALSE
   .endif
   ret
 
@@ -1139,61 +1080,10 @@ Ifdef_Ifndef proc uses xdi xsi bCondType:DWORD
 Ifdef_Ifndef endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: WriteInherit
-; Purpose:
-; Arguments: Arg1 -> Inherit StackList.
-;            Arg2 -> previous class.
-; Return:    Nothing.
-
-WriteInherit proc uses xdi xsi pInherit:ptr, bPreClass:BOOL
-  local bVirtual:DWORD, bVbtable:DWORD, pToken:PTOKEN
-
-  mov edi, $GetCount@Stacklist(pInherit)
-  xor esi, esi
-  mov bVirtual, FALSE
-  mov bVbtable, FALSE
-  test edi, edi
-  .while !ZERO?
-    mov xax, $GetItem@Stacklist(pInherit, esi)
-    mov pToken, xax
-    .if $DoesStringMatchA?([xax], <virtual>)
-      .if bPreClass != FALSE && bVbtable == FALSE
-        OCall xbx::IncFile.StmWrite, $OfsCStrA(" POINTER ?  ;'vbtable'")
-        OCall xbx::IncFile.StmWriteEOL
-        mov bVbtable, TRUE
-      .endif
-      mov bVirtual, TRUE
-    .else
-      IsPublicPrivateProtected? pToken
-      .if eax != FALSE
-        .if bPreClass != FALSE
-          OCall xbx::IncFile.StmWriteF, $OfsCStrA(";%s:"), pToken
-          OCall xbx::IncFile.StmWriteEOL
-        .endif
-      .else
-        .if bVirtual != FALSE
-          .if bPreClass == FALSE
-            OCall xbx::IncFile.StmWriteF, $OfsCStrA(" %s <>"), pToken
-            OCall xbx::IncFile.StmWriteEOL
-          .endif
-        .elseif (bPreClass)
-          OCall xbx::IncFile.StmWriteF, $OfsCStrA(" %s <>"), pToken
-          OCall xbx::IncFile.StmWriteEOL
-        .endif
-        mov bVirtual, FALSE
-      .endif
-    .endif
-    inc esi
-    dec edi
-  .endw
-  ret
-WriteInherit endp
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: WriteStackList
-; Purpose:   Writes tokens contained in a StackList to the output stream.
-; Arguments: Arg1 -> StackList.
-; Return:    Nothing.
+; Procedure:  WriteStackList
+; Purpose:    Writes tokens contained in a StackList to the output stream.
+; Arguments:  Arg1 -> StackList.
+; Return:     Nothing.
 
 WriteStackList proc uses xdi xsi pStackList:POINTER
   local bAddSpace:DWORD, pToken:PTOKEN
@@ -1208,7 +1098,7 @@ WriteStackList proc uses xdi xsi pStackList:POINTER
       .if CHRA ptr [xax] == "("
         mov bAddSpace, FALSE
       .else
-        mov xax, pToken
+        mov pToken, xax
         mov eax, $GetCount@Stacklist(pStackList)
         .if esi >= eax
           mov bAddSpace, FALSE
@@ -1235,10 +1125,10 @@ WriteStackList proc uses xdi xsi pStackList:POINTER
 WriteStackList endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: GetCallConvString
-; Purpose:   Return the correct calling convention.
-; Arguments: Arg1 -> CallConv qualifier (PTQ_xxx).
-; Return:    xax -> CallConv string. Can not be NULL.
+; Procedure:  GetCallConvString
+; Purpose:    Return the correct calling convention.
+; Arguments:  Arg1 -> CallConv qualifier (PTQ_xxx).
+; Return:     xax -> CallConv string. Can not be NULL.
 
 GetCallConvString proc dQualifiers:DWORD
   mov ecx, dQualifiers
@@ -1259,11 +1149,11 @@ GetCallConvString proc dQualifiers:DWORD
 GetCallConvString endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: GetProtoQualifier
-; Purpose:   Check proto qualifier (E.g. CALLBACK, WINAPI, WINGDIAPI, THEMEAPI, etc.).
-; Arguments: Arg1 -> Token.
-; Return:    xax -> List item or NULL if not found.
-; Link:      https://learn.microsoft.com/en-us/cpp/cpp/declspec?view=msvc-170
+; Procedure:  GetProtoQualifier
+; Purpose:    Check proto qualifier (E.g. CALLBACK, WINAPI, WINGDIAPI, THEMEAPI, etc.).
+; Arguments:  Arg1 -> Token.
+; Return:     xax -> List item or NULL if not found.
+; Link:       https://learn.microsoft.com/en-us/cpp/cpp/declspec?view=msvc-170
 
 GetProtoQualifier proc pToken:PTOKEN
   local InpStat:INP_STAT, dLevel:DWORD
@@ -1314,11 +1204,11 @@ GetProtoQualifier proc pToken:PTOKEN
 GetProtoQualifier endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: GetBlockName
-; Purpose:   Find name of a struct/union, if any.
-; Arguments: Arg1 -> Buffer used when the name is a macro invocation.
-; Return:    xax -> Block Name or NULL.
-;            edx = flags (if name is a macro).
+; Procedure:  GetBlockName
+; Purpose:    Find name of a struct/union, if any.
+; Arguments:  Arg1 -> Buffer used when the name is a macro invocation.
+; Return:     xax -> Block Name or NULL.
+;             edx = flags (if name is a macro).
 
 GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
   local dBraceCount:DWORD, dFlags:DWORD
@@ -1327,7 +1217,7 @@ GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
   mov pName, NULL
   mov dFlags, FALSE
   OCall xbx::IncFile.InputStatusSave, addr InpStat
-  inc [xbx].$Obj(IncFile).bSkipScanPP
+  inc [xbx].$Obj(IncFile).bSkipLinePP
 
   ;Skip declaration ---------------------------------------------------------
   mov dBraceCount, 1
@@ -1370,11 +1260,11 @@ GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
           xor ecx, ecx
         .endif
         mov xsi, [xbx].$Obj(IncFile).pStmOutPos
-        mov edi, [xbx].$Obj(IncFile).dStmOutEOL
+        mov edi, [xbx].$Obj(IncFile).dStmOutEoL
         m2m [xbx].$Obj(IncFile).pStmOutPos, pMacroNameBuffer, eax
         mov edx, ecx
         invoke RenderMacroCall, pName, edx, FALSE
-        mov [xbx].$Obj(IncFile).dStmOutEOL, edi
+        mov [xbx].$Obj(IncFile).dStmOutEoL, edi
         mov [xbx].$Obj(IncFile).pStmOutPos, xsi
         m2m pName, pMacroNameBuffer, eax
       .endif
@@ -1387,7 +1277,7 @@ GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
   .endif
 
 @Exit:
-  dec [xbx].$Obj(IncFile).bSkipScanPP
+  dec [xbx].$Obj(IncFile).bSkipLinePP
   OCall xbx::IncFile.InputStatusLoad, addr InpStat
   mov xax, pName
   mov edx, dFlags
@@ -1395,12 +1285,12 @@ GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
 GetBlockName endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: ConvertNumber
-; Purpose:   Converts number from C syntax to MASM syntax.
-; Arguments: xsi -> Input stream.
-;            xdi -> Output stream.
-; Return:    Nothing.
-; Note:      Must preserve ecx edx.
+; Procedure:  ConvertNumber
+; Purpose:    Converts number from C syntax to MASM syntax.
+; Arguments:  xsi -> Input stream.
+;             xdi -> Output stream.
+; Return:     Nothing.
+; Note:       Must preserve ecx edx.
 
 ConvertNumber proc uses xcx xdx
   xor eax, eax
@@ -1518,14 +1408,14 @@ ConvertNumber proc uses xcx xdx
 ConvertNumber endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: AddEscStr
-; Purpose:   Add some chars to the output stream.
-; Arguments: xsi -> Input stream.
-;            xdi -> Output stream.
-; Return:    Nothing.
-; Note:      Must preserve ecx edx.
-;            ch: bit 0 = 1: previous item is enclosed in '"'
-;                bit 1 = 1: no previous char
+; Procedure:  AddEscStr
+; Purpose:    Add some chars to the output stream.
+; Arguments:  xsi -> Input stream.
+;             xdi -> Output stream.
+; Return:     Nothing.
+; Note:       Must preserve ecx edx.
+;             ch: bit 0 = 1: previous item is enclosed in '"'
+;                 bit 1 = 1: no previous char
 
 AddEscStr proc
   push xax
@@ -1677,11 +1567,11 @@ GetStringLiteral proc uses xcx
 GetStringLiteral endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure: GotoClosingToken
-; Purpose:   Move the input pointer to the ending token.
-; Arguments: Arg1: Opening token.
-;            Arg2: Closing token.
-; Return:    xax -> Closing token or NULL on EoF and SF set.
+; Procedure:  GotoClosingToken
+; Purpose:    Move the input pointer to the ending token.
+; Arguments:  Arg1: Opening token.
+;             Arg2: Closing token.
+; Return:     xax -> Closing token or NULL on EoF and SF set.
 
 GotoClosingToken proc uses xsi cOpeningToken:CHRA, cClosingToken:CHRA 
   mov xax, [xbx].$Obj(IncFile).pStmInpPos
@@ -1711,11 +1601,11 @@ GotoClosingToken endp
 ; Arguments: Arg1: Token.
 ; Return:    xax -> Token or NULL on EoF and SF set.
 
-GotoNextToken proc cToken:CHRA 
-  mov xax, [xbx].$Obj(IncFile).pStmInpPos
+GotoNextToken proc pToken:PTOKEN 
+  mov xax, [xbx].$Obj(IncFile).pStmInpPos                   ;pStmInpPos is one token in advance
   .while (xax != NULL)
-    mov cl, [xax]
-    .break .if (cl == cToken)
+    invoke StrCompA, xax, pToken
+    .break .if ZERO?
     OCall xbx::IncFile.GetNextTokenC
   .endw
   ret

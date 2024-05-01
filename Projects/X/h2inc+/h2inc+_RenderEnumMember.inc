@@ -2,7 +2,7 @@
 ; Title:      h2inc+_RenderEnumMember.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
-; Purpose:  
+; Purpose:    ObjAsm h2inc+ translation procedures.
 ; ==================================================================================================
 
 
@@ -64,7 +64,7 @@ RenderEnumMember proc pToken:PTOKEN
         .if CHRA ptr [xax] == "," || CHRA ptr [xax] == "}"  ;Item terminator or end of declaration
           OCall xbx::IncFile.StmWriteF, $OfsCStrA(" equ %d"), sdValue
           inc sdValue
-          OCall xbx::IncFile.StmWriteEOL
+          OCall xbx::IncFile.StmWriteEoL
           .break
         .endif
 
@@ -82,13 +82,13 @@ RenderEnumMember proc pToken:PTOKEN
           .if CHRA ptr [xax] == "," || CHRA ptr [xax] == "}"
             OCall xbx::IncFile.StmWriteF, $OfsCStrA("%d"), sdValue
             inc sdValue
-            OCall xbx::IncFile.StmWriteEOL
+            OCall xbx::IncFile.StmWriteEoL
             .break
           .endif
         .else
           .if CHRA ptr [xax] == "," || CHRA ptr [xax] == "}"
             OCall xbx::IncFile.StmDeleteLastSpace
-            OCall xbx::IncFile.StmWriteEOL
+            OCall xbx::IncFile.StmWriteEoL
             .break
           .endif
         .endif
@@ -144,7 +144,7 @@ RenderEnumMember proc pToken:PTOKEN
 
 @Error:
   DbgErrorF , "¦SU(¦UD): RenderEnumMember - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
-  OCall xbx::IncFile.ShowError, $OfsCStrA("unexpected enum item = %s"), pToken
+  OCall xbx::IncFile.ShowError, $OfsCStr("unexpected enum item = %hs"), pToken
   mov xax, pToken
   test xax, xax
   ret

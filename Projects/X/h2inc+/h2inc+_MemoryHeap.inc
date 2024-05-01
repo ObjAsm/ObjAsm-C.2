@@ -1,9 +1,9 @@
 ; ==================================================================================================
-; Title:    h2inc+_MemoryHeap.inc
-; Author:   G. Friedrich
-; Version:  C.2.0
-; Purpose:  ObjAsm support of h2inc+ MemoryHeap objects.
-; Notes:    See h2inc+.asm
+; Title:      h2inc+_MemoryHeap.inc
+; Author:     G. Friedrich
+; Version:    See h2inc+.asm
+; Purpose:    ObjAsm support of h2inc+ MemoryHeap objects.
+; Notes:      See h2inc+.asm
 ; ==================================================================================================
 
 
@@ -11,8 +11,8 @@ MPL_OUT_OF_MEMORY     equ   1
 MPL_INVALID_ARGUMENT  equ   2
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Object:   MemoryHeap
-; Purpose:  Global memory heap for non-organized storage.
+; Object:     MemoryHeap
+; Purpose:    Global memory heap for non-organized storage.
 
 Object MemoryHeap, 0, Primer
   StaticMethod    AddBStrA,     PSTRINGA, DWORD
@@ -53,11 +53,11 @@ DbgShowMemoryHeapStatus macro
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    MemoryHeap.AddBStrA
-; Purpose:   Add a BStrA into the MemoryHeap.
-; Arguments: Arg1 -> Original string, must NOT be zero terminated.
-;            Arg2: String length, not including the ZTC, if any.
-; Return:    xax -> New string in MemoryHeap.
+; Method:     MemoryHeap.AddBStrA
+; Purpose:    Add a BStrA into the MemoryHeap.
+; Arguments:  Arg1 -> Original string, must NOT be zero terminated.
+;             Arg2: String length, not including the ZTC, if any.
+; Return:     xax -> New string in MemoryHeap.
 
 Method MemoryHeap.AddBStrA, uses xdi xsi, pStrA:PSTRINGA, dLength:DWORD
   SetObject xsi
@@ -87,10 +87,10 @@ Method MemoryHeap.AddBStrA, uses xdi xsi, pStrA:PSTRINGA, dLength:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    MemoryHeap.AddDword
-; Purpose:   Add a DWORD value into the MemoryHeap.
-; Arguments: Arg1: DWORD value.
-; Return:    xax -> Value in MemoryHeap buffer.
+; Method:     MemoryHeap.AddDword
+; Purpose:    Add a DWORD value into the MemoryHeap.
+; Arguments:  Arg1: DWORD value.
+; Return:     xax -> Value in MemoryHeap buffer.
 
 Method MemoryHeap.AddDword, uses xdi xsi, dValue:DWORD
   SetObject xsi
@@ -114,10 +114,10 @@ Method MemoryHeap.AddDword, uses xdi xsi, dValue:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    MemoryHeap.AddStrA
-; Purpose:   Add an ANSI string into the MemoryHeap.
-; Arguments: Arg1: -> ANSI String.
-; Return:    xax -> String in MemoryHeap.
+; Method:     MemoryHeap.AddStrA
+; Purpose:    Add an ANSI string into the MemoryHeap.
+; Arguments:  Arg1: -> ANSI String.
+; Return:     xax -> String in MemoryHeap.
 
 Method MemoryHeap.AddStrA, uses xdi xsi, pStrA:PSTRINGA
   local dSize:DWORD
@@ -147,10 +147,10 @@ Method MemoryHeap.AddStrA, uses xdi xsi, pStrA:PSTRINGA
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    MemoryHeap.AddStrW
-; Purpose:   Add an WIDE string into the MemoryHeap.
-; Arguments: Arg1: -> WIDE String.
-; Return:    xax -> String in MemoryHeap.
+; Method:     MemoryHeap.AddStrW
+; Purpose:    Add an WIDE string into the MemoryHeap.
+; Arguments:  Arg1: -> WIDE String.
+; Return:     xax -> String in MemoryHeap.
 
 Method MemoryHeap.AddStrW, uses xdi xsi, pStrW:PSTRINGW
   local dSize:DWORD
@@ -180,10 +180,10 @@ Method MemoryHeap.AddStrW, uses xdi xsi, pStrW:PSTRINGW
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    MemoryHeap.Alloc
-; Purpose:   Allocate memory block in MemoryHeap
-; Arguments: Arg1: memory block size.
-; Return:    xax -> Allocated memory block or NULL if failed.
+; Method:     MemoryHeap.Alloc
+; Purpose:    Allocate memory block in MemoryHeap
+; Arguments:  Arg1: memory block size.
+; Return:     xax -> Allocated memory block or NULL if failed.
 
 Method MemoryHeap.Alloc, uses xbx xsi, dMemSize:DWORD
   SetObject xsi
@@ -204,10 +204,10 @@ Method MemoryHeap.Alloc, uses xbx xsi, dMemSize:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    MemoryHeap.Done
-; Purpose:   Allocate memory block
-; Arguments: None.
-; Return:    Nothing.
+; Method:     MemoryHeap.Done
+; Purpose:    Allocate memory block
+; Arguments:  None.
+; Return:     Nothing.
 
 Method MemoryHeap.Done, uses xsi
   SetObject xsi
@@ -216,12 +216,12 @@ Method MemoryHeap.Done, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    MemoryHeap.Init
-; Purpose:   Allocate memory block.
-; Arguments: Arg1: -> Owner
-;            Arg2: Initial block size in bytes.
-;            Arg3: Increment size in bytes.
-; Return:    eax = Error code.
+; Method:     MemoryHeap.Init
+; Purpose:    Allocate memory block.
+; Arguments:  Arg1: -> Owner
+;             Arg2: Initial block size in bytes.
+;             Arg3: Increment size in bytes.
+; Return:     eax = Error code.
 
 Method MemoryHeap.Init, uses xsi, pOwner:POINTER, dMemSize:DWORD, dIncrement:DWORD
   SetObject xsi
@@ -231,10 +231,10 @@ Method MemoryHeap.Init, uses xsi, pOwner:POINTER, dMemSize:DWORD, dIncrement:DWO
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    MemoryHeap.Reset
-; Purpose:   Resets the content of the MemoryHeap.
-; Arguments: None.
-; Return:    Nothing.
+; Method:     MemoryHeap.Reset
+; Purpose:    Resets the content of the MemoryHeap.
+; Arguments:  None.
+; Return:     Nothing.
 
 Method MemoryHeap.Reset
   SetObject xcx
@@ -242,10 +242,10 @@ Method MemoryHeap.Reset
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    MemoryHeap.SetMemMax
-; Purpose:   Set the MemoryHeap limit, allocating the necessary memory on the process heap.
-; Arguments: Arg1: New memory size.
-; Return:    eax = Error code.
+; Method:     MemoryHeap.SetMemMax
+; Purpose:    Set the MemoryHeap limit, allocating the necessary memory on the process heap.
+; Arguments:  Arg1: New memory size.
+; Return:     eax = Error code.
 
 Method MemoryHeap.SetMemMax, uses xsi, dNewMemMax:DWORD
   SetObject xsi

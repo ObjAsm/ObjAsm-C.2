@@ -2,7 +2,7 @@
 ; Title:      h2inc+_ParseRecord.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
-; Purpose:  
+; Purpose:    ObjAsm h2inc+ translation procedures.
 ; ==================================================================================================
 
 ;Example 1:
@@ -28,6 +28,33 @@
 ;                 fBusy:1,
 ;                 fAck:1;
 ;} DDEACK;
+;
+;Example 3:
+;typedef struct {
+;#ifndef _MAC
+;  unsigned short reserved:14,
+;                 fDeferUpd:1,
+;		              fAckReq:1;
+;#else
+;  unsigned short usFlags;
+;#endif
+;	short     cfFormat;
+;} DDEADVISE;
+;
+;Example 4:
+;typedef struct _COMSTAT {
+;    DWORD fCtsHold : 1;
+;    DWORD fDsrHold : 1;
+;    DWORD fRlsdHold : 1;
+;    DWORD fXoffHold : 1;
+;    DWORD fXoffSent : 1;
+;    DWORD fEof : 1;
+;    DWORD fTxim : 1;
+;    DWORD fReserved : 25;
+;    DWORD cbInQue;
+;    DWORD cbOutQue;
+;} COMSTAT, *LPCOMSTAT;
+
 
 
 ;Strategy:
@@ -46,7 +73,7 @@
 ; Procedure:  GetBitLength
 ; Purpose:    Get the bit length of a given type.
 ; Arguments:  Arg1: -> Type
-; Return:     eax = bit length
+; Return:     eax = bit length, zero if not found.
 
 GetBitLength proc pType:PSTRINGA
   OCall pTypeSize::List.Search, pType
@@ -56,8 +83,6 @@ GetBitLength proc pType:PSTRINGA
     mov edx, [xax - sizeof(DWORD)]
     mov eax, [xax + xdx]
     shl eax, 3                                          ;*8
-  .else
-    mov eax, sizeof(BYTE)*8                             ;Default 8 bit
   .endif
   ret
 GetBitLength endp
@@ -73,48 +98,57 @@ GetBitLength endp
 ; Return:     xax -> Last token or NULL, ZF set.
 ; Note:       On entry, first ':' is consumed.
 
+
 RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToken:PTOKEN, pSuffix:PSTRINGA
   local dAllocUnitSize:DWORD, dCummulatedSize:DWORD, cLineBuffer[1024]:CHRA
   local pFieldStackList:POINTER, dAllocUnitCounter:DWORD, cRecName[1024]:CHRA
   local dIndexUpper:DWORD, dIndexLower:DWORD, bMultipleAllocUnits:BYTE
+  local cSeparator:CHRA, InpStat:INP_STAT
 
-  ;Build the Record name
+  ;Build the RECORD name ----------------------------------------------------------------
   lea xdi, cRecName
   .if pContainerName != NULL
     WriteFA xdi, "¦SA", pContainerName
   .endif
   WriteFA xdi, "¦SA", pSuffix
-
-  ;Initialization
+  
+  ;Initialization -----------------------------------------------------------------------
+  mov cSeparator, ';'
   mov bMultipleAllocUnits, FALSE
   mov pFieldStackList, $Create@Stacklist()
   invoke GetBitLength, pType
+  .if eax == 0
+    OCall xbx::IncFile.ShowWarning, WARNING_MAYOR, $OfsCStr("Unknown type '%hs' in bitfield"), pType
+    mov eax, sizeof(DWORD)*8                            ;Default 32 bit
+  .endif
   mov dAllocUnitSize, eax                               ;First value
 
-  ;Get all fields into the StackList
+  ;Gatter field informaton into the StackList -------------------------------------------
   .while TRUE
     Add@Stacklist pFieldStackList, pToken               ;First bitfield name
     OCall xbx::IncFile.GetNextTokenC                    ;BitField size
     jz @ErrorEoF
-    cmp CHRA ptr [xax], '}'
-    jz @ErrorSyntax
     invoke dec2dwordA, xax
     Add@Stacklist pFieldStackList, xax, xcx             ;Save eax (field length)
-    OCall xbx::IncFile.GetNextTokenC                    ;";"
+    OCall xbx::IncFile.GetNextTokenC                    ;";" or ','
     jz @ErrorEoF
     mov cl, [xax]
-    .if cl == ";" 
-      OCall xbx::IncFile.GetNextTokenC
+    .if cl == ";"
+      mov pToken, xax                                   ;Save token for exit
+      .break .if cSeparator == ','
+      OCall xbx::IncFile.PeekNextTokenLogicC
       jz @ErrorEoF 
-      .if CHRA ptr [xax] == "}"                         ;End of block detected
-        mov pToken, xax
-        .break
-      .endif
+      .break .if CHRA ptr [xax] == "}"                  ;End of block detected
+      OCall xbx::IncFile.InputStatusSave, addr InpStat
+      OCall xbx::IncFile.GetNextTokenC
+      jz @ErrorEoF
       invoke GetBitLength, xax                          ;Get the Type
       .if eax > dAllocUnitSize
         mov dAllocUnitSize, eax
       .endif
-    .elseif cl != ","
+    .elseif cl == ","
+      mov cSeparator, cl
+    .else
       jmp @ErrorSyntax
     .endif
     OCall xbx::IncFile.GetNextTokenC                     ;New name
@@ -122,9 +156,13 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
     mov pToken, xax
     OCall xbx::IncFile.GetNextTokenC                     ;Consume ":"
     jz @ErrorEoF
-    cmp CHRA ptr [xax], ':'
-    jnz @ErrorSyntax
+    .if CHRA ptr [xax] != ':'
+      OCall xbx::IncFile.InputStatusLoad, addr InpStat
+      .break
+    .endif
   .endw
+
+  ;Create the RECORD in memory ----------------------------------------------------------
 
   lea xdi, cLineBuffer
   WriteFA xdi, "¦SA record ", addr cRecName
@@ -183,24 +221,23 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
   .until eax == 0
   mov DCHRA ptr [xdi - 2*sizeof(CHRA)], 0               ;Delete last comma and SPC
 
-  ;Declare the RECORD
+  ;Declare the RECORD -------------------------------------------------------------------
   OCall xbx::IncFile.StmWrite, addr cLineBuffer 
   OCall xbx::IncFile.StmWriteComment
-  OCall xbx::IncFile.StmWriteEOL
-  DbgStrA cLineBuffer
+  OCall xbx::IncFile.StmWriteEoL
   
   ;Declare the member
   lea xdi, cLineBuffer
   .if pContainerName == NULL
     WriteFA xdi, "¦SA \[\]", addr cRecName
   .else
-    WriteFA xdi, "¦SA ¦SA \[\]", pContainerName, addr cRecName
+    WriteFA xdi, "¦SA_BITS ¦SA \[\]", pContainerName, addr cRecName
   .endif
   OCall xbx::IncFile.StmWrite, addr cLineBuffer 
   OCall xbx::IncFile.StmWriteComment
-  OCall xbx::IncFile.StmWriteEOL
-  DbgStrA cLineBuffer
+  OCall xbx::IncFile.StmWriteEoL
 
+  ;Exit ---------------------------------------------------------------------------------
   Destroy@Stacklist pFieldStackList
   mov xax, pToken                                       ;xax -> '}'
   test xax, xax

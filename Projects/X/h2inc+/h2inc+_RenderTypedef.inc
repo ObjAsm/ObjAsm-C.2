@@ -2,7 +2,7 @@
 ; Title:      h2inc+_RenderTypedef.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
-; Purpose:  
+; Purpose:    ObjAsm h2inc+ translation procedures.
 ; ==================================================================================================
 
 
@@ -14,18 +14,20 @@
 ;             "typedef" occured in the header and triggered this proc.
 ; Arguments:  xbx -> IncFile.
 ; Return:     Nothing.
-; Syntax:     typedef <annotations><qualifiers> type <<far|near> *> newname<[]>;
-;             typedef struct/union <macro> <tname> {} name;
-;             typedef struct/union <macro> <tname> * name;
-;             typedef <annotations><qualifiers> enum <tname> {<annotations>x<=a>,<annotations>y<=b>,...} name;
-;             typedef <annotations><qualifiers> returntype (<qualifiers> *name)(<parameters>);
-;             typedef <annotations><qualifiers> returntype name(<parameters>);
+; Syntax:     
+;   typedef <annotations><qualifiers> type <<far|near> *> newname<[]>;
+;   typedef struct/union <macro> <tname> {} name;
+;   typedef struct/union <macro> <tname> * name;
+;   typedef <annotations><qualifiers> enum <tname> {<annotations>x<=a>,<annotations>y<=b>,...} name;
+;   typedef <annotations><qualifiers> returntype (<qualifiers> *name)(<parameters>);
+;   typedef <annotations><qualifiers> returntype name(<parameters>);
 
 RenderTypedef proc
   local pToken:PTOKEN, pName:PSTRINGA, pType:PSTRINGA, pDup:PSTRINGA
   local dSquareBracketCount:DWORD, dPtrCount:DWORD, bValid:DWORD, dTypeCSpec:DWORD
   local cBuffer[256]:CHRA, cTransBuffer[128]:CHRA
   local pCurrToken:PTOKEN, dSize:DWORD, p1:POINTER, p2:POINTER
+  local InpStat:INP_STAT
 
   mov pType, NULL
 
@@ -48,24 +50,24 @@ RenderTypedef proc
   test xax, xax
   jz @ErrorEoF
 
-  cmp CHRA ptr [xax], ";"                             ;Statement terminator?
-  jz @ErrorSyntax                                     ; Yes => error
+  cmp CHRA ptr [xax], ";"                               ;Statement terminator?
+  jz @ErrorSyntax                                       ; Yes => error
 
-;  .if CHRA ptr [xax] == "["
-;    DbgPrintF , "¦UD: RenderTypedef - \´[\´ found", [xbx].$Obj(IncFile).dLineNumber
-;    OCall xbx::IncFile.InputStatusSave, addr InpStat
-;    OCall xbx::IncFile.GetNextTokenC
-;    .if !ZERO?
-;      .if $DoesStringMatchA?([xax], <public>)
-;        OCall xbx::IncFile.GetNextTokenC
-;        .if !ZERO? && CHRA ptr [xax] == "]"
-;          DbgPrintF , "¦UD: RenderTypedef - \´]\´ found", [xbx].$Obj(IncFile).dLineNumber
-;          jmp @GetNextToken                                ;Sure????
-;        .endif
-;      .endif
-;    .endif
-;    OCall xbx::IncFile.InputStatusLoad, addr InpStat
-;  .endif
+  .if CHRA ptr [xax] == "["
+    DbgPrintF , "¦UD: RenderTypedef - \´[\´ found", [xbx].$Obj(IncFile).dLineNumber
+    OCall xbx::IncFile.InputStatusSave, addr InpStat
+    OCall xbx::IncFile.GetNextTokenC
+    .if !ZERO?
+      .if $DoesStringMatchA?([xax], <public>)
+        OCall xbx::IncFile.GetNextTokenC
+        .if !ZERO? && CHRA ptr [xax] == "]"
+          DbgPrintF , "¦UD: RenderTypedef - \´]\´ found", [xbx].$Obj(IncFile).dLineNumber
+          jmp @GetNextToken                             ;Sure????
+        .endif
+      .endif
+    .endif
+    OCall xbx::IncFile.InputStatusLoad, addr InpStat
+  .endif
 
   ;syntax: "typedef <macro()> xxx"
   invoke IsMacro?, pToken                               ;Check if it is an already known macro
@@ -98,7 +100,7 @@ RenderTypedef proc
     DoesStringMatchA? [xax], <ENUM>
     jnz @F
   .endif
-  invoke ParseTypedefEnum, TRUE
+  invoke RenderTypedefEnum, TRUE
   jmp @Exit
 
 @@:
@@ -143,7 +145,7 @@ RenderTypedef proc
         .if bValid != FALSE
           mov pCurrToken, $invoke(TranslateReservedWord, pName, addr cTransBuffer)
           .if edx != 0 && $ObjTmpl(Application).Options.dWarningLevel > 0
-            OCall xbx::IncFile.ShowWarning, WARNING_MINOR, $OfsCStrA("reserved word %s used as typedef"), pName
+            OCall xbx::IncFile.ShowWarning, WARNING_MINOR, $OfsCStrA("reserved word %hs used as typedef"), pName
           .endif
           m2m pName, pCurrToken, xdx                    ;Assign translated name
         .endif
@@ -165,7 +167,7 @@ RenderTypedef proc
           .if pDup != NULL && dPtrCount == 0
             OCall xbx::IncFile.StmWrite, pName
             OCall xbx::IncFile.StmWrite, $OfsCStrA(" struct")
-            OCall xbx::IncFile.StmWriteEOL
+            OCall xbx::IncFile.StmWriteEoL
             inc [xbx].$Obj(IncFile).dIndentation
             OCall xbx::IncFile.StmWrite, pType
             OCall xbx::IncFile.StmWriteChar, SPC
@@ -176,11 +178,11 @@ RenderTypedef proc
             .else
               OCall xbx::IncFile.StmWrite, $OfsCStrA(" dup (<>)")
             .endif
-            OCall xbx::IncFile.StmWriteEOL
+            OCall xbx::IncFile.StmWriteEoL
             dec [xbx].$Obj(IncFile).dIndentation
             OCall xbx::IncFile.StmWrite, pName
             OCall xbx::IncFile.StmWrite, $OfsCStrA(" ends")
-            OCall xbx::IncFile.StmWriteEOL
+            OCall xbx::IncFile.StmWriteEoL
 
           .else
             OCall xbx::IncFile.StmWrite, pName
@@ -192,7 +194,7 @@ RenderTypedef proc
             .else
               OCall xbx::IncFile.StmWrite, pType
             .endif
-            OCall xbx::IncFile.StmWriteEOL
+            OCall xbx::IncFile.StmWriteEoL
 
             invoke StrLengthA, pName
             invoke InsertStrg, pTypedefs, pName, eax
@@ -209,14 +211,14 @@ RenderTypedef proc
     .if CHRA ptr [xax] == "("
       invoke IsFunctionPtr?
       .if eax != FALSE
-        invoke ParseTypedefFunctionPtr, NULL
+        invoke RenderTypedefFuncPtr, NULL
       .else
         invoke IsFunction?
         .if eax != FALSE
           mov xax, pName
           test xax, xax
           cmovz xax, pType
-          invoke ParseTypedefFunction, xax, FALSE
+          invoke RenderTypedefFunction, xax, FALSE
         .endif
       .endif
       mov pName, NULL
@@ -273,7 +275,7 @@ RenderTypedef proc
     OCall xbx::IncFile.GetNextTokenC
     jz @ErrorEoF
     invoke SkipAnnotations, xax
-    jz @ErrorEoF                                           ;No more tokens? => error
+    jz @ErrorEoF                                        ;No more tokens? => error
     mov pToken, xax
   .endw
 
@@ -284,7 +286,7 @@ RenderTypedef proc
 @ErrorSyntax:
   inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.StmWriteError
-  invoke GotoNextToken, ';'
+  invoke GotoNextToken, addr szSemiColon
   ret
 
 @ErrorEoF:

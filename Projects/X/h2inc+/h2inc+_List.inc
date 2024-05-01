@@ -1,9 +1,9 @@
 ; ==================================================================================================
-; Title:    h2inc+_List.inc
-; Author:   G. Friedrich
-; Version:  C.2.0
-; Purpose:  ObjAsm support of h2inc+ List objects.
-; Notes:    See h2inc+.asm
+; Title:      h2inc+_List.inc
+; Author:     G. Friedrich
+; Version:    See h2inc+.asm
+; Purpose:    ObjAsm support of h2inc+ List objects.
+; Notes:      See h2inc+.asm
 ; ==================================================================================================
 
 
@@ -11,8 +11,8 @@ LST_OUT_OF_MEMORY   equ 124554
 LST_OPEN_FILE_ERROR equ 125473
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Object:   List
-; Purpose:  Mantain a sorted list of items in the Memory Heap.
+; Object:     List
+; Purpose:    Mantain a sorted list of items in the Memory Heap.
 
 Object List, , SortedStrCollectionA
   RedefineMethod    Init,         POINTER, DWORD, DWORD, DWORD ;-> Owner, Count, Increment, Flags
@@ -31,22 +31,22 @@ if IMPLEMENT
 .code
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    List.DestroyItem
-; Purpose:   Remove previous functionality.
-; Arguments: Arg1: -> ANSI string.
-; Return:    Nothing.
+; Method:     List.DestroyItem
+; Purpose:    Remove previous functionality.
+; Arguments:  Arg1: -> ANSI string.
+; Return:     Nothing.
 
 Method List.DestroyItem,, pItem:PSTRINGA
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    List.Init
-; Purpose:   Initialize the List with a limit (dLimit), an increasing step (dDelta) and flags.
-; Arguments: Arg1: -> Owner object.
-;            Arg2: Initial capacity of the collection (#items).
-;            Arg3: Growing factor of the collection (#items).
-;            Arg4: Flags.
-; Return:    Nothing.
+; Method:     List.Init
+; Purpose:    Initialize the List with a limit (dLimit), an increasing step (dDelta) and flags.
+; Arguments:  Arg1: -> Owner object.
+;             Arg2: Initial capacity of the collection (#items).
+;             Arg3: Growing factor of the collection (#items).
+;             Arg4: Flags.
+; Return:     Nothing.
 
 Method List.Init,, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, dFlags:DWORD
   ACall Init, pOwner, dLimit, dDelta, COL_MAX_CAPACITY
@@ -55,10 +55,10 @@ Method List.Init,, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, dFlags:DWORD
 MethodEnd
 ;
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    List.LoadFromFile
-; Purpose:   Load list content from file.
-; Arguments: Arg1: -> WIDE Full File Name.
-; Return:    eax = TRUE if succeeded, otherwise FALSE.
+; Method:     List.LoadFromFile
+; Purpose:    Load list content from file.
+; Arguments:  Arg1: -> WIDE Full File Name.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
   local hFile:HANDLE, dBytesRead:DWORD
@@ -178,10 +178,10 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    List.SaveToFile
-; Purpose:   Save list content to file.
-; Arguments: Arg1: -> WIDE Full FileName.
-; Return:    Nothing.
+; Method:     List.SaveToFile
+; Purpose:    Save list content to file.
+; Arguments:  Arg1: -> WIDE Full FileName.
+; Return:     Nothing.
 
 Method List.SaveToFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
   local hFile:HANDLE, cBuffer[1024]:CHRA, dBytesWritten:DWORD

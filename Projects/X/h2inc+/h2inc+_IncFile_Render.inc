@@ -1,9 +1,8 @@
 ; ==================================================================================================
 ; Title:      h2inc+_IncFile_Render.inc
 ; Author:     G. Friedrich
-; Version:    C.2.0
-; Purpose:    ObjAsm h2inc+ IncFile parser procs.
-; Notes:      See h2inc+.asm
+; Version:    See h2inc+.asm
+; Purpose:    ObjAsm h2inc+ IncFile render procedures.
 ; ==================================================================================================
 
 
@@ -11,19 +10,19 @@ include h2inc+_RenderBitField.inc
 include h2inc+_RenderBlock.inc
 include h2inc+_RenderContainer.inc
 include h2inc+_RenderContainerMember.inc
+include h2inc+_RenderDefineConst.inc
 include h2inc+_RenderEnum.inc
 include h2inc+_RenderEnumMember.inc
-include h2inc+_ParseEqu.inc
-include h2inc+_ParseExtern.inc
+include h2inc+_RenderExtern.inc
 include h2inc+_RenderExternMember.inc
 include h2inc+_RenderFurtherTypes.inc
-include h2inc+_ParseInterfaceBlock.inc
+include h2inc+_RenderInterfaceBlock.inc
 include h2inc+_RenderMacroCall.inc
-include h2inc+_ParsePrototype.inc
+include h2inc+_RenderPrototype.inc
 include h2inc+_RenderTypedef.inc
-include h2inc+_ParseTypedefFunction.inc
-include h2inc+_ParseTypedefFunctionPtr.inc
-include h2inc+_ParseTypedefEnum.inc
+include h2inc+_RenderTypedefFunction.inc
+include h2inc+_RenderTypedefFuncPtr.inc
+include h2inc+_RenderTypedefEnum.inc
 include h2inc+_RenderTypedefContainer.inc
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -48,7 +47,8 @@ RenderC proc uses xdi xsi
   ;Set Initial state
   mov [xbx].$Obj(IncFile).bEOF, FALSE
   mov [xbx].$Obj(IncFile).bComment, FALSE
-  mov [xbx].$Obj(IncFile).bSkipScanPP, 0
+  mov [xbx].$Obj(IncFile).bSkipLineC, 0
+  mov [xbx].$Obj(IncFile).bSkipLinePP, 0
   mov [xbx].$Obj(IncFile).dLineNumber, 1
   mov [xbx].$Obj(IncFile).bNewLine, TRUE
   mov [xbx].$Obj(IncFile).pPrevToken, NULL
@@ -64,7 +64,7 @@ RenderC proc uses xdi xsi
     OCall xbx::IncFile.StmWriteComment
   
     mov xax, pToken
-    .if CHRA ptr [xax] == ";"                             ;Statement terminator => reset all
+    .if CHRA ptr [xax] == ";"                           ;Statement terminator => reset all
       mov [xbx].$Obj(IncFile).pPrevToken, NULL
       mov [xbx].$Obj(IncFile).pImportSpec, NULL
       mov [xbx].$Obj(IncFile).pCallConv, NULL
@@ -82,13 +82,13 @@ RenderC proc uses xdi xsi
     DoesStringMatchA? [xax], <typedef>
     jnz @F
     mov xdi, [xbx].$Obj(IncFile).pStmOutPos
-    mov esi, [xbx].$Obj(IncFile).dStmOutEOL
+    mov esi, [xbx].$Obj(IncFile).dStmOutEoL
     invoke RenderTypedef
-    OCall xbx::IncFile.StmWriteEOL                    ;Only on top level containers
+    OCall xbx::IncFile.StmWriteEoL                      ;Only on top level containers
     .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_TYPEDEFS
       ;Restore entrypoint 
       mov [xbx].$Obj(IncFile).pStmOutPos, xdi
-      mov [xbx].$Obj(IncFile).dStmOutEOL, esi
+      mov [xbx].$Obj(IncFile).dStmOutEoL, esi
       mov CHRA ptr [xdi], 0                             ;Set ZTC on output stream
     .endif
     .continue
@@ -104,12 +104,12 @@ RenderC proc uses xdi xsi
     invoke IsFunction?
     .if eax == FALSE
       mov xdi, [xbx].$Obj(IncFile).pStmOutPos
-      mov esi, [xbx].$Obj(IncFile).dStmOutEOL
+      mov esi, [xbx].$Obj(IncFile).dStmOutEoL
       invoke RenderContainer, pToken                    ;Returns last token
-      OCall xbx::IncFile.StmWriteEOL                    ;Only on top level containers
+      OCall xbx::IncFile.StmWriteEoL                    ;Only on top level containers
       .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONTAINERS
         mov [xbx].$Obj(IncFile).pStmOutPos, xdi
-        mov [xbx].$Obj(IncFile).dStmOutEOL, esi
+        mov [xbx].$Obj(IncFile).dStmOutEoL, esi
         mov CHRA ptr [xdi], 0
       .endif
       test xax, xax                                     ;Set/Reset ZF
@@ -126,11 +126,11 @@ RenderC proc uses xdi xsi
     invoke IsFunction?
     .if eax == FALSE 
       mov xdi, [xbx].$Obj(IncFile).pStmOutPos
-      mov esi, [xbx].$Obj(IncFile).dStmOutEOL
-      invoke ParseExtern
+      mov esi, [xbx].$Obj(IncFile).dStmOutEoL
+      invoke RenderExtern
       .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_EXTERNALS
         mov [xbx].$Obj(IncFile).pStmOutPos, xdi
-        mov [xbx].$Obj(IncFile).dStmOutEOL, esi
+        mov [xbx].$Obj(IncFile).dStmOutEoL, esi
         mov CHRA ptr [xdi], 0
       .endif
       .continue
@@ -144,11 +144,11 @@ RenderC proc uses xdi xsi
       jnz @F
     .endif
     mov xdi, [xbx].$Obj(IncFile).pStmOutPos
-    mov esi, [xbx].$Obj(IncFile).dStmOutEOL
+    mov esi, [xbx].$Obj(IncFile).dStmOutEoL
     invoke RenderEnum
     .ifBitSet $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
       mov [xbx].$Obj(IncFile).pStmOutPos, xdi
-      mov [xbx].$Obj(IncFile).dStmOutEOL, esi
+      mov [xbx].$Obj(IncFile).dStmOutEoL, esi
       mov CHRA ptr [xdi], 0
     .endif
     .continue
@@ -253,11 +253,11 @@ RenderC proc uses xdi xsi
     .if CHRA ptr [xax] == "("
       .if [xbx].$Obj(IncFile).pPrevToken != NULL
         mov xdi, [xbx].$Obj(IncFile).pStmOutPos
-        mov esi, [xbx].$Obj(IncFile).dStmOutEOL
-        invoke ParsePrototype, [xbx].$Obj(IncFile).pPrevToken, [xbx].$Obj(IncFile).pImportSpec
+        mov esi, [xbx].$Obj(IncFile).dStmOutEoL
+        invoke RenderPrototype, [xbx].$Obj(IncFile).pPrevToken, [xbx].$Obj(IncFile).pImportSpec
         .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_PROTOTYPES
           mov [xbx].$Obj(IncFile).pStmOutPos, xdi
-          mov [xbx].$Obj(IncFile).dStmOutEOL, esi
+          mov [xbx].$Obj(IncFile).dStmOutEoL, esi
           mov CHRA ptr [xdi], 0
         .endif
         mov [xbx].$Obj(IncFile).dQualifiers, 0
@@ -280,19 +280,19 @@ RenderC proc uses xdi xsi
       mov xax, [xbx].$Obj(IncFile).pStmOutPos
       .if CHRA ptr [xax - 1] == LF
         OCall xbx::IncFile.StmWrite, $OfsCStrA(";{")
-        OCall xbx::IncFile.StmWriteEOL
+        OCall xbx::IncFile.StmWriteEoL
       .endif
     .elseif CHRA ptr [xax] == "}"
       dec [xbx].$Obj(IncFile).dBraces
       mov xax, [xbx].$Obj(IncFile).pStmOutPos
       .if CHRA ptr [xax - 1] == LF
         OCall xbx::IncFile.StmWrite, $OfsCStrA(";}")
-        OCall xbx::IncFile.StmWriteEOL
+        OCall xbx::IncFile.StmWriteEoL
       .endif
       mov eax, [xbx].$Obj(IncFile).dBraces
       .if [xbx].$Obj(IncFile).pEndMacro != NULL && eax == [xbx].$Obj(IncFile).dBlockLevel
-        OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s_END", LF), [xbx].$Obj(IncFile).pEndMacro
-        OCall xbx::IncFile.StmWriteEOL
+        OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs_END", LF), [xbx].$Obj(IncFile).pEndMacro
+        OCall xbx::IncFile.StmWriteEoL
         mov [xbx].$Obj(IncFile).dBlockLevel, 0
         mov [xbx].$Obj(IncFile).pEndMacro, NULL
       .endif
@@ -306,8 +306,9 @@ RenderC endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderPP
-; Purpose:    Translate PreProcessor lines.
+; Purpose:    Render PreProcessor lines.
 ; Arguments:  xbx -> IncFile.
+;             Behaviour modifiers: bSkipLineC, bSkipLinePP, bSkipCondPP
 ; Return:     Nothing.
 
 RenderPP proc uses xdi
@@ -316,16 +317,14 @@ RenderPP proc uses xdi
   OCall xbx::IncFile.GetNextTokenPP
   .if !ZERO?
     mov pToken, xax
-    DbgPrintF , "¦UD: RenderPP - PP-Command ¦SA found", [xbx].$Obj(IncFile).dLineNumber, pToken
-
-    .if [xbx].$Obj(IncFile).bSkipScanPP == 0
-      ;Find and execute the matching handler for the input Token ------------
+    .if [xbx].$Obj(IncFile).bSkipLinePP == 0            ;0 = No
+      ;Find and execute the matching handler for the input Token ------------------------
       mov xax, pToken
-      .if [xbx].$Obj(IncFile).bSkipLogiPP == FALSE
+      .if [xbx].$Obj(IncFile).bSkipCondPP == FALSE
+;        .if [xbx].$Obj(IncFile).dStmOutEoL == FALSE     ;If no EoL was issued, then  
+;          OCall xbx::IncFile.StmWriteEoL                ;  start a new line
+;        .endif
         lea xdi, PreProcCmdHandlerTable
-        .if [xbx].$Obj(IncFile).dStmOutEOL == FALSE
-          OCall xbx::IncFile.StmWriteEOL
-        .endif
       .else
         lea xdi, PreProcCmdNPHandlerTable
       .endif
@@ -340,18 +339,21 @@ RenderPP proc uses xdi
       .endw
 
       ;If no handler found
-      .if [xbx].$Obj(IncFile).bSkipScanPP != 0 || [xbx].$Obj(IncFile).bSkipLogiPP == TRUE
+      .if [xbx].$Obj(IncFile).bSkipLinePP != 0 || [xbx].$Obj(IncFile).bSkipCondPP == TRUE
         SkipPPLine
       .else
-        OCall xbx::IncFile.StmWriteF, $OfsCStrA(";#%s "), pToken
+        OCall xbx::IncFile.StmWriteF, $OfsCStrA(";#%hs "), pToken
         OCall xbx::IncFile.StmCopyRestOfPPLine
+        OCall xbx::IncFile.StmWriteEoL
       .endif
     .else
       SkipPPLine
     .endif
+
 @@:
-    ;Consume C-Tokens until the next PP-Line is found -----------------------
-    .if [xbx].$Obj(IncFile).bSkipC != FALSE
+    ;Skip non-functional C code --------------------------------------------------------- 
+    .if [xbx].$Obj(IncFile).bSkipLineC != FALSE
+      ;Consume C-Tokens until the next PP-Line is found
       mov xdi, [xbx].$Obj(IncFile).pStmInpPos
       .while CHRA ptr [xdi] != '#'                      ;Always a single character
         .if DCHRA ptr [xdi] == PCT_EOL || DCHRA ptr [xdi] == PCT_WEAKEOL
@@ -362,16 +364,16 @@ RenderPP proc uses xdi
         repnz scasb
         not ecx
         dec ecx                                         ;ecx = character count
-        jz @Exit
+        jz @Exit                                        ;Exit if no 
       .endw
-      .if [xbx].$Obj(IncFile).bSkipUselessCode == FALSE
-        OCall xbx::IncFile.StmWrite, $OfsCStrA(";[...]")  ;Visualize that we skipped some lines
-        mov [xbx].$Obj(IncFile).bSkipUselessCode, TRUE
+      .if [xbx].$Obj(IncFile).bEnableNFCodeLabel == TRUE
+        OCall xbx::IncFile.StmWrite, $OfsCStrA(";[...]")  ;Visualize that we skipped the NF-code
+        OCall xbx::IncFile.StmWriteEoL
+        mov [xbx].$Obj(IncFile).bEnableNFCodeLabel, FALSE
       .endif
       mov [xbx].$Obj(IncFile).pStmInpPos, xdi
     .endif
   .endif
-  OCall xbx::IncFile.StmWriteEOL
 
 @Exit:
   ret

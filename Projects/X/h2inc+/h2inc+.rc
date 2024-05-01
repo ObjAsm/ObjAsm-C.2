@@ -1,9 +1,8 @@
 ; ==================================================================================================
 ; Title:      h2inc+.rc
 ; Author:     G. Friedrich
-; Version:    C.2.0
-; Purpose:    Creates MASM .inc files from C .h files.
-; Notes:      See h2inc+.asm
+; Version:    See h2inc+.asm
+; Purpose:    ObjAsm application resources.
 ; ==================================================================================================
 
 

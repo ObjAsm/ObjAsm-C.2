@@ -2,7 +2,7 @@
 ; Title:      h2inc+_RenderTypedefContainer.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
-; Purpose:  
+; Purpose:    ObjAsm h2inc+ translation procedures.
 ; ==================================================================================================
 
 
@@ -71,7 +71,7 @@ RenderTypedefContainer proc pContainerType:PSTRINGA
     lea xax, szEmpty
     mov pSuffix, xax
 
-    OCall xbx::IncFile.StmWriteF, $OfsCStrA("%s%s %s"), pName, pSuffix, pContainerType
+    OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs%hs %hs"), pName, pSuffix, pContainerType
 
     ;Get known structure alignment
     OCall pAlignments::List.Search, pName
@@ -86,7 +86,7 @@ RenderTypedefContainer proc pContainerType:PSTRINGA
     .elseif $ObjTmpl(Application).Options.bAddAlign != FALSE
       OCall xbx::IncFile.StmWrite, $OfsCStrA(" @Align")
     .endif
-    OCall xbx::IncFile.StmWriteEOL
+    OCall xbx::IncFile.StmWriteEoL
 
     inc [xbx].$Obj(IncFile).dIndentation
     invoke RenderBlock, pName, RBT_CONTAINER
@@ -94,14 +94,14 @@ RenderTypedefContainer proc pContainerType:PSTRINGA
     jz @ErrorEoF
     mov pToken, xax
     dec [xbx].$Obj(IncFile).dIndentation
-    OCall xbx::IncFile.StmWriteF,$OfsCStrA("%s%s ends", LF), pName, pSuffix
-    OCall xbx::IncFile.StmWriteEOL
+    OCall xbx::IncFile.StmWriteF,$OfsCStrA("%hs%hs ends", LF), pName, pSuffix
+    OCall xbx::IncFile.StmWriteEoL
 
     .if pTag != NULL && pName != NULL
       invoke StrCompA, pTag, pName
       .if eax != 0
-        OCall xbx::IncFile.StmWriteF,$OfsCStrA("%s typedef %s"), pTag, pName
-        OCall xbx::IncFile.StmWriteEOL
+        OCall xbx::IncFile.StmWriteF,$OfsCStrA("%hs typedef %hs"), pTag, pName
+        OCall xbx::IncFile.StmWriteEoL
       .endif
     .endif
 

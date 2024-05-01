@@ -1,9 +1,8 @@
 ; ==================================================================================================
 ; Title:      h2inc+_Main.inc
 ; Author:     G. Friedrich
-; Version:    C.2.0
-; Purpose:    Create MASM include files (.inc) from C header files (.h).
-;
+; Version:    See h2inc+.asm
+; Purpose:    ObjAsm main code.
 ; ==================================================================================================
 
 
@@ -184,7 +183,7 @@ Method Application.Init, uses xbx xdi xsi
   jne @@EOM
 
   OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Reading program arguments...")
-  ;--- Get CL arguments ---
+  ;Get CL arguments ---------------------------------------------------------------------
   mov xax, $invoke(GetCommandLine)
 ;  mov xax, $OfsCStrW('h2inc+.exe -b -y -d3 -i -o".\inc" ".\h\HeaderCollection.h"')
 ;  mov xax, $OfsCStrW('h2inc+.exe -@ABC -d3 -i -V3 -W3 -I",,  ,,   .\h\MoreFiles, D:\ObjAsm\Code\Objects  ,, ," -o".\inc" ".\h\*.*"')
@@ -209,7 +208,7 @@ Method Application.Init, uses xbx xdi xsi
   cmp eax, FALSE
   je @@EOM
 
-  ;--- Get EV arguments ---
+  ;Get EV arguments ---------------------------------------------------------------------
   mov CHR ptr cEnvVar, 0
   .if [xbx].Options.pEnvVar != NULL
     invoke GetEnvironmentVariableW, [xbx].Options.pEnvVar, addr cEnvVar, lengthof(cEnvVar)
@@ -399,6 +398,7 @@ if DEBUGGING
   inc [xbx].dIncNestingLevel
 endif
 
+  ;Locate the file ----------------------------------------------------------------------
   mov dResult, FALSE
   invoke PathCombineW, addr cHeaderFullFileName, pHeaderFilePath, pHeaderFileName
   invoke FileExistW, addr cHeaderFullFileName
@@ -434,7 +434,7 @@ endif
     .endif
   .endif
 
-  ;Don't process files more than once!
+  ;Don't process files more than once ---------------------------------------------------
   invoke StrLowerW, addr cHeaderFullFileName            ;Convert to LC to avoid case sensitivity
   OCall [xbx].ProcessedFiles::SortedStrCollectionW.Search, addr cHeaderFullFileName
   .if eax == FALSE                                      ;Not found in the list!
@@ -458,7 +458,7 @@ endif
     .endif
     FillStringW [xax], <.inc>
     
-    ;Check if output inc-file already exists
+    ;Check if output inc-file already exists --------------------------------------------
     .if [xbx].Options.bOverwrite == FALSE
       invoke FileExistW, addr cIncludeFullFileName
       .if eax != FALSE                                    ;File alread exists!
@@ -493,8 +493,9 @@ endif
       .endif
     .endif
 
-    ;Initialize an IncFile local instance
+    ;Initialize an IncFile local instance -----------------------------------------------
     New IncludeFile::IncFile
+    DbgStrW cHeaderFullFileName,, "Rendered Files"
     OCall IncludeFile::IncFile.Init, xbx, addr cHeaderFullFileName, pParent
     .if eax != FALSE
       ;Start real processing
@@ -522,7 +523,7 @@ endif
           mov xcx, $OfsCStrA(" - not found")
           invoke DbgOutTextA, xcx, DbgColorRed, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
         .elseif ecx == ITF_JUST_PROC
-          mov xcx, $OfsCStrA(" - just processed")
+          mov xcx, $OfsCStrA(" - already processed")
           invoke DbgOutTextA, xcx, DbgColorBlue, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
         .elseif ecx == ITF_REPROC
           mov xcx, $OfsCStrA(" - reprocessed")
@@ -549,7 +550,7 @@ if DEBUGGING
       mov xcx, $OfsCStrA(" - not found")
       invoke DbgOutTextA, xcx, DbgColorRed, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     .elseif ecx == ITF_JUST_PROC
-      mov xcx, $OfsCStrA(" - just processed")
+      mov xcx, $OfsCStrA(" - already processed")
       invoke DbgOutTextA, xcx, DbgColorBlue, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     .elseif ecx == ITF_REPROC
       mov xcx, $OfsCStrA(" - reprocessed")
@@ -559,6 +560,8 @@ if DEBUGGING
     .endif
     invoke DbgOutTextA, $OfsCStrA(" "), DbgColorForeground, DbgColorBackground, 0, ??DbgDstWnd
     DbgLoadContext
+else
+@@:
 endif
   .endif
 
@@ -581,10 +584,7 @@ Method Application.ProcessFiles, uses xbx xdi xsi, pFileSpec:PSTRINGW
   SetObject xbx
   ;GetFullPathName resolves the path using the current directory! Everything else is the FilePart
   invoke GetFullPathNameW, pFileSpec, lengthof(cFullFileSpec), addr cFullFileSpec, addr pFilePart
-  DbgStrW pFileSpec
-  DbgStrW cFullFileSpec
   invoke FindFirstFileW, pFileSpec, addr FindData
-  DbgApiError
   .if xax != INVALID_HANDLE_VALUE
     mov hFFHandle, xax
     .repeat

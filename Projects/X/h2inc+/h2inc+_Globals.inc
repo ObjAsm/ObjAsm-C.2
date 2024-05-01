@@ -1,9 +1,8 @@
 ; ==================================================================================================
-; Title:    h2inc+_Globals.inc
-; Author:   G. Friedrich
-; Version:  C.2.0
-; Purpose:  Creates MASM .inc files from C .h files.
-; Notes:    See h2inc+.asm
+; Title:      h2inc+_Globals.inc
+; Author:     G. Friedrich
+; Version:    See h2inc+.asm
+; Purpose:    ObjAsm definition of application globals.
 ; ==================================================================================================
 
 
@@ -42,17 +41,17 @@ RenderBitField          proto :PSTRINGA, :PSTRINGA, :PTOKEN, :PSTRINGA
 RenderBlock             proto :PTOKEN, :DWORD
 RenderContainerMember   proto :PTOKEN, :PSTRINGA
 RenderEnumMember        proto :PTOKEN
-ParseEqu                proto :PSTRINGA
-ParseExtern             proto
+RenderDefineConst       proto :PSTRINGA
+RenderExtern            proto
 RenderExternMember      proto :PTOKEN
 RenderFurtherTypes      proto :PSTRINGA, :PSTRINGA, :PTOKEN
-ParseInterfaceBlock     proto :PSTRINGA
+RenderInterfaceBlock    proto :PSTRINGA
 RenderMacroCall         proto :PSTRINGA, :DWORD, :DWORD
-ParsePrototype          proto :PSTRINGA, :PSTRINGA
+RenderPrototype         proto :PSTRINGA, :PSTRINGA
 RenderTypedef           proto
-ParseTypedefFunction    proto :PSTRINGA, :DWORD
-ParseTypedefFunctionPtr proto :PSTRINGA
-ParseTypedefEnum        proto :BOOL
+RenderTypedefFunction   proto :PSTRINGA, :DWORD
+RenderTypedefFuncPtr    proto :PSTRINGA
+RenderTypedefEnum       proto :BOOL
 RenderTypedefContainer  proto :PSTRINGA
 
 ;ASCII Codes
@@ -193,7 +192,7 @@ DebugMessage CHRA       512 dup (?)
 DebugCaption PSTRINGA   ?
 
 DbgPrintF macro Color:=<DbgColorForeground>, Message:req, Args:vararg
-  if 1
+  if 0
     DbgWriteF Color, "Output", Message, Args
   endif
 endm
@@ -238,8 +237,8 @@ INP_STAT struc
   pIn             POINTER   ?
   dLineNumber     DWORD     ?
   bNewLine        BYTE      ?
-  bSkipC          BYTE      ?
-  bSkipScanPP     BYTE      ?
+  bSkipLineC      BYTE      ?
+  bSkipLinePP     BYTE      ?
   bCondIfLevel    BYTE      ?
   bCondElseLevel  BYTE      MAX_COND_LEVEL dup (?)
   bCondResult     BYTE      MAX_COND_LEVEL dup (?)
@@ -372,6 +371,7 @@ DefaultKnownMacrosTable label POINTER
   CONV_ATTR_ENTRY <$OfsCBStrA("DECLARE_INTERFACE_IID"),     MCF_KNOWN or MCF_HAS_PARAMS or MCF_END_MACRO>
   CONV_ATTR_ENTRY <$OfsCBStrA("DECLARE_INTERFACE_IID_"),    MCF_KNOWN or MCF_HAS_PARAMS or MCF_END_MACRO>
   CONV_ATTR_ENTRY <$OfsCBStrA("DECLSPEC_UUID"),             MCF_KNOWN or MCF_HAS_PARAMS>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DECLSPEC_XFGVIRT"),          MCF_KNOWN or MCF_HAS_PARAMS>
   CONV_ATTR_ENTRY <$OfsCBStrA("DEFINE_GUID"),               MCF_KNOWN or MCF_HAS_PARAMS or MCF_SKIP_BRACES>
   CONV_ATTR_ENTRY <$OfsCBStrA("END_INTERFACE"),             MCF_KNOWN or MCF_INTERFACE_END>
   CONV_ATTR_ENTRY <$OfsCBStrA("SHSTDAPI_"),                 MCF_KNOWN or MCF_HAS_PARAMS>
@@ -412,7 +412,7 @@ DefaultKnownQualifiersTable label POINTER
   CONV_ATTR_ENTRY <$OfsCBStrA("__inline"),   PTQ_INLINE>
   POINTER NULL
 
-;Structure sizes. required if a structure is a parameter with size > 4.
+;Type sizes. Required if a type is a parameter with size > 4.
 DefaultTypeSizeTable label POINTER
   CONV_ATTR_ENTRY <$OfsCBStrA("BYTE"),       01>
   CONV_ATTR_ENTRY <$OfsCBStrA("CHAR"),       01>
@@ -424,6 +424,7 @@ DefaultTypeSizeTable label POINTER
   CONV_ATTR_ENTRY <$OfsCBStrA("DWORDLONG"),  08>
   CONV_ATTR_ENTRY <$OfsCBStrA("DWORD_PTR"),  08>
   CONV_ATTR_ENTRY <$OfsCBStrA("INT64"),      08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("LONG"),       04>
   CONV_ATTR_ENTRY <$OfsCBStrA("LONG64"),     08>
   CONV_ATTR_ENTRY <$OfsCBStrA("LONGLONG"),   08>
   CONV_ATTR_ENTRY <$OfsCBStrA("LONG_PTR"),   08>
@@ -434,6 +435,7 @@ DefaultTypeSizeTable label POINTER
   CONV_ATTR_ENTRY <$OfsCBStrA("SHORT"),      02>
   CONV_ATTR_ENTRY <$OfsCBStrA("UINT32"),     04>
   CONV_ATTR_ENTRY <$OfsCBStrA("UINT64"),     08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("ULONG"),      04>
   CONV_ATTR_ENTRY <$OfsCBStrA("ULONG64"),    08>
   CONV_ATTR_ENTRY <$OfsCBStrA("ULONGLONG"),  08>
   CONV_ATTR_ENTRY <$OfsCBStrA("ULONG_PTR"),  08>
@@ -471,6 +473,7 @@ DefaultSimpleTypesTable label POINTER
   POINTER $OfsCBStrA("HWND")
   POINTER $OfsCBStrA("HMENU")
   POINTER $OfsCBStrA("HDC")
+  POINTER $OfsCBStrA("HRESULT")
   POINTER NULL
 
 ;Type conversion 1 default, usually not used since defined in h2inc+.ini.

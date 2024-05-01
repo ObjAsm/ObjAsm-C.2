@@ -1,9 +1,8 @@
 ; ==================================================================================================
-; Title:    h2inc+_IncFile.inc
-; Author:   G. Friedrich
-; Version:  C.2.0
-; Purpose:  ObjAsm support of h2inc+ IncFile objects.
-; Notes:    See h2inc+.asm
+; Title:      h2inc+_IncFile.inc
+; Author:     G. Friedrich
+; Version:    See h2inc+.asm
+; Purpose:    ObjAsm support of h2inc+ IncFile objects.
 ; ==================================================================================================
 
 
@@ -12,13 +11,12 @@
 if IMPLEMENT
 
 PP_CMD_HANDLER_ENTRY struct
-  pCmd      PSTRINGA ?
-  pHandler  POINTER ?
+  pCmd      PSTRINGA  ?
+  pHandler  POINTER   ?
 PP_CMD_HANDLER_ENTRY ends
 PPRE_PROC_CMD typedef ptr PP_CMD_HANDLER_ENTRY
 
 .data
-
 ;Preprocessor command table
 ;Commands not listed here will be commented out
 PreProcCmdHandlerTable label PP_CMD_HANDLER_ENTRY
@@ -35,8 +33,8 @@ PreProcCmdHandlerTable label PP_CMD_HANDLER_ENTRY
   PP_CMD_HANDLER_ENTRY <$OfsCBStrA("ifndef"),  offset PPCH_Ifndef>
   POINTER NULL
 
-;Table used when IncFile.bSkipLogiPP == TRUE
-PreProcCmdNPHandlerTable label PP_CMD_HANDLER_ENTRY
+;Table used when IncFile.bSkipCondPP == TRUE
+PreProcCmdNPHandlerTable label PP_CMD_HANDLER_ENTRY     ;(NP: non processed)
   PP_CMD_HANDLER_ENTRY <$OfsCBStrA("if"),      offset PPCH_IfNP>
   PP_CMD_HANDLER_ENTRY <$OfsCBStrA("elif"),    offset PPCH_ElIf>
   PP_CMD_HANDLER_ENTRY <$OfsCBStrA("else"),    offset PPCH_Else>
@@ -47,7 +45,7 @@ PreProcCmdNPHandlerTable label PP_CMD_HANDLER_ENTRY
 
 ;Operator conversion for #if/#elif expressions
 OP_CONV_ENTRY struct
-  wOp     db 2 dup (?)
+  wOp     db 2 dup(?)
   pSubst  PSTRINGA ?
 OP_CONV_ENTRY ends
 
@@ -102,7 +100,7 @@ MethodEnd
 
 Method IncFile.CreateDefFile, uses xbx xdi xsi, pFileName:PSTRINGW
   local hFile:HANDLE, Result:DWORD, dBytesWritten:DWORD
-  local cFile[MAX_PATH]:CHR, cText[512]:CHR
+  local cFile[MAX_PATH]:CHR, cText[512]:CHRA
 
   SetObject xbx
   mov Result, FALSE
@@ -139,7 +137,7 @@ Method IncFile.CreateDefFile, uses xbx xdi xsi, pFileName:PSTRINGW
         .break .if esi == [xcx].$Obj(List).dCount
         OCall xcx::List.ItemAt, esi
         lea xdi, cText
-        WriteF xdi, " \`¦SA\`\n)", PSTRINGA ptr [xax]
+        WriteFA xdi, " \`¦SA\`\n)", PSTRINGA ptr [xax]
         lea xax, cText
         sub xdi, xax
         invoke WriteFile, hFile, addr cText, edi, addr dBytesWritten, NULL
@@ -178,18 +176,134 @@ Method IncFile.Done, uses xbx
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     IncFile.JumpEndIfPP
+; Purpose:    Return the next C token 
+; Arguments:  None.
+; Return:     xax -> Token or NULL if EOF is reached. ZERO flag set if xax == NULL.
+
+Method IncFile.JumpEndIfPP, uses xbx xdi
+  local InpStat:INP_STAT
+
+  SetObject xbx
+  OCall xbx::IncFile.InputStatusSave, addr InpStat
+  mov [xbx].bSkipLineC, TRUE
+  mov [xbx].bSkipCondPP, FALSE
+  mov [xbx].bEnableNFCodeLabel, FALSE
+  .while TRUE 
+    OCall xbx.GetNextToken
+    .break .if ZERO?
+    .if CHRA ptr [xax] == '#'
+      OCall xbx.GetNextToken
+      .break .if ZERO?
+      DoesStringMatchA? [xax], <endif>
+      .if ZERO?
+        OCall xbx.GetNextTokenC
+        mov xdi, xax
+        OCall xbx::IncFile.InputStatusLoad, addr InpStat    ;xax is not trashed
+        mov xax, xdi
+        test xax, xax
+        ret
+      .endif
+    .endif
+  .endw
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     IncFile.PeekNextTokenLogicC
+; Purpose:    Return the next C token 
+; Arguments:  None.
+; Return:     xax -> Token or NULL if EOF is reached. ZERO flag set if xax == NULL.
+
+Method IncFile.PeekNextTokenLogicC, uses xbx xdi
+  local InpStat:INP_STAT
+
+  SetObject xbx
+  OCall xbx::IncFile.InputStatusSave, addr InpStat
+@TryAgain:
+  OCall xbx.GetNextToken
+  .if !ZERO?
+    mov cl, [xax] 
+    .if cl == '#'
+      .while TRUE
+        .if CHRA ptr [xax] == '#' 
+          OCall xbx.GetNextToken
+          .break .if ZERO?
+          DoesStringMatchA? [xax], <endif>
+          .if ZERO?
+            OCall xbx.GetNextTokenC
+            .break
+          .endif
+        .endif
+        OCall xbx.GetNextToken
+        .break .if ZERO?
+      .endw
+    .else
+      cmp cl, PCT_EOL
+      je @TryAgain
+      cmp cl, PCT_WEAKEOL
+      je @TryAgain
+      cmp cl, PCT_COMMENT
+      je @TryAgain
+      cmp cl, PCT_IGNORE
+      je @TryAgain
+      cmp cl, PCT_MACRO
+      je @TryAgain
+    .endif
+  .endif
+
+  mov xdi, xax
+  OCall xbx::IncFile.InputStatusLoad, addr InpStat    ;xax is not trashed
+  mov xax, xdi
+  test xax, xax
+
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     IncFile.GetNextToken
+; Purpose:    Returns the next token from the input stream.
+; Arguments:  None.
+; Return:     xax -> Token or NULL. ZERO flag set if xax == NULL.
+
+Method IncFile.GetNextToken, uses xbx xdi
+  SetObject xbx
+
+  .if [xbx].bEOF != FALSE                               ;Don't cross EOF
+;    if DEBUGGING
+;      int 3
+;    endif
+    xor eax, eax
+    ret
+  .endif
+  mov xdi, [xbx].pStmInpPos
+  mov ecx, -1
+  xor eax, eax                                          ;Return NULL
+  repnz scasb
+  not ecx
+  dec ecx                                               ;ecx = character count
+  .if ZERO?
+    mov [xbx].bEOF, TRUE
+    xor eax, eax
+    ret
+  .endif
+  mov xax, xdi
+  xchg xax, [xbx].pStmInpPos
+  test xax, xax
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.GetNextTokenC
 ; Purpose:    Return the next C token from input stream. Comments are handled automatically.
 ; Arguments:  None.
 ; Return:     xax -> Token or NULL if EOF is reached. ZERO flag set if xax == NULL.
+; Note:       pStmInpPos is always pointing to the next token.
 
 Method IncFile.GetNextTokenC, uses xbx xdi
   SetObject xbx
   
   .if [xbx].bEOF != FALSE                               ;Don't cross EOF
-    if DEBUGGING
-      int 3
-    endif
+;    if DEBUGGING
+;      int 3
+;    endif
     xor eax, eax
     ret
   .endif
@@ -202,9 +316,9 @@ Method IncFile.GetNextTokenC, uses xbx xdi
     mov ecx, -1
     mov al, 0
     repnz scasb
-    not ecx                                             ;neg????
+    not ecx
     dec ecx                                             ;ecx = character count
-    .if ecx == 0
+    .if ZERO?
       xor eax, eax                                      ;Return NULL, ZF set
       jmp @Exit
     .endif
@@ -213,7 +327,7 @@ Method IncFile.GetNextTokenC, uses xbx xdi
     .if DCHRA ptr [xax] == PCT_EOL                      ;Check for EOL
       inc [xbx].dLineNumber
       mov [xbx].bNewLine, TRUE                          ;Set StreamIn new line maker
-      .if [xbx].dStmOutEOL != FALSE                     ;Check Stream out EOL
+      .if [xbx].dStmOutEoL != FALSE                     ;Check Stream out EOL
         OCall xbx::IncFile.StmWriteComment
       .endif
       jmp @TryAgain                                     ;Take the next Token
@@ -222,20 +336,20 @@ Method IncFile.GetNextTokenC, uses xbx xdi
     .if CHRA ptr [xax] == "\"                           ;Check for C continuation => combine lines
       inc [xbx].dLineNumber                                ;  This should happen while tokenizing
       mov [xbx].bNewLine, TRUE                          ;Set StreamIn new line maker
-      .if [xbx].dStmOutEOL != FALSE                     ;Check Stream out EOL
+      .if [xbx].dStmOutEoL != FALSE                     ;Check Stream out EOL
         OCall xbx::IncFile.StmWriteComment
       .endif
       jmp @TryAgain                                     ;Take the next Token
     .endif
 
     .if DCHRA ptr [xax] == PCT_COMMENT
-      .if [xbx].bSkipScanPP == 0
+      .if [xbx].bSkipLinePP == 0
         OCall xbx::IncFile.AddComment, xax
       .endif
       jmp @TryAgain
     .endif
 
-    ;Each time a new line is started from input stream, check if we have a PP command
+    ;Each time a new line is started from the input stream, check if we have a PP command
     .if [xbx].bNewLine != FALSE && CHRA ptr [xax] == '#'
       OCall xbx::IncFile.StmWriteComment
       invoke RenderPP
@@ -258,15 +372,14 @@ MethodEnd
 Method IncFile.GetNextTokenPP, uses xbx xdi
   SetObject xbx
   mov xdi, [xbx].pStmInpPos
-@NextToken:
+@GetNextToken:
+  mov [xbx].bNewLine, FALSE
   mov ecx, -1
-  mov al, 0                                           ;ZTC
+  xor eax, eax                                        ;Return NULL
   repnz scasb
   not ecx
-  xor eax, eax                                        ;Return NULL
   dec ecx                                             ;ecx = character count
-  mov [xbx].bNewLine, FALSE
-  .if ecx != 0
+  .if !ZERO?
     mov xax, xdi
     xchg xax, [xbx].pStmInpPos
     .if CHRA ptr [xax] == PCT_EOL
@@ -276,14 +389,14 @@ Method IncFile.GetNextTokenPP, uses xbx xdi
     .else
       .if CHRA ptr [xax] == PCT_WEAKEOL
         inc [xbx].dLineNumber
-        jmp @NextToken
+        jmp @GetNextToken
       .endif
       .if CHRA ptr [xax] == PCT_IGNORE
-        jmp @NextToken
+        jmp @GetNextToken
       .endif
       .if CHRA ptr [xax] == PCT_COMMENT
         OCall xbx::IncFile.AddComment, xax
-        jmp @NextToken
+        jmp @GetNextToken
       .endif
     .endif
   .endif
@@ -307,10 +420,10 @@ Method IncFile.InputStatusLoad, uses xbx xdi xsi, pStatus:P_INP_STAT
   mov [xbx].dLineNumber, ecx
   mov [xbx].bNewLine, dl
   mov [xbx].bCondIfLevel, dh
-  mov dl, [xsi].INP_STAT.bSkipC
-  mov dh, [xsi].INP_STAT.bSkipScanPP
-  mov [xbx].bSkipC, dl
-  mov [xbx].bSkipScanPP, dh
+  mov dl, [xsi].INP_STAT.bSkipLineC
+  mov dh, [xsi].INP_STAT.bSkipLinePP
+  mov [xbx].bSkipLineC, dl
+  mov [xbx].bSkipLinePP, dh
 
   mov xax, xsi
   lea xdi, [xbx].bCondElseLevel
@@ -346,10 +459,10 @@ Method IncFile.InputStatusSave, uses xbx xdi xsi, pStatus:P_INP_STAT
   mov [xsi].INP_STAT.dLineNumber, ecx
   mov [xsi].INP_STAT.bNewLine, dl
   mov [xsi].INP_STAT.bCondIfLevel, dh
-  mov dl, [xbx].bSkipC
-  mov dh, [xbx].bSkipScanPP
-  mov [xsi].INP_STAT.bSkipC, dl
-  mov [xsi].INP_STAT.bSkipScanPP, dh
+  mov dl, [xbx].bSkipLineC
+  mov dh, [xbx].bSkipLinePP
+  mov [xsi].INP_STAT.bSkipLineC, dl
+  mov [xsi].INP_STAT.bSkipLinePP, dh
 
   mov xax, xsi
   lea xdi, [xax].INP_STAT.bCondElseLevel
@@ -379,10 +492,10 @@ Method IncFile.PeekNextTokenC, uses xbx
 
   SetObject xbx
   OCall xbx::IncFile.InputStatusSave, addr InpStat
-  inc [xbx].bSkipScanPP
+  inc [xbx].bSkipLinePP
   OCall xbx::IncFile.GetNextTokenC
   mov pToken, xax
-  dec [xbx].bSkipScanPP
+  dec [xbx].bSkipLinePP
   OCall xbx::IncFile.InputStatusLoad, addr InpStat
   mov xax, pToken
   test xax, xax
@@ -952,10 +1065,11 @@ MethodEnd
 
 Method IncFile.StmWrite, uses xbx, pText:PSTRINGA
   SetObject xbx
-  .if [xbx].dStmOutEOL != FALSE
-    mov [xbx].dStmOutEOL, FALSE
+  .if [xbx].dStmOutEoL != FALSE
+    mov [xbx].dStmOutEoL, FALSE
     OCall xbx::IncFile.StmWriteIndent
   .endif
+;  DbgStrA pText,, "Inc Output"
   invoke StrECopyA, [xbx].pStmOutPos, pText
   mov [xbx].pStmOutPos, xax
 MethodEnd
@@ -972,8 +1086,8 @@ Method IncFile.StmWriteComment, uses xsi
   mov xcx, [xsi].pOwner
   .if [xcx].$Obj(Application).Options.bIncludeComments != FALSE && CHRA ptr [[xsi].cComment + 1] != 0
     OCall xsi::IncFile.StmWrite, addr [xsi].cComment
-    mov CHRA ptr [[xsi].cComment + 1], 0                 ;Set ZTC after ";"
-    OCall xbx::IncFile.StmWriteEOL
+    mov CHRA ptr [[xsi].cComment + 1], 0                ;Set ZTC after ";"
+    OCall xbx::IncFile.StmWriteEoL
   .endif
 MethodEnd
 
@@ -985,13 +1099,13 @@ MethodEnd
 
 Method IncFile.StmWriteChar, uses xbx, bChar:CHRA
   SetObject xbx
-  .if [xbx].dStmOutEOL != FALSE
-    mov [xbx].dStmOutEOL, FALSE
-    OCall xbx::IncFile.StmWriteIndent
+  .if [xbx].dStmOutEoL != FALSE                         ;If an EoL was issued, then
+    mov [xbx].dStmOutEoL, FALSE                         ;  and indentation must preceed
+    OCall xbx::IncFile.StmWriteIndent                   ;  the first output
   .endif
   mov xax, [xbx].pStmOutPos
   movzx cx, bChar
-  mov [xax], cx                                       ;Write also a ZTC
+  mov [xax], cx                                         ;Write also a ZTC
   inc [xbx].pStmOutPos
 MethodEnd
 
@@ -1004,7 +1118,7 @@ MethodEnd
 Method IncFile.StmWriteError, uses xbx
   SetObject xbx
   OCall xbx.StmWrite, $OfsCStrA(CRLF, " ********* ERROR ********* ")
-  OCall xbx.StmWriteEOL
+  OCall xbx.StmWriteEoL
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1016,29 +1130,27 @@ MethodEnd
 
 Method IncFile.StmWriteF, uses xbx, pFormat:PSTRINGA, Args:vararg
   SetObject xbx
-  .if [xbx].dStmOutEOL != FALSE
-    mov [xbx].dStmOutEOL, FALSE
-    OCall xbx::IncFile.StmWriteIndent
+  .if [xbx].dStmOutEoL != FALSE                         ;If an EoL was issued, then
+    mov [xbx].dStmOutEoL, FALSE                         ;  and indentation must preceed
+    OCall xbx::IncFile.StmWriteIndent                   ;  the first output
   .endif
   invoke wvsprintfA, [xbx].pStmOutPos, pFormat, addr Args ;-> Arguments
+;  DbgStrA [xbx].pStmOutPos,, "Inc Output"
   add [xbx].pStmOutPos, xax
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     IncFile.StmWriteEOL
+; Method:     IncFile.StmWriteEoL
 ; Purpose:    Write a <CRLF> sequence (End of Line) to the output stream.
 ; Arguments:  None.
 ; Return:     xax -> current StreamOut position.
 
-Method IncFile.StmWriteEOL, uses xbx
+Method IncFile.StmWriteEoL, uses xbx
   SetObject xbx
-  .if [xbx].dStmOutEOL != FALSE
-    mov [xbx].dStmOutEOL, FALSE
-    OCall xbx::IncFile.StmWriteIndent
-  .endif
   invoke StrECopyA, [xbx].pStmOutPos, $OfsCStrA(CRLF)
+;  DbgText "EoL", "Inc Output"
   mov [xbx].pStmOutPos, xax
-  mov [xbx].dStmOutEOL, TRUE
+  mov [xbx].dStmOutEoL, TRUE
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1050,7 +1162,7 @@ MethodEnd
 Method IncFile.StmWriteIndent, uses xbx xsi
   SetObject xbx
   mov esi, [xbx].$Obj(IncFile).dIndentation
-  .if SDWORD ptr esi < 0                        ;Just in case something goes wrong
+  .if SDWORD ptr esi < 0                                ;Just in case something goes wrong
     mov [xbx].$Obj(IncFile).dIndentation, 0
   .else
     shl esi, 1
@@ -1064,8 +1176,8 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.ShowError
 ; Purpose:    Shows an error condition.
-; Arguments:  Arg1: -> Format String.
-;             Arg2-n: Format arguments
+; Arguments:  Arg1: -> Format WIDE String. Use %hs and %ls specifiers for ANSI and WIDE input args.
+;             Arg2-n: Format arguments.
 ; Return:     Nothing.
 
 Method IncFile.ShowError, uses xbx xdi, pFormat:PSTRING, Args:vararg
@@ -1075,7 +1187,7 @@ Method IncFile.ShowError, uses xbx xdi, pFormat:PSTRING, Args:vararg
   inc [xbx].dErrorCount
   lea xdi, cMessage
   WriteF xdi, "¦SU(¦UD) - Error = ", [xbx].pHeaderFileName, [xbx].dLineNumber
-  invoke wsprintf, xdi, pFormat, addr Args
+  invoke wvsprintf, xdi, pFormat, addr Args
   OCall [xbx].pOwner::Application.ShowError, addr cMessage
 MethodEnd
 
@@ -1113,8 +1225,8 @@ MethodEnd
 ; Method:     IncFile.ShowWarning
 ; Purpose:    Shows a warning condition.
 ; Arguments:  Arg1: Level [0..3].
-;             Arg2: -> Format String.
-;             Arg2-n: Format arguments
+; Arguments:  Arg2: -> Format WIDE String. Use %hs and %ls specifiers for ANSI and WIDE input args.
+;             Arg3-n: Format arguments.
 ; Return:     Nothing.
 
 Method IncFile.ShowWarning, uses xbx xdi, dWarningLevel:DWORD, pFormat:PSTRING, Args:vararg
@@ -1124,7 +1236,7 @@ Method IncFile.ShowWarning, uses xbx xdi, dWarningLevel:DWORD, pFormat:PSTRING, 
   inc [xbx].dWarningCount
   lea xdi, cMessage
   WriteF xdi, "¦SU(¦UD) = ", [xbx].pHeaderFileName, [xbx].dLineNumber
-  invoke wsprintf, xdi, pFormat, addr Args
+  invoke wvsprintf, xdi, pFormat, addr Args
   OCall [xbx].pOwner::Application.ShowWarning, dWarningLevel, addr cMessage
 MethodEnd
 

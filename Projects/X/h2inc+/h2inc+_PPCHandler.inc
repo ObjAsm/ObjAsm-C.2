@@ -1,9 +1,8 @@
 ; ==================================================================================================
 ; Title:      h2inc+_Handler.inc
 ; Author:     G. Friedrich
-; Version:    C.2.0
+; Version:    See h2inc+.asm
 ; Purpose:    ObjAsm h2inc+ Handler routines.
-; Notes:      See h2inc+.asm
 ; ==================================================================================================
 
 
@@ -60,7 +59,7 @@ PPCH_Define proc uses xdi xsi
         .endif
         OCall xbx::IncFile.StmWrite, xax
       .endw
-      OCall xbx::IncFile.StmWriteEOL
+      OCall xbx::IncFile.StmWriteEoL
 
       ;Save macro name in symbol table
       invoke IsMacro?, pName                          ;Check if we know this macro
@@ -123,9 +122,9 @@ PPCH_Define proc uses xdi xsi
       Destroy@Stacklist pArgStack
 
       OCall xbx::IncFile.StmWriteChar, 3Eh            ;>
-      OCall xbx::IncFile.StmWriteEOL
+      OCall xbx::IncFile.StmWriteEoL
       OCall xbx::IncFile.StmWrite, $OfsCStrA("endm")
-      OCall xbx::IncFile.StmWriteEOL
+      OCall xbx::IncFile.StmWriteEoL
     .else
       invoke IsEquate?, pName                         ;Check if it already exist
       .if eax == FALSE
@@ -134,7 +133,8 @@ PPCH_Define proc uses xdi xsi
       .endif
       OCall xbx::IncFile.StmWrite, $OfsCStrA(" equ ")
       invoke SkipSimpleBraces
-      invoke ParseEqu, pName
+      invoke RenderDefineConst, pName
+      OCall xbx::IncFile.StmWriteEoL
     .endif
   .endif
 
@@ -205,7 +205,7 @@ PPCH_Include proc uses xsi xdi
     .endif
     mov ax, 0A0Dh
     stosw
-    mov [xbx].$Obj(IncFile).dStmOutEOL, TRUE
+    mov [xbx].$Obj(IncFile).dStmOutEoL, TRUE
   .endif
   mov [xbx].$Obj(IncFile).pStmOutPos, xdi
   mov al, 0
@@ -235,7 +235,7 @@ PPCH_Error proc uses xsi
     inc esi
   .endw
   OCall xbx::IncFile.StmWriteChar, 3Eh                ;">"
-  OCall xbx::IncFile.StmWriteEOL
+  OCall xbx::IncFile.StmWriteEoL
   ret
 PPCH_Error endp
 
@@ -295,7 +295,7 @@ PPCH_Pragma proc uses xsi
     .if al == ","
       OCall xbx::IncFile.StmWriteChar, "'"
     .endif
-    OCall xbx::IncFile.StmWriteEOL
+    OCall xbx::IncFile.StmWriteEoL
   .endif
   ret
 
@@ -313,16 +313,16 @@ PPCH_Pragma endp
 
 PPCH_Beg macro
 ;    int 3
-;    DbgHex [xbx].$Obj(IncFile).bSkipScanPP
-;    DbgHex [xbx].$Obj(IncFile).bSkipLogiPP
+;    DbgHex [xbx].$Obj(IncFile).bSkipLinePP
+;    DbgHex [xbx].$Obj(IncFile).bSkipCondPP
 ;    DbgHex [xbx].$Obj(IncFile).dIndentation
 ;    DbgHex [xbx].$Obj(IncFile).bCondIfLevel
 endm
 
 PPCH_End macro
 ;    int 3
-;    DbgHex [xbx].$Obj(IncFile).bSkipScanPP
-;    DbgHex [xbx].$Obj(IncFile).bSkipLogiPP
+;    DbgHex [xbx].$Obj(IncFile).bSkipLinePP
+;    DbgHex [xbx].$Obj(IncFile).bSkipCondPP
 ;    DbgHex [xbx].$Obj(IncFile).dIndentation
 ;    DbgHex [xbx].$Obj(IncFile).bCondIfLevel
 endm
@@ -340,10 +340,10 @@ PPCH_If proc
   .if ecx == 0 || (ecx != 0 && [xbx].$Obj(IncFile).bCondResult[xcx - 1] != PPR_FALSE)
     IncIfLevel
     invoke If_ElIf, PCT_IF
+    inc [xbx].$Obj(IncFile).dIndentation                ;Following C-code is indented
   .else
-    SkipPPLine
+    SkipPPLine                                          ;CondResut = FALSE => skip the PP-Line
   .endif
-  inc [xbx].$Obj(IncFile).dIndentation
   PPCH_End
   ret
 PPCH_If endp
@@ -357,17 +357,16 @@ PPCH_If endp
 PPCH_ElIf proc uses xsi
 ;    DbgText "elif"
   PPCH_Beg
-  dec [xbx].$Obj(IncFile).dIndentation
-
   movzx esi, [xbx].$Obj(IncFile).bCondIfLevel
   .if (esi == 1) || (esi > 1 && [xbx].$Obj(IncFile).bCondResult[xsi - 2] != PPR_FALSE)
+    dec [xbx].$Obj(IncFile).dIndentation
     IncElseLevel
     invoke If_ElIf, PCT_ELIF
     inc [xbx].$Obj(IncFile).dIndentation
   .else
     SkipPPLine
-    mov [xbx].$Obj(IncFile).bSkipLogiPP, TRUE
-    mov [xbx].$Obj(IncFile).bSkipC, TRUE
+    mov [xbx].$Obj(IncFile).bSkipCondPP, TRUE
+    mov [xbx].$Obj(IncFile).bSkipLineC, TRUE
   .endif
   PPCH_End
   ret
@@ -387,31 +386,32 @@ PPCH_Else proc uses xsi
     dec [xbx].$Obj(IncFile).dIndentation
     IncElseLevel
     OCall xbx::IncFile.StmWrite, $OfsCStrA("else")
-    OCall xbx::IncFile.StmWriteEOL
-    mov [xbx].$Obj(IncFile).bSkipUselessCode, FALSE
+    OCall xbx::IncFile.StmWriteEoL
     OCall xbx::IncFile.StmSkipRestOfPPLine
+    mov [xbx].$Obj(IncFile).bEnableNFCodeLabel, TRUE
     inc [xbx].$Obj(IncFile).dIndentation
+
     .if [xbx].$Obj(IncFile).bCondHistory[xsi - 1] == PPR_TRUE
       mov [xbx].$Obj(IncFile).bCondResult[xsi - 1], PPR_FALSE
-      mov [xbx].$Obj(IncFile).bSkipLogiPP, TRUE
-      mov [xbx].$Obj(IncFile).bSkipC, TRUE
+      mov [xbx].$Obj(IncFile).bSkipCondPP, TRUE
+      mov [xbx].$Obj(IncFile).bSkipLineC, TRUE
     .else
       .if [xbx].$Obj(IncFile).bCondHistory[xsi - 1] == PPR_FALSE
         mov [xbx].$Obj(IncFile).bCondResult[xsi - 1], PPR_TRUE
-        mov [xbx].$Obj(IncFile).bSkipLogiPP, FALSE
-        mov [xbx].$Obj(IncFile).bSkipC, FALSE
+        mov [xbx].$Obj(IncFile).bSkipCondPP, FALSE
+        mov [xbx].$Obj(IncFile).bSkipLineC, FALSE
         mov [xbx].$Obj(IncFile).bCondHistory[xsi - 1], PPR_TRUE
       .else
         mov [xbx].$Obj(IncFile).bCondResult[xsi - 1], PPR_UNKNOWN
-        mov [xbx].$Obj(IncFile).bSkipLogiPP, FALSE
-        mov [xbx].$Obj(IncFile).bSkipC, FALSE
+        mov [xbx].$Obj(IncFile).bSkipCondPP, FALSE
+        mov [xbx].$Obj(IncFile).bSkipLineC, FALSE
         mov [xbx].$Obj(IncFile).bCondHistory[xsi - 1], PPR_UNKNOWN
       .endif
     .endif
   .else
     SkipPPLine
-    mov [xbx].$Obj(IncFile).bSkipLogiPP, TRUE
-    mov [xbx].$Obj(IncFile).bSkipC, TRUE
+    mov [xbx].$Obj(IncFile).bSkipCondPP, TRUE
+    mov [xbx].$Obj(IncFile).bSkipLineC, TRUE
   .endif
   PPCH_End
   ret
@@ -432,14 +432,15 @@ PPCH_Endif proc uses xsi
   movzx esi, [xbx].$Obj(IncFile).bCondIfLevel
   .if (esi == 0) || (esi > 0) && ([xbx].$Obj(IncFile).bCondResult[xsi - 1] != PPR_FALSE)
     OCall xbx::IncFile.StmWrite, $OfsCStrA("endif")
-    mov [xbx].$Obj(IncFile).bSkipUselessCode, FALSE
+    OCall xbx::IncFile.StmWriteEoL
+    mov [xbx].$Obj(IncFile).bEnableNFCodeLabel, TRUE
     OCall xbx::IncFile.StmSkipRestOfPPLine
-    mov [xbx].$Obj(IncFile).bSkipLogiPP, FALSE
-    mov [xbx].$Obj(IncFile).bSkipC, FALSE
+    mov [xbx].$Obj(IncFile).bSkipCondPP, FALSE
+    mov [xbx].$Obj(IncFile).bSkipLineC, FALSE
   .else
     SkipPPLine
-    mov [xbx].$Obj(IncFile).bSkipLogiPP, TRUE
-    mov [xbx].$Obj(IncFile).bSkipC, TRUE
+    mov [xbx].$Obj(IncFile).bSkipCondPP, TRUE
+    mov [xbx].$Obj(IncFile).bSkipLineC, TRUE
   .endif
   PPCH_End
   ret
@@ -461,7 +462,7 @@ PPCH_Ifdef proc
   .else
     SkipPPLine
   .endif
-  mov [xbx].$Obj(IncFile).bSkipUselessCode, FALSE
+  mov [xbx].$Obj(IncFile).bEnableNFCodeLabel, TRUE
   inc [xbx].$Obj(IncFile).dIndentation
   PPCH_End
   ret
@@ -490,7 +491,7 @@ PPCH_Ifndef endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  PPCH_IfNP
-; Purpose:    PP Command Handler for "#if" only when IncFile.bSkipLogiPP == TRUE.
+; Purpose:    PP Command Handler for "#if" only when IncFile.bSkipCondPP == TRUE.
 ; Arguments:  None.
 ; Return:     Nothing.
 
@@ -501,8 +502,8 @@ PPCH_IfNP proc uses xsi
   movzx esi, [xbx].$Obj(IncFile).bCondIfLevel
   mov [xbx].$Obj(IncFile).bCondResult[xsi - 1], PPR_FALSE
   mov [xbx].$Obj(IncFile).bCondHistory[xsi - 1], PPR_FALSE
-  mov [xbx].$Obj(IncFile).bSkipLogiPP, TRUE
-  mov [xbx].$Obj(IncFile).bSkipC, TRUE
+  mov [xbx].$Obj(IncFile).bSkipCondPP, TRUE
+  mov [xbx].$Obj(IncFile).bSkipLineC, TRUE
 
   SkipPPLine
   inc [xbx].$Obj(IncFile).dIndentation
