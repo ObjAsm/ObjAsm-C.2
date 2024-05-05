@@ -70,24 +70,6 @@
 .code
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  GetBitLength
-; Purpose:    Get the bit length of a given type.
-; Arguments:  Arg1: -> Type
-; Return:     eax = bit length, zero if not found.
-
-GetBitLength proc pType:PSTRINGA
-  OCall pTypeSize::List.Search, pType
-  .if eax != FALSE
-  	mov edx, ecx
-    OCall pTypeSize::List.ItemAt, edx
-    mov edx, [xax - sizeof(DWORD)]
-    mov eax, [xax + xdx]
-    shl eax, 3                                          ;*8
-  .endif
-  ret
-GetBitLength endp
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderBitField
 ; Purpose:    Parse a BitField into a RECORD.
 ; Arguments:  Arg1: -> Container name
@@ -116,7 +98,9 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
   mov cSeparator, ';'
   mov bMultipleAllocUnits, FALSE
   mov pFieldStackList, $Create@Stacklist()
-  invoke GetBitLength, pType
+  mov xax, pType
+  invoke GetTypeSize, pType
+  shl eax, 3                                            ;Convert to bit size
   .if eax == 0
     OCall xbx::IncFile.ShowWarning, WARNING_MAYOR, $OfsCStr("Unknown type '%hs' in bitfield"), pType
     mov eax, sizeof(DWORD)*8                            ;Default 32 bit
@@ -142,7 +126,8 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
       OCall xbx::IncFile.InputStatusSave, addr InpStat
       OCall xbx::IncFile.GetNextTokenC
       jz @ErrorEoF
-      invoke GetBitLength, xax                          ;Get the Type
+      invoke GetTypeSize, xax                           ;Get the Type
+      shl eax, 3                                        ;Convert to bit size
       .if eax > dAllocUnitSize
         mov dAllocUnitSize, eax
       .endif

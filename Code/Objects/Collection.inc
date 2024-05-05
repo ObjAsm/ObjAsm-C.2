@@ -78,11 +78,16 @@ ObjectEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      .ColForEach
 ; Purpose:    Loop through all items of the collection.
-; Arguments:  Arg1: Collection.
+; Arguments:  Arg1: Collection. 
 ;             Arg2: Optional 32 bit index variable/register. Can not be eax!
 ; Return:     Nothing.
 ; Note:       On each loop xax -> collection item.
-; Example:    .ColForEach MyColl
+;             If Arg1 is a POINTER, load it in a non used register and pass [reg] as argument.
+; Example 1:  .ColForEach MyColl
+;               DbgHex [xax].$Obj(Primer).pOwner
+;             .ColNext
+; Example 2:  mov xbx, pColl
+;             .ColForEach [xbx]
 ;               DbgHex [xax].$Obj(Primer).pOwner
 ;             .ColNext
 

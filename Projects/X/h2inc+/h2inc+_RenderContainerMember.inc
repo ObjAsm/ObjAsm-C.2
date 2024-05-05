@@ -97,11 +97,11 @@ WriteContainerMember endp
 ; Idea:       Replace _??xx with the name of the parent struct.
 
 RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
-  local dTypeCSpec:DWORD, bStruct:DWORD
+  local dTypeCSpec:DWORD, bStruct:DWORD, InpStat:INP_STAT
   local dRes:DWORD, dPtrCount:DWORD, dNameFlags:DWORD
   local pType:PSTRINGA, pName:PSTRINGA, pDupList:POINTER, pEndToken:PSTRINGA
   local pCurrToken:PTOKEN
-  local cMacroBuffer[MAX_BLOCK_NAME]:CHRA
+  local cMacroBuffer[MAX_NAME_CHARS]:CHRA
   local cMember[128]:CHRA, cSuffix[UDWORD2DEC_MAX_CHARS]:CHRA, dSquareBracketCount:DWORD
 
   ;Initialize ---------------------------------------------------------------------------
@@ -122,6 +122,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
     invoke SkipAnnotations, xax
     jz @ErrorEoF
     .break .if CHRA ptr [xax] == ";"                    ;End of declaration reached
+    
     mov pToken, xax
 
     .if CHRA ptr [xax] == '}'
@@ -130,9 +131,36 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
     .endif
 
     .if $DoesStringMatchA?([xax], <struct>)             ;New structure inside this container?
+      OCall xbx::IncFile.InputStatusSave, addr InpStat
+      inc [xbx].$Obj(IncFile).bSkipLinePP
+      OCall xbx::IncFile.GetNextTokenC      
+      jz @ErrorEoF
+      .if CHRA ptr [xax] == '{'
+        mov pToken, xax
+        dec [xbx].$Obj(IncFile).bSkipLinePP
+        OCall xbx::IncFile.InputStatusLoad, addr InpStat
+        mov xax, pToken
+        jmp @Name
+      .else
+        OCall xbx::IncFile.GetNextTokenC      
+        jz @ErrorEoF
+        .if CHRA ptr [xax] == '{'
+          mov pToken, xax
+          dec [xbx].$Obj(IncFile).bSkipLinePP
+          OCall xbx::IncFile.InputStatusLoad, addr InpStat
+          OCall xbx::IncFile.GetNextTokenC      
+          jmp @Name
+        .endif
+      .endif
+      dec [xbx].$Obj(IncFile).bSkipLinePP
+      OCall xbx::IncFile.InputStatusLoad, addr InpStat
+      mov xax, pToken
+      jmp @GetNextToken
+
+@Name:
       ;Name management
       mov xax, pContainerName
-      .if xax != NULL                                   ;Unnamed struct or union
+      .if xax != NULL                                 ;Unnamed struct or union
         .if !$DoesTextMatchA?([xax], <DUMMYSTRUCTNAME>) ;May have a number at the end
           mov xdi, $OfsCStrA("_STRUC")
           jmp @F
@@ -146,30 +174,36 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
       ;Translation
       invoke RenderContainer, offset(szStruct)
       mov pEndToken, xax
-      test xax, xax                                     ;Set/Reset ZF        
+      test xax, xax                                   ;Set/Reset ZF        
       jz @ErrorEoF
       jmp @Exit
+;    .else
+;      jmp @GetNextToken
     .endif
 
     .if $DoesStringMatchA?([xax], <union>)              ;New union inside this container?
-      ;Name management
-      mov xax, pContainerName
-      .if xax != NULL                                   ;Unnamed struct or union
-        .if !$DoesTextMatchA?([xax], <DUMMYUNIONNAME>)  ;May have a number at the end
-          mov xdi, $OfsCStrA("_UNION")
-          jmp @F
-        .endif
-        mov pContainerName, NULL
-      .endif
-      lea xdi, cSuffix
-      WriteFA xdi, "ANONYMOUS_UNION¦UD", $ObjTmpl(Application).dUnionNameSuffix  ;Make unique
-      lea xdi, cSuffix
-@@:
-      ;Translation
-      invoke RenderContainer, offset(szUnion)
-      mov pEndToken, xax
+      OCall xbx::IncFile.PeekNextTokenC
       jz @ErrorEoF
-      jmp @Exit
+      .if CHRA ptr [xax] == '{'
+        ;Name management
+        mov xax, pContainerName
+        .if xax != NULL                                 ;Unnamed struct or union
+          .if !$DoesTextMatchA?([xax], <DUMMYUNIONNAME>)  ;May have a number at the end
+            mov xdi, $OfsCStrA("_UNION")
+            jmp @F
+          .endif
+          mov pContainerName, NULL
+        .endif
+        lea xdi, cSuffix
+        WriteFA xdi, "ANONYMOUS_UNION¦UD", $ObjTmpl(Application).dUnionNameSuffix  ;Make unique
+        lea xdi, cSuffix
+  @@:
+        ;Translation
+        invoke RenderContainer, offset(szUnion)
+        mov pEndToken, xax
+        jz @ErrorEoF
+        jmp @Exit
+      .endif
     .endif
 
     ;Skip the following keywords --------------------------------------------------------
@@ -269,6 +303,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
       invoke IsFunctionPtr?
       .if eax != FALSE
         invoke RenderTypedefFuncPtr, NULL
+        jz @ErrorEoF
         .continue
       .else
         invoke IsFunction?

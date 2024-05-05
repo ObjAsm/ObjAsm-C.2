@@ -21,7 +21,7 @@
 RenderContainer proc uses xdi pContainerType:PSTRINGA
   local pName:PSTRINGA, pTagName:PSTRINGA, pToken:PTOKEN, pEndToken:PTOKEN
   local bSkipName:DWORD
-  local cName[256]:CHRA, cTagName[256]:CHRA, cContainerName[MAX_BLOCK_NAME]:CHRA
+  local cName[256]:CHRA, cTagName[256]:CHRA, cContainerName[MAX_NAME_CHARS]:CHRA
 
   ;Initialization ----------------------------------------------------------------------- 
   mov cContainerName, 0

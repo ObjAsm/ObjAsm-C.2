@@ -20,7 +20,7 @@ VERBOSITY_NORMAL        equ 2
 VERBOSITY_DEAFENING     equ 3
 
 MAX_COND_LEVEL          equ 32      ;Must be a multiple of 4!
-MAX_BLOCK_NAME          equ 128     ;Buffer size for struct, union, etc. names.
+MAX_NAME_CHARS          equ 128     ;Buffer size for struct, union, etc. names.
 ADD_50_PERCENT          equ 0       ;0 = buffer size 100% larger than file size
 
 COLOR_HEADER            equ FOREGROUND_BLUE or FOREGROUND_GREEN or FOREGROUND_RED or FOREGROUND_INTENSITY
@@ -282,37 +282,40 @@ CONV_BASIC_TYPE_ENTRY struc
 CONV_BASIC_TYPE_ENTRY ends
 
 
-DefineConvTabEntry macro EName:req, Alloc:req, Incr:req, Flags:=<>, FName:= <>, SName:=<>
-  ifb <FName>
-    FN equ <NULL>
+DefineConvTabEntry macro EntryName:req, Alloc:req, Incr:req, Flags:=<>, FileName:= <>, SectName:=<>
+  ifb <FileName>
+    FullFileName equ <NULL>
   else
-    FN equ <$OfsCStrW("H2I_&FName&.lst")>               ;;WIDE Filename
+    FullFileName equ <$OfsCStrW("H2I_&FileName&.lst")>  ;;WIDE Filename
   endif
 
   if Flags and CF_INIF
-%   EName CONV_TAB_ENTRY <$OfsCBStrA("&SName"), NULL, Alloc, Incr, Flags, FN, offset Default&EName&Table>
+%   EntryName CONV_TAB_ENTRY <$OfsCBStrA("&SectName"), \
+              NULL, Alloc, Incr, Flags, FullFileName, offset Default&EntryName&Table>
   else
-%   EName CONV_TAB_ENTRY <offset szEmpty, NULL, Alloc, Incr, Flags, FN, NULL>
+%   EntryName CONV_TAB_ENTRY <offset szEmpty, \
+              NULL, Alloc, Incr, Flags, FullFileName, NULL>
   endif
-  p&EName textequ <&EName.pList>                        ;;Define a commodity equate
+  p&EntryName textequ <&EntryName.pList>                ;;Define a commodity equate
 endm
 
 PersistConvTable label POINTER
-DefineConvTabEntry  SimpleTypes,     1000, 100, CF_SNGL or CF_INIF, <TypeNames>, <Simple Type Names>
-DefineConvTabEntry  KnownMacros,     1000, 100, CF_ATTR or CF_INIF, <KnwMacros>, <Macro Names>
-DefineConvTabEntry  KnownEquates,    1000, 100, CF_ATTR or CF_INIF, <KnwEquate>, <Equate Names>
-DefineConvTabEntry  KnownStructs,    1000, 100, CF_SNGL or CF_INIF, <KnwStruct>, <Structure Names>
-DefineConvTabEntry  KnownQualifiers, 1000, 100, CF_ATTR or CF_INIF, <KnwQualif>, <Prototype Qualifiers>
-DefineConvTabEntry  ReservedWords,   1000, 100, CF_CASE or CF_INIF, <ResvWords>, <Reserved Words>
-DefineConvTabEntry  ConvertTypeQual, 1000, 100, CF_EQUI or CF_INIF, <QualifCnv>, <Type Qualifier Conversion>
-DefineConvTabEntry  ConvertTypes1,   1000, 100, CF_EQUI or CF_INIF, <TypeConv1>, <Type Conversion 1>
-DefineConvTabEntry  ConvertTypes2,   1000, 100, CF_EQUI or CF_INIF, <TypeConv2>, <Type Conversion 2>
-DefineConvTabEntry  ConvertTypes3,   1000, 100, CF_EQUI or CF_INIF, <TypeConv3>, <Type Conversion 3>
-DefineConvTabEntry  ConvertTokens,   1000, 100, CF_EQUI or CF_INIF, <TokenConv>, <Token Conversion>
-DefineConvTabEntry  Alignments,      1000, 100, CF_ATTR or CF_INIF, <Alignment>, <Alignment>
-DefineConvTabEntry  TypeSize,        1000, 100, CF_ATTR or CF_INIF, <TypeSizes>, <Type Size>
-DefineConvTabEntry  Annotations,     1000, 100, CF_SNGL or CF_INIF, <KnwAnnots>, <Annotations>
+DefineConvTabEntry  KnownTypeSize,   1000, 100, CF_ATTR or CF_INIF, <KnwTypeSizes>, <Type Size>
+DefineConvTabEntry  SimpleTypes,     1000, 100, CF_SNGL or CF_INIF, <TypeNames>,    <Simple Type Names>
+DefineConvTabEntry  KnownMacros,     1000, 100, CF_ATTR or CF_INIF, <KnwMacros>,    <Macro Names>
+DefineConvTabEntry  KnownEquates,    1000, 100, CF_ATTR or CF_INIF, <KnwEquate>,    <Equate Names>
+DefineConvTabEntry  KnownStructs,    1000, 100, CF_SNGL or CF_INIF, <KnwStruct>,    <Structure Names>
+DefineConvTabEntry  KnownQualifiers, 1000, 100, CF_ATTR or CF_INIF, <KnwQualif>,    <Prototype Qualifiers>
+DefineConvTabEntry  ReservedWords,   1000, 100, CF_CASE or CF_INIF, <ResvWords>,    <Reserved Words>
+DefineConvTabEntry  ConvertTypeQual, 1000, 100, CF_EQUI or CF_INIF, <QualifCnv>,    <Type Qualifier Conversion>
+DefineConvTabEntry  ConvertTypes1,   1000, 100, CF_EQUI or CF_INIF, <TypeConv1>,    <Type Conversion 1>
+DefineConvTabEntry  ConvertTypes2,   1000, 100, CF_EQUI or CF_INIF, <TypeConv2>,    <Type Conversion 2>
+DefineConvTabEntry  ConvertTypes3,   1000, 100, CF_EQUI or CF_INIF, <TypeConv3>,    <Type Conversion 3>
+DefineConvTabEntry  ConvertTokens,   1000, 100, CF_EQUI or CF_INIF, <TokenConv>,    <Token Conversion>
+DefineConvTabEntry  Alignments,      1000, 100, CF_ATTR or CF_INIF, <Alignment>,    <Alignment>
+DefineConvTabEntry  Annotations,     1000, 100, CF_SNGL or CF_INIF, <KnwAnnots>,    <Annotations>
 VolatilConvTable label POINTER
+DefineConvTabEntry  TypeSize,        1000, 100, CF_ATTR, <NewTypeSizes>
 DefineConvTabEntry  Macros,          1000, 100, CF_ATTR, <NewMacros>
 DefineConvTabEntry  Equates,         1000, 100, CF_ATTR, <NewEquate>
 DefineConvTabEntry  Structs,         1000, 100, CF_SNGL, <NewStruct>
@@ -371,7 +374,7 @@ DefaultKnownMacrosTable label POINTER
   CONV_ATTR_ENTRY <$OfsCBStrA("DECLARE_INTERFACE_IID"),     MCF_KNOWN or MCF_HAS_PARAMS or MCF_END_MACRO>
   CONV_ATTR_ENTRY <$OfsCBStrA("DECLARE_INTERFACE_IID_"),    MCF_KNOWN or MCF_HAS_PARAMS or MCF_END_MACRO>
   CONV_ATTR_ENTRY <$OfsCBStrA("DECLSPEC_UUID"),             MCF_KNOWN or MCF_HAS_PARAMS>
-  CONV_ATTR_ENTRY <$OfsCBStrA("DECLSPEC_XFGVIRT"),          MCF_KNOWN or MCF_HAS_PARAMS>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DECLSPEC_XFGVIRT"),          MCF_KNOWN or MCF_HAS_PARAMS or MCF_SKIP_INVOKATION>
   CONV_ATTR_ENTRY <$OfsCBStrA("DEFINE_GUID"),               MCF_KNOWN or MCF_HAS_PARAMS or MCF_SKIP_BRACES>
   CONV_ATTR_ENTRY <$OfsCBStrA("END_INTERFACE"),             MCF_KNOWN or MCF_INTERFACE_END>
   CONV_ATTR_ENTRY <$OfsCBStrA("SHSTDAPI_"),                 MCF_KNOWN or MCF_HAS_PARAMS>
@@ -413,7 +416,7 @@ DefaultKnownQualifiersTable label POINTER
   POINTER NULL
 
 ;Type sizes. Required if a type is a parameter with size > 4.
-DefaultTypeSizeTable label POINTER
+DefaultKnownTypeSizeTable label POINTER
   CONV_ATTR_ENTRY <$OfsCBStrA("BYTE"),       01>
   CONV_ATTR_ENTRY <$OfsCBStrA("CHAR"),       01>
   CONV_ATTR_ENTRY <$OfsCBStrA("CY"),         08>

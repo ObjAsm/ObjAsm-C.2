@@ -1,3 +1,40 @@
+union _StreamInformation {
+        struct _DesiredStorageClass {
+            FILE_STORAGE_TIER_CLASS          Class;
+            DWORD                            Flags;
+        } DesiredStorageClass;
+
+#if (NTDDI_VERSION >= NTDDI_WIN10_VB)
+        struct _DataStream {
+            WORD        Length;
+            WORD        Flags;
+            DWORD       Reserved;
+            DWORDLONG   Vdl;
+        } DataStream;
+        struct _Reparse {
+            WORD   Length;
+            WORD   Flags;
+            DWORD ReparseDataSize;
+            DWORD ReparseDataOffset;
+        } Reparse;
+        struct _Ea {
+            WORD   Length;
+            WORD   Flags;
+            DWORD EaSize;
+            DWORD EaInformationOffset;
+        } Ea;
+#endif // (NTDDI_VERSION >= NTDDI_WIN10_VB)
+    } StreamInformation;
+} STREAM_INFORMATION_ENTRY, *PSTREAM_INFORMATION_ENTRY;
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     interface IUnknown
     {
         CONST_VTBL struct IUnknownVtbl *lpVtbl;

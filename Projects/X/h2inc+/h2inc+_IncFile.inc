@@ -862,12 +862,12 @@ Method IncFile.Render, uses xbx xdi xsi
     invoke MemZero, xdi, dStmBufSize
   endif 
 
-  ;Reset volatile data lists
-  lea xsi, VolatilConvTable
-  .while POINTER ptr [xsi] != NULL
-    OCall [xsi].CONV_TAB_ENTRY.pList::List.DeleteAll
-    add xsi, sizeof(CONV_TAB_ENTRY)
-  .endw
+;  ;Reset volatile data lists
+;  lea xsi, VolatilConvTable
+;  .while POINTER ptr [xsi] != NULL
+;    OCall [xsi].CONV_TAB_ENTRY.pList::List.DeleteAll
+;    add xsi, sizeof(CONV_TAB_ENTRY)
+;  .endw
 
   ;Start translation
   invoke RenderC                                         ;xbx is passed implicitly
@@ -1124,7 +1124,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.StmWriteF
 ; Purpose:    Write a formated string to the output stream.
-; Arguments:  Arg1: -> Format.
+; Arguments:  Arg1: -> Format. Use %hs and %ls specifiers for ANSI and WIDE input args.
 ;             Arg2: -> Arguments.
 ; Return:     xax -> current StreamOut position.
 

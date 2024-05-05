@@ -27,7 +27,7 @@ Method Application.Done, uses xbx xsi
     lea xsi, PersistConvTable
     .while POINTER ptr [xsi] != NULL
       .if [xsi].CONV_TAB_ENTRY.pFileName != NULL
-;        OCall [xsi].CONV_TAB_ENTRY.pList::List.SaveToFile, [xsi].CONV_TAB_ENTRY.pFileName
+        OCall [xsi].CONV_TAB_ENTRY.pList::List.SaveToFile, [xsi].CONV_TAB_ENTRY.pFileName
       .endif
       Destroy [xsi].CONV_TAB_ENTRY.pList::List.Done
       add xsi, sizeof(CONV_TAB_ENTRY)
@@ -316,41 +316,84 @@ Method Application.Init, uses xbx xdi xsi
     jmp @@EOM
   .endif
 
+;  ;Load the lists
+;  lea xsi, PersistConvTable
+;  .if [xbx].Options.bLoadLists == FALSE
+;    OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Loading ini-file lists...")
+;    .while POINTER ptr [xsi] != NULL
+;      .if [xsi].CONV_TAB_ENTRY.pList == NULL
+;        mov [xsi].CONV_TAB_ENTRY.pList, $New(List)      ;Create the list
+;        OCall xax::List.Init, NULL, [xsi].CONV_TAB_ENTRY.dAlloc, \
+;                                    [xsi].CONV_TAB_ENTRY.dIncr, [xsi].CONV_TAB_ENTRY.dFlags
+;      .endif
+;      .ifBitSet [xsi].CONV_TAB_ENTRY.dFlags, CF_INIF
+;        OCall [xbx].IniReader::IniFileReader.LoadList, xsi
+;        .if eax == FALSE
+;          OCall xbx.ShowError, $OfsCStr(".ini-file corrupt")
+;          mov [xbx].bTerminate, TRUE
+;          jmp @@EOM
+;        .endif
+;      .endif
+;      add xsi, sizeof(CONV_TAB_ENTRY)
+;    .endw
+;  .else
+;    OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Loading file lists...")
+;    .while POINTER ptr [xsi] != NULL
+;      .if [xsi].CONV_TAB_ENTRY.pList == NULL
+;        mov [xsi].CONV_TAB_ENTRY.pList, $New(List)      ;Create the list
+;        OCall xax::List.Init, NULL, [xsi].CONV_TAB_ENTRY.dAlloc, \
+;                                    [xsi].CONV_TAB_ENTRY.dIncr, [xsi].CONV_TAB_ENTRY.dFlags
+;      .endif
+;      OCall [xsi].CONV_TAB_ENTRY.pList::List.LoadFromFile, [xsi].CONV_TAB_ENTRY.pFileName
+;      .if eax == FALSE
+;        lea xdi, cMessage
+;        WriteF xdi, "list file \`¦SU\`corrupt", [xsi].CONV_TAB_ENTRY.pFileName
+;        OCall xbx.ShowError, addr cMessage
+;        mov [xbx].bTerminate, TRUE
+;        jmp @@EOM
+;      .endif
+;      add xsi, sizeof(CONV_TAB_ENTRY)
+;    .endw
+;  .endif
+
   ;Load the lists
   lea xsi, PersistConvTable
-  .if [xbx].Options.bLoadLists == FALSE
-    OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Loading ini-file lists...")
-    .while POINTER ptr [xsi] != NULL
-      mov [xsi].CONV_TAB_ENTRY.pList, $New(List)        ;Create the list
+  OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Loading ini-file lists...")
+  .while POINTER ptr [xsi] != NULL
+    .if [xsi].CONV_TAB_ENTRY.pList == NULL
+      mov [xsi].CONV_TAB_ENTRY.pList, $New(List)      ;Create the list
       OCall xax::List.Init, NULL, [xsi].CONV_TAB_ENTRY.dAlloc, \
                                   [xsi].CONV_TAB_ENTRY.dIncr, [xsi].CONV_TAB_ENTRY.dFlags
-      .ifBitSet [xsi].CONV_TAB_ENTRY.dFlags, CF_INIF
-        OCall [xbx].IniReader::IniFileReader.LoadList, xsi
-        .if eax == FALSE
-          OCall xbx.ShowError, $OfsCStr(".ini-file corrupt")
-          mov [xbx].bTerminate, TRUE
-          jmp @@EOM
-        .endif
-      .endif
-      add xsi, sizeof(CONV_TAB_ENTRY)
-    .endw
-  .else
-    OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Loading file lists...")
-    .while POINTER ptr [xsi] != NULL
-      mov [xsi].CONV_TAB_ENTRY.pList, $New(List)        ;Create the list
-      OCall xax::List.Init, NULL, [xsi].CONV_TAB_ENTRY.dAlloc, \
-                                  [xsi].CONV_TAB_ENTRY.dIncr, [xsi].CONV_TAB_ENTRY.dFlags
-      OCall [xsi].CONV_TAB_ENTRY.pList::List.LoadFromFile, [xsi].CONV_TAB_ENTRY.pFileName
+    .endif
+    .ifBitSet [xsi].CONV_TAB_ENTRY.dFlags, CF_INIF
+      OCall [xbx].IniReader::IniFileReader.LoadList, xsi
       .if eax == FALSE
-        lea xdi, cMessage
-        WriteF xdi, "list file \`¦SU\`corrupt", [xsi].CONV_TAB_ENTRY.pFileName
-        OCall xbx.ShowError, addr cMessage
+        OCall xbx.ShowError, $OfsCStr(".ini-file corrupt")
         mov [xbx].bTerminate, TRUE
         jmp @@EOM
       .endif
-      add xsi, sizeof(CONV_TAB_ENTRY)
-    .endw
-  .endif
+    .endif
+    add xsi, sizeof(CONV_TAB_ENTRY)
+  .endw
+
+  lea xsi, PersistConvTable
+  OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Loading file lists...")
+  .while POINTER ptr [xsi] != NULL
+    .if [xsi].CONV_TAB_ENTRY.pList == NULL
+      mov [xsi].CONV_TAB_ENTRY.pList, $New(List)      ;Create the list
+      OCall xax::List.Init, NULL, [xsi].CONV_TAB_ENTRY.dAlloc, \
+                                  [xsi].CONV_TAB_ENTRY.dIncr, [xsi].CONV_TAB_ENTRY.dFlags
+    .endif
+    OCall [xsi].CONV_TAB_ENTRY.pList::List.LoadFromFile, [xsi].CONV_TAB_ENTRY.pFileName
+    .if eax == FALSE
+      lea xdi, cMessage
+      WriteF xdi, "list file \`¦SU\`corrupt", [xsi].CONV_TAB_ENTRY.pFileName
+      OCall xbx.ShowError, addr cMessage
+      mov [xbx].bTerminate, TRUE
+      jmp @@EOM
+    .endif
+    add xsi, sizeof(CONV_TAB_ENTRY)
+  .endw
   
   ;If no dSelectiveOutput is marked, all are selected
   .if [xbx].Options.dSelectiveOutput == 0

@@ -28,6 +28,32 @@ BStrCompA proc uses xdi xsi pBStrA:PSTRINGA, pStrA:PSTRINGA
 BStrCompA endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  GetTypeSize
+; Purpose:    Get the BYTE size of a given type.
+; Arguments:  Arg1: -> Type
+; Return:     eax = BYTE size, zero if not found.
+
+GetTypeSize proc pType:PSTRINGA
+  OCall pKnownTypeSize::List.Search, pType
+  .if eax == FALSE
+    OCall pTypeSize::List.Search, pType
+    .if eax == FALSE
+      jmp @Exit
+    .else
+    	mov edx, ecx
+      OCall pTypeSize::List.ItemAt, edx
+    .endif
+  .else
+  	mov edx, ecx
+    OCall pKnownTypeSize::List.ItemAt, edx
+  .endif
+  mov edx, [xax - sizeof(DWORD)]
+  mov eax, [xax + xdx]
+@Exit:
+  ret
+GetTypeSize endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  InsertStrg, InsertAttr, InsertEqui
 ; Purpose:    Add an Item to a List.
 ; Arguments:  Arg1: -> List
@@ -1601,12 +1627,18 @@ GotoClosingToken endp
 ; Arguments: Arg1: Token.
 ; Return:    xax -> Token or NULL on EoF and SF set.
 
-GotoNextToken proc pToken:PTOKEN 
-  mov xax, [xbx].$Obj(IncFile).pStmInpPos                   ;pStmInpPos is one token in advance
-  .while (xax != NULL)
-    invoke StrCompA, xax, pToken
-    .break .if ZERO?
+GotoNextToken proc uses xsi pToken:PTOKEN
+  mov xsi, [xbx].$Obj(IncFile).pStmInpPos                   ;pStmInpPos is one token in advance
+  cmp CHRA ptr [xsi], 0
+  .while !ZERO?
+    invoke StrCompA, xsi, pToken
+    .if eax == 0
+      mov xax, xsi
+      test xax, xax
+      .break
+    .endif
     OCall xbx::IncFile.GetNextTokenC
+    mov xsi, xax
   .endw
   ret
 GotoNextToken endp

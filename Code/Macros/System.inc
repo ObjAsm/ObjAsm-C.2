@@ -1216,7 +1216,9 @@ endif
 ;             Arg2: String to compare with.
 ; Return:     In case that NoMatchLabel is not specified use the flags.
 ;             Zero indicates that the String match.
-; Example:    DoesStringMatchA? myString, <Hello>
+; Example 1:  DoesStringMatchA? myString, <Hello>
+; Example 2:  mov xax, pString
+;             DoesStringMatchA? [xax], <Hello>
 ; Note:       Arg1 must have read access for the size of Arg2!
 
 DoesStringMatchA? macro StrVar:req, Text:req, NoMatchLabel

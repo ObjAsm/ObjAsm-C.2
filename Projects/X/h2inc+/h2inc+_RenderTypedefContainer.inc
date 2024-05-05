@@ -22,7 +22,7 @@ RenderTypedefContainer proc pContainerType:PSTRINGA
   local pName:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN, pEndToken:PTOKEN
   local pInherit:POINTER, pSuffix:PSTRINGA
   local bSkipName:DWORD, dPtrCount:DWORD
-  local cName[256]:CHRA, cStructName[MAX_BLOCK_NAME]:CHRA, cNoName[64]:CHRA
+  local cName[MAX_NAME_CHARS]:CHRA, cStructName[MAX_NAME_CHARS]:CHRA, cNoName[64]:CHRA
 
   mov cStructName, 0
   mov cName, 0

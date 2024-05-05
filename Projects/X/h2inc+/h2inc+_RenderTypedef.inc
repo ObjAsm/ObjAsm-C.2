@@ -13,7 +13,7 @@
 ; Purpose:    Typedef analysis and translation. 
 ;             "typedef" occured in the header and triggered this proc.
 ; Arguments:  xbx -> IncFile.
-; Return:     Nothing.
+; Return:     xax -> Last token. ZF set if xax == NULL
 ; Syntax:     
 ;   typedef <annotations><qualifiers> type <<far|near> *> newname<[]>;
 ;   typedef struct/union <macro> <tname> {} name;
@@ -212,6 +212,7 @@ RenderTypedef proc
       invoke IsFunctionPtr?
       .if eax != FALSE
         invoke RenderTypedefFuncPtr, NULL
+        jz @ErrorEoF
       .else
         invoke IsFunction?
         .if eax != FALSE
@@ -281,12 +282,13 @@ RenderTypedef proc
 
 @Exit:
   mov xax, pToken
+  test xax, xax
   ret
 
 @ErrorSyntax:
   inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.StmWriteError
-  invoke GotoNextToken, addr szSemiColon
+  invoke GotoNextToken, addr szSemiColon                ;ZF set/reset
   ret
 
 @ErrorEoF:

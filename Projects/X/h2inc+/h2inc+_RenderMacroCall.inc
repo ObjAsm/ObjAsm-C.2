@@ -18,7 +18,7 @@
 ; Return:     eax = returns TRUE if macro was invoked, otherwise FALSE (turned out to be
 ;             NO macro invocation).
 
-RenderMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
+RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
   local pToken:PTOKEN, pType:PSTRINGA, pName:PSTRINGA, pStmOutPos:PSTRINGA, bAddSpace:DWORD
   local dPtrCount:DWORD, dParenthesesCount:DWORD, bSkipTheRest:DWORd, pCurrToken:PTOKEN
   local dTypeCSpec:DWORD, dScanStep:DWORD, pArgStack:POINTER, cTransBuffer[128]:CHRA
@@ -221,23 +221,23 @@ RenderMacroCall proc pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
   .endif
   .ifBitSet dMacroFlags, MCF_INTERFACE_BEG
     .if [xbx].$Obj(IncFile).pContainerName != NULL
-      OCall xbx::IncFile.StmWriteF, $OfsCStrA("??Interface equ <%ls>"), [xbx].$Obj(IncFile).pContainerName
+      OCall xbx::IncFile.StmWriteF, $OfsCStrA("??Interface equ <%hs>"), [xbx].$Obj(IncFile).pContainerName
       OCall xbx::IncFile.StmWriteEoL
       mov [xbx].$Obj(IncFile).bInsideInterface, TRUE
     .endif
   .endif
-  .ifBitSet $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
-    mrm [xbx].$Obj(IncFile).pStmOutPos, pStmOutPos, xcx
-    mov CHRA ptr [xcx], 0
-  .endif
+;  .ifBitSet $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
+;    mrm [xbx].$Obj(IncFile).pStmOutPos, pStmOutPos, xcx
+;    mov CHRA ptr [xcx], 0
+;  .endif
 
   .ifBitSet dMacroFlags, MCF_STRUCT_BEG
     inc [xbx].$Obj(IncFile).dIndentation
     OCall xbx::IncFile.GetNextTokenC
     .if CHRA ptr [xax] == "{"
-      mov xcx, $GetItem@Stacklist(pArgStack, 0)
-      invoke RenderBlock, xcx, RBT_CONTAINER
-      invoke RenderInterfaceBlock, xcx
+      mov xsi, $GetItem@Stacklist(pArgStack, 0)
+      invoke RenderBlock, xsi, RBT_CONTAINER
+      invoke RenderInterfaceBlock, xsi
       dec [xbx].$Obj(IncFile).dIndentation
       OCall xbx::IncFile.StmWriteF, $OfsCStrA("END_%hs"), pMacroName
       OCall xbx::IncFile.StmWriteEoL

@@ -84,6 +84,7 @@ RenderC proc uses xdi xsi
     mov xdi, [xbx].$Obj(IncFile).pStmOutPos
     mov esi, [xbx].$Obj(IncFile).dStmOutEoL
     invoke RenderTypedef
+    jz @Exit
     OCall xbx::IncFile.StmWriteEoL                      ;Only on top level containers
     .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_TYPEDEFS
       ;Restore entrypoint 
@@ -106,14 +107,21 @@ RenderC proc uses xdi xsi
       mov xdi, [xbx].$Obj(IncFile).pStmOutPos
       mov esi, [xbx].$Obj(IncFile).dStmOutEoL
       invoke RenderContainer, pToken                    ;Returns last token
-      OCall xbx::IncFile.StmWriteEoL                    ;Only on top level containers
-      .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONTAINERS
-        mov [xbx].$Obj(IncFile).pStmOutPos, xdi
-        mov [xbx].$Obj(IncFile).dStmOutEoL, esi
-        mov CHRA ptr [xdi], 0
+      jz @Exit
+      mov pToken, xax
+      OCall xbx::IncFile.PeekNextTokenC
+      jz @Exit
+      .if CHRA ptr [xax] == '{'
+        OCall xbx::IncFile.StmWriteEoL                    ;Only on top level containers
+        .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONTAINERS
+          mov [xbx].$Obj(IncFile).pStmOutPos, xdi
+          mov [xbx].$Obj(IncFile).dStmOutEoL, esi
+          mov CHRA ptr [xdi], 0
+        .endif
+        mov xax, pToken
+        test xax, xax                                     ;Set/Reset ZF
+        jmp @ProcessToken
       .endif
-      test xax, xax                                     ;Set/Reset ZF
-      jmp @ProcessToken
     .endif
     mov xax, pToken
 @@:
@@ -128,6 +136,7 @@ RenderC proc uses xdi xsi
       mov xdi, [xbx].$Obj(IncFile).pStmOutPos
       mov esi, [xbx].$Obj(IncFile).dStmOutEoL
       invoke RenderExtern
+      jz @Exit
       .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_EXTERNALS
         mov [xbx].$Obj(IncFile).pStmOutPos, xdi
         mov [xbx].$Obj(IncFile).dStmOutEoL, esi
@@ -146,6 +155,7 @@ RenderC proc uses xdi xsi
     mov xdi, [xbx].$Obj(IncFile).pStmOutPos
     mov esi, [xbx].$Obj(IncFile).dStmOutEoL
     invoke RenderEnum
+    jz @Exit
     .ifBitSet $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
       mov [xbx].$Obj(IncFile).pStmOutPos, xdi
       mov [xbx].$Obj(IncFile).dStmOutEoL, esi

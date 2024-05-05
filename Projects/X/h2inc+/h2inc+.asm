@@ -1,29 +1,31 @@
 ; ==================================================================================================
-; Title:    h2inc+.asm
-; Author:   G. Friedrich
-; Version:  C.2.0
-; Purpose:  Creates MASM include files (.inc) from C header files (.h).
-; Links:    http://masm32.com/board/index.php?topic=7006.msg75149#msg75149
-;           C++ reference: https://en.cppreference.com/w/cpp
-;           Std C: http://www.open-std.org/JTC1/SC22/WG14/www/docs/n1256.pdf
-; Notes:    This is the continuation & further development of Japheth's open source h2inc+ project.
-;           Version B.1.0, June 2018
-;             - First release.
-;           Version C.1.0, September 2018
-;             - Improvements:
-;               - Output syntax & and spacing management intoduced.
-;               - Removal of unnecessary output: ";{", ";}", error & warning count, "#undef", etc.
-;               - Strategy change of @DefProto for x64.
-;               - Ini-File completion.
-;               - TypeC detection introduced.
-;               - Switches on WinAsm.inc set correctly.
-;               - Conditional sentence evaluation to skip code that can't be translated properly.
-;               - Ini-File completed.
-;           Version C.2.0, April 2024
-;             - Project renamed to h2inc+.
-;             - Ported to dual bitness.
-;             - Support for multidimesional arrays added.
-;             - Record bit reversal added.
+; Title:      h2inc+.asm
+; Author:     G. Friedrich
+; Version:    C.2.0
+; Purpose:    Creates MASM include files (.inc) from C header files (.h).
+; Links:      http://masm32.com/board/index.php?topic=7006.msg75149#msg75149
+;             C++ reference: https://en.cppreference.com/w/cpp
+;             Std C: http://www.open-std.org/JTC1/SC22/WG14/www/docs/n1256.pdf
+; Notes:      This is the continuation & further development of Japheth's open source h2inc+ 
+;             project.
+;             Version B.1.0, June 2018
+;               - First release.
+;             Version C.1.0, September 2018
+;               - Improvements:
+;                 - Output syntax & and spacing management intoduced.
+;                 - Output removal of: ";{", ";}", error & warning count, "#undef", etc.
+;                 - Strategy change of @DefProto for x64.
+;                 - Ini-File completion.
+;                 - TypeC detection introduced.
+;                 - Switches on WinAsm.inc set correctly.
+;                 - Conditional sentence evaluation to skip code that can't be translated properly.
+;                 - Ini-File completed.
+;             Version C.2.0, April 2024
+;               - Project renamed to h2inc+.
+;               - Ported to dual bitness.
+;               - Improvements:
+;                 - Support for multidimesional arrays added.
+;                 - Record bit reversal added.
 ; ==================================================================================================
 
 ;-l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\Masterinclude.h"
@@ -105,6 +107,19 @@ include h2inc+_MemoryHeap.inc
 ;Status ends
 
 ;include C:\Users\frge\OneDrive - Metall Zug AG\_MySoftware_\ObjAsm\Projects\X\h2inc+\inc\dde.inc
+
+;IUnknownVtbl struct
+;  BEGIN_INTERFACE
+;  ??Interface equ <IUnknownVtbl>
+;  STD_METHOD QueryInterface, :ptr IUnknown, :REFIID, :ptr ptr
+;  STD_METHOD AddRef, :ptr IUnknown
+;  STD_METHOD Release, :ptr IUnknown
+;  ??Interface equ <>
+;  END_INTERFACE
+;IUnknownVtbl ends
+;IUnknown struct
+;  lpVtbl POINTER ?
+;IUnknown ends
 
 MYS struct
   SSS REAL4 ?
@@ -271,3 +286,7 @@ start proc                                              ;Program entry point
 start endp
 
 end
+
+
+SPEVENTENUM=4
+SPEVENTLPARAMTYPE=4

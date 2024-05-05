@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      h2inc+_RenderEnum.inc
+; Title:      h2inc+_RenderTypedefEnum.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
 ; Purpose:    ObjAsm h2inc+ translation procedures.
@@ -9,19 +9,19 @@
 .code
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  RenderEnum
-; Purpose:    Parse 'enum'.
-; Arguments:  xbx -> IncFile.
+; Procedure:  RenderTypedefEnum
+; Purpose:    Translate 'typedef enum'.
+; Arguments:  Arg1: Typedef flag.
+;             xbx -> IncFile.
 ; Return:     TRUE if succeeded, otherwise FALSE
 ; Syntax:     <typedef> <qualifiers> enum <tname> {x<=a>,y<=b>,...} name<,*name>;
 ;             <typedef> <qualifiers> enum <tname> <:type> {x<=a>,y<=b>,...} name<,*name>;
 ;             <typedef> <qualifiers> enum <class> <tname> <: type> {x<=a>,y<=b>,...} name<,*name>;
 ;             simplest form is "enum {x = a, y = b};"
-; Link:       https://learn.microsoft.com/en-us/cpp/c-language/c-enumeration-declarations?view=msvc-170
 
-RenderEnum proc uses xbx
+RenderTypedefEnum proc bIsTypedef:BOOL
   local pTag:PTOKEN, pName:PTOKEN, pType:PSTRINGA, pToken:PTOKEN, pCurrToken:PTOKEN
-  local cWorkBuffer[MAX_NAME_CHARS]:CHRA, cEnumName[MAX_NAME_CHARS]:CHRA, dTypeCSpec:DWORD
+  local cWorkBuffer[MAX_NAME_CHARS]:CHRA, dTypeCSpec:DWORD
 
   mov pTag, NULL
   mov pName, NULL
@@ -36,11 +36,10 @@ RenderEnum proc uses xbx
   .if CHRA ptr [xax] != "{" && CHRA ptr [xax] != ":"
     mov pTag, xax
     OCall xbx::IncFile.GetNextTokenC
-    jz @ErrorEoF
   .endif
   mov pToken, xax
 
-  .if CHRA ptr [xax] == ":"                           ;Type specified?
+  .if xax != NULL && CHRA ptr [xax] == ":"            ;Type specified?
     OCall xbx::IncFile.GetNextTokenC
     jz @Error
 
@@ -64,9 +63,12 @@ RenderEnum proc uses xbx
   .endif
 
   mov xax, pToken
-  .if CHRA ptr [xax] == '{'
-    xor eax, eax
-    invoke GetBlockName, addr cEnumName
+  .if xax != NULL && CHRA ptr [xax] == "{"
+    .if bIsTypedef != FALSE
+      invoke GetBlockName, addr cWorkBuffer           ;xax -> Block Name or NULL
+    .else
+      xor eax, eax
+    .endif
     mov pName, xax
     test xax, xax
     cmovz xax, pTag                                   ;if no name found, use the tag
@@ -79,7 +81,8 @@ RenderEnum proc uses xbx
     invoke RenderBlock, pName, RBT_ENUM
 
     ;Write a typedef with the tagName
-    .if pName != NULL && pTag != NULL
+    mov xax, pName
+    .if xax != NULL && pTag != NULL
       invoke StrCompA, pName, pTag
       .if eax != 0
         OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs typedef %hs"), pTag, pName
@@ -87,19 +90,15 @@ RenderEnum proc uses xbx
       .endif
     .endif
 
+    .if bIsTypedef != FALSE
+      OCall xbx::IncFile.GetNextTokenC                 ;Skip enum name
+    .endif
     OCall xbx::IncFile.GetNextTokenC
     .if !ZERO? && pName != NULL && CHRA ptr [xax] != ";"
       invoke RenderFurtherTypes, pName, NULL, xax
     .else
       OCall xbx::IncFile.StmWriteEoL                  ;Separator line
     .endif
-    
-    .if pName != NULL
-      invoke GetTypeSize, pType
-      mov ebx, eax
-      invoke StrLengthA, pName
-      invoke InsertAttr, pTypeSize, pName, eax, ebx
-    .endif 
 
     mov eax, TRUE
 
@@ -128,6 +127,6 @@ RenderEnum proc uses xbx
 
 @Error:
 @ErrorEoF:
-  DbgErrorF , "¦SU(¦UD): RenderEnum - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+  DbgErrorF , "¦SU(¦UD): RenderTypedefEnum - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
   ret
-RenderEnum endp
+RenderTypedefEnum endp

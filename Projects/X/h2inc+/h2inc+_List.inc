@@ -102,7 +102,7 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
           inc ecx
         .until (al == CR) || (al == 0) || (al == "=")
         .break .if al == 0 || ecx == 1
-;        mov CHRA ptr [xsi - 1], 0                     ;Set ZTC
+        mov CHRA ptr [xsi - 1], 0                     ;Set ZTC, for StrCollection.Compare 
         .if al != "="
           inc xsi                                     ;Skip LF
         .endif
@@ -191,32 +191,31 @@ Method List.SaveToFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
   .if xax != INVALID_HANDLE_VALUE
     mov hFile, xax
     .ifBitSet [xsi].dFlags, CF_EQUI
-      .ColForEach pSelf
-        mov xsi, xax
-        mov edx, [xax - sizeof(DWORD)]                      ;Get the size
+      .ColForEach [xsi]
+        mov edx, [xax - sizeof(DWORD)]                  ;Get the size
         lea xdi, cBuffer
-        lea xbx, [xax + xdx + sizeof(DWORD)]                ;Next string
-        WriteF xdi, "¦SA=¦SA\n", xsi, xbx
+        lea xbx, [xax + xdx + sizeof(DWORD)]            ;xbx -> next string
+        WriteFA xdi, "¦SA=¦SA\n", xax, xbx
         lea xax, cBuffer
         mov xdx, xax
         sub xdi, xax
         invoke WriteFile, hFile, xdx, edi, addr dBytesWritten, NULL
       .ColNext
     .elseIfBitSet [xsi].dFlags, CF_ATTR
-      .ColForEach pSelf
-        mov xsi, xax
+      .ColForEach [xsi]
+        mov edx, [xax - sizeof(DWORD)]                  ;Get the size
         lea xdi, cBuffer
-        lea xbx, [xax + xdx]                                ;-> Value
-        WriteF xdi, "¦SA=¦UD\n", xsi, DWORD ptr [xbx]
+        lea xbx, [xax + xdx]                            ;xbx -> value
+        WriteFA xdi, "¦SA=¦UD\n", xax, DWORD ptr [xbx]
         lea xax, cBuffer
         mov xdx, xax
         sub xdi, xax
         invoke WriteFile, hFile, xdx, edi, addr dBytesWritten, NULL
       .ColNext
     .else
-      .ColForEach pSelf
+      .ColForEach [xsi]
         lea xdi, cBuffer
-        WriteF xdi, "¦SA\n", xax
+        WriteFA xdi, "¦SA\n", xax
         lea xax, cBuffer
         mov xdx, xax
         sub xdi, xax
