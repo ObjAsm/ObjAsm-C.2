@@ -549,8 +549,6 @@ TranslateType endp
 ; Purpose:    Convert type qualifiers.
 ; Arguments:  Arg1 -> Type qualifier.
 ; Return:     xax -> Converted type qualifier.
-;             edx = FASLE if no translation occured.
-; Note:       edx is never used. All uses test for [xax] == 0
 
 TranslateTypeQualifier proc pTypeQual:PTOKEN
   OCall pConvertTypeQual::List.Search, pTypeQual        ;Ret: eax: TRUE/FALSE, ecx: Index [0..Count]
@@ -560,7 +558,6 @@ TranslateTypeQualifier proc pTypeQual:PTOKEN
     mov edx, [xax - sizeof(DWORD)]                      ;edx = length
     lea xax, [xax + xdx + sizeof(DWORD)]                ;xax -> converted string
   .else
-    xor edx, edx
     mov xax, pTypeQual
   .endif
   ret

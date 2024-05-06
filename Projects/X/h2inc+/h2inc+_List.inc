@@ -84,7 +84,7 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
       mov WORD ptr [xax], CR + 256*LF                 ;CR + LF
       mov CHRA ptr [xax + 2], 0                       ;ZTC
     .else
-      DbgWriteF,, $OfsCStr("Out of memory reading ¦SU file", LF), pFileName
+      DbgWriteF,, $OfsCStr("Out of memory reading ¦SU file", CRLF), pFileName
       mov [xdi].dErrorCode, LST_OUT_OF_MEMORY
       xor eax, eax
       mov pMemBlock, xax
@@ -142,6 +142,13 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
           .else
             xor eax, eax                              ;Missing Attribute => assume 0
           .endif
+;          DoesTextMatchA? [xbx], <DECLARE_INTERFACE_IID_>
+;          .if ZERO?
+;            int 3
+;          .endif 
+;          DbgStrA xbx,, "List"
+;          DbgDec eax,, "List"
+;          DbgStrA pToken,, "List"
           invoke InsertAttr, xdi, xbx, dLength, eax
 
         .elseIfBitSet [xdi].dFlags, CF_EQUI

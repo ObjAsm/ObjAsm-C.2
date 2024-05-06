@@ -138,7 +138,7 @@ PPCH_Define proc uses xdi xsi
     .endif
   .endif
 
-;  .ifBitSet $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
+;  .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
 ;    mrm pStmOutPos, [xbx].$Obj(IncFile).pStmOutPos, xcx
 ;    mov CHRA ptr [xcx], 0
 ;  .endif

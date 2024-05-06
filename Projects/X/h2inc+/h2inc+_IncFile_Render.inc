@@ -110,16 +110,15 @@ RenderC proc uses xdi xsi
       jz @Exit
       mov pToken, xax
       OCall xbx::IncFile.PeekNextTokenC
-      jz @Exit
-      .if CHRA ptr [xax] == '{'
-        OCall xbx::IncFile.StmWriteEoL                    ;Only on top level containers
+      .if !ZERO? && CHRA ptr [xax] == '{'
+        OCall xbx::IncFile.StmWriteEoL                  ;Only on top level containers
         .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONTAINERS
           mov [xbx].$Obj(IncFile).pStmOutPos, xdi
           mov [xbx].$Obj(IncFile).dStmOutEoL, esi
           mov CHRA ptr [xdi], 0
         .endif
         mov xax, pToken
-        test xax, xax                                     ;Set/Reset ZF
+        test xax, xax                                   ;Set/Reset ZF
         jmp @ProcessToken
       .endif
     .endif
@@ -154,9 +153,9 @@ RenderC proc uses xdi xsi
     .endif
     mov xdi, [xbx].$Obj(IncFile).pStmOutPos
     mov esi, [xbx].$Obj(IncFile).dStmOutEoL
-    invoke RenderEnum
+    invoke RenderEnum                                   
     jz @Exit
-    .ifBitSet $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
+    .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
       mov [xbx].$Obj(IncFile).pStmOutPos, xdi
       mov [xbx].$Obj(IncFile).dStmOutEoL, esi
       mov CHRA ptr [xdi], 0
@@ -178,7 +177,7 @@ RenderC proc uses xdi xsi
       .if eax != 0
         ;OK, it is a macro, check for args in parenthesis
         OCall xbx::IncFile.PeekNextTokenC
-        .if CHRA ptr [xax] == "("
+        .if !ZERO? && CHRA ptr [xax] == "("
           mov .xsi, xsi
           mov .xdi, xdi
           mov bAddSpace, FALSE
@@ -287,21 +286,22 @@ RenderC proc uses xdi xsi
     mov xax, pToken
     .if CHRA ptr [xax] == "{"
       inc [xbx].$Obj(IncFile).dBraces
-      mov xax, [xbx].$Obj(IncFile).pStmOutPos
-      .if CHRA ptr [xax - 1] == LF
-        OCall xbx::IncFile.StmWrite, $OfsCStrA(";{")
-        OCall xbx::IncFile.StmWriteEoL
-      .endif
+;      mov xax, [xbx].$Obj(IncFile).pStmOutPos
+;      .if CHRA ptr [xax - 1] == LF
+;        OCall xbx::IncFile.StmWrite, $OfsCStrA(";{")
+;        OCall xbx::IncFile.StmWriteEoL
+;      .endif
     .elseif CHRA ptr [xax] == "}"
       dec [xbx].$Obj(IncFile).dBraces
-      mov xax, [xbx].$Obj(IncFile).pStmOutPos
-      .if CHRA ptr [xax - 1] == LF
-        OCall xbx::IncFile.StmWrite, $OfsCStrA(";}")
-        OCall xbx::IncFile.StmWriteEoL
-      .endif
+;      mov xax, [xbx].$Obj(IncFile).pStmOutPos
+;      .if CHRA ptr [xax - 1] == LF
+;        OCall xbx::IncFile.StmWrite, $OfsCStrA(";}")
+;        OCall xbx::IncFile.StmWriteEoL
+;      .endif
       mov eax, [xbx].$Obj(IncFile).dBraces
       .if [xbx].$Obj(IncFile).pEndMacro != NULL && eax == [xbx].$Obj(IncFile).dBlockLevel
-        OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs_END", LF), [xbx].$Obj(IncFile).pEndMacro
+        dec [xbx].$Obj(IncFile).dIndentation
+        OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs_END", CRLF), [xbx].$Obj(IncFile).pEndMacro
         OCall xbx::IncFile.StmWriteEoL
         mov [xbx].$Obj(IncFile).dBlockLevel, 0
         mov [xbx].$Obj(IncFile).pEndMacro, NULL

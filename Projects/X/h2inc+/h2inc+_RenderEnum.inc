@@ -77,6 +77,7 @@ RenderEnum proc uses xbx
     .endif
     mov [xbx].$Obj(IncFile).dEnumValue, 0
     invoke RenderBlock, pName, RBT_ENUM
+    jz @ErrorEoF
 
     ;Write a typedef with the tagName
     .if pName != NULL && pTag != NULL
@@ -124,6 +125,7 @@ RenderEnum proc uses xbx
     .endif
   .endif
 
+  test eax, eax
   ret
 
 @Error:

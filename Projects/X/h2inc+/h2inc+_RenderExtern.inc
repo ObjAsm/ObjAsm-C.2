@@ -19,7 +19,6 @@ RenderExtern proc
 
   .while TRUE
     OCall xbx::IncFile.GetNextTokenC
-    .break .if xax == NULL
     .break .if ZERO? || CHRA ptr [xax] == ";"           ;Statement terminator
     mov pToken, xax
     .if DWORD ptr [xax] == ',"C"' && DCHRA ptr [xax + sizeof(DWORD)] == "0"

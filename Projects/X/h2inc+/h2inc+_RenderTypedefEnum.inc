@@ -19,7 +19,7 @@
 ;             <typedef> <qualifiers> enum <class> <tname> <: type> {x<=a>,y<=b>,...} name<,*name>;
 ;             simplest form is "enum {x = a, y = b};"
 
-RenderTypedefEnum proc bIsTypedef:BOOL
+RenderTypedefEnum proc uses xbx bIsTypedef:BOOL
   local pTag:PTOKEN, pName:PTOKEN, pType:PSTRINGA, pToken:PTOKEN, pCurrToken:PTOKEN
   local cWorkBuffer[MAX_NAME_CHARS]:CHRA, dTypeCSpec:DWORD
 
@@ -99,6 +99,13 @@ RenderTypedefEnum proc bIsTypedef:BOOL
     .else
       OCall xbx::IncFile.StmWriteEoL                  ;Separator line
     .endif
+
+    .if pName != NULL
+      invoke GetTypeSize, pType
+      mov ebx, eax
+      invoke StrLengthA, pName
+      invoke InsertAttr, pTypeSize, pName, eax, ebx
+    .endif 
 
     mov eax, TRUE
 

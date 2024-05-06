@@ -15,6 +15,7 @@
 ;             xax -> '{'
 ;             xbx -> IncFile.
 ; Return:     xax -> Last Token or NULL if failed.
+; Link:       https://devblogs.microsoft.com/oldnewthing/20200909-00/?p=104198
 
 RenderInterfaceBlock proc pName:PSTRINGA
   mov [xbx].$Obj(IncFile).bInsideInterface, TRUE

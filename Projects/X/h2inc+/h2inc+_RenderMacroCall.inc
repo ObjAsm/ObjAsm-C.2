@@ -24,18 +24,16 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
   local dTypeCSpec:DWORD, dScanStep:DWORD, pArgStack:POINTER, cTransBuffer[128]:CHRA
   local pStr:PSTRINGA
 
-  m2m pStmOutPos, [xbx].$Obj(IncFile).pStmOutPos, xax
-  
+;  m2m pStmOutPos, [xbx].$Obj(IncFile).pStmOutPos, xax
+
   DbgPrintF , "¦UD: RenderMacroCall - found: ¦SA", \
             [xbx].$Obj(IncFile).dLineNumber, pMacroName
 
   .ifBitSet dMacroFlags, MCF_SKIP_INVOKATION
     OCall xbx::IncFile.PeekNextTokenC
-    .if !ZERO?
-      .if CHRA ptr [xax] == "("
-        OCall xbx::IncFile.GetNextTokenC                 ;Consume it
-        invoke SkipBraces, "(", ")"
-      .endif
+    .if !ZERO? && CHRA ptr [xax] == "("
+      OCall xbx::IncFile.GetNextTokenC                  ;Consume it
+      invoke SkipBraces, "(", ")"
     .endif
     mov eax, TRUE
     ret
@@ -142,6 +140,7 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
           .endif
           .if CHRA ptr [xax] == ")"
             dec dParenthesesCount
+            .break .if ZERO?
             .continue
           .endif
           .if CHRA ptr [xax] == "*"
@@ -169,6 +168,9 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
 
           invoke TranslateTypeQualifier, xax
           .continue .if CHRA ptr [xax] == 0
+          .continue .if $DoesStringMatchA?([xax], <struct>) ;Ignore 'struct'
+          .continue .if $DoesStringMatchA?([xax], <union>)  ;Ignore 'union'
+          .continue .if $DoesStringMatchA?([xax], <enum>)   ;Ignore 'enum'
           mov pToken, xax
 
           .if pType == NULL
@@ -208,11 +210,13 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
       jmp @Exit
     .endif
   .endif
+
   .ifBitSet dMacroFlags, MCF_END_MACRO
     mov xax, pMacroName
     mov [xbx].$Obj(IncFile).pEndMacro, xax
     mov eax, [xbx].$Obj(IncFile).dBraces
     mov [xbx].$Obj(IncFile).dBlockLevel, eax
+    inc [xbx].$Obj(IncFile).dIndentation
   .endif
 
 @Done:
@@ -226,7 +230,7 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
       mov [xbx].$Obj(IncFile).bInsideInterface, TRUE
     .endif
   .endif
-;  .ifBitSet $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
+;  .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
 ;    mrm [xbx].$Obj(IncFile).pStmOutPos, pStmOutPos, xcx
 ;    mov CHRA ptr [xcx], 0
 ;  .endif

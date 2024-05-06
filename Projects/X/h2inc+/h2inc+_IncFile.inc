@@ -129,8 +129,8 @@ Method IncFile.CreateDefFile, uses xbx xdi xsi, pFileName:PSTRINGW
                         FILE_ATTRIBUTE_ARCHIVE, 0
     .if xax != INVALID_HANDLE_VALUE
       mov hFile, xax
-      invoke WriteFile, hFile, $OfsCStrA("LIBRARY", LF), 7 + 2, addr dBytesWritten, NULL
-      invoke WriteFile, hFile, $OfsCStrA("EXPORTS", LF), 7 + 2, addr dBytesWritten, NULL
+      invoke WriteFile, hFile, $OfsCStrA("LIBRARY", CRLF), 7 + 2, addr dBytesWritten, NULL
+      invoke WriteFile, hFile, $OfsCStrA("EXPORTS", CRLF), 7 + 2, addr dBytesWritten, NULL
       xor esi, esi
       .while TRUE
         mov xcx, [xbx].pDefs
@@ -605,11 +605,11 @@ endif
     xor eax, eax
     jmp @@EOM
   .endif
-  lea xsi, cMessage
-  WriteF xsi, "Allocating buffers for \`¦SU\`\n", [xbx].pHeaderFileName
-  WriteF xsi, "StmBuffer1 at memory ¦HXh\n", [xbx].pStmBuffer1
-  WriteF xsi, "StmBuffer2 at memory ¦HXh", [xbx].pStmBuffer2
-  OCall [xbx].pOwner::Application.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
+;  lea xsi, cMessage
+;  WriteF xsi, "Allocating buffers for \`¦SU\`\n", [xbx].pHeaderFileName
+;  WriteF xsi, "StmBuffer1 at memory ¦HXh\n", [xbx].pStmBuffer1
+;  WriteF xsi, "StmBuffer2 at memory ¦HXh", [xbx].pStmBuffer2
+;  OCall [xbx].pOwner::Application.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
 
   ;Read the header file content
   invoke ReadFile, hFile, [xbx].pStmBuffer2, dFileSize, addr dBytesRead, NULL

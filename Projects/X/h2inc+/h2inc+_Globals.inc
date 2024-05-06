@@ -126,7 +126,7 @@ MCF_HAS_PARAMS          equ 002h    ;Macro has parameters
 MCF_SKIP_BRACES         equ 004h    ;Skip first and last parenthesis in macro invocation
 MCF_COPY_LINE           equ 008h    ;Assume rest of line belongs to macro invocation
 MCF_PARAMS_FOLLOW       equ 010h    ;Assume method parameters coming after macro invocation
-MCF_END_MACRO           equ 020h    ;End next block with a ???_END macro invocation
+MCF_END_MACRO           equ 020h    ;End next block with a END_xxx macro invocation
 MCF_STRUCT_BEG          equ 040h    ;Macro begins a struct/union definition
 MCF_INTERFACE_BEG       equ 080h    ;Add an "??Interface equ <xxx>" line
 MCF_INTERFACE_END       equ 100h    ;Add an "??Interface equ <>" line
@@ -300,9 +300,9 @@ DefineConvTabEntry macro EntryName:req, Alloc:req, Incr:req, Flags:=<>, FileName
 endm
 
 PersistConvTable label POINTER
+DefineConvTabEntry  KnownMacros,     1000, 100, CF_ATTR or CF_INIF, <KnwMacros>,    <Macro Names>
 DefineConvTabEntry  KnownTypeSize,   1000, 100, CF_ATTR or CF_INIF, <KnwTypeSizes>, <Type Size>
 DefineConvTabEntry  SimpleTypes,     1000, 100, CF_SNGL or CF_INIF, <TypeNames>,    <Simple Type Names>
-DefineConvTabEntry  KnownMacros,     1000, 100, CF_ATTR or CF_INIF, <KnwMacros>,    <Macro Names>
 DefineConvTabEntry  KnownEquates,    1000, 100, CF_ATTR or CF_INIF, <KnwEquate>,    <Equate Names>
 DefineConvTabEntry  KnownStructs,    1000, 100, CF_SNGL or CF_INIF, <KnwStruct>,    <Structure Names>
 DefineConvTabEntry  KnownQualifiers, 1000, 100, CF_ATTR or CF_INIF, <KnwQualif>,    <Prototype Qualifiers>

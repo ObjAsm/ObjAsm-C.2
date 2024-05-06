@@ -94,7 +94,7 @@ RenderTypedefContainer proc pContainerType:PSTRINGA
     jz @ErrorEoF
     mov pToken, xax
     dec [xbx].$Obj(IncFile).dIndentation
-    OCall xbx::IncFile.StmWriteF,$OfsCStrA("%hs%hs ends", LF), pName, pSuffix
+    OCall xbx::IncFile.StmWriteF,$OfsCStrA("%hs%hs ends", CRLF), pName, pSuffix
     OCall xbx::IncFile.StmWriteEoL
 
     .if pTag != NULL && pName != NULL

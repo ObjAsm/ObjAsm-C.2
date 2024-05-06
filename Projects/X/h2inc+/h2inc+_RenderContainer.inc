@@ -116,9 +116,9 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA
     ;Terminate container definition -----------------------------------------------------
     dec [xbx].$Obj(IncFile).dIndentation
     .if pName != NULL
-      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs ends", LF), pName
+      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs ends", CRLF), pName
     .else
-      OCall xbx::IncFile.StmWrite, $OfsCStrA("ends", LF)
+      OCall xbx::IncFile.StmWrite, $OfsCStrA("ends", CRLF)
     .endif
     OCall xbx::IncFile.StmWriteEoL
 
