@@ -16,7 +16,7 @@
 ;             xdx -> Name.
 ; Syntax:     typedef function pointer
 ;             typedef <annotations><qualifiers><returntype> ( <qualifiers> * <name> )(<parameters>)
-; Notes:      The first "(" has been read already!
+; Notes:      The first '(' has been read already!
 ;             This procedure has to be reentrant, since a function parameter may have "function ptr"
 ;             types. That means, that we have to write to an intermediate buffer (szPrototype) until
 ;             we returned from the last recursive call.
@@ -26,6 +26,7 @@ RenderTypedefFuncPtr proc uses xdi pParent:PSTRINGA
   local dQualifier:DWORD, dPtrCount:DWORD, bFirstParam:DWORD
   local cPrototype[1024*3]:CHRA, cType[128]:CHRA, cTransBuffer[128]:CHRA, dInside:DWORD
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderTypedefFuncPtr")
   mov dPtrCount, 0
   mov dQualifier, 0
   mov cPrototype, 0
@@ -34,19 +35,21 @@ RenderTypedefFuncPtr proc uses xdi pParent:PSTRINGA
   ;Get Qualifiers & Name ----------------------------------------------------------------
   .while TRUE
     OCall xbx::IncFile.GetNextTokenC
-    jz @Error
+    test xax, xax
+    jz @ErrorEoF
     invoke SkipAnnotations, xax
-    jz @Error
+    test xax, xax
+    jz @ErrorEoF
     mov pToken, xax
 
-    cmp CHRA ptr [xax], ";"                             ;Statement terminator
-    jz @Error
+    cmp CHRA ptr [xax], ';'                             ;Statement terminator
+    jz @ErrorSyntax
 
-    cmp CHRA ptr [xax], "}"                             ;block terminator
+    cmp CHRA ptr [xax], '}'                             ;block terminator
     jz @Exit
 
-    .break .if CHRA ptr [xax] == ")"
-    .if CHRA ptr [xax] == "*"
+    .break .if CHRA ptr [xax] == ')'
+    .if CHRA ptr [xax] == '*'
       inc dPtrCount
     .else
       invoke GetProtoQualifier, xax
@@ -60,15 +63,15 @@ RenderTypedefFuncPtr proc uses xdi pParent:PSTRINGA
     .endif
   .endw
 
-  DbgPrintF , "¦UD: RenderTypedefFuncPtr - ¦SA", [xbx].$Obj(IncFile).dLineNumber, pName
-
   ;Parse function header ----------------------------------------------------------------
   OCall xbx::IncFile.GetNextTokenC
-  jz @Error
+  test xax, xax
+  jz @ErrorEoF
   invoke SkipAnnotations, xax
-  jz @Error
-  cmp CHRA ptr [xax], "("
-  jnz @Error
+  test xax, xax
+  jz @ErrorEoF
+  cmp CHRA ptr [xax], '('
+  jnz @ErrorSyntax
 
   lea xdi, cPrototype                                   ;xdi -> Buffer
   xor eax, eax
@@ -94,12 +97,14 @@ RenderTypedefFuncPtr proc uses xdi pParent:PSTRINGA
   .while TRUE
     OCall xbx::IncFile.GetNextTokenC
 @ProcessToken:
-    jz @Error
+    test xax, xax
+    jz @ErrorEoF
     invoke SkipAnnotations, xax
-    jz @Error
-    .break .if CHRA ptr [xax] == ";"                    ;Statement terminator
+    test xax, xax
+    jz @ErrorEoF
+    .break .if CHRA ptr [xax] == ';'                    ;Statement terminator
 
-    .if CHRA ptr [xax] == "*"
+    .if CHRA ptr [xax] == '*'
       inc dPtrCount
       .continue
     .endif
@@ -108,30 +113,32 @@ RenderTypedefFuncPtr proc uses xdi pParent:PSTRINGA
     .continue .if $DoesStringMatchA?([xax], <union>)    ;Ignore 'union'
     .continue .if $DoesStringMatchA?([xax], <enum>)     ;Ignore 'enum'
 
-    .if CHRA ptr [xax] == "["
+    .if CHRA ptr [xax] == '['
       inc dPtrCount
       .repeat
         OCall xbx::IncFile.GetNextTokenC
-      .until ZERO? || CHRA ptr [xax] == "]" || CHRA ptr [xax] == ";"
+      .until xax == NULL || CHRA ptr [xax] == ']' || CHRA ptr [xax] == ';'
       .continue
     .endif
 
-    .if CHRA ptr [xax] == "("
+    .if CHRA ptr [xax] == '('
       ;Function ptr as function parameter?
       invoke IsFunctionPtr?
       .if eax != FALSE
         movzx eax, [xbx].$Obj(IncFile).bInsideInterface ;If we are inside an interface declaration
-      mov dInside, eax                                  ;  then we want to declare a typedef
+        mov dInside, eax                                ;  then we want to declare a typedef
         mov [xbx].$Obj(IncFile).bInsideInterface, FALSE
         invoke RenderTypedefFuncPtr, pName              ;Possible recursion here!!!
+        test xax, xax
+        jz @ErrorEoF
         mov pToken, xax
-      mov eax, dInside
+        mov eax, dInside
         mov [xbx].$Obj(IncFile).bInsideInterface, al
         ;invoke sprintf, addr cType, $OfsCStrA("P¦SA_¦SA"), pName, edx
         lea xax, cType
         mov pType, xax
         mov xax, pToken
-        .break .if CHRA ptr [xax] == ";"
+        .break .if CHRA ptr [xax] == ';'
       .endif
     .endif
 
@@ -160,11 +167,11 @@ RenderTypedefFuncPtr proc uses xdi pParent:PSTRINGA
     .endif
 
     mov xax, pToken                                     ;Needed
-    .if CHRA ptr [xax] == "," || CHRA ptr [xax] == ")"
+    .if CHRA ptr [xax] == ',' || CHRA ptr [xax] == ')'
       .if bFirstParam != FALSE
         mov xcx, pType
         .break .if CHRA ptr [xcx] == 0 && dPtrCount == 0
-        .break .if CHRA ptr [xcx] == ")"                ;We have no argument => name()
+        .break .if CHRA ptr [xcx] == ')'                ;We have no argument => name()
         FillStringA [xdi], <:>
         add xdi, ??StrLen
         mov bFirstParam, FALSE
@@ -188,7 +195,7 @@ RenderTypedefFuncPtr proc uses xdi pParent:PSTRINGA
       .endif
 
       mov xax, pToken
-      .break .if CHRA ptr [xax] == ")"                  ;Exit here with ')'
+      .break .if CHRA ptr [xax] == ')'                  ;Exit here with ')'
 
       .if CHRA ptr [xdi - 1] == SPC
         dec xdi
@@ -206,8 +213,10 @@ RenderTypedefFuncPtr proc uses xdi pParent:PSTRINGA
 
   .endw
 
-  .while CHRA ptr [xax] != ";" && CHRA ptr [xax] != "," ;Consume the rest up to ';' or ','
+  .while CHRA ptr [xax] != ';' && CHRA ptr [xax] != ',' ;Consume the rest up to ';' or ','
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
+    jz @ErrorEoF
   .endw
   mov pToken, xax
 
@@ -241,14 +250,16 @@ RenderTypedefFuncPtr proc uses xdi pParent:PSTRINGA
       OCall xbx::IncFile.StmWriteEoL
     .endif
   .endif
+
+  ;Exit ---------------------------------------------------------------------------------
 @Exit:
   mov xdx, pName
   mov xax, pToken
-  test xax, xax
   ret
 
-@Error:
-  OCall xbx::IncFile.ShowError, $OfsCStr("RenderTypedefFuncPtr error")
+@ErrorSyntax:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderTypedefFuncPtr")
   OCall xbx::IncFile.StmWriteError
   invoke GotoNextToken, addr szSemiColon
   mov xdx, pName

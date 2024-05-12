@@ -61,8 +61,8 @@
 ;1. Determine the size of the allocation unit (BYTE, WORD, DWORD, QWORD) that is the largest of
 ;   all field types (signed or unsigned).
 ;2. Fill the allocation unit with the fields in the reverse order in which they appear, until the
-;   total size exceeds the size of the allocation unit. 
-;3. Fill the rest of the allocation unit with a dummy filler. 
+;   total size exceeds the size of the allocation unit.
+;3. Fill the rest of the allocation unit with a dummy filler.
 ;4. Start a new allocation unit and repeat the process from step 2 to the first field.
 
 
@@ -77,7 +77,7 @@
 ;             Arg3: -> First field name
 ;             Arg4: -> Record Suffix
 ;             xbx -> IncFile
-; Return:     xax -> Last token or NULL, ZF set.
+; Return:     xax -> Last token or NULL.
 ; Note:       On entry, first ':' is consumed.
 
 
@@ -87,13 +87,14 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
   local dIndexUpper:DWORD, dIndexLower:DWORD, bMultipleAllocUnits:BYTE
   local cSeparator:CHRA, InpStat:INP_STAT
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderBitField")
   ;Build the RECORD name ----------------------------------------------------------------
   lea xdi, cRecName
   .if pContainerName != NULL
     WriteFA xdi, "¦SA", pContainerName
   .endif
   WriteFA xdi, "¦SA", pSuffix
-  
+
   ;Initialization -----------------------------------------------------------------------
   mov cSeparator, ';'
   mov bMultipleAllocUnits, FALSE
@@ -111,35 +112,41 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
   .while TRUE
     Add@Stacklist pFieldStackList, pToken               ;First bitfield name
     OCall xbx::IncFile.GetNextTokenC                    ;BitField size
+    test xax, xax
     jz @ErrorEoF
     invoke dec2dwordA, xax
     Add@Stacklist pFieldStackList, xax, xcx             ;Save eax (field length)
-    OCall xbx::IncFile.GetNextTokenC                    ;";" or ','
+    OCall xbx::IncFile.GetNextTokenC                    ;';' or ','
+    test xax, xax
     jz @ErrorEoF
     mov cl, [xax]
-    .if cl == ";"
+    .if cl == ';'
       mov pToken, xax                                   ;Save token for exit
       .break .if cSeparator == ','
       OCall xbx::IncFile.PeekNextTokenLogicC
-      jz @ErrorEoF 
-      .break .if CHRA ptr [xax] == "}"                  ;End of block detected
+      test xax, xax
+      jz @ErrorEoF
+      .break .if CHRA ptr [xax] == '}'                  ;End of block detected
       OCall xbx::IncFile.InputStatusSave, addr InpStat
       OCall xbx::IncFile.GetNextTokenC
+      test xax, xax
       jz @ErrorEoF
       invoke GetTypeSize, xax                           ;Get the Type
       shl eax, 3                                        ;Convert to bit size
       .if eax > dAllocUnitSize
         mov dAllocUnitSize, eax
       .endif
-    .elseif cl == ","
+    .elseif cl == ','
       mov cSeparator, cl
     .else
       jmp @ErrorSyntax
     .endif
     OCall xbx::IncFile.GetNextTokenC                     ;New name
+    test xax, xax
     jz @ErrorEoF
     mov pToken, xax
-    OCall xbx::IncFile.GetNextTokenC                     ;Consume ":"
+    OCall xbx::IncFile.GetNextTokenC                     ;Consume ':'
+    test xax, xax
     jz @ErrorEoF
     .if CHRA ptr [xax] != ':'
       OCall xbx::IncFile.InputStatusLoad, addr InpStat
@@ -175,7 +182,7 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
     .if esi != 0
       mov bMultipleAllocUnits, TRUE                     ;If we are not at the end then more
     .endif                                              ;   Allocation Units must exist
-  
+
     ;Process the filler
     mov esi, dAllocUnitSize
     sub esi, dCummulatedSize
@@ -186,9 +193,9 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
         WriteFA xdi, "¦SA_Filler:¦UD, ", addr cRecName, esi
       .endif
     .endif
-    
+
     mov esi, dIndexUpper
-    .while esi != dIndexLower 
+    .while esi != dIndexLower
       WriteFA xdi, "¦SA_", addr cRecName
       dec esi
       dec esi
@@ -207,10 +214,10 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
   mov DCHRA ptr [xdi - 2*sizeof(CHRA)], 0               ;Delete last comma and SPC
 
   ;Declare the RECORD -------------------------------------------------------------------
-  OCall xbx::IncFile.StmWrite, addr cLineBuffer 
+  OCall xbx::IncFile.StmWrite, addr cLineBuffer
   OCall xbx::IncFile.StmWriteComment
   OCall xbx::IncFile.StmWriteEoL
-  
+
   ;Declare the member
   lea xdi, cLineBuffer
   .if pContainerName == NULL
@@ -218,7 +225,7 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
   .else
     WriteFA xdi, "¦SA_BITS ¦SA \[\]", pContainerName, addr cRecName
   .endif
-  OCall xbx::IncFile.StmWrite, addr cLineBuffer 
+  OCall xbx::IncFile.StmWrite, addr cLineBuffer
   OCall xbx::IncFile.StmWriteComment
   OCall xbx::IncFile.StmWriteEoL
 
@@ -230,15 +237,14 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
 
 @ErrorSyntax:
   inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderBitField")
   OCall xbx::IncFile.StmWriteError
-  invoke GotoClosingToken, '{', '}'
-  jz @ErrorEoF
   Destroy@Stacklist pFieldStackList, xcx                ;Preserve xax and ZF
+  invoke GotoClosingToken, '{', '}'
   ret
 
 @ErrorEoF:
   inc [xbx].$Obj(IncFile).dErrorCount
-  OCall xbx::IncFile.StmWriteError
   Destroy@Stacklist pFieldStackList
   xor xax, xax                                          ;xax = NULL and ZF set
   ret

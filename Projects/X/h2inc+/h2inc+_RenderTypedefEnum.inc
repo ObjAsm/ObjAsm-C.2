@@ -13,7 +13,7 @@
 ; Purpose:    Translate 'typedef enum'.
 ; Arguments:  Arg1: Typedef flag.
 ;             xbx -> IncFile.
-; Return:     TRUE if succeeded, otherwise FALSE
+; Return:     TRUE if succeeded, otherwise FALSE.
 ; Syntax:     <typedef> <qualifiers> enum <tname> {x<=a>,y<=b>,...} name<,*name>;
 ;             <typedef> <qualifiers> enum <tname> <:type> {x<=a>,y<=b>,...} name<,*name>;
 ;             <typedef> <qualifiers> enum <class> <tname> <: type> {x<=a>,y<=b>,...} name<,*name>;
@@ -23,25 +23,33 @@ RenderTypedefEnum proc uses xbx bIsTypedef:BOOL
   local pTag:PTOKEN, pName:PTOKEN, pType:PSTRINGA, pToken:PTOKEN, pCurrToken:PTOKEN
   local cWorkBuffer[MAX_NAME_CHARS]:CHRA, dTypeCSpec:DWORD
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderTypedefEnum")
   mov pTag, NULL
   mov pName, NULL
   mov pType, NULL
 
   OCall xbx::IncFile.GetNextTokenC
+  test xax, xax
+  jz @ErrorEoF
   invoke SkipAnnotations, xax
+  test xax, xax
   jz @ErrorEoF
   invoke SkipMacros, xax
+  test xax, xax
   jz @ErrorEoF
 
-  .if CHRA ptr [xax] != "{" && CHRA ptr [xax] != ":"
+  .if CHRA ptr [xax] != '{' && CHRA ptr [xax] != ':'
     mov pTag, xax
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
+    jz @ErrorEoF
   .endif
   mov pToken, xax
 
-  .if xax != NULL && CHRA ptr [xax] == ":"            ;Type specified?
+  .if xax != NULL && CHRA ptr [xax] == ':'            ;Type specified?
     OCall xbx::IncFile.GetNextTokenC
-    jz @Error
+    test xax, xax
+    jz @ErrorEoF
 
     ;pToken may be a basic C type
     BasicTypeCScan
@@ -55,7 +63,8 @@ RenderTypedefEnum proc uses xbx bIsTypedef:BOOL
     .else
       mov pType, xax
       OCall xbx::IncFile.GetNextTokenC
-      jz @Error
+      test xax, xax
+      jz @ErrorEoF
       mov pToken, xax
     .endif
   .else
@@ -63,7 +72,7 @@ RenderTypedefEnum proc uses xbx bIsTypedef:BOOL
   .endif
 
   mov xax, pToken
-  .if xax != NULL && CHRA ptr [xax] == "{"
+  .if xax != NULL && CHRA ptr [xax] == '{'
     .if bIsTypedef != FALSE
       invoke GetBlockName, addr cWorkBuffer           ;xax -> Block Name or NULL
     .else
@@ -79,6 +88,8 @@ RenderTypedefEnum proc uses xbx bIsTypedef:BOOL
     .endif
     mov [xbx].$Obj(IncFile).dEnumValue, 0
     invoke RenderBlock, pName, RBT_ENUM
+    test xax, xax
+    jz @ErrorEoF
 
     ;Write a typedef with the tagName
     mov xax, pName
@@ -92,10 +103,14 @@ RenderTypedefEnum proc uses xbx bIsTypedef:BOOL
 
     .if bIsTypedef != FALSE
       OCall xbx::IncFile.GetNextTokenC                 ;Skip enum name
+      test xax, xax
+      jz @ErrorEoF
     .endif
     OCall xbx::IncFile.GetNextTokenC
-    .if !ZERO? && pName != NULL && CHRA ptr [xax] != ";"
+    .if xax != NULL && pName != NULL && CHRA ptr [xax] != ';'
       invoke RenderFurtherTypes, pName, NULL, xax
+      test xax, xax
+      jz @ErrorEoF
     .else
       OCall xbx::IncFile.StmWriteEoL                  ;Separator line
     .endif
@@ -104,8 +119,8 @@ RenderTypedefEnum proc uses xbx bIsTypedef:BOOL
       invoke GetTypeSize, pType
       mov ebx, eax
       invoke StrLengthA, pName
-      invoke InsertAttr, pTypeSize, pName, eax, ebx
-    .endif 
+      invoke InsertAttr, pNewTypeSize, pName, eax, ebx
+    .endif
 
     mov eax, TRUE
 
@@ -118,9 +133,9 @@ RenderTypedefEnum proc uses xbx bIsTypedef:BOOL
       OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs typedef %hs"), xcx, pType
       OCall xbx::IncFile.StmWriteEoL
       mov eax, TRUE
-    .elseif CHRA ptr [xcx] == "*"
+    .elseif CHRA ptr [xcx] == '*'
       OCall xbx::IncFile.GetNextTokenC
-      .if !ZERO?
+      .if xax != NULL
         OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs typedef ptr %hs"), xax, pType
         OCall xbx::IncFile.StmWriteEoL
       .endif
@@ -130,10 +145,21 @@ RenderTypedefEnum proc uses xbx bIsTypedef:BOOL
     .endif
   .endif
 
+  ;Exit ---------------------------------------------------------------------------------
+@Exit:
   ret
 
-@Error:
+@ErrorSyntax:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderTypedefEnum")
+  OCall xbx::IncFile.StmWriteError
+  invoke GotoNextToken, addr szSemiColon
+  xor eax, eax
+  ret
+
 @ErrorEoF:
-  DbgErrorF , "¦SU(¦UD): RenderTypedefEnum - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.StmWriteError
+  xor eax, eax
   ret
 RenderTypedefEnum endp

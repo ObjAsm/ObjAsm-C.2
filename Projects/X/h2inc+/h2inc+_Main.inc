@@ -22,15 +22,15 @@ Method Application.Done, uses xbx xsi
   SetObject xbx
 
   .if [xbx].bTerminate == FALSE
-    ;Save all lists
-    OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Saving file lists...")
-    lea xsi, PersistConvTable
+    ;Save new content lists only
+    OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Saving file lists...")
+    lea xsi, NewContentLists
     .while POINTER ptr [xsi] != NULL
-      .if [xsi].CONV_TAB_ENTRY.pFileName != NULL
-        OCall [xsi].CONV_TAB_ENTRY.pList::List.SaveToFile, [xsi].CONV_TAB_ENTRY.pFileName
+      .if [xsi].LIST_SETUP.pFileName != NULL
+        OCall [xsi].LIST_SETUP.pList::List.SaveToFile, [xsi].LIST_SETUP.pFileName
       .endif
-      Destroy [xsi].CONV_TAB_ENTRY.pList::List.Done
-      add xsi, sizeof(CONV_TAB_ENTRY)
+      Destroy [xsi].LIST_SETUP.pList::List.Done
+      add xsi, sizeof(LIST_SETUP)
     .endw
   .endif
 
@@ -43,7 +43,7 @@ Method Application.Done, uses xbx xsi
   invoke LocalFree, [xbx].pCL_Args
   invoke LocalFree, [xbx].pEV_Args
 
-  OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Program exit")
+  OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Program exit")
   invoke Sleep, 5000
   ACall xbx.Done
 MethodEnd
@@ -158,7 +158,7 @@ Method Application.Init, uses xbx xdi xsi
   SetObject xbx
   ACall xbx.Init, NULL
 
-  OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Initializing...")
+  OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Initializing...")
 
   invoke GetSystemTime, addr LocTime                    ;Get conversion time for all files
   lea xdi, [xbx].cIncCreationTime
@@ -182,13 +182,11 @@ Method Application.Init, uses xbx xdi xsi
   cmp [xbx].bTerminate, FALSE
   jne @@EOM
 
-  OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Reading program arguments...")
+  OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Reading program arguments...")
   ;Get CL arguments ---------------------------------------------------------------------
   mov xax, $invoke(GetCommandLine)
-;  mov xax, $OfsCStrW('h2inc+.exe -b -y -d3 -i -o".\inc" ".\h\HeaderCollection.h"')
-;  mov xax, $OfsCStrW('h2inc+.exe -@ABC -d3 -i -V3 -W3 -I",,  ,,   .\h\MoreFiles, D:\ObjAsm\Code\Objects  ,, ," -o".\inc" ".\h\*.*"')
   mov xax, $OfsCStrW('h2inc+.exe -@".\h2inc+_Options.txt"')
-  lea xdx, dArgCount 
+  lea xdx, dArgCount
   invoke CommandLineToArgvW, xax, xdx                   ;Strips the quotes away!
   mov [xbx].pCL_Args, xax
   .if dArgCount == 1
@@ -203,7 +201,7 @@ Method Application.Init, uses xbx xdi xsi
 ;    add xax, sizeof(POINTER)
 ;    .break .if POINTER ptr [xax] == NULL
 ;  .endw
-  
+
   OCall xbx.GetOptions, [xbx].pCL_Args, 1, dArgCount, $OfsCStr("command line")
   cmp eax, FALSE
   je @@EOM
@@ -213,8 +211,8 @@ Method Application.Init, uses xbx xdi xsi
   .if [xbx].Options.pEnvVar != NULL
     invoke GetEnvironmentVariableW, [xbx].Options.pEnvVar, addr cEnvVar, lengthof(cEnvVar)
     .if eax == 0
-      invoke CreateFileW, [xbx].Options.pEnvVar, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, \
-                          FILE_ATTRIBUTE_ARCHIVE, 0
+      invoke CreateFileW, [xbx].Options.pEnvVar, GENERIC_READ, FILE_SHARE_READ, NULL, \
+                          OPEN_EXISTING, FILE_ATTRIBUTE_ARCHIVE, 0
       .if xax == INVALID_HANDLE_VALUE
         DbgApiError
         lea xsi, cMessage
@@ -227,7 +225,8 @@ Method Application.Init, uses xbx xdi xsi
       invoke CloseHandle, hFile
       .if dBytesRead == sizeof(cReadBuffer)
         lea xsi, cMessage
-        WriteF xsi, "file \`¦SU\` too large, additional parameters skipped", [xbx].Options.pEnvVar
+        WriteF xsi, "file \`¦SU\` too large, additional parameters skipped", \
+               [xbx].Options.pEnvVar
         OCall xbx.ShowWarning, WARNING_MAX, addr cMessage
         jmp @F
       .endif
@@ -236,7 +235,8 @@ Method Application.Init, uses xbx xdi xsi
       m2z CHRA ptr [xcx + xax]                          ;Set ZTC
       invoke StrA2StrW, addr cEnvVar, addr cReadBuffer
     .elseif eax == lengthof(cEnvVar) - 1                ;Exclude ZTC
-      WriteF xsi, "environment variable \`¦SU\` too large, additional parameters skipped", [xbx].Options.pEnvVar
+      WriteF xsi, "environment variable \`¦SU\` too large, additional parameters skipped", \
+             [xbx].Options.pEnvVar
       OCall xbx.ShowWarning, WARNING_MAX, addr cMessage
       jmp @F
     .endif
@@ -265,7 +265,7 @@ Method Application.Init, uses xbx xdi xsi
     mov [xbx].bTerminate, TRUE
     jmp @@EOM
   .endif
-  
+
   ;Get all include directories and store them in SearchPathColl
   .if [xbx].Options.pIncludeDirs != NULL
     ;Split the list
@@ -284,13 +284,14 @@ Method Application.Init, uses xbx xdi xsi
         invoke FileExistW, addr cFullSearchPath
         .if eax == FALSE
           lea xsi, cMessage
-          WriteF xsi, "Include directory \`¦SU\` doesn\´t exist, continue without it?", addr cFullSearchPath 
+          WriteF xsi, "Include directory \`¦SU\` doesn\´t exist, continue without it?", \
+                 addr cFullSearchPath
           OCall xbx.ShowQuestion, addr cMessage
           .if eax != 'Y'
             mov [xbx].bTerminate, TRUE
             jmp @@EOM
           .endif
-        .else  
+        .else
           invoke StrNewW, addr cFullSearchPath
           OCall [xbx].SearchPathColl::StrCollectionW.Insert, xax
         .endif
@@ -317,16 +318,16 @@ Method Application.Init, uses xbx xdi xsi
   .endif
 
   ;Load the lists
-  lea xsi, PersistConvTable
+  lea xsi, KnownContentLists
   .if [xbx].Options.bLoadLists == FALSE
-    OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Loading ini-file lists...")
+    OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Loading ini-file lists...")
     .while POINTER ptr [xsi] != NULL
-      .if [xsi].CONV_TAB_ENTRY.pList == NULL
-        mov [xsi].CONV_TAB_ENTRY.pList, $New(List)      ;Create the list
-        OCall xax::List.Init, NULL, [xsi].CONV_TAB_ENTRY.dAlloc, \
-                                    [xsi].CONV_TAB_ENTRY.dIncr, [xsi].CONV_TAB_ENTRY.dFlags
+      .if [xsi].LIST_SETUP.pList == NULL
+        mov [xsi].LIST_SETUP.pList, $New(List)      ;Create the list
+        OCall xax::List.Init, NULL, [xsi].LIST_SETUP.dAlloc, \
+                                    [xsi].LIST_SETUP.dIncr, [xsi].LIST_SETUP.dFlags
       .endif
-      .ifBitSet [xsi].CONV_TAB_ENTRY.dFlags, CF_INIF
+      .ifBitSet [xsi].LIST_SETUP.dFlags, CF_KNW
         OCall [xbx].IniReader::IniFileReader.LoadList, xsi
         .if eax == FALSE
           OCall xbx.ShowError, $OfsCStr(".ini-file corrupt")
@@ -334,38 +335,39 @@ Method Application.Init, uses xbx xdi xsi
           jmp @@EOM
         .endif
       .endif
-      add xsi, sizeof(CONV_TAB_ENTRY)
+      add xsi, sizeof(LIST_SETUP)
     .endw
   .else
-    OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Loading file lists...")
+    OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Loading file lists...")
     .while POINTER ptr [xsi] != NULL
-      .if [xsi].CONV_TAB_ENTRY.pList == NULL
-        mov [xsi].CONV_TAB_ENTRY.pList, $New(List)      ;Create the list
-        OCall xax::List.Init, NULL, [xsi].CONV_TAB_ENTRY.dAlloc, \
-                                    [xsi].CONV_TAB_ENTRY.dIncr, [xsi].CONV_TAB_ENTRY.dFlags
+      .if [xsi].LIST_SETUP.pList == NULL
+        mov [xsi].LIST_SETUP.pList, $New(List)      ;Create the list
+        OCall xax::List.Init, NULL, [xsi].LIST_SETUP.dAlloc, \
+                                    [xsi].LIST_SETUP.dIncr, [xsi].LIST_SETUP.dFlags
       .endif
-      OCall [xsi].CONV_TAB_ENTRY.pList::List.LoadFromFile, [xsi].CONV_TAB_ENTRY.pFileName
+      OCall [xsi].LIST_SETUP.pList::List.LoadFromFile, [xsi].LIST_SETUP.pFileName
       .if eax == FALSE
         lea xdi, cMessage
-        WriteF xdi, "list file \`¦SU\`corrupt", [xsi].CONV_TAB_ENTRY.pFileName
+        WriteF xdi, "list file \`¦SU\`corrupt", [xsi].LIST_SETUP.pFileName
         OCall xbx.ShowError, addr cMessage
         mov [xbx].bTerminate, TRUE
         jmp @@EOM
       .endif
-      add xsi, sizeof(CONV_TAB_ENTRY)
+      add xsi, sizeof(LIST_SETUP)
     .endw
   .endif
 
+; ### Merge the lists ###
 ;  ;Load the lists
 ;  lea xsi, PersistConvTable
-;  OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Loading ini-file lists...")
+;  OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Loading ini-file lists...")
 ;  .while POINTER ptr [xsi] != NULL
-;    .if [xsi].CONV_TAB_ENTRY.pList == NULL
-;      mov [xsi].CONV_TAB_ENTRY.pList, $New(List)      ;Create the list
-;      OCall xax::List.Init, NULL, [xsi].CONV_TAB_ENTRY.dAlloc, \
-;                                  [xsi].CONV_TAB_ENTRY.dIncr, [xsi].CONV_TAB_ENTRY.dFlags
+;    .if [xsi].LIST_SETUP.pList == NULL
+;      mov [xsi].LIST_SETUP.pList, $New(List)      ;Create the list
+;      OCall xax::List.Init, NULL, [xsi].LIST_SETUP.dAlloc, \
+;                                  [xsi].LIST_SETUP.dIncr, [xsi].LIST_SETUP.dFlags
 ;    .endif
-;    .ifBitSet [xsi].CONV_TAB_ENTRY.dFlags, CF_INIF
+;    .ifBitSet [xsi].LIST_SETUP.dFlags, CF_KNW
 ;      OCall [xbx].IniReader::IniFileReader.LoadList, xsi
 ;      .if eax == FALSE
 ;        OCall xbx.ShowError, $OfsCStr(".ini-file corrupt")
@@ -373,28 +375,28 @@ Method Application.Init, uses xbx xdi xsi
 ;        jmp @@EOM
 ;      .endif
 ;    .endif
-;    add xsi, sizeof(CONV_TAB_ENTRY)
+;    add xsi, sizeof(LIST_SETUP)
 ;  .endw
 ;
 ;  lea xsi, PersistConvTable
-;  OCall xbx.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("Loading file lists...")
+;  OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Loading file lists...")
 ;  .while POINTER ptr [xsi] != NULL
-;    .if [xsi].CONV_TAB_ENTRY.pList == NULL
-;      mov [xsi].CONV_TAB_ENTRY.pList, $New(List)      ;Create the list
-;      OCall xax::List.Init, NULL, [xsi].CONV_TAB_ENTRY.dAlloc, \
-;                                  [xsi].CONV_TAB_ENTRY.dIncr, [xsi].CONV_TAB_ENTRY.dFlags
+;    .if [xsi].LIST_SETUP.pList == NULL
+;      mov [xsi].LIST_SETUP.pList, $New(List)      ;Create the list
+;      OCall xax::List.Init, NULL, [xsi].LIST_SETUP.dAlloc, \
+;                                  [xsi].LIST_SETUP.dIncr, [xsi].LIST_SETUP.dFlags
 ;    .endif
-;    OCall [xsi].CONV_TAB_ENTRY.pList::List.LoadFromFile, [xsi].CONV_TAB_ENTRY.pFileName
+;    OCall [xsi].LIST_SETUP.pList::List.LoadFromFile, [xsi].LIST_SETUP.pFileName
 ;    .if eax == FALSE
 ;      lea xdi, cMessage
-;      WriteF xdi, "list file \`¦SU\`corrupt", [xsi].CONV_TAB_ENTRY.pFileName
+;      WriteF xdi, "list file \`¦SU\`corrupt", [xsi].LIST_SETUP.pFileName
 ;      OCall xbx.ShowError, addr cMessage
 ;      mov [xbx].bTerminate, TRUE
 ;      jmp @@EOM
 ;    .endif
-;    add xsi, sizeof(CONV_TAB_ENTRY)
+;    add xsi, sizeof(LIST_SETUP)
 ;  .endw
-  
+
   ;If no dSelectiveOutput is marked, all are selected
   .if [xbx].Options.dSelectiveOutput == 0
     mov [xbx].Options.dSelectiveOutput, -1
@@ -429,12 +431,12 @@ if DEBUGGING
   .if SDWORD ptr ecx <= 0                               ;Just in case something goes wrong
     mov [xbx].dIncNestingLevel, 0
   .else
-    WriteF xdi, "\n"
+    WriteFW xdi, "\n"
     shl ecx, 1
     mov ax, SPC
     rep stosw                                           ;Indentation
   .endif
-  WriteF xdi, "¦SU", pHeaderFileName
+  WriteFW xdi, "¦SU", pHeaderFileName
   invoke DbgOutTextW, addr cMessage, DbgColorForeground, DbgColorBackground, \
                       DBG_EFFECT_NORMAL, ??DbgDstWnd
   DbgLoadContext
@@ -487,20 +489,24 @@ endif
     lea xdi, cMessage
     .if pParent != NULL
       mov xsi, pParent
-      WriteF xdi, "¦SU(¦UD): ", [xsi].$Obj(IncFile).pHeaderFileName, [xsi].$Obj(IncFile).dLineNumber
+      WriteF xdi, "¦SU(¦UD): ", \
+             [xsi].$Obj(IncFile).pHeaderFileName, \
+             [xsi].$Obj(IncFile).dLineNumber
     .endif
     WriteF xdi, "Include header file \`¦SU\`", addr cHeaderFullFileName
     OCall xbx.ShowInfo, VERBOSITY_IMPORTANT, addr cMessage
 
     ;Create output FileName
     lea xdi, cIncludeFullFileName
-    WriteFW xdi, "¦SU\\¦SU", addr [xbx].cOutputDir, pHeaderFileName
+    WriteFW xdi, "¦SU\\¦SU", \
+            addr [xbx].cOutputDir, \
+            pHeaderFileName
     invoke StrRScanW, addr cIncludeFullFileName, "."
     .if xax == NULL
       invoke StrEndW, addr cIncludeFullFileName
     .endif
     FillStringW [xax], <.inc>
-    
+
     ;Check if output inc-file already exists --------------------------------------------
     .if [xbx].Options.bOverwrite == FALSE
       invoke FileExistW, addr cIncludeFullFileName
@@ -510,14 +516,19 @@ endif
             lea xdi, cMessage
             .if pParent != NULL
               mov xsi, pParent
-              WriteF xdi, "¦SU(¦UD): ", [xsi].$Obj(IncFile).pHeaderFileName, [xsi].$Obj(IncFile).dLineNumber
+              WriteF xdi, "¦SU(¦UD): ", \
+                     [xsi].$Obj(IncFile).pHeaderFileName, \
+                     [xsi].$Obj(IncFile).dLineNumber
             .endif
-            WriteF xsi, "\`¦SU\` file already exists, file \`¦SU\` skipped", addr cIncludeFullFileName, addr cHeaderFullFileName
+            WriteF xsi, "\`¦SU\` file already exists, file \`¦SU\` skipped", \
+                   addr cIncludeFullFileName, \
+                   addr cHeaderFullFileName
             OCall xbx.ShowInfo, VERBOSITY_NORMAL, addr cMessage
           .endif
         .else
           lea xdi, cMessage
-          WriteF xdi, "File \`¦SU\` already exists, overwrite it?", addr cIncludeFullFileName
+          WriteF xdi, "File \`¦SU\` already exists, overwrite it?", \
+                 addr cIncludeFullFileName
           OCall xbx.ShowQuestion, addr cMessage
           .if eax == "C"
             mov [xbx].bTerminate, TRUE
@@ -526,7 +537,8 @@ endif
             jmp @F
           .elseif eax == "N"
             lea xdi, cMessage
-            WriteF xdi, "File \`¦SU\` not processed.", addr cHeaderFullFileName
+            WriteF xdi, "File \`¦SU\` not processed.", \
+                   addr cHeaderFullFileName
             OCall xbx.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
             mov dResult, FALSE
             mov ecx, ITF_SKIPPED
@@ -543,7 +555,7 @@ endif
     .if eax != FALSE
       ;Start real processing
       OCall IncludeFile::IncFile.ParseHeaderFile
-      OCall IncludeFile::IncFile.Render                 ;Reset volatile lists and start rendering
+      OCall IncludeFile::IncFile.Render
       OCall IncludeFile::IncFile.Save, addr cIncludeFullFileName  ;Save include file
       mov dResult, eax
       OCall IncludeFile::IncFile.CreateDefFile, addr cIncludeFullFileName
@@ -561,20 +573,25 @@ endif
         DbgSetDestWnd "Include Tree"
         .if ecx == ITF_SKIPPED
           mov xcx, $OfsCStrA(" - Skipped by user")
-          invoke DbgOutTextA, xcx, DbgColorGreen, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+          invoke DbgOutTextA, xcx, DbgColorGreen, DbgColorBackground, \
+                              DBG_EFFECT_NORMAL, ??DbgDstWnd
         .elseif ecx == ITF_NOT_FOUND
           mov xcx, $OfsCStrA(" - not found")
-          invoke DbgOutTextA, xcx, DbgColorRed, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+          invoke DbgOutTextA, xcx, DbgColorRed, DbgColorBackground, \
+                              DBG_EFFECT_NORMAL, ??DbgDstWnd
         .elseif ecx == ITF_JUST_PROC
           mov xcx, $OfsCStrA(" - already processed")
-          invoke DbgOutTextA, xcx, DbgColorBlue, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+          invoke DbgOutTextA, xcx, DbgColorBlue, DbgColorBackground, \
+                              DBG_EFFECT_NORMAL, ??DbgDstWnd
         .elseif ecx == ITF_REPROC
           mov xcx, $OfsCStrA(" - reprocessed")
-          invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+          invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, \
+                              DBG_EFFECT_NORMAL, ??DbgDstWnd
         .else
           mov xcx, $OfsCStrA("???")
+          invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, \
+                              DBG_EFFECT_NORMAL, ??DbgDstWnd
         .endif
-        invoke DbgOutTextA, $OfsCStrA(" "), DbgColorForeground, DbgColorBackground, 0, ??DbgDstWnd
         DbgLoadContext
       endif
     .endif
@@ -588,20 +605,25 @@ if DEBUGGING
     DbgSetDestWnd "Include Tree"
     .if ecx == ITF_SKIPPED
       mov xcx, $OfsCStrA(" - Skipped by user")
-      invoke DbgOutTextA, xcx, DbgColorGreen, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+      invoke DbgOutTextA, xcx, DbgColorGreen, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, ??DbgDstWnd
     .elseif ecx == ITF_NOT_FOUND
       mov xcx, $OfsCStrA(" - not found")
-      invoke DbgOutTextA, xcx, DbgColorRed, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+      invoke DbgOutTextA, xcx, DbgColorRed, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, ??DbgDstWnd
     .elseif ecx == ITF_JUST_PROC
       mov xcx, $OfsCStrA(" - already processed")
-      invoke DbgOutTextA, xcx, DbgColorBlue, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+      invoke DbgOutTextA, xcx, DbgColorBlue, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, ??DbgDstWnd
     .elseif ecx == ITF_REPROC
       mov xcx, $OfsCStrA(" - reprocessed")
-      invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
+      invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, ??DbgDstWnd
     .else
       mov xcx, $OfsCStrA("???")
+      invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, \
+                          DBG_EFFECT_NORMAL, ??DbgDstWnd
     .endif
-    invoke DbgOutTextA, $OfsCStrA(" "), DbgColorForeground, DbgColorBackground, 0, ??DbgDstWnd
     DbgLoadContext
 else
 @@:

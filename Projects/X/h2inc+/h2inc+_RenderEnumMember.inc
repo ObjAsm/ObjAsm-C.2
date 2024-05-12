@@ -13,8 +13,7 @@
 ; Purpose:    Render an enumerator declaration (member of an enumeration).
 ; Arguments:  Arg1 -> Token.
 ;             xbx -> IncFile.
-; Return:     xax -> Last Token, usually ';' or NULL if failed and ZF set.
-; Idea:       Linear code, not looping.
+; Return:     xax -> Last Token, usually ';' or NULL if failed.
 
 RenderEnumMember proc pToken:PTOKEN
   GED_MacroInvocation macro
@@ -22,9 +21,9 @@ RenderEnumMember proc pToken:PTOKEN
     .if eax != 0
       mov edx, ecx
       .if eax == 1
-        OCall pMacros::List.ItemAt, edx
+        OCall pNewMacros::List.ItemAt, edx
       .else
-        OCall pKnownMacros::List.ItemAt, edx
+        OCall pKnwMacros::List.ItemAt, edx
       .endif
       mov edx, [xax - sizeof(DWORD)]                    ;edx = length
       invoke RenderMacroCall, pToken, DWORD ptr [xax + xdx], FALSE
@@ -35,25 +34,28 @@ RenderEnumMember proc pToken:PTOKEN
 
   local sdValue:SDWORD, dStep:DWORD, bFirstToken:DWORD, bNegative:DWORD, cTransBuffer[128]:CHRA
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderEnumMember")
   mov xax, pToken                                       ;Use token passed to this proc
   mov sdValue, 0
   .while TRUE
     mov dStep, 0
     mov bFirstToken, TRUE
     .while TRUE
-      .if xax == NULL || CHRA ptr [xax] == ";"          ;Statement terminator
-        jmp @Error
-      .endif
+      test xax, xax
+      jz @ErrorEoF
+      cmp CHRA ptr [xax], ';'                           ;Statement terminator
+      jz @ErrorSyntax
 
       .if dStep == 0
-        .if CHRA ptr [xax] == "," || CHRA ptr [xax] == "}"  ;Item terminator or end of declaration
+        .if CHRA ptr [xax] == ',' || CHRA ptr [xax] == '}'  ;Item terminator or end of declaration
           .break
         .endif
 
         GED_MacroInvocation
 
         mov xax, pToken
-        invoke TranslateReservedWord, xax, addr cTransBuffer
+        lea xdx, cTransBuffer
+        invoke TranslateReservedWord, xax, xdx
         OCall xbx::IncFile.StmWrite, xax
         mov dStep, 1
         jmp @GetNextToken
@@ -61,7 +63,7 @@ RenderEnumMember proc pToken:PTOKEN
 
       .if dStep == 1
         mov xax, pToken
-        .if CHRA ptr [xax] == "," || CHRA ptr [xax] == "}"  ;Item terminator or end of declaration
+        .if CHRA ptr [xax] == ',' || CHRA ptr [xax] == '}'  ;Item terminator or end of declaration
           OCall xbx::IncFile.StmWriteF, $OfsCStrA(" equ %d"), sdValue
           inc sdValue
           OCall xbx::IncFile.StmWriteEoL
@@ -79,14 +81,14 @@ RenderEnumMember proc pToken:PTOKEN
 
       .if dStep == 2
         .if bFirstToken != FALSE
-          .if CHRA ptr [xax] == "," || CHRA ptr [xax] == "}"
+          .if CHRA ptr [xax] == ',' || CHRA ptr [xax] == '}'
             OCall xbx::IncFile.StmWriteF, $OfsCStrA("%d"), sdValue
             inc sdValue
             OCall xbx::IncFile.StmWriteEoL
             .break
           .endif
         .else
-          .if CHRA ptr [xax] == "," || CHRA ptr [xax] == "}"
+          .if CHRA ptr [xax] == ',' || CHRA ptr [xax] == '}'
             OCall xbx::IncFile.StmDeleteLastSpace
             OCall xbx::IncFile.StmWriteEoL
             .break
@@ -96,11 +98,11 @@ RenderEnumMember proc pToken:PTOKEN
         GED_MacroInvocation
 
         mov xax, pToken
-        .if CHRA ptr [xax] == "("                     ;On enumerations, we will skip ... = (int) xxxx
+        .if CHRA ptr [xax] == '('                     ;On enumerations, we will skip ... = (int) xxxx
           mov bFirstToken, FALSE
-          invoke SkipBraces, "(", ")"
+          invoke SkipBraces, '(', ')'
           test xax, xax
-          jz @Error
+          jz @ErrorEoF
           jmp @GetNextToken
         .endif
 
@@ -134,18 +136,24 @@ RenderEnumMember proc pToken:PTOKEN
       mov pToken, $OCall(xbx::IncFile.GetNextTokenC)
     .endw
     mov xax, pToken
-    .break .if CHRA ptr [xax] == "}"                    ;Statment terminator
+    .break .if CHRA ptr [xax] == '}'                    ;Statment terminator
     mov pToken, $OCall(xbx::IncFile.GetNextTokenC)
   .endw
 
+  ;Exit ---------------------------------------------------------------------------------
+@Exit:
   mov xax, pToken
-  test xax, xax
   ret
 
-@Error:
-  DbgErrorF , "¦SU(¦UD): RenderEnumMember - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
-  OCall xbx::IncFile.ShowError, $OfsCStr("unexpected enum item = %hs"), pToken
-  mov xax, pToken
-  test xax, xax
+@ErrorSyntax:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderEnumMember")
+  OCall xbx::IncFile.StmWriteError
+  invoke GotoNextToken, addr szSemiColon
+  ret
+
+@ErrorEoF:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  xor eax, eax
   ret
 RenderEnumMember endp

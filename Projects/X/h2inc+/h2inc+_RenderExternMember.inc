@@ -13,12 +13,13 @@
 ; Purpose:    Get an extern declaration.
 ; Arguments:  Arg1 -> First token.
 ;             xbx -> IncFile.
-; Return:     xax -> Next token, NULL if failed and ZF set.
+; Return:     xax -> Next token, NULL if failed.
 
 RenderExternMember proc pToken:PTOKEN
   local dTypeCSpec:DWORD, bFunction:DWORD, bStatic:DWORD, bConst:DWORD
   local pType:PSTRINGA, pName:PSTRINGA, cTransBuffer[128]:CHRA
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderExternMember")
   mov pType, NULL
   mov pName, NULL
   mov bStatic, FALSE
@@ -29,7 +30,13 @@ RenderExternMember proc pToken:PTOKEN
   .while TRUE
     .break .if xax == NULL
     invoke SkipAnnotations, pToken
-    .break .if ZERO?
+    test xax, xax
+    jz @ErrorEoF
+
+    .if $DoesStringMatchA?([xax], <typedef>)
+      invoke RenderTypedef
+      jmp @Exit
+    .endif
 
     .if $DoesStringMatchA?([xax], <static>)
       mov bStatic, TRUE
@@ -43,36 +50,37 @@ RenderExternMember proc pToken:PTOKEN
 
     invoke TranslateTypeQualifier, xax
     cmp CHRA ptr [xax], 0
-    je @GetNextToken
+    jz @GetNextToken
 
-    .break .if CHRA ptr [xax] == "}" || CHRA ptr [xax] == ";"   ;Statement terminator
+    .break .if CHRA ptr [xax] == '}' || CHRA ptr [xax] == ';'   ;Statement terminator
 
     mov pToken, xax
-    invoke IsMacro?, xax
+
+    invoke IsQualifier?, xax
+    test eax, eax
+    jnz @GetNextToken
+
+    invoke IsMacro?, pToken
     .if eax != 0
       mov edx, ecx
       .if eax == 1
-        OCall pMacros::List.ItemAt, edx
+        OCall pNewMacros::List.ItemAt, edx
       .else
-        OCall pKnownMacros::List.ItemAt, edx
+        OCall pKnwMacros::List.ItemAt, edx
       .endif
       mov edx, [xax - sizeof(DWORD)]
       invoke RenderMacroCall, pToken, DWORD ptr [xax + xdx], TRUE
-      .if eax != FALSE
-        jmp @GetNextToken
-      .endif
+      test eax, eax
+      jnz @GetNextToken
     .endif
 
     mov xax, pToken
-    .if CHRA ptr [xax] == "("
-      mov xax, pName
-      .if xax != NULL
-        DbgPrintF , "各D: RenderExternMember, function 吁A found", [xbx].$Obj(IncFile).dLineNumber, pName
-      .else
-        jmp @Error
-      .endif
-      mov bFunction, TRUE
-      jmp @GetNextToken
+    .if CHRA ptr [xax] == '('
+      invoke RenderPrototype, pName, NULL
+      OCall xbx::IncFile.GetNextTokenC
+      test xax, xax
+      jz @ErrorEoF
+      jmp @Exit
     .endif
 
     ;pToken may be a basic C type
@@ -103,17 +111,17 @@ RenderExternMember proc pToken:PTOKEN
 
     mov xax, pToken
     mov cl, CHRA ptr [xax]
-    .if cl == "[" && pName != NULL                      ;"[]" should only come after a valid name
+    .if cl == '[' && pName != NULL                      ;"[]" should only come after a valid name
       .repeat                                           ;Ignore it
         OCall xbx::IncFile.GetNextTokenC
-      .until ZERO? || CHRA ptr [xax] == ";"
+      .until xax == NULL || CHRA ptr [xax] == ';'
       .break
     .endif
 
     .if cl == "="
       .repeat
         OCall xbx::IncFile.GetNextTokenC
-      .until ZERO? || CHRA ptr [xax] == ";"
+      .until xax == NULL || CHRA ptr [xax] == ';'
       .break
     .endif
 
@@ -125,12 +133,10 @@ RenderExternMember proc pToken:PTOKEN
       .elseif pName == NULL
         mov pName, xax
       .else
-        DbgErrorF , "吁U(各D): RenderExternMember - unknown Token 1 吁A", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber, pToken
-        jmp @Error
+        jmp @ErrorSyntax
       .endif
     .else
-      DbgErrorF , "吁U(各D): RenderExternMember - unknown Token 2 吁A", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber, pToken
-      jmp @Error
+      jmp @ErrorSyntax
     .endif
 
 @GetNextToken:
@@ -139,24 +145,25 @@ RenderExternMember proc pToken:PTOKEN
   .endw
 
   cmp pName, NULL
-  jz @Error
+  jz @ErrorSyntax
   invoke TranslateReservedWord, pName, addr cTransBuffer
-  .if bFunction != FALSE
-    mov xcx, $OfsCStrA("near")
-  .else
-    mov xcx, pType
-  .endif
-  OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs:%hs"), xax, xcx
+  OCall xbx::IncFile.StmWriteF, $OfsCStrA("externdef %hs:%hs"), xax, pType
   OCall xbx::IncFile.StmWriteEoL
   mov xax, pToken
 
 @Exit:
-  test xax, xax
   ret
 
-@Error:
+@ErrorSyntax:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderExternMember")
+  OCall xbx::IncFile.StmWriteError
+  invoke GotoNextToken, addr szSemiColon
+  ret
+
 @ErrorEoF:
-  DbgErrorF , "吁U(各D): RenderExternMember - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.StmWriteError
   xor eax, eax
   ret
 RenderExternMember endp

@@ -1,1 +1,1 @@
--l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\Masterinclude.h"
+-l -y -d3 -i -V1 -W2 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\Masterinclude.h"

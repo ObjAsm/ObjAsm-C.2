@@ -161,25 +161,32 @@ MethodEnd
 
 Method IncFile.Done, uses xbx
   SetObject xbx
-  DbgPrintF , "Free StmBuffer1 ¦HX for ¦SU", [xbx].pStmBuffer1, [xbx].pHeaderFileName
+  
+  ;Release allocated memory
   invoke VirtualFree, [xbx].pStmBuffer2, 0, MEM_RELEASE
-  DbgPrintF , "Free StmBuffer2 ¦HX for ¦SU", [xbx].pStmBuffer2, [xbx].pHeaderFileName
   invoke VirtualFree, [xbx].pStmBuffer1, 0, MEM_RELEASE
 
   invoke StrDisposeW, [xbx].pHeaderFilePath
   invoke StrDisposeW, [xbx].pHeaderFileName
-
+  
   .if [xbx].pDefs != NULL
     Destroy [xbx].pDefs
     mov [xbx].pDefs, NULL
   .endif
+
+  ;Cummulate errors and warnings in this session
+  mov xcx, [xbx].pOwner
+  mov edx, [xbx].dErrorCount
+  add [xcx].$Obj(Application).dTotalErrorCount, edx 
+  mov edx, [xbx].dWarningCount
+  add [xcx].$Obj(Application).dTotalWarningCount, edx 
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.JumpEndIfPP
 ; Purpose:    Return the next C token 
 ; Arguments:  None.
-; Return:     xax -> Token or NULL if EOF is reached. ZERO flag set if xax == NULL.
+; Return:     xax -> Token or NULL if EOF is reached.
 
 Method IncFile.JumpEndIfPP, uses xbx xdi
   local InpStat:INP_STAT
@@ -191,17 +198,16 @@ Method IncFile.JumpEndIfPP, uses xbx xdi
   mov [xbx].bEnableNFCodeLabel, FALSE
   .while TRUE 
     OCall xbx.GetNextToken
-    .break .if ZERO?
+    .break .if xax == NULL
     .if CHRA ptr [xax] == '#'
       OCall xbx.GetNextToken
-      .break .if ZERO?
+      .break .if xax == NULL
       DoesStringMatchA? [xax], <endif>
       .if ZERO?
         OCall xbx.GetNextTokenC
         mov xdi, xax
         OCall xbx::IncFile.InputStatusLoad, addr InpStat    ;xax is not trashed
         mov xax, xdi
-        test xax, xax
         ret
       .endif
     .endif
@@ -221,13 +227,13 @@ Method IncFile.PeekNextTokenLogicC, uses xbx xdi
   OCall xbx::IncFile.InputStatusSave, addr InpStat
 @TryAgain:
   OCall xbx.GetNextToken
-  .if !ZERO?
+  .if xax != NULL
     mov cl, [xax] 
     .if cl == '#'
       .while TRUE
         .if CHRA ptr [xax] == '#' 
           OCall xbx.GetNextToken
-          .break .if ZERO?
+          .break .if xax == NULL
           DoesStringMatchA? [xax], <endif>
           .if ZERO?
             OCall xbx.GetNextTokenC
@@ -235,7 +241,7 @@ Method IncFile.PeekNextTokenLogicC, uses xbx xdi
           .endif
         .endif
         OCall xbx.GetNextToken
-        .break .if ZERO?
+        .break .if xax == NULL
       .endw
     .else
       cmp cl, PCT_EOL
@@ -268,9 +274,6 @@ Method IncFile.GetNextToken, uses xbx xdi
   SetObject xbx
 
   .if [xbx].bEOF != FALSE                               ;Don't cross EOF
-;    if DEBUGGING
-;      int 3
-;    endif
     xor eax, eax
     ret
   .endif
@@ -294,16 +297,13 @@ MethodEnd
 ; Method:     IncFile.GetNextTokenC
 ; Purpose:    Return the next C token from input stream. Comments are handled automatically.
 ; Arguments:  None.
-; Return:     xax -> Token or NULL if EOF is reached. ZERO flag set if xax == NULL.
+; Return:     xax -> Token or NULL if EOF is reached.
 ; Note:       pStmInpPos is always pointing to the next token.
 
 Method IncFile.GetNextTokenC, uses xbx xdi
   SetObject xbx
   
   .if [xbx].bEOF != FALSE                               ;Don't cross EOF
-;    if DEBUGGING
-;      int 3
-;    endif
     xor eax, eax
     ret
   .endif
@@ -485,7 +485,7 @@ MethodEnd
 ; Method:     IncFile.PeekNextTokenC
 ; Purpose:    Peek the next C token.
 ; Arguments:  None.
-; Return:     xax -> Token. ZERO flag set if xax == NULL.
+; Return:     xax -> Token.
 
 Method IncFile.PeekNextTokenC, uses xbx
   local InpStat:INP_STAT, pToken:PTOKEN
@@ -498,7 +498,6 @@ Method IncFile.PeekNextTokenC, uses xbx
   dec [xbx].bSkipLinePP
   OCall xbx::IncFile.InputStatusLoad, addr InpStat
   mov xax, pToken
-  test xax, xax
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -523,7 +522,7 @@ Method IncFile.Init, uses xbx xdi xsi, pOwner:POINTER, pFileName:PSTRINGW, pPare
   mov xdi, pOwner
   .if [xdi].$Obj(Application).Options.bCreateDefs != FALSE
     mov [xbx].pDefs, $New(List)
-    OCall xax::List.Init, NULL, 100, 10, CF_SNGL
+    OCall xax::List.Init, NULL, 100, 10, CF_SNG
   .endif
 
   ;Extract the FileName
@@ -571,7 +570,7 @@ Method IncFile.Init, uses xbx xdi xsi, pOwner:POINTER, pFileName:PSTRINGW, pPare
     .else
       lea xdi, [xdi + sizeof(CHR)*xax - sizeof(CHR)*2]  ;Remove ending CRLF
     .endif
-    WriteF xdi, "]"
+    WriteF xdi, ']'
     OCall [xbx].pOwner::Application.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
 
     ;Build a list on a separate window
@@ -863,10 +862,10 @@ Method IncFile.Render, uses xbx xdi xsi
   endif 
 
 ;  ;Reset volatile data lists
-;  lea xsi, VolatilConvTable
+;  lea xsi, NewContentLists
 ;  .while POINTER ptr [xsi] != NULL
-;    OCall [xsi].CONV_TAB_ENTRY.pList::List.DeleteAll
-;    add xsi, sizeof(CONV_TAB_ENTRY)
+;    OCall [xsi].LIST_SETUP.pList::List.DeleteAll
+;    add xsi, sizeof(LIST_SETUP)
 ;  .endw
 
   ;Start translation
@@ -1023,7 +1022,7 @@ Method IncFile.StmCopyRestOfPPLine
 
   .while TRUE
     OCall pSelf::IncFile.GetNextTokenPP
-    .break .if ZERO?
+    .break .if xax == NULL
     mov pToken, xax
     OCall pSelf::IncFile.StmWriteChar, " "
     OCall pSelf::IncFile.StmWrite, pToken
@@ -1086,7 +1085,7 @@ Method IncFile.StmWriteComment, uses xsi
   mov xcx, [xsi].pOwner
   .if [xcx].$Obj(Application).Options.bIncludeComments != FALSE && CHRA ptr [[xsi].cComment + 1] != 0
     OCall xsi::IncFile.StmWrite, addr [xsi].cComment
-    mov CHRA ptr [[xsi].cComment + 1], 0                ;Set ZTC after ";"
+    mov CHRA ptr [[xsi].cComment + 1], 0                ;Set ZTC after ';'
     OCall xbx::IncFile.StmWriteEoL
   .endif
 MethodEnd
@@ -1143,7 +1142,7 @@ MethodEnd
 ; Method:     IncFile.StmWriteEoL
 ; Purpose:    Write a <CRLF> sequence (End of Line) to the output stream.
 ; Arguments:  None.
-; Return:     xax -> current StreamOut position.
+; Return:     xax -> Current StreamOut position.
 
 Method IncFile.StmWriteEoL, uses xbx
   SetObject xbx
@@ -1184,7 +1183,6 @@ Method IncFile.ShowError, uses xbx xdi, pFormat:PSTRING, Args:vararg
   local cMessage[1024]:CHR
 
   SetObject xbx
-  inc [xbx].dErrorCount
   lea xdi, cMessage
   WriteF xdi, "¦SU(¦UD) - Error = ", [xbx].pHeaderFileName, [xbx].dLineNumber
   invoke wvsprintf, xdi, pFormat, addr Args
@@ -1216,7 +1214,7 @@ Method IncFile.ShowSysError, uses xbx xdi, pInfo:PSTRING, dErrorCode:DWORD
   .else
     lea xdi, [xdi + sizeof(CHR)*xax - sizeof(CHR)*2]   ;Remove ending CRLF
   .endif
-  WriteF xdi, "]"
+  WriteF xdi, ']'
 
   OCall [xbx].pOwner::Application.ShowError, addr cMessage
 MethodEnd

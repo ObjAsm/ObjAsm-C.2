@@ -47,7 +47,7 @@ Method IniFileReader.Init, uses xbx xdi xsi, pOwner:POINTER, pMemHeap:$ObjPtr(Me
   lea xdx, cName
   lea xcx, [xdx + sizeof(CHR)*xax - sizeof(CHR)]
   .while xcx >= xdx
-    .break .if (CHR ptr [xcx] == "\") || (CHR ptr [xcx] == "/") || (CHR ptr [xcx] == ":")
+    .break .if (CHR ptr [xcx] == "\") || (CHR ptr [xcx] == "/") || (CHR ptr [xcx] == ':')
     sub xcx, sizeof(CHR)
   .endw
   add xcx, sizeof(CHR)
@@ -88,10 +88,10 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IniFileReader.LoadList
 ; Purpose:    Scans h2inc+.ini for a given section.
-; Arguments:  Arg1 -> CONV_TAB_ENTRY of that list.
+; Arguments:  Arg1 -> LIST_SETUP of that list.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method IniFileReader.LoadList, uses xbx xdi xsi, pConTabEntry:PCONV_TAB_ENTRY
+Method IniFileReader.LoadList, uses xbx xdi xsi, pListSetup:PLIST_SETUP
   local pMemHeap:$ObjPtr(MemoryHeap), pSectionName:PSTRINGA, dStrLen:DWORD
   local pWord:POINTER, dCharCount:DWORD, cLastChar:CHRA, cMessage[1024]:CHR
 
@@ -99,8 +99,8 @@ Method IniFileReader.LoadList, uses xbx xdi xsi, pConTabEntry:PCONV_TAB_ENTRY
   m2m pMemHeap, [xcx].pMemHeap, xax                   ;Get a local copy
 
   ;Find section
-  mov xax, pConTabEntry
-  mrm pSectionName, [xax].CONV_TAB_ENTRY.pSectionName, xdx
+  mov xax, pListSetup
+  mrm pSectionName, [xax].LIST_SETUP.pSectionName, xdx
   mov eax, DWORD ptr [xdx - sizeof(DWORD)]            ;Get string size
   dec eax                                             ;Calculate the length discarding the ZTC
   mov dStrLen, eax
@@ -115,14 +115,14 @@ Method IniFileReader.LoadList, uses xbx xdi xsi, pConTabEntry:PCONV_TAB_ENTRY
   .while !ZERO?
     mov ah, al
     lodsb
-    .if ax == LF*256 + "["
+    .if ax == LF*256 + '['
       mov xdi, pSectionName
       mov ecx, dStrLen
       mov xdx, xsi
       repz cmpsb
       .if ZERO?
         lodsb
-        .if al == "]"
+        .if al == ']'
           .repeat
             lodsb
           .until (al == LF) || (al == 0)
@@ -137,32 +137,32 @@ Method IniFileReader.LoadList, uses xbx xdi xsi, pConTabEntry:PCONV_TAB_ENTRY
   .endw
 
 ;Section not found
-  mov xdi, pConTabEntry
+  mov xdi, pListSetup
   lea xbx, cMessage
-  WriteF xbx, "ini-file section \´¦SA\´ not found, using application defaults...", [xdi].CONV_TAB_ENTRY.pSectionName
+  WriteF xbx, "ini-file section \´¦SA\´ not found, using application defaults...", [xdi].LIST_SETUP.pSectionName
   OCall $ObjTmpl(Application)::Application.ShowWarning, WARNING_MAYOR, addr cMessage
-  mov xsi, [xdi].CONV_TAB_ENTRY.pDefault
+  mov xsi, [xdi].LIST_SETUP.pDefault
   .while POINTER ptr [xsi] != NULL
     mov xbx, [xsi]
     OCall pMemHeap::MemoryHeap.AddBStrA, POINTER ptr [xsi], DWORD ptr [xbx - sizeof(DWORD)]
     mov pWord, xax
-    .ifBitSet [xdi].CONV_TAB_ENTRY.dFlags, CF_CASE
+    .ifBitSet [xdi].LIST_SETUP.dFlags, CF_LCS
       invoke StrLowerA, xax
     .endif
-    OCall [xdi].CONV_TAB_ENTRY.pList::List.Insert, xax
+    OCall [xdi].LIST_SETUP.pList::List.Insert, xax
     .if xax != NULL
       add xsi, sizeof(POINTER)
-      .ifBitSet [xdi].CONV_TAB_ENTRY.dFlags, CF_ATTR
+      .ifBitSet [xdi].LIST_SETUP.dFlags, CF_ATR
         OCall pMemHeap::MemoryHeap.AddDword, DWORD ptr [xsi]
         add xsi, sizeof(DWORD)
-      .elseIfBitSet [xdi].CONV_TAB_ENTRY.dFlags, CF_EQUI
+      .elseIfBitSet [xdi].LIST_SETUP.dFlags, CF_CNV
         mov xbx, [xsi]
         OCall pMemHeap::MemoryHeap.AddBStrA, POINTER ptr [xsi], DWORD ptr [xbx - sizeof(DWORD)]
         add xsi, sizeof(POINTER)
       .endif
     .else
       lea xbx, cMessage
-      WriteF xbx, "inserting \´¦SA\´ from default application section \´¦SA\´ failed", pWord, [xdi].CONV_TAB_ENTRY.pSectionName
+      WriteF xbx, "inserting \´¦SA\´ from default application section \´¦SA\´ failed", pWord, [xdi].LIST_SETUP.pSectionName
       OCall $ObjTmpl(Application)::Application.ShowWarning, WARNING_MAYOR, addr cMessage
     .endif
   .endw
@@ -171,15 +171,15 @@ Method IniFileReader.LoadList, uses xbx xdi xsi, pConTabEntry:PCONV_TAB_ENTRY
 
 @SectionFound:
   ;Load strings into List
-  mov xdi, pConTabEntry
+  mov xdi, pListSetup
   lea xbx, cMessage
-  WriteF xbx, "Ini-file section \´¦SA\´ found in memory at ¦HXh", [xdi].CONV_TAB_ENTRY.pSectionName, xsi
+  WriteF xbx, "Ini-file section \´¦SA\´ found in memory at ¦HXh", [xdi].LIST_SETUP.pSectionName, xsi
   OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
   xor ecx, ecx
   .while TRUE
     mov al, [xsi]
-    .break .if (al == 0) || (al == "[")
-    .if (al <= SPC) || (al == ";")
+    .break .if (al == 0) || (al == '[')
+    .if (al <= SPC) || (al == ';')
       .repeat
         lodsb
       .until (al == 0) || (al == CR)
@@ -195,7 +195,7 @@ Method IniFileReader.LoadList, uses xbx xdi xsi, pConTabEntry:PCONV_TAB_ENTRY
       dec dCharCount
       mov cLastChar, al                               ;Remember last character
       m2z CHRA ptr [xsi - 1]                          ;Set ZTC
-      OCall [xdi].CONV_TAB_ENTRY.pList::List.Search, pWord
+      OCall [xdi].LIST_SETUP.pList::List.Search, pWord
       .if eax != FALSE                                ;Duplicate found =>
         .if cLastChar == "="                          ; if "=" found => skip second string
           .repeat
@@ -208,10 +208,10 @@ Method IniFileReader.LoadList, uses xbx xdi xsi, pConTabEntry:PCONV_TAB_ENTRY
 
       OCall pMemHeap::MemoryHeap.AddBStrA, pWord, dCharCount
       .if xax != NULL
-        .ifBitSet [xdi].CONV_TAB_ENTRY.dFlags, CF_CASE
+        .ifBitSet [xdi].LIST_SETUP.dFlags, CF_LCS
           invoke StrLowerA, xax                       ;In place                     
         .endif
-        OCall [xdi].CONV_TAB_ENTRY.pList::List.Insert, xax
+        OCall [xdi].LIST_SETUP.pList::List.Insert, xax
         .if xax != NULL
           .if cLastChar == "="
             mov pWord, xsi
@@ -220,11 +220,11 @@ Method IniFileReader.LoadList, uses xbx xdi xsi, pConTabEntry:PCONV_TAB_ENTRY
               lodsb
               inc ecx
             .until (al == 0) || (al == CR)
-            .ifBitSet [xdi].CONV_TAB_ENTRY.dFlags, CF_ATTR
+            .ifBitSet [xdi].LIST_SETUP.dFlags, CF_ATR
               mov CHRA ptr [xsi - 1], 0
               invoke dec2dwordA, pWord
               OCall pMemHeap::MemoryHeap.AddDword, eax
-            .elseIfBitSet [xdi].CONV_TAB_ENTRY.dFlags, CF_EQUI
+            .elseIfBitSet [xdi].LIST_SETUP.dFlags, CF_CNV
               mov eax, ecx
               dec eax
               OCall pMemHeap::MemoryHeap.AddBStrA, pWord, eax
@@ -233,9 +233,9 @@ Method IniFileReader.LoadList, uses xbx xdi xsi, pConTabEntry:PCONV_TAB_ENTRY
           inc xsi                                     ;In any case move from LF to the next char
           .continue
         .else
-          mov xdi, pConTabEntry
+          mov xdi, pListSetup
           lea xbx, cMessage
-          WriteF xbx, "inserting \´¦SA\´ from file list \´¦SA\´ failed", pWord, [xdi].CONV_TAB_ENTRY.pFileName
+          WriteF xbx, "inserting \´¦SA\´ from file list \´¦SA\´ failed", pWord, [xdi].LIST_SETUP.pFileName
           OCall $ObjTmpl(Application)::Application.ShowWarning, WARNING_MAYOR, addr cMessage
         .endif
       .endif

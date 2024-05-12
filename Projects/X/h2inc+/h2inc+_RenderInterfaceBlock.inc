@@ -14,33 +14,47 @@
 ; Arguments:  Arg1 -> Name.
 ;             xax -> '{'
 ;             xbx -> IncFile.
-; Return:     xax -> Last Token or NULL if failed.
+; Return:     xax -> Last token or NULL if failed.
 ; Link:       https://devblogs.microsoft.com/oldnewthing/20200909-00/?p=104198
 
 RenderInterfaceBlock proc pName:PSTRINGA
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderInterfaceBlock")
   mov [xbx].$Obj(IncFile).bInsideInterface, TRUE
   .repeat
     invoke RenderTypedefFuncPtr, NULL
-    jz @Error
+    test xax, xax
+    jz @ErrorEoF
     invoke RenderContainerMember, xax, pName
     .break .if xax == NULL
-    .if CHRA ptr [xax] == ";"
-      OCall xbx::IncFile.PeekNextTokenC
-      .break .if ZERO?
-      .if CHRA ptr [xax] == "}"
-        OCall xbx::IncFile.GetNextTokenC               ;Consume it
-        .break
-      .endif
-    .else
-      jmp @Error
+    cmp CHRA ptr [xax], ';'
+    jnz @ErrorSyntax
+    OCall xbx::IncFile.PeekNextTokenC
+    .break .if xax == NULL
+    .if CHRA ptr [xax] == '}'
+      OCall xbx::IncFile.GetNextTokenC               ;Consume it
+      test xax, xax
+      jz @ErrorEoF
+      .break
     .endif
   .until FALSE
+
+  ;Exit ---------------------------------------------------------------------------------
+@Exit:
   mov [xbx].$Obj(IncFile).bInsideInterface, FALSE
   ret
 
-@Error:
-  DbgPrintF , "¦UD: RenderInterfaceBlock - ¦SA, end of struct found [¦UD]", [xbx].$Obj(IncFile).dLineNumber, pName, eax
+@ErrorSyntax:
   mov [xbx].$Obj(IncFile).bInsideInterface, FALSE
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderInterfaceBlock")
+  OCall xbx::IncFile.StmWriteError
+  invoke GotoNextToken, addr szSemiColon
+  ret
+
+@ErrorEoF:
+  mov [xbx].$Obj(IncFile).bInsideInterface, FALSE
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.StmWriteError
   xor eax, eax
   ret
 RenderInterfaceBlock endp

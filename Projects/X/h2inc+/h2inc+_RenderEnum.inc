@@ -12,7 +12,7 @@
 ; Procedure:  RenderEnum
 ; Purpose:    Parse 'enum'.
 ; Arguments:  xbx -> IncFile.
-; Return:     TRUE if succeeded, otherwise FALSE
+; Return:     TRUE if succeeded, otherwise FALSE.
 ; Syntax:     <typedef> <qualifiers> enum <tname> {x<=a>,y<=b>,...} name<,*name>;
 ;             <typedef> <qualifiers> enum <tname> <:type> {x<=a>,y<=b>,...} name<,*name>;
 ;             <typedef> <qualifiers> enum <class> <tname> <: type> {x<=a>,y<=b>,...} name<,*name>;
@@ -23,26 +23,33 @@ RenderEnum proc uses xbx
   local pTag:PTOKEN, pName:PTOKEN, pType:PSTRINGA, pToken:PTOKEN, pCurrToken:PTOKEN
   local cWorkBuffer[MAX_NAME_CHARS]:CHRA, cEnumName[MAX_NAME_CHARS]:CHRA, dTypeCSpec:DWORD
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderEnum")
   mov pTag, NULL
   mov pName, NULL
   mov pType, NULL
 
   OCall xbx::IncFile.GetNextTokenC
+  test xax, xax
+  jz @ErrorEoF
   invoke SkipAnnotations, xax
+  test xax, xax
   jz @ErrorEoF
   invoke SkipMacros, xax
+  test xax, xax
   jz @ErrorEoF
 
-  .if CHRA ptr [xax] != "{" && CHRA ptr [xax] != ":"
+  .if CHRA ptr [xax] != '{' && CHRA ptr [xax] != ':'
     mov pTag, xax
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
   .endif
   mov pToken, xax
 
-  .if CHRA ptr [xax] == ":"                           ;Type specified?
+  .if CHRA ptr [xax] == ':'                           ;Type specified?
     OCall xbx::IncFile.GetNextTokenC
-    jz @Error
+    test xax, xax
+    jz @ErrorEoF
 
     ;pToken may be a basic C type
     BasicTypeCScan
@@ -56,7 +63,8 @@ RenderEnum proc uses xbx
     .else
       mov pType, xax
       OCall xbx::IncFile.GetNextTokenC
-      jz @Error
+      test xax, xax
+      jz @ErrorEoF
       mov pToken, xax
     .endif
   .else
@@ -77,6 +85,7 @@ RenderEnum proc uses xbx
     .endif
     mov [xbx].$Obj(IncFile).dEnumValue, 0
     invoke RenderBlock, pName, RBT_ENUM
+    test xax, xax
     jz @ErrorEoF
 
     ;Write a typedef with the tagName
@@ -89,18 +98,20 @@ RenderEnum proc uses xbx
     .endif
 
     OCall xbx::IncFile.GetNextTokenC
-    .if !ZERO? && pName != NULL && CHRA ptr [xax] != ";"
+    .if xax != NULL && pName != NULL && CHRA ptr [xax] != ';'
       invoke RenderFurtherTypes, pName, NULL, xax
+      test xax, xax
+      jz @ErrorEoF
     .else
       OCall xbx::IncFile.StmWriteEoL                  ;Separator line
     .endif
-    
+
     .if pName != NULL
       invoke GetTypeSize, pType
       mov ebx, eax
       invoke StrLengthA, pName
-      invoke InsertAttr, pTypeSize, pName, eax, ebx
-    .endif 
+      invoke InsertAttr, pNewTypeSize, pName, eax, ebx
+    .endif
 
     mov eax, TRUE
 
@@ -113,9 +124,9 @@ RenderEnum proc uses xbx
       OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs typedef %hs"), xcx, pType
       OCall xbx::IncFile.StmWriteEoL
       mov eax, TRUE
-    .elseif CHRA ptr [xcx] == "*"
+    .elseif CHRA ptr [xcx] == '*'
       OCall xbx::IncFile.GetNextTokenC
-      .if !ZERO?
+      .if xax != NULL
         OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs typedef ptr %hs"), xax, pType
         OCall xbx::IncFile.StmWriteEoL
       .endif
@@ -125,11 +136,21 @@ RenderEnum proc uses xbx
     .endif
   .endif
 
-  test eax, eax
+  ;Exit ---------------------------------------------------------------------------------
+@Exit:
   ret
 
-@Error:
+@ErrorSyntax:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderEnum")
+  OCall xbx::IncFile.StmWriteError
+  invoke GotoNextToken, addr szSemiColon
+  xor eax, eax
+  ret
+
 @ErrorEoF:
-  DbgErrorF , "¦SU(¦UD): RenderEnum - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.StmWriteError
+  xor eax, eax
   ret
 RenderEnum endp

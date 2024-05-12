@@ -2027,7 +2027,7 @@ WriteFT macro DstReg:req, Format:req, Args:vararg
           if ??StrLen ne 0
             add DstReg, ??StrLen*sizeof($$CHR)
           endif
-          mov DCHR ptr [DstReg], 10 shl (8*sizeof($$CHR)) + 13
+          mov $$DCHR ptr [DstReg], 10 shl (8*sizeof($$CHR)) + 13
           add DstReg, 2*sizeof($$CHR)
         elseifidn <$$WF_Character>, <r>
           $$FillText [DstReg], <%$$WF_Text>
@@ -2139,6 +2139,7 @@ WriteFA macro DstReg:req, Format:req, Args:vararg
   $$TARGET_STR_TYPE = TARGET_STR_TYPE
   TARGET_STR_TYPE = STR_TYPE_ANSI
   $$CHR textequ <CHRA>
+  $$DCHR textequ <DCHRA>
   $$FillText textequ <FillTextA>
   $$FillString textequ <FillStringA>
   WriteFT DstReg, Format, Args
@@ -2149,6 +2150,7 @@ WriteFW macro DstReg:req, Format:req, Args:vararg
   $$TARGET_STR_TYPE = TARGET_STR_TYPE
   TARGET_STR_TYPE = STR_TYPE_WIDE
   $$CHR textequ <CHRW>
+  $$DCHR textequ <DCHRW>
   $$FillText textequ <FillTextW>
   $$FillString textequ <FillStringW>
   WriteFT DstReg, Format, Args

@@ -19,15 +19,18 @@
 RenderBlock proc uses xsi pBlockName:PSTRINGA, dBlockType:DWORD
   local wIf:WORD, pPrevToken:PTOKEN
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderBlock")
   movzx eax, [xbx].$Obj(IncFile).bCondIfLevel
   mov ah, [xbx].$Obj(IncFile).bCondElseLevel[xax - 1]
   mov wIf, ax
 
   mov esi, 1                                            ;Block nesting level = 1
   .repeat
-    OCall xbx::IncFile.GetNextTokenC                    ;xax -> First token after "{"
+    OCall xbx::IncFile.GetNextTokenC                    ;xax -> First token after '{'
+    test xax, xax
     jz @ErrorEoF
     invoke SkipAnnotations, xax
+    test xax, xax
     jz @ErrorEoF
 
     movzx ecx, [xbx].$Obj(IncFile).bCondIfLevel         ;PP #if nesting level
@@ -39,33 +42,35 @@ RenderBlock proc uses xsi pBlockName:PSTRINGA, dBlockType:DWORD
       jmp @Exit
     .endif
 
-    .if CHRA ptr [xax] == "}"
+    .if CHRA ptr [xax] == '}'
       dec esi                                           ;dec block nesting level
 
-    .elseif CHRA ptr [xax] == "{"
+    .elseif CHRA ptr [xax] == '{'
       inc esi                                           ;inc block nesting level
       .continue
 
     .else
       .if dBlockType == RBT_CONTAINER
         invoke RenderContainerMember, xax, pBlockName
-      .elseif dBlockType == RBT_EXTERN
-        invoke RenderExternMember, xax
-      .else
+      .elseif dBlockType == RBT_ENUM
         invoke RenderEnumMember, xax
+      .else
+        invoke RenderExternMember, xax
       .endif
-      jz @ErrorEoF 
-      .if CHRA ptr [xax] == "}"
+      test xax, xax
+      jz @ErrorEoF
+      .if CHRA ptr [xax] == '}'
         dec esi                                         ;dec block nesting level
       .endif
     .endif
   .until esi == 0                                       ;Exit if block nesting level = 0
 
+  ;Exit ---------------------------------------------------------------------------------
 @Exit:
-  test xax, xax                                         ;Test pToken
   ret
 
 @ErrorEoF:
+  inc [xbx].$Obj(IncFile).dErrorCount
   xor xax, xax                                          ;Return NULL, ZF set
   ret
 RenderBlock endp

@@ -3436,7 +3436,7 @@ ICall macro Expression:req, Args:vararg
         $$ArgCount = 0
         ifnb <Args>
           %for $$Arg:req, <@CatStr(%??ImpIfc, %??MtdExpr, <_Args>)>
-            %ifidn <@SubStr(<$$Arg>, 1, 1)>, <:>        ;;Strip ":" to provide OA32 compatibility
+            %ifidn <@SubStr(<$$Arg>, 1, 1)>, <:>        ;;Strip ':' to provide OA32 compatibility
               $$Strip SubStr <$$Arg>, 2
             else
               $$Strip textequ <$$Arg>

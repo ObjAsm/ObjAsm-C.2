@@ -110,24 +110,11 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
         mov dCount, ecx
         mov bChar, al
 
-        .ifBitSet [xdi].dFlags, CF_CASE
+        .ifBitSet [xdi].dFlags, CF_LCS
           invoke StrLowerA, xbx
         .endif
 
-        .ifBitSet [xdi].dFlags, CF_SNGL
-          invoke InsertStrg, xdi, xbx, dCount
-          mov al, bChar
-          .if al == "="                               ;Malformed input
-            .repeat                                   ;Skip chars until CR or Zero
-              lodsb
-              inc ecx
-            .until (al == CR) || (al == 0)
-            .break .if al == 0
-            mov CHRA ptr [xsi - 1], 0                 ;Set ZTC
-            inc xsi                                   ;Skip LF
-          .endif
-
-        .elseIfBitSet [xdi].dFlags, CF_ATTR
+        .ifBitSet [xdi].dFlags, CF_ATR
           mov dLength, ecx
           mov al, bChar
           .if al == "="
@@ -142,16 +129,9 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
           .else
             xor eax, eax                              ;Missing Attribute => assume 0
           .endif
-;          DoesTextMatchA? [xbx], <DECLARE_INTERFACE_IID_>
-;          .if ZERO?
-;            int 3
-;          .endif 
-;          DbgStrA xbx,, "List"
-;          DbgDec eax,, "List"
-;          DbgStrA pToken,, "List"
           invoke InsertAttr, xdi, xbx, dLength, eax
 
-        .elseIfBitSet [xdi].dFlags, CF_EQUI
+        .elseIfBitSet [xdi].dFlags, CF_CNV
           mov dLength, ecx
           mov al, bChar
           .if al == "="
@@ -170,6 +150,19 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
             mov dCounter, 1
           .endif
           invoke InsertEqui, xdi, xbx, dLength, xax, dCounter
+
+        .else                                         ;Single string
+          invoke InsertStrg, xdi, xbx, dCount
+          mov al, bChar
+          .if al == "="                               ;Malformed input
+            .repeat                                   ;Skip chars until CR or Zero
+              lodsb
+              inc ecx
+            .until (al == CR) || (al == 0)
+            .break .if al == 0
+            mov CHRA ptr [xsi - 1], 0                 ;Set ZTC
+            inc xsi                                   ;Skip LF
+          .endif
         .endif
 
         mov xbx, xsi
@@ -197,7 +190,7 @@ Method List.SaveToFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
   invoke CreateFileW, pFullFileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_ARCHIVE, 0
   .if xax != INVALID_HANDLE_VALUE
     mov hFile, xax
-    .ifBitSet [xsi].dFlags, CF_EQUI
+    .ifBitSet [xsi].dFlags, CF_CNV
       .ColForEach [xsi]
         mov edx, [xax - sizeof(DWORD)]                  ;Get the size
         lea xdi, cBuffer
@@ -208,7 +201,7 @@ Method List.SaveToFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
         sub xdi, xax
         invoke WriteFile, hFile, xdx, edi, addr dBytesWritten, NULL
       .ColNext
-    .elseIfBitSet [xsi].dFlags, CF_ATTR
+    .elseIfBitSet [xsi].dFlags, CF_ATR
       .ColForEach [xsi]
         mov edx, [xax - sizeof(DWORD)]                  ;Get the size
         lea xdi, cBuffer

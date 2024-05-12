@@ -13,14 +13,14 @@
 ; Purpose:    Parse Typedef of a structure or union.
 ; Arguments:  Arg1 -> ContainerType (structure or union).
 ;             xbx -> IncFile.
-; Return:     Nothing
+; Return:     xax -> Last token or NULL if failed.
 ; Syntax:     typedef struct/union <macro> tname name;
 ;             typedef struct/union <macro> <tname> {} name;
 ;             typedef struct/union <macro> <tname> * name;
 
 RenderTypedefContainer proc pContainerType:PSTRINGA
   local pName:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN, pEndToken:PTOKEN
-  local pInherit:POINTER, pSuffix:PSTRINGA
+  local pSuffix:PSTRINGA
   local bSkipName:DWORD, dPtrCount:DWORD
   local cName[MAX_NAME_CHARS]:CHRA, cStructName[MAX_NAME_CHARS]:CHRA, cNoName[64]:CHRA
 
@@ -32,22 +32,22 @@ RenderTypedefContainer proc pContainerType:PSTRINGA
   mov dPtrCount, 0
   OCall xbx::IncFile.GetNextTokenC
   invoke SkipAnnotations, xax
-  jz @Error
+  test xax, xax
+  jz @ErrorEoF
   invoke SkipMacros, xax
-  jz @Error
+  test xax, xax
+  jz @ErrorEoF
 
-  .if CHRA ptr [xax] != "{"
-    DbgPrintF , "¦UD: RenderTypedefContainer - token ¦SA assumed tag", [xbx].$Obj(IncFile).dLineNumber, xax
+  .if CHRA ptr [xax] != '{'
     lea xdx, cName
     mov pTag, $invoke(TranslateReservedWord, xax, xdx)
     mov pName, xax
     OCall xbx::IncFile.GetNextTokenC
-	  jz @Error
+    test xax, xax
+	  jz @ErrorEoF
   .endif
 
-  DbgPrintF , "¦UD: RenderTypedefContainer - token ¦SA found", [xbx].$Obj(IncFile).dLineNumber, xax
-
-  .if CHRA ptr [xax] == "{"
+  .if CHRA ptr [xax] == '{'
     invoke GetBlockName, addr cStructName
     mov bSkipName, TRUE
     .if xax == NULL
@@ -66,7 +66,7 @@ RenderTypedefContainer proc pContainerType:PSTRINGA
     IsStructure? pName
     .if eax == FALSE
       invoke StrLengthA, pName
-      invoke InsertStrg, pStructs, pName, eax
+      invoke InsertStrg, pNewStructs, pName, eax
     .endif
     lea xax, szEmpty
     mov pSuffix, xax
@@ -74,10 +74,10 @@ RenderTypedefContainer proc pContainerType:PSTRINGA
     OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs%hs %hs"), pName, pSuffix, pContainerType
 
     ;Get known structure alignment
-    OCall pAlignments::List.Search, pName
+    OCall pKnwAlignments::List.Search, pName
     .if eax != FALSE
       mov edx, ecx
-      OCall pAlignments::List.ItemAt, edx
+      OCall pKnwAlignments::List.ItemAt, edx
       mov edx, [xax - sizeof(DWORD)]                    ;edx = length
       mov eax, [xax + xdx]
     .endif
@@ -114,18 +114,26 @@ RenderTypedefContainer proc pContainerType:PSTRINGA
 
   .if xax != NULL
     invoke RenderFurtherTypes, pName, pTag, xax
+    test xax, xax
+    jz @ErrorEoF
     mov pEndToken, xax
   .endif
 
+  ;Exit ---------------------------------------------------------------------------------
 @Exit:
-  Destroy@Stacklist pInherit
   mov xax, pEndToken
-  test xax, xax
   ret
 
-@Error:
+@ErrorSyntax:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderTypedefContainer")
+  OCall xbx::IncFile.StmWriteError
+  invoke GotoNextToken, addr szSemiColon
+  ret
+
 @ErrorEoF:
-  DbgErrorF , "¦SU(¦UD): RenderTypedefContainer - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
-  Destroy@Stacklist pInherit
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.StmWriteError
+  xor eax, eax
   ret
 RenderTypedefContainer endp

@@ -210,7 +210,7 @@ Method Evaluator.Evaluate, uses xdi xsi
             .if (ecx < [xdi].EVAL_OPTOR.dPrece || \
                 (ecx == [xdi].EVAL_OPTOR.dPrece && [xdx].EVAL_OPTOR.dAssoc == ASO_LEFT))
               mov xdi, pAuxToken
-              .if CHRA ptr [xdi] != "("
+              .if CHRA ptr [xdi] != '('
                 mov xcx, [xsi].Stack.pLastMember
                 LDLL_RemoveLast [xsi].Stack, xdi
                 LDLL_InsertLast [xsi].Queue, xcx, xdx
@@ -224,15 +224,15 @@ Method Evaluator.Evaluate, uses xdi xsi
 
       .else
         mov xdx, [xax].EVAL_TOKEN.pToken
-        .if CHRA ptr [xdx] == "("
+        .if CHRA ptr [xdx] == '('
           LDLL_InsertLast [xsi].Stack, xax, xdx
 
-        .elseif CHRA ptr [xdx] == ")"
+        .elseif CHRA ptr [xdx] == ')'
           .while TRUE
             mov xcx, [xsi].Stack.pLastMember
             .break .if xcx == NULL
             mov xdx, [xcx].EVAL_TOKEN.pToken
-            .if CHRA ptr [xdx] != "("
+            .if CHRA ptr [xdx] != '('
               LDLL_RemoveLast [xsi].Stack, xax
               LDLL_InsertLast [xsi].Queue, xcx, xdi
             .else
@@ -1048,7 +1048,7 @@ Method Evaluator.GetNextEvalToken, uses xdi xsi
   local pToken:PTOKEN
   
   OCall xbx::IncFile.GetNextTokenPP
-;  DbgStr eax
+  test xax, xax
   jz @@EOM
   mov pToken, xax
   MemAlloc sizeof(EVAL_TOKEN), MEM_INIT_ZERO
@@ -1072,7 +1072,7 @@ Method Evaluator.GetNextEvalToken, uses xdi xsi
   ;Check if it is a parenthesis
   mov xax, EvalArg2.pToken
   movzx cx, CHRA ptr [xax]
-  .if cl == "(" || cl == ")"
+  .if cl == '(' || cl == ')'
     mov EvalArg2.wType, ETT_PARENTHESIS
     mov EvalArg2.wGenus, cx
     mov EvalArg2.dValue, 0

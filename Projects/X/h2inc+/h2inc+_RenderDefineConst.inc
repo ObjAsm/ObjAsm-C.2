@@ -19,10 +19,11 @@ RenderDefineConst proc uses xdi xsi pName:PSTRINGA
   local bExpression:DWORD, bAddSpace:DWORD, InpStat:INP_STAT
   local dTypeCSpec:DWORD, pType:PSTRINGA
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderDefineConst")
   mov pItems, NULL
   invoke SkipCasts
   OCall xbx::IncFile.GetNextTokenPP
-  .if ZERO?
+  .if xax == NULL
     OCall xbx::IncFile.StmWrite, $OfsCStrA("<>")        ;Terminate the equ line
   .else
     ;Find out if the line is an expression ----------------------------------
@@ -41,7 +42,7 @@ RenderDefineConst proc uses xdi xsi pName:PSTRINGA
       mov al, [xdi]
       .if al >= "0" && al <= "9"
         mov bExpression, TRUE
-      .elseif al != "(" && al != ")"
+      .elseif al != '(' && al != ')'
         ;Is Alpha?
         .if al != "?" && al != "@" && al != "_"
           .if al < "A" || al > "Z"
@@ -74,7 +75,6 @@ RenderDefineConst proc uses xdi xsi pName:PSTRINGA
     mov xax, pToken
     mov bAddSpace, FALSE
     .while xax != NULL
-      DbgPrintF , "¦UD: RenderDefineConst - item ¦SA found", [xbx].$Obj(IncFile).dLineNumber, xdi
 
       DoesStringMatchA? [xax], <LongToHandle>
       jz @NextTokenPP                                   ;Hack => ignore this macro
@@ -96,17 +96,17 @@ RenderDefineConst proc uses xdi xsi pName:PSTRINGA
       .endif
 
       mov eax, $GetCount@Stacklist(pItems)
-      .if eax != 0 && CHRA ptr [xdi] != ")" && CHRA ptr [xdi] != "," && bAddSpace != FALSE
+      .if eax != 0 && CHRA ptr [xdi] != ')' && CHRA ptr [xdi] != ',' && bAddSpace != FALSE
         OCall xbx::IncFile.StmWriteChar, SPC
       .endif
       invoke IsMacro?, xdi                              ;If it is a macro, check if it has params
       .if eax != 0
         .if eax == 1
           mov edx, ecx
-          OCall pMacros::List.ItemAt, edx
+          OCall pNewMacros::List.ItemAt, edx
         .else
           mov edx, ecx
-          OCall pKnownMacros::List.ItemAt, edx
+          OCall pKnwMacros::List.ItemAt, edx
         .endif
         mov edx, [xax - sizeof(DWORD)]
         mov ecx, DWORD ptr [xax + xdx]
@@ -115,7 +115,7 @@ RenderDefineConst proc uses xdi xsi pName:PSTRINGA
           mov eax, TRUE
         .endif
       .endif
-      .if CHRA ptr [xdi] == "(" || eax != FALSE
+      .if CHRA ptr [xdi] == '(' || eax != FALSE
         mov bAddSpace, FALSE
       .else
         mov eax, $GetCount@Stacklist(pItems)
@@ -154,9 +154,9 @@ RenderDefineConst proc uses xdi xsi pName:PSTRINGA
         .if eax != 0
           mov edx, ecx
           .if eax == 1
-            mov xcx, pQualifiers
+            mov xcx, pNewQualifiers
           .else                                         ;eax = 2
-            mov xcx, pKnownQualifiers
+            mov xcx, KnwQualifiers
           .endif
           OCall xcx::List.ItemAt, edx
           mov edx, [xax - sizeof(DWORD)]                ;edx = length
@@ -166,12 +166,12 @@ RenderDefineConst proc uses xdi xsi pName:PSTRINGA
 
       .if edi != 0
         invoke IsQualifier?, pName                      ;ecx = index into list
-        .if eax == 0                                    ;pKnownQualifiers (eax = 2) are immutable
+        .if eax == 0                                    ;KnwQualifiers (eax = 2) are immutable
           invoke StrSizeA, pName
-          invoke InsertAttr, pQualifiers, pName, eax, edi
+          invoke InsertAttr, pNewQualifiers, pName, eax, edi
         .elseif eax == 1
           mov edx, ecx
-          OCall pQualifiers::List.ItemAt, edx
+          OCall pNewQualifiers::List.ItemAt, edx
           mov edx, [xax - sizeof(DWORD)]
           BitSet [xax + xdx], edi                       ;Combine with prev qualifiers
         .endif
@@ -180,12 +180,21 @@ RenderDefineConst proc uses xdi xsi pName:PSTRINGA
   .endif
   OCall xbx::IncFile.StmWriteComment
 
+  ;Exit ---------------------------------------------------------------------------------
+@Exit:
   Destroy@Stacklist pItems                              ;Restore stack
   ret
 
-@Error:
+@ErrorSyntax:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderDefineConst")
+  OCall xbx::IncFile.StmWriteError
+  Destroy@Stacklist pItems                              ;Restore stack
+  invoke GotoNextToken, addr szSemiColon
+  ret
+
 @ErrorEoF:
-  DbgErrorF , "¦SU(¦UD): RenderDefineConst - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+  inc [xbx].$Obj(IncFile).dErrorCount
   Destroy@Stacklist pItems                              ;Restore stack
   ret
 RenderDefineConst endp

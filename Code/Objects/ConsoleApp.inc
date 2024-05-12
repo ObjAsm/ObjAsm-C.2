@@ -145,7 +145,8 @@ Method ConsoleApp.PrintLn, uses xbx xsi, pMessage:PSTRING
   SetObject xsi
   OCall xsi.Print, pMessage
   lea xbx, dCharsWritten
-  invoke WriteConsole, [xsi].hOutput, addr cCRLF, 1*sizeof(CHR), xbx, NULL  ;MUST be 1 CHAR only!
+  invoke WriteConsole, [xsi].hOutput, addr cCRLF, 2*sizeof(CHR), xbx, NULL  ;MUST be 1 CHAR only!
+  ;The console only accepts LF. A CR is shown as a space.
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

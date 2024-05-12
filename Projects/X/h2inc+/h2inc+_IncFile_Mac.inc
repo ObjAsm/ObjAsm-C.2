@@ -78,9 +78,9 @@ endm
 ; Return:     eax = TRUE if token is a known structure name, otherwise FALSE
 
 IsStructure? macro pToken:req
-  OCall pKnownStructs::List.Search, pToken
+  OCall pKnwStructs::List.Search, pToken
   .if eax == FALSE
-    OCall pStructs::List.Search, pToken
+    OCall pNewStructs::List.Search, pToken
   .endif
 endm
 
@@ -111,7 +111,7 @@ endm
 ; Macro:      BasicTypeCScan
 ; Purpose:    Helper macro to identifiy basic C types. It sets dTypeCSpec using CTS_xxx.
 ; Arguments:  xax -> Current token.
-; Return:     xax -> Next token. 
+; Return:     xax -> Next token.
 ;             dTypeCSpec with matching CTS_xxx value.
 
 BasicTypeCScan macro
@@ -120,12 +120,14 @@ BasicTypeCScan macro
   .if $DoesStringMatchA?([xax], <unsigned>)
     BitSet dTypeCSpec, CTS_unsigned
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <signed>)
     BitSet dTypeCSpec, CTS_signed
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
@@ -133,12 +135,14 @@ BasicTypeCScan macro
   .if $DoesStringMatchA?([xax], <long>)
     BitSet dTypeCSpec, CTS_long
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <short>)
     BitSet dTypeCSpec, CTS_short
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
@@ -146,6 +150,7 @@ BasicTypeCScan macro
   .if $DoesStringMatchA?([xax], <long>)
     BitSet dTypeCSpec, CTS_long2
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
@@ -153,66 +158,77 @@ BasicTypeCScan macro
   .if $DoesStringMatchA?([xax], <void>)
     BitSet dTypeCSpec, CTS_void
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <char>)
     BitSet dTypeCSpec, CTS_char
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <bool>)
     BitSet dTypeCSpec, CTS_bool
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <int>)
     BitSet dTypeCSpec, CTS_int
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <float>)
     BitSet dTypeCSpec, CTS_float
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <double>)
     BitSet dTypeCSpec, CTS_double
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <__int8>)
     BitSet dTypeCSpec, CTS___int8
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <__int16>)
     BitSet dTypeCSpec, CTS___int16
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <__int32>)
     BitSet dTypeCSpec, CTS___int32
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <__int64>)
     BitSet dTypeCSpec, CTS___int64
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
     jmp @F
   .endif
   .if $DoesStringMatchA?([xax], <__wchar_t>)
     BitSet dTypeCSpec, CTS___wchar_t
     OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
     jz @ErrorEoF
 ;      jmp @F
   .endif
@@ -307,5 +323,5 @@ endm
 SkipPPLine macro
   .repeat
     OCall xbx::IncFile.GetNextTokenPP
-  .until ZERO?
+  .until xax == NULL
 endm

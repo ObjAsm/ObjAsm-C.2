@@ -22,7 +22,7 @@ PPCH_Define proc uses xdi xsi
   m2m pStmOutPos, [xbx].$Obj(IncFile).pStmOutPos, xax
 
   OCall xbx::IncFile.GetNextTokenPP                     ;Get the name of constant/macro
-  .if !ZERO?
+  .if xax != NULL
     mov pName, xax
     invoke TranslateReservedWord, pName, addr cTransBuffer
     OCall xbx::IncFile.StmWrite, xax
@@ -34,7 +34,7 @@ PPCH_Define proc uses xdi xsi
     .endif
     .if bMacro != FALSE
       OCall xbx::IncFile.GetNextTokenPP                 ;Skip PCT_MACRO
-      OCall xbx::IncFile.GetNextTokenPP                 ;Skip "("
+      OCall xbx::IncFile.GetNextTokenPP                 ;Skip '('
       OCall xbx::IncFile.StmWrite, $OfsCStrA(" macro ")
 
       ;Write the macro params
@@ -44,14 +44,15 @@ PPCH_Define proc uses xdi xsi
       mov dParams, 0
       .while TRUE
         OCall xbx::IncFile.GetNextTokenPP
-        .break .if ZERO?
-        .break .if CHRA ptr [xax] == ")"
+        .break .if xax == NULL
+        .break .if CHRA ptr [xax] == ')'
         mov pToken, xax
-        .if CHRA ptr [xax] == ","
+        .if CHRA ptr [xax] == ','
           mov xax, $OfsCStrA(", ")
         .else
           inc dParams
-          invoke TranslateReservedWord, xax, addr cTransBuffer
+          lea xdx, cTransBuffer
+          invoke TranslateReservedWord, xax, xdx
           .if edx != 0
             ;Translation occurred
             Add@Stacklist pArgStack, pToken           ;Does NOT change xax
@@ -71,7 +72,7 @@ PPCH_Define proc uses xdi xsi
         .else
           xor eax, eax
         .endif
-        invoke InsertAttr, pMacros, pName, dSize, eax
+        invoke InsertAttr, pNewMacros, pName, dSize, eax
       .endif
 
       OCall xbx::IncFile.StmWrite, $OfsCStrA("  exitm ", 3Ch)   ;"  exitm <", incl. 2 spc 4 indent.
@@ -81,23 +82,23 @@ PPCH_Define proc uses xdi xsi
       mov bFirstParam, TRUE
       .while TRUE
         OCall xbx::IncFile.GetNextTokenPP
-        .break .if ZERO?
+        .break .if xax == NULL
         mov xsi, xax
-        .continue .if CHRA ptr [xsi] == ")"
-        .if bFirstParam == FALSE && CHRA ptr [xsi] != ")" && CHRA ptr [xsi] != "," && bAddSpace != FALSE && CHRA ptr [xax] != "."
+        .continue .if CHRA ptr [xsi] == ')'
+        .if bFirstParam == FALSE && CHRA ptr [xsi] != ')' && CHRA ptr [xsi] != ',' && bAddSpace != FALSE && CHRA ptr [xax] != "."
           OCall xbx::IncFile.StmWriteChar, SPC
         .endif
         invoke IsMacro?, xsi
         .if eax != 0
           OCall xbx::IncFile.PeekNextTokenC
-          .if !ZERO? && CHRA ptr [xax] == "("
+          .if xax != NULL && CHRA ptr [xax] == '('
             mov bAddSpace, FALSE
           .else
             mov bAddSpace, TRUE
           .endif
         .else
           mov bAddSpace, FALSE
-          cmp CHRA ptr [xsi], "("
+          cmp CHRA ptr [xsi], '('
           setne bAddSpace
         .endif
 
@@ -129,7 +130,7 @@ PPCH_Define proc uses xdi xsi
       invoke IsEquate?, pName                         ;Check if it already exist
       .if eax == FALSE
         invoke StrSizeA, pName
-        invoke InsertAttr, pEquates, pName, eax, 0
+        invoke InsertAttr, pNewEquates, pName, eax, 0
       .endif
       OCall xbx::IncFile.StmWrite, $OfsCStrA(" equ ")
       invoke SkipSimpleBraces
@@ -138,10 +139,10 @@ PPCH_Define proc uses xdi xsi
     .endif
   .endif
 
-;  .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
-;    mrm pStmOutPos, [xbx].$Obj(IncFile).pStmOutPos, xcx
-;    mov CHRA ptr [xcx], 0
-;  .endif
+  .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
+    mrm [xbx].$Obj(IncFile).pStmOutPos, pStmOutPos, xcx
+    mov CHRA ptr [xcx], 0
+  .endif
   ret
 PPCH_Define endp
 
@@ -166,10 +167,11 @@ PPCH_Undef endp
 
 PPCH_Include proc uses xsi xdi
   local pPath:PSTRINGA, cIncludeFile[1024]:CHRW
+  local .xdi:XWORD, .xsi:XWORD
 
   OCall xbx::IncFile.StmWrite, $OfsCStrA("include ")
   OCall xbx::IncFile.GetNextTokenPP
-  .if !ZERO? && CHRA ptr [xax] == "<"
+  .if xax != NULL && CHRA ptr [xax] == "<"
     OCall xbx::IncFile.GetNextTokenPP
   .endif
   mov pPath, xax
@@ -191,12 +193,14 @@ PPCH_Include proc uses xsi xdi
     or ah, 20h
     .if ax == "h."
       .if $ObjTmpl(Application).Options.bProcessInclude != FALSE
-        pushax
+        mov .xdi, xdi
+        mov .xsi, xsi
         mov al, 0
         stosb
         invoke StrA2StrW, addr cIncludeFile, [xbx].$Obj(IncFile).pStmOutPos
         OCall $ObjTmpl(Application)::Application.ProcessFile, [xbx].$Obj(IncFile).pHeaderFilePath, addr cIncludeFile, xbx   ;Ignore result and continue
-        popax
+        mov xdi, .xdi
+        mov xsi, .xsi
       .endif
       dec xdi
       dec xdi
@@ -226,7 +230,7 @@ PPCH_Error proc uses xsi
   xor esi, esi
   .while TRUE
     OCall xbx::IncFile.GetNextTokenPP
-    .break .if ZERO?
+    .break .if xax == NULL
     mov pToken, xax
     .if esi != 0
       OCall xbx::IncFile.StmWriteChar, " "
@@ -256,17 +260,18 @@ PPCH_Pragma proc uses xsi
   .endif
 
   ;Handle "#pragma message(...)"
-  OCall xbx::IncFile.GetNextTokenPP           ;skip "("
-  .if !ZERO?
+  OCall xbx::IncFile.GetNextTokenPP                     ;skip '('
+  .if xax != NULL
     OCall xbx::IncFile.StmWrite, $OfsCStrA("echo ")
     mov dParenthesesCount, 1
     xor esi, esi
     .while TRUE
       OCall xbx::IncFile.GetNextTokenPP
+;      test xax, xax
 ;      jz @Error
-      .if CHRA ptr [xax] == "("
+      .if CHRA ptr [xax] == '('
         inc dParenthesesCount
-      .elseif CHRA ptr [xax] == ")"
+      .elseif CHRA ptr [xax] == ')'
         dec dParenthesesCount
       .endif
       .break .if ZERO? || xax == NULL
@@ -290,9 +295,9 @@ PPCH_Pragma proc uses xsi
       SkipPPLine
     .endif
     mov xcx, [xbx].$Obj(IncFile).pStmOutPos
-    ;Check if last character is a ",". This causes %echo to continue with next line!
+    ;Check if last character is a ','. This causes %echo to continue with next line!
     mov al, CHRA ptr [xcx - 1]
-    .if al == ","
+    .if al == ','
       OCall xbx::IncFile.StmWriteChar, "'"
     .endif
     OCall xbx::IncFile.StmWriteEoL
@@ -304,7 +309,7 @@ PPCH_Pragma proc uses xsi
 ;    OCall xbx::IncFile.StmCopyRestOfPPLine
   .while TRUE
     OCall xbx::IncFile.GetNextTokenPP
-    .break .if ZERO?
+    .break .if xax == NULL
   .endw
   ret
 PPCH_Pragma endp

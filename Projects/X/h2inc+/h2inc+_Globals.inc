@@ -49,10 +49,9 @@ RenderInterfaceBlock    proto :PSTRINGA
 RenderMacroCall         proto :PSTRINGA, :DWORD, :DWORD
 RenderPrototype         proto :PSTRINGA, :PSTRINGA
 RenderTypedef           proto
-RenderTypedefFunction   proto :PSTRINGA, :DWORD
+RenderTypedefFunction   proto :PSTRINGA
 RenderTypedefFuncPtr    proto :PSTRINGA
 RenderTypedefEnum       proto :BOOL
-RenderTypedefContainer  proto :PSTRINGA
 
 ;ASCII Codes
 BELL                    equ <07>
@@ -64,7 +63,7 @@ FF                      equ <"0C">
 DLLIMPORT_DEFAULT       equ 0
 DLLIMPORT_ASSUME        equ 1
 DLLIMPORT_IGNORE        equ 2
-DLLIMPORT_DEFPROTO      equ 2
+DLLIMPORT_DEFPROTO      equ 3
 
 OUTPUT_CONSTANTS        equ BIT00
 OUTPUT_PROTOTYPES       equ BIT01
@@ -78,6 +77,11 @@ CALLCONV_PASCAL         equ 2
 CALLCONV_SYSCALL        equ 3
 CALLCONV_FASTCALL       equ 4
 CALLCONV_VECTORCALL     equ 5
+
+;Extern Linkage Type
+ELT_UNDEF               equ 0
+ELT_C                   equ 1
+ELT_CPP                 equ 2
 
 ;Prototype qualifiers
 PTQ_CDECL               equ 0001h   ;cdecl
@@ -110,8 +114,8 @@ CTS___wchar_t           equ 11
 
 ;Types for RenderBlock()
 RBT_CONTAINER           equ 0       ;struct/union
-RBT_EXTERN              equ 1       ;extern
-RBT_ENUM                equ 2       ;enum
+RBT_ENUM                equ 1       ;enum
+RBT_EXTERN              equ 2       ;extern
 
 ;Parser output ctrl codes
 PCT_EOL                 equ 0E0h    ;(à) End of Line
@@ -121,12 +125,12 @@ PCT_IGNORE              equ 0E3h    ;(ã) Ignore token
 PCT_MACRO               equ 0E4h    ;(ä) Is a macro
 
 ;Flag values for Known-Macros
-MCF_KNOWN               equ 001h    ;Known macro comming from Ini-File or default values
+MCF_KNOWN               equ 001h    ;Known macro comming from stored values
 MCF_HAS_PARAMS          equ 002h    ;Macro has parameters
 MCF_SKIP_BRACES         equ 004h    ;Skip first and last parenthesis in macro invocation
 MCF_COPY_LINE           equ 008h    ;Assume rest of line belongs to macro invocation
 MCF_PARAMS_FOLLOW       equ 010h    ;Assume method parameters coming after macro invocation
-MCF_END_MACRO           equ 020h    ;End next block with a END_xxx macro invocation
+MCF_WRITE_END_MACRO     equ 020h    ;End block with a macro invocation (e.g.: xxx_END)
 MCF_STRUCT_BEG          equ 040h    ;Macro begins a struct/union definition
 MCF_INTERFACE_BEG       equ 080h    ;Add an "??Interface equ <xxx>" line
 MCF_INTERFACE_END       equ 100h    ;Add an "??Interface equ <>" line
@@ -191,18 +195,6 @@ CStr szEndifWoIf,       "'endif' without 'if'"
 DebugMessage CHRA       512 dup (?)
 DebugCaption PSTRINGA   ?
 
-DbgPrintF macro Color:=<DbgColorForeground>, Message:req, Args:vararg
-  if 0
-    DbgWriteF Color, "Output", Message, Args
-  endif
-endm
-
-DbgErrorF macro Color:=<DbgColorError>, Message:req, Args:vararg
-  if 1
-    DbgWriteF Color, "Output", Message, Args
-  endif
-endm
-
 PrependZerosA macro Var, Count
   xor eax, eax
   if Count eq 4
@@ -246,10 +238,7 @@ INP_STAT struc
 INP_STAT ends
 P_INP_STAT typedef ptr INP_STAT
 
-.data
-;--- table for sections to read from h2inc+.ini
-
-CONV_TAB_ENTRY struct
+LIST_SETUP struct
   pSectionName    PSTRINGA  ?   ;-> ini section name
   pList           POINTER   ?   ;-> List
   dAlloc          DWORD     ?   ;List memory allocation count
@@ -257,14 +246,14 @@ CONV_TAB_ENTRY struct
   dFlags          DWORD     ?   ;List flags
   pFileName       PSTRINGW  ?   ;Load/Save Filename
   pDefault        POINTER   ?   ;-> default table
-CONV_TAB_ENTRY ends
-PCONV_TAB_ENTRY typedef ptr CONV_TAB_ENTRY
+LIST_SETUP ends
+PLIST_SETUP typedef ptr LIST_SETUP
 
-CF_SNGL   equ 0001h             ;Single string
-CF_CASE   equ 0002h             ;Single lowercase string
-CF_EQUI   equ 0004h             ;string -> string conversion
-CF_ATTR   equ 0008h             ;string -> DWORD conversion
-CF_INIF   equ 0010h             ;Load from Ini-File
+CF_SNG    equ 0001h             ;Single string
+CF_LCS    equ 0002h             ;Single lowercase string
+CF_CNV    equ 0004h             ;string -> string conversion
+CF_ATR    equ 0008h             ;string -> DWORD conversion
+CF_KNW    equ 0010h             ;Load from Ini-File
 
 CONV_ATTR_ENTRY struc
   pName   PSTRINGA ?
@@ -282,58 +271,59 @@ CONV_BASIC_TYPE_ENTRY struc
 CONV_BASIC_TYPE_ENTRY ends
 
 
-DefineConvTabEntry macro EntryName:req, Alloc:req, Incr:req, Flags:=<>, FileName:= <>, SectName:=<>
+DefListSetup macro EntryName:req, Alloc:req, Incr:req, Flags:=<>, FileName:= <>, SectName:=<>
   ifb <FileName>
     FullFileName equ <NULL>
   else
     FullFileName equ <$OfsCStrW("H2I_&FileName&.lst")>  ;;WIDE Filename
   endif
 
-  if Flags and CF_INIF
-%   EntryName CONV_TAB_ENTRY <$OfsCBStrA("&SectName"), \
+  if Flags and CF_KNW
+%   EntryName LIST_SETUP <$OfsCBStrA("&SectName"), \
               NULL, Alloc, Incr, Flags, FullFileName, offset Default&EntryName&Table>
   else
-%   EntryName CONV_TAB_ENTRY <offset szEmpty, \
+%   EntryName LIST_SETUP <offset szEmpty, \
               NULL, Alloc, Incr, Flags, FullFileName, NULL>
   endif
   p&EntryName textequ <&EntryName.pList>                ;;Define a commodity equate
 endm
 
-PersistConvTable label POINTER
-DefineConvTabEntry  KnownMacros,     1000, 100, CF_ATTR or CF_INIF, <KnwMacros>,    <Macro Names>
-DefineConvTabEntry  KnownTypeSize,   1000, 100, CF_ATTR or CF_INIF, <KnwTypeSizes>, <Type Size>
-DefineConvTabEntry  SimpleTypes,     1000, 100, CF_SNGL or CF_INIF, <TypeNames>,    <Simple Type Names>
-DefineConvTabEntry  KnownEquates,    1000, 100, CF_ATTR or CF_INIF, <KnwEquate>,    <Equate Names>
-DefineConvTabEntry  KnownStructs,    1000, 100, CF_SNGL or CF_INIF, <KnwStruct>,    <Structure Names>
-DefineConvTabEntry  KnownQualifiers, 1000, 100, CF_ATTR or CF_INIF, <KnwQualif>,    <Prototype Qualifiers>
-DefineConvTabEntry  ReservedWords,   1000, 100, CF_CASE or CF_INIF, <ResvWords>,    <Reserved Words>
-DefineConvTabEntry  ConvertTypeQual, 1000, 100, CF_EQUI or CF_INIF, <QualifCnv>,    <Type Qualifier Conversion>
-DefineConvTabEntry  ConvertTypes1,   1000, 100, CF_EQUI or CF_INIF, <TypeConv1>,    <Type Conversion 1>
-DefineConvTabEntry  ConvertTypes2,   1000, 100, CF_EQUI or CF_INIF, <TypeConv2>,    <Type Conversion 2>
-DefineConvTabEntry  ConvertTypes3,   1000, 100, CF_EQUI or CF_INIF, <TypeConv3>,    <Type Conversion 3>
-DefineConvTabEntry  ConvertTokens,   1000, 100, CF_EQUI or CF_INIF, <TokenConv>,    <Token Conversion>
-DefineConvTabEntry  Alignments,      1000, 100, CF_ATTR or CF_INIF, <Alignment>,    <Alignment>
-DefineConvTabEntry  Annotations,     1000, 100, CF_SNGL or CF_INIF, <KnwAnnots>,    <Annotations>
-VolatilConvTable label POINTER
-DefineConvTabEntry  TypeSize,        1000, 100, CF_ATTR, <NewTypeSizes>
-DefineConvTabEntry  Macros,          1000, 100, CF_ATTR, <NewMacros>
-DefineConvTabEntry  Equates,         1000, 100, CF_ATTR, <NewEquate>
-DefineConvTabEntry  Structs,         1000, 100, CF_SNGL, <NewStruct>
-DefineConvTabEntry  Qualifiers,      1000, 100, CF_ATTR, <NewQualif>
-DefineConvTabEntry  Prototypes,      1000, 100, CF_SNGL, <NewProtos>
-DefineConvTabEntry  Typedefs,        1000, 100, CF_SNGL, <NewTypdef>
+.data                                                   ;Must be in .data because of pList
+KnownContentLists label LIST_SETUP
+DefListSetup  KnwResvWords,    1000, 100, CF_KNW or CF_LCS, <KnwResvWords>,   <Reserved Words>
+DefListSetup  KnwTypeSize,     1000, 100, CF_KNW or CF_ATR, <KnwTypeSizes>,   <Type Size>
+DefListSetup  KnwMacros,       1000, 100, CF_KNW or CF_ATR, <KnwMacros>,      <Macro Names>
+DefListSetup  KnwEquates,      1000, 100, CF_KNW or CF_ATR, <KnwEquate>,      <Equate Names>
+DefListSetup  KnwStructs,      1000, 100, CF_KNW or CF_SNG, <KnwStruct>,      <Structure Names>
+DefListSetup  KnwQualifiers,   1000, 100, CF_KNW or CF_ATR, <KnwQualif>,      <Prototype Qualifiers>
+DefListSetup  KnwSimpleTypes,  1000, 100, CF_KNW or CF_SNG, <KnwTypeNames>,   <Simple Type Names>
+DefListSetup  KnwConvTypeQual, 1000, 100, CF_KNW or CF_CNV, <KnwConvQualif>,  <Type Qualifier Conversion>
+DefListSetup  KnwConvTypes1,   1000, 100, CF_KNW or CF_CNV, <KnwConvType1>,   <Type Conversion 1>
+DefListSetup  KnwConvTypes2,   1000, 100, CF_KNW or CF_CNV, <KnwConvType2>,   <Type Conversion 2>
+DefListSetup  KnwConvTypes3,   1000, 100, CF_KNW or CF_CNV, <KnwConvType3>,   <Type Conversion 3>
+DefListSetup  KnwConvTokens,   1000, 100, CF_KNW or CF_CNV, <KnwConvToken>,   <Token Conversion>
+DefListSetup  KnwAlignments,   1000, 100, CF_KNW or CF_ATR, <KnwAlignment>,   <Alignment>
+DefListSetup  KnwAnnotations,  1000, 100, CF_KNW or CF_SNG, <KnwAnnotations>, <Annotations>
+NewContentLists label LIST_SETUP
+DefListSetup  NewTypeSize,     1000, 100, CF_ATR,           <NewTypeSizes>
+DefListSetup  NewMacros,       1000, 100, CF_ATR,           <NewMacros>
+DefListSetup  NewEquates,      1000, 100, CF_ATR,           <NewEquate>
+DefListSetup  NewStructs,      1000, 100, CF_SNG,           <NewStruct>
+DefListSetup  NewQualifiers,   1000, 100, CF_ATR,           <NewQualif>
+DefListSetup  NewPrototypes,   1000, 100, CF_SNG,           <NewProtos>
+DefListSetup  NewTypedefs,     1000, 100, CF_SNG,           <NewTypdef>
 POINTER NULL
 
 
 .const
 
 ;Token conversion, use with care!
-DefaultConvertTokensTable label POINTER
+DefaultKnwConvTokensTable label POINTER
   CONV_EQUI_ENTRY <$OfsCBStrA("interface"), offset szStruct>
   POINTER NULL
 
 ;Known type attribute names, usually not used, since defined in h2inc+.ini.
-DefaultConvertTypeQualTable label POINTER
+DefaultKnwConvTypeQualTable label POINTER
   CONV_EQUI_ENTRY <$OfsCBStrA("const"),     offset szEmpty>
   CONV_EQUI_ENTRY <$OfsCBStrA("volatile"),  offset szEmpty>
   CONV_EQUI_ENTRY <$OfsCBStrA("restrict"),  offset szEmpty>
@@ -351,7 +341,7 @@ DefaultConvertTypeQualTable label POINTER
 ;  MCF_SKIP_BRACES      004h => Skip braces in macro call
 ;  MCF_COPY_LINE        008h => Assume rest of line belongs to macro call
 ;  MCF_PARAMS_FOLLOW    010h => Assume method parameters coming after macro
-;  MCF_END_MACRO        020h => End next block with a ???_END macro call
+;  MCF_WRITE_END_MACRO  020h => End next block with a ???_END macro call
 ;  MCF_STRUCT_BEG       040h => Macro begins a struct/union
 ;  MCF_INTERFACE_BEG    080h => Add an "??Interface equ <xxx>" line
 ;  MCF_INTERFACE_END    100h => Add an "??Interface equ <>" line
@@ -366,17 +356,18 @@ DefaultConvertTypeQualTable label POINTER
 ; 129: assume BEGIN_INTERFACE: add "??Interface equ <xxx>" line
 ; 257: assume END_INTERFACE: add "??Interface equ <>" line
 
-DefaultKnownMacrosTable label POINTER
+DefaultKnwMacrosTable label POINTER
   CONV_ATTR_ENTRY <$OfsCBStrA("BEGIN_INTERFACE"),           MCF_KNOWN or MCF_INTERFACE_BEG>
   CONV_ATTR_ENTRY <$OfsCBStrA("DECLARE_HANDLE"),            MCF_KNOWN or MCF_HAS_PARAMS>
-  CONV_ATTR_ENTRY <$OfsCBStrA("DECLARE_INTERFACE"),         MCF_KNOWN or MCF_HAS_PARAMS or MCF_END_MACRO>
-  CONV_ATTR_ENTRY <$OfsCBStrA("DECLARE_INTERFACE_"),        MCF_KNOWN or MCF_HAS_PARAMS or MCF_END_MACRO>
-  CONV_ATTR_ENTRY <$OfsCBStrA("DECLARE_INTERFACE_IID"),     MCF_KNOWN or MCF_HAS_PARAMS or MCF_END_MACRO>
-  CONV_ATTR_ENTRY <$OfsCBStrA("DECLARE_INTERFACE_IID_"),    MCF_KNOWN or MCF_HAS_PARAMS or MCF_END_MACRO>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DECLARE_INTERFACE"),         MCF_KNOWN or MCF_HAS_PARAMS or MCF_WRITE_END_MACRO>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DECLARE_INTERFACE_"),        MCF_KNOWN or MCF_HAS_PARAMS or MCF_WRITE_END_MACRO>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DECLARE_INTERFACE_IID"),     MCF_KNOWN or MCF_HAS_PARAMS or MCF_WRITE_END_MACRO>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DECLARE_INTERFACE_IID_"),    MCF_KNOWN or MCF_HAS_PARAMS or MCF_WRITE_END_MACRO>
   CONV_ATTR_ENTRY <$OfsCBStrA("DECLSPEC_UUID"),             MCF_KNOWN or MCF_HAS_PARAMS>
   CONV_ATTR_ENTRY <$OfsCBStrA("DECLSPEC_XFGVIRT"),          MCF_KNOWN or MCF_HAS_PARAMS or MCF_SKIP_INVOKATION>
   CONV_ATTR_ENTRY <$OfsCBStrA("DEFINE_GUID"),               MCF_KNOWN or MCF_HAS_PARAMS or MCF_SKIP_BRACES>
   CONV_ATTR_ENTRY <$OfsCBStrA("END_INTERFACE"),             MCF_KNOWN or MCF_INTERFACE_END>
+  CONV_ATTR_ENTRY <$OfsCBStrA("MIDL_INTERFACE"),            MCF_KNOWN or MCF_HAS_PARAMS or MCF_WRITE_END_MACRO or MCF_STRUCT_BEG>
   CONV_ATTR_ENTRY <$OfsCBStrA("SHSTDAPI_"),                 MCF_KNOWN or MCF_HAS_PARAMS>
   CONV_ATTR_ENTRY <$OfsCBStrA("STDMETHOD"),                 MCF_KNOWN or MCF_HAS_PARAMS or MCF_SKIP_BRACES or MCF_COPY_LINE or MCF_PARAMS_FOLLOW>
   CONV_ATTR_ENTRY <$OfsCBStrA("STDMETHOD_"),                MCF_KNOWN or MCF_HAS_PARAMS or MCF_SKIP_BRACES or MCF_COPY_LINE or MCF_PARAMS_FOLLOW>
@@ -393,17 +384,17 @@ DefaultKnownMacrosTable label POINTER
 ;Meaning of ATTR value:
 ;  EQF_KNOWN            001h
 
-DefaultKnownEquatesTable label POINTER
+DefaultKnwEquatesTable label POINTER
 ;  CONV_ATTR_ENTRY <$OfsCBStrA(""),           EQF_KNOWN>
   POINTER NULL
 
 ;Known structure names, usually not used, since defined in h2inc+.ini.
-DefaultKnownStructsTable label POINTER
+DefaultKnwStructsTable label POINTER
   POINTER $OfsCBStrA("POINT")
   POINTER NULL
 
 ;Known prototype qualifier names, usually not used, since defined in h2inc+.ini.
-DefaultKnownQualifiersTable label POINTER
+DefaultKnwQualifiersTable label POINTER
   CONV_ATTR_ENTRY <$OfsCBStrA("__cdecl"),    PTQ_CDECL>
   CONV_ATTR_ENTRY <$OfsCBStrA("_cdecl"),     PTQ_CDECL>
   CONV_ATTR_ENTRY <$OfsCBStrA("__stdcall"),  PTQ_STDCALL>
@@ -416,40 +407,40 @@ DefaultKnownQualifiersTable label POINTER
   POINTER NULL
 
 ;Type sizes. Required if a type is a parameter with size > 4.
-DefaultKnownTypeSizeTable label POINTER
-  CONV_ATTR_ENTRY <$OfsCBStrA("BYTE"),       01>
-  CONV_ATTR_ENTRY <$OfsCBStrA("CHAR"),       01>
-  CONV_ATTR_ENTRY <$OfsCBStrA("CY"),         08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("DATE"),       08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("DOUBLE"),     08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("DWORD"),      04>
-  CONV_ATTR_ENTRY <$OfsCBStrA("DWORD64"),    08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("DWORDLONG"),  08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("DWORD_PTR"),  08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("INT64"),      08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("LONG"),       04>
-  CONV_ATTR_ENTRY <$OfsCBStrA("LONG64"),     08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("LONGLONG"),   08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("LONG_PTR"),   08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("OWORD"),      16>
-  CONV_ATTR_ENTRY <$OfsCBStrA("POINT"),      08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("PROPVARIANT"),16>
-  CONV_ATTR_ENTRY <$OfsCBStrA("QWORD"),      08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("SHORT"),      02>
-  CONV_ATTR_ENTRY <$OfsCBStrA("UINT32"),     04>
-  CONV_ATTR_ENTRY <$OfsCBStrA("UINT64"),     08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("ULONG"),      04>
-  CONV_ATTR_ENTRY <$OfsCBStrA("ULONG64"),    08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("ULONGLONG"),  08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("ULONG_PTR"),  08>
-  CONV_ATTR_ENTRY <$OfsCBStrA("VARIANT"),    16>
-  CONV_ATTR_ENTRY <$OfsCBStrA("VARIANTARG"), 16>
-  CONV_ATTR_ENTRY <$OfsCBStrA("WCHAR"),      02>
-  CONV_ATTR_ENTRY <$OfsCBStrA("WORD"),       02>
+DefaultKnwTypeSizeTable label POINTER
+  CONV_ATTR_ENTRY <$OfsCBStrA("BYTE"),        01>
+  CONV_ATTR_ENTRY <$OfsCBStrA("CHAR"),        01>
+  CONV_ATTR_ENTRY <$OfsCBStrA("CY"),          08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DATE"),        08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DOUBLE"),      08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DWORD"),       04>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DWORD64"),     08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DWORDLONG"),   08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("DWORD_PTR"),   08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("INT64"),       08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("LONG"),        04>
+  CONV_ATTR_ENTRY <$OfsCBStrA("LONG64"),      08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("LONGLONG"),    08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("LONG_PTR"),    08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("OWORD"),       16>
+  CONV_ATTR_ENTRY <$OfsCBStrA("POINT"),       08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("PROPVARIANT"), 16>
+  CONV_ATTR_ENTRY <$OfsCBStrA("QWORD"),       08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("SHORT"),       02>
+  CONV_ATTR_ENTRY <$OfsCBStrA("UINT32"),      04>
+  CONV_ATTR_ENTRY <$OfsCBStrA("UINT64"),      08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("ULONG"),       04>
+  CONV_ATTR_ENTRY <$OfsCBStrA("ULONG64"),     08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("ULONGLONG"),   08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("ULONG_PTR"),   08>
+  CONV_ATTR_ENTRY <$OfsCBStrA("VARIANT"),     16>
+  CONV_ATTR_ENTRY <$OfsCBStrA("VARIANTARG"),  16>
+  CONV_ATTR_ENTRY <$OfsCBStrA("WCHAR"),       02>
+  CONV_ATTR_ENTRY <$OfsCBStrA("WORD"),        02>
   POINTER NULL
 
 ;Simple types default, usually not used, since defined in h2inc+.ini.
-DefaultSimpleTypesTable label POINTER
+DefaultKnwSimpleTypesTable label POINTER
   POINTER $OfsCBStrA("BYTE")
   POINTER $OfsCBStrA("SBYTE")
   POINTER $OfsCBStrA("WORD")
@@ -480,7 +471,7 @@ DefaultSimpleTypesTable label POINTER
   POINTER NULL
 
 ;Type conversion 1 default, usually not used since defined in h2inc+.ini.
-DefaultConvertTypes1Table label POINTER
+DefaultKnwConvTypes1Table label POINTER
   CONV_EQUI_ENTRY <$OfsCBStrA("DWORDLONG"),      $OfsCBStrA("QWORD")>
   CONV_EQUI_ENTRY <$OfsCBStrA("ULONGLONG"),      $OfsCBStrA("QWORD")>
   CONV_EQUI_ENTRY <$OfsCBStrA("LONGLONG"),       $OfsCBStrA("SQWORD")>
@@ -489,7 +480,7 @@ DefaultConvertTypes1Table label POINTER
   POINTER NULL
 
 ;Type conversion 2 default, usually not used since defined in h2inc+.ini.
-DefaultConvertTypes2Table label POINTER
+DefaultKnwConvTypes2Table label POINTER
   CONV_EQUI_ENTRY <$OfsCBStrA("int"),            $OfsCBStrA("SDWORD")>
   CONV_EQUI_ENTRY <$OfsCBStrA("unsigned int"),   $OfsCBStrA("DWORD")>
   CONV_EQUI_ENTRY <$OfsCBStrA("short"),          $OfsCBStrA("SWORD")>
@@ -509,21 +500,21 @@ DefaultConvertTypes2Table label POINTER
   POINTER NULL
 
 ;Type conversion 3 default, usually not used since defined in h2inc+.ini.
-DefaultConvertTypes3Table label POINTER
+DefaultKnwConvTypes3Table label POINTER
   CONV_EQUI_ENTRY < $OfsCBStrA("POINT"),         $OfsCBStrA("QWORD")>
   POINTER NULL
 
 ;Structure alignments default, usually not used since defined in h2inc+.ini.
-DefaultAlignmentsTable label POINTER
+DefaultKnwAlignmentsTable label POINTER
   POINTER NULL
 
 ;Reserved words default, usually not used since defined in h2inc+.ini.
-DefaultReservedWordsTable label POINTER
+DefaultKnwResvWordsTable label POINTER
   POINTER $OfsCBStrA("cx")
   POINTER $OfsCBStrA("dx")
   POINTER NULL
 
-DefaultAnnotationsTable label POINTER
+DefaultKnwAnnotationsTable label POINTER
   POINTER NULL
 
 ConvertBasicTypeTable label DWORD

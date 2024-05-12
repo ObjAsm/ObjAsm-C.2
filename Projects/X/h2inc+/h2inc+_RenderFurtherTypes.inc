@@ -15,39 +15,39 @@
 ;             Arg2 -> Tag.
 ;             Arg3 -> Token
 ;             xbx -> IncFile.
-; Return:     xax -> Next Token.
+; Return:     xax -> Next Token or NULL if failed.
 
 RenderFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
   local dPtrCount:DWORD, pName:PSTRINGA, pCurrToken:PTOKEN, cTransBuffer[128]:CHRA
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderFurtherTypes")
   mov dPtrCount, 0
   mov pName, NULL
   .while TRUE
     mov xax, pToken
-    .if CHRA ptr [xax] == "," || CHRA ptr [xax] == ";"    ;Statement terminator
+    .if CHRA ptr [xax] == ',' || CHRA ptr [xax] == ';'    ;Statement terminator
       .if pName != NULL
         mov pCurrToken, xax
         mov xdi, pType
         .if xdi == NULL
           mov xdi, pTag
         .endif
-        DbgPrintF , "¦UD: RenderFurtherTypes - ¦SA ¦SA", [xbx].$Obj(IncFile).dLineNumber, pName, xdi
         ;Comment out forward declarations
         .if dPtrCount == 0
           invoke StrCompA, pName, xdi
           .if eax == 0
-            OCall xbx::IncFile.StmWriteChar, ";"
+            OCall xbx::IncFile.StmWriteChar, ';'
           .endif
         .endif
         invoke TranslateReservedWord, pName, addr cTransBuffer
         mov pName, xax
         .if dPtrCount == 0
-          IsStructure? xdi                              ;If the type is a structure, 
+          IsStructure? xdi                              ;If the type is a structure,
           .if eax != FALSE                              ;  then the new type is it too
             IsStructure? pName                          ;Check if it already exist
             .if eax == FALSE
               invoke StrLengthA, pName
-              invoke InsertStrg, pStructs, pName, eax
+              invoke InsertStrg, pNewStructs, pName, eax
             .endif
           .endif
         .endif
@@ -59,10 +59,10 @@ RenderFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
         OCall xbx::IncFile.StmWriteEoL
         mov xax, pCurrToken
       .endif
-      .break .if CHRA ptr [xax] == ";"                ;Statement terminator
+      .break .if CHRA ptr [xax] == ';'                ;Statement terminator
       mov pName, NULL
       mov dPtrCount, 0
-    .elseif CHRA ptr [xax] == "*"
+    .elseif CHRA ptr [xax] == '*'
       inc dPtrCount
     .else
       invoke TranslateTypeQualifier, pToken
@@ -71,16 +71,29 @@ RenderFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
       .endif
     .endif
     OCall xbx::IncFile.GetNextTokenC
-    jz @Error
+    test xax, xax
+    jz @ErrorEoF
     mov pToken, xax
   .endw
   .if pName != NULL
     OCall xbx::IncFile.StmWriteEoL
   .endif
 
+  ;Exit ---------------------------------------------------------------------------------
+@Exit:
+  mov xax, pToken
   ret
 
-@Error:
-  DbgErrorF , "¦SU(¦UD): RenderFurtherTypes - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+@ErrorSyntax:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderFurtherTypes")
+  OCall xbx::IncFile.StmWriteError
+  invoke GotoNextToken, addr szSemiColon
+  ret
+
+@ErrorEoF:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.StmWriteError
+  xor eax, eax
   ret
 RenderFurtherTypes endp

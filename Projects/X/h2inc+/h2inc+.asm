@@ -6,7 +6,7 @@
 ; Links:      http://masm32.com/board/index.php?topic=7006.msg75149#msg75149
 ;             C++ reference: https://en.cppreference.com/w/cpp
 ;             Std C: http://www.open-std.org/JTC1/SC22/WG14/www/docs/n1256.pdf
-; Notes:      This is the continuation & further development of Japheth's open source h2inc+ 
+; Notes:      This is the continuation & further development of Japheth's open source h2inc+
 ;             project.
 ;             Version B.1.0, June 2018
 ;               - First release.
@@ -31,22 +31,38 @@
 ;-l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\Masterinclude.h"
 ;-l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\um_10.0.22621.0\dde.h"
 ;-l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\Test.h"
+
 ;ToDo:
 ; 1. CRLF in Optionsfile produces a problem with FileSpec
-
-
-
-; Rules:
-;  1. When a proc returns a pToken, the ZF must be set accordingly
-;  2. Returned tokens are the last processed ones. 
 
 
 ;Class Storage Specifiers: auto, extern, register, static
 ;Type Qualifiers: const, volatile
 
-
+;      CHOOSEFONTA struct
+;        lStructSize DWORD ?
+;        hwndOwner HWND ?
+;        hDC HDC ?
+;        lpLogFont LPLOGFONTA ?
+;        iPointSize INT ?
+;        Flags DWORD ?
+;        rgbColors COLORREF ?
+;        lCustData LPARAM ?
+;        lpfnHook LPCFHOOKPROC ?
+;        lpTemplateName LPCSTR ?
+;        hInstance HINSTANCE ?
+;        lpszStyle LPSTR ?
+;        nFontType WORD ?
+;        ___MISSING_ALIGNMENT__ WORD ?
+;        nSizeMin INT ?
+;        nSizeMax INT ?
+;      CHOOSEFONTA ends
+      
+      
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc
-SysSetup OOP, NUI64, WIDE_STRING, DEBUG(WND);, RESGUARD)
+SysSetup OOP, NUI64, WIDE_STRING;, DEBUG(WND);, RESGUARD)
+
+% include &MacPath&fMath.inc
 
 % include &IncPath&Windows\ShellApi.inc
 % include &IncPath&Windows\shlwapi.inc
@@ -59,72 +75,16 @@ SysSetup OOP, NUI64, WIDE_STRING, DEBUG(WND);, RESGUARD)
 % include &MacPath&LSLL.inc
 
 MakeObjects Primer, Stream, Collection, SortedCollection, StrCollectionA
-MakeObjects SortedStrCollectionA, StrCollectionW, SortedStrCollectionW 
-MakeObjects ConsoleApp
-MakeObjects Vector, %XWordVector
+MakeObjects SortedStrCollectionA, StrCollectionW, SortedStrCollectionW
+MakeObjects ConsoleApp, StopWatch
 
-PTOKEN  typedef     ptr CHRA
+PTOKEN  typedef ptr CHRA
 
 include h2inc+_Shared.inc
 include h2inc+_BStrA.inc
 include h2inc+_Globals.inc
 include h2inc+_List.inc
 include h2inc+_MemoryHeap.inc
-
-
-;DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGSX struct
-;  union
-;    struct
-;      qqq1 DWORD  ?
-;      qqq2 DWORD  ?
-;    ends 
-;    value DWORD  ?
-;  ends
-;DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGSX ends
-;
-;Pepe struct
-;  DUMMYSTRUCTNAME000 record DUMMYSTRUCTNAME_R0_reserved:29, DUMMYSTRUCTNAME_R0_edidIdsValid:1, DUMMYSTRUCTNAME_R0_friendlyNameForced:1, DUMMYSTRUCTNAME_R0_friendlyNameFromEdid:1
-;  DUMMYSTRUCTNAME DUMMYSTRUCTNAME000 <>
-;  value UINT32 ?
-;Pepe ends
-;
-;Pepa struct
-;  DUMMYSTRUCTNAME000 record DUMMYSTRUCTNAME_R0_reserved:29, DUMMYSTRUCTNAME_R0_edidIdsValid:1, DUMMYSTRUCTNAME_R0_friendlyNameForced:1, DUMMYSTRUCTNAME_R0_friendlyNameFromEdid:1
-;  DUMMYSTRUCTNAME DUMMYSTRUCTNAME000 <>
-;  value UINT32 ?
-;Pepa ends
-;
-;Status struct 
-;  Status_REC record xxx:1,
-;ifndef VERSION2
-;    fBusy:1,
-;else
-;    fAck:1,
-;    fBusy:1,
-;endif
-;    reserved:6
-;  Status_R0 Status_REC <>
-;Status ends
-
-;include C:\Users\frge\OneDrive - Metall Zug AG\_MySoftware_\ObjAsm\Projects\X\h2inc+\inc\dde.inc
-
-;IUnknownVtbl struct
-;  BEGIN_INTERFACE
-;  ??Interface equ <IUnknownVtbl>
-;  STD_METHOD QueryInterface, :ptr IUnknown, :REFIID, :ptr ptr
-;  STD_METHOD AddRef, :ptr IUnknown
-;  STD_METHOD Release, :ptr IUnknown
-;  ??Interface equ <>
-;  END_INTERFACE
-;IUnknownVtbl ends
-;IUnknown struct
-;  lpVtbl POINTER ?
-;IUnknown ends
-
-MYS struct
-  SSS REAL4 ?
-  SSS1 REAL4 ? 
-MYS ends
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Object:   IniFileReader
@@ -133,7 +93,7 @@ MYS ends
 Object IniFileReader, 0, Primer
   RedefineMethod  Done
   RedefineMethod  Init,         POINTER, $ObjPtr(MemoryHeap)
-  StaticMethod    LoadList,     PCONV_TAB_ENTRY
+  StaticMethod    LoadList,     PLIST_SETUP
 
   DefineVariable  pMemBlock,    POINTER,  NULL
   DefineVariable  dMemSize,     DWORD,    0
@@ -192,25 +152,25 @@ Object IncFile,, Primer
   DefineVariable  pEndMacro,          PSTRINGA, NULL
   DefineVariable  pDefs,              $ObjPtr(List), NULL    ;-> .def file content
   DefineVariable  pParent,            $ObjPtr(IncFile), NULL ;-> Parent IncFile (if any)
-  DefineVariable  CreationFileTime,   FILETIME, {}      ;Stores the creation FILETIME of .h file
-  DefineVariable  LastWriteFileTime,  FILETIME, {}      ;Stores the last write FILETIME of .h file
-  DefineVariable  dBlockLevel,        DWORD,    0       ;Block level where pEndMacro becomes active
-  DefineVariable  dQualifiers,        DWORD,    0       ;Current qualifiers
-  DefineVariable  dLineNumber,        DWORD,    0       ;Current line number
-  DefineVariable  dEnumValue,         DWORD,    0       ;Counter for enums
-  DefineVariable  dBraces,            DWORD,    0       ;Curly brackets count => Block deep
-  DefineVariable  dIndentation,       DWORD,    0       ;Indentation level: 0..n
-  DefineVariable  dStmOutEoL,         DWORD,    FALSE   ;StmOut line ended. It MUST be a DWORD!
-  DefineVariable  bSkipLineC,         BYTE,     FALSE   ;>0 => don't parse C lines in StmInp
-  DefineVariable  bSkipLinePP,        BYTE,     FALSE   ;>0 => don't parse PP lines
-  DefineVariable  bSkipCondPP,        BYTE,     FALSE   ;TRUE => don't parse conditional PP lines
-  DefineVariable  bNewLine,           BYTE,     FALSE   ;Last token was a PCT_EOL
-  DefineVariable  bComment,           BYTE,     FALSE   ;Comment flag for "/*" and "*/"
-  DefineVariable  bUsePrevToken,      BYTE,     FALSE   ;GetNextTokenC returns pPrevToken
-  DefineVariable  bExternC,           BYTE,     FALSE   ;Extern "C" occured
-  DefineVariable  bInsideInterface,   BYTE,     FALSE   ;Inside an interface definition
-  DefineVariable  bEnableNFCodeLabel, BYTE,     FALSE   ;Flag to avoid [...] repetitions (Non-Functional Code)
-  DefineVariable  bCondIfLevel,       BYTE,     0       ;Current 'if' level
+  DefineVariable  CreationFileTime,   FILETIME, {}        ;Stores the creation FILETIME of .h file
+  DefineVariable  LastWriteFileTime,  FILETIME, {}        ;Stores the last write FILETIME of .h file
+  DefineVariable  dBlockLevel,        DWORD,    0         ;Block level where pEndMacro becomes active
+  DefineVariable  dQualifiers,        DWORD,    0         ;Current qualifiers
+  DefineVariable  dLineNumber,        DWORD,    0         ;Current line number
+  DefineVariable  dEnumValue,         DWORD,    0         ;Counter for enums
+  DefineVariable  dBraces,            DWORD,    0         ;Curly brackets count => Block deep
+  DefineVariable  dIndentation,       DWORD,    0         ;Indentation level: 0..n
+  DefineVariable  dStmOutEoL,         DWORD,    FALSE     ;StmOut line ended. It MUST be a DWORD!
+  DefineVariable  dExternLinkage,     DWORD,    ELT_UNDEF ;Extern linkage type
+  DefineVariable  bSkipLineC,         BYTE,     FALSE     ;>0 => don't parse C lines in StmInp
+  DefineVariable  bSkipLinePP,        BYTE,     FALSE     ;>0 => don't parse PP lines
+  DefineVariable  bSkipCondPP,        BYTE,     FALSE     ;TRUE => don't parse conditional PP lines
+  DefineVariable  bNewLine,           BYTE,     FALSE     ;Last token was a PCT_EOL
+  DefineVariable  bComment,           BYTE,     FALSE     ;Comment flag for "/*" and "*/"
+  DefineVariable  bUsePrevToken,      BYTE,     FALSE     ;GetNextTokenC returns pPrevToken
+  DefineVariable  bInsideInterface,   BYTE,     FALSE     ;Inside an interface definition
+  DefineVariable  bEnableNFCodeLabel, BYTE,     FALSE     ;Flag to avoid [...] repetitions (Non-Functional Code)
+  DefineVariable  bCondIfLevel,       BYTE,     0         ;Current 'if' level
   DefineVariable  bCondElseLevel,     BYTE,     MAX_COND_LEVEL dup(0) ;Else stack
   DefineVariable  bCondResult,        BYTE,     MAX_COND_LEVEL dup(0) ;If result stack
   DefineVariable  bCondHistory,       BYTE,     MAX_COND_LEVEL dup(0) ;If history stack
@@ -239,8 +199,10 @@ Object Application, MyConsoleAppID, ConsoleApp          ;Console Interface App.
   StaticMethod    ShowQuestion,       PSTRING
   StaticMethod    ShowWarning,        DWORD, PSTRING
 
+  DefineVariable  dTotalErrorCount,   DWORD,    0       ;Total errors occured in this session
+  DefineVariable  dTotalWarningCount, DWORD,    0       ;Total warnings occured in this session
   DefineVariable  dRecordNameSuffix,  DWORD,    0       ;Added at the end of record and field names
-  DefineVariable  dStrucNameSuffix,   DWORD,    0       ;Added at the end of DUMMYSTRUCTNAME/nameless 
+  DefineVariable  dStrucNameSuffix,   DWORD,    0       ;Added at the end of DUMMYSTRUCTNAME/nameless
   DefineVariable  dUnionNameSuffix,   DWORD,    0       ;Added at the end of DUMMYUNIONNAME/nameless
   if DEBUGGING
   DefineVariable  dIncNestingLevel,   DWORD,    0
@@ -273,12 +235,33 @@ include h2inc+_IncFile_Render.inc
 include h2inc+_PPCHandler.inc                           ;PP command handler
 include h2inc+_Main.inc
 
-start proc                                              ;Program entry point
+start proc uses xdi                                     ;Program entry point
+  local SW:$Obj(StopWatch), cBuffer[50]:CHR
+
   SysInit
   DbgClearAll
+  New SW::StopWatch
+  OCall SW::StopWatch.Init, NULL
+  s2s SW.r8Resolution, $CReal8(1000.0), xax, xcx        ;Resolution 1 ms
 
+  OCall SW::StopWatch.Start
   OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
   OCall $ObjTmpl(Application)::Application.Run          ;Execute application
+
+  ;Show session results
+  OCall SW::StopWatch.Stop
+  OCall SW::StopWatch.GetTime
+  OCall SW::StopWatch.Done
+  lea xdi, cBuffer
+  WriteF xdi, "Runtime = ¦UX ms", xax
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_IMPORTANT, addr cBuffer
+  lea xdi, cBuffer
+  WriteF xdi, "Errors = ¦UD", $ObjTmpl(Application).dTotalErrorCount
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_IMPORTANT, addr cBuffer
+  lea xdi, cBuffer
+  WriteF xdi, "Warnings = ¦UD", $ObjTmpl(Application).dTotalWarningCount
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_IMPORTANT, addr cBuffer
+
   OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
 
   SysDone                                               ;Runtime finalization of the OOP model

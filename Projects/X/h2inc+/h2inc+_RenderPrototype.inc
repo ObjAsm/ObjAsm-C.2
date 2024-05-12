@@ -25,14 +25,10 @@ RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
   local dTypeCSpec:DWORD, pType:PSTRINGA, cTransBuffer[128]:CHRA
   local pStmOutPos:POINTER, dStmOutEoL:DWORD
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, \
+                                                     $OfsCStr("RenderPrototype")
   ;Parse function header ----------------------------------------------------
   mov pCallConvStr, $invoke(GetCallConvString, [xbx].$Obj(IncFile).dQualifiers)
-  DbgPrintF , "¦UD: RenderPrototype - name = ¦SA", [xbx].$Obj(IncFile).dLineNumber, pProcName
-  .if pImportSpec == NULL
-    DbgPrintF , "ImportSpec = undefined"
-  .else
-    DbgPrintF , "ImportSpec = ¦SA", pImportSpec
-  .endif
   .if $ObjTmpl(Application).Options.dDllImport != DLLIMPORT_DEFPROTO && pImportSpec != NULL
   .else
     .if $ObjTmpl(Application).Options.dDllImport == DLLIMPORT_ASSUME
@@ -43,10 +39,10 @@ RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
   .endif
 
   .if $ObjTmpl(Application).Options.dDllImport == DLLIMPORT_DEFPROTO && pImportSpec != NULL
-    OCall xbx::IncFile.StmWriteF, $OfsCStrA("@DefProto %hs, %hs, %hs,"), pImportSpec, pProcName, pCallConvStr
+    OCall xbx::IncFile.StmWriteF, $OfsCStrA("@DefProto %hs, %hs, %hs,"), \
+                                  pImportSpec, pProcName, pCallConvStr
     invoke IsReservedWord?, pProcName
     .if eax != FALSE
-      OCall xbx::IncFile.ShowWarning, WARNING_MINOR, $OfsCStr("reserved word '%hs' used as prototype"), pProcName
       OCall xbx::IncFile.StmWriteF, $OfsCStrA(" %hs"), addr szResWordSuffix    ;ProcName suffix
     .endif
     OCall xbx::IncFile.StmWrite, $OfsCStrA(", ", 3Ch)  ;", <"
@@ -75,11 +71,11 @@ RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
   .while dParenthesisCount != 0
     OCall xbx::IncFile.GetNextTokenC
 @ProcessToken:
-    .break .if ZERO? || CHRA ptr [xax] == ";"           ;Statement terminator
+    .break .if xax == NULL || CHRA ptr [xax] == ';'     ;Statement terminator
     invoke SkipAnnotations, xax
-    .break .if ZERO?
+    .break .if xax == NULL
 
-    .if CHRA ptr [xax] == "," || CHRA ptr [xax] == ")"
+    .if CHRA ptr [xax] == ',' || CHRA ptr [xax] == ')'
       mov pToken, xax
       .if pType != NULL || dPtrCount != 0
         mov xax, pType
@@ -93,7 +89,9 @@ RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
         .endif
                                                         ;Don't interpret xxx(void) as parameter
         .if dPtrCount != 0 || CHRA ptr [xax] != 0
-          .if dParamBytes != 0 || $ObjTmpl(Application).Options.dDllImport != DLLIMPORT_DEFPROTO || pImportSpec == NULL
+          .if dParamBytes != 0 || \
+              $ObjTmpl(Application).Options.dDllImport != DLLIMPORT_DEFPROTO || \
+              pImportSpec == NULL
             OCall xbx::IncFile.StmWrite, addr szSpace
           .endif
           OCall xbx::IncFile.StmWrite, addr szColon
@@ -101,10 +99,10 @@ RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
             mov eax, sizeof(DWORD)                      ;Size of a 32 bit POINTER
           .else
             ;Get type sizes (for structures used as parameters). Only relevant for 32 bit!
-            OCall pTypeSize::List.Search, pType
+            OCall pNewTypeSize::List.Search, pType
             .if eax != FALSE
             	mov edx, ecx
-              OCall pTypeSize::List.ItemAt, edx
+              OCall pNewTypeSize::List.ItemAt, edx
               mov edx, [xax - sizeof(DWORD)]
               mov eax, [xax + xdx]
             .else
@@ -126,35 +124,38 @@ RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
       .endif
 
       mov xax, pToken
-      .if CHRA ptr [xax] == ")"
+      .if CHRA ptr [xax] == ')'
         dec dParenthesisCount
       .else
         OCall xbx::IncFile.StmWrite, xax
       .endif
 
-    .elseif CHRA ptr [xax] == "*" || CHRA ptr [xax] == "&"
+    .elseif CHRA ptr [xax] == '*' || CHRA ptr [xax] == '&'
       inc dPtrCount
 
-    .elseif CHRA ptr [xax] == "["
+    .elseif CHRA ptr [xax] == '['
       inc dPtrCount
       .repeat
         OCall xbx::IncFile.GetNextTokenC
-      .until xax == NULL || CHRA ptr [xax] == "]" || CHRA ptr [xax] == ";"
+      .until xax == NULL || CHRA ptr [xax] == ']' || CHRA ptr [xax] == ';'
 
-    .elseif CHRA ptr [xax] == "("
+    .elseif CHRA ptr [xax] == '('
       ;Function ptr as function parameter?
       invoke IsFunctionPtr?
       .if eax != FALSE
         m2m pStmOutPos, [xbx].$Obj(IncFile).pStmOutPos, xax
         m2m dStmOutEoL, [xbx].$Obj(IncFile).dStmOutEoL, ecx
         invoke RenderTypedefFuncPtr, NULL
+        test xax, xax
         jz @ErrorEoF
         m2m [xbx].$Obj(IncFile).pStmOutPos, pStmOutPos, xax
         m2m [xbx].$Obj(IncFile).dStmOutEoL, dStmOutEoL, ecx
         ;Alternative code without explicit declaration of the Function pointer
-        invoke SkipBraces, "(", ")"
+        invoke SkipBraces, '(', ')'
         OCall xbx::IncFile.GetNextTokenC
-        invoke SkipBraces, "(", ")"
+        test xax, xax
+        jz @ErrorEoF
+        invoke SkipBraces, '(', ')'
         mov dPtrCount, TRUE
         mov pName, NULL
         mov pType, NULL
@@ -206,12 +207,12 @@ RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
     .endif
   .endw
 
-  .if $ObjTmpl(Application).Options.dDllImport == DLLIMPORT_DEFPROTO 
+  .if $ObjTmpl(Application).Options.dDllImport == DLLIMPORT_DEFPROTO
     .if pImportSpec != NULL
       OCall xbx::IncFile.StmWriteChar, 3Eh              ;">"
       mov xax, pCallConvStr
       .if CHRA ptr [xax] != "c"                         ;cdecl doesn't need decoration suffix
-        OCall xbx::IncFile.StmWriteF, $OfsCStrA(", &u"), dParamBytes
+        OCall xbx::IncFile.StmWriteF, $OfsCStrA(", %u"), dParamBytes
       .endif
     .endif
   .endif
@@ -239,13 +240,13 @@ RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
       OCall xbx::IncFile.StmWriteEoL
       invoke TranslateReservedWord, pProcName, addr cTransBuffer
       mov xcx, xax
-      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs equ ", 3Ch, "_imp_%hs%hs%hs", 3Eh), \     ;"<" ">"
+      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs equ ", 3Ch, "_imp_%hs%hs%hs", 3Eh), \   ;"<" ">"
                                     xcx, pPrefix, pProcName, addr szSuffix
       OCall xbx::IncFile.StmWriteEoL
     .endif
   .endif
   invoke StrLengthA, pProcName
-  invoke InsertStrg, pPrototypes, pProcName, eax
+  invoke InsertStrg, pNewPrototypes, pProcName, eax
 
   .if $ObjTmpl(Application).Options.bCreateDefs != FALSE
     invoke InsertDefItem, pProcName, dParamBytes
@@ -254,18 +255,27 @@ RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
     ;Skip inline C-code block
     OCall xbx::IncFile.InputStatusSave, addr InpStat
     OCall xbx::IncFile.GetNextTokenC
-    .if !ZERO? && CHRA ptr [xax] == "{"
-      invoke SkipBraces, "{", "}"
+    .if xax != NULL && CHRA ptr [xax] == '{'
+      invoke SkipBraces, '{', '}'
     .else
       OCall xbx::IncFile.InputStatusLoad, addr InpStat
     .endif
   .endif
 
+  ;Exit ---------------------------------------------------------------------------------
 @Exit:
   ret
 
-@Error:
+@ErrorSyntax:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderPrototype")
+  OCall xbx::IncFile.StmWriteError
+  invoke GotoNextToken, addr szSemiColon
+  ret
+
 @ErrorEoF:
-  DbgErrorF , "¦SU(¦UD): RenderPrototype - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.StmWriteError
+  xor eax, eax
   ret
 RenderPrototype endp

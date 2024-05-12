@@ -19,21 +19,19 @@
 ;             NO macro invocation).
 
 RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
-  local pToken:PTOKEN, pType:PSTRINGA, pName:PSTRINGA, pStmOutPos:PSTRINGA, bAddSpace:DWORD
+  local pToken:PTOKEN, pType:PSTRINGA, pName:PSTRINGA, bAddSpace:DWORD
   local dPtrCount:DWORD, dParenthesesCount:DWORD, bSkipTheRest:DWORd, pCurrToken:PTOKEN
   local dTypeCSpec:DWORD, dScanStep:DWORD, pArgStack:POINTER, cTransBuffer[128]:CHRA
   local pStr:PSTRINGA
 
-;  m2m pStmOutPos, [xbx].$Obj(IncFile).pStmOutPos, xax
-
-  DbgPrintF , "各D: RenderMacroCall - found: 吁A", \
-            [xbx].$Obj(IncFile).dLineNumber, pMacroName
-
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderMacroCall")
   .ifBitSet dMacroFlags, MCF_SKIP_INVOKATION
     OCall xbx::IncFile.PeekNextTokenC
-    .if !ZERO? && CHRA ptr [xax] == "("
+    .if xax != NULL && CHRA ptr [xax] == '('
       OCall xbx::IncFile.GetNextTokenC                  ;Consume it
-      invoke SkipBraces, "(", ")"
+      test xax, xax
+      jz @ErrorEoF
+      invoke SkipBraces, '(', ')'
     .endif
     mov eax, TRUE
     ret
@@ -48,7 +46,7 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
   .endif
 
   OCall xbx::IncFile.PeekNextTokenC
-  .if !ZERO? && CHRA ptr [xax] == "("
+  .if xax != NULL && CHRA ptr [xax] == '('
     OCall xbx::IncFile.StmWrite, pMacroName
     OCall xbx::IncFile.GetNextTokenC                   ;Can NOT fail, we peeked a token previously
     .ifBitClr dMacroFlags, MCF_SKIP_BRACES
@@ -60,27 +58,27 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
     mov bAddSpace, FALSE
     .while TRUE
       OCall xbx::IncFile.GetNextTokenC
-      .break .if ZERO?
+      .break .if xax == NULL
       Add@Stacklist pArgStack, xax, xdx
-      .if CHRA ptr [xax] == "("
+      .if CHRA ptr [xax] == '('
         inc dParenthesesCount
         mov bAddSpace, FALSE
-      .elseif CHRA ptr [xax] == ")"
+      .elseif CHRA ptr [xax] == ')'
         dec dParenthesesCount
         mov bAddSpace, TRUE
         .break .if dParenthesesCount == 0
       .else
-        .if CHRA ptr [xax] != ","
+        .if CHRA ptr [xax] != ','
           mov pCurrToken, xax
           .if bAddSpace != FALSE
             OCall xbx::IncFile.StmWriteChar, SPC
           .endif
           mov xax, pCurrToken
           .ifBitSet dMacroFlags, MCF_PARAMS_FOLLOW
-            invoke TranslateReservedWord, xax, addr cTransBuffer   ;Arguments can not be reserved words
+            lea xdx, cTransBuffer
+            invoke TranslateReservedWord, xax, xdx      ;Arguments can not be reserved words
           .endif
           invoke TranslateNumOperator, xax
-          DbgPrintF , "各D: RenderMacroCall - Parameter = 吁A", [xbx].$Obj(IncFile).dLineNumber, xax
           mov bAddSpace, TRUE
         .endif
       .endif
@@ -88,11 +86,11 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
     .endw
 
     .ifBitClr dMacroFlags, MCF_SKIP_BRACES
-      OCall xbx::IncFile.StmWriteChar, 29h            ;")"
+      OCall xbx::IncFile.StmWriteChar, 29h              ;')'
     .endif
 
     ;Up to now we processed MacroName(...). Now comes the rest of the line.
-    .ifBitSet dMacroFlags, MCF_COPY_LINE              ;Rest of line belongs to macro invocation
+    .ifBitSet dMacroFlags, MCF_COPY_LINE                ;Rest of line belongs to macro invocation
       mov pType, NULL
       mov pName, NULL
       mov dPtrCount, 0
@@ -102,23 +100,22 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
       .while TRUE
         .ifBitSet dMacroFlags, MCF_PARAMS_FOLLOW
           OCall xbx::IncFile.GetNextTokenC
-          .break .if ZERO? || CHRA ptr [xax] == ";"     ;Statement terminator
+          .break .if xax == NULL || CHRA ptr [xax] == ';' ;Statement terminator
         .else
           OCall xbx::IncFile.GetNextTokenPP
-          .break .if ZERO?
+          .break .if xax == NULL
         .endif
         .continue .if bSkipTheRest != FALSE
 
 @ProcessToken:
         .ifBitSet dMacroFlags, MCF_PARAMS_FOLLOW
           invoke SkipAnnotations, xax
-          .if CHRA ptr [xax] == ")" || CHRA ptr [xax] == ","
+          .if CHRA ptr [xax] == ')' || CHRA ptr [xax] == ','
             mov pCurrToken, xax
             mov xax, pType
             test xax, xax
             cmovz xax, pName
             .if xax != NULL
-              DbgPrintF , "各D: RenderMacroCall - Param = 吁A", [xbx].$Obj(IncFile).dLineNumber, xax
               mov pStr, xax
               OCall xbx::IncFile.StmWrite, $OfsCStrA(", :")
               WritePtr
@@ -132,24 +129,24 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
             mov dTypeCSpec, 0
             mov dScanStep, 0
             mov xax, pCurrToken
-            .continue .if CHRA ptr [xax] == ","
+            .continue .if CHRA ptr [xax] == ','
           .endif
-          .if CHRA ptr [xax] == "("
+          .if CHRA ptr [xax] == '('
             inc dParenthesesCount
             .continue
           .endif
-          .if CHRA ptr [xax] == ")"
+          .if CHRA ptr [xax] == ')'
             dec dParenthesesCount
             .break .if ZERO?
             .continue
           .endif
-          .if CHRA ptr [xax] == "*"
+          .if CHRA ptr [xax] == '*'
             inc dPtrCount
             .continue
           .endif
-          .if CHRA ptr [xax] == "["
+          .if CHRA ptr [xax] == '['
             inc dPtrCount
-            invoke SkipBraces, "[", "]"
+            invoke SkipBraces, '[', ']'
             test eax, eax
             jz @Exit
             .continue
@@ -158,7 +155,7 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
             mov bSkipTheRest, TRUE
             .continue
           .endif
-          
+
           mov ecx, [xax]
           or ecx, 20202020h                             ;Convert to lowercase
           .if ecx == "siht"
@@ -211,7 +208,7 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
     .endif
   .endif
 
-  .ifBitSet dMacroFlags, MCF_END_MACRO
+  .ifBitSet dMacroFlags, MCF_WRITE_END_MACRO
     mov xax, pMacroName
     mov [xbx].$Obj(IncFile).pEndMacro, xax
     mov eax, [xbx].$Obj(IncFile).dBraces
@@ -230,18 +227,18 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
       mov [xbx].$Obj(IncFile).bInsideInterface, TRUE
     .endif
   .endif
-;  .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
-;    mrm [xbx].$Obj(IncFile).pStmOutPos, pStmOutPos, xcx
-;    mov CHRA ptr [xcx], 0
-;  .endif
 
   .ifBitSet dMacroFlags, MCF_STRUCT_BEG
     inc [xbx].$Obj(IncFile).dIndentation
     OCall xbx::IncFile.GetNextTokenC
-    .if CHRA ptr [xax] == "{"
+    .if CHRA ptr [xax] == '{'
       mov xsi, $GetItem@Stacklist(pArgStack, 0)
       invoke RenderBlock, xsi, RBT_CONTAINER
+      test xax, xax
+      jz @ErrorEoF
       invoke RenderInterfaceBlock, xsi
+      test eax, eax
+      jz @ErrorEoF
       dec [xbx].$Obj(IncFile).dIndentation
       OCall xbx::IncFile.StmWriteF, $OfsCStrA("END_%hs"), pMacroName
       OCall xbx::IncFile.StmWriteEoL
@@ -251,15 +248,23 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
   .endif
   mov eax, TRUE
 
+  ;Exit ---------------------------------------------------------------------------------
 @Exit:
-  Destroy@Stacklist pArgStack, xcx                      ;Dont trash xax
+  Destroy@Stacklist pArgStack, xcx                      ;Don't trash xax
   ret
 
 @ErrorSyntax:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderMacroCall")
+  OCall xbx::IncFile.StmWriteError
+  Destroy@Stacklist pArgStack, xcx                      ;Don't trash xax
+  invoke GotoNextToken, addr szSemiColon
+  ret
+
 @ErrorEoF:
-  DbgErrorF , "吁U(各D): RenderMacroCall - error", \
-              [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
-  Destroy@Stacklist pArgStack
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.StmWriteError
+  Destroy@Stacklist pArgStack, xcx                      ;Don't trash xax
   xor eax, eax
   ret
 RenderMacroCall endp

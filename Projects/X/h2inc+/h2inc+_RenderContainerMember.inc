@@ -27,7 +27,7 @@
 ;             Arg2 -> Member type.
 ;             Arg3 -> List with collected DUP info.
 ;             Arg4: Number of indirections.
-; Return:     Nothing
+; Return:     Nothing.
 
 WriteContainerMember proc pName:PTOKEN, pType:PTOKEN, pDupList:POINTER, dPtrCount:DWORD
   local cTransBuffer[128]:CHRA
@@ -74,7 +74,7 @@ WriteContainerMember proc pName:PTOKEN, pType:PTOKEN, pDupList:POINTER, dPtrCoun
       .endif
 
       .if pDupList != NULL
-        OCall xbx::IncFile.StmWriteChar, ")"
+        OCall xbx::IncFile.StmWriteChar, ')'
       .endif
 
       OCall xbx::IncFile.StmWriteEoL
@@ -92,7 +92,7 @@ WriteContainerMember endp
 ; Arguments:  Arg1 -> First token after 'union {' or 'struct {'.
 ;             Arg2 -> Struct or union Name. Can be NULL.
 ;             xbx -> IncFile.
-; Return:     xax -> Last processed token, usually ';' or NULL if failed and ZF set.
+; Return:     xax -> Last processed token, usually ';' or NULL if failed.
 ; Link:       https://en.cppreference.com/w/c/language/bit_field
 ; Idea:       Replace _??xx with the name of the parent struct.
 
@@ -104,6 +104,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
   local cMacroBuffer[MAX_NAME_CHARS]:CHRA
   local cMember[128]:CHRA, cSuffix[UDWORD2DEC_MAX_CHARS]:CHRA, dSquareBracketCount:DWORD
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderContainerMember")
   ;Initialize ---------------------------------------------------------------------------
   m2m [xbx].$Obj(IncFile).pContainerName, pContainerName, xcx
 
@@ -120,8 +121,9 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
     test xax, xax
     jz @ErrorEoF
     invoke SkipAnnotations, xax
+    test xax, xax
     jz @ErrorEoF
-    .break .if CHRA ptr [xax] == ";"                    ;End of declaration reached
+    .break .if CHRA ptr [xax] == ';'                    ;End of declaration reached
 
     mov pToken, xax
 
@@ -134,7 +136,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
       OCall xbx::IncFile.InputStatusSave, addr InpStat
       inc [xbx].$Obj(IncFile).bSkipLinePP
       OCall xbx::IncFile.GetNextTokenC
-      .if ZERO?
+      .if xax == NULL
         dec [xbx].$Obj(IncFile).bSkipLinePP
         jmp @ErrorEoF
       .endif
@@ -144,7 +146,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
         jmp @StrucName
       .else
         OCall xbx::IncFile.GetNextTokenC
-        .if ZERO?
+        .if xax == NULL
           dec [xbx].$Obj(IncFile).bSkipLinePP
           jmp @ErrorEoF
         .endif
@@ -152,6 +154,8 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
           dec [xbx].$Obj(IncFile).bSkipLinePP
           OCall xbx::IncFile.InputStatusLoad, addr InpStat
           OCall xbx::IncFile.GetNextTokenC              ;Consume tagName
+          test xax, xax
+          jz @ErrorEoF
           jmp @StrucName
         .endif
       .endif
@@ -176,9 +180,9 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
 @@:
       ;Translation
       invoke RenderContainer, offset(szStruct)
-      mov pEndToken, xax
       test xax, xax                                     ;Set/Reset ZF
       jz @ErrorEoF
+      mov pEndToken, xax
       jmp @Exit
     .endif
 
@@ -186,7 +190,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
       OCall xbx::IncFile.InputStatusSave, addr InpStat
       inc [xbx].$Obj(IncFile).bSkipLinePP
       OCall xbx::IncFile.GetNextTokenC
-      .if ZERO?
+      .if xax == NULL
         dec [xbx].$Obj(IncFile).bSkipLinePP
         jmp @ErrorEoF
       .endif
@@ -196,7 +200,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
         jmp @UnionName
       .else
         OCall xbx::IncFile.GetNextTokenC
-        .if ZERO?
+        .if xax == NULL
           dec [xbx].$Obj(IncFile).bSkipLinePP
           jmp @ErrorEoF
         .endif
@@ -204,6 +208,8 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
           dec [xbx].$Obj(IncFile).bSkipLinePP
           OCall xbx::IncFile.InputStatusLoad, addr InpStat
           OCall xbx::IncFile.GetNextTokenC              ;Consume tagName
+          test xax, xax
+          jz @ErrorEoF
           jmp @UnionName
         .endif
       .endif
@@ -228,8 +234,9 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
 @@:
       ;Translation
       invoke RenderContainer, offset(szUnion)
-      mov pEndToken, xax
+      test xax, xax
       jz @ErrorEoF
+      mov pEndToken, xax
       jmp @Exit
     .endif
 
@@ -258,8 +265,10 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
     IsPublicPrivateProtected? xax                       ;Check for 'private', 'public', 'protected'
     .if eax != FALSE
       OCall xbx::IncFile.PeekNextTokenC
-      .if !ZERO? && CHRA ptr [xax] == ":"
+      .if xax != NULL && CHRA ptr [xax] == ':'
         OCall xbx::IncFile.GetNextTokenC                ;Consume it
+        test xax, xax
+        jz @ErrorEoF
         jmp @GetNextToken
       .endif
     .endif
@@ -269,15 +278,14 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
     .if eax != 0
       mov edx, ecx
       .if eax == 1
-        OCall pMacros::List.ItemAt, edx
+        OCall pNewMacros::List.ItemAt, edx
       .else
-        OCall pKnownMacros::List.ItemAt, edx
+        OCall pKnwMacros::List.ItemAt, edx
       .endif
       mov edx, [xax - sizeof(DWORD)]                    ;edx = length
       invoke RenderMacroCall, pToken, DWORD ptr [xax + xdx], TRUE
-      .if eax != FALSE
-        jmp @GetNextToken
-      .endif
+      test eax, eax
+      jnz @GetNextToken
     .endif
 
     ;Equate containing items ------------------------------------------------------------
@@ -285,9 +293,9 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
     .if eax != 0
       mov edx, ecx
       .if eax == 1
-        OCall pEquates::List.ItemAt, edx
+        OCall pNewEquates::List.ItemAt, edx
       .else
-        OCall pKnownEquates::List.ItemAt, edx
+        OCall pKnwEquates::List.ItemAt, edx
       .endif
       mov edx, [xax - sizeof(DWORD)]                    ;edx = length
 
@@ -300,7 +308,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
 
     ;Record -----------------------------------------------------------------------------
     mov xax, pToken
-    .if CHRA ptr [xax] == ":"                           ;Record field detected
+    .if CHRA ptr [xax] == ':'                           ;Record field detected
       ;Name management
       mov xax, pContainerName
       .if xax != NULL                                   ;Unnamed struct or union
@@ -318,18 +326,19 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
 @@:
       ;Translation
       invoke RenderBitField, pContainerName, pType, pName, xdi
-      mov pEndToken, xax
       test xax, xax
       jz @ErrorEoF
+      mov pEndToken, xax
       jmp @Exit
     .endif
 
     ;Function or FunctionPtr ------------------------------------------------------------
     mov xax, pToken
-    .if CHRA ptr [xax] == "("
+    .if CHRA ptr [xax] == '('
       invoke IsFunctionPtr?
       .if eax != FALSE
         invoke RenderTypedefFuncPtr, NULL
+        test xax, xax
         jz @ErrorEoF
         .continue
       .else
@@ -338,7 +347,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
           mov xax, pName
           test xax, xax
           cmovz xax, pType
-          invoke RenderTypedefFunction, xax, FALSE       ;No return value
+          invoke RenderTypedefFunction, xax             ;No return value
           .continue
         .endif
       .endif
@@ -346,12 +355,13 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
 
     ;Array ------------------------------------------------------------------------------
     mov xax, pToken
-    .if CHRA ptr [xax] == "["                           ;Array => DUP
+    .if CHRA ptr [xax] == '['                           ;Array => DUP
       .if pType != NULL || pName != NULL                ;Only of we have a Type & a Name
         mov pDupList, $Create@Stacklist()
         mov dSquareBracketCount, 1
         .while TRUE
           OCall xbx::IncFile.GetNextTokenC
+          test xax, xax
           jz @ErrorEoF
           .if CHRA ptr [xax] == ';'                     ;Statement terminator
             .break .if dSquareBracketCount == 0
@@ -374,7 +384,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
     ;Pointer ----------------------------------------------------------------------------
     mov xax, pToken
     mov cl, [xax]
-    .if cl == "*" || cl == "&"
+    .if cl == '*' || cl == '&'
       inc dPtrCount
       jmp @GetNextToken
     .endif
@@ -401,7 +411,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
 
     ;Multiple definition ---------------------------------------------------------------
     mov xax, pToken
-    .if CHRA ptr [xax] == ","
+    .if CHRA ptr [xax] == ','
       invoke WriteContainerMember, pName, pType, pDupList, dPtrCount
       mov pName, NULL
       jmp @GetNextToken
@@ -428,26 +438,25 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
 
   invoke WriteContainerMember, pName, pType, pDupList, dPtrCount
 
-  ;--------------------------------------------------------------------------------------
+  ;Exit ---------------------------------------------------------------------------------
 
 @Exit:
   Destroy@Stacklist pDupList
   mov xax, pEndToken
-  test xax, xax
   ret
 
 @ErrorSyntax:
-  Destroy@Stacklist pDupList
-  OCall xbx::IncFile.ShowError, $OfsCStr("unexpected '%hs' ContainerItem: %hs"), pContainerName, pToken
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderContainerMember - '%hs': unexpected Item '%hs'"), pContainerName, pToken
   OCall xbx::IncFile.StmWriteError
+  Destroy@Stacklist pDupList
   invoke GotoNextToken, addr szSemiColon
   ret
 
 @ErrorEoF:
   inc [xbx].$Obj(IncFile).dErrorCount
-  Destroy@Stacklist pDupList
   OCall xbx::IncFile.StmWriteError
+  Destroy@Stacklist pDupList
   xor eax, eax
   ret
-
 RenderContainerMember endp

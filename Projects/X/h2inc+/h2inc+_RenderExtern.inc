@@ -12,36 +12,65 @@
 ; Procedure:  RenderExtern
 ; Purpose:    Parse extern.
 ; Arguments:  xbx -> IncFile.
-; Return:     Nothing.
+; Return:     xax -> Last token or NULL if failed.
 
 RenderExtern proc
   local pToken:PTOKEN
 
-  .while TRUE
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderExtern")
+  mov [xbx].$Obj(IncFile).dExternLinkage, ELT_UNDEF
+  OCall xbx::IncFile.GetNextTokenC
+  test xax, xax
+  jz @ErrorEoF
+  mov pToken, xax
+  .if $DoesTextMatchA?([xax], <"C">)
+;    OCall xbx::IncFile.StmWrite, $OfsCStrA(";extern ", 22h, "C", 22h)   ;"   C linkage
+;    OCall xbx::IncFile.StmWriteEoL
+    mov [xbx].$Obj(IncFile).dExternLinkage, ELT_C
     OCall xbx::IncFile.GetNextTokenC
-    .break .if ZERO? || CHRA ptr [xax] == ";"           ;Statement terminator
+    test xax, xax
+    jz @ErrorEoF
     mov pToken, xax
-    .if DWORD ptr [xax] == ',"C"' && DCHRA ptr [xax + sizeof(DWORD)] == "0"
-      OCall xbx::IncFile.StmWrite, $OfsCStrA(";extern ", 22h, "C", 22h)   ;"   C linkage
-      OCall xbx::IncFile.StmWriteEoL
-      mov [xbx].$Obj(IncFile).bExternC, TRUE
-      .break
-    .elseif DWORD ptr [xax] == '++C"' && DWORD ptr [xax + 4] == '0,"'
-      OCall xbx::IncFile.StmWrite, $OfsCStrA(";extern ", 22h, "C++", 22h) ;"   C++ linkage
-      OCall xbx::IncFile.StmWriteEoL
-      .break
-    .endif
-    OCall xbx::IncFile.StmWrite, $OfsCStrA("externdef ")
-    .if [xbx].$Obj(IncFile).bExternC != FALSE
-      OCall xbx::IncFile.StmWrite, $OfsCStrA("c ")
-    .endif
-    invoke RenderExternMember, pToken
-    .break
-  .endw
+  .elseif $DoesTextMatchA?([xax], <"C++">)
+    OCall xbx::IncFile.StmWrite, $OfsCStrA(";extern ", 22h, "C++", 22h) ;"   C++ linkage
+    OCall xbx::IncFile.StmWriteEoL
+    mov [xbx].$Obj(IncFile).dExternLinkage, ELT_CPP
+    OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
+    jz @ErrorEoF
+    mov pToken, xax
+  .endif
 
+  mov xax, pToken
+  .if CHRA ptr [xax] == '{'
+    invoke RenderBlock, NULL, RBT_EXTERN
+    test xax, xax
+    jz @ErrorEoF
+    mov pToken, xax
+    OCall xbx::IncFile.StmWriteEoL
+    mov xax, pToken
+  .else
+;    OCall xbx::IncFile.GetNextTokenC
+;    test xax, xax
+;    jz @ErrorEoF
+    invoke RenderExternMember, xax
+    test xax, xax
+    jz @ErrorEoF
+  .endif
+
+  ;Exit ---------------------------------------------------------------------------------
+@Exit:
   ret
 
-@Error:
-  DbgErrorF , "¦SU(¦UD): RenderExtern - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+@ErrorSyntax:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderExtern")
+  OCall xbx::IncFile.StmWriteError
+  invoke GotoNextToken, addr szSemiColon
+  ret
+
+@ErrorEoF:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  xor eax, eax
   ret
 RenderExtern endp

@@ -21,6 +21,18 @@ SWS_RUNNING    equ    1
 ;             QueryPerformanceFrequency API to perform the measuring.
 ;             Due to the CPU architecture, the time measure depends on many factors, not only from
 ;             the code. To obtain comparable results, many measures must be averaged.
+; Example:
+;  local SW:$Obj(StopWatch), cBuffer[50]:CHR
+;
+;  New SW::StopWatch
+;  OCall SW::StopWatch.Init, NULL
+;  s2s SW.r8Resolution, $CReal8(1000.0), xax, xcx
+;  OCall SW::StopWatch.Start
+;  ...
+;  OCall SW::StopWatch.Stop
+;  OCall SW::StopWatch.GetTime
+;  lea xdi, cBuffer
+;  WriteF xdi, "Runtime = ¦UX ms", xax
 
 Object StopWatch, StopWatchID, Primer
   VirtualMethod     GetTime
@@ -53,7 +65,7 @@ if IMPLEMENT
 ; Method:     StopWatch.GetTime
 ; Purpose:    Return the elapsed time in the specified resolution as a QWORD.
 ; Arguments:  None.
-; Return:     eax = Accumulated time in edx::eax.
+; Return:     edx:eax or rax = Accumulated time.
 
 Method StopWatch.GetTime
   local qTime:QWORD

@@ -12,16 +12,16 @@
 ; Procedure:  RenderTypedefFunction
 ; Purpose:    Translate a typedef function.
 ; Arguments:  Arg1 -> Name.
-;             Arg2: Accept Body flag.
 ; Return:     Nothing.
 ; Syntax:     typedef <qualifiers> returntype name(<parameters>)<{...}>;
 ;             or in a class definition:
 ;             <qualifiers> returntype name(<parameters>)<{...}>;
 
-RenderTypedefFunction proc pName:PSTRINGA, bAcceptBody:DWORD
+RenderTypedefFunction proc pName:PSTRINGA
   local pToken:PTOKEN, pCurrToken:PTOKEN, dPtrCount:DWORD, bFirstParam:DWORD
   local dTypeCSpec:DWORD, pType:PSTRINGA, cTransBuffer[128]:CHRA
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderTypedefFunction")
   ;Parse function header ----------------------------------------------------
   mov bFirstParam, FALSE
   mov pName, $invoke(TranslateReservedWord, pName, addr cTransBuffer)
@@ -33,12 +33,14 @@ RenderTypedefFunction proc pName:PSTRINGA, bAcceptBody:DWORD
   .while TRUE
     OCall xbx::IncFile.GetNextTokenC
 @ProcessToken:
-    jz @Error
+    test xax, xax
+    jz @ErrorEoF
 
     invoke SkipAnnotations, xax
-    jz @Error
+    test xax, xax
+    jz @ErrorEoF
 
-    .if CHRA ptr [xax] == "*"
+    .if CHRA ptr [xax] == '*'
       inc dPtrCount
       .continue
     .endif
@@ -67,7 +69,7 @@ RenderTypedefFunction proc pName:PSTRINGA, bAcceptBody:DWORD
       .endif
     .endif
     mov pToken, xax
-    .if CHRA ptr [xax] == "," || CHRA ptr [xax] == ")"  ;End of function parameter list
+    .if CHRA ptr [xax] == ',' || CHRA ptr [xax] == ')'  ;End of function parameter list
       mov pCurrToken, xax
       .if dPtrCount != 0 || pType != NULL
         .if pType != NULL
@@ -80,7 +82,7 @@ RenderTypedefFunction proc pName:PSTRINGA, bAcceptBody:DWORD
             OCall xbx::IncFile.StmWrite, $OfsCStrA(", ")
             mov bFirstParam, FALSE
           .endif
-          OCall xbx::IncFile.StmWriteChar, ":"
+          OCall xbx::IncFile.StmWriteChar, ':'
         .endif
         WritePtr
         .if pType != NULL
@@ -89,7 +91,7 @@ RenderTypedefFunction proc pName:PSTRINGA, bAcceptBody:DWORD
         OCall xbx::IncFile.StmDeleteLastSpace
       .endif
       mov xax, pCurrToken
-      .break .if CHRA ptr [xax] == ")"
+      .break .if CHRA ptr [xax] == ')'
       OCall xbx::IncFile.StmWrite, $OfsCStrA(", ")
       mov pType, NULL
       mov dPtrCount, 0
@@ -105,17 +107,24 @@ RenderTypedefFunction proc pName:PSTRINGA, bAcceptBody:DWORD
   .endw
   OCall xbx::IncFile.StmWriteEoL
 
-  .if bAcceptBody != FALSE
-    OCall xbx::IncFile.PeekNextTokenC
-    .if !ZERO? && CHRA ptr [xax] == "{"
-      invoke SkipBraces, "{", "}"
-    .endif
+  OCall xbx::IncFile.PeekNextTokenC
+  .if xax != NULL && CHRA ptr [xax] == '{'
+    invoke SkipBraces, '{', '}'
   .endif
 
+  ;Exit ---------------------------------------------------------------------------------
+@Exit:
   ret
 
-@Error:
+@ErrorSyntax:
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.ShowError, $OfsCStr("RenderTypedefFunction")
+  OCall xbx::IncFile.StmWriteError
+  invoke GotoNextToken, addr szSemiColon
+  ret
+
 @ErrorEoF:
-  DbgErrorF , "¦SU(¦UD): RenderTypedefFunction - error", [xbx].$Obj(IncFile).pHeaderFileName, [xbx].$Obj(IncFile).dLineNumber
+  inc [xbx].$Obj(IncFile).dErrorCount
+  OCall xbx::IncFile.StmWriteError
   ret
 RenderTypedefFunction endp
