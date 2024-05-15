@@ -12,20 +12,21 @@
 ; Procedure:  RenderContainer
 ; Purpose:    Render a structure or union.
 ; Arguments:  Arg1 -> ContainerType ("struct" or "union").
+;             Arg2: TRUE if the container is embedded in another container.
 ;             xbx -> IncFile.
 ; Return:     xax -> Last token or NULL if failed.
 ; Syntax:     struct/union <macro> TagName Name;
 ;             struct/union <macro> <TagName> {...} Name;
 ;             struct/union <macro> <TagName> * Name;
 
-RenderContainer proc uses xdi pContainerType:PSTRINGA
+RenderContainer proc uses xdi pContainerType:PSTRINGA, dEmbedded:DWORD
   local pName:PSTRINGA, pTagName:PSTRINGA, pToken:PTOKEN, pEndToken:PTOKEN
   local bSkipName:DWORD
-  local cName[256]:CHRA, cTagName[256]:CHRA, cContainerName[MAX_NAME_CHARS]:CHRA
+  local cName[256]:CHRA, cTagName[256]:CHRA, cWorkBuffer[MAX_NAME_CHARS]:CHRA
 
   OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderContainer")
   ;Initialization -----------------------------------------------------------------------
-  mov cContainerName, 0
+  mov cWorkBuffer, 0
   mov cTagName, 0
   mov cName, 0
   mov pTagName, NULL
@@ -52,7 +53,7 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA
   .endif
 
   .if CHRA ptr [xax] == '{'
-    invoke GetBlockName, addr cContainerName
+    invoke GetBlockName, addr cWorkBuffer               ;xax -> Name
     .if xax == NULL                                     ;No block name
       mov bSkipName, FALSE
       mov xax, pTagName
@@ -68,7 +69,7 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA
 @@:
 ;    ;No name at all?
 ;    .if xax == NULL
-;      lea xdi, cContainerName
+;      lea xdi, cWorkBuffer
 ;      mov xax, pContainerType
 ;      .if $DoesStringMatchA?([xax], <struct>)
 ;        WriteFA xdi, "ANONIMOUS_STRUCT_¦UD", $ObjTmpl(Application).dStrucNameSuffix
@@ -77,7 +78,7 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA
 ;        WriteFA xdi, "ANONIMOUS_UNION_¦UD", $ObjTmpl(Application).dUnionNameSuffix
 ;        inc $ObjTmpl(Application).dUnionNameSuffix
 ;      .endif
-;      lea xax, cContainerName
+;      lea xax, cWorkBuffer
 ;    .endif
 
     ;Start container definition ---------------------------------------------------------
@@ -89,11 +90,19 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA
       mov pName, $invoke(TranslateReservedWord, xax, xdx)
       IsStructure? pName
       .if eax == FALSE
+        DbgStrA pName, "RenderContainer"
+        DbgStrW [xbx].$Obj(IncFile).pHeaderFileName
+        DbgDec [xbx].$Obj(IncFile).dLineNumber
         invoke StrLengthA, pName
         invoke InsertStrg, pNewStructs, pName, eax
       .endif
 
-      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs %hs"), pName, pContainerType
+      ;MASM special syntax for embedded containers
+      .if dEmbedded != FALSE
+        OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs %hs"), pContainerType, pName
+      .else
+        OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs %hs"), pName, pContainerType
+      .endif
 
       ;Get known structure alignment
       OCall pKnwAlignments::List.Search, pName
@@ -121,10 +130,10 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA
 
     ;Terminate container definition -----------------------------------------------------
     dec [xbx].$Obj(IncFile).dIndentation
-    .if pName != NULL
-      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs ends", CRLF), pName
+    .if dEmbedded != FALSE || pName == NULL
+      OCall xbx::IncFile.StmWriteF, $OfsCStrA("ends")
     .else
-      OCall xbx::IncFile.StmWrite, $OfsCStrA("ends", CRLF)
+      OCall xbx::IncFile.StmWriteF, $OfsCStrA("%hs ends"), pName
     .endif
     OCall xbx::IncFile.StmWriteEoL
 

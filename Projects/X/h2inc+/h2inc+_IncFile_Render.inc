@@ -108,7 +108,7 @@ RenderC proc uses xdi xsi
     .if eax == FALSE
       mov xdi, [xbx].$Obj(IncFile).pStmOutPos
       mov esi, [xbx].$Obj(IncFile).dStmOutEoL
-      invoke RenderContainer, pToken                    ;Returns last token
+      invoke RenderContainer, pToken, FALSE             ;Returns last token
       test xax, xax
       jz @Exit
       mov pToken, xax

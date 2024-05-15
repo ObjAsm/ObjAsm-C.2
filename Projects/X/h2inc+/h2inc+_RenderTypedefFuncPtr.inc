@@ -213,10 +213,11 @@ RenderTypedefFuncPtr proc uses xdi pParent:PSTRINGA
 
   .endw
 
-  .while CHRA ptr [xax] != ';' && CHRA ptr [xax] != ',' ;Consume the rest up to ';' or ','
+  .while TRUE
     OCall xbx::IncFile.GetNextTokenC
     test xax, xax
     jz @ErrorEoF
+    .break .if CHRA ptr [xax] != ';' || CHRA ptr [xax] != ',' || CHRA ptr [xax] != ')'  ;Consume the rest up to ';', ','. ')'
   .endw
   mov pToken, xax
 

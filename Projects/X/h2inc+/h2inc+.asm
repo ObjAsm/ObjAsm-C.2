@@ -26,41 +26,19 @@
 ;               - Improvements:
 ;                 - Support for multidimesional arrays added.
 ;                 - Record bit reversal added.
+;                 - @ option added to specify additional options in an env. var. or in a file.
 ; ==================================================================================================
 
 ;-l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\Masterinclude.h"
 ;-l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\um_10.0.22621.0\dde.h"
 ;-l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\Test.h"
 
-;ToDo:
-; 1. CRLF in Optionsfile produces a problem with FileSpec
-
-
 ;Class Storage Specifiers: auto, extern, register, static
 ;Type Qualifiers: const, volatile
 
-;      CHOOSEFONTA struct
-;        lStructSize DWORD ?
-;        hwndOwner HWND ?
-;        hDC HDC ?
-;        lpLogFont LPLOGFONTA ?
-;        iPointSize INT ?
-;        Flags DWORD ?
-;        rgbColors COLORREF ?
-;        lCustData LPARAM ?
-;        lpfnHook LPCFHOOKPROC ?
-;        lpTemplateName LPCSTR ?
-;        hInstance HINSTANCE ?
-;        lpszStyle LPSTR ?
-;        nFontType WORD ?
-;        ___MISSING_ALIGNMENT__ WORD ?
-;        nSizeMin INT ?
-;        nSizeMax INT ?
-;      CHOOSEFONTA ends
-      
-      
+
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc
-SysSetup OOP, NUI64, WIDE_STRING;, DEBUG(WND);, RESGUARD)
+SysSetup OOP, NUI64, WIDE_STRING, DEBUG(WND);, RESGUARD)
 
 % include &MacPath&fMath.inc
 
@@ -134,6 +112,7 @@ Object IncFile,, Primer
   StaticMethod    StmWriteEoL
   StaticMethod    StmWriteIndent
   StaticMethod    ShowError,          PSTRING, ?
+  StaticMethod    ShowInfo,           DWORD, PSTRING, ?
   StaticMethod    ShowSysError,       PSTRING, DWORD
   StaticMethod    ShowWarning,        DWORD, PSTRING, ?
 
@@ -152,25 +131,25 @@ Object IncFile,, Primer
   DefineVariable  pEndMacro,          PSTRINGA, NULL
   DefineVariable  pDefs,              $ObjPtr(List), NULL    ;-> .def file content
   DefineVariable  pParent,            $ObjPtr(IncFile), NULL ;-> Parent IncFile (if any)
-  DefineVariable  CreationFileTime,   FILETIME, {}        ;Stores the creation FILETIME of .h file
-  DefineVariable  LastWriteFileTime,  FILETIME, {}        ;Stores the last write FILETIME of .h file
-  DefineVariable  dBlockLevel,        DWORD,    0         ;Block level where pEndMacro becomes active
-  DefineVariable  dQualifiers,        DWORD,    0         ;Current qualifiers
-  DefineVariable  dLineNumber,        DWORD,    0         ;Current line number
-  DefineVariable  dEnumValue,         DWORD,    0         ;Counter for enums
-  DefineVariable  dBraces,            DWORD,    0         ;Curly brackets count => Block deep
-  DefineVariable  dIndentation,       DWORD,    0         ;Indentation level: 0..n
-  DefineVariable  dStmOutEoL,         DWORD,    FALSE     ;StmOut line ended. It MUST be a DWORD!
-  DefineVariable  dExternLinkage,     DWORD,    ELT_UNDEF ;Extern linkage type
-  DefineVariable  bSkipLineC,         BYTE,     FALSE     ;>0 => don't parse C lines in StmInp
-  DefineVariable  bSkipLinePP,        BYTE,     FALSE     ;>0 => don't parse PP lines
-  DefineVariable  bSkipCondPP,        BYTE,     FALSE     ;TRUE => don't parse conditional PP lines
-  DefineVariable  bNewLine,           BYTE,     FALSE     ;Last token was a PCT_EOL
-  DefineVariable  bComment,           BYTE,     FALSE     ;Comment flag for "/*" and "*/"
-  DefineVariable  bUsePrevToken,      BYTE,     FALSE     ;GetNextTokenC returns pPrevToken
-  DefineVariable  bInsideInterface,   BYTE,     FALSE     ;Inside an interface definition
-  DefineVariable  bEnableNFCodeLabel, BYTE,     FALSE     ;Flag to avoid [...] repetitions (Non-Functional Code)
-  DefineVariable  bCondIfLevel,       BYTE,     0         ;Current 'if' level
+  DefineVariable  CreationFileTime,   FILETIME, {}      ;Stores the creation FILETIME of .h file
+  DefineVariable  LastWriteFileTime,  FILETIME, {}      ;Stores the last write FILETIME of .h file
+  DefineVariable  dBlockLevel,        DWORD,    0       ;Block level where pEndMacro becomes active
+  DefineVariable  dQualifiers,        DWORD,    0       ;Current qualifiers
+  DefineVariable  dLineNumber,        DWORD,    0       ;Current line number
+  DefineVariable  dEnumValue,         DWORD,    0       ;Counter for enums
+  DefineVariable  dBraces,            DWORD,    0       ;Curly brackets count => Block deep
+  DefineVariable  dIndentation,       DWORD,    0       ;Indentation level: 0..n
+  DefineVariable  dStmOutEoL,         DWORD,    FALSE   ;StmOut line ended. It MUST be a DWORD!
+  DefineVariable  dExternLinkage,     DWORD,    ELT_UNDEF   ;Extern linkage type
+  DefineVariable  bSkipLineC,         BYTE,     FALSE   ;>0 => don't parse C lines in StmInp
+  DefineVariable  bSkipLinePP,        BYTE,     FALSE   ;>0 => don't parse PP lines
+  DefineVariable  bSkipCondPP,        BYTE,     FALSE   ;TRUE => don't parse conditional PP lines
+  DefineVariable  bNewLine,           BYTE,     FALSE   ;Last token was a PCT_EOL
+  DefineVariable  bComment,           BYTE,     FALSE   ;Comment flag for "/*" and "*/"
+  DefineVariable  bUsePrevToken,      BYTE,     FALSE   ;GetNextTokenC returns pPrevToken
+  DefineVariable  bInsideInterface,   BYTE,     FALSE   ;Inside an interface definition
+  DefineVariable  bEnableNFCodeLabel, BYTE,     FALSE   ;Flag to avoid [...] repetitions (Non-Functional Code)
+  DefineVariable  bCondIfLevel,       BYTE,     0       ;Current 'if' level
   DefineVariable  bCondElseLevel,     BYTE,     MAX_COND_LEVEL dup(0) ;Else stack
   DefineVariable  bCondResult,        BYTE,     MAX_COND_LEVEL dup(0) ;If result stack
   DefineVariable  bCondHistory,       BYTE,     MAX_COND_LEVEL dup(0) ;If history stack
@@ -191,6 +170,7 @@ Object Application, MyConsoleAppID, ConsoleApp          ;Console Interface App.
   StaticMethod    GetOption,          PSTRINGW
   StaticMethod    GetOptions,         POINTER, DWORD, DWORD, PSTRING
   RedefineMethod  Init
+  StaticMethod    ParseArguments,     PSTRINGW
   StaticMethod    ProcessFile,        PSTRINGW, PSTRINGW, $ObjPtr(IncFile)
   StaticMethod    ProcessFiles,       PSTRINGW
   RedefineMethod  Run
@@ -232,44 +212,41 @@ include h2inc+_IncFile_Mac.inc
 include h2inc+_IncFile.inc
 include h2inc+_IncFile_Proc.inc
 include h2inc+_IncFile_Render.inc
-include h2inc+_PPCHandler.inc                           ;PP command handler
+include h2inc+_PPCHandler.inc                           ;Pre-Processor Command Handler
 include h2inc+_Main.inc
 
 start proc uses xdi                                     ;Program entry point
-  local SW:$Obj(StopWatch), cBuffer[50]:CHR
+  local cBuffer[50]:CHR
 
   SysInit
   DbgClearAll
-  New SW::StopWatch
-  OCall SW::StopWatch.Init, NULL
-  s2s SW.r8Resolution, $CReal8(1000.0), xax, xcx        ;Resolution 1 ms
+  OCall $ObjTmpl(StopWatch)::StopWatch.Init, NULL
+  s2s $ObjTmpl(StopWatch).r8Resolution, $CReal8(1000.0), xax, xcx   ;Resolution 1 ms
 
-  OCall SW::StopWatch.Start
+  OCall $ObjTmpl(StopWatch)::StopWatch.Start
   OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
   OCall $ObjTmpl(Application)::Application.Run          ;Execute application
 
-  ;Show session results
-  OCall SW::StopWatch.Stop
-  OCall SW::StopWatch.GetTime
-  OCall SW::StopWatch.Done
-  lea xdi, cBuffer
-  WriteF xdi, "Runtime = 各X ms", xax
-  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_IMPORTANT, addr cBuffer
-  lea xdi, cBuffer
-  WriteF xdi, "Errors = 各D", $ObjTmpl(Application).dTotalErrorCount
-  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_IMPORTANT, addr cBuffer
-  lea xdi, cBuffer
-  WriteF xdi, "Warnings = 各D", $ObjTmpl(Application).dTotalWarningCount
-  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_IMPORTANT, addr cBuffer
+  OCall $ObjTmpl(StopWatch)::StopWatch.Stop
+  .if $ObjTmpl(Application).Options.bShowUsage == FALSE
+    ;Show session results
+    OCall $ObjTmpl(StopWatch)::StopWatch.GetTime
+    lea xdi, cBuffer
+    WriteF xdi, "Runtime = 各X ms", xax
+    OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_IMPORTANT, addr cBuffer
+    lea xdi, cBuffer
+    WriteF xdi, "Errors = 各D", $ObjTmpl(Application).dTotalErrorCount
+    OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_IMPORTANT, addr cBuffer
+    lea xdi, cBuffer
+    WriteF xdi, "Warnings = 各D", $ObjTmpl(Application).dTotalWarningCount
+    OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_IMPORTANT, addr cBuffer
+  .endif
 
+  OCall $ObjTmpl(StopWatch)::StopWatch.Done
   OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
 
   SysDone                                               ;Runtime finalization of the OOP model
-  invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS
+  invoke ExitProcess, $ObjTmpl(Application).bTerminate  ;Exit returning the termination flag
 start endp
 
 end
-
-
-SPEVENTENUM=4
-SPEVENTLPARAMTYPE=4

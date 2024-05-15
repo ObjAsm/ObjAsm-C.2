@@ -172,8 +172,8 @@ Method MemoryHeap.AddStrW, uses xdi xsi, pStrW:PSTRINGW
     ret
   .endif
 
-  invoke StrECopyW, xdi, pStrW      ;Copy string
-  inc xax
+  invoke StrECopyW, xdi, pStrW      ;Copy string, xax -> ZTC
+  add xax, sizeof(CHRW)             ;Skip ZTC
   mov [xsi].pMemFree, xax           ;Set Free-Pointer
   mov xax, xdi                      ;Return -> allocated string
 ;  DbgShowMemoryHeapStatus

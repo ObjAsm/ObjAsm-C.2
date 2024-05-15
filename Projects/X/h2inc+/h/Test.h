@@ -1,4 +1,3 @@
-// ICMessage is not supported on NT
 static __inline LRESULT VFWAPI_INLINE
 ICSetStatusProc(
             _In_ HIC hic,

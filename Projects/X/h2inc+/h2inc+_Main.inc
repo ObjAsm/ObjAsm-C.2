@@ -23,7 +23,7 @@ Method Application.Done, uses xbx xsi
 
   .if [xbx].bTerminate == FALSE
     ;Save new content lists only
-    OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Saving file lists...")
+    OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Saving new lists...")
     lea xsi, NewContentLists
     .while POINTER ptr [xsi] != NULL
       .if [xsi].LIST_SETUP.pFileName != NULL
@@ -40,8 +40,8 @@ Method Application.Done, uses xbx xsi
   OCall [xbx].SearchPathColl::StrCollectionW.Done
   OCall [xbx].ProcessedFiles::SortedStrCollectionW.Done
 
-  invoke LocalFree, [xbx].pCL_Args
-  invoke LocalFree, [xbx].pEV_Args
+  MemFree [xbx].pCL_Args
+  MemFree [xbx].pEV_Args
 
   OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Program exit")
   invoke Sleep, 5000
@@ -50,7 +50,7 @@ MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Application.GetOption
-; Purpose:    Scan command line for options.
+; Purpose:    Process a single option.
 ; Arguments:  Arg1: -> WIDE Argument comming from commandline.
 ; Return:     eax: TRUE if succeeded, otherwise FALSE.
 
@@ -63,7 +63,7 @@ Method Application.GetOption, uses xbx xdi xsi, pArgument:PSTRINGW
     lea xdi, CmdLineSwitchTable
     .while TRUE
       movzx eax, [xdi].CMDLINE_SWITCH_ENTRY.wSwitch
-      cmp eax, 0                                        ;Table end marker
+      test eax, eax                                     ;Table end marker
       je @@EOM
       .break .if ecx == eax
       add xdi, sizeof(CMDLINE_SWITCH_ENTRY)
@@ -91,8 +91,11 @@ Method Application.GetOption, uses xbx xdi xsi, pArgument:PSTRINGW
       mov DWORD ptr [xdx], ecx
       mov eax, TRUE
     .elseif [xdi].CMDLINE_SWITCH_ENTRY.bType == CLS_IS_STRING
-      lea xcx, [xsi + 2*sizeof(CHRW)]
-      mov POINTER ptr [xdx], xcx
+      mov xdi, xdx
+      lea xsi, [xsi + 2*sizeof(CHRW)]
+      invoke PathUnquoteSpacesW, xsi
+      OCall [xbx].MemHeap::MemoryHeap.AddStrW, xsi
+      mov POINTER ptr [xdi], xax
       mov eax, TRUE
     .else
       xor eax, eax
@@ -104,7 +107,7 @@ MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Application.GetOptions
-; Purpose:    .
+; Purpose:    Scan argument list for options.
 ; Arguments:  Arg1: -> WIDE Argument list.
 ;             Arg2: First argument from the list to start with.
 ;             Arg3: Number of arguments in the ArgList.
@@ -119,11 +122,15 @@ Method Application.GetOptions, uses xbx xdi xsi, pArgList:POINTER, dStart:DWORD,
   mov edi, dStart
   mov xsi, pArgList
   .while edi < dCount
-    OCall xbx.GetOption, PSTRINGW ptr [xsi + xdi*sizeof(PSTRINGW)]
+    mov xdx, PSTRINGW ptr [xsi + xdi*sizeof(PSTRINGW)]
+    OCall xbx.GetOption, xdx
     .if eax == FALSE
       lea eax, [edi + 1]
       .if eax == dCount                                 ;Last argument?
-        m2m [xbx].pFilespec, PSTRINGW ptr [xsi + xdi*sizeof(PSTRINGW)], xdx
+        mov xsi, [xsi + xdi*sizeof(PSTRINGW)]
+        invoke PathUnquoteSpacesW, xsi
+        OCall [xbx].MemHeap::MemoryHeap.AddStrW, xsi
+        mov [xbx].pFilespec, xax
       .else
         ReleaseObject
         mov xbx, PSTRINGW ptr [xsi + xdi*sizeof(PSTRINGW)]
@@ -150,6 +157,7 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
+.code
 Method Application.Init, uses xbx xdi xsi
   local cMessage[1024]:CHR, hFile:HANDLE, dBytesRead:DWORD
   local dArgCount:DWORD, LocTime:SYSTEMTIME, cFullSearchPath[MAX_PATH]:CHRW
@@ -184,27 +192,28 @@ Method Application.Init, uses xbx xdi xsi
 
   OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Reading program arguments...")
   ;Get CL arguments ---------------------------------------------------------------------
-  mov xax, $invoke(GetCommandLine)
-  mov xax, $OfsCStrW('h2inc+.exe -@".\h2inc+_Options.txt"')
-  lea xdx, dArgCount
-  invoke CommandLineToArgvW, xax, xdx                   ;Strips the quotes away!
+;  mov xax, $invoke(GetCommandLine)
+  mov xax, $OfsDStrW('h2inc+.exe -@".\h2inc+_Options.txt"')
+  OCall xbx.ParseArguments, xax
   mov [xbx].pCL_Args, xax
-  .if dArgCount == 1
+  mov dArgCount, ecx
+  .if ecx == 1
     mov [xbx].Options.bShowUsage, TRUE
     mov [xbx].bTerminate, TRUE
     jmp @@EOM
   .endif
 
 ;  ;Show me all commandline arguments
-;  .while TRUE
-;    DbgStrW POINTER ptr [xax]
+;  test ecx, ecx
+;  .while !ZERO?
+;    DbgStrW POINTER ptr [xax], "Show CL Arguments"
 ;    add xax, sizeof(POINTER)
-;    .break .if POINTER ptr [xax] == NULL
+;    dec ecx
 ;  .endw
 
   OCall xbx.GetOptions, [xbx].pCL_Args, 1, dArgCount, $OfsCStr("command line")
-  cmp eax, FALSE
-  je @@EOM
+  test eax, eax
+  jz @@EOM
 
   ;Get EV arguments ---------------------------------------------------------------------
   mov CHR ptr cEnvVar, 0
@@ -241,20 +250,21 @@ Method Application.Init, uses xbx xdi xsi
       jmp @F
     .endif
   .endif
-  lea xdx, dArgCount
-  invoke CommandLineToArgvW, addr cEnvVar, xdx          ;Strips the quotes away!
+  OCall xbx.ParseArguments, addr cEnvVar
   mov [xbx].pEV_Args, xax
+  mov dArgCount, ecx
 
 ;  ;Show me all Environment Variable arguments
-;  .while TRUE
-;    DbgStrW POINTER ptr [xax]
+;  test ecx, ecx
+;  .while !ZERO?
+;    DbgStrW POINTER ptr [xax], "Show EV-Arguments"
 ;    add xax, sizeof(POINTER)
-;    .break .if POINTER ptr [xax] == NULL
+;    dec ecx
 ;  .endw
 
   OCall xbx.GetOptions, [xbx].pEV_Args, 0, dArgCount, [xbx].Options.pEnvVar
-  cmp eax, FALSE
-  je @@EOM
+  test eax, eax
+  jz @@EOM
 
 @@:
   ;Check Filespec
@@ -311,7 +321,7 @@ Method Application.Init, uses xbx xdi xsi
   invoke FileExistW, addr [xbx].cOutputDir
   .if xax == FALSE
     lea xdi, cMessage
-    WriteF xdi, "Output directory \`¦SU\` doesn\´t exist"
+    WriteF xdi, "Output directory \`¦SU\` doesn\´t exist", addr [xbx].cOutputDir
     OCall xbx.ShowError, addr cMessage
     mov [xbx].bTerminate, TRUE
     jmp @@EOM
@@ -401,6 +411,91 @@ Method Application.Init, uses xbx xdi xsi
   .if [xbx].Options.dSelectiveOutput == 0
     mov [xbx].Options.dSelectiveOutput, -1
   .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Application.ParseArguments
+; Purpose:    Parse a WIDE CL-string and return an array of PSTRINGW to the command line arguments,
+;             along with a count of such arguments. Delimiters are white chars or CRLF.
+; Arguments:  Arg1: -> Input WIDE string.
+; Return:     xax -> Array of PSTRINGWs.
+;             ecx = Argument count.
+; Note:       1. Mermory allocated to hold the PSTRINGWs must be freed using MemFree.
+;             2. Arguments that are followed by an quoted string are retuned with the opening quote
+;                and the closing quote removed.
+
+Method Application.ParseArguments, uses xbx xsi, pArgumentStringW:PSTRINGW
+.const
+JumpTable label POINTER
+  POINTER offset @@1
+  POINTER offset @@2
+  POINTER offset @@3
+  POINTER offset @@4
+  POINTER offset @@5
+
+.code
+  MemAlloc 1024
+  mov xsi, pArgumentStringW
+  xor ebx, ebx                                          ;Argument Count
+  mov edx, 1                                            ;Statemachine step
+
+@@0:
+  lea xdi, JumpTable
+  mov cx, CHRW ptr [xsi]
+  cmp cx, 0
+  je @@9
+  jmp POINTER ptr [xdi + xdx*sizeof(POINTER) - sizeof(POINTER)]
+
+@@1:
+  .if cx == SPC || cx == TAB || cx == LF || cx == CR  ;Start search
+    add xsi, sizeof(CHRW)
+    jmp @@0
+  .endif
+  mov edx, 2
+  jmp @@0
+
+@@2:
+  push xsi                                              ;Save start address
+  inc ebx
+  mov edx, 3
+  jmp @@0
+
+@@3:
+  .if cx == '"'                                         ;Opening quote
+    add xsi, sizeof(CHRW)                               ;Skip the quote
+    mov edx, 4
+    jmp @@0
+  .elseif cx == SPC || cx == TAB || cx == LF || cx == CR
+    mov edx, 5
+    jmp @@0
+  .endif
+  add xsi, sizeof(CHRW)
+  jmp @@0
+
+@@4:
+  .if cx == '"'                                         ;Search closing quote
+    add xsi, sizeof(CHRW)                               ;Skip the quote
+    mov edx, 5
+    jmp @@0
+  .endif
+  add xsi, sizeof(CHRW)                                 ;Skip the quote
+  jmp @@0
+
+@@5:
+  mov CHRW ptr [xsi], 0                                 ;ZTC
+  add xsi, sizeof(CHRW)
+  mov edx, 1                                            ;Start again
+  jmp @@0
+
+@@9:
+  mov ecx, ebx
+  test ecx, ecx
+  .while !ZERO?
+    pop xdx
+    mov PSTRINGW ptr [xax + xcx*sizeof(PSTRINGW) - sizeof(PSTRINGW)], xdx
+    dec ecx
+  .endw
+  mov ecx, ebx                                          ;Return argument count in ecx
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

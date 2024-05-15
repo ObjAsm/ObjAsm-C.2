@@ -39,6 +39,7 @@ ConvertNumber           proto
 RenderC                 proto
 RenderBitField          proto :PSTRINGA, :PSTRINGA, :PTOKEN, :PSTRINGA
 RenderBlock             proto :PTOKEN, :DWORD
+RenderContainer         proto :PSTRINGA, :DWORD
 RenderContainerMember   proto :PTOKEN, :PSTRINGA
 RenderEnumMember        proto :PTOKEN
 RenderDefineConst       proto :PSTRINGA
@@ -53,12 +54,12 @@ RenderTypedefFunction   proto :PSTRINGA
 RenderTypedefFuncPtr    proto :PSTRINGA
 RenderTypedefEnum       proto :BOOL
 
-;ASCII Codes
-BELL                    equ <07>
-BACK                    equ <"08">
-HTAB                    equ <"09">
-VTAB                    equ <"0B">
-FF                      equ <"0C">
+;Additional ASCII Codes
+BELL                    equ 07h
+BACK                    equ 08h
+HTAB                    equ 09h
+VTAB                    equ 0Bh
+FF                      equ 0Ch
 
 DLLIMPORT_DEFAULT       equ 0
 DLLIMPORT_ASSUME        equ 1
@@ -228,6 +229,7 @@ endm
 INP_STAT struc
   pIn             POINTER   ?
   dLineNumber     DWORD     ?
+  dIndentation    DWORD     ?
   bNewLine        BYTE      ?
   bSkipLineC      BYTE      ?
   bSkipLinePP     BYTE      ?
@@ -380,20 +382,17 @@ DefaultKnwMacrosTable label POINTER
   CONV_ATTR_ENTRY <$OfsCBStrA("WINAPI_PARTITION_PHONE"),    MCF_KNOWN or MCF_HAS_PARAMS or MCF_ARG_EXPRESSION>
   POINTER NULL
 
-;Known equate names, usually not used, since defined in h2inc+.ini.
-;Meaning of ATTR value:
-;  EQF_KNOWN            001h
-
+;Known equate default names, usually not used, since defined in h2inc+.ini.
 DefaultKnwEquatesTable label POINTER
 ;  CONV_ATTR_ENTRY <$OfsCBStrA(""),           EQF_KNOWN>
   POINTER NULL
 
-;Known structure names, usually not used, since defined in h2inc+.ini.
+;Known structure default names, usually not used, since defined in h2inc+.ini.
 DefaultKnwStructsTable label POINTER
   POINTER $OfsCBStrA("POINT")
   POINTER NULL
 
-;Known prototype qualifier names, usually not used, since defined in h2inc+.ini.
+;Known prototype qualifier default names, usually not used, since defined in h2inc+.ini.
 DefaultKnwQualifiersTable label POINTER
   CONV_ATTR_ENTRY <$OfsCBStrA("__cdecl"),    PTQ_CDECL>
   CONV_ATTR_ENTRY <$OfsCBStrA("_cdecl"),     PTQ_CDECL>
@@ -406,7 +405,8 @@ DefaultKnwQualifiersTable label POINTER
   CONV_ATTR_ENTRY <$OfsCBStrA("__inline"),   PTQ_INLINE>
   POINTER NULL
 
-;Type sizes. Required if a type is a parameter with size > 4.
+;Type sizes default values. Required if a type is a parameter with size > 4.
+;Usually not used, since defined in h2inc+.ini.
 DefaultKnwTypeSizeTable label POINTER
   CONV_ATTR_ENTRY <$OfsCBStrA("BYTE"),        01>
   CONV_ATTR_ENTRY <$OfsCBStrA("CHAR"),        01>
@@ -439,7 +439,7 @@ DefaultKnwTypeSizeTable label POINTER
   CONV_ATTR_ENTRY <$OfsCBStrA("WORD"),        02>
   POINTER NULL
 
-;Simple types default, usually not used, since defined in h2inc+.ini.
+;Simple types default values, usually not used, since defined in h2inc+.ini.
 DefaultKnwSimpleTypesTable label POINTER
   POINTER $OfsCBStrA("BYTE")
   POINTER $OfsCBStrA("SBYTE")
@@ -470,7 +470,7 @@ DefaultKnwSimpleTypesTable label POINTER
   POINTER $OfsCBStrA("HRESULT")
   POINTER NULL
 
-;Type conversion 1 default, usually not used since defined in h2inc+.ini.
+;Type conversion 1 default values, usually not used since defined in h2inc+.ini.
 DefaultKnwConvTypes1Table label POINTER
   CONV_EQUI_ENTRY <$OfsCBStrA("DWORDLONG"),      $OfsCBStrA("QWORD")>
   CONV_EQUI_ENTRY <$OfsCBStrA("ULONGLONG"),      $OfsCBStrA("QWORD")>
@@ -479,7 +479,7 @@ DefaultKnwConvTypes1Table label POINTER
   CONV_EQUI_ENTRY <$OfsCBStrA("float"),          $OfsCBStrA("REAL4")>
   POINTER NULL
 
-;Type conversion 2 default, usually not used since defined in h2inc+.ini.
+;Type conversion 2 default values, usually not used since defined in h2inc+.ini.
 DefaultKnwConvTypes2Table label POINTER
   CONV_EQUI_ENTRY <$OfsCBStrA("int"),            $OfsCBStrA("SDWORD")>
   CONV_EQUI_ENTRY <$OfsCBStrA("unsigned int"),   $OfsCBStrA("DWORD")>
@@ -499,19 +499,53 @@ DefaultKnwConvTypes2Table label POINTER
   CONV_EQUI_ENTRY <$OfsCBStrA("double"),         $OfsCBStrA("REAL8")>
   POINTER NULL
 
-;Type conversion 3 default, usually not used since defined in h2inc+.ini.
+;Type conversion 3 default values, usually not used since defined in h2inc+.ini.
 DefaultKnwConvTypes3Table label POINTER
   CONV_EQUI_ENTRY < $OfsCBStrA("POINT"),         $OfsCBStrA("QWORD")>
   POINTER NULL
 
-;Structure alignments default, usually not used since defined in h2inc+.ini.
+;Structure alignments default values, usually not used since defined in h2inc+.ini.
 DefaultKnwAlignmentsTable label POINTER
   POINTER NULL
 
-;Reserved words default, usually not used since defined in h2inc+.ini.
+;Reserved words default values, usually not used since defined in h2inc+.ini.
 DefaultKnwResvWordsTable label POINTER
+  POINTER $OfsCBStrA("al")
+  POINTER $OfsCBStrA("bl")
+  POINTER $OfsCBStrA("cl")
+  POINTER $OfsCBStrA("dl")
+  POINTER $OfsCBStrA("ax")
+  POINTER $OfsCBStrA("bx")
   POINTER $OfsCBStrA("cx")
   POINTER $OfsCBStrA("dx")
+  POINTER $OfsCBStrA("si")
+  POINTER $OfsCBStrA("di")
+  POINTER $OfsCBStrA("bp")
+  POINTER $OfsCBStrA("sp")
+  POINTER $OfsCBStrA("eax")
+  POINTER $OfsCBStrA("ebx")
+  POINTER $OfsCBStrA("ecx")
+  POINTER $OfsCBStrA("edx")
+  POINTER $OfsCBStrA("esi")
+  POINTER $OfsCBStrA("edi")
+  POINTER $OfsCBStrA("ebp")
+  POINTER $OfsCBStrA("esp")
+  POINTER $OfsCBStrA("rax")
+  POINTER $OfsCBStrA("rbx")
+  POINTER $OfsCBStrA("rcx")
+  POINTER $OfsCBStrA("rdx")
+  POINTER $OfsCBStrA("rsi")
+  POINTER $OfsCBStrA("rdi")
+  POINTER $OfsCBStrA("rbp")
+  POINTER $OfsCBStrA("r8")
+  POINTER $OfsCBStrA("r9")
+  POINTER $OfsCBStrA("r10")
+  POINTER $OfsCBStrA("r11")
+  POINTER $OfsCBStrA("r12")
+  POINTER $OfsCBStrA("r13")
+  POINTER $OfsCBStrA("r14")
+  POINTER $OfsCBStrA("r15")
+  POINTER $OfsCBStrA("r16")
   POINTER NULL
 
 DefaultKnwAnnotationsTable label POINTER

@@ -21,7 +21,7 @@
 
 RenderEnum proc uses xbx
   local pTag:PTOKEN, pName:PTOKEN, pType:PSTRINGA, pToken:PTOKEN, pCurrToken:PTOKEN
-  local cWorkBuffer[MAX_NAME_CHARS]:CHRA, cEnumName[MAX_NAME_CHARS]:CHRA, dTypeCSpec:DWORD
+  local cWorkBuffer[MAX_NAME_CHARS]:CHRA, dTypeCSpec:DWORD
 
   OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderEnum")
   mov pTag, NULL
@@ -74,7 +74,7 @@ RenderEnum proc uses xbx
   mov xax, pToken
   .if CHRA ptr [xax] == '{'
     xor eax, eax
-    invoke GetBlockName, addr cEnumName
+    invoke GetBlockName, addr cWorkBuffer
     mov pName, xax
     test xax, xax
     cmovz xax, pTag                                   ;if no name found, use the tag

@@ -31,6 +31,9 @@ RenderFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
         mov xdi, pType
         .if xdi == NULL
           mov xdi, pTag
+          .if xdi == NULL
+            jmp @Exit
+          .endif
         .endif
         ;Comment out forward declarations
         .if dPtrCount == 0
@@ -46,6 +49,9 @@ RenderFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
           .if eax != FALSE                              ;  then the new type is it too
             IsStructure? pName                          ;Check if it already exist
             .if eax == FALSE
+              DbgStrA pName, "RenderFurther"
+              DbgStrW [xbx].$Obj(IncFile).pHeaderFileName
+              DbgDec [xbx].$Obj(IncFile).dLineNumber
               invoke StrLengthA, pName
               invoke InsertStrg, pNewStructs, pName, eax
             .endif

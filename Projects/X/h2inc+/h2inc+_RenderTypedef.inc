@@ -89,7 +89,7 @@ RenderTypedef proc
     DoesStringMatchA? [xax], <union>
     jnz @F
   .endif
-  invoke RenderContainer, pToken
+  invoke RenderContainer, pToken, FALSE
   test xax, xax
   jz @ErrorEoF
   jmp @Exit
@@ -153,6 +153,9 @@ RenderTypedef proc
             .if eax != FALSE                            ;  then the new type is it too
               IsStructure? pName                        ;Check if it already exist
               .if eax == FALSE
+                DbgStrA pName, "RenderTypedef"
+                DbgStrW [xbx].$Obj(IncFile).pHeaderFileName
+                DbgDec [xbx].$Obj(IncFile).dLineNumber
                 invoke StrLengthA, pName
                 invoke InsertStrg, pNewStructs, pName, eax
               .endif

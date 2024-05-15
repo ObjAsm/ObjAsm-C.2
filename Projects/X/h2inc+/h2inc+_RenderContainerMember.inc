@@ -179,7 +179,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
       lea xdi, cSuffix
 @@:
       ;Translation
-      invoke RenderContainer, offset(szStruct)
+      invoke RenderContainer, offset(szStruct), TRUE
       test xax, xax                                     ;Set/Reset ZF
       jz @ErrorEoF
       mov pEndToken, xax
@@ -233,7 +233,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
       lea xdi, cSuffix
 @@:
       ;Translation
-      invoke RenderContainer, offset(szUnion)
+      invoke RenderContainer, offset(szUnion), TRUE
       test xax, xax
       jz @ErrorEoF
       mov pEndToken, xax

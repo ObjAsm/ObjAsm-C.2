@@ -1237,7 +1237,7 @@ GetProtoQualifier endp
 
 GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
   local dBraceCount:DWORD, dFlags:DWORD
-  local pName:PSTRINGA, InpStat:INP_STAT
+  local pName:PSTRINGA, InpStat:INP_STAT, dPrevIndentation:DWORD
 
   mov pName, NULL
   mov dFlags, FALSE
@@ -1259,7 +1259,7 @@ GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
 
   .if xax != NULL
     OCall xbx::IncFile.GetNextTokenC
-    .if xax != NULL && CHRA ptr [xax] != ';'                 ;Statement terminator
+    .if xax != NULL && CHRA ptr [xax] != ';'            ;Statement terminator
       .if CHRA ptr [xax] == '*'
         jmp @Exit
       .endif
@@ -1284,14 +1284,19 @@ GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
         .else
           xor ecx, ecx
         .endif
-        mov xsi, [xbx].$Obj(IncFile).pStmOutPos
+        
+        ;Render the macro into a buffer to get the name
+        mov xsi, [xbx].$Obj(IncFile).pStmOutPos         ;Save status
         mov edi, [xbx].$Obj(IncFile).dStmOutEoL
-        m2m [xbx].$Obj(IncFile).pStmOutPos, pMacroNameBuffer, eax
+        m2m dPrevIndentation, [xbx].$Obj(IncFile).dIndentation, eax
+        mov [xbx].$Obj(IncFile).dIndentation, 0
+        m2m [xbx].$Obj(IncFile).pStmOutPos, pMacroNameBuffer, xax   ;Write into this buffer
         mov edx, ecx
         invoke RenderMacroCall, pName, edx, FALSE
-        mov [xbx].$Obj(IncFile).dStmOutEoL, edi
+        mov [xbx].$Obj(IncFile).dStmOutEoL, edi         ;Restore status
         mov [xbx].$Obj(IncFile).pStmOutPos, xsi
-        m2m pName, pMacroNameBuffer, eax
+        m2m [xbx].$Obj(IncFile).dIndentation, dPrevIndentation, xax
+        m2m pName, pMacroNameBuffer, xax
       .endif
 
     .endif

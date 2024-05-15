@@ -416,6 +416,7 @@ Method IncFile.InputStatusLoad, uses xbx xdi xsi, pStatus:P_INP_STAT
   mov ecx, [xsi].INP_STAT.dLineNumber
   mov dl, [xsi].INP_STAT.bNewLine
   mov dh, [xsi].INP_STAT.bCondIfLevel
+  mov edi, [xsi].INP_STAT.dIndentation
   mov [xbx].pStmInpPos, xax
   mov [xbx].dLineNumber, ecx
   mov [xbx].bNewLine, dl
@@ -424,6 +425,7 @@ Method IncFile.InputStatusLoad, uses xbx xdi xsi, pStatus:P_INP_STAT
   mov dh, [xsi].INP_STAT.bSkipLinePP
   mov [xbx].bSkipLineC, dl
   mov [xbx].bSkipLinePP, dh
+  mov [xbx].dIndentation, edi
 
   mov xax, xsi
   lea xdi, [xbx].bCondElseLevel
@@ -455,6 +457,7 @@ Method IncFile.InputStatusSave, uses xbx xdi xsi, pStatus:P_INP_STAT
   mov ecx, [xbx].dLineNumber
   mov dl, [xbx].bNewLine
   mov dh, [xbx].bCondIfLevel
+  mov edi, [xbx].dIndentation
   mov [xsi].INP_STAT.pIn, xax
   mov [xsi].INP_STAT.dLineNumber, ecx
   mov [xsi].INP_STAT.bNewLine, dl
@@ -463,6 +466,7 @@ Method IncFile.InputStatusSave, uses xbx xdi xsi, pStatus:P_INP_STAT
   mov dh, [xbx].bSkipLinePP
   mov [xsi].INP_STAT.bSkipLineC, dl
   mov [xsi].INP_STAT.bSkipLinePP, dh
+  mov [xsi].INP_STAT.dIndentation, edi
 
   mov xax, xsi
   lea xdi, [xax].INP_STAT.bCondElseLevel
@@ -895,7 +899,7 @@ Method IncFile.Save, uses xbx xdi xsi, pFullFileName:PSTRINGW
 
   SetObject xbx
   mov Result, FALSE
-  invoke StrSizeA, [xbx].pStmBuffer2
+  invoke StrLengthA, [xbx].pStmBuffer2
   mov dStmBufferContent2, eax
   invoke CreateFileW, pFullFileName, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, \
                       CREATE_ALWAYS, FILE_ATTRIBUTE_ARCHIVE, 0
@@ -1190,19 +1194,37 @@ Method IncFile.ShowError, uses xbx xdi, pFormat:PSTRING, Args:vararg
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     IncFile.ShowInfo
+; Purpose:    Shows an info message.
+; Arguments:  Arg1: Verbosity Level [0..3].
+;             Arg2: -> Format WIDE String. Use %hs and %ls specifiers for ANSI and WIDE input args.
+;             Arg3-n: Format arguments.
+; Return:     Nothing.
+
+Method IncFile.ShowInfo, uses xbx, dVerbosityLevel:DWORD, pInfoFormat:PSTRING, Args:vararg
+  local cMessage[1024]:CHR
+
+  SetObject xbx
+  lea xdi, cMessage
+  WriteF xdi, "¦SU(¦UD) - Error = ", [xbx].pHeaderFileName, [xbx].dLineNumber
+  invoke wvsprintf, xdi, pInfoFormat, addr Args
+  OCall [xbx].pOwner::Application.ShowInfo, dVerbosityLevel, addr cMessage
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.ShowSysError
 ; Purpose:    Shows a system error condition.
 ; Arguments:  Arg1: -> Info String.
 ;             Arg2: Error Code.
 ; Return:     Nothing.
 
-Method IncFile.ShowSysError, uses xbx xdi, pInfo:PSTRING, dErrorCode:DWORD
+Method IncFile.ShowSysError, uses xbx xdi, pErrorMessage:PSTRING, dErrorCode:DWORD
   local cMessage[1024]:CHR
 
   SetObject xbx
   lea xdi, cMessage
-  .if pInfo != NULL
-    WriteF xdi, "¦ST ", pInfo
+  .if pErrorMessage != NULL
+    WriteF xdi, "¦ST ", pErrorMessage
   .endif
   WriteF xdi, "[Error ¦UD = ", dErrorCode
   lea xax, cMessage
@@ -1227,14 +1249,14 @@ MethodEnd
 ;             Arg3-n: Format arguments.
 ; Return:     Nothing.
 
-Method IncFile.ShowWarning, uses xbx xdi, dWarningLevel:DWORD, pFormat:PSTRING, Args:vararg
+Method IncFile.ShowWarning, uses xbx xdi, dWarningLevel:DWORD, pWarningFormat:PSTRING, Args:vararg
   local cMessage[1024]:CHR
 
   SetObject xbx
   inc [xbx].dWarningCount
   lea xdi, cMessage
   WriteF xdi, "¦SU(¦UD) = ", [xbx].pHeaderFileName, [xbx].dLineNumber
-  invoke wvsprintf, xdi, pFormat, addr Args
+  invoke wvsprintf, xdi, pWarningFormat, addr Args
   OCall [xbx].pOwner::Application.ShowWarning, dWarningLevel, addr cMessage
 MethodEnd
 
