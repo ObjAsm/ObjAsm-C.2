@@ -20,10 +20,9 @@
 
 RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
   local pName:PSTRINGA, pToken:PTOKEN, pPrefix:PSTRINGA, pCallConvStr:PSTRINGA
-  local bFunctionPtr:DWORD, dPtrCount:DWORD, dParenthesisCount:DWORD, dParamBytes:DWORD
+  local dPtrCount:DWORD, dParenthesisCount:DWORD, dParamBytes:DWORD
   local InpStat:INP_STAT, szSuffix[8]:CHRA
   local dTypeCSpec:DWORD, pType:PSTRINGA, cTransBuffer[128]:CHRA
-  local pStmOutPos:POINTER, dStmOutEoL:DWORD
 
   OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, \
                                                      $OfsCStr("RenderPrototype")
@@ -64,7 +63,6 @@ RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
   mov [xbx].$Obj(IncFile).pPrevToken, NULL
   mov pType, NULL
   mov pName, NULL
-  mov bFunctionPtr, FALSE
   mov dPtrCount, 0
   mov dParamBytes, 0
   mov dParenthesisCount, 1
@@ -120,7 +118,6 @@ RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
         .endif
         mov pType, NULL
         mov pName, NULL
-        mov bFunctionPtr, FALSE
       .endif
 
       mov xax, pToken
@@ -141,24 +138,28 @@ RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
 
     .elseif CHRA ptr [xax] == '('
       ;Function ptr as function parameter?
-      invoke IsFunctionPtr?
+      invoke IsFunctionPtr?, xax
       .if eax != FALSE
-        m2m pStmOutPos, [xbx].$Obj(IncFile).pStmOutPos, xax
-        m2m dStmOutEoL, [xbx].$Obj(IncFile).dStmOutEoL, ecx
-        invoke RenderTypedefFuncPtr, NULL
+        invoke SkipBraces, '(', ')'
         test xax, xax
         jz @ErrorEoF
-        m2m [xbx].$Obj(IncFile).pStmOutPos, pStmOutPos, xax
-        m2m [xbx].$Obj(IncFile).dStmOutEoL, dStmOutEoL, ecx
-        ;Alternative code without explicit declaration of the Function pointer
-        invoke SkipBraces, '(', ')'
         OCall xbx::IncFile.GetNextTokenC
         test xax, xax
         jz @ErrorEoF
         invoke SkipBraces, '(', ')'
-        mov dPtrCount, TRUE
+        test xax, xax
+        jz @ErrorEoF
+        OCall xbx::IncFile.PeekNextTokenC
+        test xax, xax
+        jz @ErrorEoF
+        .if CHRA ptr [xax] == '{'
+          invoke SkipBraces, '{', '}'
+          test xax, xax
+          jz @ErrorEoF
+        .endif
+        mov dPtrCount, 0
         mov pName, NULL
-        mov pType, NULL
+        m2m pType, $OfsCStrA("POINTER"), xdx
       .else
         inc dParenthesisCount
       .endif
@@ -267,7 +268,6 @@ RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
   ret
 
 @ErrorSyntax:
-  inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.ShowError, $OfsCStr("RenderPrototype")
   OCall xbx::IncFile.StmWriteError
   invoke GotoNextToken, addr szSemiColon

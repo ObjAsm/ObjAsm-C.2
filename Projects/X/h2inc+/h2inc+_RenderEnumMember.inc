@@ -146,7 +146,6 @@ RenderEnumMember proc pToken:PTOKEN
   ret
 
 @ErrorSyntax:
-  inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.ShowError, $OfsCStr("RenderEnumMember")
   OCall xbx::IncFile.StmWriteError
   invoke GotoNextToken, addr szSemiColon

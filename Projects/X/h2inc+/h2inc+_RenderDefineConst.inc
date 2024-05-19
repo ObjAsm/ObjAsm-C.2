@@ -186,7 +186,6 @@ RenderDefineConst proc uses xdi xsi pName:PSTRINGA
   ret
 
 @ErrorSyntax:
-  inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.ShowError, $OfsCStr("RenderDefineConst")
   OCall xbx::IncFile.StmWriteError
   Destroy@Stacklist pItems                              ;Restore stack

@@ -367,7 +367,7 @@ MethodEnd
 ; Method:     IncFile.GetNextTokenPP
 ; Purpose:    Returns the next token from within a PP command. Comments are handled automatically.
 ; Arguments:  None.
-; Return:     xax -> Token or NULL if token = PCT_EOL or EOF reached. ZERO flag set if xax == NULL.
+; Return:     xax -> Token or NULL if token = PCT_EOL or EOF reached.
 
 Method IncFile.GetNextTokenPP, uses xbx xdi
   SetObject xbx
@@ -400,7 +400,6 @@ Method IncFile.GetNextTokenPP, uses xbx xdi
       .endif
     .endif
   .endif
-  test xax, xax
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -833,7 +832,7 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     eax = 0 if error occured.
 
-Method IncFile.Render, uses xbx xdi xsi
+Method IncFile.Render, uses xbx xdi; xsi
   local cMessage[1024]:CHRA
 ;  local dBytesWritten:DWORD
 
@@ -1187,8 +1186,9 @@ Method IncFile.ShowError, uses xbx xdi, pFormat:PSTRING, Args:vararg
   local cMessage[1024]:CHR
 
   SetObject xbx
+  inc [xbx].dErrorCount
   lea xdi, cMessage
-  WriteF xdi, "¦SU(¦UD) - Error = ", [xbx].pHeaderFileName, [xbx].dLineNumber
+  WriteF xdi, "Error at \`¦SU(¦UD)\`: ", [xbx].pHeaderFileName, [xbx].dLineNumber
   invoke wvsprintf, xdi, pFormat, addr Args
   OCall [xbx].pOwner::Application.ShowError, addr cMessage
 MethodEnd
@@ -1201,12 +1201,12 @@ MethodEnd
 ;             Arg3-n: Format arguments.
 ; Return:     Nothing.
 
-Method IncFile.ShowInfo, uses xbx, dVerbosityLevel:DWORD, pInfoFormat:PSTRING, Args:vararg
+Method IncFile.ShowInfo, uses xbx xdi, dVerbosityLevel:DWORD, pInfoFormat:PSTRING, Args:vararg
   local cMessage[1024]:CHR
 
   SetObject xbx
   lea xdi, cMessage
-  WriteF xdi, "¦SU(¦UD) - Error = ", [xbx].pHeaderFileName, [xbx].dLineNumber
+  WriteF xdi, "Info at \`¦SU(¦UD)\`: ", [xbx].pHeaderFileName, [xbx].dLineNumber
   invoke wvsprintf, xdi, pInfoFormat, addr Args
   OCall [xbx].pOwner::Application.ShowInfo, dVerbosityLevel, addr cMessage
 MethodEnd

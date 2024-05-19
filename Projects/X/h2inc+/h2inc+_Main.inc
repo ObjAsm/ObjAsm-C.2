@@ -25,6 +25,8 @@ Method Application.Done, uses xbx xsi
     ;Save new content lists only
     OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Saving new lists...")
     lea xsi, NewContentLists
+;    OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Saving all lists...")
+;    lea xsi, KnownContentLists                          ;Uncomment to save all lists
     .while POINTER ptr [xsi] != NULL
       .if [xsi].LIST_SETUP.pFileName != NULL
         OCall [xsi].LIST_SETUP.pList::List.SaveToFile, [xsi].LIST_SETUP.pFileName
@@ -44,7 +46,7 @@ Method Application.Done, uses xbx xsi
   MemFree [xbx].pEV_Args
 
   OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Program exit")
-  invoke Sleep, 5000
+;  invoke Sleep, 5000
   ACall xbx.Done
 MethodEnd
 
@@ -192,8 +194,8 @@ Method Application.Init, uses xbx xdi xsi
 
   OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Reading program arguments...")
   ;Get CL arguments ---------------------------------------------------------------------
-;  mov xax, $invoke(GetCommandLine)
-  mov xax, $OfsDStrW('h2inc+.exe -@".\h2inc+_Options.txt"')
+  mov xax, $invoke(GetCommandLine)
+;  mov xax, $OfsDStrW('h2inc+.exe -@".\h2inc+_Options.txt"')
   OCall xbx.ParseArguments, xax
   mov [xbx].pCL_Args, xax
   mov dArgCount, ecx
@@ -424,7 +426,7 @@ MethodEnd
 ;             2. Arguments that are followed by an quoted string are retuned with the opening quote
 ;                and the closing quote removed.
 
-Method Application.ParseArguments, uses xbx xsi, pArgumentStringW:PSTRINGW
+Method Application.ParseArguments, uses xbx xdi xsi, pArgumentStringW:PSTRINGW
 .const
 JumpTable label POINTER
   POINTER offset @@1
@@ -518,25 +520,25 @@ Method Application.ProcessFile, uses xbx xdi xsi, \
 
   SetObject xbx
 
-if DEBUGGING
-  DbgSaveContext
-  DbgSetDestWnd "Include Tree"
-  mov ecx, [xbx].dIncNestingLevel
-  lea xdi, cMessage
-  .if SDWORD ptr ecx <= 0                               ;Just in case something goes wrong
-    mov [xbx].dIncNestingLevel, 0
-  .else
-    WriteFW xdi, "\n"
-    shl ecx, 1
-    mov ax, SPC
-    rep stosw                                           ;Indentation
-  .endif
-  WriteFW xdi, "¦SU", pHeaderFileName
-  invoke DbgOutTextW, addr cMessage, DbgColorForeground, DbgColorBackground, \
-                      DBG_EFFECT_NORMAL, ??DbgDstWnd
-  DbgLoadContext
-  inc [xbx].dIncNestingLevel
-endif
+;if DEBUGGING
+;  DbgSaveContext
+;  DbgSetDestWnd "Include Tree"
+;  mov ecx, [xbx].dIncNestingLevel
+;  lea xdi, cMessage
+;  .if SDWORD ptr ecx <= 0                               ;Just in case something goes wrong
+;    mov [xbx].dIncNestingLevel, 0
+;  .else
+;    WriteFW xdi, "\n"
+;    shl ecx, 1
+;    mov ax, SPC
+;    rep stosw                                           ;Indentation
+;  .endif
+;  WriteFW xdi, "¦SU", pHeaderFileName
+;  invoke DbgOutTextW, addr cMessage, DbgColorForeground, DbgColorBackground, \
+;                      DBG_EFFECT_NORMAL, ??DbgDstWnd
+;  DbgLoadContext
+;  inc [xbx].dIncNestingLevel
+;endif
 
   ;Locate the file ----------------------------------------------------------------------
   mov dResult, FALSE
@@ -588,8 +590,8 @@ endif
              [xsi].$Obj(IncFile).pHeaderFileName, \
              [xsi].$Obj(IncFile).dLineNumber
     .endif
-    WriteF xdi, "Include header file \`¦SU\`", addr cHeaderFullFileName
-    OCall xbx.ShowInfo, VERBOSITY_IMPORTANT, addr cMessage
+;    WriteF xdi, "Include header file \`¦SU\`", addr cHeaderFullFileName
+;    OCall xbx.ShowInfo, VERBOSITY_IMPORTANT, addr cMessage
 
     ;Create output FileName
     lea xdi, cIncludeFullFileName
@@ -645,7 +647,7 @@ endif
 
     ;Initialize an IncFile local instance -----------------------------------------------
     New IncludeFile::IncFile
-    DbgStrW cHeaderFullFileName,, "Rendered Files"
+;    DbgStrW cHeaderFullFileName,, "Rendered Files"
     OCall IncludeFile::IncFile.Init, xbx, addr cHeaderFullFileName, pParent
     .if eax != FALSE
       ;Start real processing
@@ -654,75 +656,75 @@ endif
       OCall IncludeFile::IncFile.Save, addr cIncludeFullFileName  ;Save include file
       mov dResult, eax
       OCall IncludeFile::IncFile.CreateDefFile, addr cIncludeFullFileName
-      if DEBUGGING
-        DbgSaveContext
-        DbgSetDestWnd "Include Tree"
-        invoke DbgOutTextA, $OfsCStrA(" "), DbgColorForeground, DbgColorBackground, \
-                            0, ??DbgDstWnd
-        DbgLoadContext
-      endif
+;      if DEBUGGING
+;        DbgSaveContext
+;        DbgSetDestWnd "Include Tree"
+;        invoke DbgOutTextA, $OfsCStrA(" "), DbgColorForeground, DbgColorBackground, \
+;                            0, ??DbgDstWnd
+;        DbgLoadContext
+;      endif
     .else
       mov dResult, FALSE
-      if DEBUGGING
-        DbgSaveContext
-        DbgSetDestWnd "Include Tree"
-        .if ecx == ITF_SKIPPED
-          mov xcx, $OfsCStrA(" - Skipped by user")
-          invoke DbgOutTextA, xcx, DbgColorGreen, DbgColorBackground, \
-                              DBG_EFFECT_NORMAL, ??DbgDstWnd
-        .elseif ecx == ITF_NOT_FOUND
-          mov xcx, $OfsCStrA(" - not found")
-          invoke DbgOutTextA, xcx, DbgColorRed, DbgColorBackground, \
-                              DBG_EFFECT_NORMAL, ??DbgDstWnd
-        .elseif ecx == ITF_JUST_PROC
-          mov xcx, $OfsCStrA(" - already processed")
-          invoke DbgOutTextA, xcx, DbgColorBlue, DbgColorBackground, \
-                              DBG_EFFECT_NORMAL, ??DbgDstWnd
-        .elseif ecx == ITF_REPROC
-          mov xcx, $OfsCStrA(" - reprocessed")
-          invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, \
-                              DBG_EFFECT_NORMAL, ??DbgDstWnd
-        .else
-          mov xcx, $OfsCStrA("???")
-          invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, \
-                              DBG_EFFECT_NORMAL, ??DbgDstWnd
-        .endif
-        DbgLoadContext
-      endif
+;      if DEBUGGING
+;        DbgSaveContext
+;        DbgSetDestWnd "Include Tree"
+;        .if ecx == ITF_SKIPPED
+;          mov xcx, $OfsCStrA(" - Skipped by user")
+;          invoke DbgOutTextA, xcx, DbgColorGreen, DbgColorBackground, \
+;                              DBG_EFFECT_NORMAL, ??DbgDstWnd
+;        .elseif ecx == ITF_NOT_FOUND
+;          mov xcx, $OfsCStrA(" - not found")
+;          invoke DbgOutTextA, xcx, DbgColorRed, DbgColorBackground, \
+;                              DBG_EFFECT_NORMAL, ??DbgDstWnd
+;        .elseif ecx == ITF_JUST_PROC
+;          mov xcx, $OfsCStrA(" - already processed")
+;          invoke DbgOutTextA, xcx, DbgColorBlue, DbgColorBackground, \
+;                              DBG_EFFECT_NORMAL, ??DbgDstWnd
+;        .elseif ecx == ITF_REPROC
+;          mov xcx, $OfsCStrA(" - reprocessed")
+;          invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, \
+;                              DBG_EFFECT_NORMAL, ??DbgDstWnd
+;        .else
+;          mov xcx, $OfsCStrA("???")
+;          invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, \
+;                              DBG_EFFECT_NORMAL, ??DbgDstWnd
+;        .endif
+;        DbgLoadContext
+;      endif
     .endif
     OCall IncludeFile::IncFile.Done
 
-if DEBUGGING
-  .else
-    mov ecx, ITF_JUST_PROC
+;if DEBUGGING
+;  .else
+;    mov ecx, ITF_JUST_PROC
+;@@:
+;    DbgSaveContext
+;    DbgSetDestWnd "Include Tree"
+;    .if ecx == ITF_SKIPPED
+;      mov xcx, $OfsCStrA(" - Skipped by user")
+;      invoke DbgOutTextA, xcx, DbgColorGreen, DbgColorBackground, \
+;                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+;    .elseif ecx == ITF_NOT_FOUND
+;      mov xcx, $OfsCStrA(" - not found")
+;      invoke DbgOutTextA, xcx, DbgColorRed, DbgColorBackground, \
+;                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+;    .elseif ecx == ITF_JUST_PROC
+;      mov xcx, $OfsCStrA(" - already processed")
+;      invoke DbgOutTextA, xcx, DbgColorBlue, DbgColorBackground, \
+;                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+;    .elseif ecx == ITF_REPROC
+;      mov xcx, $OfsCStrA(" - reprocessed")
+;      invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, \
+;                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+;    .else
+;      mov xcx, $OfsCStrA("???")
+;      invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, \
+;                          DBG_EFFECT_NORMAL, ??DbgDstWnd
+;    .endif
+;    DbgLoadContext
+;else
 @@:
-    DbgSaveContext
-    DbgSetDestWnd "Include Tree"
-    .if ecx == ITF_SKIPPED
-      mov xcx, $OfsCStrA(" - Skipped by user")
-      invoke DbgOutTextA, xcx, DbgColorGreen, DbgColorBackground, \
-                          DBG_EFFECT_NORMAL, ??DbgDstWnd
-    .elseif ecx == ITF_NOT_FOUND
-      mov xcx, $OfsCStrA(" - not found")
-      invoke DbgOutTextA, xcx, DbgColorRed, DbgColorBackground, \
-                          DBG_EFFECT_NORMAL, ??DbgDstWnd
-    .elseif ecx == ITF_JUST_PROC
-      mov xcx, $OfsCStrA(" - already processed")
-      invoke DbgOutTextA, xcx, DbgColorBlue, DbgColorBackground, \
-                          DBG_EFFECT_NORMAL, ??DbgDstWnd
-    .elseif ecx == ITF_REPROC
-      mov xcx, $OfsCStrA(" - reprocessed")
-      invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, \
-                          DBG_EFFECT_NORMAL, ??DbgDstWnd
-    .else
-      mov xcx, $OfsCStrA("???")
-      invoke DbgOutTextA, xcx, DbgColorForeground, DbgColorBackground, \
-                          DBG_EFFECT_NORMAL, ??DbgDstWnd
-    .endif
-    DbgLoadContext
-else
-@@:
-endif
+;endif
   .endif
 
 if DEBUGGING
@@ -833,12 +835,12 @@ Method Application.ShowError, uses xbx xdi, pErrorMessage:PSTRING
   OCall xbx.Print, addr cMessage
   OCall xbx.SetColor, COLOR_REGULAR
 
-  if DEBUGGING
-    DbgSaveContext TRUE
-    DbgSetDestWnd "Output"
-    invoke DbgOutText, addr cMessage, DbgColorWarning, DbgColorBackground, 0, ??DbgDstWnd
-    DbgLoadContext
-  endif
+;  if DEBUGGING
+;    DbgSaveContext TRUE
+;    DbgSetDestWnd "Output"
+;    invoke DbgOutText, addr cMessage, DbgColorWarning, DbgColorBackground, 0, ??DbgDstWnd
+;    DbgLoadContext
+;  endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -855,13 +857,13 @@ Method Application.ShowInfo, uses xbx, dVerbosityLevel:DWORD, pInfoMessage:PSTRI
     OCall xbx.SetColor, COLOR_REGULAR
     OCall xbx.PrintLn, pInfoMessage
 
-    if DEBUGGING
-      DbgSaveContext TRUE
-      DbgSetDestWnd "Output"
-      invoke DbgOutText, pInfoMessage, DbgColorMessage, DbgColorBackground, \
-                         DBG_EFFECT_NEWLINE, ??DbgDstWnd
-      DbgLoadContext
-    endif
+;    if DEBUGGING
+;      DbgSaveContext TRUE
+;      DbgSetDestWnd "Output"
+;      invoke DbgOutText, pInfoMessage, DbgColorMessage, DbgColorBackground, \
+;                         DBG_EFFECT_NEWLINE, ??DbgDstWnd
+;      DbgLoadContext
+;    endif
   .endif
 MethodEnd
 
@@ -924,11 +926,11 @@ Method Application.ShowWarning, uses xbx xdi, dWarningLevel:DWORD, pWarningMessa
     OCall xbx.Print, addr cMessage
     OCall xbx.SetColor, COLOR_REGULAR
 
-    if DEBUGGING
-      DbgSaveContext TRUE
-      DbgSetDestWnd "Output"
-      invoke DbgOutText, addr cMessage, DbgColorWarning, DbgColorBackground, 0, ??DbgDstWnd
-      DbgLoadContext
-    endif
+;    if DEBUGGING
+;      DbgSaveContext TRUE
+;      DbgSetDestWnd "Output"
+;      invoke DbgOutText, addr cMessage, DbgColorWarning, DbgColorBackground, 0, ??DbgDstWnd
+;      DbgLoadContext
+;    endif
   .endif
 MethodEnd

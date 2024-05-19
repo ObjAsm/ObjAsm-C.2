@@ -141,7 +141,6 @@ RenderEnum proc uses xbx
   ret
 
 @ErrorSyntax:
-  inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.ShowError, $OfsCStr("RenderEnum")
   OCall xbx::IncFile.StmWriteError
   invoke GotoNextToken, addr szSemiColon

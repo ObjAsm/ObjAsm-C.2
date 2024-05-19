@@ -94,13 +94,9 @@ IsValidName? macro pToken:req
   mov xcx, pToken
   mov eax, TRUE
   mov cl, [xcx]
-  .if (cl >= "A") && (cl <= "Z")
+  .if ((cl >= "A") && (cl <= "Z")) || ((cl >= "a") && (cl <= "z"))
     jmp @F
-  .elseif (cl >= "a") && (cl <= "z")
-    jmp @F
-  .elseif (cl == "_") || (cl == "?") || (cl == "@")
-    jmp @F
-  .elseif (cl == "~")
+  .elseif (cl == "_") || (cl == "?") || (cl == "@") || (cl == "~")
     jmp @F
   .endif
   xor eax, eax                                          ;FALSE
@@ -324,4 +320,30 @@ SkipPPLine macro
   .repeat
     OCall xbx::IncFile.GetNextTokenPP
   .until xax == NULL
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      StmOutLoad
+; Purpose:    Restore the StmOut status from a local storage variable.
+; Arguments:  Arg1: -> STMOUT_STAT.
+;             Arg2: Optional return register.
+; Return:     RetReg = [xbx].$Obj(IncFile).pStmOutPos.
+
+StmOutLoad macro Var, RetReg:=<xax>
+  m2m [xbx].$Obj(IncFile).dIndentation, Var.dIndentation, eax
+  m2m [xbx].$Obj(IncFile).dStmOutEoL, Var.dStmOutEoL, eax
+  mrm [xbx].$Obj(IncFile).pStmOutPos, Var.pStmOutPos, RetReg
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      StmOutSave
+; Purpose:    Save the StmOut status on a local variable.
+; Arguments:  -> STMOUT_STAT.
+;             Arg2: Optional return register.
+; Return:     RetReg = [xbx].$Obj(IncFile).pStmOutPos.
+
+StmOutSave macro Var, RetReg:=<xax>
+  m2m Var.dStmOutEoL, [xbx].$Obj(IncFile).dStmOutEoL, eax
+  m2m Var.dIndentation, [xbx].$Obj(IncFile).dIndentation, eax
+  mrm Var.pStmOutPos, [xbx].$Obj(IncFile).pStmOutPos, RetReg
 endm

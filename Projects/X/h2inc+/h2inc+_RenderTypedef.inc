@@ -89,7 +89,12 @@ RenderTypedef proc
     DoesStringMatchA? [xax], <union>
     jnz @F
   .endif
-  invoke RenderContainer, pToken, FALSE
+  invoke IsFunctionPtr?, xax                            ;Check if it is a function definition
+  .if eax == FALSE                                      ; specifying a struct as return type
+    invoke RenderContainer, pToken, FALSE
+  .else
+    invoke RenderTypedefFuncPtr, NULL
+  .endif
   test xax, xax
   jz @ErrorEoF
   jmp @Exit
@@ -153,9 +158,9 @@ RenderTypedef proc
             .if eax != FALSE                            ;  then the new type is it too
               IsStructure? pName                        ;Check if it already exist
               .if eax == FALSE
-                DbgStrA pName, "RenderTypedef"
-                DbgStrW [xbx].$Obj(IncFile).pHeaderFileName
-                DbgDec [xbx].$Obj(IncFile).dLineNumber
+                DbgStrA pName, "RenderTypedef", "New struct"
+                DbgStrW [xbx].$Obj(IncFile).pHeaderFileName, "New struct"
+                DbgDec [xbx].$Obj(IncFile).dLineNumber, "New struct"
                 invoke StrLengthA, pName
                 invoke InsertStrg, pNewStructs, pName, eax
               .endif
@@ -208,7 +213,7 @@ RenderTypedef proc
     .endif
 
     .if CHRA ptr [xax] == '('
-      invoke IsFunctionPtr?
+      invoke IsFunctionPtr?, xax
       .if eax != FALSE
         invoke RenderTypedefFuncPtr, NULL
         test xax, xax
@@ -285,7 +290,6 @@ RenderTypedef proc
   ret
 
 @ErrorSyntax:
-  inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.ShowError, $OfsCStr("RenderTypedef")
   OCall xbx::IncFile.StmWriteError
   invoke GotoNextToken, addr szSemiColon

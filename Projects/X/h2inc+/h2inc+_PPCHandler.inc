@@ -17,10 +17,10 @@
 PPCH_Define proc uses xdi xsi
   local pName:PSTRINGA, pToken:PTOKEN, dSize:DWORD
   local dParams:DWORD, bMacro:BYTE, bAddSpace:BYTE, pArgStack:POINTER, bFirstParam:DWORD
-  local pStmOutPos:POINTER, cTransBuffer[128]:CHRA
+  local PrevOutStat:STMOUT_STAT, cTransBuffer[128]:CHRA
 
-  m2m pStmOutPos, [xbx].$Obj(IncFile).pStmOutPos, xax
-
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("PPCH-Define")
+  StmOutSave PrevOutStat                                ;Save output stream status
   OCall xbx::IncFile.GetNextTokenPP                     ;Get the name of constant/macro
   .if xax != NULL
     mov pName, xax
@@ -34,7 +34,14 @@ PPCH_Define proc uses xdi xsi
     .endif
     .if bMacro != FALSE
       OCall xbx::IncFile.GetNextTokenPP                 ;Skip PCT_MACRO
+      test xax, xax
+      jz @Exit
       OCall xbx::IncFile.GetNextTokenPP                 ;Skip '('
+      test xax, xax
+      jz @Exit
+
+;      mov xcx, [xbx].$Obj(IncFile).pStmOutPos
+;      int 3
       OCall xbx::IncFile.StmWrite, $OfsCStrA(" macro ")
 
       ;Write the macro params
@@ -55,15 +62,15 @@ PPCH_Define proc uses xdi xsi
           invoke TranslateReservedWord, xax, xdx
           .if edx != 0
             ;Translation occurred
-            Add@Stacklist pArgStack, pToken           ;Does NOT change xax
+            Add@Stacklist pArgStack, pToken, xcx        ;Does NOT change xax
           .endif
         .endif
         OCall xbx::IncFile.StmWrite, xax
       .endw
       OCall xbx::IncFile.StmWriteEoL
 
-      ;Save macro name in symbol table
-      invoke IsMacro?, pName                          ;Check if we know this macro
+      ;Save macro name in new macros list
+      invoke IsMacro?, pName                            ;Check if we know this macro
       .if eax == 0
         invoke StrSizeA, pName
         mov dSize, eax
@@ -84,8 +91,8 @@ PPCH_Define proc uses xdi xsi
         OCall xbx::IncFile.GetNextTokenPP
         .break .if xax == NULL
         mov xsi, xax
-        .continue .if CHRA ptr [xsi] == ')'
-        .if bFirstParam == FALSE && CHRA ptr [xsi] != ')' && CHRA ptr [xsi] != ',' && bAddSpace != FALSE && CHRA ptr [xax] != "."
+        .if bFirstParam == FALSE && CHRA ptr [xsi] != ')' && CHRA ptr [xsi] != ',' && \
+            bAddSpace != FALSE && CHRA ptr [xax] != "."
           OCall xbx::IncFile.StmWriteChar, SPC
         .endif
         invoke IsMacro?, xsi
@@ -114,20 +121,21 @@ PPCH_Define proc uses xdi xsi
             .break
           .endif
         .endw
-        .if edx == FALSE || edi == 0                  ;No translation
-          invoke TranslateNumOperator, xsi            ;  => try to handle it as an numeric operator
+        .if edx == FALSE || edi == 0                    ;No translation
+          invoke TranslateNumOperator, xsi              ;  => try to handle it as an numeric operator
         .endif
         OCall xbx::IncFile.StmWrite, xax
         mov bFirstParam, FALSE
       .endw
       Destroy@Stacklist pArgStack
 
-      OCall xbx::IncFile.StmWriteChar, 3Eh            ;>
+      OCall xbx::IncFile.StmWriteChar, 3Eh              ;>
       OCall xbx::IncFile.StmWriteEoL
       OCall xbx::IncFile.StmWrite, $OfsCStrA("endm")
       OCall xbx::IncFile.StmWriteEoL
+
     .else
-      invoke IsEquate?, pName                         ;Check if it already exist
+      invoke IsEquate?, pName                           ;Check if it already exist
       .if eax == FALSE
         invoke StrSizeA, pName
         invoke InsertAttr, pNewEquates, pName, eax, 0
@@ -139,9 +147,10 @@ PPCH_Define proc uses xdi xsi
     .endif
   .endif
 
+@Exit:
   .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
-    mrm [xbx].$Obj(IncFile).pStmOutPos, pStmOutPos, xcx
-    mov CHRA ptr [xcx], 0
+    StmOutLoad PrevOutStat                              ;Restore output stream status
+    mov CHRA ptr [xax], 0
   .endif
   ret
 PPCH_Define endp
@@ -153,6 +162,7 @@ PPCH_Define endp
 ; Return:     Nothing.
 
 PPCH_Undef proc
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("PPCH-Undef")
   ;Consume tokens until EOL
   SkipPPLine
   ret
@@ -169,13 +179,16 @@ PPCH_Include proc uses xsi xdi
   local pPath:PSTRINGA, cIncludeFile[1024]:CHRW
   local .xdi:XWORD, .xsi:XWORD
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("PPCH-Include")
   OCall xbx::IncFile.StmWrite, $OfsCStrA("include ")
   OCall xbx::IncFile.GetNextTokenPP
   .if xax != NULL && CHRA ptr [xax] == "<"
     OCall xbx::IncFile.GetNextTokenPP
   .endif
-  mov pPath, xax
   mov xdi, [xbx].$Obj(IncFile).pStmOutPos
+  test xax, xax
+  jz @Exit
+  mov pPath, xax
   mov xsi, pPath
   .if xsi != NULL
     mov dh, 0
@@ -198,7 +211,8 @@ PPCH_Include proc uses xsi xdi
         mov al, 0
         stosb
         invoke StrA2StrW, addr cIncludeFile, [xbx].$Obj(IncFile).pStmOutPos
-        OCall $ObjTmpl(Application)::Application.ProcessFile, [xbx].$Obj(IncFile).pHeaderFilePath, addr cIncludeFile, xbx   ;Ignore result and continue
+        OCall $ObjTmpl(Application)::Application.ProcessFile, [xbx].$Obj(IncFile).pHeaderFilePath, \
+                addr cIncludeFile, xbx                  ;Ignore result and continue
         mov xdi, .xdi
         mov xsi, .xsi
       .endif
@@ -211,6 +225,7 @@ PPCH_Include proc uses xsi xdi
     stosw
     mov [xbx].$Obj(IncFile).dStmOutEoL, TRUE
   .endif
+@Exit:
   mov [xbx].$Obj(IncFile).pStmOutPos, xdi
   mov al, 0
   stosb
@@ -226,6 +241,7 @@ PPCH_Include endp
 PPCH_Error proc uses xsi
   local pToken:PTOKEN
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("PPCH-Error")
   OCall xbx::IncFile.StmWrite, $OfsCStrA(".err ", 3Ch)   ;"<"
   xor esi, esi
   .while TRUE
@@ -252,8 +268,11 @@ PPCH_Error endp
 PPCH_Pragma proc uses xsi
   local InpStat:INP_STAT, dParenthesesCount:DWORD, pToken:PTOKEN
 
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("PPCH-Pragma")
   OCall xbx::IncFile.InputStatusSave, addr InpStat
   OCall xbx::IncFile.GetNextTokenPP
+  test xax, xax
+  jz @Exit
   .if !$DoesStringMatchA?([xax], <message>)
     OCall xbx::IncFile.InputStatusLoad, addr InpStat
     jmp @NotMessage
@@ -267,8 +286,8 @@ PPCH_Pragma proc uses xsi
     xor esi, esi
     .while TRUE
       OCall xbx::IncFile.GetNextTokenPP
-;      test xax, xax
-;      jz @Error
+      test xax, xax
+      jz @Exit
       .if CHRA ptr [xax] == '('
         inc dParenthesesCount
       .elseif CHRA ptr [xax] == ')'
@@ -300,6 +319,7 @@ PPCH_Pragma proc uses xsi
     .if al == ','
       OCall xbx::IncFile.StmWriteChar, "'"
     .endif
+@Exit:
     OCall xbx::IncFile.StmWriteEoL
   .endif
   ret
@@ -340,6 +360,7 @@ endm
 
 PPCH_If proc
 ;  DbgText "if"
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("PPCH-If")
   PPCH_Beg
   movzx ecx, [xbx].$Obj(IncFile).bCondIfLevel
   .if ecx == 0 || (ecx != 0 && [xbx].$Obj(IncFile).bCondResult[xcx - 1] != PPR_FALSE)
@@ -361,6 +382,7 @@ PPCH_If endp
 
 PPCH_ElIf proc uses xsi
 ;    DbgText "elif"
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("PPCH-Elif")
   PPCH_Beg
   movzx esi, [xbx].$Obj(IncFile).bCondIfLevel
   .if (esi == 1) || (esi > 1 && [xbx].$Obj(IncFile).bCondResult[xsi - 2] != PPR_FALSE)
@@ -385,6 +407,7 @@ PPCH_ElIf endp
 
 PPCH_Else proc uses xsi
 ;    DbgText "else"
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("PPCH-Else")
   PPCH_Beg
   movzx esi, [xbx].$Obj(IncFile).bCondIfLevel
   .if (esi == 1) || (esi > 1 && [xbx].$Obj(IncFile).bCondResult[xsi - 2] != PPR_FALSE)
@@ -430,6 +453,7 @@ PPCH_Else endp
 
 PPCH_Endif proc uses xsi
 ;  DbgText "endif"
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("PPCH-Endif")
   PPCH_Beg
   dec [xbx].$Obj(IncFile).dIndentation
   DecIfLevel
@@ -459,6 +483,7 @@ PPCH_Endif endp
 
 PPCH_Ifdef proc
 ;  DbgText "ifdef"
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("PPCH-Ifdef")
   PPCH_Beg
   movzx ecx, [xbx].$Obj(IncFile).bCondIfLevel
   .if ecx == 0 || (ecx != 0 && [xbx].$Obj(IncFile).bCondResult[xcx - 1] != PPR_FALSE)
@@ -481,6 +506,7 @@ PPCH_Ifdef endp
 
 PPCH_Ifndef proc
 ;  DbgText "ifndef"
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("PPCH-Ifndef")
   PPCH_Beg
   movzx ecx, [xbx].$Obj(IncFile).bCondIfLevel
   .if ecx == 0 || (ecx != 0 && [xbx].$Obj(IncFile).bCondResult[xcx - 1] != PPR_FALSE)
@@ -502,6 +528,7 @@ PPCH_Ifndef endp
 
 PPCH_IfNP proc uses xsi
 ;  DbgText "ifNP"
+  OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("PPCH-IfNP")
   PPCH_Beg
   IncIfLevel
   movzx esi, [xbx].$Obj(IncFile).bCondIfLevel

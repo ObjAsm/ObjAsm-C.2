@@ -240,6 +240,13 @@ INP_STAT struc
 INP_STAT ends
 P_INP_STAT typedef ptr INP_STAT
 
+STMOUT_STAT struc
+  pStmOutPos      POINTER   ?
+  dStmOutEoL      DWORD     ?
+  dIndentation    DWORD     ?
+STMOUT_STAT ends
+P_STMOUT_STAT typedef ptr STMOUT_STAT
+
 LIST_SETUP struct
   pSectionName    PSTRINGA  ?   ;-> ini section name
   pList           POINTER   ?   ;-> List

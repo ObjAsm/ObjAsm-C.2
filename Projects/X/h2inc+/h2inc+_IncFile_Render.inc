@@ -40,7 +40,7 @@ include h2inc+_RenderTypedefEnum.inc
 ;             https://msdn.microsoft.com/en-us/library/bz4heb45.aspx
 
 RenderC proc uses xdi xsi
-  local pToken:PTOKEN, pMacroToken:PTOKEN, bAddSpace:DWORD
+  local pToken:PTOKEN, pMacroToken:PTOKEN, bAddSpace:DWORD, PrevOutStat:STMOUT_STAT
   local cMacroBuffer[2048]:CHRA, dProtoQualifier:DWORD, .xdi:XWORD, .xsi:XWORD
 
   ;Set Initial state
@@ -82,17 +82,13 @@ RenderC proc uses xdi xsi
     ;'typedef' test -----------------------------------------------------------
     DoesStringMatchA? [xax], <typedef>
     jnz @F
-    mov xdi, [xbx].$Obj(IncFile).pStmOutPos
-    mov esi, [xbx].$Obj(IncFile).dStmOutEoL
+    StmOutSave PrevOutStat                               ;Save output stream status
     invoke RenderTypedef
     test xax, xax
     jz @Exit
-    OCall xbx::IncFile.StmWriteEoL                      ;Only on top level containers
     .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_TYPEDEFS
-      ;Restore entrypoint
-      mov [xbx].$Obj(IncFile).pStmOutPos, xdi
-      mov [xbx].$Obj(IncFile).dStmOutEoL, esi
-      mov CHRA ptr [xdi], 0                             ;Set ZTC on output stream
+      StmOutLoad PrevOutStat                             ;Restore output stream status
+      mov CHRA ptr [xax], 0                              ;Set ZTC on output stream
     .endif
     .continue
 @@:
@@ -106,8 +102,7 @@ RenderC proc uses xdi xsi
     ; In that case, ignore struct/union and continue rendering as a proto
     invoke IsFunction?
     .if eax == FALSE
-      mov xdi, [xbx].$Obj(IncFile).pStmOutPos
-      mov esi, [xbx].$Obj(IncFile).dStmOutEoL
+      StmOutSave PrevOutStat                            ;Save output stream status
       invoke RenderContainer, pToken, FALSE             ;Returns last token
       test xax, xax
       jz @Exit
@@ -116,12 +111,10 @@ RenderC proc uses xdi xsi
       .if xax != NULL && CHRA ptr [xax] == '{'
         OCall xbx::IncFile.StmWriteEoL                  ;Only on top level containers
         .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONTAINERS
-          mov [xbx].$Obj(IncFile).pStmOutPos, xdi
-          mov [xbx].$Obj(IncFile).dStmOutEoL, esi
-          mov CHRA ptr [xdi], 0
+          StmOutLoad PrevOutStat                        ;Restore output stream status
+          mov CHRA ptr [xax], 0
         .endif
         mov xax, pToken
-        test xax, xax                                   ;Set/Reset ZF
         jmp @ProcessToken
       .endif
     .endif
@@ -135,15 +128,13 @@ RenderC proc uses xdi xsi
     ; In that case, ignore extern and continue rendering as a proto
     invoke IsFunction?
     .if eax == FALSE
-      mov xdi, [xbx].$Obj(IncFile).pStmOutPos
-      mov esi, [xbx].$Obj(IncFile).dStmOutEoL
+      StmOutSave PrevOutStat                            ;Save output stream status
       invoke RenderExtern
       test xax, xax
       jz @Exit
       .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_EXTERNALS
-        mov [xbx].$Obj(IncFile).pStmOutPos, xdi
-        mov [xbx].$Obj(IncFile).dStmOutEoL, esi
-        mov CHRA ptr [xdi], 0
+        StmOutLoad PrevOutStat                          ;Restore output stream status
+        mov CHRA ptr [xax], 0
       .endif
       .continue
     .endif
@@ -155,12 +146,12 @@ RenderC proc uses xdi xsi
       DoesStringMatchA? [xax], <ENUM>
       jnz @F
     .endif
-    mov xdi, [xbx].$Obj(IncFile).pStmOutPos
-    mov esi, [xbx].$Obj(IncFile).dStmOutEoL
+    StmOutSave PrevOutStat                              ;Save output stream status
     invoke RenderEnum
     test eax, eax
     jz @Exit
     .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
+      StmOutLoad PrevOutStat                            ;Restore output stream status
       mov [xbx].$Obj(IncFile).pStmOutPos, xdi
       mov [xbx].$Obj(IncFile).dStmOutEoL, esi
       mov CHRA ptr [xdi], 0
@@ -281,13 +272,11 @@ RenderC proc uses xdi xsi
     mov xax, pToken
     .if CHRA ptr [xax] == '('
       .if [xbx].$Obj(IncFile).pPrevToken != NULL
-        mov xdi, [xbx].$Obj(IncFile).pStmOutPos
-        mov esi, [xbx].$Obj(IncFile).dStmOutEoL
+        StmOutSave PrevOutStat                            ;Save output stream status
         invoke RenderPrototype, [xbx].$Obj(IncFile).pPrevToken, [xbx].$Obj(IncFile).pImportSpec
         .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_PROTOTYPES
-          mov [xbx].$Obj(IncFile).pStmOutPos, xdi
-          mov [xbx].$Obj(IncFile).dStmOutEoL, esi
-          mov CHRA ptr [xdi], 0
+          StmOutLoad PrevOutStat                          ;Restore output stream status
+          mov CHRA ptr [xax], 0
         .endif
         mov [xbx].$Obj(IncFile).dQualifiers, 0
         .continue

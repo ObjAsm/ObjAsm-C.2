@@ -254,7 +254,6 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
   ret
 
 @ErrorSyntax:
-  inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.ShowError, $OfsCStr("RenderMacroCall")
   OCall xbx::IncFile.StmWriteError
   Destroy@Stacklist pArgStack, xcx                      ;Don't trash xax

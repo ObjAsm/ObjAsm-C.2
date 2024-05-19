@@ -63,7 +63,6 @@ RenderExtern proc
   ret
 
 @ErrorSyntax:
-  inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.ShowError, $OfsCStr("RenderExtern")
   OCall xbx::IncFile.StmWriteError
   invoke GotoNextToken, addr szSemiColon

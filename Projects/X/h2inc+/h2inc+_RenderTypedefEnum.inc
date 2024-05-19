@@ -150,7 +150,6 @@ RenderTypedefEnum proc uses xbx bIsTypedef:BOOL
   ret
 
 @ErrorSyntax:
-  inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.ShowError, $OfsCStr("RenderTypedefEnum")
   OCall xbx::IncFile.StmWriteError
   invoke GotoNextToken, addr szSemiColon

@@ -97,19 +97,14 @@ WriteContainerMember endp
 ; Idea:       Replace _??xx with the name of the parent struct.
 
 RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
-  local dTypeCSpec:DWORD, bStruct:DWORD, InpStat:INP_STAT
-  local dRes:DWORD, dPtrCount:DWORD, dNameFlags:DWORD
+  local dTypeCSpec:DWORD, dPtrCount:DWORD, InpStat:INP_STAT
   local pType:PSTRINGA, pName:PSTRINGA, pDupList:POINTER, pEndToken:PSTRINGA
-  local pCurrToken:PTOKEN
-  local cMacroBuffer[MAX_NAME_CHARS]:CHRA
-  local cMember[128]:CHRA, cSuffix[UDWORD2DEC_MAX_CHARS]:CHRA, dSquareBracketCount:DWORD
+  local cSuffix[UDWORD2DEC_MAX_CHARS]:CHRA, dSquareBracketCount:DWORD
 
   OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderContainerMember")
   ;Initialize ---------------------------------------------------------------------------
   m2m [xbx].$Obj(IncFile).pContainerName, pContainerName, xcx
 
-  mov bStruct, FALSE
-  mov dRes, 0
   mov pEndToken, NULL
   mov pName, NULL
   mov pType, NULL
@@ -335,7 +330,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
     ;Function or FunctionPtr ------------------------------------------------------------
     mov xax, pToken
     .if CHRA ptr [xax] == '('
-      invoke IsFunctionPtr?
+      invoke IsFunctionPtr?, xax
       .if eax != FALSE
         invoke RenderTypedefFuncPtr, NULL
         test xax, xax
@@ -446,7 +441,6 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
   ret
 
 @ErrorSyntax:
-  inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.ShowError, $OfsCStr("RenderContainerMember - '%hs': unexpected Item '%hs'"), pContainerName, pToken
   OCall xbx::IncFile.StmWriteError
   Destroy@Stacklist pDupList

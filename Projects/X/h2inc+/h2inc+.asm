@@ -6,7 +6,7 @@
 ; Links:      http://masm32.com/board/index.php?topic=7006.msg75149#msg75149
 ;             C++ reference: https://en.cppreference.com/w/cpp
 ;             Std C: http://www.open-std.org/JTC1/SC22/WG14/www/docs/n1256.pdf
-; Notes:      This is the continuation & further development of Japheth's open source h2inc+
+; Notes:      This is the continuation & further development of Japheth's open source h2incX
 ;             project.
 ;             Version B.1.0, June 2018
 ;               - First release.
@@ -22,19 +22,12 @@
 ;                 - Ini-File completed.
 ;             Version C.2.0, April 2024
 ;               - Project renamed to h2inc+.
-;               - Ported to dual bitness.
+;               - Ported to dual bitness and ANSI/WIDE targets. WIDE is recommended.
 ;               - Improvements:
 ;                 - Support for multidimesional arrays added.
 ;                 - Record bit reversal added.
-;                 - @ option added to specify additional options in an env. var. or in a file.
+;                 - @ option added to specify additional options in an env. variable or in a file.
 ; ==================================================================================================
-
-;-l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\Masterinclude.h"
-;-l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\um_10.0.22621.0\dde.h"
-;-l -y -d3 -i -V3 -W3 -I".\h\um_10.0.22621.0" -o".\inc" ".\h\Test.h"
-
-;Class Storage Specifiers: auto, extern, register, static
-;Type Qualifiers: const, volatile
 
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc
@@ -219,7 +212,7 @@ start proc uses xdi                                     ;Program entry point
   local cBuffer[50]:CHR
 
   SysInit
-  DbgClearAll
+;  DbgClearAll
   OCall $ObjTmpl(StopWatch)::StopWatch.Init, NULL
   s2s $ObjTmpl(StopWatch).r8Resolution, $CReal8(1000.0), xax, xcx   ;Resolution 1 ms
 

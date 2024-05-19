@@ -411,28 +411,76 @@ IsFunction? endp
 ; Return:     eax = TRUE if present, otherwise FALSE.
 ; Syntax:     ...(...)(...)
 
-IsFunctionPtr? proc
+;IsFunctionPtr? proc
+;  local dParenthesesCount:DWORD, dReturn:DWORD, InpStat:INP_STAT
+;
+;  OCall xbx::IncFile.InputStatusSave, addr InpStat
+;  inc [xbx].$Obj(IncFile).bSkipLinePP
+;  mov dParenthesesCount, 1
+;  mov dReturn, FALSE
+;  .while dParenthesesCount != 0
+;    OCall xbx::IncFile.GetNextTokenC
+;    .break .if xax == NULL
+;    .continue .if !IsIfLevelActive?(InpStat)
+;    .if CHRA ptr [xax] == '('
+;      inc dParenthesesCount
+;    .elseif CHRA ptr [xax] == ')'
+;      dec dParenthesesCount
+;    .endif
+;  .endw
+;  .if xax != NULL                                       ;Last Token != NULL
+;    OCall xbx::IncFile.GetNextTokenC
+;    .if xax != NULL && CHRA ptr [xax] == '('
+;      mov dReturn, TRUE
+;    .endif
+;  .endif
+;
+;@Exit:
+;  dec [xbx].$Obj(IncFile).bSkipLinePP
+;  OCall xbx::IncFile.InputStatusLoad, addr InpStat
+;  mov eax, dReturn
+;  ret
+;IsFunctionPtr? endp
+
+IsFunctionPtr? proc pToken:PTOKEN
   local dParenthesesCount:DWORD, dReturn:DWORD, InpStat:INP_STAT
 
   OCall xbx::IncFile.InputStatusSave, addr InpStat
-  inc [xbx].$Obj(IncFile).bSkipLinePP
-  mov dParenthesesCount, 1
   mov dReturn, FALSE
+  inc [xbx].$Obj(IncFile).bSkipLinePP
+  mov xax, pToken
+  test xax, xax
+  jz @Exit
+  
+  ;Search for the first parenthesis
+  .while CHRA ptr [xax] != '('
+    OCall xbx::IncFile.GetNextTokenC
+    test xax, xax
+    jz @Exit
+    cmp CHRA ptr [xax], ';'
+    jz @Exit
+  .endw
+  
+  mov dParenthesesCount, 1
   .while dParenthesesCount != 0
     OCall xbx::IncFile.GetNextTokenC
-    .break .if xax == NULL
+    test xax, xax
+    jz @Exit
     .continue .if !IsIfLevelActive?(InpStat)
     .if CHRA ptr [xax] == '('
       inc dParenthesesCount
     .elseif CHRA ptr [xax] == ')'
       dec dParenthesesCount
     .endif
+    cmp CHRA ptr [xax], ';'
+    jz @Exit
   .endw
-  .if xax != NULL                                       ;Last Token != NULL
-    OCall xbx::IncFile.GetNextTokenC
-    .if xax != NULL && CHRA ptr [xax] == '('
-      mov dReturn, TRUE
-    .endif
+
+  OCall xbx::IncFile.GetNextTokenC
+  test xax, xax
+  jz @Exit
+  .if CHRA ptr [xax] == '('
+    mov dReturn, TRUE
   .endif
 
 @Exit:
@@ -666,12 +714,12 @@ ConvBasicTypeC proc dTypeSpecC:DWORD
 ConvBasicTypeC endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  DeleteSimpleBraces
-; Purpose:    Delete surrounding braces.
+; Procedure:  DeleteSimpleParentheses
+; Purpose:    Delete surrounding parentheses.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-DeleteSimpleBraces proc uses xsi
+DeleteSimpleParentheses proc uses xsi
   local InpStat:INP_STAT
 
   OCall xbx::IncFile.InputStatusSave, addr InpStat
@@ -689,8 +737,8 @@ DeleteSimpleBraces proc uses xsi
       .if cl >= "0" && cl <= "9"
         OCall xbx::IncFile.GetNextTokenPP
         .if xax != NULL && CHRA ptr [xax] == ')'
-          mov BYTE ptr [xsi], PCT_IGNORE
-          mov BYTE ptr [xax], PCT_IGNORE
+          mov BYTE ptr [xsi], PCT_IGNORE                ;Ignore opening parenthesis
+          mov BYTE ptr [xax], PCT_IGNORE                ;Ignore closing parenthesis
         .endif
       .endif
     .endif
@@ -698,7 +746,7 @@ DeleteSimpleBraces proc uses xsi
 @Exit:
   OCall xbx::IncFile.InputStatusLoad, addr InpStat
   ret
-DeleteSimpleBraces endp
+DeleteSimpleParentheses endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SkipCasts
@@ -735,9 +783,9 @@ SkipCasts proc uses xdi
     mov xax, pToken
     .if CHRA ptr [xax] == '('
       .if pCastStack == NULL
-        mov pCastStack, $Create@Stacklist()
+        mov pCastStack, $Create@Stacklist(xcx)          ;xcx aux register
       .else
-        Reset@Stacklist pCastStack
+        Reset@Stacklist pCastStack, xcx                 ;xcx aux register
       .endif
       Add@Stacklist pCastStack, xax, xdx                ;Save '('
       .continue
@@ -789,10 +837,7 @@ SkipSimpleBraces proc
   .repeat
     IsValidName? [xbx].$Obj(IncFile).pStmInpPos
     .if eax != FALSE
-      OCall xbx::IncFile.GetNextTokenPP
-      .break .if xax == NULL
-    .else
-      invoke DeleteSimpleBraces
+      invoke DeleteSimpleParentheses                    ;Remove them from input stream
     .endif
     OCall xbx::IncFile.GetNextTokenPP
   .until xax == NULL
@@ -1237,7 +1282,7 @@ GetProtoQualifier endp
 
 GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
   local dBraceCount:DWORD, dFlags:DWORD
-  local pName:PSTRINGA, InpStat:INP_STAT, dPrevIndentation:DWORD
+  local pName:PSTRINGA, InpStat:INP_STAT, PrevOutStat:STMOUT_STAT
 
   mov pName, NULL
   mov dFlags, FALSE
@@ -1286,16 +1331,12 @@ GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
         .endif
         
         ;Render the macro into a buffer to get the name
-        mov xsi, [xbx].$Obj(IncFile).pStmOutPos         ;Save status
-        mov edi, [xbx].$Obj(IncFile).dStmOutEoL
-        m2m dPrevIndentation, [xbx].$Obj(IncFile).dIndentation, eax
+        StmOutSave PrevOutStat                          ;Save output stream status
         mov [xbx].$Obj(IncFile).dIndentation, 0
         m2m [xbx].$Obj(IncFile).pStmOutPos, pMacroNameBuffer, xax   ;Write into this buffer
         mov edx, ecx
         invoke RenderMacroCall, pName, edx, FALSE
-        mov [xbx].$Obj(IncFile).dStmOutEoL, edi         ;Restore status
-        mov [xbx].$Obj(IncFile).pStmOutPos, xsi
-        m2m [xbx].$Obj(IncFile).dIndentation, dPrevIndentation, xax
+        StmOutLoad PrevOutStat                          ;Restore output stream status
         m2m pName, pMacroNameBuffer, xax
       .endif
 

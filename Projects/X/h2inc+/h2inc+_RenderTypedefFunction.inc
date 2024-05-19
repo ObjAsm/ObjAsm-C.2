@@ -117,7 +117,6 @@ RenderTypedefFunction proc pName:PSTRINGA
   ret
 
 @ErrorSyntax:
-  inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.ShowError, $OfsCStr("RenderTypedefFunction")
   OCall xbx::IncFile.StmWriteError
   invoke GotoNextToken, addr szSemiColon

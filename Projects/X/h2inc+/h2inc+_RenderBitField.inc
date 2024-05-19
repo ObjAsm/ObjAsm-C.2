@@ -236,7 +236,6 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
   ret
 
 @ErrorSyntax:
-  inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.ShowError, $OfsCStr("RenderBitField")
   OCall xbx::IncFile.StmWriteError
   Destroy@Stacklist pFieldStackList, xcx                ;Preserve xax and ZF

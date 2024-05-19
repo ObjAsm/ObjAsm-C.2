@@ -45,7 +45,6 @@ RenderInterfaceBlock proc pName:PSTRINGA
 
 @ErrorSyntax:
   mov [xbx].$Obj(IncFile).bInsideInterface, FALSE
-  inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.ShowError, $OfsCStr("RenderInterfaceBlock")
   OCall xbx::IncFile.StmWriteError
   invoke GotoNextToken, addr szSemiColon

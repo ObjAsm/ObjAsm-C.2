@@ -20,7 +20,7 @@
 ;             struct/union <macro> <TagName> * Name;
 
 RenderContainer proc uses xdi pContainerType:PSTRINGA, dEmbedded:DWORD
-  local pName:PSTRINGA, pTagName:PSTRINGA, pToken:PTOKEN, pEndToken:PTOKEN
+  local pName:PSTRINGA, pTagName:PSTRINGA, pEndToken:PTOKEN
   local bSkipName:DWORD
   local cName[256]:CHRA, cTagName[256]:CHRA, cWorkBuffer[MAX_NAME_CHARS]:CHRA
 
@@ -90,9 +90,9 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA, dEmbedded:DWORD
       mov pName, $invoke(TranslateReservedWord, xax, xdx)
       IsStructure? pName
       .if eax == FALSE
-        DbgStrA pName, "RenderContainer"
-        DbgStrW [xbx].$Obj(IncFile).pHeaderFileName
-        DbgDec [xbx].$Obj(IncFile).dLineNumber
+        DbgStrA pName, "RenderContainer", "New struct"
+        DbgStrW [xbx].$Obj(IncFile).pHeaderFileName,, "New struct"
+        DbgDec [xbx].$Obj(IncFile).dLineNumber,, "New struct"
         invoke StrLengthA, pName
         invoke InsertStrg, pNewStructs, pName, eax
       .endif
@@ -127,6 +127,7 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA, dEmbedded:DWORD
     invoke RenderBlock, pName, RBT_CONTAINER
     test xax, xax
     jz @ErrorEoF
+    mov pEndToken, xax
 
     ;Terminate container definition -----------------------------------------------------
     dec [xbx].$Obj(IncFile).dIndentation
@@ -150,11 +151,8 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA, dEmbedded:DWORD
       OCall xbx::IncFile.GetNextTokenC                  ;Skip container name
       test xax, xax
       jz @ErrorEoF
+      mov pEndToken, xax
     .endif
-    OCall xbx::IncFile.GetNextTokenC                    ;Consume ';'
-    test xax, xax
-    jz @ErrorEoF
-    mov pEndToken, xax
   .else
     ; *
     mov pEndToken, xax
@@ -173,7 +171,6 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA, dEmbedded:DWORD
   ret
 
 @ErrorSyntax:
-  inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.ShowError, $OfsCStr("RenderContainer")
   OCall xbx::IncFile.StmWriteError
   invoke GotoNextToken, addr szSemiColon

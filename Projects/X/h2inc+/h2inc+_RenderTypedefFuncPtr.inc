@@ -123,7 +123,7 @@ RenderTypedefFuncPtr proc uses xdi pParent:PSTRINGA
 
     .if CHRA ptr [xax] == '('
       ;Function ptr as function parameter?
-      invoke IsFunctionPtr?
+      invoke IsFunctionPtr?, xax
       .if eax != FALSE
         movzx eax, [xbx].$Obj(IncFile).bInsideInterface ;If we are inside an interface declaration
         mov dInside, eax                                ;  then we want to declare a typedef
@@ -213,11 +213,12 @@ RenderTypedefFuncPtr proc uses xdi pParent:PSTRINGA
 
   .endw
 
+  ;Consume the rest up to ';', ',' or ')'
   .while TRUE
     OCall xbx::IncFile.GetNextTokenC
     test xax, xax
     jz @ErrorEoF
-    .break .if CHRA ptr [xax] != ';' || CHRA ptr [xax] != ',' || CHRA ptr [xax] != ')'  ;Consume the rest up to ';', ','. ')'
+    .break .if CHRA ptr [xax] != ';' || CHRA ptr [xax] != ',' || CHRA ptr [xax] != ')'
   .endw
   mov pToken, xax
 
@@ -259,7 +260,6 @@ RenderTypedefFuncPtr proc uses xdi pParent:PSTRINGA
   ret
 
 @ErrorSyntax:
-  inc [xbx].$Obj(IncFile).dErrorCount
   OCall xbx::IncFile.ShowError, $OfsCStr("RenderTypedefFuncPtr")
   OCall xbx::IncFile.StmWriteError
   invoke GotoNextToken, addr szSemiColon
