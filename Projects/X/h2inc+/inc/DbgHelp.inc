@@ -1,9 +1,10 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\dbghelp.h\dbghelp.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\dbghelp.h
 ;             Created on (UTC) 06/04/2024 06:15:53
 ;             Last modified on (UTC) 21/02/2024 18:13:16
 
+;--*
 ifndef _DBGHELP_
   _DBGHELP_ equ <>
   if _MSC_VER gt 1020
@@ -11,6 +12,11 @@ ifndef _DBGHELP_
   include winapifamily.inc
   NONGAMESPARTITIONS equ <WINAPI_PARTITION_DESKTOPor WINAPI_PARTITION_PKG_WER>
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
+    ; As a general principal always call the 64 bit version
+    ; of every API, if a choice exists.  The 64 bit version
+    ; works great on 32 bit platforms, and is forward
+    ; compatible to 64 bit platforms.
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     ifdef _WIN64
@@ -34,11 +40,20 @@ ifndef _DBGHELP_
       endif
     endif
     DBHLPAPI equ <IMAGEAPI>
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     IMAGE_SEPARATION equ (64 * 1024)
+    ; Observant readers may notice that 2 new fields,
+    ; 'fReadOnly' and 'Version' have been added to
+    ; the LOADED_IMAGE structure after 'fDOSImage'.
+    ; This does not change the size of the structure
+    ; from previous headers.  That is because while
+    ; 'fDOSImage' is a byte, it is padded by the
+    ; compiler to 4 bytes.  So the 2 new fields are
+    ; slipped into the extra space.
     LOADED_IMAGE struct 4
-      ModuleName PSTR ?
+      ModuleName POINTER ?
       hFile HANDLE ?
       MappedAddress PUCHAR ?
       ifdef _IMAGEHLP64
@@ -47,26 +62,34 @@ ifndef _DBGHELP_
         FileHeader PIMAGE_NT_HEADERS32 ?
       endif
       LastRvaSection PIMAGE_SECTION_HEADER ?
-      NumberOfSections ULONG ?
+      NumberOfSections DWORD ?
       Sections PIMAGE_SECTION_HEADER ?
-      Characteristics ULONG ?
-      fSystemImage BOOLEAN ?
-      fDOSImage BOOLEAN ?
-      fReadOnly BOOLEAN ?
-      Version UCHAR ?
+      Characteristics DWORD ?
+      fSystemImage BYTE ?
+      fDOSImage BYTE ?
+      fReadOnly BYTE ?
+      Version BYTE ?
       Links LIST_ENTRY <>
-      SizeOfImage ULONG ?
+      SizeOfImage DWORD ?
     LOADED_IMAGE ends
     _LOADED_IMAGE typedef LOADED_IMAGE
     PLOADED_IMAGE typedef ptr LOADED_IMAGE
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     MAX_SYM_NAME equ 2000
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
-    ERROR_IMAGE_NOT_STRIPPED equ 8800h
-    ERROR_NO_DBG_POINTER equ 8801h
-    ERROR_NO_PDB_POINTER equ 8802h
+    ; Error codes set by dbghelp functions.  Call GetLastError
+    ; to see them.
+    ; Dbghelp also sets error codes found in winerror.h
+    ERROR_IMAGE_NOT_STRIPPED equ 8800h; the image is not stripped.  No dbg file available.
+
+    ERROR_NO_DBG_POINTER equ 8801h; image is stripped but there is no pointer to a dbg file
+
+    ERROR_NO_PDB_POINTER equ 8802h; image does not point to a pdb file
+
     TYPE_PFIND_DEBUG_FILE_CALLBACK typedef proto WIN_STD_CALL_CONV :HANDLE, :PCSTR, :PVOID
     PFIND_DEBUG_FILE_CALLBACK typedef ptr TYPE_PFIND_DEBUG_FILE_CALLBACK
 
@@ -103,19 +126,20 @@ ifndef _DBGHELP_
     @DefProto DllImport, ImageRvaToSection, WIN_STD_CALL_CONV,, <:PIMAGE_NT_HEADERS, :PVOID, :ULONG>, 12
     @DefProto DllImport, ImageRvaToVa, WIN_STD_CALL_CONV,, <:PIMAGE_NT_HEADERS, :PVOID, :ULONG, :ptr PIMAGE_SECTION_HEADER>, 16
     ifndef _WIN64
+      ; This api won't be ported to Win64 - Fix your code.
       IMAGE_DEBUG_INFORMATION struct
         List LIST_ENTRY <>
         ReservedSize DWORD ?
-        ReservedMappedBase PVOID ?
-        ReservedMachine USHORT ?
-        ReservedCharacteristics USHORT ?
+        ReservedMappedBase POINTER ?
+        ReservedMachine WORD ?
+        ReservedCharacteristics WORD ?
         ReservedCheckSum DWORD ?
         ImageBase DWORD ?
         SizeOfImage DWORD ?
         ReservedNumberOfSections DWORD ?
         ReservedSections PIMAGE_SECTION_HEADER ?
         ReservedExportedNamesSize DWORD ?
-        ReservedExportedNames PSTR ?
+        ReservedExportedNames POINTER ?
         ReservedNumberOfFunctionTableEntries DWORD ?
         ReservedFunctionTableEntries PIMAGE_FUNCTION_ENTRY ?
         ReservedLowestFunctionStartingAddress DWORD ?
@@ -125,12 +149,12 @@ ifndef _DBGHELP_
         SizeOfCoffSymbols DWORD ?
         CoffSymbols PIMAGE_COFF_SYMBOLS_HEADER ?
         ReservedSizeOfCodeViewSymbols DWORD ?
-        ReservedCodeViewSymbols PVOID ?
-        ImageFilePath PSTR ?
-        ImageFileName PSTR ?
-        ReservedDebugFilePath PSTR ?
+        ReservedCodeViewSymbols POINTER ?
+        ImageFilePath POINTER ?
+        ImageFileName POINTER ?
+        ReservedDebugFilePath POINTER ?
         ReservedTimeDateStamp DWORD ?
-        ReservedRomImage BOOL ?
+        ReservedRomImage DWORD ?
         ReservedDebugDirectory PIMAGE_DEBUG_DIRECTORY ?
         ReservedNumberOfDebugDirectories DWORD ?
         ReservedOriginalFunctionTableBaseAddress DWORD ?
@@ -152,57 +176,96 @@ ifndef _DBGHELP_
 
     @DefProto DllImport, EnumDirTreeW, WIN_STD_CALL_CONV,, <:HANDLE, :PCWSTR, :PCWSTR, :PWSTR, :PENUMDIRTREE_CALLBACKW, :PVOID>, 24
     @DefProto DllImport, MakeSureDirectoryPathExists, WIN_STD_CALL_CONV,, <:PCSTR>, 4
-    UNDNAME_COMPLETE equ (0000h)
-    UNDNAME_NO_LEADING_UNDERSCORES equ (0001h)
-    UNDNAME_NO_MS_KEYWORDS equ (0002h)
-    UNDNAME_NO_FUNCTION_RETURNS equ (0004h)
-    UNDNAME_NO_ALLOCATION_MODEL equ (0008h)
-    UNDNAME_NO_ALLOCATION_LANGUAGE equ (0010h)
-    UNDNAME_NO_MS_THISTYPE equ (0020h)
-    UNDNAME_NO_CV_THISTYPE equ (0040h)
-    UNDNAME_NO_THISTYPE equ (0060h)
-    UNDNAME_NO_ACCESS_SPECIFIERS equ (0080h)
-    UNDNAME_NO_THROW_SIGNATURES equ (0100h)
-    UNDNAME_NO_MEMBER_TYPE equ (0200h)
-    UNDNAME_NO_RETURN_UDT_MODEL equ (0400h)
-    UNDNAME_32_BIT_DECODE equ (0800h)
-    UNDNAME_NAME_ONLY equ (1000h)
-    UNDNAME_NO_ARGUMENTS equ (2000h)
-    UNDNAME_NO_SPECIAL_SYMS equ (4000h)
+    ; UnDecorateSymbolName Flags
+    UNDNAME_COMPLETE equ (0000h); Enable full undecoration
+
+    UNDNAME_NO_LEADING_UNDERSCORES equ (0001h); Remove leading underscores from MS extended keywords
+
+    UNDNAME_NO_MS_KEYWORDS equ (0002h); Disable expansion of MS extended keywords
+
+    UNDNAME_NO_FUNCTION_RETURNS equ (0004h); Disable expansion of return type for primary declaration
+
+    UNDNAME_NO_ALLOCATION_MODEL equ (0008h); Disable expansion of the declaration model
+
+    UNDNAME_NO_ALLOCATION_LANGUAGE equ (0010h); Disable expansion of the declaration language specifier
+
+    UNDNAME_NO_MS_THISTYPE equ (0020h); NYI Disable expansion of MS keywords on the 'this' type for primary declaration
+
+    UNDNAME_NO_CV_THISTYPE equ (0040h); NYI Disable expansion of CV modifiers on the 'this' type for primary declaration
+
+    UNDNAME_NO_THISTYPE equ (0060h); Disable all modifiers on the 'this' type
+
+    UNDNAME_NO_ACCESS_SPECIFIERS equ (0080h); Disable expansion of access specifiers for members
+
+    UNDNAME_NO_THROW_SIGNATURES equ (0100h); Disable expansion of 'throw-signatures' for functions and pointers to functions
+
+    UNDNAME_NO_MEMBER_TYPE equ (0200h); Disable expansion of 'static' or 'virtual'ness of members
+
+    UNDNAME_NO_RETURN_UDT_MODEL equ (0400h); Disable expansion of MS model for UDT returns
+
+    UNDNAME_32_BIT_DECODE equ (0800h); Undecorate 32-bit decorated names
+
+    UNDNAME_NAME_ONLY equ (1000h); Crack only the name for primary declaration;
+
+    ;  return just [scope::]name.  Does expand template params
+    UNDNAME_NO_ARGUMENTS equ (2000h); Don't undecorate arguments to function
+
+    UNDNAME_NO_SPECIAL_SYMS equ (4000h); Don't undecorate special names (v-table, vcall, vector xxx, metatype, etc)
+
     @DefProto DllImport, UnDecorateSymbolName, WIN_STD_CALL_CONV,, <:PCSTR, :PSTR, :DWORD, :DWORD>, 16
     @DefProto DllImport, UnDecorateSymbolNameW, WIN_STD_CALL_CONV,, <:PCWSTR, :PWSTR, :DWORD, :DWORD>, 16
+    ; these values are used for synthesized file types
+    ; that can be passed in as image headers instead of
+    ; the standard ones from ntimage.h
     DBHHEADER_DEBUGDIRS equ 1h
     DBHHEADER_CVMISC equ 2h
     DBHHEADER_PDBGUID equ 3h
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     MODLOAD_DATA struct
       ssize DWORD ?
+      ; size of this struct
       ssig DWORD ?
-      data PVOID ?
+      ; signature identifying the passed data
+      data POINTER ?
+      ; pointer to passed data
       size_ DWORD ?
+      ; size of passed data
       flags DWORD ?
+      ; options
     MODLOAD_DATA ends
     _MODLOAD_DATA typedef MODLOAD_DATA
     PMODLOAD_DATA typedef ptr MODLOAD_DATA
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     MODLOAD_CVMISC struct
       oCV DWORD ?
-      cCV size_t ?
+      ; ofset to the codeview record
+      cCV XWORD ?
+      ; size of the codeview record
       oMisc DWORD ?
-      cMisc size_t ?
+      ; offset to the misc record
+      cMisc XWORD ?
+      ; size of the misc record
       dtImage DWORD ?
+      ; datetime stamp of the image
       cImage DWORD ?
+      ; size of the image
     MODLOAD_CVMISC ends
     _MODLOAD_CVMISC typedef MODLOAD_CVMISC
     PMODLOAD_CVMISC typedef ptr MODLOAD_CVMISC
     MODLOAD_PDBGUID_PDBAGE struct
       PdbGuid GUID <>
+      ; Pdb Guid
       PdbAge DWORD ?
+      ; Pdb Age
     MODLOAD_PDBGUID_PDBAGE ends
     _MODLOAD_PDBGUID_PDBAGE typedef MODLOAD_PDBGUID_PDBAGE
     PMODLOAD_PDBGUID_PDBAGE typedef ptr MODLOAD_PDBGUID_PDBAGE
+    ; StackWalking API
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     ADDRESS_MODE typedef SDWORD
@@ -212,12 +275,13 @@ ifndef _DBGHELP_
     AddrModeFlat equ 3
 
     ADDRESS64 struct
-      Offset_ DWORD64 ?
+      Offset_ QWORD ?
       Segment_ WORD ?
       Mode ADDRESS_MODE ?
     ADDRESS64 ends
     _tagADDRESS64 typedef ADDRESS64
     LPADDRESS64 typedef ptr ADDRESS64
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     if  not Defined(_IMAGEHLP_SOURCE_) and Defined(_IMAGEHLP64)
@@ -234,26 +298,49 @@ ifndef _DBGHELP_
       Address32To64 proto WIN_STD_CALL_CONV :LPADDRESS, :LPADDRESS64
       Address64To32 proto WIN_STD_CALL_CONV :LPADDRESS64, :LPADDRESS
     endif
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
+    ; This structure is included in the STACKFRAME structure,
+    ; and is used to trace through usermode callbacks in a thread's
+    ; kernel stack.  The values must be copied by the kernel debugger
+    ; from the DBGKD_GET_VERSION and WAIT_STATE_CHANGE packets.
+    ; New KDHELP structure for 64 bit system support.
+    ; This structure is preferred in new code.
     KDHELP64 struct
-      Thread DWORD64 ?
+      ; address of kernel thread object, as provided in the
+      ; WAIT_STATE_CHANGE packet.
+      Thread QWORD ?
+      ; offset in thread object to pointer to the current callback frame
+      ; in kernel stack.
       ThCallbackStack DWORD ?
+      ; offset in thread object to pointer to the current callback backing
+      ; store frame in kernel stack.
       ThCallbackBStore DWORD ?
+      ; offsets to values in frame:
+      ; address of next callback frame
       NextCallback DWORD ?
+      ; address of saved frame pointer (if applicable)
       FramePointer DWORD ?
-      KiCallUserMode DWORD64 ?
-      KeUserCallbackDispatcher DWORD64 ?
-      SystemRangeStart DWORD64 ?
-      KiUserExceptionDispatcher DWORD64 ?
-      StackBase DWORD64 ?
-      StackLimit DWORD64 ?
+      ; Address of the kernel function that calls out to user mode
+      KiCallUserMode QWORD ?
+      ; Address of the user mode dispatcher function
+      KeUserCallbackDispatcher QWORD ?
+      ; Lowest kernel mode address
+      SystemRangeStart QWORD ?
+      ; Address of the user mode exception dispatcher function.
+      ; Added in API version 10.
+      KiUserExceptionDispatcher QWORD ?
+      ; Stack bounds, added in API version 11.
+      StackBase QWORD ?
+      StackLimit QWORD ?
+      ; Target OS build number. Added in API version 12.
       BuildVersion DWORD ?
       RetpolineStubFunctionTableSize DWORD ?
-      RetpolineStubFunctionTable DWORD64 ?
+      RetpolineStubFunctionTable QWORD ?
       RetpolineStubOffset DWORD ?
       RetpolineStubSize DWORD ?
-      Reserved0 DWORD64 2 dup (?)
+      Reserved0 QWORD 2 dup (?)
     KDHELP64 ends
     _KDHELP64 typedef KDHELP64
     PKDHELP64 typedef ptr KDHELP64
@@ -262,58 +349,96 @@ ifndef _DBGHELP_
       PKDHELP equ <PKDHELP64>
     else
       KDHELP struct
+        ; address of kernel thread object, as provided in the
+        ; WAIT_STATE_CHANGE packet.
         Thread DWORD ?
+        ; offset in thread object to pointer to the current callback frame
+        ; in kernel stack.
         ThCallbackStack DWORD ?
+        ; offsets to values in frame:
+        ; address of next callback frame
         NextCallback DWORD ?
+        ; address of saved frame pointer (if applicable)
         FramePointer DWORD ?
+        ; Address of the kernel function that calls out to user mode
         KiCallUserMode DWORD ?
+        ; Address of the user mode dispatcher function
         KeUserCallbackDispatcher DWORD ?
+        ; Lowest kernel mode address
         SystemRangeStart DWORD ?
+        ; offset in thread object to pointer to the current callback backing
+        ; store frame in kernel stack.
         ThCallbackBStore DWORD ?
+        ; Address of the user mode exception dispatcher function.
+        ; Added in API version 10.
         KiUserExceptionDispatcher DWORD ?
+        ; Stack bounds, added in API version 11.
         StackBase DWORD ?
         StackLimit DWORD ?
         Reserved DWORD 5 dup (?)
       KDHELP ends
       _KDHELP typedef KDHELP
       PKDHELP typedef ptr KDHELP
+      ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
       KdHelp32To64 proto WIN_STD_CALL_CONV :PKDHELP, :PKDHELP64
     endif
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     STACKFRAME64 struct
       AddrPC ADDRESS64 <>
+      ; program counter
       AddrReturn ADDRESS64 <>
+      ; return address
       AddrFrame ADDRESS64 <>
+      ; frame pointer
       AddrStack ADDRESS64 <>
+      ; stack pointer
       AddrBStore ADDRESS64 <>
-      FuncTableEntry PVOID ?
-      Params DWORD64 4 dup (?)
-      Far_ BOOL ?
-      Virtual BOOL ?
-      Reserved DWORD64 3 dup (?)
+      ; backing store pointer
+      FuncTableEntry POINTER ?
+      ; pointer to pdata/fpo or NULL
+      Params QWORD 4 dup (?)
+      ; possible arguments to the function
+      Far_ DWORD ?
+      ; WOW far call
+      Virtual DWORD ?
+      ; is this a virtual frame?
+      Reserved QWORD 3 dup (?)
       KdHelp KDHELP64 <>
     STACKFRAME64 ends
     _tagSTACKFRAME64 typedef STACKFRAME64
     LPSTACKFRAME64 typedef ptr STACKFRAME64
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     INLINE_FRAME_CONTEXT_INIT equ 0
     INLINE_FRAME_CONTEXT_IGNORE equ 0FFFFFFFFh
     STACKFRAME_EX struct
+      ; First, STACKFRAME64 structure
       AddrPC ADDRESS64 <>
+      ; program counter
       AddrReturn ADDRESS64 <>
+      ; return address
       AddrFrame ADDRESS64 <>
+      ; frame pointer
       AddrStack ADDRESS64 <>
+      ; stack pointer
       AddrBStore ADDRESS64 <>
-      FuncTableEntry PVOID ?
-      Params DWORD64 4 dup (?)
-      Far_ BOOL ?
-      Virtual BOOL ?
-      Reserved DWORD64 3 dup (?)
+      ; backing store pointer
+      FuncTableEntry POINTER ?
+      ; pointer to pdata/fpo or NULL
+      Params QWORD 4 dup (?)
+      ; possible arguments to the function
+      Far_ DWORD ?
+      ; WOW far call
+      Virtual DWORD ?
+      ; is this a virtual frame?
+      Reserved QWORD 3 dup (?)
       KdHelp KDHELP64 <>
+      ; Extended STACKFRAME fields
       StackFrameSize DWORD ?
       InlineFrameContext DWORD ?
     STACKFRAME_EX ends
@@ -325,20 +450,30 @@ ifndef _DBGHELP_
     else
       STACKFRAME struct
         AddrPC ADDRESS <>
+        ; program counter
         AddrReturn ADDRESS <>
+        ; return address
         AddrFrame ADDRESS <>
+        ; frame pointer
         AddrStack ADDRESS <>
-        FuncTableEntry PVOID ?
+        ; stack pointer
+        FuncTableEntry POINTER ?
+        ; pointer to pdata/fpo or NULL
         Params DWORD 4 dup (?)
-        Far_ BOOL ?
-        Virtual BOOL ?
+        ; possible arguments to the function
+        Far_ DWORD ?
+        ; WOW far call
+        Virtual DWORD ?
+        ; is this a virtual frame?
         Reserved DWORD 3 dup (?)
         KdHelp KDHELP <>
         AddrBStore ADDRESS <>
+        ; backing store pointer
       STACKFRAME ends
       _tagSTACKFRAME typedef STACKFRAME
       LPSTACKFRAME typedef ptr STACKFRAME
     endif
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     TYPE_PREAD_PROCESS_MEMORY_ROUTINE64 typedef proto WIN_STD_CALL_CONV :HANDLE, :DWORD64, :PVOID, :DWORD, :LPDWORD
@@ -353,12 +488,21 @@ ifndef _DBGHELP_
     TYPE_PTRANSLATE_ADDRESS_ROUTINE64 typedef proto WIN_STD_CALL_CONV :HANDLE, :HANDLE, :LPADDRESS64
     PTRANSLATE_ADDRESS_ROUTINE64 typedef ptr TYPE_PTRANSLATE_ADDRESS_ROUTINE64
 
+    ; Target Attributes:
+    ; Asks the caller to return a 64-bit mask which indicates which bits in a code address are PAC
+    ; bits.  This attribute is only relevant for ARM64 debug targets.  The attribute data must be the address
+    ; for which the PAC mask is being fetched.  This allows the caller to deal with differences in PAC masks for
+    ; ARM64 EL0/1/2.  If PAC is disabled or the attribute does not apply, FALSE should be returned from the attribute 
+    ; getter.  If the special value TARGET_ATTRIBUTE_PACMASK_LIVETARGET is returned, the PAC mask for the call 
+    ; is assumed to be the same as the PAC mask for the currently running process.
     TARGET_ATTRIBUTE_PACMASK equ 00000001h
+    ; Target Attribute Special Values:
     TARGET_ATTRIBUTE_PACMASK_LIVETARGET equ 0FFFFFFFFFFFFFFFFulh
     TYPE_PGET_TARGET_ATTRIBUTE_VALUE64 typedef proto WIN_STD_CALL_CONV :HANDLE, :DWORD, :DWORD64, :ptr DWORD64
     PGET_TARGET_ATTRIBUTE_VALUE64 typedef ptr TYPE_PGET_TARGET_ATTRIBUTE_VALUE64
 
     @DefProto DllImport, StackWalk64, WIN_STD_CALL_CONV,, <:DWORD, :HANDLE, :HANDLE, :LPSTACKFRAME64, :PVOID, :PREAD_PROCESS_MEMORY_ROUTINE64, :PFUNCTION_TABLE_ACCESS_ROUTINE64, :PGET_MODULE_BASE_ROUTINE64, :PTRANSLATE_ADDRESS_ROUTINE64>, 36
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     SYM_STKWALK_DEFAULT equ 00000000h
@@ -390,15 +534,16 @@ ifndef _DBGHELP_
     endif
     API_VERSION_NUMBER equ 12
     API_VERSION struct
-      MajorVersion USHORT ?
-      MinorVersion USHORT ?
-      Revision USHORT ?
-      Reserved USHORT ?
+      MajorVersion WORD ?
+      MinorVersion WORD ?
+      Revision WORD ?
+      Reserved WORD ?
     API_VERSION ends
     LPAPI_VERSION typedef ptr API_VERSION
     @DefProto DllImport, ImagehlpApiVersion, WIN_STD_CALL_CONV,, <>, 0
     @DefProto DllImport, ImagehlpApiVersionEx, WIN_STD_CALL_CONV,, <:LPAPI_VERSION>, 4
     @DefProto DllImport, GetTimestampForLoadedLibrary, WIN_STD_CALL_CONV,, <:HMODULE>, 4
+    ; typedefs for function pointers
     TYPE_PSYM_ENUMMODULES_CALLBACK64 typedef proto WIN_STD_CALL_CONV :PCSTR, :DWORD64, :PVOID
     PSYM_ENUMMODULES_CALLBACK64 typedef ptr TYPE_PSYM_ENUMMODULES_CALLBACK64
 
@@ -450,7 +595,13 @@ ifndef _DBGHELP_
       PSYMBOL_REGISTERED_CALLBACK typedef ptr TYPE_PSYMBOL_REGISTERED_CALLBACK
 
     endif
+    ; values found in SYMBOL_INFO.Tag
+    ; This was taken from cvconst.h and should
+    ; not override any values found there.
+    ; #define _NO_CVCONST_H_ if you don't
+    ; have access to that file...
     ifdef _NO_CVCONST_H
+      ; DIA enums
       SymTagEnum typedef SDWORD
       SymTagNull equ 0
       SymTagExe equ 1
@@ -497,6 +648,7 @@ ifndef _DBGHELP_
       SymTagMax equ 42
 
     endif
+    ; flags found in SYMBOL_INFO.Flags
     SYMFLAG_VALUEPRESENT equ 00000001h
     SYMFLAG_REGISTER equ 00000008h
     SYMFLAG_REGREL equ 00000010h
@@ -521,9 +673,13 @@ ifndef _DBGHELP_
     SYMFLAG_REGREL_ALIASINDIR equ 00800000h
     SYMFLAG_FIXUP_ARM64X equ 01000000h
     SYMFLAG_GLOBAL equ 02000000h
+    ; this resets SymNext/Prev to the beginning
+    ; of the module passed in the address field
     SYMFLAG_RESET equ 80000000h
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
+    ; symbol type enumeration
     SYM_TYPE typedef SDWORD
     SymNone equ 0
     SymCoff equ 1
@@ -532,39 +688,53 @@ ifndef _DBGHELP_
     SymExport equ 4
     SymDeferred equ 5
     SymSym equ 6
+    ; .sym file
     SymDia equ 7
     SymVirtual equ 8
     NumSymTypes equ 9
 
+    ; symbol data structure
     IMAGEHLP_SYMBOL64 struct
       SizeOfStruct DWORD ?
-      Address DWORD64 ?
+      ; set to sizeof(IMAGEHLP_SYMBOL64)
+      Address QWORD ?
+      ; virtual address including dll base address
       Size_ DWORD ?
+      ; estimated size of symbol, can be zero
       Flags DWORD ?
+      ; info about the symbols, see the SYMF defines
       MaxNameLength DWORD ?
-      Name_ CHAR 1 dup (?)
+      ; maximum size of symbol name in 'Name'
+      Name_ SBYTE 1 dup (?)
+      ; symbol name (null terminated string)
     IMAGEHLP_SYMBOL64 ends
     _IMAGEHLP_SYMBOL64 typedef IMAGEHLP_SYMBOL64
     PIMAGEHLP_SYMBOL64 typedef ptr IMAGEHLP_SYMBOL64
     IMAGEHLP_SYMBOL64_PACKAGE struct
       sym IMAGEHLP_SYMBOL64 <>
-      name_ CHAR MAX_SYM_NAME + 1 dup (?)
+      name_ SBYTE MAX_SYM_NAME + 1 dup (?)
     IMAGEHLP_SYMBOL64_PACKAGE ends
     _IMAGEHLP_SYMBOL64_PACKAGE typedef IMAGEHLP_SYMBOL64_PACKAGE
     PIMAGEHLP_SYMBOL64_PACKAGE typedef ptr IMAGEHLP_SYMBOL64_PACKAGE
     IMAGEHLP_SYMBOLW64 struct
       SizeOfStruct DWORD ?
-      Address DWORD64 ?
+      ; set to sizeof(IMAGEHLP_SYMBOLW64)
+      Address QWORD ?
+      ; virtual address including dll base address
       Size_ DWORD ?
+      ; estimated size of symbol, can be zero
       Flags DWORD ?
+      ; info about the symbols, see the SYMF defines
       MaxNameLength DWORD ?
-      Name_ WCHAR 1 dup (?)
+      ; maximum size of symbol name in 'Name'
+      Name_ WORD 1 dup (?)
+      ; symbol name (null terminated string)
     IMAGEHLP_SYMBOLW64 ends
     _IMAGEHLP_SYMBOLW64 typedef IMAGEHLP_SYMBOLW64
     PIMAGEHLP_SYMBOLW64 typedef ptr IMAGEHLP_SYMBOLW64
     IMAGEHLP_SYMBOLW64_PACKAGE struct
       sym IMAGEHLP_SYMBOLW64 <>
-      name_ WCHAR MAX_SYM_NAME + 1 dup (?)
+      name_ WORD MAX_SYM_NAME + 1 dup (?)
     IMAGEHLP_SYMBOLW64_PACKAGE ends
     _IMAGEHLP_SYMBOLW64_PACKAGE typedef IMAGEHLP_SYMBOLW64_PACKAGE
     PIMAGEHLP_SYMBOLW64_PACKAGE typedef ptr IMAGEHLP_SYMBOLW64_PACKAGE
@@ -580,104 +750,179 @@ ifndef _DBGHELP_
     else
       IMAGEHLP_SYMBOL struct
         SizeOfStruct DWORD ?
+        ; set to sizeof(IMAGEHLP_SYMBOL)
         Address DWORD ?
+        ; virtual address including dll base address
         Size_ DWORD ?
+        ; estimated size of symbol, can be zero
         Flags DWORD ?
+        ; info about the symbols, see the SYMF defines
         MaxNameLength DWORD ?
-        Name_ CHAR 1 dup (?)
+        ; maximum size of symbol name in 'Name'
+        Name_ SBYTE 1 dup (?)
+        ; symbol name (null terminated string)
       IMAGEHLP_SYMBOL ends
       _IMAGEHLP_SYMBOL typedef IMAGEHLP_SYMBOL
       PIMAGEHLP_SYMBOL typedef ptr IMAGEHLP_SYMBOL
       IMAGEHLP_SYMBOL_PACKAGE struct
         sym IMAGEHLP_SYMBOL <>
-        name_ CHAR MAX_SYM_NAME + 1 dup (?)
+        name_ SBYTE MAX_SYM_NAME + 1 dup (?)
       IMAGEHLP_SYMBOL_PACKAGE ends
       _IMAGEHLP_SYMBOL_PACKAGE typedef IMAGEHLP_SYMBOL_PACKAGE
       PIMAGEHLP_SYMBOL_PACKAGE typedef ptr IMAGEHLP_SYMBOL_PACKAGE
       IMAGEHLP_SYMBOLW struct
         SizeOfStruct DWORD ?
+        ; set to sizeof(IMAGEHLP_SYMBOLW)
         Address DWORD ?
+        ; virtual address including dll base address
         Size_ DWORD ?
+        ; estimated size of symbol, can be zero
         Flags DWORD ?
+        ; info about the symbols, see the SYMF defines
         MaxNameLength DWORD ?
-        Name_ WCHAR 1 dup (?)
+        ; maximum size of symbol name in 'Name'
+        Name_ WORD 1 dup (?)
+        ; symbol name (null terminated string)
       IMAGEHLP_SYMBOLW ends
       _IMAGEHLP_SYMBOLW typedef IMAGEHLP_SYMBOLW
       PIMAGEHLP_SYMBOLW typedef ptr IMAGEHLP_SYMBOLW
       IMAGEHLP_SYMBOLW_PACKAGE struct
         sym IMAGEHLP_SYMBOLW <>
-        name_ WCHAR MAX_SYM_NAME + 1 dup (?)
+        name_ WORD MAX_SYM_NAME + 1 dup (?)
       IMAGEHLP_SYMBOLW_PACKAGE ends
       _IMAGEHLP_SYMBOLW_PACKAGE typedef IMAGEHLP_SYMBOLW_PACKAGE
       PIMAGEHLP_SYMBOLW_PACKAGE typedef ptr IMAGEHLP_SYMBOLW_PACKAGE
     endif
+    ; module data structure
+    ; ANSI Module Information
     IMAGEHLP_MODULE64 struct
       SizeOfStruct DWORD ?
-      BaseOfImage DWORD64 ?
+      ; set to sizeof(IMAGEHLP_MODULE64)
+      BaseOfImage QWORD ?
+      ; base load address of module
       ImageSize DWORD ?
+      ; virtual size of the loaded module
       TimeDateStamp DWORD ?
+      ; date/time stamp from pe header
       CheckSum DWORD ?
+      ; checksum from the pe header
       NumSyms DWORD ?
+      ; number of symbols in the symbol table
       SymType SYM_TYPE ?
-      ModuleName CHAR 32 dup (?)
-      ImageName CHAR 256 dup (?)
-      LoadedImageName CHAR 256 dup (?)
-      LoadedPdbName CHAR 256 dup (?)
+      ; type of symbols loaded
+      ModuleName SBYTE 32 dup (?)
+      ; module name
+      ImageName SBYTE 256 dup (?)
+      ; image name
+      LoadedImageName SBYTE 256 dup (?)
+      ; symbol file name
+      ; new elements: 07-Jun-2002
+      LoadedPdbName SBYTE 256 dup (?)
+      ; pdb file name
       CVSig DWORD ?
-      CVData CHAR MAX_PATH * 3 dup (?)
+      ; Signature of the CV record in the debug directories
+      CVData SBYTE MAX_PATH * 3 dup (?)
+      ; Contents of the CV record
       PdbSig DWORD ?
+      ; Signature of PDB
       PdbSig70 GUID <>
+      ; Signature of PDB (VC 7 and up)
       PdbAge DWORD ?
-      PdbUnmatched BOOL ?
-      DbgUnmatched BOOL ?
-      LineNumbers BOOL ?
-      GlobalSymbols BOOL ?
-      TypeInfo BOOL ?
-      SourceIndexed BOOL ?
-      Publics BOOL ?
+      ; DBI age of pdb
+      PdbUnmatched DWORD ?
+      ; loaded an unmatched pdb
+      DbgUnmatched DWORD ?
+      ; loaded an unmatched dbg
+      LineNumbers DWORD ?
+      ; we have line number information
+      GlobalSymbols DWORD ?
+      ; we have internal symbol information
+      TypeInfo DWORD ?
+      ; we have type information
+      ; new elements: 17-Dec-2003
+      SourceIndexed DWORD ?
+      ; pdb supports source server
+      Publics DWORD ?
+      ; contains public symbols
+      ; new element: 15-Jul-2009
       MachineType DWORD ?
+      ; IMAGE_FILE_MACHINE_XXX from ntimage.h and winnt.h
       Reserved DWORD ?
+      ; Padding - don't remove.
     IMAGEHLP_MODULE64 ends
     _IMAGEHLP_MODULE64 typedef IMAGEHLP_MODULE64
     PIMAGEHLP_MODULE64 typedef ptr IMAGEHLP_MODULE64
+    ; (Extended) ANSI version of IMAGEHLP_MODULE64 that supports Search Hints
     IMAGEHLP_MODULE64_EX struct
       Module IMAGEHLP_MODULE64 <>
       RegionFlags DWORD ?
+      ; Region Search Flags - IMAGEHLP_MODULE_REGION_XXX
     IMAGEHLP_MODULE64_EX ends
     _IMAGEHLP_MODULE64_EX typedef IMAGEHLP_MODULE64_EX
     PIMAGEHLP_MODULE64_EX typedef ptr IMAGEHLP_MODULE64_EX
+    ; WIDE Module Information
     IMAGEHLP_MODULEW64 struct
       SizeOfStruct DWORD ?
-      BaseOfImage DWORD64 ?
+      ; set to sizeof(IMAGEHLP_MODULE64)
+      BaseOfImage QWORD ?
+      ; base load address of module
       ImageSize DWORD ?
+      ; virtual size of the loaded module
       TimeDateStamp DWORD ?
+      ; date/time stamp from pe header
       CheckSum DWORD ?
+      ; checksum from the pe header
       NumSyms DWORD ?
+      ; number of symbols in the symbol table
       SymType SYM_TYPE ?
-      ModuleName WCHAR 32 dup (?)
-      ImageName WCHAR 256 dup (?)
-      LoadedImageName WCHAR 256 dup (?)
-      LoadedPdbName WCHAR 256 dup (?)
+      ; type of symbols loaded
+      ModuleName WORD 32 dup (?)
+      ; module name
+      ImageName WORD 256 dup (?)
+      ; image name
+      ; new elements: 07-Jun-2002
+      LoadedImageName WORD 256 dup (?)
+      ; symbol file name
+      LoadedPdbName WORD 256 dup (?)
+      ; pdb file name
       CVSig DWORD ?
-      CVData WCHAR MAX_PATH * 3 dup (?)
+      ; Signature of the CV record in the debug directories
+      CVData WORD MAX_PATH * 3 dup (?)
+      ; Contents of the CV record
       PdbSig DWORD ?
+      ; Signature of PDB
       PdbSig70 GUID <>
+      ; Signature of PDB (VC 7 and up)
       PdbAge DWORD ?
-      PdbUnmatched BOOL ?
-      DbgUnmatched BOOL ?
-      LineNumbers BOOL ?
-      GlobalSymbols BOOL ?
-      TypeInfo BOOL ?
-      SourceIndexed BOOL ?
-      Publics BOOL ?
+      ; DBI age of pdb
+      PdbUnmatched DWORD ?
+      ; loaded an unmatched pdb
+      DbgUnmatched DWORD ?
+      ; loaded an unmatched dbg
+      LineNumbers DWORD ?
+      ; we have line number information
+      GlobalSymbols DWORD ?
+      ; we have internal symbol information
+      TypeInfo DWORD ?
+      ; we have type information
+      ; new elements: 17-Dec-2003
+      SourceIndexed DWORD ?
+      ; pdb supports source server
+      Publics DWORD ?
+      ; contains public symbols
+      ; new element: 15-Jul-2009
       MachineType DWORD ?
+      ; IMAGE_FILE_MACHINE_XXX from ntimage.h and winnt.h
       Reserved DWORD ?
+      ; Padding - don't remove.
     IMAGEHLP_MODULEW64 ends
     _IMAGEHLP_MODULEW64 typedef IMAGEHLP_MODULEW64
     PIMAGEHLP_MODULEW64 typedef ptr IMAGEHLP_MODULEW64
+    ; (Extended) WIDE version of IMAGEHLP_MODULEW64 that supports Search Hints
     IMAGEHLP_MODULEW64_EX struct
       Module IMAGEHLP_MODULEW64 <>
       RegionFlags DWORD ?
+      ; Region Search Flags - IMAGEHLP_MODULE_REGION_XXX
     IMAGEHLP_MODULEW64_EX ends
     _IMAGEHLP_MODULEW64_EX typedef IMAGEHLP_MODULEW64_EX
     PIMAGEHLP_MODULEW64_EX typedef ptr IMAGEHLP_MODULEW64_EX
@@ -694,48 +939,79 @@ ifndef _DBGHELP_
     else
       IMAGEHLP_MODULE struct
         SizeOfStruct DWORD ?
+        ; set to sizeof(IMAGEHLP_MODULE)
         BaseOfImage DWORD ?
+        ; base load address of module
         ImageSize DWORD ?
+        ; virtual size of the loaded module
         TimeDateStamp DWORD ?
+        ; date/time stamp from pe header
         CheckSum DWORD ?
+        ; checksum from the pe header
         NumSyms DWORD ?
+        ; number of symbols in the symbol table
         SymType SYM_TYPE ?
-        ModuleName CHAR 32 dup (?)
-        ImageName CHAR 256 dup (?)
-        LoadedImageName CHAR 256 dup (?)
+        ; type of symbols loaded
+        ModuleName SBYTE 32 dup (?)
+        ; module name
+        ImageName SBYTE 256 dup (?)
+        ; image name
+        LoadedImageName SBYTE 256 dup (?)
+        ; symbol file name
       IMAGEHLP_MODULE ends
       _IMAGEHLP_MODULE typedef IMAGEHLP_MODULE
       PIMAGEHLP_MODULE typedef ptr IMAGEHLP_MODULE
       IMAGEHLP_MODULEW struct
         SizeOfStruct DWORD ?
+        ; set to sizeof(IMAGEHLP_MODULE)
         BaseOfImage DWORD ?
+        ; base load address of module
         ImageSize DWORD ?
+        ; virtual size of the loaded module
         TimeDateStamp DWORD ?
+        ; date/time stamp from pe header
         CheckSum DWORD ?
+        ; checksum from the pe header
         NumSyms DWORD ?
+        ; number of symbols in the symbol table
         SymType SYM_TYPE ?
-        ModuleName WCHAR 32 dup (?)
-        ImageName WCHAR 256 dup (?)
-        LoadedImageName WCHAR 256 dup (?)
+        ; type of symbols loaded
+        ModuleName WORD 32 dup (?)
+        ; module name
+        ImageName WORD 256 dup (?)
+        ; image name
+        LoadedImageName WORD 256 dup (?)
+        ; symbol file name
       IMAGEHLP_MODULEW ends
       _IMAGEHLP_MODULEW typedef IMAGEHLP_MODULEW
       PIMAGEHLP_MODULEW typedef ptr IMAGEHLP_MODULEW
     endif
+    ; source file line data structure
     IMAGEHLP_LINE64 struct
       SizeOfStruct DWORD ?
-      Key PVOID ?
+      ; set to sizeof(IMAGEHLP_LINE64)
+      Key POINTER ?
+      ; internal
       LineNumber DWORD ?
-      FileName PCHAR ?
-      Address DWORD64 ?
+      ; line number in file
+      FileName POINTER ?
+      ; full filename
+      Address QWORD ?
+      ; first instruction of line
     IMAGEHLP_LINE64 ends
     _IMAGEHLP_LINE64 typedef IMAGEHLP_LINE64
     PIMAGEHLP_LINE64 typedef ptr IMAGEHLP_LINE64
     IMAGEHLP_LINEW64 struct
       SizeOfStruct DWORD ?
-      Key PVOID ?
+      ; set to sizeof(IMAGEHLP_LINE64)
+      Key POINTER ?
+      ; internal
       LineNumber DWORD ?
-      FileName PWSTR ?
-      Address DWORD64 ?
+      ; line number in file
+      FileName POINTER ?
+      ; full filename
+      Address QWORD ?
+      ; first instruction of line
     IMAGEHLP_LINEW64 ends
     _IMAGEHLP_LINEW64 typedef IMAGEHLP_LINEW64
     PIMAGEHLP_LINEW64 typedef ptr IMAGEHLP_LINEW64
@@ -745,37 +1021,54 @@ ifndef _DBGHELP_
     else
       IMAGEHLP_LINE struct
         SizeOfStruct DWORD ?
-        Key PVOID ?
+        ; set to sizeof(IMAGEHLP_LINE)
+        Key POINTER ?
+        ; internal
         LineNumber DWORD ?
-        FileName PCHAR ?
+        ; line number in file
+        FileName POINTER ?
+        ; full filename
         Address DWORD ?
+        ; first instruction of line
       IMAGEHLP_LINE ends
       _IMAGEHLP_LINE typedef IMAGEHLP_LINE
       PIMAGEHLP_LINE typedef ptr IMAGEHLP_LINE
       IMAGEHLP_LINEW struct
         SizeOfStruct DWORD ?
-        Key PVOID ?
+        ; set to sizeof(IMAGEHLP_LINE64)
+        Key POINTER ?
+        ; internal
         LineNumber DWORD ?
-        FileName PCHAR ?
-        Address DWORD64 ?
+        ; line number in file
+        FileName POINTER ?
+        ; full filename
+        Address QWORD ?
+        ; first instruction of line
       IMAGEHLP_LINEW ends
       _IMAGEHLP_LINEW typedef IMAGEHLP_LINEW
       PIMAGEHLP_LINEW typedef ptr IMAGEHLP_LINEW
     endif
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
+    ; source file structure
     SOURCEFILE struct
-      ModBase DWORD64 ?
-      FileName PCHAR ?
+      ModBase QWORD ?
+      ; base address of loaded module
+      FileName POINTER ?
+      ; full filename of source
     SOURCEFILE ends
     _SOURCEFILE typedef SOURCEFILE
     PSOURCEFILE typedef ptr SOURCEFILE
     SOURCEFILEW struct
-      ModBase DWORD64 ?
-      FileName PWSTR ?
+      ModBase QWORD ?
+      ; base address of loaded module
+      FileName POINTER ?
+      ; full filename of source
     SOURCEFILEW ends
     _SOURCEFILEW typedef SOURCEFILEW
     PSOURCEFILEW typedef ptr SOURCEFILEW
+    ; data structures used for registered symbol callbacks
     CBA_DEFERRED_SYMBOL_LOAD_START equ 00000001h
     CBA_DEFERRED_SYMBOL_LOAD_COMPLETE equ 00000002h
     CBA_DEFERRED_SYMBOL_LOAD_FAILURE equ 00000003h
@@ -796,10 +1089,14 @@ ifndef _DBGHELP_
     CBA_XML_LOG equ 90000000h
     CBA_MAP_JIT_SYMBOL equ 0A0000000h
     IMAGEHLP_CBA_READ_MEMORY struct
-      addr_ DWORD64 ?
-      buf PVOID ?
+      addr_ QWORD ?
+      ; address to read from
+      buf POINTER ?
+      ; buffer to read to
       bytes DWORD ?
+      ; amount of bytes to read
       bytesread POINTER ?
+      ; pointer to store amount of bytes read
     IMAGEHLP_CBA_READ_MEMORY ends
     _IMAGEHLP_CBA_READ_MEMORY typedef IMAGEHLP_CBA_READ_MEMORY
     PIMAGEHLP_CBA_READ_MEMORY typedef ptr IMAGEHLP_CBA_READ_MEMORY
@@ -809,45 +1106,68 @@ ifndef _DBGHELP_
     sevFatal equ 3
     sevMax equ 4
 
+    ; unused
     EVENT_SRCSPEW_START equ 100
     EVENT_SRCSPEW equ 100
     EVENT_SRCSPEW_END equ 199
     IMAGEHLP_CBA_EVENT struct
       severity DWORD ?
+      ; values from sevInfo to sevFatal
       code DWORD ?
-      desc PCHAR ?
-      object_ PVOID ?
+      ; numerical code IDs the error
+      desc POINTER ?
+      ; may contain a text description of the error
+      object_ POINTER ?
+      ; value dependant upon the error code
     IMAGEHLP_CBA_EVENT ends
     _IMAGEHLP_CBA_EVENT typedef IMAGEHLP_CBA_EVENT
     PIMAGEHLP_CBA_EVENT typedef ptr IMAGEHLP_CBA_EVENT
     IMAGEHLP_CBA_EVENTW struct
       severity DWORD ?
+      ; values from sevInfo to sevFatal
       code DWORD ?
+      ; numerical code IDs the error
       desc PCWSTR ?
-      object_ PVOID ?
+      ; may contain a text description of the error
+      object_ POINTER ?
+      ; value dependant upon the error code
     IMAGEHLP_CBA_EVENTW ends
     _IMAGEHLP_CBA_EVENTW typedef IMAGEHLP_CBA_EVENTW
     PIMAGEHLP_CBA_EVENTW typedef ptr IMAGEHLP_CBA_EVENTW
     IMAGEHLP_DEFERRED_SYMBOL_LOAD64 struct
       SizeOfStruct DWORD ?
-      BaseOfImage DWORD64 ?
+      ; set to sizeof(IMAGEHLP_DEFERRED_SYMBOL_LOAD64)
+      BaseOfImage QWORD ?
+      ; base load address of module
       CheckSum DWORD ?
+      ; checksum from the pe header
       TimeDateStamp DWORD ?
-      FileName CHAR MAX_PATH dup (?)
-      Reparse BOOLEAN ?
+      ; date/time stamp from pe header
+      FileName SBYTE MAX_PATH dup (?)
+      ; symbols file or image name
+      Reparse BYTE ?
+      ; load failure reparse
       hFile HANDLE ?
+      ; file handle, if passed
       Flags DWORD ?
     IMAGEHLP_DEFERRED_SYMBOL_LOAD64 ends
     _IMAGEHLP_DEFERRED_SYMBOL_LOAD64 typedef IMAGEHLP_DEFERRED_SYMBOL_LOAD64
     PIMAGEHLP_DEFERRED_SYMBOL_LOAD64 typedef ptr IMAGEHLP_DEFERRED_SYMBOL_LOAD64
     IMAGEHLP_DEFERRED_SYMBOL_LOADW64 struct
       SizeOfStruct DWORD ?
-      BaseOfImage DWORD64 ?
+      ; set to sizeof(IMAGEHLP_DEFERRED_SYMBOL_LOADW64)
+      BaseOfImage QWORD ?
+      ; base load address of module
       CheckSum DWORD ?
+      ; checksum from the pe header
       TimeDateStamp DWORD ?
-      FileName WCHAR MAX_PATH + 1 dup (?)
-      Reparse BOOLEAN ?
+      ; date/time stamp from pe header
+      FileName WORD MAX_PATH + 1 dup (?)
+      ; symbols file or image name
+      Reparse BYTE ?
+      ; load failure reparse
       hFile HANDLE ?
+      ; file handle, if passed
       Flags DWORD ?
     IMAGEHLP_DEFERRED_SYMBOL_LOADW64 ends
     _IMAGEHLP_DEFERRED_SYMBOL_LOADW64 typedef IMAGEHLP_DEFERRED_SYMBOL_LOADW64
@@ -863,21 +1183,32 @@ ifndef _DBGHELP_
     else
       IMAGEHLP_DEFERRED_SYMBOL_LOAD struct
         SizeOfStruct DWORD ?
+        ; set to sizeof(IMAGEHLP_DEFERRED_SYMBOL_LOAD)
         BaseOfImage DWORD ?
+        ; base load address of module
         CheckSum DWORD ?
+        ; checksum from the pe header
         TimeDateStamp DWORD ?
-        FileName CHAR MAX_PATH dup (?)
-        Reparse BOOLEAN ?
+        ; date/time stamp from pe header
+        FileName SBYTE MAX_PATH dup (?)
+        ; symbols file or image name
+        Reparse BYTE ?
+        ; load failure reparse
         hFile HANDLE ?
+        ; file handle, if passed
       IMAGEHLP_DEFERRED_SYMBOL_LOAD ends
       _IMAGEHLP_DEFERRED_SYMBOL_LOAD typedef IMAGEHLP_DEFERRED_SYMBOL_LOAD
       PIMAGEHLP_DEFERRED_SYMBOL_LOAD typedef ptr IMAGEHLP_DEFERRED_SYMBOL_LOAD
     endif
     IMAGEHLP_DUPLICATE_SYMBOL64 struct
       SizeOfStruct DWORD ?
+      ; set to sizeof(IMAGEHLP_DUPLICATE_SYMBOL64)
       NumberOfDups DWORD ?
+      ; number of duplicates in the Symbol array
       Symbol PIMAGEHLP_SYMBOL64 ?
+      ; array of duplicate symbols
       SelectedSymbol DWORD ?
+      ; symbol selected (-1 to start)
     IMAGEHLP_DUPLICATE_SYMBOL64 ends
     _IMAGEHLP_DUPLICATE_SYMBOL64 typedef IMAGEHLP_DUPLICATE_SYMBOL64
     PIMAGEHLP_DUPLICATE_SYMBOL64 typedef ptr IMAGEHLP_DUPLICATE_SYMBOL64
@@ -887,20 +1218,28 @@ ifndef _DBGHELP_
     else
       IMAGEHLP_DUPLICATE_SYMBOL struct
         SizeOfStruct DWORD ?
+        ; set to sizeof(IMAGEHLP_DUPLICATE_SYMBOL)
         NumberOfDups DWORD ?
+        ; number of duplicates in the Symbol array
         Symbol PIMAGEHLP_SYMBOL ?
+        ; array of duplicate symbols
         SelectedSymbol DWORD ?
+        ; symbol selected (-1 to start)
       IMAGEHLP_DUPLICATE_SYMBOL ends
       _IMAGEHLP_DUPLICATE_SYMBOL typedef IMAGEHLP_DUPLICATE_SYMBOL
       PIMAGEHLP_DUPLICATE_SYMBOL typedef ptr IMAGEHLP_DUPLICATE_SYMBOL
     endif
     IMAGEHLP_JIT_SYMBOLMAP struct
       SizeOfStruct DWORD ?
-      Address DWORD64 ?
-      BaseOfImage DWORD64 ?
+      ; set to sizeof(IMAGEHLP_JIT_SYMBOL_MAP)
+      Address QWORD ?
+      ; address to map to JIT association with an image
+      BaseOfImage QWORD ?
+      ; base load address (0 == unmapped)
     IMAGEHLP_JIT_SYMBOLMAP ends
     _IMAGEHLP_JIT_SYMBOL_MAP typedef IMAGEHLP_JIT_SYMBOLMAP
     PIMAGEHLP_JIT_SYMBOLMAP typedef ptr IMAGEHLP_JIT_SYMBOLMAP
+    ; If dbghelp ever needs to display graphical UI, it will use this as the parent window.
     @DefProto DllImport, SymSetParentWindow, WIN_STD_CALL_CONV,, <:HWND>, 4
     @DefProto DllImport, SymSetHomeDirectory, WIN_STD_CALL_CONV,, <:HANDLE, :PCSTR>, 8
     @DefProto DllImport, SymSetHomeDirectoryW, WIN_STD_CALL_CONV,, <:HANDLE, :PCWSTR>, 8
@@ -908,19 +1247,26 @@ ifndef _DBGHELP_
     @DefProto DllImport, SymGetHomeDirectoryW, WIN_STD_CALL_CONV,, <:DWORD, :PWSTR, :size_t>, 12
     IMAGEHLP_HD_TYPE typedef SDWORD
     hdBase equ 0
+    ; root directory for dbghelp
     hdSym equ 1
+    ; where symbols are stored
     hdSrc equ 2
+    ; where source is stored
     hdMax equ 3
 
+    ; end marker
     OMAP struct
-      rva ULONG ?
-      rvaTo ULONG ?
+      rva DWORD ?
+      rvaTo DWORD ?
     OMAP ends
     _OMAP typedef OMAP
     POMAP typedef ptr OMAP
     @DefProto DllImport, SymGetOmaps, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64, :ptr POMAP, :PDWORD64, :ptr POMAP, :PDWORD64>, 24
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    ; options that are set/returned by SymSetOptions() & SymGetOptions()
+    ; these are used as a mask
     SYMOPT_CASE_INSENSITIVE equ 00000001h
     SYMOPT_UNDNAME equ 00000002h
     SYMOPT_DEFERRED_LOADS equ 00000004h
@@ -953,23 +1299,33 @@ ifndef _DBGHELP_
     SYMOPT_DISABLE_SYMSRV_TIMEOUT equ 20000000h
     SYMOPT_DISABLE_SRVSTAR_ON_STARTUP equ 40000000h
     SYMOPT_DEBUG equ 80000000h
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     IMAGEHLP_EXTENDED_OPTIONS typedef SDWORD
     SYMOPT_EX_DISABLEACCESSTIMEUPDATE equ 0
+    ; Disable File Last Access Time on Symbols
     SYMOPT_EX_LASTVALIDDEBUGDIRECTORY equ 1
+    ; For entries with multiple debug directories: prefer the last to the first
     SYMOPT_EX_NOIMPLICITPATTERNSEARCH equ 2
+    ; For SymEnum* APIs: never implicitly run a pattern search without explicit pattern characters
     SYMOPT_EX_NEVERLOADSYMBOLS equ 3
+    ; Never try to load and parse symbols 
     SYMOPT_EX_MAX equ 4
 
+    ; Unused
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, SymSetOptions, WIN_STD_CALL_CONV,, <:DWORD>, 4
     @DefProto DllImport, SymGetOptions, WIN_STD_CALL_CONV,, <>, 0
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     @DefProto DllImport, SymCleanup, WIN_STD_CALL_CONV,, <:HANDLE>, 4
+    ; Returns the value of the extended option
     @DefProto DllImport, SymGetExtendedOption, WIN_STD_CALL_CONV,, <:IMAGEHLP_EXTENDED_OPTIONS>, 4
+    ; Returns the previous value of the option
     @DefProto DllImport, SymSetExtendedOption, WIN_STD_CALL_CONV,, <:IMAGEHLP_EXTENDED_OPTIONS, :BOOL>, 8
     @DefProto DllImport, SymMatchString, WIN_STD_CALL_CONV,, <:PCSTR, :PCSTR, :BOOL>, 12
     @DefProto DllImport, SymMatchStringA, WIN_STD_CALL_CONV,, <:PCSTR, :PCSTR, :BOOL>, 12
@@ -977,6 +1333,7 @@ ifndef _DBGHELP_
     TYPE_PSYM_ENUMSOURCEFILES_CALLBACK typedef proto WIN_STD_CALL_CONV :PSOURCEFILE, :PVOID
     PSYM_ENUMSOURCEFILES_CALLBACK typedef ptr TYPE_PSYM_ENUMSOURCEFILES_CALLBACK
 
+    ; for backwards compatibility - don't use this
     PSYM_ENUMSOURCFILES_CALLBACK equ <PSYM_ENUMSOURCEFILES_CALLBACK>
     @DefProto DllImport, SymEnumSourceFiles, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :PCSTR, :PSYM_ENUMSOURCEFILES_CALLBACK, :PVOID>, 20
     TYPE_PSYM_ENUMSOURCEFILES_CALLBACKW typedef proto WIN_STD_CALL_CONV :PSOURCEFILEW, :PVOID
@@ -999,9 +1356,11 @@ ifndef _DBGHELP_
     else
       @DefProto DllImport, EnumerateLoadedModules, WIN_STD_CALL_CONV,, <:HANDLE, :PENUMLOADED_MODULES_CALLBACK, :PVOID>, 12
     endif
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, SymFunctionTableAccess64, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64>, 8
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     @DefProto DllImport, SymFunctionTableAccess64AccessRoutines, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64, :PREAD_PROCESS_MEMORY_ROUTINE64, :PGET_MODULE_BASE_ROUTINE64>, 16
@@ -1011,6 +1370,7 @@ ifndef _DBGHELP_
       @DefProto DllImport, SymFunctionTableAccess, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD>, 8
     endif
     @DefProto DllImport, SymGetUnwindInfo, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64, :PVOID, :PULONG>, 16
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, SymGetModuleInfo64, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64, :PIMAGEHLP_MODULE64>, 12
@@ -1028,27 +1388,42 @@ ifndef _DBGHELP_
     else
       @DefProto DllImport, SymGetModuleBase, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD>, 8
     endif
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     SRCCODEINFO struct
       SizeOfStruct DWORD ?
-      Key PVOID ?
-      ModBase DWORD64 ?
-      Obj CHAR MAX_PATH + 1 dup (?)
-      FileName CHAR MAX_PATH + 1 dup (?)
+      ; set to sizeof(SRCCODEINFO)
+      Key POINTER ?
+      ; not used
+      ModBase QWORD ?
+      ; base address of module this applies to
+      Obj SBYTE MAX_PATH + 1 dup (?)
+      ; the object file within the module
+      FileName SBYTE MAX_PATH + 1 dup (?)
+      ; full filename
       LineNumber DWORD ?
-      Address DWORD64 ?
+      ; line number in file
+      Address QWORD ?
+      ; first instruction of line
     SRCCODEINFO ends
     _SRCCODEINFO typedef SRCCODEINFO
     PSRCCODEINFO typedef ptr SRCCODEINFO
     SRCCODEINFOW struct
       SizeOfStruct DWORD ?
-      Key PVOID ?
-      ModBase DWORD64 ?
-      Obj WCHAR MAX_PATH + 1 dup (?)
-      FileName WCHAR MAX_PATH + 1 dup (?)
+      ; set to sizeof(SRCCODEINFO)
+      Key POINTER ?
+      ; not used
+      ModBase QWORD ?
+      ; base address of module this applies to
+      Obj WORD MAX_PATH + 1 dup (?)
+      ; the object file within the module
+      FileName WORD MAX_PATH + 1 dup (?)
+      ; full filename
       LineNumber DWORD ?
-      Address DWORD64 ?
+      ; line number in file
+      Address QWORD ?
+      ; first instruction of line
     SRCCODEINFOW ends
     _SRCCODEINFOW typedef SRCCODEINFOW
     PSRCCODEINFOW typedef ptr SRCCODEINFOW
@@ -1060,9 +1435,11 @@ ifndef _DBGHELP_
     PSYM_ENUMLINES_CALLBACKW typedef ptr TYPE_PSYM_ENUMLINES_CALLBACKW
 
     @DefProto DllImport, SymEnumLinesW, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :PCWSTR, :PCWSTR, :PSYM_ENUMLINES_CALLBACKW, :PVOID>, 24
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, SymGetLineFromAddr64, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64, :PDWORD, :PIMAGEHLP_LINE64>, 16
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     @DefProto DllImport, SymGetLineFromAddrW64, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64, :PDWORD, :PIMAGEHLP_LINEW64>, 16
@@ -1070,6 +1447,7 @@ ifndef _DBGHELP_
     @DefProto DllImport, SymGetLineFromInlineContextW, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64, :ULONG, :DWORD64, :PDWORD, :PIMAGEHLP_LINEW64>, 24
     @DefProto DllImport, SymEnumSourceLines, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :PCSTR, :PCSTR, :DWORD, :DWORD, :PSYM_ENUMLINES_CALLBACK, :PVOID>, 32
     @DefProto DllImport, SymEnumSourceLinesW, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :PCWSTR, :PCWSTR, :DWORD, :DWORD, :PSYM_ENUMLINES_CALLBACKW, :PVOID>, 32
+    ; Check whether input Address includes "inline stack".
     @DefProto DllImport, SymAddrIncludeInlineTrace, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64>, 8
     SYM_INLINE_COMP_ERROR equ 0
     SYM_INLINE_COMP_IDENTICAL equ 1
@@ -1077,8 +1455,11 @@ ifndef _DBGHELP_
     SYM_INLINE_COMP_STEPOUT equ 3
     SYM_INLINE_COMP_STEPOVER equ 4
     SYM_INLINE_COMP_DIFFERENT equ 5
+    ; Compare the "inline stack" from the 2 input addresses and determine whether the difference is possibly from
+    ; what execution control operation. The return value would be onr of the literals defined above.
     @DefProto DllImport, SymCompareInlineTrace, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64, :DWORD, :DWORD64, :DWORD64, :DWORD64>, 24
     @DefProto DllImport, SymQueryInlineTrace, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64, :DWORD, :DWORD64, :DWORD64, :LPDWORD, :LPDWORD>, 28
+    ; flags for SymEnumSourceLines
     ESLFLAG_FULLPATH equ 00000001h
     ESLFLAG_NEAREST equ 00000002h
     ESLFLAG_PREV equ 00000004h
@@ -1135,29 +1516,36 @@ ifndef _DBGHELP_
     PENUMSOURCEFILETOKENSCALLBACK typedef ptr TYPE_PENUMSOURCEFILETOKENSCALLBACK
 
     @DefProto DllImport, SymEnumSourceFileTokens, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :PENUMSOURCEFILETOKENSCALLBACK>, 12
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, SymInitialize, WIN_STD_CALL_CONV,, <:HANDLE, :PCSTR, :BOOL>, 12
     @DefProto DllImport, SymInitializeW, WIN_STD_CALL_CONV,, <:HANDLE, :PCWSTR, :BOOL>, 12
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     @DefProto DllImport, SymGetSearchPath, WIN_STD_CALL_CONV,, <:HANDLE, :PSTR, :DWORD>, 12
     @DefProto DllImport, SymGetSearchPathW, WIN_STD_CALL_CONV,, <:HANDLE, :PWSTR, :DWORD>, 12
     @DefProto DllImport, SymSetSearchPath, WIN_STD_CALL_CONV,, <:HANDLE, :PCSTR>, 8
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, SymSetSearchPathW, WIN_STD_CALL_CONV,, <:HANDLE, :PCWSTR>, 8
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     SLMFLAG_VIRTUAL equ 1h
     SLMFLAG_ALT_INDEX equ 2h
     SLMFLAG_NO_SYMBOLS equ 4h
     @DefProto DllImport, SymLoadModuleEx, WIN_STD_CALL_CONV,, <:HANDLE, :HANDLE, :PCSTR, :PCSTR, :DWORD64, :DWORD, :PMODLOAD_DATA, :DWORD>, 32
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, SymLoadModuleExW, WIN_STD_CALL_CONV,, <:HANDLE, :HANDLE, :PCWSTR, :PCWSTR, :DWORD64, :DWORD, :PMODLOAD_DATA, :DWORD>, 32
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     @DefProto DllImport, SymUnloadModule64, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64>, 8
@@ -1167,10 +1555,12 @@ ifndef _DBGHELP_
       @DefProto DllImport, SymUnloadModule, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD>, 8
     endif
     @DefProto DllImport, SymUnDName64, WIN_STD_CALL_CONV,, <:PIMAGEHLP_SYMBOL64, :PSTR, :DWORD>, 12
+    ; Size of the buffer
     if  not Defined(_IMAGEHLP_SOURCE_) and Defined(_IMAGEHLP64)
       SymUnDName equ <SymUnDName64>
     else
       @DefProto DllImport, SymUnDName, WIN_STD_CALL_CONV,, <:PIMAGEHLP_SYMBOL, :PSTR, :DWORD>, 12
+      ; Size of the buffer
     endif
     @DefProto DllImport, SymRegisterCallback64, WIN_STD_CALL_CONV,, <:HANDLE, :PSYMBOL_REGISTERED_CALLBACK64, :ULONG64>, 12
     @DefProto DllImport, SymRegisterCallbackW64, WIN_STD_CALL_CONV,, <:HANDLE, :PSYMBOL_REGISTERED_CALLBACK64, :ULONG64>, 12
@@ -1190,73 +1580,92 @@ ifndef _DBGHELP_
     _IMAGEHLP_SYMBOL_SRC typedef IMAGEHLP_SYMBOL_SRC
     PIMAGEHLP_SYMBOL_SRC typedef ptr IMAGEHLP_SYMBOL_SRC
     MODULE_TYPE_INFO struct
-      dataLength USHORT ?
-      leaf USHORT ?
+      ; AKA TYPTYP
+      dataLength WORD ?
+      leaf WORD ?
       data BYTE 1 dup (?)
     MODULE_TYPE_INFO ends
     _MODULE_TYPE_INFO typedef MODULE_TYPE_INFO
     PMODULE_TYPE_INFO typedef ptr MODULE_TYPE_INFO
     SYMBOL_INFO struct
-      SizeOfStruct ULONG ?
-      TypeIndex ULONG ?
-      Reserved ULONG64 2 dup (?)
-      Index ULONG ?
-      Size_ ULONG ?
-      ModBase ULONG64 ?
-      Flags ULONG ?
-      Value ULONG64 ?
-      Address ULONG64 ?
-      Register ULONG ?
-      Scope ULONG ?
-      Tag ULONG ?
-      NameLen ULONG ?
-      MaxNameLen ULONG ?
-      Name_ CHAR 1 dup (?)
+      SizeOfStruct DWORD ?
+      TypeIndex DWORD ?
+      ; Type Index of symbol
+      Reserved QWORD 2 dup (?)
+      Index DWORD ?
+      Size_ DWORD ?
+      ModBase QWORD ?
+      ; Base Address of module comtaining this symbol
+      Flags DWORD ?
+      Value QWORD ?
+      ; Value of symbol, ValuePresent should be 1
+      Address QWORD ?
+      ; Address of symbol including base address of module
+      Register DWORD ?
+      ; register holding value or pointer to value
+      Scope DWORD ?
+      ; scope of the symbol
+      Tag DWORD ?
+      ; pdb classification
+      NameLen DWORD ?
+      ; Actual length of name
+      MaxNameLen DWORD ?
+      Name_ SBYTE 1 dup (?)
+      ; Name of symbol
     SYMBOL_INFO ends
     _SYMBOL_INFO typedef SYMBOL_INFO
     PSYMBOL_INFO typedef ptr SYMBOL_INFO
     SYMBOL_INFO_PACKAGE struct
       si_ SYMBOL_INFO <>
-      name_ CHAR MAX_SYM_NAME + 1 dup (?)
+      name_ SBYTE MAX_SYM_NAME + 1 dup (?)
     SYMBOL_INFO_PACKAGE ends
     _SYMBOL_INFO_PACKAGE typedef SYMBOL_INFO_PACKAGE
     PSYMBOL_INFO_PACKAGE typedef ptr SYMBOL_INFO_PACKAGE
     SYMBOL_INFOW struct
-      SizeOfStruct ULONG ?
-      TypeIndex ULONG ?
-      Reserved ULONG64 2 dup (?)
-      Index ULONG ?
-      Size_ ULONG ?
-      ModBase ULONG64 ?
-      Flags ULONG ?
-      Value ULONG64 ?
-      Address ULONG64 ?
-      Register ULONG ?
-      Scope ULONG ?
-      Tag ULONG ?
-      NameLen ULONG ?
-      MaxNameLen ULONG ?
-      Name_ WCHAR 1 dup (?)
+      SizeOfStruct DWORD ?
+      TypeIndex DWORD ?
+      ; Type Index of symbol
+      Reserved QWORD 2 dup (?)
+      Index DWORD ?
+      Size_ DWORD ?
+      ModBase QWORD ?
+      ; Base Address of module comtaining this symbol
+      Flags DWORD ?
+      Value QWORD ?
+      ; Value of symbol, ValuePresent should be 1
+      Address QWORD ?
+      ; Address of symbol including base address of module
+      Register DWORD ?
+      ; register holding value or pointer to value
+      Scope DWORD ?
+      ; scope of the symbol
+      Tag DWORD ?
+      ; pdb classification
+      NameLen DWORD ?
+      ; Actual length of name
+      MaxNameLen DWORD ?
+      Name_ WORD 1 dup (?)
+      ; Name of symbol
     SYMBOL_INFOW ends
     _SYMBOL_INFOW typedef SYMBOL_INFOW
     PSYMBOL_INFOW typedef ptr SYMBOL_INFOW
     SYMBOL_INFO_PACKAGEW struct
       si_ SYMBOL_INFOW <>
-      name_ WCHAR MAX_SYM_NAME + 1 dup (?)
+      name_ WORD MAX_SYM_NAME + 1 dup (?)
     SYMBOL_INFO_PACKAGEW ends
     _SYMBOL_INFO_PACKAGEW typedef SYMBOL_INFO_PACKAGEW
     PSYMBOL_INFO_PACKAGEW typedef ptr SYMBOL_INFO_PACKAGEW
     IMAGEHLP_STACK_FRAME struct
-      InstructionOffset ULONG64 ?
-      ReturnOffset ULONG64 ?
-      FrameOffset ULONG64 ?
-      StackOffset ULONG64 ?
-      BackingStoreOffset ULONG64 ?
-      FuncTableEntry ULONG64 ?
-      Params ULONG64 4 dup (?)
-      Reserved ULONG64 5 dup (?)
-      Virtual BOOL ?
-      Reserved2 ULONG ?
+      InstructionOffset QWORD ?
+      ReturnOffset QWORD ?
+      FrameOffset QWORD ?
+      StackOffset QWORD ?
+      BackingStoreOffset QWORD ?
+      FuncTableEntry QWORD ?
+      Params QWORD 4 dup (?)
+      Reserved QWORD 5 dup (?)
+      Virtual DWORD ?
+      Reserved2 DWORD ?
     IMAGEHLP_STACK_FRAME ends
     _IMAGEHLP_STACK_FRAME typedef IMAGEHLP_STACK_FRAME
     PIMAGEHLP_STACK_FRAME typedef ptr IMAGEHLP_STACK_FRAME
@@ -1280,6 +1689,11 @@ ifndef _DBGHELP_
     @DefProto DllImport, SymNextW, WIN_STD_CALL_CONV,, <:HANDLE, :PSYMBOL_INFOW>, 8
     @DefProto DllImport, SymPrev, WIN_STD_CALL_CONV,, <:HANDLE, :PSYMBOL_INFO>, 8
     @DefProto DllImport, SymPrevW, WIN_STD_CALL_CONV,, <:HANDLE, :PSYMBOL_INFOW>, 8
+    ; While SymFromName will provide a symbol from a name,
+    ; SymEnumSymbols can provide the same matching information
+    ; for ALL symbols with a matching name, even regular
+    ; expressions.  That way you can search across modules
+    ; and differentiate between identically named symbols.
     @DefProto DllImport, SymFromName, WIN_STD_CALL_CONV,, <:HANDLE, :PCSTR, :PSYMBOL_INFO>, 12
     @DefProto DllImport, SymFromNameW, WIN_STD_CALL_CONV,, <:HANDLE, :PCWSTR, :PSYMBOL_INFOW>, 12
     SYMENUM_OPTIONS_DEFAULT equ 00000001h
@@ -1296,10 +1710,14 @@ ifndef _DBGHELP_
     @DefProto DllImport, SymEnumSymbolsExW, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :PCWSTR, :PSYM_ENUMERATESYMBOLS_CALLBACKW, :PVOID, :DWORD>, 24
     @DefProto DllImport, SymEnumSymbolsForAddr, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64, :PSYM_ENUMERATESYMBOLS_CALLBACK, :PVOID>, 16
     @DefProto DllImport, SymEnumSymbolsForAddrW, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64, :PSYM_ENUMERATESYMBOLS_CALLBACKW, :PVOID>, 16
-    SYMSEARCH_MASKOBJS equ 01h
-    SYMSEARCH_RECURSE equ 02h
-    SYMSEARCH_GLOBALSONLY equ 04h
-    SYMSEARCH_ALLITEMS equ 08h
+    SYMSEARCH_MASKOBJS equ 01h; used internally to implement other APIs
+
+    SYMSEARCH_RECURSE equ 02h; recurse scopes
+
+    SYMSEARCH_GLOBALSONLY equ 04h; search only for global symbols
+
+    SYMSEARCH_ALLITEMS equ 08h; search for everything in the pdb, not just normal scoped symbols
+
     @DefProto DllImport, SymSearch, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :DWORD, :DWORD, :PCSTR, :DWORD64, :PSYM_ENUMERATESYMBOLS_CALLBACK, :PVOID, :DWORD>, 36
     @DefProto DllImport, SymSearchW, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :DWORD, :DWORD, :PCWSTR, :DWORD64, :PSYM_ENUMERATESYMBOLS_CALLBACKW, :PVOID, :DWORD>, 36
     @DefProto DllImport, SymGetScope, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :DWORD, :PSYMBOL_INFO>, 16
@@ -1346,32 +1764,32 @@ ifndef _DBGHELP_
     _IMAGEHLP_SYMBOL_TYPE_INFO typedef IMAGEHLP_SYMBOL_TYPE_INFO
 
     TI_FINDCHILDREN_PARAMS struct
-      Count ULONG ?
-      Start ULONG ?
-      ChildId ULONG 1 dup (?)
+      Count DWORD ?
+      Start DWORD ?
+      ChildId DWORD 1 dup (?)
     TI_FINDCHILDREN_PARAMS ends
     _TI_FINDCHILDREN_PARAMS typedef TI_FINDCHILDREN_PARAMS
     @DefProto DllImport, SymGetTypeInfo, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64, :ULONG, :IMAGEHLP_SYMBOL_TYPE_INFO, :PVOID>, 20
     IMAGEHLP_GET_TYPE_INFO_UNCACHED equ 00000001h
     IMAGEHLP_GET_TYPE_INFO_CHILDREN equ 00000002h
     IMAGEHLP_GET_TYPE_INFO_PARAMS struct
-      SizeOfStruct ULONG ?
-      Flags ULONG ?
-      NumIds ULONG ?
+      SizeOfStruct DWORD ?
+      Flags DWORD ?
+      NumIds DWORD ?
       TypeIds PULONG ?
-      TagFilter ULONG64 ?
-      NumReqs ULONG ?
+      TagFilter QWORD ?
+      NumReqs DWORD ?
       ReqKinds POINTER ?
       ReqOffsets PULONG_PTR ?
       ReqSizes PULONG ?
-      ReqStride ULONG_PTR ?
-      BufferSize ULONG_PTR ?
-      Buffer PVOID ?
-      EntriesMatched ULONG ?
-      EntriesFilled ULONG ?
-      TagsFound ULONG64 ?
-      AllReqsValid ULONG64 ?
-      NumReqsValid ULONG ?
+      ReqStride XWORD ?
+      BufferSize XWORD ?
+      Buffer POINTER ?
+      EntriesMatched DWORD ?
+      EntriesFilled DWORD ?
+      TagsFound QWORD ?
+      AllReqsValid QWORD ?
+      NumReqsValid DWORD ?
       ReqsValid PULONG64 ?
     IMAGEHLP_GET_TYPE_INFO_PARAMS ends
     _IMAGEHLP_GET_TYPE_INFO_PARAMS typedef IMAGEHLP_GET_TYPE_INFO_PARAMS
@@ -1387,9 +1805,11 @@ ifndef _DBGHELP_
     @DefProto DllImport, SymAddSymbolW, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :PCWSTR, :DWORD64, :DWORD, :DWORD>, 24
     @DefProto DllImport, SymDeleteSymbol, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :PCSTR, :DWORD64, :DWORD>, 20
     @DefProto DllImport, SymDeleteSymbolW, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :PCWSTR, :DWORD64, :DWORD>, 20
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, SymRefreshModuleList, WIN_STD_CALL_CONV,, <:HANDLE>, 4
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     @DefProto DllImport, SymAddSourceStream, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :PCSTR, :PBYTE, :size_t>, 20
@@ -1414,7 +1834,7 @@ ifndef _DBGHELP_
     SYMSRV_INDEX_INFO struct
       sizeofstruct DWORD ?
       file SBYTE MAX_PATH + 1 dup (?)
-      stripped BOOL ?
+      stripped DWORD ?
       timestamp DWORD ?
       size_ DWORD ?
       dbgfile SBYTE MAX_PATH + 1 dup (?)
@@ -1426,12 +1846,12 @@ ifndef _DBGHELP_
     PSYMSRV_INDEX_INFO typedef ptr SYMSRV_INDEX_INFO
     SYMSRV_INDEX_INFOW struct
       sizeofstruct DWORD ?
-      file WCHAR MAX_PATH + 1 dup (?)
-      stripped BOOL ?
+      file WORD MAX_PATH + 1 dup (?)
+      stripped DWORD ?
       timestamp DWORD ?
       size_ DWORD ?
-      dbgfile WCHAR MAX_PATH + 1 dup (?)
-      pdbfile WCHAR MAX_PATH + 1 dup (?)
+      dbgfile WORD MAX_PATH + 1 dup (?)
+      pdbfile WORD MAX_PATH + 1 dup (?)
       guid GUID <>
       sig DWORD ?
       age DWORD ?
@@ -1442,11 +1862,14 @@ ifndef _DBGHELP_
     @DefProto DllImport, SymSrvStoreSupplement, WIN_STD_CALL_CONV,, <:HANDLE, :PCSTR, :PCSTR, :PCSTR, :DWORD>, 20
     @DefProto DllImport, SymSrvStoreSupplementW, WIN_STD_CALL_CONV,, <:HANDLE, :PCWSTR, :PCWSTR, :PCWSTR, :DWORD>, 20
     @DefProto DllImport, SymSrvStoreFile, WIN_STD_CALL_CONV,, <:HANDLE, :PCSTR, :PCSTR, :DWORD>, 16
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, SymSrvStoreFileW, WIN_STD_CALL_CONV,, <:HANDLE, :PCWSTR, :PCWSTR, :DWORD>, 16
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
+    ; used by SymGetSymbolFile's "Type" parameter
     IMAGEHLP_SF_TYPE typedef SDWORD
     sfImage equ 0
     sfDbg equ 1
@@ -1456,11 +1879,17 @@ ifndef _DBGHELP_
 
     @DefProto DllImport, SymGetSymbolFile, WIN_STD_CALL_CONV,, <:HANDLE, :PCSTR, :PCSTR, :DWORD, :PSTR, :size_t, :PSTR, :size_t>, 32
     @DefProto DllImport, SymGetSymbolFileW, WIN_STD_CALL_CONV,, <:HANDLE, :PCWSTR, :PCWSTR, :DWORD, :PWSTR, :size_t, :PWSTR, :size_t>, 32
+    ; Full user-mode dump creation.
     TYPE_PDBGHELP_CREATE_USER_DUMP_CALLBACK typedef proto WIN_STD_CALL_CONV :DWORD, :ptr PVOID, :LPDWORD, :PVOID
     PDBGHELP_CREATE_USER_DUMP_CALLBACK typedef ptr TYPE_PDBGHELP_CREATE_USER_DUMP_CALLBACK
 
     DbgHelpCreateUserDump proto WIN_STD_CALL_CONV :LPCSTR, :PDBGHELP_CREATE_USER_DUMP_CALLBACK, :PVOID
     DbgHelpCreateUserDumpW proto WIN_STD_CALL_CONV :LPCWSTR, :PDBGHELP_CREATE_USER_DUMP_CALLBACK, :PVOID
+    ; -----------------------------------------------------------------
+    ; The following 4 legacy APIs are fully supported, but newer
+    ; ones are recommended.  SymFromName and SymFromAddr provide
+    ; much more detailed info on the returned symbol.
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, SymGetSymFromAddr64, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD64, :PDWORD64, :PIMAGEHLP_SYMBOL64>, 16
@@ -1469,19 +1898,31 @@ ifndef _DBGHELP_
     else
       @DefProto DllImport, SymGetSymFromAddr, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :PDWORD, :PIMAGEHLP_SYMBOL>, 16
     endif
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
+    ; While following two APIs will provide a symbol from a name,
+    ; SymEnumSymbols can provide the same matching information
+    ; for ALL symbols with a matching name, even regular
+    ; expressions.  That way you can search across modules
+    ; and differentiate between identically named symbols.
     @DefProto DllImport, SymGetSymFromName64, WIN_STD_CALL_CONV,, <:HANDLE, :PCSTR, :PIMAGEHLP_SYMBOL64>, 12
     if  not Defined(_IMAGEHLP_SOURCE_) and Defined(_IMAGEHLP64)
       SymGetSymFromName equ <SymGetSymFromName64>
     else
       @DefProto DllImport, SymGetSymFromName, WIN_STD_CALL_CONV,, <:HANDLE, :PCSTR, :PIMAGEHLP_SYMBOL>, 12
     endif
+    ; Symbol server exports
+    ;  This is the version of the SYMSRV_EXTENDED_OUTPUT_DATA structure.
     EXT_OUTPUT_VER equ 1
+    ;  This structure indicates the Extended Symsrv.dll output data structure
     SYMSRV_EXTENDED_OUTPUT_DATA struct
       sizeOfStruct DWORD ?
+      ; size of the structure
       version DWORD ?
-      filePtrMsg WCHAR MAX_PATH + 1 dup (?)
+      ; version number (EXT_OUTPUT_VER)
+      filePtrMsg WORD MAX_PATH + 1 dup (?)
+      ; File ptr message data buffer
     SYMSRV_EXTENDED_OUTPUT_DATA ends
     PSYMSRV_EXTENDED_OUTPUT_DATA typedef ptr SYMSRV_EXTENDED_OUTPUT_DATA
     TYPE_PSYMBOLSERVERPROC typedef proto WIN_STD_CALL_CONV :PCSTR, :PCSTR, :PVOID, :DWORD, :DWORD, :PSTR
@@ -1608,7 +2049,8 @@ ifndef _DBGHELP_
     SSRVOPT_FLAT_DEFAULT_STORE equ 00020000h
     SSRVOPT_PROXYW equ 00040000h
     SSRVOPT_MESSAGE equ 00080000h
-    SSRVOPT_SERVICE equ 00100000h
+    SSRVOPT_SERVICE equ 00100000h; deprecated
+
     SSRVOPT_FAVOR_COMPRESSED equ 00200000h
     SSRVOPT_STRING equ 00400000h
     SSRVOPT_WINHTTP equ 00800000h
@@ -1632,6 +2074,7 @@ ifndef _DBGHELP_
     SSRVURI_HTTP_MASK equ 0Fh
     SSRVURI_UNC_MASK equ 0F0h
     SSRVURI_ALL equ 0FFh
+    ; Legacy Names
     SSRVURI_NORMAL equ <SSRVURI_HTTP_NORMAL>
     SSRVURI_COMPRESSED equ <SSRVURI_HTTP_COMPRESSED>
     SSRVURI_FILEPTR equ <SSRVURI_HTTP_FILEPTR>
@@ -1644,6 +2087,7 @@ ifndef _DBGHELP_
     SSRVACTION_XMLOUTPUT equ 7
     SSRVACTION_CHECKSUMSTATUS equ 8
   endif
+  ; WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     SYMSTOREOPT_COMPRESS equ 01h
     SYMSTOREOPT_OVERWRITE equ 02h
@@ -1652,6 +2096,7 @@ ifndef _DBGHELP_
     SYMSTOREOPT_ALT_INDEX equ 10h
     SYMSTOREOPT_UNICODE equ 20h
     SYMSTOREOPT_PASS_IF_EXISTS equ 40h
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
     ifdef DBGHELP_TRANSLATE_TCHAR
@@ -1749,7 +2194,15 @@ ifndef _DBGHELP_
       PSYMBOLSERVERPROC equ <PSYMBOLSERVERPROCW>
       PSYMBOLSERVERPINGPROC equ <PSYMBOLSERVERPINGPROCW>
     endif
+    ; WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS)
+    ; -----------------------------------------------------------------
+    ; The following APIs exist only for backwards compatibility
+    ; with a pre-release version documented in an MSDN release.
+    ; You should use SymFindFileInPath if you want to maintain
+    ; future compatibility.
     @DefProto DllImport, FindFileInPath, WIN_STD_CALL_CONV,, <:HANDLE, :PCSTR, :PCSTR, :PVOID, :DWORD, :DWORD, :DWORD, :PSTR>, 32
+    ; You should use SymFindFileInPath if you want to maintain
+    ; future compatibility.
     @DefProto DllImport, FindFileInSearchPath, WIN_STD_CALL_CONV,, <:HANDLE, :PCSTR, :PCSTR, :DWORD, :DWORD, :DWORD, :PSTR>, 28
     @DefProto DllImport, SymEnumSym, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :PSYM_ENUMERATESYMBOLS_CALLBACK, :PVOID>, 16
     @DefProto DllImport, SymEnumerateSymbols64, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG64, :PSYM_ENUMSYMBOLS_CALLBACK64, :PVOID>, 16
@@ -1761,6 +2214,7 @@ ifndef _DBGHELP_
       @DefProto DllImport, SymEnumerateSymbols, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG, :PSYM_ENUMSYMBOLS_CALLBACK, :PVOID>, 16
       @DefProto DllImport, SymEnumerateSymbolsW, WIN_STD_CALL_CONV,, <:HANDLE, :ULONG, :PSYM_ENUMSYMBOLS_CALLBACKW, :PVOID>, 16
     endif
+    ; use SymLoadModuleEx
     @DefProto DllImport, SymLoadModule64, WIN_STD_CALL_CONV,, <:HANDLE, :HANDLE, :PCSTR, :PCSTR, :DWORD64, :DWORD>, 24
     if  not Defined(_IMAGEHLP_SOURCE_) and Defined(_IMAGEHLP64)
       SymLoadModule equ <SymLoadModule64>
@@ -1785,9 +2239,11 @@ ifndef _DBGHELP_
       @DefProto DllImport, SymGetSymPrev, WIN_STD_CALL_CONV,, <:HANDLE, :PIMAGEHLP_SYMBOL>, 8
       @DefProto DllImport, SymGetSymPrevW, WIN_STD_CALL_CONV,, <:HANDLE, :PIMAGEHLP_SYMBOLW>, 8
     endif
+    ;  This type indicates the call back function type
     TYPE_LPCALL_BACK_USER_INTERRUPT_ROUTINE typedef proto WIN_STD_CALL_CONV :VOID
     LPCALL_BACK_USER_INTERRUPT_ROUTINE typedef ptr TYPE_LPCALL_BACK_USER_INTERRUPT_ROUTINE
 
+    ;  Extra data to report for the symbol load summary
     DBGHELP_DATA_REPORT_STRUCT struct
       pBinPathNonExist PCWSTR ?
       pSymbolPathNonExist PCWSTR ?
@@ -1799,6 +2255,8 @@ ifndef _DBGHELP_
     @DefProto DllImport, SetSymLoadError, WIN_STD_CALL_CONV,, <:DWORD>, 4
     @DefProto DllImport, ReportSymbolLoadSummary, WIN_STD_CALL_CONV,, <:HANDLE, :PCWSTR, :PDBGHELP_DATA_REPORT_STRUCT>, 12
     @DefProto DllImport, RemoveInvalidModuleList, WIN_STD_CALL_CONV,, <:HANDLE>, 4
+    ; These values should not be used.
+    ; They have been replaced by SYMFLAG_ values.
     SYMF_OMAP_GENERATED equ 00000001h
     SYMF_OMAP_MODIFIED equ 00000002h
     SYMF_REGISTER equ 00000008h
@@ -1813,17 +2271,30 @@ ifndef _DBGHELP_
     SYMF_VIRTUAL equ 00001000h
     SYMF_THUNK equ 00002000h
     SYMF_TLSREL equ 00004000h
+    ; These values should also not be used.
+    ; They have been replaced by SYMFLAG_ values.
     IMAGEHLP_SYMBOL_INFO_VALUEPRESENT equ 1
-    IMAGEHLP_SYMBOL_INFO_REGISTER equ <SYMF_REGISTER>
-    IMAGEHLP_SYMBOL_INFO_REGRELATIVE equ <SYMF_REGREL>
-    IMAGEHLP_SYMBOL_INFO_FRAMERELATIVE equ <SYMF_FRAMEREL>
-    IMAGEHLP_SYMBOL_INFO_PARAMETER equ <SYMF_PARAMETER>
-    IMAGEHLP_SYMBOL_INFO_LOCAL equ <SYMF_LOCAL>
-    IMAGEHLP_SYMBOL_INFO_CONSTANT equ <SYMF_CONSTANT>
-    IMAGEHLP_SYMBOL_FUNCTION equ <SYMF_FUNCTION>
-    IMAGEHLP_SYMBOL_VIRTUAL equ <SYMF_VIRTUAL>
-    IMAGEHLP_SYMBOL_THUNK equ <SYMF_THUNK>
-    IMAGEHLP_SYMBOL_INFO_TLSRELATIVE equ <SYMF_TLSREL>
+    IMAGEHLP_SYMBOL_INFO_REGISTER equ <SYMF_REGISTER>; 0x0008
+
+    IMAGEHLP_SYMBOL_INFO_REGRELATIVE equ <SYMF_REGREL>; 0x0010
+
+    IMAGEHLP_SYMBOL_INFO_FRAMERELATIVE equ <SYMF_FRAMEREL>; 0x0020
+
+    IMAGEHLP_SYMBOL_INFO_PARAMETER equ <SYMF_PARAMETER>; 0x0040
+
+    IMAGEHLP_SYMBOL_INFO_LOCAL equ <SYMF_LOCAL>; 0x0080
+
+    IMAGEHLP_SYMBOL_INFO_CONSTANT equ <SYMF_CONSTANT>; 0x0100
+
+    IMAGEHLP_SYMBOL_FUNCTION equ <SYMF_FUNCTION>; 0x0800
+
+    IMAGEHLP_SYMBOL_VIRTUAL equ <SYMF_VIRTUAL>; 0x1000
+
+    IMAGEHLP_SYMBOL_THUNK equ <SYMF_THUNK>; 0x2000
+
+    IMAGEHLP_SYMBOL_INFO_TLSRELATIVE equ <SYMF_TLSREL>; 0x4000
+
+    ; RangeMap APIs.
     @DefProto DllImport, RangeMapCreate, WIN_STD_CALL_CONV,, <>, 0
     @DefProto DllImport, RangeMapFree, WIN_STD_CALL_CONV,, <:PVOID>, 4
     IMAGEHLP_RMAP_MAPPED_FLAT equ 00000001h
@@ -1837,6 +2308,7 @@ ifndef _DBGHELP_
     @DefProto DllImport, RangeMapRemove, WIN_STD_CALL_CONV,, <:PVOID, :DWORD64>, 8
     @DefProto DllImport, RangeMapRead, WIN_STD_CALL_CONV,, <:PVOID, :DWORD64, :PVOID, :DWORD, :DWORD, :PDWORD>, 24
     @DefProto DllImport, RangeMapWrite, WIN_STD_CALL_CONV,, <:PVOID, :DWORD64, :PVOID, :DWORD, :DWORD, :PDWORD>, 24
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
   if WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS or WINAPI_PARTITION_GAMES)
     ifdef __cplusplus
@@ -1844,5 +2316,7 @@ ifndef _DBGHELP_
     endif
     include poppack.inc
     include minidumpapiset.inc
+    ;* WINAPI_FAMILY_PARTITION(NONGAMESPARTITIONS) *
   endif
 endif
+; _DBGHELP_

@@ -1,9 +1,10 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\gdiplusfontfamily.h\gdiplusfontfamily.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\gdiplusfontfamily.h
 ;             Created on (UTC) 06/04/2024 06:15:55
 ;             Last modified on (UTC) 16/12/2023 11:07:10
 
+;\**************************************************************************
 ifndef _GDIPLUS_FONT_FAMILY_H
   _GDIPLUS_FONT_FAMILY_H equ <>
   include winapifamily.inc
@@ -37,5 +38,6 @@ ifndef _GDIPLUS_FONT_FAMILY_H
     SetStatus proto WIN_STD_CALL_CONV :Status
     if_ proto WIN_STD_CALL_CONV :status
     return proto WIN_STD_CALL_CONV :lastResult
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
 endif

@@ -1,11 +1,13 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\fileapi.h\fileapi.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\fileapi.h
 ;             Created on (UTC) 06/04/2024 06:15:55
 ;             Last modified on (UTC) 21/02/2024 18:13:14
 
+;********************************************************************************
 ifdef _MSC_VER
 endif
+; _MSC_VER
 ifndef _APISETFILE_
   _APISETFILE_ equ <>
   include apiset.inc
@@ -16,6 +18,7 @@ ifndef _APISETFILE_
     ;[...]
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    ; Constants
     CREATE_NEW equ 1
     CREATE_ALWAYS equ 2
     OPEN_EXISTING equ 3
@@ -32,6 +35,8 @@ ifndef _APISETFILE_
     else
       CreateDirectory equ <CreateDirectoryA>
     endif
+    ; !UNICODE
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, CreateFileA, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD, :DWORD, :LPSECURITY_ATTRIBUTES, :DWORD, :DWORD, :HANDLE>, 28
@@ -41,13 +46,16 @@ ifndef _APISETFILE_
     else
       CreateFile equ <CreateFileA>
     endif
+    ; !UNICODE
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, DefineDosDeviceW, WIN_STD_CALL_CONV,, <:DWORD, :LPCWSTR, :LPCWSTR>, 12
     ifdef UNICODE
       DefineDosDevice equ <DefineDosDeviceW>
     endif
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, DeleteFileA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
     @DefProto DllImport, DeleteFileW, WIN_STD_CALL_CONV,, <:LPCWSTR>, 4
@@ -56,18 +64,23 @@ ifndef _APISETFILE_
     else
       DeleteFile equ <DeleteFileA>
     endif
+    ; !UNICODE
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, DeleteVolumeMountPointW, WIN_STD_CALL_CONV,, <:LPCWSTR>, 4
     ifdef UNICODE
       DeleteVolumeMountPoint equ <DeleteVolumeMountPointW>
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, FileTimeToLocalFileTime, WIN_STD_CALL_CONV,, <:ptr FILETIME, :LPFILETIME>, 8
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, FindClose, WIN_STD_CALL_CONV,, <:HANDLE>, 4
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, FindCloseChangeNotification, WIN_STD_CALL_CONV,, <:HANDLE>, 4
@@ -78,7 +91,9 @@ ifndef _APISETFILE_
     else
       FindFirstChangeNotification equ <FindFirstChangeNotificationA>
     endif
+    ; !UNICODE
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, FindFirstFileA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPWIN32_FIND_DATAA>, 8
     @DefProto DllImport, FindFirstFileW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPWIN32_FIND_DATAW>, 8
@@ -87,6 +102,7 @@ ifndef _APISETFILE_
     else
       FindFirstFile equ <FindFirstFileA>
     endif
+    ; !UNICODE
     if (_WIN32_WINNT ge 0400h)
       @DefProto DllImport, FindFirstFileExA, WIN_STD_CALL_CONV,, <:LPCSTR, :FINDEX_INFO_LEVELS, :LPVOID, :FINDEX_SEARCH_OPS, :LPVOID, :DWORD>, 24
       @DefProto DllImport, FindFirstFileExW, WIN_STD_CALL_CONV,, <:LPCWSTR, :FINDEX_INFO_LEVELS, :LPVOID, :FINDEX_SEARCH_OPS, :LPVOID, :DWORD>, 24
@@ -95,15 +111,20 @@ ifndef _APISETFILE_
       else
         FindFirstFileEx equ <FindFirstFileExA>
       endif
+      ; !UNICODE
+      ;* _WIN32_WINNT >= 0x0400 *
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, FindFirstVolumeW, WIN_STD_CALL_CONV,, <:LPWSTR, :DWORD>, 8
     ifdef UNICODE
       FindFirstVolume equ <FindFirstVolumeW>
     endif
+    ; !UNICODE
     @DefProto DllImport, FindNextChangeNotification, WIN_STD_CALL_CONV,, <:HANDLE>, 4
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, FindNextFileA, WIN_STD_CALL_CONV,, <:HANDLE, :LPWIN32_FIND_DATAA>, 8
     @DefProto DllImport, FindNextFileW, WIN_STD_CALL_CONV,, <:HANDLE, :LPWIN32_FIND_DATAW>, 8
@@ -112,6 +133,8 @@ ifndef _APISETFILE_
     else
       FindNextFile equ <FindNextFileA>
     endif
+    ; !UNICODE
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, FindNextVolumeW, WIN_STD_CALL_CONV,, <:HANDLE, :LPWSTR, :DWORD>, 12
@@ -119,6 +142,7 @@ ifndef _APISETFILE_
       FindNextVolume equ <FindNextVolumeW>
     endif
     @DefProto DllImport, FindVolumeClose, WIN_STD_CALL_CONV,, <:HANDLE>, 4
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, FlushFileBuffers, WIN_STD_CALL_CONV,, <:HANDLE>, 4
@@ -129,6 +153,7 @@ ifndef _APISETFILE_
     else
       GetDiskFreeSpace equ <GetDiskFreeSpaceA>
     endif
+    ; !UNICODE
     @DefProto DllImport, GetDiskFreeSpaceExA, WIN_STD_CALL_CONV,, <:LPCSTR, :PULARGE_INTEGER, :PULARGE_INTEGER, :PULARGE_INTEGER>, 16
     @DefProto DllImport, GetDiskFreeSpaceExW, WIN_STD_CALL_CONV,, <:LPCWSTR, :PULARGE_INTEGER, :PULARGE_INTEGER, :PULARGE_INTEGER>, 16
     ifdef UNICODE
@@ -136,20 +161,57 @@ ifndef _APISETFILE_
     else
       GetDiskFreeSpaceEx equ <GetDiskFreeSpaceExA>
     endif
+    ; !UNICODE
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    ;  The structure definition must be same as the one
+    ;  (FILE_FS_FULL_SIZE_INFORMATION_EX) defined in ntioapi_x.w
     DISK_SPACE_INFORMATION struct
-      ActualTotalAllocationUnits ULONGLONG ?
-      ActualAvailableAllocationUnits ULONGLONG ?
-      ActualPoolUnavailableAllocationUnits ULONGLONG ?
-      CallerTotalAllocationUnits ULONGLONG ?
-      CallerAvailableAllocationUnits ULONGLONG ?
-      CallerPoolUnavailableAllocationUnits ULONGLONG ?
-      UsedAllocationUnits ULONGLONG ?
-      TotalReservedAllocationUnits ULONGLONG ?
-      VolumeStorageReserveAllocationUnits ULONGLONG ?
-      AvailableCommittedAllocationUnits ULONGLONG ?
-      PoolAvailableAllocationUnits ULONGLONG ?
+      ;  AllocationUnits are actually file system clusters.
+      ;  AllocationUnits * SectorsPerAllocationUnit * BytesPerSector
+      ;  will get you the sizes in bytes.
+      ;  The Actual*AllocationUnits are volume sizes without considering Quota
+      ;  setting.
+      ;  ActualPoolUnavailableAllocationUnits is the unavailable space for the
+      ;  volume due to insufficient free pool space (PoolAvailableAllocationUnits).
+      ;  Be aware AllocationUnits are mesured in clusters, see comments at the beginning.
+      ;  ActualTotalAllocationUnits = ActualAvailableAllocationUnits +
+      ;                               ActualPoolUnavailableAllocationUnits +
+      ;                               UsedAllocationUnits +
+      ;                               TotalReservedAllocationUnits
+      ActualTotalAllocationUnits QWORD ?
+      ActualAvailableAllocationUnits QWORD ?
+      ActualPoolUnavailableAllocationUnits QWORD ?
+      ;  The Caller*AllocationUnits are limited by Quota setting.
+      ;  CallerPoolUnavailableAllocationUnits is the unavailable space for the
+      ;  volume due to insufficient free pool space (PoolAvailableAllocationUnits).
+      ;  Be aware AllocationUnits are mesured in clusters, see comments at the beginning.
+      ;  CallerTotalAllocationUnits = CallerAvailableAllocationUnits +
+      ;                               CallerPoolUnavailableAllocationUnits +
+      ;                               UsedAllocationUnits +
+      ;                               TotalReservedAllocationUnits
+      CallerTotalAllocationUnits QWORD ?
+      CallerAvailableAllocationUnits QWORD ?
+      CallerPoolUnavailableAllocationUnits QWORD ?
+      ;  The used space (in clusters) of the volume.
+      UsedAllocationUnits QWORD ?
+      ;  Total reserved space (in clusters).
+      TotalReservedAllocationUnits QWORD ?
+      ;  A special type of reserved space (in clusters) for per-volume storage
+      ;  reserve and this is included in the above TotalReservedAllocationUnits.
+      VolumeStorageReserveAllocationUnits QWORD ?
+      ;  This refers to the space (in clusters) that has been committed by
+      ;  storage pool but has not been allocated by file system.
+      ;  s1 = (ActualTotalAllocationUnits - UsedAllocationUnits - TotalReservedAllocationUnits)
+      ;  s2 = (AvailableCommittedAllocationUnits + PoolAvailableAllocationUnits)
+      ;  ActualAvailableAllocationUnits = min( s1, s2 )
+      ;  When s1 >= s2, ActualPoolUnavailableAllocationUnits = 0
+      ;  When s1 < s2, ActualPoolUnavailableAllocationUnits = s2 - s1.
+      AvailableCommittedAllocationUnits QWORD ?
+      ;  Available space (in clusters) in corresponding storage pool. If the volume
+      ;  is not a spaces volume, the PoolAvailableAllocationUnits is set to zero.
+      PoolAvailableAllocationUnits QWORD ?
       SectorsPerAllocationUnit DWORD ?
       BytesPerSector DWORD ?
     DISK_SPACE_INFORMATION ends
@@ -160,6 +222,8 @@ ifndef _APISETFILE_
     else
       GetDiskSpaceInformation equ <GetDiskSpaceInformationA>
     endif
+    ; !UNICODE
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, GetDriveTypeA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
@@ -169,6 +233,7 @@ ifndef _APISETFILE_
     else
       GetDriveType equ <GetDriveTypeA>
     endif
+    ; !UNICODE
     WIN32_FILE_ATTRIBUTE_DATA struct
       dwFileAttributes DWORD ?
       ftCreationTime FILETIME <>
@@ -186,6 +251,7 @@ ifndef _APISETFILE_
     else
       GetFileAttributes equ <GetFileAttributesA>
     endif
+    ; !UNICODE
     @DefProto DllImport, GetFileAttributesExA, WIN_STD_CALL_CONV,, <:LPCSTR, :GET_FILEEX_INFO_LEVELS, :LPVOID>, 12
     @DefProto DllImport, GetFileAttributesExW, WIN_STD_CALL_CONV,, <:LPCWSTR, :GET_FILEEX_INFO_LEVELS, :LPVOID>, 12
     ifdef UNICODE
@@ -193,6 +259,7 @@ ifndef _APISETFILE_
     else
       GetFileAttributesEx equ <GetFileAttributesExA>
     endif
+    ; !UNICODE
     BY_HANDLE_FILE_INFORMATION struct
       dwFileAttributes DWORD ?
       ftCreationTime FILETIME <>
@@ -209,10 +276,12 @@ ifndef _APISETFILE_
     PBY_HANDLE_FILE_INFORMATION typedef ptr BY_HANDLE_FILE_INFORMATION
     LPBY_HANDLE_FILE_INFORMATION typedef ptr BY_HANDLE_FILE_INFORMATION
     @DefProto DllImport, GetFileInformationByHandle, WIN_STD_CALL_CONV,, <:HANDLE, :LPBY_HANDLE_FILE_INFORMATION>, 8
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, GetFileSize, WIN_STD_CALL_CONV,, <:HANDLE, :LPDWORD>, 8
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, GetFileSizeEx, WIN_STD_CALL_CONV,, <:HANDLE, :PLARGE_INTEGER>, 8
     @DefProto DllImport, GetFileType, WIN_STD_CALL_CONV,, <:HANDLE>, 4
@@ -224,7 +293,9 @@ ifndef _APISETFILE_
       else
         GetFinalPathNameByHandle equ <GetFinalPathNameByHandleA>
       endif
+      ; !UNICODE
     endif
+    ; (_WIN32_WINNT >= 0x0600)
     @DefProto DllImport, GetFileTime, WIN_STD_CALL_CONV,, <:HANDLE, :LPFILETIME, :LPFILETIME, :LPFILETIME>, 16
     @DefProto DllImport, GetFullPathNameW, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :LPWSTR, :ptr LPWSTR>, 16
     ifdef UNICODE
@@ -235,12 +306,14 @@ ifndef _APISETFILE_
       GetFullPathName equ <GetFullPathNameA>
     endif
     @DefProto DllImport, GetLogicalDrives, WIN_STD_CALL_CONV,, <>, 0
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetLogicalDriveStringsW, WIN_STD_CALL_CONV,, <:DWORD, :LPWSTR>, 8
     ifdef UNICODE
       GetLogicalDriveStrings equ <GetLogicalDriveStringsW>
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetLongPathNameA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPSTR, :DWORD>, 12
@@ -251,25 +324,30 @@ ifndef _APISETFILE_
     ifdef UNICODE
       GetLongPathName equ <GetLongPathNameW>
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if (NTDDI_VERSION ge NTDDI_WIN10_FE)
       @DefProto DllImport, AreShortNamesEnabled, WIN_STD_CALL_CONV,, <:HANDLE, :ptr BOOL>, 8
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_FE)
     @DefProto DllImport, GetShortPathNameW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPWSTR, :DWORD>, 12
     ifdef UNICODE
       GetShortPathName equ <GetShortPathNameW>
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetTempFileNameW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :UINT, :LPWSTR>, 16
     ifdef UNICODE
       GetTempFileName equ <GetTempFileNameW>
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, GetVolumeInformationByHandleW, WIN_STD_CALL_CONV,, <:HANDLE, :LPWSTR, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPWSTR, :DWORD>, 32
+      ;* _WIN32_WINNT >=  0x0600 *
     endif
     @DefProto DllImport, GetVolumeInformationW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPWSTR, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPWSTR, :DWORD>, 32
     ifdef UNICODE
@@ -282,12 +360,14 @@ ifndef _APISETFILE_
     @DefProto DllImport, LocalFileTimeToFileTime, WIN_STD_CALL_CONV,, <:ptr FILETIME, :LPFILETIME>, 8
     @DefProto DllImport, LockFile, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :DWORD, :DWORD, :DWORD>, 20
     @DefProto DllImport, LockFileEx, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :DWORD, :DWORD, :DWORD, :LPOVERLAPPED>, 24
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, QueryDosDeviceW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPWSTR, :DWORD>, 12
     ifdef UNICODE
       QueryDosDevice equ <QueryDosDeviceW>
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, ReadFile, WIN_STD_CALL_CONV,, <:HANDLE, :LPVOID, :DWORD, :LPDWORD, :LPOVERLAPPED>, 20
@@ -300,6 +380,7 @@ ifndef _APISETFILE_
     else
       RemoveDirectory equ <RemoveDirectoryA>
     endif
+    ; !UNICODE
     @DefProto DllImport, SetEndOfFile, WIN_STD_CALL_CONV,, <:HANDLE>, 4
     @DefProto DllImport, SetFileAttributesA, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD>, 8
     @DefProto DllImport, SetFileAttributesW, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD>, 8
@@ -308,6 +389,7 @@ ifndef _APISETFILE_
     else
       SetFileAttributes equ <SetFileAttributesA>
     endif
+    ; !UNICODE
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, SetFileInformationByHandle, WIN_STD_CALL_CONV,, <:HANDLE, :FILE_INFO_BY_HANDLE_CLASS, :LPVOID, :DWORD>, 16
     endif
@@ -317,6 +399,7 @@ ifndef _APISETFILE_
     if _WIN32_WINNT ge 0501h
       @DefProto DllImport, SetFileValidData, WIN_STD_CALL_CONV,, <:HANDLE, :LONGLONG>, 8
     endif
+    ; (_WIN32_WINNT >= 0x0501)
     @DefProto DllImport, UnlockFile, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :DWORD, :DWORD, :DWORD>, 20
     @DefProto DllImport, UnlockFileEx, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :DWORD, :DWORD, :LPOVERLAPPED>, 20
     @DefProto DllImport, WriteFile, WIN_STD_CALL_CONV,, <:HANDLE, :LPCVOID, :DWORD, :LPDWORD, :LPOVERLAPPED>, 20
@@ -326,12 +409,14 @@ ifndef _APISETFILE_
     ifdef UNICODE
       GetTempPath equ <GetTempPathW>
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetVolumeNameForVolumeMountPointW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPWSTR, :DWORD>, 12
     ifdef UNICODE
       GetVolumeNameForVolumeMountPoint equ <GetVolumeNameForVolumeMountPointW>
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if (_WIN32_WINNT ge 0501h)
@@ -340,6 +425,8 @@ ifndef _APISETFILE_
         GetVolumePathNamesForVolumeName equ <GetVolumePathNamesForVolumeNameW>
       endif
     endif
+    ; _WIN32_WINNT >= 0x0501
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if (_WIN32_WINNT ge 0602h)
@@ -356,11 +443,14 @@ ifndef _APISETFILE_
       LPCREATEFILE2_EXTENDED_PARAMETERS typedef ptr CREATEFILE2_EXTENDED_PARAMETERS
       @DefProto DllImport, CreateFile2, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :DWORD, :DWORD, :LPCREATEFILE2_EXTENDED_PARAMETERS>, 20
     endif
+    ; _WIN32_WINNT >= 0x0602
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, SetFileIoOverlappedRange, WIN_STD_CALL_CONV,, <:HANDLE, :PUCHAR, :ULONG>, 12
     endif
+    ; _WIN32_WINNT >= 0x0600
     if _WIN32_WINNT ge 0501h
       @DefProto DllImport, GetCompressedFileSizeA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPDWORD>, 8
       @DefProto DllImport, GetCompressedFileSizeW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPDWORD>, 8
@@ -369,7 +459,9 @@ ifndef _APISETFILE_
       else
         GetCompressedFileSize equ <GetCompressedFileSizeA>
       endif
+      ; !UNICODE
     endif
+    ; _WIN32_WINNT >= 0x0501
     if (_WIN32_WINNT ge 0501h)
       STREAM_INFO_LEVELS typedef SDWORD
       FindStreamInfoStandard equ 0
@@ -378,44 +470,53 @@ ifndef _APISETFILE_
 
       WIN32_FIND_STREAM_DATA struct
         StreamSize LARGE_INTEGER <>
-        cStreamName WCHAR MAX_PATH + 36 dup (?)
+        cStreamName WORD MAX_PATH + 36 dup (?)
       WIN32_FIND_STREAM_DATA ends
       _WIN32_FIND_STREAM_DATA typedef WIN32_FIND_STREAM_DATA
       PWIN32_FIND_STREAM_DATA typedef ptr WIN32_FIND_STREAM_DATA
       @DefProto DllImport, FindFirstStreamW, WIN_STD_CALL_CONV,, <:LPCWSTR, :STREAM_INFO_LEVELS, :LPVOID, :DWORD>, 16
       @DefProto DllImport, FindNextStreamW, WIN_STD_CALL_CONV,, <:HANDLE, :LPVOID>, 8
     endif
+    ; (_WIN32_WINNT >= 0x0501)
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, AreFileApisANSI, WIN_STD_CALL_CONV,, <>, 0
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, GetTempPathA, WIN_STD_CALL_CONV,, <:DWORD, :LPSTR>, 8
     ifndef UNICODE
       GetTempPath equ <GetTempPathA>
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if _WIN32_WINNT ge 0600h
       @DefProto DllImport, FindFirstFileNameW, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :LPDWORD, :PWSTR>, 16
       @DefProto DllImport, FindNextFileNameW, WIN_STD_CALL_CONV,, <:HANDLE, :LPDWORD, :PWSTR>, 12
     endif
+    ; (_WIN32_WINNT >= 0x0600)
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, GetVolumeInformationA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPSTR, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPSTR, :DWORD>, 32
     ifndef UNICODE
       GetVolumeInformation equ <GetVolumeInformationA>
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetTempFileNameA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :UINT, :LPSTR>, 16
     ifndef UNICODE
       GetTempFileName equ <GetTempFileNameA>
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, SetFileApisToOEM, WIN_STD_CALL_CONV,, <>, 0
     @DefProto DllImport, SetFileApisToANSI, WIN_STD_CALL_CONV,, <>, 0
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if (NTDDI_VERSION ge NTDDI_WIN10_FE)
@@ -428,8 +529,11 @@ ifndef _APISETFILE_
         GetTempPath2 equ <GetTempPath2A>
       endif
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_FE)
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   ifdef __cplusplus
     ;[...]
   endif
 endif
+; _APISETFILE_

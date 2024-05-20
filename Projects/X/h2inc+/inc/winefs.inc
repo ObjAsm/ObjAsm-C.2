@@ -1,95 +1,139 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winefs.h\winefs.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winefs.h
 ;             Created on (UTC) 06/04/2024 06:16:03
 ;             Last modified on (UTC) 16/12/2023 11:07:16
 
 include winapifamily.inc
+;+---------------------------------------------------------------------------
+;  Microsoft Windows
+;  Copyright (C) Microsoft Corporation, 1992-1999.
+;  File:       winefs.h
+;  Contents:   EFS Data and prototypes.
+;----------------------------------------------------------------------------
 ifndef __WINEFS_H__
   __WINEFS_H__ equ <>
+  ; winefs.h was not available at all pre-W2K
   if (NTDDI_VERSION ge NTDDI_WIN2K)
     if _MSC_VER gt 1000
     endif
     if _MSC_VER ge 1200
+      ; padding added after data member
     endif
     ifdef __cplusplus
       ;[...]
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       WINEFS_SETUSERKEY_SET_CAPABILITIES equ 00000001h
+      ;+---------------------------------------------------------------------------------/
+      ;                                                                                  /
+      ;                                                                                  /
+      ;                          Data Structures                                         /
+      ;                                                                                  /
+      ;                                                                                  /
+      ;----------------------------------------------------------------------------------/
+      ; ALG_ID define is used as part of EFS_KEY_INFO (not available pre-WXP)
       if (NTDDI_VERSION ge NTDDI_WINXP)
         ifndef ALGIDDEF
           ALGIDDEF equ <>
           ALG_ID typedef DWORD
         endif
       endif
+      ;  Encoded Certificate
+      ; MIDL_PASS
+      ; MIDL_PASS
       EFS_CERTIFICATE_BLOB struct
         dwCertEncodingType DWORD ?
         ifdef MIDL_PASS
           ;[...]
         endif
+        ; MIDL_PASS
         cbData DWORD ?
         ifdef MIDL_PASS
           ;[...]
         endif
-        pbData PBYTE ?
+        ; MIDL_PASS
+        pbData POINTER ?
       EFS_CERTIFICATE_BLOB ends
       _CERTIFICATE_BLOB typedef EFS_CERTIFICATE_BLOB
       PEFS_CERTIFICATE_BLOB typedef ptr EFS_CERTIFICATE_BLOB
+      ;  Certificate Hash
+      ; MIDL_PASS
+      ; MIDL_PASS
       EFS_HASH_BLOB struct
         ifdef MIDL_PASS
           ;[...]
         endif
+        ; MIDL_PASS
         cbData DWORD ?
         ifdef MIDL_PASS
           ;[...]
         endif
-        pbData PBYTE ?
+        ; MIDL_PASS
+        pbData POINTER ?
       EFS_HASH_BLOB ends
       _EFS_HASH_BLOB typedef EFS_HASH_BLOB
       PEFS_HASH_BLOB typedef ptr EFS_HASH_BLOB
+      ; EFS_RPC_BLOB was not available pre-WXP
       if (NTDDI_VERSION ge NTDDI_WINXP)
+        ;  RPC blob
+        ; MIDL_PASS
+        ; MIDL_PASS
         EFS_RPC_BLOB struct
           ifdef MIDL_PASS
             ;[...]
           endif
+          ; MIDL_PASS
           cbData DWORD ?
           ifdef MIDL_PASS
             ;[...]
           endif
-          pbData PBYTE ?
+          ; MIDL_PASS
+          pbData POINTER ?
         EFS_RPC_BLOB ends
         _EFS_RPC_BLOB typedef EFS_RPC_BLOB
         PEFS_RPC_BLOB typedef ptr EFS_RPC_BLOB
       endif
+      ; #if (NTDDI_VERSION >= NTDDI_WINXP)
+      ; EFS_PIN_BLOB was not available pre-LH
       if (NTDDI_VERSION ge NTDDI_VISTA)
+        ; MIDL_PASS  
+        ; MIDL_PASS
+        ; MIDL_PASS
         EFS_PIN_BLOB struct
           ifdef MIDL_PASS
             ;[...]
           endif
+          ; MIDL_PASS  
           cbPadding DWORD ?
           ifdef MIDL_PASS
             ;[...]
           endif
+          ; MIDL_PASS
           cbData DWORD ?
           ifdef MIDL_PASS
             ;[...]
           endif
-          pbData PBYTE ?
+          ; MIDL_PASS
+          pbData POINTER ?
         EFS_PIN_BLOB ends
         _EFS_PIN_BLOB typedef EFS_PIN_BLOB
         PEFS_PIN_BLOB typedef ptr EFS_PIN_BLOB
       endif
+      ; #if (NTDDI_VERSION >= NTDDI_VISTA) 
+      ; EFS_KEY_INFO was not available pre-WXP
       if (NTDDI_VERSION ge NTDDI_WINXP)
         EFS_KEY_INFO struct
           dwVersion DWORD ?
-          Entropy ULONG ?
+          Entropy DWORD ?
           Algorithm ALG_ID ?
-          KeyLength ULONG ?
+          KeyLength DWORD ?
         EFS_KEY_INFO ends
         _EFS_KEY_INFO typedef EFS_KEY_INFO
         PEFS_KEY_INFO typedef ptr EFS_KEY_INFO
       endif
+      ; #if (NTDDI_VERSION >= NTDDI_WINXP)
+      ; EFS_COMPATIBILITY_INFO was not available pre-Windows 7
       if (NTDDI_VERSION ge NTDDI_WIN7)
         EFS_COMPATIBILITY_INFO struct
           EfsVersion DWORD ?
@@ -97,9 +141,11 @@ ifndef __WINEFS_H__
         _EFS_COMPATIBILITY_INFO typedef EFS_COMPATIBILITY_INFO
         PEFS_COMPATIBILITY_INFO typedef ptr EFS_COMPATIBILITY_INFO
       endif
+      ; #if (NTDDI_VERSION >= NTDDI_WIN7)
       if (NTDDI_VERSION ge NTDDI_WINBLUE)
         EFS_COMPATIBILITY_VERSION_NCRYPT_PROTECTOR equ 5
       endif
+      ; #if (NTDDI_VERSION >= NTDDI_WINBLUE)
       if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
         EFS_COMPATIBILITY_VERSION_PFILE_PROTECTOR equ 6
         EFS_IS_DESCRIPTOR_VERSION macro __v
@@ -119,6 +165,8 @@ ifndef __WINEFS_H__
           exitm <((__v == EFS_COMPATIBILITY_VERSION_PFILE_PROTECTOR) and (__subV == EFS_PFILE_SUBVER_APPX))>
         endm
       endif
+      ; #if (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
+      ; EFS_(EN/DE)CRYPTION_STATUS_INFO was not available pre-LH
       if (NTDDI_VERSION ge NTDDI_VISTA)
         EFS_DECRYPTION_STATUS_INFO struct
           dwDecryptionError DWORD ?
@@ -128,12 +176,14 @@ ifndef __WINEFS_H__
         _EFS_DECRYPTION_STATUS_INFO typedef EFS_DECRYPTION_STATUS_INFO
         PEFS_DECRYPTION_STATUS_INFO typedef ptr EFS_DECRYPTION_STATUS_INFO
         EFS_ENCRYPTION_STATUS_INFO struct
-          bHasCurrentKey BOOL ?
+          bHasCurrentKey DWORD ?
           dwEncryptionError DWORD ?
         EFS_ENCRYPTION_STATUS_INFO ends
         _EFS_ENCRYPTION_STATUS_INFO typedef EFS_ENCRYPTION_STATUS_INFO
         PEFS_ENCRYPTION_STATUS_INFO typedef ptr EFS_ENCRYPTION_STATUS_INFO
       endif
+      ; #if (NTDDI_VERSION >= NTDDI_VISTA) 
+      ; Input to add a user to an encrypted file
       ENCRYPTION_CERTIFICATE struct
         cbTotalLength DWORD ?
         pUserSid POINTER ?
@@ -142,6 +192,7 @@ ifndef __WINEFS_H__
       _ENCRYPTION_CERTIFICATE typedef ENCRYPTION_CERTIFICATE
       PENCRYPTION_CERTIFICATE typedef ptr ENCRYPTION_CERTIFICATE
       MAX_SID_SIZE equ 256
+      ; MIDL_PASS
       ENCRYPTION_CERTIFICATE_HASH struct
         cbTotalLength DWORD ?
         pUserSid POINTER ?
@@ -149,34 +200,44 @@ ifndef __WINEFS_H__
         ifdef MIDL_PASS
           ;[...]
         endif
-        lpDisplayInformation LPWSTR ?
+        ; MIDL_PASS
+        lpDisplayInformation POINTER ?
       ENCRYPTION_CERTIFICATE_HASH ends
       _ENCRYPTION_CERTIFICATE_HASH typedef ENCRYPTION_CERTIFICATE_HASH
       PENCRYPTION_CERTIFICATE_HASH typedef ptr ENCRYPTION_CERTIFICATE_HASH
+      ; MIDL_PASS
+      ; MIDL_PASS
       ENCRYPTION_CERTIFICATE_HASH_LIST struct
         ifdef MIDL_PASS
           ;[...]
         endif
+        ; MIDL_PASS
         nCert_Hash DWORD ?
         ifdef MIDL_PASS
           ;[...]
         endif
+        ; MIDL_PASS
         pUsers POINTER ?
       ENCRYPTION_CERTIFICATE_HASH_LIST ends
       _ENCRYPTION_CERTIFICATE_HASH_LIST typedef ENCRYPTION_CERTIFICATE_HASH_LIST
       PENCRYPTION_CERTIFICATE_HASH_LIST typedef ptr ENCRYPTION_CERTIFICATE_HASH_LIST
+      ; MIDL_PASS
+      ; MIDL_PASS
       ENCRYPTION_CERTIFICATE_LIST struct
         ifdef MIDL_PASS
           ;[...]
         endif
+        ; MIDL_PASS
         nUsers DWORD ?
         ifdef MIDL_PASS
           ;[...]
         endif
+        ; MIDL_PASS
         pUsers POINTER ?
       ENCRYPTION_CERTIFICATE_LIST ends
       _ENCRYPTION_CERTIFICATE_LIST typedef ENCRYPTION_CERTIFICATE_LIST
       PENCRYPTION_CERTIFICATE_LIST typedef ptr ENCRYPTION_CERTIFICATE_LIST
+      ; ENCRYPTED_FILE_METADATA_SIGNATURE was not available pre-LH
       if (NTDDI_VERSION ge NTDDI_VISTA)
         EFS_METADATA_ADD_USER equ 00000001h
         EFS_METADATA_REMOVE_USER equ 00000002h
@@ -191,51 +252,72 @@ ifndef __WINEFS_H__
         _ENCRYPTED_FILE_METADATA_SIGNATURE typedef ENCRYPTED_FILE_METADATA_SIGNATURE
         PENCRYPTED_FILE_METADATA_SIGNATURE typedef ptr ENCRYPTED_FILE_METADATA_SIGNATURE
       endif
+      ; #if (NTDDI_VERSION >= NTDDI_VISTA)
       if (NTDDI_VERSION ge NTDDI_WIN8)
+        ; MIDL_PASS
         ENCRYPTION_PROTECTOR struct
           cbTotalLength DWORD ?
           pUserSid POINTER ?
           ifdef MIDL_PASS
             ;[...]
           endif
-          lpProtectorDescriptor LPWSTR ?
+          ; MIDL_PASS
+          lpProtectorDescriptor POINTER ?
         ENCRYPTION_PROTECTOR ends
         _ENCRYPTION_PROTECTOR typedef ENCRYPTION_PROTECTOR
         PENCRYPTION_PROTECTOR typedef ptr ENCRYPTION_PROTECTOR
+        ; MIDL_PASS
         ENCRYPTION_PROTECTOR_LIST struct
           nProtectors DWORD ?
           ifdef MIDL_PASS
             ;[...]
           endif
+          ; MIDL_PASS
           pProtectors POINTER ?
         ENCRYPTION_PROTECTOR_LIST ends
         _ENCRYPTION_PROTECTOR_LIST typedef ENCRYPTION_PROTECTOR_LIST
         PENCRYPTION_PROTECTOR_LIST typedef ptr ENCRYPTION_PROTECTOR_LIST
       endif
+      ;+---------------------------------------------------------------------------------/
+      ;                                                                                  /
+      ;                                                                                  /
+      ;                               Prototypes                                         /
+      ;                                                                                  /
+      ;                                                                                  /
+      ;----------------------------------------------------------------------------------/
       @DefProto DllImport, QueryUsersOnEncryptedFile, WIN_STD_CALL_CONV,, <:LPCWSTR, :ptr PENCRYPTION_CERTIFICATE_HASH_LIST>, 8
       @DefProto DllImport, QueryRecoveryAgentsOnEncryptedFile, WIN_STD_CALL_CONV,, <:LPCWSTR, :ptr PENCRYPTION_CERTIFICATE_HASH_LIST>, 8
       @DefProto DllImport, RemoveUsersFromEncryptedFile, WIN_STD_CALL_CONV,, <:LPCWSTR, :PENCRYPTION_CERTIFICATE_HASH_LIST>, 8
       @DefProto DllImport, AddUsersToEncryptedFile, WIN_STD_CALL_CONV,, <:LPCWSTR, :PENCRYPTION_CERTIFICATE_LIST>, 8
+      ; SetUserFileEncryptionKey signature change in Vista to allow NULL certificate
       if (NTDDI_VERSION ge NTDDI_VISTA)
         @DefProto DllImport, SetUserFileEncryptionKey, WIN_STD_CALL_CONV,, <:PENCRYPTION_CERTIFICATE>, 4
       else
         @DefProto DllImport, SetUserFileEncryptionKey, WIN_STD_CALL_CONV,, <:PENCRYPTION_CERTIFICATE>, 4
       endif
+      ; SetUserFileEncryptionKeyEx was not available pre-LH
       if (NTDDI_VERSION ge NTDDI_VISTA)
         @DefProto DllImport, SetUserFileEncryptionKeyEx, WIN_STD_CALL_CONV,, <:PENCRYPTION_CERTIFICATE, :DWORD, :DWORD, :LPVOID>, 16
       endif
+      ; #if (NTDDI_VERSION >= NTDDI_VISTA) 
       @DefProto DllImport, FreeEncryptionCertificateHashList, WIN_STD_CALL_CONV,, <:PENCRYPTION_CERTIFICATE_HASH_LIST>, 4
       @DefProto DllImport, EncryptionDisable, WIN_STD_CALL_CONV,, <:LPCWSTR, :BOOL>, 8
+      ; DuplicateEncryptionInfoFile signature changed
+      ; in WS03 to use a CONST SECURITY_ATTRIBUTES structure
       if (NTDDI_VERSION ge NTDDI_WS03)
         @DefProto DllImport, DuplicateEncryptionInfoFile, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :DWORD, :DWORD, :LPSECURITY_ATTRIBUTES>, 20
+        ; DuplicateEncryptionInfoFile didn't exist pre-WXP
       elseif (NTDDI_VERSION ge NTDDI_WINXP)
         @DefProto DllImport, DuplicateEncryptionInfoFile, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :DWORD, :DWORD, :LPSECURITY_ATTRIBUTES>, 20
       endif
+      ; *EncryptedFileMetadata routines were not available pre-LH
       if (NTDDI_VERSION ge NTDDI_VISTA)
         @DefProto DllImport, GetEncryptedFileMetadata, WIN_STD_CALL_CONV,, <:LPCWSTR, :PDWORD, :ptr PBYTE>, 12
         @DefProto DllImport, SetEncryptedFileMetadata, WIN_STD_CALL_CONV,, <:LPCWSTR, :PBYTE, :PBYTE, :PENCRYPTION_CERTIFICATE_HASH, :DWORD, :PENCRYPTION_CERTIFICATE_HASH_LIST>, 24
         @DefProto DllImport, FreeEncryptedFileMetadata, WIN_STD_CALL_CONV,, <:PBYTE>, 4
       endif
+      ; #if (NTDDI_VERSION >= NTDDI_VISTA) 
+      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     ifdef __cplusplus
       ;[...]
@@ -243,4 +325,6 @@ ifndef __WINEFS_H__
     if _MSC_VER ge 1200
     endif
   endif
+  ; #if (NTDDI_VERSION >= NTDDI_WIN2K)
 endif
+; __WINEFS_H__

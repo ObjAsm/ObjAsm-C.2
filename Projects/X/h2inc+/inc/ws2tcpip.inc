@@ -1,15 +1,20 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\ws2tcpip.h\ws2tcpip.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\ws2tcpip.h
 ;             Created on (UTC) 06/04/2024 06:16:03
 ;             Last modified on (UTC) 12/02/2024 17:05:30
 
+;*
 ifndef _WS2TCPIP_H_
   _WS2TCPIP_H_ equ <>
   if _MSC_VER gt 1000
   endif
   include winapifamily.inc
   if _MSC_VER ge 1200
+    ; signed/unsigned mixup
+    ; #define FOO; #if FOO -- did you mean #ifdef FOO?
+    ; #if not_defined treated as #if 0
+    ; padding added after data member
   endif
   if  not Defined(_WINSOCK_DEPRECATED_BY)
     if ((Defined(_WINSOCK_DEPRECATED_NO_WARNINGS) or Defined(BUILD_WINDOWS)) and  not Defined(_WINSOCK_DEPRECATE_WARNINGS)) or Defined(MIDL_PASS)
@@ -28,24 +33,36 @@ ifndef _WS2TCPIP_H_
   ifdef _PREFAST_
     ;[...]
   endif
+  ;* Option to use with [gs]etsockopt at the IPPROTO_UDP level *
   UDP_NOCHECKSUM equ 1
+  ;* Set/get UDP-Lite checksum coverage *
   UDP_CHECKSUM_COVERAGE equ 20
   ifdef _MSC_VER
     WS2TCPIP_INLINE equ <__inline>
   else
+    ;* GNU style *
     WS2TCPIP_INLINE equ <extern inline>
   endif
+  ;* Error codes from getaddrinfo() *
   EAI_AGAIN equ <WSATRY_AGAIN>
   EAI_BADFLAGS equ <WSAEINVAL>
   EAI_FAIL equ <WSANO_RECOVERY>
   EAI_FAMILY equ <WSAEAFNOSUPPORT>
   EAI_MEMORY equ <WSA_NOT_ENOUGH_MEMORY>
   EAI_NOSECURENAME equ <WSA_SECURE_HOST_NOT_FOUND>
+  ;#define EAI_NODATA        WSANO_DATA
   EAI_NONAME equ <WSAHOST_NOT_FOUND>
   EAI_SERVICE equ <WSATYPE_NOT_FOUND>
   EAI_SOCKTYPE equ <WSAESOCKTNOSUPPORT>
   EAI_IPSECPOLICY equ <WSA_IPSEC_NAME_POLICY_ERROR>
+  ;  DCR_FIX:  EAI_NODATA remove or fix
+  ;  EAI_NODATA was removed from rfc2553bis
+  ;  need to find out from the authors why and
+  ;  determine the error for "no records of this type"
+  ;  temporarily, we'll keep #define to avoid changing
+  ;  code that could change back;  use NONAME
   EAI_NODATA equ <EAI_NONAME>
+  ;  Switchable definition for GetAddrInfo()
   ifdef UNICODE
     ADDRINFOT typedef ADDRINFOW
     PADDRINFOT typedef ptr ADDRINFOW
@@ -53,6 +70,7 @@ ifndef _WS2TCPIP_H_
     ADDRINFOT typedef ADDRINFOA
     PADDRINFOT typedef ptr ADDRINFOA
   endif
+  ;  RFC standard definition for getaddrinfo()
   ADDRINFO typedef ADDRINFOA
   LPADDRINFO typedef ptr ADDRINFOA
   if (_WIN32_WINNT ge 0600h)
@@ -63,6 +81,7 @@ ifndef _WS2TCPIP_H_
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         ADDRINFOEX typedef ADDRINFOEXA
         PADDRINFOEX typedef ptr ADDRINFOEXA
+        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
     endif
   endif
@@ -100,6 +119,7 @@ ifndef _WS2TCPIP_H_
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       _WINSOCK_DEPRECATED_BY("GetAddrInfoExW()")
       @DefProto DllImport, GetAddrInfoExA, WIN_STD_CALL_CONV,, <:PCSTR, :PCSTR, :DWORD, :LPGUID, :ptr ADDRINFOEXA, :ptr PADDRINFOEXA, :ptr timeval, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE>, 40
+      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     @DefProto DllImport, GetAddrInfoExW, WIN_STD_CALL_CONV,, <:PCWSTR, :PCWSTR, :DWORD, :LPGUID, :ptr ADDRINFOEXW, :ptr PADDRINFOEXW, :ptr timeval, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE>, 40
     @DefProto DllImport, GetAddrInfoExCancel, WIN_STD_CALL_CONV,, <:LPHANDLE>, 4
@@ -114,6 +134,7 @@ ifndef _WS2TCPIP_H_
         TYPE_LPFN_GETADDRINFOEXA typedef proto WIN_STD_CALL_CONV :PCSTR, :PCSTR, :DWORD, :LPGUID, :ptr ADDRINFOEXA, :ptr PADDRINFOEXA, :ptr timeval, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE
         LPFN_GETADDRINFOEXA typedef ptr TYPE_LPFN_GETADDRINFOEXA
 
+        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
       endif
       TYPE_LPFN_GETADDRINFOEXW typedef proto WIN_STD_CALL_CONV :PCWSTR, :PCWSTR, :DWORD, :LPGUID, :ptr ADDRINFOEXW, :ptr PADDRINFOEXW, :ptr timeval, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE
       LPFN_GETADDRINFOEXW typedef ptr TYPE_LPFN_GETADDRINFOEXW
@@ -135,6 +156,7 @@ ifndef _WS2TCPIP_H_
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       _WINSOCK_DEPRECATED_BY("SetAddrInfoExW()")
       @DefProto DllImport, SetAddrInfoExA, WIN_STD_CALL_CONV,, <:PCSTR, :PCSTR, :ptr SOCKET_ADDRESS, :DWORD, :LPBLOB, :DWORD, :DWORD, :LPGUID, :ptr timeval, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE>, 48
+      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     @DefProto DllImport, SetAddrInfoExW, WIN_STD_CALL_CONV,, <:PCWSTR, :PCWSTR, :ptr SOCKET_ADDRESS, :DWORD, :LPBLOB, :DWORD, :DWORD, :LPGUID, :ptr timeval, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE>, 48
     ifdef UNICODE
@@ -147,6 +169,7 @@ ifndef _WS2TCPIP_H_
         TYPE_LPFN_SETADDRINFOEXA typedef proto WIN_STD_CALL_CONV :PCSTR, :PCSTR, :ptr SOCKET_ADDRESS, :DWORD, :LPBLOB, :DWORD, :DWORD, :LPGUID, :ptr timeval, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE
         LPFN_SETADDRINFOEXA typedef ptr TYPE_LPFN_SETADDRINFOEXA
 
+        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
       TYPE_LPFN_SETADDRINFOEXW typedef proto WIN_STD_CALL_CONV :PCWSTR, :PCWSTR, :ptr SOCKET_ADDRESS, :DWORD, :LPBLOB, :DWORD, :DWORD, :LPGUID, :ptr timeval, :LPOVERLAPPED, :LPLOOKUPSERVICE_COMPLETION_ROUTINE, :LPHANDLE
       LPFN_SETADDRINFOEXW typedef ptr TYPE_LPFN_SETADDRINFOEXW
@@ -186,6 +209,7 @@ ifndef _WS2TCPIP_H_
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       _WINSOCK_DEPRECATED_BY("FreeAddrInfoExW()")
       @DefProto DllImport, FreeAddrInfoEx, WIN_STD_CALL_CONV,, <:PADDRINFOEXA>, 4
+      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     @DefProto DllImport, FreeAddrInfoExW, WIN_STD_CALL_CONV,, <:PADDRINFOEXW>, 4
     FreeAddrInfoExA equ <FreeAddrInfoEx>
@@ -197,6 +221,7 @@ ifndef _WS2TCPIP_H_
         TYPE_LPFN_FREEADDRINFOEXA typedef proto WIN_STD_CALL_CONV :PADDRINFOEXA
         LPFN_FREEADDRINFOEXA typedef ptr TYPE_LPFN_FREEADDRINFOEXA
 
+        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
       endif
       TYPE_LPFN_FREEADDRINFOEXW typedef proto WIN_STD_CALL_CONV :PADDRINFOEXW
       LPFN_FREEADDRINFOEXW typedef ptr TYPE_LPFN_FREEADDRINFOEXW
@@ -268,17 +293,27 @@ ifndef _WS2TCPIP_H_
         LPFN_INET_NTOP equ <LPFN_INET_NTOPA>
       endif
     endif
+    ;  TYPEDEFS
   endif
+  ;  (NTDDI_VERSION >= NTDDI_VISTA)
   if INCL_WINSOCK_API_PROTOTYPES
     ifdef UNICODE
       gai_strerror equ <gai_strerrorW>
     else
       gai_strerror equ <gai_strerrorA>
+      ;* UNICODE *
     endif
+    ; WARNING: The gai_strerror inline functions below use static buffers,
+    ; and hence are not thread-safe.  We'll use buffers long enough to hold
+    ; 1k characters.  Any system error messages longer than this will be
+    ; returned as empty strings.  However 1k should work for the error codes
+    ; used by getaddrinfo().
     GAI_STRERROR_BUFFER_SIZE equ 1024
     gai_strerrorA proto WIN_STD_CALL_CONV :SDWORD
     gai_strerrorW proto WIN_STD_CALL_CONV :SDWORD
+    ;* INCL_WINSOCK_API_PROTOTYPES *
   endif
+  ;* Multicast source filter APIs from RFC 3678. *
   setipv4sourcefilter proto WIN_STD_CALL_CONV :SOCKET, :IN_ADDR, :IN_ADDR, :MULTICAST_MODE_TYPE, :ULONG, :ptr IN_ADDR
   getipv4sourcefilter proto WIN_STD_CALL_CONV :SOCKET, :IN_ADDR, :IN_ADDR, :ptr MULTICAST_MODE_TYPE, :ptr ULONG, :ptr IN_ADDR
   if (NTDDI_VERSION ge NTDDI_WINXP)
@@ -286,44 +321,62 @@ ifndef _WS2TCPIP_H_
     getsourcefilter proto WIN_STD_CALL_CONV :SOCKET, :ULONG, :ptr SOCKADDR, :SDWORD, :ptr MULTICAST_MODE_TYPE, :ptr ULONG, :ptr SOCKADDR_STORAGE
   endif
   ifdef IDEAL_SEND_BACKLOG_IOCTLS
+    ; Wrapper functions for the ideal send backlog query and change notification
+    ; ioctls
     idealsendbacklogquery proto WIN_STD_CALL_CONV :SOCKET, :ptr ULONG
     idealsendbacklognotify proto WIN_STD_CALL_CONV :SOCKET, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE
   endif
   if (NTDDI_VERSION ge NTDDI_WIN10_VB)
+    ; Wrapper functions for the IP_USER_MTU/IPV6_USER_MTU socket option.
     WSAGetIPUserMtu proto WIN_STD_CALL_CONV :SOCKET, :ptr DWORD
     if (_WIN32_WINNT ge 0501h)
     endif
+    ;(_WIN32_WINNT >= 0x0501)
     WSASetIPUserMtu proto WIN_STD_CALL_CONV :SOCKET, :DWORD
     if (_WIN32_WINNT ge 0501h)
     endif
+    ;(_WIN32_WINNT >= 0x0501)
+    ; Wrapper functions for the TCP_FAIL_CONNECT_ON_ICMP_ERROR and
+    ; TCP_ICMP_ERROR_SOURCE_ADDRESS socket options.
     WSAGetFailConnectOnIcmpError proto WIN_STD_CALL_CONV :SOCKET, :ptr DWORD
     WSASetFailConnectOnIcmpError proto WIN_STD_CALL_CONV :SOCKET, :DWORD
     WSAGetIcmpErrorInfo proto WIN_STD_CALL_CONV :SOCKET, :ptr ICMP_ERROR_INFO
+    ; Wrapper functions for the UDP_SEND_MSG_SIZE and UDP_RECV_MAX_COALESCED_SIZE
+    ; socket options.
     WSAGetUdpSendMessageSize proto WIN_STD_CALL_CONV :SOCKET, :ptr DWORD
     WSASetUdpSendMessageSize proto WIN_STD_CALL_CONV :SOCKET, :DWORD
     WSAGetUdpRecvMaxCoalescedSize proto WIN_STD_CALL_CONV :SOCKET, :ptr DWORD
     WSASetUdpRecvMaxCoalescedSize proto WIN_STD_CALL_CONV :SOCKET, :DWORD
   endif
+  ; NTDDI_VERSION >= NTDDI_WIN10_VB
   if (NTDDI_VERSION ge NTDDI_WIN10_FE)
+    ; Wrapper functions for the IP_RECVECN/IPV6_RECVECN socket option.
     WSAGetRecvIPEcn proto WIN_STD_CALL_CONV :SOCKET, :ptr DWORD
     if (_WIN32_WINNT ge 0501h)
     endif
+    ;(_WIN32_WINNT >= 0x0501)
     WSASetRecvIPEcn proto WIN_STD_CALL_CONV :SOCKET, :DWORD
     if (_WIN32_WINNT ge 0501h)
     endif
+    ;(_WIN32_WINNT >= 0x0501)
   endif
+  ; NTDDI_VERSION >= NTDDI_WIN10_FE
   if (_WIN32_WINNT ge 0600h)
     ifdef _SECURE_SOCKET_TYPES_DEFINED_
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PKG_APPRUNTIME)
+        ; Secure socket API definitions
         @DefProto DllImport, WSASetSocketSecurity, WIN_STD_CALL_CONV,, <:SOCKET, :ptr SOCKET_SECURITY_SETTINGS, :ULONG, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE>, 20
         @DefProto DllImport, WSAQuerySocketSecurity, WIN_STD_CALL_CONV,, <:SOCKET, :ptr SOCKET_SECURITY_QUERY_TEMPLATE, :ULONG, :ptr SOCKET_SECURITY_QUERY_INFO, :ptr ULONG, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE>, 28
         @DefProto DllImport, WSASetSocketPeerTargetName, WIN_STD_CALL_CONV,, <:SOCKET, :ptr SOCKET_PEER_TARGET_NAME, :ULONG, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE>, 20
         @DefProto DllImport, WSADeleteSocketPeerTargetName, WIN_STD_CALL_CONV,, <:SOCKET, :ptr sockaddr, :ULONG, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE>, 20
         @DefProto DllImport, WSAImpersonateSocketPeer, WIN_STD_CALL_CONV,, <:SOCKET, :ptr sockaddr, :ULONG>, 12
         @DefProto DllImport, WSARevertImpersonation, WIN_STD_CALL_CONV,, <>, 0
+        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_PKG_APPRUNTIME) *
       endif
     endif
+    ;_SECURE_SOCKET_TYPES_DEFINED_
   endif
+  ;(_WIN32_WINNT >= 0x0600)
   ifdef __cplusplus
     ;[...]
   endif
@@ -331,10 +384,15 @@ ifndef _WS2TCPIP_H_
     ;[...]
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+    ; Unless the build environment is explicitly targeting only
+    ; platforms that include built-in getaddrinfo() support, include
+    ; the backwards-compatibility version of the relevant APIs.
     if  not Defined(_WIN32_WINNT) or (_WIN32_WINNT le 0500h)
       include wspiapi.inc
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if _MSC_VER ge 1200
   endif
+  ;* _WS2TCPIP_H_ *
 endif

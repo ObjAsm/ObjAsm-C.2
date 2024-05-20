@@ -1,15 +1,20 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\gdiplusimaging.h\gdiplusimaging.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\gdiplusimaging.h
 ;             Created on (UTC) 06/04/2024 06:15:55
 ;             Last modified on (UTC) 16/12/2023 11:07:52
 
+;\**************************************************************************
 ifndef _GDIPLUSIMAGING_H
   _GDIPLUSIMAGING_H equ <>
   include winapifamily.inc
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if _MSC_VER ge 1200
+      ;* padding added after data member *
     endif
+    ;---------------------------------------------------------------------------
+    ; Image file format identifiers
+    ;---------------------------------------------------------------------------
     DEFINE_GUID ImageFormatUndefined, 0b96b3ca9h, 0728h, 11d3h, 9dh, 7bh, 00h, 00h, 0f8h, 1eh, 0f3h, 2eh
     DEFINE_GUID ImageFormatMemoryBMP, 0b96b3caah, 0728h, 11d3h, 9dh, 7bh, 00h, 00h, 0f8h, 1eh, 0f3h, 2eh
     DEFINE_GUID ImageFormatBMP, 0b96b3cabh, 0728h, 11d3h, 9dh, 7bh, 00h, 00h, 0f8h, 1eh, 0f3h, 2eh
@@ -23,11 +28,20 @@ ifndef _GDIPLUSIMAGING_H
     DEFINE_GUID ImageFormatIcon, 0b96b3cb5h, 0728h, 11d3h, 9dh, 7bh, 00h, 00h, 0f8h, 1eh, 0f3h, 2eh
     DEFINE_GUID ImageFormatHEIF, 0b96b3cb6h, 0728h, 11d3h, 9dh, 7bh, 00h, 00h, 0f8h, 1eh, 0f3h, 2eh
     DEFINE_GUID ImageFormatWEBP, 0b96b3cb7h, 0728h, 11d3h, 9dh, 7bh, 00h, 00h, 0f8h, 1eh, 0f3h, 2eh
+    ;---------------------------------------------------------------------------
+    ; Predefined multi-frame dimension IDs
+    ;---------------------------------------------------------------------------
     DEFINE_GUID FrameDimensionTime, 6aedbd6dh, 3fb5h, 418ah, 83h, 0a6h, 7fh, 45h, 22h, 9dh, 0c8h, 72h
     DEFINE_GUID FrameDimensionResolution, 84236f7bh, 3bd3h, 428fh, 8dh, 0abh, 4eh, 0a1h, 43h, 9ch, 0a3h, 15h
     DEFINE_GUID FrameDimensionPage, 7462dc86h, 6180h, 4c7eh, 8eh, 3fh, 0eeh, 73h, 33h, 0a7h, 0a4h, 83h
+    ;---------------------------------------------------------------------------
+    ; Property sets
+    ;---------------------------------------------------------------------------
     DEFINE_GUID FormatIDImageInformation, 0e5836cbeh, 5eefh, 4f1dh, 0ach, 0deh, 0aeh, 4ch, 43h, 0b6h, 08h, 0ceh
     DEFINE_GUID FormatIDJpegAppHeaders, 1c4afdcdh, 6177h, 43cfh, 0abh, 0c7h, 5fh, 51h, 0afh, 39h, 0eeh, 85h
+    ;---------------------------------------------------------------------------
+    ; Encoder parameter sets
+    ;---------------------------------------------------------------------------
     DEFINE_GUID EncoderCompression, 0e09d739dh, 0ccd4h, 44eeh, 8eh, 0bah, 3fh, 0bfh, 8bh, 0e4h, 0fch, 58h
     DEFINE_GUID EncoderColorDepth, 66087055h, 0ad66h, 4c7ch, 9ah, 18h, 38h, 0a2h, 31h, 0bh, 83h, 37h
     DEFINE_GUID EncoderScanMethod, 3a4e2661h, 3109h, 4e56h, 85h, 36h, 42h, 0c1h, 56h, 0e7h, 0dch, 0fah
@@ -43,15 +57,77 @@ ifndef _GDIPLUSIMAGING_H
       DEFINE_GUID EncoderImageItems, 63875e13h, 1f1dh, 45abh, 91h, 95h, 0a2h, 9bh, 60h, 66h, 0a6h, 50h
       DEFINE_GUID EncoderSaveAsCMYK, 0a219bbc9h, 0a9dh, 4005h, 0a3h, 0eeh, 3ah, 42h, 1bh, 8bh, 0b0h, 6ch
     endif
+    ;(GDIPVER >= 0x0110)
     DEFINE_GUID CodecIImageBytes, 025d1823h, 6c7dh, 447bh, 0bbh, 0dbh, 0a3h, 0cbh, 0c3h, 0dfh, 0a2h, 0fch
     MIDL_INTERFACE("025D1823-6C7D-447B-BBDB-A3CBC3DFA2FC")
+      ; Return total number of bytes in the IStream
       STDMETHOD CountBytes, :ptr DWORD
+      ; Locks "cb" bytes, starting from "ulOffset" in the stream, and returns the
+      ; pointer to the beginning of the locked memory chunk in "ppvBytes"
       STDMETHOD LockBytes, :DWORD, :DWORD, :ptr ptr 
+      ; Unlocks "cb" bytes, pointed by "pvBytes", starting from "ulOffset" in the
+      ; stream
       STDMETHOD UnlockBytes, :ptr , :DWORD, :DWORD
     MIDL_INTERFACE_END
 
+    ;--------------------------------------------------------------------------
+    ; ImageCodecInfo structure
+    ;--------------------------------------------------------------------------
+    ;--------------------------------------------------------------------------
+    ; Information flags about image codecs
+    ;--------------------------------------------------------------------------
+    ;---------------------------------------------------------------------------
+    ; Access modes used when calling Image::LockBits
+    ;---------------------------------------------------------------------------
+    ;---------------------------------------------------------------------------
+    ; Information about image pixel data
+    ;---------------------------------------------------------------------------
+    ;---------------------------------------------------------------------------
+    ; Image flags
+    ;---------------------------------------------------------------------------
+    ; Low-word: shared with SINKFLAG_x
+    ; Low-word: color space definition
+    ; Low-word: image size info
+    ; High-word
+    ;---------------------------------------------------------------------------
+    ; Encoder Parameter structure
+    ;---------------------------------------------------------------------------
+    ; GUID of the parameter
+    ; Number of the parameter values
+    ; Value type, like ValueTypeLONG  etc.
+    ; A pointer to the parameter values
+    ;---------------------------------------------------------------------------
+    ; Encoder Parameters structure
+    ;---------------------------------------------------------------------------
+    ; Number of parameters in this structure
+    ; Parameter values
     if (GDIPVER ge 0110h)
+      ;---------------------------------------------------------------------------
+      ; External Data Item
+      ;---------------------------------------------------------------------------
+      ; size of the structure 
+      ; flags describing how the data is to be used.
+      ; description on how the data is to be saved.
+      ; it is different for every codec type.
+      ; size memory pointed by Desc
+      ; pointer to the data that is to be saved in the
+      ; file, could be anything saved directly.
+      ; size memory pointed by Data
+      ; opaque for the apps data member used during
+      ; enumeration of image data items.
     endif
+    ;(GDIPVER >= 0x0110)
+    ;---------------------------------------------------------------------------
+    ; Property Item
+    ;---------------------------------------------------------------------------
+    ; ID of this property
+    ; Length of the property value, in bytes
+    ; Type of the value, as one of TAG_TYPE_XXX
+    ; defined above
+    ; property value
+    ;---------------------------------------------------------------------------
+    ; Image property types 
+    ;---------------------------------------------------------------------------
     PropertyTagTypeByte equ 1
     PropertyTagTypeASCII equ 2
     PropertyTagTypeShort equ 3
@@ -60,6 +136,9 @@ ifndef _GDIPLUSIMAGING_H
     PropertyTagTypeUndefined equ 7
     PropertyTagTypeSLONG equ 9
     PropertyTagTypeSRational equ 10
+    ;---------------------------------------------------------------------------
+    ; Image property ID tags
+    ;---------------------------------------------------------------------------
     PropertyTagExifIFD equ 8769h
     PropertyTagGpsIFD equ 8825h
     PropertyTagNewSubfileType equ 00FEh
@@ -84,9 +163,12 @@ ifndef _GDIPLUSIMAGING_H
     PropertyTagStripBytesCount equ 0117h
     PropertyTagMinSampleValue equ 0118h
     PropertyTagMaxSampleValue equ 0119h
-    PropertyTagXResolution equ 011Ah
-    PropertyTagYResolution equ 011Bh
-    PropertyTagPlanarConfig equ 011Ch
+    PropertyTagXResolution equ 011Ah; Image resolution in width direction
+
+    PropertyTagYResolution equ 011Bh; Image resolution in height direction
+
+    PropertyTagPlanarConfig equ 011Ch; Image data arrangement
+
     PropertyTagPageName equ 011Dh
     PropertyTagXPosition equ 011Eh
     PropertyTagYPosition equ 011Fh
@@ -96,7 +178,8 @@ ifndef _GDIPLUSIMAGING_H
     PropertyTagGrayResponseCurve equ 0123h
     PropertyTagT4Option equ 0124h
     PropertyTagT6Option equ 0125h
-    PropertyTagResolutionUnit equ 0128h
+    PropertyTagResolutionUnit equ 0128h; Unit of X and Y resolution
+
     PropertyTagPageNumber equ 0129h
     PropertyTagTransferFuncition equ 012Dh
     PropertyTagSoftwareUsed equ 0131h
@@ -135,12 +218,15 @@ ifndef _GDIPLUSIMAGING_H
     PropertyTagYCbCrSubsampling equ 0212h
     PropertyTagYCbCrPositioning equ 0213h
     PropertyTagREFBlackWhite equ 0214h
-    PropertyTagICCProfile equ 8773h
+    PropertyTagICCProfile equ 8773h; This TAG is defined by ICC
+
+    ; for embedded ICC in TIFF
     PropertyTagGamma equ 0301h
     PropertyTagICCProfileDescriptor equ 0302h
     PropertyTagSRGBRenderingIntent equ 0303h
     PropertyTagImageTitle equ 0320h
     PropertyTagCopyright equ 8298h
+    ; Extra TAGs (Like Adobe Image Information tags etc.)
     PropertyTagResolutionXUnit equ 5001h
     PropertyTagResolutionYUnit equ 5002h
     PropertyTagResolutionXLengthUnit equ 5003h
@@ -158,7 +244,8 @@ ifndef _GDIPLUSIMAGING_H
     PropertyTagHalftoneScreen equ 500Fh
     PropertyTagJPEGQuality equ 5010h
     PropertyTagGridSize equ 5011h
-    PropertyTagThumbnailFormat equ 5012h
+    PropertyTagThumbnailFormat equ 5012h; 1 = JPEG, 0 = RAW RGB
+
     PropertyTagThumbnailWidth equ 5013h
     PropertyTagThumbnailHeight equ 5014h
     PropertyTagThumbnailColorDepth equ 5015h
@@ -167,35 +254,81 @@ ifndef _GDIPLUSIMAGING_H
     PropertyTagThumbnailSize equ 5018h
     PropertyTagThumbnailCompressedSize equ 5019h
     PropertyTagColorTransferFunction equ 501Ah
-    PropertyTagThumbnailData equ 501Bh
-    PropertyTagThumbnailImageWidth equ 5020h
-    PropertyTagThumbnailImageHeight equ 5021h
-    PropertyTagThumbnailBitsPerSample equ 5022h
-    PropertyTagThumbnailCompression equ 5023h
-    PropertyTagThumbnailPhotometricInterp equ 5024h
-    PropertyTagThumbnailImageDescription equ 5025h
-    PropertyTagThumbnailEquipMake equ 5026h
-    PropertyTagThumbnailEquipModel equ 5027h
-    PropertyTagThumbnailStripOffsets equ 5028h
-    PropertyTagThumbnailOrientation equ 5029h
-    PropertyTagThumbnailSamplesPerPixel equ 502Ah
-    PropertyTagThumbnailRowsPerStrip equ 502Bh
-    PropertyTagThumbnailStripBytesCount equ 502Ch
-    PropertyTagThumbnailResolutionX equ 502Dh
-    PropertyTagThumbnailResolutionY equ 502Eh
-    PropertyTagThumbnailPlanarConfig equ 502Fh
-    PropertyTagThumbnailResolutionUnit equ 5030h
-    PropertyTagThumbnailTransferFunction equ 5031h
-    PropertyTagThumbnailSoftwareUsed equ 5032h
-    PropertyTagThumbnailDateTime equ 5033h
-    PropertyTagThumbnailArtist equ 5034h
-    PropertyTagThumbnailWhitePoint equ 5035h
+    PropertyTagThumbnailData equ 501Bh; RAW thumbnail bits in
+
+    ; JPEG format or RGB format
+    ; depends on
+    ; PropertyTagThumbnailFormat
+    ; Thumbnail related TAGs
+    PropertyTagThumbnailImageWidth equ 5020h; Thumbnail width
+
+    PropertyTagThumbnailImageHeight equ 5021h; Thumbnail height
+
+    PropertyTagThumbnailBitsPerSample equ 5022h; Number of bits per
+
+    ; component
+    PropertyTagThumbnailCompression equ 5023h; Compression Scheme
+
+    PropertyTagThumbnailPhotometricInterp equ 5024h; Pixel composition
+
+    PropertyTagThumbnailImageDescription equ 5025h; Image Tile
+
+    PropertyTagThumbnailEquipMake equ 5026h; Manufacturer of Image
+
+    ; Input equipment
+    PropertyTagThumbnailEquipModel equ 5027h; Model of Image input
+
+    ; equipment
+    PropertyTagThumbnailStripOffsets equ 5028h; Image data location
+
+    PropertyTagThumbnailOrientation equ 5029h; Orientation of image
+
+    PropertyTagThumbnailSamplesPerPixel equ 502Ah; Number of components
+
+    PropertyTagThumbnailRowsPerStrip equ 502Bh; Number of rows per strip
+
+    PropertyTagThumbnailStripBytesCount equ 502Ch; Bytes per compressed
+
+    ; strip
+    PropertyTagThumbnailResolutionX equ 502Dh; Resolution in width
+
+    ; direction
+    PropertyTagThumbnailResolutionY equ 502Eh; Resolution in height
+
+    ; direction
+    PropertyTagThumbnailPlanarConfig equ 502Fh; Image data arrangement
+
+    PropertyTagThumbnailResolutionUnit equ 5030h; Unit of X and Y
+
+    ; Resolution
+    PropertyTagThumbnailTransferFunction equ 5031h; Transfer function
+
+    PropertyTagThumbnailSoftwareUsed equ 5032h; Software used
+
+    PropertyTagThumbnailDateTime equ 5033h; File change date and
+
+    ; time
+    PropertyTagThumbnailArtist equ 5034h; Person who created the
+
+    ; image
+    PropertyTagThumbnailWhitePoint equ 5035h; White point chromaticity
+
     PropertyTagThumbnailPrimaryChromaticities equ 5036h
-    PropertyTagThumbnailYCbCrCoefficients equ 5037h
-    PropertyTagThumbnailYCbCrSubsampling equ 5038h
-    PropertyTagThumbnailYCbCrPositioning equ 5039h
-    PropertyTagThumbnailRefBlackWhite equ 503Ah
-    PropertyTagThumbnailCopyRight equ 503Bh
+    ; Chromaticities of
+    ; primaries
+    PropertyTagThumbnailYCbCrCoefficients equ 5037h; Color space transforma-
+
+    ; tion coefficients
+    PropertyTagThumbnailYCbCrSubsampling equ 5038h; Subsampling ratio of Y
+
+    ; to C
+    PropertyTagThumbnailYCbCrPositioning equ 5039h; Y and C position
+
+    PropertyTagThumbnailRefBlackWhite equ 503Ah; Pair of black and white
+
+    ; reference values
+    PropertyTagThumbnailCopyRight equ 503Bh; CopyRight holder
+
     PropertyTagLuminanceTable equ 5090h
     PropertyTagChrominanceTable equ 5091h
     PropertyTagFrameDelay equ 5100h
@@ -205,10 +338,16 @@ ifndef _GDIPLUSIMAGING_H
       PropertyTagIndexBackground equ 5103h
       PropertyTagIndexTransparent equ 5104h
     endif
-    PropertyTagPixelUnit equ 5110h
-    PropertyTagPixelPerUnitX equ 5111h
-    PropertyTagPixelPerUnitY equ 5112h
-    PropertyTagPaletteHistogram equ 5113h
+    ;(GDIPVER >= 0x0110)
+    PropertyTagPixelUnit equ 5110h; Unit specifier for pixel/unit
+
+    PropertyTagPixelPerUnitX equ 5111h; Pixels per unit in X
+
+    PropertyTagPixelPerUnitY equ 5112h; Pixels per unit in Y
+
+    PropertyTagPaletteHistogram equ 5113h; Palette histogram
+
+    ; EXIF specific tag
     PropertyTagExifExposureTime equ 829Ah
     PropertyTagExifFNumber equ 829Dh
     PropertyTagExifExposureProg equ 8822h
@@ -216,8 +355,10 @@ ifndef _GDIPLUSIMAGING_H
     PropertyTagExifISOSpeed equ 8827h
     PropertyTagExifOECF equ 8828h
     PropertyTagExifVer equ 9000h
-    PropertyTagExifDTOrig equ 9003h
-    PropertyTagExifDTDigitized equ 9004h
+    PropertyTagExifDTOrig equ 9003h; Date & time of original
+
+    PropertyTagExifDTDigitized equ 9004h; Date & time of digital data generation
+
     PropertyTagExifCompConfig equ 9101h
     PropertyTagExifCompBPP equ 9102h
     PropertyTagExifShutterSpeed equ 9201h
@@ -230,29 +371,39 @@ ifndef _GDIPLUSIMAGING_H
     PropertyTagExifLightSource equ 9208h
     PropertyTagExifFlash equ 9209h
     PropertyTagExifFocalLength equ 920Ah
-    PropertyTagExifSubjectArea equ 9214h
+    PropertyTagExifSubjectArea equ 9214h; exif 2.2 Subject Area
+
     PropertyTagExifMakerNote equ 927Ch
     PropertyTagExifUserComment equ 9286h
-    PropertyTagExifDTSubsec equ 9290h
-    PropertyTagExifDTOrigSS equ 9291h
-    PropertyTagExifDTDigSS equ 9292h
+    PropertyTagExifDTSubsec equ 9290h; Date & Time subseconds
+
+    PropertyTagExifDTOrigSS equ 9291h; Date & Time original subseconds
+
+    PropertyTagExifDTDigSS equ 9292h; Date & TIme digitized subseconds
+
     PropertyTagExifFPXVer equ 0A000h
     PropertyTagExifColorSpace equ 0A001h
     PropertyTagExifPixXDim equ 0A002h
     PropertyTagExifPixYDim equ 0A003h
-    PropertyTagExifRelatedWav equ 0A004h
+    PropertyTagExifRelatedWav equ 0A004h; related sound file
+
     PropertyTagExifInterop equ 0A005h
     PropertyTagExifFlashEnergy equ 0A20Bh
-    PropertyTagExifSpatialFR equ 0A20Ch
-    PropertyTagExifFocalXRes equ 0A20Eh
-    PropertyTagExifFocalYRes equ 0A20Fh
-    PropertyTagExifFocalResUnit equ 0A210h
+    PropertyTagExifSpatialFR equ 0A20Ch; Spatial Frequency Response
+
+    PropertyTagExifFocalXRes equ 0A20Eh; Focal Plane X Resolution
+
+    PropertyTagExifFocalYRes equ 0A20Fh; Focal Plane Y Resolution
+
+    PropertyTagExifFocalResUnit equ 0A210h; Focal Plane Resolution Unit
+
     PropertyTagExifSubjectLoc equ 0A214h
     PropertyTagExifExposureIndex equ 0A215h
     PropertyTagExifSensingMethod equ 0A217h
     PropertyTagExifFileSource equ 0A300h
     PropertyTagExifSceneType equ 0A301h
     PropertyTagExifCfaPattern equ 0A302h
+    ; New EXIF 2.2 properties
     PropertyTagExifCustomRendered equ 0A401h
     PropertyTagExifExposureMode equ 0A402h
     PropertyTagExifWhiteBalance equ 0A403h
@@ -277,7 +428,8 @@ ifndef _GDIPLUSIMAGING_H
     PropertyTagGpsGpsSatellites equ 0008h
     PropertyTagGpsGpsStatus equ 0009h
     PropertyTagGpsGpsMeasureMode equ 00Ah
-    PropertyTagGpsGpsDop equ 000Bh
+    PropertyTagGpsGpsDop equ 000Bh; Measurement precision
+
     PropertyTagGpsSpeedRef equ 000Ch
     PropertyTagGpsSpeed equ 000Dh
     PropertyTagGpsTrackRef equ 000Eh
@@ -299,5 +451,6 @@ ifndef _GDIPLUSIMAGING_H
     PropertyTagGpsDifferential equ 001Eh
     if _MSC_VER ge 1200
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
 endif

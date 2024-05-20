@@ -1,65 +1,108 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\ddeml.h\ddeml.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\ddeml.h
 ;             Created on (UTC) 06/04/2024 06:15:53
 ;             Last modified on (UTC) 21/02/2024 18:18:22
 
 include winapifamily.inc
+;*++ BUILD Version: 0001 // Increment this if a change has global effects --*
+;*****************************************************************************\
+;*                                                                             *
+;*  ddeml.h -    DDEML API header file                                         *
+;*                                                                             *
+;*               Version 3.10                                                  *
+;*                                                                             *
+;*               Copyright (c) Microsoft Corporation.  All rights reserved.    *
+;*                                                                             *
+;\*****************************************************************************
 ifndef _INC_DDEMLH
   _INC_DDEMLH equ <>
   if _MSC_VER ge 1200
+    ; padding added after data member
   endif
   ifdef __cplusplus
     ;[...]
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+    ;******** public types ********
     DECLARE_HANDLE HCONVLIST
     DECLARE_HANDLE HCONV
     DECLARE_HANDLE HSZ
     DECLARE_HANDLE HDDEDATA
     EXPENTRY equ <CALLBACK>
+    ;* the following structure is for use with XTYP_WILDCONNECT processing. *
     HSZPAIR struct
       hszSvc HSZ ?
       hszTopic HSZ ?
     HSZPAIR ends
     tagHSZPAIR typedef HSZPAIR
     PHSZPAIR typedef ptr HSZPAIR
+    ;* The following structure is used by DdeConnect() and DdeConnectList() and
+    ;by XTYP_CONNECT and XTYP_WILDCONNECT callbacks. *
     CONVCONTEXT struct
-      cb UINT ?
-      wFlags UINT ?
-      wCountryID UINT ?
+      cb DWORD ?
+      ;* set to sizeof(CONVCONTEXT) *
+      wFlags DWORD ?
+      ;* none currently defined. *
+      wCountryID DWORD ?
+      ;* country/region code for topic/item strings used. *
       iCodePage SDWORD ?
+      ;* codepage used for topic/item strings. *
       dwLangID DWORD ?
+      ;* language ID for topic/item strings. *
       dwSecurity DWORD ?
+      ;* Private security code. *
       qos SECURITY_QUALITY_OF_SERVICE <>
+      ;* client side's quality of service *
     CONVCONTEXT ends
     tagCONVCONTEXT typedef CONVCONTEXT
     PCONVCONTEXT typedef ptr CONVCONTEXT
+    ;* The following structure is used by DdeQueryConvInfo(): *
     CONVINFO struct
       cb DWORD ?
-      hUser DWORD_PTR ?
+      ;* sizeof(CONVINFO)  *
+      hUser XWORD ?
+      ;* user specified field  *
       hConvPartner HCONV ?
+      ;* hConv on other end or 0 if non-ddemgr partner  *
       hszSvcPartner HSZ ?
+      ;* app name of partner if obtainable  *
       hszServiceReq HSZ ?
+      ;* AppName requested for connection  *
       hszTopic HSZ ?
+      ;* Topic name for conversation  *
       hszItem HSZ ?
-      wFmt UINT ?
-      wType UINT ?
-      wStatus UINT ?
-      wConvst UINT ?
-      wLastError UINT ?
+      ;* transaction item name or NULL if quiescent  *
+      wFmt DWORD ?
+      ;* transaction format or NULL if quiescent  *
+      wType DWORD ?
+      ;* XTYP_ for current transaction  *
+      wStatus DWORD ?
+      ;* ST_ constant for current conversation  *
+      wConvst DWORD ?
+      ;* XST_ constant for current transaction  *
+      wLastError DWORD ?
+      ;* last transaction error.  *
       hConvList HCONVLIST ?
+      ;* parent hConvList if this conversation is in a list *
       ConvCtxt CONVCONTEXT <>
+      ;* conversation context *
       hwnd HWND ?
+      ;* window handle for this conversation *
       hwndPartner HWND ?
+      ;* partner window handle for this conversation *
     CONVINFO ends
     tagCONVINFO typedef CONVINFO
     PCONVINFO typedef ptr CONVINFO
+    ;***** conversation states (usState) *****
+    ;* quiescent states *
     XST_NULL equ 0
     XST_INCOMPLETE equ 1
     XST_CONNECTED equ 2
+    ;* mid-initiation states *
     XST_INIT1 equ 3
     XST_INIT2 equ 4
+    ;* active conversation states *
     XST_REQSENT equ 5
     XST_DATARCVD equ 6
     XST_POKESENT equ 7
@@ -72,7 +115,9 @@ ifndef _INC_DDEMLH
     XST_UNADVACKRCVD equ 14
     XST_ADVDATASENT equ 15
     XST_ADVDATAACKRCVD equ 16
+    ;* used in LOWORD(dwData1) of XTYP_ADVREQ callbacks... *
     CADV_LATEACK equ 0FFFFh
+    ;***** conversation status bits (fsStatus) *****
     ST_CONNECTED equ 0001h
     ST_ADVISE equ 0002h
     ST_ISLOCAL equ 0004h
@@ -82,6 +127,7 @@ ifndef _INC_DDEMLH
     ST_INLIST equ 0040h
     ST_BLOCKNEXT equ 0080h
     ST_ISSELF equ 0100h
+    ;* DDE constants for wStatus field *
     DDE_FACK equ 8000h
     DDE_FBUSY equ 4000h
     DDE_FDEFERUPD equ 4000h
@@ -94,16 +140,25 @@ ifndef _INC_DDEMLH
     DDE_FADVRESERVED equ <(not (DDE_FACKREQ or DDE_FDEFERUPD))>
     DDE_FDATRESERVED equ <(not (DDE_FACKREQ or DDE_FRELEASE or DDE_FREQUESTED))>
     DDE_FPOKRESERVED equ <(not (DDE_FRELEASE))>
+    ;***** message filter hook types *****
     MSGF_DDEMGR equ 8001h
+    ;***** codepage constants ****
+    ;* default codepage for windows & old DDE convs. *
     CP_WINANSI equ 1004
     CP_WINUNICODE equ 1200
     ifdef UNICODE
       CP_WINNEUTRAL equ <CP_WINUNICODE>
     else
+    ; !UNICODE
       CP_WINNEUTRAL equ <CP_WINANSI>
     endif
+    ; !UNICODE
+    ;***** transaction types *****
+    ;* CBR_BLOCK will not work *
     XTYPF_NOBLOCK equ 0002h
+    ;* DDE_FDEFERUPD *
     XTYPF_NODATA equ 0004h
+    ;* DDE_FACKREQ *
     XTYPF_ACKREQ equ 0008h
     XCLASS_MASK equ 0FC00h
     XCLASS_BOOL equ 1000h
@@ -126,9 +181,13 @@ ifndef _INC_DDEMLH
     XTYP_UNREGISTER equ (00D0h or XCLASS_NOTIFICATION or XTYPF_NOBLOCK)
     XTYP_WILDCONNECT equ (00E0h or XCLASS_DATA or XTYPF_NOBLOCK)
     XTYP_MASK equ 00F0h
+    ;* shift to turn XTYP_ into an index *
     XTYP_SHIFT equ 4
+    ;***** Timeout constants *****
     TIMEOUT_ASYNC equ 0FFFFFFFFh
+    ;***** Transaction ID constants *****
     QID_SYNC equ 0FFFFFFFFh
+    ;****** public strings used in DDE ******
     ifdef UNICODE
       SZDDESYS_TOPIC equ <L("System")>
       SZDDESYS_ITEM_TOPICS equ <L("Topics")>
@@ -148,11 +207,13 @@ ifndef _INC_DDEMLH
       SZDDESYS_ITEM_HELP equ <"Help">
       SZDDE_ITEM_ITEMLIST equ <"TopicItemList">
     endif
+    ;****** API entry points ******
     FNCALLBACK typedef proto :UINT, :UINT, :HCONV, :HSZ, :HSZ, :HDDEDATA, :ULONG_PTR, :ULONG_PTR
     TYPE_PFNCALLBACK typedef proto WIN_STD_CALL_CONV :UINT, :UINT, :HCONV, :HSZ, :HSZ, :HDDEDATA, :ULONG_PTR, :ULONG_PTR
     PFNCALLBACK typedef ptr TYPE_PFNCALLBACK
 
     CBR_BLOCK equ ((HDDEDATA) - 1)
+    ;* DLL registration functions *
     DdeInitializeA proto WIN_STD_CALL_CONV :LPDWORD, :PFNCALLBACK, :DWORD, :DWORD
     DdeInitializeW proto WIN_STD_CALL_CONV :LPDWORD, :PFNCALLBACK, :DWORD, :DWORD
     ifdef UNICODE
@@ -160,6 +221,10 @@ ifndef _INC_DDEMLH
     else
       DdeInitialize equ <DdeInitializeA>
     endif
+    ; !UNICODE
+    ;*
+    ;* Callback filter flags for use with standard apps.
+    ;*
     CBF_FAIL_SELFCONNECTIONS equ 00001000h
     CBF_FAIL_CONNECTIONS equ 00002000h
     CBF_FAIL_ADVISES equ 00004000h
@@ -172,21 +237,36 @@ ifndef _INC_DDEMLH
     CBF_SKIP_UNREGISTRATIONS equ 00100000h
     CBF_SKIP_DISCONNECTS equ 00200000h
     CBF_SKIP_ALLNOTIFICATIONS equ 003c0000h
+    ;*
+    ;* Application command flags
+    ;*
     APPCMD_CLIENTONLY equ 00000010h
     APPCMD_FILTERINITS equ 00000020h
     APPCMD_MASK equ 00000FF0h
+    ;*
+    ;* Application classification flags
+    ;*
     APPCLASS_STANDARD equ 00000000h
     APPCLASS_MASK equ 0000000Fh
     DdeUninitialize proto WIN_STD_CALL_CONV :DWORD
+    ;*
+    ;* conversation enumeration functions
+    ;*
     DdeConnectList proto WIN_STD_CALL_CONV :DWORD, :HSZ, :HSZ, :HCONVLIST, :PCONVCONTEXT
     DdeQueryNextServer proto WIN_STD_CALL_CONV :HCONVLIST, :HCONV
     DdeDisconnectList proto WIN_STD_CALL_CONV :HCONVLIST
+    ;*
+    ;* conversation control functions
+    ;*
     DdeConnect proto WIN_STD_CALL_CONV :DWORD, :HSZ, :HSZ, :PCONVCONTEXT
     DdeDisconnect proto WIN_STD_CALL_CONV :HCONV
     DdeReconnect proto WIN_STD_CALL_CONV :HCONV
     DdeQueryConvInfo proto WIN_STD_CALL_CONV :HCONV, :DWORD, :PCONVINFO
     DdeSetUserHandle proto WIN_STD_CALL_CONV :HCONV, :DWORD, :DWORD_PTR
     DdeAbandonTransaction proto WIN_STD_CALL_CONV :DWORD, :HCONV, :DWORD
+    ;*
+    ;* app server interface functions
+    ;*
     DdePostAdvise proto WIN_STD_CALL_CONV :DWORD, :HSZ, :HSZ
     DdeEnableCallback proto WIN_STD_CALL_CONV :DWORD, :HCONV, :UINT
     DdeImpersonateClient proto WIN_STD_CALL_CONV :HCONV
@@ -199,7 +279,13 @@ ifndef _INC_DDEMLH
     DNS_UNREGISTER equ 0002h
     DNS_FILTERON equ 0004h
     DNS_FILTEROFF equ 0008h
+    ;*
+    ;* app client interface functions
+    ;*
     DdeClientTransaction proto WIN_STD_CALL_CONV :LPBYTE, :DWORD, :HCONV, :HSZ, :UINT, :UINT, :DWORD, :LPDWORD
+    ;*
+    ;*data transfer functions
+    ;*
     DdeCreateDataHandle proto WIN_STD_CALL_CONV :DWORD, :LPBYTE, :DWORD, :DWORD, :HSZ, :UINT, :UINT
     DdeAddData proto WIN_STD_CALL_CONV :HDDEDATA, :LPBYTE, :DWORD, :DWORD
     DdeGetData proto WIN_STD_CALL_CONV :HDDEDATA, :LPBYTE, :DWORD, :DWORD
@@ -208,6 +294,7 @@ ifndef _INC_DDEMLH
     DdeFreeDataHandle proto WIN_STD_CALL_CONV :HDDEDATA
     HDATA_APPOWNED equ 0001h
     DdeGetLastError proto WIN_STD_CALL_CONV :DWORD
+    ;* must be 0 *
     DMLERR_NO_ERROR equ 0
     DMLERR_FIRST equ 4000h
     DMLERR_ADVACKTIMEOUT equ 4000h
@@ -236,6 +323,7 @@ ifndef _INC_DDEMLH
     else
       DdeCreateStringHandle equ <DdeCreateStringHandleA>
     endif
+    ; !UNICODE
     DdeQueryStringA proto WIN_STD_CALL_CONV :DWORD, :HSZ, :LPSTR, :DWORD, :SDWORD
     DdeQueryStringW proto WIN_STD_CALL_CONV :DWORD, :HSZ, :LPWSTR, :DWORD, :SDWORD
     ifdef UNICODE
@@ -243,66 +331,80 @@ ifndef _INC_DDEMLH
     else
       DdeQueryString equ <DdeQueryStringA>
     endif
+    ; !UNICODE
     DdeFreeStringHandle proto WIN_STD_CALL_CONV :DWORD, :HSZ
     DdeKeepStringHandle proto WIN_STD_CALL_CONV :DWORD, :HSZ
     DdeCmpStringHandles proto WIN_STD_CALL_CONV :HSZ, :HSZ
     ifndef NODDEMLSPY
+      ;*
+      ;* DDEML public debugging header file info
+      ;*
       DDEML_MSG_HOOK_DATA struct
-        uiLo UINT_PTR ?
-        uiHi UINT_PTR ?
+        ; new for NT
+        uiLo XWORD ?
+        ; unpacked lo and hi parts of lParam
+        uiHi XWORD ?
         cbData DWORD ?
+        ; amount of data in message, if any. May be > than 32 bytes.
         Data DWORD 8 dup (?)
+        ; data peeking by DDESPY is limited to 32 bytes.
       DDEML_MSG_HOOK_DATA ends
       tagDDEML_MSG_HOOK_DATA typedef DDEML_MSG_HOOK_DATA
       PDDEML_MSG_HOOK_DATA typedef ptr DDEML_MSG_HOOK_DATA
       MONMSGSTRUCT struct
-        cb UINT ?
+        cb DWORD ?
         hwndTo HWND ?
         dwTime DWORD ?
         hTask HANDLE ?
-        wMsg UINT ?
+        wMsg DWORD ?
         wParam WPARAM ?
         lParam LPARAM ?
         dmhd DDEML_MSG_HOOK_DATA <>
+        ; new for NT
       MONMSGSTRUCT ends
       tagMONMSGSTRUCT typedef MONMSGSTRUCT
       PMONMSGSTRUCT typedef ptr MONMSGSTRUCT
       MONCBSTRUCT struct
-        cb UINT ?
+        cb DWORD ?
         dwTime DWORD ?
         hTask HANDLE ?
         dwRet DWORD ?
-        wType UINT ?
-        wFmt UINT ?
+        wType DWORD ?
+        wFmt DWORD ?
         hConv HCONV ?
         hsz1 HSZ ?
         hsz2 HSZ ?
         hData HDDEDATA ?
-        dwData1 ULONG_PTR ?
-        dwData2 ULONG_PTR ?
+        dwData1 XWORD ?
+        dwData2 XWORD ?
         cc CONVCONTEXT <>
+        ; new for NT for XTYP_CONNECT callbacks
         cbData DWORD ?
+        ; new for NT for data peeking
         Data DWORD 8 dup (?)
+        ; new for NT for data peeking
       MONCBSTRUCT ends
       tagMONCBSTRUCT typedef MONCBSTRUCT
       PMONCBSTRUCT typedef ptr MONCBSTRUCT
       MONHSZSTRUCTA struct
-        cb UINT ?
-        fsAction BOOL ?
+        cb DWORD ?
+        fsAction DWORD ?
+        ;* MH_ value *
         dwTime DWORD ?
         hsz HSZ ?
         hTask HANDLE ?
-        str_ CHAR 1 dup (?)
+        str_ SBYTE 1 dup (?)
       MONHSZSTRUCTA ends
       tagMONHSZSTRUCTA typedef MONHSZSTRUCTA
       PMONHSZSTRUCTA typedef ptr MONHSZSTRUCTA
       MONHSZSTRUCTW struct
-        cb UINT ?
-        fsAction BOOL ?
+        cb DWORD ?
+        fsAction DWORD ?
+        ;* MH_ value *
         dwTime DWORD ?
         hsz HSZ ?
         hTask HANDLE ?
-        str_ WCHAR 1 dup (?)
+        str_ WORD 1 dup (?)
       MONHSZSTRUCTW ends
       tagMONHSZSTRUCTW typedef MONHSZSTRUCTW
       PMONHSZSTRUCTW typedef ptr MONHSZSTRUCTW
@@ -313,49 +415,56 @@ ifndef _INC_DDEMLH
         MONHSZSTRUCT typedef MONHSZSTRUCTA
         PMONHSZSTRUCT typedef PMONHSZSTRUCTA
       endif
+      ; UNICODE
       MH_CREATE equ 1
       MH_KEEP equ 2
       MH_DELETE equ 3
       MH_CLEANUP equ 4
       MONERRSTRUCT struct
-        cb UINT ?
-        wLastError UINT ?
+        cb DWORD ?
+        wLastError DWORD ?
         dwTime DWORD ?
         hTask HANDLE ?
       MONERRSTRUCT ends
       tagMONERRSTRUCT typedef MONERRSTRUCT
       PMONERRSTRUCT typedef ptr MONERRSTRUCT
       MONLINKSTRUCT struct
-        cb UINT ?
+        cb DWORD ?
         dwTime DWORD ?
         hTask HANDLE ?
-        fEstablished BOOL ?
-        fNoData BOOL ?
+        fEstablished DWORD ?
+        fNoData DWORD ?
         hszSvc HSZ ?
         hszTopic HSZ ?
         hszItem HSZ ?
-        wFmt UINT ?
-        fServer BOOL ?
+        wFmt DWORD ?
+        fServer DWORD ?
         hConvServer HCONV ?
         hConvClient HCONV ?
       MONLINKSTRUCT ends
       tagMONLINKSTRUCT typedef MONLINKSTRUCT
       PMONLINKSTRUCT typedef ptr MONLINKSTRUCT
       MONCONVSTRUCT struct
-        cb UINT ?
-        fConnect BOOL ?
+        cb DWORD ?
+        fConnect DWORD ?
         dwTime DWORD ?
         hTask HANDLE ?
         hszSvc HSZ ?
         hszTopic HSZ ?
         hConvClient HCONV ?
+        ; Globally unique value != apps local hConv
         hConvServer HCONV ?
+        ; Globally unique value != apps local hConv
       MONCONVSTRUCT ends
       tagMONCONVSTRUCT typedef MONCONVSTRUCT
       PMONCONVSTRUCT typedef ptr MONCONVSTRUCT
       MAX_MONITORS equ 4
       APPCLASS_MONITOR equ 00000001h
       XTYP_MONITOR equ (00F0h or XCLASS_NOTIFICATION or XTYPF_NOBLOCK)
+      ;*
+      ;* Callback filter flags for use with MONITOR apps - 0 implies no monitor
+      ;* callbacks.
+      ;*
       MF_HSZ_INFO equ 01000000h
       MF_SENDMSGS equ 02000000h
       MF_POSTMSGS equ 04000000h
@@ -364,11 +473,14 @@ ifndef _INC_DDEMLH
       MF_LINKS equ 20000000h
       MF_CONV equ 40000000h
       MF_MASK equ 0FF000000h
+      ;* NODDEMLSPY *
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   ifdef __cplusplus
     ;[...]
   endif
   if _MSC_VER ge 1200
   endif
+  ;* _INC_DDEMLH *
 endif

@@ -138,8 +138,8 @@ InsertEqui endp
 ;             Arg2: Parameter bytes.
 ; Return:     Nothing.
 
-InsertDefItem proc uses xdi pFuncName:PSTRINGA, dParamBytes:DWORD
-  local cProto[1024]:CHRA
+InsertDefItem proc uses xdi xsi pFuncName:PSTRINGA, dParamBytes:DWORD
+  local cProto[1024]:CHRA, cMessage[1024]:CHR
 
   mov cProto, 0
   lea xdi, cProto
@@ -151,16 +151,15 @@ InsertDefItem proc uses xdi pFuncName:PSTRINGA, dParamBytes:DWORD
     WriteFA xdi, "¦SA", pFuncName
   .endif
   lea xdx, cProto
-  sub xdi, xdx
-  inc xdi
+  sub xdi, xdx                                          ;Just the length, without the ZTC
   OCall $ObjTmpl(Application).MemHeap::MemoryHeap.AddBStrA, xdx, edi
   .if xax != NULL
     OCall [xbx].$Obj(IncFile).pDefs::List.Insert, xax
-    .if xax == NULL
-      OCall xbx::IncFile.ShowError, addr szOutOfSpace
-      mov $ObjTmpl(Application).bTerminate, TRUE
-      xor eax, eax
-    .endif
+;    .if xax == NULL                                    ;The string may be a duplicate!
+;      lea xsi, cMessage
+;      WriteF xsi, "inserting \´¦SA\´ def list failed", addr cProto
+;      OCall $ObjTmpl(Application)::Application.ShowWarning, WARNING_MAYOR, addr cMessage
+;    .endif
   .endif
   ret
 InsertDefItem endp
@@ -552,14 +551,13 @@ TranslateReservedWord proc pToken:PTOKEN, pTransBuffer:PSTRINGA
 TranslateReservedWord endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  TranslateType
-; Purpose:    Translate known type.
+; Procedure:  TranslateStruct
+; Purpose:    Translate known struct.
 ; Arguments:  Arg1 -> Token.
-;             Arg2: Mode: 0 for TYPES, 1 for STRUCTS.
-; Return:     xax -> translated type.
+; Return:     xax -> translated structure.
 ;             edx = FALSE if no macht found.
 
-TranslateType proc uses xdi pToken:PTOKEN, bMode:DWORD
+TranslateStruct proc uses xdi pToken:PTOKEN
   OCall pKnwConvTypes1::List.Search, pToken             ;Common for TYPES & STRUCTS
   .if eax != FALSE
     mov edx, ecx
@@ -567,12 +565,7 @@ TranslateType proc uses xdi pToken:PTOKEN, bMode:DWORD
     mov edx, [xax - sizeof(DWORD)]                      ;edx = length
     lea xax, [xax + xdx + sizeof(DWORD)]
   .else
-    .if bMode == 0
-      mov xdi, pKnwConvTypes2                           ;TYPE
-    .else
-      mov xdi, pKnwConvTypes3                           ;STRUCT
-    .endif
-
+    mov xdi, pKnwConvTypes3                             ;STRUCT
     OCall xdi::List.Search, pToken
     .if eax != FALSE
       mov edx, ecx
@@ -581,11 +574,37 @@ TranslateType proc uses xdi pToken:PTOKEN, bMode:DWORD
       lea xax, [xax + xdx + sizeof(DWORD)]
     .else
       xor edx, edx
-      .if bMode == 0                                    ;TYPE
-        mov xax, pToken
-      .else                                             ;STRUCT
-        lea xax, szUnkType
-      .endif
+      lea xax, szUnkType
+    .endif
+  .endif
+  ret
+TranslateStruct endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  TranslateType
+; Purpose:    Translate known type.
+; Arguments:  Arg1 -> Token.
+; Return:     xax -> translated type.
+;             edx = FALSE if no macht found.
+
+TranslateType proc uses xdi pToken:PTOKEN
+  OCall pKnwConvTypes1::List.Search, pToken             ;Common for TYPES & STRUCTS
+  .if eax != FALSE
+    mov edx, ecx
+    OCall pKnwConvTypes1::List.ItemAt, edx
+    mov edx, [xax - sizeof(DWORD)]                      ;edx = length
+    lea xax, [xax + xdx + sizeof(DWORD)]
+  .else
+    mov xdi, pKnwConvTypes2                           ;TYPE
+    OCall xdi::List.Search, pToken
+    .if eax != FALSE
+      mov edx, ecx
+      OCall xdi::List.ItemAt, edx
+      mov edx, [xax - sizeof(DWORD)]                    ;edx = length
+      lea xax, [xax + xdx + sizeof(DWORD)]
+    .else
+      xor edx, edx
+      mov xax, pToken
     .endif
   .endif
   ret
@@ -1336,7 +1355,7 @@ GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
         m2m [xbx].$Obj(IncFile).pStmOutPos, pMacroNameBuffer, xax   ;Write into this buffer
         mov edx, ecx
         invoke RenderMacroCall, pName, edx, FALSE
-        StmOutLoad PrevOutStat                          ;Restore output stream status
+        StmOutLoad PrevOutStat                          ;Restore initial output stream status
         m2m pName, pMacroNameBuffer, xax
       .endif
 

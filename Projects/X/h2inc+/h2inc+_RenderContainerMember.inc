@@ -18,8 +18,6 @@
 ;} Point;
 
 .code
-
-
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  WriteContainerMember
 ; Purpose:    Write member to the output stream.
@@ -99,7 +97,7 @@ WriteContainerMember endp
 RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
   local dTypeCSpec:DWORD, dPtrCount:DWORD, InpStat:INP_STAT
   local pType:PSTRINGA, pName:PSTRINGA, pDupList:POINTER, pEndToken:PSTRINGA
-  local cSuffix[UDWORD2DEC_MAX_CHARS]:CHRA, dSquareBracketCount:DWORD
+  local cSuffix[UDWORD2DEC_MAX_CHARS + 20]:CHRA, dSquareBracketCount:DWORD
 
   OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderContainerMember")
   ;Initialize ---------------------------------------------------------------------------
@@ -119,9 +117,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
     test xax, xax
     jz @ErrorEoF
     .break .if CHRA ptr [xax] == ';'                    ;End of declaration reached
-
     mov pToken, xax
-
     .if CHRA ptr [xax] == '}'
       mov pEndToken, xax
       jmp @Exit
@@ -416,7 +412,10 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
     .if eax != FALSE
       mov xcx, pToken
       .if pType == NULL                                 ;First get a type
-        mov pType, xcx
+        .if $ObjTmpl(Application).Options.bUntypedParams
+          invoke TranslateType, pToken
+        .endif
+        mov pType, xax
       .elseif pName == NULL                             ;Then get a name
         mov pName, xcx
       .else
@@ -430,7 +429,6 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
     OCall xbx::IncFile.GetNextTokenC
   .endw
   mov pEndToken, xax
-
   invoke WriteContainerMember, pName, pType, pDupList, dPtrCount
 
   ;Exit ---------------------------------------------------------------------------------

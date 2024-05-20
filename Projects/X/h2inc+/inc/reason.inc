@@ -1,20 +1,31 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\reason.h\reason.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\reason.h
 ;             Created on (UTC) 06/04/2024 06:15:57
 ;             Last modified on (UTC) 16/12/2023 11:07:52
 
 include winapifamily.inc
+;+-------------------------------------------------------------------
+;  Microsoft Windows
+;  Copyright (c) Microsoft Corporation. All rights reserved.
+;  File:        reason.h
+;  Contents:    Shutdown reason code values.
+;  History:     8-00        Created         Hughleat
+;--------------------------------------------------------------------
 if  not Defined(SENTINEL_Reason)
   SENTINEL_Reason equ <>
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+    ; Reason flags
+    ; Flags used by the various UIs.
     SHTDN_REASON_FLAG_COMMENT_REQUIRED equ 01000000h
     SHTDN_REASON_FLAG_DIRTY_PROBLEM_ID_REQUIRED equ 02000000h
     SHTDN_REASON_FLAG_CLEAN_UI equ 04000000h
     SHTDN_REASON_FLAG_DIRTY_UI equ 08000000h
     SHTDN_REASON_FLAG_MOBILE_UI_RESERVED equ 10000000h
+    ; Flags that end up in the event log code.
     SHTDN_REASON_FLAG_USER_DEFINED equ 40000000h
     SHTDN_REASON_FLAG_PLANNED equ 80000000h
+    ; Microsoft major reasons.
     SHTDN_REASON_MAJOR_OTHER equ 00000000h
     SHTDN_REASON_MAJOR_NONE equ 00000000h
     SHTDN_REASON_MAJOR_HARDWARE equ 00010000h
@@ -24,6 +35,7 @@ if  not Defined(SENTINEL_Reason)
     SHTDN_REASON_MAJOR_SYSTEM equ 00050000h
     SHTDN_REASON_MAJOR_POWER equ 00060000h
     SHTDN_REASON_MAJOR_LEGACY_API equ 00070000h
+    ; Microsoft minor reasons.
     SHTDN_REASON_MINOR_OTHER equ 00000000h
     SHTDN_REASON_MINOR_NONE equ 000000ffh
     SHTDN_REASON_MINOR_MAINTENANCE equ 00000001h
@@ -57,23 +69,41 @@ if  not Defined(SENTINEL_Reason)
     SHTDN_REASON_MINOR_DC_DEMOTION equ 00000022h
     SHTDN_REASON_UNKNOWN equ <SHTDN_REASON_MINOR_NONE>
     SHTDN_REASON_LEGACY_API equ <(SHTDN_REASON_MAJOR_LEGACY_API or SHTDN_REASON_FLAG_PLANNED)>
+    ; This mask cuts out UI flags.
     SHTDN_REASON_VALID_BIT_MASK equ 0c0ffffffh
+    ; Convenience flags.
     PCLEANUI equ <(SHTDN_REASON_FLAG_PLANNED or SHTDN_REASON_FLAG_CLEAN_UI)>
     UCLEANUI equ <(SHTDN_REASON_FLAG_CLEAN_UI)>
     PDIRTYUI equ <(SHTDN_REASON_FLAG_PLANNED or SHTDN_REASON_FLAG_DIRTY_UI)>
     UDIRTYUI equ <(SHTDN_REASON_FLAG_DIRTY_UI)>
+    ;*
+    ;* Maximum character lengths for reason name, description, problem id, and
+    ;* comment respectively.
+    ;*
     MAX_REASON_NAME_LEN equ 64
     MAX_REASON_DESC_LEN equ 256
     MAX_REASON_BUGID_LEN equ 32
     MAX_REASON_COMMENT_LEN equ 512
     SHUTDOWN_TYPE_LEN equ 32
+    ;*
+    ;*	S.E.T. policy value
+    ;*
+    ;*
     POLICY_SHOWREASONUI_NEVER equ 0
     POLICY_SHOWREASONUI_ALWAYS equ 1
     POLICY_SHOWREASONUI_WORKSTATIONONLY equ 2
     POLICY_SHOWREASONUI_SERVERONLY equ 3
+    ;*
+    ;* Snapshot policy values
+    ;*
     SNAPSHOT_POLICY_NEVER equ 0
     SNAPSHOT_POLICY_ALWAYS equ 1
     SNAPSHOT_POLICY_UNPLANNED equ 2
+    ;*
+    ;* Maximue user defined reasons
+    ;*
     MAX_NUM_REASONS equ 256
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
 endif
+; !defined SENTINEL_Reason

@@ -1,31 +1,47 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winnetwk.h\winnetwk.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winnetwk.h
 ;             Created on (UTC) 06/04/2024 06:16:03
 ;             Last modified on (UTC) 21/02/2024 18:13:16
 
 include winapifamily.inc
+;*++
+;Copyright (c) Microsoft Corporation. All rights reserved.
+;Module Name:
+;winnetwk.h
+;Abstract:
+;Standard WINNET Header File for WIN32
+;Environment:
+;User Mode -Win32
+;Notes:
+;optional-notes
+;--*
 ifndef _WINNETWK_
   _WINNETWK_ equ <>
   ifdef __cplusplus
     ;[...]
   endif
   if _MSC_VER ge 1200
+    ; padding added after data member
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    ; Network types
     include wnnc.inc
+    ;  Network Resources.
     RESOURCE_CONNECTED equ 00000001h
     RESOURCE_GLOBALNET equ 00000002h
     RESOURCE_REMEMBERED equ 00000003h
     if (WINVER ge 0400h)
       RESOURCE_RECENT equ 00000004h
       RESOURCE_CONTEXT equ 00000005h
+      ;* WINVER >= 0x0400 *
     endif
     RESOURCETYPE_ANY equ 00000000h
     RESOURCETYPE_DISK equ 00000001h
     RESOURCETYPE_PRINT equ 00000002h
     if (WINVER ge 0400h)
       RESOURCETYPE_RESERVED equ 00000008h
+      ;* WINVER >= 0x0400 *
     endif
     RESOURCETYPE_UNKNOWN equ 0FFFFFFFFh
     RESOURCEUSAGE_CONNECTABLE equ 00000001h
@@ -35,6 +51,7 @@ ifndef _WINNETWK_
       RESOURCEUSAGE_SIBLING equ 00000008h
       RESOURCEUSAGE_ATTACHED equ 00000010h
       RESOURCEUSAGE_ALL equ <(RESOURCEUSAGE_CONNECTABLE or RESOURCEUSAGE_CONTAINER or RESOURCEUSAGE_ATTACHED)>
+      ;* WINVER >= 0x0400 *
     endif
     RESOURCEUSAGE_RESERVED equ 80000000h
     RESOURCEDISPLAYTYPE_GENERIC equ 00000000h
@@ -48,20 +65,22 @@ ifndef _WINNETWK_
       RESOURCEDISPLAYTYPE_ROOT equ 00000007h
       RESOURCEDISPLAYTYPE_SHAREADMIN equ 00000008h
       RESOURCEDISPLAYTYPE_DIRECTORY equ 00000009h
+      ;* WINVER >= 0x0400 *
     endif
     RESOURCEDISPLAYTYPE_TREE equ 0000000Ah
     if (WINVER ge 0400h)
       RESOURCEDISPLAYTYPE_NDSCONTAINER equ 0000000Bh
+      ;* WINVER >= 0x0400 *
     endif
     NETRESOURCEA struct
       dwScope DWORD ?
       dwType DWORD ?
       dwDisplayType DWORD ?
       dwUsage DWORD ?
-      lpLocalName LPSTR ?
-      lpRemoteName LPSTR ?
-      lpComment LPSTR ?
-      lpProvider LPSTR ?
+      lpLocalName POINTER ?
+      lpRemoteName POINTER ?
+      lpComment POINTER ?
+      lpProvider POINTER ?
     NETRESOURCEA ends
     _NETRESOURCEA typedef NETRESOURCEA
     LPNETRESOURCEA typedef ptr NETRESOURCEA
@@ -70,10 +89,10 @@ ifndef _WINNETWK_
       dwType DWORD ?
       dwDisplayType DWORD ?
       dwUsage DWORD ?
-      lpLocalName LPWSTR ?
-      lpRemoteName LPWSTR ?
-      lpComment LPWSTR ?
-      lpProvider LPWSTR ?
+      lpLocalName POINTER ?
+      lpRemoteName POINTER ?
+      lpComment POINTER ?
+      lpProvider POINTER ?
     NETRESOURCEW ends
     _NETRESOURCEW typedef NETRESOURCEW
     LPNETRESOURCEW typedef ptr NETRESOURCEW
@@ -84,6 +103,8 @@ ifndef _WINNETWK_
       NETRESOURCE typedef NETRESOURCEA
       LPNETRESOURCE typedef LPNETRESOURCEA
     endif
+    ; UNICODE
+    ;  Network Connections.
     NETPROPERTY_PERSISTENT equ 1
     CONNECT_UPDATE_PROFILE equ 00000001h
     CONNECT_UPDATE_RECENT equ 00000002h
@@ -98,13 +119,16 @@ ifndef _WINNETWK_
       CONNECT_CURRENT_MEDIA equ 00000200h
       CONNECT_DEFERRED equ 00000400h
       CONNECT_RESERVED equ 0FF000000h
+      ;* WINVER >= 0x0400 *
     endif
     if (WINVER ge 0500h)
       CONNECT_COMMANDLINE equ 00000800h
       CONNECT_CMD_SAVECRED equ 00001000h
+      ;* WINVER >= 0x0500 *
     endif
     if (WINVER ge 0600h)
       CONNECT_CRED_RESET equ 00002000h
+      ;* WINVER >= 0x0600 *
     endif
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN10)
       CONNECT_REQUIRE_INTEGRITY equ 00004000h
@@ -119,6 +143,7 @@ ifndef _WINNETWK_
     else
       WNetAddConnection equ <WNetAddConnectionA>
     endif
+    ; !UNICODE
     WNetAddConnection2A proto WIN_STD_CALL_CONV :LPNETRESOURCEA, :LPCSTR, :LPCSTR, :DWORD
     WNetAddConnection2W proto WIN_STD_CALL_CONV :LPNETRESOURCEW, :LPCWSTR, :LPCWSTR, :DWORD
     ifdef UNICODE
@@ -126,6 +151,7 @@ ifndef _WINNETWK_
     else
       WNetAddConnection2 equ <WNetAddConnection2A>
     endif
+    ; !UNICODE
     WNetAddConnection3A proto WIN_STD_CALL_CONV :HWND, :LPNETRESOURCEA, :LPCSTR, :LPCSTR, :DWORD
     WNetAddConnection3W proto WIN_STD_CALL_CONV :HWND, :LPNETRESOURCEW, :LPCWSTR, :LPCWSTR, :DWORD
     ifdef UNICODE
@@ -133,6 +159,7 @@ ifndef _WINNETWK_
     else
       WNetAddConnection3 equ <WNetAddConnection3A>
     endif
+    ; !UNICODE
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN10)
       WNetAddConnection4A proto WIN_STD_CALL_CONV :HWND, :LPNETRESOURCEA, :PVOID, :DWORD, :DWORD, :PBYTE, :DWORD
       WNetAddConnection4W proto WIN_STD_CALL_CONV :HWND, :LPNETRESOURCEW, :PVOID, :DWORD, :DWORD, :PBYTE, :DWORD
@@ -141,7 +168,9 @@ ifndef _WINNETWK_
       else
         WNetAddConnection4 equ <WNetAddConnection4A>
       endif
+      ; !UNICODE
     endif
+    ;(_WIN32_WINNT >= _WIN32_WINNT_WIN10)
     WNetCancelConnectionA proto WIN_STD_CALL_CONV :LPCSTR, :BOOL
     WNetCancelConnectionW proto WIN_STD_CALL_CONV :LPCWSTR, :BOOL
     ifdef UNICODE
@@ -149,6 +178,7 @@ ifndef _WINNETWK_
     else
       WNetCancelConnection equ <WNetCancelConnectionA>
     endif
+    ; !UNICODE
     WNetCancelConnection2A proto WIN_STD_CALL_CONV :LPCSTR, :DWORD, :BOOL
     WNetCancelConnection2W proto WIN_STD_CALL_CONV :LPCWSTR, :DWORD, :BOOL
     ifdef UNICODE
@@ -156,6 +186,7 @@ ifndef _WINNETWK_
     else
       WNetCancelConnection2 equ <WNetCancelConnection2A>
     endif
+    ; !UNICODE
     WNetGetConnectionA proto WIN_STD_CALL_CONV :LPCSTR, :LPSTR, :LPDWORD
     WNetGetConnectionW proto WIN_STD_CALL_CONV :LPCWSTR, :LPWSTR, :LPDWORD
     ifdef UNICODE
@@ -163,6 +194,8 @@ ifndef _WINNETWK_
     else
       WNetGetConnection equ <WNetGetConnectionA>
     endif
+    ; !UNICODE
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (_WIN32_WINNT ge _WIN32_WINNT_LONGHORN)
@@ -170,6 +203,7 @@ ifndef _WINNETWK_
     else
       WNetRestoreConnectionW proto WIN_STD_CALL_CONV :HWND, :LPCWSTR
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if (WINVER ge 0400h)
@@ -180,6 +214,8 @@ ifndef _WINNETWK_
       else
         WNetUseConnection equ <WNetUseConnectionA>
       endif
+      ; !UNICODE
+      ;* WINVER >= 0x0400 *
     endif
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN10)
       WNetUseConnection4A proto WIN_STD_CALL_CONV :HWND, :LPNETRESOURCEA, :PVOID, :DWORD, :DWORD, :PBYTE, :DWORD, :LPSTR, :LPDWORD, :LPDWORD
@@ -189,25 +225,38 @@ ifndef _WINNETWK_
       else
         WNetUseConnection4 equ <WNetUseConnection4A>
       endif
+      ; !UNICODE
     endif
+    ;(_WIN32_WINNT >= _WIN32_WINNT_WIN10)
+    ;  Network Connection Dialogs.
     WNetConnectionDialog proto WIN_STD_CALL_CONV :HWND, :DWORD
     WNetDisconnectDialog proto WIN_STD_CALL_CONV :HWND, :DWORD
     if (WINVER ge 0400h)
       CONNECTDLGSTRUCTA struct
         cbStructure DWORD ?
+        ;* size of this structure in bytes *
         hwndOwner HWND ?
+        ;* owner window for the dialog *
         lpConnRes LPNETRESOURCEA ?
+        ;* Requested Resource info    *
         dwFlags DWORD ?
+        ;* flags (see below) *
         dwDevNum DWORD ?
+        ;* number of devices connected to *
       CONNECTDLGSTRUCTA ends
       _CONNECTDLGSTRUCTA typedef CONNECTDLGSTRUCTA
       LPCONNECTDLGSTRUCTA typedef ptr CONNECTDLGSTRUCTA
       CONNECTDLGSTRUCTW struct
         cbStructure DWORD ?
+        ;* size of this structure in bytes *
         hwndOwner HWND ?
+        ;* owner window for the dialog *
         lpConnRes LPNETRESOURCEW ?
+        ;* Requested Resource info    *
         dwFlags DWORD ?
+        ;* flags (see below) *
         dwDevNum DWORD ?
+        ;* number of devices connected to *
       CONNECTDLGSTRUCTW ends
       _CONNECTDLGSTRUCTW typedef CONNECTDLGSTRUCTW
       LPCONNECTDLGSTRUCTW typedef ptr CONNECTDLGSTRUCTW
@@ -218,11 +267,23 @@ ifndef _WINNETWK_
         CONNECTDLGSTRUCT typedef CONNECTDLGSTRUCTA
         LPCONNECTDLGSTRUCT typedef LPCONNECTDLGSTRUCTA
       endif
+      ; UNICODE
+      ;* Resource path should be read-only    *
       CONNDLG_RO_PATH equ 00000001h
+      ;* Netware -style movable connection point enabled *
       CONNDLG_CONN_POINT equ 00000002h
+      ;* Use MRU combobox  *
       CONNDLG_USE_MRU equ 00000004h
+      ;* Hide persistent connect checkbox  *
       CONNDLG_HIDE_BOX equ 00000008h
+      ;*
+      ;* NOTE:  Set at most ONE of the below flags.  If neither flag is set,
+      ;*        then the persistence is set to whatever the user chose during
+      ;*        a previous connection
+      ;*
+      ;* Force persistent connection *
       CONNDLG_PERSIST equ 00000010h
+      ;* Force connection NOT persistent *
       CONNDLG_NOT_PERSIST equ 00000020h
       WNetConnectionDialog1A proto WIN_STD_CALL_CONV :LPCONNECTDLGSTRUCTA
       WNetConnectionDialog1W proto WIN_STD_CALL_CONV :LPCONNECTDLGSTRUCTW
@@ -231,21 +292,32 @@ ifndef _WINNETWK_
       else
         WNetConnectionDialog1 equ <WNetConnectionDialog1A>
       endif
+      ; !UNICODE
       DISCDLGSTRUCTA struct
         cbStructure DWORD ?
+        ;* size of this structure in bytes *
         hwndOwner HWND ?
-        lpLocalName LPSTR ?
-        lpRemoteName LPSTR ?
+        ;* owner window for the dialog *
+        lpLocalName POINTER ?
+        ;* local device name *
+        lpRemoteName POINTER ?
+        ;* network resource name *
         dwFlags DWORD ?
+        ;* flags *
       DISCDLGSTRUCTA ends
       _DISCDLGSTRUCTA typedef DISCDLGSTRUCTA
       LPDISCDLGSTRUCTA typedef ptr DISCDLGSTRUCTA
       DISCDLGSTRUCTW struct
         cbStructure DWORD ?
+        ;* size of this structure in bytes *
         hwndOwner HWND ?
-        lpLocalName LPWSTR ?
-        lpRemoteName LPWSTR ?
+        ;* owner window for the dialog *
+        lpLocalName POINTER ?
+        ;* local device name *
+        lpRemoteName POINTER ?
+        ;* network resource name *
         dwFlags DWORD ?
+        ;* flags *
       DISCDLGSTRUCTW ends
       _DISCDLGSTRUCTW typedef DISCDLGSTRUCTW
       LPDISCDLGSTRUCTW typedef ptr DISCDLGSTRUCTW
@@ -256,6 +328,7 @@ ifndef _WINNETWK_
         DISCDLGSTRUCT typedef DISCDLGSTRUCTA
         LPDISCDLGSTRUCT typedef LPDISCDLGSTRUCTA
       endif
+      ; UNICODE
       DISC_UPDATE_PROFILE equ 00000001h
       DISC_NO_FORCE equ 00000040h
       WNetDisconnectDialog1A proto WIN_STD_CALL_CONV :LPDISCDLGSTRUCTA
@@ -265,7 +338,10 @@ ifndef _WINNETWK_
       else
         WNetDisconnectDialog1 equ <WNetDisconnectDialog1A>
       endif
+      ; !UNICODE
+      ;* WINVER >= 0x0400 *
     endif
+    ;  Network Browsing.
     WNetOpenEnumA proto WIN_STD_CALL_CONV :DWORD, :DWORD, :DWORD, :LPNETRESOURCEA, :LPHANDLE
     WNetOpenEnumW proto WIN_STD_CALL_CONV :DWORD, :DWORD, :DWORD, :LPNETRESOURCEW, :LPHANDLE
     ifdef UNICODE
@@ -273,6 +349,7 @@ ifndef _WINNETWK_
     else
       WNetOpenEnum equ <WNetOpenEnumA>
     endif
+    ; !UNICODE
     WNetEnumResourceA proto WIN_STD_CALL_CONV :HANDLE, :LPDWORD, :LPVOID, :LPDWORD
     WNetEnumResourceW proto WIN_STD_CALL_CONV :HANDLE, :LPDWORD, :LPVOID, :LPDWORD
     ifdef UNICODE
@@ -280,6 +357,7 @@ ifndef _WINNETWK_
     else
       WNetEnumResource equ <WNetEnumResourceA>
     endif
+    ; !UNICODE
     WNetCloseEnum proto WIN_STD_CALL_CONV :HANDLE
     if (WINVER ge 0400h)
       WNetGetResourceParentA proto WIN_STD_CALL_CONV :LPNETRESOURCEA, :LPVOID, :LPDWORD
@@ -289,6 +367,7 @@ ifndef _WINNETWK_
       else
         WNetGetResourceParent equ <WNetGetResourceParentA>
       endif
+      ; !UNICODE
       WNetGetResourceInformationA proto WIN_STD_CALL_CONV :LPNETRESOURCEA, :LPVOID, :LPDWORD, :ptr LPSTR
       WNetGetResourceInformationW proto WIN_STD_CALL_CONV :LPNETRESOURCEW, :LPVOID, :LPDWORD, :ptr LPWSTR
       ifdef UNICODE
@@ -296,16 +375,19 @@ ifndef _WINNETWK_
       else
         WNetGetResourceInformation equ <WNetGetResourceInformationA>
       endif
+      ; !UNICODE
+      ;* WINVER >= 0x0400 *
     endif
+    ;  Universal Naming.
     UNIVERSAL_NAME_INFO_LEVEL equ 00000001h
     REMOTE_NAME_INFO_LEVEL equ 00000002h
     UNIVERSAL_NAME_INFOA struct
-      lpUniversalName LPSTR ?
+      lpUniversalName POINTER ?
     UNIVERSAL_NAME_INFOA ends
     _UNIVERSAL_NAME_INFOA typedef UNIVERSAL_NAME_INFOA
     LPUNIVERSAL_NAME_INFOA typedef ptr UNIVERSAL_NAME_INFOA
     UNIVERSAL_NAME_INFOW struct
-      lpUniversalName LPWSTR ?
+      lpUniversalName POINTER ?
     UNIVERSAL_NAME_INFOW ends
     _UNIVERSAL_NAME_INFOW typedef UNIVERSAL_NAME_INFOW
     LPUNIVERSAL_NAME_INFOW typedef ptr UNIVERSAL_NAME_INFOW
@@ -316,17 +398,18 @@ ifndef _WINNETWK_
       UNIVERSAL_NAME_INFO typedef UNIVERSAL_NAME_INFOA
       LPUNIVERSAL_NAME_INFO typedef LPUNIVERSAL_NAME_INFOA
     endif
+    ; UNICODE
     REMOTE_NAME_INFOA struct
-      lpUniversalName LPSTR ?
-      lpConnectionName LPSTR ?
-      lpRemainingPath LPSTR ?
+      lpUniversalName POINTER ?
+      lpConnectionName POINTER ?
+      lpRemainingPath POINTER ?
     REMOTE_NAME_INFOA ends
     _REMOTE_NAME_INFOA typedef REMOTE_NAME_INFOA
     LPREMOTE_NAME_INFOA typedef ptr REMOTE_NAME_INFOA
     REMOTE_NAME_INFOW struct
-      lpUniversalName LPWSTR ?
-      lpConnectionName LPWSTR ?
-      lpRemainingPath LPWSTR ?
+      lpUniversalName POINTER ?
+      lpConnectionName POINTER ?
+      lpRemainingPath POINTER ?
     REMOTE_NAME_INFOW ends
     _REMOTE_NAME_INFOW typedef REMOTE_NAME_INFOW
     LPREMOTE_NAME_INFOW typedef ptr REMOTE_NAME_INFOW
@@ -337,6 +420,7 @@ ifndef _WINNETWK_
       REMOTE_NAME_INFO typedef REMOTE_NAME_INFOA
       LPREMOTE_NAME_INFO typedef LPREMOTE_NAME_INFOA
     endif
+    ; UNICODE
     WNetGetUniversalNameA proto WIN_STD_CALL_CONV :LPCSTR, :DWORD, :LPVOID, :LPDWORD
     WNetGetUniversalNameW proto WIN_STD_CALL_CONV :LPCWSTR, :DWORD, :LPVOID, :LPDWORD
     ifdef UNICODE
@@ -344,18 +428,24 @@ ifndef _WINNETWK_
     else
       WNetGetUniversalName equ <WNetGetUniversalNameA>
     endif
+    ; !UNICODE
+    ;  Authentication and Logon/Logoff.
     WNetGetUserA proto WIN_STD_CALL_CONV :LPCSTR, :LPSTR, :LPDWORD
+    ;  Authentication and Logon/Logoff.
     WNetGetUserW proto WIN_STD_CALL_CONV :LPCWSTR, :LPWSTR, :LPDWORD
     ifdef UNICODE
       WNetGetUser equ <WNetGetUserW>
     else
       WNetGetUser equ <WNetGetUserA>
     endif
+    ; !UNICODE
+    ; Other.
     if (WINVER ge 0400h)
       WNFMT_MULTILINE equ 01h
       WNFMT_ABBREVIATED equ 02h
       WNFMT_INENUM equ 10h
       WNFMT_CONNECTION equ 20h
+      ;* WINVER >= 0x0400 *
     endif
     if (WINVER ge 0400h)
       WNetGetProviderNameA proto WIN_STD_CALL_CONV :DWORD, :LPSTR, :LPDWORD
@@ -365,20 +455,24 @@ ifndef _WINNETWK_
       else
         WNetGetProviderName equ <WNetGetProviderNameA>
       endif
+      ; !UNICODE
       NETINFOSTRUCT struct
         cbStructure DWORD ?
         dwProviderVersion DWORD ?
         dwStatus DWORD ?
         dwCharacteristics DWORD ?
-        dwHandle ULONG_PTR ?
+        dwHandle XWORD ?
         wNetType WORD ?
         dwPrinters DWORD ?
         dwDrives DWORD ?
       NETINFOSTRUCT ends
       _NETINFOSTRUCT typedef NETINFOSTRUCT
       LPNETINFOSTRUCT typedef ptr NETINFOSTRUCT
+      ;* Provider running as 16 bit Winnet Driver *
       NETINFO_DLL16 equ 00000001h
+      ;* Provider requires disk redirections to connect *
       NETINFO_DISKRED equ 00000004h
+      ;* Provider requires printer redirections to connect *
       NETINFO_PRINTERRED equ 00000008h
       WNetGetNetworkInformationA proto WIN_STD_CALL_CONV :LPCSTR, :LPNETINFOSTRUCT
       WNetGetNetworkInformationW proto WIN_STD_CALL_CONV :LPCWSTR, :LPNETINFOSTRUCT
@@ -387,7 +481,10 @@ ifndef _WINNETWK_
       else
         WNetGetNetworkInformation equ <WNetGetNetworkInformationA>
       endif
+      ; !UNICODE
+      ;* WINVER >= 0x0400 *
     endif
+    ;  Error handling.
     WNetGetLastErrorA proto WIN_STD_CALL_CONV :LPDWORD, :LPSTR, :DWORD, :LPSTR, :DWORD
     WNetGetLastErrorW proto WIN_STD_CALL_CONV :LPDWORD, :LPWSTR, :DWORD, :LPWSTR, :DWORD
     ifdef UNICODE
@@ -395,6 +492,9 @@ ifndef _WINNETWK_
     else
       WNetGetLastError equ <WNetGetLastErrorA>
     endif
+    ; !UNICODE
+    ;  STATUS CODES
+    ; General
     WN_SUCCESS equ <NO_ERROR>
     WN_NO_ERROR equ <NO_ERROR>
     WN_NOT_SUPPORTED equ <ERROR_NOT_SUPPORTED>
@@ -417,7 +517,9 @@ ifndef _WINNETWK_
     if (WINVER ge 0400h)
       WN_NOT_INITIALIZING equ <ERROR_ALREADY_INITIALIZED>
       WN_NO_MORE_DEVICES equ <ERROR_NO_MORE_DEVICES>
+      ;* WINVER >= 0x0400 *
     endif
+    ; Connection
     WN_NOT_CONNECTED equ <ERROR_NOT_CONNECTED>
     WN_OPEN_FILES equ <ERROR_OPEN_FILES>
     WN_DEVICE_IN_USE equ <ERROR_DEVICE_IN_USE>
@@ -435,14 +537,19 @@ ifndef _WINNETWK_
     WN_CONNECTED_OTHER_PASSWORD equ <ERROR_CONNECTED_OTHER_PASSWORD>
     if (WINVER ge 0501h)
       WN_CONNECTED_OTHER_PASSWORD_DEFAULT equ <ERROR_CONNECTED_OTHER_PASSWORD_DEFAULT>
+      ;* WINVER >= 0x0501 *
     endif
+    ; Enumeration
     WN_NO_MORE_ENTRIES equ <ERROR_NO_MORE_ITEMS>
     WN_NOT_CONTAINER equ <ERROR_NOT_CONTAINER>
     if (WINVER ge 0400h)
+      ; Authentication
       WN_NOT_AUTHENTICATED equ <ERROR_NOT_AUTHENTICATED>
       WN_NOT_LOGGED_ON equ <ERROR_NOT_LOGGED_ON>
       WN_NOT_VALIDATED equ <ERROR_NO_LOGON_SERVERS>
+      ;* WINVER >= 0x0400 *
     endif
+    ;  For Shell
     if (WINVER ge 0400h)
       NETCONNECTINFOSTRUCT struct
         cbStructure DWORD ?
@@ -464,7 +571,10 @@ ifndef _WINNETWK_
       else
         MultinetGetConnectionPerformance equ <MultinetGetConnectionPerformanceA>
       endif
+      ; !UNICODE
+      ;* WINVER >= 0x0400 *
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if _MSC_VER ge 1200
   endif
@@ -472,3 +582,4 @@ ifndef _WINNETWK_
     ;[...]
   endif
 endif
+; _WINNETWK_

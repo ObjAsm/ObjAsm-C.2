@@ -86,10 +86,12 @@ d3CharOps dd ">>=", "<<="
 
 Method IncFile.AddComment, uses xsi, pCommentText:PSTRINGA
   SetObject xsi
+  lea xsi, [xsi].cComment
   mov xdx, pCommentText
-  inc xdx
-  invoke StrCopyA, addr [[xsi].cComment + 1], xdx
-  mov [[xsi].cComment], ';'
+  .if DCHRA ptr [xdx] == "//"
+    add xdx, sizeof(DCHRA)
+  .endif
+  WriteFA xsi, ";¦SA", xdx 
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -110,22 +112,22 @@ Method IncFile.CreateDefFile, uses xbx xdi xsi, pFileName:PSTRINGW
     .if [xdx].$Obj(List).dCount == 0
       mov xax, [xbx].pOwner
       .if [xax].$Obj(Application).Options.dWarningLevel > 2
-        OCall [xbx].pOwner::Application.Print, $OfsCStr("No items for .DEF file", CRLF)
+        OCall [xbx].pOwner::Application.Print, $OfsCStr("No items for .def file", CRLF)
       .endif
       jmp @Exit
     .endif
 
-    invoke StrCopyW, addr cFile, pFileName
-    invoke StrSizeW, pFileName
-    lea xcx, cFile
-    .if (eax <= 10) || (CHR ptr [xcx + xax - 8] != '.')
+    lea xdi, cFile
+    invoke StrECopyW, xdi, pFileName
+    mov xcx, xax
+    sub xcx, xdi 
+    .if (ecx <= 10) || (CHRW ptr [xax - 8] != '.')      ;.inc expected
       OCall [xbx].pOwner::Application.Print, $OfsCStr("Invalid .def file name", CRLF)
       jmp @Exit
     .endif
-    mov pFileName, xcx
-    FillStringW [xcx + xax - 6], <def>                  ;Replace extension
+    FillStringW [xax - 6], <def>                        ;Replace extension
 
-    invoke CreateFileW, pFileName,GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, \
+    invoke CreateFileW, xdi, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, \
                         FILE_ATTRIBUTE_ARCHIVE, 0
     .if xax != INVALID_HANDLE_VALUE
       mov hFile, xax
@@ -137,7 +139,7 @@ Method IncFile.CreateDefFile, uses xbx xdi xsi, pFileName:PSTRINGW
         .break .if esi == [xcx].$Obj(List).dCount
         OCall xcx::List.ItemAt, esi
         lea xdi, cText
-        WriteFA xdi, " \`¦SA\`\n)", PSTRINGA ptr [xax]
+        WriteFA xdi, " ¦SA\n", xax
         lea xax, cText
         sub xdi, xax
         invoke WriteFile, hFile, addr cText, edi, addr dBytesWritten, NULL
@@ -170,7 +172,7 @@ Method IncFile.Done, uses xbx
   invoke StrDisposeW, [xbx].pHeaderFileName
   
   .if [xbx].pDefs != NULL
-    Destroy [xbx].pDefs
+    Kill [xbx].pDefs
     mov [xbx].pDefs, NULL
   .endif
 
@@ -342,9 +344,10 @@ Method IncFile.GetNextTokenC, uses xbx xdi
       jmp @TryAgain                                     ;Take the next Token
     .endif
 
-    .if DCHRA ptr [xax] == PCT_COMMENT
+    .if CHRA ptr [xax] == PCT_COMMENT
       .if [xbx].bSkipLinePP == 0
-        OCall xbx::IncFile.AddComment, xax
+        lea xdx, [xax + sizeof(CHRA)]
+        OCall xbx::IncFile.AddComment, xdx
       .endif
       jmp @TryAgain
     .endif
@@ -395,7 +398,8 @@ Method IncFile.GetNextTokenPP, uses xbx xdi
         jmp @GetNextToken
       .endif
       .if CHRA ptr [xax] == PCT_COMMENT
-        OCall xbx::IncFile.AddComment, xax
+        lea xdx, [xax + sizeof(CHRA)] 
+        OCall xbx::IncFile.AddComment, xdx
         jmp @GetNextToken
       .endif
     .endif
@@ -525,13 +529,18 @@ Method IncFile.Init, uses xbx xdi xsi, pOwner:POINTER, pFileName:PSTRINGW, pPare
   mov xdi, pOwner
   .if [xdi].$Obj(Application).Options.bCreateDefs != FALSE
     mov [xbx].pDefs, $New(List)
-    OCall xax::List.Init, NULL, 100, 10, CF_SNG
+    OCall xax::List.Init, NULL, 1000, 100, CF_SNG
   .endif
 
   ;Extract the FileName
   invoke GetFullPathNameW, pFileName, lengthof(cFullFileName), addr cFullFileName, addr pName
+  mov [xbx].pHeaderFileName, $invoke(StrNewW, pName)
+  mov xax, pName
+  mov si, CHRW ptr [xax]
+  mov CHRW ptr [xax], 0
   mov [xbx].pHeaderFilePath, $invoke(StrNewW, addr cFullFileName)
-  m2m [xbx].pHeaderFileName, $invoke(StrNewW, pName)
+  mov xax, pName
+  mov CHRW ptr [xax], si
 
   ;Try to open the file
   invoke CreateFileW, addr cFullFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, 0
@@ -577,7 +586,9 @@ Method IncFile.Init, uses xbx xdi xsi, pOwner:POINTER, pFileName:PSTRINGW, pPare
     OCall [xbx].pOwner::Application.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
 
     ;Build a list on a separate window
+    ifndef SILENT
     DbgStrW pFileName,, "Files not found"
+    endif
     xor eax, eax
     jmp @@EOM
   .endif
@@ -915,7 +926,7 @@ Method IncFile.Save, uses xbx xdi xsi, pFullFileName:PSTRINGW
 
     invoke FileTimeToSystemTime, addr [xbx].CreationFileTime, addr CreationSysTime
     invoke FileTimeToSystemTime, addr [xbx].LastWriteFileTime, addr LastWriteSysTime
-    WriteFA xdi, ";Source file: ¦SU\¦SU\n", [xbx].pHeaderFilePath, [xbx].pHeaderFileName
+    WriteFA xdi, ";Source file: ¦SU¦SU\n", [xbx].pHeaderFilePath, [xbx].pHeaderFileName
     WriteFA xdi, ";             Created on (UTC) ¦BN¦UW/¦BN¦UW/¦BN¦UW ¦BN¦UW:¦BN¦UW:¦BN¦UW\n", \
                  <<<PrependZerosA(CreationSysTime.wDay, 2)>>>,     CreationSysTime.wDay, \
                  <<<PrependZerosA(CreationSysTime.wMonth, 2)>>>,   CreationSysTime.wMonth, \
@@ -1071,7 +1082,6 @@ Method IncFile.StmWrite, uses xbx, pText:PSTRINGA
     mov [xbx].dStmOutEoL, FALSE
     OCall xbx::IncFile.StmWriteIndent
   .endif
-;  DbgStrA pText,, "Inc Output"
   invoke StrECopyA, [xbx].pStmOutPos, pText
   mov [xbx].pStmOutPos, xax
 MethodEnd
@@ -1137,7 +1147,6 @@ Method IncFile.StmWriteF, uses xbx, pFormat:PSTRINGA, Args:vararg
     OCall xbx::IncFile.StmWriteIndent                   ;  the first output
   .endif
   invoke wvsprintfA, [xbx].pStmOutPos, pFormat, addr Args ;-> Arguments
-;  DbgStrA [xbx].pStmOutPos,, "Inc Output"
   add [xbx].pStmOutPos, xax
 MethodEnd
 

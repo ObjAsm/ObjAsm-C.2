@@ -11,19 +11,25 @@ if exist %ProjectName%.obj (
   ) else (
     set Extension=exe
   )
-  
+
+  if !TARGET_USER_INTERFACE! == GUI (
+    set Subsystem=WIN
+  ) else (
+    set Subsystem=CON
+  )
+
   if exist !ProjectName!.res set AuxRes=!ProjectName!.res
 
   if [!LogFile!] == [] (
     if exist !Linker! (
-      call !Linker! @"%OBJASM_PATH%\Build\Options\OPT_LNK_!TARGET_MODE!_!TARGET_BITNESS!.txt" !OptDLL! !ProjectName!.obj !AuxRes! /OUT:!ProjectName!!TARGET_SUFFIX_STR!.!Extension!
+      call !Linker! @"%OBJASM_PATH%\Build\Options\OPT_LNK_!Subsystem!_!TARGET_MODE!_!TARGET_BITNESS!.txt" !OptDLL! !ProjectName!.obj !AuxRes! /OUT:!ProjectName!!TARGET_SUFFIX_STR!.!Extension!
     ) else (
       echo [93;101mERROR: Linker not found[0m
       exit /b 1
     )
   ) else (
     if exist !Linker! (
-      call !Linker! @"%OBJASM_PATH%\Build\Options\OPT_LNK_!TARGET_MODE!_!TARGET_BITNESS!.txt" !OptDLL! !ProjectName!.obj !AuxRes! /OUT:!ProjectName!!TARGET_SUFFIX_STR!.!Extension!>> !LogFile!
+      call !Linker! @"%OBJASM_PATH%\Build\Options\OPT_LNK_!Subsystem!_!TARGET_MODE!_!TARGET_BITNESS!.txt" !OptDLL! !ProjectName!.obj !AuxRes! /OUT:!ProjectName!!TARGET_SUFFIX_STR!.!Extension!>> !LogFile!
       echo.>> !LogFile!
     ) else (
       echo ERROR: Linker not found>> !LogFile!

@@ -6,14 +6,6 @@ set ProjectName=%~n1
 REM Clear LogFile variable
 set LogFile=%LogFile%
 
-REM Dispaly some information
-echo Assembling !ProjectName! project ...
-echo.
-if not [!LogFile!] == [] (
-  echo Assembling !ProjectName! project ...> !LogFile!
-  echo.>> !LogFile!
-)
-
 REM Set build targets.
 call "%OBJASM_PATH%\Build\OA_TARGET.cmd" %*
 if errorlevel 1 goto Error

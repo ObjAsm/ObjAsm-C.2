@@ -22,7 +22,7 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
   local pToken:PTOKEN, pType:PSTRINGA, pName:PSTRINGA, bAddSpace:DWORD
   local dPtrCount:DWORD, dParenthesesCount:DWORD, bSkipTheRest:DWORd, pCurrToken:PTOKEN
   local dTypeCSpec:DWORD, dScanStep:DWORD, pArgStack:POINTER, cTransBuffer[128]:CHRA
-  local pStr:PSTRINGA
+  local pStr:PSTRINGA, PrevOutStat:STMOUT_STAT
 
   OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderMacroCall")
   .ifBitSet dMacroFlags, MCF_SKIP_INVOKATION
@@ -40,8 +40,10 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
   mov pArgStack, $Create@Stacklist()
 
   .ifBitSet dMacroFlags, MCF_INTERFACE_END
-    OCall xbx::IncFile.StmWrite, $OfsCStrA("??Interface equ <>")  ;Reset ??Interface symbol
-    OCall xbx::IncFile.StmWriteEoL
+    .ifBitSet $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
+      OCall xbx::IncFile.StmWrite, $OfsCStrA("??Interface equ <>")  ;Reset ??Interface symbol
+      OCall xbx::IncFile.StmWriteEoL
+    .endif
     mov [xbx].$Obj(IncFile).bInsideInterface, FALSE
   .endif
 
@@ -119,8 +121,9 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
               mov pStr, xax
               OCall xbx::IncFile.StmWrite, $OfsCStrA(", :")
               WritePtr
-              movzx edx, $ObjTmpl(Application).Options.bUntypedParams
-              invoke TranslateType, pStr, edx
+              .if $ObjTmpl(Application).Options.bUntypedParams
+                invoke TranslateType, pStr
+              .endif
               OCall xbx::IncFile.StmWrite, xax
             .endif
             mov pType, NULL
@@ -222,13 +225,16 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
   .endif
   .ifBitSet dMacroFlags, MCF_INTERFACE_BEG
     .if [xbx].$Obj(IncFile).pContainerName != NULL
-      OCall xbx::IncFile.StmWriteF, $OfsCStrA("??Interface equ <%hs>"), [xbx].$Obj(IncFile).pContainerName
-      OCall xbx::IncFile.StmWriteEoL
+      .ifBitSet $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
+        OCall xbx::IncFile.StmWriteF, $OfsCStrA("??Interface equ <%hs>"), [xbx].$Obj(IncFile).pContainerName
+        OCall xbx::IncFile.StmWriteEoL
+      .endif
       mov [xbx].$Obj(IncFile).bInsideInterface, TRUE
     .endif
   .endif
 
   .ifBitSet dMacroFlags, MCF_STRUCT_BEG
+    StmOutSave PrevOutStat                              ;Save output stream status
     inc [xbx].$Obj(IncFile).dIndentation
     OCall xbx::IncFile.GetNextTokenC
     .if CHRA ptr [xax] == '{'
@@ -244,6 +250,10 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
       OCall xbx::IncFile.StmWriteEoL
     .else
       jmp @ErrorSyntax
+    .endif
+    .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONTAINERS
+      StmOutLoad PrevOutStat                            ;Restore initial output stream status
+      mov CHRA ptr [xax], 0
     .endif
   .endif
   mov eax, TRUE

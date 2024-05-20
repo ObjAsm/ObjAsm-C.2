@@ -32,6 +32,16 @@ for /f "tokens=1,* eol=;" %%X in (!ProjectName!.asm) do (
           set TARGET_USER_INTERFACE=GUI
           set TARGET_BITNESS=32
           set TARGET_BIN_FORMAT=EXE
+        ) else if %%A == CON64 (
+          set TARGET_PLATFORM=WINDOWS
+          set TARGET_USER_INTERFACE=CLI
+          set TARGET_BITNESS=64
+          set TARGET_BIN_FORMAT=EXE
+        ) else if %%A == CON32 (
+          set TARGET_PLATFORM=WINDOWS
+          set TARGET_USER_INTERFACE=CLI
+          set TARGET_BITNESS=32
+          set TARGET_BIN_FORMAT=EXE
         ) else if %%A == NUI64 (
           set TARGET_PLATFORM=WINDOWS
           set TARGET_USER_INTERFACE=NONE

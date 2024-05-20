@@ -1,9 +1,10 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\gdiplusflat.h\gdiplusflat.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\gdiplusflat.h
 ;             Created on (UTC) 06/04/2024 06:15:55
 ;             Last modified on (UTC) 16/12/2023 11:07:10
 
+;\**************************************************************************
 ifndef _FLATAPI_H
   _FLATAPI_H equ <>
   include winapifamily.inc
@@ -13,6 +14,9 @@ ifndef _FLATAPI_H
     ifdef __cplusplus
       ;[...]
     endif
+    ;----------------------------------------------------------------------------
+    ; GraphicsPath APIs
+    ;----------------------------------------------------------------------------
     GdipCreatePath proto WIN_STD_CALL_CONV :GpFillMode, :ptr ptr GpPath
     GdipCreatePath2 proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr GDIPCONST, :INT_, :GpFillMode, :ptr ptr GpPath
     GdipCreatePath2I proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr GDIPCONST, :INT_, :GpFillMode, :ptr ptr GpPath
@@ -77,6 +81,9 @@ ifndef _FLATAPI_H
     GdipIsVisiblePathPointI proto WIN_STD_CALL_CONV :ptr GpPath, :INT_, :INT_, :ptr GpGraphics, :ptr BOOL
     GdipIsOutlineVisiblePathPoint proto WIN_STD_CALL_CONV :ptr GpPath, :REAL, :REAL, :ptr GpPen, :ptr GpGraphics, :ptr BOOL
     GdipIsOutlineVisiblePathPointI proto WIN_STD_CALL_CONV :ptr GpPath, :INT_, :INT_, :ptr GpPen, :ptr GpGraphics, :ptr BOOL
+    ;----------------------------------------------------------------------------
+    ; PathIterator APIs
+    ;----------------------------------------------------------------------------
     GdipCreatePathIter proto WIN_STD_CALL_CONV :ptr ptr GpPathIterator, :ptr GpPath
     GdipDeletePathIter proto WIN_STD_CALL_CONV :ptr GpPathIterator
     GdipPathIterNextSubpath proto WIN_STD_CALL_CONV :ptr GpPathIterator, :ptr INT_, :ptr INT_, :ptr INT_, :ptr BOOL
@@ -91,6 +98,9 @@ ifndef _FLATAPI_H
     GdipPathIterRewind proto WIN_STD_CALL_CONV :ptr GpPathIterator
     GdipPathIterEnumerate proto WIN_STD_CALL_CONV :ptr GpPathIterator, :ptr INT_, :ptr GpPointF, :ptr BYTE, :INT_
     GdipPathIterCopyData proto WIN_STD_CALL_CONV :ptr GpPathIterator, :ptr INT_, :ptr GpPointF, :ptr BYTE, :INT_, :INT_
+    ;----------------------------------------------------------------------------
+    ; Matrix APIs
+    ;----------------------------------------------------------------------------
     GdipCreateMatrix proto WIN_STD_CALL_CONV :ptr ptr GpMatrix
     GdipCreateMatrix2 proto WIN_STD_CALL_CONV :REAL, :REAL, :REAL, :REAL, :REAL, :REAL, :ptr ptr GpMatrix
     GdipCreateMatrix3 proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr GDIPCONST, :ptr ptr GpMatrix
@@ -112,6 +122,9 @@ ifndef _FLATAPI_H
     GdipIsMatrixInvertible proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr BOOL
     GdipIsMatrixIdentity proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr BOOL
     GdipIsMatrixEqual proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr GDIPCONST, :ptr BOOL
+    ;----------------------------------------------------------------------------
+    ; Region APIs
+    ;----------------------------------------------------------------------------
     GdipCreateRegion proto WIN_STD_CALL_CONV :ptr ptr GpRegion
     GdipCreateRegionRect proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr ptr GpRegion
     GdipCreateRegionRectI proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr ptr GpRegion
@@ -144,13 +157,22 @@ ifndef _FLATAPI_H
     GdipGetRegionScansCount proto WIN_STD_CALL_CONV :ptr GpRegion, :ptr UINT, :ptr GpMatrix
     GdipGetRegionScans proto WIN_STD_CALL_CONV :ptr GpRegion, :ptr GpRectF, :ptr INT_, :ptr GpMatrix
     GdipGetRegionScansI proto WIN_STD_CALL_CONV :ptr GpRegion, :ptr GpRect, :ptr INT_, :ptr GpMatrix
+    ;----------------------------------------------------------------------------
+    ; Brush APIs
+    ;----------------------------------------------------------------------------
     GdipCloneBrush proto WIN_STD_CALL_CONV :ptr GpBrush, :ptr ptr GpBrush
     GdipDeleteBrush proto WIN_STD_CALL_CONV :ptr GpBrush
     GdipGetBrushType proto WIN_STD_CALL_CONV :ptr GpBrush, :ptr GpBrushType
+    ;----------------------------------------------------------------------------
+    ; HatchBrush APIs
+    ;----------------------------------------------------------------------------
     GdipCreateHatchBrush proto WIN_STD_CALL_CONV :GpHatchStyle, :ARGB, :ARGB, :ptr ptr GpHatch
     GdipGetHatchStyle proto WIN_STD_CALL_CONV :ptr GpHatch, :ptr GpHatchStyle
     GdipGetHatchForegroundColor proto WIN_STD_CALL_CONV :ptr GpHatch, :ptr ARGB
     GdipGetHatchBackgroundColor proto WIN_STD_CALL_CONV :ptr GpHatch, :ptr ARGB
+    ;----------------------------------------------------------------------------
+    ; TextureBrush APIs
+    ;----------------------------------------------------------------------------
     GdipCreateTexture proto WIN_STD_CALL_CONV :ptr GpImage, :GpWrapMode, :ptr ptr GpTexture
     GdipCreateTexture2 proto WIN_STD_CALL_CONV :ptr GpImage, :GpWrapMode, :REAL, :REAL, :REAL, :REAL, :ptr ptr GpTexture
     GdipCreateTextureIA proto WIN_STD_CALL_CONV :ptr GpImage, :ptr GDIPCONST, :REAL, :REAL, :REAL, :REAL, :ptr ptr GpTexture
@@ -166,9 +188,15 @@ ifndef _FLATAPI_H
     GdipSetTextureWrapMode proto WIN_STD_CALL_CONV :ptr GpTexture, :GpWrapMode
     GdipGetTextureWrapMode proto WIN_STD_CALL_CONV :ptr GpTexture, :ptr GpWrapMode
     GdipGetTextureImage proto WIN_STD_CALL_CONV :ptr GpTexture, :ptr ptr GpImage
+    ;----------------------------------------------------------------------------
+    ; SolidBrush APIs
+    ;----------------------------------------------------------------------------
     GdipCreateSolidFill proto WIN_STD_CALL_CONV :ARGB, :ptr ptr GpSolidFill
     GdipSetSolidFillColor proto WIN_STD_CALL_CONV :ptr GpSolidFill, :ARGB
     GdipGetSolidFillColor proto WIN_STD_CALL_CONV :ptr GpSolidFill, :ptr ARGB
+    ;----------------------------------------------------------------------------
+    ; LineBrush APIs
+    ;----------------------------------------------------------------------------
     GdipCreateLineBrush proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr GDIPCONST, :ARGB, :ARGB, :GpWrapMode, :ptr ptr GpLineGradient
     GdipCreateLineBrushI proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr GDIPCONST, :ARGB, :ARGB, :GpWrapMode, :ptr ptr GpLineGradient
     GdipCreateLineBrushFromRect proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ARGB, :ARGB, :LinearGradientMode, :GpWrapMode, :ptr ptr GpLineGradient
@@ -198,6 +226,9 @@ ifndef _FLATAPI_H
     GdipTranslateLineTransform proto WIN_STD_CALL_CONV :ptr GpLineGradient, :REAL, :REAL, :GpMatrixOrder
     GdipScaleLineTransform proto WIN_STD_CALL_CONV :ptr GpLineGradient, :REAL, :REAL, :GpMatrixOrder
     GdipRotateLineTransform proto WIN_STD_CALL_CONV :ptr GpLineGradient, :REAL, :GpMatrixOrder
+    ;----------------------------------------------------------------------------
+    ; PathGradientBrush APIs
+    ;----------------------------------------------------------------------------
     GdipCreatePathGradient proto WIN_STD_CALL_CONV :ptr GDIPCONST, :INT_, :GpWrapMode, :ptr ptr GpPathGradient
     GdipCreatePathGradientI proto WIN_STD_CALL_CONV :ptr GDIPCONST, :INT_, :GpWrapMode, :ptr ptr GpPathGradient
     GdipCreatePathGradientFromPath proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr ptr GpPathGradient
@@ -236,6 +267,9 @@ ifndef _FLATAPI_H
     GdipRotatePathGradientTransform proto WIN_STD_CALL_CONV :ptr GpPathGradient, :REAL, :GpMatrixOrder
     GdipGetPathGradientFocusScales proto WIN_STD_CALL_CONV :ptr GpPathGradient, :ptr REAL, :ptr REAL
     GdipSetPathGradientFocusScales proto WIN_STD_CALL_CONV :ptr GpPathGradient, :REAL, :REAL
+    ;----------------------------------------------------------------------------
+    ; Pen APIs
+    ;----------------------------------------------------------------------------
     GdipCreatePen1 proto WIN_STD_CALL_CONV :ARGB, :REAL, :GpUnit, :ptr ptr GpPen
     GdipCreatePen2 proto WIN_STD_CALL_CONV :ptr GpBrush, :REAL, :GpUnit, :ptr ptr GpPen
     GdipClonePen proto WIN_STD_CALL_CONV :ptr GpPen, :ptr ptr GpPen
@@ -283,6 +317,9 @@ ifndef _FLATAPI_H
     GdipGetPenCompoundCount proto WIN_STD_CALL_CONV :ptr GpPen, :ptr INT_
     GdipSetPenCompoundArray proto WIN_STD_CALL_CONV :ptr GpPen, :ptr GDIPCONST, :INT_
     GdipGetPenCompoundArray proto WIN_STD_CALL_CONV :ptr GpPen, :ptr REAL, :INT_
+    ;----------------------------------------------------------------------------
+    ; CustomLineCap APIs
+    ;----------------------------------------------------------------------------
     GdipCreateCustomLineCap proto WIN_STD_CALL_CONV :ptr GpPath, :ptr GpPath, :GpLineCap, :REAL, :ptr ptr GpCustomLineCap
     GdipDeleteCustomLineCap proto WIN_STD_CALL_CONV :ptr GpCustomLineCap
     GdipCloneCustomLineCap proto WIN_STD_CALL_CONV :ptr GpCustomLineCap, :ptr ptr GpCustomLineCap
@@ -297,6 +334,9 @@ ifndef _FLATAPI_H
     GdipGetCustomLineCapBaseInset proto WIN_STD_CALL_CONV :ptr GpCustomLineCap, :ptr REAL
     GdipSetCustomLineCapWidthScale proto WIN_STD_CALL_CONV :ptr GpCustomLineCap, :REAL
     GdipGetCustomLineCapWidthScale proto WIN_STD_CALL_CONV :ptr GpCustomLineCap, :ptr REAL
+    ;----------------------------------------------------------------------------
+    ; AdjustableArrowCap APIs
+    ;----------------------------------------------------------------------------
     GdipCreateAdjustableArrowCap proto WIN_STD_CALL_CONV :REAL, :REAL, :BOOL, :ptr ptr GpAdjustableArrowCap
     GdipSetAdjustableArrowCapHeight proto WIN_STD_CALL_CONV :ptr GpAdjustableArrowCap, :REAL
     GdipGetAdjustableArrowCapHeight proto WIN_STD_CALL_CONV :ptr GpAdjustableArrowCap, :ptr REAL
@@ -306,6 +346,9 @@ ifndef _FLATAPI_H
     GdipGetAdjustableArrowCapMiddleInset proto WIN_STD_CALL_CONV :ptr GpAdjustableArrowCap, :ptr REAL
     GdipSetAdjustableArrowCapFillState proto WIN_STD_CALL_CONV :ptr GpAdjustableArrowCap, :BOOL
     GdipGetAdjustableArrowCapFillState proto WIN_STD_CALL_CONV :ptr GpAdjustableArrowCap, :ptr BOOL
+    ;----------------------------------------------------------------------------
+    ; Image APIs
+    ;----------------------------------------------------------------------------
     GdipLoadImageFromStream proto WIN_STD_CALL_CONV :ptr IStream, :ptr ptr GpImage
     GdipLoadImageFromFile proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr ptr GpImage
     GdipLoadImageFromStreamICM proto WIN_STD_CALL_CONV :ptr IStream, :ptr ptr GpImage
@@ -351,7 +394,11 @@ ifndef _FLATAPI_H
       GdipFindNextImageItem proto WIN_STD_CALL_CONV :ptr GpImage, :ptr ImageItemData
       GdipGetImageItemData proto WIN_STD_CALL_CONV :ptr GpImage, :ptr ImageItemData
     endif
+    ;(GDIPVER >= 0x0110)
     GdipImageForceValidation proto WIN_STD_CALL_CONV :ptr GpImage
+    ;----------------------------------------------------------------------------
+    ; Bitmap APIs
+    ;----------------------------------------------------------------------------
     GdipCreateBitmapFromStream proto WIN_STD_CALL_CONV :ptr IStream, :ptr ptr GpBitmap
     GdipCreateBitmapFromFile proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr ptr GpBitmap
     GdipCreateBitmapFromStreamICM proto WIN_STD_CALL_CONV :ptr IStream, :ptr ptr GpBitmap
@@ -376,12 +423,16 @@ ifndef _FLATAPI_H
       GdipGraphicsSetAbort proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GdiplusAbort
       GdipBitmapConvertFormat proto WIN_STD_CALL_CONV :ptr GpBitmap, :PixelFormat, :DitherType, :PaletteType, :ptr ColorPalette, :REAL
       GdipInitializePalette proto WIN_STD_CALL_CONV :ptr ColorPalette, :PaletteType, :INT_, :BOOL, :ptr GpBitmap
+      ; optional bitmap for median cut.
       GdipBitmapApplyEffect proto WIN_STD_CALL_CONV :ptr GpBitmap, :ptr CGpEffect, :ptr RECT, :BOOL, :ptr ptr VOID, :ptr INT_
       GdipBitmapCreateApplyEffect proto WIN_STD_CALL_CONV :ptr ptr GpBitmap, :INT_, :ptr CGpEffect, :ptr RECT, :ptr RECT, :ptr ptr GpBitmap, :BOOL, :ptr ptr VOID, :ptr INT_
       GdipBitmapGetHistogram proto WIN_STD_CALL_CONV :ptr GpBitmap, :HistogramFormat, :UINT, :ptr UINT, :ptr UINT, :ptr UINT, :ptr UINT
       GdipBitmapGetHistogramSize proto WIN_STD_CALL_CONV :HistogramFormat, :ptr UINT
     endif
     GdipBitmapSetResolution proto WIN_STD_CALL_CONV :ptr GpBitmap, :REAL, :REAL
+    ;----------------------------------------------------------------------------
+    ; ImageAttributes APIs
+    ;----------------------------------------------------------------------------
     GdipCreateImageAttributes proto WIN_STD_CALL_CONV :ptr ptr GpImageAttributes
     GdipCloneImageAttributes proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr ptr GpImageAttributes
     GdipDisposeImageAttributes proto WIN_STD_CALL_CONV :ptr GpImageAttributes
@@ -398,6 +449,9 @@ ifndef _FLATAPI_H
     GdipSetImageAttributesWrapMode proto WIN_STD_CALL_CONV :ptr GpImageAttributes, :WrapMode, :ARGB, :BOOL
     GdipSetImageAttributesICMMode proto WIN_STD_CALL_CONV :ptr GpImageAttributes, :BOOL
     GdipGetImageAttributesAdjustedPalette proto WIN_STD_CALL_CONV :ptr GpImageAttributes, :ptr ColorPalette, :ColorAdjustType
+    ;----------------------------------------------------------------------------
+    ; Graphics APIs
+    ;----------------------------------------------------------------------------
     GdipFlush proto WIN_STD_CALL_CONV :ptr GpGraphics, :GpFlushIntention
     GdipCreateFromHDC proto WIN_STD_CALL_CONV :HDC, :ptr ptr GpGraphics
     GdipCreateFromHDC2 proto WIN_STD_CALL_CONV :HDC, :HANDLE, :ptr ptr GpGraphics
@@ -439,6 +493,7 @@ ifndef _FLATAPI_H
     GdipTransformPoints proto WIN_STD_CALL_CONV :ptr GpGraphics, :GpCoordinateSpace, :GpCoordinateSpace, :ptr GpPointF, :INT_
     GdipTransformPointsI proto WIN_STD_CALL_CONV :ptr GpGraphics, :GpCoordinateSpace, :GpCoordinateSpace, :ptr GpPoint, :INT_
     GdipGetNearestColor proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr ARGB
+    ; Creates the Win9x Halftone Palette (even on NT) with correct Desktop colors
     GdipCreateHalftonePalette proto WIN_STD_CALL_CONV
     GdipDrawLine proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GpPen, :REAL, :REAL, :REAL, :REAL
     GdipDrawLineI proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GpPen, :INT_, :INT_, :INT_, :INT_
@@ -493,6 +548,7 @@ ifndef _FLATAPI_H
     if (GDIPVER ge 0110h)
       GdipDrawImageFX proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GpImage, :ptr GpRectF, :ptr GpMatrix, :ptr CGpEffect, :ptr GpImageAttributes, :GpUnit
     endif
+    ;(GDIPVER >= 0x0110)
     GdipDrawImage proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GpImage, :REAL, :REAL
     GdipDrawImageI proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GpImage, :INT_, :INT_
     GdipDrawImageRect proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GpImage, :REAL, :REAL, :REAL, :REAL
@@ -569,6 +625,9 @@ ifndef _FLATAPI_H
     GdipGetImageEncodersSize proto WIN_STD_CALL_CONV :ptr UINT, :ptr UINT
     GdipGetImageEncoders proto WIN_STD_CALL_CONV :UINT, :UINT, :ptr ImageCodecInfo
     GdipComment proto WIN_STD_CALL_CONV :ptr GpGraphics, :UINT, :ptr GDIPCONST
+    ;----------------------------------------------------------------------------
+    ; FontFamily APIs
+    ;----------------------------------------------------------------------------
     GdipCreateFontFamilyFromName proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr GpFontCollection, :ptr ptr GpFontFamily
     GdipDeleteFontFamily proto WIN_STD_CALL_CONV :ptr GpFontFamily
     GdipCloneFontFamily proto WIN_STD_CALL_CONV :ptr GpFontFamily, :ptr ptr GpFontFamily
@@ -583,6 +642,9 @@ ifndef _FLATAPI_H
     GdipGetCellAscent proto WIN_STD_CALL_CONV :ptr GDIPCONST, :INT_, :ptr UINT16
     GdipGetCellDescent proto WIN_STD_CALL_CONV :ptr GDIPCONST, :INT_, :ptr UINT16
     GdipGetLineSpacing proto WIN_STD_CALL_CONV :ptr GDIPCONST, :INT_, :ptr UINT16
+    ;----------------------------------------------------------------------------
+    ; Font APIs
+    ;----------------------------------------------------------------------------
     GdipCreateFontFromDC proto WIN_STD_CALL_CONV :HDC, :ptr ptr GpFont
     GdipCreateFontFromLogfontA proto WIN_STD_CALL_CONV :HDC, :ptr GDIPCONST, :ptr ptr GpFont
     GdipCreateFontFromLogfontW proto WIN_STD_CALL_CONV :HDC, :ptr GDIPCONST, :ptr ptr GpFont
@@ -604,11 +666,17 @@ ifndef _FLATAPI_H
     GdipGetFontCollectionFamilyList proto WIN_STD_CALL_CONV :ptr GpFontCollection, :INT_, :ptr ptr GpFontFamily, :ptr INT_
     GdipPrivateAddFontFile proto WIN_STD_CALL_CONV :ptr GpFontCollection, :ptr GDIPCONST
     GdipPrivateAddMemoryFont proto WIN_STD_CALL_CONV :ptr GpFontCollection, :ptr GDIPCONST, :length_
+    ;----------------------------------------------------------------------------
+    ; Text APIs
+    ;----------------------------------------------------------------------------
     GdipDrawString proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GDIPCONST, :length_, :ptr GDIPCONST, :ptr GDIPCONST, :ptr GDIPCONST, :ptr GDIPCONST
     GdipMeasureString proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GDIPCONST, :length_, :ptr GDIPCONST, :ptr GDIPCONST, :ptr GDIPCONST, :ptr RectF, :ptr INT_, :ptr INT_
     GdipMeasureCharacterRanges proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GDIPCONST, :length_, :ptr GDIPCONST, :ptr GDIPCONST, :ptr GDIPCONST, :INT_, :ptr ptr GpRegion
     GdipDrawDriverString proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GDIPCONST, :length_, :ptr GDIPCONST, :ptr GDIPCONST, :ptr GDIPCONST, :INT_, :ptr GDIPCONST
     GdipMeasureDriverString proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GDIPCONST, :length_, :ptr GDIPCONST, :ptr GDIPCONST, :INT_, :ptr GDIPCONST, :ptr RectF
+    ;----------------------------------------------------------------------------
+    ; String format APIs
+    ;----------------------------------------------------------------------------
     GdipCreateStringFormat proto WIN_STD_CALL_CONV :INT_, :LANGID, :ptr ptr GpStringFormat
     GdipStringFormatGetGenericDefault proto WIN_STD_CALL_CONV :ptr ptr GpStringFormat
     GdipStringFormatGetGenericTypographic proto WIN_STD_CALL_CONV :ptr ptr GpStringFormat
@@ -631,6 +699,9 @@ ifndef _FLATAPI_H
     GdipGetStringFormatDigitSubstitution proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr LANGID, :ptr StringDigitSubstitute
     GdipGetStringFormatMeasurableCharacterRangeCount proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr INT_
     GdipSetStringFormatMeasurableCharacterRanges proto WIN_STD_CALL_CONV :ptr GpStringFormat, :INT_, :ptr GDIPCONST
+    ;----------------------------------------------------------------------------
+    ; Cached Bitmap APIs
+    ;----------------------------------------------------------------------------
     GdipCreateCachedBitmap proto WIN_STD_CALL_CONV :ptr GpBitmap, :ptr GpGraphics, :ptr ptr GpCachedBitmap
     GdipDeleteCachedBitmap proto WIN_STD_CALL_CONV :ptr GpCachedBitmap
     GdipDrawCachedBitmap proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GpCachedBitmap, :INT_, :INT_
@@ -644,8 +715,11 @@ ifndef _FLATAPI_H
       GdipConvertToEmfPlusToFile proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GpMetafile, :ptr INT_, :ptr WCHAR, :EmfType, :ptr WCHAR, :ptr ptr GpMetafile
       GdipConvertToEmfPlusToStream proto WIN_STD_CALL_CONV :ptr GpGraphics, :ptr GpMetafile, :ptr INT_, :ptr IStream, :EmfType, :ptr WCHAR, :ptr ptr GpMetafile
     endif
+    ;(GDIPVER >= 0x0110)
     ifdef __cplusplus
       ;[...]
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
 endif
+; !_FLATAPI_H

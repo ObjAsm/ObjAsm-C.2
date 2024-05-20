@@ -90,9 +90,6 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA, dEmbedded:DWORD
       mov pName, $invoke(TranslateReservedWord, xax, xdx)
       IsStructure? pName
       .if eax == FALSE
-        DbgStrA pName, "RenderContainer", "New struct"
-        DbgStrW [xbx].$Obj(IncFile).pHeaderFileName,, "New struct"
-        DbgDec [xbx].$Obj(IncFile).dLineNumber,, "New struct"
         invoke StrLengthA, pName
         invoke InsertStrg, pNewStructs, pName, eax
       .endif

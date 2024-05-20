@@ -1,19 +1,30 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\oleauto.h\oleauto.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\oleauto.h
 ;             Created on (UTC) 06/04/2024 06:15:57
 ;             Last modified on (UTC) 12/02/2024 17:05:56
 
 include winapifamily.inc
 if _MSC_VER ge 1200
+  ;* nonstandard extension : single line comment *
+  ; padding added after data member
 endif
+;+---------------------------------------------------------------------------
+;  Microsoft Windows
+;  Copyright (c) Microsoft Corporation. All rights reserved.
+;  File:       oleauto.h
+;  Contents:   Defines Ole Automation support function prototypes, constants
+;----------------------------------------------------------------------------
 if  not Defined(_OLEAUTO_H_)
   _OLEAUTO_H_ equ <>
   if _MSC_VER gt 1000
   endif
+  ; Set packing to 8 for ISV, and Win95 support
   ifndef RC_INVOKED
     include pshpack8.inc
   endif
+  ; RC_INVOKED
+  ;  Definition of the OLE Automation APIs, and macros.
   ifdef _OLEAUT32_
     WINOLEAUTAPI equ <STDAPI>
     WINOLEAUTAPI_ macro type_
@@ -29,18 +40,25 @@ if  not Defined(_OLEAUTO_H_)
   STDOLE_MAJORVERNUM equ 1h
   STDOLE_MINORVERNUM equ 0h
   STDOLE_LCID equ 0000h
+  ; Version # of stdole2.tlb
   STDOLE2_MAJORVERNUM equ 2h
   STDOLE2_MINORVERNUM equ 0h
   STDOLE2_LCID equ 0000h
+  ;* if not already picked up from olenls.h *
   ifndef _LCID_DEFINED
     LCID typedef DWORD
     _LCID_DEFINED equ <>
+    ;* _LCID_DEFINED *
   endif
   ifndef BEGIN_INTERFACE
     BEGIN_INTERFACE equ <>
     END_INTERFACE equ <>
   endif
+  ;* pull in the MIDL generated header *
   include oaidl.inc
+  ;*---------------------------------------------------------------------*
+  ;*                            BSTR API                                 *
+  ;*---------------------------------------------------------------------*
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, SysAllocString, WIN_STD_CALL_CONV,, <:ptr OLECHAR>, 4
     @DefProto DllImport, SysReAllocString, WIN_STD_CALL_CONV,, <:ptr BSTR, :ptr OLECHAR>, 8
@@ -53,18 +71,29 @@ if  not Defined(_OLEAUTO_H_)
     if (Defined(_WIN32) or Defined(_WIN64))
       @DefProto DllImport, SysStringByteLen, WIN_STD_CALL_CONV,, <:BSTR>, 4
       @DefProto DllImport, SysAllocStringByteLen, WIN_STD_CALL_CONV,, <:LPCSTR, :UINT>, 8
+      ;* (defined (_WIN32) || defined (_WIN64)) *
     endif
+    ;*  WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
+  ;*---------------------------------------------------------------------*
+  ;*                            Time API                                 *
+  ;*---------------------------------------------------------------------*
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, DosDateTimeToVariantTime, WIN_STD_CALL_CONV,, <:USHORT, :USHORT, :ptr DOUBLE>, 12
     @DefProto DllImport, VariantTimeToDosDateTime, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr USHORT, :ptr USHORT>, 12
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if (Defined(_WIN32) or Defined(_WIN64))
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, SystemTimeToVariantTime, WIN_STD_CALL_CONV,, <:LPSYSTEMTIME, :ptr DOUBLE>, 8
       @DefProto DllImport, VariantTimeToSystemTime, WIN_STD_CALL_CONV,, <:DOUBLE, :LPSYSTEMTIME>, 8
+      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
     endif
+    ;* (defined (_WIN32) || defined (_WIN64)) *
   endif
+  ;*---------------------------------------------------------------------*
+  ;*                          SafeArray API                              *
+  ;*---------------------------------------------------------------------*
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, SafeArrayAllocDescriptor, WIN_STD_CALL_CONV,, <:UINT, :ptr ptr SAFEARRAY>, 8
     @DefProto DllImport, SafeArrayAllocDescriptorEx, WIN_STD_CALL_CONV,, <:VARTYPE, :UINT, :ptr ptr SAFEARRAY>, 12
@@ -98,7 +127,11 @@ if  not Defined(_OLEAUTO_H_)
     @DefProto DllImport, SafeArrayGetVartype, WIN_STD_CALL_CONV,, <:ptr SAFEARRAY, :ptr VARTYPE>, 8
     @DefProto DllImport, SafeArrayCreateVector, WIN_STD_CALL_CONV,, <:VARTYPE, :LONG, :ULONG>, 12
     @DefProto DllImport, SafeArrayCreateVectorEx, WIN_STD_CALL_CONV,, <:VARTYPE, :LONG, :ULONG, :PVOID>, 16
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
+  ;*---------------------------------------------------------------------*
+  ;*                           VARIANT API                               *
+  ;*---------------------------------------------------------------------*
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, VariantInit, WIN_STD_CALL_CONV,, <:ptr VARIANTARG>, 4
     @DefProto DllImport, VariantClear, WIN_STD_CALL_CONV,, <:ptr VARIANTARG>, 4
@@ -106,33 +139,98 @@ if  not Defined(_OLEAUTO_H_)
     @DefProto DllImport, VariantCopyInd, WIN_STD_CALL_CONV,, <:ptr VARIANT, :ptr VARIANTARG>, 8
     @DefProto DllImport, VariantChangeType, WIN_STD_CALL_CONV,, <:ptr VARIANTARG, :ptr VARIANTARG, :USHORT, :VARTYPE>, 16
     @DefProto DllImport, VariantChangeTypeEx, WIN_STD_CALL_CONV,, <:ptr VARIANTARG, :ptr VARIANTARG, :LCID, :USHORT, :VARTYPE>, 20
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
+  ; Flags for VariantChangeType/VariantChangeTypeEx
   VARIANT_NOVALUEPROP equ 01h
-  VARIANT_ALPHABOOL equ 02h
-  VARIANT_NOUSEROVERRIDE equ 04h
+  VARIANT_ALPHABOOL equ 02h; For VT_BOOL to VT_BSTR conversions,
+
+  ; convert to "True"/"False" instead of
+  ; "-1"/"0"
+  VARIANT_NOUSEROVERRIDE equ 04h; For conversions to/from VT_BSTR,
+
+  ; passes LOCALE_NOUSEROVERRIDE
+  ; to core coercion routines
   VARIANT_CALENDAR_HIJRI equ 08h
-  VARIANT_LOCALBOOL equ 10h
-  VARIANT_CALENDAR_THAI equ 20h
-  VARIANT_CALENDAR_GREGORIAN equ 40h
-  VARIANT_USE_NLS equ 80h
+  VARIANT_LOCALBOOL equ 10h; For VT_BOOL to VT_BSTR and back,
+
+  ; convert to local language rather than
+  ; English
+  VARIANT_CALENDAR_THAI equ 20h; SOUTHASIA calendar support
+
+  VARIANT_CALENDAR_GREGORIAN equ 40h; SOUTHASIA calendar support
+
+  VARIANT_USE_NLS equ 80h; NLS function call support
+
+  ;*---------------------------------------------------------------------*
+  ;*                Vector <-> Bstr conversion APIs                      *
+  ;*---------------------------------------------------------------------*
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, VectorFromBstr, WIN_STD_CALL_CONV,, <:BSTR, :ptr ptr SAFEARRAY>, 8
     @DefProto DllImport, BstrFromVector, WIN_STD_CALL_CONV,, <:ptr SAFEARRAY, :ptr BSTR>, 8
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
+  ;*---------------------------------------------------------------------*
+  ;*                     Variant API Flags                               *
+  ;*---------------------------------------------------------------------*
+  ;* Any of the coersion functions that converts either from or to a string
+  ;* takes an additional lcid and dwFlags arguments. The lcid argument allows
+  ;* locale specific parsing to occur.  The dwFlags allow additional function
+  ;* specific condition to occur.  All function that accept the dwFlags argument
+  ;* can include either 0 or LOCALE_NOUSEROVERRIDE flag.
+  ;*
+  ;* The VarDateFromStr and VarBstrFromDate functions also accept the
+  ;* VAR_TIMEVALUEONLY and VAR_DATEVALUEONLY flags
+  ;*
+  ;* return time value *
   VAR_TIMEVALUEONLY equ (00000001h)
+  ;* return date value *
   VAR_DATEVALUEONLY equ (00000002h)
+  ;* VarDateFromUdate() only *
   VAR_VALIDDATE equ (00000004h)
+  ;* Accepted by all date & format APIs *
+  ;* use Hijri calender *
   VAR_CALENDAR_HIJRI equ (00000008h)
+  ;* Booleans can optionally be accepted in localized form. Pass VAR_LOCALBOOL
+  ;* into VarBoolFromStr and VarBstrFromBool to use localized boolean names
+  ;*
   VAR_LOCALBOOL equ (00000010h)
+  ;* When passed into VarFormat and VarFormatFromTokens, prevents substitution
+  ;* of formats in the case where a string is passed in that can not be
+  ;* coverted into the desired type. (for ex, 'Format("Hello", "General Number")')
+  ;*
   VAR_FORMAT_NOSUBSTITUTE equ (00000020h)
+  ;*
+  ;* For VarBstrFromDate only - forces years to be 4 digits rather than shortening
+  ;* to 2-digits when the years is in the date window.
+  ;*
   VAR_FOURDIGITYEARS equ (00000040h)
+  ;*
+  ;* Use NLS functions to format date, currency, time, and number.
+  ;*
   ifndef LOCALE_USE_NLS
     LOCALE_USE_NLS equ 10000000h
   endif
+  ; SOUTHASIA START
+  ;* SOUTHASIA
+  ;* For VarBstrFromDate only - forces years to be 4 digits rather than shortening
+  ;* to 2-digits when the years is in the date window.
+  ;*
   VAR_CALENDAR_THAI equ (00000080h)
   VAR_CALENDAR_GREGORIAN equ (00000100h)
+  ;SOUTHASIA END
+  ;* Dec 31, 9999, 0:0:0 in Gregorain Calendar *
   VTDATEGRE_MAX equ 2958465
+  ;* Jan  1,  100, 0:0:0 in Gregorain Calendar *
   VTDATEGRE_MIN equ -657434
+  ;*---------------------------------------------------------------------*
+  ;*                     VARTYPE Coercion API                            *
+  ;*---------------------------------------------------------------------*
+  ;* Note: The routines that convert *from* a string are defined
+  ;* to take a OLECHAR* rather than a BSTR because no allocation is
+  ;* required, and this makes the routines a bit more generic.
+  ;* They may of course still be passed a BSTR as the strIn param.
+  ;*
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, VarUI1FromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr BYTE>, 8
     @DefProto DllImport, VarUI1FromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr BYTE>, 8
@@ -179,6 +277,7 @@ if  not Defined(_OLEAUTO_H_)
     @DefProto DllImport, VarI4FromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr LONG>, 8
     @DefProto DllImport, VarI4FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr LONG>, 8
     @DefProto DllImport, VarI4FromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr LONG>, 8
+    ;******************************************
     @DefProto DllImport, VarI8FromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr LONG64>, 8
     @DefProto DllImport, VarI8FromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr LONG64>, 8
     @DefProto DllImport, VarI8FromR4, WIN_STD_CALL_CONV,, <:FLOAT, :ptr LONG64>, 8
@@ -193,6 +292,7 @@ if  not Defined(_OLEAUTO_H_)
     @DefProto DllImport, VarI8FromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr LONG64>, 8
     @DefProto DllImport, VarI8FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr LONG64>, 8
     @DefProto DllImport, VarI8FromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr LONG64>, 8
+    ;*********************
     @DefProto DllImport, VarR4FromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr FLOAT>, 8
     @DefProto DllImport, VarR4FromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr FLOAT>, 8
     @DefProto DllImport, VarR4FromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr FLOAT>, 8
@@ -328,11 +428,14 @@ if  not Defined(_OLEAUTO_H_)
     @DefProto DllImport, VarUI4FromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr ULONG>, 8
     @DefProto DllImport, VarUI4FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr ULONG>, 8
     @DefProto DllImport, VarUI4FromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr ULONG>, 8
+    ;******************************************
     @DefProto DllImport, VarUI8FromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr ULONG64>, 8
     @DefProto DllImport, VarUI8FromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr ULONG64>, 8
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, VarUI8FromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr ULONG64>, 8
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, VarUI8FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr ULONG64>, 8
@@ -347,6 +450,7 @@ if  not Defined(_OLEAUTO_H_)
     @DefProto DllImport, VarUI8FromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr ULONG64>, 8
     @DefProto DllImport, VarUI8FromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr ULONG64>, 8
     @DefProto DllImport, VarUI8FromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr ULONG64>, 8
+    ;*********************
     @DefProto DllImport, VarDecFromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr DECIMAL>, 8
     @DefProto DllImport, VarDecFromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr DECIMAL>, 8
     @DefProto DllImport, VarDecFromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr DECIMAL>, 8
@@ -362,6 +466,7 @@ if  not Defined(_OLEAUTO_H_)
     @DefProto DllImport, VarDecFromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr DECIMAL>, 8
     @DefProto DllImport, VarDecFromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr DECIMAL>, 8
     @DefProto DllImport, VarDecFromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr DECIMAL>, 8
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   VarUI4FromUI4 macro in_, pOut
     exitm <(* (pOut) = (in_))>
@@ -372,6 +477,7 @@ if  not Defined(_OLEAUTO_H_)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, VarI4FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr LONG>, 8
     @DefProto DllImport, VarI4FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr LONG>, 8
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   VarUI8FromUI8 macro in_, pOut
     exitm <(* (pOut) = (in_))>
@@ -385,6 +491,7 @@ if  not Defined(_OLEAUTO_H_)
   VarI2FromUint equ <VarI2FromUI4>
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     VarI4FromInt equ <VarI4FromI4>
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   VarI4FromUint equ <VarI4FromUI4>
   VarI8FromUint equ <VarI8FromUI4>
@@ -442,14 +549,25 @@ if  not Defined(_OLEAUTO_H_)
   VarUintFromUI8 equ <VarUI4FromUI8>
   VarUintFromDec equ <VarUI4FromDec>
   VarUintFromInt equ <VarUI4FromI4>
+  ;* Mac Note: On the Mac, the coersion functions support the
+  ;* Symantec C++ calling convention for float/double. To support
+  ;* float/double arguments compiled with the MPW C compiler,
+  ;* use the following APIs to move MPW float/double values into
+  ;* a VARIANT.
+  ;*
+  ;*---------------------------------------------------------------------*
+  ;*            New VARIANT <-> string parsing functions                 *
+  ;*---------------------------------------------------------------------*
   NUMPARSE struct
-    cDig INT_ ?
-    dwInFlags ULONG ?
-    dwOutFlags ULONG ?
-    cchUsed INT_ ?
-    nBaseShift INT_ ?
-    nPwr10 INT_ ?
+    cDig SDWORD ?
+    dwInFlags DWORD ?
+    dwOutFlags DWORD ?
+    cchUsed SDWORD ?
+    nBaseShift SDWORD ?
+    nPwr10 SDWORD ?
   NUMPARSE ends
+  ;* flags used by both dwInFlags and dwOutFlags:
+  ;*
   NUMPRS_LEADING_WHITE equ 0001h
   NUMPRS_TRAILING_WHITE equ 0002h
   NUMPRS_LEADING_PLUS equ 0004h
@@ -464,8 +582,12 @@ if  not Defined(_OLEAUTO_H_)
   NUMPRS_EXPONENT equ 0800h
   NUMPRS_USE_ALL equ 1000h
   NUMPRS_STD equ 1FFFh
+  ;* flags used by dwOutFlags only:
+  ;*
   NUMPRS_NEG equ 10000h
   NUMPRS_INEXACT equ 20000h
+  ;* flags used by VarNumFromParseNum to indicate acceptable result types:
+  ;*
   VTBIT_I1 equ (1 shl VT_I1)
   VTBIT_UI1 equ (1 shl VT_UI1)
   VTBIT_I2 equ (1 shl VT_I2)
@@ -481,7 +603,11 @@ if  not Defined(_OLEAUTO_H_)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, VarParseNumFromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr NUMPARSE, :ptr BYTE>, 20
     @DefProto DllImport, VarNumFromParseNum, WIN_STD_CALL_CONV,, <:ptr NUMPARSE, :ptr BYTE, :ULONG, :ptr VARIANT>, 16
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
+  ;*---------------------------------------------------------------------*
+  ;*                     VARTYPE Math API                                *
+  ;*---------------------------------------------------------------------*
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, VarAdd, WIN_STD_CALL_CONV,, <:LPVARIANT, :LPVARIANT, :LPVARIANT>, 12
     @DefProto DllImport, VarAnd, WIN_STD_CALL_CONV,, <:LPVARIANT, :LPVARIANT, :LPVARIANT>, 12
@@ -502,11 +628,14 @@ if  not Defined(_OLEAUTO_H_)
     @DefProto DllImport, VarNeg, WIN_STD_CALL_CONV,, <:LPVARIANT, :LPVARIANT>, 8
     @DefProto DllImport, VarNot, WIN_STD_CALL_CONV,, <:LPVARIANT, :LPVARIANT>, 8
     @DefProto DllImport, VarRound, WIN_STD_CALL_CONV,, <:LPVARIANT, :SDWORD, :LPVARIANT>, 12
+    ; dwFlags passed to CompareString if a string compare
     @DefProto DllImport, VarCmp, WIN_STD_CALL_CONV,, <:LPVARIANT, :LPVARIANT, :LCID, :ULONG>, 16
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   ifdef __cplusplus
     ;[...]
   endif
+  ; Decimal math
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, VarDecAdd, WIN_STD_CALL_CONV,, <:LPDECIMAL, :LPDECIMAL, :LPDECIMAL>, 12
     @DefProto DllImport, VarDecDiv, WIN_STD_CALL_CONV,, <:LPDECIMAL, :LPDECIMAL, :LPDECIMAL>, 12
@@ -519,6 +648,7 @@ if  not Defined(_OLEAUTO_H_)
     @DefProto DllImport, VarDecRound, WIN_STD_CALL_CONV,, <:LPDECIMAL, :SDWORD, :LPDECIMAL>, 12
     @DefProto DllImport, VarDecCmp, WIN_STD_CALL_CONV,, <:LPDECIMAL, :LPDECIMAL>, 8
     @DefProto DllImport, VarDecCmpR8, WIN_STD_CALL_CONV,, <:LPDECIMAL, :REAL8>, 8
+    ; Currency math
     @DefProto DllImport, VarCyAdd, WIN_STD_CALL_CONV,, <:CY, :CY, :LPCY>, 12
     @DefProto DllImport, VarCyMul, WIN_STD_CALL_CONV,, <:CY, :CY, :LPCY>, 12
     @DefProto DllImport, VarCyMulI4, WIN_STD_CALL_CONV,, <:CY, :LONG, :LPCY>, 12
@@ -531,28 +661,58 @@ if  not Defined(_OLEAUTO_H_)
     @DefProto DllImport, VarCyRound, WIN_STD_CALL_CONV,, <:CY, :SDWORD, :LPCY>, 12
     @DefProto DllImport, VarCyCmp, WIN_STD_CALL_CONV,, <:CY, :CY>, 8
     @DefProto DllImport, VarCyCmpR8, WIN_STD_CALL_CONV,, <:CY, :REAL8>, 8
+    ; Misc support functions
     @DefProto DllImport, VarBstrCat, WIN_STD_CALL_CONV,, <:BSTR, :BSTR, :LPBSTR>, 12
     @DefProto DllImport, VarBstrCmp, WIN_STD_CALL_CONV,, <:BSTR, :BSTR, :LCID, :ULONG>, 16
+    ; dwFlags passed to CompareString
     @DefProto DllImport, VarR8Pow, WIN_STD_CALL_CONV,, <:REAL8, :REAL8, :ptr REAL8>, 12
     @DefProto DllImport, VarR4CmpR8, WIN_STD_CALL_CONV,, <:REAL4, :REAL8>, 8
     @DefProto DllImport, VarR8Round, WIN_STD_CALL_CONV,, <:REAL8, :SDWORD, :ptr REAL8>, 12
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
+  ; Compare results.  These are returned as a SUCCESS HResult.  Subtracting
+  ; one gives the usual values of -1 for Less Than, 0 for Equal To, +1 for
+  ; Greater Than.
   VARCMP_LT equ 0
   VARCMP_EQ equ 1
   VARCMP_GT equ 2
   VARCMP_NULL equ 3
+  ; VT_HARDTYPE tells the compare routine that the argument is a literal or
+  ; otherwise declared of that specific type.  It causes comparison rules to
+  ; change. For example, if a hard-type string is compared to a variant (not hard
+  ; -type) number, the number is converted to string.  If a hard-type number is
+  ; compared to a variant string, the string is converted to number.  If they're
+  ; both variant, then number < string.
   VT_HARDTYPE equ <VT_RESERVED>
+  ;*---------------------------------------------------------------------*
+  ;*                   New date functions                                *
+  ;*---------------------------------------------------------------------*
+  ;* The UDATE structure is used with VarDateFromUdate() and VarUdateFromDate().
+  ;* It represents an "unpacked date".
+  ;*
   UDATE struct
     st_ SYSTEMTIME <>
-    wDayOfYear USHORT ?
+    wDayOfYear WORD ?
   UDATE ends
+  ;* APIs to "pack" and "unpack" dates.
+  ;* NOTE: Ex version of VarDateFromUdate obeys 2 digit year setting in
+  ;* control panel.
+  ;*
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, VarDateFromUdate, WIN_STD_CALL_CONV,, <:ptr UDATE, :ULONG, :ptr DATE>, 12
     @DefProto DllImport, VarDateFromUdateEx, WIN_STD_CALL_CONV,, <:ptr UDATE, :LCID, :ULONG, :ptr DATE>, 16
     @DefProto DllImport, VarUdateFromDate, WIN_STD_CALL_CONV,, <:DATE, :ULONG, :ptr UDATE>, 12
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    ;* API to retrieve the secondary(altername) month names
+    ;Useful for Hijri, Polish and Russian alternate month names
+    ;*
     @DefProto DllImport, GetAltMonthNames, WIN_STD_CALL_CONV,, <:LCID, :ptr ptr LPOLESTR>, 8
+    ;*---------------------------------------------------------------------*
+    ;*                 Format                                              *
+    ;*---------------------------------------------------------------------*
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, VarFormat, WIN_STD_CALL_CONV,, <:LPVARIANT, :LPOLESTR, :SDWORD, :SDWORD, :ULONG, :ptr BSTR>, 24
@@ -564,25 +724,49 @@ if  not Defined(_OLEAUTO_H_)
     @DefProto DllImport, VarMonthName, WIN_STD_CALL_CONV,, <:SDWORD, :SDWORD, :ULONG, :ptr BSTR>, 16
     @DefProto DllImport, VarFormatFromTokens, WIN_STD_CALL_CONV,, <:LPVARIANT, :LPOLESTR, :LPBYTE, :ULONG, :ptr BSTR, :LCID>, 24
     @DefProto DllImport, VarTokenizeFormatString, WIN_STD_CALL_CONV,, <:LPOLESTR, :LPBYTE, :SDWORD, :SDWORD, :SDWORD, :LCID, :ptr SDWORD>, 28
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    ;*---------------------------------------------------------------------*
+    ;*                 ITypeLib                                            *
+    ;*---------------------------------------------------------------------*
+    ;* [unique] *
     LPTYPELIB typedef ptr ITypeLib
+    ;*---------------------------------------------------------------------*
+    ;*                ITypeInfo                                            *
+    ;*---------------------------------------------------------------------*
     DISPID typedef LONG
     MEMBERID typedef DISPID
     MEMBERID_NIL equ <DISPID_UNKNOWN>
     ID_DEFAULTINST equ -2
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    ;* Flags for IDispatch::Invoke *
     DISPATCH_METHOD equ 1h
     DISPATCH_PROPERTYGET equ 2h
     DISPATCH_PROPERTYPUT equ 4h
     DISPATCH_PROPERTYPUTREF equ 8h
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    ;* [unique] *
     LPTYPEINFO typedef ptr ITypeInfo
+    ;*---------------------------------------------------------------------*
+    ;*                ITypeComp                                            *
+    ;*---------------------------------------------------------------------*
+    ;* [unique] *
     LPTYPECOMP typedef ptr ITypeComp
+    ;*---------------------------------------------------------------------*
+    ;*             ICreateTypeLib                                          *
+    ;*---------------------------------------------------------------------*
     LPCREATETYPELIB typedef ptr ICreateTypeLib
     LPCREATETYPEINFO typedef ptr ICreateTypeInfo
+    ;*---------------------------------------------------------------------*
+    ;*             TypeInfo API                                            *
+    ;*---------------------------------------------------------------------*
+    ;* compute a 16bit hash value for the given name
+    ;*
     if (Defined(_WIN32) or Defined(_WIN64))
       @DefProto DllImport, LHashValOfNameSysA, WIN_STD_CALL_CONV,, <:SYSKIND, :LCID, :LPCSTR>, 12
     endif
@@ -596,76 +780,141 @@ if  not Defined(_OLEAUTO_H_)
     IsHashValCompatible macro lhashval1, lhashval2
       exitm <(((00ff0000h and (lhashval1)) == (00ff0000h and (lhashval2))))>
     endm
+    ;* load the typelib from the file with the given filename
+    ;*
     @DefProto DllImport, LoadTypeLib, WIN_STD_CALL_CONV,, <:LPCOLESTR, :ptr ptr ITypeLib>, 8
+    ;* Control how a type library is registered
+    ;*
     REGKIND typedef SDWORD
     REGKIND_DEFAULT equ 0
     REGKIND_REGISTER equ 1
     REGKIND_NONE equ 2
     tagREGKIND typedef REGKIND
 
+    ; Constants for specifying format in which TLB should be loaded
+    ; (the default format is 32-bit on WIN32 and 64-bit on WIN64)
     LOAD_TLB_AS_32BIT equ 20h
     LOAD_TLB_AS_64BIT equ 40h
     MASK_TO_RESET_TLB_BITS equ <not (LOAD_TLB_AS_32BIT or LOAD_TLB_AS_64BIT)>
     @DefProto DllImport, LoadTypeLibEx, WIN_STD_CALL_CONV,, <:LPCOLESTR, :REGKIND, :ptr ptr ITypeLib>, 12
+    ;* load registered typelib
+    ;*
     @DefProto DllImport, LoadRegTypeLib, WIN_STD_CALL_CONV,, <:REFGUID, :WORD, :WORD, :LCID, :ptr ptr ITypeLib>, 20
+    ;* get path to registered typelib
+    ;*
     @DefProto DllImport, QueryPathOfRegTypeLib, WIN_STD_CALL_CONV,, <:REFGUID, :USHORT, :USHORT, :LCID, :LPBSTR>, 20
+    ;* add typelib to registry
+    ;*
     @DefProto DllImport, RegisterTypeLib, WIN_STD_CALL_CONV,, <:ptr ITypeLib, :LPCOLESTR, :LPCOLESTR>, 12
+    ;* remove typelib from registry
+    ;*
     @DefProto DllImport, UnRegisterTypeLib, WIN_STD_CALL_CONV,, <:REFGUID, :WORD, :WORD, :LCID, :SYSKIND>, 20
+    ;* Registers a type library for use by the calling user.
+    ;*
     @DefProto DllImport, RegisterTypeLibForUser, WIN_STD_CALL_CONV,, <:ptr ITypeLib, :ptr OLECHAR, :ptr OLECHAR>, 12
+    ;* Removes type library information that was registered by using RegisterTypeLibForUser.
+    ;*
     @DefProto DllImport, UnRegisterTypeLibForUser, WIN_STD_CALL_CONV,, <:REFGUID, :WORD, :WORD, :LCID, :SYSKIND>, 20
     @DefProto DllImport, CreateTypeLib, WIN_STD_CALL_CONV,, <:SYSKIND, :LPCOLESTR, :ptr ptr ICreateTypeLib>, 12
     @DefProto DllImport, CreateTypeLib2, WIN_STD_CALL_CONV,, <:SYSKIND, :LPCOLESTR, :ptr ptr ICreateTypeLib2>, 12
+    ;*---------------------------------------------------------------------*
+    ;*           IDispatch implementation support                          *
+    ;*---------------------------------------------------------------------*
+    ;* [unique] *
     LPDISPATCH typedef ptr IDispatch
     PARAMDATA struct
       szName POINTER ?
+      ;* parameter name *
       vt VARTYPE ?
+      ;* parameter type *
     PARAMDATA ends
     tagPARAMDATA typedef PARAMDATA
     LPPARAMDATA typedef ptr PARAMDATA
     METHODDATA struct
       szName POINTER ?
+      ;* method name *
       ppdata POINTER ?
+      ;* pointer to an array of PARAMDATAs *
       dispid DISPID ?
-      iMeth UINT ?
+      ;* method ID *
+      iMeth DWORD ?
+      ;* method index *
       cc CALLCONV ?
-      cArgs UINT ?
+      ;* calling convention *
+      cArgs DWORD ?
+      ;* count of arguments *
       wFlags WORD ?
+      ;* same wFlags as on IDispatch::Invoke() *
       vtReturn VARTYPE ?
     METHODDATA ends
     tagMETHODDATA typedef METHODDATA
     LPMETHODDATA typedef ptr METHODDATA
     INTERFACEDATA struct
       pmethdata POINTER ?
-      cMembers UINT ?
+      ;* pointer to an array of METHODDATAs *
+      cMembers DWORD ?
+      ;* count of members *
     INTERFACEDATA ends
     tagINTERFACEDATA typedef INTERFACEDATA
     LPINTERFACEDATA typedef ptr INTERFACEDATA
+    ;* Locate the parameter indicated by the given position, and
+    ;* return it coerced to the given target VARTYPE (vtTarg).
+    ;*
     @DefProto DllImport, DispGetParam, WIN_STD_CALL_CONV,, <:ptr DISPPARAMS, :UINT, :VARTYPE, :ptr VARIANT, :ptr UINT>, 20
+    ;* Automatic TypeInfo driven implementation of IDispatch::GetIDsOfNames()
+    ;*
     @DefProto DllImport, DispGetIDsOfNames, WIN_STD_CALL_CONV,, <:ptr ITypeInfo, :ptr LPOLESTR, :UINT, :ptr DISPID>, 16
+    ;* Automatic TypeInfo driven implementation of IDispatch::Invoke()
+    ;*
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, DispInvoke, WIN_STD_CALL_CONV,, <:ptr, :ptr ITypeInfo, :DISPID, :WORD, :ptr DISPPARAMS, :ptr VARIANT, :ptr EXCEPINFO, :ptr UINT>, 32
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    ;* Construct a TypeInfo from an interface data description
+    ;*
     @DefProto DllImport, CreateDispTypeInfo, WIN_STD_CALL_CONV,, <:ptr INTERFACEDATA, :LCID, :ptr ptr ITypeInfo>, 12
+    ;* Create an instance of the standard TypeInfo driven IDispatch
+    ;* implementation.
+    ;*
     @DefProto DllImport, CreateStdDispatch, WIN_STD_CALL_CONV,, <:ptr IUnknown, :ptr, :ptr ITypeInfo, :ptr ptr IUnknown>, 16
+    ;* Low-level helper for IDispatch::Invoke() provides machine independence
+    ;* for customized Invoke().
+    ;*
     @DefProto DllImport, DispCallFunc, WIN_STD_CALL_CONV,, <:ptr, :ULONG_PTR, :CALLCONV, :VARTYPE, :UINT, :ptr VARTYPE, :ptr ptr VARIANTARG, :ptr VARIANT>, 32
+    ;*---------------------------------------------------------------------*
+    ;*            Active Object Registration API                           *
+    ;*---------------------------------------------------------------------*
+    ;* flags for RegisterActiveObject *
     ACTIVEOBJECT_STRONG equ 0h
     ACTIVEOBJECT_WEAK equ 1h
     @DefProto DllImport, RegisterActiveObject, WIN_STD_CALL_CONV,, <:ptr IUnknown, :REFCLSID, :DWORD, :ptr DWORD>, 16
     @DefProto DllImport, RevokeActiveObject, WIN_STD_CALL_CONV,, <:DWORD, :ptr>, 8
     @DefProto DllImport, GetActiveObject, WIN_STD_CALL_CONV,, <:REFCLSID, :ptr, :ptr ptr IUnknown>, 12
+    ;*---------------------------------------------------------------------*
+    ;*                           ErrorInfo API                             *
+    ;*---------------------------------------------------------------------*
     @DefProto DllImport, SetErrorInfo, WIN_STD_CALL_CONV,, <:ULONG, :ptr IErrorInfo>, 8
     @DefProto DllImport, GetErrorInfo, WIN_STD_CALL_CONV,, <:ULONG, :ptr ptr IErrorInfo>, 8
     @DefProto DllImport, CreateErrorInfo, WIN_STD_CALL_CONV,, <:ptr ptr ICreateErrorInfo>, 4
+    ;*---------------------------------------------------------------------*
+    ;*           User Defined Data types support                           *
+    ;*---------------------------------------------------------------------*
     @DefProto DllImport, GetRecordInfoFromTypeInfo, WIN_STD_CALL_CONV,, <:ptr ITypeInfo, :ptr ptr IRecordInfo>, 8
     @DefProto DllImport, GetRecordInfoFromGuids, WIN_STD_CALL_CONV,, <:REFGUID, :ULONG, :ULONG, :LCID, :REFGUID, :ptr ptr IRecordInfo>, 24
+    ;*---------------------------------------------------------------------*
+    ;*                           MISC API                                  *
+    ;*---------------------------------------------------------------------*
     @DefProto DllImport, OaBuildVersion, WIN_STD_CALL_CONV,, <>, 0
     @DefProto DllImport, ClearCustData, WIN_STD_CALL_CONV,, <:LPCUSTDATA>, 4
     if (NTDDI_VERSION ge NTDDI_VISTASP1)
       @DefProto DllImport, OaEnablePerUserTLibRegistration, WIN_STD_CALL_CONV,, <>, 0
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
+  ; Declare variant access functions.
   if (__STDC__ and  not Defined(_FORCENAMELESSUNION)) or Defined(NONAMELESSUNION) or ( not Defined(_MSC_EXTENSIONS) and  not Defined(_FORCENAMELESSUNION))
     V_UNION macro X, Y
       exitm <((X) - n1.n2.n3.Y)>
@@ -699,6 +948,8 @@ if  not Defined(_OLEAUTO_H_)
       exitm <((X) - decVal)>
     endm
   endif
+  ;* Variant access macros
+  ;*
   V_ISBYREF macro X
     exitm <(V_VT(X) and VT_BYREF)>
   endm
@@ -870,6 +1121,8 @@ if  not Defined(_OLEAUTO_H_)
   ifndef RC_INVOKED
     include poppack.inc
   endif
+  ; RC_INVOKED
 endif
+; __OLEAUTO_H__
 if _MSC_VER ge 1200
 endif

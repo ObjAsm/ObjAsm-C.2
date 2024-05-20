@@ -40,8 +40,6 @@ PPCH_Define proc uses xdi xsi
       test xax, xax
       jz @Exit
 
-;      mov xcx, [xbx].$Obj(IncFile).pStmOutPos
-;      int 3
       OCall xbx::IncFile.StmWrite, $OfsCStrA(" macro ")
 
       ;Write the macro params
@@ -149,7 +147,7 @@ PPCH_Define proc uses xdi xsi
 
 @Exit:
   .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
-    StmOutLoad PrevOutStat                              ;Restore output stream status
+    StmOutLoad PrevOutStat                              ;Restore initial output stream status
     mov CHRA ptr [xax], 0
   .endif
   ret

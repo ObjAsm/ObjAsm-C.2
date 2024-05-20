@@ -487,6 +487,7 @@ DefaultKnwConvTypes1Table label POINTER
   POINTER NULL
 
 ;Type conversion 2 default values, usually not used since defined in h2inc+.ini.
+;https://learn.microsoft.com/de-de/windows/win32/winprog/windows-data-types?redirectedfrom=MSDN
 DefaultKnwConvTypes2Table label POINTER
   CONV_EQUI_ENTRY <$OfsCBStrA("int"),            $OfsCBStrA("SDWORD")>
   CONV_EQUI_ENTRY <$OfsCBStrA("unsigned int"),   $OfsCBStrA("DWORD")>

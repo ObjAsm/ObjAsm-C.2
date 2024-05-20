@@ -111,11 +111,9 @@ Method ConsoleApp.Init, uses xsi, pOwner:POINTER
   .if eax == 0
     invoke AllocConsole
   .endif
-  .if eax != 0
-    mov [xsi].hError,  $invoke(GetStdHandle, STD_ERROR_HANDLE)
-    mov [xsi].hInput,  $invoke(GetStdHandle, STD_INPUT_HANDLE)
-    mov [xsi].hOutput, $invoke(GetStdHandle, STD_OUTPUT_HANDLE)
-  .endif
+  mov [xsi].hError,  $invoke(GetStdHandle, STD_ERROR_HANDLE)
+  mov [xsi].hInput,  $invoke(GetStdHandle, STD_INPUT_HANDLE)
+  mov [xsi].hOutput, $invoke(GetStdHandle, STD_OUTPUT_HANDLE)
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

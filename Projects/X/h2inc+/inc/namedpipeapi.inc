@@ -1,11 +1,13 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\namedpipeapi.h\namedpipeapi.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\namedpipeapi.h
 ;             Created on (UTC) 06/04/2024 06:15:57
 ;             Last modified on (UTC) 21/02/2024 18:13:16
 
+;********************************************************************************
 ifdef _MSC_VER
 endif
+; _MSC_VER
 ifndef _NAMEDPIPE_H_
   _NAMEDPIPE_H_ equ <>
   include apiset.inc
@@ -22,9 +24,11 @@ ifndef _NAMEDPIPE_H_
     @DefProto DllImport, SetNamedPipeHandleState, WIN_STD_CALL_CONV,, <:HANDLE, :LPDWORD, :LPDWORD, :LPDWORD>, 16
     @DefProto DllImport, PeekNamedPipe, WIN_STD_CALL_CONV,, <:HANDLE, :LPVOID, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD>, 24
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, TransactNamedPipe, WIN_STD_CALL_CONV,, <:HANDLE, :LPVOID, :DWORD, :LPVOID, :DWORD, :LPDWORD, :LPOVERLAPPED>, 28
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, CreateNamedPipeW, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :LPSECURITY_ATTRIBUTES>, 32
     ifdef UNICODE
@@ -35,29 +39,35 @@ ifndef _NAMEDPIPE_H_
       WaitNamedPipe equ <WaitNamedPipeW>
     endif
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, GetNamedPipeClientComputerNameW, WIN_STD_CALL_CONV,, <:HANDLE, :LPWSTR, :ULONG>, 12
     endif
+    ; (_WIN32_WINNT >= 0x0600)
     ifdef UNICODE
       GetNamedPipeClientComputerName equ <GetNamedPipeClientComputerNameW>
     endif
     @DefProto DllImport, ImpersonateNamedPipeClient, WIN_STD_CALL_CONV,, <:HANDLE>, 4
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetNamedPipeInfo, WIN_STD_CALL_CONV,, <:HANDLE, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD>, 20
     @DefProto DllImport, GetNamedPipeHandleStateW, WIN_STD_CALL_CONV,, <:HANDLE, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPWSTR, :DWORD>, 28
     ifdef UNICODE
       GetNamedPipeHandleState equ <GetNamedPipeHandleStateW>
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, CallNamedPipeW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPVOID, :DWORD, :LPVOID, :DWORD, :LPDWORD, :DWORD>, 28
     ifdef UNICODE
       CallNamedPipe equ <CallNamedPipeW>
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   ifdef __cplusplus
     ;[...]
   endif
 endif
+; _NAMEDPIPE_H_

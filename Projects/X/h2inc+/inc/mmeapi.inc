@@ -1,11 +1,13 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\mmeapi.h\mmeapi.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\mmeapi.h
 ;             Created on (UTC) 06/04/2024 06:15:56
 ;             Last modified on (UTC) 21/02/2024 18:13:22
 
+;********************************************************************************
 ifdef _MSC_VER
 endif
+; _MSC_VER
 ifndef _MMEAPI_H_
   _MMEAPI_H_ equ <>
   include apiset.inc
@@ -16,17 +18,29 @@ ifndef _MMEAPI_H_
     include nturtl.inc
     include windows.inc
   endif
+  ; _CONTRACT_GEN
   include mmsyscom.inc
+  ; mm common definitions
   ifdef __cplusplus
     ;[...]
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     ifndef MMNOWAVE
+      ;****************************************************************************
+      ;Waveform audio support
+      ;****************************************************************************
+      ;* waveform audio error return values *
+      ;* unsupported wave format *
       WAVERR_BADFORMAT equ (WAVERR_BASE + 0)
+      ;* still something playing *
       WAVERR_STILLPLAYING equ (WAVERR_BASE + 1)
+      ;* header not prepared *
       WAVERR_UNPREPARED equ (WAVERR_BASE + 2)
+      ;* device is synchronous *
       WAVERR_SYNC equ (WAVERR_BASE + 3)
+      ;* last error in range *
       WAVERR_LASTERROR equ (WAVERR_BASE + 3)
+      ;* waveform audio data types *
       DECLARE_HANDLE HWAVE
       DECLARE_HANDLE HWAVEIN
       DECLARE_HANDLE HWAVEOUT
@@ -34,13 +48,16 @@ ifndef _MMEAPI_H_
       LPHWAVEOUT typedef ptr HWAVEOUT
       WAVECALLBACK typedef DRVCALLBACK
       LPWAVECALLBACK typedef ptr WAVECALLBACK
+      ;* wave callback messages *
       WOM_OPEN equ <MM_WOM_OPEN>
       WOM_CLOSE equ <MM_WOM_CLOSE>
       WOM_DONE equ <MM_WOM_DONE>
       WIM_OPEN equ <MM_WIM_OPEN>
       WIM_CLOSE equ <MM_WIM_CLOSE>
       WIM_DATA equ <MM_WIM_DATA>
+      ;* device ID for wave device mapper *
       WAVE_MAPPER equ (- 1)
+      ;* flags for dwFlags parameter in waveOutOpen() and waveInOpen() *
       WAVE_FORMAT_QUERY equ 0001h
       WAVE_ALLOWSYNC equ 0002h
       if (WINVER ge 0400h)
@@ -48,36 +65,61 @@ ifndef _MMEAPI_H_
         WAVE_FORMAT_DIRECT equ 0008h
         WAVE_FORMAT_DIRECT_QUERY equ <(WAVE_FORMAT_QUERY or WAVE_FORMAT_DIRECT)>
         WAVE_MAPPED_DEFAULT_COMMUNICATION_DEVICE equ 0010h
+        ;* (WINVER >= 0x0400) *
       endif
+      ;* wave data block header *
       WAVEHDR struct
-        lpData LPSTR ?
+        lpData POINTER ?
+        ;* pointer to locked data buffer *
         dwBufferLength DWORD ?
+        ;* length of data buffer *
         dwBytesRecorded DWORD ?
-        dwUser DWORD_PTR ?
+        ;* used for input only *
+        dwUser XWORD ?
+        ;* for client's use *
         dwFlags DWORD ?
+        ;* assorted flags (see defines) *
         dwLoops DWORD ?
+        ;* loop control counter *
         lpNext POINTER ?
-        reserved DWORD_PTR ?
+        ;* reserved for driver *
+        reserved XWORD ?
+        ;* reserved for driver *
       WAVEHDR ends
       wavehdr_tag typedef WAVEHDR
       PWAVEHDR typedef ptr WAVEHDR
       NPWAVEHDR typedef ptr WAVEHDR
       LPWAVEHDR typedef ptr WAVEHDR
+      ;* flags for dwFlags field of WAVEHDR *
+      ;* done bit *
       WHDR_DONE equ 00000001h
+      ;* set if this header has been prepared *
       WHDR_PREPARED equ 00000002h
+      ;* loop start block *
       WHDR_BEGINLOOP equ 00000004h
+      ;* loop end block *
       WHDR_ENDLOOP equ 00000008h
+      ;* reserved for driver *
       WHDR_INQUEUE equ 00000010h
+      ;* waveform output device capabilities structure *
       ifdef _WIN32
         WAVEOUTCAPSA struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname CHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname SBYTE MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           dwFormats DWORD ?
+          ;* formats supported *
           wChannels WORD ?
+          ;* number of sources supported *
           wReserved1 WORD ?
+          ;* packing *
           dwSupport DWORD ?
+          ;* functionality supported by driver *
         WAVEOUTCAPSA ends
         tagWAVEOUTCAPSA typedef WAVEOUTCAPSA
         PWAVEOUTCAPSA typedef ptr WAVEOUTCAPSA
@@ -85,13 +127,21 @@ ifndef _MMEAPI_H_
         LPWAVEOUTCAPSA typedef ptr WAVEOUTCAPSA
         WAVEOUTCAPSW struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname WCHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname WORD MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           dwFormats DWORD ?
+          ;* formats supported *
           wChannels WORD ?
+          ;* number of sources supported *
           wReserved1 WORD ?
+          ;* packing *
           dwSupport DWORD ?
+          ;* functionality supported by driver *
         WAVEOUTCAPSW ends
         tagWAVEOUTCAPSW typedef WAVEOUTCAPSW
         PWAVEOUTCAPSW typedef ptr WAVEOUTCAPSW
@@ -108,18 +158,30 @@ ifndef _MMEAPI_H_
           NPWAVEOUTCAPS typedef NPWAVEOUTCAPSA
           LPWAVEOUTCAPS typedef LPWAVEOUTCAPSA
         endif
+        ; UNICODE
         WAVEOUTCAPS2A struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname CHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname SBYTE MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           dwFormats DWORD ?
+          ;* formats supported *
           wChannels WORD ?
+          ;* number of sources supported *
           wReserved1 WORD ?
+          ;* packing *
           dwSupport DWORD ?
+          ;* functionality supported by driver *
           ManufacturerGuid GUID <>
+          ;* for extensible MID mapping *
           ProductGuid GUID <>
+          ;* for extensible PID mapping *
           NameGuid GUID <>
+          ;* for name lookup in registry *
         WAVEOUTCAPS2A ends
         tagWAVEOUTCAPS2A typedef WAVEOUTCAPS2A
         PWAVEOUTCAPS2A typedef ptr WAVEOUTCAPS2A
@@ -127,16 +189,27 @@ ifndef _MMEAPI_H_
         LPWAVEOUTCAPS2A typedef ptr WAVEOUTCAPS2A
         WAVEOUTCAPS2W struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname WCHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname WORD MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           dwFormats DWORD ?
+          ;* formats supported *
           wChannels WORD ?
+          ;* number of sources supported *
           wReserved1 WORD ?
+          ;* packing *
           dwSupport DWORD ?
+          ;* functionality supported by driver *
           ManufacturerGuid GUID <>
+          ;* for extensible MID mapping *
           ProductGuid GUID <>
+          ;* for extensible PID mapping *
           NameGuid GUID <>
+          ;* for name lookup in registry *
         WAVEOUTCAPS2W ends
         tagWAVEOUTCAPS2W typedef WAVEOUTCAPS2W
         PWAVEOUTCAPS2W typedef ptr WAVEOUTCAPS2W
@@ -153,24 +226,38 @@ ifndef _MMEAPI_H_
           NPWAVEOUTCAPS2 typedef NPWAVEOUTCAPS2A
           LPWAVEOUTCAPS2 typedef LPWAVEOUTCAPS2A
         endif
+        ; UNICODE
       else
         ;[...]
       endif
+      ;* flags for dwSupport field of WAVEOUTCAPS *
+      ;* supports pitch control *
       WAVECAPS_PITCH equ 0001h
+      ;* supports playback rate control *
       WAVECAPS_PLAYBACKRATE equ 0002h
+      ;* supports volume control *
       WAVECAPS_VOLUME equ 0004h
+      ;* separate left-right volume control *
       WAVECAPS_LRVOLUME equ 0008h
       WAVECAPS_SYNC equ 0010h
       WAVECAPS_SAMPLEACCURATE equ 0020h
+      ;* waveform input device capabilities structure *
       ifdef _WIN32
         WAVEINCAPSA struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname CHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname SBYTE MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           dwFormats DWORD ?
+          ;* formats supported *
           wChannels WORD ?
+          ;* number of channels supported *
           wReserved1 WORD ?
+          ;* structure packing *
         WAVEINCAPSA ends
         tagWAVEINCAPSA typedef WAVEINCAPSA
         PWAVEINCAPSA typedef ptr WAVEINCAPSA
@@ -178,12 +265,19 @@ ifndef _MMEAPI_H_
         LPWAVEINCAPSA typedef ptr WAVEINCAPSA
         WAVEINCAPSW struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname WCHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname WORD MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           dwFormats DWORD ?
+          ;* formats supported *
           wChannels WORD ?
+          ;* number of channels supported *
           wReserved1 WORD ?
+          ;* structure packing *
         WAVEINCAPSW ends
         tagWAVEINCAPSW typedef WAVEINCAPSW
         PWAVEINCAPSW typedef ptr WAVEINCAPSW
@@ -200,17 +294,28 @@ ifndef _MMEAPI_H_
           NPWAVEINCAPS typedef NPWAVEINCAPSA
           LPWAVEINCAPS typedef LPWAVEINCAPSA
         endif
+        ; UNICODE
         WAVEINCAPS2A struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname CHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname SBYTE MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           dwFormats DWORD ?
+          ;* formats supported *
           wChannels WORD ?
+          ;* number of channels supported *
           wReserved1 WORD ?
+          ;* structure packing *
           ManufacturerGuid GUID <>
+          ;* for extensible MID mapping *
           ProductGuid GUID <>
+          ;* for extensible PID mapping *
           NameGuid GUID <>
+          ;* for name lookup in registry *
         WAVEINCAPS2A ends
         tagWAVEINCAPS2A typedef WAVEINCAPS2A
         PWAVEINCAPS2A typedef ptr WAVEINCAPS2A
@@ -218,15 +323,25 @@ ifndef _MMEAPI_H_
         LPWAVEINCAPS2A typedef ptr WAVEINCAPS2A
         WAVEINCAPS2W struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname WCHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname WORD MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           dwFormats DWORD ?
+          ;* formats supported *
           wChannels WORD ?
+          ;* number of channels supported *
           wReserved1 WORD ?
+          ;* structure packing *
           ManufacturerGuid GUID <>
+          ;* for extensible MID mapping *
           ProductGuid GUID <>
+          ;* for extensible PID mapping *
           NameGuid GUID <>
+          ;* for name lookup in registry *
         WAVEINCAPS2W ends
         tagWAVEINCAPS2W typedef WAVEINCAPS2W
         PWAVEINCAPS2W typedef ptr WAVEINCAPS2W
@@ -243,47 +358,82 @@ ifndef _MMEAPI_H_
           NPWAVEINCAPS2 typedef NPWAVEINCAPS2A
           LPWAVEINCAPS2 typedef LPWAVEINCAPS2A
         endif
+        ; UNICODE
       else
         ;[...]
       endif
+      ;* defines for dwFormat field of WAVEINCAPS and WAVEOUTCAPS *
+      ;* invalid format *
       WAVE_INVALIDFORMAT equ 00000000h
+      ;* 11.025 kHz, Mono,   8-bit  *
       WAVE_FORMAT_1M08 equ 00000001h
+      ;* 11.025 kHz, Stereo, 8-bit  *
       WAVE_FORMAT_1S08 equ 00000002h
+      ;* 11.025 kHz, Mono,   16-bit *
       WAVE_FORMAT_1M16 equ 00000004h
+      ;* 11.025 kHz, Stereo, 16-bit *
       WAVE_FORMAT_1S16 equ 00000008h
+      ;* 22.05  kHz, Mono,   8-bit  *
       WAVE_FORMAT_2M08 equ 00000010h
+      ;* 22.05  kHz, Stereo, 8-bit  *
       WAVE_FORMAT_2S08 equ 00000020h
+      ;* 22.05  kHz, Mono,   16-bit *
       WAVE_FORMAT_2M16 equ 00000040h
+      ;* 22.05  kHz, Stereo, 16-bit *
       WAVE_FORMAT_2S16 equ 00000080h
+      ;* 44.1   kHz, Mono,   8-bit  *
       WAVE_FORMAT_4M08 equ 00000100h
+      ;* 44.1   kHz, Stereo, 8-bit  *
       WAVE_FORMAT_4S08 equ 00000200h
+      ;* 44.1   kHz, Mono,   16-bit *
       WAVE_FORMAT_4M16 equ 00000400h
+      ;* 44.1   kHz, Stereo, 16-bit *
       WAVE_FORMAT_4S16 equ 00000800h
+      ;* 44.1   kHz, Mono,   8-bit  *
       WAVE_FORMAT_44M08 equ 00000100h
+      ;* 44.1   kHz, Stereo, 8-bit  *
       WAVE_FORMAT_44S08 equ 00000200h
+      ;* 44.1   kHz, Mono,   16-bit *
       WAVE_FORMAT_44M16 equ 00000400h
+      ;* 44.1   kHz, Stereo, 16-bit *
       WAVE_FORMAT_44S16 equ 00000800h
+      ;* 48     kHz, Mono,   8-bit  *
       WAVE_FORMAT_48M08 equ 00001000h
+      ;* 48     kHz, Stereo, 8-bit  *
       WAVE_FORMAT_48S08 equ 00002000h
+      ;* 48     kHz, Mono,   16-bit *
       WAVE_FORMAT_48M16 equ 00004000h
+      ;* 48     kHz, Stereo, 16-bit *
       WAVE_FORMAT_48S16 equ 00008000h
+      ;* 96     kHz, Mono,   8-bit  *
       WAVE_FORMAT_96M08 equ 00010000h
+      ;* 96     kHz, Stereo, 8-bit  *
       WAVE_FORMAT_96S08 equ 00020000h
+      ;* 96     kHz, Mono,   16-bit *
       WAVE_FORMAT_96M16 equ 00040000h
+      ;* 96     kHz, Stereo, 16-bit *
       WAVE_FORMAT_96S16 equ 00080000h
       ifndef WAVE_FORMAT_PCM
+        ;* OLD general waveform format structure (information common to all formats) *
         WAVEFORMAT struct
           wFormatTag WORD ?
+          ;* format type *
           nChannels WORD ?
+          ;* number of channels (i.e. mono, stereo, etc.) *
           nSamplesPerSec DWORD ?
+          ;* sample rate *
           nAvgBytesPerSec DWORD ?
+          ;* for buffer estimation *
           nBlockAlign WORD ?
+          ;* block size of data *
         WAVEFORMAT ends
         waveformat_tag typedef WAVEFORMAT
         PWAVEFORMAT typedef ptr WAVEFORMAT
         NPWAVEFORMAT typedef ptr WAVEFORMAT
         LPWAVEFORMAT typedef ptr WAVEFORMAT
+        ;* flags for wFormatTag field of WAVEFORMAT *
         WAVE_FORMAT_PCM equ 1
+        ;* specific waveform format structure for PCM data *
         PCMWAVEFORMAT struct
           wf WAVEFORMAT <>
           wBitsPerSample WORD ?
@@ -292,24 +442,39 @@ ifndef _MMEAPI_H_
         PPCMWAVEFORMAT typedef ptr PCMWAVEFORMAT
         NPPCMWAVEFORMAT typedef ptr PCMWAVEFORMAT
         LPPCMWAVEFORMAT typedef ptr PCMWAVEFORMAT
+        ;* WAVE_FORMAT_PCM *
       endif
       ifndef _WAVEFORMATEX_
         _WAVEFORMATEX_ equ <>
+        ;*
+        ;*  extended waveform format structure used for all non-PCM formats. this
+        ;*  structure is common to all non-PCM formats.
+        ;*
         WAVEFORMATEX struct
           wFormatTag WORD ?
+          ;* format type *
           nChannels WORD ?
+          ;* number of channels (i.e. mono, stereo...) *
           nSamplesPerSec DWORD ?
+          ;* sample rate *
           nAvgBytesPerSec DWORD ?
+          ;* for buffer estimation *
           nBlockAlign WORD ?
+          ;* block size of data *
           wBitsPerSample WORD ?
+          ;* number of bits per sample of mono data *
           cbSize WORD ?
+          ;* the count in bytes of the size of *
+          ;* extra information (after cbSize) *
         WAVEFORMATEX ends
         tWAVEFORMATEX typedef WAVEFORMATEX
         PWAVEFORMATEX typedef ptr WAVEFORMATEX
         NPWAVEFORMATEX typedef ptr WAVEFORMATEX
         LPWAVEFORMATEX typedef ptr WAVEFORMATEX
+        ;* _WAVEFORMATEX_ *
       endif
       LPCWAVEFORMATEX typedef ptr WAVEFORMATEX
+      ;* waveform audio function prototypes *
       @DefProto DllImport, waveOutGetNumDevs, WIN_STD_CALL_CONV,, <>, 0
       ifdef _WIN32
         @DefProto DllImport, waveOutGetDevCapsA, WIN_STD_CALL_CONV,, <:UINT_PTR, :LPWAVEOUTCAPSA, :UINT>, 12
@@ -319,6 +484,7 @@ ifndef _MMEAPI_H_
         else
           waveOutGetDevCaps equ <waveOutGetDevCapsA>
         endif
+        ; !UNICODE
       else
         ;[...]
       endif
@@ -337,6 +503,7 @@ ifndef _MMEAPI_H_
         else
           waveOutGetErrorText equ <waveOutGetErrorTextA>
         endif
+        ; !UNICODE
       else
         ;[...]
       endif
@@ -361,6 +528,7 @@ ifndef _MMEAPI_H_
         else
           ;[...]
         endif
+        ;* ifdef WINVER >= 0x030a *
       endif
       @DefProto DllImport, waveInGetNumDevs, WIN_STD_CALL_CONV,, <>, 0
       ifdef _WIN32
@@ -371,6 +539,7 @@ ifndef _MMEAPI_H_
         else
           waveInGetDevCaps equ <waveInGetDevCapsA>
         endif
+        ; !UNICODE
       else
         ;[...]
       endif
@@ -382,6 +551,7 @@ ifndef _MMEAPI_H_
         else
           waveInGetErrorText equ <waveInGetErrorTextA>
         endif
+        ; !UNICODE
       else
         ;[...]
       endif
@@ -401,18 +571,34 @@ ifndef _MMEAPI_H_
         else
           ;[...]
         endif
+        ;* ifdef WINVER >= 0x030a *
       endif
+      ;* ifndef MMNOWAVE *
     endif
     ifndef MMNOMIDI
+      ;****************************************************************************
+      ;MIDI audio support
+      ;****************************************************************************
+      ;* MIDI error return values *
+      ;* header not prepared *
       MIDIERR_UNPREPARED equ (MIDIERR_BASE + 0)
+      ;* still something playing *
       MIDIERR_STILLPLAYING equ (MIDIERR_BASE + 1)
+      ;* no configured instruments *
       MIDIERR_NOMAP equ (MIDIERR_BASE + 2)
+      ;* hardware is still busy *
       MIDIERR_NOTREADY equ (MIDIERR_BASE + 3)
+      ;* port no longer connected *
       MIDIERR_NODEVICE equ (MIDIERR_BASE + 4)
+      ;* invalid MIF *
       MIDIERR_INVALIDSETUP equ (MIDIERR_BASE + 5)
+      ;* operation unsupported w/ open mode *
       MIDIERR_BADOPENMODE equ (MIDIERR_BASE + 6)
+      ;* thru device 'eating' a message *
       MIDIERR_DONT_CONTINUE equ (MIDIERR_BASE + 7)
+      ;* last error in range *
       MIDIERR_LASTERROR equ (MIDIERR_BASE + 7)
+      ;* MIDI audio data types *
       DECLARE_HANDLE HMIDI
       DECLARE_HANDLE HMIDIIN
       DECLARE_HANDLE HMIDIOUT
@@ -432,6 +618,7 @@ ifndef _MMEAPI_H_
         WORD MIDIPATCHSIZE dup (?)
       KEYARRAY ends
       LPKEYARRAY typedef ptr WORD
+      ;* MIDI callback messages *
       MIM_OPEN equ <MM_MIM_OPEN>
       MIM_CLOSE equ <MM_MIM_CLOSE>
       MIM_DATA equ <MM_MIM_DATA>
@@ -444,27 +631,42 @@ ifndef _MMEAPI_H_
       if (WINVER ge 0400h)
         MIM_MOREDATA equ <MM_MIM_MOREDATA>
         MOM_POSITIONCB equ <MM_MOM_POSITIONCB>
+        ;* WINVER >= 0x0400 *
       endif
+      ;* device ID for MIDI mapper *
       MIDIMAPPER equ (- 1)
       MIDI_MAPPER equ (- 1)
       if (WINVER ge 0400h)
+        ;* flags for dwFlags parm of midiInOpen() *
         MIDI_IO_STATUS equ 00000020h
+        ;* WINVER >= 0x0400 *
       endif
+      ;* flags for wFlags parm of midiOutCachePatches(), midiOutCacheDrumPatches() *
       MIDI_CACHE_ALL equ 1
       MIDI_CACHE_BESTFIT equ 2
       MIDI_CACHE_QUERY equ 3
       MIDI_UNCACHE equ 4
+      ;* MIDI output device capabilities structure *
       ifdef _WIN32
         MIDIOUTCAPSA struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname CHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname SBYTE MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           wTechnology WORD ?
+          ;* type of device *
           wVoices WORD ?
+          ;* # of voices (internal synth only) *
           wNotes WORD ?
+          ;* max # of notes (internal synth only) *
           wChannelMask WORD ?
+          ;* channels used (internal synth only) *
           dwSupport DWORD ?
+          ;* functionality supported by driver *
         MIDIOUTCAPSA ends
         tagMIDIOUTCAPSA typedef MIDIOUTCAPSA
         PMIDIOUTCAPSA typedef ptr MIDIOUTCAPSA
@@ -472,14 +674,23 @@ ifndef _MMEAPI_H_
         LPMIDIOUTCAPSA typedef ptr MIDIOUTCAPSA
         MIDIOUTCAPSW struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname WCHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname WORD MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           wTechnology WORD ?
+          ;* type of device *
           wVoices WORD ?
+          ;* # of voices (internal synth only) *
           wNotes WORD ?
+          ;* max # of notes (internal synth only) *
           wChannelMask WORD ?
+          ;* channels used (internal synth only) *
           dwSupport DWORD ?
+          ;* functionality supported by driver *
         MIDIOUTCAPSW ends
         tagMIDIOUTCAPSW typedef MIDIOUTCAPSW
         PMIDIOUTCAPSW typedef ptr MIDIOUTCAPSW
@@ -496,19 +707,32 @@ ifndef _MMEAPI_H_
           NPMIDIOUTCAPS typedef NPMIDIOUTCAPSA
           LPMIDIOUTCAPS typedef LPMIDIOUTCAPSA
         endif
+        ; UNICODE
         MIDIOUTCAPS2A struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname CHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname SBYTE MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           wTechnology WORD ?
+          ;* type of device *
           wVoices WORD ?
+          ;* # of voices (internal synth only) *
           wNotes WORD ?
+          ;* max # of notes (internal synth only) *
           wChannelMask WORD ?
+          ;* channels used (internal synth only) *
           dwSupport DWORD ?
+          ;* functionality supported by driver *
           ManufacturerGuid GUID <>
+          ;* for extensible MID mapping *
           ProductGuid GUID <>
+          ;* for extensible PID mapping *
           NameGuid GUID <>
+          ;* for name lookup in registry *
         MIDIOUTCAPS2A ends
         tagMIDIOUTCAPS2A typedef MIDIOUTCAPS2A
         PMIDIOUTCAPS2A typedef ptr MIDIOUTCAPS2A
@@ -516,17 +740,29 @@ ifndef _MMEAPI_H_
         LPMIDIOUTCAPS2A typedef ptr MIDIOUTCAPS2A
         MIDIOUTCAPS2W struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname WCHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname WORD MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           wTechnology WORD ?
+          ;* type of device *
           wVoices WORD ?
+          ;* # of voices (internal synth only) *
           wNotes WORD ?
+          ;* max # of notes (internal synth only) *
           wChannelMask WORD ?
+          ;* channels used (internal synth only) *
           dwSupport DWORD ?
+          ;* functionality supported by driver *
           ManufacturerGuid GUID <>
+          ;* for extensible MID mapping *
           ProductGuid GUID <>
+          ;* for extensible PID mapping *
           NameGuid GUID <>
+          ;* for name lookup in registry *
         MIDIOUTCAPS2W ends
         tagMIDIOUTCAPS2W typedef MIDIOUTCAPS2W
         PMIDIOUTCAPS2W typedef ptr MIDIOUTCAPS2W
@@ -543,30 +779,50 @@ ifndef _MMEAPI_H_
           NPMIDIOUTCAPS2 typedef NPMIDIOUTCAPS2A
           LPMIDIOUTCAPS2 typedef LPMIDIOUTCAPS2A
         endif
+        ; UNICODE
       else
         ;[...]
       endif
+      ;* flags for wTechnology field of MIDIOUTCAPS structure *
+      ;* output port *
       MOD_MIDIPORT equ 1
+      ;* generic internal synth *
       MOD_SYNTH equ 2
+      ;* square wave internal synth *
       MOD_SQSYNTH equ 3
+      ;* FM internal synth *
       MOD_FMSYNTH equ 4
+      ;* MIDI mapper *
       MOD_MAPPER equ 5
+      ;* hardware wavetable synth *
       MOD_WAVETABLE equ 6
+      ;* software synth *
       MOD_SWSYNTH equ 7
+      ;* flags for dwSupport field of MIDIOUTCAPS structure *
+      ;* supports volume control *
       MIDICAPS_VOLUME equ 0001h
+      ;* separate left-right volume control *
       MIDICAPS_LRVOLUME equ 0002h
       MIDICAPS_CACHE equ 0004h
       if (WINVER ge 0400h)
+        ;* driver supports midiStreamOut directly *
         MIDICAPS_STREAM equ 0008h
+        ;* WINVER >= 0x0400 *
       endif
+      ;* MIDI input device capabilities structure *
       ifdef _WIN32
         MIDIINCAPSA struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname CHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname SBYTE MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           if (WINVER ge 0400h)
             dwSupport DWORD ?
+            ;* functionality supported by driver *
           endif
         MIDIINCAPSA ends
         tagMIDIINCAPSA typedef MIDIINCAPSA
@@ -575,11 +831,16 @@ ifndef _MMEAPI_H_
         LPMIDIINCAPSA typedef ptr MIDIINCAPSA
         MIDIINCAPSW struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname WCHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname WORD MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           if (WINVER ge 0400h)
             dwSupport DWORD ?
+            ;* functionality supported by driver *
           endif
         MIDIINCAPSW ends
         tagMIDIINCAPSW typedef MIDIINCAPSW
@@ -597,17 +858,26 @@ ifndef _MMEAPI_H_
           NPMIDIINCAPS typedef NPMIDIINCAPSA
           LPMIDIINCAPS typedef LPMIDIINCAPSA
         endif
+        ; UNICODE
         MIDIINCAPS2A struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname CHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname SBYTE MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           if (WINVER ge 0400h)
             dwSupport DWORD ?
+            ;* functionality supported by driver *
           endif
           ManufacturerGuid GUID <>
+          ;* for extensible MID mapping *
           ProductGuid GUID <>
+          ;* for extensible PID mapping *
           NameGuid GUID <>
+          ;* for name lookup in registry *
         MIDIINCAPS2A ends
         tagMIDIINCAPS2A typedef MIDIINCAPS2A
         PMIDIINCAPS2A typedef ptr MIDIINCAPS2A
@@ -615,15 +885,23 @@ ifndef _MMEAPI_H_
         LPMIDIINCAPS2A typedef ptr MIDIINCAPS2A
         MIDIINCAPS2W struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname WCHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname WORD MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           if (WINVER ge 0400h)
             dwSupport DWORD ?
+            ;* functionality supported by driver *
           endif
           ManufacturerGuid GUID <>
+          ;* for extensible MID mapping *
           ProductGuid GUID <>
+          ;* for extensible PID mapping *
           NameGuid GUID <>
+          ;* for name lookup in registry *
         MIDIINCAPS2W ends
         tagMIDIINCAPS2W typedef MIDIINCAPS2W
         PMIDIINCAPS2W typedef ptr MIDIINCAPS2W
@@ -640,20 +918,31 @@ ifndef _MMEAPI_H_
           NPMIDIINCAPS2 typedef NPMIDIINCAPS2A
           LPMIDIINCAPS2 typedef LPMIDIINCAPS2A
         endif
+        ; UNICODE
       else
         ;[...]
       endif
+      ;* MIDI data block header *
       MIDIHDR struct
-        lpData LPSTR ?
+        lpData POINTER ?
+        ;* pointer to locked data block *
         dwBufferLength DWORD ?
+        ;* length of data in data block *
         dwBytesRecorded DWORD ?
-        dwUser DWORD_PTR ?
+        ;* used for input only *
+        dwUser XWORD ?
+        ;* for client's use *
         dwFlags DWORD ?
+        ;* assorted flags (see defines) *
         lpNext POINTER ?
-        reserved DWORD_PTR ?
+        ;* reserved for driver *
+        reserved XWORD ?
+        ;* reserved for driver *
         if (WINVER ge 0400h)
           dwOffset DWORD ?
-          dwReserved DWORD_PTR 8 dup (?)
+          ;* Callback offset into buffer *
+          dwReserved XWORD 8 dup (?)
+          ;* Reserved for MMSYSTEM *
         endif
       MIDIHDR ends
       midihdr_tag typedef MIDIHDR
@@ -663,23 +952,45 @@ ifndef _MMEAPI_H_
       if (WINVER ge 0400h)
         MIDIEVENT struct
           dwDeltaTime DWORD ?
+          ;* Ticks since last event *
           dwStreamID DWORD ?
+          ;* Reserved; must be zero *
           dwEvent DWORD ?
+          ;* Event type and parameters *
           dwParms DWORD 1 dup (?)
+          ;* Parameters if this is a long event *
         MIDIEVENT ends
         midievent_tag typedef MIDIEVENT
         MIDISTRMBUFFVER struct
           dwVersion DWORD ?
+          ;* Stream buffer format version *
           dwMid DWORD ?
+          ;* Manufacturer ID as defined in MMREG.H *
           dwOEMVersion DWORD ?
+          ;* Manufacturer version for custom ext *
         MIDISTRMBUFFVER ends
         midistrmbuffver_tag typedef MIDISTRMBUFFVER
+        ;* WINVER >= 0x0400 *
       endif
+      ;* flags for dwFlags field of MIDIHDR structure *
+      ;* done bit *
       MHDR_DONE equ 00000001h
+      ;* set if header prepared *
       MHDR_PREPARED equ 00000002h
+      ;* reserved for driver *
       MHDR_INQUEUE equ 00000004h
+      ;* Buffer is stream buffer *
       MHDR_ISSTRM equ 00000008h
       if (WINVER ge 0400h)
+        ;* *
+        ;* Type codes which go in the high byte of the event DWORD of a stream buffer *
+        ;* *
+        ;* Type codes 00-7F contain parameters within the low 24 bits *
+        ;* Type codes 80-FF contain a length of their parameter in the low 24 *
+        ;* bits, followed by their parameter data in the buffer. The event *
+        ;* DWORD contains the exact byte length; the parm data itself must be *
+        ;* padded to be an even multiple of 4 bytes long. *
+        ;* *
         MEVT_F_SHORT equ 00000000h
         MEVT_F_LONG equ 80000000h
         MEVT_F_CALLBACK equ 40000000h
@@ -689,15 +1000,29 @@ ifndef _MMEAPI_H_
         MEVT_EVENTPARM macro x
           exitm <(((x) and 00FFFFFFh))>
         endm
+        ;* parm = shortmsg for midiOutShortMsg *
         MEVT_SHORTMSG equ (00h)
+        ;* parm = new tempo in microsec/qn     *
         MEVT_TEMPO equ (01h)
+        ;* parm = unused; does nothing         *
         MEVT_NOP equ (02h)
+        ;* 0x04-0x7F reserved *
+        ;* parm = bytes to send verbatim       *
         MEVT_LONGMSG equ (80h)
+        ;* parm = comment data                 *
         MEVT_COMMENT equ (82h)
+        ;* parm = MIDISTRMBUFFVER struct       *
         MEVT_VERSION equ (84h)
+        ;* 0x81-0xFF reserved *
         MIDISTRM_ERROR equ (- 2)
+        ;* *
+        ;* Structures and defines for midiStreamProperty *
+        ;* *
         MIDIPROP_SET equ 80000000h
         MIDIPROP_GET equ 40000000h
+        ;* These are intentionally both non-zero so the app cannot accidentally *
+        ;* leave the operation off and happen to appear to work due to default *
+        ;* action. *
         MIDIPROP_TIMEDIV equ 00000001h
         MIDIPROP_TEMPO equ 00000002h
         MIDIPROPTIMEDIV struct
@@ -712,7 +1037,9 @@ ifndef _MMEAPI_H_
         MIDIPROPTEMPO ends
         midiproptempo_tag typedef MIDIPROPTEMPO
         LPMIDIPROPTEMPO typedef ptr MIDIPROPTEMPO
+        ;* WINVER >= 0x0400 *
       endif
+      ;* MIDI function prototypes *
       @DefProto DllImport, midiOutGetNumDevs, WIN_STD_CALL_CONV,, <>, 0
       if (WINVER ge 0400h)
         @DefProto DllImport, midiStreamOpen, WIN_STD_CALL_CONV,, <:LPHMIDISTRM, :LPUINT, :DWORD, :DWORD_PTR, :DWORD_PTR, :DWORD>, 24
@@ -727,6 +1054,7 @@ ifndef _MMEAPI_H_
           @DefProto DllImport, midiConnect, WIN_STD_CALL_CONV,, <:HMIDI, :HMIDIOUT, :LPVOID>, 12
           @DefProto DllImport, midiDisconnect, WIN_STD_CALL_CONV,, <:HMIDI, :HMIDIOUT, :LPVOID>, 12
         endif
+        ;* WINVER >= 0x0400 *
       endif
       ifdef _WIN32
         @DefProto DllImport, midiOutGetDevCapsA, WIN_STD_CALL_CONV,, <:UINT_PTR, :LPMIDIOUTCAPSA, :UINT>, 12
@@ -736,6 +1064,7 @@ ifndef _MMEAPI_H_
         else
           midiOutGetDevCaps equ <midiOutGetDevCapsA>
         endif
+        ; !UNICODE
       else
         ;[...]
       endif
@@ -754,6 +1083,7 @@ ifndef _MMEAPI_H_
         else
           midiOutGetErrorText equ <midiOutGetErrorTextA>
         endif
+        ; !UNICODE
       else
         ;[...]
       endif
@@ -773,6 +1103,7 @@ ifndef _MMEAPI_H_
         else
           ;[...]
         endif
+        ;* ifdef WINVER >= 0x030a *
       endif
       @DefProto DllImport, midiInGetNumDevs, WIN_STD_CALL_CONV,, <>, 0
       ifdef _WIN32
@@ -783,6 +1114,7 @@ ifndef _MMEAPI_H_
         else
           midiInGetDevCaps equ <midiInGetDevCapsA>
         endif
+        ; !UNICODE
         @DefProto DllImport, midiInGetErrorTextA, WIN_STD_CALL_CONV,, <:MMRESULT, :LPSTR, :UINT>, 12
         @DefProto DllImport, midiInGetErrorTextW, WIN_STD_CALL_CONV,, <:MMRESULT, :LPWSTR, :UINT>, 12
         ifdef UNICODE
@@ -790,6 +1122,7 @@ ifndef _MMEAPI_H_
         else
           midiInGetErrorText equ <midiInGetErrorTextA>
         endif
+        ; !UNICODE
       else
         ;[...]
       endif
@@ -808,19 +1141,33 @@ ifndef _MMEAPI_H_
         else
           ;[...]
         endif
+        ;* ifdef WINVER >= 0x030a *
       endif
+      ;* ifndef MMNOMIDI *
     endif
     ifndef MMNOAUX
+      ;****************************************************************************
+      ;Auxiliary audio support
+      ;****************************************************************************
+      ;* device ID for aux device mapper *
       AUX_MAPPER equ (- 1)
+      ;* Auxiliary audio device capabilities structure *
       ifdef _WIN32
         AUXCAPSA struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname CHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname SBYTE MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           wTechnology WORD ?
+          ;* type of device *
           wReserved1 WORD ?
+          ;* padding *
           dwSupport DWORD ?
+          ;* functionality supported by driver *
         AUXCAPSA ends
         tagAUXCAPSA typedef AUXCAPSA
         PAUXCAPSA typedef ptr AUXCAPSA
@@ -828,12 +1175,19 @@ ifndef _MMEAPI_H_
         LPAUXCAPSA typedef ptr AUXCAPSA
         AUXCAPSW struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname WCHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname WORD MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           wTechnology WORD ?
+          ;* type of device *
           wReserved1 WORD ?
+          ;* padding *
           dwSupport DWORD ?
+          ;* functionality supported by driver *
         AUXCAPSW ends
         tagAUXCAPSW typedef AUXCAPSW
         PAUXCAPSW typedef ptr AUXCAPSW
@@ -850,17 +1204,28 @@ ifndef _MMEAPI_H_
           NPAUXCAPS typedef NPAUXCAPSA
           LPAUXCAPS typedef LPAUXCAPSA
         endif
+        ; UNICODE
         AUXCAPS2A struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname CHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname SBYTE MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           wTechnology WORD ?
+          ;* type of device *
           wReserved1 WORD ?
+          ;* padding *
           dwSupport DWORD ?
+          ;* functionality supported by driver *
           ManufacturerGuid GUID <>
+          ;* for extensible MID mapping *
           ProductGuid GUID <>
+          ;* for extensible PID mapping *
           NameGuid GUID <>
+          ;* for name lookup in registry *
         AUXCAPS2A ends
         tagAUXCAPS2A typedef AUXCAPS2A
         PAUXCAPS2A typedef ptr AUXCAPS2A
@@ -868,15 +1233,25 @@ ifndef _MMEAPI_H_
         LPAUXCAPS2A typedef ptr AUXCAPS2A
         AUXCAPS2W struct
           wMid WORD ?
+          ;* manufacturer ID *
           wPid WORD ?
+          ;* product ID *
           vDriverVersion MMVERSION ?
-          szPname WCHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname WORD MAXPNAMELEN dup (?)
+          ;* product name (NULL terminated string) *
           wTechnology WORD ?
+          ;* type of device *
           wReserved1 WORD ?
+          ;* padding *
           dwSupport DWORD ?
+          ;* functionality supported by driver *
           ManufacturerGuid GUID <>
+          ;* for extensible MID mapping *
           ProductGuid GUID <>
+          ;* for extensible PID mapping *
           NameGuid GUID <>
+          ;* for name lookup in registry *
         AUXCAPS2W ends
         tagAUXCAPS2W typedef AUXCAPS2W
         PAUXCAPS2W typedef ptr AUXCAPS2W
@@ -893,13 +1268,21 @@ ifndef _MMEAPI_H_
           NPAUXCAPS2 typedef NPAUXCAPS2A
           LPAUXCAPS2 typedef LPAUXCAPS2A
         endif
+        ; UNICODE
       else
         ;[...]
       endif
+      ;* flags for wTechnology field in AUXCAPS structure *
+      ;* audio from internal CD-ROM drive *
       AUXCAPS_CDAUDIO equ 1
+      ;* audio from auxiliary input jacks *
       AUXCAPS_AUXIN equ 2
+      ;* flags for dwSupport field in AUXCAPS structure *
+      ;* supports volume control *
       AUXCAPS_VOLUME equ 0001h
+      ;* separate left-right volume control *
       AUXCAPS_LRVOLUME equ 0002h
+      ;* auxiliary audio function prototypes *
       @DefProto DllImport, auxGetNumDevs, WIN_STD_CALL_CONV,, <>, 0
       ifdef _WIN32
         @DefProto DllImport, auxGetDevCapsA, WIN_STD_CALL_CONV,, <:UINT_PTR, :LPAUXCAPSA, :UINT>, 12
@@ -909,6 +1292,7 @@ ifndef _MMEAPI_H_
         else
           auxGetDevCaps equ <auxGetDevCapsA>
         endif
+        ; !UNICODE
       else
         ;[...]
       endif
@@ -920,15 +1304,24 @@ ifndef _MMEAPI_H_
         else
           ;[...]
         endif
+        ;* ifdef WINVER >= 0x030a *
       endif
+      ;* ifndef MMNOAUX *
     endif
     ifndef MMNOMIXER
+      ;****************************************************************************
+      ;Mixer Support
+      ;****************************************************************************
       DECLARE_HANDLE HMIXEROBJ
       LPHMIXEROBJ typedef ptr HMIXEROBJ
       DECLARE_HANDLE HMIXER
       LPHMIXER typedef ptr HMIXER
       MIXER_SHORT_NAME_CHARS equ 16
       MIXER_LONG_NAME_CHARS equ 64
+      ;* *
+      ;*  MMRESULT error return values specific to the mixer API *
+      ;* *
+      ;* *
       MIXERR_INVALLINE equ (MIXERR_BASE + 0)
       MIXERR_INVALCONTROL equ (MIXERR_BASE + 1)
       MIXERR_INVALVALUE equ (MIXERR_BASE + 2)
@@ -949,22 +1342,34 @@ ifndef _MMEAPI_H_
       ifdef _WIN32
         MIXERCAPSA struct
           wMid WORD ?
+          ;* manufacturer id *
           wPid WORD ?
+          ;* product id *
           vDriverVersion MMVERSION ?
-          szPname CHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname SBYTE MAXPNAMELEN dup (?)
+          ;* product name *
           fdwSupport DWORD ?
+          ;* misc. support bits *
           cDestinations DWORD ?
+          ;* count of destinations *
         MIXERCAPSA ends
         tagMIXERCAPSA typedef MIXERCAPSA
         PMIXERCAPSA typedef ptr MIXERCAPSA
         LPMIXERCAPSA typedef ptr MIXERCAPSA
         MIXERCAPSW struct
           wMid WORD ?
+          ;* manufacturer id *
           wPid WORD ?
+          ;* product id *
           vDriverVersion MMVERSION ?
-          szPname WCHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname WORD MAXPNAMELEN dup (?)
+          ;* product name *
           fdwSupport DWORD ?
+          ;* misc. support bits *
           cDestinations DWORD ?
+          ;* count of destinations *
         MIXERCAPSW ends
         tagMIXERCAPSW typedef MIXERCAPSW
         PMIXERCAPSW typedef ptr MIXERCAPSW
@@ -978,30 +1383,49 @@ ifndef _MMEAPI_H_
           PMIXERCAPS typedef PMIXERCAPSA
           LPMIXERCAPS typedef LPMIXERCAPSA
         endif
+        ; UNICODE
         MIXERCAPS2A struct
           wMid WORD ?
+          ;* manufacturer id *
           wPid WORD ?
+          ;* product id *
           vDriverVersion MMVERSION ?
-          szPname CHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname SBYTE MAXPNAMELEN dup (?)
+          ;* product name *
           fdwSupport DWORD ?
+          ;* misc. support bits *
           cDestinations DWORD ?
+          ;* count of destinations *
           ManufacturerGuid GUID <>
+          ;* for extensible MID mapping *
           ProductGuid GUID <>
+          ;* for extensible PID mapping *
           NameGuid GUID <>
+          ;* for name lookup in registry *
         MIXERCAPS2A ends
         tagMIXERCAPS2A typedef MIXERCAPS2A
         PMIXERCAPS2A typedef ptr MIXERCAPS2A
         LPMIXERCAPS2A typedef ptr MIXERCAPS2A
         MIXERCAPS2W struct
           wMid WORD ?
+          ;* manufacturer id *
           wPid WORD ?
+          ;* product id *
           vDriverVersion MMVERSION ?
-          szPname WCHAR MAXPNAMELEN dup (?)
+          ;* version of the driver *
+          szPname WORD MAXPNAMELEN dup (?)
+          ;* product name *
           fdwSupport DWORD ?
+          ;* misc. support bits *
           cDestinations DWORD ?
+          ;* count of destinations *
           ManufacturerGuid GUID <>
+          ;* for extensible MID mapping *
           ProductGuid GUID <>
+          ;* for extensible PID mapping *
           NameGuid GUID <>
+          ;* for name lookup in registry *
         MIXERCAPS2W ends
         tagMIXERCAPS2W typedef MIXERCAPS2W
         PMIXERCAPS2W typedef ptr MIXERCAPS2W
@@ -1015,6 +1439,7 @@ ifndef _MMEAPI_H_
           PMIXERCAPS2 typedef PMIXERCAPS2A
           LPMIXERCAPS2 typedef LPMIXERCAPS2A
         endif
+        ; UNICODE
       else
         ;[...]
       endif
@@ -1026,6 +1451,7 @@ ifndef _MMEAPI_H_
         else
           mixerGetDevCaps equ <mixerGetDevCapsA>
         endif
+        ; !UNICODE
       else
         ;[...]
       endif
@@ -1035,24 +1461,40 @@ ifndef _MMEAPI_H_
       ifdef _WIN32
         MIXERLINEA struct
           cbStruct DWORD ?
+          ;* size of MIXERLINE structure *
           dwDestination DWORD ?
+          ;* zero based destination index *
           dwSource DWORD ?
+          ;* zero based source index (if source) *
           dwLineID DWORD ?
+          ;* unique line id for mixer device *
           fdwLine DWORD ?
-          dwUser DWORD_PTR ?
+          ;* state/information about line *
+          dwUser XWORD ?
+          ;* driver specific information *
           dwComponentType DWORD ?
+          ;* component type line connects to *
           cChannels DWORD ?
+          ;* number of channels line supports *
           cConnections DWORD ?
+          ;* number of connections [possible] *
           cControls DWORD ?
-          szShortName CHAR MIXER_SHORT_NAME_CHARS dup (?)
-          szName CHAR MIXER_LONG_NAME_CHARS dup (?)
+          ;* number of controls at this line *
+          szShortName SBYTE MIXER_SHORT_NAME_CHARS dup (?)
+          szName SBYTE MIXER_LONG_NAME_CHARS dup (?)
           struct Target
             dwType DWORD ?
+            ;* MIXERLINE_TARGETTYPE_xxxx *
             dwDeviceID DWORD ?
+            ;* target device ID of device type *
             wMid WORD ?
+            ;* of target device *
             wPid WORD ?
+            ;*      " *
             vDriverVersion MMVERSION ?
-            szPname CHAR MAXPNAMELEN dup (?)
+            ;*      " *
+            szPname SBYTE MAXPNAMELEN dup (?)
+            ;*      " *
           ends
         MIXERLINEA ends
         tagMIXERLINEA typedef MIXERLINEA
@@ -1060,24 +1502,40 @@ ifndef _MMEAPI_H_
         LPMIXERLINEA typedef ptr MIXERLINEA
         MIXERLINEW struct
           cbStruct DWORD ?
+          ;* size of MIXERLINE structure *
           dwDestination DWORD ?
+          ;* zero based destination index *
           dwSource DWORD ?
+          ;* zero based source index (if source) *
           dwLineID DWORD ?
+          ;* unique line id for mixer device *
           fdwLine DWORD ?
-          dwUser DWORD_PTR ?
+          ;* state/information about line *
+          dwUser XWORD ?
+          ;* driver specific information *
           dwComponentType DWORD ?
+          ;* component type line connects to *
           cChannels DWORD ?
+          ;* number of channels line supports *
           cConnections DWORD ?
+          ;* number of connections [possible] *
           cControls DWORD ?
-          szShortName WCHAR MIXER_SHORT_NAME_CHARS dup (?)
-          szName WCHAR MIXER_LONG_NAME_CHARS dup (?)
+          ;* number of controls at this line *
+          szShortName WORD MIXER_SHORT_NAME_CHARS dup (?)
+          szName WORD MIXER_LONG_NAME_CHARS dup (?)
           struct Target
             dwType DWORD ?
+            ;* MIXERLINE_TARGETTYPE_xxxx *
             dwDeviceID DWORD ?
+            ;* target device ID of device type *
             wMid WORD ?
+            ;* of target device *
             wPid WORD ?
+            ;*      " *
             vDriverVersion MMVERSION ?
-            szPname WCHAR MAXPNAMELEN dup (?)
+            ;*      " *
+            szPname WORD MAXPNAMELEN dup (?)
+            ;*      " *
           ends
         MIXERLINEW ends
         tagMIXERLINEW typedef MIXERLINEW
@@ -1092,12 +1550,23 @@ ifndef _MMEAPI_H_
           PMIXERLINE typedef PMIXERLINEA
           LPMIXERLINE typedef LPMIXERLINEA
         endif
+        ; UNICODE
       else
         ;[...]
       endif
+      ;* *
+      ;*  MIXERLINE.fdwLine *
+      ;* *
+      ;* *
       MIXERLINE_LINEF_ACTIVE equ 00000001h
       MIXERLINE_LINEF_DISCONNECTED equ 00008000h
       MIXERLINE_LINEF_SOURCE equ 80000000h
+      ;* *
+      ;*  MIXERLINE.dwComponentType *
+      ;* *
+      ;*  component types for destinations and sources *
+      ;* *
+      ;* *
       MIXERLINE_COMPONENTTYPE_DST_FIRST equ 00000000h
       MIXERLINE_COMPONENTTYPE_DST_UNDEFINED equ (MIXERLINE_COMPONENTTYPE_DST_FIRST + 0)
       MIXERLINE_COMPONENTTYPE_DST_DIGITAL equ (MIXERLINE_COMPONENTTYPE_DST_FIRST + 1)
@@ -1122,6 +1591,10 @@ ifndef _MMEAPI_H_
       MIXERLINE_COMPONENTTYPE_SRC_AUXILIARY equ (MIXERLINE_COMPONENTTYPE_SRC_FIRST + 9)
       MIXERLINE_COMPONENTTYPE_SRC_ANALOG equ (MIXERLINE_COMPONENTTYPE_SRC_FIRST + 10)
       MIXERLINE_COMPONENTTYPE_SRC_LAST equ (MIXERLINE_COMPONENTTYPE_SRC_FIRST + 10)
+      ;* *
+      ;*  MIXERLINE.Target.dwType *
+      ;* *
+      ;* *
       MIXERLINE_TARGETTYPE_UNDEFINED equ 0
       MIXERLINE_TARGETTYPE_WAVEOUT equ 1
       MIXERLINE_TARGETTYPE_WAVEIN equ 2
@@ -1136,6 +1609,7 @@ ifndef _MMEAPI_H_
         else
           mixerGetLineInfo equ <mixerGetLineInfoA>
         endif
+        ; !UNICODE
       else
         ;[...]
       endif
@@ -1146,30 +1620,46 @@ ifndef _MMEAPI_H_
       MIXER_GETLINEINFOF_TARGETTYPE equ 00000004h
       MIXER_GETLINEINFOF_QUERYMASK equ 0000000Fh
       @DefProto DllImport, mixerGetID, WIN_STD_CALL_CONV,, <:HMIXEROBJ, :ptr UINT, :DWORD>, 12
+      ;* *
+      ;*  MIXERCONTROL *
+      ;* *
+      ;* *
       ifdef _WIN32
         MIXERCONTROLA struct
           cbStruct DWORD ?
+          ;* size in bytes of MIXERCONTROL *
           dwControlID DWORD ?
+          ;* unique control id for mixer device *
           dwControlType DWORD ?
+          ;* MIXERCONTROL_CONTROLTYPE_xxx *
           fdwControl DWORD ?
+          ;* MIXERCONTROL_CONTROLF_xxx *
           cMultipleItems DWORD ?
-          szShortName CHAR MIXER_SHORT_NAME_CHARS dup (?)
-          szName CHAR MIXER_LONG_NAME_CHARS dup (?)
+          ;* if MIXERCONTROL_CONTROLF_MULTIPLE set *
+          szShortName SBYTE MIXER_SHORT_NAME_CHARS dup (?)
+          szName SBYTE MIXER_LONG_NAME_CHARS dup (?)
           union Bounds
             struct
-              lMinimum LONG ?
-              lMaximum LONG ?
+              lMinimum SDWORD ?
+              ;* signed minimum for this control *
+              lMaximum SDWORD ?
+              ;* signed maximum for this control *
             ends
             struct
               dwMinimum DWORD ?
+              ;* unsigned minimum for this control *
               dwMaximum DWORD ?
+              ;* unsigned maximum for this control *
             ends
             dwReserved DWORD 6 dup (?)
           ends
           union Metrics
             cSteps DWORD ?
+            ;* # of steps between min & max *
             cbCustomData DWORD ?
+            ;* size in bytes of custom data *
             dwReserved DWORD 6 dup (?)
+            ;* !!! needed? we have cbStruct.... *
           ends
         MIXERCONTROLA ends
         tagMIXERCONTROLA typedef MIXERCONTROLA
@@ -1177,27 +1667,39 @@ ifndef _MMEAPI_H_
         LPMIXERCONTROLA typedef ptr MIXERCONTROLA
         MIXERCONTROLW struct
           cbStruct DWORD ?
+          ;* size in bytes of MIXERCONTROL *
           dwControlID DWORD ?
+          ;* unique control id for mixer device *
           dwControlType DWORD ?
+          ;* MIXERCONTROL_CONTROLTYPE_xxx *
           fdwControl DWORD ?
+          ;* MIXERCONTROL_CONTROLF_xxx *
           cMultipleItems DWORD ?
-          szShortName WCHAR MIXER_SHORT_NAME_CHARS dup (?)
-          szName WCHAR MIXER_LONG_NAME_CHARS dup (?)
+          ;* if MIXERCONTROL_CONTROLF_MULTIPLE set *
+          szShortName WORD MIXER_SHORT_NAME_CHARS dup (?)
+          szName WORD MIXER_LONG_NAME_CHARS dup (?)
           union Bounds
             struct
-              lMinimum LONG ?
-              lMaximum LONG ?
+              lMinimum SDWORD ?
+              ;* signed minimum for this control *
+              lMaximum SDWORD ?
+              ;* signed maximum for this control *
             ends
             struct
               dwMinimum DWORD ?
+              ;* unsigned minimum for this control *
               dwMaximum DWORD ?
+              ;* unsigned maximum for this control *
             ends
             dwReserved DWORD 6 dup (?)
           ends
           union Metrics
             cSteps DWORD ?
+            ;* # of steps between min & max *
             cbCustomData DWORD ?
+            ;* size in bytes of custom data *
             dwReserved DWORD 6 dup (?)
+            ;* !!! needed? we have cbStruct.... *
           ends
         MIXERCONTROLW ends
         tagMIXERCONTROLW typedef MIXERCONTROLW
@@ -1212,12 +1714,21 @@ ifndef _MMEAPI_H_
           PMIXERCONTROL typedef PMIXERCONTROLA
           LPMIXERCONTROL typedef LPMIXERCONTROLA
         endif
+        ; UNICODE
       else
         ;[...]
       endif
+      ;* *
+      ;*  MIXERCONTROL.fdwControl *
+      ;* *
+      ;* *
       MIXERCONTROL_CONTROLF_UNIFORM equ 00000001h
       MIXERCONTROL_CONTROLF_MULTIPLE equ 00000002h
       MIXERCONTROL_CONTROLF_DISABLED equ 80000000h
+      ;* *
+      ;*  MIXERCONTROL_CONTROLTYPE_xxx building block defines *
+      ;* *
+      ;* *
       MIXERCONTROL_CT_CLASS_MASK equ 0F0000000h
       MIXERCONTROL_CT_CLASS_CUSTOM equ 00000000h
       MIXERCONTROL_CT_CLASS_METER equ 10000000h
@@ -1240,8 +1751,13 @@ ifndef _MMEAPI_H_
       MIXERCONTROL_CT_UNITS_BOOLEAN equ 00010000h
       MIXERCONTROL_CT_UNITS_SIGNED equ 00020000h
       MIXERCONTROL_CT_UNITS_UNSIGNED equ 00030000h
+      ;* in 10ths *
       MIXERCONTROL_CT_UNITS_DECIBELS equ 00040000h
+      ;* in 10ths *
       MIXERCONTROL_CT_UNITS_PERCENT equ 00050000h
+      ;* *
+      ;*  Commonly used control types for specifying MIXERCONTROL.dwControlType *
+      ;* *
       MIXERCONTROL_CONTROLTYPE_CUSTOM equ <(MIXERCONTROL_CT_CLASS_CUSTOM or MIXERCONTROL_CT_UNITS_CUSTOM)>
       MIXERCONTROL_CONTROLTYPE_BOOLEANMETER equ <(MIXERCONTROL_CT_CLASS_METER or MIXERCONTROL_CT_SC_METER_POLLED or MIXERCONTROL_CT_UNITS_BOOLEAN)>
       MIXERCONTROL_CONTROLTYPE_SIGNEDMETER equ <(MIXERCONTROL_CT_CLASS_METER or MIXERCONTROL_CT_SC_METER_POLLED or MIXERCONTROL_CT_UNITS_SIGNED)>
@@ -1273,31 +1789,48 @@ ifndef _MMEAPI_H_
       MIXERCONTROL_CONTROLTYPE_MIXER equ (MIXERCONTROL_CONTROLTYPE_MULTIPLESELECT + 1)
       MIXERCONTROL_CONTROLTYPE_MICROTIME equ <(MIXERCONTROL_CT_CLASS_TIME or MIXERCONTROL_CT_SC_TIME_MICROSECS or MIXERCONTROL_CT_UNITS_UNSIGNED)>
       MIXERCONTROL_CONTROLTYPE_MILLITIME equ <(MIXERCONTROL_CT_CLASS_TIME or MIXERCONTROL_CT_SC_TIME_MILLISECS or MIXERCONTROL_CT_UNITS_UNSIGNED)>
+      ;* *
+      ;*  MIXERLINECONTROLS *
+      ;* *
       ifdef _WIN32
         MIXERLINECONTROLSA struct
           cbStruct DWORD ?
+          ;* size in bytes of MIXERLINECONTROLS *
           dwLineID DWORD ?
+          ;* line id (from MIXERLINE.dwLineID) *
           union
             dwControlID DWORD ?
+            ;* MIXER_GETLINECONTROLSF_ONEBYID *
             dwControlType DWORD ?
+            ;* MIXER_GETLINECONTROLSF_ONEBYTYPE *
           ends
           cControls DWORD ?
+          ;* count of controls pmxctrl points to *
           cbmxctrl DWORD ?
+          ;* size in bytes of _one_ MIXERCONTROL *
           pamxctrl LPMIXERCONTROLA ?
+          ;* pointer to first MIXERCONTROL array *
         MIXERLINECONTROLSA ends
         tagMIXERLINECONTROLSA typedef MIXERLINECONTROLSA
         PMIXERLINECONTROLSA typedef ptr MIXERLINECONTROLSA
         LPMIXERLINECONTROLSA typedef ptr MIXERLINECONTROLSA
         MIXERLINECONTROLSW struct
           cbStruct DWORD ?
+          ;* size in bytes of MIXERLINECONTROLS *
           dwLineID DWORD ?
+          ;* line id (from MIXERLINE.dwLineID) *
           union
             dwControlID DWORD ?
+            ;* MIXER_GETLINECONTROLSF_ONEBYID *
             dwControlType DWORD ?
+            ;* MIXER_GETLINECONTROLSF_ONEBYTYPE *
           ends
           cControls DWORD ?
+          ;* count of controls pmxctrl points to *
           cbmxctrl DWORD ?
+          ;* size in bytes of _one_ MIXERCONTROL *
           pamxctrl LPMIXERCONTROLW ?
+          ;* pointer to first MIXERCONTROL array *
         MIXERLINECONTROLSW ends
         tagMIXERLINECONTROLSW typedef MIXERLINECONTROLSW
         PMIXERLINECONTROLSW typedef ptr MIXERLINECONTROLSW
@@ -1311,9 +1844,13 @@ ifndef _MMEAPI_H_
           PMIXERLINECONTROLS typedef PMIXERLINECONTROLSA
           LPMIXERLINECONTROLS typedef LPMIXERLINECONTROLSA
         endif
+        ; UNICODE
       else
         ;[...]
       endif
+      ;* *
+      ;* *
+      ;* *
       ifdef _WIN32
         @DefProto DllImport, mixerGetLineControlsA, WIN_STD_CALL_CONV,, <:HMIXEROBJ, :LPMIXERLINECONTROLSA, :DWORD>, 12
         @DefProto DllImport, mixerGetLineControlsW, WIN_STD_CALL_CONV,, <:HMIXEROBJ, :LPMIXERLINECONTROLSW, :DWORD>, 12
@@ -1322,6 +1859,7 @@ ifndef _MMEAPI_H_
         else
           mixerGetLineControls equ <mixerGetLineControlsA>
         endif
+        ; !UNICODE
       else
         ;[...]
       endif
@@ -1331,23 +1869,34 @@ ifndef _MMEAPI_H_
       MIXER_GETLINECONTROLSF_QUERYMASK equ 0000000Fh
       MIXERCONTROLDETAILS struct
         cbStruct DWORD ?
+        ;* size in bytes of MIXERCONTROLDETAILS *
         dwControlID DWORD ?
+        ;* control id to get/set details on *
         cChannels DWORD ?
+        ;* number of channels in paDetails array *
         union
           hwndOwner HWND ?
+          ;* for MIXER_SETCONTROLDETAILSF_CUSTOM *
           cMultipleItems DWORD ?
+          ;* if _MULTIPLE, the number of items per channel *
         ends
         cbDetails DWORD ?
-        paDetails LPVOID ?
+        ;* size of _one_ details_XX struct *
+        paDetails POINTER ?
+        ;* pointer to array of details_XX structs *
       MIXERCONTROLDETAILS ends
       tMIXERCONTROLDETAILS typedef MIXERCONTROLDETAILS
       PMIXERCONTROLDETAILS typedef ptr MIXERCONTROLDETAILS
       LPMIXERCONTROLDETAILS typedef ptr MIXERCONTROLDETAILS
+      ;* *
+      ;*  MIXER_GETCONTROLDETAILSF_LISTTEXT *
+      ;* *
+      ;* *
       ifdef _WIN32
         MIXERCONTROLDETAILS_LISTTEXTA struct
           dwParam1 DWORD ?
           dwParam2 DWORD ?
-          szName CHAR MIXER_LONG_NAME_CHARS dup (?)
+          szName SBYTE MIXER_LONG_NAME_CHARS dup (?)
         MIXERCONTROLDETAILS_LISTTEXTA ends
         tagMIXERCONTROLDETAILS_LISTTEXTA typedef MIXERCONTROLDETAILS_LISTTEXTA
         PMIXERCONTROLDETAILS_LISTTEXTA typedef ptr MIXERCONTROLDETAILS_LISTTEXTA
@@ -1355,7 +1904,7 @@ ifndef _MMEAPI_H_
         MIXERCONTROLDETAILS_LISTTEXTW struct
           dwParam1 DWORD ?
           dwParam2 DWORD ?
-          szName WCHAR MIXER_LONG_NAME_CHARS dup (?)
+          szName WORD MIXER_LONG_NAME_CHARS dup (?)
         MIXERCONTROLDETAILS_LISTTEXTW ends
         tagMIXERCONTROLDETAILS_LISTTEXTW typedef MIXERCONTROLDETAILS_LISTTEXTW
         PMIXERCONTROLDETAILS_LISTTEXTW typedef ptr MIXERCONTROLDETAILS_LISTTEXTW
@@ -1369,17 +1918,22 @@ ifndef _MMEAPI_H_
           PMIXERCONTROLDETAILS_LISTTEXT typedef PMIXERCONTROLDETAILS_LISTTEXTA
           LPMIXERCONTROLDETAILS_LISTTEXT typedef LPMIXERCONTROLDETAILS_LISTTEXTA
         endif
+        ; UNICODE
       else
         ;[...]
       endif
+      ;* *
+      ;*  MIXER_GETCONTROLDETAILSF_VALUE *
+      ;* *
+      ;* *
       MIXERCONTROLDETAILS_BOOLEAN struct
-        fValue LONG ?
+        fValue SDWORD ?
       MIXERCONTROLDETAILS_BOOLEAN ends
       tMIXERCONTROLDETAILS_BOOLEAN typedef MIXERCONTROLDETAILS_BOOLEAN
       PMIXERCONTROLDETAILS_BOOLEAN typedef ptr MIXERCONTROLDETAILS_BOOLEAN
       LPMIXERCONTROLDETAILS_BOOLEAN typedef ptr MIXERCONTROLDETAILS_BOOLEAN
       MIXERCONTROLDETAILS_SIGNED struct
-        lValue LONG ?
+        lValue SDWORD ?
       MIXERCONTROLDETAILS_SIGNED ends
       tMIXERCONTROLDETAILS_SIGNED typedef MIXERCONTROLDETAILS_SIGNED
       PMIXERCONTROLDETAILS_SIGNED typedef ptr MIXERCONTROLDETAILS_SIGNED
@@ -1398,6 +1952,7 @@ ifndef _MMEAPI_H_
         else
           mixerGetControlDetails equ <mixerGetControlDetailsA>
         endif
+        ; !UNICODE
       else
         ;[...]
       endif
@@ -1408,9 +1963,12 @@ ifndef _MMEAPI_H_
       MIXER_SETCONTROLDETAILSF_VALUE equ 00000000h
       MIXER_SETCONTROLDETAILSF_CUSTOM equ 00000001h
       MIXER_SETCONTROLDETAILSF_QUERYMASK equ 0000000Fh
+      ;* ifndef MMNOMIXER *
     endif
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
   ifdef __cplusplus
     ;[...]
   endif
 endif
+; _MMEAPI_H_

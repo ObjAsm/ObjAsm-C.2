@@ -1,13 +1,20 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\ncrypt.h\ncrypt.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\ncrypt.h
 ;             Created on (UTC) 06/04/2024 06:15:57
 ;             Last modified on (UTC) 21/02/2024 18:14:20
 
 include winapifamily.inc
+;+---------------------------------------------------------------------------
+;  Microsoft Windows
+;  Copyright (C) Microsoft Corporation, 2004.
+;  File:       ncrypt.h
+;  Contents:   Cryptographic API Prototypes and Definitions
+;----------------------------------------------------------------------------
 ifndef __NCRYPT_H__
   __NCRYPT_H__ equ <>
   if _MSC_VER ge 1200
+    ; padding added after data member
   endif
   ifdef __cplusplus
     ;[...]
@@ -26,8 +33,14 @@ ifndef __NCRYPT_H__
     HCRYPTKEY typedef ULONG_PTR
     HCRYPTHASH typedef ULONG_PTR
   endif
+  ; Maximum length of Key name, in characters
   NCRYPT_MAX_KEY_NAME_LENGTH equ 512
+  ; Maximum length of Algorithm name, in characters
   NCRYPT_MAX_ALG_ID_LENGTH equ 512
+  ;****************************************************************************
+  ;NCRYPT memory management routines for functions that require
+  ;the caller to allocate memory
+  ;****************************************************************************
   TYPE_PFN_NCRYPT_ALLOC typedef proto WIN_STD_CALL_CONV :SIZE_T
   PFN_NCRYPT_ALLOC typedef ptr TYPE_PFN_NCRYPT_ALLOC
 
@@ -36,16 +49,21 @@ ifndef __NCRYPT_H__
 
   NCRYPT_ALLOC_PARA struct
     cbSize DWORD ?
+    ; size of this structure
     pfnAlloc PFN_NCRYPT_ALLOC ?
     pfnFree PFN_NCRYPT_FREE ?
   NCRYPT_ALLOC_PARA ends
+  ; Microsoft built-in providers.
   MS_KEY_STORAGE_PROVIDER equ <L("Microsoft Software Key Storage Provider")>
   MS_SMART_CARD_KEY_STORAGE_PROVIDER equ <L("Microsoft Smart Card Key Storage Provider")>
   MS_PLATFORM_KEY_STORAGE_PROVIDER equ <L("Microsoft Platform Crypto Provider")>
   MS_NGC_KEY_STORAGE_PROVIDER equ <L("Microsoft Passport Key Storage Provider")>
+  ; Key name for sealing
   if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
     TPM_RSA_SRK_SEAL_KEY equ <L("MICROSOFT_PCP_KSP_RSA_SEAL_KEY_3BD1C4BF-004E-4E2F-8A4D-0BF633DCB074")>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN10_RS1)
+  ; Common algorithm identifiers.
   NCRYPT_RSA_ALGORITHM equ <BCRYPT_RSA_ALGORITHM>
   NCRYPT_RSA_SIGN_ALGORITHM equ <BCRYPT_RSA_SIGN_ALGORITHM>
   NCRYPT_DH_ALGORITHM equ <BCRYPT_DH_ALGORITHM>
@@ -75,17 +93,23 @@ ifndef __NCRYPT_H__
     NCRYPT_PBKDF2_ALGORITHM equ <BCRYPT_PBKDF2_ALGORITHM>
     NCRYPT_CAPI_KDF_ALGORITHM equ <BCRYPT_CAPI_KDF_ALGORITHM>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN8)
   if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
     NCRYPT_ECDSA_ALGORITHM equ <BCRYPT_ECDSA_ALGORITHM>
     NCRYPT_ECDH_ALGORITHM equ <BCRYPT_ECDH_ALGORITHM>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
   NCRYPT_KEY_STORAGE_ALGORITHM equ <L("KEY_STORAGE")>
   if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
+    ; This algorithm is not supported by any BCrypt provider. This identifier is for creating
+    ; persistent stored HMAC keys in the TPM KSP.
     NCRYPT_HMAC_SHA256_ALGORITHM equ <L("HMAC-SHA256")>
   endif
+  ; Interfaces
   if (NTDDI_VERSION ge NTDDI_WIN8)
     NCRYPT_CIPHER_INTERFACE equ <BCRYPT_CIPHER_INTERFACE>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN8)
   NCRYPT_HASH_INTERFACE equ <BCRYPT_HASH_INTERFACE>
   NCRYPT_ASYMMETRIC_ENCRYPTION_INTERFACE equ <BCRYPT_ASYMMETRIC_ENCRYPTION_INTERFACE>
   NCRYPT_SECRET_AGREEMENT_INTERFACE equ <BCRYPT_SECRET_AGREEMENT_INTERFACE>
@@ -93,6 +117,7 @@ ifndef __NCRYPT_H__
   if (NTDDI_VERSION ge NTDDI_WIN8)
     NCRYPT_KEY_DERIVATION_INTERFACE equ <BCRYPT_KEY_DERIVATION_INTERFACE>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN8)
   NCRYPT_KEY_STORAGE_INTERFACE equ 00010001h
   NCRYPT_SCHANNEL_INTERFACE equ 00010002h
   if (NTDDI_VERSION ge NTDDI_WIN7)
@@ -101,6 +126,8 @@ ifndef __NCRYPT_H__
   if (NTDDI_VERSION ge NTDDI_WIN8)
     NCRYPT_KEY_PROTECTION_INTERFACE equ 00010004h
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN8)
+  ; algorithm groups.
   NCRYPT_RSA_ALGORITHM_GROUP equ <NCRYPT_RSA_ALGORITHM>
   NCRYPT_DH_ALGORITHM_GROUP equ <NCRYPT_DH_ALGORITHM>
   NCRYPT_DSA_ALGORITHM_GROUP equ <NCRYPT_DSA_ALGORITHM>
@@ -112,13 +139,18 @@ ifndef __NCRYPT_H__
     NCRYPT_DES_ALGORITHM_GROUP equ <L("DES")>
     NCRYPT_KEY_DERIVATION_GROUP equ <L("KEY_DERIVATION")>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN8)
+  ; NCrypt generic memory descriptors
   NCRYPTBUFFER_VERSION equ 0
   NCRYPTBUFFER_EMPTY equ 0
   NCRYPTBUFFER_DATA equ 1
   if (NTDDI_VERSION ge NTDDI_WIN8)
-    NCRYPTBUFFER_PROTECTION_DESCRIPTOR_STRING equ 3
-    NCRYPTBUFFER_PROTECTION_FLAGS equ 4
+    NCRYPTBUFFER_PROTECTION_DESCRIPTOR_STRING equ 3; The buffer contains a null-terminated Unicode string that contains the Protection Descriptor.
+
+    NCRYPTBUFFER_PROTECTION_FLAGS equ 4; DWORD flags to be passed to NCryptCreateProtectionDescriptor function.
+
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN8)
   NCRYPTBUFFER_SSL_CLIENT_RANDOM equ 20
   NCRYPTBUFFER_SSL_SERVER_RANDOM equ 21
   NCRYPTBUFFER_SSL_HIGHEST_VERSION equ 22
@@ -127,6 +159,7 @@ ifndef __NCRYPT_H__
   if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
     NCRYPTBUFFER_SSL_SESSION_HASH equ 25
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
   NCRYPTBUFFER_PKCS_OID equ 40
   NCRYPTBUFFER_PKCS_ALG_OID equ 41
   NCRYPTBUFFER_PKCS_ALG_PARAM equ 42
@@ -135,6 +168,7 @@ ifndef __NCRYPT_H__
   NCRYPTBUFFER_PKCS_KEY_NAME equ 45
   NCRYPTBUFFER_PKCS_SECRET equ 46
   NCRYPTBUFFER_CERT_BLOB equ 47
+  ;for threshold key attestation
   NCRYPTBUFFER_CLAIM_IDBINDING_NONCE equ 48
   NCRYPTBUFFER_CLAIM_KEYATTESTATION_NONCE equ 49
   NCRYPTBUFFER_KEY_PROPERTY_FLAGS equ 50
@@ -145,24 +179,32 @@ ifndef __NCRYPT_H__
     NCRYPTBUFFER_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS equ 54
   endif
   if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
+    ;for generic ecc
     NCRYPTBUFFER_ECC_CURVE_NAME equ 60
     NCRYPTBUFFER_ECC_PARAMETERS equ 61
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
   if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
+    ;for TPM seal
     NCRYPTBUFFER_TPM_SEAL_PASSWORD equ 70
     NCRYPTBUFFER_TPM_SEAL_POLICYINFO equ 71
     NCRYPTBUFFER_TPM_SEAL_TICKET equ 72
     NCRYPTBUFFER_TPM_SEAL_NO_DA_PROTECTION equ 73
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN10_RS1)
   if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
+    ; for TPM platform attestation statements
     NCRYPTBUFFER_TPM_PLATFORM_CLAIM_PCR_MASK equ 80
     NCRYPTBUFFER_TPM_PLATFORM_CLAIM_NONCE equ 81
     NCRYPTBUFFER_TPM_PLATFORM_CLAIM_STATIC_CREATE equ 82
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN10_RS5)
+  ; NCRYPT shares the same BCRYPT definitions
   NCryptBuffer typedef BCryptBuffer
   PNCryptBuffer typedef ptr BCryptBuffer
   NCryptBufferDesc typedef BCryptBufferDesc
   PNCryptBufferDesc typedef ptr BCryptBufferDesc
+  ; NCrypt handles
   NCRYPT_HANDLE typedef ULONG_PTR
   NCRYPT_PROV_HANDLE typedef ULONG_PTR
   NCRYPT_KEY_HANDLE typedef ULONG_PTR
@@ -170,36 +212,57 @@ ifndef __NCRYPT_H__
   NCRYPT_SECRET_HANDLE typedef ULONG_PTR
   if (NTDDI_VERSION ge NTDDI_WIN8)
     NCRYPT_CIPHER_PADDING_INFO struct
-      cbSize ULONG ?
+      ; size of this struct
+      cbSize DWORD ?
+      ; See NCRYPT_CIPHER_ flag values
       dwFlags DWORD ?
+      ; [in, out, optional]
+      ; The address of a buffer that contains the initialization vector (IV) to use during encryption.
+      ; The cbIV parameter contains the size of this buffer. This function will modify the contents of this buffer.
+      ; If you need to reuse the IV later, make sure you make a copy of this buffer before calling this function.
       pbIV PUCHAR ?
-      cbIV ULONG ?
+      cbIV DWORD ?
+      ; [in, out, optional]
+      ; The address of a buffer that contains the algorithm specific info to use during encryption.
+      ; The cbOtherInfo parameter contains the size of this buffer. This function will modify the contents of this buffer.
+      ; If you need to reuse the buffer later, make sure you make a copy of this buffer before calling this function.
+      ; For Microsoft providers, when an authenticated encryption mode is used,
+      ; this parameter must point to a serialized BCRYPT_AUTHENTICATED_CIPHER_MODE_INFO structure.
+      ; NOTE: All pointers inside a structure must be to a data allocated within pbOtherInfo buffer.
       pbOtherInfo PUCHAR ?
-      cbOtherInfo ULONG ?
+      cbOtherInfo DWORD ?
     NCRYPT_CIPHER_PADDING_INFO ends
     _NCRYPT_CIPHER_PADDING_INFO typedef NCRYPT_CIPHER_PADDING_INFO
     PNCRYPT_CIPHER_PADDING_INFO typedef ptr NCRYPT_CIPHER_PADDING_INFO
+    ; The following flags are used with NCRYPT_CIPHER_PADDING_INFO
     NCRYPT_CIPHER_NO_PADDING_FLAG equ 00000000h
     NCRYPT_CIPHER_BLOCK_PADDING_FLAG equ 00000001h
     NCRYPT_CIPHER_OTHER_PADDING_FLAG equ 00000002h
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN8)
   if (NTDDI_VERSION ge NTDDI_WINBLUE)
-    NCRYPT_PLATFORM_ATTEST_MAGIC equ 44504150h
+    NCRYPT_PLATFORM_ATTEST_MAGIC equ 44504150h; 'PAPD'
+
     NCRYPT_PLATFORM_ATTEST_PADDING_INFO struct
-      magic ULONG ?
-      pcrMask ULONG ?
+      magic DWORD ?
+      ; 'PAPD'
+      pcrMask DWORD ?
     NCRYPT_PLATFORM_ATTEST_PADDING_INFO ends
     _NCRYPT_PLATFORM_ATTEST_PADDING_INFO typedef NCRYPT_PLATFORM_ATTEST_PADDING_INFO
-    NCRYPT_KEY_ATTEST_MAGIC equ 4450414bh
+    NCRYPT_KEY_ATTEST_MAGIC equ 4450414bh; 'KAPD'
+
     NCRYPT_KEY_ATTEST_PADDING_INFO struct
-      magic ULONG ?
+      magic DWORD ?
+      ; 'KAPD'
       pbKeyBlob PUCHAR ?
-      cbKeyBlob ULONG ?
+      cbKeyBlob DWORD ?
       pbKeyAuth PUCHAR ?
-      cbKeyAuth ULONG ?
+      cbKeyAuth DWORD ?
     NCRYPT_KEY_ATTEST_PADDING_INFO ends
     _NCRYPT_KEY_ATTEST_PADDING_INFO typedef NCRYPT_KEY_ATTEST_PADDING_INFO
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINBLUE)
+  ; key attestation claim type
   if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
     NCRYPT_CLAIM_AUTHORITY_ONLY equ 00000001h
     NCRYPT_CLAIM_SUBJECT_ONLY equ 00000002h
@@ -208,140 +271,232 @@ ifndef __NCRYPT_H__
     if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
       NCRYPT_CLAIM_VSM_KEY_ATTESTATION_STATEMENT equ 00000004h
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_RS3)
     NCRYPT_CLAIM_UNKNOWN equ 00001000h
     if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
       NCRYPT_CLAIM_PLATFORM equ 00010000h
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_RS5)
     if (NTDDI_VERSION ge NTDDI_WIN11_SV3)
       NCRYPT_CLAIM_WEB_AUTH_SUBJECT_ONLY_V2 equ 00000103h
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN11_SV3)
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
   if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
-    NCRYPT_ISOLATED_KEY_FLAG_CREATED_IN_ISOLATION equ 00000001h
-    NCRYPT_ISOLATED_KEY_FLAG_IMPORT_ONLY equ 00000002h
+    ; NCryptCreateClaim claim types, flags and buffer types
+    NCRYPT_ISOLATED_KEY_FLAG_CREATED_IN_ISOLATION equ 00000001h; if set, this key was generated in isolation, not imported
+
+    NCRYPT_ISOLATED_KEY_FLAG_IMPORT_ONLY equ 00000002h; if set, this key can only be used for importing other keys
+
     NCRYPT_ISOLATED_KEY_ATTESTED_ATTRIBUTES_V0 equ 0
     NCRYPT_ISOLATED_KEY_ATTESTED_ATTRIBUTES_CURRENT_VERSION equ <NCRYPT_ISOLATED_KEY_ATTESTED_ATTRIBUTES_V0>
     NCRYPT_ISOLATED_KEY_ATTESTED_ATTRIBUTES struct
-      Version ULONG ?
-      Flags ULONG ?
-      cbPublicKeyBlob ULONG ?
+      Version DWORD ?
+      ; set to NCRYPT_ISOLATED_KEY_ATTESTED_ATTRIBUTES_V0
+      Flags DWORD ?
+      ; NCRYPT_ISOLATED_KEY_FLAG_ flags
+      cbPublicKeyBlob DWORD ?
+      ; pbPublicKeyBlob[cbPublicKeyBlob] - exported public key
     NCRYPT_ISOLATED_KEY_ATTESTED_ATTRIBUTES ends
     _NCRYPT_ISOLATED_KEY_ATTESTED_ATTRIBUTES typedef NCRYPT_ISOLATED_KEY_ATTESTED_ATTRIBUTES
     PNCRYPT_ISOLATED_KEY_ATTESTED_ATTRIBUTES typedef ptr NCRYPT_ISOLATED_KEY_ATTESTED_ATTRIBUTES
     NCRYPT_VSM_KEY_ATTESTATION_STATEMENT_V0 equ 0
     NCRYPT_VSM_KEY_ATTESTATION_STATEMENT_CURRENT_VERSION equ <NCRYPT_VSM_KEY_ATTESTATION_STATEMENT_V0>
     NCRYPT_VSM_KEY_ATTESTATION_STATEMENT struct
-      Magic ULONG ?
-      Version ULONG ?
-      cbSignature ULONG ?
-      cbReport ULONG ?
-      cbAttributes ULONG ?
+      Magic DWORD ?
+      ; {'I', 'M', 'S', 'V'} - 'VSMI' for VSM Isolated
+      Version DWORD ?
+      ; Set to NCRYPT_VSM_KEY_ATTESTATION_STATEMENT_CURRENT_VERSION
+      cbSignature DWORD ?
+      ; Secure kernel signature over the isolation report
+      cbReport DWORD ?
+      ; Key isolation report from the secure kernel
+      cbAttributes DWORD ?
+      ; Attributes of the isolated key including public key blob
+      ; UCHAR Signature[cbSignature]    -- Secure kernel signature of the report
+      ; UCHAR Report[cbReport]          -- Secure kernel report including hash of Attributes
+      ; UCHAR Attributes[cbAttributes]  -- Trustlet-reported attributes of the key
     NCRYPT_VSM_KEY_ATTESTATION_STATEMENT ends
     _NCRYPT_VSM_KEY_ATTESTATION_STATEMENT typedef NCRYPT_VSM_KEY_ATTESTATION_STATEMENT
     PNCRYPT_VSM_KEY_ATTESTATION_STATEMENT typedef ptr NCRYPT_VSM_KEY_ATTESTATION_STATEMENT
+    ; Buffer contents for NCryptVerifyClaim (for buffer type NCRYPTBUFFER_ISOLATED_KEY_ATTESTATION_CLAIM_RESTRICTIONS)
     NCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS_V0 equ 0
     NCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS_CURRENT_VERSION equ <NCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS_V0>
+    ; bit fields type other than int
     NCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS struct
-      Version ULONG ?
-      TrustletId ULONGLONG ?
-      MinSvn ULONG ?
-      FlagsMask ULONG ?
-      FlagsExpected ULONG ?
+      Version DWORD ?
+      ; Set to NCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS_V0
+      TrustletId QWORD ?
+      ; Trustlet type
+      MinSvn DWORD ?
+      ; Minimum acceptable trustlet SVN, 0 if don't care
+      FlagsMask DWORD ?
+      ; Which of NCRYPT_ISOLATED_KEY_ flags to check
+      FlagsExpected DWORD ?
+      ; Expected values of flags inside the mask
+      ; Is it okay for the trustlet to be debugged, 0 if no
       NCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS_REC record NCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS_REC_Reserved:31, NCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS_REC_AllowDebugging:1
       NCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS_BITS NCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS_REC <>
+      ; Future extension area, must be 0
     NCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS ends
     _NCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS typedef NCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS
     PNCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS typedef ptr NCRYPT_VSM_KEY_ATTESTATION_CLAIM_RESTRICTIONS
+    ; bit fields type other than int
+    ; Structures to assist with importation of isolated keys
     NCRYPT_EXPORTED_ISOLATED_KEY_HEADER_V0 equ 0
     NCRYPT_EXPORTED_ISOLATED_KEY_HEADER_CURRENT_VERSION equ <NCRYPT_EXPORTED_ISOLATED_KEY_HEADER_V0>
+    ; bit fields type other than int
     NCRYPT_EXPORTED_ISOLATED_KEY_HEADER struct
-      Version ULONG ?
-      KeyUsage ULONG ?
+      Version DWORD ?
+      ; Set to NCRYPT_EXPORTED_ISOLATED_KEY_HEADER_V0
+      KeyUsage DWORD ?
+      ; Set to NCRYPT_ALLOW_KEY_IMPORT_FLAG for import-only keys
+      ; Set to TRUE if the key is to be valid in the current boot cycle only
+      ; Leave as 0
       NCRYPT_EXPORTED_ISOLATED_KEY_HEADER_REC record NCRYPT_EXPORTED_ISOLATED_KEY_HEADER_REC_Reserved:31, NCRYPT_EXPORTED_ISOLATED_KEY_HEADER_REC_PerBootKey:1
       NCRYPT_EXPORTED_ISOLATED_KEY_HEADER_BITS NCRYPT_EXPORTED_ISOLATED_KEY_HEADER_REC <>
-      cbAlgName ULONG ?
-      cbNonce ULONG ?
-      cbAuthTag ULONG ?
-      cbWrappingKey ULONG ?
-      cbIsolatedKey ULONG ?
+      ; Leave as 0
+      cbAlgName DWORD ?
+      ; Number of bytes in Unicode algorithm name following header + terminating NULL
+      cbNonce DWORD ?
+      ; Number of bytes in the nonce used to encrypt the isolated key
+      cbAuthTag DWORD ?
+      ; Number of bytes in authentication tag resulting from encrypting the isolated key
+      cbWrappingKey DWORD ?
+      ; Number of bytes in encrypted wrapping key blob
+      cbIsolatedKey DWORD ?
+      ; Number of bytes in encrypted isolated key blob
     NCRYPT_EXPORTED_ISOLATED_KEY_HEADER ends
     _NCRYPT_EXPORTED_ISOLATED_KEY_HEADER typedef NCRYPT_EXPORTED_ISOLATED_KEY_HEADER
     PNCRYPT_EXPORTED_ISOLATED_KEY_HEADER typedef ptr NCRYPT_EXPORTED_ISOLATED_KEY_HEADER
+    ; bit fields type other than int
     NCRYPT_EXPORTED_ISOLATED_KEY_ENVELOPE struct
       Header NCRYPT_EXPORTED_ISOLATED_KEY_HEADER <>
+      ; UCHAR AlgorithmName[Header.cbAlgName]       -- Unicode algorithm name including terminating NULL
+      ; UCHAR Nonce[Header.cbNonce]                 -- Nonce buffer used when encrypting isolated key
+      ; ---- data after this point is not integrity protected in transit
+      ; UCHAR AesGcmAuthTag[Header.cbAuthTag]
+      ; UCHAR WrappingKeyBlob[Header.cbWrappingKey] -- RSA-OAEP encrypted AES wrapping key
+      ; UCHAR IsolatedKeyBlob[Header.cbIsolatedKey] -- AES-GCM encrypted key to import
     NCRYPT_EXPORTED_ISOLATED_KEY_ENVELOPE ends
     _NCRYPT_EXPORTED_ISOLATED_KEY_ENVELOPE typedef NCRYPT_EXPORTED_ISOLATED_KEY_ENVELOPE
     PNCRYPT_EXPORTED_ISOLATED_KEY_ENVELOPE typedef ptr NCRYPT_EXPORTED_ISOLATED_KEY_ENVELOPE
   endif
   if (NTDDI_VERSION ge NTDDI_WIN10_RS2)
     NCRYPT_PCP_TPM_WEB_AUTHN_ATTESTATION_STATEMENT struct
-      Magic UINT32 ?
-      Version UINT32 ?
-      HeaderSize UINT32 ?
-      cbCertifyInfo UINT32 ?
-      cbSignature UINT32 ?
-      cbTpmPublic UINT32 ?
+      Magic DWORD ?
+      ; { 'A', 'W', 'A', 'K' } - 'KAWA'
+      Version DWORD ?
+      ; 1 for the statement defined in this specification
+      HeaderSize DWORD ?
+      ; 24
+      cbCertifyInfo DWORD ?
+      cbSignature DWORD ?
+      cbTpmPublic DWORD ?
+      ; CertifyInfo[cbCertifyInfo];
+      ; Signature[cbSignature];
+      ; TpmPublic[cbTpmPublic];
     NCRYPT_PCP_TPM_WEB_AUTHN_ATTESTATION_STATEMENT ends
     __NCRYPT_PCP_TPM_WEB_AUTHN_ATTESTATION_STATEMENT typedef NCRYPT_PCP_TPM_WEB_AUTHN_ATTESTATION_STATEMENT
     PNCRYPT_PCP_TPM_WEB_AUTHN_ATTESTATION_STATEMENT typedef ptr NCRYPT_PCP_TPM_WEB_AUTHN_ATTESTATION_STATEMENT
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN10_RS2)
   if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
     NCRYPT_TPM_PLATFORM_ATTESTATION_STATEMENT_V0 equ 0
     NCRYPT_TPM_PLATFORM_ATTESTATION_STATEMENT_CURRENT_VERSION equ <NCRYPT_TPM_PLATFORM_ATTESTATION_STATEMENT_V0>
     NCRYPT_TPM_PLATFORM_ATTESTATION_STATEMENT struct
-      Magic ULONG ?
-      Version ULONG ?
-      pcrAlg ULONG ?
-      cbSignature ULONG ?
-      cbQuote ULONG ?
-      cbPcrs ULONG ?
+      Magic DWORD ?
+      ; {'A', 'L', 'P', 'T'} - 'TPLA' for TPM Platform
+      Version DWORD ?
+      ; Set to NCRYPT_TPM_PLATFORM_ATTESTATION_STATEMENT_CURRENT_VERSION
+      pcrAlg DWORD ?
+      ; The TPM hash algorithm ID
+      cbSignature DWORD ?
+      ; TPMT_SIGNATURE structure signature over the quote
+      cbQuote DWORD ?
+      ; TPMS_ATTEST structure that was generated and signed
+      cbPcrs DWORD ?
+      ; Raw concatenation of all 24 PCRs
+      ; UCHAR Signature[cbSignature]
+      ; UCHAR Quote[cbQuote]
+      ; UCHAR Pcrs[cbPcrs]
     NCRYPT_TPM_PLATFORM_ATTESTATION_STATEMENT ends
     _NCRYPT_TPM_PLATFORM_ATTESTATION_STATEMENT typedef NCRYPT_TPM_PLATFORM_ATTESTATION_STATEMENT
     PNCRYPT_TPM_PLATFORM_ATTESTATION_STATEMENT typedef ptr NCRYPT_TPM_PLATFORM_ATTESTATION_STATEMENT
   endif
-  NCRYPT_NO_PADDING_FLAG equ 00000001h
-  NCRYPT_PAD_PKCS1_FLAG equ 00000002h
-  NCRYPT_PAD_OAEP_FLAG equ 00000004h
-  NCRYPT_PAD_PSS_FLAG equ 00000008h
+  ; (NTDDI_VERSION >= NTDDI_WIN10_RS5)
+  ; NCrypt API Flags
+  NCRYPT_NO_PADDING_FLAG equ 00000001h; NCryptEncrypt/Decrypt
+
+  NCRYPT_PAD_PKCS1_FLAG equ 00000002h; NCryptEncrypt/Decrypt NCryptSignHash/VerifySignature
+
+  NCRYPT_PAD_OAEP_FLAG equ 00000004h; BCryptEncrypt/Decrypt
+
+  NCRYPT_PAD_PSS_FLAG equ 00000008h; BCryptSignHash/VerifySignature
+
   if (NTDDI_VERSION ge NTDDI_WIN8)
-    NCRYPT_PAD_CIPHER_FLAG equ 00000010h
+    NCRYPT_PAD_CIPHER_FLAG equ 00000010h; NCryptEncrypt/Decrypt
+
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN8)
   if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
-    NCRYPT_ATTESTATION_FLAG equ 00000020h
+    NCRYPT_ATTESTATION_FLAG equ 00000020h; NCryptDecrypt for key attestation
+
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
   if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
-    NCRYPT_SEALING_FLAG equ 00000100h
+    NCRYPT_SEALING_FLAG equ 00000100h; NCryptEncrypt/Decrypt for sealing
+
   endif
-  NCRYPT_REGISTER_NOTIFY_FLAG equ 00000001h
-  NCRYPT_UNREGISTER_NOTIFY_FLAG equ 00000002h
+  ; (NTDDI_VERSION >= NTDDI_WIN10_RS1)
+  NCRYPT_REGISTER_NOTIFY_FLAG equ 00000001h; NCryptNotifyChangeKey
+
+  NCRYPT_UNREGISTER_NOTIFY_FLAG equ 00000002h; NCryptNotifyChangeKey
+
   NCRYPT_NO_KEY_VALIDATION equ <BCRYPT_NO_KEY_VALIDATION>
-  NCRYPT_MACHINE_KEY_FLAG equ 00000020h
-  NCRYPT_SILENT_FLAG equ 00000040h
+  NCRYPT_MACHINE_KEY_FLAG equ 00000020h; same as CAPI CRYPT_MACHINE_KEYSET
+
+  NCRYPT_SILENT_FLAG equ 00000040h; same as CAPI CRYPT_SILENT
+
   NCRYPT_OVERWRITE_KEY_FLAG equ 00000080h
   NCRYPT_WRITE_KEY_TO_LEGACY_STORE_FLAG equ 00000200h
   NCRYPT_DO_NOT_FINALIZE_FLAG equ 00000400h
   NCRYPT_EXPORT_LEGACY_FLAG equ 00000800h
   if (NTDDI_VERSION ge NTDDI_WINBLUE)
-    NCRYPT_IGNORE_DEVICE_STATE_FLAG equ 00001000h
+    NCRYPT_IGNORE_DEVICE_STATE_FLAG equ 00001000h; NCryptOpenStorageProvider
+
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINBLUE)
   if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
     NCRYPT_TREAT_NIST_AS_GENERIC_ECC_FLAG equ 00002000h
     NCRYPT_NO_CACHED_PASSWORD equ 00004000h
     NCRYPT_PROTECT_TO_LOCAL_SYSTEM equ 00008000h
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
   NCRYPT_REQUIRE_KDS_LRPC_BIND_FLAG equ 20000000h
   NCRYPT_PERSIST_ONLY_FLAG equ 40000000h
   NCRYPT_PERSIST_FLAG equ 80000000h
   if (NTDDI_VERSION ge NTDDI_WIN10_RS2)
-    NCRYPT_PREFER_VIRTUAL_ISOLATION_FLAG equ 00010000h
-    NCRYPT_USE_VIRTUAL_ISOLATION_FLAG equ 00020000h
-    NCRYPT_USE_PER_BOOT_KEY_FLAG equ 00040000h
+    NCRYPT_PREFER_VIRTUAL_ISOLATION_FLAG equ 00010000h; NCryptCreatePersistedKey NCryptImportKey
+
+    NCRYPT_USE_VIRTUAL_ISOLATION_FLAG equ 00020000h; NCryptCreatePersistedKey NCryptImportKey
+
+    NCRYPT_USE_PER_BOOT_KEY_FLAG equ 00040000h; NCryptCreatePersistedKey NCryptImportKey
+
   endif
-  NCRYPT_SILENT_FLAG equ 00000040h
+  ; (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+  ; Functions used to manage persisted keys.
+  ; NCryptOpenStorageProvider flags
+  NCRYPT_SILENT_FLAG equ 00000040h; same as CAPI CRYPT_SILENT
+
   if (NTDDI_VERSION ge NTDDI_WINBLUE)
-    NCRYPT_IGNORE_DEVICE_STATE_FLAG equ 00001000h
+    NCRYPT_IGNORE_DEVICE_STATE_FLAG equ 00001000h; NCryptOpenStorageProvider
+
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINBLUE)
   NCryptOpenStorageProvider proto WIN_STD_CALL_CONV :ptr NCRYPT_PROV_HANDLE, :LPCWSTR, :DWORD
+  ; AlgOperations flags for use with NCryptEnumAlgorithms()
   NCRYPT_CIPHER_OPERATION equ <BCRYPT_CIPHER_OPERATION>
   NCRYPT_HASH_OPERATION equ <BCRYPT_HASH_OPERATION>
   NCRYPT_ASYMMETRIC_ENCRYPTION_OPERATION equ <BCRYPT_ASYMMETRIC_ENCRYPTION_OPERATION>
@@ -351,31 +506,41 @@ ifndef __NCRYPT_H__
   if (NTDDI_VERSION ge NTDDI_WIN8)
     NCRYPT_KEY_DERIVATION_OPERATION equ <BCRYPT_KEY_DERIVATION_OPERATION>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN8)
+  ; USE EXTREME CAUTION: editing comments that contain "certenrolls_*" tokens
+  ; could break building CertEnroll idl files:
+  ; certenrolls_begin -- NCryptAlgorithmName
   NCryptAlgorithmName struct
-    pszName LPWSTR ?
+    pszName POINTER ?
     dwClass DWORD ?
+    ; the CNG interface that supports this algorithm
     dwAlgOperations DWORD ?
+    ; the types of operations supported by this algorithm
     dwFlags DWORD ?
   NCryptAlgorithmName ends
   _NCryptAlgorithmName typedef NCryptAlgorithmName
+  ; certenrolls_end
   NCryptEnumAlgorithms proto WIN_STD_CALL_CONV :NCRYPT_PROV_HANDLE, :DWORD, :ptr DWORD, :ptr ptr NCryptAlgorithmName, :DWORD
   NCryptIsAlgSupported proto WIN_STD_CALL_CONV :NCRYPT_PROV_HANDLE, :LPCWSTR, :DWORD
+  ; NCryptEnumKeys flags
   NCRYPT_MACHINE_KEY_FLAG equ 00000020h
   NCryptKeyName struct
-    pszName LPWSTR ?
-    pszAlgid LPWSTR ?
+    pszName POINTER ?
+    pszAlgid POINTER ?
     dwLegacyKeySpec DWORD ?
     dwFlags DWORD ?
   NCryptKeyName ends
   NCryptEnumKeys proto WIN_STD_CALL_CONV :NCRYPT_PROV_HANDLE, :LPCWSTR, :ptr ptr NCryptKeyName, :ptr PVOID, :DWORD
   NCryptProviderName struct
-    pszName LPWSTR ?
-    pszComment LPWSTR ?
+    pszName POINTER ?
+    pszComment POINTER ?
   NCryptProviderName ends
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     NCryptEnumStorageProviders proto WIN_STD_CALL_CONV :ptr DWORD, :ptr ptr NCryptProviderName, :DWORD
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   NCryptFreeBuffer proto WIN_STD_CALL_CONV :PVOID
+  ; NCryptOpenKey flags
   NCRYPT_MACHINE_KEY_FLAG equ 00000020h
   NCRYPT_SILENT_FLAG equ 00000040h
   if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
@@ -385,9 +550,11 @@ ifndef __NCRYPT_H__
     NCRYPT_EXTENDED_ERRORS_FLAG equ 10000000h
   endif
   NCryptOpenKey proto WIN_STD_CALL_CONV :NCRYPT_PROV_HANDLE, :ptr NCRYPT_KEY_HANDLE, :LPCWSTR, :DWORD, :DWORD
+  ; NCryptCreatePersistedKey flags
   NCRYPT_MACHINE_KEY_FLAG equ 00000020h
   NCRYPT_OVERWRITE_KEY_FLAG equ 00000080h
   NCryptCreatePersistedKey proto WIN_STD_CALL_CONV :NCRYPT_PROV_HANDLE, :ptr NCRYPT_KEY_HANDLE, :LPCWSTR, :LPCWSTR, :DWORD, :DWORD
+  ; Standard property names.
   NCRYPT_NAME_PROPERTY equ <L("Name")>
   NCRYPT_UNIQUE_NAME_PROPERTY equ <L("Unique Name")>
   NCRYPT_ALGORITHM_PROPERTY equ <L("Algorithm Name")>
@@ -398,10 +565,12 @@ ifndef __NCRYPT_H__
     NCRYPT_PUBLIC_LENGTH_PROPERTY equ <BCRYPT_PUBLIC_KEY_LENGTH>
     NCRYPT_SIGNATURE_LENGTH_PROPERTY equ <BCRYPT_SIGNATURE_LENGTH>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
   if (NTDDI_VERSION ge NTDDI_WIN8)
     NCRYPT_CHAINING_MODE_PROPERTY equ <L("Chaining Mode")>
     NCRYPT_AUTH_TAG_LENGTH equ <L("AuthTagLength")>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN8)
   NCRYPT_UI_POLICY_PROPERTY equ <L("UI Policy")>
   NCRYPT_EXPORT_POLICY_PROPERTY equ <L("Export Policy")>
   NCRYPT_WINDOW_HANDLE_PROPERTY equ <L("HWND Handle")>
@@ -423,10 +592,12 @@ ifndef __NCRYPT_H__
     NCRYPT_ECC_CURVE_NAME_PROPERTY equ <BCRYPT_ECC_CURVE_NAME>
     NCRYPT_ECC_CURVE_NAME_LIST_PROPERTY equ <BCRYPT_ECC_CURVE_NAME_LIST>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
   if (NTDDI_VERSION ge NTDDI_WIN10_RS2)
     NCRYPT_USE_VIRTUAL_ISOLATION_PROPERTY equ <L("Virtual Iso")>
     NCRYPT_USE_PER_BOOT_KEY_PROPERTY equ <L("Per Boot Key")>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN10_RS2)
   NCRYPT_PROVIDER_HANDLE_PROPERTY equ <L("Provider Handle")>
   NCRYPT_PIN_PROPERTY equ <L("SmartCardPin")>
   NCRYPT_READER_PROPERTY equ <L("SmartCardReader")>
@@ -441,15 +612,20 @@ ifndef __NCRYPT_H__
     NCRYPT_SCARD_PIN_ID equ <L("SmartCardPinId")>
     NCRYPT_SCARD_PIN_INFO equ <L("SmartCardPinInfo")>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN7)
   if (NTDDI_VERSION ge NTDDI_WIN8)
     NCRYPT_READER_ICON_PROPERTY equ <L("SmartCardReaderIcon")>
     NCRYPT_KDF_SECRET_VALUE equ <L("KDFKeySecret")>
     if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
       NCRYPT_DISMISS_UI_TIMEOUT_SEC_PROPERTY equ <L("SmartCardDismissUITimeoutSeconds")>
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_RS5)
     if (NTDDI_VERSION ge NTDDI_WIN11_SV3)
+      ; NTDDI_WIN11_SV3 is not final
       NCRYPT_CERTIFICATE_FROM_NVRAM_PROPERTY equ <L("KeyCertificateFromTpmNvram")>
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN11_SV3)
+    ; Additional property strings specific for the Platform Crypto Provider
     NCRYPT_PCP_PLATFORM_TYPE_PROPERTY equ <L("PCP_PLATFORM_TYPE")>
     NCRYPT_PCP_PROVIDER_VERSION_PROPERTY equ <L("PCP_PROVIDER_VERSION")>
     NCRYPT_PCP_EKPUB_PROPERTY equ <L("PCP_EKPUB")>
@@ -484,6 +660,7 @@ ifndef __NCRYPT_H__
     if (NTDDI_VERSION ge NTDDI_WIN10)
       NCRYPT_PCP_PLATFORM_BINDING_PCRALGID_PROPERTY equ <L("PCP_PLATFORM_BINDING_PCRALGID")>
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10)
     if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
       NCRYPT_PCP_HMAC_AUTH_POLICYREF equ <L("PCP_HMAC_AUTH_POLICYREF")>
       NCRYPT_PCP_HMAC_AUTH_POLICYINFO equ <L("PCP_HMAC_AUTH_POLICYINFO")>
@@ -492,14 +669,17 @@ ifndef __NCRYPT_H__
       NCRYPT_PCP_HMAC_AUTH_TICKET equ <L("PCP_HMAC_AUTH_TICKET")>
       NCRYPT_PCP_NO_DA_PROTECTION_PROPERTY equ <L("PCP_NO_DA_PROTECTION")>
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_RS1)
     if (NTDDI_VERSION ge NTDDI_WIN10_RS2)
       NCRYPT_PCP_TPM_MANUFACTURER_ID_PROPERTY equ <L("PCP_TPM_MANUFACTURER_ID")>
       NCRYPT_PCP_TPM_FW_VERSION_PROPERTY equ <L("PCP_TPM_FW_VERSION")>
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_RS2)
     if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
       NCRYPT_PCP_TPM2BNAME_PROPERTY equ <L("PCP_TPM2BNAME")>
       NCRYPT_PCP_TPM_VERSION_PROPERTY equ <L("PCP_TPM_VERSION")>
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_RS3)
     if (NTDDI_VERSION ge NTDDI_WIN10_RS4)
       NCRYPT_PCP_RAW_POLICYDIGEST_PROPERTY equ <L("PCP_RAW_POLICYDIGEST")>
       NCRYPT_PCP_KEY_CREATIONHASH_PROPERTY equ <L("PCP_KEY_CREATIONHASH")>
@@ -508,6 +688,8 @@ ifndef __NCRYPT_H__
       NCRYPT_PCP_TPM_IFX_RSA_KEYGEN_PROHIBITED_PROPERTY equ <L("PCP_TPM_IFX_RSA_KEYGEN_PROHIBITED")>
       NCRYPT_PCP_TPM_IFX_RSA_KEYGEN_VULNERABILITY_PROPERTY equ <L("PCP_TPM_IFX_RSA_KEYGEN_VULNERABILITY")>
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_RS4)
+    ; NCRYPT_PCP_TPM_IFX_RSA_KEYGEN_VULNERABILITY_PROPERTY values
     IFX_RSA_KEYGEN_VUL_NOT_AFFECTED equ 0
     IFX_RSA_KEYGEN_VUL_AFFECTED_LEVEL_1 equ 1
     IFX_RSA_KEYGEN_VUL_AFFECTED_LEVEL_2 equ 2
@@ -515,23 +697,35 @@ ifndef __NCRYPT_H__
       NCRYPT_PCP_SESSIONID_PROPERTY equ <L("PCP_SESSIONID")>
       NCRYPT_PCP_PSS_SALT_SIZE_PROPERTY equ <L("PSS Salt Size")>
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_RS5)
+    ; TPM RSAPSS Salt size types
     if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
       NCRYPT_TPM_PSS_SALT_SIZE_UNKNOWN equ 00000000h
-      NCRYPT_TPM_PSS_SALT_SIZE_MAXIMUM equ 00000001h
-      NCRYPT_TPM_PSS_SALT_SIZE_HASHSIZE equ 00000002h
+      NCRYPT_TPM_PSS_SALT_SIZE_MAXIMUM equ 00000001h; Pre-TPM Spec-1.16: Max allowed salt size
+
+      NCRYPT_TPM_PSS_SALT_SIZE_HASHSIZE equ 00000002h; Post-1.16: PSS salt = hashLen
+
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_RS5)
     if (NTDDI_VERSION ge NTDDI_WIN10_MN)
       NCRYPT_PCP_INTERMEDIATE_CA_EKCERT_PROPERTY equ <L("PCP_INTERMEDIATE_CA_EKCERT")>
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_MN)
     if (NTDDI_VERSION ge NTDDI_WIN10_FE)
       NCRYPT_PCP_PCRTABLE_ALGORITHM_PROPERTY equ <L("PCP_PCRTABLE_ALGORITHM")>
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_FE)
     if (NTDDI_VERSION ge NTDDI_WIN10_CO)
       NCRYPT_PCP_SYMMETRIC_KEYBITS_PROPERTY equ <L("PCP_SYMMETRIC_KEYBITS")>
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_CO)
+    ; TPM NCryptSignHash Flag
     if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
-      NCRYPT_TPM_PAD_PSS_IGNORE_SALT equ 00000020h
+      NCRYPT_TPM_PAD_PSS_IGNORE_SALT equ 00000020h; NCryptSignHash
+
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_RS5)
+    ; BCRYPT_PCP_KEY_USAGE_POLICY values
     NCRYPT_TPM12_PROVIDER equ (00010000h)
     NCRYPT_PCP_SIGNATURE_KEY equ (00000001h)
     NCRYPT_PCP_ENCRYPTION_KEY equ (00000002h)
@@ -539,26 +733,37 @@ ifndef __NCRYPT_H__
     NCRYPT_PCP_STORAGE_KEY equ (00000004h)
     NCRYPT_PCP_IDENTITY_KEY equ (00000008h)
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN8)
   if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
     NCRYPT_PCP_HMACVERIFICATION_KEY equ (00000010h)
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN10_RS1)
+  ; Additional property strings specific for the Smart Card Key Storage Provider
   if (NTDDI_VERSION ge NTDDI_WIN10)
     NCRYPT_SCARD_NGC_KEY_NAME equ <L("SmartCardNgcKeyName")>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN10)
   if (NTDDI_VERSION ge NTDDI_WIN8)
+    ; Used to set IV for block ciphers, before calling NCryptEncrypt/NCryptDecrypt
     NCRYPT_INITIALIZATION_VECTOR equ <BCRYPT_INITIALIZATION_VECTOR>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN8)
   if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
     NCRYPT_CHANGEPASSWORD_PROPERTY equ <NCRYPT_PCP_CHANGEPASSWORD_PROPERTY>
     NCRYPT_ALTERNATE_KEY_STORAGE_LOCATION_PROPERTY equ <NCRYPT_PCP_ALTERNATE_KEY_STORAGE_LOCATION_PROPERTY>
     NCRYPT_KEY_ACCESS_POLICY_PROPERTY equ <L("Key Access Policy")>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
+  ; Maximum length of property name (in characters)
   NCRYPT_MAX_PROPERTY_NAME equ 64
+  ; Maximum length of property data (in bytes)
   NCRYPT_MAX_PROPERTY_DATA equ 100000h
+  ; NCRYPT_EXPORT_POLICY_PROPERTY property flags.
   NCRYPT_ALLOW_EXPORT_FLAG equ 00000001h
   NCRYPT_ALLOW_PLAINTEXT_EXPORT_FLAG equ 00000002h
   NCRYPT_ALLOW_ARCHIVING_FLAG equ 00000004h
   NCRYPT_ALLOW_PLAINTEXT_ARCHIVING_FLAG equ 00000008h
+  ; NCRYPT_IMPL_TYPE_PROPERTY property flags.
   NCRYPT_IMPL_HARDWARE_FLAG equ 00000001h
   NCRYPT_IMPL_SOFTWARE_FLAG equ 00000002h
   NCRYPT_IMPL_REMOVABLE_FLAG equ 00000008h
@@ -566,6 +771,7 @@ ifndef __NCRYPT_H__
   if (NTDDI_VERSION ge NTDDI_WIN10_RS4)
     NCRYPT_IMPL_VIRTUAL_ISOLATION_FLAG equ 00000020h
   endif
+  ; NCRYPT_KEY_USAGE_PROPERTY property flags.
   NCRYPT_ALLOW_DECRYPT_FLAG equ 00000001h
   NCRYPT_ALLOW_SIGNING_FLAG equ 00000002h
   NCRYPT_ALLOW_KEY_AGREEMENT_FLAG equ 00000004h
@@ -573,37 +779,50 @@ ifndef __NCRYPT_H__
     NCRYPT_ALLOW_KEY_IMPORT_FLAG equ 00000008h
   endif
   NCRYPT_ALLOW_ALL_USAGES equ 00ffffffh
+  ; NCRYPT_UI_POLICY_PROPERTY property flags and structure
   NCRYPT_UI_PROTECT_KEY_FLAG equ 00000001h
   NCRYPT_UI_FORCE_HIGH_PROTECTION_FLAG equ 00000002h
   if (NTDDI_VERSION ge NTDDI_WINBLUE)
     NCRYPT_UI_FINGERPRINT_PROTECTION_FLAG equ 00000004h
     NCRYPT_UI_APPCONTAINER_ACCESS_MEDIUM_FLAG equ 00000008h
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINBLUE)
   if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
+    ; Pin Cache Provider Properties
     NCRYPT_PIN_CACHE_FREE_APPLICATION_TICKET_PROPERTY equ <L("PinCacheFreeApplicationTicket")>
     if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
       NCRYPT_PIN_CACHE_FLAGS_PROPERTY equ <L("PinCacheFlags")>
+      ; The NCRYPT_PIN_CACHE_FLAGS_PROPERTY property is a DWORD value that can be set from a trusted process. The
+      ; following flags can be set.
       NCRYPT_PIN_CACHE_DISABLE_DPL_FLAG equ 00000001h
     endif
+    ; (NTDDI_VERSION >= NTDDI_WIN10_RS1)
+    ; Pin Cache Key Properties
     NCRYPT_PIN_CACHE_APPLICATION_TICKET_PROPERTY equ <L("PinCacheApplicationTicket")>
     NCRYPT_PIN_CACHE_APPLICATION_IMAGE_PROPERTY equ <L("PinCacheApplicationImage")>
     NCRYPT_PIN_CACHE_APPLICATION_STATUS_PROPERTY equ <L("PinCacheApplicationStatus")>
     NCRYPT_PIN_CACHE_PIN_PROPERTY equ <L("PinCachePin")>
     NCRYPT_PIN_CACHE_IS_GESTURE_REQUIRED_PROPERTY equ <L("PinCacheIsGestureRequired")>
     NCRYPT_PIN_CACHE_REQUIRE_GESTURE_FLAG equ 00000001h
+    ; The NCRYPT_PIN_CACHE_PIN_PROPERTY and NCRYPT_PIN_CACHE_APPLICATION_TICKET_PROPERTY properties
+    ; return a 32 byte random unique ID encoded as a null terminated base64 Unicode string. The string length
+    ; is 32 * 4/3 + 1 characters = 45 characters, 90 bytes
     NCRYPT_PIN_CACHE_PIN_BYTE_LENGTH equ 90
     NCRYPT_PIN_CACHE_APPLICATION_TICKET_BYTE_LENGTH equ 90
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
   if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
     NCRYPT_PIN_CACHE_CLEAR_PROPERTY equ <L("PinCacheClear")>
+    ; The NCRYPT_PIN_CACHE_CLEAR_PROPERTY property is a DWORD value. The following option can be set:
     NCRYPT_PIN_CACHE_CLEAR_FOR_CALLING_PROCESS_OPTION equ 00000001h
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN10_RS1)
   NCRYPT_UI_POLICY struct
     dwVersion DWORD ?
     dwFlags DWORD ?
-    pszCreationTitle LPCWSTR ?
-    pszFriendlyName LPCWSTR ?
-    pszDescription LPCWSTR ?
+    pszCreationTitle =POINTER ?
+    pszFriendlyName =POINTER ?
+    pszDescription =POINTER ?
   NCRYPT_UI_POLICY ends
   __NCRYPT_UI_POLICY typedef NCRYPT_UI_POLICY
   if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
@@ -614,9 +833,13 @@ ifndef __NCRYPT_H__
       dwPolicyFlags DWORD ?
       cbUserSid DWORD ?
       cbApplicationSid DWORD ?
+      ;  User Sid
+      ;  Application Sid
     NCRYPT_KEY_ACCESS_POLICY_BLOB ends
     __NCRYPT_KEY_ACCESS_POLICY_BLOB typedef NCRYPT_KEY_ACCESS_POLICY_BLOB
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
+  ; NCRYPT_LENGTHS_PROPERTY property structure.
   NCRYPT_SUPPORTED_LENGTHS struct
     dwMinLength DWORD ?
     dwMaxLength DWORD ?
@@ -625,16 +848,19 @@ ifndef __NCRYPT_H__
   NCRYPT_SUPPORTED_LENGTHS ends
   __NCRYPT_SUPPORTED_LENGTHS typedef NCRYPT_SUPPORTED_LENGTHS
   if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
+    ; NCRYPT_PCP_HMAC_AUTH_SIGNATURE property structure.
     NCRYPT_PCP_HMAC_AUTH_SIGNATURE_INFO struct
       dwVersion DWORD ?
-      iExpiration INT32 ?
+      iExpiration SDWORD ?
       pabNonce BYTE 32 dup (?)
       pabPolicyRef BYTE 32 dup (?)
       pabHMAC BYTE 32 dup (?)
     NCRYPT_PCP_HMAC_AUTH_SIGNATURE_INFO ends
     __NCRYPT_PCP_HMAC_AUTH_SIGNATURE_INFO typedef NCRYPT_PCP_HMAC_AUTH_SIGNATURE_INFO
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN10_RS1)
   if (NTDDI_VERSION ge NTDDI_WIN10_RS2)
+    ; NCRYPT_PCP_TPM_FW_VERSION property structure.
     NCRYPT_PCP_TPM_FW_VERSION_INFO struct
       major1 UINT16 ?
       major2 UINT16 ?
@@ -643,38 +869,50 @@ ifndef __NCRYPT_H__
     NCRYPT_PCP_TPM_FW_VERSION_INFO ends
     __NCRYPT_PCP_TPM_FW_VERSION_INFO typedef NCRYPT_PCP_TPM_FW_VERSION_INFO
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN10_RS2)
   if (NTDDI_VERSION ge NTDDI_WIN10_RS4)
+    ; NCRYPT_PCP_RAW_POLICYDIGEST_PROPERTY structure
     NCRYPT_PCP_RAW_POLICYDIGEST_INFO struct
       dwVersion DWORD ?
       cbDigest DWORD ?
     NCRYPT_PCP_RAW_POLICYDIGEST_INFO ends
     __NCRYPT_PCP_RAW_POLICYDIGEST typedef NCRYPT_PCP_RAW_POLICYDIGEST_INFO
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+  ; NCryptGetProperty flags
   NCRYPT_PERSIST_ONLY_FLAG equ 40000000h
   NCryptGetProperty proto WIN_STD_CALL_CONV :NCRYPT_HANDLE, :LPCWSTR, :PBYTE, :DWORD, :ptr DWORD, :DWORD
+  ; NCryptSetProperty flags
   NCRYPT_PERSIST_FLAG equ 80000000h
   NCRYPT_PERSIST_ONLY_FLAG equ 40000000h
   NCryptSetProperty proto WIN_STD_CALL_CONV :NCRYPT_HANDLE, :LPCWSTR, :PBYTE, :DWORD, :DWORD
+  ; NCryptFinalizeKey flags
   NCRYPT_WRITE_KEY_TO_LEGACY_STORE_FLAG equ 00000200h
   NCryptFinalizeKey proto WIN_STD_CALL_CONV :NCRYPT_KEY_HANDLE, :DWORD
   NCryptEncrypt proto WIN_STD_CALL_CONV :NCRYPT_KEY_HANDLE, :PBYTE, :DWORD, :ptr VOID, :PBYTE, :DWORD, :ptr DWORD, :DWORD
   NCryptDecrypt proto WIN_STD_CALL_CONV :NCRYPT_KEY_HANDLE, :PBYTE, :DWORD, :ptr VOID, :PBYTE, :DWORD, :ptr DWORD, :DWORD
   if (NTDDI_VERSION ge NTDDI_WIN8)
     NCRYPT_KEY_BLOB_HEADER struct
-      cbSize ULONG ?
-      dwMagic ULONG ?
-      cbAlgName ULONG ?
-      cbKeyData ULONG ?
+      cbSize DWORD ?
+      ; size of this structure
+      dwMagic DWORD ?
+      cbAlgName DWORD ?
+      ; size of the algorithm, in bytes, including terminating 0
+      cbKeyData DWORD ?
     NCRYPT_KEY_BLOB_HEADER ends
     _NCRYPT_KEY_BLOB_HEADER typedef NCRYPT_KEY_BLOB_HEADER
     PNCRYPT_KEY_BLOB_HEADER typedef ptr NCRYPT_KEY_BLOB_HEADER
-    NCRYPT_CIPHER_KEY_BLOB_MAGIC equ 52485043h
-    NCRYPT_KDF_KEY_BLOB_MAGIC equ 3146444Bh
-    NCRYPT_PROTECTED_KEY_BLOB_MAGIC equ 4B545250h
+    NCRYPT_CIPHER_KEY_BLOB_MAGIC equ 52485043h; CPHR
+
+    NCRYPT_KDF_KEY_BLOB_MAGIC equ 3146444Bh; KDF1
+
+    NCRYPT_PROTECTED_KEY_BLOB_MAGIC equ 4B545250h; PRTK
+
     NCRYPT_CIPHER_KEY_BLOB equ <L("CipherKeyBlob")>
     NCRYPT_KDF_KEY_BLOB equ <L("KDFKeyBlob")>
     NCRYPT_PROTECTED_KEY_BLOB equ <L("ProtectedKeyBlob")>
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN8)
   NCRYPT_TPM_LOADABLE_KEY_BLOB_HEADER struct
     magic DWORD ?
     cbHeader DWORD ?
@@ -685,7 +923,8 @@ ifndef __NCRYPT_H__
   PNCRYPT_TPM_LOADABLE_KEY_BLOB_HEADER typedef ptr NCRYPT_TPM_LOADABLE_KEY_BLOB_HEADER
   NCRYPT_TPM_LOADABLE_KEY_BLOB_MIN_SIZE equ <sizeof(NCRYPT_TPM_LOADABLE_KEY_BLOB_HEADER)>
   NCRYPT_TPM_LOADABLE_KEY_BLOB equ <L("PcpTpmProtectedKeyBlob")>
-  NCRYPT_TPM_LOADABLE_KEY_BLOB_MAGIC equ 4D54504Bh
+  NCRYPT_TPM_LOADABLE_KEY_BLOB_MAGIC equ 4D54504Bh;'MTPK'
+
   NCRYPT_TPM_PERSISTENT_KEY_BLOB_HEADER struct
     magic DWORD ?
     cbHeader DWORD ?
@@ -694,13 +933,15 @@ ifndef __NCRYPT_H__
   PNCRYPT_TPM_PERSISTENT_KEY_BLOB_HEADER typedef ptr NCRYPT_TPM_PERSISTENT_KEY_BLOB_HEADER
   NCRYPT_TPM_PERSISTENT_KEY_BLOB_MIN_SIZE equ <sizeof(NCRYPT_TPM_PERSISTENT_KEY_BLOB_HEADER)>
   NCRYPT_TPM_PERSISTENT_KEY_BLOB equ <L("PcpTpmPersistentKeyBlob")>
-  NCRYPT_TPM_PERSISTENT_KEY_BLOB_MAGIC equ 4D54504Bh
+  NCRYPT_TPM_PERSISTENT_KEY_BLOB_MAGIC equ 4D54504Bh;'MTPE'
+
   NCRYPT_PKCS7_ENVELOPE_BLOB equ <L("PKCS7_ENVELOPE")>
   NCRYPT_PKCS8_PRIVATE_KEY_BLOB equ <L("PKCS8_PRIVATEKEY")>
   NCRYPT_OPAQUETRANSPORT_BLOB equ <L("OpaqueTransport")>
   if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
     NCRYPT_ISOLATED_KEY_ENVELOPE_BLOB equ <L("ISOLATED_KEY_ENVELOPE")>
   endif
+  ; NCryptImportKey flags
   NCRYPT_MACHINE_KEY_FLAG equ 00000020h
   NCRYPT_DO_NOT_FINALIZE_FLAG equ 00000400h
   NCRYPT_EXPORT_LEGACY_FLAG equ 00000800h
@@ -713,24 +954,30 @@ ifndef __NCRYPT_H__
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     NCryptIsKeyHandle proto WIN_STD_CALL_CONV :NCRYPT_KEY_HANDLE
     NCryptTranslateHandle proto WIN_STD_CALL_CONV :ptr NCRYPT_PROV_HANDLE, :ptr NCRYPT_KEY_HANDLE, :HCRYPTPROV, :HCRYPTKEY, :DWORD, :DWORD
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
+  ; NCryptNotifyChangeKey flags
   NCRYPT_REGISTER_NOTIFY_FLAG equ 00000001h
   NCRYPT_UNREGISTER_NOTIFY_FLAG equ 00000002h
   NCRYPT_MACHINE_KEY_FLAG equ 00000020h
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     NCryptNotifyChangeKey proto WIN_STD_CALL_CONV :NCRYPT_PROV_HANDLE, :ptr HANDLE, :DWORD
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   NCryptSecretAgreement proto WIN_STD_CALL_CONV :NCRYPT_KEY_HANDLE, :NCRYPT_KEY_HANDLE, :ptr NCRYPT_SECRET_HANDLE, :DWORD
   NCryptDeriveKey proto WIN_STD_CALL_CONV :NCRYPT_SECRET_HANDLE, :LPCWSTR, :ptr NCryptBufferDesc, :PBYTE, :DWORD, :ptr DWORD, :ULONG
   if (NTDDI_VERSION ge NTDDI_WIN8)
     NCryptKeyDerivation proto WIN_STD_CALL_CONV :NCRYPT_KEY_HANDLE, :ptr NCryptBufferDesc, :PUCHAR, :DWORD, :ptr DWORD, :ULONG
   endif
+  ; (NTDDI_VERSION >= NTDDI_WIN8)
   if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
     NCryptCreateClaim proto WIN_STD_CALL_CONV :NCRYPT_KEY_HANDLE, :NCRYPT_KEY_HANDLE, :DWORD, :ptr NCryptBufferDesc, :PBYTE, :DWORD, :ptr DWORD, :DWORD
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
   if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
     NCryptVerifyClaim proto WIN_STD_CALL_CONV :NCRYPT_KEY_HANDLE, :NCRYPT_KEY_HANDLE, :DWORD, :ptr NCryptBufferDesc, :PBYTE, :DWORD, :ptr NCryptBufferDesc, :DWORD
   endif
+  ; (NTDDI_VERSION >= NTDDI_WINTHRESHOLD)
   NCRYPT_KEY_STORAGE_INTERFACE_VERSION equ BCRYPT_MAKE_INTERFACE_VERSION(1, 0)
   NCRYPT_KEY_STORAGE_INTERFACE_VERSION_2 equ BCRYPT_MAKE_INTERFACE_VERSION(2, 0)
   NCRYPT_KEY_STORAGE_INTERFACE_VERSION_3 equ BCRYPT_MAKE_INTERFACE_VERSION(3, 0)
@@ -740,3 +987,4 @@ ifndef __NCRYPT_H__
   if _MSC_VER ge 1200
   endif
 endif
+; __NCRYPT_H__

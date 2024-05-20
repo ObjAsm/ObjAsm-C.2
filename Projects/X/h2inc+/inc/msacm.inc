@@ -1,10 +1,12 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\msacm.h\msacm.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\msacm.h
 ;             Created on (UTC) 06/04/2024 06:15:56
 ;             Last modified on (UTC) 21/02/2024 18:13:14
 
+;==========================================================================;
 ifndef _INC_ACM
+  ;* #defined if msacm.h has been included *
   _INC_ACM equ <>
   if _MSC_VER gt 1000
   endif
@@ -24,10 +26,13 @@ ifndef _INC_ACM
       endif
       _UNICODE equ <>
     endif
+    ;* Assume byte packing throughout *
     include pshpack1.inc
     ifdef __cplusplus
       ;[...]
     endif
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     ifndef DRV_MAPPER_PREFERRED_INPUT_GET
       DRV_MAPPER_PREFERRED_INPUT_GET equ (DRV_USER + 0)
     endif
@@ -50,11 +55,31 @@ ifndef _INC_ACM
       WAVEOUT_MAPPER_STATUS_MAPPED equ 1
       WAVEOUT_MAPPER_STATUS_FORMAT equ 2
     endif
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     ifdef _WIN32
       ACMAPI equ <WINAPI>
     else
       ;[...]
     endif
+    ;--------------------------------------------------------------------------;
+    ;  ACM General API's and Defines
+    ;--------------------------------------------------------------------------;
+    ;  there are four types of 'handles' used by the ACM. the first three
+    ;  are unique types that define specific objects:
+    ;  HACMDRIVERID: used to _identify_ an ACM driver. this identifier can be
+    ;  used to _open_ the driver for querying details, etc about the driver.
+    ;  HACMDRIVER: used to manage a driver (codec, filter, etc). this handle
+    ;  is much like a handle to other media drivers--you use it to send
+    ;  messages to the converter, query for capabilities, etc.
+    ;  HACMSTREAM: used to manage a 'stream' (conversion channel) with the
+    ;  ACM. you use a stream handle to convert data from one format/type
+    ;  to another--much like dealing with a file handle.
+    ;  the fourth handle type is a generic type used on ACM functions that
+    ;  can accept two or more of the above handle types (for example the
+    ;  acmMetrics and acmDriverID functions).
+    ;  HACMOBJ: used to identify ACM objects. this handle is used on functions
+    ;  that can accept two or more ACM handle types.
     DECLARE_HANDLE HACMDRIVERID
     PHACMDRIVERID typedef ptr HACMDRIVERID
     LPHACMDRIVERID typedef ptr HACMDRIVERID
@@ -67,6 +92,11 @@ ifndef _INC_ACM
     DECLARE_HANDLE HACMOBJ
     PHACMOBJ typedef ptr HACMOBJ
     LPHACMOBJ typedef ptr HACMOBJ
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  ACM Error Codes
+    ;  Note that these error codes are specific errors that apply to the ACM
+    ;  directly--general errors are defined as MMSYSERR_*.
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     ifndef _MMRESULT_
       _MMRESULT_ equ <>
       MMRESULT typedef UINT
@@ -76,10 +106,33 @@ ifndef _INC_ACM
     ACMERR_BUSY equ (ACMERR_BASE + 1)
     ACMERR_UNPREPARED equ (ACMERR_BASE + 2)
     ACMERR_CANCELED equ (ACMERR_BASE + 3)
-    MM_ACM_OPEN equ <(MM_STREAM_OPEN)>
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  ACM Window Messages
+    ;  These window messages are sent by the ACM or ACM drivers to notify
+    ;  applications of events.
+    ;  Note that these window message numbers will also be defined in
+    ;  mmsystem.
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    MM_ACM_OPEN equ <(MM_STREAM_OPEN)>; conversion callback messages
+
     MM_ACM_CLOSE equ <(MM_STREAM_CLOSE)>
     MM_ACM_DONE equ <(MM_STREAM_DONE)>
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmGetVersion()
+    ;  the ACM version is a 32 bit number that is broken into three parts as 
+    ;  follows:
+    ;      bits 24 - 31:   8 bit _major_ version number
+    ;      bits 16 - 23:   8 bit _minor_ version number
+    ;      bits  0 - 15:   16 bit build number
+    ;  this is then displayed as follows:
+    ;      bMajor = (BYTE)(dwVersion >> 24)
+    ;      bMinor = (BYTE)(dwVersion >> 16) & 
+    ;      wBuild = LOWORD(dwVersion)
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmGetVersion proto WIN_STD_CALL_CONV
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmMetrics()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmMetrics proto WIN_STD_CALL_CONV :HACMOBJ, :UINT, :LPVOID
     ACM_METRIC_COUNT_DRIVERS equ 1
     ACM_METRIC_COUNT_CODECS equ 2
@@ -98,13 +151,25 @@ ifndef _INC_ACM
     ACM_METRIC_MAX_SIZE_FILTER equ 51
     ACM_METRIC_DRIVER_SUPPORT equ 100
     ACM_METRIC_DRIVER_PRIORITY equ 101
+    ;--------------------------------------------------------------------------;
+    ;  ACM Drivers
+    ;--------------------------------------------------------------------------;
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmDriverEnum()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     TYPE_ACMDRIVERENUMCB typedef proto WIN_STD_CALL_CONV :HACMDRIVERID, :DWORD_PTR, :DWORD
     ACMDRIVERENUMCB typedef ptr TYPE_ACMDRIVERENUMCB
 
     acmDriverEnum proto WIN_STD_CALL_CONV :ACMDRIVERENUMCB, :DWORD_PTR, :DWORD
     ACM_DRIVERENUMF_NOLOCAL equ 40000000h
     ACM_DRIVERENUMF_DISABLED equ 80000000h
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmDriverID()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmDriverID proto WIN_STD_CALL_CONV :HACMOBJ, :LPHACMDRIVERID, :DWORD
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmDriverAdd()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     ifdef _WIN32
       acmDriverAddA proto WIN_STD_CALL_CONV :LPHACMDRIVERID, :HINSTANCE, :LPARAM, :DWORD, :DWORD
       acmDriverAddW proto WIN_STD_CALL_CONV :LPHACMDRIVERID, :HINSTANCE, :LPARAM, :DWORD, :DWORD
@@ -117,24 +182,46 @@ ifndef _INC_ACM
       ;[...]
     endif
     ACM_DRIVERADDF_NAME equ 00000001h
-    ACM_DRIVERADDF_FUNCTION equ 00000003h
-    ACM_DRIVERADDF_NOTIFYHWND equ 00000004h
-    ACM_DRIVERADDF_TYPEMASK equ 00000007h
-    ACM_DRIVERADDF_LOCAL equ 00000000h
-    ACM_DRIVERADDF_GLOBAL equ 00000008h
+    ACM_DRIVERADDF_FUNCTION equ 00000003h; lParam is a procedure
+
+    ACM_DRIVERADDF_NOTIFYHWND equ 00000004h; lParam is notify hwnd
+
+    ACM_DRIVERADDF_TYPEMASK equ 00000007h; driver type mask
+
+    ACM_DRIVERADDF_LOCAL equ 00000000h; is local to current task
+
+    ACM_DRIVERADDF_GLOBAL equ 00000008h; is global
+
+    ;  prototype for ACM driver procedures that are installed as _functions_
+    ;  or _notifations_ instead of as a standalone installable driver.
     TYPE_ACMDRIVERPROC typedef proto WIN_STD_CALL_CONV :DWORD_PTR, :HACMDRIVERID, :UINT, :LPARAM, :LPARAM
     ACMDRIVERPROC typedef ptr TYPE_ACMDRIVERPROC
 
     LPACMDRIVERPROC typedef ptr ACMDRIVERPROC
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmDriverRemove()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmDriverRemove proto WIN_STD_CALL_CONV :HACMDRIVERID, :DWORD
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmDriverOpen()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmDriverOpen proto WIN_STD_CALL_CONV :LPHACMDRIVER, :HACMDRIVERID, :DWORD
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmDriverClose()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmDriverClose proto WIN_STD_CALL_CONV :HACMDRIVER, :DWORD
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmDriverMessage()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmDriverMessage proto WIN_STD_CALL_CONV :HACMDRIVER, :UINT, :LPARAM, :LPARAM
     ACMDM_USER equ (DRV_USER + 0000h)
     ACMDM_RESERVED_LOW equ (DRV_USER + 2000h)
     ACMDM_RESERVED_HIGH equ (DRV_USER + 2FFFh)
     ACMDM_BASE equ <ACMDM_RESERVED_LOW>
     ACMDM_DRIVER_ABOUT equ (ACMDM_BASE + 11)
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmDriverPriority
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmDriverPriority proto WIN_STD_CALL_CONV :HACMDRIVERID, :DWORD, :DWORD
     ACM_DRIVERPRIORITYF_ENABLE equ 00000001h
     ACM_DRIVERPRIORITYF_DISABLE equ 00000002h
@@ -142,6 +229,12 @@ ifndef _INC_ACM
     ACM_DRIVERPRIORITYF_BEGIN equ 00010000h
     ACM_DRIVERPRIORITYF_END equ 00020000h
     ACM_DRIVERPRIORITYF_DEFERMASK equ 00030000h
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmDriverDetails()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  ACMDRIVERDETAILS
+    ;  the ACMDRIVERDETAILS structure is used to get various capabilities from
+    ;  an ACM driver (codec, converter, filter).
     ACMDRIVERDETAILS_SHORTNAME_CHARS equ 32
     ACMDRIVERDETAILS_LONGNAME_CHARS equ 128
     ACMDRIVERDETAILS_COPYRIGHT_CHARS equ 80
@@ -150,16 +243,27 @@ ifndef _INC_ACM
     ifdef _WIN32
       ACMDRIVERDETAILSA struct
         cbStruct DWORD ?
+        ; number of valid bytes in structure
         fccType FOURCC ?
+        ; compressor type 'audc'
         fccComp FOURCC ?
+        ; sub-type (not used; reserved)
         wMid WORD ?
+        ; manufacturer id
         wPid WORD ?
+        ; product id
         vdwACM DWORD ?
+        ; version of the ACM *compiled* for
         vdwDriver DWORD ?
+        ; version of the driver
         fdwSupport DWORD ?
+        ; misc. support flags
         cFormatTags DWORD ?
+        ; total unique format tags supported
         cFilterTags DWORD ?
+        ; total unique filter tags supported
         hicon HICON ?
+        ; handle to custom icon
         szShortName SBYTE ACMDRIVERDETAILS_SHORTNAME_CHARS dup (?)
         szLongName SBYTE ACMDRIVERDETAILS_LONGNAME_CHARS dup (?)
         szCopyright SBYTE ACMDRIVERDETAILS_COPYRIGHT_CHARS dup (?)
@@ -171,21 +275,32 @@ ifndef _INC_ACM
       LPACMDRIVERDETAILSA typedef ptr ACMDRIVERDETAILSA
       ACMDRIVERDETAILSW struct
         cbStruct DWORD ?
+        ; number of valid bytes in structure
         fccType FOURCC ?
+        ; compressor type 'audc'
         fccComp FOURCC ?
+        ; sub-type (not used; reserved)
         wMid WORD ?
+        ; manufacturer id
         wPid WORD ?
+        ; product id
         vdwACM DWORD ?
+        ; version of the ACM *compiled* for
         vdwDriver DWORD ?
+        ; version of the driver
         fdwSupport DWORD ?
+        ; misc. support flags
         cFormatTags DWORD ?
+        ; total unique format tags supported
         cFilterTags DWORD ?
+        ; total unique filter tags supported
         hicon HICON ?
-        szShortName WCHAR ACMDRIVERDETAILS_SHORTNAME_CHARS dup (?)
-        szLongName WCHAR ACMDRIVERDETAILS_LONGNAME_CHARS dup (?)
-        szCopyright WCHAR ACMDRIVERDETAILS_COPYRIGHT_CHARS dup (?)
-        szLicensing WCHAR ACMDRIVERDETAILS_LICENSING_CHARS dup (?)
-        szFeatures WCHAR ACMDRIVERDETAILS_FEATURES_CHARS dup (?)
+        ; handle to custom icon
+        szShortName WORD ACMDRIVERDETAILS_SHORTNAME_CHARS dup (?)
+        szLongName WORD ACMDRIVERDETAILS_LONGNAME_CHARS dup (?)
+        szCopyright WORD ACMDRIVERDETAILS_COPYRIGHT_CHARS dup (?)
+        szLicensing WORD ACMDRIVERDETAILS_LICENSING_CHARS dup (?)
+        szFeatures WORD ACMDRIVERDETAILS_FEATURES_CHARS dup (?)
       ACMDRIVERDETAILSW ends
       tACMDRIVERDETAILSW typedef ACMDRIVERDETAILSW
       PACMDRIVERDETAILSW typedef ptr ACMDRIVERDETAILSW
@@ -202,8 +317,43 @@ ifndef _INC_ACM
     else
       ;[...]
     endif
+    ;  ACMDRIVERDETAILS.fccType
+    ;  ACMDRIVERDETAILS_FCCTYPE_AUDIOCODEC: the FOURCC used in the fccType
+    ;  field of the ACMDRIVERDETAILS structure to specify that this is an ACM
+    ;  codec designed for audio.
+    ;  ACMDRIVERDETAILS.fccComp
+    ;  ACMDRIVERDETAILS_FCCCOMP_UNDEFINED: the FOURCC used in the fccComp
+    ;  field of the ACMDRIVERDETAILS structure. this is currently an unused
+    ;  field.
     ACMDRIVERDETAILS_FCCTYPE_AUDIOCODEC equ <mmioFOURCC('a', 'u', 'd', 'c')>
     ACMDRIVERDETAILS_FCCCOMP_UNDEFINED equ <mmioFOURCC('\0', '\0', '\0', '\0')>
+    ;  the following flags are used to specify the type of conversion(s) that
+    ;  the converter/codec/filter supports. these are placed in the fdwSupport
+    ;  field of the ACMDRIVERDETAILS structure. note that a converter can
+    ;  support one or more of these flags in any combination.
+    ;  ACMDRIVERDETAILS_SUPPORTF_CODEC: this flag is set if the driver supports
+    ;  conversions from one format tag to another format tag. for example, if a
+    ;  converter compresses WAVE_FORMAT_PCM to WAVE_FORMAT_ADPCM, then this bit
+    ;  should be set.
+    ;  ACMDRIVERDETAILS_SUPPORTF_CONVERTER: this flags is set if the driver
+    ;  supports conversions on the same format tag. as an example, the PCM
+    ;  converter that is built into the ACM sets this bit (and only this bit)
+    ;  because it converts only PCM formats (bits, sample rate).
+    ;  ACMDRIVERDETAILS_SUPPORTF_FILTER: this flag is set if the driver supports
+    ;  transformations on a single format. for example, a converter that changed
+    ;  the 'volume' of PCM data would set this bit. 'echo' and 'reverb' are
+    ;  also filter types.
+    ;  ACMDRIVERDETAILS_SUPPORTF_HARDWARE: this flag is set if the driver supports
+    ;  hardware input and/or output through a waveform device.
+    ;  ACMDRIVERDETAILS_SUPPORTF_ASYNC: this flag is set if the driver supports
+    ;  async conversions.
+    ;  ACMDRIVERDETAILS_SUPPORTF_LOCAL: this flag is set _by the ACM_ if a
+    ;  driver has been installed local to the current task. this flag is also
+    ;  set in the fdwSupport argument to the enumeration callback function
+    ;  for drivers.
+    ;  ACMDRIVERDETAILS_SUPPORTF_DISABLED: this flag is set _by the ACM_ if a
+    ;  driver has been disabled. this flag is also passed set in the fdwSupport
+    ;  argument to the enumeration callback function for drivers.
     ACMDRIVERDETAILS_SUPPORTF_CODEC equ 00000001h
     ACMDRIVERDETAILS_SUPPORTF_CONVERTER equ 00000002h
     ACMDRIVERDETAILS_SUPPORTF_FILTER equ 00000004h
@@ -222,6 +372,12 @@ ifndef _INC_ACM
     else
       ;[...]
     endif
+    ;--------------------------------------------------------------------------;
+    ;  ACM Format Tags
+    ;--------------------------------------------------------------------------;
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmFormatTagDetails()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     ACMFORMATTAGDETAILS_FORMATTAG_CHARS equ 48
     ifdef _WIN32
       ACMFORMATTAGDETAILSA struct
@@ -243,7 +399,7 @@ ifndef _INC_ACM
         cbFormatSize DWORD ?
         fdwSupport DWORD ?
         cStandardFormats DWORD ?
-        szFormatTag WCHAR ACMFORMATTAGDETAILS_FORMATTAG_CHARS dup (?)
+        szFormatTag WORD ACMFORMATTAGDETAILS_FORMATTAG_CHARS dup (?)
       ACMFORMATTAGDETAILSW ends
       tACMFORMATTAGDETAILSW typedef ACMFORMATTAGDETAILSW
       PACMFORMATTAGDETAILSW typedef ptr ACMFORMATTAGDETAILSW
@@ -275,6 +431,9 @@ ifndef _INC_ACM
     ACM_FORMATTAGDETAILSF_FORMATTAG equ 00000001h
     ACM_FORMATTAGDETAILSF_LARGESTSIZE equ 00000002h
     ACM_FORMATTAGDETAILSF_QUERYMASK equ 0000000Fh
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmFormatTagEnum()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     ifdef _WIN32
       TYPE_ACMFORMATTAGENUMCBA typedef proto WIN_STD_CALL_CONV :HACMDRIVERID, :LPACMFORMATTAGDETAILSA, :DWORD_PTR, :DWORD
       ACMFORMATTAGENUMCBA typedef ptr TYPE_ACMFORMATTAGENUMCBA
@@ -294,6 +453,12 @@ ifndef _INC_ACM
     else
       ;[...]
     endif
+    ;--------------------------------------------------------------------------;
+    ;  ACM Formats
+    ;--------------------------------------------------------------------------;
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmFormatDetails()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     ACMFORMATDETAILS_FORMAT_CHARS equ 128
     ifdef _WIN32
       ACMFORMATDETAILSA struct
@@ -315,7 +480,7 @@ ifndef _INC_ACM
         fdwSupport DWORD ?
         pwfx LPWAVEFORMATEX ?
         cbwfx DWORD ?
-        szFormat WCHAR ACMFORMATDETAILS_FORMAT_CHARS dup (?)
+        szFormat WORD ACMFORMATDETAILS_FORMAT_CHARS dup (?)
       ACMFORMATDETAILSW ends
       tACMFORMATDETAILSW typedef ACMFORMATDETAILSW
       PACMFORMATDETAILSW typedef ptr ACMFORMATDETAILSW
@@ -346,6 +511,9 @@ ifndef _INC_ACM
     ACM_FORMATDETAILSF_INDEX equ 00000000h
     ACM_FORMATDETAILSF_FORMAT equ 00000001h
     ACM_FORMATDETAILSF_QUERYMASK equ 0000000Fh
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmFormatEnum()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     ifdef _WIN32
       TYPE_ACMFORMATENUMCBA typedef proto WIN_STD_CALL_CONV :HACMDRIVERID, :LPACMFORMATDETAILSA, :DWORD_PTR, :DWORD
       ACMFORMATENUMCBA typedef ptr TYPE_ACMFORMATENUMCBA
@@ -374,12 +542,18 @@ ifndef _INC_ACM
     ACM_FORMATENUMF_HARDWARE equ 00400000h
     ACM_FORMATENUMF_INPUT equ 00800000h
     ACM_FORMATENUMF_OUTPUT equ 01000000h
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmFormatSuggest()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmFormatSuggest proto WIN_STD_CALL_CONV :HACMDRIVER, :LPWAVEFORMATEX, :LPWAVEFORMATEX, :DWORD, :DWORD
     ACM_FORMATSUGGESTF_WFORMATTAG equ 00010000h
     ACM_FORMATSUGGESTF_NCHANNELS equ 00020000h
     ACM_FORMATSUGGESTF_NSAMPLESPERSEC equ 00040000h
     ACM_FORMATSUGGESTF_WBITSPERSAMPLE equ 00080000h
     ACM_FORMATSUGGESTF_TYPEMASK equ 00FF0000h
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmFormatChoose()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     ifdef _WIN32
       ACMHELPMSGSTRINGA equ <"acmchoose_help">
       ACMHELPMSGSTRINGW equ <L("acmchoose_help")>
@@ -399,6 +573,8 @@ ifndef _INC_ACM
     else
       ;[...]
     endif
+    ;  MM_ACM_FORMATCHOOSE is sent to hook callbacks by the Format Chooser
+    ;  Dialog...
     MM_ACM_FORMATCHOOSE equ (8000h)
     FORMATCHOOSE_MESSAGE equ 0
     FORMATCHOOSE_FORMATTAG_VERIFY equ (FORMATCHOOSE_MESSAGE + 0)
@@ -422,42 +598,70 @@ ifndef _INC_ACM
     ifdef _WIN32
       ACMFORMATCHOOSEA struct
         cbStruct DWORD ?
+        ; sizeof(ACMFORMATCHOOSE)
         fdwStyle DWORD ?
+        ; chooser style flags
         hwndOwner HWND ?
+        ; caller's window handle
         pwfx LPWAVEFORMATEX ?
+        ; ptr to wfx buf to receive choice
         cbwfx DWORD ?
-        pszTitle LPCSTR ?
+        ; size of mem buf for pwfx
+        pszTitle =POINTER ?
+        ; dialog box title bar
         szFormatTag SBYTE ACMFORMATTAGDETAILS_FORMATTAG_CHARS dup (?)
         szFormat SBYTE ACMFORMATDETAILS_FORMAT_CHARS dup (?)
-        pszName LPSTR ?
+        pszName POINTER ?
+        ; custom name selection
         cchName DWORD ?
+        ; size in chars of mem buf for pszName
         fdwEnum DWORD ?
+        ; format enumeration restrictions
         pwfxEnum LPWAVEFORMATEX ?
+        ; format describing restrictions
         hInstance HINSTANCE ?
-        pszTemplateName LPCSTR ?
+        ; app instance containing dlg template
+        pszTemplateName =POINTER ?
+        ; custom template name
         lCustData LPARAM ?
+        ; data passed to hook fn.
         pfnHook ACMFORMATCHOOSEHOOKPROCA ?
+        ; ptr to hook function
       ACMFORMATCHOOSEA ends
       tACMFORMATCHOOSEA typedef ACMFORMATCHOOSEA
       PACMFORMATCHOOSEA typedef ptr ACMFORMATCHOOSEA
       LPACMFORMATCHOOSEA typedef ptr ACMFORMATCHOOSEA
       ACMFORMATCHOOSEW struct
         cbStruct DWORD ?
+        ; sizeof(ACMFORMATCHOOSE)
         fdwStyle DWORD ?
+        ; chooser style flags
         hwndOwner HWND ?
+        ; caller's window handle
         pwfx LPWAVEFORMATEX ?
+        ; ptr to wfx buf to receive choice
         cbwfx DWORD ?
-        pszTitle LPCWSTR ?
-        szFormatTag WCHAR ACMFORMATTAGDETAILS_FORMATTAG_CHARS dup (?)
-        szFormat WCHAR ACMFORMATDETAILS_FORMAT_CHARS dup (?)
-        pszName LPWSTR ?
+        ; size of mem buf for pwfx
+        pszTitle =POINTER ?
+        ; dialog box title bar
+        szFormatTag WORD ACMFORMATTAGDETAILS_FORMATTAG_CHARS dup (?)
+        szFormat WORD ACMFORMATDETAILS_FORMAT_CHARS dup (?)
+        pszName POINTER ?
+        ; custom name selection
         cchName DWORD ?
+        ; size in chars of mem buf for pszName
         fdwEnum DWORD ?
+        ; format enumeration restrictions
         pwfxEnum LPWAVEFORMATEX ?
+        ; format describing restrictions
         hInstance HINSTANCE ?
-        pszTemplateName LPCWSTR ?
+        ; app instance containing dlg template
+        pszTemplateName =POINTER ?
+        ; custom template name
         lCustData LPARAM ?
+        ; data passed to hook fn.
         pfnHook ACMFORMATCHOOSEHOOKPROCW ?
+        ; ptr to hook function
       ACMFORMATCHOOSEW ends
       tACMFORMATCHOOSEW typedef ACMFORMATCHOOSEW
       PACMFORMATCHOOSEW typedef ptr ACMFORMATCHOOSEW
@@ -474,6 +678,7 @@ ifndef _INC_ACM
     else
       ;[...]
     endif
+    ;  ACMFORMATCHOOSE.fdwStyle
     ACMFORMATCHOOSE_STYLEF_SHOWHELP equ 00000004h
     ACMFORMATCHOOSE_STYLEF_ENABLEHOOK equ 00000008h
     ACMFORMATCHOOSE_STYLEF_ENABLETEMPLATE equ 00000010h
@@ -491,6 +696,12 @@ ifndef _INC_ACM
     else
       ;[...]
     endif
+    ;--------------------------------------------------------------------------;
+    ;  ACM Filter Tags
+    ;--------------------------------------------------------------------------;
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmFilterTagDetails()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     ACMFILTERTAGDETAILS_FILTERTAG_CHARS equ 48
     ifdef _WIN32
       ACMFILTERTAGDETAILSA struct
@@ -512,7 +723,7 @@ ifndef _INC_ACM
         cbFilterSize DWORD ?
         fdwSupport DWORD ?
         cStandardFilters DWORD ?
-        szFilterTag WCHAR ACMFILTERTAGDETAILS_FILTERTAG_CHARS dup (?)
+        szFilterTag WORD ACMFILTERTAGDETAILS_FILTERTAG_CHARS dup (?)
       ACMFILTERTAGDETAILSW ends
       tACMFILTERTAGDETAILSW typedef ACMFILTERTAGDETAILSW
       PACMFILTERTAGDETAILSW typedef ptr ACMFILTERTAGDETAILSW
@@ -544,6 +755,9 @@ ifndef _INC_ACM
     ACM_FILTERTAGDETAILSF_FILTERTAG equ 00000001h
     ACM_FILTERTAGDETAILSF_LARGESTSIZE equ 00000002h
     ACM_FILTERTAGDETAILSF_QUERYMASK equ 0000000Fh
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmFilterTagEnum()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     ifdef _WIN32
       TYPE_ACMFILTERTAGENUMCBA typedef proto WIN_STD_CALL_CONV :HACMDRIVERID, :LPACMFILTERTAGDETAILSA, :DWORD_PTR, :DWORD
       ACMFILTERTAGENUMCBA typedef ptr TYPE_ACMFILTERTAGENUMCBA
@@ -563,6 +777,12 @@ ifndef _INC_ACM
     else
       ;[...]
     endif
+    ;--------------------------------------------------------------------------;
+    ;  ACM Filters
+    ;--------------------------------------------------------------------------;
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmFilterDetails()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     ACMFILTERDETAILS_FILTER_CHARS equ 128
     ifdef _WIN32
       ACMFILTERDETAILSA struct
@@ -584,7 +804,7 @@ ifndef _INC_ACM
         fdwSupport DWORD ?
         pwfltr LPWAVEFILTER ?
         cbwfltr DWORD ?
-        szFilter WCHAR ACMFILTERDETAILS_FILTER_CHARS dup (?)
+        szFilter WORD ACMFILTERDETAILS_FILTER_CHARS dup (?)
       ACMFILTERDETAILSW ends
       tACMFILTERDETAILSW typedef ACMFILTERDETAILSW
       PACMFILTERDETAILSW typedef ptr ACMFILTERDETAILSW
@@ -615,6 +835,9 @@ ifndef _INC_ACM
     ACM_FILTERDETAILSF_INDEX equ 00000000h
     ACM_FILTERDETAILSF_FILTER equ 00000001h
     ACM_FILTERDETAILSF_QUERYMASK equ 0000000Fh
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmFilterEnum()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     ifdef _WIN32
       TYPE_ACMFILTERENUMCBA typedef proto WIN_STD_CALL_CONV :HACMDRIVERID, :LPACMFILTERDETAILSA, :DWORD_PTR, :DWORD
       ACMFILTERENUMCBA typedef ptr TYPE_ACMFILTERENUMCBA
@@ -635,6 +858,11 @@ ifndef _INC_ACM
       ;[...]
     endif
     ACM_FILTERENUMF_DWFILTERTAG equ 00010000h
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmFilterChoose()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  MM_ACM_FILTERCHOOSE is sent to hook callbacks by the Filter Chooser
+    ;  Dialog...
     MM_ACM_FILTERCHOOSE equ (8000h)
     FILTERCHOOSE_MESSAGE equ 0
     FILTERCHOOSE_FILTERTAG_VERIFY equ (FILTERCHOOSE_MESSAGE + 0)
@@ -655,45 +883,72 @@ ifndef _INC_ACM
     else
       ;[...]
     endif
+    ;  ACMFILTERCHOOSE
     ifdef _WIN32
       ACMFILTERCHOOSEA struct
         cbStruct DWORD ?
+        ; sizeof(ACMFILTERCHOOSE)
         fdwStyle DWORD ?
+        ; chooser style flags
         hwndOwner HWND ?
+        ; caller's window handle
         pwfltr LPWAVEFILTER ?
+        ; ptr to wfltr buf to receive choice
         cbwfltr DWORD ?
-        pszTitle LPCSTR ?
+        ; size of mem buf for pwfltr
+        pszTitle =POINTER ?
         szFilterTag SBYTE ACMFILTERTAGDETAILS_FILTERTAG_CHARS dup (?)
         szFilter SBYTE ACMFILTERDETAILS_FILTER_CHARS dup (?)
-        pszName LPSTR ?
+        pszName POINTER ?
+        ; custom name selection
         cchName DWORD ?
+        ; size in chars of mem buf for pszName
         fdwEnum DWORD ?
+        ; filter enumeration restrictions
         pwfltrEnum LPWAVEFILTER ?
+        ; filter describing restrictions
         hInstance HINSTANCE ?
-        pszTemplateName LPCSTR ?
+        ; app instance containing dlg template
+        pszTemplateName =POINTER ?
+        ; custom template name
         lCustData LPARAM ?
+        ; data passed to hook fn.
         pfnHook ACMFILTERCHOOSEHOOKPROCA ?
+        ; ptr to hook function
       ACMFILTERCHOOSEA ends
       tACMFILTERCHOOSEA typedef ACMFILTERCHOOSEA
       PACMFILTERCHOOSEA typedef ptr ACMFILTERCHOOSEA
       LPACMFILTERCHOOSEA typedef ptr ACMFILTERCHOOSEA
       ACMFILTERCHOOSEW struct
         cbStruct DWORD ?
+        ; sizeof(ACMFILTERCHOOSE)
         fdwStyle DWORD ?
+        ; chooser style flags
         hwndOwner HWND ?
+        ; caller's window handle
         pwfltr LPWAVEFILTER ?
+        ; ptr to wfltr buf to receive choice
         cbwfltr DWORD ?
-        pszTitle LPCWSTR ?
-        szFilterTag WCHAR ACMFILTERTAGDETAILS_FILTERTAG_CHARS dup (?)
-        szFilter WCHAR ACMFILTERDETAILS_FILTER_CHARS dup (?)
-        pszName LPWSTR ?
+        ; size of mem buf for pwfltr
+        pszTitle =POINTER ?
+        szFilterTag WORD ACMFILTERTAGDETAILS_FILTERTAG_CHARS dup (?)
+        szFilter WORD ACMFILTERDETAILS_FILTER_CHARS dup (?)
+        pszName POINTER ?
+        ; custom name selection
         cchName DWORD ?
+        ; size in chars of mem buf for pszName
         fdwEnum DWORD ?
+        ; filter enumeration restrictions
         pwfltrEnum LPWAVEFILTER ?
+        ; filter describing restrictions
         hInstance HINSTANCE ?
-        pszTemplateName LPCWSTR ?
+        ; app instance containing dlg template
+        pszTemplateName =POINTER ?
+        ; custom template name
         lCustData LPARAM ?
+        ; data passed to hook fn.
         pfnHook ACMFILTERCHOOSEHOOKPROCW ?
+        ; ptr to hook function
       ACMFILTERCHOOSEW ends
       tACMFILTERCHOOSEW typedef ACMFILTERCHOOSEW
       PACMFILTERCHOOSEW typedef ptr ACMFILTERCHOOSEW
@@ -710,6 +965,7 @@ ifndef _INC_ACM
     else
       ;[...]
     endif
+    ;  ACMFILTERCHOOSE.fdwStyle
     ACMFILTERCHOOSE_STYLEF_SHOWHELP equ 00000004h
     ACMFILTERCHOOSE_STYLEF_ENABLEHOOK equ 00000008h
     ACMFILTERCHOOSE_STYLEF_ENABLETEMPLATE equ 00000010h
@@ -727,51 +983,91 @@ ifndef _INC_ACM
     else
       ;[...]
     endif
+    ;--------------------------------------------------------------------------;
+    ;  ACM Stream API's
+    ;--------------------------------------------------------------------------;
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmStreamOpen()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     ifdef _WIN64
       _DRVRESERVED equ 15
     else
       _DRVRESERVED equ 10
     endif
+    ; _WIN64
     ACMSTREAMHEADER struct
       cbStruct DWORD ?
+      ; sizeof(ACMSTREAMHEADER)
       fdwStatus DWORD ?
-      dwUser DWORD_PTR ?
+      ; ACMSTREAMHEADER_STATUSF_*
+      dwUser XWORD ?
+      ; user instance data for hdr
       pbSrc LPBYTE ?
       cbSrcLength DWORD ?
       cbSrcLengthUsed DWORD ?
-      dwSrcUser DWORD_PTR ?
+      dwSrcUser XWORD ?
+      ; user instance data for src
       pbDst LPBYTE ?
       cbDstLength DWORD ?
       cbDstLengthUsed DWORD ?
-      dwDstUser DWORD_PTR ?
+      dwDstUser XWORD ?
+      ; user instance data for dst
       dwReservedDriver DWORD _DRVRESERVED dup (?)
+      ; driver reserved work space
     ACMSTREAMHEADER ends
     tACMSTREAMHEADER typedef ACMSTREAMHEADER
     PACMSTREAMHEADER typedef ptr ACMSTREAMHEADER
     LPACMSTREAMHEADER typedef ptr ACMSTREAMHEADER
+    ;  ACMSTREAMHEADER.fdwStatus
+    ;  ACMSTREAMHEADER_STATUSF_DONE: done bit for async conversions.
     ACMSTREAMHEADER_STATUSF_DONE equ 00010000h
     ACMSTREAMHEADER_STATUSF_PREPARED equ 00020000h
     ACMSTREAMHEADER_STATUSF_INQUEUE equ 00100000h
     acmStreamOpen proto WIN_STD_CALL_CONV :LPHACMSTREAM, :HACMDRIVER, :LPWAVEFORMATEX, :LPWAVEFORMATEX, :LPWAVEFILTER, :DWORD_PTR, :DWORD_PTR, :DWORD
+    ; ACM_STREAMOPENF_* and CALLBACK_*
     ACM_STREAMOPENF_QUERY equ 00000001h
     ACM_STREAMOPENF_ASYNC equ 00000002h
     ACM_STREAMOPENF_NONREALTIME equ 00000004h
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmStreamClose()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmStreamClose proto WIN_STD_CALL_CONV :HACMSTREAM, :DWORD
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmStreamSize()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmStreamSize proto WIN_STD_CALL_CONV :HACMSTREAM, :DWORD, :LPDWORD, :DWORD
     ACM_STREAMSIZEF_SOURCE equ 00000000h
     ACM_STREAMSIZEF_DESTINATION equ 00000001h
     ACM_STREAMSIZEF_QUERYMASK equ 0000000Fh
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmStreamReset()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmStreamReset proto WIN_STD_CALL_CONV :HACMSTREAM, :DWORD
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmStreamMessage()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmStreamMessage proto WIN_STD_CALL_CONV :HACMSTREAM, :UINT, :LPARAM, :LPARAM
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmStreamConvert()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmStreamConvert proto WIN_STD_CALL_CONV :HACMSTREAM, :LPACMSTREAMHEADER, :DWORD
     ACM_STREAMCONVERTF_BLOCKALIGN equ 00000004h
     ACM_STREAMCONVERTF_START equ 00000010h
     ACM_STREAMCONVERTF_END equ 00000020h
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmStreamPrepareHeader()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmStreamPrepareHeader proto WIN_STD_CALL_CONV :HACMSTREAM, :LPACMSTREAMHEADER, :DWORD
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+    ;  acmStreamUnprepareHeader()
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
     acmStreamUnprepareHeader proto WIN_STD_CALL_CONV :HACMSTREAM, :LPACMSTREAMHEADER, :DWORD
+    ;* Revert to default packing *
     include poppack.inc
     ifdef __cplusplus
       ;[...]
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
+  ;* _INC_ACM *
 endif

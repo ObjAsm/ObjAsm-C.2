@@ -52,9 +52,6 @@ RenderFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
             .if eax != FALSE                              ;  then the new type is it too
               IsStructure? pName                          ;Check if it already exist
               .if eax == FALSE
-                DbgStrA pName, "RenderFurtherTypes", "New struct"
-                DbgStrW [xbx].$Obj(IncFile).pHeaderFileName, "New struct"
-                DbgDec [xbx].$Obj(IncFile).dLineNumber, "New struct"
                 invoke StrLengthA, pName
                 invoke InsertStrg, pNewStructs, pName, eax
               .endif

@@ -31,7 +31,8 @@
 
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc
-SysSetup OOP, NUI64, WIDE_STRING, DEBUG(WND);, RESGUARD)
+SysSetup OOP, CON64, WIDE_STRING, DEBUG(WND, RESGUARD)
+SILENT=TRUE
 
 % include &MacPath&fMath.inc
 
@@ -212,7 +213,9 @@ start proc uses xdi                                     ;Program entry point
   local cBuffer[50]:CHR
 
   SysInit
-;  DbgClearAll
+  ifndef SILENT
+  DbgClearAll
+  endif
   OCall $ObjTmpl(StopWatch)::StopWatch.Init, NULL
   s2s $ObjTmpl(StopWatch).r8Resolution, $CReal8(1000.0), xax, xcx   ;Resolution 1 ms
 

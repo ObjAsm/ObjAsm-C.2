@@ -1,12 +1,14 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\d3d12sdklayers.h\d3d12sdklayers.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\d3d12sdklayers.h
 ;             Created on (UTC) 06/04/2024 06:15:53
 ;             Last modified on (UTC) 21/02/2024 18:19:34
 
+;* verify that the <rpcndr.h> version is high enough to compile this file*
 ifndef __REQUIRED_RPCNDR_H_VERSION__
   __REQUIRED_RPCNDR_H_VERSION__ equ 501
 endif
+;* verify that the <rpcsal.h> version is high enough to compile this file*
 ifndef __REQUIRED_RPCSAL_H_VERSION__
   __REQUIRED_RPCSAL_H_VERSION__ equ 100
 endif
@@ -14,10 +16,12 @@ include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
   .err <this stub requires an updated version of < rpcndr.h >>
+  ;* __RPCNDR_H_VERSION__ *
 endif
 ifndef COM_NO_WINDOWS_H
   include windows.inc
   include ole2.inc
+  ;*COM_NO_WINDOWS_H*
 endif
 ifndef __d3d12sdklayers_h__
   __d3d12sdklayers_h__ equ <>
@@ -34,69 +38,92 @@ ifndef __d3d12sdklayers_h__
       endm
     endif
   endif
+  ;* Forward Declarations *
   ifndef __ID3D12Debug_FWD_DEFINED__
     __ID3D12Debug_FWD_DEFINED__ equ <>
+    ;* __ID3D12Debug_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Debug1_FWD_DEFINED__
     __ID3D12Debug1_FWD_DEFINED__ equ <>
+    ;* __ID3D12Debug1_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Debug2_FWD_DEFINED__
     __ID3D12Debug2_FWD_DEFINED__ equ <>
+    ;* __ID3D12Debug2_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Debug3_FWD_DEFINED__
     __ID3D12Debug3_FWD_DEFINED__ equ <>
+    ;* __ID3D12Debug3_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Debug4_FWD_DEFINED__
     __ID3D12Debug4_FWD_DEFINED__ equ <>
+    ;* __ID3D12Debug4_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Debug5_FWD_DEFINED__
     __ID3D12Debug5_FWD_DEFINED__ equ <>
+    ;* __ID3D12Debug5_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Debug6_FWD_DEFINED__
     __ID3D12Debug6_FWD_DEFINED__ equ <>
+    ;* __ID3D12Debug6_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DebugDevice1_FWD_DEFINED__
     __ID3D12DebugDevice1_FWD_DEFINED__ equ <>
+    ;* __ID3D12DebugDevice1_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DebugDevice_FWD_DEFINED__
     __ID3D12DebugDevice_FWD_DEFINED__ equ <>
+    ;* __ID3D12DebugDevice_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DebugDevice2_FWD_DEFINED__
     __ID3D12DebugDevice2_FWD_DEFINED__ equ <>
+    ;* __ID3D12DebugDevice2_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DebugCommandQueue_FWD_DEFINED__
     __ID3D12DebugCommandQueue_FWD_DEFINED__ equ <>
+    ;* __ID3D12DebugCommandQueue_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DebugCommandList1_FWD_DEFINED__
     __ID3D12DebugCommandList1_FWD_DEFINED__ equ <>
+    ;* __ID3D12DebugCommandList1_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DebugCommandList_FWD_DEFINED__
     __ID3D12DebugCommandList_FWD_DEFINED__ equ <>
+    ;* __ID3D12DebugCommandList_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DebugCommandList2_FWD_DEFINED__
     __ID3D12DebugCommandList2_FWD_DEFINED__ equ <>
+    ;* __ID3D12DebugCommandList2_FWD_DEFINED__ *
   endif
   ifndef __ID3D12SharingContract_FWD_DEFINED__
     __ID3D12SharingContract_FWD_DEFINED__ equ <>
+    ;* __ID3D12SharingContract_FWD_DEFINED__ *
   endif
   ifndef __ID3D12InfoQueue_FWD_DEFINED__
     __ID3D12InfoQueue_FWD_DEFINED__ equ <>
+    ;* __ID3D12InfoQueue_FWD_DEFINED__ *
   endif
   ifndef __ID3D12InfoQueue1_FWD_DEFINED__
     __ID3D12InfoQueue1_FWD_DEFINED__ equ <>
+    ;* __ID3D12InfoQueue1_FWD_DEFINED__ *
   endif
+  ;* header files for imported files *
   include OAIdl.inc
   include OCIdl.inc
   include d3d12.inc
   ifdef __cplusplus
     ;[...]
   endif
+  ;* interface __MIDL_itf_d3d12sdklayers_0000_0000 *
+  ;* [local] *
   include winapifamily.inc
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_GAMES)
     externdef __MIDL_itf_d3d12sdklayers_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_d3d12sdklayers_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12Debug_INTERFACE_DEFINED__
       __ID3D12Debug_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12Debug *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Debug:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -121,8 +148,12 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12Debug_INTERFACE_DEFINED__ *
     endif
+    ;* interface __MIDL_itf_d3d12sdklayers_0000_0001 *
+    ;* [local] *
     D3D12_GPU_BASED_VALIDATION_FLAGS typedef SDWORD
     D3D12_GPU_BASED_VALIDATION_FLAGS_NONE equ 0
     D3D12_GPU_BASED_VALIDATION_FLAGS_DISABLE_STATE_TRACKING equ 1h
@@ -132,6 +163,8 @@ ifndef __d3d12sdklayers_h__
     externdef __MIDL_itf_d3d12sdklayers_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12Debug1_INTERFACE_DEFINED__
       __ID3D12Debug1_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12Debug1 *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Debug1:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -160,10 +193,14 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12Debug1_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Debug2_INTERFACE_DEFINED__
       __ID3D12Debug2_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12Debug2 *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Debug2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -188,10 +225,14 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12Debug2_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Debug3_INTERFACE_DEFINED__
       __ID3D12Debug3_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12Debug3 *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Debug3:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -222,10 +263,14 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12Debug3_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Debug4_INTERFACE_DEFINED__
       __ID3D12Debug4_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12Debug4 *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Debug4:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -258,10 +303,14 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12Debug4_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Debug5_INTERFACE_DEFINED__
       __ID3D12Debug5_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12Debug5 *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Debug5:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -296,10 +345,14 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12Debug5_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Debug6_INTERFACE_DEFINED__
       __ID3D12Debug6_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12Debug6 *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Debug6:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -336,8 +389,12 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12Debug6_INTERFACE_DEFINED__ *
     endif
+    ;* interface __MIDL_itf_d3d12sdklayers_0000_0007 *
+    ;* [local] *
     DEFINE_GUID WKPDID_D3DAutoDebugObjectNameW, 0d4902e36h, 757ah, 4942h, 95h, 94h, 0b6h, 76h, 9ah, 0fah, 43h, 0cdh
     D3D12_RLDO_FLAGS typedef SDWORD
     D3D12_RLDO_NONE equ 0
@@ -375,17 +432,19 @@ ifndef __d3d12sdklayers_h__
 
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_GPU_BASED_VALIDATION_PIPELINE_STATE_CREATE_FLAGS)
     D3D12_DEBUG_DEVICE_GPU_BASED_VALIDATION_SETTINGS struct
-      MaxMessagesPerCommandList UINT ?
+      MaxMessagesPerCommandList DWORD ?
       DefaultShaderPatchMode D3D12_GPU_BASED_VALIDATION_SHADER_PATCH_MODE ?
       PipelineStateCreateFlags D3D12_GPU_BASED_VALIDATION_PIPELINE_STATE_CREATE_FLAGS ?
     D3D12_DEBUG_DEVICE_GPU_BASED_VALIDATION_SETTINGS ends
     D3D12_DEBUG_DEVICE_GPU_SLOWDOWN_PERFORMANCE_FACTOR struct
-      SlowdownFactor FLOAT ?
+      SlowdownFactor REAL4 ?
     D3D12_DEBUG_DEVICE_GPU_SLOWDOWN_PERFORMANCE_FACTOR ends
     externdef __MIDL_itf_d3d12sdklayers_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_d3d12sdklayers_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12DebugDevice1_INTERFACE_DEFINED__
       __ID3D12DebugDevice1_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12DebugDevice1 *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DebugDevice1:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -414,10 +473,14 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12DebugDevice1_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12DebugDevice_INTERFACE_DEFINED__
       __ID3D12DebugDevice_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12DebugDevice *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DebugDevice:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -446,10 +509,14 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12DebugDevice_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12DebugDevice2_INTERFACE_DEFINED__
       __ID3D12DebugDevice2_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12DebugDevice2 *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DebugDevice2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -482,13 +549,19 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12DebugDevice2_INTERFACE_DEFINED__ *
     endif
+    ;* interface __MIDL_itf_d3d12sdklayers_0000_0010 *
+    ;* [local] *
     DEFINE_GUID DXGI_DEBUG_D3D12, 0cf59a98ch, 0a950h, 4326h, 91h, 0efh, 9bh, 0bah, 0a1h, 7bh, 0fdh, 95h
     externdef __MIDL_itf_d3d12sdklayers_0000_0010_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_d3d12sdklayers_0000_0010_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12DebugCommandQueue_INTERFACE_DEFINED__
       __ID3D12DebugCommandQueue_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12DebugCommandQueue *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DebugCommandQueue:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -513,8 +586,12 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12DebugCommandQueue_INTERFACE_DEFINED__ *
     endif
+    ;* interface __MIDL_itf_d3d12sdklayers_0000_0011 *
+    ;* [local] *
     D3D12_DEBUG_COMMAND_LIST_PARAMETER_TYPE typedef SDWORD
     D3D12_DEBUG_COMMAND_LIST_PARAMETER_GPU_BASED_VALIDATION_SETTINGS equ 0
 
@@ -525,6 +602,8 @@ ifndef __d3d12sdklayers_h__
     externdef __MIDL_itf_d3d12sdklayers_0000_0011_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12DebugCommandList1_INTERFACE_DEFINED__
       __ID3D12DebugCommandList1_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12DebugCommandList1 *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DebugCommandList1:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -553,10 +632,14 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12DebugCommandList1_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12DebugCommandList_INTERFACE_DEFINED__
       __ID3D12DebugCommandList_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12DebugCommandList *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DebugCommandList:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -585,10 +668,14 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12DebugCommandList_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12DebugCommandList2_INTERFACE_DEFINED__
       __ID3D12DebugCommandList2_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12DebugCommandList2 *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DebugCommandList2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -621,10 +708,14 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12DebugCommandList2_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12SharingContract_INTERFACE_DEFINED__
       __ID3D12SharingContract_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12SharingContract *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12SharingContract:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -655,8 +746,12 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12SharingContract_INTERFACE_DEFINED__ *
     endif
+    ;* interface __MIDL_itf_d3d12sdklayers_0000_0015 *
+    ;* [local] *
     D3D12_MESSAGE_CATEGORY typedef SDWORD
     D3D12_MESSAGE_CATEGORY_APPLICATION_DEFINED equ 0
     D3D12_MESSAGE_CATEGORY_MISCELLANEOUS equ
@@ -1598,14 +1693,14 @@ ifndef __d3d12sdklayers_h__
       Severity D3D12_MESSAGE_SEVERITY ?
       ID D3D12_MESSAGE_ID ?
       pDescription POINTER ?
-      DescriptionByteLength SIZE_T ?
+      DescriptionByteLength XWORD ?
     D3D12_MESSAGE ends
     D3D12_INFO_QUEUE_FILTER_DESC struct
-      NumCategories UINT ?
+      NumCategories DWORD ?
       pCategoryList POINTER ?
-      NumSeverities UINT ?
+      NumSeverities DWORD ?
       pSeverityList POINTER ?
-      NumIDs UINT ?
+      NumIDs DWORD ?
       pIDList POINTER ?
     D3D12_INFO_QUEUE_FILTER_DESC ends
     D3D12_INFO_QUEUE_FILTER struct
@@ -1617,6 +1712,8 @@ ifndef __d3d12sdklayers_h__
     externdef __MIDL_itf_d3d12sdklayers_0000_0015_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12InfoQueue_INTERFACE_DEFINED__
       __ID3D12InfoQueue_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12InfoQueue *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12InfoQueue:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -1709,8 +1806,12 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12InfoQueue_INTERFACE_DEFINED__ *
     endif
+    ;* interface __MIDL_itf_d3d12sdklayers_0000_0016 *
+    ;* [local] *
     D3D12_MESSAGE_CALLBACK_FLAGS typedef SDWORD
     D3D12_MESSAGE_CALLBACK_FLAG_NONE equ 0
     D3D12_MESSAGE_CALLBACK_IGNORE_FILTERS equ 1h
@@ -1723,6 +1824,8 @@ ifndef __d3d12sdklayers_h__
     externdef __MIDL_itf_d3d12sdklayers_0000_0016_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12InfoQueue1_INTERFACE_DEFINED__
       __ID3D12InfoQueue1_INTERFACE_DEFINED__ equ <>
+      ;* interface ID3D12InfoQueue1 *
+      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12InfoQueue1:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -1819,8 +1922,13 @@ ifndef __d3d12sdklayers_h__
         ifdef COBJMACROS
           ;[...]
         endif
+        ;* C style interface *
       endif
+      ;* __ID3D12InfoQueue1_INTERFACE_DEFINED__ *
     endif
+    ;* interface __MIDL_itf_d3d12sdklayers_0000_0017 *
+    ;* [local] *
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_GAMES) *
   endif
   DEFINE_GUID IID_ID3D12Debug, 344488b7h, 6846h, 474bh, 0b9h, 89h, 0f0h, 27h, 44h, 82h, 45h, 0e0h
   DEFINE_GUID IID_ID3D12Debug1, 0affaa4cah, 63feh, 4d8eh, 0b8h, 0adh, 15h, 90h, 00h, 0afh, 43h, 04h
@@ -1841,6 +1949,8 @@ ifndef __d3d12sdklayers_h__
   DEFINE_GUID IID_ID3D12InfoQueue1, 2852dd88h, 0b484h, 4c0ch, 0b6h, 0b1h, 67h, 16h, 85h, 00h, 0e6h, 00h
   externdef __MIDL_itf_d3d12sdklayers_0000_0017_v0_0_c_ifspec:RPC_IF_HANDLE
   externdef __MIDL_itf_d3d12sdklayers_0000_0017_v0_0_s_ifspec:RPC_IF_HANDLE
+  ;* Additional Prototypes for ALL interfaces *
+  ;* end of Additional Prototypes *
   ifdef __cplusplus
     ;[...]
   endif

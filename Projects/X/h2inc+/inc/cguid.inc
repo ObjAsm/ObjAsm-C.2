@@ -1,10 +1,15 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\cguid.h\cguid.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\cguid.h
 ;             Created on (UTC) 06/04/2024 06:15:52
 ;             Last modified on (UTC) 12/02/2024 17:05:56
 
 include winapifamily.inc
+;*+-------------------------------------------------------------------------
+;Microsoft Windows
+;Copyright (c) Microsoft Corporation. All rights reserved.
+;File:       cguid.h
+;--------------------------------------------------------------------------*
 ifndef __CGUID_H__
   __CGUID_H__ equ <>
   if _MSC_VER gt 1000
@@ -12,12 +17,14 @@ ifndef __CGUID_H__
   if (_MSC_VER ge 800)
     if (_MSC_VER ge 1200)
     endif
+    ;* non standard extension : single line comment *
   endif
   ifdef __cplusplus
     ;[...]
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_GAMES)
     externdef GUID_NULL:IID
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (NTDDI_VERSION ge NTDDI_WINXP)
@@ -57,14 +64,17 @@ ifndef __CGUID_H__
     externdef CLSID_StaticDib:CLSID
     externdef CID_CDfsVolume:CLSID
     externdef CLSID_DCOMAccessControl:CLSID
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     externdef CLSID_GlobalOptions:CLSID
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     externdef CLSID_StdGlobalInterfaceTable:CLSID
     externdef CLSID_MachineGlobalObjectTable:CLSID
     externdef CLSID_ActivationCapabilities:CLSID
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     externdef CLSID_ComBinding:CLSID
@@ -77,9 +87,14 @@ ifndef __CGUID_H__
     if (NTDDI_VERSION ge NTDDI_VISTA)
       externdef CLSID_ContextSwitcher:CLSID
     endif
+    ;--------------------------------------------
+    ; CD Forms CLSIDs
+    ;--------------------------------------------
+    ; Form Kernel objects
     externdef CLSID_CCDFormKrnl:CLSID
     externdef CLSID_CCDPropertyPage:CLSID
     externdef CLSID_CCDFormDialog:CLSID
+    ; Control objects
     externdef CLSID_CCDCommandButton:CLSID
     externdef CLSID_CCDComboBox:CLSID
     externdef CLSID_CCDTextBox:CLSID
@@ -89,6 +104,7 @@ ifndef __CGUID_H__
     externdef CLSID_CCDListBox:CLSID
     externdef CLSID_CCDScrollBar:CLSID
     externdef CLSID_CCDGroupBox:CLSID
+    ; Property Pages
     externdef CLSID_CCDGeneralPropertyPage:CLSID
     externdef CLSID_CCDGenericPropertyPage:CLSID
     externdef CLSID_CCDFontPropertyPage:CLSID
@@ -109,15 +125,19 @@ ifndef __CGUID_H__
     externdef CLSID_CWSJArticlePage:CLSID
     externdef CLSID_CSystemPage:CLSID
     externdef CLSID_IdentityUnmarshal:CLSID
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     externdef CLSID_InProcFreeMarshaler:CLSID
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     externdef CLSID_Picture_Metafile:CLSID
     externdef CLSID_Picture_EnhMetafile:CLSID
     externdef CLSID_Picture_Dib:CLSID
+    ; Enumerations
     externdef GUID_TRISTATE:GUID
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   ifdef __cplusplus
     ;[...]
@@ -127,4 +147,5 @@ ifndef __CGUID_H__
     else
     endif
   endif
+  ;* __CGUID_H__ *
 endif

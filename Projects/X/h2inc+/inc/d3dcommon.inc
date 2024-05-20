@@ -1,12 +1,14 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\d3dcommon.h\d3dcommon.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\d3dcommon.h
 ;             Created on (UTC) 06/04/2024 06:15:53
 ;             Last modified on (UTC) 21/02/2024 18:17:38
 
+;* verify that the <rpcndr.h> version is high enough to compile this file*
 ifndef __REQUIRED_RPCNDR_H_VERSION__
   __REQUIRED_RPCNDR_H_VERSION__ equ 501
 endif
+;* verify that the <rpcsal.h> version is high enough to compile this file*
 ifndef __REQUIRED_RPCSAL_H_VERSION__
   __REQUIRED_RPCSAL_H_VERSION__ equ 100
 endif
@@ -14,10 +16,12 @@ include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
   .err <this stub requires an updated version of < rpcndr.h >>
+  ;* __RPCNDR_H_VERSION__ *
 endif
 ifndef COM_NO_WINDOWS_H
   include windows.inc
   include ole2.inc
+  ;*COM_NO_WINDOWS_H*
 endif
 ifndef __d3dcommon_h__
   __d3dcommon_h__ equ <>
@@ -34,17 +38,23 @@ ifndef __d3dcommon_h__
       endm
     endif
   endif
+  ;* Forward Declarations *
   ifndef __ID3D10Blob_FWD_DEFINED__
     __ID3D10Blob_FWD_DEFINED__ equ <>
+    ;* __ID3D10Blob_FWD_DEFINED__ *
   endif
   ifndef __ID3DDestructionNotifier_FWD_DEFINED__
     __ID3DDestructionNotifier_FWD_DEFINED__ equ <>
+    ;* __ID3DDestructionNotifier_FWD_DEFINED__ *
   endif
+  ;* header files for imported files *
   include OAIdl.inc
   include OCIdl.inc
   ifdef __cplusplus
     ;[...]
   endif
+  ;* interface __MIDL_itf_d3dcommon_0000_0000 *
+  ;* [local] *
   D3D_DRIVER_TYPE typedef SDWORD
   D3D_DRIVER_TYPE_UNKNOWN equ 0
   D3D_DRIVER_TYPE_HARDWARE equ
@@ -338,8 +348,8 @@ ifndef __d3dcommon_h__
   D3D_SHADER_FEATURE_WAVE_MMA equ 8000000h
   D3D_SHADER_FEATURE_ATOMIC_INT64_ON_DESCRIPTOR_HEAP_RESOURCE equ 10000000h
   D3D_SHADER_MACRO struct
-    Name_ LPCSTR ?
-    Definition LPCSTR ?
+    Name_ =POINTER ?
+    Definition =POINTER ?
   D3D_SHADER_MACRO ends
   _D3D_SHADER_MACRO typedef D3D_SHADER_MACRO
   LPD3D_SHADER_MACRO typedef ptr _D3D_SHADER_MACRO
@@ -348,6 +358,8 @@ ifndef __d3dcommon_h__
   externdef __MIDL_itf_d3dcommon_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
   ifndef __ID3D10Blob_INTERFACE_DEFINED__
     __ID3D10Blob_INTERFACE_DEFINED__ equ <>
+    ;* interface ID3D10Blob *
+    ;* [unique][local][object][uuid] *
     externdef IID_ID3D10Blob:IID
     if Defined(__cplusplus) and  not Defined(CINTERFACE)
       ;[...]
@@ -356,6 +368,8 @@ ifndef __d3dcommon_h__
         BEGIN_INTERFACE
         ??Interface equ <ID3D10BlobVtbl>
         DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
+        ;* [in] *
+        ;* [annotation][iid_is][out] *
         STD_METHOD QueryInterface, :ptr ID3D10Blob, :REFIID, :ptr ptr
         DECLSPEC_XFGVIRT(IUnknown, AddRef)
         STD_METHOD AddRef, :ptr ID3D10Blob
@@ -374,8 +388,12 @@ ifndef __d3dcommon_h__
       ifdef COBJMACROS
         ;[...]
       endif
+      ;* C style interface *
     endif
+    ;* __ID3D10Blob_INTERFACE_DEFINED__ *
   endif
+  ;* interface __MIDL_itf_d3dcommon_0000_0001 *
+  ;* [local] *
   LPD3D10BLOB typedef ptr ID3D10Blob
   ID3DBlob typedef ID3D10Blob
   LPD3DBLOB typedef ptr ID3DBlob
@@ -387,6 +405,8 @@ ifndef __d3dcommon_h__
   externdef __MIDL_itf_d3dcommon_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
   ifndef __ID3DDestructionNotifier_INTERFACE_DEFINED__
     __ID3DDestructionNotifier_INTERFACE_DEFINED__ equ <>
+    ;* interface ID3DDestructionNotifier *
+    ;* [unique][local][object][uuid] *
     externdef IID_ID3DDestructionNotifier:IID
     if Defined(__cplusplus) and  not Defined(CINTERFACE)
       ;[...]
@@ -395,14 +415,20 @@ ifndef __d3dcommon_h__
         BEGIN_INTERFACE
         ??Interface equ <ID3DDestructionNotifierVtbl>
         DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
+        ;* [in] *
+        ;* [annotation][iid_is][out] *
         STD_METHOD QueryInterface, :ptr ID3DDestructionNotifier, :REFIID, :ptr ptr
         DECLSPEC_XFGVIRT(IUnknown, AddRef)
         STD_METHOD AddRef, :ptr ID3DDestructionNotifier
         DECLSPEC_XFGVIRT(IUnknown, Release)
         STD_METHOD Release, :ptr ID3DDestructionNotifier
         DECLSPEC_XFGVIRT(ID3DDestructionNotifier, RegisterDestructionCallback)
+        ;* [annotation] *
+        ;* [annotation] *
+        ;* [annotation] *
         STD_METHOD RegisterDestructionCallback, :ptr ID3DDestructionNotifier, :PFN_DESTRUCTION_CALLBACK, :ptr, :ptr UINT
         DECLSPEC_XFGVIRT(ID3DDestructionNotifier, UnregisterDestructionCallback)
+        ;* [annotation] *
         STD_METHOD UnregisterDestructionCallback, :ptr ID3DDestructionNotifier, :UINT
         ??Interface equ <>
         END_INTERFACE
@@ -413,8 +439,12 @@ ifndef __d3dcommon_h__
       ifdef COBJMACROS
         ;[...]
       endif
+      ;* C style interface *
     endif
+    ;* __ID3DDestructionNotifier_INTERFACE_DEFINED__ *
   endif
+  ;* interface __MIDL_itf_d3dcommon_0000_0002 *
+  ;* [local] *
   D3D_INCLUDE_TYPE typedef SDWORD
   D3D_INCLUDE_LOCAL equ 0
   D3D_INCLUDE_SYSTEM equ
@@ -426,7 +456,7 @@ ifndef __d3dcommon_h__
   INTERFACE equ <ID3DInclude>
   DECLARE_INTERFACE(ID3DInclude)
     ??Interface equ <ID3DDestructionNotifier>
-    STDMETHOD Open, :D3D_INCLUDE_TYPE, :LPSTR, :LPCVOID, :ptr LPCVOID, :ptr DWORD
+    STDMETHOD Open, :D3D_INCLUDE_TYPE, :=POINTER, :LPCVOID, :ptr LPCVOID, :ptr DWORD
     STDMETHOD Close, :LPCVOID
   DECLARE_INTERFACE_END
 
@@ -820,6 +850,8 @@ ifndef __d3dcommon_h__
   DEFINE_GUID D3D_TEXTURE_LAYOUT_64KB_STANDARD_SWIZZLE, 4c0f29e3h, 3f5fh, 4d35h, 84h, 0c9h, 0bch, 09h, 83h, 0b6h, 2ch, 28h
   externdef __MIDL_itf_d3dcommon_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
   externdef __MIDL_itf_d3dcommon_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
+  ;* Additional Prototypes for ALL interfaces *
+  ;* end of Additional Prototypes *
   ifdef __cplusplus
     ;[...]
   endif

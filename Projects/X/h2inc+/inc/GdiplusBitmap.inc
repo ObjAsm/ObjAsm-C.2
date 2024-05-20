@@ -1,13 +1,15 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\gdiplusbitmap.h\gdiplusbitmap.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\gdiplusbitmap.h
 ;             Created on (UTC) 06/04/2024 06:15:55
 ;             Last modified on (UTC) 16/12/2023 11:07:10
 
+;\**************************************************************************
 ifndef _GDIPLUSBITMAP_H
   _GDIPLUSBITMAP_H equ <>
   include winapifamily.inc
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+    ; Uses SetStatus()/GetStatus() pattern rather than return codes so PREfast gets confused
     Image proto WIN_STD_CALL_CONV :ptr WCHAR, :BOOL
     Image proto WIN_STD_CALL_CONV :ptr IStream, :BOOL
     FromFile proto WIN_STD_CALL_CONV :ptr WCHAR, :BOOL
@@ -53,6 +55,7 @@ ifndef _GDIPLUSBITMAP_H
       FindNextItem proto WIN_STD_CALL_CONV :ptr ImageItemData
       GetItemData proto WIN_STD_CALL_CONV :ptr ImageItemData
     endif
+    ;(GDIPVER >= 0x0110)
     GetLastStatus proto WIN_STD_CALL_CONV
     Image proto WIN_STD_CALL_CONV :ptr GpImage, :Status
     SetNativeImage proto WIN_STD_CALL_CONV :ptr GpImage
@@ -88,11 +91,15 @@ ifndef _GDIPLUSBITMAP_H
       SetAbort proto WIN_STD_CALL_CONV :ptr GdiplusAbort
       ConvertFormat proto WIN_STD_CALL_CONV :PixelFormat, :DitherType, :PaletteType, :ptr ColorPalette, :REAL
       InitializePalette proto WIN_STD_CALL_CONV :ptr ColorPalette, :PaletteType, :INT_, :BOOL, :ptr Bitmap
+      ; optional bitmap for median cut.
       ApplyEffect proto WIN_STD_CALL_CONV :ptr ptr Bitmap, :INT_, :ptr Effect, :ptr RECT, :ptr RECT, :ptr ptr Bitmap
+      ; optional parameter.
       ApplyEffect proto WIN_STD_CALL_CONV :ptr Effect, :ptr RECT
       GetHistogram proto WIN_STD_CALL_CONV :HistogramFormat, :UINT, :ptr UINT, :ptr UINT, :ptr UINT, :ptr UINT
       GetHistogramSize proto WIN_STD_CALL_CONV :HistogramFormat, :ptr UINT
     endif
+    ; (GDIPVER >= 0x0110)
     SetResolution proto WIN_STD_CALL_CONV :REAL, :REAL
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
 endif

@@ -1,13 +1,16 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\vsstyle.h\vsstyle.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\vsstyle.h
 ;             Created on (UTC) 06/04/2024 06:16:02
 ;             Last modified on (UTC) 12/02/2024 17:06:20
 
+;-------------------------------------------------------------------------//
 ifndef __VSSTYLE_H__
   __VSSTYLE_H__ equ <>
+  ;  property symbol definitions
   TMTVS_RESERVEDLOW equ 100000
   TMTVS_RESERVEDHIGH equ 19999
+  ;  AEROWIZARDSTYLE class parts and states 
   ifndef VSCLASS_AEROWIZARDSTYLE
     VSCLASS_AEROWIZARDSTYLE equ <L("AEROWIZARDSTYLE")>
   endif
@@ -32,6 +35,7 @@ ifndef __VSSTYLE_H__
   CONTENTAREASTATES typedef SDWORD
   AW_S_CONTENTAREA_NOMARGIN equ 1
 
+  ;  BUTTONSTYLE class parts and states 
   ifndef VSCLASS_BUTTONSTYLE
     VSCLASS_BUTTONSTYLE equ <L("BUTTONSTYLE")>
   endif
@@ -115,6 +119,7 @@ ifndef __VSSTYLE_H__
   PBDDS_NORMAL equ 1
   PBDDS_DISABLED equ 2
 
+  ;  COMBOBOXSTYLE class parts and states 
   ifndef VSCLASS_COMBOBOXSTYLE
     VSCLASS_COMBOBOXSTYLE equ <L("COMBOBOXSTYLE")>
   endif
@@ -179,6 +184,7 @@ ifndef __VSSTYLE_H__
   CBDI_NORMAL equ 1
   CBDI_HIGHLIGHTED equ 2
 
+  ;  COMMUNICATIONSSTYLE class parts and states 
   ifndef VSCLASS_COMMUNICATIONSSTYLE
     VSCLASS_COMMUNICATIONSSTYLE equ <L("COMMUNICATIONSSTYLE")>
   endif
@@ -194,6 +200,7 @@ ifndef __VSSTYLE_H__
   CSTB_HOT equ 2
   CSTB_SELECTED equ 3
 
+  ;  CONTROLPANELSTYLE class parts and states 
   ifndef VSCLASS_CONTROLPANELSTYLE
     VSCLASS_CONTROLPANELSTYLE equ <L("CONTROLPANELSTYLE")>
   endif
@@ -245,6 +252,7 @@ ifndef __VSSTYLE_H__
   CPSTL_NORMAL equ 1
   CPSTL_HOT equ 2
 
+  ;  DATEPICKERSTYLE class parts and states 
   ifndef VSCLASS_DATEPICKERSTYLE
     VSCLASS_DATEPICKERSTYLE equ <L("DATEPICKERSTYLE")>
   endif
@@ -274,6 +282,7 @@ ifndef __VSSTYLE_H__
   DPSCBR_PRESSED equ 3
   DPSCBR_DISABLED equ 4
 
+  ;  DRAGDROPSTYLE class parts and states 
   ifndef VSCLASS_DRAGDROPSTYLE
     VSCLASS_DRAGDROPSTYLE equ <L("DRAGDROPSTYLE")>
   endif
@@ -315,6 +324,7 @@ ifndef __VSSTYLE_H__
   DDNONE_HIGHLIGHT equ 1
   DDNONE_NOHIGHLIGHT equ 2
 
+  ;  EDITSTYLE class parts and states 
   ifndef VSCLASS_EDITSTYLE
     VSCLASS_EDITSTYLE equ <L("EDITSTYLE")>
   endif
@@ -381,6 +391,7 @@ ifndef __VSSTYLE_H__
   EPSHV_FOCUSED equ 3
   EPSHV_DISABLED equ 4
 
+  ;  EXPLORERBARSTYLE class parts and states 
   ifndef VSCLASS_EXPLORERBARSTYLE
     VSCLASS_EXPLORERBARSTYLE equ <L("EXPLORERBARSTYLE")>
   endif
@@ -440,6 +451,7 @@ ifndef __VSSTYLE_H__
   EBSGE_HOT equ 2
   EBSGE_PRESSED equ 3
 
+  ;  FLYOUTSTYLE class parts and states 
   ifndef VSCLASS_FLYOUTSTYLE
     VSCLASS_FLYOUTSTYLE equ <L("FLYOUTSTYLE")>
   endif
@@ -475,6 +487,7 @@ ifndef __VSSTYLE_H__
   FLH_NORMAL equ 1
   FLH_HOVER equ 2
 
+  ;  HEADERSTYLE class parts and states 
   ifndef VSCLASS_HEADERSTYLE
     VSCLASS_HEADERSTYLE equ <L("HEADERSTYLE")>
   endif
@@ -537,6 +550,7 @@ ifndef __VSSTYLE_H__
   HOFS_NORMAL equ 1
   HOFS_HOT equ 2
 
+  ;  LISTBOXSTYLE class parts and states 
   ifndef VSCLASS_LISTBOXSTYLE
     VSCLASS_LISTBOXSTYLE equ <L("LISTBOXSTYLE")>
   endif
@@ -581,6 +595,7 @@ ifndef __VSSTYLE_H__
   LBPSI_SELECTED equ 3
   LBPSI_SELECTEDNOTFOCUS equ 4
 
+  ;  LISTVIEWSTYLE class parts and states 
   ifndef VSCLASS_LISTVIEWSTYLE
     VSCLASS_LISTVIEWSTYLE equ <L("LISTVIEWSTYLE")>
   endif
@@ -654,6 +669,7 @@ ifndef __VSSTYLE_H__
   LVCB_HOVER equ 2
   LVCB_PUSHED equ 3
 
+  ;  MENUSTYLE class parts and states 
   ifndef VSCLASS_MENUSTYLE
     VSCLASS_MENUSTYLE equ <L("MENUSTYLE")>
   endif
@@ -763,6 +779,7 @@ ifndef __VSSTYLE_H__
   MPIF_DISABLED equ 3
   MPIF_DISABLEDHOT equ 4
 
+  ;  NAVIGATION class parts and states 
   ifndef VSCLASS_NAVIGATION
     VSCLASS_NAVIGATION equ <L("NAVIGATION")>
   endif
@@ -789,6 +806,7 @@ ifndef __VSSTYLE_H__
   NAV_MB_PRESSED equ 3
   NAV_MB_DISABLED equ 4
 
+  ;  PROGRESSSTYLE class parts and states 
   ifndef VSCLASS_PROGRESSSTYLE
     VSCLASS_PROGRESSSTYLE equ <L("PROGRESSSTYLE")>
   endif
@@ -830,6 +848,7 @@ ifndef __VSSTYLE_H__
   PBFVS_PAUSED equ 3
   PBFVS_PARTIAL equ 4
 
+  ;  REBARSTYLE class parts and states 
   ifndef VSCLASS_REBARSTYLE
     VSCLASS_REBARSTYLE equ <L("REBARSTYLE")>
   endif
@@ -867,6 +886,7 @@ ifndef __VSSTYLE_H__
   SPLITSV_HOT equ 2
   SPLITSV_PRESSED equ 3
 
+  ;  SCROLLBARSTYLE class parts and states 
   ifndef VSCLASS_SCROLLBARSTYLE
     VSCLASS_SCROLLBARSTYLE equ <L("SCROLLBARSTYLE")>
   endif
@@ -926,6 +946,7 @@ ifndef __VSSTYLE_H__
   SZB_HALFTOPRIGHTALIGN equ 7
   SZB_HALFTOPLEFTALIGN equ 8
 
+  ;  SPINSTYLE class parts and states 
   ifndef VSCLASS_SPINSTYLE
     VSCLASS_SPINSTYLE equ <L("SPINSTYLE")>
   endif
@@ -963,6 +984,7 @@ ifndef __VSSTYLE_H__
   DNHZS_PRESSED equ 3
   DNHZS_DISABLED equ 4
 
+  ;  STATUSSTYLE class parts and states 
   ifndef VSCLASS_STATUSSTYLE
     VSCLASS_STATUSSTYLE equ <L("STATUSSTYLE")>
   endif
@@ -975,6 +997,7 @@ ifndef __VSSTYLE_H__
   SP_GRIPPER equ 3
 
   STATUSSTYLEPARTS equ <STATUSPARTS ;>
+  ;  TABSTYLE class parts and states 
   ifndef VSCLASS_TABSTYLE
     VSCLASS_TABSTYLE equ <L("TABSTYLE")>
   endif
@@ -1051,6 +1074,7 @@ ifndef __VSSTYLE_H__
   TTIBES_DISABLED equ 4
   TTIBES_FOCUSED equ 5
 
+  ;  TASKDIALOGSTYLE class parts and states 
   ifndef VSCLASS_TASKDIALOGSTYLE
     VSCLASS_TASKDIALOGSTYLE equ <L("TASKDIALOGSTYLE")>
   endif
@@ -1094,6 +1118,7 @@ ifndef __VSSTYLE_H__
   TDLGEBS_NORMALDISABLED equ 7
   TDLGEBS_EXPANDEDDISABLED equ 8
 
+  ;  TEXTSTYLE class parts and states 
   ifndef VSCLASS_TEXTSTYLE
     VSCLASS_TEXTSTYLE equ <L("TEXTSTYLE")>
   endif
@@ -1118,6 +1143,7 @@ ifndef __VSSTYLE_H__
   TS_CONTROLLABEL_NORMAL equ 1
   TS_CONTROLLABEL_DISABLED equ 2
 
+  ;  TOOLBARSTYLE class parts and states 
   ifndef VSCLASS_TOOLBARSTYLE
     VSCLASS_TOOLBARSTYLE equ <L("TOOLBARSTYLE")>
   endif
@@ -1144,6 +1170,7 @@ ifndef __VSSTYLE_H__
   TS_NEARHOT equ 7
   TS_OTHERSIDEHOT equ 8
 
+  ;  TOOLTIPSTYLE class parts and states 
   ifndef VSCLASS_TOOLTIPSTYLE
     VSCLASS_TOOLTIPSTYLE equ <L("TOOLTIPSTYLE")>
   endif
@@ -1186,6 +1213,7 @@ ifndef __VSSTYLE_H__
   TTWS_HOT equ 2
   TTWS_PRESSED equ 3
 
+  ;  TRACKBARSTYLE class parts and states 
   ifndef VSCLASS_TRACKBARSTYLE
     VSCLASS_TRACKBARSTYLE equ <L("TRACKBARSTYLE")>
   endif
@@ -1262,6 +1290,7 @@ ifndef __VSSTYLE_H__
   TICSVERTSTATES typedef SDWORD
   TSVS_NORMAL equ 1
 
+  ;  TREEVIEWSTYLE class parts and states 
   ifndef VSCLASS_TREEVIEWSTYLE
     VSCLASS_TREEVIEWSTYLE equ <L("TREEVIEWSTYLE")>
   endif
@@ -1291,6 +1320,7 @@ ifndef __VSSTYLE_H__
   HGLPS_CLOSED equ 1
   HGLPS_OPENED equ 2
 
+  ;  USERTILE class parts and states 
   ifndef VSCLASS_USERTILE
     VSCLASS_USERTILE equ <L("USERTILE")>
   endif
@@ -1303,6 +1333,7 @@ ifndef __VSSTYLE_H__
   UTS_HOT equ 2
   UTS_PRESSED equ 3
 
+  ;  TEXTSELECTIONGRIPPER class parts and states 
   ifndef VSCLASS_TEXTSELECTIONGRIPPER
     VSCLASS_TEXTSELECTIONGRIPPER equ <L("TEXTSELECTIONGRIPPER")>
   endif
@@ -1313,6 +1344,7 @@ ifndef __VSSTYLE_H__
   TSGS_NORMAL equ 1
   TSGS_CENTERED equ 2
 
+  ;  WINDOWSTYLE class parts and states 
   ifndef VSCLASS_WINDOWSTYLE
     VSCLASS_WINDOWSTYLE equ <L("WINDOWSTYLE")>
   endif
@@ -1494,3 +1526,4 @@ ifndef __VSSTYLE_H__
   MDRE_DISABLED equ 4
 
 endif
+;__VSSTYLE_H__

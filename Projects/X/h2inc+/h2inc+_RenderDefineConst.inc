@@ -156,7 +156,7 @@ RenderDefineConst proc uses xdi xsi pName:PSTRINGA
           .if eax == 1
             mov xcx, pNewQualifiers
           .else                                         ;eax = 2
-            mov xcx, KnwQualifiers
+            mov xcx, pKnwQualifiers
           .endif
           OCall xcx::List.ItemAt, edx
           mov edx, [xax - sizeof(DWORD)]                ;edx = length

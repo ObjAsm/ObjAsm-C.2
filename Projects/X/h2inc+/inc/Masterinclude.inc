@@ -1,6 +1,6 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\masterinclude.h\masterinclude.h
+;Source file: d:\objasm\projects\x\h2inc+\h\masterinclude.h
 ;             Created on (UTC) 06/04/2024 06:16:29
 ;             Last modified on (UTC) 06/04/2024 06:18:18
 
@@ -45,3 +45,6 @@ include SetupAPI.inc
 include http.inc
 include sspi.inc
 include winhttp.inc
+;#include <DirectXCollision.h>
+;#include <DirectXColors.h>
+;#include <DirectXPackedVector.h>

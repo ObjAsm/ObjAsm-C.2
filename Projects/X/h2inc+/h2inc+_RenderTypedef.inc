@@ -27,7 +27,7 @@ RenderTypedef proc
   local dSquareBracketCount:DWORD, dPtrCount:DWORD, bValid:DWORD, dTypeCSpec:DWORD
   local cBuffer[256]:CHRA, cTransBuffer[128]:CHRA
   local pCurrToken:PTOKEN, dSize:DWORD, p1:POINTER, p2:POINTER
-  local InpStat:INP_STAT
+  local InpStat:INP_STAT, PrevOutStat:STMOUT_STAT
 
   OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderTypedef")
   mov pType, NULL
@@ -91,9 +91,19 @@ RenderTypedef proc
   .endif
   invoke IsFunctionPtr?, xax                            ;Check if it is a function definition
   .if eax == FALSE                                      ; specifying a struct as return type
+    StmOutSave PrevOutStat                              ;Save output stream status
     invoke RenderContainer, pToken, FALSE
+    .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONTAINERS
+      StmOutLoad PrevOutStat                            ;Restore initial output stream status
+      mov CHRA ptr [xax], 0
+    .endif
   .else
+    StmOutSave PrevOutStat                              ;Save output stream status
     invoke RenderTypedefFuncPtr, NULL
+    .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_TYPEDEFS
+      StmOutLoad PrevOutStat                            ;Restore initial output stream status
+      mov CHRA ptr [xax], 0
+    .endif
   .endif
   test xax, xax
   jz @ErrorEoF
@@ -105,7 +115,12 @@ RenderTypedef proc
     DoesStringMatchA? [xax], <ENUM>
     jnz @F
   .endif
+  StmOutSave PrevOutStat                                ;Save output stream status
   invoke RenderTypedefEnum, TRUE
+  .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
+    StmOutLoad PrevOutStat                            ;Restore initial output stream status
+    mov CHRA ptr [xax], 0
+  .endif
   jmp @Exit
 
 @@:
@@ -158,9 +173,6 @@ RenderTypedef proc
             .if eax != FALSE                            ;  then the new type is it too
               IsStructure? pName                        ;Check if it already exist
               .if eax == FALSE
-                DbgStrA pName, "RenderTypedef", "New struct"
-                DbgStrW [xbx].$Obj(IncFile).pHeaderFileName, "New struct"
-                DbgDec [xbx].$Obj(IncFile).dLineNumber, "New struct"
                 invoke StrLengthA, pName
                 invoke InsertStrg, pNewStructs, pName, eax
               .endif

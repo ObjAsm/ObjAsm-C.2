@@ -1,11 +1,13 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\wow64apiset.h\wow64apiset.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\wow64apiset.h
 ;             Created on (UTC) 06/04/2024 06:16:03
 ;             Last modified on (UTC) 21/02/2024 18:13:14
 
+;********************************************************************************
 ifdef _MSC_VER
 endif
+; _MSC_VER
 ifndef _WOW64APISET_H_
   _WOW64APISET_H_ equ <>
   include apiset.inc
@@ -16,20 +18,27 @@ ifndef _WOW64APISET_H_
     ;[...]
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    ; RC warns because "WINBASE_DECLARE_GET_SYSTEM_WOW64_DIRECTORY" is a bit long.
     if  not Defined(RC_INVOKED)
       if _WIN32_WINNT ge 0501h or Defined(WINBASE_DECLARE_GET_SYSTEM_WOW64_DIRECTORY)
         @DefProto DllImport, Wow64EnableWow64FsRedirection, WIN_STD_CALL_CONV,, <:BOOLEAN>, 4
         @DefProto DllImport, Wow64DisableWow64FsRedirection, WIN_STD_CALL_CONV,, <:ptr PVOID>, 4
         @DefProto DllImport, Wow64RevertWow64FsRedirection, WIN_STD_CALL_CONV,, <:PVOID>, 4
       endif
+      ; _WIN32_WINNT >= 0x0501
     endif
+    ; !defined(RC_INVOKED)
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     if (_WIN32_WINNT ge 0501h)
       @DefProto DllImport, IsWow64Process, WIN_STD_CALL_CONV,, <:HANDLE, :PBOOL>, 8
     endif
+    ; _WIN32_WINNT >= 0x0501
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    ; RC warns because "WINBASE_DECLARE_GET_SYSTEM_WOW64_DIRECTORY" is a bit long.
     if  not Defined(RC_INVOKED)
       if _WIN32_WINNT ge 0501h or Defined(WINBASE_DECLARE_GET_SYSTEM_WOW64_DIRECTORY)
         @DefProto DllImport, GetSystemWow64DirectoryA, WIN_STD_CALL_CONV,, <:LPSTR, :UINT>, 8
@@ -39,16 +48,23 @@ ifndef _WOW64APISET_H_
         else
           GetSystemWow64Directory equ <GetSystemWow64DirectoryA>
         endif
+        ; !UNICODE
       endif
+      ; _WIN32_WINNT >= 0x0501
     endif
+    ; !defined(RC_INVOKED)
     if (_WIN32_WINNT ge 0A00h)
       @DefProto DllImport, Wow64SetThreadDefaultGuestMachine, WIN_STD_CALL_CONV,, <:USHORT>, 4
     endif
+    ; _WIN32_WINNT >= 0x0A00
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     if (_WIN32_WINNT ge 0A00h)
       @DefProto DllImport, IsWow64Process2, WIN_STD_CALL_CONV,, <:HANDLE, :ptr USHORT, :ptr USHORT>, 12
     endif
+    ; _WIN32_WINNT >= 0x0A00
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if (_WIN32_WINNT ge 0A00h)
@@ -59,17 +75,23 @@ ifndef _WOW64APISET_H_
       else
         GetSystemWow64Directory2 equ <GetSystemWow64Directory2A>
       endif
+      ; !UNICODE
     endif
+    ; _WIN32_WINNT >= 0x0A00
     if (_WIN32_WINNT ge 0A00h)
       @DefProto DllImport, IsWow64GuestMachineSupported, WIN_STD_CALL_CONV,, <:USHORT, :ptr BOOL>, 8
     endif
+    ; _WIN32_WINNT >= 0x0A00
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, Wow64GetThreadContext, WIN_STD_CALL_CONV,, <:HANDLE, :PWOW64_CONTEXT>, 8
       @DefProto DllImport, Wow64SetThreadContext, WIN_STD_CALL_CONV,, <:HANDLE, :ptr WOW64_CONTEXT>, 8
       @DefProto DllImport, Wow64SuspendThread, WIN_STD_CALL_CONV,, <:HANDLE>, 4
     endif
+    ; (_WIN32_WINNT >= 0x0600)
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM)
   ifdef __cplusplus
     ;[...]
   endif
 endif
+; _WOW64APISET_H_

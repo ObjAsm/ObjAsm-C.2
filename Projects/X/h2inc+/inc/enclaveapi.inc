@@ -1,11 +1,13 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\enclaveapi.h\enclaveapi.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\enclaveapi.h
 ;             Created on (UTC) 06/04/2024 06:15:55
 ;             Last modified on (UTC) 21/02/2024 18:13:14
 
+;********************************************************************************
 ifdef _MSC_VER
 endif
+; _MSC_VER
 ifndef _ENCLAVEAPI_H_
   _ENCLAVEAPI_H_ equ <>
   include apiset.inc
@@ -20,6 +22,7 @@ ifndef _ENCLAVEAPI_H_
     @DefProto DllImport, CreateEnclave, WIN_STD_CALL_CONV,, <:HANDLE, :LPVOID, :SIZE_T, :SIZE_T, :DWORD, :LPCVOID, :DWORD, :LPDWORD>, 32
     @DefProto DllImport, LoadEnclaveData, WIN_STD_CALL_CONV,, <:HANDLE, :LPVOID, :LPCVOID, :SIZE_T, :DWORD, :LPCVOID, :DWORD, :PSIZE_T, :LPDWORD>, 36
     @DefProto DllImport, InitializeEnclave, WIN_STD_CALL_CONV,, <:HANDLE, :LPVOID, :LPCVOID, :DWORD, :LPDWORD>, 20
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_APP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, LoadEnclaveImageA, WIN_STD_CALL_CONV,, <:LPVOID, :LPCSTR>, 8
@@ -29,11 +32,14 @@ ifndef _ENCLAVEAPI_H_
     else
       LoadEnclaveImage equ <LoadEnclaveImageA>
     endif
+    ; !UNICODE
     @DefProto DllImport, CallEnclave, WIN_STD_CALL_CONV,, <:LPENCLAVE_ROUTINE, :LPVOID, :BOOL, :ptr LPVOID>, 16
     @DefProto DllImport, TerminateEnclave, WIN_STD_CALL_CONV,, <:LPVOID, :BOOL>, 8
     @DefProto DllImport, DeleteEnclave, WIN_STD_CALL_CONV,, <:LPVOID>, 4
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   ifdef __cplusplus
     ;[...]
   endif
 endif
+; _ENCLAVEAPI_H_

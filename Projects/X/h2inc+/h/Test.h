@@ -1,46 +1,21 @@
-#ifndef _WINREG_
-#define PROVIDER_KEEPS_VALUE_LENGTH 0x1
-struct val_context {
-    int valuelen;       // the total length of this value
-    LPVOID value_context;   // provider's context
-    LPVOID val_buff_ptr;    // where in the ouput buffer the value is.
-};
+typedef struct WIN32_MEMORY_REGION_INFORMATION {
+    PVOID AllocationBase;
+    ULONG AllocationProtect;
 
-typedef struct val_context FAR *PVALCONTEXT;
+    union {
+        ULONG Flags;
 
-typedef struct pvalueA {           // Provider supplied value/context.
-    LPSTR   pv_valuename;          // The value name pointer
-    int pv_valuelen;
-    LPVOID pv_value_context;
-    DWORD pv_type;
-}PVALUEA, FAR *PPVALUEA;
-typedef struct pvalueW {           // Provider supplied value/context.
-    LPWSTR  pv_valuename;          // The value name pointer
-    int pv_valuelen;
-    LPVOID pv_value_context;
-    DWORD pv_type;
-}PVALUEW, FAR *PPVALUEW;
-#ifdef UNICODE
-typedef PVALUEW PVALUE;
-typedef PPVALUEW PPVALUE;
-#else
-typedef PVALUEA PVALUE;
-typedef PPVALUEA PPVALUE;
-#endif // UNICODE
+        struct {
+            ULONG Private : 1;
+            ULONG MappedDataFile : 1;
+            ULONG MappedImage : 1;
+            ULONG MappedPageFile : 1;
+            ULONG MappedPhysical : 1;
+            ULONG DirectMapped : 1;
+            ULONG Reserved : 26;
+        } DUMMYSTRUCTNAME;
+    } DUMMYUNIONNAME;
 
-typedef
-DWORD __cdecl
-QUERYHANDLER (LPVOID keycontext, PVALCONTEXT val_list, DWORD num_vals,
-          LPVOID outputbuffer, DWORD FAR *total_outlen, DWORD input_blen);
-
-typedef QUERYHANDLER FAR *PQUERYHANDLER;
-
-typedef struct provider_info {
-    PQUERYHANDLER pi_R0_1val;
-    PQUERYHANDLER pi_R0_allvals;
-    PQUERYHANDLER pi_R3_1val;
-    PQUERYHANDLER pi_R3_allvals;
-    DWORD pi_flags;    // capability flags (none defined yet).
-    LPVOID pi_key_context;
-}REG_PROVIDER;
-#endif
+    SIZE_T RegionSize;
+    SIZE_T CommitSize;
+} WIN32_MEMORY_REGION_INFORMATION;

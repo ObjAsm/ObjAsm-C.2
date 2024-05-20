@@ -1,11 +1,13 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\libloaderapi.h\libloaderapi.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\libloaderapi.h
 ;             Created on (UTC) 06/04/2024 06:15:56
 ;             Last modified on (UTC) 21/02/2024 18:13:14
 
+;********************************************************************************
 ifdef _MSC_VER
 endif
+; _MSC_VER
 ifndef _APISETLIBLOADER_
   _APISETLIBLOADER_ equ <>
   include apiset.inc
@@ -26,8 +28,10 @@ ifndef _APISETLIBLOADER_
     RESOURCE_ENUM_MODULE_EXACT equ (0010h)
     SUPPORT_LANG_NUMBER equ 32
     ENUMUILANG struct
-      NumOfEnumUILang ULONG ?
-      SizeOfEnumUIBuffer ULONG ?
+      NumOfEnumUILang DWORD ?
+      ; Acutall number of enumerated languages
+      SizeOfEnumUIBuffer DWORD ?
+      ; Buffer size of pMUIEnumUILanguages
       pEnumUIBuffer POINTER ?
     ENUMUILANG ends
     tagENUMUILANG typedef ENUMUILANG
@@ -44,6 +48,7 @@ ifndef _APISETLIBLOADER_
       else
         ENUMRESLANGPROC equ <ENUMRESLANGPROCA>
       endif
+      ; !UNICODE
       TYPE_ENUMRESNAMEPROCA typedef proto WIN_STD_CALL_CONV :HMODULE, :LPCSTR, :LPSTR, :LONG_PTR
       ENUMRESNAMEPROCA typedef ptr TYPE_ENUMRESNAMEPROCA
 
@@ -55,6 +60,7 @@ ifndef _APISETLIBLOADER_
       else
         ENUMRESNAMEPROC equ <ENUMRESNAMEPROCA>
       endif
+      ; !UNICODE
       TYPE_ENUMRESTYPEPROCA typedef proto WIN_STD_CALL_CONV :HMODULE, :LPSTR, :LONG_PTR
       ENUMRESTYPEPROCA typedef ptr TYPE_ENUMRESTYPEPROCA
 
@@ -66,6 +72,7 @@ ifndef _APISETLIBLOADER_
       else
         ENUMRESTYPEPROC equ <ENUMRESTYPEPROCA>
       endif
+      ; !UNICODE
     else
       ENUMRESTYPEPROCA typedef FARPROC
       ENUMRESTYPEPROCW typedef FARPROC
@@ -74,6 +81,7 @@ ifndef _APISETLIBLOADER_
       else
         ENUMRESTYPEPROC typedef ENUMRESTYPEPROCA
       endif
+      ; UNICODE
       ENUMRESNAMEPROCA typedef FARPROC
       ENUMRESNAMEPROCW typedef FARPROC
       ifdef UNICODE
@@ -81,6 +89,7 @@ ifndef _APISETLIBLOADER_
       else
         ENUMRESNAMEPROC typedef ENUMRESNAMEPROCA
       endif
+      ; UNICODE
       ENUMRESLANGPROCA typedef FARPROC
       ENUMRESLANGPROCW typedef FARPROC
       ifdef UNICODE
@@ -88,7 +97,9 @@ ifndef _APISETLIBLOADER_
       else
         ENUMRESLANGPROC typedef ENUMRESLANGPROCA
       endif
+      ; UNICODE
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, DisableThreadLibraryCalls, WIN_STD_CALL_CONV,, <:HMODULE>, 4
@@ -99,11 +110,14 @@ ifndef _APISETLIBLOADER_
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
       @DefProto DllImport, FindStringOrdinal, WIN_STD_CALL_CONV,, <:DWORD, :LPCWSTR, :SDWORD, :LPCWSTR, :SDWORD, :BOOL>, 24
     endif
+    ; (_WIN32_WINNT >= _WIN32_WINNT_WIN7)
     @DefProto DllImport, FreeLibrary, WIN_STD_CALL_CONV,, <:HMODULE>, 4
     @DefProto DllImport, FreeLibraryAndExitThread, WIN_STD_CALL_CONV,, <:HMODULE, :DWORD>, 8
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, FreeResource, WIN_STD_CALL_CONV,, <:HGLOBAL>, 4
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, GetModuleFileNameA, WIN_STD_CALL_CONV,, <:HMODULE, :LPSTR, :DWORD>, 12
@@ -113,6 +127,7 @@ ifndef _APISETLIBLOADER_
     else
       GetModuleFileName equ <GetModuleFileNameA>
     endif
+    ; !UNICODE
     @DefProto DllImport, GetModuleHandleA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
     @DefProto DllImport, GetModuleHandleW, WIN_STD_CALL_CONV,, <:LPCWSTR>, 4
     ifdef UNICODE
@@ -120,6 +135,7 @@ ifndef _APISETLIBLOADER_
     else
       GetModuleHandle equ <GetModuleHandleA>
     endif
+    ; !UNICODE
     if  not Defined(RC_INVOKED)
       GET_MODULE_HANDLE_EX_FLAG_PIN equ (00000001h)
       GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT equ (00000002h)
@@ -135,6 +151,7 @@ ifndef _APISETLIBLOADER_
       else
         PGET_MODULE_HANDLE_EX equ <PGET_MODULE_HANDLE_EXA>
       endif
+      ; !UNICODE
       @DefProto DllImport, GetModuleHandleExA, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR, :ptr HMODULE>, 12
       @DefProto DllImport, GetModuleHandleExW, WIN_STD_CALL_CONV,, <:DWORD, :LPCWSTR, :ptr HMODULE>, 12
       ifdef UNICODE
@@ -142,20 +159,21 @@ ifndef _APISETLIBLOADER_
       else
         GetModuleHandleEx equ <GetModuleHandleExA>
       endif
+      ; !UNICODE
     endif
     @DefProto DllImport, GetProcAddress, WIN_STD_CALL_CONV,, <:HMODULE, :LPCSTR>, 8
     CURRENT_IMPORT_REDIRECTION_VERSION equ 1
     REDIRECTION_FUNCTION_DESCRIPTOR struct
       DllName PCSTR ?
       FunctionName PCSTR ?
-      RedirectionTarget PVOID ?
+      RedirectionTarget POINTER ?
     REDIRECTION_FUNCTION_DESCRIPTOR ends
     _REDIRECTION_FUNCTION_DESCRIPTOR typedef REDIRECTION_FUNCTION_DESCRIPTOR
     PREDIRECTION_FUNCTION_DESCRIPTOR typedef ptr REDIRECTION_FUNCTION_DESCRIPTOR
     PCREDIRECTION_FUNCTION_DESCRIPTOR typedef ptr REDIRECTION_FUNCTION_DESCRIPTOR
     REDIRECTION_DESCRIPTOR struct
-      Version ULONG ?
-      FunctionCount ULONG ?
+      Version DWORD ?
+      FunctionCount DWORD ?
       Redirections PCREDIRECTION_FUNCTION_DESCRIPTOR ?
     REDIRECTION_DESCRIPTOR ends
     _REDIRECTION_DESCRIPTOR typedef REDIRECTION_DESCRIPTOR
@@ -168,8 +186,10 @@ ifndef _APISETLIBLOADER_
     else
       LoadLibraryEx equ <LoadLibraryExA>
     endif
+    ; !UNICODE
     DONT_RESOLVE_DLL_REFERENCES equ 00000001h
     LOAD_LIBRARY_AS_DATAFILE equ 00000002h
+    ; reserved for internal LOAD_PACKAGED_LIBRARY: 0x00000004
     LOAD_WITH_ALTERED_SEARCH_PATH equ 00000008h
     LOAD_IGNORE_CODE_AUTHZ_LEVEL equ 00000010h
     LOAD_LIBRARY_AS_IMAGE_RESOURCE equ 00000020h
@@ -184,8 +204,11 @@ ifndef _APISETLIBLOADER_
       LOAD_LIBRARY_SAFE_CURRENT_DIRS equ 00002000h
       LOAD_LIBRARY_SEARCH_SYSTEM32_NO_FORWARDER equ 00004000h
     else
+      ; For anything building for downlevel, set the flag to be the same as LOAD_LIBRARY_SEARCH_SYSTEM32
+      ; such that they're treated the same when running on older version of OS.
       LOAD_LIBRARY_SEARCH_SYSTEM32_NO_FORWARDER equ <LOAD_LIBRARY_SEARCH_SYSTEM32>
     endif
+    ; (_APISET_LIBLOADER_VER >= 0x0202)
     if (NTDDI_VERSION ge NTDDI_WIN10_RS2)
       LOAD_LIBRARY_OS_INTEGRITY_CONTINUITY equ 00008000h
     endif
@@ -197,9 +220,11 @@ ifndef _APISETLIBLOADER_
     else
       LoadString equ <LoadStringA>
     endif
+    ; !UNICODE
     @DefProto DllImport, LockResource, WIN_STD_CALL_CONV,, <:HGLOBAL>, 4
     @DefProto DllImport, SizeofResource, WIN_STD_CALL_CONV,, <:HMODULE, :HRSRC>, 8
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     DLL_DIRECTORY_COOKIE typedef PVOID
     PDLL_DIRECTORY_COOKIE typedef ptr PVOID
@@ -207,6 +232,7 @@ ifndef _APISETLIBLOADER_
     @DefProto DllImport, RemoveDllDirectory, WIN_STD_CALL_CONV,, <:DLL_DIRECTORY_COOKIE>, 4
     @DefProto DllImport, SetDefaultDllDirectories, WIN_STD_CALL_CONV,, <:DWORD>, 4
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if (_WIN32_WINNT ge _WIN32_WINNT_VISTA)
       @DefProto DllImport, EnumResourceLanguagesExA, WIN_STD_CALL_CONV,, <:HMODULE, :LPCSTR, :LPCSTR, :ENUMRESLANGPROCA, :LONG_PTR, :DWORD, :LANGID>, 28
@@ -216,6 +242,7 @@ ifndef _APISETLIBLOADER_
       else
         EnumResourceLanguagesEx equ <EnumResourceLanguagesExA>
       endif
+      ; !UNICODE
       @DefProto DllImport, EnumResourceNamesExA, WIN_STD_CALL_CONV,, <:HMODULE, :LPCSTR, :ENUMRESNAMEPROCA, :LONG_PTR, :DWORD, :LANGID>, 24
       @DefProto DllImport, EnumResourceNamesExW, WIN_STD_CALL_CONV,, <:HMODULE, :LPCWSTR, :ENUMRESNAMEPROCW, :LONG_PTR, :DWORD, :LANGID>, 24
       ifdef UNICODE
@@ -223,6 +250,7 @@ ifndef _APISETLIBLOADER_
       else
         EnumResourceNamesEx equ <EnumResourceNamesExA>
       endif
+      ; !UNICODE
       @DefProto DllImport, EnumResourceTypesExA, WIN_STD_CALL_CONV,, <:HMODULE, :ENUMRESTYPEPROCA, :LONG_PTR, :DWORD, :LANGID>, 20
       @DefProto DllImport, EnumResourceTypesExW, WIN_STD_CALL_CONV,, <:HMODULE, :ENUMRESTYPEPROCW, :LONG_PTR, :DWORD, :LANGID>, 20
       ifdef UNICODE
@@ -230,8 +258,11 @@ ifndef _APISETLIBLOADER_
       else
         EnumResourceTypesEx equ <EnumResourceTypesExA>
       endif
+      ; !UNICODE
     endif
+    ; (_WIN32_WINNT >= _WIN32_WINNT_VISTA)
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, FindResourceW, WIN_STD_CALL_CONV,, <:HMODULE, :LPCWSTR, :LPCWSTR>, 12
     ifdef UNICODE
@@ -244,7 +275,9 @@ ifndef _APISETLIBLOADER_
     else
       LoadLibrary equ <LoadLibraryA>
     endif
+    ; !UNICODE
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, EnumResourceNamesW, WIN_STD_CALL_CONV,, <:HMODULE, :LPCWSTR, :ENUMRESNAMEPROCW, :LONG_PTR>, 16
     @DefProto DllImport, EnumResourceNamesA, WIN_STD_CALL_CONV,, <:HMODULE, :LPCSTR, :ENUMRESNAMEPROCA, :LONG_PTR>, 16
@@ -254,7 +287,9 @@ ifndef _APISETLIBLOADER_
       EnumResourceNames equ <EnumResourceNamesA>
     endif
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM)
   ifdef __cplusplus
     ;[...]
   endif
 endif
+; _APISETLIBLOADER_

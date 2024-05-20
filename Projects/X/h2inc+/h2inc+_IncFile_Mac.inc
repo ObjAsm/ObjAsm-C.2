@@ -18,24 +18,24 @@ StackListPtr POINTER offset StackList                   ;-> Next free (XWORD) sl
 
 $Create@Stacklist macro AuxReg:=<xax>
   mov AuxReg, StackListPtr
-  exitm <AuxReg>                                        ;-> Stack reference
+  exitm <AuxReg>                                        ;-> Stack base
 endm
 
-Destroy@Stacklist macro pStackRef:req, AuxReg:=<xax>
-  .if pStackRef != NULL
-    mov AuxReg, pStackRef
+Destroy@Stacklist macro pStackBase:req, AuxReg:=<xax>
+  .if pStackBase != NULL
+    mov AuxReg, pStackBase
     mov StackListPtr, AuxReg
   .endif
 endm
 
-Reset@Stacklist macro pStackRef:req, AuxReg:=<xax>
-  .if pStackRef != NULL
-    mov AuxReg, pStackRef
+Reset@Stacklist macro pStackBase:req, AuxReg:=<xax>
+  .if pStackBase != NULL
+    mov AuxReg, pStackBase
     mov StackListPtr, AuxReg
   .endif
 endm
 
-Add@Stacklist macro pStackRef:req, pItem:req, AuxReg:=<xax>
+Add@Stacklist macro pStackBase:req, pItem:req, AuxReg:=<xax>
   mov AuxReg, StackListPtr
   if (opattr pItem) and OAT_REGISTER
     mov [AuxReg], pItem                                 ;Save item
@@ -46,15 +46,15 @@ Add@Stacklist macro pStackRef:req, pItem:req, AuxReg:=<xax>
   add StackListPtr, sizeof(XWORD)
 endm
 
-$GetCount@Stacklist macro pStackRef:req, AuxReg:=<xax>
+$GetCount@Stacklist macro pStackBase:req, AuxReg:=<xax>
   mov AuxReg, StackListPtr
-  sub AuxReg, pStackRef
+  sub AuxReg, pStackBase
   shr $SubReg(AuxReg, sizeof(DWORD)), $Log2(Sizeof(XWORD))
   exitm <$SubReg(AuxReg, sizeof(DWORD))>                ;Return count
 endm
 
-$GetItem@Stacklist macro pStackRef:req, dIndex:req, AuxReg1:=<xax>, AuxReg2:=<xcx>
-  mov AuxReg1, pStackRef
+$GetItem@Stacklist macro pStackBase:req, dIndex:req, AuxReg1:=<xax>, AuxReg2:=<xcx>
+  mov AuxReg1, pStackBase
   mov $SubReg(AuxReg2, sizeof(DWORD)), dIndex
   shl $SubReg(AuxReg2, sizeof(DWORD)), $Log2(Sizeof(XWORD))
   exitm <XWORD ptr [AuxReg1 + AuxReg2]>

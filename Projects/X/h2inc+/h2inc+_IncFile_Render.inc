@@ -87,7 +87,7 @@ RenderC proc uses xdi xsi
     test xax, xax
     jz @Exit
     .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_TYPEDEFS
-      StmOutLoad PrevOutStat                             ;Restore output stream status
+      StmOutLoad PrevOutStat                             ;Restore initial output stream status
       mov CHRA ptr [xax], 0                              ;Set ZTC on output stream
     .endif
     .continue
@@ -110,13 +110,13 @@ RenderC proc uses xdi xsi
       OCall xbx::IncFile.PeekNextTokenC
       .if xax != NULL && CHRA ptr [xax] == '{'
         OCall xbx::IncFile.StmWriteEoL                  ;Only on top level containers
-        .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONTAINERS
-          StmOutLoad PrevOutStat                        ;Restore output stream status
-          mov CHRA ptr [xax], 0
-        .endif
-        mov xax, pToken
-        jmp @ProcessToken
       .endif
+      .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONTAINERS
+        StmOutLoad PrevOutStat                          ;Restore initial output stream status
+        mov CHRA ptr [xax], 0
+      .endif
+      mov xax, pToken
+      jmp @ProcessToken
     .endif
     mov xax, pToken
 @@:
@@ -133,7 +133,7 @@ RenderC proc uses xdi xsi
       test xax, xax
       jz @Exit
       .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_EXTERNALS
-        StmOutLoad PrevOutStat                          ;Restore output stream status
+        StmOutLoad PrevOutStat                          ;Restore initial output stream status
         mov CHRA ptr [xax], 0
       .endif
       .continue
@@ -151,10 +151,8 @@ RenderC proc uses xdi xsi
     test eax, eax
     jz @Exit
     .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
-      StmOutLoad PrevOutStat                            ;Restore output stream status
-      mov [xbx].$Obj(IncFile).pStmOutPos, xdi
-      mov [xbx].$Obj(IncFile).dStmOutEoL, esi
-      mov CHRA ptr [xdi], 0
+      StmOutLoad PrevOutStat                            ;Restore initial output stream status
+      mov CHRA ptr [xax], 0
     .endif
     .continue
 @@:
@@ -275,7 +273,7 @@ RenderC proc uses xdi xsi
         StmOutSave PrevOutStat                            ;Save output stream status
         invoke RenderPrototype, [xbx].$Obj(IncFile).pPrevToken, [xbx].$Obj(IncFile).pImportSpec
         .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_PROTOTYPES
-          StmOutLoad PrevOutStat                          ;Restore output stream status
+          StmOutLoad PrevOutStat                          ;Restore initial output stream status
           mov CHRA ptr [xax], 0
         .endif
         mov [xbx].$Obj(IncFile).dQualifiers, 0

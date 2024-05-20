@@ -1,9 +1,10 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\gdiplusregion.h\gdiplusregion.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\gdiplusregion.h
 ;             Created on (UTC) 06/04/2024 06:15:55
 ;             Last modified on (UTC) 16/12/2023 11:07:10
 
+;\**************************************************************************
 ifndef _GDIPLUSREGION_H
   _GDIPLUSREGION_H equ <>
   include winapifamily.inc
@@ -56,10 +57,18 @@ ifndef _GDIPLUSREGION_H
     SetStatus proto WIN_STD_CALL_CONV :DllExports, :g, :ptr booln
     Equals proto WIN_STD_CALL_CONV :ptr Region, :ptr Graphics
     SetStatus proto WIN_STD_CALL_CONV :DllExports, :region, :g, :ptr booln
+    ; Get the size of the buffer needed for the GetData method
     GetDataSize proto WIN_STD_CALL_CONV
     SetStatus proto WIN_STD_CALL_CONV :DllExports, :ptr bufferSize
+    ; buffer     - where to put the data
+    ; bufferSize - how big the buffer is (should be at least as big as GetDataSize())
+    ; sizeFilled - if not NULL, this is an OUT param that says how many bytes
+    ;              of data were written to the buffer.
     GetData proto WIN_STD_CALL_CONV :ptr BYTE, :UINT, :ptr UINT
     SetStatus proto WIN_STD_CALL_CONV :DllExports, :buffer, :bufferSize, :sizeFilled
+    ;**
+    ;* Hit testing operations
+    ;*
     IsVisible proto WIN_STD_CALL_CONV :ptr PointF, :ptr Graphics
     SetStatus proto WIN_STD_CALL_CONV :DllExports, :point.X, :point.Y, :g :?_, :ptr booln
     IsVisible proto WIN_STD_CALL_CONV :ptr RectF, :ptr Graphics
@@ -70,6 +79,13 @@ ifndef _GDIPLUSREGION_H
     SetStatus proto WIN_STD_CALL_CONV :DllExports, :rect.X, :rect.Y, :rect.Width, :rect.Height, :g :?_, :ptr booln
     GetRegionScansCount proto WIN_STD_CALL_CONV :ptr Matrix
     SetStatus proto WIN_STD_CALL_CONV :DllExports, :ptr count, :matrix
+    ; If rects is NULL, return the count of rects in the region.
+    ; Otherwise, assume rects is big enough to hold all the region rects
+    ; and fill them in and return the number of rects filled in.
+    ; The rects are returned in the units specified by the matrix
+    ; (which is typically a world-to-device transform).
+    ; Note that the number of rects returned can vary, depending on the
+    ; matrix that is used.
     GetRegionScans proto WIN_STD_CALL_CONV :ptr Matrix, :ptr RectF, :ptr INT_
     SetStatus proto WIN_STD_CALL_CONV :DllExports, :rects, :count, :matrix
     GetRegionScans proto WIN_STD_CALL_CONV :ptr Matrix, :ptr Rect, :ptr INT_
@@ -77,5 +93,7 @@ ifndef _GDIPLUSREGION_H
     Region proto WIN_STD_CALL_CONV :ptr GpRegion
     SetNativeRegion proto WIN_STD_CALL_CONV :ptr GpRegion
     GetLastStatus proto WIN_STD_CALL_CONV
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
 endif
+; !_GDIPLUSREGION_H

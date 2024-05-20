@@ -1,14 +1,16 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\wsipv6ok.h\wsipv6ok.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\wsipv6ok.h
 ;             Created on (UTC) 06/04/2024 06:16:03
 ;             Last modified on (UTC) 16/12/2023 11:07:20
 
+;--*
 ifndef _WSIPV6OK_
   _WSIPV6OK_ equ <>
   include winapifamily.inc
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     ifdef IPV6STRICT
+      ; prevent substitutions in these headers by including them first.
       include ws2tcpip.inc
       include wspiapi.inc
       AF_INET equ <AF_INET_IPV6INCOMPATIBLE>
@@ -73,5 +75,8 @@ ifndef _WSIPV6OK_
         exitm <WSAAsyncGetHostByName_IPV6INCOMPATIBLE>
       endm
     endif
+    ; IPV6STRICT
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
 endif
+; _WSIPV6OK_

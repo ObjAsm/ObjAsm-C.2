@@ -1,9 +1,10 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\compressapi.h\compressapi.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\compressapi.h
 ;             Created on (UTC) 06/04/2024 06:15:52
 ;             Last modified on (UTC) 12/02/2024 17:05:44
 
+;--*
 include windef.inc
 if (NTDDI_VERSION ge NTDDI_WIN8)
   ifdef __cplusplus
@@ -31,7 +32,7 @@ if (NTDDI_VERSION ge NTDDI_WIN8)
     COMPRESS_ALLOCATION_ROUTINES struct
       Allocate PFN_COMPRESS_ALLOCATE ?
       Free PFN_COMPRESS_FREE ?
-      UserContext PVOID ?
+      UserContext POINTER ?
     COMPRESS_ALLOCATION_ROUTINES ends
     _COMPRESS_ALLOCATION_ROUTINES typedef COMPRESS_ALLOCATION_ROUTINES
     PCOMPRESS_ALLOCATION_ROUTINES typedef ptr COMPRESS_ALLOCATION_ROUTINES
@@ -40,12 +41,14 @@ if (NTDDI_VERSION ge NTDDI_WIN8)
     COMPRESS_INFORMATION_CLASS_BLOCK_SIZE equ 1
     COMPRESS_INFORMATION_CLASS_LEVEL equ 2
 
+    ; Compression routines
     CreateCompressor proto WIN_STD_CALL_CONV :DWORD, :PCOMPRESS_ALLOCATION_ROUTINES, :PCOMPRESSOR_HANDLE
     SetCompressorInformation proto WIN_STD_CALL_CONV :COMPRESSOR_HANDLE, :COMPRESS_INFORMATION_CLASS, :LPCVOID, :SIZE_T
     QueryCompressorInformation proto WIN_STD_CALL_CONV :COMPRESSOR_HANDLE, :COMPRESS_INFORMATION_CLASS, :PVOID, :SIZE_T
     Compress proto WIN_STD_CALL_CONV :COMPRESSOR_HANDLE, :LPCVOID, :SIZE_T, :PVOID, :SIZE_T, :PSIZE_T
     ResetCompressor proto WIN_STD_CALL_CONV :COMPRESSOR_HANDLE
     CloseCompressor proto WIN_STD_CALL_CONV :COMPRESSOR_HANDLE
+    ; Decompression routines
     CreateDecompressor proto WIN_STD_CALL_CONV :DWORD, :PCOMPRESS_ALLOCATION_ROUTINES, :PDECOMPRESSOR_HANDLE
     SetDecompressorInformation proto WIN_STD_CALL_CONV :DECOMPRESSOR_HANDLE, :COMPRESS_INFORMATION_CLASS, :LPCVOID, :SIZE_T
     QueryDecompressorInformation proto WIN_STD_CALL_CONV :DECOMPRESSOR_HANDLE, :COMPRESS_INFORMATION_CLASS, :PVOID, :SIZE_T
@@ -53,6 +56,7 @@ if (NTDDI_VERSION ge NTDDI_WIN8)
     ResetDecompressor proto WIN_STD_CALL_CONV :DECOMPRESSOR_HANDLE
     CloseDecompressor proto WIN_STD_CALL_CONV :DECOMPRESSOR_HANDLE
   endif
+  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES)
   ifdef __cplusplus
     ;[...]
   endif

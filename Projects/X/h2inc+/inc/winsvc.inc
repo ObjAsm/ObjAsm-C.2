@@ -1,12 +1,14 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winsvc.h\winsvc.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winsvc.h
 ;             Created on (UTC) 06/04/2024 06:16:03
 ;             Last modified on (UTC) 21/02/2024 18:13:44
 
+;--*
 ifndef _WINSVC_
   _WINSVC_ equ <>
   include winapifamily.inc
+  ; Define API decoration for direct importing of DLL references.
   if  not Defined(WINADVAPI)
     if  not Defined(_ADVAPI32_)
       WINADVAPI equ <DECLSPEC_IMPORT>
@@ -15,15 +17,19 @@ ifndef _WINSVC_
     endif
   endif
   if _MSC_VER ge 1200
+    ;* padding added after data member *
   endif
   ifdef __cplusplus
     ;[...]
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    ; Constants
+    ; Service database names
     SERVICES_ACTIVE_DATABASEW equ <L("ServicesActive")>
     SERVICES_FAILED_DATABASEW equ <L("ServicesFailed")>
     SERVICES_ACTIVE_DATABASEA equ <"ServicesActive">
     SERVICES_FAILED_DATABASEA equ <"ServicesFailed">
+    ; Character to designate that a name is a group
     SC_GROUP_IDENTIFIERW equ <L' + '>
     SC_GROUP_IDENTIFIERA equ <' + '>
     ifdef UNICODE
@@ -31,14 +37,19 @@ ifndef _WINSVC_
       SERVICES_FAILED_DATABASE equ <SERVICES_FAILED_DATABASEW>
       SC_GROUP_IDENTIFIER equ <SC_GROUP_IDENTIFIERW>
     else
+    ; ndef UNICODE
       SERVICES_ACTIVE_DATABASE equ <SERVICES_ACTIVE_DATABASEA>
       SERVICES_FAILED_DATABASE equ <SERVICES_FAILED_DATABASEA>
       SC_GROUP_IDENTIFIER equ <SC_GROUP_IDENTIFIERA>
     endif
+    ; ndef UNICODE
+    ; Value to indicate no change to an optional parameter
     SERVICE_NO_CHANGE equ 0ffffffffh
+    ; Service State -- for Enum Requests (Bit Mask)
     SERVICE_ACTIVE equ 00000001h
     SERVICE_INACTIVE equ 00000002h
     SERVICE_STATE_ALL equ <(SERVICE_ACTIVE or SERVICE_INACTIVE)>
+    ; Controls
     SERVICE_CONTROL_STOP equ 00000001h
     SERVICE_CONTROL_PAUSE equ 00000002h
     SERVICE_CONTROL_CONTINUE equ 00000003h
@@ -55,9 +66,13 @@ ifndef _WINSVC_
     SERVICE_CONTROL_SESSIONCHANGE equ 0000000Eh
     SERVICE_CONTROL_PRESHUTDOWN equ 0000000Fh
     SERVICE_CONTROL_TIMECHANGE equ 00000010h
+    ;#define SERVICE_CONTROL_USER_LOGOFF            0x00000011
     SERVICE_CONTROL_TRIGGEREVENT equ 00000020h
+    ;reserved for internal use                    0x00000021
+    ;reserved for internal use                    0x00000050
     SERVICE_CONTROL_LOWRESOURCES equ 00000060h
     SERVICE_CONTROL_SYSTEMLOWRESOURCES equ 00000061h
+    ; Service State -- for CurrentState
     SERVICE_STOPPED equ 00000001h
     SERVICE_START_PENDING equ 00000002h
     SERVICE_STOP_PENDING equ 00000003h
@@ -65,6 +80,7 @@ ifndef _WINSVC_
     SERVICE_CONTINUE_PENDING equ 00000005h
     SERVICE_PAUSE_PENDING equ 00000006h
     SERVICE_PAUSED equ 00000007h
+    ; Controls Accepted  (Bit Mask)
     SERVICE_ACCEPT_STOP equ 00000001h
     SERVICE_ACCEPT_PAUSE_CONTINUE equ 00000002h
     SERVICE_ACCEPT_SHUTDOWN equ 00000004h
@@ -77,8 +93,10 @@ ifndef _WINSVC_
     SERVICE_ACCEPT_TIMECHANGE equ 00000200h
     SERVICE_ACCEPT_TRIGGEREVENT equ 00000400h
     SERVICE_ACCEPT_USER_LOGOFF equ 00000800h
+    ; reserved for internal use                   0x00001000
     SERVICE_ACCEPT_LOWRESOURCES equ 00002000h
     SERVICE_ACCEPT_SYSTEMLOWRESOURCES equ 00004000h
+    ; Service Control Manager object specific access types
     SC_MANAGER_CONNECT equ 0001h
     SC_MANAGER_CREATE_SERVICE equ 0002h
     SC_MANAGER_ENUMERATE_SERVICE equ 0004h
@@ -86,6 +104,7 @@ ifndef _WINSVC_
     SC_MANAGER_QUERY_LOCK_STATUS equ 0010h
     SC_MANAGER_MODIFY_BOOT_CONFIG equ 0020h
     SC_MANAGER_ALL_ACCESS equ <(STANDARD_RIGHTS_REQUIRED or SC_MANAGER_CONNECT or SC_MANAGER_CREATE_SERVICE or SC_MANAGER_ENUMERATE_SERVICE or SC_MANAGER_LOCK or SC_MANAGER_QUERY_LOCK_STATUS or SC_MANAGER_MODIFY_BOOT_CONFIG)>
+    ; Service object specific access type
     SERVICE_QUERY_CONFIG equ 0001h
     SERVICE_CHANGE_CONFIG equ 0002h
     SERVICE_QUERY_STATUS equ 0004h
@@ -96,7 +115,9 @@ ifndef _WINSVC_
     SERVICE_INTERROGATE equ 0080h
     SERVICE_USER_DEFINED_CONTROL equ 0100h
     SERVICE_ALL_ACCESS equ <(STANDARD_RIGHTS_REQUIRED or SERVICE_QUERY_CONFIG or SERVICE_CHANGE_CONFIG or SERVICE_QUERY_STATUS or SERVICE_ENUMERATE_DEPENDENTS or SERVICE_START or SERVICE_STOP or SERVICE_PAUSE_CONTINUE or SERVICE_INTERROGATE or SERVICE_USER_DEFINED_CONTROL)>
+    ; Service flags for QueryServiceStatusEx
     SERVICE_RUNS_IN_SYSTEM_PROCESS equ 00000001h
+    ; Info levels for ChangeServiceConfig2 and QueryServiceConfig2
     SERVICE_CONFIG_DESCRIPTION equ 1
     SERVICE_CONFIG_FAILURE_ACTIONS equ 2
     SERVICE_CONFIG_DELAYED_AUTO_START_INFO equ 3
@@ -106,10 +127,14 @@ ifndef _WINSVC_
     SERVICE_CONFIG_PRESHUTDOWN_INFO equ 7
     SERVICE_CONFIG_TRIGGER_INFO equ 8
     SERVICE_CONFIG_PREFERRED_NODE equ 9
+    ; reserved                                     10
+    ; reserved                                     11
     SERVICE_CONFIG_LAUNCH_PROTECTED equ 12
+    ; Info levels for NotifyServiceStatusChange
     SERVICE_NOTIFY_STATUS_CHANGE_1 equ 1
     SERVICE_NOTIFY_STATUS_CHANGE_2 equ 2
     SERVICE_NOTIFY_STATUS_CHANGE equ <SERVICE_NOTIFY_STATUS_CHANGE_2>
+    ; Service notification masks
     SERVICE_NOTIFY_STOPPED equ 00000001h
     SERVICE_NOTIFY_START_PENDING equ 00000002h
     SERVICE_NOTIFY_STOP_PENDING equ 00000004h
@@ -120,11 +145,16 @@ ifndef _WINSVC_
     SERVICE_NOTIFY_CREATED equ 00000080h
     SERVICE_NOTIFY_DELETED equ 00000100h
     SERVICE_NOTIFY_DELETE_PENDING equ 00000200h
+    ; The following defines are for service stop reason codes
+    ; Stop reason flags. Update SERVICE_STOP_REASON_FLAG_MAX when
+    ; new flags are added.
     SERVICE_STOP_REASON_FLAG_MIN equ 00000000h
     SERVICE_STOP_REASON_FLAG_UNPLANNED equ 10000000h
     SERVICE_STOP_REASON_FLAG_CUSTOM equ 20000000h
     SERVICE_STOP_REASON_FLAG_PLANNED equ 40000000h
     SERVICE_STOP_REASON_FLAG_MAX equ 80000000h
+    ; Microsoft major reasons. Update SERVICE_STOP_REASON_MAJOR_MAX when
+    ; new codes are added.
     SERVICE_STOP_REASON_MAJOR_MIN equ 00000000h
     SERVICE_STOP_REASON_MAJOR_OTHER equ 00010000h
     SERVICE_STOP_REASON_MAJOR_HARDWARE equ 00020000h
@@ -135,6 +165,8 @@ ifndef _WINSVC_
     SERVICE_STOP_REASON_MAJOR_MAX equ 00070000h
     SERVICE_STOP_REASON_MAJOR_MIN_CUSTOM equ 00400000h
     SERVICE_STOP_REASON_MAJOR_MAX_CUSTOM equ 00ff0000h
+    ; Microsoft minor reasons. Update SERVICE_STOP_REASON_MINOR_MAX when
+    ; new codes are added.
     SERVICE_STOP_REASON_MINOR_MIN equ 00000000h
     SERVICE_STOP_REASON_MINOR_OTHER equ 00000001h
     SERVICE_STOP_REASON_MINOR_MAINTENANCE equ 00000002h
@@ -163,10 +195,13 @@ ifndef _WINSVC_
     SERVICE_STOP_REASON_MINOR_MAX equ 00000019h
     SERVICE_STOP_REASON_MINOR_MIN_CUSTOM equ 00000100h
     SERVICE_STOP_REASON_MINOR_MAX_CUSTOM equ 0000FFFFh
+    ; Info levels for ControlServiceEx
     SERVICE_CONTROL_STATUS_REASON_INFO equ 1
+    ; Service SID types supported
     SERVICE_SID_TYPE_NONE equ 00000000h
     SERVICE_SID_TYPE_UNRESTRICTED equ 00000001h
     SERVICE_SID_TYPE_RESTRICTED equ (00000002h or SERVICE_SID_TYPE_UNRESTRICTED)
+    ; Service trigger types
     SERVICE_TRIGGER_TYPE_DEVICE_INTERFACE_ARRIVAL equ 1
     SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY equ 2
     SERVICE_TRIGGER_TYPE_DOMAIN_JOIN equ 3
@@ -176,32 +211,58 @@ ifndef _WINSVC_
     SERVICE_TRIGGER_TYPE_CUSTOM_SYSTEM_STATE_CHANGE equ 7
     SERVICE_TRIGGER_TYPE_CUSTOM equ 20
     SERVICE_TRIGGER_TYPE_AGGREGATE equ 30
+    ; Service trigger data types
     SERVICE_TRIGGER_DATA_TYPE_BINARY equ 1
     SERVICE_TRIGGER_DATA_TYPE_STRING equ 2
     SERVICE_TRIGGER_DATA_TYPE_LEVEL equ 3
     SERVICE_TRIGGER_DATA_TYPE_KEYWORD_ANY equ 4
     SERVICE_TRIGGER_DATA_TYPE_KEYWORD_ALL equ 5
+    ;  Service start reason
     SERVICE_START_REASON_DEMAND equ 00000001h
     SERVICE_START_REASON_AUTO equ 00000002h
     SERVICE_START_REASON_TRIGGER equ 00000004h
     SERVICE_START_REASON_RESTART_ON_FAILURE equ 00000008h
     SERVICE_START_REASON_DELAYEDAUTO equ 00000010h
+    ;  Service dynamic information levels
     SERVICE_DYNAMIC_INFORMATION_LEVEL_START_REASON equ 1
+    ; Service LaunchProtected types supported
     SERVICE_LAUNCH_PROTECTED_NONE equ 0
     SERVICE_LAUNCH_PROTECTED_WINDOWS equ 1
     SERVICE_LAUNCH_PROTECTED_WINDOWS_LIGHT equ 2
     SERVICE_LAUNCH_PROTECTED_ANTIMALWARE_LIGHT equ 3
+    ;  NETWORK_MANAGER_FIRST_IP_ADDRESS_ARRIVAL_GUID & NETWORK_MANAGER_LAST_IP_ADDRESS_REMOVAL_GUID are used with
+    ;  SERVICE_TRIGGER_TYPE_IP_ADDRESS_AVAILABILITY trigger.
+    ;* 4f27f2de-14e2-430b-a549-7cd48cbc8245 *
     DEFINE_GUID NETWORK_MANAGER_FIRST_IP_ADDRESS_ARRIVAL_GUID, 4f27f2deh, 14e2h, 430bh, 0a5h, 49h, 7ch, 0d4h, 8ch, 0bch, 82h, 45h
+    ;* cc4ba62a-162e-4648-847a-b6bdf993e335 *
     DEFINE_GUID NETWORK_MANAGER_LAST_IP_ADDRESS_REMOVAL_GUID, 0cc4ba62ah, 162eh, 4648h, 84h, 7ah, 0b6h, 0bdh, 0f9h, 93h, 0e3h, 35h
+    ;  DOMAIN_JOIN_GUID & DOMAIN_LEAVE_GUID are used with SERVICE_TRIGGER_TYPE_DOMAIN_JOIN trigger.
+    ;* 1ce20aba-9851-4421-9430-1ddeb766e809 *
     DEFINE_GUID DOMAIN_JOIN_GUID, 1ce20abah, 9851h, 4421h, 94h, 30h, 1dh, 0deh, 0b7h, 66h, 0e8h, 09h
+    ;* ddaf516e-58c2-4866-9574-c3b615d42ea1 *
     DEFINE_GUID DOMAIN_LEAVE_GUID, 0ddaf516eh, 58c2h, 4866h, 95h, 74h, 0c3h, 0b6h, 15h, 0d4h, 2eh, 0a1h
+    ;  FIREWALL_PORT_OPEN_GUID & FIREWALL_PORT_CLOSE_GUID are used with
+    ;  SERVICE_TRIGGER_TYPE_FIREWALL_PORT_EVENT trigger.
+    ;* b7569e07-8421-4ee0-ad10-86915afdad09 *
     DEFINE_GUID FIREWALL_PORT_OPEN_GUID, 0b7569e07h, 8421h, 4ee0h, 0adh, 10h, 86h, 91h, 5ah, 0fdh, 0adh, 09h
+    ;* a144ed38-8e12-4de4-9d96-e64740b1a524 *
     DEFINE_GUID FIREWALL_PORT_CLOSE_GUID, 0a144ed38h, 8e12h, 4de4h, 9dh, 96h, 0e6h, 47h, 40h, 0b1h, 0a5h, 24h
+    ;  MACHINE_POLICY_PRESENT_GUID & USER_POLICY_PRESENT_GUID are used with
+    ;  SERVICE_TRIGGER_TYPE_GROUP_POLICY trigger.
+    ;* 659FCAE6-5BDB-4DA9-B1FF-CA2A178D46E0 *
     DEFINE_GUID MACHINE_POLICY_PRESENT_GUID, 659FCAE6h, 5BDBh, 4DA9h, 0B1h, 0FFh, 0CAh, 2Ah, 17h, 8Dh, 46h, 0E0h
+    ;* 54FB46C8-F089-464C-B1FD-59D1B62C3B50 *
     DEFINE_GUID USER_POLICY_PRESENT_GUID, 54FB46C8h, 0F089h, 464Ch, 0B1h, 0FDh, 59h, 0D1h, 0B6h, 2Ch, 3Bh, 50h
+    ; RPC_INTERFACE_EVENT_GUID, NAMED_PIPE_EVENT_GUID & TCP_PORT_EVENT_GUID are
+    ; used with SERVICE_TRIGGER_TYPE_NETWORK_ENDPOINT trigger.
+    ;* bc90d167-9470-4139-a9ba-be0bbbf5b74d *
     DEFINE_GUID RPC_INTERFACE_EVENT_GUID, 0bc90d167h, 9470h, 4139h, 0a9h, 0bah, 0beh, 0bh, 0bbh, 0f5h, 0b7h, 4dh
+    ;* 1f81d131-3fac-4537-9e0c-7e7b0c2f4b55 *
     DEFINE_GUID NAMED_PIPE_EVENT_GUID, 1f81d131h, 3fach, 4537h, 9eh, 0ch, 7eh, 7bh, 0ch, 2fh, 4bh, 55h
+    ; CUSTOM_SYSTEM_STATE_CHANGE_EVENT_GUID is used with SERVICE_TRIGGER_TYPE_CUSTOM_SYSTEM_STATE_CHANGE
+    ;* 2d7a2816-0c5e-45fc-9ce7-570e5ecde9c9 *
     DEFINE_GUID CUSTOM_SYSTEM_STATE_CHANGE_EVENT_GUID, 2d7a2816h, 0c5eh, 45fch, 9ch, 0e7h, 57h, 0eh, 5eh, 0cdh, 0e9h, 0c9h
+    ; Service notification trigger identifier
     SERVICE_TRIGGER_CUSTOM_STATE_ID struct
       Data DWORD 2 dup (?)
     SERVICE_TRIGGER_CUSTOM_STATE_ID ends
@@ -216,16 +277,20 @@ ifndef _WINSVC_
     SERVICE_CUSTOM_SYSTEM_STATE_CHANGE_DATA_ITEM ends
     _SERVICE_CUSTOM_SYSTEM_STATE_CHANGE_DATA_ITEM typedef SERVICE_CUSTOM_SYSTEM_STATE_CHANGE_DATA_ITEM
     LPSERVICE_CUSTOM_SYSTEM_STATE_CHANGE_DATA_ITEM typedef ptr SERVICE_CUSTOM_SYSTEM_STATE_CHANGE_DATA_ITEM
+    ; Service trigger actions
     SERVICE_TRIGGER_ACTION_SERVICE_START equ 1
     SERVICE_TRIGGER_ACTION_SERVICE_STOP equ 2
+    ; argv[1] passed into ServiceMain of trigger started services
     SERVICE_TRIGGER_STARTED_ARGUMENT equ <L("TriggerStarted")>
+    ; Service description string
     SERVICE_DESCRIPTIONA struct
-      lpDescription LPSTR ?
+      lpDescription POINTER ?
     SERVICE_DESCRIPTIONA ends
     _SERVICE_DESCRIPTIONA typedef SERVICE_DESCRIPTIONA
     LPSERVICE_DESCRIPTIONA typedef ptr SERVICE_DESCRIPTIONA
+    ; Service description string
     SERVICE_DESCRIPTIONW struct
-      lpDescription LPWSTR ?
+      lpDescription POINTER ?
     SERVICE_DESCRIPTIONW ends
     _SERVICE_DESCRIPTIONW typedef SERVICE_DESCRIPTIONW
     LPSERVICE_DESCRIPTIONW typedef ptr SERVICE_DESCRIPTIONW
@@ -236,6 +301,8 @@ ifndef _WINSVC_
       SERVICE_DESCRIPTION typedef SERVICE_DESCRIPTIONA
       LPSERVICE_DESCRIPTION typedef LPSERVICE_DESCRIPTIONA
     endif
+    ; UNICODE
+    ; Actions to take on service failure
     SC_ACTION_TYPE typedef SDWORD
     SC_ACTION_NONE equ 0
     SC_ACTION_RESTART equ 1
@@ -252,8 +319,8 @@ ifndef _WINSVC_
     LPSC_ACTION typedef ptr SC_ACTION
     SERVICE_FAILURE_ACTIONSA struct
       dwResetPeriod DWORD ?
-      lpRebootMsg LPSTR ?
-      lpCommand LPSTR ?
+      lpRebootMsg POINTER ?
+      lpCommand POINTER ?
       ifdef __midl
         ;[...]
       endif
@@ -267,8 +334,8 @@ ifndef _WINSVC_
     LPSERVICE_FAILURE_ACTIONSA typedef ptr SERVICE_FAILURE_ACTIONSA
     SERVICE_FAILURE_ACTIONSW struct
       dwResetPeriod DWORD ?
-      lpRebootMsg LPWSTR ?
-      lpCommand LPWSTR ?
+      lpRebootMsg POINTER ?
+      lpCommand POINTER ?
       ifdef __midl
         ;[...]
       endif
@@ -287,28 +354,39 @@ ifndef _WINSVC_
       SERVICE_FAILURE_ACTIONS typedef SERVICE_FAILURE_ACTIONSA
       LPSERVICE_FAILURE_ACTIONS typedef LPSERVICE_FAILURE_ACTIONSA
     endif
+    ; UNICODE
+    ; Service delayed autostart info setting
     SERVICE_DELAYED_AUTO_START_INFO struct
-      fDelayedAutostart BOOL ?
+      fDelayedAutostart DWORD ?
+      ; Delayed autostart flag
     SERVICE_DELAYED_AUTO_START_INFO ends
     _SERVICE_DELAYED_AUTO_START_INFO typedef SERVICE_DELAYED_AUTO_START_INFO
     LPSERVICE_DELAYED_AUTO_START_INFO typedef ptr SERVICE_DELAYED_AUTO_START_INFO
+    ; Service failure actions flag setting
     SERVICE_FAILURE_ACTIONS_FLAG struct
-      fFailureActionsOnNonCrashFailures BOOL ?
+      fFailureActionsOnNonCrashFailures DWORD ?
+      ; Failure actions flag
     SERVICE_FAILURE_ACTIONS_FLAG ends
     _SERVICE_FAILURE_ACTIONS_FLAG typedef SERVICE_FAILURE_ACTIONS_FLAG
     LPSERVICE_FAILURE_ACTIONS_FLAG typedef ptr SERVICE_FAILURE_ACTIONS_FLAG
+    ; Service SID info setting
     SERVICE_SID_INFO struct
       dwServiceSidType DWORD ?
+      ; Service SID type
     SERVICE_SID_INFO ends
     _SERVICE_SID_INFO typedef SERVICE_SID_INFO
     LPSERVICE_SID_INFO typedef ptr SERVICE_SID_INFO
+    ; Service required privileges information
     SERVICE_REQUIRED_PRIVILEGES_INFOA struct
-      pmszRequiredPrivileges LPSTR ?
+      pmszRequiredPrivileges POINTER ?
+      ; Required privileges multi-sz
     SERVICE_REQUIRED_PRIVILEGES_INFOA ends
     _SERVICE_REQUIRED_PRIVILEGES_INFOA typedef SERVICE_REQUIRED_PRIVILEGES_INFOA
     LPSERVICE_REQUIRED_PRIVILEGES_INFOA typedef ptr SERVICE_REQUIRED_PRIVILEGES_INFOA
+    ; Service required privileges information
     SERVICE_REQUIRED_PRIVILEGES_INFOW struct
-      pmszRequiredPrivileges LPWSTR ?
+      pmszRequiredPrivileges POINTER ?
+      ; Required privileges multi-sz
     SERVICE_REQUIRED_PRIVILEGES_INFOW ends
     _SERVICE_REQUIRED_PRIVILEGES_INFOW typedef SERVICE_REQUIRED_PRIVILEGES_INFOW
     LPSERVICE_REQUIRED_PRIVILEGES_INFOW typedef ptr SERVICE_REQUIRED_PRIVILEGES_INFOW
@@ -319,81 +397,113 @@ ifndef _WINSVC_
       SERVICE_REQUIRED_PRIVILEGES_INFO typedef SERVICE_REQUIRED_PRIVILEGES_INFOA
       LPSERVICE_REQUIRED_PRIVILEGES_INFO typedef LPSERVICE_REQUIRED_PRIVILEGES_INFOA
     endif
+    ; UNICODE
+    ; Service preshutdown timeout setting
     SERVICE_PRESHUTDOWN_INFO struct
       dwPreshutdownTimeout DWORD ?
+      ; Timeout in msecs
     SERVICE_PRESHUTDOWN_INFO ends
     _SERVICE_PRESHUTDOWN_INFO typedef SERVICE_PRESHUTDOWN_INFO
     LPSERVICE_PRESHUTDOWN_INFO typedef ptr SERVICE_PRESHUTDOWN_INFO
+    ;  Service trigger data item
     SERVICE_TRIGGER_SPECIFIC_DATA_ITEM struct
       dwDataType DWORD ?
+      ; Data type -- one of SERVICE_TRIGGER_DATA_TYPE_* constants
       ifdef __midl
         ;[...]
       endif
       cbData DWORD ?
+      ; Size of trigger specific data
       ifdef __midl
         ;[...]
       endif
-      pData PBYTE ?
+      pData POINTER ?
+      ; Trigger specific data
     SERVICE_TRIGGER_SPECIFIC_DATA_ITEM ends
     _SERVICE_TRIGGER_SPECIFIC_DATA_ITEM typedef SERVICE_TRIGGER_SPECIFIC_DATA_ITEM
     PSERVICE_TRIGGER_SPECIFIC_DATA_ITEM typedef ptr SERVICE_TRIGGER_SPECIFIC_DATA_ITEM
+    ;  Trigger-specific information
     SERVICE_TRIGGER struct
       dwTriggerType DWORD ?
+      ; One of SERVICE_TRIGGER_TYPE_* constants
       dwAction DWORD ?
+      ; One of SERVICE_TRIGGER_ACTION_* constants
       pTriggerSubtype POINTER ?
+      ; Provider GUID if the trigger type is SERVICE_TRIGGER_TYPE_CUSTOM
+      ; Device class interface GUID if the trigger type is
+      ; SERVICE_TRIGGER_TYPE_DEVICE_INTERFACE_ARRIVAL
+      ; Aggregate identifier GUID if type is aggregate.
       ifdef __midl
         ;[...]
       endif
       cDataItems DWORD ?
+      ; Number of data items in pDataItems array
       ifdef __midl
         ;[...]
       endif
       pDataItems PSERVICE_TRIGGER_SPECIFIC_DATA_ITEM ?
+      ; Trigger specific data
     SERVICE_TRIGGER ends
     _SERVICE_TRIGGER typedef SERVICE_TRIGGER
     PSERVICE_TRIGGER typedef ptr SERVICE_TRIGGER
+    ; Service trigger information
     SERVICE_TRIGGER_INFO struct
       ifdef __midl
         ;[...]
       endif
       cTriggers DWORD ?
+      ; Number of triggers in the pTriggers array
       ifdef __midl
         ;[...]
       endif
       pTriggers PSERVICE_TRIGGER ?
-      pReserved PBYTE ?
+      ; Array of triggers
+      pReserved POINTER ?
+      ; Reserved, must be NULL
     SERVICE_TRIGGER_INFO ends
     _SERVICE_TRIGGER_INFO typedef SERVICE_TRIGGER_INFO
     PSERVICE_TRIGGER_INFO typedef ptr SERVICE_TRIGGER_INFO
     SC_AGGREGATE_STORAGE_KEY equ <L("System\CurrentControlSet\Control\ServiceAggregatedEvents")>
+    ; Preferred node information
     SERVICE_PREFERRED_NODE_INFO struct
-      usPreferredNode USHORT ?
-      fDelete BOOLEAN ?
+      usPreferredNode WORD ?
+      ; Preferred node
+      fDelete BYTE ?
+      ; Delete the preferred node setting
     SERVICE_PREFERRED_NODE_INFO ends
     _SERVICE_PREFERRED_NODE_INFO typedef SERVICE_PREFERRED_NODE_INFO
     LPSERVICE_PREFERRED_NODE_INFO typedef ptr SERVICE_PREFERRED_NODE_INFO
+    ; Time change information
     SERVICE_TIMECHANGE_INFO struct
       liNewTime LARGE_INTEGER <>
+      ; New time
       liOldTime LARGE_INTEGER <>
+      ; Old time
     SERVICE_TIMECHANGE_INFO ends
     _SERVICE_TIMECHANGE_INFO typedef SERVICE_TIMECHANGE_INFO
     PSERVICE_TIMECHANGE_INFO typedef ptr SERVICE_TIMECHANGE_INFO
+    ; Service launch protected setting
     SERVICE_LAUNCH_PROTECTED_INFO struct
       dwLaunchProtected DWORD ?
+      ; Service launch protected
     SERVICE_LAUNCH_PROTECTED_INFO ends
     _SERVICE_LAUNCH_PROTECTED_INFO typedef SERVICE_LAUNCH_PROTECTED_INFO
     PSERVICE_LAUNCH_PROTECTED_INFO typedef ptr SERVICE_LAUNCH_PROTECTED_INFO
+    ; Handle Types
     DECLARE_HANDLE SC_HANDLE
     LPSC_HANDLE typedef ptr SC_HANDLE
     DECLARE_HANDLE SERVICE_STATUS_HANDLE
+    ; Info levels for QueryServiceStatusEx
     SC_STATUS_TYPE typedef SDWORD
     SC_STATUS_PROCESS_INFO equ 0
     _SC_STATUS_TYPE typedef SC_STATUS_TYPE
 
+    ; Info levels for EnumServicesStatusEx
     SC_ENUM_TYPE typedef SDWORD
     SC_ENUM_PROCESS_INFO equ 0
     _SC_ENUM_TYPE typedef SC_ENUM_TYPE
 
+    ; Service Status Structures
     SERVICE_STATUS struct
       dwServiceType DWORD ?
       dwCurrentState DWORD ?
@@ -418,16 +528,17 @@ ifndef _WINSVC_
     SERVICE_STATUS_PROCESS ends
     _SERVICE_STATUS_PROCESS typedef SERVICE_STATUS_PROCESS
     LPSERVICE_STATUS_PROCESS typedef ptr SERVICE_STATUS_PROCESS
+    ; Service Status Enumeration Structure
     ENUM_SERVICE_STATUSA struct
-      lpServiceName LPSTR ?
-      lpDisplayName LPSTR ?
+      lpServiceName POINTER ?
+      lpDisplayName POINTER ?
       ServiceStatus SERVICE_STATUS <>
     ENUM_SERVICE_STATUSA ends
     _ENUM_SERVICE_STATUSA typedef ENUM_SERVICE_STATUSA
     LPENUM_SERVICE_STATUSA typedef ptr ENUM_SERVICE_STATUSA
     ENUM_SERVICE_STATUSW struct
-      lpServiceName LPWSTR ?
-      lpDisplayName LPWSTR ?
+      lpServiceName POINTER ?
+      lpDisplayName POINTER ?
       ServiceStatus SERVICE_STATUS <>
     ENUM_SERVICE_STATUSW ends
     _ENUM_SERVICE_STATUSW typedef ENUM_SERVICE_STATUSW
@@ -439,16 +550,17 @@ ifndef _WINSVC_
       ENUM_SERVICE_STATUS typedef ENUM_SERVICE_STATUSA
       LPENUM_SERVICE_STATUS typedef LPENUM_SERVICE_STATUSA
     endif
+    ; UNICODE
     ENUM_SERVICE_STATUS_PROCESSA struct
-      lpServiceName LPSTR ?
-      lpDisplayName LPSTR ?
+      lpServiceName POINTER ?
+      lpDisplayName POINTER ?
       ServiceStatusProcess SERVICE_STATUS_PROCESS <>
     ENUM_SERVICE_STATUS_PROCESSA ends
     _ENUM_SERVICE_STATUS_PROCESSA typedef ENUM_SERVICE_STATUS_PROCESSA
     LPENUM_SERVICE_STATUS_PROCESSA typedef ptr ENUM_SERVICE_STATUS_PROCESSA
     ENUM_SERVICE_STATUS_PROCESSW struct
-      lpServiceName LPWSTR ?
-      lpDisplayName LPWSTR ?
+      lpServiceName POINTER ?
+      lpDisplayName POINTER ?
       ServiceStatusProcess SERVICE_STATUS_PROCESS <>
     ENUM_SERVICE_STATUS_PROCESSW ends
     _ENUM_SERVICE_STATUS_PROCESSW typedef ENUM_SERVICE_STATUS_PROCESSW
@@ -460,17 +572,19 @@ ifndef _WINSVC_
       ENUM_SERVICE_STATUS_PROCESS typedef ENUM_SERVICE_STATUS_PROCESSA
       LPENUM_SERVICE_STATUS_PROCESS typedef LPENUM_SERVICE_STATUS_PROCESSA
     endif
+    ; UNICODE
+    ; Structures for the Lock API functions
     SC_LOCK typedef LPVOID
     QUERY_SERVICE_LOCK_STATUSA struct
       fIsLocked DWORD ?
-      lpLockOwner LPSTR ?
+      lpLockOwner POINTER ?
       dwLockDuration DWORD ?
     QUERY_SERVICE_LOCK_STATUSA ends
     _QUERY_SERVICE_LOCK_STATUSA typedef QUERY_SERVICE_LOCK_STATUSA
     LPQUERY_SERVICE_LOCK_STATUSA typedef ptr QUERY_SERVICE_LOCK_STATUSA
     QUERY_SERVICE_LOCK_STATUSW struct
       fIsLocked DWORD ?
-      lpLockOwner LPWSTR ?
+      lpLockOwner POINTER ?
       dwLockDuration DWORD ?
     QUERY_SERVICE_LOCK_STATUSW ends
     _QUERY_SERVICE_LOCK_STATUSW typedef QUERY_SERVICE_LOCK_STATUSW
@@ -482,16 +596,18 @@ ifndef _WINSVC_
       QUERY_SERVICE_LOCK_STATUS typedef QUERY_SERVICE_LOCK_STATUSA
       LPQUERY_SERVICE_LOCK_STATUS typedef LPQUERY_SERVICE_LOCK_STATUSA
     endif
+    ; UNICODE
+    ; Query Service Configuration Structure
     QUERY_SERVICE_CONFIGA struct
       dwServiceType DWORD ?
       dwStartType DWORD ?
       dwErrorControl DWORD ?
-      lpBinaryPathName LPSTR ?
-      lpLoadOrderGroup LPSTR ?
+      lpBinaryPathName POINTER ?
+      lpLoadOrderGroup POINTER ?
       dwTagId DWORD ?
-      lpDependencies LPSTR ?
-      lpServiceStartName LPSTR ?
-      lpDisplayName LPSTR ?
+      lpDependencies POINTER ?
+      lpServiceStartName POINTER ?
+      lpDisplayName POINTER ?
     QUERY_SERVICE_CONFIGA ends
     _QUERY_SERVICE_CONFIGA typedef QUERY_SERVICE_CONFIGA
     LPQUERY_SERVICE_CONFIGA typedef ptr QUERY_SERVICE_CONFIGA
@@ -499,12 +615,12 @@ ifndef _WINSVC_
       dwServiceType DWORD ?
       dwStartType DWORD ?
       dwErrorControl DWORD ?
-      lpBinaryPathName LPWSTR ?
-      lpLoadOrderGroup LPWSTR ?
+      lpBinaryPathName POINTER ?
+      lpLoadOrderGroup POINTER ?
       dwTagId DWORD ?
-      lpDependencies LPWSTR ?
-      lpServiceStartName LPWSTR ?
-      lpDisplayName LPWSTR ?
+      lpDependencies POINTER ?
+      lpServiceStartName POINTER ?
+      lpDisplayName POINTER ?
     QUERY_SERVICE_CONFIGW ends
     _QUERY_SERVICE_CONFIGW typedef QUERY_SERVICE_CONFIGW
     LPQUERY_SERVICE_CONFIGW typedef ptr QUERY_SERVICE_CONFIGW
@@ -515,6 +631,8 @@ ifndef _WINSVC_
       QUERY_SERVICE_CONFIG typedef QUERY_SERVICE_CONFIGA
       LPQUERY_SERVICE_CONFIG typedef LPQUERY_SERVICE_CONFIGA
     endif
+    ; UNICODE
+    ; Function Prototype for the Service Main Function
     SERVICE_MAIN_FUNCTIONW typedef proto :DWORD, :ptr LPWSTR
     SERVICE_MAIN_FUNCTIONA typedef proto :DWORD, :ptr LPTSTR
     ifdef UNICODE
@@ -522,6 +640,7 @@ ifndef _WINSVC_
     else
       SERVICE_MAIN_FUNCTION equ <SERVICE_MAIN_FUNCTIONA>
     endif
+    ;UNICODE
     TYPE_LPSERVICE_MAIN_FUNCTIONW typedef proto WIN_STD_CALL_CONV :DWORD, :ptr LPWSTR
     LPSERVICE_MAIN_FUNCTIONW typedef ptr TYPE_LPSERVICE_MAIN_FUNCTIONW
 
@@ -533,14 +652,16 @@ ifndef _WINSVC_
     else
       LPSERVICE_MAIN_FUNCTION equ <LPSERVICE_MAIN_FUNCTIONA>
     endif
+    ;UNICODE
+    ; Service Start Table
     SERVICE_TABLE_ENTRYA struct
-      lpServiceName LPSTR ?
+      lpServiceName POINTER ?
       lpServiceProc LPSERVICE_MAIN_FUNCTIONA ?
     SERVICE_TABLE_ENTRYA ends
     _SERVICE_TABLE_ENTRYA typedef SERVICE_TABLE_ENTRYA
     LPSERVICE_TABLE_ENTRYA typedef ptr SERVICE_TABLE_ENTRYA
     SERVICE_TABLE_ENTRYW struct
-      lpServiceName LPWSTR ?
+      lpServiceName POINTER ?
       lpServiceProc LPSERVICE_MAIN_FUNCTIONW ?
     SERVICE_TABLE_ENTRYW ends
     _SERVICE_TABLE_ENTRYW typedef SERVICE_TABLE_ENTRYW
@@ -552,6 +673,8 @@ ifndef _WINSVC_
       SERVICE_TABLE_ENTRY typedef SERVICE_TABLE_ENTRYA
       LPSERVICE_TABLE_ENTRY typedef LPSERVICE_TABLE_ENTRYA
     endif
+    ; UNICODE
+    ; Prototype for the Service Control Handler Function
     dwControl typedef VOID
     HANDLER_FUNCTION_EX typedef proto :DWORD, :DWORD, :LPVOID, :LPVOID
     TYPE_LPHANDLER_FUNCTION typedef proto WIN_STD_CALL_CONV :DWORD
@@ -560,13 +683,15 @@ ifndef _WINSVC_
     TYPE_LPHANDLER_FUNCTION_EX typedef proto WIN_STD_CALL_CONV :DWORD, :DWORD, :LPVOID, :LPVOID
     LPHANDLER_FUNCTION_EX typedef ptr TYPE_LPHANDLER_FUNCTION_EX
 
+    ; Service notification parameters
     TYPE_PFN_SC_NOTIFY_CALLBACK typedef proto WIN_STD_CALL_CONV :PVOID
     PFN_SC_NOTIFY_CALLBACK typedef ptr TYPE_PFN_SC_NOTIFY_CALLBACK
 
+    ;  Each new notify structure is a superset of the older version
     SERVICE_NOTIFY_1 struct
       dwVersion DWORD ?
       pfnNotifyCallback PFN_SC_NOTIFY_CALLBACK ?
-      pContext PVOID ?
+      pContext POINTER ?
       dwNotificationStatus DWORD ?
       ServiceStatus SERVICE_STATUS_PROCESS <>
     SERVICE_NOTIFY_1 ends
@@ -575,22 +700,22 @@ ifndef _WINSVC_
     SERVICE_NOTIFY_2A struct
       dwVersion DWORD ?
       pfnNotifyCallback PFN_SC_NOTIFY_CALLBACK ?
-      pContext PVOID ?
+      pContext POINTER ?
       dwNotificationStatus DWORD ?
       ServiceStatus SERVICE_STATUS_PROCESS <>
       dwNotificationTriggered DWORD ?
-      pszServiceNames LPSTR ?
+      pszServiceNames POINTER ?
     SERVICE_NOTIFY_2A ends
     _SERVICE_NOTIFY_2A typedef SERVICE_NOTIFY_2A
     PSERVICE_NOTIFY_2A typedef ptr SERVICE_NOTIFY_2A
     SERVICE_NOTIFY_2W struct
       dwVersion DWORD ?
       pfnNotifyCallback PFN_SC_NOTIFY_CALLBACK ?
-      pContext PVOID ?
+      pContext POINTER ?
       dwNotificationStatus DWORD ?
       ServiceStatus SERVICE_STATUS_PROCESS <>
       dwNotificationTriggered DWORD ?
-      pszServiceNames LPWSTR ?
+      pszServiceNames POINTER ?
     SERVICE_NOTIFY_2W ends
     _SERVICE_NOTIFY_2W typedef SERVICE_NOTIFY_2W
     PSERVICE_NOTIFY_2W typedef ptr SERVICE_NOTIFY_2W
@@ -601,6 +726,7 @@ ifndef _WINSVC_
       SERVICE_NOTIFY_2 typedef SERVICE_NOTIFY_2A
       PSERVICE_NOTIFY_2 typedef PSERVICE_NOTIFY_2A
     endif
+    ; UNICODE
     SERVICE_NOTIFYA typedef SERVICE_NOTIFY_2A
     PSERVICE_NOTIFYA typedef ptr SERVICE_NOTIFY_2A
     SERVICE_NOTIFYW typedef SERVICE_NOTIFY_2W
@@ -612,16 +738,19 @@ ifndef _WINSVC_
       SERVICE_NOTIFY typedef SERVICE_NOTIFYA
       PSERVICE_NOTIFY typedef PSERVICE_NOTIFYA
     endif
+    ; UNICODE
+    ; Service control status reason parameters
     SERVICE_CONTROL_STATUS_REASON_PARAMSA struct
       dwReason DWORD ?
-      pszComment LPSTR ?
+      pszComment POINTER ?
       ServiceStatus SERVICE_STATUS_PROCESS <>
     SERVICE_CONTROL_STATUS_REASON_PARAMSA ends
     _SERVICE_CONTROL_STATUS_REASON_PARAMSA typedef SERVICE_CONTROL_STATUS_REASON_PARAMSA
     PSERVICE_CONTROL_STATUS_REASON_PARAMSA typedef ptr SERVICE_CONTROL_STATUS_REASON_PARAMSA
+    ; Service control status reason parameters
     SERVICE_CONTROL_STATUS_REASON_PARAMSW struct
       dwReason DWORD ?
-      pszComment LPWSTR ?
+      pszComment POINTER ?
       ServiceStatus SERVICE_STATUS_PROCESS <>
     SERVICE_CONTROL_STATUS_REASON_PARAMSW ends
     _SERVICE_CONTROL_STATUS_REASON_PARAMSW typedef SERVICE_CONTROL_STATUS_REASON_PARAMSW
@@ -633,11 +762,16 @@ ifndef _WINSVC_
       SERVICE_CONTROL_STATUS_REASON_PARAMS typedef SERVICE_CONTROL_STATUS_REASON_PARAMSA
       PSERVICE_CONTROL_STATUS_REASON_PARAMS typedef PSERVICE_CONTROL_STATUS_REASON_PARAMSA
     endif
+    ; UNICODE
+    ;  Service start reason
     SERVICE_START_REASON struct
       dwReason DWORD ?
     SERVICE_START_REASON ends
     _SERVICE_START_REASON typedef SERVICE_START_REASON
     PSERVICE_START_REASON typedef ptr SERVICE_START_REASON
+    ;/////////////////////////////////////////////////////////////////////////
+    ; API Function Prototypes
+    ;/////////////////////////////////////////////////////////////////////////
     @DefProto DllImport, ChangeServiceConfigA, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :DWORD, :DWORD, :LPCSTR, :LPCSTR, :LPDWORD, :LPCSTR, :LPCSTR, :LPCSTR, :LPCSTR>, 44
     @DefProto DllImport, ChangeServiceConfigW, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :DWORD, :DWORD, :LPCWSTR, :LPCWSTR, :LPDWORD, :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR>, 44
     ifdef UNICODE
@@ -645,6 +779,7 @@ ifndef _WINSVC_
     else
       ChangeServiceConfig equ <ChangeServiceConfigA>
     endif
+    ; !UNICODE
     @DefProto DllImport, ChangeServiceConfig2A, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :LPVOID>, 12
     @DefProto DllImport, ChangeServiceConfig2W, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :LPVOID>, 12
     ifdef UNICODE
@@ -652,6 +787,7 @@ ifndef _WINSVC_
     else
       ChangeServiceConfig2 equ <ChangeServiceConfig2A>
     endif
+    ; !UNICODE
     @DefProto DllImport, CloseServiceHandle, WIN_STD_CALL_CONV,, <:SC_HANDLE>, 4
     @DefProto DllImport, ControlService, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :LPSERVICE_STATUS>, 12
     @DefProto DllImport, CreateServiceA, WIN_STD_CALL_CONV,, <:SC_HANDLE, :LPCSTR, :LPCSTR, :DWORD, :DWORD, :DWORD, :DWORD, :LPCSTR, :LPCSTR, :LPDWORD, :LPCSTR, :LPCSTR, :LPCSTR>, 52
@@ -661,6 +797,7 @@ ifndef _WINSVC_
     else
       CreateService equ <CreateServiceA>
     endif
+    ; !UNICODE
     @DefProto DllImport, DeleteService, WIN_STD_CALL_CONV,, <:SC_HANDLE>, 4
     @DefProto DllImport, EnumDependentServicesA, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :LPENUM_SERVICE_STATUSA, :DWORD, :LPDWORD, :LPDWORD>, 24
     @DefProto DllImport, EnumDependentServicesW, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :LPENUM_SERVICE_STATUSW, :DWORD, :LPDWORD, :LPDWORD>, 24
@@ -669,6 +806,8 @@ ifndef _WINSVC_
     else
       EnumDependentServices equ <EnumDependentServicesA>
     endif
+    ; !UNICODE
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, EnumServicesStatusA, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :DWORD, :LPENUM_SERVICE_STATUSA, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD>, 32
@@ -678,6 +817,8 @@ ifndef _WINSVC_
     else
       EnumServicesStatus equ <EnumServicesStatusA>
     endif
+    ; !UNICODE
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, EnumServicesStatusExA, WIN_STD_CALL_CONV,, <:SC_HANDLE, :SC_ENUM_TYPE, :DWORD, :DWORD, :LPBYTE, :DWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPCSTR>, 40
@@ -687,6 +828,7 @@ ifndef _WINSVC_
     else
       EnumServicesStatusEx equ <EnumServicesStatusExA>
     endif
+    ; !UNICODE
     @DefProto DllImport, GetServiceKeyNameA, WIN_STD_CALL_CONV,, <:SC_HANDLE, :LPCSTR, :LPSTR, :LPDWORD>, 16
     @DefProto DllImport, GetServiceKeyNameW, WIN_STD_CALL_CONV,, <:SC_HANDLE, :LPCWSTR, :LPWSTR, :LPDWORD>, 16
     ifdef UNICODE
@@ -694,6 +836,7 @@ ifndef _WINSVC_
     else
       GetServiceKeyName equ <GetServiceKeyNameA>
     endif
+    ; !UNICODE
     @DefProto DllImport, GetServiceDisplayNameA, WIN_STD_CALL_CONV,, <:SC_HANDLE, :LPCSTR, :LPSTR, :LPDWORD>, 16
     @DefProto DllImport, GetServiceDisplayNameW, WIN_STD_CALL_CONV,, <:SC_HANDLE, :LPCWSTR, :LPWSTR, :LPDWORD>, 16
     ifdef UNICODE
@@ -701,10 +844,13 @@ ifndef _WINSVC_
     else
       GetServiceDisplayName equ <GetServiceDisplayNameA>
     endif
+    ; !UNICODE
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, LockServiceDatabase, WIN_STD_CALL_CONV,, <:SC_HANDLE>, 4
     @DefProto DllImport, NotifyBootConfigStatus, WIN_STD_CALL_CONV,, <:BOOL>, 4
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, OpenSCManagerA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :DWORD>, 12
@@ -714,6 +860,7 @@ ifndef _WINSVC_
     else
       OpenSCManager equ <OpenSCManagerA>
     endif
+    ; !UNICODE
     @DefProto DllImport, OpenServiceA, WIN_STD_CALL_CONV,, <:SC_HANDLE, :LPCSTR, :DWORD>, 12
     @DefProto DllImport, OpenServiceW, WIN_STD_CALL_CONV,, <:SC_HANDLE, :LPCWSTR, :DWORD>, 12
     ifdef UNICODE
@@ -721,6 +868,7 @@ ifndef _WINSVC_
     else
       OpenService equ <OpenServiceA>
     endif
+    ; !UNICODE
     @DefProto DllImport, QueryServiceConfigA, WIN_STD_CALL_CONV,, <:SC_HANDLE, :LPQUERY_SERVICE_CONFIGA, :DWORD, :LPDWORD>, 16
     @DefProto DllImport, QueryServiceConfigW, WIN_STD_CALL_CONV,, <:SC_HANDLE, :LPQUERY_SERVICE_CONFIGW, :DWORD, :LPDWORD>, 16
     ifdef UNICODE
@@ -728,6 +876,7 @@ ifndef _WINSVC_
     else
       QueryServiceConfig equ <QueryServiceConfigA>
     endif
+    ; !UNICODE
     @DefProto DllImport, QueryServiceConfig2A, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :LPBYTE, :DWORD, :LPDWORD>, 20
     @DefProto DllImport, QueryServiceConfig2W, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :LPBYTE, :DWORD, :LPDWORD>, 20
     ifdef UNICODE
@@ -735,6 +884,8 @@ ifndef _WINSVC_
     else
       QueryServiceConfig2 equ <QueryServiceConfig2A>
     endif
+    ; !UNICODE
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, QueryServiceLockStatusA, WIN_STD_CALL_CONV,, <:SC_HANDLE, :LPQUERY_SERVICE_LOCK_STATUSA, :DWORD, :LPDWORD>, 16
@@ -744,6 +895,8 @@ ifndef _WINSVC_
     else
       QueryServiceLockStatus equ <QueryServiceLockStatusA>
     endif
+    ; !UNICODE
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, QueryServiceObjectSecurity, WIN_STD_CALL_CONV,, <:SC_HANDLE, :SECURITY_INFORMATION, :PSECURITY_DESCRIPTOR, :DWORD, :LPDWORD>, 20
@@ -756,6 +909,7 @@ ifndef _WINSVC_
     else
       RegisterServiceCtrlHandler equ <RegisterServiceCtrlHandlerA>
     endif
+    ; !UNICODE
     @DefProto DllImport, RegisterServiceCtrlHandlerExA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPHANDLER_FUNCTION_EX, :LPVOID>, 12
     @DefProto DllImport, RegisterServiceCtrlHandlerExW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPHANDLER_FUNCTION_EX, :LPVOID>, 12
     ifdef UNICODE
@@ -763,6 +917,7 @@ ifndef _WINSVC_
     else
       RegisterServiceCtrlHandlerEx equ <RegisterServiceCtrlHandlerExA>
     endif
+    ; !UNICODE
     @DefProto DllImport, SetServiceObjectSecurity, WIN_STD_CALL_CONV,, <:SC_HANDLE, :SECURITY_INFORMATION, :PSECURITY_DESCRIPTOR>, 12
     @DefProto DllImport, SetServiceStatus, WIN_STD_CALL_CONV,, <:SERVICE_STATUS_HANDLE, :LPSERVICE_STATUS>, 8
     @DefProto DllImport, StartServiceCtrlDispatcherA, WIN_STD_CALL_CONV,, <:ptr SERVICE_TABLE_ENTRYA>, 4
@@ -772,6 +927,7 @@ ifndef _WINSVC_
     else
       StartServiceCtrlDispatcher equ <StartServiceCtrlDispatcherA>
     endif
+    ; !UNICODE
     @DefProto DllImport, StartServiceA, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :ptr LPCSTR>, 12
     @DefProto DllImport, StartServiceW, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :ptr LPCWSTR>, 12
     ifdef UNICODE
@@ -779,9 +935,12 @@ ifndef _WINSVC_
     else
       StartService equ <StartServiceA>
     endif
+    ; !UNICODE
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, UnlockServiceDatabase, WIN_STD_CALL_CONV,, <:SC_LOCK>, 4
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if (NTDDI_VERSION ge NTDDI_VISTA)
@@ -792,6 +951,7 @@ ifndef _WINSVC_
       else
         NotifyServiceStatusChange equ <NotifyServiceStatusChangeA>
       endif
+      ; !UNICODE
       @DefProto DllImport, ControlServiceExA, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :DWORD, :PVOID>, 16
       @DefProto DllImport, ControlServiceExW, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :DWORD, :PVOID>, 16
       ifdef UNICODE
@@ -799,9 +959,12 @@ ifndef _WINSVC_
       else
         ControlServiceEx equ <ControlServiceExA>
       endif
+      ; !UNICODE
       @DefProto DllImport, QueryServiceDynamicInformation, WIN_STD_CALL_CONV,, <:SERVICE_STATUS_HANDLE, :DWORD, :ptr PVOID>, 12
     endif
+    ; NTDDI_VERSION >= NTDDI_VISTA
     if (NTDDI_VERSION ge NTDDI_WIN8)
+      ; Service status change notification API
       SC_EVENT_TYPE typedef SDWORD
       SC_EVENT_DATABASE_CHANGE equ 0
       SC_EVENT_PROPERTY_CHANGE equ 1
@@ -815,7 +978,9 @@ ifndef _WINSVC_
       @DefProto DllImport, UnsubscribeServiceChangeNotifications, WIN_STD_CALL_CONV,, <:PSC_NOTIFICATION_REGISTRATION>, 4
       @DefProto DllImport, WaitServiceState, WIN_STD_CALL_CONV,, <:SC_HANDLE, :DWORD, :DWORD, :HANDLE>, 16
     endif
+    ; NTDDI_VERSION >= NTDDI_WIN8
     if (NTDDI_VERSION ge NTDDI_WIN10_RS4)
+      ; Service state type enums
       SERVICE_REGISTRY_STATE_TYPE typedef SDWORD
       ServiceRegistryStateParameters equ 0
       ServiceRegistryStatePersistent equ 1
@@ -823,6 +988,7 @@ ifndef _WINSVC_
 
       GetServiceRegistryStateKey proto WIN_STD_CALL_CONV :SERVICE_STATUS_HANDLE, :SERVICE_REGISTRY_STATE_TYPE, :DWORD, :ptr HKEY
     endif
+    ; NTDDI_VERSION >= NTDDI_WIN10_RS4
     if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
       SERVICE_DIRECTORY_TYPE typedef SDWORD
       ServiceDirectoryPersistentState equ 0
@@ -830,6 +996,7 @@ ifndef _WINSVC_
 
       GetServiceDirectory proto WIN_STD_CALL_CONV :SERVICE_STATUS_HANDLE, :SERVICE_DIRECTORY_TYPE, :PWCHAR, :DWORD, :ptr DWORD
     endif
+    ; NTDDI_VERSION >= NTDDI_WIN10_RS5
     if (NTDDI_VERSION ge NTDDI_WIN10_MN)
       SERVICE_SHARED_REGISTRY_STATE_TYPE typedef SDWORD
       ServiceSharedRegistryPersistentState equ 0
@@ -840,6 +1007,8 @@ ifndef _WINSVC_
 
       GetSharedServiceDirectory proto WIN_STD_CALL_CONV :SC_HANDLE, :SERVICE_SHARED_DIRECTORY_TYPE, :PWCHAR, :DWORD, :ptr DWORD
     endif
+    ; NTDDI_VERSION >= NTDDI_WIN10_MN
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   ifdef __cplusplus
     ;[...]
@@ -847,3 +1016,4 @@ ifndef _WINSVC_
   if _MSC_VER ge 1200
   endif
 endif
+; _WINSVC_

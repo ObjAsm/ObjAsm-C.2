@@ -1,9 +1,10 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 19/05/2024 07:52:23
+;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
 ;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\minidumpapiset.h\minidumpapiset.h
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\minidumpapiset.h
 ;             Created on (UTC) 06/04/2024 06:15:56
 ;             Last modified on (UTC) 21/02/2024 18:13:14
 
+; Copyright (C) Microsoft Corporation. All rights reserved.
 if Defined(_MSC_VER)
 endif
 ifndef _MINIDUMP_H
@@ -17,16 +18,20 @@ ifndef _MINIDUMP_H
   include apiset.inc
   include apisetcconv.inc
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
+    ; HEXTRACT: hide_line begin_dbghelp begin_imagehlp
     include pshpack4.inc
     if Defined(_MSC_VER)
       if _MSC_VER ge 800
         if _MSC_VER ge 1200
         endif
+        ;* Zero length array *
+        ;* Nameless struct/union *
       endif
     endif
     ifdef __cplusplus
       ;[...]
     endif
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     MINIDUMP_SIGNATURE equ <('PMDM')>
@@ -34,55 +39,70 @@ ifndef _MINIDUMP_H
     RVA typedef DWORD
     RVA64 typedef ULONG64
     MINIDUMP_LOCATION_DESCRIPTOR struct
-      DataSize ULONG32 ?
+      DataSize DWORD ?
       Rva RVA ?
     MINIDUMP_LOCATION_DESCRIPTOR ends
     _MINIDUMP_LOCATION_DESCRIPTOR typedef MINIDUMP_LOCATION_DESCRIPTOR
     MINIDUMP_LOCATION_DESCRIPTOR64 struct
-      DataSize ULONG64 ?
+      DataSize QWORD ?
       Rva RVA64 ?
     MINIDUMP_LOCATION_DESCRIPTOR64 ends
     _MINIDUMP_LOCATION_DESCRIPTOR64 typedef MINIDUMP_LOCATION_DESCRIPTOR64
     MINIDUMP_MEMORY_DESCRIPTOR struct
-      StartOfMemoryRange ULONG64 ?
+      StartOfMemoryRange QWORD ?
       Memory_ MINIDUMP_LOCATION_DESCRIPTOR <>
     MINIDUMP_MEMORY_DESCRIPTOR ends
     _MINIDUMP_MEMORY_DESCRIPTOR typedef MINIDUMP_MEMORY_DESCRIPTOR
     PMINIDUMP_MEMORY_DESCRIPTOR typedef ptr MINIDUMP_MEMORY_DESCRIPTOR
+    ; DESCRIPTOR64 is used for full-memory minidumps where
+    ; all of the raw memory is laid out sequentially at the
+    ; end of the dump.  There is no need for individual RVAs
+    ; as the RVA is the base RVA plus the sum of the preceeding
+    ; data blocks.
     MINIDUMP_MEMORY_DESCRIPTOR64 struct
-      StartOfMemoryRange ULONG64 ?
-      DataSize ULONG64 ?
+      StartOfMemoryRange QWORD ?
+      DataSize QWORD ?
     MINIDUMP_MEMORY_DESCRIPTOR64 ends
     _MINIDUMP_MEMORY_DESCRIPTOR64 typedef MINIDUMP_MEMORY_DESCRIPTOR64
     PMINIDUMP_MEMORY_DESCRIPTOR64 typedef ptr MINIDUMP_MEMORY_DESCRIPTOR64
     MINIDUMP_HEADER struct
-      Signature ULONG32 ?
-      Version ULONG32 ?
-      NumberOfStreams ULONG32 ?
+      Signature DWORD ?
+      Version DWORD ?
+      NumberOfStreams DWORD ?
       StreamDirectoryRva RVA ?
-      CheckSum ULONG32 ?
+      CheckSum DWORD ?
       union
-        Reserved ULONG32 ?
-        TimeDateStamp ULONG32 ?
+        Reserved DWORD ?
+        TimeDateStamp DWORD ?
       ends
-      Flags ULONG64 ?
+      Flags QWORD ?
     MINIDUMP_HEADER ends
     _MINIDUMP_HEADER typedef MINIDUMP_HEADER
     PMINIDUMP_HEADER typedef ptr MINIDUMP_HEADER
+    ; The MINIDUMP_HEADER field StreamDirectoryRva points to
+    ; an array of MINIDUMP_DIRECTORY structures.
     MINIDUMP_DIRECTORY struct
-      StreamType ULONG32 ?
+      StreamType DWORD ?
       Location MINIDUMP_LOCATION_DESCRIPTOR <>
     MINIDUMP_DIRECTORY ends
     _MINIDUMP_DIRECTORY typedef MINIDUMP_DIRECTORY
     PMINIDUMP_DIRECTORY typedef ptr MINIDUMP_DIRECTORY
     MINIDUMP_STRING struct
-      Length_ ULONG32 ?
-      Buffer WCHAR 0 dup (?)
+      Length_ DWORD ?
+      ; Length in bytes of the string
+      Buffer WORD 0 dup (?)
+      ; Variable size buffer
     MINIDUMP_STRING ends
     _MINIDUMP_STRING typedef MINIDUMP_STRING
     PMINIDUMP_STRING typedef ptr MINIDUMP_STRING
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    ; The MINIDUMP_DIRECTORY field StreamType may be one of the following types.
+    ; Types will be added in the future, so if a program reading the minidump
+    ; header encounters a stream type it does not understand it should ignore
+    ; the data altogether. Any tag above LastReservedStream will not be used by
+    ; the system and is reserved for program-specific information.
     MINIDUMP_STREAM_TYPE typedef SDWORD
     UnusedStream equ 0
     ReservedStream0 equ 1
@@ -125,153 +145,205 @@ ifndef _MINIDUMP_H
     LastReservedStream equ 0ffffh
     _MINIDUMP_STREAM_TYPE typedef MINIDUMP_STREAM_TYPE
 
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+    ; The minidump system information contains processor and
+    ; Operating System specific information.
+    ; CPU information is obtained from one of two places.
+    ;  1) On x86 computers, CPU_INFORMATION is obtained from the CPUID
+    ;     instruction. You must use the X86 portion of the union for X86
+    ;     computers.
+    ;  2) On non-x86 architectures, CPU_INFORMATION is obtained by calling
+    ;     IsProcessorFeatureSupported().
     CPU_INFORMATION union
+      ; X86 platforms use CPUID function to obtain processor information.
       struct X86CpuInfo
-        VendorId ULONG32 3 dup (?)
-        VersionInformation ULONG32 ?
-        FeatureInformation ULONG32 ?
-        AMDExtendedCpuFeatures ULONG32 ?
+        ; CPUID Subfunction 0, register EAX (VendorId [0]),
+        ; EBX (VendorId [1]) and ECX (VendorId [2]).
+        VendorId DWORD 3 dup (?)
+        ; CPUID Subfunction 1, register EAX
+        VersionInformation DWORD ?
+        ; CPUID Subfunction 1, register EDX
+        FeatureInformation DWORD ?
+        ; CPUID, Subfunction 80000001, register EBX. This will only
+        ; be obtained if the vendor id is "AuthenticAMD".
+        AMDExtendedCpuFeatures DWORD ?
       ends
+      ; Non-x86 platforms use processor feature flags.
       struct OtherCpuInfo
-        ProcessorFeatures ULONG64 2 dup (?)
+        ProcessorFeatures QWORD 2 dup (?)
       ends
     CPU_INFORMATION ends
     _CPU_INFORMATION typedef CPU_INFORMATION
     PCPU_INFORMATION typedef ptr CPU_INFORMATION
     MINIDUMP_SYSTEM_INFO struct
-      ProcessorArchitecture USHORT ?
-      ProcessorLevel USHORT ?
-      ProcessorRevision USHORT ?
+      ; ProcessorArchitecture, ProcessorLevel and ProcessorRevision are all
+      ; taken from the SYSTEM_INFO structure obtained by GetSystemInfo( ).
+      ProcessorArchitecture WORD ?
+      ProcessorLevel WORD ?
+      ProcessorRevision WORD ?
       union
-        Reserved0 USHORT ?
+        Reserved0 WORD ?
         struct
-          NumberOfProcessors UCHAR ?
-          ProductType UCHAR ?
+          NumberOfProcessors BYTE ?
+          ProductType BYTE ?
         ends
       ends
-      MajorVersion ULONG32 ?
-      MinorVersion ULONG32 ?
-      BuildNumber ULONG32 ?
-      PlatformId ULONG32 ?
+      ; MajorVersion, MinorVersion, BuildNumber, PlatformId and
+      ; CSDVersion are all taken from the OSVERSIONINFO structure
+      ; returned by GetVersionEx( ).
+      MajorVersion DWORD ?
+      MinorVersion DWORD ?
+      BuildNumber DWORD ?
+      PlatformId DWORD ?
+      ; RVA to a CSDVersion string in the string table.
       CSDVersionRva RVA ?
       union
-        Reserved1 ULONG32 ?
+        Reserved1 DWORD ?
         struct
-          SuiteMask USHORT ?
-          Reserved2 USHORT ?
+          SuiteMask WORD ?
+          Reserved2 WORD ?
         ends
       ends
       Cpu_ CPU_INFORMATION <>
     MINIDUMP_SYSTEM_INFO ends
     _MINIDUMP_SYSTEM_INFO typedef MINIDUMP_SYSTEM_INFO
     PMINIDUMP_SYSTEM_INFO typedef ptr MINIDUMP_SYSTEM_INFO
+    ; The minidump thread contains standard thread
+    ; information plus an RVA to the memory for this
+    ; thread and an RVA to the CONTEXT structure for
+    ; this thread.
+    ; ThreadId must be 4 bytes on all architectures.
     MINIDUMP_THREAD struct
-      ThreadId ULONG32 ?
-      SuspendCount ULONG32 ?
-      PriorityClass ULONG32 ?
-      Priority ULONG32 ?
-      Teb ULONG64 ?
+      ThreadId DWORD ?
+      SuspendCount DWORD ?
+      PriorityClass DWORD ?
+      Priority DWORD ?
+      Teb QWORD ?
       Stack_ MINIDUMP_MEMORY_DESCRIPTOR <>
       ThreadContext MINIDUMP_LOCATION_DESCRIPTOR <>
     MINIDUMP_THREAD ends
     _MINIDUMP_THREAD typedef MINIDUMP_THREAD
     PMINIDUMP_THREAD typedef ptr MINIDUMP_THREAD
+    ; The thread list is a container of threads.
     MINIDUMP_THREAD_LIST struct
-      NumberOfThreads ULONG32 ?
+      NumberOfThreads DWORD ?
       Threads MINIDUMP_THREAD 0 dup (<>)
     MINIDUMP_THREAD_LIST ends
     _MINIDUMP_THREAD_LIST typedef MINIDUMP_THREAD_LIST
     PMINIDUMP_THREAD_LIST typedef ptr MINIDUMP_THREAD_LIST
     MINIDUMP_THREAD_EX struct
-      ThreadId ULONG32 ?
-      SuspendCount ULONG32 ?
-      PriorityClass ULONG32 ?
-      Priority ULONG32 ?
-      Teb ULONG64 ?
+      ThreadId DWORD ?
+      SuspendCount DWORD ?
+      PriorityClass DWORD ?
+      Priority DWORD ?
+      Teb QWORD ?
       Stack_ MINIDUMP_MEMORY_DESCRIPTOR <>
       ThreadContext MINIDUMP_LOCATION_DESCRIPTOR <>
       BackingStore MINIDUMP_MEMORY_DESCRIPTOR <>
     MINIDUMP_THREAD_EX ends
     _MINIDUMP_THREAD_EX typedef MINIDUMP_THREAD_EX
     PMINIDUMP_THREAD_EX typedef ptr MINIDUMP_THREAD_EX
+    ; The thread list is a container of threads.
     MINIDUMP_THREAD_EX_LIST struct
-      NumberOfThreads ULONG32 ?
+      NumberOfThreads DWORD ?
       Threads MINIDUMP_THREAD_EX 0 dup (<>)
     MINIDUMP_THREAD_EX_LIST ends
     _MINIDUMP_THREAD_EX_LIST typedef MINIDUMP_THREAD_EX_LIST
     PMINIDUMP_THREAD_EX_LIST typedef ptr MINIDUMP_THREAD_EX_LIST
+    ; The MINIDUMP_EXCEPTION is the same as EXCEPTION on Win64.
     MINIDUMP_EXCEPTION struct
-      ExceptionCode ULONG32 ?
-      ExceptionFlags ULONG32 ?
-      ExceptionRecord ULONG64 ?
-      ExceptionAddress ULONG64 ?
-      NumberParameters ULONG32 ?
-      __unusedAlignment ULONG32 ?
-      ExceptionInformation ULONG64 EXCEPTION_MAXIMUM_PARAMETERS dup (?)
+      ExceptionCode DWORD ?
+      ExceptionFlags DWORD ?
+      ExceptionRecord QWORD ?
+      ExceptionAddress QWORD ?
+      NumberParameters DWORD ?
+      __unusedAlignment DWORD ?
+      ExceptionInformation QWORD EXCEPTION_MAXIMUM_PARAMETERS dup (?)
     MINIDUMP_EXCEPTION ends
     _MINIDUMP_EXCEPTION typedef MINIDUMP_EXCEPTION
     PMINIDUMP_EXCEPTION typedef ptr MINIDUMP_EXCEPTION
+    ; The exception information stream contains the id of the thread that caused
+    ; the exception (ThreadId), the exception record for the exception
+    ; (ExceptionRecord) and an RVA to the thread context where the exception
+    ; occured.
     MINIDUMP_EXCEPTION_STREAM struct
-      ThreadId ULONG32 ?
-      __alignment ULONG32 ?
+      ThreadId DWORD ?
+      __alignment DWORD ?
       ExceptionRecord MINIDUMP_EXCEPTION <>
       ThreadContext MINIDUMP_LOCATION_DESCRIPTOR <>
     MINIDUMP_EXCEPTION_STREAM ends
     PMINIDUMP_EXCEPTION_STREAM typedef ptr MINIDUMP_EXCEPTION_STREAM
+    ; The MINIDUMP_MODULE contains information about a
+    ; a specific module. It includes the CheckSum and
+    ; the TimeDateStamp for the module so the module
+    ; can be reloaded during the analysis phase.
     MINIDUMP_MODULE struct
-      BaseOfImage ULONG64 ?
-      SizeOfImage ULONG32 ?
-      CheckSum ULONG32 ?
-      TimeDateStamp ULONG32 ?
+      BaseOfImage QWORD ?
+      SizeOfImage DWORD ?
+      CheckSum DWORD ?
+      TimeDateStamp DWORD ?
       ModuleNameRva RVA ?
       VersionInfo VS_FIXEDFILEINFO <>
       CvRecord MINIDUMP_LOCATION_DESCRIPTOR <>
       MiscRecord MINIDUMP_LOCATION_DESCRIPTOR <>
-      Reserved0 ULONG64 ?
-      Reserved1 ULONG64 ?
+      Reserved0 QWORD ?
+      ; Reserved for future use.
+      Reserved1 QWORD ?
+      ; Reserved for future use.
     MINIDUMP_MODULE ends
     _MINIDUMP_MODULE typedef MINIDUMP_MODULE
     PMINIDUMP_MODULE typedef ptr MINIDUMP_MODULE
+    ; The minidump module list is a container for modules.
     MINIDUMP_MODULE_LIST struct
-      NumberOfModules ULONG32 ?
+      NumberOfModules DWORD ?
       Modules MINIDUMP_MODULE 0 dup (<>)
     MINIDUMP_MODULE_LIST ends
     _MINIDUMP_MODULE_LIST typedef MINIDUMP_MODULE_LIST
     PMINIDUMP_MODULE_LIST typedef ptr MINIDUMP_MODULE_LIST
+    ; Memory Ranges
     MINIDUMP_MEMORY_LIST struct
-      NumberOfMemoryRanges ULONG32 ?
+      NumberOfMemoryRanges DWORD ?
       MemoryRanges MINIDUMP_MEMORY_DESCRIPTOR 0 dup (<>)
     MINIDUMP_MEMORY_LIST ends
     _MINIDUMP_MEMORY_LIST typedef MINIDUMP_MEMORY_LIST
     PMINIDUMP_MEMORY_LIST typedef ptr MINIDUMP_MEMORY_LIST
     MINIDUMP_MEMORY64_LIST struct
-      NumberOfMemoryRanges ULONG64 ?
+      NumberOfMemoryRanges QWORD ?
       BaseRva RVA64 ?
       MemoryRanges MINIDUMP_MEMORY_DESCRIPTOR64 0 dup (<>)
     MINIDUMP_MEMORY64_LIST ends
     _MINIDUMP_MEMORY64_LIST typedef MINIDUMP_MEMORY64_LIST
     PMINIDUMP_MEMORY64_LIST typedef ptr MINIDUMP_MEMORY64_LIST
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
+    ; Support for user supplied exception information.
     MINIDUMP_EXCEPTION_INFORMATION struct
       ThreadId DWORD ?
       ExceptionPointers PEXCEPTION_POINTERS ?
-      ClientPointers BOOL ?
+      ClientPointers DWORD ?
     MINIDUMP_EXCEPTION_INFORMATION ends
     _MINIDUMP_EXCEPTION_INFORMATION typedef MINIDUMP_EXCEPTION_INFORMATION
     PMINIDUMP_EXCEPTION_INFORMATION typedef ptr MINIDUMP_EXCEPTION_INFORMATION
     MINIDUMP_EXCEPTION_INFORMATION64 struct
       ThreadId DWORD ?
-      ExceptionRecord ULONG64 ?
-      ContextRecord ULONG64 ?
-      ClientPointers BOOL ?
+      ExceptionRecord QWORD ?
+      ContextRecord QWORD ?
+      ClientPointers DWORD ?
     MINIDUMP_EXCEPTION_INFORMATION64 ends
     _MINIDUMP_EXCEPTION_INFORMATION64 typedef MINIDUMP_EXCEPTION_INFORMATION64
     PMINIDUMP_EXCEPTION_INFORMATION64 typedef ptr MINIDUMP_EXCEPTION_INFORMATION64
+    ; Support for capturing system handle state at the time of the dump.
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+    ; Per-handle object information varies according to
+    ; the OS, the OS version, the processor type and
+    ; so on.  The minidump gives a minidump identifier
+    ; to each possible data format for identification
+    ; purposes but does not control nor describe the actual data.
     MINIDUMP_HANDLE_OBJECT_INFORMATION_TYPE typedef SDWORD
     MiniHandleObjectInformationNone equ 0
     MiniThreadInformation1 equ 1
@@ -287,95 +359,116 @@ ifndef _MINIDUMP_H
 
     MINIDUMP_HANDLE_OBJECT_INFORMATION struct
       NextInfoRva RVA ?
-      InfoType ULONG32 ?
-      SizeOfInfo ULONG32 ?
+      InfoType DWORD ?
+      SizeOfInfo DWORD ?
+      ; Raw information follows.
     MINIDUMP_HANDLE_OBJECT_INFORMATION ends
     _MINIDUMP_HANDLE_OBJECT_INFORMATION typedef MINIDUMP_HANDLE_OBJECT_INFORMATION
     MINIDUMP_HANDLE_DESCRIPTOR struct
-      Handle ULONG64 ?
+      Handle QWORD ?
       TypeNameRva RVA ?
       ObjectNameRva RVA ?
-      Attributes ULONG32 ?
-      GrantedAccess ULONG32 ?
-      HandleCount ULONG32 ?
-      PointerCount ULONG32 ?
+      Attributes DWORD ?
+      GrantedAccess DWORD ?
+      HandleCount DWORD ?
+      PointerCount DWORD ?
     MINIDUMP_HANDLE_DESCRIPTOR ends
     _MINIDUMP_HANDLE_DESCRIPTOR typedef MINIDUMP_HANDLE_DESCRIPTOR
     PMINIDUMP_HANDLE_DESCRIPTOR typedef ptr MINIDUMP_HANDLE_DESCRIPTOR
     MINIDUMP_HANDLE_DESCRIPTOR_2 struct
-      Handle ULONG64 ?
+      Handle QWORD ?
       TypeNameRva RVA ?
       ObjectNameRva RVA ?
-      Attributes ULONG32 ?
-      GrantedAccess ULONG32 ?
-      HandleCount ULONG32 ?
-      PointerCount ULONG32 ?
+      Attributes DWORD ?
+      GrantedAccess DWORD ?
+      HandleCount DWORD ?
+      PointerCount DWORD ?
       ObjectInfoRva RVA ?
-      Reserved0 ULONG32 ?
+      Reserved0 DWORD ?
     MINIDUMP_HANDLE_DESCRIPTOR_2 ends
     _MINIDUMP_HANDLE_DESCRIPTOR_2 typedef MINIDUMP_HANDLE_DESCRIPTOR_2
     PMINIDUMP_HANDLE_DESCRIPTOR_2 typedef ptr MINIDUMP_HANDLE_DESCRIPTOR_2
+    ; The latest MINIDUMP_HANDLE_DESCRIPTOR definition.
     MINIDUMP_HANDLE_DESCRIPTOR_N typedef MINIDUMP_HANDLE_DESCRIPTOR_2
     PMINIDUMP_HANDLE_DESCRIPTOR_N typedef ptr MINIDUMP_HANDLE_DESCRIPTOR_N
     MINIDUMP_HANDLE_DATA_STREAM struct
-      SizeOfHeader ULONG32 ?
-      SizeOfDescriptor ULONG32 ?
-      NumberOfDescriptors ULONG32 ?
-      Reserved ULONG32 ?
+      SizeOfHeader DWORD ?
+      SizeOfDescriptor DWORD ?
+      NumberOfDescriptors DWORD ?
+      Reserved DWORD ?
     MINIDUMP_HANDLE_DATA_STREAM ends
     _MINIDUMP_HANDLE_DATA_STREAM typedef MINIDUMP_HANDLE_DATA_STREAM
     PMINIDUMP_HANDLE_DATA_STREAM typedef ptr MINIDUMP_HANDLE_DATA_STREAM
+    ; Some operating systems can track the last operations
+    ; performed on a handle.  For example, Application Verifier
+    ; can enable this for some versions of Windows.  The
+    ; handle operation list collects handle operations
+    ; known for the dump target.
+    ; Each entry is an AVRF_HANDLE_OPERATION.
     MINIDUMP_HANDLE_OPERATION_LIST struct
-      SizeOfHeader ULONG32 ?
-      SizeOfEntry ULONG32 ?
-      NumberOfEntries ULONG32 ?
-      Reserved ULONG32 ?
+      SizeOfHeader DWORD ?
+      SizeOfEntry DWORD ?
+      NumberOfEntries DWORD ?
+      Reserved DWORD ?
     MINIDUMP_HANDLE_OPERATION_LIST ends
     _MINIDUMP_HANDLE_OPERATION_LIST typedef MINIDUMP_HANDLE_OPERATION_LIST
     PMINIDUMP_HANDLE_OPERATION_LIST typedef ptr MINIDUMP_HANDLE_OPERATION_LIST
+    ; Support for capturing dynamic function table state at the time of the dump.
     MINIDUMP_FUNCTION_TABLE_DESCRIPTOR struct
-      MinimumAddress ULONG64 ?
-      MaximumAddress ULONG64 ?
-      BaseAddress ULONG64 ?
-      EntryCount ULONG32 ?
-      SizeOfAlignPad ULONG32 ?
+      MinimumAddress QWORD ?
+      MaximumAddress QWORD ?
+      BaseAddress QWORD ?
+      EntryCount DWORD ?
+      SizeOfAlignPad DWORD ?
     MINIDUMP_FUNCTION_TABLE_DESCRIPTOR ends
     _MINIDUMP_FUNCTION_TABLE_DESCRIPTOR typedef MINIDUMP_FUNCTION_TABLE_DESCRIPTOR
     PMINIDUMP_FUNCTION_TABLE_DESCRIPTOR typedef ptr MINIDUMP_FUNCTION_TABLE_DESCRIPTOR
     MINIDUMP_FUNCTION_TABLE_STREAM struct
-      SizeOfHeader ULONG32 ?
-      SizeOfDescriptor ULONG32 ?
-      SizeOfNativeDescriptor ULONG32 ?
-      SizeOfFunctionEntry ULONG32 ?
-      NumberOfDescriptors ULONG32 ?
-      SizeOfAlignPad ULONG32 ?
+      SizeOfHeader DWORD ?
+      SizeOfDescriptor DWORD ?
+      SizeOfNativeDescriptor DWORD ?
+      SizeOfFunctionEntry DWORD ?
+      NumberOfDescriptors DWORD ?
+      SizeOfAlignPad DWORD ?
     MINIDUMP_FUNCTION_TABLE_STREAM ends
     _MINIDUMP_FUNCTION_TABLE_STREAM typedef MINIDUMP_FUNCTION_TABLE_STREAM
     PMINIDUMP_FUNCTION_TABLE_STREAM typedef ptr MINIDUMP_FUNCTION_TABLE_STREAM
+    ; The MINIDUMP_UNLOADED_MODULE contains information about a
+    ; a specific module that was previously loaded but no
+    ; longer is.  This can help with diagnosing problems where
+    ; callers attempt to call code that is no longer loaded.
     MINIDUMP_UNLOADED_MODULE struct
-      BaseOfImage ULONG64 ?
-      SizeOfImage ULONG32 ?
-      CheckSum ULONG32 ?
-      TimeDateStamp ULONG32 ?
+      BaseOfImage QWORD ?
+      SizeOfImage DWORD ?
+      CheckSum DWORD ?
+      TimeDateStamp DWORD ?
       ModuleNameRva RVA ?
     MINIDUMP_UNLOADED_MODULE ends
     _MINIDUMP_UNLOADED_MODULE typedef MINIDUMP_UNLOADED_MODULE
     PMINIDUMP_UNLOADED_MODULE typedef ptr MINIDUMP_UNLOADED_MODULE
+    ; The minidump unloaded module list is a container for unloaded modules.
     MINIDUMP_UNLOADED_MODULE_LIST struct
-      SizeOfHeader ULONG32 ?
-      SizeOfEntry ULONG32 ?
-      NumberOfEntries ULONG32 ?
+      SizeOfHeader DWORD ?
+      SizeOfEntry DWORD ?
+      NumberOfEntries DWORD ?
     MINIDUMP_UNLOADED_MODULE_LIST ends
     _MINIDUMP_UNLOADED_MODULE_LIST typedef MINIDUMP_UNLOADED_MODULE_LIST
     PMINIDUMP_UNLOADED_MODULE_LIST typedef ptr MINIDUMP_UNLOADED_MODULE_LIST
+    ; The XSTATE_CONFIG_FEATURE_MSC_INFO struct is used to determine if the x86/amd64 machine
+    ; supports a specific XState feature.
+    ; Also, it is used to locate the XState context feature (AVX) in the context extended buffer.
     XSTATE_CONFIG_FEATURE_MSC_INFO struct
-      SizeOfInfo ULONG32 ?
-      ContextSize ULONG32 ?
-      EnabledFeatures ULONG64 ?
+      SizeOfInfo DWORD ?
+      ContextSize DWORD ?
+      EnabledFeatures QWORD ?
       Features XSTATE_FEATURE MAXIMUM_XSTATE_FEATURES dup (<>)
     XSTATE_CONFIG_FEATURE_MSC_INFO ends
     _XSTATE_CONFIG_FEATURE_MSC_INFO typedef XSTATE_CONFIG_FEATURE_MSC_INFO
     PXSTATE_CONFIG_FEATURE_MSC_INFO typedef ptr XSTATE_CONFIG_FEATURE_MSC_INFO
+    ; The miscellaneous information stream contains a variety
+    ; of small pieces of information.  A member is valid if
+    ; it's within the available size and its corresponding
+    ; bit is set.
     MINIDUMP_MISC1_PROCESS_ID equ 00000001h
     MINIDUMP_MISC1_PROCESS_TIMES equ 00000002h
     MINIDUMP_MISC1_PROCESSOR_POWER_INFO equ 00000004h
@@ -386,134 +479,149 @@ ifndef _MINIDUMP_H
     MINIDUMP_MISC4_BUILDSTRING equ 00000100h
     MINIDUMP_MISC5_PROCESS_COOKIE equ 00000200h
     MINIDUMP_MISC_INFO struct
-      SizeOfInfo ULONG32 ?
-      Flags1 ULONG32 ?
-      ProcessId ULONG32 ?
-      ProcessCreateTime ULONG32 ?
-      ProcessUserTime ULONG32 ?
-      ProcessKernelTime ULONG32 ?
+      SizeOfInfo DWORD ?
+      Flags1 DWORD ?
+      ProcessId DWORD ?
+      ProcessCreateTime DWORD ?
+      ProcessUserTime DWORD ?
+      ProcessKernelTime DWORD ?
     MINIDUMP_MISC_INFO ends
     _MINIDUMP_MISC_INFO typedef MINIDUMP_MISC_INFO
     PMINIDUMP_MISC_INFO typedef ptr MINIDUMP_MISC_INFO
     MINIDUMP_MISC_INFO_2 struct
-      SizeOfInfo ULONG32 ?
-      Flags1 ULONG32 ?
-      ProcessId ULONG32 ?
-      ProcessCreateTime ULONG32 ?
-      ProcessUserTime ULONG32 ?
-      ProcessKernelTime ULONG32 ?
-      ProcessorMaxMhz ULONG32 ?
-      ProcessorCurrentMhz ULONG32 ?
-      ProcessorMhzLimit ULONG32 ?
-      ProcessorMaxIdleState ULONG32 ?
-      ProcessorCurrentIdleState ULONG32 ?
+      SizeOfInfo DWORD ?
+      Flags1 DWORD ?
+      ProcessId DWORD ?
+      ProcessCreateTime DWORD ?
+      ProcessUserTime DWORD ?
+      ProcessKernelTime DWORD ?
+      ProcessorMaxMhz DWORD ?
+      ProcessorCurrentMhz DWORD ?
+      ProcessorMhzLimit DWORD ?
+      ProcessorMaxIdleState DWORD ?
+      ProcessorCurrentIdleState DWORD ?
     MINIDUMP_MISC_INFO_2 ends
     _MINIDUMP_MISC_INFO_2 typedef MINIDUMP_MISC_INFO_2
     PMINIDUMP_MISC_INFO_2 typedef ptr MINIDUMP_MISC_INFO_2
     MINIDUMP_MISC_INFO_3 struct
-      SizeOfInfo ULONG32 ?
-      Flags1 ULONG32 ?
-      ProcessId ULONG32 ?
-      ProcessCreateTime ULONG32 ?
-      ProcessUserTime ULONG32 ?
-      ProcessKernelTime ULONG32 ?
-      ProcessorMaxMhz ULONG32 ?
-      ProcessorCurrentMhz ULONG32 ?
-      ProcessorMhzLimit ULONG32 ?
-      ProcessorMaxIdleState ULONG32 ?
-      ProcessorCurrentIdleState ULONG32 ?
-      ProcessIntegrityLevel ULONG32 ?
-      ProcessExecuteFlags ULONG32 ?
-      ProtectedProcess ULONG32 ?
-      TimeZoneId ULONG32 ?
+      SizeOfInfo DWORD ?
+      Flags1 DWORD ?
+      ProcessId DWORD ?
+      ProcessCreateTime DWORD ?
+      ProcessUserTime DWORD ?
+      ProcessKernelTime DWORD ?
+      ProcessorMaxMhz DWORD ?
+      ProcessorCurrentMhz DWORD ?
+      ProcessorMhzLimit DWORD ?
+      ProcessorMaxIdleState DWORD ?
+      ProcessorCurrentIdleState DWORD ?
+      ProcessIntegrityLevel DWORD ?
+      ProcessExecuteFlags DWORD ?
+      ProtectedProcess DWORD ?
+      TimeZoneId DWORD ?
       TimeZone TIME_ZONE_INFORMATION <>
     MINIDUMP_MISC_INFO_3 ends
     _MINIDUMP_MISC_INFO_3 typedef MINIDUMP_MISC_INFO_3
     PMINIDUMP_MISC_INFO_3 typedef ptr MINIDUMP_MISC_INFO_3
     MINIDUMP_MISC_INFO_4 struct
-      SizeOfInfo ULONG32 ?
-      Flags1 ULONG32 ?
-      ProcessId ULONG32 ?
-      ProcessCreateTime ULONG32 ?
-      ProcessUserTime ULONG32 ?
-      ProcessKernelTime ULONG32 ?
-      ProcessorMaxMhz ULONG32 ?
-      ProcessorCurrentMhz ULONG32 ?
-      ProcessorMhzLimit ULONG32 ?
-      ProcessorMaxIdleState ULONG32 ?
-      ProcessorCurrentIdleState ULONG32 ?
-      ProcessIntegrityLevel ULONG32 ?
-      ProcessExecuteFlags ULONG32 ?
-      ProtectedProcess ULONG32 ?
-      TimeZoneId ULONG32 ?
+      SizeOfInfo DWORD ?
+      Flags1 DWORD ?
+      ProcessId DWORD ?
+      ProcessCreateTime DWORD ?
+      ProcessUserTime DWORD ?
+      ProcessKernelTime DWORD ?
+      ProcessorMaxMhz DWORD ?
+      ProcessorCurrentMhz DWORD ?
+      ProcessorMhzLimit DWORD ?
+      ProcessorMaxIdleState DWORD ?
+      ProcessorCurrentIdleState DWORD ?
+      ProcessIntegrityLevel DWORD ?
+      ProcessExecuteFlags DWORD ?
+      ProtectedProcess DWORD ?
+      TimeZoneId DWORD ?
       TimeZone TIME_ZONE_INFORMATION <>
-      BuildString WCHAR MAX_PATH dup (?)
-      DbgBldStr WCHAR 40 dup (?)
+      BuildString WORD MAX_PATH dup (?)
+      DbgBldStr WORD 40 dup (?)
     MINIDUMP_MISC_INFO_4 ends
     _MINIDUMP_MISC_INFO_4 typedef MINIDUMP_MISC_INFO_4
     PMINIDUMP_MISC_INFO_4 typedef ptr MINIDUMP_MISC_INFO_4
     MINIDUMP_MISC_INFO_5 struct
-      SizeOfInfo ULONG32 ?
-      Flags1 ULONG32 ?
-      ProcessId ULONG32 ?
-      ProcessCreateTime ULONG32 ?
-      ProcessUserTime ULONG32 ?
-      ProcessKernelTime ULONG32 ?
-      ProcessorMaxMhz ULONG32 ?
-      ProcessorCurrentMhz ULONG32 ?
-      ProcessorMhzLimit ULONG32 ?
-      ProcessorMaxIdleState ULONG32 ?
-      ProcessorCurrentIdleState ULONG32 ?
-      ProcessIntegrityLevel ULONG32 ?
-      ProcessExecuteFlags ULONG32 ?
-      ProtectedProcess ULONG32 ?
-      TimeZoneId ULONG32 ?
+      SizeOfInfo DWORD ?
+      Flags1 DWORD ?
+      ProcessId DWORD ?
+      ProcessCreateTime DWORD ?
+      ProcessUserTime DWORD ?
+      ProcessKernelTime DWORD ?
+      ProcessorMaxMhz DWORD ?
+      ProcessorCurrentMhz DWORD ?
+      ProcessorMhzLimit DWORD ?
+      ProcessorMaxIdleState DWORD ?
+      ProcessorCurrentIdleState DWORD ?
+      ProcessIntegrityLevel DWORD ?
+      ProcessExecuteFlags DWORD ?
+      ProtectedProcess DWORD ?
+      TimeZoneId DWORD ?
       TimeZone TIME_ZONE_INFORMATION <>
-      BuildString WCHAR MAX_PATH dup (?)
-      DbgBldStr WCHAR 40 dup (?)
+      BuildString WORD MAX_PATH dup (?)
+      DbgBldStr WORD 40 dup (?)
       XStateData XSTATE_CONFIG_FEATURE_MSC_INFO <>
-      ProcessCookie ULONG32 ?
+      ProcessCookie DWORD ?
     MINIDUMP_MISC_INFO_5 ends
     _MINIDUMP_MISC_INFO_5 typedef MINIDUMP_MISC_INFO_5
     PMINIDUMP_MISC_INFO_5 typedef ptr MINIDUMP_MISC_INFO_5
+    ; The latest MINIDUMP_MISC_INFO definition.
     MINIDUMP_MISC_INFO_N typedef MINIDUMP_MISC_INFO_5
     PMINIDUMP_MISC_INFO_N typedef ptr MINIDUMP_MISC_INFO_N
+    ; The memory information stream contains memory region
+    ; description information.  This stream corresponds to
+    ; what VirtualQuery would return for the process the
+    ; dump was created for.
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
     MINIDUMP_MEMORY_INFO struct
-      BaseAddress ULONG64 ?
-      AllocationBase ULONG64 ?
-      AllocationProtect ULONG32 ?
-      __alignment1 ULONG32 ?
-      RegionSize ULONG64 ?
-      State ULONG32 ?
-      Protect ULONG32 ?
-      Type_ ULONG32 ?
-      __alignment2 ULONG32 ?
+      BaseAddress QWORD ?
+      AllocationBase QWORD ?
+      AllocationProtect DWORD ?
+      __alignment1 DWORD ?
+      RegionSize QWORD ?
+      State DWORD ?
+      Protect DWORD ?
+      Type_ DWORD ?
+      __alignment2 DWORD ?
     MINIDUMP_MEMORY_INFO ends
     _MINIDUMP_MEMORY_INFO typedef MINIDUMP_MEMORY_INFO
     PMINIDUMP_MEMORY_INFO typedef ptr MINIDUMP_MEMORY_INFO
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     MINIDUMP_MEMORY_INFO_LIST struct
-      SizeOfHeader ULONG ?
-      SizeOfEntry ULONG ?
-      NumberOfEntries ULONG64 ?
+      SizeOfHeader DWORD ?
+      SizeOfEntry DWORD ?
+      NumberOfEntries QWORD ?
     MINIDUMP_MEMORY_INFO_LIST ends
     _MINIDUMP_MEMORY_INFO_LIST typedef MINIDUMP_MEMORY_INFO_LIST
     PMINIDUMP_MEMORY_INFO_LIST typedef ptr MINIDUMP_MEMORY_INFO_LIST
+    ; The thread names stream in a minidump, containing information
+    ; about each thread's name/description (if available).
     MINIDUMP_THREAD_NAME struct
-      ThreadId ULONG ?
+      ThreadId DWORD ?
       RvaOfThreadName RVA64 ?
     MINIDUMP_THREAD_NAME ends
     _MINIDUMP_THREAD_NAME typedef MINIDUMP_THREAD_NAME
     PMINIDUMP_THREAD_NAME typedef ptr MINIDUMP_THREAD_NAME
     MINIDUMP_THREAD_NAME_LIST struct
-      NumberOfThreadNames ULONG ?
+      NumberOfThreadNames DWORD ?
       ThreadNames MINIDUMP_THREAD_NAME 0 dup (<>)
+      ; Variable size buffer
     MINIDUMP_THREAD_NAME_LIST ends
     _MINIDUMP_THREAD_NAME_LIST typedef MINIDUMP_THREAD_NAME_LIST
     PMINIDUMP_THREAD_NAME_LIST typedef ptr MINIDUMP_THREAD_NAME_LIST
+    ; The memory information stream contains memory region
+    ; description information.  This stream corresponds to
+    ; what VirtualQuery would return for the process the
+    ; dump was created for.
+    ; Thread dump writer status flags.
     MINIDUMP_THREAD_INFO_ERROR_THREAD equ 00000001h
     MINIDUMP_THREAD_INFO_WRITING_THREAD equ 00000002h
     MINIDUMP_THREAD_INFO_EXITED_THREAD equ 00000004h
@@ -521,155 +629,160 @@ ifndef _MINIDUMP_H
     MINIDUMP_THREAD_INFO_INVALID_CONTEXT equ 00000010h
     MINIDUMP_THREAD_INFO_INVALID_TEB equ 00000020h
     MINIDUMP_THREAD_INFO struct
-      ThreadId ULONG32 ?
-      DumpFlags ULONG32 ?
-      DumpError ULONG32 ?
-      ExitStatus ULONG32 ?
-      CreateTime ULONG64 ?
-      ExitTime ULONG64 ?
-      KernelTime ULONG64 ?
-      UserTime ULONG64 ?
-      StartAddress ULONG64 ?
-      Affinity ULONG64 ?
+      ThreadId DWORD ?
+      DumpFlags DWORD ?
+      DumpError DWORD ?
+      ExitStatus DWORD ?
+      CreateTime QWORD ?
+      ExitTime QWORD ?
+      KernelTime QWORD ?
+      UserTime QWORD ?
+      StartAddress QWORD ?
+      Affinity QWORD ?
     MINIDUMP_THREAD_INFO ends
     _MINIDUMP_THREAD_INFO typedef MINIDUMP_THREAD_INFO
     PMINIDUMP_THREAD_INFO typedef ptr MINIDUMP_THREAD_INFO
     MINIDUMP_THREAD_INFO_LIST struct
-      SizeOfHeader ULONG ?
-      SizeOfEntry ULONG ?
-      NumberOfEntries ULONG ?
+      SizeOfHeader DWORD ?
+      SizeOfEntry DWORD ?
+      NumberOfEntries DWORD ?
     MINIDUMP_THREAD_INFO_LIST ends
     _MINIDUMP_THREAD_INFO_LIST typedef MINIDUMP_THREAD_INFO_LIST
     PMINIDUMP_THREAD_INFO_LIST typedef ptr MINIDUMP_THREAD_INFO_LIST
+    ; Support for token information.
     MINIDUMP_TOKEN_INFO_HEADER struct
-      TokenSize ULONG ?
-      TokenId ULONG ?
-      TokenHandle ULONG64 ?
+      TokenSize DWORD ?
+      ; The size of the token structure.
+      TokenId DWORD ?
+      ; The PID in NtOpenProcessToken() call or TID in NtOpenThreadToken() call.
+      TokenHandle QWORD ?
+      ; The handle value returned.
     MINIDUMP_TOKEN_INFO_HEADER ends
     _MINIDUMP_TOKEN_INFO_HEADER typedef MINIDUMP_TOKEN_INFO_HEADER
     PMINIDUMP_TOKEN_INFO_HEADER typedef ptr MINIDUMP_TOKEN_INFO_HEADER
     MINIDUMP_TOKEN_INFO_LIST struct
-      TokenListSize ULONG ?
-      TokenListEntries ULONG ?
-      ListHeaderSize ULONG ?
-      ElementHeaderSize ULONG ?
+      TokenListSize DWORD ?
+      TokenListEntries DWORD ?
+      ListHeaderSize DWORD ?
+      ElementHeaderSize DWORD ?
     MINIDUMP_TOKEN_INFO_LIST ends
     _MINIDUMP_TOKEN_INFO_LIST typedef MINIDUMP_TOKEN_INFO_LIST
     PMINIDUMP_TOKEN_INFO_LIST typedef ptr MINIDUMP_TOKEN_INFO_LIST
+    ; Support for global system memory/performance information.
     MINIDUMP_SYSTEM_BASIC_INFORMATION struct
-      TimerResolution ULONG ?
-      PageSize ULONG ?
-      NumberOfPhysicalPages ULONG ?
-      LowestPhysicalPageNumber ULONG ?
-      HighestPhysicalPageNumber ULONG ?
-      AllocationGranularity ULONG ?
-      MinimumUserModeAddress ULONG64 ?
-      MaximumUserModeAddress ULONG64 ?
-      ActiveProcessorsAffinityMask ULONG64 ?
-      NumberOfProcessors ULONG ?
+      TimerResolution DWORD ?
+      PageSize DWORD ?
+      NumberOfPhysicalPages DWORD ?
+      LowestPhysicalPageNumber DWORD ?
+      HighestPhysicalPageNumber DWORD ?
+      AllocationGranularity DWORD ?
+      MinimumUserModeAddress QWORD ?
+      MaximumUserModeAddress QWORD ?
+      ActiveProcessorsAffinityMask QWORD ?
+      NumberOfProcessors DWORD ?
     MINIDUMP_SYSTEM_BASIC_INFORMATION ends
     _MINIDUMP_SYSTEM_BASIC_INFORMATION typedef MINIDUMP_SYSTEM_BASIC_INFORMATION
     PMINIDUMP_SYSTEM_BASIC_INFORMATION typedef ptr MINIDUMP_SYSTEM_BASIC_INFORMATION
     MINIDUMP_SYSTEM_FILECACHE_INFORMATION struct
-      CurrentSize ULONG64 ?
-      PeakSize ULONG64 ?
-      PageFaultCount ULONG ?
-      MinimumWorkingSet ULONG64 ?
-      MaximumWorkingSet ULONG64 ?
-      CurrentSizeIncludingTransitionInPages ULONG64 ?
-      PeakSizeIncludingTransitionInPages ULONG64 ?
-      TransitionRePurposeCount ULONG ?
-      Flags ULONG ?
+      CurrentSize QWORD ?
+      PeakSize QWORD ?
+      PageFaultCount DWORD ?
+      MinimumWorkingSet QWORD ?
+      MaximumWorkingSet QWORD ?
+      CurrentSizeIncludingTransitionInPages QWORD ?
+      PeakSizeIncludingTransitionInPages QWORD ?
+      TransitionRePurposeCount DWORD ?
+      Flags DWORD ?
     MINIDUMP_SYSTEM_FILECACHE_INFORMATION ends
     _MINIDUMP_SYSTEM_FILECACHE_INFORMATION typedef MINIDUMP_SYSTEM_FILECACHE_INFORMATION
     PMINIDUMP_SYSTEM_FILECACHE_INFORMATION typedef ptr MINIDUMP_SYSTEM_FILECACHE_INFORMATION
     MINIDUMP_SYSTEM_BASIC_PERFORMANCE_INFORMATION struct
-      AvailablePages ULONG64 ?
-      CommittedPages ULONG64 ?
-      CommitLimit ULONG64 ?
-      PeakCommitment ULONG64 ?
+      AvailablePages QWORD ?
+      CommittedPages QWORD ?
+      CommitLimit QWORD ?
+      PeakCommitment QWORD ?
     MINIDUMP_SYSTEM_BASIC_PERFORMANCE_INFORMATION ends
     _MINIDUMP_SYSTEM_BASIC_PERFORMANCE_INFORMATION typedef MINIDUMP_SYSTEM_BASIC_PERFORMANCE_INFORMATION
     PMINIDUMP_SYSTEM_BASIC_PERFORMANCE_INFORMATION typedef ptr MINIDUMP_SYSTEM_BASIC_PERFORMANCE_INFORMATION
     MINIDUMP_SYSTEM_PERFORMANCE_INFORMATION struct
-      IdleProcessTime ULONG64 ?
-      IoReadTransferCount ULONG64 ?
-      IoWriteTransferCount ULONG64 ?
-      IoOtherTransferCount ULONG64 ?
-      IoReadOperationCount ULONG ?
-      IoWriteOperationCount ULONG ?
-      IoOtherOperationCount ULONG ?
-      AvailablePages ULONG ?
-      CommittedPages ULONG ?
-      CommitLimit ULONG ?
-      PeakCommitment ULONG ?
-      PageFaultCount ULONG ?
-      CopyOnWriteCount ULONG ?
-      TransitionCount ULONG ?
-      CacheTransitionCount ULONG ?
-      DemandZeroCount ULONG ?
-      PageReadCount ULONG ?
-      PageReadIoCount ULONG ?
-      CacheReadCount ULONG ?
-      CacheIoCount ULONG ?
-      DirtyPagesWriteCount ULONG ?
-      DirtyWriteIoCount ULONG ?
-      MappedPagesWriteCount ULONG ?
-      MappedWriteIoCount ULONG ?
-      PagedPoolPages ULONG ?
-      NonPagedPoolPages ULONG ?
-      PagedPoolAllocs ULONG ?
-      PagedPoolFrees ULONG ?
-      NonPagedPoolAllocs ULONG ?
-      NonPagedPoolFrees ULONG ?
-      FreeSystemPtes ULONG ?
-      ResidentSystemCodePage ULONG ?
-      TotalSystemDriverPages ULONG ?
-      TotalSystemCodePages ULONG ?
-      NonPagedPoolLookasideHits ULONG ?
-      PagedPoolLookasideHits ULONG ?
-      AvailablePagedPoolPages ULONG ?
-      ResidentSystemCachePage ULONG ?
-      ResidentPagedPoolPage ULONG ?
-      ResidentSystemDriverPage ULONG ?
-      CcFastReadNoWait ULONG ?
-      CcFastReadWait ULONG ?
-      CcFastReadResourceMiss ULONG ?
-      CcFastReadNotPossible ULONG ?
-      CcFastMdlReadNoWait ULONG ?
-      CcFastMdlReadWait ULONG ?
-      CcFastMdlReadResourceMiss ULONG ?
-      CcFastMdlReadNotPossible ULONG ?
-      CcMapDataNoWait ULONG ?
-      CcMapDataWait ULONG ?
-      CcMapDataNoWaitMiss ULONG ?
-      CcMapDataWaitMiss ULONG ?
-      CcPinMappedDataCount ULONG ?
-      CcPinReadNoWait ULONG ?
-      CcPinReadWait ULONG ?
-      CcPinReadNoWaitMiss ULONG ?
-      CcPinReadWaitMiss ULONG ?
-      CcCopyReadNoWait ULONG ?
-      CcCopyReadWait ULONG ?
-      CcCopyReadNoWaitMiss ULONG ?
-      CcCopyReadWaitMiss ULONG ?
-      CcMdlReadNoWait ULONG ?
-      CcMdlReadWait ULONG ?
-      CcMdlReadNoWaitMiss ULONG ?
-      CcMdlReadWaitMiss ULONG ?
-      CcReadAheadIos ULONG ?
-      CcLazyWriteIos ULONG ?
-      CcLazyWritePages ULONG ?
-      CcDataFlushes ULONG ?
-      CcDataPages ULONG ?
-      ContextSwitches ULONG ?
-      FirstLevelTbFills ULONG ?
-      SecondLevelTbFills ULONG ?
-      SystemCalls ULONG ?
-      CcTotalDirtyPages ULONG64 ?
-      CcDirtyPageThreshold ULONG64 ?
-      ResidentAvailablePages LONG64 ?
-      SharedCommittedPages ULONG64 ?
+      IdleProcessTime QWORD ?
+      IoReadTransferCount QWORD ?
+      IoWriteTransferCount QWORD ?
+      IoOtherTransferCount QWORD ?
+      IoReadOperationCount DWORD ?
+      IoWriteOperationCount DWORD ?
+      IoOtherOperationCount DWORD ?
+      AvailablePages DWORD ?
+      CommittedPages DWORD ?
+      CommitLimit DWORD ?
+      PeakCommitment DWORD ?
+      PageFaultCount DWORD ?
+      CopyOnWriteCount DWORD ?
+      TransitionCount DWORD ?
+      CacheTransitionCount DWORD ?
+      DemandZeroCount DWORD ?
+      PageReadCount DWORD ?
+      PageReadIoCount DWORD ?
+      CacheReadCount DWORD ?
+      CacheIoCount DWORD ?
+      DirtyPagesWriteCount DWORD ?
+      DirtyWriteIoCount DWORD ?
+      MappedPagesWriteCount DWORD ?
+      MappedWriteIoCount DWORD ?
+      PagedPoolPages DWORD ?
+      NonPagedPoolPages DWORD ?
+      PagedPoolAllocs DWORD ?
+      PagedPoolFrees DWORD ?
+      NonPagedPoolAllocs DWORD ?
+      NonPagedPoolFrees DWORD ?
+      FreeSystemPtes DWORD ?
+      ResidentSystemCodePage DWORD ?
+      TotalSystemDriverPages DWORD ?
+      TotalSystemCodePages DWORD ?
+      NonPagedPoolLookasideHits DWORD ?
+      PagedPoolLookasideHits DWORD ?
+      AvailablePagedPoolPages DWORD ?
+      ResidentSystemCachePage DWORD ?
+      ResidentPagedPoolPage DWORD ?
+      ResidentSystemDriverPage DWORD ?
+      CcFastReadNoWait DWORD ?
+      CcFastReadWait DWORD ?
+      CcFastReadResourceMiss DWORD ?
+      CcFastReadNotPossible DWORD ?
+      CcFastMdlReadNoWait DWORD ?
+      CcFastMdlReadWait DWORD ?
+      CcFastMdlReadResourceMiss DWORD ?
+      CcFastMdlReadNotPossible DWORD ?
+      CcMapDataNoWait DWORD ?
+      CcMapDataWait DWORD ?
+      CcMapDataNoWaitMiss DWORD ?
+      CcMapDataWaitMiss DWORD ?
+      CcPinMappedDataCount DWORD ?
+      CcPinReadNoWait DWORD ?
+      CcPinReadWait DWORD ?
+      CcPinReadNoWaitMiss DWORD ?
+      CcPinReadWaitMiss DWORD ?
+      CcCopyReadNoWait DWORD ?
+      CcCopyReadWait DWORD ?
+      CcCopyReadNoWaitMiss DWORD ?
+      CcCopyReadWaitMiss DWORD ?
+      CcMdlReadNoWait DWORD ?
+      CcMdlReadWait DWORD ?
+      CcMdlReadNoWaitMiss DWORD ?
+      CcMdlReadWaitMiss DWORD ?
+      CcReadAheadIos DWORD ?
+      CcLazyWriteIos DWORD ?
+      CcLazyWritePages DWORD ?
+      CcDataFlushes DWORD ?
+      CcDataPages DWORD ?
+      ContextSwitches DWORD ?
+      FirstLevelTbFills DWORD ?
+      SecondLevelTbFills DWORD ?
+      SystemCalls DWORD ?
+      CcTotalDirtyPages QWORD ?
+      CcDirtyPageThreshold QWORD ?
+      ResidentAvailablePages SQWORD ?
+      SharedCommittedPages QWORD ?
     MINIDUMP_SYSTEM_PERFORMANCE_INFORMATION ends
     _MINIDUMP_SYSTEM_PERFORMANCE_INFORMATION typedef MINIDUMP_SYSTEM_PERFORMANCE_INFORMATION
     PMINIDUMP_SYSTEM_PERFORMANCE_INFORMATION typedef ptr MINIDUMP_SYSTEM_PERFORMANCE_INFORMATION
@@ -678,8 +791,8 @@ ifndef _MINIDUMP_H
     MINIDUMP_SYSMEMINFO1_PERF_CCTOTALDIRTYPAGES_CCDIRTYPAGETHRESHOLD equ 0004h
     MINIDUMP_SYSMEMINFO1_PERF_RESIDENTAVAILABLEPAGES_SHAREDCOMMITPAGES equ 0008h
     MINIDUMP_SYSTEM_MEMORY_INFO_1 struct
-      Revision USHORT ?
-      Flags USHORT ?
+      Revision WORD ?
+      Flags WORD ?
       BasicInfo MINIDUMP_SYSTEM_BASIC_INFORMATION <>
       FileCacheInfo MINIDUMP_SYSTEM_FILECACHE_INFORMATION <>
       BasicPerfInfo MINIDUMP_SYSTEM_BASIC_PERFORMANCE_INFORMATION <>
@@ -689,18 +802,19 @@ ifndef _MINIDUMP_H
     PMINIDUMP_SYSTEM_MEMORY_INFO_1 typedef ptr MINIDUMP_SYSTEM_MEMORY_INFO_1
     MINIDUMP_SYSTEM_MEMORY_INFO_N typedef MINIDUMP_SYSTEM_MEMORY_INFO_1
     PMINIDUMP_SYSTEM_MEMORY_INFO_N typedef ptr MINIDUMP_SYSTEM_MEMORY_INFO_N
+    ; Support for process VM counters.
     MINIDUMP_PROCESS_VM_COUNTERS_1 struct
-      Revision USHORT ?
-      PageFaultCount ULONG ?
-      PeakWorkingSetSize ULONG64 ?
-      WorkingSetSize ULONG64 ?
-      QuotaPeakPagedPoolUsage ULONG64 ?
-      QuotaPagedPoolUsage ULONG64 ?
-      QuotaPeakNonPagedPoolUsage ULONG64 ?
-      QuotaNonPagedPoolUsage ULONG64 ?
-      PagefileUsage ULONG64 ?
-      PeakPagefileUsage ULONG64 ?
-      PrivateUsage ULONG64 ?
+      Revision WORD ?
+      PageFaultCount DWORD ?
+      PeakWorkingSetSize QWORD ?
+      WorkingSetSize QWORD ?
+      QuotaPeakPagedPoolUsage QWORD ?
+      QuotaPagedPoolUsage QWORD ?
+      QuotaPeakNonPagedPoolUsage QWORD ?
+      QuotaNonPagedPoolUsage QWORD ?
+      PagefileUsage QWORD ?
+      PeakPagefileUsage QWORD ?
+      PrivateUsage QWORD ?
     MINIDUMP_PROCESS_VM_COUNTERS_1 ends
     _MINIDUMP_PROCESS_VM_COUNTERS_1 typedef MINIDUMP_PROCESS_VM_COUNTERS_1
     PMINIDUMP_PROCESS_VM_COUNTERS_1 typedef ptr MINIDUMP_PROCESS_VM_COUNTERS_1
@@ -710,53 +824,66 @@ ifndef _MINIDUMP_H
     MINIDUMP_PROCESS_VM_COUNTERS_EX2 equ 0008h
     MINIDUMP_PROCESS_VM_COUNTERS_JOB equ 0010h
     MINIDUMP_PROCESS_VM_COUNTERS_2 struct
-      Revision USHORT ?
-      Flags USHORT ?
-      PageFaultCount ULONG ?
-      PeakWorkingSetSize ULONG64 ?
-      WorkingSetSize ULONG64 ?
-      QuotaPeakPagedPoolUsage ULONG64 ?
-      QuotaPagedPoolUsage ULONG64 ?
-      QuotaPeakNonPagedPoolUsage ULONG64 ?
-      QuotaNonPagedPoolUsage ULONG64 ?
-      PagefileUsage ULONG64 ?
-      PeakPagefileUsage ULONG64 ?
-      PeakVirtualSize ULONG64 ?
-      VirtualSize ULONG64 ?
-      PrivateUsage ULONG64 ?
-      PrivateWorkingSetSize ULONG64 ?
-      SharedCommitUsage ULONG64 ?
-      JobSharedCommitUsage ULONG64 ?
-      JobPrivateCommitUsage ULONG64 ?
-      JobPeakPrivateCommitUsage ULONG64 ?
-      JobPrivateCommitLimit ULONG64 ?
-      JobTotalCommitLimit ULONG64 ?
+      Revision WORD ?
+      Flags WORD ?
+      PageFaultCount DWORD ?
+      PeakWorkingSetSize QWORD ?
+      WorkingSetSize QWORD ?
+      QuotaPeakPagedPoolUsage QWORD ?
+      QuotaPagedPoolUsage QWORD ?
+      QuotaPeakNonPagedPoolUsage QWORD ?
+      QuotaNonPagedPoolUsage QWORD ?
+      PagefileUsage QWORD ?
+      PeakPagefileUsage QWORD ?
+      PeakVirtualSize QWORD ?
+      ; VIRTUALSIZE
+      VirtualSize QWORD ?
+      ; VIRTUALSIZE
+      PrivateUsage QWORD ?
+      ; EX+
+      PrivateWorkingSetSize QWORD ?
+      ; EX2+
+      SharedCommitUsage QWORD ?
+      ; EX2+
+      JobSharedCommitUsage QWORD ?
+      ; JOB+
+      JobPrivateCommitUsage QWORD ?
+      ; JOB+
+      JobPeakPrivateCommitUsage QWORD ?
+      ; JOB+
+      JobPrivateCommitLimit QWORD ?
+      ; JOB+
+      JobTotalCommitLimit QWORD ?
+      ; JOB+
     MINIDUMP_PROCESS_VM_COUNTERS_2 ends
     _MINIDUMP_PROCESS_VM_COUNTERS_2 typedef MINIDUMP_PROCESS_VM_COUNTERS_2
     PMINIDUMP_PROCESS_VM_COUNTERS_2 typedef ptr MINIDUMP_PROCESS_VM_COUNTERS_2
     MINIDUMP_PROCESS_VM_COUNTERS_N typedef MINIDUMP_PROCESS_VM_COUNTERS_2
     PMINIDUMP_PROCESS_VM_COUNTERS_N typedef ptr MINIDUMP_PROCESS_VM_COUNTERS_N
+    ; Support for arbitrary user-defined information.
     MINIDUMP_USER_RECORD struct
-      Type_ ULONG32 ?
+      Type_ DWORD ?
       Memory_ MINIDUMP_LOCATION_DESCRIPTOR <>
     MINIDUMP_USER_RECORD ends
     _MINIDUMP_USER_RECORD typedef MINIDUMP_USER_RECORD
     PMINIDUMP_USER_RECORD typedef ptr MINIDUMP_USER_RECORD
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
     MINIDUMP_USER_STREAM struct
-      Type_ ULONG32 ?
-      BufferSize ULONG ?
-      Buffer PVOID ?
+      Type_ DWORD ?
+      BufferSize DWORD ?
+      Buffer POINTER ?
     MINIDUMP_USER_STREAM ends
     _MINIDUMP_USER_STREAM typedef MINIDUMP_USER_STREAM
     PMINIDUMP_USER_STREAM typedef ptr MINIDUMP_USER_STREAM
     MINIDUMP_USER_STREAM_INFORMATION struct
-      UserStreamCount ULONG ?
+      UserStreamCount DWORD ?
       UserStreamArray PMINIDUMP_USER_STREAM ?
     MINIDUMP_USER_STREAM_INFORMATION ends
     _MINIDUMP_USER_STREAM_INFORMATION typedef MINIDUMP_USER_STREAM_INFORMATION
     PMINIDUMP_USER_STREAM_INFORMATION typedef ptr MINIDUMP_USER_STREAM_INFORMATION
+    ; Callback support.
     MINIDUMP_CALLBACK_TYPE typedef SDWORD
     ModuleCallback equ 0
     ThreadCallback equ 1
@@ -782,35 +909,35 @@ ifndef _MINIDUMP_H
     _MINIDUMP_CALLBACK_TYPE typedef MINIDUMP_CALLBACK_TYPE
 
     MINIDUMP_THREAD_CALLBACK struct
-      ThreadId ULONG ?
+      ThreadId DWORD ?
       ThreadHandle HANDLE ?
       if Defined(_ARM64_)
         ;[...]
       endif
       Context CONTEXT <>
-      SizeOfContext ULONG ?
-      StackBase ULONG64 ?
-      StackEnd ULONG64 ?
+      SizeOfContext DWORD ?
+      StackBase QWORD ?
+      StackEnd QWORD ?
     MINIDUMP_THREAD_CALLBACK ends
     _MINIDUMP_THREAD_CALLBACK typedef MINIDUMP_THREAD_CALLBACK
     PMINIDUMP_THREAD_CALLBACK typedef ptr MINIDUMP_THREAD_CALLBACK
     MINIDUMP_THREAD_EX_CALLBACK struct
-      ThreadId ULONG ?
+      ThreadId DWORD ?
       ThreadHandle HANDLE ?
       if Defined(_ARM64_)
         ;[...]
       endif
       Context CONTEXT <>
-      SizeOfContext ULONG ?
-      StackBase ULONG64 ?
-      StackEnd ULONG64 ?
-      BackingStoreBase ULONG64 ?
-      BackingStoreEnd ULONG64 ?
+      SizeOfContext DWORD ?
+      StackBase QWORD ?
+      StackEnd QWORD ?
+      BackingStoreBase QWORD ?
+      BackingStoreEnd QWORD ?
     MINIDUMP_THREAD_EX_CALLBACK ends
     _MINIDUMP_THREAD_EX_CALLBACK typedef MINIDUMP_THREAD_EX_CALLBACK
     PMINIDUMP_THREAD_EX_CALLBACK typedef ptr MINIDUMP_THREAD_EX_CALLBACK
     MINIDUMP_INCLUDE_THREAD_CALLBACK struct
-      ThreadId ULONG ?
+      ThreadId DWORD ?
     MINIDUMP_INCLUDE_THREAD_CALLBACK ends
     _MINIDUMP_INCLUDE_THREAD_CALLBACK typedef MINIDUMP_INCLUDE_THREAD_CALLBACK
     PMINIDUMP_INCLUDE_THREAD_CALLBACK typedef ptr MINIDUMP_INCLUDE_THREAD_CALLBACK
@@ -826,23 +953,24 @@ ifndef _MINIDUMP_H
 
     MINIDUMP_MODULE_CALLBACK struct
       FullPath PWCHAR ?
-      BaseOfImage ULONG64 ?
-      SizeOfImage ULONG ?
-      CheckSum ULONG ?
-      TimeDateStamp ULONG ?
+      BaseOfImage QWORD ?
+      SizeOfImage DWORD ?
+      CheckSum DWORD ?
+      TimeDateStamp DWORD ?
       VersionInfo VS_FIXEDFILEINFO <>
-      CvRecord PVOID ?
-      SizeOfCvRecord ULONG ?
-      MiscRecord PVOID ?
-      SizeOfMiscRecord ULONG ?
+      CvRecord POINTER ?
+      SizeOfCvRecord DWORD ?
+      MiscRecord POINTER ?
+      SizeOfMiscRecord DWORD ?
     MINIDUMP_MODULE_CALLBACK ends
     _MINIDUMP_MODULE_CALLBACK typedef MINIDUMP_MODULE_CALLBACK
     PMINIDUMP_MODULE_CALLBACK typedef ptr MINIDUMP_MODULE_CALLBACK
     MINIDUMP_INCLUDE_MODULE_CALLBACK struct
-      BaseOfImage ULONG64 ?
+      BaseOfImage QWORD ?
     MINIDUMP_INCLUDE_MODULE_CALLBACK ends
     _MINIDUMP_INCLUDE_MODULE_CALLBACK typedef MINIDUMP_INCLUDE_MODULE_CALLBACK
     PMINIDUMP_INCLUDE_MODULE_CALLBACK typedef ptr MINIDUMP_INCLUDE_MODULE_CALLBACK
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     MODULE_WRITE_FLAGS typedef SDWORD
@@ -855,48 +983,49 @@ ifndef _MINIDUMP_H
     ModuleWriteCodeSegs equ 0040h
     _MODULE_WRITE_FLAGS typedef MODULE_WRITE_FLAGS
 
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
     MINIDUMP_IO_CALLBACK struct
       Handle HANDLE ?
-      Offset_ ULONG64 ?
-      Buffer PVOID ?
-      BufferBytes ULONG ?
+      Offset_ QWORD ?
+      Buffer POINTER ?
+      BufferBytes DWORD ?
     MINIDUMP_IO_CALLBACK ends
     _MINIDUMP_IO_CALLBACK typedef MINIDUMP_IO_CALLBACK
     PMINIDUMP_IO_CALLBACK typedef ptr MINIDUMP_IO_CALLBACK
     MINIDUMP_READ_MEMORY_FAILURE_CALLBACK struct
-      Offset_ ULONG64 ?
-      Bytes ULONG ?
+      Offset_ QWORD ?
+      Bytes DWORD ?
       FailureStatus HRESULT ?
     MINIDUMP_READ_MEMORY_FAILURE_CALLBACK ends
     _MINIDUMP_READ_MEMORY_FAILURE_CALLBACK typedef MINIDUMP_READ_MEMORY_FAILURE_CALLBACK
     PMINIDUMP_READ_MEMORY_FAILURE_CALLBACK typedef ptr MINIDUMP_READ_MEMORY_FAILURE_CALLBACK
     MINIDUMP_VM_QUERY_CALLBACK struct
-      Offset_ ULONG64 ?
+      Offset_ QWORD ?
     MINIDUMP_VM_QUERY_CALLBACK ends
     _MINIDUMP_VM_QUERY_CALLBACK typedef MINIDUMP_VM_QUERY_CALLBACK
     PMINIDUMP_VM_QUERY_CALLBACK typedef ptr MINIDUMP_VM_QUERY_CALLBACK
     MINIDUMP_VM_PRE_READ_CALLBACK struct
-      Offset_ ULONG64 ?
-      Buffer PVOID ?
-      Size_ ULONG ?
+      Offset_ QWORD ?
+      Buffer POINTER ?
+      Size_ DWORD ?
     MINIDUMP_VM_PRE_READ_CALLBACK ends
     _MINIDUMP_VM_PRE_READ_CALLBACK typedef MINIDUMP_VM_PRE_READ_CALLBACK
     PMINIDUMP_VM_PRE_READ_CALLBACK typedef ptr MINIDUMP_VM_PRE_READ_CALLBACK
     MINIDUMP_VM_POST_READ_CALLBACK struct
-      Offset_ ULONG64 ?
-      Buffer PVOID ?
-      Size_ ULONG ?
-      Completed ULONG ?
+      Offset_ QWORD ?
+      Buffer POINTER ?
+      Size_ DWORD ?
+      Completed DWORD ?
       Status HRESULT ?
     MINIDUMP_VM_POST_READ_CALLBACK ends
     _MINIDUMP_VM_POST_READ_CALLBACK typedef MINIDUMP_VM_POST_READ_CALLBACK
     PMINIDUMP_VM_POST_READ_CALLBACK typedef ptr MINIDUMP_VM_POST_READ_CALLBACK
     MINIDUMP_CALLBACK_INPUT struct
-      ProcessId ULONG ?
+      ProcessId DWORD ?
       ProcessHandle HANDLE ?
-      CallbackType ULONG ?
+      CallbackType DWORD ?
       union
         Status HRESULT ?
         Thread MINIDUMP_THREAD_CALLBACK <>
@@ -906,7 +1035,7 @@ ifndef _MINIDUMP_H
         IncludeModule MINIDUMP_INCLUDE_MODULE_CALLBACK <>
         Io MINIDUMP_IO_CALLBACK <>
         ReadMemoryFailure MINIDUMP_READ_MEMORY_FAILURE_CALLBACK <>
-        SecondaryFlags ULONG ?
+        SecondaryFlags DWORD ?
         VmQuery MINIDUMP_VM_QUERY_CALLBACK <>
         VmPreRead MINIDUMP_VM_PRE_READ_CALLBACK <>
         VmPostRead MINIDUMP_VM_POST_READ_CALLBACK <>
@@ -916,21 +1045,21 @@ ifndef _MINIDUMP_H
     PMINIDUMP_CALLBACK_INPUT typedef ptr MINIDUMP_CALLBACK_INPUT
     MINIDUMP_CALLBACK_OUTPUT struct
       union
-        ModuleWriteFlags ULONG ?
-        ThreadWriteFlags ULONG ?
-        SecondaryFlags ULONG ?
+        ModuleWriteFlags DWORD ?
+        ThreadWriteFlags DWORD ?
+        SecondaryFlags DWORD ?
         struct
-          MemoryBase ULONG64 ?
-          MemorySize ULONG ?
+          MemoryBase QWORD ?
+          MemorySize DWORD ?
         ends
         struct
-          CheckCancel BOOL ?
-          Cancel BOOL ?
+          CheckCancel DWORD ?
+          Cancel DWORD ?
         ends
         Handle HANDLE ?
         struct
           VmRegion MINIDUMP_MEMORY_INFO <>
-          Continue BOOL ?
+          Continue DWORD ?
         ends
         struct
           VmQueryStatus HRESULT ?
@@ -938,13 +1067,73 @@ ifndef _MINIDUMP_H
         ends
         struct
           VmReadStatus HRESULT ?
-          VmReadBytesCompleted ULONG ?
+          VmReadBytesCompleted DWORD ?
         ends
         Status HRESULT ?
       ends
     MINIDUMP_CALLBACK_OUTPUT ends
     _MINIDUMP_CALLBACK_OUTPUT typedef MINIDUMP_CALLBACK_OUTPUT
     PMINIDUMP_CALLBACK_OUTPUT typedef ptr MINIDUMP_CALLBACK_OUTPUT
+    ; A normal minidump contains just the information
+    ; necessary to capture stack traces for all of the
+    ; existing threads in a process.
+    ; A minidump with data segments includes all of the data
+    ; sections from loaded modules in order to capture
+    ; global variable contents.  This can make the dump much
+    ; larger if many modules have global data.
+    ; A minidump with full memory includes all of the accessible
+    ; memory in the process and can be very large.  A minidump
+    ; with full memory always has the raw memory data at the end
+    ; of the dump so that the initial structures in the dump can
+    ; be mapped directly without having to include the raw
+    ; memory information.
+    ; Stack and backing store memory can be filtered to remove
+    ; data unnecessary for stack walking.  This can improve
+    ; compression of stacks and also deletes data that may
+    ; be private and should not be stored in a dump.
+    ; Memory can also be scanned to see what modules are
+    ; referenced by stack and backing store memory to allow
+    ; omission of other modules to reduce dump size.
+    ; In either of these modes the ModuleReferencedByMemory flag
+    ; is set for all modules referenced before the base
+    ; module callbacks occur.
+    ; On some operating systems a list of modules that were
+    ; recently unloaded is kept in addition to the currently
+    ; loaded module list.  This information can be saved in
+    ; the dump if desired.
+    ; Stack and backing store memory can be scanned for referenced
+    ; pages in order to pick up data referenced by locals or other
+    ; stack memory.  This can increase the size of a dump significantly.
+    ; Module paths may contain undesired information such as user names
+    ; or other important directory names so they can be stripped.  This
+    ; option reduces the ability to locate the proper image later
+    ; and should only be used in certain situations.
+    ; Complete operating system per-process and per-thread information can
+    ; be gathered and stored in the dump.
+    ; The virtual address space can be scanned for various types
+    ; of memory to be included in the dump.
+    ; Code which is concerned with potentially private information
+    ; getting into the minidump can set a flag that automatically
+    ; modifies all existing and future flags to avoid placing
+    ; unnecessary data in the dump.  Basic data, such as stack
+    ; information, will still be included but optional data, such
+    ; as indirect memory, will not.
+    ; When doing a full memory dump it's possible to store all
+    ; of the enumerated memory region descriptive information
+    ; in a memory information stream.
+    ; Additional thread information beyond the basic thread
+    ; structure can be collected if desired.
+    ; A minidump with code segments includes all of the code
+    ; and code-related sections from loaded modules in order
+    ; to capture executable content.
+    ; MiniDumpWithoutAuxiliaryState turns off any secondary,
+    ; auxiliary-supported memory gathering.
+    ; MiniDumpWithFullAuxiliaryState asks any present auxiliary
+    ; data providers to include all of their state in the dump.
+    ; The exact set of what is provided depends on the auxiliary.
+    ; This can be quite large.
+    ; MiniDumpFilterWriteCombinedMemory asks to exclude all memory
+    ; with the virtual protection attribute of PAGE_WRITECOMBINE.
     MINIDUMP_TYPE typedef SDWORD
     MiniDumpNormal equ 00000000h
     MiniDumpWithDataSegs equ 00000001h
@@ -975,31 +1164,60 @@ ifndef _MINIDUMP_H
     MiniDumpValidTypeFlags equ 01ffffffh
     _MINIDUMP_TYPE typedef MINIDUMP_TYPE
 
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+    ; In addition to the primary flags provided to
+    ; MiniDumpWriteDump there are additional, less
+    ; frequently used options queried via the secondary
+    ; flags callback.
+    ; MiniSecondaryWithoutPowerInfo suppresses the minidump
+    ; query that retrieves processor power information for
+    ; MINIDUMP_MISC_INFO.
     MINIDUMP_SECONDARY_FLAGS typedef SDWORD
     MiniSecondaryWithoutPowerInfo equ 00000001h
     MiniSecondaryValidFlags equ 00000001h
     _MINIDUMP_SECONDARY_FLAGS typedef MINIDUMP_SECONDARY_FLAGS
 
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
+    ; The minidump callback should modify the FieldsToWrite parameter to reflect
+    ; what portions of the specified thread or module should be written to the
+    ; file.
     TYPE_MINIDUMP_CALLBACK_ROUTINE typedef proto WIN_STD_CALL_CONV :PVOID, :PMINIDUMP_CALLBACK_INPUT, :PMINIDUMP_CALLBACK_OUTPUT
     MINIDUMP_CALLBACK_ROUTINE typedef ptr TYPE_MINIDUMP_CALLBACK_ROUTINE
 
     MINIDUMP_CALLBACK_INFORMATION struct
       CallbackRoutine MINIDUMP_CALLBACK_ROUTINE ?
-      CallbackParam PVOID ?
+      CallbackParam POINTER ?
     MINIDUMP_CALLBACK_INFORMATION ends
     _MINIDUMP_CALLBACK_INFORMATION typedef MINIDUMP_CALLBACK_INFORMATION
     PMINIDUMP_CALLBACK_INFORMATION typedef ptr MINIDUMP_CALLBACK_INFORMATION
+    ;++
+    ; PVOID
+    ; RVA_TO_ADDR(
+    ;     PVOID Mapping,
+    ;     ULONG Rva
+    ;     )
+    ; Routine Description:
+    ;     Map an RVA that is contained within a mapped file to it's associated
+    ;     flat address.
+    ; Arguments:
+    ;     Mapping - Base address of mapped file containing the RVA.
+    ;     Rva - An Rva to fixup.
+    ; Return Values:
+    ;     A pointer to the desired data.
+    ;--
     RVA_TO_ADDR macro Mapping, Rva
       exitm <((((Mapping)) + (Rva)))>
     endm
     MiniDumpWriteDump proto WIN_STD_CALL_CONV :HANDLE, :DWORD, :HANDLE, :MINIDUMP_TYPE, :PMINIDUMP_EXCEPTION_INFORMATION, :PMINIDUMP_USER_STREAM_INFORMATION, :PMINIDUMP_CALLBACK_INFORMATION
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     MiniDumpReadDumpStream proto WIN_STD_CALL_CONV :PVOID, :ULONG, :ptr PMINIDUMP_DIRECTORY, :ptr PVOID, :ptr ULONG
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
     ifdef __cplusplus
@@ -1009,9 +1227,14 @@ ifndef _MINIDUMP_H
       if _MSC_VER ge 800
         if _MSC_VER ge 1200
         else
+          ;* Zero length array *
+          ;* Nameless struct/union *
         endif
       endif
     endif
     include poppack.inc
+    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
+  ;* _MINIDUMP_H *
 endif
+; HEXTRACT: end_dbghelp hide-line end_imagehlp
