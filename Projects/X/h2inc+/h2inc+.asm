@@ -31,7 +31,7 @@
 
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc
-SysSetup OOP, CON64, WIDE_STRING, DEBUG(WND, RESGUARD)
+SysSetup OOP, CON64, WIDE_STRING, DEBUG(WND);, RESGUARD)
 SILENT=TRUE
 
 % include &MacPath&fMath.inc

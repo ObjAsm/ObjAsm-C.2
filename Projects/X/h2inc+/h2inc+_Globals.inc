@@ -667,14 +667,14 @@ String cUsageText,  "Usage: h2inc+ [Options] Filespec", CRLF
   ExtendString      "  Options: (prepended by '-' or '/')", CRLF
   ExtendString      "    -@[name]: specify an environment variable or", CRLF
   ExtendString      "              ASCII file that contains further options", CRLF
-  ExtendString      "    -a: add @Align to STRUCT declarations", CRLF
-  ExtendString      "    -b: batch mode, no user interaction", CRLF
+  ExtendString      "    -a: add @Align to STRUCT/UNION declarations", CRLF
+  ExtendString      "    -b: batch mode without user interaction", CRLF
   ExtendString      "    -c: include comments in output", CRLF
   ExtendString      "    -d[0|1|2|3]: define __declspec(dllimport) handling (default = 0)", CRLF
   ExtendString      "      0: decide depending on values in h2inc+.ini", CRLF
   ExtendString      "      1: always assume __declspec(dllimport) is set", CRLF
   ExtendString      "      2: always assume __declspec(dllimport) is not set", CRLF
-  ExtendString      "      3: if possible use @DefProto macro to define prototypes", CRLF
+  ExtendString      "      3: if possible, use @DefProto macro to define prototypes", CRLF
   ExtendString      "    -e: write full decorated names of function prototypes to a def-file", CRLF
   ExtendString      "    -h | -?: show usage help", CRLF
   ExtendString      "    -I[directory list]: specify additional directories to search for header files", CRLF
@@ -697,13 +697,13 @@ String cUsageText,  "Usage: h2inc+ [Options] Filespec", CRLF
   ExtendString      "      3: structs/unions", CRLF
   ExtendString      "      4: externals", CRLF
   ExtendString      "    -V[0|1|2|3]: verbosity (default = 0)", CRLF
-  ExtendString      "      0: Silent.", CRLF
+  ExtendString      "      0: Silent", CRLF
   ExtendString      "      1: Important messages only", CRLF
   ExtendString      "      2: Less-important messages", CRLF
   ExtendString      "      3: All messages", CRLF
-  ExtendString      "    -W[0|1|2|3]: set warning level (default is 0)", CRLF
-  ExtendString      "      0: No warnins", CRLF
-  ExtendString      "      1: Severe warnins only", CRLF
+  ExtendString      "    -W[0|1|2|3]: set warning level (default = 0)", CRLF
+  ExtendString      "      0: No warnings", CRLF
+  ExtendString      "      1: Severe warnings only", CRLF
   ExtendString      "      2: Severe and some less-severe warnings", CRLF
   ExtendString      "      3: All warnings", CRLF
   ExtendString      "    -y: overwrite existing .inc files without confirmation", CRLF
