@@ -29,10 +29,21 @@
 ;                 - @ option added to specify additional options in an env. variable or in a file.
 ; ==================================================================================================
 
+;void proto WIN_STD_CALL_CONV :ptr __RPC_USER
+;          STD_METHOD Draw, :ptr IViewObject, :DWORD, :LONG, :ptr, :ptr DVTARGETDEVICE, :HDC, :HDC, :LPCRECTL, :LPCRECTL, :, :ULONG_PTR
+;@DefProto DllImport, PtInRect, WIN_STD_CALL_CONV,, <:ptr RECT, :POINT>, 8  <--- 12
+;STD_METHOD Draw, :ptr IViewObjectEx, :DWORD, :LONG, :ptr, :ptr DVTARGETDEVICE, :HDC, :HDC, :LPCRECTL, :LPCRECTL, :s_BITS s_REC <>, :ULONG_PTR
+;SIZE_ ?  <-- <>
+
+;          NMDATETIMEFORMATQUERYW struct
+;            nmhdr NMHDR <>
+;            pszFormat LPCWSTR ?
+;            szMax SIZE_ ?   <-- <>
+;          NMDATETIMEFORMATQUERYW ends
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc
 SysSetup OOP, CON64, WIDE_STRING, DEBUG(WND);, RESGUARD)
-SILENT=TRUE
+;SILENT=TRUE
 
 % include &MacPath&fMath.inc
 
@@ -209,6 +220,8 @@ include h2inc+_IncFile_Render.inc
 include h2inc+_PPCHandler.inc                           ;Pre-Processor Command Handler
 include h2inc+_Main.inc
 
+.code
+  
 start proc uses xdi                                     ;Program entry point
   local cBuffer[50]:CHR
 

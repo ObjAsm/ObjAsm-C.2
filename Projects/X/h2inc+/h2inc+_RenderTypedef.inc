@@ -79,7 +79,7 @@ RenderTypedef proc
     .endif
     mov edx, [xax - sizeof(DWORD)]                      ;Get offset to Macro-Attr
     invoke RenderMacroCall, pToken, DWORD ptr [xax + xdx], TRUE
-    test xax, xax                                       ;FALSE if it was not a macro
+    test eax, eax                                       ;FALSE if it was not a macro
     jnz @GetNextToken
   .endif
 

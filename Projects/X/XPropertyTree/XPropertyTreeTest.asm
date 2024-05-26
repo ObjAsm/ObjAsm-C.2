@@ -15,6 +15,7 @@ SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, ResGuard)  ;Load OOP files and OS 
 % include &MacPath&SDLL.inc
 
 % include &IncPath&Windows\mmsystem.inc
+% include &IncPath&Windows\combaseapi.inc
 % include &IncPath&Windows\shlobj_core.inc
 
 % includelib &LibPath&Windows\shell32.lib

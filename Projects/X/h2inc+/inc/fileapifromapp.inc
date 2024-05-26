@@ -1,15 +1,13 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 26/05/2024 13:31:25
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\fileapifromapp.h
 ;             Created on (UTC) 06/04/2024 06:15:55
 ;             Last modified on (UTC) 21/02/2024 18:13:22
 
-;*********************************************************************************
 ifndef _FILEAPIFROMAPP_H_
   _FILEAPIFROMAPP_H_ equ <>
   ifdef _MSC_VER
   endif
-  ; _MSC_VER
   include apiset.inc
   include apisetcconv.inc
   include minwindef.inc
@@ -65,11 +63,8 @@ ifndef _FILEAPIFROMAPP_H_
         ;[...]
       endif
     endif
-    ; Version check
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) *
   endif
   ifdef __cplusplus
     ;[...]
   endif
 endif
-; _FILEAPIFROMAPP_H_

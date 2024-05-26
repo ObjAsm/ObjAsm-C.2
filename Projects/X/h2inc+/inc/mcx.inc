@@ -1,23 +1,20 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\mcx.h
 ;             Created on (UTC) 06/04/2024 06:15:56
 ;             Last modified on (UTC) 16/12/2023 11:07:40
 
-;************************************************************************
 ifndef _MCX_H_
   _MCX_H_ equ <>
   if _MSC_VER gt 1000
   endif
   if _MSC_VER ge 1200
-    ; padding added after data member
   endif
   MODEMDEVCAPS struct
     dwActualSize DWORD ?
     dwRequiredSize DWORD ?
     dwDevSpecificOffset DWORD ?
     dwDevSpecificSize DWORD ?
-    ; product and version identification
     dwModemProviderVersion DWORD ?
     dwModemManufacturerOffset DWORD ?
     dwModemManufacturerSize DWORD ?
@@ -25,24 +22,14 @@ ifndef _MCX_H_
     dwModemModelSize DWORD ?
     dwModemVersionOffset DWORD ?
     dwModemVersionSize DWORD ?
-    ; local option capabilities
     dwDialOptions DWORD ?
-    ; bitmap of supported values
     dwCallSetupFailTimer DWORD ?
-    ; maximum in seconds
     dwInactivityTimeout DWORD ?
-    ; maximum in seconds
     dwSpeakerVolume DWORD ?
-    ; bitmap of supported values
     dwSpeakerMode DWORD ?
-    ; bitmap of supported values
     dwModemOptions DWORD ?
-    ; bitmap of supported values
     dwMaxDTERate DWORD ?
-    ; maximum value in bit/s
     dwMaxDCERate DWORD ?
-    ; maximum value in bit/s
-    ; Variable portion for proprietary expansion
     abVariablePortion BYTE 1 dup (?)
   MODEMDEVCAPS ends
   _MODEMDEVCAPS typedef MODEMDEVCAPS
@@ -53,54 +40,35 @@ ifndef _MCX_H_
     dwRequiredSize DWORD ?
     dwDevSpecificOffset DWORD ?
     dwDevSpecificSize DWORD ?
-    ; static local options (read/write)
     dwCallSetupFailTimer DWORD ?
-    ; seconds
     dwInactivityTimeout DWORD ?
-    ; seconds
     dwSpeakerVolume DWORD ?
-    ; level
     dwSpeakerMode DWORD ?
-    ; mode
     dwPreferredModemOptions DWORD ?
-    ; bitmap
-    ; negotiated options (read only) for current or last call
     dwNegotiatedModemOptions DWORD ?
-    ; bitmap
     dwNegotiatedDCERate DWORD ?
-    ; bit/s
-    ; Variable portion for proprietary expansion
     abVariablePortion BYTE 1 dup (?)
   MODEMSETTINGS ends
   _MODEMSETTINGS typedef MODEMSETTINGS
   PMODEMSETTINGS typedef ptr MODEMSETTINGS
   LPMODEMSETTINGS typedef ptr MODEMSETTINGS
-  ; Dial Options
-  DIALOPTION_BILLING equ 00000040h; Supports wait for bong "$"
-
-  DIALOPTION_QUIET equ 00000080h; Supports wait for quiet "@"
-
-  DIALOPTION_DIALTONE equ 00000100h; Supports wait for dial tone "W"
-
-  ; SpeakerVolume for MODEMDEVCAPS
+  DIALOPTION_BILLING equ 00000040h
+  DIALOPTION_QUIET equ 00000080h
+  DIALOPTION_DIALTONE equ 00000100h
   MDMVOLFLAG_LOW equ 00000001h
   MDMVOLFLAG_MEDIUM equ 00000002h
   MDMVOLFLAG_HIGH equ 00000004h
-  ; SpeakerVolume for MODEMSETTINGS
   MDMVOL_LOW equ 00000000h
   MDMVOL_MEDIUM equ 00000001h
   MDMVOL_HIGH equ 00000002h
-  ; SpeakerMode for MODEMDEVCAPS
   MDMSPKRFLAG_OFF equ 00000001h
   MDMSPKRFLAG_DIAL equ 00000002h
   MDMSPKRFLAG_ON equ 00000004h
   MDMSPKRFLAG_CALLSETUP equ 00000008h
-  ; SpeakerMode for MODEMSETTINGS
   MDMSPKR_OFF equ 00000000h
   MDMSPKR_DIAL equ 00000001h
   MDMSPKR_ON equ 00000002h
   MDMSPKR_CALLSETUP equ 00000003h
-  ; Modem Options
   MDM_COMPRESSION equ 00000001h
   MDM_ERROR_CONTROL equ 00000002h
   MDM_FORCED_EC equ 00000004h
@@ -113,22 +81,14 @@ ifndef _MCX_H_
   MDM_BLIND_DIAL equ 00000200h
   MDM_V23_OVERRIDE equ 00000400h
   MDM_DIAGNOSTICS equ 00000800h
-  ;=========================================================================
-  ;      EXTENDED MODEM OPTIONS INFORMATION
-  ;      THE following macros define additional bits in dwPreferredModemOptions.
-  ;      These bits specify information relevant to making ISDN and GSM
-  ;      calls, such as which protocol to use.
-  ;=========================================================================
   MDM_MASK_BEARERMODE equ 0000f000h
   MDM_SHIFT_BEARERMODE equ 12
   MDM_MASK_PROTOCOLID equ 000f0000h
   MDM_SHIFT_PROTOCOLID equ 16
   MDM_MASK_PROTOCOLDATA equ 0ff00000h
   MDM_SHIFT_PROTOCOLDATA equ 20
-  ; PROTOCOLINFO is the union of PROTOCOLID and PROTOCOLDATA ...
   MDM_MASK_PROTOCOLINFO equ <(MDM_MASK_PROTOCOLID or MDM_MASK_PROTOCOLDATA)>
   MDM_SHIFT_PROTOCOLINFO equ <MDM_SHIFT_PROTOCOLID>
-  ; EXTENDEDINFO is the union of BEARERMODE and PROTOCOLINFO
   MDM_MASK_EXTENDEDINFO equ <(MDM_MASK_BEARERMODE or MDM_MASK_PROTOCOLINFO)>
   MDM_SHIFT_EXTENDEDINFO equ <MDM_SHIFT_BEARERMODE>
   MDM_GET_BEARERMODE macro _dwOptions
@@ -149,80 +109,51 @@ ifndef _MCX_H_
   MDM_SET_PROTOCOLDATA macro _dwOptions, _pd
     exitm <(((_dwOptions) and not MDM_MASK_PROTOCOLDATA), ((_dwOptions) or (((_pd) shl MDM_SHIFT_PROTOCOLDATA) and MDM_MASK_PROTOCOLDATA)))>
   endm
-  ; MDM_GET_PROTOCOLINFO gets the protocol-id and info bits in
-  ; their IN-PLACE form (preserving their place in dwModemPreferredOptions)
   MDM_GET_PROTOCOLINFO macro _dwOptions
     exitm <((_dwOptions) and MDM_MASK_PROTOCOLINFO)>
   endm
-  ; MDM_SET_PROTOCOLINFO takes as its argument the protocol-id and info bits in
-  ; their IN-PLACE form (final position within dwModemPreferredOptions)
   MDM_SET_PROTOCOLINFO macro _dwOptions, _pinfo
     exitm <(((_dwOptions) and not MDM_MASK_PROTOCOLINFO), ((_dwOptions) or ((_pinfo) and MDM_MASK_PROTOCOLINFO)))>
   endm
-  ; MDM_GEN_PROTOCOLINFO generates the  the protocol-id and info bits in
-  ; their IN-PLACE form (final position  within dwModemPreferredOptions).
   MDM_GEN_PROTOCOLINFO macro _pid, _pdata
     exitm <((((_pid) shl MDM_SHIFT_PROTOCOLID) and MDM_MASK_PROTOCOLID) or (((_pdata) shl MDM_SHIFT_PROTOCOLDATA) and MDM_MASK_PROTOCOLDATA))>
   endm
-  ; MDM_GET_EXTENDEDIONFO gets the bearermode and protocol information in
-  ; their IN-PLACE form (preserving their place in dwModemPreferredOptions)
   MDM_GET_EXTENDEDINFO macro _dwOptions
     exitm <((_dwOptions) and MDM_MASK_EXTENDEDINFO)>
   endm
-  ; MDM_SET_PROTOCOLINFO takes as its argument the bearermode and
-  ; protocol bits in their IN-PLACE form (final position within
-  ; dwModemPreferredOptions)
   MDM_SET_EXTENDEDINFO macro _dwOptions, _extinfo
     exitm <(((_dwOptions) and not MDM_MASK_EXTENDEDINFO), ((_dwOptions) or ((_extinfo) and MDM_MASK_EXTENDEDINFO)))>
   endm
-  ; MDM_GEN_EXTENDEDINFO generates the bearermode and protocol information
-  ; in their IN-PLACE form (final position within dwModemPreferredOptions0.
   MDM_GEN_EXTENDEDINFO macro _bearermode, _pinfo
     exitm <(((_pinfo) and MDM_MASK_PROTOCOLINFO) or (((_bearermode) shl MDM_SHIFT_BEARERMODE) and MDM_MASK_BEARERMODE))>
   endm
-  ;=========================================================================
-  ;  BEARER MODES
-  ;=========================================================================
   MDM_BEARERMODE_ANALOG equ 0h
   MDM_BEARERMODE_ISDN equ 1h
   MDM_BEARERMODE_GSM equ 2h
-  ;=========================================================================
-  ;  PROTOCOL IDs
-  ;=========================================================================
   MDM_PROTOCOLID_DEFAULT equ 0h
   MDM_PROTOCOLID_HDLCPPP equ 1h
   MDM_PROTOCOLID_V128 equ 2h
   MDM_PROTOCOLID_X75 equ 3h
   MDM_PROTOCOLID_V110 equ 4h
   MDM_PROTOCOLID_V120 equ 5h
-  MDM_PROTOCOLID_AUTO equ 6h; Auto protocol detection.
-
-  MDM_PROTOCOLID_ANALOG equ 7h; Applicable only to GSM
-
+  MDM_PROTOCOLID_AUTO equ 6h
+  MDM_PROTOCOLID_ANALOG equ 7h
   MDM_PROTOCOLID_GPRS equ 8h
   MDM_PROTOCOLID_PIAFS equ 9h
-  ;=========================================================================
-  ;  HDLC PPP PROTOCOL INFORMATION
-  ;=========================================================================
-  ; Following are specific to the HDLC-PPP protocol.
-  ; The shifts are w.r.t. the start of the PROTOCOLDATA field.
   MDM_SHIFT_HDLCPPP_SPEED equ 0h
-  MDM_MASK_HDLCPPP_SPEED equ 7h; 3 bits
-
+  MDM_MASK_HDLCPPP_SPEED equ 7h
   MDM_HDLCPPP_SPEED_DEFAULT equ 0h
   MDM_HDLCPPP_SPEED_64K equ 1h
   MDM_HDLCPPP_SPEED_56K equ 2h
   MDM_SHIFT_HDLCPPP_AUTH equ 3h
-  MDM_MASK_HDLCPPP_AUTH equ (7h shl 3); 3 bits
-
+  MDM_MASK_HDLCPPP_AUTH equ (7h shl 3)
   MDM_HDLCPPP_AUTH_DEFAULT equ 0h
   MDM_HDLCPPP_AUTH_NONE equ 1h
   MDM_HDLCPPP_AUTH_PAP equ 2h
   MDM_HDLCPPP_AUTH_CHAP equ 3h
   MDM_HDLCPPP_AUTH_MSCHAP equ 4h
   MDM_SHIFT_HDLCPPP_ML equ 6h
-  MDM_MASK_HDLCPPP_ML equ (3h shl 6); 2 bits
-
+  MDM_MASK_HDLCPPP_ML equ (3h shl 6)
   MDM_HDLCPPP_ML_DEFAULT equ 0h
   MDM_HDLCPPP_ML_NONE equ 1h
   MDM_HDLCPPP_ML_2 equ 2h
@@ -239,19 +170,13 @@ ifndef _MCX_H_
   MDM_PROTOCOL_HDLCPPP_128K_PAP equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_HDLCPPP, MDM_GEN_HDLCPPP_PROTOCOL_DATA(MDM_HDLCPPP_SPEED_64K, MDM_HDLCPPP_AUTH_PAP, MDM_HDLCPPP_ML_2))>
   MDM_PROTOCOL_HDLCPPP_128K_CHAP equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_HDLCPPP, MDM_GEN_HDLCPPP_PROTOCOL_DATA(MDM_HDLCPPP_SPEED_64K, MDM_HDLCPPP_AUTH_CHAP, MDM_HDLCPPP_ML_2))>
   MDM_PROTOCOL_HDLCPPP_128K_MSCHAP equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_HDLCPPP, MDM_GEN_HDLCPPP_PROTOCOL_DATA(MDM_HDLCPPP_SPEED_64K, MDM_HDLCPPP_AUTH_MSCHAP, MDM_HDLCPPP_ML_2))>
-  ;=========================================================================
-  ;  V120 PROTOCOL INFORMATION
-  ; The shifts are w.r.t. the start of the PROTOCOLDATA field.
-  ;=========================================================================
   MDM_SHIFT_V120_SPEED equ 0h
-  MDM_MASK_V120_SPEED equ 7h; 3 bits
-
+  MDM_MASK_V120_SPEED equ 7h
   MDM_V120_SPEED_DEFAULT equ 0h
   MDM_V120_SPEED_64K equ 1h
   MDM_V120_SPEED_56K equ 2h
   MDM_SHIFT_V120_ML equ 6h
-  MDM_MASK_V120_ML equ (3h shl 6); 2 bits
-
+  MDM_MASK_V120_ML equ (3h shl 6)
   MDM_V120_ML_DEFAULT equ 0h
   MDM_V120_ML_NONE equ 1h
   MDM_V120_ML_2 equ 2h
@@ -262,13 +187,8 @@ ifndef _MCX_H_
   MDM_PROTOCOL_V120_56K equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_V120, MDM_GEN_V120_PROTOCOL_DATA(MDM_V120_SPEED_56K, MDM_V120_ML_NONE))>
   MDM_PROTOCOL_V120_112K equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_V120, MDM_GEN_V120_PROTOCOL_DATA(MDM_V120_SPEED_56K, MDM_V120_ML_2))>
   MDM_PROTOCOL_V120_128K equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_V120, MDM_GEN_V120_PROTOCOL_DATA(MDM_V120_SPEED_64K, MDM_V120_ML_2))>
-  ;=========================================================================
-  ;  X75 PROTOCOL INFORMATION
-  ; The shifts are w.r.t. the start of the PROTOCOLDATA field.
-  ;=========================================================================
   MDM_SHIFT_X75_DATA equ 0h
-  MDM_MASK_X75_DATA equ 7h; 3 bits
-
+  MDM_MASK_X75_DATA equ 7h
   MDM_X75_DATA_DEFAULT equ 0h
   MDM_X75_DATA_64K equ 1h
   MDM_X75_DATA_128K equ 2h
@@ -281,13 +201,8 @@ ifndef _MCX_H_
   MDM_PROTOCOL_X75_128K equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_X75, MDM_GEN_X75_PROTOCOL_DATA(MDM_X75_DATA_128K))>
   MDM_PROTOCOL_X75_T_70 equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_X75, MDM_GEN_X75_PROTOCOL_DATA(MDM_X75_DATA_T_70))>
   MDM_PROTOCOL_X75_BTX equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_X75, MDM_GEN_X75_PROTOCOL_DATA(MDM_X75_DATA_BTX))>
-  ;=========================================================================
-  ;  V110 PROTOCOL INFORMATION
-  ; The shifts are w.r.t. the start of the PROTOCOLDATA field.
-  ;=========================================================================
   MDM_SHIFT_V110_SPEED equ 0h
-  MDM_MASK_V110_SPEED equ 0fh; 4 bits
-
+  MDM_MASK_V110_SPEED equ 0fh
   MDM_V110_SPEED_DEFAULT equ 0h
   MDM_V110_SPEED_1DOT2K equ 1h
   MDM_V110_SPEED_2DOT4K equ 2h
@@ -312,18 +227,11 @@ ifndef _MCX_H_
   MDM_PROTOCOL_V110_28DOT8K equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_V110, MDM_GEN_V110_PROTOCOL_DATA(MDM_V110_SPEED_28DOT8K))>
   MDM_PROTOCOL_V110_38DOT4K equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_V110, MDM_GEN_V110_PROTOCOL_DATA(MDM_V110_SPEED_38DOT4K))>
   MDM_PROTOCOL_V110_57DOT6K equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_V110, MDM_GEN_V110_PROTOCOL_DATA(MDM_V110_SPEED_57DOT6K))>
-  ;=========================================================================
-  ;  AUTO PROTOCOL INFORMATION (ie, when the protocol is detected automatically)
-  ; The shifts are w.r.t. the start of the PROTOCOLDATA field.
-  ;=========================================================================
-  ; Following are specific to the AUTO-protocol
   MDM_SHIFT_AUTO_SPEED equ 0h
-  MDM_MASK_AUTO_SPEED equ 7h; 3 bits
-
+  MDM_MASK_AUTO_SPEED equ 7h
   MDM_AUTO_SPEED_DEFAULT equ 0h
   MDM_SHIFT_AUTO_ML equ 6h
-  MDM_MASK_AUTO_ML equ (3h shl 6); 2 bits
-
+  MDM_MASK_AUTO_ML equ (3h shl 6)
   MDM_AUTO_ML_DEFAULT equ 0h
   MDM_AUTO_ML_NONE equ 1h
   MDM_AUTO_ML_2 equ 2h
@@ -332,10 +240,6 @@ ifndef _MCX_H_
   endm
   MDM_PROTOCOL_AUTO_1CH equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_AUTO, MDM_GEN_AUTO_PROTOCOL_DATA(MDM_AUTO_SPEED_DEFAULT, MDM_AUTO_ML_NONE))>
   MDM_PROTOCOL_AUTO_2CH equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_AUTO, MDM_GEN_AUTO_PROTOCOL_DATA(MDM_AUTO_SPEED_DEFAULT, MDM_AUTO_ML_2))>
-  ;=========================================================================
-  ;  ANALOG PROTOCOL INFORMATION (Applicable only to GSM)
-  ;=========================================================================
-  ; Following are specific to GSM Analog protocol
   MDM_ANALOG_RLP_ON equ 0h
   MDM_ANALOG_RLP_OFF equ 1h
   MDM_ANALOG_V34 equ 2h
@@ -344,22 +248,12 @@ ifndef _MCX_H_
   endm
   MDM_PROTOCOL_ANALOG_RLP equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_ANALOG, MDM_GEN_ANALOG_PROTOCOL_DATA(MDM_ANALOG_RLP_ON))>
   MDM_PROTOCOL_ANALOG_NRLP equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_ANALOG, MDM_GEN_ANALOG_PROTOCOL_DATA(MDM_ANALOG_RLP_OFF))>
-  ;  v34 anolog for isdn
   MDM_PROTOCOL_ANALOG_V34 equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_ANALOG, MDM_GEN_ANALOG_PROTOCOL_DATA(MDM_ANALOG_V34))>
-  ;=========================================================================
-  ;  GPRS PROTOCOL INFORMATION (Applicable only to GSM)
-  ;=========================================================================
-  ; Following are specific to GPRS protocol
   MDM_PROTOCOL_GPRS equ MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_GPRS, 0)
-  ;=========================================================================
-  ;  PIAFS PROTOCOL INFORMATION
-  ;=========================================================================
-  ; Following are specific to PIAFS protocol
   MDM_PIAFS_INCOMING equ 0
   MDM_PIAFS_OUTGOING equ 1
   MDM_PROTOCOL_PIAFS_INCOMING equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_PIAFS, MDM_PIAFS_INCOMING)>
   MDM_PROTOCOL_PIAFS_OUTGOING equ <MDM_GEN_PROTOCOLINFO(MDM_PROTOCOLID_PIAFS, MDM_PIAFS_OUTGOING)>
   if _MSC_VER ge 1200
   endif
-  ;* _MCX_H_ *
 endif

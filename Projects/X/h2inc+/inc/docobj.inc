@@ -1,14 +1,12 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\docobj.h
 ;             Created on (UTC) 06/04/2024 06:15:53
 ;             Last modified on (UTC) 21/02/2024 18:16:08
 
-;* verify that the <rpcndr.h> version is high enough to compile this file*
 ifndef __REQUIRED_RPCNDR_H_VERSION__
   __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
-;* verify that the <rpcsal.h> version is high enough to compile this file*
 ifndef __REQUIRED_RPCSAL_H_VERSION__
   __REQUIRED_RPCSAL_H_VERSION__ equ 100
 endif
@@ -16,12 +14,10 @@ include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
   .err <this stub requires an updated version of < rpcndr.h >>
-  ;* __RPCNDR_H_VERSION__ *
 endif
 ifndef COM_NO_WINDOWS_H
   include windows.inc
   include ole2.inc
-  ;*COM_NO_WINDOWS_H*
 endif
 ifndef __docobj_h__
   __docobj_h__ equ <>
@@ -38,80 +34,49 @@ ifndef __docobj_h__
       endm
     endif
   endif
-  ;* Forward Declarations *
   ifndef __IOleDocument_FWD_DEFINED__
     __IOleDocument_FWD_DEFINED__ equ <>
-    ;* __IOleDocument_FWD_DEFINED__ *
   endif
   ifndef __IOleDocumentSite_FWD_DEFINED__
     __IOleDocumentSite_FWD_DEFINED__ equ <>
-    ;* __IOleDocumentSite_FWD_DEFINED__ *
   endif
   ifndef __IOleDocumentView_FWD_DEFINED__
     __IOleDocumentView_FWD_DEFINED__ equ <>
-    ;* __IOleDocumentView_FWD_DEFINED__ *
   endif
   ifndef __IEnumOleDocumentViews_FWD_DEFINED__
     __IEnumOleDocumentViews_FWD_DEFINED__ equ <>
-    ;* __IEnumOleDocumentViews_FWD_DEFINED__ *
   endif
   ifndef __IContinueCallback_FWD_DEFINED__
     __IContinueCallback_FWD_DEFINED__ equ <>
-    ;* __IContinueCallback_FWD_DEFINED__ *
   endif
   ifndef __IPrint_FWD_DEFINED__
     __IPrint_FWD_DEFINED__ equ <>
-    ;* __IPrint_FWD_DEFINED__ *
   endif
   ifndef __IOleCommandTarget_FWD_DEFINED__
     __IOleCommandTarget_FWD_DEFINED__ equ <>
-    ;* __IOleCommandTarget_FWD_DEFINED__ *
   endif
   ifndef __IZoomEvents_FWD_DEFINED__
     __IZoomEvents_FWD_DEFINED__ equ <>
-    ;* __IZoomEvents_FWD_DEFINED__ *
   endif
   ifndef __IProtectFocus_FWD_DEFINED__
     __IProtectFocus_FWD_DEFINED__ equ <>
-    ;* __IProtectFocus_FWD_DEFINED__ *
   endif
   ifndef __IProtectedModeMenuServices_FWD_DEFINED__
     __IProtectedModeMenuServices_FWD_DEFINED__ equ <>
-    ;* __IProtectedModeMenuServices_FWD_DEFINED__ *
   endif
-  ;* header files for imported files *
   include ocidl.inc
   ifdef __cplusplus
     ;[...]
   endif
-  ;* interface __MIDL_itf_docobj_0000_0000 *
-  ;* [local] *
-  ;=--------------------------------------------------------------------------=
-  ; DocObj.h
-  ;=--------------------------------------------------------------------------=
-  ; (C) Copyright Microsoft Corporation.  All Rights Reserved.
-  ; THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-  ; ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-  ; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-  ; PARTICULAR PURPOSE.
-  ;=--------------------------------------------------------------------------=
   include winapifamily.inc
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-    ;--------------------------------------------------------------------------
-    ; OLE Document Object Interfaces.
-    ;//////////////////////////////////////////////////////////////////////////
-    ;  Interface Definitions
     ifndef _LPOLEDOCUMENT_DEFINED
       _LPOLEDOCUMENT_DEFINED equ <>
       externdef __MIDL_itf_docobj_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_docobj_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IOleDocument_INTERFACE_DEFINED__
         __IOleDocument_INTERFACE_DEFINED__ equ <>
-        ;* interface IOleDocument *
-        ;* [unique][uuid][object] *
-        ;* [unique] *
         LPOLEDOCUMENT typedef ptr IOleDocument
-        ;* [public] *
         DOCMISC typedef SDWORD
         DOCMISC_CANCREATEMULTIPLEVIEWS equ 1
         DOCMISC_SUPPORTCOMPLEXRECTANGLES equ 2
@@ -127,26 +92,17 @@ ifndef __docobj_h__
             BEGIN_INTERFACE
             ??Interface equ <IOleDocumentVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IOleDocument, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IOleDocument
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IOleDocument
             DECLSPEC_XFGVIRT(IOleDocument, CreateView)
-            ;* [unique][in] *
-            ;* [unique][in] *
-            ;* [in] *
             STD_METHOD CreateView, :ptr IOleDocument, :ptr IOleInPlaceSite, :ptr IStream, :DWORD, :ptr ptr IOleDocumentView
-            ;* [out] *
             DECLSPEC_XFGVIRT(IOleDocument, GetDocMiscStatus)
             STD_METHOD GetDocMiscStatus, :ptr IOleDocument, :ptr DWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IOleDocument, EnumViews)
-            ;* [out] *
             STD_METHOD EnumViews, :ptr IOleDocument, :ptr ptr IEnumOleDocumentViews, :ptr ptr IOleDocumentView
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IOleDocumentVtbl ends
@@ -156,12 +112,8 @@ ifndef __docobj_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IOleDocument_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_docobj_0000_0001 *
-      ;* [local] *
     endif
     ifndef _LPOLEDOCUMENTSITE_DEFINED
       _LPOLEDOCUMENTSITE_DEFINED equ <>
@@ -169,9 +121,6 @@ ifndef __docobj_h__
       externdef __MIDL_itf_docobj_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IOleDocumentSite_INTERFACE_DEFINED__
         __IOleDocumentSite_INTERFACE_DEFINED__ equ <>
-        ;* interface IOleDocumentSite *
-        ;* [unique][uuid][object] *
-        ;* [unique] *
         LPOLEDOCUMENTSITE typedef ptr IOleDocumentSite
         externdef IID_IOleDocumentSite:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -181,8 +130,6 @@ ifndef __docobj_h__
             BEGIN_INTERFACE
             ??Interface equ <IOleDocumentSiteVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IOleDocumentSite, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IOleDocumentSite
@@ -190,7 +137,6 @@ ifndef __docobj_h__
             STD_METHOD Release, :ptr IOleDocumentSite
             DECLSPEC_XFGVIRT(IOleDocumentSite, ActivateMe)
             STD_METHOD ActivateMe, :ptr IOleDocumentSite, :ptr IOleDocumentView
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IOleDocumentSiteVtbl ends
@@ -200,12 +146,8 @@ ifndef __docobj_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IOleDocumentSite_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_docobj_0000_0002 *
-      ;* [local] *
     endif
     ifndef _LPOLEDOCUMENTVIEW_DEFINED
       _LPOLEDOCUMENTVIEW_DEFINED equ <>
@@ -213,9 +155,6 @@ ifndef __docobj_h__
       externdef __MIDL_itf_docobj_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IOleDocumentView_INTERFACE_DEFINED__
         __IOleDocumentView_INTERFACE_DEFINED__ equ <>
-        ;* interface IOleDocumentView *
-        ;* [unique][uuid][object] *
-        ;* [unique] *
         LPOLEDOCUMENTVIEW typedef ptr IOleDocumentView
         externdef IID_IOleDocumentView:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -225,8 +164,6 @@ ifndef __docobj_h__
             BEGIN_INTERFACE
             ??Interface equ <IOleDocumentViewVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IOleDocumentView, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IOleDocumentView
@@ -234,48 +171,30 @@ ifndef __docobj_h__
             STD_METHOD Release, :ptr IOleDocumentView
             DECLSPEC_XFGVIRT(IOleDocumentView, SetInPlaceSite)
             STD_METHOD SetInPlaceSite, :ptr IOleDocumentView, :ptr IOleInPlaceSite
-            ;* [unique][in] *
             DECLSPEC_XFGVIRT(IOleDocumentView, GetInPlaceSite)
             STD_METHOD GetInPlaceSite, :ptr IOleDocumentView, :ptr ptr IOleInPlaceSite
-            ;* [out] *
             DECLSPEC_XFGVIRT(IOleDocumentView, GetDocument)
             STD_METHOD GetDocument, :ptr IOleDocumentView, :ptr ptr IUnknown
-            ;* [out] *
             DECLSPEC_XFGVIRT(IOleDocumentView, SetRect)
-            ;* [input_sync] *
             STD_METHOD SetRect, :ptr IOleDocumentView, :LPRECT
-            ;* [in] *
             DECLSPEC_XFGVIRT(IOleDocumentView, GetRect)
             STD_METHOD GetRect, :ptr IOleDocumentView, :LPRECT
-            ;* [out] *
             DECLSPEC_XFGVIRT(IOleDocumentView, SetRectComplex)
-            ;* [input_sync] *
-            ;* [unique][in] *
-            ;* [unique][in] *
-            ;* [unique][in] *
             STD_METHOD SetRectComplex, :ptr IOleDocumentView, :LPRECT, :LPRECT, :LPRECT, :LPRECT
-            ;* [unique][in] *
             DECLSPEC_XFGVIRT(IOleDocumentView, Show)
             STD_METHOD Show, :ptr IOleDocumentView, :BOOL
-            ;* [in] *
             DECLSPEC_XFGVIRT(IOleDocumentView, UIActivate)
             STD_METHOD UIActivate, :ptr IOleDocumentView, :BOOL
-            ;* [in] *
             DECLSPEC_XFGVIRT(IOleDocumentView, Open)
             STD_METHOD Open, :ptr IOleDocumentView
             DECLSPEC_XFGVIRT(IOleDocumentView, CloseView)
             STD_METHOD CloseView, :ptr IOleDocumentView, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IOleDocumentView, SaveViewState)
             STD_METHOD SaveViewState, :ptr IOleDocumentView, :LPSTREAM
-            ;* [in] *
             DECLSPEC_XFGVIRT(IOleDocumentView, ApplyViewState)
             STD_METHOD ApplyViewState, :ptr IOleDocumentView, :LPSTREAM
-            ;* [in] *
             DECLSPEC_XFGVIRT(IOleDocumentView, Clone)
-            ;* [in] *
             STD_METHOD Clone, :ptr IOleDocumentView, :ptr IOleInPlaceSite, :ptr ptr IOleDocumentView
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IOleDocumentViewVtbl ends
@@ -285,12 +204,8 @@ ifndef __docobj_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IOleDocumentView_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_docobj_0000_0003 *
-      ;* [local] *
     endif
     ifndef _LPENUMOLEDOCUMENTVIEWS_DEFINED
       _LPENUMOLEDOCUMENTVIEWS_DEFINED equ <>
@@ -298,9 +213,6 @@ ifndef __docobj_h__
       externdef __MIDL_itf_docobj_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IEnumOleDocumentViews_INTERFACE_DEFINED__
         __IEnumOleDocumentViews_INTERFACE_DEFINED__ equ <>
-        ;* interface IEnumOleDocumentViews *
-        ;* [unique][uuid][object] *
-        ;* [unique] *
         LPENUMOLEDOCUMENTVIEWS typedef ptr IEnumOleDocumentViews
         externdef IID_IEnumOleDocumentViews:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -310,27 +222,19 @@ ifndef __docobj_h__
             BEGIN_INTERFACE
             ??Interface equ <IEnumOleDocumentViewsVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IEnumOleDocumentViews, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IEnumOleDocumentViews
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IEnumOleDocumentViews
             DECLSPEC_XFGVIRT(IEnumOleDocumentViews, Next)
-            ;* [local] *
-            ;* [in] *
-            ;* [out] *
             STD_METHOD Next, :ptr IEnumOleDocumentViews, :ULONG, :ptr ptr IOleDocumentView, :ptr ULONG
-            ;* [out] *
             DECLSPEC_XFGVIRT(IEnumOleDocumentViews, Skip)
             STD_METHOD Skip, :ptr IEnumOleDocumentViews, :ULONG
-            ;* [in] *
             DECLSPEC_XFGVIRT(IEnumOleDocumentViews, Reset)
             STD_METHOD Reset, :ptr IEnumOleDocumentViews
             DECLSPEC_XFGVIRT(IEnumOleDocumentViews, Clone)
             STD_METHOD Clone, :ptr IEnumOleDocumentViews, :ptr ptr IEnumOleDocumentViews
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IEnumOleDocumentViewsVtbl ends
@@ -340,16 +244,10 @@ ifndef __docobj_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* [call_as] *
         IEnumOleDocumentViews_RemoteNext_Proxy proto WIN_STD_CALL_CONV :ptr IEnumOleDocumentViews, :ULONG, :ptr ptr IOleDocumentView, :ptr ULONG
-        ;* [out] *
         IEnumOleDocumentViews_RemoteNext_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-        ;* __IEnumOleDocumentViews_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_docobj_0000_0004 *
-      ;* [local] *
     endif
     ifndef _LPCONTINUECALLBACK_DEFINED
       _LPCONTINUECALLBACK_DEFINED equ <>
@@ -357,9 +255,6 @@ ifndef __docobj_h__
       externdef __MIDL_itf_docobj_0000_0004_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IContinueCallback_INTERFACE_DEFINED__
         __IContinueCallback_INTERFACE_DEFINED__ equ <>
-        ;* interface IContinueCallback *
-        ;* [unique][uuid][object] *
-        ;* [unique] *
         LPCONTINUECALLBACK typedef ptr IContinueCallback
         externdef IID_IContinueCallback:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -369,8 +264,6 @@ ifndef __docobj_h__
             BEGIN_INTERFACE
             ??Interface equ <IContinueCallbackVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IContinueCallback, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IContinueCallback
@@ -379,10 +272,7 @@ ifndef __docobj_h__
             DECLSPEC_XFGVIRT(IContinueCallback, FContinue)
             STD_METHOD FContinue, :ptr IContinueCallback
             DECLSPEC_XFGVIRT(IContinueCallback, FContinuePrinting)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD FContinuePrinting, :ptr IContinueCallback, :LONG, :LONG, :ptr wchar_t
-            ;* [unique][in] *
             ??Interface equ <>
             END_INTERFACE
           IContinueCallbackVtbl ends
@@ -392,12 +282,8 @@ ifndef __docobj_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IContinueCallback_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_docobj_0000_0005 *
-      ;* [local] *
     endif
     ifndef _LPPRINT_DEFINED
       _LPPRINT_DEFINED equ <>
@@ -405,11 +291,7 @@ ifndef __docobj_h__
       externdef __MIDL_itf_docobj_0000_0005_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IPrint_INTERFACE_DEFINED__
         __IPrint_INTERFACE_DEFINED__ equ <>
-        ;* interface IPrint *
-        ;* [unique][uuid][object] *
-        ;* [unique] *
         LPPRINT typedef ptr IPrint
-        ;* [public] *
         PRINTFLAG typedef SDWORD
         PRINTFLAG_MAYBOTHERUSER equ 1
         PRINTFLAG_PROMPTUSER equ 2
@@ -421,17 +303,16 @@ ifndef __docobj_h__
         __MIDL_IPrint_0001 typedef PRINTFLAG
 
         PAGERANGE struct
-          nFromPage SDWORD ?
-          nToPage SDWORD ?
+          nFromPage LONG ?
+          nToPage LONG ?
         PAGERANGE ends
         tagPAGERANGE typedef PAGERANGE
         PAGESET struct
-          cbStruct DWORD ?
-          fOddPages DWORD ?
-          fEvenPages DWORD ?
-          cPageRange DWORD ?
+          cbStruct ULONG ?
+          fOddPages BOOL ?
+          fEvenPages BOOL ?
+          cPageRange ULONG ?
           rgPages PAGERANGE 1 dup (<>)
-          ;* [size_is] *
         PAGESET ends
         tagPAGESET typedef PAGESET
         PAGESET_TOLASTPAGE equ ((- 1))
@@ -443,8 +324,6 @@ ifndef __docobj_h__
             BEGIN_INTERFACE
             ??Interface equ <IPrintVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IPrint, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IPrint
@@ -452,22 +331,10 @@ ifndef __docobj_h__
             STD_METHOD Release, :ptr IPrint
             DECLSPEC_XFGVIRT(IPrint, SetInitialPageNum)
             STD_METHOD SetInitialPageNum, :ptr IPrint, :LONG
-            ;* [in] *
             DECLSPEC_XFGVIRT(IPrint, GetPageInfo)
-            ;* [out] *
             STD_METHOD GetPageInfo, :ptr IPrint, :ptr LONG, :ptr LONG
-            ;* [out] *
             DECLSPEC_XFGVIRT(IPrint, Print)
-            ;* [local] *
-            ;* [in] *
-            ;* [out][in] *
-            ;* [out][in] *
-            ;* [unique][out][in] *
-            ;* [in] *
-            ;* [in] *
-            ;* [out] *
             STD_METHOD Print, :ptr IPrint, :DWORD, :ptr ptr DVTARGETDEVICE, :ptr ptr PAGESET, :ptr STGMEDIUM, :ptr IContinueCallback, :LONG, :ptr LONG, :ptr LONG
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IPrintVtbl ends
@@ -477,16 +344,10 @@ ifndef __docobj_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* [call_as] *
         IPrint_RemotePrint_Proxy proto WIN_STD_CALL_CONV :ptr IPrint, :DWORD, :ptr ptr DVTARGETDEVICE, :ptr ptr PAGESET, :ptr RemSTGMEDIUM, :ptr IContinueCallback, :LONG, :ptr LONG, :ptr LONG
-        ;* [out] *
         IPrint_RemotePrint_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-        ;* __IPrint_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_docobj_0000_0006 *
-      ;* [local] *
     endif
     ifndef _LPOLECOMMANDTARGET_DEFINED
       _LPOLECOMMANDTARGET_DEFINED equ <>
@@ -494,9 +355,6 @@ ifndef __docobj_h__
       externdef __MIDL_itf_docobj_0000_0006_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IOleCommandTarget_INTERFACE_DEFINED__
         __IOleCommandTarget_INTERFACE_DEFINED__ equ <>
-        ;* interface IOleCommandTarget *
-        ;* [unique][uuid][object] *
-        ;* [unique] *
         LPOLECOMMANDTARGET typedef ptr IOleCommandTarget
         OLECMDF typedef SDWORD
         OLECMDF_SUPPORTED equ 1h
@@ -507,16 +365,15 @@ ifndef __docobj_h__
         OLECMDF_DEFHIDEONCTXTMENU equ 20h
 
         OLECMD struct
-          cmdID DWORD ?
+          cmdID ULONG ?
           cmdf DWORD ?
         OLECMD ends
         _tagOLECMD typedef OLECMD
         OLECMDTEXT struct
           cmdtextf DWORD ?
-          cwActual DWORD ?
-          cwBuf DWORD ?
+          cwActual ULONG ?
+          cwBuf ULONG ?
           rgwz wchar_t 1 dup (?)
-          ;* [size_is] *
         OLECMDTEXT ends
         _tagOLECMDTEXT typedef OLECMDTEXT
         OLECMDTEXTF typedef SDWORD
@@ -530,7 +387,6 @@ ifndef __docobj_h__
         OLECMDEXECOPT_DONTPROMPTUSER equ 2
         OLECMDEXECOPT_SHOWHELP equ 3
 
-        ;* OLECMDID_STOPDOWNLOAD and OLECMDID_ALLOWUILESSSAVEAS are supported for QueryStatus Only *
         OLECMDID typedef SDWORD
         OLECMDID_OPEN equ 1
         OLECMDID_NEW equ 2
@@ -664,27 +520,15 @@ ifndef __docobj_h__
             BEGIN_INTERFACE
             ??Interface equ <IOleCommandTargetVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IOleCommandTarget, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IOleCommandTarget
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IOleCommandTarget
             DECLSPEC_XFGVIRT(IOleCommandTarget, QueryStatus)
-            ;* [input_sync] *
-            ;* [unique][in] *
-            ;* [in] *
-            ;* [out][in][size_is] *
             STD_METHOD QueryStatus, :ptr IOleCommandTarget, :ptr GUID, :ULONG, :ptr OLECMD, :ptr OLECMDTEXT
-            ;* [unique][out][in] *
             DECLSPEC_XFGVIRT(IOleCommandTarget, Exec)
-            ;* [unique][in] *
-            ;* [in] *
-            ;* [in] *
-            ;* [unique][in] *
             STD_METHOD Exec, :ptr IOleCommandTarget, :ptr GUID, :DWORD, :DWORD, :ptr VARIANT, :ptr VARIANT
-            ;* [unique][out][in] *
             ??Interface equ <>
             END_INTERFACE
           IOleCommandTargetVtbl ends
@@ -694,12 +538,8 @@ ifndef __docobj_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IOleCommandTarget_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_docobj_0000_0007 *
-      ;* [local] *
     endif
     OLECMDID_REFRESHFLAG typedef SDWORD
     OLECMDIDF_REFRESH_NORMAL equ 0
@@ -803,8 +643,6 @@ ifndef __docobj_h__
     OLECMDIDF_VIEWPORTMODE_FIXED_LAYOUT_WIDTH_VALID equ 00010000h
     OLECMDIDF_VIEWPORTMODE_EXCLUDE_VISUAL_BOTTOM_VALID equ 00020000h
 
-    ;//////////////////////////////////////////////////////////////////////////
-    ;  Aliases to original office-compatible names
     IMsoDocument equ <IOleDocument>
     IMsoDocumentSite equ <IOleDocumentSite>
     IMsoView equ <IOleDocumentView>
@@ -858,8 +696,6 @@ ifndef __docobj_h__
     externdef __MIDL_itf_docobj_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IZoomEvents_INTERFACE_DEFINED__
       __IZoomEvents_INTERFACE_DEFINED__ equ <>
-      ;* interface IZoomEvents *
-      ;* [unique][uuid][object] *
       externdef IID_IZoomEvents:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -868,8 +704,6 @@ ifndef __docobj_h__
           BEGIN_INTERFACE
           ??Interface equ <IZoomEventsVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IZoomEvents, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IZoomEvents
@@ -877,7 +711,6 @@ ifndef __docobj_h__
           STD_METHOD Release, :ptr IZoomEvents
           DECLSPEC_XFGVIRT(IZoomEvents, OnZoomPercentChanged)
           STD_METHOD OnZoomPercentChanged, :ptr IZoomEvents, :ULONG
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IZoomEventsVtbl ends
@@ -887,14 +720,10 @@ ifndef __docobj_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IZoomEvents_INTERFACE_DEFINED__ *
     endif
     ifndef __IProtectFocus_INTERFACE_DEFINED__
       __IProtectFocus_INTERFACE_DEFINED__ equ <>
-      ;* interface IProtectFocus *
-      ;* [unique][uuid][object] *
       externdef IID_IProtectFocus:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -903,8 +732,6 @@ ifndef __docobj_h__
           BEGIN_INTERFACE
           ??Interface equ <IProtectFocusVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IProtectFocus, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IProtectFocus
@@ -912,7 +739,6 @@ ifndef __docobj_h__
           STD_METHOD Release, :ptr IProtectFocus
           DECLSPEC_XFGVIRT(IProtectFocus, AllowFocusChange)
           STD_METHOD AllowFocusChange, :ptr IProtectFocus, :ptr BOOL
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IProtectFocusVtbl ends
@@ -922,12 +748,8 @@ ifndef __docobj_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IProtectFocus_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_docobj_0000_0009 *
-    ;* [local] *
     SID_SProtectFocus equ <IID_IProtectFocus>
     ifndef _LPPROTECTEDMODEMENUSERVICES_DEFINED
       _LPPROTECTEDMODEMENUSERVICES_DEFINED equ <>
@@ -935,8 +757,6 @@ ifndef __docobj_h__
       externdef __MIDL_itf_docobj_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IProtectedModeMenuServices_INTERFACE_DEFINED__
         __IProtectedModeMenuServices_INTERFACE_DEFINED__ equ <>
-        ;* interface IProtectedModeMenuServices *
-        ;* [unique][uuid][object] *
         externdef IID_IProtectedModeMenuServices:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -945,8 +765,6 @@ ifndef __docobj_h__
             BEGIN_INTERFACE
             ??Interface equ <IProtectedModeMenuServicesVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IProtectedModeMenuServices, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IProtectedModeMenuServices
@@ -954,17 +772,10 @@ ifndef __docobj_h__
             STD_METHOD Release, :ptr IProtectedModeMenuServices
             DECLSPEC_XFGVIRT(IProtectedModeMenuServices, CreateMenu)
             STD_METHOD CreateMenu, :ptr IProtectedModeMenuServices, :ptr HMENU
-            ;* [out] *
             DECLSPEC_XFGVIRT(IProtectedModeMenuServices, LoadMenu)
-            ;* [string][in] *
-            ;* [string][in] *
             STD_METHOD LoadMenu, :ptr IProtectedModeMenuServices, :LPCWSTR, :LPCWSTR, :ptr HMENU
-            ;* [out] *
             DECLSPEC_XFGVIRT(IProtectedModeMenuServices, LoadMenuID)
-            ;* [string][in] *
-            ;* [in] *
             STD_METHOD LoadMenuID, :ptr IProtectedModeMenuServices, :LPCWSTR, :WORD, :ptr HMENU
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IProtectedModeMenuServicesVtbl ends
@@ -974,24 +785,17 @@ ifndef __docobj_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IProtectedModeMenuServices_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_docobj_0000_0010 *
-      ;* [local] *
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) and  not WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     PAGESET struct
     PAGESET ends
     tagPAGESET typedef PAGESET
   endif
-  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
   externdef __MIDL_itf_docobj_0000_0010_v0_0_c_ifspec:RPC_IF_HANDLE
   externdef __MIDL_itf_docobj_0000_0010_v0_0_s_ifspec:RPC_IF_HANDLE
-  ;* Additional Prototypes for ALL interfaces *
   HMENU_UserSize proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr HMENU
   HMENU_UserMarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr HMENU
   HMENU_UserUnmarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr HMENU
@@ -1008,19 +812,10 @@ ifndef __docobj_h__
   VARIANT_UserMarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr VARIANT
   VARIANT_UserUnmarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr VARIANT
   VARIANT_UserFree64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr VARIANT
-  ;* [local] *
   IEnumOleDocumentViews_Next_Proxy proto WIN_STD_CALL_CONV :ptr IEnumOleDocumentViews, :ULONG, :ptr ptr IOleDocumentView, :ptr ULONG
-  ;* [out] *
-  ;* [call_as] *
   IEnumOleDocumentViews_Next_Stub proto WIN_STD_CALL_CONV :ptr IEnumOleDocumentViews, :ULONG, :ptr ptr IOleDocumentView, :ptr ULONG
-  ;* [out] *
-  ;* [local] *
   IPrint_Print_Proxy proto WIN_STD_CALL_CONV :ptr IPrint, :DWORD, :ptr ptr DVTARGETDEVICE, :ptr ptr PAGESET, :ptr STGMEDIUM, :ptr IContinueCallback, :LONG, :ptr LONG, :ptr LONG
-  ;* [out] *
-  ;* [call_as] *
   IPrint_Print_Stub proto WIN_STD_CALL_CONV :ptr IPrint, :DWORD, :ptr ptr DVTARGETDEVICE, :ptr ptr PAGESET, :ptr RemSTGMEDIUM, :ptr IContinueCallback, :LONG, :ptr LONG, :ptr LONG
-  ;* [out] *
-  ;* end of Additional Prototypes *
   ifdef __cplusplus
     ;[...]
   endif

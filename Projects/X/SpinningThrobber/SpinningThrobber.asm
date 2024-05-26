@@ -44,6 +44,7 @@ include SpinningThrobber_Main.inc                       ;Application object
 .code
 start proc                                              ;Program entry point
   local dMajorVersion:DWORD
+
   SysInit                                               ;Runtime initialization of OOP model
 
   DbgClearAll

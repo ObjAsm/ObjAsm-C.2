@@ -1,10 +1,9 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\mciapi.h
 ;             Created on (UTC) 06/04/2024 06:15:56
 ;             Last modified on (UTC) 21/02/2024 18:13:22
 
-;********************************************************************************
 ifdef _MSC_VER
 endif
 ifndef _MCIAPI_H_
@@ -16,25 +15,17 @@ ifndef _MCIAPI_H_
     ;[...]
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-    ;****************************************************************************
-    ;MCI support
-    ;****************************************************************************
-    ;* MCIERROR is defined in some post 3.1 apps *
     ifndef _MCIERROR_
       _MCIERROR_ equ <>
-      ;* error return code, 0 means no error *
       MCIERROR typedef DWORD
     endif
-    ;* Same with MCIDEVICEID *
     ifndef _MCIDEVICEID_
       _MCIDEVICEID_ equ <>
-      ;* MCI device ID type *
       MCIDEVICEID typedef UINT
     endif
     TYPE_YIELDPROC typedef proto WIN_STD_CALL_CONV :MCIDEVICEID, :DWORD
     YIELDPROC typedef ptr TYPE_YIELDPROC
 
-    ;* MCI function prototypes *
     ifdef _WIN32
       @DefProto DllImport, mciSendCommandA, WIN_STD_CALL_CONV,, <:MCIDEVICEID, :UINT, :DWORD_PTR, :DWORD_PTR>, 16
       @DefProto DllImport, mciSendCommandW, WIN_STD_CALL_CONV,, <:MCIDEVICEID, :UINT, :DWORD_PTR, :DWORD_PTR>, 16
@@ -43,7 +34,6 @@ ifndef _MCIAPI_H_
       else
         mciSendCommand equ <mciSendCommandA>
       endif
-      ; !UNICODE
       @DefProto DllImport, mciSendStringA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPSTR, :UINT, :HWND>, 16
       @DefProto DllImport, mciSendStringW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPWSTR, :UINT, :HWND>, 16
       ifdef UNICODE
@@ -51,7 +41,6 @@ ifndef _MCIAPI_H_
       else
         mciSendString equ <mciSendStringA>
       endif
-      ; !UNICODE
       @DefProto DllImport, mciGetDeviceIDA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
       @DefProto DllImport, mciGetDeviceIDW, WIN_STD_CALL_CONV,, <:LPCWSTR>, 4
       ifdef UNICODE
@@ -59,7 +48,6 @@ ifndef _MCIAPI_H_
       else
         mciGetDeviceID equ <mciGetDeviceIDA>
       endif
-      ; !UNICODE
       @DefProto DllImport, mciGetDeviceIDFromElementIDA, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR>, 8
       @DefProto DllImport, mciGetDeviceIDFromElementIDW, WIN_STD_CALL_CONV,, <:DWORD, :LPCWSTR>, 8
       ifdef UNICODE
@@ -67,7 +55,6 @@ ifndef _MCIAPI_H_
       else
         mciGetDeviceIDFromElementID equ <mciGetDeviceIDFromElementIDA>
       endif
-      ; !UNICODE
       @DefProto DllImport, mciGetErrorStringA, WIN_STD_CALL_CONV,, <:MCIERROR, :LPSTR, :UINT>, 12
       @DefProto DllImport, mciGetErrorStringW, WIN_STD_CALL_CONV,, <:MCIERROR, :LPWSTR, :UINT>, 12
       ifdef UNICODE
@@ -75,7 +62,6 @@ ifndef _MCIAPI_H_
       else
         mciGetErrorString equ <mciGetErrorStringA>
       endif
-      ; !UNICODE
     else
       ;[...]
     endif
@@ -83,13 +69,10 @@ ifndef _MCIAPI_H_
     if (WINVER ge 030ah)
       @DefProto DllImport, mciGetCreatorTask, WIN_STD_CALL_CONV,, <:MCIDEVICEID>, 4
       @DefProto DllImport, mciGetYieldProc, WIN_STD_CALL_CONV,, <:MCIDEVICEID, :LPDWORD>, 8
-      ;* ifdef WINVER >= 0x030a *
     endif
     if (WINVER lt 030ah)
       @DefProto DllImport, mciExecute, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
-      ;* ifdef WINVER < 0x030a *
     endif
-    ;* MCI error return values *
     MCIERR_INVALID_DEVICE_ID equ (MCIERR_BASE + 1)
     MCIERR_UNRECOGNIZED_KEYWORD equ (MCIERR_BASE + 3)
     MCIERR_UNRECOGNIZED_COMMAND equ (MCIERR_BASE + 5)
@@ -165,11 +148,8 @@ ifndef _MCIAPI_H_
     MCIERR_FILE_READ equ (MCIERR_BASE + 92)
     MCIERR_FILE_WRITE equ (MCIERR_BASE + 93)
     MCIERR_NO_IDENTITY equ (MCIERR_BASE + 94)
-    ;* all custom device driver errors must be >= than this value *
     MCIERR_CUSTOM_DRIVER_BASE equ (MCIERR_BASE + 256)
-    ;* 0x0800 *
     MCI_FIRST equ <DRV_MCI_FIRST>
-    ;* MCI command message identifiers *
     MCI_OPEN equ 0803h
     MCI_CLOSE equ 0804h
     MCI_ESCAPE equ 0805h
@@ -201,38 +181,23 @@ ifndef _MCIAPI_H_
     MCI_UPDATE equ 0854h
     MCI_RESUME equ 0855h
     MCI_DELETE equ 0856h
-    ;* all custom MCI command messages must be >= than this value *
     MCI_USER_MESSAGES equ (DRV_MCI_FIRST + 400h)
     MCI_LAST equ 0FFFh
-    ;* device ID for "all devices" *
     MCI_ALL_DEVICE_ID equ ((MCIDEVICEID) - 1)
-    ;* constants for predefined MCI device types *
-    ;* (MCI_STRING_OFFSET + 1) *
     MCI_DEVTYPE_VCR equ 513
-    ;* (MCI_STRING_OFFSET + 2) *
     MCI_DEVTYPE_VIDEODISC equ 514
-    ;* (MCI_STRING_OFFSET + 3) *
     MCI_DEVTYPE_OVERLAY equ 515
-    ;* (MCI_STRING_OFFSET + 4) *
     MCI_DEVTYPE_CD_AUDIO equ 516
-    ;* (MCI_STRING_OFFSET + 5) *
     MCI_DEVTYPE_DAT equ 517
-    ;* (MCI_STRING_OFFSET + 6) *
     MCI_DEVTYPE_SCANNER equ 518
-    ;* (MCI_STRING_OFFSET + 7) *
     MCI_DEVTYPE_ANIMATION equ 519
-    ;* (MCI_STRING_OFFSET + 8) *
     MCI_DEVTYPE_DIGITAL_VIDEO equ 520
-    ;* (MCI_STRING_OFFSET + 9) *
     MCI_DEVTYPE_OTHER equ 521
-    ;* (MCI_STRING_OFFSET + 10) *
     MCI_DEVTYPE_WAVEFORM_AUDIO equ 522
-    ;* (MCI_STRING_OFFSET + 11) *
     MCI_DEVTYPE_SEQUENCER equ 523
     MCI_DEVTYPE_FIRST equ <MCI_DEVTYPE_VCR>
     MCI_DEVTYPE_LAST equ <MCI_DEVTYPE_SEQUENCER>
     MCI_DEVTYPE_FIRST_USER equ 1000h
-    ;* return values for 'status mode' command *
     MCI_MODE_NOT_READY equ (MCI_STRING_OFFSET + 12)
     MCI_MODE_STOP equ (MCI_STRING_OFFSET + 13)
     MCI_MODE_PLAY equ (MCI_STRING_OFFSET + 14)
@@ -240,7 +205,6 @@ ifndef _MCIAPI_H_
     MCI_MODE_SEEK equ (MCI_STRING_OFFSET + 16)
     MCI_MODE_PAUSE equ (MCI_STRING_OFFSET + 17)
     MCI_MODE_OPEN equ (MCI_STRING_OFFSET + 18)
-    ;* constants used in 'set time format' and 'status time format' commands *
     MCI_FORMAT_MILLISECONDS equ 0
     MCI_FORMAT_HMS equ 1
     MCI_FORMAT_MSF equ 2
@@ -252,7 +216,6 @@ ifndef _MCIAPI_H_
     MCI_FORMAT_BYTES equ 8
     MCI_FORMAT_SAMPLES equ 9
     MCI_FORMAT_TMSF equ 10
-    ;* MCI time format conversion macros *
     MCI_MSF_MINUTE macro msf
       exitm <((msf))>
     endm
@@ -292,31 +255,25 @@ ifndef _MCIAPI_H_
     MCI_MAKE_HMS macro h, m, s
       exitm <((((h) or ((m) shl 8)) or (((s)) shl 16)))>
     endm
-    ;* flags for wParam of MM_MCINOTIFY message *
     MCI_NOTIFY_SUCCESSFUL equ 0001h
     MCI_NOTIFY_SUPERSEDED equ 0002h
     MCI_NOTIFY_ABORTED equ 0004h
     MCI_NOTIFY_FAILURE equ 0008h
-    ;* common flags for dwFlags parameter of MCI command messages *
     MCI_NOTIFY equ 00000001h
     MCI_WAIT equ 00000002h
     MCI_FROM equ 00000004h
     MCI_TO equ 00000008h
     MCI_TRACK equ 00000010h
-    ;* flags for dwFlags parameter of MCI_OPEN command message *
     MCI_OPEN_SHAREABLE equ 00000100h
     MCI_OPEN_ELEMENT equ 00000200h
     MCI_OPEN_ALIAS equ 00000400h
     MCI_OPEN_ELEMENT_ID equ 00000800h
     MCI_OPEN_TYPE_ID equ 00001000h
     MCI_OPEN_TYPE equ 00002000h
-    ;* flags for dwFlags parameter of MCI_SEEK command message *
     MCI_SEEK_TO_START equ 00000100h
     MCI_SEEK_TO_END equ 00000200h
-    ;* flags for dwFlags parameter of MCI_STATUS command message *
     MCI_STATUS_ITEM equ 00000100h
     MCI_STATUS_START equ 00000200h
-    ;* flags for dwItem field of the MCI_STATUS_PARMS parameter block *
     MCI_STATUS_LENGTH equ 00000001h
     MCI_STATUS_POSITION equ 00000002h
     MCI_STATUS_NUMBER_OF_TRACKS equ 00000003h
@@ -325,16 +282,13 @@ ifndef _MCIAPI_H_
     MCI_STATUS_TIME_FORMAT equ 00000006h
     MCI_STATUS_READY equ 00000007h
     MCI_STATUS_CURRENT_TRACK equ 00000008h
-    ;* flags for dwFlags parameter of MCI_INFO command message *
     MCI_INFO_PRODUCT equ 00000100h
     MCI_INFO_FILE equ 00000200h
     MCI_INFO_MEDIA_UPC equ 00000400h
     MCI_INFO_MEDIA_IDENTITY equ 00000800h
     MCI_INFO_NAME equ 00001000h
     MCI_INFO_COPYRIGHT equ 00002000h
-    ;* flags for dwFlags parameter of MCI_GETDEVCAPS command message *
     MCI_GETDEVCAPS_ITEM equ 00000100h
-    ;* flags for dwItem field of the MCI_GETDEVCAPS_PARMS parameter block *
     MCI_GETDEVCAPS_CAN_RECORD equ 00000001h
     MCI_GETDEVCAPS_HAS_AUDIO equ 00000002h
     MCI_GETDEVCAPS_HAS_VIDEO equ 00000003h
@@ -344,12 +298,10 @@ ifndef _MCIAPI_H_
     MCI_GETDEVCAPS_CAN_EJECT equ 00000007h
     MCI_GETDEVCAPS_CAN_PLAY equ 00000008h
     MCI_GETDEVCAPS_CAN_SAVE equ 00000009h
-    ;* flags for dwFlags parameter of MCI_SYSINFO command message *
     MCI_SYSINFO_QUANTITY equ 00000100h
     MCI_SYSINFO_OPEN equ 00000200h
     MCI_SYSINFO_NAME equ 00000400h
     MCI_SYSINFO_INSTALLNAME equ 00000800h
-    ;* flags for dwFlags parameter of MCI_SET command message *
     MCI_SET_DOOR_OPEN equ 00000100h
     MCI_SET_DOOR_CLOSED equ 00000200h
     MCI_SET_TIME_FORMAT equ 00000400h
@@ -357,46 +309,39 @@ ifndef _MCIAPI_H_
     MCI_SET_VIDEO equ 00001000h
     MCI_SET_ON equ 00002000h
     MCI_SET_OFF equ 00004000h
-    ;* flags for dwAudio field of MCI_SET_PARMS or MCI_SEQ_SET_PARMS *
     MCI_SET_AUDIO_ALL equ 00000000h
     MCI_SET_AUDIO_LEFT equ 00000001h
     MCI_SET_AUDIO_RIGHT equ 00000002h
-    ;* flags for dwFlags parameter of MCI_BREAK command message *
     MCI_BREAK_KEY equ 00000100h
     MCI_BREAK_HWND equ 00000200h
     MCI_BREAK_OFF equ 00000400h
-    ;* flags for dwFlags parameter of MCI_RECORD command message *
     MCI_RECORD_INSERT equ 00000100h
     MCI_RECORD_OVERWRITE equ 00000200h
-    ;* flags for dwFlags parameter of MCI_SAVE command message *
     MCI_SAVE_FILE equ 00000100h
-    ;* flags for dwFlags parameter of MCI_LOAD command message *
     MCI_LOAD_FILE equ 00000100h
-    ;* generic parameter block for MCI command messages with no special parameters *
     MCI_GENERIC_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
     MCI_GENERIC_PARMS ends
     tagMCI_GENERIC_PARMS typedef MCI_GENERIC_PARMS
     PMCI_GENERIC_PARMS typedef ptr MCI_GENERIC_PARMS
     LPMCI_GENERIC_PARMS typedef ptr MCI_GENERIC_PARMS
-    ;* parameter block for MCI_OPEN command message *
     ifdef _WIN32
       MCI_OPEN_PARMSA struct
-        dwCallback XWORD ?
+        dwCallback DWORD_PTR ?
         wDeviceID MCIDEVICEID ?
-        lpstrDeviceType =POINTER ?
-        lpstrElementName =POINTER ?
-        lpstrAlias =POINTER ?
+        lpstrDeviceType LPCSTR ?
+        lpstrElementName LPCSTR ?
+        lpstrAlias LPCSTR ?
       MCI_OPEN_PARMSA ends
       tagMCI_OPEN_PARMSA typedef MCI_OPEN_PARMSA
       PMCI_OPEN_PARMSA typedef ptr MCI_OPEN_PARMSA
       LPMCI_OPEN_PARMSA typedef ptr MCI_OPEN_PARMSA
       MCI_OPEN_PARMSW struct
-        dwCallback XWORD ?
+        dwCallback DWORD_PTR ?
         wDeviceID MCIDEVICEID ?
-        lpstrDeviceType =POINTER ?
-        lpstrElementName =POINTER ?
-        lpstrAlias =POINTER ?
+        lpstrDeviceType LPCWSTR ?
+        lpstrElementName LPCWSTR ?
+        lpstrAlias LPCWSTR ?
       MCI_OPEN_PARMSW ends
       tagMCI_OPEN_PARMSW typedef MCI_OPEN_PARMSW
       PMCI_OPEN_PARMSW typedef ptr MCI_OPEN_PARMSW
@@ -410,49 +355,44 @@ ifndef _MCIAPI_H_
         PMCI_OPEN_PARMS typedef PMCI_OPEN_PARMSA
         LPMCI_OPEN_PARMS typedef LPMCI_OPEN_PARMSA
       endif
-      ; UNICODE
     else
       ;[...]
     endif
-    ;* parameter block for MCI_PLAY command message *
     MCI_PLAY_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       dwFrom DWORD ?
       dwTo DWORD ?
     MCI_PLAY_PARMS ends
     tagMCI_PLAY_PARMS typedef MCI_PLAY_PARMS
     PMCI_PLAY_PARMS typedef ptr MCI_PLAY_PARMS
     LPMCI_PLAY_PARMS typedef ptr MCI_PLAY_PARMS
-    ;* parameter block for MCI_SEEK command message *
     MCI_SEEK_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       dwTo DWORD ?
     MCI_SEEK_PARMS ends
     tagMCI_SEEK_PARMS typedef MCI_SEEK_PARMS
     PMCI_SEEK_PARMS typedef ptr MCI_SEEK_PARMS
     LPMCI_SEEK_PARMS typedef ptr MCI_SEEK_PARMS
-    ;* parameter block for MCI_STATUS command message *
     MCI_STATUS_PARMS struct
-      dwCallback XWORD ?
-      dwReturn XWORD ?
+      dwCallback DWORD_PTR ?
+      dwReturn DWORD_PTR ?
       dwItem DWORD ?
       dwTrack DWORD ?
     MCI_STATUS_PARMS ends
     tagMCI_STATUS_PARMS typedef MCI_STATUS_PARMS
     PMCI_STATUS_PARMS typedef ptr MCI_STATUS_PARMS
     LPMCI_STATUS_PARMS typedef ptr MCI_STATUS_PARMS
-    ;* parameter block for MCI_INFO command message *
     ifdef _WIN32
       MCI_INFO_PARMSA struct
-        dwCallback XWORD ?
-        lpstrReturn POINTER ?
+        dwCallback DWORD_PTR ?
+        lpstrReturn LPSTR ?
         dwRetSize DWORD ?
       MCI_INFO_PARMSA ends
       tagMCI_INFO_PARMSA typedef MCI_INFO_PARMSA
       LPMCI_INFO_PARMSA typedef ptr MCI_INFO_PARMSA
       MCI_INFO_PARMSW struct
-        dwCallback XWORD ?
-        lpstrReturn POINTER ?
+        dwCallback DWORD_PTR ?
+        lpstrReturn LPWSTR ?
         dwRetSize DWORD ?
       MCI_INFO_PARMSW ends
       tagMCI_INFO_PARMSW typedef MCI_INFO_PARMSW
@@ -464,37 +404,34 @@ ifndef _MCIAPI_H_
         MCI_INFO_PARMS typedef MCI_INFO_PARMSA
         LPMCI_INFO_PARMS typedef LPMCI_INFO_PARMSA
       endif
-      ; UNICODE
     else
       ;[...]
     endif
-    ;* parameter block for MCI_GETDEVCAPS command message *
     MCI_GETDEVCAPS_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       dwReturn DWORD ?
       dwItem DWORD ?
     MCI_GETDEVCAPS_PARMS ends
     tagMCI_GETDEVCAPS_PARMS typedef MCI_GETDEVCAPS_PARMS
     PMCI_GETDEVCAPS_PARMS typedef ptr MCI_GETDEVCAPS_PARMS
     LPMCI_GETDEVCAPS_PARMS typedef ptr MCI_GETDEVCAPS_PARMS
-    ;* parameter block for MCI_SYSINFO command message *
     ifdef _WIN32
       MCI_SYSINFO_PARMSA struct
-        dwCallback XWORD ?
-        lpstrReturn POINTER ?
+        dwCallback DWORD_PTR ?
+        lpstrReturn LPSTR ?
         dwRetSize DWORD ?
         dwNumber DWORD ?
-        wDeviceType DWORD ?
+        wDeviceType UINT ?
       MCI_SYSINFO_PARMSA ends
       tagMCI_SYSINFO_PARMSA typedef MCI_SYSINFO_PARMSA
       PMCI_SYSINFO_PARMSA typedef ptr MCI_SYSINFO_PARMSA
       LPMCI_SYSINFO_PARMSA typedef ptr MCI_SYSINFO_PARMSA
       MCI_SYSINFO_PARMSW struct
-        dwCallback XWORD ?
-        lpstrReturn POINTER ?
+        dwCallback DWORD_PTR ?
+        lpstrReturn LPWSTR ?
         dwRetSize DWORD ?
         dwNumber DWORD ?
-        wDeviceType DWORD ?
+        wDeviceType UINT ?
       MCI_SYSINFO_PARMSW ends
       tagMCI_SYSINFO_PARMSW typedef MCI_SYSINFO_PARMSW
       PMCI_SYSINFO_PARMSW typedef ptr MCI_SYSINFO_PARMSW
@@ -508,22 +445,19 @@ ifndef _MCIAPI_H_
         PMCI_SYSINFO_PARMS typedef PMCI_SYSINFO_PARMSA
         LPMCI_SYSINFO_PARMS typedef LPMCI_SYSINFO_PARMSA
       endif
-      ; UNICODE
     else
       ;[...]
     endif
-    ;* parameter block for MCI_SET command message *
     MCI_SET_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       dwTimeFormat DWORD ?
       dwAudio DWORD ?
     MCI_SET_PARMS ends
     tagMCI_SET_PARMS typedef MCI_SET_PARMS
     PMCI_SET_PARMS typedef ptr MCI_SET_PARMS
     LPMCI_SET_PARMS typedef ptr MCI_SET_PARMS
-    ;* parameter block for MCI_BREAK command message *
     MCI_BREAK_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       ifdef _WIN32
         nVirtKey SDWORD ?
         hwndBreak HWND ?
@@ -534,18 +468,17 @@ ifndef _MCIAPI_H_
     tagMCI_BREAK_PARMS typedef MCI_BREAK_PARMS
     PMCI_BREAK_PARMS typedef ptr MCI_BREAK_PARMS
     LPMCI_BREAK_PARMS typedef ptr MCI_BREAK_PARMS
-    ;* parameter block for MCI_SAVE command message *
     ifdef _WIN32
       MCI_SAVE_PARMSA struct
-        dwCallback XWORD ?
-        lpfilename =POINTER ?
+        dwCallback DWORD_PTR ?
+        lpfilename LPCSTR ?
       MCI_SAVE_PARMSA ends
       tagMCI_SAVE_PARMSA typedef MCI_SAVE_PARMSA
       PMCI_SAVE_PARMSA typedef ptr MCI_SAVE_PARMSA
       LPMCI_SAVE_PARMSA typedef ptr MCI_SAVE_PARMSA
       MCI_SAVE_PARMSW struct
-        dwCallback XWORD ?
-        lpfilename =POINTER ?
+        dwCallback DWORD_PTR ?
+        lpfilename LPCWSTR ?
       MCI_SAVE_PARMSW ends
       tagMCI_SAVE_PARMSW typedef MCI_SAVE_PARMSW
       PMCI_SAVE_PARMSW typedef ptr MCI_SAVE_PARMSW
@@ -559,22 +492,20 @@ ifndef _MCIAPI_H_
         PMCI_SAVE_PARMS typedef PMCI_SAVE_PARMSA
         LPMCI_SAVE_PARMS typedef LPMCI_SAVE_PARMSA
       endif
-      ; UNICODE
     else
       ;[...]
     endif
-    ;* parameter block for MCI_LOAD command message *
     ifdef _WIN32
       MCI_LOAD_PARMSA struct
-        dwCallback XWORD ?
-        lpfilename =POINTER ?
+        dwCallback DWORD_PTR ?
+        lpfilename LPCSTR ?
       MCI_LOAD_PARMSA ends
       tagMCI_LOAD_PARMSA typedef MCI_LOAD_PARMSA
       PMCI_LOAD_PARMSA typedef ptr MCI_LOAD_PARMSA
       LPMCI_LOAD_PARMSA typedef ptr MCI_LOAD_PARMSA
       MCI_LOAD_PARMSW struct
-        dwCallback XWORD ?
-        lpfilename =POINTER ?
+        dwCallback DWORD_PTR ?
+        lpfilename LPCWSTR ?
       MCI_LOAD_PARMSW ends
       tagMCI_LOAD_PARMSW typedef MCI_LOAD_PARMSW
       PMCI_LOAD_PARMSW typedef ptr MCI_LOAD_PARMSW
@@ -588,60 +519,45 @@ ifndef _MCIAPI_H_
         PMCI_LOAD_PARMS typedef PMCI_LOAD_PARMSA
         LPMCI_LOAD_PARMS typedef LPMCI_LOAD_PARMSA
       endif
-      ; UNICODE
     else
       ;[...]
     endif
-    ;* parameter block for MCI_RECORD command message *
     MCI_RECORD_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       dwFrom DWORD ?
       dwTo DWORD ?
     MCI_RECORD_PARMS ends
     tagMCI_RECORD_PARMS typedef MCI_RECORD_PARMS
     LPMCI_RECORD_PARMS typedef ptr MCI_RECORD_PARMS
-    ;* MCI extensions for videodisc devices *
-    ;* flag for dwReturn field of MCI_STATUS_PARMS *
-    ;* MCI_STATUS command, (dwItem == MCI_STATUS_MODE) *
     MCI_VD_MODE_PARK equ (MCI_VD_OFFSET + 1)
-    ;* flag for dwReturn field of MCI_STATUS_PARMS *
-    ;* MCI_STATUS command, (dwItem == MCI_VD_STATUS_MEDIA_TYPE) *
     MCI_VD_MEDIA_CLV equ (MCI_VD_OFFSET + 2)
     MCI_VD_MEDIA_CAV equ (MCI_VD_OFFSET + 3)
     MCI_VD_MEDIA_OTHER equ (MCI_VD_OFFSET + 4)
     MCI_VD_FORMAT_TRACK equ 4001h
-    ;* flags for dwFlags parameter of MCI_PLAY command message *
     MCI_VD_PLAY_REVERSE equ 00010000h
     MCI_VD_PLAY_FAST equ 00020000h
     MCI_VD_PLAY_SPEED equ 00040000h
     MCI_VD_PLAY_SCAN equ 00080000h
     MCI_VD_PLAY_SLOW equ 00100000h
-    ;* flag for dwFlags parameter of MCI_SEEK command message *
     MCI_VD_SEEK_REVERSE equ 00010000h
-    ;* flags for dwItem field of MCI_STATUS_PARMS parameter block *
     MCI_VD_STATUS_SPEED equ 00004002h
     MCI_VD_STATUS_FORWARD equ 00004003h
     MCI_VD_STATUS_MEDIA_TYPE equ 00004004h
     MCI_VD_STATUS_SIDE equ 00004005h
     MCI_VD_STATUS_DISC_SIZE equ 00004006h
-    ;* flags for dwFlags parameter of MCI_GETDEVCAPS command message *
     MCI_VD_GETDEVCAPS_CLV equ 00010000h
     MCI_VD_GETDEVCAPS_CAV equ 00020000h
     MCI_VD_SPIN_UP equ 00010000h
     MCI_VD_SPIN_DOWN equ 00020000h
-    ;* flags for dwItem field of MCI_GETDEVCAPS_PARMS parameter block *
     MCI_VD_GETDEVCAPS_CAN_REVERSE equ 00004002h
     MCI_VD_GETDEVCAPS_FAST_RATE equ 00004003h
     MCI_VD_GETDEVCAPS_SLOW_RATE equ 00004004h
     MCI_VD_GETDEVCAPS_NORMAL_RATE equ 00004005h
-    ;* flags for the dwFlags parameter of MCI_STEP command message *
     MCI_VD_STEP_FRAMES equ 00010000h
     MCI_VD_STEP_REVERSE equ 00020000h
-    ;* flag for the MCI_ESCAPE command message *
     MCI_VD_ESCAPE_STRING equ 00000100h
-    ;* parameter block for MCI_PLAY command message *
     MCI_VD_PLAY_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       dwFrom DWORD ?
       dwTo DWORD ?
       dwSpeed DWORD ?
@@ -649,26 +565,24 @@ ifndef _MCIAPI_H_
     tagMCI_VD_PLAY_PARMS typedef MCI_VD_PLAY_PARMS
     PMCI_VD_PLAY_PARMS typedef ptr MCI_VD_PLAY_PARMS
     LPMCI_VD_PLAY_PARMS typedef ptr MCI_VD_PLAY_PARMS
-    ;* parameter block for MCI_STEP command message *
     MCI_VD_STEP_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       dwFrames DWORD ?
     MCI_VD_STEP_PARMS ends
     tagMCI_VD_STEP_PARMS typedef MCI_VD_STEP_PARMS
     PMCI_VD_STEP_PARMS typedef ptr MCI_VD_STEP_PARMS
     LPMCI_VD_STEP_PARMS typedef ptr MCI_VD_STEP_PARMS
-    ;* parameter block for MCI_ESCAPE command message *
     ifdef _WIN32
       MCI_VD_ESCAPE_PARMSA struct
-        dwCallback XWORD ?
-        lpstrCommand =POINTER ?
+        dwCallback DWORD_PTR ?
+        lpstrCommand LPCSTR ?
       MCI_VD_ESCAPE_PARMSA ends
       tagMCI_VD_ESCAPE_PARMSA typedef MCI_VD_ESCAPE_PARMSA
       PMCI_VD_ESCAPE_PARMSA typedef ptr MCI_VD_ESCAPE_PARMSA
       LPMCI_VD_ESCAPE_PARMSA typedef ptr MCI_VD_ESCAPE_PARMSA
       MCI_VD_ESCAPE_PARMSW struct
-        dwCallback XWORD ?
-        lpstrCommand =POINTER ?
+        dwCallback DWORD_PTR ?
+        lpstrCommand LPCWSTR ?
       MCI_VD_ESCAPE_PARMSW ends
       tagMCI_VD_ESCAPE_PARMSW typedef MCI_VD_ESCAPE_PARMSW
       PMCI_VD_ESCAPE_PARMSW typedef ptr MCI_VD_ESCAPE_PARMSW
@@ -682,33 +596,23 @@ ifndef _MCIAPI_H_
         PMCI_VD_ESCAPE_PARMS typedef PMCI_VD_ESCAPE_PARMSA
         LPMCI_VD_ESCAPE_PARMS typedef LPMCI_VD_ESCAPE_PARMSA
       endif
-      ; UNICODE
     else
       ;[...]
     endif
-    ;* MCI extensions for CD audio devices *
-    ;* flags for the dwItem field of the MCI_STATUS_PARMS parameter block *
     MCI_CDA_STATUS_TYPE_TRACK equ 00004001h
-    ;* flags for the dwReturn field of MCI_STATUS_PARMS parameter block *
-    ;* MCI_STATUS command, (dwItem == MCI_CDA_STATUS_TYPE_TRACK) *
     MCI_CDA_TRACK_AUDIO equ (MCI_CD_OFFSET + 0)
     MCI_CDA_TRACK_OTHER equ (MCI_CD_OFFSET + 1)
-    ;* MCI extensions for waveform audio devices *
     MCI_WAVE_PCM equ (MCI_WAVE_OFFSET + 0)
     MCI_WAVE_MAPPER equ (MCI_WAVE_OFFSET + 1)
-    ;* flags for the dwFlags parameter of MCI_OPEN command message *
     MCI_WAVE_OPEN_BUFFER equ 00010000h
-    ;* flags for the dwFlags parameter of MCI_SET command message *
     MCI_WAVE_SET_FORMATTAG equ 00010000h
     MCI_WAVE_SET_CHANNELS equ 00020000h
     MCI_WAVE_SET_SAMPLESPERSEC equ 00040000h
     MCI_WAVE_SET_AVGBYTESPERSEC equ 00080000h
     MCI_WAVE_SET_BLOCKALIGN equ 00100000h
     MCI_WAVE_SET_BITSPERSAMPLE equ 00200000h
-    ;* flags for the dwFlags parameter of MCI_STATUS, MCI_SET command messages *
     MCI_WAVE_INPUT equ 00400000h
     MCI_WAVE_OUTPUT equ 00800000h
-    ;* flags for the dwItem field of MCI_STATUS_PARMS parameter block *
     MCI_WAVE_STATUS_FORMATTAG equ 00004001h
     MCI_WAVE_STATUS_CHANNELS equ 00004002h
     MCI_WAVE_STATUS_SAMPLESPERSEC equ 00004003h
@@ -716,31 +620,28 @@ ifndef _MCIAPI_H_
     MCI_WAVE_STATUS_BLOCKALIGN equ 00004005h
     MCI_WAVE_STATUS_BITSPERSAMPLE equ 00004006h
     MCI_WAVE_STATUS_LEVEL equ 00004007h
-    ;* flags for the dwFlags parameter of MCI_SET command message *
     MCI_WAVE_SET_ANYINPUT equ 04000000h
     MCI_WAVE_SET_ANYOUTPUT equ 08000000h
-    ;* flags for the dwFlags parameter of MCI_GETDEVCAPS command message *
     MCI_WAVE_GETDEVCAPS_INPUTS equ 00004001h
     MCI_WAVE_GETDEVCAPS_OUTPUTS equ 00004002h
-    ;* parameter block for MCI_OPEN command message *
     ifdef _WIN32
       MCI_WAVE_OPEN_PARMSA struct
-        dwCallback XWORD ?
+        dwCallback DWORD_PTR ?
         wDeviceID MCIDEVICEID ?
-        lpstrDeviceType =POINTER ?
-        lpstrElementName =POINTER ?
-        lpstrAlias =POINTER ?
+        lpstrDeviceType LPCSTR ?
+        lpstrElementName LPCSTR ?
+        lpstrAlias LPCSTR ?
         dwBufferSeconds DWORD ?
       MCI_WAVE_OPEN_PARMSA ends
       tagMCI_WAVE_OPEN_PARMSA typedef MCI_WAVE_OPEN_PARMSA
       PMCI_WAVE_OPEN_PARMSA typedef ptr MCI_WAVE_OPEN_PARMSA
       LPMCI_WAVE_OPEN_PARMSA typedef ptr MCI_WAVE_OPEN_PARMSA
       MCI_WAVE_OPEN_PARMSW struct
-        dwCallback XWORD ?
+        dwCallback DWORD_PTR ?
         wDeviceID MCIDEVICEID ?
-        lpstrDeviceType =POINTER ?
-        lpstrElementName =POINTER ?
-        lpstrAlias =POINTER ?
+        lpstrDeviceType LPCWSTR ?
+        lpstrElementName LPCWSTR ?
+        lpstrAlias LPCWSTR ?
         dwBufferSeconds DWORD ?
       MCI_WAVE_OPEN_PARMSW ends
       tagMCI_WAVE_OPEN_PARMSW typedef MCI_WAVE_OPEN_PARMSW
@@ -755,27 +656,24 @@ ifndef _MCIAPI_H_
         PMCI_WAVE_OPEN_PARMS typedef PMCI_WAVE_OPEN_PARMSA
         LPMCI_WAVE_OPEN_PARMS typedef LPMCI_WAVE_OPEN_PARMSA
       endif
-      ; UNICODE
     else
       ;[...]
     endif
-    ;* parameter block for MCI_DELETE command message *
     MCI_WAVE_DELETE_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       dwFrom DWORD ?
       dwTo DWORD ?
     MCI_WAVE_DELETE_PARMS ends
     tagMCI_WAVE_DELETE_PARMS typedef MCI_WAVE_DELETE_PARMS
     PMCI_WAVE_DELETE_PARMS typedef ptr MCI_WAVE_DELETE_PARMS
     LPMCI_WAVE_DELETE_PARMS typedef ptr MCI_WAVE_DELETE_PARMS
-    ;* parameter block for MCI_SET command message *
     MCI_WAVE_SET_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       dwTimeFormat DWORD ?
       dwAudio DWORD ?
       ifdef _WIN32
-        wInput DWORD ?
-        wOutput DWORD ?
+        wInput UINT ?
+        wOutput UINT ?
       else
         ;[...]
       endif
@@ -793,23 +691,17 @@ ifndef _MCIAPI_H_
     tagMCI_WAVE_SET_PARMS typedef MCI_WAVE_SET_PARMS
     PMCI_WAVE_SET_PARMS typedef ptr MCI_WAVE_SET_PARMS
     LPMCI_WAVE_SET_PARMS typedef ptr MCI_WAVE_SET_PARMS
-    ;* MCI extensions for MIDI sequencer devices *
-    ;* flags for the dwReturn field of MCI_STATUS_PARMS parameter block *
-    ;* MCI_STATUS command, (dwItem == MCI_SEQ_STATUS_DIVTYPE) *
     MCI_SEQ_DIV_PPQN equ (0 + MCI_SEQ_OFFSET)
     MCI_SEQ_DIV_SMPTE_24 equ (1 + MCI_SEQ_OFFSET)
     MCI_SEQ_DIV_SMPTE_25 equ (2 + MCI_SEQ_OFFSET)
     MCI_SEQ_DIV_SMPTE_30DROP equ (3 + MCI_SEQ_OFFSET)
     MCI_SEQ_DIV_SMPTE_30 equ (4 + MCI_SEQ_OFFSET)
-    ;* flags for the dwMaster field of MCI_SEQ_SET_PARMS parameter block *
-    ;* MCI_SET command, (dwFlags == MCI_SEQ_SET_MASTER) *
     MCI_SEQ_FORMAT_SONGPTR equ 4001h
     MCI_SEQ_FILE equ 4002h
     MCI_SEQ_MIDI equ 4003h
     MCI_SEQ_SMPTE equ 4004h
     MCI_SEQ_NONE equ 65533
     MCI_SEQ_MAPPER equ 65535
-    ;* flags for the dwItem field of MCI_STATUS_PARMS parameter block *
     MCI_SEQ_STATUS_TEMPO equ 00004002h
     MCI_SEQ_STATUS_PORT equ 00004003h
     MCI_SEQ_STATUS_SLAVE equ 00004007h
@@ -818,15 +710,13 @@ ifndef _MCIAPI_H_
     MCI_SEQ_STATUS_DIVTYPE equ 0000400Ah
     MCI_SEQ_STATUS_NAME equ 0000400Bh
     MCI_SEQ_STATUS_COPYRIGHT equ 0000400Ch
-    ;* flags for the dwFlags parameter of MCI_SET command message *
     MCI_SEQ_SET_TEMPO equ 00010000h
     MCI_SEQ_SET_PORT equ 00020000h
     MCI_SEQ_SET_SLAVE equ 00040000h
     MCI_SEQ_SET_MASTER equ 00080000h
     MCI_SEQ_SET_OFFSET equ 01000000h
-    ;* parameter block for MCI_SET command message *
     MCI_SEQ_SET_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       dwTimeFormat DWORD ?
       dwAudio DWORD ?
       dwTempo DWORD ?
@@ -838,29 +728,22 @@ ifndef _MCIAPI_H_
     tagMCI_SEQ_SET_PARMS typedef MCI_SEQ_SET_PARMS
     PMCI_SEQ_SET_PARMS typedef ptr MCI_SEQ_SET_PARMS
     LPMCI_SEQ_SET_PARMS typedef ptr MCI_SEQ_SET_PARMS
-    ;* MCI extensions for animation devices *
-    ;* flags for dwFlags parameter of MCI_OPEN command message *
     MCI_ANIM_OPEN_WS equ 00010000h
     MCI_ANIM_OPEN_PARENT equ 00020000h
     MCI_ANIM_OPEN_NOSTATIC equ 00040000h
-    ;* flags for dwFlags parameter of MCI_PLAY command message *
     MCI_ANIM_PLAY_SPEED equ 00010000h
     MCI_ANIM_PLAY_REVERSE equ 00020000h
     MCI_ANIM_PLAY_FAST equ 00040000h
     MCI_ANIM_PLAY_SLOW equ 00080000h
     MCI_ANIM_PLAY_SCAN equ 00100000h
-    ;* flags for dwFlags parameter of MCI_STEP command message *
     MCI_ANIM_STEP_REVERSE equ 00010000h
     MCI_ANIM_STEP_FRAMES equ 00020000h
-    ;* flags for dwItem field of MCI_STATUS_PARMS parameter block *
     MCI_ANIM_STATUS_SPEED equ 00004001h
     MCI_ANIM_STATUS_FORWARD equ 00004002h
     MCI_ANIM_STATUS_HWND equ 00004003h
     MCI_ANIM_STATUS_HPAL equ 00004004h
     MCI_ANIM_STATUS_STRETCH equ 00004005h
-    ;* flags for the dwFlags parameter of MCI_INFO command message *
     MCI_ANIM_INFO_TEXT equ 00010000h
-    ;* flags for dwItem field of MCI_GETDEVCAPS_PARMS parameter block *
     MCI_ANIM_GETDEVCAPS_CAN_REVERSE equ 00004001h
     MCI_ANIM_GETDEVCAPS_FAST_RATE equ 00004002h
     MCI_ANIM_GETDEVCAPS_SLOW_RATE equ 00004003h
@@ -868,35 +751,27 @@ ifndef _MCIAPI_H_
     MCI_ANIM_GETDEVCAPS_PALETTES equ 00004006h
     MCI_ANIM_GETDEVCAPS_CAN_STRETCH equ 00004007h
     MCI_ANIM_GETDEVCAPS_MAX_WINDOWS equ 00004008h
-    ;* flags for the MCI_REALIZE command message *
     MCI_ANIM_REALIZE_NORM equ 00010000h
     MCI_ANIM_REALIZE_BKGD equ 00020000h
-    ;* flags for dwFlags parameter of MCI_WINDOW command message *
     MCI_ANIM_WINDOW_HWND equ 00010000h
     MCI_ANIM_WINDOW_STATE equ 00040000h
     MCI_ANIM_WINDOW_TEXT equ 00080000h
     MCI_ANIM_WINDOW_ENABLE_STRETCH equ 00100000h
     MCI_ANIM_WINDOW_DISABLE_STRETCH equ 00200000h
-    ;* flags for hWnd field of MCI_ANIM_WINDOW_PARMS parameter block *
-    ;* MCI_WINDOW command message, (dwFlags == MCI_ANIM_WINDOW_HWND) *
     MCI_ANIM_WINDOW_DEFAULT equ 00000000h
-    ;* flags for dwFlags parameter of MCI_PUT command message *
     MCI_ANIM_RECT equ 00010000h
     MCI_ANIM_PUT_SOURCE equ 00020000h
     MCI_ANIM_PUT_DESTINATION equ 00040000h
-    ;* flags for dwFlags parameter of MCI_WHERE command message *
     MCI_ANIM_WHERE_SOURCE equ 00020000h
     MCI_ANIM_WHERE_DESTINATION equ 00040000h
-    ;* flags for dwFlags parameter of MCI_UPDATE command message *
     MCI_ANIM_UPDATE_HDC equ 00020000h
-    ;* parameter block for MCI_OPEN command message *
     ifdef _WIN32
       MCI_ANIM_OPEN_PARMSA struct
-        dwCallback XWORD ?
+        dwCallback DWORD_PTR ?
         wDeviceID MCIDEVICEID ?
-        lpstrDeviceType =POINTER ?
-        lpstrElementName =POINTER ?
-        lpstrAlias =POINTER ?
+        lpstrDeviceType LPCSTR ?
+        lpstrElementName LPCSTR ?
+        lpstrAlias LPCSTR ?
         dwStyle DWORD ?
         hWndParent HWND ?
       MCI_ANIM_OPEN_PARMSA ends
@@ -904,11 +779,11 @@ ifndef _MCIAPI_H_
       PMCI_ANIM_OPEN_PARMSA typedef ptr MCI_ANIM_OPEN_PARMSA
       LPMCI_ANIM_OPEN_PARMSA typedef ptr MCI_ANIM_OPEN_PARMSA
       MCI_ANIM_OPEN_PARMSW struct
-        dwCallback XWORD ?
+        dwCallback DWORD_PTR ?
         wDeviceID MCIDEVICEID ?
-        lpstrDeviceType =POINTER ?
-        lpstrElementName =POINTER ?
-        lpstrAlias =POINTER ?
+        lpstrDeviceType LPCWSTR ?
+        lpstrElementName LPCWSTR ?
+        lpstrAlias LPCWSTR ?
         dwStyle DWORD ?
         hWndParent HWND ?
       MCI_ANIM_OPEN_PARMSW ends
@@ -924,13 +799,11 @@ ifndef _MCIAPI_H_
         PMCI_ANIM_OPEN_PARMS typedef PMCI_ANIM_OPEN_PARMSA
         LPMCI_ANIM_OPEN_PARMS typedef LPMCI_ANIM_OPEN_PARMSA
       endif
-      ; UNICODE
     else
       ;[...]
     endif
-    ;* parameter block for MCI_PLAY command message *
     MCI_ANIM_PLAY_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       dwFrom DWORD ?
       dwTo DWORD ?
       dwSpeed DWORD ?
@@ -938,30 +811,28 @@ ifndef _MCIAPI_H_
     tagMCI_ANIM_PLAY_PARMS typedef MCI_ANIM_PLAY_PARMS
     PMCI_ANIM_PLAY_PARMS typedef ptr MCI_ANIM_PLAY_PARMS
     LPMCI_ANIM_PLAY_PARMS typedef ptr MCI_ANIM_PLAY_PARMS
-    ;* parameter block for MCI_STEP command message *
     MCI_ANIM_STEP_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       dwFrames DWORD ?
     MCI_ANIM_STEP_PARMS ends
     tagMCI_ANIM_STEP_PARMS typedef MCI_ANIM_STEP_PARMS
     PMCI_ANIM_STEP_PARMS typedef ptr MCI_ANIM_STEP_PARMS
     LPMCI_ANIM_STEP_PARMS typedef ptr MCI_ANIM_STEP_PARMS
-    ;* parameter block for MCI_WINDOW command message *
     ifdef _WIN32
       MCI_ANIM_WINDOW_PARMSA struct
-        dwCallback XWORD ?
+        dwCallback DWORD_PTR ?
         hWnd HWND ?
-        nCmdShow DWORD ?
-        lpstrText =POINTER ?
+        nCmdShow UINT ?
+        lpstrText LPCSTR ?
       MCI_ANIM_WINDOW_PARMSA ends
       tagMCI_ANIM_WINDOW_PARMSA typedef MCI_ANIM_WINDOW_PARMSA
       PMCI_ANIM_WINDOW_PARMSA typedef ptr MCI_ANIM_WINDOW_PARMSA
       LPMCI_ANIM_WINDOW_PARMSA typedef ptr MCI_ANIM_WINDOW_PARMSA
       MCI_ANIM_WINDOW_PARMSW struct
-        dwCallback XWORD ?
+        dwCallback DWORD_PTR ?
         hWnd HWND ?
-        nCmdShow DWORD ?
-        lpstrText =POINTER ?
+        nCmdShow UINT ?
+        lpstrText LPCWSTR ?
       MCI_ANIM_WINDOW_PARMSW ends
       tagMCI_ANIM_WINDOW_PARMSW typedef MCI_ANIM_WINDOW_PARMSW
       PMCI_ANIM_WINDOW_PARMSW typedef ptr MCI_ANIM_WINDOW_PARMSW
@@ -975,74 +846,59 @@ ifndef _MCIAPI_H_
         PMCI_ANIM_WINDOW_PARMS typedef PMCI_ANIM_WINDOW_PARMSA
         LPMCI_ANIM_WINDOW_PARMS typedef LPMCI_ANIM_WINDOW_PARMSA
       endif
-      ; UNICODE
     else
       ;[...]
     endif
-    ;* parameter block for MCI_PUT, MCI_UPDATE, MCI_WHERE command messages *
     MCI_ANIM_RECT_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       ifdef MCI_USE_OFFEXT
         ptOffset POINT <>
         ptExtent POINT <>
-        ;* ifdef MCI_USE_OFFEXT *
       else
         rc RECT <>
-        ;* ifdef MCI_USE_OFFEXT *
       endif
     MCI_ANIM_RECT_PARMS ends
     tagMCI_ANIM_RECT_PARMS typedef MCI_ANIM_RECT_PARMS
     PMCI_ANIM_RECT_PARMS typedef ptr MCI_ANIM_RECT_PARMS
     LPMCI_ANIM_RECT_PARMS typedef ptr MCI_ANIM_RECT_PARMS
-    ;* parameter block for MCI_UPDATE PARMS *
     MCI_ANIM_UPDATE_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       rc RECT <>
       hDC HDC ?
     MCI_ANIM_UPDATE_PARMS ends
     tagMCI_ANIM_UPDATE_PARMS typedef MCI_ANIM_UPDATE_PARMS
     PMCI_ANIM_UPDATE_PARMS typedef ptr MCI_ANIM_UPDATE_PARMS
     LPMCI_ANIM_UPDATE_PARMS typedef ptr MCI_ANIM_UPDATE_PARMS
-    ;* MCI extensions for video overlay devices *
-    ;* flags for dwFlags parameter of MCI_OPEN command message *
     MCI_OVLY_OPEN_WS equ 00010000h
     MCI_OVLY_OPEN_PARENT equ 00020000h
-    ;* flags for dwFlags parameter of MCI_STATUS command message *
     MCI_OVLY_STATUS_HWND equ 00004001h
     MCI_OVLY_STATUS_STRETCH equ 00004002h
-    ;* flags for dwFlags parameter of MCI_INFO command message *
     MCI_OVLY_INFO_TEXT equ 00010000h
-    ;* flags for dwItem field of MCI_GETDEVCAPS_PARMS parameter block *
     MCI_OVLY_GETDEVCAPS_CAN_STRETCH equ 00004001h
     MCI_OVLY_GETDEVCAPS_CAN_FREEZE equ 00004002h
     MCI_OVLY_GETDEVCAPS_MAX_WINDOWS equ 00004003h
-    ;* flags for dwFlags parameter of MCI_WINDOW command message *
     MCI_OVLY_WINDOW_HWND equ 00010000h
     MCI_OVLY_WINDOW_STATE equ 00040000h
     MCI_OVLY_WINDOW_TEXT equ 00080000h
     MCI_OVLY_WINDOW_ENABLE_STRETCH equ 00100000h
     MCI_OVLY_WINDOW_DISABLE_STRETCH equ 00200000h
-    ;* flags for hWnd parameter of MCI_OVLY_WINDOW_PARMS parameter block *
     MCI_OVLY_WINDOW_DEFAULT equ 00000000h
-    ;* flags for dwFlags parameter of MCI_PUT command message *
     MCI_OVLY_RECT equ 00010000h
     MCI_OVLY_PUT_SOURCE equ 00020000h
     MCI_OVLY_PUT_DESTINATION equ 00040000h
     MCI_OVLY_PUT_FRAME equ 00080000h
     MCI_OVLY_PUT_VIDEO equ 00100000h
-    ;* flags for dwFlags parameter of MCI_WHERE command message *
     MCI_OVLY_WHERE_SOURCE equ 00020000h
     MCI_OVLY_WHERE_DESTINATION equ 00040000h
     MCI_OVLY_WHERE_FRAME equ 00080000h
     MCI_OVLY_WHERE_VIDEO equ 00100000h
-    ;* parameter block for MCI_OPEN command message *
     ifdef _WIN32
       MCI_OVLY_OPEN_PARMSA struct
-        dwCallback XWORD ?
+        dwCallback DWORD_PTR ?
         wDeviceID MCIDEVICEID ?
-        lpstrDeviceType =POINTER ?
-        lpstrElementName =POINTER ?
-        lpstrAlias =POINTER ?
+        lpstrDeviceType LPCSTR ?
+        lpstrElementName LPCSTR ?
+        lpstrAlias LPCSTR ?
         dwStyle DWORD ?
         hWndParent HWND ?
       MCI_OVLY_OPEN_PARMSA ends
@@ -1050,11 +906,11 @@ ifndef _MCIAPI_H_
       PMCI_OVLY_OPEN_PARMSA typedef ptr MCI_OVLY_OPEN_PARMSA
       LPMCI_OVLY_OPEN_PARMSA typedef ptr MCI_OVLY_OPEN_PARMSA
       MCI_OVLY_OPEN_PARMSW struct
-        dwCallback XWORD ?
+        dwCallback DWORD_PTR ?
         wDeviceID MCIDEVICEID ?
-        lpstrDeviceType =POINTER ?
-        lpstrElementName =POINTER ?
-        lpstrAlias =POINTER ?
+        lpstrDeviceType LPCWSTR ?
+        lpstrElementName LPCWSTR ?
+        lpstrAlias LPCWSTR ?
         dwStyle DWORD ?
         hWndParent HWND ?
       MCI_OVLY_OPEN_PARMSW ends
@@ -1070,26 +926,24 @@ ifndef _MCIAPI_H_
         PMCI_OVLY_OPEN_PARMS typedef PMCI_OVLY_OPEN_PARMSA
         LPMCI_OVLY_OPEN_PARMS typedef LPMCI_OVLY_OPEN_PARMSA
       endif
-      ; UNICODE
     else
       ;[...]
     endif
-    ;* parameter block for MCI_WINDOW command message *
     ifdef _WIN32
       MCI_OVLY_WINDOW_PARMSA struct
-        dwCallback XWORD ?
+        dwCallback DWORD_PTR ?
         hWnd HWND ?
-        nCmdShow DWORD ?
-        lpstrText =POINTER ?
+        nCmdShow UINT ?
+        lpstrText LPCSTR ?
       MCI_OVLY_WINDOW_PARMSA ends
       tagMCI_OVLY_WINDOW_PARMSA typedef MCI_OVLY_WINDOW_PARMSA
       PMCI_OVLY_WINDOW_PARMSA typedef ptr MCI_OVLY_WINDOW_PARMSA
       LPMCI_OVLY_WINDOW_PARMSA typedef ptr MCI_OVLY_WINDOW_PARMSA
       MCI_OVLY_WINDOW_PARMSW struct
-        dwCallback XWORD ?
+        dwCallback DWORD_PTR ?
         hWnd HWND ?
-        nCmdShow DWORD ?
-        lpstrText =POINTER ?
+        nCmdShow UINT ?
+        lpstrText LPCWSTR ?
       MCI_OVLY_WINDOW_PARMSW ends
       tagMCI_OVLY_WINDOW_PARMSW typedef MCI_OVLY_WINDOW_PARMSW
       PMCI_OVLY_WINDOW_PARMSW typedef ptr MCI_OVLY_WINDOW_PARMSW
@@ -1103,38 +957,33 @@ ifndef _MCIAPI_H_
         PMCI_OVLY_WINDOW_PARMS typedef PMCI_OVLY_WINDOW_PARMSA
         LPMCI_OVLY_WINDOW_PARMS typedef LPMCI_OVLY_WINDOW_PARMSA
       endif
-      ; UNICODE
     else
       ;[...]
     endif
-    ;* parameter block for MCI_PUT, MCI_UPDATE, and MCI_WHERE command messages *
     MCI_OVLY_RECT_PARMS struct
-      dwCallback XWORD ?
+      dwCallback DWORD_PTR ?
       ifdef MCI_USE_OFFEXT
         ptOffset POINT <>
         ptExtent POINT <>
-        ;* ifdef MCI_USE_OFFEXT *
       else
         rc RECT <>
-        ;* ifdef MCI_USE_OFFEXT *
       endif
     MCI_OVLY_RECT_PARMS ends
     tagMCI_OVLY_RECT_PARMS typedef MCI_OVLY_RECT_PARMS
     PMCI_OVLY_RECT_PARMS typedef ptr MCI_OVLY_RECT_PARMS
     LPMCI_OVLY_RECT_PARMS typedef ptr MCI_OVLY_RECT_PARMS
-    ;* parameter block for MCI_SAVE command message *
     ifdef _WIN32
       MCI_OVLY_SAVE_PARMSA struct
-        dwCallback XWORD ?
-        lpfilename =POINTER ?
+        dwCallback DWORD_PTR ?
+        lpfilename LPCSTR ?
         rc RECT <>
       MCI_OVLY_SAVE_PARMSA ends
       tagMCI_OVLY_SAVE_PARMSA typedef MCI_OVLY_SAVE_PARMSA
       PMCI_OVLY_SAVE_PARMSA typedef ptr MCI_OVLY_SAVE_PARMSA
       LPMCI_OVLY_SAVE_PARMSA typedef ptr MCI_OVLY_SAVE_PARMSA
       MCI_OVLY_SAVE_PARMSW struct
-        dwCallback XWORD ?
-        lpfilename =POINTER ?
+        dwCallback DWORD_PTR ?
+        lpfilename LPCWSTR ?
         rc RECT <>
       MCI_OVLY_SAVE_PARMSW ends
       tagMCI_OVLY_SAVE_PARMSW typedef MCI_OVLY_SAVE_PARMSW
@@ -1149,23 +998,21 @@ ifndef _MCIAPI_H_
         PMCI_OVLY_SAVE_PARMS typedef PMCI_OVLY_SAVE_PARMSA
         LPMCI_OVLY_SAVE_PARMS typedef LPMCI_OVLY_SAVE_PARMSA
       endif
-      ; UNICODE
     else
       ;[...]
     endif
-    ;* parameter block for MCI_LOAD command message *
     ifdef _WIN32
       MCI_OVLY_LOAD_PARMSA struct
-        dwCallback XWORD ?
-        lpfilename =POINTER ?
+        dwCallback DWORD_PTR ?
+        lpfilename LPCSTR ?
         rc RECT <>
       MCI_OVLY_LOAD_PARMSA ends
       tagMCI_OVLY_LOAD_PARMSA typedef MCI_OVLY_LOAD_PARMSA
       PMCI_OVLY_LOAD_PARMSA typedef ptr MCI_OVLY_LOAD_PARMSA
       LPMCI_OVLY_LOAD_PARMSA typedef ptr MCI_OVLY_LOAD_PARMSA
       MCI_OVLY_LOAD_PARMSW struct
-        dwCallback XWORD ?
-        lpfilename =POINTER ?
+        dwCallback DWORD_PTR ?
+        lpfilename LPCWSTR ?
         rc RECT <>
       MCI_OVLY_LOAD_PARMSW ends
       tagMCI_OVLY_LOAD_PARMSW typedef MCI_OVLY_LOAD_PARMSW
@@ -1180,11 +1027,9 @@ ifndef _MCIAPI_H_
         PMCI_OVLY_LOAD_PARMS typedef PMCI_OVLY_LOAD_PARMSA
         LPMCI_OVLY_LOAD_PARMS typedef LPMCI_OVLY_LOAD_PARMSA
       endif
-      ; UNICODE
     else
       ;[...]
     endif
-    ; APIs moved from mmddk.h - function prototypes for MCI driver functions
     mciGetDriverData proto WIN_STD_CALL_CONV :MCIDEVICEID
     mciLoadCommandResource proto WIN_STD_CALL_CONV :HANDLE, :LPCWSTR, :UINT
     mciSetDriverData proto WIN_STD_CALL_CONV :MCIDEVICEID, :DWORD_PTR
@@ -1192,9 +1037,7 @@ ifndef _MCIAPI_H_
     mciDriverNotify proto WIN_STD_CALL_CONV :HANDLE, :MCIDEVICEID, :UINT
     mciFreeCommandResource proto WIN_STD_CALL_CONV :UINT
   endif
-  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
   ifdef __cplusplus
     ;[...]
   endif
 endif
-; _MCIAPI_H_

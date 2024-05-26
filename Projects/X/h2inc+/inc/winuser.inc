@@ -1,20 +1,12 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 26/05/2024 13:31:25
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winuser.h
 ;             Created on (UTC) 06/04/2024 06:16:03
 ;             Last modified on (UTC) 21/02/2024 18:18:34
 
 include winapifamily.inc
-;****************************************************************************
-;*                                                                           *
-;* winuser.h -- USER procedure declarations, constant definitions and macros *
-;*                                                                           *
-;* Copyright (c) Microsoft Corporation. All rights reserved.                 *
-;*                                                                           *
-;****************************************************************************
 ifndef _WINUSER_
   _WINUSER_ equ <>
-  ; Define API decoration for direct importing of DLL references.
   if  not Defined(WINUSERAPI)
     if  not Defined(_USER32_)
       WINUSERAPI equ <DECLSPEC_IMPORT>
@@ -37,19 +29,14 @@ ifndef _WINUSER_
   endif
   if _MSC_VER ge 1200
     ifndef _MSC_EXTENSIONS
-      ; truncation of constant value
     endif
-    ; padding added after data member
   endif
   ifndef WINVER
-    ;* version 5.0 *
     WINVER equ 0500h
-    ;* !WINVER *
   endif
   include stdarg.inc
   ifndef NOAPISET
     include libloaderapi.inc
-    ; LoadString%
   endif
   ifndef NOUSER
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -61,7 +48,6 @@ ifndef _WINUSER_
       else
         MENUTEMPLATE typedef MENUTEMPLATEA
       endif
-      ; UNICODE
       LPMENUTEMPLATEA typedef PVOID
       LPMENUTEMPLATEW typedef PVOID
       ifdef UNICODE
@@ -69,27 +55,22 @@ ifndef _WINUSER_
       else
         LPMENUTEMPLATE typedef LPMENUTEMPLATEA
       endif
-      ; UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       TYPE_WNDPROC typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :WPARAM, :LPARAM
       WNDPROC typedef ptr TYPE_WNDPROC
 
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     ifdef STRICT
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
         TYPE_DLGPROC typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :WPARAM, :LPARAM
         DLGPROC typedef ptr TYPE_DLGPROC
 
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
         TYPE_TIMERPROC typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :UINT_PTR, :DWORD
         TIMERPROC typedef ptr TYPE_TIMERPROC
 
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         TYPE_GRAYSTRINGPROC typedef proto WIN_STD_CALL_CONV :HDC, :LPARAM, :SDWORD
@@ -126,19 +107,14 @@ ifndef _WINUSER_
           TYPE_DRAWSTATEPROC typedef proto WIN_STD_CALL_CONV :HDC, :LPARAM, :WPARAM, :SDWORD, :SDWORD
           DRAWSTATEPROC typedef ptr TYPE_DRAWSTATEPROC
 
-          ;* WINVER >= 0x0400 *
         endif
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* !STRICT *
     else
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
         DLGPROC typedef FARPROC
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
         TIMERPROC typedef FARPROC
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         GRAYSTRINGPROC typedef FARPROC
@@ -153,23 +129,18 @@ ifndef _WINUSER_
         PROPENUMPROCEXW typedef FARPROC
         if (WINVER ge 0400h)
           DRAWSTATEPROC typedef FARPROC
-          ;* WINVER >= 0x0400 *
         endif
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* !STRICT *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       ifdef UNICODE
         PROPENUMPROC typedef PROPENUMPROCW
         PROPENUMPROCEX typedef PROPENUMPROCEXW
         EDITWORDBREAKPROC typedef EDITWORDBREAKPROCW
-        ;* !UNICODE *
       else
         PROPENUMPROC typedef PROPENUMPROCA
         PROPENUMPROCEX typedef PROPENUMPROCEXA
         EDITWORDBREAKPROC typedef EDITWORDBREAKPROCA
-        ;* UNICODE *
       endif
       ifdef STRICT
         TYPE_NAMEENUMPROCA typedef proto WIN_STD_CALL_CONV :LPSTR, :LPARAM
@@ -182,7 +153,6 @@ ifndef _WINUSER_
         DESKTOPENUMPROCA typedef NAMEENUMPROCA
         WINSTAENUMPROCW typedef NAMEENUMPROCW
         DESKTOPENUMPROCW typedef NAMEENUMPROCW
-        ;* !STRICT *
       else
         NAMEENUMPROCA typedef FARPROC
         NAMEENUMPROCW typedef FARPROC
@@ -190,18 +160,14 @@ ifndef _WINUSER_
         DESKTOPENUMPROCA typedef FARPROC
         WINSTAENUMPROCW typedef FARPROC
         DESKTOPENUMPROCW typedef FARPROC
-        ;* !STRICT *
       endif
       ifdef UNICODE
         WINSTAENUMPROC typedef WINSTAENUMPROCW
         DESKTOPENUMPROC typedef DESKTOPENUMPROCW
-        ;* !UNICODE *
       else
         WINSTAENUMPROC typedef WINSTAENUMPROCA
         DESKTOPENUMPROC typedef DESKTOPENUMPROCA
-        ;* UNICODE *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     IS_INTRESOURCE macro _r
       exitm <((((_r)) shr 16) == 0)>
@@ -217,11 +183,7 @@ ifndef _WINUSER_
     else
       MAKEINTRESOURCE equ <MAKEINTRESOURCEA>
     endif
-    ; !UNICODE
     ifndef NORESOURCE
-      ;*
-      ;* Predefined Resource Types
-      ;*
       RT_CURSOR equ MAKEINTRESOURCE (1)
       RT_BITMAP equ MAKEINTRESOURCE (2)
       RT_ICON equ MAKEINTRESOURCE (3)
@@ -243,7 +205,6 @@ ifndef _WINUSER_
         RT_VXD equ MAKEINTRESOURCE (20)
         RT_ANICURSOR equ MAKEINTRESOURCE (21)
         RT_ANIICON equ MAKEINTRESOURCE (22)
-        ;* WINVER >= 0x0400 *
       endif
       RT_HTML equ MAKEINTRESOURCE (23)
       ifdef RC_INVOKED
@@ -255,13 +216,9 @@ ifndef _WINUSER_
         ISOLATIONAWARE_NOSTATICIMPORT_MANIFEST_RESOURCE_ID equ MAKEINTRESOURCE (3)
         ISOLATIONPOLICY_MANIFEST_RESOURCE_ID equ MAKEINTRESOURCE (4)
         ISOLATIONPOLICY_BROWSER_MANIFEST_RESOURCE_ID equ MAKEINTRESOURCE (5)
-        ;*inclusive*
         MINIMUM_RESERVED_MANIFEST_RESOURCE_ID equ MAKEINTRESOURCE (1)
-        ;*inclusive*
         MAXIMUM_RESERVED_MANIFEST_RESOURCE_ID equ MAKEINTRESOURCE (16)
-        ;* RC_INVOKED *
       endif
-      ;* !NORESOURCE *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       if Defined(DEPRECATE_SUPPORTED)
@@ -273,7 +230,6 @@ ifndef _WINUSER_
       else
         wvsprintf equ <wvsprintfA>
       endif
-      ; !UNICODE
       @DefProto DllImport, wsprintfA, c,, <:LPSTR, :LPCSTR, :vararg>
       @DefProto DllImport, wsprintfW, c,, <:LPWSTR, :LPCWSTR, :vararg>
       ifdef UNICODE
@@ -281,26 +237,15 @@ ifndef _WINUSER_
       else
         wsprintf equ <wsprintfA>
       endif
-      ; !UNICODE
       if Defined(DEPRECATE_SUPPORTED)
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;*
-    ;* SPI_SETDESKWALLPAPER defined constants
-    ;*
     SETWALLPAPER_DEFAULT equ (- 1)
     ifndef NOSCROLL
-      ;*
-      ;* Scroll Bar Constants
-      ;*
       SB_HORZ equ 0
       SB_VERT equ 1
       SB_CTL equ 2
       SB_BOTH equ 3
-      ;*
-      ;* Scroll Bar Commands
-      ;*
       SB_LINEUP equ 0
       SB_LINELEFT equ 0
       SB_LINEDOWN equ 1
@@ -316,12 +261,8 @@ ifndef _WINUSER_
       SB_BOTTOM equ 7
       SB_RIGHT equ 7
       SB_ENDSCROLL equ 8
-      ;* !NOSCROLL *
     endif
     ifndef NOSHOWWINDOW
-      ;*
-      ;* ShowWindow() Commands
-      ;*
       SW_HIDE equ 0
       SW_SHOWNORMAL equ 1
       SW_NORMAL equ 1
@@ -337,27 +278,17 @@ ifndef _WINUSER_
       SW_SHOWDEFAULT equ 10
       SW_FORCEMINIMIZE equ 11
       SW_MAX equ 11
-      ;*
-      ;* Old ShowWindow() Commands
-      ;*
       HIDE_WINDOW equ 0
       SHOW_OPENWINDOW equ 1
       SHOW_ICONWINDOW equ 2
       SHOW_FULLSCREEN equ 3
       SHOW_OPENNOACTIVATE equ 4
-      ;*
-      ;* Identifiers for the WM_SHOWWINDOW message
-      ;*
       SW_PARENTCLOSING equ 1
       SW_OTHERZOOM equ 2
       SW_PARENTOPENING equ 3
       SW_OTHERUNZOOM equ 4
-      ;* !NOSHOWWINDOW *
     endif
     if (WINVER ge 0500h)
-      ;*
-      ;* AnimateWindow() Commands
-      ;*
       AW_HOR_POSITIVE equ 00000001h
       AW_HOR_NEGATIVE equ 00000002h
       AW_VER_POSITIVE equ 00000004h
@@ -367,11 +298,7 @@ ifndef _WINUSER_
       AW_ACTIVATE equ 00020000h
       AW_SLIDE equ 00040000h
       AW_BLEND equ 00080000h
-      ;* WINVER >= 0x0500 *
     endif
-    ;*
-    ;* WM_KEYUP/DOWN/CHAR HIWORD(lParam) flags
-    ;*
     KF_EXTENDED equ 0100h
     KF_DLGMODE equ 0800h
     KF_MENUMODE equ 1000h
@@ -379,41 +306,24 @@ ifndef _WINUSER_
     KF_REPEAT equ 4000h
     KF_UP equ 8000h
     ifndef NOVIRTUALKEYCODES
-      ;*
-      ;* Virtual Keys, Standard Set
-      ;*
       VK_LBUTTON equ 01h
       VK_RBUTTON equ 02h
       VK_CANCEL equ 03h
-      ;* NOT contiguous with L & RBUTTON *
       VK_MBUTTON equ 04h
       if (_WIN32_WINNT ge 0500h)
-        ;* NOT contiguous with L & RBUTTON *
         VK_XBUTTON1 equ 05h
-        ;* NOT contiguous with L & RBUTTON *
         VK_XBUTTON2 equ 06h
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
-      ;*
-      ;* 0x07 : reserved
-      ;*
       VK_BACK equ 08h
       VK_TAB equ 09h
-      ;*
-      ;* 0x0A - 0x0B : reserved
-      ;*
       VK_CLEAR equ 0Ch
       VK_RETURN equ 0Dh
-      ;*
-      ;* 0x0E - 0x0F : unassigned
-      ;*
       VK_SHIFT equ 10h
       VK_CONTROL equ 11h
       VK_MENU equ 12h
       VK_PAUSE equ 13h
       VK_CAPITAL equ 14h
       VK_KANA equ 15h
-      ;* old name - should be here for compatibility *
       VK_HANGEUL equ 15h
       VK_HANGUL equ 15h
       VK_IME_ON equ 16h
@@ -443,17 +353,9 @@ ifndef _WINUSER_
       VK_INSERT equ 2Dh
       VK_DELETE equ 2Eh
       VK_HELP equ 2Fh
-      ;*
-      ;* VK_0 - VK_9 are the same as ASCII '0' - '9' (0x30 - 0x39)
-      ;* 0x3A - 0x40 : unassigned
-      ;* VK_A - VK_Z are the same as ASCII 'A' - 'Z' (0x41 - 0x5A)
-      ;*
       VK_LWIN equ 5Bh
       VK_RWIN equ 5Ch
       VK_APPS equ 5Dh
-      ;*
-      ;* 0x5E : reserved
-      ;*
       VK_SLEEP equ 5Fh
       VK_NUMPAD0 equ 60h
       VK_NUMPAD1 equ 61h
@@ -496,55 +398,23 @@ ifndef _WINUSER_
       VK_F23 equ 86h
       VK_F24 equ 87h
       if (_WIN32_WINNT ge 0604h)
-        ;*
-        ;* 0x88 - 0x8F : UI navigation
-        ;*
-        VK_NAVIGATION_VIEW equ 88h; reserved
-
-        VK_NAVIGATION_MENU equ 89h; reserved
-
-        VK_NAVIGATION_UP equ 8Ah; reserved
-
-        VK_NAVIGATION_DOWN equ 8Bh; reserved
-
-        VK_NAVIGATION_LEFT equ 8Ch; reserved
-
-        VK_NAVIGATION_RIGHT equ 8Dh; reserved
-
-        VK_NAVIGATION_ACCEPT equ 8Eh; reserved
-
-        VK_NAVIGATION_CANCEL equ 8Fh; reserved
-
-        ;* _WIN32_WINNT >= 0x0604 *
+        VK_NAVIGATION_VIEW equ 88h
+        VK_NAVIGATION_MENU equ 89h
+        VK_NAVIGATION_UP equ 8Ah
+        VK_NAVIGATION_DOWN equ 8Bh
+        VK_NAVIGATION_LEFT equ 8Ch
+        VK_NAVIGATION_RIGHT equ 8Dh
+        VK_NAVIGATION_ACCEPT equ 8Eh
+        VK_NAVIGATION_CANCEL equ 8Fh
       endif
       VK_NUMLOCK equ 90h
       VK_SCROLL equ 91h
-      ;*
-      ;* NEC PC-9800 kbd definitions
-      ;*
-      VK_OEM_NEC_EQUAL equ 92h; '=' key on numpad
-
-      ;*
-      ;* Fujitsu/OASYS kbd definitions
-      ;*
-      VK_OEM_FJ_JISHO equ 92h; 'Dictionary' key
-
-      VK_OEM_FJ_MASSHOU equ 93h; 'Unregister word' key
-
-      VK_OEM_FJ_TOUROKU equ 94h; 'Register word' key
-
-      VK_OEM_FJ_LOYA equ 95h; 'Left OYAYUBI' key
-
-      VK_OEM_FJ_ROYA equ 96h; 'Right OYAYUBI' key
-
-      ;*
-      ;* 0x97 - 0x9F : unassigned
-      ;*
-      ;*
-      ;* VK_L* & VK_R* - left and right Alt, Ctrl and Shift virtual keys.
-      ;* Used only as parameters to GetAsyncKeyState() and GetKeyState().
-      ;* No other API or message will distinguish left and right keys in this way.
-      ;*
+      VK_OEM_NEC_EQUAL equ 92h
+      VK_OEM_FJ_JISHO equ 92h
+      VK_OEM_FJ_MASSHOU equ 93h
+      VK_OEM_FJ_TOUROKU equ 94h
+      VK_OEM_FJ_LOYA equ 95h
+      VK_OEM_FJ_ROYA equ 96h
       VK_LSHIFT equ 0A0h
       VK_RSHIFT equ 0A1h
       VK_LCONTROL equ 0A2h
@@ -570,120 +440,56 @@ ifndef _WINUSER_
         VK_LAUNCH_MEDIA_SELECT equ 0B5h
         VK_LAUNCH_APP1 equ 0B6h
         VK_LAUNCH_APP2 equ 0B7h
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
-      ;*
-      ;* 0xB8 - 0xB9 : reserved
-      ;*
-      VK_OEM_1 equ 0BAh; ';:' for US
-
-      VK_OEM_PLUS equ 0BBh; '+' any country
-
-      VK_OEM_COMMA equ 0BCh; ',' any country
-
-      VK_OEM_MINUS equ 0BDh; '-' any country
-
-      VK_OEM_PERIOD equ 0BEh; '.' any country
-
-      VK_OEM_2 equ 0BFh; '/?' for US
-
-      VK_OEM_3 equ 0C0h; '`~' for US
-
-      ;*
-      ;* 0xC1 - 0xC2 : reserved
-      ;*
+      VK_OEM_1 equ 0BAh
+      VK_OEM_PLUS equ 0BBh
+      VK_OEM_COMMA equ 0BCh
+      VK_OEM_MINUS equ 0BDh
+      VK_OEM_PERIOD equ 0BEh
+      VK_OEM_2 equ 0BFh
+      VK_OEM_3 equ 0C0h
       if (_WIN32_WINNT ge 0604h)
-        ;*
-        ;* 0xC3 - 0xDA : Gamepad input
-        ;*
-        VK_GAMEPAD_A equ 0C3h; reserved
-
-        VK_GAMEPAD_B equ 0C4h; reserved
-
-        VK_GAMEPAD_X equ 0C5h; reserved
-
-        VK_GAMEPAD_Y equ 0C6h; reserved
-
-        VK_GAMEPAD_RIGHT_SHOULDER equ 0C7h; reserved
-
-        VK_GAMEPAD_LEFT_SHOULDER equ 0C8h; reserved
-
-        VK_GAMEPAD_LEFT_TRIGGER equ 0C9h; reserved
-
-        VK_GAMEPAD_RIGHT_TRIGGER equ 0CAh; reserved
-
-        VK_GAMEPAD_DPAD_UP equ 0CBh; reserved
-
-        VK_GAMEPAD_DPAD_DOWN equ 0CCh; reserved
-
-        VK_GAMEPAD_DPAD_LEFT equ 0CDh; reserved
-
-        VK_GAMEPAD_DPAD_RIGHT equ 0CEh; reserved
-
-        VK_GAMEPAD_MENU equ 0CFh; reserved
-
-        VK_GAMEPAD_VIEW equ 0D0h; reserved
-
-        VK_GAMEPAD_LEFT_THUMBSTICK_BUTTON equ 0D1h; reserved
-
-        VK_GAMEPAD_RIGHT_THUMBSTICK_BUTTON equ 0D2h; reserved
-
-        VK_GAMEPAD_LEFT_THUMBSTICK_UP equ 0D3h; reserved
-
-        VK_GAMEPAD_LEFT_THUMBSTICK_DOWN equ 0D4h; reserved
-
-        VK_GAMEPAD_LEFT_THUMBSTICK_RIGHT equ 0D5h; reserved
-
-        VK_GAMEPAD_LEFT_THUMBSTICK_LEFT equ 0D6h; reserved
-
-        VK_GAMEPAD_RIGHT_THUMBSTICK_UP equ 0D7h; reserved
-
-        VK_GAMEPAD_RIGHT_THUMBSTICK_DOWN equ 0D8h; reserved
-
-        VK_GAMEPAD_RIGHT_THUMBSTICK_RIGHT equ 0D9h; reserved
-
-        VK_GAMEPAD_RIGHT_THUMBSTICK_LEFT equ 0DAh; reserved
-
-        ;* _WIN32_WINNT >= 0x0604 *
+        VK_GAMEPAD_A equ 0C3h
+        VK_GAMEPAD_B equ 0C4h
+        VK_GAMEPAD_X equ 0C5h
+        VK_GAMEPAD_Y equ 0C6h
+        VK_GAMEPAD_RIGHT_SHOULDER equ 0C7h
+        VK_GAMEPAD_LEFT_SHOULDER equ 0C8h
+        VK_GAMEPAD_LEFT_TRIGGER equ 0C9h
+        VK_GAMEPAD_RIGHT_TRIGGER equ 0CAh
+        VK_GAMEPAD_DPAD_UP equ 0CBh
+        VK_GAMEPAD_DPAD_DOWN equ 0CCh
+        VK_GAMEPAD_DPAD_LEFT equ 0CDh
+        VK_GAMEPAD_DPAD_RIGHT equ 0CEh
+        VK_GAMEPAD_MENU equ 0CFh
+        VK_GAMEPAD_VIEW equ 0D0h
+        VK_GAMEPAD_LEFT_THUMBSTICK_BUTTON equ 0D1h
+        VK_GAMEPAD_RIGHT_THUMBSTICK_BUTTON equ 0D2h
+        VK_GAMEPAD_LEFT_THUMBSTICK_UP equ 0D3h
+        VK_GAMEPAD_LEFT_THUMBSTICK_DOWN equ 0D4h
+        VK_GAMEPAD_LEFT_THUMBSTICK_RIGHT equ 0D5h
+        VK_GAMEPAD_LEFT_THUMBSTICK_LEFT equ 0D6h
+        VK_GAMEPAD_RIGHT_THUMBSTICK_UP equ 0D7h
+        VK_GAMEPAD_RIGHT_THUMBSTICK_DOWN equ 0D8h
+        VK_GAMEPAD_RIGHT_THUMBSTICK_RIGHT equ 0D9h
+        VK_GAMEPAD_RIGHT_THUMBSTICK_LEFT equ 0DAh
       endif
-      VK_OEM_4 equ 0DBh;  '[{' for US
-
-      VK_OEM_5 equ 0DCh;  '\|' for US
-
-      VK_OEM_6 equ 0DDh;  ']}' for US
-
-      VK_OEM_7 equ 0DEh;  ''"' for US
-
+      VK_OEM_4 equ 0DBh
+      VK_OEM_5 equ 0DCh
+      VK_OEM_6 equ 0DDh
+      VK_OEM_7 equ 0DEh
       VK_OEM_8 equ 0DFh
-      ;*
-      ;* 0xE0 : reserved
-      ;*
-      ;*
-      ;* Various extended or enhanced keyboards
-      ;*
-      VK_OEM_AX equ 0E1h;  'AX' key on Japanese AX kbd
-
-      VK_OEM_102 equ 0E2h;  "<>" or "\|" on RT 102-key kbd.
-
-      VK_ICO_HELP equ 0E3h;  Help key on ICO
-
-      VK_ICO_00 equ 0E4h;  00 key on ICO
-
+      VK_OEM_AX equ 0E1h
+      VK_OEM_102 equ 0E2h
+      VK_ICO_HELP equ 0E3h
+      VK_ICO_00 equ 0E4h
       if (WINVER ge 0400h)
         VK_PROCESSKEY equ 0E5h
-        ;* WINVER >= 0x0400 *
       endif
       VK_ICO_CLEAR equ 0E6h
       if (_WIN32_WINNT ge 0500h)
         VK_PACKET equ 0E7h
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
-      ;*
-      ;* 0xE8 : unassigned
-      ;*
-      ;*
-      ;* Nokia/Ericsson definitions
-      ;*
       VK_OEM_RESET equ 0E9h
       VK_OEM_JUMP equ 0EAh
       VK_OEM_PA1 equ 0EBh
@@ -706,15 +512,8 @@ ifndef _WINUSER_
       VK_NONAME equ 0FCh
       VK_PA1 equ 0FDh
       VK_OEM_CLEAR equ 0FEh
-      ;*
-      ;* 0xFF : reserved
-      ;*
-      ;* !NOVIRTUALKEYCODES *
     endif
     ifndef NOWH
-      ;*
-      ;* SetWindowsHook() codes
-      ;*
       WH_MIN equ (- 1)
       WH_MSGFILTER equ (- 1)
       WH_JOURNALRECORD equ 0
@@ -733,28 +532,22 @@ ifndef _WINUSER_
       WH_FOREGROUNDIDLE equ 11
       if (WINVER ge 0400h)
         WH_CALLWNDPROCRET equ 12
-        ;* WINVER >= 0x0400 *
       endif
       if (_WIN32_WINNT ge 0400h)
         WH_KEYBOARD_LL equ 13
         WH_MOUSE_LL equ 14
       endif
-      ; (_WIN32_WINNT >= 0x0400)
       if (WINVER ge 0400h)
         if (_WIN32_WINNT ge 0400h)
           WH_MAX equ 14
         else
           WH_MAX equ 12
         endif
-        ; (_WIN32_WINNT >= 0x0400)
       else
         WH_MAX equ 11
       endif
       WH_MINHOOK equ <WH_MIN>
       WH_MAXHOOK equ <WH_MAX>
-      ;*
-      ;* Hook Codes
-      ;*
       HC_ACTION equ 0
       HC_GETNEXT equ 1
       HC_SKIP equ 2
@@ -762,9 +555,6 @@ ifndef _WINUSER_
       HC_NOREM equ <HC_NOREMOVE>
       HC_SYSMODALON equ 4
       HC_SYSMODALOFF equ 5
-      ;*
-      ;* CBT Hook Codes
-      ;*
       HCBT_MOVESIZE equ 0
       HCBT_MINMAX equ 1
       HCBT_QS equ 2
@@ -776,18 +566,12 @@ ifndef _WINUSER_
       HCBT_SYSCOMMAND equ 8
       HCBT_SETFOCUS equ 9
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-        ;*
-        ;* HCBT_CREATEWND parameters pointed to by lParam
-        ;*
         CBT_CREATEWNDA struct
           lpcs POINTER ?
           hwndInsertAfter HWND ?
         CBT_CREATEWNDA ends
         tagCBT_CREATEWNDA typedef CBT_CREATEWNDA
         LPCBT_CREATEWNDA typedef ptr CBT_CREATEWNDA
-        ;*
-        ;* HCBT_CREATEWND parameters pointed to by lParam
-        ;*
         CBT_CREATEWNDW struct
           lpcs POINTER ?
           hwndInsertAfter HWND ?
@@ -801,34 +585,22 @@ ifndef _WINUSER_
           CBT_CREATEWND typedef CBT_CREATEWNDA
           LPCBT_CREATEWND typedef LPCBT_CREATEWNDA
         endif
-        ; UNICODE
-        ;*
-        ;* HCBT_ACTIVATE structure pointed to by lParam
-        ;*
         CBTACTIVATESTRUCT struct
-          fMouse DWORD ?
+          fMouse BOOL ?
           hWndActive HWND ?
         CBTACTIVATESTRUCT ends
         tagCBTACTIVATESTRUCT typedef CBTACTIVATESTRUCT
         LPCBTACTIVATESTRUCT typedef ptr CBTACTIVATESTRUCT
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
       if (_WIN32_WINNT ge 0501h)
         if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-          ;*
-          ;* WTSSESSION_NOTIFICATION struct pointed by lParam, for WM_WTSSESSION_CHANGE
-          ;*
           WTSSESSION_NOTIFICATION struct
             cbSize DWORD ?
             dwSessionId DWORD ?
           WTSSESSION_NOTIFICATION ends
           tagWTSSESSION_NOTIFICATION typedef WTSSESSION_NOTIFICATION
           PWTSSESSION_NOTIFICATION typedef ptr WTSSESSION_NOTIFICATION
-          ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
         endif
-        ;*
-        ;* codes passed in WPARAM for WM_WTSSESSION_CHANGE
-        ;*
         WTS_CONSOLE_CONNECT equ 1h
         WTS_CONSOLE_DISCONNECT equ 2h
         WTS_REMOTE_CONNECT equ 3h
@@ -840,22 +612,14 @@ ifndef _WINUSER_
         WTS_SESSION_REMOTE_CONTROL equ 9h
         WTS_SESSION_CREATE equ 0ah
         WTS_SESSION_TERMINATE equ 0bh
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
-      ;*
-      ;* WH_MSGFILTER Filter Proc Codes
-      ;*
       MSGF_DIALOGBOX equ 0
       MSGF_MESSAGEBOX equ 1
       MSGF_MENU equ 2
       MSGF_SCROLLBAR equ 5
       MSGF_NEXTWINDOW equ 6
-      MSGF_MAX equ 8; unused
-
+      MSGF_MAX equ 8
       MSGF_USER equ 4096
-      ;*
-      ;* Shell support
-      ;*
       HSHELL_WINDOWCREATED equ 1
       HSHELL_WINDOWDESTROYED equ 2
       HSHELL_ACTIVATESHELLWINDOW equ 3
@@ -867,30 +631,24 @@ ifndef _WINUSER_
         HSHELL_LANGUAGE equ 8
         HSHELL_SYSMENU equ 9
         HSHELL_ENDTASK equ 10
-        ;* WINVER >= 0x0400 *
       endif
       if (_WIN32_WINNT ge 0500h)
         HSHELL_ACCESSIBILITYSTATE equ 11
         HSHELL_APPCOMMAND equ 12
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
       if (_WIN32_WINNT ge 0501h)
         HSHELL_WINDOWREPLACED equ 13
         HSHELL_WINDOWREPLACING equ 14
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if (_WIN32_WINNT ge 0602h)
         HSHELL_MONITORCHANGED equ 16
         if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
         endif
-        ; NTDDI_VERSION >= NTDDI_WIN10_RS3
-        ;* _WIN32_WINNT >= 0x0602 *
       endif
       HSHELL_HIGHBIT equ 8000h
       HSHELL_FLASH equ <(HSHELL_REDRAW or HSHELL_HIGHBIT)>
       HSHELL_RUDEAPPACTIVATED equ <(HSHELL_WINDOWACTIVATED or HSHELL_HIGHBIT)>
       if (_WIN32_WINNT ge 0500h)
-        ;* cmd for HSHELL_APPCOMMAND and WM_APPCOMMAND *
         APPCOMMAND_BROWSER_BACKWARD equ 1
         APPCOMMAND_BROWSER_FORWARD equ 2
         APPCOMMAND_BROWSER_REFRESH equ 3
@@ -944,12 +702,10 @@ ifndef _WINUSER_
           APPCOMMAND_MEDIA_REWIND equ 50
           APPCOMMAND_MEDIA_CHANNEL_UP equ 51
           APPCOMMAND_MEDIA_CHANNEL_DOWN equ 52
-          ;* _WIN32_WINNT >= 0x0501 *
         endif
         if (_WIN32_WINNT ge 0600h)
           APPCOMMAND_DELETE equ 53
           APPCOMMAND_DWM_FLIP3D equ 54
-          ;* _WIN32_WINNT >= 0x0600 *
         endif
         FAPPCOMMAND_MOUSE equ 8000h
         FAPPCOMMAND_KEY equ 0
@@ -968,7 +724,6 @@ ifndef _WINUSER_
         GET_KEYSTATE_LPARAM macro lParam
           exitm <GET_FLAGS_LPARAM(lParam)>
         endm
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         SHELLHOOKINFO struct
@@ -976,13 +731,10 @@ ifndef _WINUSER_
           rc RECT <>
         SHELLHOOKINFO ends
         LPSHELLHOOKINFO typedef ptr SHELLHOOKINFO
-        ;*
-        ;* Message Structure used in Journaling
-        ;*
         EVENTMSG struct
-          message DWORD ?
-          paramL DWORD ?
-          paramH DWORD ?
+          message UINT ?
+          paramL UINT ?
+          paramH UINT ?
           time DWORD ?
           hwnd HWND ?
         EVENTMSG ends
@@ -993,13 +745,10 @@ ifndef _WINUSER_
         PEVENTMSG typedef ptr tagEVENTMSG
         NPEVENTMSG typedef ptr tagEVENTMSG
         LPEVENTMSG typedef ptr tagEVENTMSG
-        ;*
-        ;* Message structure used by WH_CALLWNDPROC
-        ;*
         CWPSTRUCT struct
           lParam LPARAM ?
           wParam WPARAM ?
-          message DWORD ?
+          message UINT ?
           hwnd HWND ?
         CWPSTRUCT ends
         tagCWPSTRUCT typedef CWPSTRUCT
@@ -1007,73 +756,51 @@ ifndef _WINUSER_
         NPCWPSTRUCT typedef ptr CWPSTRUCT
         LPCWPSTRUCT typedef ptr CWPSTRUCT
         if (WINVER ge 0400h)
-          ;*
-          ;* Message structure used by WH_CALLWNDPROCRET
-          ;*
           CWPRETSTRUCT struct
             lResult LRESULT ?
             lParam LPARAM ?
             wParam WPARAM ?
-            message DWORD ?
+            message UINT ?
             hwnd HWND ?
           CWPRETSTRUCT ends
           tagCWPRETSTRUCT typedef CWPRETSTRUCT
           PCWPRETSTRUCT typedef ptr CWPRETSTRUCT
           NPCWPRETSTRUCT typedef ptr CWPRETSTRUCT
           LPCWPRETSTRUCT typedef ptr CWPRETSTRUCT
-          ;* WINVER >= 0x0400 *
         endif
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
       if (_WIN32_WINNT ge 0400h)
-        ;*
-        ;* Low level hook flags
-        ;*
-        ;* 0x00000001 *
         LLKHF_EXTENDED equ (KF_EXTENDED shr 8)
         LLKHF_INJECTED equ 00000010h
-        ;* 0x00000020 *
         LLKHF_ALTDOWN equ (KF_ALTDOWN shr 8)
-        ;* 0x00000080 *
         LLKHF_UP equ (KF_UP shr 8)
         LLKHF_LOWER_IL_INJECTED equ 00000002h
         LLMHF_INJECTED equ 00000001h
         LLMHF_LOWER_IL_INJECTED equ 00000002h
         if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-          ;*
-          ;* Structure used by WH_KEYBOARD_LL
-          ;*
           KBDLLHOOKSTRUCT struct
             vkCode DWORD ?
             scanCode DWORD ?
             flags DWORD ?
             time DWORD ?
-            dwExtraInfo XWORD ?
+            dwExtraInfo ULONG_PTR ?
           KBDLLHOOKSTRUCT ends
           tagKBDLLHOOKSTRUCT typedef KBDLLHOOKSTRUCT
           LPKBDLLHOOKSTRUCT typedef ptr KBDLLHOOKSTRUCT
           PKBDLLHOOKSTRUCT typedef ptr KBDLLHOOKSTRUCT
-          ;*
-          ;* Structure used by WH_MOUSE_LL
-          ;*
           MSLLHOOKSTRUCT struct
             pt POINT <>
             mouseData DWORD ?
             flags DWORD ?
             time DWORD ?
-            dwExtraInfo XWORD ?
+            dwExtraInfo ULONG_PTR ?
           MSLLHOOKSTRUCT ends
           tagMSLLHOOKSTRUCT typedef MSLLHOOKSTRUCT
           LPMSLLHOOKSTRUCT typedef ptr MSLLHOOKSTRUCT
           PMSLLHOOKSTRUCT typedef ptr MSLLHOOKSTRUCT
-          ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
         endif
       endif
-      ; (_WIN32_WINNT >= 0x0400)
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-        ;*
-        ;* Structure used by WH_DEBUG
-        ;*
         DEBUGHOOKINFO struct
           idThread DWORD ?
           idThreadInstaller DWORD ?
@@ -1085,14 +812,11 @@ ifndef _WINUSER_
         PDEBUGHOOKINFO typedef ptr DEBUGHOOKINFO
         NPDEBUGHOOKINFO typedef ptr DEBUGHOOKINFO
         LPDEBUGHOOKINFO typedef ptr DEBUGHOOKINFO
-        ;*
-        ;* Structure used by WH_MOUSE
-        ;*
         MOUSEHOOKSTRUCT struct
           pt POINT <>
           hwnd HWND ?
-          wHitTestCode DWORD ?
-          dwExtraInfo XWORD ?
+          wHitTestCode UINT ?
+          dwExtraInfo ULONG_PTR ?
         MOUSEHOOKSTRUCT ends
         tagMOUSEHOOKSTRUCT typedef MOUSEHOOKSTRUCT
         LPMOUSEHOOKSTRUCT typedef ptr MOUSEHOOKSTRUCT
@@ -1101,7 +825,6 @@ ifndef _WINUSER_
           ifdef __cplusplus
             ;[...]
           else
-          ; ndef __cplusplus
             MOUSEHOOKSTRUCTEX struct
               DUMMYSTRUCTNAME MOUSEHOOKSTRUCT <>
               mouseData DWORD ?
@@ -1110,30 +833,20 @@ ifndef _WINUSER_
             LPMOUSEHOOKSTRUCTEX typedef ptr MOUSEHOOKSTRUCTEX
             PMOUSEHOOKSTRUCTEX typedef ptr MOUSEHOOKSTRUCTEX
           endif
-          ;* _WIN32_WINNT >= 0x0500 *
         endif
         if (WINVER ge 0400h)
-          ;*
-          ;* Structure used by WH_HARDWARE
-          ;*
           HARDWAREHOOKSTRUCT struct
             hwnd HWND ?
-            message DWORD ?
+            message UINT ?
             wParam WPARAM ?
             lParam LPARAM ?
           HARDWAREHOOKSTRUCT ends
           tagHARDWAREHOOKSTRUCT typedef HARDWAREHOOKSTRUCT
           LPHARDWAREHOOKSTRUCT typedef ptr HARDWAREHOOKSTRUCT
           PHARDWAREHOOKSTRUCT typedef ptr HARDWAREHOOKSTRUCT
-          ;* WINVER >= 0x0400 *
         endif
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* !NOWH *
     endif
-    ;*
-    ;* Keyboard Layout API
-    ;*
     HKL_PREV equ 0
     HKL_NEXT equ 1
     KLF_ACTIVATE equ 00000001h
@@ -1142,26 +855,17 @@ ifndef _WINUSER_
     if (WINVER ge 0400h)
       KLF_REPLACELANG equ 00000010h
       KLF_NOTELLSHELL equ 00000080h
-      ;* WINVER >= 0x0400 *
     endif
     KLF_SETFORPROCESS equ 00000100h
     if (_WIN32_WINNT ge 0500h)
       KLF_SHIFTLOCK equ 00010000h
       KLF_RESET equ 40000000h
-      ;* _WIN32_WINNT >= 0x0500 *
     endif
     if (WINVER ge 0500h)
-      ;*
-      ;* Bits in wParam of WM_INPUTLANGCHANGEREQUEST message
-      ;*
       INPUTLANGCHANGE_SYSCHARSET equ 0001h
       INPUTLANGCHANGE_FORWARD equ 0002h
       INPUTLANGCHANGE_BACKWARD equ 0004h
-      ;* WINVER >= 0x0500 *
     endif
-    ;*
-    ;* Size of KeyboardLayoutName (number of characters), including nul terminator
-    ;*
     KL_NAMELENGTH equ 9
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, LoadKeyboardLayoutA, WIN_STD_CALL_CONV,, <:LPCSTR, :UINT>, 8
@@ -1171,16 +875,13 @@ ifndef _WINUSER_
       else
         LoadKeyboardLayout equ <LoadKeyboardLayoutA>
       endif
-      ; !UNICODE
       if (WINVER ge 0400h)
         @DefProto DllImport, ActivateKeyboardLayout, WIN_STD_CALL_CONV,, <:HKL, :UINT>, 8
       else
         @DefProto DllImport, ActivateKeyboardLayout, WIN_STD_CALL_CONV,, <:HKL, :UINT>, 8
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0400h)
         @DefProto DllImport, ToUnicodeEx, WIN_STD_CALL_CONV,, <:UINT, :UINT, :ptr BYTE, :LPWSTR, :SDWORD, :UINT, :HKL>, 28
-        ;* WINVER >= 0x0400 *
       endif
       @DefProto DllImport, UnloadKeyboardLayout, WIN_STD_CALL_CONV,, <:HKL>, 4
       @DefProto DllImport, GetKeyboardLayoutNameA, WIN_STD_CALL_CONV,, <:LPSTR>, 4
@@ -1190,13 +891,10 @@ ifndef _WINUSER_
       else
         GetKeyboardLayoutName equ <GetKeyboardLayoutNameA>
       endif
-      ; !UNICODE
       if (WINVER ge 0400h)
         @DefProto DllImport, GetKeyboardLayoutList, WIN_STD_CALL_CONV,, <:SDWORD, :ptr HKL>, 8
         @DefProto DllImport, GetKeyboardLayout, WIN_STD_CALL_CONV,, <:DWORD>, 4
-        ;* WINVER >= 0x0400 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if (WINVER ge 0500h)
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -1204,28 +902,19 @@ ifndef _WINUSER_
           x SDWORD ?
           y SDWORD ?
           time DWORD ?
-          dwExtraInfo XWORD ?
+          dwExtraInfo ULONG_PTR ?
         MOUSEMOVEPOINT ends
         tagMOUSEMOVEPOINT typedef MOUSEMOVEPOINT
         PMOUSEMOVEPOINT typedef ptr MOUSEMOVEPOINT
         LPMOUSEMOVEPOINT typedef ptr MOUSEMOVEPOINT
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;*
-      ;* Values for resolution parameter of GetMouseMovePointsEx
-      ;*
       GMMP_USE_DISPLAY_POINTS equ 1
       GMMP_USE_HIGH_RESOLUTION_POINTS equ 2
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, GetMouseMovePointsEx, WIN_STD_CALL_CONV,, <:UINT, :LPMOUSEMOVEPOINT, :LPMOUSEMOVEPOINT, :SDWORD, :DWORD>, 20
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* WINVER >= 0x0500 *
     endif
     ifndef NODESKTOP
-      ;*
-      ;* Desktop-specific access flags
-      ;*
       DESKTOP_READOBJECTS equ 0001h
       DESKTOP_CREATEWINDOW equ 0002h
       DESKTOP_CREATEMENU equ 0004h
@@ -1235,9 +924,6 @@ ifndef _WINUSER_
       DESKTOP_ENUMERATE equ 0040h
       DESKTOP_WRITEOBJECTS equ 0080h
       DESKTOP_SWITCHDESKTOP equ 0100h
-      ;*
-      ;* Desktop-specific control flags
-      ;*
       DF_ALLOWOTHERACCOUNTHOOK equ 0001h
       ifdef _WINGDI_
         ifndef NOGDI
@@ -1249,7 +935,6 @@ ifndef _WINUSER_
             else
               CreateDesktop equ <CreateDesktopA>
             endif
-            ; !UNICODE
             @DefProto DllImport, CreateDesktopExA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :ptr DEVMODEA, :DWORD, :ACCESS_MASK, :LPSECURITY_ATTRIBUTES, :ULONG, :PVOID>, 32
             @DefProto DllImport, CreateDesktopExW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :ptr DEVMODEW, :DWORD, :ACCESS_MASK, :LPSECURITY_ATTRIBUTES, :ULONG, :PVOID>, 32
             ifdef UNICODE
@@ -1257,12 +942,8 @@ ifndef _WINUSER_
             else
               CreateDesktopEx equ <CreateDesktopExA>
             endif
-            ; !UNICODE
-            ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
           endif
-          ;* NOGDI *
         endif
-        ;* _WINGDI_ *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, OpenDesktopA, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD, :BOOL, :ACCESS_MASK>, 16
@@ -1272,7 +953,6 @@ ifndef _WINUSER_
         else
           OpenDesktop equ <OpenDesktopA>
         endif
-        ; !UNICODE
         @DefProto DllImport, OpenInputDesktop, WIN_STD_CALL_CONV,, <:DWORD, :BOOL, :ACCESS_MASK>, 12
         @DefProto DllImport, EnumDesktopsA, WIN_STD_CALL_CONV,, <:HWINSTA, :DESKTOPENUMPROCA, :LPARAM>, 12
         @DefProto DllImport, EnumDesktopsW, WIN_STD_CALL_CONV,, <:HWINSTA, :DESKTOPENUMPROCW, :LPARAM>, 12
@@ -1281,20 +961,14 @@ ifndef _WINUSER_
         else
           EnumDesktops equ <EnumDesktopsA>
         endif
-        ; !UNICODE
         @DefProto DllImport, EnumDesktopWindows, WIN_STD_CALL_CONV,, <:HDESK, :WNDENUMPROC, :LPARAM>, 12
         @DefProto DllImport, SwitchDesktop, WIN_STD_CALL_CONV,, <:HDESK>, 4
         @DefProto DllImport, SetThreadDesktop, WIN_STD_CALL_CONV,, <:HDESK>, 4
         @DefProto DllImport, CloseDesktop, WIN_STD_CALL_CONV,, <:HDESK>, 4
         @DefProto DllImport, GetThreadDesktop, WIN_STD_CALL_CONV,, <:DWORD>, 4
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* !NODESKTOP *
     endif
     ifndef NOWINDOWSTATION
-      ;*
-      ;* Windowstation-specific access flags
-      ;*
       WINSTA_ENUMDESKTOPS equ 0001h
       WINSTA_READATTRIBUTES equ 0002h
       WINSTA_ACCESSCLIPBOARD equ 0004h
@@ -1305,13 +979,7 @@ ifndef _WINUSER_
       WINSTA_ENUMERATE equ 0100h
       WINSTA_READSCREEN equ 0200h
       WINSTA_ALL_ACCESS equ <(WINSTA_ENUMDESKTOPS or WINSTA_READATTRIBUTES or WINSTA_ACCESSCLIPBOARD or WINSTA_CREATEDESKTOP or WINSTA_WRITEATTRIBUTES or WINSTA_ACCESSGLOBALATOMS or WINSTA_EXITWINDOWS or WINSTA_ENUMERATE or WINSTA_READSCREEN)>
-      ;*
-      ;* Windowstation creation flags.
-      ;*
       CWF_CREATE_ONLY equ 00000001h
-      ;*
-      ;* Windowstation-specific attribute flags
-      ;*
       WSF_VISIBLE equ 0001h
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, CreateWindowStationA, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD, :ACCESS_MASK, :LPSECURITY_ATTRIBUTES>, 16
@@ -1321,7 +989,6 @@ ifndef _WINUSER_
         else
           CreateWindowStation equ <CreateWindowStationA>
         endif
-        ; !UNICODE
         @DefProto DllImport, OpenWindowStationA, WIN_STD_CALL_CONV,, <:LPCSTR, :BOOL, :ACCESS_MASK>, 12
         @DefProto DllImport, OpenWindowStationW, WIN_STD_CALL_CONV,, <:LPCWSTR, :BOOL, :ACCESS_MASK>, 12
         ifdef UNICODE
@@ -1329,7 +996,6 @@ ifndef _WINUSER_
         else
           OpenWindowStation equ <OpenWindowStationA>
         endif
-        ; !UNICODE
         @DefProto DllImport, EnumWindowStationsA, WIN_STD_CALL_CONV,, <:WINSTAENUMPROCA, :LPARAM>, 8
         @DefProto DllImport, EnumWindowStationsW, WIN_STD_CALL_CONV,, <:WINSTAENUMPROCW, :LPARAM>, 8
         ifdef UNICODE
@@ -1337,19 +1003,15 @@ ifndef _WINUSER_
         else
           EnumWindowStations equ <EnumWindowStationsA>
         endif
-        ; !UNICODE
         @DefProto DllImport, CloseWindowStation, WIN_STD_CALL_CONV,, <:HWINSTA>, 4
         @DefProto DllImport, SetProcessWindowStation, WIN_STD_CALL_CONV,, <:HWINSTA>, 4
         @DefProto DllImport, GetProcessWindowStation, WIN_STD_CALL_CONV,, <>, 0
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* !NOWINDOWSTATION *
     endif
     ifndef NOSECURITY
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, SetUserObjectSecurity, WIN_STD_CALL_CONV,, <:HANDLE, :PSECURITY_INFORMATION, :PSECURITY_DESCRIPTOR>, 12
         @DefProto DllImport, GetUserObjectSecurity, WIN_STD_CALL_CONV,, <:HANDLE, :PSECURITY_INFORMATION, :PSECURITY_DESCRIPTOR, :DWORD, :LPDWORD>, 20
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
       UOI_FLAGS equ 1
       UOI_NAME equ 2
@@ -1358,13 +1020,12 @@ ifndef _WINUSER_
       if (WINVER ge 0600h)
         UOI_HEAPSIZE equ 5
         UOI_IO equ 6
-        ;* WINVER >= 0x0600 *
       endif
       UOI_TIMERPROC_EXCEPTION_SUPPRESSION equ 7
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         USEROBJECTFLAGS struct
-          fInherit DWORD ?
-          fReserved DWORD ?
+          fInherit BOOL ?
+          fReserved BOOL ?
           dwFlags DWORD ?
         USEROBJECTFLAGS ends
         tagUSEROBJECTFLAGS typedef USEROBJECTFLAGS
@@ -1376,7 +1037,6 @@ ifndef _WINUSER_
         else
           GetUserObjectInformation equ <GetUserObjectInformationA>
         endif
-        ; !UNICODE
         @DefProto DllImport, SetUserObjectInformationA, WIN_STD_CALL_CONV,, <:HANDLE, :SDWORD, :PVOID, :DWORD>, 16
         @DefProto DllImport, SetUserObjectInformationW, WIN_STD_CALL_CONV,, <:HANDLE, :SDWORD, :PVOID, :DWORD>, 16
         ifdef UNICODE
@@ -1384,17 +1044,13 @@ ifndef _WINUSER_
         else
           SetUserObjectInformation equ <SetUserObjectInformationA>
         endif
-        ; !UNICODE
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* !NOSECURITY *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       if (WINVER ge 0400h)
         WNDCLASSEXA struct
-          cbSize DWORD ?
-          ;* Win 3.x *
-          style DWORD ?
+          cbSize UINT ?
+          style UINT ?
           lpfnWndProc WNDPROC ?
           cbClsExtra SDWORD ?
           cbWndExtra SDWORD ?
@@ -1402,9 +1058,8 @@ ifndef _WINUSER_
           hIcon HICON ?
           hCursor HCURSOR ?
           hbrBackground HBRUSH ?
-          lpszMenuName =POINTER ?
-          lpszClassName =POINTER ?
-          ;* Win 4.0 *
+          lpszMenuName LPCSTR ?
+          lpszClassName LPCSTR ?
           hIconSm HICON ?
         WNDCLASSEXA ends
         tagWNDCLASSEXA typedef WNDCLASSEXA
@@ -1412,9 +1067,8 @@ ifndef _WINUSER_
         NPWNDCLASSEXA typedef ptr WNDCLASSEXA
         LPWNDCLASSEXA typedef ptr WNDCLASSEXA
         WNDCLASSEXW struct
-          cbSize DWORD ?
-          ;* Win 3.x *
-          style DWORD ?
+          cbSize UINT ?
+          style UINT ?
           lpfnWndProc WNDPROC ?
           cbClsExtra SDWORD ?
           cbWndExtra SDWORD ?
@@ -1422,9 +1076,8 @@ ifndef _WINUSER_
           hIcon HICON ?
           hCursor HCURSOR ?
           hbrBackground HBRUSH ?
-          lpszMenuName =POINTER ?
-          lpszClassName =POINTER ?
-          ;* Win 4.0 *
+          lpszMenuName LPCWSTR ?
+          lpszClassName LPCWSTR ?
           hIconSm HICON ?
         WNDCLASSEXW ends
         tagWNDCLASSEXW typedef WNDCLASSEXW
@@ -1442,11 +1095,9 @@ ifndef _WINUSER_
           NPWNDCLASSEX typedef NPWNDCLASSEXA
           LPWNDCLASSEX typedef LPWNDCLASSEXA
         endif
-        ; UNICODE
-        ;* WINVER >= 0x0400 *
       endif
       WNDCLASSA struct
-        style DWORD ?
+        style UINT ?
         lpfnWndProc WNDPROC ?
         cbClsExtra SDWORD ?
         cbWndExtra SDWORD ?
@@ -1454,15 +1105,15 @@ ifndef _WINUSER_
         hIcon HICON ?
         hCursor HCURSOR ?
         hbrBackground HBRUSH ?
-        lpszMenuName =POINTER ?
-        lpszClassName =POINTER ?
+        lpszMenuName LPCSTR ?
+        lpszClassName LPCSTR ?
       WNDCLASSA ends
       tagWNDCLASSA typedef WNDCLASSA
       PWNDCLASSA typedef ptr WNDCLASSA
       NPWNDCLASSA typedef ptr WNDCLASSA
       LPWNDCLASSA typedef ptr WNDCLASSA
       WNDCLASSW struct
-        style DWORD ?
+        style UINT ?
         lpfnWndProc WNDPROC ?
         cbClsExtra SDWORD ?
         cbWndExtra SDWORD ?
@@ -1470,8 +1121,8 @@ ifndef _WINUSER_
         hIcon HICON ?
         hCursor HCURSOR ?
         hbrBackground HBRUSH ?
-        lpszMenuName =POINTER ?
-        lpszClassName =POINTER ?
+        lpszMenuName LPCWSTR ?
+        lpszClassName LPCWSTR ?
       WNDCLASSW ends
       tagWNDCLASSW typedef WNDCLASSW
       PWNDCLASSW typedef ptr WNDCLASSW
@@ -1488,25 +1139,18 @@ ifndef _WINUSER_
         NPWNDCLASS typedef NPWNDCLASSA
         LPWNDCLASS typedef LPWNDCLASSA
       endif
-      ; UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, IsHungAppWindow, WIN_STD_CALL_CONV,, <:HWND>, 4
       if (WINVER ge 0501h)
         @DefProto DllImport, DisableProcessWindowsGhosting, WIN_STD_CALL_CONV,, <>, 0
-        ;* WINVER >= 0x0501 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     ifndef NOMSG
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-        ;*
-        ;* Message structure
-        ;*
         MSG struct
           hwnd HWND ?
-          message DWORD ?
+          message UINT ?
           wParam WPARAM ?
           lParam LPARAM ?
           time DWORD ?
@@ -1519,7 +1163,6 @@ ifndef _WINUSER_
         PMSG typedef ptr MSG
         NPMSG typedef ptr MSG
         LPMSG typedef ptr MSG
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
       endif
       POINTSTOPOINT macro pt, pts
         exitm <{ (pt).x = LOWORD(* and pts) ; (pt).y = HIWORD(* and pts) ; }>
@@ -1536,12 +1179,8 @@ ifndef _WINUSER_
       MAKELRESULT macro l, h
         exitm <(MAKELONG(l, h))>
       endm
-      ;* !NOMSG *
     endif
     ifndef NOWINOFFSETS
-      ;*
-      ;* Window field offsets for GetWindowLong()
-      ;*
       GWL_WNDPROC equ (- 4)
       GWL_HINSTANCE equ (- 6)
       GWL_HWNDPARENT equ (- 8)
@@ -1550,19 +1189,12 @@ ifndef _WINUSER_
       GWL_USERDATA equ (- 21)
       GWL_ID equ (- 12)
       ifdef _WIN64
-        ;* _WIN64 *
       endif
       GWLP_WNDPROC equ (- 4)
       GWLP_HINSTANCE equ (- 6)
       GWLP_HWNDPARENT equ (- 8)
       GWLP_USERDATA equ (- 21)
       GWLP_ID equ (- 12)
-      ;*
-      ;* Used in _GetWindowLongPtr to return internal state of user32 edit control
-      ;*
-      ;*
-      ;* Class field offsets for GetClassLong()
-      ;*
       GCL_MENUNAME equ (- 8)
       GCL_HBRBACKGROUND equ (- 10)
       GCL_HCURSOR equ (- 12)
@@ -1575,10 +1207,8 @@ ifndef _WINUSER_
       GCW_ATOM equ (- 32)
       if (WINVER ge 0400h)
         GCL_HICONSM equ (- 34)
-        ;* WINVER >= 0x0400 *
       endif
       ifdef _WIN64
-        ;* _WIN64 *
       endif
       GCLP_MENUNAME equ (- 8)
       GCLP_HBRBACKGROUND equ (- 10)
@@ -1587,21 +1217,14 @@ ifndef _WINUSER_
       GCLP_HMODULE equ (- 16)
       GCLP_WNDPROC equ (- 24)
       GCLP_HICONSM equ (- 34)
-      ;* !NOWINOFFSETS *
     endif
     ifndef NOWINMESSAGES
-      ;*
-      ;* Window Messages
-      ;*
       WM_NULL equ 0000h
       WM_CREATE equ 0001h
       WM_DESTROY equ 0002h
       WM_MOVE equ 0003h
       WM_SIZE equ 0005h
       WM_ACTIVATE equ 0006h
-      ;*
-      ;* WM_ACTIVATE state values
-      ;*
       WA_INACTIVE equ 0
       WA_ACTIVE equ 1
       WA_CLICKACTIVE equ 2
@@ -1626,11 +1249,9 @@ ifndef _WINUSER_
       WM_WININICHANGE equ 001Ah
       if (WINVER ge 0400h)
         WM_SETTINGCHANGE equ <WM_WININICHANGE>
-        ;* WINVER >= 0x0400 *
       endif
       if (NTDDI_VERSION ge NTDDI_WIN10_19H1)
       endif
-      ; NTDDI_VERSION >= NTDDI_WIN10_19H1
       WM_DEVMODECHANGE equ 001Bh
       WM_ACTIVATEAPP equ 001Ch
       WM_FONTCHANGE equ 001Dh
@@ -1642,9 +1263,6 @@ ifndef _WINUSER_
       WM_QUEUESYNC equ 0023h
       WM_GETMINMAXINFO equ 0024h
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-        ;*
-        ;* Struct pointed to by WM_GETMINMAXINFO lParam
-        ;*
         MINMAXINFO struct
           ptReserved POINT <>
           ptMaxSize POINT <>
@@ -1655,7 +1273,6 @@ ifndef _WINUSER_
         tagMINMAXINFO typedef MINMAXINFO
         PMINMAXINFO typedef ptr MINMAXINFO
         LPMINMAXINFO typedef ptr MINMAXINFO
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
       WM_PAINTICON equ 0026h
       WM_ICONERASEBKGND equ 0027h
@@ -1676,17 +1293,12 @@ ifndef _WINUSER_
         ifndef _WIN32_WCE
           WM_GETOBJECT equ 003Dh
         endif
-        ;* WINVER >= 0x0500 *
       endif
       WM_COMPACTING equ 0041h
-      ;* no longer suported *
       WM_COMMNOTIFY equ 0044h
       WM_WINDOWPOSCHANGING equ 0046h
       WM_WINDOWPOSCHANGED equ 0047h
       WM_POWER equ 0048h
-      ;*
-      ;* wParam for WM_POWER window message and DRV_POWER driver notification
-      ;*
       PWR_OK equ 1
       PWR_FAIL equ (- 1)
       PWR_SUSPENDREQUEST equ 1
@@ -1695,13 +1307,10 @@ ifndef _WINUSER_
       WM_COPYDATA equ 004Ah
       WM_CANCELJOURNAL equ 004Bh
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-        ;*
-        ;* lParam of WM_COPYDATA message points to...
-        ;*
         COPYDATASTRUCT struct
-          dwData XWORD ?
+          dwData ULONG_PTR ?
           cbData DWORD ?
-          lpData POINTER ?
+          lpData PVOID ?
         COPYDATASTRUCT ends
         tagCOPYDATASTRUCT typedef COPYDATASTRUCT
         PCOPYDATASTRUCT typedef ptr COPYDATASTRUCT
@@ -1714,9 +1323,7 @@ ifndef _WINUSER_
           tagMDINEXTMENU typedef MDINEXTMENU
           PMDINEXTMENU typedef ptr MDINEXTMENU
           LPMDINEXTMENU typedef ptr MDINEXTMENU
-          ;* WINVER >= 0x0400 *
         endif
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
       if (WINVER ge 0400h)
         WM_NOTIFY equ 004Eh
@@ -1736,7 +1343,6 @@ ifndef _WINUSER_
         WM_DISPLAYCHANGE equ 007Eh
         WM_GETICON equ 007Fh
         WM_SETICON equ 0080h
-        ;* WINVER >= 0x0400 *
       endif
       WM_NCCREATE equ 0081h
       WM_NCDESTROY equ 0082h
@@ -1762,15 +1368,12 @@ ifndef _WINUSER_
         WM_NCXBUTTONDOWN equ 00ABh
         WM_NCXBUTTONUP equ 00ACh
         WM_NCXBUTTONDBLCLK equ 00ADh
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
       if (_WIN32_WINNT ge 0501h)
         WM_INPUT_DEVICE_CHANGE equ 00FEh
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if (_WIN32_WINNT ge 0501h)
         WM_INPUT equ 00FFh
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       WM_KEYFIRST equ 0100h
       WM_KEYDOWN equ 0100h
@@ -1787,14 +1390,12 @@ ifndef _WINUSER_
         UNICODE_NOCHAR equ 0FFFFh
       else
         WM_KEYLAST equ 0108h
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if (WINVER ge 0400h)
         WM_IME_STARTCOMPOSITION equ 010Dh
         WM_IME_ENDCOMPOSITION equ 010Eh
         WM_IME_COMPOSITION equ 010Fh
         WM_IME_KEYLAST equ 010Fh
-        ;* WINVER >= 0x0400 *
       endif
       WM_INITDIALOG equ 0110h
       WM_COMMAND equ 0111h
@@ -1807,7 +1408,6 @@ ifndef _WINUSER_
       if (WINVER ge 0601h)
         WM_GESTURE equ 0119h
         WM_GESTURENOTIFY equ 011Ah
-        ;* WINVER >= 0x0601 *
       endif
       WM_MENUSELECT equ 011Fh
       WM_MENUCHAR equ 0120h
@@ -1824,26 +1424,17 @@ ifndef _WINUSER_
               WM_CHANGEUISTATE equ 0127h
               WM_UPDATEUISTATE equ 0128h
               WM_QUERYUISTATE equ 0129h
-              ;*
-              ;* LOWORD(wParam) values in WM_*UISTATE*
-              ;*
               UIS_SET equ 1
               UIS_CLEAR equ 2
               UIS_INITIALIZE equ 3
-              ;*
-              ;* HIWORD(wParam) values in WM_*UISTATE*
-              ;*
               UISF_HIDEFOCUS equ 1h
               UISF_HIDEACCEL equ 2h
               if (_WIN32_WINNT ge 0501h)
                 UISF_ACTIVE equ 4h
-                ;* _WIN32_WINNT >= 0x0501 *
               endif
-              ;* _WIN32_WINNT >= 0x0500 *
             endif
           endif
         endif
-        ;* WINVER >= 0x0500 *
       endif
       WM_CTLCOLORMSGBOX equ 0132h
       WM_CTLCOLOREDIT equ 0133h
@@ -1883,17 +1474,13 @@ ifndef _WINUSER_
         WM_MOUSELAST equ 020Ah
       else
         WM_MOUSELAST equ 0209h
-        ;* (_WIN32_WINNT >= 0x0600) *
       endif
       if (_WIN32_WINNT ge 0400h)
-        ;* Value for rolling one detent *
         WHEEL_DELTA equ 120
         GET_WHEEL_DELTA_WPARAM macro wParam
           exitm <(HIWORD(wParam))>
         endm
-        ;* Setting to scroll one page for SPI_GET/SETWHEELSCROLLLINES *
         WHEEL_PAGESCROLL equ <(UINT_MAX)>
-        ;* _WIN32_WINNT >= 0x0400 *
       endif
       if (_WIN32_WINNT ge 0500h)
         GET_KEYSTATE_WPARAM macro wParam
@@ -1905,11 +1492,8 @@ ifndef _WINUSER_
         GET_XBUTTON_WPARAM macro wParam
           exitm <(HIWORD(wParam))>
         endm
-        ;* XButton values are WORD flags *
         XBUTTON1 equ 0001h
         XBUTTON2 equ 0002h
-        ;* Were there to be an XBUTTON3, its value would be 0x0004 *
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
       WM_PARENTNOTIFY equ 0210h
       WM_ENTERMENULOOP equ 0211h
@@ -1919,7 +1503,6 @@ ifndef _WINUSER_
         WM_SIZING equ 0214h
         WM_CAPTURECHANGED equ 0215h
         WM_MOVING equ 0216h
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0400h)
         WM_POWERBROADCAST equ 0218h
@@ -1945,21 +1528,16 @@ ifndef _WINUSER_
                 POWERBROADCAST_SETTING struct
                   PowerSetting GUID <>
                   DataLength DWORD ?
-                  Data BYTE 1 dup (?)
+                  Data UCHAR 1 dup (?)
                 POWERBROADCAST_SETTING ends
                 PPOWERBROADCAST_SETTING typedef ptr POWERBROADCAST_SETTING
-                ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
               endif
             endif
-            ; PBT_POWERSETTINGCHANGE
           endif
-          ; (_WIN32_WINNT >= 0x0502)
         endif
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0400h)
         WM_DEVICECHANGE equ 0219h
-        ;* WINVER >= 0x0400 *
       endif
       WM_MDICREATE equ 0220h
       WM_MDIDESTROY equ 0221h
@@ -1980,11 +1558,9 @@ ifndef _WINUSER_
         WM_POINTERDEVICECHANGE equ 238h
         WM_POINTERDEVICEINRANGE equ 239h
         WM_POINTERDEVICEOUTOFRANGE equ 23Ah
-        ;* WINVER >= 0x0602 *
       endif
       if (WINVER ge 0601h)
         WM_TOUCH equ 0240h
-        ;* WINVER >= 0x0601 *
       endif
       if (WINVER ge 0602h)
         WM_NCPOINTERUPDATE equ 0241h
@@ -2004,7 +1580,6 @@ ifndef _WINUSER_
         WM_POINTERROUTEDTO equ 0251h
         WM_POINTERROUTEDAWAY equ 0252h
         WM_POINTERROUTEDRELEASED equ 0253h
-        ;* WINVER >= 0x0602 *
       endif
       if (WINVER ge 0400h)
         WM_IME_SETCONTEXT equ 0281h
@@ -2013,16 +1588,13 @@ ifndef _WINUSER_
         WM_IME_COMPOSITIONFULL equ 0284h
         WM_IME_SELECT equ 0285h
         WM_IME_CHAR equ 0286h
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0500h)
         WM_IME_REQUEST equ 0288h
-        ;* WINVER >= 0x0500 *
       endif
       if (WINVER ge 0400h)
         WM_IME_KEYDOWN equ 0290h
         WM_IME_KEYUP equ 0291h
-        ;* WINVER >= 0x0400 *
       endif
       if ((_WIN32_WINNT ge 0400h) or (WINVER ge 0500h))
         WM_MOUSEHOVER equ 02A1h
@@ -2031,23 +1603,19 @@ ifndef _WINUSER_
       if (WINVER ge 0500h)
         WM_NCMOUSEHOVER equ 02A0h
         WM_NCMOUSELEAVE equ 02A2h
-        ;* WINVER >= 0x0500 *
       endif
       if (_WIN32_WINNT ge 0501h)
         WM_WTSSESSION_CHANGE equ 02B1h
         WM_TABLET_FIRST equ 02c0h
         WM_TABLET_LAST equ 02dfh
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if (WINVER ge 0601h)
         WM_DPICHANGED equ 02E0h
-        ;* WINVER >= 0x0601 *
       endif
       if (WINVER ge 0605h)
         WM_DPICHANGED_BEFOREPARENT equ 02E2h
         WM_DPICHANGED_AFTERPARENT equ 02E3h
         WM_GETDPISCALEDSIZE equ 02E4h
-        ;* WINVER >= 0x0605 *
       endif
       WM_CUT equ 0300h
       WM_COPY equ 0301h
@@ -2071,60 +1639,44 @@ ifndef _WINUSER_
       if (WINVER ge 0400h)
         WM_PRINT equ 0317h
         WM_PRINTCLIENT equ 0318h
-        ;* WINVER >= 0x0400 *
       endif
       if (_WIN32_WINNT ge 0500h)
         WM_APPCOMMAND equ 0319h
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
       if (_WIN32_WINNT ge 0501h)
         WM_THEMECHANGED equ 031Ah
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if (_WIN32_WINNT ge 0501h)
         WM_CLIPBOARDUPDATE equ 031Dh
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if (_WIN32_WINNT ge 0600h)
         WM_DWMCOMPOSITIONCHANGED equ 031Eh
         WM_DWMNCRENDERINGCHANGED equ 031Fh
         WM_DWMCOLORIZATIONCOLORCHANGED equ 0320h
         WM_DWMWINDOWMAXIMIZEDCHANGE equ 0321h
-        ;* _WIN32_WINNT >= 0x0600 *
       endif
       if (_WIN32_WINNT ge 0601h)
         WM_DWMSENDICONICTHUMBNAIL equ 0323h
         WM_DWMSENDICONICLIVEPREVIEWBITMAP equ 0326h
-        ;* _WIN32_WINNT >= 0x0601 *
       endif
       if (WINVER ge 0600h)
         WM_GETTITLEBARINFOEX equ 033Fh
-        ;* WINVER >= 0x0600 *
       endif
       if (WINVER ge 0400h)
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0400h)
         WM_HANDHELDFIRST equ 0358h
         WM_HANDHELDLAST equ 035Fh
         WM_AFXFIRST equ 0360h
         WM_AFXLAST equ 037Fh
-        ;* WINVER >= 0x0400 *
       endif
       WM_PENWINFIRST equ 0380h
       WM_PENWINLAST equ 038Fh
       if (WINVER ge 0400h)
         WM_APP equ 8000h
-        ;* WINVER >= 0x0400 *
       endif
-      ;*
-      ;* NOTE: All Message Numbers below 0x0400 are RESERVED.
-      ;*
-      ;* Private Window Messages Start Here:
-      ;*
       WM_USER equ 0400h
       if (WINVER ge 0400h)
-        ;*  wParam for WM_SIZING message  *
         WMSZ_LEFT equ 1
         WMSZ_RIGHT equ 2
         WMSZ_TOP equ 3
@@ -2133,12 +1685,8 @@ ifndef _WINUSER_
         WMSZ_BOTTOM equ 6
         WMSZ_BOTTOMLEFT equ 7
         WMSZ_BOTTOMRIGHT equ 8
-        ;* WINVER >= 0x0400 *
       endif
       ifndef NONCMESSAGES
-        ;*
-        ;* WM_NCHITTEST and MOUSEHOOKSTRUCT Mouse Position Codes
-        ;*
         HTERROR equ (- 2)
         HTTRANSPARENT equ (- 1)
         HTNOWHERE equ 0
@@ -2169,42 +1717,27 @@ ifndef _WINUSER_
           HTOBJECT equ 19
           HTCLOSE equ 20
           HTHELP equ 21
-          ;* WINVER >= 0x0400 *
         endif
-        ;*
-        ;* SendMessageTimeout values
-        ;*
         SMTO_NORMAL equ 0000h
         SMTO_BLOCK equ 0001h
         SMTO_ABORTIFHUNG equ 0002h
         if (WINVER ge 0500h)
           SMTO_NOTIMEOUTIFNOTHUNG equ 0008h
-          ;* WINVER >= 0x0500 *
         endif
         if (WINVER ge 0600h)
           SMTO_ERRORONEXIT equ 0020h
-          ;* WINVER >= 0x0600 *
         endif
         if (WINVER ge 0602h)
-          ;* WINVER >= 0x0602 *
         endif
-        ;* !NONCMESSAGES *
       endif
-      ;*
-      ;* WM_MOUSEACTIVATE Return Codes
-      ;*
       MA_ACTIVATE equ 1
       MA_ACTIVATEANDEAT equ 2
       MA_NOACTIVATE equ 3
       MA_NOACTIVATEANDEAT equ 4
-      ;*
-      ;* WM_SETICON / WM_GETICON Type Codes
-      ;*
       ICON_SMALL equ 0
       ICON_BIG equ 1
       if (_WIN32_WINNT ge 0501h)
         ICON_SMALL2 equ 2
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, RegisterWindowMessageA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
@@ -2214,29 +1747,18 @@ ifndef _WINUSER_
         else
           RegisterWindowMessage equ <RegisterWindowMessageA>
         endif
-        ; !UNICODE
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;*
-      ;* WM_SIZE message wParam values
-      ;*
       SIZE_RESTORED equ 0
       SIZE_MINIMIZED equ 1
       SIZE_MAXIMIZED equ 2
       SIZE_MAXSHOW equ 3
       SIZE_MAXHIDE equ 4
-      ;*
-      ;* Obsolete constant names
-      ;*
       SIZENORMAL equ <SIZE_RESTORED>
       SIZEICONIC equ <SIZE_MINIMIZED>
       SIZEFULLSCREEN equ <SIZE_MAXIMIZED>
       SIZEZOOMSHOW equ <SIZE_MAXSHOW>
       SIZEZOOMHIDE equ <SIZE_MAXHIDE>
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-        ;*
-        ;* WM_WINDOWPOSCHANGING/CHANGED struct pointed to by lParam
-        ;*
         WINDOWPOS struct
           hwnd HWND ?
           hwndInsertAfter HWND ?
@@ -2244,25 +1766,18 @@ ifndef _WINUSER_
           y SDWORD ?
           cx_ SDWORD ?
           cy SDWORD ?
-          flags DWORD ?
+          flags UINT ?
         WINDOWPOS ends
         tagWINDOWPOS typedef WINDOWPOS
         LPWINDOWPOS typedef ptr WINDOWPOS
         PWINDOWPOS typedef ptr WINDOWPOS
-        ;*
-        ;* WM_NCCALCSIZE parameter structure
-        ;*
         NCCALCSIZE_PARAMS struct
           rgrc RECT 3 dup (<>)
           lppos PWINDOWPOS ?
         NCCALCSIZE_PARAMS ends
         tagNCCALCSIZE_PARAMS typedef NCCALCSIZE_PARAMS
         LPNCCALCSIZE_PARAMS typedef ptr NCCALCSIZE_PARAMS
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;*
-      ;* WM_NCCALCSIZE "window valid rect" return values
-      ;*
       WVR_ALIGNTOP equ 0010h
       WVR_ALIGNLEFT equ 0020h
       WVR_ALIGNBOTTOM equ 0040h
@@ -2272,9 +1787,6 @@ ifndef _WINUSER_
       WVR_REDRAW equ <(WVR_HREDRAW or WVR_VREDRAW)>
       WVR_VALIDRECTS equ 0400h
       ifndef NOKEYSTATES
-        ;*
-        ;* Key State Masks for Mouse Messages
-        ;*
         MK_LBUTTON equ 0001h
         MK_RBUTTON equ 0002h
         MK_SHIFT equ 0004h
@@ -2283,9 +1795,7 @@ ifndef _WINUSER_
         if (_WIN32_WINNT ge 0500h)
           MK_XBUTTON1 equ 0020h
           MK_XBUTTON2 equ 0040h
-          ;* _WIN32_WINNT >= 0x0500 *
         endif
-        ;* !NOKEYSTATES *
       endif
       if (_WIN32_WINNT ge 0400h)
         ifndef NOTRACKMOUSEEVENT
@@ -2293,12 +1803,10 @@ ifndef _WINUSER_
           TME_LEAVE equ 00000002h
           if (WINVER ge 0500h)
             TME_NONCLIENT equ 00000010h
-            ;* WINVER >= 0x0500 *
           endif
           TME_QUERY equ 40000000h
           TME_CANCEL equ 80000000h
           HOVER_DEFAULT equ 0FFFFFFFFh
-          ;* _WIN32_WINNT >= 0x0400 *
         endif
         if (_WIN32_WINNT ge 0400h)
           if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -2311,21 +1819,13 @@ ifndef _WINUSER_
             tagTRACKMOUSEEVENT typedef TRACKMOUSEEVENT
             LPTRACKMOUSEEVENT typedef ptr TRACKMOUSEEVENT
             @DefProto DllImport, TrackMouseEvent, WIN_STD_CALL_CONV,, <:LPTRACKMOUSEEVENT>, 4
-            ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
           endif
-          ;* _WIN32_WINNT >= 0x0400 *
         endif
         if (_WIN32_WINNT ge 0400h)
-          ;* !NOTRACKMOUSEEVENT *
         endif
-        ;* _WIN32_WINNT >= 0x0400 *
       endif
-      ;* !NOWINMESSAGES *
     endif
     ifndef NOWINSTYLES
-      ;*
-      ;* Window Styles
-      ;*
       WS_OVERLAPPED equ 00000000h
       WS_POPUP equ 80000000h
       WS_CHILD equ 40000000h
@@ -2335,7 +1835,6 @@ ifndef _WINUSER_
       WS_CLIPSIBLINGS equ 04000000h
       WS_CLIPCHILDREN equ 02000000h
       WS_MAXIMIZE equ 01000000h
-      ;* WS_BORDER | WS_DLGFRAME  *
       WS_CAPTION equ 00C00000h
       WS_BORDER equ 00800000h
       WS_DLGFRAME equ 00400000h
@@ -2351,15 +1850,9 @@ ifndef _WINUSER_
       WS_ICONIC equ <WS_MINIMIZE>
       WS_SIZEBOX equ <WS_THICKFRAME>
       WS_TILEDWINDOW equ <WS_OVERLAPPEDWINDOW>
-      ;*
-      ;* Common Window Styles
-      ;*
       WS_OVERLAPPEDWINDOW equ <(WS_OVERLAPPED or WS_CAPTION or WS_SYSMENU or WS_THICKFRAME or WS_MINIMIZEBOX or WS_MAXIMIZEBOX)>
       WS_POPUPWINDOW equ <(WS_POPUP or WS_BORDER or WS_SYSMENU)>
       WS_CHILDWINDOW equ <(WS_CHILD)>
-      ;*
-      ;* Extended Window Styles
-      ;*
       WS_EX_DLGMODALFRAME equ 00000001h
       WS_EX_NOPARENTNOTIFY equ 00000004h
       WS_EX_TOPMOST equ 00000008h
@@ -2371,7 +1864,6 @@ ifndef _WINUSER_
         WS_EX_WINDOWEDGE equ 00000100h
         WS_EX_CLIENTEDGE equ 00000200h
         WS_EX_CONTEXTHELP equ 00000400h
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0400h)
         WS_EX_RIGHT equ 00001000h
@@ -2385,37 +1877,25 @@ ifndef _WINUSER_
         WS_EX_APPWINDOW equ 00040000h
         WS_EX_OVERLAPPEDWINDOW equ <(WS_EX_WINDOWEDGE or WS_EX_CLIENTEDGE)>
         WS_EX_PALETTEWINDOW equ <(WS_EX_WINDOWEDGE or WS_EX_TOOLWINDOW or WS_EX_TOPMOST)>
-        ;* WINVER >= 0x0400 *
       endif
       if (_WIN32_WINNT ge 0500h)
         WS_EX_LAYERED equ 00080000h
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
       if (WINVER ge 0500h)
-        WS_EX_NOINHERITLAYOUT equ 00100000h; Disable inheritence of mirroring by children
-
-        ;* WINVER >= 0x0500 *
+        WS_EX_NOINHERITLAYOUT equ 00100000h
       endif
       if (WINVER ge 0602h)
         WS_EX_NOREDIRECTIONBITMAP equ 00200000h
-        ;* WINVER >= 0x0602 *
       endif
       if (WINVER ge 0500h)
-        WS_EX_LAYOUTRTL equ 00400000h; Right to left mirroring
-
-        ;* WINVER >= 0x0500 *
+        WS_EX_LAYOUTRTL equ 00400000h
       endif
       if (_WIN32_WINNT ge 0501h)
         WS_EX_COMPOSITED equ 02000000h
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if (_WIN32_WINNT ge 0500h)
         WS_EX_NOACTIVATE equ 08000000h
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
-      ;*
-      ;* Class styles
-      ;*
       CS_VREDRAW equ 0001h
       CS_HREDRAW equ 0002h
       CS_DBLCLKS equ 0008h
@@ -2430,19 +1910,15 @@ ifndef _WINUSER_
       CS_IME equ 00010000h
       if (_WIN32_WINNT ge 0501h)
         CS_DROPSHADOW equ 00020000h
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
-      ;* !NOWINSTYLES *
     endif
     if (WINVER ge 0400h)
-      ;* WM_PRINT flags *
       PRF_CHECKVISIBLE equ 00000001h
       PRF_NONCLIENT equ 00000002h
       PRF_CLIENT equ 00000004h
       PRF_ERASEBKGND equ 00000008h
       PRF_CHILDREN equ 00000010h
       PRF_OWNED equ 00000020h
-      ;* 3D border styles *
       BDR_RAISEDOUTER equ 0001h
       BDR_SUNKENOUTER equ 0002h
       BDR_RAISEDINNER equ 0004h
@@ -2455,7 +1931,6 @@ ifndef _WINUSER_
       EDGE_SUNKEN equ <(BDR_SUNKENOUTER or BDR_SUNKENINNER)>
       EDGE_ETCHED equ <(BDR_SUNKENOUTER or BDR_RAISEDINNER)>
       EDGE_BUMP equ <(BDR_RAISEDOUTER or BDR_SUNKENINNER)>
-      ;* Border flags *
       BF_LEFT equ 0001h
       BF_TOP equ 0002h
       BF_RIGHT equ 0004h
@@ -2466,34 +1941,24 @@ ifndef _WINUSER_
       BF_BOTTOMRIGHT equ <(BF_BOTTOM or BF_RIGHT)>
       BF_RECT equ <(BF_LEFT or BF_TOP or BF_RIGHT or BF_BOTTOM)>
       BF_DIAGONAL equ 0010h
-      ; For diagonal lines, the BF_RECT flags specify the end point of the
-      ; vector bounded by the rectangle parameter.
       BF_DIAGONAL_ENDTOPRIGHT equ <(BF_DIAGONAL or BF_TOP or BF_RIGHT)>
       BF_DIAGONAL_ENDTOPLEFT equ <(BF_DIAGONAL or BF_TOP or BF_LEFT)>
       BF_DIAGONAL_ENDBOTTOMLEFT equ <(BF_DIAGONAL or BF_BOTTOM or BF_LEFT)>
       BF_DIAGONAL_ENDBOTTOMRIGHT equ <(BF_DIAGONAL or BF_BOTTOM or BF_RIGHT)>
-      ;* Fill in the middle *
       BF_MIDDLE equ 0800h
-      ;* For softer buttons *
       BF_SOFT equ 1000h
-      ;* Calculate the space left over *
       BF_ADJUST equ 2000h
-      ;* For flat rather than 3D borders *
       BF_FLAT equ 4000h
-      ;* For monochrome borders *
       BF_MONO equ 8000h
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, DrawEdge, WIN_STD_CALL_CONV,, <:HDC, :LPRECT, :UINT, :UINT>, 16
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* flags for DrawFrameControl *
       DFC_CAPTION equ 1
       DFC_MENU equ 2
       DFC_SCROLL equ 3
       DFC_BUTTON equ 4
       if (WINVER ge 0500h)
         DFC_POPUPMENU equ 5
-        ;* WINVER >= 0x0500 *
       endif
       DFCS_CAPTIONCLOSE equ 0000h
       DFCS_CAPTIONMIN equ 0001h
@@ -2523,16 +1988,13 @@ ifndef _WINUSER_
       if (WINVER ge 0500h)
         DFCS_TRANSPARENT equ 0800h
         DFCS_HOT equ 1000h
-        ;* WINVER >= 0x0500 *
       endif
       DFCS_ADJUSTRECT equ 2000h
       DFCS_FLAT equ 4000h
       DFCS_MONO equ 8000h
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, DrawFrameControl, WIN_STD_CALL_CONV,, <:HDC, :LPRECT, :UINT, :UINT>, 16
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* flags for DrawCaption *
       DC_ACTIVE equ 0001h
       DC_SMALLCAP equ 0002h
       DC_ICON equ 0004h
@@ -2540,28 +2002,20 @@ ifndef _WINUSER_
       DC_INBUTTON equ 0010h
       if (WINVER ge 0500h)
         DC_GRADIENT equ 0020h
-        ;* WINVER >= 0x0500 *
       endif
       if (_WIN32_WINNT ge 0501h)
         DC_BUTTONS equ 1000h
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, DrawCaption, WIN_STD_CALL_CONV,, <:HWND, :HDC, :ptr RECT, :UINT>, 16
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
       IDANI_OPEN equ 1
       IDANI_CAPTION equ 3
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, DrawAnimatedRects, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :ptr RECT, :ptr RECT>, 16
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* WINVER >= 0x0400 *
     endif
     ifndef NOCLIPBOARD
-      ;*
-      ;* Predefined Clipboard Formats
-      ;*
       CF_TEXT equ 1
       CF_BITMAP equ 2
       CF_METAFILEPICT equ 3
@@ -2579,11 +2033,9 @@ ifndef _WINUSER_
       if (WINVER ge 0400h)
         CF_HDROP equ 15
         CF_LOCALE equ 16
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0500h)
         CF_DIBV5 equ 17
-        ;* WINVER >= 0x0500 *
       endif
       if (WINVER ge 0500h)
         CF_MAX equ 18
@@ -2597,22 +2049,11 @@ ifndef _WINUSER_
       CF_DSPBITMAP equ 0082h
       CF_DSPMETAFILEPICT equ 0083h
       CF_DSPENHMETAFILE equ 008Eh
-      ;*
-      ;* "Private" formats don't get GlobalFree()'d
-      ;*
       CF_PRIVATEFIRST equ 0200h
       CF_PRIVATELAST equ 02FFh
-      ;*
-      ;* "GDIOBJ" formats do get DeleteObject()'d
-      ;*
       CF_GDIOBJFIRST equ 0300h
       CF_GDIOBJLAST equ 03FFh
-      ;* !NOCLIPBOARD *
     endif
-    ;*
-    ;* Defines for the fVirt field of the Accelerator table structure.
-    ;*
-    ;* Assumed to be == TRUE *
     FVIRTKEY equ <TRUE>
     FNOINVERT equ 02h
     FSHIFT equ 04h
@@ -2622,7 +2063,6 @@ ifndef _WINUSER_
       ACCEL struct
         ifndef _MAC
           fVirt BYTE ?
-          ;* Also called the flags field *
           key WORD ?
           cmd WORD ?
         else
@@ -2633,21 +2073,20 @@ ifndef _WINUSER_
       LPACCEL typedef ptr ACCEL
       PAINTSTRUCT struct
         hdc HDC ?
-        fErase DWORD ?
+        fErase BOOL ?
         rcPaint RECT <>
-        fRestore DWORD ?
-        fIncUpdate DWORD ?
+        fRestore BOOL ?
+        fIncUpdate BOOL ?
         rgbReserved BYTE 32 dup (?)
       PAINTSTRUCT ends
       tagPAINTSTRUCT typedef PAINTSTRUCT
       PPAINTSTRUCT typedef ptr PAINTSTRUCT
       NPPAINTSTRUCT typedef ptr PAINTSTRUCT
       LPPAINTSTRUCT typedef ptr PAINTSTRUCT
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       CREATESTRUCTA struct
-        lpCreateParams POINTER ?
+        lpCreateParams LPVOID ?
         hInstance HINSTANCE ?
         hMenu HMENU ?
         hwndParent HWND ?
@@ -2655,15 +2094,15 @@ ifndef _WINUSER_
         cx_ SDWORD ?
         y SDWORD ?
         x SDWORD ?
-        style SDWORD ?
-        lpszName =POINTER ?
-        lpszClass =POINTER ?
+        style LONG ?
+        lpszName LPCSTR ?
+        lpszClass LPCSTR ?
         dwExStyle DWORD ?
       CREATESTRUCTA ends
       tagCREATESTRUCTA typedef CREATESTRUCTA
       LPCREATESTRUCTA typedef ptr CREATESTRUCTA
       CREATESTRUCTW struct
-        lpCreateParams POINTER ?
+        lpCreateParams LPVOID ?
         hInstance HINSTANCE ?
         hMenu HMENU ?
         hwndParent HWND ?
@@ -2671,9 +2110,9 @@ ifndef _WINUSER_
         cx_ SDWORD ?
         y SDWORD ?
         x SDWORD ?
-        style SDWORD ?
-        lpszName =POINTER ?
-        lpszClass =POINTER ?
+        style LONG ?
+        lpszName LPCWSTR ?
+        lpszClass LPCWSTR ?
         dwExStyle DWORD ?
       CREATESTRUCTW ends
       tagCREATESTRUCTW typedef CREATESTRUCTW
@@ -2685,14 +2124,12 @@ ifndef _WINUSER_
         CREATESTRUCT typedef CREATESTRUCTA
         LPCREATESTRUCT typedef LPCREATESTRUCTA
       endif
-      ; UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       WINDOWPLACEMENT struct
-        length_ DWORD ?
-        flags DWORD ?
-        showCmd DWORD ?
+        length_ UINT ?
+        flags UINT ?
+        showCmd UINT ?
         ptMinPosition POINT <>
         ptMaxPosition POINT <>
         rcNormalPosition RECT <>
@@ -2707,20 +2144,16 @@ ifndef _WINUSER_
       WPF_RESTORETOMAXIMIZED equ 0002h
       if (_WIN32_WINNT ge 0500h)
         WPF_ASYNCWINDOWPLACEMENT equ 0004h
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if (WINVER ge 0400h)
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
         NMHDR struct
           hwndFrom HWND ?
-          idFrom XWORD ?
-          code DWORD ?
-          ; NM_ code
+          idFrom UINT_PTR ?
+          code UINT ?
         NMHDR ends
         tagNMHDR typedef NMHDR
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         LPNMHDR typedef ptr NMHDR
@@ -2730,30 +2163,18 @@ ifndef _WINUSER_
         STYLESTRUCT ends
         tagSTYLESTRUCT typedef STYLESTRUCT
         LPSTYLESTRUCT typedef ptr STYLESTRUCT
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* WINVER >= 0x0400 *
     endif
-    ;*
-    ;* Owner draw control types
-    ;*
     ODT_MENU equ 1
     ODT_LISTBOX equ 2
     ODT_COMBOBOX equ 3
     ODT_BUTTON equ 4
     if (WINVER ge 0400h)
       ODT_STATIC equ 5
-      ;* WINVER >= 0x0400 *
     endif
-    ;*
-    ;* Owner draw actions
-    ;*
     ODA_DRAWENTIRE equ 0001h
     ODA_SELECT equ 0002h
     ODA_FOCUS equ 0004h
-    ;*
-    ;* Owner draw state
-    ;*
     ODS_SELECTED equ 0001h
     ODS_GRAYED equ 0002h
     ODS_DISABLED equ 0004h
@@ -2762,7 +2183,6 @@ ifndef _WINUSER_
     if (WINVER ge 0400h)
       ODS_DEFAULT equ 0020h
       ODS_COMBOBOXEDIT equ 1000h
-      ;* WINVER >= 0x0400 *
     endif
     if (WINVER ge 0500h)
       ODS_HOTLIGHT equ 0040h
@@ -2770,78 +2190,60 @@ ifndef _WINUSER_
       if (_WIN32_WINNT ge 0500h)
         ODS_NOACCEL equ 0100h
         ODS_NOFOCUSRECT equ 0200h
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
-      ;* WINVER >= 0x0500 *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-      ;*
-      ;* MEASUREITEMSTRUCT for ownerdraw
-      ;*
       MEASUREITEMSTRUCT struct
-        CtlType DWORD ?
-        CtlID DWORD ?
-        itemID DWORD ?
-        itemWidth DWORD ?
-        itemHeight DWORD ?
-        itemData XWORD ?
+        CtlType UINT ?
+        CtlID UINT ?
+        itemID UINT ?
+        itemWidth UINT ?
+        itemHeight UINT ?
+        itemData ULONG_PTR ?
       MEASUREITEMSTRUCT ends
       tagMEASUREITEMSTRUCT typedef MEASUREITEMSTRUCT
       PMEASUREITEMSTRUCT typedef ptr MEASUREITEMSTRUCT
       LPMEASUREITEMSTRUCT typedef ptr MEASUREITEMSTRUCT
-      ;*
-      ;* DRAWITEMSTRUCT for ownerdraw
-      ;*
       DRAWITEMSTRUCT struct
-        CtlType DWORD ?
-        CtlID DWORD ?
-        itemID DWORD ?
-        itemAction DWORD ?
-        itemState DWORD ?
+        CtlType UINT ?
+        CtlID UINT ?
+        itemID UINT ?
+        itemAction UINT ?
+        itemState UINT ?
         hwndItem HWND ?
         hDC HDC ?
         rcItem RECT <>
-        itemData XWORD ?
+        itemData ULONG_PTR ?
       DRAWITEMSTRUCT ends
       tagDRAWITEMSTRUCT typedef DRAWITEMSTRUCT
       PDRAWITEMSTRUCT typedef ptr DRAWITEMSTRUCT
       LPDRAWITEMSTRUCT typedef ptr DRAWITEMSTRUCT
-      ;*
-      ;* DELETEITEMSTRUCT for ownerdraw
-      ;*
       DELETEITEMSTRUCT struct
-        CtlType DWORD ?
-        CtlID DWORD ?
-        itemID DWORD ?
+        CtlType UINT ?
+        CtlID UINT ?
+        itemID UINT ?
         hwndItem HWND ?
-        itemData XWORD ?
+        itemData ULONG_PTR ?
       DELETEITEMSTRUCT ends
       tagDELETEITEMSTRUCT typedef DELETEITEMSTRUCT
       PDELETEITEMSTRUCT typedef ptr DELETEITEMSTRUCT
       LPDELETEITEMSTRUCT typedef ptr DELETEITEMSTRUCT
-      ;*
-      ;* COMPAREITEMSTUCT for ownerdraw sorting
-      ;*
       COMPAREITEMSTRUCT struct
-        CtlType DWORD ?
-        CtlID DWORD ?
+        CtlType UINT ?
+        CtlID UINT ?
         hwndItem HWND ?
-        itemID1 DWORD ?
-        itemData1 XWORD ?
-        itemID2 DWORD ?
-        itemData2 XWORD ?
+        itemID1 UINT ?
+        itemData1 ULONG_PTR ?
+        itemID2 UINT ?
+        itemData2 ULONG_PTR ?
         dwLocaleId DWORD ?
       COMPAREITEMSTRUCT ends
       tagCOMPAREITEMSTRUCT typedef COMPAREITEMSTRUCT
       PCOMPAREITEMSTRUCT typedef ptr COMPAREITEMSTRUCT
       LPCOMPAREITEMSTRUCT typedef ptr COMPAREITEMSTRUCT
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     ifndef NOMSG
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
-        ;*
-        ;* Message Function Templates
-        ;*
         @DefProto DllImport, GetMessageA, WIN_STD_CALL_CONV,, <:LPMSG, :HWND, :UINT, :UINT>, 16
         @DefProto DllImport, GetMessageW, WIN_STD_CALL_CONV,, <:LPMSG, :HWND, :UINT, :UINT>, 16
         ifdef UNICODE
@@ -2849,7 +2251,6 @@ ifndef _WINUSER_
         else
           GetMessage equ <GetMessageA>
         endif
-        ; !UNICODE
         if Defined(_M_CEE)
           ;[...]
         endif
@@ -2861,15 +2262,12 @@ ifndef _WINUSER_
         else
           DispatchMessage equ <DispatchMessageA>
         endif
-        ; !UNICODE
         if Defined(_M_CEE)
           ;[...]
         endif
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, SetMessageQueue, WIN_STD_CALL_CONV,, <:SDWORD>, 4
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
         @DefProto DllImport, PeekMessageA, WIN_STD_CALL_CONV,, <:LPMSG, :HWND, :UINT, :UINT, :UINT>, 20
@@ -2879,12 +2277,7 @@ ifndef _WINUSER_
         else
           PeekMessage equ <PeekMessageA>
         endif
-        ; !UNICODE
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
       endif
-      ;*
-      ;* PeekMessage() Options
-      ;*
       PM_NOREMOVE equ 0000h
       PM_REMOVE equ 0001h
       PM_NOYIELD equ 0002h
@@ -2893,14 +2286,11 @@ ifndef _WINUSER_
         PM_QS_POSTMESSAGE equ ((QS_POSTMESSAGE or QS_HOTKEY or QS_TIMER) shl 16)
         PM_QS_PAINT equ (QS_PAINT shl 16)
         PM_QS_SENDMESSAGE equ (QS_SENDMESSAGE shl 16)
-        ;* WINVER >= 0x0500 *
       endif
-      ;* !NOMSG *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, RegisterHotKey, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :UINT, :UINT>, 16
       @DefProto DllImport, UnregisterHotKey, WIN_STD_CALL_CONV,, <:HWND, :SDWORD>, 8
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     MOD_ALT equ 0001h
     MOD_CONTROL equ 0002h
@@ -2908,37 +2298,27 @@ ifndef _WINUSER_
     MOD_WIN equ 0008h
     if (WINVER ge 0601h)
       MOD_NOREPEAT equ 4000h
-      ;* WINVER >= 0x0601 *
     endif
-    ;* SHIFT-PRINTSCRN  *
     IDHOT_SNAPWINDOW equ (- 1)
-    ;* PRINTSCRN        *
     IDHOT_SNAPDESKTOP equ (- 2)
     ifdef WIN_INTERNAL
       ifndef LSTRING
         NOLSTRING equ <>
-        ;* LSTRING *
       endif
       ifndef LFILEIO
         NOLFILEIO equ <>
-        ;* LFILEIO *
       endif
-      ;* WIN_INTERNAL *
     endif
     if (WINVER ge 0400h)
-      ;* WINVER >= 0x0400 *
     endif
     if (_WIN32_WINNT ge 0400h)
       ENDSESSION_CLOSEAPP equ 00000001h
-      ;* _WIN32_WINNT >= 0x0400 *
     endif
     if (_WIN32_WINNT ge 0400h)
       ENDSESSION_CRITICAL equ 40000000h
-      ;* _WIN32_WINNT >= 0x0400 *
     endif
     if (_WIN32_WINNT ge 0400h)
       ENDSESSION_LOGOFF equ 80000000h
-      ;* _WIN32_WINNT >= 0x0400 *
     endif
     EWX_LOGOFF equ 00000000h
     EWX_SHUTDOWN equ 00000001h
@@ -2947,12 +2327,10 @@ ifndef _WINUSER_
     EWX_POWEROFF equ 00000008h
     if (_WIN32_WINNT ge 0500h)
       EWX_FORCEIFHUNG equ 00000010h
-      ;* _WIN32_WINNT >= 0x0500 *
     endif
     EWX_QUICKRESOLVE equ 00000020h
     if (_WIN32_WINNT ge 0600h)
       EWX_RESTARTAPPS equ 00000040h
-      ;* _WIN32_WINNT >= 0x0600 *
     endif
     EWX_HYBRID_SHUTDOWN equ 00400000h
     EWX_BOOTOPTIONS equ 01000000h
@@ -2970,17 +2348,13 @@ ifndef _WINUSER_
       @DefProto DllImport, GetMessageExtraInfo, WIN_STD_CALL_CONV,, <>, 0
       if (_WIN32_WINNT ge 0602h)
         @DefProto DllImport, GetUnpredictedMessagePos, WIN_STD_CALL_CONV,, <>, 0
-        ;* _WIN32_WINNT >= 0x0602 *
       endif
       if (_WIN32_WINNT ge 0501h)
         @DefProto DllImport, IsWow64Message, WIN_STD_CALL_CONV,, <>, 0
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if (WINVER ge 0400h)
         @DefProto DllImport, SetMessageExtraInfo, WIN_STD_CALL_CONV,, <:LPARAM>, 4
-        ;* WINVER >= 0x0400 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, SendMessageA, WIN_STD_CALL_CONV,, <:HWND, :UINT, :WPARAM, :LPARAM>, 16
@@ -2990,11 +2364,9 @@ ifndef _WINUSER_
       else
         SendMessage equ <SendMessageA>
       endif
-      ; !UNICODE
       if Defined(_M_CEE)
         ;[...]
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, SendMessageTimeoutA, WIN_STD_CALL_CONV,, <:HWND, :UINT, :WPARAM, :LPARAM, :UINT, :UINT, :PDWORD_PTR>, 28
@@ -3004,7 +2376,6 @@ ifndef _WINUSER_
       else
         SendMessageTimeout equ <SendMessageTimeoutA>
       endif
-      ; !UNICODE
       @DefProto DllImport, SendNotifyMessageA, WIN_STD_CALL_CONV,, <:HWND, :UINT, :WPARAM, :LPARAM>, 16
       @DefProto DllImport, SendNotifyMessageW, WIN_STD_CALL_CONV,, <:HWND, :UINT, :WPARAM, :LPARAM>, 16
       ifdef UNICODE
@@ -3012,7 +2383,6 @@ ifndef _WINUSER_
       else
         SendNotifyMessage equ <SendNotifyMessageA>
       endif
-      ; !UNICODE
       @DefProto DllImport, SendMessageCallbackA, WIN_STD_CALL_CONV,, <:HWND, :UINT, :WPARAM, :LPARAM, :SENDASYNCPROC, :ULONG_PTR>, 24
       @DefProto DllImport, SendMessageCallbackW, WIN_STD_CALL_CONV,, <:HWND, :UINT, :WPARAM, :LPARAM, :SENDASYNCPROC, :ULONG_PTR>, 24
       ifdef UNICODE
@@ -3020,10 +2390,9 @@ ifndef _WINUSER_
       else
         SendMessageCallback equ <SendMessageCallbackA>
       endif
-      ; !UNICODE
       if (_WIN32_WINNT ge 0501h)
         BSMINFO struct
-          cbSize DWORD ?
+          cbSize UINT ?
           hdesk HDESK ?
           hwnd HWND ?
           luid LUID <>
@@ -3036,10 +2405,7 @@ ifndef _WINUSER_
         else
           BroadcastSystemMessageEx equ <BroadcastSystemMessageExA>
         endif
-        ; !UNICODE
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if (WINVER ge 0400h)
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -3051,21 +2417,16 @@ ifndef _WINUSER_
           else
             BroadcastSystemMessage equ <BroadcastSystemMessageA>
           endif
-          ; !UNICODE
         elseif Defined(_WIN32_WINDOWS)
-          ; The Win95 version isn't A/W decorated
           @DefProto DllImport, BroadcastSystemMessage, WIN_STD_CALL_CONV,, <:DWORD, :LPDWORD, :UINT, :WPARAM, :LPARAM>, 20
         endif
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;Broadcast Special Message Recipient list
       BSM_ALLCOMPONENTS equ 00000000h
       BSM_VXDS equ 00000001h
       BSM_NETDRIVER equ 00000002h
       BSM_INSTALLABLEDRIVERS equ 00000004h
       BSM_APPLICATIONS equ 00000008h
       BSM_ALLDESKTOPS equ 00000010h
-      ;Broadcast Special Message Flags
       BSF_QUERY equ 00000001h
       BSF_IGNORECURRENTTASK equ 00000002h
       BSF_FLUSHDISK equ 00000004h
@@ -3076,18 +2437,13 @@ ifndef _WINUSER_
       if (_WIN32_WINNT ge 0500h)
         BSF_ALLOWSFW equ 00000080h
         BSF_SENDNOTIFYMESSAGE equ 00000100h
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
       if (_WIN32_WINNT ge 0501h)
         BSF_RETURNHDESK equ 00000200h
         BSF_LUID equ 00000400h
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
-      BROADCAST_QUERY_DENY equ 424D5144h; Return this value to deny a query.
-
-      ;* WINVER >= 0x0400 *
+      BROADCAST_QUERY_DENY equ 424D5144h
     endif
-    ; RegisterDeviceNotification
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       if (WINVER ge 0500h)
         HDEVNOTIFY typedef PVOID
@@ -3096,7 +2452,6 @@ ifndef _WINUSER_
         DEVICE_NOTIFY_SERVICE_HANDLE equ 00000001h
         if (_WIN32_WINNT ge 0501h)
           DEVICE_NOTIFY_ALL_INTERFACE_CLASSES equ 00000004h
-          ;* _WIN32_WINNT >= 0x0501 *
         endif
         @DefProto DllImport, RegisterDeviceNotificationA, WIN_STD_CALL_CONV,, <:HANDLE, :LPVOID, :DWORD>, 12
         @DefProto DllImport, RegisterDeviceNotificationW, WIN_STD_CALL_CONV,, <:HANDLE, :LPVOID, :DWORD>, 12
@@ -3105,7 +2460,6 @@ ifndef _WINUSER_
         else
           RegisterDeviceNotification equ <RegisterDeviceNotificationA>
         endif
-        ; !UNICODE
         @DefProto DllImport, UnregisterDeviceNotification, WIN_STD_CALL_CONV,, <:HDEVNOTIFY>, 4
         if (_WIN32_WINNT ge 0502h)
           if  not Defined(_HPOWERNOTIFY_DEF_)
@@ -3118,10 +2472,7 @@ ifndef _WINUSER_
           @DefProto DllImport, RegisterSuspendResumeNotification, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD>, 8
           @DefProto DllImport, UnregisterSuspendResumeNotification, WIN_STD_CALL_CONV,, <:HPOWERNOTIFY>, 4
         endif
-        ; (_WIN32_WINNT >= 0x0502)
-        ;* WINVER >= 0x0500 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, PostMessageA, WIN_STD_CALL_CONV,, <:HWND, :UINT, :WPARAM, :LPARAM>, 16
@@ -3131,7 +2482,6 @@ ifndef _WINUSER_
       else
         PostMessage equ <PostMessageA>
       endif
-      ; !UNICODE
       @DefProto DllImport, PostThreadMessageA, WIN_STD_CALL_CONV,, <:DWORD, :UINT, :WPARAM, :LPARAM>, 16
       @DefProto DllImport, PostThreadMessageW, WIN_STD_CALL_CONV,, <:DWORD, :UINT, :WPARAM, :LPARAM>, 16
       ifdef UNICODE
@@ -3139,8 +2489,6 @@ ifndef _WINUSER_
       else
         PostThreadMessage equ <PostThreadMessageA>
       endif
-      ; !UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     PostAppMessageA macro idThread, wMsg, wParam, lParam
       exitm <PostThreadMessageA (idThread, wMsg, wParam, lParam)>
@@ -3153,14 +2501,9 @@ ifndef _WINUSER_
     else
       PostAppMessage equ <PostAppMessageA>
     endif
-    ; !UNICODE
-    ;*
-    ;* Special HWND value for use with PostMessage() and SendMessage()
-    ;*
     HWND_BROADCAST equ (0ffffh)
     if (WINVER ge 0500h)
       HWND_MESSAGE equ (- 3)
-      ;* WINVER >= 0x0500 *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, AttachThreadInput, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :BOOL>, 12
@@ -3169,7 +2512,6 @@ ifndef _WINUSER_
       if (_WIN32_WINNT ge 602h)
       endif
       @DefProto DllImport, WaitForInputIdle, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD>, 8
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       ifndef _MAC
@@ -3187,7 +2529,6 @@ ifndef _WINUSER_
       else
         DefWindowProc equ <DefWindowProcA>
       endif
-      ; !UNICODE
       @DefProto DllImport, PostQuitMessage, WIN_STD_CALL_CONV,, <:SDWORD>, 4
       ifdef STRICT
         @DefProto DllImport, CallWindowProcA, WIN_STD_CALL_CONV,, <:WNDPROC, :HWND, :UINT, :WPARAM, :LPARAM>, 20
@@ -3197,8 +2538,6 @@ ifndef _WINUSER_
         else
           CallWindowProc equ <CallWindowProcA>
         endif
-        ; !UNICODE
-        ;* !STRICT *
       else
         @DefProto DllImport, CallWindowProcA, WIN_STD_CALL_CONV,, <:FARPROC, :HWND, :UINT, :WPARAM, :LPARAM>, 20
         @DefProto DllImport, CallWindowProcW, WIN_STD_CALL_CONV,, <:FARPROC, :HWND, :UINT, :WPARAM, :LPARAM>, 20
@@ -3207,34 +2546,24 @@ ifndef _WINUSER_
         else
           CallWindowProc equ <CallWindowProcA>
         endif
-        ; !UNICODE
-        ;* !STRICT *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, InSendMessage, WIN_STD_CALL_CONV,, <>, 0
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if (WINVER ge 0500h)
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, InSendMessageEx, WIN_STD_CALL_CONV,, <:LPVOID>, 4
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;*
-      ;* InSendMessageEx return value
-      ;*
       ISMEX_NOSEND equ 00000000h
       ISMEX_SEND equ 00000001h
       ISMEX_NOTIFY equ 00000002h
       ISMEX_CALLBACK equ 00000004h
       ISMEX_REPLIED equ 00000008h
-      ;* WINVER >= 0x0500 *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, GetDoubleClickTime, WIN_STD_CALL_CONV,, <>, 0
       @DefProto DllImport, SetDoubleClickTime, WIN_STD_CALL_CONV,, <:UINT>, 4
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, RegisterClassA, WIN_STD_CALL_CONV,, <:ptr WNDCLASSA>, 4
@@ -3244,7 +2573,6 @@ ifndef _WINUSER_
       else
         RegisterClass equ <RegisterClassA>
       endif
-      ; !UNICODE
       @DefProto DllImport, UnregisterClassA, WIN_STD_CALL_CONV,, <:LPCSTR, :HINSTANCE>, 8
       @DefProto DllImport, UnregisterClassW, WIN_STD_CALL_CONV,, <:LPCWSTR, :HINSTANCE>, 8
       ifdef UNICODE
@@ -3252,8 +2580,6 @@ ifndef _WINUSER_
       else
         UnregisterClass equ <UnregisterClassA>
       endif
-      ; !UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, GetClassInfoA, WIN_STD_CALL_CONV,, <:HINSTANCE, :LPCSTR, :LPWNDCLASSA>, 12
@@ -3263,8 +2589,6 @@ ifndef _WINUSER_
       else
         GetClassInfo equ <GetClassInfoA>
       endif
-      ; !UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       if (WINVER ge 0400h)
@@ -3275,8 +2599,6 @@ ifndef _WINUSER_
         else
           RegisterClassEx equ <RegisterClassExA>
         endif
-        ; !UNICODE
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, GetClassInfoExA, WIN_STD_CALL_CONV,, <:HINSTANCE, :LPCSTR, :LPWNDCLASSEXA>, 12
@@ -3286,22 +2608,15 @@ ifndef _WINUSER_
         else
           GetClassInfoEx equ <GetClassInfoExA>
         endif
-        ; !UNICODE
-        ;* WINVER >= 0x0400 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     CW_USEDEFAULT equ (80000000h)
-    ;*
-    ;* Special value for CreateWindow, et al.
-    ;*
     HWND_DESKTOP equ (0)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       if (_WIN32_WINNT ge 0501h)
         TYPE_PREGISTERCLASSNAMEW typedef proto WIN_STD_CALL_CONV :LPCWSTR
         PREGISTERCLASSNAMEW typedef ptr TYPE_PREGISTERCLASSNAMEW
 
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       @DefProto DllImport, CreateWindowExA, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR, :LPCSTR, :DWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :HWND, :HMENU, :HINSTANCE, :LPVOID>, 48
       @DefProto DllImport, CreateWindowExW, WIN_STD_CALL_CONV,, <:DWORD, :LPCWSTR, :LPCWSTR, :DWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :HWND, :HMENU, :HINSTANCE, :LPVOID>, 48
@@ -3310,8 +2625,6 @@ ifndef _WINUSER_
       else
         CreateWindowEx equ <CreateWindowExA>
       endif
-      ; !UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     CreateWindowA macro lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam
       exitm <CreateWindowExA (0, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, lpParam)>
@@ -3324,32 +2637,24 @@ ifndef _WINUSER_
     else
       CreateWindow equ <CreateWindowA>
     endif
-    ; !UNICODE
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, IsWindow, WIN_STD_CALL_CONV,, <:HWND>, 4
       @DefProto DllImport, IsMenu, WIN_STD_CALL_CONV,, <:HMENU>, 4
       @DefProto DllImport, IsChild, WIN_STD_CALL_CONV,, <:HWND, :HWND>, 8
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, DestroyWindow, WIN_STD_CALL_CONV,, <:HWND>, 4
       @DefProto DllImport, ShowWindow, WIN_STD_CALL_CONV,, <:HWND, :SDWORD>, 8
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       if (WINVER ge 0500h)
         @DefProto DllImport, AnimateWindow, WIN_STD_CALL_CONV,, <:HWND, :DWORD, :DWORD>, 12
-        ;* WINVER >= 0x0500 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if (_WIN32_WINNT ge 0500h)
       if Defined(_WINGDI_) and  not Defined(NOGDI)
         if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
           @DefProto DllImport, UpdateLayeredWindow, WIN_STD_CALL_CONV,, <:HWND, :HDC, :ptr POINT, :ptr SIZE_, :HDC, :ptr POINT, :COLORREF, :ptr BLENDFUNCTION, :DWORD>, 36
-          ;*
-          ;* Layered Window Update information
-          ;*
           UPDATELAYEREDWINDOWINFO struct
             cbSize DWORD ?
             hdcDst HDC ?
@@ -3365,10 +2670,8 @@ ifndef _WINUSER_
           tagUPDATELAYEREDWINDOWINFO typedef UPDATELAYEREDWINDOWINFO
           PUPDATELAYEREDWINDOWINFO typedef ptr UPDATELAYEREDWINDOWINFO
           if (_WIN32_WINNT lt 0502h)
-            ;* _WIN32_WINNT < 0x0502 *
           endif
           UpdateLayeredWindowIndirect typedef proto :HWND, :ptr UPDATELAYEREDWINDOWINFO
-          ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
         endif
       endif
       if (_WIN32_WINNT ge 0501h)
@@ -3377,16 +2680,12 @@ ifndef _WINUSER_
           PW_CLIENTONLY equ 00000001h
           if (_WIN32_WINNT ge 0603h)
             PW_RENDERFULLCONTENT equ 00000002h
-            ;* _WIN32_WINNT >= 0x0603 *
           endif
           @DefProto DllImport, PrintWindow, WIN_STD_CALL_CONV,, <:HWND, :HDC, :UINT>, 12
-          ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
         endif
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, SetLayeredWindowAttributes, WIN_STD_CALL_CONV,, <:HWND, :COLORREF, :BYTE, :DWORD>, 16
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
       LWA_COLORKEY equ 00000001h
       LWA_ALPHA equ 00000002h
@@ -3394,20 +2693,18 @@ ifndef _WINUSER_
       ULW_ALPHA equ 00000002h
       ULW_OPAQUE equ 00000004h
       ULW_EX_NORESIZE equ 00000008h
-      ;* _WIN32_WINNT >= 0x0500 *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       if (WINVER ge 0400h)
         @DefProto DllImport, ShowWindowAsync, WIN_STD_CALL_CONV,, <:HWND, :SDWORD>, 8
-        ;* WINVER >= 0x0400 *
       endif
       @DefProto DllImport, FlashWindow, WIN_STD_CALL_CONV,, <:HWND, :BOOL>, 8
       if (WINVER ge 0500h)
         FLASHWINFO struct
-          cbSize DWORD ?
+          cbSize UINT ?
           hwnd HWND ?
           dwFlags DWORD ?
-          uCount DWORD ?
+          uCount UINT ?
           dwTimeout DWORD ?
         FLASHWINFO ends
         PFLASHWINFO typedef ptr FLASHWINFO
@@ -3418,17 +2715,14 @@ ifndef _WINUSER_
         FLASHW_ALL equ <(FLASHW_CAPTION or FLASHW_TRAY)>
         FLASHW_TIMER equ 00000004h
         FLASHW_TIMERNOFG equ 0000000Ch
-        ;* WINVER >= 0x0500 *
       endif
       @DefProto DllImport, ShowOwnedPopups, WIN_STD_CALL_CONV,, <:HWND, :BOOL>, 8
       @DefProto DllImport, OpenIcon, WIN_STD_CALL_CONV,, <:HWND>, 4
       @DefProto DllImport, CloseWindow, WIN_STD_CALL_CONV,, <:HWND>, 4
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, MoveWindow, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :BOOL>, 24
       @DefProto DllImport, SetWindowPos, WIN_STD_CALL_CONV,, <:HWND, :HWND, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :UINT>, 28
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, GetWindowPlacement, WIN_STD_CALL_CONV,, <:HWND, :ptr WINDOWPLACEMENT>, 8
@@ -3439,71 +2733,48 @@ ifndef _WINUSER_
         WDA_EXCLUDEFROMCAPTURE equ 00000011h
         @DefProto DllImport, GetWindowDisplayAffinity, WIN_STD_CALL_CONV,, <:HWND, :ptr DWORD>, 8
         @DefProto DllImport, SetWindowDisplayAffinity, WIN_STD_CALL_CONV,, <:HWND, :DWORD>, 8
-        ;* _WIN32_WINNT >= 0x0601 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     ifndef NODEFERWINDOWPOS
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, BeginDeferWindowPos, WIN_STD_CALL_CONV,, <:SDWORD>, 4
         @DefProto DllImport, DeferWindowPos, WIN_STD_CALL_CONV,, <:HDWP, :HWND, :HWND, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :UINT>, 32
         @DefProto DllImport, EndDeferWindowPos, WIN_STD_CALL_CONV,, <:HDWP>, 4
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* !NODEFERWINDOWPOS *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, IsWindowVisible, WIN_STD_CALL_CONV,, <:HWND>, 4
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, IsIconic, WIN_STD_CALL_CONV,, <:HWND>, 4
       @DefProto DllImport, AnyPopup, WIN_STD_CALL_CONV,, <>, 0
       @DefProto DllImport, BringWindowToTop, WIN_STD_CALL_CONV,, <:HWND>, 4
       @DefProto DllImport, IsZoomed, WIN_STD_CALL_CONV,, <:HWND>, 4
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;*
-    ;* SetWindowPos Flags
-    ;*
     SWP_NOSIZE equ 0001h
     SWP_NOMOVE equ 0002h
     SWP_NOZORDER equ 0004h
     SWP_NOREDRAW equ 0008h
     SWP_NOACTIVATE equ 0010h
-    ;* The frame changed: send WM_NCCALCSIZE *
     SWP_FRAMECHANGED equ 0020h
     SWP_SHOWWINDOW equ 0040h
     SWP_HIDEWINDOW equ 0080h
     SWP_NOCOPYBITS equ 0100h
-    ;* Don't do owner Z ordering *
     SWP_NOOWNERZORDER equ 0200h
-    ;* Don't send WM_WINDOWPOSCHANGING *
     SWP_NOSENDCHANGING equ 0400h
     SWP_DRAWFRAME equ <SWP_FRAMECHANGED>
     SWP_NOREPOSITION equ <SWP_NOOWNERZORDER>
     if (WINVER ge 0400h)
-      SWP_DEFERERASE equ 2000h; same as SWP_DEFERDRAWING
-
-      SWP_ASYNCWINDOWPOS equ 4000h; same as SWP_CREATESPB
-
-      ;* WINVER >= 0x0400 *
+      SWP_DEFERERASE equ 2000h
+      SWP_ASYNCWINDOWPOS equ 4000h
     endif
     HWND_TOP equ (0)
     HWND_BOTTOM equ (1)
     HWND_TOPMOST equ (- 1)
     HWND_NOTOPMOST equ (- 2)
     ifndef NOCTLMGR
-      ;*
-      ;* WARNING:
-      ;* The following structures must NOT be DWORD padded because they are
-      ;* followed by strings, etc that do not have to be DWORD aligned.
-      ;*
       include pshpack2.inc
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
-        ;*
-        ;* original NT 32 bit dialog template:
-        ;*
         DLGTEMPLATE struct
           style DWORD ?
           dwExtendedStyle DWORD ?
@@ -3513,7 +2784,6 @@ ifndef _WINUSER_
           cx_ SWORD ?
           cy SWORD ?
         DLGTEMPLATE ends
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         LPDLGTEMPLATEA typedef ptr DLGTEMPLATE
@@ -3523,8 +2793,6 @@ ifndef _WINUSER_
         else
           LPDLGTEMPLATE typedef LPDLGTEMPLATEA
         endif
-        ; UNICODE
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
         LPCDLGTEMPLATEA typedef ptr DLGTEMPLATE
@@ -3534,13 +2802,8 @@ ifndef _WINUSER_
         else
           LPCDLGTEMPLATE typedef LPCDLGTEMPLATEA
         endif
-        ; UNICODE
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-        ;*
-        ;* 32 bit Dialog item template.
-        ;*
         DLGITEMTEMPLATE struct
           style DWORD ?
           dwExtendedStyle DWORD ?
@@ -3557,7 +2820,6 @@ ifndef _WINUSER_
         else
           PDLGITEMTEMPLATE typedef PDLGITEMTEMPLATEA
         endif
-        ; UNICODE
         LPDLGITEMTEMPLATEA typedef ptr DLGITEMTEMPLATE
         LPDLGITEMTEMPLATEW typedef ptr DLGITEMTEMPLATE
         ifdef UNICODE
@@ -3565,10 +2827,7 @@ ifndef _WINUSER_
         else
           LPDLGITEMTEMPLATE typedef LPDLGITEMTEMPLATEA
         endif
-        ; UNICODE
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* Resume normal packing *
       include poppack.inc
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, CreateDialogParamA, WIN_STD_CALL_CONV,, <:HINSTANCE, :LPCSTR, :HWND, :DLGPROC, :LPARAM>, 20
@@ -3578,7 +2837,6 @@ ifndef _WINUSER_
         else
           CreateDialogParam equ <CreateDialogParamA>
         endif
-        ; !UNICODE
         @DefProto DllImport, CreateDialogIndirectParamA, WIN_STD_CALL_CONV,, <:HINSTANCE, :LPCDLGTEMPLATEA, :HWND, :DLGPROC, :LPARAM>, 20
         @DefProto DllImport, CreateDialogIndirectParamW, WIN_STD_CALL_CONV,, <:HINSTANCE, :LPCDLGTEMPLATEW, :HWND, :DLGPROC, :LPARAM>, 20
         ifdef UNICODE
@@ -3586,7 +2844,6 @@ ifndef _WINUSER_
         else
           CreateDialogIndirectParam equ <CreateDialogIndirectParamA>
         endif
-        ; !UNICODE
         CreateDialogA macro hInstance, lpName, hWndParent, lpDialogFunc
           exitm <CreateDialogParamA (hInstance, lpName, hWndParent, lpDialogFunc, 0)>
         endm
@@ -3598,7 +2855,6 @@ ifndef _WINUSER_
         else
           CreateDialog equ <CreateDialogA>
         endif
-        ; !UNICODE
         CreateDialogIndirectA macro hInstance, lpTemplate, hWndParent, lpDialogFunc
           exitm <CreateDialogIndirectParamA (hInstance, lpTemplate, hWndParent, lpDialogFunc, 0)>
         endm
@@ -3610,7 +2866,6 @@ ifndef _WINUSER_
         else
           CreateDialogIndirect equ <CreateDialogIndirectA>
         endif
-        ; !UNICODE
         @DefProto DllImport, DialogBoxParamA, WIN_STD_CALL_CONV,, <:HINSTANCE, :LPCSTR, :HWND, :DLGPROC, :LPARAM>, 20
         @DefProto DllImport, DialogBoxParamW, WIN_STD_CALL_CONV,, <:HINSTANCE, :LPCWSTR, :HWND, :DLGPROC, :LPARAM>, 20
         ifdef UNICODE
@@ -3618,7 +2873,6 @@ ifndef _WINUSER_
         else
           DialogBoxParam equ <DialogBoxParamA>
         endif
-        ; !UNICODE
         @DefProto DllImport, DialogBoxIndirectParamA, WIN_STD_CALL_CONV,, <:HINSTANCE, :LPCDLGTEMPLATEA, :HWND, :DLGPROC, :LPARAM>, 20
         @DefProto DllImport, DialogBoxIndirectParamW, WIN_STD_CALL_CONV,, <:HINSTANCE, :LPCDLGTEMPLATEW, :HWND, :DLGPROC, :LPARAM>, 20
         ifdef UNICODE
@@ -3626,7 +2880,6 @@ ifndef _WINUSER_
         else
           DialogBoxIndirectParam equ <DialogBoxIndirectParamA>
         endif
-        ; !UNICODE
         DialogBoxA macro hInstance, lpTemplate, hWndParent, lpDialogFunc
           exitm <DialogBoxParamA (hInstance, lpTemplate, hWndParent, lpDialogFunc, 0)>
         endm
@@ -3638,7 +2891,6 @@ ifndef _WINUSER_
         else
           DialogBox equ <DialogBoxA>
         endif
-        ; !UNICODE
         DialogBoxIndirectA macro hInstance, lpTemplate, hWndParent, lpDialogFunc
           exitm <DialogBoxIndirectParamA (hInstance, lpTemplate, hWndParent, lpDialogFunc, 0)>
         endm
@@ -3650,7 +2902,6 @@ ifndef _WINUSER_
         else
           DialogBoxIndirect equ <DialogBoxIndirectA>
         endif
-        ; !UNICODE
         @DefProto DllImport, EndDialog, WIN_STD_CALL_CONV,, <:HWND, :INT_PTR>, 8
         @DefProto DllImport, GetDlgItem, WIN_STD_CALL_CONV,, <:HWND, :SDWORD>, 8
         @DefProto DllImport, SetDlgItemInt, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :UINT, :BOOL>, 16
@@ -3662,7 +2913,6 @@ ifndef _WINUSER_
         else
           SetDlgItemText equ <SetDlgItemTextA>
         endif
-        ; !UNICODE
         @DefProto DllImport, GetDlgItemTextA, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :LPSTR, :SDWORD>, 16
         @DefProto DllImport, GetDlgItemTextW, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :LPWSTR, :SDWORD>, 16
         ifdef UNICODE
@@ -3670,7 +2920,6 @@ ifndef _WINUSER_
         else
           GetDlgItemText equ <GetDlgItemTextA>
         endif
-        ; !UNICODE
         @DefProto DllImport, CheckDlgButton, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :UINT>, 12
         @DefProto DllImport, CheckRadioButton, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :SDWORD, :SDWORD>, 16
         @DefProto DllImport, IsDlgButtonChecked, WIN_STD_CALL_CONV,, <:HWND, :SDWORD>, 8
@@ -3681,7 +2930,6 @@ ifndef _WINUSER_
         else
           SendDlgItemMessage equ <SendDlgItemMessageA>
         endif
-        ; !UNICODE
         @DefProto DllImport, GetNextDlgGroupItem, WIN_STD_CALL_CONV,, <:HWND, :HWND, :BOOL>, 12
         @DefProto DllImport, GetNextDlgTabItem, WIN_STD_CALL_CONV,, <:HWND, :HWND, :BOOL>, 12
         @DefProto DllImport, GetDlgCtrlID, WIN_STD_CALL_CONV,, <:HWND>, 4
@@ -3701,7 +2949,6 @@ ifndef _WINUSER_
         else
           DefDlgProc equ <DefDlgProcA>
         endif
-        ; !UNICODE
         DIALOG_CONTROL_DPI_CHANGE_BEHAVIORS typedef SDWORD
         DCDC_DEFAULT equ 0000h
         DCDC_DISABLE_FONT_UPDATE equ 0001h
@@ -3723,17 +2970,12 @@ ifndef _WINUSER_
         endif
         SetDialogDpiChangeBehavior proto WIN_STD_CALL_CONV :HWND, :DIALOG_DPI_CHANGE_BEHAVIORS, :DIALOG_DPI_CHANGE_BEHAVIORS
         GetDialogDpiChangeBehavior proto WIN_STD_CALL_CONV :HWND
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;*
-      ;* Window extra byted needed for private dialog classes.
-      ;*
       ifndef _MAC
         DLGWINDOWEXTRA equ 30
       else
         ;[...]
       endif
-      ;* !NOCTLMGR *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       ifndef NOMSG
@@ -3744,18 +2986,12 @@ ifndef _WINUSER_
         else
           CallMsgFilter equ <CallMsgFilterA>
         endif
-        ; !UNICODE
-        ;* !NOMSG *
       endif
       ifndef NOCLIPBOARD
-        ;*
-        ;* Clipboard Manager Functions
-        ;*
         @DefProto DllImport, OpenClipboard, WIN_STD_CALL_CONV,, <:HWND>, 4
         @DefProto DllImport, CloseClipboard, WIN_STD_CALL_CONV,, <>, 0
         if (WINVER ge 0500h)
           @DefProto DllImport, GetClipboardSequenceNumber, WIN_STD_CALL_CONV,, <>, 0
-          ;* WINVER >= 0x0500 *
         endif
         @DefProto DllImport, GetClipboardOwner, WIN_STD_CALL_CONV,, <>, 0
         @DefProto DllImport, SetClipboardViewer, WIN_STD_CALL_CONV,, <:HWND>, 4
@@ -3764,12 +3000,9 @@ ifndef _WINUSER_
         @DefProto DllImport, SetClipboardData, WIN_STD_CALL_CONV,, <:UINT, :HANDLE>, 8
         @DefProto DllImport, GetClipboardData, WIN_STD_CALL_CONV,, <:UINT>, 4
         GETCLIPBMETADATA struct
-          Version DWORD ?
-          ; Currently version 1; increment this value to add more fields.
-          IsDelayRendered DWORD ?
-          ; Indicates if the data is delay-rendered.
-          IsSynthetic DWORD ?
-          ; Indicates if the data is produced on-demand from another format (some bitmap/text/metafile).
+          Version UINT ?
+          IsDelayRendered BOOL ?
+          IsSynthetic BOOL ?
         GETCLIPBMETADATA ends
         tagGETCLIPBMETADATA typedef GETCLIPBMETADATA
         PGETCLIPBMETADATA typedef ptr GETCLIPBMETADATA
@@ -3781,7 +3014,6 @@ ifndef _WINUSER_
         else
           RegisterClipboardFormat equ <RegisterClipboardFormatA>
         endif
-        ; !UNICODE
         @DefProto DllImport, CountClipboardFormats, WIN_STD_CALL_CONV,, <>, 0
         @DefProto DllImport, EnumClipboardFormats, WIN_STD_CALL_CONV,, <:UINT>, 4
         @DefProto DllImport, GetClipboardFormatNameA, WIN_STD_CALL_CONV,, <:UINT, :LPSTR, :SDWORD>, 12
@@ -3791,7 +3023,6 @@ ifndef _WINUSER_
         else
           GetClipboardFormatName equ <GetClipboardFormatNameA>
         endif
-        ; !UNICODE
         @DefProto DllImport, EmptyClipboard, WIN_STD_CALL_CONV,, <>, 0
         @DefProto DllImport, IsClipboardFormatAvailable, WIN_STD_CALL_CONV,, <:UINT>, 4
         @DefProto DllImport, GetPriorityClipboardFormat, WIN_STD_CALL_CONV,, <:ptr UINT, :SDWORD>, 8
@@ -3800,13 +3031,8 @@ ifndef _WINUSER_
           @DefProto DllImport, AddClipboardFormatListener, WIN_STD_CALL_CONV,, <:HWND>, 4
           @DefProto DllImport, RemoveClipboardFormatListener, WIN_STD_CALL_CONV,, <:HWND>, 4
           @DefProto DllImport, GetUpdatedClipboardFormats, WIN_STD_CALL_CONV,, <:PUINT, :UINT, :PUINT>, 12
-          ;* WINVER >= 0x0600 *
         endif
-        ;* !NOCLIPBOARD *
       endif
-      ;*
-      ;* Character Translation Routines
-      ;*
       @DefProto DllImport, CharToOemA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPSTR>, 8
       @DefProto DllImport, CharToOemW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPSTR>, 8
       ifdef UNICODE
@@ -3814,7 +3040,6 @@ ifndef _WINUSER_
       else
         CharToOem equ <CharToOemA>
       endif
-      ; !UNICODE
       @DefProto DllImport, OemToCharA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPSTR>, 8
       @DefProto DllImport, OemToCharW, WIN_STD_CALL_CONV,, <:LPCSTR, :LPWSTR>, 8
       ifdef UNICODE
@@ -3822,7 +3047,6 @@ ifndef _WINUSER_
       else
         OemToChar equ <OemToCharA>
       endif
-      ; !UNICODE
       @DefProto DllImport, CharToOemBuffA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPSTR, :DWORD>, 12
       @DefProto DllImport, CharToOemBuffW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPSTR, :DWORD>, 12
       ifdef UNICODE
@@ -3830,7 +3054,6 @@ ifndef _WINUSER_
       else
         CharToOemBuff equ <CharToOemBuffA>
       endif
-      ; !UNICODE
       @DefProto DllImport, OemToCharBuffA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPSTR, :DWORD>, 12
       @DefProto DllImport, OemToCharBuffW, WIN_STD_CALL_CONV,, <:LPCSTR, :LPWSTR, :DWORD>, 12
       ifdef UNICODE
@@ -3838,8 +3061,6 @@ ifndef _WINUSER_
       else
         OemToCharBuff equ <OemToCharBuffA>
       endif
-      ; !UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CharUpperA, WIN_STD_CALL_CONV,, <:LPSTR>, 4
@@ -3849,7 +3070,6 @@ ifndef _WINUSER_
       else
         CharUpper equ <CharUpperA>
       endif
-      ; !UNICODE
       @DefProto DllImport, CharUpperBuffA, WIN_STD_CALL_CONV,, <:LPSTR, :DWORD>, 8
       @DefProto DllImport, CharUpperBuffW, WIN_STD_CALL_CONV,, <:LPWSTR, :DWORD>, 8
       ifdef UNICODE
@@ -3857,7 +3077,6 @@ ifndef _WINUSER_
       else
         CharUpperBuff equ <CharUpperBuffA>
       endif
-      ; !UNICODE
       @DefProto DllImport, CharLowerA, WIN_STD_CALL_CONV,, <:LPSTR>, 4
       @DefProto DllImport, CharLowerW, WIN_STD_CALL_CONV,, <:LPWSTR>, 4
       ifdef UNICODE
@@ -3865,7 +3084,6 @@ ifndef _WINUSER_
       else
         CharLower equ <CharLowerA>
       endif
-      ; !UNICODE
       @DefProto DllImport, CharLowerBuffA, WIN_STD_CALL_CONV,, <:LPSTR, :DWORD>, 8
       @DefProto DllImport, CharLowerBuffW, WIN_STD_CALL_CONV,, <:LPWSTR, :DWORD>, 8
       ifdef UNICODE
@@ -3873,7 +3091,6 @@ ifndef _WINUSER_
       else
         CharLowerBuff equ <CharLowerBuffA>
       endif
-      ; !UNICODE
       @DefProto DllImport, CharNextA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
       @DefProto DllImport, CharNextW, WIN_STD_CALL_CONV,, <:LPCWSTR>, 4
       ifdef UNICODE
@@ -3881,7 +3098,6 @@ ifndef _WINUSER_
       else
         CharNext equ <CharNextA>
       endif
-      ; !UNICODE
       @DefProto DllImport, CharPrevA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR>, 8
       @DefProto DllImport, CharPrevW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR>, 8
       ifdef UNICODE
@@ -3889,17 +3105,11 @@ ifndef _WINUSER_
       else
         CharPrev equ <CharPrevA>
       endif
-      ; !UNICODE
       if (WINVER ge 0400h)
         @DefProto DllImport, CharNextExA, WIN_STD_CALL_CONV,, <:WORD, :LPCSTR, :DWORD>, 12
         @DefProto DllImport, CharPrevExA, WIN_STD_CALL_CONV,, <:WORD, :LPCSTR, :LPCSTR, :DWORD>, 16
-        ;* WINVER >= 0x0400 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
     endif
-    ;*
-    ;* Compatibility defines for character translation routines
-    ;*
     AnsiToOem equ <CharToOemA>
     OemToAnsi equ <OemToCharA>
     AnsiToOemBuff equ <CharToOemBuffA>
@@ -3912,9 +3122,6 @@ ifndef _WINUSER_
     AnsiPrev equ <CharPrevA>
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       ifndef NOLANGUAGE
-        ;*
-        ;* Language dependent Routines
-        ;*
         @DefProto DllImport, IsCharAlphaA, WIN_STD_CALL_CONV,, <:CHAR>, 4
         @DefProto DllImport, IsCharAlphaW, WIN_STD_CALL_CONV,, <:WCHAR>, 4
         ifdef UNICODE
@@ -3922,7 +3129,6 @@ ifndef _WINUSER_
         else
           IsCharAlpha equ <IsCharAlphaA>
         endif
-        ; !UNICODE
         @DefProto DllImport, IsCharAlphaNumericA, WIN_STD_CALL_CONV,, <:CHAR>, 4
         @DefProto DllImport, IsCharAlphaNumericW, WIN_STD_CALL_CONV,, <:WCHAR>, 4
         ifdef UNICODE
@@ -3930,7 +3136,6 @@ ifndef _WINUSER_
         else
           IsCharAlphaNumeric equ <IsCharAlphaNumericA>
         endif
-        ; !UNICODE
         @DefProto DllImport, IsCharUpperA, WIN_STD_CALL_CONV,, <:CHAR>, 4
         @DefProto DllImport, IsCharUpperW, WIN_STD_CALL_CONV,, <:WCHAR>, 4
         ifdef UNICODE
@@ -3938,7 +3143,6 @@ ifndef _WINUSER_
         else
           IsCharUpper equ <IsCharUpperA>
         endif
-        ; !UNICODE
         @DefProto DllImport, IsCharLowerA, WIN_STD_CALL_CONV,, <:CHAR>, 4
         @DefProto DllImport, IsCharLowerW, WIN_STD_CALL_CONV,, <:WCHAR>, 4
         ifdef UNICODE
@@ -3946,10 +3150,7 @@ ifndef _WINUSER_
         else
           IsCharLower equ <IsCharLowerA>
         endif
-        ; !UNICODE
-        ;* !NOLANGUAGE *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, SetFocus, WIN_STD_CALL_CONV,, <:HWND>, 4
@@ -3960,7 +3161,6 @@ ifndef _WINUSER_
       @DefProto DllImport, GetAsyncKeyState, WIN_STD_CALL_CONV,, <:SDWORD>, 4
       @DefProto DllImport, GetKeyboardState, WIN_STD_CALL_CONV,, <:PBYTE>, 4
       @DefProto DllImport, SetKeyboardState, WIN_STD_CALL_CONV,, <:LPBYTE>, 4
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PC_APP)
       @DefProto DllImport, GetKeyNameTextA, WIN_STD_CALL_CONV,, <:LONG, :LPSTR, :SDWORD>, 12
@@ -3970,15 +3170,12 @@ ifndef _WINUSER_
       else
         GetKeyNameText equ <GetKeyNameTextA>
       endif
-      ; !UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_PC_APP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, GetKeyboardType, WIN_STD_CALL_CONV,, <:SDWORD>, 4
       @DefProto DllImport, ToAscii, WIN_STD_CALL_CONV,, <:UINT, :UINT, :ptr BYTE, :LPWORD, :UINT>, 20
       if (WINVER ge 0400h)
         @DefProto DllImport, ToAsciiEx, WIN_STD_CALL_CONV,, <:UINT, :UINT, :ptr BYTE, :LPWORD, :UINT, :HKL>, 24
-        ;* WINVER >= 0x0400 *
       endif
       @DefProto DllImport, ToUnicode, WIN_STD_CALL_CONV,, <:UINT, :UINT, :ptr BYTE, :LPWSTR, :SDWORD, :UINT>, 24
       @DefProto DllImport, OemKeyScan, WIN_STD_CALL_CONV,, <:WORD>, 4
@@ -3989,7 +3186,6 @@ ifndef _WINUSER_
       else
         VkKeyScan equ <VkKeyScanA>
       endif
-      ; !UNICODE
       if (WINVER ge 0400h)
         @DefProto DllImport, VkKeyScanExA, WIN_STD_CALL_CONV,, <:CHAR, :HKL>, 8
         @DefProto DllImport, VkKeyScanExW, WIN_STD_CALL_CONV,, <:WCHAR, :HKL>, 8
@@ -3998,64 +3194,44 @@ ifndef _WINUSER_
         else
           VkKeyScanEx equ <VkKeyScanExA>
         endif
-        ; !UNICODE
-        ;* WINVER >= 0x0400 *
       endif
       KEYEVENTF_EXTENDEDKEY equ 0001h
       KEYEVENTF_KEYUP equ 0002h
       if (_WIN32_WINNT ge 0500h)
         KEYEVENTF_UNICODE equ 0004h
         KEYEVENTF_SCANCODE equ 0008h
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
       @DefProto DllImport, keybd_event, WIN_STD_CALL_CONV,, <:BYTE, :BYTE, :DWORD, :ULONG_PTR>, 16
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;* mouse move *
     MOUSEEVENTF_MOVE equ 0001h
-    ;* left button down *
     MOUSEEVENTF_LEFTDOWN equ 0002h
-    ;* left button up *
     MOUSEEVENTF_LEFTUP equ 0004h
-    ;* right button down *
     MOUSEEVENTF_RIGHTDOWN equ 0008h
-    ;* right button up *
     MOUSEEVENTF_RIGHTUP equ 0010h
-    ;* middle button down *
     MOUSEEVENTF_MIDDLEDOWN equ 0020h
-    ;* middle button up *
     MOUSEEVENTF_MIDDLEUP equ 0040h
-    ;* x button down *
     MOUSEEVENTF_XDOWN equ 0080h
-    ;* x button down *
     MOUSEEVENTF_XUP equ 0100h
-    ;* wheel button rolled *
     MOUSEEVENTF_WHEEL equ 0800h
     if (_WIN32_WINNT ge 0600h)
-      ;* hwheel button rolled *
       MOUSEEVENTF_HWHEEL equ 01000h
     endif
     if (WINVER ge 0600h)
-      ;* do not coalesce mouse moves *
       MOUSEEVENTF_MOVE_NOCOALESCE equ 2000h
-      ;* WINVER >= 0x0600 *
     endif
-    ;* map to entire virtual desktop *
     MOUSEEVENTF_VIRTUALDESK equ 4000h
-    ;* absolute move *
     MOUSEEVENTF_ABSOLUTE equ 8000h
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, mouse_event, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :DWORD, :DWORD, :ULONG_PTR>, 20
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if (_WIN32_WINNT gt 0400h)
       MOUSEINPUT struct
-        dx_ SDWORD ?
-        dy SDWORD ?
+        dx_ LONG ?
+        dy LONG ?
         mouseData DWORD ?
         dwFlags DWORD ?
         time DWORD ?
-        dwExtraInfo XWORD ?
+        dwExtraInfo ULONG_PTR ?
       MOUSEINPUT ends
       tagMOUSEINPUT typedef MOUSEINPUT
       PMOUSEINPUT typedef ptr MOUSEINPUT
@@ -4065,16 +3241,7 @@ ifndef _WINUSER_
         wScan WORD ?
         dwFlags DWORD ?
         time DWORD ?
-        ;*
-        ;* When dwFlags has KEYEVENTF_SYSTEMINJECTION specified this field may carry
-        ;* KEY_UNICODE_SEQUENCE_ITEM or KEY_UNICODE_SEQUENCE_END which are used by InputService
-        ;* to distinguish injected unicode sequences. Those flags are stored in low word.
-        ;* When dwFlags has KEYEVENTF_ATTRIBUTED_INPUT specified this field carries in its high word
-        ;* ID of attributes associated with injected input. This ID is assigned by InputService and
-        ;* recognized only by it.
-        ;* For all other usage scenarios please refer to official documentation.
-        ;*
-        dwExtraInfo XWORD ?
+        dwExtraInfo ULONG_PTR ?
       KEYBDINPUT ends
       tagKEYBDINPUT typedef KEYBDINPUT
       PKEYBDINPUT typedef ptr KEYBDINPUT
@@ -4103,47 +3270,30 @@ ifndef _WINUSER_
         PINPUT typedef ptr INPUT
         LPINPUT typedef ptr INPUT
         @DefProto DllImport, SendInput, WIN_STD_CALL_CONV,, <:UINT, :LPINPUT, :SDWORD>, 12
-        ; array of inputs
-        ; sizeof(INPUT)
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
     endif
-    ; (_WIN32_WINNT > 0x0400)
     if (WINVER ge 0601h)
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-        ;*
-        ;* Touch Input defines and functions
-        ;*
-        ;*
-        ;* Touch input handle
-        ;*
         DECLARE_HANDLE HTOUCHINPUT
         TOUCHINPUT struct
-          x SDWORD ?
-          y SDWORD ?
+          x LONG ?
+          y LONG ?
           hSource HANDLE ?
           dwID DWORD ?
           dwFlags DWORD ?
           dwMask DWORD ?
           dwTime DWORD ?
-          dwExtraInfo XWORD ?
+          dwExtraInfo ULONG_PTR ?
           cxContact DWORD ?
           cyContact DWORD ?
         TOUCHINPUT ends
         tagTOUCHINPUT typedef TOUCHINPUT
         PTOUCHINPUT typedef ptr TOUCHINPUT
         PCTOUCHINPUT typedef ptr TOUCHINPUT
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;*
-      ;* Conversion of touch input coordinates to pixels
-      ;*
       TOUCH_COORD_TO_PIXEL macro l
         exitm <((l) / 100)>
       endm
-      ;*
-      ;* Touch input flag values (TOUCHINPUT.dwFlags)
-      ;*
       TOUCHEVENTF_MOVE equ 0001h
       TOUCHEVENTF_DOWN equ 0002h
       TOUCHEVENTF_UP equ 0004h
@@ -4152,103 +3302,57 @@ ifndef _WINUSER_
       TOUCHEVENTF_NOCOALESCE equ 0020h
       TOUCHEVENTF_PEN equ 0040h
       TOUCHEVENTF_PALM equ 0080h
-      ;*
-      ;* Touch input mask values (TOUCHINPUT.dwMask)
-      ;*
-      TOUCHINPUTMASKF_TIMEFROMSYSTEM equ 0001h; the dwTime field contains a system generated value
-
-      TOUCHINPUTMASKF_EXTRAINFO equ 0002h; the dwExtraInfo field is valid
-
-      TOUCHINPUTMASKF_CONTACTAREA equ 0004h; the cxContact and cyContact fields are valid
-
+      TOUCHINPUTMASKF_TIMEFROMSYSTEM equ 0001h
+      TOUCHINPUTMASKF_EXTRAINFO equ 0002h
+      TOUCHINPUTMASKF_CONTACTAREA equ 0004h
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, GetTouchInputInfo, WIN_STD_CALL_CONV,, <:HTOUCHINPUT, :UINT, :PTOUCHINPUT, :SDWORD>, 16
-        ; array of touch inputs
-        ; sizeof(TOUCHINPUT)
         @DefProto DllImport, CloseTouchInputHandle, WIN_STD_CALL_CONV,, <:HTOUCHINPUT>, 4
-        ; input event handle; from touch message lParam
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;*
-      ;* RegisterTouchWindow flag values
-      ;*
       TWF_FINETOUCH equ (00000001h)
       TWF_WANTPALM equ (00000002h)
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, RegisterTouchWindow, WIN_STD_CALL_CONV,, <:HWND, :ULONG>, 8
         @DefProto DllImport, UnregisterTouchWindow, WIN_STD_CALL_CONV,, <:HWND>, 4
         @DefProto DllImport, IsTouchWindow, WIN_STD_CALL_CONV,, <:HWND, :PULONG>, 8
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* WINVER >= 0x0601 *
     endif
     if (WINVER ge 0602h)
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         POINTER_STRUCTURES equ <>
         tagPOINTER_INPUT_TYPE typedef SDWORD
         PT_POINTER equ 1
-        ; Generic pointer
         PT_TOUCH equ 2
-        ; Touch
         PT_PEN equ 3
-        ; Pen
         PT_MOUSE equ 4
-        ; Mouse
         if (WINVER ge 0603h)
           PT_TOUCHPAD equ 5
-          ; Touchpad
-          ;* WINVER >= 0x0603 *
         endif
 
         POINTER_INPUT_TYPE typedef DWORD
         POINTER_FLAGS typedef UINT32
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      POINTER_FLAG_NONE equ 00000000h; Default
-
-      POINTER_FLAG_NEW equ 00000001h; New pointer
-
-      POINTER_FLAG_INRANGE equ 00000002h; Pointer has not departed
-
-      POINTER_FLAG_INCONTACT equ 00000004h; Pointer is in contact
-
-      POINTER_FLAG_FIRSTBUTTON equ 00000010h; Primary action
-
-      POINTER_FLAG_SECONDBUTTON equ 00000020h; Secondary action
-
-      POINTER_FLAG_THIRDBUTTON equ 00000040h; Third button
-
-      POINTER_FLAG_FOURTHBUTTON equ 00000080h; Fourth button
-
-      POINTER_FLAG_FIFTHBUTTON equ 00000100h; Fifth button
-
-      POINTER_FLAG_PRIMARY equ 00002000h; Pointer is primary for system
-
-      POINTER_FLAG_CONFIDENCE equ 00004000h; Pointer is considered unlikely to be accidental
-
-      POINTER_FLAG_CANCELED equ 00008000h; Pointer is departing in an abnormal manner
-
-      POINTER_FLAG_DOWN equ 00010000h; Pointer transitioned to down state (made contact)
-
-      POINTER_FLAG_UPDATE equ 00020000h; Pointer update
-
-      POINTER_FLAG_UP equ 00040000h; Pointer transitioned from down state (broke contact)
-
-      POINTER_FLAG_WHEEL equ 00080000h; Vertical wheel
-
-      POINTER_FLAG_HWHEEL equ 00100000h; Horizontal wheel
-
-      POINTER_FLAG_CAPTURECHANGED equ 00200000h; Lost capture
-
-      POINTER_FLAG_HASTRANSFORM equ 00400000h; Input has a transform associated with it
-
-      ;*
-      ;* Pointer info key states defintions.
-      ;*
-      POINTER_MOD_SHIFT equ (0004h); Shift key is held down.
-
-      POINTER_MOD_CTRL equ (0008h); Ctrl key is held down.
-
+      POINTER_FLAG_NONE equ 00000000h
+      POINTER_FLAG_NEW equ 00000001h
+      POINTER_FLAG_INRANGE equ 00000002h
+      POINTER_FLAG_INCONTACT equ 00000004h
+      POINTER_FLAG_FIRSTBUTTON equ 00000010h
+      POINTER_FLAG_SECONDBUTTON equ 00000020h
+      POINTER_FLAG_THIRDBUTTON equ 00000040h
+      POINTER_FLAG_FOURTHBUTTON equ 00000080h
+      POINTER_FLAG_FIFTHBUTTON equ 00000100h
+      POINTER_FLAG_PRIMARY equ 00002000h
+      POINTER_FLAG_CONFIDENCE equ 00004000h
+      POINTER_FLAG_CANCELED equ 00008000h
+      POINTER_FLAG_DOWN equ 00010000h
+      POINTER_FLAG_UPDATE equ 00020000h
+      POINTER_FLAG_UP equ 00040000h
+      POINTER_FLAG_WHEEL equ 00080000h
+      POINTER_FLAG_HWHEEL equ 00100000h
+      POINTER_FLAG_CAPTURECHANGED equ 00200000h
+      POINTER_FLAG_HASTRANSFORM equ 00400000h
+      POINTER_MOD_SHIFT equ (0004h)
+      POINTER_MOD_CTRL equ (0008h)
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         POINTER_BUTTON_CHANGE_TYPE typedef SDWORD
         POINTER_CHANGE_NONE equ 0
@@ -4266,8 +3370,8 @@ ifndef _WINUSER_
 
         POINTER_INFO struct
           pointerType POINTER_INPUT_TYPE ?
-          pointerId DWORD ?
-          frameId DWORD ?
+          pointerId UINT32 ?
+          frameId UINT32 ?
           pointerFlags POINTER_FLAGS ?
           sourceDevice HANDLE ?
           hwndTarget HWND ?
@@ -4276,95 +3380,63 @@ ifndef _WINUSER_
           ptPixelLocationRaw POINT <>
           ptHimetricLocationRaw POINT <>
           dwTime DWORD ?
-          historyCount DWORD ?
-          InputData SDWORD ?
+          historyCount UINT32 ?
+          InputData INT32 ?
           dwKeyStates DWORD ?
-          PerformanceCount QWORD ?
+          PerformanceCount UINT64 ?
           ButtonChangeType POINTER_BUTTON_CHANGE_TYPE ?
         POINTER_INFO ends
         tagPOINTER_INFO typedef POINTER_INFO
         TOUCH_FLAGS typedef UINT32
-        TOUCH_FLAG_NONE equ 00000000h; Default
-
+        TOUCH_FLAG_NONE equ 00000000h
         TOUCH_MASK typedef UINT32
-        TOUCH_MASK_NONE equ 00000000h; Default - none of the optional fields are valid
-
-        TOUCH_MASK_CONTACTAREA equ 00000001h; The rcContact field is valid
-
-        TOUCH_MASK_ORIENTATION equ 00000002h; The orientation field is valid
-
-        TOUCH_MASK_PRESSURE equ 00000004h; The pressure field is valid
-
+        TOUCH_MASK_NONE equ 00000000h
+        TOUCH_MASK_CONTACTAREA equ 00000001h
+        TOUCH_MASK_ORIENTATION equ 00000002h
+        TOUCH_MASK_PRESSURE equ 00000004h
         POINTER_TOUCH_INFO struct
           pointerInfo POINTER_INFO <>
           touchFlags TOUCH_FLAGS ?
           touchMask TOUCH_MASK ?
           rcContact RECT <>
           rcContactRaw RECT <>
-          orientation DWORD ?
-          pressure DWORD ?
+          orientation UINT32 ?
+          pressure UINT32 ?
         POINTER_TOUCH_INFO ends
         tagPOINTER_TOUCH_INFO typedef POINTER_TOUCH_INFO
         PEN_FLAGS typedef UINT32
-        PEN_FLAG_NONE equ 00000000h; Default
-
-        PEN_FLAG_BARREL equ 00000001h; The barrel button is pressed
-
-        PEN_FLAG_INVERTED equ 00000002h; The pen is inverted
-
-        PEN_FLAG_ERASER equ 00000004h; The eraser button is pressed
-
+        PEN_FLAG_NONE equ 00000000h
+        PEN_FLAG_BARREL equ 00000001h
+        PEN_FLAG_INVERTED equ 00000002h
+        PEN_FLAG_ERASER equ 00000004h
         PEN_MASK typedef UINT32
-        PEN_MASK_NONE equ 00000000h; Default - none of the optional fields are valid
-
-        PEN_MASK_PRESSURE equ 00000001h; The pressure field is valid
-
-        PEN_MASK_ROTATION equ 00000002h; The rotation field is valid
-
-        PEN_MASK_TILT_X equ 00000004h; The tiltX field is valid
-
-        PEN_MASK_TILT_Y equ 00000008h; The tiltY field is valid
-
+        PEN_MASK_NONE equ 00000000h
+        PEN_MASK_PRESSURE equ 00000001h
+        PEN_MASK_ROTATION equ 00000002h
+        PEN_MASK_TILT_X equ 00000004h
+        PEN_MASK_TILT_Y equ 00000008h
         POINTER_PEN_INFO struct
           pointerInfo POINTER_INFO <>
           penFlags PEN_FLAGS ?
           penMask PEN_MASK ?
-          pressure DWORD ?
-          rotation DWORD ?
-          tiltX SDWORD ?
-          tiltY SDWORD ?
+          pressure UINT32 ?
+          rotation UINT32 ?
+          tiltX INT32 ?
+          tiltY INT32 ?
         POINTER_PEN_INFO ends
         tagPOINTER_PEN_INFO typedef POINTER_PEN_INFO
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;*
-      ;* Flags that appear in pointer input message parameters
-      ;*
-      POINTER_MESSAGE_FLAG_NEW equ 00000001h; New pointer
-
-      POINTER_MESSAGE_FLAG_INRANGE equ 00000002h; Pointer has not departed
-
-      POINTER_MESSAGE_FLAG_INCONTACT equ 00000004h; Pointer is in contact
-
-      POINTER_MESSAGE_FLAG_FIRSTBUTTON equ 00000010h; Primary action
-
-      POINTER_MESSAGE_FLAG_SECONDBUTTON equ 00000020h; Secondary action
-
-      POINTER_MESSAGE_FLAG_THIRDBUTTON equ 00000040h; Third button
-
-      POINTER_MESSAGE_FLAG_FOURTHBUTTON equ 00000080h; Fourth button
-
-      POINTER_MESSAGE_FLAG_FIFTHBUTTON equ 00000100h; Fifth button
-
-      POINTER_MESSAGE_FLAG_PRIMARY equ 00002000h; Pointer is primary
-
-      POINTER_MESSAGE_FLAG_CONFIDENCE equ 00004000h; Pointer is considered unlikely to be accidental
-
-      POINTER_MESSAGE_FLAG_CANCELED equ 00008000h; Pointer is departing in an abnormal manner
-
-      ;*
-      ;* Macros to retrieve information from pointer input message parameters
-      ;*
+      POINTER_MESSAGE_FLAG_NEW equ 00000001h
+      POINTER_MESSAGE_FLAG_INRANGE equ 00000002h
+      POINTER_MESSAGE_FLAG_INCONTACT equ 00000004h
+      POINTER_MESSAGE_FLAG_FIRSTBUTTON equ 00000010h
+      POINTER_MESSAGE_FLAG_SECONDBUTTON equ 00000020h
+      POINTER_MESSAGE_FLAG_THIRDBUTTON equ 00000040h
+      POINTER_MESSAGE_FLAG_FOURTHBUTTON equ 00000080h
+      POINTER_MESSAGE_FLAG_FIFTHBUTTON equ 00000100h
+      POINTER_MESSAGE_FLAG_PRIMARY equ 00002000h
+      POINTER_MESSAGE_FLAG_CONFIDENCE equ 00004000h
+      POINTER_MESSAGE_FLAG_CANCELED equ 00008000h
       GET_POINTERID_WPARAM macro wParam
         exitm <(LOWORD(wParam))>
       endm
@@ -4404,9 +3476,6 @@ ifndef _WINUSER_
       IS_POINTER_CANCELED_WPARAM macro wParam
         exitm <IS_POINTER_FLAG_SET_WPARAM(wParam, POINTER_MESSAGE_FLAG_CANCELED)>
       endm
-      ;*
-      ;* WM_POINTERACTIVATE return codes
-      ;*
       PA_ACTIVATE equ <MA_ACTIVATE>
       PA_NOACTIVATE equ <MA_NOACTIVATE>
       MAX_TOUCH_COUNT equ 256
@@ -4415,26 +3484,23 @@ ifndef _WINUSER_
       TOUCH_FEEDBACK_NONE equ 3h
       POINTER_FEEDBACK_MODE typedef SDWORD
       POINTER_FEEDBACK_DEFAULT equ 1
-      ; The injected pointer input feedback may get suppressed by the end-user settings in the Pen and Touch control panel.
       POINTER_FEEDBACK_INDIRECT equ 2
-      ; The injected pointer input feedback overrides the end-user settings in the Pen and Touch control panel.
       POINTER_FEEDBACK_NONE equ 3
-      ; No touch visualizations.
 
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, InitializeTouchInjection, WIN_STD_CALL_CONV,, <:UINT32, :DWORD>, 8
         @DefProto DllImport, InjectTouchInput, WIN_STD_CALL_CONV,, <:UINT32, :ptr POINTER_TOUCH_INFO>, 8
         USAGE_PROPERTIES struct
-          level WORD ?
-          page_ WORD ?
-          usage WORD ?
-          logicalMinimum SDWORD ?
-          logicalMaximum SDWORD ?
-          unit WORD ?
-          exponent WORD ?
+          level USHORT ?
+          page_ USHORT ?
+          usage USHORT ?
+          logicalMinimum INT32 ?
+          logicalMaximum INT32 ?
+          unit USHORT ?
+          exponent USHORT ?
           count BYTE ?
-          physicalMinimum SDWORD ?
-          physicalMaximum SDWORD ?
+          physicalMinimum INT32 ?
+          physicalMaximum INT32 ?
         USAGE_PROPERTIES ends
         tagUSAGE_PROPERTIES typedef USAGE_PROPERTIES
         PUSAGE_PROPERTIES typedef ptr USAGE_PROPERTIES
@@ -4448,10 +3514,10 @@ ifndef _WINUSER_
         tagPOINTER_TYPE_INFO typedef POINTER_TYPE_INFO
         PPOINTER_TYPE_INFO typedef ptr POINTER_TYPE_INFO
         INPUT_INJECTION_VALUE struct
-          page_ WORD ?
-          usage WORD ?
-          value SDWORD ?
-          index WORD ?
+          page_ USHORT ?
+          usage USHORT ?
+          value INT32 ?
+          index USHORT ?
         INPUT_INJECTION_VALUE ends
         tagINPUT_INJECTION_VALUE typedef INPUT_INJECTION_VALUE
         PINPUT_INJECTION_VALUE typedef ptr INPUT_INJECTION_VALUE
@@ -4480,7 +3546,6 @@ ifndef _WINUSER_
           @DefProto DllImport, InjectSyntheticPointerInput, WIN_STD_CALL_CONV,, <:HSYNTHETICPOINTERDEVICE, :ptr POINTER_TYPE_INFO, :UINT32>, 12
           @DefProto DllImport, DestroySyntheticPointerDevice, WIN_STD_CALL_CONV,, <:HSYNTHETICPOINTERDEVICE>, 4
         endif
-        ; NTDDI_VERSION >= NTDDI_WIN10_RS5
         @DefProto DllImport, EnableMouseInPointer, WIN_STD_CALL_CONV,, <:BOOL>, 4
         @DefProto DllImport, IsMouseInPointerEnabled, WIN_STD_CALL_CONV,, <>, 0
         if WDK_NTDDI_VERSION ge NTDDI_WIN10_RS3
@@ -4496,15 +3561,12 @@ ifndef _WINUSER_
         TOUCH_HIT_TESTING_PROXIMITY_EVALUATION ends
         tagTOUCH_HIT_TESTING_PROXIMITY_EVALUATION typedef TOUCH_HIT_TESTING_PROXIMITY_EVALUATION
         PTOUCH_HIT_TESTING_PROXIMITY_EVALUATION typedef ptr TOUCH_HIT_TESTING_PROXIMITY_EVALUATION
-        ;*
-        ;* WM_TOUCHHITTESTING structure
-        ;*
         TOUCH_HIT_TESTING_INPUT struct
-          pointerId DWORD ?
+          pointerId UINT32 ?
           point POINT <>
           boundingBox RECT <>
           nonOccludedBoundingBox RECT <>
-          orientation DWORD ?
+          orientation UINT32 ?
         TOUCH_HIT_TESTING_INPUT ends
         tagTOUCH_HIT_TESTING_INPUT typedef TOUCH_HIT_TESTING_INPUT
         PTOUCH_HIT_TESTING_INPUT typedef ptr TOUCH_HIT_TESTING_INPUT
@@ -4531,13 +3593,10 @@ ifndef _WINUSER_
         GWFS_INCLUDE_ANCESTORS equ 00000001h
         @DefProto DllImport, GetWindowFeedbackSetting, WIN_STD_CALL_CONV,, <:HWND, :FEEDBACK_TYPE, :DWORD, :ptr UINT32, :ptr VOID>, 20
         @DefProto DllImport, SetWindowFeedbackSetting, WIN_STD_CALL_CONV,, <:HWND, :FEEDBACK_TYPE, :DWORD, :UINT32, :ptr VOID>, 20
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* WINVER >= 0x0602 *
     endif
     if (WINVER ge 0603h)
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-        ;Disable warning C4201:nameless struct/union
         if _MSC_VER ge 1200
         endif
         INPUT_TRANSFORM struct
@@ -4567,25 +3626,20 @@ ifndef _WINUSER_
         if _MSC_VER ge 1200
         endif
         @DefProto DllImport, GetPointerInputTransform, WIN_STD_CALL_CONV,, <:UINT32, :UINT32, :ptr INPUT_TRANSFORM>, 12
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* WINVER >= 0x0603 *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PC_APP)
       if (_WIN32_WINNT ge 0500h)
         LASTINPUTINFO struct
-          cbSize DWORD ?
+          cbSize UINT ?
           dwTime DWORD ?
         LASTINPUTINFO ends
         tagLASTINPUTINFO typedef LASTINPUTINFO
         PLASTINPUTINFO typedef ptr LASTINPUTINFO
         @DefProto DllImport, GetLastInputInfo, WIN_STD_CALL_CONV,, <:PLASTINPUTINFO>, 4
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_PC_APP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PC_APP)
       @DefProto DllImport, MapVirtualKeyA, WIN_STD_CALL_CONV,, <:UINT, :UINT>, 8
@@ -4595,7 +3649,6 @@ ifndef _WINUSER_
       else
         MapVirtualKey equ <MapVirtualKeyA>
       endif
-      ; !UNICODE
       if (WINVER ge 0400h)
         @DefProto DllImport, MapVirtualKeyExA, WIN_STD_CALL_CONV,, <:UINT, :UINT, :HKL>, 12
         @DefProto DllImport, MapVirtualKeyExW, WIN_STD_CALL_CONV,, <:UINT, :UINT, :HKL>, 12
@@ -4604,19 +3657,15 @@ ifndef _WINUSER_
         else
           MapVirtualKeyEx equ <MapVirtualKeyExA>
         endif
-        ; !UNICODE
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_PC_APP) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         MAPVK_VK_TO_VSC equ (0)
         MAPVK_VSC_TO_VK equ (1)
         MAPVK_VK_TO_CHAR equ (2)
         MAPVK_VSC_TO_VK_EX equ (3)
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0600h)
         MAPVK_VK_TO_VSC_EX equ (4)
-        ;* WINVER >= 0x0600 *
       endif
       @DefProto DllImport, GetInputState, WIN_STD_CALL_CONV,, <>, 0
       @DefProto DllImport, GetQueueStatus, WIN_STD_CALL_CONV,, <:UINT>, 4
@@ -4625,14 +3674,10 @@ ifndef _WINUSER_
       @DefProto DllImport, ReleaseCapture, WIN_STD_CALL_CONV,, <>, 0
       @DefProto DllImport, MsgWaitForMultipleObjects, WIN_STD_CALL_CONV,, <:DWORD, :ptr HANDLE, :BOOL, :DWORD, :DWORD>, 20
       @DefProto DllImport, MsgWaitForMultipleObjectsEx, WIN_STD_CALL_CONV,, <:DWORD, :ptr HANDLE, :DWORD, :DWORD, :DWORD>, 20
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     MWMO_WAITALL equ 0001h
     MWMO_ALERTABLE equ 0002h
     MWMO_INPUTAVAILABLE equ 0004h
-    ;*
-    ;* Queue status flags for GetQueueStatus() and MsgWaitForMultipleObjects()
-    ;*
     QS_KEY equ 0001h
     QS_MOUSEMOVE equ 0002h
     QS_MOUSEBUTTON equ 0004h
@@ -4644,12 +3689,10 @@ ifndef _WINUSER_
     QS_ALLPOSTMESSAGE equ 0100h
     if (_WIN32_WINNT ge 0501h)
       QS_RAWINPUT equ 0400h
-      ;* _WIN32_WINNT >= 0x0501 *
     endif
     if (_WIN32_WINNT ge 0602h)
       QS_TOUCH equ 0800h
       QS_POINTER equ 1000h
-      ;* _WIN32_WINNT >= 0x0602 *
     endif
     QS_MOUSE equ <(QS_MOUSEMOVE or QS_MOUSEBUTTON)>
     if (_WIN32_WINNT ge 602h)
@@ -4660,36 +3703,27 @@ ifndef _WINUSER_
       else
         QS_INPUT equ <(QS_MOUSE or QS_KEY)>
       endif
-      ; (_WIN32_WINNT >= 0x0501)
     endif
     QS_ALLEVENTS equ <(QS_INPUT or QS_POSTMESSAGE or QS_TIMER or QS_PAINT or QS_HOTKEY)>
     QS_ALLINPUT equ <(QS_INPUT or QS_POSTMESSAGE or QS_TIMER or QS_PAINT or QS_HOTKEY or QS_SENDMESSAGE)>
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       USER_TIMER_MAXIMUM equ 7FFFFFFFh
       USER_TIMER_MINIMUM equ 0000000Ah
-      ;*
-      ;* Windows Functions
-      ;*
       @DefProto DllImport, SetTimer, WIN_STD_CALL_CONV,, <:HWND, :UINT_PTR, :UINT, :TIMERPROC>, 16
       if (WINVER ge 0601h)
         TIMERV_DEFAULT_COALESCING equ (0)
         TIMERV_NO_COALESCING equ (0FFFFFFFFh)
         TIMERV_COALESCING_MIN equ (1)
         TIMERV_COALESCING_MAX equ (7FFFFFF5h)
-        ;* WINVER >= 0x0601 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       if (WINVER ge 0601h)
         @DefProto DllImport, SetCoalescableTimer, WIN_STD_CALL_CONV,, <:HWND, :UINT_PTR, :UINT, :TIMERPROC, :ULONG>, 20
-        ;* WINVER >= 0x0601 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, KillTimer, WIN_STD_CALL_CONV,, <:HWND, :UINT_PTR>, 8
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, IsWindowUnicode, WIN_STD_CALL_CONV,, <:HWND>, 4
@@ -4702,7 +3736,6 @@ ifndef _WINUSER_
       else
         LoadAccelerators equ <LoadAcceleratorsA>
       endif
-      ; !UNICODE
       @DefProto DllImport, CreateAcceleratorTableA, WIN_STD_CALL_CONV,, <:LPACCEL, :SDWORD>, 8
       @DefProto DllImport, CreateAcceleratorTableW, WIN_STD_CALL_CONV,, <:LPACCEL, :SDWORD>, 8
       ifdef UNICODE
@@ -4710,7 +3743,6 @@ ifndef _WINUSER_
       else
         CreateAcceleratorTable equ <CreateAcceleratorTableA>
       endif
-      ; !UNICODE
       @DefProto DllImport, DestroyAcceleratorTable, WIN_STD_CALL_CONV,, <:HACCEL>, 4
       @DefProto DllImport, CopyAcceleratorTableA, WIN_STD_CALL_CONV,, <:HACCEL, :LPACCEL, :SDWORD>, 12
       @DefProto DllImport, CopyAcceleratorTableW, WIN_STD_CALL_CONV,, <:HACCEL, :LPACCEL, :SDWORD>, 12
@@ -4719,7 +3751,6 @@ ifndef _WINUSER_
       else
         CopyAcceleratorTable equ <CopyAcceleratorTableA>
       endif
-      ; !UNICODE
       ifndef NOMSG
         @DefProto DllImport, TranslateAcceleratorA, WIN_STD_CALL_CONV,, <:HWND, :HACCEL, :LPMSG>, 12
         @DefProto DllImport, TranslateAcceleratorW, WIN_STD_CALL_CONV,, <:HWND, :HACCEL, :LPMSG>, 12
@@ -4728,15 +3759,9 @@ ifndef _WINUSER_
         else
           TranslateAccelerator equ <TranslateAcceleratorA>
         endif
-        ; !UNICODE
-        ;* !NOMSG *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     ifndef NOSYSMETRICS
-      ;*
-      ;* GetSystemMetrics() codes
-      ;*
       SM_CXSCREEN equ 0
       SM_CYSCREEN equ 1
       SM_CXVSCROLL equ 2
@@ -4782,13 +3807,9 @@ ifndef _WINUSER_
       SM_DBCSENABLED equ 42
       SM_CMOUSEBUTTONS equ 43
       if (WINVER ge 0400h)
-        ;* ;win40 name change *
         SM_CXFIXEDFRAME equ <SM_CXDLGFRAME>
-        ;* ;win40 name change *
         SM_CYFIXEDFRAME equ <SM_CYDLGFRAME>
-        ;* ;win40 name change *
         SM_CXSIZEFRAME equ <SM_CXFRAME>
-        ;* ;win40 name change *
         SM_CYSIZEFRAME equ <SM_CYFRAME>
         SM_SECURE equ 44
         SM_CXEDGE equ 45
@@ -4813,16 +3834,13 @@ ifndef _WINUSER_
         SM_CLEANBOOT equ 67
         SM_CXDRAG equ 68
         SM_CYDRAG equ 69
-        ;* WINVER >= 0x0400 *
       endif
       SM_SHOWSOUNDS equ 70
       if (WINVER ge 0400h)
-        ;* Use instead of GetMenuCheckMarkDimensions()! *
         SM_CXMENUCHECK equ 71
         SM_CYMENUCHECK equ 72
         SM_SLOWMACHINE equ 73
         SM_MIDEASTENABLED equ 74
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0500h) or (_WIN32_WINNT ge 0400h)
         SM_MOUSEWHEELPRESENT equ 75
@@ -4834,33 +3852,27 @@ ifndef _WINUSER_
         SM_CYVIRTUALSCREEN equ 79
         SM_CMONITORS equ 80
         SM_SAMEDISPLAYFORMAT equ 81
-        ;* WINVER >= 0x0500 *
       endif
       if (_WIN32_WINNT ge 0500h)
         SM_IMMENABLED equ 82
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
       if (_WIN32_WINNT ge 0501h)
         SM_CXFOCUSBORDER equ 83
         SM_CYFOCUSBORDER equ 84
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if (_WIN32_WINNT ge 0501h)
         SM_TABLETPC equ 86
         SM_MEDIACENTER equ 87
         SM_STARTER equ 88
         SM_SERVERR2 equ 89
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if (_WIN32_WINNT ge 0600h)
         SM_MOUSEHORIZONTALWHEELPRESENT equ 91
         SM_CXPADDEDBORDER equ 92
-        ;* _WIN32_WINNT >= 0x0600 *
       endif
       if (WINVER ge 0601h)
         SM_DIGITIZER equ 94
         SM_MAXIMUMTOUCHES equ 95
-        ;* WINVER >= 0x0601 *
       endif
       if (WINVER lt 0500h) and ( not Defined(_WIN32_WINNT) or (_WIN32_WINNT lt 0400h))
         SM_CMETRICS equ 76
@@ -4877,32 +3889,24 @@ ifndef _WINUSER_
         SM_REMOTESESSION equ 1000h
         if (_WIN32_WINNT ge 0501h)
           SM_SHUTTINGDOWN equ 2000h
-          ;* _WIN32_WINNT >= 0x0501 *
         endif
         if (WINVER ge 0501h)
           SM_REMOTECONTROL equ 2001h
-          ;* WINVER >= 0x0501 *
         endif
         if (WINVER ge 0501h)
           SM_CARETBLINKINGENABLED equ 2002h
-          ;* WINVER >= 0x0501 *
         endif
         if (WINVER ge 0602h)
           SM_CONVERTIBLESLATEMODE equ 2003h
           SM_SYSTEMDOCKED equ 2004h
-          ;* WINVER >= 0x0602 *
         endif
-        ;* WINVER >= 0x0500 *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, GetSystemMetrics, WIN_STD_CALL_CONV,, <:SDWORD>, 4
         if (WINVER ge 0605h)
           @DefProto DllImport, GetSystemMetricsForDpi, WIN_STD_CALL_CONV,, <:SDWORD, :UINT>, 8
-          ;* WINVER >= 0x0605 *
         endif
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* !NOSYSMETRICS *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       ifndef NOMENUS
@@ -4913,7 +3917,6 @@ ifndef _WINUSER_
         else
           LoadMenu equ <LoadMenuA>
         endif
-        ; !UNICODE
         @DefProto DllImport, LoadMenuIndirectA, WIN_STD_CALL_CONV,, <:ptr MENUTEMPLATEA>, 4
         @DefProto DllImport, LoadMenuIndirectW, WIN_STD_CALL_CONV,, <:ptr MENUTEMPLATEW>, 4
         ifdef UNICODE
@@ -4921,7 +3924,6 @@ ifndef _WINUSER_
         else
           LoadMenuIndirect equ <LoadMenuIndirectA>
         endif
-        ; !UNICODE
         @DefProto DllImport, GetMenu, WIN_STD_CALL_CONV,, <:HWND>, 4
         @DefProto DllImport, SetMenu, WIN_STD_CALL_CONV,, <:HWND, :HMENU>, 8
         @DefProto DllImport, ChangeMenuA, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :LPCSTR, :UINT, :UINT>, 20
@@ -4931,7 +3933,6 @@ ifndef _WINUSER_
         else
           ChangeMenu equ <ChangeMenuA>
         endif
-        ; !UNICODE
         @DefProto DllImport, HiliteMenuItem, WIN_STD_CALL_CONV,, <:HWND, :HMENU, :UINT, :UINT>, 16
         @DefProto DllImport, GetMenuStringA, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :LPSTR, :SDWORD, :UINT>, 20
         @DefProto DllImport, GetMenuStringW, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :LPWSTR, :SDWORD, :UINT>, 20
@@ -4940,12 +3941,10 @@ ifndef _WINUSER_
         else
           GetMenuString equ <GetMenuStringA>
         endif
-        ; !UNICODE
         @DefProto DllImport, GetMenuState, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :UINT>, 12
         @DefProto DllImport, DrawMenuBar, WIN_STD_CALL_CONV,, <:HWND>, 4
         if (_WIN32_WINNT ge 0501h)
           PMB_ACTIVE equ 00000001h
-          ;* _WIN32_WINNT >= 0x0501 *
         endif
         @DefProto DllImport, GetSystemMenu, WIN_STD_CALL_CONV,, <:HWND, :BOOL>, 8
         @DefProto DllImport, CreateMenu, WIN_STD_CALL_CONV,, <>, 0
@@ -4963,7 +3962,6 @@ ifndef _WINUSER_
         else
           InsertMenu equ <InsertMenuA>
         endif
-        ; !UNICODE
         @DefProto DllImport, AppendMenuA, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :UINT_PTR, :LPCSTR>, 16
         @DefProto DllImport, AppendMenuW, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :UINT_PTR, :LPCWSTR>, 16
         ifdef UNICODE
@@ -4971,7 +3969,6 @@ ifndef _WINUSER_
         else
           AppendMenu equ <AppendMenuA>
         endif
-        ; !UNICODE
         @DefProto DllImport, ModifyMenuA, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :UINT, :UINT_PTR, :LPCSTR>, 20
         @DefProto DllImport, ModifyMenuW, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :UINT, :UINT_PTR, :LPCWSTR>, 20
         ifdef UNICODE
@@ -4979,33 +3976,26 @@ ifndef _WINUSER_
         else
           ModifyMenu equ <ModifyMenuA>
         endif
-        ; !UNICODE
         @DefProto DllImport, RemoveMenu, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :UINT>, 12
         @DefProto DllImport, DeleteMenu, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :UINT>, 12
         @DefProto DllImport, SetMenuItemBitmaps, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :UINT, :HBITMAP, :HBITMAP>, 20
         @DefProto DllImport, GetMenuCheckMarkDimensions, WIN_STD_CALL_CONV,, <>, 0
         @DefProto DllImport, TrackPopupMenu, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :SDWORD, :SDWORD, :SDWORD, :HWND, :ptr RECT>, 28
         if (WINVER ge 0400h)
-          ;* return codes for WM_MENUCHAR *
           MNC_IGNORE equ 0
           MNC_CLOSE equ 1
           MNC_EXECUTE equ 2
           MNC_SELECT equ 3
           TPMPARAMS struct
-            cbSize DWORD ?
-            ;* Size of structure *
+            cbSize UINT ?
             rcExclude RECT <>
-            ;* Screen coordinates of rectangle to exclude when positioning *
           TPMPARAMS ends
           tagTPMPARAMS typedef TPMPARAMS
           LPTPMPARAMS typedef ptr TPMPARAMS
           @DefProto DllImport, TrackPopupMenuEx, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :SDWORD, :SDWORD, :HWND, :LPTPMPARAMS>, 24
-          ;* WINVER >= 0x0400 *
         endif
         if (_WIN32_WINNT ge 0601h)
           @DefProto DllImport, CalculatePopupWindowPosition, WIN_STD_CALL_CONV,, <:ptr POINT, :ptr SIZE_, :UINT, :ptr RECT, :ptr RECT>, 20
-          ;* TPM_XXX values *
-          ;* _WIN32_WINNT >= 0x0601 *
         endif
         if (WINVER ge 0500h)
           MNS_NOCHECK equ 80000000h
@@ -5024,10 +4014,10 @@ ifndef _WINUSER_
             cbSize DWORD ?
             fMask DWORD ?
             dwStyle DWORD ?
-            cyMax DWORD ?
+            cyMax UINT ?
             hbrBack HBRUSH ?
             dwContextHelpID DWORD ?
-            dwMenuData XWORD ?
+            dwMenuData ULONG_PTR ?
           MENUINFO ends
           tagMENUINFO typedef MENUINFO
           LPMENUINFO typedef ptr MENUINFO
@@ -5035,31 +4025,21 @@ ifndef _WINUSER_
           @DefProto DllImport, GetMenuInfo, WIN_STD_CALL_CONV,, <:HMENU, :LPMENUINFO>, 8
           @DefProto DllImport, SetMenuInfo, WIN_STD_CALL_CONV,, <:HMENU, :LPCMENUINFO>, 8
           @DefProto DllImport, EndMenu, WIN_STD_CALL_CONV,, <>, 0
-          ;*
-          ;* WM_MENUDRAG return values.
-          ;*
           MND_CONTINUE equ 0
           MND_ENDMENU equ 1
           MENUGETOBJECTINFO struct
             dwFlags DWORD ?
-            uPos DWORD ?
+            uPos UINT ?
             hmenu HMENU ?
-            riid POINTER ?
-            pvObj POINTER ?
+            riid PVOID ?
+            pvObj PVOID ?
           MENUGETOBJECTINFO ends
           tagMENUGETOBJECTINFO typedef MENUGETOBJECTINFO
           PMENUGETOBJECTINFO typedef ptr MENUGETOBJECTINFO
-          ;*
-          ;* MENUGETOBJECTINFO dwFlags values
-          ;*
           MNGOF_TOPGAP equ 00000001h
           MNGOF_BOTTOMGAP equ 00000002h
-          ;*
-          ;* WM_MENUGETOBJECT return values
-          ;*
           MNGO_NOINTERFACE equ 00000000h
           MNGO_NOERROR equ 00000001h
-          ;* WINVER >= 0x0500 *
         endif
         if (WINVER ge 0400h)
           MIIM_STATE equ 00000001h
@@ -5068,7 +4048,6 @@ ifndef _WINUSER_
           MIIM_CHECKMARKS equ 00000008h
           MIIM_TYPE equ 00000010h
           MIIM_DATA equ 00000020h
-          ;* WINVER >= 0x0400 *
         endif
         if (WINVER ge 0500h)
           MIIM_STRING equ 00000040h
@@ -5085,63 +4064,40 @@ ifndef _WINUSER_
           HBMMENU_POPUP_RESTORE equ (9)
           HBMMENU_POPUP_MAXIMIZE equ (10)
           HBMMENU_POPUP_MINIMIZE equ (11)
-          ;* WINVER >= 0x0500 *
         endif
         if (WINVER ge 0400h)
           MENUITEMINFOA struct
-            cbSize DWORD ?
-            fMask DWORD ?
-            fType DWORD ?
-            ; used if MIIM_TYPE (4.0) or MIIM_FTYPE (>4.0)
-            fState DWORD ?
-            ; used if MIIM_STATE
-            wID DWORD ?
-            ; used if MIIM_ID
+            cbSize UINT ?
+            fMask UINT ?
+            fType UINT ?
+            fState UINT ?
+            wID UINT ?
             hSubMenu HMENU ?
-            ; used if MIIM_SUBMENU
             hbmpChecked HBITMAP ?
-            ; used if MIIM_CHECKMARKS
             hbmpUnchecked HBITMAP ?
-            ; used if MIIM_CHECKMARKS
-            dwItemData XWORD ?
-            ; used if MIIM_DATA
-            dwTypeData POINTER ?
-            ; used if MIIM_TYPE (4.0) or MIIM_STRING (>4.0)
-            cch DWORD ?
-            ; used if MIIM_TYPE (4.0) or MIIM_STRING (>4.0)
+            dwItemData ULONG_PTR ?
+            dwTypeData LPSTR ?
+            cch UINT ?
             if (WINVER ge 0500h)
               hbmpItem HBITMAP ?
-              ; used if MIIM_BITMAP
-              ;* WINVER >= 0x0500 *
             endif
           MENUITEMINFOA ends
           tagMENUITEMINFOA typedef MENUITEMINFOA
           LPMENUITEMINFOA typedef ptr MENUITEMINFOA
           MENUITEMINFOW struct
-            cbSize DWORD ?
-            fMask DWORD ?
-            fType DWORD ?
-            ; used if MIIM_TYPE (4.0) or MIIM_FTYPE (>4.0)
-            fState DWORD ?
-            ; used if MIIM_STATE
-            wID DWORD ?
-            ; used if MIIM_ID
+            cbSize UINT ?
+            fMask UINT ?
+            fType UINT ?
+            fState UINT ?
+            wID UINT ?
             hSubMenu HMENU ?
-            ; used if MIIM_SUBMENU
             hbmpChecked HBITMAP ?
-            ; used if MIIM_CHECKMARKS
             hbmpUnchecked HBITMAP ?
-            ; used if MIIM_CHECKMARKS
-            dwItemData XWORD ?
-            ; used if MIIM_DATA
-            dwTypeData POINTER ?
-            ; used if MIIM_TYPE (4.0) or MIIM_STRING (>4.0)
-            cch DWORD ?
-            ; used if MIIM_TYPE (4.0) or MIIM_STRING (>4.0)
+            dwItemData ULONG_PTR ?
+            dwTypeData LPWSTR ?
+            cch UINT ?
             if (WINVER ge 0500h)
               hbmpItem HBITMAP ?
-              ; used if MIIM_BITMAP
-              ;* WINVER >= 0x0500 *
             endif
           MENUITEMINFOW ends
           tagMENUITEMINFOW typedef MENUITEMINFOW
@@ -5153,7 +4109,6 @@ ifndef _WINUSER_
             MENUITEMINFO typedef MENUITEMINFOA
             LPMENUITEMINFO typedef LPMENUITEMINFOA
           endif
-          ; UNICODE
           LPCMENUITEMINFOA typedef ptr MENUITEMINFOA
           LPCMENUITEMINFOW typedef ptr MENUITEMINFOW
           ifdef UNICODE
@@ -5161,7 +4116,6 @@ ifndef _WINUSER_
           else
             LPCMENUITEMINFO typedef LPCMENUITEMINFOA
           endif
-          ; UNICODE
           @DefProto DllImport, InsertMenuItemA, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :BOOL, :LPCMENUITEMINFOA>, 16
           @DefProto DllImport, InsertMenuItemW, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :BOOL, :LPCMENUITEMINFOW>, 16
           ifdef UNICODE
@@ -5169,7 +4123,6 @@ ifndef _WINUSER_
           else
             InsertMenuItem equ <InsertMenuItemA>
           endif
-          ; !UNICODE
           @DefProto DllImport, GetMenuItemInfoA, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :BOOL, :LPMENUITEMINFOA>, 16
           @DefProto DllImport, GetMenuItemInfoW, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :BOOL, :LPMENUITEMINFOW>, 16
           ifdef UNICODE
@@ -5177,7 +4130,6 @@ ifndef _WINUSER_
           else
             GetMenuItemInfo equ <GetMenuItemInfoA>
           endif
-          ; !UNICODE
           @DefProto DllImport, SetMenuItemInfoA, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :BOOL, :LPCMENUITEMINFOA>, 16
           @DefProto DllImport, SetMenuItemInfoW, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :BOOL, :LPCMENUITEMINFOW>, 16
           ifdef UNICODE
@@ -5185,18 +4137,13 @@ ifndef _WINUSER_
           else
             SetMenuItemInfo equ <SetMenuItemInfoA>
           endif
-          ; !UNICODE
           GMDI_USEDISABLED equ 0001h
           GMDI_GOINTOPOPUPS equ 0002h
           @DefProto DllImport, GetMenuDefaultItem, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :UINT>, 12
           @DefProto DllImport, SetMenuDefaultItem, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :UINT>, 12
           @DefProto DllImport, GetMenuItemRect, WIN_STD_CALL_CONV,, <:HWND, :HMENU, :UINT, :LPRECT>, 16
           @DefProto DllImport, MenuItemFromPoint, WIN_STD_CALL_CONV,, <:HWND, :HMENU, :POINT>, 12
-          ;* WINVER >= 0x0400 *
         endif
-        ;*
-        ;* Flags for TrackPopupMenu
-        ;*
         TPM_LEFTBUTTON equ 0000h
         TPM_RIGHTBUTTON equ 0002h
         TPM_LEFTALIGN equ 0000h
@@ -5206,14 +4153,10 @@ ifndef _WINUSER_
           TPM_TOPALIGN equ 0000h
           TPM_VCENTERALIGN equ 0010h
           TPM_BOTTOMALIGN equ 0020h
-          ;* Horz alignment matters more *
           TPM_HORIZONTAL equ 0000h
-          ;* Vert alignment matters more *
           TPM_VERTICAL equ 0040h
-          ;* Don't send any notification msgs *
           TPM_NONOTIFY equ 0080h
           TPM_RETURNCMD equ 0100h
-          ;* WINVER >= 0x0400 *
         endif
         if (WINVER ge 0500h)
           TPM_RECURSE equ 0001h
@@ -5223,41 +4166,31 @@ ifndef _WINUSER_
           TPM_VERNEGANIMATION equ 2000h
           if (_WIN32_WINNT ge 0500h)
             TPM_NOANIMATION equ 4000h
-            ;* _WIN32_WINNT >= 0x0500 *
           endif
           if (_WIN32_WINNT ge 0501h)
             TPM_LAYOUTRTL equ 8000h
-            ;* _WIN32_WINNT >= 0x0501 *
           endif
-          ;* WINVER >= 0x0500 *
         endif
         if (_WIN32_WINNT ge 0601h)
           TPM_WORKAREA equ 10000h
-          ;* _WIN32_WINNT >= 0x0601 *
         endif
-        ;* !NOMENUS *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if (WINVER ge 0400h)
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-        ; Drag-and-drop support
-        ; Obsolete - use OLE instead
         DROPSTRUCT struct
           hwndSource HWND ?
           hwndSink HWND ?
           wFmt DWORD ?
-          dwData XWORD ?
+          dwData ULONG_PTR ?
           ptDrop POINT <>
           dwControlData DWORD ?
         DROPSTRUCT ends
         tagDROPSTRUCT typedef DROPSTRUCT
         PDROPSTRUCT typedef ptr DROPSTRUCT
         LPDROPSTRUCT typedef ptr DROPSTRUCT
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      DOF_EXECUTABLE equ 8001h; wFmt flags
-
+      DOF_EXECUTABLE equ 8001h
       DOF_DOCUMENT equ 8002h
       DOF_DIRECTORY equ 8003h
       DOF_MULTIPLE equ 8004h
@@ -5268,18 +4201,12 @@ ifndef _WINUSER_
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, DragObject, WIN_STD_CALL_CONV,, <:HWND, :HWND, :UINT, :ULONG_PTR, :HCURSOR>, 20
         @DefProto DllImport, DragDetect, WIN_STD_CALL_CONV,, <:HWND, :POINT>, 8
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* WINVER >= 0x0400 *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, DrawIcon, WIN_STD_CALL_CONV,, <:HDC, :SDWORD, :SDWORD, :HICON>, 16
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     ifndef NODRAWTEXT
-      ;*
-      ;* DrawText() Format Flags
-      ;*
       DT_TOP equ 00000000h
       DT_LEFT equ 00000000h
       DT_CENTER equ 00000001h
@@ -5307,23 +4234,19 @@ ifndef _WINUSER_
           if (_WIN32_WINNT ge 0500h)
             DT_HIDEPREFIX equ 00100000h
             DT_PREFIXONLY equ 00200000h
-            ;* _WIN32_WINNT >= 0x0500 *
           endif
-          ;* WINVER >= 0x0500 *
         endif
         if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
           DRAWTEXTPARAMS struct
-            cbSize DWORD ?
+            cbSize UINT ?
             iTabLength SDWORD ?
             iLeftMargin SDWORD ?
             iRightMargin SDWORD ?
-            uiLengthDrawn DWORD ?
+            uiLengthDrawn UINT ?
           DRAWTEXTPARAMS ends
           tagDRAWTEXTPARAMS typedef DRAWTEXTPARAMS
           LPDRAWTEXTPARAMS typedef ptr DRAWTEXTPARAMS
-          ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
         endif
-        ;* WINVER >= 0x0400 *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         _In_bypassable_reads_or_z_ macro size_
@@ -5339,7 +4262,6 @@ ifndef _WINUSER_
         else
           DrawText equ <DrawTextA>
         endif
-        ; !UNICODE
         if Defined(_M_CEE)
           ;[...]
         endif
@@ -5351,12 +4273,8 @@ ifndef _WINUSER_
           else
             DrawTextEx equ <DrawTextExA>
           endif
-          ; !UNICODE
-          ;* WINVER >= 0x0400 *
         endif
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* !NODRAWTEXT *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, GrayStringA, WIN_STD_CALL_CONV,, <:HDC, :HBRUSH, :GRAYSTRINGPROC, :LPARAM, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD>, 36
@@ -5366,27 +4284,20 @@ ifndef _WINUSER_
       else
         GrayString equ <GrayStringA>
       endif
-      ; !UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if (WINVER ge 0400h)
-      ;* Monolithic state-drawing routine *
-      ;* Image type *
       DST_COMPLEX equ 0000h
       DST_TEXT equ 0001h
       DST_PREFIXTEXT equ 0002h
       DST_ICON equ 0003h
       DST_BITMAP equ 0004h
-      ;* State type *
       DSS_NORMAL equ 0000h
-      ;* Gray string appearance *
       DSS_UNION equ 0010h
       DSS_DISABLED equ 0020h
       DSS_MONO equ 0080h
       if (_WIN32_WINNT ge 0500h)
         DSS_HIDEPREFIX equ 0200h
         DSS_PREFIXONLY equ 0400h
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
       DSS_RIGHT equ 8000h
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -5397,10 +4308,7 @@ ifndef _WINUSER_
         else
           DrawState equ <DrawStateA>
         endif
-        ; !UNICODE
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* WINVER >= 0x0400 *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, TabbedTextOutA, WIN_STD_CALL_CONV,, <:HDC, :SDWORD, :SDWORD, :LPCSTR, :SDWORD, :SDWORD, :ptr INT_, :SDWORD>, 32
@@ -5410,7 +4318,6 @@ ifndef _WINUSER_
       else
         TabbedTextOut equ <TabbedTextOutA>
       endif
-      ; !UNICODE
       @DefProto DllImport, GetTabbedTextExtentA, WIN_STD_CALL_CONV,, <:HDC, :LPCSTR, :SDWORD, :SDWORD, :ptr INT_>, 20
       @DefProto DllImport, GetTabbedTextExtentW, WIN_STD_CALL_CONV,, <:HDC, :LPCWSTR, :SDWORD, :SDWORD, :ptr INT_>, 20
       ifdef UNICODE
@@ -5418,14 +4325,12 @@ ifndef _WINUSER_
       else
         GetTabbedTextExtent equ <GetTabbedTextExtentA>
       endif
-      ; !UNICODE
       @DefProto DllImport, UpdateWindow, WIN_STD_CALL_CONV,, <:HWND>, 4
       @DefProto DllImport, SetActiveWindow, WIN_STD_CALL_CONV,, <:HWND>, 4
       @DefProto DllImport, GetForegroundWindow, WIN_STD_CALL_CONV,, <>, 0
       if (WINVER ge 0400h)
         @DefProto DllImport, PaintDesktop, WIN_STD_CALL_CONV,, <:HDC>, 4
         @DefProto DllImport, SwitchToThisWindow, WIN_STD_CALL_CONV,, <:HWND, :BOOL>, 8
-        ;* WINVER >= 0x0400 *
       endif
       @DefProto DllImport, SetForegroundWindow, WIN_STD_CALL_CONV,, <:HWND>, 4
       if (_WIN32_WINNT ge 0500h)
@@ -5434,16 +4339,11 @@ ifndef _WINUSER_
         @DefProto DllImport, LockSetForegroundWindow, WIN_STD_CALL_CONV,, <:UINT>, 4
         LSFW_LOCK equ 1
         LSFW_UNLOCK equ 2
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
       @DefProto DllImport, WindowFromDC, WIN_STD_CALL_CONV,, <:HDC>, 4
       @DefProto DllImport, GetDC, WIN_STD_CALL_CONV,, <:HWND>, 4
       @DefProto DllImport, GetDCEx, WIN_STD_CALL_CONV,, <:HWND, :HRGN, :DWORD>, 12
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;*
-    ;* GetDCEx() flags
-    ;*
     DCX_WINDOW equ 00000001h
     DCX_CACHE equ 00000002h
     DCX_NORESETATTRS equ 00000004h
@@ -5464,13 +4364,11 @@ ifndef _WINUSER_
       @DefProto DllImport, GetUpdateRect, WIN_STD_CALL_CONV,, <:HWND, :LPRECT, :BOOL>, 12
       @DefProto DllImport, GetUpdateRgn, WIN_STD_CALL_CONV,, <:HWND, :HRGN, :BOOL>, 12
       @DefProto DllImport, SetWindowRgn, WIN_STD_CALL_CONV,, <:HWND, :HRGN, :BOOL>, 12
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, GetWindowRgn, WIN_STD_CALL_CONV,, <:HWND, :HRGN>, 8
       if (_WIN32_WINNT ge 0501h)
         @DefProto DllImport, GetWindowRgnBox, WIN_STD_CALL_CONV,, <:HWND, :LPRECT>, 8
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       @DefProto DllImport, ExcludeUpdateRgn, WIN_STD_CALL_CONV,, <:HDC, :HWND>, 8
       @DefProto DllImport, InvalidateRect, WIN_STD_CALL_CONV,, <:HWND, :ptr RECT, :BOOL>, 12
@@ -5478,11 +4376,7 @@ ifndef _WINUSER_
       @DefProto DllImport, InvalidateRgn, WIN_STD_CALL_CONV,, <:HWND, :HRGN, :BOOL>, 12
       @DefProto DllImport, ValidateRgn, WIN_STD_CALL_CONV,, <:HWND, :HRGN>, 8
       @DefProto DllImport, RedrawWindow, WIN_STD_CALL_CONV,, <:HWND, :ptr RECT, :HRGN, :UINT>, 16
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;*
-    ;* RedrawWindow() flags
-    ;*
     RDW_INVALIDATE equ 0001h
     RDW_INTERNALPAINT equ 0002h
     RDW_ERASE equ 0004h
@@ -5496,25 +4390,16 @@ ifndef _WINUSER_
     RDW_FRAME equ 0400h
     RDW_NOFRAME equ 0800h
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-      ;*
-      ;* LockWindowUpdate API
-      ;*
       @DefProto DllImport, LockWindowUpdate, WIN_STD_CALL_CONV,, <:HWND>, 4
       @DefProto DllImport, ScrollWindow, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :SDWORD, :ptr RECT, :ptr RECT>, 20
       @DefProto DllImport, ScrollDC, WIN_STD_CALL_CONV,, <:HDC, :SDWORD, :SDWORD, :ptr RECT, :ptr RECT, :HRGN, :LPRECT>, 28
       @DefProto DllImport, ScrollWindowEx, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :SDWORD, :ptr RECT, :ptr RECT, :HRGN, :LPRECT, :UINT>, 32
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;* Scroll children within *lprcScroll. *
     SW_SCROLLCHILDREN equ 0001h
-    ;* Invalidate after scrolling *
     SW_INVALIDATE equ 0002h
-    ;* If SW_INVALIDATE, don't send WM_ERASEBACKGROUND *
     SW_ERASE equ 0004h
     if (WINVER ge 0500h)
-      ;* Use smooth scrolling *
       SW_SMOOTHSCROLL equ 0010h
-      ;* WINVER >= 0x0500 *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       ifndef NOSCROLL
@@ -5524,9 +4409,6 @@ ifndef _WINUSER_
         @DefProto DllImport, GetScrollRange, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :LPINT, :LPINT>, 16
         @DefProto DllImport, ShowScrollBar, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :BOOL>, 12
         @DefProto DllImport, EnableScrollBar, WIN_STD_CALL_CONV,, <:HWND, :UINT, :UINT>, 12
-        ;*
-        ;* EnableScrollBar() flags
-        ;*
         ESB_ENABLE_BOTH equ 0000h
         ESB_DISABLE_BOTH equ 0003h
         ESB_DISABLE_LEFT equ 0001h
@@ -5535,7 +4417,6 @@ ifndef _WINUSER_
         ESB_DISABLE_DOWN equ 0002h
         ESB_DISABLE_LTUP equ <ESB_DISABLE_LEFT>
         ESB_DISABLE_RTDN equ <ESB_DISABLE_RIGHT>
-        ;* !NOSCROLL *
       endif
       @DefProto DllImport, SetPropA, WIN_STD_CALL_CONV,, <:HWND, :LPCSTR, :HANDLE>, 12
       @DefProto DllImport, SetPropW, WIN_STD_CALL_CONV,, <:HWND, :LPCWSTR, :HANDLE>, 12
@@ -5544,7 +4425,6 @@ ifndef _WINUSER_
       else
         SetProp equ <SetPropA>
       endif
-      ; !UNICODE
       @DefProto DllImport, GetPropA, WIN_STD_CALL_CONV,, <:HWND, :LPCSTR>, 8
       @DefProto DllImport, GetPropW, WIN_STD_CALL_CONV,, <:HWND, :LPCWSTR>, 8
       ifdef UNICODE
@@ -5552,7 +4432,6 @@ ifndef _WINUSER_
       else
         GetProp equ <GetPropA>
       endif
-      ; !UNICODE
       @DefProto DllImport, RemovePropA, WIN_STD_CALL_CONV,, <:HWND, :LPCSTR>, 8
       @DefProto DllImport, RemovePropW, WIN_STD_CALL_CONV,, <:HWND, :LPCWSTR>, 8
       ifdef UNICODE
@@ -5560,7 +4439,6 @@ ifndef _WINUSER_
       else
         RemoveProp equ <RemovePropA>
       endif
-      ; !UNICODE
       @DefProto DllImport, EnumPropsExA, WIN_STD_CALL_CONV,, <:HWND, :PROPENUMPROCEXA, :LPARAM>, 12
       @DefProto DllImport, EnumPropsExW, WIN_STD_CALL_CONV,, <:HWND, :PROPENUMPROCEXW, :LPARAM>, 12
       ifdef UNICODE
@@ -5568,7 +4446,6 @@ ifndef _WINUSER_
       else
         EnumPropsEx equ <EnumPropsExA>
       endif
-      ; !UNICODE
       @DefProto DllImport, EnumPropsA, WIN_STD_CALL_CONV,, <:HWND, :PROPENUMPROCA>, 8
       @DefProto DllImport, EnumPropsW, WIN_STD_CALL_CONV,, <:HWND, :PROPENUMPROCW>, 8
       ifdef UNICODE
@@ -5576,7 +4453,6 @@ ifndef _WINUSER_
       else
         EnumProps equ <EnumPropsA>
       endif
-      ; !UNICODE
       @DefProto DllImport, SetWindowTextA, WIN_STD_CALL_CONV,, <:HWND, :LPCSTR>, 8
       @DefProto DllImport, SetWindowTextW, WIN_STD_CALL_CONV,, <:HWND, :LPCWSTR>, 8
       ifdef UNICODE
@@ -5584,7 +4460,6 @@ ifndef _WINUSER_
       else
         SetWindowText equ <SetWindowTextA>
       endif
-      ; !UNICODE
       @DefProto DllImport, GetWindowTextA, WIN_STD_CALL_CONV,, <:HWND, :LPSTR, :SDWORD>, 12
       @DefProto DllImport, GetWindowTextW, WIN_STD_CALL_CONV,, <:HWND, :LPWSTR, :SDWORD>, 12
       ifdef UNICODE
@@ -5592,7 +4467,6 @@ ifndef _WINUSER_
       else
         GetWindowText equ <GetWindowTextA>
       endif
-      ; !UNICODE
       @DefProto DllImport, GetWindowTextLengthA, WIN_STD_CALL_CONV,, <:HWND>, 4
       @DefProto DllImport, GetWindowTextLengthW, WIN_STD_CALL_CONV,, <:HWND>, 4
       ifdef UNICODE
@@ -5600,47 +4474,33 @@ ifndef _WINUSER_
       else
         GetWindowTextLength equ <GetWindowTextLengthA>
       endif
-      ; !UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, GetClientRect, WIN_STD_CALL_CONV,, <:HWND, :LPRECT>, 8
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, GetWindowRect, WIN_STD_CALL_CONV,, <:HWND, :LPRECT>, 8
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, AdjustWindowRect, WIN_STD_CALL_CONV,, <:LPRECT, :DWORD, :BOOL>, 12
       @DefProto DllImport, AdjustWindowRectEx, WIN_STD_CALL_CONV,, <:LPRECT, :DWORD, :BOOL, :DWORD>, 16
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       if (WINVER ge 0605h)
         @DefProto DllImport, AdjustWindowRectExForDpi, WIN_STD_CALL_CONV,, <:LPRECT, :DWORD, :BOOL, :DWORD, :UINT>, 20
-        ;* WINVER >= 0x0605 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if (WINVER ge 0400h)
       HELPINFO_WINDOW equ 0001h
       HELPINFO_MENUITEM equ 0002h
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-        ;* Structure pointed to by lParam of WM_HELP *
         HELPINFO struct
-          cbSize DWORD ?
-          ;* Size in bytes of this struct  *
+          cbSize UINT ?
           iContextType SDWORD ?
-          ;* Either HELPINFO_WINDOW or HELPINFO_MENUITEM *
           iCtrlId SDWORD ?
-          ;* Control Id or a Menu item Id. *
           hItemHandle HANDLE ?
-          ;* hWnd of control or hMenu.     *
-          dwContextId XWORD ?
-          ;* Context Id associated with this item *
+          dwContextId DWORD_PTR ?
           MousePos POINT <>
-          ;* Mouse Position in screen co-ordinates *
         HELPINFO ends
         tagHELPINFO typedef HELPINFO
         LPHELPINFO typedef ptr HELPINFO
@@ -5648,14 +4508,9 @@ ifndef _WINUSER_
         @DefProto DllImport, GetWindowContextHelpId, WIN_STD_CALL_CONV,, <:HWND>, 4
         @DefProto DllImport, SetMenuContextHelpId, WIN_STD_CALL_CONV,, <:HMENU, :DWORD>, 8
         @DefProto DllImport, GetMenuContextHelpId, WIN_STD_CALL_CONV,, <:HMENU>, 4
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* WINVER >= 0x0400 *
     endif
     ifndef NOMB
-      ;*
-      ;* MessageBox() Flags
-      ;*
       MB_OK equ 00000000h
       MB_OKCANCEL equ 00000001h
       MB_ABORTRETRYIGNORE equ 00000002h
@@ -5664,7 +4519,6 @@ ifndef _WINUSER_
       MB_RETRYCANCEL equ 00000005h
       if (WINVER ge 0500h)
         MB_CANCELTRYCONTINUE equ 00000006h
-        ;* WINVER >= 0x0500 *
       endif
       MB_ICONHAND equ 00000010h
       MB_ICONQUESTION equ 00000020h
@@ -5674,7 +4528,6 @@ ifndef _WINUSER_
         MB_USERICON equ 00000080h
         MB_ICONWARNING equ <MB_ICONEXCLAMATION>
         MB_ICONERROR equ <MB_ICONHAND>
-        ;* WINVER >= 0x0400 *
       endif
       MB_ICONINFORMATION equ <MB_ICONASTERISK>
       MB_ICONSTOP equ <MB_ICONHAND>
@@ -5683,15 +4536,12 @@ ifndef _WINUSER_
       MB_DEFBUTTON3 equ 00000200h
       if (WINVER ge 0400h)
         MB_DEFBUTTON4 equ 00000300h
-        ;* WINVER >= 0x0400 *
       endif
       MB_APPLMODAL equ 00000000h
       MB_SYSTEMMODAL equ 00001000h
       MB_TASKMODAL equ 00002000h
       if (WINVER ge 0400h)
-        MB_HELP equ 00004000h; Help Button
-
-        ;* WINVER >= 0x0400 *
+        MB_HELP equ 00004000h
       endif
       MB_NOFOCUS equ 00008000h
       MB_SETFOREGROUND equ 00010000h
@@ -5700,7 +4550,6 @@ ifndef _WINUSER_
         MB_TOPMOST equ 00040000h
         MB_RIGHT equ 00080000h
         MB_RTLREADING equ 00100000h
-        ;* WINVER >= 0x0400 *
       endif
       ifdef _WIN32_WINNT
         if (_WIN32_WINNT ge 0400h)
@@ -5723,7 +4572,6 @@ ifndef _WINUSER_
         else
           MessageBox equ <MessageBoxA>
         endif
-        ; !UNICODE
         if Defined(_M_CEE)
           ;[...]
         endif
@@ -5734,20 +4582,19 @@ ifndef _WINUSER_
         else
           MessageBoxEx equ <MessageBoxExA>
         endif
-        ; !UNICODE
         if (WINVER ge 0400h)
           TYPE_MSGBOXCALLBACK typedef proto WIN_STD_CALL_CONV :LPHELPINFO
           MSGBOXCALLBACK typedef ptr TYPE_MSGBOXCALLBACK
 
           MSGBOXPARAMSA struct
-            cbSize DWORD ?
+            cbSize UINT ?
             hwndOwner HWND ?
             hInstance HINSTANCE ?
-            lpszText =POINTER ?
-            lpszCaption =POINTER ?
+            lpszText LPCSTR ?
+            lpszCaption LPCSTR ?
             dwStyle DWORD ?
-            lpszIcon =POINTER ?
-            dwContextHelpId XWORD ?
+            lpszIcon LPCSTR ?
+            dwContextHelpId DWORD_PTR ?
             lpfnMsgBoxCallback MSGBOXCALLBACK ?
             dwLanguageId DWORD ?
           MSGBOXPARAMSA ends
@@ -5755,14 +4602,14 @@ ifndef _WINUSER_
           PMSGBOXPARAMSA typedef ptr MSGBOXPARAMSA
           LPMSGBOXPARAMSA typedef ptr MSGBOXPARAMSA
           MSGBOXPARAMSW struct
-            cbSize DWORD ?
+            cbSize UINT ?
             hwndOwner HWND ?
             hInstance HINSTANCE ?
-            lpszText =POINTER ?
-            lpszCaption =POINTER ?
+            lpszText LPCWSTR ?
+            lpszCaption LPCWSTR ?
             dwStyle DWORD ?
-            lpszIcon =POINTER ?
-            dwContextHelpId XWORD ?
+            lpszIcon LPCWSTR ?
+            dwContextHelpId DWORD_PTR ?
             lpfnMsgBoxCallback MSGBOXCALLBACK ?
             dwLanguageId DWORD ?
           MSGBOXPARAMSW ends
@@ -5778,7 +4625,6 @@ ifndef _WINUSER_
             PMSGBOXPARAMS typedef PMSGBOXPARAMSA
             LPMSGBOXPARAMS typedef LPMSGBOXPARAMSA
           endif
-          ; UNICODE
           @DefProto DllImport, MessageBoxIndirectA, WIN_STD_CALL_CONV,, <:ptr MSGBOXPARAMSA>, 4
           @DefProto DllImport, MessageBoxIndirectW, WIN_STD_CALL_CONV,, <:ptr MSGBOXPARAMSW>, 4
           ifdef UNICODE
@@ -5786,41 +4632,30 @@ ifndef _WINUSER_
           else
             MessageBoxIndirect equ <MessageBoxIndirectA>
           endif
-          ; !UNICODE
-          ;* WINVER >= 0x0400 *
         endif
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, MessageBeep, WIN_STD_CALL_CONV,, <:UINT>, 4
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* !NOMB *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, ShowCursor, WIN_STD_CALL_CONV,, <:BOOL>, 4
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, SetCursorPos, WIN_STD_CALL_CONV,, <:SDWORD, :SDWORD>, 8
       if (WINVER ge 0600h)
         @DefProto DllImport, SetPhysicalCursorPos, WIN_STD_CALL_CONV,, <:SDWORD, :SDWORD>, 8
-        ;* WINVER >= 0x0600 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, SetCursor, WIN_STD_CALL_CONV,, <:HCURSOR>, 4
       @DefProto DllImport, GetCursorPos, WIN_STD_CALL_CONV,, <:LPPOINT>, 4
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       if (WINVER ge 0600h)
         @DefProto DllImport, GetPhysicalCursorPos, WIN_STD_CALL_CONV,, <:LPPOINT>, 4
-        ;* WINVER >= 0x0600 *
       endif
       @DefProto DllImport, GetClipCursor, WIN_STD_CALL_CONV,, <:LPRECT>, 4
       @DefProto DllImport, GetCursor, WIN_STD_CALL_CONV,, <>, 0
@@ -5837,25 +4672,20 @@ ifndef _WINUSER_
       if (WINVER ge 0600h)
         @DefProto DllImport, LogicalToPhysicalPoint, WIN_STD_CALL_CONV,, <:HWND, :LPPOINT>, 8
         @DefProto DllImport, PhysicalToLogicalPoint, WIN_STD_CALL_CONV,, <:HWND, :LPPOINT>, 8
-        ;* WINVER >= 0x0600 *
       endif
       if (WINVER ge 0603h)
         @DefProto DllImport, LogicalToPhysicalPointForPerMonitorDPI, WIN_STD_CALL_CONV,, <:HWND, :LPPOINT>, 8
         @DefProto DllImport, PhysicalToLogicalPointForPerMonitorDPI, WIN_STD_CALL_CONV,, <:HWND, :LPPOINT>, 8
-        ;* WINVER >= 0x0603 *
       endif
       @DefProto DllImport, MapWindowPoints, WIN_STD_CALL_CONV,, <:HWND, :HWND, :LPPOINT, :UINT>, 16
       @DefProto DllImport, WindowFromPoint, WIN_STD_CALL_CONV,, <:POINT>, 4
       if (WINVER ge 0600h)
         @DefProto DllImport, WindowFromPhysicalPoint, WIN_STD_CALL_CONV,, <:POINT>, 4
-        ;* WINVER >= 0x0600 *
       endif
       @DefProto DllImport, ChildWindowFromPoint, WIN_STD_CALL_CONV,, <:HWND, :POINT>, 8
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PC_APP)
       @DefProto DllImport, ClipCursor, WIN_STD_CALL_CONV,, <:ptr RECT>, 4
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_PC_APP) *
     endif
     if (WINVER ge 0400h)
       CWP_ALL equ 0000h
@@ -5864,14 +4694,9 @@ ifndef _WINUSER_
       CWP_SKIPTRANSPARENT equ 0004h
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, ChildWindowFromPointEx, WIN_STD_CALL_CONV,, <:HWND, :POINT, :UINT>, 12
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* WINVER >= 0x0400 *
     endif
     ifndef NOCOLOR
-      ;*
-      ;* Color Types
-      ;*
       CTLCOLOR_MSGBOX equ 0
       CTLCOLOR_EDIT equ 1
       CTLCOLOR_LISTBOX equ 2
@@ -5906,7 +4731,6 @@ ifndef _WINUSER_
         COLOR_3DLIGHT equ 22
         COLOR_INFOTEXT equ 23
         COLOR_INFOBK equ 24
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0500h)
         COLOR_HOTLIGHT equ 26
@@ -5915,9 +4739,7 @@ ifndef _WINUSER_
         if (WINVER ge 0501h)
           COLOR_MENUHILIGHT equ 29
           COLOR_MENUBAR equ 30
-          ;* WINVER >= 0x0501 *
         endif
-        ;* WINVER >= 0x0500 *
       endif
       if (WINVER ge 0400h)
         COLOR_DESKTOP equ <COLOR_BACKGROUND>
@@ -5926,18 +4748,14 @@ ifndef _WINUSER_
         COLOR_3DHIGHLIGHT equ <COLOR_BTNHIGHLIGHT>
         COLOR_3DHILIGHT equ <COLOR_BTNHIGHLIGHT>
         COLOR_BTNHILIGHT equ <COLOR_BTNHIGHLIGHT>
-        ;* WINVER >= 0x0400 *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, GetSysColor, WIN_STD_CALL_CONV,, <:SDWORD>, 4
         if (WINVER ge 0400h)
           @DefProto DllImport, GetSysColorBrush, WIN_STD_CALL_CONV,, <:SDWORD>, 4
-          ;* WINVER >= 0x0400 *
         endif
         @DefProto DllImport, SetSysColors, WIN_STD_CALL_CONV,, <:SDWORD, :ptr INT_, :ptr COLORREF>, 12
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* !NOCOLOR *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, DrawFocusRect, WIN_STD_CALL_CONV,, <:HDC, :ptr RECT>, 8
@@ -5958,9 +4776,7 @@ ifndef _WINUSER_
       ifndef NOWINOFFSETS
         @DefProto DllImport, GetWindowWord, WIN_STD_CALL_CONV,, <:HWND, :SDWORD>, 8
         @DefProto DllImport, SetWindowWord, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :WORD>, 12
-        ;* !NOWINOFFSETS *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       ifndef NOWINOFFSETS
@@ -5971,7 +4787,6 @@ ifndef _WINUSER_
         else
           GetWindowLong equ <GetWindowLongA>
         endif
-        ; !UNICODE
         @DefProto DllImport, SetWindowLongA, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :LONG>, 12
         @DefProto DllImport, SetWindowLongW, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :LONG>, 12
         ifdef UNICODE
@@ -5979,7 +4794,6 @@ ifndef _WINUSER_
         else
           SetWindowLong equ <SetWindowLongA>
         endif
-        ; !UNICODE
         ifdef _WIN64
           @DefProto DllImport, GetWindowLongPtrA, WIN_STD_CALL_CONV,, <:HWND, :SDWORD>, 8
           @DefProto DllImport, GetWindowLongPtrW, WIN_STD_CALL_CONV,, <:HWND, :SDWORD>, 8
@@ -5988,7 +4802,6 @@ ifndef _WINUSER_
           else
             GetWindowLongPtr equ <GetWindowLongPtrA>
           endif
-          ; !UNICODE
           @DefProto DllImport, SetWindowLongPtrA, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :LONG_PTR>, 12
           @DefProto DllImport, SetWindowLongPtrW, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :LONG_PTR>, 12
           ifdef UNICODE
@@ -5996,8 +4809,6 @@ ifndef _WINUSER_
           else
             SetWindowLongPtr equ <SetWindowLongPtrA>
           endif
-          ; !UNICODE
-          ;* _WIN64 *
         else
           GetWindowLongPtrA equ <GetWindowLongA>
           GetWindowLongPtrW equ <GetWindowLongW>
@@ -6006,7 +4817,6 @@ ifndef _WINUSER_
           else
             GetWindowLongPtr equ <GetWindowLongPtrA>
           endif
-          ; !UNICODE
           SetWindowLongPtrA equ <SetWindowLongA>
           SetWindowLongPtrW equ <SetWindowLongW>
           ifdef UNICODE
@@ -6014,12 +4824,8 @@ ifndef _WINUSER_
           else
             SetWindowLongPtr equ <SetWindowLongPtrA>
           endif
-          ; !UNICODE
-          ;* _WIN64 *
         endif
-        ;* !NOWINOFFSETS *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       ifndef NOWINOFFSETS
@@ -6032,7 +4838,6 @@ ifndef _WINUSER_
         else
           GetClassLong equ <GetClassLongA>
         endif
-        ; !UNICODE
         @DefProto DllImport, SetClassLongA, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :LONG>, 12
         @DefProto DllImport, SetClassLongW, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :LONG>, 12
         ifdef UNICODE
@@ -6040,7 +4845,6 @@ ifndef _WINUSER_
         else
           SetClassLong equ <SetClassLongA>
         endif
-        ; !UNICODE
         ifdef _WIN64
           @DefProto DllImport, GetClassLongPtrA, WIN_STD_CALL_CONV,, <:HWND, :SDWORD>, 8
           @DefProto DllImport, GetClassLongPtrW, WIN_STD_CALL_CONV,, <:HWND, :SDWORD>, 8
@@ -6049,7 +4853,6 @@ ifndef _WINUSER_
           else
             GetClassLongPtr equ <GetClassLongPtrA>
           endif
-          ; !UNICODE
           @DefProto DllImport, SetClassLongPtrA, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :LONG_PTR>, 12
           @DefProto DllImport, SetClassLongPtrW, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :LONG_PTR>, 12
           ifdef UNICODE
@@ -6057,8 +4860,6 @@ ifndef _WINUSER_
           else
             SetClassLongPtr equ <SetClassLongPtrA>
           endif
-          ; !UNICODE
-          ;* _WIN64 *
         else
           GetClassLongPtrA equ <GetClassLongA>
           GetClassLongPtrW equ <GetClassLongW>
@@ -6067,7 +4868,6 @@ ifndef _WINUSER_
           else
             GetClassLongPtr equ <GetClassLongPtrA>
           endif
-          ; !UNICODE
           SetClassLongPtrA equ <SetClassLongA>
           SetClassLongPtrW equ <SetClassLongW>
           ifdef UNICODE
@@ -6075,15 +4875,11 @@ ifndef _WINUSER_
           else
             SetClassLongPtr equ <SetClassLongPtrA>
           endif
-          ; !UNICODE
-          ;* _WIN64 *
         endif
-        ;* !NOWINOFFSETS *
       endif
       if (WINVER ge 0500h)
         @DefProto DllImport, GetProcessDefaultLayout, WIN_STD_CALL_CONV,, <:ptr DWORD>, 4
         @DefProto DllImport, SetProcessDefaultLayout, WIN_STD_CALL_CONV,, <:DWORD>, 4
-        ;* WINVER >= 0x0500 *
       endif
       @DefProto DllImport, GetDesktopWindow, WIN_STD_CALL_CONV,, <>, 0
       @DefProto DllImport, GetParent, WIN_STD_CALL_CONV,, <:HWND>, 4
@@ -6096,7 +4892,6 @@ ifndef _WINUSER_
       else
         FindWindow equ <FindWindowA>
       endif
-      ; !UNICODE
       if (WINVER ge 0400h)
         @DefProto DllImport, FindWindowExA, WIN_STD_CALL_CONV,, <:HWND, :HWND, :LPCSTR, :LPCSTR>, 16
         @DefProto DllImport, FindWindowExW, WIN_STD_CALL_CONV,, <:HWND, :HWND, :LPCWSTR, :LPCWSTR>, 16
@@ -6105,9 +4900,7 @@ ifndef _WINUSER_
         else
           FindWindowEx equ <FindWindowExA>
         endif
-        ; !UNICODE
         @DefProto DllImport, GetShellWindow, WIN_STD_CALL_CONV,, <>, 0
-        ;* WINVER >= 0x0400 *
       endif
       @DefProto DllImport, RegisterShellHookWindow, WIN_STD_CALL_CONV,, <:HWND>, 4
       @DefProto DllImport, DeregisterShellHookWindow, WIN_STD_CALL_CONV,, <:HWND>, 4
@@ -6116,7 +4909,6 @@ ifndef _WINUSER_
       EnumTaskWindows macro hTask, lpfn, lParam
         exitm <EnumThreadWindows (HandleToUlong(hTask), lpfn, lParam)>
       endm
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, GetClassNameA, WIN_STD_CALL_CONV,, <:HWND, :LPSTR, :SDWORD>, 12
@@ -6126,11 +4918,9 @@ ifndef _WINUSER_
       else
         GetClassName equ <GetClassNameA>
       endif
-      ; !UNICODE
       if Defined(_M_CEE)
         ;[...]
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, GetTopWindow, WIN_STD_CALL_CONV,, <:HWND>, 4
@@ -6146,15 +4936,11 @@ ifndef _WINUSER_
       @DefProto DllImport, GetWindowThreadProcessId, WIN_STD_CALL_CONV,, <:HWND, :LPDWORD>, 8
       if (_WIN32_WINNT ge 0501h)
         @DefProto DllImport, IsGUIThread, WIN_STD_CALL_CONV,, <:BOOL>, 4
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       GetWindowTask macro hWnd
         exitm <(GetWindowThreadProcessId (hWnd, NULL))>
       endm
       @DefProto DllImport, GetLastActivePopup, WIN_STD_CALL_CONV,, <:HWND>, 4
-      ;*
-      ;* GetWindow() Constants
-      ;*
       GW_HWNDFIRST equ 0
       GW_HWNDLAST equ 1
       GW_HWNDNEXT equ 2
@@ -6177,8 +4963,6 @@ ifndef _WINUSER_
           else
             SetWindowsHook equ <SetWindowsHookA>
           endif
-          ; !UNICODE
-          ;* !STRICT *
         else
           @DefProto DllImport, SetWindowsHookA, WIN_STD_CALL_CONV,, <:SDWORD, :HOOKPROC>, 8
           @DefProto DllImport, SetWindowsHookW, WIN_STD_CALL_CONV,, <:SDWORD, :HOOKPROC>, 8
@@ -6187,8 +4971,6 @@ ifndef _WINUSER_
           else
             SetWindowsHook equ <SetWindowsHookA>
           endif
-          ; !UNICODE
-          ;* !STRICT *
         endif
         @DefProto DllImport, UnhookWindowsHook, WIN_STD_CALL_CONV,, <:SDWORD, :HOOKPROC>, 8
         @DefProto DllImport, SetWindowsHookExA, WIN_STD_CALL_CONV,, <:SDWORD, :HOOKPROC, :HINSTANCE, :DWORD>, 16
@@ -6198,12 +4980,8 @@ ifndef _WINUSER_
         else
           SetWindowsHookEx equ <SetWindowsHookExA>
         endif
-        ; !UNICODE
         @DefProto DllImport, UnhookWindowsHookEx, WIN_STD_CALL_CONV,, <:HHOOK>, 4
         @DefProto DllImport, CallNextHookEx, WIN_STD_CALL_CONV,, <:HHOOK, :SDWORD, :WPARAM, :LPARAM>, 16
-        ;*
-        ;* Macros for source-level compatibility with old functions.
-        ;*
         ifdef STRICT
           DefHookProc macro nCode, wParam, lParam, phhk
             exitm <CallNextHookEx (* phhk, nCode, wParam, lParam)>
@@ -6212,17 +4990,10 @@ ifndef _WINUSER_
           DefHookProc macro nCode, wParam, lParam, phhk
             exitm <CallNextHookEx ((HHOOK) * phhk, nCode, wParam, lParam)>
           endm
-          ;* STRICT *
         endif
-        ;* !NOWH *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     ifndef NOMENUS
-      ;* ;win40  -- A lot of MF_* flags have been renamed as MFT_* and MFS_* flags *
-      ;*
-      ;* Menu flags for Add/Check/EnableMenuItem()
-      ;*
       MF_INSERT equ 00000000h
       MF_CHANGE equ 00000080h
       MF_APPEND equ 00000100h
@@ -6247,19 +5018,15 @@ ifndef _WINUSER_
       MF_HILITE equ 00000080h
       if (WINVER ge 0400h)
         MF_DEFAULT equ 00001000h
-        ;* WINVER >= 0x0400 *
       endif
       MF_SYSMENU equ 00002000h
       MF_HELP equ 00004000h
       if (WINVER ge 0400h)
         MF_RIGHTJUSTIFY equ 00004000h
-        ;* WINVER >= 0x0400 *
       endif
       MF_MOUSESELECT equ 00008000h
       if (WINVER ge 0400h)
-        ;* Obsolete -- only used by old RES files *
         MF_END equ 00000080h
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0400h)
         MFT_STRING equ <MF_STRING>
@@ -6271,7 +5038,6 @@ ifndef _WINUSER_
         MFT_SEPARATOR equ <MF_SEPARATOR>
         MFT_RIGHTORDER equ 00002000h
         MFT_RIGHTJUSTIFY equ <MF_RIGHTJUSTIFY>
-        ;* Menu flags for Add/Check/EnableMenuItem() *
         MFS_GRAYED equ 00000003h
         MFS_DISABLED equ <MFS_GRAYED>
         MFS_CHECKED equ <MF_CHECKED>
@@ -6280,37 +5046,26 @@ ifndef _WINUSER_
         MFS_UNCHECKED equ <MF_UNCHECKED>
         MFS_UNHILITE equ <MF_UNHILITE>
         MFS_DEFAULT equ <MF_DEFAULT>
-        ;* WINVER >= 0x0400 *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         if (WINVER ge 0400h)
           @DefProto DllImport, CheckMenuRadioItem, WIN_STD_CALL_CONV,, <:HMENU, :UINT, :UINT, :UINT, :UINT>, 20
-          ;* WINVER >= 0x0400 *
         endif
-        ;*
-        ;* Menu item resource format
-        ;*
         MENUITEMTEMPLATEHEADER struct
           versionNumber WORD ?
           offset_ WORD ?
         MENUITEMTEMPLATEHEADER ends
         PMENUITEMTEMPLATEHEADER typedef ptr MENUITEMTEMPLATEHEADER
         MENUITEMTEMPLATE struct
-          ; version 0
           mtOption WORD ?
           mtID WORD ?
-          mtString WORD 1 dup (?)
+          mtString WCHAR 1 dup (?)
         MENUITEMTEMPLATE ends
         PMENUITEMTEMPLATE typedef ptr MENUITEMTEMPLATE
         MF_END equ 00000080h
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* !NOMENUS *
     endif
     ifndef NOSYSCOMMANDS
-      ;*
-      ;* System Menu Command Values
-      ;*
       SC_SIZE equ 0F000h
       SC_MOVE equ 0F010h
       SC_MINIMIZE equ 0F020h
@@ -6332,25 +5087,16 @@ ifndef _WINUSER_
         SC_MONITORPOWER equ 0F170h
         SC_CONTEXTHELP equ 0F180h
         SC_SEPARATOR equ 0F00Fh
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0600h)
         SCF_ISSECURE equ 00000001h
-        ;* WINVER >= 0x0600 *
       endif
       GET_SC_WPARAM macro wParam
         exitm <(wParam and 0FFF0h)>
       endm
-      ;*
-      ;* Obsolete names
-      ;*
       SC_ICON equ <SC_MINIMIZE>
       SC_ZOOM equ <SC_MAXIMIZE>
-      ;* !NOSYSCOMMANDS *
     endif
-    ;*
-    ;* Resource Loading Routines
-    ;*
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, LoadBitmapA, WIN_STD_CALL_CONV,, <:HINSTANCE, :LPCSTR>, 8
       @DefProto DllImport, LoadBitmapW, WIN_STD_CALL_CONV,, <:HINSTANCE, :LPCWSTR>, 8
@@ -6359,8 +5105,6 @@ ifndef _WINUSER_
       else
         LoadBitmap equ <LoadBitmapA>
       endif
-      ; !UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, LoadCursorA, WIN_STD_CALL_CONV,, <:HINSTANCE, :LPCSTR>, 8
@@ -6370,8 +5114,6 @@ ifndef _WINUSER_
       else
         LoadCursor equ <LoadCursorA>
       endif
-      ; !UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, LoadCursorFromFileA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
@@ -6381,13 +5123,10 @@ ifndef _WINUSER_
       else
         LoadCursorFromFile equ <LoadCursorFromFileA>
       endif
-      ; !UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, CreateCursor, WIN_STD_CALL_CONV,, <:HINSTANCE, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :ptr VOID, :ptr VOID>, 28
       @DefProto DllImport, DestroyCursor, WIN_STD_CALL_CONV,, <:HCURSOR>, 4
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       ifndef _MAC
@@ -6397,46 +5136,35 @@ ifndef _WINUSER_
       else
         ;[...]
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;*
-    ;* Standard Cursor IDs
-    ;*
     IDC_ARROW equ MAKEINTRESOURCE (32512)
     IDC_IBEAM equ MAKEINTRESOURCE (32513)
     IDC_WAIT equ MAKEINTRESOURCE (32514)
     IDC_CROSS equ MAKEINTRESOURCE (32515)
     IDC_UPARROW equ MAKEINTRESOURCE (32516)
-    ;* OBSOLETE: use IDC_SIZEALL *
     IDC_SIZE equ MAKEINTRESOURCE (32640)
-    ;* OBSOLETE: use IDC_ARROW *
     IDC_ICON equ MAKEINTRESOURCE (32641)
     IDC_SIZENWSE equ MAKEINTRESOURCE (32642)
     IDC_SIZENESW equ MAKEINTRESOURCE (32643)
     IDC_SIZEWE equ MAKEINTRESOURCE (32644)
     IDC_SIZENS equ MAKEINTRESOURCE (32645)
     IDC_SIZEALL equ MAKEINTRESOURCE (32646)
-    ;*not in win3.1 *
     IDC_NO equ MAKEINTRESOURCE (32648)
     if (WINVER ge 0500h)
       IDC_HAND equ MAKEINTRESOURCE (32649)
-      ;* WINVER >= 0x0500 *
     endif
-    ;*not in win3.1 *
     IDC_APPSTARTING equ MAKEINTRESOURCE (32650)
     if (WINVER ge 0400h)
       IDC_HELP equ MAKEINTRESOURCE (32651)
-      ;* WINVER >= 0x0400 *
     endif
     if (WINVER ge 0606h)
       IDC_PIN equ MAKEINTRESOURCE (32671)
       IDC_PERSON equ MAKEINTRESOURCE (32672)
-      ;* WINVER >= 0x0606 *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, SetSystemCursor, WIN_STD_CALL_CONV,, <:HCURSOR, :DWORD>, 8
       ICONINFO struct
-        fIcon DWORD ?
+        fIcon BOOL ?
         xHotspot DWORD ?
         yHotspot DWORD ?
         hbmMask HBITMAP ?
@@ -6451,7 +5179,6 @@ ifndef _WINUSER_
       else
         LoadIcon equ <LoadIconA>
       endif
-      ; !UNICODE
       @DefProto DllImport, PrivateExtractIconsA, WIN_STD_CALL_CONV,, <:LPCSTR, :SDWORD, :SDWORD, :SDWORD, :ptr HICON, :ptr UINT, :UINT, :UINT>, 32
       @DefProto DllImport, PrivateExtractIconsW, WIN_STD_CALL_CONV,, <:LPCWSTR, :SDWORD, :SDWORD, :SDWORD, :ptr HICON, :ptr UINT, :UINT, :UINT>, 32
       ifdef UNICODE
@@ -6459,18 +5186,15 @@ ifndef _WINUSER_
       else
         PrivateExtractIcons equ <PrivateExtractIconsA>
       endif
-      ; !UNICODE
       @DefProto DllImport, CreateIcon, WIN_STD_CALL_CONV,, <:HINSTANCE, :SDWORD, :SDWORD, :BYTE, :BYTE, :ptr BYTE, :ptr BYTE>, 28
       @DefProto DllImport, DestroyIcon, WIN_STD_CALL_CONV,, <:HICON>, 4
       @DefProto DllImport, LookupIconIdFromDirectory, WIN_STD_CALL_CONV,, <:PBYTE, :BOOL>, 8
       if (WINVER ge 0400h)
         @DefProto DllImport, LookupIconIdFromDirectoryEx, WIN_STD_CALL_CONV,, <:PBYTE, :BOOL, :SDWORD, :SDWORD, :UINT>, 20
-        ;* WINVER >= 0x0400 *
       endif
       @DefProto DllImport, CreateIconFromResource, WIN_STD_CALL_CONV,, <:PBYTE, :DWORD, :BOOL, :DWORD>, 16
       if (WINVER ge 0400h)
         @DefProto DllImport, CreateIconFromResourceEx, WIN_STD_CALL_CONV,, <:PBYTE, :DWORD, :BOOL, :DWORD, :SDWORD, :SDWORD, :UINT>, 28
-        ;* Icon/Cursor header *
         CURSORSHAPE struct
           xHotSpot SDWORD ?
           yHotSpot SDWORD ?
@@ -6482,18 +5206,14 @@ ifndef _WINUSER_
         CURSORSHAPE ends
         tagCURSORSHAPE typedef CURSORSHAPE
         LPCURSORSHAPE typedef ptr CURSORSHAPE
-        ;* WINVER >= 0x0400 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
       if (NTDDI_VERSION ge NTDDI_WIN10_CO)
         CURSOR_CREATION_SCALING_NONE equ 1
         CURSOR_CREATION_SCALING_DEFAULT equ 2
         @DefProto DllImport, SetThreadCursorCreationScaling, WIN_STD_CALL_CONV,, <:UINT>, 4
-        ;* NTDDI_VERSION >= NTDDI_WIN10_CO *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
     endif
     IMAGE_BITMAP equ 0
     IMAGE_ICON equ 1
@@ -6521,7 +5241,6 @@ ifndef _WINUSER_
         else
           LoadImage equ <LoadImageA>
         endif
-        ; !UNICODE
         @DefProto DllImport, CopyImage, WIN_STD_CALL_CONV,, <:HANDLE, :UINT, :SDWORD, :SDWORD, :UINT>, 20
         DI_MASK equ 0001h
         DI_IMAGE equ 0002h
@@ -6530,12 +5249,9 @@ ifndef _WINUSER_
         DI_DEFAULTSIZE equ 0008h
         if (_WIN32_WINNT ge 0501h)
           DI_NOMIRROR equ 0010h
-          ;* _WIN32_WINNT >= 0x0501 *
         endif
         @DefProto DllImport, DrawIconEx, WIN_STD_CALL_CONV,, <:HDC, :SDWORD, :SDWORD, :HICON, :SDWORD, :SDWORD, :UINT, :HBRUSH, :UINT>, 36
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* WINVER >= 0x0400 *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, CreateIconIndirect, WIN_STD_CALL_CONV,, <:PICONINFO>, 4
@@ -6544,27 +5260,27 @@ ifndef _WINUSER_
       if (_WIN32_WINNT ge 0600h)
         ICONINFOEXA struct
           cbSize DWORD ?
-          fIcon DWORD ?
+          fIcon BOOL ?
           xHotspot DWORD ?
           yHotspot DWORD ?
           hbmMask HBITMAP ?
           hbmColor HBITMAP ?
           wResID WORD ?
-          szModName SBYTE MAX_PATH dup (?)
-          szResName SBYTE MAX_PATH dup (?)
+          szModName CHAR MAX_PATH dup (?)
+          szResName CHAR MAX_PATH dup (?)
         ICONINFOEXA ends
         _ICONINFOEXA typedef ICONINFOEXA
         PICONINFOEXA typedef ptr ICONINFOEXA
         ICONINFOEXW struct
           cbSize DWORD ?
-          fIcon DWORD ?
+          fIcon BOOL ?
           xHotspot DWORD ?
           yHotspot DWORD ?
           hbmMask HBITMAP ?
           hbmColor HBITMAP ?
           wResID WORD ?
-          szModName WORD MAX_PATH dup (?)
-          szResName WORD MAX_PATH dup (?)
+          szModName WCHAR MAX_PATH dup (?)
+          szResName WCHAR MAX_PATH dup (?)
         ICONINFOEXW ends
         _ICONINFOEXW typedef ICONINFOEXW
         PICONINFOEXW typedef ptr ICONINFOEXW
@@ -6575,7 +5291,6 @@ ifndef _WINUSER_
           ICONINFOEX typedef ICONINFOEXA
           PICONINFOEX typedef PICONINFOEXA
         endif
-        ; UNICODE
         @DefProto DllImport, GetIconInfoExA, WIN_STD_CALL_CONV,, <:HICON, :PICONINFOEXA>, 8
         @DefProto DllImport, GetIconInfoExW, WIN_STD_CALL_CONV,, <:HICON, :PICONINFOEXW>, 8
         ifdef UNICODE
@@ -6583,20 +5298,13 @@ ifndef _WINUSER_
         else
           GetIconInfoEx equ <GetIconInfoExA>
         endif
-        ; !UNICODE
-        ;* _WIN32_WINNT >= 0x0600 *
       endif
       if (WINVER ge 0400h)
         RES_ICON equ 1
         RES_CURSOR equ 2
-        ;* WINVER >= 0x0400 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     ifdef OEMRESOURCE
-      ;*
-      ;* OEM Resource Ordinal Numbers
-      ;*
       OBM_CLOSE equ 32754
       OBM_UPARROW equ 32753
       OBM_DNARROW equ 32752
@@ -6636,25 +5344,20 @@ ifndef _WINUSER_
       OCR_WAIT equ 32514
       OCR_CROSS equ 32515
       OCR_UP equ 32516
-      ;* OBSOLETE: use OCR_SIZEALL *
       OCR_SIZE equ 32640
-      ;* OBSOLETE: use OCR_NORMAL *
       OCR_ICON equ 32641
       OCR_SIZENWSE equ 32642
       OCR_SIZENESW equ 32643
       OCR_SIZEWE equ 32644
       OCR_SIZENS equ 32645
       OCR_SIZEALL equ 32646
-      ;* OBSOLETE: use OIC_WINLOGO *
       OCR_ICOCUR equ 32647
       OCR_NO equ 32648
       if (WINVER ge 0500h)
         OCR_HAND equ 32649
-        ;* WINVER >= 0x0500 *
       endif
       if (WINVER ge 0400h)
         OCR_APPSTARTING equ 32650
-        ;* WINVER >= 0x0400 *
       endif
       OIC_SAMPLE equ 32512
       OIC_HAND equ 32513
@@ -6666,20 +5369,13 @@ ifndef _WINUSER_
         OIC_WARNING equ <OIC_BANG>
         OIC_ERROR equ <OIC_HAND>
         OIC_INFORMATION equ <OIC_NOTE>
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0600h)
         OIC_SHIELD equ 32518
-        ;* WINVER >= 0x0600 *
       endif
-      ;* OEMRESOURCE *
     endif
-    ; The ordinal number for the entry point of language drivers.
     ORD_LANGDRIVER equ 1
     ifndef NOICONS
-      ;*
-      ;* Standard Icon IDs
-      ;*
       ifdef RC_INVOKED
         ;[...]
       else
@@ -6690,21 +5386,16 @@ ifndef _WINUSER_
         IDI_ASTERISK equ MAKEINTRESOURCE (32516)
         if (WINVER ge 0400h)
           IDI_WINLOGO equ MAKEINTRESOURCE (32517)
-          ;* WINVER >= 0x0400 *
         endif
         if (WINVER ge 0600h)
           IDI_SHIELD equ MAKEINTRESOURCE (32518)
-          ;* WINVER >= 0x0600 *
         endif
-        ;* RC_INVOKED *
       endif
       if (WINVER ge 0400h)
         IDI_WARNING equ <IDI_EXCLAMATION>
         IDI_ERROR equ <IDI_HAND>
         IDI_INFORMATION equ <IDI_ASTERISK>
-        ;* WINVER >= 0x0400 *
       endif
-      ;* !NOICONS *
     endif
     ifdef NOAPISET
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -6715,13 +5406,8 @@ ifndef _WINUSER_
         else
           LoadString equ <LoadStringA>
         endif
-        ; !UNICODE
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
     endif
-    ;*
-    ;* Dialog Box Command IDs
-    ;*
     IDOK equ 1
     IDCANCEL equ 2
     IDABORT equ 3
@@ -6732,27 +5418,18 @@ ifndef _WINUSER_
     if (WINVER ge 0400h)
       IDCLOSE equ 8
       IDHELP equ 9
-      ;* WINVER >= 0x0400 *
     endif
     if (WINVER ge 0500h)
       IDTRYAGAIN equ 10
       IDCONTINUE equ 11
-      ;* WINVER >= 0x0500 *
     endif
     if (WINVER ge 0501h)
       ifndef IDTIMEOUT
         IDTIMEOUT equ 32000
       endif
-      ;* WINVER >= 0x0501 *
     endif
     ifndef NOCTLMGR
-      ;*
-      ;* Control Manager Structures and Definitions
-      ;*
       ifndef NOWINSTYLES
-        ;*
-        ;* Edit Control Styles
-        ;*
         ES_LEFT equ 0000h
         ES_CENTER equ 0001h
         ES_RIGHT equ 0002h
@@ -6768,13 +5445,8 @@ ifndef _WINUSER_
         ES_WANTRETURN equ 1000h
         if (WINVER ge 0400h)
           ES_NUMBER equ 2000h
-          ;* WINVER >= 0x0400 *
         endif
-        ;* !NOWINSTYLES *
       endif
-      ;*
-      ;* Edit Control Notification Codes
-      ;*
       EN_SETFOCUS equ 0100h
       EN_KILLFOCUS equ 0200h
       EN_CHANGE equ 0300h
@@ -6786,33 +5458,23 @@ ifndef _WINUSER_
       if (_WIN32_WINNT ge 0500h)
         EN_ALIGN_LTR_EC equ 0700h
         EN_ALIGN_RTL_EC equ 0701h
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
       if (WINVER ge 0604h)
         EN_BEFORE_PASTE equ 0800h
         EN_AFTER_PASTE equ 0801h
-        ;* WINVER >= 0x0604 *
       endif
       if (WINVER ge 0400h)
-        ;* Edit control EM_SETMARGIN parameters *
         EC_LEFTMARGIN equ 0001h
         EC_RIGHTMARGIN equ 0002h
         EC_USEFONTINFO equ 0ffffh
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0500h)
-        ;* wParam of EM_GET/SETIMESTATUS  *
         EMSIS_COMPOSITIONSTRING equ 0001h
-        ;* lParam for EMSIS_COMPOSITIONSTRING  *
         EIMES_GETCOMPSTRATONCE equ 0001h
         EIMES_CANCELCOMPSTRINFOCUS equ 0002h
         EIMES_COMPLETECOMPSTRKILLFOCUS equ 0004h
-        ;* WINVER >= 0x0500 *
       endif
       ifndef NOWINMESSAGES
-        ;*
-        ;* Edit Control Messages
-        ;*
         EM_GETSEL equ 00B0h
         EM_SETSEL equ 00B1h
         EM_GETRECT equ 00B2h
@@ -6847,43 +5509,28 @@ ifndef _WINUSER_
         if (WINVER ge 0400h)
           EM_SETMARGINS equ 00D3h
           EM_GETMARGINS equ 00D4h
-          ;* ;win40 Name change *
           EM_SETLIMITTEXT equ <EM_LIMITTEXT>
           EM_GETLIMITTEXT equ 00D5h
           EM_POSFROMCHAR equ 00D6h
           EM_CHARFROMPOS equ 00D7h
-          ;* WINVER >= 0x0400 *
         endif
         if (WINVER ge 0500h)
           EM_SETIMESTATUS equ 00D8h
           EM_GETIMESTATUS equ 00D9h
-          ;* WINVER >= 0x0500 *
         endif
         if (WINVER ge 0604h)
           EM_ENABLEFEATURE equ 00DAh
-          ;* WINVER >= 0x0604 *
         endif
-        ;* !NOWINMESSAGES *
       endif
       if (WINVER ge 0604h)
-        ;*
-        ;* EM_ENABLEFEATURE options
-        ;*
         EDIT_CONTROL_FEATURE typedef SDWORD
         EDIT_CONTROL_FEATURE_ENTERPRISE_DATA_PROTECTION_PASTE_SUPPORT equ 0
         EDIT_CONTROL_FEATURE_PASTE_NOTIFICATIONS equ 1
 
-        ;* WINVER >= 0x0604 *
       endif
-      ;*
-      ;* EDITWORDBREAKPROC code values
-      ;*
       WB_LEFT equ 0
       WB_RIGHT equ 1
       WB_ISDELIMITER equ 2
-      ;*
-      ;* Button Control Styles
-      ;*
       BS_PUSHBUTTON equ 00000000h
       BS_DEFPUSHBUTTON equ 00000001h
       BS_CHECKBOX equ 00000002h
@@ -6913,11 +5560,7 @@ ifndef _WINUSER_
         BS_NOTIFY equ 00004000h
         BS_FLAT equ 00008000h
         BS_RIGHTBUTTON equ <BS_LEFTTEXT>
-        ;* WINVER >= 0x0400 *
       endif
-      ;*
-      ;* User Button Notification Codes
-      ;*
       BN_CLICKED equ 0
       BN_PAINT equ 1
       BN_HILITE equ 2
@@ -6930,11 +5573,7 @@ ifndef _WINUSER_
         BN_DBLCLK equ <BN_DOUBLECLICKED>
         BN_SETFOCUS equ 6
         BN_KILLFOCUS equ 7
-        ;* WINVER >= 0x0400 *
       endif
-      ;*
-      ;* Button Control Messages
-      ;*
       BM_GETCHECK equ 00F0h
       BM_SETCHECK equ 00F1h
       BM_GETSTATE equ 00F2h
@@ -6944,11 +5583,9 @@ ifndef _WINUSER_
         BM_CLICK equ 00F5h
         BM_GETIMAGE equ 00F6h
         BM_SETIMAGE equ 00F7h
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0600h)
         BM_SETDONTCLICK equ 00F8h
-        ;* WINVER >= 0x0600 *
       endif
       if (WINVER ge 0400h)
         BST_UNCHECKED equ 0000h
@@ -6956,11 +5593,7 @@ ifndef _WINUSER_
         BST_INDETERMINATE equ 0002h
         BST_PUSHED equ 0004h
         BST_FOCUS equ 0008h
-        ;* WINVER >= 0x0400 *
       endif
-      ;*
-      ;* Static Control Constants
-      ;*
       SS_LEFT equ 00000000h
       SS_CENTER equ 00000001h
       SS_RIGHT equ 00000002h
@@ -6982,13 +5615,10 @@ ifndef _WINUSER_
         SS_ETCHEDVERT equ 00000011h
         SS_ETCHEDFRAME equ 00000012h
         SS_TYPEMASK equ 0000001Fh
-        ;* WINVER >= 0x0400 *
       endif
       if (WINVER ge 0501h)
         SS_REALSIZECONTROL equ 00000040h
-        ;* WINVER >= 0x0501 *
       endif
-      ;* Don't do "&" character translation *
       SS_NOPREFIX equ 00000080h
       if (WINVER ge 0400h)
         SS_NOTIFY equ 00000100h
@@ -7001,12 +5631,8 @@ ifndef _WINUSER_
         SS_PATHELLIPSIS equ 00008000h
         SS_WORDELLIPSIS equ 0000C000h
         SS_ELLIPSISMASK equ 0000C000h
-        ;* WINVER >= 0x0400 *
       endif
       ifndef NOWINMESSAGES
-        ;*
-        ;* Static Control Mesages
-        ;*
         STM_SETICON equ 0170h
         STM_GETICON equ 0171h
         if (WINVER ge 0400h)
@@ -7016,31 +5642,19 @@ ifndef _WINUSER_
           STN_DBLCLK equ 1
           STN_ENABLE equ 2
           STN_DISABLE equ 3
-          ;* WINVER >= 0x0400 *
         endif
         STM_MSGMAX equ 0174h
-        ;* !NOWINMESSAGES *
       endif
-      ;*
-      ;* Dialog window class
-      ;*
       WC_DIALOG equ (MAKEINTATOM(8002h))
-      ;*
-      ;* Get/SetWindowWord/Long offsets for use with WC_DIALOG windows
-      ;*
       DWL_MSGRESULT equ 0
       DWL_DLGPROC equ 4
       DWL_USER equ 8
       ifdef _WIN64
-        ;* _WIN64 *
       endif
       DWLP_MSGRESULT equ 0
       DWLP_DLGPROC equ <DWLP_MSGRESULT + sizeof(LRESULT)>
       DWLP_USER equ <DWLP_DLGPROC + sizeof(DLGPROC)>
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-        ;*
-        ;* Dialog Manager Routines
-        ;*
         ifndef NOMSG
           @DefProto DllImport, IsDialogMessageA, WIN_STD_CALL_CONV,, <:HWND, :LPMSG>, 8
           @DefProto DllImport, IsDialogMessageW, WIN_STD_CALL_CONV,, <:HWND, :LPMSG>, 8
@@ -7049,8 +5663,6 @@ ifndef _WINUSER_
           else
             IsDialogMessage equ <IsDialogMessageA>
           endif
-          ; !UNICODE
-          ;* !NOMSG *
         endif
         @DefProto DllImport, MapDialogRect, WIN_STD_CALL_CONV,, <:HWND, :LPRECT>, 8
         @DefProto DllImport, DlgDirListA, WIN_STD_CALL_CONV,, <:HWND, :LPSTR, :SDWORD, :SDWORD, :UINT>, 20
@@ -7060,12 +5672,7 @@ ifndef _WINUSER_
         else
           DlgDirList equ <DlgDirListA>
         endif
-        ; !UNICODE
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;*
-      ;* DlgDirList, DlgDirListComboBox flags values
-      ;*
       DDL_READWRITE equ 0000h
       DDL_READONLY equ 0001h
       DDL_HIDDEN equ 0002h
@@ -7083,7 +5690,6 @@ ifndef _WINUSER_
         else
           DlgDirSelectEx equ <DlgDirSelectExA>
         endif
-        ; !UNICODE
         @DefProto DllImport, DlgDirListComboBoxA, WIN_STD_CALL_CONV,, <:HWND, :LPSTR, :SDWORD, :SDWORD, :UINT>, 20
         @DefProto DllImport, DlgDirListComboBoxW, WIN_STD_CALL_CONV,, <:HWND, :LPWSTR, :SDWORD, :SDWORD, :UINT>, 20
         ifdef UNICODE
@@ -7091,7 +5697,6 @@ ifndef _WINUSER_
         else
           DlgDirListComboBox equ <DlgDirListComboBoxA>
         endif
-        ; !UNICODE
         @DefProto DllImport, DlgDirSelectComboBoxExA, WIN_STD_CALL_CONV,, <:HWND, :LPSTR, :SDWORD, :SDWORD>, 16
         @DefProto DllImport, DlgDirSelectComboBoxExW, WIN_STD_CALL_CONV,, <:HWND, :LPWSTR, :SDWORD, :SDWORD>, 16
         ifdef UNICODE
@@ -7099,23 +5704,13 @@ ifndef _WINUSER_
         else
           DlgDirSelectComboBoxEx equ <DlgDirSelectComboBoxExA>
         endif
-        ; !UNICODE
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;*
-      ;* Dialog Styles
-      ;*
       DS_ABSALIGN equ 01h
       DS_SYSMODAL equ 02h
-      ;* 16-bit: Edit items get Local storage. 32-bit and up: meaningless. *
       DS_LOCALEDIT equ 20h
-      ;* User specified font for Dlg controls *
       DS_SETFONT equ 40h
-      ;* Can be combined with WS_CAPTION  *
       DS_MODALFRAME equ 80h
-      ;* WM_ENTERIDLE message will not be sent *
       DS_NOIDLEMSG equ 100h
-      ;* not in win3.1 *
       DS_SETFOREGROUND equ 200h
       if (WINVER ge 0400h)
         DS_3DLOOK equ 0004h
@@ -7126,7 +5721,6 @@ ifndef _WINUSER_
         DS_CENTERMOUSE equ 1000h
         DS_CONTEXTHELP equ 2000h
         DS_SHELLFONT equ <(DS_SETFONT or DS_FIXEDSYS)>
-        ;* WINVER >= 0x0400 *
       endif
       if Defined(_WIN32_WCE) and (_WIN32_WCE ge 0500h)
         DS_USEPIXELS equ 8000h
@@ -7135,53 +5729,23 @@ ifndef _WINUSER_
       DM_SETDEFID equ (WM_USER + 1)
       if (WINVER ge 0400h)
         DM_REPOSITION equ (WM_USER + 2)
-        ;* WINVER >= 0x0400 *
       endif
-      ;*
-      ;* Returned in HIWORD() of DM_GETDEFID result if msg is supported
-      ;*
       DC_HASDEFID equ 534Bh
-      ;*
-      ;* Dialog Codes
-      ;*
-      ;* Control wants arrow keys         *
       DLGC_WANTARROWS equ 0001h
-      ;* Control wants tab keys           *
       DLGC_WANTTAB equ 0002h
-      ;* Control wants all keys           *
       DLGC_WANTALLKEYS equ 0004h
-      ;* Pass message to control          *
       DLGC_WANTMESSAGE equ 0004h
-      ;* Understands EM_SETSEL message    *
       DLGC_HASSETSEL equ 0008h
-      ;* Default pushbutton               *
       DLGC_DEFPUSHBUTTON equ 0010h
-      ;* Non-default pushbutton           *
       DLGC_UNDEFPUSHBUTTON equ 0020h
-      ;* Radio button                     *
       DLGC_RADIOBUTTON equ 0040h
-      ;* Want WM_CHAR messages            *
       DLGC_WANTCHARS equ 0080h
-      ;* Static item: don't include       *
       DLGC_STATIC equ 0100h
-      ;* Button item: can be checked      *
       DLGC_BUTTON equ 2000h
       LB_CTLCODE equ 0
-      ;*
-      ;* Listbox Return Values
-      ;*
       LB_OKAY equ 0
       LB_ERR equ (- 1)
       LB_ERRSPACE equ (- 2)
-      ;*
-      ;**  The idStaticPath parameter to DlgDirList can have the following values
-      ;**  ORed if the list box should show other details of the files along with
-      ;**  the name of the files;
-      ;*
-      ;* all other details also will be returned *
-      ;*
-      ;* Listbox Notification Codes
-      ;*
       LBN_ERRSPACE equ (- 2)
       LBN_SELCHANGE equ 1
       LBN_DBLCLK equ 2
@@ -7189,9 +5753,6 @@ ifndef _WINUSER_
       LBN_SETFOCUS equ 4
       LBN_KILLFOCUS equ 5
       ifndef NOWINMESSAGES
-        ;*
-        ;* Listbox messages
-        ;*
         LB_ADDSTRING equ 0180h
         LB_INSERTSTRING equ 0181h
         LB_DELETESTRING equ 0182h
@@ -7233,14 +5794,12 @@ ifndef _WINUSER_
         if (WINVER ge 0400h)
           LB_INITSTORAGE equ 01A8h
           LB_ITEMFROMPOINT equ 01A9h
-          ;* WINVER >= 0x0400 *
         endif
         if Defined(_WIN32_WCE) and (_WIN32_WCE ge 0400h)
           LB_MULTIPLEADDSTRING equ 01B1h
         endif
         if (_WIN32_WINNT ge 0501h)
           LB_GETLISTBOXINFO equ 01B2h
-          ;* _WIN32_WINNT >= 0x0501 *
         endif
         if (_WIN32_WINNT ge 0501h)
           LB_MSGMAX equ 01B3h
@@ -7251,12 +5810,8 @@ ifndef _WINUSER_
         else
           LB_MSGMAX equ 01A8h
         endif
-        ;* !NOWINMESSAGES *
       endif
       ifndef NOWINSTYLES
-        ;*
-        ;* Listbox Styles
-        ;*
         LBS_NOTIFY equ 0001h
         LBS_SORT equ 0002h
         LBS_NOREDRAW equ 0004h
@@ -7273,21 +5828,13 @@ ifndef _WINUSER_
         LBS_NODATA equ 2000h
         if (WINVER ge 0400h)
           LBS_NOSEL equ 4000h
-          ;* WINVER >= 0x0400 *
         endif
         LBS_COMBOBOX equ 8000h
         LBS_STANDARD equ <(LBS_NOTIFY or LBS_SORT or WS_VSCROLL or WS_BORDER)>
-        ;* !NOWINSTYLES *
       endif
-      ;*
-      ;* Combo Box return Values
-      ;*
       CB_OKAY equ 0
       CB_ERR equ (- 1)
       CB_ERRSPACE equ (- 2)
-      ;*
-      ;* Combo Box Notification Codes
-      ;*
       CBN_ERRSPACE equ (- 1)
       CBN_SELCHANGE equ 1
       CBN_DBLCLK equ 2
@@ -7300,9 +5847,6 @@ ifndef _WINUSER_
       CBN_SELENDOK equ 9
       CBN_SELENDCANCEL equ 10
       ifndef NOWINSTYLES
-        ;*
-        ;* Combo Box styles
-        ;*
         CBS_SIMPLE equ 0001h
         CBS_DROPDOWN equ 0002h
         CBS_DROPDOWNLIST equ 0003h
@@ -7317,13 +5861,8 @@ ifndef _WINUSER_
         if (WINVER ge 0400h)
           CBS_UPPERCASE equ 2000h
           CBS_LOWERCASE equ 4000h
-          ;* WINVER >= 0x0400 *
         endif
-        ;* !NOWINSTYLES *
       endif
-      ;*
-      ;* Combo Box messages
-      ;*
       ifndef NOWINMESSAGES
         CB_GETEDITSEL equ 0140h
         CB_LIMITTEXT equ 0141h
@@ -7363,11 +5902,9 @@ ifndef _WINUSER_
           if Defined(_WIN32_WCE) and (_WIN32_WCE ge 0400h)
             CB_MULTIPLEADDSTRING equ 0163h
           endif
-          ;* WINVER >= 0x0400 *
         endif
         if (_WIN32_WINNT ge 0501h)
           CB_GETCOMBOBOXINFO equ 0164h
-          ;* _WIN32_WINNT >= 0x0501 *
         endif
         if (_WIN32_WINNT ge 0501h)
           CB_MSGMAX equ 0165h
@@ -7378,12 +5915,8 @@ ifndef _WINUSER_
         else
           CB_MSGMAX equ 015Bh
         endif
-        ;* !NOWINMESSAGES *
       endif
       ifndef NOWINSTYLES
-        ;*
-        ;* Scroll Bar Styles
-        ;*
         SBS_HORZ equ 0000h
         SBS_VERT equ 0001h
         SBS_TOPALIGN equ 0002h
@@ -7395,34 +5928,21 @@ ifndef _WINUSER_
         SBS_SIZEBOX equ 0008h
         if (WINVER ge 0400h)
           SBS_SIZEGRIP equ 0010h
-          ;* WINVER >= 0x0400 *
         endif
-        ;* !NOWINSTYLES *
       endif
-      ;*
-      ;* Scroll bar messages
-      ;*
       ifndef NOWINMESSAGES
-        ;*not in win3.1 *
         SBM_SETPOS equ 00E0h
-        ;*not in win3.1 *
         SBM_GETPOS equ 00E1h
-        ;*not in win3.1 *
         SBM_SETRANGE equ 00E2h
-        ;*not in win3.1 *
         SBM_SETRANGEREDRAW equ 00E6h
-        ;*not in win3.1 *
         SBM_GETRANGE equ 00E3h
-        ;*not in win3.1 *
         SBM_ENABLE_ARROWS equ 00E4h
         if (WINVER ge 0400h)
           SBM_SETSCROLLINFO equ 00E9h
           SBM_GETSCROLLINFO equ 00EAh
-          ;* WINVER >= 0x0400 *
         endif
         if (_WIN32_WINNT ge 0501h)
           SBM_GETSCROLLBARINFO equ 00EBh
-          ;* _WIN32_WINNT >= 0x0501 *
         endif
         if (WINVER ge 0400h)
           SIF_RANGE equ 0001h
@@ -7433,11 +5953,11 @@ ifndef _WINUSER_
           SIF_ALL equ <(SIF_RANGE or SIF_PAGE or SIF_POS or SIF_TRACKPOS)>
           if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
             SCROLLINFO struct
-              cbSize DWORD ?
-              fMask DWORD ?
+              cbSize UINT ?
+              fMask UINT ?
               nMin SDWORD ?
               nMax SDWORD ?
-              nPage DWORD ?
+              nPage UINT ?
               nPos SDWORD ?
               nTrackPos SDWORD ?
             SCROLLINFO ends
@@ -7446,36 +5966,22 @@ ifndef _WINUSER_
             LPCSCROLLINFO typedef ptr SCROLLINFO
             @DefProto DllImport, SetScrollInfo, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :LPCSCROLLINFO, :BOOL>, 16
             @DefProto DllImport, GetScrollInfo, WIN_STD_CALL_CONV,, <:HWND, :SDWORD, :LPSCROLLINFO>, 12
-            ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
           endif
-          ;* WINVER >= 0x0400 *
         endif
-        ;* !NOWINMESSAGES *
       endif
-      ;* !NOCTLMGR *
     endif
     ifndef NOMDI
-      ;*
-      ;* MDI client style bits
-      ;*
       MDIS_ALLCHILDSTYLES equ 0001h
-      ;*
-      ;* wParam Flags for WM_MDITILE and WM_MDICASCADE messages.
-      ;*
-      ;*not in win3.1 *
       MDITILE_VERTICAL equ 0000h
-      ;*not in win3.1 *
       MDITILE_HORIZONTAL equ 0001h
-      ;*not in win3.1 *
       MDITILE_SKIPDISABLED equ 0002h
       if (_WIN32_WINNT ge 0500h)
         MDITILE_ZORDER equ 0004h
-        ;* _WIN32_WINNT >= 0x0500 *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         MDICREATESTRUCTA struct
-          szClass =POINTER ?
-          szTitle =POINTER ?
+          szClass LPCSTR ?
+          szTitle LPCSTR ?
           hOwner HANDLE ?
           x SDWORD ?
           y SDWORD ?
@@ -7483,13 +5989,12 @@ ifndef _WINUSER_
           cy SDWORD ?
           style DWORD ?
           lParam LPARAM ?
-          ;* app-defined stuff *
         MDICREATESTRUCTA ends
         tagMDICREATESTRUCTA typedef MDICREATESTRUCTA
         LPMDICREATESTRUCTA typedef ptr MDICREATESTRUCTA
         MDICREATESTRUCTW struct
-          szClass =POINTER ?
-          szTitle =POINTER ?
+          szClass LPCWSTR ?
+          szTitle LPCWSTR ?
           hOwner HANDLE ?
           x SDWORD ?
           y SDWORD ?
@@ -7497,7 +6002,6 @@ ifndef _WINUSER_
           cy SDWORD ?
           style DWORD ?
           lParam LPARAM ?
-          ;* app-defined stuff *
         MDICREATESTRUCTW ends
         tagMDICREATESTRUCTW typedef MDICREATESTRUCTW
         LPMDICREATESTRUCTW typedef ptr MDICREATESTRUCTW
@@ -7508,10 +6012,9 @@ ifndef _WINUSER_
           MDICREATESTRUCT typedef MDICREATESTRUCTA
           LPMDICREATESTRUCT typedef LPMDICREATESTRUCTA
         endif
-        ; UNICODE
         CLIENTCREATESTRUCT struct
           hWindowMenu HANDLE ?
-          idFirstChild DWORD ?
+          idFirstChild UINT ?
         CLIENTCREATESTRUCT ends
         tagCLIENTCREATESTRUCT typedef CLIENTCREATESTRUCT
         LPCLIENTCREATESTRUCT typedef ptr CLIENTCREATESTRUCT
@@ -7522,7 +6025,6 @@ ifndef _WINUSER_
         else
           DefFrameProc equ <DefFrameProcA>
         endif
-        ; !UNICODE
         ifndef _MAC
         else
           ;[...]
@@ -7538,10 +6040,8 @@ ifndef _WINUSER_
         else
           DefMDIChildProc equ <DefMDIChildProcA>
         endif
-        ; !UNICODE
         ifndef NOMSG
           @DefProto DllImport, TranslateMDISysAccel, WIN_STD_CALL_CONV,, <:HWND, :LPMSG>, 8
-          ;* !NOMSG *
         endif
         @DefProto DllImport, ArrangeIconicWindows, WIN_STD_CALL_CONV,, <:HWND>, 4
         @DefProto DllImport, CreateMDIWindowA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :DWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :HWND, :HINSTANCE, :LPARAM>, 40
@@ -7551,19 +6051,13 @@ ifndef _WINUSER_
         else
           CreateMDIWindow equ <CreateMDIWindowA>
         endif
-        ; !UNICODE
         if (WINVER ge 0400h)
           @DefProto DllImport, TileWindows, WIN_STD_CALL_CONV,, <:HWND, :UINT, :ptr RECT, :UINT, :ptr HWND>, 20
           @DefProto DllImport, CascadeWindows, WIN_STD_CALL_CONV,, <:HWND, :UINT, :ptr RECT, :UINT, :ptr HWND>, 20
-          ;* WINVER >= 0x0400 *
         endif
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* !NOMDI *
     endif
-    ;* !NOUSER *
   endif
-  ;****** Help support ********************************************************
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     ifndef NOHELP
       HELPPOLY typedef DWORD
@@ -7573,8 +6067,8 @@ ifndef _WINUSER_
         else
           ;[...]
         endif
-        mkKeylist SBYTE ?
-        szKeyphrase SBYTE 1 dup (?)
+        mkKeylist CHAR ?
+        szKeyphrase CHAR 1 dup (?)
       MULTIKEYHELPA ends
       tagMULTIKEYHELPA typedef MULTIKEYHELPA
       PMULTIKEYHELPA typedef ptr MULTIKEYHELPA
@@ -7585,8 +6079,8 @@ ifndef _WINUSER_
         else
           ;[...]
         endif
-        mkKeylist WORD ?
-        szKeyphrase WORD 1 dup (?)
+        mkKeylist WCHAR ?
+        szKeyphrase WCHAR 1 dup (?)
       MULTIKEYHELPW ends
       tagMULTIKEYHELPW typedef MULTIKEYHELPW
       PMULTIKEYHELPW typedef ptr MULTIKEYHELPW
@@ -7600,7 +6094,6 @@ ifndef _WINUSER_
         PMULTIKEYHELP typedef PMULTIKEYHELPA
         LPMULTIKEYHELP typedef LPMULTIKEYHELPA
       endif
-      ; UNICODE
       HELPWININFOA struct
         wStructSize SDWORD ?
         x SDWORD ?
@@ -7608,7 +6101,7 @@ ifndef _WINUSER_
         dx_ SDWORD ?
         dy SDWORD ?
         wMax SDWORD ?
-        rgchMember SBYTE 2 dup (?)
+        rgchMember CHAR 2 dup (?)
       HELPWININFOA ends
       tagHELPWININFOA typedef HELPWININFOA
       PHELPWININFOA typedef ptr HELPWININFOA
@@ -7620,7 +6113,7 @@ ifndef _WINUSER_
         dx_ SDWORD ?
         dy SDWORD ?
         wMax SDWORD ?
-        rgchMember WORD 2 dup (?)
+        rgchMember WCHAR 2 dup (?)
       HELPWININFOW ends
       tagHELPWININFOW typedef HELPWININFOW
       PHELPWININFOW typedef ptr HELPWININFOW
@@ -7634,25 +6127,15 @@ ifndef _WINUSER_
         PHELPWININFO typedef PHELPWININFOA
         LPHELPWININFO typedef LPHELPWININFOA
       endif
-      ; UNICODE
-      ;*
-      ;* Commands to pass to WinHelp()
-      ;*
-      ;* Display topic in ulTopic *
       HELP_CONTEXT equ 0001h
-      ;* Terminate help *
       HELP_QUIT equ 0002h
-      ;* Display index *
       HELP_INDEX equ 0003h
       HELP_CONTENTS equ 0003h
-      ;* Display help on using help *
       HELP_HELPONHELP equ 0004h
-      ;* Set current Index for multi index help *
       HELP_SETINDEX equ 0005h
       HELP_SETCONTENTS equ 0005h
       HELP_CONTEXTPOPUP equ 0008h
       HELP_FORCEFILE equ 0009h
-      ;* Display topic for keyword in offabData *
       HELP_KEY equ 0101h
       HELP_COMMAND equ 0102h
       HELP_PARTIALKEY equ 0105h
@@ -7666,16 +6149,12 @@ ifndef _WINUSER_
         HELP_TCARD equ 8000h
         HELP_TCARD_DATA equ 0010h
         HELP_TCARD_OTHER_CALLER equ 0011h
-        ; These are in winhelp.h in Win95.
         IDH_NO_HELP equ 28440
-        IDH_MISSING_CONTEXT equ 28441; Control doesn't have matching help context
-
-        IDH_GENERIC_HELP_BUTTON equ 28442; Property sheet help button
-
+        IDH_MISSING_CONTEXT equ 28441
+        IDH_GENERIC_HELP_BUTTON equ 28442
         IDH_OK equ 28443
         IDH_CANCEL equ 28444
         IDH_HELP equ 28445
-        ;* WINVER >= 0x0400 *
       endif
       @DefProto DllImport, WinHelpA, WIN_STD_CALL_CONV,, <:HWND, :LPCSTR, :UINT, :ULONG_PTR>, 16
       @DefProto DllImport, WinHelpW, WIN_STD_CALL_CONV,, <:HWND, :LPCWSTR, :UINT, :ULONG_PTR>, 16
@@ -7684,43 +6163,27 @@ ifndef _WINUSER_
       else
         WinHelp equ <WinHelpA>
       endif
-      ; !UNICODE
-      ;* !NOHELP *
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if (WINVER ge 0500h)
-    ;* Count of GDI objects *
     GR_GDIOBJECTS equ 0
-    ;* Count of USER objects *
     GR_USEROBJECTS equ 1
-    ;* WINVER >= 0x0500 *
   endif
   if (WINVER ge 0601h)
-    ;* Peak count of GDI objects *
     GR_GDIOBJECTS_PEAK equ 2
-    ;* Peak count of USER objects *
     GR_USEROBJECTS_PEAK equ 4
-    ;* WINVER >= 0x0601 *
   endif
   if (WINVER ge 0601h)
     GR_GLOBAL equ (- 2)
-    ;* WINVER >= 0x0601 *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (WINVER ge 0500h)
       @DefProto DllImport, GetGuiResources, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD>, 8
-      ;* WINVER >= 0x0500 *
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   ifndef NOSYSPARAMSINFO
-    ;*
-    ;* Parameter for SystemParametersInfo.
-    ;*
     SPI_GETBEEP equ 0001h
     SPI_SETBEEP equ 0002h
     SPI_GETMOUSE equ 0003h
@@ -7797,7 +6260,6 @@ ifndef _WINUSER_
       SPI_GETMOUSETRAILS equ 005Eh
       SPI_SETSCREENSAVERRUNNING equ 0061h
       SPI_SCREENSAVERRUNNING equ <SPI_SETSCREENSAVERRUNNING>
-      ;* WINVER >= 0x0400 *
     endif
     SPI_GETFILTERKEYS equ 0032h
     SPI_SETFILTERKEYS equ 0033h
@@ -7814,14 +6276,12 @@ ifndef _WINUSER_
     if (WINVER ge 0400h)
       SPI_GETSERIALKEYS equ 003Eh
       SPI_SETSERIALKEYS equ 003Fh
-      ;* WINVER >= 0x0400 *
     endif
     SPI_GETSOUNDSENTRY equ 0040h
     SPI_SETSOUNDSENTRY equ 0041h
     if (_WIN32_WINNT ge 0400h)
       SPI_GETSNAPTODEFBUTTON equ 005Fh
       SPI_SETSNAPTODEFBUTTON equ 0060h
-      ;* _WIN32_WINNT >= 0x0400 *
     endif
     if (_WIN32_WINNT ge 0400h) or (_WIN32_WINDOWS gt 0400h)
       SPI_GETMOUSEHOVERWIDTH equ 0062h
@@ -7846,14 +6306,12 @@ ifndef _WINUSER_
       SPI_SETMOUSESPEED equ 0071h
       SPI_GETSCREENSAVERRUNNING equ 0072h
       SPI_GETDESKWALLPAPER equ 0073h
-      ;* WINVER >= 0x0500 *
     endif
     if (WINVER ge 0600h)
       SPI_GETAUDIODESCRIPTION equ 0074h
       SPI_SETAUDIODESCRIPTION equ 0075h
       SPI_GETSCREENSAVESECURE equ 0076h
       SPI_SETSCREENSAVESECURE equ 0077h
-      ;* WINVER >= 0x0600 *
     endif
     if (_WIN32_WINNT ge 0601h)
       SPI_GETHUNGAPPTIMEOUT equ 0078h
@@ -7882,19 +6340,15 @@ ifndef _WINUSER_
       SPI_SETSNAPSIZING equ 008Fh
       SPI_GETDOCKMOVING equ 0090h
       SPI_SETDOCKMOVING equ 0091h
-      ;* _WIN32_WINNT >= 0x0601 *
     endif
     if (WINVER ge 0602h)
       MAX_TOUCH_PREDICTION_FILTER_TAPS equ 3
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         TOUCHPREDICTIONPARAMETERS struct
-          cbSize DWORD ?
-          dwLatency DWORD ?
-          ; Latency in millisecs
-          dwSampleTime DWORD ?
-          ; Sample time in millisecs (used to deduce velocity)
-          bUseHWTimeStamp DWORD ?
-          ; Use H/W TimeStamps
+          cbSize UINT ?
+          dwLatency UINT ?
+          dwSampleTime UINT ?
+          bUseHWTimeStamp UINT ?
         TOUCHPREDICTIONPARAMETERS ends
         tagTouchPredictionParameters typedef TOUCHPREDICTIONPARAMETERS
         PTOUCHPREDICTIONPARAMETERS typedef ptr TOUCHPREDICTIONPARAMETERS
@@ -7906,7 +6360,6 @@ ifndef _WINUSER_
         TOUCHPREDICTIONPARAMETERS_DEFAULT_RLS_LAMBDA_MAX equ 0.999
         TOUCHPREDICTIONPARAMETERS_DEFAULT_RLS_LAMBDA_LEARNING_RATE equ 0.001
         TOUCHPREDICTIONPARAMETERS_DEFAULT_RLS_EXPO_SMOOTH_ALPHA equ 0.99
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
       SPI_GETTOUCHPREDICTIONPARAMETERS equ 009Ch
       SPI_SETTOUCHPREDICTIONPARAMETERS equ 009Dh
@@ -7916,14 +6369,11 @@ ifndef _WINUSER_
       SPI_SETLOGICALDPIOVERRIDE equ 009Fh
       SPI_GETMENURECT equ 00A2h
       SPI_SETMENURECT equ 00A3h
-      ;* WINVER >= 0x0602 *
     endif
     if (NTDDI_VERSION ge NTDDI_WIN10_19H1)
     endif
     if (NTDDI_VERSION ge NTDDI_WIN10_CO)
-      ;* constants for SPI_{GET|SET}WAKEONINPUTDEVICETYPES *
     endif
-    ; NTDDI_VERSION >= NTDDI_WIN10_CO
     if (WINVER ge 0500h)
       SPI_GETACTIVEWINDOWTRACKING equ 1000h
       SPI_SETACTIVEWINDOWTRACKING equ 1001h
@@ -7966,7 +6416,6 @@ ifndef _WINUSER_
         SPI_SETDROPSHADOW equ 1025h
         SPI_GETBLOCKSENDINPUTRESETS equ 1026h
         SPI_SETBLOCKSENDINPUTRESETS equ 1027h
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       SPI_GETUIEFFECTS equ 103Eh
       SPI_SETUIEFFECTS equ 103Fh
@@ -7979,7 +6428,6 @@ ifndef _WINUSER_
         SPI_SETCLEARTYPE equ 1049h
         SPI_GETSPEECHRECOGNITION equ 104Ah
         SPI_SETSPEECHRECOGNITION equ 104Bh
-        ;* _WIN32_WINNT >= 0x0600 *
       endif
       if (WINVER ge 0601h)
         SPI_GETCARETBROWSING equ 104Ch
@@ -7988,11 +6436,9 @@ ifndef _WINUSER_
         SPI_SETTHREADLOCALINPUTSETTINGS equ 104Fh
         SPI_GETSYSTEMLANGUAGEBAR equ 1050h
         SPI_SETSYSTEMLANGUAGEBAR equ 1051h
-        ;* WINVER >= 0x0601 *
       endif
       if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
       endif
-      ; NTDDI_VERSION >= NTDDI_WIN10_RS3
       SPI_GETFOREGROUNDLOCKTIMEOUT equ 2000h
       SPI_SETFOREGROUNDLOCKTIMEOUT equ 2001h
       SPI_GETACTIVEWNDTRKTIMEOUT equ 2002h
@@ -8006,7 +6452,6 @@ ifndef _WINUSER_
         SPI_SETMOUSECLICKLOCKTIME equ 2009h
         SPI_GETFONTSMOOTHINGTYPE equ 200Ah
         SPI_SETFONTSMOOTHINGTYPE equ 200Bh
-        ;* constants for SPI_GETFONTSMOOTHINGTYPE and SPI_SETFONTSMOOTHINGTYPE: *
         FE_FONTSMOOTHINGSTANDARD equ 0001h
         FE_FONTSMOOTHINGCLEARTYPE equ 0002h
         SPI_GETFONTSMOOTHINGCONTRAST equ 200Ch
@@ -8017,28 +6462,23 @@ ifndef _WINUSER_
         SPI_SETFOCUSBORDERHEIGHT equ 2011h
         SPI_GETFONTSMOOTHINGORIENTATION equ 2012h
         SPI_SETFONTSMOOTHINGORIENTATION equ 2013h
-        ;* constants for SPI_GETFONTSMOOTHINGORIENTATION and SPI_SETFONTSMOOTHINGORIENTATION: *
         FE_FONTSMOOTHINGORIENTATIONBGR equ 0000h
         FE_FONTSMOOTHINGORIENTATIONRGB equ 0001h
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if (_WIN32_WINNT ge 0600h)
         SPI_GETMINIMUMHITRADIUS equ 2014h
         SPI_SETMINIMUMHITRADIUS equ 2015h
         SPI_GETMESSAGEDURATION equ 2016h
         SPI_SETMESSAGEDURATION equ 2017h
-        ;* _WIN32_WINNT >= 0x0600 *
       endif
       if (WINVER ge 0602h)
         SPI_GETCONTACTVISUALIZATION equ 2018h
         SPI_SETCONTACTVISUALIZATION equ 2019h
-        ;* constants for SPI_GETCONTACTVISUALIZATION and SPI_SETCONTACTVISUALIZATION *
         CONTACTVISUALIZATION_OFF equ 0000h
         CONTACTVISUALIZATION_ON equ 0001h
         CONTACTVISUALIZATION_PRESENTATIONMODE equ 0002h
         SPI_GETGESTUREVISUALIZATION equ 201Ah
         SPI_SETGESTUREVISUALIZATION equ 201Bh
-        ;* constants for SPI_GETGESTUREVISUALIZATION and SPI_SETGESTUREVISUALIZATION *
         GESTUREVISUALIZATION_OFF equ 0000h
         GESTUREVISUALIZATION_ON equ 001Fh
         GESTUREVISUALIZATION_TAP equ 0001h
@@ -8046,7 +6486,6 @@ ifndef _WINUSER_
         GESTUREVISUALIZATION_PRESSANDTAP equ 0004h
         GESTUREVISUALIZATION_PRESSANDHOLD equ 0008h
         GESTUREVISUALIZATION_RIGHTTAP equ 0010h
-        ;* WINVER >= 0x0602 *
       endif
       if (WINVER ge 0602h)
         SPI_GETMOUSEWHEELROUTING equ 201Ch
@@ -8055,14 +6494,11 @@ ifndef _WINUSER_
         MOUSEWHEEL_ROUTING_HYBRID equ 1
         if (WINVER ge 0603h)
           MOUSEWHEEL_ROUTING_MOUSE_POS equ 2
-          ;* WINVER >= 0x0603 *
         endif
-        ;* WINVER >= 0x0602 *
       endif
       if (WINVER ge 0604h)
         SPI_GETPENVISUALIZATION equ 201Eh
         SPI_SETPENVISUALIZATION equ 201Fh
-        ;* constants for SPI_{GET|SET}PENVISUALIZATION *
         PENVISUALIZATION_ON equ 0023h
         PENVISUALIZATION_OFF equ 0000h
         PENVISUALIZATION_TAP equ 0001h
@@ -8070,19 +6506,16 @@ ifndef _WINUSER_
         PENVISUALIZATION_CURSOR equ 0020h
         SPI_GETPENARBITRATIONTYPE equ 2020h
         SPI_SETPENARBITRATIONTYPE equ 2021h
-        ;* constants for SPI_{GET|SET}PENARBITRATIONTYPE *
         PENARBITRATIONTYPE_NONE equ 0000h
         PENARBITRATIONTYPE_WIN8 equ 0001h
         PENARBITRATIONTYPE_FIS equ 0002h
         PENARBITRATIONTYPE_SPT equ 0003h
         PENARBITRATIONTYPE_MAX equ 0004h
-        ;* WINVER >= 0x0604 *
       endif
       if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
         SPI_GETCARETTIMEOUT equ 2022h
         SPI_SETCARETTIMEOUT equ 2023h
       endif
-      ; NTDDI_VERSION >= NTDDI_WIN10_RS3
       if (NTDDI_VERSION ge NTDDI_WIN10_RS4)
         SPI_GETHANDEDNESS equ 2024h
         SPI_SETHANDEDNESS equ 2025h
@@ -8092,12 +6525,7 @@ ifndef _WINUSER_
         tagHANDEDNESS typedef HANDEDNESS
         PHANDEDNESS typedef ptr HANDEDNESS
       endif
-      ; NTDDI_VERSION >= NTDDI_WIN10_RS4
-      ;* WINVER >= 0x0500 *
     endif
-    ;*
-    ;* Flags
-    ;*
     SPIF_UPDATEINIFILE equ 0001h
     SPIF_SENDWININICHANGE equ 0002h
     SPIF_SENDCHANGE equ <SPIF_SENDWININICHANGE>
@@ -8106,7 +6534,7 @@ ifndef _WINUSER_
       ifndef NOGDI
         if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
           NONCLIENTMETRICSA struct
-            cbSize DWORD ?
+            cbSize UINT ?
             iBorderWidth SDWORD ?
             iScrollWidth SDWORD ?
             iScrollHeight SDWORD ?
@@ -8123,14 +6551,13 @@ ifndef _WINUSER_
             lfMessageFont LOGFONTA <>
             if (WINVER ge 0600h)
               iPaddedBorderWidth SDWORD ?
-              ;* WINVER >= 0x0600 *
             endif
           NONCLIENTMETRICSA ends
           tagNONCLIENTMETRICSA typedef NONCLIENTMETRICSA
           PNONCLIENTMETRICSA typedef ptr NONCLIENTMETRICSA
           LPNONCLIENTMETRICSA typedef ptr NONCLIENTMETRICSA
           NONCLIENTMETRICSW struct
-            cbSize DWORD ?
+            cbSize UINT ?
             iBorderWidth SDWORD ?
             iScrollWidth SDWORD ?
             iScrollHeight SDWORD ?
@@ -8147,7 +6574,6 @@ ifndef _WINUSER_
             lfMessageFont LOGFONTW <>
             if (WINVER ge 0600h)
               iPaddedBorderWidth SDWORD ?
-              ;* WINVER >= 0x0600 *
             endif
           NONCLIENTMETRICSW ends
           tagNONCLIENTMETRICSW typedef NONCLIENTMETRICSW
@@ -8162,12 +6588,8 @@ ifndef _WINUSER_
             PNONCLIENTMETRICS typedef PNONCLIENTMETRICSA
             LPNONCLIENTMETRICS typedef LPNONCLIENTMETRICSA
           endif
-          ; UNICODE
-          ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
         endif
-        ;* NOGDI *
       endif
-      ;* _WINGDI_ *
     endif
     ARW_BOTTOMLEFT equ 0000h
     ARW_BOTTOMRIGHT equ 0001h
@@ -8183,7 +6605,7 @@ ifndef _WINUSER_
     ARW_HIDE equ 0008h
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       MINIMIZEDMETRICS struct
-        cbSize DWORD ?
+        cbSize UINT ?
         iWidth SDWORD ?
         iHorzGap SDWORD ?
         iVertGap SDWORD ?
@@ -8195,7 +6617,7 @@ ifndef _WINUSER_
       ifdef _WINGDI_
         ifndef NOGDI
           ICONMETRICSA struct
-            cbSize DWORD ?
+            cbSize UINT ?
             iHorzSpacing SDWORD ?
             iVertSpacing SDWORD ?
             iTitleWrap SDWORD ?
@@ -8205,7 +6627,7 @@ ifndef _WINUSER_
           PICONMETRICSA typedef ptr ICONMETRICSA
           LPICONMETRICSA typedef ptr ICONMETRICSA
           ICONMETRICSW struct
-            cbSize DWORD ?
+            cbSize UINT ?
             iHorzSpacing SDWORD ?
             iVertSpacing SDWORD ?
             iTitleWrap SDWORD ?
@@ -8223,36 +6645,33 @@ ifndef _WINUSER_
             PICONMETRICS typedef PICONMETRICSA
             LPICONMETRICS typedef LPICONMETRICSA
           endif
-          ; UNICODE
-          ;* NOGDI *
         endif
-        ;* _WINGDI_ *
       endif
       ANIMATIONINFO struct
-        cbSize DWORD ?
+        cbSize UINT ?
         iMinAnimate SDWORD ?
       ANIMATIONINFO ends
       tagANIMATIONINFO typedef ANIMATIONINFO
       LPANIMATIONINFO typedef ptr ANIMATIONINFO
       SERIALKEYSA struct
-        cbSize DWORD ?
+        cbSize UINT ?
         dwFlags DWORD ?
-        lpszActivePort POINTER ?
-        lpszPort POINTER ?
-        iBaudRate DWORD ?
-        iPortState DWORD ?
-        iActive DWORD ?
+        lpszActivePort LPSTR ?
+        lpszPort LPSTR ?
+        iBaudRate UINT ?
+        iPortState UINT ?
+        iActive UINT ?
       SERIALKEYSA ends
       tagSERIALKEYSA typedef SERIALKEYSA
       LPSERIALKEYSA typedef ptr SERIALKEYSA
       SERIALKEYSW struct
-        cbSize DWORD ?
+        cbSize UINT ?
         dwFlags DWORD ?
-        lpszActivePort POINTER ?
-        lpszPort POINTER ?
-        iBaudRate DWORD ?
-        iPortState DWORD ?
-        iActive DWORD ?
+        lpszActivePort LPWSTR ?
+        lpszPort LPWSTR ?
+        iBaudRate UINT ?
+        iPortState UINT ?
+        iActive UINT ?
       SERIALKEYSW ends
       tagSERIALKEYSW typedef SERIALKEYSW
       LPSERIALKEYSW typedef ptr SERIALKEYSW
@@ -8263,22 +6682,20 @@ ifndef _WINUSER_
         SERIALKEYS typedef SERIALKEYSA
         LPSERIALKEYS typedef LPSERIALKEYSA
       endif
-      ; UNICODE
-      ;* flags for SERIALKEYS dwFlags field *
       SERKF_SERIALKEYSON equ 00000001h
       SERKF_AVAILABLE equ 00000002h
       SERKF_INDICATOR equ 00000004h
       HIGHCONTRASTA struct
-        cbSize DWORD ?
+        cbSize UINT ?
         dwFlags DWORD ?
-        lpszDefaultScheme POINTER ?
+        lpszDefaultScheme LPSTR ?
       HIGHCONTRASTA ends
       tagHIGHCONTRASTA typedef HIGHCONTRASTA
       LPHIGHCONTRASTA typedef ptr HIGHCONTRASTA
       HIGHCONTRASTW struct
-        cbSize DWORD ?
+        cbSize UINT ?
         dwFlags DWORD ?
-        lpszDefaultScheme POINTER ?
+        lpszDefaultScheme LPWSTR ?
       HIGHCONTRASTW ends
       tagHIGHCONTRASTW typedef HIGHCONTRASTW
       LPHIGHCONTRASTW typedef ptr HIGHCONTRASTW
@@ -8289,10 +6706,7 @@ ifndef _WINUSER_
         HIGHCONTRAST typedef HIGHCONTRASTA
         LPHIGHCONTRAST typedef LPHIGHCONTRASTA
       endif
-      ; UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;* flags for HIGHCONTRAST dwFlags field *
     HCF_HIGHCONTRASTON equ 00000001h
     HCF_AVAILABLE equ 00000002h
     HCF_HOTKEYACTIVE equ 00000004h
@@ -8303,7 +6717,6 @@ ifndef _WINUSER_
     HCF_LOGONDESKTOP equ 00000100h
     HCF_DEFAULTDESKTOP equ 00000200h
     HCF_OPTION_NOTHEMECHANGE equ 00001000h
-    ;* Flags for ChangeDisplaySettings *
     CDS_UPDATEREGISTRY equ 00000001h
     CDS_TEST equ 00000002h
     CDS_FULLSCREEN equ 00000004h
@@ -8313,13 +6726,11 @@ ifndef _WINUSER_
     if (WINVER ge 0600h)
       CDS_ENABLE_UNSAFE_MODES equ 00000100h
       CDS_DISABLE_UNSAFE_MODES equ 00000200h
-      ;* WINVER >= 0x0600 *
     endif
     CDS_RESET equ 40000000h
     CDS_RESET_EX equ 20000000h
     CDS_NORESET equ 10000000h
     include tvout.inc
-    ;* Return values for ChangeDisplaySettings *
     DISP_CHANGE_SUCCESSFUL equ 0
     DISP_CHANGE_RESTART equ 1
     DISP_CHANGE_FAILED equ -1
@@ -8329,7 +6740,6 @@ ifndef _WINUSER_
     DISP_CHANGE_BADPARAM equ -5
     if (_WIN32_WINNT ge 0501h)
       DISP_CHANGE_BADDUALVIEW equ -6
-      ;* _WIN32_WINNT >= 0x0501 *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       ifdef _WINGDI_
@@ -8341,7 +6751,6 @@ ifndef _WINUSER_
           else
             ChangeDisplaySettings equ <ChangeDisplaySettingsA>
           endif
-          ; !UNICODE
           @DefProto DllImport, ChangeDisplaySettingsExA, WIN_STD_CALL_CONV,, <:LPCSTR, :ptr DEVMODEA, :HWND, :DWORD, :LPVOID>, 20
           @DefProto DllImport, ChangeDisplaySettingsExW, WIN_STD_CALL_CONV,, <:LPCWSTR, :ptr DEVMODEW, :HWND, :DWORD, :LPVOID>, 20
           ifdef UNICODE
@@ -8349,7 +6758,6 @@ ifndef _WINUSER_
           else
             ChangeDisplaySettingsEx equ <ChangeDisplaySettingsExA>
           endif
-          ; !UNICODE
           ENUM_CURRENT_SETTINGS equ (- 1)
           ENUM_REGISTRY_SETTINGS equ (- 2)
           @DefProto DllImport, EnumDisplaySettingsA, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD, :ptr DEVMODEA>, 12
@@ -8359,7 +6767,6 @@ ifndef _WINUSER_
           else
             EnumDisplaySettings equ <EnumDisplaySettingsA>
           endif
-          ; !UNICODE
           if (WINVER ge 0500h)
             @DefProto DllImport, EnumDisplaySettingsExA, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD, :ptr DEVMODEA, :DWORD>, 16
             @DefProto DllImport, EnumDisplaySettingsExW, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :ptr DEVMODEW, :DWORD>, 16
@@ -8368,8 +6775,6 @@ ifndef _WINUSER_
             else
               EnumDisplaySettingsEx equ <EnumDisplaySettingsExA>
             endif
-            ; !UNICODE
-            ;* Flags for EnumDisplaySettingsEx *
             EDS_RAWMODE equ 00000002h
             EDS_ROTATEDMODE equ 00000004h
             @DefProto DllImport, EnumDisplayDevicesA, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD, :PDISPLAY_DEVICEA, :DWORD>, 16
@@ -8379,10 +6784,7 @@ ifndef _WINUSER_
             else
               EnumDisplayDevices equ <EnumDisplayDevicesA>
             endif
-            ; !UNICODE
-            ;* Flags for EnumDisplayDevices *
             EDD_GET_DEVICE_INTERFACE_NAME equ 00000001h
-            ;* WINVER >= 0x0500 *
           endif
           if (WINVER ge 0601h)
             @DefProto DllImport, GetDisplayConfigBufferSizes, WIN_STD_CALL_CONV,, <:UINT32, :ptr UINT32, :ptr UINT32>, 12
@@ -8390,11 +6792,8 @@ ifndef _WINUSER_
             @DefProto DllImport, QueryDisplayConfig, WIN_STD_CALL_CONV,, <:UINT32, :ptr UINT32, :ptr DISPLAYCONFIG_PATH_INFO, :ptr UINT32, :ptr DISPLAYCONFIG_MODE_INFO, :ptr DISPLAYCONFIG_TOPOLOGY_ID>, 24
             @DefProto DllImport, DisplayConfigGetDeviceInfo, WIN_STD_CALL_CONV,, <:ptr DISPLAYCONFIG_DEVICE_INFO_HEADER>, 4
             @DefProto DllImport, DisplayConfigSetDeviceInfo, WIN_STD_CALL_CONV,, <:ptr DISPLAYCONFIG_DEVICE_INFO_HEADER>, 4
-            ;* WINVER >= 0x0601 *
           endif
-          ;* NOGDI *
         endif
-        ;* _WINGDI_ *
       endif
       @DefProto DllImport, SystemParametersInfoA, WIN_STD_CALL_CONV,, <:UINT, :UINT, :PVOID, :UINT>, 16
       @DefProto DllImport, SystemParametersInfoW, WIN_STD_CALL_CONV,, <:UINT, :UINT, :PVOID, :UINT>, 16
@@ -8403,38 +6802,23 @@ ifndef _WINUSER_
       else
         SystemParametersInfo equ <SystemParametersInfoA>
       endif
-      ; !UNICODE
       if (WINVER ge 0605h)
         @DefProto DllImport, SystemParametersInfoForDpi, WIN_STD_CALL_CONV,, <:UINT, :UINT, :PVOID, :UINT, :UINT>, 20
-        ;* WINVER >= 0x0605 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;* !NOSYSPARAMSINFO  *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-    ;*
-    ;* Accessibility support
-    ;*
     FILTERKEYS struct
-      cbSize DWORD ?
+      cbSize UINT ?
       dwFlags DWORD ?
       iWaitMSec DWORD ?
-      ; Acceptance Delay
       iDelayMSec DWORD ?
-      ; Delay Until Repeat
       iRepeatMSec DWORD ?
-      ; Repeat Rate
       iBounceMSec DWORD ?
-      ; Debounce Time
     FILTERKEYS ends
     tagFILTERKEYS typedef FILTERKEYS
     LPFILTERKEYS typedef ptr FILTERKEYS
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
-  ;*
-  ;* FILTERKEYS dwFlags field
-  ;*
   FKF_FILTERKEYSON equ 00000001h
   FKF_AVAILABLE equ 00000002h
   FKF_HOTKEYACTIVE equ 00000004h
@@ -8444,16 +6828,12 @@ ifndef _WINUSER_
   FKF_CLICKON equ 00000040h
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     STICKYKEYS struct
-      cbSize DWORD ?
+      cbSize UINT ?
       dwFlags DWORD ?
     STICKYKEYS ends
     tagSTICKYKEYS typedef STICKYKEYS
     LPSTICKYKEYS typedef ptr STICKYKEYS
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
-  ;*
-  ;* STICKYKEYS dwFlags field
-  ;*
   SKF_STICKYKEYSON equ 00000001h
   SKF_AVAILABLE equ 00000002h
   SKF_HOTKEYACTIVE equ 00000004h
@@ -8480,11 +6860,10 @@ ifndef _WINUSER_
     SKF_RSHIFTLOCKED equ 00020000h
     SKF_LWINLOCKED equ 00400000h
     SKF_RWINLOCKED equ 00800000h
-    ;* _WIN32_WINNT >= 0x0500 *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     MOUSEKEYS struct
-      cbSize DWORD ?
+      cbSize UINT ?
       dwFlags DWORD ?
       iMaxSpeed DWORD ?
       iTimeToMaxSpeed DWORD ?
@@ -8494,11 +6873,7 @@ ifndef _WINUSER_
     MOUSEKEYS ends
     tagMOUSEKEYS typedef MOUSEKEYS
     LPMOUSEKEYS typedef ptr MOUSEKEYS
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
-  ;*
-  ;* MOUSEKEYS dwFlags field
-  ;*
   MKF_MOUSEKEYSON equ 00000001h
   MKF_AVAILABLE equ 00000002h
   MKF_HOTKEYACTIVE equ 00000004h
@@ -8513,32 +6888,24 @@ ifndef _WINUSER_
     MKF_LEFTBUTTONDOWN equ 01000000h
     MKF_RIGHTBUTTONDOWN equ 02000000h
     MKF_MOUSEMODE equ 80000000h
-    ;* _WIN32_WINNT >= 0x0500 *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     ACCESSTIMEOUT struct
-      cbSize DWORD ?
+      cbSize UINT ?
       dwFlags DWORD ?
       iTimeOutMSec DWORD ?
     ACCESSTIMEOUT ends
     tagACCESSTIMEOUT typedef ACCESSTIMEOUT
     LPACCESSTIMEOUT typedef ptr ACCESSTIMEOUT
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
-  ;*
-  ;* ACCESSTIMEOUT dwFlags field
-  ;*
   ATF_TIMEOUTON equ 00000001h
   ATF_ONOFFFEEDBACK equ 00000002h
-  ;* values for SOUNDSENTRY iFSGrafEffect field *
   SSGF_NONE equ 0
   SSGF_DISPLAY equ 3
-  ;* values for SOUNDSENTRY iFSTextEffect field *
   SSTF_NONE equ 0
   SSTF_CHARS equ 1
   SSTF_BORDER equ 2
   SSTF_DISPLAY equ 3
-  ;* values for SOUNDSENTRY iWindowsEffect field *
   SSWF_NONE equ 0
   SSWF_TITLE equ 1
   SSWF_WINDOW equ 2
@@ -8546,7 +6913,7 @@ ifndef _WINUSER_
   SSWF_CUSTOM equ 4
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     SOUNDSENTRYA struct
-      cbSize DWORD ?
+      cbSize UINT ?
       dwFlags DWORD ?
       iFSTextEffect DWORD ?
       iFSTextEffectMSec DWORD ?
@@ -8556,13 +6923,13 @@ ifndef _WINUSER_
       iFSGrafEffectColor DWORD ?
       iWindowsEffect DWORD ?
       iWindowsEffectMSec DWORD ?
-      lpszWindowsEffectDLL POINTER ?
+      lpszWindowsEffectDLL LPSTR ?
       iWindowsEffectOrdinal DWORD ?
     SOUNDSENTRYA ends
     tagSOUNDSENTRYA typedef SOUNDSENTRYA
     LPSOUNDSENTRYA typedef ptr SOUNDSENTRYA
     SOUNDSENTRYW struct
-      cbSize DWORD ?
+      cbSize UINT ?
       dwFlags DWORD ?
       iFSTextEffect DWORD ?
       iFSTextEffectMSec DWORD ?
@@ -8572,7 +6939,7 @@ ifndef _WINUSER_
       iFSGrafEffectColor DWORD ?
       iWindowsEffect DWORD ?
       iWindowsEffectMSec DWORD ?
-      lpszWindowsEffectDLL POINTER ?
+      lpszWindowsEffectDLL LPWSTR ?
       iWindowsEffectOrdinal DWORD ?
     SOUNDSENTRYW ends
     tagSOUNDSENTRYW typedef SOUNDSENTRYW
@@ -8584,34 +6951,23 @@ ifndef _WINUSER_
       SOUNDSENTRY typedef SOUNDSENTRYA
       LPSOUNDSENTRY typedef LPSOUNDSENTRYA
     endif
-    ; UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
-  ;*
-  ;* SOUNDSENTRY dwFlags field
-  ;*
   SSF_SOUNDSENTRYON equ 00000001h
   SSF_AVAILABLE equ 00000002h
   SSF_INDICATOR equ 00000004h
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PC_APP)
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, SoundSentry, WIN_STD_CALL_CONV,, <>, 0
-      ;* _WIN32_WINNT >= 0x0600 *
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_PC_APP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     TOGGLEKEYS struct
-      cbSize DWORD ?
+      cbSize UINT ?
       dwFlags DWORD ?
     TOGGLEKEYS ends
     tagTOGGLEKEYS typedef TOGGLEKEYS
     LPTOGGLEKEYS typedef ptr TOGGLEKEYS
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
-  ;*
-  ;* TOGGLEKEYS dwFlags field
-  ;*
   TKF_TOGGLEKEYSON equ 00000001h
   TKF_AVAILABLE equ 00000002h
   TKF_HOTKEYACTIVE equ 00000004h
@@ -8621,26 +6977,15 @@ ifndef _WINUSER_
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (_WIN32_WINNT ge 0600h)
       AUDIODESCRIPTION struct
-        cbSize DWORD ?
-        ; sizeof(AudioDescriptionType)
-        Enabled DWORD ?
-        ; On/Off
+        cbSize UINT ?
+        Enabled BOOL ?
         Locale LCID ?
-        ; locale ID for language
       AUDIODESCRIPTION ends
       tagAUDIODESCRIPTION typedef AUDIODESCRIPTION
       LPAUDIODESCRIPTION typedef ptr AUDIODESCRIPTION
-      ;* _WIN32_WINNT >= 0x0600 *
     endif
-    ;*
-    ;* Set debug level
-    ;*
     @DefProto DllImport, SetDebugErrorLevel, WIN_STD_CALL_CONV,, <:DWORD>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
-  ;*
-  ;* SetLastErrorEx() types.
-  ;*
   SLE_ERROR equ 00000001h
   SLE_MINORERROR equ 00000002h
   SLE_WARNING equ 00000003h
@@ -8651,12 +6996,8 @@ ifndef _WINUSER_
       @DefProto DllImport, EndTask, WIN_STD_CALL_CONV,, <:HWND, :BOOL, :BOOL>, 12
     endif
     @DefProto DllImport, CancelShutdown, WIN_STD_CALL_CONV,, <>, 0
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if (WINVER ge 0500h)
-    ;*
-    ;* Multimonitor API.
-    ;*
     MONITOR_DEFAULTTONULL equ 00000000h
     MONITOR_DEFAULTTOPRIMARY equ 00000001h
     MONITOR_DEFAULTTONEAREST equ 00000002h
@@ -8664,7 +7005,6 @@ ifndef _WINUSER_
       @DefProto DllImport, MonitorFromPoint, WIN_STD_CALL_CONV,, <:POINT, :DWORD>, 8
       @DefProto DllImport, MonitorFromRect, WIN_STD_CALL_CONV,, <:LPCRECT, :DWORD>, 8
       @DefProto DllImport, MonitorFromWindow, WIN_STD_CALL_CONV,, <:HWND, :DWORD>, 8
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     MONITORINFOF_PRIMARY equ 00000001h
     ifndef CCHDEVICENAME
@@ -8681,18 +7021,16 @@ ifndef _WINUSER_
       LPMONITORINFO typedef ptr MONITORINFO
       ifdef __cplusplus
         ;[...]
-        ; UNICODE
       else
-      ; ndef __cplusplus
         MONITORINFOEXA struct
           DUMMYSTRUCTNAME MONITORINFO <>
-          szDevice SBYTE CCHDEVICENAME dup (?)
+          szDevice CHAR CCHDEVICENAME dup (?)
         MONITORINFOEXA ends
         tagMONITORINFOEXA typedef MONITORINFOEXA
         LPMONITORINFOEXA typedef ptr MONITORINFOEXA
         MONITORINFOEXW struct
           DUMMYSTRUCTNAME MONITORINFO <>
-          szDevice WORD CCHDEVICENAME dup (?)
+          szDevice WCHAR CCHDEVICENAME dup (?)
         MONITORINFOEXW ends
         tagMONITORINFOEXW typedef MONITORINFOEXW
         LPMONITORINFOEXW typedef ptr MONITORINFOEXW
@@ -8703,7 +7041,6 @@ ifndef _WINUSER_
           MONITORINFOEX typedef MONITORINFOEXA
           LPMONITORINFOEX typedef LPMONITORINFOEXA
         endif
-        ; UNICODE
       endif
       @DefProto DllImport, GetMonitorInfoA, WIN_STD_CALL_CONV,, <:HMONITOR, :LPMONITORINFO>, 8
       @DefProto DllImport, GetMonitorInfoW, WIN_STD_CALL_CONV,, <:HMONITOR, :LPMONITORINFO>, 8
@@ -8712,18 +7049,13 @@ ifndef _WINUSER_
       else
         GetMonitorInfo equ <GetMonitorInfoA>
       endif
-      ; !UNICODE
       TYPE_MONITORENUMPROC typedef proto WIN_STD_CALL_CONV :HMONITOR, :HDC, :LPRECT, :LPARAM
       MONITORENUMPROC typedef ptr TYPE_MONITORENUMPROC
 
       @DefProto DllImport, EnumDisplayMonitors, WIN_STD_CALL_CONV,, <:HDC, :LPCRECT, :MONITORENUMPROC, :LPARAM>, 16
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     ifndef NOWINABLE
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-        ;*
-        ;* WinEvents - Active Accessibility hooks
-        ;*
         @DefProto DllImport, NotifyWinEvent, WIN_STD_CALL_CONV,, <:DWORD, :HWND, :LONG, :LONG>, 16
         TYPE_WINEVENTPROC typedef proto WIN_STD_CALL_CONV :HWINEVENTHOOK, :DWORD, :HWND, :LONG, :LONG, :DWORD, :DWORD
         WINEVENTPROC typedef ptr TYPE_WINEVENTPROC
@@ -8731,47 +7063,18 @@ ifndef _WINUSER_
         @DefProto DllImport, SetWinEventHook, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :HMODULE, :WINEVENTPROC, :DWORD, :DWORD, :DWORD>, 28
         if (_WIN32_WINNT ge 0501h)
           @DefProto DllImport, IsWinEventHookInstalled, WIN_STD_CALL_CONV,, <:DWORD>, 4
-          ;* _WIN32_WINNT >= 0x0501 *
         endif
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;*
-      ;* dwFlags for SetWinEventHook
-      ;*
-      WINEVENT_OUTOFCONTEXT equ 0000h; Events are ASYNC
-
-      WINEVENT_SKIPOWNTHREAD equ 0001h; Don't call back for events on installer's thread
-
-      WINEVENT_SKIPOWNPROCESS equ 0002h; Don't call back for events on installer's process
-
-      WINEVENT_INCONTEXT equ 0004h; Events are SYNC, this causes your dll to be injected into every process
-
+      WINEVENT_OUTOFCONTEXT equ 0000h
+      WINEVENT_SKIPOWNTHREAD equ 0001h
+      WINEVENT_SKIPOWNPROCESS equ 0002h
+      WINEVENT_INCONTEXT equ 0004h
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, UnhookWinEvent, WIN_STD_CALL_CONV,, <:HWINEVENTHOOK>, 4
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;*
-      ;* idObject values for WinEventProc and NotifyWinEvent
-      ;*
-      ;*
-      ;* hwnd + idObject can be used with OLEACC.DLL's OleGetObjectFromWindow()
-      ;* to get an interface pointer to the container.  indexChild is the item
-      ;* within the container in question.  Setup a VARIANT with vt VT_I4 and
-      ;* lVal the indexChild and pass that in to all methods.  Then you
-      ;* are raring to go.
-      ;*
-      ;*
-      ;* Common object IDs (cookies, only for sending WM_GETOBJECT to get at the
-      ;* thing in question).  Positive IDs are reserved for apps (app specific),
-      ;* negative IDs are system things and are global, 0 means "just little old
-      ;* me".
-      ;*
       CHILDID_SELF equ 0
       INDEXID_OBJECT equ 0
       INDEXID_CONTAINER equ 0
-      ;*
-      ;* Reserved IDs for system objects
-      ;*
       OBJID_WINDOW equ (00000000h)
       OBJID_SYSMENU equ (0FFFFFFFFh)
       OBJID_TITLEBAR equ (0FFFFFFFEh)
@@ -8786,185 +7089,42 @@ ifndef _WINUSER_
       OBJID_SOUND equ (0FFFFFFF5h)
       OBJID_QUERYCLASSNAMEIDX equ (0FFFFFFF4h)
       OBJID_NATIVEOM equ (0FFFFFFF0h)
-      ;*
-      ;* EVENT DEFINITION
-      ;*
       EVENT_MIN equ 00000001h
       EVENT_MAX equ 7FFFFFFFh
-      ;*
-      ;*  EVENT_SYSTEM_SOUND
-      ;*  Sent when a sound is played.  Currently nothing is generating this, we
-      ;*  this event when a system sound (for menus, etc) is played.  Apps
-      ;*  generate this, if accessible, when a private sound is played.  For
-      ;*  example, if Mail plays a "New Mail" sound.
-      ;*
-      ;*  System Sounds:
-      ;*  (Generated by PlaySoundEvent in USER itself)
-      ;*      hwnd            is NULL
-      ;*      idObject        is OBJID_SOUND
-      ;*      idChild         is sound child ID if one
-      ;*  App Sounds:
-      ;*  (PlaySoundEvent won't generate notification; up to app)
-      ;*      hwnd + idObject gets interface pointer to Sound object
-      ;*      idChild identifies the sound in question
-      ;*  are going to be cleaning up the SOUNDSENTRY feature in the control panel
-      ;*  and will use this at that time.  Applications implementing WinEvents
-      ;*  are perfectly welcome to use it.  Clients of IAccessible* will simply
-      ;*  turn around and get back a non-visual object that describes the sound.
-      ;*
       EVENT_SYSTEM_SOUND equ 0001h
-      ;*
-      ;* EVENT_SYSTEM_ALERT
-      ;* System Alerts:
-      ;* (Generated by MessageBox() calls for example)
-      ;*      hwnd            is hwndMessageBox
-      ;*      idObject        is OBJID_ALERT
-      ;* App Alerts:
-      ;* (Generated whenever)
-      ;*      hwnd+idObject gets interface pointer to Alert
-      ;*
       EVENT_SYSTEM_ALERT equ 0002h
-      ;*
-      ;* EVENT_SYSTEM_FOREGROUND
-      ;* Sent when the foreground (active) window changes, even if it is changing
-      ;* to another window in the same thread as the previous one.
-      ;*      hwnd            is hwndNewForeground
-      ;*      idObject        is OBJID_WINDOW
-      ;*      idChild    is INDEXID_OBJECT
-      ;*
       EVENT_SYSTEM_FOREGROUND equ 0003h
-      ;*
-      ;* Menu
-      ;*      hwnd            is window (top level window or popup menu window)
-      ;*      idObject        is ID of control (OBJID_MENU, OBJID_SYSMENU, OBJID_SELF for popup)
-      ;*      idChild         is CHILDID_SELF
-      ;*
-      ;* EVENT_SYSTEM_MENUSTART
-      ;* EVENT_SYSTEM_MENUEND
-      ;* For MENUSTART, hwnd+idObject+idChild refers to the control with the menu bar,
-      ;*  or the control bringing up the context menu.
-      ;*
-      ;* Sent when entering into and leaving from menu mode (system, app bar, and
-      ;* track popups).
-      ;*
       EVENT_SYSTEM_MENUSTART equ 0004h
       EVENT_SYSTEM_MENUEND equ 0005h
-      ;*
-      ;* EVENT_SYSTEM_MENUPOPUPSTART
-      ;* EVENT_SYSTEM_MENUPOPUPEND
-      ;* Sent when a menu popup comes up and just before it is taken down.  Note
-      ;* that for a call to TrackPopupMenu(), a client will see EVENT_SYSTEM_MENUSTART
-      ;* followed almost immediately by EVENT_SYSTEM_MENUPOPUPSTART for the popup
-      ;* being shown.
-      ;*
-      ;* For MENUPOPUP, hwnd+idObject+idChild refers to the NEW popup coming up, not the
-      ;* parent item which is hierarchical.  You can get the parent menu/popup by
-      ;* asking for the accParent object.
-      ;*
       EVENT_SYSTEM_MENUPOPUPSTART equ 0006h
       EVENT_SYSTEM_MENUPOPUPEND equ 0007h
-      ;*
-      ;* EVENT_SYSTEM_CAPTURESTART
-      ;* EVENT_SYSTEM_CAPTUREEND
-      ;* Sent when a window takes the capture and releases the capture.
-      ;*
       EVENT_SYSTEM_CAPTURESTART equ 0008h
       EVENT_SYSTEM_CAPTUREEND equ 0009h
-      ;*
-      ;* Move Size
-      ;* EVENT_SYSTEM_MOVESIZESTART
-      ;* EVENT_SYSTEM_MOVESIZEEND
-      ;* Sent when a window enters and leaves move-size dragging mode.
-      ;*
       EVENT_SYSTEM_MOVESIZESTART equ 000Ah
       EVENT_SYSTEM_MOVESIZEEND equ 000Bh
-      ;*
-      ;* Context Help
-      ;* EVENT_SYSTEM_CONTEXTHELPSTART
-      ;* EVENT_SYSTEM_CONTEXTHELPEND
-      ;* Sent when a window enters and leaves context sensitive help mode.
-      ;*
       EVENT_SYSTEM_CONTEXTHELPSTART equ 000Ch
       EVENT_SYSTEM_CONTEXTHELPEND equ 000Dh
-      ;*
-      ;* Drag & Drop
-      ;* EVENT_SYSTEM_DRAGDROPSTART
-      ;* EVENT_SYSTEM_DRAGDROPEND
-      ;* Send the START notification just before going into drag&drop loop.  Send
-      ;* the END notification just after canceling out.
-      ;* Note that it is up to apps and OLE to generate this, since the system
-      ;* doesn't know.  Like EVENT_SYSTEM_SOUND, it will be a while before this
-      ;* is prevalent.
-      ;*
       EVENT_SYSTEM_DRAGDROPSTART equ 000Eh
       EVENT_SYSTEM_DRAGDROPEND equ 000Fh
-      ;*
-      ;* Dialog
-      ;* Send the START notification right after the dialog is completely
-      ;*  initialized and visible.  Send the END right before the dialog
-      ;*  is hidden and goes away.
-      ;* EVENT_SYSTEM_DIALOGSTART
-      ;* EVENT_SYSTEM_DIALOGEND
-      ;*
       EVENT_SYSTEM_DIALOGSTART equ 0010h
       EVENT_SYSTEM_DIALOGEND equ 0011h
-      ;*
-      ;* EVENT_SYSTEM_SCROLLING
-      ;* EVENT_SYSTEM_SCROLLINGSTART
-      ;* EVENT_SYSTEM_SCROLLINGEND
-      ;* Sent when beginning and ending the tracking of a scrollbar in a window,
-      ;* and also for scrollbar controls.
-      ;*
       EVENT_SYSTEM_SCROLLINGSTART equ 0012h
       EVENT_SYSTEM_SCROLLINGEND equ 0013h
-      ;*
-      ;* Alt-Tab Window
-      ;* Send the START notification right after the switch window is initialized
-      ;* and visible.  Send the END right before it is hidden and goes away.
-      ;* EVENT_SYSTEM_SWITCHSTART
-      ;* EVENT_SYSTEM_SWITCHEND
-      ;*
       EVENT_SYSTEM_SWITCHSTART equ 0014h
       EVENT_SYSTEM_SWITCHEND equ 0015h
-      ;*
-      ;* EVENT_SYSTEM_MINIMIZESTART
-      ;* EVENT_SYSTEM_MINIMIZEEND
-      ;* Sent when a window minimizes and just before it restores.
-      ;*
       EVENT_SYSTEM_MINIMIZESTART equ 0016h
       EVENT_SYSTEM_MINIMIZEEND equ 0017h
       if (_WIN32_WINNT ge 0600h)
         EVENT_SYSTEM_DESKTOPSWITCH equ 0020h
-        ;* _WIN32_WINNT >= 0x0600 *
       endif
       if (_WIN32_WINNT ge 0602h)
-        ; AppGrabbed: HWND = hwnd of app thumbnail, objectID = 0, childID = 0
         EVENT_SYSTEM_SWITCHER_APPGRABBED equ 0024h
-        ; OverTarget: HWND = hwnd of app thumbnail, objectID =
-        ;            1 for center
-        ;            2 for near snapped
-        ;            3 for far snapped
-        ;            4 for prune
-        ;            childID = 0
         EVENT_SYSTEM_SWITCHER_APPOVERTARGET equ 0025h
-        ; Dropped: HWND = hwnd of app thumbnail, objectID = <same as above>, childID = 0
         EVENT_SYSTEM_SWITCHER_APPDROPPED equ 0026h
-        ; Cancelled: HWND = hwnd of app thumbnail, objectID = 0, childID = 0
         EVENT_SYSTEM_SWITCHER_CANCELLED equ 0027h
-        ;* _WIN32_WINNT >= 0x0602 *
       endif
       if (_WIN32_WINNT ge 0602h)
-        ;*
-        ;* Sent when an IME's soft key is pressed and should be echoed,
-        ;* but is not passed through the keyboard hook.
-        ;* Must not be sent when a key is sent through the keyboard hook.
-        ;*     HWND             is the hwnd of the UI containing the soft key
-        ;*     idChild          is the Unicode value of the character entered
-        ;*     idObject         is a bitfield
-        ;*         0x00000001: set if a 32-bit Unicode surrogate pair is used
-        ;*
         EVENT_SYSTEM_IME_KEY_NOTIFICATION equ 0029h
-        ;* _WIN32_WINNT >= 0x0602 *
       endif
       if (_WIN32_WINNT ge 0601h)
         EVENT_SYSTEM_END equ 00FFh
@@ -8974,7 +7134,6 @@ ifndef _WINUSER_
         EVENT_UIA_EVENTID_END equ 4EFFh
         EVENT_UIA_PROPID_START equ 7500h
         EVENT_UIA_PROPID_END equ 75FFh
-        ;* _WIN32_WINNT >= 0x0601 *
       endif
       if (_WIN32_WINNT ge 0501h)
         EVENT_CONSOLE_CARET equ 4001h
@@ -8984,317 +7143,65 @@ ifndef _WINUSER_
         EVENT_CONSOLE_LAYOUT equ 4005h
         EVENT_CONSOLE_START_APPLICATION equ 4006h
         EVENT_CONSOLE_END_APPLICATION equ 4007h
-        ;*
-        ;* Flags for EVENT_CONSOLE_START/END_APPLICATION.
-        ;*
         if Defined(_WIN64)
           CONSOLE_APPLICATION_16BIT equ 0000h
         else
           CONSOLE_APPLICATION_16BIT equ 0001h
         endif
-        ;*
-        ;* Flags for EVENT_CONSOLE_CARET
-        ;*
         CONSOLE_CARET_SELECTION equ 0001h
         CONSOLE_CARET_VISIBLE equ 0002h
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if (_WIN32_WINNT ge 0601h)
         EVENT_CONSOLE_END equ 40FFh
-        ;* _WIN32_WINNT >= 0x0601 *
       endif
-      ;*
-      ;* Object events
-      ;*
-      ;* The system AND apps generate these.  The system generates these for
-      ;* real windows.  Apps generate these for objects within their window which
-      ;* act like a separate control, e.g. an item in a list view.
-      ;*
-      ;* When the system generate them, dwParam2 is always WMOBJID_SELF.  When
-      ;* apps generate them, apps put the has-meaning-to-the-app-only ID value
-      ;* in dwParam2.
-      ;* For all events, if you want detailed accessibility information, callers
-      ;* should
-      ;*      * Call AccessibleObjectFromWindow() with the hwnd, idObject parameters
-      ;*          of the event, and IID_IAccessible as the REFIID, to get back an
-      ;*          IAccessible* to talk to
-      ;*      * Initialize and fill in a VARIANT as VT_I4 with lVal the idChild
-      ;*          parameter of the event.
-      ;*      * If idChild isn't zero, call get_accChild() in the container to see
-      ;*          if the child is an object in its own right.  If so, you will get
-      ;*          back an IDispatch* object for the child.  You should release the
-      ;*          parent, and call QueryInterface() on the child object to get its
-      ;*          IAccessible*.  Then you talk directly to the child.  Otherwise,
-      ;*          if get_accChild() returns you nothing, you should continue to
-      ;*          use the child VARIANT.  You will ask the container for the properties
-      ;*          of the child identified by the VARIANT.  In other words, the
-      ;*          child in this case is accessible but not a full-blown object.
-      ;*          Like a button on a titlebar which is 'small' and has no children.
-      ;*
-      ;*
-      ;* For all EVENT_OBJECT events,
-      ;*      hwnd is the dude to Send the WM_GETOBJECT message to (unless NULL,
-      ;*          see above for system things)
-      ;*      idObject is the ID of the object that can resolve any queries a
-      ;*          client might have.  It's a way to deal with windowless controls,
-      ;*          controls that are just drawn on the screen in some larger parent
-      ;*          window (like SDM), or standard frame elements of a window.
-      ;*      idChild is the piece inside of the object that is affected.  This
-      ;*          allows clients to access things that are too small to have full
-      ;*          blown objects in their own right.  Like the thumb of a scrollbar.
-      ;*          The hwnd/idObject pair gets you to the container, the dude you
-      ;*          probably want to talk to most of the time anyway.  The idChild
-      ;*          can then be passed into the acc properties to get the name/value
-      ;*          of it as needed.
-      ;*
-      ;* Example #1:
-      ;*      System propagating a listbox selection change
-      ;*      EVENT_OBJECT_SELECTION
-      ;*          hwnd == listbox hwnd
-      ;*          idObject == OBJID_WINDOW
-      ;*          idChild == new selected item, or CHILDID_SELF if
-      ;*              nothing now selected within container.
-      ;*      Word '97 propagating a listbox selection change
-      ;*          hwnd == SDM window
-      ;*          idObject == SDM ID to get at listbox 'control'
-      ;*          idChild == new selected item, or CHILDID_SELF if
-      ;*              nothing
-      ;*
-      ;* Example #2:
-      ;*      System propagating a menu item selection on the menu bar
-      ;*      EVENT_OBJECT_SELECTION
-      ;*          hwnd == top level window
-      ;*          idObject == OBJID_MENU
-      ;*          idChild == ID of child menu bar item selected
-      ;*
-      ;* Example #3:
-      ;*      System propagating a dropdown coming off of said menu bar item
-      ;*      EVENT_OBJECT_CREATE
-      ;*          hwnd == popup item
-      ;*          idObject == OBJID_WINDOW
-      ;*          idChild == CHILDID_SELF
-      ;*
-      ;* Example #4:
-      ;*
-      ;* For EVENT_OBJECT_REORDER, the object referred to by hwnd/idObject is the
-      ;* PARENT container in which the zorder is occurring.  This is because if
-      ;* one child is zordering, all of them are changing their relative zorder.
-      ;*
-      EVENT_OBJECT_CREATE equ 8000h; hwnd + ID + idChild is created item
-
-      EVENT_OBJECT_DESTROY equ 8001h; hwnd + ID + idChild is destroyed item
-
-      EVENT_OBJECT_SHOW equ 8002h; hwnd + ID + idChild is shown item
-
-      EVENT_OBJECT_HIDE equ 8003h; hwnd + ID + idChild is hidden item
-
-      EVENT_OBJECT_REORDER equ 8004h; hwnd + ID + idChild is parent of zordering children
-
-      ;*
-      ;* NOTE:
-      ;* Minimize the number of notifications!
-      ;*
-      ;* When you are hiding a parent object, obviously all child objects are no
-      ;* longer visible on screen.  They still have the same "visible" status,
-      ;* but are not truly visible.  Hence do not send HIDE notifications for the
-      ;* children also.  One implies all.  The same goes for SHOW.
-      ;*
-      EVENT_OBJECT_FOCUS equ 8005h; hwnd + ID + idChild is focused item
-
-      EVENT_OBJECT_SELECTION equ 8006h; hwnd + ID + idChild is selected item (if only one), or idChild is OBJID_WINDOW if complex
-
-      EVENT_OBJECT_SELECTIONADD equ 8007h; hwnd + ID + idChild is item added
-
-      EVENT_OBJECT_SELECTIONREMOVE equ 8008h; hwnd + ID + idChild is item removed
-
-      EVENT_OBJECT_SELECTIONWITHIN equ 8009h; hwnd + ID + idChild is parent of changed selected items
-
-      ;*
-      ;* NOTES:
-      ;* There is only one "focused" child item in a parent.  This is the place
-      ;* keystrokes are going at a given moment.  Hence only send a notification
-      ;* about where the NEW focus is going.  A NEW item getting the focus already
-      ;* implies that the OLD item is losing it.
-      ;*
-      ;* SELECTION however can be multiple.  Hence the different SELECTION
-      ;* notifications.  Here's when to use each:
-      ;*
-      ;* (1) Send a SELECTION notification in the simple single selection
-      ;*     case (like the focus) when the item with the selection is
-      ;*     merely moving to a different item within a container.  hwnd + ID
-      ;*     is the container control, idChildItem is the new child with the
-      ;*     selection.
-      ;*
-      ;* (2) Send a SELECTIONADD notification when a new item has simply been added
-      ;*     to the selection within a container.  This is appropriate when the
-      ;*     number of newly selected items is very small.  hwnd + ID is the
-      ;*     container control, idChildItem is the new child added to the selection.
-      ;*
-      ;* (3) Send a SELECTIONREMOVE notification when a new item has simply been
-      ;*     removed from the selection within a container.  This is appropriate
-      ;*     when the number of newly selected items is very small, just like
-      ;*     SELECTIONADD.  hwnd + ID is the container control, idChildItem is the
-      ;*     new child removed from the selection.
-      ;*
-      ;* (4) Send a SELECTIONWITHIN notification when the selected items within a
-      ;*     control have changed substantially.  Rather than propagate a large
-      ;*     number of changes to reflect removal for some items, addition of
-      ;*     others, just tell somebody who cares that a lot happened.  It will
-      ;*     be faster an easier for somebody watching to just turn around and
-      ;*     query the container control what the new bunch of selected items
-      ;*     are.
-      ;*
-      EVENT_OBJECT_STATECHANGE equ 800Ah; hwnd + ID + idChild is item w/ state change
-
-      ;*
-      ;* Examples of when to send an EVENT_OBJECT_STATECHANGE include
-      ;*      * It is being enabled/disabled (USER does for windows)
-      ;*      * It is being pressed/released (USER does for buttons)
-      ;*      * It is being checked/unchecked (USER does for radio/check buttons)
-      ;*
-      EVENT_OBJECT_LOCATIONCHANGE equ 800Bh; hwnd + ID + idChild is moved/sized item
-
-      ;*
-      ;* Note:
-      ;* A LOCATIONCHANGE is not sent for every child object when the parent
-      ;* changes shape/moves.  Send one notification for the topmost object
-      ;* that is changing.  For example, if the user resizes a top level window,
-      ;* USER will generate a LOCATIONCHANGE for it, but not for the menu bar,
-      ;* title bar, scrollbars, etc.  that are also changing shape/moving.
-      ;*
-      ;* In other words, it only generates LOCATIONCHANGE notifications for
-      ;* real windows that are moving/sizing.  It will not generate a LOCATIONCHANGE
-      ;* for every non-floating child window when the parent moves (the children are
-      ;* logically moving also on screen, but not relative to the parent).
-      ;*
-      ;* Now, if the app itself resizes child windows as a result of being
-      ;* sized, USER will generate LOCATIONCHANGEs for those dudes also because
-      ;* it doesn't know better.
-      ;*
-      ;* Note also that USER will generate LOCATIONCHANGE notifications for two
-      ;* non-window sys objects:
-      ;*      (1) System caret
-      ;*      (2) Cursor
-      ;*
-      EVENT_OBJECT_NAMECHANGE equ 800Ch; hwnd + ID + idChild is item w/ name change
-
-      EVENT_OBJECT_DESCRIPTIONCHANGE equ 800Dh; hwnd + ID + idChild is item w/ desc change
-
-      EVENT_OBJECT_VALUECHANGE equ 800Eh; hwnd + ID + idChild is item w/ value change
-
-      EVENT_OBJECT_PARENTCHANGE equ 800Fh; hwnd + ID + idChild is item w/ new parent
-
-      EVENT_OBJECT_HELPCHANGE equ 8010h; hwnd + ID + idChild is item w/ help change
-
-      EVENT_OBJECT_DEFACTIONCHANGE equ 8011h; hwnd + ID + idChild is item w/ def action change
-
-      EVENT_OBJECT_ACCELERATORCHANGE equ 8012h; hwnd + ID + idChild is item w/ keybd accel change
-
+      EVENT_OBJECT_CREATE equ 8000h
+      EVENT_OBJECT_DESTROY equ 8001h
+      EVENT_OBJECT_SHOW equ 8002h
+      EVENT_OBJECT_HIDE equ 8003h
+      EVENT_OBJECT_REORDER equ 8004h
+      EVENT_OBJECT_FOCUS equ 8005h
+      EVENT_OBJECT_SELECTION equ 8006h
+      EVENT_OBJECT_SELECTIONADD equ 8007h
+      EVENT_OBJECT_SELECTIONREMOVE equ 8008h
+      EVENT_OBJECT_SELECTIONWITHIN equ 8009h
+      EVENT_OBJECT_STATECHANGE equ 800Ah
+      EVENT_OBJECT_LOCATIONCHANGE equ 800Bh
+      EVENT_OBJECT_NAMECHANGE equ 800Ch
+      EVENT_OBJECT_DESCRIPTIONCHANGE equ 800Dh
+      EVENT_OBJECT_VALUECHANGE equ 800Eh
+      EVENT_OBJECT_PARENTCHANGE equ 800Fh
+      EVENT_OBJECT_HELPCHANGE equ 8010h
+      EVENT_OBJECT_DEFACTIONCHANGE equ 8011h
+      EVENT_OBJECT_ACCELERATORCHANGE equ 8012h
       if (_WIN32_WINNT ge 0600h)
-        EVENT_OBJECT_INVOKED equ 8013h; hwnd + ID + idChild is item invoked
-
-        EVENT_OBJECT_TEXTSELECTIONCHANGED equ 8014h; hwnd + ID + idChild is item w? test selection change
-
-        ;*
-        ;* EVENT_OBJECT_CONTENTSCROLLED
-        ;* Sent when ending the scrolling of a window object.
-        ;*
-        ;* Unlike the similar event (EVENT_SYSTEM_SCROLLEND), this event will be
-        ;* associated with the scrolling window itself. There is no difference
-        ;* between horizontal or vertical scrolling.
-        ;*
-        ;* This event should be posted whenever scroll action is completed, including
-        ;* when it is scrolled by scroll bars, mouse wheel, or keyboard navigations.
-        ;*
-        ;*   example:
-        ;*          hwnd == window that is scrolling
-        ;*          idObject == OBJID_CLIENT
-        ;*          idChild == CHILDID_SELF
-        ;*
+        EVENT_OBJECT_INVOKED equ 8013h
+        EVENT_OBJECT_TEXTSELECTIONCHANGED equ 8014h
         EVENT_OBJECT_CONTENTSCROLLED equ 8015h
-        ;* _WIN32_WINNT >= 0x0600 *
       endif
       if (_WIN32_WINNT ge 0601h)
         EVENT_SYSTEM_ARRANGMENTPREVIEW equ 8016h
-        ;* _WIN32_WINNT >= 0x0601 *
       endif
       if (_WIN32_WINNT ge 0602h)
-        ;*
-        ;* EVENT_OBJECT_CLOAKED / UNCLOAKED
-        ;* Sent when a window is cloaked or uncloaked.
-        ;* A cloaked window still exists, but is invisible to
-        ;* the user.
-        ;*
         EVENT_OBJECT_CLOAKED equ 8017h
         EVENT_OBJECT_UNCLOAKED equ 8018h
-        ;*
-        ;* EVENT_OBJECT_LIVEREGIONCHANGED
-        ;* Sent when an object that is part of a live region
-        ;* changes.  A live region is an area of an application
-        ;* that changes frequently and/or asynchronously, so
-        ;* that an assistive technology tool might want to pay
-        ;* special attention to it.
-        ;*
         EVENT_OBJECT_LIVEREGIONCHANGED equ 8019h
-        ;*
-        ;* EVENT_OBJECT_HOSTEDOBJECTSINVALIDATED
-        ;* Sent when a window that is hosting other Accessible
-        ;* objects changes the hosted objects.  A client may
-        ;* wish to requery to see what the new hosted objects are,
-        ;* especially if it has been monitoring events from this
-        ;* window.  A hosted object is one with a different Accessibility
-        ;* framework (MSAA or UI Automation) from its host.
-        ;*
-        ;* Changes in hosted objects with the *same* framework
-        ;* as the parent should be handed with the usual structural
-        ;* change events, such as EVENT_OBJECT_CREATED for MSAA.
-        ;* see above.
-        ;*
         EVENT_OBJECT_HOSTEDOBJECTSINVALIDATED equ 8020h
-        ;*
-        ;* Drag / Drop Events
-        ;* These events are used in conjunction with the
-        ;* UI Automation Drag/Drop patterns.
-        ;*
-        ;* For DRAGSTART, DRAGCANCEL, and DRAGCOMPLETE,
-        ;* HWND+objectID+childID refers to the object being dragged.
-        ;*
-        ;* For DRAGENTER, DRAGLEAVE, and DRAGDROPPED,
-        ;* HWND+objectID+childID refers to the target of the drop
-        ;* that is being hovered over.
-        ;*
         EVENT_OBJECT_DRAGSTART equ 8021h
         EVENT_OBJECT_DRAGCANCEL equ 8022h
         EVENT_OBJECT_DRAGCOMPLETE equ 8023h
         EVENT_OBJECT_DRAGENTER equ 8024h
         EVENT_OBJECT_DRAGLEAVE equ 8025h
         EVENT_OBJECT_DRAGDROPPED equ 8026h
-        ;*
-        ;* EVENT_OBJECT_IME_SHOW/HIDE
-        ;* Sent by an IME window when it has become visible or invisible.
-        ;*
         EVENT_OBJECT_IME_SHOW equ 8027h
         EVENT_OBJECT_IME_HIDE equ 8028h
-        ;*
-        ;* EVENT_OBJECT_IME_CHANGE
-        ;* Sent by an IME window whenever it changes size or position.
-        ;*
         EVENT_OBJECT_IME_CHANGE equ 8029h
         EVENT_OBJECT_TEXTEDIT_CONVERSIONTARGETCHANGED equ 8030h
-        ;* _WIN32_WINNT >= 0x0602 *
       endif
       if (_WIN32_WINNT ge 0601h)
         EVENT_OBJECT_END equ 80FFh
         EVENT_AIA_START equ 0A000h
         EVENT_AIA_END equ 0AFFFh
-        ;* _WIN32_WINNT >= 0x0601 *
       endif
-      ;*
-      ;* Child IDs
-      ;*
-      ;*
-      ;* System Sounds (idChild of system SOUND notification)
-      ;*
       SOUND_SYSTEM_STARTUP equ 1
       SOUND_SYSTEM_SHUTDOWN equ 2
       SOUND_SYSTEM_BEEP equ 3
@@ -9312,19 +7219,11 @@ ifndef _WINUSER_
       SOUND_SYSTEM_MENUCOMMAND equ 15
       SOUND_SYSTEM_MENUPOPUP equ 16
       CSOUND_SYSTEM equ 16
-      ;*
-      ;* System Alerts (indexChild of system ALERT notification)
-      ;*
-      ALERT_SYSTEM_INFORMATIONAL equ 1; MB_INFORMATION
-
-      ALERT_SYSTEM_WARNING equ 2; MB_WARNING
-
-      ALERT_SYSTEM_ERROR equ 3; MB_ERROR
-
-      ALERT_SYSTEM_QUERY equ 4; MB_QUESTION
-
-      ALERT_SYSTEM_CRITICAL equ 5; HardSysErrBox
-
+      ALERT_SYSTEM_INFORMATIONAL equ 1
+      ALERT_SYSTEM_WARNING equ 2
+      ALERT_SYSTEM_ERROR equ 3
+      ALERT_SYSTEM_QUERY equ 4
+      ALERT_SYSTEM_CRITICAL equ 5
       CALERT_SYSTEM equ 6
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         GUITHREADINFO struct
@@ -9341,7 +7240,6 @@ ifndef _WINUSER_
         tagGUITHREADINFO typedef GUITHREADINFO
         PGUITHREADINFO typedef ptr GUITHREADINFO
         LPGUITHREADINFO typedef ptr GUITHREADINFO
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
       GUI_CARETBLINKING equ 00000001h
       GUI_INMOVESIZE equ 00000002h
@@ -9354,7 +7252,6 @@ ifndef _WINUSER_
         else
           GUI_16BITTASK equ 00000020h
         endif
-        ;* _WIN32_WINNT >= 0x0501 *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, GetGUIThreadInfo, WIN_STD_CALL_CONV,, <:DWORD, :PGUITHREADINFO>, 8
@@ -9363,7 +7260,6 @@ ifndef _WINUSER_
           USER_DEFAULT_SCREEN_DPI equ 96
           @DefProto DllImport, SetProcessDPIAware, WIN_STD_CALL_CONV,, <>, 0
           @DefProto DllImport, IsProcessDPIAware, WIN_STD_CALL_CONV,, <>, 0
-          ;* _WIN32_WINNT >= 0x0600 *
         endif
         if (WINVER ge 0605h)
           @DefProto DllImport, SetThreadDpiAwarenessContext, WIN_STD_CALL_CONV,, <:DPI_AWARENESS_CONTEXT>, 4
@@ -9378,21 +7274,17 @@ ifndef _WINUSER_
           @DefProto DllImport, GetSystemDpiForProcess, WIN_STD_CALL_CONV,, <:HANDLE>, 4
           @DefProto DllImport, EnableNonClientDpiScaling, WIN_STD_CALL_CONV,, <:HWND>, 4
           @DefProto DllImport, InheritWindowMonitor, WIN_STD_CALL_CONV,, <:HWND, :HWND>, 8
-          ;* WINVER >= 0x0605 *
         endif
         if (WINVER ge 0605h)
           @DefProto DllImport, SetProcessDpiAwarenessContext, WIN_STD_CALL_CONV,, <:DPI_AWARENESS_CONTEXT>, 4
-          ;* WINVER >= 0x0605 *
         endif
         if (NTDDI_VERSION ge NTDDI_WIN10_19H1)
           @DefProto DllImport, GetDpiAwarenessContextForProcess, WIN_STD_CALL_CONV,, <:HANDLE>, 4
         endif
-        ; NTDDI_VERSION >= NTDDI_WIN10_19H1
         if (WINVER ge 0606h)
           @DefProto DllImport, SetThreadDpiHostingBehavior, WIN_STD_CALL_CONV,, <:DPI_HOSTING_BEHAVIOR>, 4
           @DefProto DllImport, GetThreadDpiHostingBehavior, WIN_STD_CALL_CONV,, <>, 0
           @DefProto DllImport, GetWindowDpiHostingBehavior, WIN_STD_CALL_CONV,, <:HWND>, 4
-          ;* WINVER >= 0x0606 *
         endif
         @DefProto DllImport, GetWindowModuleFileNameA, WIN_STD_CALL_CONV,, <:HWND, :LPSTR, :UINT>, 12
         @DefProto DllImport, GetWindowModuleFileNameW, WIN_STD_CALL_CONV,, <:HWND, :LPWSTR, :UINT>, 12
@@ -9401,18 +7293,14 @@ ifndef _WINUSER_
         else
           GetWindowModuleFileName equ <GetWindowModuleFileNameA>
         endif
-        ; !UNICODE
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
       ifndef NO_STATE_FLAGS
-        STATE_SYSTEM_UNAVAILABLE equ 00000001h; Disabled
-
+        STATE_SYSTEM_UNAVAILABLE equ 00000001h
         STATE_SYSTEM_SELECTED equ 00000002h
         STATE_SYSTEM_FOCUSED equ 00000004h
         STATE_SYSTEM_PRESSED equ 00000008h
         STATE_SYSTEM_CHECKED equ 00000010h
-        STATE_SYSTEM_MIXED equ 00000020h; 3-state checkbox or toolbar button
-
+        STATE_SYSTEM_MIXED equ 00000020h
         STATE_SYSTEM_INDETERMINATE equ <STATE_SYSTEM_MIXED>
         STATE_SYSTEM_READONLY equ 00000040h
         STATE_SYSTEM_HOTTRACKED equ 00000080h
@@ -9420,8 +7308,7 @@ ifndef _WINUSER_
         STATE_SYSTEM_EXPANDED equ 00000200h
         STATE_SYSTEM_COLLAPSED equ 00000400h
         STATE_SYSTEM_BUSY equ 00000800h
-        STATE_SYSTEM_FLOATING equ 00001000h; Children "owned" not "contained" by parent
-
+        STATE_SYSTEM_FLOATING equ 00001000h
         STATE_SYSTEM_MARQUEED equ 00002000h
         STATE_SYSTEM_ANIMATED equ 00004000h
         STATE_SYSTEM_INVISIBLE equ 00008000h
@@ -9433,26 +7320,17 @@ ifndef _WINUSER_
         STATE_SYSTEM_SELECTABLE equ 00200000h
         STATE_SYSTEM_LINKED equ 00400000h
         STATE_SYSTEM_TRAVERSED equ 00800000h
-        STATE_SYSTEM_MULTISELECTABLE equ 01000000h; Supports multiple selection
-
-        STATE_SYSTEM_EXTSELECTABLE equ 02000000h; Supports extended selection
-
-        STATE_SYSTEM_ALERT_LOW equ 04000000h; This information is of low priority
-
-        STATE_SYSTEM_ALERT_MEDIUM equ 08000000h; This information is of medium priority
-
-        STATE_SYSTEM_ALERT_HIGH equ 10000000h; This information is of high priority
-
-        STATE_SYSTEM_PROTECTED equ 20000000h; access to this is restricted
-
+        STATE_SYSTEM_MULTISELECTABLE equ 01000000h
+        STATE_SYSTEM_EXTSELECTABLE equ 02000000h
+        STATE_SYSTEM_ALERT_LOW equ 04000000h
+        STATE_SYSTEM_ALERT_MEDIUM equ 08000000h
+        STATE_SYSTEM_ALERT_HIGH equ 10000000h
+        STATE_SYSTEM_PROTECTED equ 20000000h
         STATE_SYSTEM_VALID equ 3FFFFFFFh
       endif
       CCHILDREN_TITLEBAR equ 5
       CCHILDREN_SCROLLBAR equ 5
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
-        ;*
-        ;* Information about the global cursor.
-        ;*
         CURSORINFO struct
           cbSize DWORD ?
           flags DWORD ?
@@ -9465,15 +7343,10 @@ ifndef _WINUSER_
         CURSOR_SHOWING equ 00000001h
         if (WINVER ge 0602h)
           CURSOR_SUPPRESSED equ 00000002h
-          ;* WINVER >= 0x0602 *
         endif
         @DefProto DllImport, GetCursorInfo, WIN_STD_CALL_CONV,, <:PCURSORINFO>, 4
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-        ;*
-        ;* Window information snapshot
-        ;*
         WINDOWINFO struct
           cbSize DWORD ?
           rcWindow RECT <>
@@ -9481,8 +7354,8 @@ ifndef _WINUSER_
           dwStyle DWORD ?
           dwExStyle DWORD ?
           dwWindowStatus DWORD ?
-          cxWindowBorders DWORD ?
-          cyWindowBorders DWORD ?
+          cxWindowBorders UINT ?
+          cyWindowBorders UINT ?
           atomWindowType ATOM ?
           wCreatorVersion WORD ?
         WINDOWINFO ends
@@ -9491,9 +7364,6 @@ ifndef _WINUSER_
         LPWINDOWINFO typedef ptr WINDOWINFO
         WS_ACTIVECAPTION equ 0001h
         @DefProto DllImport, GetWindowInfo, WIN_STD_CALL_CONV,, <:HWND, :PWINDOWINFO>, 8
-        ;*
-        ;* Titlebar information.
-        ;*
         TITLEBARINFO struct
           cbSize DWORD ?
           rcTitleBar RECT <>
@@ -9513,32 +7383,19 @@ ifndef _WINUSER_
           tagTITLEBARINFOEX typedef TITLEBARINFOEX
           PTITLEBARINFOEX typedef ptr TITLEBARINFOEX
           LPTITLEBARINFOEX typedef ptr TITLEBARINFOEX
-          ;* WINVER >= 0x0600 *
         endif
-        ;*
-        ;* Menubar information
-        ;*
         MENUBARINFO struct
           cbSize DWORD ?
           rcBar RECT <>
-          ; rect of bar, popup, item
           hMenu HMENU ?
-          ; real menu handle of bar, popup
           hwndMenu HWND ?
-          ; hwnd of item submenu if one
-          ; bar, popup has the focus
-          ; item has the focus
           MENUBARINFO_REC record MENUBARINFO_REC_fUnused:30, MENUBARINFO_REC_fFocused:1, MENUBARINFO_REC_fBarFocused:1
           MENUBARINFO_BITS MENUBARINFO_REC <>
-          ; reserved
         MENUBARINFO ends
         tagMENUBARINFO typedef MENUBARINFO
         PMENUBARINFO typedef ptr MENUBARINFO
         LPMENUBARINFO typedef ptr MENUBARINFO
         @DefProto DllImport, GetMenuBarInfo, WIN_STD_CALL_CONV,, <:HWND, :LONG, :LONG, :PMENUBARINFO>, 16
-        ;*
-        ;* Scrollbar information
-        ;*
         SCROLLBARINFO struct
           cbSize DWORD ?
           rcScrollBar RECT <>
@@ -9552,9 +7409,6 @@ ifndef _WINUSER_
         PSCROLLBARINFO typedef ptr SCROLLBARINFO
         LPSCROLLBARINFO typedef ptr SCROLLBARINFO
         @DefProto DllImport, GetScrollBarInfo, WIN_STD_CALL_CONV,, <:HWND, :LONG, :PSCROLLBARINFO>, 12
-        ;*
-        ;* Combobox information
-        ;*
         COMBOBOXINFO struct
           cbSize DWORD ?
           rcItem RECT <>
@@ -9568,42 +7422,20 @@ ifndef _WINUSER_
         PCOMBOBOXINFO typedef ptr COMBOBOXINFO
         LPCOMBOBOXINFO typedef ptr COMBOBOXINFO
         @DefProto DllImport, GetComboBoxInfo, WIN_STD_CALL_CONV,, <:HWND, :PCOMBOBOXINFO>, 8
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;*
-      ;* The "real" ancestor window
-      ;*
       GA_PARENT equ 1
       GA_ROOT equ 2
       GA_ROOTOWNER equ 3
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         @DefProto DllImport, GetAncestor, WIN_STD_CALL_CONV,, <:HWND, :UINT>, 8
-        ;*
-        ;* This gets the REAL child window at the point.  If it is in the dead
-        ;* space of a group box, it will try a sibling behind it.  But static
-        ;* fields will get returned.  In other words, it is kind of a cross between
-        ;* ChildWindowFromPointEx and WindowFromPoint.
-        ;*
         @DefProto DllImport, RealChildWindowFromPoint, WIN_STD_CALL_CONV,, <:HWND, :POINT>, 8
-        ;*
-        ;* This gets the name of the window TYPE, not class.  This allows us to
-        ;* recognize ThunderButton32 et al.
-        ;*
         @DefProto DllImport, RealGetWindowClassA, WIN_STD_CALL_CONV,, <:HWND, :LPSTR, :UINT>, 12
-        ;*
-        ;* This gets the name of the window TYPE, not class.  This allows us to
-        ;* recognize ThunderButton32 et al.
-        ;*
         @DefProto DllImport, RealGetWindowClassW, WIN_STD_CALL_CONV,, <:HWND, :LPWSTR, :UINT>, 12
         ifdef UNICODE
           RealGetWindowClass equ <RealGetWindowClassW>
         else
           RealGetWindowClass equ <RealGetWindowClassA>
         endif
-        ; !UNICODE
-        ;*
-        ;* Alt-Tab Switch window information.
-        ;*
         ALTTABINFO struct
           cbSize DWORD ?
           cItems SDWORD ?
@@ -9625,61 +7457,28 @@ ifndef _WINUSER_
         else
           GetAltTabInfo equ <GetAltTabInfoA>
         endif
-        ; !UNICODE
-        ;*
-        ;* Listbox information.
-        ;* Returns the number of items per row.
-        ;*
         @DefProto DllImport, GetListBoxInfo, WIN_STD_CALL_CONV,, <:HWND>, 4
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* NOWINABLE *
     endif
-    ;* WINVER >= 0x0500 *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (_WIN32_WINNT ge 0500h)
       @DefProto DllImport, LockWorkStation, WIN_STD_CALL_CONV,, <>, 0
-      ;* _WIN32_WINNT >= 0x0500 *
     endif
     if (_WIN32_WINNT ge 0500h)
       @DefProto DllImport, UserHandleGrantAccess, WIN_STD_CALL_CONV,, <:HANDLE, :HANDLE, :BOOL>, 12
-      ;* _WIN32_WINNT >= 0x0500 *
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if (_WIN32_WINNT ge 0501h)
-    ;*
-    ;* Raw Input Messages.
-    ;*
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       DECLARE_HANDLE HRAWINPUT
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;*
-    ;* WM_INPUT wParam
-    ;*
-    ;*
-    ;* Use this macro to get the input code from wParam.
-    ;*
     GET_RAWINPUT_CODE_WPARAM macro wParam
       exitm <((wParam) and 0ffh)>
     endm
-    ;*
-    ;* The input is in the regular message flow,
-    ;* the app is required to call DefWindowProc
-    ;* so that the system can perform clean ups.
-    ;*
     RIM_INPUT equ 0
-    ;*
-    ;* The input is sink only. The app is expected
-    ;* to behave nicely.
-    ;*
     RIM_INPUTSINK equ 1
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-      ;*
-      ;* Raw Input data header
-      ;*
       RAWINPUTHEADER struct
         dwType DWORD ?
         dwSize DWORD ?
@@ -9689,76 +7488,40 @@ ifndef _WINUSER_
       tagRAWINPUTHEADER typedef RAWINPUTHEADER
       PRAWINPUTHEADER typedef ptr RAWINPUTHEADER
       LPRAWINPUTHEADER typedef ptr RAWINPUTHEADER
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;*
-    ;* Type of the raw input
-    ;*
     RIM_TYPEMOUSE equ 0
     RIM_TYPEKEYBOARD equ 1
     RIM_TYPEHID equ 2
     RIM_TYPEMAX equ 2
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-      ;Disable warning C4201:nameless struct/union
       if _MSC_VER ge 1200
       endif
-      ;*
-      ;* Raw format of the mouse input
-      ;*
       RAWMOUSE struct
-        ;*
-        ;* Indicator flags.
-        ;*
-        usFlags WORD ?
-        ;*
-        ;* The transition state of the mouse buttons.
-        ;*
+        usFlags USHORT ?
         union
-          ulButtons DWORD ?
+          ulButtons ULONG ?
           struct
-            usButtonFlags WORD ?
-            usButtonData WORD ?
+            usButtonFlags USHORT ?
+            usButtonData USHORT ?
           ends
         ends
-        ;*
-        ;* The raw state of the mouse buttons.
-        ;*
-        ulRawButtons DWORD ?
-        ;*
-        ;* The signed relative or absolute motion in the X direction.
-        ;*
-        lLastX SDWORD ?
-        ;*
-        ;* The signed relative or absolute motion in the Y direction.
-        ;*
-        lLastY SDWORD ?
-        ;*
-        ;* Device-specific additional information for the event.
-        ;*
-        ulExtraInformation DWORD ?
+        ulRawButtons ULONG ?
+        lLastX LONG ?
+        lLastY LONG ?
+        ulExtraInformation ULONG ?
       RAWMOUSE ends
       tagRAWMOUSE typedef RAWMOUSE
       PRAWMOUSE typedef ptr RAWMOUSE
       LPRAWMOUSE typedef ptr RAWMOUSE
       if _MSC_VER ge 1200
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;*
-    ;* Define the mouse button state indicators.
-    ;*
-    RI_MOUSE_LEFT_BUTTON_DOWN equ 0001h; Left Button changed to down.
-
-    RI_MOUSE_LEFT_BUTTON_UP equ 0002h; Left Button changed to up.
-
-    RI_MOUSE_RIGHT_BUTTON_DOWN equ 0004h; Right Button changed to down.
-
-    RI_MOUSE_RIGHT_BUTTON_UP equ 0008h; Right Button changed to up.
-
-    RI_MOUSE_MIDDLE_BUTTON_DOWN equ 0010h; Middle Button changed to down.
-
-    RI_MOUSE_MIDDLE_BUTTON_UP equ 0020h; Middle Button changed to up.
-
+    RI_MOUSE_LEFT_BUTTON_DOWN equ 0001h
+    RI_MOUSE_LEFT_BUTTON_UP equ 0002h
+    RI_MOUSE_RIGHT_BUTTON_DOWN equ 0004h
+    RI_MOUSE_RIGHT_BUTTON_UP equ 0008h
+    RI_MOUSE_MIDDLE_BUTTON_DOWN equ 0010h
+    RI_MOUSE_MIDDLE_BUTTON_UP equ 0020h
     RI_MOUSE_BUTTON_1_DOWN equ <RI_MOUSE_LEFT_BUTTON_DOWN>
     RI_MOUSE_BUTTON_1_UP equ <RI_MOUSE_LEFT_BUTTON_UP>
     RI_MOUSE_BUTTON_2_DOWN equ <RI_MOUSE_RIGHT_BUTTON_DOWN>
@@ -9769,66 +7532,31 @@ ifndef _WINUSER_
     RI_MOUSE_BUTTON_4_UP equ 0080h
     RI_MOUSE_BUTTON_5_DOWN equ 0100h
     RI_MOUSE_BUTTON_5_UP equ 0200h
-    ;*
-    ;* If usButtonFlags has RI_MOUSE_WHEEL, the wheel delta is stored in usButtonData.
-    ;* Take it as a signed value.
-    ;*
     RI_MOUSE_WHEEL equ 0400h
     if (WINVER ge 0600h)
       RI_MOUSE_HWHEEL equ 0800h
-      ;* WINVER >= 0x0600 *
     endif
-    ;*
-    ;* Define the mouse indicator flags.
-    ;*
     MOUSE_MOVE_RELATIVE equ 0
     MOUSE_MOVE_ABSOLUTE equ 1
-    MOUSE_VIRTUAL_DESKTOP equ 02h; the coordinates are mapped to the virtual desktop
-
-    MOUSE_ATTRIBUTES_CHANGED equ 04h; requery for mouse attributes
-
+    MOUSE_VIRTUAL_DESKTOP equ 02h
+    MOUSE_ATTRIBUTES_CHANGED equ 04h
     if (WINVER ge 0600h)
-      MOUSE_MOVE_NOCOALESCE equ 08h; do not coalesce mouse moves
-
-      ;* WINVER >= 0x0600 *
+      MOUSE_MOVE_NOCOALESCE equ 08h
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-      ;*
-      ;* Raw format of the keyboard input
-      ;*
       RAWKEYBOARD struct
-        ;*
-        ;* The "make" scan code (key depression).
-        ;*
-        MakeCode WORD ?
-        ;*
-        ;* The flags field indicates a "break" (key release) and other
-        ;* miscellaneous scan code information defined in ntddkbd.h.
-        ;*
-        Flags WORD ?
-        Reserved WORD ?
-        ;*
-        ;* Windows message compatible information
-        ;*
-        VKey WORD ?
-        Message DWORD ?
-        ;*
-        ;* Device-specific additional information for the event.
-        ;*
-        ExtraInformation DWORD ?
+        MakeCode USHORT ?
+        Flags USHORT ?
+        Reserved USHORT ?
+        VKey USHORT ?
+        Message UINT ?
+        ExtraInformation ULONG ?
       RAWKEYBOARD ends
       tagRAWKEYBOARD typedef RAWKEYBOARD
       PRAWKEYBOARD typedef ptr RAWKEYBOARD
       LPRAWKEYBOARD typedef ptr RAWKEYBOARD
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;*
-    ;* Define the keyboard overrun MakeCode.
-    ;*
     KEYBOARD_OVERRUN_MAKE_CODE equ 0FFh
-    ;*
-    ;* Define the keyboard input data Flags.
-    ;*
     RI_KEY_MAKE equ 0
     RI_KEY_BREAK equ 1
     RI_KEY_E0 equ 2
@@ -9836,24 +7564,15 @@ ifndef _WINUSER_
     RI_KEY_TERMSRV_SET_LED equ 8
     RI_KEY_TERMSRV_SHADOW equ 10h
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-      ;*
-      ;* Raw format of the input from Human Input Devices
-      ;*
       RAWHID struct
         dwSizeHid DWORD ?
-        ; byte size of each report
         dwCount DWORD ?
-        ; number of input packed
         bRawData BYTE 1 dup (?)
       RAWHID ends
       tagRAWHID typedef RAWHID
       PRAWHID typedef ptr RAWHID
       LPRAWHID typedef ptr RAWHID
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;*
-    ;* RAWINPUT data structure.
-    ;*
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       RAWINPUT struct
         header RAWINPUTHEADER <>
@@ -9866,44 +7585,33 @@ ifndef _WINUSER_
       tagRAWINPUT typedef RAWINPUT
       PRAWINPUT typedef ptr RAWINPUT
       LPRAWINPUT typedef ptr RAWINPUT
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     ifdef _WIN64
       RAWINPUT_ALIGN macro x
         exitm <(((x) + sizeof(QWORD) - 1) and not (sizeof(QWORD) - 1))>
       endm
     else
-    ; _WIN64
       RAWINPUT_ALIGN macro x
         exitm <(((x) + sizeof(DWORD) - 1) and not (sizeof(DWORD) - 1))>
       endm
     endif
-    ; _WIN64
     NEXTRAWINPUTBLOCK macro ptr_
       exitm <((PRAWINPUT) RAWINPUT_ALIGN(((ptr_) + (ptr_) - header.dwSize)))>
     endm
-    ;*
-    ;* Flags for GetRawInputData
-    ;*
     RID_INPUT equ 10000003h
     RID_HEADER equ 10000005h
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, GetRawInputData, WIN_STD_CALL_CONV,, <:HRAWINPUT, :UINT, :LPVOID, :PUINT, :UINT>, 20
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;*
-    ;* Raw Input Device Information
-    ;*
     RIDI_PREPARSEDDATA equ 20000005h
-    RIDI_DEVICENAME equ 20000007h; the return valus is the character length, not the byte size
-
+    RIDI_DEVICENAME equ 20000007h
     RIDI_DEVICEINFO equ 2000000bh
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       RID_DEVICE_INFO_MOUSE struct
         dwId DWORD ?
         dwNumberOfButtons DWORD ?
         dwSampleRate DWORD ?
-        fHasHorizontalWheel DWORD ?
+        fHasHorizontalWheel BOOL ?
       RID_DEVICE_INFO_MOUSE ends
       tagRID_DEVICE_INFO_MOUSE typedef RID_DEVICE_INFO_MOUSE
       PRID_DEVICE_INFO_MOUSE typedef ptr RID_DEVICE_INFO_MOUSE
@@ -9921,11 +7629,8 @@ ifndef _WINUSER_
         dwVendorId DWORD ?
         dwProductId DWORD ?
         dwVersionNumber DWORD ?
-        ;*
-        ;* Top level collection UsagePage and Usage
-        ;*
-        usUsagePage WORD ?
-        usUsage WORD ?
+        usUsagePage USHORT ?
+        usUsage USHORT ?
       RID_DEVICE_INFO_HID ends
       tagRID_DEVICE_INFO_HID typedef RID_DEVICE_INFO_HID
       PRID_DEVICE_INFO_HID typedef ptr RID_DEVICE_INFO_HID
@@ -9948,56 +7653,37 @@ ifndef _WINUSER_
       else
         GetRawInputDeviceInfo equ <GetRawInputDeviceInfoA>
       endif
-      ; !UNICODE
-      ;*
-      ;* Raw Input Bulk Read: GetRawInputBuffer
-      ;*
       @DefProto DllImport, GetRawInputBuffer, WIN_STD_CALL_CONV,, <:PRAWINPUT, :PUINT, :UINT>, 12
-      ;*
-      ;* Raw Input request APIs
-      ;*
       RAWINPUTDEVICE struct
-        usUsagePage WORD ?
-        ; Toplevel collection UsagePage
-        usUsage WORD ?
-        ; Toplevel collection Usage
+        usUsagePage USHORT ?
+        usUsage USHORT ?
         dwFlags DWORD ?
         hwndTarget HWND ?
-        ; Target hwnd. NULL = follows keyboard focus
       RAWINPUTDEVICE ends
       tagRAWINPUTDEVICE typedef RAWINPUTDEVICE
       PRAWINPUTDEVICE typedef ptr RAWINPUTDEVICE
       LPRAWINPUTDEVICE typedef ptr RAWINPUTDEVICE
       PCRAWINPUTDEVICE typedef ptr RAWINPUTDEVICE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     RIDEV_REMOVE equ 00000001h
     RIDEV_EXCLUDE equ 00000010h
     RIDEV_PAGEONLY equ 00000020h
     RIDEV_NOLEGACY equ 00000030h
     RIDEV_INPUTSINK equ 00000100h
-    RIDEV_CAPTUREMOUSE equ 00000200h; effective when mouse nolegacy is specified, otherwise it would be an error
-
-    RIDEV_NOHOTKEYS equ 00000200h; effective for keyboard.
-
-    RIDEV_APPKEYS equ 00000400h; effective for keyboard.
-
+    RIDEV_CAPTUREMOUSE equ 00000200h
+    RIDEV_NOHOTKEYS equ 00000200h
+    RIDEV_APPKEYS equ 00000400h
     if (_WIN32_WINNT ge 0501h)
       RIDEV_EXINPUTSINK equ 00001000h
       RIDEV_DEVNOTIFY equ 00002000h
-      ;* _WIN32_WINNT >= 0x0501 *
     endif
     RIDEV_EXMODEMASK equ 000000F0h
     RIDEV_EXMODE macro mode
       exitm <((mode) and RIDEV_EXMODEMASK)>
     endm
     if (_WIN32_WINNT ge 0501h)
-      ;*
-      ;* Flags for the WM_INPUT_DEVICE_CHANGE message.
-      ;*
       GIDC_ARRIVAL equ 1
       GIDC_REMOVAL equ 2
-      ;* _WIN32_WINNT >= 0x0501 *
     endif
     if (_WIN32_WINNT ge 0601h)
       GET_DEVICE_CHANGE_WPARAM macro wParam
@@ -10007,7 +7693,6 @@ ifndef _WINUSER_
       GET_DEVICE_CHANGE_LPARAM macro lParam
         exitm <(LOWORD(lParam))>
       endm
-      ;* (_WIN32_WINNT >= 0x0601) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, RegisterRawInputDevices, WIN_STD_CALL_CONV,, <:PCRAWINPUTDEVICE, :UINT, :UINT>, 12
@@ -10020,15 +7705,10 @@ ifndef _WINUSER_
       PRAWINPUTDEVICELIST typedef ptr RAWINPUTDEVICELIST
       @DefProto DllImport, GetRawInputDeviceList, WIN_STD_CALL_CONV,, <:PRAWINPUTDEVICELIST, :PUINT, :UINT>, 12
       @DefProto DllImport, DefRawInputProc, WIN_STD_CALL_CONV,, <:ptr PRAWINPUT, :INT_, :UINT>, 12
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;* _WIN32_WINNT >= 0x0501 *
   endif
   if (WINVER ge 0602h)
     POINTER_DEVICE_PRODUCT_STRING_MAX equ 520
-    ;*
-    ;* wParam values for WM_POINTERDEVICECHANGE
-    ;*
     PDC_ARRIVAL equ 001h
     PDC_REMOVAL equ 002h
     PDC_ORIENTATION_0 equ 004h
@@ -10048,7 +7728,6 @@ ifndef _WINUSER_
       POINTER_DEVICE_TYPE_TOUCH equ 00000003h
       if (WINVER ge 0603h)
         POINTER_DEVICE_TYPE_TOUCH_PAD equ 00000004h
-        ;* WINVER >= 0x0603 *
       endif
       POINTER_DEVICE_TYPE_MAX equ 0FFFFFFFFh
       tagPOINTER_DEVICE_TYPE typedef POINTER_DEVICE_TYPE
@@ -10058,20 +7737,20 @@ ifndef _WINUSER_
         device HANDLE ?
         pointerDeviceType POINTER_DEVICE_TYPE ?
         monitor_ HMONITOR ?
-        startingCursorId DWORD ?
-        maxActiveContacts WORD ?
-        productString WORD POINTER_DEVICE_PRODUCT_STRING_MAX dup (?)
+        startingCursorId ULONG ?
+        maxActiveContacts USHORT ?
+        productString WCHAR POINTER_DEVICE_PRODUCT_STRING_MAX dup (?)
       POINTER_DEVICE_INFO ends
       tagPOINTER_DEVICE_INFO typedef POINTER_DEVICE_INFO
       POINTER_DEVICE_PROPERTY struct
-        logicalMin SDWORD ?
-        logicalMax SDWORD ?
-        physicalMin SDWORD ?
-        physicalMax SDWORD ?
-        unit DWORD ?
-        unitExponent DWORD ?
-        usagePageId WORD ?
-        usageId WORD ?
+        logicalMin INT32 ?
+        logicalMax INT32 ?
+        physicalMin INT32 ?
+        physicalMax INT32 ?
+        unit UINT32 ?
+        unitExponent UINT32 ?
+        usagePageId USHORT ?
+        usageId USHORT ?
       POINTER_DEVICE_PROPERTY ends
       tagPOINTER_DEVICE_PROPERTY typedef POINTER_DEVICE_PROPERTY
       POINTER_DEVICE_CURSOR_TYPE typedef SDWORD
@@ -10082,7 +7761,7 @@ ifndef _WINUSER_
       tagPOINTER_DEVICE_CURSOR_TYPE typedef POINTER_DEVICE_CURSOR_TYPE
 
       POINTER_DEVICE_CURSOR_INFO struct
-        cursorId DWORD ?
+        cursorId UINT32 ?
         cursor POINTER_DEVICE_CURSOR_TYPE ?
       POINTER_DEVICE_CURSOR_INFO ends
       tagPOINTER_DEVICE_CURSOR_INFO typedef POINTER_DEVICE_CURSOR_INFO
@@ -10093,26 +7772,16 @@ ifndef _WINUSER_
       @DefProto DllImport, GetPointerDeviceRects, WIN_STD_CALL_CONV,, <:HANDLE, :ptr RECT, :ptr RECT>, 12
       @DefProto DllImport, GetPointerDeviceCursors, WIN_STD_CALL_CONV,, <:HANDLE, :ptr UINT32, :ptr POINTER_DEVICE_CURSOR_INFO>, 12
       @DefProto DllImport, GetRawPointerDeviceData, WIN_STD_CALL_CONV,, <:UINT32, :UINT32, :UINT32, :ptr POINTER_DEVICE_PROPERTY, :ptr LONG>, 20
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;* WINVER >= 0x0602 *
   endif
   if (WINVER ge 0600h)
-    ;*
-    ;* Message Filter
-    ;*
     MSGFLT_ADD equ 1
     MSGFLT_REMOVE equ 2
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, ChangeWindowMessageFilter, WIN_STD_CALL_CONV,, <:UINT, :DWORD>, 8
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;* WINVER >= 0x0600 *
   endif
   if (WINVER ge 0601h)
-    ;*
-    ;* Message filter info values (CHANGEFILTERSTRUCT.ExtStatus)
-    ;*
     MSGFLTINFO_NONE equ (0)
     MSGFLTINFO_ALREADYALLOWED_FORWND equ (1)
     MSGFLTINFO_ALREADYDISALLOWED_FORWND equ (2)
@@ -10124,45 +7793,23 @@ ifndef _WINUSER_
       CHANGEFILTERSTRUCT ends
       tagCHANGEFILTERSTRUCT typedef CHANGEFILTERSTRUCT
       PCHANGEFILTERSTRUCT typedef ptr CHANGEFILTERSTRUCT
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;*
-    ;* Message filter action values (action parameter to ChangeWindowMessageFilterEx)
-    ;*
     MSGFLT_RESET equ (0)
     MSGFLT_ALLOW equ (1)
     MSGFLT_DISALLOW equ (2)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, ChangeWindowMessageFilterEx, WIN_STD_CALL_CONV,, <:HWND, :UINT, :DWORD, :PCHANGEFILTERSTRUCT>, 16
-      ; Message filter action value
-      ; Optional
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;* WINVER >= 0x0601 *
   endif
   if (WINVER ge 0601h)
-    ;* WINVER >= 0x0601 *
   endif
   if (WINVER ge 0601h)
-    ;*
-    ;* Gesture defines and functions
-    ;*
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-      ;*
-      ;* Gesture information handle
-      ;*
       DECLARE_HANDLE HGESTUREINFO
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;*
-    ;* Gesture flags - GESTUREINFO.dwFlags
-    ;*
     GF_BEGIN equ 00000001h
     GF_INERTIA equ 00000002h
     GF_END equ 00000004h
-    ;*
-    ;* Gesture IDs
-    ;*
     GID_BEGIN equ 1
     GID_END equ 2
     GID_ZOOM equ 3
@@ -10172,235 +7819,109 @@ ifndef _WINUSER_
     GID_PRESSANDTAP equ 7
     GID_ROLLOVER equ <GID_PRESSANDTAP>
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-      ;*
-      ;* Gesture information structure
-      ;*   - Pass the HGESTUREINFO received in the WM_GESTURE message lParam into the
-      ;*     GetGestureInfo function to retrieve this information.
-      ;*   - If cbExtraArgs is non-zero, pass the HGESTUREINFO received in the WM_GESTURE
-      ;*     message lParam into the GetGestureExtraArgs function to retrieve extended
-      ;*     argument information.
-      ;*
       GESTUREINFO struct
-        cbSize DWORD ?
-        ; size, in bytes, of this structure (including variable length Args field)
+        cbSize UINT ?
         dwFlags DWORD ?
-        ; see GF_* flags
         dwID DWORD ?
-        ; gesture ID, see GID_* defines
         hwndTarget HWND ?
-        ; handle to window targeted by this gesture
         ptsLocation POINTS <>
-        ; current location of this gesture
         dwInstanceID DWORD ?
-        ; internally used
         dwSequenceID DWORD ?
-        ; internally used
-        ullArguments QWORD ?
-        ; arguments for gestures whose arguments fit in 8 BYTES
-        cbExtraArgs DWORD ?
-        ; size, in bytes, of extra arguments, if any, that accompany this gesture
+        ullArguments ULONGLONG ?
+        cbExtraArgs UINT ?
       GESTUREINFO ends
       tagGESTUREINFO typedef GESTUREINFO
       PGESTUREINFO typedef ptr GESTUREINFO
       PCGESTUREINFO typedef ptr GESTUREINFO
-      ;*
-      ;* Gesture notification structure
-      ;*   - The WM_GESTURENOTIFY message lParam contains a pointer to this structure.
-      ;*   - The WM_GESTURENOTIFY message notifies a window that gesture recognition is
-      ;*     in progress and a gesture will be generated if one is recognized under the
-      ;*     current gesture settings.
-      ;*
       GESTURENOTIFYSTRUCT struct
-        cbSize DWORD ?
-        ; size, in bytes, of this structure
+        cbSize UINT ?
         dwFlags DWORD ?
-        ; unused
         hwndTarget HWND ?
-        ; handle to window targeted by the gesture
         ptsLocation POINTS <>
-        ; starting location
         dwInstanceID DWORD ?
-        ; internally used
       GESTURENOTIFYSTRUCT ends
       tagGESTURENOTIFYSTRUCT typedef GESTURENOTIFYSTRUCT
       PGESTURENOTIFYSTRUCT typedef ptr GESTURENOTIFYSTRUCT
-      ;*
-      ;* Gesture argument helpers
-      ;*   - Angle should be a double in the range of -2pi to +2pi
-      ;*   - Argument should be an unsigned 16-bit value
-      ;*
       GID_ROTATE_ANGLE_TO_ARGUMENT macro _arg_
         exitm <(((((_arg_) + 2.0 * 3.14159265) / (4.0 * 3.14159265)) * 65535.0))>
       endm
       GID_ROTATE_ANGLE_FROM_ARGUMENT macro _arg_
         exitm <((((_arg_) / 65535.0) * 4.0 * 3.14159265) - 2.0 * 3.14159265)>
       endm
-      ;*
-      ;* Gesture information retrieval
-      ;*   - HGESTUREINFO is received by a window in the lParam of a WM_GESTURE message.
-      ;*
       @DefProto DllImport, GetGestureInfo, WIN_STD_CALL_CONV,, <:HGESTUREINFO, :PGESTUREINFO>, 8
-      ;*
-      ;* Gesture extra arguments retrieval
-      ;*   - HGESTUREINFO is received by a window in the lParam of a WM_GESTURE message.
-      ;*   - Size, in bytes, of the extra argument data is available in the cbExtraArgs
-      ;*     field of the GESTUREINFO structure retrieved using the GetGestureInfo function.
-      ;*
       @DefProto DllImport, GetGestureExtraArgs, WIN_STD_CALL_CONV,, <:HGESTUREINFO, :UINT, :PBYTE>, 12
-      ;*
-      ;* Gesture information handle management
-      ;*   - If an application processes the WM_GESTURE message, then once it is done
-      ;*     with the associated HGESTUREINFO, the application is responsible for
-      ;*     closing the handle using this function. Failure to do so may result in
-      ;*     process memory leaks.
-      ;*   - If the message is instead passed to DefWindowProc, or is forwarded using
-      ;*     one of the PostMessage or SendMessage class of API functions, the handle
-      ;*     is transfered with the message and need not be closed by the application.
-      ;*
       @DefProto DllImport, CloseGestureInfoHandle, WIN_STD_CALL_CONV,, <:HGESTUREINFO>, 4
-      ;*
-      ;* Gesture configuration structure
-      ;*   - Used in SetGestureConfig and GetGestureConfig
-      ;*   - Note that any setting not included in either GESTURECONFIG.dwWant or
-      ;*     GESTURECONFIG.dwBlock will use the parent window's preferences or
-      ;*     system defaults.
-      ;*
       GESTURECONFIG struct
         dwID DWORD ?
-        ; gesture ID
         dwWant DWORD ?
-        ; settings related to gesture ID that are to be turned on
         dwBlock DWORD ?
-        ; settings related to gesture ID that are to be turned off
       GESTURECONFIG ends
       tagGESTURECONFIG typedef GESTURECONFIG
       PGESTURECONFIG typedef ptr GESTURECONFIG
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;*
-    ;* Gesture configuration flags - GESTURECONFIG.dwWant or GESTURECONFIG.dwBlock
-    ;*
-    ;*
-    ;* Common gesture configuration flags - set GESTURECONFIG.dwID to zero
-    ;*
     GC_ALLGESTURES equ 00000001h
-    ;*
-    ;* Zoom gesture configuration flags - set GESTURECONFIG.dwID to GID_ZOOM
-    ;*
     GC_ZOOM equ 00000001h
-    ;*
-    ;* Pan gesture configuration flags - set GESTURECONFIG.dwID to GID_PAN
-    ;*
     GC_PAN equ 00000001h
     GC_PAN_WITH_SINGLE_FINGER_VERTICALLY equ 00000002h
     GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY equ 00000004h
     GC_PAN_WITH_GUTTER equ 00000008h
     GC_PAN_WITH_INERTIA equ 00000010h
-    ;*
-    ;* Rotate gesture configuration flags - set GESTURECONFIG.dwID to GID_ROTATE
-    ;*
     GC_ROTATE equ 00000001h
-    ;*
-    ;* Two finger tap gesture configuration flags - set GESTURECONFIG.dwID to GID_TWOFINGERTAP
-    ;*
     GC_TWOFINGERTAP equ 00000001h
-    ;*
-    ;* PressAndTap gesture configuration flags - set GESTURECONFIG.dwID to GID_PRESSANDTAP
-    ;*
     GC_PRESSANDTAP equ 00000001h
     GC_ROLLOVER equ <GC_PRESSANDTAP>
-    GESTURECONFIGMAXCOUNT equ 256; Maximum number of gestures that can be included
-
-    ; in a single call to SetGestureConfig / GetGestureConfig
+    GESTURECONFIGMAXCOUNT equ 256
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, SetGestureConfig, WIN_STD_CALL_CONV,, <:HWND, :DWORD, :UINT, :PGESTURECONFIG, :UINT>, 20
-      ; order specified and repeated occurances will overwrite previous ones
-      ; sizeof(GESTURECONFIG)
-      GCF_INCLUDE_ANCESTORS equ 00000001h; If specified, GetGestureConfig returns consolidated configuration
-
-      ; for the specified window and it's parent window chain
+      GCF_INCLUDE_ANCESTORS equ 00000001h
       @DefProto DllImport, GetGestureConfig, WIN_STD_CALL_CONV,, <:HWND, :DWORD, :DWORD, :PUINT, :PGESTURECONFIG, :UINT>, 24
-      ; pointer to buffer to receive the returned array of GESTURECONFIG structures
-      ; sizeof(GESTURECONFIG)
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;* WINVER >= 0x0601 *
   endif
   if (WINVER ge 0601h)
-    ;*
-    ;* GetSystemMetrics(SM_DIGITIZER) flag values
-    ;*
     NID_INTEGRATED_TOUCH equ 00000001h
     NID_EXTERNAL_TOUCH equ 00000002h
     NID_INTEGRATED_PEN equ 00000004h
     NID_EXTERNAL_PEN equ 00000008h
     NID_MULTI_INPUT equ 00000040h
     NID_READY equ 00000080h
-    ;* WINVER >= 0x0601 *
   endif
   MAX_STR_BLOCKREASON equ 256
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, ShutdownBlockReasonCreate, WIN_STD_CALL_CONV,, <:HWND, :LPCWSTR>, 8
     @DefProto DllImport, ShutdownBlockReasonQuery, WIN_STD_CALL_CONV,, <:HWND, :LPWSTR, :ptr DWORD>, 12
     @DefProto DllImport, ShutdownBlockReasonDestroy, WIN_STD_CALL_CONV,, <:HWND>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if (WINVER ge 0601h)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-      ;*
-      ;* Identifiers for message input source device type.
-      ;*
       INPUT_MESSAGE_DEVICE_TYPE typedef SDWORD
       IMDT_UNAVAILABLE equ 00000000h
-      ; not specified
       IMDT_KEYBOARD equ 00000001h
-      ; from keyboard
       IMDT_MOUSE equ 00000002h
-      ; from mouse
       IMDT_TOUCH equ 00000004h
-      ; from touch
       IMDT_PEN equ 00000008h
-      ; from pen
       if (WINVER ge 0603h)
         IMDT_TOUCHPAD equ 00000010h
-        ; from touchpad
-        ;* WINVER >= 0x0603 *
       endif
       tagINPUT_MESSAGE_DEVICE_TYPE typedef INPUT_MESSAGE_DEVICE_TYPE
 
       INPUT_MESSAGE_ORIGIN_ID typedef SDWORD
       IMO_UNAVAILABLE equ 00000000h
-      ; not specified
       IMO_HARDWARE equ 00000001h
-      ; from a hardware device or injected by a UIAccess app
       IMO_INJECTED equ 00000002h
-      ; injected via SendInput() by a non-UIAccess app
       IMO_SYSTEM equ 00000004h
-      ; injected by the system
       tagINPUT_MESSAGE_ORIGIN_ID typedef INPUT_MESSAGE_ORIGIN_ID
 
-      ;*
-      ;* Input source structure.
-      ;*
       INPUT_MESSAGE_SOURCE struct
         deviceType INPUT_MESSAGE_DEVICE_TYPE ?
         originId INPUT_MESSAGE_ORIGIN_ID ?
       INPUT_MESSAGE_SOURCE ends
       tagINPUT_MESSAGE_SOURCE typedef INPUT_MESSAGE_SOURCE
-      ;*
-      ;* API to determine the input source of the current messsage.
-      ;*
       @DefProto DllImport, GetCurrentInputMessageSource, WIN_STD_CALL_CONV,, <:ptr INPUT_MESSAGE_SOURCE>, 4
       @DefProto DllImport, GetCIMSSM, WIN_STD_CALL_CONV,, <:ptr INPUT_MESSAGE_SOURCE>, 4
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;* WINVER >= 0x0601 *
   endif
   if (WINVER ge 0602h)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-      ;*
-      ;* AutoRotation state structure
-      ;*
       AR_STATE typedef SDWORD
       AR_ENABLED equ 0h
       AR_DISABLED equ 1h
@@ -10413,19 +7934,11 @@ ifndef _WINUSER_
       AR_LAPTOP equ 80h
       tagAR_STATE typedef AR_STATE
       PAR_STATE typedef ptr AR_STATE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     ifndef MIDL_PASS
-      ; Don't define this for MIDL compiler passes over winuser.h. Some of them
-      ; don't include winnt.h (where DEFINE_ENUM_FLAG_OPERATORS is defined and
-      ; get compile errors.
       DEFINE_ENUM_FLAG_OPERATORS(AR_STATE)
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-      ;*
-      ;* Orientation preference structure. This is used by applications to specify
-      ;* their orientation preferences to windows.
-      ;*
       ORIENTATION_PREFERENCE typedef SDWORD
       ORIENTATION_PREFERENCE_NONE equ 0h
       ORIENTATION_PREFERENCE_LANDSCAPE equ 1h
@@ -10434,73 +7947,39 @@ ifndef _WINUSER_
       ORIENTATION_PREFERENCE_PORTRAIT_FLIPPED equ 8h
 
       ifndef MIDL_PASS
-        ; Don't define this for MIDL compiler passes over winuser.h. Some of them
-        ; don't include winnt.h (where DEFINE_ENUM_FLAG_OPERATORS is defined and
-        ; get compile errors.
         DEFINE_ENUM_FLAG_OPERATORS(ORIENTATION_PREFERENCE)
       endif
       @DefProto DllImport, GetAutoRotationState, WIN_STD_CALL_CONV,, <:PAR_STATE>, 4
       @DefProto DllImport, GetDisplayAutoRotationPreferences, WIN_STD_CALL_CONV,, <:ptr ORIENTATION_PREFERENCE>, 4
       @DefProto DllImport, GetDisplayAutoRotationPreferencesByProcessId, WIN_STD_CALL_CONV,, <:DWORD, :ptr ORIENTATION_PREFERENCE, :ptr BOOL>, 12
       @DefProto DllImport, SetDisplayAutoRotationPreferences, WIN_STD_CALL_CONV,, <:ORIENTATION_PREFERENCE>, 4
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;* WINVER >= 0x0602 *
   endif
   if (WINVER ge 0601h)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, IsImmersiveProcess, WIN_STD_CALL_CONV,, <:HANDLE>, 4
       @DefProto DllImport, SetProcessRestrictionExemption, WIN_STD_CALL_CONV,, <:BOOL>, 4
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;* WINVER >= 0x0601 *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
-  ;*
-  ;* Ink Feedback APIs
-  ;*
   if (WINVER ge 0607h)
     @DefProto DllImport, SetAdditionalForegroundBoostProcesses, WIN_STD_CALL_CONV,, <:HWND, :DWORD, :ptr HANDLE>, 12
-    ;* TOOLTIP_DISMISS_FLAGS:
-    ;*
-    ;* These are flags used with the RegisterForTooltipDismissNotification API.
-    ;*
-    ;* TDF_REGISTER -   Used to register tooltip to receive notification of trigger key combination
-    ;*                  via WM_TOOLTIPDISMISS.
-    ;*
-    ;* TDF_UNREGISTER - Used to unregister tooltip from receiving notification of trigger key
-    ;*                  combination via WM_TOOLTIPDISMISS.
-    ;*
     TOOLTIP_DISMISS_FLAGS typedef SDWORD
     TDF_REGISTER equ 0001h
     TDF_UNREGISTER equ 0002h
 
     @DefProto DllImport, RegisterForTooltipDismissNotification, WIN_STD_CALL_CONV,, <:HWND, :TOOLTIP_DISMISS_FLAGS>, 8
-    ;*
-    ;* Support for Accessibility Tooltip Dismissal API:
-    ;*
-    ;* This message notifies apps/frameworks that a trigger event has occurred and they should dismiss the
-    ;* respective tooltip window.
-    ;* This is used with RegisterForTooltipDismissNotification.
-    ;*
-    ;* Note that only kernel mode can originate this message.
-    ;*
     WM_TOOLTIPDISMISS equ 0345h
-    ;* WINVER >= 0x0607 *
   endif
   if _MSC_VER ge 1200
   endif
-  ;* RC complains about long symbols in #ifs *
   if  not Defined(RC_INVOKED)
     if Defined(ISOLATION_AWARE_ENABLED) and (ISOLATION_AWARE_ENABLED ne 0)
       ;[...]
     endif
-    ;* RC *
   endif
   ifdef __cplusplus
     ;[...]
   endif
-  ;* !_WINUSER_ *
 endif

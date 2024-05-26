@@ -1,10 +1,9 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\spapidef.h
 ;             Created on (UTC) 06/04/2024 06:15:58
 ;             Last modified on (UTC) 16/12/2023 11:06:58
 
-;--*
 ifndef _INC_SPAPIDEF
   _INC_SPAPIDEF equ <>
   if _MSC_VER gt 1000
@@ -15,37 +14,22 @@ ifndef _INC_SPAPIDEF
       SP_LOG_TOKEN typedef DWORDLONG
       PSP_LOG_TOKEN typedef ptr DWORDLONG
     endif
-    ; Special txtlog token values
     LOGTOKEN_TYPE_MASK equ 3
     LOGTOKEN_UNSPECIFIED equ 0
     LOGTOKEN_NO_LOG equ 1
     LOGTOKEN_SETUPAPI_APPLOG equ 2
     LOGTOKEN_SETUPAPI_DEVLOG equ 3
-    ; Flags for SetupCreateTextLogSection
-    TXTLOG_SETUPAPI_DEVLOG equ 00000001h; 1 = setupdi.log, 0 = setupapi.log
-
-    TXTLOG_SETUPAPI_CMDLINE equ 00000002h; log the command line
-
+    TXTLOG_SETUPAPI_DEVLOG equ 00000001h
+    TXTLOG_SETUPAPI_CMDLINE equ 00000002h
     TXTLOG_SETUPAPI_BITS equ 00000003h
-    ; Flags for SetupWriteTextLog
-    ; Event Levels (bits 0-3)
-    TXTLOG_ERROR equ 1h; shows entries which indicate a real problem
-
-    TXTLOG_WARNING equ 2h; shows entries which indicate a potential problem
-
-    TXTLOG_SYSTEM_STATE_CHANGE equ 3h; system changes only
-
-    TXTLOG_SUMMARY equ 4h; show basic operation surrounding system changes
-
-    TXTLOG_DETAILS equ 5h; detailed operation of the install process
-
-    TXTLOG_VERBOSE equ 6h; log entries which potentially generate a lot of data
-
-    TXTLOG_VERY_VERBOSE equ 7h; highest level shows all log entries
-
-    ; Bits reserved for internal use
+    TXTLOG_ERROR equ 1h
+    TXTLOG_WARNING equ 2h
+    TXTLOG_SYSTEM_STATE_CHANGE equ 3h
+    TXTLOG_SUMMARY equ 4h
+    TXTLOG_DETAILS equ 5h
+    TXTLOG_VERBOSE equ 6h
+    TXTLOG_VERY_VERBOSE equ 7h
     TXTLOG_RESERVED_FLAGS equ 0000FFF0h
-    ; Basic flags (bits 4-31)
     TXTLOG_TIMESTAMP equ 00010000h
     TXTLOG_DEPTH_INCR equ 00020000h
     TXTLOG_DEPTH_DECR equ 00040000h
@@ -54,7 +38,6 @@ ifndef _INC_SPAPIDEF
     TXTLOG_LEVEL macro flags
       exitm <(flags and 0fh)>
     endm
-    ; Setupapi, Setupdi event categories
     TXTLOG_DEVINST equ 00000001h
     TXTLOG_INF equ 00000002h
     TXTLOG_FILEQ equ 00000004h
@@ -74,7 +57,5 @@ ifndef _INC_SPAPIDEF
     TXTLOG_DEVMGR equ 20000000h
     TXTLOG_INSTALLER equ 40000000h
     TXTLOG_VENDOR equ 80000000h
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
 endif
-; _INC_SPAPIDEF

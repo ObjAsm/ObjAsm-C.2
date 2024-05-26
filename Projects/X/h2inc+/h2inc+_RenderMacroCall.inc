@@ -15,7 +15,7 @@
 ;             Arg2: Macro Flags (MCF_xxx).
 ;             Arg3: Flag to write LF after macro invocation.
 ;             xbx -> IncFile.
-; Return:     eax = returns TRUE if macro was invoked, otherwise FALSE (turned out to be
+; Return:     eax = TRUE if macro was invoked, otherwise FALSE (turned out to be
 ;             NO macro invocation).
 
 RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:DWORD
@@ -150,7 +150,7 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
           .if CHRA ptr [xax] == '['
             inc dPtrCount
             invoke SkipBraces, '[', ']'
-            test eax, eax
+            test xax, xax
             jz @Exit
             .continue
           .endif
@@ -243,7 +243,7 @@ RenderMacroCall proc uses xsi pMacroName:PSTRINGA, dMacroFlags:DWORD, bWriteLF:D
       test xax, xax
       jz @ErrorEoF
       invoke RenderInterfaceBlock, xsi
-      test eax, eax
+      test xax, xax
       jz @ErrorEoF
       dec [xbx].$Obj(IncFile).dIndentation
       OCall xbx::IncFile.StmWriteF, $OfsCStrA("END_%hs"), pMacroName

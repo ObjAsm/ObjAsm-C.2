@@ -1,14 +1,12 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\d3d12.h
 ;             Created on (UTC) 06/04/2024 06:15:53
 ;             Last modified on (UTC) 21/02/2024 18:19:20
 
-;* verify that the <rpcndr.h> version is high enough to compile this file*
 ifndef __REQUIRED_RPCNDR_H_VERSION__
   __REQUIRED_RPCNDR_H_VERSION__ equ 501
 endif
-;* verify that the <rpcsal.h> version is high enough to compile this file*
 ifndef __REQUIRED_RPCSAL_H_VERSION__
   __REQUIRED_RPCSAL_H_VERSION__ equ 100
 endif
@@ -16,12 +14,10 @@ include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
   .err <this stub requires an updated version of < rpcndr.h >>
-  ;* __RPCNDR_H_VERSION__ *
 endif
 ifndef COM_NO_WINDOWS_H
   include windows.inc
   include ole2.inc
-  ;*COM_NO_WINDOWS_H*
 endif
 ifndef __d3d12_h__
   __d3d12_h__ equ <>
@@ -38,256 +34,192 @@ ifndef __d3d12_h__
       endm
     endif
   endif
-  ;* Forward Declarations *
   ifndef __ID3D12Object_FWD_DEFINED__
     __ID3D12Object_FWD_DEFINED__ equ <>
-    ;* __ID3D12Object_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DeviceChild_FWD_DEFINED__
     __ID3D12DeviceChild_FWD_DEFINED__ equ <>
-    ;* __ID3D12DeviceChild_FWD_DEFINED__ *
   endif
   ifndef __ID3D12RootSignature_FWD_DEFINED__
     __ID3D12RootSignature_FWD_DEFINED__ equ <>
-    ;* __ID3D12RootSignature_FWD_DEFINED__ *
   endif
   ifndef __ID3D12RootSignatureDeserializer_FWD_DEFINED__
     __ID3D12RootSignatureDeserializer_FWD_DEFINED__ equ <>
-    ;* __ID3D12RootSignatureDeserializer_FWD_DEFINED__ *
   endif
   ifndef __ID3D12VersionedRootSignatureDeserializer_FWD_DEFINED__
     __ID3D12VersionedRootSignatureDeserializer_FWD_DEFINED__ equ <>
-    ;* __ID3D12VersionedRootSignatureDeserializer_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Pageable_FWD_DEFINED__
     __ID3D12Pageable_FWD_DEFINED__ equ <>
-    ;* __ID3D12Pageable_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Heap_FWD_DEFINED__
     __ID3D12Heap_FWD_DEFINED__ equ <>
-    ;* __ID3D12Heap_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Resource_FWD_DEFINED__
     __ID3D12Resource_FWD_DEFINED__ equ <>
-    ;* __ID3D12Resource_FWD_DEFINED__ *
   endif
   ifndef __ID3D12CommandAllocator_FWD_DEFINED__
     __ID3D12CommandAllocator_FWD_DEFINED__ equ <>
-    ;* __ID3D12CommandAllocator_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Fence_FWD_DEFINED__
     __ID3D12Fence_FWD_DEFINED__ equ <>
-    ;* __ID3D12Fence_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Fence1_FWD_DEFINED__
     __ID3D12Fence1_FWD_DEFINED__ equ <>
-    ;* __ID3D12Fence1_FWD_DEFINED__ *
   endif
   ifndef __ID3D12PipelineState_FWD_DEFINED__
     __ID3D12PipelineState_FWD_DEFINED__ equ <>
-    ;* __ID3D12PipelineState_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DescriptorHeap_FWD_DEFINED__
     __ID3D12DescriptorHeap_FWD_DEFINED__ equ <>
-    ;* __ID3D12DescriptorHeap_FWD_DEFINED__ *
   endif
   ifndef __ID3D12QueryHeap_FWD_DEFINED__
     __ID3D12QueryHeap_FWD_DEFINED__ equ <>
-    ;* __ID3D12QueryHeap_FWD_DEFINED__ *
   endif
   ifndef __ID3D12CommandSignature_FWD_DEFINED__
     __ID3D12CommandSignature_FWD_DEFINED__ equ <>
-    ;* __ID3D12CommandSignature_FWD_DEFINED__ *
   endif
   ifndef __ID3D12CommandList_FWD_DEFINED__
     __ID3D12CommandList_FWD_DEFINED__ equ <>
-    ;* __ID3D12CommandList_FWD_DEFINED__ *
   endif
   ifndef __ID3D12GraphicsCommandList_FWD_DEFINED__
     __ID3D12GraphicsCommandList_FWD_DEFINED__ equ <>
-    ;* __ID3D12GraphicsCommandList_FWD_DEFINED__ *
   endif
   ifndef __ID3D12GraphicsCommandList1_FWD_DEFINED__
     __ID3D12GraphicsCommandList1_FWD_DEFINED__ equ <>
-    ;* __ID3D12GraphicsCommandList1_FWD_DEFINED__ *
   endif
   ifndef __ID3D12GraphicsCommandList2_FWD_DEFINED__
     __ID3D12GraphicsCommandList2_FWD_DEFINED__ equ <>
-    ;* __ID3D12GraphicsCommandList2_FWD_DEFINED__ *
   endif
   ifndef __ID3D12CommandQueue_FWD_DEFINED__
     __ID3D12CommandQueue_FWD_DEFINED__ equ <>
-    ;* __ID3D12CommandQueue_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Device_FWD_DEFINED__
     __ID3D12Device_FWD_DEFINED__ equ <>
-    ;* __ID3D12Device_FWD_DEFINED__ *
   endif
   ifndef __ID3D12PipelineLibrary_FWD_DEFINED__
     __ID3D12PipelineLibrary_FWD_DEFINED__ equ <>
-    ;* __ID3D12PipelineLibrary_FWD_DEFINED__ *
   endif
   ifndef __ID3D12PipelineLibrary1_FWD_DEFINED__
     __ID3D12PipelineLibrary1_FWD_DEFINED__ equ <>
-    ;* __ID3D12PipelineLibrary1_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Device1_FWD_DEFINED__
     __ID3D12Device1_FWD_DEFINED__ equ <>
-    ;* __ID3D12Device1_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Device2_FWD_DEFINED__
     __ID3D12Device2_FWD_DEFINED__ equ <>
-    ;* __ID3D12Device2_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Device3_FWD_DEFINED__
     __ID3D12Device3_FWD_DEFINED__ equ <>
-    ;* __ID3D12Device3_FWD_DEFINED__ *
   endif
   ifndef __ID3D12ProtectedSession_FWD_DEFINED__
     __ID3D12ProtectedSession_FWD_DEFINED__ equ <>
-    ;* __ID3D12ProtectedSession_FWD_DEFINED__ *
   endif
   ifndef __ID3D12ProtectedResourceSession_FWD_DEFINED__
     __ID3D12ProtectedResourceSession_FWD_DEFINED__ equ <>
-    ;* __ID3D12ProtectedResourceSession_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Device4_FWD_DEFINED__
     __ID3D12Device4_FWD_DEFINED__ equ <>
-    ;* __ID3D12Device4_FWD_DEFINED__ *
   endif
   ifndef __ID3D12LifetimeOwner_FWD_DEFINED__
     __ID3D12LifetimeOwner_FWD_DEFINED__ equ <>
-    ;* __ID3D12LifetimeOwner_FWD_DEFINED__ *
   endif
   ifndef __ID3D12SwapChainAssistant_FWD_DEFINED__
     __ID3D12SwapChainAssistant_FWD_DEFINED__ equ <>
-    ;* __ID3D12SwapChainAssistant_FWD_DEFINED__ *
   endif
   ifndef __ID3D12LifetimeTracker_FWD_DEFINED__
     __ID3D12LifetimeTracker_FWD_DEFINED__ equ <>
-    ;* __ID3D12LifetimeTracker_FWD_DEFINED__ *
   endif
   ifndef __ID3D12StateObject_FWD_DEFINED__
     __ID3D12StateObject_FWD_DEFINED__ equ <>
-    ;* __ID3D12StateObject_FWD_DEFINED__ *
   endif
   ifndef __ID3D12StateObjectProperties_FWD_DEFINED__
     __ID3D12StateObjectProperties_FWD_DEFINED__ equ <>
-    ;* __ID3D12StateObjectProperties_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Device5_FWD_DEFINED__
     __ID3D12Device5_FWD_DEFINED__ equ <>
-    ;* __ID3D12Device5_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DeviceRemovedExtendedDataSettings_FWD_DEFINED__
     __ID3D12DeviceRemovedExtendedDataSettings_FWD_DEFINED__ equ <>
-    ;* __ID3D12DeviceRemovedExtendedDataSettings_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DeviceRemovedExtendedDataSettings1_FWD_DEFINED__
     __ID3D12DeviceRemovedExtendedDataSettings1_FWD_DEFINED__ equ <>
-    ;* __ID3D12DeviceRemovedExtendedDataSettings1_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DeviceRemovedExtendedData_FWD_DEFINED__
     __ID3D12DeviceRemovedExtendedData_FWD_DEFINED__ equ <>
-    ;* __ID3D12DeviceRemovedExtendedData_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DeviceRemovedExtendedData1_FWD_DEFINED__
     __ID3D12DeviceRemovedExtendedData1_FWD_DEFINED__ equ <>
-    ;* __ID3D12DeviceRemovedExtendedData1_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DeviceRemovedExtendedData2_FWD_DEFINED__
     __ID3D12DeviceRemovedExtendedData2_FWD_DEFINED__ equ <>
-    ;* __ID3D12DeviceRemovedExtendedData2_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Device6_FWD_DEFINED__
     __ID3D12Device6_FWD_DEFINED__ equ <>
-    ;* __ID3D12Device6_FWD_DEFINED__ *
   endif
   ifndef __ID3D12ProtectedResourceSession1_FWD_DEFINED__
     __ID3D12ProtectedResourceSession1_FWD_DEFINED__ equ <>
-    ;* __ID3D12ProtectedResourceSession1_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Device7_FWD_DEFINED__
     __ID3D12Device7_FWD_DEFINED__ equ <>
-    ;* __ID3D12Device7_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Device8_FWD_DEFINED__
     __ID3D12Device8_FWD_DEFINED__ equ <>
-    ;* __ID3D12Device8_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Resource1_FWD_DEFINED__
     __ID3D12Resource1_FWD_DEFINED__ equ <>
-    ;* __ID3D12Resource1_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Resource2_FWD_DEFINED__
     __ID3D12Resource2_FWD_DEFINED__ equ <>
-    ;* __ID3D12Resource2_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Heap1_FWD_DEFINED__
     __ID3D12Heap1_FWD_DEFINED__ equ <>
-    ;* __ID3D12Heap1_FWD_DEFINED__ *
   endif
   ifndef __ID3D12GraphicsCommandList3_FWD_DEFINED__
     __ID3D12GraphicsCommandList3_FWD_DEFINED__ equ <>
-    ;* __ID3D12GraphicsCommandList3_FWD_DEFINED__ *
   endif
   ifndef __ID3D12MetaCommand_FWD_DEFINED__
     __ID3D12MetaCommand_FWD_DEFINED__ equ <>
-    ;* __ID3D12MetaCommand_FWD_DEFINED__ *
   endif
   ifndef __ID3D12GraphicsCommandList4_FWD_DEFINED__
     __ID3D12GraphicsCommandList4_FWD_DEFINED__ equ <>
-    ;* __ID3D12GraphicsCommandList4_FWD_DEFINED__ *
   endif
   ifndef __ID3D12ShaderCacheSession_FWD_DEFINED__
     __ID3D12ShaderCacheSession_FWD_DEFINED__ equ <>
-    ;* __ID3D12ShaderCacheSession_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Device9_FWD_DEFINED__
     __ID3D12Device9_FWD_DEFINED__ equ <>
-    ;* __ID3D12Device9_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Device10_FWD_DEFINED__
     __ID3D12Device10_FWD_DEFINED__ equ <>
-    ;* __ID3D12Device10_FWD_DEFINED__ *
   endif
   ifndef __ID3D12VirtualizationGuestDevice_FWD_DEFINED__
     __ID3D12VirtualizationGuestDevice_FWD_DEFINED__ equ <>
-    ;* __ID3D12VirtualizationGuestDevice_FWD_DEFINED__ *
   endif
   ifndef __ID3D12Tools_FWD_DEFINED__
     __ID3D12Tools_FWD_DEFINED__ equ <>
-    ;* __ID3D12Tools_FWD_DEFINED__ *
   endif
   ifndef __ID3D12SDKConfiguration_FWD_DEFINED__
     __ID3D12SDKConfiguration_FWD_DEFINED__ equ <>
-    ;* __ID3D12SDKConfiguration_FWD_DEFINED__ *
   endif
   ifndef __ID3D12SDKConfiguration1_FWD_DEFINED__
     __ID3D12SDKConfiguration1_FWD_DEFINED__ equ <>
-    ;* __ID3D12SDKConfiguration1_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DeviceFactory_FWD_DEFINED__
     __ID3D12DeviceFactory_FWD_DEFINED__ equ <>
-    ;* __ID3D12DeviceFactory_FWD_DEFINED__ *
   endif
   ifndef __ID3D12DeviceConfiguration_FWD_DEFINED__
     __ID3D12DeviceConfiguration_FWD_DEFINED__ equ <>
-    ;* __ID3D12DeviceConfiguration_FWD_DEFINED__ *
   endif
   ifndef __ID3D12GraphicsCommandList5_FWD_DEFINED__
     __ID3D12GraphicsCommandList5_FWD_DEFINED__ equ <>
-    ;* __ID3D12GraphicsCommandList5_FWD_DEFINED__ *
   endif
   ifndef __ID3D12GraphicsCommandList6_FWD_DEFINED__
     __ID3D12GraphicsCommandList6_FWD_DEFINED__ equ <>
-    ;* __ID3D12GraphicsCommandList6_FWD_DEFINED__ *
   endif
   ifndef __ID3D12GraphicsCommandList7_FWD_DEFINED__
     __ID3D12GraphicsCommandList7_FWD_DEFINED__ equ <>
-    ;* __ID3D12GraphicsCommandList7_FWD_DEFINED__ *
   endif
-  ;* header files for imported files *
   include OAIdl.inc
   include OCIdl.inc
   include dxgicommon.inc
@@ -296,8 +228,6 @@ ifndef __d3d12_h__
   ifdef __cplusplus
     ;[...]
   endif
-  ;* interface __MIDL_itf_d3d12_0000_0000 *
-  ;* [local] *
   include winapifamily.inc
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_GAMES)
     ifndef _D3D12_CONSTANTS
@@ -746,9 +676,9 @@ ifndef __d3d12_h__
 
     D3D12_COMMAND_QUEUE_DESC struct
       Type_ D3D12_COMMAND_LIST_TYPE ?
-      Priority SDWORD ?
+      Priority INT_ ?
       Flags D3D12_COMMAND_QUEUE_FLAGS ?
-      NodeMask DWORD ?
+      NodeMask UINT ?
     D3D12_COMMAND_QUEUE_DESC ends
     D3D12_PRIMITIVE_TOPOLOGY_TYPE typedef SDWORD
     D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED equ 0
@@ -762,13 +692,13 @@ ifndef __d3d12_h__
     D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA equ 1
 
     D3D12_INPUT_ELEMENT_DESC struct
-      SemanticName =POINTER ?
-      SemanticIndex DWORD ?
+      SemanticName LPCSTR ?
+      SemanticIndex UINT ?
       Format DXGI_FORMAT ?
-      InputSlot DWORD ?
-      AlignedByteOffset DWORD ?
+      InputSlot UINT ?
+      AlignedByteOffset UINT ?
       InputSlotClass D3D12_INPUT_CLASSIFICATION ?
-      InstanceDataStepRate DWORD ?
+      InstanceDataStepRate UINT ?
     D3D12_INPUT_ELEMENT_DESC ends
     D3D12_FILL_MODE typedef SDWORD
     D3D12_FILL_MODE_WIREFRAME equ 2
@@ -782,29 +712,29 @@ ifndef __d3d12_h__
     D3D12_CULL_MODE_BACK equ 3
 
     D3D12_SO_DECLARATION_ENTRY struct
-      Stream DWORD ?
-      SemanticName =POINTER ?
-      SemanticIndex DWORD ?
+      Stream UINT ?
+      SemanticName LPCSTR ?
+      SemanticIndex UINT ?
       StartComponent BYTE ?
       ComponentCount BYTE ?
       OutputSlot BYTE ?
     D3D12_SO_DECLARATION_ENTRY ends
     D3D12_VIEWPORT struct
-      TopLeftX REAL4 ?
-      TopLeftY REAL4 ?
-      Width_ REAL4 ?
-      Height REAL4 ?
-      MinDepth REAL4 ?
-      MaxDepth REAL4 ?
+      TopLeftX FLOAT ?
+      TopLeftY FLOAT ?
+      Width_ FLOAT ?
+      Height FLOAT ?
+      MinDepth FLOAT ?
+      MaxDepth FLOAT ?
     D3D12_VIEWPORT ends
     D3D12_RECT typedef RECT
     D3D12_BOX struct
-      left DWORD ?
-      top DWORD ?
-      front DWORD ?
-      right DWORD ?
-      bottom DWORD ?
-      back DWORD ?
+      left UINT ?
+      top UINT ?
+      front UINT ?
+      right UINT ?
+      bottom UINT ?
+      back UINT ?
     D3D12_BOX ends
     D3D12_COMPARISON_FUNC typedef SDWORD
     D3D12_COMPARISON_FUNC_NEVER equ 1
@@ -837,25 +767,25 @@ ifndef __d3d12_h__
       StencilFunc D3D12_COMPARISON_FUNC ?
     D3D12_DEPTH_STENCILOP_DESC ends
     D3D12_DEPTH_STENCIL_DESC struct
-      DepthEnable DWORD ?
+      DepthEnable BOOL ?
       DepthWriteMask D3D12_DEPTH_WRITE_MASK ?
       DepthFunc D3D12_COMPARISON_FUNC ?
-      StencilEnable DWORD ?
-      StencilReadMask BYTE ?
-      StencilWriteMask BYTE ?
+      StencilEnable BOOL ?
+      StencilReadMask UINT8 ?
+      StencilWriteMask UINT8 ?
       FrontFace D3D12_DEPTH_STENCILOP_DESC <>
       BackFace D3D12_DEPTH_STENCILOP_DESC <>
     D3D12_DEPTH_STENCIL_DESC ends
     D3D12_DEPTH_STENCIL_DESC1 struct
-      DepthEnable DWORD ?
+      DepthEnable BOOL ?
       DepthWriteMask D3D12_DEPTH_WRITE_MASK ?
       DepthFunc D3D12_COMPARISON_FUNC ?
-      StencilEnable DWORD ?
-      StencilReadMask BYTE ?
-      StencilWriteMask BYTE ?
+      StencilEnable BOOL ?
+      StencilReadMask UINT8 ?
+      StencilWriteMask UINT8 ?
       FrontFace D3D12_DEPTH_STENCILOP_DESC <>
       BackFace D3D12_DEPTH_STENCILOP_DESC <>
-      DepthBoundsTestEnable DWORD ?
+      DepthBoundsTestEnable BOOL ?
     D3D12_DEPTH_STENCIL_DESC1 ends
     D3D12_BLEND typedef SDWORD
     D3D12_BLEND_ZERO equ 1
@@ -911,8 +841,8 @@ ifndef __d3d12_h__
     D3D12_LOGIC_OP_OR_INVERTED equ
 
     D3D12_RENDER_TARGET_BLEND_DESC struct
-      BlendEnable DWORD ?
-      LogicOpEnable DWORD ?
+      BlendEnable BOOL ?
+      LogicOpEnable BOOL ?
       SrcBlend D3D12_BLEND ?
       DestBlend D3D12_BLEND ?
       BlendOp D3D12_BLEND_OP ?
@@ -920,15 +850,13 @@ ifndef __d3d12_h__
       DestBlendAlpha D3D12_BLEND ?
       BlendOpAlpha D3D12_BLEND_OP ?
       LogicOp D3D12_LOGIC_OP ?
-      RenderTargetWriteMask BYTE ?
+      RenderTargetWriteMask UINT8 ?
     D3D12_RENDER_TARGET_BLEND_DESC ends
     D3D12_BLEND_DESC struct
-      AlphaToCoverageEnable DWORD ?
-      IndependentBlendEnable DWORD ?
+      AlphaToCoverageEnable BOOL ?
+      IndependentBlendEnable BOOL ?
       RenderTarget D3D12_RENDER_TARGET_BLEND_DESC 8 dup (<>)
     D3D12_BLEND_DESC ends
-    ;* Note, the array size for RenderTarget[] above is D3D12_SIMULTANEOUS_RENDERTARGET_COUNT. 
-    ;IDL processing/generation of this header replaces the define; this comment is merely explaining what happened. *
     D3D12_CONSERVATIVE_RASTERIZATION_MODE typedef SDWORD
     D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF equ 0
     D3D12_CONSERVATIVE_RASTERIZATION_MODE_ON equ 1
@@ -936,22 +864,20 @@ ifndef __d3d12_h__
     D3D12_RASTERIZER_DESC struct
       FillMode D3D12_FILL_MODE ?
       CullMode D3D12_CULL_MODE ?
-      FrontCounterClockwise DWORD ?
-      DepthBias SDWORD ?
-      DepthBiasClamp REAL4 ?
-      SlopeScaledDepthBias REAL4 ?
-      DepthClipEnable DWORD ?
-      MultisampleEnable DWORD ?
-      AntialiasedLineEnable DWORD ?
-      ForcedSampleCount DWORD ?
+      FrontCounterClockwise BOOL ?
+      DepthBias INT_ ?
+      DepthBiasClamp FLOAT ?
+      SlopeScaledDepthBias FLOAT ?
+      DepthClipEnable BOOL ?
+      MultisampleEnable BOOL ?
+      AntialiasedLineEnable BOOL ?
+      ForcedSampleCount UINT ?
       ConservativeRaster D3D12_CONSERVATIVE_RASTERIZATION_MODE ?
     D3D12_RASTERIZER_DESC ends
     externdef __MIDL_itf_d3d12_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_d3d12_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12Object_INTERFACE_DEFINED__
       __ID3D12Object_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Object *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Object:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -982,14 +908,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Object_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12DeviceChild_INTERFACE_DEFINED__
       __ID3D12DeviceChild_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12DeviceChild *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DeviceChild:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -1022,14 +944,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12DeviceChild_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12RootSignature_INTERFACE_DEFINED__
       __ID3D12RootSignature_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12RootSignature *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12RootSignature:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -1062,26 +980,22 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12RootSignature_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0001 *
-    ;* [local] *
     D3D12_SHADER_BYTECODE struct
       pShaderBytecode POINTER ?
-      BytecodeLength XWORD ?
+      BytecodeLength SIZE_T ?
     D3D12_SHADER_BYTECODE ends
     D3D12_STREAM_OUTPUT_DESC struct
       pSODeclaration POINTER ?
-      NumEntries DWORD ?
+      NumEntries UINT ?
       pBufferStrides POINTER ?
-      NumStrides DWORD ?
-      RasterizedStream DWORD ?
+      NumStrides UINT ?
+      RasterizedStream UINT ?
     D3D12_STREAM_OUTPUT_DESC ends
     D3D12_INPUT_LAYOUT_DESC struct
       pInputElementDescs POINTER ?
-      NumElements DWORD ?
+      NumElements UINT ?
     D3D12_INPUT_LAYOUT_DESC ends
     D3D12_INDEX_BUFFER_STRIP_CUT_VALUE typedef SDWORD
     D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED equ 0
@@ -1090,7 +1004,7 @@ ifndef __d3d12_h__
 
     D3D12_CACHED_PIPELINE_STATE struct
       pCachedBlob POINTER ?
-      CachedBlobSizeInBytes XWORD ?
+      CachedBlobSizeInBytes SIZE_T ?
     D3D12_CACHED_PIPELINE_STATE ends
     D3D12_PIPELINE_STATE_FLAGS typedef SDWORD
     D3D12_PIPELINE_STATE_FLAG_NONE equ 0
@@ -1106,33 +1020,33 @@ ifndef __d3d12_h__
       GS_ D3D12_SHADER_BYTECODE <>
       StreamOutput D3D12_STREAM_OUTPUT_DESC <>
       BlendState D3D12_BLEND_DESC <>
-      SampleMask DWORD ?
+      SampleMask UINT ?
       RasterizerState D3D12_RASTERIZER_DESC <>
       DepthStencilState D3D12_DEPTH_STENCIL_DESC <>
       InputLayout D3D12_INPUT_LAYOUT_DESC <>
       IBStripCutValue D3D12_INDEX_BUFFER_STRIP_CUT_VALUE ?
       PrimitiveTopologyType D3D12_PRIMITIVE_TOPOLOGY_TYPE ?
-      NumRenderTargets DWORD ?
+      NumRenderTargets UINT ?
       RTVFormats DXGI_FORMAT 8 dup (?)
       DSVFormat DXGI_FORMAT ?
-      SampleDesc DXGI_SAMPLE_DESC ?
-      NodeMask DWORD ?
+      SampleDesc DXGI_SAMPLE_DESC <>
+      NodeMask UINT ?
       CachedPSO D3D12_CACHED_PIPELINE_STATE <>
       Flags D3D12_PIPELINE_STATE_FLAGS ?
     D3D12_GRAPHICS_PIPELINE_STATE_DESC ends
     D3D12_COMPUTE_PIPELINE_STATE_DESC struct
       pRootSignature POINTER ?
       CS_ D3D12_SHADER_BYTECODE <>
-      NodeMask DWORD ?
+      NodeMask UINT ?
       CachedPSO D3D12_CACHED_PIPELINE_STATE <>
       Flags D3D12_PIPELINE_STATE_FLAGS ?
     D3D12_COMPUTE_PIPELINE_STATE_DESC ends
     D3D12_RT_FORMAT_ARRAY struct
       RTFormats DXGI_FORMAT 8 dup (?)
-      NumRenderTargets DWORD ?
+      NumRenderTargets UINT ?
     D3D12_RT_FORMAT_ARRAY ends
     D3D12_PIPELINE_STATE_STREAM_DESC struct
-      SizeInBytes XWORD ?
+      SizeInBytes SIZE_T ?
       pPipelineStateSubobjectStream POINTER ?
     D3D12_PIPELINE_STATE_STREAM_DESC ends
     D3D12_PIPELINE_STATE_SUBOBJECT_TYPE typedef SDWORD
@@ -1301,32 +1215,32 @@ ifndef __d3d12_h__
     D3D12_VIEW_INSTANCING_TIER_3 equ 3
 
     D3D12_FEATURE_DATA_D3D12_OPTIONS struct
-      DoublePrecisionFloatShaderOps DWORD ?
-      OutputMergerLogicOp DWORD ?
+      DoublePrecisionFloatShaderOps BOOL ?
+      OutputMergerLogicOp BOOL ?
       MinPrecisionSupport D3D12_SHADER_MIN_PRECISION_SUPPORT ?
       TiledResourcesTier D3D12_TILED_RESOURCES_TIER ?
       ResourceBindingTier D3D12_RESOURCE_BINDING_TIER ?
-      PSSpecifiedStencilRefSupported DWORD ?
-      TypedUAVLoadAdditionalFormats DWORD ?
-      ROVsSupported DWORD ?
+      PSSpecifiedStencilRefSupported BOOL ?
+      TypedUAVLoadAdditionalFormats BOOL ?
+      ROVsSupported BOOL ?
       ConservativeRasterizationTier D3D12_CONSERVATIVE_RASTERIZATION_TIER ?
-      MaxGPUVirtualAddressBitsPerResource DWORD ?
-      StandardSwizzle64KBSupported DWORD ?
+      MaxGPUVirtualAddressBitsPerResource UINT ?
+      StandardSwizzle64KBSupported BOOL ?
       CrossNodeSharingTier D3D12_CROSS_NODE_SHARING_TIER ?
-      CrossAdapterRowMajorTextureSupported DWORD ?
-      VPAndRTArrayIndexFromAnyShaderFeedingRasterizerSupportedWithoutGSEmulation DWORD ?
+      CrossAdapterRowMajorTextureSupported BOOL ?
+      VPAndRTArrayIndexFromAnyShaderFeedingRasterizerSupportedWithoutGSEmulation BOOL ?
       ResourceHeapTier D3D12_RESOURCE_HEAP_TIER ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS ends
     D3D12_FEATURE_DATA_D3D12_OPTIONS1 struct
-      WaveOps DWORD ?
-      WaveLaneCountMin DWORD ?
-      WaveLaneCountMax DWORD ?
-      TotalLaneCount DWORD ?
-      ExpandedComputeResourceStates DWORD ?
-      Int64ShaderOps DWORD ?
+      WaveOps BOOL ?
+      WaveLaneCountMin UINT ?
+      WaveLaneCountMax UINT ?
+      TotalLaneCount UINT ?
+      ExpandedComputeResourceStates BOOL ?
+      Int64ShaderOps BOOL ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS1 ends
     D3D12_FEATURE_DATA_D3D12_OPTIONS2 struct
-      DepthBoundsTestSupported DWORD ?
+      DepthBoundsTestSupported BOOL ?
       ProgrammableSamplePositionsTier D3D12_PROGRAMMABLE_SAMPLE_POSITIONS_TIER ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS2 ends
     D3D_ROOT_SIGNATURE_VERSION typedef SDWORD
@@ -1338,20 +1252,20 @@ ifndef __d3d12_h__
       HighestVersion D3D_ROOT_SIGNATURE_VERSION ?
     D3D12_FEATURE_DATA_ROOT_SIGNATURE ends
     D3D12_FEATURE_DATA_ARCHITECTURE struct
-      NodeIndex DWORD ?
-      TileBasedRenderer DWORD ?
-      UMA DWORD ?
-      CacheCoherentUMA DWORD ?
+      NodeIndex UINT ?
+      TileBasedRenderer BOOL ?
+      UMA BOOL ?
+      CacheCoherentUMA BOOL ?
     D3D12_FEATURE_DATA_ARCHITECTURE ends
     D3D12_FEATURE_DATA_ARCHITECTURE1 struct
-      NodeIndex DWORD ?
-      TileBasedRenderer DWORD ?
-      UMA DWORD ?
-      CacheCoherentUMA DWORD ?
-      IsolatedMMU DWORD ?
+      NodeIndex UINT ?
+      TileBasedRenderer BOOL ?
+      UMA BOOL ?
+      CacheCoherentUMA BOOL ?
+      IsolatedMMU BOOL ?
     D3D12_FEATURE_DATA_ARCHITECTURE1 ends
     D3D12_FEATURE_DATA_FEATURE_LEVELS struct
-      NumFeatureLevels DWORD ?
+      NumFeatureLevels UINT ?
       pFeatureLevelsRequested POINTER ?
       MaxSupportedFeatureLevel D3D_FEATURE_LEVEL ?
     D3D12_FEATURE_DATA_FEATURE_LEVELS ends
@@ -1377,17 +1291,17 @@ ifndef __d3d12_h__
     D3D12_FEATURE_DATA_FORMAT_SUPPORT ends
     D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS struct
       Format DXGI_FORMAT ?
-      SampleCount DWORD ?
+      SampleCount UINT ?
       Flags D3D12_MULTISAMPLE_QUALITY_LEVEL_FLAGS ?
-      NumQualityLevels DWORD ?
+      NumQualityLevels UINT ?
     D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS ends
     D3D12_FEATURE_DATA_FORMAT_INFO struct
       Format DXGI_FORMAT ?
-      PlaneCount BYTE ?
+      PlaneCount UINT8 ?
     D3D12_FEATURE_DATA_FORMAT_INFO ends
     D3D12_FEATURE_DATA_GPU_VIRTUAL_ADDRESS_SUPPORT struct
-      MaxGPUVirtualAddressBitsPerResource DWORD ?
-      MaxGPUVirtualAddressBitsPerProcess DWORD ?
+      MaxGPUVirtualAddressBitsPerResource UINT ?
+      MaxGPUVirtualAddressBitsPerProcess UINT ?
     D3D12_FEATURE_DATA_GPU_VIRTUAL_ADDRESS_SUPPORT ends
     D3D12_SHADER_CACHE_SUPPORT_FLAGS typedef SDWORD
     D3D12_SHADER_CACHE_SUPPORT_NONE equ 0
@@ -1405,8 +1319,8 @@ ifndef __d3d12_h__
     D3D12_FEATURE_DATA_SHADER_CACHE ends
     D3D12_FEATURE_DATA_COMMAND_QUEUE_PRIORITY struct
       CommandListType D3D12_COMMAND_LIST_TYPE ?
-      Priority DWORD ?
-      PriorityForTypeIsSupported DWORD ?
+      Priority UINT ?
+      PriorityForTypeIsSupported BOOL ?
     D3D12_FEATURE_DATA_COMMAND_QUEUE_PRIORITY ends
     D3D12_COMMAND_LIST_SUPPORT_FLAGS typedef SDWORD
     D3D12_COMMAND_LIST_SUPPORT_FLAG_NONE equ 0
@@ -1420,14 +1334,14 @@ ifndef __d3d12_h__
 
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_COMMAND_LIST_SUPPORT_FLAGS)
     D3D12_FEATURE_DATA_D3D12_OPTIONS3 struct
-      CopyQueueTimestampQueriesSupported DWORD ?
-      CastingFullyTypedFormatSupported DWORD ?
+      CopyQueueTimestampQueriesSupported BOOL ?
+      CastingFullyTypedFormatSupported BOOL ?
       WriteBufferImmediateSupportFlags D3D12_COMMAND_LIST_SUPPORT_FLAGS ?
       ViewInstancingTier D3D12_VIEW_INSTANCING_TIER ?
-      BarycentricsSupported DWORD ?
+      BarycentricsSupported BOOL ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS3 ends
     D3D12_FEATURE_DATA_EXISTING_HEAPS struct
-      Supported DWORD ?
+      Supported BOOL ?
     D3D12_FEATURE_DATA_EXISTING_HEAPS ends
     D3D12_SHARED_RESOURCE_COMPATIBILITY_TIER typedef SDWORD
     D3D12_SHARED_RESOURCE_COMPATIBILITY_TIER_0 equ 0
@@ -1435,25 +1349,25 @@ ifndef __d3d12_h__
     D3D12_SHARED_RESOURCE_COMPATIBILITY_TIER_2 equ
 
     D3D12_FEATURE_DATA_DISPLAYABLE struct
-      DisplayableTexture DWORD ?
+      DisplayableTexture BOOL ?
       SharedResourceCompatibilityTier D3D12_SHARED_RESOURCE_COMPATIBILITY_TIER ?
     D3D12_FEATURE_DATA_DISPLAYABLE ends
     D3D12_FEATURE_DATA_D3D12_OPTIONS4 struct
-      MSAA64KBAlignedTextureSupported DWORD ?
+      MSAA64KBAlignedTextureSupported BOOL ?
       SharedResourceCompatibilityTier D3D12_SHARED_RESOURCE_COMPATIBILITY_TIER ?
-      Native16BitShaderOpsSupported DWORD ?
+      Native16BitShaderOpsSupported BOOL ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS4 ends
     D3D12_HEAP_SERIALIZATION_TIER typedef SDWORD
     D3D12_HEAP_SERIALIZATION_TIER_0 equ 0
     D3D12_HEAP_SERIALIZATION_TIER_10 equ 10
 
     D3D12_FEATURE_DATA_SERIALIZATION struct
-      NodeIndex DWORD ?
+      NodeIndex UINT ?
       HeapSerializationTier D3D12_HEAP_SERIALIZATION_TIER ?
     D3D12_FEATURE_DATA_SERIALIZATION ends
     D3D12_FEATURE_DATA_CROSS_NODE struct
       SharingTier D3D12_CROSS_NODE_SHARING_TIER ?
-      AtomicShaderInstructions DWORD ?
+      AtomicShaderInstructions BOOL ?
     D3D12_FEATURE_DATA_CROSS_NODE ends
     D3D12_RENDER_PASS_TIER typedef SDWORD
     D3D12_RENDER_PASS_TIER_0 equ 0
@@ -1466,7 +1380,7 @@ ifndef __d3d12_h__
     D3D12_RAYTRACING_TIER_1_1 equ 11
 
     D3D12_FEATURE_DATA_D3D12_OPTIONS5 struct
-      SRVOnlyTiledResourceTier3 DWORD ?
+      SRVOnlyTiledResourceTier3 BOOL ?
       RenderPassesTier D3D12_RENDER_PASS_TIER ?
       RaytracingTier D3D12_RAYTRACING_TIER ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS5 ends
@@ -1476,11 +1390,11 @@ ifndef __d3d12_h__
     D3D12_VARIABLE_SHADING_RATE_TIER_2 equ 2
 
     D3D12_FEATURE_DATA_D3D12_OPTIONS6 struct
-      AdditionalShadingRatesSupported DWORD ?
-      PerPrimitiveShadingRateSupportedWithViewportIndexing DWORD ?
+      AdditionalShadingRatesSupported BOOL ?
+      PerPrimitiveShadingRateSupportedWithViewportIndexing BOOL ?
       VariableShadingRateTier D3D12_VARIABLE_SHADING_RATE_TIER ?
-      ShadingRateImageTileSize DWORD ?
-      BackgroundProcessingSupported DWORD ?
+      ShadingRateImageTileSize UINT ?
+      BackgroundProcessingSupported BOOL ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS6 ends
     D3D12_MESH_SHADER_TIER typedef SDWORD
     D3D12_MESH_SHADER_TIER_NOT_SUPPORTED equ 0
@@ -1497,33 +1411,33 @@ ifndef __d3d12_h__
     D3D12_FEATURE_DATA_D3D12_OPTIONS7 ends
     D3D12_FEATURE_DATA_QUERY_META_COMMAND struct
       CommandId GUID <>
-      NodeMask DWORD ?
+      NodeMask UINT ?
       pQueryInputData POINTER ?
-      QueryInputDataSizeInBytes XWORD ?
+      QueryInputDataSizeInBytes SIZE_T ?
       pQueryOutputData POINTER ?
-      QueryOutputDataSizeInBytes XWORD ?
+      QueryOutputDataSizeInBytes SIZE_T ?
     D3D12_FEATURE_DATA_QUERY_META_COMMAND ends
     D3D12_FEATURE_DATA_D3D12_OPTIONS8 struct
-      UnalignedBlockTexturesSupported DWORD ?
+      UnalignedBlockTexturesSupported BOOL ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS8 ends
     D3D12_WAVE_MMA_TIER typedef SDWORD
     D3D12_WAVE_MMA_TIER_NOT_SUPPORTED equ 0
     D3D12_WAVE_MMA_TIER_1_0 equ 10
 
     D3D12_FEATURE_DATA_D3D12_OPTIONS9 struct
-      MeshShaderPipelineStatsSupported DWORD ?
-      MeshShaderSupportsFullRangeRenderTargetArrayIndex DWORD ?
-      AtomicInt64OnTypedResourceSupported DWORD ?
-      AtomicInt64OnGroupSharedSupported DWORD ?
-      DerivativesInMeshAndAmplificationShadersSupported DWORD ?
+      MeshShaderPipelineStatsSupported BOOL ?
+      MeshShaderSupportsFullRangeRenderTargetArrayIndex BOOL ?
+      AtomicInt64OnTypedResourceSupported BOOL ?
+      AtomicInt64OnGroupSharedSupported BOOL ?
+      DerivativesInMeshAndAmplificationShadersSupported BOOL ?
       WaveMMATier D3D12_WAVE_MMA_TIER ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS9 ends
     D3D12_FEATURE_DATA_D3D12_OPTIONS10 struct
-      VariableRateShadingSumCombinerSupported DWORD ?
-      MeshShaderPerPrimitiveShadingRateSupported DWORD ?
+      VariableRateShadingSumCombinerSupported BOOL ?
+      MeshShaderPerPrimitiveShadingRateSupported BOOL ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS10 ends
     D3D12_FEATURE_DATA_D3D12_OPTIONS11 struct
-      AtomicInt64OnDescriptorHeapResourceSupported DWORD ?
+      AtomicInt64OnDescriptorHeapResourceSupported BOOL ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS11 ends
     D3D12_TRI_STATE typedef SDWORD
     D3D12_TRI_STATE_UNKNOWN equ -1
@@ -1532,40 +1446,40 @@ ifndef __d3d12_h__
 
     D3D12_FEATURE_DATA_D3D12_OPTIONS12 struct
       MSPrimitivesPipelineStatisticIncludesCulledPrimitives D3D12_TRI_STATE ?
-      EnhancedBarriersSupported DWORD ?
-      RelaxedFormatCastingSupported DWORD ?
+      EnhancedBarriersSupported BOOL ?
+      RelaxedFormatCastingSupported BOOL ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS12 ends
     D3D12_FEATURE_DATA_D3D12_OPTIONS13 struct
-      UnrestrictedBufferTextureCopyPitchSupported DWORD ?
-      UnrestrictedVertexElementAlignmentSupported DWORD ?
-      InvertedViewportHeightFlipsYSupported DWORD ?
-      InvertedViewportDepthFlipsZSupported DWORD ?
-      TextureCopyBetweenDimensionsSupported DWORD ?
-      AlphaBlendFactorSupported DWORD ?
+      UnrestrictedBufferTextureCopyPitchSupported BOOL ?
+      UnrestrictedVertexElementAlignmentSupported BOOL ?
+      InvertedViewportHeightFlipsYSupported BOOL ?
+      InvertedViewportDepthFlipsZSupported BOOL ?
+      TextureCopyBetweenDimensionsSupported BOOL ?
+      AlphaBlendFactorSupported BOOL ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS13 ends
     D3D12_FEATURE_DATA_D3D12_OPTIONS19 struct
-      MismatchingOutputDimensionsSupported DWORD ?
-      SupportedSampleCountsWithNoOutputs DWORD ?
-      PointSamplingAddressesNeverRoundUp DWORD ?
-      RasterizerDesc2Supported DWORD ?
-      NarrowQuadrilateralLinesSupported DWORD ?
-      AnisoFilterWithPointMipSupported DWORD ?
-      MaxSamplerDescriptorHeapSize DWORD ?
-      MaxSamplerDescriptorHeapSizeWithStaticSamplers DWORD ?
-      MaxViewDescriptorHeapSize DWORD ?
-      ComputeOnlyCustomHeapSupported DWORD ?
+      MismatchingOutputDimensionsSupported BOOL ?
+      SupportedSampleCountsWithNoOutputs UINT ?
+      PointSamplingAddressesNeverRoundUp BOOL ?
+      RasterizerDesc2Supported BOOL ?
+      NarrowQuadrilateralLinesSupported BOOL ?
+      AnisoFilterWithPointMipSupported BOOL ?
+      MaxSamplerDescriptorHeapSize UINT ?
+      MaxSamplerDescriptorHeapSizeWithStaticSamplers UINT ?
+      MaxViewDescriptorHeapSize UINT ?
+      ComputeOnlyCustomHeapSupported BOOL ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS19 ends
     D3D12_FEATURE_DATA_D3D12_OPTIONS20 struct
-      ComputeOnlyWriteWatchSupported DWORD ?
+      ComputeOnlyWriteWatchSupported BOOL ?
     D3D12_FEATURE_DATA_D3D12_OPTIONS20 ends
     D3D12_RESOURCE_ALLOCATION_INFO struct
-      SizeInBytes QWORD ?
-      Alignment QWORD ?
+      SizeInBytes UINT64 ?
+      Alignment UINT64 ?
     D3D12_RESOURCE_ALLOCATION_INFO ends
     D3D12_RESOURCE_ALLOCATION_INFO1 struct
-      Offset_ QWORD ?
-      Alignment QWORD ?
-      SizeInBytes QWORD ?
+      Offset_ UINT64 ?
+      Alignment UINT64 ?
+      SizeInBytes UINT64 ?
     D3D12_RESOURCE_ALLOCATION_INFO1 ends
     D3D12_HEAP_TYPE typedef SDWORD
     D3D12_HEAP_TYPE_DEFAULT equ 1
@@ -1588,8 +1502,8 @@ ifndef __d3d12_h__
       Type_ D3D12_HEAP_TYPE ?
       CPUPageProperty D3D12_CPU_PAGE_PROPERTY ?
       MemoryPoolPreference D3D12_MEMORY_POOL ?
-      CreationNodeMask DWORD ?
-      VisibleNodeMask DWORD ?
+      CreationNodeMask UINT ?
+      VisibleNodeMask UINT ?
     D3D12_HEAP_PROPERTIES ends
     D3D12_HEAP_FLAGS typedef SDWORD
     D3D12_HEAP_FLAG_NONE equ 0
@@ -1611,9 +1525,9 @@ ifndef __d3d12_h__
 
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_HEAP_FLAGS)
     D3D12_HEAP_DESC struct
-      SizeInBytes QWORD ?
+      SizeInBytes UINT64 ?
       Properties D3D12_HEAP_PROPERTIES <>
-      Alignment QWORD ?
+      Alignment UINT64 ?
       Flags D3D12_HEAP_FLAGS ?
     D3D12_HEAP_DESC ends
     D3D12_RESOURCE_DIMENSION typedef SDWORD
@@ -1643,73 +1557,73 @@ ifndef __d3d12_h__
 
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_RESOURCE_FLAGS)
     D3D12_MIP_REGION struct
-      Width_ DWORD ?
-      Height DWORD ?
-      Depth DWORD ?
+      Width_ UINT ?
+      Height UINT ?
+      Depth UINT ?
     D3D12_MIP_REGION ends
     D3D12_RESOURCE_DESC struct
       Dimension D3D12_RESOURCE_DIMENSION ?
-      Alignment QWORD ?
-      Width_ QWORD ?
-      Height DWORD ?
+      Alignment UINT64 ?
+      Width_ UINT64 ?
+      Height UINT ?
       DepthOrArraySize UINT16 ?
       MipLevels UINT16 ?
       Format DXGI_FORMAT ?
-      SampleDesc DXGI_SAMPLE_DESC ?
+      SampleDesc DXGI_SAMPLE_DESC <>
       Layout D3D12_TEXTURE_LAYOUT ?
       Flags D3D12_RESOURCE_FLAGS ?
     D3D12_RESOURCE_DESC ends
     D3D12_RESOURCE_DESC1 struct
       Dimension D3D12_RESOURCE_DIMENSION ?
-      Alignment QWORD ?
-      Width_ QWORD ?
-      Height DWORD ?
+      Alignment UINT64 ?
+      Width_ UINT64 ?
+      Height UINT ?
       DepthOrArraySize UINT16 ?
       MipLevels UINT16 ?
       Format DXGI_FORMAT ?
-      SampleDesc DXGI_SAMPLE_DESC ?
+      SampleDesc DXGI_SAMPLE_DESC <>
       Layout D3D12_TEXTURE_LAYOUT ?
       Flags D3D12_RESOURCE_FLAGS ?
       SamplerFeedbackMipRegion D3D12_MIP_REGION <>
     D3D12_RESOURCE_DESC1 ends
     D3D12_DEPTH_STENCIL_VALUE struct
-      Depth REAL4 ?
-      Stencil BYTE ?
+      Depth FLOAT ?
+      Stencil UINT8 ?
     D3D12_DEPTH_STENCIL_VALUE ends
     D3D12_CLEAR_VALUE struct
       Format DXGI_FORMAT ?
       union
-        Color REAL4 4 dup (?)
+        Color FLOAT 4 dup (?)
         DepthStencil D3D12_DEPTH_STENCIL_VALUE <>
       ends
     D3D12_CLEAR_VALUE ends
     D3D12_RANGE struct
-      Begin XWORD ?
-      End_ XWORD ?
+      Begin SIZE_T ?
+      End_ SIZE_T ?
     D3D12_RANGE ends
     D3D12_RANGE_UINT64 struct
-      Begin QWORD ?
-      End_ QWORD ?
+      Begin UINT64 ?
+      End_ UINT64 ?
     D3D12_RANGE_UINT64 ends
     D3D12_SUBRESOURCE_RANGE_UINT64 struct
-      Subresource DWORD ?
+      Subresource UINT ?
       Range D3D12_RANGE_UINT64 <>
     D3D12_SUBRESOURCE_RANGE_UINT64 ends
     D3D12_SUBRESOURCE_INFO struct
-      Offset_ QWORD ?
-      RowPitch DWORD ?
-      DepthPitch DWORD ?
+      Offset_ UINT64 ?
+      RowPitch UINT ?
+      DepthPitch UINT ?
     D3D12_SUBRESOURCE_INFO ends
     D3D12_TILED_RESOURCE_COORDINATE struct
-      X DWORD ?
-      Y DWORD ?
-      Z DWORD ?
-      Subresource DWORD ?
+      X UINT ?
+      Y UINT ?
+      Z UINT ?
+      Subresource UINT ?
     D3D12_TILED_RESOURCE_COORDINATE ends
     D3D12_TILE_REGION_SIZE struct
-      NumTiles DWORD ?
-      UseBox DWORD ?
-      Width_ DWORD ?
+      NumTiles UINT ?
+      UseBox BOOL ?
+      Width_ UINT ?
       Height UINT16 ?
       Depth UINT16 ?
     D3D12_TILE_REGION_SIZE ends
@@ -1720,21 +1634,21 @@ ifndef __d3d12_h__
     D3D12_TILE_RANGE_FLAG_REUSE_SINGLE_TILE equ 4
 
     D3D12_SUBRESOURCE_TILING struct
-      WidthInTiles DWORD ?
+      WidthInTiles UINT ?
       HeightInTiles UINT16 ?
       DepthInTiles UINT16 ?
-      StartTileIndexInOverallResource DWORD ?
+      StartTileIndexInOverallResource UINT ?
     D3D12_SUBRESOURCE_TILING ends
     D3D12_TILE_SHAPE struct
-      WidthInTexels DWORD ?
-      HeightInTexels DWORD ?
-      DepthInTexels DWORD ?
+      WidthInTexels UINT ?
+      HeightInTexels UINT ?
+      DepthInTexels UINT ?
     D3D12_TILE_SHAPE ends
     D3D12_PACKED_MIP_INFO struct
-      NumStandardMips BYTE ?
-      NumPackedMips BYTE ?
-      NumTilesForPackedMips DWORD ?
-      StartTileIndexInOverallResource DWORD ?
+      NumStandardMips UINT8 ?
+      NumPackedMips UINT8 ?
+      NumTilesForPackedMips UINT ?
+      StartTileIndexInOverallResource UINT ?
     D3D12_PACKED_MIP_INFO ends
     D3D12_TILE_MAPPING_FLAGS typedef SDWORD
     D3D12_TILE_MAPPING_FLAG_NONE equ 0
@@ -1785,7 +1699,7 @@ ifndef __d3d12_h__
 
     D3D12_RESOURCE_TRANSITION_BARRIER struct
       pResource POINTER ?
-      Subresource DWORD ?
+      Subresource UINT ?
       StateBefore D3D12_RESOURCE_STATES ?
       StateAfter D3D12_RESOURCE_STATES ?
     D3D12_RESOURCE_TRANSITION_BARRIER ends
@@ -1813,13 +1727,13 @@ ifndef __d3d12_h__
     D3D12_RESOURCE_BARRIER ends
     D3D12_SUBRESOURCE_FOOTPRINT struct
       Format DXGI_FORMAT ?
-      Width_ DWORD ?
-      Height DWORD ?
-      Depth DWORD ?
-      RowPitch DWORD ?
+      Width_ UINT ?
+      Height UINT ?
+      Depth UINT ?
+      RowPitch UINT ?
     D3D12_SUBRESOURCE_FOOTPRINT ends
     D3D12_PLACED_SUBRESOURCE_FOOTPRINT struct
-      Offset_ QWORD ?
+      Offset_ UINT64 ?
       Footprint D3D12_SUBRESOURCE_FOOTPRINT <>
     D3D12_PLACED_SUBRESOURCE_FOOTPRINT ends
     D3D12_TEXTURE_COPY_TYPE typedef SDWORD
@@ -1831,7 +1745,7 @@ ifndef __d3d12_h__
       Type_ D3D12_TEXTURE_COPY_TYPE ?
       union
         PlacedFootprint D3D12_PLACED_SUBRESOURCE_FOOTPRINT <>
-        SubresourceIndex DWORD ?
+        SubresourceIndex UINT ?
       ends
     D3D12_TEXTURE_COPY_LOCATION ends
     D3D12_RESOLVE_MODE typedef SDWORD
@@ -1843,12 +1757,12 @@ ifndef __d3d12_h__
     D3D12_RESOLVE_MODE_DECODE_SAMPLER_FEEDBACK equ 5
 
     D3D12_SAMPLE_POSITION struct
-      X SBYTE ?
-      Y SBYTE ?
+      X INT8 ?
+      Y INT8 ?
     D3D12_SAMPLE_POSITION ends
     D3D12_VIEW_INSTANCE_LOCATION struct
-      ViewportArrayIndex DWORD ?
-      RenderTargetArrayIndex DWORD ?
+      ViewportArrayIndex UINT ?
+      RenderTargetArrayIndex UINT ?
     D3D12_VIEW_INSTANCE_LOCATION ends
     D3D12_VIEW_INSTANCING_FLAGS typedef SDWORD
     D3D12_VIEW_INSTANCING_FLAG_NONE equ 0
@@ -1856,7 +1770,7 @@ ifndef __d3d12_h__
 
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_VIEW_INSTANCING_FLAGS)
     D3D12_VIEW_INSTANCING_DESC struct
-      ViewInstanceCount DWORD ?
+      ViewInstanceCount UINT ?
       pViewInstanceLocations POINTER ?
       Flags D3D12_VIEW_INSTANCING_FLAGS ?
     D3D12_VIEW_INSTANCING_DESC ends
@@ -1884,60 +1798,60 @@ ifndef __d3d12_h__
 
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_BUFFER_SRV_FLAGS)
     D3D12_BUFFER_SRV struct
-      FirstElement QWORD ?
-      NumElements DWORD ?
-      StructureByteStride DWORD ?
+      FirstElement UINT64 ?
+      NumElements UINT ?
+      StructureByteStride UINT ?
       Flags D3D12_BUFFER_SRV_FLAGS ?
     D3D12_BUFFER_SRV ends
     D3D12_TEX1D_SRV struct
-      MostDetailedMip DWORD ?
-      MipLevels DWORD ?
-      ResourceMinLODClamp REAL4 ?
+      MostDetailedMip UINT ?
+      MipLevels UINT ?
+      ResourceMinLODClamp FLOAT ?
     D3D12_TEX1D_SRV ends
     D3D12_TEX1D_ARRAY_SRV struct
-      MostDetailedMip DWORD ?
-      MipLevels DWORD ?
-      FirstArraySlice DWORD ?
-      ArraySize DWORD ?
-      ResourceMinLODClamp REAL4 ?
+      MostDetailedMip UINT ?
+      MipLevels UINT ?
+      FirstArraySlice UINT ?
+      ArraySize UINT ?
+      ResourceMinLODClamp FLOAT ?
     D3D12_TEX1D_ARRAY_SRV ends
     D3D12_TEX2D_SRV struct
-      MostDetailedMip DWORD ?
-      MipLevels DWORD ?
-      PlaneSlice DWORD ?
-      ResourceMinLODClamp REAL4 ?
+      MostDetailedMip UINT ?
+      MipLevels UINT ?
+      PlaneSlice UINT ?
+      ResourceMinLODClamp FLOAT ?
     D3D12_TEX2D_SRV ends
     D3D12_TEX2D_ARRAY_SRV struct
-      MostDetailedMip DWORD ?
-      MipLevels DWORD ?
-      FirstArraySlice DWORD ?
-      ArraySize DWORD ?
-      PlaneSlice DWORD ?
-      ResourceMinLODClamp REAL4 ?
+      MostDetailedMip UINT ?
+      MipLevels UINT ?
+      FirstArraySlice UINT ?
+      ArraySize UINT ?
+      PlaneSlice UINT ?
+      ResourceMinLODClamp FLOAT ?
     D3D12_TEX2D_ARRAY_SRV ends
     D3D12_TEX3D_SRV struct
-      MostDetailedMip DWORD ?
-      MipLevels DWORD ?
-      ResourceMinLODClamp REAL4 ?
+      MostDetailedMip UINT ?
+      MipLevels UINT ?
+      ResourceMinLODClamp FLOAT ?
     D3D12_TEX3D_SRV ends
     D3D12_TEXCUBE_SRV struct
-      MostDetailedMip DWORD ?
-      MipLevels DWORD ?
-      ResourceMinLODClamp REAL4 ?
+      MostDetailedMip UINT ?
+      MipLevels UINT ?
+      ResourceMinLODClamp FLOAT ?
     D3D12_TEXCUBE_SRV ends
     D3D12_TEXCUBE_ARRAY_SRV struct
-      MostDetailedMip DWORD ?
-      MipLevels DWORD ?
-      First2DArrayFace DWORD ?
-      NumCubes DWORD ?
-      ResourceMinLODClamp REAL4 ?
+      MostDetailedMip UINT ?
+      MipLevels UINT ?
+      First2DArrayFace UINT ?
+      NumCubes UINT ?
+      ResourceMinLODClamp FLOAT ?
     D3D12_TEXCUBE_ARRAY_SRV ends
     D3D12_TEX2DMS_SRV struct
-      UnusedField_NothingToDefine DWORD ?
+      UnusedField_NothingToDefine UINT ?
     D3D12_TEX2DMS_SRV ends
     D3D12_TEX2DMS_ARRAY_SRV struct
-      FirstArraySlice DWORD ?
-      ArraySize DWORD ?
+      FirstArraySlice UINT ?
+      ArraySize UINT ?
     D3D12_TEX2DMS_ARRAY_SRV ends
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_SRV struct
       Location D3D12_GPU_VIRTUAL_ADDRESS ?
@@ -1959,7 +1873,7 @@ ifndef __d3d12_h__
     D3D12_SHADER_RESOURCE_VIEW_DESC struct
       Format DXGI_FORMAT ?
       ViewDimension D3D12_SRV_DIMENSION ?
-      Shader4ComponentMapping DWORD ?
+      Shader4ComponentMapping UINT ?
       union
         Buffer D3D12_BUFFER_SRV <>
         Texture1D D3D12_TEX1D_SRV <>
@@ -1976,7 +1890,7 @@ ifndef __d3d12_h__
     D3D12_SHADER_RESOURCE_VIEW_DESC ends
     D3D12_CONSTANT_BUFFER_VIEW_DESC struct
       BufferLocation D3D12_GPU_VIRTUAL_ADDRESS ?
-      SizeInBytes DWORD ?
+      SizeInBytes UINT ?
     D3D12_CONSTANT_BUFFER_VIEW_DESC ends
     D3D12_FILTER typedef SDWORD
     D3D12_FILTER_MIN_MAG_MIP_POINT equ 0
@@ -2069,12 +1983,12 @@ ifndef __d3d12_h__
       AddressU D3D12_TEXTURE_ADDRESS_MODE ?
       AddressV D3D12_TEXTURE_ADDRESS_MODE ?
       AddressW D3D12_TEXTURE_ADDRESS_MODE ?
-      MipLODBias REAL4 ?
-      MaxAnisotropy DWORD ?
+      MipLODBias FLOAT ?
+      MaxAnisotropy UINT ?
       ComparisonFunc D3D12_COMPARISON_FUNC ?
-      BorderColor REAL4 4 dup (?)
-      MinLOD REAL4 ?
-      MaxLOD REAL4 ?
+      BorderColor FLOAT 4 dup (?)
+      MinLOD FLOAT ?
+      MaxLOD FLOAT ?
     D3D12_SAMPLER_DESC ends
     D3D12_BUFFER_UAV_FLAGS typedef SDWORD
     D3D12_BUFFER_UAV_FLAG_NONE equ 0
@@ -2082,34 +1996,34 @@ ifndef __d3d12_h__
 
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_BUFFER_UAV_FLAGS)
     D3D12_BUFFER_UAV struct
-      FirstElement QWORD ?
-      NumElements DWORD ?
-      StructureByteStride DWORD ?
-      CounterOffsetInBytes QWORD ?
+      FirstElement UINT64 ?
+      NumElements UINT ?
+      StructureByteStride UINT ?
+      CounterOffsetInBytes UINT64 ?
       Flags D3D12_BUFFER_UAV_FLAGS ?
     D3D12_BUFFER_UAV ends
     D3D12_TEX1D_UAV struct
-      MipSlice DWORD ?
+      MipSlice UINT ?
     D3D12_TEX1D_UAV ends
     D3D12_TEX1D_ARRAY_UAV struct
-      MipSlice DWORD ?
-      FirstArraySlice DWORD ?
-      ArraySize DWORD ?
+      MipSlice UINT ?
+      FirstArraySlice UINT ?
+      ArraySize UINT ?
     D3D12_TEX1D_ARRAY_UAV ends
     D3D12_TEX2D_UAV struct
-      MipSlice DWORD ?
-      PlaneSlice DWORD ?
+      MipSlice UINT ?
+      PlaneSlice UINT ?
     D3D12_TEX2D_UAV ends
     D3D12_TEX2D_ARRAY_UAV struct
-      MipSlice DWORD ?
-      FirstArraySlice DWORD ?
-      ArraySize DWORD ?
-      PlaneSlice DWORD ?
+      MipSlice UINT ?
+      FirstArraySlice UINT ?
+      ArraySize UINT ?
+      PlaneSlice UINT ?
     D3D12_TEX2D_ARRAY_UAV ends
     D3D12_TEX3D_UAV struct
-      MipSlice DWORD ?
-      FirstWSlice DWORD ?
-      WSize DWORD ?
+      MipSlice UINT ?
+      FirstWSlice UINT ?
+      WSize UINT ?
     D3D12_TEX3D_UAV ends
     D3D12_UAV_DIMENSION typedef SDWORD
     D3D12_UAV_DIMENSION_UNKNOWN equ 0
@@ -2133,38 +2047,38 @@ ifndef __d3d12_h__
       ends
     D3D12_UNORDERED_ACCESS_VIEW_DESC ends
     D3D12_BUFFER_RTV struct
-      FirstElement QWORD ?
-      NumElements DWORD ?
+      FirstElement UINT64 ?
+      NumElements UINT ?
     D3D12_BUFFER_RTV ends
     D3D12_TEX1D_RTV struct
-      MipSlice DWORD ?
+      MipSlice UINT ?
     D3D12_TEX1D_RTV ends
     D3D12_TEX1D_ARRAY_RTV struct
-      MipSlice DWORD ?
-      FirstArraySlice DWORD ?
-      ArraySize DWORD ?
+      MipSlice UINT ?
+      FirstArraySlice UINT ?
+      ArraySize UINT ?
     D3D12_TEX1D_ARRAY_RTV ends
     D3D12_TEX2D_RTV struct
-      MipSlice DWORD ?
-      PlaneSlice DWORD ?
+      MipSlice UINT ?
+      PlaneSlice UINT ?
     D3D12_TEX2D_RTV ends
     D3D12_TEX2DMS_RTV struct
-      UnusedField_NothingToDefine DWORD ?
+      UnusedField_NothingToDefine UINT ?
     D3D12_TEX2DMS_RTV ends
     D3D12_TEX2D_ARRAY_RTV struct
-      MipSlice DWORD ?
-      FirstArraySlice DWORD ?
-      ArraySize DWORD ?
-      PlaneSlice DWORD ?
+      MipSlice UINT ?
+      FirstArraySlice UINT ?
+      ArraySize UINT ?
+      PlaneSlice UINT ?
     D3D12_TEX2D_ARRAY_RTV ends
     D3D12_TEX2DMS_ARRAY_RTV struct
-      FirstArraySlice DWORD ?
-      ArraySize DWORD ?
+      FirstArraySlice UINT ?
+      ArraySize UINT ?
     D3D12_TEX2DMS_ARRAY_RTV ends
     D3D12_TEX3D_RTV struct
-      MipSlice DWORD ?
-      FirstWSlice DWORD ?
-      WSize DWORD ?
+      MipSlice UINT ?
+      FirstWSlice UINT ?
+      WSize UINT ?
     D3D12_TEX3D_RTV ends
     D3D12_RTV_DIMENSION typedef SDWORD
     D3D12_RTV_DIMENSION_UNKNOWN equ 0
@@ -2192,27 +2106,27 @@ ifndef __d3d12_h__
       ends
     D3D12_RENDER_TARGET_VIEW_DESC ends
     D3D12_TEX1D_DSV struct
-      MipSlice DWORD ?
+      MipSlice UINT ?
     D3D12_TEX1D_DSV ends
     D3D12_TEX1D_ARRAY_DSV struct
-      MipSlice DWORD ?
-      FirstArraySlice DWORD ?
-      ArraySize DWORD ?
+      MipSlice UINT ?
+      FirstArraySlice UINT ?
+      ArraySize UINT ?
     D3D12_TEX1D_ARRAY_DSV ends
     D3D12_TEX2D_DSV struct
-      MipSlice DWORD ?
+      MipSlice UINT ?
     D3D12_TEX2D_DSV ends
     D3D12_TEX2D_ARRAY_DSV struct
-      MipSlice DWORD ?
-      FirstArraySlice DWORD ?
-      ArraySize DWORD ?
+      MipSlice UINT ?
+      FirstArraySlice UINT ?
+      ArraySize UINT ?
     D3D12_TEX2D_ARRAY_DSV ends
     D3D12_TEX2DMS_DSV struct
-      UnusedField_NothingToDefine DWORD ?
+      UnusedField_NothingToDefine UINT ?
     D3D12_TEX2DMS_DSV ends
     D3D12_TEX2DMS_ARRAY_DSV struct
-      FirstArraySlice DWORD ?
-      ArraySize DWORD ?
+      FirstArraySlice UINT ?
+      ArraySize UINT ?
     D3D12_TEX2DMS_ARRAY_DSV ends
     D3D12_DSV_FLAGS typedef SDWORD
     D3D12_DSV_FLAG_NONE equ 0
@@ -2268,9 +2182,9 @@ ifndef __d3d12_h__
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_DESCRIPTOR_HEAP_FLAGS)
     D3D12_DESCRIPTOR_HEAP_DESC struct
       Type_ D3D12_DESCRIPTOR_HEAP_TYPE ?
-      NumDescriptors DWORD ?
+      NumDescriptors UINT ?
       Flags D3D12_DESCRIPTOR_HEAP_FLAGS ?
-      NodeMask DWORD ?
+      NodeMask UINT ?
     D3D12_DESCRIPTOR_HEAP_DESC ends
     D3D12_DESCRIPTOR_RANGE_TYPE typedef SDWORD
     D3D12_DESCRIPTOR_RANGE_TYPE_SRV equ 0
@@ -2280,23 +2194,23 @@ ifndef __d3d12_h__
 
     D3D12_DESCRIPTOR_RANGE struct
       RangeType D3D12_DESCRIPTOR_RANGE_TYPE ?
-      NumDescriptors DWORD ?
-      BaseShaderRegister DWORD ?
-      RegisterSpace DWORD ?
-      OffsetInDescriptorsFromTableStart DWORD ?
+      NumDescriptors UINT ?
+      BaseShaderRegister UINT ?
+      RegisterSpace UINT ?
+      OffsetInDescriptorsFromTableStart UINT ?
     D3D12_DESCRIPTOR_RANGE ends
     D3D12_ROOT_DESCRIPTOR_TABLE struct
-      NumDescriptorRanges DWORD ?
+      NumDescriptorRanges UINT ?
       pDescriptorRanges POINTER ?
     D3D12_ROOT_DESCRIPTOR_TABLE ends
     D3D12_ROOT_CONSTANTS struct
-      ShaderRegister DWORD ?
-      RegisterSpace DWORD ?
-      Num32BitValues DWORD ?
+      ShaderRegister UINT ?
+      RegisterSpace UINT ?
+      Num32BitValues UINT ?
     D3D12_ROOT_CONSTANTS ends
     D3D12_ROOT_DESCRIPTOR struct
-      ShaderRegister DWORD ?
-      RegisterSpace DWORD ?
+      ShaderRegister UINT ?
+      RegisterSpace UINT ?
     D3D12_ROOT_DESCRIPTOR ends
     D3D12_SHADER_VISIBILITY typedef SDWORD
     D3D12_SHADER_VISIBILITY_ALL equ 0
@@ -2350,20 +2264,20 @@ ifndef __d3d12_h__
       AddressU D3D12_TEXTURE_ADDRESS_MODE ?
       AddressV D3D12_TEXTURE_ADDRESS_MODE ?
       AddressW D3D12_TEXTURE_ADDRESS_MODE ?
-      MipLODBias REAL4 ?
-      MaxAnisotropy DWORD ?
+      MipLODBias FLOAT ?
+      MaxAnisotropy UINT ?
       ComparisonFunc D3D12_COMPARISON_FUNC ?
       BorderColor D3D12_STATIC_BORDER_COLOR ?
-      MinLOD REAL4 ?
-      MaxLOD REAL4 ?
-      ShaderRegister DWORD ?
-      RegisterSpace DWORD ?
+      MinLOD FLOAT ?
+      MaxLOD FLOAT ?
+      ShaderRegister UINT ?
+      RegisterSpace UINT ?
       ShaderVisibility D3D12_SHADER_VISIBILITY ?
     D3D12_STATIC_SAMPLER_DESC ends
     D3D12_ROOT_SIGNATURE_DESC struct
-      NumParameters DWORD ?
+      NumParameters UINT ?
       pParameters POINTER ?
-      NumStaticSamplers DWORD ?
+      NumStaticSamplers UINT ?
       pStaticSamplers POINTER ?
       Flags D3D12_ROOT_SIGNATURE_FLAGS ?
     D3D12_ROOT_SIGNATURE_DESC ends
@@ -2378,14 +2292,14 @@ ifndef __d3d12_h__
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_DESCRIPTOR_RANGE_FLAGS)
     D3D12_DESCRIPTOR_RANGE1 struct
       RangeType D3D12_DESCRIPTOR_RANGE_TYPE ?
-      NumDescriptors DWORD ?
-      BaseShaderRegister DWORD ?
-      RegisterSpace DWORD ?
+      NumDescriptors UINT ?
+      BaseShaderRegister UINT ?
+      RegisterSpace UINT ?
       Flags D3D12_DESCRIPTOR_RANGE_FLAGS ?
-      OffsetInDescriptorsFromTableStart DWORD ?
+      OffsetInDescriptorsFromTableStart UINT ?
     D3D12_DESCRIPTOR_RANGE1 ends
     D3D12_ROOT_DESCRIPTOR_TABLE1 struct
-      NumDescriptorRanges DWORD ?
+      NumDescriptorRanges UINT ?
       pDescriptorRanges POINTER ?
     D3D12_ROOT_DESCRIPTOR_TABLE1 ends
     D3D12_ROOT_DESCRIPTOR_FLAGS typedef SDWORD
@@ -2396,8 +2310,8 @@ ifndef __d3d12_h__
 
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_ROOT_DESCRIPTOR_FLAGS)
     D3D12_ROOT_DESCRIPTOR1 struct
-      ShaderRegister DWORD ?
-      RegisterSpace DWORD ?
+      ShaderRegister UINT ?
+      RegisterSpace UINT ?
       Flags D3D12_ROOT_DESCRIPTOR_FLAGS ?
     D3D12_ROOT_DESCRIPTOR1 ends
     D3D12_ROOT_PARAMETER1 struct
@@ -2410,9 +2324,9 @@ ifndef __d3d12_h__
       ShaderVisibility D3D12_SHADER_VISIBILITY ?
     D3D12_ROOT_PARAMETER1 ends
     D3D12_ROOT_SIGNATURE_DESC1 struct
-      NumParameters DWORD ?
+      NumParameters UINT ?
       pParameters POINTER ?
-      NumStaticSamplers DWORD ?
+      NumStaticSamplers UINT ?
       pStaticSamplers POINTER ?
       Flags D3D12_ROOT_SIGNATURE_FLAGS ?
     D3D12_ROOT_SIGNATURE_DESC1 ends
@@ -2427,8 +2341,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12RootSignatureDeserializer_INTERFACE_DEFINED__
       __ID3D12RootSignatureDeserializer_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12RootSignatureDeserializer *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12RootSignatureDeserializer:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2453,14 +2365,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12RootSignatureDeserializer_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12VersionedRootSignatureDeserializer_INTERFACE_DEFINED__
       __ID3D12VersionedRootSignatureDeserializer_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12VersionedRootSignatureDeserializer *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12VersionedRootSignatureDeserializer:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2487,12 +2395,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12VersionedRootSignatureDeserializer_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0003 *
-    ;* [local] *
     TYPE_PFN_D3D12_SERIALIZE_ROOT_SIGNATURE typedef proto WIN_STD_CALL_CONV :ptr D3D12_ROOT_SIGNATURE_DESC, :D3D_ROOT_SIGNATURE_VERSION, :ptr ptr ID3DBlob, :ptr ptr ID3DBlob
     PFN_D3D12_SERIALIZE_ROOT_SIGNATURE typedef ptr TYPE_PFN_D3D12_SERIALIZE_ROOT_SIGNATURE
 
@@ -2510,18 +2414,16 @@ ifndef __d3d12_h__
 
     D3D12CreateVersionedRootSignatureDeserializer proto WIN_STD_CALL_CONV :LPCVOID, :SIZE_T, :REFIID, :ptr ptr
     D3D12_CPU_DESCRIPTOR_HANDLE struct
-      ptr_ XWORD ?
+      ptr_ SIZE_T ?
     D3D12_CPU_DESCRIPTOR_HANDLE ends
     D3D12_GPU_DESCRIPTOR_HANDLE struct
-      ptr_ QWORD ?
+      ptr_ UINT64 ?
     D3D12_GPU_DESCRIPTOR_HANDLE ends
-    ; If rects are supplied in D3D12_DISCARD_REGION, below, the resource 
-    ; must have 2D subresources with all specified subresources the same dimension.
     D3D12_DISCARD_REGION struct
-      NumRects DWORD ?
+      NumRects UINT ?
       pRects POINTER ?
-      FirstSubresource DWORD ?
-      NumSubresources DWORD ?
+      FirstSubresource UINT ?
+      NumSubresources UINT ?
     D3D12_DISCARD_REGION ends
     D3D12_QUERY_HEAP_TYPE typedef SDWORD
     D3D12_QUERY_HEAP_TYPE_OCCLUSION equ 0
@@ -2534,8 +2436,8 @@ ifndef __d3d12_h__
 
     D3D12_QUERY_HEAP_DESC struct
       Type_ D3D12_QUERY_HEAP_TYPE ?
-      Count DWORD ?
-      NodeMask DWORD ?
+      Count UINT ?
+      NodeMask UINT ?
     D3D12_QUERY_HEAP_DESC ends
     D3D12_QUERY_TYPE typedef SDWORD
     D3D12_QUERY_TYPE_OCCLUSION equ 0
@@ -2554,69 +2456,69 @@ ifndef __d3d12_h__
     D3D12_PREDICATION_OP_NOT_EQUAL_ZERO equ 1
 
     D3D12_QUERY_DATA_PIPELINE_STATISTICS struct
-      IAVertices QWORD ?
-      IAPrimitives QWORD ?
-      VSInvocations QWORD ?
-      GSInvocations QWORD ?
-      GSPrimitives QWORD ?
-      CInvocations QWORD ?
-      CPrimitives QWORD ?
-      PSInvocations QWORD ?
-      HSInvocations QWORD ?
-      DSInvocations QWORD ?
-      CSInvocations QWORD ?
+      IAVertices UINT64 ?
+      IAPrimitives UINT64 ?
+      VSInvocations UINT64 ?
+      GSInvocations UINT64 ?
+      GSPrimitives UINT64 ?
+      CInvocations UINT64 ?
+      CPrimitives UINT64 ?
+      PSInvocations UINT64 ?
+      HSInvocations UINT64 ?
+      DSInvocations UINT64 ?
+      CSInvocations UINT64 ?
     D3D12_QUERY_DATA_PIPELINE_STATISTICS ends
     D3D12_QUERY_DATA_PIPELINE_STATISTICS1 struct
-      IAVertices QWORD ?
-      IAPrimitives QWORD ?
-      VSInvocations QWORD ?
-      GSInvocations QWORD ?
-      GSPrimitives QWORD ?
-      CInvocations QWORD ?
-      CPrimitives QWORD ?
-      PSInvocations QWORD ?
-      HSInvocations QWORD ?
-      DSInvocations QWORD ?
-      CSInvocations QWORD ?
-      ASInvocations QWORD ?
-      MSInvocations QWORD ?
-      MSPrimitives QWORD ?
+      IAVertices UINT64 ?
+      IAPrimitives UINT64 ?
+      VSInvocations UINT64 ?
+      GSInvocations UINT64 ?
+      GSPrimitives UINT64 ?
+      CInvocations UINT64 ?
+      CPrimitives UINT64 ?
+      PSInvocations UINT64 ?
+      HSInvocations UINT64 ?
+      DSInvocations UINT64 ?
+      CSInvocations UINT64 ?
+      ASInvocations UINT64 ?
+      MSInvocations UINT64 ?
+      MSPrimitives UINT64 ?
     D3D12_QUERY_DATA_PIPELINE_STATISTICS1 ends
     D3D12_QUERY_DATA_SO_STATISTICS struct
-      NumPrimitivesWritten QWORD ?
-      PrimitivesStorageNeeded QWORD ?
+      NumPrimitivesWritten UINT64 ?
+      PrimitivesStorageNeeded UINT64 ?
     D3D12_QUERY_DATA_SO_STATISTICS ends
     D3D12_STREAM_OUTPUT_BUFFER_VIEW struct
       BufferLocation D3D12_GPU_VIRTUAL_ADDRESS ?
-      SizeInBytes QWORD ?
+      SizeInBytes UINT64 ?
       BufferFilledSizeLocation D3D12_GPU_VIRTUAL_ADDRESS ?
     D3D12_STREAM_OUTPUT_BUFFER_VIEW ends
     D3D12_DRAW_ARGUMENTS struct
-      VertexCountPerInstance DWORD ?
-      InstanceCount DWORD ?
-      StartVertexLocation DWORD ?
-      StartInstanceLocation DWORD ?
+      VertexCountPerInstance UINT ?
+      InstanceCount UINT ?
+      StartVertexLocation UINT ?
+      StartInstanceLocation UINT ?
     D3D12_DRAW_ARGUMENTS ends
     D3D12_DRAW_INDEXED_ARGUMENTS struct
-      IndexCountPerInstance DWORD ?
-      InstanceCount DWORD ?
-      StartIndexLocation DWORD ?
-      BaseVertexLocation SDWORD ?
-      StartInstanceLocation DWORD ?
+      IndexCountPerInstance UINT ?
+      InstanceCount UINT ?
+      StartIndexLocation UINT ?
+      BaseVertexLocation INT_ ?
+      StartInstanceLocation UINT ?
     D3D12_DRAW_INDEXED_ARGUMENTS ends
     D3D12_DISPATCH_ARGUMENTS struct
-      ThreadGroupCountX DWORD ?
-      ThreadGroupCountY DWORD ?
-      ThreadGroupCountZ DWORD ?
+      ThreadGroupCountX UINT ?
+      ThreadGroupCountY UINT ?
+      ThreadGroupCountZ UINT ?
     D3D12_DISPATCH_ARGUMENTS ends
     D3D12_VERTEX_BUFFER_VIEW struct
       BufferLocation D3D12_GPU_VIRTUAL_ADDRESS ?
-      SizeInBytes DWORD ?
-      StrideInBytes DWORD ?
+      SizeInBytes UINT ?
+      StrideInBytes UINT ?
     D3D12_VERTEX_BUFFER_VIEW ends
     D3D12_INDEX_BUFFER_VIEW struct
       BufferLocation D3D12_GPU_VIRTUAL_ADDRESS ?
-      SizeInBytes DWORD ?
+      SizeInBytes UINT ?
       Format DXGI_FORMAT ?
     D3D12_INDEX_BUFFER_VIEW ends
     D3D12_INDIRECT_ARGUMENT_TYPE typedef SDWORD
@@ -2636,36 +2538,34 @@ ifndef __d3d12_h__
       Type_ D3D12_INDIRECT_ARGUMENT_TYPE ?
       union
         struct VertexBuffer
-          Slot DWORD ?
+          Slot UINT ?
         ends
         struct Constant
-          RootParameterIndex DWORD ?
-          DestOffsetIn32BitValues DWORD ?
-          Num32BitValuesToSet DWORD ?
+          RootParameterIndex UINT ?
+          DestOffsetIn32BitValues UINT ?
+          Num32BitValuesToSet UINT ?
         ends
         struct ConstantBufferView
-          RootParameterIndex DWORD ?
+          RootParameterIndex UINT ?
         ends
         struct ShaderResourceView
-          RootParameterIndex DWORD ?
+          RootParameterIndex UINT ?
         ends
         struct UnorderedAccessView
-          RootParameterIndex DWORD ?
+          RootParameterIndex UINT ?
         ends
       ends
     D3D12_INDIRECT_ARGUMENT_DESC ends
     D3D12_COMMAND_SIGNATURE_DESC struct
-      ByteStride DWORD ?
-      NumArgumentDescs DWORD ?
+      ByteStride UINT ?
+      NumArgumentDescs UINT ?
       pArgumentDescs POINTER ?
-      NodeMask DWORD ?
+      NodeMask UINT ?
     D3D12_COMMAND_SIGNATURE_DESC ends
     externdef __MIDL_itf_d3d12_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_d3d12_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12Pageable_INTERFACE_DEFINED__
       __ID3D12Pageable_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Pageable *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Pageable:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2698,14 +2598,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Pageable_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Heap_INTERFACE_DEFINED__
       __ID3D12Heap_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Heap *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Heap:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2740,14 +2636,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Heap_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Resource_INTERFACE_DEFINED__
       __ID3D12Resource_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Resource *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Resource:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2794,14 +2686,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Resource_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12CommandAllocator_INTERFACE_DEFINED__
       __ID3D12CommandAllocator_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12CommandAllocator *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12CommandAllocator:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2836,14 +2724,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12CommandAllocator_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Fence_INTERFACE_DEFINED__
       __ID3D12Fence_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Fence *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Fence:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2882,14 +2766,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Fence_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Fence1_INTERFACE_DEFINED__
       __ID3D12Fence1_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Fence1 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Fence1:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2930,14 +2810,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Fence1_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12PipelineState_INTERFACE_DEFINED__
       __ID3D12PipelineState_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12PipelineState *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12PipelineState:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2972,14 +2848,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12PipelineState_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12DescriptorHeap_INTERFACE_DEFINED__
       __ID3D12DescriptorHeap_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12DescriptorHeap *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DescriptorHeap:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3018,14 +2890,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12DescriptorHeap_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12QueryHeap_INTERFACE_DEFINED__
       __ID3D12QueryHeap_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12QueryHeap *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12QueryHeap:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3058,14 +2926,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12QueryHeap_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12CommandSignature_INTERFACE_DEFINED__
       __ID3D12CommandSignature_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12CommandSignature *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12CommandSignature:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3098,14 +2962,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12CommandSignature_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12CommandList_INTERFACE_DEFINED__
       __ID3D12CommandList_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12CommandList *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12CommandList:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3140,14 +3000,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12CommandList_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12GraphicsCommandList_INTERFACE_DEFINED__
       __ID3D12GraphicsCommandList_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12GraphicsCommandList *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12GraphicsCommandList:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3284,14 +3140,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12GraphicsCommandList_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12GraphicsCommandList1_INTERFACE_DEFINED__
       __ID3D12GraphicsCommandList1_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12GraphicsCommandList1 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12GraphicsCommandList1:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3440,15 +3292,11 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12GraphicsCommandList1_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0018 *
-    ;* [local] *
     D3D12_WRITEBUFFERIMMEDIATE_PARAMETER struct
       Dest D3D12_GPU_VIRTUAL_ADDRESS ?
-      Value DWORD ?
+      Value UINT32 ?
     D3D12_WRITEBUFFERIMMEDIATE_PARAMETER ends
     D3D12_WRITEBUFFERIMMEDIATE_MODE typedef SDWORD
     D3D12_WRITEBUFFERIMMEDIATE_MODE_DEFAULT equ 0
@@ -3459,8 +3307,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0018_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12GraphicsCommandList2_INTERFACE_DEFINED__
       __ID3D12GraphicsCommandList2_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12GraphicsCommandList2 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12GraphicsCommandList2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3611,14 +3457,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12GraphicsCommandList2_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12CommandQueue_INTERFACE_DEFINED__
       __ID3D12CommandQueue_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12CommandQueue *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12CommandQueue:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3673,12 +3515,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12CommandQueue_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0020 *
-    ;* [local] *
     ifdef __midl
       ;[...]
     endif
@@ -3686,8 +3524,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0020_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12Device_INTERFACE_DEFINED__
       __ID3D12Device_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Device *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Device:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3762,7 +3598,6 @@ ifndef __d3d12_h__
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandle)
           STD_METHOD OpenSharedHandle, :ptr ID3D12Device, :HANDLE, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandleByName)
-          ;* [annotation][out] *
           STD_METHOD OpenSharedHandleByName, :ptr ID3D12Device, :LPCWSTR, :DWORD, :ptr HANDLE
           DECLSPEC_XFGVIRT(ID3D12Device, MakeResident)
           STD_METHOD MakeResident, :ptr ID3D12Device, :UINT, :ptr ptr ID3D12Pageable
@@ -3793,14 +3628,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Device_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12PipelineLibrary_INTERFACE_DEFINED__
       __ID3D12PipelineLibrary_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12PipelineLibrary *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12PipelineLibrary:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3843,14 +3674,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12PipelineLibrary_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12PipelineLibrary1_INTERFACE_DEFINED__
       __ID3D12PipelineLibrary1_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12PipelineLibrary1 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12PipelineLibrary1:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3895,12 +3722,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12PipelineLibrary1_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0023 *
-    ;* [local] *
     D3D12_MULTIPLE_FENCE_WAIT_FLAGS typedef SDWORD
     D3D12_MULTIPLE_FENCE_WAIT_FLAG_NONE equ 0
     D3D12_MULTIPLE_FENCE_WAIT_FLAG_ANY equ 1h
@@ -3918,8 +3741,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0023_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12Device1_INTERFACE_DEFINED__
       __ID3D12Device1_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Device1 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Device1:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3994,7 +3815,6 @@ ifndef __d3d12_h__
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandle)
           STD_METHOD OpenSharedHandle, :ptr ID3D12Device1, :HANDLE, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandleByName)
-          ;* [annotation][out] *
           STD_METHOD OpenSharedHandleByName, :ptr ID3D12Device1, :LPCWSTR, :DWORD, :ptr HANDLE
           DECLSPEC_XFGVIRT(ID3D12Device, MakeResident)
           STD_METHOD MakeResident, :ptr ID3D12Device1, :UINT, :ptr ptr ID3D12Pageable
@@ -4031,14 +3851,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Device1_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Device2_INTERFACE_DEFINED__
       __ID3D12Device2_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Device2 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Device2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4113,7 +3929,6 @@ ifndef __d3d12_h__
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandle)
           STD_METHOD OpenSharedHandle, :ptr ID3D12Device2, :HANDLE, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandleByName)
-          ;* [annotation][out] *
           STD_METHOD OpenSharedHandleByName, :ptr ID3D12Device2, :LPCWSTR, :DWORD, :ptr HANDLE
           DECLSPEC_XFGVIRT(ID3D12Device, MakeResident)
           STD_METHOD MakeResident, :ptr ID3D12Device2, :UINT, :ptr ptr ID3D12Pageable
@@ -4152,12 +3967,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Device2_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0025 *
-    ;* [local] *
     D3D12_RESIDENCY_FLAGS typedef SDWORD
     D3D12_RESIDENCY_FLAG_NONE equ 0
     D3D12_RESIDENCY_FLAG_DENY_OVERBUDGET equ 1h
@@ -4167,8 +3978,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0025_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12Device3_INTERFACE_DEFINED__
       __ID3D12Device3_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Device3 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Device3:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4243,7 +4052,6 @@ ifndef __d3d12_h__
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandle)
           STD_METHOD OpenSharedHandle, :ptr ID3D12Device3, :HANDLE, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandleByName)
-          ;* [annotation][out] *
           STD_METHOD OpenSharedHandleByName, :ptr ID3D12Device3, :LPCWSTR, :DWORD, :ptr HANDLE
           DECLSPEC_XFGVIRT(ID3D12Device, MakeResident)
           STD_METHOD MakeResident, :ptr ID3D12Device3, :UINT, :ptr ptr ID3D12Pageable
@@ -4288,12 +4096,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Device3_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0026 *
-    ;* [local] *
     D3D12_COMMAND_LIST_FLAGS typedef SDWORD
     D3D12_COMMAND_LIST_FLAG_NONE equ 0
 
@@ -4314,8 +4118,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0026_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12ProtectedSession_INTERFACE_DEFINED__
       __ID3D12ProtectedSession_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12ProtectedSession *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12ProtectedSession:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4352,19 +4154,15 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12ProtectedSession_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0027 *
-    ;* [local] *
     D3D12_PROTECTED_RESOURCE_SESSION_SUPPORT_FLAGS typedef SDWORD
     D3D12_PROTECTED_RESOURCE_SESSION_SUPPORT_FLAG_NONE equ 0
     D3D12_PROTECTED_RESOURCE_SESSION_SUPPORT_FLAG_SUPPORTED equ 1h
 
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_PROTECTED_RESOURCE_SESSION_SUPPORT_FLAGS)
     D3D12_FEATURE_DATA_PROTECTED_RESOURCE_SESSION_SUPPORT struct
-      NodeIndex DWORD ?
+      NodeIndex UINT ?
       Support D3D12_PROTECTED_RESOURCE_SESSION_SUPPORT_FLAGS ?
     D3D12_FEATURE_DATA_PROTECTED_RESOURCE_SESSION_SUPPORT ends
     D3D12_PROTECTED_RESOURCE_SESSION_FLAGS typedef SDWORD
@@ -4372,15 +4170,13 @@ ifndef __d3d12_h__
 
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_PROTECTED_RESOURCE_SESSION_FLAGS)
     D3D12_PROTECTED_RESOURCE_SESSION_DESC struct
-      NodeMask DWORD ?
+      NodeMask UINT ?
       Flags D3D12_PROTECTED_RESOURCE_SESSION_FLAGS ?
     D3D12_PROTECTED_RESOURCE_SESSION_DESC ends
     externdef __MIDL_itf_d3d12_0000_0027_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_d3d12_0000_0027_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12ProtectedResourceSession_INTERFACE_DEFINED__
       __ID3D12ProtectedResourceSession_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12ProtectedResourceSession *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12ProtectedResourceSession:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4419,14 +4215,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12ProtectedResourceSession_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Device4_INTERFACE_DEFINED__
       __ID3D12Device4_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Device4 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Device4:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4501,7 +4293,6 @@ ifndef __d3d12_h__
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandle)
           STD_METHOD OpenSharedHandle, :ptr ID3D12Device4, :HANDLE, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandleByName)
-          ;* [annotation][out] *
           STD_METHOD OpenSharedHandleByName, :ptr ID3D12Device4, :LPCWSTR, :DWORD, :ptr HANDLE
           DECLSPEC_XFGVIRT(ID3D12Device, MakeResident)
           STD_METHOD MakeResident, :ptr ID3D12Device4, :UINT, :ptr ptr ID3D12Pageable
@@ -4558,12 +4349,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Device4_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0029 *
-    ;* [local] *
     D3D12_LIFETIME_STATE typedef SDWORD
     D3D12_LIFETIME_STATE_IN_USE equ 0
     D3D12_LIFETIME_STATE_NOT_IN_USE equ
@@ -4572,8 +4359,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0029_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12LifetimeOwner_INTERFACE_DEFINED__
       __ID3D12LifetimeOwner_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12LifetimeOwner *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12LifetimeOwner:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4598,14 +4383,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12LifetimeOwner_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12SwapChainAssistant_INTERFACE_DEFINED__
       __ID3D12SwapChainAssistant_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12SwapChainAssistant *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12SwapChainAssistant:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4636,14 +4417,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12SwapChainAssistant_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12LifetimeTracker_INTERFACE_DEFINED__
       __ID3D12LifetimeTracker_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12LifetimeTracker *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12LifetimeTracker:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4678,12 +4455,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12LifetimeTracker_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0032 *
-    ;* [local] *
     D3D12_META_COMMAND_PARAMETER_TYPE typedef SDWORD
     D3D12_META_COMMAND_PARAMETER_TYPE_FLOAT equ 0
     D3D12_META_COMMAND_PARAMETER_TYPE_UINT64 equ 1
@@ -4702,11 +4475,11 @@ ifndef __d3d12_h__
     D3D12_META_COMMAND_PARAMETER_STAGE_EXECUTION equ 2
 
     D3D12_META_COMMAND_PARAMETER_DESC struct
-      Name_ =POINTER ?
+      Name_ LPCWSTR ?
       Type_ D3D12_META_COMMAND_PARAMETER_TYPE ?
       Flags D3D12_META_COMMAND_PARAMETER_FLAGS ?
       RequiredResourceState D3D12_RESOURCE_STATES ?
-      StructureOffset DWORD ?
+      StructureOffset UINT ?
     D3D12_META_COMMAND_PARAMETER_DESC ends
     D3D12_GRAPHICS_STATES typedef SDWORD
     D3D12_GRAPHICS_STATE_NONE equ 0
@@ -4731,7 +4504,7 @@ ifndef __d3d12_h__
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_GRAPHICS_STATES)
     D3D12_META_COMMAND_DESC struct
       Id GUID <>
-      Name_ =POINTER ?
+      Name_ LPCWSTR ?
       InitializationDirtyState D3D12_GRAPHICS_STATES ?
       ExecutionDirtyState D3D12_GRAPHICS_STATES ?
     D3D12_META_COMMAND_DESC ends
@@ -4739,8 +4512,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0032_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12StateObject_INTERFACE_DEFINED__
       __ID3D12StateObject_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12StateObject *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12StateObject:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4773,14 +4544,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12StateObject_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12StateObjectProperties_INTERFACE_DEFINED__
       __ID3D12StateObjectProperties_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12StateObjectProperties *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12StateObjectProperties:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4811,12 +4578,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12StateObjectProperties_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0034 *
-    ;* [local] *
     D3D12_STATE_SUBOBJECT_TYPE typedef SDWORD
     D3D12_STATE_SUBOBJECT_TYPE_STATE_OBJECT_CONFIG equ 0
     D3D12_STATE_SUBOBJECT_TYPE_GLOBAL_ROOT_SIGNATURE equ 1
@@ -4853,35 +4616,35 @@ ifndef __d3d12_h__
       pLocalRootSignature POINTER ?
     D3D12_LOCAL_ROOT_SIGNATURE ends
     D3D12_NODE_MASK struct
-      NodeMask DWORD ?
+      NodeMask UINT ?
     D3D12_NODE_MASK ends
     D3D12_EXPORT_FLAGS typedef SDWORD
     D3D12_EXPORT_FLAG_NONE equ 0
 
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_EXPORT_FLAGS)
     D3D12_EXPORT_DESC struct
-      Name_ =POINTER ?
-      ExportToRename =POINTER ?
+      Name_ LPCWSTR ?
+      ExportToRename LPCWSTR ?
       Flags D3D12_EXPORT_FLAGS ?
     D3D12_EXPORT_DESC ends
     D3D12_DXIL_LIBRARY_DESC struct
       DXILLibrary D3D12_SHADER_BYTECODE <>
-      NumExports DWORD ?
+      NumExports UINT ?
       pExports POINTER ?
     D3D12_DXIL_LIBRARY_DESC ends
     D3D12_EXISTING_COLLECTION_DESC struct
       pExistingCollection POINTER ?
-      NumExports DWORD ?
+      NumExports UINT ?
       pExports POINTER ?
     D3D12_EXISTING_COLLECTION_DESC ends
     D3D12_SUBOBJECT_TO_EXPORTS_ASSOCIATION struct
       pSubobjectToAssociate POINTER ?
-      NumExports DWORD ?
+      NumExports UINT ?
       pExports POINTER ?
     D3D12_SUBOBJECT_TO_EXPORTS_ASSOCIATION ends
     D3D12_DXIL_SUBOBJECT_TO_EXPORTS_ASSOCIATION struct
-      SubobjectToAssociate =POINTER ?
-      NumExports DWORD ?
+      SubobjectToAssociate LPCWSTR ?
+      NumExports UINT ?
       pExports POINTER ?
     D3D12_DXIL_SUBOBJECT_TO_EXPORTS_ASSOCIATION ends
     D3D12_HIT_GROUP_TYPE typedef SDWORD
@@ -4889,18 +4652,18 @@ ifndef __d3d12_h__
     D3D12_HIT_GROUP_TYPE_PROCEDURAL_PRIMITIVE equ 1h
 
     D3D12_HIT_GROUP_DESC struct
-      HitGroupExport =POINTER ?
+      HitGroupExport LPCWSTR ?
       Type_ D3D12_HIT_GROUP_TYPE ?
-      AnyHitShaderImport =POINTER ?
-      ClosestHitShaderImport =POINTER ?
-      IntersectionShaderImport =POINTER ?
+      AnyHitShaderImport LPCWSTR ?
+      ClosestHitShaderImport LPCWSTR ?
+      IntersectionShaderImport LPCWSTR ?
     D3D12_HIT_GROUP_DESC ends
     D3D12_RAYTRACING_SHADER_CONFIG struct
-      MaxPayloadSizeInBytes DWORD ?
-      MaxAttributeSizeInBytes DWORD ?
+      MaxPayloadSizeInBytes UINT ?
+      MaxAttributeSizeInBytes UINT ?
     D3D12_RAYTRACING_SHADER_CONFIG ends
     D3D12_RAYTRACING_PIPELINE_CONFIG struct
-      MaxTraceRecursionDepth DWORD ?
+      MaxTraceRecursionDepth UINT ?
     D3D12_RAYTRACING_PIPELINE_CONFIG ends
     D3D12_RAYTRACING_PIPELINE_FLAGS typedef SDWORD
     D3D12_RAYTRACING_PIPELINE_FLAG_NONE equ 0
@@ -4909,7 +4672,7 @@ ifndef __d3d12_h__
 
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_RAYTRACING_PIPELINE_FLAGS)
     D3D12_RAYTRACING_PIPELINE_CONFIG1 struct
-      MaxTraceRecursionDepth DWORD ?
+      MaxTraceRecursionDepth UINT ?
       Flags D3D12_RAYTRACING_PIPELINE_FLAGS ?
     D3D12_RAYTRACING_PIPELINE_CONFIG1 ends
     D3D12_STATE_OBJECT_TYPE typedef SDWORD
@@ -4918,7 +4681,7 @@ ifndef __d3d12_h__
 
     D3D12_STATE_OBJECT_DESC struct
       Type_ D3D12_STATE_OBJECT_TYPE ?
-      NumSubobjects DWORD ?
+      NumSubobjects UINT ?
       pSubobjects POINTER ?
     D3D12_STATE_OBJECT_DESC ends
     D3D12_RAYTRACING_GEOMETRY_FLAGS typedef SDWORD
@@ -4941,36 +4704,36 @@ ifndef __d3d12_h__
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_RAYTRACING_INSTANCE_FLAGS)
     D3D12_GPU_VIRTUAL_ADDRESS_AND_STRIDE struct
       StartAddress D3D12_GPU_VIRTUAL_ADDRESS ?
-      StrideInBytes QWORD ?
+      StrideInBytes UINT64 ?
     D3D12_GPU_VIRTUAL_ADDRESS_AND_STRIDE ends
     D3D12_GPU_VIRTUAL_ADDRESS_RANGE struct
       StartAddress D3D12_GPU_VIRTUAL_ADDRESS ?
-      SizeInBytes QWORD ?
+      SizeInBytes UINT64 ?
     D3D12_GPU_VIRTUAL_ADDRESS_RANGE ends
     D3D12_GPU_VIRTUAL_ADDRESS_RANGE_AND_STRIDE struct
       StartAddress D3D12_GPU_VIRTUAL_ADDRESS ?
-      SizeInBytes QWORD ?
-      StrideInBytes QWORD ?
+      SizeInBytes UINT64 ?
+      StrideInBytes UINT64 ?
     D3D12_GPU_VIRTUAL_ADDRESS_RANGE_AND_STRIDE ends
     D3D12_RAYTRACING_GEOMETRY_TRIANGLES_DESC struct
       Transform3x4 D3D12_GPU_VIRTUAL_ADDRESS ?
       IndexFormat DXGI_FORMAT ?
       VertexFormat DXGI_FORMAT ?
-      IndexCount DWORD ?
-      VertexCount DWORD ?
+      IndexCount UINT ?
+      VertexCount UINT ?
       IndexBuffer D3D12_GPU_VIRTUAL_ADDRESS ?
       VertexBuffer D3D12_GPU_VIRTUAL_ADDRESS_AND_STRIDE <>
     D3D12_RAYTRACING_GEOMETRY_TRIANGLES_DESC ends
     D3D12_RAYTRACING_AABB struct
-      MinX REAL4 ?
-      MinY REAL4 ?
-      MinZ REAL4 ?
-      MaxX REAL4 ?
-      MaxY REAL4 ?
-      MaxZ REAL4 ?
+      MinX FLOAT ?
+      MinY FLOAT ?
+      MinZ FLOAT ?
+      MaxX FLOAT ?
+      MaxY FLOAT ?
+      MaxZ FLOAT ?
     D3D12_RAYTRACING_AABB ends
     D3D12_RAYTRACING_GEOMETRY_AABBS_DESC struct
-      AABBCount QWORD ?
+      AABBCount UINT64 ?
       AABBs D3D12_GPU_VIRTUAL_ADDRESS_AND_STRIDE <>
     D3D12_RAYTRACING_GEOMETRY_AABBS_DESC ends
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAGS typedef SDWORD
@@ -5009,23 +4772,18 @@ ifndef __d3d12_h__
       InfoType D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_TYPE ?
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_DESC ends
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_COMPACTED_SIZE_DESC struct
-      CompactedSizeInBytes QWORD ?
+      CompactedSizeInBytes UINT64 ?
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_COMPACTED_SIZE_DESC ends
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_TOOLS_VISUALIZATION_DESC struct
-      DecodedSizeInBytes QWORD ?
+      DecodedSizeInBytes UINT64 ?
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_TOOLS_VISUALIZATION_DESC ends
     D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_TOOLS_VISUALIZATION_HEADER struct
       Type_ D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE ?
-      NumDescs DWORD ?
+      NumDescs UINT ?
     D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_TOOLS_VISUALIZATION_HEADER ends
-    ; Regarding D3D12_BUILD_RAY_TRACING_ACCELERATION_STRUCTURE_TOOLS_VISUALIZATION_HEADER above,
-    ; depending on Type field, NumDescs above is followed by either:
-    ;       D3D12_RAY_TRACING_INSTANCE_DESC InstanceDescs[NumDescs]
-    ;    or D3D12_RAY_TRACING_GEOMETRY_DESC GeometryDescs[NumDescs].
-    ; There is 4 bytes of padding between GeometryDesc structs in the array so alignment is natural when viewed by CPU.
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_SERIALIZATION_DESC struct
-      SerializedSizeInBytes QWORD ?
-      NumBottomLevelAccelerationStructurePointers QWORD ?
+      SerializedSizeInBytes UINT64 ?
+      NumBottomLevelAccelerationStructurePointers UINT64 ?
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_SERIALIZATION_DESC ends
     D3D12_SERIALIZED_DATA_DRIVER_MATCHING_IDENTIFIER struct
       DriverOpaqueGUID GUID <>
@@ -5043,15 +4801,15 @@ ifndef __d3d12_h__
 
     D3D12_SERIALIZED_RAYTRACING_ACCELERATION_STRUCTURE_HEADER struct
       DriverMatchingIdentifier D3D12_SERIALIZED_DATA_DRIVER_MATCHING_IDENTIFIER <>
-      SerializedSizeInBytesIncludingHeader QWORD ?
-      DeserializedSizeInBytes QWORD ?
-      NumBottomLevelAccelerationStructurePointersAfterHeader QWORD ?
+      SerializedSizeInBytesIncludingHeader UINT64 ?
+      DeserializedSizeInBytes UINT64 ?
+      NumBottomLevelAccelerationStructurePointersAfterHeader UINT64 ?
     D3D12_SERIALIZED_RAYTRACING_ACCELERATION_STRUCTURE_HEADER ends
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_CURRENT_SIZE_DESC struct
-      CurrentSizeInBytes QWORD ?
+      CurrentSizeInBytes UINT64 ?
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_POSTBUILD_INFO_CURRENT_SIZE_DESC ends
     D3D12_RAYTRACING_INSTANCE_DESC struct
-      Transform REAL4 3 * 4 dup (?)
+      Transform FLOAT 3 * 4 dup (?)
       D3D12_RAYTRACING_INSTANCE_DESC_REC record D3D12_RAYTRACING_INSTANCE_DESC_REC_Flags:8, D3D12_RAYTRACING_INSTANCE_DESC_REC_InstanceContributionToHitGroupIndex:24, D3D12_RAYTRACING_INSTANCE_DESC_REC_InstanceMask:8, D3D12_RAYTRACING_INSTANCE_DESC_REC_InstanceID:24
       D3D12_RAYTRACING_INSTANCE_DESC_BITS D3D12_RAYTRACING_INSTANCE_DESC_REC <>
       AccelerationStructure D3D12_GPU_VIRTUAL_ADDRESS ?
@@ -5067,7 +4825,7 @@ ifndef __d3d12_h__
     D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS struct
       Type_ D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE ?
       Flags D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAGS ?
-      NumDescs DWORD ?
+      NumDescs UINT ?
       DescsLayout D3D12_ELEMENTS_LAYOUT ?
       union
         InstanceDescs D3D12_GPU_VIRTUAL_ADDRESS ?
@@ -5082,9 +4840,9 @@ ifndef __d3d12_h__
       ScratchAccelerationStructureData D3D12_GPU_VIRTUAL_ADDRESS ?
     D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC ends
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_PREBUILD_INFO struct
-      ResultDataMaxSizeInBytes QWORD ?
-      ScratchDataSizeInBytes QWORD ?
-      UpdateScratchDataSizeInBytes QWORD ?
+      ResultDataMaxSizeInBytes UINT64 ?
+      ScratchDataSizeInBytes UINT64 ?
+      UpdateScratchDataSizeInBytes UINT64 ?
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_PREBUILD_INFO ends
     D3D12_RAY_FLAGS typedef SDWORD
     D3D12_RAY_FLAG_NONE equ 0
@@ -5108,8 +4866,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0034_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12Device5_INTERFACE_DEFINED__
       __ID3D12Device5_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Device5 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Device5:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5184,7 +4940,6 @@ ifndef __d3d12_h__
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandle)
           STD_METHOD OpenSharedHandle, :ptr ID3D12Device5, :HANDLE, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandleByName)
-          ;* [annotation][out] *
           STD_METHOD OpenSharedHandleByName, :ptr ID3D12Device5, :LPCWSTR, :DWORD, :ptr HANDLE
           DECLSPEC_XFGVIRT(ID3D12Device, MakeResident)
           STD_METHOD MakeResident, :ptr ID3D12Device5, :UINT, :ptr ptr ID3D12Pageable
@@ -5257,12 +5012,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Device5_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0035 *
-    ;* [local] *
     D3D12_AUTO_BREADCRUMB_OP typedef SDWORD
     D3D12_AUTO_BREADCRUMB_OP_SETMARKER equ 0
     D3D12_AUTO_BREADCRUMB_OP_BEGINEVENT equ 1
@@ -5317,13 +5068,13 @@ ifndef __d3d12_h__
       pCommandQueueDebugNameW POINTER ?
       pCommandList POINTER ?
       pCommandQueue POINTER ?
-      BreadcrumbCount DWORD ?
+      BreadcrumbCount UINT32 ?
       pLastBreadcrumbValue POINTER ?
       pCommandHistory POINTER ?
       pNext POINTER ?
     D3D12_AUTO_BREADCRUMB_NODE ends
     D3D12_DRED_BREADCRUMB_CONTEXT struct
-      BreadcrumbIndex DWORD ?
+      BreadcrumbIndex UINT ?
       pContextString POINTER ?
     D3D12_DRED_BREADCRUMB_CONTEXT ends
     D3D12_AUTO_BREADCRUMB_NODE1 struct
@@ -5333,11 +5084,11 @@ ifndef __d3d12_h__
       pCommandQueueDebugNameW POINTER ?
       pCommandList POINTER ?
       pCommandQueue POINTER ?
-      BreadcrumbCount DWORD ?
+      BreadcrumbCount UINT ?
       pLastBreadcrumbValue POINTER ?
       pCommandHistory POINTER ?
       pNext POINTER ?
-      BreadcrumbContextsCount DWORD ?
+      BreadcrumbContextsCount UINT ?
       pBreadcrumbContexts POINTER ?
     D3D12_AUTO_BREADCRUMB_NODE1 ends
     D3D12_DRED_VERSION typedef SDWORD
@@ -5466,8 +5217,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0035_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12DeviceRemovedExtendedDataSettings_INTERFACE_DEFINED__
       __ID3D12DeviceRemovedExtendedDataSettings_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12DeviceRemovedExtendedDataSettings *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DeviceRemovedExtendedDataSettings:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5496,14 +5245,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12DeviceRemovedExtendedDataSettings_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12DeviceRemovedExtendedDataSettings1_INTERFACE_DEFINED__
       __ID3D12DeviceRemovedExtendedDataSettings1_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12DeviceRemovedExtendedDataSettings1 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DeviceRemovedExtendedDataSettings1:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5534,14 +5279,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12DeviceRemovedExtendedDataSettings1_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12DeviceRemovedExtendedData_INTERFACE_DEFINED__
       __ID3D12DeviceRemovedExtendedData_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12DeviceRemovedExtendedData *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DeviceRemovedExtendedData:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5568,14 +5309,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12DeviceRemovedExtendedData_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12DeviceRemovedExtendedData1_INTERFACE_DEFINED__
       __ID3D12DeviceRemovedExtendedData1_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12DeviceRemovedExtendedData1 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DeviceRemovedExtendedData1:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5606,14 +5343,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12DeviceRemovedExtendedData1_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12DeviceRemovedExtendedData2_INTERFACE_DEFINED__
       __ID3D12DeviceRemovedExtendedData2_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12DeviceRemovedExtendedData2 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DeviceRemovedExtendedData2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5648,12 +5381,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12DeviceRemovedExtendedData2_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0040 *
-    ;* [local] *
     D3D12_BACKGROUND_PROCESSING_MODE typedef SDWORD
     D3D12_BACKGROUND_PROCESSING_MODE_ALLOWED equ 0
     D3D12_BACKGROUND_PROCESSING_MODE_ALLOW_INTRUSIVE_MEASUREMENTS equ
@@ -5670,8 +5399,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0040_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12Device6_INTERFACE_DEFINED__
       __ID3D12Device6_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Device6 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Device6:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5746,7 +5473,6 @@ ifndef __d3d12_h__
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandle)
           STD_METHOD OpenSharedHandle, :ptr ID3D12Device6, :HANDLE, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandleByName)
-          ;* [annotation][out] *
           STD_METHOD OpenSharedHandleByName, :ptr ID3D12Device6, :LPCWSTR, :DWORD, :ptr HANDLE
           DECLSPEC_XFGVIRT(ID3D12Device, MakeResident)
           STD_METHOD MakeResident, :ptr ID3D12Device6, :UINT, :ptr ptr ID3D12Pageable
@@ -5821,24 +5547,20 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Device6_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0041 *
-    ;* [local] *
     DEFINE_GUID D3D12_PROTECTED_RESOURCES_SESSION_HARDWARE_PROTECTED, 62B0084Eh, 0C70Eh, 4DAAh, 0A1h, 09h, 30h, 0FFh, 8Dh, 5Ah, 04h, 82h
     D3D12_FEATURE_DATA_PROTECTED_RESOURCE_SESSION_TYPE_COUNT struct
-      NodeIndex DWORD ?
-      Count DWORD ?
+      NodeIndex UINT ?
+      Count UINT ?
     D3D12_FEATURE_DATA_PROTECTED_RESOURCE_SESSION_TYPE_COUNT ends
     D3D12_FEATURE_DATA_PROTECTED_RESOURCE_SESSION_TYPES struct
-      NodeIndex DWORD ?
-      Count DWORD ?
+      NodeIndex UINT ?
+      Count UINT ?
       pTypes POINTER ?
     D3D12_FEATURE_DATA_PROTECTED_RESOURCE_SESSION_TYPES ends
     D3D12_PROTECTED_RESOURCE_SESSION_DESC1 struct
-      NodeMask DWORD ?
+      NodeMask UINT ?
       Flags D3D12_PROTECTED_RESOURCE_SESSION_FLAGS ?
       ProtectionType GUID <>
     D3D12_PROTECTED_RESOURCE_SESSION_DESC1 ends
@@ -5846,8 +5568,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0041_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12ProtectedResourceSession1_INTERFACE_DEFINED__
       __ID3D12ProtectedResourceSession1_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12ProtectedResourceSession1 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12ProtectedResourceSession1:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5888,14 +5608,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12ProtectedResourceSession1_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Device7_INTERFACE_DEFINED__
       __ID3D12Device7_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Device7 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Device7:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5970,7 +5686,6 @@ ifndef __d3d12_h__
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandle)
           STD_METHOD OpenSharedHandle, :ptr ID3D12Device7, :HANDLE, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandleByName)
-          ;* [annotation][out] *
           STD_METHOD OpenSharedHandleByName, :ptr ID3D12Device7, :LPCWSTR, :DWORD, :ptr HANDLE
           DECLSPEC_XFGVIRT(ID3D12Device, MakeResident)
           STD_METHOD MakeResident, :ptr ID3D12Device7, :UINT, :ptr ptr ID3D12Pageable
@@ -6049,14 +5764,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Device7_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Device8_INTERFACE_DEFINED__
       __ID3D12Device8_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Device8 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Device8:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6131,7 +5842,6 @@ ifndef __d3d12_h__
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandle)
           STD_METHOD OpenSharedHandle, :ptr ID3D12Device8, :HANDLE, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandleByName)
-          ;* [annotation][out] *
           STD_METHOD OpenSharedHandleByName, :ptr ID3D12Device8, :LPCWSTR, :DWORD, :ptr HANDLE
           DECLSPEC_XFGVIRT(ID3D12Device, MakeResident)
           STD_METHOD MakeResident, :ptr ID3D12Device8, :UINT, :ptr ptr ID3D12Pageable
@@ -6220,14 +5930,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Device8_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Resource1_INTERFACE_DEFINED__
       __ID3D12Resource1_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Resource1 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Resource1:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6276,14 +5982,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Resource1_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Resource2_INTERFACE_DEFINED__
       __ID3D12Resource2_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Resource2 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Resource2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6334,14 +6036,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Resource2_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Heap1_INTERFACE_DEFINED__
       __ID3D12Heap1_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Heap1 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Heap1:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6378,14 +6076,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Heap1_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12GraphicsCommandList3_INTERFACE_DEFINED__
       __ID3D12GraphicsCommandList3_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12GraphicsCommandList3 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12GraphicsCommandList3:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6538,12 +6232,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12GraphicsCommandList3_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0048 *
-    ;* [local] *
     D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE typedef SDWORD
     D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_DISCARD equ 0
     D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_PRESERVE equ
@@ -6566,20 +6256,20 @@ ifndef __d3d12_h__
     D3D12_RENDER_PASS_ENDING_ACCESS_TYPE_NO_ACCESS equ
 
     D3D12_RENDER_PASS_ENDING_ACCESS_RESOLVE_SUBRESOURCE_PARAMETERS struct
-      SrcSubresource DWORD ?
-      DstSubresource DWORD ?
-      DstX DWORD ?
-      DstY DWORD ?
+      SrcSubresource UINT ?
+      DstSubresource UINT ?
+      DstX UINT ?
+      DstY UINT ?
       SrcRect D3D12_RECT <>
     D3D12_RENDER_PASS_ENDING_ACCESS_RESOLVE_SUBRESOURCE_PARAMETERS ends
     D3D12_RENDER_PASS_ENDING_ACCESS_RESOLVE_PARAMETERS struct
       pSrcResource POINTER ?
       pDstResource POINTER ?
-      SubresourceCount DWORD ?
+      SubresourceCount UINT ?
       pSubresourceParameters POINTER ?
       Format DXGI_FORMAT ?
       ResolveMode D3D12_RESOLVE_MODE ?
-      PreserveResolveSource DWORD ?
+      PreserveResolveSource BOOL ?
     D3D12_RENDER_PASS_ENDING_ACCESS_RESOLVE_PARAMETERS ends
     D3D12_RENDER_PASS_ENDING_ACCESS struct
       Type_ D3D12_RENDER_PASS_ENDING_ACCESS_TYPE ?
@@ -6610,8 +6300,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0048_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12MetaCommand_INTERFACE_DEFINED__
       __ID3D12MetaCommand_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12MetaCommand *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12MetaCommand:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6646,27 +6334,21 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12MetaCommand_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0049 *
-    ;* [local] *
     D3D12_DISPATCH_RAYS_DESC struct
       RayGenerationShaderRecord D3D12_GPU_VIRTUAL_ADDRESS_RANGE <>
       MissShaderTable D3D12_GPU_VIRTUAL_ADDRESS_RANGE_AND_STRIDE <>
       HitGroupTable D3D12_GPU_VIRTUAL_ADDRESS_RANGE_AND_STRIDE <>
       CallableShaderTable D3D12_GPU_VIRTUAL_ADDRESS_RANGE_AND_STRIDE <>
-      Width_ DWORD ?
-      Height DWORD ?
-      Depth DWORD ?
+      Width_ UINT ?
+      Height UINT ?
+      Depth UINT ?
     D3D12_DISPATCH_RAYS_DESC ends
     externdef __MIDL_itf_d3d12_0000_0049_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_d3d12_0000_0049_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12GraphicsCommandList4_INTERFACE_DEFINED__
       __ID3D12GraphicsCommandList4_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12GraphicsCommandList4 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12GraphicsCommandList4:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6837,12 +6519,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12GraphicsCommandList4_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0050 *
-    ;* [local] *
     D3D12_SHADER_CACHE_MODE typedef SDWORD
     D3D12_SHADER_CACHE_MODE_MEMORY equ 0
     D3D12_SHADER_CACHE_MODE_DISK equ
@@ -6857,10 +6535,10 @@ ifndef __d3d12_h__
       Identifier GUID <>
       Mode D3D12_SHADER_CACHE_MODE ?
       Flags D3D12_SHADER_CACHE_FLAGS ?
-      MaximumInMemoryCacheSizeBytes DWORD ?
-      MaximumInMemoryCacheEntries DWORD ?
-      MaximumValueFileSizeBytes DWORD ?
-      Version QWORD ?
+      MaximumInMemoryCacheSizeBytes UINT ?
+      MaximumInMemoryCacheEntries UINT ?
+      MaximumValueFileSizeBytes UINT ?
+      Version UINT64 ?
     D3D12_SHADER_CACHE_SESSION_DESC ends
     D3D12_BARRIER_LAYOUT typedef SDWORD
     D3D12_BARRIER_LAYOUT_UNDEFINED equ 0ffffffffh
@@ -6963,12 +6641,12 @@ ifndef __d3d12_h__
 
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_TEXTURE_BARRIER_FLAGS)
     D3D12_BARRIER_SUBRESOURCE_RANGE struct
-      IndexOrFirstMipLevel DWORD ?
-      NumMipLevels DWORD ?
-      FirstArraySlice DWORD ?
-      NumArraySlices DWORD ?
-      FirstPlane DWORD ?
-      NumPlanes DWORD ?
+      IndexOrFirstMipLevel UINT ?
+      NumMipLevels UINT ?
+      FirstArraySlice UINT ?
+      NumArraySlices UINT ?
+      FirstPlane UINT ?
+      NumPlanes UINT ?
     D3D12_BARRIER_SUBRESOURCE_RANGE ends
     D3D12_GLOBAL_BARRIER struct
       SyncBefore D3D12_BARRIER_SYNC ?
@@ -6993,12 +6671,12 @@ ifndef __d3d12_h__
       AccessBefore D3D12_BARRIER_ACCESS ?
       AccessAfter D3D12_BARRIER_ACCESS ?
       pResource POINTER ?
-      Offset_ QWORD ?
-      Size_ QWORD ?
+      Offset_ UINT64 ?
+      Size_ UINT64 ?
     D3D12_BUFFER_BARRIER ends
     D3D12_BARRIER_GROUP struct
       Type_ D3D12_BARRIER_TYPE ?
-      NumBarriers DWORD ?
+      NumBarriers UINT32 ?
       union
         pGlobalBarriers POINTER ?
         pTextureBarriers POINTER ?
@@ -7009,8 +6687,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0050_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12ShaderCacheSession_INTERFACE_DEFINED__
       __ID3D12ShaderCacheSession_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12ShaderCacheSession *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12ShaderCacheSession:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -7035,12 +6711,8 @@ ifndef __d3d12_h__
           DECLSPEC_XFGVIRT(ID3D12DeviceChild, GetDevice)
           STD_METHOD GetDevice, :ptr ID3D12ShaderCacheSession, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(ID3D12ShaderCacheSession, FindValue)
-          ;* [annotation][in] *
-          ;* [annotation][out] *
           STD_METHOD FindValue, :ptr ID3D12ShaderCacheSession, :ptr, :UINT, :ptr, :ptr UINT
           DECLSPEC_XFGVIRT(ID3D12ShaderCacheSession, StoreValue)
-          ;* [annotation][in] *
-          ;* [annotation][in] *
           STD_METHOD StoreValue, :ptr ID3D12ShaderCacheSession, :ptr, :UINT, :ptr, :UINT
           DECLSPEC_XFGVIRT(ID3D12ShaderCacheSession, SetDeleteOnDestroy)
           STD_METHOD SetDeleteOnDestroy, :ptr ID3D12ShaderCacheSession
@@ -7055,12 +6727,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12ShaderCacheSession_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0051 *
-    ;* [local] *
     D3D12_SHADER_CACHE_KIND_FLAGS typedef SDWORD
     D3D12_SHADER_CACHE_KIND_FLAG_IMPLICIT_D3D_CACHE_FOR_DRIVER equ 1h
     D3D12_SHADER_CACHE_KIND_FLAG_IMPLICIT_D3D_CONVERSIONS equ 2h
@@ -7078,8 +6746,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0051_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12Device9_INTERFACE_DEFINED__
       __ID3D12Device9_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Device9 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Device9:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -7154,7 +6820,6 @@ ifndef __d3d12_h__
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandle)
           STD_METHOD OpenSharedHandle, :ptr ID3D12Device9, :HANDLE, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandleByName)
-          ;* [annotation][out] *
           STD_METHOD OpenSharedHandleByName, :ptr ID3D12Device9, :LPCWSTR, :DWORD, :ptr HANDLE
           DECLSPEC_XFGVIRT(ID3D12Device, MakeResident)
           STD_METHOD MakeResident, :ptr ID3D12Device9, :UINT, :ptr ptr ID3D12Pageable
@@ -7249,14 +6914,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Device9_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Device10_INTERFACE_DEFINED__
       __ID3D12Device10_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Device10 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Device10:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -7331,7 +6992,6 @@ ifndef __d3d12_h__
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandle)
           STD_METHOD OpenSharedHandle, :ptr ID3D12Device10, :HANDLE, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(ID3D12Device, OpenSharedHandleByName)
-          ;* [annotation][out] *
           STD_METHOD OpenSharedHandleByName, :ptr ID3D12Device10, :LPCWSTR, :DWORD, :ptr HANDLE
           DECLSPEC_XFGVIRT(ID3D12Device, MakeResident)
           STD_METHOD MakeResident, :ptr ID3D12Device10, :UINT, :ptr ptr ID3D12Pageable
@@ -7432,14 +7092,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Device10_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12VirtualizationGuestDevice_INTERFACE_DEFINED__
       __ID3D12VirtualizationGuestDevice_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12VirtualizationGuestDevice *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12VirtualizationGuestDevice:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -7466,14 +7122,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12VirtualizationGuestDevice_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12Tools_INTERFACE_DEFINED__
       __ID3D12Tools_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12Tools *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12Tools:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -7500,96 +7152,30 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12Tools_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0055 *
-    ;* [local] *
     D3D12_SUBRESOURCE_DATA struct
       pData POINTER ?
-      RowPitch SXWORD ?
-      SlicePitch SXWORD ?
+      RowPitch LONG_PTR ?
+      SlicePitch LONG_PTR ?
     D3D12_SUBRESOURCE_DATA ends
     D3D12_MEMCPY_DEST struct
       pData POINTER ?
-      RowPitch XWORD ?
-      SlicePitch XWORD ?
+      RowPitch SIZE_T ?
+      SlicePitch SIZE_T ?
     D3D12_MEMCPY_DEST ends
     if  not Defined(D3D12_IGNORE_SDK_LAYERS)
       include d3d12sdklayers.inc
     endif
-    ;/////////////////////////////////////////////////////////////////////////
-    ; D3D12CreateDevice
-    ; ------------------
-    ; pAdapter
-    ;      If NULL, D3D12CreateDevice will choose the primary adapter.
-    ;      If non-NULL, D3D12CreateDevice will use the provided adapter.
-    ; MinimumFeatureLevel
-    ;      The minimum feature level required for successful device creation.
-    ; riid
-    ;      The interface IID of the device to be returned. Expected: ID3D12Device.
-    ; ppDevice
-    ;      Pointer to returned interface. May be NULL.
-    ; Return Values
-    ;  Any of those documented for 
-    ;          CreateDXGIFactory1
-    ;          IDXGIFactory::EnumAdapters
-    ;          D3D12CreateDevice
-    ;/////////////////////////////////////////////////////////////////////////
     TYPE_PFN_D3D12_CREATE_DEVICE typedef proto WIN_STD_CALL_CONV :ptr IUnknown, :D3D_FEATURE_LEVEL, :REFIID, :ptr ptr
     PFN_D3D12_CREATE_DEVICE typedef ptr TYPE_PFN_D3D12_CREATE_DEVICE
 
     D3D12CreateDevice proto WIN_STD_CALL_CONV :ptr IUnknown, :D3D_FEATURE_LEVEL, :REFIID, :ptr ptr
-    ; Expected: ID3D12Device
     TYPE_PFN_D3D12_GET_DEBUG_INTERFACE typedef proto WIN_STD_CALL_CONV :REFIID, :ptr ptr
     PFN_D3D12_GET_DEBUG_INTERFACE typedef ptr TYPE_PFN_D3D12_GET_DEBUG_INTERFACE
 
     D3D12GetDebugInterface proto WIN_STD_CALL_CONV :REFIID, :ptr ptr
-    ; --------------------------------------------------------------------------------------------------------------------------------
-    ; D3D12EnableExperimentalFeatures
-    ; Pass in a list of feature GUIDs to be enabled together.
-    ; 
-    ; If a particular feature requires some configuration information on enablement, it will have
-    ; a configuration struct that can be passed alongside the GUID.
-    ; 
-    ; Some features might use an interface IID as the GUID.  For these, once the feature is enabled via
-    ; D3D12EnableExperimentalFeatures, D3D12GetDebugInterface can then be called with the IID to retrieve the interface
-    ; for manipulating the feature.  This allows for control that might not cleanly be expressed by just 
-    ; the configuration struct that D3D12EnableExperimentalFeatures provides.
-    ; If this method is called and a change to existing feature enablement is made, 
-    ; all current D3D12 devices are set to DEVICE_REMOVED state, since under the covers there is really only one
-    ; singleton device for a process.  Removing the devices when configuration changes prevents
-    ; mismatched expectations of how a device is supposed to work after it has been created from the app's point of view.
-    ; The call returns E_NOINTERFACE if an unrecognized feature is passed in or Windows Developer mode is not on.
-    ; The call returns E_INVALIDARG if the configuration of a feature is incorrect, the set of features passed
-    ; in are known to be incompatible with each other, or other errors.
-    ; Returns S_OK otherwise.
-    ; --------------------------------------------------------------------------------------------------------------------------------
     D3D12EnableExperimentalFeatures proto WIN_STD_CALL_CONV :UINT, :ptr IID, :ptr, :ptr UINT
-    ; --------------------------------------------------------------------------------------------------------------------------------
-    ; Experimental Feature: D3D12ExperimentalShaderModels
-    ; Use with D3D12EnableExperimentalFeatures to enable experimental shader model support,
-    ; meaning shader models that haven't been finalized for use in retail.
-    ; Enabling D3D12ExperimentalShaderModels needs no configuration struct, pass NULL in the pConfigurationStructs array.
-    ; --------------------------------------------------------------------------------------------------------------------------------
-    ;* 76f5573e-f13a-40f5-b297-81ce9e18933f *
-    ; --------------------------------------------------------------------------------------------------------------------------------
-    ; Experimental Feature: D3D12TiledResourceTier4
-    ; Use with D3D12EnableExperimentalFeatures to enable tiled resource tier 4 support,
-    ; meaning texture tile data-inheritance is allowed.
-    ; Enabling D3D12TiledResourceTier4 needs no configuration struct, pass NULL in the pConfigurationStructs array.
-    ; --------------------------------------------------------------------------------------------------------------------------------
-    ;* c9c4725f-a81a-4f56-8c5b-c51039d694fb *
-    ; --------------------------------------------------------------------------------------------------------------------------------
-    ; Experimental Feature: D3D12MetaCommand
-    ; Use with D3D12EnableExperimentalFeatures to enable the D3D12 Meta Command.
-    ; Enabling D3D12MetaCommand needs no configuration struct, pass NULL in the pConfigurationStructs array.
-    ; --------------------------------------------------------------------------------------------------------------------------------
-    ;* C734C97E-8077-48C8-9FDC-D9D1DD31DD77 *
-    ; --------------------------------------------------------------------------------------------------------------------------------
-    ; D3D12GetInterface
-    ; Retrieve Global D3D12 Interface.
     DEFINE_GUID CLSID_D3D12Debug, 0f2352aebh, 0dd84h, 49feh, 0b9h, 7bh, 0a9h, 0dch, 0fdh, 0cch, 1bh, 4fh
     DEFINE_GUID CLSID_D3D12Tools, 0e38216b1h, 3c8ch, 4833h, 0aah, 09h, 0ah, 06h, 0b6h, 5dh, 96h, 0c8h
     DEFINE_GUID CLSID_D3D12DeviceRemovedExtendedData, 4a75bbc4h, 9ff4h, 4ad8h, 9fh, 18h, 0abh, 0aeh, 84h, 0dch, 5fh, 0f2h
@@ -7603,8 +7189,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0055_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12SDKConfiguration_INTERFACE_DEFINED__
       __ID3D12SDKConfiguration_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12SDKConfiguration *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12SDKConfiguration:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -7629,14 +7213,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12SDKConfiguration_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12SDKConfiguration1_INTERFACE_DEFINED__
       __ID3D12SDKConfiguration1_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12SDKConfiguration1 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12SDKConfiguration1:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -7665,12 +7245,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12SDKConfiguration1_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0057 *
-    ;* [local] *
     D3D12_DEVICE_FACTORY_FLAGS typedef SDWORD
     D3D12_DEVICE_FACTORY_FLAG_NONE equ 0
     D3D12_DEVICE_FACTORY_FLAG_ALLOW_RETURNING_EXISTING_DEVICE equ 1h
@@ -7682,8 +7258,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0057_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12DeviceFactory_INTERFACE_DEFINED__
       __ID3D12DeviceFactory_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12DeviceFactory *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DeviceFactory:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -7720,12 +7294,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12DeviceFactory_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0058 *
-    ;* [local] *
     D3D12_DEVICE_FLAGS typedef SDWORD
     D3D12_DEVICE_FLAG_NONE equ 0
     D3D12_DEVICE_FLAG_DEBUG_LAYER_ENABLED equ 1h
@@ -7743,16 +7313,14 @@ ifndef __d3d12_h__
     DEFINE_ENUM_FLAG_OPERATORS(D3D12_DEVICE_FLAGS)
     D3D12_DEVICE_CONFIGURATION_DESC struct
       Flags D3D12_DEVICE_FLAGS ?
-      GpuBasedValidationFlags DWORD ?
-      SDKVersion DWORD ?
-      NumEnabledExperimentalFeatures DWORD ?
+      GpuBasedValidationFlags UINT ?
+      SDKVersion UINT ?
+      NumEnabledExperimentalFeatures UINT ?
     D3D12_DEVICE_CONFIGURATION_DESC ends
     externdef __MIDL_itf_d3d12_0000_0058_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_d3d12_0000_0058_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12DeviceConfiguration_INTERFACE_DEFINED__
       __ID3D12DeviceConfiguration_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12DeviceConfiguration *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12DeviceConfiguration:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -7783,12 +7351,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12DeviceConfiguration_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0059 *
-    ;* [local] *
     D3D12_AXIS_SHADING_RATE typedef SDWORD
     D3D12_AXIS_SHADING_RATE_1X equ 0
     D3D12_AXIS_SHADING_RATE_2X equ 1h
@@ -7825,8 +7389,6 @@ ifndef __d3d12_h__
     externdef __MIDL_itf_d3d12_0000_0059_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12GraphicsCommandList5_INTERFACE_DEFINED__
       __ID3D12GraphicsCommandList5_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12GraphicsCommandList5 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12GraphicsCommandList5:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -8001,23 +7563,17 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12GraphicsCommandList5_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0060 *
-    ;* [local] *
     D3D12_DISPATCH_MESH_ARGUMENTS struct
-      ThreadGroupCountX DWORD ?
-      ThreadGroupCountY DWORD ?
-      ThreadGroupCountZ DWORD ?
+      ThreadGroupCountX UINT ?
+      ThreadGroupCountY UINT ?
+      ThreadGroupCountZ UINT ?
     D3D12_DISPATCH_MESH_ARGUMENTS ends
     externdef __MIDL_itf_d3d12_0000_0060_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_d3d12_0000_0060_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ID3D12GraphicsCommandList6_INTERFACE_DEFINED__
       __ID3D12GraphicsCommandList6_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12GraphicsCommandList6 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12GraphicsCommandList6:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -8194,14 +7750,10 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12GraphicsCommandList6_INTERFACE_DEFINED__ *
     endif
     ifndef __ID3D12GraphicsCommandList7_INTERFACE_DEFINED__
       __ID3D12GraphicsCommandList7_INTERFACE_DEFINED__ equ <>
-      ;* interface ID3D12GraphicsCommandList7 *
-      ;* [unique][local][object][uuid] *
       externdef IID_ID3D12GraphicsCommandList7:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -8380,13 +7932,8 @@ ifndef __d3d12_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ID3D12GraphicsCommandList7_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_d3d12_0000_0062 *
-    ;* [local] *
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_GAMES) *
   endif
   DEFINE_GUID IID_ID3D12Object, 0c4fec28fh, 7966h, 4e95h, 9fh, 94h, 0f4h, 31h, 0cbh, 56h, 0c3h, 0b8h
   DEFINE_GUID IID_ID3D12DeviceChild, 905db94bh, 0a00ch, 4140h, 9dh, 0f5h, 2bh, 64h, 0cah, 9eh, 0a3h, 57h
@@ -8452,8 +7999,6 @@ ifndef __d3d12_h__
   DEFINE_GUID IID_ID3D12GraphicsCommandList7, 0dd171223h, 8b61h, 4769h, 90h, 0e3h, 16h, 0ch, 0cdh, 0e4h, 0e2h, 0c1h
   externdef __MIDL_itf_d3d12_0000_0062_v0_0_c_ifspec:RPC_IF_HANDLE
   externdef __MIDL_itf_d3d12_0000_0062_v0_0_s_ifspec:RPC_IF_HANDLE
-  ;* Additional Prototypes for ALL interfaces *
-  ;* end of Additional Prototypes *
   ifdef __cplusplus
     ;[...]
   endif

@@ -1,14 +1,12 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\shobjidl_core.h
 ;             Created on (UTC) 06/04/2024 06:15:58
 ;             Last modified on (UTC) 21/02/2024 18:22:54
 
-;* verify that the <rpcndr.h> version is high enough to compile this file*
 ifndef __REQUIRED_RPCNDR_H_VERSION__
   __REQUIRED_RPCNDR_H_VERSION__ equ 501
 endif
-;* verify that the <rpcsal.h> version is high enough to compile this file*
 ifndef __REQUIRED_RPCSAL_H_VERSION__
   __REQUIRED_RPCSAL_H_VERSION__ equ 100
 endif
@@ -16,12 +14,10 @@ include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
   .err <this stub requires an updated version of < rpcndr.h >>
-  ;* __RPCNDR_H_VERSION__ *
 endif
 ifndef COM_NO_WINDOWS_H
   include windows.inc
   include ole2.inc
-  ;*COM_NO_WINDOWS_H*
 endif
 ifndef __shobjidl_core_h__
   __shobjidl_core_h__ equ <>
@@ -38,1154 +34,876 @@ ifndef __shobjidl_core_h__
       endm
     endif
   endif
-  ;* Forward Declarations *
   ifndef __IContextMenu_FWD_DEFINED__
     __IContextMenu_FWD_DEFINED__ equ <>
-    ;* __IContextMenu_FWD_DEFINED__ *
   endif
   ifndef __IContextMenu2_FWD_DEFINED__
     __IContextMenu2_FWD_DEFINED__ equ <>
-    ;* __IContextMenu2_FWD_DEFINED__ *
   endif
   ifndef __IContextMenu3_FWD_DEFINED__
     __IContextMenu3_FWD_DEFINED__ equ <>
-    ;* __IContextMenu3_FWD_DEFINED__ *
   endif
   ifndef __IExecuteCommand_FWD_DEFINED__
     __IExecuteCommand_FWD_DEFINED__ equ <>
-    ;* __IExecuteCommand_FWD_DEFINED__ *
   endif
   ifndef __IPersistFolder_FWD_DEFINED__
     __IPersistFolder_FWD_DEFINED__ equ <>
-    ;* __IPersistFolder_FWD_DEFINED__ *
   endif
   ifndef __IRunnableTask_FWD_DEFINED__
     __IRunnableTask_FWD_DEFINED__ equ <>
-    ;* __IRunnableTask_FWD_DEFINED__ *
   endif
   ifndef __IShellTaskScheduler_FWD_DEFINED__
     __IShellTaskScheduler_FWD_DEFINED__ equ <>
-    ;* __IShellTaskScheduler_FWD_DEFINED__ *
   endif
   ifndef __IPersistFolder2_FWD_DEFINED__
     __IPersistFolder2_FWD_DEFINED__ equ <>
-    ;* __IPersistFolder2_FWD_DEFINED__ *
   endif
   ifndef __IPersistFolder3_FWD_DEFINED__
     __IPersistFolder3_FWD_DEFINED__ equ <>
-    ;* __IPersistFolder3_FWD_DEFINED__ *
   endif
   ifndef __IPersistIDList_FWD_DEFINED__
     __IPersistIDList_FWD_DEFINED__ equ <>
-    ;* __IPersistIDList_FWD_DEFINED__ *
   endif
   ifndef __IEnumIDList_FWD_DEFINED__
     __IEnumIDList_FWD_DEFINED__ equ <>
-    ;* __IEnumIDList_FWD_DEFINED__ *
   endif
   ifndef __IEnumFullIDList_FWD_DEFINED__
     __IEnumFullIDList_FWD_DEFINED__ equ <>
-    ;* __IEnumFullIDList_FWD_DEFINED__ *
   endif
   ifndef __IFileSyncMergeHandler_FWD_DEFINED__
     __IFileSyncMergeHandler_FWD_DEFINED__ equ <>
-    ;* __IFileSyncMergeHandler_FWD_DEFINED__ *
   endif
   ifndef __IObjectWithFolderEnumMode_FWD_DEFINED__
     __IObjectWithFolderEnumMode_FWD_DEFINED__ equ <>
-    ;* __IObjectWithFolderEnumMode_FWD_DEFINED__ *
   endif
   ifndef __IParseAndCreateItem_FWD_DEFINED__
     __IParseAndCreateItem_FWD_DEFINED__ equ <>
-    ;* __IParseAndCreateItem_FWD_DEFINED__ *
   endif
   ifndef __IShellFolder_FWD_DEFINED__
     __IShellFolder_FWD_DEFINED__ equ <>
-    ;* __IShellFolder_FWD_DEFINED__ *
   endif
   ifndef __IEnumExtraSearch_FWD_DEFINED__
     __IEnumExtraSearch_FWD_DEFINED__ equ <>
-    ;* __IEnumExtraSearch_FWD_DEFINED__ *
   endif
   ifndef __IShellFolder2_FWD_DEFINED__
     __IShellFolder2_FWD_DEFINED__ equ <>
-    ;* __IShellFolder2_FWD_DEFINED__ *
   endif
   ifndef __IShellView_FWD_DEFINED__
     __IShellView_FWD_DEFINED__ equ <>
-    ;* __IShellView_FWD_DEFINED__ *
   endif
   ifndef __IShellView2_FWD_DEFINED__
     __IShellView2_FWD_DEFINED__ equ <>
-    ;* __IShellView2_FWD_DEFINED__ *
   endif
   ifndef __IFolderView_FWD_DEFINED__
     __IFolderView_FWD_DEFINED__ equ <>
-    ;* __IFolderView_FWD_DEFINED__ *
   endif
   ifndef __IFolderView2_FWD_DEFINED__
     __IFolderView2_FWD_DEFINED__ equ <>
-    ;* __IFolderView2_FWD_DEFINED__ *
   endif
   ifndef __IFolderViewSettings_FWD_DEFINED__
     __IFolderViewSettings_FWD_DEFINED__ equ <>
-    ;* __IFolderViewSettings_FWD_DEFINED__ *
   endif
   ifndef __IInitializeNetworkFolder_FWD_DEFINED__
     __IInitializeNetworkFolder_FWD_DEFINED__ equ <>
-    ;* __IInitializeNetworkFolder_FWD_DEFINED__ *
   endif
   ifndef __INetworkFolderInternal_FWD_DEFINED__
     __INetworkFolderInternal_FWD_DEFINED__ equ <>
-    ;* __INetworkFolderInternal_FWD_DEFINED__ *
   endif
   ifndef __IPreviewHandlerVisuals_FWD_DEFINED__
     __IPreviewHandlerVisuals_FWD_DEFINED__ equ <>
-    ;* __IPreviewHandlerVisuals_FWD_DEFINED__ *
   endif
   ifndef __ICommDlgBrowser_FWD_DEFINED__
     __ICommDlgBrowser_FWD_DEFINED__ equ <>
-    ;* __ICommDlgBrowser_FWD_DEFINED__ *
   endif
   ifndef __ICommDlgBrowser2_FWD_DEFINED__
     __ICommDlgBrowser2_FWD_DEFINED__ equ <>
-    ;* __ICommDlgBrowser2_FWD_DEFINED__ *
   endif
   ifndef __IColumnManager_FWD_DEFINED__
     __IColumnManager_FWD_DEFINED__ equ <>
-    ;* __IColumnManager_FWD_DEFINED__ *
   endif
   ifndef __IFolderFilterSite_FWD_DEFINED__
     __IFolderFilterSite_FWD_DEFINED__ equ <>
-    ;* __IFolderFilterSite_FWD_DEFINED__ *
   endif
   ifndef __IFolderFilter_FWD_DEFINED__
     __IFolderFilter_FWD_DEFINED__ equ <>
-    ;* __IFolderFilter_FWD_DEFINED__ *
   endif
   ifndef __IInputObjectSite_FWD_DEFINED__
     __IInputObjectSite_FWD_DEFINED__ equ <>
-    ;* __IInputObjectSite_FWD_DEFINED__ *
   endif
   ifndef __IInputObject_FWD_DEFINED__
     __IInputObject_FWD_DEFINED__ equ <>
-    ;* __IInputObject_FWD_DEFINED__ *
   endif
   ifndef __IInputObject2_FWD_DEFINED__
     __IInputObject2_FWD_DEFINED__ equ <>
-    ;* __IInputObject2_FWD_DEFINED__ *
   endif
   ifndef __IShellIcon_FWD_DEFINED__
     __IShellIcon_FWD_DEFINED__ equ <>
-    ;* __IShellIcon_FWD_DEFINED__ *
   endif
   ifndef __IShellBrowser_FWD_DEFINED__
     __IShellBrowser_FWD_DEFINED__ equ <>
-    ;* __IShellBrowser_FWD_DEFINED__ *
   endif
   ifndef __IProfferService_FWD_DEFINED__
     __IProfferService_FWD_DEFINED__ equ <>
-    ;* __IProfferService_FWD_DEFINED__ *
   endif
   ifndef __IGetServiceIds_FWD_DEFINED__
     __IGetServiceIds_FWD_DEFINED__ equ <>
-    ;* __IGetServiceIds_FWD_DEFINED__ *
   endif
   ifndef __IShellItem_FWD_DEFINED__
     __IShellItem_FWD_DEFINED__ equ <>
-    ;* __IShellItem_FWD_DEFINED__ *
   endif
   ifndef __IShellItem2_FWD_DEFINED__
     __IShellItem2_FWD_DEFINED__ equ <>
-    ;* __IShellItem2_FWD_DEFINED__ *
   endif
   ifndef __IShellItemImageFactory_FWD_DEFINED__
     __IShellItemImageFactory_FWD_DEFINED__ equ <>
-    ;* __IShellItemImageFactory_FWD_DEFINED__ *
   endif
   ifndef __IEnumShellItems_FWD_DEFINED__
     __IEnumShellItems_FWD_DEFINED__ equ <>
-    ;* __IEnumShellItems_FWD_DEFINED__ *
   endif
   ifndef __ITransferAdviseSink_FWD_DEFINED__
     __ITransferAdviseSink_FWD_DEFINED__ equ <>
-    ;* __ITransferAdviseSink_FWD_DEFINED__ *
   endif
   ifndef __ITransferSource_FWD_DEFINED__
     __ITransferSource_FWD_DEFINED__ equ <>
-    ;* __ITransferSource_FWD_DEFINED__ *
   endif
   ifndef __IEnumResources_FWD_DEFINED__
     __IEnumResources_FWD_DEFINED__ equ <>
-    ;* __IEnumResources_FWD_DEFINED__ *
   endif
   ifndef __IShellItemResources_FWD_DEFINED__
     __IShellItemResources_FWD_DEFINED__ equ <>
-    ;* __IShellItemResources_FWD_DEFINED__ *
   endif
   ifndef __ITransferDestination_FWD_DEFINED__
     __ITransferDestination_FWD_DEFINED__ equ <>
-    ;* __ITransferDestination_FWD_DEFINED__ *
   endif
   ifndef __IFileOperationProgressSink_FWD_DEFINED__
     __IFileOperationProgressSink_FWD_DEFINED__ equ <>
-    ;* __IFileOperationProgressSink_FWD_DEFINED__ *
   endif
   ifndef __IShellItemArray_FWD_DEFINED__
     __IShellItemArray_FWD_DEFINED__ equ <>
-    ;* __IShellItemArray_FWD_DEFINED__ *
   endif
   ifndef __IInitializeWithItem_FWD_DEFINED__
     __IInitializeWithItem_FWD_DEFINED__ equ <>
-    ;* __IInitializeWithItem_FWD_DEFINED__ *
   endif
   ifndef __IObjectWithSelection_FWD_DEFINED__
     __IObjectWithSelection_FWD_DEFINED__ equ <>
-    ;* __IObjectWithSelection_FWD_DEFINED__ *
   endif
   ifndef __IObjectWithBackReferences_FWD_DEFINED__
     __IObjectWithBackReferences_FWD_DEFINED__ equ <>
-    ;* __IObjectWithBackReferences_FWD_DEFINED__ *
   endif
   ifndef __IPropertyUI_FWD_DEFINED__
     __IPropertyUI_FWD_DEFINED__ equ <>
-    ;* __IPropertyUI_FWD_DEFINED__ *
   endif
   ifndef __ICategoryProvider_FWD_DEFINED__
     __ICategoryProvider_FWD_DEFINED__ equ <>
-    ;* __ICategoryProvider_FWD_DEFINED__ *
   endif
   ifndef __ICategorizer_FWD_DEFINED__
     __ICategorizer_FWD_DEFINED__ equ <>
-    ;* __ICategorizer_FWD_DEFINED__ *
   endif
   ifndef __IDropTargetHelper_FWD_DEFINED__
     __IDropTargetHelper_FWD_DEFINED__ equ <>
-    ;* __IDropTargetHelper_FWD_DEFINED__ *
   endif
   ifndef __IDragSourceHelper_FWD_DEFINED__
     __IDragSourceHelper_FWD_DEFINED__ equ <>
-    ;* __IDragSourceHelper_FWD_DEFINED__ *
   endif
   ifndef __IShellLinkA_FWD_DEFINED__
     __IShellLinkA_FWD_DEFINED__ equ <>
-    ;* __IShellLinkA_FWD_DEFINED__ *
   endif
   ifndef __IShellLinkW_FWD_DEFINED__
     __IShellLinkW_FWD_DEFINED__ equ <>
-    ;* __IShellLinkW_FWD_DEFINED__ *
   endif
   ifndef __IShellLinkDataList_FWD_DEFINED__
     __IShellLinkDataList_FWD_DEFINED__ equ <>
-    ;* __IShellLinkDataList_FWD_DEFINED__ *
   endif
   ifndef __IResolveShellLink_FWD_DEFINED__
     __IResolveShellLink_FWD_DEFINED__ equ <>
-    ;* __IResolveShellLink_FWD_DEFINED__ *
   endif
   ifndef __IActionProgressDialog_FWD_DEFINED__
     __IActionProgressDialog_FWD_DEFINED__ equ <>
-    ;* __IActionProgressDialog_FWD_DEFINED__ *
   endif
   ifndef __IActionProgress_FWD_DEFINED__
     __IActionProgress_FWD_DEFINED__ equ <>
-    ;* __IActionProgress_FWD_DEFINED__ *
   endif
   ifndef __IShellExtInit_FWD_DEFINED__
     __IShellExtInit_FWD_DEFINED__ equ <>
-    ;* __IShellExtInit_FWD_DEFINED__ *
   endif
   ifndef __IShellPropSheetExt_FWD_DEFINED__
     __IShellPropSheetExt_FWD_DEFINED__ equ <>
-    ;* __IShellPropSheetExt_FWD_DEFINED__ *
   endif
   ifndef __IRemoteComputer_FWD_DEFINED__
     __IRemoteComputer_FWD_DEFINED__ equ <>
-    ;* __IRemoteComputer_FWD_DEFINED__ *
   endif
   ifndef __IQueryContinue_FWD_DEFINED__
     __IQueryContinue_FWD_DEFINED__ equ <>
-    ;* __IQueryContinue_FWD_DEFINED__ *
   endif
   ifndef __IObjectWithCancelEvent_FWD_DEFINED__
     __IObjectWithCancelEvent_FWD_DEFINED__ equ <>
-    ;* __IObjectWithCancelEvent_FWD_DEFINED__ *
   endif
   ifndef __IUserNotification_FWD_DEFINED__
     __IUserNotification_FWD_DEFINED__ equ <>
-    ;* __IUserNotification_FWD_DEFINED__ *
   endif
   ifndef __IItemNameLimits_FWD_DEFINED__
     __IItemNameLimits_FWD_DEFINED__ equ <>
-    ;* __IItemNameLimits_FWD_DEFINED__ *
   endif
   ifndef __ISearchFolderItemFactory_FWD_DEFINED__
     __ISearchFolderItemFactory_FWD_DEFINED__ equ <>
-    ;* __ISearchFolderItemFactory_FWD_DEFINED__ *
   endif
   ifndef __IExtractImage_FWD_DEFINED__
     __IExtractImage_FWD_DEFINED__ equ <>
-    ;* __IExtractImage_FWD_DEFINED__ *
   endif
   ifndef __IExtractImage2_FWD_DEFINED__
     __IExtractImage2_FWD_DEFINED__ equ <>
-    ;* __IExtractImage2_FWD_DEFINED__ *
   endif
   ifndef __IThumbnailHandlerFactory_FWD_DEFINED__
     __IThumbnailHandlerFactory_FWD_DEFINED__ equ <>
-    ;* __IThumbnailHandlerFactory_FWD_DEFINED__ *
   endif
   ifndef __IParentAndItem_FWD_DEFINED__
     __IParentAndItem_FWD_DEFINED__ equ <>
-    ;* __IParentAndItem_FWD_DEFINED__ *
   endif
   ifndef __IDockingWindow_FWD_DEFINED__
     __IDockingWindow_FWD_DEFINED__ equ <>
-    ;* __IDockingWindow_FWD_DEFINED__ *
   endif
   ifndef __IDeskBand_FWD_DEFINED__
     __IDeskBand_FWD_DEFINED__ equ <>
-    ;* __IDeskBand_FWD_DEFINED__ *
   endif
   ifndef __IDeskBandInfo_FWD_DEFINED__
     __IDeskBandInfo_FWD_DEFINED__ equ <>
-    ;* __IDeskBandInfo_FWD_DEFINED__ *
   endif
   ifndef __ITaskbarList_FWD_DEFINED__
     __ITaskbarList_FWD_DEFINED__ equ <>
-    ;* __ITaskbarList_FWD_DEFINED__ *
   endif
   ifndef __ITaskbarList2_FWD_DEFINED__
     __ITaskbarList2_FWD_DEFINED__ equ <>
-    ;* __ITaskbarList2_FWD_DEFINED__ *
   endif
   ifndef __ITaskbarList3_FWD_DEFINED__
     __ITaskbarList3_FWD_DEFINED__ equ <>
-    ;* __ITaskbarList3_FWD_DEFINED__ *
   endif
   ifndef __ITaskbarList4_FWD_DEFINED__
     __ITaskbarList4_FWD_DEFINED__ equ <>
-    ;* __ITaskbarList4_FWD_DEFINED__ *
   endif
   ifndef __IExplorerBrowserEvents_FWD_DEFINED__
     __IExplorerBrowserEvents_FWD_DEFINED__ equ <>
-    ;* __IExplorerBrowserEvents_FWD_DEFINED__ *
   endif
   ifndef __IExplorerBrowser_FWD_DEFINED__
     __IExplorerBrowser_FWD_DEFINED__ equ <>
-    ;* __IExplorerBrowser_FWD_DEFINED__ *
   endif
   ifndef __IEnumObjects_FWD_DEFINED__
     __IEnumObjects_FWD_DEFINED__ equ <>
-    ;* __IEnumObjects_FWD_DEFINED__ *
   endif
   ifndef __IOperationsProgressDialog_FWD_DEFINED__
     __IOperationsProgressDialog_FWD_DEFINED__ equ <>
-    ;* __IOperationsProgressDialog_FWD_DEFINED__ *
   endif
   ifndef __IIOCancelInformation_FWD_DEFINED__
     __IIOCancelInformation_FWD_DEFINED__ equ <>
-    ;* __IIOCancelInformation_FWD_DEFINED__ *
   endif
   ifndef __IFileOperation_FWD_DEFINED__
     __IFileOperation_FWD_DEFINED__ equ <>
-    ;* __IFileOperation_FWD_DEFINED__ *
   endif
   ifndef __IFileOperation2_FWD_DEFINED__
     __IFileOperation2_FWD_DEFINED__ equ <>
-    ;* __IFileOperation2_FWD_DEFINED__ *
   endif
   ifndef __IObjectProvider_FWD_DEFINED__
     __IObjectProvider_FWD_DEFINED__ equ <>
-    ;* __IObjectProvider_FWD_DEFINED__ *
   endif
   ifndef __INamespaceWalkCB_FWD_DEFINED__
     __INamespaceWalkCB_FWD_DEFINED__ equ <>
-    ;* __INamespaceWalkCB_FWD_DEFINED__ *
   endif
   ifndef __INamespaceWalkCB2_FWD_DEFINED__
     __INamespaceWalkCB2_FWD_DEFINED__ equ <>
-    ;* __INamespaceWalkCB2_FWD_DEFINED__ *
   endif
   ifndef __INamespaceWalk_FWD_DEFINED__
     __INamespaceWalk_FWD_DEFINED__ equ <>
-    ;* __INamespaceWalk_FWD_DEFINED__ *
   endif
   ifndef __IBandSite_FWD_DEFINED__
     __IBandSite_FWD_DEFINED__ equ <>
-    ;* __IBandSite_FWD_DEFINED__ *
   endif
   ifndef __IModalWindow_FWD_DEFINED__
     __IModalWindow_FWD_DEFINED__ equ <>
-    ;* __IModalWindow_FWD_DEFINED__ *
   endif
   ifndef __IContextMenuSite_FWD_DEFINED__
     __IContextMenuSite_FWD_DEFINED__ equ <>
-    ;* __IContextMenuSite_FWD_DEFINED__ *
   endif
   ifndef __IMenuBand_FWD_DEFINED__
     __IMenuBand_FWD_DEFINED__ equ <>
-    ;* __IMenuBand_FWD_DEFINED__ *
   endif
   ifndef __IRegTreeItem_FWD_DEFINED__
     __IRegTreeItem_FWD_DEFINED__ equ <>
-    ;* __IRegTreeItem_FWD_DEFINED__ *
   endif
   ifndef __IDeskBar_FWD_DEFINED__
     __IDeskBar_FWD_DEFINED__ equ <>
-    ;* __IDeskBar_FWD_DEFINED__ *
   endif
   ifndef __IMenuPopup_FWD_DEFINED__
     __IMenuPopup_FWD_DEFINED__ equ <>
-    ;* __IMenuPopup_FWD_DEFINED__ *
   endif
   ifndef __IFileIsInUse_FWD_DEFINED__
     __IFileIsInUse_FWD_DEFINED__ equ <>
-    ;* __IFileIsInUse_FWD_DEFINED__ *
   endif
   ifndef __IFileDialogEvents_FWD_DEFINED__
     __IFileDialogEvents_FWD_DEFINED__ equ <>
-    ;* __IFileDialogEvents_FWD_DEFINED__ *
   endif
   ifndef __IFileDialog_FWD_DEFINED__
     __IFileDialog_FWD_DEFINED__ equ <>
-    ;* __IFileDialog_FWD_DEFINED__ *
   endif
   ifndef __IFileSaveDialog_FWD_DEFINED__
     __IFileSaveDialog_FWD_DEFINED__ equ <>
-    ;* __IFileSaveDialog_FWD_DEFINED__ *
   endif
   ifndef __IFileOpenDialog_FWD_DEFINED__
     __IFileOpenDialog_FWD_DEFINED__ equ <>
-    ;* __IFileOpenDialog_FWD_DEFINED__ *
   endif
   ifndef __IFileDialogCustomize_FWD_DEFINED__
     __IFileDialogCustomize_FWD_DEFINED__ equ <>
-    ;* __IFileDialogCustomize_FWD_DEFINED__ *
   endif
   ifndef __IApplicationAssociationRegistration_FWD_DEFINED__
     __IApplicationAssociationRegistration_FWD_DEFINED__ equ <>
-    ;* __IApplicationAssociationRegistration_FWD_DEFINED__ *
   endif
   ifndef __IDelegateFolder_FWD_DEFINED__
     __IDelegateFolder_FWD_DEFINED__ equ <>
-    ;* __IDelegateFolder_FWD_DEFINED__ *
   endif
   ifndef __IBrowserFrameOptions_FWD_DEFINED__
     __IBrowserFrameOptions_FWD_DEFINED__ equ <>
-    ;* __IBrowserFrameOptions_FWD_DEFINED__ *
   endif
   ifndef __INewWindowManager_FWD_DEFINED__
     __INewWindowManager_FWD_DEFINED__ equ <>
-    ;* __INewWindowManager_FWD_DEFINED__ *
   endif
   ifndef __IAttachmentExecute_FWD_DEFINED__
     __IAttachmentExecute_FWD_DEFINED__ equ <>
-    ;* __IAttachmentExecute_FWD_DEFINED__ *
   endif
   ifndef __IShellMenuCallback_FWD_DEFINED__
     __IShellMenuCallback_FWD_DEFINED__ equ <>
-    ;* __IShellMenuCallback_FWD_DEFINED__ *
   endif
   ifndef __IShellMenu_FWD_DEFINED__
     __IShellMenu_FWD_DEFINED__ equ <>
-    ;* __IShellMenu_FWD_DEFINED__ *
   endif
   ifndef __IKnownFolder_FWD_DEFINED__
     __IKnownFolder_FWD_DEFINED__ equ <>
-    ;* __IKnownFolder_FWD_DEFINED__ *
   endif
   ifndef __IKnownFolderManager_FWD_DEFINED__
     __IKnownFolderManager_FWD_DEFINED__ equ <>
-    ;* __IKnownFolderManager_FWD_DEFINED__ *
   endif
   ifndef __ISharingConfigurationManager_FWD_DEFINED__
     __ISharingConfigurationManager_FWD_DEFINED__ equ <>
-    ;* __ISharingConfigurationManager_FWD_DEFINED__ *
   endif
   ifndef __IRelatedItem_FWD_DEFINED__
     __IRelatedItem_FWD_DEFINED__ equ <>
-    ;* __IRelatedItem_FWD_DEFINED__ *
   endif
   ifndef __IIdentityName_FWD_DEFINED__
     __IIdentityName_FWD_DEFINED__ equ <>
-    ;* __IIdentityName_FWD_DEFINED__ *
   endif
   ifndef __IDelegateItem_FWD_DEFINED__
     __IDelegateItem_FWD_DEFINED__ equ <>
-    ;* __IDelegateItem_FWD_DEFINED__ *
   endif
   ifndef __ICurrentItem_FWD_DEFINED__
     __ICurrentItem_FWD_DEFINED__ equ <>
-    ;* __ICurrentItem_FWD_DEFINED__ *
   endif
   ifndef __ITransferMediumItem_FWD_DEFINED__
     __ITransferMediumItem_FWD_DEFINED__ equ <>
-    ;* __ITransferMediumItem_FWD_DEFINED__ *
   endif
   ifndef __IDisplayItem_FWD_DEFINED__
     __IDisplayItem_FWD_DEFINED__ equ <>
-    ;* __IDisplayItem_FWD_DEFINED__ *
   endif
   ifndef __IViewStateIdentityItem_FWD_DEFINED__
     __IViewStateIdentityItem_FWD_DEFINED__ equ <>
-    ;* __IViewStateIdentityItem_FWD_DEFINED__ *
   endif
   ifndef __IPreviewItem_FWD_DEFINED__
     __IPreviewItem_FWD_DEFINED__ equ <>
-    ;* __IPreviewItem_FWD_DEFINED__ *
   endif
   ifndef __IDestinationStreamFactory_FWD_DEFINED__
     __IDestinationStreamFactory_FWD_DEFINED__ equ <>
-    ;* __IDestinationStreamFactory_FWD_DEFINED__ *
   endif
   ifndef __ICreateProcessInputs_FWD_DEFINED__
     __ICreateProcessInputs_FWD_DEFINED__ equ <>
-    ;* __ICreateProcessInputs_FWD_DEFINED__ *
   endif
   ifndef __ICreatingProcess_FWD_DEFINED__
     __ICreatingProcess_FWD_DEFINED__ equ <>
-    ;* __ICreatingProcess_FWD_DEFINED__ *
   endif
   ifndef __ILaunchUIContext_FWD_DEFINED__
     __ILaunchUIContext_FWD_DEFINED__ equ <>
-    ;* __ILaunchUIContext_FWD_DEFINED__ *
   endif
   ifndef __ILaunchUIContextProvider_FWD_DEFINED__
     __ILaunchUIContextProvider_FWD_DEFINED__ equ <>
-    ;* __ILaunchUIContextProvider_FWD_DEFINED__ *
   endif
   ifndef __INewMenuClient_FWD_DEFINED__
     __INewMenuClient_FWD_DEFINED__ equ <>
-    ;* __INewMenuClient_FWD_DEFINED__ *
   endif
   ifndef __IInitializeWithBindCtx_FWD_DEFINED__
     __IInitializeWithBindCtx_FWD_DEFINED__ equ <>
-    ;* __IInitializeWithBindCtx_FWD_DEFINED__ *
   endif
   ifndef __IShellItemFilter_FWD_DEFINED__
     __IShellItemFilter_FWD_DEFINED__ equ <>
-    ;* __IShellItemFilter_FWD_DEFINED__ *
   endif
   ifndef __INameSpaceTreeControl_FWD_DEFINED__
     __INameSpaceTreeControl_FWD_DEFINED__ equ <>
-    ;* __INameSpaceTreeControl_FWD_DEFINED__ *
   endif
   ifndef __INameSpaceTreeControlFolderCapabilities_FWD_DEFINED__
     __INameSpaceTreeControlFolderCapabilities_FWD_DEFINED__ equ <>
-    ;* __INameSpaceTreeControlFolderCapabilities_FWD_DEFINED__ *
   endif
   ifndef __IPreviewHandler_FWD_DEFINED__
     __IPreviewHandler_FWD_DEFINED__ equ <>
-    ;* __IPreviewHandler_FWD_DEFINED__ *
   endif
   ifndef __IPreviewHandlerFrame_FWD_DEFINED__
     __IPreviewHandlerFrame_FWD_DEFINED__ equ <>
-    ;* __IPreviewHandlerFrame_FWD_DEFINED__ *
   endif
   ifndef __IExplorerPaneVisibility_FWD_DEFINED__
     __IExplorerPaneVisibility_FWD_DEFINED__ equ <>
-    ;* __IExplorerPaneVisibility_FWD_DEFINED__ *
   endif
   ifndef __IContextMenuCB_FWD_DEFINED__
     __IContextMenuCB_FWD_DEFINED__ equ <>
-    ;* __IContextMenuCB_FWD_DEFINED__ *
   endif
   ifndef __IDefaultExtractIconInit_FWD_DEFINED__
     __IDefaultExtractIconInit_FWD_DEFINED__ equ <>
-    ;* __IDefaultExtractIconInit_FWD_DEFINED__ *
   endif
   ifndef __IExplorerCommand_FWD_DEFINED__
     __IExplorerCommand_FWD_DEFINED__ equ <>
-    ;* __IExplorerCommand_FWD_DEFINED__ *
   endif
   ifndef __IExplorerCommandState_FWD_DEFINED__
     __IExplorerCommandState_FWD_DEFINED__ equ <>
-    ;* __IExplorerCommandState_FWD_DEFINED__ *
   endif
   ifndef __IInitializeCommand_FWD_DEFINED__
     __IInitializeCommand_FWD_DEFINED__ equ <>
-    ;* __IInitializeCommand_FWD_DEFINED__ *
   endif
   ifndef __IEnumExplorerCommand_FWD_DEFINED__
     __IEnumExplorerCommand_FWD_DEFINED__ equ <>
-    ;* __IEnumExplorerCommand_FWD_DEFINED__ *
   endif
   ifndef __IExplorerCommandProvider_FWD_DEFINED__
     __IExplorerCommandProvider_FWD_DEFINED__ equ <>
-    ;* __IExplorerCommandProvider_FWD_DEFINED__ *
   endif
   ifndef __IOpenControlPanel_FWD_DEFINED__
     __IOpenControlPanel_FWD_DEFINED__ equ <>
-    ;* __IOpenControlPanel_FWD_DEFINED__ *
   endif
   ifndef __IFileSystemBindData_FWD_DEFINED__
     __IFileSystemBindData_FWD_DEFINED__ equ <>
-    ;* __IFileSystemBindData_FWD_DEFINED__ *
   endif
   ifndef __IFileSystemBindData2_FWD_DEFINED__
     __IFileSystemBindData2_FWD_DEFINED__ equ <>
-    ;* __IFileSystemBindData2_FWD_DEFINED__ *
   endif
   ifndef __ICustomDestinationList_FWD_DEFINED__
     __ICustomDestinationList_FWD_DEFINED__ equ <>
-    ;* __ICustomDestinationList_FWD_DEFINED__ *
   endif
   ifndef __IApplicationDestinations_FWD_DEFINED__
     __IApplicationDestinations_FWD_DEFINED__ equ <>
-    ;* __IApplicationDestinations_FWD_DEFINED__ *
   endif
   ifndef __IApplicationDocumentLists_FWD_DEFINED__
     __IApplicationDocumentLists_FWD_DEFINED__ equ <>
-    ;* __IApplicationDocumentLists_FWD_DEFINED__ *
   endif
   ifndef __IObjectWithAppUserModelID_FWD_DEFINED__
     __IObjectWithAppUserModelID_FWD_DEFINED__ equ <>
-    ;* __IObjectWithAppUserModelID_FWD_DEFINED__ *
   endif
   ifndef __IObjectWithProgID_FWD_DEFINED__
     __IObjectWithProgID_FWD_DEFINED__ equ <>
-    ;* __IObjectWithProgID_FWD_DEFINED__ *
   endif
   ifndef __IUpdateIDList_FWD_DEFINED__
     __IUpdateIDList_FWD_DEFINED__ equ <>
-    ;* __IUpdateIDList_FWD_DEFINED__ *
   endif
   ifndef __IDesktopWallpaper_FWD_DEFINED__
     __IDesktopWallpaper_FWD_DEFINED__ equ <>
-    ;* __IDesktopWallpaper_FWD_DEFINED__ *
   endif
   ifndef __IHomeGroup_FWD_DEFINED__
     __IHomeGroup_FWD_DEFINED__ equ <>
-    ;* __IHomeGroup_FWD_DEFINED__ *
   endif
   ifndef __IInitializeWithPropertyStore_FWD_DEFINED__
     __IInitializeWithPropertyStore_FWD_DEFINED__ equ <>
-    ;* __IInitializeWithPropertyStore_FWD_DEFINED__ *
   endif
   ifndef __IOpenSearchSource_FWD_DEFINED__
     __IOpenSearchSource_FWD_DEFINED__ equ <>
-    ;* __IOpenSearchSource_FWD_DEFINED__ *
   endif
   ifndef __IShellLibrary_FWD_DEFINED__
     __IShellLibrary_FWD_DEFINED__ equ <>
-    ;* __IShellLibrary_FWD_DEFINED__ *
   endif
   ifndef __IDefaultFolderMenuInitialize_FWD_DEFINED__
     __IDefaultFolderMenuInitialize_FWD_DEFINED__ equ <>
-    ;* __IDefaultFolderMenuInitialize_FWD_DEFINED__ *
   endif
   ifndef __IApplicationActivationManager_FWD_DEFINED__
     __IApplicationActivationManager_FWD_DEFINED__ equ <>
-    ;* __IApplicationActivationManager_FWD_DEFINED__ *
   endif
   ifndef __IVirtualDesktopManager_FWD_DEFINED__
     __IVirtualDesktopManager_FWD_DEFINED__ equ <>
-    ;* __IVirtualDesktopManager_FWD_DEFINED__ *
   endif
   ifndef __DesktopWallpaper_FWD_DEFINED__
     __DesktopWallpaper_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __DesktopWallpaper_FWD_DEFINED__ *
   endif
   ifndef __ShellDesktop_FWD_DEFINED__
     __ShellDesktop_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __ShellDesktop_FWD_DEFINED__ *
   endif
   ifndef __ShellFSFolder_FWD_DEFINED__
     __ShellFSFolder_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __ShellFSFolder_FWD_DEFINED__ *
   endif
   ifndef __NetworkPlaces_FWD_DEFINED__
     __NetworkPlaces_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __NetworkPlaces_FWD_DEFINED__ *
   endif
   ifndef __ShellLink_FWD_DEFINED__
     __ShellLink_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __ShellLink_FWD_DEFINED__ *
   endif
   ifndef __DriveSizeCategorizer_FWD_DEFINED__
     __DriveSizeCategorizer_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __DriveSizeCategorizer_FWD_DEFINED__ *
   endif
   ifndef __DriveTypeCategorizer_FWD_DEFINED__
     __DriveTypeCategorizer_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __DriveTypeCategorizer_FWD_DEFINED__ *
   endif
   ifndef __FreeSpaceCategorizer_FWD_DEFINED__
     __FreeSpaceCategorizer_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __FreeSpaceCategorizer_FWD_DEFINED__ *
   endif
   ifndef __SizeCategorizer_FWD_DEFINED__
     __SizeCategorizer_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __SizeCategorizer_FWD_DEFINED__ *
   endif
   ifndef __PropertiesUI_FWD_DEFINED__
     __PropertiesUI_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __PropertiesUI_FWD_DEFINED__ *
   endif
   ifndef __UserNotification_FWD_DEFINED__
     __UserNotification_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __UserNotification_FWD_DEFINED__ *
   endif
   ifndef __TaskbarList_FWD_DEFINED__
     __TaskbarList_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __TaskbarList_FWD_DEFINED__ *
   endif
   ifndef __ShellItem_FWD_DEFINED__
     __ShellItem_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __ShellItem_FWD_DEFINED__ *
   endif
   ifndef __NamespaceWalker_FWD_DEFINED__
     __NamespaceWalker_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __NamespaceWalker_FWD_DEFINED__ *
   endif
   ifndef __FileOperation_FWD_DEFINED__
     __FileOperation_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __FileOperation_FWD_DEFINED__ *
   endif
   ifndef __FileOpenDialog_FWD_DEFINED__
     __FileOpenDialog_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __FileOpenDialog_FWD_DEFINED__ *
   endif
   ifndef __FileSaveDialog_FWD_DEFINED__
     __FileSaveDialog_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __FileSaveDialog_FWD_DEFINED__ *
   endif
   ifndef __KnownFolderManager_FWD_DEFINED__
     __KnownFolderManager_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __KnownFolderManager_FWD_DEFINED__ *
   endif
   ifndef __SharingConfigurationManager_FWD_DEFINED__
     __SharingConfigurationManager_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __SharingConfigurationManager_FWD_DEFINED__ *
   endif
   ifndef __NetworkConnections_FWD_DEFINED__
     __NetworkConnections_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __NetworkConnections_FWD_DEFINED__ *
   endif
   ifndef __ScheduledTasks_FWD_DEFINED__
     __ScheduledTasks_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __ScheduledTasks_FWD_DEFINED__ *
   endif
   ifndef __ApplicationAssociationRegistration_FWD_DEFINED__
     __ApplicationAssociationRegistration_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __ApplicationAssociationRegistration_FWD_DEFINED__ *
   endif
   ifndef __SearchFolderItemFactory_FWD_DEFINED__
     __SearchFolderItemFactory_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __SearchFolderItemFactory_FWD_DEFINED__ *
   endif
   ifndef __OpenControlPanel_FWD_DEFINED__
     __OpenControlPanel_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __OpenControlPanel_FWD_DEFINED__ *
   endif
   ifndef __MailRecipient_FWD_DEFINED__
     __MailRecipient_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __MailRecipient_FWD_DEFINED__ *
   endif
   ifndef __NetworkExplorerFolder_FWD_DEFINED__
     __NetworkExplorerFolder_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __NetworkExplorerFolder_FWD_DEFINED__ *
   endif
   ifndef __DestinationList_FWD_DEFINED__
     __DestinationList_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __DestinationList_FWD_DEFINED__ *
   endif
   ifndef __ApplicationDestinations_FWD_DEFINED__
     __ApplicationDestinations_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __ApplicationDestinations_FWD_DEFINED__ *
   endif
   ifndef __ApplicationDocumentLists_FWD_DEFINED__
     __ApplicationDocumentLists_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __ApplicationDocumentLists_FWD_DEFINED__ *
   endif
   ifndef __HomeGroup_FWD_DEFINED__
     __HomeGroup_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __HomeGroup_FWD_DEFINED__ *
   endif
   ifndef __ShellLibrary_FWD_DEFINED__
     __ShellLibrary_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __ShellLibrary_FWD_DEFINED__ *
   endif
   ifndef __AppStartupLink_FWD_DEFINED__
     __AppStartupLink_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __AppStartupLink_FWD_DEFINED__ *
   endif
   ifndef __EnumerableObjectCollection_FWD_DEFINED__
     __EnumerableObjectCollection_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __EnumerableObjectCollection_FWD_DEFINED__ *
   endif
   ifndef __FrameworkInputPane_FWD_DEFINED__
     __FrameworkInputPane_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __FrameworkInputPane_FWD_DEFINED__ *
   endif
   ifndef __DefFolderMenu_FWD_DEFINED__
     __DefFolderMenu_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __DefFolderMenu_FWD_DEFINED__ *
   endif
   ifndef __AppVisibility_FWD_DEFINED__
     __AppVisibility_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __AppVisibility_FWD_DEFINED__ *
   endif
   ifndef __AppShellVerbHandler_FWD_DEFINED__
     __AppShellVerbHandler_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __AppShellVerbHandler_FWD_DEFINED__ *
   endif
   ifndef __ExecuteUnknown_FWD_DEFINED__
     __ExecuteUnknown_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __ExecuteUnknown_FWD_DEFINED__ *
   endif
   ifndef __PackageDebugSettings_FWD_DEFINED__
     __PackageDebugSettings_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __PackageDebugSettings_FWD_DEFINED__ *
   endif
   ifndef __SuspensionDependencyManager_FWD_DEFINED__
     __SuspensionDependencyManager_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __SuspensionDependencyManager_FWD_DEFINED__ *
   endif
   ifndef __ApplicationActivationManager_FWD_DEFINED__
     __ApplicationActivationManager_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __ApplicationActivationManager_FWD_DEFINED__ *
   endif
   ifndef __ApplicationDesignModeSettings_FWD_DEFINED__
     __ApplicationDesignModeSettings_FWD_DEFINED__ equ <>
     ifdef __cplusplus
       ;[...]
     else
-      ;* __cplusplus *
     endif
-    ;* __ApplicationDesignModeSettings_FWD_DEFINED__ *
   endif
   ifndef __IAssocHandlerInvoker_FWD_DEFINED__
     __IAssocHandlerInvoker_FWD_DEFINED__ equ <>
-    ;* __IAssocHandlerInvoker_FWD_DEFINED__ *
   endif
   ifndef __IAssocHandler_FWD_DEFINED__
     __IAssocHandler_FWD_DEFINED__ equ <>
-    ;* __IAssocHandler_FWD_DEFINED__ *
   endif
   ifndef __IEnumAssocHandlers_FWD_DEFINED__
     __IEnumAssocHandlers_FWD_DEFINED__ equ <>
-    ;* __IEnumAssocHandlers_FWD_DEFINED__ *
   endif
   ifndef __IDataObjectProvider_FWD_DEFINED__
     __IDataObjectProvider_FWD_DEFINED__ equ <>
-    ;* __IDataObjectProvider_FWD_DEFINED__ *
   endif
   ifndef __IDataTransferManagerInterop_FWD_DEFINED__
     __IDataTransferManagerInterop_FWD_DEFINED__ equ <>
-    ;* __IDataTransferManagerInterop_FWD_DEFINED__ *
   endif
   ifndef __IFrameworkInputPaneHandler_FWD_DEFINED__
     __IFrameworkInputPaneHandler_FWD_DEFINED__ equ <>
-    ;* __IFrameworkInputPaneHandler_FWD_DEFINED__ *
   endif
   ifndef __IFrameworkInputPane_FWD_DEFINED__
     __IFrameworkInputPane_FWD_DEFINED__ equ <>
-    ;* __IFrameworkInputPane_FWD_DEFINED__ *
   endif
   ifndef __IAppVisibilityEvents_FWD_DEFINED__
     __IAppVisibilityEvents_FWD_DEFINED__ equ <>
-    ;* __IAppVisibilityEvents_FWD_DEFINED__ *
   endif
   ifndef __IAppVisibility_FWD_DEFINED__
     __IAppVisibility_FWD_DEFINED__ equ <>
-    ;* __IAppVisibility_FWD_DEFINED__ *
   endif
   ifndef __IPackageExecutionStateChangeNotification_FWD_DEFINED__
     __IPackageExecutionStateChangeNotification_FWD_DEFINED__ equ <>
-    ;* __IPackageExecutionStateChangeNotification_FWD_DEFINED__ *
   endif
   ifndef __IPackageDebugSettings_FWD_DEFINED__
     __IPackageDebugSettings_FWD_DEFINED__ equ <>
-    ;* __IPackageDebugSettings_FWD_DEFINED__ *
   endif
   ifndef __IPackageDebugSettings2_FWD_DEFINED__
     __IPackageDebugSettings2_FWD_DEFINED__ equ <>
-    ;* __IPackageDebugSettings2_FWD_DEFINED__ *
   endif
   ifndef __ISuspensionDependencyManager_FWD_DEFINED__
     __ISuspensionDependencyManager_FWD_DEFINED__ equ <>
-    ;* __ISuspensionDependencyManager_FWD_DEFINED__ *
   endif
   ifndef __IExecuteCommandApplicationHostEnvironment_FWD_DEFINED__
     __IExecuteCommandApplicationHostEnvironment_FWD_DEFINED__ equ <>
-    ;* __IExecuteCommandApplicationHostEnvironment_FWD_DEFINED__ *
   endif
   ifndef __IExecuteCommandHost_FWD_DEFINED__
     __IExecuteCommandHost_FWD_DEFINED__ equ <>
-    ;* __IExecuteCommandHost_FWD_DEFINED__ *
   endif
   ifndef __IApplicationDesignModeSettings_FWD_DEFINED__
     __IApplicationDesignModeSettings_FWD_DEFINED__ equ <>
-    ;* __IApplicationDesignModeSettings_FWD_DEFINED__ *
   endif
   ifndef __IApplicationDesignModeSettings2_FWD_DEFINED__
     __IApplicationDesignModeSettings2_FWD_DEFINED__ equ <>
-    ;* __IApplicationDesignModeSettings2_FWD_DEFINED__ *
   endif
   ifndef __ILaunchTargetMonitor_FWD_DEFINED__
     __ILaunchTargetMonitor_FWD_DEFINED__ equ <>
-    ;* __ILaunchTargetMonitor_FWD_DEFINED__ *
   endif
   ifndef __ILaunchSourceViewSizePreference_FWD_DEFINED__
     __ILaunchSourceViewSizePreference_FWD_DEFINED__ equ <>
-    ;* __ILaunchSourceViewSizePreference_FWD_DEFINED__ *
   endif
   ifndef __ILaunchTargetViewSizePreference_FWD_DEFINED__
     __ILaunchTargetViewSizePreference_FWD_DEFINED__ equ <>
-    ;* __ILaunchTargetViewSizePreference_FWD_DEFINED__ *
   endif
   ifndef __ILaunchSourceAppUserModelId_FWD_DEFINED__
     __ILaunchSourceAppUserModelId_FWD_DEFINED__ equ <>
-    ;* __ILaunchSourceAppUserModelId_FWD_DEFINED__ *
   endif
   ifndef __IInitializeWithWindow_FWD_DEFINED__
     __IInitializeWithWindow_FWD_DEFINED__ equ <>
-    ;* __IInitializeWithWindow_FWD_DEFINED__ *
   endif
   ifndef __IHandlerInfo_FWD_DEFINED__
     __IHandlerInfo_FWD_DEFINED__ equ <>
-    ;* __IHandlerInfo_FWD_DEFINED__ *
   endif
   ifndef __IHandlerInfo2_FWD_DEFINED__
     __IHandlerInfo2_FWD_DEFINED__ equ <>
-    ;* __IHandlerInfo2_FWD_DEFINED__ *
   endif
   ifndef __IHandlerActivationHost_FWD_DEFINED__
     __IHandlerActivationHost_FWD_DEFINED__ equ <>
-    ;* __IHandlerActivationHost_FWD_DEFINED__ *
   endif
   ifndef __IAppActivationUIInfo_FWD_DEFINED__
     __IAppActivationUIInfo_FWD_DEFINED__ equ <>
-    ;* __IAppActivationUIInfo_FWD_DEFINED__ *
   endif
   ifndef __IContactManagerInterop_FWD_DEFINED__
     __IContactManagerInterop_FWD_DEFINED__ equ <>
-    ;* __IContactManagerInterop_FWD_DEFINED__ *
   endif
   ifndef __IShellIconOverlayIdentifier_FWD_DEFINED__
     __IShellIconOverlayIdentifier_FWD_DEFINED__ equ <>
-    ;* __IShellIconOverlayIdentifier_FWD_DEFINED__ *
   endif
   ifndef __IBannerNotificationHandler_FWD_DEFINED__
     __IBannerNotificationHandler_FWD_DEFINED__ equ <>
-    ;* __IBannerNotificationHandler_FWD_DEFINED__ *
   endif
   ifndef __ISortColumnArray_FWD_DEFINED__
     __ISortColumnArray_FWD_DEFINED__ equ <>
-    ;* __ISortColumnArray_FWD_DEFINED__ *
   endif
   ifndef __IPropertyKeyStore_FWD_DEFINED__
     __IPropertyKeyStore_FWD_DEFINED__ equ <>
-    ;* __IPropertyKeyStore_FWD_DEFINED__ *
   endif
-  ;* header files for imported files *
   include objidl.inc
   include shtypes.inc
   include servprov.inc
@@ -1195,8 +913,6 @@ ifndef __shobjidl_core_h__
   ifdef __cplusplus
     ;[...]
   endif
-  ;* interface __MIDL_itf_shobjidl_core_0000_0000 *
-  ;* [local] *
   include winapifamily.inc
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     include sherrors.inc
@@ -1213,84 +929,6 @@ ifndef __shobjidl_core_h__
         endm
       endif
     endif
-    ; SHSTDAPI
-    ; IContextMenu interface
-    ; [OverView]
-    ;  The shell uses the IContextMenu interface in following three cases.
-    ; case-1: The shell is loading context menu extensions.
-    ;   When the user clicks the right mouse button on an item within the shell's
-    ;  name space (i.g., file, directory, server, work-group, etc.), it creates
-    ;  the default context menu for its type, then loads context menu extensions
-    ;  that are registered for that type (and its base type) so that they can
-    ;  add extra menu items. Those context menu extensions are registered at
-    ;  HKCR\{ProgID}\shellex\ContextMenuHandlers.
-    ; case-2: The shell is retrieving a context menu of sub-folders in extended
-    ;   name-space.
-    ;   When the explorer's name space is extended by name space extensions,
-    ;  the shell calls their IShellFolder::GetUIObjectOf to get the IContextMenu
-    ;  objects when it creates context menus for folders under those extended
-    ;  name spaces.
-    ; case-3: The shell is loading non-default drag and drop handler for directories.
-    ;   When the user performed a non-default drag and drop onto one of file
-    ;  system folders (i.e., directories), it loads shell extensions that are
-    ;  registered at HKCR\{ProgID}\DragDropHandlers.
-    ; [Member functions]
-    ; IContextMenu::QueryContextMenu
-    ;   This member function may insert one or more menuitems to the specified
-    ;  menu (hmenu) at the specified location (indexMenu which is never be -1).
-    ;  The IDs of those menuitem must be in the specified range (idCmdFirst and
-    ;  idCmdLast). It returns the maximum menuitem ID offset (ushort) in the
-    ;  'code' field (low word) of the scode.
-    ;   The uFlags specify the context. It may have one or more of following
-    ;  flags.
-    ;  CMF_DEFAULTONLY: This flag is passed if the user is invoking the default
-    ;   action (typically by double-clicking, case 1 and 2 only). Context menu
-    ;   extensions (case 1) should not add any menu items, and returns S_OK.
-    ;  CMF_VERBSONLY: The explorer passes this flag if it is constructing
-    ;   a context menu for a short-cut object (case 1 and case 2 only). If this
-    ;   flag is passed, it should not add any menu-items that is not appropriate
-    ;   from a short-cut.
-    ;    A good example is the Delete menuitem, which confuses the user
-    ;   because it is not clear whether it deletes the link source item or the
-    ;   link itself.
-    ;  CMF_EXPLORER: The explorer passes this flag if it has the left-side pane
-    ;   (case 1 and 2 only). Context menu extensions should ignore this flag.
-    ;   High word (16-bit) are reserved for context specific communications
-    ;  and the rest of flags (13-bit) are reserved by the system.
-    ; IContextMenu::InvokeCommand
-    ;   This member is called when the user has selected one of menuitems that
-    ;  are inserted by previous QueryContextMenu member. In this case, the
-    ;  LOWORD(lpici->lpVerb) contains the menuitem ID offset (menuitem ID -
-    ;  idCmdFirst).
-    ;   This member function may also be called programmatically. In such a case,
-    ;  lpici->lpVerb specifies the canonical name of the command to be invoked,
-    ;  which is typically retrieved by GetCommandString member previously.
-    ;  Parameters in lpci:
-    ;    cbSize -- Specifies the size of this structure (sizeof(*lpci))
-    ;    hwnd   -- Specifies the owner window for any message/dialog box.
-    ;    fMask  -- Specifies whether or not dwHotkey/hIcon paramter is valid.
-    ;    lpVerb -- Specifies the command to be invoked.
-    ;    lpParameters -- Parameters (optional)
-    ;    lpDirectory  -- Working directory (optional)
-    ;    nShow -- Specifies the flag to be passed to ShowWindow (SW_*).
-    ;    dwHotKey -- Hot key to be assigned to the app after invoked (optional).
-    ;    hIcon -- Specifies the icon (optional).
-    ;    hMonitor -- Specifies the default monitor (optional).
-    ; IContextMenu::GetCommandString
-    ;   This member function is called by the explorer either to get the
-    ;  canonical (language independent) command name (uFlags == GCS_VERB) or
-    ;  the help text ((uFlags & GCS_HELPTEXT) != 0) for the specified command.
-    ;  The retrieved canonical string may be passed to its InvokeCommand
-    ;  member function to invoke a command programmatically. The explorer
-    ;  displays the help texts in its status bar; therefore, the length of
-    ;  the help text should be reasonably short (<40 characters).
-    ;  Parameters:
-    ;   idCmd -- Specifies menuitem ID offset (from idCmdFirst)
-    ;   uFlags -- Either GCS_VERB or GCS_HELPTEXT
-    ;   pwReserved -- Reserved (must pass NULL when calling, must ignore when called)
-    ;   pszName -- Specifies the string buffer.
-    ;   cchMax -- Specifies the size of the string buffer.
-    ; QueryContextMenu uFlags
     CMF_NORMAL equ 00000000h
     CMF_DEFAULTONLY equ 00000001h
     CMF_VERBSONLY equ 00000002h
@@ -1313,23 +951,14 @@ ifndef __shobjidl_core_h__
     CMF_SYNCCASCADEMENU equ 00001000h
     CMF_DONOTPICKDEFAULT equ 00002000h
     CMF_RESERVED equ 0ffff0000h
-    ; GetCommandString uFlags
-    GCS_VERBA equ 00000000h; canonical verb
-
-    GCS_HELPTEXTA equ 00000001h; help text (for status bar)
-
-    GCS_VALIDATEA equ 00000002h; validate command exists
-
-    GCS_VERBW equ 00000004h; canonical verb (unicode)
-
-    GCS_HELPTEXTW equ 00000005h; help text (unicode version)
-
-    GCS_VALIDATEW equ 00000006h; validate command exists (unicode)
-
-    GCS_VERBICONW equ 00000014h; icon string (unicode)
-
-    GCS_UNICODE equ 00000004h; for bit testing - Unicode string
-
+    GCS_VERBA equ 00000000h
+    GCS_HELPTEXTA equ 00000001h
+    GCS_VALIDATEA equ 00000002h
+    GCS_VERBW equ 00000004h
+    GCS_HELPTEXTW equ 00000005h
+    GCS_VALIDATEW equ 00000006h
+    GCS_VERBICONW equ 00000014h
+    GCS_UNICODE equ 00000004h
     ifdef UNICODE
       GCS_VERB equ <GCS_VERBW>
       GCS_HELPTEXT equ <GCS_HELPTEXTW>
@@ -1363,7 +992,6 @@ ifndef __shobjidl_core_h__
       CMIC_MASK_HASLINKNAME equ <SEE_MASK_HASLINKNAME>
       CMIC_MASK_HASTITLE equ <SEE_MASK_HASTITLE>
     endif
-    ; NTDDI_VISTA
     CMIC_MASK_FLAG_SEP_VDM equ <SEE_MASK_FLAG_SEPVDM>
     CMIC_MASK_ASYNCOK equ <SEE_MASK_ASYNCOK>
     if (NTDDI_VERSION ge NTDDI_VISTA)
@@ -1383,9 +1011,9 @@ ifndef __shobjidl_core_h__
       cbSize DWORD ?
       fMask DWORD ?
       hwnd HWND ?
-      lpVerb =POINTER ?
-      lpParameters =POINTER ?
-      lpDirectory =POINTER ?
+      lpVerb LPCSTR ?
+      lpParameters LPCSTR ?
+      lpDirectory LPCSTR ?
       nShow SDWORD ?
       dwHotKey DWORD ?
       hIcon HANDLE ?
@@ -1397,17 +1025,17 @@ ifndef __shobjidl_core_h__
       cbSize DWORD ?
       fMask DWORD ?
       hwnd HWND ?
-      lpVerb =POINTER ?
-      lpParameters =POINTER ?
-      lpDirectory =POINTER ?
+      lpVerb LPCSTR ?
+      lpParameters LPCSTR ?
+      lpDirectory LPCSTR ?
       nShow SDWORD ?
       dwHotKey DWORD ?
       hIcon HANDLE ?
-      lpTitle =POINTER ?
-      lpVerbW =POINTER ?
-      lpParametersW =POINTER ?
-      lpDirectoryW =POINTER ?
-      lpTitleW =POINTER ?
+      lpTitle LPCSTR ?
+      lpVerbW LPCWSTR ?
+      lpParametersW LPCWSTR ?
+      lpDirectoryW LPCWSTR ?
+      lpTitleW LPCWSTR ?
       ptInvoke POINT <>
     CMINVOKECOMMANDINFOEX ends
     _CMINVOKECOMMANDINFOEX typedef CMINVOKECOMMANDINFOEX
@@ -1417,27 +1045,25 @@ ifndef __shobjidl_core_h__
       cbSize DWORD ?
       fMask DWORD ?
       hwnd HWND ?
-      lpVerbString =POINTER ?
-      lpParameters =POINTER ?
-      lpDirectory =POINTER ?
+      lpVerbString LPCSTR ?
+      lpParameters LPCSTR ?
+      lpDirectory LPCSTR ?
       nShow SDWORD ?
       dwHotKey DWORD ?
-      lpTitle =POINTER ?
-      lpVerbWString =POINTER ?
-      lpParametersW =POINTER ?
-      lpDirectoryW =POINTER ?
-      lpTitleW =POINTER ?
+      lpTitle LPCSTR ?
+      lpVerbWString LPCWSTR ?
+      lpParametersW LPCWSTR ?
+      lpDirectoryW LPCWSTR ?
+      lpTitleW LPCWSTR ?
       ptInvoke POINT <>
-      lpVerbInt DWORD ?
-      lpVerbWInt DWORD ?
+      lpVerbInt UINT ?
+      lpVerbWInt UINT ?
     CMINVOKECOMMANDINFOEX_REMOTE ends
     include poppack.inc
     externdef __MIDL_itf_shobjidl_core_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IContextMenu_INTERFACE_DEFINED__
       __IContextMenu_INTERFACE_DEFINED__ equ <>
-      ;* interface IContextMenu *
-      ;* [object][unique][uuid] *
       externdef IID_IContextMenu:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -1446,32 +1072,16 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IContextMenuVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IContextMenu, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IContextMenu
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IContextMenu
           DECLSPEC_XFGVIRT(IContextMenu, QueryContextMenu)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
           STD_METHOD QueryContextMenu, :ptr IContextMenu, :HMENU, :UINT, :UINT, :UINT, :UINT
           DECLSPEC_XFGVIRT(IContextMenu, InvokeCommand)
-          ;* [local] *
-          ;* [annotation][in] *
           STD_METHOD InvokeCommand, :ptr IContextMenu, :ptr CMINVOKECOMMANDINFO
           DECLSPEC_XFGVIRT(IContextMenu, GetCommandString)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][out] *
-          ;* [annotation][in] *
           STD_METHOD GetCommandString, :ptr IContextMenu, :UINT_PTR, :UINT, :ptr UINT, :ptr CHAR, :UINT
           ??Interface equ <>
           END_INTERFACE
@@ -1482,31 +1092,19 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* [call_as] *
       IContextMenu_RemoteQueryContextMenu_Proxy proto WIN_STD_CALL_CONV :ptr IContextMenu, :HMENU, :UINT, :UINT, :UINT, :UINT, :ptr UINT, :ptr ptr HANDLE, :ptr ptr ULONG
-      ;* [size_is][size_is][out] *
       IContextMenu_RemoteQueryContextMenu_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-      ;* [call_as] *
       IContextMenu_RemoteInvokeCommand_Proxy proto WIN_STD_CALL_CONV :ptr IContextMenu, :ptr CMINVOKECOMMANDINFOEX_REMOTE
-      ;* [in] *
       IContextMenu_RemoteInvokeCommand_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-      ;* [call_as] *
       IContextMenu_RemoteGetCommandString_Proxy proto WIN_STD_CALL_CONV :ptr IContextMenu, :UINT_PTR, :UINT, :ptr UINT, :ptr CHAR, :UINT
-      ;* [in] *
       IContextMenu_RemoteGetCommandString_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-      ;* __IContextMenu_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0001 *
-    ;* [local] *
     LPCONTEXTMENU typedef ptr IContextMenu
     externdef __MIDL_itf_shobjidl_core_0000_0001_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0001_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IContextMenu2_INTERFACE_DEFINED__
       __IContextMenu2_INTERFACE_DEFINED__ equ <>
-      ;* interface IContextMenu2 *
-      ;* [object][unique][uuid] *
       externdef IID_IContextMenu2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -1515,38 +1113,18 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IContextMenu2Vtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IContextMenu2, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IContextMenu2
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IContextMenu2
           DECLSPEC_XFGVIRT(IContextMenu, QueryContextMenu)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
           STD_METHOD QueryContextMenu, :ptr IContextMenu2, :HMENU, :UINT, :UINT, :UINT, :UINT
           DECLSPEC_XFGVIRT(IContextMenu, InvokeCommand)
-          ;* [local] *
-          ;* [annotation][in] *
           STD_METHOD InvokeCommand, :ptr IContextMenu2, :ptr CMINVOKECOMMANDINFO
           DECLSPEC_XFGVIRT(IContextMenu, GetCommandString)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][out] *
-          ;* [annotation][in] *
           STD_METHOD GetCommandString, :ptr IContextMenu2, :UINT_PTR, :UINT, :ptr UINT, :ptr CHAR, :UINT
           DECLSPEC_XFGVIRT(IContextMenu2, HandleMenuMsg)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
           STD_METHOD HandleMenuMsg, :ptr IContextMenu2, :UINT, :WPARAM, :LPARAM
           ??Interface equ <>
           END_INTERFACE
@@ -1557,23 +1135,15 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* [call_as] *
       IContextMenu2_RemoteHandleMenuMsg_Proxy proto WIN_STD_CALL_CONV :ptr IContextMenu2, :UINT, :WPARAM, :LPARAM
-      ;* [in] *
       IContextMenu2_RemoteHandleMenuMsg_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-      ;* __IContextMenu2_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0002 *
-    ;* [local] *
     LPCONTEXTMENU2 typedef ptr IContextMenu2
     externdef __MIDL_itf_shobjidl_core_0000_0002_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0002_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IContextMenu3_INTERFACE_DEFINED__
       __IContextMenu3_INTERFACE_DEFINED__ equ <>
-      ;* interface IContextMenu3 *
-      ;* [object][unique][uuid] *
       externdef IID_IContextMenu3:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -1582,45 +1152,20 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IContextMenu3Vtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IContextMenu3, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IContextMenu3
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IContextMenu3
           DECLSPEC_XFGVIRT(IContextMenu, QueryContextMenu)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
           STD_METHOD QueryContextMenu, :ptr IContextMenu3, :HMENU, :UINT, :UINT, :UINT, :UINT
           DECLSPEC_XFGVIRT(IContextMenu, InvokeCommand)
-          ;* [local] *
-          ;* [annotation][in] *
           STD_METHOD InvokeCommand, :ptr IContextMenu3, :ptr CMINVOKECOMMANDINFO
           DECLSPEC_XFGVIRT(IContextMenu, GetCommandString)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][out] *
-          ;* [annotation][in] *
           STD_METHOD GetCommandString, :ptr IContextMenu3, :UINT_PTR, :UINT, :ptr UINT, :ptr CHAR, :UINT
           DECLSPEC_XFGVIRT(IContextMenu2, HandleMenuMsg)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
           STD_METHOD HandleMenuMsg, :ptr IContextMenu3, :UINT, :WPARAM, :LPARAM
           DECLSPEC_XFGVIRT(IContextMenu3, HandleMenuMsg2)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][out] *
           STD_METHOD HandleMenuMsg2, :ptr IContextMenu3, :UINT, :WPARAM, :LPARAM, :ptr LRESULT
           ??Interface equ <>
           END_INTERFACE
@@ -1631,23 +1176,15 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* [call_as] *
       IContextMenu3_RemoteHandleMenuMsg2_Proxy proto WIN_STD_CALL_CONV :ptr IContextMenu3, :UINT, :WPARAM, :LPARAM, :ptr LRESULT
-      ;* [out] *
       IContextMenu3_RemoteHandleMenuMsg2_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-      ;* __IContextMenu3_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0003 *
-    ;* [local] *
     LPCONTEXTMENU3 typedef ptr IContextMenu3
     externdef __MIDL_itf_shobjidl_core_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IExecuteCommand_INTERFACE_DEFINED__
       __IExecuteCommand_INTERFACE_DEFINED__ equ <>
-      ;* interface IExecuteCommand *
-      ;* [unique][object][uuid] *
       externdef IID_IExecuteCommand:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -1656,8 +1193,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IExecuteCommandVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IExecuteCommand, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IExecuteCommand
@@ -1665,22 +1200,16 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IExecuteCommand
           DECLSPEC_XFGVIRT(IExecuteCommand, SetKeyState)
           STD_METHOD SetKeyState, :ptr IExecuteCommand, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IExecuteCommand, SetParameters)
           STD_METHOD SetParameters, :ptr IExecuteCommand, :LPCWSTR
-          ;* [string][in] *
           DECLSPEC_XFGVIRT(IExecuteCommand, SetPosition)
           STD_METHOD SetPosition, :ptr IExecuteCommand, :POINT
-          ;* [in] *
           DECLSPEC_XFGVIRT(IExecuteCommand, SetShowWindow)
           STD_METHOD SetShowWindow, :ptr IExecuteCommand, :SDWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IExecuteCommand, SetNoShowUI)
           STD_METHOD SetNoShowUI, :ptr IExecuteCommand, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(IExecuteCommand, SetDirectory)
           STD_METHOD SetDirectory, :ptr IExecuteCommand, :LPCWSTR
-          ;* [string][in] *
           DECLSPEC_XFGVIRT(IExecuteCommand, Execute)
           STD_METHOD Execute, :ptr IExecuteCommand
           ??Interface equ <>
@@ -1692,14 +1221,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IExecuteCommand_INTERFACE_DEFINED__ *
     endif
     ifndef __IPersistFolder_INTERFACE_DEFINED__
       __IPersistFolder_INTERFACE_DEFINED__ equ <>
-      ;* interface IPersistFolder *
-      ;* [unique][uuid][object] *
       externdef IID_IPersistFolder:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -1708,8 +1233,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IPersistFolderVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IPersistFolder, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IPersistFolder
@@ -1717,10 +1240,8 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IPersistFolder
           DECLSPEC_XFGVIRT(IPersist, GetClassID)
           STD_METHOD GetClassID, :ptr IPersistFolder, :ptr CLSID
-          ;* [out] *
           DECLSPEC_XFGVIRT(IPersistFolder, Initialize)
           STD_METHOD Initialize, :ptr IPersistFolder, :PCIDLIST_ABSOLUTE
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IPersistFolderVtbl ends
@@ -1730,12 +1251,8 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IPersistFolder_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0005 *
-    ;* [local] *
     LPPERSISTFOLDER typedef ptr IPersistFolder
     IRTIR_TASK_NOT_RUNNING equ 0
     IRTIR_TASK_RUNNING equ 1
@@ -1746,8 +1263,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0005_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IRunnableTask_INTERFACE_DEFINED__
       __IRunnableTask_INTERFACE_DEFINED__ equ <>
-      ;* interface IRunnableTask *
-      ;* [local][object][uuid] *
       externdef IID_IRunnableTask:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -1756,8 +1271,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IRunnableTaskVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IRunnableTask, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IRunnableTask
@@ -1766,7 +1279,6 @@ ifndef __shobjidl_core_h__
           DECLSPEC_XFGVIRT(IRunnableTask, Run)
           STD_METHOD Run, :ptr IRunnableTask
           DECLSPEC_XFGVIRT(IRunnableTask, Kill)
-          ;* [annotation][in] *
           STD_METHOD Kill_, :ptr IRunnableTask, :BOOL
           DECLSPEC_XFGVIRT(IRunnableTask, Suspend)
           STD_METHOD Suspend, :ptr IRunnableTask
@@ -1783,34 +1295,23 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IRunnableTask_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0006 *
-    ;* [local] *
     TOID_NULL equ <GUID_NULL>
     ITSAT_DEFAULT_LPARAM equ (- 1)
     ITSAT_DEFAULT_PRIORITY equ 10000000h
     ITSAT_MAX_PRIORITY equ 7fffffffh
     ITSAT_MIN_PRIORITY equ 00000000h
-    ITSSFLAG_COMPLETE_ON_DESTROY equ 0000h; wait for the current task to complete before deleting the scheduler
-
-    ITSSFLAG_KILL_ON_DESTROY equ 0001h; kill the current task (if there is one) when the task scheduler is deleted
-
+    ITSSFLAG_COMPLETE_ON_DESTROY equ 0000h
+    ITSSFLAG_KILL_ON_DESTROY equ 0001h
     ITSSFLAG_FLAGS_MASK equ 0003h
-    ITSS_THREAD_DESTROY_DEFAULT_TIMEOUT equ (10 * 1000); default milliseconds until a sleeping worker thread is released
-
-    ITSS_THREAD_TERMINATE_TIMEOUT equ <(INFINITE)>; set sleeping worker threads to never be released
-
-    ITSS_THREAD_TIMEOUT_NO_CHANGE equ (INFINITE - 1); no change to the thread timeout
-
+    ITSS_THREAD_DESTROY_DEFAULT_TIMEOUT equ (10 * 1000)
+    ITSS_THREAD_TERMINATE_TIMEOUT equ <(INFINITE)>
+    ITSS_THREAD_TIMEOUT_NO_CHANGE equ (INFINITE - 1)
     externdef __MIDL_itf_shobjidl_core_0000_0006_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0006_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IShellTaskScheduler_INTERFACE_DEFINED__
       __IShellTaskScheduler_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellTaskScheduler *
-      ;* [local][object][uuid] *
       externdef IID_IShellTaskScheduler:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -1819,30 +1320,18 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellTaskSchedulerVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellTaskScheduler, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellTaskScheduler
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellTaskScheduler
           DECLSPEC_XFGVIRT(IShellTaskScheduler, AddTask)
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
           STD_METHOD AddTask, :ptr IShellTaskScheduler, :ptr IRunnableTask, :REFTASKOWNERID, :DWORD_PTR, :DWORD
           DECLSPEC_XFGVIRT(IShellTaskScheduler, RemoveTasks)
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
           STD_METHOD RemoveTasks, :ptr IShellTaskScheduler, :REFTASKOWNERID, :DWORD_PTR, :BOOL
           DECLSPEC_XFGVIRT(IShellTaskScheduler, CountTasks)
-          ;* [annotation][in] *
           STD_METHOD CountTasks, :ptr IShellTaskScheduler, :REFTASKOWNERID
           DECLSPEC_XFGVIRT(IShellTaskScheduler, Status)
-          ;* [annotation][in] *
-          ;* [annotation][in] *
           STD_METHOD Status, :ptr IShellTaskScheduler, :DWORD, :DWORD
           ??Interface equ <>
           END_INTERFACE
@@ -1853,19 +1342,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellTaskScheduler_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0007 *
-    ;* [local] *
     SID_ShellTaskScheduler equ <IID_IShellTaskScheduler>
     externdef __MIDL_itf_shobjidl_core_0000_0007_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0007_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IPersistFolder2_INTERFACE_DEFINED__
       __IPersistFolder2_INTERFACE_DEFINED__ equ <>
-      ;* interface IPersistFolder2 *
-      ;* [unique][uuid][object] *
       externdef IID_IPersistFolder2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -1874,8 +1357,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IPersistFolder2Vtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IPersistFolder2, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IPersistFolder2
@@ -1883,13 +1364,10 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IPersistFolder2
           DECLSPEC_XFGVIRT(IPersist, GetClassID)
           STD_METHOD GetClassID, :ptr IPersistFolder2, :ptr CLSID
-          ;* [out] *
           DECLSPEC_XFGVIRT(IPersistFolder, Initialize)
           STD_METHOD Initialize, :ptr IPersistFolder2, :PCIDLIST_ABSOLUTE
-          ;* [in] *
           DECLSPEC_XFGVIRT(IPersistFolder2, GetCurFolder)
           STD_METHOD GetCurFolder, :ptr IPersistFolder2, :ptr PIDLIST_ABSOLUTE
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IPersistFolder2Vtbl ends
@@ -1899,18 +1377,14 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IPersistFolder2_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0008 *
-    ;* [local] *
     CSIDL_FLAG_PFTI_TRACKTARGET equ <CSIDL_FLAG_DONT_VERIFY>
     include pshpack8.inc
     PERSIST_FOLDER_TARGET_INFO struct
       pidlTargetFolder PIDLIST_ABSOLUTE ?
-      szTargetParsingName WORD 260 dup (?)
-      szNetworkProvider WORD 260 dup (?)
+      szTargetParsingName WCHAR 260 dup (?)
+      szNetworkProvider WCHAR 260 dup (?)
       dwAttributes DWORD ?
       csidl SDWORD ?
     PERSIST_FOLDER_TARGET_INFO ends
@@ -1920,8 +1394,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0008_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IPersistFolder3_INTERFACE_DEFINED__
       __IPersistFolder3_INTERFACE_DEFINED__ equ <>
-      ;* interface IPersistFolder3 *
-      ;* [unique][uuid][object] *
       externdef IID_IPersistFolder3:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -1930,8 +1402,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IPersistFolder3Vtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IPersistFolder3, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IPersistFolder3
@@ -1939,21 +1409,14 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IPersistFolder3
           DECLSPEC_XFGVIRT(IPersist, GetClassID)
           STD_METHOD GetClassID, :ptr IPersistFolder3, :ptr CLSID
-          ;* [out] *
           DECLSPEC_XFGVIRT(IPersistFolder, Initialize)
           STD_METHOD Initialize, :ptr IPersistFolder3, :PCIDLIST_ABSOLUTE
-          ;* [in] *
           DECLSPEC_XFGVIRT(IPersistFolder2, GetCurFolder)
           STD_METHOD GetCurFolder, :ptr IPersistFolder3, :ptr PIDLIST_ABSOLUTE
-          ;* [out] *
           DECLSPEC_XFGVIRT(IPersistFolder3, InitializeEx)
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD InitializeEx, :ptr IPersistFolder3, :ptr IBindCtx, :PCIDLIST_ABSOLUTE, :ptr PERSIST_FOLDER_TARGET_INFO
-          ;* [unique][in] *
           DECLSPEC_XFGVIRT(IPersistFolder3, GetFolderTargetInfo)
           STD_METHOD GetFolderTargetInfo, :ptr IPersistFolder3, :ptr PERSIST_FOLDER_TARGET_INFO
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IPersistFolder3Vtbl ends
@@ -1963,19 +1426,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IPersistFolder3_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0009 *
-    ;* [local] *
     if (NTDDI_VERSION ge NTDDI_WINXP) or (_WIN32_IE ge _WIN32_IE_IE70)
       externdef __MIDL_itf_shobjidl_core_0000_0009_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IPersistIDList_INTERFACE_DEFINED__
         __IPersistIDList_INTERFACE_DEFINED__ equ <>
-        ;* interface IPersistIDList *
-        ;* [unique][uuid][object] *
         externdef IID_IPersistIDList:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -1984,8 +1441,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IPersistIDListVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IPersistIDList, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IPersistIDList
@@ -1993,13 +1448,10 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IPersistIDList
             DECLSPEC_XFGVIRT(IPersist, GetClassID)
             STD_METHOD GetClassID, :ptr IPersistIDList, :ptr CLSID
-            ;* [out] *
             DECLSPEC_XFGVIRT(IPersistIDList, SetIDList)
             STD_METHOD SetIDList, :ptr IPersistIDList, :PCIDLIST_ABSOLUTE
-            ;* [in] *
             DECLSPEC_XFGVIRT(IPersistIDList, GetIDList)
             STD_METHOD GetIDList, :ptr IPersistIDList, :ptr PIDLIST_ABSOLUTE
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IPersistIDListVtbl ends
@@ -2009,20 +1461,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IPersistIDList_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0010 *
-      ;* [local] *
     endif
-    ; NTDDI_WINXP|| (_WIN32_IE >= _WIN32_IE_IE70)
     externdef __MIDL_itf_shobjidl_core_0000_0010_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0010_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IEnumIDList_INTERFACE_DEFINED__
       __IEnumIDList_INTERFACE_DEFINED__ equ <>
-      ;* interface IEnumIDList *
-      ;* [unique][object][uuid] *
       externdef IID_IEnumIDList:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2031,27 +1476,19 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IEnumIDListVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IEnumIDList, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IEnumIDList
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IEnumIDList
           DECLSPEC_XFGVIRT(IEnumIDList, Next)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][length_is][size_is][out] *
-          ;* [annotation][out] *
           STD_METHOD Next, :ptr IEnumIDList, :ULONG, :ptr PITEMID_CHILD, :ptr ULONG
           DECLSPEC_XFGVIRT(IEnumIDList, Skip)
           STD_METHOD Skip, :ptr IEnumIDList, :ULONG
-          ;* [in] *
           DECLSPEC_XFGVIRT(IEnumIDList, Reset)
           STD_METHOD Reset, :ptr IEnumIDList
           DECLSPEC_XFGVIRT(IEnumIDList, Clone)
           STD_METHOD Clone, :ptr IEnumIDList, :ptr ptr IEnumIDList
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IEnumIDListVtbl ends
@@ -2061,23 +1498,15 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* [call_as] *
       IEnumIDList_RemoteNext_Proxy proto WIN_STD_CALL_CONV :ptr IEnumIDList, :ULONG, :ptr PITEMID_CHILD, :ptr ULONG
-      ;* [out] *
       IEnumIDList_RemoteNext_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-      ;* __IEnumIDList_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0011 *
-    ;* [local] *
     LPENUMIDLIST typedef ptr IEnumIDList
     externdef __MIDL_itf_shobjidl_core_0000_0011_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0011_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IEnumFullIDList_INTERFACE_DEFINED__
       __IEnumFullIDList_INTERFACE_DEFINED__ equ <>
-      ;* interface IEnumFullIDList *
-      ;* [unique][object][uuid] *
       externdef IID_IEnumFullIDList:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2086,27 +1515,19 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IEnumFullIDListVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IEnumFullIDList, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IEnumFullIDList
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IEnumFullIDList
           DECLSPEC_XFGVIRT(IEnumFullIDList, Next)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][length_is][size_is][out] *
-          ;* [annotation][out] *
           STD_METHOD Next, :ptr IEnumFullIDList, :ULONG, :ptr PIDLIST_ABSOLUTE, :ptr ULONG
           DECLSPEC_XFGVIRT(IEnumFullIDList, Skip)
           STD_METHOD Skip, :ptr IEnumFullIDList, :ULONG
-          ;* [in] *
           DECLSPEC_XFGVIRT(IEnumFullIDList, Reset)
           STD_METHOD Reset, :ptr IEnumFullIDList
           DECLSPEC_XFGVIRT(IEnumFullIDList, Clone)
           STD_METHOD Clone, :ptr IEnumFullIDList, :ptr ptr IEnumFullIDList
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IEnumFullIDListVtbl ends
@@ -2116,17 +1537,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* [call_as] *
       IEnumFullIDList_RemoteNext_Proxy proto WIN_STD_CALL_CONV :ptr IEnumFullIDList, :ULONG, :ptr PIDLIST_ABSOLUTE, :ptr ULONG
-      ;* [out] *
       IEnumFullIDList_RemoteNext_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-      ;* __IEnumFullIDList_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0012 *
-    ;* [local] *
-    ;* [v1_enum] *
     _SHGDNF typedef SDWORD
     SHGDN_NORMAL equ 0
     SHGDN_INFOLDER equ 1h
@@ -2135,7 +1549,6 @@ ifndef __shobjidl_core_h__
     SHGDN_FORPARSING equ 8000h
 
     SHGDNF typedef DWORD
-    ;* [v1_enum] *
     _SHCONTF typedef SDWORD
     SHCONTF_CHECKING_FOR_CHILDREN equ 10h
     SHCONTF_FOLDERS equ 20h
@@ -2156,77 +1569,43 @@ ifndef __shobjidl_core_h__
     SHCIDS_CANONICALONLY equ 10000000h
     SHCIDS_BITMASK equ 0FFFF0000h
     SHCIDS_COLUMNMASK equ 0000FFFFh
-    SFGAO_CANCOPY equ <DROPEFFECT_COPY>; Objects can be copied    (0x1)
-
-    SFGAO_CANMOVE equ <DROPEFFECT_MOVE>; Objects can be moved     (0x2)
-
-    SFGAO_CANLINK equ <DROPEFFECT_LINK>; Objects can be linked    (0x4)
-
-    SFGAO_STORAGE equ 00000008h; supports BindToObject(IID_IStorage)
-
-    SFGAO_CANRENAME equ 00000010h; Objects can be renamed
-
-    SFGAO_CANDELETE equ 00000020h; Objects can be deleted
-
-    SFGAO_HASPROPSHEET equ 00000040h; Objects have property sheets
-
-    SFGAO_DROPTARGET equ 00000100h; Objects are drop target
-
+    SFGAO_CANCOPY equ <DROPEFFECT_COPY>
+    SFGAO_CANMOVE equ <DROPEFFECT_MOVE>
+    SFGAO_CANLINK equ <DROPEFFECT_LINK>
+    SFGAO_STORAGE equ 00000008h
+    SFGAO_CANRENAME equ 00000010h
+    SFGAO_CANDELETE equ 00000020h
+    SFGAO_HASPROPSHEET equ 00000040h
+    SFGAO_DROPTARGET equ 00000100h
     SFGAO_CAPABILITYMASK equ 00000177h
-    SFGAO_PLACEHOLDER equ 00000800h; File or folder is not fully present and recalled on open or access
-
-    SFGAO_SYSTEM equ 00001000h; System object
-
-    SFGAO_ENCRYPTED equ 00002000h; Object is encrypted (use alt color)
-
-    SFGAO_ISSLOW equ 00004000h; 'Slow' object
-
-    SFGAO_GHOSTED equ 00008000h; Ghosted icon
-
-    SFGAO_LINK equ 00010000h; Shortcut (link)
-
-    SFGAO_SHARE equ 00020000h; Shared
-
-    SFGAO_READONLY equ 00040000h; Read-only
-
-    SFGAO_HIDDEN equ 00080000h; Hidden object
-
+    SFGAO_PLACEHOLDER equ 00000800h
+    SFGAO_SYSTEM equ 00001000h
+    SFGAO_ENCRYPTED equ 00002000h
+    SFGAO_ISSLOW equ 00004000h
+    SFGAO_GHOSTED equ 00008000h
+    SFGAO_LINK equ 00010000h
+    SFGAO_SHARE equ 00020000h
+    SFGAO_READONLY equ 00040000h
+    SFGAO_HIDDEN equ 00080000h
     SFGAO_DISPLAYATTRMASK equ 000FC000h
-    SFGAO_FILESYSANCESTOR equ 10000000h; May contain children with SFGAO_FILESYSTEM
-
-    SFGAO_FOLDER equ 20000000h; Support BindToObject(IID_IShellFolder)
-
-    SFGAO_FILESYSTEM equ 40000000h; Is a win32 file system object (file/folder/root)
-
-    SFGAO_HASSUBFOLDER equ 80000000h; May contain children with SFGAO_FOLDER (may be slow)
-
+    SFGAO_FILESYSANCESTOR equ 10000000h
+    SFGAO_FOLDER equ 20000000h
+    SFGAO_FILESYSTEM equ 40000000h
+    SFGAO_HASSUBFOLDER equ 80000000h
     SFGAO_CONTENTSMASK equ 80000000h
-    SFGAO_VALIDATE equ 01000000h; Invalidate cached information (may be slow)
-
-    SFGAO_REMOVABLE equ 02000000h; Is this removeable media?
-
-    SFGAO_COMPRESSED equ 04000000h; Object is compressed (use alt color)
-
-    SFGAO_BROWSABLE equ 08000000h; Supports IShellFolder, but only implements CreateViewObject() (non-folder view)
-
-    SFGAO_NONENUMERATED equ 00100000h; Is a non-enumerated object (should be hidden)
-
-    SFGAO_NEWCONTENT equ 00200000h; Should show bold in explorer tree
-
-    SFGAO_CANMONIKER equ 00400000h; Obsolete
-
-    SFGAO_HASSTORAGE equ 00400000h; Obsolete
-
-    SFGAO_STREAM equ 00400000h; Supports BindToObject(IID_IStream)
-
-    SFGAO_STORAGEANCESTOR equ 00800000h; May contain children with SFGAO_STORAGE or SFGAO_STREAM
-
-    SFGAO_STORAGECAPMASK equ 70C50008h; For determining storage capabilities, ie for open/save semantics
-
-    SFGAO_PKEYSFGAOMASK equ 81044000h; Attributes that are masked out for PKEY_SFGAOFlags because they are considered to cause slow calculations or lack context (SFGAO_VALIDATE | SFGAO_ISSLOW | SFGAO_HASSUBFOLDER and others)
-
+    SFGAO_VALIDATE equ 01000000h
+    SFGAO_REMOVABLE equ 02000000h
+    SFGAO_COMPRESSED equ 04000000h
+    SFGAO_BROWSABLE equ 08000000h
+    SFGAO_NONENUMERATED equ 00100000h
+    SFGAO_NEWCONTENT equ 00200000h
+    SFGAO_CANMONIKER equ 00400000h
+    SFGAO_HASSTORAGE equ 00400000h
+    SFGAO_STREAM equ 00400000h
+    SFGAO_STORAGEANCESTOR equ 00800000h
+    SFGAO_STORAGECAPMASK equ 70C50008h
+    SFGAO_PKEYSFGAOMASK equ 81044000h
     SFGAOF typedef ULONG
-    ;* [v1_enum] *
     SYNC_TRANSFER_STATUS typedef SDWORD
     STS_NONE equ 0
     STS_NEEDSUPLOAD equ 1h
@@ -2242,14 +1621,12 @@ ifndef __shobjidl_core_h__
     STS_PLACEHOLDER_IFEMPTY equ 400h
 
     DEFINE_ENUM_FLAG_OPERATORS(SYNC_TRANSFER_STATUS)
-    ;* [v1_enum] *
     STORAGE_PROVIDER_FILE_FLAGS typedef SDWORD
     SPFF_NONE equ 0
     SPFF_DOWNLOAD_BY_DEFAULT equ 1h
     SPFF_CREATED_ON_THIS_DEVICE equ 2h
 
     DEFINE_ENUM_FLAG_OPERATORS(STORAGE_PROVIDER_FILE_FLAGS)
-    ;* [v1_enum] *
     PLACEHOLDER_STATES typedef SDWORD
     PS_NONE equ 0
     PS_MARKED_FOR_OFFLINE_AVAILABILITY equ 1h
@@ -2261,7 +1638,6 @@ ifndef __shobjidl_core_h__
 
     DEFINE_ENUM_FLAG_OPERATORS(PLACEHOLDER_STATES)
     CONFLICT_RESOLUTION_CLSID_KEY equ <L("ConflictResolutionCLSID")>
-    ;* [v1_enum] *
     MERGE_UPDATE_STATUS typedef SDWORD
     MUS_COMPLETE equ 0
     MUS_USERINPUTNEEDED equ
@@ -2271,8 +1647,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0012_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IFileSyncMergeHandler_INTERFACE_DEFINED__
       __IFileSyncMergeHandler_INTERFACE_DEFINED__ equ <>
-      ;* interface IFileSyncMergeHandler *
-      ;* [unique][object][uuid] *
       externdef IID_IFileSyncMergeHandler:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2281,22 +1655,15 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IFileSyncMergeHandlerVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IFileSyncMergeHandler, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IFileSyncMergeHandler
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IFileSyncMergeHandler
           DECLSPEC_XFGVIRT(IFileSyncMergeHandler, Merge)
-          ;* [string][in] *
-          ;* [string][in] *
           STD_METHOD Merge, :ptr IFileSyncMergeHandler, :LPCWSTR, :LPCWSTR, :ptr MERGE_UPDATE_STATUS
-          ;* [retval][out] *
           DECLSPEC_XFGVIRT(IFileSyncMergeHandler, ShowResolveConflictUIAsync)
-          ;* [in] *
           STD_METHOD ShowResolveConflictUIAsync, :ptr IFileSyncMergeHandler, :LPCWSTR, :HMONITOR
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IFileSyncMergeHandlerVtbl ends
@@ -2306,12 +1673,8 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IFileSyncMergeHandler_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0013 *
-    ;* [local] *
     STR_BIND_FORCE_FOLDER_SHORTCUT_RESOLVE equ <L("Force Folder Shortcut Resolve")>
     STR_AVOID_DRIVE_RESTRICTION_POLICY equ <L("Avoid Drive Restriction Policy")>
     STR_AVOID_DRIVE_RESTRICTION_POLICY equ <L("Avoid Drive Restriction Policy")>
@@ -2333,15 +1696,12 @@ ifndef __shobjidl_core_h__
       STR_PARSE_DONT_REQUIRE_VALIDATED_URLS equ <L("Do not require validated URLs")>
       STR_INTERNETFOLDER_PARSE_ONLY_URLMON_BINDABLE equ <L("Validate URL")>
     endif
-    ; _WIN32_IE >= 0x0700
     if (NTDDI_VERSION ge NTDDI_WIN8)
       BIND_INTERRUPTABLE equ 0FFFFFFFFh
     endif
-    ; NTDDI_WIN8
     if (NTDDI_VERSION ge NTDDI_WIN7)
       STR_BIND_FOLDERS_READ_ONLY equ <L("Folders As Read Only")>
       STR_BIND_FOLDER_ENUM_MODE equ <L("Folder Enum Mode")>
-      ;* [v1_enum] *
       FOLDER_ENUM_MODE typedef SDWORD
       FEM_VIEWRESULT equ 0
       FEM_NAVIGATION equ 1
@@ -2350,8 +1710,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0013_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IObjectWithFolderEnumMode_INTERFACE_DEFINED__
         __IObjectWithFolderEnumMode_INTERFACE_DEFINED__ equ <>
-        ;* interface IObjectWithFolderEnumMode *
-        ;* [unique][object][uuid] *
         externdef IID_IObjectWithFolderEnumMode:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2360,8 +1718,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IObjectWithFolderEnumModeVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IObjectWithFolderEnumMode, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IObjectWithFolderEnumMode
@@ -2369,10 +1725,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IObjectWithFolderEnumMode
             DECLSPEC_XFGVIRT(IObjectWithFolderEnumMode, SetMode)
             STD_METHOD SetMode, :ptr IObjectWithFolderEnumMode, :FOLDER_ENUM_MODE
-            ;* [in] *
             DECLSPEC_XFGVIRT(IObjectWithFolderEnumMode, GetMode)
             STD_METHOD GetMode, :ptr IObjectWithFolderEnumMode, :ptr FOLDER_ENUM_MODE
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IObjectWithFolderEnumModeVtbl ends
@@ -2382,12 +1736,8 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IObjectWithFolderEnumMode_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0014 *
-      ;* [local] *
       STR_PARSE_WITH_EXPLICIT_PROGID equ <L("ExplicitProgid")>
       STR_PARSE_WITH_EXPLICIT_ASSOCAPP equ <L("ExplicitAssociationApp")>
       STR_PARSE_EXPLICIT_ASSOCIATION_SUCCESSFUL equ <L("ExplicitAssociationSuccessful")>
@@ -2399,8 +1749,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0014_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IParseAndCreateItem_INTERFACE_DEFINED__
         __IParseAndCreateItem_INTERFACE_DEFINED__ equ <>
-        ;* interface IParseAndCreateItem *
-        ;* [local][unique][uuid][object] *
         externdef IID_IParseAndCreateItem:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2409,8 +1757,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IParseAndCreateItemVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IParseAndCreateItem, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IParseAndCreateItem
@@ -2418,11 +1764,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IParseAndCreateItem
             DECLSPEC_XFGVIRT(IParseAndCreateItem, SetItem)
             STD_METHOD SetItem, :ptr IParseAndCreateItem, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IParseAndCreateItem, GetItem)
-            ;* [in] *
             STD_METHOD GetItem, :ptr IParseAndCreateItem, :REFIID, :ptr ptr
-            ;* [iid_is][out] *
             ??Interface equ <>
             END_INTERFACE
           IParseAndCreateItemVtbl ends
@@ -2432,21 +1775,14 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IParseAndCreateItem_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0015 *
-      ;* [local] *
       STR_ITEM_CACHE_CONTEXT equ <L("ItemCacheContext")>
     endif
-    ; NTDDI_VERSION >= NTDDI_WIN7
     externdef __MIDL_itf_shobjidl_core_0000_0015_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0015_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IShellFolder_INTERFACE_DEFINED__
       __IShellFolder_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellFolder *
-      ;* [unique][object][uuid] *
       externdef IID_IShellFolder:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2455,73 +1791,30 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellFolderVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellFolder, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellFolder
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellFolder
           DECLSPEC_XFGVIRT(IShellFolder, ParseDisplayName)
-          ;* [unique][in] *
-          ;* [unique][in] *
-          ;* [string][in] *
-          ;* [annotation][unique][out][in] *
-          ;* [out] *
           STD_METHOD ParseDisplayName, :ptr IShellFolder, :HWND, :ptr IBindCtx, :LPWSTR, :ptr ULONG, :ptr PIDLIST_RELATIVE, :ptr ULONG
-          ;* [unique][out][in] *
           DECLSPEC_XFGVIRT(IShellFolder, EnumObjects)
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD EnumObjects, :ptr IShellFolder, :HWND, :SHCONTF, :ptr ptr IEnumIDList
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellFolder, BindToObject)
-          ;* [in] *
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD BindToObject, :ptr IShellFolder, :PCUIDLIST_RELATIVE, :ptr IBindCtx, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellFolder, BindToStorage)
-          ;* [in] *
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD BindToStorage, :ptr IShellFolder, :PCUIDLIST_RELATIVE, :ptr IBindCtx, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellFolder, CompareIDs)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD CompareIDs, :ptr IShellFolder, :LPARAM, :PCUIDLIST_RELATIVE, :PCUIDLIST_RELATIVE
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellFolder, CreateViewObject)
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD CreateViewObject, :ptr IShellFolder, :HWND, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellFolder, GetAttributesOf)
-          ;* [in] *
-          ;* [unique][size_is][in] *
           STD_METHOD GetAttributesOf, :ptr IShellFolder, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr SFGAOF
-          ;* [out][in] *
           DECLSPEC_XFGVIRT(IShellFolder, GetUIObjectOf)
-          ;* [unique][in] *
-          ;* [in] *
-          ;* [unique][size_is][in] *
-          ;* [in] *
-          ;* [annotation][unique][out][in] *
           STD_METHOD GetUIObjectOf, :ptr IShellFolder, :HWND, :UINT, :PCUITEMID_CHILD_ARRAY, :REFIID, :ptr UINT, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellFolder, GetDisplayNameOf)
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD GetDisplayNameOf, :ptr IShellFolder, :PCUITEMID_CHILD, :SHGDNF, :ptr STRRET
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellFolder, SetNameOf)
-          ;* [local] *
-          ;* [annotation][unique][in] *
-          ;* [annotation][in] *
-          ;* [annotation][string][in] *
-          ;* [annotation][in] *
-          ;* [annotation][out] *
           STD_METHOD SetNameOf, :ptr IShellFolder, :HWND, :PCUITEMID_CHILD, :LPCWSTR, :SHGDNF, :ptr PITEMID_CHILD
           ??Interface equ <>
           END_INTERFACE
@@ -2532,29 +1825,21 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* [call_as] *
       IShellFolder_RemoteSetNameOf_Proxy proto WIN_STD_CALL_CONV :ptr IShellFolder, :HWND, :PCUITEMID_CHILD, :LPCWSTR, :SHGDNF, :ptr PITEMID_CHILD
-      ;* [out] *
       IShellFolder_RemoteSetNameOf_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-      ;* __IShellFolder_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0016 *
-    ;* [local] *
     LPSHELLFOLDER typedef ptr IShellFolder
     EXTRASEARCH struct
       guidSearch GUID <>
-      wszFriendlyName WORD 80 dup (?)
-      wszUrl WORD 2084 dup (?)
+      wszFriendlyName WCHAR 80 dup (?)
+      wszUrl WCHAR 2084 dup (?)
     EXTRASEARCH ends
     LPEXTRASEARCH typedef ptr EXTRASEARCH
     externdef __MIDL_itf_shobjidl_core_0000_0016_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0016_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IEnumExtraSearch_INTERFACE_DEFINED__
       __IEnumExtraSearch_INTERFACE_DEFINED__ equ <>
-      ;* interface IEnumExtraSearch *
-      ;* [unique][object][uuid] *
       externdef IID_IEnumExtraSearch:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2563,26 +1848,19 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IEnumExtraSearchVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IEnumExtraSearch, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IEnumExtraSearch
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IEnumExtraSearch
           DECLSPEC_XFGVIRT(IEnumExtraSearch, Next)
-          ;* [in] *
-          ;* [length_is][size_is][out] *
           STD_METHOD Next, :ptr IEnumExtraSearch, :ULONG, :ptr EXTRASEARCH, :ptr ULONG
-          ;* [out] *
           DECLSPEC_XFGVIRT(IEnumExtraSearch, Skip)
           STD_METHOD Skip, :ptr IEnumExtraSearch, :ULONG
-          ;* [in] *
           DECLSPEC_XFGVIRT(IEnumExtraSearch, Reset)
           STD_METHOD Reset, :ptr IEnumExtraSearch
           DECLSPEC_XFGVIRT(IEnumExtraSearch, Clone)
           STD_METHOD Clone, :ptr IEnumExtraSearch, :ptr ptr IEnumExtraSearch
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IEnumExtraSearchVtbl ends
@@ -2592,19 +1870,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IEnumExtraSearch_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0017 *
-    ;* [local] *
     LPENUMEXTRASEARCH typedef ptr IEnumExtraSearch
     externdef __MIDL_itf_shobjidl_core_0000_0017_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0017_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IShellFolder2_INTERFACE_DEFINED__
       __IShellFolder2_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellFolder2 *
-      ;* [unique][object][uuid] *
       externdef IID_IShellFolder2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -2613,103 +1885,45 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellFolder2Vtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellFolder2, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellFolder2
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellFolder2
           DECLSPEC_XFGVIRT(IShellFolder, ParseDisplayName)
-          ;* [unique][in] *
-          ;* [unique][in] *
-          ;* [string][in] *
-          ;* [annotation][unique][out][in] *
-          ;* [out] *
           STD_METHOD ParseDisplayName, :ptr IShellFolder2, :HWND, :ptr IBindCtx, :LPWSTR, :ptr ULONG, :ptr PIDLIST_RELATIVE, :ptr ULONG
-          ;* [unique][out][in] *
           DECLSPEC_XFGVIRT(IShellFolder, EnumObjects)
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD EnumObjects, :ptr IShellFolder2, :HWND, :SHCONTF, :ptr ptr IEnumIDList
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellFolder, BindToObject)
-          ;* [in] *
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD BindToObject, :ptr IShellFolder2, :PCUIDLIST_RELATIVE, :ptr IBindCtx, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellFolder, BindToStorage)
-          ;* [in] *
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD BindToStorage, :ptr IShellFolder2, :PCUIDLIST_RELATIVE, :ptr IBindCtx, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellFolder, CompareIDs)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD CompareIDs, :ptr IShellFolder2, :LPARAM, :PCUIDLIST_RELATIVE, :PCUIDLIST_RELATIVE
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellFolder, CreateViewObject)
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD CreateViewObject, :ptr IShellFolder2, :HWND, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellFolder, GetAttributesOf)
-          ;* [in] *
-          ;* [unique][size_is][in] *
           STD_METHOD GetAttributesOf, :ptr IShellFolder2, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr SFGAOF
-          ;* [out][in] *
           DECLSPEC_XFGVIRT(IShellFolder, GetUIObjectOf)
-          ;* [unique][in] *
-          ;* [in] *
-          ;* [unique][size_is][in] *
-          ;* [in] *
-          ;* [annotation][unique][out][in] *
           STD_METHOD GetUIObjectOf, :ptr IShellFolder2, :HWND, :UINT, :PCUITEMID_CHILD_ARRAY, :REFIID, :ptr UINT, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellFolder, GetDisplayNameOf)
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD GetDisplayNameOf, :ptr IShellFolder2, :PCUITEMID_CHILD, :SHGDNF, :ptr STRRET
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellFolder, SetNameOf)
-          ;* [local] *
-          ;* [annotation][unique][in] *
-          ;* [annotation][in] *
-          ;* [annotation][string][in] *
-          ;* [annotation][in] *
-          ;* [annotation][out] *
           STD_METHOD SetNameOf, :ptr IShellFolder2, :HWND, :PCUITEMID_CHILD, :LPCWSTR, :SHGDNF, :ptr PITEMID_CHILD
           DECLSPEC_XFGVIRT(IShellFolder2, GetDefaultSearchGUID)
           STD_METHOD GetDefaultSearchGUID, :ptr IShellFolder2, :ptr GUID
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellFolder2, EnumSearches)
           STD_METHOD EnumSearches, :ptr IShellFolder2, :ptr ptr IEnumExtraSearch
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellFolder2, GetDefaultColumn)
-          ;* [in] *
-          ;* [out] *
           STD_METHOD GetDefaultColumn, :ptr IShellFolder2, :DWORD, :ptr ULONG, :ptr ULONG
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellFolder2, GetDefaultColumnState)
-          ;* [in] *
           STD_METHOD GetDefaultColumnState, :ptr IShellFolder2, :UINT, :ptr SHCOLSTATEF
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellFolder2, GetDetailsEx)
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD GetDetailsEx, :ptr IShellFolder2, :PCUITEMID_CHILD, :ptr SHCOLUMNID, :ptr VARIANT
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellFolder2, GetDetailsOf)
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD GetDetailsOf, :ptr IShellFolder2, :PCUITEMID_CHILD, :UINT, :ptr SHELLDETAILS
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellFolder2, MapColumnToSCID)
-          ;* [in] *
           STD_METHOD MapColumnToSCID, :ptr IShellFolder2, :UINT, :ptr SHCOLUMNID
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IShellFolder2Vtbl ends
@@ -2719,13 +1933,8 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellFolder2_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0018 *
-    ;* [local] *
-    ;* [v1_enum] *
     FOLDERFLAGS typedef SDWORD
     FWF_NONE equ 0
     FWF_AUTOARRANGE equ 1h
@@ -2762,7 +1971,6 @@ ifndef __shobjidl_core_h__
     FWF_ALLOWRTLREADING equ 80000000h
 
     DEFINE_ENUM_FLAG_OPERATORS(FOLDERFLAGS)
-    ;* [v1_enum] *
     FOLDERVIEWMODE typedef SDWORD
     FVM_AUTO equ -1
     FVM_FIRST equ 1
@@ -2777,7 +1985,6 @@ ifndef __shobjidl_core_h__
     FVM_LAST equ 8
 
     if (NTDDI_VERSION ge NTDDI_VISTA)
-      ;* [v1_enum] *
       FOLDERLOGICALVIEWMODE typedef SDWORD
       FLVM_UNSPECIFIED equ -1
       FLVM_FIRST equ 1
@@ -2789,15 +1996,13 @@ ifndef __shobjidl_core_h__
       FLVM_LAST equ 5
 
     endif
-    ; NTDDI_VISTA
     FOLDERSETTINGS struct
-      ViewMode DWORD ?
-      fFlags DWORD ?
+      ViewMode UINT ?
+      fFlags UINT ?
     FOLDERSETTINGS ends
     LPFOLDERSETTINGS typedef ptr FOLDERSETTINGS
     LPCFOLDERSETTINGS typedef ptr FOLDERSETTINGS
     PFOLDERSETTINGS typedef ptr FOLDERSETTINGS
-    ;* [v1_enum] *
     _SVSIF typedef SDWORD
     SVSI_DESELECT equ 0
     SVSI_SELECT equ 1h
@@ -2813,10 +2018,8 @@ ifndef __shobjidl_core_h__
     SVSI_KEYBOARDSELECT equ 401h
     SVSI_NOTAKEFOCUS equ 40000000h
 
-    SVSI_NOSTATECHANGE equ (80000000h); work around the use of the high bit that results in 4245: signed/unsigned mismatch
-
+    SVSI_NOSTATECHANGE equ (80000000h)
     SVSIF typedef UINT
-    ;* [v1_enum] *
     _SVGIO typedef SDWORD
     SVGIO_BACKGROUND equ 0
     SVGIO_SELECTION equ 1h
@@ -2827,7 +2030,6 @@ ifndef __shobjidl_core_h__
 
     DEFINE_ENUM_FLAG_OPERATORS(_SVGIO)
     SVGIO typedef SDWORD
-    ;* [v1_enum] *
     SVUIA_STATUS typedef SDWORD
     SVUIA_DEACTIVATE equ 0
     SVUIA_ACTIVATE_NOFOCUS equ 1
@@ -2840,17 +2042,13 @@ ifndef __shobjidl_core_h__
     ifdef _NEVER_
       LPFNSVADDPROPSHEETPAGE typedef LPARAM
     else
-    ;!_NEVER_
       include prsht.inc
       LPFNSVADDPROPSHEETPAGE typedef LPFNADDPROPSHEETPAGE
     endif
-    ;_NEVER_
     externdef __MIDL_itf_shobjidl_core_0000_0018_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0018_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IShellView_INTERFACE_DEFINED__
       __IShellView_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellView *
-      ;* [unique][object][uuid] *
       LPSHELLVIEW typedef ptr IShellView
       externdef IID_IShellView:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -2860,60 +2058,37 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellViewVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellView, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellView
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellView
           DECLSPEC_XFGVIRT(IOleWindow, GetWindow)
-          ;* [input_sync] *
           STD_METHOD GetWindow, :ptr IShellView, :ptr HWND
-          ;* [out] *
           DECLSPEC_XFGVIRT(IOleWindow, ContextSensitiveHelp)
           STD_METHOD ContextSensitiveHelp, :ptr IShellView, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellView, TranslateAccelerator)
           STD_METHOD TranslateAccelerator, :ptr IShellView, :ptr MSG
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellView, EnableModeless)
           STD_METHOD EnableModeless, :ptr IShellView, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellView, UIActivate)
           STD_METHOD UIActivate, :ptr IShellView, :UINT
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellView, Refresh)
           STD_METHOD Refresh, :ptr IShellView
           DECLSPEC_XFGVIRT(IShellView, CreateViewWindow)
-          ;* [unique][in] *
-          ;* [in] *
-          ;* [in] *
-          ;* [in] *
           STD_METHOD CreateViewWindow, :ptr IShellView, :ptr IShellView, :LPCFOLDERSETTINGS, :ptr IShellBrowser, :ptr RECT, :ptr HWND
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellView, DestroyViewWindow)
           STD_METHOD DestroyViewWindow, :ptr IShellView
           DECLSPEC_XFGVIRT(IShellView, GetCurrentInfo)
           STD_METHOD GetCurrentInfo, :ptr IShellView, :LPFOLDERSETTINGS
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellView, AddPropertySheetPages)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
           STD_METHOD AddPropertySheetPages, :ptr IShellView, :DWORD, :LPFNSVADDPROPSHEETPAGE, :LPARAM
           DECLSPEC_XFGVIRT(IShellView, SaveViewState)
           STD_METHOD SaveViewState, :ptr IShellView
           DECLSPEC_XFGVIRT(IShellView, SelectItem)
-          ;* [unique][in] *
           STD_METHOD SelectItem, :ptr IShellView, :PCUITEMID_CHILD, :SVSIF
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellView, GetItemObject)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetItemObject, :ptr IShellView, :UINT, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           ??Interface equ <>
           END_INTERFACE
         IShellViewVtbl ends
@@ -2923,14 +2098,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellView_INTERFACE_DEFINED__ *
     endif
     ifndef __IShellView2_INTERFACE_DEFINED__
       __IShellView2_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellView2 *
-      ;* [unique][object][uuid] *
       SHELLVIEWID typedef GUID
       SV2GV_CURRENTVIEW equ (- 1)
       SV2GV_DEFAULTVIEW equ (- 2)
@@ -2955,75 +2126,45 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellView2Vtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellView2, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellView2
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellView2
           DECLSPEC_XFGVIRT(IOleWindow, GetWindow)
-          ;* [input_sync] *
           STD_METHOD GetWindow, :ptr IShellView2, :ptr HWND
-          ;* [out] *
           DECLSPEC_XFGVIRT(IOleWindow, ContextSensitiveHelp)
           STD_METHOD ContextSensitiveHelp, :ptr IShellView2, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellView, TranslateAccelerator)
           STD_METHOD TranslateAccelerator, :ptr IShellView2, :ptr MSG
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellView, EnableModeless)
           STD_METHOD EnableModeless, :ptr IShellView2, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellView, UIActivate)
           STD_METHOD UIActivate, :ptr IShellView2, :UINT
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellView, Refresh)
           STD_METHOD Refresh, :ptr IShellView2
           DECLSPEC_XFGVIRT(IShellView, CreateViewWindow)
-          ;* [unique][in] *
-          ;* [in] *
-          ;* [in] *
-          ;* [in] *
           STD_METHOD CreateViewWindow, :ptr IShellView2, :ptr IShellView, :LPCFOLDERSETTINGS, :ptr IShellBrowser, :ptr RECT, :ptr HWND
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellView, DestroyViewWindow)
           STD_METHOD DestroyViewWindow, :ptr IShellView2
           DECLSPEC_XFGVIRT(IShellView, GetCurrentInfo)
           STD_METHOD GetCurrentInfo, :ptr IShellView2, :LPFOLDERSETTINGS
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellView, AddPropertySheetPages)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
           STD_METHOD AddPropertySheetPages, :ptr IShellView2, :DWORD, :LPFNSVADDPROPSHEETPAGE, :LPARAM
           DECLSPEC_XFGVIRT(IShellView, SaveViewState)
           STD_METHOD SaveViewState, :ptr IShellView2
           DECLSPEC_XFGVIRT(IShellView, SelectItem)
-          ;* [unique][in] *
           STD_METHOD SelectItem, :ptr IShellView2, :PCUITEMID_CHILD, :SVSIF
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellView, GetItemObject)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetItemObject, :ptr IShellView2, :UINT, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellView2, GetView)
-          ;* [out][in] *
           STD_METHOD GetView, :ptr IShellView2, :ptr SHELLVIEWID, :ULONG
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellView2, CreateViewWindow2)
           STD_METHOD CreateViewWindow2, :ptr IShellView2, :LPSV2CVW2_PARAMS
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellView2, HandleRename)
           STD_METHOD HandleRename, :ptr IShellView2, :PCUITEMID_CHILD
-          ;* [unique][in] *
           DECLSPEC_XFGVIRT(IShellView2, SelectAndPositionItem)
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD SelectAndPositionItem, :ptr IShellView2, :PCUITEMID_CHILD, :UINT, :ptr POINT
-          ;* [unique][in] *
           ??Interface equ <>
           END_INTERFACE
         IShellView2Vtbl ends
@@ -3033,20 +2174,14 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellView2_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0020 *
-    ;* [local] *
     ifdef _FIX_ENABLEMODELESS_CONFLICT
     endif
     externdef __MIDL_itf_shobjidl_core_0000_0020_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0020_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IFolderView_INTERFACE_DEFINED__
       __IFolderView_INTERFACE_DEFINED__ equ <>
-      ;* interface IFolderView *
-      ;* [unique][object][uuid] *
       externdef IID_IFolderView:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3055,8 +2190,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IFolderViewVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IFolderView, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IFolderView
@@ -3064,55 +2197,32 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IFolderView
           DECLSPEC_XFGVIRT(IFolderView, GetCurrentViewMode)
           STD_METHOD GetCurrentViewMode, :ptr IFolderView, :ptr UINT
-          ;* [out] *
           DECLSPEC_XFGVIRT(IFolderView, SetCurrentViewMode)
           STD_METHOD SetCurrentViewMode, :ptr IFolderView, :UINT
-          ;* [in] *
           DECLSPEC_XFGVIRT(IFolderView, GetFolder)
-          ;* [in] *
           STD_METHOD GetFolder, :ptr IFolderView, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IFolderView, Item)
-          ;* [in] *
           STD_METHOD Item, :ptr IFolderView, :SDWORD, :ptr PITEMID_CHILD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IFolderView, ItemCount)
-          ;* [in] *
           STD_METHOD ItemCount, :ptr IFolderView, :UINT, :ptr SDWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IFolderView, Items)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD Items, :ptr IFolderView, :UINT, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IFolderView, GetSelectionMarkedItem)
           STD_METHOD GetSelectionMarkedItem, :ptr IFolderView, :ptr SDWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IFolderView, GetFocusedItem)
           STD_METHOD GetFocusedItem, :ptr IFolderView, :ptr SDWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IFolderView, GetItemPosition)
-          ;* [in] *
           STD_METHOD GetItemPosition, :ptr IFolderView, :PCUITEMID_CHILD, :ptr POINT
-          ;* [out] *
           DECLSPEC_XFGVIRT(IFolderView, GetSpacing)
           STD_METHOD GetSpacing, :ptr IFolderView, :ptr POINT
-          ;* [unique][out][in] *
           DECLSPEC_XFGVIRT(IFolderView, GetDefaultSpacing)
           STD_METHOD GetDefaultSpacing, :ptr IFolderView, :ptr POINT
-          ;* [out] *
           DECLSPEC_XFGVIRT(IFolderView, GetAutoArrange)
           STD_METHOD GetAutoArrange, :ptr IFolderView
           DECLSPEC_XFGVIRT(IFolderView, SelectItem)
-          ;* [in] *
           STD_METHOD SelectItem, :ptr IFolderView, :SDWORD, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IFolderView, SelectAndPositionItems)
-          ;* [in] *
-          ;* [size_is][in] *
-          ;* [size_is][unique][in][disable_consistency_check] *
           STD_METHOD SelectAndPositionItems, :ptr IFolderView, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr POINT, :DWORD
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IFolderViewVtbl ends
@@ -3122,29 +2232,21 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IFolderView_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0021 *
-    ;* [local] *
-    SID_SFolderView equ <IID_IFolderView>; folder view, usually IFolderView
-
+    SID_SFolderView equ <IID_IFolderView>
     if (NTDDI_VERSION ge NTDDI_VISTA) or (_WIN32_IE ge _WIN32_IE_IE70)
       ifndef NO_SHOBJIDL_SORTDIRECTION
-        ;* [v1_enum] *
         tagSORTDIRECTION typedef SDWORD
         SORT_DESCENDING equ -1
         SORT_ASCENDING equ 1
 
       endif
-      ; NO_SHOBJIDL_SORTDIRECTION
       SORTDIRECTION typedef SDWORD
       SORTCOLUMN struct
         propkey PROPERTYKEY <>
         direction SORTDIRECTION ?
       SORTCOLUMN ends
-      ;* [v1_enum] *
       FVTEXTTYPE typedef SDWORD
       FVST_EMPTYTEXT equ 0
 
@@ -3156,8 +2258,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0021_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IFolderView2_INTERFACE_DEFINED__
         __IFolderView2_INTERFACE_DEFINED__ equ <>
-        ;* interface IFolderView2 *
-        ;* [unique][object][uuid] *
         externdef IID_IFolderView2:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -3166,8 +2266,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IFolderView2Vtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IFolderView2, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IFolderView2
@@ -3175,146 +2273,78 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IFolderView2
             DECLSPEC_XFGVIRT(IFolderView, GetCurrentViewMode)
             STD_METHOD GetCurrentViewMode, :ptr IFolderView2, :ptr UINT
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView, SetCurrentViewMode)
             STD_METHOD SetCurrentViewMode, :ptr IFolderView2, :UINT
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFolderView, GetFolder)
-            ;* [in] *
             STD_METHOD GetFolder, :ptr IFolderView2, :REFIID, :ptr ptr
-            ;* [iid_is][out] *
             DECLSPEC_XFGVIRT(IFolderView, Item)
-            ;* [in] *
             STD_METHOD Item, :ptr IFolderView2, :SDWORD, :ptr PITEMID_CHILD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView, ItemCount)
-            ;* [in] *
             STD_METHOD ItemCount, :ptr IFolderView2, :UINT, :ptr SDWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView, Items)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD Items, :ptr IFolderView2, :UINT, :REFIID, :ptr ptr
-            ;* [iid_is][out] *
             DECLSPEC_XFGVIRT(IFolderView, GetSelectionMarkedItem)
             STD_METHOD GetSelectionMarkedItem, :ptr IFolderView2, :ptr SDWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView, GetFocusedItem)
             STD_METHOD GetFocusedItem, :ptr IFolderView2, :ptr SDWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView, GetItemPosition)
-            ;* [in] *
             STD_METHOD GetItemPosition, :ptr IFolderView2, :PCUITEMID_CHILD, :ptr POINT
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView, GetSpacing)
             STD_METHOD GetSpacing, :ptr IFolderView2, :ptr POINT
-            ;* [unique][out][in] *
             DECLSPEC_XFGVIRT(IFolderView, GetDefaultSpacing)
             STD_METHOD GetDefaultSpacing, :ptr IFolderView2, :ptr POINT
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView, GetAutoArrange)
             STD_METHOD GetAutoArrange, :ptr IFolderView2
             DECLSPEC_XFGVIRT(IFolderView, SelectItem)
-            ;* [in] *
             STD_METHOD SelectItem, :ptr IFolderView2, :SDWORD, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFolderView, SelectAndPositionItems)
-            ;* [in] *
-            ;* [size_is][in] *
-            ;* [size_is][unique][in][disable_consistency_check] *
             STD_METHOD SelectAndPositionItems, :ptr IFolderView2, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr POINT, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFolderView2, SetGroupBy)
-            ;* [in] *
             STD_METHOD SetGroupBy, :ptr IFolderView2, :REFPROPERTYKEY, :BOOL
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFolderView2, GetGroupBy)
-            ;* [local] *
-            ;* [annotation][out] *
-            ;* [annotation][out] *
             STD_METHOD GetGroupBy, :ptr IFolderView2, :ptr PROPERTYKEY, :ptr BOOL
             DECLSPEC_XFGVIRT(IFolderView2, SetViewProperty)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD SetViewProperty, :ptr IFolderView2, :PCUITEMID_CHILD, :REFPROPERTYKEY, :REFPROPVARIANT
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFolderView2, GetViewProperty)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD GetViewProperty, :ptr IFolderView2, :PCUITEMID_CHILD, :REFPROPERTYKEY, :ptr PROPVARIANT
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView2, SetTileViewProperties)
-            ;* [in] *
             STD_METHOD SetTileViewProperties, :ptr IFolderView2, :PCUITEMID_CHILD, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFolderView2, SetExtendedTileViewProperties)
-            ;* [in] *
             STD_METHOD SetExtendedTileViewProperties, :ptr IFolderView2, :PCUITEMID_CHILD, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFolderView2, SetText)
-            ;* [in] *
             STD_METHOD SetText, :ptr IFolderView2, :FVTEXTTYPE, :LPCWSTR
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFolderView2, SetCurrentFolderFlags)
-            ;* [in] *
             STD_METHOD SetCurrentFolderFlags, :ptr IFolderView2, :DWORD, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFolderView2, GetCurrentFolderFlags)
             STD_METHOD GetCurrentFolderFlags, :ptr IFolderView2, :ptr DWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView2, GetSortColumnCount)
             STD_METHOD GetSortColumnCount, :ptr IFolderView2, :ptr SDWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView2, SetSortColumns)
-            ;* [size_is][in] *
             STD_METHOD SetSortColumns, :ptr IFolderView2, :ptr SORTCOLUMN, :SDWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFolderView2, GetSortColumns)
-            ;* [size_is][out] *
             STD_METHOD GetSortColumns, :ptr IFolderView2, :ptr SORTCOLUMN, :SDWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFolderView2, GetItem)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD GetItem, :ptr IFolderView2, :SDWORD, :REFIID, :ptr ptr
-            ;* [iid_is][out] *
             DECLSPEC_XFGVIRT(IFolderView2, GetVisibleItem)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD GetVisibleItem, :ptr IFolderView2, :SDWORD, :BOOL, :ptr SDWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView2, GetSelectedItem)
-            ;* [in] *
             STD_METHOD GetSelectedItem, :ptr IFolderView2, :SDWORD, :ptr SDWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView2, GetSelection)
-            ;* [in] *
             STD_METHOD GetSelection, :ptr IFolderView2, :BOOL, :ptr ptr IShellItemArray
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView2, GetSelectionState)
-            ;* [in] *
             STD_METHOD GetSelectionState, :ptr IFolderView2, :PCUITEMID_CHILD, :ptr DWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView2, InvokeVerbOnSelection)
             STD_METHOD InvokeVerbOnSelection, :ptr IFolderView2, :LPCSTR
-            ;* [string][unique][in] *
             DECLSPEC_XFGVIRT(IFolderView2, SetViewModeAndIconSize)
-            ;* [in] *
             STD_METHOD SetViewModeAndIconSize, :ptr IFolderView2, :FOLDERVIEWMODE, :SDWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFolderView2, GetViewModeAndIconSize)
-            ;* [out] *
             STD_METHOD GetViewModeAndIconSize, :ptr IFolderView2, :ptr FOLDERVIEWMODE, :ptr SDWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView2, SetGroupSubsetCount)
             STD_METHOD SetGroupSubsetCount, :ptr IFolderView2, :UINT
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFolderView2, GetGroupSubsetCount)
             STD_METHOD GetGroupSubsetCount, :ptr IFolderView2, :ptr UINT
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFolderView2, SetRedraw)
             STD_METHOD SetRedraw, :ptr IFolderView2, :BOOL
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFolderView2, IsMoveInSameFolder)
             STD_METHOD IsMoveInSameFolder, :ptr IFolderView2
             DECLSPEC_XFGVIRT(IFolderView2, DoRename)
@@ -3328,23 +2358,15 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* [call_as] *
         IFolderView2_RemoteGetGroupBy_Proxy proto WIN_STD_CALL_CONV :ptr IFolderView2, :ptr PROPERTYKEY, :ptr BOOL
-        ;* [out] *
         IFolderView2_RemoteGetGroupBy_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-        ;* __IFolderView2_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0022 *
-      ;* [local] *
       if (NTDDI_VERSION ge NTDDI_VISTA)
         externdef __MIDL_itf_shobjidl_core_0000_0022_v0_0_c_ifspec:RPC_IF_HANDLE
         externdef __MIDL_itf_shobjidl_core_0000_0022_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IFolderViewSettings_INTERFACE_DEFINED__
           __IFolderViewSettings_INTERFACE_DEFINED__ equ <>
-          ;* interface IFolderViewSettings *
-          ;* [object][uuid] *
           externdef IID_IFolderViewSettings:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -3353,39 +2375,25 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <IFolderViewSettingsVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IFolderViewSettings, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IFolderViewSettings
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IFolderViewSettings
               DECLSPEC_XFGVIRT(IFolderViewSettings, GetColumnPropertyList)
-              ;* [in] *
               STD_METHOD GetColumnPropertyList, :ptr IFolderViewSettings, :REFIID, :ptr ptr
-              ;* [iid_is][out] *
               DECLSPEC_XFGVIRT(IFolderViewSettings, GetGroupByProperty)
-              ;* [out] *
               STD_METHOD GetGroupByProperty, :ptr IFolderViewSettings, :ptr PROPERTYKEY, :ptr BOOL
-              ;* [out] *
               DECLSPEC_XFGVIRT(IFolderViewSettings, GetViewMode)
               STD_METHOD GetViewMode, :ptr IFolderViewSettings, :ptr FOLDERLOGICALVIEWMODE
-              ;* [out] *
               DECLSPEC_XFGVIRT(IFolderViewSettings, GetIconSize)
               STD_METHOD GetIconSize, :ptr IFolderViewSettings, :ptr UINT
-              ;* [out] *
               DECLSPEC_XFGVIRT(IFolderViewSettings, GetFolderFlags)
-              ;* [out] *
               STD_METHOD GetFolderFlags, :ptr IFolderViewSettings, :ptr FOLDERFLAGS, :ptr FOLDERFLAGS
-              ;* [out] *
               DECLSPEC_XFGVIRT(IFolderViewSettings, GetSortColumns)
-              ;* [length_is][size_is][out] *
-              ;* [in] *
               STD_METHOD GetSortColumns, :ptr IFolderViewSettings, :ptr SORTCOLUMN, :UINT, :ptr UINT
-              ;* [out] *
               DECLSPEC_XFGVIRT(IFolderViewSettings, GetGroupSubsetCount)
               STD_METHOD GetGroupSubsetCount, :ptr IFolderViewSettings, :ptr UINT
-              ;* [out] *
               ??Interface equ <>
               END_INTERFACE
             IFolderViewSettingsVtbl ends
@@ -3395,14 +2403,10 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IFolderViewSettings_INTERFACE_DEFINED__ *
         endif
         ifndef __IInitializeNetworkFolder_INTERFACE_DEFINED__
           __IInitializeNetworkFolder_INTERFACE_DEFINED__ equ <>
-          ;* interface IInitializeNetworkFolder *
-          ;* [unique][uuid][object] *
           externdef IID_IInitializeNetworkFolder:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -3411,20 +2415,13 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <IInitializeNetworkFolderVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IInitializeNetworkFolder, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IInitializeNetworkFolder
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IInitializeNetworkFolder
               DECLSPEC_XFGVIRT(IInitializeNetworkFolder, Initialize)
-              ;* [unique][in] *
-              ;* [unique][in] *
-              ;* [in] *
-              ;* [string][unique][in] *
               STD_METHOD Initialize, :ptr IInitializeNetworkFolder, :PCIDLIST_ABSOLUTE, :PCIDLIST_ABSOLUTE, :UINT, :LPCWSTR, :LPCWSTR
-              ;* [string][unique][in] *
               ??Interface equ <>
               END_INTERFACE
             IInitializeNetworkFolderVtbl ends
@@ -3434,14 +2431,10 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IInitializeNetworkFolder_INTERFACE_DEFINED__ *
         endif
         ifndef __INetworkFolderInternal_INTERFACE_DEFINED__
           __INetworkFolderInternal_INTERFACE_DEFINED__ equ <>
-          ;* interface INetworkFolderInternal *
-          ;* [unique][uuid][object] *
           externdef IID_INetworkFolderInternal:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -3450,8 +2443,6 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <INetworkFolderInternalVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr INetworkFolderInternal, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr INetworkFolderInternal
@@ -3459,16 +2450,10 @@ ifndef __shobjidl_core_h__
               STD_METHOD Release, :ptr INetworkFolderInternal
               DECLSPEC_XFGVIRT(INetworkFolderInternal, GetResourceDisplayType)
               STD_METHOD GetResourceDisplayType, :ptr INetworkFolderInternal, :ptr UINT
-              ;* [out] *
               DECLSPEC_XFGVIRT(INetworkFolderInternal, GetIDList)
               STD_METHOD GetIDList, :ptr INetworkFolderInternal, :ptr PIDLIST_ABSOLUTE
-              ;* [out] *
               DECLSPEC_XFGVIRT(INetworkFolderInternal, GetProvider)
-              ;* [in] *
-              ;* [unique][size_is][in] *
-              ;* [in] *
               STD_METHOD GetProvider, :ptr INetworkFolderInternal, :UINT, :PCUITEMID_CHILD_ARRAY, :UINT, :LPWSTR
-              ;* [size_is][out] *
               ??Interface equ <>
               END_INTERFACE
             INetworkFolderInternalVtbl ends
@@ -3478,23 +2463,15 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __INetworkFolderInternal_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0025 *
-        ;* [local] *
       endif
-      ; NTDDI_VISTA
     endif
-    ; (_WIN32_IE >= _WIN32_IE_IE70)
     if (_WIN32_IE ge _WIN32_IE_IE70)
       externdef __MIDL_itf_shobjidl_core_0000_0025_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0025_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IPreviewHandlerVisuals_INTERFACE_DEFINED__
         __IPreviewHandlerVisuals_INTERFACE_DEFINED__ equ <>
-        ;* interface IPreviewHandlerVisuals *
-        ;* [unique][uuid][object] *
         externdef IID_IPreviewHandlerVisuals:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -3503,8 +2480,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IPreviewHandlerVisualsVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IPreviewHandlerVisuals, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IPreviewHandlerVisuals
@@ -3512,13 +2487,10 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IPreviewHandlerVisuals
             DECLSPEC_XFGVIRT(IPreviewHandlerVisuals, SetBackgroundColor)
             STD_METHOD SetBackgroundColor, :ptr IPreviewHandlerVisuals, :COLORREF
-            ;* [in] *
             DECLSPEC_XFGVIRT(IPreviewHandlerVisuals, SetFont)
             STD_METHOD SetFont, :ptr IPreviewHandlerVisuals, :ptr LOGFONTW
-            ;* [in] *
             DECLSPEC_XFGVIRT(IPreviewHandlerVisuals, SetTextColor)
             STD_METHOD SetTextColor, :ptr IPreviewHandlerVisuals, :COLORREF
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IPreviewHandlerVisualsVtbl ends
@@ -3528,14 +2500,9 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IPreviewHandlerVisuals_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0026 *
-      ;* [local] *
     endif
-    ; _WIN32_IE_IE70
     CDBOSC_SETFOCUS equ 00000000h
     CDBOSC_KILLFOCUS equ 00000001h
     CDBOSC_SELCHANGE equ 00000002h
@@ -3545,8 +2512,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0026_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ICommDlgBrowser_INTERFACE_DEFINED__
       __ICommDlgBrowser_INTERFACE_DEFINED__ equ <>
-      ;* interface ICommDlgBrowser *
-      ;* [unique][object][uuid] *
       externdef IID_ICommDlgBrowser:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3555,8 +2520,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <ICommDlgBrowserVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr ICommDlgBrowser, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr ICommDlgBrowser
@@ -3564,15 +2527,10 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr ICommDlgBrowser
           DECLSPEC_XFGVIRT(ICommDlgBrowser, OnDefaultCommand)
           STD_METHOD OnDefaultCommand, :ptr ICommDlgBrowser, :ptr IShellView
-          ;* [in] *
           DECLSPEC_XFGVIRT(ICommDlgBrowser, OnStateChange)
-          ;* [in] *
           STD_METHOD OnStateChange, :ptr ICommDlgBrowser, :ptr IShellView, :ULONG
-          ;* [in] *
           DECLSPEC_XFGVIRT(ICommDlgBrowser, IncludeObject)
-          ;* [unique][in] *
           STD_METHOD IncludeObject, :ptr ICommDlgBrowser, :ptr IShellView, :PCUITEMID_CHILD
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         ICommDlgBrowserVtbl ends
@@ -3582,12 +2540,8 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ICommDlgBrowser_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0027 *
-    ;* [local] *
     LPCOMMDLGBROWSER typedef ptr ICommDlgBrowser
     SID_SExplorerBrowserFrame equ <IID_ICommDlgBrowser>
     if (NTDDI_VERSION ge NTDDI_WIN2K)
@@ -3595,22 +2549,17 @@ ifndef __shobjidl_core_h__
       CDB2N_CONTEXTMENU_START equ 00000002h
       CDB2GVF_SHOWALLFILES equ 00000001h
       if (NTDDI_VERSION ge NTDDI_VISTA)
-        CDB2GVF_ISFILESAVE equ 00000002h; is file save, else file open
-
+        CDB2GVF_ISFILESAVE equ 00000002h
         CDB2GVF_ALLOWPREVIEWPANE equ 00000004h
         CDB2GVF_NOSELECTVERB equ 00000008h
         CDB2GVF_NOINCLUDEITEM equ 00000010h
         CDB2GVF_ISFOLDERPICKER equ 00000020h
-        CDB2GVF_ADDSHIELD equ 00000040h; when CDB2GVF_NOSELECTVERB is not specified this flag controls the display of a LUA shield on the Select menu item
-
+        CDB2GVF_ADDSHIELD equ 00000040h
       endif
-      ; NTDDI_VISTA
       externdef __MIDL_itf_shobjidl_core_0000_0027_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0027_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __ICommDlgBrowser2_INTERFACE_DEFINED__
         __ICommDlgBrowser2_INTERFACE_DEFINED__ equ <>
-        ;* interface ICommDlgBrowser2 *
-        ;* [unique][object][uuid] *
         externdef IID_ICommDlgBrowser2:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -3619,8 +2568,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <ICommDlgBrowser2Vtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ICommDlgBrowser2, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ICommDlgBrowser2
@@ -3628,27 +2575,16 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr ICommDlgBrowser2
             DECLSPEC_XFGVIRT(ICommDlgBrowser, OnDefaultCommand)
             STD_METHOD OnDefaultCommand, :ptr ICommDlgBrowser2, :ptr IShellView
-            ;* [in] *
             DECLSPEC_XFGVIRT(ICommDlgBrowser, OnStateChange)
-            ;* [in] *
             STD_METHOD OnStateChange, :ptr ICommDlgBrowser2, :ptr IShellView, :ULONG
-            ;* [in] *
             DECLSPEC_XFGVIRT(ICommDlgBrowser, IncludeObject)
-            ;* [unique][in] *
             STD_METHOD IncludeObject, :ptr ICommDlgBrowser2, :ptr IShellView, :PCUITEMID_CHILD
-            ;* [in] *
             DECLSPEC_XFGVIRT(ICommDlgBrowser2, Notify)
-            ;* [in] *
             STD_METHOD Notify, :ptr ICommDlgBrowser2, :ptr IShellView, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(ICommDlgBrowser2, GetDefaultMenuText)
-            ;* [in] *
-            ;* [size_is][string][out] *
             STD_METHOD GetDefaultMenuText, :ptr ICommDlgBrowser2, :ptr IShellView, :LPWSTR, :SDWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(ICommDlgBrowser2, GetViewFlags)
             STD_METHOD GetViewFlags, :ptr ICommDlgBrowser2, :ptr DWORD
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           ICommDlgBrowser2Vtbl ends
@@ -3658,17 +2594,11 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ICommDlgBrowser2_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0028 *
-      ;* [local] *
       LPCOMMDLGBROWSER2 typedef ptr ICommDlgBrowser2
     endif
-    ; NTDDI_WIN2K
     if (_WIN32_IE ge _WIN32_IE_IE70)
-      ;* [v1_enum] *
       CM_MASK typedef SDWORD
       CM_MASK_WIDTH equ 1h
       CM_MASK_DEFAULTWIDTH equ 2h
@@ -3677,7 +2607,6 @@ ifndef __shobjidl_core_h__
       CM_MASK_STATE equ 10h
 
       DEFINE_ENUM_FLAG_OPERATORS(CM_MASK)
-      ;* [v1_enum] *
       CM_STATE typedef SDWORD
       CM_STATE_NONE equ 0
       CM_STATE_VISIBLE equ 1h
@@ -3686,13 +2615,11 @@ ifndef __shobjidl_core_h__
       CM_STATE_ALWAYSVISIBLE equ 8h
 
       DEFINE_ENUM_FLAG_OPERATORS(CM_STATE)
-      ;* [v1_enum] *
       CM_ENUM_FLAGS typedef SDWORD
       CM_ENUM_ALL equ 1h
       CM_ENUM_VISIBLE equ 2h
 
       DEFINE_ENUM_FLAG_OPERATORS(CM_ENUM_FLAGS)
-      ;* [v1_enum] *
       CM_SET_WIDTH_VALUE typedef SDWORD
       CM_WIDTH_USEDEFAULT equ -1
       CM_WIDTH_AUTOSIZE equ -2
@@ -3701,17 +2628,15 @@ ifndef __shobjidl_core_h__
         cbSize DWORD ?
         dwMask DWORD ?
         dwState DWORD ?
-        uWidth DWORD ?
-        uDefaultWidth DWORD ?
-        uIdealWidth DWORD ?
-        wszName WORD 80 dup (?)
+        uWidth UINT ?
+        uDefaultWidth UINT ?
+        uIdealWidth UINT ?
+        wszName WCHAR 80 dup (?)
       CM_COLUMNINFO ends
       externdef __MIDL_itf_shobjidl_core_0000_0028_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0028_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IColumnManager_INTERFACE_DEFINED__
         __IColumnManager_INTERFACE_DEFINED__ equ <>
-        ;* interface IColumnManager *
-        ;* [unique][object][uuid] *
         externdef IID_IColumnManager:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -3720,34 +2645,21 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IColumnManagerVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IColumnManager, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IColumnManager
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IColumnManager
             DECLSPEC_XFGVIRT(IColumnManager, SetColumnInfo)
-            ;* [in] *
             STD_METHOD SetColumnInfo, :ptr IColumnManager, :REFPROPERTYKEY, :ptr CM_COLUMNINFO
-            ;* [in] *
             DECLSPEC_XFGVIRT(IColumnManager, GetColumnInfo)
-            ;* [in] *
             STD_METHOD GetColumnInfo, :ptr IColumnManager, :REFPROPERTYKEY, :ptr CM_COLUMNINFO
-            ;* [out][in] *
             DECLSPEC_XFGVIRT(IColumnManager, GetColumnCount)
-            ;* [in] *
             STD_METHOD GetColumnCount, :ptr IColumnManager, :CM_ENUM_FLAGS, :ptr UINT
-            ;* [out] *
             DECLSPEC_XFGVIRT(IColumnManager, GetColumns)
-            ;* [in] *
-            ;* [size_is][out] *
             STD_METHOD GetColumns, :ptr IColumnManager, :CM_ENUM_FLAGS, :ptr PROPERTYKEY, :UINT
-            ;* [in] *
             DECLSPEC_XFGVIRT(IColumnManager, SetColumns)
-            ;* [size_is][in] *
             STD_METHOD SetColumns, :ptr IColumnManager, :ptr PROPERTYKEY, :UINT
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IColumnManagerVtbl ends
@@ -3757,20 +2669,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IColumnManager_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0029 *
-      ;* [local] *
     endif
-    ; (_WIN32_IE >= _WIN32_IE_IE70)
     externdef __MIDL_itf_shobjidl_core_0000_0029_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0029_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IFolderFilterSite_INTERFACE_DEFINED__
       __IFolderFilterSite_INTERFACE_DEFINED__ equ <>
-      ;* interface IFolderFilterSite *
-      ;* [unique][object][uuid] *
       externdef IID_IFolderFilterSite:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3779,8 +2684,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IFolderFilterSiteVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IFolderFilterSite, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IFolderFilterSite
@@ -3788,7 +2691,6 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IFolderFilterSite
           DECLSPEC_XFGVIRT(IFolderFilterSite, SetFilter)
           STD_METHOD SetFilter, :ptr IFolderFilterSite, :ptr IUnknown
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IFolderFilterSiteVtbl ends
@@ -3798,14 +2700,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IFolderFilterSite_INTERFACE_DEFINED__ *
     endif
     ifndef __IFolderFilter_INTERFACE_DEFINED__
       __IFolderFilter_INTERFACE_DEFINED__ equ <>
-      ;* interface IFolderFilter *
-      ;* [unique][object][uuid] *
       externdef IID_IFolderFilter:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3814,24 +2712,15 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IFolderFilterVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IFolderFilter, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IFolderFilter
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IFolderFilter
           DECLSPEC_XFGVIRT(IFolderFilter, ShouldShow)
-          ;* [in] *
-          ;* [unique][in] *
           STD_METHOD ShouldShow, :ptr IFolderFilter, :ptr IShellFolder, :PCIDLIST_ABSOLUTE, :PCUITEMID_CHILD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IFolderFilter, GetEnumFlags)
-          ;* [in] *
-          ;* [in] *
-          ;* [out] *
           STD_METHOD GetEnumFlags, :ptr IFolderFilter, :ptr IShellFolder, :PCIDLIST_ABSOLUTE, :ptr HWND, :ptr DWORD
-          ;* [out][in] *
           ??Interface equ <>
           END_INTERFACE
         IFolderFilterVtbl ends
@@ -3841,14 +2730,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IFolderFilter_INTERFACE_DEFINED__ *
     endif
     ifndef __IInputObjectSite_INTERFACE_DEFINED__
       __IInputObjectSite_INTERFACE_DEFINED__ equ <>
-      ;* interface IInputObjectSite *
-      ;* [unique][uuid][object] *
       externdef IID_IInputObjectSite:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3857,17 +2742,13 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IInputObjectSiteVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IInputObjectSite, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IInputObjectSite
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IInputObjectSite
           DECLSPEC_XFGVIRT(IInputObjectSite, OnFocusChangeIS)
-          ;* [unique][in] *
           STD_METHOD OnFocusChangeIS, :ptr IInputObjectSite, :ptr IUnknown, :BOOL
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IInputObjectSiteVtbl ends
@@ -3877,14 +2758,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IInputObjectSite_INTERFACE_DEFINED__ *
     endif
     ifndef __IInputObject_INTERFACE_DEFINED__
       __IInputObject_INTERFACE_DEFINED__ equ <>
-      ;* interface IInputObject *
-      ;* [unique][uuid][object] *
       externdef IID_IInputObject:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3893,22 +2770,17 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IInputObjectVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IInputObject, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IInputObject
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IInputObject
           DECLSPEC_XFGVIRT(IInputObject, UIActivateIO)
-          ;* [in] *
           STD_METHOD UIActivateIO, :ptr IInputObject, :BOOL, :ptr MSG
-          ;* [unique][in] *
           DECLSPEC_XFGVIRT(IInputObject, HasFocusIO)
           STD_METHOD HasFocusIO, :ptr IInputObject
           DECLSPEC_XFGVIRT(IInputObject, TranslateAcceleratorIO)
           STD_METHOD TranslateAcceleratorIO, :ptr IInputObject, :ptr MSG
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IInputObjectVtbl ends
@@ -3918,14 +2790,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IInputObject_INTERFACE_DEFINED__ *
     endif
     ifndef __IInputObject2_INTERFACE_DEFINED__
       __IInputObject2_INTERFACE_DEFINED__ equ <>
-      ;* interface IInputObject2 *
-      ;* [local][unique][uuid][object] *
       externdef IID_IInputObject2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3934,24 +2802,18 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IInputObject2Vtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IInputObject2, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IInputObject2
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IInputObject2
           DECLSPEC_XFGVIRT(IInputObject, UIActivateIO)
-          ;* [in] *
           STD_METHOD UIActivateIO, :ptr IInputObject2, :BOOL, :ptr MSG
-          ;* [unique][in] *
           DECLSPEC_XFGVIRT(IInputObject, HasFocusIO)
           STD_METHOD HasFocusIO, :ptr IInputObject2
           DECLSPEC_XFGVIRT(IInputObject, TranslateAcceleratorIO)
           STD_METHOD TranslateAcceleratorIO, :ptr IInputObject2, :ptr MSG
-          ;* [in] *
           DECLSPEC_XFGVIRT(IInputObject2, TranslateAcceleratorGlobal)
-          ;* [annotation][in] *
           STD_METHOD TranslateAcceleratorGlobal, :ptr IInputObject2, :ptr MSG
           ??Interface equ <>
           END_INTERFACE
@@ -3962,14 +2824,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IInputObject2_INTERFACE_DEFINED__ *
     endif
     ifndef __IShellIcon_INTERFACE_DEFINED__
       __IShellIcon_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellIcon *
-      ;* [unique][object][uuid] *
       externdef IID_IShellIcon:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -3978,18 +2836,13 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellIconVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellIcon, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellIcon
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellIcon
           DECLSPEC_XFGVIRT(IShellIcon, GetIconOf)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetIconOf, :ptr IShellIcon, :PCUITEMID_CHILD, :UINT, :ptr SDWORD
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IShellIconVtbl ends
@@ -3999,12 +2852,8 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellIcon_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0035 *
-    ;* [local] *
     SBSP_DEFBROWSER equ 0000h
     SBSP_SAMEBROWSER equ 0001h
     SBSP_NEWBROWSER equ 0002h
@@ -4026,23 +2875,19 @@ ifndef __shobjidl_core_h__
       SBSP_CREATENOHISTORY equ 00100000h
       SBSP_PLAYNOSOUND equ 00200000h
     endif
-    ; (NTDDI_VERSION >= NTDDI_VISTA)
     if (_WIN32_IE ge _WIN32_IE_IE60SP2)
       SBSP_CALLERUNTRUSTED equ 00800000h
       SBSP_TRUSTFIRSTDOWNLOAD equ 01000000h
       SBSP_UNTRUSTEDFORDOWNLOAD equ 02000000h
     endif
-    ; _WIN32_IE_IE60SP2
     SBSP_NOAUTOSELECT equ 04000000h
     SBSP_WRITENOHISTORY equ 08000000h
     if (_WIN32_IE ge _WIN32_IE_IE60SP2)
       SBSP_TRUSTEDFORACTIVEX equ 10000000h
     endif
-    ; _WIN32_IE_IE60SP2
     if (_WIN32_IE ge _WIN32_IE_IE70)
       SBSP_FEEDNAVIGATION equ 20000000h
     endif
-    ; _WIN32_IE_IE70
     SBSP_REDIRECT equ 40000000h
     SBSP_INITIATEDBYHLINKFRAME equ 80000000h
     FCW_STATUS equ 0001h
@@ -4058,17 +2903,13 @@ ifndef __shobjidl_core_h__
     ifdef _NEVER_
       LPTBBUTTONSB typedef LPARAM
     else
-    ;!_NEVER_
       include commctrl.inc
       LPTBBUTTONSB typedef LPTBBUTTON
     endif
-    ;_NEVER_
     externdef __MIDL_itf_shobjidl_core_0000_0035_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0035_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IShellBrowser_INTERFACE_DEFINED__
       __IShellBrowser_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellBrowser *
-      ;* [unique][object][uuid] *
       externdef IID_IShellBrowser:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4077,73 +2918,40 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellBrowserVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellBrowser, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellBrowser
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellBrowser
           DECLSPEC_XFGVIRT(IOleWindow, GetWindow)
-          ;* [input_sync] *
           STD_METHOD GetWindow, :ptr IShellBrowser, :ptr HWND
-          ;* [out] *
           DECLSPEC_XFGVIRT(IOleWindow, ContextSensitiveHelp)
           STD_METHOD ContextSensitiveHelp, :ptr IShellBrowser, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellBrowser, InsertMenusSB)
-          ;* [in] *
           STD_METHOD InsertMenusSB, :ptr IShellBrowser, :HMENU, :LPOLEMENUGROUPWIDTHS
-          ;* [out][in] *
           DECLSPEC_XFGVIRT(IShellBrowser, SetMenuSB)
-          ;* [unique][in] *
-          ;* [unique][in] *
           STD_METHOD SetMenuSB, :ptr IShellBrowser, :HMENU, :HOLEMENU, :HWND
-          ;* [unique][in] *
           DECLSPEC_XFGVIRT(IShellBrowser, RemoveMenusSB)
           STD_METHOD RemoveMenusSB, :ptr IShellBrowser, :HMENU
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellBrowser, SetStatusTextSB)
           STD_METHOD SetStatusTextSB, :ptr IShellBrowser, :LPCWSTR
-          ;* [unique][in] *
           DECLSPEC_XFGVIRT(IShellBrowser, EnableModelessSB)
           STD_METHOD EnableModelessSB, :ptr IShellBrowser, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellBrowser, TranslateAcceleratorSB)
-          ;* [in] *
           STD_METHOD TranslateAcceleratorSB, :ptr IShellBrowser, :ptr MSG, :WORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellBrowser, BrowseObject)
-          ;* [unique][in] *
           STD_METHOD BrowseObject, :ptr IShellBrowser, :PCUIDLIST_RELATIVE, :UINT
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellBrowser, GetViewStateStream)
-          ;* [in] *
           STD_METHOD GetViewStateStream, :ptr IShellBrowser, :DWORD, :ptr ptr IStream
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellBrowser, GetControlWindow)
-          ;* [in] *
           STD_METHOD GetControlWindow, :ptr IShellBrowser, :UINT, :ptr HWND
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellBrowser, SendControlMsg)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][out] *
           STD_METHOD SendControlMsg, :ptr IShellBrowser, :UINT, :UINT, :WPARAM, :LPARAM, :ptr LRESULT
           DECLSPEC_XFGVIRT(IShellBrowser, QueryActiveShellView)
           STD_METHOD QueryActiveShellView, :ptr IShellBrowser, :ptr ptr IShellView
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellBrowser, OnViewWindowActive)
           STD_METHOD OnViewWindowActive, :ptr IShellBrowser, :ptr IShellView
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellBrowser, SetToolbarItems)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
           STD_METHOD SetToolbarItems, :ptr IShellBrowser, :LPTBBUTTONSB, :UINT, :UINT
           ??Interface equ <>
           END_INTERFACE
@@ -4154,19 +2962,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellBrowser_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0036 *
-    ;* [local] *
     LPSHELLBROWSER typedef ptr IShellBrowser
     externdef __MIDL_itf_shobjidl_core_0000_0036_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0036_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IProfferService_INTERFACE_DEFINED__
       __IProfferService_INTERFACE_DEFINED__ equ <>
-      ;* interface IProfferService *
-      ;* [unique][object][uuid] *
       externdef IID_IProfferService:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4175,21 +2977,15 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IProfferServiceVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IProfferService, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IProfferService
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IProfferService
           DECLSPEC_XFGVIRT(IProfferService, ProfferService)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD ProfferService, :ptr IProfferService, :REFGUID, :ptr IServiceProvider, :ptr DWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IProfferService, RevokeService)
           STD_METHOD RevokeService, :ptr IProfferService, :DWORD
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IProfferServiceVtbl ends
@@ -4199,20 +2995,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IProfferService_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0037 *
-    ;* [local] *
-    SID_SProfferService equ <IID_IProfferService>; nearest service that you can proffer to
-
+    SID_SProfferService equ <IID_IProfferService>
     externdef __MIDL_itf_shobjidl_core_0000_0037_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0037_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IGetServiceIds_INTERFACE_DEFINED__
       __IGetServiceIds_INTERFACE_DEFINED__ equ <>
-      ;* interface IGetServiceIds *
-      ;* [unique][object][uuid] *
       externdef IID_IGetServiceIds:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4221,17 +3010,13 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IGetServiceIdsVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IGetServiceIds, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IGetServiceIds
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IGetServiceIds
           DECLSPEC_XFGVIRT(IGetServiceIds, GetServiceIds)
-          ;* [out] *
           STD_METHOD GetServiceIds, :ptr IGetServiceIds, :ptr ULONG, :ptr ptr GUID
-          ;* [size_is][size_is][out] *
           ??Interface equ <>
           END_INTERFACE
         IGetServiceIdsVtbl ends
@@ -4241,21 +3026,14 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IGetServiceIds_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0038 *
-    ;* [local] *
     STR_DONT_RESOLVE_LINK equ <L("Don't Resolve Link")>
     STR_GET_ASYNC_HANDLER equ <L("GetAsyncHandler")>
     externdef __MIDL_itf_shobjidl_core_0000_0038_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0038_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IShellItem_INTERFACE_DEFINED__
       __IShellItem_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellItem *
-      ;* [unique][object][uuid] *
-      ;* [v1_enum] *
       SIGDN typedef SDWORD
       SIGDN_NORMALDISPLAY equ 0
       SIGDN_PARENTRELATIVEPARSING equ 80018001h
@@ -4269,7 +3047,6 @@ ifndef __shobjidl_core_h__
       SIGDN_PARENTRELATIVEFORUI equ 80094001h
       _SIGDN typedef SIGDN
 
-      ;* [v1_enum] *
       _SICHINTF typedef SDWORD
       SICHINT_DISPLAY equ 0
       SICHINT_ALLFIELDS equ 80000000h
@@ -4285,35 +3062,21 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellItemVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellItem, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellItem
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellItem
           DECLSPEC_XFGVIRT(IShellItem, BindToHandler)
-          ;* [unique][in] *
-          ;* [in] *
-          ;* [in] *
           STD_METHOD BindToHandler, :ptr IShellItem, :ptr IBindCtx, :REFGUID, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellItem, GetParent)
           STD_METHOD GetParent, :ptr IShellItem, :ptr ptr IShellItem
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItem, GetDisplayName)
-          ;* [in] *
-          ;* [annotation][string][out] *
           STD_METHOD GetDisplayName, :ptr IShellItem, :SIGDN, :ptr LPWSTR
           DECLSPEC_XFGVIRT(IShellItem, GetAttributes)
-          ;* [in] *
           STD_METHOD GetAttributes, :ptr IShellItem, :SFGAOF, :ptr SFGAOF
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItem, Compare)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD Compare, :ptr IShellItem, :ptr IShellItem, :SICHINTF, :ptr SDWORD
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IShellItemVtbl ends
@@ -4323,35 +3086,24 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellItem_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0039 *
-    ;* [local] *
     @DefProto DllImport, SHSimpleIDListFromPath, WIN_STD_CALL_CONV,, <:PCWSTR>, 4
     if (_WIN32_IE ge _WIN32_IE_IE70)
-      ; CLSID_ShellItem create and init helper APIs. produce IShellItem derived interfaces from these different expressions of an item
       @DefProto DllImport, SHCreateItemFromIDList, WIN_STD_CALL_CONV,, <:PCIDLIST_ABSOLUTE, :REFIID, :ptr ptr>, 12
       @DefProto DllImport, SHCreateItemFromParsingName, WIN_STD_CALL_CONV,, <:PCWSTR, :ptr IBindCtx, :REFIID, :ptr ptr>, 16
       @DefProto DllImport, SHCreateItemWithParent, WIN_STD_CALL_CONV,, <:PCIDLIST_ABSOLUTE, :ptr IShellFolder, :PCUITEMID_CHILD, :REFIID, :ptr ptr>, 20
       @DefProto DllImport, SHCreateItemFromRelativeName, WIN_STD_CALL_CONV,, <:ptr IShellItem, :PCWSTR, :ptr IBindCtx, :REFIID, :ptr ptr>, 20
     endif
-    ; (_WIN32_IE >= _WIN32_IE_IE70)
     if (NTDDI_VERSION ge NTDDI_VISTA)
       @DefProto DllImport, SHCreateItemInKnownFolder, WIN_STD_CALL_CONV,, <:REFKNOWNFOLDERID, :DWORD, :PCWSTR, :REFIID, :ptr ptr>, 20
-      ; get the IDList expression from an object, works with objects that support IPersistIDlist or IPersistIDlist like CLSID_ShellItem and most shell folders
       @DefProto DllImport, SHGetIDListFromObject, WIN_STD_CALL_CONV,, <:ptr IUnknown, :ptr PIDLIST_ABSOLUTE>, 8
-      ; similar to SHGetIDListFromObject but returns an IShellItem-based object (preferred for performance if the IDList is already bound to a folder)
       @DefProto DllImport, SHGetItemFromObject, WIN_STD_CALL_CONV,, <:ptr IUnknown, :REFIID, :ptr ptr>, 12
-      ; these APIs return object that support IPropertyStore or related interfaces
       @DefProto DllImport, SHGetPropertyStoreFromIDList, WIN_STD_CALL_CONV,, <:PCIDLIST_ABSOLUTE, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr ptr>, 16
       @DefProto DllImport, SHGetPropertyStoreFromParsingName, WIN_STD_CALL_CONV,, <:PCWSTR, :ptr IBindCtx, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr ptr>, 20
       @DefProto DllImport, SHGetNameFromIDList, WIN_STD_CALL_CONV,, <:PCIDLIST_ABSOLUTE, :SIGDN, :ptr PWSTR>, 12
     endif
-    ; (NTDDI_VERSION >= NTDDI_VISTA)
     if (NTDDI_VERSION ge NTDDI_WIN7)
-      ;* [v1_enum] *
       DATAOBJ_GET_ITEM_FLAGS typedef SDWORD
       DOGIF_DEFAULT equ 0
       DOGIF_TRAVERSE_LINK equ 1h
@@ -4362,7 +3114,6 @@ ifndef __shobjidl_core_h__
       DEFINE_ENUM_FLAG_OPERATORS(DATAOBJ_GET_ITEM_FLAGS)
       @DefProto DllImport, SHGetItemFromDataObject, WIN_STD_CALL_CONV,, <:ptr IDataObject, :DATAOBJ_GET_ITEM_FLAGS, :REFIID, :ptr ptr>, 16
     endif
-    ; (NTDDI_VERSION >= NTDDI_WIN7)
     STR_GPS_HANDLERPROPERTIESONLY equ <L("GPS_HANDLERPROPERTIESONLY")>
     STR_GPS_FASTPROPERTIESONLY equ <L("GPS_FASTPROPERTIESONLY")>
     STR_GPS_OPENSLOWITEM equ <L("GPS_OPENSLOWITEM")>
@@ -4373,8 +3124,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0039_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IShellItem2_INTERFACE_DEFINED__
       __IShellItem2_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellItem2 *
-      ;* [unique][object][uuid] *
       externdef IID_IShellItem2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4383,93 +3132,47 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellItem2Vtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellItem2, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellItem2
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellItem2
           DECLSPEC_XFGVIRT(IShellItem, BindToHandler)
-          ;* [unique][in] *
-          ;* [in] *
-          ;* [in] *
           STD_METHOD BindToHandler, :ptr IShellItem2, :ptr IBindCtx, :REFGUID, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellItem, GetParent)
           STD_METHOD GetParent, :ptr IShellItem2, :ptr ptr IShellItem
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItem, GetDisplayName)
-          ;* [in] *
-          ;* [annotation][string][out] *
           STD_METHOD GetDisplayName, :ptr IShellItem2, :SIGDN, :ptr LPWSTR
           DECLSPEC_XFGVIRT(IShellItem, GetAttributes)
-          ;* [in] *
           STD_METHOD GetAttributes, :ptr IShellItem2, :SFGAOF, :ptr SFGAOF
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItem, Compare)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD Compare, :ptr IShellItem2, :ptr IShellItem, :SICHINTF, :ptr SDWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItem2, GetPropertyStore)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetPropertyStore, :ptr IShellItem2, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellItem2, GetPropertyStoreWithCreateObject)
-          ;* [in] *
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetPropertyStoreWithCreateObject, :ptr IShellItem2, :GETPROPERTYSTOREFLAGS, :ptr IUnknown, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellItem2, GetPropertyStoreForKeys)
-          ;* [size_is][in] *
-          ;* [in] *
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetPropertyStoreForKeys, :ptr IShellItem2, :ptr PROPERTYKEY, :UINT, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellItem2, GetPropertyDescriptionList)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetPropertyDescriptionList, :ptr IShellItem2, :REFPROPERTYKEY, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellItem2, Update)
           STD_METHOD Update, :ptr IShellItem2, :ptr IBindCtx
-          ;* [unique][in] *
           DECLSPEC_XFGVIRT(IShellItem2, GetProperty)
-          ;* [in] *
           STD_METHOD GetProperty, :ptr IShellItem2, :REFPROPERTYKEY, :ptr PROPVARIANT
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItem2, GetCLSID)
-          ;* [in] *
           STD_METHOD GetCLSID, :ptr IShellItem2, :REFPROPERTYKEY, :ptr CLSID
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItem2, GetFileTime)
-          ;* [in] *
           STD_METHOD GetFileTime, :ptr IShellItem2, :REFPROPERTYKEY, :ptr FILETIME
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItem2, GetInt32)
-          ;* [in] *
           STD_METHOD GetInt32, :ptr IShellItem2, :REFPROPERTYKEY, :ptr SDWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItem2, GetString)
-          ;* [in] *
           STD_METHOD GetString, :ptr IShellItem2, :REFPROPERTYKEY, :ptr LPWSTR
-          ;* [string][out] *
           DECLSPEC_XFGVIRT(IShellItem2, GetUInt32)
-          ;* [in] *
           STD_METHOD GetUInt32, :ptr IShellItem2, :REFPROPERTYKEY, :ptr ULONG
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItem2, GetUInt64)
-          ;* [in] *
           STD_METHOD GetUInt64, :ptr IShellItem2, :REFPROPERTYKEY, :ptr ULONGLONG
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItem2, GetBool)
-          ;* [in] *
           STD_METHOD GetBool, :ptr IShellItem2, :REFPROPERTYKEY, :ptr BOOL
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IShellItem2Vtbl ends
@@ -4479,13 +3182,8 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellItem2_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0040 *
-    ;* [local] *
-    ;* [v1_enum] *
     _SIIGBF typedef SDWORD
     SIIGBF_RESIZETOFIT equ 0
     SIIGBF_BIGGERSIZEOK equ 1h
@@ -4503,8 +3201,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0040_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IShellItemImageFactory_INTERFACE_DEFINED__
       __IShellItemImageFactory_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellItemImageFactory *
-      ;* [unique][object][uuid] *
       externdef IID_IShellItemImageFactory:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4513,18 +3209,13 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellItemImageFactoryVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellItemImageFactory, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellItemImageFactory
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellItemImageFactory
           DECLSPEC_XFGVIRT(IShellItemImageFactory, GetImage)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetImage, :ptr IShellItemImageFactory, :SIZE_, :SIIGBF, :ptr HBITMAP
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IShellItemImageFactoryVtbl ends
@@ -4534,19 +3225,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellItemImageFactory_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0041 *
-    ;* [local] *
     if (NTDDI_VERSION ge NTDDI_WINXP)
       externdef __MIDL_itf_shobjidl_core_0000_0041_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0041_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IEnumShellItems_INTERFACE_DEFINED__
         __IEnumShellItems_INTERFACE_DEFINED__ equ <>
-        ;* interface IEnumShellItems *
-        ;* [unique][object][uuid] *
         externdef IID_IEnumShellItems:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -4555,27 +3240,19 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IEnumShellItemsVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IEnumShellItems, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IEnumShellItems
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IEnumShellItems
             DECLSPEC_XFGVIRT(IEnumShellItems, Next)
-            ;* [local] *
-            ;* [annotation][in] *
-            ;* [annotation][length_is][size_is][out] *
-            ;* [annotation][out] *
             STD_METHOD Next, :ptr IEnumShellItems, :ULONG, :ptr ptr IShellItem, :ptr ULONG
             DECLSPEC_XFGVIRT(IEnumShellItems, Skip)
             STD_METHOD Skip, :ptr IEnumShellItems, :ULONG
-            ;* [in] *
             DECLSPEC_XFGVIRT(IEnumShellItems, Reset)
             STD_METHOD Reset, :ptr IEnumShellItems
             DECLSPEC_XFGVIRT(IEnumShellItems, Clone)
             STD_METHOD Clone, :ptr IEnumShellItems, :ptr ptr IEnumShellItems
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IEnumShellItemsVtbl ends
@@ -4585,19 +3262,12 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* [call_as] *
         IEnumShellItems_RemoteNext_Proxy proto WIN_STD_CALL_CONV :ptr IEnumShellItems, :ULONG, :ptr ptr IShellItem, :ptr ULONG
-        ;* [out] *
         IEnumShellItems_RemoteNext_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-        ;* __IEnumShellItems_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0042 *
-      ;* [local] *
       STGTRANSCONFIRMATION typedef GUID
       LPSTGTRANSCONFIRMATION typedef ptr GUID
-      ;* [v1_enum] *
       STGOP typedef SDWORD
       STGOP_MOVE equ 1
       STGOP_COPY equ 2
@@ -4608,8 +3278,6 @@ ifndef __shobjidl_core_h__
       STGOP_NEW equ 10
 
     endif
-    ; NTDDI_WINXP
-    ;* [v1_enum] *
     _TRANSFER_SOURCE_FLAGS typedef SDWORD
     TSF_NORMAL equ 0
     TSF_FAIL_EXIST equ 0
@@ -4632,9 +3300,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0042_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __ITransferAdviseSink_INTERFACE_DEFINED__
         __ITransferAdviseSink_INTERFACE_DEFINED__ equ <>
-        ;* interface ITransferAdviseSink *
-        ;* [object][uuid] *
-        ;* [v1_enum] *
         _TRANSFER_ADVISE_STATE typedef SDWORD
         TS_NONE equ 0
         TS_PERFORMING equ 1h
@@ -4650,49 +3315,25 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <ITransferAdviseSinkVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ITransferAdviseSink, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ITransferAdviseSink
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ITransferAdviseSink
             DECLSPEC_XFGVIRT(ITransferAdviseSink, UpdateProgress)
-            ;* [in] *
-            ;* [in] *
-            ;* [in] *
-            ;* [in] *
-            ;* [in] *
             STD_METHOD UpdateProgress, :ptr ITransferAdviseSink, :ULONGLONG, :ULONGLONG, :SDWORD, :SDWORD, :SDWORD, :SDWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(ITransferAdviseSink, UpdateTransferState)
             STD_METHOD UpdateTransferState, :ptr ITransferAdviseSink, :TRANSFER_ADVISE_STATE
-            ;* [in] *
             DECLSPEC_XFGVIRT(ITransferAdviseSink, ConfirmOverwrite)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD ConfirmOverwrite, :ptr ITransferAdviseSink, :ptr IShellItem, :ptr IShellItem, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(ITransferAdviseSink, ConfirmEncryptionLoss)
             STD_METHOD ConfirmEncryptionLoss, :ptr ITransferAdviseSink, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(ITransferAdviseSink, FileFailure)
-            ;* [in] *
-            ;* [string][unique][in] *
-            ;* [in] *
-            ;* [size_is][unique][out][in] *
             STD_METHOD FileFailure, :ptr ITransferAdviseSink, :ptr IShellItem, :LPCWSTR, :HRESULT, :LPWSTR, :ULONG
-            ;* [in] *
             DECLSPEC_XFGVIRT(ITransferAdviseSink, SubStreamFailure)
-            ;* [in] *
-            ;* [string][in] *
             STD_METHOD SubStreamFailure, :ptr ITransferAdviseSink, :ptr IShellItem, :LPCWSTR, :HRESULT
-            ;* [in] *
             DECLSPEC_XFGVIRT(ITransferAdviseSink, PropertyFailure)
-            ;* [in] *
-            ;* [unique][in] *
             STD_METHOD PropertyFailure, :ptr ITransferAdviseSink, :ptr IShellItem, :ptr PROPERTYKEY, :HRESULT
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           ITransferAdviseSinkVtbl ends
@@ -4702,21 +3343,14 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ITransferAdviseSink_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0043 *
-      ;* [local] *
     endif
-    ; (_WIN32_IE >= _WIN32_IE_IE70)
     if (NTDDI_VERSION ge NTDDI_VISTA)
       externdef __MIDL_itf_shobjidl_core_0000_0043_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0043_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __ITransferSource_INTERFACE_DEFINED__
         __ITransferSource_INTERFACE_DEFINED__ equ <>
-        ;* interface ITransferSource *
-        ;* [local][unique][uuid][object] *
         externdef IID_ITransferSource:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -4725,73 +3359,36 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <ITransferSourceVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ITransferSource, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ITransferSource
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ITransferSource
             DECLSPEC_XFGVIRT(ITransferSource, Advise)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD Advise, :ptr ITransferSource, :ptr ITransferAdviseSink, :ptr DWORD
             DECLSPEC_XFGVIRT(ITransferSource, Unadvise)
-            ;* [annotation][in] *
             STD_METHOD Unadvise, :ptr ITransferSource, :DWORD
             DECLSPEC_XFGVIRT(ITransferSource, SetProperties)
-            ;* [annotation][in] *
             STD_METHOD SetProperties, :ptr ITransferSource, :ptr IPropertyChangeArray
             DECLSPEC_XFGVIRT(ITransferSource, OpenItem)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD OpenItem, :ptr ITransferSource, :ptr IShellItem, :TRANSFER_SOURCE_FLAGS, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(ITransferSource, MoveItem)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][string][in] *
-            ;* [in] *
-            ;* [annotation][out] *
             STD_METHOD MoveItem, :ptr ITransferSource, :ptr IShellItem, :ptr IShellItem, :LPCWSTR, :TRANSFER_SOURCE_FLAGS, :ptr ptr IShellItem
             DECLSPEC_XFGVIRT(ITransferSource, RecycleItem)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD RecycleItem, :ptr ITransferSource, :ptr IShellItem, :ptr IShellItem, :TRANSFER_SOURCE_FLAGS, :ptr ptr IShellItem
             DECLSPEC_XFGVIRT(ITransferSource, RemoveItem)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD RemoveItem, :ptr ITransferSource, :ptr IShellItem, :TRANSFER_SOURCE_FLAGS
             DECLSPEC_XFGVIRT(ITransferSource, RenameItem)
-            ;* [annotation][in] *
-            ;* [annotation][string][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD RenameItem, :ptr ITransferSource, :ptr IShellItem, :LPCWSTR, :TRANSFER_SOURCE_FLAGS, :ptr ptr IShellItem
             DECLSPEC_XFGVIRT(ITransferSource, LinkItem)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][string][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD LinkItem, :ptr ITransferSource, :ptr IShellItem, :ptr IShellItem, :LPCWSTR, :TRANSFER_SOURCE_FLAGS, :ptr ptr IShellItem
             DECLSPEC_XFGVIRT(ITransferSource, ApplyPropertiesToItem)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD ApplyPropertiesToItem, :ptr ITransferSource, :ptr IShellItem, :ptr ptr IShellItem
             DECLSPEC_XFGVIRT(ITransferSource, GetDefaultDestinationName)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][string][out] *
             STD_METHOD GetDefaultDestinationName, :ptr ITransferSource, :ptr IShellItem, :ptr IShellItem, :ptr LPWSTR
             DECLSPEC_XFGVIRT(ITransferSource, EnterFolder)
-            ;* [annotation][in] *
             STD_METHOD EnterFolder, :ptr ITransferSource, :ptr IShellItem
             DECLSPEC_XFGVIRT(ITransferSource, LeaveFolder)
-            ;* [annotation][in] *
             STD_METHOD LeaveFolder, :ptr ITransferSource, :ptr IShellItem
             ??Interface equ <>
             END_INTERFACE
@@ -4802,24 +3399,17 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ITransferSource_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0044 *
-      ;* [local] *
     endif
-    ; NTDDI_VISTA
     SHELL_ITEM_RESOURCE struct
       guidType GUID <>
-      szName WORD 260 dup (?)
+      szName WCHAR 260 dup (?)
     SHELL_ITEM_RESOURCE ends
     externdef __MIDL_itf_shobjidl_core_0000_0044_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0044_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IEnumResources_INTERFACE_DEFINED__
       __IEnumResources_INTERFACE_DEFINED__ equ <>
-      ;* interface IEnumResources *
-      ;* [unique][uuid][object] *
       externdef IID_IEnumResources:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4828,26 +3418,19 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IEnumResourcesVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IEnumResources, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IEnumResources
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IEnumResources
           DECLSPEC_XFGVIRT(IEnumResources, Next)
-          ;* [in] *
-          ;* [length_is][size_is][out] *
           STD_METHOD Next, :ptr IEnumResources, :ULONG, :ptr SHELL_ITEM_RESOURCE, :ptr ULONG
-          ;* [out] *
           DECLSPEC_XFGVIRT(IEnumResources, Skip)
           STD_METHOD Skip, :ptr IEnumResources, :ULONG
-          ;* [in] *
           DECLSPEC_XFGVIRT(IEnumResources, Reset)
           STD_METHOD Reset, :ptr IEnumResources
           DECLSPEC_XFGVIRT(IEnumResources, Clone)
           STD_METHOD Clone, :ptr IEnumResources, :ptr ptr IEnumResources
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IEnumResourcesVtbl ends
@@ -4857,14 +3440,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IEnumResources_INTERFACE_DEFINED__ *
     endif
     ifndef __IShellItemResources_INTERFACE_DEFINED__
       __IShellItemResources_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellItemResources *
-      ;* [unique][uuid][object] *
       externdef IID_IShellItemResources:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4873,8 +3452,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellItemResourcesVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellItemResources, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellItemResources
@@ -4882,40 +3459,22 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IShellItemResources
           DECLSPEC_XFGVIRT(IShellItemResources, GetAttributes)
           STD_METHOD GetAttributes, :ptr IShellItemResources, :ptr DWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItemResources, GetSize)
           STD_METHOD GetSize, :ptr IShellItemResources, :ptr ULONGLONG
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItemResources, GetTimes)
-          ;* [out] *
-          ;* [out] *
           STD_METHOD GetTimes, :ptr IShellItemResources, :ptr FILETIME, :ptr FILETIME, :ptr FILETIME
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItemResources, SetTimes)
-          ;* [unique][in] *
-          ;* [unique][in] *
           STD_METHOD SetTimes, :ptr IShellItemResources, :ptr FILETIME, :ptr FILETIME, :ptr FILETIME
-          ;* [unique][in] *
           DECLSPEC_XFGVIRT(IShellItemResources, GetResourceDescription)
-          ;* [in] *
           STD_METHOD GetResourceDescription, :ptr IShellItemResources, :ptr SHELL_ITEM_RESOURCE, :ptr LPWSTR
-          ;* [string][out] *
           DECLSPEC_XFGVIRT(IShellItemResources, EnumResources)
           STD_METHOD EnumResources, :ptr IShellItemResources, :ptr ptr IEnumResources
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItemResources, SupportsResource)
           STD_METHOD SupportsResource, :ptr IShellItemResources, :ptr SHELL_ITEM_RESOURCE
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellItemResources, OpenResource)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD OpenResource, :ptr IShellItemResources, :ptr SHELL_ITEM_RESOURCE, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellItemResources, CreateResource)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD CreateResource, :ptr IShellItemResources, :ptr SHELL_ITEM_RESOURCE, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellItemResources, MarkForDelete)
           STD_METHOD MarkForDelete, :ptr IShellItemResources
           ??Interface equ <>
@@ -4927,14 +3486,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellItemResources_INTERFACE_DEFINED__ *
     endif
     ifndef __ITransferDestination_INTERFACE_DEFINED__
       __ITransferDestination_INTERFACE_DEFINED__ equ <>
-      ;* interface ITransferDestination *
-      ;* [local][unique][uuid][object] *
       externdef IID_ITransferDestination:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -4943,29 +3498,16 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <ITransferDestinationVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr ITransferDestination, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr ITransferDestination
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr ITransferDestination
           DECLSPEC_XFGVIRT(ITransferDestination, Advise)
-          ;* [annotation][in] *
-          ;* [annotation][out] *
           STD_METHOD Advise, :ptr ITransferDestination, :ptr ITransferAdviseSink, :ptr DWORD
           DECLSPEC_XFGVIRT(ITransferDestination, Unadvise)
           STD_METHOD Unadvise, :ptr ITransferDestination, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITransferDestination, CreateItem)
-          ;* [annotation][string][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][iid_is][out] *
-          ;* [annotation][in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD CreateItem, :ptr ITransferDestination, :LPCWSTR, :DWORD, :ULONGLONG, :TRANSFER_SOURCE_FLAGS, :REFIID, :ptr ptr, :REFIID, :ptr ptr
           ??Interface equ <>
           END_INTERFACE
@@ -4976,19 +3518,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ITransferDestination_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0047 *
-    ;* [local] *
     if (_WIN32_IE ge _WIN32_IE_IE70)
       externdef __MIDL_itf_shobjidl_core_0000_0047_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0047_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IFileOperationProgressSink_INTERFACE_DEFINED__
         __IFileOperationProgressSink_INTERFACE_DEFINED__ equ <>
-        ;* interface IFileOperationProgressSink *
-        ;* [unique][uuid][object] *
         externdef IID_IFileOperationProgressSink:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -4997,8 +3533,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IFileOperationProgressSinkVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IFileOperationProgressSink, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IFileOperationProgressSink
@@ -5008,75 +3542,28 @@ ifndef __shobjidl_core_h__
             STD_METHOD StartOperations, :ptr IFileOperationProgressSink
             DECLSPEC_XFGVIRT(IFileOperationProgressSink, FinishOperations)
             STD_METHOD FinishOperations, :ptr IFileOperationProgressSink, :HRESULT
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileOperationProgressSink, PreRenameItem)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD PreRenameItem, :ptr IFileOperationProgressSink, :DWORD, :ptr IShellItem, :LPCWSTR
-            ;* [string][unique][in] *
             DECLSPEC_XFGVIRT(IFileOperationProgressSink, PostRenameItem)
-            ;* [in] *
-            ;* [in] *
-            ;* [string][in] *
-            ;* [in] *
             STD_METHOD PostRenameItem, :ptr IFileOperationProgressSink, :DWORD, :ptr IShellItem, :LPCWSTR, :HRESULT, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileOperationProgressSink, PreMoveItem)
-            ;* [in] *
-            ;* [in] *
-            ;* [in] *
             STD_METHOD PreMoveItem, :ptr IFileOperationProgressSink, :DWORD, :ptr IShellItem, :ptr IShellItem, :LPCWSTR
-            ;* [string][unique][in] *
             DECLSPEC_XFGVIRT(IFileOperationProgressSink, PostMoveItem)
-            ;* [in] *
-            ;* [in] *
-            ;* [in] *
-            ;* [string][unique][in] *
-            ;* [in] *
             STD_METHOD PostMoveItem, :ptr IFileOperationProgressSink, :DWORD, :ptr IShellItem, :ptr IShellItem, :LPCWSTR, :HRESULT, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileOperationProgressSink, PreCopyItem)
-            ;* [in] *
-            ;* [in] *
-            ;* [in] *
             STD_METHOD PreCopyItem, :ptr IFileOperationProgressSink, :DWORD, :ptr IShellItem, :ptr IShellItem, :LPCWSTR
-            ;* [string][unique][in] *
             DECLSPEC_XFGVIRT(IFileOperationProgressSink, PostCopyItem)
-            ;* [in] *
-            ;* [in] *
-            ;* [in] *
-            ;* [string][unique][in] *
-            ;* [in] *
             STD_METHOD PostCopyItem, :ptr IFileOperationProgressSink, :DWORD, :ptr IShellItem, :ptr IShellItem, :LPCWSTR, :HRESULT, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileOperationProgressSink, PreDeleteItem)
-            ;* [in] *
             STD_METHOD PreDeleteItem, :ptr IFileOperationProgressSink, :DWORD, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileOperationProgressSink, PostDeleteItem)
-            ;* [in] *
-            ;* [in] *
-            ;* [in] *
             STD_METHOD PostDeleteItem, :ptr IFileOperationProgressSink, :DWORD, :ptr IShellItem, :HRESULT, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileOperationProgressSink, PreNewItem)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD PreNewItem, :ptr IFileOperationProgressSink, :DWORD, :ptr IShellItem, :LPCWSTR
-            ;* [string][unique][in] *
             DECLSPEC_XFGVIRT(IFileOperationProgressSink, PostNewItem)
-            ;* [in] *
-            ;* [in] *
-            ;* [string][unique][in] *
-            ;* [string][unique][in] *
-            ;* [in] *
-            ;* [in] *
             STD_METHOD PostNewItem, :ptr IFileOperationProgressSink, :DWORD, :ptr IShellItem, :LPCWSTR, :LPCWSTR, :DWORD, :HRESULT, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileOperationProgressSink, UpdateProgress)
-            ;* [in] *
             STD_METHOD UpdateProgress, :ptr IFileOperationProgressSink, :UINT, :UINT
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileOperationProgressSink, ResetTimer)
             STD_METHOD ResetTimer, :ptr IFileOperationProgressSink
             DECLSPEC_XFGVIRT(IFileOperationProgressSink, PauseTimer)
@@ -5092,21 +3579,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IFileOperationProgressSink_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0048 *
-      ;* [local] *
     endif
-    ; (_WIN32_IE >= _WIN32_IE_IE70)
     externdef __MIDL_itf_shobjidl_core_0000_0048_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0048_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IShellItemArray_INTERFACE_DEFINED__
       __IShellItemArray_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellItemArray *
-      ;* [unique][object][uuid] *
-      ;* [v1_enum] *
       SIATTRIBFLAGS typedef SDWORD
       SIATTRIBFLAGS_AND equ 1h
       SIATTRIBFLAGS_OR equ 2h
@@ -5123,44 +3602,25 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellItemArrayVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellItemArray, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellItemArray
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellItemArray
           DECLSPEC_XFGVIRT(IShellItemArray, BindToHandler)
-          ;* [unique][in] *
-          ;* [in] *
-          ;* [in] *
           STD_METHOD BindToHandler, :ptr IShellItemArray, :ptr IBindCtx, :REFGUID, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellItemArray, GetPropertyStore)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetPropertyStore, :ptr IShellItemArray, :GETPROPERTYSTOREFLAGS, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellItemArray, GetPropertyDescriptionList)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetPropertyDescriptionList, :ptr IShellItemArray, :REFPROPERTYKEY, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellItemArray, GetAttributes)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetAttributes, :ptr IShellItemArray, :SIATTRIBFLAGS, :SFGAOF, :ptr SFGAOF
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItemArray, GetCount)
           STD_METHOD GetCount, :ptr IShellItemArray, :ptr DWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItemArray, GetItemAt)
-          ;* [in] *
           STD_METHOD GetItemAt, :ptr IShellItemArray, :DWORD, :ptr ptr IShellItem
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellItemArray, EnumItems)
           STD_METHOD EnumItems, :ptr IShellItemArray, :ptr ptr IEnumShellItems
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IShellItemArrayVtbl ends
@@ -5170,25 +3630,18 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellItemArray_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0049 *
-    ;* [local] *
     if (_WIN32_IE ge _WIN32_IE_IE70)
       @DefProto DllImport, SHCreateShellItemArray, WIN_STD_CALL_CONV,, <:PCIDLIST_ABSOLUTE, :ptr IShellFolder, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr ptr IShellItemArray>, 20
       @DefProto DllImport, SHCreateShellItemArrayFromDataObject, WIN_STD_CALL_CONV,, <:ptr IDataObject, :REFIID, :ptr ptr>, 12
       @DefProto DllImport, SHCreateShellItemArrayFromIDLists, WIN_STD_CALL_CONV,, <:UINT, :PCIDLIST_ABSOLUTE_ARRAY, :ptr ptr IShellItemArray>, 12
       @DefProto DllImport, SHCreateShellItemArrayFromShellItem, WIN_STD_CALL_CONV,, <:ptr IShellItem, :REFIID, :ptr ptr>, 12
     endif
-    ; (_WIN32_IE >= _WIN32_IE_IE70)
     externdef __MIDL_itf_shobjidl_core_0000_0049_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0049_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IInitializeWithItem_INTERFACE_DEFINED__
       __IInitializeWithItem_INTERFACE_DEFINED__ equ <>
-      ;* interface IInitializeWithItem *
-      ;* [unique][object][uuid] *
       externdef IID_IInitializeWithItem:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5197,17 +3650,13 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IInitializeWithItemVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IInitializeWithItem, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IInitializeWithItem
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IInitializeWithItem
           DECLSPEC_XFGVIRT(IInitializeWithItem, Initialize)
-          ;* [in] *
           STD_METHOD Initialize, :ptr IInitializeWithItem, :ptr IShellItem, :DWORD
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IInitializeWithItemVtbl ends
@@ -5217,14 +3666,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IInitializeWithItem_INTERFACE_DEFINED__ *
     endif
     ifndef __IObjectWithSelection_INTERFACE_DEFINED__
       __IObjectWithSelection_INTERFACE_DEFINED__ equ <>
-      ;* interface IObjectWithSelection *
-      ;* [unique][uuid][object] *
       externdef IID_IObjectWithSelection:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5233,8 +3678,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IObjectWithSelectionVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IObjectWithSelection, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IObjectWithSelection
@@ -5242,11 +3685,8 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IObjectWithSelection
           DECLSPEC_XFGVIRT(IObjectWithSelection, SetSelection)
           STD_METHOD SetSelection, :ptr IObjectWithSelection, :ptr IShellItemArray
-          ;* [in] *
           DECLSPEC_XFGVIRT(IObjectWithSelection, GetSelection)
-          ;* [in] *
           STD_METHOD GetSelection, :ptr IObjectWithSelection, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           ??Interface equ <>
           END_INTERFACE
         IObjectWithSelectionVtbl ends
@@ -5256,14 +3696,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IObjectWithSelection_INTERFACE_DEFINED__ *
     endif
     ifndef __IObjectWithBackReferences_INTERFACE_DEFINED__
       __IObjectWithBackReferences_INTERFACE_DEFINED__ equ <>
-      ;* interface IObjectWithBackReferences *
-      ;* [unique][uuid][object] *
       externdef IID_IObjectWithBackReferences:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5272,8 +3708,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IObjectWithBackReferencesVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IObjectWithBackReferences, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IObjectWithBackReferences
@@ -5290,26 +3724,19 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IObjectWithBackReferences_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0052 *
-    ;* [local] *
-    ;* [v1_enum] *
     _PROPERTYUI_NAME_FLAGS typedef SDWORD
     PUIFNF_DEFAULT equ 0
     PUIFNF_MNEMONIC equ 1h
 
     PROPERTYUI_NAME_FLAGS typedef DWORD
-    ;* [v1_enum] *
     _PROPERTYUI_FLAGS typedef SDWORD
     PUIF_DEFAULT equ 0
     PUIF_RIGHTALIGN equ 1h
     PUIF_NOLABELININFOTIP equ 2h
 
     PROPERTYUI_FLAGS typedef DWORD
-    ;* [v1_enum] *
     _PROPERTYUI_FORMAT_FLAGS typedef SDWORD
     PUIFFDF_DEFAULT equ 0
     PUIFFDF_RIGHTTOLEFT equ 1h
@@ -5322,8 +3749,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0052_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IPropertyUI_INTERFACE_DEFINED__
       __IPropertyUI_INTERFACE_DEFINED__ equ <>
-      ;* interface IPropertyUI *
-      ;* [unique][object][uuid] *
       externdef IID_IPropertyUI:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5332,63 +3757,27 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IPropertyUIVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IPropertyUI, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IPropertyUI
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IPropertyUI
           DECLSPEC_XFGVIRT(IPropertyUI, ParsePropertyName)
-          ;* [string][in] *
-          ;* [out] *
-          ;* [out] *
           STD_METHOD ParsePropertyName, :ptr IPropertyUI, :LPCWSTR, :ptr FMTID, :ptr PROPID, :ptr ULONG
-          ;* [out][in] *
           DECLSPEC_XFGVIRT(IPropertyUI, GetCannonicalName)
-          ;* [in] *
-          ;* [in] *
-          ;* [size_is][string][out] *
           STD_METHOD GetCannonicalName, :ptr IPropertyUI, :REFFMTID, :PROPID, :LPWSTR, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IPropertyUI, GetDisplayName)
-          ;* [in] *
-          ;* [in] *
-          ;* [in] *
-          ;* [size_is][out] *
           STD_METHOD GetDisplayName, :ptr IPropertyUI, :REFFMTID, :PROPID, :PROPERTYUI_NAME_FLAGS, :LPWSTR, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IPropertyUI, GetPropertyDescription)
-          ;* [in] *
-          ;* [in] *
-          ;* [size_is][out] *
           STD_METHOD GetPropertyDescription, :ptr IPropertyUI, :REFFMTID, :PROPID, :LPWSTR, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IPropertyUI, GetDefaultWidth)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetDefaultWidth, :ptr IPropertyUI, :REFFMTID, :PROPID, :ptr ULONG
-          ;* [out] *
           DECLSPEC_XFGVIRT(IPropertyUI, GetFlags)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetFlags, :ptr IPropertyUI, :REFFMTID, :PROPID, :ptr PROPERTYUI_FLAGS
-          ;* [out] *
           DECLSPEC_XFGVIRT(IPropertyUI, FormatForDisplay)
-          ;* [in] *
-          ;* [in] *
-          ;* [in] *
-          ;* [in] *
-          ;* [size_is][string][out] *
           STD_METHOD FormatForDisplay, :ptr IPropertyUI, :REFFMTID, :PROPID, :ptr PROPVARIANT, :PROPERTYUI_FORMAT_FLAGS, :LPWSTR, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IPropertyUI, GetHelpInfo)
-          ;* [in] *
-          ;* [in] *
-          ;* [size_is][string][out] *
-          ;* [in] *
           STD_METHOD GetHelpInfo, :ptr IPropertyUI, :REFFMTID, :PROPID, :LPWSTR, :DWORD, :ptr UINT
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IPropertyUIVtbl ends
@@ -5398,14 +3787,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IPropertyUI_INTERFACE_DEFINED__ *
     endif
     ifndef __ICategoryProvider_INTERFACE_DEFINED__
       __ICategoryProvider_INTERFACE_DEFINED__ equ <>
-      ;* interface ICategoryProvider *
-      ;* [unique][object][uuid] *
       externdef IID_ICategoryProvider:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5414,8 +3799,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <ICategoryProviderVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr ICategoryProvider, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr ICategoryProvider
@@ -5423,28 +3806,16 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr ICategoryProvider
           DECLSPEC_XFGVIRT(ICategoryProvider, CanCategorizeOnSCID)
           STD_METHOD CanCategorizeOnSCID, :ptr ICategoryProvider, :ptr SHCOLUMNID
-          ;* [in] *
           DECLSPEC_XFGVIRT(ICategoryProvider, GetDefaultCategory)
-          ;* [out] *
           STD_METHOD GetDefaultCategory, :ptr ICategoryProvider, :ptr GUID, :ptr SHCOLUMNID
-          ;* [out] *
           DECLSPEC_XFGVIRT(ICategoryProvider, GetCategoryForSCID)
-          ;* [in] *
           STD_METHOD GetCategoryForSCID, :ptr ICategoryProvider, :ptr SHCOLUMNID, :ptr GUID
-          ;* [out] *
           DECLSPEC_XFGVIRT(ICategoryProvider, EnumCategories)
           STD_METHOD EnumCategories, :ptr ICategoryProvider, :ptr ptr IEnumGUID
-          ;* [out] *
           DECLSPEC_XFGVIRT(ICategoryProvider, GetCategoryName)
-          ;* [in] *
-          ;* [size_is][string][out] *
           STD_METHOD GetCategoryName, :ptr ICategoryProvider, :ptr GUID, :LPWSTR, :UINT
-          ;* [in] *
           DECLSPEC_XFGVIRT(ICategoryProvider, CreateCategory)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD CreateCategory, :ptr ICategoryProvider, :ptr GUID, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           ??Interface equ <>
           END_INTERFACE
         ICategoryProviderVtbl ends
@@ -5454,13 +3825,8 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ICategoryProvider_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0054 *
-    ;* [local] *
-    ;* [v1_enum] *
     CATEGORYINFO_FLAGS typedef SDWORD
     CATINFO_NORMAL equ 0
     CATINFO_COLLAPSED equ 1h
@@ -5474,7 +3840,6 @@ ifndef __shobjidl_core_h__
     CATINFO_SHOWEMPTY equ 100h
 
     DEFINE_ENUM_FLAG_OPERATORS(CATEGORYINFO_FLAGS)
-    ;* [v1_enum] *
     CATSORT_FLAGS typedef SDWORD
     CATSORT_DEFAULT equ 0
     CATSORT_NAME equ 1h
@@ -5482,14 +3847,12 @@ ifndef __shobjidl_core_h__
     DEFINE_ENUM_FLAG_OPERATORS(CATSORT_FLAGS)
     CATEGORY_INFO struct
       cif CATEGORYINFO_FLAGS ?
-      wszName WORD 260 dup (?)
+      wszName WCHAR 260 dup (?)
     CATEGORY_INFO ends
     externdef __MIDL_itf_shobjidl_core_0000_0054_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0054_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ICategorizer_INTERFACE_DEFINED__
       __ICategorizer_INTERFACE_DEFINED__ equ <>
-      ;* interface ICategorizer *
-      ;* [unique][object][uuid] *
       externdef IID_ICategorizer:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5498,31 +3861,19 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <ICategorizerVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr ICategorizer, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr ICategorizer
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr ICategorizer
           DECLSPEC_XFGVIRT(ICategorizer, GetDescription)
-          ;* [size_is][string][out] *
           STD_METHOD GetDescription, :ptr ICategorizer, :LPWSTR, :UINT
-          ;* [in] *
           DECLSPEC_XFGVIRT(ICategorizer, GetCategory)
-          ;* [in] *
-          ;* [size_is][in] *
           STD_METHOD GetCategory, :ptr ICategorizer, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr DWORD
-          ;* [size_is][out] *
           DECLSPEC_XFGVIRT(ICategorizer, GetCategoryInfo)
-          ;* [in] *
           STD_METHOD GetCategoryInfo, :ptr ICategorizer, :DWORD, :ptr CATEGORY_INFO
-          ;* [out] *
           DECLSPEC_XFGVIRT(ICategorizer, CompareCategory)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD CompareCategory, :ptr ICategorizer, :CATSORT_FLAGS, :DWORD, :DWORD
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         ICategorizerVtbl ends
@@ -5532,12 +3883,8 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ICategorizer_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0055 *
-    ;* [local] *
     if (NTDDI_VERSION ge NTDDI_WIN2K)
       include pshpack8.inc
       SHDRAGIMAGE struct
@@ -5548,14 +3895,11 @@ ifndef __shobjidl_core_h__
       SHDRAGIMAGE ends
       LPSHDRAGIMAGE typedef ptr SHDRAGIMAGE
       include poppack.inc
-      ; Return to byte packing
       DI_GETDRAGIMAGE equ <TEXT("ShellGetDragImage")>
       externdef __MIDL_itf_shobjidl_core_0000_0055_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0055_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IDropTargetHelper_INTERFACE_DEFINED__
         __IDropTargetHelper_INTERFACE_DEFINED__ equ <>
-        ;* interface IDropTargetHelper *
-        ;* [object][unique][local][uuid] *
         externdef IID_IDropTargetHelper:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -5564,32 +3908,20 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IDropTargetHelperVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IDropTargetHelper, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IDropTargetHelper
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IDropTargetHelper
             DECLSPEC_XFGVIRT(IDropTargetHelper, DragEnter)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD DragEnter, :ptr IDropTargetHelper, :HWND, :ptr IDataObject, :ptr POINT, :DWORD
             DECLSPEC_XFGVIRT(IDropTargetHelper, DragLeave)
             STD_METHOD DragLeave, :ptr IDropTargetHelper
             DECLSPEC_XFGVIRT(IDropTargetHelper, DragOver)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD DragOver, :ptr IDropTargetHelper, :ptr POINT, :DWORD
             DECLSPEC_XFGVIRT(IDropTargetHelper, Drop)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD Drop, :ptr IDropTargetHelper, :ptr IDataObject, :ptr POINT, :DWORD
             DECLSPEC_XFGVIRT(IDropTargetHelper, Show)
-            ;* [annotation][in] *
             STD_METHOD Show, :ptr IDropTargetHelper, :BOOL
             ??Interface equ <>
             END_INTERFACE
@@ -5600,14 +3932,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IDropTargetHelper_INTERFACE_DEFINED__ *
       endif
       ifndef __IDragSourceHelper_INTERFACE_DEFINED__
         __IDragSourceHelper_INTERFACE_DEFINED__ equ <>
-        ;* interface IDragSourceHelper *
-        ;* [object][unique][local][uuid] *
         externdef IID_IDragSourceHelper:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -5616,21 +3944,14 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IDragSourceHelperVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IDragSourceHelper, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IDragSourceHelper
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IDragSourceHelper
             DECLSPEC_XFGVIRT(IDragSourceHelper, InitializeFromBitmap)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD InitializeFromBitmap, :ptr IDragSourceHelper, :LPSHDRAGIMAGE, :ptr IDataObject
             DECLSPEC_XFGVIRT(IDragSourceHelper, InitializeFromWindow)
-            ;* [annotation][unique][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
             STD_METHOD InitializeFromWindow, :ptr IDragSourceHelper, :HWND, :ptr POINT, :ptr IDataObject
             ??Interface equ <>
             END_INTERFACE
@@ -5641,20 +3962,14 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IDragSourceHelper_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0057 *
-      ;* [local] *
     endif
-    ; NTDDI_WIN2K
     ifdef UNICODE
       IShellLink equ <IShellLinkW>
     else
       IShellLink equ <IShellLinkA>
     endif
-    ;* [v1_enum] *
     SLR_FLAGS typedef SDWORD
     SLR_NONE equ 0
     SLR_NO_UI equ 1h
@@ -5673,7 +3988,6 @@ ifndef __shobjidl_core_h__
     SLR_NO_OBJECT_ID equ 2000h
 
     DEFINE_ENUM_FLAG_OPERATORS(SLR_FLAGS)
-    ;* [v1_enum] *
     SLGP_FLAGS typedef SDWORD
     SLGP_SHORTPATH equ 1h
     SLGP_UNCPRIORITY equ 2h
@@ -5685,8 +3999,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0057_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IShellLinkA_INTERFACE_DEFINED__
       __IShellLinkA_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellLinkA *
-      ;* [unique][object][uuid] *
       externdef IID_IShellLinkA:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5695,78 +4007,47 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellLinkAVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellLinkA, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellLinkA
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellLinkA
           DECLSPEC_XFGVIRT(IShellLinkA, GetPath)
-          ;* [size_is][string][out] *
-          ;* [in] *
-          ;* [unique][out][in] *
           STD_METHOD GetPath, :ptr IShellLinkA, :LPSTR, :SDWORD, :ptr WIN32_FIND_DATAA, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkA, GetIDList)
           STD_METHOD GetIDList, :ptr IShellLinkA, :ptr PIDLIST_ABSOLUTE
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellLinkA, SetIDList)
           STD_METHOD SetIDList, :ptr IShellLinkA, :PCIDLIST_ABSOLUTE
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkA, GetDescription)
-          ;* [size_is][string][out] *
           STD_METHOD GetDescription, :ptr IShellLinkA, :LPSTR, :SDWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkA, SetDescription)
           STD_METHOD SetDescription, :ptr IShellLinkA, :LPCSTR
-          ;* [string][in] *
           DECLSPEC_XFGVIRT(IShellLinkA, GetWorkingDirectory)
-          ;* [size_is][string][out] *
           STD_METHOD GetWorkingDirectory, :ptr IShellLinkA, :LPSTR, :SDWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkA, SetWorkingDirectory)
           STD_METHOD SetWorkingDirectory, :ptr IShellLinkA, :LPCSTR
-          ;* [string][in] *
           DECLSPEC_XFGVIRT(IShellLinkA, GetArguments)
-          ;* [size_is][string][out] *
           STD_METHOD GetArguments, :ptr IShellLinkA, :LPSTR, :SDWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkA, SetArguments)
           STD_METHOD SetArguments, :ptr IShellLinkA, :LPCSTR
-          ;* [string][in] *
           DECLSPEC_XFGVIRT(IShellLinkA, GetHotkey)
           STD_METHOD GetHotkey, :ptr IShellLinkA, :ptr WORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellLinkA, SetHotkey)
           STD_METHOD SetHotkey, :ptr IShellLinkA, :WORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkA, GetShowCmd)
           STD_METHOD GetShowCmd, :ptr IShellLinkA, :ptr SDWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellLinkA, SetShowCmd)
           STD_METHOD SetShowCmd, :ptr IShellLinkA, :SDWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkA, GetIconLocation)
-          ;* [size_is][string][out] *
-          ;* [in] *
           STD_METHOD GetIconLocation, :ptr IShellLinkA, :LPSTR, :SDWORD, :ptr SDWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellLinkA, SetIconLocation)
-          ;* [string][in] *
           STD_METHOD SetIconLocation, :ptr IShellLinkA, :LPCSTR, :SDWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkA, SetRelativePath)
-          ;* [string][in] *
           STD_METHOD SetRelativePath, :ptr IShellLinkA, :LPCSTR, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkA, Resolve)
-          ;* [unique][in] *
           STD_METHOD Resolve, :ptr IShellLinkA, :HWND, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkA, SetPath)
           STD_METHOD SetPath, :ptr IShellLinkA, :LPCSTR
-          ;* [string][in] *
           ??Interface equ <>
           END_INTERFACE
         IShellLinkAVtbl ends
@@ -5776,14 +4057,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellLinkA_INTERFACE_DEFINED__ *
     endif
     ifndef __IShellLinkW_INTERFACE_DEFINED__
       __IShellLinkW_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellLinkW *
-      ;* [unique][object][uuid] *
       externdef IID_IShellLinkW:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5792,76 +4069,47 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellLinkWVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellLinkW, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellLinkW
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellLinkW
           DECLSPEC_XFGVIRT(IShellLinkW, GetPath)
-          ;* [size_is][string][out] *
-          ;* [in] *
-          ;* [unique][out][in] *
           STD_METHOD GetPath, :ptr IShellLinkW, :LPWSTR, :SDWORD, :ptr WIN32_FIND_DATAW, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkW, GetIDList)
           STD_METHOD GetIDList, :ptr IShellLinkW, :ptr PIDLIST_ABSOLUTE
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellLinkW, SetIDList)
           STD_METHOD SetIDList, :ptr IShellLinkW, :PCIDLIST_ABSOLUTE
-          ;* [unique][in] *
           DECLSPEC_XFGVIRT(IShellLinkW, GetDescription)
-          ;* [size_is][string][out] *
           STD_METHOD GetDescription, :ptr IShellLinkW, :LPWSTR, :SDWORD
           DECLSPEC_XFGVIRT(IShellLinkW, SetDescription)
           STD_METHOD SetDescription, :ptr IShellLinkW, :LPCWSTR
-          ;* [string][in] *
           DECLSPEC_XFGVIRT(IShellLinkW, GetWorkingDirectory)
-          ;* [size_is][string][out] *
           STD_METHOD GetWorkingDirectory, :ptr IShellLinkW, :LPWSTR, :SDWORD
           DECLSPEC_XFGVIRT(IShellLinkW, SetWorkingDirectory)
           STD_METHOD SetWorkingDirectory, :ptr IShellLinkW, :LPCWSTR
-          ;* [string][in] *
           DECLSPEC_XFGVIRT(IShellLinkW, GetArguments)
-          ;* [size_is][string][out] *
           STD_METHOD GetArguments, :ptr IShellLinkW, :LPWSTR, :SDWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkW, SetArguments)
           STD_METHOD SetArguments, :ptr IShellLinkW, :LPCWSTR
-          ;* [string][in] *
           DECLSPEC_XFGVIRT(IShellLinkW, GetHotkey)
           STD_METHOD GetHotkey, :ptr IShellLinkW, :ptr WORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellLinkW, SetHotkey)
           STD_METHOD SetHotkey, :ptr IShellLinkW, :WORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkW, GetShowCmd)
           STD_METHOD GetShowCmd, :ptr IShellLinkW, :ptr SDWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellLinkW, SetShowCmd)
           STD_METHOD SetShowCmd, :ptr IShellLinkW, :SDWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkW, GetIconLocation)
-          ;* [size_is][string][out] *
-          ;* [in] *
           STD_METHOD GetIconLocation, :ptr IShellLinkW, :LPWSTR, :SDWORD, :ptr SDWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellLinkW, SetIconLocation)
-          ;* [string][in] *
           STD_METHOD SetIconLocation, :ptr IShellLinkW, :LPCWSTR, :SDWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkW, SetRelativePath)
-          ;* [string][in] *
           STD_METHOD SetRelativePath, :ptr IShellLinkW, :LPCWSTR, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkW, Resolve)
-          ;* [unique][in] *
           STD_METHOD Resolve, :ptr IShellLinkW, :HWND, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkW, SetPath)
           STD_METHOD SetPath, :ptr IShellLinkW, :LPCWSTR
-          ;* [string][in] *
           ??Interface equ <>
           END_INTERFACE
         IShellLinkWVtbl ends
@@ -5871,14 +4119,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellLinkW_INTERFACE_DEFINED__ *
     endif
     ifndef __IShellLinkDataList_INTERFACE_DEFINED__
       __IShellLinkDataList_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellLinkDataList *
-      ;* [unique][object][uuid] *
       externdef IID_IShellLinkDataList:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -5887,31 +4131,21 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellLinkDataListVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellLinkDataList, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellLinkDataList
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellLinkDataList
           DECLSPEC_XFGVIRT(IShellLinkDataList, AddDataBlock)
-          ;* [local] *
-          ;* [annotation][in] *
           STD_METHOD AddDataBlock, :ptr IShellLinkDataList, :ptr
           DECLSPEC_XFGVIRT(IShellLinkDataList, CopyDataBlock)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][out] *
           STD_METHOD CopyDataBlock, :ptr IShellLinkDataList, :DWORD, :ptr ptr
           DECLSPEC_XFGVIRT(IShellLinkDataList, RemoveDataBlock)
           STD_METHOD RemoveDataBlock, :ptr IShellLinkDataList, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLinkDataList, GetFlags)
           STD_METHOD GetFlags, :ptr IShellLinkDataList, :ptr DWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellLinkDataList, SetFlags)
           STD_METHOD SetFlags, :ptr IShellLinkDataList, :DWORD
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IShellLinkDataListVtbl ends
@@ -5921,19 +4155,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellLinkDataList_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0060 *
-    ;* [local] *
     if (NTDDI_VERSION ge NTDDI_WIN2K)
       externdef __MIDL_itf_shobjidl_core_0000_0060_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0060_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IResolveShellLink_INTERFACE_DEFINED__
         __IResolveShellLink_INTERFACE_DEFINED__ equ <>
-        ;* interface IResolveShellLink *
-        ;* [unique][uuid][object] *
         externdef IID_IResolveShellLink:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -5942,18 +4170,13 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IResolveShellLinkVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IResolveShellLink, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IResolveShellLink
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IResolveShellLink
             DECLSPEC_XFGVIRT(IResolveShellLink, ResolveShellLink)
-            ;* [in] *
-            ;* [unique][in] *
             STD_METHOD ResolveShellLink, :ptr IResolveShellLink, :ptr IUnknown, :HWND, :DWORD
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IResolveShellLinkVtbl ends
@@ -5963,21 +4186,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IResolveShellLink_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0061 *
-      ;* [local] *
     endif
-    ; NTDDI_WIN2K
     externdef __MIDL_itf_shobjidl_core_0000_0061_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0061_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IActionProgressDialog_INTERFACE_DEFINED__
       __IActionProgressDialog_INTERFACE_DEFINED__ equ <>
-      ;* interface IActionProgressDialog *
-      ;* [unique][uuid][object] *
-      ;* [v1_enum] *
       _SPINITF typedef SDWORD
       SPINITF_NORMAL equ 0
       SPINITF_MODAL equ 1h
@@ -5992,18 +4207,13 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IActionProgressDialogVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IActionProgressDialog, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IActionProgressDialog
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IActionProgressDialog
           DECLSPEC_XFGVIRT(IActionProgressDialog, Initialize)
-          ;* [in] *
-          ;* [string][unique][in] *
           STD_METHOD Initialize, :ptr IActionProgressDialog, :SPINITF, :LPCWSTR, :LPCWSTR
-          ;* [string][unique][in] *
           DECLSPEC_XFGVIRT(IActionProgressDialog, Stop)
           STD_METHOD Stop, :ptr IActionProgressDialog
           ??Interface equ <>
@@ -6015,68 +4225,37 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IActionProgressDialog_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0062 *
-    ;* [local] *
-    ARCONTENT_AUTORUNINF equ 00000002h; That's the one we have today, and always had
-
-    ARCONTENT_AUDIOCD equ 00000004h; Audio CD (not MP3 and the like, the stuff you buy at the store)
-
-    ARCONTENT_DVDMOVIE equ 00000008h; DVD Movie (not MPEGs, the stuff you buy at the store)
-
-    ARCONTENT_BLANKCD equ 00000010h; Blank CD-R/CD-RW)
-
-    ARCONTENT_BLANKDVD equ 00000020h; Blank DVD-R/DVD-RW
-
-    ARCONTENT_UNKNOWNCONTENT equ 00000040h; Whatever files.  Mean that it's formatted.
-
-    ARCONTENT_AUTOPLAYPIX equ 00000080h; Any files classified by shell as image. (jpg, bmp, etc.)
-
-    ARCONTENT_AUTOPLAYMUSIC equ 00000100h; Any files classified by shell as music. (wma, mp3, etc.)
-
-    ARCONTENT_AUTOPLAYVIDEO equ 00000200h; Any files classified by shell as video. (mpg, avi, etc.)
-
+    ARCONTENT_AUTORUNINF equ 00000002h
+    ARCONTENT_AUDIOCD equ 00000004h
+    ARCONTENT_DVDMOVIE equ 00000008h
+    ARCONTENT_BLANKCD equ 00000010h
+    ARCONTENT_BLANKDVD equ 00000020h
+    ARCONTENT_UNKNOWNCONTENT equ 00000040h
+    ARCONTENT_AUTOPLAYPIX equ 00000080h
+    ARCONTENT_AUTOPLAYMUSIC equ 00000100h
+    ARCONTENT_AUTOPLAYVIDEO equ 00000200h
     if (NTDDI_VERSION ge NTDDI_VISTA)
-      ARCONTENT_VCD equ 00000400h; VCD format
-
-      ARCONTENT_SVCD equ 00000800h; Super-VCD format
-
-      ARCONTENT_DVDAUDIO equ 00001000h; DVD-Audio
-
-      ARCONTENT_BLANKBD equ 00002000h; Blank BD-R/BD-RW
-
-      ARCONTENT_BLURAY equ 00004000h; Blu-ray Disc
-
-      ARCONTENT_CAMERASTORAGE equ 00008000h; Camera Storage
-
-      ARCONTENT_CUSTOMEVENT equ 00010000h; Custom Event
-
-      ARCONTENT_NONE equ 00000000h; Empty (but formatted)
-
-      ARCONTENT_MASK equ 0001FFFEh; Bits that denote valid content types
-
-      ARCONTENT_PHASE_UNKNOWN equ 00000000h; We can be in any phase.  This is XP behavior.
-
-      ARCONTENT_PHASE_PRESNIFF equ 10000000h; These are contents we know w/o scanning the media for complete data (e.g. Audio track, DVD Movie).
-
-      ARCONTENT_PHASE_SNIFFING equ 20000000h; We are in the middle of searching the media.  There could be more contents to be found than currently reported.
-
-      ARCONTENT_PHASE_FINAL equ 40000000h; We have finished searching; contents we report are final.
-
-      ARCONTENT_PHASE_MASK equ 70000000h; Bits that denote what phase we are in the Autoplay process.
-
+      ARCONTENT_VCD equ 00000400h
+      ARCONTENT_SVCD equ 00000800h
+      ARCONTENT_DVDAUDIO equ 00001000h
+      ARCONTENT_BLANKBD equ 00002000h
+      ARCONTENT_BLURAY equ 00004000h
+      ARCONTENT_CAMERASTORAGE equ 00008000h
+      ARCONTENT_CUSTOMEVENT equ 00010000h
+      ARCONTENT_NONE equ 00000000h
+      ARCONTENT_MASK equ 0001FFFEh
+      ARCONTENT_PHASE_UNKNOWN equ 00000000h
+      ARCONTENT_PHASE_PRESNIFF equ 10000000h
+      ARCONTENT_PHASE_SNIFFING equ 20000000h
+      ARCONTENT_PHASE_FINAL equ 40000000h
+      ARCONTENT_PHASE_MASK equ 70000000h
     endif
-    ; NTDDI_VISTA
     externdef __MIDL_itf_shobjidl_core_0000_0062_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0062_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IActionProgress_INTERFACE_DEFINED__
       __IActionProgress_INTERFACE_DEFINED__ equ <>
-      ;* interface IActionProgress *
-      ;* [unique][uuid][object] *
-      ;* [v1_enum] *
       _SPBEGINF typedef SDWORD
       SPBEGINF_NORMAL equ 0
       SPBEGINF_AUTOTIME equ 2h
@@ -6085,7 +4264,6 @@ ifndef __shobjidl_core_h__
       SPBEGINF_NOCANCELBUTTON equ 40h
 
       SPBEGINF typedef DWORD
-      ;* [v1_enum] *
       SPACTION typedef SDWORD
       SPACTION_NONE equ 0
       SPACTION_MOVING equ
@@ -6103,7 +4281,6 @@ ifndef __shobjidl_core_h__
       SPACTION_COPY_MOVING equ
       _SPACTION typedef SPACTION
 
-      ;* [v1_enum] *
       SPTEXT typedef SDWORD
       SPTEXT_ACTIONDESCRIPTION equ 1
       SPTEXT_ACTIONDETAIL equ
@@ -6117,29 +4294,19 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IActionProgressVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IActionProgress, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IActionProgress
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IActionProgress
           DECLSPEC_XFGVIRT(IActionProgress, Begin)
-          ;* [in] *
           STD_METHOD Begin, :ptr IActionProgress, :SPACTION, :SPBEGINF
-          ;* [in] *
           DECLSPEC_XFGVIRT(IActionProgress, UpdateProgress)
-          ;* [in] *
           STD_METHOD UpdateProgress, :ptr IActionProgress, :ULONGLONG, :ULONGLONG
-          ;* [in] *
           DECLSPEC_XFGVIRT(IActionProgress, UpdateText)
-          ;* [in] *
-          ;* [string][in] *
           STD_METHOD UpdateText, :ptr IActionProgress, :SPTEXT, :LPCWSTR, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(IActionProgress, QueryCancel)
           STD_METHOD QueryCancel, :ptr IActionProgress, :ptr BOOL
-          ;* [out] *
           DECLSPEC_XFGVIRT(IActionProgress, ResetCancel)
           STD_METHOD ResetCancel, :ptr IActionProgress
           DECLSPEC_XFGVIRT(IActionProgress, End)
@@ -6153,14 +4320,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IActionProgress_INTERFACE_DEFINED__ *
     endif
     ifndef __IShellExtInit_INTERFACE_DEFINED__
       __IShellExtInit_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellExtInit *
-      ;* [unique][object][uuid] *
       externdef IID_IShellExtInit:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6169,18 +4332,12 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellExtInitVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellExtInit, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellExtInit
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellExtInit
           DECLSPEC_XFGVIRT(IShellExtInit, Initialize)
-          ;* [local] *
-          ;* [annotation][unique][in] *
-          ;* [annotation][unique][in] *
-          ;* [annotation][unique][in] *
           STD_METHOD Initialize, :ptr IShellExtInit, :PCIDLIST_ABSOLUTE, :ptr IDataObject, :HKEY
           ??Interface equ <>
           END_INTERFACE
@@ -6191,24 +4348,15 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* [call_as] *
       IShellExtInit_RemoteInitialize_Proxy proto WIN_STD_CALL_CONV :ptr IShellExtInit, :PCIDLIST_ABSOLUTE, :ptr IDataObject, :HANDLE
-      ;* [system_handle][unique][in] *
       IShellExtInit_RemoteInitialize_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-      ;* __IShellExtInit_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0064 *
-    ;* [local] *
     LPSHELLEXTINIT typedef ptr IShellExtInit
     externdef __MIDL_itf_shobjidl_core_0000_0064_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0064_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IShellPropSheetExt_INTERFACE_DEFINED__
       __IShellPropSheetExt_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellPropSheetExt *
-      ;* [unique][local][object][uuid] *
-      ;* [v1_enum] *
       _EXPPS typedef SDWORD
       EXPPS_FILETYPES equ 1h
 
@@ -6221,21 +4369,14 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellPropSheetExtVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellPropSheetExt, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellPropSheetExt
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellPropSheetExt
           DECLSPEC_XFGVIRT(IShellPropSheetExt, AddPages)
-          ;* [annotation][in] *
-          ;* [annotation][in] *
           STD_METHOD AddPages, :ptr IShellPropSheetExt, :LPFNSVADDPROPSHEETPAGE, :LPARAM
           DECLSPEC_XFGVIRT(IShellPropSheetExt, ReplacePage)
-          ;* [annotation][in] *
-          ;* [annotation][in] *
-          ;* [annotation][in] *
           STD_METHOD ReplacePage, :ptr IShellPropSheetExt, :EXPPS, :LPFNSVADDPROPSHEETPAGE, :LPARAM
           ??Interface equ <>
           END_INTERFACE
@@ -6246,19 +4387,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellPropSheetExt_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0065 *
-    ;* [local] *
     LPSHELLPROPSHEETEXT typedef ptr IShellPropSheetExt
     externdef __MIDL_itf_shobjidl_core_0000_0065_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0065_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IRemoteComputer_INTERFACE_DEFINED__
       __IRemoteComputer_INTERFACE_DEFINED__ equ <>
-      ;* interface IRemoteComputer *
-      ;* [unique][object][uuid] *
       externdef IID_IRemoteComputer:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6267,17 +4402,13 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IRemoteComputerVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IRemoteComputer, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IRemoteComputer
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IRemoteComputer
           DECLSPEC_XFGVIRT(IRemoteComputer, Initialize)
-          ;* [string][in] *
           STD_METHOD Initialize, :ptr IRemoteComputer, :LPCWSTR, :BOOL
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IRemoteComputerVtbl ends
@@ -6287,14 +4418,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IRemoteComputer_INTERFACE_DEFINED__ *
     endif
     ifndef __IQueryContinue_INTERFACE_DEFINED__
       __IQueryContinue_INTERFACE_DEFINED__ equ <>
-      ;* interface IQueryContinue *
-      ;* [unique][object][uuid] *
       externdef IID_IQueryContinue:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6303,8 +4430,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IQueryContinueVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IQueryContinue, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IQueryContinue
@@ -6321,14 +4446,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IQueryContinue_INTERFACE_DEFINED__ *
     endif
     ifndef __IObjectWithCancelEvent_INTERFACE_DEFINED__
       __IObjectWithCancelEvent_INTERFACE_DEFINED__ equ <>
-      ;* interface IObjectWithCancelEvent *
-      ;* [unique][local][object][uuid] *
       externdef IID_IObjectWithCancelEvent:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6337,15 +4458,12 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IObjectWithCancelEventVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IObjectWithCancelEvent, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IObjectWithCancelEvent
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IObjectWithCancelEvent
           DECLSPEC_XFGVIRT(IObjectWithCancelEvent, GetCancelEvent)
-          ;* [annotation][out] *
           STD_METHOD GetCancelEvent, :ptr IObjectWithCancelEvent, :ptr HANDLE
           ??Interface equ <>
           END_INTERFACE
@@ -6356,14 +4474,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IObjectWithCancelEvent_INTERFACE_DEFINED__ *
     endif
     ifndef __IUserNotification_INTERFACE_DEFINED__
       __IUserNotification_INTERFACE_DEFINED__ equ <>
-      ;* interface IUserNotification *
-      ;* [unique][object][uuid] *
       externdef IID_IUserNotification:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6372,34 +4486,21 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IUserNotificationVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IUserNotification, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IUserNotification
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IUserNotification
           DECLSPEC_XFGVIRT(IUserNotification, SetBalloonInfo)
-          ;* [string][unique][in] *
-          ;* [string][unique][in] *
           STD_METHOD SetBalloonInfo, :ptr IUserNotification, :LPCWSTR, :LPCWSTR, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IUserNotification, SetBalloonRetry)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD SetBalloonRetry, :ptr IUserNotification, :DWORD, :DWORD, :UINT
-          ;* [in] *
           DECLSPEC_XFGVIRT(IUserNotification, SetIconInfo)
-          ;* [unique][in] *
           STD_METHOD SetIconInfo, :ptr IUserNotification, :HICON, :LPCWSTR
-          ;* [string][unique][in] *
           DECLSPEC_XFGVIRT(IUserNotification, Show)
-          ;* [unique][in] *
           STD_METHOD Show, :ptr IUserNotification, :ptr IQueryContinue, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IUserNotification, PlaySound)
           STD_METHOD PlaySound, :ptr IUserNotification, :LPCWSTR
-          ;* [string][in] *
           ??Interface equ <>
           END_INTERFACE
         IUserNotificationVtbl ends
@@ -6409,14 +4510,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IUserNotification_INTERFACE_DEFINED__ *
     endif
     ifndef __IItemNameLimits_INTERFACE_DEFINED__
       __IItemNameLimits_INTERFACE_DEFINED__ equ <>
-      ;* interface IItemNameLimits *
-      ;* [object][uuid] *
       externdef IID_IItemNameLimits:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6425,21 +4522,15 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IItemNameLimitsVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IItemNameLimits, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IItemNameLimits
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IItemNameLimits
           DECLSPEC_XFGVIRT(IItemNameLimits, GetValidCharacters)
-          ;* [string][out] *
           STD_METHOD GetValidCharacters, :ptr IItemNameLimits, :ptr LPWSTR, :ptr LPWSTR
-          ;* [string][out] *
           DECLSPEC_XFGVIRT(IItemNameLimits, GetMaxLength)
-          ;* [string][in] *
           STD_METHOD GetMaxLength, :ptr IItemNameLimits, :LPCWSTR, :ptr SDWORD
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IItemNameLimitsVtbl ends
@@ -6449,19 +4540,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IItemNameLimits_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0070 *
-    ;* [local] *
     if (NTDDI_VERSION ge NTDDI_VISTA)
       externdef __MIDL_itf_shobjidl_core_0000_0070_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0070_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __ISearchFolderItemFactory_INTERFACE_DEFINED__
         __ISearchFolderItemFactory_INTERFACE_DEFINED__ equ <>
-        ;* interface ISearchFolderItemFactory *
-        ;* [unique][uuid][object] *
         externdef IID_ISearchFolderItemFactory:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -6470,8 +4555,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <ISearchFolderItemFactoryVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ISearchFolderItemFactory, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ISearchFolderItemFactory
@@ -6479,44 +4562,28 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr ISearchFolderItemFactory
             DECLSPEC_XFGVIRT(ISearchFolderItemFactory, SetDisplayName)
             STD_METHOD SetDisplayName, :ptr ISearchFolderItemFactory, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(ISearchFolderItemFactory, SetFolderTypeID)
             STD_METHOD SetFolderTypeID, :ptr ISearchFolderItemFactory, :FOLDERTYPEID
-            ;* [in] *
             DECLSPEC_XFGVIRT(ISearchFolderItemFactory, SetFolderLogicalViewMode)
             STD_METHOD SetFolderLogicalViewMode, :ptr ISearchFolderItemFactory, :FOLDERLOGICALVIEWMODE
-            ;* [in] *
             DECLSPEC_XFGVIRT(ISearchFolderItemFactory, SetIconSize)
             STD_METHOD SetIconSize, :ptr ISearchFolderItemFactory, :SDWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(ISearchFolderItemFactory, SetVisibleColumns)
-            ;* [in] *
             STD_METHOD SetVisibleColumns, :ptr ISearchFolderItemFactory, :UINT, :ptr PROPERTYKEY
-            ;* [size_is][in] *
             DECLSPEC_XFGVIRT(ISearchFolderItemFactory, SetSortColumns)
-            ;* [in] *
             STD_METHOD SetSortColumns, :ptr ISearchFolderItemFactory, :UINT, :ptr SORTCOLUMN
-            ;* [size_is][in] *
             DECLSPEC_XFGVIRT(ISearchFolderItemFactory, SetGroupColumn)
             STD_METHOD SetGroupColumn, :ptr ISearchFolderItemFactory, :REFPROPERTYKEY
-            ;* [in] *
             DECLSPEC_XFGVIRT(ISearchFolderItemFactory, SetStacks)
-            ;* [in] *
             STD_METHOD SetStacks, :ptr ISearchFolderItemFactory, :UINT, :ptr PROPERTYKEY
-            ;* [size_is][in] *
             DECLSPEC_XFGVIRT(ISearchFolderItemFactory, SetScope)
             STD_METHOD SetScope, :ptr ISearchFolderItemFactory, :ptr IShellItemArray
-            ;* [in] *
             DECLSPEC_XFGVIRT(ISearchFolderItemFactory, SetCondition)
             STD_METHOD SetCondition, :ptr ISearchFolderItemFactory, :ptr ICondition
-            ;* [in] *
             DECLSPEC_XFGVIRT(ISearchFolderItemFactory, GetShellItem)
-            ;* [in] *
             STD_METHOD GetShellItem, :ptr ISearchFolderItemFactory, :REFIID, :ptr ptr
-            ;* [iid_is][out] *
             DECLSPEC_XFGVIRT(ISearchFolderItemFactory, GetIDList)
             STD_METHOD GetIDList, :ptr ISearchFolderItemFactory, :ptr PIDLIST_ABSOLUTE
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           ISearchFolderItemFactoryVtbl ends
@@ -6526,45 +4593,27 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ISearchFolderItemFactory_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0071 *
-      ;* [local] *
     endif
-    ; NTDDI_VISTA
     IEI_PRIORITY_MAX equ <ITSAT_MAX_PRIORITY>
     IEI_PRIORITY_MIN equ <ITSAT_MIN_PRIORITY>
     IEIT_PRIORITY_NORMAL equ <ITSAT_DEFAULT_PRIORITY>
-    IEIFLAG_ASYNC equ 0001h; (deprecated) ask the extractor if it supports ASYNC extract (free threaded)
-
-    IEIFLAG_CACHE equ 0002h; returned from the extractor if it does NOT cache the thumbnail
-
-    IEIFLAG_ASPECT equ 0004h; passed to the extractor to beg it to render to the aspect ratio of the supplied rect
-
-    IEIFLAG_OFFLINE equ 0008h; if the extractor shouldn't hit the net to get any content neede for the rendering
-
-    IEIFLAG_GLEAM equ 0010h; does the image have a gleam ? this will be returned if it does
-
-    IEIFLAG_SCREEN equ 0020h; render as if for the screen  (this is exlusive with IEIFLAG_ASPECT )
-
-    IEIFLAG_ORIGSIZE equ 0040h; render to the approx size passed, but crop if neccessary
-
-    IEIFLAG_NOSTAMP equ 0080h; returned from the extractor if it does NOT want an icon stamp on the thumbnail
-
-    IEIFLAG_NOBORDER equ 0100h; returned from the extractor if it does NOT want an a border around the thumbnail
-
-    IEIFLAG_QUALITY equ 0200h; passed to the Extract method to indicate that a slower, higher quality image is desired, re-compute the thumbnail
-
-    IEIFLAG_REFRESH equ 0400h; returned from the extractor if it would like to have Refresh Thumbnail available
-
+    IEIFLAG_ASYNC equ 0001h
+    IEIFLAG_CACHE equ 0002h
+    IEIFLAG_ASPECT equ 0004h
+    IEIFLAG_OFFLINE equ 0008h
+    IEIFLAG_GLEAM equ 0010h
+    IEIFLAG_SCREEN equ 0020h
+    IEIFLAG_ORIGSIZE equ 0040h
+    IEIFLAG_NOSTAMP equ 0080h
+    IEIFLAG_NOBORDER equ 0100h
+    IEIFLAG_QUALITY equ 0200h
+    IEIFLAG_REFRESH equ 0400h
     externdef __MIDL_itf_shobjidl_core_0000_0071_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0071_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IExtractImage_INTERFACE_DEFINED__
       __IExtractImage_INTERFACE_DEFINED__ equ <>
-      ;* interface IExtractImage *
-      ;* [unique][object][uuid] *
       externdef IID_IExtractImage:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6573,24 +4622,15 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IExtractImageVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IExtractImage, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IExtractImage
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IExtractImage
           DECLSPEC_XFGVIRT(IExtractImage, GetLocation)
-          ;* [size_is][string][out] *
-          ;* [in] *
-          ;* [unique][out][in] *
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetLocation, :ptr IExtractImage, :LPWSTR, :DWORD, :ptr DWORD, :ptr SIZE_, :DWORD, :ptr DWORD
-          ;* [out][in] *
           DECLSPEC_XFGVIRT(IExtractImage, Extract)
           STD_METHOD Extract, :ptr IExtractImage, :ptr HBITMAP
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IExtractImageVtbl ends
@@ -6600,19 +4640,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IExtractImage_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0072 *
-    ;* [local] *
     LPEXTRACTIMAGE typedef ptr IExtractImage
     externdef __MIDL_itf_shobjidl_core_0000_0072_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0072_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IExtractImage2_INTERFACE_DEFINED__
       __IExtractImage2_INTERFACE_DEFINED__ equ <>
-      ;* interface IExtractImage2 *
-      ;* [unique][object][uuid] *
       externdef IID_IExtractImage2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6621,27 +4655,17 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IExtractImage2Vtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IExtractImage2, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IExtractImage2
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IExtractImage2
           DECLSPEC_XFGVIRT(IExtractImage, GetLocation)
-          ;* [size_is][string][out] *
-          ;* [in] *
-          ;* [unique][out][in] *
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetLocation, :ptr IExtractImage2, :LPWSTR, :DWORD, :ptr DWORD, :ptr SIZE_, :DWORD, :ptr DWORD
-          ;* [out][in] *
           DECLSPEC_XFGVIRT(IExtractImage, Extract)
           STD_METHOD Extract, :ptr IExtractImage2, :ptr HBITMAP
-          ;* [out] *
           DECLSPEC_XFGVIRT(IExtractImage2, GetDateStamp)
           STD_METHOD GetDateStamp, :ptr IExtractImage2, :ptr FILETIME
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IExtractImage2Vtbl ends
@@ -6651,19 +4675,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IExtractImage2_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0073 *
-    ;* [local] *
     LPEXTRACTIMAGE2 typedef ptr IExtractImage2
     externdef __MIDL_itf_shobjidl_core_0000_0073_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0073_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IThumbnailHandlerFactory_INTERFACE_DEFINED__
       __IThumbnailHandlerFactory_INTERFACE_DEFINED__ equ <>
-      ;* interface IThumbnailHandlerFactory *
-      ;* [unique][object][uuid] *
       externdef IID_IThumbnailHandlerFactory:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6672,19 +4690,13 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IThumbnailHandlerFactoryVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IThumbnailHandlerFactory, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IThumbnailHandlerFactory
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IThumbnailHandlerFactory
           DECLSPEC_XFGVIRT(IThumbnailHandlerFactory, GetThumbnailHandler)
-          ;* [in] *
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD GetThumbnailHandler, :ptr IThumbnailHandlerFactory, :PCUITEMID_CHILD, :ptr IBindCtx, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           ??Interface equ <>
           END_INTERFACE
         IThumbnailHandlerFactoryVtbl ends
@@ -6694,14 +4706,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IThumbnailHandlerFactory_INTERFACE_DEFINED__ *
     endif
     ifndef __IParentAndItem_INTERFACE_DEFINED__
       __IParentAndItem_INTERFACE_DEFINED__ equ <>
-      ;* interface IParentAndItem *
-      ;* [unique][object][uuid] *
       externdef IID_IParentAndItem:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6710,23 +4718,14 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IParentAndItemVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IParentAndItem, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IParentAndItem
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IParentAndItem
           DECLSPEC_XFGVIRT(IParentAndItem, SetParentAndItem)
-          ;* [unique][in] *
-          ;* [unique][in] *
           STD_METHOD SetParentAndItem, :ptr IParentAndItem, :PCIDLIST_ABSOLUTE, :ptr IShellFolder, :PCUITEMID_CHILD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IParentAndItem, GetParentAndItem)
-          ;* [local] *
-          ;* [annotation][out] *
-          ;* [annotation][out] *
-          ;* [annotation][out] *
           STD_METHOD GetParentAndItem, :ptr IParentAndItem, :ptr PIDLIST_ABSOLUTE, :ptr ptr IShellFolder, :ptr PITEMID_CHILD
           ??Interface equ <>
           END_INTERFACE
@@ -6737,18 +4736,12 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* [call_as] *
       IParentAndItem_RemoteGetParentAndItem_Proxy proto WIN_STD_CALL_CONV :ptr IParentAndItem, :ptr PIDLIST_ABSOLUTE, :ptr ptr IShellFolder, :ptr PITEMID_CHILD
-      ;* [out] *
       IParentAndItem_RemoteGetParentAndItem_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-      ;* __IParentAndItem_INTERFACE_DEFINED__ *
     endif
     ifndef __IDockingWindow_INTERFACE_DEFINED__
       __IDockingWindow_INTERFACE_DEFINED__ equ <>
-      ;* interface IDockingWindow *
-      ;* [object][uuid] *
       externdef IID_IDockingWindow:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6757,31 +4750,21 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IDockingWindowVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IDockingWindow, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IDockingWindow
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IDockingWindow
           DECLSPEC_XFGVIRT(IOleWindow, GetWindow)
-          ;* [input_sync] *
           STD_METHOD GetWindow, :ptr IDockingWindow, :ptr HWND
-          ;* [out] *
           DECLSPEC_XFGVIRT(IOleWindow, ContextSensitiveHelp)
           STD_METHOD ContextSensitiveHelp, :ptr IDockingWindow, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(IDockingWindow, ShowDW)
           STD_METHOD ShowDW, :ptr IDockingWindow, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(IDockingWindow, CloseDW)
           STD_METHOD CloseDW, :ptr IDockingWindow, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IDockingWindow, ResizeBorderDW)
-          ;* [unique][in] *
-          ;* [unique][in] *
           STD_METHOD ResizeBorderDW, :ptr IDockingWindow, :LPCRECT, :ptr IUnknown, :BOOL
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IDockingWindowVtbl ends
@@ -6791,12 +4774,8 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IDockingWindow_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0076 *
-    ;* [local] *
     DBIM_MINSIZE equ 0001h
     DBIM_MAXSIZE equ 0002h
     DBIM_INTEGRAL equ 0004h
@@ -6811,15 +4790,14 @@ ifndef __shobjidl_core_h__
       ptMaxSize POINTL <>
       ptIntegral POINTL <>
       ptActual POINTL <>
-      wszTitle WORD 256 dup (?)
+      wszTitle WCHAR 256 dup (?)
       dwModeFlags DWORD ?
       crBkgnd COLORREF ?
     DESKBANDINFO ends
     include poppack.inc
     DBIMF_NORMAL equ 0000h
     DBIMF_FIXED equ 0001h
-    DBIMF_FIXEDBMP equ 0004h; a fixed background bitmap (if supported)
-
+    DBIMF_FIXEDBMP equ 0004h
     DBIMF_VARIABLEHEIGHT equ 0008h
     DBIMF_UNDELETEABLE equ 0010h
     DBIMF_DEBOSSED equ 0020h
@@ -6833,7 +4811,6 @@ ifndef __shobjidl_core_h__
       DBIMF_ALWAYSGRIPPER equ 1000h
       DBIMF_NOMARGINS equ 2000h
     endif
-    ; NTDDI_VISTA
     DBIF_VIEWMODE_NORMAL equ 0000h
     DBIF_VIEWMODE_VERTICAL equ 0001h
     DBIF_VIEWMODE_FLOATING equ 0002h
@@ -6855,8 +4832,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0076_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IDeskBand_INTERFACE_DEFINED__
       __IDeskBand_INTERFACE_DEFINED__ equ <>
-      ;* interface IDeskBand *
-      ;* [object][uuid] *
       externdef IID_IDeskBand:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6865,36 +4840,23 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IDeskBandVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IDeskBand, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IDeskBand
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IDeskBand
           DECLSPEC_XFGVIRT(IOleWindow, GetWindow)
-          ;* [input_sync] *
           STD_METHOD GetWindow, :ptr IDeskBand, :ptr HWND
-          ;* [out] *
           DECLSPEC_XFGVIRT(IOleWindow, ContextSensitiveHelp)
           STD_METHOD ContextSensitiveHelp, :ptr IDeskBand, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(IDockingWindow, ShowDW)
           STD_METHOD ShowDW, :ptr IDeskBand, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(IDockingWindow, CloseDW)
           STD_METHOD CloseDW, :ptr IDeskBand, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IDockingWindow, ResizeBorderDW)
-          ;* [unique][in] *
-          ;* [unique][in] *
           STD_METHOD ResizeBorderDW, :ptr IDeskBand, :LPCRECT, :ptr IUnknown, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(IDeskBand, GetBandInfo)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetBandInfo, :ptr IDeskBand, :DWORD, :DWORD, :ptr DESKBANDINFO
-          ;* [out][in] *
           ??Interface equ <>
           END_INTERFACE
         IDeskBandVtbl ends
@@ -6904,19 +4866,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IDeskBand_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0077 *
-    ;* [local] *
     if (NTDDI_VERSION ge NTDDI_VISTA)
       externdef __MIDL_itf_shobjidl_core_0000_0077_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0077_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IDeskBandInfo_INTERFACE_DEFINED__
         __IDeskBandInfo_INTERFACE_DEFINED__ equ <>
-        ;* interface IDeskBandInfo *
-        ;* [object][uuid] *
         externdef IID_IDeskBandInfo:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -6925,18 +4881,13 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IDeskBandInfoVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IDeskBandInfo, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IDeskBandInfo
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IDeskBandInfo
             DECLSPEC_XFGVIRT(IDeskBandInfo, GetDefaultBandWidth)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD GetDefaultBandWidth, :ptr IDeskBandInfo, :DWORD, :DWORD, :ptr SDWORD
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IDeskBandInfoVtbl ends
@@ -6946,20 +4897,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IDeskBandInfo_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0078 *
-      ;* [local] *
     endif
-    ; NTDDI_VISTA
     externdef __MIDL_itf_shobjidl_core_0000_0078_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0078_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ITaskbarList_INTERFACE_DEFINED__
       __ITaskbarList_INTERFACE_DEFINED__ equ <>
-      ;* interface ITaskbarList *
-      ;* [object][uuid] *
       externdef IID_ITaskbarList:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -6968,8 +4912,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <ITaskbarListVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr ITaskbarList, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr ITaskbarList
@@ -6979,16 +4921,12 @@ ifndef __shobjidl_core_h__
           STD_METHOD HrInit, :ptr ITaskbarList
           DECLSPEC_XFGVIRT(ITaskbarList, AddTab)
           STD_METHOD AddTab, :ptr ITaskbarList, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList, DeleteTab)
           STD_METHOD DeleteTab, :ptr ITaskbarList, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList, ActivateTab)
           STD_METHOD ActivateTab, :ptr ITaskbarList, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList, SetActiveAlt)
           STD_METHOD SetActiveAlt, :ptr ITaskbarList, :HWND
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         ITaskbarListVtbl ends
@@ -6998,14 +4936,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ITaskbarList_INTERFACE_DEFINED__ *
     endif
     ifndef __ITaskbarList2_INTERFACE_DEFINED__
       __ITaskbarList2_INTERFACE_DEFINED__ equ <>
-      ;* interface ITaskbarList2 *
-      ;* [object][uuid] *
       externdef IID_ITaskbarList2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -7014,8 +4948,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <ITaskbarList2Vtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr ITaskbarList2, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr ITaskbarList2
@@ -7025,20 +4957,14 @@ ifndef __shobjidl_core_h__
           STD_METHOD HrInit, :ptr ITaskbarList2
           DECLSPEC_XFGVIRT(ITaskbarList, AddTab)
           STD_METHOD AddTab, :ptr ITaskbarList2, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList, DeleteTab)
           STD_METHOD DeleteTab, :ptr ITaskbarList2, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList, ActivateTab)
           STD_METHOD ActivateTab, :ptr ITaskbarList2, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList, SetActiveAlt)
           STD_METHOD SetActiveAlt, :ptr ITaskbarList2, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList2, MarkFullscreenWindow)
-          ;* [in] *
           STD_METHOD MarkFullscreenWindow, :ptr ITaskbarList2, :HWND, :BOOL
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         ITaskbarList2Vtbl ends
@@ -7048,16 +4974,11 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ITaskbarList2_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0080 *
-    ;* [local] *
     ifdef MIDL_PASS
       ;[...]
     endif
-    ;* [v1_enum] *
     THUMBBUTTONFLAGS typedef SDWORD
     THBF_ENABLED equ 0
     THBF_DISABLED equ 1h
@@ -7067,7 +4988,6 @@ ifndef __shobjidl_core_h__
     THBF_NONINTERACTIVE equ 10h
 
     DEFINE_ENUM_FLAG_OPERATORS(THUMBBUTTONFLAGS)
-    ;* [v1_enum] *
     THUMBBUTTONMASK typedef SDWORD
     THB_BITMAP equ 1h
     THB_ICON equ 2h
@@ -7078,10 +4998,10 @@ ifndef __shobjidl_core_h__
     include pshpack8.inc
     THUMBBUTTON struct
       dwMask THUMBBUTTONMASK ?
-      iId DWORD ?
-      iBitmap DWORD ?
+      iId UINT ?
+      iBitmap UINT ?
       hIcon HICON ?
-      szTip WORD 260 dup (?)
+      szTip WCHAR 260 dup (?)
       dwFlags THUMBBUTTONFLAGS ?
     THUMBBUTTON ends
     LPTHUMBBUTTON typedef ptr THUMBBUTTON
@@ -7091,9 +5011,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0080_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ITaskbarList3_INTERFACE_DEFINED__
       __ITaskbarList3_INTERFACE_DEFINED__ equ <>
-      ;* interface ITaskbarList3 *
-      ;* [object][uuid] *
-      ;* [v1_enum] *
       TBPFLAG typedef SDWORD
       TBPF_NOPROGRESS equ 0
       TBPF_INDETERMINATE equ 1h
@@ -7110,8 +5027,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <ITaskbarList3Vtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr ITaskbarList3, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr ITaskbarList3
@@ -7121,72 +5036,38 @@ ifndef __shobjidl_core_h__
           STD_METHOD HrInit, :ptr ITaskbarList3
           DECLSPEC_XFGVIRT(ITaskbarList, AddTab)
           STD_METHOD AddTab, :ptr ITaskbarList3, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList, DeleteTab)
           STD_METHOD DeleteTab, :ptr ITaskbarList3, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList, ActivateTab)
           STD_METHOD ActivateTab, :ptr ITaskbarList3, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList, SetActiveAlt)
           STD_METHOD SetActiveAlt, :ptr ITaskbarList3, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList2, MarkFullscreenWindow)
-          ;* [in] *
           STD_METHOD MarkFullscreenWindow, :ptr ITaskbarList3, :HWND, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, SetProgressValue)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD SetProgressValue, :ptr ITaskbarList3, :HWND, :ULONGLONG, :ULONGLONG
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, SetProgressState)
-          ;* [in] *
           STD_METHOD SetProgressState, :ptr ITaskbarList3, :HWND, :TBPFLAG
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, RegisterTab)
-          ;* [in] *
           STD_METHOD RegisterTab, :ptr ITaskbarList3, :HWND, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, UnregisterTab)
           STD_METHOD UnregisterTab, :ptr ITaskbarList3, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, SetTabOrder)
-          ;* [in] *
           STD_METHOD SetTabOrder, :ptr ITaskbarList3, :HWND, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, SetTabActive)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD SetTabActive, :ptr ITaskbarList3, :HWND, :HWND, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, ThumbBarAddButtons)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD ThumbBarAddButtons, :ptr ITaskbarList3, :HWND, :UINT, :LPTHUMBBUTTON
-          ;* [size_is][in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, ThumbBarUpdateButtons)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD ThumbBarUpdateButtons, :ptr ITaskbarList3, :HWND, :UINT, :LPTHUMBBUTTON
-          ;* [size_is][in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, ThumbBarSetImageList)
-          ;* [in] *
           STD_METHOD ThumbBarSetImageList, :ptr ITaskbarList3, :HWND, :HIMAGELIST
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, SetOverlayIcon)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD SetOverlayIcon, :ptr ITaskbarList3, :HWND, :HICON, :LPCWSTR
-          ;* [string][unique][in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, SetThumbnailTooltip)
-          ;* [in] *
           STD_METHOD SetThumbnailTooltip, :ptr ITaskbarList3, :HWND, :LPCWSTR
-          ;* [string][unique][in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, SetThumbnailClip)
-          ;* [in] *
           STD_METHOD SetThumbnailClip, :ptr ITaskbarList3, :HWND, :ptr RECT
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         ITaskbarList3Vtbl ends
@@ -7196,15 +5077,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ITaskbarList3_INTERFACE_DEFINED__ *
     endif
     ifndef __ITaskbarList4_INTERFACE_DEFINED__
       __ITaskbarList4_INTERFACE_DEFINED__ equ <>
-      ;* interface ITaskbarList4 *
-      ;* [object][uuid] *
-      ;* [v1_enum] *
       STPFLAG typedef SDWORD
       STPF_NONE equ 0
       STPF_USEAPPTHUMBNAILALWAYS equ 1h
@@ -7221,8 +5097,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <ITaskbarList4Vtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr ITaskbarList4, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr ITaskbarList4
@@ -7232,76 +5106,40 @@ ifndef __shobjidl_core_h__
           STD_METHOD HrInit, :ptr ITaskbarList4
           DECLSPEC_XFGVIRT(ITaskbarList, AddTab)
           STD_METHOD AddTab, :ptr ITaskbarList4, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList, DeleteTab)
           STD_METHOD DeleteTab, :ptr ITaskbarList4, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList, ActivateTab)
           STD_METHOD ActivateTab, :ptr ITaskbarList4, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList, SetActiveAlt)
           STD_METHOD SetActiveAlt, :ptr ITaskbarList4, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList2, MarkFullscreenWindow)
-          ;* [in] *
           STD_METHOD MarkFullscreenWindow, :ptr ITaskbarList4, :HWND, :BOOL
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, SetProgressValue)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD SetProgressValue, :ptr ITaskbarList4, :HWND, :ULONGLONG, :ULONGLONG
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, SetProgressState)
-          ;* [in] *
           STD_METHOD SetProgressState, :ptr ITaskbarList4, :HWND, :TBPFLAG
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, RegisterTab)
-          ;* [in] *
           STD_METHOD RegisterTab, :ptr ITaskbarList4, :HWND, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, UnregisterTab)
           STD_METHOD UnregisterTab, :ptr ITaskbarList4, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, SetTabOrder)
-          ;* [in] *
           STD_METHOD SetTabOrder, :ptr ITaskbarList4, :HWND, :HWND
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, SetTabActive)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD SetTabActive, :ptr ITaskbarList4, :HWND, :HWND, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, ThumbBarAddButtons)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD ThumbBarAddButtons, :ptr ITaskbarList4, :HWND, :UINT, :LPTHUMBBUTTON
-          ;* [size_is][in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, ThumbBarUpdateButtons)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD ThumbBarUpdateButtons, :ptr ITaskbarList4, :HWND, :UINT, :LPTHUMBBUTTON
-          ;* [size_is][in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, ThumbBarSetImageList)
-          ;* [in] *
           STD_METHOD ThumbBarSetImageList, :ptr ITaskbarList4, :HWND, :HIMAGELIST
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, SetOverlayIcon)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD SetOverlayIcon, :ptr ITaskbarList4, :HWND, :HICON, :LPCWSTR
-          ;* [string][unique][in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, SetThumbnailTooltip)
-          ;* [in] *
           STD_METHOD SetThumbnailTooltip, :ptr ITaskbarList4, :HWND, :LPCWSTR
-          ;* [string][unique][in] *
           DECLSPEC_XFGVIRT(ITaskbarList3, SetThumbnailClip)
-          ;* [in] *
           STD_METHOD SetThumbnailClip, :ptr ITaskbarList4, :HWND, :ptr RECT
-          ;* [in] *
           DECLSPEC_XFGVIRT(ITaskbarList4, SetTabProperties)
-          ;* [in] *
           STD_METHOD SetTabProperties, :ptr ITaskbarList4, :HWND, :STPFLAG
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         ITaskbarList4Vtbl ends
@@ -7311,20 +5149,14 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __ITaskbarList4_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0082 *
-    ;* [local] *
     if (NTDDI_VERSION ge NTDDI_WINXP) or (_WIN32_IE ge _WIN32_IE_IE70)
       if (_WIN32_IE ge _WIN32_IE_IE70)
         externdef __MIDL_itf_shobjidl_core_0000_0082_v0_0_c_ifspec:RPC_IF_HANDLE
         externdef __MIDL_itf_shobjidl_core_0000_0082_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IExplorerBrowserEvents_INTERFACE_DEFINED__
           __IExplorerBrowserEvents_INTERFACE_DEFINED__ equ <>
-          ;* interface IExplorerBrowserEvents *
-          ;* [object][uuid] *
           externdef IID_IExplorerBrowserEvents:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -7333,8 +5165,6 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <IExplorerBrowserEventsVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IExplorerBrowserEvents, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IExplorerBrowserEvents
@@ -7342,16 +5172,12 @@ ifndef __shobjidl_core_h__
               STD_METHOD Release, :ptr IExplorerBrowserEvents
               DECLSPEC_XFGVIRT(IExplorerBrowserEvents, OnNavigationPending)
               STD_METHOD OnNavigationPending, :ptr IExplorerBrowserEvents, :PCIDLIST_ABSOLUTE
-              ;* [in] *
               DECLSPEC_XFGVIRT(IExplorerBrowserEvents, OnViewCreated)
               STD_METHOD OnViewCreated, :ptr IExplorerBrowserEvents, :ptr IShellView
-              ;* [in] *
               DECLSPEC_XFGVIRT(IExplorerBrowserEvents, OnNavigationComplete)
               STD_METHOD OnNavigationComplete, :ptr IExplorerBrowserEvents, :PCIDLIST_ABSOLUTE
-              ;* [in] *
               DECLSPEC_XFGVIRT(IExplorerBrowserEvents, OnNavigationFailed)
               STD_METHOD OnNavigationFailed, :ptr IExplorerBrowserEvents, :PCIDLIST_ABSOLUTE
-              ;* [in] *
               ??Interface equ <>
               END_INTERFACE
             IExplorerBrowserEventsVtbl ends
@@ -7361,13 +5187,8 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IExplorerBrowserEvents_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0083 *
-        ;* [local] *
-        ;* [v1_enum] *
         EXPLORER_BROWSER_OPTIONS typedef SDWORD
         EBO_NONE equ 0
         EBO_NAVIGATEONCE equ 1h
@@ -7380,7 +5201,6 @@ ifndef __shobjidl_core_h__
         EBO_NOPERSISTVIEWSTATE equ 80h
 
         DEFINE_ENUM_FLAG_OPERATORS(EXPLORER_BROWSER_OPTIONS)
-        ;* [v1_enum] *
         EXPLORER_BROWSER_FILL_FLAGS typedef SDWORD
         EBF_NONE equ 0
         EBF_SELECTFROMDATAOBJECT equ 100h
@@ -7391,8 +5211,6 @@ ifndef __shobjidl_core_h__
         externdef __MIDL_itf_shobjidl_core_0000_0083_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IExplorerBrowser_INTERFACE_DEFINED__
           __IExplorerBrowser_INTERFACE_DEFINED__ equ <>
-          ;* interface IExplorerBrowser *
-          ;* [object][uuid] *
           externdef IID_IExplorerBrowser:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -7401,66 +5219,41 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <IExplorerBrowserVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IExplorerBrowser, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IExplorerBrowser
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IExplorerBrowser
               DECLSPEC_XFGVIRT(IExplorerBrowser, Initialize)
-              ;* [local] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][unique][in] *
               STD_METHOD Initialize, :ptr IExplorerBrowser, :HWND, :ptr RECT, :ptr FOLDERSETTINGS
               DECLSPEC_XFGVIRT(IExplorerBrowser, Destroy)
               STD_METHOD Destroy_, :ptr IExplorerBrowser
               DECLSPEC_XFGVIRT(IExplorerBrowser, SetRect)
-              ;* [local] *
-              ;* [annotation][unique][out][in] *
-              ;* [annotation][in] *
               STD_METHOD SetRect, :ptr IExplorerBrowser, :ptr HDWP, :RECT
               DECLSPEC_XFGVIRT(IExplorerBrowser, SetPropertyBag)
               STD_METHOD SetPropertyBag, :ptr IExplorerBrowser, :LPCWSTR
-              ;* [string][in] *
               DECLSPEC_XFGVIRT(IExplorerBrowser, SetEmptyText)
               STD_METHOD SetEmptyText, :ptr IExplorerBrowser, :LPCWSTR
-              ;* [string][in] *
               DECLSPEC_XFGVIRT(IExplorerBrowser, SetFolderSettings)
               STD_METHOD SetFolderSettings, :ptr IExplorerBrowser, :ptr FOLDERSETTINGS
-              ;* [in] *
               DECLSPEC_XFGVIRT(IExplorerBrowser, Advise)
-              ;* [in] *
               STD_METHOD Advise, :ptr IExplorerBrowser, :ptr IExplorerBrowserEvents, :ptr DWORD
-              ;* [out] *
               DECLSPEC_XFGVIRT(IExplorerBrowser, Unadvise)
               STD_METHOD Unadvise, :ptr IExplorerBrowser, :DWORD
-              ;* [in] *
               DECLSPEC_XFGVIRT(IExplorerBrowser, SetOptions)
               STD_METHOD SetOptions, :ptr IExplorerBrowser, :EXPLORER_BROWSER_OPTIONS
-              ;* [in] *
               DECLSPEC_XFGVIRT(IExplorerBrowser, GetOptions)
               STD_METHOD GetOptions, :ptr IExplorerBrowser, :ptr EXPLORER_BROWSER_OPTIONS
-              ;* [out] *
               DECLSPEC_XFGVIRT(IExplorerBrowser, BrowseToIDList)
-              ;* [in] *
               STD_METHOD BrowseToIDList, :ptr IExplorerBrowser, :PCUIDLIST_RELATIVE, :UINT
-              ;* [in] *
               DECLSPEC_XFGVIRT(IExplorerBrowser, BrowseToObject)
-              ;* [in] *
               STD_METHOD BrowseToObject, :ptr IExplorerBrowser, :ptr IUnknown, :UINT
-              ;* [in] *
               DECLSPEC_XFGVIRT(IExplorerBrowser, FillFromObject)
-              ;* [unique][in] *
               STD_METHOD FillFromObject, :ptr IExplorerBrowser, :ptr IUnknown, :EXPLORER_BROWSER_FILL_FLAGS
-              ;* [in] *
               DECLSPEC_XFGVIRT(IExplorerBrowser, RemoveAll)
               STD_METHOD RemoveAll, :ptr IExplorerBrowser
               DECLSPEC_XFGVIRT(IExplorerBrowser, GetCurrentView)
-              ;* [in] *
               STD_METHOD GetCurrentView, :ptr IExplorerBrowser, :REFIID, :ptr ptr
-              ;* [iid_is][out] *
               ??Interface equ <>
               END_INTERFACE
             IExplorerBrowserVtbl ends
@@ -7470,21 +5263,14 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IExplorerBrowser_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0084 *
-        ;* [local] *
       endif
-      ; (_WIN32_IE >= _WIN32_IE_IE70)
       if (_WIN32_IE ge _WIN32_IE_IE70)
         externdef __MIDL_itf_shobjidl_core_0000_0084_v0_0_c_ifspec:RPC_IF_HANDLE
         externdef __MIDL_itf_shobjidl_core_0000_0084_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IEnumObjects_INTERFACE_DEFINED__
           __IEnumObjects_INTERFACE_DEFINED__ equ <>
-          ;* interface IEnumObjects *
-          ;* [unique][object][uuid] *
           externdef IID_IEnumObjects:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -7493,28 +5279,19 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <IEnumObjectsVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IEnumObjects, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IEnumObjects
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IEnumObjects
               DECLSPEC_XFGVIRT(IEnumObjects, Next)
-              ;* [local] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][iid_is][length_is][size_is][out] *
-              ;* [annotation][out] *
               STD_METHOD Next, :ptr IEnumObjects, :ULONG, :REFIID, :ptr ptr, :ptr ULONG
               DECLSPEC_XFGVIRT(IEnumObjects, Skip)
               STD_METHOD Skip, :ptr IEnumObjects, :ULONG
-              ;* [in] *
               DECLSPEC_XFGVIRT(IEnumObjects, Reset)
               STD_METHOD Reset, :ptr IEnumObjects
               DECLSPEC_XFGVIRT(IEnumObjects, Clone)
               STD_METHOD Clone, :ptr IEnumObjects, :ptr ptr IEnumObjects
-              ;* [out] *
               ??Interface equ <>
               END_INTERFACE
             IEnumObjectsVtbl ends
@@ -7524,17 +5301,10 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* [call_as] *
           IEnumObjects_RemoteNext_Proxy proto WIN_STD_CALL_CONV :ptr IEnumObjects, :ULONG, :REFIID, :ptr ptr, :ptr ULONG
-          ;* [out] *
           IEnumObjects_RemoteNext_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-          ;* __IEnumObjects_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0085 *
-        ;* [local] *
-        ;* [v1_enum] *
         _OPPROGDLGF typedef SDWORD
         OPPROGDLG_DEFAULT equ 0
         OPPROGDLG_ENABLEPAUSE equ 80h
@@ -7549,9 +5319,6 @@ ifndef __shobjidl_core_h__
         externdef __MIDL_itf_shobjidl_core_0000_0085_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IOperationsProgressDialog_INTERFACE_DEFINED__
           __IOperationsProgressDialog_INTERFACE_DEFINED__ equ <>
-          ;* interface IOperationsProgressDialog *
-          ;* [unique][object][uuid] *
-          ;* [v1_enum] *
           _PDMODE typedef SDWORD
           PDM_DEFAULT equ 0
           PDM_RUN equ 1h
@@ -7561,7 +5328,6 @@ ifndef __shobjidl_core_h__
           PDM_INDETERMINATE equ 10h
 
           PDMODE typedef DWORD
-          ;* [v1_enum] *
           PDOPSTATUS typedef SDWORD
           PDOPS_RUNNING equ 1
           PDOPS_PAUSED equ 2
@@ -7577,38 +5343,23 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <IOperationsProgressDialogVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IOperationsProgressDialog, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IOperationsProgressDialog
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IOperationsProgressDialog
               DECLSPEC_XFGVIRT(IOperationsProgressDialog, StartProgressDialog)
-              ;* [unique][in] *
               STD_METHOD StartProgressDialog, :ptr IOperationsProgressDialog, :HWND, :OPPROGDLGF
-              ;* [in] *
               DECLSPEC_XFGVIRT(IOperationsProgressDialog, StopProgressDialog)
               STD_METHOD StopProgressDialog, :ptr IOperationsProgressDialog
               DECLSPEC_XFGVIRT(IOperationsProgressDialog, SetOperation)
               STD_METHOD SetOperation, :ptr IOperationsProgressDialog, :SPACTION
-              ;* [in] *
               DECLSPEC_XFGVIRT(IOperationsProgressDialog, SetMode)
               STD_METHOD SetMode, :ptr IOperationsProgressDialog, :PDMODE
-              ;* [in] *
               DECLSPEC_XFGVIRT(IOperationsProgressDialog, UpdateProgress)
-              ;* [in] *
-              ;* [in] *
-              ;* [in] *
-              ;* [in] *
-              ;* [in] *
               STD_METHOD UpdateProgress, :ptr IOperationsProgressDialog, :ULONGLONG, :ULONGLONG, :ULONGLONG, :ULONGLONG, :ULONGLONG, :ULONGLONG
-              ;* [in] *
               DECLSPEC_XFGVIRT(IOperationsProgressDialog, UpdateLocations)
-              ;* [unique][in] *
-              ;* [unique][in] *
               STD_METHOD UpdateLocations, :ptr IOperationsProgressDialog, :ptr IShellItem, :ptr IShellItem, :ptr IShellItem
-              ;* [unique][in] *
               DECLSPEC_XFGVIRT(IOperationsProgressDialog, ResetTimer)
               STD_METHOD ResetTimer, :ptr IOperationsProgressDialog
               DECLSPEC_XFGVIRT(IOperationsProgressDialog, PauseTimer)
@@ -7616,12 +5367,9 @@ ifndef __shobjidl_core_h__
               DECLSPEC_XFGVIRT(IOperationsProgressDialog, ResumeTimer)
               STD_METHOD ResumeTimer, :ptr IOperationsProgressDialog
               DECLSPEC_XFGVIRT(IOperationsProgressDialog, GetMilliseconds)
-              ;* [out] *
               STD_METHOD GetMilliseconds, :ptr IOperationsProgressDialog, :ptr ULONGLONG, :ptr ULONGLONG
-              ;* [out] *
               DECLSPEC_XFGVIRT(IOperationsProgressDialog, GetOperationStatus)
               STD_METHOD GetOperationStatus, :ptr IOperationsProgressDialog, :ptr PDOPSTATUS
-              ;* [out] *
               ??Interface equ <>
               END_INTERFACE
             IOperationsProgressDialogVtbl ends
@@ -7631,14 +5379,10 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IOperationsProgressDialog_INTERFACE_DEFINED__ *
         endif
         ifndef __IIOCancelInformation_INTERFACE_DEFINED__
           __IIOCancelInformation_INTERFACE_DEFINED__ equ <>
-          ;* interface IIOCancelInformation *
-          ;* [local][unique][object][uuid] *
           externdef IID_IIOCancelInformation:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -7647,20 +5391,14 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <IIOCancelInformationVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IIOCancelInformation, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IIOCancelInformation
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IIOCancelInformation
               DECLSPEC_XFGVIRT(IIOCancelInformation, SetCancelInformation)
-              ;* [in] *
               STD_METHOD SetCancelInformation, :ptr IIOCancelInformation, :DWORD, :UINT
-              ;* [in] *
               DECLSPEC_XFGVIRT(IIOCancelInformation, GetCancelInformation)
-              ;* [annotation][out] *
-              ;* [annotation][out] *
               STD_METHOD GetCancelInformation, :ptr IIOCancelInformation, :ptr DWORD, :ptr UINT
               ??Interface equ <>
               END_INTERFACE
@@ -7671,50 +5409,28 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IIOCancelInformation_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0087 *
-        ;* [local] *
-        FOFX_NOSKIPJUNCTIONS equ 00010000h; Don't avoid binding to junctions (like Task folder, Recycle-Bin)
-
-        FOFX_PREFERHARDLINK equ 00020000h; Create hard link if possible
-
-        FOFX_SHOWELEVATIONPROMPT equ 00040000h; Show elevation prompts when error UI is disabled (use with FOF_NOERRORUI)
-
-        FOFX_RECYCLEONDELETE equ 00080000h; Recycle when deleting, rather than permanently deleting
-
-        FOFX_EARLYFAILURE equ 00100000h; Fail operation as soon as a single error occurs rather than trying to process other items (applies only when using FOF_NOERRORUI)
-
-        FOFX_PRESERVEFILEEXTENSIONS equ 00200000h; Rename collisions preserve file extns (use with FOF_RENAMEONCOLLISION)
-
-        FOFX_KEEPNEWERFILE equ 00400000h; Keep newer file on naming conflicts
-
-        FOFX_NOCOPYHOOKS equ 00800000h; Don't use copy hooks
-
-        FOFX_NOMINIMIZEBOX equ 01000000h; Don't allow minimizing the progress dialog
-
-        FOFX_MOVEACLSACROSSVOLUMES equ 02000000h; Copy security information when performing a cross-volume move operation
-
-        FOFX_DONTDISPLAYSOURCEPATH equ 04000000h; Don't display the path of source file in progress dialog
-
-        FOFX_DONTDISPLAYDESTPATH equ 08000000h; Don't display the path of destination file in progress dialog
-
-        FOFX_REQUIREELEVATION equ 10000000h; User expects the elevation; don't show a dialog to confirm
-
-        FOFX_ADDUNDORECORD equ 20000000h; This is a user-invoked operation, and should be placed on the undo stack.  This flag is preferred to FOF_ALLOWUNDO
-
-        FOFX_COPYASDOWNLOAD equ 40000000h; Show Downloading instead of Copying
-
-        FOFX_DONTDISPLAYLOCATIONS equ 80000000h; Hides the locations line in the progress dialog
-
+        FOFX_NOSKIPJUNCTIONS equ 00010000h
+        FOFX_PREFERHARDLINK equ 00020000h
+        FOFX_SHOWELEVATIONPROMPT equ 00040000h
+        FOFX_RECYCLEONDELETE equ 00080000h
+        FOFX_EARLYFAILURE equ 00100000h
+        FOFX_PRESERVEFILEEXTENSIONS equ 00200000h
+        FOFX_KEEPNEWERFILE equ 00400000h
+        FOFX_NOCOPYHOOKS equ 00800000h
+        FOFX_NOMINIMIZEBOX equ 01000000h
+        FOFX_MOVEACLSACROSSVOLUMES equ 02000000h
+        FOFX_DONTDISPLAYSOURCEPATH equ 04000000h
+        FOFX_DONTDISPLAYDESTPATH equ 08000000h
+        FOFX_REQUIREELEVATION equ 10000000h
+        FOFX_ADDUNDORECORD equ 20000000h
+        FOFX_COPYASDOWNLOAD equ 40000000h
+        FOFX_DONTDISPLAYLOCATIONS equ 80000000h
         externdef __MIDL_itf_shobjidl_core_0000_0087_v0_0_c_ifspec:RPC_IF_HANDLE
         externdef __MIDL_itf_shobjidl_core_0000_0087_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IFileOperation_INTERFACE_DEFINED__
           __IFileOperation_INTERFACE_DEFINED__ equ <>
-          ;* interface IFileOperation *
-          ;* [unique][object][uuid] *
           externdef IID_IFileOperation:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -7723,89 +5439,51 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <IFileOperationVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IFileOperation, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IFileOperation
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IFileOperation
               DECLSPEC_XFGVIRT(IFileOperation, Advise)
-              ;* [in] *
               STD_METHOD Advise, :ptr IFileOperation, :ptr IFileOperationProgressSink, :ptr DWORD
-              ;* [out] *
               DECLSPEC_XFGVIRT(IFileOperation, Unadvise)
               STD_METHOD Unadvise, :ptr IFileOperation, :DWORD
-              ;* [in] *
               DECLSPEC_XFGVIRT(IFileOperation, SetOperationFlags)
               STD_METHOD SetOperationFlags, :ptr IFileOperation, :DWORD
-              ;* [in] *
               DECLSPEC_XFGVIRT(IFileOperation, SetProgressMessage)
               STD_METHOD SetProgressMessage, :ptr IFileOperation, :LPCWSTR
-              ;* [string][in] *
               DECLSPEC_XFGVIRT(IFileOperation, SetProgressDialog)
               STD_METHOD SetProgressDialog, :ptr IFileOperation, :ptr IOperationsProgressDialog
-              ;* [in] *
               DECLSPEC_XFGVIRT(IFileOperation, SetProperties)
               STD_METHOD SetProperties, :ptr IFileOperation, :ptr IPropertyChangeArray
-              ;* [in] *
               DECLSPEC_XFGVIRT(IFileOperation, SetOwnerWindow)
               STD_METHOD SetOwnerWindow, :ptr IFileOperation, :HWND
-              ;* [in] *
               DECLSPEC_XFGVIRT(IFileOperation, ApplyPropertiesToItem)
               STD_METHOD ApplyPropertiesToItem, :ptr IFileOperation, :ptr IShellItem
-              ;* [in] *
               DECLSPEC_XFGVIRT(IFileOperation, ApplyPropertiesToItems)
               STD_METHOD ApplyPropertiesToItems, :ptr IFileOperation, :ptr IUnknown
-              ;* [in] *
               DECLSPEC_XFGVIRT(IFileOperation, RenameItem)
-              ;* [in] *
-              ;* [string][in] *
               STD_METHOD RenameItem, :ptr IFileOperation, :ptr IShellItem, :LPCWSTR, :ptr IFileOperationProgressSink
-              ;* [unique][in] *
               DECLSPEC_XFGVIRT(IFileOperation, RenameItems)
-              ;* [in] *
               STD_METHOD RenameItems, :ptr IFileOperation, :ptr IUnknown, :LPCWSTR
-              ;* [string][in] *
               DECLSPEC_XFGVIRT(IFileOperation, MoveItem)
-              ;* [in] *
-              ;* [in] *
-              ;* [string][unique][in] *
               STD_METHOD MoveItem, :ptr IFileOperation, :ptr IShellItem, :ptr IShellItem, :LPCWSTR, :ptr IFileOperationProgressSink
-              ;* [unique][in] *
               DECLSPEC_XFGVIRT(IFileOperation, MoveItems)
-              ;* [in] *
               STD_METHOD MoveItems, :ptr IFileOperation, :ptr IUnknown, :ptr IShellItem
-              ;* [in] *
               DECLSPEC_XFGVIRT(IFileOperation, CopyItem)
-              ;* [in] *
-              ;* [in] *
-              ;* [string][unique][in] *
               STD_METHOD CopyItem, :ptr IFileOperation, :ptr IShellItem, :ptr IShellItem, :LPCWSTR, :ptr IFileOperationProgressSink
-              ;* [unique][in] *
               DECLSPEC_XFGVIRT(IFileOperation, CopyItems)
-              ;* [in] *
               STD_METHOD CopyItems, :ptr IFileOperation, :ptr IUnknown, :ptr IShellItem
-              ;* [in] *
               DECLSPEC_XFGVIRT(IFileOperation, DeleteItem)
-              ;* [in] *
               STD_METHOD DeleteItem, :ptr IFileOperation, :ptr IShellItem, :ptr IFileOperationProgressSink
-              ;* [unique][in] *
               DECLSPEC_XFGVIRT(IFileOperation, DeleteItems)
               STD_METHOD DeleteItems, :ptr IFileOperation, :ptr IUnknown
-              ;* [in] *
               DECLSPEC_XFGVIRT(IFileOperation, NewItem)
-              ;* [in] *
-              ;* [in] *
-              ;* [string][in] *
-              ;* [string][unique][in] *
               STD_METHOD NewItem, :ptr IFileOperation, :ptr IShellItem, :DWORD, :LPCWSTR, :LPCWSTR, :ptr IFileOperationProgressSink
-              ;* [unique][in] *
               DECLSPEC_XFGVIRT(IFileOperation, PerformOperations)
               STD_METHOD PerformOperations, :ptr IFileOperation
               DECLSPEC_XFGVIRT(IFileOperation, GetAnyOperationsAborted)
               STD_METHOD GetAnyOperationsAborted, :ptr IFileOperation, :ptr BOOL
-              ;* [out] *
               ??Interface equ <>
               END_INTERFACE
             IFileOperationVtbl ends
@@ -7815,14 +5493,9 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IFileOperation_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0088 *
-        ;* [local] *
         if (NTDDI_VERSION ge NTDDI_WIN10_RS4)
-          ;* [v1_enum] *
           FILE_OPERATION_FLAGS2 typedef SDWORD
           FOF2_NONE equ 0
           FOF2_MERGEFOLDERSONCOLLISION equ 1h
@@ -7832,8 +5505,6 @@ ifndef __shobjidl_core_h__
           externdef __MIDL_itf_shobjidl_core_0000_0088_v0_0_s_ifspec:RPC_IF_HANDLE
           ifndef __IFileOperation2_INTERFACE_DEFINED__
             __IFileOperation2_INTERFACE_DEFINED__ equ <>
-            ;* interface IFileOperation2 *
-            ;* [unique][object][uuid] *
             externdef IID_IFileOperation2:IID
             if Defined(__cplusplus) and  not Defined(CINTERFACE)
               ;[...]
@@ -7842,92 +5513,53 @@ ifndef __shobjidl_core_h__
                 BEGIN_INTERFACE
                 ??Interface equ <IFileOperation2Vtbl>
                 DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-                ;* [in] *
-                ;* [annotation][iid_is][out] *
                 STD_METHOD QueryInterface, :ptr IFileOperation2, :REFIID, :ptr ptr
                 DECLSPEC_XFGVIRT(IUnknown, AddRef)
                 STD_METHOD AddRef, :ptr IFileOperation2
                 DECLSPEC_XFGVIRT(IUnknown, Release)
                 STD_METHOD Release, :ptr IFileOperation2
                 DECLSPEC_XFGVIRT(IFileOperation, Advise)
-                ;* [in] *
                 STD_METHOD Advise, :ptr IFileOperation2, :ptr IFileOperationProgressSink, :ptr DWORD
-                ;* [out] *
                 DECLSPEC_XFGVIRT(IFileOperation, Unadvise)
                 STD_METHOD Unadvise, :ptr IFileOperation2, :DWORD
-                ;* [in] *
                 DECLSPEC_XFGVIRT(IFileOperation, SetOperationFlags)
                 STD_METHOD SetOperationFlags, :ptr IFileOperation2, :DWORD
-                ;* [in] *
                 DECLSPEC_XFGVIRT(IFileOperation, SetProgressMessage)
                 STD_METHOD SetProgressMessage, :ptr IFileOperation2, :LPCWSTR
-                ;* [string][in] *
                 DECLSPEC_XFGVIRT(IFileOperation, SetProgressDialog)
                 STD_METHOD SetProgressDialog, :ptr IFileOperation2, :ptr IOperationsProgressDialog
-                ;* [in] *
                 DECLSPEC_XFGVIRT(IFileOperation, SetProperties)
                 STD_METHOD SetProperties, :ptr IFileOperation2, :ptr IPropertyChangeArray
-                ;* [in] *
                 DECLSPEC_XFGVIRT(IFileOperation, SetOwnerWindow)
                 STD_METHOD SetOwnerWindow, :ptr IFileOperation2, :HWND
-                ;* [in] *
                 DECLSPEC_XFGVIRT(IFileOperation, ApplyPropertiesToItem)
                 STD_METHOD ApplyPropertiesToItem, :ptr IFileOperation2, :ptr IShellItem
-                ;* [in] *
                 DECLSPEC_XFGVIRT(IFileOperation, ApplyPropertiesToItems)
                 STD_METHOD ApplyPropertiesToItems, :ptr IFileOperation2, :ptr IUnknown
-                ;* [in] *
                 DECLSPEC_XFGVIRT(IFileOperation, RenameItem)
-                ;* [in] *
-                ;* [string][in] *
                 STD_METHOD RenameItem, :ptr IFileOperation2, :ptr IShellItem, :LPCWSTR, :ptr IFileOperationProgressSink
-                ;* [unique][in] *
                 DECLSPEC_XFGVIRT(IFileOperation, RenameItems)
-                ;* [in] *
                 STD_METHOD RenameItems, :ptr IFileOperation2, :ptr IUnknown, :LPCWSTR
-                ;* [string][in] *
                 DECLSPEC_XFGVIRT(IFileOperation, MoveItem)
-                ;* [in] *
-                ;* [in] *
-                ;* [string][unique][in] *
                 STD_METHOD MoveItem, :ptr IFileOperation2, :ptr IShellItem, :ptr IShellItem, :LPCWSTR, :ptr IFileOperationProgressSink
-                ;* [unique][in] *
                 DECLSPEC_XFGVIRT(IFileOperation, MoveItems)
-                ;* [in] *
                 STD_METHOD MoveItems, :ptr IFileOperation2, :ptr IUnknown, :ptr IShellItem
-                ;* [in] *
                 DECLSPEC_XFGVIRT(IFileOperation, CopyItem)
-                ;* [in] *
-                ;* [in] *
-                ;* [string][unique][in] *
                 STD_METHOD CopyItem, :ptr IFileOperation2, :ptr IShellItem, :ptr IShellItem, :LPCWSTR, :ptr IFileOperationProgressSink
-                ;* [unique][in] *
                 DECLSPEC_XFGVIRT(IFileOperation, CopyItems)
-                ;* [in] *
                 STD_METHOD CopyItems, :ptr IFileOperation2, :ptr IUnknown, :ptr IShellItem
-                ;* [in] *
                 DECLSPEC_XFGVIRT(IFileOperation, DeleteItem)
-                ;* [in] *
                 STD_METHOD DeleteItem, :ptr IFileOperation2, :ptr IShellItem, :ptr IFileOperationProgressSink
-                ;* [unique][in] *
                 DECLSPEC_XFGVIRT(IFileOperation, DeleteItems)
                 STD_METHOD DeleteItems, :ptr IFileOperation2, :ptr IUnknown
-                ;* [in] *
                 DECLSPEC_XFGVIRT(IFileOperation, NewItem)
-                ;* [in] *
-                ;* [in] *
-                ;* [string][in] *
-                ;* [string][unique][in] *
                 STD_METHOD NewItem, :ptr IFileOperation2, :ptr IShellItem, :DWORD, :LPCWSTR, :LPCWSTR, :ptr IFileOperationProgressSink
-                ;* [unique][in] *
                 DECLSPEC_XFGVIRT(IFileOperation, PerformOperations)
                 STD_METHOD PerformOperations, :ptr IFileOperation2
                 DECLSPEC_XFGVIRT(IFileOperation, GetAnyOperationsAborted)
                 STD_METHOD GetAnyOperationsAborted, :ptr IFileOperation2, :ptr BOOL
-                ;* [out] *
                 DECLSPEC_XFGVIRT(IFileOperation2, SetOperationFlags2)
                 STD_METHOD SetOperationFlags2, :ptr IFileOperation2, :FILE_OPERATION_FLAGS2
-                ;* [in] *
                 ??Interface equ <>
                 END_INTERFACE
               IFileOperation2Vtbl ends
@@ -7937,20 +5569,13 @@ ifndef __shobjidl_core_h__
               ifdef COBJMACROS
                 ;[...]
               endif
-              ;* C style interface *
             endif
-            ;* __IFileOperation2_INTERFACE_DEFINED__ *
           endif
-          ;* interface __MIDL_itf_shobjidl_core_0000_0089 *
-          ;* [local] *
         endif
-        ; (NTDDI_VERSION >= NTDDI_WIN10_RS4)
         externdef __MIDL_itf_shobjidl_core_0000_0089_v0_0_c_ifspec:RPC_IF_HANDLE
         externdef __MIDL_itf_shobjidl_core_0000_0089_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IObjectProvider_INTERFACE_DEFINED__
           __IObjectProvider_INTERFACE_DEFINED__ equ <>
-          ;* interface IObjectProvider *
-          ;* [unique][object][uuid] *
           externdef IID_IObjectProvider:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -7959,18 +5584,13 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <IObjectProviderVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IObjectProvider, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IObjectProvider
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IObjectProvider
               DECLSPEC_XFGVIRT(IObjectProvider, QueryObject)
-              ;* [in] *
-              ;* [in] *
               STD_METHOD QueryObject, :ptr IObjectProvider, :REFGUID, :REFIID, :ptr ptr
-              ;* [iid_is][out] *
               ??Interface equ <>
               END_INTERFACE
             IObjectProviderVtbl ends
@@ -7980,20 +5600,13 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IObjectProvider_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0090 *
-        ;* [local] *
       endif
-      ; (_WIN32_IE >= _WIN32_IE_IE70)
       externdef __MIDL_itf_shobjidl_core_0000_0090_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0090_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __INamespaceWalkCB_INTERFACE_DEFINED__
         __INamespaceWalkCB_INTERFACE_DEFINED__ equ <>
-        ;* interface INamespaceWalkCB *
-        ;* [object][uuid] *
         externdef IID_INamespaceWalkCB:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -8002,29 +5615,19 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <INamespaceWalkCBVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr INamespaceWalkCB, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr INamespaceWalkCB
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr INamespaceWalkCB
             DECLSPEC_XFGVIRT(INamespaceWalkCB, FoundItem)
-            ;* [in] *
             STD_METHOD FoundItem, :ptr INamespaceWalkCB, :ptr IShellFolder, :PCUITEMID_CHILD
-            ;* [in] *
             DECLSPEC_XFGVIRT(INamespaceWalkCB, EnterFolder)
-            ;* [in] *
             STD_METHOD EnterFolder, :ptr INamespaceWalkCB, :ptr IShellFolder, :PCUITEMID_CHILD
-            ;* [in] *
             DECLSPEC_XFGVIRT(INamespaceWalkCB, LeaveFolder)
-            ;* [in] *
             STD_METHOD LeaveFolder, :ptr INamespaceWalkCB, :ptr IShellFolder, :PCUITEMID_CHILD
-            ;* [in] *
             DECLSPEC_XFGVIRT(INamespaceWalkCB, InitializeProgressDialog)
-            ;* [string][out] *
             STD_METHOD InitializeProgressDialog, :ptr INamespaceWalkCB, :ptr LPWSTR, :ptr LPWSTR
-            ;* [string][out] *
             ??Interface equ <>
             END_INTERFACE
           INamespaceWalkCBVtbl ends
@@ -8034,19 +5637,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __INamespaceWalkCB_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0091 *
-      ;* [local] *
       if (_WIN32_IE ge _WIN32_IE_IE70)
         externdef __MIDL_itf_shobjidl_core_0000_0091_v0_0_c_ifspec:RPC_IF_HANDLE
         externdef __MIDL_itf_shobjidl_core_0000_0091_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __INamespaceWalkCB2_INTERFACE_DEFINED__
           __INamespaceWalkCB2_INTERFACE_DEFINED__ equ <>
-          ;* interface INamespaceWalkCB2 *
-          ;* [object][uuid] *
           externdef IID_INamespaceWalkCB2:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -8055,32 +5652,21 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <INamespaceWalkCB2Vtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr INamespaceWalkCB2, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr INamespaceWalkCB2
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr INamespaceWalkCB2
               DECLSPEC_XFGVIRT(INamespaceWalkCB, FoundItem)
-              ;* [in] *
               STD_METHOD FoundItem, :ptr INamespaceWalkCB2, :ptr IShellFolder, :PCUITEMID_CHILD
-              ;* [in] *
               DECLSPEC_XFGVIRT(INamespaceWalkCB, EnterFolder)
-              ;* [in] *
               STD_METHOD EnterFolder, :ptr INamespaceWalkCB2, :ptr IShellFolder, :PCUITEMID_CHILD
-              ;* [in] *
               DECLSPEC_XFGVIRT(INamespaceWalkCB, LeaveFolder)
-              ;* [in] *
               STD_METHOD LeaveFolder, :ptr INamespaceWalkCB2, :ptr IShellFolder, :PCUITEMID_CHILD
-              ;* [in] *
               DECLSPEC_XFGVIRT(INamespaceWalkCB, InitializeProgressDialog)
-              ;* [string][out] *
               STD_METHOD InitializeProgressDialog, :ptr INamespaceWalkCB2, :ptr LPWSTR, :ptr LPWSTR
-              ;* [string][out] *
               DECLSPEC_XFGVIRT(INamespaceWalkCB2, WalkComplete)
               STD_METHOD WalkComplete, :ptr INamespaceWalkCB2, :HRESULT
-              ;* [in] *
               ??Interface equ <>
               END_INTERFACE
             INamespaceWalkCB2Vtbl ends
@@ -8090,21 +5676,13 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __INamespaceWalkCB2_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0092 *
-        ;* [local] *
       endif
-      ; (_WIN32_IE >= _WIN32_IE_IE70)
       externdef __MIDL_itf_shobjidl_core_0000_0092_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0092_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __INamespaceWalk_INTERFACE_DEFINED__
         __INamespaceWalk_INTERFACE_DEFINED__ equ <>
-        ;* interface INamespaceWalk *
-        ;* [object][uuid] *
-        ;* [v1_enum] *
         NAMESPACEWALKFLAG typedef SDWORD
         NSWF_DEFAULT equ 0
         NSWF_NONE_IMPLIES_ALL equ 1h
@@ -8133,23 +5711,15 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <INamespaceWalkVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr INamespaceWalk, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr INamespaceWalk
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr INamespaceWalk
             DECLSPEC_XFGVIRT(INamespaceWalk, Walk)
-            ;* [in] *
-            ;* [in] *
-            ;* [in] *
             STD_METHOD Walk, :ptr INamespaceWalk, :ptr IUnknown, :DWORD, :SDWORD, :ptr INamespaceWalkCB
-            ;* [unique][in] *
             DECLSPEC_XFGVIRT(INamespaceWalk, GetIDArrayResult)
-            ;* [out] *
             STD_METHOD GetIDArrayResult, :ptr INamespaceWalk, :ptr UINT, :ptr ptr PIDLIST_ABSOLUTE
-            ;* [size_is][size_is][out] *
             ??Interface equ <>
             END_INTERFACE
           INamespaceWalkVtbl ends
@@ -8159,23 +5729,16 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __INamespaceWalk_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0093 *
-      ;* [local] *
     endif
-    ; NTDDI_WINXP || (_WIN32_IE >= _WIN32_IE_IE70)
     FreeIDListArray proto WIN_STD_CALL_CONV :ptr PIDLIST_RELATIVE, :UINT
     if Defined(STRICT_TYPED_ITEMIDS) and Defined(__cplusplus)
       ;[...]
     else
-    ;  defined(STRICT_TYPED_ITEMIDS) && defined(__cplusplus)
       FreeIDListArrayFull equ <FreeIDListArray>
       FreeIDListArrayChild equ <FreeIDListArray>
     endif
-    ;  defined(STRICT_TYPED_ITEMIDS) && defined(__cplusplus)
     include pshpack8.inc
     BANDSITEINFO struct
       dwMask DWORD ?
@@ -8207,15 +5770,12 @@ ifndef __shobjidl_core_h__
       BSIS_PRESERVEORDERDURINGLAYOUT equ 00000200h
       BSIS_FIXEDORDER equ 00000400h
     endif
-    ; _WIN32_IE_IE70
     SID_SBandSite equ <IID_IBandSite>
     CGID_BandSite equ <IID_IBandSite>
     externdef __MIDL_itf_shobjidl_core_0000_0093_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0093_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IBandSite_INTERFACE_DEFINED__
       __IBandSite_INTERFACE_DEFINED__ equ <>
-      ;* interface IBandSite *
-      ;* [uuid][object] *
       externdef IID_IBandSite:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -8224,8 +5784,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IBandSiteVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IBandSite, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IBandSite
@@ -8233,38 +5791,20 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IBandSite
           DECLSPEC_XFGVIRT(IBandSite, AddBand)
           STD_METHOD AddBand, :ptr IBandSite, :ptr IUnknown
-          ;* [in] *
           DECLSPEC_XFGVIRT(IBandSite, EnumBands)
-          ;* [in] *
           STD_METHOD EnumBands, :ptr IBandSite, :UINT, :ptr DWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IBandSite, QueryBand)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][out] *
-          ;* [annotation][out] *
-          ;* [annotation][size_is][string][out] *
-          ;* [annotation][in] *
           STD_METHOD QueryBand, :ptr IBandSite, :DWORD, :ptr ptr IDeskBand, :ptr DWORD, :LPWSTR, :SDWORD
           DECLSPEC_XFGVIRT(IBandSite, SetBandState)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD SetBandState, :ptr IBandSite, :DWORD, :DWORD, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IBandSite, RemoveBand)
           STD_METHOD RemoveBand, :ptr IBandSite, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IBandSite, GetBandObject)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetBandObject, :ptr IBandSite, :DWORD, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IBandSite, SetBandSiteInfo)
           STD_METHOD SetBandSiteInfo, :ptr IBandSite, :ptr BANDSITEINFO
-          ;* [in] *
           DECLSPEC_XFGVIRT(IBandSite, GetBandSiteInfo)
           STD_METHOD GetBandSiteInfo, :ptr IBandSite, :ptr BANDSITEINFO
-          ;* [out][in] *
           ??Interface equ <>
           END_INTERFACE
         IBandSiteVtbl ends
@@ -8274,23 +5814,15 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* [call_as] *
       IBandSite_RemoteQueryBand_Proxy proto WIN_STD_CALL_CONV :ptr IBandSite, :DWORD, :ptr ptr IDeskBand, :ptr DWORD, :LPWSTR, :SDWORD
-      ;* [in] *
       IBandSite_RemoteQueryBand_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-      ;* __IBandSite_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0094 *
-    ;* [local] *
     if (NTDDI_VERSION ge NTDDI_WINXP)
       externdef __MIDL_itf_shobjidl_core_0000_0094_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0094_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IModalWindow_INTERFACE_DEFINED__
         __IModalWindow_INTERFACE_DEFINED__ equ <>
-        ;* interface IModalWindow *
-        ;* [unique][object][uuid] *
         externdef IID_IModalWindow:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -8299,16 +5831,12 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IModalWindowVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IModalWindow, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IModalWindow
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IModalWindow
             DECLSPEC_XFGVIRT(IModalWindow, Show)
-            ;* [local] *
-            ;* [annotation][unique][in] *
             STD_METHOD Show, :ptr IModalWindow, :HWND
             ??Interface equ <>
             END_INTERFACE
@@ -8319,24 +5847,15 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* [call_as] *
         IModalWindow_RemoteShow_Proxy proto WIN_STD_CALL_CONV :ptr IModalWindow, :HWND
-        ;* [unique][in] *
         IModalWindow_RemoteShow_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-        ;* __IModalWindow_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0095 *
-      ;* [local] *
     endif
-    ; NTDDI_WINXP
     externdef __MIDL_itf_shobjidl_core_0000_0095_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0095_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IContextMenuSite_INTERFACE_DEFINED__
       __IContextMenuSite_INTERFACE_DEFINED__ equ <>
-      ;* interface IContextMenuSite *
-      ;* [unique][object][uuid] *
       externdef IID_IContextMenuSite:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -8345,18 +5864,13 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IContextMenuSiteVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IContextMenuSite, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IContextMenuSite
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IContextMenuSite
           DECLSPEC_XFGVIRT(IContextMenuSite, DoContextMenuPopup)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD DoContextMenuPopup, :ptr IContextMenuSite, :ptr IUnknown, :UINT, :POINT
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IContextMenuSiteVtbl ends
@@ -8366,20 +5880,14 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IContextMenuSite_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0096 *
-    ;* [local] *
     if (NTDDI_VERSION ge NTDDI_WINXP) or (_WIN32_IE ge _WIN32_IE_IE70)
       if (NTDDI_VERSION ge NTDDI_WINXP)
         externdef __MIDL_itf_shobjidl_core_0000_0096_v0_0_c_ifspec:RPC_IF_HANDLE
         externdef __MIDL_itf_shobjidl_core_0000_0096_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IMenuBand_INTERFACE_DEFINED__
           __IMenuBand_INTERFACE_DEFINED__ equ <>
-          ;* interface IMenuBand *
-          ;* [local][unique][object][uuid] *
           tagMENUBANDHANDLERCID typedef SDWORD
           MBHANDCID_PIDLSELECT equ 0
 
@@ -8391,19 +5899,14 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <IMenuBandVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IMenuBand, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IMenuBand
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IMenuBand
               DECLSPEC_XFGVIRT(IMenuBand, IsMenuMessage)
-              ;* [annotation][in] *
               STD_METHOD IsMenuMessage, :ptr IMenuBand, :ptr MSG
               DECLSPEC_XFGVIRT(IMenuBand, TranslateMenuMessage)
-              ;* [annotation][out][in] *
-              ;* [annotation][out] *
               STD_METHOD TranslateMenuMessage, :ptr IMenuBand, :ptr MSG, :ptr LRESULT
               ??Interface equ <>
               END_INTERFACE
@@ -8414,14 +5917,10 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IMenuBand_INTERFACE_DEFINED__ *
         endif
         ifndef __IRegTreeItem_INTERFACE_DEFINED__
           __IRegTreeItem_INTERFACE_DEFINED__ equ <>
-          ;* interface IRegTreeItem *
-          ;* [object][local][uuid] *
           externdef IID_IRegTreeItem:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -8430,18 +5929,14 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <IRegTreeItemVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IRegTreeItem, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IRegTreeItem
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IRegTreeItem
               DECLSPEC_XFGVIRT(IRegTreeItem, GetCheckState)
-              ;* [annotation][out] *
               STD_METHOD GetCheckState, :ptr IRegTreeItem, :ptr BOOL
               DECLSPEC_XFGVIRT(IRegTreeItem, SetCheckState)
-              ;* [annotation][in] *
               STD_METHOD SetCheckState, :ptr IRegTreeItem, :BOOL
               ??Interface equ <>
               END_INTERFACE
@@ -8452,23 +5947,15 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IRegTreeItem_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0098 *
-        ;* [local] *
       endif
-      ; NTDDI_WINXP
     endif
-    ; NTDDI_WINXP) || (_WIN32_IE >= _WIN32_IE_IE70)
     if (_WIN32_IE ge _WIN32_IE_IE60)
       externdef __MIDL_itf_shobjidl_core_0000_0098_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0098_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IDeskBar_INTERFACE_DEFINED__
         __IDeskBar_INTERFACE_DEFINED__ equ <>
-        ;* interface IDeskBar *
-        ;* [local][unique][object][uuid] *
         externdef IID_IDeskBar:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -8477,28 +5964,20 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IDeskBarVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IDeskBar, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IDeskBar
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IDeskBar
             DECLSPEC_XFGVIRT(IOleWindow, GetWindow)
-            ;* [input_sync] *
             STD_METHOD GetWindow, :ptr IDeskBar, :ptr HWND
-            ;* [out] *
             DECLSPEC_XFGVIRT(IOleWindow, ContextSensitiveHelp)
             STD_METHOD ContextSensitiveHelp, :ptr IDeskBar, :BOOL
-            ;* [in] *
             DECLSPEC_XFGVIRT(IDeskBar, SetClient)
-            ;* [annotation][unique][in] *
             STD_METHOD SetClient, :ptr IDeskBar, :ptr IUnknown
             DECLSPEC_XFGVIRT(IDeskBar, GetClient)
-            ;* [annotation][out] *
             STD_METHOD GetClient, :ptr IDeskBar, :ptr ptr IUnknown
             DECLSPEC_XFGVIRT(IDeskBar, OnPosRectChangeDB)
-            ;* [annotation][in] *
             STD_METHOD OnPosRectChangeDB, :ptr IDeskBar, :ptr RECT
             ??Interface equ <>
             END_INTERFACE
@@ -8509,14 +5988,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IDeskBar_INTERFACE_DEFINED__ *
       endif
       ifndef __IMenuPopup_INTERFACE_DEFINED__
         __IMenuPopup_INTERFACE_DEFINED__ equ <>
-        ;* interface IMenuPopup *
-        ;* [local][unique][object][uuid] *
         tagMENUPOPUPSELECT typedef SDWORD
         MPOS_EXECUTE equ 0
         MPOS_FULLCANCEL equ
@@ -8550,40 +6025,26 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IMenuPopupVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IMenuPopup, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IMenuPopup
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IMenuPopup
             DECLSPEC_XFGVIRT(IOleWindow, GetWindow)
-            ;* [input_sync] *
             STD_METHOD GetWindow, :ptr IMenuPopup, :ptr HWND
-            ;* [out] *
             DECLSPEC_XFGVIRT(IOleWindow, ContextSensitiveHelp)
             STD_METHOD ContextSensitiveHelp, :ptr IMenuPopup, :BOOL
-            ;* [in] *
             DECLSPEC_XFGVIRT(IDeskBar, SetClient)
-            ;* [annotation][unique][in] *
             STD_METHOD SetClient, :ptr IMenuPopup, :ptr IUnknown
             DECLSPEC_XFGVIRT(IDeskBar, GetClient)
-            ;* [annotation][out] *
             STD_METHOD GetClient, :ptr IMenuPopup, :ptr ptr IUnknown
             DECLSPEC_XFGVIRT(IDeskBar, OnPosRectChangeDB)
-            ;* [annotation][in] *
             STD_METHOD OnPosRectChangeDB, :ptr IMenuPopup, :ptr RECT
             DECLSPEC_XFGVIRT(IMenuPopup, Popup)
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
             STD_METHOD Popup, :ptr IMenuPopup, :ptr POINTL, :ptr RECTL, :MP_POPUPFLAGS
             DECLSPEC_XFGVIRT(IMenuPopup, OnSelect)
-            ;* [annotation][in] *
             STD_METHOD OnSelect, :ptr IMenuPopup, :DWORD
             DECLSPEC_XFGVIRT(IMenuPopup, SetSubMenu)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD SetSubMenu, :ptr IMenuPopup, :ptr IMenuPopup, :BOOL
             ??Interface equ <>
             END_INTERFACE
@@ -8594,16 +6055,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IMenuPopup_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0100 *
-      ;* [local] *
     endif
-    ; _WIN32_IE_IE60
     if (NTDDI_VERSION ge NTDDI_VISTA)
-      ;* [v1_enum] *
       FILE_USAGE_TYPE typedef SDWORD
       FUT_PLAYING equ 0
       FUT_EDITING equ
@@ -8615,8 +6070,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0100_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IFileIsInUse_INTERFACE_DEFINED__
         __IFileIsInUse_INTERFACE_DEFINED__ equ <>
-        ;* interface IFileIsInUse *
-        ;* [object][unique][uuid] *
         externdef IID_IFileIsInUse:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -8625,8 +6078,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IFileIsInUseVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IFileIsInUse, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IFileIsInUse
@@ -8634,16 +6085,12 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IFileIsInUse
             DECLSPEC_XFGVIRT(IFileIsInUse, GetAppName)
             STD_METHOD GetAppName, :ptr IFileIsInUse, :ptr LPWSTR
-            ;* [string][out] *
             DECLSPEC_XFGVIRT(IFileIsInUse, GetUsage)
             STD_METHOD GetUsage, :ptr IFileIsInUse, :ptr FILE_USAGE_TYPE
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileIsInUse, GetCapabilities)
             STD_METHOD GetCapabilities, :ptr IFileIsInUse, :ptr DWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileIsInUse, GetSwitchToHWND)
             STD_METHOD GetSwitchToHWND, :ptr IFileIsInUse, :ptr HWND
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileIsInUse, CloseFile)
             STD_METHOD CloseFile, :ptr IFileIsInUse
             ??Interface equ <>
@@ -8655,25 +6102,18 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IFileIsInUse_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0101 *
-      ;* [local] *
-      ;* [v1_enum] *
       FDE_OVERWRITE_RESPONSE typedef SDWORD
       FDEOR_DEFAULT equ 0
       FDEOR_ACCEPT equ 1
       FDEOR_REFUSE equ 2
 
-      ;* [v1_enum] *
       FDE_SHAREVIOLATION_RESPONSE typedef SDWORD
       FDESVR_DEFAULT equ 0
       FDESVR_ACCEPT equ 1
       FDESVR_REFUSE equ 2
 
-      ;* [v1_enum] *
       FDAP typedef SDWORD
       FDAP_BOTTOM equ 0
       FDAP_TOP equ 1
@@ -8682,8 +6122,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0101_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IFileDialogEvents_INTERFACE_DEFINED__
         __IFileDialogEvents_INTERFACE_DEFINED__ equ <>
-        ;* interface IFileDialogEvents *
-        ;* [unique][object][uuid] *
         externdef IID_IFileDialogEvents:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -8692,8 +6130,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IFileDialogEventsVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IFileDialogEvents, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IFileDialogEvents
@@ -8701,30 +6137,18 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IFileDialogEvents
             DECLSPEC_XFGVIRT(IFileDialogEvents, OnFileOk)
             STD_METHOD OnFileOk, :ptr IFileDialogEvents, :ptr IFileDialog
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogEvents, OnFolderChanging)
-            ;* [in] *
             STD_METHOD OnFolderChanging, :ptr IFileDialogEvents, :ptr IFileDialog, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogEvents, OnFolderChange)
             STD_METHOD OnFolderChange, :ptr IFileDialogEvents, :ptr IFileDialog
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogEvents, OnSelectionChange)
             STD_METHOD OnSelectionChange, :ptr IFileDialogEvents, :ptr IFileDialog
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogEvents, OnShareViolation)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD OnShareViolation, :ptr IFileDialogEvents, :ptr IFileDialog, :ptr IShellItem, :ptr FDE_SHAREVIOLATION_RESPONSE
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialogEvents, OnTypeChange)
             STD_METHOD OnTypeChange, :ptr IFileDialogEvents, :ptr IFileDialog
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogEvents, OnOverwrite)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD OnOverwrite, :ptr IFileDialogEvents, :ptr IFileDialog, :ptr IShellItem, :ptr FDE_OVERWRITE_RESPONSE
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IFileDialogEventsVtbl ends
@@ -8734,19 +6158,12 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IFileDialogEvents_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0102 *
-      ;* [local] *
       externdef __MIDL_itf_shobjidl_core_0000_0102_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0102_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IFileDialog_INTERFACE_DEFINED__
         __IFileDialog_INTERFACE_DEFINED__ equ <>
-        ;* interface IFileDialog *
-        ;* [unique][object][uuid] *
-        ;* [v1_enum] *
         _FILEOPENDIALOGOPTIONS typedef SDWORD
         FOS_OVERWRITEPROMPT equ 2h
         FOS_STRICTFILETYPES equ 4h
@@ -8781,88 +6198,59 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IFileDialogVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IFileDialog, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IFileDialog
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IFileDialog
             DECLSPEC_XFGVIRT(IModalWindow, Show)
-            ;* [local] *
-            ;* [annotation][unique][in] *
             STD_METHOD Show, :ptr IFileDialog, :HWND
             DECLSPEC_XFGVIRT(IFileDialog, SetFileTypes)
-            ;* [in] *
             STD_METHOD SetFileTypes, :ptr IFileDialog, :UINT, :ptr COMDLG_FILTERSPEC
-            ;* [size_is][in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetFileTypeIndex)
             STD_METHOD SetFileTypeIndex, :ptr IFileDialog, :UINT
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetFileTypeIndex)
             STD_METHOD GetFileTypeIndex, :ptr IFileDialog, :ptr UINT
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, Advise)
-            ;* [in] *
             STD_METHOD Advise, :ptr IFileDialog, :ptr IFileDialogEvents, :ptr DWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, Unadvise)
             STD_METHOD Unadvise, :ptr IFileDialog, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetOptions)
             STD_METHOD SetOptions, :ptr IFileDialog, :FILEOPENDIALOGOPTIONS
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetOptions)
             STD_METHOD GetOptions, :ptr IFileDialog, :ptr FILEOPENDIALOGOPTIONS
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, SetDefaultFolder)
             STD_METHOD SetDefaultFolder, :ptr IFileDialog, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetFolder)
             STD_METHOD SetFolder, :ptr IFileDialog, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetFolder)
             STD_METHOD GetFolder, :ptr IFileDialog, :ptr ptr IShellItem
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, GetCurrentSelection)
             STD_METHOD GetCurrentSelection, :ptr IFileDialog, :ptr ptr IShellItem
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, SetFileName)
             STD_METHOD SetFileName, :ptr IFileDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetFileName)
             STD_METHOD GetFileName, :ptr IFileDialog, :ptr LPWSTR
-            ;* [string][out] *
             DECLSPEC_XFGVIRT(IFileDialog, SetTitle)
             STD_METHOD SetTitle, :ptr IFileDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetOkButtonLabel)
             STD_METHOD SetOkButtonLabel, :ptr IFileDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetFileNameLabel)
             STD_METHOD SetFileNameLabel, :ptr IFileDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetResult)
             STD_METHOD GetResult, :ptr IFileDialog, :ptr ptr IShellItem
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, AddPlace)
-            ;* [in] *
             STD_METHOD AddPlace, :ptr IFileDialog, :ptr IShellItem, :FDAP
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetDefaultExtension)
             STD_METHOD SetDefaultExtension, :ptr IFileDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, Close)
             STD_METHOD Close, :ptr IFileDialog, :HRESULT
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetClientGuid)
             STD_METHOD SetClientGuid, :ptr IFileDialog, :REFGUID
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, ClearClientData)
             STD_METHOD ClearClientData, :ptr IFileDialog
             DECLSPEC_XFGVIRT(IFileDialog, SetFilter)
             STD_METHOD SetFilter, :ptr IFileDialog, :ptr IShellItemFilter
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IFileDialogVtbl ends
@@ -8872,14 +6260,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IFileDialog_INTERFACE_DEFINED__ *
       endif
       ifndef __IFileSaveDialog_INTERFACE_DEFINED__
         __IFileSaveDialog_INTERFACE_DEFINED__ equ <>
-        ;* interface IFileSaveDialog *
-        ;* [unique][object][uuid] *
         externdef IID_IFileSaveDialog:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -8888,107 +6272,69 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IFileSaveDialogVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IFileSaveDialog, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IFileSaveDialog
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IFileSaveDialog
             DECLSPEC_XFGVIRT(IModalWindow, Show)
-            ;* [local] *
-            ;* [annotation][unique][in] *
             STD_METHOD Show, :ptr IFileSaveDialog, :HWND
             DECLSPEC_XFGVIRT(IFileDialog, SetFileTypes)
-            ;* [in] *
             STD_METHOD SetFileTypes, :ptr IFileSaveDialog, :UINT, :ptr COMDLG_FILTERSPEC
-            ;* [size_is][in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetFileTypeIndex)
             STD_METHOD SetFileTypeIndex, :ptr IFileSaveDialog, :UINT
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetFileTypeIndex)
             STD_METHOD GetFileTypeIndex, :ptr IFileSaveDialog, :ptr UINT
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, Advise)
-            ;* [in] *
             STD_METHOD Advise, :ptr IFileSaveDialog, :ptr IFileDialogEvents, :ptr DWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, Unadvise)
             STD_METHOD Unadvise, :ptr IFileSaveDialog, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetOptions)
             STD_METHOD SetOptions, :ptr IFileSaveDialog, :FILEOPENDIALOGOPTIONS
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetOptions)
             STD_METHOD GetOptions, :ptr IFileSaveDialog, :ptr FILEOPENDIALOGOPTIONS
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, SetDefaultFolder)
             STD_METHOD SetDefaultFolder, :ptr IFileSaveDialog, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetFolder)
             STD_METHOD SetFolder, :ptr IFileSaveDialog, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetFolder)
             STD_METHOD GetFolder, :ptr IFileSaveDialog, :ptr ptr IShellItem
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, GetCurrentSelection)
             STD_METHOD GetCurrentSelection, :ptr IFileSaveDialog, :ptr ptr IShellItem
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, SetFileName)
             STD_METHOD SetFileName, :ptr IFileSaveDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetFileName)
             STD_METHOD GetFileName, :ptr IFileSaveDialog, :ptr LPWSTR
-            ;* [string][out] *
             DECLSPEC_XFGVIRT(IFileDialog, SetTitle)
             STD_METHOD SetTitle, :ptr IFileSaveDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetOkButtonLabel)
             STD_METHOD SetOkButtonLabel, :ptr IFileSaveDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetFileNameLabel)
             STD_METHOD SetFileNameLabel, :ptr IFileSaveDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetResult)
             STD_METHOD GetResult, :ptr IFileSaveDialog, :ptr ptr IShellItem
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, AddPlace)
-            ;* [in] *
             STD_METHOD AddPlace, :ptr IFileSaveDialog, :ptr IShellItem, :FDAP
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetDefaultExtension)
             STD_METHOD SetDefaultExtension, :ptr IFileSaveDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, Close)
             STD_METHOD Close, :ptr IFileSaveDialog, :HRESULT
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetClientGuid)
             STD_METHOD SetClientGuid, :ptr IFileSaveDialog, :REFGUID
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, ClearClientData)
             STD_METHOD ClearClientData, :ptr IFileSaveDialog
             DECLSPEC_XFGVIRT(IFileDialog, SetFilter)
             STD_METHOD SetFilter, :ptr IFileSaveDialog, :ptr IShellItemFilter
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileSaveDialog, SetSaveAsItem)
             STD_METHOD SetSaveAsItem, :ptr IFileSaveDialog, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileSaveDialog, SetProperties)
             STD_METHOD SetProperties, :ptr IFileSaveDialog, :ptr IPropertyStore
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileSaveDialog, SetCollectedProperties)
-            ;* [in] *
             STD_METHOD SetCollectedProperties, :ptr IFileSaveDialog, :ptr IPropertyDescriptionList, :BOOL
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileSaveDialog, GetProperties)
             STD_METHOD GetProperties, :ptr IFileSaveDialog, :ptr ptr IPropertyStore
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileSaveDialog, ApplyProperties)
-            ;* [in] *
-            ;* [in] *
-            ;* [unique][in] *
             STD_METHOD ApplyProperties, :ptr IFileSaveDialog, :ptr IShellItem, :ptr IPropertyStore, :HWND, :ptr IFileOperationProgressSink
-            ;* [unique][in] *
             ??Interface equ <>
             END_INTERFACE
           IFileSaveDialogVtbl ends
@@ -8998,14 +6344,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IFileSaveDialog_INTERFACE_DEFINED__ *
       endif
       ifndef __IFileOpenDialog_INTERFACE_DEFINED__
         __IFileOpenDialog_INTERFACE_DEFINED__ equ <>
-        ;* interface IFileOpenDialog *
-        ;* [unique][object][uuid] *
         externdef IID_IFileOpenDialog:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -9014,94 +6356,63 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IFileOpenDialogVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IFileOpenDialog, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IFileOpenDialog
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IFileOpenDialog
             DECLSPEC_XFGVIRT(IModalWindow, Show)
-            ;* [local] *
-            ;* [annotation][unique][in] *
             STD_METHOD Show, :ptr IFileOpenDialog, :HWND
             DECLSPEC_XFGVIRT(IFileDialog, SetFileTypes)
-            ;* [in] *
             STD_METHOD SetFileTypes, :ptr IFileOpenDialog, :UINT, :ptr COMDLG_FILTERSPEC
-            ;* [size_is][in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetFileTypeIndex)
             STD_METHOD SetFileTypeIndex, :ptr IFileOpenDialog, :UINT
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetFileTypeIndex)
             STD_METHOD GetFileTypeIndex, :ptr IFileOpenDialog, :ptr UINT
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, Advise)
-            ;* [in] *
             STD_METHOD Advise, :ptr IFileOpenDialog, :ptr IFileDialogEvents, :ptr DWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, Unadvise)
             STD_METHOD Unadvise, :ptr IFileOpenDialog, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetOptions)
             STD_METHOD SetOptions, :ptr IFileOpenDialog, :FILEOPENDIALOGOPTIONS
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetOptions)
             STD_METHOD GetOptions, :ptr IFileOpenDialog, :ptr FILEOPENDIALOGOPTIONS
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, SetDefaultFolder)
             STD_METHOD SetDefaultFolder, :ptr IFileOpenDialog, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetFolder)
             STD_METHOD SetFolder, :ptr IFileOpenDialog, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetFolder)
             STD_METHOD GetFolder, :ptr IFileOpenDialog, :ptr ptr IShellItem
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, GetCurrentSelection)
             STD_METHOD GetCurrentSelection, :ptr IFileOpenDialog, :ptr ptr IShellItem
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, SetFileName)
             STD_METHOD SetFileName, :ptr IFileOpenDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetFileName)
             STD_METHOD GetFileName, :ptr IFileOpenDialog, :ptr LPWSTR
-            ;* [string][out] *
             DECLSPEC_XFGVIRT(IFileDialog, SetTitle)
             STD_METHOD SetTitle, :ptr IFileOpenDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetOkButtonLabel)
             STD_METHOD SetOkButtonLabel, :ptr IFileOpenDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetFileNameLabel)
             STD_METHOD SetFileNameLabel, :ptr IFileOpenDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, GetResult)
             STD_METHOD GetResult, :ptr IFileOpenDialog, :ptr ptr IShellItem
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialog, AddPlace)
-            ;* [in] *
             STD_METHOD AddPlace, :ptr IFileOpenDialog, :ptr IShellItem, :FDAP
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetDefaultExtension)
             STD_METHOD SetDefaultExtension, :ptr IFileOpenDialog, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialog, Close)
             STD_METHOD Close, :ptr IFileOpenDialog, :HRESULT
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, SetClientGuid)
             STD_METHOD SetClientGuid, :ptr IFileOpenDialog, :REFGUID
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialog, ClearClientData)
             STD_METHOD ClearClientData, :ptr IFileOpenDialog
             DECLSPEC_XFGVIRT(IFileDialog, SetFilter)
             STD_METHOD SetFilter, :ptr IFileOpenDialog, :ptr IShellItemFilter
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileOpenDialog, GetResults)
             STD_METHOD GetResults, :ptr IFileOpenDialog, :ptr ptr IShellItemArray
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileOpenDialog, GetSelectedItems)
             STD_METHOD GetSelectedItems, :ptr IFileOpenDialog, :ptr ptr IShellItemArray
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IFileOpenDialogVtbl ends
@@ -9111,13 +6422,8 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IFileOpenDialog_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0105 *
-      ;* [local] *
-      ;* [v1_enum] *
       CDCONTROLSTATEF typedef SDWORD
       CDCS_INACTIVE equ 0
       CDCS_ENABLED equ 1h
@@ -9129,8 +6435,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0105_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IFileDialogCustomize_INTERFACE_DEFINED__
         __IFileDialogCustomize_INTERFACE_DEFINED__ equ <>
-        ;* interface IFileDialogCustomize *
-        ;* [unique][object][uuid] *
         externdef IID_IFileDialogCustomize:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -9139,8 +6443,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IFileDialogCustomizeVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IFileDialogCustomize, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IFileDialogCustomize
@@ -9148,109 +6450,58 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IFileDialogCustomize
             DECLSPEC_XFGVIRT(IFileDialogCustomize, EnableOpenDropDown)
             STD_METHOD EnableOpenDropDown, :ptr IFileDialogCustomize, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, AddMenu)
-            ;* [in] *
             STD_METHOD AddMenu, :ptr IFileDialogCustomize, :DWORD, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, AddPushButton)
-            ;* [in] *
             STD_METHOD AddPushButton, :ptr IFileDialogCustomize, :DWORD, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, AddComboBox)
             STD_METHOD AddComboBox, :ptr IFileDialogCustomize, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, AddRadioButtonList)
             STD_METHOD AddRadioButtonList, :ptr IFileDialogCustomize, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, AddCheckButton)
-            ;* [in] *
-            ;* [string][in] *
             STD_METHOD AddCheckButton, :ptr IFileDialogCustomize, :DWORD, :LPCWSTR, :BOOL
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, AddEditBox)
-            ;* [in] *
             STD_METHOD AddEditBox, :ptr IFileDialogCustomize, :DWORD, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, AddSeparator)
             STD_METHOD AddSeparator, :ptr IFileDialogCustomize, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, AddText)
-            ;* [in] *
             STD_METHOD AddText, :ptr IFileDialogCustomize, :DWORD, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, SetControlLabel)
-            ;* [in] *
             STD_METHOD SetControlLabel, :ptr IFileDialogCustomize, :DWORD, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, GetControlState)
-            ;* [in] *
             STD_METHOD GetControlState, :ptr IFileDialogCustomize, :DWORD, :ptr CDCONTROLSTATEF
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, SetControlState)
-            ;* [in] *
             STD_METHOD SetControlState, :ptr IFileDialogCustomize, :DWORD, :CDCONTROLSTATEF
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, GetEditBoxText)
-            ;* [in] *
             STD_METHOD GetEditBoxText, :ptr IFileDialogCustomize, :DWORD, :ptr ptr WCHAR
-            ;* [string][out] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, SetEditBoxText)
-            ;* [in] *
             STD_METHOD SetEditBoxText, :ptr IFileDialogCustomize, :DWORD, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, GetCheckButtonState)
-            ;* [in] *
             STD_METHOD GetCheckButtonState, :ptr IFileDialogCustomize, :DWORD, :ptr BOOL
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, SetCheckButtonState)
-            ;* [in] *
             STD_METHOD SetCheckButtonState, :ptr IFileDialogCustomize, :DWORD, :BOOL
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, AddControlItem)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD AddControlItem, :ptr IFileDialogCustomize, :DWORD, :DWORD, :LPCWSTR
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, RemoveControlItem)
-            ;* [in] *
             STD_METHOD RemoveControlItem, :ptr IFileDialogCustomize, :DWORD, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, RemoveAllControlItems)
             STD_METHOD RemoveAllControlItems, :ptr IFileDialogCustomize, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, GetControlItemState)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD GetControlItemState, :ptr IFileDialogCustomize, :DWORD, :DWORD, :ptr CDCONTROLSTATEF
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, SetControlItemState)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD SetControlItemState, :ptr IFileDialogCustomize, :DWORD, :DWORD, :CDCONTROLSTATEF
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, GetSelectedControlItem)
-            ;* [in] *
             STD_METHOD GetSelectedControlItem, :ptr IFileDialogCustomize, :DWORD, :ptr DWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, SetSelectedControlItem)
-            ;* [in] *
             STD_METHOD SetSelectedControlItem, :ptr IFileDialogCustomize, :DWORD, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, StartVisualGroup)
-            ;* [in] *
             STD_METHOD StartVisualGroup, :ptr IFileDialogCustomize, :DWORD, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, EndVisualGroup)
             STD_METHOD EndVisualGroup, :ptr IFileDialogCustomize
             DECLSPEC_XFGVIRT(IFileDialogCustomize, MakeProminent)
             STD_METHOD MakeProminent, :ptr IFileDialogCustomize, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFileDialogCustomize, SetControlItemText)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD SetControlItemText, :ptr IFileDialogCustomize, :DWORD, :DWORD, :LPCWSTR
-            ;* [string][in] *
             ??Interface equ <>
             END_INTERFACE
           IFileDialogCustomizeVtbl ends
@@ -9260,19 +6511,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IFileDialogCustomize_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0106 *
-      ;* [local] *
-      ;* [v1_enum] *
       ASSOCIATIONLEVEL typedef SDWORD
       AL_MACHINE equ 0
       AL_EFFECTIVE equ
       AL_USER equ
 
-      ;* [v1_enum] *
       ASSOCIATIONTYPE typedef SDWORD
       AT_FILEEXTENSION equ 0
       AT_URLPROTOCOL equ
@@ -9283,8 +6528,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0106_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IApplicationAssociationRegistration_INTERFACE_DEFINED__
         __IApplicationAssociationRegistration_INTERFACE_DEFINED__ equ <>
-        ;* interface IApplicationAssociationRegistration *
-        ;* [unique][uuid][object] *
         externdef IID_IApplicationAssociationRegistration:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -9293,39 +6536,21 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IApplicationAssociationRegistrationVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IApplicationAssociationRegistration, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IApplicationAssociationRegistration
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IApplicationAssociationRegistration
             DECLSPEC_XFGVIRT(IApplicationAssociationRegistration, QueryCurrentDefault)
-            ;* [string][in] *
-            ;* [in] *
-            ;* [in] *
             STD_METHOD QueryCurrentDefault, :ptr IApplicationAssociationRegistration, :LPCWSTR, :ASSOCIATIONTYPE, :ASSOCIATIONLEVEL, :ptr LPWSTR
-            ;* [string][out] *
             DECLSPEC_XFGVIRT(IApplicationAssociationRegistration, QueryAppIsDefault)
-            ;* [string][in] *
-            ;* [in] *
-            ;* [in] *
-            ;* [string][in] *
             STD_METHOD QueryAppIsDefault, :ptr IApplicationAssociationRegistration, :LPCWSTR, :ASSOCIATIONTYPE, :ASSOCIATIONLEVEL, :LPCWSTR, :ptr BOOL
-            ;* [out] *
             DECLSPEC_XFGVIRT(IApplicationAssociationRegistration, QueryAppIsDefaultAll)
-            ;* [in] *
-            ;* [string][in] *
             STD_METHOD QueryAppIsDefaultAll, :ptr IApplicationAssociationRegistration, :ASSOCIATIONLEVEL, :LPCWSTR, :ptr BOOL
-            ;* [out] *
             DECLSPEC_XFGVIRT(IApplicationAssociationRegistration, SetAppAsDefault)
-            ;* [string][in] *
-            ;* [string][in] *
             STD_METHOD SetAppAsDefault, :ptr IApplicationAssociationRegistration, :LPCWSTR, :LPCWSTR, :ASSOCIATIONTYPE
-            ;* [in] *
             DECLSPEC_XFGVIRT(IApplicationAssociationRegistration, SetAppAsDefaultAll)
             STD_METHOD SetAppAsDefaultAll, :ptr IApplicationAssociationRegistration, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IApplicationAssociationRegistration, ClearUserAssociations)
             STD_METHOD ClearUserAssociations, :ptr IApplicationAssociationRegistration
             ??Interface equ <>
@@ -9337,15 +6562,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IApplicationAssociationRegistration_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0107 *
-      ;* [local] *
       @DefProto DllImport, SHCreateAssociationRegistration, WIN_STD_CALL_CONV,, <:REFIID, :ptr ptr>, 8
     endif
-    ; NTDDI_VISTA
     include pshpack1.inc
     DELEGATEITEMID struct
       cbSize WORD ?
@@ -9360,8 +6580,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0107_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IDelegateFolder_INTERFACE_DEFINED__
       __IDelegateFolder_INTERFACE_DEFINED__ equ <>
-      ;* interface IDelegateFolder *
-      ;* [unique][local][object][uuid] *
       externdef IID_IDelegateFolder:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -9370,15 +6588,12 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IDelegateFolderVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IDelegateFolder, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IDelegateFolder
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IDelegateFolder
           DECLSPEC_XFGVIRT(IDelegateFolder, SetItemAlloc)
-          ;* [annotation][in] *
           STD_METHOD SetItemAlloc, :ptr IDelegateFolder, :ptr IMalloc
           ??Interface equ <>
           END_INTERFACE
@@ -9389,30 +6604,14 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IDelegateFolder_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0108 *
-    ;* [local] *
     if (_WIN32_IE ge _WIN32_IE_IE60)
-      ; INTERFACE: IBrowserFrameOptions
-      ; This interface was implemented so a browser or host can ask a ShellView/ShelNameSpace what
-      ; kind of 'Behavior' is appropriate for that view.
-      ;    IBrowserFrameOptions::GetBrowserOptions()
-      ;       dwMask is the logical OR of bits to look for.  pdwOptions is not optional and
-      ;       it's return value will always equal or will be a subset of dwMask.
-      ;       If the function succeeds, the return value must be S_OK and pdwOptions needs to be filled in.
-      ;       If the function fails, pdwOptions needs to be filled in with BFO_NONE.
       externdef __MIDL_itf_shobjidl_core_0000_0108_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0108_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IBrowserFrameOptions_INTERFACE_DEFINED__
         __IBrowserFrameOptions_INTERFACE_DEFINED__ equ <>
-        ;* interface IBrowserFrameOptions *
-        ;* [local][object][uuid] *
-        ;* [unique] *
         LPBROWSERFRAMEOPTIONS typedef ptr IBrowserFrameOptions
-        ;* [v1_enum] *
         _BROWSERFRAMEOPTIONS typedef SDWORD
         BFO_NONE equ 0
         BFO_BROWSER_PERSIST_SETTINGS equ 1h
@@ -9444,16 +6643,12 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IBrowserFrameOptionsVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IBrowserFrameOptions, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IBrowserFrameOptions
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IBrowserFrameOptions
             DECLSPEC_XFGVIRT(IBrowserFrameOptions, GetFrameOptions)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD GetFrameOptions, :ptr IBrowserFrameOptions, :BROWSERFRAMEOPTIONS, :ptr BROWSERFRAMEOPTIONS
             ??Interface equ <>
             END_INTERFACE
@@ -9464,16 +6659,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IBrowserFrameOptions_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0109 *
-      ;* [local] *
     endif
-    ; _WIN32_IE_IE60
     if (_WIN32_IE ge _WIN32_IE_IE60SP2)
-      ;* [v1_enum] *
       NWMF typedef SDWORD
       NWMF_UNLOADING equ 1h
       NWMF_USERINITED equ 2h
@@ -9496,8 +6685,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0109_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __INewWindowManager_INTERFACE_DEFINED__
         __INewWindowManager_INTERFACE_DEFINED__ equ <>
-        ;* interface INewWindowManager *
-        ;* [unique][object][uuid] *
         externdef IID_INewWindowManager:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -9506,22 +6693,13 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <INewWindowManagerVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr INewWindowManager, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr INewWindowManager
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr INewWindowManager
             DECLSPEC_XFGVIRT(INewWindowManager, EvaluateNewWindow)
-            ;* [string][in] *
-            ;* [string][in] *
-            ;* [string][in] *
-            ;* [string][in] *
-            ;* [in] *
-            ;* [in] *
             STD_METHOD EvaluateNewWindow, :ptr INewWindowManager, :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :BOOL, :DWORD, :DWORD
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           INewWindowManagerVtbl ends
@@ -9531,22 +6709,16 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __INewWindowManager_INTERFACE_DEFINED__ *
       endif
       ifndef __IAttachmentExecute_INTERFACE_DEFINED__
         __IAttachmentExecute_INTERFACE_DEFINED__ equ <>
-        ;* interface IAttachmentExecute *
-        ;* [unique][local][uuid][object] *
-        ;* [v1_enum] *
         ATTACHMENT_PROMPT typedef SDWORD
         ATTACHMENT_PROMPT_NONE equ 0
         ATTACHMENT_PROMPT_SAVE equ 1h
         ATTACHMENT_PROMPT_EXEC equ 2h
         ATTACHMENT_PROMPT_EXEC_OR_SAVE equ 3h
 
-        ;* [v1_enum] *
         ATTACHMENT_ACTION typedef SDWORD
         ATTACHMENT_ACTION_CANCEL equ 0
         ATTACHMENT_ACTION_SAVE equ 1h
@@ -9560,47 +6732,32 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IAttachmentExecuteVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IAttachmentExecute, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IAttachmentExecute
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IAttachmentExecute
             DECLSPEC_XFGVIRT(IAttachmentExecute, SetClientTitle)
-            ;* [annotation][string][in] *
             STD_METHOD SetClientTitle, :ptr IAttachmentExecute, :LPCWSTR
             DECLSPEC_XFGVIRT(IAttachmentExecute, SetClientGuid)
-            ;* [annotation][in] *
             STD_METHOD SetClientGuid, :ptr IAttachmentExecute, :REFGUID
             DECLSPEC_XFGVIRT(IAttachmentExecute, SetLocalPath)
-            ;* [annotation][string][in] *
             STD_METHOD SetLocalPath, :ptr IAttachmentExecute, :LPCWSTR
             DECLSPEC_XFGVIRT(IAttachmentExecute, SetFileName)
-            ;* [annotation][string][in] *
             STD_METHOD SetFileName, :ptr IAttachmentExecute, :LPCWSTR
             DECLSPEC_XFGVIRT(IAttachmentExecute, SetSource)
-            ;* [annotation][string][in] *
             STD_METHOD SetSource, :ptr IAttachmentExecute, :LPCWSTR
             DECLSPEC_XFGVIRT(IAttachmentExecute, SetReferrer)
-            ;* [annotation][string][in] *
             STD_METHOD SetReferrer, :ptr IAttachmentExecute, :LPCWSTR
             DECLSPEC_XFGVIRT(IAttachmentExecute, CheckPolicy)
             STD_METHOD CheckPolicy, :ptr IAttachmentExecute
             DECLSPEC_XFGVIRT(IAttachmentExecute, Prompt)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD Prompt, :ptr IAttachmentExecute, :HWND, :ATTACHMENT_PROMPT, :ptr ATTACHMENT_ACTION
             DECLSPEC_XFGVIRT(IAttachmentExecute, Save)
             STD_METHOD Save, :ptr IAttachmentExecute
             DECLSPEC_XFGVIRT(IAttachmentExecute, Execute)
-            ;* [annotation][in] *
-            ;* [annotation][string][in] *
-            ;* [annotation][out] *
             STD_METHOD Execute, :ptr IAttachmentExecute, :HWND, :LPCWSTR, :ptr HANDLE
             DECLSPEC_XFGVIRT(IAttachmentExecute, SaveWithUI)
-            ;* [annotation][in] *
             STD_METHOD SaveWithUI, :ptr IAttachmentExecute, :HWND
             DECLSPEC_XFGVIRT(IAttachmentExecute, ClearClientState)
             STD_METHOD ClearClientState, :ptr IAttachmentExecute
@@ -9613,14 +6770,9 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IAttachmentExecute_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0111 *
-      ;* [local] *
     endif
-    ; _WIN32_IE_IE60SP2
     if (_WIN32_IE ge _WIN32_IE_IE60)
       include pshpack8.inc
       SMDATA struct
@@ -9628,9 +6780,9 @@ ifndef __shobjidl_core_h__
         dwFlags DWORD ?
         hmenu HMENU ?
         hwnd HWND ?
-        uId DWORD ?
-        uIdParent DWORD ?
-        uIdAncestor DWORD ?
+        uId UINT ?
+        uIdParent UINT ?
+        uIdAncestor UINT ?
         punk POINTER ?
         pidlFolder PIDLIST_ABSOLUTE ?
         pidlItem PUITEMID_CHILD ?
@@ -9639,14 +6791,9 @@ ifndef __shobjidl_core_h__
       SMDATA ends
       tagSMDATA typedef SMDATA
       LPSMDATA typedef ptr tagSMDATA
-      ; Mask
-      SMDM_SHELLFOLDER equ 00000001h; This is for an item in the band
-
-      SMDM_HMENU equ 00000002h; This is for the Band itself
-
-      SMDM_TOOLBAR equ 00000004h; Plain toolbar, not associated with a shell folder or hmenu
-
-      ; Flags (bitmask)
+      SMDM_SHELLFOLDER equ 00000001h
+      SMDM_HMENU equ 00000002h
+      SMDM_TOOLBAR equ 00000004h
       SMINFO struct
         dwMask DWORD ?
         dwType DWORD ?
@@ -9687,76 +6834,42 @@ ifndef __shobjidl_core_h__
       SMIF_DRAGNDROP equ 1000h
       SMIF_NEW equ 2000h
 
-      SMC_INITMENU equ 00000001h; The callback is called to init a menuband
-
+      SMC_INITMENU equ 00000001h
       SMC_CREATE equ 00000002h
-      SMC_EXITMENU equ 00000003h; The callback is called when menu is collapsing
-
-      SMC_GETINFO equ 00000005h; The callback is called to return DWORD values
-
-      SMC_GETSFINFO equ 00000006h; The callback is called to return DWORD values
-
-      SMC_GETOBJECT equ 00000007h; The callback is called to get some object
-
-      SMC_GETSFOBJECT equ 00000008h; The callback is called to get some object
-
-      SMC_SFEXEC equ 00000009h; The callback is called to execute an shell folder item
-
-      SMC_SFSELECTITEM equ 0000000Ah; The callback is called when an item is selected
-
-      SMC_REFRESH equ 00000010h; Menus have completely refreshed. Reset your state.
-
-      SMC_DEMOTE equ 00000011h; Demote an item
-
-      SMC_PROMOTE equ 00000012h; Promote an item, wParam = SMINV_* flag
-
-      SMC_DEFAULTICON equ 00000016h; Returns Default icon location in wParam, index in lParam
-
-      SMC_NEWITEM equ 00000017h; Notifies item is not in the order stream.
-
-      SMC_CHEVRONEXPAND equ 00000019h; Notifies of a expansion via the chevron
-
-      SMC_DISPLAYCHEVRONTIP equ 0000002Ah; S_OK display, S_FALSE not.
-
-      SMC_SETSFOBJECT equ 0000002Dh; Called to save the passed object
-
-      SMC_SHCHANGENOTIFY equ 0000002Eh; Called when a Change notify is received. lParam points to SMCSHCHANGENOTIFYSTRUCT
-
-      SMC_CHEVRONGETTIP equ 0000002Fh; Called to get the chevron tip text. wParam = Tip title, Lparam = TipText Both MAX_PATH
-
-      SMC_SFDDRESTRICTED equ 00000030h; Called requesting if it's ok to drop. wParam = IDropTarget.
-
+      SMC_EXITMENU equ 00000003h
+      SMC_GETINFO equ 00000005h
+      SMC_GETSFINFO equ 00000006h
+      SMC_GETOBJECT equ 00000007h
+      SMC_GETSFOBJECT equ 00000008h
+      SMC_SFEXEC equ 00000009h
+      SMC_SFSELECTITEM equ 0000000Ah
+      SMC_REFRESH equ 00000010h
+      SMC_DEMOTE equ 00000011h
+      SMC_PROMOTE equ 00000012h
+      SMC_DEFAULTICON equ 00000016h
+      SMC_NEWITEM equ 00000017h
+      SMC_CHEVRONEXPAND equ 00000019h
+      SMC_DISPLAYCHEVRONTIP equ 0000002Ah
+      SMC_SETSFOBJECT equ 0000002Dh
+      SMC_SHCHANGENOTIFY equ 0000002Eh
+      SMC_CHEVRONGETTIP equ 0000002Fh
+      SMC_SFDDRESTRICTED equ 00000030h
       if (_WIN32_IE ge _WIN32_IE_IE70)
-        SMC_SFEXEC_MIDDLE equ 00000031h; Same as SFEXEC, but the middle mouse button caused the exec.
-
-        SMC_GETAUTOEXPANDSTATE equ 00000041h; callback returns the default autoexpand state lParam = LPDWORD to recieve flags
-
-        SMC_AUTOEXPANDCHANGE equ 00000042h; Notify that the menu is expanding/contracting
-
-        SMC_GETCONTEXTMENUMODIFIER equ 00000043h; Used to add items to a context menu
-
-        SMC_GETBKCONTEXTMENU equ 00000044h; used to get a context menu to display when user right clicks on the background
-
-        SMC_OPEN equ 00000045h; allows client to overwrite open/explore verb action on an item
-
-        ; Flags for return value from SMC_GETAUTOEXPANDSTATE and SMC_AUTOEXPANDCHANGE:
-        SMAE_EXPANDED equ 00000001h; The menu is or should start expanded
-
-        SMAE_CONTRACTED equ 00000002h; The menu is or should start contracted
-
-        ; SMAE_EXPANDED and SMAE_CONTRACTED are mutually exclusive
-        SMAE_USER equ 00000004h; Indicates that the menu expansion/contraction is a reflection
-
-        ; of user choice
+        SMC_SFEXEC_MIDDLE equ 00000031h
+        SMC_GETAUTOEXPANDSTATE equ 00000041h
+        SMC_AUTOEXPANDCHANGE equ 00000042h
+        SMC_GETCONTEXTMENUMODIFIER equ 00000043h
+        SMC_GETBKCONTEXTMENU equ 00000044h
+        SMC_OPEN equ 00000045h
+        SMAE_EXPANDED equ 00000001h
+        SMAE_CONTRACTED equ 00000002h
+        SMAE_USER equ 00000004h
         SMAE_VALID equ 00000007h
       endif
-      ; _WIN32_IE_IE70
       externdef __MIDL_itf_shobjidl_core_0000_0111_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0111_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IShellMenuCallback_INTERFACE_DEFINED__
         __IShellMenuCallback_INTERFACE_DEFINED__ equ <>
-        ;* interface IShellMenuCallback *
-        ;* [local][unique][object][uuid] *
         externdef IID_IShellMenuCallback:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -9765,18 +6878,12 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IShellMenuCallbackVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IShellMenuCallback, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IShellMenuCallback
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IShellMenuCallback
             DECLSPEC_XFGVIRT(IShellMenuCallback, CallbackSM)
-            ;* [annotation][out][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD CallbackSM, :ptr IShellMenuCallback, :LPSMDATA, :UINT, :WPARAM, :LPARAM
             ??Interface equ <>
             END_INTERFACE
@@ -9787,47 +6894,29 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IShellMenuCallback_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0112 *
-      ;* [local] *
-      SMINIT_DEFAULT equ 00000000h; No Options
-
-      SMINIT_RESTRICT_DRAGDROP equ 00000002h; Don't allow Drag and Drop
-
-      SMINIT_TOPLEVEL equ 00000004h; This is the top band.
-
+      SMINIT_DEFAULT equ 00000000h
+      SMINIT_RESTRICT_DRAGDROP equ 00000002h
+      SMINIT_TOPLEVEL equ 00000004h
       SMINIT_CACHED equ 00000010h
       if (_WIN32_IE ge _WIN32_IE_IE70)
-        SMINIT_AUTOEXPAND equ 00000100h; automatically expand/contract menu band
-
-        SMINIT_AUTOTOOLTIP equ 00000200h; regular tooltip support
-
-        SMINIT_DROPONCONTAINER equ 00000400h; allow drop on a container
-
+        SMINIT_AUTOEXPAND equ 00000100h
+        SMINIT_AUTOTOOLTIP equ 00000200h
+        SMINIT_DROPONCONTAINER equ 00000400h
       endif
-      ; _WIN32_IE_IE70
-      SMINIT_VERTICAL equ 10000000h; This is a vertical menu
-
-      SMINIT_HORIZONTAL equ 20000000h; This is a horizontal menu    (does not inherit)
-
+      SMINIT_VERTICAL equ 10000000h
+      SMINIT_HORIZONTAL equ 20000000h
       ANCESTORDEFAULT equ -1
-      SMSET_TOP equ 10000000h; Bias this namespace to the top of the menu
-
-      SMSET_BOTTOM equ 20000000h; Bias this namespace to the bottom of the menu
-
-      SMSET_DONTOWN equ 00000001h; The Menuband doesn't own the non-ref counted object
-
+      SMSET_TOP equ 10000000h
+      SMSET_BOTTOM equ 20000000h
+      SMSET_DONTOWN equ 00000001h
       SMINV_REFRESH equ 00000001h
       SMINV_ID equ 00000008h
       externdef __MIDL_itf_shobjidl_core_0000_0112_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0112_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IShellMenu_INTERFACE_DEFINED__
         __IShellMenu_INTERFACE_DEFINED__ equ <>
-        ;* interface IShellMenu *
-        ;* [local][unique][object][uuid] *
         externdef IID_IShellMenu:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -9836,57 +6925,28 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IShellMenuVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IShellMenu, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IShellMenu
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IShellMenu
             DECLSPEC_XFGVIRT(IShellMenu, Initialize)
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD Initialize, :ptr IShellMenu, :ptr IShellMenuCallback, :UINT, :UINT, :DWORD
             DECLSPEC_XFGVIRT(IShellMenu, GetMenuInfo)
-            ;* [annotation][out] *
-            ;* [annotation][out] *
-            ;* [annotation][out] *
-            ;* [annotation][out] *
             STD_METHOD GetMenuInfo, :ptr IShellMenu, :ptr ptr IShellMenuCallback, :ptr UINT, :ptr UINT, :ptr DWORD
             DECLSPEC_XFGVIRT(IShellMenu, SetShellFolder)
-            ;* [annotation][unique][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
             STD_METHOD SetShellFolder, :ptr IShellMenu, :ptr IShellFolder, :PCIDLIST_ABSOLUTE, :HKEY, :DWORD
             DECLSPEC_XFGVIRT(IShellMenu, GetShellFolder)
-            ;* [annotation][out] *
-            ;* [annotation][out] *
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD GetShellFolder, :ptr IShellMenu, :ptr DWORD, :ptr PIDLIST_ABSOLUTE, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IShellMenu, SetMenu)
-            ;* [annotation][unique][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
             STD_METHOD SetMenu, :ptr IShellMenu, :HMENU, :HWND, :DWORD
             DECLSPEC_XFGVIRT(IShellMenu, GetMenu)
-            ;* [annotation][out] *
-            ;* [annotation][out] *
-            ;* [annotation][out] *
             STD_METHOD GetMenu, :ptr IShellMenu, :ptr HMENU, :ptr HWND, :ptr DWORD
             DECLSPEC_XFGVIRT(IShellMenu, InvalidateItem)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD InvalidateItem, :ptr IShellMenu, :LPSMDATA, :DWORD
             DECLSPEC_XFGVIRT(IShellMenu, GetState)
-            ;* [annotation][out] *
             STD_METHOD GetState, :ptr IShellMenu, :LPSMDATA
             DECLSPEC_XFGVIRT(IShellMenu, SetMenuToolbar)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD SetMenuToolbar, :ptr IShellMenu, :ptr IUnknown, :DWORD
             ??Interface equ <>
             END_INTERFACE
@@ -9897,23 +6957,16 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IShellMenu_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0113 *
-      ;* [local] *
     endif
-    ; _WIN32_IE_IE60
     if (NTDDI_VERSION ge NTDDI_VISTA)
-      ;* [v1_enum] *
       KF_CATEGORY typedef SDWORD
       KF_CATEGORY_VIRTUAL equ 1
       KF_CATEGORY_FIXED equ 2
       KF_CATEGORY_COMMON equ 3
       KF_CATEGORY_PERUSER equ 4
 
-      ;* [v1_enum] *
       _KF_DEFINITION_FLAGS typedef SDWORD
       KFDF_LOCAL_REDIRECT_ONLY equ 2h
       KFDF_ROAMABLE equ 4h
@@ -9923,7 +6976,6 @@ ifndef __shobjidl_core_h__
       KFDF_NO_REDIRECT_UI equ 40h
 
       KF_DEFINITION_FLAGS typedef DWORD
-      ;* [v1_enum] *
       _KF_REDIRECT_FLAGS typedef SDWORD
       KF_REDIRECT_USER_EXCLUSIVE equ 1h
       KF_REDIRECT_COPY_SOURCE_DACL equ 2h
@@ -9938,7 +6990,6 @@ ifndef __shobjidl_core_h__
       KF_REDIRECT_EXCLUDE_ALL_KNOWN_SUBFOLDERS equ 800h
 
       KF_REDIRECT_FLAGS typedef DWORD
-      ;* [v1_enum] *
       _KF_REDIRECTION_CAPABILITIES typedef SDWORD
       KF_REDIRECTION_CAPABILITIES_ALLOW_ALL equ 0ffh
       KF_REDIRECTION_CAPABILITIES_REDIRECTABLE equ 1h
@@ -9950,15 +7001,15 @@ ifndef __shobjidl_core_h__
       KF_REDIRECTION_CAPABILITIES typedef DWORD
       KNOWNFOLDER_DEFINITION struct
         category KF_CATEGORY ?
-        pszName POINTER ?
-        pszDescription POINTER ?
+        pszName LPWSTR ?
+        pszDescription LPWSTR ?
         fidParent KNOWNFOLDERID <>
-        pszRelativePath POINTER ?
-        pszParsingName POINTER ?
-        pszTooltip POINTER ?
-        pszLocalizedName POINTER ?
-        pszIcon POINTER ?
-        pszSecurity POINTER ?
+        pszRelativePath LPWSTR ?
+        pszParsingName LPWSTR ?
+        pszTooltip LPWSTR ?
+        pszLocalizedName LPWSTR ?
+        pszIcon LPWSTR ?
+        pszSecurity LPWSTR ?
         dwAttributes DWORD ?
         kfdFlags KF_DEFINITION_FLAGS ?
         ftidType FOLDERTYPEID <>
@@ -9967,8 +7018,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0113_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IKnownFolder_INTERFACE_DEFINED__
         __IKnownFolder_INTERFACE_DEFINED__ equ <>
-        ;* interface IKnownFolder *
-        ;* [ref][version][object][uuid] *
         externdef IID_IKnownFolder:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -9977,8 +7026,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IKnownFolderVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IKnownFolder, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IKnownFolder
@@ -9986,36 +7033,22 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IKnownFolder
             DECLSPEC_XFGVIRT(IKnownFolder, GetId)
             STD_METHOD GetId, :ptr IKnownFolder, :ptr KNOWNFOLDERID
-            ;* [out] *
             DECLSPEC_XFGVIRT(IKnownFolder, GetCategory)
             STD_METHOD GetCategory, :ptr IKnownFolder, :ptr KF_CATEGORY
-            ;* [out] *
             DECLSPEC_XFGVIRT(IKnownFolder, GetShellItem)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD GetShellItem, :ptr IKnownFolder, :DWORD, :REFIID, :ptr ptr
-            ;* [iid_is][out] *
             DECLSPEC_XFGVIRT(IKnownFolder, GetPath)
-            ;* [in] *
             STD_METHOD GetPath, :ptr IKnownFolder, :DWORD, :ptr LPWSTR
-            ;* [string][out] *
             DECLSPEC_XFGVIRT(IKnownFolder, SetPath)
-            ;* [in] *
             STD_METHOD SetPath, :ptr IKnownFolder, :DWORD, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IKnownFolder, GetIDList)
-            ;* [in] *
             STD_METHOD GetIDList, :ptr IKnownFolder, :DWORD, :ptr PIDLIST_ABSOLUTE
-            ;* [out] *
             DECLSPEC_XFGVIRT(IKnownFolder, GetFolderType)
             STD_METHOD GetFolderType, :ptr IKnownFolder, :ptr FOLDERTYPEID
-            ;* [out] *
             DECLSPEC_XFGVIRT(IKnownFolder, GetRedirectionCapabilities)
             STD_METHOD GetRedirectionCapabilities, :ptr IKnownFolder, :ptr KF_REDIRECTION_CAPABILITIES
-            ;* [out] *
             DECLSPEC_XFGVIRT(IKnownFolder, GetFolderDefinition)
             STD_METHOD GetFolderDefinition, :ptr IKnownFolder, :ptr KNOWNFOLDER_DEFINITION
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IKnownFolderVtbl ends
@@ -10025,15 +7058,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IKnownFolder_INTERFACE_DEFINED__ *
       endif
       ifndef __IKnownFolderManager_INTERFACE_DEFINED__
         __IKnownFolderManager_INTERFACE_DEFINED__ equ <>
-        ;* interface IKnownFolderManager *
-        ;* [ref][version][object][uuid] *
-        ;* [v1_enum] *
         FFFP_MODE typedef SDWORD
         FFFP_EXACTMATCH equ 0
         FFFP_NEARESTPARENTMATCH equ
@@ -10046,58 +7074,30 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IKnownFolderManagerVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IKnownFolderManager, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IKnownFolderManager
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IKnownFolderManager
             DECLSPEC_XFGVIRT(IKnownFolderManager, FolderIdFromCsidl)
-            ;* [in] *
             STD_METHOD FolderIdFromCsidl, :ptr IKnownFolderManager, :SDWORD, :ptr KNOWNFOLDERID
-            ;* [out] *
             DECLSPEC_XFGVIRT(IKnownFolderManager, FolderIdToCsidl)
-            ;* [in] *
             STD_METHOD FolderIdToCsidl, :ptr IKnownFolderManager, :REFKNOWNFOLDERID, :ptr SDWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IKnownFolderManager, GetFolderIds)
-            ;* [size_is][size_is][out] *
             STD_METHOD GetFolderIds, :ptr IKnownFolderManager, :ptr ptr KNOWNFOLDERID, :ptr UINT
-            ;* [out][in] *
             DECLSPEC_XFGVIRT(IKnownFolderManager, GetFolder)
-            ;* [in] *
             STD_METHOD GetFolder, :ptr IKnownFolderManager, :REFKNOWNFOLDERID, :ptr ptr IKnownFolder
-            ;* [out] *
             DECLSPEC_XFGVIRT(IKnownFolderManager, GetFolderByName)
-            ;* [string][in] *
             STD_METHOD GetFolderByName, :ptr IKnownFolderManager, :LPCWSTR, :ptr ptr IKnownFolder
-            ;* [out] *
             DECLSPEC_XFGVIRT(IKnownFolderManager, RegisterFolder)
-            ;* [in] *
             STD_METHOD RegisterFolder, :ptr IKnownFolderManager, :REFKNOWNFOLDERID, :ptr KNOWNFOLDER_DEFINITION
-            ;* [in] *
             DECLSPEC_XFGVIRT(IKnownFolderManager, UnregisterFolder)
             STD_METHOD UnregisterFolder, :ptr IKnownFolderManager, :REFKNOWNFOLDERID
-            ;* [in] *
             DECLSPEC_XFGVIRT(IKnownFolderManager, FindFolderFromPath)
-            ;* [string][in] *
-            ;* [in] *
             STD_METHOD FindFolderFromPath, :ptr IKnownFolderManager, :LPCWSTR, :FFFP_MODE, :ptr ptr IKnownFolder
-            ;* [out] *
             DECLSPEC_XFGVIRT(IKnownFolderManager, FindFolderFromIDList)
-            ;* [in] *
             STD_METHOD FindFolderFromIDList, :ptr IKnownFolderManager, :PCIDLIST_ABSOLUTE, :ptr ptr IKnownFolder
-            ;* [out] *
             DECLSPEC_XFGVIRT(IKnownFolderManager, Redirect)
-            ;* [local] *
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][string][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][unique][size_is][in] *
-            ;* [annotation][string][out] *
             STD_METHOD Redirect, :ptr IKnownFolderManager, :REFKNOWNFOLDERID, :HWND, :KF_REDIRECT_FLAGS, :LPCWSTR, :UINT, :ptr KNOWNFOLDERID, :ptr LPWSTR
             ??Interface equ <>
             END_INTERFACE
@@ -10108,18 +7108,11 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* [call_as] *
         IKnownFolderManager_RemoteRedirect_Proxy proto WIN_STD_CALL_CONV :ptr IKnownFolderManager, :REFKNOWNFOLDERID, :HWND, :KF_REDIRECT_FLAGS, :LPCWSTR, :UINT, :ptr GUID, :ptr LPWSTR
-        ;* [string][out] *
         IKnownFolderManager_RemoteRedirect_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-        ;* __IKnownFolderManager_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0115 *
-      ;* [local] *
       FreeKnownFolderDefinitionFields proto WIN_STD_CALL_CONV :ptr KNOWNFOLDER_DEFINITION
-      ;* [v1_enum] *
       SHARE_ROLE typedef SDWORD
       SHARE_ROLE_INVALID equ -1
       SHARE_ROLE_READER equ 0
@@ -10129,7 +7122,6 @@ ifndef __shobjidl_core_h__
       SHARE_ROLE_CUSTOM equ 4
       SHARE_ROLE_MIXED equ 5
 
-      ;* [v1_enum] *
       DEF_SHARE_ID typedef SDWORD
       DEFSHAREID_USERS equ 1
       DEFSHAREID_PUBLIC equ 2
@@ -10138,8 +7130,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0115_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __ISharingConfigurationManager_INTERFACE_DEFINED__
         __ISharingConfigurationManager_INTERFACE_DEFINED__ equ <>
-        ;* interface ISharingConfigurationManager *
-        ;* [uuid][object] *
         externdef IID_ISharingConfigurationManager:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10148,27 +7138,19 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <ISharingConfigurationManagerVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ISharingConfigurationManager, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ISharingConfigurationManager
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ISharingConfigurationManager
             DECLSPEC_XFGVIRT(ISharingConfigurationManager, CreateShare)
-            ;* [in] *
             STD_METHOD CreateShare, :ptr ISharingConfigurationManager, :DEF_SHARE_ID, :SHARE_ROLE
-            ;* [in] *
             DECLSPEC_XFGVIRT(ISharingConfigurationManager, DeleteShare)
             STD_METHOD DeleteShare, :ptr ISharingConfigurationManager, :DEF_SHARE_ID
-            ;* [in] *
             DECLSPEC_XFGVIRT(ISharingConfigurationManager, ShareExists)
             STD_METHOD ShareExists, :ptr ISharingConfigurationManager, :DEF_SHARE_ID
-            ;* [in] *
             DECLSPEC_XFGVIRT(ISharingConfigurationManager, GetSharePermissions)
-            ;* [in] *
             STD_METHOD GetSharePermissions, :ptr ISharingConfigurationManager, :DEF_SHARE_ID, :ptr SHARE_ROLE
-            ;* [out] *
             DECLSPEC_XFGVIRT(ISharingConfigurationManager, SharePrinters)
             STD_METHOD SharePrinters, :ptr ISharingConfigurationManager
             DECLSPEC_XFGVIRT(ISharingConfigurationManager, StopSharingPrinters)
@@ -10184,21 +7166,14 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ISharingConfigurationManager_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0116 *
-      ;* [local] *
     endif
-    ; NTDDI_VISTA
     if (NTDDI_VERSION ge NTDDI_VISTA)
       externdef __MIDL_itf_shobjidl_core_0000_0116_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0116_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IRelatedItem_INTERFACE_DEFINED__
         __IRelatedItem_INTERFACE_DEFINED__ equ <>
-        ;* interface IRelatedItem *
-        ;* [unique][uuid][object] *
         externdef IID_IRelatedItem:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10207,8 +7182,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IRelatedItemVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IRelatedItem, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IRelatedItem
@@ -10216,10 +7189,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IRelatedItem
             DECLSPEC_XFGVIRT(IRelatedItem, GetItemIDList)
             STD_METHOD GetItemIDList, :ptr IRelatedItem, :ptr PIDLIST_ABSOLUTE
-            ;* [out] *
             DECLSPEC_XFGVIRT(IRelatedItem, GetItem)
             STD_METHOD GetItem, :ptr IRelatedItem, :ptr ptr IShellItem
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IRelatedItemVtbl ends
@@ -10229,14 +7200,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IRelatedItem_INTERFACE_DEFINED__ *
       endif
       ifndef __IIdentityName_INTERFACE_DEFINED__
         __IIdentityName_INTERFACE_DEFINED__ equ <>
-        ;* interface IIdentityName *
-        ;* [unique][uuid][object] *
         externdef IID_IIdentityName:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10245,8 +7212,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IIdentityNameVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IIdentityName, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IIdentityName
@@ -10254,10 +7219,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IIdentityName
             DECLSPEC_XFGVIRT(IRelatedItem, GetItemIDList)
             STD_METHOD GetItemIDList, :ptr IIdentityName, :ptr PIDLIST_ABSOLUTE
-            ;* [out] *
             DECLSPEC_XFGVIRT(IRelatedItem, GetItem)
             STD_METHOD GetItem, :ptr IIdentityName, :ptr ptr IShellItem
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IIdentityNameVtbl ends
@@ -10267,14 +7230,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IIdentityName_INTERFACE_DEFINED__ *
       endif
       ifndef __IDelegateItem_INTERFACE_DEFINED__
         __IDelegateItem_INTERFACE_DEFINED__ equ <>
-        ;* interface IDelegateItem *
-        ;* [unique][uuid][object] *
         externdef IID_IDelegateItem:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10283,8 +7242,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IDelegateItemVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IDelegateItem, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IDelegateItem
@@ -10292,10 +7249,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IDelegateItem
             DECLSPEC_XFGVIRT(IRelatedItem, GetItemIDList)
             STD_METHOD GetItemIDList, :ptr IDelegateItem, :ptr PIDLIST_ABSOLUTE
-            ;* [out] *
             DECLSPEC_XFGVIRT(IRelatedItem, GetItem)
             STD_METHOD GetItem, :ptr IDelegateItem, :ptr ptr IShellItem
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IDelegateItemVtbl ends
@@ -10305,14 +7260,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IDelegateItem_INTERFACE_DEFINED__ *
       endif
       ifndef __ICurrentItem_INTERFACE_DEFINED__
         __ICurrentItem_INTERFACE_DEFINED__ equ <>
-        ;* interface ICurrentItem *
-        ;* [unique][uuid][object] *
         externdef IID_ICurrentItem:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10321,8 +7272,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <ICurrentItemVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ICurrentItem, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ICurrentItem
@@ -10330,10 +7279,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr ICurrentItem
             DECLSPEC_XFGVIRT(IRelatedItem, GetItemIDList)
             STD_METHOD GetItemIDList, :ptr ICurrentItem, :ptr PIDLIST_ABSOLUTE
-            ;* [out] *
             DECLSPEC_XFGVIRT(IRelatedItem, GetItem)
             STD_METHOD GetItem, :ptr ICurrentItem, :ptr ptr IShellItem
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           ICurrentItemVtbl ends
@@ -10343,14 +7290,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ICurrentItem_INTERFACE_DEFINED__ *
       endif
       ifndef __ITransferMediumItem_INTERFACE_DEFINED__
         __ITransferMediumItem_INTERFACE_DEFINED__ equ <>
-        ;* interface ITransferMediumItem *
-        ;* [unique][uuid][object] *
         externdef IID_ITransferMediumItem:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10359,8 +7302,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <ITransferMediumItemVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ITransferMediumItem, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ITransferMediumItem
@@ -10368,10 +7309,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr ITransferMediumItem
             DECLSPEC_XFGVIRT(IRelatedItem, GetItemIDList)
             STD_METHOD GetItemIDList, :ptr ITransferMediumItem, :ptr PIDLIST_ABSOLUTE
-            ;* [out] *
             DECLSPEC_XFGVIRT(IRelatedItem, GetItem)
             STD_METHOD GetItem, :ptr ITransferMediumItem, :ptr ptr IShellItem
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           ITransferMediumItemVtbl ends
@@ -10381,14 +7320,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ITransferMediumItem_INTERFACE_DEFINED__ *
       endif
       ifndef __IDisplayItem_INTERFACE_DEFINED__
         __IDisplayItem_INTERFACE_DEFINED__ equ <>
-        ;* interface IDisplayItem *
-        ;* [unique][uuid][object] *
         externdef IID_IDisplayItem:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10397,8 +7332,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IDisplayItemVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IDisplayItem, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IDisplayItem
@@ -10406,10 +7339,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IDisplayItem
             DECLSPEC_XFGVIRT(IRelatedItem, GetItemIDList)
             STD_METHOD GetItemIDList, :ptr IDisplayItem, :ptr PIDLIST_ABSOLUTE
-            ;* [out] *
             DECLSPEC_XFGVIRT(IRelatedItem, GetItem)
             STD_METHOD GetItem, :ptr IDisplayItem, :ptr ptr IShellItem
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IDisplayItemVtbl ends
@@ -10419,14 +7350,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IDisplayItem_INTERFACE_DEFINED__ *
       endif
       ifndef __IViewStateIdentityItem_INTERFACE_DEFINED__
         __IViewStateIdentityItem_INTERFACE_DEFINED__ equ <>
-        ;* interface IViewStateIdentityItem *
-        ;* [unique][uuid][object] *
         externdef IID_IViewStateIdentityItem:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10435,8 +7362,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IViewStateIdentityItemVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IViewStateIdentityItem, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IViewStateIdentityItem
@@ -10444,10 +7369,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IViewStateIdentityItem
             DECLSPEC_XFGVIRT(IRelatedItem, GetItemIDList)
             STD_METHOD GetItemIDList, :ptr IViewStateIdentityItem, :ptr PIDLIST_ABSOLUTE
-            ;* [out] *
             DECLSPEC_XFGVIRT(IRelatedItem, GetItem)
             STD_METHOD GetItem, :ptr IViewStateIdentityItem, :ptr ptr IShellItem
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IViewStateIdentityItemVtbl ends
@@ -10457,14 +7380,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IViewStateIdentityItem_INTERFACE_DEFINED__ *
       endif
       ifndef __IPreviewItem_INTERFACE_DEFINED__
         __IPreviewItem_INTERFACE_DEFINED__ equ <>
-        ;* interface IPreviewItem *
-        ;* [unique][uuid][object] *
         externdef IID_IPreviewItem:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10473,8 +7392,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IPreviewItemVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IPreviewItem, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IPreviewItem
@@ -10482,10 +7399,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IPreviewItem
             DECLSPEC_XFGVIRT(IRelatedItem, GetItemIDList)
             STD_METHOD GetItemIDList, :ptr IPreviewItem, :ptr PIDLIST_ABSOLUTE
-            ;* [out] *
             DECLSPEC_XFGVIRT(IRelatedItem, GetItem)
             STD_METHOD GetItem, :ptr IPreviewItem, :ptr ptr IShellItem
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IPreviewItemVtbl ends
@@ -10495,20 +7410,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IPreviewItem_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0124 *
-      ;* [local] *
     endif
-    ; NTDDI_VISTA
     externdef __MIDL_itf_shobjidl_core_0000_0124_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0124_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IDestinationStreamFactory_INTERFACE_DEFINED__
       __IDestinationStreamFactory_INTERFACE_DEFINED__ equ <>
-      ;* interface IDestinationStreamFactory *
-      ;* [unique][object][uuid] *
       externdef IID_IDestinationStreamFactory:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -10517,8 +7425,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IDestinationStreamFactoryVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IDestinationStreamFactory, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IDestinationStreamFactory
@@ -10526,7 +7432,6 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IDestinationStreamFactory
           DECLSPEC_XFGVIRT(IDestinationStreamFactory, GetDestinationStream)
           STD_METHOD GetDestinationStream, :ptr IDestinationStreamFactory, :ptr ptr IStream
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IDestinationStreamFactoryVtbl ends
@@ -10536,19 +7441,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IDestinationStreamFactory_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0125 *
-    ;* [local] *
     if (NTDDI_VERSION ge NTDDI_VISTA)
       externdef __MIDL_itf_shobjidl_core_0000_0125_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0125_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __ICreateProcessInputs_INTERFACE_DEFINED__
         __ICreateProcessInputs_INTERFACE_DEFINED__ equ <>
-        ;* interface ICreateProcessInputs *
-        ;* [local][unique][uuid][object] *
         externdef IID_ICreateProcessInputs:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10557,34 +7456,24 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <ICreateProcessInputsVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ICreateProcessInputs, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ICreateProcessInputs
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ICreateProcessInputs
             DECLSPEC_XFGVIRT(ICreateProcessInputs, GetCreateFlags)
-            ;* [annotation][out] *
             STD_METHOD GetCreateFlags, :ptr ICreateProcessInputs, :ptr DWORD
             DECLSPEC_XFGVIRT(ICreateProcessInputs, SetCreateFlags)
-            ;* [annotation][in] *
             STD_METHOD SetCreateFlags, :ptr ICreateProcessInputs, :DWORD
             DECLSPEC_XFGVIRT(ICreateProcessInputs, AddCreateFlags)
-            ;* [annotation][in] *
             STD_METHOD AddCreateFlags, :ptr ICreateProcessInputs, :DWORD
             DECLSPEC_XFGVIRT(ICreateProcessInputs, SetHotKey)
-            ;* [annotation][in] *
             STD_METHOD SetHotKey, :ptr ICreateProcessInputs, :WORD
             DECLSPEC_XFGVIRT(ICreateProcessInputs, AddStartupFlags)
-            ;* [annotation][in] *
             STD_METHOD AddStartupFlags, :ptr ICreateProcessInputs, :DWORD
             DECLSPEC_XFGVIRT(ICreateProcessInputs, SetTitle)
-            ;* [annotation][string][in] *
             STD_METHOD SetTitle, :ptr ICreateProcessInputs, :LPCWSTR
             DECLSPEC_XFGVIRT(ICreateProcessInputs, SetEnvironmentVariable)
-            ;* [annotation][string][in] *
-            ;* [annotation][string][in] *
             STD_METHOD SetEnvironmentVariable, :ptr ICreateProcessInputs, :LPCWSTR, :LPCWSTR
             ??Interface equ <>
             END_INTERFACE
@@ -10595,14 +7484,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ICreateProcessInputs_INTERFACE_DEFINED__ *
       endif
       ifndef __ICreatingProcess_INTERFACE_DEFINED__
         __ICreatingProcess_INTERFACE_DEFINED__ equ <>
-        ;* interface ICreatingProcess *
-        ;* [object][local][uuid] *
         externdef IID_ICreatingProcess:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10611,15 +7496,12 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <ICreatingProcessVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ICreatingProcess, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ICreatingProcess
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ICreatingProcess
             DECLSPEC_XFGVIRT(ICreatingProcess, OnCreating)
-            ;* [annotation][in] *
             STD_METHOD OnCreating, :ptr ICreatingProcess, :ptr ICreateProcessInputs
             ??Interface equ <>
             END_INTERFACE
@@ -10630,22 +7512,15 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ICreatingProcess_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0127 *
-      ;* [local] *
       SID_ExecuteCreatingProcess equ <__uuidof(ICreatingProcess)>
     endif
-    ; NTDDI_VISTA
     if (NTDDI_VERSION ge NTDDI_WIN10_RS4)
       externdef __MIDL_itf_shobjidl_core_0000_0127_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0127_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __ILaunchUIContext_INTERFACE_DEFINED__
         __ILaunchUIContext_INTERFACE_DEFINED__ equ <>
-        ;* interface ILaunchUIContext *
-        ;* [object][uuid] *
         externdef IID_ILaunchUIContext:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10654,8 +7529,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <ILaunchUIContextVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ILaunchUIContext, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ILaunchUIContext
@@ -10663,10 +7536,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr ILaunchUIContext
             DECLSPEC_XFGVIRT(ILaunchUIContext, SetAssociatedWindow)
             STD_METHOD SetAssociatedWindow, :ptr ILaunchUIContext, :HWND
-            ;* [in] *
             DECLSPEC_XFGVIRT(ILaunchUIContext, SetTabGroupingPreference)
             STD_METHOD SetTabGroupingPreference, :ptr ILaunchUIContext, :DWORD
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           ILaunchUIContextVtbl ends
@@ -10676,14 +7547,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ILaunchUIContext_INTERFACE_DEFINED__ *
       endif
       ifndef __ILaunchUIContextProvider_INTERFACE_DEFINED__
         __ILaunchUIContextProvider_INTERFACE_DEFINED__ equ <>
-        ;* interface ILaunchUIContextProvider *
-        ;* [object][uuid] *
         externdef IID_ILaunchUIContextProvider:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10692,8 +7559,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <ILaunchUIContextProviderVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ILaunchUIContextProvider, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ILaunchUIContextProvider
@@ -10701,7 +7566,6 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr ILaunchUIContextProvider
             DECLSPEC_XFGVIRT(ILaunchUIContextProvider, UpdateContext)
             STD_METHOD UpdateContext, :ptr ILaunchUIContextProvider, :ptr ILaunchUIContext
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           ILaunchUIContextProviderVtbl ends
@@ -10711,23 +7575,16 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ILaunchUIContextProvider_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0129 *
-      ;* [local] *
       SID_LaunchUIContextProvider equ <__uuidof(ILaunchUIContextProvider)>
     endif
-    ; (NTDDI_VERSION >= NTDDI_WIN10_RS4)
-    ;* [v1_enum] *
     _NMCII_FLAGS typedef SDWORD
     NMCII_NONE equ 0
     NMCII_ITEMS equ 1h
     NMCII_FOLDERS equ 2h
 
     NMCII_FLAGS typedef SDWORD
-    ;* [v1_enum] *
     _NMCSAEI_FLAGS typedef SDWORD
     NMCSAEI_SELECT equ 0
     NMCSAEI_EDIT equ 1h
@@ -10737,8 +7594,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0129_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __INewMenuClient_INTERFACE_DEFINED__
       __INewMenuClient_INTERFACE_DEFINED__ equ <>
-      ;* interface INewMenuClient *
-      ;* [object][unique][uuid] *
       externdef IID_INewMenuClient:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -10747,8 +7602,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <INewMenuClientVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr INewMenuClient, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr INewMenuClient
@@ -10756,11 +7609,8 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr INewMenuClient
           DECLSPEC_XFGVIRT(INewMenuClient, IncludeItems)
           STD_METHOD IncludeItems, :ptr INewMenuClient, :ptr NMCII_FLAGS
-          ;* [out] *
           DECLSPEC_XFGVIRT(INewMenuClient, SelectAndEditItem)
-          ;* [in] *
           STD_METHOD SelectAndEditItem, :ptr INewMenuClient, :PCIDLIST_ABSOLUTE, :NMCSAEI_FLAGS
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         INewMenuClientVtbl ends
@@ -10770,20 +7620,14 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __INewMenuClient_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0130 *
-    ;* [local] *
     SID_SNewMenuClient equ <IID_INewMenuClient>
     if (_WIN32_IE ge _WIN32_IE_IE70)
       externdef __MIDL_itf_shobjidl_core_0000_0130_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0130_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IInitializeWithBindCtx_INTERFACE_DEFINED__
         __IInitializeWithBindCtx_INTERFACE_DEFINED__ equ <>
-        ;* interface IInitializeWithBindCtx *
-        ;* [unique][uuid][object] *
         externdef IID_IInitializeWithBindCtx:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10792,8 +7636,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IInitializeWithBindCtxVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IInitializeWithBindCtx, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IInitializeWithBindCtx
@@ -10801,7 +7643,6 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IInitializeWithBindCtx
             DECLSPEC_XFGVIRT(IInitializeWithBindCtx, Initialize)
             STD_METHOD Initialize, :ptr IInitializeWithBindCtx, :ptr IBindCtx
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IInitializeWithBindCtxVtbl ends
@@ -10811,14 +7652,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IInitializeWithBindCtx_INTERFACE_DEFINED__ *
       endif
       ifndef __IShellItemFilter_INTERFACE_DEFINED__
         __IShellItemFilter_INTERFACE_DEFINED__ equ <>
-        ;* interface IShellItemFilter *
-        ;* [unique][uuid][object] *
         externdef IID_IShellItemFilter:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -10827,8 +7664,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IShellItemFilterVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IShellItemFilter, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IShellItemFilter
@@ -10836,11 +7671,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IShellItemFilter
             DECLSPEC_XFGVIRT(IShellItemFilter, IncludeItem)
             STD_METHOD IncludeItem, :ptr IShellItemFilter, :ptr IShellItem
-            ;* [in] *
             DECLSPEC_XFGVIRT(IShellItemFilter, GetEnumFlagsForItem)
-            ;* [in] *
             STD_METHOD GetEnumFlagsForItem, :ptr IShellItemFilter, :ptr IShellItem, :ptr SHCONTF
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IShellItemFilterVtbl ends
@@ -10850,21 +7682,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IShellItemFilter_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0132 *
-      ;* [local] *
     endif
-    ; (_WIN32_IE >= _WIN32_IE_IE70)
     externdef __MIDL_itf_shobjidl_core_0000_0132_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0132_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __INameSpaceTreeControl_INTERFACE_DEFINED__
       __INameSpaceTreeControl_INTERFACE_DEFINED__ equ <>
-      ;* interface INameSpaceTreeControl *
-      ;* [uuid][object] *
-      ;* [v1_enum] *
       _NSTCSTYLE typedef SDWORD
       NSTCS_HASEXPANDOS equ 1h
       NSTCS_HASLINES equ 2h
@@ -10898,14 +7722,12 @@ ifndef __shobjidl_core_h__
       NSTCS_SHOWREFRESHBUTTON equ 80000000h
 
       NSTCSTYLE typedef DWORD
-      ;* [v1_enum] *
       _NSTCROOTSTYLE typedef SDWORD
       NSTCRS_VISIBLE equ 0
       NSTCRS_HIDDEN equ 1h
       NSTCRS_EXPANDED equ 2h
 
       NSTCROOTSTYLE typedef DWORD
-      ;* [v1_enum] *
       _NSTCITEMSTATE typedef SDWORD
       NSTCIS_NONE equ 0
       NSTCIS_SELECTED equ 1h
@@ -10915,7 +7737,6 @@ ifndef __shobjidl_core_h__
       NSTCIS_SELECTEDNOEXPAND equ 10h
 
       NSTCITEMSTATE typedef DWORD
-      ;* [v1_enum] *
       NSTCGNI typedef SDWORD
       NSTCGNI_NEXT equ 0
       NSTCGNI_NEXTVISIBLE equ 1
@@ -10934,86 +7755,47 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <INameSpaceTreeControlVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr INameSpaceTreeControl, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr INameSpaceTreeControl
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr INameSpaceTreeControl
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, Initialize)
-          ;* [in] *
-          ;* [unique][in] *
           STD_METHOD Initialize, :ptr INameSpaceTreeControl, :HWND, :ptr RECT, :NSTCSTYLE
-          ;* [in] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, TreeAdvise)
-          ;* [in] *
           STD_METHOD TreeAdvise, :ptr INameSpaceTreeControl, :ptr IUnknown, :ptr DWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, TreeUnadvise)
           STD_METHOD TreeUnadvise, :ptr INameSpaceTreeControl, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, AppendRoot)
-          ;* [in] *
-          ;* [in] *
-          ;* [in] *
           STD_METHOD AppendRoot, :ptr INameSpaceTreeControl, :ptr IShellItem, :SHCONTF, :NSTCROOTSTYLE, :ptr IShellItemFilter
-          ;* [unique][in] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, InsertRoot)
-          ;* [in] *
-          ;* [in] *
-          ;* [in] *
-          ;* [in] *
           STD_METHOD InsertRoot, :ptr INameSpaceTreeControl, :SDWORD, :ptr IShellItem, :SHCONTF, :NSTCROOTSTYLE, :ptr IShellItemFilter
-          ;* [unique][in] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, RemoveRoot)
           STD_METHOD RemoveRoot, :ptr INameSpaceTreeControl, :ptr IShellItem
-          ;* [in] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, RemoveAllRoots)
           STD_METHOD RemoveAllRoots, :ptr INameSpaceTreeControl
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, GetRootItems)
           STD_METHOD GetRootItems, :ptr INameSpaceTreeControl, :ptr ptr IShellItemArray
-          ;* [out] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, SetItemState)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD SetItemState, :ptr INameSpaceTreeControl, :ptr IShellItem, :NSTCITEMSTATE, :NSTCITEMSTATE
-          ;* [in] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, GetItemState)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetItemState, :ptr INameSpaceTreeControl, :ptr IShellItem, :NSTCITEMSTATE, :ptr NSTCITEMSTATE
-          ;* [out] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, GetSelectedItems)
           STD_METHOD GetSelectedItems, :ptr INameSpaceTreeControl, :ptr ptr IShellItemArray
-          ;* [out] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, GetItemCustomState)
-          ;* [in] *
           STD_METHOD GetItemCustomState, :ptr INameSpaceTreeControl, :ptr IShellItem, :ptr SDWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, SetItemCustomState)
-          ;* [in] *
           STD_METHOD SetItemCustomState, :ptr INameSpaceTreeControl, :ptr IShellItem, :SDWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, EnsureItemVisible)
           STD_METHOD EnsureItemVisible, :ptr INameSpaceTreeControl, :ptr IShellItem
-          ;* [in] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, SetTheme)
           STD_METHOD SetTheme, :ptr INameSpaceTreeControl, :LPCWSTR
-          ;* [string][in] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, GetNextItem)
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD GetNextItem, :ptr INameSpaceTreeControl, :ptr IShellItem, :NSTCGNI, :ptr ptr IShellItem
-          ;* [out] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, HitTest)
-          ;* [in] *
           STD_METHOD HitTest, :ptr INameSpaceTreeControl, :ptr POINT, :ptr ptr IShellItem
-          ;* [out] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, GetItemRect)
-          ;* [in] *
           STD_METHOD GetItemRect, :ptr INameSpaceTreeControl, :ptr IShellItem, :ptr RECT
-          ;* [out] *
           DECLSPEC_XFGVIRT(INameSpaceTreeControl, CollapseAll)
           STD_METHOD CollapseAll, :ptr INameSpaceTreeControl
           ??Interface equ <>
@@ -11025,22 +7807,14 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __INameSpaceTreeControl_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0133 *
-    ;* [local] *
-    SID_SNavigationPane equ <IID_INameSpaceTreeControl>; nearest service that you can proffer to
-
+    SID_SNavigationPane equ <IID_INameSpaceTreeControl>
     if (NTDDI_VERSION ge NTDDI_VISTA)
       externdef __MIDL_itf_shobjidl_core_0000_0133_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0133_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __INameSpaceTreeControlFolderCapabilities_INTERFACE_DEFINED__
         __INameSpaceTreeControlFolderCapabilities_INTERFACE_DEFINED__ equ <>
-        ;* interface INameSpaceTreeControlFolderCapabilities *
-        ;* [local][uuid][object] *
-        ;* [v1_enum] *
         NSTCFOLDERCAPABILITIES typedef SDWORD
         NSTCFC_NONE equ 0
         NSTCFC_PINNEDITEMFILTERING equ 1h
@@ -11055,16 +7829,12 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <INameSpaceTreeControlFolderCapabilitiesVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr INameSpaceTreeControlFolderCapabilities, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr INameSpaceTreeControlFolderCapabilities
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr INameSpaceTreeControlFolderCapabilities
             DECLSPEC_XFGVIRT(INameSpaceTreeControlFolderCapabilities, GetFolderCapabilities)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD GetFolderCapabilities, :ptr INameSpaceTreeControlFolderCapabilities, :NSTCFOLDERCAPABILITIES, :ptr NSTCFOLDERCAPABILITIES
             ??Interface equ <>
             END_INTERFACE
@@ -11075,14 +7845,9 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __INameSpaceTreeControlFolderCapabilities_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0134 *
-      ;* [local] *
     endif
-    ; NTDDI_VISTA
     E_PREVIEWHANDLER_DRM_FAIL equ _HRESULT_TYPEDEF_(86420001h)
     E_PREVIEWHANDLER_NOAUTH equ _HRESULT_TYPEDEF_(86420002h)
     E_PREVIEWHANDLER_NOTFOUND equ _HRESULT_TYPEDEF_(86420003h)
@@ -11091,8 +7856,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0134_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IPreviewHandler_INTERFACE_DEFINED__
       __IPreviewHandler_INTERFACE_DEFINED__ equ <>
-      ;* interface IPreviewHandler *
-      ;* [uuid][object] *
       externdef IID_IPreviewHandler:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -11101,20 +7864,15 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IPreviewHandlerVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IPreviewHandler, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IPreviewHandler
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IPreviewHandler
           DECLSPEC_XFGVIRT(IPreviewHandler, SetWindow)
-          ;* [in] *
           STD_METHOD SetWindow, :ptr IPreviewHandler, :HWND, :ptr RECT
-          ;* [in] *
           DECLSPEC_XFGVIRT(IPreviewHandler, SetRect)
           STD_METHOD SetRect, :ptr IPreviewHandler, :ptr RECT
-          ;* [in] *
           DECLSPEC_XFGVIRT(IPreviewHandler, DoPreview)
           STD_METHOD DoPreview, :ptr IPreviewHandler
           DECLSPEC_XFGVIRT(IPreviewHandler, Unload)
@@ -11123,10 +7881,8 @@ ifndef __shobjidl_core_h__
           STD_METHOD SetFocus, :ptr IPreviewHandler
           DECLSPEC_XFGVIRT(IPreviewHandler, QueryFocus)
           STD_METHOD QueryFocus, :ptr IPreviewHandler, :ptr HWND
-          ;* [out] *
           DECLSPEC_XFGVIRT(IPreviewHandler, TranslateAccelerator)
           STD_METHOD TranslateAccelerator, :ptr IPreviewHandler, :ptr MSG
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IPreviewHandlerVtbl ends
@@ -11136,17 +7892,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IPreviewHandler_INTERFACE_DEFINED__ *
     endif
     ifndef __IPreviewHandlerFrame_INTERFACE_DEFINED__
       __IPreviewHandlerFrame_INTERFACE_DEFINED__ equ <>
-      ;* interface IPreviewHandlerFrame *
-      ;* [unique][uuid][object] *
       PREVIEWHANDLERFRAMEINFO struct
         haccel HACCEL ?
-        cAccelEntries DWORD ?
+        cAccelEntries UINT ?
       PREVIEWHANDLERFRAMEINFO ends
       externdef IID_IPreviewHandlerFrame:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -11156,8 +7908,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IPreviewHandlerFrameVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IPreviewHandlerFrame, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IPreviewHandlerFrame
@@ -11165,10 +7915,8 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IPreviewHandlerFrame
           DECLSPEC_XFGVIRT(IPreviewHandlerFrame, GetWindowContext)
           STD_METHOD GetWindowContext, :ptr IPreviewHandlerFrame, :ptr PREVIEWHANDLERFRAMEINFO
-          ;* [out] *
           DECLSPEC_XFGVIRT(IPreviewHandlerFrame, TranslateAccelerator)
           STD_METHOD TranslateAccelerator, :ptr IPreviewHandlerFrame, :ptr MSG
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IPreviewHandlerFrameVtbl ends
@@ -11178,32 +7926,22 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IPreviewHandlerFrame_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0136 *
-    ;* [local] *
     if (NTDDI_VERSION ge NTDDI_VISTA)
       EXPLORERPANE typedef GUID
       if 0
         ;[...]
       endif
-      ; 0
       ifdef __cplusplus
         ;[...]
       else
-      ; !__cplusplus
         REFEXPLORERPANE equ <const EXPLORERPANE * __MIDL_CONST>
       endif
-      ; __cplusplus
       externdef __MIDL_itf_shobjidl_core_0000_0136_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0136_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IExplorerPaneVisibility_INTERFACE_DEFINED__
         __IExplorerPaneVisibility_INTERFACE_DEFINED__ equ <>
-        ;* interface IExplorerPaneVisibility *
-        ;* [unique][local][uuid][object] *
-        ;* [v1_enum] *
         _EXPLORERPANESTATE typedef SDWORD
         EPS_DONTCARE equ 0
         EPS_DEFAULT_ON equ 1h
@@ -11221,16 +7959,12 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IExplorerPaneVisibilityVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IExplorerPaneVisibility, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IExplorerPaneVisibility
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IExplorerPaneVisibility
             DECLSPEC_XFGVIRT(IExplorerPaneVisibility, GetPaneState)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD GetPaneState, :ptr IExplorerPaneVisibility, :REFEXPLORERPANE, :ptr EXPLORERPANESTATE
             ??Interface equ <>
             END_INTERFACE
@@ -11241,19 +7975,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IExplorerPaneVisibility_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0137 *
-      ;* [local] *
       SID_ExplorerPaneVisibility equ <IID_IExplorerPaneVisibility>
       externdef __MIDL_itf_shobjidl_core_0000_0137_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0137_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IContextMenuCB_INTERFACE_DEFINED__
         __IContextMenuCB_INTERFACE_DEFINED__ equ <>
-        ;* interface IContextMenuCB *
-        ;* [local][unique][uuid][object] *
         externdef IID_IContextMenuCB:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -11262,20 +7990,12 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IContextMenuCBVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IContextMenuCB, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IContextMenuCB
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IContextMenuCB
             DECLSPEC_XFGVIRT(IContextMenuCB, CallBack)
-            ;* [annotation][unique][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD CallBack, :ptr IContextMenuCB, :ptr IShellFolder, :HWND, :ptr IDataObject, :UINT, :WPARAM, :LPARAM
             ??Interface equ <>
             END_INTERFACE
@@ -11286,20 +8006,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IContextMenuCB_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0138 *
-      ;* [local] *
     endif
-    ; NTDDI_VISTA
     externdef __MIDL_itf_shobjidl_core_0000_0138_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0138_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IDefaultExtractIconInit_INTERFACE_DEFINED__
       __IDefaultExtractIconInit_INTERFACE_DEFINED__ equ <>
-      ;* interface IDefaultExtractIconInit *
-      ;* [unique][local][uuid][object] *
       externdef IID_IDefaultExtractIconInit:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -11308,34 +8021,22 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IDefaultExtractIconInitVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IDefaultExtractIconInit, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IDefaultExtractIconInit
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IDefaultExtractIconInit
           DECLSPEC_XFGVIRT(IDefaultExtractIconInit, SetFlags)
-          ;* [annotation][in] *
           STD_METHOD SetFlags, :ptr IDefaultExtractIconInit, :UINT
           DECLSPEC_XFGVIRT(IDefaultExtractIconInit, SetKey)
-          ;* [annotation][in] *
           STD_METHOD SetKey, :ptr IDefaultExtractIconInit, :HKEY
           DECLSPEC_XFGVIRT(IDefaultExtractIconInit, SetNormalIcon)
-          ;* [annotation][string][unique][in] *
-          ;* [annotation][in] *
           STD_METHOD SetNormalIcon, :ptr IDefaultExtractIconInit, :LPCWSTR, :SDWORD
           DECLSPEC_XFGVIRT(IDefaultExtractIconInit, SetOpenIcon)
-          ;* [annotation][string][unique][in] *
-          ;* [annotation][in] *
           STD_METHOD SetOpenIcon, :ptr IDefaultExtractIconInit, :LPCWSTR, :SDWORD
           DECLSPEC_XFGVIRT(IDefaultExtractIconInit, SetShortcutIcon)
-          ;* [annotation][string][unique][in] *
-          ;* [annotation][in] *
           STD_METHOD SetShortcutIcon, :ptr IDefaultExtractIconInit, :LPCWSTR, :SDWORD
           DECLSPEC_XFGVIRT(IDefaultExtractIconInit, SetDefaultIcon)
-          ;* [annotation][string][unique][in] *
-          ;* [annotation][in] *
           STD_METHOD SetDefaultIcon, :ptr IDefaultExtractIconInit, :LPCWSTR, :SDWORD
           ??Interface equ <>
           END_INTERFACE
@@ -11346,20 +8047,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IDefaultExtractIconInit_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0139 *
-    ;* [local] *
     @DefProto DllImport, SHCreateDefaultExtractIcon, WIN_STD_CALL_CONV,, <:REFIID, :ptr ptr>, 8
     externdef __MIDL_itf_shobjidl_core_0000_0139_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0139_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IExplorerCommand_INTERFACE_DEFINED__
       __IExplorerCommand_INTERFACE_DEFINED__ equ <>
-      ;* interface IExplorerCommand *
-      ;* [object][unique][uuid] *
-      ;* [v1_enum] *
       _EXPCMDSTATE typedef SDWORD
       ECS_ENABLED equ 0
       ECS_DISABLED equ 1h
@@ -11369,7 +8063,6 @@ ifndef __shobjidl_core_h__
       ECS_RADIOCHECK equ 10h
 
       EXPCMDSTATE typedef DWORD
-      ;* [v1_enum] *
       _EXPCMDFLAGS typedef SDWORD
       ECF_DEFAULT equ 0
       ECF_HASSUBCOMMANDS equ 1h
@@ -11392,43 +8085,27 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IExplorerCommandVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IExplorerCommand, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IExplorerCommand
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IExplorerCommand
           DECLSPEC_XFGVIRT(IExplorerCommand, GetTitle)
-          ;* [unique][in] *
           STD_METHOD GetTitle, :ptr IExplorerCommand, :ptr IShellItemArray, :ptr LPWSTR
-          ;* [string][out] *
           DECLSPEC_XFGVIRT(IExplorerCommand, GetIcon)
-          ;* [unique][in] *
           STD_METHOD GetIcon, :ptr IExplorerCommand, :ptr IShellItemArray, :ptr LPWSTR
-          ;* [string][out] *
           DECLSPEC_XFGVIRT(IExplorerCommand, GetToolTip)
-          ;* [unique][in] *
           STD_METHOD GetToolTip, :ptr IExplorerCommand, :ptr IShellItemArray, :ptr LPWSTR
-          ;* [string][out] *
           DECLSPEC_XFGVIRT(IExplorerCommand, GetCanonicalName)
           STD_METHOD GetCanonicalName, :ptr IExplorerCommand, :ptr GUID
-          ;* [out] *
           DECLSPEC_XFGVIRT(IExplorerCommand, GetState)
-          ;* [unique][in] *
-          ;* [in] *
           STD_METHOD GetState, :ptr IExplorerCommand, :ptr IShellItemArray, :BOOL, :ptr EXPCMDSTATE
-          ;* [out] *
           DECLSPEC_XFGVIRT(IExplorerCommand, Invoke)
-          ;* [unique][in] *
           STD_METHOD Invoke_, :ptr IExplorerCommand, :ptr IShellItemArray, :ptr IBindCtx
-          ;* [unique][in] *
           DECLSPEC_XFGVIRT(IExplorerCommand, GetFlags)
           STD_METHOD GetFlags, :ptr IExplorerCommand, :ptr EXPCMDFLAGS
-          ;* [out] *
           DECLSPEC_XFGVIRT(IExplorerCommand, EnumSubCommands)
           STD_METHOD EnumSubCommands, :ptr IExplorerCommand, :ptr ptr IEnumExplorerCommand
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IExplorerCommandVtbl ends
@@ -11438,14 +8115,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IExplorerCommand_INTERFACE_DEFINED__ *
     endif
     ifndef __IExplorerCommandState_INTERFACE_DEFINED__
       __IExplorerCommandState_INTERFACE_DEFINED__ equ <>
-      ;* interface IExplorerCommandState *
-      ;* [unique][object][uuid] *
       externdef IID_IExplorerCommandState:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -11454,18 +8127,13 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IExplorerCommandStateVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IExplorerCommandState, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IExplorerCommandState
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IExplorerCommandState
           DECLSPEC_XFGVIRT(IExplorerCommandState, GetState)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetState, :ptr IExplorerCommandState, :ptr IShellItemArray, :BOOL, :ptr EXPCMDSTATE
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IExplorerCommandStateVtbl ends
@@ -11475,14 +8143,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IExplorerCommandState_INTERFACE_DEFINED__ *
     endif
     ifndef __IInitializeCommand_INTERFACE_DEFINED__
       __IInitializeCommand_INTERFACE_DEFINED__ equ <>
-      ;* interface IInitializeCommand *
-      ;* [unique][uuid][object] *
       externdef IID_IInitializeCommand:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -11491,17 +8155,13 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IInitializeCommandVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IInitializeCommand, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IInitializeCommand
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IInitializeCommand
           DECLSPEC_XFGVIRT(IInitializeCommand, Initialize)
-          ;* [string][in] *
           STD_METHOD Initialize, :ptr IInitializeCommand, :LPCWSTR, :ptr IPropertyBag
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IInitializeCommandVtbl ends
@@ -11511,14 +8171,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IInitializeCommand_INTERFACE_DEFINED__ *
     endif
     ifndef __IEnumExplorerCommand_INTERFACE_DEFINED__
       __IEnumExplorerCommand_INTERFACE_DEFINED__ equ <>
-      ;* interface IEnumExplorerCommand *
-      ;* [unique][object][uuid] *
       externdef IID_IEnumExplorerCommand:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -11527,27 +8183,19 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IEnumExplorerCommandVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IEnumExplorerCommand, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IEnumExplorerCommand
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IEnumExplorerCommand
           DECLSPEC_XFGVIRT(IEnumExplorerCommand, Next)
-          ;* [local] *
-          ;* [annotation][in] *
-          ;* [annotation][length_is][size_is][out] *
-          ;* [annotation][out] *
           STD_METHOD Next, :ptr IEnumExplorerCommand, :ULONG, :ptr ptr IExplorerCommand, :ptr ULONG
           DECLSPEC_XFGVIRT(IEnumExplorerCommand, Skip)
           STD_METHOD Skip, :ptr IEnumExplorerCommand, :ULONG
-          ;* [in] *
           DECLSPEC_XFGVIRT(IEnumExplorerCommand, Reset)
           STD_METHOD Reset, :ptr IEnumExplorerCommand
           DECLSPEC_XFGVIRT(IEnumExplorerCommand, Clone)
           STD_METHOD Clone, :ptr IEnumExplorerCommand, :ptr ptr IEnumExplorerCommand
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IEnumExplorerCommandVtbl ends
@@ -11557,18 +8205,12 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* [call_as] *
       IEnumExplorerCommand_RemoteNext_Proxy proto WIN_STD_CALL_CONV :ptr IEnumExplorerCommand, :ULONG, :ptr ptr IExplorerCommand, :ptr ULONG
-      ;* [out] *
       IEnumExplorerCommand_RemoteNext_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-      ;* __IEnumExplorerCommand_INTERFACE_DEFINED__ *
     endif
     ifndef __IExplorerCommandProvider_INTERFACE_DEFINED__
       __IExplorerCommandProvider_INTERFACE_DEFINED__ equ <>
-      ;* interface IExplorerCommandProvider *
-      ;* [object][unique][uuid] *
       externdef IID_IExplorerCommandProvider:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -11577,23 +8219,15 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IExplorerCommandProviderVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IExplorerCommandProvider, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IExplorerCommandProvider
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IExplorerCommandProvider
           DECLSPEC_XFGVIRT(IExplorerCommandProvider, GetCommands)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetCommands, :ptr IExplorerCommandProvider, :ptr IUnknown, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IExplorerCommandProvider, GetCommand)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetCommand, :ptr IExplorerCommandProvider, :REFGUID, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           ??Interface equ <>
           END_INTERFACE
         IExplorerCommandProviderVtbl ends
@@ -11603,14 +8237,9 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IExplorerCommandProvider_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0144 *
-    ;* [local] *
     HTHEME typedef HANDLE
-    ;* [v1_enum] *
     CPVIEW typedef SDWORD
     CPVIEW_CLASSIC equ 0
     CPVIEW_ALLITEMS equ CPVIEW_CLASSIC
@@ -11621,8 +8250,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0144_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IOpenControlPanel_INTERFACE_DEFINED__
       __IOpenControlPanel_INTERFACE_DEFINED__ equ <>
-      ;* interface IOpenControlPanel *
-      ;* [uuid][object] *
       externdef IID_IOpenControlPanel:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -11631,26 +8258,17 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IOpenControlPanelVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IOpenControlPanel, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IOpenControlPanel
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IOpenControlPanel
           DECLSPEC_XFGVIRT(IOpenControlPanel, Open)
-          ;* [string][unique][in] *
-          ;* [string][unique][in] *
           STD_METHOD Open, :ptr IOpenControlPanel, :LPCWSTR, :LPCWSTR, :ptr IUnknown
-          ;* [unique][in] *
           DECLSPEC_XFGVIRT(IOpenControlPanel, GetPath)
-          ;* [string][unique][in] *
-          ;* [size_is][string][out] *
           STD_METHOD GetPath, :ptr IOpenControlPanel, :LPCWSTR, :LPWSTR, :UINT
-          ;* [in] *
           DECLSPEC_XFGVIRT(IOpenControlPanel, GetCurrentView)
           STD_METHOD GetCurrentView, :ptr IOpenControlPanel, :ptr CPVIEW
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IOpenControlPanelVtbl ends
@@ -11660,20 +8278,14 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IOpenControlPanel_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0145 *
-    ;* [local] *
     STR_FILE_SYS_BIND_DATA equ <L("File System Bind Data")>
     STR_FILE_SYS_BIND_DATA_WIN7_FORMAT equ <L("Win7FileSystemIdList")>
     externdef __MIDL_itf_shobjidl_core_0000_0145_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0145_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IFileSystemBindData_INTERFACE_DEFINED__
       __IFileSystemBindData_INTERFACE_DEFINED__ equ <>
-      ;* interface IFileSystemBindData *
-      ;* [local][unique][uuid][object] *
       externdef IID_IFileSystemBindData:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -11682,8 +8294,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IFileSystemBindDataVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IFileSystemBindData, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IFileSystemBindData
@@ -11691,10 +8301,8 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IFileSystemBindData
           DECLSPEC_XFGVIRT(IFileSystemBindData, SetFindData)
           STD_METHOD SetFindData, :ptr IFileSystemBindData, :ptr WIN32_FIND_DATAW
-          ;* [in] *
           DECLSPEC_XFGVIRT(IFileSystemBindData, GetFindData)
           STD_METHOD GetFindData, :ptr IFileSystemBindData, :ptr WIN32_FIND_DATAW
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IFileSystemBindDataVtbl ends
@@ -11704,14 +8312,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IFileSystemBindData_INTERFACE_DEFINED__ *
     endif
     ifndef __IFileSystemBindData2_INTERFACE_DEFINED__
       __IFileSystemBindData2_INTERFACE_DEFINED__ equ <>
-      ;* interface IFileSystemBindData2 *
-      ;* [local][unique][uuid][object] *
       externdef IID_IFileSystemBindData2:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -11720,8 +8324,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IFileSystemBindData2Vtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IFileSystemBindData2, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IFileSystemBindData2
@@ -11729,22 +8331,16 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IFileSystemBindData2
           DECLSPEC_XFGVIRT(IFileSystemBindData, SetFindData)
           STD_METHOD SetFindData, :ptr IFileSystemBindData2, :ptr WIN32_FIND_DATAW
-          ;* [in] *
           DECLSPEC_XFGVIRT(IFileSystemBindData, GetFindData)
           STD_METHOD GetFindData, :ptr IFileSystemBindData2, :ptr WIN32_FIND_DATAW
-          ;* [out] *
           DECLSPEC_XFGVIRT(IFileSystemBindData2, SetFileID)
           STD_METHOD SetFileID, :ptr IFileSystemBindData2, :LARGE_INTEGER
-          ;* [in] *
           DECLSPEC_XFGVIRT(IFileSystemBindData2, GetFileID)
           STD_METHOD GetFileID, :ptr IFileSystemBindData2, :ptr LARGE_INTEGER
-          ;* [out] *
           DECLSPEC_XFGVIRT(IFileSystemBindData2, SetJunctionCLSID)
           STD_METHOD SetJunctionCLSID, :ptr IFileSystemBindData2, :REFCLSID
-          ;* [in] *
           DECLSPEC_XFGVIRT(IFileSystemBindData2, GetJunctionCLSID)
           STD_METHOD GetJunctionCLSID, :ptr IFileSystemBindData2, :ptr CLSID
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IFileSystemBindData2Vtbl ends
@@ -11754,20 +8350,13 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IFileSystemBindData2_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0147 *
-    ;* [local] *
     if (NTDDI_VERSION ge NTDDI_WIN7)
       externdef __MIDL_itf_shobjidl_core_0000_0147_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0147_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __ICustomDestinationList_INTERFACE_DEFINED__
         __ICustomDestinationList_INTERFACE_DEFINED__ equ <>
-        ;* interface ICustomDestinationList *
-        ;* [unique][object][uuid] *
-        ;* [v1_enum] *
         KNOWNDESTCATEGORY typedef SDWORD
         KDC_FREQUENT equ 1
         KDC_RECENT equ
@@ -11780,8 +8369,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <ICustomDestinationListVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ICustomDestinationList, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ICustomDestinationList
@@ -11789,31 +8376,20 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr ICustomDestinationList
             DECLSPEC_XFGVIRT(ICustomDestinationList, SetAppID)
             STD_METHOD SetAppID, :ptr ICustomDestinationList, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(ICustomDestinationList, BeginList)
-            ;* [out] *
-            ;* [in] *
             STD_METHOD BeginList, :ptr ICustomDestinationList, :ptr UINT, :REFIID, :ptr ptr
-            ;* [iid_is][out] *
             DECLSPEC_XFGVIRT(ICustomDestinationList, AppendCategory)
-            ;* [string][in] *
             STD_METHOD AppendCategory, :ptr ICustomDestinationList, :LPCWSTR, :ptr IObjectArray
-            ;* [in] *
             DECLSPEC_XFGVIRT(ICustomDestinationList, AppendKnownCategory)
             STD_METHOD AppendKnownCategory, :ptr ICustomDestinationList, :KNOWNDESTCATEGORY
-            ;* [in] *
             DECLSPEC_XFGVIRT(ICustomDestinationList, AddUserTasks)
             STD_METHOD AddUserTasks, :ptr ICustomDestinationList, :ptr IObjectArray
-            ;* [in] *
             DECLSPEC_XFGVIRT(ICustomDestinationList, CommitList)
             STD_METHOD CommitList, :ptr ICustomDestinationList
             DECLSPEC_XFGVIRT(ICustomDestinationList, GetRemovedDestinations)
-            ;* [in] *
             STD_METHOD GetRemovedDestinations, :ptr ICustomDestinationList, :REFIID, :ptr ptr
-            ;* [iid_is][out] *
             DECLSPEC_XFGVIRT(ICustomDestinationList, DeleteList)
             STD_METHOD DeleteList, :ptr ICustomDestinationList, :LPCWSTR
-            ;* [string][unique][in] *
             DECLSPEC_XFGVIRT(ICustomDestinationList, AbortList)
             STD_METHOD AbortList, :ptr ICustomDestinationList
             ??Interface equ <>
@@ -11825,14 +8401,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ICustomDestinationList_INTERFACE_DEFINED__ *
       endif
       ifndef __IApplicationDestinations_INTERFACE_DEFINED__
         __IApplicationDestinations_INTERFACE_DEFINED__ equ <>
-        ;* interface IApplicationDestinations *
-        ;* [unique][object][uuid] *
         externdef IID_IApplicationDestinations:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -11841,8 +8413,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IApplicationDestinationsVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IApplicationDestinations, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IApplicationDestinations
@@ -11850,10 +8420,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IApplicationDestinations
             DECLSPEC_XFGVIRT(IApplicationDestinations, SetAppID)
             STD_METHOD SetAppID, :ptr IApplicationDestinations, :LPCWSTR
-            ;* [in] *
             DECLSPEC_XFGVIRT(IApplicationDestinations, RemoveDestination)
             STD_METHOD RemoveDestination, :ptr IApplicationDestinations, :ptr IUnknown
-            ;* [in] *
             DECLSPEC_XFGVIRT(IApplicationDestinations, RemoveAllDestinations)
             STD_METHOD RemoveAllDestinations, :ptr IApplicationDestinations
             ??Interface equ <>
@@ -11865,15 +8433,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IApplicationDestinations_INTERFACE_DEFINED__ *
       endif
       ifndef __IApplicationDocumentLists_INTERFACE_DEFINED__
         __IApplicationDocumentLists_INTERFACE_DEFINED__ equ <>
-        ;* interface IApplicationDocumentLists *
-        ;* [unique][object][uuid] *
-        ;* [v1_enum] *
         APPDOCLISTTYPE typedef SDWORD
         ADLT_RECENT equ 0
         ADLT_FREQUENT equ
@@ -11886,8 +8449,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IApplicationDocumentListsVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IApplicationDocumentLists, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IApplicationDocumentLists
@@ -11895,13 +8456,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IApplicationDocumentLists
             DECLSPEC_XFGVIRT(IApplicationDocumentLists, SetAppID)
             STD_METHOD SetAppID, :ptr IApplicationDocumentLists, :LPCWSTR
-            ;* [in] *
             DECLSPEC_XFGVIRT(IApplicationDocumentLists, GetList)
-            ;* [in] *
-            ;* [in] *
-            ;* [in] *
             STD_METHOD GetList, :ptr IApplicationDocumentLists, :APPDOCLISTTYPE, :UINT, :REFIID, :ptr ptr
-            ;* [iid_is][out] *
             ??Interface equ <>
             END_INTERFACE
           IApplicationDocumentListsVtbl ends
@@ -11911,14 +8467,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IApplicationDocumentLists_INTERFACE_DEFINED__ *
       endif
       ifndef __IObjectWithAppUserModelID_INTERFACE_DEFINED__
         __IObjectWithAppUserModelID_INTERFACE_DEFINED__ equ <>
-        ;* interface IObjectWithAppUserModelID *
-        ;* [unique][object][uuid] *
         externdef IID_IObjectWithAppUserModelID:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -11927,8 +8479,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IObjectWithAppUserModelIDVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IObjectWithAppUserModelID, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IObjectWithAppUserModelID
@@ -11936,10 +8486,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IObjectWithAppUserModelID
             DECLSPEC_XFGVIRT(IObjectWithAppUserModelID, SetAppID)
             STD_METHOD SetAppID, :ptr IObjectWithAppUserModelID, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IObjectWithAppUserModelID, GetAppID)
             STD_METHOD GetAppID, :ptr IObjectWithAppUserModelID, :ptr LPWSTR
-            ;* [string][out] *
             ??Interface equ <>
             END_INTERFACE
           IObjectWithAppUserModelIDVtbl ends
@@ -11949,14 +8497,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IObjectWithAppUserModelID_INTERFACE_DEFINED__ *
       endif
       ifndef __IObjectWithProgID_INTERFACE_DEFINED__
         __IObjectWithProgID_INTERFACE_DEFINED__ equ <>
-        ;* interface IObjectWithProgID *
-        ;* [unique][object][uuid] *
         externdef IID_IObjectWithProgID:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -11965,8 +8509,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IObjectWithProgIDVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IObjectWithProgID, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IObjectWithProgID
@@ -11974,10 +8516,8 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IObjectWithProgID
             DECLSPEC_XFGVIRT(IObjectWithProgID, SetProgID)
             STD_METHOD SetProgID, :ptr IObjectWithProgID, :LPCWSTR
-            ;* [string][in] *
             DECLSPEC_XFGVIRT(IObjectWithProgID, GetProgID)
             STD_METHOD GetProgID, :ptr IObjectWithProgID, :ptr LPWSTR
-            ;* [string][out] *
             ??Interface equ <>
             END_INTERFACE
           IObjectWithProgIDVtbl ends
@@ -11987,14 +8527,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IObjectWithProgID_INTERFACE_DEFINED__ *
       endif
       ifndef __IUpdateIDList_INTERFACE_DEFINED__
         __IUpdateIDList_INTERFACE_DEFINED__ equ <>
-        ;* interface IUpdateIDList *
-        ;* [object][unique][local][uuid] *
         externdef IID_IUpdateIDList:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -12003,17 +8539,12 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IUpdateIDListVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IUpdateIDList, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IUpdateIDList
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IUpdateIDList
             DECLSPEC_XFGVIRT(IUpdateIDList, Update)
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD Update, :ptr IUpdateIDList, :ptr IBindCtx, :PCUITEMID_CHILD, :ptr PITEMID_CHILD
             ??Interface equ <>
             END_INTERFACE
@@ -12024,41 +8555,30 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IUpdateIDList_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0153 *
-      ;* [local] *
       @DefProto DllImport, SetCurrentProcessExplicitAppUserModelID, WIN_STD_CALL_CONV,, <:PCWSTR>, 4
       @DefProto DllImport, GetCurrentProcessExplicitAppUserModelID, WIN_STD_CALL_CONV,, <:ptr PWSTR>, 4
     endif
-    ; NTDDI_WIN7
     if (NTDDI_VERSION ge NTDDI_WIN8)
       externdef __MIDL_itf_shobjidl_core_0000_0153_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0153_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IDesktopWallpaper_INTERFACE_DEFINED__
         __IDesktopWallpaper_INTERFACE_DEFINED__ equ <>
-        ;* interface IDesktopWallpaper *
-        ;* [object][uuid] *
-        ;* [v1_enum] *
         DESKTOP_SLIDESHOW_OPTIONS typedef SDWORD
         DSO_SHUFFLEIMAGES equ 1h
 
         DEFINE_ENUM_FLAG_OPERATORS(DESKTOP_SLIDESHOW_OPTIONS)
-        ;* [v1_enum] *
         DESKTOP_SLIDESHOW_STATE typedef SDWORD
         DSS_ENABLED equ 1h
         DSS_SLIDESHOW equ 2h
         DSS_DISABLED_BY_REMOTE_SESSION equ 4h
 
         DEFINE_ENUM_FLAG_OPERATORS(DESKTOP_SLIDESHOW_STATE)
-        ;* [v1_enum] *
         DESKTOP_SLIDESHOW_DIRECTION typedef SDWORD
         DSD_FORWARD equ 0
         DSD_BACKWARD equ 1
 
-        ;* [v1_enum] *
         DESKTOP_WALLPAPER_POSITION typedef SDWORD
         DWPOS_CENTER equ 0
         DWPOS_TILE equ 1
@@ -12075,68 +8595,43 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IDesktopWallpaperVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IDesktopWallpaper, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IDesktopWallpaper
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IDesktopWallpaper
             DECLSPEC_XFGVIRT(IDesktopWallpaper, SetWallpaper)
-            ;* [unique][in] *
             STD_METHOD SetWallpaper, :ptr IDesktopWallpaper, :LPCWSTR, :LPCWSTR
-            ;* [in] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, GetWallpaper)
-            ;* [unique][in] *
             STD_METHOD GetWallpaper, :ptr IDesktopWallpaper, :LPCWSTR, :ptr LPWSTR
-            ;* [string][out] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, GetMonitorDevicePathAt)
-            ;* [in] *
             STD_METHOD GetMonitorDevicePathAt, :ptr IDesktopWallpaper, :UINT, :ptr LPWSTR
-            ;* [string][out] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, GetMonitorDevicePathCount)
             STD_METHOD GetMonitorDevicePathCount, :ptr IDesktopWallpaper, :ptr UINT
-            ;* [out] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, GetMonitorRECT)
-            ;* [in] *
             STD_METHOD GetMonitorRECT, :ptr IDesktopWallpaper, :LPCWSTR, :ptr RECT
-            ;* [out] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, SetBackgroundColor)
             STD_METHOD SetBackgroundColor, :ptr IDesktopWallpaper, :COLORREF
-            ;* [in] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, GetBackgroundColor)
             STD_METHOD GetBackgroundColor, :ptr IDesktopWallpaper, :ptr COLORREF
-            ;* [out] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, SetPosition)
             STD_METHOD SetPosition, :ptr IDesktopWallpaper, :DESKTOP_WALLPAPER_POSITION
-            ;* [in] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, GetPosition)
             STD_METHOD GetPosition, :ptr IDesktopWallpaper, :ptr DESKTOP_WALLPAPER_POSITION
-            ;* [out] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, SetSlideshow)
             STD_METHOD SetSlideshow, :ptr IDesktopWallpaper, :ptr IShellItemArray
-            ;* [in] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, GetSlideshow)
             STD_METHOD GetSlideshow, :ptr IDesktopWallpaper, :ptr ptr IShellItemArray
-            ;* [out] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, SetSlideshowOptions)
-            ;* [in] *
             STD_METHOD SetSlideshowOptions, :ptr IDesktopWallpaper, :DESKTOP_SLIDESHOW_OPTIONS, :UINT
-            ;* [in] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, GetSlideshowOptions)
-            ;* [out] *
             STD_METHOD GetSlideshowOptions, :ptr IDesktopWallpaper, :ptr DESKTOP_SLIDESHOW_OPTIONS, :ptr UINT
-            ;* [out] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, AdvanceSlideshow)
-            ;* [unique][in] *
             STD_METHOD AdvanceSlideshow, :ptr IDesktopWallpaper, :LPCWSTR, :DESKTOP_SLIDESHOW_DIRECTION
-            ;* [in] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, GetStatus)
             STD_METHOD GetStatus, :ptr IDesktopWallpaper, :ptr DESKTOP_SLIDESHOW_STATE
-            ;* [out] *
             DECLSPEC_XFGVIRT(IDesktopWallpaper, Enable)
             STD_METHOD Enable, :ptr IDesktopWallpaper, :BOOL
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IDesktopWallpaperVtbl ends
@@ -12146,23 +8641,15 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IDesktopWallpaper_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0154 *
-      ;* [local] *
     endif
-    ; NTDDI_WIN8
     HOMEGROUP_SECURITY_GROUP_MULTI equ <L("HUG")>
     HOMEGROUP_SECURITY_GROUP equ <L("HomeUsers")>
     externdef __MIDL_itf_shobjidl_core_0000_0154_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0154_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IHomeGroup_INTERFACE_DEFINED__
       __IHomeGroup_INTERFACE_DEFINED__ equ <>
-      ;* interface IHomeGroup *
-      ;* [local][object][uuid] *
-      ;* [v1_enum] *
       HOMEGROUPSHARINGCHOICES typedef SDWORD
       HGSC_NONE equ 0
       HGSC_MUSICLIBRARY equ 1h
@@ -12180,8 +8667,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IHomeGroupVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IHomeGroup, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IHomeGroup
@@ -12189,11 +8674,8 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IHomeGroup
           DECLSPEC_XFGVIRT(IHomeGroup, IsMember)
           STD_METHOD IsMember, :ptr IHomeGroup, :ptr BOOL
-          ;* [out] *
           DECLSPEC_XFGVIRT(IHomeGroup, ShowSharingWizard)
-          ;* [in] *
           STD_METHOD ShowSharingWizard, :ptr IHomeGroup, :HWND, :ptr HOMEGROUPSHARINGCHOICES
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IHomeGroupVtbl ends
@@ -12203,14 +8685,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IHomeGroup_INTERFACE_DEFINED__ *
     endif
     ifndef __IInitializeWithPropertyStore_INTERFACE_DEFINED__
       __IInitializeWithPropertyStore_INTERFACE_DEFINED__ equ <>
-      ;* interface IInitializeWithPropertyStore *
-      ;* [unique][object][uuid][helpstring] *
       externdef IID_IInitializeWithPropertyStore:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -12219,8 +8697,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IInitializeWithPropertyStoreVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IInitializeWithPropertyStore, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IInitializeWithPropertyStore
@@ -12228,7 +8704,6 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IInitializeWithPropertyStore
           DECLSPEC_XFGVIRT(IInitializeWithPropertyStore, Initialize)
           STD_METHOD Initialize, :ptr IInitializeWithPropertyStore, :ptr IPropertyStore
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IInitializeWithPropertyStoreVtbl ends
@@ -12238,14 +8713,10 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IInitializeWithPropertyStore_INTERFACE_DEFINED__ *
     endif
     ifndef __IOpenSearchSource_INTERFACE_DEFINED__
       __IOpenSearchSource_INTERFACE_DEFINED__ equ <>
-      ;* interface IOpenSearchSource *
-      ;* [unique][object][uuid][helpstring] *
       externdef IID_IOpenSearchSource:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -12254,21 +8725,13 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IOpenSearchSourceVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IOpenSearchSource, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IOpenSearchSource
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IOpenSearchSource
           DECLSPEC_XFGVIRT(IOpenSearchSource, GetResults)
-          ;* [in] *
-          ;* [in] *
-          ;* [in] *
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetResults, :ptr IOpenSearchSource, :HWND, :LPCWSTR, :DWORD, :DWORD, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           ??Interface equ <>
           END_INTERFACE
         IOpenSearchSourceVtbl ends
@@ -12278,34 +8741,26 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IOpenSearchSource_INTERFACE_DEFINED__ *
     endif
     ifndef __IShellLibrary_INTERFACE_DEFINED__
       __IShellLibrary_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellLibrary *
-      ;* [unique][object][uuid][helpstring] *
-      ;* [v1_enum] *
       LIBRARYFOLDERFILTER typedef SDWORD
       LFF_FORCEFILESYSTEM equ 1
       LFF_STORAGEITEMS equ 2
       LFF_ALLITEMS equ 3
 
-      ;* [v1_enum] *
       LIBRARYOPTIONFLAGS typedef SDWORD
       LOF_DEFAULT equ 0
       LOF_PINNEDTONAVPANE equ 1h
       LOF_MASK_ALL equ 1h
 
       DEFINE_ENUM_FLAG_OPERATORS(LIBRARYOPTIONFLAGS)
-      ;* [v1_enum] *
       DEFAULTSAVEFOLDERTYPE typedef SDWORD
       DSFT_DETECT equ 1
       DSFT_PRIVATE equ
       DSFT_PUBLIC equ
 
-      ;* [v1_enum] *
       LIBRARYSAVEFLAGS typedef SDWORD
       LSF_FAILIFTHERE equ 0
       LSF_OVERRIDEEXISTING equ 1h
@@ -12320,80 +8775,45 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellLibraryVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellLibrary, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellLibrary
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellLibrary
           DECLSPEC_XFGVIRT(IShellLibrary, LoadLibraryFromItem)
-          ;* [in] *
           STD_METHOD LoadLibraryFromItem, :ptr IShellLibrary, :ptr IShellItem, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLibrary, LoadLibraryFromKnownFolder)
-          ;* [in] *
           STD_METHOD LoadLibraryFromKnownFolder, :ptr IShellLibrary, :REFKNOWNFOLDERID, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLibrary, AddFolder)
           STD_METHOD AddFolder, :ptr IShellLibrary, :ptr IShellItem
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLibrary, RemoveFolder)
           STD_METHOD RemoveFolder, :ptr IShellLibrary, :ptr IShellItem
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLibrary, GetFolders)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetFolders, :ptr IShellLibrary, :LIBRARYFOLDERFILTER, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellLibrary, ResolveFolder)
-          ;* [in] *
-          ;* [in] *
-          ;* [in] *
           STD_METHOD ResolveFolder, :ptr IShellLibrary, :ptr IShellItem, :DWORD, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellLibrary, GetDefaultSaveFolder)
-          ;* [in] *
-          ;* [in] *
           STD_METHOD GetDefaultSaveFolder, :ptr IShellLibrary, :DEFAULTSAVEFOLDERTYPE, :REFIID, :ptr ptr
-          ;* [iid_is][out] *
           DECLSPEC_XFGVIRT(IShellLibrary, SetDefaultSaveFolder)
-          ;* [in] *
           STD_METHOD SetDefaultSaveFolder, :ptr IShellLibrary, :DEFAULTSAVEFOLDERTYPE, :ptr IShellItem
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLibrary, GetOptions)
           STD_METHOD GetOptions, :ptr IShellLibrary, :ptr LIBRARYOPTIONFLAGS
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellLibrary, SetOptions)
-          ;* [in] *
           STD_METHOD SetOptions, :ptr IShellLibrary, :LIBRARYOPTIONFLAGS, :LIBRARYOPTIONFLAGS
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLibrary, GetFolderType)
           STD_METHOD GetFolderType, :ptr IShellLibrary, :ptr FOLDERTYPEID
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellLibrary, SetFolderType)
           STD_METHOD SetFolderType, :ptr IShellLibrary, :REFFOLDERTYPEID
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellLibrary, GetIcon)
           STD_METHOD GetIcon, :ptr IShellLibrary, :ptr LPWSTR
-          ;* [string][out] *
           DECLSPEC_XFGVIRT(IShellLibrary, SetIcon)
           STD_METHOD SetIcon, :ptr IShellLibrary, :LPCWSTR
-          ;* [string][in] *
           DECLSPEC_XFGVIRT(IShellLibrary, Commit)
           STD_METHOD Commit, :ptr IShellLibrary
           DECLSPEC_XFGVIRT(IShellLibrary, Save)
-          ;* [in] *
-          ;* [string][in] *
-          ;* [in] *
           STD_METHOD Save, :ptr IShellLibrary, :ptr IShellItem, :LPCWSTR, :LIBRARYSAVEFLAGS, :ptr ptr IShellItem
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellLibrary, SaveInKnownFolder)
-          ;* [in] *
-          ;* [string][in] *
-          ;* [in] *
           STD_METHOD SaveInKnownFolder, :ptr IShellLibrary, :REFKNOWNFOLDERID, :LPCWSTR, :LIBRARYSAVEFLAGS, :ptr ptr IShellItem
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IShellLibraryVtbl ends
@@ -12403,13 +8823,8 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellLibrary_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0158 *
-    ;* [local] *
-    ;* [v1_enum] *
     DEFAULT_FOLDER_MENU_RESTRICTIONS typedef SDWORD
     DFMR_DEFAULT equ 0
     DFMR_NO_STATIC_VERBS equ 8h
@@ -12428,8 +8843,6 @@ ifndef __shobjidl_core_h__
     externdef __MIDL_itf_shobjidl_core_0000_0158_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IDefaultFolderMenuInitialize_INTERFACE_DEFINED__
       __IDefaultFolderMenuInitialize_INTERFACE_DEFINED__ equ <>
-      ;* interface IDefaultFolderMenuInitialize *
-      ;* [local][unique][uuid][object] *
       externdef IID_IDefaultFolderMenuInitialize:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -12438,34 +8851,19 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IDefaultFolderMenuInitializeVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IDefaultFolderMenuInitialize, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IDefaultFolderMenuInitialize
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IDefaultFolderMenuInitialize
           DECLSPEC_XFGVIRT(IDefaultFolderMenuInitialize, Initialize)
-          ;* [in] *
-          ;* [annotation][unique][in] *
-          ;* [annotation][unique][in] *
-          ;* [annotation][unique][in] *
-          ;* [in] *
-          ;* [size_is][unique][in] *
-          ;* [annotation][unique][in] *
-          ;* [in] *
-          ;* [annotation][size_is][unique][in] *
           STD_METHOD Initialize, :ptr IDefaultFolderMenuInitialize, :HWND, :ptr IContextMenuCB, :PCIDLIST_ABSOLUTE, :ptr IShellFolder, :UINT, :PCUITEMID_CHILD_ARRAY, :ptr IUnknown, :UINT, :ptr HKEY
           DECLSPEC_XFGVIRT(IDefaultFolderMenuInitialize, SetMenuRestrictions)
           STD_METHOD SetMenuRestrictions, :ptr IDefaultFolderMenuInitialize, :DEFAULT_FOLDER_MENU_RESTRICTIONS
-          ;* [in] *
           DECLSPEC_XFGVIRT(IDefaultFolderMenuInitialize, GetMenuRestrictions)
-          ;* [in] *
           STD_METHOD GetMenuRestrictions, :ptr IDefaultFolderMenuInitialize, :DEFAULT_FOLDER_MENU_RESTRICTIONS, :ptr DEFAULT_FOLDER_MENU_RESTRICTIONS
-          ;* [out] *
           DECLSPEC_XFGVIRT(IDefaultFolderMenuInitialize, SetHandlerClsid)
           STD_METHOD SetHandlerClsid, :ptr IDefaultFolderMenuInitialize, :REFCLSID
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IDefaultFolderMenuInitializeVtbl ends
@@ -12475,14 +8873,9 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IDefaultFolderMenuInitialize_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0159 *
-    ;* [local] *
     if (NTDDI_VERSION ge NTDDI_WIN8)
-      ;* [v1_enum] *
       ACTIVATEOPTIONS typedef SDWORD
       AO_NONE equ 0
       AO_DESIGNMODE equ 1h
@@ -12495,8 +8888,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0159_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IApplicationActivationManager_INTERFACE_DEFINED__
         __IApplicationActivationManager_INTERFACE_DEFINED__ equ <>
-        ;* interface IApplicationActivationManager *
-        ;* [unique][uuid][object] *
         externdef IID_IApplicationActivationManager:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -12505,30 +8896,17 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IApplicationActivationManagerVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IApplicationActivationManager, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IApplicationActivationManager
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IApplicationActivationManager
             DECLSPEC_XFGVIRT(IApplicationActivationManager, ActivateApplication)
-            ;* [in] *
-            ;* [unique][in] *
-            ;* [in] *
             STD_METHOD ActivateApplication, :ptr IApplicationActivationManager, :LPCWSTR, :LPCWSTR, :ACTIVATEOPTIONS, :ptr DWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IApplicationActivationManager, ActivateForFile)
-            ;* [in] *
-            ;* [in] *
-            ;* [unique][in] *
             STD_METHOD ActivateForFile, :ptr IApplicationActivationManager, :LPCWSTR, :ptr IShellItemArray, :LPCWSTR, :ptr DWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IApplicationActivationManager, ActivateForProtocol)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD ActivateForProtocol, :ptr IApplicationActivationManager, :LPCWSTR, :ptr IShellItemArray, :ptr DWORD
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IApplicationActivationManagerVtbl ends
@@ -12538,21 +8916,14 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IApplicationActivationManager_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0160 *
-      ;* [local] *
     endif
-    ; NTDDI_WIN8
     if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
       externdef __MIDL_itf_shobjidl_core_0000_0160_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0160_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IVirtualDesktopManager_INTERFACE_DEFINED__
         __IVirtualDesktopManager_INTERFACE_DEFINED__ equ <>
-        ;* interface IVirtualDesktopManager *
-        ;* [object][uuid] *
         externdef IID_IVirtualDesktopManager:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -12561,25 +8932,17 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IVirtualDesktopManagerVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IVirtualDesktopManager, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IVirtualDesktopManager
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IVirtualDesktopManager
             DECLSPEC_XFGVIRT(IVirtualDesktopManager, IsWindowOnCurrentVirtualDesktop)
-            ;* [in] *
             STD_METHOD IsWindowOnCurrentVirtualDesktop, :ptr IVirtualDesktopManager, :HWND, :ptr BOOL
-            ;* [out] *
             DECLSPEC_XFGVIRT(IVirtualDesktopManager, GetWindowDesktopId)
-            ;* [in] *
             STD_METHOD GetWindowDesktopId, :ptr IVirtualDesktopManager, :HWND, :ptr GUID
-            ;* [out] *
             DECLSPEC_XFGVIRT(IVirtualDesktopManager, MoveWindowToDesktop)
-            ;* [in] *
             STD_METHOD MoveWindowToDesktop, :ptr IVirtualDesktopManager, :HWND, :REFGUID
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IVirtualDesktopManagerVtbl ends
@@ -12589,20 +8952,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IVirtualDesktopManager_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0161 *
-      ;* [local] *
     endif
-    ; NTDDI_WINTHRESHOLD
     externdef __MIDL_itf_shobjidl_core_0000_0161_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0161_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __ShellCoreObjects_LIBRARY_DEFINED__
       __ShellCoreObjects_LIBRARY_DEFINED__ equ <>
-      ;* library ShellCoreObjects *
-      ;* [version][lcid][uuid] *
       externdef LIBID_ShellCoreObjects:IID
       externdef CLSID_DesktopWallpaper:CLSID
       ifdef __cplusplus
@@ -12772,18 +9128,13 @@ ifndef __shobjidl_core_h__
       ifdef __cplusplus
         ;[...]
       endif
-      ;* __ShellCoreObjects_LIBRARY_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0162 *
-    ;* [local] *
     if (NTDDI_VERSION ge NTDDI_VISTA)
       @DefProto DllImport, SHGetTemporaryPropertyForItem, WIN_STD_CALL_CONV,, <:ptr IShellItem, :REFPROPERTYKEY, :ptr PROPVARIANT>, 12
       @DefProto DllImport, SHSetTemporaryPropertyForItem, WIN_STD_CALL_CONV,, <:ptr IShellItem, :REFPROPERTYKEY, :REFPROPVARIANT>, 12
     endif
-    ; NTDDI_VISTA
     if (NTDDI_VERSION ge NTDDI_WIN7)
       if (_WIN32_IE ge _WIN32_IE_IE70)
-        ;* [v1_enum] *
         LIBRARYMANAGEDIALOGOPTIONS typedef SDWORD
         LMD_DEFAULT equ 0
         LMD_ALLOWUNINDEXABLENETWORKLOCATIONS equ 1h
@@ -12794,18 +9145,13 @@ ifndef __shobjidl_core_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         endif
-        ; __cplusplus && !CINTERFACE
       endif
-      ; _WIN32_IE >= _WIN32_IE_IE70
     endif
-    ; NTDDI_WIN7
     if (NTDDI_VERSION ge NTDDI_VISTA)
       externdef __MIDL_itf_shobjidl_core_0000_0162_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0162_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IAssocHandlerInvoker_INTERFACE_DEFINED__
         __IAssocHandlerInvoker_INTERFACE_DEFINED__ equ <>
-        ;* interface IAssocHandlerInvoker *
-        ;* [local][unique][object][uuid] *
         externdef IID_IAssocHandlerInvoker:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -12814,8 +9160,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IAssocHandlerInvokerVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IAssocHandlerInvoker, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IAssocHandlerInvoker
@@ -12834,13 +9178,8 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IAssocHandlerInvoker_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0163 *
-      ;* [local] *
-      ;* [v1_enum] *
       AHTYPE typedef SDWORD
       AHTYPE_UNDEFINED equ 0
       AHTYPE_USER_APPLICATION equ 8h
@@ -12856,8 +9195,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0163_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IAssocHandler_INTERFACE_DEFINED__
         __IAssocHandler_INTERFACE_DEFINED__ equ <>
-        ;* interface IAssocHandler *
-        ;* [local][unique][object][uuid] *
         externdef IID_IAssocHandler:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -12866,34 +9203,24 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IAssocHandlerVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IAssocHandler, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IAssocHandler
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IAssocHandler
             DECLSPEC_XFGVIRT(IAssocHandler, GetName)
-            ;* [annotation][out][string] *
             STD_METHOD GetName, :ptr IAssocHandler, :ptr LPWSTR
             DECLSPEC_XFGVIRT(IAssocHandler, GetUIName)
-            ;* [annotation][out][string] *
             STD_METHOD GetUIName, :ptr IAssocHandler, :ptr LPWSTR
             DECLSPEC_XFGVIRT(IAssocHandler, GetIconLocation)
-            ;* [annotation][out][string] *
-            ;* [annotation][out] *
             STD_METHOD GetIconLocation, :ptr IAssocHandler, :ptr LPWSTR, :ptr SDWORD
             DECLSPEC_XFGVIRT(IAssocHandler, IsRecommended)
             STD_METHOD IsRecommended, :ptr IAssocHandler
             DECLSPEC_XFGVIRT(IAssocHandler, MakeDefault)
-            ;* [annotation][string][in] *
             STD_METHOD MakeDefault, :ptr IAssocHandler, :LPCWSTR
             DECLSPEC_XFGVIRT(IAssocHandler, Invoke)
-            ;* [annotation][in] *
             STD_METHOD Invoke_, :ptr IAssocHandler, :ptr IDataObject
             DECLSPEC_XFGVIRT(IAssocHandler, CreateInvoker)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD CreateInvoker, :ptr IAssocHandler, :ptr IDataObject, :ptr ptr IAssocHandlerInvoker
             ??Interface equ <>
             END_INTERFACE
@@ -12904,14 +9231,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IAssocHandler_INTERFACE_DEFINED__ *
       endif
       ifndef __IEnumAssocHandlers_INTERFACE_DEFINED__
         __IEnumAssocHandlers_INTERFACE_DEFINED__ equ <>
-        ;* interface IEnumAssocHandlers *
-        ;* [local][unique][object][uuid] *
         externdef IID_IEnumAssocHandlers:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -12920,17 +9243,12 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IEnumAssocHandlersVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IEnumAssocHandlers, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IEnumAssocHandlers
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IEnumAssocHandlers
             DECLSPEC_XFGVIRT(IEnumAssocHandlers, Next)
-            ;* [annotation][in] *
-            ;* [annotation][length_is][size_is][out] *
-            ;* [annotation][out] *
             STD_METHOD Next, :ptr IEnumAssocHandlers, :ULONG, :ptr ptr IAssocHandler, :ptr ULONG
             ??Interface equ <>
             END_INTERFACE
@@ -12941,12 +9259,8 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IEnumAssocHandlers_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0165 *
-      ;* [local] *
       ASSOC_FILTER typedef SDWORD
       ASSOC_FILTER_NONE equ 0
       ASSOC_FILTER_RECOMMENDED equ 1h
@@ -12954,18 +9268,14 @@ ifndef __shobjidl_core_h__
       DEFINE_ENUM_FLAG_OPERATORS(ASSOC_FILTER)
       @DefProto DllImport, SHAssocEnumHandlers, WIN_STD_CALL_CONV,, <:PCWSTR, :ASSOC_FILTER, :ptr ptr IEnumAssocHandlers>, 12
     endif
-    ; NTDDI_VISTA
     if (NTDDI_VERSION ge NTDDI_WIN7)
       @DefProto DllImport, SHAssocEnumHandlersForProtocolByApplication, WIN_STD_CALL_CONV,, <:PCWSTR, :REFIID, :ptr ptr>, 12
     endif
-    ; NTDDI_WIN7
     if (NTDDI_VERSION ge NTDDI_WIN8)
       externdef __MIDL_itf_shobjidl_core_0000_0165_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0165_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IDataObjectProvider_INTERFACE_DEFINED__
         __IDataObjectProvider_INTERFACE_DEFINED__ equ <>
-        ;* interface IDataObjectProvider *
-        ;* [unique][uuid][object] *
         externdef IID_IDataObjectProvider:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -12974,8 +9284,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IDataObjectProviderVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IDataObjectProvider, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IDataObjectProvider
@@ -12983,10 +9291,7 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IDataObjectProvider
             DECLSPEC_XFGVIRT(IDataObjectProvider, GetDataObject)
             STD_METHOD GetDataObject, :ptr IDataObjectProvider, :ptr ptr IDataObject
-            ;* [out] *
             DECLSPEC_XFGVIRT(IDataObjectProvider, SetDataObject)
-            ;* [local] *
-            ;* [annotation][in] *
             STD_METHOD SetDataObject, :ptr IDataObjectProvider, :ptr IDataObject
             ??Interface equ <>
             END_INTERFACE
@@ -12997,14 +9302,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IDataObjectProvider_INTERFACE_DEFINED__ *
       endif
       ifndef __IDataTransferManagerInterop_INTERFACE_DEFINED__
         __IDataTransferManagerInterop_INTERFACE_DEFINED__ equ <>
-        ;* interface IDataTransferManagerInterop *
-        ;* [unique][uuid][object] *
         externdef IID_IDataTransferManagerInterop:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -13013,21 +9314,15 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IDataTransferManagerInteropVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IDataTransferManagerInterop, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IDataTransferManagerInterop
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IDataTransferManagerInterop
             DECLSPEC_XFGVIRT(IDataTransferManagerInterop, GetForWindow)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD GetForWindow, :ptr IDataTransferManagerInterop, :HWND, :REFIID, :ptr ptr
-            ;* [iid_is][retval][out] *
             DECLSPEC_XFGVIRT(IDataTransferManagerInterop, ShowShareUIForWindow)
             STD_METHOD ShowShareUIForWindow, :ptr IDataTransferManagerInterop, :HWND
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IDataTransferManagerInteropVtbl ends
@@ -13037,21 +9332,14 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IDataTransferManagerInterop_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0167 *
-      ;* [local] *
     endif
-    ; NTDDI_WIN8
     if (NTDDI_VERSION ge NTDDI_WIN8)
       externdef __MIDL_itf_shobjidl_core_0000_0167_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0167_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IFrameworkInputPaneHandler_INTERFACE_DEFINED__
         __IFrameworkInputPaneHandler_INTERFACE_DEFINED__ equ <>
-        ;* interface IFrameworkInputPaneHandler *
-        ;* [uuid][object] *
         externdef IID_IFrameworkInputPaneHandler:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -13060,20 +9348,15 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IFrameworkInputPaneHandlerVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IFrameworkInputPaneHandler, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IFrameworkInputPaneHandler
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IFrameworkInputPaneHandler
             DECLSPEC_XFGVIRT(IFrameworkInputPaneHandler, Showing)
-            ;* [in] *
             STD_METHOD Showing, :ptr IFrameworkInputPaneHandler, :ptr RECT, :BOOL
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFrameworkInputPaneHandler, Hiding)
             STD_METHOD Hiding, :ptr IFrameworkInputPaneHandler, :BOOL
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IFrameworkInputPaneHandlerVtbl ends
@@ -13083,14 +9366,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IFrameworkInputPaneHandler_INTERFACE_DEFINED__ *
       endif
       ifndef __IFrameworkInputPane_INTERFACE_DEFINED__
         __IFrameworkInputPane_INTERFACE_DEFINED__ equ <>
-        ;* interface IFrameworkInputPane *
-        ;* [uuid][object] *
         externdef IID_IFrameworkInputPane:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -13099,29 +9378,19 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IFrameworkInputPaneVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IFrameworkInputPane, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IFrameworkInputPane
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IFrameworkInputPane
             DECLSPEC_XFGVIRT(IFrameworkInputPane, Advise)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD Advise, :ptr IFrameworkInputPane, :ptr IUnknown, :ptr IFrameworkInputPaneHandler, :ptr DWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFrameworkInputPane, AdviseWithHWND)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD AdviseWithHWND, :ptr IFrameworkInputPane, :HWND, :ptr IFrameworkInputPaneHandler, :ptr DWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IFrameworkInputPane, Unadvise)
             STD_METHOD Unadvise, :ptr IFrameworkInputPane, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IFrameworkInputPane, Location)
             STD_METHOD Location, :ptr IFrameworkInputPane, :ptr RECT
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IFrameworkInputPaneVtbl ends
@@ -13131,24 +9400,14 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IFrameworkInputPane_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0169 *
-      ;* [local] *
       ifndef PROP_CONTRACT_DELEGATE
         PROP_CONTRACT_DELEGATE equ <L("ContractDelegate")>
       endif
-      ; PROP_CONTRACT_DELEGATE
-      ; For applications that use modern APIs and use a child or owned window
-      ; that run on different threads this API must be used to indicate which
-      ; window is the current main window. Call this API when those windows change their state.
       SetContractDelegateWindow proto WIN_STD_CALL_CONV :HWND, :HWND
     endif
-    ; NTDDI_WIN8
     if (NTDDI_VERSION ge NTDDI_WIN8)
-      ;* [v1_enum] *
       MONITOR_APP_VISIBILITY typedef SDWORD
       MAV_UNKNOWN equ 0
       MAV_NO_APP_VISIBLE equ 1
@@ -13158,8 +9417,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0169_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IAppVisibilityEvents_INTERFACE_DEFINED__
         __IAppVisibilityEvents_INTERFACE_DEFINED__ equ <>
-        ;* interface IAppVisibilityEvents *
-        ;* [uuid][object] *
         externdef IID_IAppVisibilityEvents:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -13168,21 +9425,15 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IAppVisibilityEventsVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IAppVisibilityEvents, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IAppVisibilityEvents
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IAppVisibilityEvents
             DECLSPEC_XFGVIRT(IAppVisibilityEvents, AppVisibilityOnMonitorChanged)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD AppVisibilityOnMonitorChanged, :ptr IAppVisibilityEvents, :HMONITOR, :MONITOR_APP_VISIBILITY, :MONITOR_APP_VISIBILITY
-            ;* [in] *
             DECLSPEC_XFGVIRT(IAppVisibilityEvents, LauncherVisibilityChange)
             STD_METHOD LauncherVisibilityChange, :ptr IAppVisibilityEvents, :BOOL
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IAppVisibilityEventsVtbl ends
@@ -13192,14 +9443,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IAppVisibilityEvents_INTERFACE_DEFINED__ *
       endif
       ifndef __IAppVisibility_INTERFACE_DEFINED__
         __IAppVisibility_INTERFACE_DEFINED__ equ <>
-        ;* interface IAppVisibility *
-        ;* [uuid][object] *
         externdef IID_IAppVisibility:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -13208,27 +9455,19 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IAppVisibilityVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IAppVisibility, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IAppVisibility
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IAppVisibility
             DECLSPEC_XFGVIRT(IAppVisibility, GetAppVisibilityOnMonitor)
-            ;* [in] *
             STD_METHOD GetAppVisibilityOnMonitor, :ptr IAppVisibility, :HMONITOR, :ptr MONITOR_APP_VISIBILITY
-            ;* [out] *
             DECLSPEC_XFGVIRT(IAppVisibility, IsLauncherVisible)
             STD_METHOD IsLauncherVisible, :ptr IAppVisibility, :ptr BOOL
-            ;* [out] *
             DECLSPEC_XFGVIRT(IAppVisibility, Advise)
-            ;* [in] *
             STD_METHOD Advise, :ptr IAppVisibility, :ptr IAppVisibilityEvents, :ptr DWORD
-            ;* [out] *
             DECLSPEC_XFGVIRT(IAppVisibility, Unadvise)
             STD_METHOD Unadvise, :ptr IAppVisibility, :DWORD
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IAppVisibilityVtbl ends
@@ -13238,16 +9477,11 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IAppVisibility_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0171 *
-      ;* [local] *
       ifdef MIDL_PASS
         ;[...]
       endif
-      ;* [v1_enum] *
       PACKAGE_EXECUTION_STATE typedef SDWORD
       PES_UNKNOWN equ 0
       PES_RUNNING equ 1
@@ -13259,8 +9493,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0171_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IPackageExecutionStateChangeNotification_INTERFACE_DEFINED__
         __IPackageExecutionStateChangeNotification_INTERFACE_DEFINED__ equ <>
-        ;* interface IPackageExecutionStateChangeNotification *
-        ;* [uuid][object] *
         externdef IID_IPackageExecutionStateChangeNotification:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -13269,17 +9501,13 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IPackageExecutionStateChangeNotificationVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IPackageExecutionStateChangeNotification, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IPackageExecutionStateChangeNotification
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IPackageExecutionStateChangeNotification
             DECLSPEC_XFGVIRT(IPackageExecutionStateChangeNotification, OnStateChanged)
-            ;* [string][in] *
             STD_METHOD OnStateChanged, :ptr IPackageExecutionStateChangeNotification, :LPCWSTR, :PACKAGE_EXECUTION_STATE
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IPackageExecutionStateChangeNotificationVtbl ends
@@ -13289,14 +9517,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IPackageExecutionStateChangeNotification_INTERFACE_DEFINED__ *
       endif
       ifndef __IPackageDebugSettings_INTERFACE_DEFINED__
         __IPackageDebugSettings_INTERFACE_DEFINED__ equ <>
-        ;* interface IPackageDebugSettings *
-        ;* [uuid][local][object] *
         externdef IID_IPackageDebugSettings:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -13305,66 +9529,40 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IPackageDebugSettingsVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IPackageDebugSettings, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IPackageDebugSettings
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IPackageDebugSettings
             DECLSPEC_XFGVIRT(IPackageDebugSettings, EnableDebugging)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD EnableDebugging, :ptr IPackageDebugSettings, :LPCWSTR, :LPCWSTR, :PZZWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, DisableDebugging)
-            ;* [annotation][in] *
             STD_METHOD DisableDebugging, :ptr IPackageDebugSettings, :LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, Suspend)
-            ;* [annotation][in] *
             STD_METHOD Suspend, :ptr IPackageDebugSettings, :LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, Resume)
-            ;* [annotation][in] *
             STD_METHOD Resume, :ptr IPackageDebugSettings, :LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, TerminateAllProcesses)
-            ;* [annotation][in] *
             STD_METHOD TerminateAllProcesses, :ptr IPackageDebugSettings, :LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, SetTargetSessionId)
-            ;* [annotation][in] *
             STD_METHOD SetTargetSessionId, :ptr IPackageDebugSettings, :ULONG
             DECLSPEC_XFGVIRT(IPackageDebugSettings, EnumerateBackgroundTasks)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
-            ;* [annotation][size_is][size_is][out] *
-            ;* [annotation][size_is][size_is][out] *
             STD_METHOD EnumerateBackgroundTasks, :ptr IPackageDebugSettings, :LPCWSTR, :ptr ULONG, :ptr LPCGUID, :ptr ptr LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, ActivateBackgroundTask)
-            ;* [annotation][in] *
             STD_METHOD ActivateBackgroundTask, :ptr IPackageDebugSettings, :LPCGUID
             DECLSPEC_XFGVIRT(IPackageDebugSettings, StartServicing)
-            ;* [annotation][in] *
             STD_METHOD StartServicing, :ptr IPackageDebugSettings, :LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, StopServicing)
-            ;* [annotation][in] *
             STD_METHOD StopServicing, :ptr IPackageDebugSettings, :LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, StartSessionRedirection)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD StartSessionRedirection, :ptr IPackageDebugSettings, :LPCWSTR, :ULONG
             DECLSPEC_XFGVIRT(IPackageDebugSettings, StopSessionRedirection)
-            ;* [annotation][in] *
             STD_METHOD StopSessionRedirection, :ptr IPackageDebugSettings, :LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, GetPackageExecutionState)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD GetPackageExecutionState, :ptr IPackageDebugSettings, :LPCWSTR, :ptr PACKAGE_EXECUTION_STATE
             DECLSPEC_XFGVIRT(IPackageDebugSettings, RegisterForPackageStateChanges)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD RegisterForPackageStateChanges, :ptr IPackageDebugSettings, :LPCWSTR, :ptr IPackageExecutionStateChangeNotification, :ptr DWORD
             DECLSPEC_XFGVIRT(IPackageDebugSettings, UnregisterForPackageStateChanges)
-            ;* [annotation][in] *
             STD_METHOD UnregisterForPackageStateChanges, :ptr IPackageDebugSettings, :DWORD
             ??Interface equ <>
             END_INTERFACE
@@ -13375,14 +9573,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IPackageDebugSettings_INTERFACE_DEFINED__ *
       endif
       ifndef __IPackageDebugSettings2_INTERFACE_DEFINED__
         __IPackageDebugSettings2_INTERFACE_DEFINED__ equ <>
-        ;* interface IPackageDebugSettings2 *
-        ;* [uuid][local][object] *
         externdef IID_IPackageDebugSettings2:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -13391,72 +9585,42 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IPackageDebugSettings2Vtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IPackageDebugSettings2, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IPackageDebugSettings2
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IPackageDebugSettings2
             DECLSPEC_XFGVIRT(IPackageDebugSettings, EnableDebugging)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD EnableDebugging, :ptr IPackageDebugSettings2, :LPCWSTR, :LPCWSTR, :PZZWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, DisableDebugging)
-            ;* [annotation][in] *
             STD_METHOD DisableDebugging, :ptr IPackageDebugSettings2, :LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, Suspend)
-            ;* [annotation][in] *
             STD_METHOD Suspend, :ptr IPackageDebugSettings2, :LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, Resume)
-            ;* [annotation][in] *
             STD_METHOD Resume, :ptr IPackageDebugSettings2, :LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, TerminateAllProcesses)
-            ;* [annotation][in] *
             STD_METHOD TerminateAllProcesses, :ptr IPackageDebugSettings2, :LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, SetTargetSessionId)
-            ;* [annotation][in] *
             STD_METHOD SetTargetSessionId, :ptr IPackageDebugSettings2, :ULONG
             DECLSPEC_XFGVIRT(IPackageDebugSettings, EnumerateBackgroundTasks)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
-            ;* [annotation][size_is][size_is][out] *
-            ;* [annotation][size_is][size_is][out] *
             STD_METHOD EnumerateBackgroundTasks, :ptr IPackageDebugSettings2, :LPCWSTR, :ptr ULONG, :ptr LPCGUID, :ptr ptr LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, ActivateBackgroundTask)
-            ;* [annotation][in] *
             STD_METHOD ActivateBackgroundTask, :ptr IPackageDebugSettings2, :LPCGUID
             DECLSPEC_XFGVIRT(IPackageDebugSettings, StartServicing)
-            ;* [annotation][in] *
             STD_METHOD StartServicing, :ptr IPackageDebugSettings2, :LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, StopServicing)
-            ;* [annotation][in] *
             STD_METHOD StopServicing, :ptr IPackageDebugSettings2, :LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, StartSessionRedirection)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD StartSessionRedirection, :ptr IPackageDebugSettings2, :LPCWSTR, :ULONG
             DECLSPEC_XFGVIRT(IPackageDebugSettings, StopSessionRedirection)
-            ;* [annotation][in] *
             STD_METHOD StopSessionRedirection, :ptr IPackageDebugSettings2, :LPCWSTR
             DECLSPEC_XFGVIRT(IPackageDebugSettings, GetPackageExecutionState)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD GetPackageExecutionState, :ptr IPackageDebugSettings2, :LPCWSTR, :ptr PACKAGE_EXECUTION_STATE
             DECLSPEC_XFGVIRT(IPackageDebugSettings, RegisterForPackageStateChanges)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD RegisterForPackageStateChanges, :ptr IPackageDebugSettings2, :LPCWSTR, :ptr IPackageExecutionStateChangeNotification, :ptr DWORD
             DECLSPEC_XFGVIRT(IPackageDebugSettings, UnregisterForPackageStateChanges)
-            ;* [annotation][in] *
             STD_METHOD UnregisterForPackageStateChanges, :ptr IPackageDebugSettings2, :DWORD
             DECLSPEC_XFGVIRT(IPackageDebugSettings2, EnumerateApps)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
-            ;* [annotation][size_is][size_is][out] *
-            ;* [annotation][size_is][size_is][out] *
             STD_METHOD EnumerateApps, :ptr IPackageDebugSettings2, :LPCWSTR, :ptr ULONG, :ptr ptr LPWSTR, :ptr ptr LPWSTR
             ??Interface equ <>
             END_INTERFACE
@@ -13467,14 +9631,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IPackageDebugSettings2_INTERFACE_DEFINED__ *
       endif
       ifndef __ISuspensionDependencyManager_INTERFACE_DEFINED__
         __ISuspensionDependencyManager_INTERFACE_DEFINED__ equ <>
-        ;* interface ISuspensionDependencyManager *
-        ;* [uuid][local][object] *
         externdef IID_ISuspensionDependencyManager:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -13483,21 +9643,16 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <ISuspensionDependencyManagerVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ISuspensionDependencyManager, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ISuspensionDependencyManager
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ISuspensionDependencyManager
             DECLSPEC_XFGVIRT(ISuspensionDependencyManager, RegisterAsChild)
-            ;* [annotation][in] *
             STD_METHOD RegisterAsChild, :ptr ISuspensionDependencyManager, :HANDLE
             DECLSPEC_XFGVIRT(ISuspensionDependencyManager, GroupChildWithParent)
-            ;* [annotation][in] *
             STD_METHOD GroupChildWithParent, :ptr ISuspensionDependencyManager, :HANDLE
             DECLSPEC_XFGVIRT(ISuspensionDependencyManager, UngroupChildFromParent)
-            ;* [annotation][in] *
             STD_METHOD UngroupChildFromParent, :ptr ISuspensionDependencyManager, :HANDLE
             ??Interface equ <>
             END_INTERFACE
@@ -13508,13 +9663,8 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ISuspensionDependencyManager_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0175 *
-      ;* [local] *
-      ;* [v1_enum] *
       AHE_TYPE typedef SDWORD
       AHE_DESKTOP equ 0
       AHE_IMMERSIVE equ 1
@@ -13523,8 +9673,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0175_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IExecuteCommandApplicationHostEnvironment_INTERFACE_DEFINED__
         __IExecuteCommandApplicationHostEnvironment_INTERFACE_DEFINED__ equ <>
-        ;* interface IExecuteCommandApplicationHostEnvironment *
-        ;* [uuid][object] *
         externdef IID_IExecuteCommandApplicationHostEnvironment:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -13533,8 +9681,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IExecuteCommandApplicationHostEnvironmentVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IExecuteCommandApplicationHostEnvironment, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IExecuteCommandApplicationHostEnvironment
@@ -13542,7 +9688,6 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IExecuteCommandApplicationHostEnvironment
             DECLSPEC_XFGVIRT(IExecuteCommandApplicationHostEnvironment, GetValue)
             STD_METHOD GetValue, :ptr IExecuteCommandApplicationHostEnvironment, :ptr AHE_TYPE
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IExecuteCommandApplicationHostEnvironmentVtbl ends
@@ -13552,13 +9697,8 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IExecuteCommandApplicationHostEnvironment_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0176 *
-      ;* [local] *
-      ;* [v1_enum] *
       EC_HOST_UI_MODE typedef SDWORD
       ECHUIM_DESKTOP equ 0
       ECHUIM_IMMERSIVE equ
@@ -13568,8 +9708,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0176_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IExecuteCommandHost_INTERFACE_DEFINED__
         __IExecuteCommandHost_INTERFACE_DEFINED__ equ <>
-        ;* interface IExecuteCommandHost *
-        ;* [uuid][object] *
         externdef IID_IExecuteCommandHost:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -13578,8 +9716,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IExecuteCommandHostVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IExecuteCommandHost, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IExecuteCommandHost
@@ -13587,7 +9723,6 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IExecuteCommandHost
             DECLSPEC_XFGVIRT(IExecuteCommandHost, GetUIMode)
             STD_METHOD GetUIMode, :ptr IExecuteCommandHost, :ptr EC_HOST_UI_MODE
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IExecuteCommandHostVtbl ends
@@ -13597,21 +9732,15 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IExecuteCommandHost_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0177 *
-      ;* [local] *
       SID_ExecuteCommandHost equ <IID_IExecuteCommandHost>
-      ;* [v1_enum] *
       APPLICATION_VIEW_STATE typedef SDWORD
       AVS_FULLSCREEN_LANDSCAPE equ 0
       AVS_FILLED equ
       AVS_SNAPPED equ
       AVS_FULLSCREEN_PORTRAIT equ
 
-      ;* [v1_enum] *
       EDGE_GESTURE_KIND typedef SDWORD
       EGK_TOUCH equ 0
       EGK_KEYBOARD equ
@@ -13621,8 +9750,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0177_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IApplicationDesignModeSettings_INTERFACE_DEFINED__
         __IApplicationDesignModeSettings_INTERFACE_DEFINED__ equ <>
-        ;* interface IApplicationDesignModeSettings *
-        ;* [uuid][object] *
         externdef IID_IApplicationDesignModeSettings:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -13631,8 +9758,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IApplicationDesignModeSettingsVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IApplicationDesignModeSettings, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IApplicationDesignModeSettings
@@ -13640,25 +9765,16 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IApplicationDesignModeSettings
             DECLSPEC_XFGVIRT(IApplicationDesignModeSettings, SetNativeDisplaySize)
             STD_METHOD SetNativeDisplaySize, :ptr IApplicationDesignModeSettings, :SIZE_
-            ;* [in] *
             DECLSPEC_XFGVIRT(IApplicationDesignModeSettings, SetScaleFactor)
             STD_METHOD SetScaleFactor, :ptr IApplicationDesignModeSettings, :DEVICE_SCALE_FACTOR
-            ;* [in] *
             DECLSPEC_XFGVIRT(IApplicationDesignModeSettings, SetApplicationViewState)
             STD_METHOD SetApplicationViewState, :ptr IApplicationDesignModeSettings, :APPLICATION_VIEW_STATE
-            ;* [in] *
             DECLSPEC_XFGVIRT(IApplicationDesignModeSettings, ComputeApplicationSize)
             STD_METHOD ComputeApplicationSize, :ptr IApplicationDesignModeSettings, :ptr SIZE_
-            ;* [out] *
             DECLSPEC_XFGVIRT(IApplicationDesignModeSettings, IsApplicationViewStateSupported)
-            ;* [in] *
-            ;* [in] *
-            ;* [in] *
             STD_METHOD IsApplicationViewStateSupported, :ptr IApplicationDesignModeSettings, :APPLICATION_VIEW_STATE, :SIZE_, :DEVICE_SCALE_FACTOR, :ptr BOOL
-            ;* [out] *
             DECLSPEC_XFGVIRT(IApplicationDesignModeSettings, TriggerEdgeGesture)
             STD_METHOD TriggerEdgeGesture, :ptr IApplicationDesignModeSettings, :EDGE_GESTURE_KIND
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IApplicationDesignModeSettingsVtbl ends
@@ -13668,23 +9784,16 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IApplicationDesignModeSettings_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0178 *
-      ;* [local] *
-      ;* [v1_enum] *
       NATIVE_DISPLAY_ORIENTATION typedef SDWORD
       NDO_LANDSCAPE equ 0
       NDO_PORTRAIT equ
 
-      ;* [v1_enum] *
       APPLICATION_VIEW_ORIENTATION typedef SDWORD
       AVO_LANDSCAPE equ 0
       AVO_PORTRAIT equ
 
-      ;* [v1_enum] *
       ADJACENT_DISPLAY_EDGES typedef SDWORD
       ADE_NONE equ 0
       ADE_LEFT equ 1h
@@ -13692,7 +9801,6 @@ ifndef __shobjidl_core_h__
 
       DEFINE_ENUM_FLAG_OPERATORS(ADJACENT_DISPLAY_EDGES)
       if (NTDDI_VERSION ge NTDDI_WINBLUE)
-        ;* [v1_enum] *
         APPLICATION_VIEW_MIN_WIDTH typedef SDWORD
         AVMW_DEFAULT equ 0
         AVMW_320 equ 1
@@ -13702,8 +9810,6 @@ ifndef __shobjidl_core_h__
         externdef __MIDL_itf_shobjidl_core_0000_0178_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IApplicationDesignModeSettings2_INTERFACE_DEFINED__
           __IApplicationDesignModeSettings2_INTERFACE_DEFINED__ equ <>
-          ;* interface IApplicationDesignModeSettings2 *
-          ;* [uuid][object] *
           externdef IID_IApplicationDesignModeSettings2:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -13712,8 +9818,6 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <IApplicationDesignModeSettings2Vtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IApplicationDesignModeSettings2, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IApplicationDesignModeSettings2
@@ -13721,48 +9825,30 @@ ifndef __shobjidl_core_h__
               STD_METHOD Release, :ptr IApplicationDesignModeSettings2
               DECLSPEC_XFGVIRT(IApplicationDesignModeSettings, SetNativeDisplaySize)
               STD_METHOD SetNativeDisplaySize, :ptr IApplicationDesignModeSettings2, :SIZE_
-              ;* [in] *
               DECLSPEC_XFGVIRT(IApplicationDesignModeSettings, SetScaleFactor)
               STD_METHOD SetScaleFactor, :ptr IApplicationDesignModeSettings2, :DEVICE_SCALE_FACTOR
-              ;* [in] *
               DECLSPEC_XFGVIRT(IApplicationDesignModeSettings, SetApplicationViewState)
               STD_METHOD SetApplicationViewState, :ptr IApplicationDesignModeSettings2, :APPLICATION_VIEW_STATE
-              ;* [in] *
               DECLSPEC_XFGVIRT(IApplicationDesignModeSettings, ComputeApplicationSize)
               STD_METHOD ComputeApplicationSize, :ptr IApplicationDesignModeSettings2, :ptr SIZE_
-              ;* [out] *
               DECLSPEC_XFGVIRT(IApplicationDesignModeSettings, IsApplicationViewStateSupported)
-              ;* [in] *
-              ;* [in] *
-              ;* [in] *
               STD_METHOD IsApplicationViewStateSupported, :ptr IApplicationDesignModeSettings2, :APPLICATION_VIEW_STATE, :SIZE_, :DEVICE_SCALE_FACTOR, :ptr BOOL
-              ;* [out] *
               DECLSPEC_XFGVIRT(IApplicationDesignModeSettings, TriggerEdgeGesture)
               STD_METHOD TriggerEdgeGesture, :ptr IApplicationDesignModeSettings2, :EDGE_GESTURE_KIND
-              ;* [in] *
               DECLSPEC_XFGVIRT(IApplicationDesignModeSettings2, SetNativeDisplayOrientation)
               STD_METHOD SetNativeDisplayOrientation, :ptr IApplicationDesignModeSettings2, :NATIVE_DISPLAY_ORIENTATION
-              ;* [in] *
               DECLSPEC_XFGVIRT(IApplicationDesignModeSettings2, SetApplicationViewOrientation)
               STD_METHOD SetApplicationViewOrientation, :ptr IApplicationDesignModeSettings2, :APPLICATION_VIEW_ORIENTATION
-              ;* [in] *
               DECLSPEC_XFGVIRT(IApplicationDesignModeSettings2, SetAdjacentDisplayEdges)
               STD_METHOD SetAdjacentDisplayEdges, :ptr IApplicationDesignModeSettings2, :ADJACENT_DISPLAY_EDGES
-              ;* [in] *
               DECLSPEC_XFGVIRT(IApplicationDesignModeSettings2, SetIsOnLockScreen)
               STD_METHOD SetIsOnLockScreen, :ptr IApplicationDesignModeSettings2, :BOOL
-              ;* [in] *
               DECLSPEC_XFGVIRT(IApplicationDesignModeSettings2, SetApplicationViewMinWidth)
               STD_METHOD SetApplicationViewMinWidth, :ptr IApplicationDesignModeSettings2, :APPLICATION_VIEW_MIN_WIDTH
-              ;* [in] *
               DECLSPEC_XFGVIRT(IApplicationDesignModeSettings2, GetApplicationSizeBounds)
-              ;* [out] *
               STD_METHOD GetApplicationSizeBounds, :ptr IApplicationDesignModeSettings2, :ptr SIZE_, :ptr SIZE_
-              ;* [out] *
               DECLSPEC_XFGVIRT(IApplicationDesignModeSettings2, GetApplicationViewOrientation)
-              ;* [in] *
               STD_METHOD GetApplicationViewOrientation, :ptr IApplicationDesignModeSettings2, :SIZE_, :ptr APPLICATION_VIEW_ORIENTATION
-              ;* [out] *
               ??Interface equ <>
               END_INTERFACE
             IApplicationDesignModeSettings2Vtbl ends
@@ -13772,12 +9858,8 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IApplicationDesignModeSettings2_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0179 *
-        ;* [local] *
         DEFINE_GUID SID_URLExecutionContext, 0FB5F8EBCh, 0BBB6h, 4D10h, 0A4h, 61h, 77h, 72h, 91h, 0A0h, 90h, 30h
         STR_TAB_REUSE_IDENTIFIER equ <L("Tab Reuse Identifier")>
         STR_REFERRER_IDENTIFIER equ <L("Referrer Identifier")>
@@ -13785,8 +9867,6 @@ ifndef __shobjidl_core_h__
         externdef __MIDL_itf_shobjidl_core_0000_0179_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __ILaunchTargetMonitor_INTERFACE_DEFINED__
           __ILaunchTargetMonitor_INTERFACE_DEFINED__ equ <>
-          ;* interface ILaunchTargetMonitor *
-          ;* [uuid][object] *
           externdef IID_ILaunchTargetMonitor:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -13795,8 +9875,6 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <ILaunchTargetMonitorVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr ILaunchTargetMonitor, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr ILaunchTargetMonitor
@@ -13804,7 +9882,6 @@ ifndef __shobjidl_core_h__
               STD_METHOD Release, :ptr ILaunchTargetMonitor
               DECLSPEC_XFGVIRT(ILaunchTargetMonitor, GetMonitor)
               STD_METHOD GetMonitor, :ptr ILaunchTargetMonitor, :ptr HMONITOR
-              ;* [out] *
               ??Interface equ <>
               END_INTERFACE
             ILaunchTargetMonitorVtbl ends
@@ -13814,14 +9891,9 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __ILaunchTargetMonitor_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0180 *
-        ;* [local] *
         SID_LaunchTargetMonitor equ <__uuidof((struct __declspec(uuid("8D547FA1-CC45-40C8-B7C1-D48C183F13F3")) LaunchTargetMonitor *) 0)>
-        ;* [v1_enum] *
         APPLICATION_VIEW_SIZE_PREFERENCE typedef SDWORD
         AVSP_DEFAULT equ 0
         AVSP_USE_LESS equ 1
@@ -13835,8 +9907,6 @@ ifndef __shobjidl_core_h__
         externdef __MIDL_itf_shobjidl_core_0000_0180_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __ILaunchSourceViewSizePreference_INTERFACE_DEFINED__
           __ILaunchSourceViewSizePreference_INTERFACE_DEFINED__ equ <>
-          ;* interface ILaunchSourceViewSizePreference *
-          ;* [uuid][object] *
           externdef IID_ILaunchSourceViewSizePreference:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -13845,8 +9915,6 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <ILaunchSourceViewSizePreferenceVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr ILaunchSourceViewSizePreference, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr ILaunchSourceViewSizePreference
@@ -13854,10 +9922,8 @@ ifndef __shobjidl_core_h__
               STD_METHOD Release, :ptr ILaunchSourceViewSizePreference
               DECLSPEC_XFGVIRT(ILaunchSourceViewSizePreference, GetSourceViewToPosition)
               STD_METHOD GetSourceViewToPosition, :ptr ILaunchSourceViewSizePreference, :ptr HWND
-              ;* [out] *
               DECLSPEC_XFGVIRT(ILaunchSourceViewSizePreference, GetSourceViewSizePreference)
               STD_METHOD GetSourceViewSizePreference, :ptr ILaunchSourceViewSizePreference, :ptr APPLICATION_VIEW_SIZE_PREFERENCE
-              ;* [out] *
               ??Interface equ <>
               END_INTERFACE
             ILaunchSourceViewSizePreferenceVtbl ends
@@ -13867,19 +9933,13 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __ILaunchSourceViewSizePreference_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0181 *
-        ;* [local] *
         DEFINE_GUID SID_LaunchSourceViewSizePreference, 80605492h, 67d9h, 414fh, 0afh, 89h, 0a1h, 0cdh, 0f1h, 24h, 2bh, 0c1h
         externdef __MIDL_itf_shobjidl_core_0000_0181_v0_0_c_ifspec:RPC_IF_HANDLE
         externdef __MIDL_itf_shobjidl_core_0000_0181_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __ILaunchTargetViewSizePreference_INTERFACE_DEFINED__
           __ILaunchTargetViewSizePreference_INTERFACE_DEFINED__ equ <>
-          ;* interface ILaunchTargetViewSizePreference *
-          ;* [uuid][object] *
           externdef IID_ILaunchTargetViewSizePreference:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -13888,8 +9948,6 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <ILaunchTargetViewSizePreferenceVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr ILaunchTargetViewSizePreference, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr ILaunchTargetViewSizePreference
@@ -13897,7 +9955,6 @@ ifndef __shobjidl_core_h__
               STD_METHOD Release, :ptr ILaunchTargetViewSizePreference
               DECLSPEC_XFGVIRT(ILaunchTargetViewSizePreference, GetTargetViewSizePreference)
               STD_METHOD GetTargetViewSizePreference, :ptr ILaunchTargetViewSizePreference, :ptr APPLICATION_VIEW_SIZE_PREFERENCE
-              ;* [out] *
               ??Interface equ <>
               END_INTERFACE
             ILaunchTargetViewSizePreferenceVtbl ends
@@ -13907,19 +9964,13 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __ILaunchTargetViewSizePreference_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0182 *
-        ;* [local] *
         DEFINE_GUID SID_LaunchTargetViewSizePreference, 26db2472h, 0b7b7h, 406bh, 97h, 2h, 73h, 0ah, 4eh, 20h, 0d3h, 0bfh
         externdef __MIDL_itf_shobjidl_core_0000_0182_v0_0_c_ifspec:RPC_IF_HANDLE
         externdef __MIDL_itf_shobjidl_core_0000_0182_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __ILaunchSourceAppUserModelId_INTERFACE_DEFINED__
           __ILaunchSourceAppUserModelId_INTERFACE_DEFINED__ equ <>
-          ;* interface ILaunchSourceAppUserModelId *
-          ;* [uuid][object] *
           externdef IID_ILaunchSourceAppUserModelId:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -13928,8 +9979,6 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <ILaunchSourceAppUserModelIdVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr ILaunchSourceAppUserModelId, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr ILaunchSourceAppUserModelId
@@ -13937,7 +9986,6 @@ ifndef __shobjidl_core_h__
               STD_METHOD Release, :ptr ILaunchSourceAppUserModelId
               DECLSPEC_XFGVIRT(ILaunchSourceAppUserModelId, GetAppUserModelId)
               STD_METHOD GetAppUserModelId, :ptr ILaunchSourceAppUserModelId, :ptr LPWSTR
-              ;* [string][out] *
               ??Interface equ <>
               END_INTERFACE
             ILaunchSourceAppUserModelIdVtbl ends
@@ -13947,21 +9995,14 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __ILaunchSourceAppUserModelId_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0183 *
-        ;* [local] *
         DEFINE_GUID SID_LaunchSourceAppUserModelId, 2ce78010h, 74dbh, 48bch, 9ch, 6ah, 10h, 0f3h, 72h, 49h, 57h, 23h
       endif
-      ; NTDDI_WINBLUE
       externdef __MIDL_itf_shobjidl_core_0000_0183_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0183_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IInitializeWithWindow_INTERFACE_DEFINED__
         __IInitializeWithWindow_INTERFACE_DEFINED__ equ <>
-        ;* interface IInitializeWithWindow *
-        ;* [unique][object][uuid] *
         externdef IID_IInitializeWithWindow:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -13970,8 +10011,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IInitializeWithWindowVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IInitializeWithWindow, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IInitializeWithWindow
@@ -13979,7 +10018,6 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IInitializeWithWindow
             DECLSPEC_XFGVIRT(IInitializeWithWindow, Initialize)
             STD_METHOD Initialize, :ptr IInitializeWithWindow, :HWND
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IInitializeWithWindowVtbl ends
@@ -13989,14 +10027,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IInitializeWithWindow_INTERFACE_DEFINED__ *
       endif
       ifndef __IHandlerInfo_INTERFACE_DEFINED__
         __IHandlerInfo_INTERFACE_DEFINED__ equ <>
-        ;* interface IHandlerInfo *
-        ;* [unique][object][uuid] *
         externdef IID_IHandlerInfo:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -14005,8 +10039,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IHandlerInfoVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IHandlerInfo, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IHandlerInfo
@@ -14014,13 +10046,10 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IHandlerInfo
             DECLSPEC_XFGVIRT(IHandlerInfo, GetApplicationDisplayName)
             STD_METHOD GetApplicationDisplayName, :ptr IHandlerInfo, :ptr LPWSTR
-            ;* [out] *
             DECLSPEC_XFGVIRT(IHandlerInfo, GetApplicationPublisher)
             STD_METHOD GetApplicationPublisher, :ptr IHandlerInfo, :ptr LPWSTR
-            ;* [out] *
             DECLSPEC_XFGVIRT(IHandlerInfo, GetApplicationIconReference)
             STD_METHOD GetApplicationIconReference, :ptr IHandlerInfo, :ptr LPWSTR
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IHandlerInfoVtbl ends
@@ -14030,19 +10059,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IHandlerInfo_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0185 *
-      ;* [local] *
       SID_HandlerInfo equ <IID_IHandlerInfo>
       externdef __MIDL_itf_shobjidl_core_0000_0185_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_shobjidl_core_0000_0185_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IHandlerInfo2_INTERFACE_DEFINED__
         __IHandlerInfo2_INTERFACE_DEFINED__ equ <>
-        ;* interface IHandlerInfo2 *
-        ;* [unique][object][uuid] *
         externdef IID_IHandlerInfo2:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -14051,8 +10074,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IHandlerInfo2Vtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IHandlerInfo2, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IHandlerInfo2
@@ -14060,16 +10081,12 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IHandlerInfo2
             DECLSPEC_XFGVIRT(IHandlerInfo, GetApplicationDisplayName)
             STD_METHOD GetApplicationDisplayName, :ptr IHandlerInfo2, :ptr LPWSTR
-            ;* [out] *
             DECLSPEC_XFGVIRT(IHandlerInfo, GetApplicationPublisher)
             STD_METHOD GetApplicationPublisher, :ptr IHandlerInfo2, :ptr LPWSTR
-            ;* [out] *
             DECLSPEC_XFGVIRT(IHandlerInfo, GetApplicationIconReference)
             STD_METHOD GetApplicationIconReference, :ptr IHandlerInfo2, :ptr LPWSTR
-            ;* [out] *
             DECLSPEC_XFGVIRT(IHandlerInfo2, GetApplicationId)
             STD_METHOD GetApplicationId, :ptr IHandlerInfo2, :ptr LPWSTR
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IHandlerInfo2Vtbl ends
@@ -14079,14 +10096,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IHandlerInfo2_INTERFACE_DEFINED__ *
       endif
       ifndef __IHandlerActivationHost_INTERFACE_DEFINED__
         __IHandlerActivationHost_INTERFACE_DEFINED__ equ <>
-        ;* interface IHandlerActivationHost *
-        ;* [unique][object][uuid] *
         externdef IID_IHandlerActivationHost:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -14095,23 +10108,15 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IHandlerActivationHostVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IHandlerActivationHost, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IHandlerActivationHost
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IHandlerActivationHost
             DECLSPEC_XFGVIRT(IHandlerActivationHost, BeforeCoCreateInstance)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD BeforeCoCreateInstance, :ptr IHandlerActivationHost, :REFCLSID, :ptr IShellItemArray, :ptr IHandlerInfo
-            ;* [in] *
             DECLSPEC_XFGVIRT(IHandlerActivationHost, BeforeCreateProcess)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD BeforeCreateProcess, :ptr IHandlerActivationHost, :LPCWSTR, :LPCWSTR, :ptr IHandlerInfo
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IHandlerActivationHostVtbl ends
@@ -14121,20 +10126,14 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IHandlerActivationHost_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0187 *
-      ;* [local] *
       SID_SHandlerActivationHost equ <IID_IHandlerActivationHost>
       if (NTDDI_VERSION ge NTDDI_WIN10)
         externdef __MIDL_itf_shobjidl_core_0000_0187_v0_0_c_ifspec:RPC_IF_HANDLE
         externdef __MIDL_itf_shobjidl_core_0000_0187_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IAppActivationUIInfo_INTERFACE_DEFINED__
           __IAppActivationUIInfo_INTERFACE_DEFINED__ equ <>
-          ;* interface IAppActivationUIInfo *
-          ;* [unique][object][uuid] *
           externdef IID_IAppActivationUIInfo:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -14143,8 +10142,6 @@ ifndef __shobjidl_core_h__
               BEGIN_INTERFACE
               ??Interface equ <IAppActivationUIInfoVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IAppActivationUIInfo, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IAppActivationUIInfo
@@ -14152,19 +10149,14 @@ ifndef __shobjidl_core_h__
               STD_METHOD Release, :ptr IAppActivationUIInfo
               DECLSPEC_XFGVIRT(IAppActivationUIInfo, GetMonitor)
               STD_METHOD GetMonitor, :ptr IAppActivationUIInfo, :ptr HMONITOR
-              ;* [out] *
               DECLSPEC_XFGVIRT(IAppActivationUIInfo, GetInvokePoint)
               STD_METHOD GetInvokePoint, :ptr IAppActivationUIInfo, :ptr POINT
-              ;* [out] *
               DECLSPEC_XFGVIRT(IAppActivationUIInfo, GetShowCommand)
               STD_METHOD GetShowCommand, :ptr IAppActivationUIInfo, :ptr SDWORD
-              ;* [out] *
               DECLSPEC_XFGVIRT(IAppActivationUIInfo, GetShowUI)
               STD_METHOD GetShowUI, :ptr IAppActivationUIInfo, :ptr BOOL
-              ;* [out] *
               DECLSPEC_XFGVIRT(IAppActivationUIInfo, GetKeyState)
               STD_METHOD GetKeyState, :ptr IAppActivationUIInfo, :ptr DWORD
-              ;* [out] *
               ??Interface equ <>
               END_INTERFACE
             IAppActivationUIInfoVtbl ends
@@ -14174,20 +10166,13 @@ ifndef __shobjidl_core_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IAppActivationUIInfo_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_shobjidl_core_0000_0188 *
-        ;* [local] *
         SID_AppActivationUIInfo equ <IID_IAppActivationUIInfo>
       endif
-      ; NTDDI_WIN10
       DEFINE_GUID SID_ShellExecuteNamedPropertyStore, 0eb84ada2h, 00ffh, 4992h, 83h, 24h, 0edh, 5ch, 0e0h, 61h, 0cbh, 29h
     endif
-    ; NTDDI_WIN8
     if (NTDDI_VERSION ge NTDDI_WINBLUE)
-      ;* [v1_enum] *
       FLYOUT_PLACEMENT typedef SDWORD
       FP_DEFAULT equ 0
       FP_ABOVE equ
@@ -14199,8 +10184,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0188_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IContactManagerInterop_INTERFACE_DEFINED__
         __IContactManagerInterop_INTERFACE_DEFINED__ equ <>
-        ;* interface IContactManagerInterop *
-        ;* [unique][uuid][object] *
         externdef IID_IContactManagerInterop:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -14209,19 +10192,13 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IContactManagerInteropVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IContactManagerInterop, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IContactManagerInterop
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IContactManagerInterop
             DECLSPEC_XFGVIRT(IContactManagerInterop, ShowContactCardForWindow)
-            ;* [in] *
-            ;* [in] *
-            ;* [in] *
             STD_METHOD ShowContactCardForWindow, :ptr IContactManagerInterop, :HWND, :ptr IUnknown, :ptr RECT, :FLYOUT_PLACEMENT
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IContactManagerInteropVtbl ends
@@ -14231,20 +10208,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IContactManagerInterop_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0189 *
-      ;* [local] *
     endif
-    ; NTDDI_WINBLUE
     externdef __MIDL_itf_shobjidl_core_0000_0189_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0189_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IShellIconOverlayIdentifier_INTERFACE_DEFINED__
       __IShellIconOverlayIdentifier_INTERFACE_DEFINED__ equ <>
-      ;* interface IShellIconOverlayIdentifier *
-      ;* [object][unique][uuid] *
       externdef IID_IShellIconOverlayIdentifier:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -14253,26 +10223,17 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IShellIconOverlayIdentifierVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IShellIconOverlayIdentifier, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IShellIconOverlayIdentifier
           DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IShellIconOverlayIdentifier
           DECLSPEC_XFGVIRT(IShellIconOverlayIdentifier, IsMemberOf)
-          ;* [string][in] *
           STD_METHOD IsMemberOf, :ptr IShellIconOverlayIdentifier, :LPCWSTR, :DWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IShellIconOverlayIdentifier, GetOverlayInfo)
-          ;* [size_is][string][out] *
-          ;* [in] *
-          ;* [out] *
           STD_METHOD GetOverlayInfo, :ptr IShellIconOverlayIdentifier, :LPWSTR, :SDWORD, :ptr SDWORD, :ptr DWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IShellIconOverlayIdentifier, GetPriority)
           STD_METHOD GetPriority, :ptr IShellIconOverlayIdentifier, :ptr SDWORD
-          ;* [out] *
           ??Interface equ <>
           END_INTERFACE
         IShellIconOverlayIdentifierVtbl ends
@@ -14282,12 +10243,8 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IShellIconOverlayIdentifier_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0190 *
-    ;* [local] *
     ISIOI_ICONFILE equ 00000001h
     ISIOI_ICONINDEX equ 00000002h
     if (NTDDI_VERSION ge NTDDI_WIN10_RS4)
@@ -14295,9 +10252,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0190_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IBannerNotificationHandler_INTERFACE_DEFINED__
         __IBannerNotificationHandler_INTERFACE_DEFINED__ equ <>
-        ;* interface IBannerNotificationHandler *
-        ;* [unique][uuid][object] *
-        ;* [v1_enum] *
         BANNER_NOTIFICATION_EVENT typedef SDWORD
         BNE_Rendered equ 0
         BNE_Hovered equ
@@ -14308,8 +10262,8 @@ ifndef __shobjidl_core_h__
 
         BANNER_NOTIFICATION struct
           event_ BANNER_NOTIFICATION_EVENT ?
-          providerIdentity =POINTER ?
-          contentId =POINTER ?
+          providerIdentity LPCWSTR ?
+          contentId LPCWSTR ?
         BANNER_NOTIFICATION ends
         externdef IID_IBannerNotificationHandler:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -14319,8 +10273,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <IBannerNotificationHandlerVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IBannerNotificationHandler, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IBannerNotificationHandler
@@ -14328,7 +10280,6 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr IBannerNotificationHandler
             DECLSPEC_XFGVIRT(IBannerNotificationHandler, OnBannerEvent)
             STD_METHOD OnBannerEvent, :ptr IBannerNotificationHandler, :ptr BANNER_NOTIFICATION
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IBannerNotificationHandlerVtbl ends
@@ -14338,16 +10289,10 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IBannerNotificationHandler_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0191 *
-      ;* [local] *
     endif
-    ; NTDDI_WIN10_RS4
     if (NTDDI_VERSION ge NTDDI_VISTA)
-      ;* [v1_enum] *
       SORT_ORDER_TYPE typedef SDWORD
       SOT_DEFAULT equ 0
       SOT_IGNORE_FOLDERNESS equ 1
@@ -14356,8 +10301,6 @@ ifndef __shobjidl_core_h__
       externdef __MIDL_itf_shobjidl_core_0000_0191_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __ISortColumnArray_INTERFACE_DEFINED__
         __ISortColumnArray_INTERFACE_DEFINED__ equ <>
-        ;* interface ISortColumnArray *
-        ;* [unique][uuid][object] *
         externdef IID_ISortColumnArray:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -14366,8 +10309,6 @@ ifndef __shobjidl_core_h__
             BEGIN_INTERFACE
             ??Interface equ <ISortColumnArrayVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ISortColumnArray, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ISortColumnArray
@@ -14375,14 +10316,10 @@ ifndef __shobjidl_core_h__
             STD_METHOD Release, :ptr ISortColumnArray
             DECLSPEC_XFGVIRT(ISortColumnArray, GetCount)
             STD_METHOD GetCount, :ptr ISortColumnArray, :ptr UINT
-            ;* [out] *
             DECLSPEC_XFGVIRT(ISortColumnArray, GetAt)
-            ;* [in] *
             STD_METHOD GetAt, :ptr ISortColumnArray, :UINT, :ptr SORTCOLUMN
-            ;* [out] *
             DECLSPEC_XFGVIRT(ISortColumnArray, GetSortType)
             STD_METHOD GetSortType, :ptr ISortColumnArray, :ptr SORT_ORDER_TYPE
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           ISortColumnArrayVtbl ends
@@ -14392,20 +10329,13 @@ ifndef __shobjidl_core_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ISortColumnArray_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_shobjidl_core_0000_0192 *
-      ;* [local] *
     endif
-    ; (NTDDI_VERSION >= NTDDI_VISTA)
     externdef __MIDL_itf_shobjidl_core_0000_0192_v0_0_c_ifspec:RPC_IF_HANDLE
     externdef __MIDL_itf_shobjidl_core_0000_0192_v0_0_s_ifspec:RPC_IF_HANDLE
     ifndef __IPropertyKeyStore_INTERFACE_DEFINED__
       __IPropertyKeyStore_INTERFACE_DEFINED__ equ <>
-      ;* interface IPropertyKeyStore *
-      ;* [unique][uuid][object] *
       externdef IID_IPropertyKeyStore:IID
       if Defined(__cplusplus) and  not Defined(CINTERFACE)
         ;[...]
@@ -14414,8 +10344,6 @@ ifndef __shobjidl_core_h__
           BEGIN_INTERFACE
           ??Interface equ <IPropertyKeyStoreVtbl>
           DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-          ;* [in] *
-          ;* [annotation][iid_is][out] *
           STD_METHOD QueryInterface, :ptr IPropertyKeyStore, :REFIID, :ptr ptr
           DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IPropertyKeyStore
@@ -14423,23 +10351,16 @@ ifndef __shobjidl_core_h__
           STD_METHOD Release, :ptr IPropertyKeyStore
           DECLSPEC_XFGVIRT(IPropertyKeyStore, GetKeyCount)
           STD_METHOD GetKeyCount, :ptr IPropertyKeyStore, :ptr SDWORD
-          ;* [out] *
           DECLSPEC_XFGVIRT(IPropertyKeyStore, GetKeyAt)
-          ;* [in] *
           STD_METHOD GetKeyAt, :ptr IPropertyKeyStore, :SDWORD, :ptr PROPERTYKEY
-          ;* [out] *
           DECLSPEC_XFGVIRT(IPropertyKeyStore, AppendKey)
           STD_METHOD AppendKey, :ptr IPropertyKeyStore, :REFPROPERTYKEY
-          ;* [in] *
           DECLSPEC_XFGVIRT(IPropertyKeyStore, DeleteKey)
           STD_METHOD DeleteKey, :ptr IPropertyKeyStore, :SDWORD
-          ;* [in] *
           DECLSPEC_XFGVIRT(IPropertyKeyStore, IsKeyInStore)
           STD_METHOD IsKeyInStore, :ptr IPropertyKeyStore, :REFPROPERTYKEY
-          ;* [in] *
           DECLSPEC_XFGVIRT(IPropertyKeyStore, RemoveKey)
           STD_METHOD RemoveKey, :ptr IPropertyKeyStore, :REFPROPERTYKEY
-          ;* [in] *
           ??Interface equ <>
           END_INTERFACE
         IPropertyKeyStoreVtbl ends
@@ -14449,17 +10370,11 @@ ifndef __shobjidl_core_h__
         ifdef COBJMACROS
           ;[...]
         endif
-        ;* C style interface *
       endif
-      ;* __IPropertyKeyStore_INTERFACE_DEFINED__ *
     endif
-    ;* interface __MIDL_itf_shobjidl_core_0000_0193 *
-    ;* [local] *
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   externdef __MIDL_itf_shobjidl_core_0000_0193_v0_0_c_ifspec:RPC_IF_HANDLE
   externdef __MIDL_itf_shobjidl_core_0000_0193_v0_0_s_ifspec:RPC_IF_HANDLE
-  ;* Additional Prototypes for ALL interfaces *
   BSTR_UserSize proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr BSTR
   BSTR_UserMarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
   BSTR_UserUnmarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
@@ -14588,109 +10503,40 @@ ifndef __shobjidl_core_h__
   VARIANT_UserMarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr VARIANT
   VARIANT_UserUnmarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr VARIANT
   VARIANT_UserFree64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr VARIANT
-  ;* [local] *
   IContextMenu_QueryContextMenu_Proxy proto WIN_STD_CALL_CONV :ptr IContextMenu, :HMENU, :UINT, :UINT, :UINT, :UINT
-  ;* [annotation][in] *
-  ;* [call_as] *
   IContextMenu_QueryContextMenu_Stub proto WIN_STD_CALL_CONV :ptr IContextMenu, :HMENU, :UINT, :UINT, :UINT, :UINT, :ptr UINT, :ptr ptr HANDLE, :ptr ptr ULONG
-  ;* [size_is][size_is][out] *
-  ;* [local] *
   IContextMenu_InvokeCommand_Proxy proto WIN_STD_CALL_CONV :ptr IContextMenu, :ptr CMINVOKECOMMANDINFO
-  ;* [annotation][in] *
-  ;* [call_as] *
   IContextMenu_InvokeCommand_Stub proto WIN_STD_CALL_CONV :ptr IContextMenu, :ptr CMINVOKECOMMANDINFOEX_REMOTE
-  ;* [in] *
-  ;* [local] *
   IContextMenu_GetCommandString_Proxy proto WIN_STD_CALL_CONV :ptr IContextMenu, :UINT_PTR, :UINT, :ptr UINT, :ptr CHAR, :UINT
-  ;* [annotation][in] *
-  ;* [call_as] *
   IContextMenu_GetCommandString_Stub proto WIN_STD_CALL_CONV :ptr IContextMenu, :UINT_PTR, :UINT, :ptr UINT, :ptr CHAR, :UINT
-  ;* [in] *
-  ;* [local] *
   IContextMenu2_HandleMenuMsg_Proxy proto WIN_STD_CALL_CONV :ptr IContextMenu2, :UINT, :WPARAM, :LPARAM
-  ;* [annotation][in] *
-  ;* [call_as] *
   IContextMenu2_HandleMenuMsg_Stub proto WIN_STD_CALL_CONV :ptr IContextMenu2, :UINT, :WPARAM, :LPARAM
-  ;* [in] *
-  ;* [local] *
   IContextMenu3_HandleMenuMsg2_Proxy proto WIN_STD_CALL_CONV :ptr IContextMenu3, :UINT, :WPARAM, :LPARAM, :ptr LRESULT
-  ;* [annotation][out] *
-  ;* [call_as] *
   IContextMenu3_HandleMenuMsg2_Stub proto WIN_STD_CALL_CONV :ptr IContextMenu3, :UINT, :WPARAM, :LPARAM, :ptr LRESULT
-  ;* [out] *
-  ;* [local] *
   IEnumIDList_Next_Proxy proto WIN_STD_CALL_CONV :ptr IEnumIDList, :ULONG, :ptr PITEMID_CHILD, :ptr ULONG
-  ;* [annotation][out] *
-  ;* [call_as] *
   IEnumIDList_Next_Stub proto WIN_STD_CALL_CONV :ptr IEnumIDList, :ULONG, :ptr PITEMID_CHILD, :ptr ULONG
-  ;* [out] *
-  ;* [local] *
   IEnumFullIDList_Next_Proxy proto WIN_STD_CALL_CONV :ptr IEnumFullIDList, :ULONG, :ptr PIDLIST_ABSOLUTE, :ptr ULONG
-  ;* [annotation][out] *
-  ;* [call_as] *
   IEnumFullIDList_Next_Stub proto WIN_STD_CALL_CONV :ptr IEnumFullIDList, :ULONG, :ptr PIDLIST_ABSOLUTE, :ptr ULONG
-  ;* [out] *
-  ;* [local] *
   IShellFolder_SetNameOf_Proxy proto WIN_STD_CALL_CONV :ptr IShellFolder, :HWND, :PCUITEMID_CHILD, :LPCWSTR, :SHGDNF, :ptr PITEMID_CHILD
-  ;* [annotation][out] *
-  ;* [call_as] *
   IShellFolder_SetNameOf_Stub proto WIN_STD_CALL_CONV :ptr IShellFolder, :HWND, :PCUITEMID_CHILD, :LPCWSTR, :SHGDNF, :ptr PITEMID_CHILD
-  ;* [out] *
-  ;* [local] *
   IFolderView2_GetGroupBy_Proxy proto WIN_STD_CALL_CONV :ptr IFolderView2, :ptr PROPERTYKEY, :ptr BOOL
-  ;* [annotation][out] *
-  ;* [call_as] *
   IFolderView2_GetGroupBy_Stub proto WIN_STD_CALL_CONV :ptr IFolderView2, :ptr PROPERTYKEY, :ptr BOOL
-  ;* [out] *
-  ;* [local] *
   IEnumShellItems_Next_Proxy proto WIN_STD_CALL_CONV :ptr IEnumShellItems, :ULONG, :ptr ptr IShellItem, :ptr ULONG
-  ;* [annotation][out] *
-  ;* [call_as] *
   IEnumShellItems_Next_Stub proto WIN_STD_CALL_CONV :ptr IEnumShellItems, :ULONG, :ptr ptr IShellItem, :ptr ULONG
-  ;* [out] *
-  ;* [local] *
   IShellExtInit_Initialize_Proxy proto WIN_STD_CALL_CONV :ptr IShellExtInit, :PCIDLIST_ABSOLUTE, :ptr IDataObject, :HKEY
-  ;* [annotation][unique][in] *
-  ;* [call_as] *
   IShellExtInit_Initialize_Stub proto WIN_STD_CALL_CONV :ptr IShellExtInit, :PCIDLIST_ABSOLUTE, :ptr IDataObject, :HANDLE
-  ;* [system_handle][unique][in] *
-  ;* [local] *
   IParentAndItem_GetParentAndItem_Proxy proto WIN_STD_CALL_CONV :ptr IParentAndItem, :ptr PIDLIST_ABSOLUTE, :ptr ptr IShellFolder, :ptr PITEMID_CHILD
-  ;* [annotation][out] *
-  ;* [call_as] *
   IParentAndItem_GetParentAndItem_Stub proto WIN_STD_CALL_CONV :ptr IParentAndItem, :ptr PIDLIST_ABSOLUTE, :ptr ptr IShellFolder, :ptr PITEMID_CHILD
-  ;* [out] *
-  ;* [local] *
   IEnumObjects_Next_Proxy proto WIN_STD_CALL_CONV :ptr IEnumObjects, :ULONG, :REFIID, :ptr ptr, :ptr ULONG
-  ;* [annotation][out] *
-  ;* [call_as] *
   IEnumObjects_Next_Stub proto WIN_STD_CALL_CONV :ptr IEnumObjects, :ULONG, :REFIID, :ptr ptr, :ptr ULONG
-  ;* [out] *
-  ;* [local] *
   IBandSite_QueryBand_Proxy proto WIN_STD_CALL_CONV :ptr IBandSite, :DWORD, :ptr ptr IDeskBand, :ptr DWORD, :LPWSTR, :SDWORD
-  ;* [annotation][in] *
-  ;* [call_as] *
   IBandSite_QueryBand_Stub proto WIN_STD_CALL_CONV :ptr IBandSite, :DWORD, :ptr ptr IDeskBand, :ptr DWORD, :LPWSTR, :SDWORD
-  ;* [in] *
-  ;* [local] *
   IModalWindow_Show_Proxy proto WIN_STD_CALL_CONV :ptr IModalWindow, :HWND
-  ;* [annotation][unique][in] *
-  ;* [call_as] *
   IModalWindow_Show_Stub proto WIN_STD_CALL_CONV :ptr IModalWindow, :HWND
-  ;* [unique][in] *
-  ;* [local] *
   IKnownFolderManager_Redirect_Proxy proto WIN_STD_CALL_CONV :ptr IKnownFolderManager, :REFKNOWNFOLDERID, :HWND, :KF_REDIRECT_FLAGS, :LPCWSTR, :UINT, :ptr KNOWNFOLDERID, :ptr LPWSTR
-  ;* [annotation][string][out] *
-  ;* [call_as] *
   IKnownFolderManager_Redirect_Stub proto WIN_STD_CALL_CONV :ptr IKnownFolderManager, :REFKNOWNFOLDERID, :HWND, :KF_REDIRECT_FLAGS, :LPCWSTR, :UINT, :ptr GUID, :ptr LPWSTR
-  ;* [string][out] *
-  ;* [local] *
   IEnumExplorerCommand_Next_Proxy proto WIN_STD_CALL_CONV :ptr IEnumExplorerCommand, :ULONG, :ptr ptr IExplorerCommand, :ptr ULONG
-  ;* [annotation][out] *
-  ;* [call_as] *
   IEnumExplorerCommand_Next_Stub proto WIN_STD_CALL_CONV :ptr IEnumExplorerCommand, :ULONG, :ptr ptr IExplorerCommand, :ptr ULONG
-  ;* [out] *
-  ;* end of Additional Prototypes *
   ifdef __cplusplus
     ;[...]
   endif

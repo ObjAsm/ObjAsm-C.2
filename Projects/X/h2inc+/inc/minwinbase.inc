@@ -1,59 +1,54 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 26/05/2024 13:31:25
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\minwinbase.h
 ;             Created on (UTC) 06/04/2024 06:15:56
 ;             Last modified on (UTC) 21/02/2024 18:13:36
 
-;************************************************************************
 ifndef _MINWINBASE_
   _MINWINBASE_ equ <>
   if (_MSC_VER ge 800)
     ifndef __WINDOWS_DONT_DISABLE_PRAGMA_PACK_WARNING__
     endif
     if _MSC_VER ge 1200
-      ; padding added after data member
     endif
   endif
   ifdef __cplusplus
     ;[...]
   endif
-  ; Constants
   MoveMemory equ <RtlMoveMemory>
   CopyMemory equ <RtlCopyMemory>
   FillMemory equ <RtlFillMemory>
   ZeroMemory equ <RtlZeroMemory>
-  ; Typedefs
   SECURITY_ATTRIBUTES struct
     nLength DWORD ?
-    lpSecurityDescriptor POINTER ?
-    bInheritHandle DWORD ?
+    lpSecurityDescriptor LPVOID ?
+    bInheritHandle BOOL ?
   SECURITY_ATTRIBUTES ends
   _SECURITY_ATTRIBUTES typedef SECURITY_ATTRIBUTES
   PSECURITY_ATTRIBUTES typedef ptr SECURITY_ATTRIBUTES
   LPSECURITY_ATTRIBUTES typedef ptr SECURITY_ATTRIBUTES
   OVERLAPPED struct
-    Internal XWORD ?
-    InternalHigh XWORD ?
+    Internal ULONG_PTR ?
+    InternalHigh ULONG_PTR ?
     union
       struct
         Offset_ DWORD ?
         OffsetHigh DWORD ?
       ends
-      Pointer POINTER ?
+      Pointer PVOID ?
     ends
     hEvent HANDLE ?
   OVERLAPPED ends
   _OVERLAPPED typedef OVERLAPPED
   LPOVERLAPPED typedef ptr OVERLAPPED
   OVERLAPPED_ENTRY struct
-    lpCompletionKey XWORD ?
+    lpCompletionKey ULONG_PTR ?
     lpOverlapped LPOVERLAPPED ?
-    Internal XWORD ?
+    Internal ULONG_PTR ?
     dwNumberOfBytesTransferred DWORD ?
   OVERLAPPED_ENTRY ends
   _OVERLAPPED_ENTRY typedef OVERLAPPED_ENTRY
   LPOVERLAPPED_ENTRY typedef ptr OVERLAPPED_ENTRY
-  ;  File System time stamps are represented with the following structure:
   ifndef _FILETIME_
     _FILETIME_ equ <>
     FILETIME struct
@@ -64,7 +59,6 @@ ifndef _MINWINBASE_
     PFILETIME typedef ptr FILETIME
     LPFILETIME typedef ptr FILETIME
   endif
-  ; System time is represented with the following structure:
   SYSTEMTIME struct
     wYear WORD ?
     wMonth WORD ?
@@ -87,8 +81,8 @@ ifndef _MINWINBASE_
     nFileSizeLow DWORD ?
     dwReserved0 DWORD ?
     dwReserved1 DWORD ?
-    cFileName SBYTE MAX_PATH dup (?)
-    cAlternateFileName SBYTE 14 dup (?)
+    cFileName CHAR MAX_PATH dup (?)
+    cAlternateFileName CHAR 14 dup (?)
     ifdef _MAC
       ;[...]
     endif
@@ -105,8 +99,8 @@ ifndef _MINWINBASE_
     nFileSizeLow DWORD ?
     dwReserved0 DWORD ?
     dwReserved1 DWORD ?
-    cFileName WORD MAX_PATH dup (?)
-    cAlternateFileName WORD 14 dup (?)
+    cFileName WCHAR MAX_PATH dup (?)
+    cAlternateFileName WCHAR 14 dup (?)
     ifdef _MAC
       ;[...]
     endif
@@ -123,7 +117,6 @@ ifndef _MINWINBASE_
     PWIN32_FIND_DATA typedef PWIN32_FIND_DATAA
     LPWIN32_FIND_DATA typedef LPWIN32_FIND_DATAA
   endif
-  ; UNICODE
   if (_WIN32_WINNT ge 0400h)
     FINDEX_INFO_LEVELS typedef SDWORD
     FindExInfoStandard equ 0
@@ -143,24 +136,19 @@ ifndef _MINWINBASE_
     FindExSearchMaxSearchOp equ 3
     _FINDEX_SEARCH_OPS typedef FINDEX_SEARCH_OPS
 
-    ;* _WIN32_WINNT >= 0x0400 *
   endif
   if (_WIN32_WINNT ge 0400h)
     if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
       READ_DIRECTORY_NOTIFY_INFORMATION_CLASS typedef SDWORD
       ReadDirectoryNotifyInformation equ 1
       ReadDirectoryNotifyExtendedInformation equ 2
-      ; 2
       if (NTDDI_VERSION ge NTDDI_WIN10_NI)
         ReadDirectoryNotifyFullInformation equ 3
-        ; 3
       endif
-      ; add new classes above
       ReadDirectoryNotifyMaximumInformation equ 4
       _READ_DIRECTORY_NOTIFY_INFORMATION_CLASS typedef READ_DIRECTORY_NOTIFY_INFORMATION_CLASS
       PREAD_DIRECTORY_NOTIFY_INFORMATION_CLASS typedef ptr READ_DIRECTORY_NOTIFY_INFORMATION_CLASS
     endif
-    ;* _WIN32_WINNT >= 0x0400 *
   endif
   GET_FILEEX_INFO_LEVELS typedef SDWORD
   GetFileExInfoStandard equ 0
@@ -216,7 +204,7 @@ ifndef _MINWINBASE_
   LOCKFILE_FAIL_IMMEDIATELY equ 00000001h
   LOCKFILE_EXCLUSIVE_LOCK equ 00000002h
   PROCESS_HEAP_ENTRY struct
-    lpData POINTER ?
+    lpData PVOID ?
     cbData DWORD ?
     cbOverhead BYTE ?
     iRegionIndex BYTE ?
@@ -229,8 +217,8 @@ ifndef _MINWINBASE_
       struct Region
         dwCommittedSize DWORD ?
         dwUnCommittedSize DWORD ?
-        lpFirstBlock POINTER ?
-        lpLastBlock POINTER ?
+        lpFirstBlock LPVOID ?
+        lpLastBlock LPVOID ?
       ends
     ends
   PROCESS_HEAP_ENTRY ends
@@ -244,21 +232,20 @@ ifndef _MINWINBASE_
   PROCESS_HEAP_ENTRY_MOVEABLE equ 0010h
   PROCESS_HEAP_ENTRY_DDESHARE equ 0020h
   REASON_CONTEXT struct
-    Version DWORD ?
+    Version ULONG ?
     Flags DWORD ?
     union Reason
       struct Detailed
         LocalizedReasonModule HMODULE ?
-        LocalizedReasonId DWORD ?
-        ReasonStringCount DWORD ?
+        LocalizedReasonId ULONG ?
+        ReasonStringCount ULONG ?
         ReasonStrings POINTER ?
       ends
-      SimpleReasonString POINTER ?
+      SimpleReasonString LPWSTR ?
     ends
   REASON_CONTEXT ends
   _REASON_CONTEXT typedef REASON_CONTEXT
   PREASON_CONTEXT typedef ptr REASON_CONTEXT
-  ; Debug APIs
   EXCEPTION_DEBUG_EVENT equ 1
   CREATE_THREAD_DEBUG_EVENT equ 2
   CREATE_PROCESS_DEBUG_EVENT equ 3
@@ -284,7 +271,7 @@ ifndef _MINWINBASE_
   LPEXCEPTION_DEBUG_INFO typedef ptr EXCEPTION_DEBUG_INFO
   CREATE_THREAD_DEBUG_INFO struct
     hThread HANDLE ?
-    lpThreadLocalBase POINTER ?
+    lpThreadLocalBase LPVOID ?
     lpStartAddress LPTHREAD_START_ROUTINE ?
   CREATE_THREAD_DEBUG_INFO ends
   _CREATE_THREAD_DEBUG_INFO typedef CREATE_THREAD_DEBUG_INFO
@@ -293,12 +280,12 @@ ifndef _MINWINBASE_
     hFile HANDLE ?
     hProcess HANDLE ?
     hThread HANDLE ?
-    lpBaseOfImage POINTER ?
+    lpBaseOfImage LPVOID ?
     dwDebugInfoFileOffset DWORD ?
     nDebugInfoSize DWORD ?
-    lpThreadLocalBase POINTER ?
+    lpThreadLocalBase LPVOID ?
     lpStartAddress LPTHREAD_START_ROUTINE ?
-    lpImageName POINTER ?
+    lpImageName LPVOID ?
     fUnicode WORD ?
   CREATE_PROCESS_DEBUG_INFO ends
   _CREATE_PROCESS_DEBUG_INFO typedef CREATE_PROCESS_DEBUG_INFO
@@ -315,21 +302,21 @@ ifndef _MINWINBASE_
   LPEXIT_PROCESS_DEBUG_INFO typedef ptr EXIT_PROCESS_DEBUG_INFO
   LOAD_DLL_DEBUG_INFO struct
     hFile HANDLE ?
-    lpBaseOfDll POINTER ?
+    lpBaseOfDll LPVOID ?
     dwDebugInfoFileOffset DWORD ?
     nDebugInfoSize DWORD ?
-    lpImageName POINTER ?
+    lpImageName LPVOID ?
     fUnicode WORD ?
   LOAD_DLL_DEBUG_INFO ends
   _LOAD_DLL_DEBUG_INFO typedef LOAD_DLL_DEBUG_INFO
   LPLOAD_DLL_DEBUG_INFO typedef ptr LOAD_DLL_DEBUG_INFO
   UNLOAD_DLL_DEBUG_INFO struct
-    lpBaseOfDll POINTER ?
+    lpBaseOfDll LPVOID ?
   UNLOAD_DLL_DEBUG_INFO ends
   _UNLOAD_DLL_DEBUG_INFO typedef UNLOAD_DLL_DEBUG_INFO
   LPUNLOAD_DLL_DEBUG_INFO typedef ptr UNLOAD_DLL_DEBUG_INFO
   OUTPUT_DEBUG_STRING_INFO struct
-    lpDebugStringData POINTER ?
+    lpDebugStringData LPSTR ?
     fUnicode WORD ?
     nDebugStringLength WORD ?
   OUTPUT_DEBUG_STRING_INFO ends
@@ -359,13 +346,9 @@ ifndef _MINWINBASE_
   DEBUG_EVENT ends
   _DEBUG_EVENT typedef DEBUG_EVENT
   LPDEBUG_EVENT typedef ptr DEBUG_EVENT
-  ; Context definitions
   if  not Defined(MIDL_PASS)
     LPCONTEXT typedef PCONTEXT
   endif
-  ; !defined(MIDL_PASS)
-  ; macros
-  ;* compatibility macros *
   STILL_ACTIVE equ <STATUS_PENDING>
   EXCEPTION_ACCESS_VIOLATION equ <STATUS_ACCESS_VIOLATION>
   EXCEPTION_DATATYPE_MISALIGNMENT equ <STATUS_DATATYPE_MISALIGNMENT>
@@ -391,7 +374,6 @@ ifndef _MINWINBASE_
   EXCEPTION_INVALID_HANDLE equ <STATUS_INVALID_HANDLE>
   EXCEPTION_POSSIBLE_DEADLOCK equ <STATUS_POSSIBLE_DEADLOCK>
   CONTROL_C_EXIT equ <STATUS_CONTROL_C_EXIT>
-  ;* Local Memory Flags *
   LMEM_FIXED equ 0000h
   LMEM_MOVEABLE equ 0002h
   LMEM_NOCOMPACT equ 0010h
@@ -408,10 +390,8 @@ ifndef _MINWINBASE_
   LocalDiscard macro h
     exitm <LocalReAlloc ((h), 0, LMEM_MOVEABLE)>
   endm
-  ;* Flags returned by LocalFlags (in addition to LMEM_DISCARDABLE) *
   LMEM_DISCARDED equ 4000h
   LMEM_LOCKCOUNT equ 00FFh
-  ; NUMA values
   NUMA_NO_PREFERRED_NODE equ (- 1)
   ifdef __cplusplus
     ;[...]
@@ -419,8 +399,6 @@ ifndef _MINWINBASE_
   if (_MSC_VER ge 800)
     if _MSC_VER ge 1200
     else
-      ;* Leave 4514 disabled.  It's an unneeded warning anyway. *
     endif
   endif
 endif
-; _MINWINBASE_

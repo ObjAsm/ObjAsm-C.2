@@ -1,4 +1,4 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\propkeydef.h
 ;             Created on (UTC) 06/04/2024 06:15:57
@@ -11,12 +11,9 @@ ifndef REFPROPERTYKEY
   ifdef __cplusplus
     ;[...]
   else
-  ; !__cplusplus
     REFPROPERTYKEY equ <const PROPERTYKEY * __MIDL_CONST>
   endif
-  ; __cplusplus
 endif
-;REFPROPERTYKEY
 ifdef DEFINE_PROPERTYKEY
 endif
 ifdef INITGUID
@@ -28,18 +25,14 @@ else
     exitm <EXTERN_C const PROPERTYKEY name_>
   endm
 endif
-; INITGUID
 ifndef IsEqualPropertyKey
   IsEqualPropertyKey macro a, b
     exitm <(((a).pid == (b).pid) and IsEqualIID((a).fmtid, (b).fmtid))>
   endm
 endif
-; IsEqualPropertyKey
 ifndef _PROPERTYKEY_EQUALITY_OPERATORS_
   _PROPERTYKEY_EQUALITY_OPERATORS_ equ <>
   ifdef __cplusplus
     ;[...]
   endif
-  ; __cplusplus
 endif
-; _PROPERTYKEY_EQUALITY_OPERATORS_

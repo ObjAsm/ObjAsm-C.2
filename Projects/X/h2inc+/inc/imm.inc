@@ -1,22 +1,16 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\imm.h
 ;             Created on (UTC) 06/04/2024 06:15:55
 ;             Last modified on (UTC) 21/02/2024 18:18:22
 
 include winapifamily.inc
-;**********************************************************************
-;*      imm.h - Input Method Manager definitions                      *
-;*                                                                    *
-;*      Copyright (c) Microsoft Corporation. All rights reserved.     *
-;**********************************************************************
 ifndef _IMM_
   _IMM_ equ <>
   ifdef __cplusplus
     ;[...]
   endif
   if _MSC_VER ge 1200
-    ; padding added after data member
   endif
   ifndef _IMM_SDK_DEFINED_
     _IMM_SDK_DEFINED_ equ <>
@@ -27,14 +21,11 @@ ifndef _IMM_
       else
         HIMC typedef DWORD
         HIMCC typedef DWORD
-        ;* WINVER >= 0x040A *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       LPHKL typedef ptr HKL
       LPUINT typedef ptr UINT
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
       COMPOSITIONFORM struct
@@ -56,7 +47,6 @@ ifndef _IMM_
       PCANDIDATEFORM typedef ptr CANDIDATEFORM
       NPCANDIDATEFORM typedef ptr CANDIDATEFORM
       LPCANDIDATEFORM typedef ptr CANDIDATEFORM
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       CANDIDATELIST struct
@@ -72,20 +62,19 @@ ifndef _IMM_
       PCANDIDATELIST typedef ptr CANDIDATELIST
       NPCANDIDATELIST typedef ptr CANDIDATELIST
       LPCANDIDATELIST typedef ptr CANDIDATELIST
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
       REGISTERWORDA struct
-        lpReading POINTER ?
-        lpWord POINTER ?
+        lpReading LPSTR ?
+        lpWord LPSTR ?
       REGISTERWORDA ends
       tagREGISTERWORDA typedef REGISTERWORDA
       PREGISTERWORDA typedef ptr REGISTERWORDA
       NPREGISTERWORDA typedef ptr REGISTERWORDA
       LPREGISTERWORDA typedef ptr REGISTERWORDA
       REGISTERWORDW struct
-        lpReading POINTER ?
-        lpWord POINTER ?
+        lpReading LPWSTR ?
+        lpWord LPWSTR ?
       REGISTERWORDW ends
       tagREGISTERWORDW typedef REGISTERWORDW
       PREGISTERWORDW typedef ptr REGISTERWORDW
@@ -102,8 +91,6 @@ ifndef _IMM_
         NPREGISTERWORD typedef NPREGISTERWORDA
         LPREGISTERWORD typedef LPREGISTERWORDA
       endif
-      ; UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) *
     endif
     if (WINVER ge 040Ah)
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -121,15 +108,13 @@ ifndef _IMM_
         PRECONVERTSTRING typedef ptr RECONVERTSTRING
         NPRECONVERTSTRING typedef ptr RECONVERTSTRING
         LPRECONVERTSTRING typedef ptr RECONVERTSTRING
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* WINVER >= 0x040A *
     endif
     STYLE_DESCRIPTION_SIZE equ 32
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
       STYLEBUFA struct
         dwStyle DWORD ?
-        szDescription SBYTE STYLE_DESCRIPTION_SIZE dup (?)
+        szDescription CHAR STYLE_DESCRIPTION_SIZE dup (?)
       STYLEBUFA ends
       tagSTYLEBUFA typedef STYLEBUFA
       PSTYLEBUFA typedef ptr STYLEBUFA
@@ -137,7 +122,7 @@ ifndef _IMM_
       LPSTYLEBUFA typedef ptr STYLEBUFA
       STYLEBUFW struct
         dwStyle DWORD ?
-        szDescription WORD STYLE_DESCRIPTION_SIZE dup (?)
+        szDescription WCHAR STYLE_DESCRIPTION_SIZE dup (?)
       STYLEBUFW ends
       tagSTYLEBUFW typedef STYLEBUFW
       PSTYLEBUFW typedef ptr STYLEBUFW
@@ -154,21 +139,19 @@ ifndef _IMM_
         NPSTYLEBUF typedef NPSTYLEBUFA
         LPSTYLEBUF typedef LPSTYLEBUFA
       endif
-      ; UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) *
     endif
     if (WINVER ge 040Ah)
       IMEMENUITEM_STRING_SIZE equ 80
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         IMEMENUITEMINFOA struct
-          cbSize DWORD ?
-          fType DWORD ?
-          fState DWORD ?
-          wID DWORD ?
+          cbSize UINT ?
+          fType UINT ?
+          fState UINT ?
+          wID UINT ?
           hbmpChecked HBITMAP ?
           hbmpUnchecked HBITMAP ?
           dwItemData DWORD ?
-          szString SBYTE IMEMENUITEM_STRING_SIZE dup (?)
+          szString CHAR IMEMENUITEM_STRING_SIZE dup (?)
           hbmpItem HBITMAP ?
         IMEMENUITEMINFOA ends
         tagIMEMENUITEMINFOA typedef IMEMENUITEMINFOA
@@ -176,14 +159,14 @@ ifndef _IMM_
         NPIMEMENUITEMINFOA typedef ptr IMEMENUITEMINFOA
         LPIMEMENUITEMINFOA typedef ptr IMEMENUITEMINFOA
         IMEMENUITEMINFOW struct
-          cbSize DWORD ?
-          fType DWORD ?
-          fState DWORD ?
-          wID DWORD ?
+          cbSize UINT ?
+          fType UINT ?
+          fState UINT ?
+          wID UINT ?
           hbmpChecked HBITMAP ?
           hbmpUnchecked HBITMAP ?
           dwItemData DWORD ?
-          szString WORD IMEMENUITEM_STRING_SIZE dup (?)
+          szString WCHAR IMEMENUITEM_STRING_SIZE dup (?)
           hbmpItem HBITMAP ?
         IMEMENUITEMINFOW ends
         tagIMEMENUITEMINFOW typedef IMEMENUITEMINFOW
@@ -201,12 +184,11 @@ ifndef _IMM_
           NPIMEMENUITEMINFO typedef NPIMEMENUITEMINFOA
           LPIMEMENUITEMINFO typedef LPIMEMENUITEMINFOA
         endif
-        ; UNICODE
         IMECHARPOSITION struct
           dwSize DWORD ?
           dwCharPos DWORD ?
           pt POINT <>
-          cLineHeight DWORD ?
+          cLineHeight UINT ?
           rcDocument RECT <>
         IMECHARPOSITION ends
         tagIMECHARPOSITION typedef IMECHARPOSITION
@@ -216,11 +198,8 @@ ifndef _IMM_
         TYPE_IMCENUMPROC typedef proto WIN_STD_CALL_CONV :HIMC, :LPARAM
         IMCENUMPROC typedef ptr TYPE_IMCENUMPROC
 
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
       endif
-      ;* WINVER >= 0x040A *
     endif
-    ; prototype of IMM API
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       ImmInstallIMEA proto WIN_STD_CALL_CONV :LPCSTR, :LPCSTR
       ImmInstallIMEW proto WIN_STD_CALL_CONV :LPCWSTR, :LPCWSTR
@@ -229,7 +208,6 @@ ifndef _IMM_
       else
         ImmInstallIME equ <ImmInstallIMEA>
       endif
-      ; !UNICODE
       ImmGetDefaultIMEWnd proto WIN_STD_CALL_CONV :HWND
       ImmGetDescriptionA proto WIN_STD_CALL_CONV :HKL, :LPSTR, :UINT
       ImmGetDescriptionW proto WIN_STD_CALL_CONV :HKL, :LPWSTR, :UINT
@@ -238,7 +216,6 @@ ifndef _IMM_
       else
         ImmGetDescription equ <ImmGetDescriptionA>
       endif
-      ; !UNICODE
       ImmGetIMEFileNameA proto WIN_STD_CALL_CONV :HKL, :LPSTR, :UINT
       ImmGetIMEFileNameW proto WIN_STD_CALL_CONV :HKL, :LPWSTR, :UINT
       ifdef UNICODE
@@ -246,7 +223,6 @@ ifndef _IMM_
       else
         ImmGetIMEFileName equ <ImmGetIMEFileNameA>
       endif
-      ; !UNICODE
       ImmGetProperty proto WIN_STD_CALL_CONV :HKL, :DWORD
       ImmIsIME proto WIN_STD_CALL_CONV :HKL
       ImmSimulateHotKey proto WIN_STD_CALL_CONV :HWND, :DWORD
@@ -257,7 +233,6 @@ ifndef _IMM_
       ImmAssociateContext proto WIN_STD_CALL_CONV :HWND, :HIMC
       if (WINVER ge 040Ah)
         ImmAssociateContextEx proto WIN_STD_CALL_CONV :HWND, :HIMC, :DWORD
-        ;* WINVER >= 0x040A *
       endif
       ImmGetCompositionStringA proto WIN_STD_CALL_CONV :HIMC, :DWORD, :LPVOID, :DWORD
       ImmGetCompositionStringW proto WIN_STD_CALL_CONV :HIMC, :DWORD, :LPVOID, :DWORD
@@ -266,7 +241,6 @@ ifndef _IMM_
       else
         ImmGetCompositionString equ <ImmGetCompositionStringA>
       endif
-      ; !UNICODE
       ImmSetCompositionStringA proto WIN_STD_CALL_CONV :HIMC, :DWORD, :LPVOID, :DWORD, :LPVOID, :DWORD
       ImmSetCompositionStringW proto WIN_STD_CALL_CONV :HIMC, :DWORD, :LPVOID, :DWORD, :LPVOID, :DWORD
       ifdef UNICODE
@@ -274,7 +248,6 @@ ifndef _IMM_
       else
         ImmSetCompositionString equ <ImmSetCompositionStringA>
       endif
-      ; !UNICODE
       ImmGetCandidateListCountA proto WIN_STD_CALL_CONV :HIMC, :LPDWORD
       ImmGetCandidateListCountW proto WIN_STD_CALL_CONV :HIMC, :LPDWORD
       ifdef UNICODE
@@ -282,7 +255,6 @@ ifndef _IMM_
       else
         ImmGetCandidateListCount equ <ImmGetCandidateListCountA>
       endif
-      ; !UNICODE
       ImmGetCandidateListA proto WIN_STD_CALL_CONV :HIMC, :DWORD, :LPCANDIDATELIST, :DWORD
       ImmGetCandidateListW proto WIN_STD_CALL_CONV :HIMC, :DWORD, :LPCANDIDATELIST, :DWORD
       ifdef UNICODE
@@ -290,7 +262,6 @@ ifndef _IMM_
       else
         ImmGetCandidateList equ <ImmGetCandidateListA>
       endif
-      ; !UNICODE
       ImmGetGuideLineA proto WIN_STD_CALL_CONV :HIMC, :DWORD, :LPSTR, :DWORD
       ImmGetGuideLineW proto WIN_STD_CALL_CONV :HIMC, :DWORD, :LPWSTR, :DWORD
       ifdef UNICODE
@@ -298,7 +269,6 @@ ifndef _IMM_
       else
         ImmGetGuideLine equ <ImmGetGuideLineA>
       endif
-      ; !UNICODE
       ImmGetConversionStatus proto WIN_STD_CALL_CONV :HIMC, :LPDWORD, :LPDWORD
       ImmSetConversionStatus proto WIN_STD_CALL_CONV :HIMC, :DWORD, :DWORD
       ImmGetOpenStatus proto WIN_STD_CALL_CONV :HIMC
@@ -311,7 +281,6 @@ ifndef _IMM_
         else
           ImmGetCompositionFont equ <ImmGetCompositionFontA>
         endif
-        ; !UNICODE
         ImmSetCompositionFontA proto WIN_STD_CALL_CONV :HIMC, :LPLOGFONTA
         ImmSetCompositionFontW proto WIN_STD_CALL_CONV :HIMC, :LPLOGFONTW
         ifdef UNICODE
@@ -319,9 +288,7 @@ ifndef _IMM_
         else
           ImmSetCompositionFont equ <ImmSetCompositionFontA>
         endif
-        ; !UNICODE
       endif
-      ; defined(_WINGDI_) && !defined(NOGDI)
       ImmConfigureIMEA proto WIN_STD_CALL_CONV :HKL, :HWND, :DWORD, :LPVOID
       ImmConfigureIMEW proto WIN_STD_CALL_CONV :HKL, :HWND, :DWORD, :LPVOID
       ifdef UNICODE
@@ -329,7 +296,6 @@ ifndef _IMM_
       else
         ImmConfigureIME equ <ImmConfigureIMEA>
       endif
-      ; !UNICODE
       ImmEscapeA proto WIN_STD_CALL_CONV :HKL, :HIMC, :UINT, :LPVOID
       ImmEscapeW proto WIN_STD_CALL_CONV :HKL, :HIMC, :UINT, :LPVOID
       ifdef UNICODE
@@ -337,7 +303,6 @@ ifndef _IMM_
       else
         ImmEscape equ <ImmEscapeA>
       endif
-      ; !UNICODE
       ImmGetConversionListA proto WIN_STD_CALL_CONV :HKL, :HIMC, :LPCSTR, :LPCANDIDATELIST, :DWORD, :UINT
       ImmGetConversionListW proto WIN_STD_CALL_CONV :HKL, :HIMC, :LPCWSTR, :LPCANDIDATELIST, :DWORD, :UINT
       ifdef UNICODE
@@ -345,7 +310,6 @@ ifndef _IMM_
       else
         ImmGetConversionList equ <ImmGetConversionListA>
       endif
-      ; !UNICODE
       ImmNotifyIME proto WIN_STD_CALL_CONV :HIMC, :DWORD, :DWORD, :DWORD
       ImmGetStatusWindowPos proto WIN_STD_CALL_CONV :HIMC, :LPPOINT
       ImmSetStatusWindowPos proto WIN_STD_CALL_CONV :HIMC, :LPPOINT
@@ -360,7 +324,6 @@ ifndef _IMM_
       else
         ImmIsUIMessage equ <ImmIsUIMessageA>
       endif
-      ; !UNICODE
       ImmGetVirtualKey proto WIN_STD_CALL_CONV :HWND
       TYPE_REGISTERWORDENUMPROCA typedef proto WIN_STD_CALL_CONV :LPCSTR, :DWORD, :LPCSTR, :LPVOID
       REGISTERWORDENUMPROCA typedef ptr TYPE_REGISTERWORDENUMPROCA
@@ -373,7 +336,6 @@ ifndef _IMM_
       else
         REGISTERWORDENUMPROC equ <REGISTERWORDENUMPROCA>
       endif
-      ; !UNICODE
       ImmRegisterWordA proto WIN_STD_CALL_CONV :HKL, :LPCSTR, :DWORD, :LPCSTR
       ImmRegisterWordW proto WIN_STD_CALL_CONV :HKL, :LPCWSTR, :DWORD, :LPCWSTR
       ifdef UNICODE
@@ -381,7 +343,6 @@ ifndef _IMM_
       else
         ImmRegisterWord equ <ImmRegisterWordA>
       endif
-      ; !UNICODE
       ImmUnregisterWordA proto WIN_STD_CALL_CONV :HKL, :LPCSTR, :DWORD, :LPCSTR
       ImmUnregisterWordW proto WIN_STD_CALL_CONV :HKL, :LPCWSTR, :DWORD, :LPCWSTR
       ifdef UNICODE
@@ -389,7 +350,6 @@ ifndef _IMM_
       else
         ImmUnregisterWord equ <ImmUnregisterWordA>
       endif
-      ; !UNICODE
       ImmGetRegisterWordStyleA proto WIN_STD_CALL_CONV :HKL, :UINT, :LPSTYLEBUFA
       ImmGetRegisterWordStyleW proto WIN_STD_CALL_CONV :HKL, :UINT, :LPSTYLEBUFW
       ifdef UNICODE
@@ -397,7 +357,6 @@ ifndef _IMM_
       else
         ImmGetRegisterWordStyle equ <ImmGetRegisterWordStyleA>
       endif
-      ; !UNICODE
       ImmEnumRegisterWordA proto WIN_STD_CALL_CONV :HKL, :REGISTERWORDENUMPROCA, :LPCSTR, :DWORD, :LPCSTR, :LPVOID
       ImmEnumRegisterWordW proto WIN_STD_CALL_CONV :HKL, :REGISTERWORDENUMPROCW, :LPCWSTR, :DWORD, :LPCWSTR, :LPVOID
       ifdef UNICODE
@@ -405,7 +364,6 @@ ifndef _IMM_
       else
         ImmEnumRegisterWord equ <ImmEnumRegisterWordA>
       endif
-      ; !UNICODE
       if (WINVER ge 040Ah)
         ImmDisableIME proto WIN_STD_CALL_CONV :DWORD
         ImmEnumInputContext proto WIN_STD_CALL_CONV :DWORD, :IMCENUMPROC, :LPARAM
@@ -416,17 +374,12 @@ ifndef _IMM_
         else
           ImmGetImeMenuItems equ <ImmGetImeMenuItemsA>
         endif
-        ; !UNICODE
         ImmDisableTextFrameService proto WIN_STD_CALL_CONV :DWORD
-        ;* WINVER >= 0x040A *
       endif
       if (WINVER ge 0602h)
         ImmDisableLegacyIME proto WIN_STD_CALL_CONV
-        ;* WINVER >= 0x0602 *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ; wParam for WM_IME_CONTROL
     IMC_GETCANDIDATEPOS equ 0007h
     IMC_SETCANDIDATEPOS equ 0008h
     IMC_GETCOMPOSITIONFONT equ 0009h
@@ -437,7 +390,6 @@ ifndef _IMM_
     IMC_SETSTATUSWINDOWPOS equ 0010h
     IMC_CLOSESTATUSWINDOW equ 0021h
     IMC_OPENSTATUSWINDOW equ 0022h
-    ; dwAction for ImmNotifyIME
     NI_OPENCANDIDATE equ 0010h
     NI_CLOSECANDIDATE equ 0011h
     NI_SELECTCANDIDATESTR equ 0012h
@@ -447,18 +399,15 @@ ifndef _IMM_
     NI_SETCANDIDATE_PAGESTART equ 0016h
     NI_SETCANDIDATE_PAGESIZE equ 0017h
     NI_IMEMENUSELECTED equ 0018h
-    ; lParam for WM_IME_SETCONTEXT
     ISC_SHOWUICANDIDATEWINDOW equ 00000001h
     ISC_SHOWUICOMPOSITIONWINDOW equ 80000000h
     ISC_SHOWUIGUIDELINE equ 40000000h
     ISC_SHOWUIALLCANDIDATEWINDOW equ 0000000Fh
     ISC_SHOWUIALL equ 0C000000Fh
-    ; dwIndex for ImmNotifyIME/NI_COMPOSITIONSTR
     CPS_COMPLETE equ 0001h
     CPS_CONVERT equ 0002h
     CPS_REVERT equ 0003h
     CPS_CANCEL equ 0004h
-    ; the modifiers of hot key
     MOD_ALT equ 0001h
     MOD_CONTROL equ 0002h
     MOD_SHIFT equ 0004h
@@ -466,31 +415,24 @@ ifndef _IMM_
     MOD_RIGHT equ 4000h
     MOD_ON_KEYUP equ 0800h
     MOD_IGNORE_ALL_MODIFIER equ 0400h
-    ; Windows for Simplified Chinese Edition hot key ID from 0x10 - 0x2F
     IME_CHOTKEY_IME_NONIME_TOGGLE equ 10h
     IME_CHOTKEY_SHAPE_TOGGLE equ 11h
     IME_CHOTKEY_SYMBOL_TOGGLE equ 12h
-    ; Windows for Japanese Edition hot key ID from 0x30 - 0x4F
     IME_JHOTKEY_CLOSE_OPEN equ 30h
-    ; Windows for Korean Edition hot key ID from 0x50 - 0x6F
     IME_KHOTKEY_SHAPE_TOGGLE equ 50h
     IME_KHOTKEY_HANJACONVERT equ 51h
     IME_KHOTKEY_ENGLISH equ 52h
-    ; Windows for Traditional Chinese Edition hot key ID from 0x70 - 0x8F
     IME_THOTKEY_IME_NONIME_TOGGLE equ 70h
     IME_THOTKEY_SHAPE_TOGGLE equ 71h
     IME_THOTKEY_SYMBOL_TOGGLE equ 72h
-    ; direct switch hot key ID from 0x100 - 0x11F
     IME_HOTKEY_DSWITCH_FIRST equ 100h
     IME_HOTKEY_DSWITCH_LAST equ 11Fh
-    ; IME private hot key from 0x200 - 0x21F
     IME_HOTKEY_PRIVATE_FIRST equ 200h
     IME_ITHOTKEY_RESEND_RESULTSTR equ 200h
     IME_ITHOTKEY_PREVIOUS_COMPOSITION equ 201h
     IME_ITHOTKEY_UISTYLE_TOGGLE equ 202h
     IME_ITHOTKEY_RECONVERTSTRING equ 203h
     IME_HOTKEY_PRIVATE_LAST equ 21Fh
-    ; parameter of ImmGetCompositionString
     GCS_COMPREADSTR equ 0001h
     GCS_COMPREADATTR equ 0002h
     GCS_COMPREADCLAUSE equ 0004h
@@ -503,41 +445,32 @@ ifndef _IMM_
     GCS_RESULTREADCLAUSE equ 0400h
     GCS_RESULTSTR equ 0800h
     GCS_RESULTCLAUSE equ 1000h
-    ; style bit flags for WM_IME_COMPOSITION
     CS_INSERTCHAR equ 2000h
     CS_NOMOVECARET equ 4000h
-    ; IME version constants
     IMEVER_0310 equ 0003000Ah
     IMEVER_0400 equ 00040000h
-    ; IME property bits
     IME_PROP_AT_CARET equ 00010000h
     IME_PROP_SPECIAL_UI equ 00020000h
     IME_PROP_CANDLIST_START_FROM_1 equ 00040000h
     IME_PROP_UNICODE equ 00080000h
     IME_PROP_COMPLETE_ON_UNSELECT equ 00100000h
-    ; IME UICapability bits
     UI_CAP_2700 equ 00000001h
     UI_CAP_ROT90 equ 00000002h
     UI_CAP_ROTANY equ 00000004h
-    ; ImmSetCompositionString Capability bits
     SCS_CAP_COMPSTR equ 00000001h
     SCS_CAP_MAKEREAD equ 00000002h
     SCS_CAP_SETRECONVERTSTRING equ 00000004h
-    ; IME WM_IME_SELECT inheritance Capability bits
     SELECT_CAP_CONVERSION equ 00000001h
     SELECT_CAP_SENTENCE equ 00000002h
-    ; ID for deIndex of ImmGetGuideLine
     GGL_LEVEL equ 00000001h
     GGL_INDEX equ 00000002h
     GGL_STRING equ 00000003h
     GGL_PRIVATE equ 00000004h
-    ; ID for dwLevel of GUIDELINE Structure
     GL_LEVEL_NOGUIDELINE equ 00000000h
     GL_LEVEL_FATAL equ 00000001h
     GL_LEVEL_ERROR equ 00000002h
     GL_LEVEL_WARNING equ 00000003h
     GL_LEVEL_INFORMATION equ 00000004h
-    ; ID for dwIndex of GUIDELINE Structure
     GL_ID_UNKNOWN equ 00000000h
     GL_ID_NOMODULE equ 00000001h
     GL_ID_NODICTIONARY equ 00000010h
@@ -554,7 +487,6 @@ ifndef _IMM_
     GL_ID_REVERSECONVERSION equ 00000029h
     GL_ID_PRIVATE_FIRST equ 00008000h
     GL_ID_PRIVATE_LAST equ 0000FFFFh
-    ; ID for dwIndex of ImmGetProperty
     IGP_GETIMEVERSION equ (- 4)
     IGP_PROPERTY equ 00000004h
     IGP_CONVERSION equ 00000008h
@@ -562,33 +494,27 @@ ifndef _IMM_
     IGP_UI equ 00000010h
     IGP_SETCOMPSTR equ 00000014h
     IGP_SELECT equ 00000018h
-    ; dwIndex for ImmSetCompositionString API
     SCS_SETSTR equ <(GCS_COMPREADSTR or GCS_COMPSTR)>
     SCS_CHANGEATTR equ <(GCS_COMPREADATTR or GCS_COMPATTR)>
     SCS_CHANGECLAUSE equ <(GCS_COMPREADCLAUSE or GCS_COMPCLAUSE)>
     SCS_SETRECONVERTSTRING equ 00010000h
     SCS_QUERYRECONVERTSTRING equ 00020000h
-    ; attribute for COMPOSITIONSTRING Structure
     ATTR_INPUT equ 00h
     ATTR_TARGET_CONVERTED equ 01h
     ATTR_CONVERTED equ 02h
     ATTR_TARGET_NOTCONVERTED equ 03h
     ATTR_INPUT_ERROR equ 04h
     ATTR_FIXEDCONVERTED equ 05h
-    ; bit field for IMC_SETCOMPOSITIONWINDOW, IMC_SETCANDIDATEWINDOW
     CFS_DEFAULT equ 0000h
     CFS_RECT equ 0001h
     CFS_POINT equ 0002h
     CFS_FORCE_POSITION equ 0020h
     CFS_CANDIDATEPOS equ 0040h
     CFS_EXCLUDE equ 0080h
-    ; conversion direction for ImmGetConversionList
     GCL_CONVERSION equ 0001h
     GCL_REVERSECONVERSION equ 0002h
     GCL_REVERSE_LENGTH equ 0003h
     include ime_cmodes.inc
-    ; bit field for conversion mode
-    ; IME_CMODE_HANGEUL is old name of IME_CMODE_HANGUL. It will be gone eventually.
     IME_CMODE_HANGEUL equ <IME_CMODE_NATIVE>
     IME_CMODE_SOFTKBD equ 0080h
     IME_CMODE_NOCONVERSION equ 0100h
@@ -596,7 +522,6 @@ ifndef _IMM_
     IME_CMODE_SYMBOL equ 0400h
     IME_CMODE_FIXED equ 0800h
     IME_CMODE_RESERVED equ 0F0000000h
-    ; bit field for sentence mode
     IME_SMODE_NONE equ 0000h
     IME_SMODE_PLAURALCLAUSE equ 0001h
     IME_SMODE_SINGLECONVERT equ 0002h
@@ -604,14 +529,12 @@ ifndef _IMM_
     IME_SMODE_PHRASEPREDICT equ 0008h
     IME_SMODE_CONVERSATION equ 0010h
     IME_SMODE_RESERVED equ 0000F000h
-    ; style of candidate
     IME_CAND_UNKNOWN equ 0000h
     IME_CAND_READ equ 0001h
     IME_CAND_CODE equ 0002h
     IME_CAND_MEANING equ 0003h
     IME_CAND_RADICAL equ 0004h
     IME_CAND_STROKE equ 0005h
-    ; wParam of report message WM_IME_NOTIFY
     IMN_CLOSESTATUSWINDOW equ 0001h
     IMN_OPENSTATUSWINDOW equ 0002h
     IMN_CHANGECANDIDATE equ 0003h
@@ -627,7 +550,6 @@ ifndef _IMM_
     IMN_GUIDELINE equ 000Dh
     IMN_PRIVATE equ 000Eh
     if (WINVER ge 040Ah)
-      ; wParam of report message WM_IME_REQUEST
       IMR_COMPOSITIONWINDOW equ 0001h
       IMR_CANDIDATEWINDOW equ 0002h
       IMR_COMPOSITIONFONT equ 0003h
@@ -635,16 +557,12 @@ ifndef _IMM_
       IMR_CONFIRMRECONVERTSTRING equ 0005h
       IMR_QUERYCHARPOSITION equ 0006h
       IMR_DOCUMENTFEED equ 0007h
-      ;* WINVER >= 0x040A *
     endif
-    ; error code of ImmGetCompositionString
     IMM_ERROR_NODATA equ (- 1)
     IMM_ERROR_GENERAL equ (- 2)
-    ; dialog mode of ImmConfigureIME
     IME_CONFIG_GENERAL equ 1
     IME_CONFIG_REGISTERWORD equ 2
     IME_CONFIG_SELECTDICTIONARY equ 3
-    ; flags for ImmEscape
     IME_ESC_QUERY_SUPPORT equ 0003h
     IME_ESC_RESERVED_FIRST equ 0004h
     IME_ESC_RESERVED_LAST equ 07FFh
@@ -660,18 +578,14 @@ ifndef _IMM_
     IME_ESC_AUTOMATA equ 1009h
     IME_ESC_PRIVATE_HOTKEY equ 100ah
     IME_ESC_GETHELPFILENAME equ 100bh
-    ; style of word registration
     IME_REGWORD_STYLE_EUDC equ 00000001h
     IME_REGWORD_STYLE_USER_FIRST equ 80000000h
     IME_REGWORD_STYLE_USER_LAST equ 0FFFFFFFFh
     if (WINVER ge 040Ah)
-      ; dwFlags for ImmAssociateContextEx
       IACE_CHILDREN equ 0001h
       IACE_DEFAULT equ 0010h
       IACE_IGNORENOCONTEXT equ 0020h
-      ; dwFlags for ImmGetImeMenuItems
       IGIMIF_RIGHTMENU equ 0001h
-      ; dwType for ImmGetImeMenuItems
       IGIMII_CMODE equ 0001h
       IGIMII_SMODE equ 0002h
       IGIMII_CONFIGURE equ 0004h
@@ -679,11 +593,9 @@ ifndef _IMM_
       IGIMII_HELP equ 0010h
       IGIMII_OTHER equ 0020h
       IGIMII_INPUTTOOLS equ 0040h
-      ; fType of IMEMENUITEMINFO structure
       IMFT_RADIOCHECK equ 00001h
       IMFT_SEPARATOR equ 00002h
       IMFT_SUBMENU equ 00004h
-      ; fState of IMEMENUITEMINFO structure
       IMFS_GRAYED equ <MFS_GRAYED>
       IMFS_DISABLED equ <MFS_DISABLED>
       IMFS_CHECKED equ <MFS_CHECKED>
@@ -692,19 +604,13 @@ ifndef _IMM_
       IMFS_UNCHECKED equ <MFS_UNCHECKED>
       IMFS_UNHILITE equ <MFS_UNHILITE>
       IMFS_DEFAULT equ <MFS_DEFAULT>
-      ;* WINVER >= 0x040A *
     endif
-    ; type of soft keyboard
-    ; for Windows Tranditional Chinese Edition
     SOFTKEYBOARD_TYPE_T1 equ 0001h
-    ; for Windows Simplified Chinese Edition
     SOFTKEYBOARD_TYPE_C1 equ 0002h
   endif
-  ; _IMM_SDK_DEFINED_
   if _MSC_VER ge 1200
   endif
   ifdef __cplusplus
     ;[...]
   endif
 endif
-; _IMM_

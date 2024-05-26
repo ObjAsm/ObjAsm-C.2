@@ -250,7 +250,7 @@ MethodEnd
 Method HttpServer.HandlePostRequest, uses xbx xdi xsi, pRequest:PHTTP_REQUEST
   local dResult:DWORD, dBytesSent:DWORD
   local pEntityBuffer:PSTRING, dEntityBufferSize:DWORD, dBytesRead:DWORD, dTotalBytesRead:DWORD
-  local Response:HTTP_RESPONSE, CDS:COPYDATASTRUCT
+  local Response:HTTP_RESPONSE_V1, CDS:COPYDATASTRUCT
   local Chuncks:$Obj(Collection)
 
   CHUNK_SIZE = 2048
@@ -279,11 +279,11 @@ Method HttpServer.HandlePostRequest, uses xbx xdi xsi, pRequest:PHTTP_REQUEST
     ;      are no o entity bodies in HTTP_REQUEST.
 
     mov xbx, pRequest
-    .ifBitSet [xbx].HTTP_REQUEST.Flags, HTTP_REQUEST_FLAG_MORE_ENTITY_BODY_EXISTS
+    .ifBitSet [xbx].HTTP_REQUEST_V1.Flags, HTTP_REQUEST_FLAG_MORE_ENTITY_BODY_EXISTS
       ;The entity body is sent over multiple calls. Collect them in mem and send back.
       .while TRUE
         ;Read the entity chunk from the request.
-        invoke HttpReceiveRequestEntityBody, [xsi].hRequestQueue, [xbx].HTTP_REQUEST.RequestId, 0, \
+        invoke HttpReceiveRequestEntityBody, [xsi].hRequestQueue, [xbx].HTTP_REQUEST_V1.RequestId, 0, \
                                              [xdi].$Obj(DataChunk).pBuffer, \
                                              [xdi].$Obj(DataChunk).dBufferSize, \
                                              addr [xdi].$Obj(DataChunk).dBufferUsed, NULL
@@ -339,7 +339,7 @@ Method HttpServer.HandlePostRequest, uses xbx xdi xsi, pRequest:PHTTP_REQUEST
 
     .else
       ;This request does not have an entity body.
-      invoke HttpSendHttpResponse, [xsi].hRequestQueue, [xbx].HTTP_REQUEST.RequestId, 0, \
+      invoke HttpSendHttpResponse, [xsi].hRequestQueue, [xbx].HTTP_REQUEST_V1.RequestId, 0, \
                                    addr Response, NULL, addr dBytesSent,
                                    NULL, 0, NULL, NULL
     .endif
@@ -512,7 +512,7 @@ Method HttpServer.ReceiveRequests, uses xsi
                                      addr dBytesRead, NULL  ;Synch. call
       .if eax == NO_ERROR
         mov xcx, pRequest
-        mov eax, [xcx].HTTP_REQUEST.Verb
+        mov eax, [xcx].HTTP_REQUEST_V1.Verb
         .if eax == HttpVerbGET
           OCall xsi.HandleGetRequest, pRequest
 
@@ -534,7 +534,7 @@ Method HttpServer.ReceiveRequests, uses xsi
           m2m DWORD ptr RequestId[0], DWORD ptr [xcx].HTTP_REQUEST.RequestId[0], eax
           m2m DWORD ptr RequestId[4], DWORD ptr [xcx].HTTP_REQUEST.RequestId[4], ecx
         else
-          m2m RequestId, [xcx].HTTP_REQUEST.RequestId, xax
+          m2m RequestId, [xcx].HTTP_REQUEST_V1.RequestId, xax
         endif
         add dRequestSize, 2048
         MemReAlloc pRequest, dRequestSize
@@ -591,7 +591,7 @@ MethodEnd
 
 Method HttpServer.SendResponse, uses xsi, pRequest:PHTTP_REQUEST, wStatusCode:WORD, \
                                           pReason:PSTRINGA, pEntityString:PSTRINGA
-  local Response:HTTP_RESPONSE, DataChunk:HTTP_DATA_CHUNK, dBytesSent:DWORD
+  local Response:HTTP_RESPONSE_V1, DataChunk:HTTP_DATA_CHUNK, dBytesSent:DWORD
 
   SetObject xsi
 
@@ -613,6 +613,6 @@ Method HttpServer.SendResponse, uses xsi, pRequest:PHTTP_REQUEST, wStatusCode:WO
 
   ;Because the entity body is sent in one call, it is not required to specify the Content-Length.
   mov xdx, pRequest
-  invoke HttpSendHttpResponse, [xsi].hRequestQueue, [xdx].HTTP_REQUEST.RequestId, 0, addr Response, \
+  invoke HttpSendHttpResponse, [xsi].hRequestQueue, [xdx].HTTP_REQUEST_V1.RequestId, 0, addr Response, \
                                NULL, addr dBytesSent, NULL, 0, NULL, NULL
 MethodEnd

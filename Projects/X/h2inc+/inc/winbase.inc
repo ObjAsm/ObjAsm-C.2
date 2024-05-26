@@ -1,39 +1,23 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 26/05/2024 13:31:25
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winbase.h
 ;             Created on (UTC) 06/04/2024 06:16:02
 ;             Last modified on (UTC) 21/02/2024 18:13:42
 
-;@[contract("ntoskrnl-winbase"), comment("MVI_tracked - https://osgwiki.com/wiki/Microsoft_Virus_Initiative")];
 include winapifamily.inc
-;************************************************************************
-;*                                                                       *
-;*   winbase.h -- This module defines the 32-Bit Windows Base APIs       *
-;*                                                                       *
-;*   Copyright (c) Microsoft Corp. All rights reserved.                  *
-;*                                                                       *
-;************************************************************************
 ifndef _WINBASE_
   _WINBASE_ equ <>
   if Defined(_MSC_VER)
     if _MSC_VER gt 1000
     endif
     if _MSC_VER ge 1200
-      ;* padding added after data member *
-      ;* #if not_defined treated as #if 0 *
     endif
-    ;* nonstandard extension : single line comment *
-    ;* nonstandard extension used : nameless struct/union *
-    ;* nonstandard extension used : bit field types other then int *
   endif
-  ; defined(_MSC_VER)
   ifdef _MAC
     ;[...]
   endif
-  ;_MAC
   include apisetcconv.inc
   include minwinbase.inc
-  ; APISET contracts
   include apiquery2.inc
   include processenv.inc
   include fileapifromapp.inc
@@ -68,9 +52,6 @@ ifndef _WINBASE_
     ;[...]
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-    ;*
-    ;* Compatibility macros
-    ;*
     DefineHandleTable macro w
       exitm <((w), TRUE)>
     endm
@@ -86,13 +67,11 @@ ifndef _WINBASE_
     UnlockSegment macro w
       exitm <GlobalUnfix ((w))>
     endm
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     GetCurrentTime macro 
       exitm <GetTickCount ()>
     endm
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     Yield macro 
@@ -108,9 +87,6 @@ ifndef _WINBASE_
     WAIT_IO_COMPLETION equ <STATUS_USER_APC>
     SecureZeroMemory equ <RtlSecureZeroMemory>
     CaptureStackBackTrace equ <RtlCaptureStackBackTrace>
-    ; File creation flags must start at the high end since they
-    ; are combined with the attributes
-    ;  These are flags supported through CreateFile (W7) and CreateFile2 (W8 and beyond)
     FILE_FLAG_WRITE_THROUGH equ 80000000h
     FILE_FLAG_OVERLAPPED equ 40000000h
     FILE_FLAG_NO_BUFFERING equ 20000000h
@@ -124,11 +100,6 @@ ifndef _WINBASE_
     FILE_FLAG_OPEN_NO_RECALL equ 00100000h
     FILE_FLAG_FIRST_PIPE_INSTANCE equ 00080000h
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
-      ;  These are flags supported only through CreateFile2 (W8 and beyond)
-      ;  Due to the multiplexing of file creation flags, file attribute flags and
-      ;  security QoS flags into a single DWORD (dwFlagsAndAttributes) parameter for
-      ;  CreateFile, there is no way to add any more flags to CreateFile. Additional
-      ;  flags for the create operation must be added to CreateFile2 only
       FILE_FLAG_OPEN_REQUIRING_OPLOCK equ 00040000h
       if Defined(NTDDI_WIN10_NI) and (NTDDI_VERSION ge NTDDI_WIN10_NI)
         FILE_FLAG_IGNORE_IMPERSONATED_DEVICEMAP equ 00020000h
@@ -142,37 +113,27 @@ ifndef _WINBASE_
       DEFINE_ENUM_FLAG_OPERATORS(FILE_WRITE_FLAGS)
       FILE_FLUSH_MODE typedef SDWORD
       FILE_FLUSH_DEFAULT equ 0
-      ; same as WIN32 FlushFileBuffers(); Flushes data, metadata, AND sends a SYNC command to the hardware
       FILE_FLUSH_DATA equ 1
-      ; Flush data only
       FILE_FLUSH_MIN_METADATA equ 2
-      ; Flush data + SYNC (minimal metadata)
       FILE_FLUSH_NO_SYNC equ 3
-      ; Flush data + metadata
 
     endif
-    ; NTDDI_WIN10_NI
     if (_WIN32_WINNT ge 0400h)
-      ; Define possible return codes from the CopyFileEx callback routine
       PROGRESS_CONTINUE equ 0
       PROGRESS_CANCEL equ 1
       PROGRESS_STOP equ 2
       PROGRESS_QUIET equ 3
-      ; Define CopyFileEx callback routine state change values
       CALLBACK_CHUNK_FINISHED equ 00000000h
       CALLBACK_STREAM_SWITCH equ 00000001h
-      ; Define CopyFileEx option flags
       COPY_FILE_FAIL_IF_EXISTS equ 00000001h
       COPY_FILE_RESTARTABLE equ 00000002h
       COPY_FILE_OPEN_SOURCE_FOR_WRITE equ 00000004h
       COPY_FILE_ALLOW_DECRYPTED_DESTINATION equ 00000008h
-      ;  Gap for private copyfile flags
       if (_WIN32_WINNT ge 0600h)
         COPY_FILE_COPY_SYMLINK equ 00000800h
         COPY_FILE_NO_BUFFERING equ 00001000h
       endif
       if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
-        ;  CopyFile2 flags
         COPY_FILE_REQUEST_SECURITY_PRIVILEGES equ 00002000h
         COPY_FILE_RESUME_FROM_PAUSE equ 00004000h
         COPY_FILE_NO_OFFLOAD equ 00040000h
@@ -180,47 +141,32 @@ ifndef _WINBASE_
       if (_WIN32_WINNT ge _WIN32_WINNT_WIN10)
         COPY_FILE_IGNORE_EDP_BLOCK equ 00400000h
         COPY_FILE_IGNORE_SOURCE_ENCRYPTION equ 00800000h
-        ; Don't request WRITE_DAC for the destination file access.
         COPY_FILE_DONT_REQUEST_DEST_WRITE_DAC equ 02000000h
-        ; If either source or target is an SMB share, compression
-        ; will be requested on all READs and WRITEs.
         COPY_FILE_REQUEST_COMPRESSED_TRAFFIC equ 10000000h
       endif
       if (NTDDI_VERSION ge NTDDI_WIN10_VB)
-        ;  Additional flags for CopyFileEx() and CopyFile2().
         COPY_FILE_OPEN_AND_COPY_REPARSE_POINT equ 00200000h
         COPY_FILE_DIRECTORY equ 00000080h
         COPY_FILE_SKIP_ALTERNATE_STREAMS equ 00008000h
         COPY_FILE_DISABLE_PRE_ALLOCATION equ 04000000h
-        ;  Additional flags for CopyFile2().
         COPY_FILE_ENABLE_LOW_FREE_SPACE_MODE equ 08000000h
       endif
-      ; (NTDDI_VERSION >= NTDDI_WIN10_VB)
       if (NTDDI_VERSION ge NTDDI_WIN10_NI)
-        ;  CopyFile flag to retain sparse state during copying.
         COPY_FILE_ENABLE_SPARSE_COPY equ 20000000h
       endif
-      ; (NTDDI_VERSION >= NTDDI_WIN10_NI)
-      ;* _WIN32_WINNT >= 0x0400 *
     endif
     if (_WIN32_WINNT ge 0500h)
-      ; Define ReplaceFile option flags
       REPLACEFILE_WRITE_THROUGH equ 00000001h
       REPLACEFILE_IGNORE_MERGE_ERRORS equ 00000002h
       if (_WIN32_WINNT ge 0600h)
         REPLACEFILE_IGNORE_ACL_ERRORS equ 00000004h
       endif
     endif
-    ; #if (_WIN32_WINNT >= 0x0500)
-    ; Define the NamedPipe definitions
-    ; Define the dwOpenMode values for CreateNamedPipe
     PIPE_ACCESS_INBOUND equ 00000001h
     PIPE_ACCESS_OUTBOUND equ 00000002h
     PIPE_ACCESS_DUPLEX equ 00000003h
-    ; Define the Named Pipe End flags for GetNamedPipeInfo
     PIPE_CLIENT_END equ 00000000h
     PIPE_SERVER_END equ 00000001h
-    ; Define the dwPipeMode values for CreateNamedPipe
     PIPE_WAIT equ 00000000h
     PIPE_NOWAIT equ 00000001h
     PIPE_READMODE_BYTE equ 00000000h
@@ -229,10 +175,7 @@ ifndef _WINBASE_
     PIPE_TYPE_MESSAGE equ 00000004h
     PIPE_ACCEPT_REMOTE_CLIENTS equ 00000000h
     PIPE_REJECT_REMOTE_CLIENTS equ 00000008h
-    ; Define the well known values for CreateNamedPipe nMaxInstances
     PIPE_UNLIMITED_INSTANCES equ 255
-    ; Define the Security Quality of Service bits to be passed
-    ; into CreateFile
     SECURITY_ANONYMOUS equ (SecurityAnonymous shl 16)
     SECURITY_IDENTIFICATION equ (SecurityIdentification shl 16)
     SECURITY_IMPERSONATION equ (SecurityImpersonation shl 16)
@@ -241,7 +184,6 @@ ifndef _WINBASE_
     SECURITY_EFFECTIVE_ONLY equ 00080000h
     SECURITY_SQOS_PRESENT equ 00100000h
     SECURITY_VALID_SQOS_FLAGS equ 001F0000h
-    ; Fiber structures
     if (_WIN32_WINNT ge 0400h)
       TYPE_PFIBER_START_ROUTINE typedef proto WIN_STD_CALL_CONV :LPVOID
       PFIBER_START_ROUTINE typedef ptr TYPE_PFIBER_START_ROUTINE
@@ -250,12 +192,9 @@ ifndef _WINBASE_
       TYPE_PFIBER_CALLOUT_ROUTINE typedef proto WIN_STD_CALL_CONV :LPVOID
       PFIBER_CALLOUT_ROUTINE typedef ptr TYPE_PFIBER_CALLOUT_ROUTINE
 
-      ;* _WIN32_WINNT >= 0x0400 *
     endif
-    ; FailFast Exception Flags
     FAIL_FAST_GENERATE_EXCEPTION_ADDRESS equ 1h
     FAIL_FAST_NO_HARD_ERROR_DLG equ 2h
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     if Defined(_X86_)
@@ -263,9 +202,7 @@ ifndef _WINBASE_
     else
       LPLDT_ENTRY typedef LPVOID
     endif
-    ; Serial provider type.
     SP_SERIALCOMM equ (00000001h)
-    ; Provider SubTypes
     PST_UNSPECIFIED equ (00000000h)
     PST_RS232 equ (00000001h)
     PST_PARALLELPORT equ (00000002h)
@@ -279,7 +216,6 @@ ifndef _WINBASE_
     PST_LAT equ (00000101h)
     PST_TCPIP_TELNET equ (00000102h)
     PST_X25 equ (00000103h)
-    ; Provider capabilities flags.
     PCF_DTRDSR equ (0001h)
     PCF_RTSCTS equ (0002h)
     PCF_RLSD equ (0004h)
@@ -290,7 +226,6 @@ ifndef _WINBASE_
     PCF_INTTIMEOUTS equ (0080h)
     PCF_SPECIALCHARS equ (0100h)
     PCF_16BITMODE equ (0200h)
-    ; Comm provider settable parameters.
     SP_PARITY equ (0001h)
     SP_BAUD equ (0002h)
     SP_DATABITS equ (0004h)
@@ -298,7 +233,6 @@ ifndef _WINBASE_
     SP_HANDSHAKING equ (0010h)
     SP_PARITY_CHECK equ (0020h)
     SP_RLSD equ (0040h)
-    ; Settable baud rates in the provider.
     BAUD_075 equ (00000001h)
     BAUD_110 equ (00000002h)
     BAUD_134_5 equ (00000004h)
@@ -319,14 +253,12 @@ ifndef _WINBASE_
     BAUD_115200 equ (00020000h)
     BAUD_57600 equ (00040000h)
     BAUD_USER equ (10000000h)
-    ; Settable Data Bits
     DATABITS_5 equ (0001h)
     DATABITS_6 equ (0002h)
     DATABITS_7 equ (0004h)
     DATABITS_8 equ (0008h)
     DATABITS_16 equ (0010h)
     DATABITS_16X equ (0020h)
-    ; Settable Stop and Parity bits.
     STOPBITS_10 equ (0001h)
     STOPBITS_15 equ (0002h)
     STOPBITS_20 equ (0004h)
@@ -353,12 +285,10 @@ ifndef _WINBASE_
       dwCurrentRxQueue DWORD ?
       dwProvSpec1 DWORD ?
       dwProvSpec2 DWORD ?
-      wcProvChar WORD 1 dup (?)
+      wcProvChar WCHAR 1 dup (?)
     COMMPROP ends
     _COMMPROP typedef COMMPROP
     LPCOMMPROP typedef ptr COMMPROP
-    ; Set dwProvSpec1 to COMMPROP_INITIALIZED to indicate that wPacketLength
-    ; is valid before a call to GetCommProperties().
     COMMPROP_INITIALIZED equ (0E73CF52Eh)
     COMSTAT struct
       COMSTAT_REC record COMSTAT_REC_fReserved:25, COMSTAT_REC_fTxim:1, COMSTAT_REC_fEof:1, COMSTAT_REC_fXoffSent:1, COMSTAT_REC_fXoffHold:1, COMSTAT_REC_fRlsdHold:1, COMSTAT_REC_fDsrHold:1, COMSTAT_REC_fCtsHold:1
@@ -368,101 +298,54 @@ ifndef _WINBASE_
     COMSTAT ends
     _COMSTAT typedef COMSTAT
     LPCOMSTAT typedef ptr COMSTAT
-    ; DTR Control Flow Values.
     DTR_CONTROL_DISABLE equ 00h
     DTR_CONTROL_ENABLE equ 01h
     DTR_CONTROL_HANDSHAKE equ 02h
-    ; RTS Control Flow Values
     RTS_CONTROL_DISABLE equ 00h
     RTS_CONTROL_ENABLE equ 01h
     RTS_CONTROL_HANDSHAKE equ 02h
     RTS_CONTROL_TOGGLE equ 03h
     DCB struct
       DCBlength DWORD ?
-      ;* sizeof(DCB)                     *
       BaudRate DWORD ?
-      ;* Baudrate at which running       *
-      ;* Binary Mode (skip EOF check)    *
-      ;* Enable parity checking          *
-      ;* CTS handshaking on output       *
-      ;* DSR handshaking on output       *
-      ;* DTR Flow control                *
-      ;* DSR Sensitivity              *
-      ;* Continue TX when Xoff sent *
-      ;* Enable output X-ON/X-OFF        *
-      ;* Enable input X-ON/X-OFF         *
-      ;* Enable Err Replacement          *
-      ;* Enable Null stripping           *
-      ;* Rts Flow control                *
-      ;* Abort all reads and writes on Error *
-      ;* Reserved                        *
-      DCB_REC record DCB_REC_fDummy2:17, DCB_REC_fAbortOnError:1, DCB_REC_fRtsControl:2, DCB_REC_fNull:1, DCB_REC_fErrorChar:1, DCB_REC_fInX:1, DCB_REC_fOutX:1, DCB_REC_fTXContinueOnXoff:1, DCB_REC_fDsrSensitivity:1, DCB_REC_fDtrControl:2, DCB_REC_fOutxDsrFlow:1, DCB_REC_fOutxCtsFlow:1, DCB_REC_fParity:1, DCB_REC_fBinary:1;* Not currently used              *
-
+      DCB_REC record DCB_REC_fDummy2:17, DCB_REC_fAbortOnError:1, DCB_REC_fRtsControl:2, DCB_REC_fNull:1, DCB_REC_fErrorChar:1, DCB_REC_fInX:1, DCB_REC_fOutX:1, DCB_REC_fTXContinueOnXoff:1, DCB_REC_fDsrSensitivity:1, DCB_REC_fDtrControl:2, DCB_REC_fOutxDsrFlow:1, DCB_REC_fOutxCtsFlow:1, DCB_REC_fParity:1, DCB_REC_fBinary:1
       DCB_BITS DCB_REC <>
       wReserved WORD ?
-      ;* Not currently used              *
       XonLim WORD ?
-      ;* Transmit X-ON threshold         *
       XoffLim WORD ?
-      ;* Transmit X-OFF threshold        *
       ByteSize BYTE ?
-      ;* Number of bits/byte, 4-8        *
       Parity BYTE ?
-      ;* 0-4=None,Odd,Even,Mark,Space    *
       StopBits BYTE ?
-      ;* 0,1,2 = 1, 1.5, 2               *
       XonChar SBYTE ?
-      ;* Tx and Rx X-ON character        *
       XoffChar SBYTE ?
-      ;* Tx and Rx X-OFF character       *
       ErrorChar SBYTE ?
-      ;* Error replacement char          *
       EofChar SBYTE ?
-      ;* End of Input character          *
       EvtChar SBYTE ?
-      ;* Received Event character        *
       wReserved1 WORD ?
-      ;* Fill for now.                   *
     DCB ends
     _DCB typedef DCB
     LPDCB typedef ptr DCB
     COMMTIMEOUTS struct
       ReadIntervalTimeout DWORD ?
-      ;* Maximum time between read chars. *
       ReadTotalTimeoutMultiplier DWORD ?
-      ;* Multiplier of characters.        *
       ReadTotalTimeoutConstant DWORD ?
-      ;* Constant in milliseconds.        *
       WriteTotalTimeoutMultiplier DWORD ?
-      ;* Multiplier of characters.        *
       WriteTotalTimeoutConstant DWORD ?
-      ;* Constant in milliseconds.        *
     COMMTIMEOUTS ends
     _COMMTIMEOUTS typedef COMMTIMEOUTS
     LPCOMMTIMEOUTS typedef ptr COMMTIMEOUTS
     COMMCONFIG struct
       dwSize DWORD ?
-      ;* Size of the entire struct *
       wVersion WORD ?
-      ;* version of the structure *
       wReserved WORD ?
-      ;* alignment *
       dcb DCB <>
-      ;* device control block *
       dwProviderSubType DWORD ?
-      ;* ordinal value for identifying
-      ;provider-defined data structure format*
       dwProviderOffset DWORD ?
-      ;* Specifies the offset of provider specific
-      ;data field in bytes from the start *
       dwProviderSize DWORD ?
-      ;* size of the provider-specific data field *
-      wcProviderData WORD 1 dup (?)
-      ;* provider-specific data *
+      wcProviderData WCHAR 1 dup (?)
     COMMCONFIG ends
     _COMMCONFIG typedef COMMCONFIG
     LPCOMMCONFIG typedef ptr COMMCONFIG
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     FreeModule macro hLibModule
@@ -474,7 +357,6 @@ ifndef _WINBASE_
     FreeProcInstance macro lpProc
       exitm <(lpProc)>
     endm
-    ;* Global Memory Flags *
     GMEM_FIXED equ 0000h
     GMEM_MOVEABLE equ 0002h
     GMEM_NOCOMPACT equ 0010h
@@ -500,28 +382,24 @@ ifndef _WINBASE_
     GlobalDiscard macro h
       exitm <GlobalReAlloc ((h), 0, GMEM_MOVEABLE)>
     endm
-    ;* Flags returned by GlobalFlags (in addition to GMEM_DISCARDABLE) *
     GMEM_DISCARDED equ 4000h
     GMEM_LOCKCOUNT equ 00FFh
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     MEMORYSTATUS struct
       dwLength DWORD ?
       dwMemoryLoad DWORD ?
-      dwTotalPhys XWORD ?
-      dwAvailPhys XWORD ?
-      dwTotalPageFile XWORD ?
-      dwAvailPageFile XWORD ?
-      dwTotalVirtual XWORD ?
-      dwAvailVirtual XWORD ?
+      dwTotalPhys SIZE_T ?
+      dwAvailPhys SIZE_T ?
+      dwTotalPageFile SIZE_T ?
+      dwAvailPageFile SIZE_T ?
+      dwTotalVirtual SIZE_T ?
+      dwAvailVirtual SIZE_T ?
     MEMORYSTATUS ends
     _MEMORYSTATUS typedef MEMORYSTATUS
     LPMEMORYSTATUS typedef ptr MEMORYSTATUS
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-    ; Process dwCreationFlag values
     DEBUG_PROCESS equ 00000001h
     DEBUG_ONLY_THIS_PROCESS equ 00000002h
     CREATE_SUSPENDED equ 00000004h
@@ -539,8 +417,7 @@ ifndef _WINBASE_
     BELOW_NORMAL_PRIORITY_CLASS equ 00004000h
     ABOVE_NORMAL_PRIORITY_CLASS equ 00008000h
     INHERIT_PARENT_AFFINITY equ 00010000h
-    INHERIT_CALLER_PRIORITY equ 00020000h; Deprecated
-
+    INHERIT_CALLER_PRIORITY equ 00020000h
     CREATE_PROTECTED_PROCESS equ 00040000h
     EXTENDED_STARTUPINFO_PRESENT equ 00080000h
     PROCESS_MODE_BACKGROUND_BEGIN equ 00100000h
@@ -554,11 +431,7 @@ ifndef _WINBASE_
     PROFILE_KERNEL equ 20000000h
     PROFILE_SERVER equ 40000000h
     CREATE_IGNORE_SYSTEM_DEFAULT equ 80000000h
-    ; Thread dwCreationFlag values
-    ;#define CREATE_SUSPENDED                  0x00000004
-    STACK_SIZE_PARAM_IS_A_RESERVATION equ 00010000h; Threads only
-
-    ; Priority flags
+    STACK_SIZE_PARAM_IS_A_RESERVATION equ 00010000h
     THREAD_PRIORITY_LOWEST equ <THREAD_BASE_PRIORITY_MIN>
     THREAD_PRIORITY_BELOW_NORMAL equ (THREAD_PRIORITY_LOWEST + 1)
     THREAD_PRIORITY_NORMAL equ 0
@@ -569,28 +442,22 @@ ifndef _WINBASE_
     THREAD_PRIORITY_IDLE equ <THREAD_BASE_PRIORITY_IDLE>
     THREAD_MODE_BACKGROUND_BEGIN equ 00010000h
     THREAD_MODE_BACKGROUND_END equ 00020000h
-    ; GetFinalPathNameByHandle
-    VOLUME_NAME_DOS equ 0h;default
-
+    VOLUME_NAME_DOS equ 0h
     VOLUME_NAME_GUID equ 1h
     VOLUME_NAME_NT equ 2h
     VOLUME_NAME_NONE equ 4h
-    FILE_NAME_NORMALIZED equ 0h;default
-
+    FILE_NAME_NORMALIZED equ 0h
     FILE_NAME_OPENED equ 8h
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
-    ; JIT Debugging Info. This structure is defined to have constant size in
-    ; both the emulated and native environment.
     JIT_DEBUG_INFO struct
       dwSize DWORD ?
       dwProcessorArchitecture DWORD ?
       dwThreadID DWORD ?
       dwReserved0 DWORD ?
-      lpExceptionAddress QWORD ?
-      lpExceptionRecord QWORD ?
-      lpContextRecord QWORD ?
+      lpExceptionAddress ULONG64 ?
+      lpExceptionRecord ULONG64 ?
+      lpContextRecord ULONG64 ?
     JIT_DEBUG_INFO ends
     _JIT_DEBUG_INFO typedef JIT_DEBUG_INFO
     LPJIT_DEBUG_INFO typedef ptr JIT_DEBUG_INFO
@@ -598,7 +465,6 @@ ifndef _WINBASE_
     LPJIT_DEBUG_INFO32 typedef ptr JIT_DEBUG_INFO
     JIT_DEBUG_INFO64 typedef JIT_DEBUG_INFO
     LPJIT_DEBUG_INFO64 typedef ptr JIT_DEBUG_INFO
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if  not Defined(MIDL_PASS)
@@ -612,7 +478,6 @@ ifndef _WINBASE_
     DRIVE_REMOTE equ 4
     DRIVE_CDROM equ 5
     DRIVE_RAMDISK equ 6
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     ifndef _MAC
@@ -622,7 +487,6 @@ ifndef _WINBASE_
     else
       ;[...]
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     FILE_TYPE_UNKNOWN equ 0000h
@@ -633,7 +497,6 @@ ifndef _WINBASE_
     STD_INPUT_HANDLE equ (- 10)
     STD_OUTPUT_HANDLE equ (- 11)
     STD_ERROR_HANDLE equ (- 12)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     NOPARITY equ 0
@@ -644,17 +507,12 @@ ifndef _WINBASE_
     ONESTOPBIT equ 0
     ONE5STOPBITS equ 1
     TWOSTOPBITS equ 2
-    IGNORE equ 0; Ignore signal
-
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
+    IGNORE equ 0
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-    INFINITE equ 0FFFFFFFFh; Infinite timeout
-
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
+    INFINITE equ 0FFFFFFFFh
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
-    ; Baud rates at which the communication device operates
     CBR_110 equ 110
     CBR_300 equ 300
     CBR_600 equ 600
@@ -670,165 +528,86 @@ ifndef _WINBASE_
     CBR_115200 equ 115200
     CBR_128000 equ 128000
     CBR_256000 equ 256000
-    ; Error Flags
-    CE_RXOVER equ 0001h; Receive Queue overflow
-
-    CE_OVERRUN equ 0002h; Receive Overrun Error
-
-    CE_RXPARITY equ 0004h; Receive Parity Error
-
-    CE_FRAME equ 0008h; Receive Framing error
-
-    CE_BREAK equ 0010h; Break Detected
-
-    CE_TXFULL equ 0100h; TX Queue is full
-
-    CE_PTO equ 0200h; LPTx Timeout
-
-    CE_IOE equ 0400h; LPTx I/O Error
-
-    CE_DNS equ 0800h; LPTx Device not selected
-
-    CE_OOP equ 1000h; LPTx Out-Of-Paper
-
-    CE_MODE equ 8000h; Requested mode unsupported
-
-    IE_BADID equ (- 1); Invalid or unsupported id
-
-    IE_OPEN equ (- 2); Device Already Open
-
-    IE_NOPEN equ (- 3); Device Not Open
-
-    IE_MEMORY equ (- 4); Unable to allocate queues
-
-    IE_DEFAULT equ (- 5); Error in default parameters
-
-    IE_HARDWARE equ (- 10); Hardware Not Present
-
-    IE_BYTESIZE equ (- 11); Illegal Byte Size
-
-    IE_BAUDRATE equ (- 12); Unsupported BaudRate
-
-    ; Events
-    EV_RXCHAR equ 0001h; Any Character received
-
-    EV_RXFLAG equ 0002h; Received certain character
-
-    EV_TXEMPTY equ 0004h; Transmitt Queue Empty
-
-    EV_CTS equ 0008h; CTS changed state
-
-    EV_DSR equ 0010h; DSR changed state
-
-    EV_RLSD equ 0020h; RLSD changed state
-
-    EV_BREAK equ 0040h; BREAK received
-
-    EV_ERR equ 0080h; Line status error occurred
-
-    EV_RING equ 0100h; Ring signal detected
-
-    EV_PERR equ 0200h; Printer error occured
-
-    EV_RX80FULL equ 0400h; Receive buffer is 80 percent full
-
-    EV_EVENT1 equ 0800h; Provider specific event 1
-
-    EV_EVENT2 equ 1000h; Provider specific event 2
-
-    ; Escape Functions
-    SETXOFF equ 1; Simulate XOFF received
-
-    SETXON equ 2; Simulate XON received
-
-    SETRTS equ 3; Set RTS high
-
-    CLRRTS equ 4; Set RTS low
-
-    SETDTR equ 5; Set DTR high
-
-    CLRDTR equ 6; Set DTR low
-
-    RESETDEV equ 7; Reset device if possible
-
-    SETBREAK equ 8; Set the device break line.
-
-    CLRBREAK equ 9; Clear the device break line.
-
-    ; PURGE function flags.
-    PURGE_TXABORT equ 0001h; Kill the pending/current writes to the comm port.
-
-    PURGE_RXABORT equ 0002h; Kill the pending/current reads to the comm port.
-
-    PURGE_TXCLEAR equ 0004h; Kill the transmit queue if there.
-
-    PURGE_RXCLEAR equ 0008h; Kill the typeahead buffer if there.
-
-    LPTx equ 80h; Set if ID is for LPT device
-
-    ; Modem Status Flags
+    CE_RXOVER equ 0001h
+    CE_OVERRUN equ 0002h
+    CE_RXPARITY equ 0004h
+    CE_FRAME equ 0008h
+    CE_BREAK equ 0010h
+    CE_TXFULL equ 0100h
+    CE_PTO equ 0200h
+    CE_IOE equ 0400h
+    CE_DNS equ 0800h
+    CE_OOP equ 1000h
+    CE_MODE equ 8000h
+    IE_BADID equ (- 1)
+    IE_OPEN equ (- 2)
+    IE_NOPEN equ (- 3)
+    IE_MEMORY equ (- 4)
+    IE_DEFAULT equ (- 5)
+    IE_HARDWARE equ (- 10)
+    IE_BYTESIZE equ (- 11)
+    IE_BAUDRATE equ (- 12)
+    EV_RXCHAR equ 0001h
+    EV_RXFLAG equ 0002h
+    EV_TXEMPTY equ 0004h
+    EV_CTS equ 0008h
+    EV_DSR equ 0010h
+    EV_RLSD equ 0020h
+    EV_BREAK equ 0040h
+    EV_ERR equ 0080h
+    EV_RING equ 0100h
+    EV_PERR equ 0200h
+    EV_RX80FULL equ 0400h
+    EV_EVENT1 equ 0800h
+    EV_EVENT2 equ 1000h
+    SETXOFF equ 1
+    SETXON equ 2
+    SETRTS equ 3
+    CLRRTS equ 4
+    SETDTR equ 5
+    CLRDTR equ 6
+    RESETDEV equ 7
+    SETBREAK equ 8
+    CLRBREAK equ 9
+    PURGE_TXABORT equ 0001h
+    PURGE_RXABORT equ 0002h
+    PURGE_TXCLEAR equ 0004h
+    PURGE_RXCLEAR equ 0008h
+    LPTx equ 80h
     MS_CTS_ON equ (0010h)
     MS_DSR_ON equ (0020h)
     MS_RING_ON equ (0040h)
     MS_RLSD_ON equ (0080h)
-    ; WaitSoundState() Constants
     S_QUEUEEMPTY equ 0
     S_THRESHOLD equ 1
     S_ALLTHRESHOLD equ 2
-    ; Accent Modes
     S_NORMAL equ 0
     S_LEGATO equ 1
     S_STACCATO equ 2
-    ; SetSoundNoise() Sources
-    S_PERIOD512 equ 0; Freq = N/512 high pitch, less coarse hiss
-
-    S_PERIOD1024 equ 1; Freq = N/1024
-
-    S_PERIOD2048 equ 2; Freq = N/2048 low pitch, more coarse hiss
-
-    S_PERIODVOICE equ 3; Source is frequency from voice channel (3)
-
-    S_WHITE512 equ 4; Freq = N/512 high pitch, less coarse hiss
-
-    S_WHITE1024 equ 5; Freq = N/1024
-
-    S_WHITE2048 equ 6; Freq = N/2048 low pitch, more coarse hiss
-
-    S_WHITEVOICE equ 7; Source is frequency from voice channel (3)
-
-    S_SERDVNA equ (- 1); Device not available
-
-    S_SEROFM equ (- 2); Out of memory
-
-    S_SERMACT equ (- 3); Music active
-
-    S_SERQFUL equ (- 4); Queue full
-
-    S_SERBDNT equ (- 5); Invalid note
-
-    S_SERDLN equ (- 6); Invalid note length
-
-    S_SERDCC equ (- 7); Invalid note count
-
-    S_SERDTP equ (- 8); Invalid tempo
-
-    S_SERDVL equ (- 9); Invalid volume
-
-    S_SERDMD equ (- 10); Invalid mode
-
-    S_SERDSH equ (- 11); Invalid shape
-
-    S_SERDPT equ (- 12); Invalid pitch
-
-    S_SERDFQ equ (- 13); Invalid frequency
-
-    S_SERDDR equ (- 14); Invalid duration
-
-    S_SERDSR equ (- 15); Invalid source
-
-    S_SERDST equ (- 16); Invalid state
-
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
+    S_PERIOD512 equ 0
+    S_PERIOD1024 equ 1
+    S_PERIOD2048 equ 2
+    S_PERIODVOICE equ 3
+    S_WHITE512 equ 4
+    S_WHITE1024 equ 5
+    S_WHITE2048 equ 6
+    S_WHITEVOICE equ 7
+    S_SERDVNA equ (- 1)
+    S_SEROFM equ (- 2)
+    S_SERMACT equ (- 3)
+    S_SERQFUL equ (- 4)
+    S_SERBDNT equ (- 5)
+    S_SERDLN equ (- 6)
+    S_SERDCC equ (- 7)
+    S_SERDTP equ (- 8)
+    S_SERDVL equ (- 9)
+    S_SERDMD equ (- 10)
+    S_SERDSH equ (- 11)
+    S_SERDPT equ (- 12)
+    S_SERDFQ equ (- 13)
+    S_SERDDR equ (- 14)
+    S_SERDSR equ (- 15)
+    S_SERDST equ (- 16)
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     NMPWAIT_WAIT_FOREVER equ 0ffffffffh
@@ -864,7 +643,7 @@ ifndef _WINBASE_
       nErrCode WORD ?
       Reserved1 WORD ?
       Reserved2 WORD ?
-      szPathName SBYTE OFS_MAXPATHNAME dup (?)
+      szPathName CHAR OFS_MAXPATHNAME dup (?)
     OFSTRUCT ends
     _OFSTRUCT typedef OFSTRUCT
     LPOFSTRUCT typedef ptr OFSTRUCT
@@ -877,7 +656,6 @@ ifndef _WINBASE_
       exitm <(LPTSTR) (((i)))>
     endm
     INVALID_ATOM equ (0)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if  not Defined(_MAC)
@@ -894,30 +672,24 @@ ifndef _WINBASE_
     else
     endif
     wWinMain proto WIN_STD_CALL_CONV :HINSTANCE, :HINSTANCE, :LPWSTR, :SDWORD
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, GlobalAlloc, WIN_STD_CALL_CONV,, <:UINT, :SIZE_T>, 8
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, GlobalReAlloc, WIN_STD_CALL_CONV,, <:HGLOBAL, :SIZE_T, :UINT>, 12
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, GlobalSize, WIN_STD_CALL_CONV,, <:HGLOBAL>, 4
     @DefProto DllImport, GlobalUnlock, WIN_STD_CALL_CONV,, <:HGLOBAL>, 4
     @DefProto DllImport, GlobalLock, WIN_STD_CALL_CONV,, <:HGLOBAL>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, GlobalFlags, WIN_STD_CALL_CONV,, <:HGLOBAL>, 4
     @DefProto DllImport, GlobalHandle, WIN_STD_CALL_CONV,, <:LPCVOID>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, GlobalFree, WIN_STD_CALL_CONV,, <:HGLOBAL>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, GlobalCompact, WIN_STD_CALL_CONV,, <:DWORD>, 4
@@ -926,41 +698,32 @@ ifndef _WINBASE_
     @DefProto DllImport, GlobalWire, WIN_STD_CALL_CONV,, <:HGLOBAL>, 4
     @DefProto DllImport, GlobalUnWire, WIN_STD_CALL_CONV,, <:HGLOBAL>, 4
     @DefProto DllImport, GlobalMemoryStatus, WIN_STD_CALL_CONV,, <:LPMEMORYSTATUS>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, LocalAlloc, WIN_STD_CALL_CONV,, <:UINT, :SIZE_T>, 8
     @DefProto DllImport, LocalReAlloc, WIN_STD_CALL_CONV,, <:HLOCAL, :SIZE_T, :UINT>, 12
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES)*
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, LocalLock, WIN_STD_CALL_CONV,, <:HLOCAL>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, LocalHandle, WIN_STD_CALL_CONV,, <:LPCVOID>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, LocalUnlock, WIN_STD_CALL_CONV,, <:HLOCAL>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, LocalSize, WIN_STD_CALL_CONV,, <:HLOCAL>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, LocalFlags, WIN_STD_CALL_CONV,, <:HLOCAL>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, LocalFree, WIN_STD_CALL_CONV,, <:HLOCAL>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, LocalShrink, WIN_STD_CALL_CONV,, <:HLOCAL, :UINT>, 8
     @DefProto DllImport, LocalCompact, WIN_STD_CALL_CONV,, <:UINT>, 4
-    ; GetBinaryType return values.
     SCS_32BIT_BINARY equ 0
     SCS_DOS_BINARY equ 1
     SCS_WOW_BINARY equ 2
@@ -980,7 +743,6 @@ ifndef _WINBASE_
     else
       GetBinaryType equ <GetBinaryTypeA>
     endif
-    ; !UNICODE
     @DefProto DllImport, GetShortPathNameA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPSTR, :DWORD>, 12
     ifndef UNICODE
       GetShortPathName equ <GetShortPathNameA>
@@ -993,33 +755,25 @@ ifndef _WINBASE_
       else
         GetLongPathNameTransacted equ <GetLongPathNameTransactedA>
       endif
-      ; !UNICODE
     endif
-    ; _WIN32_WINNT >= 0x0600
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, GetProcessAffinityMask, WIN_STD_CALL_CONV,, <:HANDLE, :PDWORD_PTR, :PDWORD_PTR>, 12
     @DefProto DllImport, SetProcessAffinityMask, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD_PTR>, 8
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, GetProcessIoCounters, WIN_STD_CALL_CONV,, <:HANDLE, :PIO_COUNTERS>, 8
     @DefProto DllImport, FatalExit, WIN_STD_CALL_CONV,, <:SDWORD>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, SetEnvironmentStringsA, WIN_STD_CALL_CONV,, <:LPCH>, 4
     ifndef UNICODE
       SetEnvironmentStrings equ <SetEnvironmentStringsA>
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if (_WIN32_WINNT ge 0400h)
-    ; Fiber begin
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-      FIBER_FLAG_FLOAT_SWITCH equ 1h; context switch floating point
-
+      FIBER_FLAG_FLOAT_SWITCH equ 1h
       @DefProto DllImport, SwitchToFiber, WIN_STD_CALL_CONV,, <:LPVOID>, 4
       @DefProto DllImport, DeleteFiber, WIN_STD_CALL_CONV,, <:LPVOID>, 4
       if (_WIN32_WINNT ge 0501h)
@@ -1027,15 +781,11 @@ ifndef _WINBASE_
       endif
       @DefProto DllImport, CreateFiberEx, WIN_STD_CALL_CONV,, <:SIZE_T, :SIZE_T, :DWORD, :LPFIBER_START_ROUTINE, :LPVOID>, 20
       @DefProto DllImport, ConvertThreadToFiberEx, WIN_STD_CALL_CONV,, <:LPVOID, :DWORD>, 8
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, CreateFiber, WIN_STD_CALL_CONV,, <:SIZE_T, :LPFIBER_START_ROUTINE, :LPVOID>, 12
       @DefProto DllImport, ConvertThreadToFiber, WIN_STD_CALL_CONV,, <:LPVOID>, 4
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
-    ; Fiber end
-    ; UMS begin
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       if (_WIN32_WINNT ge 0601h) and  not Defined(MIDL_PASS)
         UMS_VERSION equ <RTL_UMS_VERSION>
@@ -1045,26 +795,21 @@ ifndef _WINBASE_
         UMS_SCHEDULER_REASON typedef SDWORD
         PUMS_SCHEDULER_ENTRY_POINT typedef PRTL_UMS_SCHEDULER_ENTRY_POINT
         UMS_SCHEDULER_STARTUP_INFO struct
-          ; UMS Version the application was built to. Should be set to UMS_VERSION
-          UmsVersion DWORD ?
-          ; Completion List to associate the new User Scheduler to.
+          UmsVersion ULONG ?
           CompletionList PUMS_COMPLETION_LIST ?
-          ; A pointer to the application-defined function that represents the starting
-          ; address of the Sheduler.
           SchedulerProc PUMS_SCHEDULER_ENTRY_POINT ?
-          ; pointer to a variable to be passed to the scheduler uppon first activation.
-          SchedulerParam POINTER ?
+          SchedulerParam PVOID ?
         UMS_SCHEDULER_STARTUP_INFO ends
         _UMS_SCHEDULER_STARTUP_INFO typedef UMS_SCHEDULER_STARTUP_INFO
         PUMS_SCHEDULER_STARTUP_INFO typedef ptr UMS_SCHEDULER_STARTUP_INFO
         UMS_SYSTEM_THREAD_INFORMATION struct
-          UmsVersion DWORD ?
+          UmsVersion ULONG ?
           union
             struct
-              ANONYMOUS_REC0 record ANONYMOUS_REC0_Filler:30, ANONYMOUS_REC0_IsUmsWorkerThread:1, ANONYMOUS_REC0_IsUmsSchedulerThread:1
-              ANONYMOUS_REC0 <>
+              ANONYMOUS_REC35 record ANONYMOUS_REC35_Filler:30, ANONYMOUS_REC35_IsUmsWorkerThread:1, ANONYMOUS_REC35_IsUmsSchedulerThread:1
+              ANONYMOUS_REC35 <>
             ends
-            ThreadUmsFlags DWORD ?
+            ThreadUmsFlags ULONG ?
           ends
         UMS_SYSTEM_THREAD_INFORMATION ends
         _UMS_SYSTEM_THREAD_INFORMATION typedef UMS_SYSTEM_THREAD_INFORMATION
@@ -1084,15 +829,10 @@ ifndef _WINBASE_
         @DefProto DllImport, EnterUmsSchedulingMode, WIN_STD_CALL_CONV,, <:PUMS_SCHEDULER_STARTUP_INFO>, 4
         @DefProto DllImport, GetUmsSystemThreadInformation, WIN_STD_CALL_CONV,, <:HANDLE, :PUMS_SYSTEM_THREAD_INFORMATION>, 8
       endif
-      ; (_WIN32_WINNT >= 0x0601) && !defined(MIDL_PASS)
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ; UMS end
-    ;* _WIN32_WINNT >= 0x0400 *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, SetThreadAffinityMask, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD_PTR>, 8
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (_WIN32_WINNT ge 0600h)
@@ -1101,13 +841,11 @@ ifndef _WINBASE_
       @DefProto DllImport, SetProcessDEPPolicy, WIN_STD_CALL_CONV,, <:DWORD>, 4
       @DefProto DllImport, GetProcessDEPPolicy, WIN_STD_CALL_CONV,, <:HANDLE, :LPDWORD, :PBOOL>, 12
     endif
-    ; _WIN32_WINNT >= 0x0600
     @DefProto DllImport, RequestWakeupLatency, WIN_STD_CALL_CONV,, <:LATENCY_TIME>, 4
     @DefProto DllImport, IsSystemResumeAutomatic, WIN_STD_CALL_CONV,, <>, 0
     @DefProto DllImport, GetThreadSelectorEntry, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :LPLDT_ENTRY>, 12
     @DefProto DllImport, SetThreadExecutionState, WIN_STD_CALL_CONV,, <:EXECUTION_STATE>, 4
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
-      ; Power Request APIs
       POWER_REQUEST_CONTEXT typedef REASON_CONTEXT
       PPOWER_REQUEST_CONTEXT typedef ptr REASON_CONTEXT
       LPPOWER_REQUEST_CONTEXT typedef ptr REASON_CONTEXT
@@ -1115,18 +853,14 @@ ifndef _WINBASE_
       @DefProto DllImport, PowerSetRequest, WIN_STD_CALL_CONV,, <:HANDLE, :POWER_REQUEST_TYPE>, 8
       @DefProto DllImport, PowerClearRequest, WIN_STD_CALL_CONV,, <:HANDLE, :POWER_REQUEST_TYPE>, 8
     endif
-    ; (_WIN32_WINNT >= _WIN32_WINNT_WIN7)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     ifdef _M_CEE_PURE
       ;[...]
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
     if  not Defined(RC_INVOKED)
-      ;#if _WIN32_WINNT >= 0x0501 || defined(WINBASE_DECLARE_RESTORE_LAST_ERROR)
       if Defined(WINBASE_DECLARE_RESTORE_LAST_ERROR)
         @DefProto DllImport, RestoreLastError, WIN_STD_CALL_CONV,, <:DWORD>, 4
         TYPE_PRESTORE_LAST_ERROR typedef proto WIN_STD_CALL_CONV :DWORD
@@ -1140,21 +874,13 @@ ifndef _WINBASE_
     HasOverlappedIoCompleted macro lpOverlapped
       exitm <(((lpOverlapped) - Internal) != STATUS_PENDING)>
     endm
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if (_WIN32_WINNT ge 0600h)
-      ; The following flags allows an application to change
-      ; the semantics of IO completion notification.
-      ; Don't queue an entry to an associated completion port if returning success
-      ; synchronously.
       FILE_SKIP_COMPLETION_PORT_ON_SUCCESS equ 1h
-      ; Don't set the file handle event on IO completion.
       FILE_SKIP_SET_EVENT_ON_HANDLE equ 2h
       @DefProto DllImport, SetFileCompletionNotificationModes, WIN_STD_CALL_CONV,, <:HANDLE, :UCHAR>, 8
     endif
-    ; _WIN32_WINNT >= 0x0600
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     SEM_FAILCRITICALERRORS equ 0001h
@@ -1165,18 +891,14 @@ ifndef _WINBASE_
       if (_WIN32_WINNT ge 0601h)
         @DefProto DllImport, Wow64GetThreadSelectorEntry, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :PWOW64_LDT_ENTRY>, 12
       endif
-      ; (_WIN32_WINNT >= 0x0601)
     endif
-    ; !defined(MIDL_PASS)
     @DefProto DllImport, DebugSetProcessKillOnExit, WIN_STD_CALL_CONV,, <:BOOL>, 4
     @DefProto DllImport, DebugBreakProcess, WIN_STD_CALL_CONV,, <:HANDLE>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_GAMES)
     if (_WIN32_WINNT ge 0403h)
       CRITICAL_SECTION_NO_DEBUG_INFO equ <RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO>
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, PulseEvent, WIN_STD_CALL_CONV,, <:HANDLE>, 4
@@ -1195,19 +917,15 @@ ifndef _WINBASE_
     else
       SetFileShortName equ <SetFileShortNameA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
     HANDLE_FLAG_INHERIT equ 00000001h
     HANDLE_FLAG_PROTECT_FROM_CLOSE equ 00000002h
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     HINSTANCE_ERROR equ 32
     @DefProto DllImport, LoadModule, WIN_STD_CALL_CONV,, <:LPCSTR, :LPVOID>, 8
     @DefProto DllImport, WinExec, WIN_STD_CALL_CONV,, <:LPCSTR, :UINT>, 8
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_APP)
     @DefProto DllImport, ClearCommBreak, WIN_STD_CALL_CONV,, <:HANDLE>, 4
@@ -1231,13 +949,9 @@ ifndef _WINBASE_
     if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
       @DefProto DllImport, OpenCommPort, WIN_STD_CALL_CONV,, <:ULONG, :DWORD, :DWORD>, 12
     endif
-    ; (NTDDI_VERSION >= NTDDI_WIN10_RS3)
     if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
-      ; NTDDI_WIN10_RS4NTDDI_WIN10_RS4
       @DefProto DllImport, GetCommPorts, WIN_STD_CALL_CONV,, <:PULONG, :ULONG, :PULONG>, 12
     endif
-    ; (NTDDI_VERSION >= NTDDI_WIN10_RS3) // NTDDI_WIN10_RS4NTDDI_WIN10_RS4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_APP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, SetTapePosition, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :DWORD, :DWORD, :DWORD, :BOOL>, 24
@@ -1253,11 +967,9 @@ ifndef _WINBASE_
     @DefProto DllImport, SetTapeParameters, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :LPVOID>, 12
     SET_TAPE_MEDIA_INFORMATION equ 0
     SET_TAPE_DRIVE_INFORMATION equ 1
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, MulDiv, WIN_STD_CALL_CONV,, <:SDWORD, :SDWORD, :SDWORD>, 12
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     DEP_SYSTEM_POLICY_TYPE typedef SDWORD
@@ -1271,15 +983,11 @@ ifndef _WINBASE_
     if (NTDDI_VERSION ge NTDDI_WINXPSP3)
       @DefProto DllImport, GetSystemDEPPolicy, WIN_STD_CALL_CONV,, <>, 0
     endif
-    ; (NTDDI_VERSION >= NTDDI_WINXPSP3)
     if _WIN32_WINNT ge 0501h
       @DefProto DllImport, GetSystemRegistryQuota, WIN_STD_CALL_CONV,, <:PDWORD, :PDWORD>, 8
     endif
-    ; (_WIN32_WINNT >= 0x0501)
-    ; Routines to convert back and forth between system time and file time
     @DefProto DllImport, FileTimeToDosDateTime, WIN_STD_CALL_CONV,, <:ptr FILETIME, :LPWORD, :LPWORD>, 12
     @DefProto DllImport, DosDateTimeToFileTime, WIN_STD_CALL_CONV,, <:WORD, :WORD, :LPFILETIME>, 12
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     FORMAT_MESSAGE_ALLOCATE_BUFFER equ 00000100h
@@ -1291,11 +999,9 @@ ifndef _WINBASE_
       else
         FormatMessage equ <FormatMessageA>
       endif
-      ; !UNICODE
       if Defined(_M_CEE)
         ;[...]
       endif
-      ;* MIDL_PASS *
     endif
     FORMAT_MESSAGE_IGNORE_INSERTS equ 00000200h
     FORMAT_MESSAGE_FROM_STRING equ 00000400h
@@ -1303,7 +1009,6 @@ ifndef _WINBASE_
     FORMAT_MESSAGE_FROM_SYSTEM equ 00001000h
     FORMAT_MESSAGE_ARGUMENT_ARRAY equ 00002000h
     FORMAT_MESSAGE_MAX_WIDTH_MASK equ 000000FFh
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, CreateMailslotA, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD, :DWORD, :LPSECURITY_ATTRIBUTES>, 16
@@ -1313,10 +1018,8 @@ ifndef _WINBASE_
     else
       CreateMailslot equ <CreateMailslotA>
     endif
-    ; !UNICODE
     @DefProto DllImport, GetMailslotInfo, WIN_STD_CALL_CONV,, <:HANDLE, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD>, 20
     @DefProto DllImport, SetMailslotInfo, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD>, 8
-    ; File Encryption API
     @DefProto DllImport, EncryptFileA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
     @DefProto DllImport, EncryptFileW, WIN_STD_CALL_CONV,, <:LPCWSTR>, 4
     ifdef UNICODE
@@ -1324,7 +1027,6 @@ ifndef _WINBASE_
     else
       EncryptFile equ <EncryptFileA>
     endif
-    ; !UNICODE
     @DefProto DllImport, DecryptFileA, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD>, 8
     @DefProto DllImport, DecryptFileW, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD>, 8
     ifdef UNICODE
@@ -1332,8 +1034,6 @@ ifndef _WINBASE_
     else
       DecryptFile equ <DecryptFileA>
     endif
-    ; !UNICODE
-    ;  Encryption Status Value
     FILE_ENCRYPTABLE equ 0
     FILE_IS_ENCRYPTED equ 1
     FILE_SYSTEM_ATTR equ 2
@@ -1351,8 +1051,6 @@ ifndef _WINBASE_
     else
       FileEncryptionStatus equ <FileEncryptionStatusA>
     endif
-    ; !UNICODE
-    ; Currently defined recovery flags
     EFS_USE_RECOVERY_KEYS equ (1h)
     TYPE_PFE_EXPORT_FUNC typedef proto WIN_STD_CALL_CONV :PBYTE, :PVOID, :ULONG
     PFE_EXPORT_FUNC typedef ptr TYPE_PFE_EXPORT_FUNC
@@ -1360,7 +1058,6 @@ ifndef _WINBASE_
     TYPE_PFE_IMPORT_FUNC typedef proto WIN_STD_CALL_CONV :PBYTE, :PVOID, :PULONG
     PFE_IMPORT_FUNC typedef ptr TYPE_PFE_IMPORT_FUNC
 
-    ;  OpenRaw flag values
     CREATE_FOR_IMPORT equ (1)
     CREATE_FOR_DIR equ (2)
     OVERWRITE_HIDDEN equ (4)
@@ -1373,13 +1070,10 @@ ifndef _WINBASE_
     else
       OpenEncryptedFileRaw equ <OpenEncryptedFileRawA>
     endif
-    ; !UNICODE
     @DefProto DllImport, ReadEncryptedFileRaw, WIN_STD_CALL_CONV,, <:PFE_EXPORT_FUNC, :PVOID, :PVOID>, 12
     @DefProto DllImport, WriteEncryptedFileRaw, WIN_STD_CALL_CONV,, <:PFE_IMPORT_FUNC, :PVOID, :PVOID>, 12
     @DefProto DllImport, CloseEncryptedFileRaw, WIN_STD_CALL_CONV,, <:PVOID>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
-  ; _l Compat Functions
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, lstrcmpA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR>, 8
     @DefProto DllImport, lstrcmpW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR>, 8
@@ -1388,7 +1082,6 @@ ifndef _WINBASE_
     else
       lstrcmp equ <lstrcmpA>
     endif
-    ; !UNICODE
     @DefProto DllImport, lstrcmpiA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR>, 8
     @DefProto DllImport, lstrcmpiW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR>, 8
     ifdef UNICODE
@@ -1396,8 +1089,6 @@ ifndef _WINBASE_
     else
       lstrcmpi equ <lstrcmpiA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if Defined(DEPRECATE_SUPPORTED)
@@ -1409,30 +1100,22 @@ ifndef _WINBASE_
     else
       lstrcpyn equ <lstrcpynA>
     endif
-    ; !UNICODE
     @DefProto DllImport, lstrcpyA, WIN_STD_CALL_CONV,, <:LPSTR, :LPCSTR>, 8
-    ; deprecated: annotation is as good as it gets
     @DefProto DllImport, lstrcpyW, WIN_STD_CALL_CONV,, <:LPWSTR, :LPCWSTR>, 8
-    ; deprecated: annotation is as good as it gets
     ifdef UNICODE
       lstrcpy equ <lstrcpyW>
     else
       lstrcpy equ <lstrcpyA>
     endif
-    ; !UNICODE
     @DefProto DllImport, lstrcatA, WIN_STD_CALL_CONV,, <:LPSTR, :LPCSTR>, 8
-    ; deprecated: annotation is as good as it gets
     @DefProto DllImport, lstrcatW, WIN_STD_CALL_CONV,, <:LPWSTR, :LPCWSTR>, 8
-    ; deprecated: annotation is as good as it gets
     ifdef UNICODE
       lstrcat equ <lstrcatW>
     else
       lstrcat equ <lstrcatA>
     endif
-    ; !UNICODE
     if Defined(DEPRECATE_SUPPORTED)
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, lstrlenA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
@@ -1442,8 +1125,6 @@ ifndef _WINBASE_
     else
       lstrlen equ <lstrlenA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, OpenFile, WIN_STD_CALL_CONV,, <:LPCSTR, :LPOFSTRUCT, :UINT>, 12
@@ -1456,30 +1137,25 @@ ifndef _WINBASE_
     @DefProto DllImport, _lclose, WIN_STD_CALL_CONV,, <:HFILE>, 4
     @DefProto DllImport, _llseek, WIN_STD_CALL_CONV,, <:HFILE, :LONG, :SDWORD>, 12
     @DefProto DllImport, IsTextUnicode, WIN_STD_CALL_CONV,, <:ptr VOID, :SDWORD, :LPINT>, 12
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if (_WIN32_WINNT ge 0400h)
       @DefProto DllImport, SignalObjectAndWait, WIN_STD_CALL_CONV,, <:HANDLE, :HANDLE, :DWORD, :BOOL>, 16
-      ;* _WIN32_WINNT >= 0x0400 *
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, BackupRead, WIN_STD_CALL_CONV,, <:HANDLE, :LPBYTE, :DWORD, :LPDWORD, :BOOL, :BOOL, :ptr LPVOID>, 28
     @DefProto DllImport, BackupSeek, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :DWORD, :LPDWORD, :LPDWORD, :ptr LPVOID>, 24
     @DefProto DllImport, BackupWrite, WIN_STD_CALL_CONV,, <:HANDLE, :LPBYTE, :DWORD, :LPDWORD, :BOOL, :BOOL, :ptr LPVOID>, 28
-    ;  Stream id structure
     WIN32_STREAM_ID struct
       dwStreamId DWORD ?
       dwStreamAttributes DWORD ?
       Size_ LARGE_INTEGER <>
       dwStreamNameSize DWORD ?
-      cStreamName WORD ANYSIZE_ARRAY dup (?)
+      cStreamName WCHAR ANYSIZE_ARRAY dup (?)
     WIN32_STREAM_ID ends
     _WIN32_STREAM_ID typedef WIN32_STREAM_ID
     LPWIN32_STREAM_ID typedef ptr WIN32_STREAM_ID
-    ;  Stream Ids
     BACKUP_INVALID equ 00000000h
     BACKUP_DATA equ 00000001h
     BACKUP_EA_DATA equ 00000002h
@@ -1492,24 +1168,20 @@ ifndef _WINBASE_
     BACKUP_SPARSE_BLOCK equ 00000009h
     BACKUP_TXFS_DATA equ 0000000ah
     BACKUP_GHOSTED_FILE_EXTENTS equ 0000000bh
-    ;  Stream Attributes
     STREAM_NORMAL_ATTRIBUTE equ 00000000h
     STREAM_MODIFIED_WHEN_READ equ 00000001h
     STREAM_CONTAINS_SECURITY equ 00000002h
     STREAM_CONTAINS_PROPERTIES equ 00000004h
     STREAM_SPARSE_ATTRIBUTE equ 00000008h
     STREAM_CONTAINS_GHOSTED_FILE_EXTENTS equ 00000010h
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
-    ; Dual Mode API below this line. Dual Mode Structures also included.
     STARTF_USESHOWWINDOW equ 00000001h
     STARTF_USESIZE equ 00000002h
     STARTF_USEPOSITION equ 00000004h
     STARTF_USECOUNTCHARS equ 00000008h
     STARTF_USEFILLATTRIBUTE equ 00000010h
-    STARTF_RUNFULLSCREEN equ 00000020h; ignored for non-x86 platforms
-
+    STARTF_RUNFULLSCREEN equ 00000020h
     STARTF_FORCEONFEEDBACK equ 00000040h
     STARTF_FORCEOFFFEEDBACK equ 00000080h
     STARTF_USESTDHANDLES equ 00000100h
@@ -1518,17 +1190,13 @@ ifndef _WINBASE_
       STARTF_TITLEISLINKNAME equ 00000800h
       STARTF_TITLEISAPPID equ 00001000h
       STARTF_PREVENTPINNING equ 00002000h
-      ;* WINVER >= 0x0400 *
     endif
     if (WINVER ge 0600h)
       STARTF_UNTRUSTEDSOURCE equ 00008000h
-      ;* WINVER >= 0x0600 *
     endif
     if (NTDDI_VERSION ge NTDDI_WIN10_FE)
       STARTF_HOLOGRAPHIC equ 00040000h
     endif
-    ; (NTDDI_VERSION >= NTDDI_WIN10_FE)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if (_WIN32_WINNT ge 0600h)
@@ -1551,14 +1219,10 @@ ifndef _WINBASE_
         STARTUPINFOEX typedef STARTUPINFOEXA
         LPSTARTUPINFOEX typedef LPSTARTUPINFOEXA
       endif
-      ; UNICODE
     endif
-    ; (_WIN32_WINNT >= 0x0600)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     SHUTDOWN_NORETRY equ 00000001h
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, OpenMutexA, WIN_STD_CALL_CONV,, <:DWORD, :BOOL, :LPCSTR>, 12
@@ -1569,14 +1233,12 @@ ifndef _WINBASE_
     ifndef UNICODE
       CreateSemaphore equ <CreateSemaphoreA>
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, OpenSemaphoreA, WIN_STD_CALL_CONV,, <:DWORD, :BOOL, :LPCSTR>, 12
     ifndef UNICODE
       OpenSemaphore equ <OpenSemaphoreA>
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if (_WIN32_WINNT ge 0400h) or (_WIN32_WINDOWS gt 0400h)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
@@ -1597,18 +1259,14 @@ ifndef _WINBASE_
         ifndef UNICODE
           CreateWaitableTimerEx equ <CreateWaitableTimerExA>
         endif
-        ;* (_WIN32_WINNT >= 0x0600) *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
-    ;* (_WIN32_WINNT >= 0x0400) || (_WIN32_WINDOWS > 0x0400) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, CreateFileMappingA, WIN_STD_CALL_CONV,, <:HANDLE, :LPSECURITY_ATTRIBUTES, :DWORD, :DWORD, :DWORD, :LPCSTR>, 24
     ifndef UNICODE
       CreateFileMapping equ <CreateFileMappingA>
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if _WIN32_WINNT ge 0600h
@@ -1616,53 +1274,40 @@ ifndef _WINBASE_
       ifndef UNICODE
         CreateFileMappingNuma equ <CreateFileMappingNumaA>
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
   endif
-  ; _WIN32_WINNT >= 0x0600
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, OpenFileMappingA, WIN_STD_CALL_CONV,, <:DWORD, :BOOL, :LPCSTR>, 12
     ifndef UNICODE
       OpenFileMapping equ <OpenFileMappingA>
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetLogicalDriveStringsA, WIN_STD_CALL_CONV,, <:DWORD, :LPSTR>, 8
     ifndef UNICODE
       GetLogicalDriveStrings equ <GetLogicalDriveStringsA>
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if (_WIN32_WINNT ge 0602h)
       @DefProto DllImport, LoadPackagedLibrary, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD>, 8
     endif
-    ; _WIN32_WINNT >= 0x0602
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if (_WIN32_WINNT ge 0600h)
-    ; Supported process protection levels.
     PROTECTION_LEVEL_WINTCB_LIGHT equ 00000000h
     PROTECTION_LEVEL_WINDOWS equ 00000001h
     PROTECTION_LEVEL_WINDOWS_LIGHT equ 00000002h
     PROTECTION_LEVEL_ANTIMALWARE_LIGHT equ 00000003h
     PROTECTION_LEVEL_LSA_LIGHT equ 00000004h
-    ; The following protection levels are supplied for testing only (no win32
-    ; callers need these).
     PROTECTION_LEVEL_WINTCB equ 00000005h
     PROTECTION_LEVEL_CODEGEN_LIGHT equ 00000006h
     PROTECTION_LEVEL_AUTHENTICODE equ 00000007h
     PROTECTION_LEVEL_PPL_APP equ 00000008h
     PROTECTION_LEVEL_SAME equ 0FFFFFFFFh
-    ; The following is only used as a value for ProtectionLevel
-    ; when querying ProcessProtectionLevelInfo in GetProcessInformation.
     PROTECTION_LEVEL_NONE equ 0FFFFFFFEh
   endif
-  ; _WIN32_WINNT >= 0x0600
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if (_WIN32_WINNT ge 0600h)
       PROCESS_NAME_NATIVE equ 00000001h
@@ -1673,21 +1318,14 @@ ifndef _WINBASE_
       else
         QueryFullProcessImageName equ <QueryFullProcessImageNameA>
       endif
-      ; !UNICODE
     endif
-    ; _WIN32_WINNT >= 0x0600
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if (_WIN32_WINNT ge 0600h)
-      ; Extended process and thread attribute support
       PROC_THREAD_ATTRIBUTE_NUMBER equ 0000FFFFh
-      PROC_THREAD_ATTRIBUTE_THREAD equ 00010000h; Attribute may be used with thread creation
-
-      PROC_THREAD_ATTRIBUTE_INPUT equ 00020000h; Attribute is input only
-
-      PROC_THREAD_ATTRIBUTE_ADDITIVE equ 00040000h; Attribute may be "accumulated," e.g. bitmasks, counters, etc.
-
+      PROC_THREAD_ATTRIBUTE_THREAD equ 00010000h
+      PROC_THREAD_ATTRIBUTE_INPUT equ 00020000h
+      PROC_THREAD_ATTRIBUTE_ADDITIVE equ 00040000h
       ifndef _USE_FULL_PROC_THREAD_ATTRIBUTE
         PROC_THREAD_ATTRIBUTE_NUM typedef SDWORD
         ProcThreadAttributeParentProcess equ 0
@@ -1742,7 +1380,6 @@ ifndef _WINBASE_
       PROC_THREAD_ATTRIBUTE_PARENT_PROCESS equ <ProcThreadAttributeValue(ProcThreadAttributeParentProcess, FALSE, TRUE, FALSE)>
       PROC_THREAD_ATTRIBUTE_HANDLE_LIST equ <ProcThreadAttributeValue(ProcThreadAttributeHandleList, FALSE, TRUE, FALSE)>
     endif
-    ; (_WIN32_WINNT >= 0x0600)
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
       PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY equ <ProcThreadAttributeValue(ProcThreadAttributeGroupAffinity, TRUE, TRUE, FALSE)>
       PROC_THREAD_ATTRIBUTE_PREFERRED_NODE equ <ProcThreadAttributeValue(ProcThreadAttributePreferredNode, FALSE, TRUE, FALSE)>
@@ -1766,289 +1403,213 @@ ifndef _WINBASE_
       PROC_THREAD_ATTRIBUTE_ENABLE_OPTIONAL_XSTATE_FEATURES equ <ProcThreadAttributeValue(ProcThreadAttributeEnableOptionalXStateFeatures, TRUE, TRUE, FALSE)>
     endif
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
-      ; Define legacy creation mitigation policy options, which are straight
-      ; bitmasks.  Bits 0-5 are legacy bits.
       PROCESS_CREATION_MITIGATION_POLICY_DEP_ENABLE equ 01h
       PROCESS_CREATION_MITIGATION_POLICY_DEP_ATL_THUNK_ENABLE equ 02h
       PROCESS_CREATION_MITIGATION_POLICY_SEHOP_ENABLE equ 04h
     endif
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
-      ; Define mandatory ASLR options.  Mandatory ASLR forcibly rebases images that
-      ; are not dynamic base compatible by acting as though there were an image base
-      ; collision at load time.
-      ; Note that 'require relocations' mode refuses load of images that do not have
-      ; a base relocation section.
       PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_MASK equ (00000003h shl 8)
       PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_DEFER equ (00000000h shl 8)
       PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_ALWAYS_ON equ (00000001h shl 8)
       PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_ALWAYS_OFF equ (00000002h shl 8)
       PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_ALWAYS_ON_REQ_RELOCS equ (00000003h shl 8)
-      ; Define heap terminate on corruption options.  Note that 'always off' does
-      ; not override the default opt-in for binaries with current subsystem versions
-      ; set in the image header.
-      ; Heap terminate on corruption is user mode enforced.
       PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_MASK equ (00000003h shl 12)
       PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_DEFER equ (00000000h shl 12)
       PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_ALWAYS_ON equ (00000001h shl 12)
       PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_ALWAYS_OFF equ (00000002h shl 12)
       PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_RESERVED equ (00000003h shl 12)
-      ; Define bottom up randomization (includes stack randomization) options,
-      ; i.e. randomization of the lowest user address.
       PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_MASK equ (00000003h shl 16)
       PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_DEFER equ (00000000h shl 16)
       PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_ALWAYS_ON equ (00000001h shl 16)
       PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_ALWAYS_OFF equ (00000002h shl 16)
       PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_RESERVED equ (00000003h shl 16)
-      ; Define high entropy bottom up randomization.  Note that high entropy bottom
-      ; up randomization is effective if and only if bottom up ASLR is also enabled.
-      ; N.B.  High entropy mode is only meaningful for native 64-bit processes.  in
-      ;       high entropy mode, up to 1TB of bottom up variance is enabled.
       PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_MASK equ (00000003h shl 20)
       PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_DEFER equ (00000000h shl 20)
       PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_ALWAYS_ON equ (00000001h shl 20)
       PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_ALWAYS_OFF equ (00000002h shl 20)
       PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_RESERVED equ (00000003h shl 20)
-      ; Define handle checking enforcement options.  Handle checking enforcement
-      ; causes an exception to be raised immediately on a bad handle reference,
-      ; versus simply returning a failure status from the handle reference.
       PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_MASK equ (00000003h shl 24)
       PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_DEFER equ (00000000h shl 24)
       PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_ALWAYS_ON equ (00000001h shl 24)
       PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_ALWAYS_OFF equ (00000002h shl 24)
       PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_RESERVED equ (00000003h shl 24)
-      ; Define win32k system call disable options.  Win32k system call disable
-      ; prevents a process from making Win32k calls.
       PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_MASK equ (00000003h shl 28)
       PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_DEFER equ (00000000h shl 28)
       PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_ALWAYS_ON equ (00000001h shl 28)
       PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_ALWAYS_OFF equ (00000002h shl 28)
       PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_RESERVED equ (00000003h shl 28)
-      ; Define the extension point disable options.  Extension point disable allows
-      ; a process to opt-out of loading various arbitrary extension point DLLs.
       PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_MASK equ (00000003h shl 32)
       PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_DEFER equ (00000000h shl 32)
       PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_ALWAYS_ON equ (00000001h shl 32)
       PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_ALWAYS_OFF equ (00000002h shl 32)
       PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_RESERVED equ (00000003h shl 32)
       if (_WIN32_WINNT ge _WIN32_WINNT_WINBLUE)
-        ; Define dynamic code options.
         PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_MASK equ (00000003h shl 36)
         PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_DEFER equ (00000000h shl 36)
         PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_ALWAYS_ON equ (00000001h shl 36)
         PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_ALWAYS_OFF equ (00000002h shl 36)
         PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_ALWAYS_ON_ALLOW_OPT_OUT equ (00000003h shl 36)
-        ; Define Control Flow Guard (CFG) mitigation policy options.  Control Flow
-        ; Guard allows indirect control transfers to be checked at runtime.
         PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_MASK equ (00000003h shl 40)
         PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_DEFER equ (00000000h shl 40)
         PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_ALWAYS_ON equ (00000001h shl 40)
         PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_ALWAYS_OFF equ (00000002h shl 40)
         PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_EXPORT_SUPPRESSION equ (00000003h shl 40)
-        ; Define module signature options.  When enabled, this option will
-        ; block mapping of non-microsoft binaries.
         PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_MASK equ (00000003h shl 44)
         PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_DEFER equ (00000000h shl 44)
         PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_ON equ (00000001h shl 44)
         PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_OFF equ (00000002h shl 44)
         PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALLOW_STORE equ (00000003h shl 44)
         if (_WIN32_WINNT ge _WIN32_WINNT_WINTHRESHOLD)
-          ; Define Font Disable Policy.  When enabled, this option will
-          ; block loading Non System Fonts.
           PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_MASK equ (00000003h shl 48)
           PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_DEFER equ (00000000h shl 48)
           PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_ALWAYS_ON equ (00000001h shl 48)
           PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_ALWAYS_OFF equ (00000002h shl 48)
           PROCESS_CREATION_MITIGATION_POLICY_AUDIT_NONSYSTEM_FONTS equ (00000003h shl 48)
-          ; Define remote image load options.  When enabled, this option will
-          ; block mapping of images from remote devices.
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_MASK equ (00000003h shl 52)
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_DEFER equ (00000000h shl 52)
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_ALWAYS_ON equ (00000001h shl 52)
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_ALWAYS_OFF equ (00000002h shl 52)
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_RESERVED equ (00000003h shl 52)
-          ; Define low IL image load options.  When enabled, this option will
-          ; block mapping of images that have the low mandatory label.
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_MASK equ (00000003h shl 56)
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_DEFER equ (00000000h shl 56)
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_ALWAYS_ON equ (00000001h shl 56)
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_ALWAYS_OFF equ (00000002h shl 56)
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_RESERVED equ (00000003h shl 56)
-          ; Define image load options to prefer System32 images compared to
-          ; the same images in application directory. When enabled, this option
-          ; will prefer loading images from system32 folder.
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_MASK equ (00000003h shl 60)
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_DEFER equ (00000000h shl 60)
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_ALWAYS_ON equ (00000001h shl 60)
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_ALWAYS_OFF equ (00000002h shl 60)
           PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_RESERVED equ (00000003h shl 60)
-          ; Define Loader Integrity Continuity mitigation policy options.  This mitigation
-          ; enforces OS signing levels for depenedent module loads.
           PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_MASK equ (00000003h shl 4)
           PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_DEFER equ (00000000h shl 4)
           PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_ALWAYS_ON equ (00000001h shl 4)
           PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_ALWAYS_OFF equ (00000002h shl 4)
           PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_AUDIT equ (00000003h shl 4)
-          ; Define the strict Control Flow Guard (CFG) mitigation policy options. This mitigation
-          ; requires all images that load in the process to be instrumented by CFG.
           PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_MASK equ (00000003h shl 8)
           PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_DEFER equ (00000000h shl 8)
           PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_ALWAYS_ON equ (00000001h shl 8)
           PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_ALWAYS_OFF equ (00000002h shl 8)
           PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_RESERVED equ (00000003h shl 8)
-          ; Define the module tampering mitigation policy options.
           PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_MASK equ (00000003h shl 12)
           PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_DEFER equ (00000000h shl 12)
           PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_ALWAYS_ON equ (00000001h shl 12)
           PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_ALWAYS_OFF equ (00000002h shl 12)
           PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_NOINHERIT equ (00000003h shl 12)
-          ; Define the restricted indirect branch prediction mitigation policy options.
           PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_MASK equ (00000003h shl 16)
           PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_DEFER equ (00000000h shl 16)
           PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_ALWAYS_ON equ (00000001h shl 16)
           PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_ALWAYS_OFF equ (00000002h shl 16)
           PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_RESERVED equ (00000003h shl 16)
-          ; Define the policy option that allows a broker to downgrade the dynamic code policy for a process.
           PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_MASK equ (00000003h shl 20)
           PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_DEFER equ (00000000h shl 20)
           PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_ALWAYS_ON equ (00000001h shl 20)
           PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_ALWAYS_OFF equ (00000002h shl 20)
           PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_RESERVED equ (00000003h shl 20)
-          ; Define the Memory Disambiguation Disable mitigation policy options.
           PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_MASK equ (00000003h shl 24)
           PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_DEFER equ (00000000h shl 24)
           PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_ALWAYS_ON equ (00000001h shl 24)
           PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_ALWAYS_OFF equ (00000002h shl 24)
           PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_RESERVED equ (00000003h shl 24)
-          ; Define the user-mode shadow stack mitigation policy options.
           PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_MASK equ (00000003h shl 28)
           PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_DEFER equ (00000000h shl 28)
           PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_ALWAYS_ON equ (00000001h shl 28)
           PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_ALWAYS_OFF equ (00000002h shl 28)
           PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_STRICT_MODE equ (00000003h shl 28)
-          ; Define the user-mode CET set context instruction pointer validation mitigation policy options.
           PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_MASK equ (00000003h shl 32)
           PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_DEFER equ (00000000h shl 32)
           PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_ALWAYS_ON equ (00000001h shl 32)
           PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_ALWAYS_OFF equ (00000002h shl 32)
           PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_RELAXED_MODE equ (00000003h shl 32)
-          ; Define the block non-CET/non-EHCONT binaries mitigation policy options.
           PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_MASK equ (00000003h shl 36)
           PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_DEFER equ (00000000h shl 36)
           PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_ALWAYS_ON equ (00000001h shl 36)
           PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_ALWAYS_OFF equ (00000002h shl 36)
           PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_NON_EHCONT equ (00000003h shl 36)
-          ; Define the XFG mitigation policy options.
           PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_MASK equ (00000003h shl 40)
           PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_DEFER equ (00000000h shl 40)
           PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_ALWAYS_ON equ (00000001h shl 40)
           PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_ALWAYS_OFF equ (00000002h shl 40)
           PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_RESERVED equ (00000003h shl 40)
-          ; Define the ARM64 user-mode per-process instruction pointer authentication
-          ; mitigation policy options.
           PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_MASK equ (00000003h shl 44)
           PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_DEFER equ (00000000h shl 44)
           PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_ALWAYS_ON equ (00000001h shl 44)
           PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_ALWAYS_OFF equ (00000002h shl 44)
           PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_RESERVED equ (00000003h shl 44)
-          ; Define the CET-related dynamic code validation data APIs out-of-proc mitigation policy options.
           PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_MASK equ (00000003h shl 48)
           PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_DEFER equ (00000000h shl 48)
           PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_ALWAYS_ON equ (00000001h shl 48)
           PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_ALWAYS_OFF equ (00000002h shl 48)
           PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_RESERVED equ (00000003h shl 48)
-          ; Define the restrict core sharing policy options.
           PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_MASK equ (00000003h shl 52)
           PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_DEFER equ (00000000h shl 52)
           PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_ALWAYS_ON equ (00000001h shl 52)
           PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_ALWAYS_OFF equ (00000002h shl 52)
           PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_RESERVED equ (00000003h shl 52)
-          ; Define FSCTL system call disable options.  FSCTL system call disable
-          ; prevents a process from making NtFsControlFile calls.
           PROCESS_CREATION_MITIGATION_POLICY2_FSCTL_SYSTEM_CALL_DISABLE_MASK equ (00000003h shl 56)
           PROCESS_CREATION_MITIGATION_POLICY2_FSCTL_SYSTEM_CALL_DISABLE_DEFER equ (00000000h shl 56)
           PROCESS_CREATION_MITIGATION_POLICY2_FSCTL_SYSTEM_CALL_DISABLE_ALWAYS_ON equ (00000001h shl 56)
           PROCESS_CREATION_MITIGATION_POLICY2_FSCTL_SYSTEM_CALL_DISABLE_ALWAYS_OFF equ (00000002h shl 56)
           PROCESS_CREATION_MITIGATION_POLICY2_FSCTL_SYSTEM_CALL_DISABLE_RESERVED equ (00000003h shl 56)
         endif
-        ; _WIN32_WINNT_WINTHRESHOLD
       endif
-      ; _WIN32_WINNT_WINBLUE
     endif
-    ; _WIN32_WINNT_WIN8
     if (_WIN32_WINNT ge _WIN32_WINNT_WINTHRESHOLD)
       PROC_THREAD_ATTRIBUTE_JOB_LIST equ <ProcThreadAttributeValue(ProcThreadAttributeJobList, FALSE, TRUE, FALSE)>
-      ; Define Attribute to disable creation of child process
       PROCESS_CREATION_CHILD_PROCESS_RESTRICTED equ 01h
       PROCESS_CREATION_CHILD_PROCESS_OVERRIDE equ 02h
       PROCESS_CREATION_CHILD_PROCESS_RESTRICTED_UNLESS_SECURE equ 04h
       PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY equ <ProcThreadAttributeValue(ProcThreadAttributeChildProcessPolicy, FALSE, TRUE, FALSE)>
-      ; Define Attribute to opt out of matching All Application Packages
       PROCESS_CREATION_ALL_APPLICATION_PACKAGES_OPT_OUT equ 01h
       PROC_THREAD_ATTRIBUTE_ALL_APPLICATION_PACKAGES_POLICY equ <ProcThreadAttributeValue(ProcThreadAttributeAllApplicationPackagesPolicy, FALSE, TRUE, FALSE)>
       PROC_THREAD_ATTRIBUTE_WIN32K_FILTER equ <ProcThreadAttributeValue(ProcThreadAttributeWin32kFilter, FALSE, TRUE, FALSE)>
     endif
-    ; _WIN32_WINNT_WINTHRESHOLD
     if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
     endif
-    ; NTDDI_WIN10_RS1
     if (NTDDI_VERSION ge NTDDI_WIN10_RS2)
-      ; Define Attribute for Desktop App Override
       PROCESS_CREATION_DESKTOP_APP_BREAKAWAY_ENABLE_PROCESS_TREE equ 01h
       PROCESS_CREATION_DESKTOP_APP_BREAKAWAY_DISABLE_PROCESS_TREE equ 02h
       PROCESS_CREATION_DESKTOP_APP_BREAKAWAY_OVERRIDE equ 04h
       PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY equ <ProcThreadAttributeValue(ProcThreadAttributeDesktopAppPolicy, FALSE, TRUE, FALSE)>
     endif
-    ; NTDDI_WIN10_RS2
     if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
     endif
-    ; NTDDI_WIN10_RS5
     if (NTDDI_VERSION ge NTDDI_WIN10_19H1)
     endif
-    ; NTDDI_WIN10_19H1
     if (NTDDI_VERSION ge NTDDI_WIN10_MN)
       PROC_THREAD_ATTRIBUTE_MITIGATION_AUDIT_POLICY equ <ProcThreadAttributeValue(ProcThreadAttributeMitigationAuditPolicy, FALSE, TRUE, FALSE)>
       PROC_THREAD_ATTRIBUTE_COMPONENT_FILTER equ <ProcThreadAttributeValue(ProcThreadAttributeComponentFilter, FALSE, TRUE, FALSE)>
-      ; Define the user-mode shadow stack mitigation audit policy options.
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_CET_USER_SHADOW_STACKS_MASK equ (00000003h shl 28)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_CET_USER_SHADOW_STACKS_DEFER equ (00000000h shl 28)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_CET_USER_SHADOW_STACKS_ALWAYS_ON equ (00000001h shl 28)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_CET_USER_SHADOW_STACKS_ALWAYS_OFF equ (00000002h shl 28)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_CET_USER_SHADOW_STACKS_RESERVED equ (00000003h shl 28)
-      ; Define the user-mode CET set context instruction pointer validation mitigation audit policy options.
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_MASK equ (00000003h shl 32)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_DEFER equ (00000000h shl 32)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_ALWAYS_ON equ (00000001h shl 32)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_ALWAYS_OFF equ (00000002h shl 32)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_RESERVED equ (00000003h shl 32)
-      ; Define the block non-CET/non-EHCONT binaries mitigation audit policy options.
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_BLOCK_NON_CET_BINARIES_MASK equ (00000003h shl 36)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_BLOCK_NON_CET_BINARIES_DEFER equ (00000000h shl 36)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_BLOCK_NON_CET_BINARIES_ALWAYS_ON equ (00000001h shl 36)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_BLOCK_NON_CET_BINARIES_ALWAYS_OFF equ (00000002h shl 36)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_BLOCK_NON_CET_BINARIES_RESERVED equ (00000003h shl 36)
-      ; Define the XFG mitigation audit policy options.
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_XTENDED_CONTROL_FLOW_GUARD_MASK equ (00000003h shl 40)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_XTENDED_CONTROL_FLOW_GUARD_DEFER equ (00000000h shl 40)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_XTENDED_CONTROL_FLOW_GUARD_ALWAYS_ON equ (00000001h shl 40)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_XTENDED_CONTROL_FLOW_GUARD_ALWAYS_OFF equ (00000002h shl 40)
       PROCESS_CREATION_MITIGATION_AUDIT_POLICY2_XTENDED_CONTROL_FLOW_GUARD_RESERVED equ (00000003h shl 40)
     endif
-    ; NTDDI_WIN10_MN
     if (NTDDI_VERSION ge NTDDI_WIN10_NI)
       PROC_THREAD_ATTRIBUTE_TRUSTED_APP equ <ProcThreadAttributeValue(ProcThreadAttributeTrustedApp, FALSE, TRUE, FALSE)>
     endif
-    ; (NTDDI_VERSION >= NTDDI_WIN10_NI)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, GetStartupInfoA, WIN_STD_CALL_CONV,, <:LPSTARTUPINFOA>, 4
     ifndef UNICODE
       GetStartupInfo equ <GetStartupInfoA>
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if Defined(_M_CEE)
@@ -2057,7 +1618,6 @@ ifndef _WINBASE_
     if Defined(_M_CEE)
       ;[...]
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_APP)
     @DefProto DllImport, GetFirmwareEnvironmentVariableA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :PVOID, :DWORD>, 16
@@ -2067,7 +1627,6 @@ ifndef _WINBASE_
     else
       GetFirmwareEnvironmentVariable equ <GetFirmwareEnvironmentVariableA>
     endif
-    ; !UNICODE
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
       @DefProto DllImport, GetFirmwareEnvironmentVariableExA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :PVOID, :DWORD, :PDWORD>, 20
       @DefProto DllImport, GetFirmwareEnvironmentVariableExW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :PVOID, :DWORD, :PDWORD>, 20
@@ -2076,7 +1635,6 @@ ifndef _WINBASE_
       else
         GetFirmwareEnvironmentVariableEx equ <GetFirmwareEnvironmentVariableExA>
       endif
-      ; !UNICODE
     endif
     @DefProto DllImport, SetFirmwareEnvironmentVariableA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :PVOID, :DWORD>, 16
     @DefProto DllImport, SetFirmwareEnvironmentVariableW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :PVOID, :DWORD>, 16
@@ -2085,7 +1643,6 @@ ifndef _WINBASE_
     else
       SetFirmwareEnvironmentVariable equ <SetFirmwareEnvironmentVariableA>
     endif
-    ; !UNICODE
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
       @DefProto DllImport, SetFirmwareEnvironmentVariableExA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :PVOID, :DWORD, :DWORD>, 20
       @DefProto DllImport, SetFirmwareEnvironmentVariableExW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :PVOID, :DWORD, :DWORD>, 20
@@ -2094,16 +1651,13 @@ ifndef _WINBASE_
       else
         SetFirmwareEnvironmentVariableEx equ <SetFirmwareEnvironmentVariableExA>
       endif
-      ; !UNICODE
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_APP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
       @DefProto DllImport, GetFirmwareType, WIN_STD_CALL_CONV,, <:PFIRMWARE_TYPE>, 4
       @DefProto DllImport, IsNativeVhdBoot, WIN_STD_CALL_CONV,, <:PBOOL>, 4
     endif
-    ; _WIN32_WINNT >= _WIN32_WINNT_WIN8
     @DefProto DllImport, FindResourceA, WIN_STD_CALL_CONV,, <:HMODULE, :LPCSTR, :LPCSTR>, 12
     ifndef UNICODE
       FindResource equ <FindResourceA>
@@ -2119,7 +1673,6 @@ ifndef _WINBASE_
     else
       EnumResourceTypes equ <EnumResourceTypesA>
     endif
-    ; !UNICODE
     @DefProto DllImport, EnumResourceLanguagesA, WIN_STD_CALL_CONV,, <:HMODULE, :LPCSTR, :LPCSTR, :ENUMRESLANGPROCA, :LONG_PTR>, 20
     @DefProto DllImport, EnumResourceLanguagesW, WIN_STD_CALL_CONV,, <:HMODULE, :LPCWSTR, :LPCWSTR, :ENUMRESLANGPROCW, :LONG_PTR>, 20
     ifdef UNICODE
@@ -2127,7 +1680,6 @@ ifndef _WINBASE_
     else
       EnumResourceLanguages equ <EnumResourceLanguagesA>
     endif
-    ; !UNICODE
     @DefProto DllImport, BeginUpdateResourceA, WIN_STD_CALL_CONV,, <:LPCSTR, :BOOL>, 8
     @DefProto DllImport, BeginUpdateResourceW, WIN_STD_CALL_CONV,, <:LPCWSTR, :BOOL>, 8
     ifdef UNICODE
@@ -2135,7 +1687,6 @@ ifndef _WINBASE_
     else
       BeginUpdateResource equ <BeginUpdateResourceA>
     endif
-    ; !UNICODE
     @DefProto DllImport, UpdateResourceA, WIN_STD_CALL_CONV,, <:HANDLE, :LPCSTR, :LPCSTR, :WORD, :LPVOID, :DWORD>, 24
     @DefProto DllImport, UpdateResourceW, WIN_STD_CALL_CONV,, <:HANDLE, :LPCWSTR, :LPCWSTR, :WORD, :LPVOID, :DWORD>, 24
     ifdef UNICODE
@@ -2143,7 +1694,6 @@ ifndef _WINBASE_
     else
       UpdateResource equ <UpdateResourceA>
     endif
-    ; !UNICODE
     @DefProto DllImport, EndUpdateResourceA, WIN_STD_CALL_CONV,, <:HANDLE, :BOOL>, 8
     @DefProto DllImport, EndUpdateResourceW, WIN_STD_CALL_CONV,, <:HANDLE, :BOOL>, 8
     ifdef UNICODE
@@ -2151,7 +1701,6 @@ ifndef _WINBASE_
     else
       EndUpdateResource equ <EndUpdateResourceA>
     endif
-    ; !UNICODE
     ATOM_FLAG_GLOBAL equ 2h
     @DefProto DllImport, GlobalAddAtomA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
     @DefProto DllImport, GlobalAddAtomW, WIN_STD_CALL_CONV,, <:LPCWSTR>, 4
@@ -2160,7 +1709,6 @@ ifndef _WINBASE_
     else
       GlobalAddAtom equ <GlobalAddAtomA>
     endif
-    ; !UNICODE
     @DefProto DllImport, GlobalAddAtomExA, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD>, 8
     @DefProto DllImport, GlobalAddAtomExW, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD>, 8
     ifdef UNICODE
@@ -2168,7 +1716,6 @@ ifndef _WINBASE_
     else
       GlobalAddAtomEx equ <GlobalAddAtomExA>
     endif
-    ; !UNICODE
     @DefProto DllImport, GlobalFindAtomA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
     @DefProto DllImport, GlobalFindAtomW, WIN_STD_CALL_CONV,, <:LPCWSTR>, 4
     ifdef UNICODE
@@ -2176,7 +1723,6 @@ ifndef _WINBASE_
     else
       GlobalFindAtom equ <GlobalFindAtomA>
     endif
-    ; !UNICODE
     @DefProto DllImport, GlobalGetAtomNameA, WIN_STD_CALL_CONV,, <:ATOM, :LPSTR, :SDWORD>, 12
     @DefProto DllImport, GlobalGetAtomNameW, WIN_STD_CALL_CONV,, <:ATOM, :LPWSTR, :SDWORD>, 12
     ifdef UNICODE
@@ -2184,7 +1730,6 @@ ifndef _WINBASE_
     else
       GlobalGetAtomName equ <GlobalGetAtomNameA>
     endif
-    ; !UNICODE
     @DefProto DllImport, AddAtomA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
     @DefProto DllImport, AddAtomW, WIN_STD_CALL_CONV,, <:LPCWSTR>, 4
     ifdef UNICODE
@@ -2192,7 +1737,6 @@ ifndef _WINBASE_
     else
       AddAtom equ <AddAtomA>
     endif
-    ; !UNICODE
     @DefProto DllImport, FindAtomA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
     @DefProto DllImport, FindAtomW, WIN_STD_CALL_CONV,, <:LPCWSTR>, 4
     ifdef UNICODE
@@ -2200,7 +1744,6 @@ ifndef _WINBASE_
     else
       FindAtom equ <FindAtomA>
     endif
-    ; !UNICODE
     @DefProto DllImport, GetAtomNameA, WIN_STD_CALL_CONV,, <:ATOM, :LPSTR, :SDWORD>, 12
     @DefProto DllImport, GetAtomNameW, WIN_STD_CALL_CONV,, <:ATOM, :LPWSTR, :SDWORD>, 12
     ifdef UNICODE
@@ -2208,8 +1751,6 @@ ifndef _WINBASE_
     else
       GetAtomName equ <GetAtomNameA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetProfileIntA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :INT_>, 12
@@ -2219,7 +1760,6 @@ ifndef _WINBASE_
     else
       GetProfileInt equ <GetProfileIntA>
     endif
-    ; !UNICODE
     @DefProto DllImport, GetProfileStringA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :LPCSTR, :LPSTR, :DWORD>, 20
     @DefProto DllImport, GetProfileStringW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :LPCWSTR, :LPWSTR, :DWORD>, 20
     ifdef UNICODE
@@ -2227,8 +1767,6 @@ ifndef _WINBASE_
     else
       GetProfileString equ <GetProfileStringA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, WriteProfileStringA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :LPCSTR>, 12
@@ -2238,8 +1776,6 @@ ifndef _WINBASE_
     else
       WriteProfileString equ <WriteProfileStringA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetProfileSectionA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPSTR, :DWORD>, 12
@@ -2249,8 +1785,6 @@ ifndef _WINBASE_
     else
       GetProfileSection equ <GetProfileSectionA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, WriteProfileSectionA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR>, 8
@@ -2260,8 +1794,6 @@ ifndef _WINBASE_
     else
       WriteProfileSection equ <WriteProfileSectionA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetPrivateProfileIntA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :INT_, :LPCSTR>, 16
@@ -2271,7 +1803,6 @@ ifndef _WINBASE_
     else
       GetPrivateProfileInt equ <GetPrivateProfileIntA>
     endif
-    ; !UNICODE
     if Defined(_M_CEE)
       ;[...]
     endif
@@ -2282,7 +1813,6 @@ ifndef _WINBASE_
     else
       GetPrivateProfileString equ <GetPrivateProfileStringA>
     endif
-    ; !UNICODE
     if Defined(_M_CEE)
       ;[...]
     endif
@@ -2293,7 +1823,6 @@ ifndef _WINBASE_
     else
       WritePrivateProfileString equ <WritePrivateProfileStringA>
     endif
-    ; !UNICODE
     @DefProto DllImport, GetPrivateProfileSectionA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPSTR, :DWORD, :LPCSTR>, 16
     @DefProto DllImport, GetPrivateProfileSectionW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPWSTR, :DWORD, :LPCWSTR>, 16
     ifdef UNICODE
@@ -2301,7 +1830,6 @@ ifndef _WINBASE_
     else
       GetPrivateProfileSection equ <GetPrivateProfileSectionA>
     endif
-    ; !UNICODE
     if Defined(_M_CEE)
       ;[...]
     endif
@@ -2312,8 +1840,6 @@ ifndef _WINBASE_
     else
       WritePrivateProfileSection equ <WritePrivateProfileSectionA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, GetPrivateProfileSectionNamesA, WIN_STD_CALL_CONV,, <:LPSTR, :DWORD, :LPCSTR>, 12
@@ -2323,7 +1849,6 @@ ifndef _WINBASE_
     else
       GetPrivateProfileSectionNames equ <GetPrivateProfileSectionNamesA>
     endif
-    ; !UNICODE
     if Defined(_M_CEE)
       ;[...]
     endif
@@ -2334,7 +1859,6 @@ ifndef _WINBASE_
     else
       GetPrivateProfileStruct equ <GetPrivateProfileStructA>
     endif
-    ; !UNICODE
     if Defined(_M_CEE)
       ;[...]
     endif
@@ -2345,23 +1869,17 @@ ifndef _WINBASE_
     else
       WritePrivateProfileStruct equ <WritePrivateProfileStructA>
     endif
-    ; !UNICODE
     if Defined(_M_CEE)
       ;[...]
     endif
     if  not Defined(RC_INVOKED)
-      ; RC warns because "WINBASE_DECLARE_GET_SYSTEM_WOW64_DIRECTORY" is a bit long.
       if _WIN32_WINNT ge 0501h or Defined(WINBASE_DECLARE_GET_SYSTEM_WOW64_DIRECTORY)
-        ; for GetProcAddress
         TYPE_PGET_SYSTEM_WOW64_DIRECTORY_A typedef proto WIN_STD_CALL_CONV :LPSTR, :UINT
         PGET_SYSTEM_WOW64_DIRECTORY_A typedef ptr TYPE_PGET_SYSTEM_WOW64_DIRECTORY_A
 
         TYPE_PGET_SYSTEM_WOW64_DIRECTORY_W typedef proto WIN_STD_CALL_CONV :LPWSTR, :UINT
         PGET_SYSTEM_WOW64_DIRECTORY_W typedef ptr TYPE_PGET_SYSTEM_WOW64_DIRECTORY_W
 
-        ; GetProcAddress only accepts GET_SYSTEM_WOW64_DIRECTORY_NAME_A_A,
-        ; GET_SYSTEM_WOW64_DIRECTORY_NAME_W_A, GET_SYSTEM_WOW64_DIRECTORY_NAME_T_A.
-        ; The others are if you want to use the strings in some other way.
         GET_SYSTEM_WOW64_DIRECTORY_NAME_A_A equ <"GetSystemWow64DirectoryA">
         GET_SYSTEM_WOW64_DIRECTORY_NAME_A_W equ <L("GetSystemWow64DirectoryA")>
         GET_SYSTEM_WOW64_DIRECTORY_NAME_A_T equ <TEXT("GetSystemWow64DirectoryA")>
@@ -2378,7 +1896,6 @@ ifndef _WINBASE_
           GET_SYSTEM_WOW64_DIRECTORY_NAME_T_T equ <GET_SYSTEM_WOW64_DIRECTORY_NAME_A_T>
         endif
       endif
-      ; _WIN32_WINNT >= 0x0501
     endif
     if Defined(_M_CEE)
       ;[...]
@@ -2386,7 +1903,6 @@ ifndef _WINBASE_
     if Defined(_M_CEE)
       ;[...]
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
     if _WIN32_WINNT ge 0502h
@@ -2397,9 +1913,7 @@ ifndef _WINBASE_
       else
         SetDllDirectory equ <SetDllDirectoryA>
       endif
-      ; !UNICODE
     endif
-    ; _WIN32_WINNT >= 0x0502
     if _WIN32_WINNT ge 0502h
       @DefProto DllImport, GetDllDirectoryA, WIN_STD_CALL_CONV,, <:DWORD, :LPSTR>, 8
       @DefProto DllImport, GetDllDirectoryW, WIN_STD_CALL_CONV,, <:DWORD, :LPWSTR>, 8
@@ -2408,10 +1922,7 @@ ifndef _WINBASE_
       else
         GetDllDirectory equ <GetDllDirectoryA>
       endif
-      ; !UNICODE
     endif
-    ; _WIN32_WINNT >= 0x0502
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     BASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE equ 1h
@@ -2419,13 +1930,11 @@ ifndef _WINBASE_
     BASE_SEARCH_PATH_PERMANENT equ 8000h
     BASE_SEARCH_PATH_INVALID_FLAGS equ not 18001h
     @DefProto DllImport, SetSearchPathMode, WIN_STD_CALL_CONV,, <:DWORD>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_GAMES)
     if Defined(_M_CEE)
       ;[...]
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, CreateDirectoryExA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :LPSECURITY_ATTRIBUTES>, 12
@@ -2435,8 +1944,6 @@ ifndef _WINBASE_
     else
       CreateDirectoryEx equ <CreateDirectoryExA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if _WIN32_WINNT ge 0600h
@@ -2447,7 +1954,6 @@ ifndef _WINBASE_
       else
         CreateDirectoryTransacted equ <CreateDirectoryTransactedA>
       endif
-      ; !UNICODE
       @DefProto DllImport, RemoveDirectoryTransactedA, WIN_STD_CALL_CONV,, <:LPCSTR, :HANDLE>, 8
       @DefProto DllImport, RemoveDirectoryTransactedW, WIN_STD_CALL_CONV,, <:LPCWSTR, :HANDLE>, 8
       ifdef UNICODE
@@ -2455,7 +1961,6 @@ ifndef _WINBASE_
       else
         RemoveDirectoryTransacted equ <RemoveDirectoryTransactedA>
       endif
-      ; !UNICODE
       @DefProto DllImport, GetFullPathNameTransactedA, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD, :LPSTR, :ptr LPSTR, :HANDLE>, 20
       @DefProto DllImport, GetFullPathNameTransactedW, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :LPWSTR, :ptr LPWSTR, :HANDLE>, 20
       ifdef UNICODE
@@ -2463,10 +1968,7 @@ ifndef _WINBASE_
       else
         GetFullPathNameTransacted equ <GetFullPathNameTransactedA>
       endif
-      ; !UNICODE
     endif
-    ; _WIN32_WINNT >= 0x0600
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     DDD_RAW_TARGET_PATH equ 00000001h
@@ -2482,7 +1984,6 @@ ifndef _WINBASE_
     ifndef UNICODE
       QueryDosDevice equ <QueryDosDeviceA>
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     EXPAND_LOCAL_DRIVES equ <>
@@ -2494,17 +1995,12 @@ ifndef _WINBASE_
       else
         CreateFileTransacted equ <CreateFileTransactedA>
       endif
-      ; !UNICODE
     endif
-    ; _WIN32_WINNT >= 0x0600
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     if _WIN32_WINNT ge 0502h
       @DefProto DllImport, ReOpenFile, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :DWORD, :DWORD>, 16
     endif
-    ; _WIN32_WINNT >= 0x0502
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if _WIN32_WINNT ge 0600h
@@ -2515,7 +2011,6 @@ ifndef _WINBASE_
       else
         SetFileAttributesTransacted equ <SetFileAttributesTransactedA>
       endif
-      ; !UNICODE
       @DefProto DllImport, GetFileAttributesTransactedA, WIN_STD_CALL_CONV,, <:LPCSTR, :GET_FILEEX_INFO_LEVELS, :LPVOID, :HANDLE>, 16
       @DefProto DllImport, GetFileAttributesTransactedW, WIN_STD_CALL_CONV,, <:LPCWSTR, :GET_FILEEX_INFO_LEVELS, :LPVOID, :HANDLE>, 16
       ifdef UNICODE
@@ -2523,7 +2018,6 @@ ifndef _WINBASE_
       else
         GetFileAttributesTransacted equ <GetFileAttributesTransactedA>
       endif
-      ; !UNICODE
       @DefProto DllImport, GetCompressedFileSizeTransactedA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPDWORD, :HANDLE>, 12
       @DefProto DllImport, GetCompressedFileSizeTransactedW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPDWORD, :HANDLE>, 12
       ifdef UNICODE
@@ -2531,7 +2025,6 @@ ifndef _WINBASE_
       else
         GetCompressedFileSizeTransacted equ <GetCompressedFileSizeTransactedA>
       endif
-      ; !UNICODE
       @DefProto DllImport, DeleteFileTransactedA, WIN_STD_CALL_CONV,, <:LPCSTR, :HANDLE>, 8
       @DefProto DllImport, DeleteFileTransactedW, WIN_STD_CALL_CONV,, <:LPCWSTR, :HANDLE>, 8
       ifdef UNICODE
@@ -2539,16 +2032,12 @@ ifndef _WINBASE_
       else
         DeleteFileTransacted equ <DeleteFileTransactedA>
       endif
-      ; !UNICODE
     endif
-    ; _WIN32_WINNT >= 0x0600
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     if Defined(_M_CEE)
       ;[...]
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if _WIN32_WINNT ge 0501h
@@ -2559,10 +2048,7 @@ ifndef _WINBASE_
       else
         CheckNameLegalDOS8Dot3 equ <CheckNameLegalDOS8Dot3A>
       endif
-      ; !UNICODE
     endif
-    ; (_WIN32_WINNT >= 0x0501)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if (_WIN32_WINNT ge 0400h)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -2574,11 +2060,8 @@ ifndef _WINBASE_
         else
           FindFirstFileTransacted equ <FindFirstFileTransactedA>
         endif
-        ; !UNICODE
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;* _WIN32_WINNT >= 0x0400 *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, CopyFileA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :BOOL>, 12
@@ -2588,11 +2071,9 @@ ifndef _WINBASE_
     else
       CopyFile equ <CopyFileA>
     endif
-    ; !UNICODE
     if Defined(_M_CEE)
       ;[...]
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if (_WIN32_WINNT ge 0400h)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
@@ -2606,8 +2087,6 @@ ifndef _WINBASE_
       else
         CopyFileEx equ <CopyFileExA>
       endif
-      ; !UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       if _WIN32_WINNT ge 0600h
@@ -2618,13 +2097,9 @@ ifndef _WINBASE_
         else
           CopyFileTransacted equ <CopyFileTransactedA>
         endif
-        ; !UNICODE
       endif
-      ; _WIN32_WINNT >= 0x0600
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-      ; TODO: Win7 for now, when we roll over the version number this needs to be updated.
       if _WIN32_WINNT ge 0601h
         COPYFILE2_MESSAGE_TYPE typedef SDWORD
         COPYFILE2_CALLBACK_NONE equ 0
@@ -2653,7 +2128,6 @@ ifndef _WINBASE_
         COPYFILE2_PHASE_WRITE_DESTINATION equ 4
         COPYFILE2_PHASE_SERVER_COPY equ 5
         COPYFILE2_PHASE_NAMEGRAFT_COPY equ 6
-        ; ... etc phases.
         COPYFILE2_PHASE_MAX equ 7
         _COPYFILE2_COPY_PHASE typedef COPYFILE2_COPY_PHASE
 
@@ -2664,61 +2138,39 @@ ifndef _WINBASE_
           union Info
             struct ChunkStarted
               dwStreamNumber DWORD ?
-              ; monotonically increasing stream number
               dwReserved DWORD ?
               hSourceFile HANDLE ?
-              ; handle to the source stream
               hDestinationFile HANDLE ?
-              ; handle to the destination stream
               uliChunkNumber ULARGE_INTEGER <>
-              ; monotonically increasing chunk number
               uliChunkSize ULARGE_INTEGER <>
-              ; size of the copied chunk
               uliStreamSize ULARGE_INTEGER <>
-              ; size of the current stream
               uliTotalFileSize ULARGE_INTEGER <>
-              ; size of all streams for this file
             ends
             struct ChunkFinished
               dwStreamNumber DWORD ?
-              ; monotonically increasing stream number
               dwFlags DWORD ?
               hSourceFile HANDLE ?
-              ; handle to the source stream
               hDestinationFile HANDLE ?
-              ; handle to the destination stream
               uliChunkNumber ULARGE_INTEGER <>
-              ; monotonically increasing chunk number
               uliChunkSize ULARGE_INTEGER <>
-              ; size of the copied chunk
               uliStreamSize ULARGE_INTEGER <>
-              ; size of the current stream
               uliStreamBytesTransferred ULARGE_INTEGER <>
-              ; bytes copied for this stream so far
               uliTotalFileSize ULARGE_INTEGER <>
-              ; size of all streams for this file
               uliTotalBytesTransferred ULARGE_INTEGER <>
-              ; total bytes copied so far
             ends
             struct StreamStarted
               dwStreamNumber DWORD ?
               dwReserved DWORD ?
               hSourceFile HANDLE ?
-              ; handle to the source stream
               hDestinationFile HANDLE ?
-              ; handle to the destination stream
               uliStreamSize ULARGE_INTEGER <>
-              ; size of this stream
               uliTotalFileSize ULARGE_INTEGER <>
-              ; total size of all streams for this file
             ends
             struct StreamFinished
               dwStreamNumber DWORD ?
               dwReserved DWORD ?
               hSourceFile HANDLE ?
-              ; handle to the source stream
               hDestinationFile HANDLE ?
-              ; handle to the destination stream
               uliStreamSize ULARGE_INTEGER <>
               uliStreamBytesTransferred ULARGE_INTEGER <>
               uliTotalFileSize ULARGE_INTEGER <>
@@ -2738,7 +2190,6 @@ ifndef _WINBASE_
               uliTotalFileSize ULARGE_INTEGER <>
               uliTotalBytesTransferred ULARGE_INTEGER <>
             ends
-            Error_ typedef Error_
           ends
         COPYFILE2_MESSAGE ends
         TYPE_PCOPYFILE2_PROGRESS_ROUTINE typedef proto WIN_STD_CALL_CONV :ptr COPYFILE2_MESSAGE, :PVOID
@@ -2749,54 +2200,31 @@ ifndef _WINBASE_
           dwCopyFlags DWORD ?
           pfCancel POINTER ?
           pProgressRoutine PCOPYFILE2_PROGRESS_ROUTINE ?
-          pvCallbackContext POINTER ?
+          pvCallbackContext PVOID ?
         COPYFILE2_EXTENDED_PARAMETERS ends
         if (NTDDI_VERSION ge NTDDI_WIN10_FE)
-          ; minimum allowed requested i/o size, in bytes
-          ; (constrains COPYFILE2_EXTENDED_PARAMETERS_V2 ioDesiredSize field).
           COPYFILE2_IO_CYCLE_SIZE_MIN equ 4096
-          ; maximum allowed requested i/o size, in bytes (1GB)
-          ; (constrains COPYFILE2_EXTENDED_PARAMETERS_V2 ioDesiredSize field).
           COPYFILE2_IO_CYCLE_SIZE_MAX equ 40000000h
-          ; minimum allowed requested average i/o rate, in kbytes per second
-          ; (constrains COPYFILE2_EXTENDED_PARAMETERS_V2 ioDesiredRate field).
           COPYFILE2_IO_RATE_MIN equ 512
           COPYFILE2_EXTENDED_PARAMETERS_V2 struct
             dwSize DWORD ?
             dwCopyFlags DWORD ?
             pfCancel POINTER ?
             pProgressRoutine PCOPYFILE2_PROGRESS_ROUTINE ?
-            pvCallbackContext POINTER ?
-            ; Additional copy flags (COPYFILE2_EXTENDED_PARAMETERS_V2 only;
-            ; treated as zero if COPYFILE2_EXTENDED_PARAMETERS is used).
+            pvCallbackContext PVOID ?
             dwCopyFlagsV2 DWORD ?
-            ; size of the i/o for each {read, write} cycle, in bytes
-            ; (may be reduced, if insufficient memory is available)
-            ; if zero: use a suitable default.
-            ; may be ignored if ioDesiredRate is specified (i.e.,
-            ; CopyFile2() will disregard if a requested size is
-            ; rate is inappropriate for a requested rate.)
-            ioDesiredSize DWORD ?
-            ; requested average i/o rate, in kbytes per second.
-            ; if zero: use a suitable default (usually as fast as possible).
-            ioDesiredRate DWORD ?
-            ; reserved for future use; must be set to zero
-            reserved POINTER 8 dup (?)
+            ioDesiredSize ULONG ?
+            ioDesiredRate ULONG ?
+            reserved PVOID 8 dup (?)
           COPYFILE2_EXTENDED_PARAMETERS_V2 ends
           if (NTDDI_VERSION ge NTDDI_WIN10_NI)
-            ;  Disable copying junctions (dwCopyFlagsV2 field of COPYFILE2_EXTENDED_PARAMETERS_V2).
             COPY_FILE2_V2_DONT_COPY_JUNCTIONS equ 00000001h
             COPY_FILE2_V2_VALID_FLAGS equ <(COPY_FILE2_V2_DONT_COPY_JUNCTIONS)>
           endif
-          ; (NTDDI_VERSION >= NTDDI_WIN10_NI)
         endif
-        ; (NTDDI_VERSION >= NTDDI_WIN10_FE)
         @DefProto DllImport, CopyFile2, WIN_STD_CALL_CONV,, <:PCWSTR, :PCWSTR, :ptr COPYFILE2_EXTENDED_PARAMETERS>, 12
       endif
-      ; _WIN32_WINNT >= 0x0601
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
-    ;* _WIN32_WINNT >= 0x0400 *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, MoveFileA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR>, 8
@@ -2806,11 +2234,9 @@ ifndef _WINBASE_
     else
       MoveFile equ <MoveFileA>
     endif
-    ; !UNICODE
     if Defined(_M_CEE)
       ;[...]
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, MoveFileExA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :DWORD>, 12
@@ -2820,8 +2246,6 @@ ifndef _WINBASE_
     else
       MoveFileEx equ <MoveFileExA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     if (_WIN32_WINNT ge 0500h)
@@ -2832,10 +2256,7 @@ ifndef _WINBASE_
       else
         MoveFileWithProgress equ <MoveFileWithProgressA>
       endif
-      ; !UNICODE
     endif
-    ; (_WIN32_WINNT >= 0x0500)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (_WIN32_WINNT ge 0600h)
@@ -2846,10 +2267,7 @@ ifndef _WINBASE_
       else
         MoveFileTransacted equ <MoveFileTransactedA>
       endif
-      ; !UNICODE
     endif
-    ; (_WIN32_WINNT >= 0x0600)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_GAMES)
     MOVEFILE_REPLACE_EXISTING equ 00000001h
@@ -2860,11 +2278,8 @@ ifndef _WINBASE_
       MOVEFILE_CREATE_HARDLINK equ 00000010h
       MOVEFILE_FAIL_IF_NOT_TRACKABLE equ 00000020h
     endif
-    ; (_WIN32_WINNT >= 0x0500)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if (_WIN32_WINNT ge 0500h)
@@ -2875,11 +2290,8 @@ ifndef _WINBASE_
       else
         ReplaceFile equ <ReplaceFileA>
       endif
-      ; !UNICODE
     endif
-    ; (_WIN32_WINNT >= 0x0500)
     if (_WIN32_WINNT ge 0500h)
-      ; API call to create hard links.
       @DefProto DllImport, CreateHardLinkA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :LPSECURITY_ATTRIBUTES>, 12
       @DefProto DllImport, CreateHardLinkW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :LPSECURITY_ATTRIBUTES>, 12
       ifdef UNICODE
@@ -2887,14 +2299,10 @@ ifndef _WINBASE_
       else
         CreateHardLink equ <CreateHardLinkA>
       endif
-      ; !UNICODE
     endif
-    ; (_WIN32_WINNT >= 0x0500)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (_WIN32_WINNT ge 0600h)
-      ; API call to create hard links.
       @DefProto DllImport, CreateHardLinkTransactedA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :LPSECURITY_ATTRIBUTES, :HANDLE>, 16
       @DefProto DllImport, CreateHardLinkTransactedW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :LPSECURITY_ATTRIBUTES, :HANDLE>, 16
       ifdef UNICODE
@@ -2902,21 +2310,17 @@ ifndef _WINBASE_
       else
         CreateHardLinkTransacted equ <CreateHardLinkTransactedA>
       endif
-      ; !UNICODE
     endif
-    ; (_WIN32_WINNT >= 0x0600)
     if _WIN32_WINNT ge 0600h
       @DefProto DllImport, FindFirstStreamTransactedW, WIN_STD_CALL_CONV,, <:LPCWSTR, :STREAM_INFO_LEVELS, :LPVOID, :DWORD, :HANDLE>, 20
       @DefProto DllImport, FindFirstFileNameTransactedW, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :LPDWORD, :PWSTR, :HANDLE>, 20
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, CreateNamedPipeA, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :LPSECURITY_ATTRIBUTES>, 32
     ifndef UNICODE
       CreateNamedPipe equ <CreateNamedPipeA>
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetNamedPipeHandleStateA, WIN_STD_CALL_CONV,, <:HANDLE, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPSTR, :DWORD>, 28
@@ -2927,35 +2331,29 @@ ifndef _WINBASE_
     ifndef UNICODE
       CallNamedPipe equ <CallNamedPipeA>
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, WaitNamedPipeA, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD>, 8
     ifndef UNICODE
       WaitNamedPipe equ <WaitNamedPipeA>
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if (_WIN32_WINNT ge 0600h)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, GetNamedPipeClientComputerNameA, WIN_STD_CALL_CONV,, <:HANDLE, :LPSTR, :ULONG>, 12
       ifndef UNICODE
         GetNamedPipeClientComputerName equ <GetNamedPipeClientComputerNameA>
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, GetNamedPipeClientProcessId, WIN_STD_CALL_CONV,, <:HANDLE, :PULONG>, 8
       @DefProto DllImport, GetNamedPipeClientSessionId, WIN_STD_CALL_CONV,, <:HANDLE, :PULONG>, 8
       @DefProto DllImport, GetNamedPipeServerProcessId, WIN_STD_CALL_CONV,, <:HANDLE, :PULONG>, 8
       @DefProto DllImport, GetNamedPipeServerSessionId, WIN_STD_CALL_CONV,, <:HANDLE, :PULONG>, 8
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
   endif
-  ; (_WIN32_WINNT >= 0x0600)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     @DefProto DllImport, SetVolumeLabelA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR>, 8
     @DefProto DllImport, SetVolumeLabelW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR>, 8
@@ -2964,16 +2362,12 @@ ifndef _WINBASE_
     else
       SetVolumeLabel equ <SetVolumeLabelA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, SetFileBandwidthReservation, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :DWORD, :BOOL, :LPDWORD, :LPDWORD>, 24
       @DefProto DllImport, GetFileBandwidthReservation, WIN_STD_CALL_CONV,, <:HANDLE, :LPDWORD, :LPDWORD, :LPBOOL, :LPDWORD, :LPDWORD>, 24
     endif
-    ; (_WIN32_WINNT >= 0x0600)
-    ; Event logging APIs
     @DefProto DllImport, ClearEventLogA, WIN_STD_CALL_CONV,, <:HANDLE, :LPCSTR>, 8
     @DefProto DllImport, ClearEventLogW, WIN_STD_CALL_CONV,, <:HANDLE, :LPCWSTR>, 8
     ifdef UNICODE
@@ -2981,7 +2375,6 @@ ifndef _WINBASE_
     else
       ClearEventLog equ <ClearEventLogA>
     endif
-    ; !UNICODE
     @DefProto DllImport, BackupEventLogA, WIN_STD_CALL_CONV,, <:HANDLE, :LPCSTR>, 8
     @DefProto DllImport, BackupEventLogW, WIN_STD_CALL_CONV,, <:HANDLE, :LPCWSTR>, 8
     ifdef UNICODE
@@ -2989,13 +2382,10 @@ ifndef _WINBASE_
     else
       BackupEventLog equ <BackupEventLogA>
     endif
-    ; !UNICODE
     @DefProto DllImport, CloseEventLog, WIN_STD_CALL_CONV,, <:HANDLE>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     @DefProto DllImport, DeregisterEventSource, WIN_STD_CALL_CONV,, <:HANDLE>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, NotifyChangeEventLog, WIN_STD_CALL_CONV,, <:HANDLE, :HANDLE>, 8
@@ -3008,8 +2398,6 @@ ifndef _WINBASE_
     else
       OpenEventLog equ <OpenEventLogA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     @DefProto DllImport, RegisterEventSourceA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR>, 8
@@ -3019,8 +2407,6 @@ ifndef _WINBASE_
     else
       RegisterEventSource equ <RegisterEventSourceA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, OpenBackupEventLogA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR>, 8
@@ -3030,7 +2416,6 @@ ifndef _WINBASE_
     else
       OpenBackupEventLog equ <OpenBackupEventLogA>
     endif
-    ; !UNICODE
     @DefProto DllImport, ReadEventLogA, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :DWORD, :LPVOID, :DWORD, :ptr DWORD, :ptr DWORD>, 28
     @DefProto DllImport, ReadEventLogW, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :DWORD, :LPVOID, :DWORD, :ptr DWORD, :ptr DWORD>, 28
     ifdef UNICODE
@@ -3038,8 +2423,6 @@ ifndef _WINBASE_
     else
       ReadEventLog equ <ReadEventLogA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     @DefProto DllImport, ReportEventA, WIN_STD_CALL_CONV,, <:HANDLE, :WORD, :WORD, :DWORD, :PSID, :WORD, :DWORD, :ptr LPCSTR, :LPVOID>, 36
@@ -3049,8 +2432,6 @@ ifndef _WINBASE_
     else
       ReportEvent equ <ReportEventA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     EVENTLOG_FULL_INFO equ 0
@@ -3061,23 +2442,20 @@ ifndef _WINBASE_
     LPEVENTLOG_FULL_INFORMATION typedef ptr EVENTLOG_FULL_INFORMATION
     @DefProto DllImport, GetEventLogInformation, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :LPVOID, :DWORD, :LPDWORD>, 20
     if (_WIN32_WINNT ge 0602h)
-      ; Operation prefetch API.
       OPERATION_API_VERSION equ 1
       OPERATION_ID typedef ULONG
-      ; OperationStart() parameters.
       OPERATION_START_PARAMETERS struct
-        Version DWORD ?
+        Version ULONG ?
         OperationId OPERATION_ID ?
-        Flags DWORD ?
+        Flags ULONG ?
       OPERATION_START_PARAMETERS ends
       _OPERATION_START_PARAMETERS typedef OPERATION_START_PARAMETERS
       POPERATION_START_PARAMETERS typedef ptr OPERATION_START_PARAMETERS
       OPERATION_START_TRACE_CURRENT_THREAD equ 1h
-      ; OperationEnd() parameters.
       OPERATION_END_PARAMETERS struct
-        Version DWORD ?
+        Version ULONG ?
         OperationId OPERATION_ID ?
-        Flags DWORD ?
+        Flags ULONG ?
       OPERATION_END_PARAMETERS ends
       _OPERATION_END_PARAMETERS typedef OPERATION_END_PARAMETERS
       POPERATION_END_PARAMETERS typedef ptr OPERATION_END_PARAMETERS
@@ -3085,8 +2463,6 @@ ifndef _WINBASE_
       @DefProto DllImport, OperationStart, WIN_STD_CALL_CONV,, <:ptr OPERATION_START_PARAMETERS>, 4
       @DefProto DllImport, OperationEnd, WIN_STD_CALL_CONV,, <:ptr OPERATION_END_PARAMETERS>, 4
     endif
-    ; _WIN32_WINNT >= 0x0602
-    ; Security APIs
     @DefProto DllImport, AccessCheckAndAuditAlarmA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPVOID, :LPSTR, :LPSTR, :PSECURITY_DESCRIPTOR, :DWORD, :PGENERIC_MAPPING, :BOOL, :LPDWORD, :LPBOOL, :LPBOOL>, 44
     ifndef UNICODE
       AccessCheckAndAuditAlarm equ <AccessCheckAndAuditAlarmA>
@@ -3105,7 +2481,6 @@ ifndef _WINBASE_
         AccessCheckByTypeResultListAndAuditAlarmByHandle equ <AccessCheckByTypeResultListAndAuditAlarmByHandleA>
       endif
     endif
-    ;(_WIN32_WINNT >= 0x0500)
     @DefProto DllImport, ObjectOpenAuditAlarmA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPVOID, :LPSTR, :LPSTR, :PSECURITY_DESCRIPTOR, :HANDLE, :DWORD, :DWORD, :PPRIVILEGE_SET, :BOOL, :BOOL, :LPBOOL>, 48
     ifndef UNICODE
       ObjectOpenAuditAlarm equ <ObjectOpenAuditAlarmA>
@@ -3128,9 +2503,7 @@ ifndef _WINBASE_
     endif
     if (_WIN32_WINNT ge 0601h)
       @DefProto DllImport, AddConditionalAce, WIN_STD_CALL_CONV,, <:PACL, :DWORD, :DWORD, :UCHAR, :DWORD, :PSID, :PWCHAR, :ptr DWORD>, 32
-      ;* _WIN32_WINNT >=  0x0601 *
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, SetFileSecurityA, WIN_STD_CALL_CONV,, <:LPCSTR, :SECURITY_INFORMATION, :PSECURITY_DESCRIPTOR>, 12
@@ -3141,7 +2514,6 @@ ifndef _WINBASE_
     ifndef UNICODE
       GetFileSecurity equ <GetFileSecurityA>
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if (_WIN32_WINNT ge 0400h)
@@ -3149,15 +2521,12 @@ ifndef _WINBASE_
       if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
         @DefProto DllImport, ReadDirectoryChangesExW, WIN_STD_CALL_CONV,, <:HANDLE, :LPVOID, :DWORD, :BOOL, :DWORD, :LPDWORD, :LPOVERLAPPED, :LPOVERLAPPED_COMPLETION_ROUTINE, :READ_DIRECTORY_NOTIFY_INFORMATION_CLASS>, 36
       endif
-      ;* _WIN32_WINNT >= 0x0400 *
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if _WIN32_WINNT ge 0600h
       @DefProto DllImport, MapViewOfFileExNuma, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :DWORD, :DWORD, :SIZE_T, :LPVOID, :DWORD>, 28
     endif
-    ; _WIN32_WINNT >= 0x0600
     @DefProto DllImport, IsBadReadPtr, WIN_STD_CALL_CONV,, <:ptr VOID, :UINT_PTR>, 8
     @DefProto DllImport, IsBadWritePtr, WIN_STD_CALL_CONV,, <:LPVOID, :UINT_PTR>, 8
     @DefProto DllImport, IsBadHugeReadPtr, WIN_STD_CALL_CONV,, <:ptr VOID, :UINT_PTR>, 8
@@ -3170,8 +2539,6 @@ ifndef _WINBASE_
     else
       IsBadStringPtr equ <IsBadStringPtrA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, LookupAccountSidA, WIN_STD_CALL_CONV,, <:LPCSTR, :PSID, :LPSTR, :LPDWORD, :LPSTR, :LPDWORD, :PSID_NAME_USE>, 28
@@ -3181,7 +2548,6 @@ ifndef _WINBASE_
     else
       LookupAccountSid equ <LookupAccountSidA>
     endif
-    ; !UNICODE
     @DefProto DllImport, LookupAccountNameA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :PSID, :LPDWORD, :LPSTR, :LPDWORD, :PSID_NAME_USE>, 28
     @DefProto DllImport, LookupAccountNameW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :PSID, :LPDWORD, :LPWSTR, :LPDWORD, :PSID_NAME_USE>, 28
     ifdef UNICODE
@@ -3189,8 +2555,6 @@ ifndef _WINBASE_
     else
       LookupAccountName equ <LookupAccountNameA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if _WIN32_WINNT ge 0601h
@@ -3201,7 +2565,6 @@ ifndef _WINBASE_
       else
         LookupAccountNameLocal equ <LookupAccountNameLocalA>
       endif
-      ; !UNICODE
       @DefProto DllImport, LookupAccountSidLocalA, WIN_STD_CALL_CONV,, <:PSID, :LPSTR, :LPDWORD, :LPSTR, :LPDWORD, :PSID_NAME_USE>, 24
       @DefProto DllImport, LookupAccountSidLocalW, WIN_STD_CALL_CONV,, <:PSID, :LPWSTR, :LPDWORD, :LPWSTR, :LPDWORD, :PSID_NAME_USE>, 24
       ifdef UNICODE
@@ -3209,9 +2572,7 @@ ifndef _WINBASE_
       else
         LookupAccountSidLocal equ <LookupAccountSidLocalA>
       endif
-      ; !UNICODE
     else
-    ; _WIN32_WINNT >= 0x0601
       LookupAccountNameLocalA macro n, s, cs_, d, cd, u
         exitm <LookupAccountNameA (NULL, n, s, cs_, d, cd, u)>
       endm
@@ -3223,7 +2584,6 @@ ifndef _WINBASE_
       else
         LookupAccountNameLocal equ <LookupAccountNameLocalA>
       endif
-      ; !UNICODE
       LookupAccountSidLocalA macro s, n, cn, d, cd, u
         exitm <LookupAccountSidA (NULL, s, n, cn, d, cd, u)>
       endm
@@ -3235,10 +2595,7 @@ ifndef _WINBASE_
       else
         LookupAccountSidLocal equ <LookupAccountSidLocalA>
       endif
-      ; !UNICODE
     endif
-    ; _WIN32_WINNT >= 0x0601
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, LookupPrivilegeValueA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :PLUID>, 12
@@ -3248,7 +2605,6 @@ ifndef _WINBASE_
     else
       LookupPrivilegeValue equ <LookupPrivilegeValueA>
     endif
-    ; !UNICODE
     @DefProto DllImport, LookupPrivilegeNameA, WIN_STD_CALL_CONV,, <:LPCSTR, :PLUID, :LPSTR, :LPDWORD>, 16
     @DefProto DllImport, LookupPrivilegeNameW, WIN_STD_CALL_CONV,, <:LPCWSTR, :PLUID, :LPWSTR, :LPDWORD>, 16
     ifdef UNICODE
@@ -3256,7 +2612,6 @@ ifndef _WINBASE_
     else
       LookupPrivilegeName equ <LookupPrivilegeNameA>
     endif
-    ; !UNICODE
     @DefProto DllImport, LookupPrivilegeDisplayNameA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :LPSTR, :LPDWORD, :LPDWORD>, 20
     @DefProto DllImport, LookupPrivilegeDisplayNameW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :LPWSTR, :LPDWORD, :LPDWORD>, 20
     ifdef UNICODE
@@ -3264,8 +2619,6 @@ ifndef _WINBASE_
     else
       LookupPrivilegeDisplayName equ <LookupPrivilegeDisplayNameA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     @DefProto DllImport, BuildCommDCBA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPDCB>, 8
@@ -3275,7 +2628,6 @@ ifndef _WINBASE_
     else
       BuildCommDCB equ <BuildCommDCBA>
     endif
-    ; !UNICODE
     @DefProto DllImport, BuildCommDCBAndTimeoutsA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPDCB, :LPCOMMTIMEOUTS>, 12
     @DefProto DllImport, BuildCommDCBAndTimeoutsW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPDCB, :LPCOMMTIMEOUTS>, 12
     ifdef UNICODE
@@ -3283,7 +2635,6 @@ ifndef _WINBASE_
     else
       BuildCommDCBAndTimeouts equ <BuildCommDCBAndTimeoutsA>
     endif
-    ; !UNICODE
     @DefProto DllImport, CommConfigDialogA, WIN_STD_CALL_CONV,, <:LPCSTR, :HWND, :LPCOMMCONFIG>, 12
     @DefProto DllImport, CommConfigDialogW, WIN_STD_CALL_CONV,, <:LPCWSTR, :HWND, :LPCOMMCONFIG>, 12
     ifdef UNICODE
@@ -3291,7 +2642,6 @@ ifndef _WINBASE_
     else
       CommConfigDialog equ <CommConfigDialogA>
     endif
-    ; !UNICODE
     @DefProto DllImport, GetDefaultCommConfigA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCOMMCONFIG, :LPDWORD>, 12
     @DefProto DllImport, GetDefaultCommConfigW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCOMMCONFIG, :LPDWORD>, 12
     ifdef UNICODE
@@ -3299,7 +2649,6 @@ ifndef _WINBASE_
     else
       GetDefaultCommConfig equ <GetDefaultCommConfigA>
     endif
-    ; !UNICODE
     @DefProto DllImport, SetDefaultCommConfigA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCOMMCONFIG, :DWORD>, 12
     @DefProto DllImport, SetDefaultCommConfigW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCOMMCONFIG, :DWORD>, 12
     ifdef UNICODE
@@ -3307,8 +2656,6 @@ ifndef _WINBASE_
     else
       SetDefaultCommConfig equ <SetDefaultCommConfigA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     ifndef _MAC
@@ -3323,8 +2670,6 @@ ifndef _WINBASE_
     else
       GetComputerName equ <GetComputerNameA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (_WIN32_WINNT ge 0500h)
@@ -3335,9 +2680,7 @@ ifndef _WINBASE_
       else
         DnsHostnameToComputerName equ <DnsHostnameToComputerNameA>
       endif
-      ; !UNICODE
     endif
-    ; _WIN32_WINNT
     @DefProto DllImport, GetUserNameA, WIN_STD_CALL_CONV,, <:LPSTR, :LPDWORD>, 8
     @DefProto DllImport, GetUserNameW, WIN_STD_CALL_CONV,, <:LPWSTR, :LPDWORD>, 8
     ifdef UNICODE
@@ -3345,8 +2688,6 @@ ifndef _WINBASE_
     else
       GetUserName equ <GetUserNameA>
     endif
-    ; !UNICODE
-    ; Logon Support APIs
     LOGON32_LOGON_INTERACTIVE equ 2
     LOGON32_LOGON_NETWORK equ 3
     LOGON32_LOGON_BATCH equ 4
@@ -3356,21 +2697,17 @@ ifndef _WINBASE_
       LOGON32_LOGON_NETWORK_CLEARTEXT equ 8
       LOGON32_LOGON_NEW_CREDENTIALS equ 9
     endif
-    ; (_WIN32_WINNT >= 0x0500)
     LOGON32_PROVIDER_DEFAULT equ 0
     LOGON32_PROVIDER_WINNT35 equ 1
     if (_WIN32_WINNT ge 0400h)
       LOGON32_PROVIDER_WINNT40 equ 2
-      ;* _WIN32_WINNT >= 0x0400 *
     endif
     if (_WIN32_WINNT ge 0500h)
       LOGON32_PROVIDER_WINNT50 equ 3
     endif
-    ; (_WIN32_WINNT >= 0x0500)
     if (_WIN32_WINNT ge 0600h)
       LOGON32_PROVIDER_VIRTUAL equ 4
     endif
-    ; (_WIN32_WINNT >= 0x0600)
     @DefProto DllImport, LogonUserA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :LPCSTR, :DWORD, :DWORD, :PHANDLE>, 24
     @DefProto DllImport, LogonUserW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :LPCWSTR, :DWORD, :DWORD, :PHANDLE>, 24
     ifdef UNICODE
@@ -3378,7 +2715,6 @@ ifndef _WINBASE_
     else
       LogonUser equ <LogonUserA>
     endif
-    ; !UNICODE
     @DefProto DllImport, LogonUserExA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :LPCSTR, :DWORD, :DWORD, :PHANDLE, :ptr PSID, :ptr PVOID, :LPDWORD, :PQUOTA_LIMITS>, 40
     @DefProto DllImport, LogonUserExW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :LPCWSTR, :DWORD, :DWORD, :PHANDLE, :ptr PSID, :ptr PVOID, :LPDWORD, :PQUOTA_LIMITS>, 40
     ifdef UNICODE
@@ -3386,27 +2722,20 @@ ifndef _WINBASE_
     else
       LogonUserEx equ <LogonUserExA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if (_WIN32_WINNT ge 0600h)
   endif
-  ; (_WIN32_WINNT >= 0x0600)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (_WIN32_WINNT ge 0500h)
-      ; LogonFlags
       LOGON_WITH_PROFILE equ 00000001h
       LOGON_NETCREDENTIALS_ONLY equ 00000002h
       LOGON_ZERO_PASSWORD_BUFFER equ 80000000h
       @DefProto DllImport, CreateProcessWithLogonW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :LPCWSTR, :DWORD, :LPCWSTR, :LPWSTR, :DWORD, :LPVOID, :LPCWSTR, :LPSTARTUPINFOW, :LPPROCESS_INFORMATION>, 44
       @DefProto DllImport, CreateProcessWithTokenW, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :LPCWSTR, :LPWSTR, :DWORD, :LPVOID, :LPCWSTR, :LPSTARTUPINFOW, :LPPROCESS_INFORMATION>, 36
     endif
-    ; (_WIN32_WINNT >= 0x0500)
     @DefProto DllImport, IsTokenUntrusted, WIN_STD_CALL_CONV,, <:HANDLE>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
-    ; Thread pool API's
     if (_WIN32_WINNT ge 0500h)
       @DefProto DllImport, RegisterWaitForSingleObject, WIN_STD_CALL_CONV,, <:PHANDLE, :HANDLE, :WAITORTIMERCALLBACK, :PVOID, :ULONG, :ULONG>, 24
       @DefProto DllImport, UnregisterWait, WIN_STD_CALL_CONV,, <:HANDLE>, 4
@@ -3414,8 +2743,6 @@ ifndef _WINBASE_
       @DefProto DllImport, SetTimerQueueTimer, WIN_STD_CALL_CONV,, <:HANDLE, :WAITORTIMERCALLBACK, :PVOID, :DWORD, :DWORD, :BOOL>, 24
       @DefProto DllImport, CancelTimerQueueTimer, WIN_STD_CALL_CONV,, <:HANDLE, :HANDLE>, 8
     endif
-    ; _WIN32_WINNT >= 0x0500
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     if (_WIN32_WINNT ge 0500h)
@@ -3431,23 +2758,16 @@ ifndef _WINBASE_
           endif
           DestroyThreadpoolEnvironment proto WIN_STD_CALL_CONV :PTP_CALLBACK_ENVIRON
         endif
-        ; !defined(MIDL_PASS)
       endif
-      ; _WIN32_WINNT >= 0x0600
     endif
-    ; _WIN32_WINNT >= 0x0500
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) *
   endif
   if (_WIN32_WINNT ge 0600h)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       if  not Defined(MIDL_PASS)
         SetThreadpoolCallbackPersistent proto WIN_STD_CALL_CONV :PTP_CALLBACK_ENVIRON
       endif
-      ; !defined(MIDL_PASS)
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
-      ;  Private Namespaces support
       @DefProto DllImport, CreatePrivateNamespaceA, WIN_STD_CALL_CONV,, <:LPSECURITY_ATTRIBUTES, :LPVOID, :LPCSTR>, 12
       ifndef UNICODE
         CreatePrivateNamespace equ <CreatePrivateNamespaceA>
@@ -3460,26 +2780,20 @@ ifndef _WINBASE_
       else
         OpenPrivateNamespace equ <OpenPrivateNamespaceW>
       endif
-      ;  Boundary descriptors support
       @DefProto DllImport, CreateBoundaryDescriptorA, WIN_STD_CALL_CONV,, <:LPCSTR, :ULONG>, 8
       ifndef UNICODE
         CreateBoundaryDescriptor equ <CreateBoundaryDescriptorA>
       else
         CreateBoundaryDescriptor equ <CreateBoundaryDescriptorW>
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, AddIntegrityLabelToBoundaryDescriptor, WIN_STD_CALL_CONV,, <:ptr HANDLE, :PSID>, 8
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
   endif
-  ; _WIN32_WINNT >= 0x0600
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (_WIN32_WINNT ge 0400h)
-      ; Plug-and-Play API's
-      HW_PROFILE_GUIDLEN equ 39; 36-characters plus NULL terminator
-
+      HW_PROFILE_GUIDLEN equ 39
       MAX_PROFILE_LEN equ 80
       DOCKINFO_UNDOCKED equ (1h)
       DOCKINFO_DOCKED equ (2h)
@@ -3488,15 +2802,15 @@ ifndef _WINBASE_
       DOCKINFO_USER_DOCKED equ <(DOCKINFO_USER_SUPPLIED or DOCKINFO_DOCKED)>
       HW_PROFILE_INFOA struct
         dwDockInfo DWORD ?
-        szHwProfileGuid SBYTE HW_PROFILE_GUIDLEN dup (?)
-        szHwProfileName SBYTE MAX_PROFILE_LEN dup (?)
+        szHwProfileGuid CHAR HW_PROFILE_GUIDLEN dup (?)
+        szHwProfileName CHAR MAX_PROFILE_LEN dup (?)
       HW_PROFILE_INFOA ends
       tagHW_PROFILE_INFOA typedef HW_PROFILE_INFOA
       LPHW_PROFILE_INFOA typedef ptr HW_PROFILE_INFOA
       HW_PROFILE_INFOW struct
         dwDockInfo DWORD ?
-        szHwProfileGuid WORD HW_PROFILE_GUIDLEN dup (?)
-        szHwProfileName WORD MAX_PROFILE_LEN dup (?)
+        szHwProfileGuid WCHAR HW_PROFILE_GUIDLEN dup (?)
+        szHwProfileName WCHAR MAX_PROFILE_LEN dup (?)
       HW_PROFILE_INFOW ends
       tagHW_PROFILE_INFOW typedef HW_PROFILE_INFOW
       LPHW_PROFILE_INFOW typedef ptr HW_PROFILE_INFOW
@@ -3507,7 +2821,6 @@ ifndef _WINBASE_
         HW_PROFILE_INFO typedef HW_PROFILE_INFOA
         LPHW_PROFILE_INFO typedef LPHW_PROFILE_INFOA
       endif
-      ; UNICODE
       @DefProto DllImport, GetCurrentHwProfileA, WIN_STD_CALL_CONV,, <:LPHW_PROFILE_INFOA>, 4
       @DefProto DllImport, GetCurrentHwProfileW, WIN_STD_CALL_CONV,, <:LPHW_PROFILE_INFOW>, 4
       ifdef UNICODE
@@ -3515,10 +2828,7 @@ ifndef _WINBASE_
       else
         GetCurrentHwProfile equ <GetCurrentHwProfileA>
       endif
-      ; !UNICODE
-      ;* _WIN32_WINNT >= 0x0400 *
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, VerifyVersionInfoA, WIN_STD_CALL_CONV,, <:LPOSVERSIONINFOEXA, :DWORD, :DWORDLONG>, 12
@@ -3528,29 +2838,20 @@ ifndef _WINBASE_
     else
       VerifyVersionInfo equ <VerifyVersionInfoA>
     endif
-    ; !UNICODE
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_GAMES) *
   endif
-  ; DOS and OS/2 Compatible Error Code definitions returned by the Win32 Base
-  ; API functions.
   include winerror.inc
   include timezoneapi.inc
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-    ;* Abnormal termination codes *
     TC_NORMAL equ 0
     TC_HARDERR equ 1
     TC_GP_TRAP equ 2
     TC_SIGNAL equ 3
     if (WINVER ge 0400h)
-      ; Power Management APIs
       @DefProto DllImport, SetSystemPowerState, WIN_STD_CALL_CONV,, <:BOOL, :BOOL>, 8
-      ;* WINVER >= 0x0400 *
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PC_APP)
     if (WINVER ge 0400h)
-      ; Power Management APIs
       AC_LINE_OFFLINE equ 00h
       AC_LINE_ONLINE equ 01h
       AC_LINE_BACKUP_POWER equ 02h
@@ -3575,15 +2876,11 @@ ifndef _WINBASE_
       _SYSTEM_POWER_STATUS typedef SYSTEM_POWER_STATUS
       LPSYSTEM_POWER_STATUS typedef ptr SYSTEM_POWER_STATUS
       @DefProto DllImport, GetSystemPowerStatus, WIN_STD_CALL_CONV,, <:LPSYSTEM_POWER_STATUS>, 4
-      ;* WINVER >= 0x0400 *
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_PC_APP) *
   endif
   if (_WIN32_WINNT ge 0500h)
-    ; Very Large Memory API Subset
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, MapUserPhysicalPagesScatter, WIN_STD_CALL_CONV,, <:ptr PVOID, :ULONG_PTR, :PULONG_PTR>, 12
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, CreateJobObjectA, WIN_STD_CALL_CONV,, <:LPSECURITY_ATTRIBUTES, :LPCSTR>, 8
@@ -3592,19 +2889,15 @@ ifndef _WINBASE_
       else
         CreateJobObject equ <CreateJobObjectA>
       endif
-      ; !UNICODE
       @DefProto DllImport, OpenJobObjectA, WIN_STD_CALL_CONV,, <:DWORD, :BOOL, :LPCSTR>, 12
       ifdef UNICODE
         OpenJobObject equ <OpenJobObjectW>
       else
         OpenJobObject equ <OpenJobObjectA>
       endif
-      ; !UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, CreateJobSet, WIN_STD_CALL_CONV,, <:ULONG, :PJOB_SET_ARRAY, :ULONG>, 12
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, FindFirstVolumeA, WIN_STD_CALL_CONV,, <:LPSTR, :DWORD>, 8
@@ -3615,7 +2908,6 @@ ifndef _WINBASE_
       ifndef UNICODE
         FindNextVolume equ <FindNextVolumeA>
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       @DefProto DllImport, FindFirstVolumeMountPointA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPSTR, :DWORD>, 12
@@ -3625,7 +2917,6 @@ ifndef _WINBASE_
       else
         FindFirstVolumeMountPoint equ <FindFirstVolumeMountPointA>
       endif
-      ; !UNICODE
       @DefProto DllImport, FindNextVolumeMountPointA, WIN_STD_CALL_CONV,, <:HANDLE, :LPSTR, :DWORD>, 12
       @DefProto DllImport, FindNextVolumeMountPointW, WIN_STD_CALL_CONV,, <:HANDLE, :LPWSTR, :DWORD>, 12
       ifdef UNICODE
@@ -3633,7 +2924,6 @@ ifndef _WINBASE_
       else
         FindNextVolumeMountPoint equ <FindNextVolumeMountPointA>
       endif
-      ; !UNICODE
       @DefProto DllImport, FindVolumeMountPointClose, WIN_STD_CALL_CONV,, <:HANDLE>, 4
       @DefProto DllImport, SetVolumeMountPointA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR>, 8
       @DefProto DllImport, SetVolumeMountPointW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR>, 8
@@ -3642,29 +2932,24 @@ ifndef _WINBASE_
       else
         SetVolumeMountPoint equ <SetVolumeMountPointA>
       endif
-      ; !UNICODE
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, DeleteVolumeMountPointA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
       ifndef UNICODE
         DeleteVolumeMountPoint equ <DeleteVolumeMountPointA>
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       ifndef UNICODE
         GetVolumeNameForVolumeMountPoint equ <GetVolumeNameForVolumeMountPointA>
       endif
       @DefProto DllImport, GetVolumeNameForVolumeMountPointA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPSTR, :DWORD>, 12
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, GetVolumePathNameA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPSTR, :DWORD>, 12
       ifndef UNICODE
         GetVolumePathName equ <GetVolumePathNameA>
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
@@ -3674,7 +2959,6 @@ ifndef _WINBASE_
         GetVolumePathNamesForVolumeName equ <GetVolumePathNamesForVolumeNameA>
       endif
     endif
-    ; (_WIN32_WINNT >= 0x0501)
     if (_WIN32_WINNT ge 0500h) or (_WIN32_FUSION ge 0100h) or ISOLATION_AWARE_ENABLED
       ACTCTX_FLAG_PROCESSOR_ARCHITECTURE_VALID equ (00000001h)
       ACTCTX_FLAG_LANGID_VALID equ (00000002h)
@@ -3685,27 +2969,27 @@ ifndef _WINBASE_
       ACTCTX_FLAG_SOURCE_IS_ASSEMBLYREF equ (00000040h)
       ACTCTX_FLAG_HMODULE_VALID equ (00000080h)
       ACTCTXA struct
-        cbSize DWORD ?
+        cbSize ULONG ?
         dwFlags DWORD ?
-        lpSource =POINTER ?
-        wProcessorArchitecture WORD ?
+        lpSource LPCSTR ?
+        wProcessorArchitecture USHORT ?
         wLangId LANGID ?
-        lpAssemblyDirectory =POINTER ?
-        lpResourceName =POINTER ?
-        lpApplicationName =POINTER ?
+        lpAssemblyDirectory LPCSTR ?
+        lpResourceName LPCSTR ?
+        lpApplicationName LPCSTR ?
         hModule HMODULE ?
       ACTCTXA ends
       tagACTCTXA typedef ACTCTXA
       PACTCTXA typedef ptr ACTCTXA
       ACTCTXW struct
-        cbSize DWORD ?
+        cbSize ULONG ?
         dwFlags DWORD ?
-        lpSource =POINTER ?
-        wProcessorArchitecture WORD ?
+        lpSource LPCWSTR ?
+        wProcessorArchitecture USHORT ?
         wLangId LANGID ?
-        lpAssemblyDirectory =POINTER ?
-        lpResourceName =POINTER ?
-        lpApplicationName =POINTER ?
+        lpAssemblyDirectory LPCWSTR ?
+        lpResourceName LPCWSTR ?
+        lpApplicationName LPCWSTR ?
         hModule HMODULE ?
       ACTCTXW ends
       tagACTCTXW typedef ACTCTXW
@@ -3717,7 +3001,6 @@ ifndef _WINBASE_
         ACTCTX typedef ACTCTXA
         PACTCTX typedef PACTCTXA
       endif
-      ; UNICODE
       PCACTCTXA typedef ptr ACTCTXA
       PCACTCTXW typedef ptr ACTCTXW
       ifdef UNICODE
@@ -3725,7 +3008,6 @@ ifndef _WINBASE_
       else
         PCACTCTX typedef PCACTCTXA
       endif
-      ; UNICODE
       @DefProto DllImport, CreateActCtxA, WIN_STD_CALL_CONV,, <:PCACTCTXA>, 4
       @DefProto DllImport, CreateActCtxW, WIN_STD_CALL_CONV,, <:PCACTCTXW>, 4
       ifdef UNICODE
@@ -3733,7 +3015,6 @@ ifndef _WINBASE_
       else
         CreateActCtx equ <CreateActCtxA>
       endif
-      ; !UNICODE
       @DefProto DllImport, AddRefActCtx, WIN_STD_CALL_CONV,, <:HANDLE>, 4
       @DefProto DllImport, ReleaseActCtx, WIN_STD_CALL_CONV,, <:HANDLE>, 4
       @DefProto DllImport, ZombifyActCtx, WIN_STD_CALL_CONV,, <:HANDLE>, 4
@@ -3742,43 +3023,42 @@ ifndef _WINBASE_
       @DefProto DllImport, DeactivateActCtx, WIN_STD_CALL_CONV,, <:DWORD, :ULONG_PTR>, 8
       @DefProto DllImport, GetCurrentActCtx, WIN_STD_CALL_CONV,, <:ptr HANDLE>, 4
       ACTCTX_SECTION_KEYED_DATA_2600 struct
-        cbSize DWORD ?
-        ulDataFormatVersion DWORD ?
-        lpData POINTER ?
-        ulLength DWORD ?
-        lpSectionGlobalData POINTER ?
-        ulSectionGlobalDataLength DWORD ?
-        lpSectionBase POINTER ?
-        ulSectionTotalLength DWORD ?
+        cbSize ULONG ?
+        ulDataFormatVersion ULONG ?
+        lpData PVOID ?
+        ulLength ULONG ?
+        lpSectionGlobalData PVOID ?
+        ulSectionGlobalDataLength ULONG ?
+        lpSectionBase PVOID ?
+        ulSectionTotalLength ULONG ?
         hActCtx HANDLE ?
-        ulAssemblyRosterIndex DWORD ?
+        ulAssemblyRosterIndex ULONG ?
       ACTCTX_SECTION_KEYED_DATA_2600 ends
       tagACTCTX_SECTION_KEYED_DATA_2600 typedef ACTCTX_SECTION_KEYED_DATA_2600
       PACTCTX_SECTION_KEYED_DATA_2600 typedef ptr ACTCTX_SECTION_KEYED_DATA_2600
       PCACTCTX_SECTION_KEYED_DATA_2600 typedef ptr ACTCTX_SECTION_KEYED_DATA_2600
       ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA struct
-        lpInformation POINTER ?
-        lpSectionBase POINTER ?
-        ulSectionLength DWORD ?
-        lpSectionGlobalDataBase POINTER ?
-        ulSectionGlobalDataLength DWORD ?
+        lpInformation PVOID ?
+        lpSectionBase PVOID ?
+        ulSectionLength ULONG ?
+        lpSectionGlobalDataBase PVOID ?
+        ulSectionGlobalDataLength ULONG ?
       ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA ends
       tagACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA typedef ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA
       PACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA typedef ptr ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA
       PCACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA typedef ptr ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA
       ACTCTX_SECTION_KEYED_DATA struct
-        cbSize DWORD ?
-        ulDataFormatVersion DWORD ?
-        lpData POINTER ?
-        ulLength DWORD ?
-        lpSectionGlobalData POINTER ?
-        ulSectionGlobalDataLength DWORD ?
-        lpSectionBase POINTER ?
-        ulSectionTotalLength DWORD ?
+        cbSize ULONG ?
+        ulDataFormatVersion ULONG ?
+        lpData PVOID ?
+        ulLength ULONG ?
+        lpSectionGlobalData PVOID ?
+        ulSectionGlobalDataLength ULONG ?
+        lpSectionBase PVOID ?
+        ulSectionTotalLength ULONG ?
         hActCtx HANDLE ?
-        ulAssemblyRosterIndex DWORD ?
-        ; 2600 stops here
-        ulFlags DWORD ?
+        ulAssemblyRosterIndex ULONG ?
+        ulFlags ULONG ?
         AssemblyMetadata ACTCTX_SECTION_KEYED_DATA_ASSEMBLY_METADATA <>
       ACTCTX_SECTION_KEYED_DATA ends
       tagACTCTX_SECTION_KEYED_DATA typedef ACTCTX_SECTION_KEYED_DATA
@@ -3794,9 +3074,7 @@ ifndef _WINBASE_
       else
         FindActCtxSectionString equ <FindActCtxSectionStringA>
       endif
-      ; !UNICODE
       @DefProto DllImport, FindActCtxSectionGuid, WIN_STD_CALL_CONV,, <:DWORD, :ptr GUID, :ULONG, :ptr GUID, :PACTCTX_SECTION_KEYED_DATA>, 20
-      ;* RC complains about long symbols in #ifs *
       if  not Defined(RC_INVOKED)
         if  not Defined(ACTIVATION_CONTEXT_BASIC_INFORMATION_DEFINED)
           ACTIVATION_CONTEXT_BASIC_INFORMATION struct
@@ -3808,96 +3086,58 @@ ifndef _WINBASE_
           PCACTIVATION_CONTEXT_BASIC_INFORMATION typedef ptr _ACTIVATION_CONTEXT_BASIC_INFORMATION
           ACTIVATION_CONTEXT_BASIC_INFORMATION_DEFINED equ 1
         endif
-        ; !defined(ACTIVATION_CONTEXT_BASIC_INFORMATION_DEFINED)
       endif
       QUERY_ACTCTX_FLAG_USE_ACTIVE_ACTCTX equ (00000004h)
       QUERY_ACTCTX_FLAG_ACTCTX_IS_HMODULE equ (00000008h)
       QUERY_ACTCTX_FLAG_ACTCTX_IS_ADDRESS equ (00000010h)
       QUERY_ACTCTX_FLAG_NO_ADDREF equ (80000000h)
-      ; switch (ulInfoClass)
-      ;  case ActivationContextBasicInformation:
-      ;    pvSubInstance == NULL
-      ;    pvBuffer is of type PACTIVATION_CONTEXT_BASIC_INFORMATION
-      ;  case ActivationContextDetailedInformation:
-      ;    pvSubInstance == NULL
-      ;    pvBuffer is of type PACTIVATION_CONTEXT_DETAILED_INFORMATION
-      ;  case AssemblyDetailedInformationInActivationContext:
-      ;    pvSubInstance is of type PULONG
-      ;      *pvSubInstance < ACTIVATION_CONTEXT_DETAILED_INFORMATION::ulAssemblyCount
-      ;    pvBuffer is of type PACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION
-      ;  case FileInformationInAssemblyOfAssemblyInActivationContext:
-      ;    pvSubInstance is of type PACTIVATION_CONTEXT_QUERY_INDEX
-      ;      pvSubInstance->ulAssemblyIndex < ACTIVATION_CONTEXT_DETAILED_INFORMATION::ulAssemblyCount
-      ;      pvSubInstance->ulFileIndexInAssembly < ACTIVATION_CONTEXT_ASSEMBLY_DETAILED_INFORMATION::ulFileCount
-      ;    pvBuffer is of type PASSEMBLY_FILE_DETAILED_INFORMATION
-      ;  case RunlevelInformationInActivationContext :
-      ;    pvSubInstance == NULL
-      ;    pvBuffer is of type PACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION
-      ; String are placed after the structs.
       @DefProto DllImport, QueryActCtxW, WIN_STD_CALL_CONV,, <:DWORD, :HANDLE, :PVOID, :ULONG, :PVOID, :SIZE_T, :ptr SIZE_T>, 28
       TYPE_PQUERYACTCTXW_FUNC typedef proto WIN_STD_CALL_CONV :DWORD, :HANDLE, :PVOID, :ULONG, :PVOID, :SIZE_T, :ptr SIZE_T
       PQUERYACTCTXW_FUNC typedef ptr TYPE_PQUERYACTCTXW_FUNC
 
     endif
-    ; (_WIN32_WINNT > 0x0500) || (_WIN32_FUSION >= 0x0100) || ISOLATION_AWARE_ENABLED
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if _WIN32_WINNT ge 0501h
       @DefProto DllImport, WTSGetActiveConsoleSessionId, WIN_STD_CALL_CONV,, <>, 0
     endif
-    ; (_WIN32_WINNT >= 0x0501)
     if (_WIN32_WINNT ge _WIN32_WINNT_WINTHRESHOLD)
       @DefProto DllImport, WTSGetServiceSessionId, WIN_STD_CALL_CONV,, <>, 0
       @DefProto DllImport, WTSIsServerContainer, WIN_STD_CALL_CONV,, <>, 0
     endif
-    ; (_WIN32_WINNT >= _WIN32_WINNT_WINTHRESHOLD)
     if _WIN32_WINNT ge 0601h
       @DefProto DllImport, GetActiveProcessorGroupCount, WIN_STD_CALL_CONV,, <>, 0
       @DefProto DllImport, GetMaximumProcessorGroupCount, WIN_STD_CALL_CONV,, <>, 0
       @DefProto DllImport, GetActiveProcessorCount, WIN_STD_CALL_CONV,, <:WORD>, 4
       @DefProto DllImport, GetMaximumProcessorCount, WIN_STD_CALL_CONV,, <:WORD>, 4
     endif
-    ; (_WIN32_WINNT >=0x0601)
-    ; NUMA Information routines.
     @DefProto DllImport, GetNumaProcessorNode, WIN_STD_CALL_CONV,, <:UCHAR, :PUCHAR>, 8
     if _WIN32_WINNT ge 0601h
       @DefProto DllImport, GetNumaNodeNumberFromHandle, WIN_STD_CALL_CONV,, <:HANDLE, :PUSHORT>, 8
     endif
-    ; (_WIN32_WINNT >=0x0601)
     if _WIN32_WINNT ge 0601h
       @DefProto DllImport, GetNumaProcessorNodeEx, WIN_STD_CALL_CONV,, <:PPROCESSOR_NUMBER, :PUSHORT>, 8
     endif
-    ; (_WIN32_WINNT >=0x0601)
     @DefProto DllImport, GetNumaNodeProcessorMask, WIN_STD_CALL_CONV,, <:UCHAR, :PULONGLONG>, 8
     @DefProto DllImport, GetNumaAvailableMemoryNode, WIN_STD_CALL_CONV,, <:UCHAR, :PULONGLONG>, 8
     if _WIN32_WINNT ge 0601h
       @DefProto DllImport, GetNumaAvailableMemoryNodeEx, WIN_STD_CALL_CONV,, <:USHORT, :PULONGLONG>, 8
     endif
-    ; (_WIN32_WINNT >=0x0601)
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, GetNumaProximityNode, WIN_STD_CALL_CONV,, <:ULONG, :PUCHAR>, 8
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
-    ; Application restart and data recovery callback
     TYPE_APPLICATION_RECOVERY_CALLBACK typedef proto WIN_STD_CALL_CONV :PVOID
     APPLICATION_RECOVERY_CALLBACK typedef ptr TYPE_APPLICATION_RECOVERY_CALLBACK
 
-    ; Max length of commandline in characters (including the NULL character that can be registered for restart)
     RESTART_MAX_CMD_LINE equ 1024
-    ; Do not restart the process for termination due to application crashes
     RESTART_NO_CRASH equ 1
-    ; Do not restart the process for termination due to application hangs
     RESTART_NO_HANG equ 2
-    ; Do not restart the process for termination due to patch installations
     RESTART_NO_PATCH equ 4
-    ; Do not restart the process when the system is rebooted due to patch installations
     RESTART_NO_REBOOT equ 8
     RECOVERY_DEFAULT_PING_INTERVAL equ 5000
     RECOVERY_MAX_PING_INTERVAL equ (5 * 60 * 1000)
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (_WIN32_WINNT ge 0600h)
@@ -3906,24 +3146,18 @@ ifndef _WINBASE_
       @DefProto DllImport, RegisterApplicationRestart, WIN_STD_CALL_CONV,, <:PCWSTR, :DWORD>, 8
       @DefProto DllImport, UnregisterApplicationRestart, WIN_STD_CALL_CONV,, <>, 0
     endif
-    ; _WIN32_WINNT >= 0x0600
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, GetApplicationRecoveryCallback, WIN_STD_CALL_CONV,, <:HANDLE, :ptr APPLICATION_RECOVERY_CALLBACK, :ptr PVOID, :PDWORD, :PDWORD>, 20
       @DefProto DllImport, GetApplicationRestartSettings, WIN_STD_CALL_CONV,, <:HANDLE, :PWSTR, :PDWORD, :PDWORD>, 16
     endif
-    ; _WIN32_WINNT >= 0x0600
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, ApplicationRecoveryInProgress, WIN_STD_CALL_CONV,, <:PBOOL>, 4
       @DefProto DllImport, ApplicationRecoveryFinished, WIN_STD_CALL_CONV,, <:BOOL>, 4
     endif
-    ; _WIN32_WINNT >= 0x0600
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if (_WIN32_WINNT ge 0600h)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
@@ -3940,19 +3174,19 @@ ifndef _WINBASE_
         AllocationSize LARGE_INTEGER <>
         EndOfFile LARGE_INTEGER <>
         NumberOfLinks DWORD ?
-        DeletePending BYTE ?
-        Directory BYTE ?
+        DeletePending BOOLEAN ?
+        Directory BOOLEAN ?
       FILE_STANDARD_INFO ends
       _FILE_STANDARD_INFO typedef FILE_STANDARD_INFO
       PFILE_STANDARD_INFO typedef ptr FILE_STANDARD_INFO
       FILE_NAME_INFO struct
         FileNameLength DWORD ?
-        FileName WORD 1 dup (?)
+        FileName WCHAR 1 dup (?)
       FILE_NAME_INFO ends
       _FILE_NAME_INFO typedef FILE_NAME_INFO
       PFILE_NAME_INFO typedef ptr FILE_NAME_INFO
       FILE_CASE_SENSITIVE_INFO struct
-        Flags DWORD ?
+        Flags ULONG ?
       FILE_CASE_SENSITIVE_INFO ends
       _FILE_CASE_SENSITIVE_INFO typedef FILE_CASE_SENSITIVE_INFO
       PFILE_CASE_SENSITIVE_INFO typedef ptr FILE_CASE_SENSITIVE_INFO
@@ -3966,17 +3200,15 @@ ifndef _WINBASE_
       FILE_RENAME_INFO struct
         if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_RS1)
           union
-            ReplaceIfExists BYTE ?
-            ; FileRenameInfo
+            ReplaceIfExists BOOLEAN ?
             Flags DWORD ?
-            ; FileRenameInfoEx
           ends
         else
-          ReplaceIfExists BYTE ?
+          ReplaceIfExists BOOLEAN ?
         endif
         RootDirectory HANDLE ?
         FileNameLength DWORD ?
-        FileName WORD 1 dup (?)
+        FileName WCHAR 1 dup (?)
       FILE_RENAME_INFO ends
       _FILE_RENAME_INFO typedef FILE_RENAME_INFO
       PFILE_RENAME_INFO typedef ptr FILE_RENAME_INFO
@@ -3995,17 +3227,17 @@ ifndef _WINBASE_
         StreamNameLength DWORD ?
         StreamSize LARGE_INTEGER <>
         StreamAllocationSize LARGE_INTEGER <>
-        StreamName WORD 1 dup (?)
+        StreamName WCHAR 1 dup (?)
       FILE_STREAM_INFO ends
       _FILE_STREAM_INFO typedef FILE_STREAM_INFO
       PFILE_STREAM_INFO typedef ptr FILE_STREAM_INFO
       FILE_COMPRESSION_INFO struct
         CompressedFileSize LARGE_INTEGER <>
         CompressionFormat WORD ?
-        CompressionUnitShift BYTE ?
-        ChunkShift BYTE ?
-        ClusterShift BYTE ?
-        Reserved BYTE 3 dup (?)
+        CompressionUnitShift UCHAR ?
+        ChunkShift UCHAR ?
+        ClusterShift UCHAR ?
+        Reserved UCHAR 3 dup (?)
       FILE_COMPRESSION_INFO ends
       _FILE_COMPRESSION_INFO typedef FILE_COMPRESSION_INFO
       PFILE_COMPRESSION_INFO typedef ptr FILE_COMPRESSION_INFO
@@ -4016,7 +3248,7 @@ ifndef _WINBASE_
       _FILE_ATTRIBUTE_TAG_INFO typedef FILE_ATTRIBUTE_TAG_INFO
       PFILE_ATTRIBUTE_TAG_INFO typedef ptr FILE_ATTRIBUTE_TAG_INFO
       FILE_DISPOSITION_INFO struct
-        DeleteFile BYTE ?
+        DeleteFile BOOLEAN ?
       FILE_DISPOSITION_INFO ends
       _FILE_DISPOSITION_INFO typedef FILE_DISPOSITION_INFO
       PFILE_DISPOSITION_INFO typedef ptr FILE_DISPOSITION_INFO
@@ -4048,25 +3280,25 @@ ifndef _WINBASE_
         FileNameLength DWORD ?
         EaSize DWORD ?
         ShortNameLength CCHAR ?
-        ShortName WORD 12 dup (?)
+        ShortName WCHAR 12 dup (?)
         FileId LARGE_INTEGER <>
-        FileName WORD 1 dup (?)
+        FileName WCHAR 1 dup (?)
       FILE_ID_BOTH_DIR_INFO ends
       _FILE_ID_BOTH_DIR_INFO typedef FILE_ID_BOTH_DIR_INFO
       PFILE_ID_BOTH_DIR_INFO typedef ptr FILE_ID_BOTH_DIR_INFO
       FILE_FULL_DIR_INFO struct
-        NextEntryOffset DWORD ?
-        FileIndex DWORD ?
+        NextEntryOffset ULONG ?
+        FileIndex ULONG ?
         CreationTime LARGE_INTEGER <>
         LastAccessTime LARGE_INTEGER <>
         LastWriteTime LARGE_INTEGER <>
         ChangeTime LARGE_INTEGER <>
         EndOfFile LARGE_INTEGER <>
         AllocationSize LARGE_INTEGER <>
-        FileAttributes DWORD ?
-        FileNameLength DWORD ?
-        EaSize DWORD ?
-        FileName WORD 1 dup (?)
+        FileAttributes ULONG ?
+        FileNameLength ULONG ?
+        EaSize ULONG ?
+        FileName WCHAR 1 dup (?)
       FILE_FULL_DIR_INFO ends
       _FILE_FULL_DIR_INFO typedef FILE_FULL_DIR_INFO
       PFILE_FULL_DIR_INFO typedef ptr FILE_FULL_DIR_INFO
@@ -4082,68 +3314,56 @@ ifndef _WINBASE_
       FILE_IO_PRIORITY_HINT_INFO ends
       _FILE_IO_PRIORITY_HINT_INFO typedef FILE_IO_PRIORITY_HINT_INFO
       PFILE_IO_PRIORITY_HINT_INFO typedef ptr FILE_IO_PRIORITY_HINT_INFO
-      ; Structure and constants must match those in ntioapi_x.w
       if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
         FILE_ALIGNMENT_INFO struct
-          AlignmentRequirement DWORD ?
+          AlignmentRequirement ULONG ?
         FILE_ALIGNMENT_INFO ends
         _FILE_ALIGNMENT_INFO typedef FILE_ALIGNMENT_INFO
         PFILE_ALIGNMENT_INFO typedef ptr FILE_ALIGNMENT_INFO
-        ;  Flag definitions for FILE_STORAGE_INFO structure
-        ;  If this flag is set then the partition is correctly aligned with the
-        ;  physical sector size of the device for optimial performance.
         STORAGE_INFO_FLAGS_ALIGNED_DEVICE equ 00000001h
         STORAGE_INFO_FLAGS_PARTITION_ALIGNED_ON_DEVICE equ 00000002h
-        ;  If this value is set for the Sector and Parition alignment
-        ;  fields then it means the alignment is not known and the
-        ;  alignment flags have no meaning
         STORAGE_INFO_OFFSET_UNKNOWN equ (0ffffffffh)
         FILE_STORAGE_INFO struct
-          LogicalBytesPerSector DWORD ?
-          PhysicalBytesPerSectorForAtomicity DWORD ?
-          PhysicalBytesPerSectorForPerformance DWORD ?
-          FileSystemEffectivePhysicalBytesPerSectorForAtomicity DWORD ?
-          Flags DWORD ?
-          ByteOffsetForSectorAlignment DWORD ?
-          ByteOffsetForPartitionAlignment DWORD ?
+          LogicalBytesPerSector ULONG ?
+          PhysicalBytesPerSectorForAtomicity ULONG ?
+          PhysicalBytesPerSectorForPerformance ULONG ?
+          FileSystemEffectivePhysicalBytesPerSectorForAtomicity ULONG ?
+          Flags ULONG ?
+          ByteOffsetForSectorAlignment ULONG ?
+          ByteOffsetForPartitionAlignment ULONG ?
         FILE_STORAGE_INFO ends
         _FILE_STORAGE_INFO typedef FILE_STORAGE_INFO
         PFILE_STORAGE_INFO typedef ptr FILE_STORAGE_INFO
-        ;  Structure definition for FileIdInfo
         FILE_ID_INFO struct
-          VolumeSerialNumber QWORD ?
+          VolumeSerialNumber ULONGLONG ?
           FileId FILE_ID_128 <>
         FILE_ID_INFO ends
         _FILE_ID_INFO typedef FILE_ID_INFO
         PFILE_ID_INFO typedef ptr FILE_ID_INFO
-        ;  Structure definition for FileIdExtdDirectoryInfo
         FILE_ID_EXTD_DIR_INFO struct
-          NextEntryOffset DWORD ?
-          FileIndex DWORD ?
+          NextEntryOffset ULONG ?
+          FileIndex ULONG ?
           CreationTime LARGE_INTEGER <>
           LastAccessTime LARGE_INTEGER <>
           LastWriteTime LARGE_INTEGER <>
           ChangeTime LARGE_INTEGER <>
           EndOfFile LARGE_INTEGER <>
           AllocationSize LARGE_INTEGER <>
-          FileAttributes DWORD ?
-          FileNameLength DWORD ?
-          EaSize DWORD ?
-          ReparsePointTag DWORD ?
+          FileAttributes ULONG ?
+          FileNameLength ULONG ?
+          EaSize ULONG ?
+          ReparsePointTag ULONG ?
           FileId FILE_ID_128 <>
-          FileName WORD 1 dup (?)
+          FileName WCHAR 1 dup (?)
         FILE_ID_EXTD_DIR_INFO ends
         _FILE_ID_EXTD_DIR_INFO typedef FILE_ID_EXTD_DIR_INFO
         PFILE_ID_EXTD_DIR_INFO typedef ptr FILE_ID_EXTD_DIR_INFO
       endif
-      ; File Remote protocol info (FileRemoteProtocolInfo)
-      ; Protocol generic flags.
       REMOTE_PROTOCOL_INFO_FLAG_LOOPBACK equ 00000001h
       REMOTE_PROTOCOL_INFO_FLAG_OFFLINE equ 00000002h
       if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
         REMOTE_PROTOCOL_INFO_FLAG_PERSISTENT_HANDLE equ 00000004h
       endif
-      ; Protocol specific SMB2 share capability flags.
       if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
         RPI_FLAG_SMB2_SHARECAP_TIMEWARP equ 00000002h
         RPI_FLAG_SMB2_SHARECAP_DFS equ 00000008h
@@ -4151,10 +3371,8 @@ ifndef _WINBASE_
         RPI_FLAG_SMB2_SHARECAP_SCALEOUT equ 00000020h
         RPI_FLAG_SMB2_SHARECAP_CLUSTER equ 00000040h
       endif
-      ; Protocol specific SMB2 share flags
       RPI_SMB2_SHAREFLAG_ENCRYPT_DATA equ 00000001h
       RPI_SMB2_SHAREFLAG_COMPRESS_DATA equ 00000002h
-      ; Protocol specific SMB2 server capability flags.
       if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
         RPI_SMB2_FLAG_SERVERCAP_DFS equ 00000001h
         RPI_SMB2_FLAG_SERVERCAP_LEASING equ 00000002h
@@ -4164,52 +3382,44 @@ ifndef _WINBASE_
         RPI_SMB2_FLAG_SERVERCAP_DIRECTORY_LEASING equ 00000020h
       endif
       FILE_REMOTE_PROTOCOL_INFO struct
-        ; Structure Version
-        StructureVersion WORD ?
-        ; 1 for Win7, 2 for Win8 SMB3, 3 for Blue SMB3.
-        StructureSize WORD ?
-        ; sizeof(FILE_REMOTE_PROTOCOL_INFO)
-        Protocol DWORD ?
-        ; Protocol (WNNC_NET_*) defined in winnetwk.h or ntifs.h.
-        ; Protocol Version & Type
-        ProtocolMajorVersion WORD ?
-        ProtocolMinorVersion WORD ?
-        ProtocolRevision WORD ?
-        Reserved WORD ?
-        ; Protocol-Generic Information
-        Flags DWORD ?
+        StructureVersion USHORT ?
+        StructureSize USHORT ?
+        Protocol ULONG ?
+        ProtocolMajorVersion USHORT ?
+        ProtocolMinorVersion USHORT ?
+        ProtocolRevision USHORT ?
+        Reserved USHORT ?
+        Flags ULONG ?
         struct GenericReserved
-          Reserved DWORD 8 dup (?)
+          Reserved ULONG 8 dup (?)
         ends
-        ; Protocol specific information
         if (_WIN32_WINNT lt _WIN32_WINNT_WIN8)
           struct ProtocolSpecificReserved
-            Reserved DWORD 16 dup (?)
+            Reserved ULONG 16 dup (?)
           ends
         endif
         if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
           union ProtocolSpecific
             struct Smb2
               struct Server
-                Capabilities DWORD ?
+                Capabilities ULONG ?
               ends
               struct Share
-                Capabilities DWORD ?
+                Capabilities ULONG ?
                 if (NTDDI_VERSION ge NTDDI_WIN10_NI)
-                  ShareFlags DWORD ?
+                  ShareFlags ULONG ?
                 else
-                  CachingFlags DWORD ?
+                  CachingFlags ULONG ?
                 endif
               ends
             ends
-            Reserved DWORD 16 dup (?)
+            Reserved ULONG 16 dup (?)
           ends
         endif
       FILE_REMOTE_PROTOCOL_INFO ends
       _FILE_REMOTE_PROTOCOL_INFO typedef FILE_REMOTE_PROTOCOL_INFO
       PFILE_REMOTE_PROTOCOL_INFO typedef ptr FILE_REMOTE_PROTOCOL_INFO
       @DefProto DllImport, GetFileInformationByHandleEx, WIN_STD_CALL_CONV,, <:HANDLE, :FILE_INFO_BY_HANDLE_CLASS, :LPVOID, :DWORD>, 16
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       FILE_ID_TYPE typedef SDWORD
@@ -4221,9 +3431,7 @@ ifndef _WINBASE_
       PFILE_ID_TYPE typedef ptr FILE_ID_TYPE
       FILE_ID_DESCRIPTOR struct
         dwSize DWORD ?
-        ; Size of the struct
         Type_ FILE_ID_TYPE ?
-        ; Describes the type of identifier passed in.
         union
           FileId LARGE_INTEGER <>
           ObjectId GUID <>
@@ -4234,21 +3442,11 @@ ifndef _WINBASE_
       FILE_ID_DESCRIPTOR ends
       LPFILE_ID_DESCRIPTOR typedef ptr FILE_ID_DESCRIPTOR
       @DefProto DllImport, OpenFileById, WIN_STD_CALL_CONV,, <:HANDLE, :LPFILE_ID_DESCRIPTOR, :DWORD, :DWORD, :LPSECURITY_ATTRIBUTES, :DWORD>, 24
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
     endif
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if (_WIN32_WINNT ge 0600h)
-      ;  Flag values for the dwFlags parameter of the CreateSymbolicLink API
-      ;  Request to create a directory symbolic link
       SYMBOLIC_LINK_FLAG_DIRECTORY equ (1h)
-      ;  Specify this flag if you want to allow creation of symbolic links when the
-      ;  process is not elevated.  As of now enabling DEVELOPER MODE on a system
-      ;  is the only scenario that allow unprivileged symlink creation. There may
-      ;  be future scenarios that this flag will enable in the future.
-      ;  Also be aware that the behavior of this API with this flag set will likely
-      ;  be different between a development environment and an and customers
-      ;  environment so please be careful with the usage of this flag.
       SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE equ (2h)
       @DefProto DllImport, CreateSymbolicLinkA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :DWORD>, 12
       @DefProto DllImport, CreateSymbolicLinkW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :DWORD>, 12
@@ -4257,13 +3455,10 @@ ifndef _WINBASE_
       else
         CreateSymbolicLink equ <CreateSymbolicLinkA>
       endif
-      ; !UNICODE
     endif
-    ; (_WIN32_WINNT >= 0x0600)
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, QueryActCtxSettingsW, WIN_STD_CALL_CONV,, <:DWORD, :HANDLE, :PCWSTR, :PCWSTR, :PWSTR, :SIZE_T, :ptr SIZE_T>, 28
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if (_WIN32_WINNT ge 0600h)
@@ -4274,9 +3469,7 @@ ifndef _WINBASE_
       else
         CreateSymbolicLinkTransacted equ <CreateSymbolicLinkTransactedA>
       endif
-      ; !UNICODE
     endif
-    ; (_WIN32_WINNT >= 0x0600)
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, ReplacePartitionUnit, WIN_STD_CALL_CONV,, <:PWSTR, :PWSTR, :ULONG>, 12
     endif
@@ -4284,23 +3477,18 @@ ifndef _WINBASE_
       @DefProto DllImport, AddSecureMemoryCacheCallback, WIN_STD_CALL_CONV,, <:PSECURE_MEMORY_CACHE_CALLBACK>, 4
       @DefProto DllImport, RemoveSecureMemoryCacheCallback, WIN_STD_CALL_CONV,, <:PSECURE_MEMORY_CACHE_CALLBACK>, 4
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
   if (NTDDI_VERSION ge NTDDI_WIN7SP1)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, CopyContext, WIN_STD_CALL_CONV,, <:PCONTEXT, :DWORD, :PCONTEXT>, 12
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, InitializeContext, WIN_STD_CALL_CONV,, <:PVOID, :DWORD, :ptr PCONTEXT, :PDWORD>, 16
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
         @DefProto DllImport, InitializeContext2, WIN_STD_CALL_CONV,, <:PVOID, :DWORD, :ptr PCONTEXT, :PDWORD, :ULONG64>, 20
       endif
-      ; (NTDDI_VERSION >= NTDDI_WIN10_RS5)
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if Defined(_AMD64_) or Defined(_X86_)
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
@@ -4311,13 +3499,9 @@ ifndef _WINBASE_
         if (NTDDI_VERSION ge NTDDI_WIN10_FE)
           @DefProto DllImport, GetThreadEnabledXStateFeatures, WIN_STD_CALL_CONV,, <>, 0
           @DefProto DllImport, EnableProcessOptionalXStateFeatures, WIN_STD_CALL_CONV,, <:DWORD64>, 4
-          ;* NTDDI_VERSION >= NTDDI_WIN10_FE *
         endif
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
       endif
-      ;* defined(_AMD64_) || defined(_X86_) *
     endif
-    ;* (NTDDI_VERSION >= NTDDI_WIN7SP1) *
   endif
   if (_WIN32_WINNT ge 0601h)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -4325,30 +3509,21 @@ ifndef _WINBASE_
       @DefProto DllImport, DisableThreadProfiling, WIN_STD_CALL_CONV,, <:HANDLE>, 4
       @DefProto DllImport, QueryThreadProfiling, WIN_STD_CALL_CONV,, <:HANDLE, :PBOOLEAN>, 8
       @DefProto DllImport, ReadThreadProfilingData, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :PPERFORMANCE_DATA>, 12
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
     endif
-    ;* (_WIN32_WINNT >= 0x0601) *
   endif
   if (NTDDI_VERSION ge NTDDI_WIN10_RS4)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, RaiseCustomSystemEventTrigger, WIN_STD_CALL_CONV,, <:PCUSTOM_SYSTEM_EVENT_TRIGGER_CONFIG>, 4
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
     endif
-    ;* (NTDDI_VERSION >= NTDDI_WIN10_RS4) *
   endif
-  ;yahao
   if (NTDDI_VERSION ge NTDDI_WIN10_MN)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
     endif
-    ;* (NTDDI_VERSION >= NTDDI_WIN10_MN) *
   endif
-  ;* RC complains about long symbols in #ifs *
   if  not Defined(RC_INVOKED)
     if Defined(ISOLATION_AWARE_ENABLED) and (ISOLATION_AWARE_ENABLED ne 0)
       ;[...]
     endif
-    ;* RC *
   endif
   ifdef __cplusplus
     ;[...]
@@ -4356,37 +3531,17 @@ ifndef _WINBASE_
   if Defined(_MSC_VER)
     if _MSC_VER ge 1200
     else
-      ;* nonstandard extension : single line comment *
-      ;* nonstandard extension used : nameless struct/union *
-      ;* nonstandard extension used : bit field types other then int *
     endif
   endif
 endif
-; _WINBASE_
 if  not Defined(RC_INVOKED)
   if  not Defined(NOWINBASEINTERLOCK)
     if  not Defined(_NTOS_)
-      ;*++
-      ;Copyright (c) Microsoft Corporation.  All rights reserved.
-      ;Module Name:
-      ;winbase_interlockedcplusplus.h
-      ;Abstract:
-      ;C++ function overloads in place of "manual name mangling".
-      ;This file is meant to be #included by winbase.h or any other file declaring the signed interlocked functions.
-      ;Author:
-      ;Jay Krell (JayKrell) April 2002
-      ;--*
-      ;* { *
       if  not Defined(RC_INVOKED)
-        ;* { *
         if  not Defined(MICROSOFT_WINDOWS_WINBASE_INTERLOCKED_CPLUSPLUS_H_INCLUDED)
           ;[...]
         endif
-        ;* } RC_INVOKED *
       endif
-      ;* _NTOS_ *
     endif
-    ;* NOWINBASEINTERLOCK *
   endif
-  ;* RC_INVOKED *
 endif

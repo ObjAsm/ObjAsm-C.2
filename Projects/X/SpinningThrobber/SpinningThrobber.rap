@@ -148,7 +148,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=13
+MilestoneOnDateDate=26
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -183,8 +183,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1449,575,1165
-1=0,0,0,0,1694
+2=0,0,1449,575,3835
+1=0,0,0,0,1307
 6=0,0,1456,414,295
 4=0,0,1449,575,472
 31=0,0,0,0,2098
@@ -196,22 +196,22 @@ ProductVer4Range=0
 3=0,0,0,0,610
 11=0,0,1783,588,220
 15=0,0,0,0,250
-14=0,0,0,0,363
+14=0,0,0,0,1803
 13=0,0,0,0,253
 12=0,0,0,0,414
 16=0,0,0,0,6688
 17=0,0,0,0,267
 20=0,0,0,0,924
-18=0,0,0,0,250
-19=0,0,0,0,261
+18=0,0,0,0,6419
+19=0,0,0,0,2563
 23=0,0,0,0,5451
 24=0,0,0,0,0
 25=0,0,0,0,1955
 21=0,0,0,0,575
-22=0,0,0,0,14104
+22=0,0,0,0,10179
 26=0,0,0,0,6064
 27=0,0,0,0,51736
-28=0,0,1449,575,1218
+28=0,0,1449,575,4099
 29=0,0,0,0,8977
 30=0,0,0,0,1048
 32=0,0,0,0,4407
@@ -234,16 +234,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="ResList"
-2="LoadBmpFromRes"
-3="szApplication"
-4="DEF_MTBR"
-5="DEF_STBR"
-6="PDEF_STHROBBER"
-7="PDEF_STBR"
-8="Simple Circular Activity Indicator"
-9="CircularThrobber"
-10="pSCAI2"
+1="CreateWindow"
+2="ResList"
+3="LoadBmpFromRes"
+4="szApplication"
+5="DEF_MTBR"
+6="DEF_STBR"
+7="PDEF_STHROBBER"
+8="PDEF_STBR"
+9="Simple Circular Activity Indicator"
+10="CircularThrobber"
 [Collapse]
 1=
 2=
@@ -357,9 +357,9 @@ ProductVer4Range=0
 27=,,,,,,,
 32=
 [AutoLoad]
-AutoLoad=1,2,28,32
+AutoLoad=1,2,28,32,14,22,18,19
 [PTimer]
-PTimer=1379479807
+PTimer=1381128338
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

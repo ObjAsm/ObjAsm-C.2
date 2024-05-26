@@ -1,14 +1,12 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\shtypes.h
 ;             Created on (UTC) 06/04/2024 06:15:58
 ;             Last modified on (UTC) 21/02/2024 18:17:36
 
-;* verify that the <rpcndr.h> version is high enough to compile this file*
 ifndef __REQUIRED_RPCNDR_H_VERSION__
   __REQUIRED_RPCNDR_H_VERSION__ equ 501
 endif
-;* verify that the <rpcsal.h> version is high enough to compile this file*
 ifndef __REQUIRED_RPCSAL_H_VERSION__
   __REQUIRED_RPCSAL_H_VERSION__ equ 100
 endif
@@ -16,7 +14,6 @@ include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
   .err <this stub requires an updated version of < rpcndr.h >>
-  ;* __RPCNDR_H_VERSION__ *
 endif
 ifndef __shtypes_h__
   __shtypes_h__ equ <>
@@ -33,24 +30,13 @@ ifndef __shtypes_h__
       endm
     endif
   endif
-  ;* Forward Declarations *
-  ;* header files for imported files *
   include wtypes.inc
   include unknwn.inc
   ifdef __cplusplus
     ;[...]
   endif
-  ;* interface __MIDL_itf_shtypes_0000_0000 *
-  ;* [local] *
   if _MSC_VER ge 1200
-    ;* nonstandard extension : single line comment *
-    ;* padding added after data member *
   endif
-  ;+-------------------------------------------------------------------------
-  ;  Microsoft Windows
-  ;  Copyright (c) Microsoft Corporation. All rights reserved.
-  ;--------------------------------------------------------------------------
-  ; For compilers that don't support nameless unions
   ifndef DUMMYUNIONNAME
     ifdef NONAMELESSUNION
       DUMMYUNIONNAME equ <u>
@@ -66,41 +52,9 @@ ifndef __shtypes_h__
       DUMMYUNIONNAME5 equ <>
     endif
   endif
-  ; DUMMYUNIONNAME
-  ;===========================================================================
-  ; Object identifiers in the explorer's name space (ItemID and IDList)
-  ;  All the items that the user can browse with the explorer (such as files,
-  ; directories, servers, work-groups, etc.) has an identifier which is unique
-  ; among items within the parent folder. Those identifiers are called item
-  ; IDs (SHITEMID). Since all its parent folders have their own item IDs,
-  ; any items can be uniquely identified by a list of item IDs, which is called
-  ; an ID list (ITEMIDLIST).
-  ;  ID lists are almost always allocated by the task allocator (see some
-  ; description below as well as OLE 2.0 SDK) and may be passed across
-  ; some of shell interfaces (such as IShellFolder). Each item ID in an ID list
-  ; is only meaningful to its parent folder (which has generated it), and all
-  ; the clients must treat it as an opaque binary data except the first two
-  ; bytes, which indicates the size of the item ID.
-  ;  When a shell extension -- which implements the IShellFolder interace --
-  ; generates an item ID, it may put any information in it, not only the data
-  ; with that it needs to identifies the item, but also some additional
-  ; information, which would help implementing some other functions efficiently.
-  ; For example, the shell's IShellFolder implementation of file system items
-  ; stores the primary (long) name of a file or a directory as the item
-  ; identifier, but it also stores its alternative (short) name, size and date
-  ; etc.
-  ;  When an ID list is passed to one of shell APIs (such as SHGetPathFromIDList),
-  ; it is always an absolute path -- relative from the root of the name space,
-  ; which is the desktop folder. When an ID list is passed to one of IShellFolder
-  ; member function, it is always a relative path from the folder (unless it
-  ; is explicitly specified).
-  ;===========================================================================
-  ; SHITEMID -- Item ID  (mkid)
-  ;     USHORT      cb;             // Size of the ID (including cb itself)
-  ;     BYTE        abID[];         // The item ID (variable length)
   include pshpack1.inc
   SHITEMID struct
-    cb WORD ?
+    cb USHORT ?
     abID BYTE 1 dup (?)
   SHITEMID ends
   _SHITEMID typedef SHITEMID
@@ -108,10 +62,8 @@ ifndef __shtypes_h__
   if Defined(_M_IX86)
     __unaligned equ <>
   endif
-  ; __unaligned
   LPSHITEMID typedef ptr SHITEMID
   LPCSHITEMID typedef ptr SHITEMID
-  ; ITEMIDLIST -- List if item IDs (combined with 0-terminator)
   include pshpack1.inc
   ITEMIDLIST struct
     mkid SHITEMID <>
@@ -120,23 +72,17 @@ ifndef __shtypes_h__
   if Defined(STRICT_TYPED_ITEMIDS) and Defined(__cplusplus)
     ;[...]
   else
-  ; !(defined(STRICT_TYPED_ITEMIDS) && defined(__cplusplus))
     ITEMIDLIST_RELATIVE typedef ITEMIDLIST
     ITEMID_CHILD typedef ITEMIDLIST
     ITEMIDLIST_ABSOLUTE typedef ITEMIDLIST
   endif
-  ; defined(STRICT_TYPED_ITEMIDS) && defined(__cplusplus)
   include poppack.inc
-  ;* [unique] *
   wirePIDL typedef ptr BYTE_BLOB
-  ;* [wire_marshal] *
   LPITEMIDLIST typedef ptr ITEMIDLIST
-  ;* [wire_marshal] *
   LPCITEMIDLIST typedef ptr ITEMIDLIST
   if Defined(STRICT_TYPED_ITEMIDS) and Defined(__cplusplus)
     ;[...]
   else
-  ; !(defined(STRICT_TYPED_ITEMIDS) && defined(__cplusplus))
     PIDLIST_ABSOLUTE equ <LPITEMIDLIST>
     PCIDLIST_ABSOLUTE equ <LPCITEMIDLIST>
     PCUIDLIST_ABSOLUTE equ <LPCITEMIDLIST>
@@ -153,20 +99,9 @@ ifndef __shtypes_h__
     PCIDLIST_ABSOLUTE_ARRAY equ <LPCITEMIDLIST *>
     PCUIDLIST_ABSOLUTE_ARRAY equ <LPCITEMIDLIST *>
   endif
-  ; defined(STRICT_TYPED_ITEMIDS) && defined(__cplusplus)
   ifdef MIDL_PASS
     ;[...]
   endif
-  ; MIDL_PASS
-  ;-------------------------------------------------------------------------
-  ; struct STRRET
-  ; structure for returning strings from IShellFolder member functions
-  ;-------------------------------------------------------------------------
-  ;  uType indicate which union member to use 
-  ;    STRRET_WSTR    Use STRRET.pOleStr     must be freed by caller of GetDisplayNameOf
-  ;    STRRET_OFFSET  Use STRRET.uOffset     Offset into SHITEMID for ANSI string 
-  ;    STRRET_CSTR    Use STRRET.cStr        ANSI Buffer
-  ;* [v1_enum] *
   STRRET_TYPE typedef SDWORD
   STRRET_WSTR equ 0
   STRRET_OFFSET equ 1h
@@ -174,19 +109,14 @@ ifndef __shtypes_h__
   tagSTRRET_TYPE typedef STRRET_TYPE
 
   if Defined(_MSC_VER) and (_MSC_VER ge 1200)
-    ;* nonstandard extension used : nameless struct/union *
   endif
   include pshpack8.inc
   STRRET struct
-    uType DWORD ?
-    ;* [switch_is][switch_type] *
+    uType UINT ?
     union
-      pOleStr POINTER ?
-      ;* [case()][string] *
-      uOffset DWORD ?
-      ;* [case()] *
+      pOleStr LPWSTR ?
+      uOffset UINT ?
       cStr SBYTE 260 dup (?)
-      ;* [case()] *
     ends
   STRRET ends
   _STRRET typedef STRRET
@@ -194,13 +124,6 @@ ifndef __shtypes_h__
   if Defined(_MSC_VER) and (_MSC_VER ge 1200)
   endif
   LPSTRRET typedef ptr STRRET
-  ;-------------------------------------------------------------------------
-  ; struct SHELLDETAILS
-  ; structure for returning strings from IShellDetails
-  ;-------------------------------------------------------------------------
-  ;  fmt;            // LVCFMT_* value (header only)
-  ;  cxChar;         // Number of 'average' characters (header only)
-  ;  str;            // String information
   include pshpack1.inc
   SHELLDETAILS struct
     fmt SDWORD ?
@@ -211,7 +134,6 @@ ifndef __shtypes_h__
   LPSHELLDETAILS typedef ptr _SHELLDETAILS
   include poppack.inc
   if (_WIN32_IE ge _WIN32_IE_IE60SP2)
-    ;* [v1_enum] *
     PERCEIVED typedef SDWORD
     PERCEIVED_TYPE_FIRST equ -3
     PERCEIVED_TYPE_CUSTOM equ -3
@@ -240,73 +162,57 @@ ifndef __shtypes_h__
     PERCEIVEDFLAG_ZIPFOLDER equ 0040h
     PERCEIVEDFLAG typedef DWORD
   endif
-  ; _WIN32_IE_IE60SP2
   if (NTDDI_VERSION ge NTDDI_VISTA)
     COMDLG_FILTERSPEC struct
-      pszName =POINTER ?
-      ;* [string] *
-      pszSpec =POINTER ?
-      ;* [string] *
+      pszName LPCWSTR ?
+      pszSpec LPCWSTR ?
     COMDLG_FILTERSPEC ends
     _COMDLG_FILTERSPEC typedef COMDLG_FILTERSPEC
   endif
-  ; NTDDI_VISTA
   KNOWNFOLDERID typedef GUID
   if 0
     ;[...]
   endif
-  ; 0
   ifdef __cplusplus
     ;[...]
   else
-  ; !__cplusplus
     REFKNOWNFOLDERID equ <const KNOWNFOLDERID * __MIDL_CONST>
   endif
-  ; __cplusplus
   KF_REDIRECT_FLAGS typedef DWORD
   FOLDERTYPEID typedef GUID
   if 0
     ;[...]
   endif
-  ; 0
   ifdef __cplusplus
     ;[...]
   else
-  ; !__cplusplus
     REFFOLDERTYPEID equ <const FOLDERTYPEID * __MIDL_CONST>
   endif
-  ; __cplusplus
   TASKOWNERID typedef GUID
   if 0
     ;[...]
   endif
-  ; 0
   ifdef __cplusplus
     ;[...]
   else
-  ; !__cplusplus
     REFTASKOWNERID equ <const TASKOWNERID * __MIDL_CONST>
   endif
-  ; __cplusplus
   ELEMENTID typedef GUID
   if 0
     ;[...]
   endif
-  ; 0
   ifdef __cplusplus
     ;[...]
   else
-  ; !__cplusplus
     REFELEMENTID equ <const ELEMENTID * __MIDL_CONST>
   endif
-  ; __cplusplus
   ifndef LF_FACESIZE
     LOGFONTA struct
-      lfHeight SDWORD ?
-      lfWidth SDWORD ?
-      lfEscapement SDWORD ?
-      lfOrientation SDWORD ?
-      lfWeight SDWORD ?
+      lfHeight LONG ?
+      lfWidth LONG ?
+      lfEscapement LONG ?
+      lfOrientation LONG ?
+      lfWeight LONG ?
       lfItalic BYTE ?
       lfUnderline BYTE ?
       lfStrikeOut BYTE ?
@@ -315,15 +221,15 @@ ifndef __shtypes_h__
       lfClipPrecision BYTE ?
       lfQuality BYTE ?
       lfPitchAndFamily BYTE ?
-      lfFaceName SBYTE 32 dup (?)
+      lfFaceName CHAR 32 dup (?)
     LOGFONTA ends
     tagLOGFONTA typedef LOGFONTA
     LOGFONTW struct
-      lfHeight SDWORD ?
-      lfWidth SDWORD ?
-      lfEscapement SDWORD ?
-      lfOrientation SDWORD ?
-      lfWeight SDWORD ?
+      lfHeight LONG ?
+      lfWidth LONG ?
+      lfEscapement LONG ?
+      lfOrientation LONG ?
+      lfWeight LONG ?
       lfItalic BYTE ?
       lfUnderline BYTE ?
       lfStrikeOut BYTE ?
@@ -332,13 +238,11 @@ ifndef __shtypes_h__
       lfClipPrecision BYTE ?
       lfQuality BYTE ?
       lfPitchAndFamily BYTE ?
-      lfFaceName WORD 32 dup (?)
+      lfFaceName WCHAR 32 dup (?)
     LOGFONTW ends
     tagLOGFONTW typedef LOGFONTW
     LOGFONT typedef LOGFONTW
   endif
-  ; LF_FACESIZE
-  ;* [v1_enum] *
   SHCOLSTATE typedef SDWORD
   SHCOLSTATE_DEFAULT equ 0
   SHCOLSTATE_TYPE_STR equ 1h
@@ -365,7 +269,6 @@ ifndef __shtypes_h__
   SHCOLSTATEF typedef DWORD
   SHCOLUMNID typedef PROPERTYKEY
   LPCSHCOLUMNID typedef ptr SHCOLUMNID
-  ;* [v1_enum] *
   DEVICE_SCALE_FACTOR typedef SDWORD
   DEVICE_SCALE_FACTOR_INVALID equ 0
   SCALE_100_PERCENT equ 100
@@ -389,8 +292,6 @@ ifndef __shtypes_h__
   endif
   externdef __MIDL_itf_shtypes_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
   externdef __MIDL_itf_shtypes_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
-  ;* Additional Prototypes for ALL interfaces *
-  ;* end of Additional Prototypes *
   ifdef __cplusplus
     ;[...]
   endif

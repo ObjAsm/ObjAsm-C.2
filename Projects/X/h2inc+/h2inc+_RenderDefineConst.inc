@@ -17,9 +17,12 @@
 RenderDefineConst proc uses xdi xsi pName:PSTRINGA
   local pToken:PTOKEN, pStmOutPos:PSTRINGA, pItems:POINTER
   local bExpression:DWORD, bAddSpace:DWORD, InpStat:INP_STAT
-  local dTypeCSpec:DWORD, pType:PSTRINGA
+  local dTypeCSpec:DWORD, pType:PSTRINGA, dNameIsType:DWORD
 
   OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderDefineConst")
+  OCall pKnwSimpleTypes::List.Search, pName             ;Check if we are defining an type-alias
+  mov dNameIsType, eax 
+
   mov pItems, NULL
   invoke SkipCasts
   OCall xbx::IncFile.GetNextTokenPP
@@ -40,13 +43,13 @@ RenderDefineConst proc uses xdi xsi pName:PSTRINGA
         .break
       .endif
       mov al, [xdi]
-      .if al >= "0" && al <= "9"
+      .if al >= '0' && al <= '9'
         mov bExpression, TRUE
       .elseif al != '(' && al != ')'
         ;Is Alpha?
-        .if al != "?" && al != "@" && al != "_"
-          .if al < "A" || al > "Z"
-            .if al < "a" || al > "z"
+        .if al != '?' && al != '@' && al != '_'
+          .if al < 'A' || al > 'Z'
+            .if al < 'a' || al > 'z'
               ;False
               invoke IsNumOperator?, DWORD ptr [xdi]
               .if eax != FALSE
@@ -119,17 +122,23 @@ RenderDefineConst proc uses xdi xsi pName:PSTRINGA
         mov bAddSpace, FALSE
       .else
         mov eax, $GetCount@Stacklist(pItems)
-        .if eax == 0 && (CHRA ptr [xdi] == "-" || CHRA ptr [xdi] == "+")
+        .if eax == 0 && (CHRA ptr [xdi] == '-' || CHRA ptr [xdi] == '+')
           mov bAddSpace, FALSE
         .else
           mov bAddSpace, TRUE
         .endif
       .endif
       Add@Stacklist pItems, xdi                         ;Save item for later evaluation
-      invoke TranslateNumOperator, xdi
-      .if edx == FALSE
-        invoke TranslateLogOperator, xax
+
+      .if dNameIsType != FALSE                                  
+        invoke TranslateType, xdi
+      .else
+        invoke TranslateNumOperator, xdi
+        .if edx == FALSE
+          invoke TranslateLogOperator, xax
+        .endif
       .endif
+
       OCall xbx::IncFile.StmWrite, xax
 
 @NextTokenPP:
@@ -138,13 +147,13 @@ RenderDefineConst proc uses xdi xsi pName:PSTRINGA
 
     OCall xbx::IncFile.StmDeleteLastSpace
     .if bExpression == FALSE
-      OCall xbx::IncFile.StmWriteChar, 3Eh              ;">"
+      OCall xbx::IncFile.StmWriteChar, 3Eh              ;'>'
     .endif
 
     ;If equate is a simple text item, then check if the value is a proto qualifier.
     ;If yes, add new equate to qualifier list.
     mov xax, pStmOutPos                                 ;1st char in 2nd member of equate
-    .if $ObjTmpl(Application).Options.dDllImport != DLLIMPORT_DEFPROTO && CHRA ptr [xax] > "9"
+    .if $ObjTmpl(Application).Options.dDllImport != DLLIMPORT_DEFPROTO && CHRA ptr [xax] > '9'
       mov esi, $GetCount@Stacklist(pItems)
       xor edi, edi
       .while esi != 0

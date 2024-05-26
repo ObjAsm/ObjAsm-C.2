@@ -1,27 +1,14 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\prsht.h
 ;             Created on (UTC) 06/04/2024 06:15:57
 ;             Last modified on (UTC) 21/02/2024 18:17:22
 
 include winapifamily.inc
-;*****************************************************************************\
-;*                                                                             *
-;* prsht.h - - Interface for the Windows Property Sheet Pages                  *
-;*                                                                             *
-;* Version 1.0                                                                 *
-;*                                                                             *
-;* Copyright (c) Microsoft Corporation. All rights reserved.                   *
-;*                                                                             *
-;\*****************************************************************************
 if Defined(_MSC_VER) and (_MSC_VER ge 1200)
-  ;* nonstandard extension 'single line comment' was used *
-  ;* nonstandard extension used : nameless struct/union *
-  ;* padding added after data member *
 endif
 ifndef _PRSHT_H_
   _PRSHT_H_ equ <>
-  ; Define API decoration for direct importing of DLL references.
   ifndef WINCOMMCTRLAPI
     if  not Defined(_COMCTL32_) and Defined(_WIN32)
       WINCOMMCTRLAPI equ <DECLSPEC_IMPORT>
@@ -29,8 +16,6 @@ ifndef _PRSHT_H_
       WINCOMMCTRLAPI equ <>
     endif
   endif
-  ; WINCOMMCTRLAPI
-  ; For compilers that don't support nameless unions
   ifndef DUMMYUNIONNAME
     ifdef NONAMELESSUNION
       DUMMYUNIONNAME equ <u>
@@ -46,7 +31,6 @@ ifndef _PRSHT_H_
       DUMMYUNIONNAME5 equ <>
     endif
   endif
-  ; DUMMYUNIONNAME
   ifdef _WIN64
     include pshpack8.inc
   else
@@ -67,7 +51,6 @@ ifndef _PRSHT_H_
         endif
       endif
     endif
-    ; ifndef SNDMSG
     ifndef PSTMSG
       ifdef __cplusplus
         ;[...]
@@ -75,7 +58,6 @@ ifndef _PRSHT_H_
         PSTMSG equ <PostMessage>
       endif
     endif
-    ; ifndef PSTMSG
     MAXPROPPAGES equ 100
     HPROPSHEETPAGE typedef ptr _PSP
     ifndef MIDL_PASS
@@ -101,11 +83,9 @@ ifndef _PRSHT_H_
     PSP_USEREFPARENT equ 00000040h
     PSP_USECALLBACK equ 00000080h
     PSP_PREMATURE equ 00000400h
-    ;----- New flags for wizard97 --------------
     PSP_HIDEHEADER equ 00000800h
     PSP_USEHEADERTITLE equ 00001000h
     PSP_USEHEADERSUBTITLE equ 00002000h
-    ;-------------------------------------------
     if (NTDDI_VERSION ge NTDDI_WINXP) or ISOLATION_AWARE_ENABLED
       PSP_USEFUSIONCONTEXT equ 00004000h
     endif
@@ -137,18 +117,16 @@ ifndef _PRSHT_H_
     LPCPROPSHEETPAGEA_V1 typedef ptr PROPSHEETPAGEA_V1
     PROPSHEETPAGEA_V2 struct
       PROPSHEETPAGEA_V1_FIELDS
-      pszHeaderTitle =POINTER ?
-      ; this is displayed in the header
-      pszHeaderSubTitle =POINTER ?
+      pszHeaderTitle LPCSTR ?
+      pszHeaderSubTitle LPCSTR ?
     PROPSHEETPAGEA_V2 ends
     _PROPSHEETPAGEA_V2 typedef PROPSHEETPAGEA_V2
     LPPROPSHEETPAGEA_V2 typedef ptr PROPSHEETPAGEA_V2
     LPCPROPSHEETPAGEA_V2 typedef ptr PROPSHEETPAGEA_V2
     PROPSHEETPAGEA_V3 struct
       PROPSHEETPAGEA_V1_FIELDS
-      pszHeaderTitle =POINTER ?
-      ; this is displayed in the header
-      pszHeaderSubTitle =POINTER ?
+      pszHeaderTitle LPCSTR ?
+      pszHeaderSubTitle LPCSTR ?
       hActCtx HANDLE ?
     PROPSHEETPAGEA_V3 ends
     _PROPSHEETPAGEA_V3 typedef PROPSHEETPAGEA_V3
@@ -157,13 +135,12 @@ ifndef _PRSHT_H_
     if (NTDDI_VERSION ge NTDDI_VISTA)
       PROPSHEETPAGEA_V4 struct
         PROPSHEETPAGEA_V1_FIELDS
-        pszHeaderTitle =POINTER ?
-        ; this is displayed in the header
-        pszHeaderSubTitle =POINTER ?
+        pszHeaderTitle LPCSTR ?
+        pszHeaderSubTitle LPCSTR ?
         hActCtx HANDLE ?
         union
           hbmHeader HBITMAP ?
-          pszbmHeader =POINTER ?
+          pszbmHeader LPCSTR ?
         ends
       PROPSHEETPAGEA_V4 ends
       _PROPSHEETPAGEA_V4 typedef PROPSHEETPAGEA_V4
@@ -178,18 +155,16 @@ ifndef _PRSHT_H_
     LPCPROPSHEETPAGEW_V1 typedef ptr PROPSHEETPAGEW_V1
     PROPSHEETPAGEW_V2 struct
       PROPSHEETPAGEW_V1_FIELDS
-      pszHeaderTitle =POINTER ?
-      ; this is displayed in the header
-      pszHeaderSubTitle =POINTER ?
+      pszHeaderTitle LPCWSTR ?
+      pszHeaderSubTitle LPCWSTR ?
     PROPSHEETPAGEW_V2 ends
     _PROPSHEETPAGEW_V2 typedef PROPSHEETPAGEW_V2
     LPPROPSHEETPAGEW_V2 typedef ptr PROPSHEETPAGEW_V2
     LPCPROPSHEETPAGEW_V2 typedef ptr PROPSHEETPAGEW_V2
     PROPSHEETPAGEW_V3 struct
       PROPSHEETPAGEW_V1_FIELDS
-      pszHeaderTitle =POINTER ?
-      ; this is displayed in the header
-      pszHeaderSubTitle =POINTER ?
+      pszHeaderTitle LPCWSTR ?
+      pszHeaderSubTitle LPCWSTR ?
       hActCtx HANDLE ?
     PROPSHEETPAGEW_V3 ends
     _PROPSHEETPAGEW_V3 typedef PROPSHEETPAGEW_V3
@@ -198,13 +173,12 @@ ifndef _PRSHT_H_
     if (NTDDI_VERSION ge NTDDI_VISTA)
       PROPSHEETPAGEW_V4 struct
         PROPSHEETPAGEW_V1_FIELDS
-        pszHeaderTitle =POINTER ?
-        ; this is displayed in the header
-        pszHeaderSubTitle =POINTER ?
+        pszHeaderTitle LPCWSTR ?
+        pszHeaderSubTitle LPCWSTR ?
         hActCtx HANDLE ?
         union
           hbmHeader HBITMAP ?
-          pszbmHeader =POINTER ?
+          pszbmHeader LPCWSTR ?
         ends
       PROPSHEETPAGEW_V4 ends
       _PROPSHEETPAGEW_V4 typedef PROPSHEETPAGEW_V4
@@ -305,7 +279,6 @@ ifndef _PRSHT_H_
       LPPROPSHEETPAGE_LATEST equ <LPPROPSHEETPAGEA_LATEST>
       LPCPROPSHEETPAGE_LATEST equ <LPCPROPSHEETPAGEA_LATEST>
     endif
-    ;----- PropSheet Header related ---------
     PSH_DEFAULT equ 00000000h
     PSH_PROPTITLE equ 00000001h
     PSH_USEHICON equ 00000002h
@@ -320,27 +293,20 @@ ifndef _PRSHT_H_
     PSH_MODELESS equ 00000400h
     PSH_RTLREADING equ 00000800h
     PSH_WIZARDCONTEXTHELP equ 00001000h
-    ;----- New flags for wizard97 -----------
     if (_WIN32_IE lt 0500h)
       PSH_WIZARD97 equ 00002000h
     else
       PSH_WIZARD97 equ 01000000h
     endif
     PSH_WATERMARK equ 00008000h
-    PSH_USEHBMWATERMARK equ 00010000h; user pass in a hbmWatermark instead of pszbmWatermark
-
+    PSH_USEHBMWATERMARK equ 00010000h
     PSH_USEHPLWATERMARK equ 00020000h
-    PSH_STRETCHWATERMARK equ 00040000h; stretchwatermark also applies for the header
-
+    PSH_STRETCHWATERMARK equ 00040000h
     PSH_HEADER equ 00080000h
     PSH_USEHBMHEADER equ 00100000h
-    PSH_USEPAGELANG equ 00200000h; use frame dialog template matched to page
-
-    ;----------------------------------------
-    ;----- New flags for wizard-lite --------
+    PSH_USEPAGELANG equ 00200000h
     PSH_WIZARD_LITE equ 00400000h
     PSH_NOCONTEXTHELP equ 02000000h
-    ;----------------------------------------
     if (NTDDI_VERSION ge NTDDI_VISTA)
       PSH_AEROWIZARD equ 00004000h
       PSH_RESIZABLE equ 04000000h
@@ -359,13 +325,12 @@ ifndef _PRSHT_H_
     PROPSHEETHEADERA_V2 struct
       union
         hbmWatermark HBITMAP ?
-        pszbmWatermark =POINTER ?
+        pszbmWatermark LPCSTR ?
       ends
       hplWatermark HPALETTE ?
       union
         hbmHeader HBITMAP ?
-        ; Header  bitmap shares the palette with watermark
-        pszbmHeader =POINTER ?
+        pszbmHeader LPCSTR ?
       ends
     PROPSHEETHEADERA_V2 ends
     _PROPSHEETHEADERA_V2 typedef PROPSHEETHEADERA_V2
@@ -380,13 +345,12 @@ ifndef _PRSHT_H_
     PROPSHEETHEADERW_V2 struct
       union
         hbmWatermark HBITMAP ?
-        pszbmWatermark =POINTER ?
+        pszbmWatermark LPCWSTR ?
       ends
       hplWatermark HPALETTE ?
       union
         hbmHeader HBITMAP ?
-        ; Header  bitmap shares the palette with watermark
-        pszbmHeader =POINTER ?
+        pszbmHeader LPCWSTR ?
       ends
     PROPSHEETHEADERW_V2 ends
     _PROPSHEETHEADERW_V2 typedef PROPSHEETHEADERW_V2
@@ -420,15 +384,8 @@ ifndef _PRSHT_H_
     PSCB_INITIALIZED equ 1
     PSCB_PRECREATE equ 2
     if (NTDDI_VERSION ge NTDDI_WINXP)
-      ; PSCB_BUTTONPRESSED will be sent when the user clicks a button in the
-      ; property dialog (OK, Cancel, Apply, or Close).  The message will be sent
-      ; to PROPSHEETHEADER's pfnCallback if the PSH_USECALLBACK flag was specified.
-      ; The LPARAM will be equal to one of the following based on the button pressed:
-      ; This message is only supported on comctl32 v6.
-      ; PSBTN_FINISH (Close), PSBTN_OK, PSBTN_APPLYNOW, or PSBTN_CANCEL
       PSCB_BUTTONPRESSED equ 3
     endif
-    ; NTDDI_VERSION >= NTDDI_WINXP
     @DefProto DllImport, CreatePropertySheetPageA, WIN_STD_CALL_CONV,, <:LPCPROPSHEETPAGEA>, 4
     @DefProto DllImport, CreatePropertySheetPageW, WIN_STD_CALL_CONV,, <:LPCPROPSHEETPAGEW>, 4
     @DefProto DllImport, DestroyPropertySheetPage, WIN_STD_CALL_CONV,, <:HPROPSHEETPAGE>, 4
@@ -457,10 +414,8 @@ ifndef _PRSHT_H_
     PSN_LAST equ (0 - 299)
     PSN_SETACTIVE equ (PSN_FIRST - 0)
     PSN_KILLACTIVE equ (PSN_FIRST - 1)
-    ; #define PSN_VALIDATE            (PSN_FIRST-1)
     PSN_APPLY equ (PSN_FIRST - 2)
     PSN_RESET equ (PSN_FIRST - 3)
-    ; #define PSN_CANCEL              (PSN_FIRST-3)
     PSN_HELP equ (PSN_FIRST - 5)
     PSN_WIZBACK equ (PSN_FIRST - 6)
     PSN_WIZNEXT equ (PSN_FIRST - 7)
@@ -533,10 +488,8 @@ ifndef _PRSHT_H_
     PSWIZB_DISABLEDFINISH equ 00000008h
     PSWIZBF_ELEVATIONREQUIRED equ 00000001h
     if (NTDDI_VERSION ge NTDDI_VISTA)
-      ; Only for PSH_AEROWIZARD - used in PSM_SHOWWIZBUTTONS
       PSWIZB_CANCEL equ 00000010h
     endif
-    ; 0x0605
     PSM_PRESSBUTTON equ (WM_USER + 113)
     PropSheet_PressButton macro hDlg, iButton
       exitm <PostMessage (hDlg, PSM_PRESSBUTTON, (iButton), 0)>
@@ -580,7 +533,6 @@ ifndef _PRSHT_H_
       exitm <SNDMSG (hDlg, PSM_INSERTPAGE, (index), (hpage))>
     endm
     if (NTDDI_VERSION ge NTDDI_VISTA)
-      ; Only for PSH_AEROWIZARD - used in PSM_SETHEADERTITLE
       PSWIZF_SETCOLOR equ ((- 1))
     endif
     PSM_SETHEADERTITLEA equ (WM_USER + 125)
@@ -636,10 +588,6 @@ ifndef _PRSHT_H_
       exitm <SNDMSG (hDlg, PSM_RECALCPAGESIZES, 0, 0)>
     endm
     if (NTDDI_VERSION ge NTDDI_VISTA)
-      ; Only UNICODE
-      ; These messages are only for Aero Wizard style wizards. The Wizard author
-      ; needs to specify the PSH_AEROWIZARD flag in the dwFlags member of the PROPSHEETHEADER
-      ; structure to get this behavior.
       PSM_SETNEXTTEXTW equ (WM_USER + 137)
       PSM_SETNEXTTEXT equ <PSM_SETNEXTTEXTW>
       PropSheet_SetNextText macro hDlg, lpszText
@@ -661,7 +609,6 @@ ifndef _PRSHT_H_
         exitm <SNDMSG (hDlg, PSM_SETBUTTONTEXT, (dwButton), (lpszText))>
       endm
     endif
-    ; 0x0600
     ID_PSRESTARTWINDOWS equ 2h
     ID_PSREBOOTSYSTEM equ (ID_PSRESTARTWINDOWS or 1h)
     WIZ_CXDLG equ 276
@@ -675,20 +622,16 @@ ifndef _PRSHT_H_
     PROP_MED_CYDLG equ 215
     PROP_LG_CXDLG equ 252
     PROP_LG_CYDLG equ 218
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
-  ;* RC complains about long symbols in #ifs *
   if  not Defined(RC_INVOKED)
     if Defined(ISOLATION_AWARE_ENABLED) and (ISOLATION_AWARE_ENABLED ne 0)
       ;[...]
     endif
-    ;* RC *
   endif
   ifdef __cplusplus
     ;[...]
   endif
   include poppack.inc
-  ;* _PRSHT_H_ *
 endif
 if Defined(_MSC_VER) and (_MSC_VER ge 1200)
 endif

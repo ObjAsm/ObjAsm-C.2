@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      h2inc+_ParseRecord.inc
+; Title:      h2inc+_RenderBitField.inc
 ; Author:     G. Friedrich
 ; Version:    See h2inc+.asm
 ; Purpose:    ObjAsm h2inc+ translation procedures.
@@ -85,7 +85,7 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
   local dAllocUnitSize:DWORD, dCummulatedSize:DWORD, cLineBuffer[1024]:CHRA
   local pFieldStackList:POINTER, dAllocUnitCounter:DWORD, cRecName[1024]:CHRA
   local dIndexUpper:DWORD, dIndexLower:DWORD, bMultipleAllocUnits:BYTE
-  local cSeparator:CHRA, InpStat:INP_STAT
+  local cSeparator:CHRA, InpStat:INP_STAT, dAnonymousFieldCounter:DWORD
 
   OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderBitField")
   ;Build the RECORD name ----------------------------------------------------------------
@@ -96,6 +96,7 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
   WriteFA xdi, "¦SA", pSuffix
 
   ;Initialization -----------------------------------------------------------------------
+  mov dAnonymousFieldCounter, 0
   mov cSeparator, ';'
   mov bMultipleAllocUnits, FALSE
   mov pFieldStackList, $Create@Stacklist()
@@ -131,7 +132,13 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
       OCall xbx::IncFile.GetNextTokenC
       test xax, xax
       jz @ErrorEoF
-      invoke GetTypeSize, xax                           ;Get the Type
+      .if $DoesStringMatchA?([xax], <unsigned>)         ;Skip it
+        OCall xbx::IncFile.GetNextTokenC
+        test xax, xax
+        jz @ErrorEoF
+      .endif
+      invoke TranslateType, xax
+      invoke GetTypeSize, xax                           ;Get the Type (CASE UNSENSITIVE !!!!!!!!!!) int not found
       shl eax, 3                                        ;Convert to bit size
       .if eax > dAllocUnitSize
         mov dAllocUnitSize, eax
@@ -141,16 +148,20 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
     .else
       jmp @ErrorSyntax
     .endif
-    OCall xbx::IncFile.GetNextTokenC                     ;New name
+    OCall xbx::IncFile.GetNextTokenC                    ;New name
     test xax, xax
     jz @ErrorEoF
-    mov pToken, xax
-    OCall xbx::IncFile.GetNextTokenC                     ;Consume ':'
-    test xax, xax
-    jz @ErrorEoF
-    .if CHRA ptr [xax] != ':'
-      OCall xbx::IncFile.InputStatusLoad, addr InpStat
-      .break
+    .if CHRA ptr [xax] == ':'                           ;Anonymous fieldname
+      mov pToken, NULL
+    .else
+      mov pToken, xax
+      OCall xbx::IncFile.GetNextTokenC                  ;Consume ':'
+      test xax, xax
+      jz @ErrorEoF
+      .if CHRA ptr [xax] != ':'
+        OCall xbx::IncFile.InputStatusLoad, addr InpStat
+        .break
+      .endif
     .endif
   .endw
 
@@ -200,7 +211,12 @@ RenderBitField proc uses xdi xsi, pContainerName:PSTRINGA, pType:PSTRINGA, pToke
       dec esi
       dec esi
       mov xdx, $GetItem@Stacklist(pFieldStackList, esi)
-      WriteFA xdi, "¦SA:", xdx
+      .if xdx == NULL
+        WriteFA xdi, "FLD¦UD:", dAnonymousFieldCounter
+        inc dAnonymousFieldCounter
+      .else  
+        WriteFA xdi, "¦SA:", xdx
+      .endif
       inc esi
       mov xdx, $GetItem@Stacklist(pFieldStackList, esi)
       dec esi

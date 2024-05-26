@@ -45,8 +45,8 @@ _LDR_DATA_TABLE_ENTRY_ struct 4
   DllBase PVOID ?
   EntryPoint PVOID ?
   SizeOfImage ULONG ?
-  FullDllName UNICODE_STRING {}
-  BaseDllName UNICODE_STRING {}
+;  FullDllName UNICODE_STRING {}
+;  BaseDllName UNICODE_STRING {}
   Flags ULONG ?
   union Flags_
     FlagGroup UCHAR 4 dup(?)

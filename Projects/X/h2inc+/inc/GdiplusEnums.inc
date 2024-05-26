@@ -1,54 +1,29 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\gdiplusenums.h
 ;             Created on (UTC) 06/04/2024 06:15:55
 ;             Last modified on (UTC) 16/12/2023 11:07:10
 
-;\**************************************************************************
 ifndef _GDIPLUSENUMS_H
   _GDIPLUSENUMS_H equ <>
   include winapifamily.inc
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-    ;--------------------------------------------------------------------------
-    ; Default bezier flattening tolerance in device pixels.
-    ;--------------------------------------------------------------------------
-    ;--------------------------------------------------------------------------
-    ; Graphics and Container State cookies
-    ;--------------------------------------------------------------------------
     GraphicsState typedef UINT
     GraphicsContainer typedef UINT
-    ;--------------------------------------------------------------------------
-    ; Fill mode constants
-    ;--------------------------------------------------------------------------
     FillMode typedef SDWORD
     FillModeAlternate equ 0
-    ; 0
     FillModeWinding equ 1
 
-    ; 1
-    ;--------------------------------------------------------------------------
-    ; Quality mode constants
-    ;--------------------------------------------------------------------------
     QualityMode typedef SDWORD
     QualityModeInvalid equ -1
     QualityModeDefault equ 0
     QualityModeLow equ 1
-    ; Best performance
     QualityModeHigh equ 2
 
-    ; Best rendering quality
-    ;--------------------------------------------------------------------------
-    ; Alpha Compositing mode constants
-    ;--------------------------------------------------------------------------
     CompositingMode typedef SDWORD
     CompositingModeSourceOver equ 0
-    ; 0
     CompositingModeSourceCopy equ 1
 
-    ; 1
-    ;--------------------------------------------------------------------------
-    ; Alpha Compositing quality constants
-    ;--------------------------------------------------------------------------
     CompositingQuality typedef SDWORD
     CompositingQualityInvalid equ QualityModeInvalid
     CompositingQualityDefault equ QualityModeDefault
@@ -57,33 +32,15 @@ ifndef _GDIPLUSENUMS_H
     CompositingQualityGammaCorrected equ 1
     CompositingQualityAssumeLinear equ 2
 
-    ;--------------------------------------------------------------------------
-    ; Unit constants
-    ;--------------------------------------------------------------------------
     Unit typedef SDWORD
     UnitWorld equ 0
-    ; 0 -- World coordinate (non-physical unit)
     UnitDisplay equ 1
-    ; 1 -- Variable -- for PageTransform only
     UnitPixel equ 2
-    ; 2 -- Each unit is one device pixel.
     UnitPoint equ 3
-    ; 3 -- Each unit is a printer's point, or 1/72 inch.
     UnitInch equ 4
-    ; 4 -- Each unit is 1 inch.
     UnitDocument equ 5
-    ; 5 -- Each unit is 1/300 inch.
     UnitMillimeter equ 6
 
-    ; 6 -- Each unit is 1 millimeter.
-    ;--------------------------------------------------------------------------
-    ; MetafileFrameUnit
-    ; The frameRect for creating a metafile can be specified in any of these
-    ; units.  There is an extra frame unit value (MetafileFrameUnitGdi) so
-    ; that units can be supplied in the same units that GDI expects for
-    ; frame rects -- these units are in .01 (1/100ths) millimeter units
-    ; as defined by GDI.
-    ;--------------------------------------------------------------------------
     MetafileFrameUnit typedef SDWORD
     MetafileFrameUnitPixel equ UnitPixel
     MetafileFrameUnitPoint equ UnitPoint
@@ -92,290 +49,146 @@ ifndef _GDIPLUSENUMS_H
     MetafileFrameUnitMillimeter equ UnitMillimeter
     MetafileFrameUnitGdi equ 1
 
-    ; GDI compatible .01 MM units
-    ;--------------------------------------------------------------------------
-    ; Coordinate space identifiers
-    ;--------------------------------------------------------------------------
     CoordinateSpace typedef SDWORD
     CoordinateSpaceWorld equ 0
-    ; 0
     CoordinateSpacePage equ 1
-    ; 1
     CoordinateSpaceDevice equ 2
 
-    ; 2
-    ;--------------------------------------------------------------------------
-    ; Various wrap modes for brushes
-    ;--------------------------------------------------------------------------
     WrapMode typedef SDWORD
     WrapModeTile equ 0
-    ; 0
     WrapModeTileFlipX equ 1
-    ; 1
     WrapModeTileFlipY equ 2
-    ; 2
     WrapModeTileFlipXY equ 3
-    ; 3
     WrapModeClamp equ 4
 
-    ; 4
-    ;--------------------------------------------------------------------------
-    ; Various hatch styles
-    ;--------------------------------------------------------------------------
     HatchStyle typedef SDWORD
     HatchStyleHorizontal equ 0
-    ; 0
     HatchStyleVertical equ 1
-    ; 1
     HatchStyleForwardDiagonal equ 2
-    ; 2
     HatchStyleBackwardDiagonal equ 3
-    ; 3
     HatchStyleCross equ 4
-    ; 4
     HatchStyleDiagonalCross equ 5
-    ; 5
     HatchStyle05Percent equ 6
-    ; 6
     HatchStyle10Percent equ 7
-    ; 7
     HatchStyle20Percent equ 8
-    ; 8
     HatchStyle25Percent equ 9
-    ; 9
     HatchStyle30Percent equ 10
-    ; 10
     HatchStyle40Percent equ 11
-    ; 11
     HatchStyle50Percent equ 12
-    ; 12
     HatchStyle60Percent equ 13
-    ; 13
     HatchStyle70Percent equ 14
-    ; 14
     HatchStyle75Percent equ 15
-    ; 15
     HatchStyle80Percent equ 16
-    ; 16
     HatchStyle90Percent equ 17
-    ; 17
     HatchStyleLightDownwardDiagonal equ 18
-    ; 18
     HatchStyleLightUpwardDiagonal equ 19
-    ; 19
     HatchStyleDarkDownwardDiagonal equ 20
-    ; 20
     HatchStyleDarkUpwardDiagonal equ 21
-    ; 21
     HatchStyleWideDownwardDiagonal equ 22
-    ; 22
     HatchStyleWideUpwardDiagonal equ 23
-    ; 23
     HatchStyleLightVertical equ 24
-    ; 24
     HatchStyleLightHorizontal equ 25
-    ; 25
     HatchStyleNarrowVertical equ 26
-    ; 26
     HatchStyleNarrowHorizontal equ 27
-    ; 27
     HatchStyleDarkVertical equ 28
-    ; 28
     HatchStyleDarkHorizontal equ 29
-    ; 29
     HatchStyleDashedDownwardDiagonal equ 30
-    ; 30
     HatchStyleDashedUpwardDiagonal equ 31
-    ; 31
     HatchStyleDashedHorizontal equ 32
-    ; 32
     HatchStyleDashedVertical equ 33
-    ; 33
     HatchStyleSmallConfetti equ 34
-    ; 34
     HatchStyleLargeConfetti equ 35
-    ; 35
     HatchStyleZigZag equ 36
-    ; 36
     HatchStyleWave equ 37
-    ; 37
     HatchStyleDiagonalBrick equ 38
-    ; 38
     HatchStyleHorizontalBrick equ 39
-    ; 39
     HatchStyleWeave equ 40
-    ; 40
     HatchStylePlaid equ 41
-    ; 41
     HatchStyleDivot equ 42
-    ; 42
     HatchStyleDottedGrid equ 43
-    ; 43
     HatchStyleDottedDiamond equ 44
-    ; 44
     HatchStyleShingle equ 45
-    ; 45
     HatchStyleTrellis equ 46
-    ; 46
     HatchStyleSphere equ 47
-    ; 47
     HatchStyleSmallGrid equ 48
-    ; 48
     HatchStyleSmallCheckerBoard equ 49
-    ; 49
     HatchStyleLargeCheckerBoard equ 50
-    ; 50
     HatchStyleOutlinedDiamond equ 51
-    ; 51
     HatchStyleSolidDiamond equ 52
-    ; 52
     HatchStyleTotal equ 53
     HatchStyleLargeGrid equ HatchStyleCross
-    ; 4
     HatchStyleMin equ HatchStyleHorizontal
     HatchStyleMax equ HatchStyleTotal - 1
 
-    ;--------------------------------------------------------------------------
-    ; Dash style constants
-    ;--------------------------------------------------------------------------
     DashStyle typedef SDWORD
     DashStyleSolid equ 0
-    ; 0
     DashStyleDash equ 1
-    ; 1
     DashStyleDot equ 2
-    ; 2
     DashStyleDashDot equ 3
-    ; 3
     DashStyleDashDotDot equ 4
-    ; 4
     DashStyleCustom equ 5
 
-    ; 5
-    ;--------------------------------------------------------------------------
-    ; Dash cap constants
-    ;--------------------------------------------------------------------------
     DashCap typedef SDWORD
     DashCapFlat equ 0
     DashCapRound equ 2
     DashCapTriangle equ 3
 
-    ;--------------------------------------------------------------------------
-    ; Line cap constants (only the lowest 8 bits are used).
-    ;--------------------------------------------------------------------------
     LineCap typedef SDWORD
     LineCapFlat equ 0
     LineCapSquare equ 1
     LineCapRound equ 2
     LineCapTriangle equ 3
     LineCapNoAnchor equ 10h
-    ; corresponds to flat cap
     LineCapSquareAnchor equ 11h
-    ; corresponds to square cap
     LineCapRoundAnchor equ 12h
-    ; corresponds to round cap
     LineCapDiamondAnchor equ 13h
-    ; corresponds to triangle cap
     LineCapArrowAnchor equ 14h
-    ; no correspondence
     LineCapCustom equ 0ffh
-    ; custom cap
     LineCapAnchorMask equ 0f0h
 
-    ; mask to check for anchor or not.
-    ;--------------------------------------------------------------------------
-    ; Custom Line cap type constants
-    ;--------------------------------------------------------------------------
     CustomLineCapType typedef SDWORD
     CustomLineCapTypeDefault equ 0
     CustomLineCapTypeAdjustableArrow equ 1
 
-    ;--------------------------------------------------------------------------
-    ; Line join constants
-    ;--------------------------------------------------------------------------
     LineJoin typedef SDWORD
     LineJoinMiter equ 0
     LineJoinBevel equ 1
     LineJoinRound equ 2
     LineJoinMiterClipped equ 3
 
-    ;--------------------------------------------------------------------------
-    ; Path point types (only the lowest 8 bits are used.)
-    ;  The lowest 3 bits are interpreted as point type
-    ;  The higher 5 bits are reserved for flags.
-    ;--------------------------------------------------------------------------
     PathPointType typedef SDWORD
     PathPointTypeStart equ 0
-    ; move
     PathPointTypeLine equ 1
-    ; line
     PathPointTypeBezier equ 3
-    ; default Bezier (= cubic Bezier)
     PathPointTypePathTypeMask equ 07h
-    ; type mask (lowest 3 bits).
     PathPointTypeDashMode equ 10h
-    ; currently in dash mode.
     PathPointTypePathMarker equ 20h
-    ; a marker for the path.
     PathPointTypeCloseSubpath equ 80h
-    ; closed flag
-    ; Path types used for advanced path.
     PathPointTypeBezier3 equ 3
-    ; cubic Bezier
 
-    ;--------------------------------------------------------------------------
-    ; WarpMode constants
-    ;--------------------------------------------------------------------------
     WarpMode typedef SDWORD
     WarpModePerspective equ 0
-    ; 0
     WarpModeBilinear equ 1
 
-    ; 1
-    ;--------------------------------------------------------------------------
-    ; LineGradient Mode
-    ;--------------------------------------------------------------------------
     LinearGradientMode typedef SDWORD
     LinearGradientModeHorizontal equ 0
-    ; 0
     LinearGradientModeVertical equ 1
-    ; 1
     LinearGradientModeForwardDiagonal equ 2
-    ; 2
     LinearGradientModeBackwardDiagonal equ 3
 
-    ; 3
-    ;--------------------------------------------------------------------------
-    ; Region Comine Modes
-    ;--------------------------------------------------------------------------
     CombineMode typedef SDWORD
     CombineModeReplace equ 0
-    ; 0
     CombineModeIntersect equ 1
-    ; 1
     CombineModeUnion equ 2
-    ; 2
     CombineModeXor equ 3
-    ; 3
     CombineModeExclude equ 4
-    ; 4
     CombineModeComplement equ 5
 
-    ; 5 (Exclude From)
-    ;--------------------------------------------------------------------------
-    ; Image types
-    ;--------------------------------------------------------------------------
     ImageType typedef SDWORD
     ImageTypeUnknown equ 0
-    ; 0
     ImageTypeBitmap equ 1
-    ; 1
     ImageTypeMetafile equ 2
 
-    ; 2
-    ;--------------------------------------------------------------------------
-    ; Interpolation modes
-    ;--------------------------------------------------------------------------
     InterpolationMode typedef SDWORD
     InterpolationModeInvalid equ QualityModeInvalid
     InterpolationModeDefault equ QualityModeDefault
@@ -387,16 +200,10 @@ ifndef _GDIPLUSENUMS_H
     InterpolationModeHighQualityBilinear equ 4
     InterpolationModeHighQualityBicubic equ 5
 
-    ;--------------------------------------------------------------------------
-    ; Pen types
-    ;--------------------------------------------------------------------------
     PenAlignment typedef SDWORD
     PenAlignmentCenter equ 0
     PenAlignmentInset equ 1
 
-    ;--------------------------------------------------------------------------
-    ; Brush types
-    ;--------------------------------------------------------------------------
     BrushType typedef SDWORD
     BrushTypeSolidColor equ 0
     BrushTypeHatchFill equ 1
@@ -404,9 +211,6 @@ ifndef _GDIPLUSENUMS_H
     BrushTypePathGradient equ 3
     BrushTypeLinearGradient equ 4
 
-    ;--------------------------------------------------------------------------
-    ; Pen's Fill types
-    ;--------------------------------------------------------------------------
     PenType typedef SDWORD
     PenTypeSolidColor equ BrushTypeSolidColor
     PenTypeHatchFill equ BrushTypeHatchFill
@@ -415,24 +219,15 @@ ifndef _GDIPLUSENUMS_H
     PenTypeLinearGradient equ BrushTypeLinearGradient
     PenTypeUnknown equ -1
 
-    ;--------------------------------------------------------------------------
-    ; Matrix Order
-    ;--------------------------------------------------------------------------
     MatrixOrder typedef SDWORD
     MatrixOrderPrepend equ 0
     MatrixOrderAppend equ 1
 
-    ;--------------------------------------------------------------------------
-    ; Generic font families
-    ;--------------------------------------------------------------------------
     GenericFontFamily typedef SDWORD
     GenericFontFamilySerif equ 0
     GenericFontFamilySansSerif equ 1
     GenericFontFamilyMonospace equ 2
 
-    ;--------------------------------------------------------------------------
-    ; FontStyle: face types and common styles
-    ;--------------------------------------------------------------------------
     FontStyle typedef SDWORD
     FontStyleRegular equ 0
     FontStyleBold equ 1
@@ -441,11 +236,7 @@ ifndef _GDIPLUSENUMS_H
     FontStyleUnderline equ 4
     FontStyleStrikeout equ 8
 
-    ;---------------------------------------------------------------------------
-    ; Smoothing Mode
-    ;---------------------------------------------------------------------------
     SmoothingMode typedef SDWORD
-    ;(GDIPVER >= 0x0110) 
     SmoothingModeInvalid equ QualityModeInvalid
     SmoothingModeDefault equ QualityModeDefault
     SmoothingModeHighSpeed equ QualityModeLow
@@ -455,71 +246,37 @@ ifndef _GDIPLUSENUMS_H
     if (GDIPVER ge 0110h)
       SmoothingModeAntiAlias8x4 equ SmoothingModeAntiAlias
       SmoothingModeAntiAlias8x8endif
-    ;(GDIPVER >= 0x0110) 
      equ 1
 
-    ;---------------------------------------------------------------------------
-    ; Pixel Format Mode
-    ;---------------------------------------------------------------------------
     PixelOffsetMode typedef SDWORD
     PixelOffsetModeInvalid equ QualityModeInvalid
     PixelOffsetModeDefault equ QualityModeDefault
     PixelOffsetModeHighSpeed equ QualityModeLow
     PixelOffsetModeHighQuality equ QualityModeHigh
     PixelOffsetModeNone equ 1
-    ; No pixel offset
     PixelOffsetModeHalf equ 2
 
-    ; Offset by -0.5, -0.5 for fast anti-alias perf
-    ;---------------------------------------------------------------------------
-    ; Text Rendering Hint
-    ;---------------------------------------------------------------------------
     TextRenderingHint typedef SDWORD
     TextRenderingHintSystemDefault equ 0
-    ; Glyph with system default rendering hint
     TextRenderingHintSingleBitPerPixelGridFit equ 1
-    ; Glyph bitmap with hinting
     TextRenderingHintSingleBitPerPixel equ 2
-    ; Glyph bitmap without hinting
     TextRenderingHintAntiAliasGridFit equ 3
-    ; Glyph anti-alias bitmap with hinting
     TextRenderingHintAntiAlias equ 4
-    ; Glyph anti-alias bitmap without hinting
     TextRenderingHintClearTypeGridFit equ 5
 
-    ; Glyph CT bitmap with hinting
-    ;---------------------------------------------------------------------------
-    ; Metafile Types
-    ;---------------------------------------------------------------------------
     MetafileType typedef SDWORD
     MetafileTypeInvalid equ 0
-    ; Invalid metafile
     MetafileTypeWmf equ 1
-    ; Standard WMF
     MetafileTypeWmfPlaceable equ 2
-    ; Placeable WMF
     MetafileTypeEmf equ 3
-    ; EMF (not EMF+)
     MetafileTypeEmfPlusOnly equ 4
-    ; EMF+ without dual, down-level records
     MetafileTypeEmfPlusDual equ 5
 
-    ; EMF+ with dual, down-level records
-    ;---------------------------------------------------------------------------
-    ; Specifies the type of EMF to record
-    ;---------------------------------------------------------------------------
     EmfType typedef SDWORD
     EmfTypeEmfOnly equ MetafileTypeEmf
-    ; no EMF+, only EMF
     EmfTypeEmfPlusOnly equ MetafileTypeEmfPlusOnly
-    ; no EMF, only EMF+
     EmfTypeEmfPlusDual equ MetafileTypeEmfPlusDual
 
-    ; both EMF+ and EMF
-    ;---------------------------------------------------------------------------
-    ; EMF+ Persistent object types
-    ;---------------------------------------------------------------------------
-    ;(GDIPVER >= 0x0110)
     ObjectType typedef SDWORD
     ObjectTypeInvalid equ 0
     ObjectTypeBrush equ 1
@@ -537,15 +294,9 @@ ifndef _GDIPLUSENUMS_H
     else
       ObjectTypeMax equ ObjectTypeCustomLineCap
     endif
-    ;(GDIPVER >= 0x0110)
     ObjectTypeMin equ ObjectTypeBrush
 
     ObjectTypeIsValid proto WIN_STD_CALL_CONV :ObjectType
-    ;---------------------------------------------------------------------------
-    ; EMF+ Records
-    ;---------------------------------------------------------------------------
-    ; We have to change the WMF record numbers so that they don't conflict with
-    ; the EMF and EMF+ record numbers.
     GDIP_EMFPLUS_RECORD_BASE equ 00004000h
     GDIP_WMF_RECORD_BASE equ 00010000h
     GDIP_WMF_RECORD_TO_EMFPLUS macro n
@@ -558,9 +309,6 @@ ifndef _GDIPLUSENUMS_H
       exitm <(((n) and GDIP_WMF_RECORD_BASE) != 0)>
     endm
     EmfPlusRecordType typedef SDWORD
-    ; Since we have to enumerate GDI records right along with GDI+ records,
-    ; We list all the GDI records here so that they can be part of the
-    ; same enumeration type which is used in the enumeration callback.
     WmfRecordTypeSetBkColor equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETBKCOLOR)
     WmfRecordTypeSetBkMode equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETBKMODE)
     WmfRecordTypeSetMapMode equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETMAPMODE)
@@ -608,7 +356,6 @@ ifndef _GDIPLUSENUMS_H
     WmfRecordTypeSelectObject equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SELECTOBJECT)
     WmfRecordTypeSetTextAlign equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETTEXTALIGN)
     WmfRecordTypeDrawText equ GDIP_WMF_RECORD_TO_EMFPLUS(062Fh)
-    ; META_DRAWTEXT
     WmfRecordTypeChord equ GDIP_WMF_RECORD_TO_EMFPLUS(META_CHORD)
     WmfRecordTypeSetMapperFlags equ GDIP_WMF_RECORD_TO_EMFPLUS(META_SETMAPPERFLAGS)
     WmfRecordTypeExtTextOut equ GDIP_WMF_RECORD_TO_EMFPLUS(META_EXTTEXTOUT)
@@ -625,31 +372,21 @@ ifndef _GDIPLUSENUMS_H
     WmfRecordTypeStretchDIB equ GDIP_WMF_RECORD_TO_EMFPLUS(META_STRETCHDIB)
     WmfRecordTypeExtFloodFill equ GDIP_WMF_RECORD_TO_EMFPLUS(META_EXTFLOODFILL)
     WmfRecordTypeSetLayout equ GDIP_WMF_RECORD_TO_EMFPLUS(0149h)
-    ; META_SETLAYOUT
     WmfRecordTypeResetDC equ GDIP_WMF_RECORD_TO_EMFPLUS(014Ch)
-    ; META_RESETDC
     WmfRecordTypeStartDoc equ GDIP_WMF_RECORD_TO_EMFPLUS(014Dh)
-    ; META_STARTDOC
     WmfRecordTypeStartPage equ GDIP_WMF_RECORD_TO_EMFPLUS(004Fh)
-    ; META_STARTPAGE
     WmfRecordTypeEndPage equ GDIP_WMF_RECORD_TO_EMFPLUS(0050h)
-    ; META_ENDPAGE
     WmfRecordTypeAbortDoc equ GDIP_WMF_RECORD_TO_EMFPLUS(0052h)
-    ; META_ABORTDOC
     WmfRecordTypeEndDoc equ GDIP_WMF_RECORD_TO_EMFPLUS(005Eh)
-    ; META_ENDDOC
     WmfRecordTypeDeleteObject equ GDIP_WMF_RECORD_TO_EMFPLUS(META_DELETEOBJECT)
     WmfRecordTypeCreatePalette equ GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEPALETTE)
     WmfRecordTypeCreateBrush equ GDIP_WMF_RECORD_TO_EMFPLUS(00F8h)
-    ; META_CREATEBRUSH
     WmfRecordTypeCreatePatternBrush equ GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEPATTERNBRUSH)
     WmfRecordTypeCreatePenIndirect equ GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEPENINDIRECT)
     WmfRecordTypeCreateFontIndirect equ GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEFONTINDIRECT)
     WmfRecordTypeCreateBrushIndirect equ GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEBRUSHINDIRECT)
     WmfRecordTypeCreateBitmapIndirect equ GDIP_WMF_RECORD_TO_EMFPLUS(02FDh)
-    ; META_CREATEBITMAPINDIRECT
     WmfRecordTypeCreateBitmap equ GDIP_WMF_RECORD_TO_EMFPLUS(06FEh)
-    ; META_CREATEBITMAP
     WmfRecordTypeCreateRegion equ GDIP_WMF_RECORD_TO_EMFPLUS(META_CREATEREGION)
     EmfRecordTypeHeader equ EMR_HEADER
     EmfRecordTypePolyBezier equ EMR_POLYBEZIER
@@ -720,7 +457,6 @@ ifndef _GDIPLUSENUMS_H
     EmfRecordTypeSelectClipPath equ EMR_SELECTCLIPPATH
     EmfRecordTypeAbortPath equ EMR_ABORTPATH
     EmfRecordTypeReserved_069 equ 69
-    ; Not Used
     EmfRecordTypeGdiComment equ EMR_GDICOMMENT
     EmfRecordTypeFillRgn equ EMR_FILLRGN
     EmfRecordTypeFrameRgn equ EMR_FRAMERGN
@@ -750,61 +486,32 @@ ifndef _GDIPLUSENUMS_H
     EmfRecordTypePolyTextOutA equ EMR_POLYTEXTOUTA
     EmfRecordTypePolyTextOutW equ EMR_POLYTEXTOUTW
     EmfRecordTypeSetICMMode equ 98
-    ; EMR_SETICMMODE,
     EmfRecordTypeCreateColorSpace equ 99
-    ; EMR_CREATECOLORSPACE,
     EmfRecordTypeSetColorSpace equ 100
-    ; EMR_SETCOLORSPACE,
     EmfRecordTypeDeleteColorSpace equ 101
-    ; EMR_DELETECOLORSPACE,
     EmfRecordTypeGLSRecord equ 102
-    ; EMR_GLSRECORD,
     EmfRecordTypeGLSBoundedRecord equ 103
-    ; EMR_GLSBOUNDEDRECORD,
     EmfRecordTypePixelFormat equ 104
-    ; EMR_PIXELFORMAT,
     EmfRecordTypeDrawEscape equ 105
-    ; EMR_RESERVED_105,
     EmfRecordTypeExtEscape equ 106
-    ; EMR_RESERVED_106,
     EmfRecordTypeStartDoc equ 107
-    ; EMR_RESERVED_107,
     EmfRecordTypeSmallTextOut equ 108
-    ; EMR_RESERVED_108,
     EmfRecordTypeForceUFIMapping equ 109
-    ; EMR_RESERVED_109,
     EmfRecordTypeNamedEscape equ 110
-    ; EMR_RESERVED_110,
     EmfRecordTypeColorCorrectPalette equ 111
-    ; EMR_COLORCORRECTPALETTE,
     EmfRecordTypeSetICMProfileA equ 112
-    ; EMR_SETICMPROFILEA,
     EmfRecordTypeSetICMProfileW equ 113
-    ; EMR_SETICMPROFILEW,
     EmfRecordTypeAlphaBlend equ 114
-    ; EMR_ALPHABLEND,
     EmfRecordTypeSetLayout equ 115
-    ; EMR_SETLAYOUT,
     EmfRecordTypeTransparentBlt equ 116
-    ; EMR_TRANSPARENTBLT,
     EmfRecordTypeReserved_117 equ 117
-    ; Not Used
     EmfRecordTypeGradientFill equ 118
-    ; EMR_GRADIENTFILL,
     EmfRecordTypeSetLinkedUFIs equ 119
-    ; EMR_RESERVED_119,
     EmfRecordTypeSetTextJustification equ 120
-    ; EMR_RESERVED_120,
     EmfRecordTypeColorMatchToTargetW equ 121
-    ; EMR_COLORMATCHTOTARGETW,
     EmfRecordTypeCreateColorSpaceW equ 122
-    ; EMR_CREATECOLORSPACEW,
     EmfRecordTypeMax equ 122
     EmfRecordTypeMin equ 1
-    ; That is the END of the GDI EMF records.
-    ; Now we start the list of EMF+ records.  We leave quite
-    ; a bit of room here for the addition of any new GDI
-    ; records that may be added later.
     EmfPlusRecordTypeInvalid equ GDIP_EMFPLUS_RECORD_BASE
     EmfPlusRecordTypeHeader equ 1
     EmfPlusRecordTypeEndOfFile equ 2
@@ -813,9 +520,7 @@ ifndef _GDIPLUSENUMS_H
     EmfPlusRecordTypeMultiFormatStart equ 5
     EmfPlusRecordTypeMultiFormatSection equ 6
     EmfPlusRecordTypeMultiFormatEnd equ 7
-    ; For all persistent objects
     EmfPlusRecordTypeObject equ 8
-    ; Drawing Records
     EmfPlusRecordTypeClear equ 9
     EmfPlusRecordTypeFillRects equ 10
     EmfPlusRecordTypeDrawRects equ 11
@@ -836,7 +541,6 @@ ifndef _GDIPLUSENUMS_H
     EmfPlusRecordTypeDrawImage equ 26
     EmfPlusRecordTypeDrawImagePoints equ 27
     EmfPlusRecordTypeDrawString equ 28
-    ; Graphics State Records
     EmfPlusRecordTypeSetRenderingOrigin equ 29
     EmfPlusRecordTypeSetAntiAliasMode equ 30
     EmfPlusRecordTypeSetTextRenderingHint equ 31
@@ -869,73 +573,10 @@ ifndef _GDIPLUSENUMS_H
       EmfPlusRecordTypeSetTSGraphics equ 57
       EmfPlusRecordTypeSetTSClip equ 58
     endif
-    ; NOTE: New records *must* be added immediately before this line.
     EmfPlusRecordTotal equ 59
     EmfPlusRecordTypeMax equ EmfPlusRecordTotal - 1
     EmfPlusRecordTypeMin equ EmfPlusRecordTypeHeader
 
-    ;---------------------------------------------------------------------------
-    ; StringFormatFlags
-    ;---------------------------------------------------------------------------
-    ;---------------------------------------------------------------------------
-    ; String format flags
-    ;  DirectionRightToLeft          - For horizontal text, the reading order is
-    ;                                  right to left. This value is called
-    ;                                  the base embedding level by the Unicode
-    ;                                  bidirectional engine.
-    ;                                  For vertical text, columns are read from
-    ;                                  right to left.
-    ;                                  By default, horizontal or vertical text is
-    ;                                  read from left to right.
-    ;  DirectionVertical             - Individual lines of text are vertical. In
-    ;                                  each line, characters progress from top to
-    ;                                  bottom.
-    ;                                  By default, lines of text are horizontal,
-    ;                                  each new line below the previous line.
-    ;  NoFitBlackBox                 - Allows parts of glyphs to overhang the
-    ;                                  bounding rectangle.
-    ;                                  By default glyphs are first aligned
-    ;                                  inside the margines, then any glyphs which
-    ;                                  still overhang the bounding box are
-    ;                                  repositioned to avoid any overhang.
-    ;                                  For example when an italic
-    ;                                  lower case letter f in a font such as
-    ;                                  Garamond is aligned at the far left of a
-    ;                                  rectangle, the lower part of the f will
-    ;                                  reach slightly further left than the left
-    ;                                  edge of the rectangle. Setting this flag
-    ;                                  will ensure the character aligns visually
-    ;                                  with the lines above and below, but may
-    ;                                  cause some pixels outside the formatting
-    ;                                  rectangle to be clipped or painted.
-    ;  DisplayFormatControl          - Causes control characters such as the
-    ;                                  left-to-right mark to be shown in the
-    ;                                  output with a representative glyph.
-    ;  NoFontFallback                - Disables fallback to alternate fonts for
-    ;                                  characters not supported in the requested
-    ;                                  font. Any missing characters will be
-    ;                                  be displayed with the fonts missing glyph,
-    ;                                  usually an open square.
-    ;  NoWrap                        - Disables wrapping of text between lines
-    ;                                  when formatting within a rectangle.
-    ;                                  NoWrap is implied when a point is passed
-    ;                                  instead of a rectangle, or when the
-    ;                                  specified rectangle has a zero line length.
-    ;  NoClip                        - By default text is clipped to the
-    ;                                  formatting rectangle. Setting NoClip
-    ;                                  allows overhanging pixels to affect the
-    ;                                  device outside the formatting rectangle.
-    ;                                  Pixels at the end of the line may be
-    ;                                  affected if the glyphs overhang their
-    ;                                  cells, and either the NoFitBlackBox flag
-    ;                                  has been set, or the glyph extends to far
-    ;                                  to be fitted.
-    ;                                  Pixels above/before the first line or
-    ;                                  below/after the last line may be affected
-    ;                                  if the glyphs extend beyond their cell
-    ;                                  ascent / descent. This can occur rarely
-    ;                                  with unusual diacritic mark combinations.
-    ;---------------------------------------------------------------------------
     StringFormatFlags typedef SDWORD
     StringFormatFlagsDirectionRightToLeft equ 00000001h
     StringFormatFlagsDirectionVertical equ 00000002h
@@ -948,9 +589,6 @@ ifndef _GDIPLUSENUMS_H
     StringFormatFlagsNoClip equ 00004000h
     StringFormatFlagsBypassGDI equ 80000000h
 
-    ;---------------------------------------------------------------------------
-    ; StringTrimming
-    ;---------------------------------------------------------------------------
     StringTrimming typedef SDWORD
     StringTrimmingNone equ 0
     StringTrimmingCharacter equ 1
@@ -959,94 +597,45 @@ ifndef _GDIPLUSENUMS_H
     StringTrimmingEllipsisWord equ 4
     StringTrimmingEllipsisPath equ 5
 
-    ;---------------------------------------------------------------------------
-    ; National language digit substitution
-    ;---------------------------------------------------------------------------
     StringDigitSubstitute typedef SDWORD
     StringDigitSubstituteUser equ 0
-    ; As NLS setting
     StringDigitSubstituteNone equ 1
     StringDigitSubstituteNational equ 2
     StringDigitSubstituteTraditional equ 3
 
-    ;---------------------------------------------------------------------------
-    ; Hotkey prefix interpretation
-    ;---------------------------------------------------------------------------
     HotkeyPrefix typedef SDWORD
     HotkeyPrefixNone equ 0
     HotkeyPrefixShow equ 1
     HotkeyPrefixHide equ 2
 
-    ;---------------------------------------------------------------------------
-    ; String alignment flags
-    ;---------------------------------------------------------------------------
     StringAlignment typedef SDWORD
-    ; Left edge for left-to-right text,
-    ; right for right-to-left text,
-    ; and top for vertical
     StringAlignmentNear equ 0
     StringAlignmentCenter equ 1
     StringAlignmentFar equ 2
 
-    ;---------------------------------------------------------------------------
-    ; DriverStringOptions
-    ;---------------------------------------------------------------------------
     DriverStringOptions typedef SDWORD
     DriverStringOptionsCmapLookup equ 1
     DriverStringOptionsVertical equ 2
     DriverStringOptionsRealizedAdvance equ 4
     DriverStringOptionsLimitSubpixel equ 8
 
-    ;---------------------------------------------------------------------------
-    ; Flush Intention flags
-    ;---------------------------------------------------------------------------
     FlushIntention typedef SDWORD
     FlushIntentionFlush equ 0
-    ; Flush all batched rendering operations
     FlushIntentionSync equ 1
 
-    ; and wait for them to complete
-    ;---------------------------------------------------------------------------
-    ; Image encoder parameter related types
-    ;---------------------------------------------------------------------------
     EncoderParameterValueType typedef SDWORD
-    ;(GDIPVER >= 0x0110)
     EncoderParameterValueTypeByte equ 1
-    ; 8-bit unsigned int
     EncoderParameterValueTypeASCII equ 2
-    ; 8-bit byte containing one 7-bit ASCII
-    ; code. NULL terminated.
     EncoderParameterValueTypeShort equ 3
-    ; 16-bit unsigned int
     EncoderParameterValueTypeLong equ 4
-    ; 32-bit unsigned int
     EncoderParameterValueTypeRational equ 5
-    ; Two Longs. The first Long is the
-    ; numerator, the second Long expresses the
-    ; denomintor.
     EncoderParameterValueTypeLongRange equ 6
-    ; Two longs which specify a range of
-    ; integer values. The first Long specifies
-    ; the lower end and the second one
-    ; specifies the higher end. All values
-    ; are inclusive at both ends
     EncoderParameterValueTypeUndefined equ 7
-    ; 8-bit byte that can take any value
-    ; depending on field definition
     EncoderParameterValueTypeRationalRange equ 8
-    ; Two Rationals. The first Rational
-    ; specifies the lower end and the second
-    ; specifies the higher end. All values
-    ; are inclusive at both ends
     if (GDIPVER ge 0110h)
-      EncoderParameterValueTypePointer equ 9 ; a pointer to a parameter defined data.
-    endif
-    ;(GDIPVER >= 0x0110)
+      EncoderParameterValueTypePointer equ 9 endif
 
 
-    ;---------------------------------------------------------------------------
-    ; Image encoder value types
-    ;---------------------------------------------------------------------------
     EncoderValue typedef SDWORD
     EncoderValueColorTypeCMYK equ 0
     EncoderValueColorTypeYCCK equ 1
@@ -1077,9 +666,6 @@ ifndef _GDIPLUSENUMS_H
       EncoderValueColorTypeRGB equ 25
     endif
 
-    ;---------------------------------------------------------------------------
-    ; Conversion of Emf To WMF Bits flags
-    ;---------------------------------------------------------------------------
     EmfToWmfBitsFlags typedef SDWORD
     EmfToWmfBitsFlagsDefault equ 00000000h
     EmfToWmfBitsFlagsEmbedEmf equ 00000001h
@@ -1087,9 +673,6 @@ ifndef _GDIPLUSENUMS_H
     EmfToWmfBitsFlagsNoXORClip equ 00000004h
 
     if (GDIPVER ge 0110h)
-      ;---------------------------------------------------------------------------
-      ; Conversion of Emf To Emf+ Bits flags
-      ;---------------------------------------------------------------------------
       ConvertToEmfPlusFlags typedef SDWORD
       ConvertToEmfPlusFlagsDefault equ 00000000h
       ConvertToEmfPlusFlagsRopUsed equ 00000001h
@@ -1097,15 +680,10 @@ ifndef _GDIPLUSENUMS_H
       ConvertToEmfPlusFlagsInvalidRecord equ 00000004h
 
     endif
-    ;---------------------------------------------------------------------------
-    ; Test Control flags
-    ;---------------------------------------------------------------------------
     GpTestControlEnum typedef SDWORD
     TestControlForceBilinear equ 0
     TestControlNoICM equ 1
     TestControlGetBuildNumber equ 2
 
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
 endif
-; !_GDIPLUSENUMS_H

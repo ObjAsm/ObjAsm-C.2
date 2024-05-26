@@ -57,7 +57,7 @@ SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS r
 % include &IncPath&Windows\UxTheme.inc
 % include &IncPath&Windows\vsstyle.inc
 % include &IncPath&Windows\WinSock2.inc
-% include &IncPath&Windows\wininet.inc
+;% include &IncPath&Windows\wininet.inc
 % include &IncPath&Windows\http.inc
 
 

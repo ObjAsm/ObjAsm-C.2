@@ -6,6 +6,25 @@
 ; ==================================================================================================
 
 
+;#define MEM_EXTENDED_PARAMETER_TYPE_BITS    8
+;
+;typedef struct DECLSPEC_ALIGN(8) MEM_EXTENDED_PARAMETER {
+;
+;    struct {
+;        DWORD64 Type : MEM_EXTENDED_PARAMETER_TYPE_BITS;
+;        DWORD64 Reserved : 64 - MEM_EXTENDED_PARAMETER_TYPE_BITS;
+;    } DUMMYSTRUCTNAME;
+;
+;    union {
+;        DWORD64 ULong64;
+;        PVOID Pointer;
+;        SIZE_T Size;
+;        HANDLE Handle;
+;        DWORD ULong;
+;    } DUMMYUNIONNAME;
+;
+;} MEM_EXTENDED_PARAMETER, *PMEM_EXTENDED_PARAMETER;
+
 .code
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -88,10 +107,12 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA, dEmbedded:DWORD
     .else
       lea xdx, cName
       mov pName, $invoke(TranslateReservedWord, xax, xdx)
-      IsStructure? pName
-      .if eax == FALSE
-        invoke StrLengthA, pName
-        invoke InsertStrg, pNewStructs, pName, eax
+      .if dEmbedded == FALSE                              ;Embedded containers must be skipped
+        IsStructure? pName
+        .if eax == FALSE
+          invoke StrLengthA, pName
+          invoke InsertStrg, pNewStructs, pName, eax
+        .endif
       .endif
 
       ;MASM special syntax for embedded containers
@@ -122,6 +143,9 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA, dEmbedded:DWORD
     ;Entry: Next token after '{'
     ;Exit: Next Token after '}'
     invoke RenderBlock, pName, RBT_CONTAINER
+    test xax, xax
+    jz @ErrorEoF
+    OCall xbx::IncFile.GetNextTokenC                    ;Consume '}'
     test xax, xax
     jz @ErrorEoF
     mov pEndToken, xax
@@ -155,8 +179,8 @@ RenderContainer proc uses xdi pContainerType:PSTRINGA, dEmbedded:DWORD
     mov pEndToken, xax
   .endif
 
-  .if xax != NULL
-    invoke RenderFurtherTypes, pName, pTagName, xax
+  .if pEndToken != NULL
+    invoke RenderFurtherTypes, pName, pTagName, pEndToken
     test xax, xax
     jz @ErrorEoF
     mov pEndToken, xax

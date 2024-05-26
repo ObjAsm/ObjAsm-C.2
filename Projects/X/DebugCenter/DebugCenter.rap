@@ -177,7 +177,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=10
+MilestoneOnDateDate=26
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -285,16 +285,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="hCalcPrc"
-2="szCalcPath"
-3="calc.exe"
-4="ClpBrdClear"
-5="Erase"
-6="dTotalUnencryptedSize"
-7="TotalBytesToRead"
-8="pUnencryptedBuffer"
-9="dUnencryptedSize"
-10="DBG_FLOAT_BUFFERSIZE"
+1="END_DECLARE_INTCE__END"
+2="HTTP_RESPONSE_V"
+3="HTTP_RESPONSE_V1"
+4="InitHttpResponse"
+5="LPQOS"
+6="_SS_PAD1SIZE"
+7="PCUITEMID_CHILD_ARRAY"
+8="SIZE_ ?"
+9="const TASKOWNERID * __MIDL_CONST"
+10="REFTASKOWNERID"
 "
 [Collapse]
 7=,,
@@ -351,9 +351,9 @@ ProductVer4Range=0
 53=
 54=
 [AutoLoad]
-AutoLoad=1,2,18,5,7,3
+AutoLoad=
 [PTimer]
-PTimer=2353200324
+PTimer=2359665339
 [RADebugBP]
 5=
 2=
@@ -398,5 +398,6 @@ PTimer=2353200324
 28=
 52=
 15=
+41=
 [GroupExpand]
 GroupExpand=1,1,1,1,1,0,1,1,0

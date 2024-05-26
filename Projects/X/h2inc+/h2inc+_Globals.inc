@@ -302,25 +302,25 @@ KnownContentLists label LIST_SETUP
 DefListSetup  KnwResvWords,    1000, 100, CF_KNW or CF_LCS, <KnwResvWords>,   <Reserved Words>
 DefListSetup  KnwTypeSize,     1000, 100, CF_KNW or CF_ATR, <KnwTypeSizes>,   <Type Size>
 DefListSetup  KnwMacros,       1000, 100, CF_KNW or CF_ATR, <KnwMacros>,      <Macro Names>
-DefListSetup  KnwEquates,      1000, 100, CF_KNW or CF_ATR, <KnwEquate>,      <Equate Names>
-DefListSetup  KnwStructs,      1000, 100, CF_KNW or CF_SNG, <KnwStruct>,      <Structure Names>
-DefListSetup  KnwQualifiers,   1000, 100, CF_KNW or CF_ATR, <KnwQualif>,      <Prototype Qualifiers>
+DefListSetup  KnwEquates,      1000, 100, CF_KNW or CF_ATR, <KnwEquates>,     <Equate Names>
+DefListSetup  KnwStructs,      1000, 100, CF_KNW or CF_SNG, <KnwStructs>,     <Structure Names>
+DefListSetup  KnwQualifiers,   1000, 100, CF_KNW or CF_ATR, <KnwQualifs>,     <Prototype Qualifiers>
 DefListSetup  KnwSimpleTypes,  1000, 100, CF_KNW or CF_SNG, <KnwTypeNames>,   <Simple Type Names>
 DefListSetup  KnwConvTypeQual, 1000, 100, CF_KNW or CF_CNV, <KnwConvQualif>,  <Type Qualifier Conversion>
 DefListSetup  KnwConvTypes1,   1000, 100, CF_KNW or CF_CNV, <KnwConvType1>,   <Type Conversion 1>
 DefListSetup  KnwConvTypes2,   1000, 100, CF_KNW or CF_CNV, <KnwConvType2>,   <Type Conversion 2>
 DefListSetup  KnwConvTypes3,   1000, 100, CF_KNW or CF_CNV, <KnwConvType3>,   <Type Conversion 3>
-DefListSetup  KnwConvTokens,   1000, 100, CF_KNW or CF_CNV, <KnwConvToken>,   <Token Conversion>
-DefListSetup  KnwAlignments,   1000, 100, CF_KNW or CF_ATR, <KnwAlignment>,   <Alignment>
+DefListSetup  KnwConvTokens,   1000, 100, CF_KNW or CF_CNV, <KnwConvTokens>,  <Token Conversion>
+DefListSetup  KnwAlignments,   1000, 100, CF_KNW or CF_ATR, <KnwAlignments>,  <Alignment>
 DefListSetup  KnwAnnotations,  1000, 100, CF_KNW or CF_SNG, <KnwAnnotations>, <Annotations>
 NewContentLists label LIST_SETUP
 DefListSetup  NewTypeSize,     1000, 100, CF_ATR,           <NewTypeSizes>
 DefListSetup  NewMacros,       1000, 100, CF_ATR,           <NewMacros>
-DefListSetup  NewEquates,      1000, 100, CF_ATR,           <NewEquate>
-DefListSetup  NewStructs,      1000, 100, CF_SNG,           <NewStruct>
-DefListSetup  NewQualifiers,   1000, 100, CF_ATR,           <NewQualif>
+DefListSetup  NewEquates,      1000, 100, CF_ATR,           <NewEquates>
+DefListSetup  NewStructs,      1000, 100, CF_SNG,           <NewStructs>
+DefListSetup  NewQualifiers,   1000, 100, CF_ATR,           <NewQualifs>
 DefListSetup  NewPrototypes,   1000, 100, CF_SNG,           <NewProtos>
-DefListSetup  NewTypedefs,     1000, 100, CF_SNG,           <NewTypdef>
+DefListSetup  NewTypedefs,     1000, 100, CF_SNG,           <NewTypdefs>
 POINTER NULL
 
 
@@ -498,8 +498,8 @@ DefaultKnwConvTypes2Table label POINTER
   CONV_EQUI_ENTRY <$OfsCBStrA("char"),           $OfsCBStrA("SBYTE")>
   CONV_EQUI_ENTRY <$OfsCBStrA("unsigned char"),  $OfsCBStrA("BYTE")>
   CONV_EQUI_ENTRY <$OfsCBStrA("wchar_t"),        $OfsCBStrA("WORD")>
-  CONV_EQUI_ENTRY <$OfsCBStrA("LPCSTR"),         $OfsCBStrA("LPSTR")>
-  CONV_EQUI_ENTRY <$OfsCBStrA("LPCWSTR"),        $OfsCBStrA("LPWSTR")>
+  CONV_EQUI_ENTRY <$OfsCBStrA("LPCSTR"),         $OfsCBStrA("POINTER")>
+  CONV_EQUI_ENTRY <$OfsCBStrA("LPCWSTR"),        $OfsCBStrA("POINTER")>
   CONV_EQUI_ENTRY <$OfsCBStrA("UINT"),           $OfsCBStrA("DWORD")>
   CONV_EQUI_ENTRY <$OfsCBStrA("ULONG"),          $OfsCBStrA("DWORD")>
   CONV_EQUI_ENTRY <$OfsCBStrA("LONG"),           $OfsCBStrA("SDWORD")>

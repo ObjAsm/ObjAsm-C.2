@@ -1,10 +1,9 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\setupapi.h
 ;             Created on (UTC) 06/04/2024 06:15:58
 ;             Last modified on (UTC) 12/02/2024 17:05:48
 
-;--*
 ifndef _INC_SETUPAPI
   _INC_SETUPAPI equ <>
   if _MSC_VER gt 1000
@@ -12,94 +11,60 @@ ifndef _INC_SETUPAPI
   include winapifamily.inc
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if Defined(_MSC_VER) and (_MSC_VER ge 1200)
-      ;* nonstandard extension used : nameless struct/union *
     endif
-    ; Define API decoration for direct importing of DLL references.
     if  not Defined(_SETUPAPI_)
       WINSETUPAPI equ <DECLSPEC_IMPORT>
     else
       WINSETUPAPI equ <>
     endif
-    ; determine version of setupapi based on _WIN32_WINDOWS and _WIN32_WINNT
-    ; NT4 version of setupapi   (_WIN32_WINNT_NT4) is earliest, and installed onto Win95 by IE.
-    ; Win2k version of setupapi (_WIN32_WINNT_WIN2K) also shipped in WinME
-    ; we'll use "0x0410" to indicate version of setupapi shipped with Win98
     ifndef _SETUPAPI_VER
       if Defined(_WIN32_WINNT) and ( not Defined(_WIN32_WINDOWS) or (_WIN32_WINNT lt _WIN32_WINDOWS))
-        _SETUPAPI_VER equ <_WIN32_WINNT>; SetupAPI version follows Windows NT version
-
+        _SETUPAPI_VER equ <_WIN32_WINNT>
       elseif Defined(_WIN32_WINDOWS)
         if _WIN32_WINDOWS ge 0490h
-          _SETUPAPI_VER equ <_WIN32_WINNT_WIN2K>; WinME uses same version of SetupAPI as Win2k
-
+          _SETUPAPI_VER equ <_WIN32_WINNT_WIN2K>
         elseif _WIN32_WINDOWS ge 0410h
-          _SETUPAPI_VER equ 0410h; Indicates version of SetupAPI shipped with Win98
-
+          _SETUPAPI_VER equ 0410h
         else
-          _SETUPAPI_VER equ <_WIN32_WINNT_NT4>; Earliest SetupAPI version
-
+          _SETUPAPI_VER equ <_WIN32_WINNT_NT4>
         endif
-        ; _WIN32_WINDOWS
       else
-      ; _WIN32_WINNT/_WIN32_WINDOWS
         _SETUPAPI_VER equ <_WIN32_WINNT_WINXP>
       endif
-      ; _WIN32_WINNT/_WIN32_WINDOWS
     endif
-    ; !_SETUPAPI_VER
     ifndef __LPGUID_DEFINED__
       __LPGUID_DEFINED__ equ <>
       LPGUID typedef ptr GUID
     endif
-    ; Include spapidef.h for basic definitions and flags
     include spapidef.inc
-    ; Include commctrl.h for our use of HIMAGELIST and wizard support.
     include commctrl.inc
-    ; Include devpropdef.h for our use of DEVPROPERTYKEY and DEVPROPTYPE.
     include devpropdef.inc
     if Defined(_WIN64)
       include pshpack8.inc
-      ; Assume 8-byte (64-bit) packing throughout
     else
       include pshpack1.inc
-      ; Assume byte packing throughout (32-bit processor)
     endif
     ifdef __cplusplus
       ;[...]
     endif
-    ; Define maximum string length constants
-    LINE_LEN equ 256; Windows 9x-compatible maximum for
-
-    ; displayable strings coming from a
-    ; device INF.
-    MAX_INF_STRING_LENGTH equ 4096; Actual maximum size of an INF string
-
-    ; (including string substitutions).
-    MAX_INF_SECTION_NAME_LENGTH equ 255; For Windows 9x compatibility, INF
-
-    ; section names should be constrained
-    ; to 32 characters.
+    LINE_LEN equ 256
+    MAX_INF_STRING_LENGTH equ 4096
+    MAX_INF_SECTION_NAME_LENGTH equ 255
     MAX_TITLE_LEN equ 60
     MAX_INSTRUCTION_LEN equ 256
     MAX_LABEL_LEN equ 30
     MAX_SERVICE_NAME_LEN equ 256
     MAX_SUBTITLE_LEN equ 256
-    ; Define maximum length of a machine name in the format expected by ConfigMgr32
-    ; CM_Connect_Machine (i.e., "\\\\MachineName\0").
     SP_MAX_MACHINENAME_LENGTH equ (MAX_PATH + 3)
-    ; Define type for reference to loaded inf file
     HINF typedef PVOID
-    ; Inf context structure. Applications must not interpret or
-    ; overwrite values in these structures.
     INFCONTEXT struct
-      Inf POINTER ?
-      CurrentInf POINTER ?
-      Section DWORD ?
-      Line DWORD ?
+      Inf PVOID ?
+      CurrentInf PVOID ?
+      Section UINT ?
+      Line UINT ?
     INFCONTEXT ends
     _INFCONTEXT typedef INFCONTEXT
     PINFCONTEXT typedef ptr INFCONTEXT
-    ; Inf file information structure.
     SP_INF_INFORMATION struct
       InfStyle DWORD ?
       InfCount DWORD ?
@@ -107,57 +72,20 @@ ifndef _INC_SETUPAPI
     SP_INF_INFORMATION ends
     _SP_INF_INFORMATION typedef SP_INF_INFORMATION
     PSP_INF_INFORMATION typedef ptr SP_INF_INFORMATION
-    ; Define structure for passing alternate platform info into
-    ; SetupSetFileQueueAlternatePlatform and SetupQueryInfOriginalFileInformation.
     SP_ALTPLATFORM_INFO_V3 struct
       cbSize DWORD ?
-      ; platform to use (VER_PLATFORM_WIN32_WINDOWS or VER_PLATFORM_WIN32_NT)
       Platform DWORD ?
-      ; major and minor version numbers to use
       MajorVersion DWORD ?
       MinorVersion DWORD ?
-      ; processor architecture to use (PROCESSOR_ARCHITECTURE_INTEL,
-      ; PROCESSOR_ARCHITECTURE_AMD64, PROCESSOR_ARCHITECTURE_IA64,
-      ; or PROCESSOR_ARCHITECTURE_ARM).
       ProcessorArchitecture WORD ?
       union
         Reserved WORD ?
-        ; for compatibility with V1 structure
         Flags WORD ?
-        ; indicates validity of non V1 fields
       ends
-      ; specify SP_ALTPLATFORM_FLAGS_VERSION_RANGE in Flags
-      ; to use FirstValidatedMajorVersion and FirstValidatedMinorVersion
-      ; Major and minor versions of the oldest previous OS for which this
-      ; package's digital signature may be considered valid.  For example, say
-      ; the alternate platform is VER_PLATFORM_WIN32_NT, version 5.1.  However,
-      ; it is wished that driver packages signed with a 5.0 osattr also be
-      ; considered valid.  In this case, you'd have a  MajorVersion/MinorVersion
-      ; of 5.1, and a FirstValidatedMajorVersion/FirstValidatedMinorVersion of
-      ; 5.0.  To validate packages signed for any previous OS release, specify
-      ; 0 for these fields.  To only validate against the target alternate
-      ; platform, specify the same values as those in the MajorVersion and
-      ; MinorVersion fields.
       FirstValidatedMajorVersion DWORD ?
       FirstValidatedMinorVersion DWORD ?
-      ; specify non-zero value (e.g. VER_NT_WORKSTATION) in ProductType to use
-      ; field, and/or specify SP_ALTPLATFORM_FLAGS_SUITE_MASK in Flags to use
-      ; SuiteMask field, which may be zero.
-      ; Product type and suite mask of alternate platform.  Used to select
-      ; matching decorated install sections within driver packages that target
-      ; specific product variants of the OS.  For example, for only Server
-      ; products with the Enterprise or Small Business suite classification,
-      ; use ProductType VER_NT_SERVER with SuiteMask VER_SUITE_ENTERPRISE and
-      ; VER_SUITE_SMALLBUSINESS.
       ProductType BYTE ?
       SuiteMask WORD ?
-      ; Build number of alternate platform.  Used to select matching
-      ; decorated install sections within driver packages that target a
-      ; minimal build number with the specified OS
-      ; MajorVersion/MinorVersion. If no specific minimal build number
-      ; targeting is required, a value of zero should be specified. Note that
-      ; this capability is only supported on certain builds of 10.0 and
-      ; later.
       BuildNumber DWORD ?
     SP_ALTPLATFORM_INFO_V3 ends
     _SP_ALTPLATFORM_INFO_V3 typedef SP_ALTPLATFORM_INFO_V3
@@ -184,47 +112,36 @@ ifndef _INC_SETUPAPI
       MinorVersion DWORD ?
       ProcessorArchitecture WORD ?
       Reserved WORD ?
-      ; must be zero.
     SP_ALTPLATFORM_INFO_V1 ends
     _SP_ALTPLATFORM_INFO_V1 typedef SP_ALTPLATFORM_INFO_V1
     PSP_ALTPLATFORM_INFO_V1 typedef ptr SP_ALTPLATFORM_INFO_V1
     if USE_SP_ALTPLATFORM_INFO_V1 or (_SETUPAPI_VER lt _WIN32_WINNT_WINXP)
-      ; use version 1 altplatform info data structure
       SP_ALTPLATFORM_INFO typedef SP_ALTPLATFORM_INFO_V1
       PSP_ALTPLATFORM_INFO typedef PSP_ALTPLATFORM_INFO_V1
     elseif USE_SP_ALTPLATFORM_INFO_V3 and (NTDDI_VERSION ge NTDDI_WIN10_RS1)
-      ; use version 3 altplatform info data structure
       SP_ALTPLATFORM_INFO typedef SP_ALTPLATFORM_INFO_V3
       PSP_ALTPLATFORM_INFO typedef PSP_ALTPLATFORM_INFO_V3
     else
-      ; use version 2 altplatform info data structure
       SP_ALTPLATFORM_INFO typedef SP_ALTPLATFORM_INFO_V2
       PSP_ALTPLATFORM_INFO typedef PSP_ALTPLATFORM_INFO_V2
     endif
-    ; use default version of altplatform info data structure
-    ; SP_ALTPLATFORM_INFO.Flags values
     if _WIN32_WINNT ge _WIN32_WINNT_WINXP
-      SP_ALTPLATFORM_FLAGS_VERSION_RANGE equ (0001h); FirstValidatedMajor/MinorVersion
-
+      SP_ALTPLATFORM_FLAGS_VERSION_RANGE equ (0001h)
     endif
     if NTDDI_VERSION ge NTDDI_WIN10_RS1
-      SP_ALTPLATFORM_FLAGS_SUITE_MASK equ (0002h); SuiteMask
-
+      SP_ALTPLATFORM_FLAGS_SUITE_MASK equ (0002h)
     endif
-    ; Define structure that is filled in by SetupQueryInfOriginalFileInformation
-    ; to indicate the INF's original name and the original name of the (potentially
-    ; platform-specific) catalog file specified by that INF.
     SP_ORIGINAL_FILE_INFO_A struct
       cbSize DWORD ?
-      OriginalInfName SBYTE MAX_PATH dup (?)
-      OriginalCatalogName SBYTE MAX_PATH dup (?)
+      OriginalInfName CHAR MAX_PATH dup (?)
+      OriginalCatalogName CHAR MAX_PATH dup (?)
     SP_ORIGINAL_FILE_INFO_A ends
     _SP_ORIGINAL_FILE_INFO_A typedef SP_ORIGINAL_FILE_INFO_A
     PSP_ORIGINAL_FILE_INFO_A typedef ptr SP_ORIGINAL_FILE_INFO_A
     SP_ORIGINAL_FILE_INFO_W struct
       cbSize DWORD ?
-      OriginalInfName WORD MAX_PATH dup (?)
-      OriginalCatalogName WORD MAX_PATH dup (?)
+      OriginalInfName WCHAR MAX_PATH dup (?)
+      OriginalCatalogName WCHAR MAX_PATH dup (?)
     SP_ORIGINAL_FILE_INFO_W ends
     _SP_ORIGINAL_FILE_INFO_W typedef SP_ORIGINAL_FILE_INFO_W
     PSP_ORIGINAL_FILE_INFO_W typedef ptr SP_ORIGINAL_FILE_INFO_W
@@ -235,32 +152,20 @@ ifndef _INC_SETUPAPI
       SP_ORIGINAL_FILE_INFO typedef SP_ORIGINAL_FILE_INFO_A
       PSP_ORIGINAL_FILE_INFO typedef PSP_ORIGINAL_FILE_INFO_A
     endif
-    ; SP_INF_INFORMATION.InfStyle values
-    INF_STYLE_NONE equ 00000000h; unrecognized or non-existent
-
-    INF_STYLE_OLDNT equ 00000001h; winnt 3.x
-
-    INF_STYLE_WIN4 equ 00000002h; Win95
-
-    ; Additional InfStyle flags that may be specified when calling SetupOpenInfFile.
-    INF_STYLE_CACHE_ENABLE equ 00000010h; always cache INF, even outside of %windir%\Inf
-
-    INF_STYLE_CACHE_DISABLE equ 00000020h; delete cached INF information
-
+    INF_STYLE_NONE equ 00000000h
+    INF_STYLE_OLDNT equ 00000001h
+    INF_STYLE_WIN4 equ 00000002h
+    INF_STYLE_CACHE_ENABLE equ 00000010h
+    INF_STYLE_CACHE_DISABLE equ 00000020h
     if _SETUPAPI_VER ge _WIN32_WINNT_WS03
-      INF_STYLE_CACHE_IGNORE equ 00000040h; ignore any cached INF information
-
+      INF_STYLE_CACHE_IGNORE equ 00000040h
     endif
-    ; Target directory specs.
-    DIRID_ABSOLUTE equ -1; real 32-bit -1
-
-    DIRID_ABSOLUTE_16BIT equ 0ffffh; 16-bit -1 for compat w/setupx
-
+    DIRID_ABSOLUTE equ -1
+    DIRID_ABSOLUTE_16BIT equ 0ffffh
     DIRID_NULL equ 0
     DIRID_SRCPATH equ 1
     DIRID_WINDOWS equ 10
-    DIRID_SYSTEM equ 11; system32
-
+    DIRID_SYSTEM equ 11
     DIRID_DRIVERS equ 12
     DIRID_IOSUBSYS equ <DIRID_DRIVERS>
     DIRID_DRIVER_STORE equ 13
@@ -279,44 +184,20 @@ ifndef _INC_SETUPAPI
     DIRID_LOADER equ 54
     DIRID_PRINTPROCESSOR equ 55
     DIRID_DEFAULT equ <DIRID_SYSTEM>
-    ; The following DIRIDs are for commonly-used shell "special folders".  The
-    ; complete list of such folders is contained in shlobj.h.  In that headerfile,
-    ; each folder is assigned a CSIDL_* value.  The DIRID values below are created
-    ; by taking the CSIDL value in shlobj.h and OR'ing it with 0x4000.  Thus, if
-    ; an INF needs to reference other special folders not defined below, it may
-    ; generate one using the above mechanism, and setupapi will automatically deal
-    ; with it and use the corresponding shell's path where appropriate.  (Remember
-    ; that DIRIDs must be specified in decimal, not hex, in an INF when used for
-    ; string substitution.)
-    DIRID_COMMON_STARTMENU equ 16406; All Users\Start Menu
-
-    DIRID_COMMON_PROGRAMS equ 16407; All Users\Start Menu\Programs
-
-    DIRID_COMMON_STARTUP equ 16408; All Users\Start Menu\Programs\Startup
-
-    DIRID_COMMON_DESKTOPDIRECTORY equ 16409; All Users\Desktop
-
-    DIRID_COMMON_FAVORITES equ 16415; All Users\Favorites
-
-    DIRID_COMMON_APPDATA equ 16419; All Users\Application Data
-
-    DIRID_PROGRAM_FILES equ 16422; Program Files
-
-    DIRID_SYSTEM_X86 equ 16425; system32 for WOW
-
-    DIRID_PROGRAM_FILES_X86 equ 16426; Program Files for WOW
-
-    DIRID_PROGRAM_FILES_COMMON equ 16427; Program Files\Common
-
-    DIRID_PROGRAM_FILES_COMMONX86 equ 16428; x86 Program Files\Common for WOW
-
-    DIRID_COMMON_TEMPLATES equ 16429; All Users\Templates
-
-    DIRID_COMMON_DOCUMENTS equ 16430; All Users\Documents
-
-    ; First user-definable dirid. See SetupSetDirectoryId().
+    DIRID_COMMON_STARTMENU equ 16406
+    DIRID_COMMON_PROGRAMS equ 16407
+    DIRID_COMMON_STARTUP equ 16408
+    DIRID_COMMON_DESKTOPDIRECTORY equ 16409
+    DIRID_COMMON_FAVORITES equ 16415
+    DIRID_COMMON_APPDATA equ 16419
+    DIRID_PROGRAM_FILES equ 16422
+    DIRID_SYSTEM_X86 equ 16425
+    DIRID_PROGRAM_FILES_X86 equ 16426
+    DIRID_PROGRAM_FILES_COMMON equ 16427
+    DIRID_PROGRAM_FILES_COMMONX86 equ 16428
+    DIRID_COMMON_TEMPLATES equ 16429
+    DIRID_COMMON_DOCUMENTS equ 16430
     DIRID_USER equ 8000h
-    ; Setup callback notification routine type
     TYPE_PSP_FILE_CALLBACK_A typedef proto WIN_STD_CALL_CONV :PVOID, :UINT, :UINT_PTR, :UINT_PTR
     PSP_FILE_CALLBACK_A typedef ptr TYPE_PSP_FILE_CALLBACK_A
 
@@ -328,7 +209,6 @@ ifndef _INC_SETUPAPI
     else
       PSP_FILE_CALLBACK equ <PSP_FILE_CALLBACK_A>
     endif
-    ; Operation/queue start/end notification. These are ordinal values.
     SPFILENOTIFY_STARTQUEUE equ 00000001h
     SPFILENOTIFY_ENDQUEUE equ 00000002h
     SPFILENOTIFY_STARTSUBQUEUE equ 00000003h
@@ -344,29 +224,23 @@ ifndef _INC_SETUPAPI
     SPFILENOTIFY_COPYERROR equ 0000000dh
     SPFILENOTIFY_NEEDMEDIA equ 0000000eh
     SPFILENOTIFY_QUEUESCAN equ 0000000fh
-    ; These are used with SetupIterateCabinet().
     SPFILENOTIFY_CABINETINFO equ 00000010h
     SPFILENOTIFY_FILEINCABINET equ 00000011h
     SPFILENOTIFY_NEEDNEWCABINET equ 00000012h
     SPFILENOTIFY_FILEEXTRACTED equ 00000013h
     SPFILENOTIFY_FILEOPDELAYED equ 00000014h
-    ; These are used for backup operations
     SPFILENOTIFY_STARTBACKUP equ 00000015h
     SPFILENOTIFY_BACKUPERROR equ 00000016h
     SPFILENOTIFY_ENDBACKUP equ 00000017h
-    ; Extended notification for SetupScanFileQueue(Flags=SPQ_SCAN_USE_CALLBACKEX)
     SPFILENOTIFY_QUEUESCAN_EX equ 00000018h
     SPFILENOTIFY_STARTREGISTRATION equ 00000019h
     SPFILENOTIFY_ENDREGISTRATION equ 00000020h
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      ; Extended notification for SetupScanFileQueue(Flags=SPQ_SCAN_USE_CALLBACK_SIGNERINFO)
       SPFILENOTIFY_QUEUESCAN_SIGNERINFO equ 00000040h
     endif
-    ; Copy notification. These are bit flags that may be combined.
     SPFILENOTIFY_LANGMISMATCH equ 00010000h
     SPFILENOTIFY_TARGETEXISTS equ 00020000h
     SPFILENOTIFY_TARGETNEWER equ 00040000h
-    ; File operation codes and callback outcomes.
     FILEOP_COPY equ 0
     FILEOP_RENAME equ 1
     FILEOP_DELETE equ 2
@@ -376,60 +250,34 @@ ifndef _INC_SETUPAPI
     FILEOP_SKIP equ 2
     FILEOP_RETRY equ <FILEOP_DOIT>
     FILEOP_NEWPATH equ 4
-    ; Flags in inf copy sections
-    COPYFLG_WARN_IF_SKIP equ 00000001h; warn if user tries to skip file
-
-    COPYFLG_NOSKIP equ 00000002h; disallow skipping this file
-
-    COPYFLG_NOVERSIONCHECK equ 00000004h; ignore versions and overwrite target
-
-    COPYFLG_FORCE_FILE_IN_USE equ 00000008h; force file-in-use behavior
-
-    COPYFLG_NO_OVERWRITE equ 00000010h; do not copy if file exists on target
-
-    COPYFLG_NO_VERSION_DIALOG equ 00000020h; do not copy if target is newer
-
-    COPYFLG_OVERWRITE_OLDER_ONLY equ 00000040h; leave target alone if version same as source
-
-    COPYFLG_PROTECTED_WINDOWS_DRIVER_FILE equ 00000100h; a Windows driver file to be
-
-    ; protected as other Windows system files
-    COPYFLG_REPLACEONLY equ 00000400h; copy only if file exists on target
-
-    COPYFLG_NODECOMP equ 00000800h; don't attempt to decompress file; copy as-is
-
-    COPYFLG_REPLACE_BOOT_FILE equ 00001000h; file must be present upon reboot (i.e., it's
-
-    ; needed by the loader); this flag implies a reboot
-    COPYFLG_NOPRUNE equ 00002000h; never prune this file
-
-    COPYFLG_IN_USE_TRY_RENAME equ 00004000h; If file in use, try to rename the target first
-
-    ; Flags in inf delete sections
-    ; New flags go in high word
-    DELFLG_IN_USE equ 00000001h; queue in-use file for delete
-
-    DELFLG_IN_USE1 equ 00010000h; high-word version of DELFLG_IN_USE
-
-    ; Source and file paths. Used when notifying queue callback
-    ; of SPFILENOTIFY_STARTxxx, SPFILENOTIFY_ENDxxx, and SPFILENOTIFY_xxxERROR.
+    COPYFLG_WARN_IF_SKIP equ 00000001h
+    COPYFLG_NOSKIP equ 00000002h
+    COPYFLG_NOVERSIONCHECK equ 00000004h
+    COPYFLG_FORCE_FILE_IN_USE equ 00000008h
+    COPYFLG_NO_OVERWRITE equ 00000010h
+    COPYFLG_NO_VERSION_DIALOG equ 00000020h
+    COPYFLG_OVERWRITE_OLDER_ONLY equ 00000040h
+    COPYFLG_PROTECTED_WINDOWS_DRIVER_FILE equ 00000100h
+    COPYFLG_REPLACEONLY equ 00000400h
+    COPYFLG_NODECOMP equ 00000800h
+    COPYFLG_REPLACE_BOOT_FILE equ 00001000h
+    COPYFLG_NOPRUNE equ 00002000h
+    COPYFLG_IN_USE_TRY_RENAME equ 00004000h
+    DELFLG_IN_USE equ 00000001h
+    DELFLG_IN_USE1 equ 00010000h
     FILEPATHS_A struct
       Target PCSTR ?
       Source PCSTR ?
-      ; not used for delete operations
-      Win32Error DWORD ?
+      Win32Error UINT ?
       Flags DWORD ?
-      ; such as SP_COPY_NOSKIP for copy errors
     FILEPATHS_A ends
     _FILEPATHS_A typedef FILEPATHS_A
     PFILEPATHS_A typedef ptr FILEPATHS_A
     FILEPATHS_W struct
       Target PCWSTR ?
       Source PCWSTR ?
-      ; not used for delete operations
-      Win32Error DWORD ?
+      Win32Error UINT ?
       Flags DWORD ?
-      ; such as SP_COPY_NOSKIP for copy errors
     FILEPATHS_W ends
     _FILEPATHS_W typedef FILEPATHS_W
     PFILEPATHS_W typedef ptr FILEPATHS_W
@@ -444,10 +292,8 @@ ifndef _INC_SETUPAPI
       FILEPATHS_SIGNERINFO_A struct
         Target PCSTR ?
         Source PCSTR ?
-        ; not used for delete operations
-        Win32Error DWORD ?
+        Win32Error UINT ?
         Flags DWORD ?
-        ; such as SP_COPY_NOSKIP for copy errors
         DigitalSigner PCSTR ?
         Version PCSTR ?
         CatalogFile PCSTR ?
@@ -457,10 +303,8 @@ ifndef _INC_SETUPAPI
       FILEPATHS_SIGNERINFO_W struct
         Target PCWSTR ?
         Source PCWSTR ?
-        ; not used for delete operations
-        Win32Error DWORD ?
+        Win32Error UINT ?
         Flags DWORD ?
-        ; such as SP_COPY_NOSKIP for copy errors
         DigitalSigner PCWSTR ?
         Version PCWSTR ?
         CatalogFile PCWSTR ?
@@ -475,33 +319,23 @@ ifndef _INC_SETUPAPI
         PFILEPATHS_SIGNERINFO typedef PFILEPATHS_SIGNERINFO_A
       endif
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
-    ; Structure used with SPFILENOTIFY_NEEDMEDIA
     SOURCE_MEDIA_A struct
       Reserved PCSTR ?
       Tagfile PCSTR ?
-      ; may be NULL
       Description PCSTR ?
-      ; Pathname part and filename part of source file
-      ; that caused us to need the media.
       SourcePath PCSTR ?
       SourceFile PCSTR ?
       Flags DWORD ?
-      ; subset of SP_COPY_xxx
     SOURCE_MEDIA_A ends
     _SOURCE_MEDIA_A typedef SOURCE_MEDIA_A
     PSOURCE_MEDIA_A typedef ptr SOURCE_MEDIA_A
     SOURCE_MEDIA_W struct
       Reserved PCWSTR ?
       Tagfile PCWSTR ?
-      ; may be NULL
       Description PCWSTR ?
-      ; Pathname part and filename part of source file
-      ; that caused us to need the media.
       SourcePath PCWSTR ?
       SourceFile PCWSTR ?
       Flags DWORD ?
-      ; subset of SP_COPY_xxx
     SOURCE_MEDIA_W ends
     _SOURCE_MEDIA_W typedef SOURCE_MEDIA_W
     PSOURCE_MEDIA_W typedef ptr SOURCE_MEDIA_W
@@ -512,14 +346,12 @@ ifndef _INC_SETUPAPI
       SOURCE_MEDIA typedef SOURCE_MEDIA_A
       PSOURCE_MEDIA typedef PSOURCE_MEDIA_A
     endif
-    ; Structure used with SPFILENOTIFY_CABINETINFO and
-    ; SPFILENOTIFY_NEEDNEWCABINET
     CABINET_INFO_A struct
       CabinetPath PCSTR ?
       CabinetFile PCSTR ?
       DiskName PCSTR ?
-      SetId WORD ?
-      CabinetNumber WORD ?
+      SetId USHORT ?
+      CabinetNumber USHORT ?
     CABINET_INFO_A ends
     _CABINET_INFO_A typedef CABINET_INFO_A
     PCABINET_INFO_A typedef ptr CABINET_INFO_A
@@ -527,8 +359,8 @@ ifndef _INC_SETUPAPI
       CabinetPath PCWSTR ?
       CabinetFile PCWSTR ?
       DiskName PCWSTR ?
-      SetId WORD ?
-      CabinetNumber WORD ?
+      SetId USHORT ?
+      CabinetNumber USHORT ?
     CABINET_INFO_W ends
     _CABINET_INFO_W typedef CABINET_INFO_W
     PCABINET_INFO_W typedef ptr CABINET_INFO_W
@@ -539,7 +371,6 @@ ifndef _INC_SETUPAPI
       CABINET_INFO typedef CABINET_INFO_A
       PCABINET_INFO typedef PCABINET_INFO_A
     endif
-    ; Structure used with SPFILENOTIFY_FILEINCABINET
     FILE_IN_CABINET_INFO_A struct
       NameInCabinet PCSTR ?
       FileSize DWORD ?
@@ -547,7 +378,7 @@ ifndef _INC_SETUPAPI
       DosDate WORD ?
       DosTime WORD ?
       DosAttribs WORD ?
-      FullTargetName SBYTE MAX_PATH dup (?)
+      FullTargetName CHAR MAX_PATH dup (?)
     FILE_IN_CABINET_INFO_A ends
     _FILE_IN_CABINET_INFO_A typedef FILE_IN_CABINET_INFO_A
     PFILE_IN_CABINET_INFO_A typedef ptr FILE_IN_CABINET_INFO_A
@@ -558,7 +389,7 @@ ifndef _INC_SETUPAPI
       DosDate WORD ?
       DosTime WORD ?
       DosAttribs WORD ?
-      FullTargetName WORD MAX_PATH dup (?)
+      FullTargetName WCHAR MAX_PATH dup (?)
     FILE_IN_CABINET_INFO_W ends
     _FILE_IN_CABINET_INFO_W typedef FILE_IN_CABINET_INFO_W
     PFILE_IN_CABINET_INFO_W typedef ptr FILE_IN_CABINET_INFO_W
@@ -569,8 +400,6 @@ ifndef _INC_SETUPAPI
       FILE_IN_CABINET_INFO typedef FILE_IN_CABINET_INFO_A
       PFILE_IN_CABINET_INFO typedef PFILE_IN_CABINET_INFO_A
     endif
-    ; Structure used for SPFILENOTIFY_***REGISTRATION
-    ; callback
     SP_REGISTER_CONTROL_STATUSA struct
       cbSize DWORD ?
       FileName PCSTR ?
@@ -594,7 +423,6 @@ ifndef _INC_SETUPAPI
       SP_REGISTER_CONTROL_STATUS typedef SP_REGISTER_CONTROL_STATUSA
       PSP_REGISTER_CONTROL_STATUS typedef PSP_REGISTER_CONTROL_STATUSA
     endif
-    ; valid values for SP_REGISTER_CONTROL_STATUS.FailureCode field
     SPREG_SUCCESS equ 00000000h
     SPREG_LOADLIBRARY equ 00000001h
     SPREG_GETPROCADDR equ 00000002h
@@ -602,9 +430,7 @@ ifndef _INC_SETUPAPI
     SPREG_DLLINSTALL equ 00000004h
     SPREG_TIMEOUT equ 00000005h
     SPREG_UNKNOWN equ 0FFFFFFFFh
-    ; Define type for setup file queue
     HSPFILEQ typedef PVOID
-    ; Structure used with SetupQueueCopyIndirect
     SP_FILE_COPY_PARAMS_A struct
       cbSize DWORD ?
       QueueHandle HSPFILEQ ?
@@ -644,37 +470,27 @@ ifndef _INC_SETUPAPI
       SP_FILE_COPY_PARAMS typedef SP_FILE_COPY_PARAMS_A
       PSP_FILE_COPY_PARAMS typedef PSP_FILE_COPY_PARAMS_A
     endif
-    ; Define type for setup disk space list
     HDSKSPC typedef PVOID
-    ; Define type for reference to device information set
     HDEVINFO typedef PVOID
-    ; Device information structure (references a device instance
-    ; that is a member of a device information set)
     SP_DEVINFO_DATA struct
       cbSize DWORD ?
       ClassGuid GUID <>
       DevInst DWORD ?
-      ; DEVINST handle
-      Reserved XWORD ?
+      Reserved ULONG_PTR ?
     SP_DEVINFO_DATA ends
     _SP_DEVINFO_DATA typedef SP_DEVINFO_DATA
     PSP_DEVINFO_DATA typedef ptr SP_DEVINFO_DATA
-    ; Device interface information structure (references a device
-    ; interface that is associated with the device information
-    ; element that owns it).
     SP_DEVICE_INTERFACE_DATA struct
       cbSize DWORD ?
       InterfaceClassGuid GUID <>
       Flags DWORD ?
-      Reserved XWORD ?
+      Reserved ULONG_PTR ?
     SP_DEVICE_INTERFACE_DATA ends
     _SP_DEVICE_INTERFACE_DATA typedef SP_DEVICE_INTERFACE_DATA
     PSP_DEVICE_INTERFACE_DATA typedef ptr SP_DEVICE_INTERFACE_DATA
-    ; Flags for SP_DEVICE_INTERFACE_DATA.Flags field.
     SPINT_ACTIVE equ 00000001h
     SPINT_DEFAULT equ 00000002h
     SPINT_REMOVED equ 00000004h
-    ; Backward compatibility--do not use.
     SP_INTERFACE_DEVICE_DATA typedef SP_DEVICE_INTERFACE_DATA
     PSP_INTERFACE_DEVICE_DATA typedef PSP_DEVICE_INTERFACE_DATA
     SPID_ACTIVE equ <SPINT_ACTIVE>
@@ -682,13 +498,13 @@ ifndef _INC_SETUPAPI
     SPID_REMOVED equ <SPINT_REMOVED>
     SP_DEVICE_INTERFACE_DETAIL_DATA_A struct
       cbSize DWORD ?
-      DevicePath SBYTE ANYSIZE_ARRAY dup (?)
+      DevicePath CHAR ANYSIZE_ARRAY dup (?)
     SP_DEVICE_INTERFACE_DETAIL_DATA_A ends
     _SP_DEVICE_INTERFACE_DETAIL_DATA_A typedef SP_DEVICE_INTERFACE_DETAIL_DATA_A
     PSP_DEVICE_INTERFACE_DETAIL_DATA_A typedef ptr SP_DEVICE_INTERFACE_DETAIL_DATA_A
     SP_DEVICE_INTERFACE_DETAIL_DATA_W struct
       cbSize DWORD ?
-      DevicePath WORD ANYSIZE_ARRAY dup (?)
+      DevicePath WCHAR ANYSIZE_ARRAY dup (?)
     SP_DEVICE_INTERFACE_DETAIL_DATA_W ends
     _SP_DEVICE_INTERFACE_DETAIL_DATA_W typedef SP_DEVICE_INTERFACE_DETAIL_DATA_W
     PSP_DEVICE_INTERFACE_DETAIL_DATA_W typedef ptr SP_DEVICE_INTERFACE_DETAIL_DATA_W
@@ -699,7 +515,6 @@ ifndef _INC_SETUPAPI
       SP_DEVICE_INTERFACE_DETAIL_DATA typedef SP_DEVICE_INTERFACE_DETAIL_DATA_A
       PSP_DEVICE_INTERFACE_DETAIL_DATA typedef PSP_DEVICE_INTERFACE_DETAIL_DATA_A
     endif
-    ; Backward compatibility--do not use.
     SP_INTERFACE_DEVICE_DETAIL_DATA_W typedef SP_DEVICE_INTERFACE_DETAIL_DATA_W
     PSP_INTERFACE_DEVICE_DETAIL_DATA_W typedef PSP_DEVICE_INTERFACE_DETAIL_DATA_W
     SP_INTERFACE_DEVICE_DETAIL_DATA_A typedef SP_DEVICE_INTERFACE_DETAIL_DATA_A
@@ -711,14 +526,11 @@ ifndef _INC_SETUPAPI
       SP_INTERFACE_DEVICE_DETAIL_DATA typedef SP_INTERFACE_DEVICE_DETAIL_DATA_A
       PSP_INTERFACE_DEVICE_DETAIL_DATA typedef PSP_INTERFACE_DEVICE_DETAIL_DATA_A
     endif
-    ; Structure for detailed information on a device information set (used for
-    ; SetupDiGetDeviceInfoListDetail which supercedes the functionality of
-    ; SetupDiGetDeviceInfoListClass).
     SP_DEVINFO_LIST_DETAIL_DATA_A struct
       cbSize DWORD ?
       ClassGuid GUID <>
       RemoteMachineHandle HANDLE ?
-      RemoteMachineName SBYTE SP_MAX_MACHINENAME_LENGTH dup (?)
+      RemoteMachineName CHAR SP_MAX_MACHINENAME_LENGTH dup (?)
     SP_DEVINFO_LIST_DETAIL_DATA_A ends
     _SP_DEVINFO_LIST_DETAIL_DATA_A typedef SP_DEVINFO_LIST_DETAIL_DATA_A
     PSP_DEVINFO_LIST_DETAIL_DATA_A typedef ptr SP_DEVINFO_LIST_DETAIL_DATA_A
@@ -726,7 +538,7 @@ ifndef _INC_SETUPAPI
       cbSize DWORD ?
       ClassGuid GUID <>
       RemoteMachineHandle HANDLE ?
-      RemoteMachineName WORD SP_MAX_MACHINENAME_LENGTH dup (?)
+      RemoteMachineName WCHAR SP_MAX_MACHINENAME_LENGTH dup (?)
     SP_DEVINFO_LIST_DETAIL_DATA_W ends
     _SP_DEVINFO_LIST_DETAIL_DATA_W typedef SP_DEVINFO_LIST_DETAIL_DATA_W
     PSP_DEVINFO_LIST_DETAIL_DATA_W typedef ptr SP_DEVINFO_LIST_DETAIL_DATA_W
@@ -737,7 +549,6 @@ ifndef _INC_SETUPAPI
       SP_DEVINFO_LIST_DETAIL_DATA typedef SP_DEVINFO_LIST_DETAIL_DATA_A
       PSP_DEVINFO_LIST_DETAIL_DATA typedef PSP_DEVINFO_LIST_DETAIL_DATA_A
     endif
-    ; Class installer function codes
     DIF_SELECTDEVICE equ 00000001h
     DIF_INSTALLDEVICE equ 00000002h
     DIF_ASSIGNRESOURCES equ 00000003h
@@ -780,24 +591,19 @@ ifndef _INC_SETUPAPI
     DIF_UPDATEDRIVER_UI equ 00000029h
     DIF_FINISHINSTALL_ACTION equ 0000002Ah
     DIF_RESERVED2 equ 00000030h
-    ; Obsoleted DIF codes (do not use)
     DIF_MOVEDEVICE equ 0000000Eh
     DI_FUNCTION typedef UINT
-    ; Function type for device installer
-    ; Device installation parameters structure (associated with a
-    ; particular device information element, or globally with a device
-    ; information set)
     SP_DEVINSTALL_PARAMS_A struct
       cbSize DWORD ?
       Flags DWORD ?
       FlagsEx DWORD ?
       hwndParent HWND ?
       InstallMsgHandler PSP_FILE_CALLBACK ?
-      InstallMsgHandlerContext POINTER ?
+      InstallMsgHandlerContext PVOID ?
       FileQueue HSPFILEQ ?
-      ClassInstallReserved XWORD ?
+      ClassInstallReserved ULONG_PTR ?
       Reserved DWORD ?
-      DriverPath SBYTE MAX_PATH dup (?)
+      DriverPath CHAR MAX_PATH dup (?)
     SP_DEVINSTALL_PARAMS_A ends
     _SP_DEVINSTALL_PARAMS_A typedef SP_DEVINSTALL_PARAMS_A
     PSP_DEVINSTALL_PARAMS_A typedef ptr SP_DEVINSTALL_PARAMS_A
@@ -807,11 +613,11 @@ ifndef _INC_SETUPAPI
       FlagsEx DWORD ?
       hwndParent HWND ?
       InstallMsgHandler PSP_FILE_CALLBACK ?
-      InstallMsgHandlerContext POINTER ?
+      InstallMsgHandlerContext PVOID ?
       FileQueue HSPFILEQ ?
-      ClassInstallReserved XWORD ?
+      ClassInstallReserved ULONG_PTR ?
       Reserved DWORD ?
-      DriverPath WORD MAX_PATH dup (?)
+      DriverPath WCHAR MAX_PATH dup (?)
     SP_DEVINSTALL_PARAMS_W ends
     _SP_DEVINSTALL_PARAMS_W typedef SP_DEVINSTALL_PARAMS_W
     PSP_DEVINSTALL_PARAMS_W typedef ptr SP_DEVINSTALL_PARAMS_W
@@ -822,177 +628,82 @@ ifndef _INC_SETUPAPI
       SP_DEVINSTALL_PARAMS typedef SP_DEVINSTALL_PARAMS_A
       PSP_DEVINSTALL_PARAMS typedef PSP_DEVINSTALL_PARAMS_A
     endif
-    ; SP_DEVINSTALL_PARAMS.Flags values
-    ; Flags for choosing a device
-    DI_SHOWOEM equ 00000001h; support Other... button
-
-    DI_SHOWCOMPAT equ 00000002h; show compatibility list
-
-    DI_SHOWCLASS equ 00000004h; show class list
-
-    DI_SHOWALL equ 00000007h; both class & compat list shown
-
-    DI_NOVCP equ 00000008h; don't create a new copy queue--use
-
-    ; caller-supplied FileQueue
-    DI_DIDCOMPAT equ 00000010h; Searched for compatible devices
-
-    DI_DIDCLASS equ 00000020h; Searched for class devices
-
-    DI_AUTOASSIGNRES equ 00000040h; No UI for resources if possible
-
-    ; flags returned by DiInstallDevice to indicate need to reboot/restart
-    DI_NEEDRESTART equ 00000080h; Reboot required to take effect
-
-    DI_NEEDREBOOT equ 00000100h; ""
-
-    ; flags for device installation
-    DI_NOBROWSE equ 00000200h; no Browse... in InsertDisk
-
-    ; Flags set by DiBuildDriverInfoList
-    DI_MULTMFGS equ 00000400h; Set if multiple manufacturers in
-
-    ; class driver list
-    ; Flag indicates that device is disabled
-    DI_DISABLED equ 00000800h; Set if device disabled
-
-    ; Flags for Device/Class Properties
+    DI_SHOWOEM equ 00000001h
+    DI_SHOWCOMPAT equ 00000002h
+    DI_SHOWCLASS equ 00000004h
+    DI_SHOWALL equ 00000007h
+    DI_NOVCP equ 00000008h
+    DI_DIDCOMPAT equ 00000010h
+    DI_DIDCLASS equ 00000020h
+    DI_AUTOASSIGNRES equ 00000040h
+    DI_NEEDRESTART equ 00000080h
+    DI_NEEDREBOOT equ 00000100h
+    DI_NOBROWSE equ 00000200h
+    DI_MULTMFGS equ 00000400h
+    DI_DISABLED equ 00000800h
     DI_GENERALPAGE_ADDED equ 00001000h
     DI_RESOURCEPAGE_ADDED equ 00002000h
-    ; Flag to indicate the setting properties for this Device (or class) caused a change
-    ; so the Dev Mgr UI probably needs to be updatd.
     DI_PROPERTIES_CHANGE equ 00004000h
-    ; Flag to indicate that the sorting from the INF file should be used.
     DI_INF_IS_SORTED equ 00008000h
-    ; Flag to indicate that only the the INF specified by SP_DEVINSTALL_PARAMS.DriverPath
-    ; should be searched.
     DI_ENUMSINGLEINF equ 00010000h
-    ; Flag that prevents ConfigMgr from removing/re-enumerating devices during device
-    ; registration, installation, and deletion.
     DI_DONOTCALLCONFIGMG equ 00020000h
-    ; The following flag can be used to install a device disabled
     DI_INSTALLDISABLED equ 00040000h
-    ; Flag that causes SetupDiBuildDriverInfoList to build a device's compatible driver
-    ; list from its existing class driver list, instead of the normal INF search.
     DI_COMPAT_FROM_CLASS equ 00080000h
-    ; This flag is set if the Class Install params should be used.
     DI_CLASSINSTALLPARAMS equ 00100000h
-    ; This flag is set if the caller of DiCallClassInstaller does NOT
-    ; want the internal default action performed if the Class installer
-    ; returns ERROR_DI_DO_DEFAULT.
     DI_NODI_DEFAULTACTION equ 00200000h
-    ; The setupx flag, DI_NOSYNCPROCESSING (0x00400000L) is not support in the Setup APIs.
-    ; flags for device installation
-    DI_QUIETINSTALL equ 00800000h; don't confuse the user with
-
-    ; questions or excess info
-    DI_NOFILECOPY equ 01000000h; No file Copy necessary
-
-    DI_FORCECOPY equ 02000000h; Force files to be copied from install path
-
-    DI_DRIVERPAGE_ADDED equ 04000000h; Prop provider added Driver page.
-
-    DI_USECI_SELECTSTRINGS equ 08000000h; Use Class Installer Provided strings in the Select Device Dlg
-
-    DI_OVERRIDE_INFFLAGS equ 10000000h; Override INF flags
-
-    DI_PROPS_NOCHANGEUSAGE equ 20000000h; No Enable/Disable in General Props
-
-    DI_NOSELECTICONS equ 40000000h; No small icons in select device dialogs
-
-    DI_NOWRITE_IDS equ 80000000h; Don't write HW & Compat IDs on install
-
-    ; SP_DEVINSTALL_PARAMS.FlagsEx values
-    DI_FLAGSEX_RESERVED2 equ 00000001h; DI_FLAGSEX_USEOLDINFSEARCH is obsolete
-
-    DI_FLAGSEX_RESERVED3 equ 00000002h; DI_FLAGSEX_AUTOSELECTRANK0 is obsolete
-
-    DI_FLAGSEX_CI_FAILED equ 00000004h; Failed to Load/Call class installer
-
+    DI_QUIETINSTALL equ 00800000h
+    DI_NOFILECOPY equ 01000000h
+    DI_FORCECOPY equ 02000000h
+    DI_DRIVERPAGE_ADDED equ 04000000h
+    DI_USECI_SELECTSTRINGS equ 08000000h
+    DI_OVERRIDE_INFFLAGS equ 10000000h
+    DI_PROPS_NOCHANGEUSAGE equ 20000000h
+    DI_NOSELECTICONS equ 40000000h
+    DI_NOWRITE_IDS equ 80000000h
+    DI_FLAGSEX_RESERVED2 equ 00000001h
+    DI_FLAGSEX_RESERVED3 equ 00000002h
+    DI_FLAGSEX_CI_FAILED equ 00000004h
     if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
-      DI_FLAGSEX_FINISHINSTALL_ACTION equ 00000008h; Class/co-installer wants to get a DIF_FINISH_INSTALL action in client context.
-
+      DI_FLAGSEX_FINISHINSTALL_ACTION equ 00000008h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_LONGHORN
-    DI_FLAGSEX_DIDINFOLIST equ 00000010h; Did the Class Info List
-
-    DI_FLAGSEX_DIDCOMPATINFO equ 00000020h; Did the Compat Info List
-
+    DI_FLAGSEX_DIDINFOLIST equ 00000010h
+    DI_FLAGSEX_DIDCOMPATINFO equ 00000020h
     DI_FLAGSEX_FILTERCLASSES equ 00000040h
     DI_FLAGSEX_SETFAILEDINSTALL equ 00000080h
     DI_FLAGSEX_DEVICECHANGE equ 00000100h
     DI_FLAGSEX_ALWAYSWRITEIDS equ 00000200h
-    DI_FLAGSEX_PROPCHANGE_PENDING equ 00000400h; One or more device property sheets have had changes made
-
-    ; to them, and need to have a DIF_PROPERTYCHANGE occur.
+    DI_FLAGSEX_PROPCHANGE_PENDING equ 00000400h
     DI_FLAGSEX_ALLOWEXCLUDEDDRVS equ 00000800h
     DI_FLAGSEX_NOUIONQUERYREMOVE equ 00001000h
-    DI_FLAGSEX_USECLASSFORCOMPAT equ 00002000h; Use the device's class when building compat drv list.
-
-    ; (Ignored if DI_COMPAT_FROM_CLASS flag is specified.)
-    DI_FLAGSEX_RESERVED4 equ 00004000h; DI_FLAGSEX_OLDINF_IN_CLASSLIST is obsolete
-
-    DI_FLAGSEX_NO_DRVREG_MODIFY equ 00008000h; Don't run AddReg and DelReg for device's software (driver) key.
-
-    DI_FLAGSEX_IN_SYSTEM_SETUP equ 00010000h; Installation is occurring during initial system setup.
-
-    DI_FLAGSEX_INET_DRIVER equ 00020000h; Driver came from Windows Update
-
-    DI_FLAGSEX_APPENDDRIVERLIST equ 00040000h; Cause SetupDiBuildDriverInfoList to append
-
-    ; a new driver list to an existing list.
-    DI_FLAGSEX_PREINSTALLBACKUP equ 00080000h; not used
-
-    DI_FLAGSEX_BACKUPONREPLACE equ 00100000h; not used
-
-    DI_FLAGSEX_DRIVERLIST_FROM_URL equ 00200000h; build driver list from INF(s) retrieved from URL specified
-
-    ; in SP_DEVINSTALL_PARAMS.DriverPath (empty string means
-    ; Windows Update website)
+    DI_FLAGSEX_USECLASSFORCOMPAT equ 00002000h
+    DI_FLAGSEX_RESERVED4 equ 00004000h
+    DI_FLAGSEX_NO_DRVREG_MODIFY equ 00008000h
+    DI_FLAGSEX_IN_SYSTEM_SETUP equ 00010000h
+    DI_FLAGSEX_INET_DRIVER equ 00020000h
+    DI_FLAGSEX_APPENDDRIVERLIST equ 00040000h
+    DI_FLAGSEX_PREINSTALLBACKUP equ 00080000h
+    DI_FLAGSEX_BACKUPONREPLACE equ 00100000h
+    DI_FLAGSEX_DRIVERLIST_FROM_URL equ 00200000h
     DI_FLAGSEX_RESERVED1 equ 00400000h
-    DI_FLAGSEX_EXCLUDE_OLD_INET_DRIVERS equ 00800000h; Don't include old Internet drivers when building
-
-    ; a driver list.
-    ; Ignored on Windows Vista and later.
-    DI_FLAGSEX_POWERPAGE_ADDED equ 01000000h; class installer added their own power page
-
+    DI_FLAGSEX_EXCLUDE_OLD_INET_DRIVERS equ 00800000h
+    DI_FLAGSEX_POWERPAGE_ADDED equ 01000000h
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      DI_FLAGSEX_FILTERSIMILARDRIVERS equ 02000000h; only include similar drivers in class list
-
-      DI_FLAGSEX_INSTALLEDDRIVER equ 04000000h; only add the installed driver to the class or compat
-
-      ; driver list.  Used in calls to SetupDiBuildDriverInfoList
-      DI_FLAGSEX_NO_CLASSLIST_NODE_MERGE equ 08000000h; Don't remove identical driver nodes from the class list
-
-      DI_FLAGSEX_ALTPLATFORM_DRVSEARCH equ 10000000h; Build driver list based on alternate platform information
-
-      ; specified in associated file queue
-      DI_FLAGSEX_RESTART_DEVICE_ONLY equ 20000000h; only restart the device drivers are being installed on as
-
-      ; opposed to restarting all devices using those drivers.
+      DI_FLAGSEX_FILTERSIMILARDRIVERS equ 02000000h
+      DI_FLAGSEX_INSTALLEDDRIVER equ 04000000h
+      DI_FLAGSEX_NO_CLASSLIST_NODE_MERGE equ 08000000h
+      DI_FLAGSEX_ALTPLATFORM_DRVSEARCH equ 10000000h
+      DI_FLAGSEX_RESTART_DEVICE_ONLY equ 20000000h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
-      DI_FLAGSEX_RECURSIVESEARCH equ 40000000h; Tell SetupDiBuildDriverInfoList to do a recursive search
-
-      DI_FLAGSEX_SEARCH_PUBLISHED_INFS equ 80000000h; Tell SetupDiBuildDriverInfoList to do a "published INF" search
-
+      DI_FLAGSEX_RECURSIVESEARCH equ 40000000h
+      DI_FLAGSEX_SEARCH_PUBLISHED_INFS equ 80000000h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_LONGHORN
-    ; Class installation parameters header.  This must be the first field of any
-    ; class install parameter structure.  The InstallFunction field must be set to
-    ; the function code corresponding to the structure, and the cbSize field must
-    ; be set to the size of the header structure.  E.g.,
-    ; SP_ENABLECLASS_PARAMS EnableClassParams;
-    ; EnableClassParams.ClassInstallHeader.cbSize = sizeof(SP_CLASSINSTALL_HEADER);
-    ; EnableClassParams.ClassInstallHeader.InstallFunction = DIF_ENABLECLASS;
     SP_CLASSINSTALL_HEADER struct
       cbSize DWORD ?
       InstallFunction DI_FUNCTION ?
     SP_CLASSINSTALL_HEADER ends
     _SP_CLASSINSTALL_HEADER typedef SP_CLASSINSTALL_HEADER
     PSP_CLASSINSTALL_HEADER typedef ptr SP_CLASSINSTALL_HEADER
-    ; Structure corresponding to a DIF_ENABLECLASS install function.
     SP_ENABLECLASS_PARAMS struct
       ClassInstallHeader SP_CLASSINSTALL_HEADER <>
       ClassGuid GUID <>
@@ -1003,21 +714,14 @@ ifndef _INC_SETUPAPI
     ENABLECLASS_QUERY equ 0
     ENABLECLASS_SUCCESS equ 1
     ENABLECLASS_FAILURE equ 2
-    ; Values indicating a change in a device's state
     DICS_ENABLE equ 00000001h
     DICS_DISABLE equ 00000002h
     DICS_PROPCHANGE equ 00000003h
     DICS_START equ 00000004h
     DICS_STOP equ 00000005h
-    ; Values specifying the scope of a device property change
-    DICS_FLAG_GLOBAL equ 00000001h; make change in all hardware profiles
-
-    DICS_FLAG_CONFIGSPECIFIC equ 00000002h; make change in specified profile only
-
-    DICS_FLAG_CONFIGGENERAL equ 00000004h; 1 or more hardware profile-specific
-
-    ; changes to follow.
-    ; Structure corresponding to a DIF_PROPERTYCHANGE install function.
+    DICS_FLAG_GLOBAL equ 00000001h
+    DICS_FLAG_CONFIGSPECIFIC equ 00000002h
+    DICS_FLAG_CONFIGGENERAL equ 00000004h
     SP_PROPCHANGE_PARAMS struct
       ClassInstallHeader SP_CLASSINSTALL_HEADER <>
       StateChange DWORD ?
@@ -1026,7 +730,6 @@ ifndef _INC_SETUPAPI
     SP_PROPCHANGE_PARAMS ends
     _SP_PROPCHANGE_PARAMS typedef SP_PROPCHANGE_PARAMS
     PSP_PROPCHANGE_PARAMS typedef ptr SP_PROPCHANGE_PARAMS
-    ; Structure corresponding to a DIF_REMOVE install function.
     SP_REMOVEDEVICE_PARAMS struct
       ClassInstallHeader SP_CLASSINSTALL_HEADER <>
       Scope DWORD ?
@@ -1036,7 +739,6 @@ ifndef _INC_SETUPAPI
     PSP_REMOVEDEVICE_PARAMS typedef ptr SP_REMOVEDEVICE_PARAMS
     DI_REMOVEDEVICE_GLOBAL equ 00000001h
     DI_REMOVEDEVICE_CONFIGSPECIFIC equ 00000002h
-    ; Structure corresponding to a DIF_UNREMOVE install function.
     SP_UNREMOVEDEVICE_PARAMS struct
       ClassInstallHeader SP_CLASSINSTALL_HEADER <>
       Scope DWORD ?
@@ -1045,24 +747,22 @@ ifndef _INC_SETUPAPI
     _SP_UNREMOVEDEVICE_PARAMS typedef SP_UNREMOVEDEVICE_PARAMS
     PSP_UNREMOVEDEVICE_PARAMS typedef ptr SP_UNREMOVEDEVICE_PARAMS
     DI_UNREMOVEDEVICE_CONFIGSPECIFIC equ 00000002h
-    ; Structure corresponding to a DIF_SELECTDEVICE install function.
     SP_SELECTDEVICE_PARAMS_A struct
       ClassInstallHeader SP_CLASSINSTALL_HEADER <>
-      Title_ SBYTE MAX_TITLE_LEN dup (?)
-      Instructions SBYTE MAX_INSTRUCTION_LEN dup (?)
-      ListLabel SBYTE MAX_LABEL_LEN dup (?)
-      SubTitle_ SBYTE MAX_SUBTITLE_LEN dup (?)
+      Title_ CHAR MAX_TITLE_LEN dup (?)
+      Instructions CHAR MAX_INSTRUCTION_LEN dup (?)
+      ListLabel CHAR MAX_LABEL_LEN dup (?)
+      SubTitle_ CHAR MAX_SUBTITLE_LEN dup (?)
       Reserved BYTE 2 dup (?)
-      ; DWORD size alignment
     SP_SELECTDEVICE_PARAMS_A ends
     _SP_SELECTDEVICE_PARAMS_A typedef SP_SELECTDEVICE_PARAMS_A
     PSP_SELECTDEVICE_PARAMS_A typedef ptr SP_SELECTDEVICE_PARAMS_A
     SP_SELECTDEVICE_PARAMS_W struct
       ClassInstallHeader SP_CLASSINSTALL_HEADER <>
-      Title_ WORD MAX_TITLE_LEN dup (?)
-      Instructions WORD MAX_INSTRUCTION_LEN dup (?)
-      ListLabel WORD MAX_LABEL_LEN dup (?)
-      SubTitle_ WORD MAX_SUBTITLE_LEN dup (?)
+      Title_ WCHAR MAX_TITLE_LEN dup (?)
+      Instructions WCHAR MAX_INSTRUCTION_LEN dup (?)
+      ListLabel WCHAR MAX_LABEL_LEN dup (?)
+      SubTitle_ WCHAR MAX_SUBTITLE_LEN dup (?)
     SP_SELECTDEVICE_PARAMS_W ends
     _SP_SELECTDEVICE_PARAMS_W typedef SP_SELECTDEVICE_PARAMS_W
     PSP_SELECTDEVICE_PARAMS_W typedef ptr SP_SELECTDEVICE_PARAMS_W
@@ -1073,32 +773,16 @@ ifndef _INC_SETUPAPI
       SP_SELECTDEVICE_PARAMS typedef SP_SELECTDEVICE_PARAMS_A
       PSP_SELECTDEVICE_PARAMS typedef PSP_SELECTDEVICE_PARAMS_A
     endif
-    ; Callback routine for giving progress notification during detection
     TYPE_PDETECT_PROGRESS_NOTIFY typedef proto WIN_STD_CALL_CONV :PVOID, :DWORD
     PDETECT_PROGRESS_NOTIFY typedef ptr TYPE_PDETECT_PROGRESS_NOTIFY
 
-    ; where:
-    ;     ProgressNotifyParam - value supplied by caller requesting detection.
-    ;     DetectComplete - Percent completion, to be incremented by class
-    ;                      installer, as it steps thru its detection.
-    ; Return Value - If TRUE, then detection is cancelled.  Allows caller
-    ;                requesting detection to stop detection asap.
-    ; Structure corresponding to a DIF_DETECT install function.
     SP_DETECTDEVICE_PARAMS struct
       ClassInstallHeader SP_CLASSINSTALL_HEADER <>
       DetectProgressNotify PDETECT_PROGRESS_NOTIFY ?
-      ProgressNotifyParam POINTER ?
+      ProgressNotifyParam PVOID ?
     SP_DETECTDEVICE_PARAMS ends
     _SP_DETECTDEVICE_PARAMS typedef SP_DETECTDEVICE_PARAMS
     PSP_DETECTDEVICE_PARAMS typedef ptr SP_DETECTDEVICE_PARAMS
-    ; 'Add New Device' installation wizard structure (backward-compatibility
-    ; only--respond to DIF_NEWDEVICEWIZARD_* requests instead).
-    ; Structure corresponding to a DIF_INSTALLWIZARD install function.
-    ; (NOTE: This structure is also applicable for DIF_DESTROYWIZARDDATA,
-    ; but DIF_INSTALLWIZARD is the associated function code in the class
-    ; installation parameter structure in both cases.)
-    ; Define maximum number of dynamic wizard pages that can be added to
-    ; hardware install wizard.
     MAX_INSTALLWIZARD_DYNAPAGES equ 20
     SP_INSTALLWIZARD_DATA struct
       ClassInstallHeader SP_CLASSINSTALL_HEADER <>
@@ -1112,7 +796,6 @@ ifndef _INC_SETUPAPI
     SP_INSTALLWIZARD_DATA ends
     _SP_INSTALLWIZARD_DATA typedef SP_INSTALLWIZARD_DATA
     PSP_INSTALLWIZARD_DATA typedef ptr SP_INSTALLWIZARD_DATA
-    ; SP_INSTALLWIZARD_DATA.Flags values
     NDW_INSTALLFLAG_DIDFACTDEFS equ 00000001h
     NDW_INSTALLFLAG_HARDWAREALLREADYIN equ 00000002h
     NDW_INSTALLFLAG_NEEDRESTART equ <DI_NEEDRESTART>
@@ -1128,101 +811,46 @@ ifndef _INC_SETUPAPI
     NDW_INSTALLFLAG_PCMCIADEVICE equ 00020000h
     NDW_INSTALLFLAG_USERCANCEL equ 00040000h
     NDW_INSTALLFLAG_KNOWNCLASS equ 00080000h
-    ; SP_INSTALLWIZARD_DATA.DynamicPageFlags values
-    ; This flag is set if a Class installer has added pages to the install wizard.
     DYNAWIZ_FLAG_PAGESADDED equ 00000001h
-    ; Set this flag if you jump to the analyze page, and want it to
-    ; handle conflicts for you.  NOTE.  You will not get control back
-    ; in the event of a conflict if you set this flag.
     DYNAWIZ_FLAG_ANALYZE_HANDLECONFLICT equ 00000008h
-    ; The following flags are not used by the Windows NT hardware wizard.
     DYNAWIZ_FLAG_INSTALLDET_NEXT equ 00000002h
     DYNAWIZ_FLAG_INSTALLDET_PREV equ 00000004h
-    ; Reserve a range of wizard page resource IDs for internal use.  Some of
-    ; these IDs are for use by class installers that respond to the obsolete
-    ; DIF_INSTALLWIZARD/DIF_DESTROYWIZARDDATA messages.  These IDs are listed
-    ; below.
     MIN_IDD_DYNAWIZ_RESOURCE_ID equ 10000
     MAX_IDD_DYNAWIZ_RESOURCE_ID equ 11000
-    ; Define wizard page resource IDs to be used when adding custom pages to the
-    ; hardware install wizard via DIF_INSTALLWIZARD.  Pages marked with
-    ; (CLASS INSTALLER PROVIDED) _must_ be supplied by the class installer if it
-    ; responds to the DIF_INSTALLWIZARD request.
-    ; Resource ID for the first page that the install wizard will go to after
-    ; adding the class installer pages.  (CLASS INSTALLER PROVIDED)
     IDD_DYNAWIZ_FIRSTPAGE equ 10000
-    ; Resource ID for the page that the Select Device page will go back to.
-    ; (CLASS INSTALLER PROVIDED)
     IDD_DYNAWIZ_SELECT_PREVPAGE equ 10001
-    ; Resource ID for the page that the Select Device page will go forward to.
-    ; (CLASS INSTALLER PROVIDED)
     IDD_DYNAWIZ_SELECT_NEXTPAGE equ 10002
-    ; Resource ID for the page that the Analyze dialog should go back to
-    ; This will only be used in the event that there is a problem, and the user
-    ; selects Back from the analyze proc. (CLASS INSTALLER PROVIDED)
     IDD_DYNAWIZ_ANALYZE_PREVPAGE equ 10003
-    ; Resource ID for the page that the Analyze dialog should go to if it
-    ; continues from the analyze proc. (CLASS INSTALLER PROVIDED)
     IDD_DYNAWIZ_ANALYZE_NEXTPAGE equ 10004
-    ; Resource ID of the hardware install wizard's select device page.
-    ; This ID can be used to go directly to the hardware install wizard's select
-    ; device page.  (This is the resource ID of the Select Device wizard page
-    ; retrieved via SetupDiGetWizardPage when SPWPT_SELECTDEVICE is the requested
-    ; PageType.)
     IDD_DYNAWIZ_SELECTDEV_PAGE equ 10009
-    ; Resource ID of the hardware install wizard's device analysis page.
-    ; This ID can be use to go directly to the hardware install wizard's analysis
-    ; page.
     IDD_DYNAWIZ_ANALYZEDEV_PAGE equ 10010
-    ; Resource ID of the hardware install wizard's install detected devices page.
-    ; This ID can be use to go directly to the hardware install wizard's install
-    ; detected devices page.
     IDD_DYNAWIZ_INSTALLDETECTEDDEVS_PAGE equ 10011
-    ; Resource ID of the hardware install wizard's select class page.
-    ; This ID can be use to go directly to the hardware install wizard's select
-    ; class page.
     IDD_DYNAWIZ_SELECTCLASS_PAGE equ 10012
-    ; The following class installer-provided wizard page resource IDs are not used
-    ; by the Windows NT hardware wizard.
     IDD_DYNAWIZ_INSTALLDETECTED_PREVPAGE equ 10006
     IDD_DYNAWIZ_INSTALLDETECTED_NEXTPAGE equ 10007
     IDD_DYNAWIZ_INSTALLDETECTED_NODEVS equ 10008
-    ; Structure corresponding to the following DIF_NEWDEVICEWIZARD_* install
-    ; functions:
-    ;     DIF_NEWDEVICEWIZARD_PRESELECT
-    ;     DIF_NEWDEVICEWIZARD_SELECT
-    ;     DIF_NEWDEVICEWIZARD_PREANALYZE
-    ;     DIF_NEWDEVICEWIZARD_POSTANALYZE
-    ;     DIF_NEWDEVICEWIZARD_FINISHINSTALL
     SP_NEWDEVICEWIZARD_DATA struct
       ClassInstallHeader SP_CLASSINSTALL_HEADER <>
       Flags DWORD ?
-      ; presently unused--must be zero.
       DynamicPages HPROPSHEETPAGE MAX_INSTALLWIZARD_DYNAPAGES dup (?)
       NumDynamicPages DWORD ?
       hwndWizardDlg HWND ?
     SP_NEWDEVICEWIZARD_DATA ends
     _SP_NEWDEVICEWIZARD_DATA typedef SP_NEWDEVICEWIZARD_DATA
     PSP_NEWDEVICEWIZARD_DATA typedef ptr SP_NEWDEVICEWIZARD_DATA
-    ; The same structure is also used for retrieval of property pages via the
-    ; following install functions:
-    ;     DIF_ADDPROPERTYPAGE_ADVANCED
-    ;     DIF_ADDPROPERTYPAGE_BASIC
-    ;     DIF_ADDREMOTEPROPERTYPAGE_ADVANCED
     SP_ADDPROPERTYPAGE_DATA typedef SP_NEWDEVICEWIZARD_DATA
     PSP_ADDPROPERTYPAGE_DATA typedef PSP_NEWDEVICEWIZARD_DATA
-    ; Structure corresponding to the DIF_TROUBLESHOOTER install function
     SP_TROUBLESHOOTER_PARAMS_A struct
       ClassInstallHeader SP_CLASSINSTALL_HEADER <>
-      ChmFile SBYTE MAX_PATH dup (?)
-      HtmlTroubleShooter SBYTE MAX_PATH dup (?)
+      ChmFile CHAR MAX_PATH dup (?)
+      HtmlTroubleShooter CHAR MAX_PATH dup (?)
     SP_TROUBLESHOOTER_PARAMS_A ends
     _SP_TROUBLESHOOTER_PARAMS_A typedef SP_TROUBLESHOOTER_PARAMS_A
     PSP_TROUBLESHOOTER_PARAMS_A typedef ptr SP_TROUBLESHOOTER_PARAMS_A
     SP_TROUBLESHOOTER_PARAMS_W struct
       ClassInstallHeader SP_CLASSINSTALL_HEADER <>
-      ChmFile WORD MAX_PATH dup (?)
-      HtmlTroubleShooter WORD MAX_PATH dup (?)
+      ChmFile WCHAR MAX_PATH dup (?)
+      HtmlTroubleShooter WCHAR MAX_PATH dup (?)
     SP_TROUBLESHOOTER_PARAMS_W ends
     _SP_TROUBLESHOOTER_PARAMS_W typedef SP_TROUBLESHOOTER_PARAMS_W
     PSP_TROUBLESHOOTER_PARAMS_W typedef ptr SP_TROUBLESHOOTER_PARAMS_W
@@ -1233,16 +861,15 @@ ifndef _INC_SETUPAPI
       SP_TROUBLESHOOTER_PARAMS typedef SP_TROUBLESHOOTER_PARAMS_A
       PSP_TROUBLESHOOTER_PARAMS typedef PSP_TROUBLESHOOTER_PARAMS_A
     endif
-    ; Structure corresponding to the DIF_POWERMESSAGEWAKE install function
     SP_POWERMESSAGEWAKE_PARAMS_A struct
       ClassInstallHeader SP_CLASSINSTALL_HEADER <>
-      PowerMessageWake SBYTE LINE_LEN * 2 dup (?)
+      PowerMessageWake CHAR LINE_LEN * 2 dup (?)
     SP_POWERMESSAGEWAKE_PARAMS_A ends
     _SP_POWERMESSAGEWAKE_PARAMS_A typedef SP_POWERMESSAGEWAKE_PARAMS_A
     PSP_POWERMESSAGEWAKE_PARAMS_A typedef ptr SP_POWERMESSAGEWAKE_PARAMS_A
     SP_POWERMESSAGEWAKE_PARAMS_W struct
       ClassInstallHeader SP_CLASSINSTALL_HEADER <>
-      PowerMessageWake WORD LINE_LEN * 2 dup (?)
+      PowerMessageWake WCHAR LINE_LEN * 2 dup (?)
     SP_POWERMESSAGEWAKE_PARAMS_W ends
     _SP_POWERMESSAGEWAKE_PARAMS_W typedef SP_POWERMESSAGEWAKE_PARAMS_W
     PSP_POWERMESSAGEWAKE_PARAMS_W typedef ptr SP_POWERMESSAGEWAKE_PARAMS_W
@@ -1253,51 +880,47 @@ ifndef _INC_SETUPAPI
       SP_POWERMESSAGEWAKE_PARAMS typedef SP_POWERMESSAGEWAKE_PARAMS_A
       PSP_POWERMESSAGEWAKE_PARAMS typedef PSP_POWERMESSAGEWAKE_PARAMS_A
     endif
-    ; Driver information structure (member of a driver info list that may be associated
-    ; with a particular device instance, or (globally) with a device information set)
     SP_DRVINFO_DATA_V2_A struct
       cbSize DWORD ?
       DriverType DWORD ?
-      Reserved XWORD ?
-      Description SBYTE LINE_LEN dup (?)
-      MfgName SBYTE LINE_LEN dup (?)
-      ProviderName SBYTE LINE_LEN dup (?)
+      Reserved ULONG_PTR ?
+      Description CHAR LINE_LEN dup (?)
+      MfgName CHAR LINE_LEN dup (?)
+      ProviderName CHAR LINE_LEN dup (?)
       DriverDate FILETIME <>
-      DriverVersion QWORD ?
+      DriverVersion DWORDLONG ?
     SP_DRVINFO_DATA_V2_A ends
     _SP_DRVINFO_DATA_V2_A typedef SP_DRVINFO_DATA_V2_A
     PSP_DRVINFO_DATA_V2_A typedef ptr SP_DRVINFO_DATA_V2_A
     SP_DRVINFO_DATA_V2_W struct
       cbSize DWORD ?
       DriverType DWORD ?
-      Reserved XWORD ?
-      Description WORD LINE_LEN dup (?)
-      MfgName WORD LINE_LEN dup (?)
-      ProviderName WORD LINE_LEN dup (?)
+      Reserved ULONG_PTR ?
+      Description WCHAR LINE_LEN dup (?)
+      MfgName WCHAR LINE_LEN dup (?)
+      ProviderName WCHAR LINE_LEN dup (?)
       DriverDate FILETIME <>
-      DriverVersion QWORD ?
+      DriverVersion DWORDLONG ?
     SP_DRVINFO_DATA_V2_W ends
     _SP_DRVINFO_DATA_V2_W typedef SP_DRVINFO_DATA_V2_W
     PSP_DRVINFO_DATA_V2_W typedef ptr SP_DRVINFO_DATA_V2_W
-    ; Version 1 of the SP_DRVINFO_DATA structures, used only for compatibility
-    ; with Windows NT 4.0/Windows 95/98 SETUPAPI.DLL
     SP_DRVINFO_DATA_V1_A struct
       cbSize DWORD ?
       DriverType DWORD ?
-      Reserved XWORD ?
-      Description SBYTE LINE_LEN dup (?)
-      MfgName SBYTE LINE_LEN dup (?)
-      ProviderName SBYTE LINE_LEN dup (?)
+      Reserved ULONG_PTR ?
+      Description CHAR LINE_LEN dup (?)
+      MfgName CHAR LINE_LEN dup (?)
+      ProviderName CHAR LINE_LEN dup (?)
     SP_DRVINFO_DATA_V1_A ends
     _SP_DRVINFO_DATA_V1_A typedef SP_DRVINFO_DATA_V1_A
     PSP_DRVINFO_DATA_V1_A typedef ptr SP_DRVINFO_DATA_V1_A
     SP_DRVINFO_DATA_V1_W struct
       cbSize DWORD ?
       DriverType DWORD ?
-      Reserved XWORD ?
-      Description WORD LINE_LEN dup (?)
-      MfgName WORD LINE_LEN dup (?)
-      ProviderName WORD LINE_LEN dup (?)
+      Reserved ULONG_PTR ?
+      Description WCHAR LINE_LEN dup (?)
+      MfgName WCHAR LINE_LEN dup (?)
+      ProviderName WCHAR LINE_LEN dup (?)
     SP_DRVINFO_DATA_V1_W ends
     _SP_DRVINFO_DATA_V1_W typedef SP_DRVINFO_DATA_V1_W
     PSP_DRVINFO_DATA_V1_W typedef ptr SP_DRVINFO_DATA_V1_W
@@ -1313,7 +936,6 @@ ifndef _INC_SETUPAPI
       PSP_DRVINFO_DATA_V2 typedef PSP_DRVINFO_DATA_V2_A
     endif
     if USE_SP_DRVINFO_DATA_V1 or (_SETUPAPI_VER lt _WIN32_WINNT_WIN2K)
-      ; use version 1 driver info data structure
       SP_DRVINFO_DATA_A typedef SP_DRVINFO_DATA_V1_A
       PSP_DRVINFO_DATA_A typedef PSP_DRVINFO_DATA_V1_A
       SP_DRVINFO_DATA_W typedef SP_DRVINFO_DATA_V1_W
@@ -1321,7 +943,6 @@ ifndef _INC_SETUPAPI
       SP_DRVINFO_DATA typedef SP_DRVINFO_DATA_V1
       PSP_DRVINFO_DATA typedef PSP_DRVINFO_DATA_V1
     else
-    ; use version 2 driver info data structure
       SP_DRVINFO_DATA_A typedef SP_DRVINFO_DATA_V2_A
       PSP_DRVINFO_DATA_A typedef PSP_DRVINFO_DATA_V2_A
       SP_DRVINFO_DATA_W typedef SP_DRVINFO_DATA_V2_W
@@ -1329,19 +950,16 @@ ifndef _INC_SETUPAPI
       SP_DRVINFO_DATA typedef SP_DRVINFO_DATA_V2
       PSP_DRVINFO_DATA typedef PSP_DRVINFO_DATA_V2
     endif
-    ; use current version of driver info data structure
-    ; Driver information details structure (provides detailed information about a
-    ; particular driver information structure)
     SP_DRVINFO_DETAIL_DATA_A struct
       cbSize DWORD ?
       InfDate FILETIME <>
       CompatIDsOffset DWORD ?
       CompatIDsLength DWORD ?
-      Reserved XWORD ?
-      SectionName SBYTE LINE_LEN dup (?)
-      InfFileName SBYTE MAX_PATH dup (?)
-      DrvDescription SBYTE LINE_LEN dup (?)
-      HardwareID SBYTE ANYSIZE_ARRAY dup (?)
+      Reserved ULONG_PTR ?
+      SectionName CHAR LINE_LEN dup (?)
+      InfFileName CHAR MAX_PATH dup (?)
+      DrvDescription CHAR LINE_LEN dup (?)
+      HardwareID CHAR ANYSIZE_ARRAY dup (?)
     SP_DRVINFO_DETAIL_DATA_A ends
     _SP_DRVINFO_DETAIL_DATA_A typedef SP_DRVINFO_DETAIL_DATA_A
     PSP_DRVINFO_DETAIL_DATA_A typedef ptr SP_DRVINFO_DETAIL_DATA_A
@@ -1350,11 +968,11 @@ ifndef _INC_SETUPAPI
       InfDate FILETIME <>
       CompatIDsOffset DWORD ?
       CompatIDsLength DWORD ?
-      Reserved XWORD ?
-      SectionName WORD LINE_LEN dup (?)
-      InfFileName WORD MAX_PATH dup (?)
-      DrvDescription WORD LINE_LEN dup (?)
-      HardwareID WORD ANYSIZE_ARRAY dup (?)
+      Reserved ULONG_PTR ?
+      SectionName WCHAR LINE_LEN dup (?)
+      InfFileName WCHAR MAX_PATH dup (?)
+      DrvDescription WCHAR LINE_LEN dup (?)
+      HardwareID WCHAR ANYSIZE_ARRAY dup (?)
     SP_DRVINFO_DETAIL_DATA_W ends
     _SP_DRVINFO_DETAIL_DATA_W typedef SP_DRVINFO_DETAIL_DATA_W
     PSP_DRVINFO_DETAIL_DATA_W typedef ptr SP_DRVINFO_DETAIL_DATA_W
@@ -1365,80 +983,45 @@ ifndef _INC_SETUPAPI
       SP_DRVINFO_DETAIL_DATA typedef SP_DRVINFO_DETAIL_DATA_A
       PSP_DRVINFO_DETAIL_DATA typedef PSP_DRVINFO_DETAIL_DATA_A
     endif
-    ; Driver installation parameters (associated with a particular driver
-    ; information element)
     SP_DRVINSTALL_PARAMS struct
       cbSize DWORD ?
       Rank DWORD ?
       Flags DWORD ?
-      PrivateData XWORD ?
+      PrivateData DWORD_PTR ?
       Reserved DWORD ?
     SP_DRVINSTALL_PARAMS ends
     _SP_DRVINSTALL_PARAMS typedef SP_DRVINSTALL_PARAMS
     PSP_DRVINSTALL_PARAMS typedef ptr SP_DRVINSTALL_PARAMS
-    ; SP_DRVINSTALL_PARAMS.Flags values
-    DNF_DUPDESC equ 00000001h; Multiple providers have same desc
-
-    DNF_OLDDRIVER equ 00000002h; Driver node specifies old/current driver
-
-    DNF_EXCLUDEFROMLIST equ 00000004h; If set, this driver node will not be
-
-    ; displayed in any driver select dialogs.
-    DNF_NODRIVER equ 00000008h; if we want to install no driver
-
-    ; (e.g no mouse drv)
-    DNF_LEGACYINF equ 00000010h; Driver node came from an old-style INF (obsolete)
-
-    DNF_CLASS_DRIVER equ 00000020h; Driver node represents a class driver
-
-    DNF_COMPATIBLE_DRIVER equ 00000040h; Driver node represents a compatible driver
-
-    DNF_INET_DRIVER equ 00000080h; Driver comes from an internet source
-
+    DNF_DUPDESC equ 00000001h
+    DNF_OLDDRIVER equ 00000002h
+    DNF_EXCLUDEFROMLIST equ 00000004h
+    DNF_NODRIVER equ 00000008h
+    DNF_LEGACYINF equ 00000010h
+    DNF_CLASS_DRIVER equ 00000020h
+    DNF_COMPATIBLE_DRIVER equ 00000040h
+    DNF_INET_DRIVER equ 00000080h
     DNF_UNUSED1 equ 00000100h
     DNF_UNUSED2 equ 00000200h
-    DNF_OLD_INET_DRIVER equ 00000400h; Driver came from the Internet, but we don't currently
-
-    ; have access to it's source files.  Never attempt to
-    ; install a driver with this flag!
-    ; Note used on Windows Vista and Later.
-    DNF_BAD_DRIVER equ 00000800h; Driver node should not be used at all
-
-    DNF_DUPPROVIDER equ 00001000h; Multiple drivers have the same provider and desc
-
+    DNF_OLD_INET_DRIVER equ 00000400h
+    DNF_BAD_DRIVER equ 00000800h
+    DNF_DUPPROVIDER equ 00001000h
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      DNF_INF_IS_SIGNED equ 00002000h; If file is digitally signed
-
-      DNF_OEM_F6_INF equ 00004000h; INF specified from F6 during textmode setup.
-
-      DNF_DUPDRIVERVER equ 00008000h; Multipe drivers have the same desc, provider, and DriverVer values
-
-      DNF_BASIC_DRIVER equ 00010000h; Driver provides basic functionality, but should
-
-      ; not be chosen if other signed drivers exist.
+      DNF_INF_IS_SIGNED equ 00002000h
+      DNF_OEM_F6_INF equ 00004000h
+      DNF_DUPDRIVERVER equ 00008000h
+      DNF_BASIC_DRIVER equ 00010000h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     if _SETUPAPI_VER ge _WIN32_WINNT_WS03
-      DNF_AUTHENTICODE_SIGNED equ 00020000h; Inf file is signed by an Authenticode(tm) catalog.
-
+      DNF_AUTHENTICODE_SIGNED equ 00020000h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WS03
     if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
-      DNF_INSTALLEDDRIVER equ 00040000h; This driver node is currently installed on the device.
-
-      DNF_ALWAYSEXCLUDEFROMLIST equ 00080000h; If set, this driver is not even displayed in
-
-      ; alternative platform either.
-      DNF_INBOX_DRIVER equ 00100000h; This driver node came from an INF that shipped with Windows.
-
+      DNF_INSTALLEDDRIVER equ 00040000h
+      DNF_ALWAYSEXCLUDEFROMLIST equ 00080000h
+      DNF_INBOX_DRIVER equ 00100000h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_LONGHORN
     if _SETUPAPI_VER ge _WIN32_WINNT_WIN7
-      DNF_REQUESTADDITIONALSOFTWARE equ 00200000h; This driver is only part of a software solution needed
-
-      ; by this device
+      DNF_REQUESTADDITIONALSOFTWARE equ 00200000h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WIN7
     DNF_UNUSED_22 equ 00400000h
     DNF_UNUSED_23 equ 00800000h
     DNF_UNUSED_24 equ 01000000h
@@ -1449,102 +1032,38 @@ ifndef _INC_SETUPAPI
     DNF_UNUSED_29 equ 20000000h
     DNF_UNUSED_30 equ 40000000h
     DNF_UNUSED_31 equ 80000000h
-    ; Rank values (the lower the Rank number, the better the Rank)
     if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
-      DRIVER_HARDWAREID_RANK equ 00000FFFh; Any rank less than or equal to
-
-      ; this value is a gold
-      ; HardwareID match
-      DRIVER_HARDWAREID_MASK equ 80000FFFh; If you mask these bits off (AND)
-
-      ; from the Rank and the result is 0
-      ; then the Rank is a trusted HardwareID
-      ; match
-      DRIVER_UNTRUSTED_RANK equ 80000000h; Any rank with this bit set is an
-
-      ; "untrusted" rank, meaning that
-      ; the INF was unsigned.
-      DRIVER_W9X_SUSPECT_RANK equ 0C0000000h; Any rank that is greater than
-
-      ; or equal to this value, and lesser
-      ; than or equal to 0xFFFF is suspected
-      ; to be a Win9x-only driver, because
-      ; (a) it isn't signed, and (b) there
-      ; is no NT-specific decoration to
-      ; explicitly indicate that the INF
-      ; supports Windows NT/2000/XP
+      DRIVER_HARDWAREID_RANK equ 00000FFFh
+      DRIVER_HARDWAREID_MASK equ 80000FFFh
+      DRIVER_UNTRUSTED_RANK equ 80000000h
+      DRIVER_W9X_SUSPECT_RANK equ 0C0000000h
     else
-      DRIVER_HARDWAREID_RANK equ 00000FFFh; Any rank less than or equal to
-
-      ; this value is a trusted
-      ; HardwareID match
-      DRIVER_COMPATID_RANK equ 00003FFFh; Any rank less than or equal to
-
-      ; this (and greater than
-      ; DRIVER_HARDWAREID_RANK) is a
-      ; trusted CompatibleID match
-      DRIVER_UNTRUSTED_RANK equ 00008000h; Any rank with this bit set is an
-
-      ; "untrusted" rank, meaning that
-      ; the INF was unsigned.
-      DRIVER_UNTRUSTED_HARDWAREID_RANK equ 00008FFFh; Any rank less than or equal to
-
-      ; this value (and greater than
-      ; or equal to DRIVER_UNTRUSTED_RANK)
-      ; is an untrusted HardwareID match
-      DRIVER_UNTRUSTED_COMPATID_RANK equ 0000BFFFh; Any rank less than or equal to
-
-      ; this value (and greater than
-      ; DRIVER_UNTRUSTED_HARDWAREID_RANK)
-      ; is an untrusted CompatibleID match
-      DRIVER_W9X_SUSPECT_RANK equ 0000C000h; Any rank that is greater than
-
-      ; or equal to this value, and lesser
-      ; than or equal to 0xFFFF is suspected
-      ; to be a Win9x-only driver, because
-      ; (a) it isn't signed, and (b) there
-      ; is no NT-specific decoration to
-      ; explicitly indicate that the INF
-      ; supports Windows NT/2000/XP
-      DRIVER_W9X_SUSPECT_HARDWAREID_RANK equ 0000CFFFh; Any rank less than or equal to this
-
-      ; (and greater than or equal to
-      ; DRIVER_W9X_SUSPECT_RANK) is a
-      ; hardware ID match suspected of being
-      ; only for Windows 9x platforms.
-      DRIVER_W9X_SUSPECT_COMPATID_RANK equ 0000FFFFh; Any rank less than or equal to
-
-      ; this (and greater than
-      ; DRIVER_W9X_SUSPECT_HARDWAREID_RANK)
-      ; is a compatible ID match suspected
-      ; of being only for Windows 9x
-      ; platforms.
+      DRIVER_HARDWAREID_RANK equ 00000FFFh
+      DRIVER_COMPATID_RANK equ 00003FFFh
+      DRIVER_UNTRUSTED_RANK equ 00008000h
+      DRIVER_UNTRUSTED_HARDWAREID_RANK equ 00008FFFh
+      DRIVER_UNTRUSTED_COMPATID_RANK equ 0000BFFFh
+      DRIVER_W9X_SUSPECT_RANK equ 0000C000h
+      DRIVER_W9X_SUSPECT_HARDWAREID_RANK equ 0000CFFFh
+      DRIVER_W9X_SUSPECT_COMPATID_RANK equ 0000FFFFh
     endif
-    ; _SETUPAPI_VER < _WIN32_WINNT_LONGHORN
-    ; Setup callback routine for comparing detection signatures
     TYPE_PSP_DETSIG_CMPPROC typedef proto WIN_STD_CALL_CONV :HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DEVINFO_DATA, :PVOID
     PSP_DETSIG_CMPPROC typedef ptr TYPE_PSP_DETSIG_CMPPROC
 
-    ; Define context structure handed to co-installers
     COINSTALLER_CONTEXT_DATA struct
-      PostProcessing DWORD ?
+      PostProcessing BOOL ?
       InstallResult DWORD ?
-      PrivateData POINTER ?
+      PrivateData PVOID ?
     COINSTALLER_CONTEXT_DATA ends
     _COINSTALLER_CONTEXT_DATA typedef COINSTALLER_CONTEXT_DATA
     PCOINSTALLER_CONTEXT_DATA typedef ptr COINSTALLER_CONTEXT_DATA
-    ; Structure containing class image list information.
     SP_CLASSIMAGELIST_DATA struct
       cbSize DWORD ?
       ImageList HIMAGELIST ?
-      Reserved XWORD ?
+      Reserved ULONG_PTR ?
     SP_CLASSIMAGELIST_DATA ends
     _SP_CLASSIMAGELIST_DATA typedef SP_CLASSIMAGELIST_DATA
     PSP_CLASSIMAGELIST_DATA typedef ptr SP_CLASSIMAGELIST_DATA
-    ; Structure to be passed as first parameter (LPVOID lpv) to ExtensionPropSheetPageProc
-    ; entry point in setupapi.dll or to "EnumPropPages32" or "BasicProperties32" entry
-    ; points provided by class/device property page providers.  Used to retrieve a handle
-    ; (or, potentially, multiple handles) to property pages for a specified property page type.
     SP_PROPSHEETPAGE_REQUEST struct
       cbSize DWORD ?
       PageRequested DWORD ?
@@ -1553,57 +1072,36 @@ ifndef _INC_SETUPAPI
     SP_PROPSHEETPAGE_REQUEST ends
     _SP_PROPSHEETPAGE_REQUEST typedef SP_PROPSHEETPAGE_REQUEST
     PSP_PROPSHEETPAGE_REQUEST typedef ptr SP_PROPSHEETPAGE_REQUEST
-    ; Property sheet codes used in SP_PROPSHEETPAGE_REQUEST.PageRequested
-    SPPSR_SELECT_DEVICE_RESOURCES equ 1; supplied by setupapi.dll
-
-    SPPSR_ENUM_BASIC_DEVICE_PROPERTIES equ 2; supplied by device's BasicProperties32 provider
-
-    SPPSR_ENUM_ADV_DEVICE_PROPERTIES equ 3; supplied by class and/or device's EnumPropPages32 provider
-
-    ; Structure used with SetupGetBackupInformation/SetupSetBackupInformation
+    SPPSR_SELECT_DEVICE_RESOURCES equ 1
+    SPPSR_ENUM_BASIC_DEVICE_PROPERTIES equ 2
+    SPPSR_ENUM_ADV_DEVICE_PROPERTIES equ 3
     SP_BACKUP_QUEUE_PARAMS_V2_A struct
       cbSize DWORD ?
-      ; size of structure
-      FullInfPath SBYTE MAX_PATH dup (?)
-      ; buffer to hold ANSI pathname of INF file
-      FilenameOffset SDWORD ?
-      ; offset in CHAR's of filename part (after '\')
-      ReinstallInstance SBYTE MAX_PATH dup (?)
-      ; Instance ID (if present)
+      FullInfPath CHAR MAX_PATH dup (?)
+      FilenameOffset INT_ ?
+      ReinstallInstance CHAR MAX_PATH dup (?)
     SP_BACKUP_QUEUE_PARAMS_V2_A ends
     _SP_BACKUP_QUEUE_PARAMS_V2_A typedef SP_BACKUP_QUEUE_PARAMS_V2_A
     PSP_BACKUP_QUEUE_PARAMS_V2_A typedef ptr SP_BACKUP_QUEUE_PARAMS_V2_A
     SP_BACKUP_QUEUE_PARAMS_V2_W struct
       cbSize DWORD ?
-      ; size of structure
-      FullInfPath WORD MAX_PATH dup (?)
-      ; buffer to hold UNICODE pathname of INF file
-      FilenameOffset SDWORD ?
-      ; offset in WCHAR's of filename part (after '\')
-      ReinstallInstance WORD MAX_PATH dup (?)
-      ; Instance ID (if present)
+      FullInfPath WCHAR MAX_PATH dup (?)
+      FilenameOffset INT_ ?
+      ReinstallInstance WCHAR MAX_PATH dup (?)
     SP_BACKUP_QUEUE_PARAMS_V2_W ends
     _SP_BACKUP_QUEUE_PARAMS_V2_W typedef SP_BACKUP_QUEUE_PARAMS_V2_W
     PSP_BACKUP_QUEUE_PARAMS_V2_W typedef ptr SP_BACKUP_QUEUE_PARAMS_V2_W
-    ; Version 1 of the SP_BACKUP_QUEUE_PARAMS structures, used only for compatibility
-    ; with Windows 2000/Windows 95/98/ME SETUPAPI.DLL
     SP_BACKUP_QUEUE_PARAMS_V1_A struct
       cbSize DWORD ?
-      ; size of structure
-      FullInfPath SBYTE MAX_PATH dup (?)
-      ; buffer to hold ANSI pathname of INF file
-      FilenameOffset SDWORD ?
-      ; offset in CHAR's of filename part (after '\')
+      FullInfPath CHAR MAX_PATH dup (?)
+      FilenameOffset INT_ ?
     SP_BACKUP_QUEUE_PARAMS_V1_A ends
     _SP_BACKUP_QUEUE_PARAMS_V1_A typedef SP_BACKUP_QUEUE_PARAMS_V1_A
     PSP_BACKUP_QUEUE_PARAMS_V1_A typedef ptr SP_BACKUP_QUEUE_PARAMS_V1_A
     SP_BACKUP_QUEUE_PARAMS_V1_W struct
       cbSize DWORD ?
-      ; size of structure
-      FullInfPath WORD MAX_PATH dup (?)
-      ; buffer to hold UNICODE pathname of INF file
-      FilenameOffset SDWORD ?
-      ; offset in WCHAR's of filename part (after '\')
+      FullInfPath WCHAR MAX_PATH dup (?)
+      FilenameOffset INT_ ?
     SP_BACKUP_QUEUE_PARAMS_V1_W ends
     _SP_BACKUP_QUEUE_PARAMS_V1_W typedef SP_BACKUP_QUEUE_PARAMS_V1_W
     PSP_BACKUP_QUEUE_PARAMS_V1_W typedef ptr SP_BACKUP_QUEUE_PARAMS_V1_W
@@ -1619,7 +1117,6 @@ ifndef _INC_SETUPAPI
       PSP_BACKUP_QUEUE_PARAMS_V2 typedef PSP_BACKUP_QUEUE_PARAMS_V2_A
     endif
     if USE_SP_BACKUP_QUEUE_PARAMS_V1 or (_SETUPAPI_VER lt _WIN32_WINNT_WINXP)
-      ; use version 1 driver info data structure
       SP_BACKUP_QUEUE_PARAMS_A typedef SP_BACKUP_QUEUE_PARAMS_V1_A
       PSP_BACKUP_QUEUE_PARAMS_A typedef PSP_BACKUP_QUEUE_PARAMS_V1_A
       SP_BACKUP_QUEUE_PARAMS_W typedef SP_BACKUP_QUEUE_PARAMS_V1_W
@@ -1627,7 +1124,6 @@ ifndef _INC_SETUPAPI
       SP_BACKUP_QUEUE_PARAMS typedef SP_BACKUP_QUEUE_PARAMS_V1
       PSP_BACKUP_QUEUE_PARAMS typedef PSP_BACKUP_QUEUE_PARAMS_V1
     else
-    ; use version 2 driver info data structure
       SP_BACKUP_QUEUE_PARAMS_A typedef SP_BACKUP_QUEUE_PARAMS_V2_A
       PSP_BACKUP_QUEUE_PARAMS_A typedef PSP_BACKUP_QUEUE_PARAMS_V2_A
       SP_BACKUP_QUEUE_PARAMS_W typedef SP_BACKUP_QUEUE_PARAMS_V2_W
@@ -1635,21 +1131,16 @@ ifndef _INC_SETUPAPI
       SP_BACKUP_QUEUE_PARAMS typedef SP_BACKUP_QUEUE_PARAMS_V2
       PSP_BACKUP_QUEUE_PARAMS typedef PSP_BACKUP_QUEUE_PARAMS_V2
     endif
-    ; use current version of driver info data structure
     ifndef _SPAPI_ERRORS
       _SPAPI_ERRORS equ <>
-      ; Setupapi-specific error codes
-      ; Inf parse outcomes
       ERROR_EXPECTED_SECTION_NAME equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 0)
       ERROR_BAD_SECTION_NAME_LINE equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 1)
       ERROR_SECTION_NAME_TOO_LONG equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 2)
       ERROR_GENERAL_SYNTAX equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 3)
-      ; Inf runtime errors
       ERROR_WRONG_INF_STYLE equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 100h)
       ERROR_SECTION_NOT_FOUND equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 101h)
       ERROR_LINE_NOT_FOUND equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 102h)
       ERROR_NO_BACKUP equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 103h)
-      ; Device Installer/other errors
       ERROR_NO_ASSOCIATED_CLASS equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 200h)
       ERROR_CLASS_MISMATCH equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 201h)
       ERROR_DUPLICATE_FOUND equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 202h)
@@ -1726,21 +1217,16 @@ ifndef _INC_SETUPAPI
       ERROR_WRONG_INF_TYPE equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 24Ah)
       ERROR_FILE_HASH_NOT_IN_CATALOG equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 24Bh)
       ERROR_DRIVER_STORE_DELETE_FAILED equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 24Ch)
-      ; Setupapi exception codes
       ERROR_UNRECOVERABLE_STACK_OVERFLOW equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 300h)
       EXCEPTION_SPAPI_UNRECOVERABLE_STACK_OVERFLOW equ <ERROR_UNRECOVERABLE_STACK_OVERFLOW>
-      ; Backward compatibility--do not use.
       ERROR_NO_DEFAULT_INTERFACE_DEVICE equ <ERROR_NO_DEFAULT_DEVICE_INTERFACE>
       ERROR_INTERFACE_DEVICE_ACTIVE equ <ERROR_DEVICE_INTERFACE_ACTIVE>
       ERROR_INTERFACE_DEVICE_REMOVED equ <ERROR_DEVICE_INTERFACE_REMOVED>
       ERROR_NO_SUCH_INTERFACE_DEVICE equ <ERROR_NO_SUCH_DEVICE_INTERFACE>
-      ; Win9x migration DLL error code
       ERROR_NOT_INSTALLED equ (APPLICATION_ERROR_MASK or ERROR_SEVERITY_ERROR or 1000h)
     endif
-    ; _SPAPI_ERRORS
     @DefProto DllImport, SetupGetInfInformationA, WIN_STD_CALL_CONV,, <:LPCVOID, :DWORD, :PSP_INF_INFORMATION, :DWORD, :PDWORD>, 20
     @DefProto DllImport, SetupGetInfInformationW, WIN_STD_CALL_CONV,, <:LPCVOID, :DWORD, :PSP_INF_INFORMATION, :DWORD, :PDWORD>, 20
-    ; SearchControl flags for SetupGetInfInformation
     INFINFO_INF_SPEC_IS_HINF equ 1
     INFINFO_INF_NAME_IS_ABSOLUTE equ 2
     INFINFO_DEFAULT_SEARCH equ 3
@@ -1788,7 +1274,6 @@ ifndef _INC_SETUPAPI
         SetupGetInfPublishedName equ <SetupGetInfPublishedNameA>
       endif
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_LONGHORN
     @DefProto DllImport, SetupGetInfFileListA, WIN_STD_CALL_CONV,, <:PCSTR, :DWORD, :PSTR, :DWORD, :PDWORD>, 20
     @DefProto DllImport, SetupGetInfFileListW, WIN_STD_CALL_CONV,, <:PCWSTR, :DWORD, :PWSTR, :DWORD, :PDWORD>, 20
     ifdef UNICODE
@@ -1865,11 +1350,6 @@ ifndef _INC_SETUPAPI
       SetupGetMultiSzField equ <SetupGetMultiSzFieldA>
     endif
     @DefProto DllImport, SetupGetBinaryField, WIN_STD_CALL_CONV,, <:PINFCONTEXT, :DWORD, :PBYTE, :DWORD, :LPDWORD>, 20
-    ; SetupGetFileCompressionInfo is depreciated
-    ; use SetupGetFileCompressionInfoEx instead
-    ; ActualSourceFileName returned by SetupGetFileCompressionInfo
-    ; must be freed by the export setupapi!MyFree (NT4+ Win95+)
-    ; or LocalFree (Win2k+)
     @DefProto DllImport, SetupGetFileCompressionInfoA, WIN_STD_CALL_CONV,, <:PCSTR, :ptr PSTR, :PDWORD, :PDWORD, :PUINT>, 20
     @DefProto DllImport, SetupGetFileCompressionInfoW, WIN_STD_CALL_CONV,, <:PCWSTR, :ptr PWSTR, :PDWORD, :PDWORD, :PUINT>, 20
     ifdef UNICODE
@@ -1878,10 +1358,6 @@ ifndef _INC_SETUPAPI
       SetupGetFileCompressionInfo equ <SetupGetFileCompressionInfoA>
     endif
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      ; SetupGetFileCompressionInfoEx is the preferred API over
-      ; SetupGetFileCompressionInfo. It follows the normal
-      ; conventions of returning BOOL and writing to user-supplied
-      ; buffer.
       @DefProto DllImport, SetupGetFileCompressionInfoExA, WIN_STD_CALL_CONV,, <:PCSTR, :PSTR, :DWORD, :PDWORD, :PDWORD, :PDWORD, :PUINT>, 28
       @DefProto DllImport, SetupGetFileCompressionInfoExW, WIN_STD_CALL_CONV,, <:PCWSTR, :PWSTR, :DWORD, :PDWORD, :PDWORD, :PDWORD, :PUINT>, 28
       ifdef UNICODE
@@ -1890,8 +1366,6 @@ ifndef _INC_SETUPAPI
         SetupGetFileCompressionInfoEx equ <SetupGetFileCompressionInfoExA>
       endif
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
-    ; Compression types
     FILE_COMPRESSION_NONE equ 0
     FILE_COMPRESSION_WINLZA equ 1
     FILE_COMPRESSION_MSZIP equ 2
@@ -1924,7 +1398,6 @@ ifndef _INC_SETUPAPI
     else
       SetupGetTargetPath equ <SetupGetTargetPathA>
     endif
-    ; Define flags for SourceList APIs.
     SRCLIST_TEMPORARY equ 00000001h
     SRCLIST_NOBROWSE equ 00000002h
     SRCLIST_SYSTEM equ 00000010h
@@ -2004,8 +1477,6 @@ ifndef _INC_SETUPAPI
     else
       SetupBackupError equ <SetupBackupErrorA>
     endif
-    ; Styles for SetupPromptForDisk, SetupCopyError,
-    ; SetupRenameError, SetupDeleteError
     IDF_NOBROWSE equ 00000001h
     IDF_NOSKIP equ 00000002h
     IDF_NODETAILS equ 00000004h
@@ -2019,9 +1490,6 @@ ifndef _INC_SETUPAPI
       IDF_USEDISKNAMEASPROMPT equ 00002000h
       IDF_OEMDISK equ 80000000h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
-    ; Return values for SetupPromptForDisk, SetupCopyError,
-    ; SetupRenameError, SetupDeleteError, SetupBackupError
     DPROMPT_SUCCESS equ 0
     DPROMPT_CANCEL equ 1
     DPROMPT_SKIPFILE equ 2
@@ -2041,7 +1509,6 @@ ifndef _INC_SETUPAPI
     else
       SetupSetDirectoryIdEx equ <SetupSetDirectoryIdExA>
     endif
-    ; Flags for SetupSetDirectoryIdEx
     SETDIRID_NOT_FULL_PATH equ 00000001h
     @DefProto DllImport, SetupGetSourceInfoA, WIN_STD_CALL_CONV,, <:HINF, :UINT, :UINT, :PSTR, :DWORD, :PDWORD>, 24
     @DefProto DllImport, SetupGetSourceInfoW, WIN_STD_CALL_CONV,, <:HINF, :UINT, :UINT, :PWSTR, :DWORD, :PDWORD>, 24
@@ -2050,21 +1517,14 @@ ifndef _INC_SETUPAPI
     else
       SetupGetSourceInfo equ <SetupGetSourceInfoA>
     endif
-    ; InfoDesired values for SetupGetSourceInfo
     SRCINFO_PATH equ 1
     SRCINFO_TAGFILE equ 2
     SRCINFO_DESCRIPTION equ 3
     SRCINFO_FLAGS equ 4
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      ; SRC_FLAGS allow special treatment of source
-      ; lower 4 bits are reserved for OS use
-      ; the flags may determine what other parameters exist
-      SRCINFO_TAGFILE2 equ 5; alternate tagfile, when SRCINFO_TAGFILE is a cabfile
-
-      SRC_FLAGS_CABFILE equ (0010h); if set, treat SRCINFO_TAGFILE as a cabfile and specify alternate tagfile
-
+      SRCINFO_TAGFILE2 equ 5
+      SRC_FLAGS_CABFILE equ (0010h)
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     @DefProto DllImport, SetupInstallFileA, WIN_STD_CALL_CONV,, <:HINF, :PINFCONTEXT, :PCSTR, :PCSTR, :PCSTR, :DWORD, :PSP_FILE_CALLBACK_A, :PVOID>, 32
     @DefProto DllImport, SetupInstallFileW, WIN_STD_CALL_CONV,, <:HINF, :PINFCONTEXT, :PCWSTR, :PCWSTR, :PCWSTR, :DWORD, :PSP_FILE_CALLBACK_W, :PVOID>, 32
     ifdef UNICODE
@@ -2079,88 +1539,49 @@ ifndef _INC_SETUPAPI
     else
       SetupInstallFileEx equ <SetupInstallFileExA>
     endif
-    ; CopyStyle values for copy and queue-related APIs
-    SP_COPY_DELETESOURCE equ 0000001h; delete source file on successful copy
-
-    SP_COPY_REPLACEONLY equ 0000002h; copy only if target file already present
-
-    SP_COPY_NEWER equ 0000004h; copy only if source newer than or same as target
-
+    SP_COPY_DELETESOURCE equ 0000001h
+    SP_COPY_REPLACEONLY equ 0000002h
+    SP_COPY_NEWER equ 0000004h
     SP_COPY_NEWER_OR_SAME equ <SP_COPY_NEWER>
-    SP_COPY_NOOVERWRITE equ 0000008h; copy only if target doesn't exist
-
-    SP_COPY_NODECOMP equ 0000010h; don't decompress source file while copying
-
-    SP_COPY_LANGUAGEAWARE equ 0000020h; don't overwrite file of different language
-
-    SP_COPY_SOURCE_ABSOLUTE equ 0000040h; SourceFile is a full source path
-
-    SP_COPY_SOURCEPATH_ABSOLUTE equ 0000080h; SourcePathRoot is the full path
-
-    SP_COPY_IN_USE_NEEDS_REBOOT equ 0000100h; System needs reboot if file in use
-
-    SP_COPY_FORCE_IN_USE equ 0000200h; Force target-in-use behavior
-
-    SP_COPY_NOSKIP equ 0000400h; Skip is disallowed for this file or section
-
-    SP_FLAG_CABINETCONTINUATION equ 0000800h; Used with need media notification
-
-    SP_COPY_FORCE_NOOVERWRITE equ 0001000h; like NOOVERWRITE but no callback nofitication
-
-    SP_COPY_FORCE_NEWER equ 0002000h; like NEWER but no callback nofitication
-
-    SP_COPY_WARNIFSKIP equ 0004000h; system critical file: warn if user tries to skip
-
-    SP_COPY_NOBROWSE equ 0008000h; Browsing is disallowed for this file or section
-
-    SP_COPY_NEWER_ONLY equ 0010000h; copy only if source file newer than target
-
-    SP_COPY_RESERVED equ 0020000h; was: SP_COPY_SOURCE_SIS_MASTER (deprecated)
-
-    SP_COPY_OEMINF_CATALOG_ONLY equ 0040000h; (SetupCopyOEMInf only) don't copy INF--just catalog
-
-    SP_COPY_REPLACE_BOOT_FILE equ 0080000h; file must be present upon reboot (i.e., it's
-
-    ; needed by the loader); this flag implies a reboot
-    SP_COPY_NOPRUNE equ 0100000h; never prune this file
-
+    SP_COPY_NOOVERWRITE equ 0000008h
+    SP_COPY_NODECOMP equ 0000010h
+    SP_COPY_LANGUAGEAWARE equ 0000020h
+    SP_COPY_SOURCE_ABSOLUTE equ 0000040h
+    SP_COPY_SOURCEPATH_ABSOLUTE equ 0000080h
+    SP_COPY_IN_USE_NEEDS_REBOOT equ 0000100h
+    SP_COPY_FORCE_IN_USE equ 0000200h
+    SP_COPY_NOSKIP equ 0000400h
+    SP_FLAG_CABINETCONTINUATION equ 0000800h
+    SP_COPY_FORCE_NOOVERWRITE equ 0001000h
+    SP_COPY_FORCE_NEWER equ 0002000h
+    SP_COPY_WARNIFSKIP equ 0004000h
+    SP_COPY_NOBROWSE equ 0008000h
+    SP_COPY_NEWER_ONLY equ 0010000h
+    SP_COPY_RESERVED equ 0020000h
+    SP_COPY_OEMINF_CATALOG_ONLY equ 0040000h
+    SP_COPY_REPLACE_BOOT_FILE equ 0080000h
+    SP_COPY_NOPRUNE equ 0100000h
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      SP_COPY_OEM_F6_INF equ 0200000h; Used when calling SetupCopyOemInf
-
+      SP_COPY_OEM_F6_INF equ 0200000h
     endif
-    ;_SETUPAPI_VER >= _WIN32_WINNT_WINXP
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      SP_COPY_ALREADYDECOMP equ 0400000h; similar to SP_COPY_NODECOMP
-
+      SP_COPY_ALREADYDECOMP equ 0400000h
     endif
-    ;_SETUPAPI_VER >= _WIN32_WINNT_WINXP
     if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
-      SP_COPY_WINDOWS_SIGNED equ 1000000h; BuildLab or WinSE signed
-
-      SP_COPY_PNPLOCKED equ 2000000h; Used with the signature flag
-
-      SP_COPY_IN_USE_TRY_RENAME equ 4000000h; If file in use, try to rename the target first
-
-      SP_COPY_INBOX_INF equ 8000000h; Referred by CopyFiles of inbox inf
-
+      SP_COPY_WINDOWS_SIGNED equ 1000000h
+      SP_COPY_PNPLOCKED equ 2000000h
+      SP_COPY_IN_USE_TRY_RENAME equ 4000000h
+      SP_COPY_INBOX_INF equ 8000000h
     endif
-    ;_SETUPAPI_VER >= _WIN32_WINNT_LONGHORN
     if _SETUPAPI_VER ge _WIN32_WINNT_WIN7
-      SP_COPY_HARDLINK equ 10000000h; Copy using hardlink, if possible
-
+      SP_COPY_HARDLINK equ 10000000h
     endif
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      ; Flags passed to Backup notification
-      SP_BACKUP_BACKUPPASS equ 00000001h; file backed up during backup pass
-
-      SP_BACKUP_DEMANDPASS equ 00000002h; file backed up on demand
-
-      SP_BACKUP_SPECIAL equ 00000004h; if set, special type of backup
-
-      SP_BACKUP_BOOTFILE equ 00000008h; file marked with COPYFLG_REPLACE_BOOT_FILE
-
+      SP_BACKUP_BACKUPPASS equ 00000001h
+      SP_BACKUP_DEMANDPASS equ 00000002h
+      SP_BACKUP_SPECIAL equ 00000004h
+      SP_BACKUP_BOOTFILE equ 00000008h
     endif
-    ;_SETUPAPI_VER >= _WIN32_WINNT_WINXP
     @DefProto DllImport, SetupOpenFileQueue, WIN_STD_CALL_CONV,, <>, 0
     @DefProto DllImport, SetupCloseFileQueue, WIN_STD_CALL_CONV,, <:HSPFILEQ>, 4
     @DefProto DllImport, SetupSetFileQueueAlternatePlatformA, WIN_STD_CALL_CONV,, <:HSPFILEQ, :PSP_ALTPLATFORM_INFO, :PCSTR>, 12
@@ -2247,7 +1668,6 @@ ifndef _INC_SETUPAPI
     else
       SetupScanFileQueue equ <SetupScanFileQueueA>
     endif
-    ; Define flags for SetupScanFileQueue.
     SPQ_SCAN_FILE_PRESENCE equ 00000001h
     SPQ_SCAN_FILE_VALIDITY equ 00000002h
     SPQ_SCAN_USE_CALLBACK equ 00000004h
@@ -2256,52 +1676,24 @@ ifndef _INC_SETUPAPI
     SPQ_SCAN_PRUNE_COPY_QUEUE equ 00000020h
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
       SPQ_SCAN_USE_CALLBACK_SIGNERINFO equ 00000040h
-      SPQ_SCAN_PRUNE_DELREN equ 00000080h; remote Delete/Rename queue
-
+      SPQ_SCAN_PRUNE_DELREN equ 00000080h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
       SPQ_SCAN_FILE_PRESENCE_WITHOUT_SOURCE equ 00000100h
       SPQ_SCAN_FILE_COMPARISON equ 00000200h
       SPQ_SCAN_ACTIVATE_DRP equ 00000400h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_LONGHORN
-    ; Define flags used with Param2 for SPFILENOTIFY_QUEUESCAN
-    SPQ_DELAYED_COPY equ 00000001h; file was in use; registered for delayed copy
-
+    SPQ_DELAYED_COPY equ 00000001h
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
       @DefProto DllImport, SetupGetFileQueueCount, WIN_STD_CALL_CONV,, <:HSPFILEQ, :UINT, :PUINT>, 12
       @DefProto DllImport, SetupGetFileQueueFlags, WIN_STD_CALL_CONV,, <:HSPFILEQ, :PDWORD>, 8
       @DefProto DllImport, SetupSetFileQueueFlags, WIN_STD_CALL_CONV,, <:HSPFILEQ, :DWORD, :DWORD>, 12
-      ; Flags/FlagMask for use with SetupSetFileQueueFlags and returned by SetupGetFileQueueFlags
-      SPQ_FLAG_BACKUP_AWARE equ 00000001h; If set, SetupCommitFileQueue will
-
-      ; issue backup notifications.
-      SPQ_FLAG_ABORT_IF_UNSIGNED equ 00000002h; If set, SetupCommitFileQueue will
-
-      ; fail with ERROR_SET_SYSTEM_RESTORE_POINT
-      ; if the user elects to proceed with an
-      ; unsigned queue committal.  This allows
-      ; the caller to set a system restore point,
-      ; then re-commit the file queue.
-      SPQ_FLAG_FILES_MODIFIED equ 00000004h; If set, at least one file was
-
-      ; replaced by a different version
-      SPQ_FLAG_DO_SHUFFLEMOVE equ 00000008h; If set then always do a shuffle move. A shuffle
-
-      ; move will first try to copy the source over the
-      ; destination file, but if the destination file is
-      ; in use it will rename the destination file to a
-      ; temp name and queue the temp name for deletion.
-      ; It will then be free to copy the source to the
-      ; destination name.  It is considered an error if
-      ; the destination file can't be renamed for some
-      ; reason.
-      SPQ_FLAG_VALID equ 0000000Fh; mask of valid flags (can be passed as FlagMask)
-
+      SPQ_FLAG_BACKUP_AWARE equ 00000001h
+      SPQ_FLAG_ABORT_IF_UNSIGNED equ 00000002h
+      SPQ_FLAG_FILES_MODIFIED equ 00000004h
+      SPQ_FLAG_DO_SHUFFLEMOVE equ 00000008h
+      SPQ_FLAG_VALID equ 0000000Fh
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
-    ; Define OEM Source Type values for use in SetupCopyOEMInf.
     SPOST_NONE equ 0
     SPOST_PATH equ 1
     SPOST_URL equ 2
@@ -2314,14 +1706,11 @@ ifndef _INC_SETUPAPI
       SetupCopyOEMInf equ <SetupCopyOEMInfA>
     endif
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      ; Flags used by SetupUninstallOEMInf
       SUOI_FORCEDELETE equ 00000001h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
       SUOI_INTERNAL1 equ 00000002h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_LONGHORN
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
       @DefProto DllImport, SetupUninstallOEMInfA, WIN_STD_CALL_CONV,, <:PCSTR, :DWORD, :PVOID>, 12
       @DefProto DllImport, SetupUninstallOEMInfW, WIN_STD_CALL_CONV,, <:PCWSTR, :DWORD, :PVOID>, 12
@@ -2332,8 +1721,6 @@ ifndef _INC_SETUPAPI
       endif
       @DefProto DllImport, SetupUninstallNewlyCopiedInfs, WIN_STD_CALL_CONV,, <:HSPFILEQ, :DWORD, :PVOID>, 12
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
-    ; Disk space list APIs
     @DefProto DllImport, SetupCreateDiskSpaceListA, WIN_STD_CALL_CONV,, <:PVOID, :DWORD, :UINT>, 12
     @DefProto DllImport, SetupCreateDiskSpaceListW, WIN_STD_CALL_CONV,, <:PVOID, :DWORD, :UINT>, 12
     ifdef UNICODE
@@ -2341,9 +1728,7 @@ ifndef _INC_SETUPAPI
     else
       SetupCreateDiskSpaceList equ <SetupCreateDiskSpaceListA>
     endif
-    ; Flags for SetupCreateDiskSpaceList
-    SPDSL_IGNORE_DISK equ 00000001h; ignore deletes and on-disk files in copies
-
+    SPDSL_IGNORE_DISK equ 00000001h
     SPDSL_DISALLOW_NEGATIVE_ADJUST equ 00000002h
     @DefProto DllImport, SetupDuplicateDiskSpaceListA, WIN_STD_CALL_CONV,, <:HDSKSPC, :PVOID, :DWORD, :UINT>, 16
     @DefProto DllImport, SetupDuplicateDiskSpaceListW, WIN_STD_CALL_CONV,, <:HDSKSPC, :PVOID, :DWORD, :UINT>, 16
@@ -2416,7 +1801,6 @@ ifndef _INC_SETUPAPI
     else
       SetupRemoveInstallSectionFromDiskSpaceList equ <SetupRemoveInstallSectionFromDiskSpaceListA>
     endif
-    ; Cabinet APIs
     @DefProto DllImport, SetupIterateCabinetA, WIN_STD_CALL_CONV,, <:PCSTR, :DWORD, :PSP_FILE_CALLBACK_A, :PVOID>, 16
     @DefProto DllImport, SetupIterateCabinetW, WIN_STD_CALL_CONV,, <:PCWSTR, :DWORD, :PSP_FILE_CALLBACK_W, :PVOID>, 16
     ifdef UNICODE
@@ -2425,7 +1809,6 @@ ifndef _INC_SETUPAPI
       SetupIterateCabinet equ <SetupIterateCabinetA>
     endif
     @DefProto DllImport, SetupPromptReboot, WIN_STD_CALL_CONV,, <:HSPFILEQ, :HWND, :BOOL>, 12
-    ; Define flags that are returned by SetupPromptReboot
     SPFILEQ_FILE_IN_USE equ 00000001h
     SPFILEQ_REBOOT_RECOMMENDED equ 00000002h
     SPFILEQ_REBOOT_IN_PROGRESS equ 00000004h
@@ -2439,43 +1822,20 @@ ifndef _INC_SETUPAPI
     else
       SetupDefaultQueueCallback equ <SetupDefaultQueueCallbackA>
     endif
-    ; Flags for AddReg section lines in INF.  The corresponding value
-    ; is <ValueType> in the AddReg line format given below:
-    ; <RegRootString>,<SubKey>,<ValueName>,<ValueType>,<Value>...
-    ; The low word contains basic flags concerning the general data type
-    ; and AddReg action. The high word contains values that more specifically
-    ; identify the data type of the registry value.  The high word is ignored
-    ; by the 16-bit Windows 95 SETUPX APIs.
-    ; If <ValueType> has FLG_ADDREG_DELREG_BIT set, it will be ignored by AddReg
-    ; (not supported by SetupX).
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      FLG_ADDREG_DELREG_BIT equ (00008000h); if set, interpret as DELREG, see below
-
+      FLG_ADDREG_DELREG_BIT equ (00008000h)
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     FLG_ADDREG_BINVALUETYPE equ (00000001h)
     FLG_ADDREG_NOCLOBBER equ (00000002h)
     FLG_ADDREG_DELVAL equ (00000004h)
-    FLG_ADDREG_APPEND equ (00000008h); Currently supported only
-
-    ; for REG_MULTI_SZ values.
-    FLG_ADDREG_KEYONLY equ (00000010h); Just create the key, ignore value
-
-    FLG_ADDREG_OVERWRITEONLY equ (00000020h); Set only if value already exists
-
+    FLG_ADDREG_APPEND equ (00000008h)
+    FLG_ADDREG_KEYONLY equ (00000010h)
+    FLG_ADDREG_OVERWRITEONLY equ (00000020h)
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      FLG_ADDREG_64BITKEY equ (00001000h); make this change in the 64 bit registry.
-
-      FLG_ADDREG_KEYONLY_COMMON equ (00002000h); same as FLG_ADDREG_KEYONLY but also works for DELREG
-
-      FLG_ADDREG_32BITKEY equ (00004000h); make this change in the 32 bit registry.
-
+      FLG_ADDREG_64BITKEY equ (00001000h)
+      FLG_ADDREG_KEYONLY_COMMON equ (00002000h)
+      FLG_ADDREG_32BITKEY equ (00004000h)
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
-    ; The INF may supply any arbitrary data type ordinal in the highword except
-    ; for the following: REG_NONE, REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ.  If this
-    ; technique is used, then the data is given in binary format, one byte per
-    ; field.
     FLG_ADDREG_TYPE_MASK equ (0FFFF0000h or FLG_ADDREG_BINVALUETYPE)
     FLG_ADDREG_TYPE_SZ equ (00000000h)
     FLG_ADDREG_TYPE_MULTI_SZ equ (00010000h)
@@ -2486,82 +1846,45 @@ ifndef _INC_SETUPAPI
     if _SETUPAPI_VER ge _WIN32_WINNT_WIN10
       FLG_ADDREG_TYPE_QWORD equ (000B0000h or FLG_ADDREG_BINVALUETYPE)
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WIN10
-    ; Flags for DelReg section lines in INF.  The corresponding value
-    ; is <Operation> in the extended DelReg line format given below:
-    ; <RegRootString>,<SubKey>,<ValueName>,<Operation>[,...]
-    ; In SetupX and some versions of SetupAPI, <Operation> will be ignored and <ValueName> will
-    ; be deleted. Use with care.
-    ; The bits determined by mask FLG_DELREG_TYPE_MASK indicates type of data expected.
-    ; <Operation> must have FLG_ADDREG_DELREG_BIT set, otherwise it is ignored and specified
-    ; value will be deleted (allowing an AddReg section to also be used as a DelReg section)
-    ; if <Operation> is not specified, <ValueName> will be deleted (if specified) otherwise
-    ; <SubKey> will be deleted.
-    ; the compatability flag
     FLG_DELREG_VALUE equ (00000000h)
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      FLG_DELREG_TYPE_MASK equ <FLG_ADDREG_TYPE_MASK>; 0xFFFF0001
-
-      FLG_DELREG_TYPE_SZ equ <FLG_ADDREG_TYPE_SZ>; 0x00000000
-
-      FLG_DELREG_TYPE_MULTI_SZ equ <FLG_ADDREG_TYPE_MULTI_SZ>; 0x00010000
-
-      FLG_DELREG_TYPE_EXPAND_SZ equ <FLG_ADDREG_TYPE_EXPAND_SZ>; 0x00020000
-
-      FLG_DELREG_TYPE_BINARY equ <FLG_ADDREG_TYPE_BINARY>; 0x00000001
-
-      FLG_DELREG_TYPE_DWORD equ <FLG_ADDREG_TYPE_DWORD>; 0x00010001
-
-      FLG_DELREG_TYPE_NONE equ <FLG_ADDREG_TYPE_NONE>; 0x00020001
-
-      FLG_DELREG_64BITKEY equ <FLG_ADDREG_64BITKEY>; 0x00001000
-
-      FLG_DELREG_KEYONLY_COMMON equ <FLG_ADDREG_KEYONLY_COMMON>; 0x00002000
-
-      FLG_DELREG_32BITKEY equ <FLG_ADDREG_32BITKEY>; 0x00004000
-
-      ; <Operation> = FLG_DELREG_MULTI_SZ_DELSTRING
-      ;               <RegRootString>,<SubKey>,<ValueName>,0x00018002,<String>
-      ;               removes all entries matching <String> (case ignored) from multi-sz registry value
+      FLG_DELREG_TYPE_MASK equ <FLG_ADDREG_TYPE_MASK>
+      FLG_DELREG_TYPE_SZ equ <FLG_ADDREG_TYPE_SZ>
+      FLG_DELREG_TYPE_MULTI_SZ equ <FLG_ADDREG_TYPE_MULTI_SZ>
+      FLG_DELREG_TYPE_EXPAND_SZ equ <FLG_ADDREG_TYPE_EXPAND_SZ>
+      FLG_DELREG_TYPE_BINARY equ <FLG_ADDREG_TYPE_BINARY>
+      FLG_DELREG_TYPE_DWORD equ <FLG_ADDREG_TYPE_DWORD>
+      FLG_DELREG_TYPE_NONE equ <FLG_ADDREG_TYPE_NONE>
+      FLG_DELREG_64BITKEY equ <FLG_ADDREG_64BITKEY>
+      FLG_DELREG_KEYONLY_COMMON equ <FLG_ADDREG_KEYONLY_COMMON>
+      FLG_DELREG_32BITKEY equ <FLG_ADDREG_32BITKEY>
       FLG_DELREG_OPERATION_MASK equ (000000FEh)
-      FLG_DELREG_MULTI_SZ_DELSTRING equ (FLG_DELREG_TYPE_MULTI_SZ or FLG_ADDREG_DELREG_BIT or 00000002h); 0x00018002
-
+      FLG_DELREG_MULTI_SZ_DELSTRING equ (FLG_DELREG_TYPE_MULTI_SZ or FLG_ADDREG_DELREG_BIT or 00000002h)
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     if _SETUPAPI_VER ge _WIN32_WINNT_WIN10
-      FLG_DELREG_TYPE_QWORD equ <FLG_ADDREG_TYPE_QWORD>; 0x000B0001
-
+      FLG_DELREG_TYPE_QWORD equ <FLG_ADDREG_TYPE_QWORD>
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WIN10
-    ; Flags for BitReg section lines in INF.
     FLG_BITREG_CLEARBITS equ (00000000h)
     FLG_BITREG_SETBITS equ (00000001h)
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
       FLG_BITREG_64BITKEY equ (00001000h)
       FLG_BITREG_32BITKEY equ (00004000h)
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
-    ; Flags for Ini2Reg section lines in INF.
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
       FLG_INI2REG_64BITKEY equ (00001000h)
       FLG_INI2REG_32BITKEY equ (00004000h)
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
-    ; Flags for RegSvr section lines in INF
     FLG_REGSVR_DLLREGISTER equ (00000001h)
     FLG_REGSVR_DLLINSTALL equ (00000002h)
-    ; Flags for RegSvr section lines in INF
     FLG_PROFITEM_CURRENTUSER equ (00000001h)
     FLG_PROFITEM_DELETE equ (00000002h)
     FLG_PROFITEM_GROUP equ (00000004h)
     FLG_PROFITEM_CSIDL equ (00000008h)
-    ; Flags for AddProperty section lines in the INF
     FLG_ADDPROPERTY_NOCLOBBER equ (00000001h)
     FLG_ADDPROPERTY_OVERWRITEONLY equ (00000002h)
     FLG_ADDPROPERTY_APPEND equ (00000004h)
     FLG_ADDPROPERTY_OR equ (00000008h)
     FLG_ADDPROPERTY_AND equ (00000010h)
-    ; Flags for DelProperty section lines in the INF
     FLG_DELPROPERTY_MULTI_SZ_DELSTRING equ (00000001h)
     @DefProto DllImport, SetupInstallFromInfSectionA, WIN_STD_CALL_CONV,, <:HWND, :HINF, :PCSTR, :UINT, :HKEY, :PCSTR, :UINT, :PSP_FILE_CALLBACK_A, :PVOID, :HDEVINFO, :PSP_DEVINFO_DATA>, 44
     @DefProto DllImport, SetupInstallFromInfSectionW, WIN_STD_CALL_CONV,, <:HWND, :HINF, :PCWSTR, :UINT, :HKEY, :PCWSTR, :UINT, :PSP_FILE_CALLBACK_W, :PVOID, :HDEVINFO, :PSP_DEVINFO_DATA>, 44
@@ -2570,7 +1893,6 @@ ifndef _INC_SETUPAPI
     else
       SetupInstallFromInfSection equ <SetupInstallFromInfSectionA>
     endif
-    ; Flags for SetupInstallFromInfSection
     SPINST_LOGCONFIG equ 00000001h
     SPINST_INIFILES equ 00000002h
     SPINST_REGISTRY equ 00000004h
@@ -2588,22 +1910,18 @@ ifndef _INC_SETUPAPI
       else
         SPINST_ALL equ 000003ffh
       endif
-      ; _SETUPAPI_VER >= _WIN32_WINNT_LONGHORN
     else
       SPINST_ALL equ 000001ffh
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     SPINST_SINGLESECTION equ 00010000h
     SPINST_LOGCONFIG_IS_FORCED equ 00020000h
     SPINST_LOGCONFIGS_ARE_OVERRIDES equ 00040000h
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
       SPINST_REGISTERCALLBACKAWARE equ 00080000h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
       SPINST_DEVICEINSTALL equ 00100000h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_LONGHORN
     @DefProto DllImport, SetupInstallFilesFromInfSectionA, WIN_STD_CALL_CONV,, <:HINF, :HINF, :HSPFILEQ, :PCSTR, :PCSTR, :UINT>, 24
     @DefProto DllImport, SetupInstallFilesFromInfSectionW, WIN_STD_CALL_CONV,, <:HINF, :HINF, :HSPFILEQ, :PCWSTR, :PCWSTR, :UINT>, 24
     ifdef UNICODE
@@ -2611,61 +1929,32 @@ ifndef _INC_SETUPAPI
     else
       SetupInstallFilesFromInfSection equ <SetupInstallFilesFromInfSectionA>
     endif
-    ; Flags for SetupInstallServicesFromInfSection(Ex).  These flags are also used
-    ; in the flags field of AddService or DelService lines in a device INF.  Some
-    ; of these flags are not permitted in the non-Ex API.  These flags are marked
-    ; as such below.
-    ; (AddService) move service's tag to front of its group order list
     SPSVCINST_TAGTOFRONT equ (00000001h)
-    ; (AddService) **Ex API only** mark this service as the function driver for the
-    ; device being installed
     SPSVCINST_ASSOCSERVICE equ (00000002h)
-    ; (DelService) delete the associated event log entry for a service specified in
-    ; a DelService entry
     SPSVCINST_DELETEEVENTLOGENTRY equ (00000004h)
-    ; (AddService) don't overwrite display name if it already exists
     SPSVCINST_NOCLOBBER_DISPLAYNAME equ (00000008h)
-    ; (AddService) don't overwrite start type value if service already exists
     SPSVCINST_NOCLOBBER_STARTTYPE equ (00000010h)
-    ; (AddService) don't overwrite error control value if service already exists
     SPSVCINST_NOCLOBBER_ERRORCONTROL equ (00000020h)
-    ; (AddService) don't overwrite load order group if it already exists
     SPSVCINST_NOCLOBBER_LOADORDERGROUP equ (00000040h)
-    ; (AddService) don't overwrite dependencies list if it already exists
     SPSVCINST_NOCLOBBER_DEPENDENCIES equ (00000080h)
-    ; (AddService) don't overwrite description if it already exists
     SPSVCINST_NOCLOBBER_DESCRIPTION equ (00000100h)
-    ; (DelService) stop the associated service specified in
-    ; a DelService entry before deleting the service
     SPSVCINST_STOPSERVICE equ (00000200h)
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      ; (AddService) force overwrite of security settings
       SPSVCINST_CLOBBER_SECURITY equ (00000400h)
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
-      ; (Start Service) start a service manually after install
       SPSVCINST_STARTSERVICE equ (00000800h)
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_LONGHORN
     if _SETUPAPI_VER ge _WIN32_WINNT_WIN7
-      ; (AddService) don't overwrite required privileges list if it already exists
       SPSVCINST_NOCLOBBER_REQUIREDPRIVILEGES equ (00001000h)
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WIN7
     if _SETUPAPI_VER ge _WIN32_WINNT_WIN10
-      ; (AddService) don't overwrite triggers if they already exist
       SPSVCINST_NOCLOBBER_TRIGGERS equ (00002000h)
-      ; (AddService) don't overwrite service SID type if it already exists
       SPSVCINST_NOCLOBBER_SERVICESIDTYPE equ (00004000h)
-      ; (AddService) don't overwrite delayed auto start if it already exists
       SPSVCINST_NOCLOBBER_DELAYEDAUTOSTART equ (00008000h)
-      ; (AddService) create service with a unique name
       SPSVCINST_UNIQUE_NAME equ (00010000h)
-      ; (AddService) don't overwrite failure actions if they already exist
       SPSVCINST_NOCLOBBER_FAILUREACTIONS equ (00020000h)
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WIN10
     @DefProto DllImport, SetupInstallServicesFromInfSectionA, WIN_STD_CALL_CONV,, <:HINF, :PCSTR, :DWORD>, 12
     @DefProto DllImport, SetupInstallServicesFromInfSectionW, WIN_STD_CALL_CONV,, <:HINF, :PCWSTR, :DWORD>, 12
     ifdef UNICODE
@@ -2680,11 +1969,6 @@ ifndef _INC_SETUPAPI
     else
       SetupInstallServicesFromInfSectionEx equ <SetupInstallServicesFromInfSectionExA>
     endif
-    ; High level routine, usually used via rundll32.dll
-    ; to perform right-click install action on INFs
-    ; May be called directly:
-    ; wsprintf(CmdLineBuffer,TEXT("DefaultInstall 132 %s"),InfPath);
-    ; InstallHinfSection(NULL,NULL,CmdLineBuffer,0);
     InstallHinfSectionA proto WIN_STD_CALL_CONV :HWND, :HINSTANCE, :PCSTR, :INT_
     InstallHinfSectionW proto WIN_STD_CALL_CONV :HWND, :HINSTANCE, :PCWSTR, :INT_
     ifdef UNICODE
@@ -2692,7 +1976,6 @@ ifndef _INC_SETUPAPI
     else
       InstallHinfSection equ <InstallHinfSectionA>
     endif
-    ; Define handle type for Setup file log.
     HSPFILELOG typedef PVOID
     @DefProto DllImport, SetupInitializeFileLogA, WIN_STD_CALL_CONV,, <:PCSTR, :DWORD>, 8
     @DefProto DllImport, SetupInitializeFileLogW, WIN_STD_CALL_CONV,, <:PCWSTR, :DWORD>, 8
@@ -2701,13 +1984,9 @@ ifndef _INC_SETUPAPI
     else
       SetupInitializeFileLog equ <SetupInitializeFileLogA>
     endif
-    ; Flags for SetupInitializeFileLog
-    SPFILELOG_SYSTEMLOG equ 00000001h; use system log -- must be Administrator
-
-    SPFILELOG_FORCENEW equ 00000002h; not valid with SPFILELOG_SYSTEMLOG
-
-    SPFILELOG_QUERYONLY equ 00000004h; allows non-administrators to read system log
-
+    SPFILELOG_SYSTEMLOG equ 00000001h
+    SPFILELOG_FORCENEW equ 00000002h
+    SPFILELOG_QUERYONLY equ 00000004h
     @DefProto DllImport, SetupTerminateFileLog, WIN_STD_CALL_CONV,, <:HSPFILELOG>, 4
     @DefProto DllImport, SetupLogFileA, WIN_STD_CALL_CONV,, <:HSPFILELOG, :PCSTR, :PCSTR, :PCSTR, :DWORD, :PCSTR, :PCSTR, :PCSTR, :DWORD>, 36
     @DefProto DllImport, SetupLogFileW, WIN_STD_CALL_CONV,, <:HSPFILELOG, :PCWSTR, :PCWSTR, :PCWSTR, :DWORD, :PCWSTR, :PCWSTR, :PCWSTR, :DWORD>, 36
@@ -2716,7 +1995,6 @@ ifndef _INC_SETUPAPI
     else
       SetupLogFile equ <SetupLogFileA>
     endif
-    ; Flags for SetupLogFile
     SPFILELOG_OEMFILE equ 00000001h
     @DefProto DllImport, SetupRemoveFileLogEntryA, WIN_STD_CALL_CONV,, <:HSPFILELOG, :PCSTR, :PCSTR>, 12
     @DefProto DllImport, SetupRemoveFileLogEntryW, WIN_STD_CALL_CONV,, <:HSPFILELOG, :PCWSTR, :PCWSTR>, 12
@@ -2725,7 +2003,6 @@ ifndef _INC_SETUPAPI
     else
       SetupRemoveFileLogEntry equ <SetupRemoveFileLogEntryA>
     endif
-    ; Items retrievable from SetupQueryFileLog()
     SetupFileLogInfo typedef SDWORD
     SetupFileLogSourceFilename equ 0
     SetupFileLogChecksum equ 1
@@ -2741,7 +2018,6 @@ ifndef _INC_SETUPAPI
     else
       SetupQueryFileLog equ <SetupQueryFileLogA>
     endif
-    ; Text logging APIs
     LogSeverity equ <DWORD>
     LogSevInformation equ 00000000h
     LogSevWarning equ 00000001h
@@ -2757,7 +2033,6 @@ ifndef _INC_SETUPAPI
       SetupLogError equ <SetupLogErrorA>
     endif
     @DefProto DllImport, SetupCloseLog, WIN_STD_CALL_CONV,, <>, 0
-    ; Text log for INF debugging
     if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
       @DefProto DllImport, SetupGetThreadLogToken, WIN_STD_CALL_CONV,, <>, 0
       @DefProto DllImport, SetupSetThreadLogToken, WIN_STD_CALL_CONV,, <:SP_LOG_TOKEN>, 4
@@ -2765,8 +2040,6 @@ ifndef _INC_SETUPAPI
       @DefProto DllImport, SetupWriteTextLogError, WIN_STD_CALL_CONV,, <:SP_LOG_TOKEN, :DWORD, :DWORD, :DWORD, :PCSTR, :vararg>, 24
       @DefProto DllImport, SetupWriteTextLogInfLine, WIN_STD_CALL_CONV,, <:SP_LOG_TOKEN, :DWORD, :HINF, :PINFCONTEXT>, 16
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_LONGHORN
-    ; Backup Information API's
     @DefProto DllImport, SetupGetBackupInformationA, WIN_STD_CALL_CONV,, <:HSPFILEQ, :PSP_BACKUP_QUEUE_PARAMS_A>, 8
     @DefProto DllImport, SetupGetBackupInformationW, WIN_STD_CALL_CONV,, <:HSPFILEQ, :PSP_BACKUP_QUEUE_PARAMS_W>, 8
     ifdef UNICODE
@@ -2783,15 +2056,10 @@ ifndef _INC_SETUPAPI
         SetupPrepareQueueForRestore equ <SetupPrepareQueueForRestoreA>
       endif
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      ; Control forcing of Non-Interactive Mode
-      ; Overriden if SetupAPI is run in non-interactive window session
       @DefProto DllImport, SetupSetNonInteractiveMode, WIN_STD_CALL_CONV,, <:BOOL>, 4
       @DefProto DllImport, SetupGetNonInteractiveMode, WIN_STD_CALL_CONV,, <>, 0
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
-    ; Device Installer APIs
     @DefProto DllImport, SetupDiCreateDeviceInfoList, WIN_STD_CALL_CONV,, <:ptr GUID, :HWND>, 8
     @DefProto DllImport, SetupDiCreateDeviceInfoListExA, WIN_STD_CALL_CONV,, <:ptr GUID, :HWND, :PCSTR, :PVOID>, 16
     @DefProto DllImport, SetupDiCreateDeviceInfoListExW, WIN_STD_CALL_CONV,, <:ptr GUID, :HWND, :PCWSTR, :PVOID>, 16
@@ -2808,7 +2076,6 @@ ifndef _INC_SETUPAPI
     else
       SetupDiGetDeviceInfoListDetail equ <SetupDiGetDeviceInfoListDetailA>
     endif
-    ; Flags for SetupDiCreateDeviceInfo
     DICD_GENERATE_ID equ 00000001h
     DICD_INHERIT_CLASSDRVS equ 00000002h
     @DefProto DllImport, SetupDiCreateDeviceInfoA, WIN_STD_CALL_CONV,, <:HDEVINFO, :PCSTR, :ptr GUID, :PCSTR, :HWND, :DWORD, :PSP_DEVINFO_DATA>, 28
@@ -2818,7 +2085,6 @@ ifndef _INC_SETUPAPI
     else
       SetupDiCreateDeviceInfo equ <SetupDiCreateDeviceInfoA>
     endif
-    ; Flags for SetupDiOpenDeviceInfo
     DIOD_INHERIT_CLASSDRVS equ 00000002h
     DIOD_CANCEL_REMOVE equ 00000004h
     @DefProto DllImport, SetupDiOpenDeviceInfoA, WIN_STD_CALL_CONV,, <:HDEVINFO, :PCSTR, :HWND, :DWORD, :PSP_DEVINFO_DATA>, 20
@@ -2839,7 +2105,6 @@ ifndef _INC_SETUPAPI
     @DefProto DllImport, SetupDiEnumDeviceInfo, WIN_STD_CALL_CONV,, <:HDEVINFO, :DWORD, :PSP_DEVINFO_DATA>, 12
     @DefProto DllImport, SetupDiDestroyDeviceInfoList, WIN_STD_CALL_CONV,, <:HDEVINFO>, 4
     @DefProto DllImport, SetupDiEnumDeviceInterfaces, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :ptr GUID, :DWORD, :PSP_DEVICE_INTERFACE_DATA>, 20
-    ; Backward compatibility--do not use
     SetupDiEnumInterfaceDevice equ <SetupDiEnumDeviceInterfaces>
     @DefProto DllImport, SetupDiCreateDeviceInterfaceA, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :ptr GUID, :PCSTR, :DWORD, :PSP_DEVICE_INTERFACE_DATA>, 24
     @DefProto DllImport, SetupDiCreateDeviceInterfaceW, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :ptr GUID, :PCWSTR, :DWORD, :PSP_DEVICE_INTERFACE_DATA>, 24
@@ -2848,7 +2113,6 @@ ifndef _INC_SETUPAPI
     else
       SetupDiCreateDeviceInterface equ <SetupDiCreateDeviceInterfaceA>
     endif
-    ; Backward compatibility--do not use.
     SetupDiCreateInterfaceDeviceW equ <SetupDiCreateDeviceInterfaceW>
     SetupDiCreateInterfaceDeviceA equ <SetupDiCreateDeviceInterfaceA>
     ifdef UNICODE
@@ -2856,7 +2120,6 @@ ifndef _INC_SETUPAPI
     else
       SetupDiCreateInterfaceDevice equ <SetupDiCreateDeviceInterfaceA>
     endif
-    ; Flags for SetupDiOpenDeviceInterface
     DIODI_NO_ADD equ 00000001h
     @DefProto DllImport, SetupDiOpenDeviceInterfaceA, WIN_STD_CALL_CONV,, <:HDEVINFO, :PCSTR, :DWORD, :PSP_DEVICE_INTERFACE_DATA>, 16
     @DefProto DllImport, SetupDiOpenDeviceInterfaceW, WIN_STD_CALL_CONV,, <:HDEVINFO, :PCWSTR, :DWORD, :PSP_DEVICE_INTERFACE_DATA>, 16
@@ -2865,7 +2128,6 @@ ifndef _INC_SETUPAPI
     else
       SetupDiOpenDeviceInterface equ <SetupDiOpenDeviceInterfaceA>
     endif
-    ; Backward compatibility--do not use
     SetupDiOpenInterfaceDeviceW equ <SetupDiOpenDeviceInterfaceW>
     SetupDiOpenInterfaceDeviceA equ <SetupDiOpenDeviceInterfaceA>
     ifdef UNICODE
@@ -2874,13 +2136,10 @@ ifndef _INC_SETUPAPI
       SetupDiOpenInterfaceDevice equ <SetupDiOpenDeviceInterfaceA>
     endif
     @DefProto DllImport, SetupDiGetDeviceInterfaceAlias, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :ptr GUID, :PSP_DEVICE_INTERFACE_DATA>, 16
-    ; Backward compatibility--do not use.
     SetupDiGetInterfaceDeviceAlias equ <SetupDiGetDeviceInterfaceAlias>
     @DefProto DllImport, SetupDiDeleteDeviceInterfaceData, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVICE_INTERFACE_DATA>, 8
-    ; Backward compatibility--do not use.
     SetupDiDeleteInterfaceDeviceData equ <SetupDiDeleteDeviceInterfaceData>
     @DefProto DllImport, SetupDiRemoveDeviceInterface, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVICE_INTERFACE_DATA>, 8
-    ; Backward compatibility--do not use.
     SetupDiRemoveInterfaceDevice equ <SetupDiRemoveDeviceInterface>
     @DefProto DllImport, SetupDiGetDeviceInterfaceDetailA, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :PSP_DEVICE_INTERFACE_DETAIL_DATA_A, :DWORD, :PDWORD, :PSP_DEVINFO_DATA>, 24
     @DefProto DllImport, SetupDiGetDeviceInterfaceDetailW, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :PSP_DEVICE_INTERFACE_DETAIL_DATA_W, :DWORD, :PDWORD, :PSP_DEVINFO_DATA>, 24
@@ -2889,7 +2148,6 @@ ifndef _INC_SETUPAPI
     else
       SetupDiGetDeviceInterfaceDetail equ <SetupDiGetDeviceInterfaceDetailA>
     endif
-    ; Backward compatibility--do not use.
     SetupDiGetInterfaceDeviceDetailW equ <SetupDiGetDeviceInterfaceDetailW>
     SetupDiGetInterfaceDeviceDetailA equ <SetupDiGetDeviceInterfaceDetailA>
     ifdef UNICODE
@@ -2897,21 +2155,13 @@ ifndef _INC_SETUPAPI
     else
       SetupDiGetInterfaceDeviceDetail equ <SetupDiGetDeviceInterfaceDetailA>
     endif
-    ; Default install handler for DIF_INSTALLINTERFACES.
     @DefProto DllImport, SetupDiInstallDeviceInterfaces, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA>, 8
-    ; Backward compatibility--do not use.
     SetupDiInstallInterfaceDevices equ <SetupDiInstallDeviceInterfaces>
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
       @DefProto DllImport, SetupDiSetDeviceInterfaceDefault, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :DWORD, :PVOID>, 16
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
-    ; Default install handler for DIF_REGISTERDEVICE
-    ; Flags for SetupDiRegisterDeviceInfo
     SPRDI_FIND_DUPS equ 00000001h
     @DefProto DllImport, SetupDiRegisterDeviceInfo, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :PSP_DETSIG_CMPPROC, :PVOID, :PSP_DEVINFO_DATA>, 24
-    ; Ordinal values distinguishing between class drivers and
-    ; device drivers.
-    ; (Passed in 'DriverType' parameter of driver information list APIs)
     SPDIT_NODRIVER equ 00000000h
     SPDIT_CLASSDRIVER equ 00000001h
     SPDIT_COMPATDRIVER equ 00000002h
@@ -2946,15 +2196,11 @@ ifndef _INC_SETUPAPI
       SetupDiGetDriverInfoDetail equ <SetupDiGetDriverInfoDetailA>
     endif
     @DefProto DllImport, SetupDiDestroyDriverInfoList, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :DWORD>, 12
-    ; Flags controlling what is included in the device information set built
-    ; by SetupDiGetClassDevs
-    DIGCF_DEFAULT equ 00000001h; only valid with DIGCF_DEVICEINTERFACE
-
+    DIGCF_DEFAULT equ 00000001h
     DIGCF_PRESENT equ 00000002h
     DIGCF_ALLCLASSES equ 00000004h
     DIGCF_PROFILE equ 00000008h
     DIGCF_DEVICEINTERFACE equ 00000010h
-    ; Backward compatibility--do not use.
     DIGCF_INTERFACEDEVICE equ <DIGCF_DEVICEINTERFACE>
     @DefProto DllImport, SetupDiGetClassDevsA, WIN_STD_CALL_CONV,, <:ptr GUID, :PCSTR, :HWND, :DWORD>, 16
     @DefProto DllImport, SetupDiGetClassDevsW, WIN_STD_CALL_CONV,, <:ptr GUID, :PCWSTR, :HWND, :DWORD>, 16
@@ -2977,8 +2223,6 @@ ifndef _INC_SETUPAPI
     else
       SetupDiGetINFClass equ <SetupDiGetINFClassA>
     endif
-    ; Flags controlling exclusion from the class information list built
-    ; by SetupDiBuildClassInfoList(Ex)
     DIBCI_NOINSTALLCLASS equ 00000001h
     DIBCI_NODISPLAYCLASS equ 00000002h
     @DefProto DllImport, SetupDiBuildClassInfoList, WIN_STD_CALL_CONV,, <:DWORD, :LPGUID, :DWORD, :PDWORD>, 16
@@ -3004,25 +2248,16 @@ ifndef _INC_SETUPAPI
       SetupDiGetClassDescriptionEx equ <SetupDiGetClassDescriptionExA>
     endif
     @DefProto DllImport, SetupDiCallClassInstaller, WIN_STD_CALL_CONV,, <:DI_FUNCTION, :HDEVINFO, :PSP_DEVINFO_DATA>, 12
-    ; Default install handler for DIF_SELECTDEVICE
     @DefProto DllImport, SetupDiSelectDevice, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA>, 8
-    ; Default install handler for DIF_SELECTBESTCOMPATDRV
     @DefProto DllImport, SetupDiSelectBestCompatDrv, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA>, 8
-    ; Default install handler for DIF_INSTALLDEVICE
     @DefProto DllImport, SetupDiInstallDevice, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA>, 8
-    ; Default install handler for DIF_INSTALLDEVICEFILES
     @DefProto DllImport, SetupDiInstallDriverFiles, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA>, 8
-    ; Default install handler for DIF_REGISTER_COINSTALLERS
     @DefProto DllImport, SetupDiRegisterCoDeviceInstallers, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA>, 8
-    ; Default install handler for DIF_REMOVE
     @DefProto DllImport, SetupDiRemoveDevice, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA>, 8
-    ; Default install handler for DIF_UNREMOVE
     @DefProto DllImport, SetupDiUnremoveDevice, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA>, 8
     if _SETUPAPI_VER ge _WIN32_WINNT_WS03
       @DefProto DllImport, SetupDiRestartDevices, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA>, 8
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WS03
-    ; Default install handler for DIF_PROPERTYCHANGE
     @DefProto DllImport, SetupDiChangeState, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA>, 8
     @DefProto DllImport, SetupDiInstallClassA, WIN_STD_CALL_CONV,, <:HWND, :PCSTR, :DWORD, :HSPFILEQ>, 16
     @DefProto DllImport, SetupDiInstallClassW, WIN_STD_CALL_CONV,, <:HWND, :PCWSTR, :DWORD, :HSPFILEQ>, 16
@@ -3039,11 +2274,8 @@ ifndef _INC_SETUPAPI
       SetupDiInstallClassEx equ <SetupDiInstallClassExA>
     endif
     @DefProto DllImport, SetupDiOpenClassRegKey, WIN_STD_CALL_CONV,, <:ptr GUID, :REGSAM>, 8
-    ; Flags for SetupDiOpenClassRegKeyEx
-    DIOCR_INSTALLER equ 00000001h; class installer registry branch
-
-    DIOCR_INTERFACE equ 00000002h; interface class registry branch
-
+    DIOCR_INSTALLER equ 00000001h
+    DIOCR_INTERFACE equ 00000002h
     @DefProto DllImport, SetupDiOpenClassRegKeyExA, WIN_STD_CALL_CONV,, <:ptr GUID, :REGSAM, :DWORD, :PCSTR, :PVOID>, 20
     @DefProto DllImport, SetupDiOpenClassRegKeyExW, WIN_STD_CALL_CONV,, <:ptr GUID, :REGSAM, :DWORD, :PCWSTR, :PVOID>, 20
     ifdef UNICODE
@@ -3058,7 +2290,6 @@ ifndef _INC_SETUPAPI
     else
       SetupDiCreateDeviceInterfaceRegKey equ <SetupDiCreateDeviceInterfaceRegKeyA>
     endif
-    ; Backward compatibility--do not use.
     SetupDiCreateInterfaceDeviceRegKeyW equ <SetupDiCreateDeviceInterfaceRegKeyW>
     SetupDiCreateInterfaceDeviceRegKeyA equ <SetupDiCreateDeviceInterfaceRegKeyA>
     ifdef UNICODE
@@ -3067,19 +2298,12 @@ ifndef _INC_SETUPAPI
       SetupDiCreateInterfaceDeviceRegKey equ <SetupDiCreateDeviceInterfaceRegKeyA>
     endif
     @DefProto DllImport, SetupDiOpenDeviceInterfaceRegKey, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :DWORD, :REGSAM>, 16
-    ; Backward compatibility--do not use.
     SetupDiOpenInterfaceDeviceRegKey equ <SetupDiOpenDeviceInterfaceRegKey>
     @DefProto DllImport, SetupDiDeleteDeviceInterfaceRegKey, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVICE_INTERFACE_DATA, :DWORD>, 12
-    ; Backward compatibility--do not use.
     SetupDiDeleteInterfaceDeviceRegKey equ <SetupDiDeleteDeviceInterfaceRegKey>
-    ; KeyType values for SetupDiCreateDevRegKey, SetupDiOpenDevRegKey, and
-    ; SetupDiDeleteDevRegKey.
-    DIREG_DEV equ 00000001h; Open/Create/Delete device key
-
-    DIREG_DRV equ 00000002h; Open/Create/Delete driver key
-
-    DIREG_BOTH equ 00000004h; Delete both driver and Device key
-
+    DIREG_DEV equ 00000001h
+    DIREG_DRV equ 00000002h
+    DIREG_BOTH equ 00000004h
     @DefProto DllImport, SetupDiCreateDevRegKeyA, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :DWORD, :DWORD, :HINF, :PCSTR>, 28
     @DefProto DllImport, SetupDiCreateDevRegKeyW, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :DWORD, :DWORD, :HINF, :PCWSTR>, 28
     ifdef UNICODE
@@ -3116,12 +2340,8 @@ ifndef _INC_SETUPAPI
       ifdef UNICODE
         SetupDiSetDeviceInterfaceProperty equ <SetupDiSetDeviceInterfacePropertyW>
       endif
-      ; Flags for SetupDiGetClassPropertyKeys, SetupDiGetClassProperty, and
-      ; SetupDiSetClassProperty.
-      DICLASSPROP_INSTALLER equ 00000001h; device setup class property
-
-      DICLASSPROP_INTERFACE equ 00000002h; device interface class property
-
+      DICLASSPROP_INSTALLER equ 00000001h
+      DICLASSPROP_INTERFACE equ 00000002h
       @DefProto DllImport, SetupDiGetClassPropertyKeys, WIN_STD_CALL_CONV,, <:ptr GUID, :ptr DEVPROPKEY, :DWORD, :PDWORD, :DWORD>, 20
       @DefProto DllImport, SetupDiGetClassPropertyKeysExW, WIN_STD_CALL_CONV,, <:ptr GUID, :ptr DEVPROPKEY, :DWORD, :PDWORD, :DWORD, :PCWSTR, :PVOID>, 28
       ifdef UNICODE
@@ -3144,112 +2364,52 @@ ifndef _INC_SETUPAPI
         SetupDiSetClassPropertyEx equ <SetupDiSetClassPropertyExW>
       endif
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_LONGHORN
-    ; Device registry property codes
-    ; (Codes marked as read-only (R) may only be used for
-    ; SetupDiGetDeviceRegistryProperty)
-    ; These values should cover the same set of registry properties
-    ; as defined by the CM_DRP codes in cfgmgr32.h.
-    ; Note that SPDRP codes are zero based while CM_DRP codes are one based!
-    SPDRP_DEVICEDESC equ (00000000h); DeviceDesc (R/W)
-
-    SPDRP_HARDWAREID equ (00000001h); HardwareID (R/W)
-
-    SPDRP_COMPATIBLEIDS equ (00000002h); CompatibleIDs (R/W)
-
-    SPDRP_UNUSED0 equ (00000003h); unused
-
-    SPDRP_SERVICE equ (00000004h); Service (R/W)
-
-    SPDRP_UNUSED1 equ (00000005h); unused
-
-    SPDRP_UNUSED2 equ (00000006h); unused
-
-    SPDRP_CLASS equ (00000007h); Class (R--tied to ClassGUID)
-
-    SPDRP_CLASSGUID equ (00000008h); ClassGUID (R/W)
-
-    SPDRP_DRIVER equ (00000009h); Driver (R/W)
-
-    SPDRP_CONFIGFLAGS equ (0000000Ah); ConfigFlags (R/W)
-
-    SPDRP_MFG equ (0000000Bh); Mfg (R/W)
-
-    SPDRP_FRIENDLYNAME equ (0000000Ch); FriendlyName (R/W)
-
-    SPDRP_LOCATION_INFORMATION equ (0000000Dh); LocationInformation (R/W)
-
-    SPDRP_PHYSICAL_DEVICE_OBJECT_NAME equ (0000000Eh); PhysicalDeviceObjectName (R)
-
-    SPDRP_CAPABILITIES equ (0000000Fh); Capabilities (R)
-
-    SPDRP_UI_NUMBER equ (00000010h); UiNumber (R)
-
-    SPDRP_UPPERFILTERS equ (00000011h); UpperFilters (R/W)
-
-    SPDRP_LOWERFILTERS equ (00000012h); LowerFilters (R/W)
-
-    SPDRP_BUSTYPEGUID equ (00000013h); BusTypeGUID (R)
-
-    SPDRP_LEGACYBUSTYPE equ (00000014h); LegacyBusType (R)
-
-    SPDRP_BUSNUMBER equ (00000015h); BusNumber (R)
-
-    SPDRP_ENUMERATOR_NAME equ (00000016h); Enumerator Name (R)
-
-    SPDRP_SECURITY equ (00000017h); Security (R/W, binary form)
-
-    SPDRP_SECURITY_SDS equ (00000018h); Security (W, SDS form)
-
-    SPDRP_DEVTYPE equ (00000019h); Device Type (R/W)
-
-    SPDRP_EXCLUSIVE equ (0000001Ah); Device is exclusive-access (R/W)
-
-    SPDRP_CHARACTERISTICS equ (0000001Bh); Device Characteristics (R/W)
-
-    SPDRP_ADDRESS equ (0000001Ch); Device Address (R)
-
-    SPDRP_UI_NUMBER_DESC_FORMAT equ (0000001Dh); UiNumberDescFormat (R/W)
-
-    SPDRP_DEVICE_POWER_DATA equ (0000001Eh); Device Power Data (R)
-
-    SPDRP_REMOVAL_POLICY equ (0000001Fh); Removal Policy (R)
-
-    SPDRP_REMOVAL_POLICY_HW_DEFAULT equ (00000020h); Hardware Removal Policy (R)
-
-    SPDRP_REMOVAL_POLICY_OVERRIDE equ (00000021h); Removal Policy Override (RW)
-
-    SPDRP_INSTALL_STATE equ (00000022h); Device Install State (R)
-
-    SPDRP_LOCATION_PATHS equ (00000023h); Device Location Paths (R)
-
-    SPDRP_BASE_CONTAINERID equ (00000024h); Base ContainerID (R)
-
-    SPDRP_MAXIMUM_PROPERTY equ (00000025h); Upper bound on ordinals
-
-    ; Class registry property codes
-    ; (Codes marked as read-only (R) may only be used for
-    ; SetupDiGetClassRegistryProperty)
-    ; These values should cover the same set of registry properties
-    ; as defined by the CM_CRP codes in cfgmgr32.h.
-    ; they should also have a 1:1 correspondence with Device registers, where applicable
-    ; but no overlap otherwise
-    SPCRP_UPPERFILTERS equ (00000011h); UpperFilters (R/W)
-
-    SPCRP_LOWERFILTERS equ (00000012h); LowerFilters (R/W)
-
-    SPCRP_SECURITY equ (00000017h); Security (R/W, binary form)
-
-    SPCRP_SECURITY_SDS equ (00000018h); Security (W, SDS form)
-
-    SPCRP_DEVTYPE equ (00000019h); Device Type (R/W)
-
-    SPCRP_EXCLUSIVE equ (0000001Ah); Device is exclusive-access (R/W)
-
-    SPCRP_CHARACTERISTICS equ (0000001Bh); Device Characteristics (R/W)
-
-    SPCRP_MAXIMUM_PROPERTY equ (0000001Ch); Upper bound on ordinals
-
+    SPDRP_DEVICEDESC equ (00000000h)
+    SPDRP_HARDWAREID equ (00000001h)
+    SPDRP_COMPATIBLEIDS equ (00000002h)
+    SPDRP_UNUSED0 equ (00000003h)
+    SPDRP_SERVICE equ (00000004h)
+    SPDRP_UNUSED1 equ (00000005h)
+    SPDRP_UNUSED2 equ (00000006h)
+    SPDRP_CLASS equ (00000007h)
+    SPDRP_CLASSGUID equ (00000008h)
+    SPDRP_DRIVER equ (00000009h)
+    SPDRP_CONFIGFLAGS equ (0000000Ah)
+    SPDRP_MFG equ (0000000Bh)
+    SPDRP_FRIENDLYNAME equ (0000000Ch)
+    SPDRP_LOCATION_INFORMATION equ (0000000Dh)
+    SPDRP_PHYSICAL_DEVICE_OBJECT_NAME equ (0000000Eh)
+    SPDRP_CAPABILITIES equ (0000000Fh)
+    SPDRP_UI_NUMBER equ (00000010h)
+    SPDRP_UPPERFILTERS equ (00000011h)
+    SPDRP_LOWERFILTERS equ (00000012h)
+    SPDRP_BUSTYPEGUID equ (00000013h)
+    SPDRP_LEGACYBUSTYPE equ (00000014h)
+    SPDRP_BUSNUMBER equ (00000015h)
+    SPDRP_ENUMERATOR_NAME equ (00000016h)
+    SPDRP_SECURITY equ (00000017h)
+    SPDRP_SECURITY_SDS equ (00000018h)
+    SPDRP_DEVTYPE equ (00000019h)
+    SPDRP_EXCLUSIVE equ (0000001Ah)
+    SPDRP_CHARACTERISTICS equ (0000001Bh)
+    SPDRP_ADDRESS equ (0000001Ch)
+    SPDRP_UI_NUMBER_DESC_FORMAT equ (0000001Dh)
+    SPDRP_DEVICE_POWER_DATA equ (0000001Eh)
+    SPDRP_REMOVAL_POLICY equ (0000001Fh)
+    SPDRP_REMOVAL_POLICY_HW_DEFAULT equ (00000020h)
+    SPDRP_REMOVAL_POLICY_OVERRIDE equ (00000021h)
+    SPDRP_INSTALL_STATE equ (00000022h)
+    SPDRP_LOCATION_PATHS equ (00000023h)
+    SPDRP_BASE_CONTAINERID equ (00000024h)
+    SPDRP_MAXIMUM_PROPERTY equ (00000025h)
+    SPCRP_UPPERFILTERS equ (00000011h)
+    SPCRP_LOWERFILTERS equ (00000012h)
+    SPCRP_SECURITY equ (00000017h)
+    SPCRP_SECURITY_SDS equ (00000018h)
+    SPCRP_DEVTYPE equ (00000019h)
+    SPCRP_EXCLUSIVE equ (0000001Ah)
+    SPCRP_CHARACTERISTICS equ (0000001Bh)
+    SPCRP_MAXIMUM_PROPERTY equ (0000001Ch)
     @DefProto DllImport, SetupDiGetDeviceRegistryPropertyA, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :PDWORD, :PBYTE, :DWORD, :PDWORD>, 28
     @DefProto DllImport, SetupDiGetDeviceRegistryPropertyW, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :PDWORD, :PBYTE, :DWORD, :PDWORD>, 28
     ifdef UNICODE
@@ -3266,7 +2426,6 @@ ifndef _INC_SETUPAPI
         SetupDiGetClassRegistryProperty equ <SetupDiGetClassRegistryPropertyA>
       endif
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     @DefProto DllImport, SetupDiSetDeviceRegistryPropertyA, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :ptr BYTE, :DWORD>, 20
     @DefProto DllImport, SetupDiSetDeviceRegistryPropertyW, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :DWORD, :ptr BYTE, :DWORD>, 20
     ifdef UNICODE
@@ -3283,7 +2442,6 @@ ifndef _INC_SETUPAPI
         SetupDiSetClassRegistryProperty equ <SetupDiSetClassRegistryPropertyA>
       endif
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     @DefProto DllImport, SetupDiGetDeviceInstallParamsA, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DEVINSTALL_PARAMS_A>, 12
     @DefProto DllImport, SetupDiGetDeviceInstallParamsW, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :PSP_DEVINSTALL_PARAMS_W>, 12
     ifdef UNICODE
@@ -3330,8 +2488,6 @@ ifndef _INC_SETUPAPI
     if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
       @DefProto DllImport, SetupDiLoadDeviceIcon, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :UINT, :UINT, :DWORD, :ptr HICON>, 24
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_LONGHORN
-    ; Flags controlling the drawing of mini-icons
     DMI_MASK equ 00000001h
     DMI_BKCOLOR equ 00000002h
     DMI_USERECT equ 00000004h
@@ -3347,15 +2503,12 @@ ifndef _INC_SETUPAPI
     endif
     @DefProto DllImport, SetupDiGetClassImageIndex, WIN_STD_CALL_CONV,, <:PSP_CLASSIMAGELIST_DATA, :ptr GUID, :PINT>, 12
     @DefProto DllImport, SetupDiDestroyClassImageList, WIN_STD_CALL_CONV,, <:PSP_CLASSIMAGELIST_DATA>, 4
-    ; PropertySheetType values for the SetupDiGetClassDevPropertySheets API
     DIGCDP_FLAG_BASIC equ 00000001h
     DIGCDP_FLAG_ADVANCED equ 00000002h
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      DIGCDP_FLAG_REMOTE_BASIC equ 00000003h; not presently implemented
-
+      DIGCDP_FLAG_REMOTE_BASIC equ 00000003h
       DIGCDP_FLAG_REMOTE_ADVANCED equ 00000004h
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     @DefProto DllImport, SetupDiGetClassDevPropertySheetsA, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :LPPROPSHEETHEADERA, :DWORD, :PDWORD, :DWORD>, 24
     @DefProto DllImport, SetupDiGetClassDevPropertySheetsW, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :LPPROPSHEETHEADERW, :DWORD, :PDWORD, :DWORD>, 24
     ifdef UNICODE
@@ -3363,7 +2516,6 @@ ifndef _INC_SETUPAPI
     else
       SetupDiGetClassDevPropertySheets equ <SetupDiGetClassDevPropertySheetsA>
     endif
-    ; Define ICON IDs publicly exposed from setupapi.
     IDI_RESOURCEFIRST equ 159
     IDI_RESOURCE equ 159
     IDI_RESOURCELAST equ 161
@@ -3419,9 +2571,7 @@ ifndef _INC_SETUPAPI
     else
       SetupDiGetHwProfileFriendlyNameEx equ <SetupDiGetHwProfileFriendlyNameExA>
     endif
-    ; PageType values for SetupDiGetWizardPage API
     SPWPT_SELECTDEVICE equ 00000001h
-    ; Flags for SetupDiGetWizardPage API
     SPWP_USE_DEVINFO_DATA equ 00000001h
     @DefProto DllImport, SetupDiGetWizardPage, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :PSP_INSTALLWIZARD_DATA, :DWORD, :DWORD>, 20
     @DefProto DllImport, SetupDiGetSelectedDevice, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA>, 8
@@ -3435,7 +2585,6 @@ ifndef _INC_SETUPAPI
         SetupDiGetActualModelsSection equ <SetupDiGetActualModelsSectionA>
       endif
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WS03
     @DefProto DllImport, SetupDiGetActualSectionToInstallA, WIN_STD_CALL_CONV,, <:HINF, :PCSTR, :PSTR, :DWORD, :PDWORD, :ptr PSTR>, 24
     @DefProto DllImport, SetupDiGetActualSectionToInstallW, WIN_STD_CALL_CONV,, <:HINF, :PCWSTR, :PWSTR, :DWORD, :PDWORD, :ptr PWSTR>, 24
     ifdef UNICODE
@@ -3452,9 +2601,7 @@ ifndef _INC_SETUPAPI
         SetupDiGetActualSectionToInstallEx equ <SetupDiGetActualSectionToInstallExA>
       endif
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      ; SetupEnumInfSections is for low-level parsing of an INF
       @DefProto DllImport, SetupEnumInfSectionsA, WIN_STD_CALL_CONV,, <:HINF, :UINT, :PSTR, :UINT, :ptr UINT>, 20
       @DefProto DllImport, SetupEnumInfSectionsW, WIN_STD_CALL_CONV,, <:HINF, :UINT, :PWSTR, :UINT, :ptr UINT>, 20
       ifdef UNICODE
@@ -3463,21 +2610,20 @@ ifndef _INC_SETUPAPI
         SetupEnumInfSections equ <SetupEnumInfSectionsA>
       endif
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
       SP_INF_SIGNER_INFO_V1_A struct
         cbSize DWORD ?
-        CatalogFile SBYTE MAX_PATH dup (?)
-        DigitalSigner SBYTE MAX_PATH dup (?)
-        DigitalSignerVersion SBYTE MAX_PATH dup (?)
+        CatalogFile CHAR MAX_PATH dup (?)
+        DigitalSigner CHAR MAX_PATH dup (?)
+        DigitalSignerVersion CHAR MAX_PATH dup (?)
       SP_INF_SIGNER_INFO_V1_A ends
       _SP_INF_SIGNER_INFO_V1_A typedef SP_INF_SIGNER_INFO_V1_A
       PSP_INF_SIGNER_INFO_V1_A typedef ptr SP_INF_SIGNER_INFO_V1_A
       SP_INF_SIGNER_INFO_V1_W struct
         cbSize DWORD ?
-        CatalogFile WORD MAX_PATH dup (?)
-        DigitalSigner WORD MAX_PATH dup (?)
-        DigitalSignerVersion WORD MAX_PATH dup (?)
+        CatalogFile WCHAR MAX_PATH dup (?)
+        DigitalSigner WCHAR MAX_PATH dup (?)
+        DigitalSignerVersion WCHAR MAX_PATH dup (?)
       SP_INF_SIGNER_INFO_V1_W ends
       _SP_INF_SIGNER_INFO_V1_W typedef SP_INF_SIGNER_INFO_V1_W
       PSP_INF_SIGNER_INFO_V1_W typedef ptr SP_INF_SIGNER_INFO_V1_W
@@ -3491,18 +2637,18 @@ ifndef _INC_SETUPAPI
       if _SETUPAPI_VER ge _WIN32_WINNT_LONGHORN
         SP_INF_SIGNER_INFO_V2_A struct
           cbSize DWORD ?
-          CatalogFile SBYTE MAX_PATH dup (?)
-          DigitalSigner SBYTE MAX_PATH dup (?)
-          DigitalSignerVersion SBYTE MAX_PATH dup (?)
+          CatalogFile CHAR MAX_PATH dup (?)
+          DigitalSigner CHAR MAX_PATH dup (?)
+          DigitalSignerVersion CHAR MAX_PATH dup (?)
           SignerScore DWORD ?
         SP_INF_SIGNER_INFO_V2_A ends
         _SP_INF_SIGNER_INFO_V2_A typedef SP_INF_SIGNER_INFO_V2_A
         PSP_INF_SIGNER_INFO_V2_A typedef ptr SP_INF_SIGNER_INFO_V2_A
         SP_INF_SIGNER_INFO_V2_W struct
           cbSize DWORD ?
-          CatalogFile WORD MAX_PATH dup (?)
-          DigitalSigner WORD MAX_PATH dup (?)
-          DigitalSignerVersion WORD MAX_PATH dup (?)
+          CatalogFile WCHAR MAX_PATH dup (?)
+          DigitalSigner WCHAR MAX_PATH dup (?)
+          DigitalSignerVersion WCHAR MAX_PATH dup (?)
           SignerScore DWORD ?
         SP_INF_SIGNER_INFO_V2_W ends
         _SP_INF_SIGNER_INFO_V2_W typedef SP_INF_SIGNER_INFO_V2_W
@@ -3514,27 +2660,19 @@ ifndef _INC_SETUPAPI
           SP_INF_SIGNER_INFO_V2 typedef SP_INF_SIGNER_INFO_V2_A
           PSP_INF_SIGNER_INFO_V2 typedef PSP_INF_SIGNER_INFO_V2_A
         endif
-        ; Driver signer scores (high order bit of the signing byte means unsigned)
         SIGNERSCORE_UNKNOWN equ 0FF000000h
         SIGNERSCORE_W9X_SUSPECT equ 0C0000000h
         SIGNERSCORE_UNSIGNED equ 80000000h
         SIGNERSCORE_AUTHENTICODE equ 0F000000h
-        SIGNERSCORE_WHQL equ 0D000005h; base WHQL.
-
-        SIGNERSCORE_UNCLASSIFIED equ 0D000004h; UNCLASSIFIED == INBOX == STANDARD == PREMIUM when the SIGNERSCORE_MASK
-
-        SIGNERSCORE_INBOX equ 0D000003h; filter is applied.
-
+        SIGNERSCORE_WHQL equ 0D000005h
+        SIGNERSCORE_UNCLASSIFIED equ 0D000004h
+        SIGNERSCORE_INBOX equ 0D000003h
         SIGNERSCORE_LOGO_STANDARD equ 0D000002h
         SIGNERSCORE_LOGO_PREMIUM equ 0D000001h
-        SIGNERSCORE_MASK equ 0FF000000h; Mask out all but the upper BYTE which contains the ranking signer information
-
-        SIGNERSCORE_SIGNED_MASK equ 0F0000000h; Mask out only the upper nibble, which tells us if the package is signed or not.
-
+        SIGNERSCORE_MASK equ 0FF000000h
+        SIGNERSCORE_SIGNED_MASK equ 0F0000000h
       endif
-      ; _SETUPAPI_VER >= _WIN32_WINNT_LONGHORN
       if USE_SP_INF_SIGNER_INFO_V1 or (_SETUPAPI_VER lt _WIN32_WINNT_LONGHORN)
-        ; use version 1 signer info structure
         SP_INF_SIGNER_INFO_A typedef SP_INF_SIGNER_INFO_V1_A
         PSP_INF_SIGNER_INFO_A typedef PSP_INF_SIGNER_INFO_V1_A
         SP_INF_SIGNER_INFO_W typedef SP_INF_SIGNER_INFO_V1_W
@@ -3542,7 +2680,6 @@ ifndef _INC_SETUPAPI
         SP_INF_SIGNER_INFO typedef SP_INF_SIGNER_INFO_V1
         PSP_INF_SIGNER_INFO typedef PSP_INF_SIGNER_INFO_V1
       else
-      ; use version 2 signer info structure
         SP_INF_SIGNER_INFO_A typedef SP_INF_SIGNER_INFO_V2_A
         PSP_INF_SIGNER_INFO_A typedef PSP_INF_SIGNER_INFO_V2_A
         SP_INF_SIGNER_INFO_W typedef SP_INF_SIGNER_INFO_V2_W
@@ -3550,7 +2687,6 @@ ifndef _INC_SETUPAPI
         SP_INF_SIGNER_INFO typedef SP_INF_SIGNER_INFO_V2
         PSP_INF_SIGNER_INFO typedef PSP_INF_SIGNER_INFO_V2
       endif
-      ; use current version of signer info structure
       @DefProto DllImport, SetupVerifyInfFileA, WIN_STD_CALL_CONV,, <:PCSTR, :PSP_ALTPLATFORM_INFO, :PSP_INF_SIGNER_INFO_A>, 12
       @DefProto DllImport, SetupVerifyInfFileW, WIN_STD_CALL_CONV,, <:PCWSTR, :PSP_ALTPLATFORM_INFO, :PSP_INF_SIGNER_INFO_W>, 12
       ifdef UNICODE
@@ -3559,9 +2695,7 @@ ifndef _INC_SETUPAPI
         SetupVerifyInfFile equ <SetupVerifyInfFileA>
       endif
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     if _SETUPAPI_VER ge _WIN32_WINNT_WINXP
-      ; Flags for use by SetupDiGetCustomDeviceProperty
       DICUSTOMDEVPROP_MERGE_MULTISZ equ 00000001h
       @DefProto DllImport, SetupDiGetCustomDevicePropertyA, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :PCSTR, :DWORD, :PDWORD, :PBYTE, :DWORD, :PDWORD>, 32
       @DefProto DllImport, SetupDiGetCustomDevicePropertyW, WIN_STD_CALL_CONV,, <:HDEVINFO, :PSP_DEVINFO_DATA, :PCWSTR, :DWORD, :PDWORD, :PBYTE, :DWORD, :PDWORD>, 32
@@ -3571,12 +2705,7 @@ ifndef _INC_SETUPAPI
         SetupDiGetCustomDeviceProperty equ <SetupDiGetCustomDevicePropertyA>
       endif
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WINXP
     if _SETUPAPI_VER ge _WIN32_WINNT_WS03
-      ; To configure WMI security for downlevel platforms where the [DDInstall.WMI]
-      ; section isn't natively supported by setupapi, a redistributable co-installer
-      ; is supplied in the DDK for use on those platforms.
-      ; Flags for use by SetupConfigureWmiFromInfSection
       SCWMI_CLOBBER_SECURITY equ 00000001h
       @DefProto DllImport, SetupConfigureWmiFromInfSectionA, WIN_STD_CALL_CONV,, <:HINF, :PCSTR, :DWORD>, 12
       @DefProto DllImport, SetupConfigureWmiFromInfSectionW, WIN_STD_CALL_CONV,, <:HINF, :PCWSTR, :DWORD>, 12
@@ -3586,14 +2715,11 @@ ifndef _INC_SETUPAPI
         SetupConfigureWmiFromInfSection equ <SetupConfigureWmiFromInfSectionA>
       endif
     endif
-    ; _SETUPAPI_VER >= _WIN32_WINNT_WS03
     ifdef __cplusplus
       ;[...]
     endif
     include poppack.inc
     if Defined(_MSC_VER) and (_MSC_VER ge 1200)
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
 endif
-; _INC_SETUPAPI

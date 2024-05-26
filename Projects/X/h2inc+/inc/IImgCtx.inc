@@ -1,10 +1,9 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\iimgctx.h
 ;             Created on (UTC) 06/04/2024 06:15:55
 ;             Last modified on (UTC) 16/12/2023 11:07:06
 
-;--------------------------------------------------------------------------
 ifndef _IImgCtxObjects_H_
   _IImgCtxObjects_H_ equ <>
   include winapifamily.inc
@@ -18,7 +17,6 @@ ifndef _IImgCtxObjects_H_
     ifdef __cplusplus
       ;[...]
     endif
-    ; This interface is deprecated and will not be supported/available.
     IMGCHG_SIZE equ 0001h
     IMGCHG_VIEW equ 0002h
     IMGCHG_COMPLETE equ 0004h
@@ -43,38 +41,29 @@ ifndef _IImgCtxObjects_H_
     DWN_FORCEDITHER equ 00000080h
     DWN_RAWIMAGE equ 00000100h
     DWN_MIRRORIMAGE equ 00000200h
-    ;* Definition of interface: IImgCtx *
     INTERFACE equ <IImgCtx>
-    ; {3050f3d7-98b5-11cf-bb82-00aa00bdce0b}
     DEFINE_GUID IID_IImgCtx, 3050f3d7h, 98b5h, 11cfh, 0bbh, 82h, 00h, 0aah, 00h, 0bdh, 0ceh, 0bh
     DECLARE_INTERFACE_(IImgCtx, IUnknown)
       ifndef NO_BASEINTERFACE_FUNCS
-        ;* IUnknown methods *
-        STDMETHOD QueryInterface, :REFIID, :ptr POINTER
+        STDMETHOD QueryInterface, :, :ptr 
         STDMETHOD_ ULONG, AddRef
         STDMETHOD_ ULONG, Release
       endif
-      ;* IImgCtx methods *
-      ;* Initialization/Download methods *
-      STDMETHOD Load, :=POINTER, :DWORD
-      STDMETHOD SelectChanges, :DWORD, :DWORD, :DWORD
-      STDMETHOD SetCallback, :PFNIMGCTXCALLBACK, :ptr 
+      STDMETHOD Load, :, :
+      STDMETHOD SelectChanges, :, :, :
+      STDMETHOD SetCallback, :, :ptr 
       STDMETHOD Disconnect
-      ;* Query methods *
-      STDMETHOD GetUpdateRects, :ptr tagRECT, :ptr tagRECT, :ptr SDWORD
-      STDMETHOD GetStateInfo, :ptr DWORD, :ptr tagSIZE, :DWORD
-      STDMETHOD GetPalette, :ptr HPALETTE
-      ;* Rendering methods *
-      STDMETHOD Draw, :HDC, :ptr tagRECT
-      STDMETHOD Tile, :HDC, :ptr tagPOINT, :ptr tagRECT, :ptr tagSIZE
-      STDMETHOD StretchBlt, :HDC, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :DWORD
+      STDMETHOD GetUpdateRects, :ptr , :ptr , :ptr 
+      STDMETHOD GetStateInfo, :ptr , :ptr , :
+      STDMETHOD GetPalette, :ptr 
+      STDMETHOD Draw, :, :ptr 
+      STDMETHOD Tile, :, :ptr , :ptr , :ptr 
+      STDMETHOD StretchBlt, :, :, :, :, :, :, :, :, :, :
     DECLARE_INTERFACE__END
 
     ifdef COBJMACROS
       ;[...]
     endif
-    ; {3050f3d6-98b5-11cf-bb82-00aa00bdce0b}
     DEFINE_GUID CLSID_IImgCtx, 3050f3d6h, 98b5h, 11cfh, 0bbh, 82h, 00h, 0aah, 00h, 0bdh, 0ceh, 0bh
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
 endif

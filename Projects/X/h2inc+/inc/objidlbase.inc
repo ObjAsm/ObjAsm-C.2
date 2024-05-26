@@ -1,14 +1,12 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\objidlbase.h
 ;             Created on (UTC) 06/04/2024 06:15:57
 ;             Last modified on (UTC) 21/02/2024 18:18:08
 
-;* verify that the <rpcndr.h> version is high enough to compile this file*
 ifndef __REQUIRED_RPCNDR_H_VERSION__
   __REQUIRED_RPCNDR_H_VERSION__ equ 501
 endif
-;* verify that the <rpcsal.h> version is high enough to compile this file*
 ifndef __REQUIRED_RPCSAL_H_VERSION__
   __REQUIRED_RPCSAL_H_VERSION__ equ 100
 endif
@@ -16,12 +14,10 @@ include rpc.inc
 include rpcndr.inc
 ifndef __RPCNDR_H_VERSION__
   .err <this stub requires an updated version of < rpcndr.h >>
-  ;* __RPCNDR_H_VERSION__ *
 endif
 ifndef COM_NO_WINDOWS_H
   include windows.inc
   include ole2.inc
-  ;*COM_NO_WINDOWS_H*
 endif
 ifndef __objidlbase_h__
   __objidlbase_h__ equ <>
@@ -38,256 +34,188 @@ ifndef __objidlbase_h__
       endm
     endif
   endif
-  ;* Forward Declarations *
   ifndef __IMarshal_FWD_DEFINED__
     __IMarshal_FWD_DEFINED__ equ <>
-    ;* __IMarshal_FWD_DEFINED__ *
   endif
   ifndef __INoMarshal_FWD_DEFINED__
     __INoMarshal_FWD_DEFINED__ equ <>
-    ;* __INoMarshal_FWD_DEFINED__ *
   endif
   ifndef __IAgileObject_FWD_DEFINED__
     __IAgileObject_FWD_DEFINED__ equ <>
-    ;* __IAgileObject_FWD_DEFINED__ *
   endif
   ifndef __IActivationFilter_FWD_DEFINED__
     __IActivationFilter_FWD_DEFINED__ equ <>
-    ;* __IActivationFilter_FWD_DEFINED__ *
   endif
   ifndef __IMarshal2_FWD_DEFINED__
     __IMarshal2_FWD_DEFINED__ equ <>
-    ;* __IMarshal2_FWD_DEFINED__ *
   endif
   ifndef __IMalloc_FWD_DEFINED__
     __IMalloc_FWD_DEFINED__ equ <>
-    ;* __IMalloc_FWD_DEFINED__ *
   endif
   ifndef __IStdMarshalInfo_FWD_DEFINED__
     __IStdMarshalInfo_FWD_DEFINED__ equ <>
-    ;* __IStdMarshalInfo_FWD_DEFINED__ *
   endif
   ifndef __IExternalConnection_FWD_DEFINED__
     __IExternalConnection_FWD_DEFINED__ equ <>
-    ;* __IExternalConnection_FWD_DEFINED__ *
   endif
   ifndef __IMultiQI_FWD_DEFINED__
     __IMultiQI_FWD_DEFINED__ equ <>
-    ;* __IMultiQI_FWD_DEFINED__ *
   endif
   ifndef __AsyncIMultiQI_FWD_DEFINED__
     __AsyncIMultiQI_FWD_DEFINED__ equ <>
-    ;* __AsyncIMultiQI_FWD_DEFINED__ *
   endif
   ifndef __IInternalUnknown_FWD_DEFINED__
     __IInternalUnknown_FWD_DEFINED__ equ <>
-    ;* __IInternalUnknown_FWD_DEFINED__ *
   endif
   ifndef __IEnumUnknown_FWD_DEFINED__
     __IEnumUnknown_FWD_DEFINED__ equ <>
-    ;* __IEnumUnknown_FWD_DEFINED__ *
   endif
   ifndef __IEnumString_FWD_DEFINED__
     __IEnumString_FWD_DEFINED__ equ <>
-    ;* __IEnumString_FWD_DEFINED__ *
   endif
   ifndef __ISequentialStream_FWD_DEFINED__
     __ISequentialStream_FWD_DEFINED__ equ <>
-    ;* __ISequentialStream_FWD_DEFINED__ *
   endif
   ifndef __IStream_FWD_DEFINED__
     __IStream_FWD_DEFINED__ equ <>
-    ;* __IStream_FWD_DEFINED__ *
   endif
   ifndef __IRpcChannelBuffer_FWD_DEFINED__
     __IRpcChannelBuffer_FWD_DEFINED__ equ <>
-    ;* __IRpcChannelBuffer_FWD_DEFINED__ *
   endif
   ifndef __IRpcChannelBuffer2_FWD_DEFINED__
     __IRpcChannelBuffer2_FWD_DEFINED__ equ <>
-    ;* __IRpcChannelBuffer2_FWD_DEFINED__ *
   endif
   ifndef __IAsyncRpcChannelBuffer_FWD_DEFINED__
     __IAsyncRpcChannelBuffer_FWD_DEFINED__ equ <>
-    ;* __IAsyncRpcChannelBuffer_FWD_DEFINED__ *
   endif
   ifndef __IRpcChannelBuffer3_FWD_DEFINED__
     __IRpcChannelBuffer3_FWD_DEFINED__ equ <>
-    ;* __IRpcChannelBuffer3_FWD_DEFINED__ *
   endif
   ifndef __IRpcSyntaxNegotiate_FWD_DEFINED__
     __IRpcSyntaxNegotiate_FWD_DEFINED__ equ <>
-    ;* __IRpcSyntaxNegotiate_FWD_DEFINED__ *
   endif
   ifndef __IRpcProxyBuffer_FWD_DEFINED__
     __IRpcProxyBuffer_FWD_DEFINED__ equ <>
-    ;* __IRpcProxyBuffer_FWD_DEFINED__ *
   endif
   ifndef __IRpcStubBuffer_FWD_DEFINED__
     __IRpcStubBuffer_FWD_DEFINED__ equ <>
-    ;* __IRpcStubBuffer_FWD_DEFINED__ *
   endif
   ifndef __IPSFactoryBuffer_FWD_DEFINED__
     __IPSFactoryBuffer_FWD_DEFINED__ equ <>
-    ;* __IPSFactoryBuffer_FWD_DEFINED__ *
   endif
   ifndef __IChannelHook_FWD_DEFINED__
     __IChannelHook_FWD_DEFINED__ equ <>
-    ;* __IChannelHook_FWD_DEFINED__ *
   endif
   ifndef __IClientSecurity_FWD_DEFINED__
     __IClientSecurity_FWD_DEFINED__ equ <>
-    ;* __IClientSecurity_FWD_DEFINED__ *
   endif
   ifndef __IServerSecurity_FWD_DEFINED__
     __IServerSecurity_FWD_DEFINED__ equ <>
-    ;* __IServerSecurity_FWD_DEFINED__ *
   endif
   ifndef __IRpcOptions_FWD_DEFINED__
     __IRpcOptions_FWD_DEFINED__ equ <>
-    ;* __IRpcOptions_FWD_DEFINED__ *
   endif
   ifndef __IGlobalOptions_FWD_DEFINED__
     __IGlobalOptions_FWD_DEFINED__ equ <>
-    ;* __IGlobalOptions_FWD_DEFINED__ *
   endif
   ifndef __ISurrogate_FWD_DEFINED__
     __ISurrogate_FWD_DEFINED__ equ <>
-    ;* __ISurrogate_FWD_DEFINED__ *
   endif
   ifndef __IGlobalInterfaceTable_FWD_DEFINED__
     __IGlobalInterfaceTable_FWD_DEFINED__ equ <>
-    ;* __IGlobalInterfaceTable_FWD_DEFINED__ *
   endif
   ifndef __ISynchronize_FWD_DEFINED__
     __ISynchronize_FWD_DEFINED__ equ <>
-    ;* __ISynchronize_FWD_DEFINED__ *
   endif
   ifndef __ISynchronizeHandle_FWD_DEFINED__
     __ISynchronizeHandle_FWD_DEFINED__ equ <>
-    ;* __ISynchronizeHandle_FWD_DEFINED__ *
   endif
   ifndef __ISynchronizeEvent_FWD_DEFINED__
     __ISynchronizeEvent_FWD_DEFINED__ equ <>
-    ;* __ISynchronizeEvent_FWD_DEFINED__ *
   endif
   ifndef __ISynchronizeContainer_FWD_DEFINED__
     __ISynchronizeContainer_FWD_DEFINED__ equ <>
-    ;* __ISynchronizeContainer_FWD_DEFINED__ *
   endif
   ifndef __ISynchronizeMutex_FWD_DEFINED__
     __ISynchronizeMutex_FWD_DEFINED__ equ <>
-    ;* __ISynchronizeMutex_FWD_DEFINED__ *
   endif
   ifndef __ICancelMethodCalls_FWD_DEFINED__
     __ICancelMethodCalls_FWD_DEFINED__ equ <>
-    ;* __ICancelMethodCalls_FWD_DEFINED__ *
   endif
   ifndef __IAsyncManager_FWD_DEFINED__
     __IAsyncManager_FWD_DEFINED__ equ <>
-    ;* __IAsyncManager_FWD_DEFINED__ *
   endif
   ifndef __ICallFactory_FWD_DEFINED__
     __ICallFactory_FWD_DEFINED__ equ <>
-    ;* __ICallFactory_FWD_DEFINED__ *
   endif
   ifndef __IRpcHelper_FWD_DEFINED__
     __IRpcHelper_FWD_DEFINED__ equ <>
-    ;* __IRpcHelper_FWD_DEFINED__ *
   endif
   ifndef __IReleaseMarshalBuffers_FWD_DEFINED__
     __IReleaseMarshalBuffers_FWD_DEFINED__ equ <>
-    ;* __IReleaseMarshalBuffers_FWD_DEFINED__ *
   endif
   ifndef __IWaitMultiple_FWD_DEFINED__
     __IWaitMultiple_FWD_DEFINED__ equ <>
-    ;* __IWaitMultiple_FWD_DEFINED__ *
   endif
   ifndef __IAddrTrackingControl_FWD_DEFINED__
     __IAddrTrackingControl_FWD_DEFINED__ equ <>
-    ;* __IAddrTrackingControl_FWD_DEFINED__ *
   endif
   ifndef __IAddrExclusionControl_FWD_DEFINED__
     __IAddrExclusionControl_FWD_DEFINED__ equ <>
-    ;* __IAddrExclusionControl_FWD_DEFINED__ *
   endif
   ifndef __IPipeByte_FWD_DEFINED__
     __IPipeByte_FWD_DEFINED__ equ <>
-    ;* __IPipeByte_FWD_DEFINED__ *
   endif
   ifndef __AsyncIPipeByte_FWD_DEFINED__
     __AsyncIPipeByte_FWD_DEFINED__ equ <>
-    ;* __AsyncIPipeByte_FWD_DEFINED__ *
   endif
   ifndef __IPipeLong_FWD_DEFINED__
     __IPipeLong_FWD_DEFINED__ equ <>
-    ;* __IPipeLong_FWD_DEFINED__ *
   endif
   ifndef __AsyncIPipeLong_FWD_DEFINED__
     __AsyncIPipeLong_FWD_DEFINED__ equ <>
-    ;* __AsyncIPipeLong_FWD_DEFINED__ *
   endif
   ifndef __IPipeDouble_FWD_DEFINED__
     __IPipeDouble_FWD_DEFINED__ equ <>
-    ;* __IPipeDouble_FWD_DEFINED__ *
   endif
   ifndef __AsyncIPipeDouble_FWD_DEFINED__
     __AsyncIPipeDouble_FWD_DEFINED__ equ <>
-    ;* __AsyncIPipeDouble_FWD_DEFINED__ *
   endif
   ifndef __IEnumContextProps_FWD_DEFINED__
     __IEnumContextProps_FWD_DEFINED__ equ <>
-    ;* __IEnumContextProps_FWD_DEFINED__ *
   endif
   ifndef __IContext_FWD_DEFINED__
     __IContext_FWD_DEFINED__ equ <>
-    ;* __IContext_FWD_DEFINED__ *
   endif
   ifndef __IObjContext_FWD_DEFINED__
     __IObjContext_FWD_DEFINED__ equ <>
-    ;* __IObjContext_FWD_DEFINED__ *
   endif
   ifndef __IComThreadingInfo_FWD_DEFINED__
     __IComThreadingInfo_FWD_DEFINED__ equ <>
-    ;* __IComThreadingInfo_FWD_DEFINED__ *
   endif
   ifndef __IProcessInitControl_FWD_DEFINED__
     __IProcessInitControl_FWD_DEFINED__ equ <>
-    ;* __IProcessInitControl_FWD_DEFINED__ *
   endif
   ifndef __IFastRundown_FWD_DEFINED__
     __IFastRundown_FWD_DEFINED__ equ <>
-    ;* __IFastRundown_FWD_DEFINED__ *
   endif
   ifndef __IMarshalingStream_FWD_DEFINED__
     __IMarshalingStream_FWD_DEFINED__ equ <>
-    ;* __IMarshalingStream_FWD_DEFINED__ *
   endif
   ifndef __IAgileReference_FWD_DEFINED__
     __IAgileReference_FWD_DEFINED__ equ <>
-    ;* __IAgileReference_FWD_DEFINED__ *
   endif
   ifndef __IMachineGlobalObjectTable_FWD_DEFINED__
     __IMachineGlobalObjectTable_FWD_DEFINED__ equ <>
-    ;* __IMachineGlobalObjectTable_FWD_DEFINED__ *
   endif
   ifndef __ISupportAllowLowerTrustActivation_FWD_DEFINED__
     __ISupportAllowLowerTrustActivation_FWD_DEFINED__ equ <>
-    ;* __ISupportAllowLowerTrustActivation_FWD_DEFINED__ *
   endif
-  ;* header files for imported files *
   include unknwnbase.inc
   ifdef __cplusplus
     ;[...]
   endif
-  ;* interface __MIDL_itf_objidlbase_0000_0000 *
-  ;* [local] *
   include winapifamily.inc
-  ;+-------------------------------------------------------------------------
-  ;+-------------------------------------------------------------------------
-  ;  Microsoft Windows
-  ;  Copyright (c) Microsoft Corporation. All rights reserved.
-  ;--------------------------------------------------------------------------
   if (NTDDI_VERSION ge NTDDI_VISTA and  not Defined(_WIN32_WINNT))
     _WIN32_WINNT equ 0600h
   endif
@@ -303,9 +231,7 @@ ifndef __objidlbase_h__
   if (_MSC_VER ge 800)
     if _MSC_VER ge 1200
       ifndef _MSC_EXTENSIONS
-        ;* truncation of constant value *
       endif
-      ;* padding added after data member *
     endif
   endif
   if (_MSC_VER ge 1020)
@@ -313,15 +239,13 @@ ifndef __objidlbase_h__
   include limits.inc
   ifndef _OBJIDLBASE_
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       COSERVERINFO struct
         dwReserved1 DWORD ?
-        pwszName POINTER ?
+        pwszName LPWSTR ?
         pAuthInfo POINTER ?
         dwReserved2 DWORD ?
       COSERVERINFO ends
@@ -330,9 +254,6 @@ ifndef __objidlbase_h__
       externdef __MIDL_itf_objidlbase_0000_0000_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IMarshal_INTERFACE_DEFINED__
         __IMarshal_INTERFACE_DEFINED__ equ <>
-        ;* interface IMarshal *
-        ;* [uuid][object][local] *
-        ;* [unique] *
         LPMARSHAL typedef ptr IMarshal
         externdef IID_IMarshal:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -342,47 +263,22 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IMarshalVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IMarshal, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IMarshal
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IMarshal
             DECLSPEC_XFGVIRT(IMarshal, GetUnmarshalClass)
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD GetUnmarshalClass, :ptr IMarshal, :REFIID, :ptr, :DWORD, :ptr, :DWORD, :ptr CLSID
             DECLSPEC_XFGVIRT(IMarshal, GetMarshalSizeMax)
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD GetMarshalSizeMax, :ptr IMarshal, :REFIID, :ptr, :DWORD, :ptr, :DWORD, :ptr DWORD
             DECLSPEC_XFGVIRT(IMarshal, MarshalInterface)
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
             STD_METHOD MarshalInterface, :ptr IMarshal, :ptr IStream, :REFIID, :ptr, :DWORD, :ptr, :DWORD
             DECLSPEC_XFGVIRT(IMarshal, UnmarshalInterface)
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD UnmarshalInterface, :ptr IMarshal, :ptr IStream, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IMarshal, ReleaseMarshalData)
-            ;* [annotation][unique][in] *
             STD_METHOD ReleaseMarshalData, :ptr IMarshal, :ptr IStream
             DECLSPEC_XFGVIRT(IMarshal, DisconnectObject)
-            ;* [annotation][in] *
             STD_METHOD DisconnectObject, :ptr IMarshal, :DWORD
             ??Interface equ <>
             END_INTERFACE
@@ -393,14 +289,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IMarshal_INTERFACE_DEFINED__ *
       endif
       ifndef __INoMarshal_INTERFACE_DEFINED__
         __INoMarshal_INTERFACE_DEFINED__ equ <>
-        ;* interface INoMarshal *
-        ;* [uuid][object][local] *
         externdef IID_INoMarshal:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -409,8 +301,6 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <INoMarshalVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr INoMarshal, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr INoMarshal
@@ -425,14 +315,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __INoMarshal_INTERFACE_DEFINED__ *
       endif
       ifndef __IAgileObject_INTERFACE_DEFINED__
         __IAgileObject_INTERFACE_DEFINED__ equ <>
-        ;* interface IAgileObject *
-        ;* [uuid][object][local] *
         externdef IID_IAgileObject:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -441,8 +327,6 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IAgileObjectVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IAgileObject, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IAgileObject
@@ -457,21 +341,14 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IAgileObject_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_objidlbase_0000_0003 *
-      ;* [local] *
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       externdef __MIDL_itf_objidlbase_0000_0003_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_objidlbase_0000_0003_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IActivationFilter_INTERFACE_DEFINED__
         __IActivationFilter_INTERFACE_DEFINED__ equ <>
-        ;* interface IActivationFilter *
-        ;* [uuid][object][local] *
         ACTIVATIONTYPE typedef SDWORD
         ACTIVATIONTYPE_UNCATEGORIZED equ 0
         ACTIVATIONTYPE_FROM_MONIKER equ 1h
@@ -489,18 +366,13 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IActivationFilterVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IActivationFilter, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActivationFilter
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActivationFilter
             DECLSPEC_XFGVIRT(IActivationFilter, HandleActivation)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD HandleActivation, :ptr IActivationFilter, :DWORD, :REFCLSID, :ptr CLSID
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IActivationFilterVtbl ends
@@ -510,15 +382,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IActivationFilter_INTERFACE_DEFINED__ *
       endif
       ifndef __IMarshal2_INTERFACE_DEFINED__
         __IMarshal2_INTERFACE_DEFINED__ equ <>
-        ;* interface IMarshal2 *
-        ;* [uuid][object][local] *
-        ;* [unique] *
         LPMARSHAL2 typedef ptr IMarshal2
         externdef IID_IMarshal2:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -528,47 +395,22 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IMarshal2Vtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IMarshal2, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IMarshal2
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IMarshal2
             DECLSPEC_XFGVIRT(IMarshal, GetUnmarshalClass)
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD GetUnmarshalClass, :ptr IMarshal2, :REFIID, :ptr, :DWORD, :ptr, :DWORD, :ptr CLSID
             DECLSPEC_XFGVIRT(IMarshal, GetMarshalSizeMax)
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD GetMarshalSizeMax, :ptr IMarshal2, :REFIID, :ptr, :DWORD, :ptr, :DWORD, :ptr DWORD
             DECLSPEC_XFGVIRT(IMarshal, MarshalInterface)
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
             STD_METHOD MarshalInterface, :ptr IMarshal2, :ptr IStream, :REFIID, :ptr, :DWORD, :ptr, :DWORD
             DECLSPEC_XFGVIRT(IMarshal, UnmarshalInterface)
-            ;* [annotation][unique][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD UnmarshalInterface, :ptr IMarshal2, :ptr IStream, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IMarshal, ReleaseMarshalData)
-            ;* [annotation][unique][in] *
             STD_METHOD ReleaseMarshalData, :ptr IMarshal2, :ptr IStream
             DECLSPEC_XFGVIRT(IMarshal, DisconnectObject)
-            ;* [annotation][in] *
             STD_METHOD DisconnectObject, :ptr IMarshal2, :DWORD
             ??Interface equ <>
             END_INTERFACE
@@ -579,15 +421,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IMarshal2_INTERFACE_DEFINED__ *
       endif
       ifndef __IMalloc_INTERFACE_DEFINED__
         __IMalloc_INTERFACE_DEFINED__ equ <>
-        ;* interface IMalloc *
-        ;* [uuid][object][local] *
-        ;* [unique] *
         LPMALLOC typedef ptr IMalloc
         externdef IID_IMalloc:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -597,28 +434,20 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IMallocVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IMalloc, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IMalloc
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IMalloc
             DECLSPEC_XFGVIRT(IMalloc, Alloc)
-            ;* [annotation][in] *
             STD_METHOD Alloc, :ptr IMalloc, :SIZE_T
             DECLSPEC_XFGVIRT(IMalloc, Realloc)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD Realloc, :ptr IMalloc, :ptr, :SIZE_T
             DECLSPEC_XFGVIRT(IMalloc, Free)
-            ;* [annotation][in] *
             STD_METHOD Free, :ptr IMalloc, :ptr
             DECLSPEC_XFGVIRT(IMalloc, GetSize)
-            ;* [annotation][in] *
             STD_METHOD GetSize, :ptr IMalloc, :ptr
             DECLSPEC_XFGVIRT(IMalloc, DidAlloc)
-            ;* [annotation][in] *
             STD_METHOD DidAlloc, :ptr IMalloc, :ptr
             DECLSPEC_XFGVIRT(IMalloc, HeapMinimize)
             STD_METHOD HeapMinimize, :ptr IMalloc
@@ -631,15 +460,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IMalloc_INTERFACE_DEFINED__ *
       endif
       ifndef __IStdMarshalInfo_INTERFACE_DEFINED__
         __IStdMarshalInfo_INTERFACE_DEFINED__ equ <>
-        ;* interface IStdMarshalInfo *
-        ;* [uuid][object][local] *
-        ;* [unique] *
         LPSTDMARSHALINFO typedef ptr IStdMarshalInfo
         externdef IID_IStdMarshalInfo:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -649,17 +473,12 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IStdMarshalInfoVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IStdMarshalInfo, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IStdMarshalInfo
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IStdMarshalInfo
             DECLSPEC_XFGVIRT(IStdMarshalInfo, GetClassForHandler)
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][out] *
             STD_METHOD GetClassForHandler, :ptr IStdMarshalInfo, :DWORD, :ptr, :ptr CLSID
             ??Interface equ <>
             END_INTERFACE
@@ -670,15 +489,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IStdMarshalInfo_INTERFACE_DEFINED__ *
       endif
       ifndef __IExternalConnection_INTERFACE_DEFINED__
         __IExternalConnection_INTERFACE_DEFINED__ equ <>
-        ;* interface IExternalConnection *
-        ;* [uuid][local][object] *
-        ;* [unique] *
         LPEXTERNALCONNECTION typedef ptr IExternalConnection
         EXTCONN typedef SDWORD
         EXTCONN_STRONG equ 1h
@@ -694,21 +508,14 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IExternalConnectionVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IExternalConnection, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IExternalConnection
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IExternalConnection
             DECLSPEC_XFGVIRT(IExternalConnection, AddConnection)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD AddConnection, :ptr IExternalConnection, :DWORD, :DWORD
             DECLSPEC_XFGVIRT(IExternalConnection, ReleaseConnection)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
             STD_METHOD ReleaseConnection, :ptr IExternalConnection, :DWORD, :DWORD, :BOOL
             ??Interface equ <>
             END_INTERFACE
@@ -719,15 +526,9 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IExternalConnection_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_objidlbase_0000_0008 *
-      ;* [local] *
-      ;* [unique] *
       LPMULTIQI typedef ptr IMultiQI
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       MULTI_QI struct
@@ -740,8 +541,6 @@ ifndef __objidlbase_h__
       externdef __MIDL_itf_objidlbase_0000_0008_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IMultiQI_INTERFACE_DEFINED__
         __IMultiQI_INTERFACE_DEFINED__ equ <>
-        ;* interface IMultiQI *
-        ;* [async_uuid][uuid][local][object] *
         externdef IID_IMultiQI:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -750,16 +549,12 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IMultiQIVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IMultiQI, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IMultiQI
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IMultiQI
             DECLSPEC_XFGVIRT(IMultiQI, QueryMultipleInterfaces)
-            ;* [annotation][in] *
-            ;* [annotation][out][in] *
             STD_METHOD QueryMultipleInterfaces, :ptr IMultiQI, :ULONG, :ptr MULTI_QI
             ??Interface equ <>
             END_INTERFACE
@@ -770,14 +565,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IMultiQI_INTERFACE_DEFINED__ *
       endif
       ifndef __AsyncIMultiQI_INTERFACE_DEFINED__
         __AsyncIMultiQI_INTERFACE_DEFINED__ equ <>
-        ;* interface AsyncIMultiQI *
-        ;* [uuid][local][object] *
         externdef IID_AsyncIMultiQI:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -786,19 +577,14 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <AsyncIMultiQIVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr AsyncIMultiQI, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr AsyncIMultiQI
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr AsyncIMultiQI
             DECLSPEC_XFGVIRT(AsyncIMultiQI, Begin_QueryMultipleInterfaces)
-            ;* [annotation][in] *
-            ;* [annotation][out][in] *
             STD_METHOD Begin_QueryMultipleInterfaces, :ptr AsyncIMultiQI, :ULONG, :ptr MULTI_QI
             DECLSPEC_XFGVIRT(AsyncIMultiQI, Finish_QueryMultipleInterfaces)
-            ;* [annotation][out][in] *
             STD_METHOD Finish_QueryMultipleInterfaces, :ptr AsyncIMultiQI, :ptr MULTI_QI
             ??Interface equ <>
             END_INTERFACE
@@ -809,21 +595,14 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __AsyncIMultiQI_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_objidlbase_0000_0009 *
-      ;* [local] *
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       externdef __MIDL_itf_objidlbase_0000_0009_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_objidlbase_0000_0009_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IInternalUnknown_INTERFACE_DEFINED__
         __IInternalUnknown_INTERFACE_DEFINED__ equ <>
-        ;* interface IInternalUnknown *
-        ;* [uuid][local][object] *
         externdef IID_IInternalUnknown:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -832,16 +611,12 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IInternalUnknownVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IInternalUnknown, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IInternalUnknown
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IInternalUnknown
             DECLSPEC_XFGVIRT(IInternalUnknown, QueryInternalInterface)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD QueryInternalInterface, :ptr IInternalUnknown, :REFIID, :ptr ptr
             ??Interface equ <>
             END_INTERFACE
@@ -852,22 +627,14 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IInternalUnknown_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_objidlbase_0000_0010 *
-      ;* [local] *
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       externdef __MIDL_itf_objidlbase_0000_0010_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_objidlbase_0000_0010_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IEnumUnknown_INTERFACE_DEFINED__
         __IEnumUnknown_INTERFACE_DEFINED__ equ <>
-        ;* interface IEnumUnknown *
-        ;* [unique][uuid][object] *
-        ;* [unique] *
         LPENUMUNKNOWN typedef ptr IEnumUnknown
         externdef IID_IEnumUnknown:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -877,27 +644,19 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IEnumUnknownVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IEnumUnknown, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IEnumUnknown
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IEnumUnknown
             DECLSPEC_XFGVIRT(IEnumUnknown, Next)
-            ;* [local] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
-            ;* [annotation][out] *
             STD_METHOD Next, :ptr IEnumUnknown, :ULONG, :ptr ptr IUnknown, :ptr ULONG
             DECLSPEC_XFGVIRT(IEnumUnknown, Skip)
             STD_METHOD Skip, :ptr IEnumUnknown, :ULONG
-            ;* [in] *
             DECLSPEC_XFGVIRT(IEnumUnknown, Reset)
             STD_METHOD Reset, :ptr IEnumUnknown
             DECLSPEC_XFGVIRT(IEnumUnknown, Clone)
             STD_METHOD Clone, :ptr IEnumUnknown, :ptr ptr IEnumUnknown
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IEnumUnknownVtbl ends
@@ -907,19 +666,12 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* [call_as] *
         IEnumUnknown_RemoteNext_Proxy proto WIN_STD_CALL_CONV :ptr IEnumUnknown, :ULONG, :ptr ptr IUnknown, :ptr ULONG
-        ;* [out] *
         IEnumUnknown_RemoteNext_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-        ;* __IEnumUnknown_INTERFACE_DEFINED__ *
       endif
       ifndef __IEnumString_INTERFACE_DEFINED__
         __IEnumString_INTERFACE_DEFINED__ equ <>
-        ;* interface IEnumString *
-        ;* [unique][uuid][object] *
-        ;* [unique] *
         LPENUMSTRING typedef ptr IEnumString
         externdef IID_IEnumString:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -929,27 +681,19 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IEnumStringVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IEnumString, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IEnumString
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IEnumString
             DECLSPEC_XFGVIRT(IEnumString, Next)
-            ;* [local] *
-            ;* [in] *
-            ;* [annotation] *
-            ;* [annotation] *
             STD_METHOD Next, :ptr IEnumString, :ULONG, :ptr LPOLESTR, :ptr ULONG
             DECLSPEC_XFGVIRT(IEnumString, Skip)
             STD_METHOD Skip, :ptr IEnumString, :ULONG
-            ;* [in] *
             DECLSPEC_XFGVIRT(IEnumString, Reset)
             STD_METHOD Reset, :ptr IEnumString
             DECLSPEC_XFGVIRT(IEnumString, Clone)
             STD_METHOD Clone, :ptr IEnumString, :ptr ptr IEnumString
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IEnumStringVtbl ends
@@ -959,18 +703,12 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* [call_as] *
         IEnumString_RemoteNext_Proxy proto WIN_STD_CALL_CONV :ptr IEnumString, :ULONG, :ptr LPOLESTR, :ptr ULONG
-        ;* [out] *
         IEnumString_RemoteNext_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-        ;* __IEnumString_INTERFACE_DEFINED__ *
       endif
       ifndef __ISequentialStream_INTERFACE_DEFINED__
         __ISequentialStream_INTERFACE_DEFINED__ equ <>
-        ;* interface ISequentialStream *
-        ;* [unique][uuid][object] *
         externdef IID_ISequentialStream:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -979,24 +717,14 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <ISequentialStreamVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ISequentialStream, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ISequentialStream
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ISequentialStream
             DECLSPEC_XFGVIRT(ISequentialStream, Read)
-            ;* [local] *
-            ;* [annotation] *
-            ;* [annotation][in] *
-            ;* [annotation] *
             STD_METHOD Read, :ptr ISequentialStream, :ptr, :ULONG, :ptr ULONG
             DECLSPEC_XFGVIRT(ISequentialStream, Write)
-            ;* [local] *
-            ;* [annotation] *
-            ;* [annotation][in] *
-            ;* [annotation] *
             STD_METHOD Write, :ptr ISequentialStream, :ptr, :ULONG, :ptr ULONG
             ??Interface equ <>
             END_INTERFACE
@@ -1007,23 +735,14 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* [call_as] *
         ISequentialStream_RemoteRead_Proxy proto WIN_STD_CALL_CONV :ptr ISequentialStream, :ptr byte, :ULONG, :ptr ULONG
-        ;* [out] *
         ISequentialStream_RemoteRead_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-        ;* [call_as] *
         ISequentialStream_RemoteWrite_Proxy proto WIN_STD_CALL_CONV :ptr ISequentialStream, :ptr byte, :ULONG, :ptr ULONG
-        ;* [out] *
         ISequentialStream_RemoteWrite_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-        ;* __ISequentialStream_INTERFACE_DEFINED__ *
       endif
       ifndef __IStream_INTERFACE_DEFINED__
         __IStream_INTERFACE_DEFINED__ equ <>
-        ;* interface IStream *
-        ;* [unique][uuid][object] *
-        ;* [unique] *
         LPSTREAM typedef ptr IStream
         STATSTG struct
           pwcsName LPOLESTR ?
@@ -1066,63 +785,33 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IStreamVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IStream, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IStream
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IStream
             DECLSPEC_XFGVIRT(ISequentialStream, Read)
-            ;* [local] *
-            ;* [annotation] *
-            ;* [annotation][in] *
-            ;* [annotation] *
             STD_METHOD Read, :ptr IStream, :ptr, :ULONG, :ptr ULONG
             DECLSPEC_XFGVIRT(ISequentialStream, Write)
-            ;* [local] *
-            ;* [annotation] *
-            ;* [annotation][in] *
-            ;* [annotation] *
             STD_METHOD Write, :ptr IStream, :ptr, :ULONG, :ptr ULONG
             DECLSPEC_XFGVIRT(IStream, Seek)
-            ;* [local] *
-            ;* [in] *
-            ;* [in] *
-            ;* [annotation] *
             STD_METHOD Seek, :ptr IStream, :LARGE_INTEGER, :DWORD, :ptr ULARGE_INTEGER
             DECLSPEC_XFGVIRT(IStream, SetSize)
             STD_METHOD SetSize, :ptr IStream, :ULARGE_INTEGER
-            ;* [in] *
             DECLSPEC_XFGVIRT(IStream, CopyTo)
-            ;* [local] *
-            ;* [annotation][unique][in] *
-            ;* [in] *
-            ;* [annotation] *
-            ;* [annotation] *
             STD_METHOD CopyTo, :ptr IStream, :ptr IStream, :ULARGE_INTEGER, :ptr ULARGE_INTEGER, :ptr ULARGE_INTEGER
             DECLSPEC_XFGVIRT(IStream, Commit)
             STD_METHOD Commit, :ptr IStream, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IStream, Revert)
             STD_METHOD Revert, :ptr IStream
             DECLSPEC_XFGVIRT(IStream, LockRegion)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD LockRegion, :ptr IStream, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IStream, UnlockRegion)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD UnlockRegion, :ptr IStream, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IStream, Stat)
-            ;* [out] *
             STD_METHOD Stat, :ptr IStream, :ptr STATSTG, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IStream, Clone)
             STD_METHOD Clone, :ptr IStream, :ptr ptr IStream
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IStreamVtbl ends
@@ -1132,31 +821,23 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* [call_as] *
         IStream_RemoteSeek_Proxy proto WIN_STD_CALL_CONV :ptr IStream, :LARGE_INTEGER, :DWORD, :ptr ULARGE_INTEGER
-        ;* [out] *
         IStream_RemoteSeek_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-        ;* [call_as] *
         IStream_RemoteCopyTo_Proxy proto WIN_STD_CALL_CONV :ptr IStream, :ptr IStream, :ULARGE_INTEGER, :ptr ULARGE_INTEGER, :ptr ULARGE_INTEGER
-        ;* [out] *
         IStream_RemoteCopyTo_Stub proto WIN_STD_CALL_CONV :ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD
-        ;* __IStream_INTERFACE_DEFINED__ *
       endif
       ifndef __IRpcChannelBuffer_INTERFACE_DEFINED__
         __IRpcChannelBuffer_INTERFACE_DEFINED__ equ <>
-        ;* interface IRpcChannelBuffer *
-        ;* [uuid][object][local] *
         RPCOLEDATAREP typedef ULONG
         RPCOLEMESSAGE struct
           reserved1 POINTER ?
           dataRepresentation RPCOLEDATAREP ?
           Buffer POINTER ?
-          cbBuffer DWORD ?
-          iMethod DWORD ?
+          cbBuffer ULONG ?
+          iMethod ULONG ?
           reserved2 POINTER 5 dup (?)
-          rpcFlags DWORD ?
+          rpcFlags ULONG ?
         RPCOLEMESSAGE ends
         tagRPCOLEMESSAGE typedef RPCOLEMESSAGE
         PRPCOLEMESSAGE typedef ptr RPCOLEMESSAGE
@@ -1168,27 +849,18 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IRpcChannelBufferVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IRpcChannelBuffer, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IRpcChannelBuffer
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IRpcChannelBuffer
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, GetBuffer)
-            ;* [annotation][out][in] *
-            ;* [annotation][in] *
             STD_METHOD GetBuffer, :ptr IRpcChannelBuffer, :ptr RPCOLEMESSAGE, :REFIID
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, SendReceive)
-            ;* [annotation][out][in] *
-            ;* [annotation][out] *
             STD_METHOD SendReceive, :ptr IRpcChannelBuffer, :ptr RPCOLEMESSAGE, :ptr ULONG
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, FreeBuffer)
-            ;* [annotation][out][in] *
             STD_METHOD FreeBuffer, :ptr IRpcChannelBuffer, :ptr RPCOLEMESSAGE
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, GetDestCtx)
-            ;* [annotation][out] *
-            ;* [annotation][out] *
             STD_METHOD GetDestCtx, :ptr IRpcChannelBuffer, :ptr DWORD, :ptr ptr
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, IsConnected)
             STD_METHOD IsConnected, :ptr IRpcChannelBuffer
@@ -1201,21 +873,14 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IRpcChannelBuffer_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_objidlbase_0000_0015 *
-      ;* [local] *
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       externdef __MIDL_itf_objidlbase_0000_0015_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_objidlbase_0000_0015_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IRpcChannelBuffer2_INTERFACE_DEFINED__
         __IRpcChannelBuffer2_INTERFACE_DEFINED__ equ <>
-        ;* interface IRpcChannelBuffer2 *
-        ;* [uuid][object][local] *
         externdef IID_IRpcChannelBuffer2:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -1224,32 +889,22 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IRpcChannelBuffer2Vtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IRpcChannelBuffer2, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IRpcChannelBuffer2
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IRpcChannelBuffer2
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, GetBuffer)
-            ;* [annotation][out][in] *
-            ;* [annotation][in] *
             STD_METHOD GetBuffer, :ptr IRpcChannelBuffer2, :ptr RPCOLEMESSAGE, :REFIID
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, SendReceive)
-            ;* [annotation][out][in] *
-            ;* [annotation][out] *
             STD_METHOD SendReceive, :ptr IRpcChannelBuffer2, :ptr RPCOLEMESSAGE, :ptr ULONG
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, FreeBuffer)
-            ;* [annotation][out][in] *
             STD_METHOD FreeBuffer, :ptr IRpcChannelBuffer2, :ptr RPCOLEMESSAGE
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, GetDestCtx)
-            ;* [annotation][out] *
-            ;* [annotation][out] *
             STD_METHOD GetDestCtx, :ptr IRpcChannelBuffer2, :ptr DWORD, :ptr ptr
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, IsConnected)
             STD_METHOD IsConnected, :ptr IRpcChannelBuffer2
             DECLSPEC_XFGVIRT(IRpcChannelBuffer2, GetProtocolVersion)
-            ;* [annotation][out] *
             STD_METHOD GetProtocolVersion, :ptr IRpcChannelBuffer2, :ptr DWORD
             ??Interface equ <>
             END_INTERFACE
@@ -1260,14 +915,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IRpcChannelBuffer2_INTERFACE_DEFINED__ *
       endif
       ifndef __IAsyncRpcChannelBuffer_INTERFACE_DEFINED__
         __IAsyncRpcChannelBuffer_INTERFACE_DEFINED__ equ <>
-        ;* interface IAsyncRpcChannelBuffer *
-        ;* [unique][uuid][object][local] *
         externdef IID_IAsyncRpcChannelBuffer:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -1276,46 +927,28 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IAsyncRpcChannelBufferVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IAsyncRpcChannelBuffer, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IAsyncRpcChannelBuffer
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IAsyncRpcChannelBuffer
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, GetBuffer)
-            ;* [annotation][out][in] *
-            ;* [annotation][in] *
             STD_METHOD GetBuffer, :ptr IAsyncRpcChannelBuffer, :ptr RPCOLEMESSAGE, :REFIID
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, SendReceive)
-            ;* [annotation][out][in] *
-            ;* [annotation][out] *
             STD_METHOD SendReceive, :ptr IAsyncRpcChannelBuffer, :ptr RPCOLEMESSAGE, :ptr ULONG
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, FreeBuffer)
-            ;* [annotation][out][in] *
             STD_METHOD FreeBuffer, :ptr IAsyncRpcChannelBuffer, :ptr RPCOLEMESSAGE
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, GetDestCtx)
-            ;* [annotation][out] *
-            ;* [annotation][out] *
             STD_METHOD GetDestCtx, :ptr IAsyncRpcChannelBuffer, :ptr DWORD, :ptr ptr
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, IsConnected)
             STD_METHOD IsConnected, :ptr IAsyncRpcChannelBuffer
             DECLSPEC_XFGVIRT(IRpcChannelBuffer2, GetProtocolVersion)
-            ;* [annotation][out] *
             STD_METHOD GetProtocolVersion, :ptr IAsyncRpcChannelBuffer, :ptr DWORD
             DECLSPEC_XFGVIRT(IAsyncRpcChannelBuffer, Send)
-            ;* [annotation][out][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD Send, :ptr IAsyncRpcChannelBuffer, :ptr RPCOLEMESSAGE, :ptr ISynchronize, :ptr ULONG
             DECLSPEC_XFGVIRT(IAsyncRpcChannelBuffer, Receive)
-            ;* [annotation][out][in] *
-            ;* [annotation][out] *
             STD_METHOD Receive, :ptr IAsyncRpcChannelBuffer, :ptr RPCOLEMESSAGE, :ptr ULONG
             DECLSPEC_XFGVIRT(IAsyncRpcChannelBuffer, GetDestCtxEx)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
-            ;* [annotation][out] *
             STD_METHOD GetDestCtxEx, :ptr IAsyncRpcChannelBuffer, :ptr RPCOLEMESSAGE, :ptr DWORD, :ptr ptr
             ??Interface equ <>
             END_INTERFACE
@@ -1326,14 +959,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IAsyncRpcChannelBuffer_INTERFACE_DEFINED__ *
       endif
       ifndef __IRpcChannelBuffer3_INTERFACE_DEFINED__
         __IRpcChannelBuffer3_INTERFACE_DEFINED__ equ <>
-        ;* interface IRpcChannelBuffer3 *
-        ;* [uuid][object][local] *
         externdef IID_IRpcChannelBuffer3:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -1342,62 +971,36 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IRpcChannelBuffer3Vtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IRpcChannelBuffer3, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IRpcChannelBuffer3
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IRpcChannelBuffer3
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, GetBuffer)
-            ;* [annotation][out][in] *
-            ;* [annotation][in] *
             STD_METHOD GetBuffer, :ptr IRpcChannelBuffer3, :ptr RPCOLEMESSAGE, :REFIID
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, SendReceive)
-            ;* [annotation][out][in] *
-            ;* [annotation][out] *
             STD_METHOD SendReceive, :ptr IRpcChannelBuffer3, :ptr RPCOLEMESSAGE, :ptr ULONG
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, FreeBuffer)
-            ;* [annotation][out][in] *
             STD_METHOD FreeBuffer, :ptr IRpcChannelBuffer3, :ptr RPCOLEMESSAGE
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, GetDestCtx)
-            ;* [annotation][out] *
-            ;* [annotation][out] *
             STD_METHOD GetDestCtx, :ptr IRpcChannelBuffer3, :ptr DWORD, :ptr ptr
             DECLSPEC_XFGVIRT(IRpcChannelBuffer, IsConnected)
             STD_METHOD IsConnected, :ptr IRpcChannelBuffer3
             DECLSPEC_XFGVIRT(IRpcChannelBuffer2, GetProtocolVersion)
-            ;* [annotation][out] *
             STD_METHOD GetProtocolVersion, :ptr IRpcChannelBuffer3, :ptr DWORD
             DECLSPEC_XFGVIRT(IRpcChannelBuffer3, Send)
-            ;* [annotation][out][in] *
-            ;* [annotation][out] *
             STD_METHOD Send, :ptr IRpcChannelBuffer3, :ptr RPCOLEMESSAGE, :ptr ULONG
             DECLSPEC_XFGVIRT(IRpcChannelBuffer3, Receive)
-            ;* [annotation][out][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD Receive, :ptr IRpcChannelBuffer3, :ptr RPCOLEMESSAGE, :ULONG, :ptr ULONG
             DECLSPEC_XFGVIRT(IRpcChannelBuffer3, Cancel)
-            ;* [annotation][out][in] *
             STD_METHOD Cancel, :ptr IRpcChannelBuffer3, :ptr RPCOLEMESSAGE
             DECLSPEC_XFGVIRT(IRpcChannelBuffer3, GetCallContext)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD GetCallContext, :ptr IRpcChannelBuffer3, :ptr RPCOLEMESSAGE, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IRpcChannelBuffer3, GetDestCtxEx)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
-            ;* [annotation][out] *
             STD_METHOD GetDestCtxEx, :ptr IRpcChannelBuffer3, :ptr RPCOLEMESSAGE, :ptr DWORD, :ptr ptr
             DECLSPEC_XFGVIRT(IRpcChannelBuffer3, GetState)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD GetState, :ptr IRpcChannelBuffer3, :ptr RPCOLEMESSAGE, :ptr DWORD
             DECLSPEC_XFGVIRT(IRpcChannelBuffer3, RegisterAsync)
-            ;* [annotation][out][in] *
-            ;* [annotation][in] *
             STD_METHOD RegisterAsync, :ptr IRpcChannelBuffer3, :ptr RPCOLEMESSAGE, :ptr IAsyncManager
             ??Interface equ <>
             END_INTERFACE
@@ -1408,14 +1011,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IRpcChannelBuffer3_INTERFACE_DEFINED__ *
       endif
       ifndef __IRpcSyntaxNegotiate_INTERFACE_DEFINED__
         __IRpcSyntaxNegotiate_INTERFACE_DEFINED__ equ <>
-        ;* interface IRpcSyntaxNegotiate *
-        ;* [uuid][object][local] *
         externdef IID_IRpcSyntaxNegotiate:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -1424,15 +1023,12 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IRpcSyntaxNegotiateVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IRpcSyntaxNegotiate, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IRpcSyntaxNegotiate
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IRpcSyntaxNegotiate
             DECLSPEC_XFGVIRT(IRpcSyntaxNegotiate, NegotiateSyntax)
-            ;* [annotation][out][in] *
             STD_METHOD NegotiateSyntax, :ptr IRpcSyntaxNegotiate, :ptr RPCOLEMESSAGE
             ??Interface equ <>
             END_INTERFACE
@@ -1443,14 +1039,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IRpcSyntaxNegotiate_INTERFACE_DEFINED__ *
       endif
       ifndef __IRpcProxyBuffer_INTERFACE_DEFINED__
         __IRpcProxyBuffer_INTERFACE_DEFINED__ equ <>
-        ;* interface IRpcProxyBuffer *
-        ;* [uuid][object][local] *
         externdef IID_IRpcProxyBuffer:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -1459,15 +1051,12 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IRpcProxyBufferVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IRpcProxyBuffer, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IRpcProxyBuffer
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IRpcProxyBuffer
             DECLSPEC_XFGVIRT(IRpcProxyBuffer, Connect)
-            ;* [annotation][unique][in] *
             STD_METHOD Connect, :ptr IRpcProxyBuffer, :ptr IRpcChannelBuffer
             DECLSPEC_XFGVIRT(IRpcProxyBuffer, Disconnect)
             STD_METHOD Disconnect, :ptr IRpcProxyBuffer
@@ -1480,21 +1069,14 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IRpcProxyBuffer_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_objidlbase_0000_0020 *
-      ;* [local] *
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       externdef __MIDL_itf_objidlbase_0000_0020_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_objidlbase_0000_0020_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IRpcStubBuffer_INTERFACE_DEFINED__
         __IRpcStubBuffer_INTERFACE_DEFINED__ equ <>
-        ;* interface IRpcStubBuffer *
-        ;* [uuid][object][local] *
         externdef IID_IRpcStubBuffer:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -1503,32 +1085,24 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IRpcStubBufferVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IRpcStubBuffer, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IRpcStubBuffer
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IRpcStubBuffer
             DECLSPEC_XFGVIRT(IRpcStubBuffer, Connect)
-            ;* [annotation][in] *
             STD_METHOD Connect, :ptr IRpcStubBuffer, :ptr IUnknown
             DECLSPEC_XFGVIRT(IRpcStubBuffer, Disconnect)
             STD_METHOD Disconnect, :ptr IRpcStubBuffer
             DECLSPEC_XFGVIRT(IRpcStubBuffer, Invoke)
-            ;* [annotation][out][in] *
-            ;* [annotation][in] *
             STD_METHOD Invoke_, :ptr IRpcStubBuffer, :ptr RPCOLEMESSAGE, :ptr IRpcChannelBuffer
             DECLSPEC_XFGVIRT(IRpcStubBuffer, IsIIDSupported)
-            ;* [annotation][in] *
             STD_METHOD IsIIDSupported, :ptr IRpcStubBuffer, :REFIID
             DECLSPEC_XFGVIRT(IRpcStubBuffer, CountRefs)
             STD_METHOD CountRefs, :ptr IRpcStubBuffer
             DECLSPEC_XFGVIRT(IRpcStubBuffer, DebugServerQueryInterface)
-            ;* [annotation][out] *
             STD_METHOD DebugServerQueryInterface, :ptr IRpcStubBuffer, :ptr ptr
             DECLSPEC_XFGVIRT(IRpcStubBuffer, DebugServerRelease)
-            ;* [annotation][in] *
             STD_METHOD DebugServerRelease, :ptr IRpcStubBuffer, :ptr
             ??Interface equ <>
             END_INTERFACE
@@ -1539,14 +1113,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IRpcStubBuffer_INTERFACE_DEFINED__ *
       endif
       ifndef __IPSFactoryBuffer_INTERFACE_DEFINED__
         __IPSFactoryBuffer_INTERFACE_DEFINED__ equ <>
-        ;* interface IPSFactoryBuffer *
-        ;* [uuid][object][local] *
         externdef IID_IPSFactoryBuffer:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -1555,23 +1125,14 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IPSFactoryBufferVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IPSFactoryBuffer, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IPSFactoryBuffer
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IPSFactoryBuffer
             DECLSPEC_XFGVIRT(IPSFactoryBuffer, CreateProxy)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
-            ;* [annotation][out] *
             STD_METHOD CreateProxy, :ptr IPSFactoryBuffer, :ptr IUnknown, :REFIID, :ptr ptr IRpcProxyBuffer, :ptr ptr
             DECLSPEC_XFGVIRT(IPSFactoryBuffer, CreateStub)
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
-            ;* [annotation][out] *
             STD_METHOD CreateStub, :ptr IPSFactoryBuffer, :REFIID, :ptr IUnknown, :ptr ptr IRpcStubBuffer
             ??Interface equ <>
             END_INTERFACE
@@ -1582,17 +1143,11 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IPSFactoryBuffer_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_objidlbase_0000_0022 *
-      ;* [local] *
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       if (_WIN32_WINNT ge 0400h) or Defined(_WIN32_DCOM)
-        ; This interface is only valid on Windows NT 4.0
         SChannelHookCallInfo struct
           iid IID <>
           cbSize DWORD ?
@@ -1605,8 +1160,6 @@ ifndef __objidlbase_h__
         externdef __MIDL_itf_objidlbase_0000_0022_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IChannelHook_INTERFACE_DEFINED__
           __IChannelHook_INTERFACE_DEFINED__ equ <>
-          ;* interface IChannelHook *
-          ;* [uuid][object][local] *
           externdef IID_IChannelHook:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -1615,51 +1168,22 @@ ifndef __objidlbase_h__
               BEGIN_INTERFACE
               ??Interface equ <IChannelHookVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IChannelHook, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IChannelHook
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IChannelHook
               DECLSPEC_XFGVIRT(IChannelHook, ClientGetSize)
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][out] *
               STD_METHOD ClientGetSize, :ptr IChannelHook, :REFGUID, :REFIID, :ptr ULONG
               DECLSPEC_XFGVIRT(IChannelHook, ClientFillBuffer)
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][out][in] *
-              ;* [annotation][in] *
               STD_METHOD ClientFillBuffer, :ptr IChannelHook, :REFGUID, :REFIID, :ptr ULONG, :ptr
               DECLSPEC_XFGVIRT(IChannelHook, ClientNotify)
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
               STD_METHOD ClientNotify, :ptr IChannelHook, :REFGUID, :REFIID, :ULONG, :ptr, :DWORD, :HRESULT
               DECLSPEC_XFGVIRT(IChannelHook, ServerNotify)
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
               STD_METHOD ServerNotify, :ptr IChannelHook, :REFGUID, :REFIID, :ULONG, :ptr, :DWORD
               DECLSPEC_XFGVIRT(IChannelHook, ServerGetSize)
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][out] *
               STD_METHOD ServerGetSize, :ptr IChannelHook, :REFGUID, :REFIID, :HRESULT, :ptr ULONG
               DECLSPEC_XFGVIRT(IChannelHook, ServerFillBuffer)
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][out][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
               STD_METHOD ServerFillBuffer, :ptr IChannelHook, :REFGUID, :REFIID, :ptr ULONG, :ptr, :HRESULT
               ??Interface equ <>
               END_INTERFACE
@@ -1670,25 +1194,16 @@ ifndef __objidlbase_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IChannelHook_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_objidlbase_0000_0023 *
-        ;* [local] *
       endif
-      ;DCOM
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if (_WIN32_WINNT ge 0400h) or Defined(_WIN32_DCOM)
-      ; This interface is only valid on Windows NT 4.0
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
         externdef __MIDL_itf_objidlbase_0000_0023_v0_0_c_ifspec:RPC_IF_HANDLE
         externdef __MIDL_itf_objidlbase_0000_0023_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IClientSecurity_INTERFACE_DEFINED__
           __IClientSecurity_INTERFACE_DEFINED__ equ <>
-          ;* interface IClientSecurity *
-          ;* [uuid][object][local] *
           SOLE_AUTHENTICATION_SERVICE struct
             dwAuthnSvc DWORD ?
             dwAuthzSvc DWORD ?
@@ -1739,36 +1254,16 @@ ifndef __objidlbase_h__
               BEGIN_INTERFACE
               ??Interface equ <IClientSecurityVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IClientSecurity, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IClientSecurity
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IClientSecurity
               DECLSPEC_XFGVIRT(IClientSecurity, QueryBlanket)
-              ;* [annotation][in] *
-              ;* [annotation][out] *
-              ;* [annotation][out] *
-              ;* [annotation][out] *
-              ;* [annotation][out] *
-              ;* [annotation][out] *
-              ;* [annotation][out] *
-              ;* [annotation][out] *
               STD_METHOD QueryBlanket, :ptr IClientSecurity, :ptr IUnknown, :ptr DWORD, :ptr DWORD, :ptr ptr OLECHAR, :ptr DWORD, :ptr DWORD, :ptr ptr, :ptr DWORD
               DECLSPEC_XFGVIRT(IClientSecurity, SetBlanket)
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
               STD_METHOD SetBlanket, :ptr IClientSecurity, :ptr IUnknown, :DWORD, :DWORD, :ptr OLECHAR, :DWORD, :DWORD, :ptr, :DWORD
               DECLSPEC_XFGVIRT(IClientSecurity, CopyProxy)
-              ;* [annotation][in] *
-              ;* [annotation][out] *
               STD_METHOD CopyProxy, :ptr IClientSecurity, :ptr IUnknown, :ptr ptr IUnknown
               ??Interface equ <>
               END_INTERFACE
@@ -1779,21 +1274,14 @@ ifndef __objidlbase_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IClientSecurity_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_objidlbase_0000_0024 *
-        ;* [local] *
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
         externdef __MIDL_itf_objidlbase_0000_0024_v0_0_c_ifspec:RPC_IF_HANDLE
         externdef __MIDL_itf_objidlbase_0000_0024_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IServerSecurity_INTERFACE_DEFINED__
           __IServerSecurity_INTERFACE_DEFINED__ equ <>
-          ;* interface IServerSecurity *
-          ;* [uuid][object][local] *
           externdef IID_IServerSecurity:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -1802,21 +1290,12 @@ ifndef __objidlbase_h__
               BEGIN_INTERFACE
               ??Interface equ <IServerSecurityVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IServerSecurity, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IServerSecurity
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IServerSecurity
               DECLSPEC_XFGVIRT(IServerSecurity, QueryBlanket)
-              ;* [annotation][out] *
-              ;* [annotation][out] *
-              ;* [annotation][out] *
-              ;* [annotation][out] *
-              ;* [annotation][out] *
-              ;* [annotation][out] *
-              ;* [annotation][out][in] *
               STD_METHOD QueryBlanket, :ptr IServerSecurity, :ptr DWORD, :ptr DWORD, :ptr ptr OLECHAR, :ptr DWORD, :ptr DWORD, :ptr ptr, :ptr DWORD
               DECLSPEC_XFGVIRT(IServerSecurity, ImpersonateClient)
               STD_METHOD ImpersonateClient, :ptr IServerSecurity
@@ -1833,12 +1312,8 @@ ifndef __objidlbase_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IServerSecurity_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_objidlbase_0000_0025 *
-        ;* [local] *
         RPCOPT_PROPERTIES typedef SDWORD
         COMBND_RPCTIMEOUT equ 1h
         COMBND_SERVER_LOCALITY equ 2h
@@ -1858,8 +1333,6 @@ ifndef __objidlbase_h__
         externdef __MIDL_itf_objidlbase_0000_0025_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IRpcOptions_INTERFACE_DEFINED__
           __IRpcOptions_INTERFACE_DEFINED__ equ <>
-          ;* interface IRpcOptions *
-          ;* [uuid][local][object] *
           externdef IID_IRpcOptions:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -1868,22 +1341,14 @@ ifndef __objidlbase_h__
               BEGIN_INTERFACE
               ??Interface equ <IRpcOptionsVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IRpcOptions, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IRpcOptions
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IRpcOptions
               DECLSPEC_XFGVIRT(IRpcOptions, Set)
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
               STD_METHOD Set, :ptr IRpcOptions, :ptr IUnknown, :RPCOPT_PROPERTIES, :ULONG_PTR
               DECLSPEC_XFGVIRT(IRpcOptions, Query)
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][out] *
               STD_METHOD Query, :ptr IRpcOptions, :ptr IUnknown, :RPCOPT_PROPERTIES, :ptr ULONG_PTR
               ??Interface equ <>
               END_INTERFACE
@@ -1894,13 +1359,8 @@ ifndef __objidlbase_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IRpcOptions_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_objidlbase_0000_0026 *
-        ;* [local] *
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
         GLOBALOPT_PROPERTIES typedef SDWORD
@@ -1950,8 +1410,6 @@ ifndef __objidlbase_h__
         externdef __MIDL_itf_objidlbase_0000_0026_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IGlobalOptions_INTERFACE_DEFINED__
           __IGlobalOptions_INTERFACE_DEFINED__ equ <>
-          ;* interface IGlobalOptions *
-          ;* [uuid][unique][local][object] *
           externdef IID_IGlobalOptions:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -1960,20 +1418,14 @@ ifndef __objidlbase_h__
               BEGIN_INTERFACE
               ??Interface equ <IGlobalOptionsVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IGlobalOptions, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IGlobalOptions
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IGlobalOptions
               DECLSPEC_XFGVIRT(IGlobalOptions, Set)
-              ;* [annotation][in] *
-              ;* [annotation][in] *
               STD_METHOD Set, :ptr IGlobalOptions, :GLOBALOPT_PROPERTIES, :ULONG_PTR
               DECLSPEC_XFGVIRT(IGlobalOptions, Query)
-              ;* [annotation][in] *
-              ;* [annotation][out] *
               STD_METHOD Query, :ptr IGlobalOptions, :GLOBALOPT_PROPERTIES, :ptr ULONG_PTR
               ??Interface equ <>
               END_INTERFACE
@@ -1984,24 +1436,15 @@ ifndef __objidlbase_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IGlobalOptions_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_objidlbase_0000_0027 *
-        ;* [local] *
-        ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
       endif
     endif
-    ;DCOM
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       externdef __MIDL_itf_objidlbase_0000_0027_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_objidlbase_0000_0027_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __ISurrogate_INTERFACE_DEFINED__
         __ISurrogate_INTERFACE_DEFINED__ equ <>
-        ;* interface ISurrogate *
-        ;* [object][unique][version][uuid] *
-        ;* [unique] *
         LPSURROGATE typedef ptr ISurrogate
         externdef IID_ISurrogate:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -2011,8 +1454,6 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <ISurrogateVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ISurrogate, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ISurrogate
@@ -2020,7 +1461,6 @@ ifndef __objidlbase_h__
             STD_METHOD Release, :ptr ISurrogate
             DECLSPEC_XFGVIRT(ISurrogate, LoadDllServer)
             STD_METHOD LoadDllServer, :ptr ISurrogate, :REFCLSID
-            ;* [in] *
             DECLSPEC_XFGVIRT(ISurrogate, FreeSurrogate)
             STD_METHOD FreeSurrogate, :ptr ISurrogate
             ??Interface equ <>
@@ -2032,15 +1472,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ISurrogate_INTERFACE_DEFINED__ *
       endif
       ifndef __IGlobalInterfaceTable_INTERFACE_DEFINED__
         __IGlobalInterfaceTable_INTERFACE_DEFINED__ equ <>
-        ;* interface IGlobalInterfaceTable *
-        ;* [uuid][object][local] *
-        ;* [unique] *
         LPGLOBALINTERFACETABLE typedef ptr IGlobalInterfaceTable
         externdef IID_IGlobalInterfaceTable:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -2050,25 +1485,16 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IGlobalInterfaceTableVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IGlobalInterfaceTable, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IGlobalInterfaceTable
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IGlobalInterfaceTable
             DECLSPEC_XFGVIRT(IGlobalInterfaceTable, RegisterInterfaceInGlobal)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD RegisterInterfaceInGlobal, :ptr IGlobalInterfaceTable, :ptr IUnknown, :REFIID, :ptr DWORD
             DECLSPEC_XFGVIRT(IGlobalInterfaceTable, RevokeInterfaceFromGlobal)
-            ;* [annotation][in] *
             STD_METHOD RevokeInterfaceFromGlobal, :ptr IGlobalInterfaceTable, :DWORD
             DECLSPEC_XFGVIRT(IGlobalInterfaceTable, GetInterfaceFromGlobal)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD GetInterfaceFromGlobal, :ptr IGlobalInterfaceTable, :DWORD, :REFIID, :ptr ptr
             ??Interface equ <>
             END_INTERFACE
@@ -2079,21 +1505,14 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IGlobalInterfaceTable_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_objidlbase_0000_0029 *
-      ;* [local] *
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       externdef __MIDL_itf_objidlbase_0000_0029_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_objidlbase_0000_0029_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __ISynchronize_INTERFACE_DEFINED__
         __ISynchronize_INTERFACE_DEFINED__ equ <>
-        ;* interface ISynchronize *
-        ;* [uuid][object] *
         externdef IID_ISynchronize:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2102,17 +1521,13 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <ISynchronizeVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ISynchronize, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ISynchronize
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ISynchronize
             DECLSPEC_XFGVIRT(ISynchronize, Wait)
-            ;* [in] *
             STD_METHOD Wait_, :ptr ISynchronize, :DWORD, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(ISynchronize, Signal)
             STD_METHOD Signal, :ptr ISynchronize
             DECLSPEC_XFGVIRT(ISynchronize, Reset)
@@ -2126,14 +1541,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ISynchronize_INTERFACE_DEFINED__ *
       endif
       ifndef __ISynchronizeHandle_INTERFACE_DEFINED__
         __ISynchronizeHandle_INTERFACE_DEFINED__ equ <>
-        ;* interface ISynchronizeHandle *
-        ;* [uuid][object][local] *
         externdef IID_ISynchronizeHandle:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2142,15 +1553,12 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <ISynchronizeHandleVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ISynchronizeHandle, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ISynchronizeHandle
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ISynchronizeHandle
             DECLSPEC_XFGVIRT(ISynchronizeHandle, GetHandle)
-            ;* [annotation][out] *
             STD_METHOD GetHandle, :ptr ISynchronizeHandle, :ptr HANDLE
             ??Interface equ <>
             END_INTERFACE
@@ -2161,14 +1569,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ISynchronizeHandle_INTERFACE_DEFINED__ *
       endif
       ifndef __ISynchronizeEvent_INTERFACE_DEFINED__
         __ISynchronizeEvent_INTERFACE_DEFINED__ equ <>
-        ;* interface ISynchronizeEvent *
-        ;* [uuid][object][local] *
         externdef IID_ISynchronizeEvent:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2177,18 +1581,14 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <ISynchronizeEventVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ISynchronizeEvent, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ISynchronizeEvent
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ISynchronizeEvent
             DECLSPEC_XFGVIRT(ISynchronizeHandle, GetHandle)
-            ;* [annotation][out] *
             STD_METHOD GetHandle, :ptr ISynchronizeEvent, :ptr HANDLE
             DECLSPEC_XFGVIRT(ISynchronizeEvent, SetEventHandle)
-            ;* [annotation][in] *
             STD_METHOD SetEventHandle, :ptr ISynchronizeEvent, :ptr HANDLE
             ??Interface equ <>
             END_INTERFACE
@@ -2199,14 +1599,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ISynchronizeEvent_INTERFACE_DEFINED__ *
       endif
       ifndef __ISynchronizeContainer_INTERFACE_DEFINED__
         __ISynchronizeContainer_INTERFACE_DEFINED__ equ <>
-        ;* interface ISynchronizeContainer *
-        ;* [uuid][object][local] *
         externdef IID_ISynchronizeContainer:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2215,20 +1611,14 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <ISynchronizeContainerVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ISynchronizeContainer, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ISynchronizeContainer
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ISynchronizeContainer
             DECLSPEC_XFGVIRT(ISynchronizeContainer, AddSynchronize)
-            ;* [annotation][in] *
             STD_METHOD AddSynchronize, :ptr ISynchronizeContainer, :ptr ISynchronize
             DECLSPEC_XFGVIRT(ISynchronizeContainer, WaitMultiple)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD WaitMultiple, :ptr ISynchronizeContainer, :DWORD, :DWORD, :ptr ptr ISynchronize
             ??Interface equ <>
             END_INTERFACE
@@ -2239,14 +1629,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ISynchronizeContainer_INTERFACE_DEFINED__ *
       endif
       ifndef __ISynchronizeMutex_INTERFACE_DEFINED__
         __ISynchronizeMutex_INTERFACE_DEFINED__ equ <>
-        ;* interface ISynchronizeMutex *
-        ;* [uuid][object][local] *
         externdef IID_ISynchronizeMutex:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2255,17 +1641,13 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <ISynchronizeMutexVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ISynchronizeMutex, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ISynchronizeMutex
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ISynchronizeMutex
             DECLSPEC_XFGVIRT(ISynchronize, Wait)
-            ;* [in] *
             STD_METHOD Wait_, :ptr ISynchronizeMutex, :DWORD, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(ISynchronize, Signal)
             STD_METHOD Signal, :ptr ISynchronizeMutex
             DECLSPEC_XFGVIRT(ISynchronize, Reset)
@@ -2281,15 +1663,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ISynchronizeMutex_INTERFACE_DEFINED__ *
       endif
       ifndef __ICancelMethodCalls_INTERFACE_DEFINED__
         __ICancelMethodCalls_INTERFACE_DEFINED__ equ <>
-        ;* interface ICancelMethodCalls *
-        ;* [uuid][object][local] *
-        ;* [unique] *
         LPCANCELMETHODCALLS typedef ptr ICancelMethodCalls
         externdef IID_ICancelMethodCalls:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -2299,15 +1676,12 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <ICancelMethodCallsVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ICancelMethodCalls, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ICancelMethodCalls
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ICancelMethodCalls
             DECLSPEC_XFGVIRT(ICancelMethodCalls, Cancel)
-            ;* [annotation][in] *
             STD_METHOD Cancel, :ptr ICancelMethodCalls, :ULONG
             DECLSPEC_XFGVIRT(ICancelMethodCalls, TestCancel)
             STD_METHOD TestCancel, :ptr ICancelMethodCalls
@@ -2320,14 +1694,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ICancelMethodCalls_INTERFACE_DEFINED__ *
       endif
       ifndef __IAsyncManager_INTERFACE_DEFINED__
         __IAsyncManager_INTERFACE_DEFINED__ equ <>
-        ;* interface IAsyncManager *
-        ;* [uuid][object][local] *
         DCOM_CALL_STATE typedef SDWORD
         DCOM_NONE equ 0
         DCOM_CALL_COMPLETE equ 1h
@@ -2342,22 +1712,16 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IAsyncManagerVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IAsyncManager, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IAsyncManager
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IAsyncManager
             DECLSPEC_XFGVIRT(IAsyncManager, CompleteCall)
-            ;* [annotation][in] *
             STD_METHOD CompleteCall, :ptr IAsyncManager, :HRESULT
             DECLSPEC_XFGVIRT(IAsyncManager, GetCallContext)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD GetCallContext, :ptr IAsyncManager, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IAsyncManager, GetState)
-            ;* [annotation][out] *
             STD_METHOD GetState, :ptr IAsyncManager, :ptr ULONG
             ??Interface equ <>
             END_INTERFACE
@@ -2368,14 +1732,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IAsyncManager_INTERFACE_DEFINED__ *
       endif
       ifndef __ICallFactory_INTERFACE_DEFINED__
         __ICallFactory_INTERFACE_DEFINED__ equ <>
-        ;* interface ICallFactory *
-        ;* [unique][uuid][object][local] *
         externdef IID_ICallFactory:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2384,18 +1744,12 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <ICallFactoryVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ICallFactory, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ICallFactory
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ICallFactory
             DECLSPEC_XFGVIRT(ICallFactory, CreateCall)
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD CreateCall, :ptr ICallFactory, :REFIID, :ptr IUnknown, :REFIID, :ptr ptr IUnknown
             ??Interface equ <>
             END_INTERFACE
@@ -2406,14 +1760,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ICallFactory_INTERFACE_DEFINED__ *
       endif
       ifndef __IRpcHelper_INTERFACE_DEFINED__
         __IRpcHelper_INTERFACE_DEFINED__ equ <>
-        ;* interface IRpcHelper *
-        ;* [object][local][unique][version][uuid] *
         externdef IID_IRpcHelper:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2422,19 +1772,14 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IRpcHelperVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IRpcHelper, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IRpcHelper
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IRpcHelper
             DECLSPEC_XFGVIRT(IRpcHelper, GetDCOMProtocolVersion)
-            ;* [annotation][out] *
             STD_METHOD GetDCOMProtocolVersion, :ptr IRpcHelper, :ptr DWORD
             DECLSPEC_XFGVIRT(IRpcHelper, GetIIDFromOBJREF)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD GetIIDFromOBJREF, :ptr IRpcHelper, :ptr, :ptr ptr IID
             ??Interface equ <>
             END_INTERFACE
@@ -2445,14 +1790,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IRpcHelper_INTERFACE_DEFINED__ *
       endif
       ifndef __IReleaseMarshalBuffers_INTERFACE_DEFINED__
         __IReleaseMarshalBuffers_INTERFACE_DEFINED__ equ <>
-        ;* interface IReleaseMarshalBuffers *
-        ;* [uuid][object][local] *
         externdef IID_IReleaseMarshalBuffers:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2461,17 +1802,12 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IReleaseMarshalBuffersVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IReleaseMarshalBuffers, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IReleaseMarshalBuffers
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IReleaseMarshalBuffers
             DECLSPEC_XFGVIRT(IReleaseMarshalBuffers, ReleaseMarshalBuffer)
-            ;* [annotation][out][in] *
-            ;* [annotation][in] *
-            ;* [annotation][unique][in] *
             STD_METHOD ReleaseMarshalBuffer, :ptr IReleaseMarshalBuffers, :ptr RPCOLEMESSAGE, :DWORD, :ptr IUnknown
             ??Interface equ <>
             END_INTERFACE
@@ -2482,14 +1818,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IReleaseMarshalBuffers_INTERFACE_DEFINED__ *
       endif
       ifndef __IWaitMultiple_INTERFACE_DEFINED__
         __IWaitMultiple_INTERFACE_DEFINED__ equ <>
-        ;* interface IWaitMultiple *
-        ;* [uuid][object][local] *
         externdef IID_IWaitMultiple:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2498,19 +1830,14 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IWaitMultipleVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IWaitMultiple, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IWaitMultiple
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IWaitMultiple
             DECLSPEC_XFGVIRT(IWaitMultiple, WaitMultiple)
-            ;* [annotation][in] *
-            ;* [annotation][out] *
             STD_METHOD WaitMultiple, :ptr IWaitMultiple, :DWORD, :ptr ptr ISynchronize
             DECLSPEC_XFGVIRT(IWaitMultiple, AddSynchronize)
-            ;* [annotation][in] *
             STD_METHOD AddSynchronize, :ptr IWaitMultiple, :ptr ISynchronize
             ??Interface equ <>
             END_INTERFACE
@@ -2521,15 +1848,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IWaitMultiple_INTERFACE_DEFINED__ *
       endif
       ifndef __IAddrTrackingControl_INTERFACE_DEFINED__
         __IAddrTrackingControl_INTERFACE_DEFINED__ equ <>
-        ;* interface IAddrTrackingControl *
-        ;* [uuid][object][local] *
-        ;* [unique] *
         LPADDRTRACKINGCONTROL typedef ptr IAddrTrackingControl
         externdef IID_IAddrTrackingControl:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -2539,8 +1861,6 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IAddrTrackingControlVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IAddrTrackingControl, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IAddrTrackingControl
@@ -2559,15 +1879,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IAddrTrackingControl_INTERFACE_DEFINED__ *
       endif
       ifndef __IAddrExclusionControl_INTERFACE_DEFINED__
         __IAddrExclusionControl_INTERFACE_DEFINED__ equ <>
-        ;* interface IAddrExclusionControl *
-        ;* [uuid][object][local] *
-        ;* [unique] *
         LPADDREXCLUSIONCONTROL typedef ptr IAddrExclusionControl
         externdef IID_IAddrExclusionControl:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -2577,19 +1892,14 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IAddrExclusionControlVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IAddrExclusionControl, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IAddrExclusionControl
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IAddrExclusionControl
             DECLSPEC_XFGVIRT(IAddrExclusionControl, GetCurrentAddrExclusionList)
-            ;* [annotation][in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD GetCurrentAddrExclusionList, :ptr IAddrExclusionControl, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IAddrExclusionControl, UpdateAddrExclusionList)
-            ;* [annotation][in] *
             STD_METHOD UpdateAddrExclusionList, :ptr IAddrExclusionControl, :ptr IUnknown
             ??Interface equ <>
             END_INTERFACE
@@ -2600,14 +1910,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IAddrExclusionControl_INTERFACE_DEFINED__ *
       endif
       ifndef __IPipeByte_INTERFACE_DEFINED__
         __IPipeByte_INTERFACE_DEFINED__ equ <>
-        ;* interface IPipeByte *
-        ;* [unique][async_uuid][uuid][object] *
         externdef IID_IPipeByte:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2616,22 +1922,15 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IPipeByteVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IPipeByte, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IPipeByte
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IPipeByte
             DECLSPEC_XFGVIRT(IPipeByte, Pull)
-            ;* [length_is][size_is][out] *
-            ;* [in] *
             STD_METHOD Pull, :ptr IPipeByte, :ptr BYTE, :ULONG, :ptr ULONG
-            ;* [out] *
             DECLSPEC_XFGVIRT(IPipeByte, Push)
-            ;* [size_is][in] *
             STD_METHOD Push_, :ptr IPipeByte, :ptr BYTE, :ULONG
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IPipeByteVtbl ends
@@ -2641,14 +1940,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IPipeByte_INTERFACE_DEFINED__ *
       endif
       ifndef __AsyncIPipeByte_INTERFACE_DEFINED__
         __AsyncIPipeByte_INTERFACE_DEFINED__ equ <>
-        ;* interface AsyncIPipeByte *
-        ;* [uuid][unique][object] *
         externdef IID_AsyncIPipeByte:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2657,8 +1952,6 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <AsyncIPipeByteVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr AsyncIPipeByte, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr AsyncIPipeByte
@@ -2666,15 +1959,10 @@ ifndef __objidlbase_h__
             STD_METHOD Release, :ptr AsyncIPipeByte
             DECLSPEC_XFGVIRT(AsyncIPipeByte, Begin_Pull)
             STD_METHOD Begin_Pull, :ptr AsyncIPipeByte, :ULONG
-            ;* [in] *
             DECLSPEC_XFGVIRT(AsyncIPipeByte, Finish_Pull)
-            ;* [length_is][size_is][out] *
             STD_METHOD Finish_Pull, :ptr AsyncIPipeByte, :ptr BYTE, :ptr ULONG
-            ;* [out] *
             DECLSPEC_XFGVIRT(AsyncIPipeByte, Begin_Push)
-            ;* [size_is][in] *
             STD_METHOD Begin_Push, :ptr AsyncIPipeByte, :ptr BYTE, :ULONG
-            ;* [in] *
             DECLSPEC_XFGVIRT(AsyncIPipeByte, Finish_Push)
             STD_METHOD Finish_Push, :ptr AsyncIPipeByte
             ??Interface equ <>
@@ -2686,14 +1974,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __AsyncIPipeByte_INTERFACE_DEFINED__ *
       endif
       ifndef __IPipeLong_INTERFACE_DEFINED__
         __IPipeLong_INTERFACE_DEFINED__ equ <>
-        ;* interface IPipeLong *
-        ;* [unique][async_uuid][uuid][object] *
         externdef IID_IPipeLong:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2702,22 +1986,15 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IPipeLongVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IPipeLong, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IPipeLong
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IPipeLong
             DECLSPEC_XFGVIRT(IPipeLong, Pull)
-            ;* [length_is][size_is][out] *
-            ;* [in] *
             STD_METHOD Pull, :ptr IPipeLong, :ptr LONG, :ULONG, :ptr ULONG
-            ;* [out] *
             DECLSPEC_XFGVIRT(IPipeLong, Push)
-            ;* [size_is][in] *
             STD_METHOD Push_, :ptr IPipeLong, :ptr LONG, :ULONG
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IPipeLongVtbl ends
@@ -2727,14 +2004,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IPipeLong_INTERFACE_DEFINED__ *
       endif
       ifndef __AsyncIPipeLong_INTERFACE_DEFINED__
         __AsyncIPipeLong_INTERFACE_DEFINED__ equ <>
-        ;* interface AsyncIPipeLong *
-        ;* [uuid][unique][object] *
         externdef IID_AsyncIPipeLong:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2743,8 +2016,6 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <AsyncIPipeLongVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr AsyncIPipeLong, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr AsyncIPipeLong
@@ -2752,15 +2023,10 @@ ifndef __objidlbase_h__
             STD_METHOD Release, :ptr AsyncIPipeLong
             DECLSPEC_XFGVIRT(AsyncIPipeLong, Begin_Pull)
             STD_METHOD Begin_Pull, :ptr AsyncIPipeLong, :ULONG
-            ;* [in] *
             DECLSPEC_XFGVIRT(AsyncIPipeLong, Finish_Pull)
-            ;* [length_is][size_is][out] *
             STD_METHOD Finish_Pull, :ptr AsyncIPipeLong, :ptr LONG, :ptr ULONG
-            ;* [out] *
             DECLSPEC_XFGVIRT(AsyncIPipeLong, Begin_Push)
-            ;* [size_is][in] *
             STD_METHOD Begin_Push, :ptr AsyncIPipeLong, :ptr LONG, :ULONG
-            ;* [in] *
             DECLSPEC_XFGVIRT(AsyncIPipeLong, Finish_Push)
             STD_METHOD Finish_Push, :ptr AsyncIPipeLong
             ??Interface equ <>
@@ -2772,14 +2038,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __AsyncIPipeLong_INTERFACE_DEFINED__ *
       endif
       ifndef __IPipeDouble_INTERFACE_DEFINED__
         __IPipeDouble_INTERFACE_DEFINED__ equ <>
-        ;* interface IPipeDouble *
-        ;* [unique][async_uuid][uuid][object] *
         externdef IID_IPipeDouble:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2788,22 +2050,15 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IPipeDoubleVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IPipeDouble, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IPipeDouble
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IPipeDouble
             DECLSPEC_XFGVIRT(IPipeDouble, Pull)
-            ;* [length_is][size_is][out] *
-            ;* [in] *
             STD_METHOD Pull, :ptr IPipeDouble, :ptr DOUBLE, :ULONG, :ptr ULONG
-            ;* [out] *
             DECLSPEC_XFGVIRT(IPipeDouble, Push)
-            ;* [size_is][in] *
             STD_METHOD Push_, :ptr IPipeDouble, :ptr DOUBLE, :ULONG
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IPipeDoubleVtbl ends
@@ -2813,14 +2068,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IPipeDouble_INTERFACE_DEFINED__ *
       endif
       ifndef __AsyncIPipeDouble_INTERFACE_DEFINED__
         __AsyncIPipeDouble_INTERFACE_DEFINED__ equ <>
-        ;* interface AsyncIPipeDouble *
-        ;* [uuid][unique][object] *
         externdef IID_AsyncIPipeDouble:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -2829,8 +2080,6 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <AsyncIPipeDoubleVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr AsyncIPipeDouble, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr AsyncIPipeDouble
@@ -2838,15 +2087,10 @@ ifndef __objidlbase_h__
             STD_METHOD Release, :ptr AsyncIPipeDouble
             DECLSPEC_XFGVIRT(AsyncIPipeDouble, Begin_Pull)
             STD_METHOD Begin_Pull, :ptr AsyncIPipeDouble, :ULONG
-            ;* [in] *
             DECLSPEC_XFGVIRT(AsyncIPipeDouble, Finish_Pull)
-            ;* [length_is][size_is][out] *
             STD_METHOD Finish_Pull, :ptr AsyncIPipeDouble, :ptr DOUBLE, :ptr ULONG
-            ;* [out] *
             DECLSPEC_XFGVIRT(AsyncIPipeDouble, Begin_Push)
-            ;* [size_is][in] *
             STD_METHOD Begin_Push, :ptr AsyncIPipeDouble, :ptr DOUBLE, :ULONG
-            ;* [in] *
             DECLSPEC_XFGVIRT(AsyncIPipeDouble, Finish_Push)
             STD_METHOD Finish_Push, :ptr AsyncIPipeDouble
             ??Interface equ <>
@@ -2858,28 +2102,20 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __AsyncIPipeDouble_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_objidlbase_0000_0045 *
-      ;* [local] *
       if Defined(USE_COM_CONTEXT_DEF) or Defined(BUILDTYPE_COMSVCS) or Defined(_COMBASEAPI_) or Defined(_OLE32_)
         CPFLAGS typedef DWORD
         ContextProperty struct
           policyId GUID <>
           flags CPFLAGS ?
           pUnk POINTER ?
-          ;* [unique] *
         ContextProperty ends
         tagContextProperty typedef ContextProperty
         externdef __MIDL_itf_objidlbase_0000_0045_v0_0_c_ifspec:RPC_IF_HANDLE
         externdef __MIDL_itf_objidlbase_0000_0045_v0_0_s_ifspec:RPC_IF_HANDLE
         ifndef __IEnumContextProps_INTERFACE_DEFINED__
           __IEnumContextProps_INTERFACE_DEFINED__ equ <>
-          ;* interface IEnumContextProps *
-          ;* [unique][uuid][object][local] *
-          ;* [unique] *
           LPENUMCONTEXTPROPS typedef ptr IEnumContextProps
           externdef IID_IEnumContextProps:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -2889,28 +2125,20 @@ ifndef __objidlbase_h__
               BEGIN_INTERFACE
               ??Interface equ <IEnumContextPropsVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IEnumContextProps, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IEnumContextProps
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IEnumContextProps
               DECLSPEC_XFGVIRT(IEnumContextProps, Next)
-              ;* [annotation][in] *
-              ;* [annotation][length_is][size_is][out] *
-              ;* [annotation][out] *
               STD_METHOD Next, :ptr IEnumContextProps, :ULONG, :ptr ContextProperty, :ptr ULONG
               DECLSPEC_XFGVIRT(IEnumContextProps, Skip)
-              ;* [annotation][in] *
               STD_METHOD Skip, :ptr IEnumContextProps, :ULONG
               DECLSPEC_XFGVIRT(IEnumContextProps, Reset)
               STD_METHOD Reset, :ptr IEnumContextProps
               DECLSPEC_XFGVIRT(IEnumContextProps, Clone)
-              ;* [annotation][out] *
               STD_METHOD Clone, :ptr IEnumContextProps, :ptr ptr IEnumContextProps
               DECLSPEC_XFGVIRT(IEnumContextProps, Count)
-              ;* [annotation][out] *
               STD_METHOD Count, :ptr IEnumContextProps, :ptr ULONG
               ??Interface equ <>
               END_INTERFACE
@@ -2921,14 +2149,10 @@ ifndef __objidlbase_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IEnumContextProps_INTERFACE_DEFINED__ *
         endif
         ifndef __IContext_INTERFACE_DEFINED__
           __IContext_INTERFACE_DEFINED__ equ <>
-          ;* interface IContext *
-          ;* [unique][uuid][object][local] *
           externdef IID_IContext:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
@@ -2937,28 +2161,18 @@ ifndef __objidlbase_h__
               BEGIN_INTERFACE
               ??Interface equ <IContextVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IContext, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IContext
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IContext
               DECLSPEC_XFGVIRT(IContext, SetProperty)
-              ;* [annotation][in] *
-              ;* [annotation][in] *
-              ;* [annotation][in] *
               STD_METHOD SetProperty, :ptr IContext, :REFGUID, :CPFLAGS, :ptr IUnknown
               DECLSPEC_XFGVIRT(IContext, RemoveProperty)
-              ;* [annotation][in] *
               STD_METHOD RemoveProperty, :ptr IContext, :REFGUID
               DECLSPEC_XFGVIRT(IContext, GetProperty)
-              ;* [annotation][in] *
-              ;* [annotation][out] *
-              ;* [annotation][out] *
               STD_METHOD GetProperty, :ptr IContext, :REFGUID, :ptr CPFLAGS, :ptr ptr IUnknown
               DECLSPEC_XFGVIRT(IContext, EnumContextProps)
-              ;* [annotation][out] *
               STD_METHOD EnumContextProps, :ptr IContext, :ptr ptr IEnumContextProps
               ??Interface equ <>
               END_INTERFACE
@@ -2969,19 +2183,13 @@ ifndef __objidlbase_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IContext_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_objidlbase_0000_0047 *
-        ;* [local] *
         if  not Defined(BUILDTYPE_COMSVCS) and  not (Defined(_COMBASEAPI_) or Defined(_OLE32_))
           externdef __MIDL_itf_objidlbase_0000_0047_v0_0_c_ifspec:RPC_IF_HANDLE
           externdef __MIDL_itf_objidlbase_0000_0047_v0_0_s_ifspec:RPC_IF_HANDLE
           ifndef __IObjContext_INTERFACE_DEFINED__
             __IObjContext_INTERFACE_DEFINED__ equ <>
-            ;* interface IObjContext *
-            ;* [unique][uuid][object][local] *
             externdef IID_IObjContext:IID
             if Defined(__cplusplus) and  not Defined(CINTERFACE)
               ;[...]
@@ -2990,28 +2198,18 @@ ifndef __objidlbase_h__
                 BEGIN_INTERFACE
                 ??Interface equ <IObjContextVtbl>
                 DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-                ;* [in] *
-                ;* [annotation][iid_is][out] *
                 STD_METHOD QueryInterface, :ptr IObjContext, :REFIID, :ptr ptr
                 DECLSPEC_XFGVIRT(IUnknown, AddRef)
                 STD_METHOD AddRef, :ptr IObjContext
                 DECLSPEC_XFGVIRT(IUnknown, Release)
                 STD_METHOD Release, :ptr IObjContext
                 DECLSPEC_XFGVIRT(IContext, SetProperty)
-                ;* [annotation][in] *
-                ;* [annotation][in] *
-                ;* [annotation][in] *
                 STD_METHOD SetProperty, :ptr IObjContext, :REFGUID, :CPFLAGS, :ptr IUnknown
                 DECLSPEC_XFGVIRT(IContext, RemoveProperty)
-                ;* [annotation][in] *
                 STD_METHOD RemoveProperty, :ptr IObjContext, :REFGUID
                 DECLSPEC_XFGVIRT(IContext, GetProperty)
-                ;* [annotation][in] *
-                ;* [annotation][out] *
-                ;* [annotation][out] *
                 STD_METHOD GetProperty, :ptr IObjContext, :REFGUID, :ptr CPFLAGS, :ptr ptr IUnknown
                 DECLSPEC_XFGVIRT(IContext, EnumContextProps)
-                ;* [annotation][out] *
                 STD_METHOD EnumContextProps, :ptr IObjContext, :ptr ptr IEnumContextProps
                 DECLSPEC_XFGVIRT(IObjContext, Reserved1)
                 STD_METHOD Reserved1, :ptr IObjContext
@@ -3036,15 +2234,10 @@ ifndef __objidlbase_h__
               ifdef COBJMACROS
                 ;[...]
               endif
-              ;* C style interface *
             endif
-            ;* __IObjContext_INTERFACE_DEFINED__ *
           endif
-          ;* interface __MIDL_itf_objidlbase_0000_0048 *
-          ;* [local] *
         endif
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       APTTYPEQUALIFIER typedef SDWORD
@@ -3066,7 +2259,6 @@ ifndef __objidlbase_h__
       APTTYPE_MAINSTA equ 3
       _APTTYPE typedef APTTYPE
 
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       THDTYPE typedef SDWORD
@@ -3079,8 +2271,6 @@ ifndef __objidlbase_h__
       externdef __MIDL_itf_objidlbase_0000_0048_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IComThreadingInfo_INTERFACE_DEFINED__
         __IComThreadingInfo_INTERFACE_DEFINED__ equ <>
-        ;* interface IComThreadingInfo *
-        ;* [unique][uuid][object][local] *
         externdef IID_IComThreadingInfo:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -3089,24 +2279,18 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IComThreadingInfoVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IComThreadingInfo, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IComThreadingInfo
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IComThreadingInfo
             DECLSPEC_XFGVIRT(IComThreadingInfo, GetCurrentApartmentType)
-            ;* [annotation][out] *
             STD_METHOD GetCurrentApartmentType, :ptr IComThreadingInfo, :ptr APTTYPE
             DECLSPEC_XFGVIRT(IComThreadingInfo, GetCurrentThreadType)
-            ;* [annotation][out] *
             STD_METHOD GetCurrentThreadType, :ptr IComThreadingInfo, :ptr THDTYPE
             DECLSPEC_XFGVIRT(IComThreadingInfo, GetCurrentLogicalThreadId)
-            ;* [annotation][out] *
             STD_METHOD GetCurrentLogicalThreadId, :ptr IComThreadingInfo, :ptr GUID
             DECLSPEC_XFGVIRT(IComThreadingInfo, SetCurrentLogicalThreadId)
-            ;* [annotation][in] *
             STD_METHOD SetCurrentLogicalThreadId, :ptr IComThreadingInfo, :REFGUID
             ??Interface equ <>
             END_INTERFACE
@@ -3117,14 +2301,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IComThreadingInfo_INTERFACE_DEFINED__ *
       endif
       ifndef __IProcessInitControl_INTERFACE_DEFINED__
         __IProcessInitControl_INTERFACE_DEFINED__ equ <>
-        ;* interface IProcessInitControl *
-        ;* [uuid][unique][object] *
         externdef IID_IProcessInitControl:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -3133,8 +2313,6 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IProcessInitControlVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IProcessInitControl, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IProcessInitControl
@@ -3142,7 +2320,6 @@ ifndef __objidlbase_h__
             STD_METHOD Release, :ptr IProcessInitControl
             DECLSPEC_XFGVIRT(IProcessInitControl, ResetInitializerTimeout)
             STD_METHOD ResetInitializerTimeout, :ptr IProcessInitControl, :DWORD
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IProcessInitControlVtbl ends
@@ -3152,14 +2329,10 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IProcessInitControl_INTERFACE_DEFINED__ *
       endif
       ifndef __IFastRundown_INTERFACE_DEFINED__
         __IFastRundown_INTERFACE_DEFINED__ equ <>
-        ;* interface IFastRundown *
-        ;* [uuid][unique][local][object] *
         externdef IID_IFastRundown:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -3168,8 +2341,6 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IFastRundownVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IFastRundown, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IFastRundown
@@ -3184,12 +2355,8 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IFastRundown_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_objidlbase_0000_0051 *
-      ;* [local] *
       CO_MARSHALING_CONTEXT_ATTRIBUTES typedef SDWORD
       CO_MARSHALING_SOURCE_IS_APP_CONTAINER equ 0
       CO_MARSHALING_CONTEXT_ATTRIBUTE_RESERVED_1 equ 80000000h
@@ -3215,8 +2382,6 @@ ifndef __objidlbase_h__
       externdef __MIDL_itf_objidlbase_0000_0051_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IMarshalingStream_INTERFACE_DEFINED__
         __IMarshalingStream_INTERFACE_DEFINED__ equ <>
-        ;* interface IMarshalingStream *
-        ;* [unique][uuid][object][local] *
         externdef IID_IMarshalingStream:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -3225,67 +2390,35 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IMarshalingStreamVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IMarshalingStream, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IMarshalingStream
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IMarshalingStream
             DECLSPEC_XFGVIRT(ISequentialStream, Read)
-            ;* [local] *
-            ;* [annotation] *
-            ;* [annotation][in] *
-            ;* [annotation] *
             STD_METHOD Read, :ptr IMarshalingStream, :ptr, :ULONG, :ptr ULONG
             DECLSPEC_XFGVIRT(ISequentialStream, Write)
-            ;* [local] *
-            ;* [annotation] *
-            ;* [annotation][in] *
-            ;* [annotation] *
             STD_METHOD Write, :ptr IMarshalingStream, :ptr, :ULONG, :ptr ULONG
             DECLSPEC_XFGVIRT(IStream, Seek)
-            ;* [local] *
-            ;* [in] *
-            ;* [in] *
-            ;* [annotation] *
             STD_METHOD Seek, :ptr IMarshalingStream, :LARGE_INTEGER, :DWORD, :ptr ULARGE_INTEGER
             DECLSPEC_XFGVIRT(IStream, SetSize)
             STD_METHOD SetSize, :ptr IMarshalingStream, :ULARGE_INTEGER
-            ;* [in] *
             DECLSPEC_XFGVIRT(IStream, CopyTo)
-            ;* [local] *
-            ;* [annotation][unique][in] *
-            ;* [in] *
-            ;* [annotation] *
-            ;* [annotation] *
             STD_METHOD CopyTo, :ptr IMarshalingStream, :ptr IStream, :ULARGE_INTEGER, :ptr ULARGE_INTEGER, :ptr ULARGE_INTEGER
             DECLSPEC_XFGVIRT(IStream, Commit)
             STD_METHOD Commit, :ptr IMarshalingStream, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IStream, Revert)
             STD_METHOD Revert, :ptr IMarshalingStream
             DECLSPEC_XFGVIRT(IStream, LockRegion)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD LockRegion, :ptr IMarshalingStream, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IStream, UnlockRegion)
-            ;* [in] *
-            ;* [in] *
             STD_METHOD UnlockRegion, :ptr IMarshalingStream, :ULARGE_INTEGER, :ULARGE_INTEGER, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IStream, Stat)
-            ;* [out] *
             STD_METHOD Stat, :ptr IMarshalingStream, :ptr STATSTG, :DWORD
-            ;* [in] *
             DECLSPEC_XFGVIRT(IStream, Clone)
             STD_METHOD Clone, :ptr IMarshalingStream, :ptr ptr IStream
-            ;* [out] *
             DECLSPEC_XFGVIRT(IMarshalingStream, GetMarshalingContextAttribute)
-            ;* [in] *
             STD_METHOD GetMarshalingContextAttribute, :ptr IMarshalingStream, :CO_MARSHALING_CONTEXT_ATTRIBUTES, :ptr ULONG_PTR
-            ;* [out] *
             ??Interface equ <>
             END_INTERFACE
           IMarshalingStreamVtbl ends
@@ -3295,21 +2428,14 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IMarshalingStream_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_objidlbase_0000_0052 *
-      ;* [local] *
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       externdef __MIDL_itf_objidlbase_0000_0052_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_objidlbase_0000_0052_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IAgileReference_INTERFACE_DEFINED__
         __IAgileReference_INTERFACE_DEFINED__ equ <>
-        ;* interface IAgileReference *
-        ;* [unique][uuid][object][local] *
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
@@ -3321,17 +2447,13 @@ ifndef __objidlbase_h__
               BEGIN_INTERFACE
               ??Interface equ <IAgileReferenceVtbl>
               DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              ;* [in] *
-              ;* [annotation][iid_is][out] *
               STD_METHOD QueryInterface, :ptr IAgileReference, :REFIID, :ptr ptr
               DECLSPEC_XFGVIRT(IUnknown, AddRef)
               STD_METHOD AddRef, :ptr IAgileReference
               DECLSPEC_XFGVIRT(IUnknown, Release)
               STD_METHOD Release, :ptr IAgileReference
               DECLSPEC_XFGVIRT(IAgileReference, Resolve)
-              ;* [in] *
               STD_METHOD Resolve, :ptr IAgileReference, :REFIID, :ptr ptr
-              ;* [iid_is][retval][out] *
               ??Interface equ <>
               END_INTERFACE
             IAgileReferenceVtbl ends
@@ -3341,29 +2463,22 @@ ifndef __objidlbase_h__
             ifdef COBJMACROS
               ;[...]
             endif
-            ;* C style interface *
           endif
-          ;* __IAgileReference_INTERFACE_DEFINED__ *
         endif
-        ;* interface __MIDL_itf_objidlbase_0000_0053 *
-        ;* [local] *
       endif
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       externdef IID_ICallbackWithNoReentrancyToApplicationSTA:GUID
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       MachineGlobalObjectTableRegistrationToken__ struct
         unused SDWORD ?
       MachineGlobalObjectTableRegistrationToken__ ends
+      MachineGlobalObjectTableRegistrationToken typedef ptr MachineGlobalObjectTableRegistrationToken__
       externdef __MIDL_itf_objidlbase_0000_0053_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_objidlbase_0000_0053_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __IMachineGlobalObjectTable_INTERFACE_DEFINED__
         __IMachineGlobalObjectTable_INTERFACE_DEFINED__ equ <>
-        ;* interface IMachineGlobalObjectTable *
-        ;* [unique][uuid][object][local] *
         externdef IID_IMachineGlobalObjectTable:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -3372,28 +2487,17 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <IMachineGlobalObjectTableVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr IMachineGlobalObjectTable, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IMachineGlobalObjectTable
             DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IMachineGlobalObjectTable
             DECLSPEC_XFGVIRT(IMachineGlobalObjectTable, RegisterObject)
-            ;* [in] *
-            ;* [in] *
-            ;* [in] *
             STD_METHOD RegisterObject, :ptr IMachineGlobalObjectTable, :REFCLSID, :LPCWSTR, :ptr IUnknown, :ptr MachineGlobalObjectTableRegistrationToken
-            ;* [out] *
             DECLSPEC_XFGVIRT(IMachineGlobalObjectTable, GetObject)
-            ;* [in] *
-            ;* [in] *
-            ;* [in] *
             STD_METHOD GetObject, :ptr IMachineGlobalObjectTable, :REFCLSID, :LPCWSTR, :REFIID, :ptr ptr
-            ;* [iid_is][out] *
             DECLSPEC_XFGVIRT(IMachineGlobalObjectTable, RevokeObject)
             STD_METHOD RevokeObject, :ptr IMachineGlobalObjectTable, :MachineGlobalObjectTableRegistrationToken
-            ;* [in] *
             ??Interface equ <>
             END_INTERFACE
           IMachineGlobalObjectTableVtbl ends
@@ -3403,21 +2507,14 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __IMachineGlobalObjectTable_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_objidlbase_0000_0054 *
-      ;* [local] *
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       externdef __MIDL_itf_objidlbase_0000_0054_v0_0_c_ifspec:RPC_IF_HANDLE
       externdef __MIDL_itf_objidlbase_0000_0054_v0_0_s_ifspec:RPC_IF_HANDLE
       ifndef __ISupportAllowLowerTrustActivation_INTERFACE_DEFINED__
         __ISupportAllowLowerTrustActivation_INTERFACE_DEFINED__ equ <>
-        ;* interface ISupportAllowLowerTrustActivation *
-        ;* [uuid][object][local] *
         externdef IID_ISupportAllowLowerTrustActivation:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -3426,8 +2523,6 @@ ifndef __objidlbase_h__
             BEGIN_INTERFACE
             ??Interface equ <ISupportAllowLowerTrustActivationVtbl>
             DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            ;* [in] *
-            ;* [annotation][iid_is][out] *
             STD_METHOD QueryInterface, :ptr ISupportAllowLowerTrustActivation, :REFIID, :ptr ptr
             DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ISupportAllowLowerTrustActivation
@@ -3442,13 +2537,8 @@ ifndef __objidlbase_h__
           ifdef COBJMACROS
             ;[...]
           endif
-          ;* C style interface *
         endif
-        ;* __ISupportAllowLowerTrustActivation_INTERFACE_DEFINED__ *
       endif
-      ;* interface __MIDL_itf_objidlbase_0000_0055 *
-      ;* [local] *
-      ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
     endif
     _OBJIDLBASE_ equ <>
   endif
@@ -3459,44 +2549,18 @@ ifndef __objidlbase_h__
   endif
   externdef __MIDL_itf_objidlbase_0000_0055_v0_0_c_ifspec:RPC_IF_HANDLE
   externdef __MIDL_itf_objidlbase_0000_0055_v0_0_s_ifspec:RPC_IF_HANDLE
-  ;* Additional Prototypes for ALL interfaces *
-  ;* [local] *
   IEnumUnknown_Next_Proxy proto WIN_STD_CALL_CONV :ptr IEnumUnknown, :ULONG, :ptr ptr IUnknown, :ptr ULONG
-  ;* [annotation][out] *
-  ;* [call_as] *
   IEnumUnknown_Next_Stub proto WIN_STD_CALL_CONV :ptr IEnumUnknown, :ULONG, :ptr ptr IUnknown, :ptr ULONG
-  ;* [out] *
-  ;* [local] *
   IEnumString_Next_Proxy proto WIN_STD_CALL_CONV :ptr IEnumString, :ULONG, :ptr LPOLESTR, :ptr ULONG
-  ;* [annotation] *
-  ;* [call_as] *
   IEnumString_Next_Stub proto WIN_STD_CALL_CONV :ptr IEnumString, :ULONG, :ptr LPOLESTR, :ptr ULONG
-  ;* [out] *
-  ;* [local] *
   ISequentialStream_Read_Proxy proto WIN_STD_CALL_CONV :ptr ISequentialStream, :ptr, :ULONG, :ptr ULONG
-  ;* [annotation] *
-  ;* [call_as] *
   ISequentialStream_Read_Stub proto WIN_STD_CALL_CONV :ptr ISequentialStream, :ptr byte, :ULONG, :ptr ULONG
-  ;* [out] *
-  ;* [local] *
   ISequentialStream_Write_Proxy proto WIN_STD_CALL_CONV :ptr ISequentialStream, :ptr, :ULONG, :ptr ULONG
-  ;* [annotation] *
-  ;* [call_as] *
   ISequentialStream_Write_Stub proto WIN_STD_CALL_CONV :ptr ISequentialStream, :ptr byte, :ULONG, :ptr ULONG
-  ;* [out] *
-  ;* [local] *
   IStream_Seek_Proxy proto WIN_STD_CALL_CONV :ptr IStream, :LARGE_INTEGER, :DWORD, :ptr ULARGE_INTEGER
-  ;* [annotation] *
-  ;* [call_as] *
   IStream_Seek_Stub proto WIN_STD_CALL_CONV :ptr IStream, :LARGE_INTEGER, :DWORD, :ptr ULARGE_INTEGER
-  ;* [out] *
-  ;* [local] *
   IStream_CopyTo_Proxy proto WIN_STD_CALL_CONV :ptr IStream, :ptr IStream, :ULARGE_INTEGER, :ptr ULARGE_INTEGER, :ptr ULARGE_INTEGER
-  ;* [annotation] *
-  ;* [call_as] *
   IStream_CopyTo_Stub proto WIN_STD_CALL_CONV :ptr IStream, :ptr IStream, :ULARGE_INTEGER, :ptr ULARGE_INTEGER, :ptr ULARGE_INTEGER
-  ;* [out] *
-  ;* end of Additional Prototypes *
   ifdef __cplusplus
     ;[...]
   endif

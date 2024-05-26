@@ -23,10 +23,13 @@ Method Application.Done, uses xbx xsi
 
   .if [xbx].bTerminate == FALSE
     ;Save new content lists only
-    OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Saving new lists...")
-    lea xsi, NewContentLists
-;    OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Saving all lists...")
-;    lea xsi, KnownContentLists                          ;Uncomment to save all lists
+    if 1
+      OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Saving new lists...")
+      lea xsi, NewContentLists
+    else
+      OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Saving all lists...")
+      lea xsi, KnownContentLists                          ;Uncomment to save all lists
+    endif
     .while POINTER ptr [xsi] != NULL
       .if [xsi].LIST_SETUP.pFileName != NULL
         OCall [xsi].LIST_SETUP.pList::List.SaveToFile, [xsi].LIST_SETUP.pFileName
@@ -194,8 +197,8 @@ Method Application.Init, uses xbx xdi xsi
 
   OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Reading program arguments...")
   ;Get CL arguments ---------------------------------------------------------------------
-  mov xax, $invoke(GetCommandLine)
-;  mov xax, $OfsDStrW('h2inc+.exe -@".\h2inc+_Options.txt"')
+;  mov xax, $invoke(GetCommandLine)
+  mov xax, $OfsDStrW('h2inc+.exe -@".\h2inc+_Options.txt"')
   OCall xbx.ParseArguments, xax
   mov [xbx].pCL_Args, xax
   mov dArgCount, ecx

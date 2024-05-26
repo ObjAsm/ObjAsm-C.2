@@ -184,7 +184,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=5
+MilestoneOnDateDate=25
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -240,7 +240,7 @@ ProductVer4Range=0
 18=0,0,0,0,14512
 19=0,0,0,0,7313
 20=0,0,0,0,9760
-21=0,0,0,0,17753
+21=0,0,0,0,223023
 22=0,0,0,0,163461
 23=0,0,0,0,19124
 24=0,0,0,0,8531
@@ -288,16 +288,16 @@ ProductVer4Range=0
 9=
 
 [Find]
-1="DestroyItem"
-2="VER_FILEVERSION"
-3="VARARG"
-4="vmovd"
-5="SortedTriData.Compare"
-6=".Compare"
-7="CloneRect"
-8="s2s"
-9="SubRegMM"
-10="SubReg"
+1="SIZE_ ?"
+2="DestroyItem"
+3="VER_FILEVERSION"
+4="VARARG"
+5="vmovd"
+6="SortedTriData.Compare"
+7=".Compare"
+8="CloneRect"
+9="s2s"
+10="SubRegMM"
 [Collapse]
 2=,
 1=
@@ -319,7 +319,7 @@ ProductVer4Range=0
 19=,
 20=
 10=
-21=,,,,,,,,,,,,,,,,,
+21=,,,,,,,,,,,,,,,,,,
 22=,,,,,,
 23=,,
 24=
@@ -356,7 +356,7 @@ ProductVer4Range=0
 [BreakPoint]
 0=
 [AutoLoad]
-AutoLoad=1,15
+AutoLoad=1,15,21
 [RADebugBP]
 2=
 50=
@@ -398,6 +398,6 @@ AutoLoad=1,15
 28=
 20=
 [PTimer]
-PTimer=2115631658
+PTimer=2121499674
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0

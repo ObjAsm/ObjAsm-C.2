@@ -1,13 +1,11 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\consoleapi2.h
 ;             Created on (UTC) 06/04/2024 06:15:52
 ;             Last modified on (UTC) 21/02/2024 18:13:22
 
-;********************************************************************************
 ifdef _MSC_VER
 endif
-; _MSC_VER
 ifndef _APISETCONSOLEL2_
   _APISETCONSOLEL2_ equ <>
   include apiset.inc
@@ -20,39 +18,22 @@ ifndef _APISETCONSOLEL2_
     ;[...]
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
-    ; Attributes flags:
-    FOREGROUND_BLUE equ 0001h; text color contains blue.
-
-    FOREGROUND_GREEN equ 0002h; text color contains green.
-
-    FOREGROUND_RED equ 0004h; text color contains red.
-
-    FOREGROUND_INTENSITY equ 0008h; text color is intensified.
-
-    BACKGROUND_BLUE equ 0010h; background color contains blue.
-
-    BACKGROUND_GREEN equ 0020h; background color contains green.
-
-    BACKGROUND_RED equ 0040h; background color contains red.
-
-    BACKGROUND_INTENSITY equ 0080h; background color is intensified.
-
-    COMMON_LVB_LEADING_BYTE equ 0100h; Leading Byte of DBCS
-
-    COMMON_LVB_TRAILING_BYTE equ 0200h; Trailing Byte of DBCS
-
-    COMMON_LVB_GRID_HORIZONTAL equ 0400h; DBCS: Grid attribute: top horizontal.
-
-    COMMON_LVB_GRID_LVERTICAL equ 0800h; DBCS: Grid attribute: left vertical.
-
-    COMMON_LVB_GRID_RVERTICAL equ 1000h; DBCS: Grid attribute: right vertical.
-
-    COMMON_LVB_REVERSE_VIDEO equ 4000h; DBCS: Reverse fore/back ground attribute.
-
-    COMMON_LVB_UNDERSCORE equ 8000h; DBCS: Underscore.
-
-    COMMON_LVB_SBCSDBCS equ 0300h; SBCS or DBCS flag.
-
+    FOREGROUND_BLUE equ 0001h
+    FOREGROUND_GREEN equ 0002h
+    FOREGROUND_RED equ 0004h
+    FOREGROUND_INTENSITY equ 0008h
+    BACKGROUND_BLUE equ 0010h
+    BACKGROUND_GREEN equ 0020h
+    BACKGROUND_RED equ 0040h
+    BACKGROUND_INTENSITY equ 0080h
+    COMMON_LVB_LEADING_BYTE equ 0100h
+    COMMON_LVB_TRAILING_BYTE equ 0200h
+    COMMON_LVB_GRID_HORIZONTAL equ 0400h
+    COMMON_LVB_GRID_LVERTICAL equ 0800h
+    COMMON_LVB_GRID_RVERTICAL equ 1000h
+    COMMON_LVB_REVERSE_VIDEO equ 4000h
+    COMMON_LVB_UNDERSCORE equ 8000h
+    COMMON_LVB_SBCSDBCS equ 0300h
     @DefProto DllImport, FillConsoleOutputCharacterA, WIN_STD_CALL_CONV,, <:HANDLE, :CHAR, :DWORD, :COORD, :LPDWORD>, 20
     @DefProto DllImport, FillConsoleOutputCharacterW, WIN_STD_CALL_CONV,, <:HANDLE, :WCHAR, :DWORD, :COORD, :LPDWORD>, 20
     ifdef UNICODE
@@ -60,7 +41,6 @@ ifndef _APISETCONSOLEL2_
     else
       FillConsoleOutputCharacter equ <FillConsoleOutputCharacterA>
     endif
-    ; !UNICODE
     @DefProto DllImport, FillConsoleOutputAttribute, WIN_STD_CALL_CONV,, <:HANDLE, :WORD, :DWORD, :COORD, :LPDWORD>, 20
     @DefProto DllImport, GenerateConsoleCtrlEvent, WIN_STD_CALL_CONV,, <:DWORD, :DWORD>, 8
     @DefProto DllImport, CreateConsoleScreenBuffer, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :ptr SECURITY_ATTRIBUTES, :DWORD, :LPVOID>, 20
@@ -70,7 +50,7 @@ ifndef _APISETCONSOLEL2_
     @DefProto DllImport, SetConsoleOutputCP, WIN_STD_CALL_CONV,, <:UINT>, 4
     CONSOLE_CURSOR_INFO struct
       dwSize DWORD ?
-      bVisible DWORD ?
+      bVisible BOOL ?
     CONSOLE_CURSOR_INFO ends
     _CONSOLE_CURSOR_INFO typedef CONSOLE_CURSOR_INFO
     PCONSOLE_CURSOR_INFO typedef ptr CONSOLE_CURSOR_INFO
@@ -87,14 +67,14 @@ ifndef _APISETCONSOLEL2_
     PCONSOLE_SCREEN_BUFFER_INFO typedef ptr CONSOLE_SCREEN_BUFFER_INFO
     @DefProto DllImport, GetConsoleScreenBufferInfo, WIN_STD_CALL_CONV,, <:HANDLE, :PCONSOLE_SCREEN_BUFFER_INFO>, 8
     CONSOLE_SCREEN_BUFFER_INFOEX struct
-      cbSize DWORD ?
+      cbSize ULONG ?
       dwSize COORD <>
       dwCursorPosition COORD <>
       wAttributes WORD ?
       srWindow SMALL_RECT <>
       dwMaximumWindowSize COORD <>
       wPopupAttributes WORD ?
-      bFullscreenSupported DWORD ?
+      bFullscreenSupported BOOL ?
       ColorTable COLORREF 16 dup (?)
     CONSOLE_SCREEN_BUFFER_INFOEX ends
     _CONSOLE_SCREEN_BUFFER_INFOEX typedef CONSOLE_SCREEN_BUFFER_INFOEX
@@ -113,7 +93,6 @@ ifndef _APISETCONSOLEL2_
     else
       WriteConsoleOutputCharacter equ <WriteConsoleOutputCharacterA>
     endif
-    ; !UNICODE
     @DefProto DllImport, WriteConsoleOutputAttribute, WIN_STD_CALL_CONV,, <:HANDLE, :ptr WORD, :DWORD, :COORD, :LPDWORD>, 20
     @DefProto DllImport, ReadConsoleOutputCharacterA, WIN_STD_CALL_CONV,, <:HANDLE, :LPSTR, :DWORD, :COORD, :LPDWORD>, 20
     @DefProto DllImport, ReadConsoleOutputCharacterW, WIN_STD_CALL_CONV,, <:HANDLE, :LPWSTR, :DWORD, :COORD, :LPDWORD>, 20
@@ -122,7 +101,6 @@ ifndef _APISETCONSOLEL2_
     else
       ReadConsoleOutputCharacter equ <ReadConsoleOutputCharacterA>
     endif
-    ; !UNICODE
     @DefProto DllImport, ReadConsoleOutputAttribute, WIN_STD_CALL_CONV,, <:HANDLE, :LPWORD, :DWORD, :COORD, :LPDWORD>, 20
     @DefProto DllImport, WriteConsoleInputA, WIN_STD_CALL_CONV,, <:HANDLE, :ptr INPUT_RECORD, :DWORD, :LPDWORD>, 16
     @DefProto DllImport, WriteConsoleInputW, WIN_STD_CALL_CONV,, <:HANDLE, :ptr INPUT_RECORD, :DWORD, :LPDWORD>, 16
@@ -131,7 +109,6 @@ ifndef _APISETCONSOLEL2_
     else
       WriteConsoleInput equ <WriteConsoleInputA>
     endif
-    ; !UNICODE
     @DefProto DllImport, ScrollConsoleScreenBufferA, WIN_STD_CALL_CONV,, <:HANDLE, :ptr SMALL_RECT, :ptr SMALL_RECT, :COORD, :ptr CHAR_INFO>, 20
     @DefProto DllImport, ScrollConsoleScreenBufferW, WIN_STD_CALL_CONV,, <:HANDLE, :ptr SMALL_RECT, :ptr SMALL_RECT, :COORD, :ptr CHAR_INFO>, 20
     ifdef UNICODE
@@ -139,7 +116,6 @@ ifndef _APISETCONSOLEL2_
     else
       ScrollConsoleScreenBuffer equ <ScrollConsoleScreenBufferA>
     endif
-    ; !UNICODE
     @DefProto DllImport, WriteConsoleOutputA, WIN_STD_CALL_CONV,, <:HANDLE, :ptr CHAR_INFO, :COORD, :COORD, :PSMALL_RECT>, 20
     @DefProto DllImport, WriteConsoleOutputW, WIN_STD_CALL_CONV,, <:HANDLE, :ptr CHAR_INFO, :COORD, :COORD, :PSMALL_RECT>, 20
     ifdef UNICODE
@@ -147,7 +123,6 @@ ifndef _APISETCONSOLEL2_
     else
       WriteConsoleOutput equ <WriteConsoleOutputA>
     endif
-    ; !UNICODE
     @DefProto DllImport, ReadConsoleOutputA, WIN_STD_CALL_CONV,, <:HANDLE, :PCHAR_INFO, :COORD, :COORD, :PSMALL_RECT>, 20
     @DefProto DllImport, ReadConsoleOutputW, WIN_STD_CALL_CONV,, <:HANDLE, :PCHAR_INFO, :COORD, :COORD, :PSMALL_RECT>, 20
     ifdef UNICODE
@@ -155,7 +130,6 @@ ifndef _APISETCONSOLEL2_
     else
       ReadConsoleOutput equ <ReadConsoleOutputA>
     endif
-    ; !UNICODE
     @DefProto DllImport, GetConsoleTitleA, WIN_STD_CALL_CONV,, <:LPSTR, :DWORD>, 8
     @DefProto DllImport, GetConsoleTitleW, WIN_STD_CALL_CONV,, <:LPWSTR, :DWORD>, 8
     ifdef UNICODE
@@ -163,7 +137,6 @@ ifndef _APISETCONSOLEL2_
     else
       GetConsoleTitle equ <GetConsoleTitleA>
     endif
-    ; !UNICODE
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, GetConsoleOriginalTitleA, WIN_STD_CALL_CONV,, <:LPSTR, :DWORD>, 8
       @DefProto DllImport, GetConsoleOriginalTitleW, WIN_STD_CALL_CONV,, <:LPWSTR, :DWORD>, 8
@@ -172,8 +145,6 @@ ifndef _APISETCONSOLEL2_
       else
         GetConsoleOriginalTitle equ <GetConsoleOriginalTitleA>
       endif
-      ; !UNICODE
-      ;* _WIN32_WINNT >= 0x0600 *
     endif
     @DefProto DllImport, SetConsoleTitleA, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
     @DefProto DllImport, SetConsoleTitleW, WIN_STD_CALL_CONV,, <:LPCWSTR>, 4
@@ -182,11 +153,8 @@ ifndef _APISETCONSOLEL2_
     else
       SetConsoleTitle equ <SetConsoleTitleA>
     endif
-    ; !UNICODE
   endif
-  ; WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM)
   ifdef __cplusplus
     ;[...]
   endif
 endif
-; _APISETCONSOLEL2_

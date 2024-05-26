@@ -645,7 +645,7 @@ MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.ParseHeaderFile
-; Purpose:    Input is C header source, output is tokenized, that is:
+; Purpose:    Tokenize the C header source, so that:
 ;              + Each token is an ASCII string.
 ;              + Numeric literals (numbers) are converted to ASM format on the fly.
 ;              + Comments are marked as such.
@@ -887,7 +887,7 @@ Method IncFile.Render, uses xbx xdi; xsi
 
   ;Check if level
   .if [xbx].bCondIfLevel != 0
-    OCall xbx::IncFile.ShowError, $OfsCStr("unmatching if/endif")
+    OCall xbx::IncFile.ShowError, $OfsCStr("non-matching if/endif")
   .endif
 
   ;Final message

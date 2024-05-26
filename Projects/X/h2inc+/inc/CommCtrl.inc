@@ -1,16 +1,12 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\commctrl.h
 ;             Created on (UTC) 06/04/2024 06:15:52
 ;             Last modified on (UTC) 21/02/2024 18:17:18
 
-;\*****************************************************************************
 ifndef _INC_COMMCTRL
   _INC_COMMCTRL equ <>
   if Defined(_MSC_VER) and (_MSC_VER ge 1200)
-    ;* nonstandard extension : single line comment *
-    ;* nonstandard extension used : nameless struct/union *
-    ;* padding added after data member *
   endif
   include winapifamily.inc
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -18,9 +14,7 @@ ifndef _INC_COMMCTRL
       _HRESULT_DEFINED equ <>
       HRESULT typedef SDWORD
     endif
-    ; !_HRESULT_DEFINED
     ifndef NOUSER
-      ; Define API decoration for direct importing of DLL references.
       ifndef WINCOMMCTRLAPI
         if  not Defined(_COMCTL32_) and Defined(_WIN32)
           WINCOMMCTRLAPI equ <DECLSPEC_IMPORT>
@@ -28,8 +22,6 @@ ifndef _INC_COMMCTRL
           WINCOMMCTRLAPI equ <>
         endif
       endif
-      ; WINCOMMCTRLAPI
-      ; For compilers that don't support nameless unions
       ifndef DUMMYUNIONNAME
         ifdef NONAMELESSUNION
           DUMMYUNIONNAME equ <u>
@@ -45,34 +37,9 @@ ifndef _INC_COMMCTRL
           DUMMYUNIONNAME5 equ <>
         endif
       endif
-      ; DUMMYUNIONNAME
       ifdef __cplusplus
         ;[...]
       endif
-      ; Users of this header may define any number of these constants to avoid
-      ; the definitions of each functional group.
-      ;    NOTOOLBAR    Customizable bitmap-button toolbar control.
-      ;    NOUPDOWN     Up and Down arrow increment/decrement control.
-      ;    NOSTATUSBAR  Status bar control.
-      ;    NOMENUHELP   APIs to help manage menus, especially with a status bar.
-      ;    NOTRACKBAR   Customizable column-width tracking control.
-      ;    NODRAGLIST   APIs to make a listbox source and sink drag&drop actions.
-      ;    NOPROGRESS   Progress gas gauge.
-      ;    NOHOTKEY     HotKey control
-      ;    NOHEADER     Header bar control.
-      ;    NOIMAGEAPIS  ImageList apis.
-      ;    NOLISTVIEW   ListView control.
-      ;    NOTREEVIEW   TreeView control.
-      ;    NOTABCONTROL Tab control.
-      ;    NOANIMATE    Animate control.
-      ;    NOBUTTON     Button control.
-      ;    NOSTATIC     Static control.
-      ;    NOEDIT       Edit control.
-      ;    NOLISTBOX    Listbox control.
-      ;    NOCOMBOBOX   Combobox control.
-      ;    NOSCROLLBAR  Scrollbar control.
-      ;    NOTASKDIALOG Task Dialog.
-      ;=============================================================================
       include prsht.inc
       ifndef SNDMSG
         ifdef __cplusplus
@@ -83,101 +50,63 @@ ifndef _INC_COMMCTRL
           else
             ;[...]
           endif
-          ;_MAC
         endif
       endif
-      ; ifndef SNDMSG
       ifdef _MAC
         ;[...]
-            ; _WLMDLL
-          ; _WLM_NOFORCE_LIBS
-        ; RC_INVOKED
       endif
-      ;_MAC
       @DefProto DllImport, InitCommonControls, WIN_STD_CALL_CONV,, <>, 0
       INITCOMMONCONTROLSEX struct
         dwSize DWORD ?
-        ; size of this structure
         dwICC DWORD ?
-        ; flags indicating which classes to be initialized
       INITCOMMONCONTROLSEX ends
       tagINITCOMMONCONTROLSEX typedef INITCOMMONCONTROLSEX
       LPINITCOMMONCONTROLSEX typedef ptr INITCOMMONCONTROLSEX
-      ICC_LISTVIEW_CLASSES equ 00000001h; listview, header
-
-      ICC_TREEVIEW_CLASSES equ 00000002h; treeview, tooltips
-
-      ICC_BAR_CLASSES equ 00000004h; toolbar, statusbar, trackbar, tooltips
-
-      ICC_TAB_CLASSES equ 00000008h; tab, tooltips
-
-      ICC_UPDOWN_CLASS equ 00000010h; updown
-
-      ICC_PROGRESS_CLASS equ 00000020h; progress
-
-      ICC_HOTKEY_CLASS equ 00000040h; hotkey
-
-      ICC_ANIMATE_CLASS equ 00000080h; animate
-
+      ICC_LISTVIEW_CLASSES equ 00000001h
+      ICC_TREEVIEW_CLASSES equ 00000002h
+      ICC_BAR_CLASSES equ 00000004h
+      ICC_TAB_CLASSES equ 00000008h
+      ICC_UPDOWN_CLASS equ 00000010h
+      ICC_PROGRESS_CLASS equ 00000020h
+      ICC_HOTKEY_CLASS equ 00000040h
+      ICC_ANIMATE_CLASS equ 00000080h
       ICC_WIN95_CLASSES equ 000000FFh
-      ICC_DATE_CLASSES equ 00000100h; month picker, date picker, time picker, updown
-
-      ICC_USEREX_CLASSES equ 00000200h; comboex
-
-      ICC_COOL_CLASSES equ 00000400h; rebar (coolbar) control
-
+      ICC_DATE_CLASSES equ 00000100h
+      ICC_USEREX_CLASSES equ 00000200h
+      ICC_COOL_CLASSES equ 00000400h
       ICC_INTERNET_CLASSES equ 00000800h
-      ICC_PAGESCROLLER_CLASS equ 00001000h; page scroller
-
-      ICC_NATIVEFNTCTL_CLASS equ 00002000h; native font control
-
+      ICC_PAGESCROLLER_CLASS equ 00001000h
+      ICC_NATIVEFNTCTL_CLASS equ 00002000h
       if (NTDDI_VERSION ge NTDDI_WINXP)
         ICC_STANDARD_CLASSES equ 00004000h
         ICC_LINK_CLASS equ 00008000h
       endif
-      ; (NTDDI_VERSION >= NTDDI_WINXP)
       @DefProto DllImport, InitCommonControlsEx, WIN_STD_CALL_CONV,, <:ptr INITCOMMONCONTROLSEX>, 4
       ODT_HEADER equ 100
       ODT_TAB equ 101
       ODT_LISTVIEW equ 102
-      ;====== Ranges for control message IDs =======================================
-      LVM_FIRST equ 1000h; ListView messages
-
-      TV_FIRST equ 1100h; TreeView messages
-
-      HDM_FIRST equ 1200h; Header messages
-
-      TCM_FIRST equ 1300h; Tab control messages
-
-      PGM_FIRST equ 1400h; Pager control messages
-
+      LVM_FIRST equ 1000h
+      TV_FIRST equ 1100h
+      HDM_FIRST equ 1200h
+      TCM_FIRST equ 1300h
+      PGM_FIRST equ 1400h
       if (NTDDI_VERSION ge NTDDI_WINXP)
-        ECM_FIRST equ 1500h; Edit control messages
-
-        BCM_FIRST equ 1600h; Button control messages
-
-        CBM_FIRST equ 1700h; Combobox control messages
-
+        ECM_FIRST equ 1500h
+        BCM_FIRST equ 1600h
+        CBM_FIRST equ 1700h
       endif
-      ; (NTDDI_VERSION >= NTDDI_WINXP)
-      CCM_FIRST equ 2000h; Common control shared messages
-
+      CCM_FIRST equ 2000h
       CCM_LAST equ (CCM_FIRST + 200h)
-      CCM_SETBKCOLOR equ (CCM_FIRST + 1); lParam is bkColor
-
+      CCM_SETBKCOLOR equ (CCM_FIRST + 1)
       COLORSCHEME struct
         dwSize DWORD ?
         clrBtnHighlight COLORREF ?
-        ; highlight color
         clrBtnShadow COLORREF ?
-        ; shadow color
       COLORSCHEME ends
       tagCOLORSCHEME typedef COLORSCHEME
       LPCOLORSCHEME typedef ptr COLORSCHEME
-      CCM_SETCOLORSCHEME equ (CCM_FIRST + 2); lParam is color scheme
-
-      CCM_GETCOLORSCHEME equ (CCM_FIRST + 3); fills in COLORSCHEME pointed to by lParam
-
+      CCM_SETCOLORSCHEME equ (CCM_FIRST + 2)
+      CCM_GETCOLORSCHEME equ (CCM_FIRST + 3)
       CCM_GETDROPTARGET equ (CCM_FIRST + 4)
       CCM_SETUNICODEFORMAT equ (CCM_FIRST + 5)
       CCM_GETUNICODEFORMAT equ (CCM_FIRST + 6)
@@ -188,62 +117,47 @@ ifndef _INC_COMMCTRL
       endif
       CCM_SETVERSION equ (CCM_FIRST + 7h)
       CCM_GETVERSION equ (CCM_FIRST + 8h)
-      CCM_SETNOTIFYWINDOW equ (CCM_FIRST + 9h); wParam == hwndParent.
-
+      CCM_SETNOTIFYWINDOW equ (CCM_FIRST + 9h)
       if (NTDDI_VERSION ge NTDDI_WINXP)
         CCM_SETWINDOWTHEME equ (CCM_FIRST + 0bh)
-        CCM_DPISCALE equ (CCM_FIRST + 0ch); wParam == Awareness
-
+        CCM_DPISCALE equ (CCM_FIRST + 0ch)
       endif
-      ; for tooltips
       INFOTIPSIZE equ 1024
-      ;====== WM_NOTIFY Macros =====================================================
       HANDLE_WM_NOTIFY macro hwnd, wParam, lParam, fn
         exitm <(fn) ((hwnd), (wParam), (NMHDR *) (lParam))>
       endm
       FORWARD_WM_NOTIFY macro hwnd, idFrom, pnmhdr, fn
         exitm <(fn) ((hwnd), WM_NOTIFY, (idFrom), (NMHDR *) (pnmhdr))>
       endm
-      ;====== Generic WM_NOTIFY notification codes =================================
       NM_OUTOFMEMORY equ (NM_FIRST - 1)
-      NM_CLICK equ (NM_FIRST - 2); uses NMCLICK struct
-
+      NM_CLICK equ (NM_FIRST - 2)
       NM_DBLCLK equ (NM_FIRST - 3)
       NM_RETURN equ (NM_FIRST - 4)
-      NM_RCLICK equ (NM_FIRST - 5); uses NMCLICK struct
-
+      NM_RCLICK equ (NM_FIRST - 5)
       NM_RDBLCLK equ (NM_FIRST - 6)
       NM_SETFOCUS equ (NM_FIRST - 7)
       NM_KILLFOCUS equ (NM_FIRST - 8)
       NM_CUSTOMDRAW equ (NM_FIRST - 12)
       NM_HOVER equ (NM_FIRST - 13)
-      NM_NCHITTEST equ (NM_FIRST - 14); uses NMMOUSE struct
-
-      NM_KEYDOWN equ (NM_FIRST - 15); uses NMKEY struct
-
+      NM_NCHITTEST equ (NM_FIRST - 14)
+      NM_KEYDOWN equ (NM_FIRST - 15)
       NM_RELEASEDCAPTURE equ (NM_FIRST - 16)
-      NM_SETCURSOR equ (NM_FIRST - 17); uses NMMOUSE struct
-
-      NM_CHAR equ (NM_FIRST - 18); uses NMCHAR struct
-
-      NM_TOOLTIPSCREATED equ (NM_FIRST - 19); notify of when the tooltips window is create
-
+      NM_SETCURSOR equ (NM_FIRST - 17)
+      NM_CHAR equ (NM_FIRST - 18)
+      NM_TOOLTIPSCREATED equ (NM_FIRST - 19)
       NM_LDOWN equ (NM_FIRST - 20)
       NM_RDOWN equ (NM_FIRST - 21)
       NM_THEMECHANGED equ (NM_FIRST - 22)
       if (NTDDI_VERSION ge NTDDI_VISTA)
         NM_FONTCHANGED equ (NM_FIRST - 23)
-        NM_CUSTOMTEXT equ (NM_FIRST - 24); uses NMCUSTOMTEXT struct
-
-        NM_TVSTATEIMAGECHANGING equ (NM_FIRST - 24); uses NMTVSTATEIMAGECHANGING struct, defined after HTREEITEM
-
+        NM_CUSTOMTEXT equ (NM_FIRST - 24)
+        NM_TVSTATEIMAGECHANGING equ (NM_FIRST - 24)
       endif
       ifndef CCSIZEOF_STRUCT
         CCSIZEOF_STRUCT macro structname, member
           exitm <((((LPBYTE) (and ((structname *) 0) - member) - ((LPBYTE) ((structname *) 0)))) + sizeof(((structname *) 0) - member))>
         endm
       endif
-      ;====== Generic WM_NOTIFY notification structures ============================
       NMTOOLTIPSCREATED struct
         hdr NMHDR <>
         hwndToolTips HWND ?
@@ -252,17 +166,15 @@ ifndef _INC_COMMCTRL
       LPNMTOOLTIPSCREATED typedef ptr NMTOOLTIPSCREATED
       NMMOUSE struct
         hdr NMHDR <>
-        dwItemSpec XWORD ?
-        dwItemData XWORD ?
+        dwItemSpec DWORD_PTR ?
+        dwItemData DWORD_PTR ?
         pt POINT <>
         dwHitInfo LPARAM ?
-        ; any specifics about where on the item or control the mouse is
       NMMOUSE ends
       tagNMMOUSE typedef NMMOUSE
       LPNMMOUSE typedef ptr NMMOUSE
       NMCLICK typedef NMMOUSE
       LPNMCLICK typedef LPNMMOUSE
-      ; Generic structure to request an object of a specific type.
       NMOBJECTNOTIFY struct
         hdr NMHDR <>
         iItem SDWORD ?
@@ -274,26 +186,21 @@ ifndef _INC_COMMCTRL
         pObject POINTER ?
         hResult HRESULT ?
         dwFlags DWORD ?
-        ; control specific flags (hints as to where in iItem it hit)
       NMOBJECTNOTIFY ends
       tagNMOBJECTNOTIFY typedef NMOBJECTNOTIFY
       LPNMOBJECTNOTIFY typedef ptr NMOBJECTNOTIFY
-      ; Generic structure for a key
       NMKEY struct
         hdr NMHDR <>
-        nVKey DWORD ?
-        uFlags DWORD ?
+        nVKey UINT ?
+        uFlags UINT ?
       NMKEY ends
       tagNMKEY typedef NMKEY
       LPNMKEY typedef ptr NMKEY
-      ; Generic structure for a character
       NMCHAR struct
         hdr NMHDR <>
-        ch_ DWORD ?
+        ch_ UINT ?
         dwItemPrev DWORD ?
-        ; Item previously selected
         dwItemNext DWORD ?
-        ; Item to be selected
       NMCHAR ends
       tagNMCHAR typedef NMCHAR
       LPNMCHAR typedef ptr NMCHAR
@@ -301,72 +208,48 @@ ifndef _INC_COMMCTRL
         NMCUSTOMTEXT struct
           hdr NMHDR <>
           hDC HDC ?
-          lpString =POINTER ?
+          lpString LPCWSTR ?
           nCount SDWORD ?
           lpRect LPRECT ?
-          uFormat DWORD ?
-          fLink DWORD ?
+          uFormat UINT ?
+          fLink BOOL ?
         NMCUSTOMTEXT ends
         tagNMCUSTOMTEXT typedef NMCUSTOMTEXT
         LPNMCUSTOMTEXT typedef ptr NMCUSTOMTEXT
       endif
-      ; _WIN32_IE >= 0x0600
-      ;====== WM_NOTIFY codes (NMHDR.code values) ==================================
-      NM_FIRST equ (0 - 0); generic to all controls
-
+      NM_FIRST equ (0 - 0)
       NM_LAST equ (0 - 99)
-      LVN_FIRST equ (0 - 100); listview
-
+      LVN_FIRST equ (0 - 100)
       LVN_LAST equ (0 - 199)
-      ; Property sheet reserved      (0U-200U) -  (0U-299U) - see prsht.h
-      HDN_FIRST equ (0 - 300); header
-
+      HDN_FIRST equ (0 - 300)
       HDN_LAST equ (0 - 399)
-      TVN_FIRST equ (0 - 400); treeview
-
+      TVN_FIRST equ (0 - 400)
       TVN_LAST equ (0 - 499)
-      TTN_FIRST equ (0 - 520); tooltips
-
+      TTN_FIRST equ (0 - 520)
       TTN_LAST equ (0 - 549)
-      TCN_FIRST equ (0 - 550); tab control
-
+      TCN_FIRST equ (0 - 550)
       TCN_LAST equ (0 - 580)
-      ; Shell reserved               (0U-580U) -  (0U-589U)
-      CDN_FIRST equ (0 - 601); common dialog (new)
-
+      CDN_FIRST equ (0 - 601)
       CDN_LAST equ (0 - 699)
-      TBN_FIRST equ (0 - 700); toolbar
-
+      TBN_FIRST equ (0 - 700)
       TBN_LAST equ (0 - 720)
-      UDN_FIRST equ (0 - 721); updown
-
+      UDN_FIRST equ (0 - 721)
       UDN_LAST equ (0 - 729)
-      DTN_FIRST equ (0 - 740); datetimepick
-
-      DTN_LAST equ (0 - 745); DTN_FIRST - 5
-
-      MCN_FIRST equ (0 - 746); monthcal
-
-      MCN_LAST equ (0 - 752); MCN_FIRST - 6
-
-      DTN_FIRST2 equ (0 - 753); datetimepick2
-
+      DTN_FIRST equ (0 - 740)
+      DTN_LAST equ (0 - 745)
+      MCN_FIRST equ (0 - 746)
+      MCN_LAST equ (0 - 752)
+      DTN_FIRST2 equ (0 - 753)
       DTN_LAST2 equ (0 - 799)
-      CBEN_FIRST equ (0 - 800); combo box ex
-
+      CBEN_FIRST equ (0 - 800)
       CBEN_LAST equ (0 - 830)
-      RBN_FIRST equ (0 - 831); rebar
-
+      RBN_FIRST equ (0 - 831)
       RBN_LAST equ (0 - 859)
-      IPN_FIRST equ (0 - 860); internet address
-
-      IPN_LAST equ (0 - 879); internet address
-
-      SBN_FIRST equ (0 - 880); status bar
-
+      IPN_FIRST equ (0 - 860)
+      IPN_LAST equ (0 - 879)
+      SBN_FIRST equ (0 - 880)
       SBN_LAST equ (0 - 899)
-      PGN_FIRST equ (0 - 900); Pager Control
-
+      PGN_FIRST equ (0 - 900)
       PGN_LAST equ (0 - 950)
       ifndef WMN_FIRST
         WMN_FIRST equ (0 - 1000)
@@ -377,50 +260,36 @@ ifndef _INC_COMMCTRL
         BCN_LAST equ (0 - 1350)
       endif
       if (NTDDI_VERSION ge NTDDI_VISTA)
-        TRBN_FIRST equ (0 - 1501); trackbar
-
+        TRBN_FIRST equ (0 - 1501)
         TRBN_LAST equ (0 - 1519)
       endif
       if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
-        EN_FIRST equ (0 - 1520); edit control
-
+        EN_FIRST equ (0 - 1520)
         EN_LAST equ (0 - 1540)
       endif
       MSGF_COMMCTRL_BEGINDRAG equ 4200h
       MSGF_COMMCTRL_SIZEHEADER equ 4201h
       MSGF_COMMCTRL_DRAGSELECT equ 4202h
       MSGF_COMMCTRL_TOOLBARCUST equ 4203h
-      ;==================== CUSTOM DRAW ==========================================
-      ; custom draw return flags
-      ; values under 0x00010000 are reserved for global custom draw values.
-      ; above that are for specific controls
       CDRF_DODEFAULT equ 00000000h
       CDRF_NEWFONT equ 00000002h
       CDRF_SKIPDEFAULT equ 00000004h
-      CDRF_DOERASE equ 00000008h; draw the background
-
-      CDRF_SKIPPOSTPAINT equ 00000100h; don't draw the focus rect
-
+      CDRF_DOERASE equ 00000008h
+      CDRF_SKIPPOSTPAINT equ 00000100h
       CDRF_NOTIFYPOSTPAINT equ 00000010h
       CDRF_NOTIFYITEMDRAW equ 00000020h
-      CDRF_NOTIFYSUBITEMDRAW equ 00000020h; flags are the same, we can distinguish by context
-
+      CDRF_NOTIFYSUBITEMDRAW equ 00000020h
       CDRF_NOTIFYPOSTERASE equ 00000040h
-      ; drawstage flags
-      ; values under 0x00010000 are reserved for global custom draw values.
-      ; above that are for specific controls
       CDDS_PREPAINT equ 00000001h
       CDDS_POSTPAINT equ 00000002h
       CDDS_PREERASE equ 00000003h
       CDDS_POSTERASE equ 00000004h
-      ; the 0x000010000 bit means it's individual item specific
       CDDS_ITEM equ 00010000h
       CDDS_ITEMPREPAINT equ <(CDDS_ITEM or CDDS_PREPAINT)>
       CDDS_ITEMPOSTPAINT equ <(CDDS_ITEM or CDDS_POSTPAINT)>
       CDDS_ITEMPREERASE equ <(CDDS_ITEM or CDDS_PREERASE)>
       CDDS_ITEMPOSTERASE equ <(CDDS_ITEM or CDDS_POSTERASE)>
       CDDS_SUBITEM equ 00020000h
-      ; itemState flags
       CDIS_SELECTED equ 0001h
       CDIS_GRAYED equ 0002h
       CDIS_DISABLED equ 0004h
@@ -443,16 +312,15 @@ ifndef _INC_COMMCTRL
         dwDrawStage DWORD ?
         hdc HDC ?
         rc RECT <>
-        dwItemSpec XWORD ?
-        ; this is control specific, but it's how to specify an item.  valid only with CDDS_ITEM bit set
-        uItemState DWORD ?
+        dwItemSpec DWORD_PTR ?
+        uItemState UINT ?
         lItemlParam LPARAM ?
       NMCUSTOMDRAW ends
       tagNMCUSTOMDRAWINFO typedef NMCUSTOMDRAW
       LPNMCUSTOMDRAW typedef ptr NMCUSTOMDRAW
       NMTTCUSTOMDRAW struct
         nmcd NMCUSTOMDRAW <>
-        uDrawFlags DWORD ?
+        uDrawFlags UINT ?
       NMTTCUSTOMDRAW ends
       tagNMTTCUSTOMDRAW typedef NMTTCUSTOMDRAW
       LPNMTTCUSTOMDRAW typedef ptr NMTTCUSTOMDRAW
@@ -465,7 +333,6 @@ ifndef _INC_COMMCTRL
       tagNMCUSTOMSPLITRECTINFO typedef NMCUSTOMSPLITRECTINFO
       LPNMCUSTOMSPLITRECTINFO typedef ptr NMCUSTOMSPLITRECTINFO
       NM_GETCUSTOMSPLITRECT equ (BCN_FIRST + 0003h)
-      ;====== IMAGE APIS ===========================================================
       ifndef NOIMAGEAPIS
         CLR_NONE equ 0FFFFFFFFh
         CLR_DEFAULT equ 0FF000000h
@@ -483,12 +350,10 @@ ifndef _INC_COMMCTRL
             cx_ SDWORD ?
             cy SDWORD ?
             xBitmap SDWORD ?
-            ; x offest from the upperleft of bitmap
             yBitmap SDWORD ?
-            ; y offset from the upperleft of bitmap
             rgbBk COLORREF ?
             rgbFg COLORREF ?
-            fStyle DWORD ?
+            fStyle UINT ?
             dwRop DWORD ?
             if (_WIN32_IE ge 0501h)
               fState DWORD ?
@@ -508,19 +373,14 @@ ifndef _INC_COMMCTRL
         ILC_COLOR16 equ 00000010h
         ILC_COLOR24 equ 00000018h
         ILC_COLOR32 equ 00000020h
-        ILC_PALETTE equ 00000800h; (not implemented)
-
+        ILC_PALETTE equ 00000800h
         if (NTDDI_VERSION ge NTDDI_WINXP)
-          ILC_MIRROR equ 00002000h; Mirror the icons contained, if the process is mirrored
-
-          ILC_PERITEMMIRROR equ 00008000h; Causes the mirroring code to mirror each item when inserting a set of images, verses the whole strip
-
+          ILC_MIRROR equ 00002000h
+          ILC_PERITEMMIRROR equ 00008000h
         endif
         if (NTDDI_VERSION ge NTDDI_VISTA)
-          ILC_ORIGINALSIZE equ 00010000h; Imagelist should accept smaller than set images and apply OriginalSize based on image added
-
-          ILC_HIGHQUALITYSCALE equ 00020000h; Imagelist should enable use of the high quality scaler.
-
+          ILC_ORIGINALSIZE equ 00010000h
+          ILC_HIGHQUALITYSCALE equ 00020000h
         endif
         @DefProto DllImport, ImageList_Create, WIN_STD_CALL_CONV,, <:SDWORD, :SDWORD, :UINT, :SDWORD, :SDWORD>, 20
         @DefProto DllImport, ImageList_Destroy, WIN_STD_CALL_CONV,, <:HIMAGELIST>, 4
@@ -545,10 +405,8 @@ ifndef _INC_COMMCTRL
         INDEXTOOVERLAYMASK macro i
           exitm <((i) shl 8)>
         endm
-        ILD_PRESERVEALPHA equ 00001000h; This preserves the alpha channel in dest
-
-        ILD_SCALE equ 00002000h; Causes the image to be scaled to cx, cy instead of clipped
-
+        ILD_PRESERVEALPHA equ 00001000h
+        ILD_SCALE equ 00002000h
         ILD_DPISCALE equ 00004000h
         if (NTDDI_VERSION ge NTDDI_VISTA)
           ILD_ASYNC equ 00008000h
@@ -569,8 +427,7 @@ ifndef _INC_COMMCTRL
         @DefProto DllImport, ImageList_Draw, WIN_STD_CALL_CONV,, <:HIMAGELIST, :SDWORD, :HDC, :SDWORD, :SDWORD, :UINT>, 24
         ifdef _WIN32
           if (NTDDI_VERSION ge NTDDI_VISTA)
-            HBITMAP_CALLBACK equ (- 1); only for SparseImageList
-
+            HBITMAP_CALLBACK equ (- 1)
           endif
           @DefProto DllImport, ImageList_Replace, WIN_STD_CALL_CONV,, <:HIMAGELIST, :SDWORD, :HBITMAP, :HBITMAP>, 16
           @DefProto DllImport, ImageList_AddMasked, WIN_STD_CALL_CONV,, <:HIMAGELIST, :HBITMAP, :COLORREF>, 12
@@ -608,10 +465,8 @@ ifndef _INC_COMMCTRL
           @DefProto DllImport, ImageList_Read, WIN_STD_CALL_CONV,, <:ptr IStream>, 4
           @DefProto DllImport, ImageList_Write, WIN_STD_CALL_CONV,, <:HIMAGELIST, :ptr IStream>, 8
           if (NTDDI_VERSION ge NTDDI_WINXP)
-            ILP_NORMAL equ 0; Writes or reads the stream using new sematics for this version of comctl32
-
-            ILP_DOWNLEVEL equ 1; Write or reads the stream using downlevel sematics.
-
+            ILP_NORMAL equ 0
+            ILP_DOWNLEVEL equ 1
             @DefProto DllImport, ImageList_ReadEx, WIN_STD_CALL_CONV,, <:DWORD, :ptr IStream, :REFIID, :ptr PVOID>, 16
             @DefProto DllImport, ImageList_WriteEx, WIN_STD_CALL_CONV,, <:HIMAGELIST, :DWORD, :ptr IStream>, 12
           endif
@@ -643,7 +498,6 @@ ifndef _INC_COMMCTRL
           endif
         endif
       endif
-      ;====== HEADER CONTROL =======================================================
       ifndef NOHEADER
         ifdef _WIN32
           WC_HEADERA equ <"SysHeader32">
@@ -656,7 +510,6 @@ ifndef _INC_COMMCTRL
         else
           ;[...]
         endif
-        ; begin_r_commctrl
         HDS_HORZ equ 0000h
         HDS_BUTTONS equ 0002h
         HDS_HOTTRACK equ 0004h
@@ -672,15 +525,10 @@ ifndef _INC_COMMCTRL
           HDS_NOSIZING equ 0800h
           HDS_OVERFLOW equ 1000h
         endif
-        ; end_r_commctrl
-        HDFT_ISSTRING equ 0000h; HD_ITEM.pvFilter points to a HD_TEXTFILTER
-
-        HDFT_ISNUMBER equ 0001h; HD_ITEM.pvFilter points to a INT
-
-        HDFT_ISDATE equ 0002h; HD_ITEM.pvFilter points to a DWORD (dos date)
-
-        HDFT_HASNOVALUE equ 8000h; clear the filter, by setting this bit
-
+        HDFT_ISSTRING equ 0000h
+        HDFT_ISNUMBER equ 0001h
+        HDFT_ISDATE equ 0002h
+        HDFT_HASNOVALUE equ 8000h
         ifdef UNICODE
           HD_TEXTFILTER equ <HD_TEXTFILTERW>
           HDTEXTFILTER equ <HD_TEXTFILTERW>
@@ -693,18 +541,14 @@ ifndef _INC_COMMCTRL
           LPHDTEXTFILTER equ <LPHD_TEXTFILTERA>
         endif
         HD_TEXTFILTERA struct
-          pszText POINTER ?
-          ; [in] pointer to the buffer containing the filter (ANSI)
-          cchTextMax SDWORD ?
-          ; [in] max size of buffer/edit control buffer
+          pszText LPSTR ?
+          cchTextMax INT_ ?
         HD_TEXTFILTERA ends
         _HD_TEXTFILTERA typedef HD_TEXTFILTERA
         LPHD_TEXTFILTERA typedef ptr HD_TEXTFILTERA
         HD_TEXTFILTERW struct
-          pszText POINTER ?
-          ; [in] pointer to the buffer contiaining the filter (UNICODE)
-          cchTextMax SDWORD ?
-          ; [in] max size of buffer/edit control buffer
+          pszText LPWSTR ?
+          cchTextMax INT_ ?
         HD_TEXTFILTERW ends
         _HD_TEXTFILTERW typedef HD_TEXTFILTERW
         LPHD_TEXTFILTERW typedef ptr HD_TEXTFILTERW
@@ -712,23 +556,19 @@ ifndef _INC_COMMCTRL
         HD_ITEMW equ <HDITEMW>
         HD_ITEM equ <HDITEM>
         HDITEMA struct
-          mask_ DWORD ?
+          mask_ UINT ?
           cxy SDWORD ?
-          pszText POINTER ?
+          pszText LPSTR ?
           hbm HBITMAP ?
           cchTextMax SDWORD ?
           fmt SDWORD ?
           lParam LPARAM ?
           iImage SDWORD ?
-          ; index of bitmap in ImageList
           iOrder SDWORD ?
-          ; where to draw this item
-          type_ DWORD ?
-          ; [in] filter type (defined what pvFilter is a pointer to)
+          type_ UINT ?
           pvFilter POINTER ?
-          ; [in] filter data see above
           if (NTDDI_VERSION ge NTDDI_VISTA)
-            state DWORD ?
+            state UINT ?
           endif
         HDITEMA ends
         _HD_ITEMA typedef HDITEMA
@@ -736,22 +576,19 @@ ifndef _INC_COMMCTRL
         HDITEMA_V1_SIZE equ <CCSIZEOF_STRUCT(HDITEMA, lParam)>
         HDITEMW_V1_SIZE equ <CCSIZEOF_STRUCT(HDITEMW, lParam)>
         HDITEMW struct
-          mask_ DWORD ?
+          mask_ UINT ?
           cxy SDWORD ?
-          pszText POINTER ?
+          pszText LPWSTR ?
           hbm HBITMAP ?
           cchTextMax SDWORD ?
           fmt SDWORD ?
           lParam LPARAM ?
           iImage SDWORD ?
-          ; index of bitmap in ImageList
           iOrder SDWORD ?
-          type_ DWORD ?
-          ; [in] filter type (defined what pvFilter is a pointer to)
+          type_ UINT ?
           pvFilter POINTER ?
-          ; [in] fillter data see above
           if (NTDDI_VERSION ge NTDDI_VISTA)
-            state DWORD ?
+            state UINT ?
           endif
         HDITEMW ends
         _HD_ITEMW typedef HDITEMW
@@ -778,25 +615,16 @@ ifndef _INC_COMMCTRL
         if (NTDDI_VERSION ge NTDDI_VISTA)
           HDI_STATE equ 0200h
         endif
-        ; HDF_ flags are shared with the listview control (LVCFMT_ flags)
-        HDF_LEFT equ 0000h; Same as LVCFMT_LEFT
-
-        HDF_RIGHT equ 0001h; Same as LVCFMT_RIGHT
-
-        HDF_CENTER equ 0002h; Same as LVCFMT_CENTER
-
-        HDF_JUSTIFYMASK equ 0003h; Same as LVCFMT_JUSTIFYMASK
-
-        HDF_RTLREADING equ 0004h; Same as LVCFMT_LEFT
-
+        HDF_LEFT equ 0000h
+        HDF_RIGHT equ 0001h
+        HDF_CENTER equ 0002h
+        HDF_JUSTIFYMASK equ 0003h
+        HDF_RTLREADING equ 0004h
         HDF_BITMAP equ 2000h
         HDF_STRING equ 4000h
-        HDF_OWNERDRAW equ 8000h; Same as LVCFMT_COL_HAS_IMAGES
-
-        HDF_IMAGE equ 0800h; Same as LVCFMT_IMAGE
-
-        HDF_BITMAP_ON_RIGHT equ 1000h; Same as LVCFMT_BITMAP_ON_RIGHT
-
+        HDF_OWNERDRAW equ 8000h
+        HDF_IMAGE equ 0800h
+        HDF_BITMAP_ON_RIGHT equ 1000h
         if (NTDDI_VERSION ge NTDDI_WINXP)
           HDF_SORTUP equ 0400h
           HDF_SORTDOWN equ 0200h
@@ -804,10 +632,8 @@ ifndef _INC_COMMCTRL
         if (NTDDI_VERSION ge NTDDI_VISTA)
           HDF_CHECKBOX equ 0040h
           HDF_CHECKED equ 0080h
-          HDF_FIXEDWIDTH equ 0100h; Can't resize the column; same as LVCFMT_FIXED_WIDTH
-
-          HDF_SPLITBUTTON equ 1000000h; Column is a split button; same as LVCFMT_SPLITBUTTON
-
+          HDF_FIXEDWIDTH equ 0100h
+          HDF_SPLITBUTTON equ 1000000h
         endif
         if (NTDDI_VERSION ge NTDDI_VISTA)
           HDIS_FOCUSED equ 00000001h
@@ -879,7 +705,7 @@ ifndef _INC_COMMCTRL
         HD_HITTESTINFO equ <HDHITTESTINFO>
         HDHITTESTINFO struct
           pt POINT <>
-          flags DWORD ?
+          flags UINT ?
           iItem SDWORD ?
         HDHITTESTINFO ends
         _HD_HITTESTINFO typedef HDHITTESTINFO
@@ -909,8 +735,7 @@ ifndef _INC_COMMCTRL
         Header_OrderToIndex macro hwnd, i
           exitm <SNDMSG ((hwnd), HDM_ORDERTOINDEX, (i), 0)>
         endm
-        HDM_CREATEDRAGIMAGE equ (HDM_FIRST + 16); wparam = which item (by index)
-
+        HDM_CREATEDRAGIMAGE equ (HDM_FIRST + 16)
         Header_CreateDragImage macro hwnd, i
           exitm <SNDMSG ((hwnd), HDM_CREATEDRAGIMAGE, (i), 0)>
         endm
@@ -922,20 +747,10 @@ ifndef _INC_COMMCTRL
         Header_SetOrderArray macro hwnd, iCount, lpi
           exitm <SNDMSG ((hwnd), HDM_SETORDERARRAY, (iCount), (lpi))>
         endm
-        ; lparam = int array of size HDM_GETITEMCOUNT
-        ; the array specifies the order that all items should be displayed.
-        ; e.g.  { 2, 0, 1}
-        ; says the index 2 item should be shown in the 0ths position
-        ;      index 0 should be shown in the 1st position
-        ;      index 1 should be shown in the 2nd position
         HDM_SETHOTDIVIDER equ (HDM_FIRST + 19)
         Header_SetHotDivider macro hwnd, fPos, dw_
           exitm <SNDMSG ((hwnd), HDM_SETHOTDIVIDER, (fPos), (dw_))>
         endm
-        ; convenience message for external dragdrop
-        ; wParam = BOOL  specifying whether the lParam is a dwPos of the cursor
-        ;              position or the index of which divider to hotlight
-        ; lParam = depends on wParam  (-1 and wParm = FALSE turns off hotlight)
         HDM_SETBITMAPMARGIN equ (HDM_FIRST + 20)
         Header_SetBitmapMargin macro hwnd, iWidth
           exitm <SNDMSG ((hwnd), HDM_SETBITMAPMARGIN, (iWidth), 0)>
@@ -960,9 +775,6 @@ ifndef _INC_COMMCTRL
         Header_EditFilter macro hwnd, i, fDiscardChanges
           exitm <SNDMSG ((hwnd), HDM_EDITFILTER, (i), MAKELPARAM(fDiscardChanges, 0))>
         endm
-        ; Clear filter takes -1 as a column value to indicate that all
-        ; the filter should be cleared.  When this happens you will
-        ; only receive a single filter changed notification.
         HDM_CLEARFILTER equ (HDM_FIRST + 24)
         Header_ClearFilter macro hwnd, i
           exitm <SNDMSG ((hwnd), HDM_CLEARFILTER, (i), 0)>
@@ -974,13 +786,11 @@ ifndef _INC_COMMCTRL
           HDM_TRANSLATEACCELERATOR equ <CCM_TRANSLATEACCELERATOR>
         endif
         if (NTDDI_VERSION ge NTDDI_VISTA)
-          HDM_GETITEMDROPDOWNRECT equ (HDM_FIRST + 25); rect of item's drop down button
-
+          HDM_GETITEMDROPDOWNRECT equ (HDM_FIRST + 25)
           Header_GetItemDropDownRect macro hwnd, iItem, lprc
             exitm <SNDMSG ((hwnd), HDM_GETITEMDROPDOWNRECT, (iItem), (lprc))>
           endm
-          HDM_GETOVERFLOWRECT equ (HDM_FIRST + 26); rect of overflow button
-
+          HDM_GETOVERFLOWRECT equ (HDM_FIRST + 26)
           Header_GetOverflowRect macro hwnd, lprc
             exitm <SNDMSG ((hwnd), HDM_GETOVERFLOWRECT, 0, (lprc))>
           endm
@@ -993,7 +803,6 @@ ifndef _INC_COMMCTRL
             exitm <SNDMSG ((hwnd), HDM_SETFOCUSEDITEM, (0), (iItem))>
           endm
         endif
-        ; (NTDDI_VERSION >= NTDDI_VISTA)
         HDN_ITEMCHANGINGA equ (HDN_FIRST - 0)
         HDN_ITEMCHANGINGW equ (HDN_FIRST - 20)
         HDN_ITEMCHANGEDA equ (HDN_FIRST - 1)
@@ -1076,8 +885,8 @@ ifndef _INC_COMMCTRL
         NMHDDISPINFOW struct
           hdr NMHDR <>
           iItem SDWORD ?
-          mask_ DWORD ?
-          pszText POINTER ?
+          mask_ UINT ?
+          pszText LPWSTR ?
           cchTextMax SDWORD ?
           iImage SDWORD ?
           lParam LPARAM ?
@@ -1087,8 +896,8 @@ ifndef _INC_COMMCTRL
         NMHDDISPINFOA struct
           hdr NMHDR <>
           iItem SDWORD ?
-          mask_ DWORD ?
-          pszText POINTER ?
+          mask_ UINT ?
+          pszText LPSTR ?
           cchTextMax SDWORD ?
           iImage SDWORD ?
           lParam LPARAM ?
@@ -1104,14 +913,12 @@ ifndef _INC_COMMCTRL
         endif
         NMHDFILTERBTNCLICK struct
           hdr NMHDR <>
-          iItem SDWORD ?
+          iItem INT_ ?
           rc RECT <>
         NMHDFILTERBTNCLICK ends
         tagNMHDFILTERBTNCLICK typedef NMHDFILTERBTNCLICK
         LPNMHDFILTERBTNCLICK typedef ptr NMHDFILTERBTNCLICK
       endif
-      ; NOHEADER
-      ;====== TOOLBAR CONTROL ======================================================
       ifndef NOTOOLBAR
         ifdef _WIN32
           TOOLBARCLASSNAMEW equ <L("ToolbarWindow32")>
@@ -1131,13 +938,11 @@ ifndef _INC_COMMCTRL
           fsStyle BYTE ?
           ifdef _WIN64
             bReserved BYTE 6 dup (?)
-            ; padding for alignment
           elseif Defined(_WIN32)
             bReserved BYTE 2 dup (?)
-            ; padding for alignment
           endif
-          dwData XWORD ?
-          iString SXWORD ?
+          dwData DWORD_PTR ?
+          iString INT_PTR ?
         TBBUTTON ends
         _TBBUTTON typedef TBBUTTON
         PTBBUTTON typedef ptr TBBUTTON
@@ -1160,23 +965,14 @@ ifndef _INC_COMMCTRL
         TBSTATE_WRAP equ 20h
         TBSTATE_ELLIPSES equ 40h
         TBSTATE_MARKED equ 80h
-        ; begin_r_commctrl
-        TBSTYLE_BUTTON equ 0000h; obsolete; use BTNS_BUTTON instead
-
-        TBSTYLE_SEP equ 0001h; obsolete; use BTNS_SEP instead
-
-        TBSTYLE_CHECK equ 0002h; obsolete; use BTNS_CHECK instead
-
-        TBSTYLE_GROUP equ 0004h; obsolete; use BTNS_GROUP instead
-
-        TBSTYLE_CHECKGROUP equ <(TBSTYLE_GROUP or TBSTYLE_CHECK)>; obsolete; use BTNS_CHECKGROUP instead
-
-        TBSTYLE_DROPDOWN equ 0008h; obsolete; use BTNS_DROPDOWN instead
-
-        TBSTYLE_AUTOSIZE equ 0010h; obsolete; use BTNS_AUTOSIZE instead
-
-        TBSTYLE_NOPREFIX equ 0020h; obsolete; use BTNS_NOPREFIX instead
-
+        TBSTYLE_BUTTON equ 0000h
+        TBSTYLE_SEP equ 0001h
+        TBSTYLE_CHECK equ 0002h
+        TBSTYLE_GROUP equ 0004h
+        TBSTYLE_CHECKGROUP equ <(TBSTYLE_GROUP or TBSTYLE_CHECK)>
+        TBSTYLE_DROPDOWN equ 0008h
+        TBSTYLE_AUTOSIZE equ 0010h
+        TBSTYLE_NOPREFIX equ 0020h
         TBSTYLE_TOOLTIPS equ 0100h
         TBSTYLE_WRAPABLE equ 0200h
         TBSTYLE_ALTDRAG equ 0400h
@@ -1185,63 +981,36 @@ ifndef _INC_COMMCTRL
         TBSTYLE_CUSTOMERASE equ 2000h
         TBSTYLE_REGISTERDROP equ 4000h
         TBSTYLE_TRANSPARENT equ 8000h
-        ; end_r_commctrl
         TBSTYLE_EX_DRAWDDARROWS equ 00000001h
-        ; begin_r_commctrl
-        BTNS_BUTTON equ <TBSTYLE_BUTTON>; 0x0000
-
-        BTNS_SEP equ <TBSTYLE_SEP>; 0x0001
-
-        BTNS_CHECK equ <TBSTYLE_CHECK>; 0x0002
-
-        BTNS_GROUP equ <TBSTYLE_GROUP>; 0x0004
-
-        BTNS_CHECKGROUP equ <TBSTYLE_CHECKGROUP>; (TBSTYLE_GROUP | TBSTYLE_CHECK)
-
-        BTNS_DROPDOWN equ <TBSTYLE_DROPDOWN>; 0x0008
-
-        BTNS_AUTOSIZE equ <TBSTYLE_AUTOSIZE>; 0x0010; automatically calculate the cx of the button
-
-        BTNS_NOPREFIX equ <TBSTYLE_NOPREFIX>; 0x0020; this button should not have accel prefix
-
-        BTNS_SHOWTEXT equ 0040h; ignored unless TBSTYLE_EX_MIXEDBUTTONS is set
-
-        BTNS_WHOLEDROPDOWN equ 0080h; draw drop-down arrow, but without split arrow section
-
-        ; end_r_commctrl
+        BTNS_BUTTON equ <TBSTYLE_BUTTON>
+        BTNS_SEP equ <TBSTYLE_SEP>
+        BTNS_CHECK equ <TBSTYLE_CHECK>
+        BTNS_GROUP equ <TBSTYLE_GROUP>
+        BTNS_CHECKGROUP equ <TBSTYLE_CHECKGROUP>
+        BTNS_DROPDOWN equ <TBSTYLE_DROPDOWN>
+        BTNS_AUTOSIZE equ <TBSTYLE_AUTOSIZE>
+        BTNS_NOPREFIX equ <TBSTYLE_NOPREFIX>
+        BTNS_SHOWTEXT equ 0040h
+        BTNS_WHOLEDROPDOWN equ 0080h
         TBSTYLE_EX_MIXEDBUTTONS equ 00000008h
-        TBSTYLE_EX_HIDECLIPPEDBUTTONS equ 00000010h; don't show partially obscured buttons
-
-        TBSTYLE_EX_MULTICOLUMN equ 00000002h; conflicts w/ TBSTYLE_WRAPABLE
-
+        TBSTYLE_EX_HIDECLIPPEDBUTTONS equ 00000010h
+        TBSTYLE_EX_MULTICOLUMN equ 00000002h
         TBSTYLE_EX_VERTICAL equ 00000004h
         if (NTDDI_VERSION ge NTDDI_WINXP)
-          TBSTYLE_EX_DOUBLEBUFFER equ 00000080h; Double Buffer the toolbar
-
+          TBSTYLE_EX_DOUBLEBUFFER equ 00000080h
         endif
-        ; Custom Draw Structure
         NMTBCUSTOMDRAW struct
           nmcd NMCUSTOMDRAW <>
           hbrMonoDither HBRUSH ?
           hbrLines HBRUSH ?
-          ; For drawing lines on buttons
           hpenLines HPEN ?
-          ; For drawing lines on buttons
           clrText COLORREF ?
-          ; Color of text
           clrMark COLORREF ?
-          ; Color of text bk when marked. (only if TBSTATE_MARKED)
           clrTextHighlight COLORREF ?
-          ; Color of text when highlighted
           clrBtnFace COLORREF ?
-          ; Background of the button
           clrBtnHighlight COLORREF ?
-          ; 3D highlight
           clrHighlightHotTrack COLORREF ?
-          ; In conjunction with fHighlightHotTrack
-          ; will cause button to highlight like a menu
           rcText RECT <>
-          ; Rect for text
           nStringBkMode SDWORD ?
           nHLStringBkMode SDWORD ?
           if (NTDDI_VERSION ge NTDDI_WINXP)
@@ -1250,24 +1019,15 @@ ifndef _INC_COMMCTRL
         NMTBCUSTOMDRAW ends
         _NMTBCUSTOMDRAW typedef NMTBCUSTOMDRAW
         LPNMTBCUSTOMDRAW typedef ptr NMTBCUSTOMDRAW
-        ; Toolbar custom draw return flags
-        TBCDRF_NOEDGES equ 00010000h; Don't draw button edges
-
-        TBCDRF_HILITEHOTTRACK equ 00020000h; Use color of the button bk when hottracked
-
-        TBCDRF_NOOFFSET equ 00040000h; Don't offset button if pressed
-
-        TBCDRF_NOMARK equ 00080000h; Don't draw default highlight of image/text for TBSTATE_MARKED
-
-        TBCDRF_NOETCHEDEFFECT equ 00100000h; Don't draw etched effect for disabled items
-
-        TBCDRF_BLENDICON equ 00200000h; Use ILD_BLEND50 on the icon image
-
-        TBCDRF_NOBACKGROUND equ 00400000h; Use ILD_BLEND50 on the icon image
-
+        TBCDRF_NOEDGES equ 00010000h
+        TBCDRF_HILITEHOTTRACK equ 00020000h
+        TBCDRF_NOOFFSET equ 00040000h
+        TBCDRF_NOMARK equ 00080000h
+        TBCDRF_NOETCHEDEFFECT equ 00100000h
+        TBCDRF_BLENDICON equ 00200000h
+        TBCDRF_NOBACKGROUND equ 00400000h
         if (NTDDI_VERSION ge NTDDI_VISTA)
-          TBCDRF_USECDCOLORS equ 00800000h; Use CustomDrawColors to RenderText regardless of VisualStyle
-
+          TBCDRF_USECDCOLORS equ 00800000h
         endif
         TB_ENABLEBUTTON equ (WM_USER + 1)
         TB_CHECKBUTTON equ (WM_USER + 2)
@@ -1287,7 +1047,7 @@ ifndef _INC_COMMCTRL
         ifdef _WIN32
           TBADDBITMAP struct
             hInst HINSTANCE ?
-            nID XWORD ?
+            nID UINT_PTR ?
           TBADDBITMAP ends
           tagTBADDBITMAP typedef TBADDBITMAP
           LPTBADDBITMAP typedef ptr TBADDBITMAP
@@ -1304,8 +1064,6 @@ ifndef _INC_COMMCTRL
             IDB_HIST_DISABLED equ 14
             IDB_HIST_PRESSED equ 15
           endif
-          ; (NTDDI_VERSION >= NTDDI_VISTA)
-          ; icon indexes for standard bitmap
           STD_CUT equ 0
           STD_COPY equ 1
           STD_PASTE equ 2
@@ -1321,7 +1079,6 @@ ifndef _INC_COMMCTRL
           STD_FIND equ 12
           STD_REPLACE equ 13
           STD_PRINT equ 14
-          ; icon indexes for standard view bitmap
           VIEW_LARGEICONS equ 0
           VIEW_SMALLICONS equ 1
           VIEW_LIST equ 2
@@ -1350,15 +1107,15 @@ ifndef _INC_COMMCTRL
         ifdef _WIN32
           TBSAVEPARAMSA struct
             hkr HKEY ?
-            pszSubKey =POINTER ?
-            pszValueName =POINTER ?
+            pszSubKey LPCSTR ?
+            pszValueName LPCSTR ?
           TBSAVEPARAMSA ends
           tagTBSAVEPARAMSA typedef TBSAVEPARAMSA
           LPTBSAVEPARAMSA typedef ptr TBSAVEPARAMSA
           TBSAVEPARAMSW struct
             hkr HKEY ?
-            pszSubKey =POINTER ?
-            pszValueName =POINTER ?
+            pszSubKey LPCWSTR ?
+            pszValueName LPCWSTR ?
           TBSAVEPARAMSW ends
           tagTBSAVEPARAMSW typedef TBSAVEPARAMSW
           LPTBSAVEPARAMW typedef ptr TBSAVEPARAMSW
@@ -1370,7 +1127,6 @@ ifndef _INC_COMMCTRL
             LPTBSAVEPARAMS equ <LPTBSAVEPARAMSA>
           endif
         endif
-        ; _WIN32
         TB_SAVERESTOREA equ (WM_USER + 26)
         TB_SAVERESTOREW equ (WM_USER + 76)
         TB_CUSTOMIZE equ (WM_USER + 27)
@@ -1396,8 +1152,7 @@ ifndef _INC_COMMCTRL
         TB_SETIMAGELIST equ (WM_USER + 48)
         TB_GETIMAGELIST equ (WM_USER + 49)
         TB_LOADIMAGES equ (WM_USER + 50)
-        TB_GETRECT equ (WM_USER + 51); wParam is the Cmd instead of index
-
+        TB_GETRECT equ (WM_USER + 51)
         TB_SETHOTIMAGELIST equ (WM_USER + 52)
         TB_GETHOTIMAGELIST equ (WM_USER + 53)
         TB_SETDISABLEDIMAGELIST equ (WM_USER + 54)
@@ -1417,50 +1172,35 @@ ifndef _INC_COMMCTRL
           TB_SAVERESTORE equ <TB_SAVERESTOREA>
           TB_ADDSTRING equ <TB_ADDSTRINGA>
         endif
-        TB_GETOBJECT equ (WM_USER + 62); wParam == IID, lParam void **ppv
-
+        TB_GETOBJECT equ (WM_USER + 62)
         TB_GETHOTITEM equ (WM_USER + 71)
-        TB_SETHOTITEM equ (WM_USER + 72); wParam == iHotItem
-
-        TB_SETANCHORHIGHLIGHT equ (WM_USER + 73); wParam == TRUE/FALSE
-
+        TB_SETHOTITEM equ (WM_USER + 72)
+        TB_SETANCHORHIGHLIGHT equ (WM_USER + 73)
         TB_GETANCHORHIGHLIGHT equ (WM_USER + 74)
-        TB_MAPACCELERATORA equ (WM_USER + 78); wParam == ch, lParam int * pidBtn
-
+        TB_MAPACCELERATORA equ (WM_USER + 78)
         TBINSERTMARK struct
           iButton SDWORD ?
           dwFlags DWORD ?
         TBINSERTMARK ends
         LPTBINSERTMARK typedef ptr TBINSERTMARK
-        TBIMHT_AFTER equ 00000001h; TRUE = insert After iButton, otherwise before
-
-        TBIMHT_BACKGROUND equ 00000002h; TRUE iff missed buttons completely
-
-        TB_GETINSERTMARK equ (WM_USER + 79); lParam == LPTBINSERTMARK
-
-        TB_SETINSERTMARK equ (WM_USER + 80); lParam == LPTBINSERTMARK
-
-        TB_INSERTMARKHITTEST equ (WM_USER + 81); wParam == LPPOINT lParam == LPTBINSERTMARK
-
+        TBIMHT_AFTER equ 00000001h
+        TBIMHT_BACKGROUND equ 00000002h
+        TB_GETINSERTMARK equ (WM_USER + 79)
+        TB_SETINSERTMARK equ (WM_USER + 80)
+        TB_INSERTMARKHITTEST equ (WM_USER + 81)
         TB_MOVEBUTTON equ (WM_USER + 82)
-        TB_GETMAXSIZE equ (WM_USER + 83); lParam == LPSIZE
-
-        TB_SETEXTENDEDSTYLE equ (WM_USER + 84); For TBSTYLE_EX_*
-
-        TB_GETEXTENDEDSTYLE equ (WM_USER + 85); For TBSTYLE_EX_*
-
+        TB_GETMAXSIZE equ (WM_USER + 83)
+        TB_SETEXTENDEDSTYLE equ (WM_USER + 84)
+        TB_GETEXTENDEDSTYLE equ (WM_USER + 85)
         TB_GETPADDING equ (WM_USER + 86)
         TB_SETPADDING equ (WM_USER + 87)
         TB_SETINSERTMARKCOLOR equ (WM_USER + 88)
         TB_GETINSERTMARKCOLOR equ (WM_USER + 89)
-        TB_SETCOLORSCHEME equ <CCM_SETCOLORSCHEME>; lParam is color scheme
-
-        TB_GETCOLORSCHEME equ <CCM_GETCOLORSCHEME>; fills in COLORSCHEME pointed to by lParam
-
+        TB_SETCOLORSCHEME equ <CCM_SETCOLORSCHEME>
+        TB_GETCOLORSCHEME equ <CCM_GETCOLORSCHEME>
         TB_SETUNICODEFORMAT equ <CCM_SETUNICODEFORMAT>
         TB_GETUNICODEFORMAT equ <CCM_GETUNICODEFORMAT>
-        TB_MAPACCELERATORW equ (WM_USER + 90); wParam == ch, lParam int * pidBtn
-
+        TB_MAPACCELERATORW equ (WM_USER + 90)
         ifdef UNICODE
           TB_MAPACCELERATOR equ <TB_MAPACCELERATORW>
         else
@@ -1468,9 +1208,9 @@ ifndef _INC_COMMCTRL
         endif
         TBREPLACEBITMAP struct
           hInstOld HINSTANCE ?
-          nIDOld XWORD ?
+          nIDOld UINT_PTR ?
           hInstNew HINSTANCE ?
-          nIDNew XWORD ?
+          nIDNew UINT_PTR ?
           nButtons SDWORD ?
         TBREPLACEBITMAP ends
         LPTBREPLACEBITMAP typedef ptr TBREPLACEBITMAP
@@ -1484,31 +1224,30 @@ ifndef _INC_COMMCTRL
           TBIF_LPARAM equ 00000010h
           TBIF_COMMAND equ 00000020h
           TBIF_SIZE equ 00000040h
-          TBIF_BYINDEX equ 80000000h; this specifies that the wparam in Get/SetButtonInfo is an index, not id
-
+          TBIF_BYINDEX equ 80000000h
           TBBUTTONINFOA struct
-            cbSize DWORD ?
+            cbSize UINT ?
             dwMask DWORD ?
             idCommand SDWORD ?
             iImage SDWORD ?
             fsState BYTE ?
             fsStyle BYTE ?
             cx_ WORD ?
-            lParam XWORD ?
-            pszText POINTER ?
+            lParam DWORD_PTR ?
+            pszText LPSTR ?
             cchText SDWORD ?
           TBBUTTONINFOA ends
           LPTBBUTTONINFOA typedef ptr TBBUTTONINFOA
           TBBUTTONINFOW struct
-            cbSize DWORD ?
+            cbSize UINT ?
             dwMask DWORD ?
             idCommand SDWORD ?
             iImage SDWORD ?
             fsState BYTE ?
             fsStyle BYTE ?
             cx_ WORD ?
-            lParam XWORD ?
-            pszText POINTER ?
+            lParam DWORD_PTR ?
+            pszText LPWSTR ?
             cchText SDWORD ?
           TBBUTTONINFOW ends
           LPTBBUTTONINFOW typedef ptr TBBUTTONINFOW
@@ -1519,7 +1258,6 @@ ifndef _INC_COMMCTRL
             TBBUTTONINFO equ <TBBUTTONINFOA>
             LPTBBUTTONINFO equ <LPTBBUTTONINFOA>
           endif
-          ; BUTTONINFO APIs do NOT support the string pool.
           TB_GETBUTTONINFOW equ (WM_USER + 63)
           TB_SETBUTTONINFOW equ (WM_USER + 64)
           TB_GETBUTTONINFOA equ (WM_USER + 65)
@@ -1534,9 +1272,6 @@ ifndef _INC_COMMCTRL
           TB_INSERTBUTTONW equ (WM_USER + 67)
           TB_ADDBUTTONSW equ (WM_USER + 68)
           TB_HITTEST equ (WM_USER + 69)
-          ; New post Win95/NT4 for InsertButton and AddButton.  if iString member
-          ; is a pointer to a string, it will be handled as a string like listview
-          ; (although LPSTR_TEXTCALLBACK is not supported).
           ifdef UNICODE
             TB_INSERTBUTTON equ <TB_INSERTBUTTONW>
             TB_ADDBUTTONS equ <TB_ADDBUTTONSW>
@@ -1544,8 +1279,7 @@ ifndef _INC_COMMCTRL
             TB_INSERTBUTTON equ <TB_INSERTBUTTONA>
             TB_ADDBUTTONS equ <TB_ADDBUTTONSA>
           endif
-          TB_SETDRAWTEXTFLAGS equ (WM_USER + 70); wParam == mask lParam == bit values
-
+          TB_SETDRAWTEXTFLAGS equ (WM_USER + 70)
           TB_GETSTRINGW equ (WM_USER + 91)
           TB_GETSTRINGA equ (WM_USER + 92)
           ifdef UNICODE
@@ -1554,31 +1288,24 @@ ifndef _INC_COMMCTRL
             TB_GETSTRING equ <TB_GETSTRINGA>
           endif
           TB_SETBOUNDINGSIZE equ (WM_USER + 93)
-          TB_SETHOTITEM2 equ (WM_USER + 94); wParam == iHotItem,  lParam = dwFlags
-
-          TB_HASACCELERATOR equ (WM_USER + 95); wParam == char, lParam = &iCount
-
+          TB_SETHOTITEM2 equ (WM_USER + 94)
+          TB_HASACCELERATOR equ (WM_USER + 95)
           TB_SETLISTGAP equ (WM_USER + 96)
           TB_GETIMAGELISTCOUNT equ (WM_USER + 98)
-          TB_GETIDEALSIZE equ (WM_USER + 99); wParam == fHeight, lParam = psize
-
-          ; before using WM_USER + 103, recycle old space above (WM_USER + 97)
+          TB_GETIDEALSIZE equ (WM_USER + 99)
           TB_TRANSLATEACCELERATOR equ <CCM_TRANSLATEACCELERATOR>
           if (NTDDI_VERSION ge NTDDI_WINXP)
             TBMF_PAD equ 00000001h
             TBMF_BARPAD equ 00000002h
             TBMF_BUTTONSPACING equ 00000004h
             TBMETRICS struct
-              cbSize DWORD ?
+              cbSize UINT ?
               dwMask DWORD ?
               cxPad SDWORD ?
-              ; PAD
               cyPad SDWORD ?
               cxBarPad SDWORD ?
-              ; BARPAD
               cyBarPad SDWORD ?
               cxButtonSpacing SDWORD ?
-              ; BUTTONSPACING
               cyButtonSpacing SDWORD ?
             TBMETRICS ends
             LPTBMETRICS typedef ptr TBMETRICS
@@ -1586,12 +1313,10 @@ ifndef _INC_COMMCTRL
             TB_SETMETRICS equ (WM_USER + 102)
           endif
           if (NTDDI_VERSION ge NTDDI_VISTA)
-            TB_GETITEMDROPDOWNRECT equ (WM_USER + 103); Rect of item's drop down button
-
+            TB_GETITEMDROPDOWNRECT equ (WM_USER + 103)
             TB_SETPRESSEDIMAGELIST equ (WM_USER + 104)
             TB_GETPRESSEDIMAGELIST equ (WM_USER + 105)
           endif
-          ; (NTDDI_VERSION >= NTDDI_VISTA)
           if (NTDDI_VERSION ge NTDDI_WINXP)
             TB_SETWINDOWTHEME equ <CCM_SETWINDOWTHEME>
           endif
@@ -1607,45 +1332,29 @@ ifndef _INC_COMMCTRL
           TBN_CUSTHELP equ (TBN_FIRST - 9)
           TBN_DROPDOWN equ (TBN_FIRST - 10)
           TBN_GETOBJECT equ (TBN_FIRST - 12)
-          ; Structure for TBN_HOTITEMCHANGE notification
           NMTBHOTITEM struct
             hdr NMHDR <>
             idOld SDWORD ?
             idNew SDWORD ?
             dwFlags DWORD ?
-            ; HICF_*
           NMTBHOTITEM ends
           tagNMTBHOTITEM typedef NMTBHOTITEM
           LPNMTBHOTITEM typedef ptr NMTBHOTITEM
-          ; Hot item change flags
           HICF_OTHER equ 00000000h
-          HICF_MOUSE equ 00000001h; Triggered by mouse
-
-          HICF_ARROWKEYS equ 00000002h; Triggered by arrow keys
-
-          HICF_ACCELERATOR equ 00000004h; Triggered by accelerator
-
-          HICF_DUPACCEL equ 00000008h; This accelerator is not unique
-
-          HICF_ENTERING equ 00000010h; idOld is invalid
-
-          HICF_LEAVING equ 00000020h; idNew is invalid
-
-          HICF_RESELECT equ 00000040h; hot item reselected
-
-          HICF_LMOUSE equ 00000080h; left mouse button selected
-
-          HICF_TOGGLEDROPDOWN equ 00000100h; Toggle button's dropdown state
-
+          HICF_MOUSE equ 00000001h
+          HICF_ARROWKEYS equ 00000002h
+          HICF_ACCELERATOR equ 00000004h
+          HICF_DUPACCEL equ 00000008h
+          HICF_ENTERING equ 00000010h
+          HICF_LEAVING equ 00000020h
+          HICF_RESELECT equ 00000040h
+          HICF_LMOUSE equ 00000080h
+          HICF_TOGGLEDROPDOWN equ 00000100h
           TBN_HOTITEMCHANGE equ (TBN_FIRST - 13)
-          TBN_DRAGOUT equ (TBN_FIRST - 14); this is sent when the user clicks down on a button then drags off the button
-
-          TBN_DELETINGBUTTON equ (TBN_FIRST - 15); uses TBNOTIFY
-
-          TBN_GETDISPINFOA equ (TBN_FIRST - 16); This is sent when the  toolbar needs  some display information
-
-          TBN_GETDISPINFOW equ (TBN_FIRST - 17); This is sent when the  toolbar needs  some display information
-
+          TBN_DRAGOUT equ (TBN_FIRST - 14)
+          TBN_DELETINGBUTTON equ (TBN_FIRST - 15)
+          TBN_GETDISPINFOA equ (TBN_FIRST - 16)
+          TBN_GETDISPINFOW equ (TBN_FIRST - 17)
           TBN_GETINFOTIPA equ (TBN_FIRST - 18)
           TBN_GETINFOTIPW equ (TBN_FIRST - 19)
           TBN_GETBUTTONINFOW equ (TBN_FIRST - 20)
@@ -1663,7 +1372,7 @@ ifndef _INC_COMMCTRL
             hdr NMHDR <>
             pData POINTER ?
             pCurrent POINTER ?
-            cbData DWORD ?
+            cbData UINT ?
             iItem SDWORD ?
             cButtons SDWORD ?
             tbButton TBBUTTON <>
@@ -1674,7 +1383,7 @@ ifndef _INC_COMMCTRL
             hdr NMHDR <>
             pData POINTER ?
             pCurrent POINTER ?
-            cbData DWORD ?
+            cbData UINT ?
             iItem SDWORD ?
             cButtons SDWORD ?
             cbBytesPerRecord SDWORD ?
@@ -1684,7 +1393,7 @@ ifndef _INC_COMMCTRL
           LPNMTBRESTORE typedef ptr NMTBRESTORE
           NMTBGETINFOTIPA struct
             hdr NMHDR <>
-            pszText POINTER ?
+            pszText LPSTR ?
             cchTextMax SDWORD ?
             iItem SDWORD ?
             lParam LPARAM ?
@@ -1693,7 +1402,7 @@ ifndef _INC_COMMCTRL
           LPNMTBGETINFOTIPA typedef ptr NMTBGETINFOTIPA
           NMTBGETINFOTIPW struct
             hdr NMHDR <>
-            pszText POINTER ?
+            pszText LPWSTR ?
             cchTextMax SDWORD ?
             iItem SDWORD ?
             lParam LPARAM ?
@@ -1715,33 +1424,21 @@ ifndef _INC_COMMCTRL
           NMTBDISPINFOA struct
             hdr NMHDR <>
             dwMask DWORD ?
-            ; [in] Specifies the values requested .[out] Client ask the data to be set for future use
             idCommand SDWORD ?
-            ; [in] id of button we're requesting info for
-            lParam XWORD ?
-            ; [in] lParam of button
+            lParam DWORD_PTR ?
             iImage SDWORD ?
-            ; [out] image index
-            pszText POINTER ?
-            ; [out] new text for item
+            pszText LPSTR ?
             cchText SDWORD ?
-            ; [in] size of buffer pointed to by pszText
           NMTBDISPINFOA ends
           LPNMTBDISPINFOA typedef ptr NMTBDISPINFOA
           NMTBDISPINFOW struct
             hdr NMHDR <>
             dwMask DWORD ?
-            ;[in] Specifies the values requested .[out] Client ask the data to be set for future use
             idCommand SDWORD ?
-            ; [in] id of button we're requesting info for
-            lParam XWORD ?
-            ; [in] lParam of button
+            lParam DWORD_PTR ?
             iImage SDWORD ?
-            ; [out] image index
-            pszText POINTER ?
-            ; [out] new text for item
+            pszText LPWSTR ?
             cchText SDWORD ?
-            ; [in] size of buffer pointed to by pszText
           NMTBDISPINFOW ends
           LPNMTBDISPINFOW typedef ptr NMTBDISPINFOW
           ifdef UNICODE
@@ -1753,11 +1450,9 @@ ifndef _INC_COMMCTRL
             NMTBDISPINFO equ <NMTBDISPINFOA>
             LPNMTBDISPINFO equ <LPNMTBDISPINFOA>
           endif
-          ; Return codes for TBN_DROPDOWN
           TBDDRET_DEFAULT equ 0
           TBDDRET_NODEFAULT equ 1
-          TBDDRET_TREATPRESSED equ 2; Treat as a standard press button
-
+          TBDDRET_TREATPRESSED equ 2
           ifdef UNICODE
             TBN_GETBUTTONINFO equ <TBN_GETBUTTONINFOW>
           else
@@ -1774,7 +1469,7 @@ ifndef _INC_COMMCTRL
             iItem SDWORD ?
             tbButton TBBUTTON <>
             cchText SDWORD ?
-            pszText POINTER ?
+            pszText LPSTR ?
             rcButton RECT <>
           NMTOOLBARA ends
           tagNMTOOLBARA typedef NMTOOLBARA
@@ -1784,7 +1479,7 @@ ifndef _INC_COMMCTRL
             iItem SDWORD ?
             tbButton TBBUTTON <>
             cchText SDWORD ?
-            pszText POINTER ?
+            pszText LPWSTR ?
             rcButton RECT <>
           NMTOOLBARW ends
           tagNMTOOLBARW typedef NMTOOLBARW
@@ -1798,8 +1493,6 @@ ifndef _INC_COMMCTRL
           endif
         endif
       endif
-      ; NOTOOLBAR
-      ;====== REBAR CONTROL ========================================================
       ifndef NOREBAR
         ifdef _WIN32
           REBARCLASSNAMEW equ <L("ReBarWindow32")>
@@ -1813,20 +1506,17 @@ ifndef _INC_COMMCTRL
           ;[...]
         endif
         RBIM_IMAGELIST equ 00000001h
-        ; begin_r_commctrl
         RBS_TOOLTIPS equ 00000100h
         RBS_VARHEIGHT equ 00000200h
         RBS_BANDBORDERS equ 00000400h
         RBS_FIXEDORDER equ 00000800h
         RBS_REGISTERDROP equ 00001000h
         RBS_AUTOSIZE equ 00002000h
-        RBS_VERTICALGRIPPER equ 00004000h; this always has the vertical gripper (default for horizontal mode)
-
+        RBS_VERTICALGRIPPER equ 00004000h
         RBS_DBLCLKTOGGLE equ 00008000h
-        ; end_r_commctrl
         REBARINFO struct
-          cbSize DWORD ?
-          fMask DWORD ?
+          cbSize UINT ?
+          fMask UINT ?
           ifndef NOIMAGEAPIS
             himl HIMAGELIST ?
           else
@@ -1835,30 +1525,18 @@ ifndef _INC_COMMCTRL
         REBARINFO ends
         tagREBARINFO typedef REBARINFO
         LPREBARINFO typedef ptr REBARINFO
-        RBBS_BREAK equ 00000001h; break to new line
-
-        RBBS_FIXEDSIZE equ 00000002h; band can't be sized
-
-        RBBS_CHILDEDGE equ 00000004h; edge around top & bottom of child window
-
-        RBBS_HIDDEN equ 00000008h; don't show
-
-        RBBS_NOVERT equ 00000010h; don't show when vertical
-
-        RBBS_FIXEDBMP equ 00000020h; bitmap doesn't move during band resize
-
-        RBBS_VARIABLEHEIGHT equ 00000040h; allow autosizing of this child vertically
-
-        RBBS_GRIPPERALWAYS equ 00000080h; always show the gripper
-
-        RBBS_NOGRIPPER equ 00000100h; never show the gripper
-
-        RBBS_USECHEVRON equ 00000200h; display drop-down button for this band if it's sized smaller than ideal width
-
-        RBBS_HIDETITLE equ 00000400h; keep band title hidden
-
-        RBBS_TOPALIGN equ 00000800h; keep band in top row
-
+        RBBS_BREAK equ 00000001h
+        RBBS_FIXEDSIZE equ 00000002h
+        RBBS_CHILDEDGE equ 00000004h
+        RBBS_HIDDEN equ 00000008h
+        RBBS_NOVERT equ 00000010h
+        RBBS_FIXEDBMP equ 00000020h
+        RBBS_VARIABLEHEIGHT equ 00000040h
+        RBBS_GRIPPERALWAYS equ 00000080h
+        RBBS_NOGRIPPER equ 00000100h
+        RBBS_USECHEVRON equ 00000200h
+        RBBS_HIDETITLE equ 00000400h
+        RBBS_TOPALIGN equ 00000800h
         if (NTDDI_VERSION ge NTDDI_VISTA)
         endif
         RBBIM_STYLE equ 00000001h
@@ -1872,38 +1550,35 @@ ifndef _INC_COMMCTRL
         RBBIM_ID equ 00000100h
         RBBIM_IDEALSIZE equ 00000200h
         RBBIM_LPARAM equ 00000400h
-        RBBIM_HEADERSIZE equ 00000800h; control the size of the header
-
+        RBBIM_HEADERSIZE equ 00000800h
         if (NTDDI_VERSION ge NTDDI_VISTA)
           RBBIM_CHEVRONLOCATION equ 00001000h
           RBBIM_CHEVRONSTATE equ 00002000h
         endif
         REBARBANDINFOA struct
-          cbSize DWORD ?
-          fMask DWORD ?
-          fStyle DWORD ?
+          cbSize UINT ?
+          fMask UINT ?
+          fStyle UINT ?
           clrFore COLORREF ?
           clrBack COLORREF ?
-          lpText POINTER ?
-          cch DWORD ?
+          lpText LPSTR ?
+          cch UINT ?
           iImage SDWORD ?
           hwndChild HWND ?
-          cxMinChild DWORD ?
-          cyMinChild DWORD ?
-          cx_ DWORD ?
+          cxMinChild UINT ?
+          cyMinChild UINT ?
+          cx_ UINT ?
           hbmBack HBITMAP ?
-          wID DWORD ?
-          cyChild DWORD ?
-          cyMaxChild DWORD ?
-          cyIntegral DWORD ?
-          cxIdeal DWORD ?
+          wID UINT ?
+          cyChild UINT ?
+          cyMaxChild UINT ?
+          cyIntegral UINT ?
+          cxIdeal UINT ?
           lParam LPARAM ?
-          cxHeader DWORD ?
+          cxHeader UINT ?
           if (NTDDI_VERSION ge NTDDI_VISTA)
             rcChevronLocation RECT <>
-            ; the rect is in client co-ord wrt hwndChild
-            uChevronState DWORD ?
-            ; STATE_SYSTEM_*
+            uChevronState UINT ?
           endif
         REBARBANDINFOA ends
         tagREBARBANDINFOA typedef REBARBANDINFOA
@@ -1914,31 +1589,29 @@ ifndef _INC_COMMCTRL
         REBARBANDINFOA_V6_SIZE equ <CCSIZEOF_STRUCT(REBARBANDINFOA, cxHeader)>
         REBARBANDINFOW_V6_SIZE equ <CCSIZEOF_STRUCT(REBARBANDINFOW, cxHeader)>
         REBARBANDINFOW struct
-          cbSize DWORD ?
-          fMask DWORD ?
-          fStyle DWORD ?
+          cbSize UINT ?
+          fMask UINT ?
+          fStyle UINT ?
           clrFore COLORREF ?
           clrBack COLORREF ?
-          lpText POINTER ?
-          cch DWORD ?
+          lpText LPWSTR ?
+          cch UINT ?
           iImage SDWORD ?
           hwndChild HWND ?
-          cxMinChild DWORD ?
-          cyMinChild DWORD ?
-          cx_ DWORD ?
+          cxMinChild UINT ?
+          cyMinChild UINT ?
+          cx_ UINT ?
           hbmBack HBITMAP ?
-          wID DWORD ?
-          cyChild DWORD ?
-          cyMaxChild DWORD ?
-          cyIntegral DWORD ?
-          cxIdeal DWORD ?
+          wID UINT ?
+          cyChild UINT ?
+          cyMaxChild UINT ?
+          cyIntegral UINT ?
+          cxIdeal UINT ?
           lParam LPARAM ?
-          cxHeader DWORD ?
+          cxHeader UINT ?
           if (NTDDI_VERSION ge NTDDI_VISTA)
             rcChevronLocation RECT <>
-            ; the rect is in client co-ord wrt hwndChild
-            uChevronState DWORD ?
-            ; STATE_SYSTEM_*
+            uChevronState UINT ?
           endif
         REBARBANDINFOW ends
         tagREBARBANDINFOW typedef REBARBANDINFOW
@@ -1970,27 +1643,19 @@ ifndef _INC_COMMCTRL
         RB_GETBANDCOUNT equ (WM_USER + 12)
         RB_GETROWCOUNT equ (WM_USER + 13)
         RB_GETROWHEIGHT equ (WM_USER + 14)
-        RB_IDTOINDEX equ (WM_USER + 16); wParam == id
-
+        RB_IDTOINDEX equ (WM_USER + 16)
         RB_GETTOOLTIPS equ (WM_USER + 17)
         RB_SETTOOLTIPS equ (WM_USER + 18)
-        RB_SETBKCOLOR equ (WM_USER + 19); sets the default BK color
-
-        RB_GETBKCOLOR equ (WM_USER + 20); defaults to CLR_NONE
-
+        RB_SETBKCOLOR equ (WM_USER + 19)
+        RB_GETBKCOLOR equ (WM_USER + 20)
         RB_SETTEXTCOLOR equ (WM_USER + 21)
-        RB_GETTEXTCOLOR equ (WM_USER + 22); defaults to 0x00000000
-
+        RB_GETTEXTCOLOR equ (WM_USER + 22)
         if (NTDDI_VERSION ge NTDDI_WINXP)
-          RBSTR_CHANGERECT equ 0001h; flags for RB_SIZETORECT
-
+          RBSTR_CHANGERECT equ 0001h
         endif
-        RB_SIZETORECT equ (WM_USER + 23); resize the rebar/break bands and such to this rect (lparam)
-
-        RB_SETCOLORSCHEME equ <CCM_SETCOLORSCHEME>; lParam is color scheme
-
-        RB_GETCOLORSCHEME equ <CCM_GETCOLORSCHEME>; fills in COLORSCHEME pointed to by lParam
-
+        RB_SIZETORECT equ (WM_USER + 23)
+        RB_SETCOLORSCHEME equ <CCM_SETCOLORSCHEME>
+        RB_GETCOLORSCHEME equ <CCM_GETCOLORSCHEME>
         ifdef UNICODE
           RB_INSERTBAND equ <RB_INSERTBANDW>
           RB_SETBANDINFO equ <RB_SETBANDINFOW>
@@ -1998,10 +1663,6 @@ ifndef _INC_COMMCTRL
           RB_INSERTBAND equ <RB_INSERTBANDA>
           RB_SETBANDINFO equ <RB_SETBANDINFOA>
         endif
-        ; for manual drag control
-        ; lparam == cursor pos
-        ; -1 means do it yourself.
-        ; -2 means use what you had saved before
         RB_BEGINDRAG equ (WM_USER + 24)
         RB_ENDDRAG equ (WM_USER + 25)
         RB_DRAGMOVE equ (WM_USER + 26)
@@ -2016,10 +1677,8 @@ ifndef _INC_COMMCTRL
         RB_MINIMIZEBAND equ (WM_USER + 30)
         RB_MAXIMIZEBAND equ (WM_USER + 31)
         RB_GETDROPTARGET equ <(CCM_GETDROPTARGET)>
-        RB_GETBANDBORDERS equ (WM_USER + 34); returns in lparam = lprc the amount of edges added to band wparam
-
-        RB_SHOWBAND equ (WM_USER + 35); show/hide band
-
+        RB_GETBANDBORDERS equ (WM_USER + 34)
+        RB_SHOWBAND equ (WM_USER + 35)
         RB_SETPALETTE equ (WM_USER + 37)
         RB_GETPALETTE equ (WM_USER + 38)
         RB_MOVEBAND equ (WM_USER + 39)
@@ -2033,37 +1692,31 @@ ifndef _INC_COMMCTRL
           RB_SETEXTENDEDSTYLE equ (WM_USER + 41)
           RB_GETEXTENDEDSTYLE equ (WM_USER + 42)
         endif
-        ; _WIN32_IE >= 0x0600
         RB_PUSHCHEVRON equ (WM_USER + 43)
         if (NTDDI_VERSION ge NTDDI_VISTA)
-          RB_SETBANDWIDTH equ (WM_USER + 44); set width for docked band
-
+          RB_SETBANDWIDTH equ (WM_USER + 44)
         endif
-        ; (NTDDI_VERSION >= NTDDI_VISTA)
         RBN_HEIGHTCHANGE equ (RBN_FIRST - 0)
         RBN_GETOBJECT equ (RBN_FIRST - 1)
         RBN_LAYOUTCHANGED equ (RBN_FIRST - 2)
         RBN_AUTOSIZE equ (RBN_FIRST - 3)
         RBN_BEGINDRAG equ (RBN_FIRST - 4)
         RBN_ENDDRAG equ (RBN_FIRST - 5)
-        RBN_DELETINGBAND equ (RBN_FIRST - 6); Uses NMREBAR
-
-        RBN_DELETEDBAND equ (RBN_FIRST - 7); Uses NMREBAR
-
+        RBN_DELETINGBAND equ (RBN_FIRST - 6)
+        RBN_DELETEDBAND equ (RBN_FIRST - 7)
         RBN_CHILDSIZE equ (RBN_FIRST - 8)
         RBN_CHEVRONPUSHED equ (RBN_FIRST - 10)
         if (_WIN32_IE ge 0600h)
           RBN_SPLITTERDRAG equ (RBN_FIRST - 11)
         endif
-        ; _WIN32_IE >= 0x0600
         RBN_MINMAX equ (RBN_FIRST - 21)
         if (NTDDI_VERSION ge NTDDI_WINXP)
           RBN_AUTOBREAK equ (RBN_FIRST - 22)
         endif
         NMREBARCHILDSIZE struct
           hdr NMHDR <>
-          uBand DWORD ?
-          wID DWORD ?
+          uBand UINT ?
+          wID UINT ?
           rcChild RECT <>
           rcBand RECT <>
         NMREBARCHILDSIZE ends
@@ -2072,21 +1725,19 @@ ifndef _INC_COMMCTRL
         NMREBAR struct
           hdr NMHDR <>
           dwMask DWORD ?
-          ; RBNM_*
-          uBand DWORD ?
-          fStyle DWORD ?
-          wID DWORD ?
+          uBand UINT ?
+          fStyle UINT ?
+          wID UINT ?
           lParam LPARAM ?
         NMREBAR ends
         tagNMREBAR typedef NMREBAR
         LPNMREBAR typedef ptr NMREBAR
-        ; Mask flags for NMREBAR
         RBNM_ID equ 00000001h
         RBNM_STYLE equ 00000002h
         RBNM_LPARAM equ 00000004h
         NMRBAUTOSIZE struct
           hdr NMHDR <>
-          fChanged DWORD ?
+          fChanged BOOL ?
           rcTarget RECT <>
           rcActual RECT <>
         NMRBAUTOSIZE ends
@@ -2094,8 +1745,8 @@ ifndef _INC_COMMCTRL
         LPNMRBAUTOSIZE typedef ptr NMRBAUTOSIZE
         NMREBARCHEVRON struct
           hdr NMHDR <>
-          uBand DWORD ?
-          wID DWORD ?
+          uBand UINT ?
+          wID UINT ?
           lParam LPARAM ?
           rc RECT <>
           lParamNM LPARAM ?
@@ -2111,17 +1762,16 @@ ifndef _INC_COMMCTRL
           LPNMREBARSPLITTER typedef ptr NMREBARSPLITTER
         endif
         if (NTDDI_VERSION ge NTDDI_WINXP)
-          RBAB_AUTOSIZE equ 0001h; These are not flags and are all mutually exclusive
-
+          RBAB_AUTOSIZE equ 0001h
           RBAB_ADDBAND equ 0002h
           NMREBARAUTOBREAK struct
             hdr NMHDR <>
-            uBand DWORD ?
-            wID DWORD ?
+            uBand UINT ?
+            wID UINT ?
             lParam LPARAM ?
-            uMsg DWORD ?
-            fStyleCurrent DWORD ?
-            fAutoBreak DWORD ?
+            uMsg UINT ?
+            fStyleCurrent UINT ?
+            fAutoBreak BOOL ?
           NMREBARAUTOBREAK ends
           tagNMREBARAUTOBREAK typedef NMREBARAUTOBREAK
           LPNMREBARAUTOBREAK typedef ptr NMREBARAUTOBREAK
@@ -2136,14 +1786,12 @@ ifndef _INC_COMMCTRL
         endif
         RBHITTESTINFO struct
           pt POINT <>
-          flags DWORD ?
+          flags UINT ?
           iBand SDWORD ?
         RBHITTESTINFO ends
         _RB_HITTESTINFO typedef RBHITTESTINFO
         LPRBHITTESTINFO typedef ptr RBHITTESTINFO
       endif
-      ; NOREBAR
-      ;====== TOOLTIPS CONTROL =====================================================
       ifndef NOTOOLTIPS
         ifdef _WIN32
           TOOLTIPS_CLASSW equ <L("tooltips_class32")>
@@ -2169,13 +1817,13 @@ ifndef _INC_COMMCTRL
         TTTOOLINFOA_V3_SIZE equ <CCSIZEOF_STRUCT(TTTOOLINFOA, lpReserved)>
         TTTOOLINFOW_V3_SIZE equ <CCSIZEOF_STRUCT(TTTOOLINFOW, lpReserved)>
         TTTOOLINFOA struct
-          cbSize DWORD ?
-          uFlags DWORD ?
+          cbSize UINT ?
+          uFlags UINT ?
           hwnd HWND ?
-          uId XWORD ?
+          uId UINT_PTR ?
           rect RECT <>
           hinst HINSTANCE ?
-          lpszText POINTER ?
+          lpszText LPSTR ?
           lParam LPARAM ?
           if (NTDDI_VERSION ge NTDDI_WINXP)
             lpReserved POINTER ?
@@ -2185,13 +1833,13 @@ ifndef _INC_COMMCTRL
         PTOOLINFOA typedef ptr TTTOOLINFOA
         LPTTTOOLINFOA typedef ptr TTTOOLINFOA
         TTTOOLINFOW struct
-          cbSize DWORD ?
-          uFlags DWORD ?
+          cbSize UINT ?
+          uFlags UINT ?
           hwnd HWND ?
-          uId XWORD ?
+          uId UINT_PTR ?
           rect RECT <>
           hinst HINSTANCE ?
-          lpszText POINTER ?
+          lpszText LPWSTR ?
           lParam LPARAM ?
           if (NTDDI_VERSION ge NTDDI_WINXP)
             lpReserved POINTER ?
@@ -2211,7 +1859,6 @@ ifndef _INC_COMMCTRL
           LPTTTOOLINFO equ <LPTTTOOLINFOA>
           TTTOOLINFO_V1_SIZE equ <TTTOOLINFOA_V1_SIZE>
         endif
-        ; begin_r_commctrl
         TTS_ALWAYSTIP equ 01h
         TTS_NOPREFIX equ 02h
         TTS_NOANIMATE equ 10h
@@ -2219,16 +1866,9 @@ ifndef _INC_COMMCTRL
         TTS_BALLOON equ 40h
         TTS_CLOSE equ 80h
         if (NTDDI_VERSION ge NTDDI_VISTA)
-          TTS_USEVISUALSTYLE equ 100h; Use themed hyperlinks
-
+          TTS_USEVISUALSTYLE equ 100h
         endif
-        ; end_r_commctrl
         TTF_IDISHWND equ 0001h
-        ; Use this to center around trackpoint in trackmode
-        ; -OR- to center around tool in normal mode.
-        ; Use TTF_ABSOLUTE to place the tip exactly at the track coords when
-        ; in tracking mode.  TTF_ABSOLUTE can be used in conjunction with TTF_CENTERTIP
-        ; to center the tip absolutely about the track point.
         TTF_CENTERTIP equ 0002h
         TTF_RTLREADING equ 0004h
         TTF_SUBCLASS equ 0010h
@@ -2236,13 +1876,11 @@ ifndef _INC_COMMCTRL
         TTF_ABSOLUTE equ 0080h
         TTF_TRANSPARENT equ 0100h
         TTF_PARSELINKS equ 1000h
-        TTF_DI_SETITEM equ 8000h; valid only on the TTN_NEEDTEXT callback
-
+        TTF_DI_SETITEM equ 8000h
         TTDT_AUTOMATIC equ 0
         TTDT_RESHOW equ 1
         TTDT_AUTOPOP equ 2
         TTDT_INITIAL equ 3
-        ; ToolTip Icons (Set with TTM_SETTITLE)
         TTI_NONE equ 0
         TTI_INFO equ 1
         TTI_WARNING equ 2
@@ -2252,8 +1890,6 @@ ifndef _INC_COMMCTRL
           TTI_WARNING_LARGE equ 5
           TTI_ERROR_LARGE equ 6
         endif
-        ; (NTDDI_VERSION >= NTDDI_VISTA)
-        ; Tool Tip Messages
         TTM_ACTIVATE equ (WM_USER + 1)
         TTM_SETDELAYTIME equ (WM_USER + 3)
         TTM_ADDTOOLA equ (WM_USER + 4)
@@ -2262,8 +1898,7 @@ ifndef _INC_COMMCTRL
         TTM_DELTOOLW equ (WM_USER + 51)
         TTM_NEWTOOLRECTA equ (WM_USER + 6)
         TTM_NEWTOOLRECTW equ (WM_USER + 52)
-        TTM_RELAYEVENT equ (WM_USER + 7); Win7: wParam = GetMessageExtraInfo() when relaying WM_MOUSEMOVE
-
+        TTM_RELAYEVENT equ (WM_USER + 7)
         TTM_GETTOOLINFOA equ (WM_USER + 8)
         TTM_GETTOOLINFOW equ (WM_USER + 53)
         TTM_SETTOOLINFOA equ (WM_USER + 9)
@@ -2280,10 +1915,8 @@ ifndef _INC_COMMCTRL
         TTM_GETCURRENTTOOLA equ (WM_USER + 15)
         TTM_GETCURRENTTOOLW equ (WM_USER + 59)
         TTM_WINDOWFROMPOINT equ (WM_USER + 16)
-        TTM_TRACKACTIVATE equ (WM_USER + 17); wParam = TRUE/FALSE start end  lparam = LPTOOLINFO
-
-        TTM_TRACKPOSITION equ (WM_USER + 18); lParam = dwPos
-
+        TTM_TRACKACTIVATE equ (WM_USER + 17)
+        TTM_TRACKPOSITION equ (WM_USER + 18)
         TTM_SETTIPBKCOLOR equ (WM_USER + 19)
         TTM_SETTIPTEXTCOLOR equ (WM_USER + 20)
         TTM_GETDELAYTIME equ (WM_USER + 21)
@@ -2291,26 +1924,21 @@ ifndef _INC_COMMCTRL
         TTM_GETTIPTEXTCOLOR equ (WM_USER + 23)
         TTM_SETMAXTIPWIDTH equ (WM_USER + 24)
         TTM_GETMAXTIPWIDTH equ (WM_USER + 25)
-        TTM_SETMARGIN equ (WM_USER + 26); lParam = lprc
-
-        TTM_GETMARGIN equ (WM_USER + 27); lParam = lprc
-
+        TTM_SETMARGIN equ (WM_USER + 26)
+        TTM_GETMARGIN equ (WM_USER + 27)
         TTM_POP equ (WM_USER + 28)
         TTM_UPDATE equ (WM_USER + 29)
         TTM_GETBUBBLESIZE equ (WM_USER + 30)
         TTM_ADJUSTRECT equ (WM_USER + 31)
-        TTM_SETTITLEA equ (WM_USER + 32); wParam = TTI_*, lParam = char* szTitle
-
-        TTM_SETTITLEW equ (WM_USER + 33); wParam = TTI_*, lParam = wchar* szTitle
-
+        TTM_SETTITLEA equ (WM_USER + 32)
+        TTM_SETTITLEW equ (WM_USER + 33)
         if (NTDDI_VERSION ge NTDDI_WINXP)
           TTM_POPUP equ (WM_USER + 34)
-          TTM_GETTITLE equ (WM_USER + 35); wParam = 0, lParam = TTGETTITLE*
-
+          TTM_GETTITLE equ (WM_USER + 35)
           TTGETTITLE struct
             dwSize DWORD ?
-            uTitleBitmap DWORD ?
-            cch DWORD ?
+            uTitleBitmap UINT ?
+            cch UINT ?
             pszTitle POINTER ?
           TTGETTITLE ends
           _TTGETTITLE typedef TTGETTITLE
@@ -2391,20 +2019,20 @@ ifndef _INC_COMMCTRL
         NMTTDISPINFOW_V1_SIZE equ <CCSIZEOF_STRUCT(NMTTDISPINFOW, uFlags)>
         NMTTDISPINFOA struct
           hdr NMHDR <>
-          lpszText POINTER ?
+          lpszText LPSTR ?
           szText SBYTE 80 dup (?)
           hinst HINSTANCE ?
-          uFlags DWORD ?
+          uFlags UINT ?
           lParam LPARAM ?
         NMTTDISPINFOA ends
         tagNMTTDISPINFOA typedef NMTTDISPINFOA
         LPNMTTDISPINFOA typedef ptr NMTTDISPINFOA
         NMTTDISPINFOW struct
           hdr NMHDR <>
-          lpszText POINTER ?
-          szText WORD 80 dup (?)
+          lpszText LPWSTR ?
+          szText WCHAR 80 dup (?)
           hinst HINSTANCE ?
-          uFlags DWORD ?
+          uFlags UINT ?
           lParam LPARAM ?
         NMTTDISPINFOW ends
         tagNMTTDISPINFOW typedef NMTTDISPINFOW
@@ -2419,15 +2047,10 @@ ifndef _INC_COMMCTRL
           NMTTDISPINFO_V1_SIZE equ <NMTTDISPINFOA_V1_SIZE>
         endif
       endif
-      ; NOTOOLTIPS
-      ;====== STATUS BAR CONTROL ===================================================
       ifndef NOSTATUSBAR
-        ; begin_r_commctrl
         SBARS_SIZEGRIP equ 0100h
         SBARS_TOOLTIPS equ 0800h
-        ; this is a status bar flag, preference to SBARS_TOOLTIPS
         SBT_TOOLTIPS equ 0800h
-        ; end_r_commctrl
         @DefProto DllImport, DrawStatusTextA, WIN_STD_CALL_CONV,, <:HDC, :LPCRECT, :LPCSTR, :UINT>, 16
         @DefProto DllImport, DrawStatusTextW, WIN_STD_CALL_CONV,, <:HDC, :LPCRECT, :LPCWSTR, :UINT>, 16
         @DefProto DllImport, CreateStatusWindowA, WIN_STD_CALL_CONV,, <:LONG, :LPCSTR, :HWND, :UINT>, 16
@@ -2489,22 +2112,16 @@ ifndef _INC_COMMCTRL
         SBT_POPOUT equ 0200h
         SBT_RTLREADING equ 0400h
         SBT_NOTABPARSING equ 0800h
-        SB_SETBKCOLOR equ <CCM_SETBKCOLOR>; lParam = bkColor
-
-        ; status bar notifications
+        SB_SETBKCOLOR equ <CCM_SETBKCOLOR>
         SBN_SIMPLEMODECHANGE equ (SBN_FIRST - 0)
-        ; refers to the data saved for simple mode
         SB_SIMPLEID equ 00ffh
       endif
-      ; NOSTATUSBAR
-      ;====== MENU HELP ============================================================
       ifndef NOMENUHELP
         @DefProto DllImport, MenuHelp, WIN_STD_CALL_CONV,, <:UINT, :WPARAM, :LPARAM, :HMENU, :HINSTANCE, :HWND, :ptr UINT>, 28
         @DefProto DllImport, ShowHideMenuCtl, WIN_STD_CALL_CONV,, <:HWND, :UINT_PTR, :LPINT>, 12
         @DefProto DllImport, GetEffectiveClientRect, WIN_STD_CALL_CONV,, <:HWND, :LPRECT, :ptr INT_>, 12
         MINSYSCOMMAND equ <SC_SIZE>
       endif
-      ;====== TRACKBAR CONTROL =====================================================
       ifndef NOTRACKBAR
         ifdef _WIN32
           TRACKBAR_CLASSA equ <"msctls_trackbar32">
@@ -2517,7 +2134,6 @@ ifndef _INC_COMMCTRL
         else
           ;[...]
         endif
-        ; begin_r_commctrl
         TBS_AUTOTICKS equ 0001h
         TBS_VERT equ 0002h
         TBS_HORZ equ 0000h
@@ -2531,19 +2147,14 @@ ifndef _INC_COMMCTRL
         TBS_FIXEDLENGTH equ 0040h
         TBS_NOTHUMB equ 0080h
         TBS_TOOLTIPS equ 0100h
-        TBS_REVERSED equ 0200h; Accessibility hint: the smaller number (usually the min value) means "high" and the larger number (usually the max value) means "low"
-
-        TBS_DOWNISLEFT equ 0400h; Down=Left and Up=Right (default is Down=Right and Up=Left)
-
+        TBS_REVERSED equ 0200h
+        TBS_DOWNISLEFT equ 0400h
         if (_WIN32_IE ge 0600h)
-          TBS_NOTIFYBEFOREMOVE equ 0800h; Trackbar should notify parent before repositioning the slider due to user action (enables snapping)
-
+          TBS_NOTIFYBEFOREMOVE equ 0800h
         endif
         if (NTDDI_VERSION ge NTDDI_VISTA)
-          TBS_TRANSPARENTBKGND equ 1000h; Background is painted by the parent via WM_PRINTCLIENT
-
+          TBS_TRANSPARENTBKGND equ 1000h
         endif
-        ; end_r_commctrl
         TBM_GETPOS equ <(WM_USER)>
         TBM_GETRANGEMIN equ (WM_USER + 1)
         TBM_GETRANGEMAX equ (WM_USER + 2)
@@ -2575,15 +2186,12 @@ ifndef _INC_COMMCTRL
         TBM_SETTOOLTIPS equ (WM_USER + 29)
         TBM_GETTOOLTIPS equ (WM_USER + 30)
         TBM_SETTIPSIDE equ (WM_USER + 31)
-        ; TrackBar Tip Side flags
         TBTS_TOP equ 0
         TBTS_LEFT equ 1
         TBTS_BOTTOM equ 2
         TBTS_RIGHT equ 3
-        TBM_SETBUDDY equ (WM_USER + 32); wparam = BOOL fLeft; (or right)
-
-        TBM_GETBUDDY equ (WM_USER + 33); wparam = BOOL fLeft; (or right)
-
+        TBM_SETBUDDY equ (WM_USER + 32)
+        TBM_GETBUDDY equ (WM_USER + 33)
         TBM_SETPOSNOTIFY equ (WM_USER + 34)
         TBM_SETUNICODEFORMAT equ <CCM_SETUNICODEFORMAT>
         TBM_GETUNICODEFORMAT equ <CCM_GETUNICODEFORMAT>
@@ -2596,13 +2204,11 @@ ifndef _INC_COMMCTRL
         TB_TOP equ 6
         TB_BOTTOM equ 7
         TB_ENDTRACK equ 8
-        ; custom draw item specs
         TBCD_TICS equ 0001h
         TBCD_THUMB equ 0002h
         TBCD_CHANNEL equ 0003h
         if (NTDDI_VERSION ge NTDDI_VISTA)
           TRBN_THUMBPOSCHANGING equ (TRBN_FIRST - 1)
-          ; Structure for Trackbar's TRBN_THUMBPOSCHANGING notification
           NMTRBTHUMBPOSCHANGING struct
             hdr NMHDR <>
             dwPos DWORD ?
@@ -2611,11 +2217,9 @@ ifndef _INC_COMMCTRL
           tagTRBTHUMBPOSCHANGING typedef NMTRBTHUMBPOSCHANGING
         endif
       endif
-      ; trackbar
-      ;====== DRAG LIST CONTROL ====================================================
       ifndef NODRAGLIST
         DRAGLISTINFO struct
-          uNotification DWORD ?
+          uNotification UINT ?
           hWnd HWND ?
           ptCursor POINT <>
         DRAGLISTINFO ends
@@ -2634,7 +2238,6 @@ ifndef _INC_COMMCTRL
         @DefProto DllImport, DrawInsert, WIN_STD_CALL_CONV,, <:HWND, :HWND, :SDWORD>, 12
         @DefProto DllImport, LBItemFromPt, WIN_STD_CALL_CONV,, <:HWND, :POINT, :BOOL>, 12
       endif
-      ;====== UPDOWN CONTROL =======================================================
       ifndef NOUPDOWN
         ifdef _WIN32
           UPDOWN_CLASSA equ <"msctls_updown32">
@@ -2648,14 +2251,13 @@ ifndef _INC_COMMCTRL
           ;[...]
         endif
         UDACCEL struct
-          nSec DWORD ?
-          nInc DWORD ?
+          nSec UINT ?
+          nInc UINT ?
         UDACCEL ends
         _UDACCEL typedef UDACCEL
         LPUDACCEL typedef ptr UDACCEL
         UD_MAXVAL equ 7fffh
         UD_MINVAL equ <(- UD_MAXVAL)>
-        ; begin_r_commctrl
         UDS_WRAP equ 0001h
         UDS_SETBUDDYINT equ 0002h
         UDS_ALIGNRIGHT equ 0004h
@@ -2665,7 +2267,6 @@ ifndef _INC_COMMCTRL
         UDS_HORZ equ 0040h
         UDS_NOTHOUSANDS equ 0080h
         UDS_HOTTRACK equ 0100h
-        ; end_r_commctrl
         UDM_SETRANGE equ (WM_USER + 101)
         UDM_GETRANGE equ (WM_USER + 102)
         UDM_SETPOS equ (WM_USER + 103)
@@ -2677,8 +2278,7 @@ ifndef _INC_COMMCTRL
         UDM_SETBASE equ (WM_USER + 109)
         UDM_GETBASE equ (WM_USER + 110)
         UDM_SETRANGE32 equ (WM_USER + 111)
-        UDM_GETRANGE32 equ (WM_USER + 112); wParam & lParam are LPINT
-
+        UDM_GETRANGE32 equ (WM_USER + 112)
         UDM_SETUNICODEFORMAT equ <CCM_SETUNICODEFORMAT>
         UDM_GETUNICODEFORMAT equ <CCM_GETUNICODEFORMAT>
         UDM_SETPOS32 equ (WM_USER + 113)
@@ -2695,8 +2295,6 @@ ifndef _INC_COMMCTRL
         LPNMUPDOWN typedef ptr NMUPDOWN
         UDN_DELTAPOS equ (UDN_FIRST - 1)
       endif
-      ; NOUPDOWN
-      ;====== PROGRESS CONTROL =====================================================
       ifndef NOPROGRESS
         ifdef _WIN32
           PROGRESS_CLASSA equ <"msctls_progress32">
@@ -2709,60 +2307,43 @@ ifndef _INC_COMMCTRL
         else
           ;[...]
         endif
-        ; begin_r_commctrl
         PBS_SMOOTH equ 01h
         PBS_VERTICAL equ 04h
-        ; end_r_commctrl
         PBM_SETRANGE equ (WM_USER + 1)
         PBM_SETPOS equ (WM_USER + 2)
         PBM_DELTAPOS equ (WM_USER + 3)
         PBM_SETSTEP equ (WM_USER + 4)
         PBM_STEPIT equ (WM_USER + 5)
-        PBM_SETRANGE32 equ (WM_USER + 6); lParam = high, wParam = low
-
+        PBM_SETRANGE32 equ (WM_USER + 6)
         PBRANGE struct
           iLow SDWORD ?
           iHigh SDWORD ?
         PBRANGE ends
         PPBRANGE typedef ptr PBRANGE
-        PBM_GETRANGE equ (WM_USER + 7); wParam = return (TRUE ? low : high). lParam = PPBRANGE or NULL
-
+        PBM_GETRANGE equ (WM_USER + 7)
         PBM_GETPOS equ (WM_USER + 8)
-        PBM_SETBARCOLOR equ (WM_USER + 9); lParam = bar color
-
-        PBM_SETBKCOLOR equ <CCM_SETBKCOLOR>; lParam = bkColor
-
-        ; begin_r_commctrl
+        PBM_SETBARCOLOR equ (WM_USER + 9)
+        PBM_SETBKCOLOR equ <CCM_SETBKCOLOR>
         if (NTDDI_VERSION ge NTDDI_WINXP)
           PBS_MARQUEE equ 08h
         endif
-        ; (NTDDI_VERSION >= NTDDI_WINXP)
-        ; end_r_commctrl
         if (NTDDI_VERSION ge NTDDI_WINXP)
           PBM_SETMARQUEE equ (WM_USER + 10)
         endif
-        ; (NTDDI_VERSION >= NTDDI_WINXP)
-        ; begin_r_commctrl
         if (NTDDI_VERSION ge NTDDI_VISTA)
           PBS_SMOOTHREVERSE equ 10h
         endif
-        ; (NTDDI_VERSION >= NTDDI_VISTA)
-        ; end_r_commctrl
         if (NTDDI_VERSION ge NTDDI_VISTA)
           PBM_GETSTEP equ (WM_USER + 13)
           PBM_GETBKCOLOR equ (WM_USER + 14)
           PBM_GETBARCOLOR equ (WM_USER + 15)
-          PBM_SETSTATE equ (WM_USER + 16); wParam = PBST_[State] (NORMAL, ERROR, PAUSED)
-
+          PBM_SETSTATE equ (WM_USER + 16)
           PBM_GETSTATE equ (WM_USER + 17)
           PBST_NORMAL equ 0001h
           PBST_ERROR equ 0002h
           PBST_PAUSED equ 0003h
         endif
-        ; (NTDDI_VERSION >= NTDDI_VISTA)
       endif
-      ; NOPROGRESS
-      ;====== HOTKEY CONTROL =======================================================
       ifndef NOHOTKEY
         HOTKEYF_SHIFT equ 01h
         HOTKEYF_CONTROL equ 02h
@@ -2795,9 +2376,6 @@ ifndef _INC_COMMCTRL
           ;[...]
         endif
       endif
-      ; NOHOTKEY
-      ; begin_r_commctrl
-      ;====== COMMON CONTROL STYLES ================================================
       CCS_TOP equ 00000001h
       CCS_NOMOVEY equ 00000002h
       CCS_BOTTOM equ 00000003h
@@ -2809,15 +2387,12 @@ ifndef _INC_COMMCTRL
       CCS_LEFT equ <(CCS_VERT or CCS_TOP)>
       CCS_RIGHT equ <(CCS_VERT or CCS_BOTTOM)>
       CCS_NOMOVEX equ <(CCS_VERT or CCS_NOMOVEY)>
-      ; end_r_commctrl
-      ;====== SysLink control =========================================
       ifdef _WIN32
         if (NTDDI_VERSION ge NTDDI_WINXP)
           INVALID_LINK_INDEX equ (- 1)
           MAX_LINKID_TEXT equ 48
           L_MAX_URL_LENGTH equ <(2048 + 32 + sizeof("://"))>
           WC_LINK equ <L("SysLink")>
-          ; begin_r_commctrl
           LWS_TRANSPARENT equ 0001h
           LWS_IGNORERETURN equ 0002h
           if (NTDDI_VERSION ge NTDDI_VISTA)
@@ -2826,8 +2401,6 @@ ifndef _INC_COMMCTRL
             LWS_USECUSTOMTEXT equ 0010h
             LWS_RIGHT equ 0020h
           endif
-          ; (NTDDI_VERSION >= NTDDI_VISTA)
-          ; end_r_commctrl
           LIF_ITEMINDEX equ 00000001h
           LIF_STATE equ 00000002h
           LIF_ITEMID equ 00000004h
@@ -2837,16 +2410,15 @@ ifndef _INC_COMMCTRL
           LIS_VISITED equ 00000004h
           if (NTDDI_VERSION ge NTDDI_VISTA)
             LIS_HOTTRACK equ 00000008h
-            LIS_DEFAULTCOLORS equ 00000010h; Don't use any custom text colors
-
+            LIS_DEFAULTCOLORS equ 00000010h
           endif
           LITEM struct
-            mask_ DWORD ?
+            mask_ UINT ?
             iLink SDWORD ?
-            state DWORD ?
-            stateMask DWORD ?
-            szID WORD MAX_LINKID_TEXT dup (?)
-            szUrl WORD L_MAX_URL_LENGTH dup (?)
+            state UINT ?
+            stateMask UINT ?
+            szID WCHAR MAX_LINKID_TEXT dup (?)
+            szUrl WCHAR L_MAX_URL_LENGTH dup (?)
           LITEM ends
           tagLITEM typedef LITEM
           PLITEM typedef ptr LITEM
@@ -2862,24 +2434,13 @@ ifndef _INC_COMMCTRL
           NMLINK ends
           tagNMLINK typedef NMLINK
           PNMLINK typedef ptr NMLINK
-          ;  SysLink notifications
-          ;  NM_CLICK   // wParam: control ID, lParam: PNMLINK, ret: ignored.
-          ;  LinkWindow messages
-          LM_HITTEST equ (WM_USER + 300h); wParam: n/a, lparam: PLHITTESTINFO, ret: BOOL
-
-          LM_GETIDEALHEIGHT equ (WM_USER + 301h); wParam: cxMaxWidth, lparam: n/a, ret: cy
-
-          LM_SETITEM equ (WM_USER + 302h); wParam: n/a, lparam: LITEM*, ret: BOOL
-
-          LM_GETITEM equ (WM_USER + 303h); wParam: n/a, lparam: LITEM*, ret: BOOL
-
-          LM_GETIDEALSIZE equ <(LM_GETIDEALHEIGHT)>; wParam: cxMaxWidth, lparam: SIZE*, ret: cy
-
+          LM_HITTEST equ (WM_USER + 300h)
+          LM_GETIDEALHEIGHT equ (WM_USER + 301h)
+          LM_SETITEM equ (WM_USER + 302h)
+          LM_GETITEM equ (WM_USER + 303h)
+          LM_GETIDEALSIZE equ <(LM_GETIDEALHEIGHT)>
         endif
       endif
-      ; _WIN32
-      ;====== End SysLink control =========================================
-      ;====== LISTVIEW CONTROL =====================================================
       ifndef NOLISTVIEW
         ifdef _WIN32
           WC_LISTVIEWA equ <"SysListView32">
@@ -2892,7 +2453,6 @@ ifndef _INC_COMMCTRL
         else
           ;[...]
         endif
-        ; begin_r_commctrl
         LVS_ICON equ 0000h
         LVS_REPORT equ 0001h
         LVS_SMALLICON equ 0002h
@@ -2915,7 +2475,6 @@ ifndef _INC_COMMCTRL
         LVS_OWNERDRAWFIXED equ 0400h
         LVS_NOCOLUMNHEADER equ 4000h
         LVS_NOSORTHEADER equ 8000h
-        ; end_r_commctrl
         LVM_SETUNICODEFORMAT equ <CCM_SETUNICODEFORMAT>
         ListView_SetUnicodeFormat macro hwnd, fUnicode
           exitm <SNDMSG ((hwnd), LVM_SETUNICODEFORMAT, (fUnicode), 0)>
@@ -2959,8 +2518,7 @@ ifndef _INC_COMMCTRL
           LVIF_COLUMNS equ 00000200h
         endif
         if (NTDDI_VERSION ge NTDDI_VISTA)
-          LVIF_COLFMT equ 00010000h; The piColFmt member is valid in addition to puColumns
-
+          LVIF_COLFMT equ 00010000h
         endif
         LVIS_FOCUSED equ 0001h
         LVIS_SELECTED equ 0002h
@@ -2984,7 +2542,6 @@ ifndef _INC_COMMCTRL
         LVITEMA_V1_SIZE equ <CCSIZEOF_STRUCT(LVITEMA, lParam)>
         LVITEMW_V1_SIZE equ <CCSIZEOF_STRUCT(LVITEMW, lParam)>
         if (NTDDI_VERSION ge NTDDI_VISTA)
-          ; Will be unused downlevel, but sizeof(LVITEMA) must be equal to sizeof(LVITEMW)
           LVITEMA_V5_SIZE equ <CCSIZEOF_STRUCT(LVITEMA, puColumns)>
           LVITEMW_V5_SIZE equ <CCSIZEOF_STRUCT(LVITEMW, puColumns)>
           ifdef UNICODE
@@ -2993,54 +2550,48 @@ ifndef _INC_COMMCTRL
             LVITEM_V5_SIZE equ <LVITEMA_V5_SIZE>
           endif
         endif
-        ; Will be unused downlevel, but sizeof(LVITEMA) must be equal to sizeof(LVITEMW)
         LVITEMA struct
-          mask_ DWORD ?
+          mask_ UINT ?
           iItem SDWORD ?
           iSubItem SDWORD ?
-          state DWORD ?
-          stateMask DWORD ?
-          pszText POINTER ?
+          state UINT ?
+          stateMask UINT ?
+          pszText LPSTR ?
           cchTextMax SDWORD ?
           iImage SDWORD ?
           lParam LPARAM ?
           iIndent SDWORD ?
           if (NTDDI_VERSION ge NTDDI_WINXP)
             iGroupId SDWORD ?
-            cColumns DWORD ?
-            ; tile view columns
+            cColumns UINT ?
             puColumns PUINT ?
           endif
           if (NTDDI_VERSION ge NTDDI_VISTA)
             piColFmt POINTER ?
-            ; Will be unused downlevel, but sizeof(LVITEMA) must be equal to sizeof(LVITEMW)
             iGroup SDWORD ?
-            ; readonly. only valid for owner data.
           endif
         LVITEMA ends
         tagLVITEMA typedef LVITEMA
         LPLVITEMA typedef ptr LVITEMA
         LVITEMW struct
-          mask_ DWORD ?
+          mask_ UINT ?
           iItem SDWORD ?
           iSubItem SDWORD ?
-          state DWORD ?
-          stateMask DWORD ?
-          pszText POINTER ?
+          state UINT ?
+          stateMask UINT ?
+          pszText LPWSTR ?
           cchTextMax SDWORD ?
           iImage SDWORD ?
           lParam LPARAM ?
           iIndent SDWORD ?
           if (NTDDI_VERSION ge NTDDI_WINXP)
             iGroupId SDWORD ?
-            cColumns DWORD ?
-            ; tile view columns
+            cColumns UINT ?
             puColumns PUINT ?
           endif
           if (NTDDI_VERSION ge NTDDI_VISTA)
             piColFmt POINTER ?
             iGroup SDWORD ?
-            ; readonly. only valid for owner data.
           endif
         LVITEMW ends
         tagLVITEMW typedef LVITEMW
@@ -3064,7 +2615,6 @@ ifndef _INC_COMMCTRL
         I_IMAGECALLBACK equ (- 1)
         I_IMAGENONE equ (- 2)
         if (NTDDI_VERSION ge NTDDI_WINXP)
-          ; For tileview
           I_COLUMNSCALLBACK equ (- 1)
         endif
         LVM_GETITEMA equ (LVM_FIRST + 5)
@@ -3134,8 +2684,7 @@ ifndef _INC_COMMCTRL
         endm
         LVFI_PARAM equ 0001h
         LVFI_STRING equ 0002h
-        LVFI_SUBSTRING equ 0004h; Same as LVFI_PARTIAL
-
+        LVFI_SUBSTRING equ 0004h
         LVFI_PARTIAL equ 0008h
         LVFI_WRAP equ 0020h
         LVFI_NEARESTXY equ 0040h
@@ -3143,20 +2692,20 @@ ifndef _INC_COMMCTRL
         LV_FINDINFOW equ <LVFINDINFOW>
         LV_FINDINFO equ <LVFINDINFO>
         LVFINDINFOA struct
-          flags DWORD ?
-          psz =POINTER ?
+          flags UINT ?
+          psz LPCSTR ?
           lParam LPARAM ?
           pt POINT <>
-          vkDirection DWORD ?
+          vkDirection UINT ?
         LVFINDINFOA ends
         tagLVFINDINFOA typedef LVFINDINFOA
         LPFINDINFOA typedef ptr LVFINDINFOA
         LVFINDINFOW struct
-          flags DWORD ?
-          psz =POINTER ?
+          flags UINT ?
+          psz LPCWSTR ?
           lParam LPARAM ?
           pt POINT <>
-          vkDirection DWORD ?
+          vkDirection UINT ?
         LVFINDINFOW ends
         tagLVFINDINFOW typedef LVFINDINFOW
         LPFINDINFOW typedef ptr LVFINDINFOW
@@ -3217,21 +2766,17 @@ ifndef _INC_COMMCTRL
         LVHT_EX_GROUP_STATEICON equ 01000000h
         LVHT_EX_GROUP_SUBSETLINK equ 02000000h
         LVHT_EX_GROUP equ <(LVHT_EX_GROUP_BACKGROUND or LVHT_EX_GROUP_COLLAPSE or LVHT_EX_GROUP_FOOTER or LVHT_EX_GROUP_HEADER or LVHT_EX_GROUP_STATEICON or LVHT_EX_GROUP_SUBSETLINK)>
-        LVHT_EX_ONCONTENTS equ 04000000h; On item AND not on the background
-
+        LVHT_EX_ONCONTENTS equ 04000000h
         LVHT_EX_FOOTER equ 08000000h
         LV_HITTESTINFO equ <LVHITTESTINFO>
         LVHITTESTINFO_V1_SIZE equ <CCSIZEOF_STRUCT(LVHITTESTINFO, iItem)>
         LVHITTESTINFO struct
           pt POINT <>
-          flags DWORD ?
+          flags UINT ?
           iItem SDWORD ?
           iSubItem SDWORD ?
-          ; this is was NOT in win95.  valid only for LVM_SUBITEMHITTEST
           if (NTDDI_VERSION ge NTDDI_VISTA)
             iGroup SDWORD ?
-            ; readonly. index of group. only valid for owner data.
-            ; supports single item in multiple groups.
           endif
         LVHITTESTINFO ends
         tagLVHITTESTINFO typedef LVHITTESTINFO
@@ -3283,41 +2828,35 @@ ifndef _INC_COMMCTRL
         LVCOLUMNA_V1_SIZE equ <CCSIZEOF_STRUCT(LVCOLUMNA, iSubItem)>
         LVCOLUMNW_V1_SIZE equ <CCSIZEOF_STRUCT(LVCOLUMNW, iSubItem)>
         LVCOLUMNA struct
-          mask_ DWORD ?
+          mask_ UINT ?
           fmt SDWORD ?
           cx_ SDWORD ?
-          pszText POINTER ?
+          pszText LPSTR ?
           cchTextMax SDWORD ?
           iSubItem SDWORD ?
           iImage SDWORD ?
           iOrder SDWORD ?
           if (NTDDI_VERSION ge NTDDI_VISTA)
             cxMin SDWORD ?
-            ; min snap point
             cxDefault SDWORD ?
-            ; default snap point
             cxIdeal SDWORD ?
-            ; read only. ideal may not eqaul current width if auto sized (LVS_EX_AUTOSIZECOLUMNS) to a lesser width.
           endif
         LVCOLUMNA ends
         tagLVCOLUMNA typedef LVCOLUMNA
         LPLVCOLUMNA typedef ptr LVCOLUMNA
         LVCOLUMNW struct
-          mask_ DWORD ?
+          mask_ UINT ?
           fmt SDWORD ?
           cx_ SDWORD ?
-          pszText POINTER ?
+          pszText LPWSTR ?
           cchTextMax SDWORD ?
           iSubItem SDWORD ?
           iImage SDWORD ?
           iOrder SDWORD ?
           if (NTDDI_VERSION ge NTDDI_VISTA)
             cxMin SDWORD ?
-            ; min snap point
             cxDefault SDWORD ?
-            ; default snap point
             cxIdeal SDWORD ?
-            ; read only. ideal may not eqaul current width if auto sized (LVS_EX_AUTOSIZECOLUMNS) to a lesser width.
           endif
         LVCOLUMNW ends
         tagLVCOLUMNW typedef LVCOLUMNW
@@ -3342,41 +2881,23 @@ ifndef _INC_COMMCTRL
           LVCF_DEFAULTWIDTH equ 0080h
           LVCF_IDEALWIDTH equ 0100h
         endif
-        ; LVCFMT_ flags up to FFFF are shared with the header control (HDF_ flags).
-        ; Flags above FFFF are listview-specific.
-        LVCFMT_LEFT equ 0000h; Same as HDF_LEFT
-
-        LVCFMT_RIGHT equ 0001h; Same as HDF_RIGHT
-
-        LVCFMT_CENTER equ 0002h; Same as HDF_CENTER
-
-        LVCFMT_JUSTIFYMASK equ 0003h; Same as HDF_JUSTIFYMASK
-
-        LVCFMT_IMAGE equ 0800h; Same as HDF_IMAGE
-
-        LVCFMT_BITMAP_ON_RIGHT equ 1000h; Same as HDF_BITMAP_ON_RIGHT
-
-        LVCFMT_COL_HAS_IMAGES equ 8000h; Same as HDF_OWNERDRAW
-
+        LVCFMT_LEFT equ 0000h
+        LVCFMT_RIGHT equ 0001h
+        LVCFMT_CENTER equ 0002h
+        LVCFMT_JUSTIFYMASK equ 0003h
+        LVCFMT_IMAGE equ 0800h
+        LVCFMT_BITMAP_ON_RIGHT equ 1000h
+        LVCFMT_COL_HAS_IMAGES equ 8000h
         if (NTDDI_VERSION ge NTDDI_VISTA)
-          LVCFMT_FIXED_WIDTH equ 00100h; Can't resize the column; same as HDF_FIXEDWIDTH
-
-          LVCFMT_NO_DPI_SCALE equ 40000h; If not set, CCM_DPISCALE will govern scaling up fixed width
-
-          LVCFMT_FIXED_RATIO equ 80000h; Width will augment with the row height
-
-          ; The following flags
-          LVCFMT_LINE_BREAK equ 100000h; Move to the top of the next list of columns
-
-          LVCFMT_FILL equ 200000h; Fill the remainder of the tile area. Might have a title.
-
-          LVCFMT_WRAP equ 400000h; This sub-item can be wrapped.
-
-          LVCFMT_NO_TITLE equ 800000h; This sub-item doesn't have an title.
-
+          LVCFMT_FIXED_WIDTH equ 00100h
+          LVCFMT_NO_DPI_SCALE equ 40000h
+          LVCFMT_FIXED_RATIO equ 80000h
+          LVCFMT_LINE_BREAK equ 100000h
+          LVCFMT_FILL equ 200000h
+          LVCFMT_WRAP equ 400000h
+          LVCFMT_NO_TITLE equ 800000h
           LVCFMT_TILE_PLACEMENTMASK equ <(LVCFMT_LINE_BREAK or LVCFMT_FILL)>
-          LVCFMT_SPLITBUTTON equ 1000000h; Column is a split button; same as HDF_SPLITBUTTON
-
+          LVCFMT_SPLITBUTTON equ 1000000h
         endif
         LVM_GETCOLUMNA equ (LVM_FIRST + 25)
         LVM_GETCOLUMNW equ (LVM_FIRST + 95)
@@ -3500,7 +3021,6 @@ ifndef _INC_COMMCTRL
         ListView_SetItemText macro hwndLV, i, iSubItem_, pszText_
           exitm <{ LV_ITEM _macro_lvi ; _macro_lvi.iSubItem = (iSubItem_) ; _macro_lvi.pszText = (pszText_) ; SNDMSG ((hwndLV), LVM_SETITEMTEXT, (i), (LV_ITEM *) and _macro_lvi) ; }>
         endm
-        ; these flags only apply to LVS_OWNERDATA listviews in report or list mode
         LVSICF_NOINVALIDATEALL equ 00000001h
         LVSICF_NOSCROLL equ 00000002h
         LVM_SETITEMCOUNT equ (LVM_FIRST + 47)
@@ -3540,13 +3060,10 @@ ifndef _INC_COMMCTRL
           exitm <SNDMSG ((hwndLV), LVM_GETISEARCHSTRING, 0, (LPTSTR) (lpsz))>
         endm
         LVM_SETICONSPACING equ (LVM_FIRST + 53)
-        ; -1 for cx and cy means we'll use the default (system settings)
-        ; 0 for cx or cy means use the current setting (allows you to change just one param)
         ListView_SetIconSpacing macro hwndLV, cx_, cy
           exitm <SNDMSG ((hwndLV), LVM_SETICONSPACING, 0, MAKELONG(cx_, cy))>
         endm
-        LVM_SETEXTENDEDLISTVIEWSTYLE equ (LVM_FIRST + 54); optional wParam == mask
-
+        LVM_SETEXTENDEDLISTVIEWSTYLE equ (LVM_FIRST + 54)
         ListView_SetExtendedListViewStyle macro hwndLV, dw_
           exitm <SNDMSG ((hwndLV), LVM_SETEXTENDEDLISTVIEWSTYLE, 0, dw_)>
         endm
@@ -3562,41 +3079,30 @@ ifndef _INC_COMMCTRL
         LVS_EX_CHECKBOXES equ 00000004h
         LVS_EX_TRACKSELECT equ 00000008h
         LVS_EX_HEADERDRAGDROP equ 00000010h
-        LVS_EX_FULLROWSELECT equ 00000020h; applies to report mode only
-
+        LVS_EX_FULLROWSELECT equ 00000020h
         LVS_EX_ONECLICKACTIVATE equ 00000040h
         LVS_EX_TWOCLICKACTIVATE equ 00000080h
         LVS_EX_FLATSB equ 00000100h
         LVS_EX_REGIONAL equ 00000200h
-        LVS_EX_INFOTIP equ 00000400h; listview does InfoTips for you
-
+        LVS_EX_INFOTIP equ 00000400h
         LVS_EX_UNDERLINEHOT equ 00000800h
         LVS_EX_UNDERLINECOLD equ 00001000h
         LVS_EX_MULTIWORKAREAS equ 00002000h
-        LVS_EX_LABELTIP equ 00004000h; listview unfolds partly hidden labels if it does not have infotip text
-
-        LVS_EX_BORDERSELECT equ 00008000h; border selection style instead of highlight
-
+        LVS_EX_LABELTIP equ 00004000h
+        LVS_EX_BORDERSELECT equ 00008000h
         if (NTDDI_VERSION ge NTDDI_WINXP)
           LVS_EX_DOUBLEBUFFER equ 00010000h
           LVS_EX_HIDELABELS equ 00020000h
           LVS_EX_SINGLEROW equ 00040000h
-          LVS_EX_SNAPTOGRID equ 00080000h; Icons automatically snap to grid.
-
-          LVS_EX_SIMPLESELECT equ 00100000h; Also changes overlay rendering to top right for icon mode.
-
+          LVS_EX_SNAPTOGRID equ 00080000h
+          LVS_EX_SIMPLESELECT equ 00100000h
         endif
         if (NTDDI_VERSION ge NTDDI_VISTA)
-          LVS_EX_JUSTIFYCOLUMNS equ 00200000h; Icons are lined up in columns that use up the whole view area.
-
-          LVS_EX_TRANSPARENTBKGND equ 00400000h; Background is painted by the parent via WM_PRINTCLIENT
-
-          LVS_EX_TRANSPARENTSHADOWTEXT equ 00800000h; Enable shadow text on transparent backgrounds only (useful with bitmaps)
-
-          LVS_EX_AUTOAUTOARRANGE equ 01000000h; Icons automatically arrange if no icon positions have been set
-
-          LVS_EX_HEADERINALLVIEWS equ 02000000h; Display column header in all view modes
-
+          LVS_EX_JUSTIFYCOLUMNS equ 00200000h
+          LVS_EX_TRANSPARENTBKGND equ 00400000h
+          LVS_EX_TRANSPARENTSHADOWTEXT equ 00800000h
+          LVS_EX_AUTOAUTOARRANGE equ 01000000h
+          LVS_EX_HEADERINALLVIEWS equ 02000000h
           LVS_EX_AUTOCHECKSELECT equ 08000000h
           LVS_EX_AUTOSIZECOLUMNS equ 10000000h
           LVS_EX_COLUMNSNAPPOINTS equ 40000000h
@@ -3683,22 +3189,20 @@ ifndef _INC_COMMCTRL
           exitm <SNDMSG ((hwndLV), LVM_SORTITEMSEX, (_lPrm), (PFNLVCOMPARE) (_pfnCompare))>
         endm
         LVBKIMAGEA struct
-          ulFlags DWORD ?
-          ; LVBKIF_*
+          ulFlags ULONG ?
           hbm HBITMAP ?
-          pszImage POINTER ?
-          cchImageMax DWORD ?
+          pszImage LPSTR ?
+          cchImageMax UINT ?
           xOffsetPercent SDWORD ?
           yOffsetPercent SDWORD ?
         LVBKIMAGEA ends
         tagLVBKIMAGEA typedef LVBKIMAGEA
         LPLVBKIMAGEA typedef ptr LVBKIMAGEA
         LVBKIMAGEW struct
-          ulFlags DWORD ?
-          ; LVBKIF_*
+          ulFlags ULONG ?
           hbm HBITMAP ?
-          pszImage POINTER ?
-          cchImageMax DWORD ?
+          pszImage LPWSTR ?
+          cchImageMax UINT ?
           xOffsetPercent SDWORD ?
           yOffsetPercent SDWORD ?
         LVBKIMAGEW ends
@@ -3746,24 +3250,15 @@ ifndef _INC_COMMCTRL
           LVGF_ALIGN equ 00000008h
           LVGF_GROUPID equ 00000010h
           if (NTDDI_VERSION ge NTDDI_VISTA)
-            LVGF_SUBTITLE equ 00000100h; pszSubtitle is valid
-
-            LVGF_TASK equ 00000200h; pszTask is valid
-
-            LVGF_DESCRIPTIONTOP equ 00000400h; pszDescriptionTop is valid
-
-            LVGF_DESCRIPTIONBOTTOM equ 00000800h; pszDescriptionBottom is valid
-
-            LVGF_TITLEIMAGE equ 00001000h; iTitleImage is valid
-
-            LVGF_EXTENDEDIMAGE equ 00002000h; iExtendedImage is valid
-
-            LVGF_ITEMS equ 00004000h; iFirstItem and cItems are valid
-
-            LVGF_SUBSET equ 00008000h; pszSubsetTitle is valid
-
-            LVGF_SUBSETITEMS equ 00010000h; readonly, cItems holds count of items in visible subset, iFirstItem is valid
-
+            LVGF_SUBTITLE equ 00000100h
+            LVGF_TASK equ 00000200h
+            LVGF_DESCRIPTIONTOP equ 00000400h
+            LVGF_DESCRIPTIONBOTTOM equ 00000800h
+            LVGF_TITLEIMAGE equ 00001000h
+            LVGF_EXTENDEDIMAGE equ 00002000h
+            LVGF_ITEMS equ 00004000h
+            LVGF_SUBSET equ 00008000h
+            LVGF_SUBSETITEMS equ 00010000h
           endif
           LVGS_NORMAL equ 00000000h
           LVGS_COLLAPSED equ 00000001h
@@ -3776,41 +3271,36 @@ ifndef _INC_COMMCTRL
           LVGS_SUBSETLINKFOCUSED equ 00000080h
           LVGA_HEADER_LEFT equ 00000001h
           LVGA_HEADER_CENTER equ 00000002h
-          LVGA_HEADER_RIGHT equ 00000004h; Don't forget to validate exclusivity
-
+          LVGA_HEADER_RIGHT equ 00000004h
           LVGA_FOOTER_LEFT equ 00000008h
           LVGA_FOOTER_CENTER equ 00000010h
-          LVGA_FOOTER_RIGHT equ 00000020h; Don't forget to validate exclusivity
-
+          LVGA_FOOTER_RIGHT equ 00000020h
           LVGROUP struct
-            cbSize DWORD ?
-            mask_ DWORD ?
-            pszHeader POINTER ?
+            cbSize UINT ?
+            mask_ UINT ?
+            pszHeader LPWSTR ?
             cchHeader SDWORD ?
-            pszFooter POINTER ?
+            pszFooter LPWSTR ?
             cchFooter SDWORD ?
             iGroupId SDWORD ?
-            stateMask DWORD ?
-            state DWORD ?
-            uAlign DWORD ?
+            stateMask UINT ?
+            state UINT ?
+            uAlign UINT ?
             if (NTDDI_VERSION ge NTDDI_VISTA)
-              pszSubtitle POINTER ?
-              cchSubtitle DWORD ?
-              pszTask POINTER ?
-              cchTask DWORD ?
-              pszDescriptionTop POINTER ?
-              cchDescriptionTop DWORD ?
-              pszDescriptionBottom POINTER ?
-              cchDescriptionBottom DWORD ?
+              pszSubtitle LPWSTR ?
+              cchSubtitle UINT ?
+              pszTask LPWSTR ?
+              cchTask UINT ?
+              pszDescriptionTop LPWSTR ?
+              cchDescriptionTop UINT ?
+              pszDescriptionBottom LPWSTR ?
+              cchDescriptionBottom UINT ?
               iTitleImage SDWORD ?
               iExtendedImage SDWORD ?
               iFirstItem SDWORD ?
-              ; Read only
-              cItems DWORD ?
-              ; Read only
-              pszSubsetTitle POINTER ?
-              ; NULL if group is not subset
-              cchSubsetTitle DWORD ?
+              cItems UINT ?
+              pszSubsetTitle LPWSTR ?
+              cchSubsetTitle UINT ?
               LVGROUP_V5_SIZE equ <CCSIZEOF_STRUCT(LVGROUP, uAlign)>
             endif
           LVGROUP ends
@@ -3848,14 +3338,10 @@ ifndef _INC_COMMCTRL
           ListView_MoveItemToGroup macro hwnd, idItemFrom, idGroupTo
             exitm <SNDMSG ((hwnd), LVM_MOVEITEMTOGROUP, (idItemFrom), (idGroupTo))>
           endm
-          LVGGR_GROUP equ 0; Entire expanded group
-
-          LVGGR_HEADER equ 1; Header only (collapsed group)
-
-          LVGGR_LABEL equ 2; Label only
-
-          LVGGR_SUBSETLINK equ 3; subset link only
-
+          LVGGR_GROUP equ 0
+          LVGGR_HEADER equ 1
+          LVGGR_LABEL equ 2
+          LVGGR_SUBSETLINK equ 3
           LVM_GETGROUPRECT equ (LVM_FIRST + 98)
           ListView_GetGroupRect macro hwnd, iGroupId, type_, prc
             exitm <SNDMSG ((hwnd), LVM_GETGROUPRECT, (iGroupId), ((prc) ? (((RECT *) (prc)) - top = (type_)), (RECT *) (prc) : (RECT *) NULL))>
@@ -3865,12 +3351,12 @@ ifndef _INC_COMMCTRL
           LVGMF_BORDERCOLOR equ 00000002h
           LVGMF_TEXTCOLOR equ 00000004h
           LVGROUPMETRICS struct
-            cbSize DWORD ?
-            mask_ DWORD ?
-            Left DWORD ?
-            Top DWORD ?
-            Right DWORD ?
-            Bottom DWORD ?
+            cbSize UINT ?
+            mask_ UINT ?
+            Left UINT ?
+            Top UINT ?
+            Right UINT ?
+            Bottom UINT ?
             crLeft COLORREF ?
             crTop COLORREF ?
             crRight COLORREF ?
@@ -3940,11 +3426,9 @@ ifndef _INC_COMMCTRL
           LVTVIM_COLUMNS equ 00000002h
           LVTVIM_LABELMARGIN equ 00000004h
           LVTILEVIEWINFO struct
-            cbSize DWORD ?
+            cbSize UINT ?
             dwMask DWORD ?
-            ;LVTVIM_*
             dwFlags DWORD ?
-            ;LVTVIF_*
             sizeTile SIZE_ ?
             cLines SDWORD ?
             rcLabelMargin RECT <>
@@ -3952,9 +3436,9 @@ ifndef _INC_COMMCTRL
           tagLVTILEVIEWINFO typedef LVTILEVIEWINFO
           PLVTILEVIEWINFO typedef ptr LVTILEVIEWINFO
           LVTILEINFO struct
-            cbSize DWORD ?
+            cbSize UINT ?
             iItem SDWORD ?
-            cColumns DWORD ?
+            cColumns UINT ?
             puColumns PUINT ?
             if (NTDDI_VERSION ge NTDDI_VISTA)
               piColFmt POINTER ?
@@ -3980,14 +3464,13 @@ ifndef _INC_COMMCTRL
             exitm <SNDMSG ((hwnd), LVM_GETTILEINFO, 0, (pti))>
           endm
           LVINSERTMARK struct
-            cbSize DWORD ?
+            cbSize UINT ?
             dwFlags DWORD ?
             iItem SDWORD ?
             dwReserved DWORD ?
           LVINSERTMARK ends
           LPLVINSERTMARK typedef ptr LVINSERTMARK
-          LVIM_AFTER equ 00000001h; TRUE = insert After iItem, otherwise before
-
+          LVIM_AFTER equ 00000001h
           LVM_SETINSERTMARK equ (LVM_FIRST + 166)
           ListView_SetInsertMark macro hwnd, lvim
             exitm <SNDMSG ((hwnd), LVM_SETINSERTMARK, 0, (lvim))>
@@ -4013,9 +3496,9 @@ ifndef _INC_COMMCTRL
             exitm <SNDMSG ((hwnd), LVM_GETINSERTMARKCOLOR, 0, 0)>
           endm
           LVSETINFOTIP struct
-            cbSize DWORD ?
+            cbSize UINT ?
             dwFlags DWORD ?
-            pszText POINTER ?
+            pszText LPWSTR ?
             iItem SDWORD ?
             iSubItem SDWORD ?
           LVSETINFOTIP ends
@@ -4043,12 +3526,8 @@ ifndef _INC_COMMCTRL
           endm
           LVM_CANCELEDITLABEL equ (LVM_FIRST + 179)
           ListView_CancelEditLabel macro hwnd
-            exitm <(VOID) SNDMSG ((hwnd), LVM_CANCELEDITLABEL, 0, 0)>
+            exitm <SNDMSG ((hwnd), LVM_CANCELEDITLABEL, 0, 0)>
           endm
-          ; These next to methods make it easy to identify an item that can be repositioned
-          ; within listview. For example: Many developers use the lParam to store an identifier that is
-          ; unique. Unfortunatly, in order to find this item, they have to iterate through all of the items
-          ; in the listview. Listview will maintain a unique identifier.  The upper bound is the size of a DWORD.
           LVM_MAPINDEXTOID equ (LVM_FIRST + 180)
           ListView_MapIndexToID macro hwnd, index
             exitm <SNDMSG ((hwnd), LVM_MAPINDEXTOID, (index), 0)>
@@ -4076,14 +3555,12 @@ ifndef _INC_COMMCTRL
             ListView_GetFooterRect macro hwnd, prc
               exitm <SNDMSG ((hwnd), LVM_GETFOOTERRECT, (0), (prc))>
             endm
-            ; footer flags
             LVFF_ITEMCOUNT equ 00000001h
             LVFOOTERINFO struct
-              mask_ DWORD ?
-              ; LVFF_*
-              pszText POINTER ?
+              mask_ UINT ?
+              pszText LPWSTR ?
               cchTextMax SDWORD ?
-              cItems DWORD ?
+              cItems UINT ?
             LVFOOTERINFO ends
             tagLVFOOTERINFO typedef LVFOOTERINFO
             LPLVFOOTERINFO typedef ptr LVFOOTERINFO
@@ -4095,21 +3572,16 @@ ifndef _INC_COMMCTRL
             ListView_GetFooterItemRect macro hwnd, iItem, prc
               exitm <SNDMSG ((hwnd), LVM_GETFOOTERITEMRECT, (iItem), (prc))>
             endm
-            ; footer item flags
             LVFIF_TEXT equ 00000001h
             LVFIF_STATE equ 00000002h
-            ; footer item state
             LVFIS_FOCUSED equ 0001h
             LVFOOTERITEM struct
-              mask_ DWORD ?
-              ; LVFIF_*
+              mask_ UINT ?
               iItem SDWORD ?
-              pszText POINTER ?
+              pszText LPWSTR ?
               cchTextMax SDWORD ?
-              state DWORD ?
-              ; LVFIS_*
-              stateMask DWORD ?
-              ; LVFIS_*
+              state UINT ?
+              stateMask UINT ?
             LVFOOTERITEM ends
             tagLVFOOTERITEM typedef LVFOOTERITEM
             LPLVFOOTERITEM typedef ptr LVFOOTERITEM
@@ -4117,12 +3589,9 @@ ifndef _INC_COMMCTRL
             ListView_GetFooterItem macro hwnd, iItem, pfi
               exitm <SNDMSG ((hwnd), LVM_GETFOOTERITEM, (iItem), (pfi))>
             endm
-            ; supports a single item in multiple groups.
             LVITEMINDEX struct
               iItem SDWORD ?
-              ; listview item index
               iGroup SDWORD ?
-              ; group index (must be -1 if group view is not enabled)
             LVITEMINDEX ends
             tagLVITEMINDEX typedef LVITEMINDEX
             PLVITEMINDEX typedef ptr LVITEMINDEX
@@ -4163,33 +3632,27 @@ ifndef _INC_COMMCTRL
           hdr NMHDR <>
           iItem SDWORD ?
           iSubItem SDWORD ?
-          uNewState DWORD ?
-          uOldState DWORD ?
-          uChanged DWORD ?
+          uNewState UINT ?
+          uOldState UINT ?
+          uChanged UINT ?
           ptAction POINT <>
           lParam LPARAM ?
         NMLISTVIEW ends
         tagNMLISTVIEW typedef NMLISTVIEW
         LPNMLISTVIEW typedef ptr NMLISTVIEW
-        ; NMITEMACTIVATE is used instead of NMLISTVIEW in IE >= 0x400
-        ; therefore all the fields are the same except for extra uKeyFlags
-        ; they are used to store key flags at the time of the single click with
-        ; delayed activation - because by the time the timer goes off a user may
-        ; not hold the keys (shift, ctrl) any more
         NMITEMACTIVATE struct
           hdr NMHDR <>
           iItem SDWORD ?
           iSubItem SDWORD ?
-          uNewState DWORD ?
-          uOldState DWORD ?
-          uChanged DWORD ?
+          uNewState UINT ?
+          uOldState UINT ?
+          uChanged UINT ?
           ptAction POINT <>
           lParam LPARAM ?
-          uKeyFlags DWORD ?
+          uKeyFlags UINT ?
         NMITEMACTIVATE ends
         tagNMITEMACTIVATE typedef NMITEMACTIVATE
         LPNMITEMACTIVATE typedef ptr NMITEMACTIVATE
-        ; key flags stored in uKeyFlags
         LVKF_ALT equ 0001h
         LVKF_CONTROL equ 0002h
         LVKF_SHIFT equ 0004h
@@ -4201,25 +3664,20 @@ ifndef _INC_COMMCTRL
           iSubItem SDWORD ?
           if (NTDDI_VERSION ge NTDDI_WINXP)
             dwItemType DWORD ?
-            ; Item custom draw
             clrFace COLORREF ?
             iIconEffect SDWORD ?
             iIconPhase SDWORD ?
             iPartId SDWORD ?
             iStateId SDWORD ?
-            ; Group Custom Draw
             rcText RECT <>
-            uAlign DWORD ?
-            ; Alignment. Use LVGA_HEADER_CENTER, LVGA_HEADER_RIGHT, LVGA_HEADER_LEFT
+            uAlign UINT ?
           endif
         NMLVCUSTOMDRAW ends
         tagNMLVCUSTOMDRAW typedef NMLVCUSTOMDRAW
         LPNMLVCUSTOMDRAW typedef ptr NMLVCUSTOMDRAW
-        ; dwItemType
         LVCDI_ITEM equ 00000000h
         LVCDI_GROUP equ 00000001h
         LVCDI_ITEMSLIST equ 00000002h
-        ; ListView custom draw return values
         LVCDRF_NOSELECT equ 00010000h
         LVCDRF_NOGROUPFRAME equ 00020000h
         NMLVCACHEHINT struct
@@ -4269,8 +3727,8 @@ ifndef _INC_COMMCTRL
           hdr NMHDR <>
           iFrom SDWORD ?
           iTo SDWORD ?
-          uNewState DWORD ?
-          uOldState DWORD ?
+          uNewState UINT ?
+          uOldState UINT ?
         NMLVODSTATECHANGE ends
         tagNMLVODSTATECHANGE typedef NMLVODSTATECHANGE
         LPNMLVODSTATECHANGE typedef ptr NMLVODSTATECHANGE
@@ -4344,7 +3802,7 @@ ifndef _INC_COMMCTRL
         NMLVKEYDOWN struct
           hdr NMHDR <>
           wVKey WORD ?
-          flags DWORD ?
+          flags UINT ?
         NMLVKEYDOWN ends
         tagLVKEYDOWN typedef NMLVKEYDOWN
         LPNMLVKEYDOWN typedef ptr NMLVKEYDOWN
@@ -4365,7 +3823,7 @@ ifndef _INC_COMMCTRL
         NMLVGETINFOTIPA struct
           hdr NMHDR <>
           dwFlags DWORD ?
-          pszText POINTER ?
+          pszText LPSTR ?
           cchTextMax SDWORD ?
           iItem SDWORD ?
           iSubItem SDWORD ?
@@ -4376,7 +3834,7 @@ ifndef _INC_COMMCTRL
         NMLVGETINFOTIPW struct
           hdr NMHDR <>
           dwFlags DWORD ?
-          pszText POINTER ?
+          pszText LPWSTR ?
           cchTextMax SDWORD ?
           iItem SDWORD ?
           iSubItem SDWORD ?
@@ -4384,7 +3842,6 @@ ifndef _INC_COMMCTRL
         NMLVGETINFOTIPW ends
         tagNMLVGETINFOTIPW typedef NMLVGETINFOTIPW
         LPNMLVGETINFOTIPW typedef ptr NMLVGETINFOTIPW
-        ; NMLVGETINFOTIPA.dwFlag values
         LVGIT_UNFOLDED equ 0001h
         LVN_GETINFOTIPA equ (LVN_FIRST - 57)
         LVN_GETINFOTIPW equ (LVN_FIRST - 58)
@@ -4397,15 +3854,6 @@ ifndef _INC_COMMCTRL
           NMLVGETINFOTIP equ <NMLVGETINFOTIPA>
           LPNMLVGETINFOTIP equ <LPNMLVGETINFOTIPA>
         endif
-        ;  LVN_INCREMENTALSEARCH gives the app the opportunity to customize
-        ;  incremental search.  For example, if the items are numeric,
-        ;  the app can do numerical search instead of string search.
-        ;  ListView notifies the app with NMLVFINDITEM.
-        ;  The app sets pnmfi->lvfi.lParam to the result of the incremental search,
-        ;  or to LVNSCH_DEFAULT if ListView should do the default search,
-        ;  or to LVNSCH_ERROR to fail the search and just beep,
-        ;  or to LVNSCH_IGNORE to stop all ListView processing.
-        ;  The return value is not used.
         LVNSCH_DEFAULT equ -1
         LVNSCH_ERROR equ -2
         LVNSCH_IGNORE equ -3
@@ -4420,7 +3868,6 @@ ifndef _INC_COMMCTRL
           LVN_COLUMNDROPDOWN equ (LVN_FIRST - 64)
           LVN_COLUMNOVERFLOWCLICK equ (LVN_FIRST - 66)
         endif
-        ; (NTDDI_VERSION >= NTDDI_VISTA)
         if (NTDDI_VERSION ge NTDDI_WINXP)
           NMLVSCROLL struct
             hdr NMHDR <>
@@ -4434,22 +3881,16 @@ ifndef _INC_COMMCTRL
         endif
         if (NTDDI_VERSION ge NTDDI_VISTA)
           LVN_LINKCLICK equ (LVN_FIRST - 84)
-          EMF_CENTERED equ 00000001h; render markup centered in the listview area
-
+          EMF_CENTERED equ 00000001h
           NMLVEMPTYMARKUP struct
             hdr NMHDR <>
-            ; out params from client back to listview
             dwFlags DWORD ?
-            ; EMF_*
-            szMarkup WORD L_MAX_URL_LENGTH dup (?)
-            ; markup displayed
+            szMarkup WCHAR L_MAX_URL_LENGTH dup (?)
           NMLVEMPTYMARKUP ends
           tagNMLVEMPTYMARKUP typedef NMLVEMPTYMARKUP
           LVN_GETEMPTYMARKUP equ (LVN_FIRST - 87)
         endif
       endif
-      ; NOLISTVIEW
-      ;====== TREEVIEW CONTROL =====================================================
       ifndef NOTREEVIEW
         ifdef _WIN32
           WC_TREEVIEWA equ <"SysTreeView32">
@@ -4462,7 +3903,6 @@ ifndef _INC_COMMCTRL
         else
           ;[...]
         endif
-        ; begin_r_commctrl
         TVS_HASBUTTONS equ 0001h
         TVS_HASLINES equ 0002h
         TVS_LINESATROOT equ 0004h
@@ -4478,8 +3918,7 @@ ifndef _INC_COMMCTRL
         TVS_FULLROWSELECT equ 1000h
         TVS_NOSCROLL equ 2000h
         TVS_NONEVENHEIGHT equ 4000h
-        TVS_NOHSCROLL equ 8000h; TVS_NOSCROLL overrides this
-
+        TVS_NOHSCROLL equ 8000h
         if (NTDDI_VERSION ge NTDDI_WINXP)
           TVS_EX_NOSINGLECOLLAPSE equ 0001h
         endif
@@ -4497,7 +3936,6 @@ ifndef _INC_COMMCTRL
         endif
         if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
         endif
-        ; end_r_commctrl
         HTREEITEM typedef ptr _TREEITEM
         TVIF_TEXT equ 0001h
         TVIF_IMAGE equ 0002h
@@ -4527,7 +3965,6 @@ ifndef _INC_COMMCTRL
             TVIS_EX_DISABLED equ 0002h
           endif
           TVIS_EX_ALL equ 0002h
-          ; Structure for TreeView's NM_TVSTATEIMAGECHANGING notification
           NMTVSTATEIMAGECHANGING struct
             hdr NMHDR <>
             hti HTREEITEM ?
@@ -4546,11 +3983,11 @@ ifndef _INC_COMMCTRL
         LPTV_ITEM equ <LPTVITEM>
         TV_ITEM equ <TVITEM>
         TVITEMA struct
-          mask_ DWORD ?
+          mask_ UINT ?
           hItem HTREEITEM ?
-          state DWORD ?
-          stateMask DWORD ?
-          pszText POINTER ?
+          state UINT ?
+          stateMask UINT ?
+          pszText LPSTR ?
           cchTextMax SDWORD ?
           iImage SDWORD ?
           iSelectedImage SDWORD ?
@@ -4560,11 +3997,11 @@ ifndef _INC_COMMCTRL
         tagTVITEMA typedef TVITEMA
         LPTVITEMA typedef ptr TVITEMA
         TVITEMW struct
-          mask_ DWORD ?
+          mask_ UINT ?
           hItem HTREEITEM ?
-          state DWORD ?
-          stateMask DWORD ?
-          pszText POINTER ?
+          state UINT ?
+          stateMask UINT ?
+          pszText LPWSTR ?
           cchTextMax SDWORD ?
           iImage SDWORD ?
           iSelectedImage SDWORD ?
@@ -4573,13 +4010,12 @@ ifndef _INC_COMMCTRL
         TVITEMW ends
         tagTVITEMW typedef TVITEMW
         LPTVITEMW typedef ptr TVITEMW
-        ; only used for Get and Set messages.  no notifies
         TVITEMEXA struct
-          mask_ DWORD ?
+          mask_ UINT ?
           hItem HTREEITEM ?
-          state DWORD ?
-          stateMask DWORD ?
-          pszText POINTER ?
+          state UINT ?
+          stateMask UINT ?
+          pszText LPSTR ?
           cchTextMax SDWORD ?
           iImage SDWORD ?
           iSelectedImage SDWORD ?
@@ -4587,7 +4023,7 @@ ifndef _INC_COMMCTRL
           lParam LPARAM ?
           iIntegral SDWORD ?
           if (_WIN32_IE ge 0600h)
-            uStateEx DWORD ?
+            uStateEx UINT ?
             hwnd HWND ?
             iExpandedImage SDWORD ?
           endif
@@ -4597,13 +4033,12 @@ ifndef _INC_COMMCTRL
         TVITEMEXA ends
         tagTVITEMEXA typedef TVITEMEXA
         LPTVITEMEXA typedef ptr TVITEMEXA
-        ; only used for Get and Set messages.  no notifies
         TVITEMEXW struct
-          mask_ DWORD ?
+          mask_ UINT ?
           hItem HTREEITEM ?
-          state DWORD ?
-          stateMask DWORD ?
-          pszText POINTER ?
+          state UINT ?
+          stateMask UINT ?
+          pszText LPWSTR ?
           cchTextMax SDWORD ?
           iImage SDWORD ?
           iSelectedImage SDWORD ?
@@ -4611,7 +4046,7 @@ ifndef _INC_COMMCTRL
           lParam LPARAM ?
           iIntegral SDWORD ?
           if (_WIN32_IE ge 0600h)
-            uStateEx DWORD ?
+            uStateEx UINT ?
             hwnd HWND ?
             iExpandedImage SDWORD ?
           endif
@@ -4628,7 +4063,6 @@ ifndef _INC_COMMCTRL
           TVITEMEX typedef TVITEMEXA
           LPTVITEMEX typedef LPTVITEMEXA
         endif
-        ; UNICODE
         ifdef UNICODE
           TVITEM equ <TVITEMW>
           LPTVITEM equ <LPTVITEMW>
@@ -4748,8 +4182,7 @@ ifndef _INC_COMMCTRL
           TVGN_NEXTSELECTED equ 000Bh
         endif
         if (NTDDI_VERSION ge NTDDI_WINXP)
-          TVSI_NOSINGLEEXPAND equ 8000h; Should not conflict with TVGN flags.
-
+          TVSI_NOSINGLEEXPAND equ 8000h
         endif
         TreeView_GetChild macro hwnd, hitem
           exitm <TreeView_GetNextItem(hwnd, hitem, TVGN_CHILD)>
@@ -4848,7 +4281,7 @@ ifndef _INC_COMMCTRL
         TV_HITTESTINFO equ <TVHITTESTINFO>
         TVHITTESTINFO struct
           pt POINT <>
-          flags DWORD ?
+          flags UINT ?
           hItem HTREEITEM ?
         TVHITTESTINFO ends
         tagTVHITTESTINFO typedef TVHITTESTINFO
@@ -4961,8 +4394,6 @@ ifndef _INC_COMMCTRL
         endm
         TVSBF_XBORDER equ 00000001h
         TVSBF_YBORDER equ 00000002h
-        ; tvm_?etitemstate only uses mask, state and stateMask.
-        ; so unicode or ansi is irrelevant.
         TreeView_SetItemState macro hwndTV, hti, data, _mask
           exitm <{ TVITEM _ms_TVi ; _ms_TVi.mask = TVIF_STATE ; _ms_TVi.hItem = (hti) ; _ms_TVi.stateMask = (_mask) ; _ms_TVi.state = (data) ; SNDMSG ((hwndTV), TVM_SETITEM, 0, (TV_ITEM *) and _ms_TVi) ; }>
         endm
@@ -5054,7 +4485,7 @@ ifndef _INC_COMMCTRL
         NM_TREEVIEW equ <NMTREEVIEW>
         NMTREEVIEWA struct
           hdr NMHDR <>
-          action DWORD ?
+          action UINT ?
           itemOld TVITEMA <>
           itemNew TVITEMA <>
           ptDrag POINT <>
@@ -5063,7 +4494,7 @@ ifndef _INC_COMMCTRL
         LPNMTREEVIEWA typedef ptr NMTREEVIEWA
         NMTREEVIEWW struct
           hdr NMHDR <>
-          action DWORD ?
+          action UINT ?
           itemOld TVITEMW <>
           itemNew TVITEMW <>
           ptDrag POINT <>
@@ -5170,7 +4601,7 @@ ifndef _INC_COMMCTRL
         NMTVKEYDOWN struct
           hdr NMHDR <>
           wVKey WORD ?
-          flags DWORD ?
+          flags UINT ?
         NMTVKEYDOWN ends
         tagTVKEYDOWN typedef NMTVKEYDOWN
         LPNMTVKEYDOWN typedef ptr NMTVKEYDOWN
@@ -5211,10 +4642,9 @@ ifndef _INC_COMMCTRL
         NMTVCUSTOMDRAW ends
         tagNMTVCUSTOMDRAW typedef NMTVCUSTOMDRAW
         LPNMTVCUSTOMDRAW typedef ptr NMTVCUSTOMDRAW
-        ; for tooltips
         NMTVGETINFOTIPA struct
           hdr NMHDR <>
-          pszText POINTER ?
+          pszText LPSTR ?
           cchTextMax SDWORD ?
           hItem HTREEITEM ?
           lParam LPARAM ?
@@ -5223,7 +4653,7 @@ ifndef _INC_COMMCTRL
         LPNMTVGETINFOTIPA typedef ptr NMTVGETINFOTIPA
         NMTVGETINFOTIPW struct
           hdr NMHDR <>
-          pszText POINTER ?
+          pszText LPWSTR ?
           cchTextMax SDWORD ?
           hItem HTREEITEM ?
           lParam LPARAM ?
@@ -5239,33 +4669,25 @@ ifndef _INC_COMMCTRL
           NMTVGETINFOTIP equ <NMTVGETINFOTIPA>
           LPNMTVGETINFOTIP equ <LPNMTVGETINFOTIPA>
         endif
-        ; treeview's customdraw return meaning don't draw images.  valid on CDRF_NOTIFYITEMPREPAINT
         TVCDRF_NOIMAGES equ 00010000h
         if (_WIN32_IE gt 0600h)
           NMTVITEMCHANGE struct
             hdr NMHDR <>
-            uChanged DWORD ?
+            uChanged UINT ?
             hItem HTREEITEM ?
-            uStateNew DWORD ?
-            uStateOld DWORD ?
+            uStateNew UINT ?
+            uStateOld UINT ?
             lParam LPARAM ?
           NMTVITEMCHANGE ends
           tagTVITEMCHANGE typedef NMTVITEMCHANGE
           NMTVASYNCDRAW struct
             hdr NMHDR <>
             pimldp POINTER ?
-            ; the draw that failed
             hr HRESULT ?
-            ; why it failed
             hItem HTREEITEM ?
-            ; item that failed to draw icon
             lParam LPARAM ?
-            ; its data
-            ; Out Params
             dwRetFlags DWORD ?
-            ; What listview should do on return
             iRetImageIndex SDWORD ?
-            ; used if ADRF_DRAWIMAGE is returned
           NMTVASYNCDRAW ends
           tagNMTVASYNCDRAW typedef NMTVASYNCDRAW
           ifdef UNICODE
@@ -5276,11 +4698,8 @@ ifndef _INC_COMMCTRL
             TVN_ITEMCHANGED equ <TVN_ITEMCHANGEDA>
           endif
         endif
-        ; _WIN32_IE >= 0x0600
       endif
-      ; NOTREEVIEW
       ifndef NOUSEREXCONTROLS
-        ;//////////////////  ComboBoxEx ////////////////////////////////
         WC_COMBOBOXEXW equ <L("ComboBoxEx32")>
         WC_COMBOBOXEXA equ <"ComboBoxEx32">
         ifdef UNICODE
@@ -5296,9 +4715,9 @@ ifndef _INC_COMMCTRL
         CBEIF_LPARAM equ 00000020h
         CBEIF_DI_SETITEM equ 10000000h
         COMBOBOXEXITEMA struct
-          mask_ DWORD ?
-          iItem SXWORD ?
-          pszText POINTER ?
+          mask_ UINT ?
+          iItem INT_PTR ?
+          pszText LPSTR ?
           cchTextMax SDWORD ?
           iImage SDWORD ?
           iSelectedImage SDWORD ?
@@ -5310,9 +4729,9 @@ ifndef _INC_COMMCTRL
         PCOMBOBOXEXITEMA typedef ptr COMBOBOXEXITEMA
         PCCOMBOEXITEMA typedef ptr COMBOBOXEXITEMA
         COMBOBOXEXITEMW struct
-          mask_ DWORD ?
-          iItem SXWORD ?
-          pszText POINTER ?
+          mask_ UINT ?
+          iItem INT_PTR ?
+          pszText LPWSTR ?
           cchTextMax SDWORD ?
           iImage SDWORD ?
           iSelectedImage SDWORD ?
@@ -5340,12 +4759,9 @@ ifndef _INC_COMMCTRL
         CBEM_DELETEITEM equ <CB_DELETESTRING>
         CBEM_GETCOMBOCONTROL equ (WM_USER + 6)
         CBEM_GETEDITCONTROL equ (WM_USER + 7)
-        CBEM_SETEXSTYLE equ (WM_USER + 8); use  SETEXTENDEDSTYLE instead
-
-        CBEM_SETEXTENDEDSTYLE equ (WM_USER + 14); lparam == new style, wParam (optional) == mask
-
-        CBEM_GETEXSTYLE equ (WM_USER + 9); use GETEXTENDEDSTYLE instead
-
+        CBEM_SETEXSTYLE equ (WM_USER + 8)
+        CBEM_SETEXTENDEDSTYLE equ (WM_USER + 14)
+        CBEM_GETEXSTYLE equ (WM_USER + 9)
         CBEM_GETEXTENDEDSTYLE equ (WM_USER + 9)
         CBEM_SETUNICODEFORMAT equ <CCM_SETUNICODEFORMAT>
         CBEM_GETUNICODEFORMAT equ <CCM_GETUNICODEFORMAT>
@@ -5406,7 +4822,6 @@ ifndef _INC_COMMCTRL
         else
           CBEN_DRAGBEGIN equ <CBEN_DRAGBEGINA>
         endif
-        ; lParam specifies why the endedit is happening
         ifdef UNICODE
           CBEN_ENDEDIT equ <CBEN_ENDEDITW>
         else
@@ -5417,11 +4832,10 @@ ifndef _INC_COMMCTRL
         CBENF_ESCAPE equ 3
         CBENF_DROPDOWN equ 4
         CBEMAXSTRLEN equ 260
-        ; CBEN_DRAGBEGIN sends this information ...
         NMCBEDRAGBEGINW struct
           hdr NMHDR <>
           iItemid SDWORD ?
-          szText WORD CBEMAXSTRLEN dup (?)
+          szText WCHAR CBEMAXSTRLEN dup (?)
         NMCBEDRAGBEGINW ends
         LPNMCBEDRAGBEGINW typedef ptr NMCBEDRAGBEGINW
         PNMCBEDRAGBEGINW typedef ptr NMCBEDRAGBEGINW
@@ -5441,22 +4855,18 @@ ifndef _INC_COMMCTRL
           LPNMCBEDRAGBEGIN equ <LPNMCBEDRAGBEGINA>
           PNMCBEDRAGBEGIN equ <PNMCBEDRAGBEGINA>
         endif
-        ; CBEN_ENDEDIT sends this information...
-        ; fChanged if the user actually did anything
-        ; iNewSelection gives what would be the new selection unless the notify is failed
-        ;                      iNewSelection may be CB_ERR if there's no match
         NMCBEENDEDITW struct
           hdr NMHDR <>
-          fChanged DWORD ?
+          fChanged BOOL ?
           iNewSelection SDWORD ?
-          szText WORD CBEMAXSTRLEN dup (?)
+          szText WCHAR CBEMAXSTRLEN dup (?)
           iWhy SDWORD ?
         NMCBEENDEDITW ends
         LPNMCBEENDEDITW typedef ptr NMCBEENDEDITW
         PNMCBEENDEDITW typedef ptr NMCBEENDEDITW
         NMCBEENDEDITA struct
           hdr NMHDR <>
-          fChanged DWORD ?
+          fChanged BOOL ?
           iNewSelection SDWORD ?
           szText SBYTE CBEMAXSTRLEN dup (?)
           iWhy SDWORD ?
@@ -5473,7 +4883,6 @@ ifndef _INC_COMMCTRL
           PNMCBEENDEDIT equ <PNMCBEENDEDITA>
         endif
       endif
-      ;====== TAB CONTROL ==========================================================
       ifndef NOTABCONTROL
         ifdef _WIN32
           WC_TABCONTROLA equ <"SysTabControl32">
@@ -5486,13 +4895,10 @@ ifndef _INC_COMMCTRL
         else
           ;[...]
         endif
-        ; begin_r_commctrl
-        TCS_SCROLLOPPOSITE equ 0001h; assumes multiline tab
-
+        TCS_SCROLLOPPOSITE equ 0001h
         TCS_BOTTOM equ 0002h
         TCS_RIGHT equ 0002h
-        TCS_MULTISELECT equ 0004h; allow multi-select in button mode
-
+        TCS_MULTISELECT equ 0004h
         TCS_FLATBUTTONS equ 0008h
         TCS_FORCEICONLEFT equ 0010h
         TCS_FORCELABELLEFT equ 0020h
@@ -5509,8 +4915,6 @@ ifndef _INC_COMMCTRL
         TCS_OWNERDRAWFIXED equ 2000h
         TCS_TOOLTIPS equ 4000h
         TCS_FOCUSNEVER equ 8000h
-        ; end_r_commctrl
-        ; EX styles for use with TCM_SETEXTENDEDSTYLE
         TCS_EX_FLATSEPARATORS equ 00000001h
         TCS_EX_REGISTERDROP equ 00000002h
         TCM_GETIMAGELIST equ (TCM_FIRST + 2)
@@ -5536,20 +4940,20 @@ ifndef _INC_COMMCTRL
         TC_ITEMHEADERW equ <TCITEMHEADERW>
         TC_ITEMHEADER equ <TCITEMHEADER>
         TCITEMHEADERA struct
-          mask_ DWORD ?
-          lpReserved1 DWORD ?
-          lpReserved2 DWORD ?
-          pszText POINTER ?
+          mask_ UINT ?
+          lpReserved1 UINT ?
+          lpReserved2 UINT ?
+          pszText LPSTR ?
           cchTextMax SDWORD ?
           iImage SDWORD ?
         TCITEMHEADERA ends
         tagTCITEMHEADERA typedef TCITEMHEADERA
         LPTCITEMHEADERA typedef ptr TCITEMHEADERA
         TCITEMHEADERW struct
-          mask_ DWORD ?
-          lpReserved1 DWORD ?
-          lpReserved2 DWORD ?
-          pszText POINTER ?
+          mask_ UINT ?
+          lpReserved1 UINT ?
+          lpReserved2 UINT ?
+          pszText LPWSTR ?
           cchTextMax SDWORD ?
           iImage SDWORD ?
         TCITEMHEADERW ends
@@ -5566,10 +4970,10 @@ ifndef _INC_COMMCTRL
         TC_ITEMW equ <TCITEMW>
         TC_ITEM equ <TCITEM>
         TCITEMA struct
-          mask_ DWORD ?
+          mask_ UINT ?
           dwState DWORD ?
           dwStateMask DWORD ?
-          pszText POINTER ?
+          pszText LPSTR ?
           cchTextMax SDWORD ?
           iImage SDWORD ?
           lParam LPARAM ?
@@ -5577,10 +4981,10 @@ ifndef _INC_COMMCTRL
         tagTCITEMA typedef TCITEMA
         LPTCITEMA typedef ptr TCITEMA
         TCITEMW struct
-          mask_ DWORD ?
+          mask_ UINT ?
           dwState DWORD ?
           dwStateMask DWORD ?
-          pszText POINTER ?
+          pszText LPWSTR ?
           cchTextMax SDWORD ?
           iImage SDWORD ?
           lParam LPARAM ?
@@ -5652,7 +5056,7 @@ ifndef _INC_COMMCTRL
         TC_HITTESTINFO equ <TCHITTESTINFO>
         TCHITTESTINFO struct
           pt POINT <>
-          flags DWORD ?
+          flags UINT ?
         TCHITTESTINFO ends
         tagTCHITTESTINFO typedef TCHITTESTINFO
         LPTCHITTESTINFO typedef ptr TCHITTESTINFO
@@ -5712,8 +5116,7 @@ ifndef _INC_COMMCTRL
         TabCtrl_HighlightItem macro hwnd, i, fHighlight
           exitm <SNDMSG ((hwnd), TCM_HIGHLIGHTITEM, (i), MAKELONG(fHighlight, 0))>
         endm
-        TCM_SETEXTENDEDSTYLE equ (TCM_FIRST + 52); optional wParam == mask
-
+        TCM_SETEXTENDEDSTYLE equ (TCM_FIRST + 52)
         TabCtrl_SetExtendedStyle macro hwnd, dw_
           exitm <SNDMSG ((hwnd), TCM_SETEXTENDEDSTYLE, 0, dw_)>
         endm
@@ -5737,7 +5140,7 @@ ifndef _INC_COMMCTRL
         NMTCKEYDOWN struct
           hdr NMHDR <>
           wVKey WORD ?
-          flags DWORD ?
+          flags UINT ?
         NMTCKEYDOWN ends
         tagTCKEYDOWN typedef NMTCKEYDOWN
         ifdef _WIN32
@@ -5748,8 +5151,6 @@ ifndef _INC_COMMCTRL
         TCN_GETOBJECT equ (TCN_FIRST - 3)
         TCN_FOCUSCHANGE equ (TCN_FIRST - 4)
       endif
-      ; NOTABCONTROL
-      ;====== ANIMATE CONTROL ======================================================
       ifndef NOANIMATE
         ifdef _WIN32
           ANIMATE_CLASSW equ <L("SysAnimate32")>
@@ -5759,13 +5160,10 @@ ifndef _INC_COMMCTRL
           else
             ANIMATE_CLASS equ <ANIMATE_CLASSA>
           endif
-          ; begin_r_commctrl
           ACS_CENTER equ 0001h
           ACS_TRANSPARENT equ 0002h
           ACS_AUTOPLAY equ 0004h
-          ACS_TIMER equ 0008h; don't use threads... use timers
-
-          ; end_r_commctrl
+          ACS_TIMER equ 0008h
           ACM_OPENA equ (WM_USER + 100)
           ACM_OPENW equ (WM_USER + 103)
           ifdef UNICODE
@@ -5804,8 +5202,6 @@ ifndef _INC_COMMCTRL
           endm
         endif
       endif
-      ; NOANIMATE
-      ;====== MONTHCAL CONTROL ======================================================
       ifndef NOMONTHCAL
         ifdef _WIN32
           MONTHCAL_CLASSW equ <L("SysMonthCal32")>
@@ -5815,83 +5211,45 @@ ifndef _INC_COMMCTRL
           else
             MONTHCAL_CLASS equ <MONTHCAL_CLASSA>
           endif
-          ; bit-packed array of "bold" info for a month
-          ; if a bit is on, that day is drawn bold
           MONTHDAYSTATE typedef DWORD
           LPMONTHDAYSTATE typedef ptr DWORD
           MCM_FIRST equ 1000h
-          ; BOOL MonthCal_GetCurSel(HWND hmc, LPSYSTEMTIME pst)
-          ;   returns FALSE if MCS_MULTISELECT
-          ;   returns TRUE and sets *pst to the currently selected date otherwise
           MCM_GETCURSEL equ (MCM_FIRST + 1)
           MonthCal_GetCurSel macro hmc, pst
             exitm <SNDMSG (hmc, MCM_GETCURSEL, 0, (pst))>
           endm
-          ; BOOL MonthCal_SetCurSel(HWND hmc, LPSYSTEMTIME pst)
-          ;   returns FALSE if MCS_MULTISELECT
-          ;   returns TURE and sets the currently selected date to *pst otherwise
           MCM_SETCURSEL equ (MCM_FIRST + 2)
           MonthCal_SetCurSel macro hmc, pst
             exitm <SNDMSG (hmc, MCM_SETCURSEL, 0, (pst))>
           endm
-          ; DWORD MonthCal_GetMaxSelCount(HWND hmc)
-          ;   returns the maximum number of selectable days allowed
           MCM_GETMAXSELCOUNT equ (MCM_FIRST + 3)
           MonthCal_GetMaxSelCount macro hmc
             exitm <SNDMSG (hmc, MCM_GETMAXSELCOUNT, 0, 0)>
           endm
-          ; BOOL MonthCal_SetMaxSelCount(HWND hmc, UINT n)
-          ;   sets the max number days that can be selected iff MCS_MULTISELECT
           MCM_SETMAXSELCOUNT equ (MCM_FIRST + 4)
           MonthCal_SetMaxSelCount macro hmc, n
             exitm <SNDMSG (hmc, MCM_SETMAXSELCOUNT, (n), 0)>
           endm
-          ; BOOL MonthCal_GetSelRange(HWND hmc, LPSYSTEMTIME rgst)
-          ;   sets rgst[0] to the first day of the selection range
-          ;   sets rgst[1] to the last day of the selection range
           MCM_GETSELRANGE equ (MCM_FIRST + 5)
           MonthCal_GetSelRange macro hmc, rgst
             exitm <SNDMSG (hmc, MCM_GETSELRANGE, 0, (rgst))>
           endm
-          ; BOOL MonthCal_SetSelRange(HWND hmc, LPSYSTEMTIME rgst)
-          ;   selects the range of days from rgst[0] to rgst[1]
           MCM_SETSELRANGE equ (MCM_FIRST + 6)
           MonthCal_SetSelRange macro hmc, rgst
             exitm <SNDMSG (hmc, MCM_SETSELRANGE, 0, (rgst))>
           endm
-          ; DWORD MonthCal_GetMonthRange(HWND hmc, DWORD gmr, LPSYSTEMTIME rgst)
-          ;   if rgst specified, sets rgst[0] to the starting date and
-          ;      and rgst[1] to the ending date of the the selectable (non-grayed)
-          ;      days if GMR_VISIBLE or all the displayed days (including grayed)
-          ;      if GMR_DAYSTATE.
-          ;   returns the number of months spanned by the above range.
           MCM_GETMONTHRANGE equ (MCM_FIRST + 7)
           MonthCal_GetMonthRange macro hmc, gmr, rgst
             exitm <SNDMSG (hmc, MCM_GETMONTHRANGE, (gmr), (rgst))>
           endm
-          ; BOOL MonthCal_SetDayState(HWND hmc, int cbds, DAYSTATE *rgds)
-          ;   cbds is the count of DAYSTATE items in rgds and it must be equal
-          ;   to the value returned from MonthCal_GetMonthRange(hmc, GMR_DAYSTATE, NULL)
-          ;   This sets the DAYSTATE bits for each month (grayed and non-grayed
-          ;   days) displayed in the calendar. The first bit in a month's DAYSTATE
-          ;   corresponts to bolding day 1, the second bit affects day 2, etc.
           MCM_SETDAYSTATE equ (MCM_FIRST + 8)
           MonthCal_SetDayState macro hmc, cbds, rgds
             exitm <SNDMSG (hmc, MCM_SETDAYSTATE, (cbds), (rgds))>
           endm
-          ; BOOL MonthCal_GetMinReqRect(HWND hmc, LPRECT prc)
-          ;   sets *prc the minimal size needed to display one month
-          ;   To display two months, undo the AdjustWindowRect calculation already done to
-          ;   this rect, double the width, and redo the AdjustWindowRect calculation --
-          ;   the monthcal control will display two calendars in this window (if you also
-          ;   double the vertical size, you will get 4 calendars)
-          ;   NOTE: if you want to gurantee that the "Today" string is not clipped,
-          ;   get the MCM_GETMAXTODAYWIDTH and use the max of that width and this width
           MCM_GETMINREQRECT equ (MCM_FIRST + 9)
           MonthCal_GetMinReqRect macro hmc, prc
             exitm <SNDMSG (hmc, MCM_GETMINREQRECT, 0, (prc))>
           endm
-          ; set colors to draw control with -- see MCSC_ bits below
           MCM_SETCOLOR equ (MCM_FIRST + 10)
           MonthCal_SetColor macro hmc, iColor, clr
             exitm <SNDMSG (hmc, MCM_SETCOLOR, iColor, clr)>
@@ -5900,38 +5258,28 @@ ifndef _INC_COMMCTRL
           MonthCal_GetColor macro hmc, iColor
             exitm <SNDMSG (hmc, MCM_GETCOLOR, iColor, 0)>
           endm
-          MCSC_BACKGROUND equ 0; the background color (between months)
-
-          MCSC_TEXT equ 1; the dates
-
-          MCSC_TITLEBK equ 2; background of the title
-
+          MCSC_BACKGROUND equ 0
+          MCSC_TEXT equ 1
+          MCSC_TITLEBK equ 2
           MCSC_TITLETEXT equ 3
-          MCSC_MONTHBK equ 4; background within the month cal
-
-          MCSC_TRAILINGTEXT equ 5; the text color of header & trailing days
-
-          ; set what day is "today"   send NULL to revert back to real date
+          MCSC_MONTHBK equ 4
+          MCSC_TRAILINGTEXT equ 5
           MCM_SETTODAY equ (MCM_FIRST + 12)
           MonthCal_SetToday macro hmc, pst
             exitm <SNDMSG (hmc, MCM_SETTODAY, 0, (pst))>
           endm
-          ; get what day is "today"
-          ; returns BOOL for success/failure
           MCM_GETTODAY equ (MCM_FIRST + 13)
           MonthCal_GetToday macro hmc, pst
             exitm <SNDMSG (hmc, MCM_GETTODAY, 0, (pst))>
           endm
-          ; determine what pinfo->pt is over
           MCM_HITTEST equ (MCM_FIRST + 14)
           MonthCal_HitTest macro hmc, pinfo
             exitm <SNDMSG (hmc, MCM_HITTEST, 0, (PMCHITTESTINFO) (pinfo))>
           endm
           MCHITTESTINFO struct
-            cbSize DWORD ?
+            cbSize UINT ?
             pt POINT <>
-            uHit DWORD ?
-            ; out param
+            uHit UINT ?
             st_ SYSTEMTIME <>
             if (NTDDI_VERSION ge NTDDI_VISTA)
               rc RECT <>
@@ -5948,10 +5296,8 @@ ifndef _INC_COMMCTRL
           if (NTDDI_VERSION ge NTDDI_VISTA)
             MCHT_CALENDARCONTROL equ 00100000h
           endif
-          MCHT_NEXT equ 01000000h; these indicate that hitting
-
-          MCHT_PREV equ 02000000h; here will go to the next/prev month
-
+          MCHT_NEXT equ 01000000h
+          MCHT_PREV equ 02000000h
           MCHT_NOWHERE equ 00000000h
           MCHT_TITLEBK equ <(MCHT_TITLE)>
           MCHT_TITLEMONTH equ (MCHT_TITLE or 0001h)
@@ -5966,51 +5312,30 @@ ifndef _INC_COMMCTRL
           MCHT_CALENDARWEEKNUM equ (MCHT_CALENDAR or 0003h)
           MCHT_CALENDARDATEMIN equ (MCHT_CALENDAR or 0004h)
           MCHT_CALENDARDATEMAX equ (MCHT_CALENDAR or 0005h)
-          ; set first day of week to iDay:
-          ; 0 for Monday, 1 for Tuesday, ..., 6 for Sunday
-          ; -1 for means use locale info
           MCM_SETFIRSTDAYOFWEEK equ (MCM_FIRST + 15)
           MonthCal_SetFirstDayOfWeek macro hmc, iDay
             exitm <SNDMSG (hmc, MCM_SETFIRSTDAYOFWEEK, 0, iDay)>
           endm
-          ; DWORD result...  low word has the day.  high word is bool if this is app set
-          ; or not (FALSE == using locale info)
           MCM_GETFIRSTDAYOFWEEK equ (MCM_FIRST + 16)
           MonthCal_GetFirstDayOfWeek macro hmc
             exitm <SNDMSG (hmc, MCM_GETFIRSTDAYOFWEEK, 0, 0)>
           endm
-          ; DWORD MonthCal_GetRange(HWND hmc, LPSYSTEMTIME rgst)
-          ;   modifies rgst[0] to be the minimum ALLOWABLE systemtime (or 0 if no minimum)
-          ;   modifies rgst[1] to be the maximum ALLOWABLE systemtime (or 0 if no maximum)
-          ;   returns GDTR_MIN|GDTR_MAX if there is a minimum|maximum limit
           MCM_GETRANGE equ (MCM_FIRST + 17)
           MonthCal_GetRange macro hmc, rgst
             exitm <SNDMSG (hmc, MCM_GETRANGE, 0, (rgst))>
           endm
-          ; BOOL MonthCal_SetRange(HWND hmc, DWORD gdtr, LPSYSTEMTIME rgst)
-          ;   if GDTR_MIN, sets the minimum ALLOWABLE systemtime to rgst[0], otherwise removes minimum
-          ;   if GDTR_MAX, sets the maximum ALLOWABLE systemtime to rgst[1], otherwise removes maximum
-          ;   returns TRUE on success, FALSE on error (such as invalid parameters)
           MCM_SETRANGE equ (MCM_FIRST + 18)
           MonthCal_SetRange macro hmc, gd, rgst
             exitm <SNDMSG (hmc, MCM_SETRANGE, (gd), (rgst))>
           endm
-          ; int MonthCal_GetMonthDelta(HWND hmc)
-          ;   returns the number of months one click on a next/prev button moves by
           MCM_GETMONTHDELTA equ (MCM_FIRST + 19)
           MonthCal_GetMonthDelta macro hmc
             exitm <SNDMSG (hmc, MCM_GETMONTHDELTA, 0, 0)>
           endm
-          ; int MonthCal_SetMonthDelta(HWND hmc, int n)
-          ;   sets the month delta to n. n==0 reverts to moving by a page of months
-          ;   returns the previous value of n.
           MCM_SETMONTHDELTA equ (MCM_FIRST + 20)
           MonthCal_SetMonthDelta macro hmc, n
             exitm <SNDMSG (hmc, MCM_SETMONTHDELTA, n, 0)>
           endm
-          ; DWORD MonthCal_GetMaxTodayWidth(HWND hmc, LPSIZE psz)
-          ;   sets *psz to the maximum width/height of the "Today" string displayed
-          ;   at the bottom of the calendar (as long as MCS_NOTODAY is not specified)
           MCM_GETMAXTODAYWIDTH equ (MCM_FIRST + 21)
           MonthCal_GetMaxTodayWidth macro hmc
             exitm <SNDMSG (hmc, MCM_GETMAXTODAYWIDTH, 0, 0)>
@@ -6024,7 +5349,6 @@ ifndef _INC_COMMCTRL
             exitm <SNDMSG ((hwnd), MCM_GETUNICODEFORMAT, 0, 0)>
           endm
           if (NTDDI_VERSION ge NTDDI_VISTA)
-            ; View
             MCMV_MONTH equ 0
             MCMV_YEAR equ 1
             MCMV_DECADE equ 2
@@ -6038,7 +5362,6 @@ ifndef _INC_COMMCTRL
             MonthCal_GetCalendarCount macro hmc
               exitm <SNDMSG (hmc, MCM_GETCALENDARCOUNT, 0, 0)>
             endm
-            ; Part
             MCGIP_CALENDARCONTROL equ 0
             MCGIP_NEXT equ 1
             MCGIP_PREV equ 2
@@ -6051,20 +5374,19 @@ ifndef _INC_COMMCTRL
             MCGIF_DATE equ 00000001h
             MCGIF_RECT equ 00000002h
             MCGIF_NAME equ 00000004h
-            ; Note: iRow of -1 refers to the row header and iCol of -1 refers to the col header.
             MCGRIDINFO struct
-              cbSize DWORD ?
+              cbSize UINT ?
               dwPart DWORD ?
               dwFlags DWORD ?
               iCalendar SDWORD ?
               iRow SDWORD ?
               iCol SDWORD ?
-              bSelected DWORD ?
+              bSelected BOOL ?
               stStart SYSTEMTIME <>
               stEnd SYSTEMTIME <>
               rc RECT <>
-              pszName POINTER ?
-              cchName XWORD ?
+              pszName PWSTR ?
+              cchName size_t ?
             MCGRIDINFO ends
             tagMCGRIDINFO typedef MCGRIDINFO
             PMCGRIDINFO typedef ptr MCGRIDINFO
@@ -6080,7 +5402,6 @@ ifndef _INC_COMMCTRL
             MonthCal_SetCALID macro hmc, calid
               exitm <SNDMSG (hmc, MCM_SETCALID, (calid), 0)>
             endm
-            ; Returns the min rect that will fit the max number of calendars for the passed in rect.
             MCM_SIZERECTTOMIN equ (MCM_FIRST + 29)
             MonthCal_SizeRectToMin macro hmc, prc
               exitm <SNDMSG (hmc, MCM_SIZERECTTOMIN, 0, (prc))>
@@ -6098,52 +5419,34 @@ ifndef _INC_COMMCTRL
               exitm <SNDMSG (hmc, MCM_SETCURRENTVIEW, 0, (dwNewView))>
             endm
           endif
-          ; MCN_SELCHANGE is sent whenever the currently displayed date changes
-          ; via month change, year change, keyboard navigation, prev/next button
           NMSELCHANGE struct
             nmhdr NMHDR <>
-            ; this must be first, so we don't break WM_NOTIFY
             stSelStart SYSTEMTIME <>
             stSelEnd SYSTEMTIME <>
           NMSELCHANGE ends
           tagNMSELCHANGE typedef NMSELCHANGE
           LPNMSELCHANGE typedef ptr NMSELCHANGE
-          MCN_SELCHANGE equ (MCN_FIRST - 3); -749
-
-          ; MCN_GETDAYSTATE is sent for MCS_DAYSTATE controls whenever new daystate
-          ; information is needed (month or year scroll) to draw bolding information.
-          ; The app must fill in cDayState months worth of information starting from
-          ; stStart date. The app may fill in the array at prgDayState or change
-          ; prgDayState to point to a different array out of which the information
-          ; will be copied. (similar to tooltips)
+          MCN_SELCHANGE equ (MCN_FIRST - 3)
           NMDAYSTATE struct
             nmhdr NMHDR <>
-            ; this must be first, so we don't break WM_NOTIFY
             stStart SYSTEMTIME <>
             cDayState SDWORD ?
             prgDayState LPMONTHDAYSTATE ?
-            ; points to cDayState MONTHDAYSTATEs
           NMDAYSTATE ends
           tagNMDAYSTATE typedef NMDAYSTATE
           LPNMDAYSTATE typedef ptr NMDAYSTATE
-          MCN_GETDAYSTATE equ (MCN_FIRST - 1); -747
-
-          ; MCN_SELECT is sent whenever a selection has occured (via mouse or keyboard)
+          MCN_GETDAYSTATE equ (MCN_FIRST - 1)
           NMSELECT typedef NMSELCHANGE
           LPNMSELECT typedef ptr NMSELCHANGE
-          MCN_SELECT equ <(MCN_FIRST)>; -746
-
+          MCN_SELECT equ <(MCN_FIRST)>
           NMVIEWCHANGE struct
             nmhdr NMHDR <>
-            ; this must be first, so we don't break WM_NOTIFY
             dwOldView DWORD ?
             dwNewView DWORD ?
           NMVIEWCHANGE ends
           tagNMVIEWCHANGE typedef NMVIEWCHANGE
           LPNMVIEWCHANGE typedef ptr NMVIEWCHANGE
-          MCN_VIEWCHANGE equ (MCN_FIRST - 4); -750
-
-          ; begin_r_commctrl
+          MCN_VIEWCHANGE equ (MCN_FIRST - 4)
           MCS_DAYSTATE equ 0001h
           MCS_MULTISELECT equ 0002h
           MCS_WEEKNUMBERS equ 0004h
@@ -6154,17 +5457,10 @@ ifndef _INC_COMMCTRL
             MCS_SHORTDAYSOFWEEK equ 0080h
             MCS_NOSELCHANGEONNAV equ 0100h
           endif
-          ; end_r_commctrl
-          GMR_VISIBLE equ 0; visible portion of display
-
-          GMR_DAYSTATE equ 1; above plus the grayed out parts of
-
-          ; partially displayed months
+          GMR_VISIBLE equ 0
+          GMR_DAYSTATE equ 1
         endif
-        ; _WIN32
       endif
-      ; NOMONTHCAL
-      ;====== DATETIMEPICK CONTROL ==================================================
       ifndef NODATETIMEPICK
         ifdef _WIN32
           DATETIMEPICK_CLASSW equ <L("SysDateTimePick32")>
@@ -6188,44 +5484,23 @@ ifndef _INC_COMMCTRL
             tagDATETIMEPICKERINFO typedef DATETIMEPICKERINFO
             LPDATETIMEPICKERINFO typedef ptr DATETIMEPICKERINFO
           endif
-          ; (NTDDI_VERSION >= NTDDI_VISTA)
           DTM_FIRST equ 1000h
-          ; DWORD DateTimePick_GetSystemtime(HWND hdp, LPSYSTEMTIME pst)
-          ;   returns GDT_NONE if "none" is selected (DTS_SHOWNONE only)
-          ;   returns GDT_VALID and modifies *pst to be the currently selected value
           DTM_GETSYSTEMTIME equ (DTM_FIRST + 1)
           DateTime_GetSystemtime macro hdp, pst
             exitm <SNDMSG (hdp, DTM_GETSYSTEMTIME, 0, (pst))>
           endm
-          ; BOOL DateTime_SetSystemtime(HWND hdp, DWORD gd, LPSYSTEMTIME pst)
-          ;   if gd==GDT_NONE, sets datetimepick to None (DTS_SHOWNONE only)
-          ;   if gd==GDT_VALID, sets datetimepick to *pst
-          ;   returns TRUE on success, FALSE on error (such as bad params)
           DTM_SETSYSTEMTIME equ (DTM_FIRST + 2)
           DateTime_SetSystemtime macro hdp, gd, pst
             exitm <SNDMSG (hdp, DTM_SETSYSTEMTIME, (gd), (pst))>
           endm
-          ; DWORD DateTime_GetRange(HWND hdp, LPSYSTEMTIME rgst)
-          ;   modifies rgst[0] to be the minimum ALLOWABLE systemtime (or 0 if no minimum)
-          ;   modifies rgst[1] to be the maximum ALLOWABLE systemtime (or 0 if no maximum)
-          ;   returns GDTR_MIN|GDTR_MAX if there is a minimum|maximum limit
           DTM_GETRANGE equ (DTM_FIRST + 3)
           DateTime_GetRange macro hdp, rgst
             exitm <SNDMSG (hdp, DTM_GETRANGE, 0, (rgst))>
           endm
-          ; BOOL DateTime_SetRange(HWND hdp, DWORD gdtr, LPSYSTEMTIME rgst)
-          ;   if GDTR_MIN, sets the minimum ALLOWABLE systemtime to rgst[0], otherwise removes minimum
-          ;   if GDTR_MAX, sets the maximum ALLOWABLE systemtime to rgst[1], otherwise removes maximum
-          ;   returns TRUE on success, FALSE on error (such as invalid parameters)
           DTM_SETRANGE equ (DTM_FIRST + 4)
           DateTime_SetRange macro hdp, gd, rgst
             exitm <SNDMSG (hdp, DTM_SETRANGE, (gd), (rgst))>
           endm
-          ; BOOL DateTime_SetFormat(HWND hdp, LPCTSTR sz)
-          ;   sets the display formatting string to sz (see GetDateFormat and GetTimeFormat for valid formatting chars)
-          ;   NOTE: 'X' is a valid formatting character which indicates that the application
-          ;   will determine how to display information. Such apps must support DTN_WMKEYDOWN,
-          ;   DTN_FORMAT, and DTN_FORMATQUERY.
           DTM_SETFORMATA equ (DTM_FIRST + 5)
           DTM_SETFORMATW equ (DTM_FIRST + 50)
           ifdef UNICODE
@@ -6244,9 +5519,6 @@ ifndef _INC_COMMCTRL
           DateTime_GetMonthCalColor macro hdp, iColor
             exitm <SNDMSG (hdp, DTM_GETMCCOLOR, iColor, 0)>
           endm
-          ; HWND DateTime_GetMonthCal(HWND hdp)
-          ;   returns the HWND of the MonthCal popup window. Only valid
-          ; between DTN_DROPDOWN and DTN_CLOSEUP notifications.
           DTM_GETMONTHCAL equ (DTM_FIRST + 8)
           DateTime_GetMonthCal macro hdp
             exitm <SNDMSG (hdp, DTM_GETMONTHCAL, 0, 0)>
@@ -6272,8 +5544,6 @@ ifndef _INC_COMMCTRL
             DateTime_CloseMonthCal macro hdp
               exitm <SNDMSG (hdp, DTM_CLOSEMONTHCAL, 0, 0)>
             endm
-            ; DateTime_GetDateTimePickerInfo(HWND hdp, DATETIMEPICKERINFO* pdtpi)
-            ; Retrieves information about the selected date time picker.
             DTM_GETDATETIMEPICKERINFO equ (DTM_FIRST + 14)
             DateTime_GetDateTimePickerInfo macro hdp, pdtpi
               exitm <SNDMSG (hdp, DTM_GETDATETIMEPICKERINFO, 0, (pdtpi))>
@@ -6283,59 +5553,37 @@ ifndef _INC_COMMCTRL
               exitm <SNDMSG ((hdp), DTM_GETIDEALSIZE, 0, (psize))>
             endm
           endif
-          ; (NTDDI_VERSION >= NTDDI_VISTA)
-          ; begin_r_commctrl
-          DTS_UPDOWN equ 0001h; use UPDOWN instead of MONTHCAL
-
-          DTS_SHOWNONE equ 0002h; allow a NONE selection
-
-          DTS_SHORTDATEFORMAT equ 0000h; use the short date format (app must forward WM_WININICHANGE messages)
-
-          DTS_LONGDATEFORMAT equ 0004h; use the long date format (app must forward WM_WININICHANGE messages)
-
-          DTS_SHORTDATECENTURYFORMAT equ 000Ch; short date format with century (app must forward WM_WININICHANGE messages)
-
-          DTS_TIMEFORMAT equ 0009h; use the time format (app must forward WM_WININICHANGE messages)
-
-          DTS_APPCANPARSE equ 0010h; allow user entered strings (app MUST respond to DTN_USERSTRING)
-
-          DTS_RIGHTALIGN equ 0020h; right-align popup instead of left-align it
-
-          ; end_r_commctrl
-          DTN_DATETIMECHANGE equ (DTN_FIRST2 - 6); the systemtime has changed, -759
-
+          DTS_UPDOWN equ 0001h
+          DTS_SHOWNONE equ 0002h
+          DTS_SHORTDATEFORMAT equ 0000h
+          DTS_LONGDATEFORMAT equ 0004h
+          DTS_SHORTDATECENTURYFORMAT equ 000Ch
+          DTS_TIMEFORMAT equ 0009h
+          DTS_APPCANPARSE equ 0010h
+          DTS_RIGHTALIGN equ 0020h
+          DTN_DATETIMECHANGE equ (DTN_FIRST2 - 6)
           NMDATETIMECHANGE struct
             nmhdr NMHDR <>
             dwFlags DWORD ?
-            ; GDT_VALID or GDT_NONE
             st_ SYSTEMTIME <>
-            ; valid iff dwFlags==GDT_VALID
           NMDATETIMECHANGE ends
           tagNMDATETIMECHANGE typedef NMDATETIMECHANGE
           LPNMDATETIMECHANGE typedef ptr NMDATETIMECHANGE
-          DTN_USERSTRINGA equ (DTN_FIRST2 - 5); the user has entered a string, -758
-
-          DTN_USERSTRINGW equ (DTN_FIRST - 5); -745
-
+          DTN_USERSTRINGA equ (DTN_FIRST2 - 5)
+          DTN_USERSTRINGW equ (DTN_FIRST - 5)
           NMDATETIMESTRINGA struct
             nmhdr NMHDR <>
-            pszUserString =POINTER ?
-            ; string user entered
+            pszUserString LPCSTR ?
             st_ SYSTEMTIME <>
-            ; app fills this in
             dwFlags DWORD ?
-            ; GDT_VALID or GDT_NONE
           NMDATETIMESTRINGA ends
           tagNMDATETIMESTRINGA typedef NMDATETIMESTRINGA
           LPNMDATETIMESTRINGA typedef ptr NMDATETIMESTRINGA
           NMDATETIMESTRINGW struct
             nmhdr NMHDR <>
-            pszUserString =POINTER ?
-            ; string user entered
+            pszUserString LPCWSTR ?
             st_ SYSTEMTIME <>
-            ; app fills this in
             dwFlags DWORD ?
-            ; GDT_VALID or GDT_NONE
           NMDATETIMESTRINGW ends
           tagNMDATETIMESTRINGW typedef NMDATETIMESTRINGW
           LPNMDATETIMESTRINGW typedef ptr NMDATETIMESTRINGW
@@ -6348,29 +5596,21 @@ ifndef _INC_COMMCTRL
             NMDATETIMESTRING equ <NMDATETIMESTRINGA>
             LPNMDATETIMESTRING equ <LPNMDATETIMESTRINGA>
           endif
-          DTN_WMKEYDOWNA equ (DTN_FIRST2 - 4); modify keydown on app format field (X), , -757
-
-          DTN_WMKEYDOWNW equ (DTN_FIRST - 4); -744
-
+          DTN_WMKEYDOWNA equ (DTN_FIRST2 - 4)
+          DTN_WMKEYDOWNW equ (DTN_FIRST - 4)
           NMDATETIMEWMKEYDOWNA struct
             nmhdr NMHDR <>
             nVirtKey SDWORD ?
-            ; virtual key code of WM_KEYDOWN which MODIFIES an X field
-            pszFormat =POINTER ?
-            ; format substring
+            pszFormat LPCSTR ?
             st_ SYSTEMTIME <>
-            ; current systemtime, app should modify based on key
           NMDATETIMEWMKEYDOWNA ends
           tagNMDATETIMEWMKEYDOWNA typedef NMDATETIMEWMKEYDOWNA
           LPNMDATETIMEWMKEYDOWNA typedef ptr NMDATETIMEWMKEYDOWNA
           NMDATETIMEWMKEYDOWNW struct
             nmhdr NMHDR <>
             nVirtKey SDWORD ?
-            ; virtual key code of WM_KEYDOWN which MODIFIES an X field
-            pszFormat =POINTER ?
-            ; format substring
+            pszFormat LPCWSTR ?
             st_ SYSTEMTIME <>
-            ; current systemtime, app should modify based on key
           NMDATETIMEWMKEYDOWNW ends
           tagNMDATETIMEWMKEYDOWNW typedef NMDATETIMEWMKEYDOWNW
           LPNMDATETIMEWMKEYDOWNW typedef ptr NMDATETIMEWMKEYDOWNW
@@ -6383,33 +5623,23 @@ ifndef _INC_COMMCTRL
             NMDATETIMEWMKEYDOWN equ <NMDATETIMEWMKEYDOWNA>
             LPNMDATETIMEWMKEYDOWN equ <LPNMDATETIMEWMKEYDOWNA>
           endif
-          DTN_FORMATA equ (DTN_FIRST2 - 3); query display for app format field (X), -756
-
-          DTN_FORMATW equ (DTN_FIRST - 3); -743
-
+          DTN_FORMATA equ (DTN_FIRST2 - 3)
+          DTN_FORMATW equ (DTN_FIRST - 3)
           NMDATETIMEFORMATA struct
             nmhdr NMHDR <>
-            pszFormat =POINTER ?
-            ; format substring
+            pszFormat LPCSTR ?
             st_ SYSTEMTIME <>
-            ; current systemtime
-            pszDisplay =POINTER ?
-            ; string to display
-            szDisplay SBYTE 64 dup (?)
-            ; buffer pszDisplay originally points at
+            pszDisplay LPCSTR ?
+            szDisplay CHAR 64 dup (?)
           NMDATETIMEFORMATA ends
           tagNMDATETIMEFORMATA typedef NMDATETIMEFORMATA
           LPNMDATETIMEFORMATA typedef ptr NMDATETIMEFORMATA
           NMDATETIMEFORMATW struct
             nmhdr NMHDR <>
-            pszFormat =POINTER ?
-            ; format substring
+            pszFormat LPCWSTR ?
             st_ SYSTEMTIME <>
-            ; current systemtime
-            pszDisplay =POINTER ?
-            ; string to display
-            szDisplay WORD 64 dup (?)
-            ; buffer pszDisplay originally points at
+            pszDisplay LPCWSTR ?
+            szDisplay WCHAR 64 dup (?)
           NMDATETIMEFORMATW ends
           tagNMDATETIMEFORMATW typedef NMDATETIMEFORMATW
           LPNMDATETIMEFORMATW typedef ptr NMDATETIMEFORMATW
@@ -6422,25 +5652,19 @@ ifndef _INC_COMMCTRL
             NMDATETIMEFORMAT equ <NMDATETIMEFORMATA>
             LPNMDATETIMEFORMAT equ <LPNMDATETIMEFORMATA>
           endif
-          DTN_FORMATQUERYA equ (DTN_FIRST2 - 2); query formatting info for app format field (X), -755
-
-          DTN_FORMATQUERYW equ (DTN_FIRST - 2); -742
-
+          DTN_FORMATQUERYA equ (DTN_FIRST2 - 2)
+          DTN_FORMATQUERYW equ (DTN_FIRST - 2)
           NMDATETIMEFORMATQUERYA struct
             nmhdr NMHDR <>
-            pszFormat =POINTER ?
-            ; format substring
+            pszFormat LPCSTR ?
             szMax SIZE_ ?
-            ; max bounding rectangle app will use for this format string
           NMDATETIMEFORMATQUERYA ends
           tagNMDATETIMEFORMATQUERYA typedef NMDATETIMEFORMATQUERYA
           LPNMDATETIMEFORMATQUERYA typedef ptr NMDATETIMEFORMATQUERYA
           NMDATETIMEFORMATQUERYW struct
             nmhdr NMHDR <>
-            pszFormat =POINTER ?
-            ; format substring
+            pszFormat LPCWSTR ?
             szMax SIZE_ ?
-            ; max bounding rectangle app will use for this format string
           NMDATETIMEFORMATQUERYW ends
           tagNMDATETIMEFORMATQUERYW typedef NMDATETIMEFORMATQUERYW
           LPNMDATETIMEFORMATQUERYW typedef ptr NMDATETIMEFORMATQUERYW
@@ -6453,35 +5677,22 @@ ifndef _INC_COMMCTRL
             NMDATETIMEFORMATQUERY equ <NMDATETIMEFORMATQUERYA>
             LPNMDATETIMEFORMATQUERY equ <LPNMDATETIMEFORMATQUERYA>
           endif
-          DTN_DROPDOWN equ (DTN_FIRST2 - 1); MonthCal has dropped down, -754
-
-          DTN_CLOSEUP equ <(DTN_FIRST2)>; MonthCal is popping up, -753
-
+          DTN_DROPDOWN equ (DTN_FIRST2 - 1)
+          DTN_CLOSEUP equ <(DTN_FIRST2)>
           GDTR_MIN equ 0001h
           GDTR_MAX equ 0002h
           GDT_ERROR equ -1
           GDT_VALID equ 0
           GDT_NONE equ 1
         endif
-        ; _WIN32
       endif
-      ; NODATETIMEPICK
       ifndef NOIPADDRESS
-        ;/////////////////////////////////////////////
-        ;    IP Address edit control
-        ; Messages sent to IPAddress controls
-        IPM_CLEARADDRESS equ (WM_USER + 100); no parameters
-
-        IPM_SETADDRESS equ (WM_USER + 101); lparam = TCP/IP address
-
-        IPM_GETADDRESS equ (WM_USER + 102); lresult = # of non black fields.  lparam = LPDWORD for TCP/IP address
-
-        IPM_SETRANGE equ (WM_USER + 103); wparam = field, lparam = range
-
-        IPM_SETFOCUS equ (WM_USER + 104); wparam = field
-
-        IPM_ISBLANK equ (WM_USER + 105); no parameters
-
+        IPM_CLEARADDRESS equ (WM_USER + 100)
+        IPM_SETADDRESS equ (WM_USER + 101)
+        IPM_GETADDRESS equ (WM_USER + 102)
+        IPM_SETRANGE equ (WM_USER + 103)
+        IPM_SETFOCUS equ (WM_USER + 104)
+        IPM_ISBLANK equ (WM_USER + 105)
         WC_IPADDRESSW equ <L("SysIPAddress32")>
         WC_IPADDRESSA equ <"SysIPAddress32">
         ifdef UNICODE
@@ -6497,17 +5708,12 @@ ifndef _INC_COMMCTRL
         NMIPADDRESS ends
         tagNMIPADDRESS typedef NMIPADDRESS
         LPNMIPADDRESS typedef ptr NMIPADDRESS
-        ; The following is a useful macro for passing the range values in the
-        ; IPM_SETRANGE message.
         MAKEIPRANGE macro low_, high_
           exitm <((((high_) shl 8) + (low_)))>
         endm
-        ; And this is a useful macro for making the IP Address to be passed
-        ; as a LPARAM.
         MAKEIPADDRESS macro b1, b2, b3, b4
           exitm <((((b1) shl 24) + ((b2) shl 16) + ((b3) shl 8) + ((b4))))>
         endm
-        ; Get individual number
         FIRST_IPADDRESS macro x
           exitm <(((x) shr 24) and 0ffh)>
         endm
@@ -6521,14 +5727,7 @@ ifndef _INC_COMMCTRL
           exitm <((x) and 0ffh)>
         endm
       endif
-      ; NOIPADDRESS
-      ;---------------------------------------------------------------------------------------
-      ;---------------------------------------------------------------------------------------
-      ;  ====================== Pager Control =============================
-      ;---------------------------------------------------------------------------------------
-      ;---------------------------------------------------------------------------------------
       ifndef NOPAGESCROLLER
-        ;Pager Class Name
         WC_PAGESCROLLERW equ <L("SysPager")>
         WC_PAGESCROLLERA equ <"SysPager">
         ifdef UNICODE
@@ -6536,37 +5735,18 @@ ifndef _INC_COMMCTRL
         else
           WC_PAGESCROLLER equ <WC_PAGESCROLLERA>
         endif
-        ;---------------------------------------------------------------------------------------
-        ; Pager Control Styles
-        ;---------------------------------------------------------------------------------------
-        ; begin_r_commctrl
         PGS_VERT equ 00000000h
         PGS_HORZ equ 00000001h
         PGS_AUTOSCROLL equ 00000002h
         PGS_DRAGNDROP equ 00000004h
-        ; end_r_commctrl
-        ;---------------------------------------------------------------------------------------
-        ; Pager Button State
-        ;---------------------------------------------------------------------------------------
-        ;The scroll can be in one of the following control State
-        PGF_INVISIBLE equ 0; Scroll button is not visible
-
-        PGF_NORMAL equ 1; Scroll button is in normal state
-
-        PGF_GRAYED equ 2; Scroll button is in grayed state
-
-        PGF_DEPRESSED equ 4; Scroll button is in depressed state
-
-        PGF_HOT equ 8; Scroll button is in hot state
-
-        ; The following identifiers specifies the button control
+        PGF_INVISIBLE equ 0
+        PGF_NORMAL equ 1
+        PGF_GRAYED equ 2
+        PGF_DEPRESSED equ 4
+        PGF_HOT equ 8
         PGB_TOPORLEFT equ 0
         PGB_BOTTOMORRIGHT equ 1
-        ;---------------------------------------------------------------------------------------
-        ; Pager Control  Messages
-        ;---------------------------------------------------------------------------------------
-        PGM_SETCHILD equ (PGM_FIRST + 1); lParam == hwnd
-
+        PGM_SETCHILD equ (PGM_FIRST + 1)
         Pager_SetChild macro hwnd, hwndChild
           exitm <SNDMSG ((hwnd), PGM_SETCHILD, 0, (hwndChild))>
         endm
@@ -6622,43 +5802,30 @@ ifndef _INC_COMMCTRL
         Pager_SetScrollInfo macro hwnd, cTimeOut, cLinesPer, cPixelsPerLine
           exitm <SNDMSG ((hwnd), PGM_SETSCROLLINFO, cTimeOut, MAKELONG(cLinesPer, cPixelsPerLine))>
         endm
-        ;---------------------------------------------------------------------------------------
-        ;Pager Control Notification Messages
-        ;---------------------------------------------------------------------------------------
-        ; PGN_SCROLL Notification Message
         PGN_SCROLL equ (PGN_FIRST - 1)
         PGF_SCROLLUP equ 1
         PGF_SCROLLDOWN equ 2
         PGF_SCROLLLEFT equ 4
         PGF_SCROLLRIGHT equ 8
-        ;Keys down
         PGK_SHIFT equ 1
         PGK_CONTROL equ 2
         PGK_MENU equ 4
         ifdef _WIN32
           include pshpack1.inc
         endif
-        ; This structure is sent along with PGN_SCROLL notifications
         NMPGSCROLL struct
           hdr NMHDR <>
           fwKeys WORD ?
-          ; Specifies which keys are down when this notification is send
           rcParent RECT <>
-          ; Contains Parent Window Rect
           iDir SDWORD ?
-          ; Scrolling Direction
           iXpos SDWORD ?
-          ; Horizontal scroll position
           iYpos SDWORD ?
-          ; Vertical scroll position
           iScroll SDWORD ?
-          ; [in/out] Amount to scroll
         NMPGSCROLL ends
         LPNMPGSCROLL typedef ptr NMPGSCROLL
         ifdef _WIN32
           include poppack.inc
         endif
-        ; PGN_CALCSIZE Notification Message
         PGN_CALCSIZE equ (PGN_FIRST - 2)
         PGF_CALCWIDTH equ 1
         PGF_CALCHEIGHT equ 2
@@ -6669,30 +5836,17 @@ ifndef _INC_COMMCTRL
           iHeight SDWORD ?
         NMPGCALCSIZE ends
         LPNMPGCALCSIZE typedef ptr NMPGCALCSIZE
-        ; PGN_HOTITEMCHANGE Notification Message
         PGN_HOTITEMCHANGE equ (PGN_FIRST - 3)
-        ;*
-        ;The PGN_HOTITEMCHANGE notification uses these notification
-        ;flags defined in TOOLBAR:
-        ;#define HICF_ENTERING       0x00000010          // idOld is invalid
-        ;#define HICF_LEAVING        0x00000020          // idNew is invalid
-        ;*
-        ; Structure for PGN_HOTITEMCHANGE notification
         NMPGHOTITEM struct
           hdr NMHDR <>
           idOld SDWORD ?
           idNew SDWORD ?
           dwFlags DWORD ?
-          ; HICF_*
         NMPGHOTITEM ends
         tagNMPGHOTITEM typedef NMPGHOTITEM
         LPNMPGHOTITEM typedef ptr NMPGHOTITEM
       endif
-      ; NOPAGESCROLLER
-      ;//======================  End Pager Control ==========================================
-      ; === Native Font Control ===
       ifndef NONATIVEFONTCTL
-        ;NativeFont Class Name
         WC_NATIVEFONTCTLW equ <L("NativeFontCtl")>
         WC_NATIVEFONTCTLA equ <"NativeFontCtl">
         ifdef UNICODE
@@ -6700,22 +5854,15 @@ ifndef _INC_COMMCTRL
         else
           WC_NATIVEFONTCTL equ <WC_NATIVEFONTCTLA>
         endif
-        ; begin_r_commctrl
-        ; style definition
         NFS_EDIT equ 0001h
         NFS_STATIC equ 0002h
         NFS_LISTCOMBO equ 0004h
         NFS_BUTTON equ 0008h
         NFS_ALL equ 0010h
         NFS_USEFONTASSOC equ 0020h
-        ; end_r_commctrl
       endif
-      ; NONATIVEFONTCTL
-      ; === End Native Font Control ===
-      ; ====================== Button Control =============================
       ifndef NOBUTTON
         ifdef _WIN32
-          ; Button Class Name
           WC_BUTTONA equ <"Button">
           WC_BUTTONW equ <L("Button")>
           ifdef UNICODE
@@ -6731,14 +5878,11 @@ ifndef _INC_COMMCTRL
           BUTTON_IMAGELIST_ALIGN_RIGHT equ 1
           BUTTON_IMAGELIST_ALIGN_TOP equ 2
           BUTTON_IMAGELIST_ALIGN_BOTTOM equ 3
-          BUTTON_IMAGELIST_ALIGN_CENTER equ 4; Doesn't draw text
-
+          BUTTON_IMAGELIST_ALIGN_CENTER equ 4
           BUTTON_IMAGELIST struct
             himl HIMAGELIST ?
-            ; Images: Normal, Hot, Pushed, Disabled. If count is less than 4, we use index 1
             margin RECT <>
-            ; Margin around icon.
-            uAlign DWORD ?
+            uAlign UINT ?
           BUTTON_IMAGELIST ends
           PBUTTON_IMAGELIST typedef ptr BUTTON_IMAGELIST
           BCM_GETIDEALSIZE equ (BCM_FIRST + 0001h)
@@ -6764,45 +5908,34 @@ ifndef _INC_COMMCTRL
           NMBCHOTITEM struct
             hdr NMHDR <>
             dwFlags DWORD ?
-            ; HICF_*
           NMBCHOTITEM ends
           tagNMBCHOTITEM typedef NMBCHOTITEM
           LPNMBCHOTITEM typedef ptr NMBCHOTITEM
           BCN_HOTITEMCHANGE equ (BCN_FIRST + 0001h)
           BST_HOT equ 0200h
         endif
-        ; (NTDDI_VERSION >= NTDDI_WINXP)
         if (NTDDI_VERSION ge NTDDI_VISTA)
-          ; BUTTON STATE FLAGS
           BST_DROPDOWNPUSHED equ 0400h
-          ; begin_r_commctrl
-          ; BUTTON STYLES
           BS_SPLITBUTTON equ 0000000Ch
           BS_DEFSPLITBUTTON equ 0000000Dh
           BS_COMMANDLINK equ 0000000Eh
           BS_DEFCOMMANDLINK equ 0000000Fh
-          ; SPLIT BUTTON INFO mask flags
           BCSIF_GLYPH equ 0001h
           BCSIF_IMAGE equ 0002h
           BCSIF_STYLE equ 0004h
           BCSIF_SIZE equ 0008h
-          ; SPLIT BUTTON STYLE flags
           BCSS_NOSPLIT equ 0001h
           BCSS_STRETCH equ 0002h
           BCSS_ALIGNLEFT equ 0004h
           BCSS_IMAGE equ 0008h
-          ; end_r_commctrl
-          ; BUTTON STRUCTURES
           BUTTON_SPLITINFO struct
-            mask_ DWORD ?
+            mask_ UINT ?
             himlGlyph HIMAGELIST ?
-            ; interpreted as WCHAR if BCSIF_GLYPH is set
-            uSplitStyle DWORD ?
+            uSplitStyle UINT ?
             size_ SIZE_ ?
           BUTTON_SPLITINFO ends
           tagBUTTON_SPLITINFO typedef BUTTON_SPLITINFO
           PBUTTON_SPLITINFO typedef ptr BUTTON_SPLITINFO
-          ; BUTTON MESSAGES
           BCM_SETDROPDOWNSTATE equ (BCM_FIRST + 0006h)
           Button_SetDropDownState macro hwnd, fDropDown
             exitm <SNDMSG ((hwnd), BCM_SETDROPDOWNSTATE, (fDropDown), 0)>
@@ -6828,17 +5961,12 @@ ifndef _INC_COMMCTRL
             exitm <SNDMSG ((hwnd), BCM_GETNOTELENGTH, 0, 0)>
           endm
           if (NTDDI_VERSION ge NTDDI_VISTA)
-            ; Macro to use on a button or command link to display an elevated icon
             BCM_SETSHIELD equ (BCM_FIRST + 000Ch)
             Button_SetElevationRequiredState macro hwnd, fRequired
               exitm <SNDMSG ((hwnd), BCM_SETSHIELD, 0, fRequired)>
             endm
           endif
-          ; (NTDDI_VERSION >= NTDDI_VISTA)
-          ; Value to pass to BCM_SETIMAGELIST to indicate that no glyph should be
-          ; displayed
           BCCL_NOGLYPH equ (- 1)
-          ; NOTIFICATION MESSAGES
           NMBCDROPDOWN struct
             hdr NMHDR <>
             rcButton RECT <>
@@ -6847,14 +5975,9 @@ ifndef _INC_COMMCTRL
           LPNMBCDROPDOWN typedef ptr NMBCDROPDOWN
           BCN_DROPDOWN equ (BCN_FIRST + 0002h)
         endif
-        ; (NTDDI_VERSION >= NTDDI_VISTA)
       endif
-      ; NOBUTTON
-      ; =====================  End Button Control =========================
-      ; ====================== Static Control =============================
       ifndef NOSTATIC
         ifdef _WIN32
-          ; Static Class Name
           WC_STATICA equ <"Static">
           WC_STATICW equ <L("Static")>
           ifdef UNICODE
@@ -6866,12 +5989,8 @@ ifndef _INC_COMMCTRL
           ;[...]
         endif
       endif
-      ; NOSTATIC
-      ; =====================  End Static Control =========================
-      ; ====================== Edit Control =============================
       ifndef NOEDIT
         ifdef _WIN32
-          ; Edit Class Name
           WC_EDITA equ <"Edit">
           WC_EDITW equ <L("Edit")>
           ifdef UNICODE
@@ -6883,7 +6002,6 @@ ifndef _INC_COMMCTRL
           ;[...]
         endif
         if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
-          ; Edit Control Extended Styles to use with EM_SETEXTENDEDSTYLE/EM_GETEXTENDEDSTYLE
           ES_EX_ALLOWEOL_CR equ 0001h
           ES_EX_ALLOWEOL_LF equ 0002h
           ES_EX_ALLOWEOL_ALL equ <(ES_EX_ALLOWEOL_CR or ES_EX_ALLOWEOL_LF)>
@@ -6891,35 +6009,30 @@ ifndef _INC_COMMCTRL
           ES_EX_ZOOMABLE equ 0010h
         endif
         if (NTDDI_VERSION ge NTDDI_WINXP)
-          EM_SETCUEBANNER equ (ECM_FIRST + 1); Set the cue banner with the lParm = LPCWSTR
-
+          EM_SETCUEBANNER equ (ECM_FIRST + 1)
           Edit_SetCueBannerText macro hwnd, lpcwText
             exitm <SNDMSG ((hwnd), EM_SETCUEBANNER, 0, (lpcwText))>
           endm
           Edit_SetCueBannerTextFocused macro hwnd, lpcwText, fDrawFocused
             exitm <SNDMSG ((hwnd), EM_SETCUEBANNER, fDrawFocused, lpcwText)>
           endm
-          EM_GETCUEBANNER equ (ECM_FIRST + 2); Set the cue banner with the lParm = LPCWSTR
-
+          EM_GETCUEBANNER equ (ECM_FIRST + 2)
           Edit_GetCueBannerText macro hwnd, lpwText, cchText
             exitm <SNDMSG ((hwnd), EM_GETCUEBANNER, (lpwText), (cchText))>
           endm
           EDITBALLOONTIP struct
             cbStruct DWORD ?
-            pszTitle =POINTER ?
-            pszText =POINTER ?
-            ttiIcon SDWORD ?
-            ; From TTI_*
+            pszTitle LPCWSTR ?
+            pszText LPCWSTR ?
+            ttiIcon INT_ ?
           EDITBALLOONTIP ends
           _tagEDITBALLOONTIP typedef EDITBALLOONTIP
           PEDITBALLOONTIP typedef ptr EDITBALLOONTIP
-          EM_SHOWBALLOONTIP equ (ECM_FIRST + 3); Show a balloon tip associated to the edit control
-
+          EM_SHOWBALLOONTIP equ (ECM_FIRST + 3)
           Edit_ShowBalloonTip macro hwnd, peditballoontip
             exitm <SNDMSG ((hwnd), EM_SHOWBALLOONTIP, 0, (peditballoontip))>
           endm
-          EM_HIDEBALLOONTIP equ (ECM_FIRST + 4); Hide any balloon tip associated with the edit control
-
+          EM_HIDEBALLOONTIP equ (ECM_FIRST + 4)
           Edit_HideBalloonTip macro hwnd
             exitm <SNDMSG ((hwnd), EM_HIDEBALLOONTIP, 0, 0)>
           endm
@@ -6943,7 +6056,6 @@ ifndef _INC_COMMCTRL
           exitm <(SNDMSG ((hwndCtl), EM_TAKEFOCUS, 0, 0))>
         endm
         if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
-          ; EM_SETENDOFLINE/EM_GETENDOFLINE options
           EC_ENDOFLINE typedef SDWORD
           EC_ENDOFLINE_DETECTFROMCONTENT equ 0
           EC_ENDOFLINE_CRLF equ 1
@@ -6974,7 +6086,6 @@ ifndef _INC_COMMCTRL
           Edit_SearchWeb macro hwndCtl
             exitm <SNDMSG ((hwndCtl), EM_SEARCHWEB, 0, 0)>
           endm
-          ; Form codes are internal-only so keep the api internal
           EM_SETCARETINDEX equ (ECM_FIRST + 17)
           Edit_SetCaretIndex macro hwndCtl, newCaretPosition
             exitm <SNDMSG ((hwndCtl), EM_SETCARETINDEX, (newCaretIndex), 0)>
@@ -6983,8 +6094,6 @@ ifndef _INC_COMMCTRL
           Edit_GetCaretIndex macro hwndCtl
             exitm <SNDMSG ((hwndCtl), EM_GETCARETINDEX, 0, 0)>
           endm
-          ; We want to reuse the same messages as richedit.h
-          ; which is why these are outside of the ECM_FIRST-ECM_LAST range.
           EM_GETZOOM equ (WM_USER + 224)
           Edit_GetZoom macro hwndCtl, numerator, denominator
             exitm <SNDMSG ((hwndCtl), EM_GETZOOM, (numerator), (denominator))>
@@ -7021,17 +6130,13 @@ ifndef _INC_COMMCTRL
           NMSEARCHWEB struct
             hdr NMHDR <>
             entrypoint EC_SEARCHWEB_ENTRYPOINT ?
-            hasQueryText DWORD ?
-            invokeSucceeded DWORD ?
+            hasQueryText BOOL ?
+            invokeSucceeded BOOL ?
           NMSEARCHWEB ends
         endif
       endif
-      ; NOEDIT
-      ; =====================  End Edit Control =========================
-      ; ====================== Listbox Control =============================
       ifndef NOLISTBOX
         ifdef _WIN32
-          ; Listbox Class Name
           WC_LISTBOXA equ <"ListBox">
           WC_LISTBOXW equ <L("ListBox")>
           ifdef UNICODE
@@ -7043,12 +6148,8 @@ ifndef _INC_COMMCTRL
           ;[...]
         endif
       endif
-      ; NOLISTBOX
-      ; =====================  End Listbox Control =========================
-      ; ====================== Combobox Control =============================
       ifndef NOCOMBOBOX
         ifdef _WIN32
-          ; Combobox Class Name
           WC_COMBOBOXA equ <"ComboBox">
           WC_COMBOBOXW equ <L("ComboBox")>
           ifdef UNICODE
@@ -7060,9 +6161,7 @@ ifndef _INC_COMMCTRL
           ;[...]
         endif
       endif
-      ; NOCOMBOBOX
       if (NTDDI_VERSION ge NTDDI_WINXP)
-        ; custom combobox control messages
         CB_SETMINVISIBLE equ (CBM_FIRST + 1)
         CB_GETMINVISIBLE equ (CBM_FIRST + 2)
         CB_SETCUEBANNER equ (CBM_FIRST + 3)
@@ -7080,11 +6179,8 @@ ifndef _INC_COMMCTRL
           exitm <SNDMSG ((hwnd), CB_GETCUEBANNER, (lpwText), (cchText))>
         endm
       endif
-      ; =====================  End Combobox Control =========================
-      ; ====================== Scrollbar Control ============================
       ifndef NOSCROLLBAR
         ifdef _WIN32
-          ; Scrollbar Class Name
           WC_SCROLLBARA equ <"ScrollBar">
           WC_SCROLLBARW equ <L("ScrollBar")>
           ifdef UNICODE
@@ -7096,11 +6192,7 @@ ifndef _INC_COMMCTRL
           ;[...]
         endif
       endif
-      ; NOSCROLLBAR
-      ; ===================== End Scrollbar Control =========================
-      ; ===================== Task Dialog =========================
       ifndef NOTASKDIALOG
-        ; Task Dialog is only available starting Windows Vista
         if (NTDDI_VERSION ge NTDDI_VISTA)
           ifdef _WIN32
             include pshpack1.inc
@@ -7108,7 +6200,6 @@ ifndef _INC_COMMCTRL
           TYPE_PFTASKDIALOGCALLBACK typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :WPARAM, :LPARAM, :LONG_PTR
           PFTASKDIALOGCALLBACK typedef ptr TYPE_PFTASKDIALOGCALLBACK
 
-          ; (NTDDI_VERSION >= NTDDI_WIN8)
           _TASKDIALOG_FLAGS typedef SDWORD
           TDF_ENABLE_HYPERLINKS equ 0001h
           TDF_USE_HICON_MAIN equ 0002h
@@ -7128,66 +6219,42 @@ ifndef _INC_COMMCTRL
           TDF_CAN_BE_MINIMIZED equ 8000h
           if (NTDDI_VERSION ge NTDDI_WIN8)
             TDF_NO_SET_FOREGROUND equ 00010000h
-            ; Don't call SetForegroundWindow() when activating the dialog
           endif
-          ; (NTDDI_VERSION >= NTDDI_WIN8)
           TDF_SIZE_TO_CONTENT equ 01000000h
 
-          ; used by ShellMessageBox to emulate MessageBox sizing behavior
           TASKDIALOG_FLAGS typedef SDWORD
-          ; Note: _TASKDIALOG_FLAGS is an int
           TASKDIALOG_MESSAGES typedef SDWORD
           TDM_NAVIGATE_PAGE equ WM_USER + 101
           TDM_CLICK_BUTTON equ WM_USER + 102
-          ; wParam = Button ID
           TDM_SET_MARQUEE_PROGRESS_BAR equ WM_USER + 103
-          ; wParam = 0 (nonMarque) wParam != 0 (Marquee)
           TDM_SET_PROGRESS_BAR_STATE equ WM_USER + 104
-          ; wParam = new progress state
           TDM_SET_PROGRESS_BAR_RANGE equ WM_USER + 105
-          ; lParam = MAKELPARAM(nMinRange, nMaxRange)
           TDM_SET_PROGRESS_BAR_POS equ WM_USER + 106
-          ; wParam = new position
           TDM_SET_PROGRESS_BAR_MARQUEE equ WM_USER + 107
-          ; wParam = 0 (stop marquee), wParam != 0 (start marquee), lparam = speed (milliseconds between repaints)
           TDM_SET_ELEMENT_TEXT equ WM_USER + 108
-          ; wParam = element (TASKDIALOG_ELEMENTS), lParam = new element text (LPCWSTR)
           TDM_CLICK_RADIO_BUTTON equ WM_USER + 110
-          ; wParam = Radio Button ID
           TDM_ENABLE_BUTTON equ WM_USER + 111
-          ; lParam = 0 (disable), lParam != 0 (enable), wParam = Button ID
           TDM_ENABLE_RADIO_BUTTON equ WM_USER + 112
-          ; lParam = 0 (disable), lParam != 0 (enable), wParam = Radio Button ID
           TDM_CLICK_VERIFICATION equ WM_USER + 113
-          ; wParam = 0 (unchecked), 1 (checked), lParam = 1 (set key focus)
           TDM_UPDATE_ELEMENT_TEXT equ WM_USER + 114
-          ; wParam = element (TASKDIALOG_ELEMENTS), lParam = new element text (LPCWSTR)
           TDM_SET_BUTTON_ELEVATION_REQUIRED_STATE equ WM_USER + 115
-          ; wParam = Button ID, lParam = 0 (elevation not required), lParam != 0 (elevation required)
           TDM_UPDATE_ICON equ WM_USER + 116
           _TASKDIALOG_MESSAGES typedef TASKDIALOG_MESSAGES
 
-          ; wParam = icon element (TASKDIALOG_ICON_ELEMENTS), lParam = new icon (hIcon if TDF_USE_HICON_* was set, PCWSTR otherwise)
           TASKDIALOG_NOTIFICATIONS typedef SDWORD
           TDN_CREATED equ 0
           TDN_NAVIGATED equ 1
           TDN_BUTTON_CLICKED equ 2
-          ; wParam = Button ID
           TDN_HYPERLINK_CLICKED equ 3
-          ; lParam = (LPCWSTR)pszHREF
           TDN_TIMER equ 4
-          ; wParam = Milliseconds since dialog created or timer reset
           TDN_DESTROYED equ 5
           TDN_RADIO_BUTTON_CLICKED equ 6
-          ; wParam = Radio Button ID
           TDN_DIALOG_CONSTRUCTED equ 7
           TDN_VERIFICATION_CLICKED equ 8
-          ; wParam = 1 if checkbox checked, 0 if not, lParam is unused and always 0
           TDN_HELP equ 9
           TDN_EXPANDO_BUTTON_CLICKED equ 10
           _TASKDIALOG_NOTIFICATIONS typedef TASKDIALOG_NOTIFICATIONS
 
-          ; wParam = 0 (dialog is now collapsed), wParam != 0 (dialog is now expanded)
           TASKDIALOG_BUTTON struct
             nButtonID SDWORD ?
             pszButtonText PCWSTR ?
@@ -7210,46 +6277,33 @@ ifndef _INC_COMMCTRL
           TD_INFORMATION_ICON equ MAKEINTRESOURCEW(- 3)
           TD_SHIELD_ICON equ MAKEINTRESOURCEW(- 4)
         endif
-        ; (NTDDI_VERSION >= NTDDI_VISTA)
         if (NTDDI_VERSION ge NTDDI_VISTA)
           _TASKDIALOG_COMMON_BUTTON_FLAGS typedef SDWORD
           TDCBF_OK_BUTTON equ 0001h
-          ; selected control return value IDOK
           TDCBF_YES_BUTTON equ 0002h
-          ; selected control return value IDYES
           TDCBF_NO_BUTTON equ 0004h
-          ; selected control return value IDNO
           TDCBF_CANCEL_BUTTON equ 0008h
-          ; selected control return value IDCANCEL
           TDCBF_RETRY_BUTTON equ 0010h
-          ; selected control return value IDRETRY
           TDCBF_CLOSE_BUTTON equ 0020h
 
-          ; selected control return value IDCLOSE
           TASKDIALOG_COMMON_BUTTON_FLAGS typedef SDWORD
-          ; Note: _TASKDIALOG_COMMON_BUTTON_FLAGS is an int
           TASKDIALOGCONFIG struct
-            cbSize DWORD ?
+            cbSize UINT ?
             hwndParent HWND ?
-            ; incorrectly named, this is the owner window, not a parent.
             hInstance HINSTANCE ?
-            ; used for MAKEINTRESOURCE() strings
             dwFlags TASKDIALOG_FLAGS ?
-            ; TASKDIALOG_FLAGS (TDF_XXX) flags
             dwCommonButtons TASKDIALOG_COMMON_BUTTON_FLAGS ?
-            ; TASKDIALOG_COMMON_BUTTON (TDCBF_XXX) flags
             pszWindowTitle PCWSTR ?
-            ; string or MAKEINTRESOURCE()
             union
               hMainIcon HICON ?
               pszMainIcon PCWSTR ?
             ends
             pszMainInstruction PCWSTR ?
             pszContent PCWSTR ?
-            cButtons DWORD ?
+            cButtons UINT ?
             pButtons POINTER ?
             nDefaultButton SDWORD ?
-            cRadioButtons DWORD ?
+            cRadioButtons UINT ?
             pRadioButtons POINTER ?
             nDefaultRadioButton SDWORD ?
             pszVerificationText PCWSTR ?
@@ -7262,9 +6316,8 @@ ifndef _INC_COMMCTRL
             ends
             pszFooter PCWSTR ?
             pfCallback PFTASKDIALOGCALLBACK ?
-            lpCallbackData SXWORD ?
-            cxWidth DWORD ?
-            ; width of the Task Dialog's client area in DLU's. If 0, Task Dialog will calculate the ideal width.
+            lpCallbackData LONG_PTR ?
+            cxWidth UINT ?
           TASKDIALOGCONFIG ends
           _TASKDIALOGCONFIG typedef TASKDIALOGCONFIG
           @DefProto DllImport, TaskDialogIndirect, WIN_STD_CALL_CONV,, <:ptr TASKDIALOGCONFIG, :ptr SDWORD, :ptr SDWORD, :ptr BOOL>, 16
@@ -7273,34 +6326,23 @@ ifndef _INC_COMMCTRL
             include poppack.inc
           endif
         endif
-        ; (NTDDI_VERSION >= NTDDI_VISTA)
       endif
-      ; NOTASKDIALOG
-      ; ==================== End TaskDialog =======================
-      ; === MUI APIs ===
       ifndef NOMUI
         InitMUILanguage proto WIN_STD_CALL_CONV :LANGID
         GetMUILanguage proto WIN_STD_CALL_CONV
       endif
-      ; NOMUI
       include dpa_dsa.inc
       ifdef _WIN32
-        ;====== TrackMouseEvent  =====================================================
         ifndef NOTRACKMOUSEEVENT
-          ; If the messages for TrackMouseEvent have not been defined then define them
-          ; now.
           ifndef WM_MOUSEHOVER
             WM_MOUSEHOVER equ 02A1h
             WM_MOUSELEAVE equ 02A3h
           endif
-          ; If the TRACKMOUSEEVENT structure and associated flags havent been declared
-          ; then declare them now.
           ifndef TME_HOVER
             TME_HOVER equ 00000001h
             TME_LEAVE equ 00000002h
             if (WINVER ge 0500h)
               TME_NONCLIENT equ 00000010h
-              ;* WINVER >= 0x0500 *
             endif
             TME_QUERY equ 40000000h
             TME_CANCEL equ 80000000h
@@ -7314,13 +6356,8 @@ ifndef _INC_COMMCTRL
             tagTRACKMOUSEEVENT typedef TRACKMOUSEEVENT
             LPTRACKMOUSEEVENT typedef ptr TRACKMOUSEEVENT
           endif
-          ; !TME_HOVER
-          ; Declare _TrackMouseEvent.  This API tries to use the window manager's
-          ; implementation of TrackMouseEvent if it is present, otherwise it emulates.
           @DefProto DllImport, _TrackMouseEvent, WIN_STD_CALL_CONV,, <:LPTRACKMOUSEEVENT>, 4
         endif
-        ; !NOTRACKMOUSEEVENT
-        ;====== Flat Scrollbar APIs=========================================
         ifndef NOFLATSBAPIS
           WSB_PROP_CYVSCROLL equ 00000001h
           WSB_PROP_CXHSCROLL equ 00000002h
@@ -7357,11 +6394,8 @@ ifndef _INC_COMMCTRL
           @DefProto DllImport, InitializeFlatSB, WIN_STD_CALL_CONV,, <:HWND>, 4
           @DefProto DllImport, UninitializeFlatSB, WIN_STD_CALL_CONV,, <:HWND>, 4
         endif
-        ;  NOFLATSBAPIS
-        ;* _WIN32 *
       endif
       if (NTDDI_VERSION ge NTDDI_WINXP)
-        ; subclassing stuff
         TYPE_SUBCLASSPROC typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :WPARAM, :LPARAM, :UINT_PTR, :DWORD_PTR
         SUBCLASSPROC typedef ptr TYPE_SUBCLASSPROC
 
@@ -7373,23 +6407,18 @@ ifndef _INC_COMMCTRL
       if (NTDDI_VERSION ge NTDDI_VISTA)
         _LI_METRIC typedef SDWORD
         LIM_SMALL equ 0
-        ; corresponds to SM_CXSMICON/SM_CYSMICON
         LIM_LARGE equ 1
-        ; corresponds to SM_CXICON/SM_CYICON
 
         @DefProto DllImport, LoadIconMetric, WIN_STD_CALL_CONV,, <:HINSTANCE, :PCWSTR, :SDWORD, :ptr HICON>, 16
         @DefProto DllImport, LoadIconWithScaleDown, WIN_STD_CALL_CONV,, <:HINSTANCE, :PCWSTR, :SDWORD, :SDWORD, :ptr HICON>, 20
       endif
-      ; NTDDI_VISTA
       if (NTDDI_VERSION ge NTDDI_WINXP)
         DrawShadowText proto WIN_STD_CALL_CONV :HDC, :LPCWSTR, :UINT, :ptr RECT, :DWORD, :COLORREF, :COLORREF, :SDWORD, :SDWORD
       endif
-      ;* RC complains about long symbols in #ifs *
       if  not Defined(RC_INVOKED)
         if Defined(ISOLATION_AWARE_ENABLED) and (ISOLATION_AWARE_ENABLED ne 0)
           ;[...]
         endif
-        ;* RC *
       endif
       ifdef __cplusplus
         ;[...]
@@ -7397,7 +6426,5 @@ ifndef _INC_COMMCTRL
     endif
     if Defined(_MSC_VER) and (_MSC_VER ge 1200)
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
-  ;* _INC_COMMCTRL *
 endif

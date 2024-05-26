@@ -350,7 +350,7 @@ IsString? proc pToken:PTOKEN
   mov al, [xcx]
   .if al == '"'
     jmp @IsTrue
-  .elseif al >= "0" && al <= "9"
+  .elseif al >= '0' && al <= '9'
     inc xcx
     .while CHRA ptr [xcx] != 0
       .if CHRA ptr [xcx] == ','
@@ -595,7 +595,7 @@ TranslateType proc uses xdi pToken:PTOKEN
     mov edx, [xax - sizeof(DWORD)]                      ;edx = length
     lea xax, [xax + xdx + sizeof(DWORD)]
   .else
-    mov xdi, pKnwConvTypes2                           ;TYPE
+    mov xdi, pKnwConvTypes2                             ;TYPE
     OCall xdi::List.Search, pToken
     .if eax != FALSE
       mov edx, ecx
@@ -826,7 +826,7 @@ SkipCasts proc uses xdi
       .endif
 
       OCall pKnwSimpleTypes::List.Search, pToken
-      .if eax == FALSE                                  ;Only Simple Types allowed betw. parenthesis
+      .if eax == FALSE                                  ;Only Simple Types allowed betw. parentheses
         Destroy@Stacklist pCastStack
         mov pCastStack, NULL
       .else
@@ -866,10 +866,11 @@ SkipSimpleBraces endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SkipBraces
-; Purpose:    Skip all Tokens between braces.
+; Purpose:    Skip all tokens between braces.
 ; Arguments:  Arg1: opening brace.
 ;             Arg2: closing brace.
-; Return:     xax -> Last Token or NULL.
+; Return:     xax -> Last token (closing brace) or NULL.
+; Note:       On enter, the opening brace is already consumed.
 
 SkipBraces proc uses xsi cOpenBrace:CHRA, cCloseBrace:CHRA
   mov esi, 1
@@ -1535,9 +1536,9 @@ GetStringLiteral proc uses xcx
   mov ch, 2
   .repeat
     lodsb
-    .if al == "\"
+    .if al == '\'
       lodsb
-      .if al >= "0" && al <= "7"
+      .if al >= '0' && al <= '7'
         .if ch == 0
           mov al, '"'
           stosb
@@ -1548,7 +1549,7 @@ GetStringLiteral proc uses xcx
         mov cl, 3
         .while cl != 0
           mov al, [xsi]
-          .if al >= "0" && al <= "7"
+          .if al >= '0' && al <= '7'
             stosb
           .else
             .break
@@ -1557,31 +1558,31 @@ GetStringLiteral proc uses xcx
           dec cl
         .endw
         .if cl != 3
-          mov al, "o"
+          mov al, 'o'
           stosb
         .endif
-      .elseif al == "a"
-        mov ax, BELL
+      .elseif al == 'a'
+        mov ax, "07"
         invoke AddEscStr
-      .elseif al == "b"
-        mov ax, BACK
+      .elseif al == 'b'
+        mov ax, "08"
         invoke AddEscStr
-      .elseif al == "f"
-        mov ax, FF
+      .elseif al == 'f'
+        mov ax, "0C"
         invoke AddEscStr
-      .elseif al == "n"
-        mov ax, LF
+      .elseif al == 'n'
+        mov ax, "0A"
         invoke AddEscStr
-      .elseif al == "r"
-        mov ax, CR
+      .elseif al == 'r'
+        mov ax, "0D"
         invoke AddEscStr
-      .elseif al == "t"
-        mov ax, HTAB
+      .elseif al == 't'
+        mov ax, "09"
         invoke AddEscStr
-      .elseif al == "v"
-        mov ax, VTAB
+      .elseif al == 'v'
+        mov ax, "0B"
         invoke AddEscStr
-      .elseif al == "x"
+      .elseif al == 'x'
         .if ch == 0
           mov al, '"'
           stosb
@@ -1592,11 +1593,11 @@ GetStringLiteral proc uses xcx
         .while cl != 0
           mov al, [xsi]
           or al, 20h
-          .if al >= "0" && al <= "9"
+          .if al >= '0' && al <= '9'
             stosb
-          .elseif al >= "a" && al <= "f"
+          .elseif al >= 'a' && al <= 'f'
             .if cl == 3
-              mov CHRA ptr [xdi], "0"
+              mov CHRA ptr [xdi], '0'
               inc xdi
             .endif
             stosb
@@ -1607,7 +1608,7 @@ GetStringLiteral proc uses xcx
           dec cl
         .endw
         .if cl != 3
-          mov al, "h"
+          mov al, 'h'
           stosb
         .endif
       .elseif al == '"'

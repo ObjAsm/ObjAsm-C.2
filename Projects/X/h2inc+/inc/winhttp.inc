@@ -1,17 +1,13 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winhttp.h
 ;             Created on (UTC) 06/04/2024 06:16:03
 ;             Last modified on (UTC) 21/02/2024 18:13:16
 
-;--*
 if  not Defined(_WINHTTPX_)
   _WINHTTPX_ equ <>
   include winapifamily.inc
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-    ;*
-    ;* Set up Structure Packing to be 4 bytes for all winhttp structures
-    ;*
     if Defined(_WIN64)
       include pshpack8.inc
     else
@@ -28,63 +24,35 @@ if  not Defined(_WINHTTPX_)
     ifndef BOOLAPI
       BOOLAPI equ <WINHTTPAPI BOOL WINAPI>
     endif
-    ; types
     HINTERNET typedef LPVOID
     LPHINTERNET typedef ptr HINTERNET
     INTERNET_PORT typedef WORD
     LPINTERNET_PORT typedef ptr INTERNET_PORT
-    ; manifests
-    INTERNET_DEFAULT_PORT equ 0; use the protocol-specific default
-
-    INTERNET_DEFAULT_HTTP_PORT equ 80;    "     "  HTTP   "
-
-    INTERNET_DEFAULT_HTTPS_PORT equ 443;    "     "  HTTPS  "
-
-    ; flags for WinHttpOpen():
-    WINHTTP_FLAG_ASYNC equ 10000000h; this session is asynchronous (where supported)
-
-    WINHTTP_FLAG_SECURE_DEFAULTS equ 30000000h; note that this flag also forces async
-
-    ; flags for WinHttpOpenRequest():
-    WINHTTP_FLAG_SECURE equ 00800000h; use SSL if applicable (HTTPS)
-
-    WINHTTP_FLAG_ESCAPE_PERCENT equ 00000004h; if escaping enabled, escape percent as well
-
-    WINHTTP_FLAG_NULL_CODEPAGE equ 00000008h; assume all symbols are ASCII, use fast convertion
-
-    WINHTTP_FLAG_ESCAPE_DISABLE equ 00000040h; disable escaping
-
-    WINHTTP_FLAG_ESCAPE_DISABLE_QUERY equ 00000080h; if escaping enabled escape path part, but do not escape query
-
-    WINHTTP_FLAG_BYPASS_PROXY_CACHE equ 00000100h; add "pragma: no-cache" request header
-
+    INTERNET_DEFAULT_PORT equ 0
+    INTERNET_DEFAULT_HTTP_PORT equ 80
+    INTERNET_DEFAULT_HTTPS_PORT equ 443
+    WINHTTP_FLAG_ASYNC equ 10000000h
+    WINHTTP_FLAG_SECURE_DEFAULTS equ 30000000h
+    WINHTTP_FLAG_SECURE equ 00800000h
+    WINHTTP_FLAG_ESCAPE_PERCENT equ 00000004h
+    WINHTTP_FLAG_NULL_CODEPAGE equ 00000008h
+    WINHTTP_FLAG_ESCAPE_DISABLE equ 00000040h
+    WINHTTP_FLAG_ESCAPE_DISABLE_QUERY equ 00000080h
+    WINHTTP_FLAG_BYPASS_PROXY_CACHE equ 00000100h
     WINHTTP_FLAG_REFRESH equ <WINHTTP_FLAG_BYPASS_PROXY_CACHE>
-    WINHTTP_FLAG_AUTOMATIC_CHUNKING equ 00000200h; Send request without content-length header or chunked TE
-
+    WINHTTP_FLAG_AUTOMATIC_CHUNKING equ 00000200h
     SECURITY_FLAG_IGNORE_UNKNOWN_CA equ 00000100h
     SECURITY_FLAG_IGNORE_CERT_WRONG_USAGE equ 00000200h
-    SECURITY_FLAG_IGNORE_CERT_CN_INVALID equ 00001000h; bad common name in X509 Cert.
-
-    SECURITY_FLAG_IGNORE_CERT_DATE_INVALID equ 00002000h; expired X509 Cert.
-
+    SECURITY_FLAG_IGNORE_CERT_CN_INVALID equ 00001000h
+    SECURITY_FLAG_IGNORE_CERT_DATE_INVALID equ 00002000h
     SECURITY_FLAG_IGNORE_ALL_CERT_ERRORS equ <(SECURITY_FLAG_IGNORE_UNKNOWN_CA or SECURITY_FLAG_IGNORE_CERT_WRONG_USAGE or SECURITY_FLAG_IGNORE_CERT_CN_INVALID or SECURITY_FLAG_IGNORE_CERT_DATE_INVALID)>
-    ; WINHTTP_ASYNC_RESULT - this structure is returned to the application via
-    ; the callback with WINHTTP_CALLBACK_STATUS_REQUEST_COMPLETE. It is not sufficient to
-    ; just return the result of the async operation. If the API failed then the
-    ; app cannot call GetLastError() because the thread context will be incorrect.
-    ; Both the value returned by the async API and any resultant error code are
-    ; made available. The app need not check dwError if dwResult indicates that
-    ; the API succeeded (in this case dwError will be ERROR_SUCCESS)
     WINHTTP_ASYNC_RESULT struct
-      dwResult XWORD ?
-      ; indicates which async API has encountered an error
+      dwResult DWORD_PTR ?
       dwError DWORD ?
-      ; the error code if the API failed
     WINHTTP_ASYNC_RESULT ends
     _WINHTTP_ASYNC_RESULT typedef WINHTTP_ASYNC_RESULT
     LPWINHTTP_ASYNC_RESULT typedef ptr WINHTTP_ASYNC_RESULT
     PWINHTTP_ASYNC_RESULT typedef ptr WINHTTP_ASYNC_RESULT
-    ; HTTP_VERSION_INFO - query or set global HTTP version (1.0 or 1.1)
     ifndef _HTTP_VERSION_INFO_
       _HTTP_VERSION_INFO_ equ <>
       HTTP_VERSION_INFO struct
@@ -95,7 +63,6 @@ if  not Defined(_WINHTTPX_)
       LPHTTP_VERSION_INFO typedef ptr HTTP_VERSION_INFO
       PHTTP_VERSION_INFO typedef ptr HTTP_VERSION_INFO
     endif
-    ; INTERNET_SCHEME - URL scheme type
     ifndef _INTERNET_SCHEME_
       _INTERNET_SCHEME_ equ <>
       INTERNET_SCHEME typedef SDWORD
@@ -105,84 +72,49 @@ if  not Defined(_WINHTTPX_)
       INTERNET_SCHEME_FTP equ (3)
       INTERNET_SCHEME_SOCKS equ (4)
     endif
-    ; URL_COMPONENTS - the constituent parts of an URL. Used in WinHttpCrackUrl()
-    ; and WinHttpCreateUrl()
-    ; For WinHttpCrackUrl(), if a pointer field and its corresponding length field
-    ; are both 0 then that component is not returned. If the pointer field is NULL
-    ; but the length field is not zero, then both the pointer and length fields are
-    ; returned if both pointer and corresponding length fields are non-zero then
-    ; the pointer field points to a buffer where the component is copied. The
-    ; component may be un-escaped, depending on dwFlags
-    ; For WinHttpCreateUrl(), the pointer fields should be NULL if the component
-    ; is not required. If the corresponding length field is zero then the pointer
-    ; field is the address of a zero-terminated string. If the length field is not
-    ; zero then it is the string length of the corresponding pointer field
-    ; disable alignment warning
     ifndef _URL_COMPONENTS_
       _URL_COMPONENTS_ equ <>
       URL_COMPONENTS struct
         dwStructSize DWORD ?
-        ; size of this structure. Used in version check
-        lpszScheme POINTER ?
-        ; pointer to scheme name
+        lpszScheme LPWSTR ?
         dwSchemeLength DWORD ?
-        ; length of scheme name
         nScheme INTERNET_SCHEME ?
-        ; enumerated scheme type (if known)
-        lpszHostName POINTER ?
-        ; pointer to host name
+        lpszHostName LPWSTR ?
         dwHostNameLength DWORD ?
-        ; length of host name
         nPort INTERNET_PORT ?
-        ; converted port number
-        lpszUserName POINTER ?
-        ; pointer to user name
+        lpszUserName LPWSTR ?
         dwUserNameLength DWORD ?
-        ; length of user name
-        lpszPassword POINTER ?
-        ; pointer to password
+        lpszPassword LPWSTR ?
         dwPasswordLength DWORD ?
-        ; length of password
-        lpszUrlPath POINTER ?
-        ; pointer to URL-path
+        lpszUrlPath LPWSTR ?
         dwUrlPathLength DWORD ?
-        ; length of URL-path
-        lpszExtraInfo POINTER ?
-        ; pointer to extra information (e.g. ?foo or #foo)
+        lpszExtraInfo LPWSTR ?
         dwExtraInfoLength DWORD ?
-        ; length of extra information
       URL_COMPONENTS ends
       _WINHTTP_URL_COMPONENTS typedef URL_COMPONENTS
       LPURL_COMPONENTS typedef ptr URL_COMPONENTS
       URL_COMPONENTSW typedef URL_COMPONENTS
       LPURL_COMPONENTSW typedef LPURL_COMPONENTS
     endif
-    ; restore alignment warning
-    ; WINHTTP_PROXY_INFO - structure supplied with WINHTTP_OPTION_PROXY to get/
-    ; set proxy information on a WinHttpOpen() handle
     WINHTTP_PROXY_INFO struct
       dwAccessType DWORD ?
-      ; see WINHTTP_ACCESS_* types below
-      lpszProxy POINTER ?
-      ; proxy server list
-      lpszProxyBypass POINTER ?
-      ; proxy bypass list
+      lpszProxy LPWSTR ?
+      lpszProxyBypass LPWSTR ?
     WINHTTP_PROXY_INFO ends
     _WINHTTP_PROXY_INFO typedef WINHTTP_PROXY_INFO
     LPWINHTTP_PROXY_INFO typedef ptr WINHTTP_PROXY_INFO
     PWINHTTP_PROXY_INFO typedef ptr WINHTTP_PROXY_INFO
     WINHTTP_PROXY_INFOW typedef WINHTTP_PROXY_INFO
     LPWINHTTP_PROXY_INFOW typedef LPWINHTTP_PROXY_INFO
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     WINHTTP_AUTOPROXY_OPTIONS struct
       dwFlags DWORD ?
       dwAutoDetectFlags DWORD ?
-      lpszAutoConfigUrl =POINTER ?
-      lpvReserved POINTER ?
+      lpszAutoConfigUrl LPCWSTR ?
+      lpvReserved LPVOID ?
       dwReserved DWORD ?
-      fAutoLogonIfChallenged DWORD ?
+      fAutoLogonIfChallenged BOOL ?
     WINHTTP_AUTOPROXY_OPTIONS ends
     _WINHTTP_AUTOPROXY_OPTIONS typedef WINHTTP_AUTOPROXY_OPTIONS
     PWINHTTP_AUTOPROXY_OPTIONS typedef ptr WINHTTP_AUTOPROXY_OPTIONS
@@ -200,22 +132,14 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_AUTOPROXY_NO_CACHE_CLIENT equ 00080000h
     WINHTTP_AUTOPROXY_NO_CACHE_SVC equ 00100000h
     WINHTTP_AUTOPROXY_SORT_RESULTS equ 00400000h
-    ; Flags for dwAutoDetectFlags
     WINHTTP_AUTO_DETECT_TYPE_DHCP equ 00000001h
     WINHTTP_AUTO_DETECT_TYPE_DNS_A equ 00000002h
-    ; WINHTTP_PROXY_RESULT - structure containing parsed proxy result,
-    ; see WinHttpGetProxyForUrlEx and WinHttpGetProxyResult, use WinHttpFreeProxyResult to free its members.
     WINHTTP_PROXY_RESULT_ENTRY struct
-      fProxy DWORD ?
-      ; Is this a proxy or DIRECT?
-      fBypass DWORD ?
-      ; If DIRECT, is it bypassing a proxy (intranet) or is all traffic DIRECT (internet)
+      fProxy BOOL ?
+      fBypass BOOL ?
       ProxyScheme INTERNET_SCHEME ?
-      ; The scheme of the proxy, SOCKS, HTTP (CERN Proxy), HTTPS (SSL through Proxy)
-      pwszProxy POINTER ?
-      ; Hostname of the proxy.
+      pwszProxy PWSTR ?
       ProxyPort INTERNET_PORT ?
-      ; Port of the proxy.
     WINHTTP_PROXY_RESULT_ENTRY ends
     _WINHTTP_PROXY_RESULT_ENTRY typedef WINHTTP_PROXY_RESULT_ENTRY
     WINHTTP_PROXY_RESULT struct
@@ -236,60 +160,40 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_PROXY_NETWORKING_KEY ends
     _WinHttpProxyNetworkKey typedef WINHTTP_PROXY_NETWORKING_KEY
     PWINHTTP_PROXY_NETWORKING_KEY typedef ptr WINHTTP_PROXY_NETWORKING_KEY
-    WINHTTP_PROXY_TYPE_DIRECT equ 00000001h; Direct to net
-
-    WINHTTP_PROXY_TYPE_PROXY equ 00000002h; Via named proxy
-
-    WINHTTP_PROXY_TYPE_AUTO_PROXY_URL equ 00000004h; Autoproxy URL
-
-    WINHTTP_PROXY_TYPE_AUTO_DETECT equ 00000008h; Use autoproxy detection
-
+    WINHTTP_PROXY_TYPE_DIRECT equ 00000001h
+    WINHTTP_PROXY_TYPE_PROXY equ 00000002h
+    WINHTTP_PROXY_TYPE_AUTO_PROXY_URL equ 00000004h
+    WINHTTP_PROXY_TYPE_AUTO_DETECT equ 00000008h
     WINHTTP_PROXY_SETTINGS struct
       dwStructSize DWORD ?
       dwFlags DWORD ?
       dwCurrentSettingsVersion DWORD ?
-      pwszConnectionName POINTER ?
-      pwszProxy POINTER ?
-      pwszProxyBypass POINTER ?
-      pwszAutoconfigUrl POINTER ?
-      pwszAutoconfigSecondaryUrl POINTER ?
+      pwszConnectionName PWSTR ?
+      pwszProxy PWSTR ?
+      pwszProxyBypass PWSTR ?
+      pwszAutoconfigUrl PWSTR ?
+      pwszAutoconfigSecondaryUrl PWSTR ?
       dwAutoDiscoveryFlags DWORD ?
-      pwszLastKnownGoodAutoConfigUrl POINTER ?
+      pwszLastKnownGoodAutoConfigUrl PWSTR ?
       dwAutoconfigReloadDelayMins DWORD ?
       ftLastKnownDetectTime FILETIME <>
       dwDetectedInterfaceIpCount DWORD ?
-      pdwDetectedInterfaceIp POINTER ?
+      pdwDetectedInterfaceIp PDWORD ?
       cNetworkKeys DWORD ?
       pNetworkKeys PWINHTTP_PROXY_NETWORKING_KEY ?
     WINHTTP_PROXY_SETTINGS ends
     _WINHTTP_PROXY_SETTINGS typedef WINHTTP_PROXY_SETTINGS
     PWINHTTP_PROXY_SETTINGS typedef ptr WINHTTP_PROXY_SETTINGS
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-    ; WINHTTP_CERTIFICATE_INFO lpBuffer - contains the certificate returned from
-    ; the server
     WINHTTP_CERTIFICATE_INFO struct
-      ; ftExpiry - date the certificate expires.
       ftExpiry FILETIME <>
-      ; ftStart - date the certificate becomes valid.
       ftStart FILETIME <>
-      ; lpszSubjectInfo - the name of organization, site, and server
-      ;   the cert. was issued for.
-      lpszSubjectInfo POINTER ?
-      ; lpszIssuerInfo - the name of organization, site, and server
-      ;   the cert was issues by.
-      lpszIssuerInfo POINTER ?
-      ; lpszProtocolName - the name of the protocol used to provide the secure
-      ;   connection.
-      lpszProtocolName POINTER ?
-      ; lpszSignatureAlgName - the name of the algorithm used for signing
-      ;  the certificate.
-      lpszSignatureAlgName POINTER ?
-      ; lpszEncryptionAlgName - the name of the algorithm used for
-      ;  doing encryption over the secure channel (SSL) connection.
-      lpszEncryptionAlgName POINTER ?
-      ; dwKeySize - size of the key.
+      lpszSubjectInfo LPWSTR ?
+      lpszIssuerInfo LPWSTR ?
+      lpszProtocolName LPWSTR ?
+      lpszSignatureAlgName LPWSTR ?
+      lpszEncryptionAlgName LPWSTR ?
       dwKeySize DWORD ?
     WINHTTP_CERTIFICATE_INFO ends
     _WINHTTP_CERTIFICATE_INFO typedef WINHTTP_CERTIFICATE_INFO
@@ -297,10 +201,8 @@ if  not Defined(_WINHTTPX_)
     ifdef _WS2DEF_
       WINHTTP_CONNECTION_INFO struct
         cbSize DWORD ?
-        LocalAddress SOCKADDR_STORAGE ?
-        ; local ip, local port
-        RemoteAddress SOCKADDR_STORAGE ?
-        ; remote ip, remote port
+        LocalAddress SOCKADDR_STORAGE <>
+        RemoteAddress SOCKADDR_STORAGE <>
       WINHTTP_CONNECTION_INFO ends
       _WINHTTP_CONNECTION_INFO typedef WINHTTP_CONNECTION_INFO
       PWINHTTP_CONNECTION_INFO typedef ptr WINHTTP_CONNECTION_INFO
@@ -355,8 +257,8 @@ if  not Defined(_WINHTTPX_)
     _WINHTTP_REQUEST_TIME_ENTRY typedef WINHTTP_REQUEST_TIME_ENTRY
 
     WINHTTP_REQUEST_TIMES struct
-      cTimes DWORD ?
-      rgullTimes QWORD WinHttpRequestTimeMax dup (?)
+      cTimes ULONG ?
+      rgullTimes ULONGLONG WinHttpRequestTimeMax dup (?)
     WINHTTP_REQUEST_TIMES ends
     _WINHTTP_REQUEST_TIMES typedef WINHTTP_REQUEST_TIMES
     PWINHTTP_REQUEST_TIMES typedef ptr WINHTTP_REQUEST_TIMES
@@ -388,10 +290,10 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_REQUEST_STAT_FLAG_PROXY_TLS_FALSE_START equ 00000010h
     WINHTTP_REQUEST_STAT_FLAG_FIRST_REQUEST equ 00000020h
     WINHTTP_REQUEST_STATS struct
-      ullFlags QWORD ?
-      ulIndex DWORD ?
-      cStats DWORD ?
-      rgullStats QWORD WinHttpRequestStatMax dup (?)
+      ullFlags ULONGLONG ?
+      ulIndex ULONG ?
+      cStats ULONG ?
+      rgullStats ULONGLONG WinHttpRequestStatMax dup (?)
     WINHTTP_REQUEST_STATS ends
     _WINHTTP_REQUEST_STATS typedef WINHTTP_REQUEST_STATS
     PWINHTTP_REQUEST_STATS typedef ptr WINHTTP_REQUEST_STATS
@@ -399,11 +301,10 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_MATCH_CONNECTION_GUID_FLAGS_MASK equ <WINHTTP_MATCH_CONNECTION_GUID_FLAG_REQUIRE_MARKED_CONNECTION>
     WINHTTP_MATCH_CONNECTION_GUID struct
       ConnectionGuid GUID <>
-      ullFlags QWORD ?
+      ullFlags ULONGLONG ?
     WINHTTP_MATCH_CONNECTION_GUID ends
     _WINHTTP_MATCH_CONNECTION_GUID typedef WINHTTP_MATCH_CONNECTION_GUID
     PWINHTTP_MATCH_CONNECTION_GUID typedef ptr WINHTTP_MATCH_CONNECTION_GUID
-    ;nameless unions
     WINHTTP_EXTENDED_HEADER struct
       union
         pwszName PCWSTR ?
@@ -435,50 +336,42 @@ if  not Defined(_WINHTTPX_)
     _WINHTTP_SECURE_DNS_SETTING typedef WINHTTP_SECURE_DNS_SETTING
 
     WINHTTP_RESOLVER_CACHE_CONFIG struct
-      ulMaxResolverCacheEntries DWORD ?
-      ; ulMaxCacheEntryAge is the maximum allowed age of a cache entry specified in minutes.
-      ulMaxCacheEntryAge DWORD ?
-      ; ulMinCacheEntryTtl the minimum TTL of a cache entry specified in seconds.
-      ulMinCacheEntryTtl DWORD ?
+      ulMaxResolverCacheEntries ULONG ?
+      ulMaxCacheEntryAge ULONG ?
+      ulMinCacheEntryTtl ULONG ?
       SecureDnsSetting WINHTTP_SECURE_DNS_SETTING ?
-      ; If WINHTTP_RESOLVER_CACHE_CONFIG_FLAG_CONN_USE_TTL is set, then ullCOnnResolutionWaitTime
-      ; can be used to control how frequently a re-resolution attempt is made for any connection.
-      ; It is specified in 100 nanosecond units, and the default is 600000000 (one minute).
-      ullConnResolutionWaitTime QWORD ?
-      ullFlags QWORD ?
+      ullConnResolutionWaitTime ULONGLONG ?
+      ullFlags ULONGLONG ?
     WINHTTP_RESOLVER_CACHE_CONFIG ends
     _WINHTTP_RESOLVER_CACHE_CONFIG typedef WINHTTP_RESOLVER_CACHE_CONFIG
     PWINHTTP_RESOLVER_CACHE_CONFIG typedef ptr WINHTTP_RESOLVER_CACHE_CONFIG
-    ; Structures for WinHttpQueryConnectionGroup
     WINHTTP_CONNECTION_GROUP struct
-      cConnections DWORD ?
+      cConnections ULONG ?
       guidGroup GUID <>
     WINHTTP_CONNECTION_GROUP ends
     _WINHTTP_CONNECTION_GROUP typedef WINHTTP_CONNECTION_GROUP
     PWINHTTP_CONNECTION_GROUP typedef ptr WINHTTP_CONNECTION_GROUP
     WINHTTP_HOST_CONNECTION_GROUP struct
       pwszHost PCWSTR ?
-      cConnectionGroups DWORD ?
+      cConnectionGroups ULONG ?
       pConnectionGroups PWINHTTP_CONNECTION_GROUP ?
     WINHTTP_HOST_CONNECTION_GROUP ends
     _WINHTTP_HOST_CONNECTION_GROUP typedef WINHTTP_HOST_CONNECTION_GROUP
     PWINHTTP_HOST_CONNECTION_GROUP typedef ptr WINHTTP_HOST_CONNECTION_GROUP
     WINHTTP_QUERY_CONNECTION_GROUP_RESULT struct
-      cHosts DWORD ?
+      cHosts ULONG ?
       pHostConnectionGroups PWINHTTP_HOST_CONNECTION_GROUP ?
     WINHTTP_QUERY_CONNECTION_GROUP_RESULT ends
     _WINHTTP_QUERY_CONNECTION_GROUP_RESULT typedef WINHTTP_QUERY_CONNECTION_GROUP_RESULT
     PWINHTTP_QUERY_CONNECTION_GROUP_RESULT typedef ptr WINHTTP_QUERY_CONNECTION_GROUP_RESULT
     WINHTTP_QUERY_CONNECTION_GROUP_FLAG_INSECURE equ 0000000000000001ulh
     WINHTTP_HTTP2_RECEIVE_WINDOW struct
-      ulStreamWindow DWORD ?
-      ulStreamWindowUpdateDelta DWORD ?
+      ulStreamWindow ULONG ?
+      ulStreamWindowUpdateDelta ULONG ?
     WINHTTP_HTTP2_RECEIVE_WINDOW ends
     _WINHTTP_HTTP2_RECEIVE_WINDOW typedef WINHTTP_HTTP2_RECEIVE_WINDOW
     PWINHTTP_HTTP2_RECEIVE_WINDOW typedef ptr WINHTTP_HTTP2_RECEIVE_WINDOW
-    ; constants for WinHttpTimeFromSystemTime
     WINHTTP_TIME_FORMAT_BUFSIZE equ 62
-    ; options manifests for WinHttp{Query|Set}Option
     WINHTTP_FIRST_OPTION equ <WINHTTP_OPTION_CALLBACK>
     WINHTTP_OPTION_CALLBACK equ 1
     WINHTTP_OPTION_RESOLVE_TIMEOUT equ 2
@@ -602,7 +495,6 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_OPTION_PASSWORD equ 1001h
     WINHTTP_OPTION_PROXY_USERNAME equ 1002h
     WINHTTP_OPTION_PROXY_PASSWORD equ 1003h
-    ; manifest value for WINHTTP_OPTION_MAX_CONNS_PER_SERVER and WINHTTP_OPTION_MAX_CONNS_PER_1_0_SERVER
     WINHTTP_CONNS_PER_SERVER_UNLIMITED equ 0FFFFFFFFh
     WINHTTP_CONNECTION_RETRY_CONDITION_408 equ 1h
     WINHTTP_CONNECTION_RETRY_CONDITION_SSL_HANDSHAKE equ 2h
@@ -614,23 +506,19 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_FAILED_CONNECTION_RETRIES ends
     _WINHTTP_FAILED_CONNECTION_RETRIES typedef WINHTTP_FAILED_CONNECTION_RETRIES
     PWINHTTP_FAILED_CONNECTION_RETRIES typedef ptr WINHTTP_FAILED_CONNECTION_RETRIES
-    ; Values for WINHTTP_OPTION_DECOMPRESSION
     WINHTTP_DECOMPRESSION_FLAG_GZIP equ 00000001h
     WINHTTP_DECOMPRESSION_FLAG_DEFLATE equ 00000002h
     WINHTTP_DECOMPRESSION_FLAG_ALL equ <(WINHTTP_DECOMPRESSION_FLAG_GZIP or WINHTTP_DECOMPRESSION_FLAG_DEFLATE)>
-    ; Values for WINHTTP_OPTION_ENABLE_HTTP_PROTOCOL / WINHTTP_OPTION_HTTP_PROTOCOL_USED
     WINHTTP_PROTOCOL_FLAG_HTTP2 equ 1h
     WINHTTP_PROTOCOL_FLAG_HTTP3 equ 2h
     WINHTTP_PROTOCOL_MASK equ <(WINHTTP_PROTOCOL_FLAG_HTTP2 or WINHTTP_PROTOCOL_FLAG_HTTP3)>
     WINHTTP_OPTION_REQUEST_ANNOTATION_MAX_LENGTH equ 0FA00h
-    ; values for WINHTTP_OPTION_AUTOLOGON_POLICY
     WINHTTP_AUTOLOGON_SECURITY_LEVEL_MEDIUM equ 0
     WINHTTP_AUTOLOGON_SECURITY_LEVEL_LOW equ 1
     WINHTTP_AUTOLOGON_SECURITY_LEVEL_HIGH equ 2
     WINHTTP_AUTOLOGON_SECURITY_LEVEL_PROXY_ONLY equ 3
     WINHTTP_AUTOLOGON_SECURITY_LEVEL_DEFAULT equ <WINHTTP_AUTOLOGON_SECURITY_LEVEL_MEDIUM>
     WINHTTP_AUTOLOGON_SECURITY_LEVEL_MAX equ <WINHTTP_AUTOLOGON_SECURITY_LEVEL_PROXY_ONLY>
-    ; values for WINHTTP_OPTION_REDIRECT_POLICY
     WINHTTP_OPTION_REDIRECT_POLICY_NEVER equ 0
     WINHTTP_OPTION_REDIRECT_POLICY_DISALLOW_HTTPS_TO_HTTP equ 1
     WINHTTP_OPTION_REDIRECT_POLICY_ALWAYS equ 2
@@ -640,71 +528,58 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_ENABLE_PASSPORT_AUTH equ 10000000h
     WINHTTP_DISABLE_PASSPORT_KEYRING equ 20000000h
     WINHTTP_ENABLE_PASSPORT_KEYRING equ 40000000h
-    ; Bits passed with WINHTTP_OPTION_DISABLE_PROXY_AUTH_SCHEMES option
     WINHTTP_PROXY_DISABLE_SCHEME_BASIC equ 00000001h
     WINHTTP_PROXY_DISABLE_SCHEME_DIGEST equ 00000002h
     WINHTTP_PROXY_DISABLE_SCHEME_NTLM equ 00000004h
     WINHTTP_PROXY_DISABLE_SCHEME_KERBEROS equ 00000008h
     WINHTTP_PROXY_DISABLE_SCHEME_NEGOTIATE equ 00000010h
     WINHTTP_PROXY_DISABLE_AUTH_LOCAL_SERVICE equ 00000100h
-    ; values for WINHTTP_OPTION_DISABLE_FEATURE
     WINHTTP_DISABLE_COOKIES equ 00000001h
     WINHTTP_DISABLE_REDIRECTS equ 00000002h
     WINHTTP_DISABLE_AUTHENTICATION equ 00000004h
     WINHTTP_DISABLE_KEEP_ALIVE equ 00000008h
-    ; values for WINHTTP_OPTION_ENABLE_FEATURE
     WINHTTP_ENABLE_SSL_REVOCATION equ 00000001h
     WINHTTP_ENABLE_SSL_REVERT_IMPERSONATION equ 00000002h
-    ; values for WINHTTP_OPTION_SPN
     WINHTTP_DISABLE_SPN_SERVER_PORT equ 00000000h
     WINHTTP_ENABLE_SPN_SERVER_PORT equ 00000001h
     WINHTTP_OPTION_SPN_MASK equ <WINHTTP_ENABLE_SPN_SERVER_PORT>
     WINHTTP_CREDS struct
-      lpszUserName POINTER ?
-      lpszPassword POINTER ?
-      lpszRealm POINTER ?
+      lpszUserName LPSTR ?
+      lpszPassword LPSTR ?
+      lpszRealm LPSTR ?
       dwAuthScheme DWORD ?
-      lpszHostName POINTER ?
+      lpszHostName LPSTR ?
       dwPort DWORD ?
     WINHTTP_CREDS ends
     tagWINHTTP_CREDS typedef WINHTTP_CREDS
     PWINHTTP_CREDS typedef ptr WINHTTP_CREDS
-    ; structure for WINHTTP_OPTION_GLOBAL_SERVER_CREDS and
-    ; WINHTTP_OPTION_GLOBAL_PROXY_CREDS
     WINHTTP_CREDS_EX struct
-      lpszUserName POINTER ?
-      lpszPassword POINTER ?
-      lpszRealm POINTER ?
+      lpszUserName LPSTR ?
+      lpszPassword LPSTR ?
+      lpszRealm LPSTR ?
       dwAuthScheme DWORD ?
-      lpszHostName POINTER ?
+      lpszHostName LPSTR ?
       dwPort DWORD ?
-      lpszUrl POINTER ?
+      lpszUrl LPSTR ?
     WINHTTP_CREDS_EX ends
     tagWINHTTP_CREDS_EX typedef WINHTTP_CREDS_EX
     PWINHTTP_CREDS_EX typedef ptr WINHTTP_CREDS_EX
-    ; winhttp handle types
     WINHTTP_HANDLE_TYPE_SESSION equ 1
     WINHTTP_HANDLE_TYPE_CONNECT equ 2
     WINHTTP_HANDLE_TYPE_REQUEST equ 3
     WINHTTP_HANDLE_TYPE_PROXY_RESOLVER equ 4
     WINHTTP_HANDLE_TYPE_WEBSOCKET equ 5
-    ; values for auth schemes
     WINHTTP_AUTH_SCHEME_BASIC equ 00000001h
     WINHTTP_AUTH_SCHEME_NTLM equ 00000002h
     WINHTTP_AUTH_SCHEME_PASSPORT equ 00000004h
     WINHTTP_AUTH_SCHEME_DIGEST equ 00000008h
     WINHTTP_AUTH_SCHEME_NEGOTIATE equ 00000010h
-    ; WinHttp supported Authentication Targets
     WINHTTP_AUTH_TARGET_SERVER equ 00000000h
     WINHTTP_AUTH_TARGET_PROXY equ 00000001h
-    ; values for WINHTTP_OPTION_SECURITY_FLAGS
-    ; query only
-    SECURITY_FLAG_SECURE equ 00000001h; can query only
-
+    SECURITY_FLAG_SECURE equ 00000001h
     SECURITY_FLAG_STRENGTH_WEAK equ 10000000h
     SECURITY_FLAG_STRENGTH_MEDIUM equ 40000000h
     SECURITY_FLAG_STRENGTH_STRONG equ 20000000h
-    ; Secure connection error status flags
     WINHTTP_CALLBACK_STATUS_FLAG_CERT_REV_FAILED equ 00000001h
     WINHTTP_CALLBACK_STATUS_FLAG_INVALID_CERT equ 00000002h
     WINHTTP_CALLBACK_STATUS_FLAG_CERT_REVOKED equ 00000004h
@@ -720,12 +595,10 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2 equ 00000800h
     WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_3 equ 00002000h
     WINHTTP_FLAG_SECURE_PROTOCOL_ALL equ <(WINHTTP_FLAG_SECURE_PROTOCOL_SSL2 or WINHTTP_FLAG_SECURE_PROTOCOL_SSL3 or WINHTTP_FLAG_SECURE_PROTOCOL_TLS1)>
-    ; callback function for WinHttpSetStatusCallback
     TYPE_WINHTTP_STATUS_CALLBACK typedef proto WIN_STD_CALL_CONV :HINTERNET, :DWORD_PTR, :DWORD, :LPVOID, :DWORD
     WINHTTP_STATUS_CALLBACK typedef ptr TYPE_WINHTTP_STATUS_CALLBACK
 
     LPWINHTTP_STATUS_CALLBACK typedef ptr WINHTTP_STATUS_CALLBACK
-    ; status manifests for WinHttp status callback
     WINHTTP_CALLBACK_STATUS_RESOLVING_NAME equ 00000001h
     WINHTTP_CALLBACK_STATUS_NAME_RESOLVED equ 00000002h
     WINHTTP_CALLBACK_STATUS_CONNECTING_TO_SERVER equ 00000004h
@@ -754,7 +627,6 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_CALLBACK_STATUS_GETPROXYSETTINGS_COMPLETE equ 08000000h
     WINHTTP_CALLBACK_STATUS_SETTINGS_WRITE_COMPLETE equ 10000000h
     WINHTTP_CALLBACK_STATUS_SETTINGS_READ_COMPLETE equ 20000000h
-    ; API Enums for WINHTTP_CALLBACK_STATUS_REQUEST_ERROR:
     API_RECEIVE_RESPONSE equ (1)
     API_QUERY_DATA_AVAILABLE equ (2)
     API_READ_DATA equ (3)
@@ -782,14 +654,7 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_CALLBACK_FLAG_GETPROXYSETTINGS_COMPLETE equ <WINHTTP_CALLBACK_STATUS_GETPROXYSETTINGS_COMPLETE>
     WINHTTP_CALLBACK_FLAG_ALL_COMPLETIONS equ <(WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE or WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE or WINHTTP_CALLBACK_STATUS_DATA_AVAILABLE or WINHTTP_CALLBACK_STATUS_READ_COMPLETE or WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE or WINHTTP_CALLBACK_STATUS_REQUEST_ERROR or WINHTTP_CALLBACK_STATUS_GETPROXYFORURL_COMPLETE or WINHTTP_CALLBACK_STATUS_GETPROXYSETTINGS_COMPLETE)>
     WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS equ 0ffffffffh
-    ; if the following value is returned by WinHttpSetStatusCallback, then
-    ; probably an invalid (non-code) address was supplied for the callback
     WINHTTP_INVALID_STATUS_CALLBACK equ ((WINHTTP_STATUS_CALLBACK) (- 1))
-    ; WinHttpQueryHeaders info levels. Generally, there is one info level
-    ; for each potential RFC822/HTTP/MIME header that an HTTP server
-    ; may send as part of a request response.
-    ; The WINHTTP_QUERY_RAW_HEADERS info level is provided for clients
-    ; that choose to perform their own header parsing.
     WINHTTP_QUERY_MIME_VERSION equ 0
     WINHTTP_QUERY_CONTENT_TYPE equ 1
     WINHTTP_QUERY_CONTENT_TRANSFER_ENCODING equ 2
@@ -808,16 +673,11 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_QUERY_COST equ 15
     WINHTTP_QUERY_LINK equ 16
     WINHTTP_QUERY_PRAGMA equ 17
-    WINHTTP_QUERY_VERSION equ 18; special: part of status line
-
-    WINHTTP_QUERY_STATUS_CODE equ 19; special: part of status line
-
-    WINHTTP_QUERY_STATUS_TEXT equ 20; special: part of status line
-
-    WINHTTP_QUERY_RAW_HEADERS equ 21; special: all headers as ASCIIZ
-
-    WINHTTP_QUERY_RAW_HEADERS_CRLF equ 22; special: all headers
-
+    WINHTTP_QUERY_VERSION equ 18
+    WINHTTP_QUERY_STATUS_CODE equ 19
+    WINHTTP_QUERY_STATUS_TEXT equ 20
+    WINHTTP_QUERY_RAW_HEADERS equ 21
+    WINHTTP_QUERY_RAW_HEADERS_CRLF equ 22
     WINHTTP_QUERY_CONNECTION equ 23
     WINHTTP_QUERY_ACCEPT equ 24
     WINHTTP_QUERY_ACCEPT_CHARSET equ 25
@@ -840,11 +700,9 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_QUERY_ACCEPT_RANGES equ 42
     WINHTTP_QUERY_SET_COOKIE equ 43
     WINHTTP_QUERY_COOKIE equ 44
-    WINHTTP_QUERY_REQUEST_METHOD equ 45; special: GET/POST etc.
-
+    WINHTTP_QUERY_REQUEST_METHOD equ 45
     WINHTTP_QUERY_REFRESH equ 46
     WINHTTP_QUERY_CONTENT_DISPOSITION equ 47
-    ; HTTP 1.1 defined headers
     WINHTTP_QUERY_AGE equ 48
     WINHTTP_QUERY_CACHE_CONTROL equ 49
     WINHTTP_QUERY_CONTENT_BASE equ 50
@@ -874,206 +732,102 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_QUERY_PASSPORT_CONFIG equ 78
     WINHTTP_QUERY_MAX equ 78
     WINHTTP_QUERY_EX_ALL_HEADERS equ <WINHTTP_QUERY_RAW_HEADERS>
-    ; WINHTTP_QUERY_CUSTOM - if this special value is supplied as the dwInfoLevel
-    ; parameter of WinHttpQueryHeaders() then the lpBuffer parameter contains the name
-    ; of the header we are to query
     WINHTTP_QUERY_CUSTOM equ 65535
-    ; WINHTTP_QUERY_FLAG_REQUEST_HEADERS - if this bit is set in the dwInfoLevel
-    ; parameter of WinHttpQueryHeaders() then the request headers will be queried for the
-    ; request information
     WINHTTP_QUERY_FLAG_REQUEST_HEADERS equ 80000000h
-    ; WINHTTP_QUERY_FLAG_SYSTEMTIME - if this bit is set in the dwInfoLevel parameter
-    ; of WinHttpQueryHeaders() AND the header being queried contains date information,
-    ; e.g. the "Expires:" header then lpBuffer will contain a SYSTEMTIME structure
-    ; containing the date and time information converted from the header string
     WINHTTP_QUERY_FLAG_SYSTEMTIME equ 40000000h
-    ; WINHTTP_QUERY_FLAG_NUMBER - if this bit is set in the dwInfoLevel parameter of
-    ; HttpQueryHeader(), then the value of the header will be converted to a number
-    ; before being returned to the caller, if applicable
     WINHTTP_QUERY_FLAG_NUMBER equ 20000000h
-    ; HTTP_QUERY_FLAG_NUMBER64 - if this bit is set in the dwInfoLevel parameter of
-    ; HttpQueryInfo(), then the value of the header will be converted to a 64bit
-    ; number before being returned to the caller, if applicable
     WINHTTP_QUERY_FLAG_NUMBER64 equ 08000000h
-    ; HTTP_QUERY_FLAG_TRAILERS - if this bit is set in the dwInfoLevel parameter of
-    ; WinHttpQueryHeaders(), then the response trailers will be queried, if they exist
     WINHTTP_QUERY_FLAG_TRAILERS equ 02000000h
-    ; WINHTTP_QUERY_FLAG_WIRE_ENCODING - if this bit is set in the dwInfoLevel parameter
-    ; of WinHttpQueryHeaders(), then the value of the header will be returned
-    ; with as it gets encoded when sent over the wire.
     WINHTTP_QUERY_FLAG_WIRE_ENCODING equ 01000000h
-    ; HTTP Response Status Codes:
-    HTTP_STATUS_CONTINUE equ 100; OK to continue with request
-
-    HTTP_STATUS_SWITCH_PROTOCOLS equ 101; server has switched protocols in upgrade header
-
-    HTTP_STATUS_OK equ 200; request completed
-
-    HTTP_STATUS_CREATED equ 201; object created, reason = new URI
-
-    HTTP_STATUS_ACCEPTED equ 202; async completion (TBS)
-
-    HTTP_STATUS_PARTIAL equ 203; partial completion
-
-    HTTP_STATUS_NO_CONTENT equ 204; no info to return
-
-    HTTP_STATUS_RESET_CONTENT equ 205; request completed, but clear form
-
-    HTTP_STATUS_PARTIAL_CONTENT equ 206; partial GET fulfilled
-
-    HTTP_STATUS_WEBDAV_MULTI_STATUS equ 207; WebDAV Multi-Status
-
-    HTTP_STATUS_AMBIGUOUS equ 300; server couldn't decide what to return
-
-    HTTP_STATUS_MOVED equ 301; object permanently moved
-
-    HTTP_STATUS_REDIRECT equ 302; object temporarily moved
-
-    HTTP_STATUS_REDIRECT_METHOD equ 303; redirection w/ new access method
-
-    HTTP_STATUS_NOT_MODIFIED equ 304; if-modified-since was not modified
-
-    HTTP_STATUS_USE_PROXY equ 305; redirection to proxy, location header specifies proxy to use
-
-    HTTP_STATUS_REDIRECT_KEEP_VERB equ 307; HTTP/1.1: keep same verb
-
-    HTTP_STATUS_PERMANENT_REDIRECT equ 308; Object permanently moved keep verb
-
-    HTTP_STATUS_BAD_REQUEST equ 400; invalid syntax
-
-    HTTP_STATUS_DENIED equ 401; access denied
-
-    HTTP_STATUS_PAYMENT_REQ equ 402; payment required
-
-    HTTP_STATUS_FORBIDDEN equ 403; request forbidden
-
-    HTTP_STATUS_NOT_FOUND equ 404; object not found
-
-    HTTP_STATUS_BAD_METHOD equ 405; method is not allowed
-
-    HTTP_STATUS_NONE_ACCEPTABLE equ 406; no response acceptable to client found
-
-    HTTP_STATUS_PROXY_AUTH_REQ equ 407; proxy authentication required
-
-    HTTP_STATUS_REQUEST_TIMEOUT equ 408; server timed out waiting for request
-
-    HTTP_STATUS_CONFLICT equ 409; user should resubmit with more info
-
-    HTTP_STATUS_GONE equ 410; the resource is no longer available
-
-    HTTP_STATUS_LENGTH_REQUIRED equ 411; the server refused to accept request w/o a length
-
-    HTTP_STATUS_PRECOND_FAILED equ 412; precondition given in request failed
-
-    HTTP_STATUS_REQUEST_TOO_LARGE equ 413; request entity was too large
-
-    HTTP_STATUS_URI_TOO_LONG equ 414; request URI too long
-
-    HTTP_STATUS_UNSUPPORTED_MEDIA equ 415; unsupported media type
-
-    HTTP_STATUS_RETRY_WITH equ 449; retry after doing the appropriate action.
-
-    HTTP_STATUS_SERVER_ERROR equ 500; internal server error
-
-    HTTP_STATUS_NOT_SUPPORTED equ 501; required not supported
-
-    HTTP_STATUS_BAD_GATEWAY equ 502; error response received from gateway
-
-    HTTP_STATUS_SERVICE_UNAVAIL equ 503; temporarily overloaded
-
-    HTTP_STATUS_GATEWAY_TIMEOUT equ 504; timed out waiting for gateway
-
-    HTTP_STATUS_VERSION_NOT_SUP equ 505; HTTP version not supported
-
+    HTTP_STATUS_CONTINUE equ 100
+    HTTP_STATUS_SWITCH_PROTOCOLS equ 101
+    HTTP_STATUS_OK equ 200
+    HTTP_STATUS_CREATED equ 201
+    HTTP_STATUS_ACCEPTED equ 202
+    HTTP_STATUS_PARTIAL equ 203
+    HTTP_STATUS_NO_CONTENT equ 204
+    HTTP_STATUS_RESET_CONTENT equ 205
+    HTTP_STATUS_PARTIAL_CONTENT equ 206
+    HTTP_STATUS_WEBDAV_MULTI_STATUS equ 207
+    HTTP_STATUS_AMBIGUOUS equ 300
+    HTTP_STATUS_MOVED equ 301
+    HTTP_STATUS_REDIRECT equ 302
+    HTTP_STATUS_REDIRECT_METHOD equ 303
+    HTTP_STATUS_NOT_MODIFIED equ 304
+    HTTP_STATUS_USE_PROXY equ 305
+    HTTP_STATUS_REDIRECT_KEEP_VERB equ 307
+    HTTP_STATUS_PERMANENT_REDIRECT equ 308
+    HTTP_STATUS_BAD_REQUEST equ 400
+    HTTP_STATUS_DENIED equ 401
+    HTTP_STATUS_PAYMENT_REQ equ 402
+    HTTP_STATUS_FORBIDDEN equ 403
+    HTTP_STATUS_NOT_FOUND equ 404
+    HTTP_STATUS_BAD_METHOD equ 405
+    HTTP_STATUS_NONE_ACCEPTABLE equ 406
+    HTTP_STATUS_PROXY_AUTH_REQ equ 407
+    HTTP_STATUS_REQUEST_TIMEOUT equ 408
+    HTTP_STATUS_CONFLICT equ 409
+    HTTP_STATUS_GONE equ 410
+    HTTP_STATUS_LENGTH_REQUIRED equ 411
+    HTTP_STATUS_PRECOND_FAILED equ 412
+    HTTP_STATUS_REQUEST_TOO_LARGE equ 413
+    HTTP_STATUS_URI_TOO_LONG equ 414
+    HTTP_STATUS_UNSUPPORTED_MEDIA equ 415
+    HTTP_STATUS_RETRY_WITH equ 449
+    HTTP_STATUS_SERVER_ERROR equ 500
+    HTTP_STATUS_NOT_SUPPORTED equ 501
+    HTTP_STATUS_BAD_GATEWAY equ 502
+    HTTP_STATUS_SERVICE_UNAVAIL equ 503
+    HTTP_STATUS_GATEWAY_TIMEOUT equ 504
+    HTTP_STATUS_VERSION_NOT_SUP equ 505
     HTTP_STATUS_FIRST equ <HTTP_STATUS_CONTINUE>
     HTTP_STATUS_LAST equ <HTTP_STATUS_VERSION_NOT_SUP>
-    ; flags for CrackUrl() and CombineUrl()
-    ICU_NO_ENCODE equ 20000000h; Don't convert unsafe characters to escape sequence
-
-    ICU_DECODE equ 10000000h; Convert %XX escape sequences to characters
-
-    ICU_NO_META equ 08000000h; Don't convert .. etc. meta path sequences
-
-    ICU_ENCODE_SPACES_ONLY equ 04000000h; Encode spaces only
-
-    ICU_BROWSER_MODE equ 02000000h; Special encode/decode rules for browser
-
-    ICU_ENCODE_PERCENT equ 00001000h; Encode any percent (ASCII25)
-
-    ; signs encountered, default is to not encode percent.
-    ; flags for WinHttpCrackUrl() and WinHttpCreateUrl()
-    ICU_ESCAPE equ 80000000h; (un)escape URL characters
-
-    ICU_ESCAPE_AUTHORITY equ 00002000h;causes InternetCreateUrlA to escape chars in authority components (user, pwd, host)
-
-    ICU_REJECT_USERPWD equ 00004000h; rejects usrls whick have username/pwd sections
-
-    ; WinHttpOpen dwAccessType values (also for WINHTTP_PROXY_INFO::dwAccessType)
+    ICU_NO_ENCODE equ 20000000h
+    ICU_DECODE equ 10000000h
+    ICU_NO_META equ 08000000h
+    ICU_ENCODE_SPACES_ONLY equ 04000000h
+    ICU_BROWSER_MODE equ 02000000h
+    ICU_ENCODE_PERCENT equ 00001000h
+    ICU_ESCAPE equ 80000000h
+    ICU_ESCAPE_AUTHORITY equ 00002000h
+    ICU_REJECT_USERPWD equ 00004000h
     WINHTTP_ACCESS_TYPE_DEFAULT_PROXY equ 0
     WINHTTP_ACCESS_TYPE_NO_PROXY equ 1
     WINHTTP_ACCESS_TYPE_NAMED_PROXY equ 3
     WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY equ 4
-    ; WinHttpOpen prettifiers for optional parameters
     WINHTTP_NO_PROXY_NAME equ <NULL>
     WINHTTP_NO_PROXY_BYPASS equ <NULL>
     WINHTTP_NO_CLIENT_CERT_CONTEXT equ <NULL>
-    ; WinHttpOpenRequest prettifers for optional parameters
     WINHTTP_NO_REFERER equ <NULL>
     WINHTTP_DEFAULT_ACCEPT_TYPES equ <NULL>
-    ; values for dwModifiers parameter of WinHttpAddRequestHeaders()
     WINHTTP_ADDREQ_INDEX_MASK equ 0000FFFFh
     WINHTTP_ADDREQ_FLAGS_MASK equ 0FFFF0000h
-    ; WINHTTP_ADDREQ_FLAG_ADD_IF_NEW - the header will only be added if it doesn't
-    ; already exist
     WINHTTP_ADDREQ_FLAG_ADD_IF_NEW equ 10000000h
-    ; WINHTTP_ADDREQ_FLAG_ADD - if WINHTTP_ADDREQ_FLAG_REPLACE is set but the header is
-    ; not found then if this flag is set, the header is added anyway, so long as
-    ; there is a valid header-value
     WINHTTP_ADDREQ_FLAG_ADD equ 20000000h
-    ; WINHTTP_ADDREQ_FLAG_COALESCE - coalesce headers with same name. e.g.
-    ; "Accept: text/*" and "Accept: audio/*" with this flag results in a single
-    ; header: "Accept: text/*, audio/*"
     WINHTTP_ADDREQ_FLAG_COALESCE_WITH_COMMA equ 40000000h
     WINHTTP_ADDREQ_FLAG_COALESCE_WITH_SEMICOLON equ 01000000h
     WINHTTP_ADDREQ_FLAG_COALESCE equ <WINHTTP_ADDREQ_FLAG_COALESCE_WITH_COMMA>
-    ; WINHTTP_ADDREQ_FLAG_REPLACE - replaces the specified header. Only one header can
-    ; be supplied in the buffer. If the header to be replaced is not the first
-    ; in a list of headers with the same name, then the relative index should be
-    ; supplied in the low 8 bits of the dwModifiers parameter. If the header-value
-    ; part is missing, then the header is removed
     WINHTTP_ADDREQ_FLAG_REPLACE equ 80000000h
-    ; values for ullFlags member of WINHTTP_EXTENDED_HEADER
-    ; WINHTTP_EXTENDED_HEADER_FLAG_UNICODE - indicates the value of the request header
-    ; is unicode.
     WINHTTP_EXTENDED_HEADER_FLAG_UNICODE equ 00000001h
-    ; values for ullFlags for WinHttpReadDataEx
-    ; WINHTTP_READ_DATA_EX_FLAG_FILL_BUFFER - if set, don't complete ReadDataEx
-    ; until the data buffer has been filled or the response is complete.
     WINHTTP_READ_DATA_EX_FLAG_FILL_BUFFER equ 0000000000000001ulh
     WINHTTP_IGNORE_REQUEST_TOTAL_LENGTH equ 0
-    ; WinHttpSendRequest prettifiers for optional parameters.
     WINHTTP_NO_ADDITIONAL_HEADERS equ <NULL>
     WINHTTP_NO_REQUEST_DATA equ <NULL>
-    ; WinHttpQueryHeaders prettifiers for optional parameters.
     WINHTTP_HEADER_NAME_BY_INDEX equ <NULL>
     WINHTTP_NO_OUTPUT_BUFFER equ <NULL>
     WINHTTP_NO_HEADER_INDEX equ <NULL>
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     WINHTTP_CURRENT_USER_IE_PROXY_CONFIG struct
-      fAutoDetect DWORD ?
-      lpszAutoConfigUrl POINTER ?
-      lpszProxy POINTER ?
-      lpszProxyBypass POINTER ?
+      fAutoDetect BOOL ?
+      lpszAutoConfigUrl LPWSTR ?
+      lpszProxy LPWSTR ?
+      lpszProxyBypass LPWSTR ?
     WINHTTP_CURRENT_USER_IE_PROXY_CONFIG ends
     _WINHTTP_CURRENT_USER_IE_PROXY_CONFIG typedef WINHTTP_CURRENT_USER_IE_PROXY_CONFIG
     PWINHTTP_CURRENT_USER_IE_PROXY_CONFIG typedef ptr WINHTTP_CURRENT_USER_IE_PROXY_CONFIG
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-    ;#if !defined(_WINERROR_)
-    ; WinHttp API error returns
     WINHTTP_ERROR_BASE equ 12000
     ERROR_WINHTTP_OUT_OF_HANDLES equ (WINHTTP_ERROR_BASE + 1)
     ERROR_WINHTTP_TIMEOUT equ (WINHTTP_ERROR_BASE + 2)
@@ -1092,20 +846,16 @@ if  not Defined(_WINHTTPX_)
     ERROR_WINHTTP_CONNECTION_ERROR equ (WINHTTP_ERROR_BASE + 30)
     ERROR_WINHTTP_RESEND_REQUEST equ (WINHTTP_ERROR_BASE + 32)
     ERROR_WINHTTP_CLIENT_AUTH_CERT_NEEDED equ (WINHTTP_ERROR_BASE + 44)
-    ; WinHttpRequest Component errors
     ERROR_WINHTTP_CANNOT_CALL_BEFORE_OPEN equ (WINHTTP_ERROR_BASE + 100)
     ERROR_WINHTTP_CANNOT_CALL_BEFORE_SEND equ (WINHTTP_ERROR_BASE + 101)
     ERROR_WINHTTP_CANNOT_CALL_AFTER_SEND equ (WINHTTP_ERROR_BASE + 102)
     ERROR_WINHTTP_CANNOT_CALL_AFTER_OPEN equ (WINHTTP_ERROR_BASE + 103)
-    ; HTTP API errors
     ERROR_WINHTTP_HEADER_NOT_FOUND equ (WINHTTP_ERROR_BASE + 150)
     ERROR_WINHTTP_INVALID_SERVER_RESPONSE equ (WINHTTP_ERROR_BASE + 152)
     ERROR_WINHTTP_INVALID_HEADER equ (WINHTTP_ERROR_BASE + 153)
     ERROR_WINHTTP_INVALID_QUERY_REQUEST equ (WINHTTP_ERROR_BASE + 154)
     ERROR_WINHTTP_HEADER_ALREADY_EXISTS equ (WINHTTP_ERROR_BASE + 155)
     ERROR_WINHTTP_REDIRECT_FAILED equ (WINHTTP_ERROR_BASE + 156)
-    ; additional WinHttp API error codes
-    ; additional WinHttp API error codes
     ERROR_WINHTTP_AUTO_PROXY_SERVICE_ERROR equ (WINHTTP_ERROR_BASE + 178)
     ERROR_WINHTTP_BAD_AUTO_PROXY_SCRIPT equ (WINHTTP_ERROR_BASE + 166)
     ERROR_WINHTTP_UNABLE_TO_DOWNLOAD_SCRIPT equ (WINHTTP_ERROR_BASE + 167)
@@ -1113,10 +863,6 @@ if  not Defined(_WINHTTPX_)
     ERROR_WINHTTP_SCRIPT_EXECUTION_ERROR equ (WINHTTP_ERROR_BASE + 177)
     ERROR_WINHTTP_NOT_INITIALIZED equ (WINHTTP_ERROR_BASE + 172)
     ERROR_WINHTTP_SECURE_FAILURE equ (WINHTTP_ERROR_BASE + 175)
-    ; Certificate security errors. These are raised only by the WinHttpRequest
-    ; component. The WinHTTP Win32 API will return ERROR_WINHTTP_SECURE_FAILE and
-    ; provide additional information via the WINHTTP_CALLBACK_STATUS_SECURE_FAILURE
-    ; callback notification.
     ERROR_WINHTTP_SECURE_CERT_DATE_INVALID equ (WINHTTP_ERROR_BASE + 37)
     ERROR_WINHTTP_SECURE_CERT_CN_INVALID equ (WINHTTP_ERROR_BASE + 38)
     ERROR_WINHTTP_SECURE_INVALID_CA equ (WINHTTP_ERROR_BASE + 45)
@@ -1147,22 +893,16 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_RESET_NOTIFY_NETWORK_CHANGED equ 00010000h
     WINHTTP_RESET_OUT_OF_PROC equ 00020000h
     WINHTTP_RESET_DISCARD_RESOLVERS equ 00040000h
-    ;#endif // !defined(_WINERROR_)
-    ; prototypes
     @DefProto DllImport, WinHttpSetStatusCallback, WIN_STD_CALL_CONV,, <:HINTERNET, :WINHTTP_STATUS_CALLBACK, :DWORD, :DWORD_PTR>, 16
     @DefProto DllImport, WinHttpTimeFromSystemTime, WIN_STD_CALL_CONV,, <:ptr SYSTEMTIME, :LPWSTR>, 8
-    ; output string buffer
     @DefProto DllImport, WinHttpTimeToSystemTime, WIN_STD_CALL_CONV,, <:LPCWSTR, :ptr SYSTEMTIME>, 8
-    ; output in GMT time
     @DefProto DllImport, WinHttpCrackUrl, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :DWORD, :LPURL_COMPONENTS>, 16
     @DefProto DllImport, WinHttpCreateUrl, WIN_STD_CALL_CONV,, <:LPURL_COMPONENTS, :DWORD, :LPWSTR, :LPDWORD>, 16
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, WinHttpCheckPlatform, WIN_STD_CALL_CONV,, <>, 0
     @DefProto DllImport, WinHttpGetDefaultProxyConfiguration, WIN_STD_CALL_CONV,, <:ptr WINHTTP_PROXY_INFO>, 4
     @DefProto DllImport, WinHttpSetDefaultProxyConfiguration, WIN_STD_CALL_CONV,, <:ptr WINHTTP_PROXY_INFO>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, WinHttpOpen, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :LPCWSTR, :LPCWSTR, :DWORD>, 20
@@ -1175,29 +915,20 @@ if  not Defined(_WINHTTPX_)
     @DefProto DllImport, WinHttpQueryOption, WIN_STD_CALL_CONV,, <:HINTERNET, :DWORD, :LPVOID, :LPDWORD>, 16
     @DefProto DllImport, WinHttpSetOption, WIN_STD_CALL_CONV,, <:HINTERNET, :DWORD, :LPVOID, :DWORD>, 16
     @DefProto DllImport, WinHttpSetTimeouts, WIN_STD_CALL_CONV,, <:HINTERNET, :SDWORD, :SDWORD, :SDWORD, :SDWORD>, 20
-    ; Session/Request handle.
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, WinHttpIsHostInProxyBypassList, WIN_STD_CALL_CONV,, <:ptr WINHTTP_PROXY_INFO, :PCWSTR, :INTERNET_SCHEME, :INTERNET_PORT, :ptr BOOL>, 20
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-    ; prototypes
     @DefProto DllImport, WinHttpOpenRequest, WIN_STD_CALL_CONV,, <:HINTERNET, :LPCWSTR, :LPCWSTR, :LPCWSTR, :LPCWSTR, :ptr LPCWSTR, :DWORD>, 28
     @DefProto DllImport, WinHttpAddRequestHeaders, WIN_STD_CALL_CONV,, <:HINTERNET, :LPCWSTR, :DWORD, :DWORD>, 16
     @DefProto DllImport, WinHttpAddRequestHeadersEx, WIN_STD_CALL_CONV,, <:HINTERNET, :DWORD, :ULONGLONG, :ULONGLONG, :DWORD, :ptr WINHTTP_EXTENDED_HEADER>, 24
     @DefProto DllImport, WinHttpSendRequest, WIN_STD_CALL_CONV,, <:HINTERNET, :LPCWSTR, :DWORD, :LPVOID, :DWORD, :DWORD, :DWORD_PTR>, 28
     @DefProto DllImport, WinHttpSetCredentials, WIN_STD_CALL_CONV,, <:HINTERNET, :DWORD, :DWORD, :LPCWSTR, :LPCWSTR, :LPVOID>, 24
-    ; NULL if pszUserName is not NULL
     @DefProto DllImport, WinHttpQueryAuthSchemes, WIN_STD_CALL_CONV,, <:HINTERNET, :LPDWORD, :LPDWORD, :LPDWORD>, 16
-    ; returns the first auth scheme returned by the server
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, WinHttpQueryAuthParams, WIN_STD_CALL_CONV,, <:HINTERNET, :DWORD, :ptr LPVOID>, 12
-    ; Scheme-specific Advanced auth parameters
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, WinHttpReceiveResponse, WIN_STD_CALL_CONV,, <:HINTERNET, :LPVOID>, 8
@@ -1205,7 +936,6 @@ if  not Defined(_WINHTTPX_)
     @DefProto DllImport, WinHttpQueryHeadersEx, WIN_STD_CALL_CONV,, <:HINTERNET, :DWORD, :ULONGLONG, :UINT, :PDWORD, :PWINHTTP_HEADER_NAME, :PVOID, :PDWORD, :ptr PWINHTTP_EXTENDED_HEADER, :PDWORD>, 40
     @DefProto DllImport, WinHttpQueryConnectionGroup, WIN_STD_CALL_CONV,, <:HINTERNET, :ptr GUID, :ULONGLONG, :ptr PWINHTTP_QUERY_CONNECTION_GROUP_RESULT>, 16
     @DefProto DllImport, WinHttpFreeQueryConnectionGroupResult, WIN_STD_CALL_CONV,, <:ptr WINHTTP_QUERY_CONNECTION_GROUP_RESULT>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, WinHttpDetectAutoProxyConfigUrl, WIN_STD_CALL_CONV,, <:DWORD, :ptr LPWSTR>, 8
@@ -1224,7 +954,6 @@ if  not Defined(_WINHTTPX_)
     @DefProto DllImport, WinHttpFreeProxySettings, WIN_STD_CALL_CONV,, <:ptr WINHTTP_PROXY_SETTINGS>, 4
     @DefProto DllImport, WinHttpGetProxySettingsVersion, WIN_STD_CALL_CONV,, <:HINTERNET, :ptr DWORD>, 8
     @DefProto DllImport, WinHttpSetProxySettingsPerUser, WIN_STD_CALL_CONV,, <:BOOL>, 4
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     WINHTTP_WEB_SOCKET_OPERATION typedef SDWORD
@@ -1275,7 +1004,6 @@ if  not Defined(_WINHTTPX_)
     @DefProto DllImport, WinHttpWebSocketShutdown, WIN_STD_CALL_CONV,, <:HINTERNET, :USHORT, :PVOID, :DWORD>, 16
     @DefProto DllImport, WinHttpWebSocketClose, WIN_STD_CALL_CONV,, <:HINTERNET, :USHORT, :PVOID, :DWORD>, 16
     @DefProto DllImport, WinHttpWebSocketQueryCloseStatus, WIN_STD_CALL_CONV,, <:HINTERNET, :ptr USHORT, :PVOID, :DWORD, :ptr DWORD>, 20
-    ; Proxy change notification APIs
     WINHTTP_PROXY_CHANGE_REGISTRATION_HANDLE typedef PVOID
     TYPE_WINHTTP_PROXY_CHANGE_CALLBACK typedef proto WIN_STD_CALL_CONV :ULONGLONG, :PVOID
     WINHTTP_PROXY_CHANGE_CALLBACK typedef ptr TYPE_WINHTTP_PROXY_CHANGE_CALLBACK
@@ -1283,7 +1011,6 @@ if  not Defined(_WINHTTPX_)
     WINHTTP_PROXY_NOTIFY_CHANGE equ 0001h
     @DefProto DllImport, WinHttpRegisterProxyChangeNotification, WIN_STD_CALL_CONV,, <:ULONGLONG, :WINHTTP_PROXY_CHANGE_CALLBACK, :PVOID, :ptr WINHTTP_PROXY_CHANGE_REGISTRATION_HANDLE>, 16
     @DefProto DllImport, WinHttpUnregisterProxyChangeNotification, WIN_STD_CALL_CONV,, <:WINHTTP_PROXY_CHANGE_REGISTRATION_HANDLE>, 4
-    ; Extended proxy settings APIs
     WINHTTP_PROXY_SETTINGS_TYPE typedef SDWORD
     WinHttpProxySettingsTypeUnknown equ 0
     WinHttpProxySettingsTypeWsl equ 1
@@ -1291,8 +1018,8 @@ if  not Defined(_WINHTTPX_)
     _WINHTTP_PROXY_SETTINGS_TYPE typedef WINHTTP_PROXY_SETTINGS_TYPE
     PWINHTTP_PROXY_SETTINGS_TYPE typedef ptr WINHTTP_PROXY_SETTINGS_TYPE
     WINHTTP_PROXY_SETTINGS_EX struct
-      ullGenerationId QWORD ?
-      ullFlags QWORD ?
+      ullGenerationId ULONGLONG ?
+      ullFlags ULONGLONG ?
       pcwszAutoconfigUrl PCWSTR ?
       pcwszProxy PCWSTR ?
       pcwszSecureProxy PCWSTR ?
@@ -1304,7 +1031,7 @@ if  not Defined(_WINHTTPX_)
     _WINHTTP_PROXY_SETTINGS_EX typedef WINHTTP_PROXY_SETTINGS_EX
     PWINHTTP_PROXY_SETTINGS_EX typedef ptr WINHTTP_PROXY_SETTINGS_EX
     WINHTTP_PROXY_SETTINGS_PARAM struct
-      ullFlags QWORD ?
+      ullFlags ULONGLONG ?
       pcwszConnectionName PCWSTR ?
       pcwszProbeHost PCWSTR ?
     WINHTTP_PROXY_SETTINGS_PARAM ends
@@ -1313,7 +1040,6 @@ if  not Defined(_WINHTTPX_)
     @DefProto DllImport, WinHttpGetProxySettingsEx, WIN_STD_CALL_CONV,, <:HINTERNET, :WINHTTP_PROXY_SETTINGS_TYPE, :PWINHTTP_PROXY_SETTINGS_PARAM, :DWORD_PTR>, 16
     @DefProto DllImport, WinHttpGetProxySettingsResultEx, WIN_STD_CALL_CONV,, <:HINTERNET, :PVOID>, 8
     @DefProto DllImport, WinHttpFreeProxySettingsEx, WIN_STD_CALL_CONV,, <:WINHTTP_PROXY_SETTINGS_TYPE, :PVOID>, 8
-    ; Feature IDs for WINHTTP_OPTION_FEATURE_SUPPORTED
     WINHTTP_FEATURE_DISABLE_STREAM_QUEUE equ 1
     WINHTTP_FEATURE_IPV6_FAST_FALLBACK equ 2
     WINHTTP_FEATURE_CONNECTION_STATS_V0 equ 3
@@ -1380,12 +1106,6 @@ if  not Defined(_WINHTTPX_)
     if Defined(__cplusplus)
       ;[...]
     endif
-    ;*
-    ;* Return packing to whatever it was before we
-    ;* entered this file
-    ;*
     include poppack.inc
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
 endif
-; !defined(_WINHTTPX_)

@@ -1,24 +1,15 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\dlgs.h
 ;             Created on (UTC) 06/04/2024 06:15:53
 ;             Last modified on (UTC) 16/12/2023 11:07:42
 
 include winapifamily.inc
-;*++
-;Copyright (c) Microsoft Corporation. All rights reserved.
-;Module Name:
-;dlgs.h
-;Abstract:
-;This module contains the UI dialog header information.
-;--*
 ifndef _DLGSH_INCLUDED_
   _DLGSH_INCLUDED_ equ <>
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-    ;  Constant Declarations.
     ctlFirst equ 0400h
     ctlLast equ 04ffh
-    ;  Push buttons.
     psh1 equ 0400h
     psh2 equ 0401h
     psh3 equ 0402h
@@ -36,7 +27,6 @@ ifndef _DLGSH_INCLUDED_
     psh15 equ 040eh
     pshHelp equ <psh15>
     psh16 equ 040fh
-    ;  Checkboxes.
     chx1 equ 0410h
     chx2 equ 0411h
     chx3 equ 0412h
@@ -53,7 +43,6 @@ ifndef _DLGSH_INCLUDED_
     chx14 equ 041dh
     chx15 equ 041eh
     chx16 equ 041fh
-    ;  Radio buttons.
     rad1 equ 0420h
     rad2 equ 0421h
     rad3 equ 0422h
@@ -70,7 +59,6 @@ ifndef _DLGSH_INCLUDED_
     rad14 equ 042dh
     rad15 equ 042eh
     rad16 equ 042fh
-    ;  Groups, frames, rectangles, and icons.
     grp1 equ 0430h
     grp2 equ 0431h
     grp3 equ 0432h
@@ -87,7 +75,6 @@ ifndef _DLGSH_INCLUDED_
     ico2 equ 043dh
     ico3 equ 043eh
     ico4 equ 043fh
-    ;  Static text.
     stc1 equ 0440h
     stc2 equ 0441h
     stc3 equ 0442h
@@ -120,7 +107,6 @@ ifndef _DLGSH_INCLUDED_
     stc30 equ 045dh
     stc31 equ 045eh
     stc32 equ 045fh
-    ;  Listboxes.
     lst1 equ 0460h
     lst2 equ 0461h
     lst3 equ 0462h
@@ -137,7 +123,6 @@ ifndef _DLGSH_INCLUDED_
     lst14 equ 046dh
     lst15 equ 046eh
     lst16 equ 046fh
-    ;  Combo boxes.
     cmb1 equ 0470h
     cmb2 equ 0471h
     cmb3 equ 0472h
@@ -154,7 +139,6 @@ ifndef _DLGSH_INCLUDED_
     cmb14 equ 047dh
     cmb15 equ 047eh
     cmb16 equ 047fh
-    ;  Edit controls.
     edt1 equ 0480h
     edt2 equ 0481h
     edt3 equ 0482h
@@ -171,7 +155,6 @@ ifndef _DLGSH_INCLUDED_
     edt14 equ 048dh
     edt15 equ 048eh
     edt16 equ 048fh
-    ;  Scroll bars.
     scr1 equ 0490h
     scr2 equ 0491h
     scr3 equ 0492h
@@ -180,7 +163,6 @@ ifndef _DLGSH_INCLUDED_
     scr6 equ 0495h
     scr7 equ 0496h
     scr8 equ 0497h
-    ;  Controls
     ctl1 equ 04A0h
     FILEOPENORD equ 1536
     MULTIFILEOPENORD equ 1537
@@ -199,20 +181,15 @@ ifndef _DLGSH_INCLUDED_
       PAGESETUPDLGORDMOTIF equ 1550
       COLORMGMTDLGORD equ 1551
       NEWFILEOPENV2ORD equ 1552
-      ;* WINVER >= 0x400) *
     endif
-    ; 1581 - 1590
     if (NTDDI_VERSION ge NTDDI_VISTA)
       NEWFILEOPENV3ORD equ 1553
     endif
-    ; NTDDI_VISTA
-    ; 1591 - 1600
     if (NTDDI_VERSION ge NTDDI_WIN7)
       NEWFORMATDLGWITHLINK equ 1591
       IDC_MANAGE_LINK equ 1592
     endif
     ifndef RC_INVOKED
-      ;  Typedef Declarations.
       CRGB struct
         bRed BYTE ?
         bGreen BYTE ?
@@ -220,10 +197,6 @@ ifndef _DLGSH_INCLUDED_
         bExtra BYTE ?
       CRGB ends
       tagCRGB typedef CRGB
-      ;* RGB Color *
-      ;* !RC_INVOKED *
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) *
   endif
 endif
-; _DLGSH_INCLUDED_

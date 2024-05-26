@@ -28,11 +28,14 @@ RenderFurtherTypes proc uses xdi pType:PSTRINGA, pTag:PSTRINGA, pToken:PTOKEN
     .if CHRA ptr [xax] == '['
       inc dPtrCount
       invoke SkipBraces, '[', ']'
-      test eax, eax
+      test xax, xax
+      jz @ErrorEoF
+      OCall xbx::IncFile.GetNextTokenC                  ;Get the next token
+      test xax, xax
       jz @ErrorEoF
     .endif
-  
-    .if CHRA ptr [xax] == ',' || CHRA ptr [xax] == ';'    ;Statement terminator
+
+    .if CHRA ptr [xax] == ',' || CHRA ptr [xax] == ';'  ;Statement terminator
       .if pName != NULL
         mov xdi, pType
         .if xdi == NULL

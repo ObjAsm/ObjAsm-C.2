@@ -109,7 +109,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=2
+MilestoneOnDateDate=26
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -144,9 +144,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,3081
+2=0,0,0,0,882
 1=0,0,0,0,1820
-6=0,0,0,0,8147
+6=0,0,0,0,1878
 4=0,0,0,0,1448
 31=
 8=0,0,777,591,8714
@@ -321,16 +321,16 @@ ProductVer4Range=0
 25=
 44=
 [Find]
-1="RelocatableCode"
-2="LoadFlag"
-3="LoadApi"
-4="$ApiName"
-5="int 3"
-6="<">"
-7="GetProcAddr"
-8="LoadLibraryA"
-9="SubStr"
-10="GetModuleHandleA"
+1="UNICODE_STRING"
+2="RelocatableCode"
+3="LoadFlag"
+4="LoadApi"
+5="$ApiName"
+6="int 3"
+7="<">"
+8="GetProcAddr"
+9="LoadLibraryA"
+10="SubStr"
 [AutoLoad]
 AutoLoad=2,6,13
 [RADebugBP]
@@ -361,6 +361,6 @@ AutoLoad=2,6,13
 7=
 9=
 [PTimer]
-PTimer=1093648325
+PTimer=1093793997
 [GroupExpand]
 GroupExpand=1,1,0,1,0,0,1,0,0

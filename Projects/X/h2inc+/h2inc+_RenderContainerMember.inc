@@ -88,11 +88,10 @@ WriteContainerMember endp
 ; Procedure:  RenderContainerMember
 ; Purpose:    Get a struct or union declaration of a single member.
 ; Arguments:  Arg1 -> First token after 'union {' or 'struct {'.
-;             Arg2 -> Struct or union Name. Can be NULL.
+;             Arg2 -> Struct or union name. Can be NULL.
 ;             xbx -> IncFile.
 ; Return:     xax -> Last processed token, usually ';' or NULL if failed.
 ; Link:       https://en.cppreference.com/w/c/language/bit_field
-; Idea:       Replace _??xx with the name of the parent struct.
 
 RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
   local dTypeCSpec:DWORD, dPtrCount:DWORD, InpStat:INP_STAT
@@ -102,7 +101,6 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
   OCall $ObjTmpl(Application)::Application.ShowInfo, VERBOSITY_DEAFENING, $OfsCStr("RenderContainerMember")
   ;Initialize ---------------------------------------------------------------------------
   m2m [xbx].$Obj(IncFile).pContainerName, pContainerName, xcx
-
   mov pEndToken, NULL
   mov pName, NULL
   mov pType, NULL
@@ -313,6 +311,7 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
       .endif
       lea xdi, cSuffix
       WriteFA xdi, "ANONYMOUS_REC¦UD", $ObjTmpl(Application).dRecordNameSuffix  ;Make unique
+      inc $ObjTmpl(Application).dRecordNameSuffix
       lea xdi, cSuffix
 @@:
       ;Translation
@@ -410,14 +409,14 @@ RenderContainerMember proc uses xdi pToken:PTOKEN, pContainerName:PSTRINGA
 
     IsValidName? pToken
     .if eax != FALSE
-      mov xcx, pToken
+      mov xax, pToken
       .if pType == NULL                                 ;First get a type
         .if $ObjTmpl(Application).Options.bUntypedParams
-          invoke TranslateType, pToken
+          invoke TranslateType, xax
         .endif
         mov pType, xax
       .elseif pName == NULL                             ;Then get a name
-        mov pName, xcx
+        mov pName, xax
       .else
         jmp @ErrorSyntax
       .endif

@@ -1,13 +1,11 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 20/05/2024 18:06:34
+;Include file created by h2inc+ version C.2.0 on (UTC) 26/05/2024 13:31:25
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\synchapi.h
 ;             Created on (UTC) 06/04/2024 06:15:58
 ;             Last modified on (UTC) 21/02/2024 18:13:16
 
-;********************************************************************************
 ifdef _MSC_VER
 endif
-; _MSC_VER
 ifndef _SYNCHAPI_H_
   _SYNCHAPI_H_ equ <>
   include apiset.inc
@@ -18,7 +16,6 @@ ifndef _SYNCHAPI_H_
     ;[...]
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-    ; Define the slim R/W lock.
     SRWLOCK_INIT equ <RTL_SRWLOCK_INIT>
     SRWLOCK typedef RTL_SRWLOCK
     PSRWLOCK typedef ptr RTL_SRWLOCK
@@ -31,37 +28,29 @@ ifndef _SYNCHAPI_H_
       @DefProto DllImport, TryAcquireSRWLockExclusive, WIN_STD_CALL_CONV,, <:PSRWLOCK>, 4
       @DefProto DllImport, TryAcquireSRWLockShared, WIN_STD_CALL_CONV,, <:PSRWLOCK>, 4
     endif
-    ; (_WIN32_WINNT >= 0x0600)
     if (_WIN32_WINNT lt 0600h)
       @DefProto DllImport, InitializeCriticalSection, WIN_STD_CALL_CONV,, <:LPCRITICAL_SECTION>, 4
     else
       @DefProto DllImport, InitializeCriticalSection, WIN_STD_CALL_CONV,, <:LPCRITICAL_SECTION>, 4
     endif
-    ; (_WIN32_WINNT < 0x0600)
     @DefProto DllImport, EnterCriticalSection, WIN_STD_CALL_CONV,, <:LPCRITICAL_SECTION>, 4
     @DefProto DllImport, LeaveCriticalSection, WIN_STD_CALL_CONV,, <:LPCRITICAL_SECTION>, 4
     @DefProto DllImport, InitializeCriticalSectionAndSpinCount, WIN_STD_CALL_CONV,, <:LPCRITICAL_SECTION, :DWORD>, 8
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, InitializeCriticalSectionEx, WIN_STD_CALL_CONV,, <:LPCRITICAL_SECTION, :DWORD, :DWORD>, 12
     endif
-    ; (_WIN32_WINNT >= 0x0600)
     @DefProto DllImport, SetCriticalSectionSpinCount, WIN_STD_CALL_CONV,, <:LPCRITICAL_SECTION, :DWORD>, 8
     if (_WIN32_WINNT ge 0400h)
       @DefProto DllImport, TryEnterCriticalSection, WIN_STD_CALL_CONV,, <:LPCRITICAL_SECTION>, 4
-      ;* _WIN32_WINNT >= 0x0400 *
     endif
     @DefProto DllImport, DeleteCriticalSection, WIN_STD_CALL_CONV,, <:LPCRITICAL_SECTION>, 4
-    ; Define one-time initialization primitive
     INIT_ONCE typedef RTL_RUN_ONCE
     PINIT_ONCE typedef PRTL_RUN_ONCE
     LPINIT_ONCE typedef PRTL_RUN_ONCE
     INIT_ONCE_STATIC_INIT equ <RTL_RUN_ONCE_INIT>
-    ; Run once flags
     INIT_ONCE_CHECK_ONLY equ <RTL_RUN_ONCE_CHECK_ONLY>
     INIT_ONCE_ASYNC equ <RTL_RUN_ONCE_ASYNC>
     INIT_ONCE_INIT_FAILED equ <RTL_RUN_ONCE_INIT_FAILED>
-    ; The context stored in the run once structure must leave the following number
-    ; of low order bits unused.
     INIT_ONCE_CTX_RESERVED_BITS equ <RTL_RUN_ONCE_CTX_RESERVED_BITS>
     TYPE_PINIT_ONCE_FN typedef proto WIN_STD_CALL_CONV :PINIT_ONCE, :PVOID, :ptr PVOID
     PINIT_ONCE_FN typedef ptr TYPE_PINIT_ONCE_FN
@@ -72,13 +61,9 @@ ifndef _SYNCHAPI_H_
       @DefProto DllImport, InitOnceBeginInitialize, WIN_STD_CALL_CONV,, <:LPINIT_ONCE, :DWORD, :PBOOL, :ptr LPVOID>, 16
       @DefProto DllImport, InitOnceComplete, WIN_STD_CALL_CONV,, <:LPINIT_ONCE, :DWORD, :LPVOID>, 12
     endif
-    ; (_WIN32_WINNT >= 0x0600)
-    ; Define condition variable
     CONDITION_VARIABLE typedef RTL_CONDITION_VARIABLE
     PCONDITION_VARIABLE typedef ptr RTL_CONDITION_VARIABLE
-    ; Static initializer for the condition variable
     CONDITION_VARIABLE_INIT equ <RTL_CONDITION_VARIABLE_INIT>
-    ; Flags for condition variables
     CONDITION_VARIABLE_LOCKMODE_SHARED equ <RTL_CONDITION_VARIABLE_LOCKMODE_SHARED>
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, InitializeConditionVariable, WIN_STD_CALL_CONV,, <:PCONDITION_VARIABLE>, 4
@@ -87,7 +72,6 @@ ifndef _SYNCHAPI_H_
       @DefProto DllImport, SleepConditionVariableCS, WIN_STD_CALL_CONV,, <:PCONDITION_VARIABLE, :PCRITICAL_SECTION, :DWORD>, 12
       @DefProto DllImport, SleepConditionVariableSRW, WIN_STD_CALL_CONV,, <:PCONDITION_VARIABLE, :PSRWLOCK, :DWORD, :ULONG>, 16
     endif
-    ; (_WIN32_WINNT >= 0x0600)
     @DefProto DllImport, SetEvent, WIN_STD_CALL_CONV,, <:HANDLE>, 4
     @DefProto DllImport, ResetEvent, WIN_STD_CALL_CONV,, <:HANDLE>, 4
     @DefProto DllImport, ReleaseSemaphore, WIN_STD_CALL_CONV,, <:HANDLE, :LONG, :LPLONG>, 12
@@ -96,7 +80,6 @@ ifndef _SYNCHAPI_H_
     @DefProto DllImport, SleepEx, WIN_STD_CALL_CONV,, <:DWORD, :BOOL>, 8
     @DefProto DllImport, WaitForSingleObjectEx, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :BOOL>, 12
     @DefProto DllImport, WaitForMultipleObjectsEx, WIN_STD_CALL_CONV,, <:DWORD, :ptr HANDLE, :BOOL, :DWORD, :BOOL>, 20
-    ; Synchronization APIs
     MUTEX_MODIFY_STATE equ <MUTANT_QUERY_STATE>
     MUTEX_ALL_ACCESS equ <MUTANT_ALL_ACCESS>
     @DefProto DllImport, CreateMutexA, WIN_STD_CALL_CONV,, <:LPSECURITY_ATTRIBUTES, :BOOL, :LPCSTR>, 12
@@ -106,7 +89,6 @@ ifndef _SYNCHAPI_H_
     else
       CreateMutex equ <CreateMutexA>
     endif
-    ; !UNICODE
     @DefProto DllImport, OpenMutexW, WIN_STD_CALL_CONV,, <:DWORD, :BOOL, :LPCWSTR>, 12
     ifdef UNICODE
       OpenMutex equ <OpenMutexW>
@@ -118,7 +100,6 @@ ifndef _SYNCHAPI_H_
     else
       CreateEvent equ <CreateEventA>
     endif
-    ; !UNICODE
     @DefProto DllImport, OpenEventA, WIN_STD_CALL_CONV,, <:DWORD, :BOOL, :LPCSTR>, 12
     @DefProto DllImport, OpenEventW, WIN_STD_CALL_CONV,, <:DWORD, :BOOL, :LPCWSTR>, 12
     ifdef UNICODE
@@ -126,7 +107,6 @@ ifndef _SYNCHAPI_H_
     else
       OpenEvent equ <OpenEventA>
     endif
-    ; !UNICODE
     @DefProto DllImport, OpenSemaphoreW, WIN_STD_CALL_CONV,, <:DWORD, :BOOL, :LPCWSTR>, 12
     ifdef UNICODE
       OpenSemaphore equ <OpenSemaphoreW>
@@ -142,7 +122,6 @@ ifndef _SYNCHAPI_H_
       if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
         SetWaitableTimerEx proto WIN_STD_CALL_CONV :HANDLE, :ptr LARGE_INTEGER, :LONG, :PTIMERAPCROUTINE, :LPVOID, :PREASON_CONTEXT, :ULONG
       endif
-      ; (_WIN32_WINNT >= _WIN32_WINNT_WIN7)
       @DefProto DllImport, SetWaitableTimer, WIN_STD_CALL_CONV,, <:HANDLE, :ptr LARGE_INTEGER, :LONG, :PTIMERAPCROUTINE, :LPVOID, :BOOL>, 24
       @DefProto DllImport, CancelWaitableTimer, WIN_STD_CALL_CONV,, <:HANDLE>, 4
       if (_WIN32_WINNT ge 0600h)
@@ -154,7 +133,6 @@ ifndef _SYNCHAPI_H_
         else
           CreateMutexEx equ <CreateMutexExA>
         endif
-        ; !UNICODE
         CREATE_EVENT_MANUAL_RESET equ 00000001h
         CREATE_EVENT_INITIAL_SET equ 00000002h
         @DefProto DllImport, CreateEventExA, WIN_STD_CALL_CONV,, <:LPSECURITY_ATTRIBUTES, :LPCSTR, :DWORD, :DWORD>, 16
@@ -164,7 +142,6 @@ ifndef _SYNCHAPI_H_
         else
           CreateEventEx equ <CreateEventExA>
         endif
-        ; !UNICODE
         @DefProto DllImport, CreateSemaphoreExW, WIN_STD_CALL_CONV,, <:LPSECURITY_ATTRIBUTES, :LONG, :LONG, :LPCWSTR, :DWORD, :DWORD>, 24
         ifdef UNICODE
           CreateSemaphoreEx equ <CreateSemaphoreExW>
@@ -178,9 +155,7 @@ ifndef _SYNCHAPI_H_
           CreateWaitableTimerEx equ <CreateWaitableTimerExW>
         endif
       endif
-      ; (_WIN32_WINNT >= 0x0600)
     endif
-    ; (_WIN32_WINNT >= 0x0400) || (_WIN32_WINDOWS > 0x0400)
     SYNCHRONIZATION_BARRIER typedef RTL_BARRIER
     PSYNCHRONIZATION_BARRIER typedef PRTL_BARRIER
     LPSYNCHRONIZATION_BARRIER typedef PRTL_BARRIER
@@ -194,13 +169,11 @@ ifndef _SYNCHAPI_H_
     WaitOnAddress proto WIN_STD_CALL_CONV :ptr VOID, :PVOID, :SIZE_T, :DWORD
     WakeByAddressSingle proto WIN_STD_CALL_CONV :PVOID
     WakeByAddressAll proto WIN_STD_CALL_CONV :PVOID
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     ifndef MIDL_PASS
       @DefProto DllImport, SignalObjectAndWait, WIN_STD_CALL_CONV,, <:HANDLE, :HANDLE, :DWORD, :BOOL>, 16
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM) *
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, WaitForMultipleObjects, WIN_STD_CALL_CONV,, <:DWORD, :ptr HANDLE, :BOOL, :DWORD>, 16
@@ -212,10 +185,8 @@ ifndef _SYNCHAPI_H_
     ifdef UNICODE
       CreateWaitableTimer equ <CreateWaitableTimerW>
     endif
-    ;* WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP | WINAPI_PARTITION_SYSTEM | WINAPI_PARTITION_GAMES) *
   endif
   ifdef __cplusplus
     ;[...]
   endif
 endif
-; _SYNCHAPI_H_
