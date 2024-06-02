@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\ddkernel.h', last modified: 19/04/2018 10:46
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\ddkernel.h
+;             Created on (UTC) 06/04/2024 06:15:53
+;             Last modified on (UTC) 21/02/2024 18:14:20
 
 ifndef __DDKM_INCLUDED__
   __DDKM_INCLUDED__ equ <>
@@ -21,21 +22,19 @@ ifndef __DDKM_INCLUDED__
       DEFINE_GUID IID_IDirectDrawSurfaceKernel, 60755DA0h, 6A40h, 11D0h, 9Bh, 06h, 00h, 0A0h, 0C9h, 03h, 0A3h, 0B8h
     endif
     LPDIRECTDRAWKERNEL typedef ptr IDirectDrawKernel
-    
     LPDIRECTDRAWSURFACEKERNEL typedef ptr IDirectDrawSurfaceKernel
-    
     LPDDKERNELCAPS typedef ptr _DDKERNELCAPS
-    
     if Defined(_WIN32) and  not Defined(_NO_COM)
       INTERFACE equ <IDirectDrawKernel>
-      DECLARE_INTERFACE_ IDirectDrawKernel, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD GetCaps, :THIS_
-        STD_METHOD GetKernelHandle, :THIS_
-        STD_METHOD ReleaseKernelHandle, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectDrawKernel, IUnknown)
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD GetCaps, :
+        STDMETHOD GetKernelHandle, :
+        STDMETHOD ReleaseKernelHandle
+      DECLARE_INTERFACE__END
+
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirectDrawKernel_GetCaps macro p, a
           exitm <(p) - lpVtbl - GetCaps (p, a)>
@@ -50,13 +49,14 @@ ifndef __DDKM_INCLUDED__
     endif
     if Defined(_WIN32) and  not Defined(_NO_COM)
       INTERFACE equ <IDirectDrawSurfaceKernel>
-      DECLARE_INTERFACE_ IDirectDrawSurfaceKernel, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD GetKernelHandle, :THIS_
-        STD_METHOD ReleaseKernelHandle, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectDrawSurfaceKernel, IUnknown)
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD GetKernelHandle, :
+        STDMETHOD ReleaseKernelHandle
+      DECLARE_INTERFACE__END
+
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirectDrawSurfaceKernel_GetKernelHandle macro p, a
           exitm <(p) - lpVtbl - GetKernelHandle (p, a)>
@@ -71,10 +71,8 @@ ifndef __DDKM_INCLUDED__
       dwCaps DWORD ?
       dwIRQCaps DWORD ?
     DDKERNELCAPS ends
-
     _DDKERNELCAPS typedef DDKERNELCAPS
     LPDDKERNELCAPS typedef ptr DDKERNELCAPS
-    
     DDKERNELCAPS_SKIPFIELDS equ 00000001h
     DDKERNELCAPS_AUTOFLIP equ 00000002h
     DDKERNELCAPS_SETSTATE equ 00000004h
@@ -112,4 +110,3 @@ ifndef __DDKM_INCLUDED__
     endif
   endif
 endif
-

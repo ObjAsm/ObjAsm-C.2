@@ -1,9 +1,11 @@
 ; ==================================================================================================
 ; Title:      DlgApp.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
+; Version:    C.1.2
 ; Purpose:    ObjAsm support of Dialog based Application objects.
-; Notes:      Version C.1.1, January 2020
+; Notes:      Version C.1.2, May 2024
+;               - DlgApp.WndProc corrected to support child dialogs.
+;             Version C.1.1, January 2020
 ;               - DlgApp.OnNCDestroy moved to WinApp.
 ;             Version C.1.0, October 2017
 ;               - First release.
@@ -74,7 +76,7 @@ MethodEnd
 Method DlgApp.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
   ;DbgText "DlgApp.OnInitDialog"
   SetObject xsi
-  OCall xsi.InitWindow
+  ACall xsi.InitWindow
   OCall xsi.CtlsSet
 MethodEnd
 
@@ -130,20 +132,20 @@ MethodEnd
 ; Note:       Window handle is passed in pSelf (hidden parameter).
 
 Method DlgApp.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
-  DbgMessage uMsg,, "DlgApp Messages"
+;  DbgMessage uMsg,, "DlgApp Messages"
   .if uMsg == WM_INITDIALOG
     mov xsi, lParam
     test xsi, xsi
-    jz @@DefProc                                        ;Goto handler defined in DispatchEvent
+    jz @@EOM
     mrm [xsi].$Obj(DlgApp).hWnd, pSelf, xcx             ;pSelf = hWnd
     invoke SetWindowLongPtr, xcx, DWLP_USER, xsi
   .else
     invoke GetWindowLongPtr, pSelf, DWLP_USER
     test xax, xax
-    jz @@DefProc                                        ;Goto handler defined in DispatchEvent
+    jz @@EOM
     mov xsi, xax
   .endif
-  DispatchEvent <DefWindowProc, pSelf>                  ;xsi -> Object Instance
+  DispatchEvent                                         ;xsi -> Object Instance
 MethodEnd
 
 endif

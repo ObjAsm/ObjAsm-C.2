@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\rpcnterr.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\rpcnterr.h
+;             Created on (UTC) 22/05/2024 17:57:08
+;             Last modified on (UTC) 12/02/2024 17:05:32
 
 include winapifamily.inc
 if _MSC_VER gt 1000
@@ -24,6 +25,7 @@ ifndef __RPCNTERR_H__
       RPC_S_ASYNC_CALL_PENDING equ <ERROR_IO_PENDING>
       RPC_S_UNKNOWN_PRINCIPAL equ <ERROR_NONE_MAPPED>
       RPC_S_TIMEOUT equ <ERROR_TIMEOUT>
+      RPC_S_RUNTIME_UNINITIALIZED equ <ERROR_INVALID_FUNCTION>
       if (NTDDI_VERSION ge NTDDI_VISTA)
         RPC_S_NOT_ENOUGH_QUOTA equ <ERROR_NOT_ENOUGH_QUOTA>
       endif
@@ -329,6 +331,7 @@ ifndef __RPCNTERR_H__
       RPC_S_ASYNC_CALL_PENDING equ <STATUS_PENDING>
       RPC_S_UNKNOWN_PRINCIPAL equ <STATUS_NONE_MAPPED>
       RPC_S_NOT_ENOUGH_QUOTA equ <STATUS_QUOTA_EXCEEDED>
+      RPC_S_RUNTIME_UNINITIALIZED equ <RPC_INVALID_FUNCTION>
       RPC_X_NO_MEMORY equ <STATUS_NO_MEMORY>
       RPC_X_INVALID_BOUND equ <RPC_NT_INVALID_BOUND>
       RPC_X_INVALID_TAG equ <RPC_NT_INVALID_TAG>
@@ -341,4 +344,3 @@ ifndef __RPCNTERR_H__
   if _MSC_VER ge 1200
   endif
 endif
-

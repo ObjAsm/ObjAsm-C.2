@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\dpa_dsa.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\dpa_dsa.h
+;             Created on (UTC) 06/04/2024 06:15:53
+;             Last modified on (UTC) 21/02/2024 18:13:44
 
 ifndef _INC_DPADSA
   _INC_DPADSA equ <>
@@ -25,18 +26,21 @@ ifndef _INC_DPADSA
     endif
     ifndef NO_COMMCTRL_DA
       __COMMCTRL_DA_DEFINED__ equ <>
-      DA_LAST equ 7FFFFFFFh
-      DA_ERR equ -1
+      DA_LAST equ (7FFFFFFFh)
+      DA_ERR equ (- 1)
       TYPE_PFNDAENUMCALLBACK typedef proto WIN_STD_CALL_CONV :ptr, :ptr
       PFNDAENUMCALLBACK typedef ptr TYPE_PFNDAENUMCALLBACK
+
       TYPE_PFNDAENUMCALLBACKCONST typedef proto WIN_STD_CALL_CONV :ptr, :ptr
       PFNDAENUMCALLBACKCONST typedef ptr TYPE_PFNDAENUMCALLBACKCONST
+
       TYPE_PFNDACOMPARE typedef proto WIN_STD_CALL_CONV :ptr, :ptr, :LPARAM
       PFNDACOMPARE typedef ptr TYPE_PFNDACOMPARE
+
       TYPE_PFNDACOMPARECONST typedef proto WIN_STD_CALL_CONV :ptr, :ptr, :LPARAM
       PFNDACOMPARECONST typedef ptr TYPE_PFNDACOMPARECONST
+
       HDSA typedef ptr _DSA
-      
       @DefProto DllImport, DSA_Create, WIN_STD_CALL_CONV,, <:SDWORD, :SDWORD>, 8
       @DefProto DllImport, DSA_Destroy, WIN_STD_CALL_CONV,, <:HDSA>, 4
       @DefProto DllImport, DSA_DestroyCallback, WIN_STD_CALL_CONV,, <:HDSA, :PFNDAENUMCALLBACK, :ptr>, 12
@@ -74,7 +78,6 @@ ifndef _INC_DPADSA
       PFNDSACOMPARE equ <PFNDACOMPARE>
       PFNDSACOMPARECONST equ <PFNDACOMPARECONST>
       HDPA typedef ptr _DPA
-      
       @DefProto DllImport, DPA_Create, WIN_STD_CALL_CONV,, <:SDWORD>, 4
       @DefProto DllImport, DPA_CreateEx, WIN_STD_CALL_CONV,, <:SDWORD, :HANDLE>, 8
       @DefProto DllImport, DPA_Clone, WIN_STD_CALL_CONV,, <:HDPA, :HDPA>, 8
@@ -123,10 +126,10 @@ ifndef _INC_DPADSA
         iPos SDWORD ?
         pvItem POINTER ?
       DPASTREAMINFO ends
-
       _DPASTREAMINFO typedef DPASTREAMINFO
       TYPE_PFNDPASTREAM typedef proto WIN_STD_CALL_CONV :ptr DPASTREAMINFO, :ptr IStream, :ptr
       PFNDPASTREAM typedef ptr TYPE_PFNDPASTREAM
+
       @DefProto DllImport, DPA_LoadStream, WIN_STD_CALL_CONV,, <:ptr HDPA, :PFNDPASTREAM, :ptr IStream, :ptr>, 16
       @DefProto DllImport, DPA_SaveStream, WIN_STD_CALL_CONV,, <:HDPA, :PFNDPASTREAM, :ptr IStream, :ptr>, 16
       DPAM_SORTED equ 00000001h
@@ -135,8 +138,10 @@ ifndef _INC_DPADSA
       DPAM_INTERSECT equ 00000008h
       TYPE_PFNDPAMERGE typedef proto WIN_STD_CALL_CONV :UINT, :ptr, :ptr, :LPARAM
       PFNDPAMERGE typedef ptr TYPE_PFNDPAMERGE
+
       TYPE_PFNDPAMERGECONST typedef proto WIN_STD_CALL_CONV :UINT, :ptr, :ptr, :LPARAM
       PFNDPAMERGECONST typedef ptr TYPE_PFNDPAMERGECONST
+
       DPAMM_MERGE equ 1
       DPAMM_DELETE equ 2
       DPAMM_INSERT equ 3
@@ -174,4 +179,3 @@ ifndef _INC_DPADSA
     endif
   endif
 endif
-

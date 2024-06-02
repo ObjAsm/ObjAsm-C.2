@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\dciddi.h', last modified: 19/04/2018 10:47
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\dciddi.h
+;             Created on (UTC) 22/05/2024 17:57:06
+;             Last modified on (UTC) 16/12/2023 11:07:08
 
 ifndef _INC_DCIDDI
   _INC_DCIDDI equ <>
@@ -76,7 +77,6 @@ ifndef _INC_DCIDDI
           right LONG ?
           bottom LONG ?
         RECTL ends
-
         tagRECTL typedef RECTL
         PRECTL typedef ptr RECTL
         NPRECTL typedef ptr RECTL
@@ -90,7 +90,6 @@ ifndef _INC_DCIDDI
           nRgnSize DWORD ?
           rcBound RECTL <>
         RGNDATAHEADER ends
-
         tagRGNDATAHEADER typedef RGNDATAHEADER
         PRGNDATAHEADER typedef ptr RGNDATAHEADER
         NPRGNDATAHEADER typedef ptr RGNDATAHEADER
@@ -100,7 +99,6 @@ ifndef _INC_DCIDDI
           rdh RGNDATAHEADER <>
           Buffer SBYTE 1 dup (?)
         RGNDATA ends
-
         tagRGNDATA typedef RGNDATA
         PRGNDATA typedef ptr RGNDATA
         NPRGNDATA typedef ptr RGNDATA
@@ -116,7 +114,6 @@ ifndef _INC_DCIDDI
       dwVersion DWORD ?
       dwReserved DWORD ?
     DCICMD ends
-
     _DCICMD typedef DCICMD
     DCICREATEINPUT struct
       cmd DCICMD <>
@@ -128,10 +125,8 @@ ifndef _INC_DCIDDI
       dwBitCount DWORD ?
       lpSurface LPVOID ?
     DCICREATEINPUT ends
-
     _DCICREATEINPUT typedef DCICREATEINPUT
     LPDCICREATEINPUT typedef ptr DCICREATEINPUT
-    
     DCISURFACEINFO struct
       dwSize DWORD ?
       dwDCICaps DWORD ?
@@ -149,53 +144,53 @@ ifndef _INC_DCIDDI
       dwReserved3 DWORD ?
       TYPE_BeginAccess typedef proto WIN_STD_CALL_CONV :LPVOID, :LPRECT
       BeginAccess typedef ptr TYPE_BeginAccess
+
       TYPE_EndAccess typedef proto WIN_STD_CALL_CONV :LPVOID
       EndAccess typedef ptr TYPE_EndAccess
+
       TYPE_DestroySurface typedef proto WIN_STD_CALL_CONV :LPVOID
       DestroySurface typedef ptr TYPE_DestroySurface
-    DCISURFACEINFO ends
 
+    DCISURFACEINFO ends
     _DCISURFACEINFO typedef DCISURFACEINFO
     LPDCISURFACEINFO typedef ptr DCISURFACEINFO
-    
     TYPE_ENUM_CALLBACK typedef proto WIN_STD_CALL_CONV :LPDCISURFACEINFO, :LPVOID
     ENUM_CALLBACK typedef ptr TYPE_ENUM_CALLBACK
+
     DCIENUMINPUT struct
       cmd DCICMD <>
       rSrc RECT <>
       rDst RECT <>
       TYPE_EnumCallback typedef proto WIN_STD_CALL_CONV :LPDCISURFACEINFO, :LPVOID
       EnumCallback typedef ptr TYPE_EnumCallback
+
       lpContext LPVOID ?
     DCIENUMINPUT ends
-
     _DCIENUMINPUT typedef DCIENUMINPUT
     LPDCIENUMINPUT typedef ptr DCIENUMINPUT
-    
     DCIPRIMARY typedef DCISURFACEINFO
     LPDCIPRIMARY typedef ptr DCISURFACEINFO
     DCIOFFSCREEN struct
       dciInfo DCISURFACEINFO <>
       TYPE_Draw typedef proto WIN_STD_CALL_CONV :LPVOID
       Draw typedef ptr TYPE_Draw
+
       TYPE_SetClipList typedef proto WIN_STD_CALL_CONV :LPVOID, :LPRGNDATA
       SetClipList typedef ptr TYPE_SetClipList
+
       TYPE_SetDestination typedef proto WIN_STD_CALL_CONV :LPVOID, :LPRECT, :LPRECT
       SetDestination typedef ptr TYPE_SetDestination
-    DCIOFFSCREEN ends
 
+    DCIOFFSCREEN ends
     _DCIOFFSCREEN typedef DCIOFFSCREEN
     LPDCIOFFSCREEN typedef ptr DCIOFFSCREEN
-    
     DCIOVERLAY struct
       dciInfo DCISURFACEINFO <>
       dwChromakeyValue DWORD ?
       dwChromakeyMask DWORD ?
     DCIOVERLAY ends
-
     _DCIOVERLAY typedef DCIOVERLAY
     LPDCIOVERLAY typedef ptr DCIOVERLAY
-    
     ifndef YVU9
       YVU9 equ <mmioFOURCC('Y', 'V', 'U', '9')>
     endif
@@ -219,4 +214,3 @@ ifndef _INC_DCIDDI
     ;[...]
   endif
 endif
-

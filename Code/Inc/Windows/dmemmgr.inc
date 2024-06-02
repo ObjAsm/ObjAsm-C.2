@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\dmemmgr.h', last modified: 19/04/2018 10:46
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\dmemmgr.h
+;             Created on (UTC) 06/04/2024 06:15:53
+;             Last modified on (UTC) 16/12/2023 11:07:08
 
 ifndef __DMEMMGR_INCLUDED__
   __DMEMMGR_INCLUDED__ equ <>
@@ -13,11 +14,9 @@ ifndef __DMEMMGR_INCLUDED__
     ifndef __NTDDKCOMP__
       FLATPTR typedef ULONG_PTR
       LPVIDMEM typedef ptr _VIDMEM
-      
     else
       FLATPTR typedef ULONG_PTR
       LPVIDMEM typedef ptr _VIDEOMEMORY
-      
     endif
     SURFACEALIGNMENT struct
       union
@@ -35,10 +34,8 @@ ifndef __DMEMMGR_INCLUDED__
         ends
       ends
     SURFACEALIGNMENT ends
-
     _SURFACEALIGNMENT typedef SURFACEALIGNMENT
     LPSURFACEALIGNMENT typedef ptr _SURFACEALIGNMENT
-    
     SURFACEALIGN_DISCARDABLE equ 00000001h
     HEAPALIGNMENT struct
       dwSize DWORD ?
@@ -52,10 +49,8 @@ ifndef __DMEMMGR_INCLUDED__
       Offscreen SURFACEALIGNMENT <>
       FlipTarget SURFACEALIGNMENT <>
     HEAPALIGNMENT ends
-
     _HEAPALIGNMENT typedef HEAPALIGNMENT
     LPHEAPALIGNMENT typedef ptr _HEAPALIGNMENT
-    
     DD_GETHEAPALIGNMENTDATA struct
       dwInstance ULONG_PTR ?
       dwHeap DWORD ?
@@ -63,21 +58,17 @@ ifndef __DMEMMGR_INCLUDED__
       GetHeapAlignment POINTER ?
       Alignment HEAPALIGNMENT <>
     DD_GETHEAPALIGNMENTDATA ends
-
     _DD_GETHEAPALIGNMENTDATA typedef DD_GETHEAPALIGNMENTDATA
     PDD_GETHEAPALIGNMENTDATA typedef ptr _DD_GETHEAPALIGNMENTDATA
-    
     VMEML struct
       next POINTER ?
       ptr_ FLATPTR ?
       size_ DWORD ?
       bDiscardable BOOL ?
     VMEML ends
-
     _VMEML typedef VMEML
     LPVMEML typedef ptr VMEML
     LPLPVMEML typedef ptr ptr VMEML
-    
     VMEMR struct
       next POINTER ?
       prev POINTER ?
@@ -95,11 +86,9 @@ ifndef __DMEMMGR_INCLUDED__
       pBits FLATPTR ?
       bDiscardable BOOL ?
     VMEMR ends
-
     _VMEMR typedef VMEMR
     LPVMEMR typedef ptr VMEMR
     LPLPVMEMR typedef ptr ptr VMEMR
-    
     VMEMHEAP struct
       dwFlags DWORD ?
       stride DWORD ?
@@ -123,7 +112,6 @@ ifndef __DMEMMGR_INCLUDED__
         dwAgpCommitMaskSize DWORD ?
       endif
     VMEMHEAP ends
-
     _VMEMHEAP typedef VMEMHEAP
     LPVMEMHEAP typedef ptr VMEMHEAP
     VMEMHEAP_LINEAR equ 00000001h
@@ -139,4 +127,3 @@ ifndef __DMEMMGR_INCLUDED__
     endif
   endif
 endif
-

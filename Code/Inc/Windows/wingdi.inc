@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\wingdi.h', last modified: 19/04/2018 10:46
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\wingdi.h
+;             Created on (UTC) 06/04/2024 06:16:03
+;             Last modified on (UTC) 21/02/2024 18:18:30
 
 include winapifamily.inc
 ifndef _WINGDI_
@@ -71,13 +72,13 @@ ifndef _WINGDI_
         exitm <((((back) shl 8) and 0FF000000h) or (fore))>
       endm
     endif
-    GDI_ERROR equ 0FFFFFFFFh
+    GDI_ERROR equ (0FFFFFFFFh)
     if (_WIN32_WINNT ge _WIN32_WINNT_WINXP)
       HGDI_ERROR equ ((0FFFFFFFFh))
     else
       HGDI_ERROR equ (- 1)
     endif
-    ;ERROR equ 0
+    ERROR_ equ 0
     NULLREGION equ 1
     SIMPLEREGION equ 2
     COMPLEXREGION equ 3
@@ -232,10 +233,8 @@ ifndef _WINGDI_
             wStyle WORD ?
             wPattern WORD ?
           DRAWPATRECT ends
-
           _DRAWPATRECT typedef DRAWPATRECT
           PDRAWPATRECT typedef ptr DRAWPATRECT
-          
         endif
       endif
     endif
@@ -336,10 +335,8 @@ ifndef _WINGDI_
         InjectionPoint WORD ?
         PageNumber WORD ?
       PSINJECTDATA ends
-
       _PSINJECTDATA typedef PSINJECTDATA
       PPSINJECTDATA typedef ptr PSINJECTDATA
-      
     endif
     PSINJECT_BEGINSTREAM equ 1
     PSINJECT_PSADOBE equ 2
@@ -389,10 +386,8 @@ ifndef _WINGDI_
         bPageIndependent BOOL ?
         bSetPageDevice BOOL ?
       PSFEATURE_OUTPUT ends
-
       _PSFEATURE_OUTPUT typedef PSFEATURE_OUTPUT
       PPSFEATURE_OUTPUT typedef ptr PSFEATURE_OUTPUT
-      
       PSFEATURE_CUSTPAPER struct
         lOrientation LONG ?
         lWidth LONG ?
@@ -400,10 +395,8 @@ ifndef _WINGDI_
         lWidthOffset LONG ?
         lHeightOffset LONG ?
       PSFEATURE_CUSTPAPER ends
-
       _PSFEATURE_CUSTPAPER typedef PSFEATURE_CUSTPAPER
       PPSFEATURE_CUSTPAPER typedef ptr PSFEATURE_CUSTPAPER
-      
     endif
     PSPROTOCOL_ASCII equ 0
     PSPROTOCOL_BCP equ 1
@@ -414,11 +407,11 @@ ifndef _WINGDI_
     QDI_DIBTOSCREEN equ 4
     QDI_STRETCHDIB equ 8
     SP_NOTREPORTED equ 4000h
-    SP_ERROR equ -1
-    SP_APPABORT equ -2
-    SP_USERABORT equ -3
-    SP_OUTOFDISK equ -4
-    SP_OUTOFMEMORY equ -5
+    SP_ERROR equ (- 1)
+    SP_APPABORT equ (- 2)
+    SP_USERABORT equ (- 3)
+    SP_OUTOFDISK equ (- 4)
+    SP_OUTOFMEMORY equ (- 5)
     PR_JOBSTATUS equ 0000h
     OBJ_PEN equ 1
     OBJ_BRUSH equ 2
@@ -435,6 +428,8 @@ ifndef _WINGDI_
     OBJ_ENHMETAFILE equ 13
     OBJ_COLORSPACE equ 14
     GDI_OBJ_LAST equ <OBJ_COLORSPACE>
+    GDI_MIN_OBJ_TYPE equ <OBJ_PEN>
+    GDI_MAX_OBJ_TYPE equ <GDI_OBJ_LAST>
     MWT_IDENTITY equ 1
     MWT_LEFTMULTIPLY equ 2
     MWT_RIGHTMULTIPLY equ 3
@@ -450,11 +445,9 @@ ifndef _WINGDI_
         eDx_ FLOAT ?
         eDy FLOAT ?
       XFORM ends
-
       tagXFORM typedef XFORM
       PXFORM typedef ptr XFORM
       LPXFORM typedef ptr XFORM
-      
       BITMAP struct
         bmType LONG ?
         bmWidth LONG ?
@@ -464,12 +457,10 @@ ifndef _WINGDI_
         bmBitsPixel WORD ?
         bmBits LPVOID ?
       BITMAP ends
-
       tagBITMAP typedef BITMAP
       PBITMAP typedef ptr BITMAP
       NPBITMAP typedef ptr BITMAP
       LPBITMAP typedef ptr BITMAP
-      
     endif
     include pshpack1.inc
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
@@ -478,12 +469,10 @@ ifndef _WINGDI_
         rgbtGreen BYTE ?
         rgbtRed BYTE ?
       RGBTRIPLE ends
-
       tagRGBTRIPLE typedef RGBTRIPLE
       PRGBTRIPLE typedef ptr RGBTRIPLE
       NPRGBTRIPLE typedef ptr RGBTRIPLE
       LPRGBTRIPLE typedef ptr RGBTRIPLE
-      
     endif
     include poppack.inc
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
@@ -493,7 +482,6 @@ ifndef _WINGDI_
         rgbRed BYTE ?
         rgbReserved BYTE ?
       RGBQUAD ends
-
       tagRGBQUAD typedef RGBQUAD
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -547,7 +535,6 @@ ifndef _WINGDI_
           ciexyzY FXPT2DOT30 ?
           ciexyzZ FXPT2DOT30 ?
         CIEXYZ ends
-
         tagCIEXYZ typedef CIEXYZ
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -559,7 +546,6 @@ ifndef _WINGDI_
           ciexyzGreen CIEXYZ <>
           ciexyzBlue CIEXYZ <>
         CIEXYZTRIPLE ends
-
         tagICEXYZTRIPLE typedef CIEXYZTRIPLE
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -578,10 +564,8 @@ ifndef _WINGDI_
           lcsGammaBlue DWORD ?
           lcsFilename CHAR MAX_PATH dup (?)
         LOGCOLORSPACEA ends
-
         tagLOGCOLORSPACEA typedef LOGCOLORSPACEA
         LPLOGCOLORSPACEA typedef ptr LOGCOLORSPACEA
-        
         LOGCOLORSPACEW struct
           lcsSignature DWORD ?
           lcsVersion DWORD ?
@@ -594,10 +578,8 @@ ifndef _WINGDI_
           lcsGammaBlue DWORD ?
           lcsFilename WCHAR MAX_PATH dup (?)
         LOGCOLORSPACEW ends
-
         tagLOGCOLORSPACEW typedef LOGCOLORSPACEW
         LPLOGCOLORSPACEW typedef ptr LOGCOLORSPACEW
-        
         ifdef UNICODE
           LOGCOLORSPACE typedef LOGCOLORSPACEW
           LPLOGCOLORSPACE typedef LPLOGCOLORSPACEW
@@ -615,13 +597,11 @@ ifndef _WINGDI_
         bcPlanes WORD ?
         bcBitCount WORD ?
       BITMAPCOREHEADER ends
-
       tagBITMAPCOREHEADER typedef BITMAPCOREHEADER
       LPBITMAPCOREHEADER typedef ptr BITMAPCOREHEADER
       PBITMAPCOREHEADER typedef ptr BITMAPCOREHEADER
-      
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       BITMAPINFOHEADER struct
         biSize DWORD ?
         biWidth LONG ?
@@ -635,11 +615,9 @@ ifndef _WINGDI_
         biClrUsed DWORD ?
         biClrImportant DWORD ?
       BITMAPINFOHEADER ends
-
       tagBITMAPINFOHEADER typedef BITMAPINFOHEADER
       LPBITMAPINFOHEADER typedef ptr BITMAPINFOHEADER
       PBITMAPINFOHEADER typedef ptr BITMAPINFOHEADER
-      
     endif
     if (WINVER ge 0400h)
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -665,10 +643,8 @@ ifndef _WINGDI_
           bV4GammaGreen DWORD ?
           bV4GammaBlue DWORD ?
         BITMAPV4HEADER ends
-
         LPBITMAPV4HEADER typedef ptr BITMAPV4HEADER
         PBITMAPV4HEADER typedef ptr BITMAPV4HEADER
-        
       endif
     endif
     if (WINVER ge 0500h)
@@ -699,10 +675,8 @@ ifndef _WINGDI_
           bV5ProfileSize DWORD ?
           bV5Reserved DWORD ?
         BITMAPV5HEADER ends
-
         LPBITMAPV5HEADER typedef ptr BITMAPV5HEADER
         PBITMAPV5HEADER typedef ptr BITMAPV5HEADER
-        
       endif
       PROFILE_LINKED equ <'LINK'>
       PROFILE_EMBEDDED equ <'MBED'>
@@ -720,22 +694,18 @@ ifndef _WINGDI_
         bmiHeader BITMAPINFOHEADER <>
         bmiColors RGBQUAD 1 dup (<>)
       BITMAPINFO ends
-
       tagBITMAPINFO typedef BITMAPINFO
       LPBITMAPINFO typedef ptr BITMAPINFO
       PBITMAPINFO typedef ptr BITMAPINFO
-      
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       BITMAPCOREINFO struct
         bmciHeader BITMAPCOREHEADER <>
         bmciColors RGBTRIPLE 1 dup (<>)
       BITMAPCOREINFO ends
-
       tagBITMAPCOREINFO typedef BITMAPCOREINFO
       LPBITMAPCOREINFO typedef ptr BITMAPCOREINFO
       PBITMAPCOREINFO typedef ptr BITMAPCOREINFO
-      
     endif
     include pshpack2.inc
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -746,11 +716,9 @@ ifndef _WINGDI_
         bfReserved2 WORD ?
         bfOffBits DWORD ?
       BITMAPFILEHEADER ends
-
       tagBITMAPFILEHEADER typedef BITMAPFILEHEADER
       LPBITMAPFILEHEADER typedef ptr BITMAPFILEHEADER
       PBITMAPFILEHEADER typedef ptr BITMAPFILEHEADER
-      
     endif
     include poppack.inc
     MAKEPOINTS macro l
@@ -763,11 +731,9 @@ ifndef _WINGDI_
             fsUsb DWORD 4 dup (?)
             fsCsb DWORD 2 dup (?)
           FONTSIGNATURE ends
-
           tagFONTSIGNATURE typedef FONTSIGNATURE
           PFONTSIGNATURE typedef ptr FONTSIGNATURE
           LPFONTSIGNATURE typedef ptr FONTSIGNATURE
-          
         endif
         if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
           CHARSETINFO struct
@@ -775,12 +741,10 @@ ifndef _WINGDI_
             ciACP UINT ?
             fs_ FONTSIGNATURE <>
           CHARSETINFO ends
-
           tagCHARSETINFO typedef CHARSETINFO
           PCHARSETINFO typedef ptr CHARSETINFO
           NPCHARSETINFO typedef ptr CHARSETINFO
           LPCHARSETINFO typedef ptr CHARSETINFO
-          
         endif
         TCI_SRCCHARSET equ 1
         TCI_SRCCODEPAGE equ 2
@@ -794,11 +758,9 @@ ifndef _WINGDI_
             lsCsbDefault DWORD 2 dup (?)
             lsCsbSupported DWORD 2 dup (?)
           LOCALESIGNATURE ends
-
           tagLOCALESIGNATURE typedef LOCALESIGNATURE
           PLOCALESIGNATURE typedef ptr LOCALESIGNATURE
           LPLOCALESIGNATURE typedef ptr LOCALESIGNATURE
-          
         endif
       endif
     endif
@@ -807,36 +769,29 @@ ifndef _WINGDI_
         HANDLETABLE struct
           objectHandle HGDIOBJ 1 dup (?)
         HANDLETABLE ends
-
         tagHANDLETABLE typedef HANDLETABLE
         PHANDLETABLE typedef ptr HANDLETABLE
         LPHANDLETABLE typedef ptr HANDLETABLE
-        
         METARECORD struct
           rdSize DWORD ?
           rdFunction WORD ?
           rdParm WORD 1 dup (?)
         METARECORD ends
-
         tagMETARECORD typedef METARECORD
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         PMETARECORD typedef ptr tagMETARECORD
-        
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
         LPMETARECORD typedef ptr tagMETARECORD
-        
         METAFILEPICT struct
           mm_ LONG ?
           xExt LONG ?
           yExt LONG ?
           hMF HMETAFILE ?
         METAFILEPICT ends
-
         tagMETAFILEPICT typedef METAFILEPICT
         LPMETAFILEPICT typedef ptr METAFILEPICT
-        
       endif
       include pshpack2.inc
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -849,12 +804,9 @@ ifndef _WINGDI_
           mtMaxRecord DWORD ?
           mtNoParameters WORD ?
         METAHEADER ends
-
         tagMETAHEADER typedef METAHEADER
         PMETAHEADER typedef ptr tagMETAHEADER
-        
         LPMETAHEADER typedef ptr tagMETAHEADER
-        
       endif
       include poppack.inc
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
@@ -863,11 +815,9 @@ ifndef _WINGDI_
           nSize DWORD ?
           dParm DWORD 1 dup (?)
         ENHMETARECORD ends
-
         tagENHMETARECORD typedef ENHMETARECORD
         PENHMETARECORD typedef ptr ENHMETARECORD
         LPENHMETARECORD typedef ptr ENHMETARECORD
-        
         ENHMETAHEADER struct
           iType DWORD ?
           nSize DWORD ?
@@ -893,11 +843,9 @@ ifndef _WINGDI_
             szlMicrometers SIZEL <>
           endif
         ENHMETAHEADER ends
-
         tagENHMETAHEADER typedef ENHMETAHEADER
         PENHMETAHEADER typedef ptr ENHMETAHEADER
         LPENHMETAHEADER typedef ptr ENHMETAHEADER
-        
       endif
     endif
     ifndef NOTEXTMETRIC
@@ -938,12 +886,10 @@ ifndef _WINGDI_
             tmPitchAndFamily BYTE ?
             tmCharSet BYTE ?
           TEXTMETRICA ends
-
           tagTEXTMETRICA typedef TEXTMETRICA
           PTEXTMETRICA typedef ptr TEXTMETRICA
           NPTEXTMETRICA typedef ptr TEXTMETRICA
           LPTEXTMETRICA typedef ptr TEXTMETRICA
-          
           TEXTMETRICW struct 4
             tmHeight LONG ?
             tmAscent LONG ?
@@ -966,12 +912,10 @@ ifndef _WINGDI_
             tmPitchAndFamily BYTE ?
             tmCharSet BYTE ?
           TEXTMETRICW ends
-
           tagTEXTMETRICW typedef TEXTMETRICW
           PTEXTMETRICW typedef ptr TEXTMETRICW
           NPTEXTMETRICW typedef ptr TEXTMETRICW
           LPTEXTMETRICW typedef ptr TEXTMETRICW
-          
           ifdef UNICODE
             TEXTMETRIC typedef TEXTMETRICW
             PTEXTMETRIC typedef PTEXTMETRICW
@@ -1023,12 +967,10 @@ ifndef _WINGDI_
           ntmCellHeight UINT ?
           ntmAvgWidth UINT ?
         NEWTEXTMETRICA ends
-
         tagNEWTEXTMETRICA typedef NEWTEXTMETRICA
         PNEWTEXTMETRICA typedef ptr NEWTEXTMETRICA
         NPNEWTEXTMETRICA typedef ptr NEWTEXTMETRICA
         LPNEWTEXTMETRICA typedef ptr NEWTEXTMETRICA
-        
         NEWTEXTMETRICW struct 4
           tmHeight LONG ?
           tmAscent LONG ?
@@ -1055,12 +997,10 @@ ifndef _WINGDI_
           ntmCellHeight UINT ?
           ntmAvgWidth UINT ?
         NEWTEXTMETRICW ends
-
         tagNEWTEXTMETRICW typedef NEWTEXTMETRICW
         PNEWTEXTMETRICW typedef ptr NEWTEXTMETRICW
         NPNEWTEXTMETRICW typedef ptr NEWTEXTMETRICW
         LPNEWTEXTMETRICW typedef ptr NEWTEXTMETRICW
-        
         ifdef UNICODE
           NEWTEXTMETRIC typedef NEWTEXTMETRICW
           PNEWTEXTMETRIC typedef PNEWTEXTMETRICW
@@ -1080,13 +1020,11 @@ ifndef _WINGDI_
             ntmTm NEWTEXTMETRICA <>
             ntmFontSig FONTSIGNATURE <>
           NEWTEXTMETRICEXA ends
-
           tagNEWTEXTMETRICEXA typedef NEWTEXTMETRICEXA
           NEWTEXTMETRICEXW struct 4
             ntmTm NEWTEXTMETRICW <>
             ntmFontSig FONTSIGNATURE <>
           NEWTEXTMETRICEXW ends
-
           tagNEWTEXTMETRICEXW typedef NEWTEXTMETRICEXW
           ifdef UNICODE
             NEWTEXTMETRICEX typedef NEWTEXTMETRICEXW
@@ -1104,12 +1042,10 @@ ifndef _WINGDI_
         paYExt LONG ?
         paRGBs BYTE ?
       PELARRAY ends
-
       tagPELARRAY typedef PELARRAY
       PPELARRAY typedef ptr PELARRAY
       NPPELARRAY typedef ptr PELARRAY
       LPPELARRAY typedef ptr PELARRAY
-      
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       LOGBRUSH struct
@@ -1117,23 +1053,19 @@ ifndef _WINGDI_
         lbColor COLORREF ?
         lbHatch ULONG_PTR ?
       LOGBRUSH ends
-
       tagLOGBRUSH typedef LOGBRUSH
       PLOGBRUSH typedef ptr LOGBRUSH
       NPLOGBRUSH typedef ptr LOGBRUSH
       LPLOGBRUSH typedef ptr LOGBRUSH
-      
       LOGBRUSH32 struct
         lbStyle UINT ?
         lbColor COLORREF ?
         lbHatch ULONG ?
       LOGBRUSH32 ends
-
       tagLOGBRUSH32 typedef LOGBRUSH32
       PLOGBRUSH32 typedef ptr LOGBRUSH32
       NPLOGBRUSH32 typedef ptr LOGBRUSH32
       LPLOGBRUSH32 typedef ptr LOGBRUSH32
-      
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       PATTERN typedef LOGBRUSH
@@ -1147,12 +1079,10 @@ ifndef _WINGDI_
         lopnWidth POINT <>
         lopnColor COLORREF ?
       LOGPEN ends
-
       tagLOGPEN typedef LOGPEN
       PLOGPEN typedef ptr LOGPEN
       NPLOGPEN typedef ptr LOGPEN
       LPLOGPEN typedef ptr LOGPEN
-      
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       EXTLOGPEN struct
@@ -1164,12 +1094,10 @@ ifndef _WINGDI_
         elpNumEntries DWORD ?
         elpStyleEntry DWORD 1 dup (?)
       EXTLOGPEN ends
-
       tagEXTLOGPEN typedef EXTLOGPEN
       PEXTLOGPEN typedef ptr EXTLOGPEN
       NPEXTLOGPEN typedef ptr EXTLOGPEN
       LPEXTLOGPEN typedef ptr EXTLOGPEN
-      
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       EXTLOGPEN32 struct
@@ -1181,12 +1109,10 @@ ifndef _WINGDI_
         elpNumEntries DWORD ?
         elpStyleEntry DWORD 1 dup (?)
       EXTLOGPEN32 ends
-
       tagEXTLOGPEN32 typedef EXTLOGPEN32
       PEXTLOGPEN32 typedef ptr EXTLOGPEN32
       NPEXTLOGPEN32 typedef ptr EXTLOGPEN32
       LPEXTLOGPEN32 typedef ptr EXTLOGPEN32
-      
       ifndef _PALETTEENTRY_DEFINED
         _PALETTEENTRY_DEFINED equ <>
         PALETTEENTRY struct
@@ -1195,11 +1121,9 @@ ifndef _WINGDI_
           peBlue BYTE ?
           peFlags BYTE ?
         PALETTEENTRY ends
-
         tagPALETTEENTRY typedef PALETTEENTRY
         PPALETTEENTRY typedef ptr PALETTEENTRY
         LPPALETTEENTRY typedef ptr PALETTEENTRY
-        
       endif
       ifndef _LOGPALETTE_DEFINED
         _LOGPALETTE_DEFINED equ <>
@@ -1208,12 +1132,10 @@ ifndef _WINGDI_
           palNumEntries WORD ?
           palPalEntry PALETTEENTRY 1 dup (<>)
         LOGPALETTE ends
-
         tagLOGPALETTE typedef LOGPALETTE
         PLOGPALETTE typedef ptr LOGPALETTE
         NPLOGPALETTE typedef ptr LOGPALETTE
         LPLOGPALETTE typedef ptr LOGPALETTE
-        
       endif
       LF_FACESIZE equ 32
       LOGFONTA struct
@@ -1232,12 +1154,10 @@ ifndef _WINGDI_
         lfPitchAndFamily BYTE ?
         lfFaceName CHAR LF_FACESIZE dup (?)
       LOGFONTA ends
-
       tagLOGFONTA typedef LOGFONTA
       PLOGFONTA typedef ptr LOGFONTA
       NPLOGFONTA typedef ptr LOGFONTA
       LPLOGFONTA typedef ptr LOGFONTA
-      
       LOGFONTW struct
         lfHeight LONG ?
         lfWidth LONG ?
@@ -1254,12 +1174,10 @@ ifndef _WINGDI_
         lfPitchAndFamily BYTE ?
         lfFaceName WCHAR LF_FACESIZE dup (?)
       LOGFONTW ends
-
       tagLOGFONTW typedef LOGFONTW
       PLOGFONTW typedef ptr LOGFONTW
       NPLOGFONTW typedef ptr LOGFONTW
       LPLOGFONTW typedef ptr LOGFONTW
-      
       ifdef UNICODE
         LOGFONT typedef LOGFONTW
         PLOGFONT typedef PLOGFONTW
@@ -1279,19 +1197,15 @@ ifndef _WINGDI_
         elfFullName BYTE LF_FULLFACESIZE dup (?)
         elfStyle BYTE LF_FACESIZE dup (?)
       ENUMLOGFONTA ends
-
       tagENUMLOGFONTA typedef ENUMLOGFONTA
       LPENUMLOGFONTA typedef ptr ENUMLOGFONTA
-      
       ENUMLOGFONTW struct
         elfLogFont LOGFONTW <>
         elfFullName WCHAR LF_FULLFACESIZE dup (?)
         elfStyle WCHAR LF_FACESIZE dup (?)
       ENUMLOGFONTW ends
-
       tagENUMLOGFONTW typedef ENUMLOGFONTW
       LPENUMLOGFONTW typedef ptr ENUMLOGFONTW
-      
       ifdef UNICODE
         ENUMLOGFONT typedef ENUMLOGFONTW
         LPENUMLOGFONT typedef LPENUMLOGFONTW
@@ -1306,20 +1220,16 @@ ifndef _WINGDI_
           elfStyle BYTE LF_FACESIZE dup (?)
           elfScript BYTE LF_FACESIZE dup (?)
         ENUMLOGFONTEXA ends
-
         tagENUMLOGFONTEXA typedef ENUMLOGFONTEXA
         LPENUMLOGFONTEXA typedef ptr ENUMLOGFONTEXA
-        
         ENUMLOGFONTEXW struct
           elfLogFont LOGFONTW <>
           elfFullName WCHAR LF_FULLFACESIZE dup (?)
           elfStyle WCHAR LF_FACESIZE dup (?)
           elfScript WCHAR LF_FACESIZE dup (?)
         ENUMLOGFONTEXW ends
-
         tagENUMLOGFONTEXW typedef ENUMLOGFONTEXW
         LPENUMLOGFONTEXW typedef ptr ENUMLOGFONTEXW
-        
         ifdef UNICODE
           ENUMLOGFONTEX typedef ENUMLOGFONTEXW
           LPENUMLOGFONTEX typedef LPENUMLOGFONTEXW
@@ -1451,10 +1361,8 @@ ifndef _WINGDI_
         bMidline BYTE ?
         bXHeight BYTE ?
       PANOSE ends
-
       tagPANOSE typedef PANOSE
       LPPANOSE typedef ptr PANOSE
-      
       PAN_ANY equ 0
       PAN_NO_FIT equ 1
       PAN_FAMILY_TEXT_DISPLAY equ 2
@@ -1563,12 +1471,10 @@ ifndef _WINGDI_
         elfCulture DWORD ?
         elfPanose PANOSE <>
       EXTLOGFONTA ends
-
       tagEXTLOGFONTA typedef EXTLOGFONTA
       PEXTLOGFONTA typedef ptr EXTLOGFONTA
       NPEXTLOGFONTA typedef ptr EXTLOGFONTA
       LPEXTLOGFONTA typedef ptr EXTLOGFONTA
-      
       EXTLOGFONTW struct
         elfLogFont LOGFONTW <>
         elfFullName WCHAR LF_FULLFACESIZE dup (?)
@@ -1581,12 +1487,10 @@ ifndef _WINGDI_
         elfCulture DWORD ?
         elfPanose PANOSE <>
       EXTLOGFONTW ends
-
       tagEXTLOGFONTW typedef EXTLOGFONTW
       PEXTLOGFONTW typedef ptr EXTLOGFONTW
       NPEXTLOGFONTW typedef ptr EXTLOGFONTW
       LPEXTLOGFONTW typedef ptr EXTLOGFONTW
-      
       ifdef UNICODE
         EXTLOGFONT typedef EXTLOGFONTW
         PEXTLOGFONT typedef PEXTLOGFONTW
@@ -1882,7 +1786,7 @@ ifndef _WINGDI_
               dmDefaultSource SWORD ?
               dmPrintQuality SWORD ?
             ends
-            struct DUMMYSTRUCTNAME2
+            struct
               dmPosition POINTL <>
               dmDisplayOrientation DWORD ?
               dmDisplayFixedOutput DWORD ?
@@ -1898,7 +1802,7 @@ ifndef _WINGDI_
           dmBitsPerPel DWORD ?
           dmPelsWidth DWORD ?
           dmPelsHeight DWORD ?
-          union DUMMYUNIONNAME2
+          union
             dmDisplayFlags DWORD ?
             dmNup DWORD ?
           ends
@@ -1916,12 +1820,10 @@ ifndef _WINGDI_
             endif
           endif
         DEVMODEA ends
-
         _devicemodeA typedef DEVMODEA
         PDEVMODEA typedef ptr DEVMODEA
         NPDEVMODEA typedef ptr DEVMODEA
         LPDEVMODEA typedef ptr DEVMODEA
-        
         DEVMODEW struct
           dmDeviceName WCHAR CCHDEVICENAME dup (?)
           dmSpecVersion WORD ?
@@ -1940,7 +1842,7 @@ ifndef _WINGDI_
               dmDefaultSource SWORD ?
               dmPrintQuality SWORD ?
             ends
-            struct DUMMYSTRUCTNAME2
+            struct
               dmPosition POINTL <>
               dmDisplayOrientation DWORD ?
               dmDisplayFixedOutput DWORD ?
@@ -1956,7 +1858,7 @@ ifndef _WINGDI_
           dmBitsPerPel DWORD ?
           dmPelsWidth DWORD ?
           dmPelsHeight DWORD ?
-          union DUMMYUNIONNAME2
+          union
             dmDisplayFlags DWORD ?
             dmNup DWORD ?
           ends
@@ -1974,12 +1876,10 @@ ifndef _WINGDI_
             endif
           endif
         DEVMODEW ends
-
         _devicemodeW typedef DEVMODEW
         PDEVMODEW typedef ptr DEVMODEW
         NPDEVMODEW typedef ptr DEVMODEW
         LPDEVMODEW typedef ptr DEVMODEW
-        
         ifdef UNICODE
           DEVMODE typedef DEVMODEW
           PDEVMODE typedef PDEVMODEW
@@ -2022,7 +1922,7 @@ ifndef _WINGDI_
           dmBitsPerPel DWORD ?
           dmPelsWidth DWORD ?
           dmPelsHeight DWORD ?
-          union DUMMYUNIONNAME2
+          union
             dmDisplayFlags DWORD ?
             dmNup DWORD ?
           ends
@@ -2040,12 +1940,10 @@ ifndef _WINGDI_
             endif
           endif
         DEVMODEA ends
-
         _devicemodeA typedef DEVMODEA
         PDEVMODEA typedef ptr DEVMODEA
         NPDEVMODEA typedef ptr DEVMODEA
         LPDEVMODEA typedef ptr DEVMODEA
-        
         DEVMODEW struct
           dmDeviceName WCHAR CCHDEVICENAME dup (?)
           dmSpecVersion WORD ?
@@ -2076,7 +1974,7 @@ ifndef _WINGDI_
           dmBitsPerPel DWORD ?
           dmPelsWidth DWORD ?
           dmPelsHeight DWORD ?
-          union DUMMYUNIONNAME2
+          union
             dmDisplayFlags DWORD ?
             dmNup DWORD ?
           ends
@@ -2094,12 +1992,10 @@ ifndef _WINGDI_
             endif
           endif
         DEVMODEW ends
-
         _devicemodeW typedef DEVMODEW
         PDEVMODEW typedef ptr DEVMODEW
         NPDEVMODEW typedef ptr DEVMODEW
         LPDEVMODEW typedef ptr DEVMODEW
-        
         ifdef UNICODE
           DEVMODE typedef DEVMODEW
           PDEVMODE typedef PDEVMODEW
@@ -2308,10 +2204,10 @@ ifndef _WINGDI_
     DMBIN_FORMSOURCE equ 15
     DMBIN_LAST equ <DMBIN_FORMSOURCE>
     DMBIN_USER equ 256
-    DMRES_DRAFT equ -1
-    DMRES_LOW equ -2
-    DMRES_MEDIUM equ -3
-    DMRES_HIGH equ -4
+    DMRES_DRAFT equ (- 1)
+    DMRES_LOW equ (- 2)
+    DMRES_MEDIUM equ (- 3)
+    DMRES_HIGH equ (- 4)
     DMCOLOR_MONOCHROME equ 1
     DMCOLOR_COLOR equ 2
     DMDUP_SIMPLEX equ 1
@@ -2374,11 +2270,9 @@ ifndef _WINGDI_
         DeviceID CHAR 128 dup (?)
         DeviceKey CHAR 128 dup (?)
       DISPLAY_DEVICEA ends
-
       _DISPLAY_DEVICEA typedef DISPLAY_DEVICEA
       PDISPLAY_DEVICEA typedef ptr DISPLAY_DEVICEA
       LPDISPLAY_DEVICEA typedef ptr DISPLAY_DEVICEA
-      
       DISPLAY_DEVICEW struct
         cb DWORD ?
         DeviceName WCHAR 32 dup (?)
@@ -2387,11 +2281,9 @@ ifndef _WINGDI_
         DeviceID WCHAR 128 dup (?)
         DeviceKey WCHAR 128 dup (?)
       DISPLAY_DEVICEW ends
-
       _DISPLAY_DEVICEW typedef DISPLAY_DEVICEW
       PDISPLAY_DEVICEW typedef ptr DISPLAY_DEVICEW
       LPDISPLAY_DEVICEW typedef ptr DISPLAY_DEVICEW
-      
       ifdef UNICODE
         DISPLAY_DEVICE typedef DISPLAY_DEVICEW
         PDISPLAY_DEVICE typedef PDISPLAY_DEVICEW
@@ -2434,7 +2326,6 @@ ifndef _WINGDI_
           Numerator UINT32 ?
           Denominator UINT32 ?
         DISPLAYCONFIG_RATIONAL ends
-
         DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY typedef SDWORD
         DISPLAYCONFIG_OUTPUT_TECHNOLOGY_OTHER equ -1
         DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HD15 equ 0
@@ -2453,9 +2344,11 @@ ifndef _WINGDI_
         DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDTVDONGLE equ 14
         DISPLAYCONFIG_OUTPUT_TECHNOLOGY_MIRACAST equ 15
         DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INDIRECT_WIRED equ 16
+        DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INDIRECT_VIRTUAL equ 17
+        DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_USB_TUNNEL equ 18
         DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL equ 80000000h
         DISPLAYCONFIG_OUTPUT_TECHNOLOGY_FORCE_UINT32 equ 0FFFFFFFFh
-        
+
         DISPLAYCONFIG_SCANLINE_ORDERING typedef SDWORD
         DISPLAYCONFIG_SCANLINE_ORDERING_UNSPECIFIED equ 0
         DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE equ 1
@@ -2463,12 +2356,11 @@ ifndef _WINGDI_
         DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED_UPPERFIELDFIRST equ DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED
         DISPLAYCONFIG_SCANLINE_ORDERING_INTERLACED_LOWERFIELDFIRST equ 3
         DISPLAYCONFIG_SCANLINE_ORDERING_FORCE_UINT32 equ 0FFFFFFFFh
-        
+
         DISPLAYCONFIG_2DREGION struct
           cx_ UINT32 ?
           cy UINT32 ?
         DISPLAYCONFIG_2DREGION ends
-
         DISPLAYCONFIG_VIDEO_SIGNAL_INFO struct
           pixelRate UINT64 ?
           hSyncFreq DISPLAYCONFIG_RATIONAL <>
@@ -2477,14 +2369,13 @@ ifndef _WINGDI_
           totalSize DISPLAYCONFIG_2DREGION <>
           union
             struct AdditionalSignalInfo
-              AdditionalSignalInfo_??42 record videoStandard_??42:16, vSyncFreqDivider_??42:6, reserved_??42:10
-              AdditionalSignalInfo_??42 <>
+              AdditionalSignalInfo_REC record AdditionalSignalInfo_REC_reserved:10, AdditionalSignalInfo_REC_vSyncFreqDivider:6, AdditionalSignalInfo_REC_videoStandard:16
+              AdditionalSignalInfo_BITS AdditionalSignalInfo_REC <>
             ends
             videoStandard UINT32 ?
           ends
           scanLineOrdering DISPLAYCONFIG_SCANLINE_ORDERING ?
         DISPLAYCONFIG_VIDEO_SIGNAL_INFO ends
-
         DISPLAYCONFIG_SCALING typedef SDWORD
         DISPLAYCONFIG_SCALING_IDENTITY equ 1
         DISPLAYCONFIG_SCALING_CENTERED equ 2
@@ -2493,20 +2384,20 @@ ifndef _WINGDI_
         DISPLAYCONFIG_SCALING_CUSTOM equ 5
         DISPLAYCONFIG_SCALING_PREFERRED equ 128
         DISPLAYCONFIG_SCALING_FORCE_UINT32 equ 0FFFFFFFFh
-        
+
         DISPLAYCONFIG_ROTATION typedef SDWORD
         DISPLAYCONFIG_ROTATION_IDENTITY equ 1
         DISPLAYCONFIG_ROTATION_ROTATE90 equ 2
         DISPLAYCONFIG_ROTATION_ROTATE180 equ 3
         DISPLAYCONFIG_ROTATION_ROTATE270 equ 4
         DISPLAYCONFIG_ROTATION_FORCE_UINT32 equ 0FFFFFFFFh
-        
+
         DISPLAYCONFIG_MODE_INFO_TYPE typedef SDWORD
         DISPLAYCONFIG_MODE_INFO_TYPE_SOURCE equ 1
         DISPLAYCONFIG_MODE_INFO_TYPE_TARGET equ 2
         DISPLAYCONFIG_MODE_INFO_TYPE_DESKTOP_IMAGE equ 3
         DISPLAYCONFIG_MODE_INFO_TYPE_FORCE_UINT32 equ 0FFFFFFFFh
-        
+
         DISPLAYCONFIG_PIXELFORMAT typedef SDWORD
         DISPLAYCONFIG_PIXELFORMAT_8BPP equ 1
         DISPLAYCONFIG_PIXELFORMAT_16BPP equ 2
@@ -2514,24 +2405,21 @@ ifndef _WINGDI_
         DISPLAYCONFIG_PIXELFORMAT_32BPP equ 4
         DISPLAYCONFIG_PIXELFORMAT_NONGDI equ 5
         DISPLAYCONFIG_PIXELFORMAT_FORCE_UINT32 equ 0ffffffffh
-        
+
         DISPLAYCONFIG_SOURCE_MODE struct
           width_ UINT32 ?
           height UINT32 ?
           pixelFormat DISPLAYCONFIG_PIXELFORMAT ?
           position POINTL <>
         DISPLAYCONFIG_SOURCE_MODE ends
-
         DISPLAYCONFIG_TARGET_MODE struct
           targetVideoSignalInfo DISPLAYCONFIG_VIDEO_SIGNAL_INFO <>
         DISPLAYCONFIG_TARGET_MODE ends
-
         DISPLAYCONFIG_DESKTOP_IMAGE_INFO struct
           PathSourceSize POINTL <>
           DesktopImageRegion RECTL <>
           DesktopImageClip RECTL <>
         DISPLAYCONFIG_DESKTOP_IMAGE_INFO ends
-
         DISPLAYCONFIG_MODE_INFO struct
           infoType DISPLAYCONFIG_MODE_INFO_TYPE ?
           id UINT32 ?
@@ -2542,7 +2430,6 @@ ifndef _WINGDI_
             desktopImageInfo DISPLAYCONFIG_DESKTOP_IMAGE_INFO <>
           ends
         DISPLAYCONFIG_MODE_INFO ends
-
         DISPLAYCONFIG_PATH_MODE_IDX_INVALID equ 0ffffffffh
         DISPLAYCONFIG_PATH_TARGET_MODE_IDX_INVALID equ 0ffffh
         DISPLAYCONFIG_PATH_DESKTOP_IMAGE_IDX_INVALID equ 0ffffh
@@ -2554,13 +2441,12 @@ ifndef _WINGDI_
           union
             modeInfoIdx UINT32 ?
             struct
-              DUMMYRECORDNAME_??43 record cloneGroupId_??43:16, sourceModeInfoIdx_??43:16
-              DUMMYRECORDNAME_??43 <>
+              ANONYMOUS_REC36 record ANONYMOUS_REC36_sourceModeInfoIdx:16, ANONYMOUS_REC36_cloneGroupId:16
+              ANONYMOUS_REC36 <>
             ends
           ends
           statusFlags UINT32 ?
         DISPLAYCONFIG_PATH_SOURCE_INFO ends
-
         DISPLAYCONFIG_SOURCE_IN_USE equ 00000001h
         DISPLAYCONFIG_PATH_TARGET_INFO struct
           adapterId LUID <>
@@ -2568,8 +2454,8 @@ ifndef _WINGDI_
           union
             modeInfoIdx UINT32 ?
             struct
-              DUMMYRECORDNAME_??44 record desktopModeInfoIdx_??44:16, targetModeInfoIdx_??44:16
-              DUMMYRECORDNAME_??44 <>
+              ANONYMOUS_REC37 record ANONYMOUS_REC37_targetModeInfoIdx:16, ANONYMOUS_REC37_desktopModeInfoIdx:16
+              ANONYMOUS_REC37 <>
             ends
           ends
           outputTechnology DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY ?
@@ -2580,7 +2466,6 @@ ifndef _WINGDI_
           targetAvailable BOOL ?
           statusFlags UINT32 ?
         DISPLAYCONFIG_PATH_TARGET_INFO ends
-
         DISPLAYCONFIG_TARGET_IN_USE equ 00000001h
         DISPLAYCONFIG_TARGET_FORCIBLE equ 00000002h
         DISPLAYCONFIG_TARGET_FORCED_AVAILABILITY_BOOT equ 00000004h
@@ -2592,18 +2477,17 @@ ifndef _WINGDI_
           targetInfo DISPLAYCONFIG_PATH_TARGET_INFO <>
           flags UINT32 ?
         DISPLAYCONFIG_PATH_INFO ends
-
         DISPLAYCONFIG_PATH_ACTIVE equ 00000001h
         DISPLAYCONFIG_PATH_PREFERRED_UNSCALED equ 00000004h
         DISPLAYCONFIG_PATH_SUPPORT_VIRTUAL_MODE equ 00000008h
-        DISPLAYCONFIG_PATH_VALID_FLAGS equ 0000000Dh
+        DISPLAYCONFIG_PATH_VALID_FLAGS equ 0000001Dh
         DISPLAYCONFIG_TOPOLOGY_ID typedef SDWORD
         DISPLAYCONFIG_TOPOLOGY_INTERNAL equ 00000001h
         DISPLAYCONFIG_TOPOLOGY_CLONE equ 00000002h
         DISPLAYCONFIG_TOPOLOGY_EXTEND equ 00000004h
         DISPLAYCONFIG_TOPOLOGY_EXTERNAL equ 00000008h
         DISPLAYCONFIG_TOPOLOGY_FORCE_UINT32 equ 0FFFFFFFFh
-        
+
         DISPLAYCONFIG_DEVICE_INFO_TYPE typedef SDWORD
         DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME equ 1
         DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME equ 2
@@ -2616,8 +2500,10 @@ ifndef _WINGDI_
         DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO equ 9
         DISPLAYCONFIG_DEVICE_INFO_SET_ADVANCED_COLOR_STATE equ 10
         DISPLAYCONFIG_DEVICE_INFO_GET_SDR_WHITE_LEVEL equ 11
+        DISPLAYCONFIG_DEVICE_INFO_GET_MONITOR_SPECIALIZATION equ 12
+        DISPLAYCONFIG_DEVICE_INFO_SET_MONITOR_SPECIALIZATION equ 13
         DISPLAYCONFIG_DEVICE_INFO_FORCE_UINT32 equ 0FFFFFFFFh
-        
+
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
         DISPLAYCONFIG_DEVICE_INFO_HEADER struct
@@ -2626,24 +2512,21 @@ ifndef _WINGDI_
           adapterId LUID <>
           id UINT32 ?
         DISPLAYCONFIG_DEVICE_INFO_HEADER ends
-
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         DISPLAYCONFIG_SOURCE_DEVICE_NAME struct
           header DISPLAYCONFIG_DEVICE_INFO_HEADER <>
           viewGdiDeviceName WCHAR CCHDEVICENAME dup (?)
         DISPLAYCONFIG_SOURCE_DEVICE_NAME ends
-
         DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS struct
           union
             struct
-              DUMMYRECORDNAME_??45 record friendlyNameFromEdid_??45:1, friendlyNameForced_??45:1, edidIdsValid_??45:1, reserved_??45:29
-              DUMMYRECORDNAME_??45 <>
+              ANONYMOUS_REC38 record ANONYMOUS_REC38_reserved:29, ANONYMOUS_REC38_edidIdsValid:1, ANONYMOUS_REC38_friendlyNameForced:1, ANONYMOUS_REC38_friendlyNameFromEdid:1
+              ANONYMOUS_REC38 <>
             ends
             value UINT32 ?
           ends
         DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS ends
-
         DISPLAYCONFIG_TARGET_DEVICE_NAME struct
           header DISPLAYCONFIG_DEVICE_INFO_HEADER <>
           flags DISPLAYCONFIG_TARGET_DEVICE_NAME_FLAGS <>
@@ -2654,46 +2537,40 @@ ifndef _WINGDI_
           monitorFriendlyDeviceName WCHAR 64 dup (?)
           monitorDevicePath WCHAR 128 dup (?)
         DISPLAYCONFIG_TARGET_DEVICE_NAME ends
-
         DISPLAYCONFIG_TARGET_PREFERRED_MODE struct
           header DISPLAYCONFIG_DEVICE_INFO_HEADER <>
           width_ UINT32 ?
           height UINT32 ?
           targetMode DISPLAYCONFIG_TARGET_MODE <>
         DISPLAYCONFIG_TARGET_PREFERRED_MODE ends
-
         DISPLAYCONFIG_ADAPTER_NAME struct
           header DISPLAYCONFIG_DEVICE_INFO_HEADER <>
           adapterDevicePath WCHAR 128 dup (?)
         DISPLAYCONFIG_ADAPTER_NAME ends
-
         DISPLAYCONFIG_TARGET_BASE_TYPE struct
           header DISPLAYCONFIG_DEVICE_INFO_HEADER <>
           baseOutputTechnology DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY ?
         DISPLAYCONFIG_TARGET_BASE_TYPE ends
-
         DISPLAYCONFIG_SET_TARGET_PERSISTENCE struct
           header DISPLAYCONFIG_DEVICE_INFO_HEADER <>
           union
             struct
-              DUMMYRECORDNAME_??46 record bootPersistenceOn_??46:1, reserved_??46:31
-              DUMMYRECORDNAME_??46 <>
+              ANONYMOUS_REC39 record ANONYMOUS_REC39_reserved:31, ANONYMOUS_REC39_bootPersistenceOn:1
+              ANONYMOUS_REC39 <>
             ends
             value UINT32 ?
           ends
         DISPLAYCONFIG_SET_TARGET_PERSISTENCE ends
-
         DISPLAYCONFIG_SUPPORT_VIRTUAL_RESOLUTION struct
           header DISPLAYCONFIG_DEVICE_INFO_HEADER <>
-          union DUMMYSTRUCTNAME
+          union
             struct
-              DUMMYRECORDNAME_??47 record disableMonitorVirtualResolution_??47:1, reserved_??47:31
-              DUMMYRECORDNAME_??47 <>
+              ANONYMOUS_REC40 record ANONYMOUS_REC40_reserved:31, ANONYMOUS_REC40_disableMonitorVirtualResolution:1
+              ANONYMOUS_REC40 <>
             ends
             value UINT32 ?
           ends
         DISPLAYCONFIG_SUPPORT_VIRTUAL_RESOLUTION ends
-
         DISPLAYCONFIG_COLOR_ENCODING typedef SDWORD
         DISPLAYCONFIG_COLOR_ENCODING_RGB equ 0
         DISPLAYCONFIG_COLOR_ENCODING_YCBCR444 equ 1
@@ -2702,45 +2579,68 @@ ifndef _WINGDI_
         DISPLAYCONFIG_COLOR_ENCODING_INTENSITY equ 4
         DISPLAYCONFIG_COLOR_ENCODING_FORCE_UINT32 equ 0FFFFFFFFh
         _DISPLAYCONFIG_COLOR_ENCODING typedef DISPLAYCONFIG_COLOR_ENCODING
-        
+
         DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO struct
           header DISPLAYCONFIG_DEVICE_INFO_HEADER <>
           union
             struct
-              DUMMYRECORDNAME_??48 record advancedColorSupported_??48:1, advancedColorEnabled_??48:1, wideColorEnforced_??48:1, reserved_??48:29
-              DUMMYRECORDNAME_??48 <>
+              ANONYMOUS_REC41 record ANONYMOUS_REC41_reserved:28, ANONYMOUS_REC41_advancedColorForceDisabled:1, ANONYMOUS_REC41_wideColorEnforced:1, ANONYMOUS_REC41_advancedColorEnabled:1, ANONYMOUS_REC41_advancedColorSupported:1
+              ANONYMOUS_REC41 <>
             ends
             value UINT32 ?
           ends
           colorEncoding DISPLAYCONFIG_COLOR_ENCODING ?
           bitsPerColorChannel UINT32 ?
         DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO ends
-
         _DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO typedef DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO
         DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE struct
           header DISPLAYCONFIG_DEVICE_INFO_HEADER <>
           union
             struct
-              DUMMYRECORDNAME_??49 record enableAdvancedColor_??49:1, reserved_??49:31
-              DUMMYRECORDNAME_??49 <>
+              ANONYMOUS_REC42 record ANONYMOUS_REC42_reserved:31, ANONYMOUS_REC42_enableAdvancedColor:1
+              ANONYMOUS_REC42 <>
             ends
             value UINT32 ?
           ends
         DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE ends
-
         _DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE typedef DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE
         DISPLAYCONFIG_SDR_WHITE_LEVEL struct
           header DISPLAYCONFIG_DEVICE_INFO_HEADER <>
           SDRWhiteLevel ULONG ?
         DISPLAYCONFIG_SDR_WHITE_LEVEL ends
-
         _DISPLAYCONFIG_SDR_WHITE_LEVEL typedef DISPLAYCONFIG_SDR_WHITE_LEVEL
+        DISPLAYCONFIG_GET_MONITOR_SPECIALIZATION struct
+          header DISPLAYCONFIG_DEVICE_INFO_HEADER <>
+          union
+            struct
+              ANONYMOUS_REC43 record ANONYMOUS_REC43_reserved:29, ANONYMOUS_REC43_isSpecializationAvailableForSystem:1, ANONYMOUS_REC43_isSpecializationAvailableForMonitor:1, ANONYMOUS_REC43_isSpecializationEnabled:1
+              ANONYMOUS_REC43 <>
+            ends
+            value UINT32 ?
+          ends
+        DISPLAYCONFIG_GET_MONITOR_SPECIALIZATION ends
+        _DISPLAYCONFIG_GET_MONITOR_SPECIALIZATION typedef DISPLAYCONFIG_GET_MONITOR_SPECIALIZATION
+        DISPLAYCONFIG_SET_MONITOR_SPECIALIZATION struct
+          header DISPLAYCONFIG_DEVICE_INFO_HEADER <>
+          union
+            struct
+              ANONYMOUS_REC44 record ANONYMOUS_REC44_reserved:31, ANONYMOUS_REC44_isSpecializationEnabled:1
+              ANONYMOUS_REC44 <>
+            ends
+            value UINT32 ?
+          ends
+          specializationType GUID <>
+          specializationSubType GUID <>
+          specializationApplicationName WCHAR 128 dup (?)
+        DISPLAYCONFIG_SET_MONITOR_SPECIALIZATION ends
+        _DISPLAYCONFIG_SET_MONITOR_SPECIALIZATION typedef DISPLAYCONFIG_SET_MONITOR_SPECIALIZATION
       endif
       QDC_ALL_PATHS equ 00000001h
       QDC_ONLY_ACTIVE_PATHS equ 00000002h
       QDC_DATABASE_CURRENT equ 00000004h
       QDC_VIRTUAL_MODE_AWARE equ 00000010h
       QDC_INCLUDE_HMD equ 00000020h
+      QDC_VIRTUAL_REFRESH_RATE_AWARE equ 00000040h
       SDC_TOPOLOGY_INTERNAL equ 00000001h
       SDC_TOPOLOGY_CLONE equ 00000002h
       SDC_TOPOLOGY_EXTEND equ 00000004h
@@ -2757,6 +2657,7 @@ ifndef _WINGDI_
       SDC_FORCE_MODE_ENUMERATION equ 00001000h
       SDC_ALLOW_PATH_ORDER_CHANGES equ 00002000h
       SDC_VIRTUAL_MODE_AWARE equ 00008000h
+      SDC_VIRTUAL_REFRESH_RATE_AWARE equ 00020000h
     endif
     RDH_RECTANGLES equ 1
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
@@ -2767,20 +2668,16 @@ ifndef _WINGDI_
         nRgnSize DWORD ?
         rcBound RECT <>
       RGNDATAHEADER ends
-
       _RGNDATAHEADER typedef RGNDATAHEADER
       PRGNDATAHEADER typedef ptr RGNDATAHEADER
-      
       RGNDATA struct
         rdh RGNDATAHEADER <>
         Buffer SBYTE 1 dup (?)
       RGNDATA ends
-
       _RGNDATA typedef RGNDATA
       PRGNDATA typedef ptr RGNDATA
       NPRGNDATA typedef ptr RGNDATA
       LPRGNDATA typedef ptr RGNDATA
-      
     endif
     SYSRGN equ 4
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -2789,23 +2686,19 @@ ifndef _WINGDI_
         abcB UINT ?
         abcC SDWORD ?
       ABC ends
-
       _ABC typedef ABC
       PABC typedef ptr ABC
       NPABC typedef ptr ABC
       LPABC typedef ptr ABC
-      
       ABCFLOAT struct
         abcfA FLOAT ?
         abcfB FLOAT ?
         abcfC FLOAT ?
       ABCFLOAT ends
-
       _ABCFLOAT typedef ABCFLOAT
       PABCFLOAT typedef ptr ABCFLOAT
       NPABCFLOAT typedef ptr ABCFLOAT
       LPABCFLOAT typedef ptr ABCFLOAT
-      
     endif
     ifndef NOTEXTMETRIC
       ifdef _MAC
@@ -2846,12 +2739,10 @@ ifndef _WINGDI_
           otmpStyleName PSTR ?
           otmpFullName PSTR ?
         OUTLINETEXTMETRICA ends
-
         _OUTLINETEXTMETRICA typedef OUTLINETEXTMETRICA
         POUTLINETEXTMETRICA typedef ptr OUTLINETEXTMETRICA
         NPOUTLINETEXTMETRICA typedef ptr OUTLINETEXTMETRICA
         LPOUTLINETEXTMETRICA typedef ptr OUTLINETEXTMETRICA
-        
         OUTLINETEXTMETRICW struct
           otmSize UINT ?
           otmTextMetrics TEXTMETRICW <>
@@ -2886,12 +2777,10 @@ ifndef _WINGDI_
           otmpStyleName PSTR ?
           otmpFullName PSTR ?
         OUTLINETEXTMETRICW ends
-
         _OUTLINETEXTMETRICW typedef OUTLINETEXTMETRICW
         POUTLINETEXTMETRICW typedef ptr OUTLINETEXTMETRICW
         NPOUTLINETEXTMETRICW typedef ptr OUTLINETEXTMETRICW
         LPOUTLINETEXTMETRICW typedef ptr OUTLINETEXTMETRICW
-        
         ifdef UNICODE
           OUTLINETEXTMETRIC typedef OUTLINETEXTMETRICW
           POUTLINETEXTMETRIC typedef POUTLINETEXTMETRICW
@@ -2918,12 +2807,10 @@ ifndef _WINGDI_
         rcl_ RECT <>
         pdx POINTER ?
       POLYTEXTA ends
-
       tagPOLYTEXTA typedef POLYTEXTA
       PPOLYTEXTA typedef ptr POLYTEXTA
       NPPOLYTEXTA typedef ptr POLYTEXTA
       LPPOLYTEXTA typedef ptr POLYTEXTA
-      
       POLYTEXTW struct
         x SDWORD ?
         y SDWORD ?
@@ -2933,12 +2820,10 @@ ifndef _WINGDI_
         rcl_ RECT <>
         pdx POINTER ?
       POLYTEXTW ends
-
       tagPOLYTEXTW typedef POLYTEXTW
       PPOLYTEXTW typedef ptr POLYTEXTW
       NPPOLYTEXTW typedef ptr POLYTEXTW
       LPPOLYTEXTW typedef ptr POLYTEXTW
-      
       ifdef UNICODE
         POLYTEXT typedef POLYTEXTW
         PPOLYTEXT typedef PPOLYTEXTW
@@ -2960,7 +2845,6 @@ ifndef _WINGDI_
           ;[...]
         endif
       FIXED ends
-
       _FIXED typedef FIXED
       MAT2 struct
         eM11 FIXED <>
@@ -2968,10 +2852,8 @@ ifndef _WINGDI_
         eM21 FIXED <>
         eM22 FIXED <>
       MAT2 ends
-
       _MAT2 typedef MAT2
       LPMAT2 typedef ptr MAT2
-      
       GLYPHMETRICS struct
         gmBlackBoxX UINT ?
         gmBlackBoxY UINT ?
@@ -2979,10 +2861,8 @@ ifndef _WINGDI_
         gmCellIncX SWORD ?
         gmCellIncY SWORD ?
       GLYPHMETRICS ends
-
       _GLYPHMETRICS typedef GLYPHMETRICS
       LPGLYPHMETRICS typedef ptr GLYPHMETRICS
-      
     endif
     GGO_METRICS equ 0
     GGO_BITMAP equ 1
@@ -3006,28 +2886,22 @@ ifndef _WINGDI_
         x FIXED <>
         y FIXED <>
       POINTFX ends
-
       tagPOINTFX typedef POINTFX
       LPPOINTFX typedef ptr POINTFX
-      
       TTPOLYCURVE struct
         wType WORD ?
         cpfx WORD ?
         apfx POINTFX 1 dup (<>)
       TTPOLYCURVE ends
-
       tagTTPOLYCURVE typedef TTPOLYCURVE
       LPTTPOLYCURVE typedef ptr TTPOLYCURVE
-      
       TTPOLYGONHEADER struct
         cb DWORD ?
         dwType DWORD ?
         pfxStart POINTFX <>
       TTPOLYGONHEADER ends
-
       tagTTPOLYGONHEADER typedef TTPOLYGONHEADER
       LPTTPOLYGONHEADER typedef ptr TTPOLYGONHEADER
-      
     endif
     if (WINVER ge 0400h)
       GCP_DBCS equ 0001h
@@ -3077,10 +2951,8 @@ ifndef _WINGDI_
           nGlyphs UINT ?
           nMaxFit SDWORD ?
         GCP_RESULTSA ends
-
         tagGCP_RESULTSA typedef GCP_RESULTSA
         LPGCP_RESULTSA typedef ptr GCP_RESULTSA
-        
         GCP_RESULTSW struct
           lStructSize DWORD ?
           lpOutString LPWSTR ?
@@ -3092,10 +2964,8 @@ ifndef _WINGDI_
           nGlyphs UINT ?
           nMaxFit SDWORD ?
         GCP_RESULTSW ends
-
         tagGCP_RESULTSW typedef GCP_RESULTSW
         LPGCP_RESULTSW typedef ptr GCP_RESULTSW
-        
         ifdef UNICODE
           GCP_RESULTS typedef GCP_RESULTSW
           LPGCP_RESULTS typedef LPGCP_RESULTSW
@@ -3111,10 +2981,8 @@ ifndef _WINGDI_
         wFlags SWORD ?
         nLanguageID SWORD ?
       RASTERIZER_STATUS ends
-
       _RASTERIZER_STATUS typedef RASTERIZER_STATUS
       LPRASTERIZER_STATUS typedef ptr RASTERIZER_STATUS
-      
     endif
     TT_AVAILABLE equ 0001h
     TT_ENABLED equ 0002h
@@ -3147,17 +3015,15 @@ ifndef _WINGDI_
         dwVisibleMask DWORD ?
         dwDamageMask DWORD ?
       PIXELFORMATDESCRIPTOR ends
-
       tagPIXELFORMATDESCRIPTOR typedef PIXELFORMATDESCRIPTOR
       PPIXELFORMATDESCRIPTOR typedef ptr PIXELFORMATDESCRIPTOR
       LPPIXELFORMATDESCRIPTOR typedef ptr PIXELFORMATDESCRIPTOR
-      
     endif
     PFD_TYPE_RGBA equ 0
     PFD_TYPE_COLORINDEX equ 1
     PFD_MAIN_PLANE equ 0
     PFD_OVERLAY_PLANE equ 1
-    PFD_UNDERLAY_PLANE equ -1
+    PFD_UNDERLAY_PLANE equ (- 1)
     PFD_DOUBLEBUFFER equ 00000001h
     PFD_STEREO equ 00000002h
     PFD_DRAW_TO_WINDOW equ 00000004h
@@ -3182,8 +3048,10 @@ ifndef _WINGDI_
         if  not Defined(NOTEXTMETRIC)
           TYPE_OLDFONTENUMPROCA typedef proto WIN_STD_CALL_CONV :ptr LOGFONTA, :ptr TEXTMETRICA, :DWORD, :LPARAM
           OLDFONTENUMPROCA typedef ptr TYPE_OLDFONTENUMPROCA
+
           TYPE_OLDFONTENUMPROCW typedef proto WIN_STD_CALL_CONV :ptr LOGFONTW, :ptr TEXTMETRICW, :DWORD, :LPARAM
           OLDFONTENUMPROCW typedef ptr TYPE_OLDFONTENUMPROCW
+
           ifdef UNICODE
             OLDFONTENUMPROC equ <OLDFONTENUMPROCW>
           else
@@ -3192,8 +3060,10 @@ ifndef _WINGDI_
         else
           TYPE_OLDFONTENUMPROCA typedef proto WIN_STD_CALL_CONV :ptr LOGFONTA, :ptr VOID, :DWORD, :LPARAM
           OLDFONTENUMPROCA typedef ptr TYPE_OLDFONTENUMPROCA
+
           TYPE_OLDFONTENUMPROCW typedef proto WIN_STD_CALL_CONV :ptr LOGFONTW, :ptr VOID, :DWORD, :LPARAM
           OLDFONTENUMPROCW typedef ptr TYPE_OLDFONTENUMPROCW
+
           ifdef UNICODE
             OLDFONTENUMPROC equ <OLDFONTENUMPROCW>
           else
@@ -3209,8 +3079,10 @@ ifndef _WINGDI_
         endif
         TYPE_GOBJENUMPROC typedef proto WIN_STD_CALL_CONV :LPVOID, :LPARAM
         GOBJENUMPROC typedef ptr TYPE_GOBJENUMPROC
+
         TYPE_LINEDDAPROC typedef proto WIN_STD_CALL_CONV :SDWORD, :SDWORD, :LPARAM
         LINEDDAPROC typedef ptr TYPE_LINEDDAPROC
+
       else
         OLDFONTENUMPROC typedef FARPROC
         FONTENUMPROCA typedef FARPROC
@@ -3316,8 +3188,10 @@ ifndef _WINGDI_
       @DefProto DllImport, DescribePixelFormat, WIN_STD_CALL_CONV,, <:HDC, :SDWORD, :UINT, :LPPIXELFORMATDESCRIPTOR>, 16
       TYPE_LPFNDEVMODE typedef proto WIN_STD_CALL_CONV :HWND, :HMODULE, :LPDEVMODE, :LPSTR, :LPSTR, :LPDEVMODE, :LPSTR, :UINT
       LPFNDEVMODE typedef ptr TYPE_LPFNDEVMODE
+
       TYPE_LPFNDEVCAPS typedef proto WIN_STD_CALL_CONV :LPSTR, :LPSTR, :UINT, :LPSTR, :LPDEVMODE
       LPFNDEVCAPS typedef ptr TYPE_LPFNDEVCAPS
+
     endif
     DM_UPDATE equ 1
     DM_COPY equ 2
@@ -3573,11 +3447,9 @@ ifndef _WINGDI_
           wcLow WCHAR ?
           cGlyphs USHORT ?
         WCRANGE ends
-
         tagWCRANGE typedef WCRANGE
         PWCRANGE typedef ptr WCRANGE
         LPWCRANGE typedef ptr WCRANGE
-        
         GLYPHSET struct
           cbThis DWORD ?
           flAccel DWORD ?
@@ -3585,11 +3457,9 @@ ifndef _WINGDI_
           cRanges DWORD ?
           ranges WCRANGE 1 dup (<>)
         GLYPHSET ends
-
         tagGLYPHSET typedef GLYPHSET
         PGLYPHSET typedef ptr GLYPHSET
         LPGLYPHSET typedef ptr GLYPHSET
-        
         GS_8BIT_INDICES equ 00000001h
         GGI_MARK_NONEXISTING_GLYPHS equ 0001h
         @DefProto DllImport, GetFontUnicodeRanges, WIN_STD_CALL_CONV,, <:HDC, :LPGLYPHSET>, 8
@@ -3614,11 +3484,9 @@ ifndef _WINGDI_
           dvNumAxes DWORD ?
           dvValues LONG MM_MAX_NUMAXES dup (?)
         DESIGNVECTOR ends
-
         tagDESIGNVECTOR typedef DESIGNVECTOR
         PDESIGNVECTOR typedef ptr DESIGNVECTOR
         LPDESIGNVECTOR typedef ptr DESIGNVECTOR
-        
         @DefProto DllImport, AddFontResourceExA, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD, :PVOID>, 12
         @DefProto DllImport, AddFontResourceExW, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :PVOID>, 12
         ifdef UNICODE
@@ -3643,21 +3511,17 @@ ifndef _WINGDI_
           axMaxValue LONG ?
           axAxisName BYTE MM_MAX_AXES_NAMELEN dup (?)
         AXISINFOA ends
-
         tagAXISINFOA typedef AXISINFOA
         PAXISINFOA typedef ptr AXISINFOA
         LPAXISINFOA typedef ptr AXISINFOA
-        
         AXISINFOW struct
           axMinValue LONG ?
           axMaxValue LONG ?
           axAxisName WCHAR MM_MAX_AXES_NAMELEN dup (?)
         AXISINFOW ends
-
         tagAXISINFOW typedef AXISINFOW
         PAXISINFOW typedef ptr AXISINFOW
         LPAXISINFOW typedef ptr AXISINFOW
-        
         ifdef UNICODE
           AXISINFO typedef AXISINFOW
           PAXISINFO typedef PAXISINFOW
@@ -3672,21 +3536,17 @@ ifndef _WINGDI_
           axlNumAxes DWORD ?
           axlAxisInfo AXISINFOA MM_MAX_NUMAXES dup (<>)
         AXESLISTA ends
-
         tagAXESLISTA typedef AXESLISTA
         PAXESLISTA typedef ptr AXESLISTA
         LPAXESLISTA typedef ptr AXESLISTA
-        
         AXESLISTW struct
           axlReserved DWORD ?
           axlNumAxes DWORD ?
           axlAxisInfo AXISINFOW MM_MAX_NUMAXES dup (<>)
         AXESLISTW ends
-
         tagAXESLISTW typedef AXESLISTW
         PAXESLISTW typedef ptr AXESLISTW
         LPAXESLISTW typedef ptr AXESLISTW
-        
         ifdef UNICODE
           AXESLIST typedef AXESLISTW
           PAXESLIST typedef PAXESLISTW
@@ -3700,20 +3560,16 @@ ifndef _WINGDI_
           elfEnumLogfontEx ENUMLOGFONTEXA <>
           elfDesignVector DESIGNVECTOR <>
         ENUMLOGFONTEXDVA ends
-
         tagENUMLOGFONTEXDVA typedef ENUMLOGFONTEXDVA
         PENUMLOGFONTEXDVA typedef ptr ENUMLOGFONTEXDVA
         LPENUMLOGFONTEXDVA typedef ptr ENUMLOGFONTEXDVA
-        
         ENUMLOGFONTEXDVW struct
           elfEnumLogfontEx ENUMLOGFONTEXW <>
           elfDesignVector DESIGNVECTOR <>
         ENUMLOGFONTEXDVW ends
-
         tagENUMLOGFONTEXDVW typedef ENUMLOGFONTEXDVW
         PENUMLOGFONTEXDVW typedef ptr ENUMLOGFONTEXDVW
         LPENUMLOGFONTEXDVW typedef ptr ENUMLOGFONTEXDVW
-        
         ifdef UNICODE
           ENUMLOGFONTEXDV typedef ENUMLOGFONTEXDVW
           PENUMLOGFONTEXDV typedef PENUMLOGFONTEXDVW
@@ -3735,20 +3591,16 @@ ifndef _WINGDI_
             etmNewTextMetricEx NEWTEXTMETRICEXA <>
             etmAxesList AXESLISTA <>
           ENUMTEXTMETRICA ends
-
           tagENUMTEXTMETRICA typedef ENUMTEXTMETRICA
           PENUMTEXTMETRICA typedef ptr ENUMTEXTMETRICA
           LPENUMTEXTMETRICA typedef ptr ENUMTEXTMETRICA
-          
           ENUMTEXTMETRICW struct
             etmNewTextMetricEx NEWTEXTMETRICEXW <>
             etmAxesList AXESLISTW <>
           ENUMTEXTMETRICW ends
-
           tagENUMTEXTMETRICW typedef ENUMTEXTMETRICW
           PENUMTEXTMETRICW typedef ptr ENUMTEXTMETRICW
           LPENUMTEXTMETRICW typedef ptr ENUMTEXTMETRICW
-          
           ifdef UNICODE
             ENUMTEXTMETRIC typedef ENUMTEXTMETRICW
             PENUMTEXTMETRIC typedef PENUMTEXTMETRICW
@@ -3848,12 +3700,16 @@ ifndef _WINGDI_
         if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
           TYPE_GDIMARSHALLOC typedef proto WIN_STD_CALL_CONV :DWORD, :LPVOID
           GDIMARSHALLOC typedef ptr TYPE_GDIMARSHALLOC
+
           TYPE_DDRAWMARSHCALLBACKMARSHAL typedef proto WIN_STD_CALL_CONV :HGDIOBJ, :LPVOID, :ptr LPVOID
           DDRAWMARSHCALLBACKMARSHAL typedef ptr TYPE_DDRAWMARSHCALLBACKMARSHAL
+
           TYPE_DDRAWMARSHCALLBACKUNMARSHAL typedef proto WIN_STD_CALL_CONV :LPVOID, :ptr HDC, :ptr LPVOID
           DDRAWMARSHCALLBACKUNMARSHAL typedef ptr TYPE_DDRAWMARSHCALLBACKUNMARSHAL
+
           TYPE_DDRAWMARSHCALLBACKRELEASE typedef proto WIN_STD_CALL_CONV :LPVOID
           DDRAWMARSHCALLBACKRELEASE typedef ptr TYPE_DDRAWMARSHCALLBACKRELEASE
+
           GDIREGISTERDDRAWPACKETVERSION equ 1h
           GDIREGISTERDDRAWPACKET struct
             dwSize DWORD ?
@@ -3862,9 +3718,7 @@ ifndef _WINGDI_
             pfnDdUnmarshal DDRAWMARSHCALLBACKUNMARSHAL ?
             pfnDdRelease DDRAWMARSHCALLBACKRELEASE ?
           GDIREGISTERDDRAWPACKET ends
-
           PGDIREGISTERDDRAWPACKET typedef ptr GDIREGISTERDDRAWPACKET
-          
           @DefProto DllImport, GdiRegisterDdraw, WIN_STD_CALL_CONV,, <:PGDIREGISTERDDRAWPACKET, :ptr GDIMARSHALLOC>, 8
           @DefProto DllImport, GdiMarshalSize, WIN_STD_CALL_CONV,, <>, 0
           @DefProto DllImport, GdiMarshal, WIN_STD_CALL_CONV,, <:DWORD, :HGDIOBJ, :PVOID, :ULONG>, 16
@@ -3883,11 +3737,9 @@ ifndef _WINGDI_
           Blue COLOR16 ?
           Alpha COLOR16 ?
         TRIVERTEX ends
-
         _TRIVERTEX typedef TRIVERTEX
         PTRIVERTEX typedef ptr TRIVERTEX
         LPTRIVERTEX typedef ptr TRIVERTEX
-        
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         GRADIENT_TRIANGLE struct
@@ -3895,20 +3747,16 @@ ifndef _WINGDI_
           Vertex2 ULONG ?
           Vertex3 ULONG ?
         GRADIENT_TRIANGLE ends
-
         _GRADIENT_TRIANGLE typedef GRADIENT_TRIANGLE
         PGRADIENT_TRIANGLE typedef ptr GRADIENT_TRIANGLE
         LPGRADIENT_TRIANGLE typedef ptr GRADIENT_TRIANGLE
-        
         GRADIENT_RECT struct
           UpperLeft ULONG ?
           LowerRight ULONG ?
         GRADIENT_RECT ends
-
         _GRADIENT_RECT typedef GRADIENT_RECT
         PGRADIENT_RECT typedef ptr GRADIENT_RECT
         LPGRADIENT_RECT typedef ptr GRADIENT_RECT
-        
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
         BLENDFUNCTION struct
@@ -3917,10 +3765,8 @@ ifndef _WINGDI_
           SourceConstantAlpha BYTE ?
           AlphaFormat BYTE ?
         BLENDFUNCTION ends
-
         _BLENDFUNCTION typedef BLENDFUNCTION
         PBLENDFUNCTION typedef ptr BLENDFUNCTION
-        
       endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         AC_SRC_OVER equ 00h
@@ -3944,9 +3790,11 @@ ifndef _WINGDI_
         @DefProto DllImport, PlayMetaFileRecord, WIN_STD_CALL_CONV,, <:HDC, :LPHANDLETABLE, :LPMETARECORD, :UINT>, 16
         TYPE_MFENUMPROC typedef proto WIN_STD_CALL_CONV :HDC, :ptr HANDLETABLE, :ptr METARECORD, :SDWORD, :LPARAM
         MFENUMPROC typedef ptr TYPE_MFENUMPROC
+
         @DefProto DllImport, EnumMetaFile, WIN_STD_CALL_CONV,, <:HDC, :HMETAFILE, :MFENUMPROC, :LPARAM>, 16
         TYPE_ENHMFENUMPROC typedef proto WIN_STD_CALL_CONV :HDC, :ptr HANDLETABLE, :ptr ENHMETARECORD, :SDWORD, :LPARAM
         ENHMFENUMPROC typedef ptr TYPE_ENHMFENUMPROC
+
         @DefProto DllImport, CloseEnhMetaFile, WIN_STD_CALL_CONV,, <:HDC>, 4
         @DefProto DllImport, CopyEnhMetaFileA, WIN_STD_CALL_CONV,, <:HENHMETAFILE, :LPCSTR>, 8
         @DefProto DllImport, CopyEnhMetaFileW, WIN_STD_CALL_CONV,, <:HENHMETAFILE, :LPCWSTR>, 8
@@ -4008,11 +3856,9 @@ ifndef _WINGDI_
         dshSection HANDLE ?
         dsOffset DWORD ?
       DIBSECTION ends
-
       tagDIBSECTION typedef DIBSECTION
       LPDIBSECTION typedef ptr DIBSECTION
       PDIBSECTION typedef ptr DIBSECTION
-      
       @DefProto DllImport, AngleArc, WIN_STD_CALL_CONV,, <:HDC, :SDWORD, :SDWORD, :DWORD, :FLOAT, :FLOAT>, 24
       @DefProto DllImport, PolyPolyline, WIN_STD_CALL_CONV,, <:HDC, :ptr POINT, :ptr DWORD, :DWORD>, 16
       @DefProto DllImport, GetWorldTransform, WIN_STD_CALL_CONV,, <:HDC, :LPXFORM>, 8
@@ -4072,17 +3918,16 @@ ifndef _WINGDI_
         caColorfulness SHORT_ ?
         caRedGreenTint SHORT_ ?
       COLORADJUSTMENT ends
-
       tagCOLORADJUSTMENT typedef COLORADJUSTMENT
       PCOLORADJUSTMENT typedef ptr COLORADJUSTMENT
       LPCOLORADJUSTMENT typedef ptr COLORADJUSTMENT
-      
       @DefProto DllImport, SetColorAdjustment, WIN_STD_CALL_CONV,, <:HDC, :ptr COLORADJUSTMENT>, 8
       @DefProto DllImport, GetColorAdjustment, WIN_STD_CALL_CONV,, <:HDC, :LPCOLORADJUSTMENT>, 8
       @DefProto DllImport, CreateHalftonePalette, WIN_STD_CALL_CONV,, <:HDC>, 4
       ifdef STRICT
         TYPE_ABORTPROC typedef proto WIN_STD_CALL_CONV :HDC, :SDWORD
         ABORTPROC typedef ptr TYPE_ABORTPROC
+
       else
         ABORTPROC typedef FARPROC
       endif
@@ -4095,10 +3940,8 @@ ifndef _WINGDI_
           fwType DWORD ?
         endif
       DOCINFOA ends
-
       _DOCINFOA typedef DOCINFOA
       LPDOCINFOA typedef ptr DOCINFOA
-      
       DOCINFOW struct
         cbSize SDWORD ?
         lpszDocName LPCWSTR ?
@@ -4108,10 +3951,8 @@ ifndef _WINGDI_
           fwType DWORD ?
         endif
       DOCINFOW ends
-
       _DOCINFOW typedef DOCINFOW
       LPDOCINFOW typedef ptr DOCINFOW
-      
       ifdef UNICODE
         DOCINFO typedef DOCINFOW
         LPDOCINFO typedef LPDOCINFOW
@@ -4217,10 +4058,8 @@ ifndef _WINGDI_
         wSecond WORD ?
         iKernAmount SDWORD ?
       KERNINGPAIR ends
-
       tagKERNINGPAIR typedef KERNINGPAIR
       LPKERNINGPAIR typedef ptr KERNINGPAIR
-      
       @DefProto DllImport, GetKerningPairsA, WIN_STD_CALL_CONV,, <:HDC, :DWORD, :LPKERNINGPAIR>, 12
       @DefProto DllImport, GetKerningPairsW, WIN_STD_CALL_CONV,, <:HDC, :DWORD, :LPKERNINGPAIR>, 12
       ifdef UNICODE
@@ -4241,8 +4080,10 @@ ifndef _WINGDI_
         ICM_DONE_OUTSIDEDC equ 4
         TYPE_ICMENUMPROCA typedef proto WIN_STD_CALL_CONV :LPSTR, :LPARAM
         ICMENUMPROCA typedef ptr TYPE_ICMENUMPROCA
+
         TYPE_ICMENUMPROCW typedef proto WIN_STD_CALL_CONV :LPWSTR, :LPARAM
         ICMENUMPROCW typedef ptr TYPE_ICMENUMPROCW
+
         ifdef UNICODE
           ICMENUMPROC equ <ICMENUMPROCW>
         else
@@ -4450,10 +4291,8 @@ ifndef _WINGDI_
           iType DWORD ?
           nSize DWORD ?
         EMR ends
-
         tagEMR typedef EMR
         PEMR typedef ptr EMR
-        
         EMRTEXT struct
           ptlReference POINTL <>
           nChars DWORD ?
@@ -4462,14 +4301,11 @@ ifndef _WINGDI_
           rcl_ RECTL <>
           offDx DWORD ?
         EMRTEXT ends
-
         tagEMRTEXT typedef EMRTEXT
         PEMRTEXT typedef ptr EMRTEXT
-        
         EMRABORTPATH struct
           emr EMR <>
         EMRABORTPATH ends
-
         tagABORTPATH typedef EMRABORTPATH
         PEMRABORTPATH typedef ptr EMRABORTPATH
         EMRBEGINPATH typedef EMRABORTPATH
@@ -4488,12 +4324,10 @@ ifndef _WINGDI_
         PEMRSAVEDC typedef ptr EMRABORTPATH
         EMRREALIZEPALETTE typedef EMRABORTPATH
         PEMRREALIZEPALETTE typedef ptr EMRABORTPATH
-        
         EMRSELECTCLIPPATH struct
           emr EMR <>
           iMode DWORD ?
         EMRSELECTCLIPPATH ends
-
         tagEMRSELECTCLIPPATH typedef EMRSELECTCLIPPATH
         PEMRSELECTCLIPPATH typedef ptr EMRSELECTCLIPPATH
         EMRSETBKMODE typedef EMRSELECTCLIPPATH
@@ -4514,76 +4348,59 @@ ifndef _WINGDI_
         PEMRSETICMMODE typedef ptr EMRSELECTCLIPPATH
         EMRSETTEXTALIGN typedef EMRSELECTCLIPPATH
         PEMRSETTEXTALIGN typedef ptr EMRSELECTCLIPPATH
-        
         EMRSETMITERLIMIT struct
           emr EMR <>
           eMiterLimit FLOAT ?
         EMRSETMITERLIMIT ends
-
         tagEMRSETMITERLIMIT typedef EMRSETMITERLIMIT
         PEMRSETMITERLIMIT typedef ptr EMRSETMITERLIMIT
-        
         EMRRESTOREDC struct
           emr EMR <>
           iRelative LONG ?
         EMRRESTOREDC ends
-
         tagEMRRESTOREDC typedef EMRRESTOREDC
         PEMRRESTOREDC typedef ptr EMRRESTOREDC
-        
         EMRSETARCDIRECTION struct
           emr EMR <>
           iArcDirection DWORD ?
         EMRSETARCDIRECTION ends
-
         tagEMRSETARCDIRECTION typedef EMRSETARCDIRECTION
         PEMRSETARCDIRECTION typedef ptr EMRSETARCDIRECTION
-        
         EMRSETMAPPERFLAGS struct
           emr EMR <>
           dwFlags DWORD ?
         EMRSETMAPPERFLAGS ends
-
         tagEMRSETMAPPERFLAGS typedef EMRSETMAPPERFLAGS
         PEMRSETMAPPERFLAGS typedef ptr EMRSETMAPPERFLAGS
-        
         EMRSETBKCOLOR struct
           emr EMR <>
           crColor COLORREF ?
         EMRSETBKCOLOR ends
-
         tagEMRSETTEXTCOLOR typedef EMRSETBKCOLOR
         PEMRSETBKCOLOR typedef ptr EMRSETBKCOLOR
         EMRSETTEXTCOLOR typedef EMRSETBKCOLOR
         PEMRSETTEXTCOLOR typedef ptr EMRSETBKCOLOR
-        
         EMRSELECTOBJECT struct
           emr EMR <>
           ihObject DWORD ?
         EMRSELECTOBJECT ends
-
         tagEMRSELECTOBJECT typedef EMRSELECTOBJECT
         PEMRSELECTOBJECT typedef ptr EMRSELECTOBJECT
         EMRDELETEOBJECT typedef EMRSELECTOBJECT
         PEMRDELETEOBJECT typedef ptr EMRSELECTOBJECT
-        
         EMRSELECTPALETTE struct
           emr EMR <>
           ihPal DWORD ?
         EMRSELECTPALETTE ends
-
         tagEMRSELECTPALETTE typedef EMRSELECTPALETTE
         PEMRSELECTPALETTE typedef ptr EMRSELECTPALETTE
-        
         EMRRESIZEPALETTE struct
           emr EMR <>
           ihPal DWORD ?
           cEntries DWORD ?
         EMRRESIZEPALETTE ends
-
         tagEMRRESIZEPALETTE typedef EMRRESIZEPALETTE
         PEMRRESIZEPALETTE typedef ptr EMRRESIZEPALETTE
-        
         EMRSETPALETTEENTRIES struct
           emr EMR <>
           ihPal DWORD ?
@@ -4591,99 +4408,79 @@ ifndef _WINGDI_
           cEntries DWORD ?
           aPalEntries PALETTEENTRY 1 dup (<>)
         EMRSETPALETTEENTRIES ends
-
         tagEMRSETPALETTEENTRIES typedef EMRSETPALETTEENTRIES
         PEMRSETPALETTEENTRIES typedef ptr EMRSETPALETTEENTRIES
-        
         EMRSETCOLORADJUSTMENT struct
           emr EMR <>
           ColorAdjustment COLORADJUSTMENT <>
         EMRSETCOLORADJUSTMENT ends
-
         tagEMRSETCOLORADJUSTMENT typedef EMRSETCOLORADJUSTMENT
         PEMRSETCOLORADJUSTMENT typedef ptr EMRSETCOLORADJUSTMENT
-        
         EMRGDICOMMENT struct
           emr EMR <>
           cbData DWORD ?
           Data BYTE 1 dup (?)
         EMRGDICOMMENT ends
-
         tagEMRGDICOMMENT typedef EMRGDICOMMENT
         PEMRGDICOMMENT typedef ptr EMRGDICOMMENT
-        
         EMREOF struct
           emr EMR <>
           nPalEntries DWORD ?
           offPalEntries DWORD ?
           nSizeLast DWORD ?
         EMREOF ends
-
         tagEMREOF typedef EMREOF
         PEMREOF typedef ptr EMREOF
-        
         EMRLINETO struct
           emr EMR <>
           ptl POINTL <>
         EMRLINETO ends
-
         tagEMRLINETO typedef EMRLINETO
         PEMRLINETO typedef ptr EMRLINETO
         EMRMOVETOEX typedef EMRLINETO
         PEMRMOVETOEX typedef ptr EMRLINETO
-        
         EMROFFSETCLIPRGN struct
           emr EMR <>
           ptlOffset POINTL <>
         EMROFFSETCLIPRGN ends
-
         tagEMROFFSETCLIPRGN typedef EMROFFSETCLIPRGN
         PEMROFFSETCLIPRGN typedef ptr EMROFFSETCLIPRGN
-        
         EMRFILLPATH struct
           emr EMR <>
           rclBounds RECTL <>
         EMRFILLPATH ends
-
         tagEMRFILLPATH typedef EMRFILLPATH
         PEMRFILLPATH typedef ptr EMRFILLPATH
         EMRSTROKEANDFILLPATH typedef EMRFILLPATH
         PEMRSTROKEANDFILLPATH typedef ptr EMRFILLPATH
         EMRSTROKEPATH typedef EMRFILLPATH
         PEMRSTROKEPATH typedef ptr EMRFILLPATH
-        
         EMREXCLUDECLIPRECT struct
           emr EMR <>
           rclClip RECTL <>
         EMREXCLUDECLIPRECT ends
-
         tagEMREXCLUDECLIPRECT typedef EMREXCLUDECLIPRECT
         PEMREXCLUDECLIPRECT typedef ptr EMREXCLUDECLIPRECT
         EMRINTERSECTCLIPRECT typedef EMREXCLUDECLIPRECT
         PEMRINTERSECTCLIPRECT typedef ptr EMREXCLUDECLIPRECT
-        
         EMRSETVIEWPORTORGEX struct
           emr EMR <>
           ptlOrigin POINTL <>
         EMRSETVIEWPORTORGEX ends
-
         tagEMRSETVIEWPORTORGEX typedef EMRSETVIEWPORTORGEX
         PEMRSETVIEWPORTORGEX typedef ptr EMRSETVIEWPORTORGEX
         EMRSETWINDOWORGEX typedef EMRSETVIEWPORTORGEX
         PEMRSETWINDOWORGEX typedef ptr EMRSETVIEWPORTORGEX
         EMRSETBRUSHORGEX typedef EMRSETVIEWPORTORGEX
         PEMRSETBRUSHORGEX typedef ptr EMRSETVIEWPORTORGEX
-        
         EMRSETVIEWPORTEXTEX struct
           emr EMR <>
           szlExtent SIZEL <>
         EMRSETVIEWPORTEXTEX ends
-
         tagEMRSETVIEWPORTEXTEX typedef EMRSETVIEWPORTEXTEX
         PEMRSETVIEWPORTEXTEX typedef ptr EMRSETVIEWPORTEXTEX
         EMRSETWINDOWEXTEX typedef EMRSETVIEWPORTEXTEX
         PEMRSETWINDOWEXTEX typedef ptr EMRSETVIEWPORTEXTEX
-        
         EMRSCALEVIEWPORTEXTEX struct
           emr EMR <>
           xNum LONG ?
@@ -4691,74 +4488,59 @@ ifndef _WINGDI_
           yNum LONG ?
           yDenom LONG ?
         EMRSCALEVIEWPORTEXTEX ends
-
         tagEMRSCALEVIEWPORTEXTEX typedef EMRSCALEVIEWPORTEXTEX
         PEMRSCALEVIEWPORTEXTEX typedef ptr EMRSCALEVIEWPORTEXTEX
         EMRSCALEWINDOWEXTEX typedef EMRSCALEVIEWPORTEXTEX
         PEMRSCALEWINDOWEXTEX typedef ptr EMRSCALEVIEWPORTEXTEX
-        
         EMRSETWORLDTRANSFORM struct
           emr EMR <>
           xform XFORM <>
         EMRSETWORLDTRANSFORM ends
-
         tagEMRSETWORLDTRANSFORM typedef EMRSETWORLDTRANSFORM
         PEMRSETWORLDTRANSFORM typedef ptr EMRSETWORLDTRANSFORM
-        
         EMRMODIFYWORLDTRANSFORM struct
           emr EMR <>
           xform XFORM <>
           iMode DWORD ?
         EMRMODIFYWORLDTRANSFORM ends
-
         tagEMRMODIFYWORLDTRANSFORM typedef EMRMODIFYWORLDTRANSFORM
         PEMRMODIFYWORLDTRANSFORM typedef ptr EMRMODIFYWORLDTRANSFORM
-        
         EMRSETPIXELV struct
           emr EMR <>
           ptlPixel POINTL <>
           crColor COLORREF ?
         EMRSETPIXELV ends
-
         tagEMRSETPIXELV typedef EMRSETPIXELV
         PEMRSETPIXELV typedef ptr EMRSETPIXELV
-        
         EMREXTFLOODFILL struct
           emr EMR <>
           ptlStart POINTL <>
           crColor COLORREF ?
           iMode DWORD ?
         EMREXTFLOODFILL ends
-
         tagEMREXTFLOODFILL typedef EMREXTFLOODFILL
         PEMREXTFLOODFILL typedef ptr EMREXTFLOODFILL
-        
         EMRELLIPSE struct
           emr EMR <>
           rclBox RECTL <>
         EMRELLIPSE ends
-
         tagEMRELLIPSE typedef EMRELLIPSE
         PEMRELLIPSE typedef ptr EMRELLIPSE
         EMRRECTANGLE typedef EMRELLIPSE
         PEMRRECTANGLE typedef ptr EMRELLIPSE
-        
         EMRROUNDRECT struct
           emr EMR <>
           rclBox RECTL <>
           szlCorner SIZEL <>
         EMRROUNDRECT ends
-
         tagEMRROUNDRECT typedef EMRROUNDRECT
         PEMRROUNDRECT typedef ptr EMRROUNDRECT
-        
         EMRARC struct
           emr EMR <>
           rclBox RECTL <>
           ptlStart POINTL <>
           ptlEnd POINTL <>
         EMRARC ends
-
         tagEMRARC typedef EMRARC
         PEMRARC typedef ptr EMRARC
         EMRARCTO typedef EMRARC
@@ -4767,7 +4549,6 @@ ifndef _WINGDI_
         PEMRCHORD typedef ptr EMRARC
         EMRPIE typedef EMRARC
         PEMRPIE typedef ptr EMRARC
-        
         EMRANGLEARC struct
           emr EMR <>
           ptlCenter POINTL <>
@@ -4775,17 +4556,14 @@ ifndef _WINGDI_
           eStartAngle FLOAT ?
           eSweepAngle FLOAT ?
         EMRANGLEARC ends
-
         tagEMRANGLEARC typedef EMRANGLEARC
         PEMRANGLEARC typedef ptr EMRANGLEARC
-        
         EMRPOLYLINE struct
           emr EMR <>
           rclBounds RECTL <>
           cptl DWORD ?
           aptl POINTL 1 dup (<>)
         EMRPOLYLINE ends
-
         tagEMRPOLYLINE typedef EMRPOLYLINE
         PEMRPOLYLINE typedef ptr EMRPOLYLINE
         EMRPOLYBEZIER typedef EMRPOLYLINE
@@ -4796,14 +4574,12 @@ ifndef _WINGDI_
         PEMRPOLYBEZIERTO typedef ptr EMRPOLYLINE
         EMRPOLYLINETO typedef EMRPOLYLINE
         PEMRPOLYLINETO typedef ptr EMRPOLYLINE
-        
         EMRPOLYLINE16 struct
           emr EMR <>
           rclBounds RECTL <>
           cpts DWORD ?
           apts POINTS 1 dup (<>)
         EMRPOLYLINE16 ends
-
         tagEMRPOLYLINE16 typedef EMRPOLYLINE16
         PEMRPOLYLINE16 typedef ptr EMRPOLYLINE16
         EMRPOLYBEZIER16 typedef EMRPOLYLINE16
@@ -4814,7 +4590,6 @@ ifndef _WINGDI_
         PEMRPOLYBEZIERTO16 typedef ptr EMRPOLYLINE16
         EMRPOLYLINETO16 typedef EMRPOLYLINE16
         PEMRPOLYLINETO16 typedef ptr EMRPOLYLINE16
-        
         EMRPOLYDRAW struct
           emr EMR <>
           rclBounds RECTL <>
@@ -4822,10 +4597,8 @@ ifndef _WINGDI_
           aptl POINTL 1 dup (<>)
           abTypes BYTE 1 dup (?)
         EMRPOLYDRAW ends
-
         tagEMRPOLYDRAW typedef EMRPOLYDRAW
         PEMRPOLYDRAW typedef ptr EMRPOLYDRAW
-        
         EMRPOLYDRAW16 struct
           emr EMR <>
           rclBounds RECTL <>
@@ -4833,10 +4606,8 @@ ifndef _WINGDI_
           apts POINTS 1 dup (<>)
           abTypes BYTE 1 dup (?)
         EMRPOLYDRAW16 ends
-
         tagEMRPOLYDRAW16 typedef EMRPOLYDRAW16
         PEMRPOLYDRAW16 typedef ptr EMRPOLYDRAW16
-        
         EMRPOLYPOLYLINE struct
           emr EMR <>
           rclBounds RECTL <>
@@ -4845,12 +4616,10 @@ ifndef _WINGDI_
           aPolyCounts DWORD 1 dup (?)
           aptl POINTL 1 dup (<>)
         EMRPOLYPOLYLINE ends
-
         tagEMRPOLYPOLYLINE typedef EMRPOLYPOLYLINE
         PEMRPOLYPOLYLINE typedef ptr EMRPOLYPOLYLINE
         EMRPOLYPOLYGON typedef EMRPOLYPOLYLINE
         PEMRPOLYPOLYGON typedef ptr EMRPOLYPOLYLINE
-        
         EMRPOLYPOLYLINE16 struct
           emr EMR <>
           rclBounds RECTL <>
@@ -4859,24 +4628,20 @@ ifndef _WINGDI_
           aPolyCounts DWORD 1 dup (?)
           apts POINTS 1 dup (<>)
         EMRPOLYPOLYLINE16 ends
-
         tagEMRPOLYPOLYLINE16 typedef EMRPOLYPOLYLINE16
         PEMRPOLYPOLYLINE16 typedef ptr EMRPOLYPOLYLINE16
         EMRPOLYPOLYGON16 typedef EMRPOLYPOLYLINE16
         PEMRPOLYPOLYGON16 typedef ptr EMRPOLYPOLYLINE16
-        
         EMRINVERTRGN struct
           emr EMR <>
           rclBounds RECTL <>
           cbRgnData DWORD ?
           RgnData BYTE 1 dup (?)
         EMRINVERTRGN ends
-
         tagEMRINVERTRGN typedef EMRINVERTRGN
         PEMRINVERTRGN typedef ptr EMRINVERTRGN
         EMRPAINTRGN typedef EMRINVERTRGN
         PEMRPAINTRGN typedef ptr EMRINVERTRGN
-        
         EMRFILLRGN struct
           emr EMR <>
           rclBounds RECTL <>
@@ -4884,10 +4649,8 @@ ifndef _WINGDI_
           ihBrush DWORD ?
           RgnData BYTE 1 dup (?)
         EMRFILLRGN ends
-
         tagEMRFILLRGN typedef EMRFILLRGN
         PEMRFILLRGN typedef ptr EMRFILLRGN
-        
         EMRFRAMERGN struct
           emr EMR <>
           rclBounds RECTL <>
@@ -4896,20 +4659,16 @@ ifndef _WINGDI_
           szlStroke SIZEL <>
           RgnData BYTE 1 dup (?)
         EMRFRAMERGN ends
-
         tagEMRFRAMERGN typedef EMRFRAMERGN
         PEMRFRAMERGN typedef ptr EMRFRAMERGN
-        
         EMREXTSELECTCLIPRGN struct
           emr EMR <>
           cbRgnData DWORD ?
           iMode DWORD ?
           RgnData BYTE 1 dup (?)
         EMREXTSELECTCLIPRGN ends
-
         tagEMREXTSELECTCLIPRGN typedef EMREXTSELECTCLIPRGN
         PEMREXTSELECTCLIPRGN typedef ptr EMREXTSELECTCLIPRGN
-        
         EMREXTTEXTOUTA struct
           emr EMR <>
           rclBounds RECTL <>
@@ -4918,12 +4677,10 @@ ifndef _WINGDI_
           eyScale FLOAT ?
           emrtext EMRTEXT <>
         EMREXTTEXTOUTA ends
-
         tagEMREXTTEXTOUTA typedef EMREXTTEXTOUTA
         PEMREXTTEXTOUTA typedef ptr EMREXTTEXTOUTA
         EMREXTTEXTOUTW typedef EMREXTTEXTOUTA
         PEMREXTTEXTOUTW typedef ptr EMREXTTEXTOUTA
-        
         EMRPOLYTEXTOUTA struct
           emr EMR <>
           rclBounds RECTL <>
@@ -4933,12 +4690,10 @@ ifndef _WINGDI_
           cStrings LONG ?
           aemrtext EMRTEXT 1 dup (<>)
         EMRPOLYTEXTOUTA ends
-
         tagEMRPOLYTEXTOUTA typedef EMRPOLYTEXTOUTA
         PEMRPOLYTEXTOUTA typedef ptr EMRPOLYTEXTOUTA
         EMRPOLYTEXTOUTW typedef EMRPOLYTEXTOUTA
         PEMRPOLYTEXTOUTW typedef ptr EMRPOLYTEXTOUTA
-        
         EMRBITBLT struct
           emr EMR <>
           rclBounds RECTL <>
@@ -4957,10 +4712,8 @@ ifndef _WINGDI_
           offBitsSrc DWORD ?
           cbBitsSrc DWORD ?
         EMRBITBLT ends
-
         tagEMRBITBLT typedef EMRBITBLT
         PEMRBITBLT typedef ptr EMRBITBLT
-        
         EMRSTRETCHBLT struct
           emr EMR <>
           rclBounds RECTL <>
@@ -4981,10 +4734,8 @@ ifndef _WINGDI_
           cxSrc LONG ?
           cySrc LONG ?
         EMRSTRETCHBLT ends
-
         tagEMRSTRETCHBLT typedef EMRSTRETCHBLT
         PEMRSTRETCHBLT typedef ptr EMRSTRETCHBLT
-        
         EMRMASKBLT struct
           emr EMR <>
           rclBounds RECTL <>
@@ -5010,10 +4761,8 @@ ifndef _WINGDI_
           offBitsMask DWORD ?
           cbBitsMask DWORD ?
         EMRMASKBLT ends
-
         tagEMRMASKBLT typedef EMRMASKBLT
         PEMRMASKBLT typedef ptr EMRMASKBLT
-        
         EMRPLGBLT struct
           emr EMR <>
           rclBounds RECTL <>
@@ -5037,10 +4786,8 @@ ifndef _WINGDI_
           offBitsMask DWORD ?
           cbBitsMask DWORD ?
         EMRPLGBLT ends
-
         tagEMRPLGBLT typedef EMRPLGBLT
         PEMRPLGBLT typedef ptr EMRPLGBLT
-        
         EMRSETDIBITSTODEVICE struct
           emr EMR <>
           rclBounds RECTL <>
@@ -5058,10 +4805,8 @@ ifndef _WINGDI_
           iStartScan DWORD ?
           cScans DWORD ?
         EMRSETDIBITSTODEVICE ends
-
         tagEMRSETDIBITSTODEVICE typedef EMRSETDIBITSTODEVICE
         PEMRSETDIBITSTODEVICE typedef ptr EMRSETDIBITSTODEVICE
-        
         EMRSTRETCHDIBITS struct
           emr EMR <>
           rclBounds RECTL <>
@@ -5080,37 +4825,29 @@ ifndef _WINGDI_
           cxDest LONG ?
           cyDest LONG ?
         EMRSTRETCHDIBITS ends
-
         tagEMRSTRETCHDIBITS typedef EMRSTRETCHDIBITS
         PEMRSTRETCHDIBITS typedef ptr EMRSTRETCHDIBITS
-        
         EMREXTCREATEFONTINDIRECTW struct
           emr EMR <>
           ihFont DWORD ?
           elfw EXTLOGFONTW <>
         EMREXTCREATEFONTINDIRECTW ends
-
         tagEMREXTCREATEFONTINDIRECTW typedef EMREXTCREATEFONTINDIRECTW
         PEMREXTCREATEFONTINDIRECTW typedef ptr EMREXTCREATEFONTINDIRECTW
-        
         EMRCREATEPALETTE struct
           emr EMR <>
           ihPal DWORD ?
           lgpl LOGPALETTE <>
         EMRCREATEPALETTE ends
-
         tagEMRCREATEPALETTE typedef EMRCREATEPALETTE
         PEMRCREATEPALETTE typedef ptr EMRCREATEPALETTE
-        
         EMRCREATEPEN struct
           emr EMR <>
           ihPen DWORD ?
           lopn LOGPEN <>
         EMRCREATEPEN ends
-
         tagEMRCREATEPEN typedef EMRCREATEPEN
         PEMRCREATEPEN typedef ptr EMRCREATEPEN
-        
         EMREXTCREATEPEN struct
           emr EMR <>
           ihPen DWORD ?
@@ -5120,19 +4857,15 @@ ifndef _WINGDI_
           cbBits DWORD ?
           elp EXTLOGPEN32 <>
         EMREXTCREATEPEN ends
-
         tagEMREXTCREATEPEN typedef EMREXTCREATEPEN
         PEMREXTCREATEPEN typedef ptr EMREXTCREATEPEN
-        
         EMRCREATEBRUSHINDIRECT struct
           emr EMR <>
           ihBrush DWORD ?
           lb LOGBRUSH32 <>
         EMRCREATEBRUSHINDIRECT ends
-
         tagEMRCREATEBRUSHINDIRECT typedef EMRCREATEBRUSHINDIRECT
         PEMRCREATEBRUSHINDIRECT typedef ptr EMRCREATEBRUSHINDIRECT
-        
         EMRCREATEMONOBRUSH struct
           emr EMR <>
           ihBrush DWORD ?
@@ -5142,10 +4875,8 @@ ifndef _WINGDI_
           offBits DWORD ?
           cbBits DWORD ?
         EMRCREATEMONOBRUSH ends
-
         tagEMRCREATEMONOBRUSH typedef EMRCREATEMONOBRUSH
         PEMRCREATEMONOBRUSH typedef ptr EMRCREATEMONOBRUSH
-        
         EMRCREATEDIBPATTERNBRUSHPT struct
           emr EMR <>
           ihBrush DWORD ?
@@ -5155,69 +4886,55 @@ ifndef _WINGDI_
           offBits DWORD ?
           cbBits DWORD ?
         EMRCREATEDIBPATTERNBRUSHPT ends
-
         tagEMRCREATEDIBPATTERNBRUSHPT typedef EMRCREATEDIBPATTERNBRUSHPT
         PEMRCREATEDIBPATTERNBRUSHPT typedef ptr EMRCREATEDIBPATTERNBRUSHPT
-        
         EMRFORMAT struct
           dSignature DWORD ?
           nVersion DWORD ?
           cbData DWORD ?
           offData DWORD ?
         EMRFORMAT ends
-
         tagEMRFORMAT typedef EMRFORMAT
         PEMRFORMAT typedef ptr EMRFORMAT
-        
         if (WINVER ge 0400h)
           EMRGLSRECORD struct
             emr EMR <>
             cbData DWORD ?
             Data BYTE 1 dup (?)
           EMRGLSRECORD ends
-
           tagEMRGLSRECORD typedef EMRGLSRECORD
           PEMRGLSRECORD typedef ptr EMRGLSRECORD
-          
           EMRGLSBOUNDEDRECORD struct
             emr EMR <>
             rclBounds RECTL <>
             cbData DWORD ?
             Data BYTE 1 dup (?)
           EMRGLSBOUNDEDRECORD ends
-
           tagEMRGLSBOUNDEDRECORD typedef EMRGLSBOUNDEDRECORD
           PEMRGLSBOUNDEDRECORD typedef ptr EMRGLSBOUNDEDRECORD
-          
           EMRPIXELFORMAT struct
             emr EMR <>
             pfd PIXELFORMATDESCRIPTOR <>
           EMRPIXELFORMAT ends
-
           tagEMRPIXELFORMAT typedef EMRPIXELFORMAT
           PEMRPIXELFORMAT typedef ptr EMRPIXELFORMAT
-          
           EMRCREATECOLORSPACE struct
             emr EMR <>
             ihCS DWORD ?
             lcs LOGCOLORSPACEA <>
           EMRCREATECOLORSPACE ends
-
           tagEMRCREATECOLORSPACE typedef EMRCREATECOLORSPACE
           PEMRCREATECOLORSPACE typedef ptr EMRCREATECOLORSPACE
-          
           EMRSETCOLORSPACE struct
             emr EMR <>
             ihCS DWORD ?
           EMRSETCOLORSPACE ends
-
           tagEMRSETCOLORSPACE typedef EMRSETCOLORSPACE
           PEMRSETCOLORSPACE typedef ptr EMRSETCOLORSPACE
           EMRSELECTCOLORSPACE typedef EMRSETCOLORSPACE
           PEMRSELECTCOLORSPACE typedef ptr EMRSETCOLORSPACE
           EMRDELETECOLORSPACE typedef EMRSETCOLORSPACE
           PEMRDELETECOLORSPACE typedef ptr EMRSETCOLORSPACE
-          
         endif
         if (WINVER ge 0500h)
           EMREXTESCAPE struct
@@ -5226,12 +4943,10 @@ ifndef _WINGDI_
             cbEscData INT_ ?
             EscData BYTE 1 dup (?)
           EMREXTESCAPE ends
-
           tagEMREXTESCAPE typedef EMREXTESCAPE
           PEMREXTESCAPE typedef ptr EMREXTESCAPE
           EMRDRAWESCAPE typedef EMREXTESCAPE
           PEMRDRAWESCAPE typedef ptr EMREXTESCAPE
-          
           EMRNAMEDESCAPE struct
             emr EMR <>
             iEscape INT_ ?
@@ -5239,10 +4954,8 @@ ifndef _WINGDI_
             cbEscData INT_ ?
             EscData BYTE 1 dup (?)
           EMRNAMEDESCAPE ends
-
           tagEMRNAMEDESCAPE typedef EMRNAMEDESCAPE
           PEMRNAMEDESCAPE typedef ptr EMRNAMEDESCAPE
-          
           SETICMPROFILE_EMBEDED equ 00000001h
           EMRSETICMPROFILE struct
             emr EMR <>
@@ -5251,14 +4964,12 @@ ifndef _WINGDI_
             cbData DWORD ?
             Data BYTE 1 dup (?)
           EMRSETICMPROFILE ends
-
           tagEMRSETICMPROFILE typedef EMRSETICMPROFILE
           PEMRSETICMPROFILE typedef ptr EMRSETICMPROFILE
           EMRSETICMPROFILEA typedef EMRSETICMPROFILE
           PEMRSETICMPROFILEA typedef ptr EMRSETICMPROFILE
           EMRSETICMPROFILEW typedef EMRSETICMPROFILE
           PEMRSETICMPROFILEW typedef ptr EMRSETICMPROFILE
-          
           CREATECOLORSPACE_EMBEDED equ 00000001h
           EMRCREATECOLORSPACEW struct
             emr EMR <>
@@ -5268,10 +4979,8 @@ ifndef _WINGDI_
             cbData DWORD ?
             Data BYTE 1 dup (?)
           EMRCREATECOLORSPACEW ends
-
           tagEMRCREATECOLORSPACEW typedef EMRCREATECOLORSPACEW
           PEMRCREATECOLORSPACEW typedef ptr EMRCREATECOLORSPACEW
-          
           COLORMATCHTOTARGET_EMBEDED equ 00000001h
           EMRCOLORMATCHTOTARGET struct
             emr EMR <>
@@ -5281,10 +4990,8 @@ ifndef _WINGDI_
             cbData DWORD ?
             Data BYTE 1 dup (?)
           EMRCOLORMATCHTOTARGET ends
-
           tagCOLORMATCHTOTARGET typedef EMRCOLORMATCHTOTARGET
           PEMRCOLORMATCHTOTARGET typedef ptr EMRCOLORMATCHTOTARGET
-          
           EMRCOLORCORRECTPALETTE struct
             emr EMR <>
             ihPalette DWORD ?
@@ -5292,10 +4999,8 @@ ifndef _WINGDI_
             nPalEntries DWORD ?
             nReserved DWORD ?
           EMRCOLORCORRECTPALETTE ends
-
           tagCOLORCORRECTPALETTE typedef EMRCOLORCORRECTPALETTE
           PEMRCOLORCORRECTPALETTE typedef ptr EMRCOLORCORRECTPALETTE
-          
           EMRALPHABLEND struct
             emr EMR <>
             rclBounds RECTL <>
@@ -5316,10 +5021,8 @@ ifndef _WINGDI_
             cxSrc LONG ?
             cySrc LONG ?
           EMRALPHABLEND ends
-
           tagEMRALPHABLEND typedef EMRALPHABLEND
           PEMRALPHABLEND typedef ptr EMRALPHABLEND
-          
           EMRGRADIENTFILL struct
             emr EMR <>
             rclBounds RECTL <>
@@ -5328,10 +5031,8 @@ ifndef _WINGDI_
             ulMode ULONG ?
             Ver TRIVERTEX 1 dup (<>)
           EMRGRADIENTFILL ends
-
           tagEMRGRADIENTFILL typedef EMRGRADIENTFILL
           PEMRGRADIENTFILL typedef ptr EMRGRADIENTFILL
-          
           EMRTRANSPARENTBLT struct
             emr EMR <>
             rclBounds RECTL <>
@@ -5352,10 +5053,8 @@ ifndef _WINGDI_
             cxSrc LONG ?
             cySrc LONG ?
           EMRTRANSPARENTBLT ends
-
           tagEMRTRANSPARENTBLT typedef EMRTRANSPARENTBLT
           PEMRTRANSPARENTBLT typedef ptr EMRTRANSPARENTBLT
-          
         endif
         GDICOMMENT_IDENTIFIER equ 43494447h
         GDICOMMENT_WINDOWS_METAFILE equ 80000001h
@@ -5387,10 +5086,8 @@ ifndef _WINGDI_
         x FLOAT ?
         y FLOAT ?
       POINTFLOAT ends
-
       _POINTFLOAT typedef POINTFLOAT
       PPOINTFLOAT typedef ptr POINTFLOAT
-      
       GLYPHMETRICSFLOAT struct
         gmfBlackBoxX FLOAT ?
         gmfBlackBoxY FLOAT ?
@@ -5398,11 +5095,9 @@ ifndef _WINGDI_
         gmfCellIncX FLOAT ?
         gmfCellIncY FLOAT ?
       GLYPHMETRICSFLOAT ends
-
       _GLYPHMETRICSFLOAT typedef GLYPHMETRICSFLOAT
       PGLYPHMETRICSFLOAT typedef ptr GLYPHMETRICSFLOAT
       LPGLYPHMETRICSFLOAT typedef ptr GLYPHMETRICSFLOAT
-      
       WGL_FONT_LINES equ 0
       WGL_FONT_POLYGONS equ 1
       @DefProto DllImport, wglUseFontOutlinesA, WIN_STD_CALL_CONV,, <:HDC, :DWORD, :DWORD, :DWORD, :FLOAT, :FLOAT, :SDWORD, :LPGLYPHMETRICSFLOAT>, 32
@@ -5438,11 +5133,9 @@ ifndef _WINGDI_
         bReserved BYTE ?
         crTransparent COLORREF ?
       LAYERPLANEDESCRIPTOR ends
-
       tagLAYERPLANEDESCRIPTOR typedef LAYERPLANEDESCRIPTOR
       PLAYERPLANEDESCRIPTOR typedef ptr LAYERPLANEDESCRIPTOR
       LPLAYERPLANEDESCRIPTOR typedef ptr LAYERPLANEDESCRIPTOR
-      
       LPD_DOUBLEBUFFER equ 00000001h
       LPD_STEREO equ 00000002h
       LPD_SUPPORT_GDI equ 00000010h
@@ -5496,11 +5189,9 @@ ifndef _WINGDI_
           hdc HDC ?
           uiFlags UINT ?
         WGLSWAP ends
-
         _WGLSWAP typedef WGLSWAP
         PWGLSWAP typedef ptr WGLSWAP
         LPWGLSWAP typedef ptr WGLSWAP
-        
         WGL_SWAPMULTIPLE_MAX equ 16
         @DefProto DllImport, wglSwapMultipleBuffers, WIN_STD_CALL_CONV,, <:UINT, :ptr WGLSWAP>, 8
       endif
@@ -5514,4 +5205,3 @@ ifndef _WINGDI_
   if _MSC_VER ge 1200
   endif
 endif
-

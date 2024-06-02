@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version C.01.00, 20/07/2019 16:29
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: 'D:\ObjAsm\Projects\32\h2IncX\Header_10.0.17763.0\ActivScp.h', last modified: 22/10/2018 21:37
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\activscp.h
+;             Created on (UTC) 06/04/2024 06:15:51
+;             Last modified on (UTC) 21/02/2024 18:15:50
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
   __REQUIRED_RPCNDR_H_VERSION__ equ 500
@@ -22,135 +23,94 @@ ifndef __activscp_h__
   __activscp_h__ equ <>
   if Defined(_MSC_VER) and (_MSC_VER ge 1020)
   endif
+  ifndef DECLSPEC_XFGVIRT
+    if Defined(_CONTROL_FLOW_GUARD_XFG)
+      DECLSPEC_XFGVIRT macro base, func
+        exitm <__declspec(xfg_virtual (base, func))>
+      endm
+    else
+      DECLSPEC_XFGVIRT macro base, func
+        exitm <>
+      endm
+    endif
+  endif
   ifndef __IActiveScriptSite_FWD_DEFINED__
     __IActiveScriptSite_FWD_DEFINED__ equ <>
-    ;IActiveScriptSite typedef IActiveScriptSite
-    
   endif
   ifndef __IActiveScriptError_FWD_DEFINED__
     __IActiveScriptError_FWD_DEFINED__ equ <>
-    ;IActiveScriptError typedef IActiveScriptError
-    
   endif
   ifndef __IActiveScriptError64_FWD_DEFINED__
     __IActiveScriptError64_FWD_DEFINED__ equ <>
-    ;IActiveScriptError64 typedef IActiveScriptError64
-    
   endif
   ifndef __IActiveScriptSiteWindow_FWD_DEFINED__
     __IActiveScriptSiteWindow_FWD_DEFINED__ equ <>
-    ;IActiveScriptSiteWindow typedef IActiveScriptSiteWindow
-    
   endif
   ifndef __IActiveScriptSiteUIControl_FWD_DEFINED__
     __IActiveScriptSiteUIControl_FWD_DEFINED__ equ <>
-    ;IActiveScriptSiteUIControl typedef IActiveScriptSiteUIControl
-    
   endif
   ifndef __IActiveScriptSiteInterruptPoll_FWD_DEFINED__
     __IActiveScriptSiteInterruptPoll_FWD_DEFINED__ equ <>
-    ;IActiveScriptSiteInterruptPoll typedef IActiveScriptSiteInterruptPoll
-    
   endif
   ifndef __IActiveScript_FWD_DEFINED__
     __IActiveScript_FWD_DEFINED__ equ <>
-    ;IActiveScript typedef IActiveScript
-    
   endif
   ifndef __IActiveScriptParse32_FWD_DEFINED__
     __IActiveScriptParse32_FWD_DEFINED__ equ <>
-    ;IActiveScriptParse32 typedef IActiveScriptParse32
-    
   endif
   ifndef __IActiveScriptParse64_FWD_DEFINED__
     __IActiveScriptParse64_FWD_DEFINED__ equ <>
-    ;IActiveScriptParse64 typedef IActiveScriptParse64
-    
   endif
   ifndef __IActiveScriptParseProcedureOld32_FWD_DEFINED__
     __IActiveScriptParseProcedureOld32_FWD_DEFINED__ equ <>
-    ;IActiveScriptParseProcedureOld32 typedef IActiveScriptParseProcedureOld32
-    
   endif
   ifndef __IActiveScriptParseProcedureOld64_FWD_DEFINED__
     __IActiveScriptParseProcedureOld64_FWD_DEFINED__ equ <>
-    ;IActiveScriptParseProcedureOld64 typedef IActiveScriptParseProcedureOld64
-    
   endif
   ifndef __IActiveScriptParseProcedure32_FWD_DEFINED__
     __IActiveScriptParseProcedure32_FWD_DEFINED__ equ <>
-    ;IActiveScriptParseProcedure32 typedef IActiveScriptParseProcedure32
-    
   endif
   ifndef __IActiveScriptParseProcedure64_FWD_DEFINED__
     __IActiveScriptParseProcedure64_FWD_DEFINED__ equ <>
-    ;IActiveScriptParseProcedure64 typedef IActiveScriptParseProcedure64
-    
   endif
   ifndef __IActiveScriptParseProcedure2_32_FWD_DEFINED__
     __IActiveScriptParseProcedure2_32_FWD_DEFINED__ equ <>
-    ;IActiveScriptParseProcedure2_32 typedef IActiveScriptParseProcedure2_32
-    
   endif
   ifndef __IActiveScriptParseProcedure2_64_FWD_DEFINED__
     __IActiveScriptParseProcedure2_64_FWD_DEFINED__ equ <>
-    ;IActiveScriptParseProcedure2_64 typedef IActiveScriptParseProcedure2_64
-    
   endif
   ifndef __IActiveScriptEncode_FWD_DEFINED__
     __IActiveScriptEncode_FWD_DEFINED__ equ <>
-    ;IActiveScriptEncode typedef IActiveScriptEncode
-    
   endif
   ifndef __IActiveScriptHostEncode_FWD_DEFINED__
     __IActiveScriptHostEncode_FWD_DEFINED__ equ <>
-    ;IActiveScriptHostEncode typedef IActiveScriptHostEncode
-    
   endif
   ifndef __IBindEventHandler_FWD_DEFINED__
     __IBindEventHandler_FWD_DEFINED__ equ <>
-    ;IBindEventHandler typedef IBindEventHandler
-    
   endif
   ifndef __IActiveScriptStats_FWD_DEFINED__
     __IActiveScriptStats_FWD_DEFINED__ equ <>
-    ;IActiveScriptStats typedef IActiveScriptStats
-    
   endif
   ifndef __IActiveScriptProperty_FWD_DEFINED__
     __IActiveScriptProperty_FWD_DEFINED__ equ <>
-    ;IActiveScriptProperty typedef IActiveScriptProperty
-    
   endif
   ifndef __ITridentEventSink_FWD_DEFINED__
     __ITridentEventSink_FWD_DEFINED__ equ <>
-    ;ITridentEventSink typedef ITridentEventSink
-    
   endif
   ifndef __IActiveScriptGarbageCollector_FWD_DEFINED__
     __IActiveScriptGarbageCollector_FWD_DEFINED__ equ <>
-    ;IActiveScriptGarbageCollector typedef IActiveScriptGarbageCollector
-    
   endif
   ifndef __IActiveScriptSIPInfo_FWD_DEFINED__
     __IActiveScriptSIPInfo_FWD_DEFINED__ equ <>
-    ;IActiveScriptSIPInfo typedef IActiveScriptSIPInfo
-    
   endif
   ifndef __IActiveScriptSiteTraceInfo_FWD_DEFINED__
     __IActiveScriptSiteTraceInfo_FWD_DEFINED__ equ <>
-    ;IActiveScriptSiteTraceInfo typedef IActiveScriptSiteTraceInfo
-    
   endif
   ifndef __IActiveScriptTraceInfo_FWD_DEFINED__
     __IActiveScriptTraceInfo_FWD_DEFINED__ equ <>
-    ;IActiveScriptTraceInfo typedef IActiveScriptTraceInfo
-    
   endif
   ifndef __IActiveScriptStringCompare_FWD_DEFINED__
     __IActiveScriptStringCompare_FWD_DEFINED__ equ <>
-    ;IActiveScriptStringCompare typedef IActiveScriptStringCompare
-    
   endif
   include ocidl.inc
   ifdef __cplusplus
@@ -259,7 +219,7 @@ ifndef __activscp_h__
       SCRIPTLANGUAGEVERSION_5_8 equ 2
       SCRIPTLANGUAGEVERSION_MAX equ 255
       tagSCRIPTLANGUAGEVERSION typedef SCRIPTLANGUAGEVERSION
-      
+
       SCRIPTSTATE typedef SDWORD
       SCRIPTSTATE_UNINITIALIZED equ 0
       SCRIPTSTATE_INITIALIZED equ 5
@@ -268,7 +228,7 @@ ifndef __activscp_h__
       SCRIPTSTATE_DISCONNECTED equ 3
       SCRIPTSTATE_CLOSED equ 4
       tagSCRIPTSTATE typedef SCRIPTSTATE
-      
+
       SCRIPTTRACEINFO typedef SDWORD
       SCRIPTTRACEINFO_SCRIPTSTART equ 0
       SCRIPTTRACEINFO_SCRIPTEND equ 1
@@ -279,28 +239,28 @@ ifndef __activscp_h__
       SCRIPTTRACEINFO_GETOBJSTART equ 6
       SCRIPTTRACEINFO_GETOBJEND equ 7
       tagSCRIPTTRACEINFO typedef SCRIPTTRACEINFO
-      
+
       SCRIPTTHREADSTATE typedef SDWORD
       SCRIPTTHREADSTATE_NOTINSCRIPT equ 0
       SCRIPTTHREADSTATE_RUNNING equ 1
       tagSCRIPTTHREADSTATE typedef SCRIPTTHREADSTATE
-      
+
       SCRIPTGCTYPE typedef SDWORD
       SCRIPTGCTYPE_NORMAL equ 0
       SCRIPTGCTYPE_EXHAUSTIVE equ 1
       tagSCRIPTGCTYPE typedef SCRIPTGCTYPE
-      
+
       SCRIPTUICITEM typedef SDWORD
       SCRIPTUICITEM_INPUTBOX equ 1
       SCRIPTUICITEM_MSGBOX equ 2
       tagSCRIPTUICITEM typedef SCRIPTUICITEM
-      
+
       SCRIPTUICHANDLING typedef SDWORD
       SCRIPTUICHANDLING_ALLOW equ 0
       SCRIPTUICHANDLING_NOUIERROR equ 1
       SCRIPTUICHANDLING_NOUIDEFAULT equ 2
       tagSCRIPTUICHANDLING typedef SCRIPTUICHANDLING
-      
+
       SCRIPTTHREADID typedef DWORD
       SCRIPTTHREADID_CURRENT equ ((SCRIPTTHREADID) - 1)
       SCRIPTTHREADID_BASE equ ((SCRIPTTHREADID) - 2)
@@ -316,25 +276,34 @@ ifndef __activscp_h__
           IActiveScriptSiteVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptSiteVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptSite, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptSite
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptSite
+            DECLSPEC_XFGVIRT(IActiveScriptSite, GetLCID)
             STD_METHOD GetLCID, :ptr IActiveScriptSite, :ptr LCID
+            DECLSPEC_XFGVIRT(IActiveScriptSite, GetItemInfo)
             STD_METHOD GetItemInfo, :ptr IActiveScriptSite, :LPCOLESTR, :DWORD, :ptr ptr IUnknown, :ptr ptr ITypeInfo
+            DECLSPEC_XFGVIRT(IActiveScriptSite, GetDocVersionString)
             STD_METHOD GetDocVersionString, :ptr IActiveScriptSite, :ptr BSTR
+            DECLSPEC_XFGVIRT(IActiveScriptSite, OnScriptTerminate)
             STD_METHOD OnScriptTerminate, :ptr IActiveScriptSite, :ptr VARIANT, :ptr EXCEPINFO
+            DECLSPEC_XFGVIRT(IActiveScriptSite, OnStateChange)
             STD_METHOD OnStateChange, :ptr IActiveScriptSite, :SCRIPTSTATE
+            DECLSPEC_XFGVIRT(IActiveScriptSite, OnScriptError)
             STD_METHOD OnScriptError, :ptr IActiveScriptSite, :ptr IActiveScriptError
+            DECLSPEC_XFGVIRT(IActiveScriptSite, OnEnterScript)
             STD_METHOD OnEnterScript, :ptr IActiveScriptSite
+            DECLSPEC_XFGVIRT(IActiveScriptSite, OnLeaveScript)
             STD_METHOD OnLeaveScript, :ptr IActiveScriptSite
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptSiteVtbl ends
-
           IActiveScriptSite struct
             lpVtbl POINTER ?
           IActiveScriptSite ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -349,20 +318,24 @@ ifndef __activscp_h__
           IActiveScriptErrorVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptErrorVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptError, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptError
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptError
+            DECLSPEC_XFGVIRT(IActiveScriptError, GetExceptionInfo)
             STD_METHOD GetExceptionInfo, :ptr IActiveScriptError, :ptr EXCEPINFO
+            DECLSPEC_XFGVIRT(IActiveScriptError, GetSourcePosition)
             STD_METHOD GetSourcePosition, :ptr IActiveScriptError, :ptr DWORD, :ptr ULONG, :ptr LONG
+            DECLSPEC_XFGVIRT(IActiveScriptError, GetSourceLineText)
             STD_METHOD GetSourceLineText, :ptr IActiveScriptError, :ptr BSTR
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptErrorVtbl ends
-
           IActiveScriptError struct
             lpVtbl POINTER ?
           IActiveScriptError ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -379,21 +352,26 @@ ifndef __activscp_h__
           IActiveScriptError64Vtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptError64Vtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptError64, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptError64
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptError64
+            DECLSPEC_XFGVIRT(IActiveScriptError, GetExceptionInfo)
             STD_METHOD GetExceptionInfo, :ptr IActiveScriptError64, :ptr EXCEPINFO
+            DECLSPEC_XFGVIRT(IActiveScriptError, GetSourcePosition)
             STD_METHOD GetSourcePosition, :ptr IActiveScriptError64, :ptr DWORD, :ptr ULONG, :ptr LONG
+            DECLSPEC_XFGVIRT(IActiveScriptError, GetSourceLineText)
             STD_METHOD GetSourceLineText, :ptr IActiveScriptError64, :ptr BSTR
+            DECLSPEC_XFGVIRT(IActiveScriptError64, GetSourcePosition64)
             STD_METHOD GetSourcePosition64, :ptr IActiveScriptError64, :ptr DWORDLONG, :ptr ULONG, :ptr LONG
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptError64Vtbl ends
-
           IActiveScriptError64 struct
             lpVtbl POINTER ?
           IActiveScriptError64 ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -408,19 +386,22 @@ ifndef __activscp_h__
           IActiveScriptSiteWindowVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptSiteWindowVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptSiteWindow, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptSiteWindow
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptSiteWindow
+            DECLSPEC_XFGVIRT(IActiveScriptSiteWindow, GetWindow)
             STD_METHOD GetWindow, :ptr IActiveScriptSiteWindow, :ptr HWND
+            DECLSPEC_XFGVIRT(IActiveScriptSiteWindow, EnableModeless)
             STD_METHOD EnableModeless, :ptr IActiveScriptSiteWindow, :BOOL
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptSiteWindowVtbl ends
-
           IActiveScriptSiteWindow struct
             lpVtbl POINTER ?
           IActiveScriptSiteWindow ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -435,18 +416,20 @@ ifndef __activscp_h__
           IActiveScriptSiteUIControlVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptSiteUIControlVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptSiteUIControl, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptSiteUIControl
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptSiteUIControl
+            DECLSPEC_XFGVIRT(IActiveScriptSiteUIControl, GetUIBehavior)
             STD_METHOD GetUIBehavior, :ptr IActiveScriptSiteUIControl, :SCRIPTUICITEM, :ptr SCRIPTUICHANDLING
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptSiteUIControlVtbl ends
-
           IActiveScriptSiteUIControl struct
             lpVtbl POINTER ?
           IActiveScriptSiteUIControl ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -461,18 +444,20 @@ ifndef __activscp_h__
           IActiveScriptSiteInterruptPollVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptSiteInterruptPollVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptSiteInterruptPoll, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptSiteInterruptPoll
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptSiteInterruptPoll
+            DECLSPEC_XFGVIRT(IActiveScriptSiteInterruptPoll, QueryContinue)
             STD_METHOD QueryContinue, :ptr IActiveScriptSiteInterruptPoll
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptSiteInterruptPollVtbl ends
-
           IActiveScriptSiteInterruptPoll struct
             lpVtbl POINTER ?
           IActiveScriptSiteInterruptPoll ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -487,30 +472,44 @@ ifndef __activscp_h__
           IActiveScriptVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScript, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScript
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScript
+            DECLSPEC_XFGVIRT(IActiveScript, SetScriptSite)
             STD_METHOD SetScriptSite, :ptr IActiveScript, :ptr IActiveScriptSite
+            DECLSPEC_XFGVIRT(IActiveScript, GetScriptSite)
             STD_METHOD GetScriptSite, :ptr IActiveScript, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IActiveScript, SetScriptState)
             STD_METHOD SetScriptState, :ptr IActiveScript, :SCRIPTSTATE
+            DECLSPEC_XFGVIRT(IActiveScript, GetScriptState)
             STD_METHOD GetScriptState, :ptr IActiveScript, :ptr SCRIPTSTATE
+            DECLSPEC_XFGVIRT(IActiveScript, Close)
             STD_METHOD Close, :ptr IActiveScript
+            DECLSPEC_XFGVIRT(IActiveScript, AddNamedItem)
             STD_METHOD AddNamedItem, :ptr IActiveScript, :LPCOLESTR, :DWORD
+            DECLSPEC_XFGVIRT(IActiveScript, AddTypeLib)
             STD_METHOD AddTypeLib, :ptr IActiveScript, :REFGUID, :DWORD, :DWORD, :DWORD
+            DECLSPEC_XFGVIRT(IActiveScript, GetScriptDispatch)
             STD_METHOD GetScriptDispatch, :ptr IActiveScript, :LPCOLESTR, :ptr ptr IDispatch
+            DECLSPEC_XFGVIRT(IActiveScript, GetCurrentScriptThreadID)
             STD_METHOD GetCurrentScriptThreadID, :ptr IActiveScript, :ptr SCRIPTTHREADID
+            DECLSPEC_XFGVIRT(IActiveScript, GetScriptThreadID)
             STD_METHOD GetScriptThreadID, :ptr IActiveScript, :DWORD, :ptr SCRIPTTHREADID
+            DECLSPEC_XFGVIRT(IActiveScript, GetScriptThreadState)
             STD_METHOD GetScriptThreadState, :ptr IActiveScript, :SCRIPTTHREADID, :ptr SCRIPTTHREADSTATE
+            DECLSPEC_XFGVIRT(IActiveScript, InterruptScriptThread)
             STD_METHOD InterruptScriptThread, :ptr IActiveScript, :SCRIPTTHREADID, :ptr EXCEPINFO, :DWORD
+            DECLSPEC_XFGVIRT(IActiveScript, Clone)
             STD_METHOD Clone, :ptr IActiveScript, :ptr ptr IActiveScript
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptVtbl ends
-
           IActiveScript struct
             lpVtbl POINTER ?
           IActiveScript ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -525,20 +524,24 @@ ifndef __activscp_h__
           IActiveScriptParse32Vtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptParse32Vtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptParse32, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptParse32
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptParse32
+            DECLSPEC_XFGVIRT(IActiveScriptParse32, InitNew)
             STD_METHOD InitNew, :ptr IActiveScriptParse32
+            DECLSPEC_XFGVIRT(IActiveScriptParse32, AddScriptlet)
             STD_METHOD AddScriptlet, :ptr IActiveScriptParse32, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr BSTR, :ptr EXCEPINFO
+            DECLSPEC_XFGVIRT(IActiveScriptParse32, ParseScriptText)
             STD_METHOD ParseScriptText, :ptr IActiveScriptParse32, :LPCOLESTR, :LPCOLESTR, :ptr IUnknown, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr VARIANT, :ptr EXCEPINFO
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptParse32Vtbl ends
-
           IActiveScriptParse32 struct
             lpVtbl POINTER ?
           IActiveScriptParse32 ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -553,20 +556,24 @@ ifndef __activscp_h__
           IActiveScriptParse64Vtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptParse64Vtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptParse64, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptParse64
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptParse64
+            DECLSPEC_XFGVIRT(IActiveScriptParse64, InitNew)
             STD_METHOD InitNew, :ptr IActiveScriptParse64
+            DECLSPEC_XFGVIRT(IActiveScriptParse64, AddScriptlet)
             STD_METHOD AddScriptlet, :ptr IActiveScriptParse64, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr BSTR, :ptr EXCEPINFO
+            DECLSPEC_XFGVIRT(IActiveScriptParse64, ParseScriptText)
             STD_METHOD ParseScriptText, :ptr IActiveScriptParse64, :LPCOLESTR, :LPCOLESTR, :ptr IUnknown, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr VARIANT, :ptr EXCEPINFO
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptParse64Vtbl ends
-
           IActiveScriptParse64 struct
             lpVtbl POINTER ?
           IActiveScriptParse64 ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -591,18 +598,20 @@ ifndef __activscp_h__
           IActiveScriptParseProcedureOld32Vtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptParseProcedureOld32Vtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptParseProcedureOld32, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptParseProcedureOld32
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptParseProcedureOld32
+            DECLSPEC_XFGVIRT(IActiveScriptParseProcedureOld32, ParseProcedureText)
             STD_METHOD ParseProcedureText, :ptr IActiveScriptParseProcedureOld32, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr IUnknown, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr ptr IDispatch
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptParseProcedureOld32Vtbl ends
-
           IActiveScriptParseProcedureOld32 struct
             lpVtbl POINTER ?
           IActiveScriptParseProcedureOld32 ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -617,18 +626,20 @@ ifndef __activscp_h__
           IActiveScriptParseProcedureOld64Vtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptParseProcedureOld64Vtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptParseProcedureOld64, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptParseProcedureOld64
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptParseProcedureOld64
+            DECLSPEC_XFGVIRT(IActiveScriptParseProcedureOld64, ParseProcedureText)
             STD_METHOD ParseProcedureText, :ptr IActiveScriptParseProcedureOld64, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr IUnknown, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr ptr IDispatch
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptParseProcedureOld64Vtbl ends
-
           IActiveScriptParseProcedureOld64 struct
             lpVtbl POINTER ?
           IActiveScriptParseProcedureOld64 ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -653,18 +664,20 @@ ifndef __activscp_h__
           IActiveScriptParseProcedure32Vtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptParseProcedure32Vtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptParseProcedure32, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptParseProcedure32
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptParseProcedure32
+            DECLSPEC_XFGVIRT(IActiveScriptParseProcedure32, ParseProcedureText)
             STD_METHOD ParseProcedureText, :ptr IActiveScriptParseProcedure32, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr IUnknown, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr ptr IDispatch
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptParseProcedure32Vtbl ends
-
           IActiveScriptParseProcedure32 struct
             lpVtbl POINTER ?
           IActiveScriptParseProcedure32 ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -679,18 +692,20 @@ ifndef __activscp_h__
           IActiveScriptParseProcedure64Vtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptParseProcedure64Vtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptParseProcedure64, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptParseProcedure64
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptParseProcedure64
+            DECLSPEC_XFGVIRT(IActiveScriptParseProcedure64, ParseProcedureText)
             STD_METHOD ParseProcedureText, :ptr IActiveScriptParseProcedure64, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr IUnknown, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr ptr IDispatch
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptParseProcedure64Vtbl ends
-
           IActiveScriptParseProcedure64 struct
             lpVtbl POINTER ?
           IActiveScriptParseProcedure64 ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -715,18 +730,20 @@ ifndef __activscp_h__
           IActiveScriptParseProcedure2_32Vtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptParseProcedure2_32Vtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptParseProcedure2_32, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptParseProcedure2_32
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptParseProcedure2_32
+            DECLSPEC_XFGVIRT(IActiveScriptParseProcedure32, ParseProcedureText)
             STD_METHOD ParseProcedureText, :ptr IActiveScriptParseProcedure2_32, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr IUnknown, :LPCOLESTR, :DWORD, :ULONG, :DWORD, :ptr ptr IDispatch
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptParseProcedure2_32Vtbl ends
-
           IActiveScriptParseProcedure2_32 struct
             lpVtbl POINTER ?
           IActiveScriptParseProcedure2_32 ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -741,18 +758,20 @@ ifndef __activscp_h__
           IActiveScriptParseProcedure2_64Vtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptParseProcedure2_64Vtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptParseProcedure2_64, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptParseProcedure2_64
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptParseProcedure2_64
+            DECLSPEC_XFGVIRT(IActiveScriptParseProcedure64, ParseProcedureText)
             STD_METHOD ParseProcedureText, :ptr IActiveScriptParseProcedure2_64, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :LPCOLESTR, :ptr IUnknown, :LPCOLESTR, :DWORDLONG, :ULONG, :DWORD, :ptr ptr IDispatch
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptParseProcedure2_64Vtbl ends
-
           IActiveScriptParseProcedure2_64 struct
             lpVtbl POINTER ?
           IActiveScriptParseProcedure2_64 ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -777,20 +796,24 @@ ifndef __activscp_h__
           IActiveScriptEncodeVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptEncodeVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptEncode, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptEncode
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptEncode
+            DECLSPEC_XFGVIRT(IActiveScriptEncode, EncodeSection)
             STD_METHOD EncodeSection, :ptr IActiveScriptEncode, :LPCOLESTR, :DWORD, :LPOLESTR, :DWORD, :ptr DWORD
+            DECLSPEC_XFGVIRT(IActiveScriptEncode, DecodeScript)
             STD_METHOD DecodeScript, :ptr IActiveScriptEncode, :LPCOLESTR, :DWORD, :LPOLESTR, :DWORD, :ptr DWORD
+            DECLSPEC_XFGVIRT(IActiveScriptEncode, GetEncodeProgId)
             STD_METHOD GetEncodeProgId, :ptr IActiveScriptEncode, :ptr BSTR
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptEncodeVtbl ends
-
           IActiveScriptEncode struct
             lpVtbl POINTER ?
           IActiveScriptEncode ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -805,18 +828,20 @@ ifndef __activscp_h__
           IActiveScriptHostEncodeVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptHostEncodeVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptHostEncode, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptHostEncode
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptHostEncode
+            DECLSPEC_XFGVIRT(IActiveScriptHostEncode, EncodeScriptHostFile)
             STD_METHOD EncodeScriptHostFile, :ptr IActiveScriptHostEncode, :BSTR, :ptr BSTR, :DWORD, :BSTR
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptHostEncodeVtbl ends
-
           IActiveScriptHostEncode struct
             lpVtbl POINTER ?
           IActiveScriptHostEncode ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -831,18 +856,20 @@ ifndef __activscp_h__
           IBindEventHandlerVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IBindEventHandlerVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IBindEventHandler, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IBindEventHandler
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IBindEventHandler
+            DECLSPEC_XFGVIRT(IBindEventHandler, BindHandler)
             STD_METHOD BindHandler, :ptr IBindEventHandler, :LPCOLESTR, :ptr IDispatch
             ??Interface equ <>
             END_INTERFACE
           IBindEventHandlerVtbl ends
-
           IBindEventHandler struct
             lpVtbl POINTER ?
           IBindEventHandler ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -857,20 +884,24 @@ ifndef __activscp_h__
           IActiveScriptStatsVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptStatsVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptStats, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptStats
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptStats
+            DECLSPEC_XFGVIRT(IActiveScriptStats, GetStat)
             STD_METHOD GetStat, :ptr IActiveScriptStats, :DWORD, :ptr ULONG, :ptr ULONG
+            DECLSPEC_XFGVIRT(IActiveScriptStats, GetStatEx)
             STD_METHOD GetStatEx, :ptr IActiveScriptStats, :REFGUID, :ptr ULONG, :ptr ULONG
+            DECLSPEC_XFGVIRT(IActiveScriptStats, ResetStats)
             STD_METHOD ResetStats, :ptr IActiveScriptStats
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptStatsVtbl ends
-
           IActiveScriptStats struct
             lpVtbl POINTER ?
           IActiveScriptStats ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -885,19 +916,22 @@ ifndef __activscp_h__
           IActiveScriptPropertyVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptPropertyVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptProperty, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptProperty
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptProperty
+            DECLSPEC_XFGVIRT(IActiveScriptProperty, GetProperty)
             STD_METHOD GetProperty, :ptr IActiveScriptProperty, :DWORD, :ptr VARIANT, :ptr VARIANT
+            DECLSPEC_XFGVIRT(IActiveScriptProperty, SetProperty)
             STD_METHOD SetProperty, :ptr IActiveScriptProperty, :DWORD, :ptr VARIANT, :ptr VARIANT
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptPropertyVtbl ends
-
           IActiveScriptProperty struct
             lpVtbl POINTER ?
           IActiveScriptProperty ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -912,18 +946,20 @@ ifndef __activscp_h__
           ITridentEventSinkVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <ITridentEventSinkVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr ITridentEventSink, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ITridentEventSink
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ITridentEventSink
+            DECLSPEC_XFGVIRT(ITridentEventSink, FireEvent)
             STD_METHOD FireEvent, :ptr ITridentEventSink, :LPCOLESTR, :ptr DISPPARAMS, :ptr VARIANT, :ptr EXCEPINFO
             ??Interface equ <>
             END_INTERFACE
           ITridentEventSinkVtbl ends
-
           ITridentEventSink struct
             lpVtbl POINTER ?
           ITridentEventSink ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -938,18 +974,20 @@ ifndef __activscp_h__
           IActiveScriptGarbageCollectorVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptGarbageCollectorVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptGarbageCollector, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptGarbageCollector
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptGarbageCollector
+            DECLSPEC_XFGVIRT(IActiveScriptGarbageCollector, CollectGarbage)
             STD_METHOD CollectGarbage, :ptr IActiveScriptGarbageCollector, :SCRIPTGCTYPE
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptGarbageCollectorVtbl ends
-
           IActiveScriptGarbageCollector struct
             lpVtbl POINTER ?
           IActiveScriptGarbageCollector ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -964,18 +1002,20 @@ ifndef __activscp_h__
           IActiveScriptSIPInfoVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptSIPInfoVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptSIPInfo, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptSIPInfo
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptSIPInfo
+            DECLSPEC_XFGVIRT(IActiveScriptSIPInfo, GetSIPOID)
             STD_METHOD GetSIPOID, :ptr IActiveScriptSIPInfo, :ptr GUID
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptSIPInfoVtbl ends
-
           IActiveScriptSIPInfo struct
             lpVtbl POINTER ?
           IActiveScriptSIPInfo ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -990,18 +1030,20 @@ ifndef __activscp_h__
           IActiveScriptSiteTraceInfoVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptSiteTraceInfoVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptSiteTraceInfo, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptSiteTraceInfo
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptSiteTraceInfo
+            DECLSPEC_XFGVIRT(IActiveScriptSiteTraceInfo, SendScriptTraceInfo)
             STD_METHOD SendScriptTraceInfo, :ptr IActiveScriptSiteTraceInfo, :SCRIPTTRACEINFO, :GUID, :DWORD, :LONG, :LONG, :DWORD64
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptSiteTraceInfoVtbl ends
-
           IActiveScriptSiteTraceInfo struct
             lpVtbl POINTER ?
           IActiveScriptSiteTraceInfo ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -1016,19 +1058,22 @@ ifndef __activscp_h__
           IActiveScriptTraceInfoVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptTraceInfoVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptTraceInfo, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptTraceInfo
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptTraceInfo
+            DECLSPEC_XFGVIRT(IActiveScriptTraceInfo, StartScriptTracing)
             STD_METHOD StartScriptTracing, :ptr IActiveScriptTraceInfo, :ptr IActiveScriptSiteTraceInfo, :GUID
+            DECLSPEC_XFGVIRT(IActiveScriptTraceInfo, StopScriptTracing)
             STD_METHOD StopScriptTracing, :ptr IActiveScriptTraceInfo
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptTraceInfoVtbl ends
-
           IActiveScriptTraceInfo struct
             lpVtbl POINTER ?
           IActiveScriptTraceInfo ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -1043,18 +1088,20 @@ ifndef __activscp_h__
           IActiveScriptStringCompareVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IActiveScriptStringCompareVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IActiveScriptStringCompare, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IActiveScriptStringCompare
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IActiveScriptStringCompare
+            DECLSPEC_XFGVIRT(IActiveScriptStringCompare, StrComp)
             STD_METHOD StrComp, :ptr IActiveScriptStringCompare, :BSTR, :BSTR, :ptr LONG
             ??Interface equ <>
             END_INTERFACE
           IActiveScriptStringCompareVtbl ends
-
           IActiveScriptStringCompare struct
             lpVtbl POINTER ?
           IActiveScriptStringCompare ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -1094,4 +1141,3 @@ ifndef __activscp_h__
     ;[...]
   endif
 endif
- 

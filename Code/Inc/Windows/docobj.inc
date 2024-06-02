@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\docobj.h', last modified: 19/04/2018 10:45
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\docobj.h
+;             Created on (UTC) 06/04/2024 06:15:53
+;             Last modified on (UTC) 21/02/2024 18:16:08
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
   __REQUIRED_RPCNDR_H_VERSION__ equ 500
@@ -22,55 +23,46 @@ ifndef __docobj_h__
   __docobj_h__ equ <>
   if Defined(_MSC_VER) and (_MSC_VER ge 1020)
   endif
+  ifndef DECLSPEC_XFGVIRT
+    if Defined(_CONTROL_FLOW_GUARD_XFG)
+      DECLSPEC_XFGVIRT macro base, func
+        exitm <__declspec(xfg_virtual (base, func))>
+      endm
+    else
+      DECLSPEC_XFGVIRT macro base, func
+        exitm <>
+      endm
+    endif
+  endif
   ifndef __IOleDocument_FWD_DEFINED__
     __IOleDocument_FWD_DEFINED__ equ <>
-    ;IOleDocument typedef IOleDocument
-    
   endif
   ifndef __IOleDocumentSite_FWD_DEFINED__
     __IOleDocumentSite_FWD_DEFINED__ equ <>
-    ;IOleDocumentSite typedef IOleDocumentSite
-    
   endif
   ifndef __IOleDocumentView_FWD_DEFINED__
     __IOleDocumentView_FWD_DEFINED__ equ <>
-    ;IOleDocumentView typedef IOleDocumentView
-    
   endif
   ifndef __IEnumOleDocumentViews_FWD_DEFINED__
     __IEnumOleDocumentViews_FWD_DEFINED__ equ <>
-    ;IEnumOleDocumentViews typedef IEnumOleDocumentViews
-    
   endif
   ifndef __IContinueCallback_FWD_DEFINED__
     __IContinueCallback_FWD_DEFINED__ equ <>
-    ;IContinueCallback typedef IContinueCallback
-    
   endif
   ifndef __IPrint_FWD_DEFINED__
     __IPrint_FWD_DEFINED__ equ <>
-    ;IPrint typedef IPrint
-    
   endif
   ifndef __IOleCommandTarget_FWD_DEFINED__
     __IOleCommandTarget_FWD_DEFINED__ equ <>
-    ;IOleCommandTarget typedef IOleCommandTarget
-    
   endif
   ifndef __IZoomEvents_FWD_DEFINED__
     __IZoomEvents_FWD_DEFINED__ equ <>
-    ;IZoomEvents typedef IZoomEvents
-    
   endif
   ifndef __IProtectFocus_FWD_DEFINED__
     __IProtectFocus_FWD_DEFINED__ equ <>
-    ;IProtectFocus typedef IProtectFocus
-    
   endif
   ifndef __IProtectedModeMenuServices_FWD_DEFINED__
     __IProtectedModeMenuServices_FWD_DEFINED__ equ <>
-    ;IProtectedModeMenuServices typedef IProtectedModeMenuServices
-    
   endif
   include ocidl.inc
   ifdef __cplusplus
@@ -91,7 +83,7 @@ ifndef __docobj_h__
         DOCMISC_CANTOPENEDIT equ 4
         DOCMISC_NOFILESUPPORT equ 8
         __MIDL_IOleDocument_0001 typedef DOCMISC
-        
+
         externdef IID_IOleDocument:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -99,20 +91,24 @@ ifndef __docobj_h__
           IOleDocumentVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IOleDocumentVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IOleDocument, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IOleDocument
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IOleDocument
+            DECLSPEC_XFGVIRT(IOleDocument, CreateView)
             STD_METHOD CreateView, :ptr IOleDocument, :ptr IOleInPlaceSite, :ptr IStream, :DWORD, :ptr ptr IOleDocumentView
+            DECLSPEC_XFGVIRT(IOleDocument, GetDocMiscStatus)
             STD_METHOD GetDocMiscStatus, :ptr IOleDocument, :ptr DWORD
+            DECLSPEC_XFGVIRT(IOleDocument, EnumViews)
             STD_METHOD EnumViews, :ptr IOleDocument, :ptr ptr IEnumOleDocumentViews, :ptr ptr IOleDocumentView
             ??Interface equ <>
             END_INTERFACE
           IOleDocumentVtbl ends
-
           IOleDocument struct
             lpVtbl POINTER ?
           IOleDocument ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -133,18 +129,20 @@ ifndef __docobj_h__
           IOleDocumentSiteVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IOleDocumentSiteVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IOleDocumentSite, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IOleDocumentSite
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IOleDocumentSite
+            DECLSPEC_XFGVIRT(IOleDocumentSite, ActivateMe)
             STD_METHOD ActivateMe, :ptr IOleDocumentSite, :ptr IOleDocumentView
             ??Interface equ <>
             END_INTERFACE
           IOleDocumentSiteVtbl ends
-
           IOleDocumentSite struct
             lpVtbl POINTER ?
           IOleDocumentSite ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -165,30 +163,44 @@ ifndef __docobj_h__
           IOleDocumentViewVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IOleDocumentViewVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IOleDocumentView, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IOleDocumentView
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IOleDocumentView
+            DECLSPEC_XFGVIRT(IOleDocumentView, SetInPlaceSite)
             STD_METHOD SetInPlaceSite, :ptr IOleDocumentView, :ptr IOleInPlaceSite
+            DECLSPEC_XFGVIRT(IOleDocumentView, GetInPlaceSite)
             STD_METHOD GetInPlaceSite, :ptr IOleDocumentView, :ptr ptr IOleInPlaceSite
+            DECLSPEC_XFGVIRT(IOleDocumentView, GetDocument)
             STD_METHOD GetDocument, :ptr IOleDocumentView, :ptr ptr IUnknown
+            DECLSPEC_XFGVIRT(IOleDocumentView, SetRect)
             STD_METHOD SetRect, :ptr IOleDocumentView, :LPRECT
+            DECLSPEC_XFGVIRT(IOleDocumentView, GetRect)
             STD_METHOD GetRect, :ptr IOleDocumentView, :LPRECT
+            DECLSPEC_XFGVIRT(IOleDocumentView, SetRectComplex)
             STD_METHOD SetRectComplex, :ptr IOleDocumentView, :LPRECT, :LPRECT, :LPRECT, :LPRECT
+            DECLSPEC_XFGVIRT(IOleDocumentView, Show)
             STD_METHOD Show, :ptr IOleDocumentView, :BOOL
+            DECLSPEC_XFGVIRT(IOleDocumentView, UIActivate)
             STD_METHOD UIActivate, :ptr IOleDocumentView, :BOOL
+            DECLSPEC_XFGVIRT(IOleDocumentView, Open)
             STD_METHOD Open, :ptr IOleDocumentView
+            DECLSPEC_XFGVIRT(IOleDocumentView, CloseView)
             STD_METHOD CloseView, :ptr IOleDocumentView, :DWORD
+            DECLSPEC_XFGVIRT(IOleDocumentView, SaveViewState)
             STD_METHOD SaveViewState, :ptr IOleDocumentView, :LPSTREAM
+            DECLSPEC_XFGVIRT(IOleDocumentView, ApplyViewState)
             STD_METHOD ApplyViewState, :ptr IOleDocumentView, :LPSTREAM
+            DECLSPEC_XFGVIRT(IOleDocumentView, Clone)
             STD_METHOD Clone, :ptr IOleDocumentView, :ptr IOleInPlaceSite, :ptr ptr IOleDocumentView
             ??Interface equ <>
             END_INTERFACE
           IOleDocumentViewVtbl ends
-
           IOleDocumentView struct
             lpVtbl POINTER ?
           IOleDocumentView ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -209,21 +221,26 @@ ifndef __docobj_h__
           IEnumOleDocumentViewsVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IEnumOleDocumentViewsVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IEnumOleDocumentViews, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IEnumOleDocumentViews
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IEnumOleDocumentViews
+            DECLSPEC_XFGVIRT(IEnumOleDocumentViews, Next)
             STD_METHOD Next, :ptr IEnumOleDocumentViews, :ULONG, :ptr ptr IOleDocumentView, :ptr ULONG
+            DECLSPEC_XFGVIRT(IEnumOleDocumentViews, Skip)
             STD_METHOD Skip, :ptr IEnumOleDocumentViews, :ULONG
+            DECLSPEC_XFGVIRT(IEnumOleDocumentViews, Reset)
             STD_METHOD Reset, :ptr IEnumOleDocumentViews
+            DECLSPEC_XFGVIRT(IEnumOleDocumentViews, Clone)
             STD_METHOD Clone, :ptr IEnumOleDocumentViews, :ptr ptr IEnumOleDocumentViews
             ??Interface equ <>
             END_INTERFACE
           IEnumOleDocumentViewsVtbl ends
-
           IEnumOleDocumentViews struct
             lpVtbl POINTER ?
           IEnumOleDocumentViews ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -246,19 +263,22 @@ ifndef __docobj_h__
           IContinueCallbackVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IContinueCallbackVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IContinueCallback, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IContinueCallback
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IContinueCallback
+            DECLSPEC_XFGVIRT(IContinueCallback, FContinue)
             STD_METHOD FContinue, :ptr IContinueCallback
+            DECLSPEC_XFGVIRT(IContinueCallback, FContinuePrinting)
             STD_METHOD FContinuePrinting, :ptr IContinueCallback, :LONG, :LONG, :ptr wchar_t
             ??Interface equ <>
             END_INTERFACE
           IContinueCallbackVtbl ends
-
           IContinueCallback struct
             lpVtbl POINTER ?
           IContinueCallback ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -281,12 +301,11 @@ ifndef __docobj_h__
         PRINTFLAG_FORCEPROPERTIES equ 32
         PRINTFLAG_PRINTTOFILE equ 64
         __MIDL_IPrint_0001 typedef PRINTFLAG
-        
+
         PAGERANGE struct
           nFromPage LONG ?
           nToPage LONG ?
         PAGERANGE ends
-
         tagPAGERANGE typedef PAGERANGE
         PAGESET struct
           cbStruct ULONG ?
@@ -295,9 +314,8 @@ ifndef __docobj_h__
           cPageRange ULONG ?
           rgPages PAGERANGE 1 dup (<>)
         PAGESET ends
-
         tagPAGESET typedef PAGESET
-        PAGESET_TOLASTPAGE equ (- 1)
+        PAGESET_TOLASTPAGE equ ((- 1))
         externdef IID_IPrint:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -305,20 +323,24 @@ ifndef __docobj_h__
           IPrintVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IPrintVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IPrint, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IPrint
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IPrint
+            DECLSPEC_XFGVIRT(IPrint, SetInitialPageNum)
             STD_METHOD SetInitialPageNum, :ptr IPrint, :LONG
+            DECLSPEC_XFGVIRT(IPrint, GetPageInfo)
             STD_METHOD GetPageInfo, :ptr IPrint, :ptr LONG, :ptr LONG
+            DECLSPEC_XFGVIRT(IPrint, Print)
             STD_METHOD Print, :ptr IPrint, :DWORD, :ptr ptr DVTARGETDEVICE, :ptr ptr PAGESET, :ptr STGMEDIUM, :ptr IContinueCallback, :LONG, :ptr LONG, :ptr LONG
             ??Interface equ <>
             END_INTERFACE
           IPrintVtbl ends
-
           IPrint struct
             lpVtbl POINTER ?
           IPrint ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -341,12 +363,11 @@ ifndef __docobj_h__
         OLECMDF_NINCHED equ 8h
         OLECMDF_INVISIBLE equ 10h
         OLECMDF_DEFHIDEONCTXTMENU equ 20h
-        
+
         OLECMD struct
           cmdID ULONG ?
           cmdf DWORD ?
         OLECMD ends
-
         _tagOLECMD typedef OLECMD
         OLECMDTEXT struct
           cmdtextf DWORD ?
@@ -354,19 +375,18 @@ ifndef __docobj_h__
           cwBuf ULONG ?
           rgwz wchar_t 1 dup (?)
         OLECMDTEXT ends
-
         _tagOLECMDTEXT typedef OLECMDTEXT
         OLECMDTEXTF typedef SDWORD
         OLECMDTEXTF_NONE equ 0
         OLECMDTEXTF_NAME equ 1
         OLECMDTEXTF_STATUS equ 2
-        
+
         OLECMDEXECOPT typedef SDWORD
         OLECMDEXECOPT_DODEFAULT equ 0
         OLECMDEXECOPT_PROMPTUSER equ 1
         OLECMDEXECOPT_DONTPROMPTUSER equ 2
         OLECMDEXECOPT_SHOWHELP equ 3
-        
+
         OLECMDID typedef SDWORD
         OLECMDID_OPEN equ 1
         OLECMDID_NEW equ 2
@@ -451,13 +471,13 @@ ifndef __docobj_h__
         OLECMDID_ONBEFOREUNLOAD equ 83
         OLECMDID_SHOWMESSAGE_BLOCKABLE equ 84
         OLECMDID_SHOWTASKDLG_BLOCKABLE equ 85
-        
+
         MEDIAPLAYBACK_STATE typedef SDWORD
         MEDIAPLAYBACK_RESUME equ 0
         MEDIAPLAYBACK_PAUSE equ 1
         MEDIAPLAYBACK_PAUSE_AND_SUSPEND equ 2
         MEDIAPLAYBACK_RESUME_FROM_SUSPEND equ 3
-        
+
         OLECMDERR_E_FIRST equ (OLE_E_LAST + 1)
         OLECMDERR_E_NOTSUPPORTED equ <(OLECMDERR_E_FIRST)>
         OLECMDERR_E_DISABLED equ (OLECMDERR_E_FIRST + 1)
@@ -486,11 +506,11 @@ ifndef __docobj_h__
           IGNOREMIME typedef SDWORD
           IGNOREMIME_PROMPT equ 1h
           IGNOREMIME_TEXT equ 2h
-          
+
           WPCSETTING typedef SDWORD
           WPCSETTING_LOGGING_ENABLED equ 1h
           WPCSETTING_FILEDOWNLOAD_BLOCKED equ 2h
-          
+
         endif
         externdef IID_IOleCommandTarget:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -499,19 +519,22 @@ ifndef __docobj_h__
           IOleCommandTargetVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IOleCommandTargetVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IOleCommandTarget, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IOleCommandTarget
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IOleCommandTarget
+            DECLSPEC_XFGVIRT(IOleCommandTarget, QueryStatus)
             STD_METHOD QueryStatus, :ptr IOleCommandTarget, :ptr GUID, :ULONG, :ptr OLECMD, :ptr OLECMDTEXT
+            DECLSPEC_XFGVIRT(IOleCommandTarget, Exec)
             STD_METHOD Exec, :ptr IOleCommandTarget, :ptr GUID, :DWORD, :DWORD, :ptr VARIANT, :ptr VARIANT
             ??Interface equ <>
             END_INTERFACE
           IOleCommandTargetVtbl ends
-
           IOleCommandTarget struct
             lpVtbl POINTER ?
           IOleCommandTarget ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -549,7 +572,7 @@ ifndef __docobj_h__
     OLECMDIDF_REFRESH_PAGEACTION_MIXEDCONTENT equ 02000000h
     OLECMDIDF_REFRESH_PAGEACTION_INVALID_CERT equ 04000000h
     OLECMDIDF_REFRESH_PAGEACTION_ALLOW_VERSION equ 08000000h
-    
+
     if (NTDDI_VERSION ge NTDDI_WINXPSP2)
       OLECMDID_PAGEACTIONFLAG typedef SDWORD
       OLECMDIDF_PAGEACTION_FILEDOWNLOAD equ 00000001h
@@ -585,7 +608,7 @@ ifndef __docobj_h__
       OLECMDIDF_PAGEACTION_NORESETACTIVEX equ 20000000h
       OLECMDIDF_PAGEACTION_GENERIC_STATE equ 40000000h
       OLECMDIDF_PAGEACTION_RESET equ 80000000h
-      
+
       OLECMDID_BROWSERSTATEFLAG typedef SDWORD
       OLECMDIDF_BROWSERSTATE_EXTENSIONSOFF equ 00000001h
       OLECMDIDF_BROWSERSTATE_IESECURITY equ 00000002h
@@ -594,32 +617,32 @@ ifndef __docobj_h__
       OLECMDIDF_BROWSERSTATE_REQUIRESACTIVEX equ 00000010h
       OLECMDIDF_BROWSERSTATE_DESKTOPHTMLDIALOG equ 00000020h
       OLECMDIDF_BROWSERSTATE_BLOCKEDVERSION equ 00000040h
-      
+
       OLECMDID_OPTICAL_ZOOMFLAG typedef SDWORD
       OLECMDIDF_OPTICAL_ZOOM_NOPERSIST equ 00000001h
       OLECMDIDF_OPTICAL_ZOOM_NOLAYOUT equ 00000010h
       OLECMDIDF_OPTICAL_ZOOM_NOTRANSIENT equ 00000020h
       OLECMDIDF_OPTICAL_ZOOM_RELOADFORNEWTAB equ 00000040h
-      
+
       PAGEACTION_UI typedef SDWORD
       PAGEACTION_UI_DEFAULT equ 0
       PAGEACTION_UI_MODAL equ 1
       PAGEACTION_UI_MODELESS equ 2
       PAGEACTION_UI_SILENT equ 3
-      
+
     endif
     OLECMDID_WINDOWSTATE_FLAG typedef SDWORD
     OLECMDIDF_WINDOWSTATE_USERVISIBLE equ 00000001h
     OLECMDIDF_WINDOWSTATE_ENABLED equ 00000002h
     OLECMDIDF_WINDOWSTATE_USERVISIBLE_VALID equ 00010000h
     OLECMDIDF_WINDOWSTATE_ENABLED_VALID equ 00020000h
-    
+
     OLECMDID_VIEWPORT_MODE_FLAG typedef SDWORD
     OLECMDIDF_VIEWPORTMODE_FIXED_LAYOUT_WIDTH equ 00000001h
     OLECMDIDF_VIEWPORTMODE_EXCLUDE_VISUAL_BOTTOM equ 00000002h
     OLECMDIDF_VIEWPORTMODE_FIXED_LAYOUT_WIDTH_VALID equ 00010000h
     OLECMDIDF_VIEWPORTMODE_EXCLUDE_VISUAL_BOTTOM_VALID equ 00020000h
-    
+
     IMsoDocument equ <IOleDocument>
     IMsoDocumentSite equ <IOleDocumentSite>
     IMsoView equ <IOleDocumentView>
@@ -680,18 +703,20 @@ ifndef __docobj_h__
         IZoomEventsVtbl struct
           BEGIN_INTERFACE
           ??Interface equ <IZoomEventsVtbl>
+          DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
           STD_METHOD QueryInterface, :ptr IZoomEvents, :REFIID, :ptr ptr
+          DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IZoomEvents
+          DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IZoomEvents
+          DECLSPEC_XFGVIRT(IZoomEvents, OnZoomPercentChanged)
           STD_METHOD OnZoomPercentChanged, :ptr IZoomEvents, :ULONG
           ??Interface equ <>
           END_INTERFACE
         IZoomEventsVtbl ends
-
         IZoomEvents struct
           lpVtbl POINTER ?
         IZoomEvents ends
-
         ifdef COBJMACROS
           ;[...]
         endif
@@ -706,18 +731,20 @@ ifndef __docobj_h__
         IProtectFocusVtbl struct
           BEGIN_INTERFACE
           ??Interface equ <IProtectFocusVtbl>
+          DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
           STD_METHOD QueryInterface, :ptr IProtectFocus, :REFIID, :ptr ptr
+          DECLSPEC_XFGVIRT(IUnknown, AddRef)
           STD_METHOD AddRef, :ptr IProtectFocus
+          DECLSPEC_XFGVIRT(IUnknown, Release)
           STD_METHOD Release, :ptr IProtectFocus
+          DECLSPEC_XFGVIRT(IProtectFocus, AllowFocusChange)
           STD_METHOD AllowFocusChange, :ptr IProtectFocus, :ptr BOOL
           ??Interface equ <>
           END_INTERFACE
         IProtectFocusVtbl ends
-
         IProtectFocus struct
           lpVtbl POINTER ?
         IProtectFocus ends
-
         ifdef COBJMACROS
           ;[...]
         endif
@@ -737,20 +764,24 @@ ifndef __docobj_h__
           IProtectedModeMenuServicesVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IProtectedModeMenuServicesVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IProtectedModeMenuServices, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IProtectedModeMenuServices
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IProtectedModeMenuServices
+            DECLSPEC_XFGVIRT(IProtectedModeMenuServices, CreateMenu)
             STD_METHOD CreateMenu, :ptr IProtectedModeMenuServices, :ptr HMENU
+            DECLSPEC_XFGVIRT(IProtectedModeMenuServices, LoadMenu)
             STD_METHOD LoadMenu, :ptr IProtectedModeMenuServices, :LPCWSTR, :LPCWSTR, :ptr HMENU
+            DECLSPEC_XFGVIRT(IProtectedModeMenuServices, LoadMenuID)
             STD_METHOD LoadMenuID, :ptr IProtectedModeMenuServices, :LPCWSTR, :WORD, :ptr HMENU
             ??Interface equ <>
             END_INTERFACE
           IProtectedModeMenuServicesVtbl ends
-
           IProtectedModeMenuServices struct
             lpVtbl POINTER ?
           IProtectedModeMenuServices ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -761,7 +792,6 @@ ifndef __docobj_h__
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) and  not WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     PAGESET struct
     PAGESET ends
-
     tagPAGESET typedef PAGESET
   endif
   externdef __MIDL_itf_docobj_0000_0010_v0_0_c_ifspec:RPC_IF_HANDLE
@@ -790,4 +820,3 @@ ifndef __docobj_h__
     ;[...]
   endif
 endif
-

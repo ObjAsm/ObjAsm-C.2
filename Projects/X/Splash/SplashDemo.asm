@@ -13,11 +13,11 @@ SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, ResGuard)  ;Load OOP files and OS 
 
 GDIPVER equ 0100h
 
-% include &IncPath&Windows\GdiplusPixelFormats.inc
-% include &IncPath&Windows\GdiplusInit.inc
-% include &IncPath&Windows\GdiplusEnums.inc
-% include &IncPath&Windows\GdiplusGpStubs.inc
-% include &IncPath&Windows\GdiPlusFlat.inc
+;% include &IncPath&Windows\GdiplusPixelFormats.inc
+;% include &IncPath&Windows\GdiplusInit.inc
+;% include &IncPath&Windows\GdiplusEnums.inc
+;% include &IncPath&Windows\GdiplusGpStubs.inc
+;% include &IncPath&Windows\GdiPlusFlat.inc
 
 % includelib &LibPath&Windows\shell32.lib
 % includelib &LibPath&Windows\shlwapi.lib

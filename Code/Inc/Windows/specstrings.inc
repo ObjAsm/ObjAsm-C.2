@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\specstrings.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\specstrings.h
+;             Created on (UTC) 22/05/2024 17:57:08
+;             Last modified on (UTC) 12/02/2024 17:05:38
 
 ifndef SPECSTRINGS_H
   SPECSTRINGS_H equ <>
@@ -129,7 +130,7 @@ ifndef SPECSTRINGS_H
       exitm <_SAL1_Source_(__inout_xcount_full_opt, (size_), __inout_xcount_full(size_) __exceptthat __maybenull)>
     endm
     __deref_xcount macro size_
-      exitm <_SAL1_Source_(__deref_xcount, (size_), __ecount(1) _Post_ __elem_readableTo 1 _Post_ __deref __notnull _Post_ __deref __inexpressible_writableTo(size_))>
+      exitm <_SAL1_Source_(__deref_xcount, (size_), __ecount(1) _Post_ __elem_readableTo(1) _Post_ __deref __notnull _Post_ __deref __inexpressible_writableTo(size_))>
     endm
     __deref_in equ <_SAL1_Source_(__deref_in,, __in _Pre_ __deref __deref __readonly)>
     __deref_in_ecount macro size_
@@ -157,7 +158,7 @@ ifndef SPECSTRINGS_H
       exitm <_SAL1_Source_(__inout_xcount_opt, (size_), __inout_xcount(size_) __exceptthat __maybenull)>
     endm
     __deref_xcount macro size_
-      exitm <_SAL1_Source_(__deref_xcount, (size_), __ecount(1) _Post_ __elem_readableTo 1 _Post_ __deref __notnull _Post_ __deref __inexpressible_writableTo(size_))>
+      exitm <_SAL1_Source_(__deref_xcount, (size_), __ecount(1) _Post_ __elem_readableTo(1) _Post_ __deref __notnull _Post_ __deref __inexpressible_writableTo(size_))>
     endm
     __deref_in equ <_SAL1_Source_(__deref_in,, __in _Pre_ __deref __deref __readonly)>
     __deref_in_ecount macro size_
@@ -651,4 +652,3 @@ ifndef SPECSTRINGS_H
   if _MSC_VER ge 1200
   endif
 endif
-

@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 19/04/2018 10:43
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\combaseapi.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\combaseapi.h
+;             Created on (UTC) 06/04/2024 06:15:52
+;             Last modified on (UTC) 21/02/2024 18:13:20
 
 include apiset.inc
 include apisetcconv.inc
@@ -39,34 +40,26 @@ if  not Defined(_COMBASEAPI_H_)
       endm
     endif
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if Defined(__cplusplus) and  not Defined(CINTERFACE)
       ;[...]
     else
       interface equ <struct>
       STDMETHOD macro method_
-        exitm <HRESULT (STDMETHODCALLTYPE * method_)>
       endm
       STDMETHOD_ macro type_, method_
-        exitm <type_(STDMETHODCALLTYPE * method_)>
       endm
       STDMETHODV macro method_
-        exitm <HRESULT (STDMETHODVCALLTYPE * method_)>
       endm
       STDMETHODV_ macro type_, method_
-        exitm <type_(STDMETHODVCALLTYPE * method_)>
       endm
       IFACEMETHOD macro method_
-        exitm <__override STDMETHOD(method_)>
       endm
       IFACEMETHOD_ macro type_, method_
-        exitm <__override STDMETHOD_(type_, method_)>
       endm
       IFACEMETHODV macro method_
-        exitm <__override STDMETHODV(method_)>
       endm
       IFACEMETHODV_ macro type_, method_
-        exitm <__override STDMETHODV_(type_, method_)>
       endm
       if  not Defined(BEGIN_INTERFACE)
         if Defined(_MPPC_)
@@ -94,14 +87,13 @@ if  not Defined(_COMBASEAPI_H_)
           ??Interface CatStr <iface>, <Vtbl>
         endm
       endif
-
       DECLARE_INTERFACE_ macro iface, baseiface
         @CatStr(iface, <Vtbl struct>)
         BEGIN_INTERFACE
         ??Interface CatStr <iface>, <Vtbl>
       endm
 
-      END_DECLARE_INTERFACE_ macro
+      DECLARE_INTERFACE__END macro
         @CatStr(%??Interface, <Vtbl ends>)
         END_INTERFACE
         ??Interface equ <>
@@ -131,7 +123,7 @@ if  not Defined(_COMBASEAPI_H_)
         ;[...]
       endif
     endif
-    include stdlib.inc
+;    include stdlib.inc
     LISet32 macro li, v
       exitm <((li).HighPart = ((v)) < 0 ? - 1 : 0, (li).LowPart = (v))>
     endm
@@ -156,17 +148,14 @@ if  not Defined(_COMBASEAPI_H_)
       REGCLS_AGILE equ 10h
     endif
     tagREGCLS typedef REGCLS
-    
-    ;IRpcStubBuffer typedef IRpcStubBuffer
-    
-    ;IRpcChannelBuffer typedef IRpcChannelBuffer
-    
+
+    DEFINE_ENUM_FLAG_OPERATORS(REGCLS)
     COINITBASE typedef SDWORD
     if (_WIN32_WINNT ge 0400h) or Defined(_WIN32_DCOM)
       COINITBASE_MULTITHREADED equ 0h
     endif
     tagCOINITBASE typedef COINITBASE
-    
+
     include wtypesbase.inc
     include unknwnbase.inc
     if Defined(__cplusplus) and  not Defined(CINTERFACE)
@@ -181,7 +170,7 @@ if  not Defined(_COMBASEAPI_H_)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, CoGetMalloc, WIN_STD_CALL_CONV,, <:DWORD, :ptr LPMALLOC>, 8
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, CreateStreamOnHGlobal, WIN_STD_CALL_CONV,, <:HGLOBAL, :BOOL, :ptr LPSTREAM>, 12
     @DefProto DllImport, GetHGlobalFromStream, WIN_STD_CALL_CONV,, <:LPSTREAM, :ptr HGLOBAL>, 8
     @DefProto DllImport, CoUninitialize, WIN_STD_CALL_CONV,, <>, 0
@@ -190,7 +179,7 @@ if  not Defined(_COMBASEAPI_H_)
     @DefProto DllImport, CoGetCurrentProcess, WIN_STD_CALL_CONV,, <>, 0
   endif
   if (_WIN32_WINNT ge 0400h) or Defined(_WIN32_DCOM)
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, CoInitializeEx, WIN_STD_CALL_CONV,, <:LPVOID, :DWORD>, 8
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
@@ -201,14 +190,14 @@ if  not Defined(_COMBASEAPI_H_)
     endif
   endif
   if (_WIN32_WINNT ge 0501h)
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, CoGetContextToken, WIN_STD_CALL_CONV,, <:ptr ULONG_PTR>, 4
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
-;      @DefProto DllImport, CoGetDefaultContext, WIN_STD_CALL_CONV,, <:APTTYPE, :REFIID, :ptr ptr>, 12
+      @DefProto DllImport, CoGetDefaultContext, WIN_STD_CALL_CONV,, <:DWORD, :REFIID, :ptr ptr>, 12
     endif
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if (NTDDI_VERSION ge NTDDI_WIN7)
       @DefProto DllImport, CoGetApartmentType, WIN_STD_CALL_CONV,, <:ptr APTTYPE, :ptr APTTYPEQUALIFIER>, 8
     endif
@@ -222,27 +211,35 @@ if  not Defined(_COMBASEAPI_H_)
       ServerInformation ends
       tagServerInformation typedef ServerInformation
       PServerInformation typedef ptr ServerInformation
-      
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
-      @DefProto DllImport, CoDecodeProxy, WIN_STD_CALL_CONV,, <:DWORD, :UINT64, :PServerInformation>, 16
+      @DefProto DllImport, CoDecodeProxy, WIN_STD_CALL_CONV,, <:DWORD, :UINT64, :PServerInformation>, 12
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       DECLARE_HANDLE CO_MTA_USAGE_COOKIE
-    endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CoIncrementMTAUsage, WIN_STD_CALL_CONV,, <:ptr CO_MTA_USAGE_COOKIE>, 4
       @DefProto DllImport, CoDecrementMTAUsage, WIN_STD_CALL_CONV,, <:CO_MTA_USAGE_COOKIE>, 4
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, CoAllowUnmarshalerCLSID, WIN_STD_CALL_CONV,, <:REFCLSID>, 4
+      if  not Defined(RC_INVOKED)
+        if Defined(_M_IX86)
+          _CRT_INTERNAL_COMBASE_SYMBOL_PREFIX equ <"_">
+        elseif Defined(_M_X64) or Defined(_M_ARM) or Defined(_M_ARM64)
+          _CRT_INTERNAL_COMBASE_SYMBOL_PREFIX equ <>
+        endif
+        if Defined(_EXE_INITIALIZE_MTA) and  not Defined(_M_CEE)
+        endif
+      endif
     endif
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, CoGetObjectContext, WIN_STD_CALL_CONV,, <:REFIID, :ptr LPVOID>, 8
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, CoGetClassObject, WIN_STD_CALL_CONV,, <:REFCLSID, :DWORD, :LPVOID, :REFIID, :ptr LPVOID>, 20
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, CoRegisterClassObject, WIN_STD_CALL_CONV,, <:REFCLSID, :LPUNKNOWN, :DWORD, :DWORD, :LPDWORD>, 20
     @DefProto DllImport, CoRevokeClassObject, WIN_STD_CALL_CONV,, <:DWORD>, 4
     @DefProto DllImport, CoResumeClassObjects, WIN_STD_CALL_CONV,, <>, 0
@@ -253,7 +250,7 @@ if  not Defined(_COMBASEAPI_H_)
     @DefProto DllImport, CoReleaseServerProcess, WIN_STD_CALL_CONV,, <>, 0
     @DefProto DllImport, CoGetPSClsid, WIN_STD_CALL_CONV,, <:REFIID, :ptr CLSID>, 8
     @DefProto DllImport, CoRegisterPSClsid, WIN_STD_CALL_CONV,, <:REFIID, :REFCLSID>, 8
-;    @DefProto DllImport, CoRegisterSurrogate, WIN_STD_CALL_CONV,, <:LPSURROGATE>, 4
+    @DefProto DllImport, CoRegisterSurrogate, WIN_STD_CALL_CONV,, <:POINTER>, 4
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, CoGetMarshalSizeMax, WIN_STD_CALL_CONV,, <:ptr ULONG, :REFIID, :LPUNKNOWN, :DWORD, :LPVOID, :DWORD>, 24
@@ -282,7 +279,7 @@ if  not Defined(_COMBASEAPI_H_)
     SMEXF_SERVER equ 01h
     SMEXF_HANDLER equ 02h
     tagSTDMSHLFLAGS typedef STDMSHLFLAGS
-    
+
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, CoIsHandlerConnected, WIN_STD_CALL_CONV,, <:LPUNKNOWN>, 4
@@ -290,7 +287,11 @@ if  not Defined(_COMBASEAPI_H_)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, CoMarshalInterThreadInterfaceInStream, WIN_STD_CALL_CONV,, <:REFIID, :LPUNKNOWN, :ptr LPSTREAM>, 12
     @DefProto DllImport, CoGetInterfaceAndReleaseStream, WIN_STD_CALL_CONV,, <:LPSTREAM, :REFIID, :ptr LPVOID>, 12
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, CoCreateFreeThreadedMarshaler, WIN_STD_CALL_CONV,, <:LPUNKNOWN, :ptr LPUNKNOWN>, 8
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, CoFreeUnusedLibraries, WIN_STD_CALL_CONV,, <>, 0
     if (_WIN32_WINNT ge 0501h)
       @DefProto DllImport, CoFreeUnusedLibrariesEx, WIN_STD_CALL_CONV,, <:DWORD, :DWORD>, 8
@@ -302,7 +303,7 @@ if  not Defined(_COMBASEAPI_H_)
     endif
   endif
   if (_WIN32_WINNT ge 0400h) or Defined(_WIN32_DCOM)
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, CoInitializeSecurity, WIN_STD_CALL_CONV,, <:PSECURITY_DESCRIPTOR, :LONG, :ptr SOLE_AUTHENTICATION_SERVICE, :ptr, :DWORD, :DWORD, :ptr, :DWORD, :ptr>, 36
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
@@ -322,30 +323,23 @@ if  not Defined(_COMBASEAPI_H_)
       COM_RIGHTS_EXECUTE_REMOTE equ 4
       COM_RIGHTS_ACTIVATE_LOCAL equ 8
       COM_RIGHTS_ACTIVATE_REMOTE equ 16
+      COM_RIGHTS_RESERVED1 equ 32
+      COM_RIGHTS_RESERVED2 equ 64
     endif
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+  if (WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES))
     @DefProto DllImport, CoCreateInstance, WIN_STD_CALL_CONV,, <:REFCLSID, :LPUNKNOWN, :DWORD, :REFIID, :ptr LPVOID>, 20
+  endif
+  if (WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM))
     if (_WIN32_WINNT ge 0400h) or Defined(_WIN32_DCOM)
       @DefProto DllImport, CoCreateInstanceEx, WIN_STD_CALL_CONV,, <:REFCLSID, :ptr IUnknown, :DWORD, :ptr COSERVERINFO, :DWORD, :ptr MULTI_QI>, 24
     endif
-    @DefProto DllImport, CoRegisterActivationFilter, WIN_STD_CALL_CONV,, <:ptr IActivationFilter>, 4
-  endif
-  if (_WIN32_WINNT ge 0602h)
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    if (_WIN32_WINNT ge 0602h)
       @DefProto DllImport, CoCreateInstanceFromApp, WIN_STD_CALL_CONV,, <:REFCLSID, :ptr IUnknown, :DWORD, :PVOID, :DWORD, :ptr MULTI_QI>, 24
     endif
   endif
-  if WINAPI_PARTITION_APP and  not (WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
-    CoCreateInstance proto WIN_STD_CALL_CONV :REFCLSID, :LPUNKNOWN, :DWORD, :REFIID, :ptr LPVOID
-    ifdef __cplusplus
-      ;[...]
-    else
-    endif
-    ifdef _PREFAST_
-      ;[...]
-    endif
-    CoCreateInstanceEx proto WIN_STD_CALL_CONV :REFCLSID, :ptr IUnknown, :DWORD, :ptr COSERVERINFO, :DWORD, :ptr MULTI_QI
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    @DefProto DllImport, CoRegisterActivationFilter, WIN_STD_CALL_CONV,, <:ptr IActivationFilter>, 4
   endif
   if (_WIN32_WINNT ge 0500h) or Defined(_WIN32_DCOM)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
@@ -357,23 +351,23 @@ if  not Defined(_COMBASEAPI_H_)
       @DefProto DllImport, CoDisableCallCancellation, WIN_STD_CALL_CONV,, <:LPVOID>, 4
     endif
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, StringFromCLSID, WIN_STD_CALL_CONV,, <:REFCLSID, :ptr LPOLESTR>, 8
     @DefProto DllImport, CLSIDFromString, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LPCLSID>, 8
     @DefProto DllImport, StringFromIID, WIN_STD_CALL_CONV,, <:REFIID, :ptr LPOLESTR>, 8
     @DefProto DllImport, IIDFromString, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LPIID>, 8
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, ProgIDFromCLSID, WIN_STD_CALL_CONV,, <:REFCLSID, :ptr LPOLESTR>, 8
     @DefProto DllImport, CLSIDFromProgID, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LPCLSID>, 8
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, StringFromGUID2, WIN_STD_CALL_CONV,, <:REFGUID, :LPOLESTR, :SDWORD>, 12
     @DefProto DllImport, CoCreateGuid, WIN_STD_CALL_CONV,, <:ptr GUID>, 4
-    
-    @DefProto DllImport, PropVariantCopy, WIN_STD_CALL_CONV,, <:ptr, :ptr>, 8
-    @DefProto DllImport, PropVariantClear, WIN_STD_CALL_CONV,, <:ptr>, 4
-    @DefProto DllImport, FreePropVariantArray, WIN_STD_CALL_CONV,, <:ULONG, :ptr>, 8
+;    PROPVARIANT typedef tagVARIANT
+;    @DefProto DllImport, PropVariantCopy, WIN_STD_CALL_CONV,, <:ptr PROPVARIANT, :ptr PROPVARIANT>, 8
+;    @DefProto DllImport, PropVariantClear, WIN_STD_CALL_CONV,, <:ptr PROPVARIANT>, 4
+;    @DefProto DllImport, FreePropVariantArray, WIN_STD_CALL_CONV,, <:ULONG, :ptr PROPVARIANT>, 8
   endif
   if (_WIN32_WINNT ge 0400h) or Defined(_WIN32_DCOM)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
@@ -390,13 +384,15 @@ if  not Defined(_COMBASEAPI_H_)
       COWAIT_DISPATCH_CALLS equ 8
       COWAIT_DISPATCH_WINDOW_MESSAGES equ 10h
       tagCOWAIT_FLAGS typedef COWAIT_FLAGS
-      
+
+      DEFINE_ENUM_FLAG_OPERATORS(COWAIT_FLAGS)
       if (NTDDI_VERSION ge NTDDI_WIN8)
         CWMO_FLAGS typedef SDWORD
         CWMO_DEFAULT equ 0
         CWMO_DISPATCH_CALLS equ 1
         CWMO_DISPATCH_WINDOW_MESSAGES equ 2
-        
+
+        DEFINE_ENUM_FLAG_OPERATORS(CWMO_FLAGS)
         @DefProto DllImport, CoWaitForMultipleObjects, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :ULONG, :ptr HANDLE, :LPDWORD>, 20
       endif
       CWMO_MAX_HANDLES equ 56
@@ -415,17 +411,19 @@ if  not Defined(_COMBASEAPI_H_)
       AgileReferenceOptions typedef SDWORD
       AGILEREFERENCE_DEFAULT equ 0
       AGILEREFERENCE_DELAYEDMARSHAL equ 1
-      
+
       @DefProto DllImport, RoGetAgileReference, WIN_STD_CALL_CONV,, <:AgileReferenceOptions, :REFIID, :ptr IUnknown, :ptr ptr IAgileReference>, 16
     endif
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     TYPE_LPFNGETCLASSOBJECT typedef proto WIN_STD_CALL_CONV :REFCLSID, :REFIID, :ptr LPVOID
     LPFNGETCLASSOBJECT typedef ptr TYPE_LPFNGETCLASSOBJECT
+
     TYPE_LPFNCANUNLOADNOW typedef proto WIN_STD_CALL_CONV
     LPFNCANUNLOADNOW typedef ptr TYPE_LPFNCANUNLOADNOW
-;    @DefProto DllImport, DllGetClassObject, WIN_STD_CALL_CONV,, <:REFCLSID, :REFIID, :ptr LPVOID>, 12
-;    @DefProto DllImport, DllCanUnloadNow, WIN_STD_CALL_CONV,, <>, 0
+
+    @DefProto DllImport, DllGetClassObject, WIN_STD_CALL_CONV,, <:REFCLSID, :REFIID, :ptr LPVOID>, 12
+    @DefProto DllImport, DllCanUnloadNow, WIN_STD_CALL_CONV,, <>, 0
     @DefProto DllImport, CoTaskMemAlloc, WIN_STD_CALL_CONV,, <:SIZE_T>, 4
     @DefProto DllImport, CoTaskMemRealloc, WIN_STD_CALL_CONV,, <:LPVOID, :SIZE_T>, 8
     @DefProto DllImport, CoTaskMemFree, WIN_STD_CALL_CONV,, <:LPVOID>, 4
@@ -433,6 +431,14 @@ if  not Defined(_COMBASEAPI_H_)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, CoFileTimeNow, WIN_STD_CALL_CONV,, <:ptr FILETIME>, 4
     @DefProto DllImport, CLSIDFromProgIDEx, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LPCLSID>, 8
+    if (NTDDI_VERSION ge NTDDI_WIN10_VB)
+      if  not Defined(_CO_DEVICE_CATALOG_)
+        _CO_DEVICE_CATALOG_ equ <>
+      endif
+      DECLARE_HANDLE CO_DEVICE_CATALOG_COOKIE
+      @DefProto DllImport, CoRegisterDeviceCatalog, WIN_STD_CALL_CONV,, <:PCWSTR, :ptr CO_DEVICE_CATALOG_COOKIE>, 8
+      @DefProto DllImport, CoRevokeDeviceCatalog, WIN_STD_CALL_CONV,, <:CO_DEVICE_CATALOG_COOKIE>, 4
+    endif
   endif
   ifndef RC_INVOKED
     include poppack.inc

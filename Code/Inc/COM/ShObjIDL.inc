@@ -2753,7 +2753,7 @@ COM_INTERFACE_END
 
 COM_INTERFACE_BEG IAssocHandlerInvoker, IUnknown, <92218CAB-ECAA-4335-8133-807FD234C2EE>
   COM_MTD_STD   SupportsSelection
-  COM_MTD_STD   Invoke_
+  COM_MTD_STD   Invoke
 COM_INTERFACE_END
 
 
@@ -2763,7 +2763,7 @@ COM_INTERFACE_BEG IAssocHandler, IUnknown, <F04061AC-1659-4A3F-A954-775AA57FC083
   COM_MTD_STD   GetIconLocation,              POINTER, POINTER
   COM_MTD_STD   IsRecommended
   COM_MTD_STD   MakeDefault,                  POINTER
-  COM_MTD_STD   Invoke_,                      POINTER
+  COM_MTD_STD   Invoke,                       POINTER
   COM_MTD_STD   CreateInvoker,                POINTER, POINTER
 COM_INTERFACE_END
 

@@ -81,8 +81,9 @@ ObjectEnd
 ; Arguments:  Arg1: Collection. 
 ;             Arg2: Optional 32 bit index variable/register. Can not be eax!
 ; Return:     Nothing.
-; Note:       On each loop xax -> collection item.
-;             If Arg1 is a POINTER, load it in a non used register and pass [reg] as argument.
+; Note:       - On each loop xax -> collection item.
+;             - If Arg1 is a POINTER, load it in a non used register and pass [reg] as argument.
+;             - break and .continue can be used.
 ; Example 1:  .ColForEach MyColl
 ;               DbgHex [xax].$Obj(Primer).pOwner
 ;             .ColNext

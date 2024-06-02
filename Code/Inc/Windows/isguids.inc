@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\isguids.h', last modified: 19/04/2018 10:46
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\isguids.h
+;             Created on (UTC) 06/04/2024 06:15:56
+;             Last modified on (UTC) 16/12/2023 11:07:04
 
 ifndef _ISGUIDS_H_
   _ISGUIDS_H_ equ <>
@@ -17,4 +18,3 @@ ifndef _ISGUIDS_H_
     endif
   endif
 endif
-

@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 19/04/2018 10:43
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\basetsd.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\basetsd.h
+;             Created on (UTC) 22/05/2024 17:57:06
+;             Last modified on (UTC) 12/02/2024 17:05:38
 
 ifndef _BASETSD_H_
   _BASETSD_H_ equ <>
@@ -76,7 +77,7 @@ ifndef _BASETSD_H_
       _W64 equ <>
     endif
   endif
-  if Defined(__midl); and (501 lt __midl))
+  if (Defined(__midl)); and (501 lt __midl))
     ;[...]
   else
     if Defined(_WIN64)
@@ -100,6 +101,11 @@ ifndef _BASETSD_H_
       PULONG_PTR typedef ptr _W64
       __int3264 equ <__int32>
     endif
+  endif
+  ifndef __HANDLE64_DEFINED__
+    __HANDLE64_DEFINED__ equ <>
+    HANDLE64 typedef ptr
+    PHANDLE64 typedef ptr HANDLE64
   endif
   ifdef _WIN64
     ADDRESS_TAG_BIT equ 40000000000h
@@ -182,22 +188,22 @@ ifndef _BASETSD_H_
       exitm <((p))>
     endm
     IntToPtr macro i
-      exitm <((VOID *) (i))>
+      exitm <((i))>
     endm
     UIntToPtr macro ui
-      exitm <((VOID *) (ui))>
+      exitm <((ui))>
     endm
     LongToPtr macro l
-      exitm <((VOID *) (l))>
+      exitm <((l))>
     endm
     ULongToPtr macro ul
-      exitm <((VOID *) (ul))>
+      exitm <((ul))>
     endm
     if  not Defined(__midl)
       PtrToPtr64 proto WIN_STD_CALL_CONV :ptr
       Ptr64ToPtr proto WIN_STD_CALL_CONV :ptr
       HandleToHandle64 proto WIN_STD_CALL_CONV :ptr
-      Handle64ToHandle proto WIN_STD_CALL_CONV :ptr
+      Handle64ToHandle proto WIN_STD_CALL_CONV :HANDLE64
     endif
     Ptr32ToPtr macro p
       exitm <(p)>

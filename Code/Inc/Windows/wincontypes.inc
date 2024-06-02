@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\wincontypes.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\wincontypes.h
+;             Created on (UTC) 06/04/2024 06:16:02
+;             Last modified on (UTC) 08/01/2024 17:05:24
 
 ifndef _WINCONTYPES_
   _WINCONTYPES_ equ <>
@@ -9,25 +10,21 @@ ifndef _WINCONTYPES_
   ifdef __cplusplus
     ;[...]
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     COORD struct
       X SHORT_ ?
       Y SHORT_ ?
     COORD ends
-
     _COORD typedef COORD
     PCOORD typedef ptr COORD
-    
     SMALL_RECT struct
       Left SHORT_ ?
       Top SHORT_ ?
       Right SHORT_ ?
       Bottom SHORT_ ?
     SMALL_RECT ends
-
     _SMALL_RECT typedef SMALL_RECT
     PSMALL_RECT typedef ptr SMALL_RECT
-    
     KEY_EVENT_RECORD struct
       bKeyDown BOOL ?
       wRepeatCount WORD ?
@@ -39,10 +36,8 @@ ifndef _WINCONTYPES_
       ends
       dwControlKeyState DWORD ?
     KEY_EVENT_RECORD ends
-
     _KEY_EVENT_RECORD typedef KEY_EVENT_RECORD
     PKEY_EVENT_RECORD typedef ptr KEY_EVENT_RECORD
-    
     RIGHT_ALT_PRESSED equ 0001h
     LEFT_ALT_PRESSED equ 0002h
     RIGHT_CTRL_PRESSED equ 0004h
@@ -66,10 +61,8 @@ ifndef _WINCONTYPES_
       dwControlKeyState DWORD ?
       dwEventFlags DWORD ?
     MOUSE_EVENT_RECORD ends
-
     _MOUSE_EVENT_RECORD typedef MOUSE_EVENT_RECORD
     PMOUSE_EVENT_RECORD typedef ptr MOUSE_EVENT_RECORD
-    
     FROM_LEFT_1ST_BUTTON_PRESSED equ 0001h
     RIGHTMOST_BUTTON_PRESSED equ 0002h
     FROM_LEFT_2ND_BUTTON_PRESSED equ 0004h
@@ -84,24 +77,18 @@ ifndef _WINCONTYPES_
     WINDOW_BUFFER_SIZE_RECORD struct
       dwSize COORD <>
     WINDOW_BUFFER_SIZE_RECORD ends
-
     _WINDOW_BUFFER_SIZE_RECORD typedef WINDOW_BUFFER_SIZE_RECORD
     PWINDOW_BUFFER_SIZE_RECORD typedef ptr WINDOW_BUFFER_SIZE_RECORD
-    
     MENU_EVENT_RECORD struct
       dwCommandId UINT ?
     MENU_EVENT_RECORD ends
-
     _MENU_EVENT_RECORD typedef MENU_EVENT_RECORD
     PMENU_EVENT_RECORD typedef ptr MENU_EVENT_RECORD
-    
     FOCUS_EVENT_RECORD struct
       bSetFocus BOOL ?
     FOCUS_EVENT_RECORD ends
-
     _FOCUS_EVENT_RECORD typedef FOCUS_EVENT_RECORD
     PFOCUS_EVENT_RECORD typedef ptr FOCUS_EVENT_RECORD
-    
     INPUT_RECORD struct 4
       EventType WORD ?
       union Event_
@@ -112,10 +99,8 @@ ifndef _WINCONTYPES_
         FocusEvent FOCUS_EVENT_RECORD <>
       ends
     INPUT_RECORD ends
-
     _INPUT_RECORD typedef INPUT_RECORD
     PINPUT_RECORD typedef ptr INPUT_RECORD
-    
     KEY_EVENT equ 0001h
     MOUSE_EVENT equ 0002h
     WINDOW_BUFFER_SIZE_EVENT equ 0004h
@@ -128,21 +113,17 @@ ifndef _WINCONTYPES_
       ends
       Attributes WORD ?
     CHAR_INFO ends
-
     _CHAR_INFO typedef CHAR_INFO
     PCHAR_INFO typedef ptr CHAR_INFO
-    
     CONSOLE_FONT_INFO struct
       nFont DWORD ?
       dwFontSize COORD <>
     CONSOLE_FONT_INFO ends
-
     _CONSOLE_FONT_INFO typedef CONSOLE_FONT_INFO
     PCONSOLE_FONT_INFO typedef ptr CONSOLE_FONT_INFO
-    
+    HPCON typedef ptr VOID
   endif
   ifdef __cplusplus
     ;[...]
   endif
 endif
-

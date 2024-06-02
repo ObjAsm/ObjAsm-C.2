@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\winnetwk.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winnetwk.h
+;             Created on (UTC) 06/04/2024 06:16:03
+;             Last modified on (UTC) 21/02/2024 18:13:16
 
 include winapifamily.inc
 ifndef _WINNETWK_
@@ -62,10 +63,8 @@ ifndef _WINNETWK_
       lpComment LPSTR ?
       lpProvider LPSTR ?
     NETRESOURCEA ends
-
     _NETRESOURCEA typedef NETRESOURCEA
     LPNETRESOURCEA typedef ptr NETRESOURCEA
-    
     NETRESOURCEW struct
       dwScope DWORD ?
       dwType DWORD ?
@@ -76,10 +75,8 @@ ifndef _WINNETWK_
       lpComment LPWSTR ?
       lpProvider LPWSTR ?
     NETRESOURCEW ends
-
     _NETRESOURCEW typedef NETRESOURCEW
     LPNETRESOURCEW typedef ptr NETRESOURCEW
-    
     ifdef UNICODE
       NETRESOURCE typedef NETRESOURCEW
       LPNETRESOURCE typedef LPNETRESOURCEW
@@ -112,6 +109,8 @@ ifndef _WINNETWK_
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN10)
       CONNECT_REQUIRE_INTEGRITY equ 00004000h
       CONNECT_REQUIRE_PRIVACY equ 00008000h
+      CONNECT_WRITE_THROUGH_SEMANTICS equ 00010000h
+      CONNECT_GLOBAL_MAPPING equ 00040000h
     endif
     WNetAddConnectionA proto WIN_STD_CALL_CONV :LPCSTR, :LPCSTR, :LPCSTR
     WNetAddConnectionW proto WIN_STD_CALL_CONV :LPCWSTR, :LPCWSTR, :LPCWSTR
@@ -133,6 +132,15 @@ ifndef _WINNETWK_
       WNetAddConnection3 equ <WNetAddConnection3W>
     else
       WNetAddConnection3 equ <WNetAddConnection3A>
+    endif
+    if (_WIN32_WINNT ge _WIN32_WINNT_WIN10)
+      WNetAddConnection4A proto WIN_STD_CALL_CONV :HWND, :LPNETRESOURCEA, :PVOID, :DWORD, :DWORD, :PBYTE, :DWORD
+      WNetAddConnection4W proto WIN_STD_CALL_CONV :HWND, :LPNETRESOURCEW, :PVOID, :DWORD, :DWORD, :PBYTE, :DWORD
+      ifdef UNICODE
+        WNetAddConnection4 equ <WNetAddConnection4W>
+      else
+        WNetAddConnection4 equ <WNetAddConnection4A>
+      endif
     endif
     WNetCancelConnectionA proto WIN_STD_CALL_CONV :LPCSTR, :BOOL
     WNetCancelConnectionW proto WIN_STD_CALL_CONV :LPCWSTR, :BOOL
@@ -173,6 +181,15 @@ ifndef _WINNETWK_
         WNetUseConnection equ <WNetUseConnectionA>
       endif
     endif
+    if (_WIN32_WINNT ge _WIN32_WINNT_WIN10)
+      WNetUseConnection4A proto WIN_STD_CALL_CONV :HWND, :LPNETRESOURCEA, :PVOID, :DWORD, :DWORD, :PBYTE, :DWORD, :LPSTR, :LPDWORD, :LPDWORD
+      WNetUseConnection4W proto WIN_STD_CALL_CONV :HWND, :LPNETRESOURCEW, :PVOID, :DWORD, :DWORD, :PBYTE, :DWORD, :LPWSTR, :LPDWORD, :LPDWORD
+      ifdef UNICODE
+        WNetUseConnection4 equ <WNetUseConnection4W>
+      else
+        WNetUseConnection4 equ <WNetUseConnection4A>
+      endif
+    endif
     WNetConnectionDialog proto WIN_STD_CALL_CONV :HWND, :DWORD
     WNetDisconnectDialog proto WIN_STD_CALL_CONV :HWND, :DWORD
     if (WINVER ge 0400h)
@@ -183,10 +200,8 @@ ifndef _WINNETWK_
         dwFlags DWORD ?
         dwDevNum DWORD ?
       CONNECTDLGSTRUCTA ends
-
       _CONNECTDLGSTRUCTA typedef CONNECTDLGSTRUCTA
       LPCONNECTDLGSTRUCTA typedef ptr CONNECTDLGSTRUCTA
-      
       CONNECTDLGSTRUCTW struct
         cbStructure DWORD ?
         hwndOwner HWND ?
@@ -194,10 +209,8 @@ ifndef _WINNETWK_
         dwFlags DWORD ?
         dwDevNum DWORD ?
       CONNECTDLGSTRUCTW ends
-
       _CONNECTDLGSTRUCTW typedef CONNECTDLGSTRUCTW
       LPCONNECTDLGSTRUCTW typedef ptr CONNECTDLGSTRUCTW
-      
       ifdef UNICODE
         CONNECTDLGSTRUCT typedef CONNECTDLGSTRUCTW
         LPCONNECTDLGSTRUCT typedef LPCONNECTDLGSTRUCTW
@@ -225,10 +238,8 @@ ifndef _WINNETWK_
         lpRemoteName LPSTR ?
         dwFlags DWORD ?
       DISCDLGSTRUCTA ends
-
       _DISCDLGSTRUCTA typedef DISCDLGSTRUCTA
       LPDISCDLGSTRUCTA typedef ptr DISCDLGSTRUCTA
-      
       DISCDLGSTRUCTW struct
         cbStructure DWORD ?
         hwndOwner HWND ?
@@ -236,10 +247,8 @@ ifndef _WINNETWK_
         lpRemoteName LPWSTR ?
         dwFlags DWORD ?
       DISCDLGSTRUCTW ends
-
       _DISCDLGSTRUCTW typedef DISCDLGSTRUCTW
       LPDISCDLGSTRUCTW typedef ptr DISCDLGSTRUCTW
-      
       ifdef UNICODE
         DISCDLGSTRUCT typedef DISCDLGSTRUCTW
         LPDISCDLGSTRUCT typedef LPDISCDLGSTRUCTW
@@ -293,17 +302,13 @@ ifndef _WINNETWK_
     UNIVERSAL_NAME_INFOA struct
       lpUniversalName LPSTR ?
     UNIVERSAL_NAME_INFOA ends
-
     _UNIVERSAL_NAME_INFOA typedef UNIVERSAL_NAME_INFOA
     LPUNIVERSAL_NAME_INFOA typedef ptr UNIVERSAL_NAME_INFOA
-    
     UNIVERSAL_NAME_INFOW struct
       lpUniversalName LPWSTR ?
     UNIVERSAL_NAME_INFOW ends
-
     _UNIVERSAL_NAME_INFOW typedef UNIVERSAL_NAME_INFOW
     LPUNIVERSAL_NAME_INFOW typedef ptr UNIVERSAL_NAME_INFOW
-    
     ifdef UNICODE
       UNIVERSAL_NAME_INFO typedef UNIVERSAL_NAME_INFOW
       LPUNIVERSAL_NAME_INFO typedef LPUNIVERSAL_NAME_INFOW
@@ -316,19 +321,15 @@ ifndef _WINNETWK_
       lpConnectionName LPSTR ?
       lpRemainingPath LPSTR ?
     REMOTE_NAME_INFOA ends
-
     _REMOTE_NAME_INFOA typedef REMOTE_NAME_INFOA
     LPREMOTE_NAME_INFOA typedef ptr REMOTE_NAME_INFOA
-    
     REMOTE_NAME_INFOW struct
       lpUniversalName LPWSTR ?
       lpConnectionName LPWSTR ?
       lpRemainingPath LPWSTR ?
     REMOTE_NAME_INFOW ends
-
     _REMOTE_NAME_INFOW typedef REMOTE_NAME_INFOW
     LPREMOTE_NAME_INFOW typedef ptr REMOTE_NAME_INFOW
-    
     ifdef UNICODE
       REMOTE_NAME_INFO typedef REMOTE_NAME_INFOW
       LPREMOTE_NAME_INFO typedef LPREMOTE_NAME_INFOW
@@ -374,10 +375,8 @@ ifndef _WINNETWK_
         dwPrinters DWORD ?
         dwDrives DWORD ?
       NETINFOSTRUCT ends
-
       _NETINFOSTRUCT typedef NETINFOSTRUCT
       LPNETINFOSTRUCT typedef ptr NETINFOSTRUCT
-      
       NETINFO_DLL16 equ 00000001h
       NETINFO_DISKRED equ 00000004h
       NETINFO_PRINTERRED equ 00000008h
@@ -452,10 +451,8 @@ ifndef _WINNETWK_
         dwDelay DWORD ?
         dwOptDataSize DWORD ?
       NETCONNECTINFOSTRUCT ends
-
       _NETCONNECTINFOSTRUCT typedef NETCONNECTINFOSTRUCT
       LPNETCONNECTINFOSTRUCT typedef ptr NETCONNECTINFOSTRUCT
-      
       WNCON_FORNETCARD equ 00000001h
       WNCON_NOTROUTED equ 00000002h
       WNCON_SLOWLINK equ 00000004h
@@ -475,4 +472,3 @@ ifndef _WINNETWK_
     ;[...]
   endif
 endif
-

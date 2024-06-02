@@ -1,101 +1,11 @@
 ; ==================================================================================================
-; Title:    WinAsm.inc
-; Author:   G. Friedrich
-; Version:  B.01.01
-; Purpose:  This file is intended to be used with the translated header files of the h2incX project.
-;           It must be included ahead of Windows.inc file.
-;           This include file is *NOT* automatically generated.
-; Notes:
-; - 1. 'guiddef.inc': replace the following macros
-;       ifdef INITGUID
-;         DEFINE_GUID macro GUID_Name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-;          GUID_Name GUID { l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8}}
-;         endm
-;       else
-;         DEFINE_GUID macro GUID_Name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-;          externdef GUID_Name:GUID
-;          s&GUID_Name textequ <GUID {l, w1, w2, {b1, b2, b3, b4, b5, b6, b7, b8}}>
-;         endm
-;       endif
-;
-;       DEFINE_OLEGUID macro GUID_Name, l, w1, w2
-;         DEFINE_GUID GUID_Name, l, w1, w2, 0C0h, 0, 0, 0, 0, 0, 0, 46h
-;       endm
-;
-; - 2. 'guiddef.inc': replace occurences of REFGUID, REFIID, REFCLSID, REFFMTID, etc.
-;       REFxxxx typedef ptr GUID
-;
-; - 3. 'WinNT.inc': replace DECLARE_HANDLE macro
-;       DECLARE_HANDLE macro name
-;         name typedef HANDLE
-;       endm
-;
-; - 4. 'ComBaseApi.inc': Replace the following macro
-;       STDMETHOD macro Mthd: Args:vararg
-;       endm
-;       STDMETHOD_ macro type, Mthd
-;       endm
-;       STDMETHODV macro Mthd
-;       endm
-;       STDMETHODV_ macro type, Mthd
-;       endm
-;
-; - 5. For MASM, size_t must be defined earlier as it is in C.
-;      'CrtDefs.inc': remove size_t definitions. The definition is added in this file.
-;
-; - 6. The PP logic must be changed a bit, since MASM and UASM fully check all params
-;      in an 'AND' conditional statement. That leads to problems when we check for the
-;      exitance of a symbol 'AND' for some value of the same. In example ('basetsd.inc'):
-;
-;                                                       ??AND_001 = 0
-;      if (defined(__midl) and (501 lt __midl))         if defined(__midl)
-;        INT_PTR typedef SDWORD                           if 501 lt __midl
-;        …                                                  INT_PTR typedef SDWORD
-;      else                                                 …
-;        if defined(_WIN64)                               else
-;          INT_PTR typedef QWORD                            ??AND_001 = 1
-;          …                                              endif
-;        else                                           else
-;          INT_PTR typedef _W64               ---\           ??AND_001 = 1
-;          …                                  ---/      endif
-;        endif
-;      endif                                            if ??AND_001 eq 1
-;                                                         if defined(_WIN64)
-;                                                           INT_PTR typedef QWORD
-;                                                           …
-;                                                         else
-;                                                           INT_PTR typedef _W64
-;                                                           …
-;                                                         endif
-;                                                       endif
-;
-; - 7. 'wincrypt.inc': replace 'CryptSignCertificate' with this definition
-;
-;      ifdef CMSG_SIGNER_ENCODE_INFO_HAS_IUM_FIELDS
-;        @DefProto DllImport, CryptSignCertificate, <:BCRYPT_KEY_HANDLE,:DWORD, :DWORD, :ptr BYTE, :DWORD, :PCRYPT_ALGORITHM_IDENTIFIER, :ptr , :ptr BYTE, :ptr DWORD>, 40
-;        @DefProto DllImport, CryptSignAndEncodeCertificate, <:BCRYPT_KEY_HANDLE,:DWORD, :DWORD, :LPSTR, :ptr , :PCRYPT_ALGORITHM_IDENTIFIER, :ptr , :ptr BYTE, :ptr DWORD>, 40
-;      else
-;        @DefProto DllImport, CryptSignCertificate, <:HCRYPTPROV_OR_NCRYPT_KEY_HANDLE,:DWORD, :DWORD, :ptr BYTE, :DWORD, :PCRYPT_ALGORITHM_IDENTIFIER, :ptr , :ptr BYTE, :ptr DWORD>, 40
-;        @DefProto DllImport, CryptSignAndEncodeCertificate, <:HCRYPTPROV_OR_NCRYPT_KEY_HANDLE,:DWORD, :DWORD, :LPSTR, :ptr , :PCRYPT_ALGORITHM_IDENTIFIER, :ptr , :ptr BYTE, :ptr DWORD>, 40
-;      endif
-;
-; - 8. 'winnt.inc': replace with the following lines
-;      PENCLAVE_TARGET_FUNCTION typedef proto :ptr ENCLAVE_TARGET_FUNCTION
-;      IMAGE_ARCHIVE_START equ <"!<arch!>",0Ah>
-;
-; - 9. 'shlobj_core.inc': replace with the following lines
-;      if (NTDDI_VERSION ge NTDDI_VISTA)
-;        SHELLFLAGSTATE struct
-;          SHELLFLAGSTATE_??74 record fShowAllObjects_??74:1, fShowExtensions_??74:1, fNoConfirmRecycle_??74:1, fShowSysFiles_??74:1, fShowCompColor_??74:1, fDoubleClickInWebView_??74:1, fDesktopHTML_??74:1, fWin95Classic_??74:1, fDontPrettyPath_??74:1, fShowAttribCol_??74:1, fMapNetDrvBtn_??74:1, fShowInfoTip_??74:1, fHideIcons_??74:1, fAutoCheckSelect_??74:1, fIconsOnly_??74:1, fRestFlags_??74:1
-;        SHELLFLAGSTATE ends
-;      else
-;        SHELLFLAGSTATE struct
-;          SHELLFLAGSTATE_??74 record fShowAllObjects_??74:1, fShowExtensions_??74:1, fNoConfirmRecycle_??74:1, fShowSysFiles_??74:1, fShowCompColor_??74:1, fDoubleClickInWebView_??74:1, fDesktopHTML_??74:1, fWin95Classic_??74:1, fDontPrettyPath_??74:1, fShowAttribCol_??74:1, fMapNetDrvBtn_??74:1, fShowInfoTip_??74:1, fHideIcons_??74:1, fRestFlags_??74:3
-;        SHELLFLAGSTATE ends
-;      endif
-
-
-; ==================================================================================================
+; Title:      WinAsm.inc
+; Author:     G. Friedrich
+; Version:    C.2.0
+; Purpose:    This file is designed for use with the translated header files of the h2inc+ project.
+;             It must be included before the Windows.inc file.
+;             This include file is *NOT* automatically generated.
+; Notes:      Check "h2inc+_Manual_Changes.txt" 
 
 
 ifndef _INC_WINASM
@@ -129,6 +39,7 @@ ifndef _INC_WINASM
   _WIN32_WINNT_WINBLUE      equ   0603h                 ;Windows 8.1
   _WIN32_WINNT_WINTHRESHOLD equ   0A00h                 ;Windows 10
   _WIN32_WINNT_WIN10        equ   0A00h                 ;Windows 10
+  _WIN32_WINNT_WIN10_19H2   equ   0A00h
 
   _WIN32_IE_IE100           equ   0A00h                 ;Internet Explorer 10.0
   _WIN32_IE_IE90            equ   0900h                 ;Internet Explorer 9.0
@@ -192,6 +103,29 @@ ifndef _INC_WINASM
   NTDDI_WS08SP4             equ   DDI_WIN6SP4
 
   NTDDI_LONGHORN            equ   NTDDI_VISTA
+  NTDDI_WIN8                equ   06020000h
+  NTDDI_WINBLUE             equ   06030000h
+  NTDDI_WINTHRESHOLD        equ   0A000000h             ;ABRACADABRA_THRESHOLD
+  NTDDI_WIN10               equ   0A000000h             ;ABRACADABRA_THRESHOLD
+  NTDDI_WIN10_TH2           equ   0A000001h             ;ABRACADABRA_WIN10_TH2
+  NTDDI_WIN10_RS1           equ   0A000002h             ;ABRACADABRA_WIN10_RS1
+  NTDDI_WIN10_RS2           equ   0A000003h             ;ABRACADABRA_WIN10_RS2
+  NTDDI_WIN10_RS3           equ   0A000004h             ;ABRACADABRA_WIN10_RS3
+  NTDDI_WIN10_RS4           equ   0A000005h             ;ABRACADABRA_WIN10_RS4
+  NTDDI_WIN10_RS5           equ   0A000006h             ;ABRACADABRA_WIN10_RS5
+  NTDDI_WIN10_19H1          equ   0A000007h             ;ABRACADABRA_WIN10_19H1
+  NTDDI_WIN10_VB            equ   0A000008h
+  NTDDI_WIN10_MN            equ   0A000009h
+  NTDDI_WIN10_FE            equ   0A00000Ah
+  NTDDI_WIN10_CO            equ   0A00000Bh
+  NTDDI_WIN10_NI            equ   0A00000Ch
+  NTDDI_WIN10_CU            equ   0A00000Dh
+  NTDDI_WIN11_ZN            equ   0A00000Eh
+  NTDDI_WIN11_GA            equ   0A00000Fh
+  NTDDI_WIN11_NI            equ   NTDDI_WIN10_NI
+  NTDDI_WIN11_SV3           equ   0A0000010h            ;????
+
+;  WDK_NTDDI_VERSION         equ   NTDDI_WIN10_19H1      ;ABRACADABRA_WIN10_19H1
 
   _NT_TARGET_VERSION_WIN10_RS4 equ <_WIN32_WINNT_WIN10> ;Compared with _WIN32_WINNT, missing
 
@@ -202,13 +136,34 @@ ifndef _INC_WINASM
   _WIN32_WINNT_WIN10_RS3    equ   0A000004h             ;Redstone 3,  Windows 10 version 1709 "Fall Creators Update"
   _WIN32_WINNT_WIN10_RS4    equ   0A000005h             ;Redstone 4,  Windows 10 version 1803 "April 2018 Update"
   _WIN32_WINNT_WIN10_RS5    equ   0A000006h             ;Redstone 5,  Windows 10 version 1809 "October 2018 Update"
+  _WIN32_WINNT_WIN10_19H1   equ   0A000007h             ;ABRACADABRA_WIN10_19H1
+  _WIN32_WINNT_WIN10_VB     equ   0A000008h
+  _WIN32_WINNT_WIN10_MN     equ   0A000009h
+  _WIN32_WINNT_WIN10_FE     equ   0A00000Ah
+  _WIN32_WINNT_WIN10_CO     equ   0A00000Bh
+  _WIN32_WINNT_WIN10_NI     equ   0A00000Ch
+  _WIN32_WINNT_WIN10_CU     equ   0A00000Dh
+  _WIN32_WINNT_WIN11_ZN     equ   0A00000Eh
+  _WIN32_WINNT_WIN11_GA     equ   0A00000Fh
+
+
+  _WIN32_NTDDI_WIN10_19H1   equ   0A000007h             ;ABRACADABRA_WIN10_19H1
+  _WIN32_NTDDI_WIN10_VB     equ   0A000008h
+  _WIN32_NTDDI_WIN10_MN     equ   0A000009h
+  _WIN32_NTDDI_WIN10_FE     equ   0A00000Ah
+  _WIN32_NTDDI_WIN10_CO     equ   0A00000Bh
+  _WIN32_NTDDI_WIN10_NI     equ   0A00000Ch
+  _WIN32_NTDDI_WIN10_CU     equ   0A00000Dh
+  _WIN32_NTDDI_WIN11_ZN     equ   0A00000Eh
+  _WIN32_NTDDI_WIN11_GA     equ   0A00000Fh
 
   NTDDI_WIN10_RS1           equ   _WIN32_WINNT_WIN10_RS1
   NTDDI_WIN10_RS2           equ   _WIN32_WINNT_WIN10_RS2
   NTDDI_WIN10_RS3           equ   _WIN32_WINNT_WIN10_RS3
   NTDDI_WIN10_RS4           equ   _WIN32_WINNT_WIN10_RS4
   NTDDI_WIN10_RS5           equ   _WIN32_WINNT_WIN10_RS5
-  NTDDI_VERSION             equ   NTDDI_WIN10_RS5
+;  NTDDI_VERSION             equ   NTDDI_WIN10_RS5
+
 
   _MSC_VER                  equ   1900                  ;Major & minor number of C compiler's version number
   _MSC_FULL_VER             equ   190024210
@@ -216,10 +171,14 @@ ifndef _INC_WINASM
   _FORCENAMELESSUNION       equ   -1                    ;required for VARIANT definition
 
   WINAPI_PARTITION_PHONE_RESTRICTED   equ   -1          ;Missing
+  
+  _USE_ATTRIBUTES_FOR_SAL   equ   FALSE
+  _MSVC_LANG                equ   202401
 
   ;Some basic type definitions
   POINTER               typedef     ptr
   HANDLE                typedef     ptr
+  wchar_t               typedef     WORD
 
 
   ;Required for some forward definitions in WinNT.inc
@@ -432,15 +391,15 @@ ifndef _INC_WINASM
     @CatStr(<_>, MtdName) POINTER ?                     ;;Make an entry in the structure
   endm
 
-  ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-
-  DECLARE_INTERFACE_ macro Params:vararg
-  endm
-  END_DECLARE_INTERFACE_ macro
-  endm
-
-  ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-
+;  ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;
+;  DECLARE_INTERFACE_ macro Params:vararg
+;  endm
+;  END_DECLARE_INTERFACE_ macro
+;  endm
+;
+;  ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;
   DECLARE_INTERFACE_IID_ macro IName:req, AName:=<>, sIID
     ifnb <sIID>
       sIID_&IName textequ <sIID>                        ;;Create symbolic IID
@@ -450,28 +409,28 @@ ifndef _INC_WINASM
     ??Interface CatStr <IName>, <Vtbl>
 
     ??Interface struct
-      AName&Vtbl {}
+      AName&Vtbl {}                                     ;;Create ancerstor methods
   endm
 
   ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-  END_DECLARE_INTERFACE_IID_ macro
+  DECLARE_INTERFACE_IID__END macro
     ;;Terminate structure definition
     ??Interface ends
   endm
 
   ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-
-  DECLARE_INTERFACE macro Params:vararg
-  endm
-  END_DECLARE_INTERFACE macro
-  endm
-
-  ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-
-  DECLARE_INTERFACE_IID macro Params:vararg
-  endm
-  END_DECLARE_INTERFACE_IID macro
-  endm
+;
+;  DECLARE_INTERFACE macro Params:vararg
+;  endm
+;  DECLARE_INTERFACE_END macro
+;  endm
+;
+;  ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;
+;  DECLARE_INTERFACE_IID macro Params:vararg
+;  endm
+;  END_DECLARE_INTERFACE_IID macro
+;  endm
 
 endif

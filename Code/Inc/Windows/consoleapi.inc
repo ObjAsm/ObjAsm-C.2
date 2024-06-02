@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\consoleapi.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\consoleapi.h
+;             Created on (UTC) 06/04/2024 06:15:52
+;             Last modified on (UTC) 21/02/2024 18:13:14
 
 ifdef _MSC_VER
 endif
@@ -49,6 +50,9 @@ ifndef _APISETCONSOLE_
     else
       ReadConsoleInput equ <ReadConsoleInputA>
     endif
+    ifndef UNICODE
+      PeekConsoleInput equ <PeekConsoleInputA>
+    endif
     @DefProto DllImport, PeekConsoleInputA, WIN_STD_CALL_CONV,, <:HANDLE, :PINPUT_RECORD, :DWORD, :LPDWORD>, 16
     @DefProto DllImport, PeekConsoleInputW, WIN_STD_CALL_CONV,, <:HANDLE, :PINPUT_RECORD, :DWORD, :LPDWORD>, 16
     ifdef UNICODE
@@ -62,10 +66,8 @@ ifndef _APISETCONSOLE_
       dwCtrlWakeupMask ULONG ?
       dwControlKeyState ULONG ?
     CONSOLE_READCONSOLE_CONTROL ends
-
     _CONSOLE_READCONSOLE_CONTROL typedef CONSOLE_READCONSOLE_CONTROL
     PCONSOLE_READCONSOLE_CONTROL typedef ptr CONSOLE_READCONSOLE_CONTROL
-    
     @DefProto DllImport, ReadConsoleA, WIN_STD_CALL_CONV,, <:HANDLE, :LPVOID, :DWORD, :LPDWORD, :PCONSOLE_READCONSOLE_CONTROL>, 20
     @DefProto DllImport, ReadConsoleW, WIN_STD_CALL_CONV,, <:HANDLE, :LPVOID, :DWORD, :LPDWORD, :PCONSOLE_READCONSOLE_CONTROL>, 20
     ifdef UNICODE
@@ -87,10 +89,18 @@ ifndef _APISETCONSOLE_
     CTRL_SHUTDOWN_EVENT equ 6
     TYPE_PHANDLER_ROUTINE typedef proto WIN_STD_CALL_CONV :DWORD
     PHANDLER_ROUTINE typedef ptr TYPE_PHANDLER_ROUTINE
+
     @DefProto DllImport, SetConsoleCtrlHandler, WIN_STD_CALL_CONV,, <:PHANDLER_ROUTINE, :BOOL>, 8
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
+      PSEUDOCONSOLE_INHERIT_CURSOR equ (1h)
+      @DefProto DllImport, CreatePseudoConsole, WIN_STD_CALL_CONV,, <:COORD, :HANDLE, :HANDLE, :DWORD, :ptr HPCON>, 20
+      @DefProto DllImport, ResizePseudoConsole, WIN_STD_CALL_CONV,, <:HPCON, :COORD>, 8
+      @DefProto DllImport, ClosePseudoConsole, WIN_STD_CALL_CONV,, <:HPCON>, 4
+    endif
   endif
   ifdef __cplusplus
     ;[...]
   endif
 endif
-

@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\rpc.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\rpc.h
+;             Created on (UTC) 22/05/2024 17:57:08
+;             Last modified on (UTC) 21/02/2024 18:13:14
 
 if  not Defined(RPC_NO_WINDOWS_H) and  not Defined(MAC) and  not Defined(_MAC) and  not Defined(_KRPCENV_)
   ifndef _INC_WINDOWS
@@ -78,7 +79,7 @@ ifndef __RPC_H__
   endif
   ifdef __RPC_MAC__
     include setjmp.inc
-    RPCXCWORD equ <(sizeof(jmp_buf) / sizeof(SDWORD int)>
+    RPCXCWORD equ <(sizeof(jmp_buf) / sizeof(int))>
     if _MSC_VER ge 1200
     endif
     include rpcdce.inc
@@ -90,6 +91,7 @@ ifndef __RPC_H__
     endif
     TYPE_MACYIELDCALLBACK typedef proto WIN_STD_CALL_CONV :ptr SWORD
     MACYIELDCALLBACK typedef ptr TYPE_MACYIELDCALLBACK
+
     RpcMacSetYieldInfo proto WIN_STD_CALL_CONV :MACYIELDCALLBACK
     if  not Defined(UNALIGNED)
       UNALIGNED equ <>
@@ -101,11 +103,11 @@ ifndef __RPC_H__
       include rpcnsi.inc
     endif
     include rpcnterr.inc
-    include excpt.inc
+;    include excpt.inc
     if  not Defined(_KRPCENV_)
       include winerror.inc
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       RpcTryExcept equ <__try {>
       RpcExcept macro expr
         exitm <} __except (expr) {>
@@ -132,4 +134,3 @@ ifndef __RPC_H__
     ;[...]
   endif
 endif
-

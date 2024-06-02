@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 19/04/2018 10:43
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\rpcasync.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\rpcasync.h
+;             Created on (UTC) 22/05/2024 17:57:08
+;             Last modified on (UTC) 16/12/2023 11:05:40
 
 include winapifamily.inc
 ifndef __RPCASYNC_H__
@@ -34,7 +35,7 @@ ifndef __RPCASYNC_H__
     endif
     RpcNotificationTypeCallback equ 5
     _RPC_NOTIFICATION_TYPES typedef RPC_NOTIFICATION_TYPES
-    
+
     if (NTDDI_VERSION ge NTDDI_VISTA)
       RPC_ASYNC_EVENT typedef SDWORD
       RpcCallComplete equ 0
@@ -43,7 +44,7 @@ ifndef __RPCASYNC_H__
       RpcClientDisconnect equ 3
       RpcClientCancel equ 4
       _RPC_ASYNC_EVENT typedef RPC_ASYNC_EVENT
-      
+
     else
       RPC_ASYNC_EVENT typedef SDWORD
       RpcCallComplete equ 0
@@ -51,10 +52,9 @@ ifndef __RPCASYNC_H__
       RpcReceiveComplete equ 2
       RpcClientDisconnect equ 3
       _RPC_ASYNC_EVENT typedef RPC_ASYNC_EVENT
-      
+
     endif
-;    RPCNOTIFICATION_ROUTINE typedef proto :ptr _RPC_ASYNC_STATE, :ptr, :RPC_ASYNC_EVENT
-    RPCNOTIFICATION_ROUTINE typedef proto :ptr, :ptr, :RPC_ASYNC_EVENT
+    RPCNOTIFICATION_ROUTINE typedef proto :ptr _RPC_ASYNC_STATE, :ptr, :RPC_ASYNC_EVENT
     PFN_RPCNOTIFICATION_ROUTINE typedef ptr RPCNOTIFICATION_ROUTINE
     RPC_ASYNC_NOTIFICATION_INFO union
       if  not Defined(_KRPCENV_)
@@ -86,7 +86,6 @@ ifndef __RPCASYNC_H__
     RPC_ASYNC_NOTIFICATION_INFO ends
     _RPC_ASYNC_NOTIFICATION_INFO typedef RPC_ASYNC_NOTIFICATION_INFO
     PRPC_ASYNC_NOTIFICATION_INFO typedef ptr RPC_ASYNC_NOTIFICATION_INFO
-    
     RPC_ASYNC_STATE struct
       Size_ DWORD ?
       Signature DWORD ?
@@ -102,7 +101,6 @@ ifndef __RPCASYNC_H__
     RPC_ASYNC_STATE ends
     _RPC_ASYNC_STATE typedef RPC_ASYNC_STATE
     PRPC_ASYNC_STATE typedef ptr RPC_ASYNC_STATE
-    
     RPC_C_NOTIFY_ON_SEND_COMPLETE equ 1h
     RPC_C_INFINITE_TIMEOUT equ <INFINITE>
     RpcAsyncGetCallHandle macro pAsync
@@ -127,7 +125,7 @@ ifndef __RPCASYNC_H__
         eeptNone equ 6
         eeptBinary equ 7
         tagExtendedErrorParamTypes typedef ExtendedErrorParamTypes
-        
+
         MaxNumberOfEEInfoParams equ 4
         RPC_EEINFO_VERSION equ 1
         BinaryParam struct
@@ -204,7 +202,7 @@ ifndef __RPCASYNC_H__
           rlafIPv4 equ 1
           rlafIPv6 equ 2
           tagRpcLocalAddressFormat typedef RpcLocalAddressFormat
-          
+
           RPC_CALL_LOCAL_ADDRESS_V1 struct
             Version DWORD ?
             Buffer POINTER ?
@@ -213,25 +211,24 @@ ifndef __RPCASYNC_H__
           RPC_CALL_LOCAL_ADDRESS_V1 ends
           _RPC_CALL_LOCAL_ADDRESS_V1 typedef RPC_CALL_LOCAL_ADDRESS_V1
           PRPC_CALL_LOCAL_ADDRESS_V1 typedef ptr RPC_CALL_LOCAL_ADDRESS_V1
-          
           if ((NTDDI_VERSION ge NTDDI_VISTA) and (NTDDI_VERSION lt NTDDI_WIN8))
-            RPC_CALL_ATTRIBUTES_VERSION equ 2
+            RPC_CALL_ATTRIBUTES_VERSION equ (2)
           endif
-          RPC_QUERY_SERVER_PRINCIPAL_NAME equ 02h
-          RPC_QUERY_CLIENT_PRINCIPAL_NAME equ 04h
-          RPC_QUERY_CALL_LOCAL_ADDRESS equ 08h
-          RPC_QUERY_CLIENT_PID equ 10h
-          RPC_QUERY_IS_CLIENT_LOCAL equ 20h
-          RPC_QUERY_NO_AUTH_REQUIRED equ 40h
+          RPC_QUERY_SERVER_PRINCIPAL_NAME equ (02h)
+          RPC_QUERY_CLIENT_PRINCIPAL_NAME equ (04h)
+          RPC_QUERY_CALL_LOCAL_ADDRESS equ (08h)
+          RPC_QUERY_CLIENT_PID equ (10h)
+          RPC_QUERY_IS_CLIENT_LOCAL equ (20h)
+          RPC_QUERY_NO_AUTH_REQUIRED equ (40h)
         endif
         if (NTDDI_VERSION ge NTDDI_WIN8)
-          RPC_CALL_ATTRIBUTES_VERSION equ 3
-          RPC_QUERY_CLIENT_ID equ 80h
+          RPC_CALL_ATTRIBUTES_VERSION equ (3)
+          RPC_QUERY_CLIENT_ID equ (80h)
         endif
         if ((NTDDI_VERSION ge NTDDI_WINXP) and (NTDDI_VERSION lt NTDDI_VISTA))
-          RPC_CALL_ATTRIBUTES_VERSION equ 1
-          RPC_QUERY_SERVER_PRINCIPAL_NAME equ 2
-          RPC_QUERY_CLIENT_PRINCIPAL_NAME equ 4
+          RPC_CALL_ATTRIBUTES_VERSION equ (1)
+          RPC_QUERY_SERVER_PRINCIPAL_NAME equ (2)
+          RPC_QUERY_CLIENT_PRINCIPAL_NAME equ (4)
         endif
         RPC_CALL_ATTRIBUTES_V1_W struct
           Version DWORD ?
@@ -266,14 +263,14 @@ ifndef __RPCASYNC_H__
           rctTraining equ 2
           rctGuaranteed equ 3
           tagRpcCallType typedef RpcCallType
-          
+
           RpcCallClientLocality typedef SDWORD
           rcclInvalid equ 0
           rcclLocal equ 1
           rcclRemote equ 2
           rcclClientUnknownLocality equ 3
           tagRpcCallClientLocality typedef RpcCallClientLocality
-          
+
           RPC_CALL_ATTRIBUTES_V2_W struct
             Version DWORD ?
             Flags DWORD ?
@@ -399,7 +396,7 @@ ifndef __RPCASYNC_H__
           RpcNotificationClientDisconnect equ 1
           RpcNotificationCallCancel equ 2
           _RPC_NOTIFICATIONS typedef RPC_NOTIFICATIONS
-          
+
           RpcNotificationCallStatusChange equ <RpcNotificationClientDisconnect>
           @DefProto DllImport, RpcServerSubscribeForNotification, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :RPC_NOTIFICATIONS, :RPC_NOTIFICATION_TYPES, :ptr RPC_ASYNC_NOTIFICATION_INFO>, 16
           @DefProto DllImport, RpcServerUnsubscribeForNotification, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :RPC_NOTIFICATIONS, :ptr DWORD>, 12

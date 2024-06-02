@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\comcat.h', last modified: 19/04/2018 10:44
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\comcat.h
+;             Created on (UTC) 06/04/2024 06:15:52
+;             Last modified on (UTC) 21/02/2024 18:14:20
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
   __REQUIRED_RPCNDR_H_VERSION__ equ 500
@@ -22,25 +23,28 @@ ifndef __comcat_h__
   __comcat_h__ equ <>
   if Defined(_MSC_VER) and (_MSC_VER ge 1020)
   endif
+  ifndef DECLSPEC_XFGVIRT
+    if Defined(_CONTROL_FLOW_GUARD_XFG)
+      DECLSPEC_XFGVIRT macro base, func
+        exitm <__declspec(xfg_virtual (base, func))>
+      endm
+    else
+      DECLSPEC_XFGVIRT macro base, func
+        exitm <>
+      endm
+    endif
+  endif
   ifndef __IEnumGUID_FWD_DEFINED__
     __IEnumGUID_FWD_DEFINED__ equ <>
-    ;IEnumGUID typedef IEnumGUID
-    
   endif
   ifndef __IEnumCATEGORYINFO_FWD_DEFINED__
     __IEnumCATEGORYINFO_FWD_DEFINED__ equ <>
-    ;IEnumCATEGORYINFO typedef IEnumCATEGORYINFO
-    
   endif
   ifndef __ICatRegister_FWD_DEFINED__
     __ICatRegister_FWD_DEFINED__ equ <>
-    ;ICatRegister typedef ICatRegister
-    
   endif
   ifndef __ICatInformation_FWD_DEFINED__
     __ICatInformation_FWD_DEFINED__ equ <>
-    ;ICatInformation typedef ICatInformation
-    
   endif
   include unknwn.inc
   ifdef __cplusplus
@@ -99,21 +103,26 @@ ifndef __comcat_h__
           IEnumGUIDVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IEnumGUIDVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IEnumGUID, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IEnumGUID
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IEnumGUID
+            DECLSPEC_XFGVIRT(IEnumGUID, Next)
             STD_METHOD Next, :ptr IEnumGUID, :ULONG, :ptr GUID, :ptr ULONG
+            DECLSPEC_XFGVIRT(IEnumGUID, Skip)
             STD_METHOD Skip, :ptr IEnumGUID, :ULONG
+            DECLSPEC_XFGVIRT(IEnumGUID, Reset)
             STD_METHOD Reset, :ptr IEnumGUID
+            DECLSPEC_XFGVIRT(IEnumGUID, Clone)
             STD_METHOD Clone, :ptr IEnumGUID, :ptr ptr IEnumGUID
             ??Interface equ <>
             END_INTERFACE
           IEnumGUIDVtbl ends
-
           IEnumGUID struct
             lpVtbl POINTER ?
           IEnumGUID ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -136,10 +145,8 @@ ifndef __comcat_h__
           lcid LCID ?
           szDescription OLECHAR 128 dup (?)
         CATEGORYINFO ends
-
         tagCATEGORYINFO typedef CATEGORYINFO
         LPCATEGORYINFO typedef ptr tagCATEGORYINFO
-        
         externdef IID_IEnumCATEGORYINFO:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
@@ -147,21 +154,26 @@ ifndef __comcat_h__
           IEnumCATEGORYINFOVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IEnumCATEGORYINFOVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IEnumCATEGORYINFO, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IEnumCATEGORYINFO
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IEnumCATEGORYINFO
+            DECLSPEC_XFGVIRT(IEnumCATEGORYINFO, Next)
             STD_METHOD Next, :ptr IEnumCATEGORYINFO, :ULONG, :ptr CATEGORYINFO, :ptr ULONG
+            DECLSPEC_XFGVIRT(IEnumCATEGORYINFO, Skip)
             STD_METHOD Skip, :ptr IEnumCATEGORYINFO, :ULONG
+            DECLSPEC_XFGVIRT(IEnumCATEGORYINFO, Reset)
             STD_METHOD Reset, :ptr IEnumCATEGORYINFO
+            DECLSPEC_XFGVIRT(IEnumCATEGORYINFO, Clone)
             STD_METHOD Clone, :ptr IEnumCATEGORYINFO, :ptr ptr IEnumCATEGORYINFO
             ??Interface equ <>
             END_INTERFACE
           IEnumCATEGORYINFOVtbl ends
-
           IEnumCATEGORYINFO struct
             lpVtbl POINTER ?
           IEnumCATEGORYINFO ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -182,23 +194,30 @@ ifndef __comcat_h__
           ICatRegisterVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <ICatRegisterVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr ICatRegister, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ICatRegister
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ICatRegister
+            DECLSPEC_XFGVIRT(ICatRegister, RegisterCategories)
             STD_METHOD RegisterCategories, :ptr ICatRegister, :ULONG, :ptr CATEGORYINFO
+            DECLSPEC_XFGVIRT(ICatRegister, UnRegisterCategories)
             STD_METHOD UnRegisterCategories, :ptr ICatRegister, :ULONG, :ptr CATID
+            DECLSPEC_XFGVIRT(ICatRegister, RegisterClassImplCategories)
             STD_METHOD RegisterClassImplCategories, :ptr ICatRegister, :REFCLSID, :ULONG, :ptr CATID
+            DECLSPEC_XFGVIRT(ICatRegister, UnRegisterClassImplCategories)
             STD_METHOD UnRegisterClassImplCategories, :ptr ICatRegister, :REFCLSID, :ULONG, :ptr CATID
+            DECLSPEC_XFGVIRT(ICatRegister, RegisterClassReqCategories)
             STD_METHOD RegisterClassReqCategories, :ptr ICatRegister, :REFCLSID, :ULONG, :ptr CATID
+            DECLSPEC_XFGVIRT(ICatRegister, UnRegisterClassReqCategories)
             STD_METHOD UnRegisterClassReqCategories, :ptr ICatRegister, :REFCLSID, :ULONG, :ptr CATID
             ??Interface equ <>
             END_INTERFACE
           ICatRegisterVtbl ends
-
           ICatRegister struct
             lpVtbl POINTER ?
           ICatRegister ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -219,23 +238,30 @@ ifndef __comcat_h__
           ICatInformationVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <ICatInformationVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr ICatInformation, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr ICatInformation
+            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr ICatInformation
+            DECLSPEC_XFGVIRT(ICatInformation, EnumCategories)
             STD_METHOD EnumCategories, :ptr ICatInformation, :LCID, :ptr ptr IEnumCATEGORYINFO
+            DECLSPEC_XFGVIRT(ICatInformation, GetCategoryDesc)
             STD_METHOD GetCategoryDesc, :ptr ICatInformation, :REFCATID, :LCID, :ptr LPWSTR
+            DECLSPEC_XFGVIRT(ICatInformation, EnumClassesOfCategories)
             STD_METHOD EnumClassesOfCategories, :ptr ICatInformation, :ULONG, :ptr CATID, :ULONG, :ptr CATID, :ptr ptr IEnumGUID
+            DECLSPEC_XFGVIRT(ICatInformation, IsClassOfCategories)
             STD_METHOD IsClassOfCategories, :ptr ICatInformation, :REFCLSID, :ULONG, :ptr CATID, :ULONG, :ptr CATID
+            DECLSPEC_XFGVIRT(ICatInformation, EnumImplCategoriesOfClass)
             STD_METHOD EnumImplCategoriesOfClass, :ptr ICatInformation, :REFCLSID, :ptr ptr IEnumGUID
+            DECLSPEC_XFGVIRT(ICatInformation, EnumReqCategoriesOfClass)
             STD_METHOD EnumReqCategoriesOfClass, :ptr ICatInformation, :REFCLSID, :ptr ptr IEnumGUID
             ??Interface equ <>
             END_INTERFACE
           ICatInformationVtbl ends
-
           ICatInformation struct
             lpVtbl POINTER ?
           ICatInformation ends
-
           ifdef COBJMACROS
             ;[...]
           endif
@@ -259,4 +285,3 @@ ifndef __comcat_h__
     ;[...]
   endif
 endif
-

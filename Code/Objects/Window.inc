@@ -28,7 +28,7 @@
 ; - To setup a Dynamic Layout, create in writable memory a sequence of structures:
 ;     DL_HEADER + n * DL_CHILD_INFO
 ;   where n is the number of controls in the window.
-;   The initialization is done calling OnCreateWindow. This method is called by Dialogs
+;   The initialization is done calling InitWindow. This method is called by Dialogs
 ;   automatically.
 ;   The DL_CHILD_INFO sequence order corresponds to the window tab sequence order.
 ; - Depending on the flags set in the DL_HEADER.dFlags field, additional information must be set.
@@ -40,6 +40,7 @@
 ; - Layout information is not serialized. It can be reconstructed during initialization.
 ; - Set CS_HREDRAW and CS_VREDRAW flags in the WNDCLASSEX to redraw the complete client area.
 ;   this avoids flickering when resized from the left edge (WM_MOVE!! + WM_SIZE).
+; - Don't set WS_MINIMIZE and WS_MAXIMIZE. They lead to wrong calculations on startup.
 
 
 ;Dynamic Layout flags
@@ -135,6 +136,7 @@ Method Window.OnGetMinMaxInfo, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local CRect:RECT, WRect:RECT
 
   SetObject xsi
+;  DbgText "Window.OnGetMinMaxInfo"
   mov xbx, [xsi].pDynamicLayout
   .if xbx != NULL
     invoke GetWindowRect, [xsi].hWnd, addr WRect
@@ -209,7 +211,7 @@ GetChildInfo endp
 Method Window.InitWindow, uses xbx xsi
   local CRect:RECT, GCWI:GetChildWndInfo, Gripper:RECT
 
-  ;DbgText "Window.OnInitWindow"
+;  DbgText "Window.OnInitWindow"
   SetObject xsi
   mov xbx, [xsi].pDynamicLayout
   .if xbx != NULL
@@ -337,6 +339,7 @@ MoveChildWnd endp
 Method Window.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   local MCWI:MoveChildWndInfo
 
+;  DbgText "Window.OnSize"
   SetObject xsi
   .if wParam != SIZE_MINIMIZED
     mov xdx, [xsi].pDynamicLayout

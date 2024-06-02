@@ -1,10 +1,11 @@
-;Include file created by h2incX, Version B.01.02, 23/09/2018 18:52
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\propidlbase.h', last modified: 19/04/2018 10:46
-;Creation parameters:
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\propidlbase.h
+;             Created on (UTC) 06/04/2024 06:15:57
+;             Last modified on (UTC) 21/02/2024 18:18:10
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-  __REQUIRED_RPCNDR_H_VERSION__ equ 500
+  __REQUIRED_RPCNDR_H_VERSION__ equ 501
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
   __REQUIRED_RPCSAL_H_VERSION__ equ 100
@@ -22,21 +23,28 @@ ifndef __propidlbase_h__
   __propidlbase_h__ equ <>
   if Defined(_MSC_VER) and (_MSC_VER ge 1020)
   endif
+  ifndef DECLSPEC_XFGVIRT
+    if Defined(_CONTROL_FLOW_GUARD_XFG)
+      DECLSPEC_XFGVIRT macro base, func
+        exitm <__declspec(xfg_virtual (base, func))>
+      endm
+    else
+      DECLSPEC_XFGVIRT macro base, func
+        exitm <>
+      endm
+    endif
+  endif
   ifndef __IPropertyStorage_FWD_DEFINED__
     __IPropertyStorage_FWD_DEFINED__ equ <>
-    ;IPropertyStorage typedef IPropertyStorage
   endif
   ifndef __IPropertySetStorage_FWD_DEFINED__
     __IPropertySetStorage_FWD_DEFINED__ equ <>
-    ;IPropertySetStorage typedef IPropertySetStorage
   endif
   ifndef __IEnumSTATPROPSTG_FWD_DEFINED__
     __IEnumSTATPROPSTG_FWD_DEFINED__ equ <>
-    ;IEnumSTATPROPSTG typedef IEnumSTATPROPSTG
   endif
   ifndef __IEnumSTATPROPSETSTG_FWD_DEFINED__
     __IEnumSTATPROPSETSTG_FWD_DEFINED__ equ <>
-    ;IEnumSTATPROPSETSTG typedef IEnumSTATPROPSETSTG
   endif
   include objidl.inc
   include oaidl.inc
@@ -51,23 +59,23 @@ ifndef __propidlbase_h__
   if (_MSC_VER ge 1020)
   endif
   ifndef _PROPIDLBASE_
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       VERSIONEDSTREAM struct
         guidVersion GUID <>
         pStream POINTER ?
       VERSIONEDSTREAM ends
       tagVersionedStream typedef VERSIONEDSTREAM
       LPVERSIONEDSTREAM typedef ptr tagVersionedStream
-      PROPSETFLAG_DEFAULT equ 0
-      PROPSETFLAG_NONSIMPLE equ 1
-      PROPSETFLAG_ANSI equ 2
-      PROPSETFLAG_UNBUFFERED equ 4
-      PROPSETFLAG_CASE_SENSITIVE equ 8
-      PROPSET_BEHAVIOR_CASE_SENSITIVE equ 1
+      PROPSETFLAG_DEFAULT equ (0)
+      PROPSETFLAG_NONSIMPLE equ (1)
+      PROPSETFLAG_ANSI equ (2)
+      PROPSETFLAG_UNBUFFERED equ (4)
+      PROPSETFLAG_CASE_SENSITIVE equ (8)
+      PROPSET_BEHAVIOR_CASE_SENSITIVE equ (1)
       ifdef MIDL_PASS
         ;[...]
       else
-;        PROPVARIANT typedef tagPROPVARIANT
+        PROPVARIANT typedef tagVARIANT
       endif
       CAC struct
         cElems ULONG ?
@@ -212,7 +220,7 @@ ifndef __propidlbase_h__
                 fltVal FLOAT ?
                 dblVal DOUBLE ?
                 boolVal VARIANT_BOOL ?
-                bool _VARIANT_BOOL ?
+                __OBSOLETE__VARIANT_BOOL VARIANT_BOOL ?
                 scode SCODE ?
                 cyVal CY <>
                 date DATE ?
@@ -289,24 +297,24 @@ ifndef __propidlbase_h__
           ifdef __cplusplus
             ;[...]
           else
-            REFPROPVARIANT equ <ptr PROPVARIANT>
+            REFPROPVARIANT typedef ptr tagVARIANT
           endif
         endif
       endif
-      PID_DICTIONARY equ 0
-      PID_CODEPAGE equ 1h
-      PID_FIRST_USABLE equ 2h
-      PID_FIRST_NAME_DEFAULT equ 0fffh
-      PID_LOCALE equ 80000000h
-      PID_MODIFY_TIME equ 80000001h
-      PID_SECURITY equ 80000002h
-      PID_BEHAVIOR equ 80000003h
-      PID_ILLEGAL equ 0ffffffffh
-      PID_MIN_READONLY equ 80000000h
-      PID_MAX_READONLY equ 0bfffffffh
-      PRSPEC_INVALID equ 0ffffffffh
-      PRSPEC_LPWSTR equ 0
-      PRSPEC_PROPID equ 1
+      PID_DICTIONARY equ (0)
+      PID_CODEPAGE equ (1h)
+      PID_FIRST_USABLE equ (2h)
+      PID_FIRST_NAME_DEFAULT equ (0fffh)
+      PID_LOCALE equ (80000000h)
+      PID_MODIFY_TIME equ (80000001h)
+      PID_SECURITY equ (80000002h)
+      PID_BEHAVIOR equ (80000003h)
+      PID_ILLEGAL equ (0ffffffffh)
+      PID_MIN_READONLY equ (80000000h)
+      PID_MAX_READONLY equ (0bfffffffh)
+      PRSPEC_INVALID equ (0ffffffffh)
+      PRSPEC_LPWSTR equ (0)
+      PRSPEC_PROPID equ (1)
       PROPSPEC struct
         ulKind ULONG ?
         union
@@ -349,54 +357,39 @@ ifndef __propidlbase_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
-          TYPE_IPropertyStorageVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage, :REFIID, :ptr ptr
-          PIPropertyStorageVtbl_QueryInterface typedef ptr TYPE_IPropertyStorageVtbl_QueryInterface
-          TYPE_IPropertyStorageVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage
-          PIPropertyStorageVtbl_AddRef typedef ptr TYPE_IPropertyStorageVtbl_AddRef
-          TYPE_IPropertyStorageVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage
-          PIPropertyStorageVtbl_Release typedef ptr TYPE_IPropertyStorageVtbl_Release
-          TYPE_IPropertyStorageVtbl_ReadMultiple typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage, :ULONG, :ptr PROPSPEC, :ptr PROPVARIANT
-          PIPropertyStorageVtbl_ReadMultiple typedef ptr TYPE_IPropertyStorageVtbl_ReadMultiple
-          TYPE_IPropertyStorageVtbl_WriteMultiple typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage, :ULONG, :ptr PROPSPEC, :ptr PROPVARIANT, :PROPID
-          PIPropertyStorageVtbl_WriteMultiple typedef ptr TYPE_IPropertyStorageVtbl_WriteMultiple
-          TYPE_IPropertyStorageVtbl_DeleteMultiple typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage, :ULONG, :ptr PROPSPEC
-          PIPropertyStorageVtbl_DeleteMultiple typedef ptr TYPE_IPropertyStorageVtbl_DeleteMultiple
-          TYPE_IPropertyStorageVtbl_ReadPropertyNames typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage, :ULONG, :ptr PROPID, :ptr LPOLESTR
-          PIPropertyStorageVtbl_ReadPropertyNames typedef ptr TYPE_IPropertyStorageVtbl_ReadPropertyNames
-          TYPE_IPropertyStorageVtbl_WritePropertyNames typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage, :ULONG, :ptr PROPID, :ptr LPOLESTR
-          PIPropertyStorageVtbl_WritePropertyNames typedef ptr TYPE_IPropertyStorageVtbl_WritePropertyNames
-          TYPE_IPropertyStorageVtbl_DeletePropertyNames typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage, :ULONG, :ptr PROPID
-          PIPropertyStorageVtbl_DeletePropertyNames typedef ptr TYPE_IPropertyStorageVtbl_DeletePropertyNames
-          TYPE_IPropertyStorageVtbl_Commit typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage, :DWORD
-          PIPropertyStorageVtbl_Commit typedef ptr TYPE_IPropertyStorageVtbl_Commit
-          TYPE_IPropertyStorageVtbl_Revert typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage
-          PIPropertyStorageVtbl_Revert typedef ptr TYPE_IPropertyStorageVtbl_Revert
-          TYPE_IPropertyStorageVtbl_Enum typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage, :ptr ptr IEnumSTATPROPSTG
-          PIPropertyStorageVtbl_Enum typedef ptr TYPE_IPropertyStorageVtbl_Enum
-          TYPE_IPropertyStorageVtbl_SetTimes typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage, :ptr FILETIME, :ptr FILETIME, :ptr FILETIME
-          PIPropertyStorageVtbl_SetTimes typedef ptr TYPE_IPropertyStorageVtbl_SetTimes
-          TYPE_IPropertyStorageVtbl_SetClass typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage, :REFCLSID
-          PIPropertyStorageVtbl_SetClass typedef ptr TYPE_IPropertyStorageVtbl_SetClass
-          TYPE_IPropertyStorageVtbl_Stat typedef proto WIN_STD_CALL_CONV :ptr IPropertyStorage, :ptr STATPROPSETSTG
-          PIPropertyStorageVtbl_Stat typedef ptr TYPE_IPropertyStorageVtbl_Stat
           IPropertyStorageVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IPropertyStorage>
-            QueryInterface PIPropertyStorageVtbl_QueryInterface ?
-            AddRef PIPropertyStorageVtbl_AddRef ?
-            Release PIPropertyStorageVtbl_Release ?
-            ReadMultiple PIPropertyStorageVtbl_ReadMultiple ?
-            WriteMultiple PIPropertyStorageVtbl_WriteMultiple ?
-            DeleteMultiple PIPropertyStorageVtbl_DeleteMultiple ?
-            ReadPropertyNames PIPropertyStorageVtbl_ReadPropertyNames ?
-            WritePropertyNames PIPropertyStorageVtbl_WritePropertyNames ?
-            DeletePropertyNames PIPropertyStorageVtbl_DeletePropertyNames ?
-            Commit PIPropertyStorageVtbl_Commit ?
-            Revert PIPropertyStorageVtbl_Revert ?
-            Enum_ PIPropertyStorageVtbl_Enum ?
-            SetTimes PIPropertyStorageVtbl_SetTimes ?
-            SetClass PIPropertyStorageVtbl_SetClass ?
-            Stat PIPropertyStorageVtbl_Stat ?
+            ??Interface equ <IPropertyStorageVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
+            STD_METHOD QueryInterface, :ptr IPropertyStorage, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
+            STD_METHOD AddRef, :ptr IPropertyStorage
+            DECLSPEC_XFGVIRT(IUnknown, Release)
+            STD_METHOD Release, :ptr IPropertyStorage
+            DECLSPEC_XFGVIRT(IPropertyStorage, ReadMultiple)
+            STD_METHOD ReadMultiple, :ptr IPropertyStorage, :ULONG, :ptr PROPSPEC, :ptr PROPVARIANT
+            DECLSPEC_XFGVIRT(IPropertyStorage, WriteMultiple)
+            STD_METHOD WriteMultiple, :ptr IPropertyStorage, :ULONG, :ptr PROPSPEC, :ptr PROPVARIANT, :PROPID
+            DECLSPEC_XFGVIRT(IPropertyStorage, DeleteMultiple)
+            STD_METHOD DeleteMultiple, :ptr IPropertyStorage, :ULONG, :ptr PROPSPEC
+            DECLSPEC_XFGVIRT(IPropertyStorage, ReadPropertyNames)
+            STD_METHOD ReadPropertyNames, :ptr IPropertyStorage, :ULONG, :ptr PROPID, :ptr LPOLESTR
+            DECLSPEC_XFGVIRT(IPropertyStorage, WritePropertyNames)
+            STD_METHOD WritePropertyNames, :ptr IPropertyStorage, :ULONG, :ptr PROPID, :ptr LPOLESTR
+            DECLSPEC_XFGVIRT(IPropertyStorage, DeletePropertyNames)
+            STD_METHOD DeletePropertyNames, :ptr IPropertyStorage, :ULONG, :ptr PROPID
+            DECLSPEC_XFGVIRT(IPropertyStorage, Commit)
+            STD_METHOD Commit, :ptr IPropertyStorage, :DWORD
+            DECLSPEC_XFGVIRT(IPropertyStorage, Revert)
+            STD_METHOD Revert, :ptr IPropertyStorage
+            DECLSPEC_XFGVIRT(IPropertyStorage, Enum)
+            STD_METHOD Enum, :ptr IPropertyStorage, :ptr ptr IEnumSTATPROPSTG
+            DECLSPEC_XFGVIRT(IPropertyStorage, SetTimes)
+            STD_METHOD SetTimes, :ptr IPropertyStorage, :ptr FILETIME, :ptr FILETIME, :ptr FILETIME
+            DECLSPEC_XFGVIRT(IPropertyStorage, SetClass)
+            STD_METHOD SetClass, :ptr IPropertyStorage, :REFCLSID
+            DECLSPEC_XFGVIRT(IPropertyStorage, Stat)
+            STD_METHOD Stat, :ptr IPropertyStorage, :ptr STATPROPSETSTG
             ??Interface equ <>
             END_INTERFACE
           IPropertyStorageVtbl ends
@@ -415,30 +408,23 @@ ifndef __propidlbase_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
-          TYPE_IPropertySetStorageVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IPropertySetStorage, :REFIID, :ptr ptr
-          PIPropertySetStorageVtbl_QueryInterface typedef ptr TYPE_IPropertySetStorageVtbl_QueryInterface
-          TYPE_IPropertySetStorageVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IPropertySetStorage
-          PIPropertySetStorageVtbl_AddRef typedef ptr TYPE_IPropertySetStorageVtbl_AddRef
-          TYPE_IPropertySetStorageVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IPropertySetStorage
-          PIPropertySetStorageVtbl_Release typedef ptr TYPE_IPropertySetStorageVtbl_Release
-          TYPE_IPropertySetStorageVtbl_Create typedef proto WIN_STD_CALL_CONV :ptr IPropertySetStorage, :REFFMTID, :ptr CLSID, :DWORD, :DWORD, :ptr ptr IPropertyStorage
-          PIPropertySetStorageVtbl_Create typedef ptr TYPE_IPropertySetStorageVtbl_Create
-          TYPE_IPropertySetStorageVtbl_Open typedef proto WIN_STD_CALL_CONV :ptr IPropertySetStorage, :REFFMTID, :DWORD, :ptr ptr IPropertyStorage
-          PIPropertySetStorageVtbl_Open typedef ptr TYPE_IPropertySetStorageVtbl_Open
-          TYPE_IPropertySetStorageVtbl_Delete typedef proto WIN_STD_CALL_CONV :ptr IPropertySetStorage, :REFFMTID
-          PIPropertySetStorageVtbl_Delete typedef ptr TYPE_IPropertySetStorageVtbl_Delete
-          TYPE_IPropertySetStorageVtbl_Enum typedef proto WIN_STD_CALL_CONV :ptr IPropertySetStorage, :ptr ptr IEnumSTATPROPSETSTG
-          PIPropertySetStorageVtbl_Enum typedef ptr TYPE_IPropertySetStorageVtbl_Enum
           IPropertySetStorageVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IPropertySetStorage>
-            QueryInterface PIPropertySetStorageVtbl_QueryInterface ?
-            AddRef PIPropertySetStorageVtbl_AddRef ?
-            Release PIPropertySetStorageVtbl_Release ?
-            Create PIPropertySetStorageVtbl_Create ?
-            Open PIPropertySetStorageVtbl_Open ?
-            Delete PIPropertySetStorageVtbl_Delete ?
-            Enum_ PIPropertySetStorageVtbl_Enum ?
+            ??Interface equ <IPropertySetStorageVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
+            STD_METHOD QueryInterface, :ptr IPropertySetStorage, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
+            STD_METHOD AddRef, :ptr IPropertySetStorage
+            DECLSPEC_XFGVIRT(IUnknown, Release)
+            STD_METHOD Release, :ptr IPropertySetStorage
+            DECLSPEC_XFGVIRT(IPropertySetStorage, Create)
+            STD_METHOD Create, :ptr IPropertySetStorage, :REFFMTID, :ptr CLSID, :DWORD, :DWORD, :ptr ptr IPropertyStorage
+            DECLSPEC_XFGVIRT(IPropertySetStorage, Open)
+            STD_METHOD Open, :ptr IPropertySetStorage, :REFFMTID, :DWORD, :ptr ptr IPropertyStorage
+            DECLSPEC_XFGVIRT(IPropertySetStorage, Delete)
+            STD_METHOD Delete, :ptr IPropertySetStorage, :REFFMTID
+            DECLSPEC_XFGVIRT(IPropertySetStorage, Enum)
+            STD_METHOD Enum, :ptr IPropertySetStorage, :ptr ptr IEnumSTATPROPSETSTG
             ??Interface equ <>
             END_INTERFACE
           IPropertySetStorageVtbl ends
@@ -457,30 +443,23 @@ ifndef __propidlbase_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
-          TYPE_IEnumSTATPROPSTGVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IEnumSTATPROPSTG, :REFIID, :ptr ptr
-          PIEnumSTATPROPSTGVtbl_QueryInterface typedef ptr TYPE_IEnumSTATPROPSTGVtbl_QueryInterface
-          TYPE_IEnumSTATPROPSTGVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IEnumSTATPROPSTG
-          PIEnumSTATPROPSTGVtbl_AddRef typedef ptr TYPE_IEnumSTATPROPSTGVtbl_AddRef
-          TYPE_IEnumSTATPROPSTGVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IEnumSTATPROPSTG
-          PIEnumSTATPROPSTGVtbl_Release typedef ptr TYPE_IEnumSTATPROPSTGVtbl_Release
-          TYPE_IEnumSTATPROPSTGVtbl_Next typedef proto WIN_STD_CALL_CONV :ptr IEnumSTATPROPSTG, :ULONG, :ptr STATPROPSTG, :ptr ULONG
-          PIEnumSTATPROPSTGVtbl_Next typedef ptr TYPE_IEnumSTATPROPSTGVtbl_Next
-          TYPE_IEnumSTATPROPSTGVtbl_Skip typedef proto WIN_STD_CALL_CONV :ptr IEnumSTATPROPSTG, :ULONG
-          PIEnumSTATPROPSTGVtbl_Skip typedef ptr TYPE_IEnumSTATPROPSTGVtbl_Skip
-          TYPE_IEnumSTATPROPSTGVtbl_Reset typedef proto WIN_STD_CALL_CONV :ptr IEnumSTATPROPSTG
-          PIEnumSTATPROPSTGVtbl_Reset typedef ptr TYPE_IEnumSTATPROPSTGVtbl_Reset
-          TYPE_IEnumSTATPROPSTGVtbl_Clone typedef proto WIN_STD_CALL_CONV :ptr IEnumSTATPROPSTG, :ptr ptr IEnumSTATPROPSTG
-          PIEnumSTATPROPSTGVtbl_Clone typedef ptr TYPE_IEnumSTATPROPSTGVtbl_Clone
           IEnumSTATPROPSTGVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IEnumSTATPROPSTG>
-            QueryInterface PIEnumSTATPROPSTGVtbl_QueryInterface ?
-            AddRef PIEnumSTATPROPSTGVtbl_AddRef ?
-            Release PIEnumSTATPROPSTGVtbl_Release ?
-            Next PIEnumSTATPROPSTGVtbl_Next ?
-            Skip PIEnumSTATPROPSTGVtbl_Skip ?
-            Reset PIEnumSTATPROPSTGVtbl_Reset ?
-            Clone PIEnumSTATPROPSTGVtbl_Clone ?
+            ??Interface equ <IEnumSTATPROPSTGVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
+            STD_METHOD QueryInterface, :ptr IEnumSTATPROPSTG, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
+            STD_METHOD AddRef, :ptr IEnumSTATPROPSTG
+            DECLSPEC_XFGVIRT(IUnknown, Release)
+            STD_METHOD Release, :ptr IEnumSTATPROPSTG
+            DECLSPEC_XFGVIRT(IEnumSTATPROPSTG, Next)
+            STD_METHOD Next, :ptr IEnumSTATPROPSTG, :ULONG, :ptr STATPROPSTG, :ptr ULONG
+            DECLSPEC_XFGVIRT(IEnumSTATPROPSTG, Skip)
+            STD_METHOD Skip, :ptr IEnumSTATPROPSTG, :ULONG
+            DECLSPEC_XFGVIRT(IEnumSTATPROPSTG, Reset)
+            STD_METHOD Reset, :ptr IEnumSTATPROPSTG
+            DECLSPEC_XFGVIRT(IEnumSTATPROPSTG, Clone)
+            STD_METHOD Clone, :ptr IEnumSTATPROPSTG, :ptr ptr IEnumSTATPROPSTG
             ??Interface equ <>
             END_INTERFACE
           IEnumSTATPROPSTGVtbl ends
@@ -501,30 +480,23 @@ ifndef __propidlbase_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
-          TYPE_IEnumSTATPROPSETSTGVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IEnumSTATPROPSETSTG, :REFIID, :ptr ptr
-          PIEnumSTATPROPSETSTGVtbl_QueryInterface typedef ptr TYPE_IEnumSTATPROPSETSTGVtbl_QueryInterface
-          TYPE_IEnumSTATPROPSETSTGVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IEnumSTATPROPSETSTG
-          PIEnumSTATPROPSETSTGVtbl_AddRef typedef ptr TYPE_IEnumSTATPROPSETSTGVtbl_AddRef
-          TYPE_IEnumSTATPROPSETSTGVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IEnumSTATPROPSETSTG
-          PIEnumSTATPROPSETSTGVtbl_Release typedef ptr TYPE_IEnumSTATPROPSETSTGVtbl_Release
-          TYPE_IEnumSTATPROPSETSTGVtbl_Next typedef proto WIN_STD_CALL_CONV :ptr IEnumSTATPROPSETSTG, :ULONG, :ptr STATPROPSETSTG, :ptr ULONG
-          PIEnumSTATPROPSETSTGVtbl_Next typedef ptr TYPE_IEnumSTATPROPSETSTGVtbl_Next
-          TYPE_IEnumSTATPROPSETSTGVtbl_Skip typedef proto WIN_STD_CALL_CONV :ptr IEnumSTATPROPSETSTG, :ULONG
-          PIEnumSTATPROPSETSTGVtbl_Skip typedef ptr TYPE_IEnumSTATPROPSETSTGVtbl_Skip
-          TYPE_IEnumSTATPROPSETSTGVtbl_Reset typedef proto WIN_STD_CALL_CONV :ptr IEnumSTATPROPSETSTG
-          PIEnumSTATPROPSETSTGVtbl_Reset typedef ptr TYPE_IEnumSTATPROPSETSTGVtbl_Reset
-          TYPE_IEnumSTATPROPSETSTGVtbl_Clone typedef proto WIN_STD_CALL_CONV :ptr IEnumSTATPROPSETSTG, :ptr ptr IEnumSTATPROPSETSTG
-          PIEnumSTATPROPSETSTGVtbl_Clone typedef ptr TYPE_IEnumSTATPROPSETSTGVtbl_Clone
           IEnumSTATPROPSETSTGVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IEnumSTATPROPSETSTG>
-            QueryInterface PIEnumSTATPROPSETSTGVtbl_QueryInterface ?
-            AddRef PIEnumSTATPROPSETSTGVtbl_AddRef ?
-            Release PIEnumSTATPROPSETSTGVtbl_Release ?
-            Next PIEnumSTATPROPSETSTGVtbl_Next ?
-            Skip PIEnumSTATPROPSETSTGVtbl_Skip ?
-            Reset PIEnumSTATPROPSETSTGVtbl_Reset ?
-            Clone PIEnumSTATPROPSETSTGVtbl_Clone ?
+            ??Interface equ <IEnumSTATPROPSETSTGVtbl>
+            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
+            STD_METHOD QueryInterface, :ptr IEnumSTATPROPSETSTG, :REFIID, :ptr ptr
+            DECLSPEC_XFGVIRT(IUnknown, AddRef)
+            STD_METHOD AddRef, :ptr IEnumSTATPROPSETSTG
+            DECLSPEC_XFGVIRT(IUnknown, Release)
+            STD_METHOD Release, :ptr IEnumSTATPROPSETSTG
+            DECLSPEC_XFGVIRT(IEnumSTATPROPSETSTG, Next)
+            STD_METHOD Next, :ptr IEnumSTATPROPSETSTG, :ULONG, :ptr STATPROPSETSTG, :ptr ULONG
+            DECLSPEC_XFGVIRT(IEnumSTATPROPSETSTG, Skip)
+            STD_METHOD Skip, :ptr IEnumSTATPROPSETSTG, :ULONG
+            DECLSPEC_XFGVIRT(IEnumSTATPROPSETSTG, Reset)
+            STD_METHOD Reset, :ptr IEnumSTATPROPSETSTG
+            DECLSPEC_XFGVIRT(IEnumSTATPROPSETSTG, Clone)
+            STD_METHOD Clone, :ptr IEnumSTATPROPSETSTG, :ptr ptr IEnumSTATPROPSETSTG
             ??Interface equ <>
             END_INTERFACE
           IEnumSTATPROPSETSTGVtbl ends
@@ -547,18 +519,18 @@ ifndef __propidlbase_h__
   endif
   externdef __MIDL_itf_propidlbase_0000_0004_v0_0_c_ifspec:RPC_IF_HANDLE
   externdef __MIDL_itf_propidlbase_0000_0004_v0_0_s_ifspec:RPC_IF_HANDLE
-  ;Warning: duplicate proto = BSTR_UserSize proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr BSTR
-  ;Warning: duplicate proto = BSTR_UserMarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
-  ;Warning: duplicate proto = BSTR_UserUnmarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
-  ;Warning: duplicate proto = BSTR_UserFree proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BSTR
+  BSTR_UserSize proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr BSTR
+  BSTR_UserMarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
+  BSTR_UserUnmarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
+  BSTR_UserFree proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BSTR
   LPSAFEARRAY_UserSize proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr LPSAFEARRAY
   LPSAFEARRAY_UserMarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr LPSAFEARRAY
   LPSAFEARRAY_UserUnmarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr LPSAFEARRAY
   LPSAFEARRAY_UserFree proto WIN_STD_CALL_CONV :ptr DWORD, :ptr LPSAFEARRAY
-  ;Warning: duplicate proto = BSTR_UserSize64 proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr BSTR
-  ;Warning: duplicate proto = BSTR_UserMarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
-  ;Warning: duplicate proto = BSTR_UserUnmarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
-  ;Warning: duplicate proto = BSTR_UserFree64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BSTR
+  BSTR_UserSize64 proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr BSTR
+  BSTR_UserMarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
+  BSTR_UserUnmarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
+  BSTR_UserFree64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BSTR
   LPSAFEARRAY_UserSize64 proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr LPSAFEARRAY
   LPSAFEARRAY_UserMarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr LPSAFEARRAY
   LPSAFEARRAY_UserUnmarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr LPSAFEARRAY
@@ -571,4 +543,3 @@ ifndef __propidlbase_h__
     ;[...]
   endif
 endif
-

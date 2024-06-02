@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\windef.h', last modified: 19/04/2018 10:46
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\windef.h
+;             Created on (UTC) 22/05/2024 17:57:06
+;             Last modified on (UTC) 21/02/2024 18:18:30
 
 include winapifamily.inc
 ifndef _WINDEF_
@@ -20,7 +21,7 @@ ifndef _WINDEF_
     include winnt.inc
   endif
   ifndef WIN_INTERNAL
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       DECLARE_HANDLE HWND
       DECLARE_HANDLE HHOOK
     endif
@@ -30,7 +31,7 @@ ifndef _WINDEF_
       endif
     endif
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     if  not Defined(_MAC) or  not Defined(GDI_INTERNAL)
       ifdef STRICT
         HGDIOBJ typedef ptr
@@ -79,7 +80,7 @@ ifndef _WINDEF_
       DECLARE_HANDLE HUMPD
     endif
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     ifndef _MAC
       HCURSOR typedef HICON
     else
@@ -91,19 +92,17 @@ ifndef _WINDEF_
     LPCOLORREF typedef ptr DWORD
     HFILE_ERROR equ (- 1)
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     RECT struct
       left LONG ?
       top LONG ?
       right LONG ?
       bottom LONG ?
     RECT ends
-
     tagRECT typedef RECT
     PRECT typedef ptr RECT
     NPRECT typedef ptr RECT
     LPRECT typedef ptr RECT
-    
     LPCRECT typedef ptr RECT
     RECTL struct
       left LONG ?
@@ -111,39 +110,31 @@ ifndef _WINDEF_
       right LONG ?
       bottom LONG ?
     RECTL ends
-
     _RECTL typedef RECTL
     PRECTL typedef ptr RECTL
     LPRECTL typedef ptr RECTL
-    
     LPCRECTL typedef ptr RECTL
     POINT struct
       x LONG ?
       y LONG ?
     POINT ends
-
     tagPOINT typedef POINT
     PPOINT typedef ptr POINT
     NPPOINT typedef ptr POINT
     LPPOINT typedef ptr POINT
-    
     POINTL struct
       x LONG ?
       y LONG ?
     POINTL ends
-
     _POINTL typedef POINTL
     PPOINTL typedef ptr POINTL
-    
     SIZE_ struct
       cx_ LONG ?
       cy LONG ?
     SIZE_ ends
-
     tagSIZE typedef SIZE_
     PSIZE typedef ptr SIZE_
     LPSIZE typedef ptr SIZE_
-    
     SIZEL typedef SIZE_
     PSIZEL typedef ptr SIZE_
     LPSIZEL typedef ptr SIZE_
@@ -155,11 +146,13 @@ ifndef _WINDEF_
         ;[...]
       endif
     POINTS ends
-
     tagPOINTS typedef POINTS
     PPOINTS typedef ptr POINTS
     LPPOINTS typedef ptr POINTS
-    
+    APP_LOCAL_DEVICE_ID_SIZE equ 32
+    APP_LOCAL_DEVICE_ID struct
+      value BYTE APP_LOCAL_DEVICE_ID_SIZE dup (?)
+    APP_LOCAL_DEVICE_ID ends
   endif
   DM_UPDATE equ 1
   DM_COPY equ 2
@@ -198,7 +191,7 @@ ifndef _WINDEF_
     DPI_AWARENESS_UNAWARE equ 0
     DPI_AWARENESS_SYSTEM_AWARE equ 1
     DPI_AWARENESS_PER_MONITOR_AWARE equ 2
-    
+
     DPI_AWARENESS_CONTEXT_UNAWARE equ ((DPI_AWARENESS_CONTEXT) - 1)
     DPI_AWARENESS_CONTEXT_SYSTEM_AWARE equ ((DPI_AWARENESS_CONTEXT) - 2)
     DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE equ ((DPI_AWARENESS_CONTEXT) - 3)
@@ -208,7 +201,6 @@ ifndef _WINDEF_
     DPI_HOSTING_BEHAVIOR_INVALID equ -1
     DPI_HOSTING_BEHAVIOR_DEFAULT equ 0
     DPI_HOSTING_BEHAVIOR_MIXED equ 1
-    
+
   endif
 endif
-

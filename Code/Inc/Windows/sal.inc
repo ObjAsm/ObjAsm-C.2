@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\sal.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\sal.h
+;             Created on (UTC) 22/05/2024 17:57:08
+;             Last modified on (UTC) 21/02/2024 17:17:26
 
 __ATTR_SAL equ <>
 ifndef _SAL_VERSION
@@ -33,9 +34,9 @@ if _USE_DECLSPECS_FOR_SAL or _USE_ATTRIBUTES_FOR_SAL
   _SAL_maybe equ 2
   _SAL_yes equ 3
   _SAL_default equ 4
-  
+
 endif
-if Defined(BUILD_WINDOWS) and  not _USE_ATTRIBUTES_FOR_SAL
+if Defined(UNDOCKED_WINDOWS_UCRT) and  not _USE_ATTRIBUTES_FOR_SAL
   _SAL1_Source_ macro Name_, args, annotes
     exitm <_SA_annotes3(SAL_name, # Name_,, "1") _GrouP_(annotes _SAL_nop_impl_)>
   endm
@@ -104,13 +105,13 @@ _Notref_ equ <_Notref_impl_>
 _Pre_defensive_ equ <_SA_annotes0(SAL_pre_defensive)>
 _Post_defensive_ equ <_SA_annotes0(SAL_post_defensive)>
 _In_defensive_ macro annotes
-  exitm <_Pre_defensive_ _Group_(annotes _SAL_nop_impl_)>
+  exitm <_Pre_defensive_ _Group_(annotes)>
 endm
 _Out_defensive_ macro annotes
-  exitm <_Post_defensive_ _Group_(annotes _SAL_nop_impl_)>
+  exitm <_Post_defensive_ _Group_(annotes)>
 endm
 _Inout_defensive_ macro annotes
-  exitm <_Pre_defensive_ _Post_defensive_ _Group_(annotes _SAL_nop_impl_)>
+  exitm <_Pre_defensive_ _Post_defensive_ _Group_(annotes)>
 endm
 _Reserved_ equ <_SAL2_Source_(_Reserved_,, _Pre1_impl_(__null_impl))>
 _Const_ equ <_SAL2_Source_(_Const_,, _Pre1_impl_(__readaccess_impl_notref))>
@@ -1790,7 +1791,7 @@ if _USE_ATTRIBUTES_FOR_SAL or _USE_DECLSPECS_FOR_SAL
   endm
 endif
 if _USE_ATTRIBUTES_FOR_SAL
-  include codeanalysissourceannotations.inc
+  include CodeAnalysis/sourceannotations.inc
   _SA_annotes0 macro n
     exitm <[ SAL_annotes (Name = # n) ]>
   endm
@@ -1905,33 +1906,18 @@ if _USE_ATTRIBUTES_FOR_SAL
   __readaccess_impl_notref equ Access = SA_Read, Notref = 1
   __writeaccess_impl_notref equ Access = SA_Write, Notref = 1
   __allaccess_impl_notref equ Access = SA_ReadWrite, Notref = 1
-  if _MSC_VER ge 1610
-    __cap_impl macro size_
-      exitm <WritableElements = 0Ah # size_>
-    endm
-    __bytecap_impl macro size_
-      exitm <WritableBytes = 0Ah # size_>
-    endm
-    __bytecount_impl macro size_
-      exitm <ValidBytes = 0Ah # size_>
-    endm
-    __count_impl macro size_
-      exitm <ValidElements = 0Ah # size_>
-    endm
-  else
-    __cap_impl macro size_
-      exitm <WritableElements = # size_>
-    endm
-    __bytecap_impl macro size_
-      exitm <WritableBytes = # size_>
-    endm
-    __bytecount_impl macro size_
-      exitm <ValidBytes = # size_>
-    endm
-    __count_impl macro size_
-      exitm <ValidElements = # size_>
-    endm
-  endif
+  __cap_impl macro size_
+    exitm <WritableElements = 0Ah # size_>
+  endm
+  __bytecap_impl macro size_
+    exitm <WritableBytes = 0Ah # size_>
+  endm
+  __bytecount_impl macro size_
+    exitm <ValidBytes = 0Ah # size_>
+  endm
+  __count_impl macro size_
+    exitm <ValidElements = 0Ah # size_>
+  endm
   __cap_c_impl macro size_
     exitm <WritableElementsConst = size_>
   endm
@@ -2208,7 +2194,7 @@ elseif _USE_DECLSPECS_FOR_SAL
     exitm <_SA_annotes1(SAL_typefix, ctype)>
   endm
   __inner_exceptthat equ <_SA_annotes0(SAL_except)>
-elseif Defined(_MSC_EXTENSIONS) and  not Defined(MIDL_PASS) and  not Defined(__midl) and  not Defined(RC_INVOKED) and Defined(_PFT_VER) and _MSC_VER ge 1400
+elseif Defined(_MSC_EXTENSIONS) and  not Defined(MIDL_PASS) and  not Defined(__midl) and  not Defined(RC_INVOKED) and Defined(_PFT_VER)
   ifdef __cplusplus
     ;[...]
   else
@@ -2224,9 +2210,6 @@ elseif Defined(_MSC_EXTENSIONS) and  not Defined(MIDL_PASS) and  not Defined(__m
     endif
     __d_ SDWORD ?
   __P_impl ends
-
-  ;__P_impl typedef __P_impl
-  
   source_annotation_attribute proto WIN_STD_CALL_CONV :SA
   __R_impl struct
     ifdef __cplusplus
@@ -2234,9 +2217,6 @@ elseif Defined(_MSC_EXTENSIONS) and  not Defined(MIDL_PASS) and  not Defined(__m
     endif
     __d_ SDWORD ?
   __R_impl ends
-
-  ;__R_impl typedef __R_impl
-  
   source_annotation_attribute proto WIN_STD_CALL_CONV :SA
   __M_ struct
     ifdef __cplusplus
@@ -2244,9 +2224,6 @@ elseif Defined(_MSC_EXTENSIONS) and  not Defined(MIDL_PASS) and  not Defined(__m
     endif
     __d_ SDWORD ?
   __M_ ends
-
-  ;__M_ typedef __M_
-  
   source_annotation_attribute proto WIN_STD_CALL_CONV :SA
   __A_ struct
     ifdef __cplusplus
@@ -2254,9 +2231,6 @@ elseif Defined(_MSC_EXTENSIONS) and  not Defined(MIDL_PASS) and  not Defined(__m
     endif
     __d_ SDWORD ?
   __A_ ends
-
-  ;__A_ typedef __A_
-  
   source_annotation_attribute proto WIN_STD_CALL_CONV :SA
   __F_ struct
     ifdef __cplusplus
@@ -2264,9 +2238,6 @@ elseif Defined(_MSC_EXTENSIONS) and  not Defined(MIDL_PASS) and  not Defined(__m
     endif
     __d_ SDWORD ?
   __F_ ends
-
-  ;__F_ typedef __F_
-  
   _SAL_nop_impl_ equ <>
   _At_impl_ macro target, annos
     exitm <[ __A_ (__d_ = 0) ]>
@@ -2885,10 +2856,10 @@ __inout_bcount_nz_opt macro size_
   exitm <_SAL1_Source_(__inout_bcount_nz_opt, (size_), __inout_bcount_opt(size_))>
 endm
 __deref_ecount macro size_
-  exitm <_SAL1_Source_(__deref_ecount, (size_), _Notref_ __ecount 1 __post _Notref_ __elem_readableTo 1 __post _Notref_ __deref _Notref_ __notnull __post __deref __elem_writableTo(size_))>
+  exitm <_SAL1_Source_(__deref_ecount, (size_), _Notref_ __ecount(1) __post _Notref_ __elem_readableTo(1) __post _Notref_ __deref _Notref_ __notnull __post __deref __elem_writableTo(size_))>
 endm
 __deref_bcount macro size_
-  exitm <_SAL1_Source_(__deref_bcount, (size_), _Notref_ __ecount 1 __post _Notref_ __elem_readableTo 1 __post _Notref_ __deref _Notref_ __notnull __post __deref __byte_writableTo(size_))>
+  exitm <_SAL1_Source_(__deref_bcount, (size_), _Notref_ __ecount(1) __post _Notref_ __elem_readableTo(1) __post _Notref_ __deref _Notref_ __notnull __post __deref __byte_writableTo(size_))>
 endm
 __deref_out equ <_SAL1_Source_(__deref_out,, _Outptr_)>
 __deref_out_ecount macro size_
@@ -2923,7 +2894,7 @@ endm
 __deref_out_bcount_nz macro size_
   exitm <_SAL1_Source_(__deref_out_bcount_nz, (size_), __deref_out_ecount(size_))>
 endm
-__deref_inout equ _SAL1_Source_(__deref_inout,, _Notref_ __notnull _Notref_ __elem_readableTo1 __pre __deref __valid __post _Notref_ __deref __valid __refparam)
+__deref_inout equ _SAL1_Source_(__deref_inout,, _Notref_ __notnull _Notref_ __elem_readableTo(1) __pre __deref __valid __post _Notref_ __deref __valid __refparam)
 __deref_inout_z equ <_SAL1_Source_(__deref_inout_z,, __deref_inout __pre __deref __nullterminated __post _Notref_ __deref __nullterminated)>
 __deref_inout_ecount macro size_
   exitm <_SAL1_Source_(__deref_inout_ecount, (size_), __deref_inout __pre __deref __elem_writableTo(size_) __post _Notref_ __deref __elem_writableTo(size_))>
@@ -3204,7 +3175,11 @@ else
   endm
 endif
 ifndef __fallthrough
-  __fallthrough equ <__inner_fallthrough>
+  if ( not Defined(_MSVC_LANG) or _MSVC_LANG lt 201703)
+    __fallthrough equ <__inner_fallthrough>
+  else
+    __fallthrough equ <[ [ fallthrough ] ]>
+  endif
 endif
 ifndef __analysis_assume
   ifdef _PREFAST_
@@ -3266,9 +3241,7 @@ _Enum_is_bitflag_ equ <_SAL2_Source_(_Enum_is_bitflag_,, _SA_annotes0(SAL_enumIs
 _Strict_type_match_ equ <_SAL2_Source_(_Strict_type_match,, _SA_annotes0(SAL_strictType2))>
 _Maybe_raises_SEH_exception_ equ <_SAL2_Source_(_Maybe_raises_SEH_exception_, (x), _Pre_ _SA_annotes1(SAL_inTry, __yes))>
 _Raises_SEH_exception_ equ <_SAL2_Source_(_Raises_SEH_exception_, (x), _Maybe_raises_SEH_exception_ _Analysis_noreturn_)>
-_Published_ equ <_SAL2_Source_(_Published_,, _SA_annotes0(SAL_externalIntf))>
 ifdef __cplusplus
   ;[...]
 endif
-include ConcurrencySal.inc
-
+include concurrencysal.inc

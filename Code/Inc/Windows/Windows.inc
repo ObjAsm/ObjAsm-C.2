@@ -1,9 +1,10 @@
-;Include file created by h2incX, Version B.01.01, 01/09/2018 18:44
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\Windows.h', last modified: 26/08/2018 18:51
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 09:22:30
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\windows.h
+;             Created on (UTC) 06/04/2024 06:16:02
+;             Last modified on (UTC) 21/02/2024 18:18:30
 
-include WinAsm.inc
+include winasm.inc
 include winapifamily.inc
 ifndef _WINDOWS_
   _WINDOWS_ equ <>
@@ -12,35 +13,38 @@ ifndef _WINDOWS_
     _INC_WINDOWS equ <>
     if Defined(_MSC_VER) and (_MSC_VER ge 1020)
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       if Defined(RC_INVOKED) and  not Defined(NOWINRES)
         ;[...]
       else
         if Defined(RC_INVOKED)
           ;[...]
         endif
-        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_IA64_) and  not Defined(_AMD64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and Defined(_M_IX86)
+        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_IA64_) and  not Defined(_AMD64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and  not Defined(_ARM64EC_) and Defined(_M_IX86)
           _X86_ equ <>
           if  not Defined(_CHPE_X86_ARM64_) and Defined(_M_HYBRID)
             _CHPE_X86_ARM64_ equ <>
           endif
         endif
-        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_IA64_) and  not Defined(_AMD64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and Defined(_M_AMD64)
+        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_IA64_) and  not Defined(_AMD64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and (Defined(_M_AMD64) or Defined(_M_ARM64EC))
           _AMD64_ equ <>
         endif
-        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_IA64_) and  not Defined(_AMD64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and Defined(_M_ARM)
+        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_IA64_) and  not Defined(_AMD64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and  not Defined(_ARM64EC_) and Defined(_M_ARM)
           ;[...]
         endif
-        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_IA64_) and  not Defined(_AMD64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and Defined(_M_ARM64)
+        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_IA64_) and  not Defined(_AMD64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and  not Defined(_ARM64EC_) and Defined(_M_ARM64)
           ;[...]
         endif
-        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_IA64_) and  not Defined(_AMD64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and Defined(_M_M68K)
-          _68K_ equ <>
+        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_IA64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and  not Defined(_ARM64EC_) and Defined(_M_ARM64EC)
+          _ARM64EC_ equ <>
         endif
-        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_IA64_) and  not Defined(_AMD64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and Defined(_M_MPPC)
-          _MPPC_ equ <>
+        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_IA64_) and  not Defined(_AMD64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and  not Defined(_ARM64EC_) and Defined(_M_M68K)
+          ;[...]
         endif
-        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_M_IX86) and  not Defined(_AMD64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and Defined(_M_IA64)
+        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_IA64_) and  not Defined(_AMD64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and  not Defined(_ARM64EC_) and Defined(_M_MPPC)
+          ;[...]
+        endif
+        if  not Defined(_68K_) and  not Defined(_MPPC_) and  not Defined(_X86_) and  not Defined(_M_IX86) and  not Defined(_AMD64_) and  not Defined(_ARM_) and  not Defined(_ARM64_) and  not Defined(_ARM64EC_) and Defined(_M_IA64)
           if  not Defined(_IA64_)
             _IA64_ equ <>
           endif
@@ -63,16 +67,16 @@ ifndef _WINDOWS_
             if _MSC_VER ge 1200
             endif
           endif
-          include excpt.inc
+;          include excpt.inc
           include stdarg.inc
         endif
         include windef.inc
         include winbase.inc
         include wingdi.inc
         include winuser.inc
-        if  not Defined(_MAC) or Defined(_WIN32NLS)
+;        if  not Defined(_MAC) or Defined(_WIN32NLS)
           include winnls.inc
-        endif
+;        endif
         ifndef _MAC
           include wincon.inc
           include winver.inc
@@ -147,4 +151,3 @@ ifndef _WINDOWS_
     endif
   endif
 endif
-

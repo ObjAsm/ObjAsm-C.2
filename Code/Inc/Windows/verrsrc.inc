@@ -1,10 +1,11 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\verrsrc.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\verrsrc.h
+;             Created on (UTC) 06/04/2024 06:16:02
+;             Last modified on (UTC) 08/01/2024 17:04:28
 
 include winapifamily.inc
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
   VS_FILE_INFO equ <RT_VERSION>
   VS_VERSION_INFO equ 1
   VS_USER_DEFINED equ 100
@@ -61,7 +62,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
   VFT2_FONT_VECTOR equ 00000002h
   VFT2_FONT_TRUETYPE equ 00000003h
 endif
-if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
   VFFF_ISSHAREDFILE equ 0001h
   VFF_CURNEDEST equ 0001h
   VFF_FILEINUSE equ 0002h
@@ -111,11 +112,9 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       dwFileDateMS DWORD ?
       dwFileDateLS DWORD ?
     VS_FIXEDFILEINFO ends
-
     tagVS_FIXEDFILEINFO typedef VS_FIXEDFILEINFO
     ifdef __cplusplus
       ;[...]
     endif
   endif
 endif
-

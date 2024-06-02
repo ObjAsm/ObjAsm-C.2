@@ -1,6 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\winapifamily.h', last modified: 19/04/2018 10:43
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winapifamily.h
+;             Created on (UTC) 22/05/2024 17:57:06
+;             Last modified on (UTC) 08/01/2024 17:02:00
 
 ifndef _INC_WINAPIFAMILY
   _INC_WINAPIFAMILY equ <>
@@ -19,7 +21,7 @@ ifndef _INC_WINAPIFAMILY
   ifndef WINAPI_FAMILY
     WINAPI_FAMILY equ <WINAPI_FAMILY_DESKTOP_APP>
   endif
-  if WINAPI_FAMILY ne WINAPI_FAMILY_DESKTOP_APP and WINAPI_FAMILY ne WINAPI_FAMILY_PC_APP and WINAPI_FAMILY ne WINAPI_FAMILY_PHONE_APP and WINAPI_FAMILY ne WINAPI_FAMILY_SYSTEM and WINAPI_FAMILY ne WINAPI_FAMILY_SERVER
+  if WINAPI_FAMILY ne WINAPI_FAMILY_DESKTOP_APP and WINAPI_FAMILY ne WINAPI_FAMILY_PC_APP and WINAPI_FAMILY ne WINAPI_FAMILY_PHONE_APP and WINAPI_FAMILY ne WINAPI_FAMILY_SYSTEM and WINAPI_FAMILY ne WINAPI_FAMILY_GAMES and WINAPI_FAMILY ne WINAPI_FAMILY_SERVER
     .err <Unknown WINAPI_FAMILY value. Was it defined in terms of a WINAPI_PARTITION_ * value?>
   endif
   ifndef WINAPI_PARTITION_DESKTOP
@@ -53,4 +55,3 @@ ifndef _INC_WINAPIFAMILY
     endif
   endif
 endif
-

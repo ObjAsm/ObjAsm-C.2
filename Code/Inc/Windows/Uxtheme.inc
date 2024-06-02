@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\Uxtheme.h', last modified: 19/04/2018 10:46
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\uxtheme.h
+;             Created on (UTC) 06/04/2024 06:16:02
+;             Last modified on (UTC) 21/02/2024 18:17:26
 
 ifndef _UXTHEME_H_
   _UXTHEME_H_ equ <>
@@ -28,9 +29,9 @@ ifndef _UXTHEME_H_
       MAX_THEMESIZE equ 64
     endif
     if (NTDDI_VERSION ge NTDDI_WIN7)
-      BeginPanningFeedback proto WIN_STD_CALL_CONV :HWND
-      UpdatePanningFeedback proto WIN_STD_CALL_CONV :HWND, :LONG, :LONG, :BOOL
-      EndPanningFeedback proto WIN_STD_CALL_CONV :HWND, :BOOL
+      @DefProto DllImport, BeginPanningFeedback, WIN_STD_CALL_CONV,, <:HWND>, 4
+      @DefProto DllImport, UpdatePanningFeedback, WIN_STD_CALL_CONV,, <:HWND, :LONG, :LONG, :BOOL>, 16
+      @DefProto DllImport, EndPanningFeedback, WIN_STD_CALL_CONV,, <:HWND, :BOOL>, 8
     endif
     if (NTDDI_VERSION ge NTDDI_WIN8)
       TA_PROPERTY typedef SDWORD
@@ -40,7 +41,7 @@ ifndef _UXTHEME_H_
       TAP_STAGGERDELAYCAP equ 3
       TAP_STAGGERDELAYFACTOR equ 4
       TAP_ZORDER equ 5
-      
+
       TA_PROPERTY_FLAG typedef SDWORD
       TAPF_NONE equ 0h
       TAPF_HASSTAGGER equ 1h
@@ -48,7 +49,7 @@ ifndef _UXTHEME_H_
       TAPF_ALLOWCOLLECTION equ 4h
       TAPF_HASBACKGROUND equ 8h
       TAPF_HASPERSPECTIVE equ 10h
-      
+
       DEFINE_ENUM_FLAG_OPERATORS(TA_PROPERTY_FLAG)
       @DefProto DllImport, GetThemeAnimationProperty, WIN_STD_CALL_CONV,, <:HTHEME, :SDWORD, :SDWORD, :TA_PROPERTY, :ptr VOID, :DWORD, :ptr DWORD>, 28
       TA_TRANSFORM_TYPE typedef SDWORD
@@ -56,13 +57,13 @@ ifndef _UXTHEME_H_
       TATT_SCALE_2D equ 1
       TATT_OPACITY equ 2
       TATT_CLIP equ 3
-      
+
       TA_TRANSFORM_FLAG typedef SDWORD
       TATF_NONE equ 0h
       TATF_TARGETVALUES_USER equ 1h
       TATF_HASINITIALVALUES equ 2h
       TATF_HASORIGINVALUES equ 4h
-      
+
       DEFINE_ENUM_FLAG_OPERATORS(TA_TRANSFORM_FLAG)
       include pshpack8.inc
       TA_TRANSFORM struct
@@ -72,9 +73,7 @@ ifndef _UXTHEME_H_
         dwDurationTime DWORD ?
         eFlags_ TA_TRANSFORM_FLAG ?
       TA_TRANSFORM ends
-
       PTA_TRANSFORM typedef ptr TA_TRANSFORM
-      
       TA_TRANSFORM_2D struct
         header TA_TRANSFORM <>
         rX REAL4 ?
@@ -84,17 +83,13 @@ ifndef _UXTHEME_H_
         rOriginX REAL4 ?
         rOriginY REAL4 ?
       TA_TRANSFORM_2D ends
-
       PTA_TRANSFORM_2D typedef ptr TA_TRANSFORM_2D
-      
       TA_TRANSFORM_OPACITY struct
         header TA_TRANSFORM <>
         rOpacity REAL4 ?
         rInitialOpacity REAL4 ?
       TA_TRANSFORM_OPACITY ends
-
       PTA_TRANSFORM_OPACITY typedef ptr TA_TRANSFORM_OPACITY
-      
       TA_TRANSFORM_CLIP struct
         header TA_TRANSFORM <>
         rLeft REAL4 ?
@@ -106,22 +101,18 @@ ifndef _UXTHEME_H_
         rInitialRight REAL4 ?
         rInitialBottom REAL4 ?
       TA_TRANSFORM_CLIP ends
-
       PTA_TRANSFORM_CLIP typedef ptr TA_TRANSFORM_CLIP
-      
       include poppack.inc
       @DefProto DllImport, GetThemeAnimationTransform, WIN_STD_CALL_CONV,, <:HTHEME, :SDWORD, :SDWORD, :DWORD, :ptr TA_TRANSFORM, :DWORD, :ptr DWORD>, 28
       TA_TIMINGFUNCTION_TYPE typedef SDWORD
       TTFT_UNDEFINED equ 0
       TTFT_CUBIC_BEZIER equ 1
-      
+
       include pshpack8.inc
       TA_TIMINGFUNCTION struct
         eTimingFunctionType TA_TIMINGFUNCTION_TYPE ?
       TA_TIMINGFUNCTION ends
-
       PTA_TIMINGFUNCTION typedef ptr TA_TIMINGFUNCTION
-      
       TA_CUBIC_BEZIER struct
         header TA_TIMINGFUNCTION <>
         rX0 REAL4 ?
@@ -129,9 +120,7 @@ ifndef _UXTHEME_H_
         rX1 REAL4 ?
         rY1 REAL4 ?
       TA_CUBIC_BEZIER ends
-
       PTA_CUBIC_BEZIER typedef ptr TA_CUBIC_BEZIER
-      
       include poppack.inc
       @DefProto DllImport, GetThemeTimingFunction, WIN_STD_CALL_CONV,, <:HTHEME, :SDWORD, :ptr TA_TIMINGFUNCTION, :DWORD, :ptr DWORD>, 20
     endif
@@ -156,10 +145,8 @@ ifndef _UXTHEME_H_
       dwFlags DWORD ?
       rcClip RECT <>
     DTBGOPTS ends
-
     _DTBGOPTS typedef DTBGOPTS
     PDTBGOPTS typedef ptr DTBGOPTS
-    
     @DefProto DllImport, DrawThemeBackgroundEx, WIN_STD_CALL_CONV,, <:HTHEME, :HDC, :SDWORD, :SDWORD, :LPCRECT, :ptr DTBGOPTS>, 24
     DTT_GRAYED equ 00000001h
     DTT_FLAGS2VALIDBITS equ <(DTT_GRAYED)>
@@ -171,7 +158,7 @@ ifndef _UXTHEME_H_
     TS_MIN equ 0
     TS_TRUE equ 1
     TS_DRAW equ 2
-    
+
     @DefProto DllImport, GetThemePartSize, WIN_STD_CALL_CONV,, <:HTHEME, :HDC, :SDWORD, :SDWORD, :LPCRECT, :THEMESIZE, :ptr SIZE_>, 28
     @DefProto DllImport, GetThemeTextExtent, WIN_STD_CALL_CONV,, <:HTHEME, :HDC, :SDWORD, :SDWORD, :LPCWSTR, :SDWORD, :DWORD, :LPCRECT, :LPRECT>, 36
     @DefProto DllImport, GetThemeTextMetrics, WIN_STD_CALL_CONV,, <:HTHEME, :HDC, :SDWORD, :SDWORD, :ptr TEXTMETRICW>, 20
@@ -185,7 +172,7 @@ ifndef _UXTHEME_H_
     HTTB_RESIZINGBORDER equ <(HTTB_RESIZINGBORDER_LEFT or HTTB_RESIZINGBORDER_TOP or HTTB_RESIZINGBORDER_RIGHT or HTTB_RESIZINGBORDER_BOTTOM)>
     HTTB_SIZINGTEMPLATE equ 00000100h
     HTTB_SYSTEMSIZINGMARGINS equ 00000200h
-    @DefProto DllImport, HitTestThemeBackground, WIN_STD_CALL_CONV,, <:HTHEME, :HDC, :SDWORD, :SDWORD, :DWORD, :LPCRECT, :HRGN, :POINT, :ptr WORD>, 40
+    @DefProto DllImport, HitTestThemeBackground, WIN_STD_CALL_CONV,, <:HTHEME, :HDC, :SDWORD, :SDWORD, :DWORD, :LPCRECT, :HRGN, :POINT, :ptr WORD>, 36
     @DefProto DllImport, DrawThemeEdge, WIN_STD_CALL_CONV,, <:HTHEME, :HDC, :SDWORD, :SDWORD, :LPCRECT, :UINT, :UINT, :LPRECT>, 32
     @DefProto DllImport, DrawThemeIcon, WIN_STD_CALL_CONV,, <:HTHEME, :HDC, :SDWORD, :SDWORD, :LPCRECT, :HIMAGELIST, :SDWORD>, 28
     @DefProto DllImport, IsThemePartDefined, WIN_STD_CALL_CONV,, <:HTHEME, :SDWORD, :SDWORD>, 12
@@ -205,10 +192,8 @@ ifndef _UXTHEME_H_
       cyTopHeight SDWORD ?
       cyBottomHeight SDWORD ?
     MARGINS ends
-
     _MARGINS typedef MARGINS
     PMARGINS typedef ptr MARGINS
-    
     @DefProto DllImport, GetThemeMargins, WIN_STD_CALL_CONV,, <:HTHEME, :HDC, :SDWORD, :SDWORD, :SDWORD, :LPCRECT, :ptr MARGINS>, 28
     if (NTDDI_VERSION ge NTDDI_VISTA)
       MAX_INTLIST_COUNT equ 402
@@ -219,10 +204,8 @@ ifndef _UXTHEME_H_
       iValueCount SDWORD ?
       iValues SDWORD MAX_INTLIST_COUNT dup (?)
     INTLIST ends
-
     _INTLIST typedef INTLIST
     PINTLIST typedef ptr INTLIST
-    
     @DefProto DllImport, GetThemeIntList, WIN_STD_CALL_CONV,, <:HTHEME, :SDWORD, :SDWORD, :SDWORD, :ptr INTLIST>, 20
     PROPERTYORIGIN typedef SDWORD
     PO_STATE equ 0
@@ -230,7 +213,7 @@ ifndef _UXTHEME_H_
     PO_CLASS equ 2
     PO_GLOBAL equ 3
     PO_NOTFOUND equ 4
-    
+
     @DefProto DllImport, GetThemePropertyOrigin, WIN_STD_CALL_CONV,, <:HTHEME, :SDWORD, :SDWORD, :SDWORD, :ptr PROPERTYORIGIN>, 20
     @DefProto DllImport, SetWindowTheme, WIN_STD_CALL_CONV,, <:HWND, :LPCWSTR, :LPCWSTR>, 12
     @DefProto DllImport, GetThemeFilename, WIN_STD_CALL_CONV,, <:HTHEME, :SDWORD, :SDWORD, :SDWORD, :LPWSTR, :SDWORD>, 24
@@ -279,15 +262,13 @@ ifndef _UXTHEME_H_
       @DefProto DllImport, DrawThemeParentBackgroundEx, WIN_STD_CALL_CONV,, <:HWND, :HDC, :DWORD, :ptr RECT>, 16
       WINDOWTHEMEATTRIBUTETYPE typedef SDWORD
       WTA_NONCLIENT equ 1
-      
+
       WTA_OPTIONS struct
         dwFlags DWORD ?
         dwMask DWORD ?
       WTA_OPTIONS ends
-
       _WTA_OPTIONS typedef WTA_OPTIONS
       PWTA_OPTIONS typedef ptr WTA_OPTIONS
-      
       WTNCA_NODRAWCAPTION equ 00000001h
       WTNCA_NODRAWICON equ 00000002h
       WTNCA_NOSYSMENU equ 00000004h
@@ -298,6 +279,7 @@ ifndef _UXTHEME_H_
     endif
     TYPE_DTT_CALLBACK_PROC typedef proto WIN_STD_CALL_CONV :HDC, :LPWSTR, :SDWORD, :LPRECT, :UINT, :LPARAM
     DTT_CALLBACK_PROC typedef ptr TYPE_DTT_CALLBACK_PROC
+
     DTT_TEXTCOLOR equ (1 shl 0)
     DTT_BORDERCOLOR equ (1 shl 1)
     DTT_SHADOWCOLOR equ (1 shl 2)
@@ -330,10 +312,8 @@ ifndef _UXTHEME_H_
       pfnDrawTextCallback DTT_CALLBACK_PROC ?
       lParam LPARAM ?
     DTTOPTS ends
-
     _DTTOPTS typedef DTTOPTS
     PDTTOPTS typedef ptr DTTOPTS
-    
     if (NTDDI_VERSION ge NTDDI_VISTA)
       @DefProto DllImport, DrawThemeTextEx, WIN_STD_CALL_CONV,, <:HTHEME, :HDC, :SDWORD, :SDWORD, :LPCWSTR, :SDWORD, :DWORD, :LPRECT, :ptr DTTOPTS>, 36
       @DefProto DllImport, GetThemeBitmap, WIN_STD_CALL_CONV,, <:HTHEME, :SDWORD, :SDWORD, :SDWORD, :ULONG, :ptr HBITMAP>, 24
@@ -347,7 +327,7 @@ ifndef _UXTHEME_H_
       BPBF_TOPDOWNDIB equ 2
       BPBF_TOPDOWNMONODIB equ 3
       _BP_BUFFERFORMAT typedef BP_BUFFERFORMAT
-      
+
       BPBF_COMPOSITED equ <BPBF_TOPDOWNDIB>
       BP_ANIMATIONSTYLE typedef SDWORD
       BPAS_NONE equ 0
@@ -355,17 +335,15 @@ ifndef _UXTHEME_H_
       BPAS_CUBIC equ 2
       BPAS_SINE equ 3
       _BP_ANIMATIONSTYLE typedef BP_ANIMATIONSTYLE
-      
+
       BP_ANIMATIONPARAMS struct
         cbSize DWORD ?
         dwFlags DWORD ?
         style BP_ANIMATIONSTYLE ?
         dwDuration DWORD ?
       BP_ANIMATIONPARAMS ends
-
       _BP_ANIMATIONPARAMS typedef BP_ANIMATIONPARAMS
       PBP_ANIMATIONPARAMS typedef ptr BP_ANIMATIONPARAMS
-      
       BPPF_ERASE equ 0001h
       BPPF_NOCLIP equ 0002h
       BPPF_NONCLIENT equ 0004h
@@ -375,10 +353,8 @@ ifndef _UXTHEME_H_
         prcExclude POINTER ?
         pBlendFunction POINTER ?
       BP_PAINTPARAMS ends
-
       _BP_PAINTPARAMS typedef BP_PAINTPARAMS
       PBP_PAINTPARAMS typedef ptr BP_PAINTPARAMS
-      
       @DefProto DllImport, BeginBufferedPaint, WIN_STD_CALL_CONV,, <:HDC, :ptr RECT, :BP_BUFFERFORMAT, :ptr BP_PAINTPARAMS, :ptr HDC>, 20
       @DefProto DllImport, EndBufferedPaint, WIN_STD_CALL_CONV,, <:HPAINTBUFFER, :BOOL>, 8
       @DefProto DllImport, GetBufferedPaintTargetRect, WIN_STD_CALL_CONV,, <:HPAINTBUFFER, :ptr RECT>, 8
@@ -400,4 +376,3 @@ ifndef _UXTHEME_H_
     endif
   endif
 endif
-

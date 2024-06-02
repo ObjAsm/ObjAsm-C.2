@@ -87,7 +87,7 @@ MethodEnd
 
 Method NetComProtocol.IsDataComplete?,, pConnection:$ObjPtr(NetComConnection), \
                                         pIOSockJob:PIO_SOCKJOB
-  DbgHex pConnection, "NetComProtocol.IsDataComplete?", "&PROTOCOL_WND_NAME"
+;  DbgHex pConnection, "NetComProtocol.IsDataComplete?", "&PROTOCOL_WND_NAME"
   xor eax, eax
 MethodEnd
 
@@ -112,7 +112,7 @@ MethodEnd
 ; Return:     eax = Command (PROT_CMD_ACCEPT_CONNECTION or PROT_CMD_REJECT_CONNECTION).
 
 Method NetComProtocol.OnAccept,, pConnection:$ObjPtr(NetComConnection)
-  DbgHex pConnection, "NetComProtocol.OnAccept", "&PROTOCOL_WND_NAME"
+;  DbgHex pConnection, "NetComProtocol.OnAccept", "&PROTOCOL_WND_NAME"
   mov eax, PROT_CMD_ACCEPT_CONNECTION
 MethodEnd
 
@@ -124,7 +124,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method NetComProtocol.OnClose,, pConnection:$ObjPtr(NetComConnection)
-  DbgHex pConnection, "NetComProtocol.OnClose", "&PROTOCOL_WND_NAME"
+;  DbgHex pConnection, "NetComProtocol.OnClose", "&PROTOCOL_WND_NAME"
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -144,7 +144,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method NetComProtocol.OnDisconnect,, pConnection:$ObjPtr(NetComConnection)
-  DbgHex pConnection, "NetComProtocol.OnDisconnect", "&PROTOCOL_WND_NAME"
+;  DbgHex pConnection, "NetComProtocol.OnDisconnect", "&PROTOCOL_WND_NAME"
   ?mov xdx, pConnection
   xBitSet [xdx].$Obj(NetComConnection).dFlags, NCC_DISCONNECTED
 MethodEnd
@@ -159,8 +159,8 @@ MethodEnd
 
 Method NetComProtocol.OnError,, pConnection:$ObjPtr(NetComConnection), pIOSockJob:PIO_SOCKJOB, \
                                 dError:DWORD
-  DbgHex pConnection, "NetComProtocol.OnError", "&PROTOCOL_WND_NAME"
-  DbgDec dError,, "&PROTOCOL_WND_NAME"
+;  DbgHex pConnection, "NetComProtocol.OnError", "&PROTOCOL_WND_NAME"
+;  DbgDec dError,, "&PROTOCOL_WND_NAME"
   ?mov xdx, pConnection
   mov xcx, pIOSockJob
   movzx eax, [xcx].IO_SOCKJOB.wOperation
@@ -207,7 +207,7 @@ MethodEnd
 ; Return:     eax = PROT_CMD_CONTINUE or PROT_CMD_DISCONNECT.
 
 Method NetComProtocol.OnTimeout,, pConnection:$ObjPtr(NetComConnection)
-  DbgHex pConnection, "NetComProtocol.OnTimeout", "&PROTOCOL_WND_NAME"
+;  DbgHex pConnection, "NetComProtocol.OnTimeout", "&PROTOCOL_WND_NAME"
   mov eax, PROT_CMD_DISCONNECT
 MethodEnd
 
@@ -219,7 +219,7 @@ MethodEnd
 ; Return:     eax = Number of processed bytes.
 
 Method NetComProtocol.ProcessData,, pConnection:$ObjPtr(NetComConnection), dDelimiterIndex:DWORD
-  DbgHex pConnection, "NetComProtocol.ProcessData", "&PROTOCOL_WND_NAME"
+;  DbgHex pConnection, "NetComProtocol.ProcessData", "&PROTOCOL_WND_NAME"
   mov eax, dDelimiterIndex
 MethodEnd
 
@@ -231,7 +231,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method NetComProtocol.Release,, pConnection:$ObjPtr(NetComConnection)
-  DbgHex pConnection, "NetComProtocol.Release", "&PROTOCOL_WND_NAME"
+;  DbgHex pConnection, "NetComProtocol.Release", "&PROTOCOL_WND_NAME"
 MethodEnd
 
 endif

@@ -177,7 +177,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=26
+MilestoneOnDateDate=27
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -215,7 +215,7 @@ ProductVer4Range=0
 2=0,0,806,424,20842
 3=0,0,2127,589,1095
 1=0,0,694,487,2227
-4=0,0,706,573,9402
+4=0,0,706,573,9579
 1001=0,0,0,0,460
 5=0,0,0,0,38966
 6=0,0,601,582,379
@@ -285,16 +285,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="END_DECLARE_INTCE__END"
-2="HTTP_RESPONSE_V"
-3="HTTP_RESPONSE_V1"
-4="InitHttpResponse"
-5="LPQOS"
-6="_SS_PAD1SIZE"
-7="PCUITEMID_CHILD_ARRAY"
-8="SIZE_ ?"
-9="const TASKOWNERID * __MIDL_CONST"
-10="REFTASKOWNERID"
+1="IDM_HELP_ABOUT"
+2="END_DECLARE_INTCE__END"
+3="HTTP_RESPONSE_V"
+4="HTTP_RESPONSE_V1"
+5="InitHttpResponse"
+6="LPQOS"
+7="_SS_PAD1SIZE"
+8="PCUITEMID_CHILD_ARRAY"
+9="SIZE_ ?"
+10="const TASKOWNERID * __MIDL_CONST"
 "
 [Collapse]
 7=,,
@@ -303,7 +303,7 @@ ProductVer4Range=0
 12=
 1=
 19=
-2=,67108864,176160802,21,
+2=,67108864,167772194,21,
 5=,,,
 4=
 11=
@@ -351,9 +351,9 @@ ProductVer4Range=0
 53=
 54=
 [AutoLoad]
-AutoLoad=
+AutoLoad=4,2,33,34
 [PTimer]
-PTimer=2359665339
+PTimer=2359739480
 [RADebugBP]
 5=
 2=

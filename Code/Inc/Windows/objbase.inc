@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\objbase.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\objbase.h
+;             Created on (UTC) 06/04/2024 06:15:57
+;             Last modified on (UTC) 21/02/2024 18:13:14
 
 include winapifamily.inc
 include rpc.inc
@@ -21,7 +22,7 @@ if  not Defined(_OBJBASE_H_)
     COINIT_SPEED_OVER_MEMORY equ 8h
   endif
   tagCOINIT typedef COINIT
-  
+
   MARSHALINTERFACE_MIN equ 500
   ASYNC_MODE_COMPATIBILITY equ 00000001h
   ASYNC_MODE_DEFAULT equ 00000000h
@@ -56,7 +57,7 @@ if  not Defined(_OBJBASE_H_)
       SD_LAUNCHRESTRICTIONS equ 2
       SD_ACCESSRESTRICTIONS equ 3
       tagCOMSD typedef COMSD
-      
+
       @DefProto DllImport, CoGetSystemSecurityPermissions, WIN_STD_CALL_CONV,, <:COMSD, :ptr PSECURITY_DESCRIPTOR>, 8
     endif
     @DefProto DllImport, CoLoadLibrary, WIN_STD_CALL_CONV,, <:LPOLESTR, :BOOL>, 8
@@ -71,10 +72,10 @@ if  not Defined(_OBJBASE_H_)
       @DefProto DllImport, DcomChannelSetHResult, WIN_STD_CALL_CONV,, <:LPVOID, :ptr ULONG, :HRESULT>, 12
     endif
     @DefProto DllImport, CoIsOle1Class, WIN_STD_CALL_CONV,, <:REFCLSID>, 4
-;    @DefProto DllImport, CLSIDFromProgIDEx, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LPCLSID>, 8
+    @DefProto DllImport, CLSIDFromProgIDEx, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LPCLSID>, 8
     @DefProto DllImport, CoFileTimeToDosDateTime, WIN_STD_CALL_CONV,, <:ptr FILETIME, :LPWORD, :LPWORD>, 12
     @DefProto DllImport, CoDosDateTimeToFileTime, WIN_STD_CALL_CONV,, <:WORD, :WORD, :ptr FILETIME>, 12
-;    @DefProto DllImport, CoFileTimeNow, WIN_STD_CALL_CONV,, <:ptr FILETIME>, 4
+    @DefProto DllImport, CoFileTimeNow, WIN_STD_CALL_CONV,, <:ptr FILETIME>, 4
     @DefProto DllImport, CoRegisterMessageFilter, WIN_STD_CALL_CONV,, <:LPMESSAGEFILTER, :ptr LPMESSAGEFILTER>, 8
     if (_WIN32_WINNT ge 0400h) or Defined(_WIN32_DCOM)
       @DefProto DllImport, CoRegisterChannelHook, WIN_STD_CALL_CONV,, <:REFGUID, :ptr IChannelHook>, 8
@@ -118,4 +119,3 @@ if  not Defined(_OBJBASE_H_)
     include poppack.inc
   endif
 endif
-

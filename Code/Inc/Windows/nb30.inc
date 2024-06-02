@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\nb30.h', last modified: 19/04/2018 10:44
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\nb30.h
+;             Created on (UTC) 06/04/2024 06:15:57
+;             Last modified on (UTC) 16/12/2023 11:05:36
 
 ifndef NCB_INCLUDED
   NCB_INCLUDED equ <>
@@ -29,6 +30,7 @@ ifndef NCB_INCLUDED
       ncb_sto UCHAR ?
       TYPE_ncb_post typedef proto WIN_STD_CALL_CONV :ptr _NCB
       ncb_post typedef ptr TYPE_ncb_post
+
       ncb_lana_num UCHAR ?
       ncb_cmd_cplt UCHAR ?
       ifdef _WIN64
@@ -38,9 +40,8 @@ ifndef NCB_INCLUDED
       endif
       ncb_event HANDLE ?
     NCB ends
-;    _NCB typedef NCB
+    _NCB typedef NCB
     PNCB typedef ptr NCB
-    
     ADAPTER_STATUS struct
       adapter_address UCHAR 6 dup (?)
       rev_major UCHAR ?
@@ -72,7 +73,6 @@ ifndef NCB_INCLUDED
     ADAPTER_STATUS ends
     _ADAPTER_STATUS typedef ADAPTER_STATUS
     PADAPTER_STATUS typedef ptr ADAPTER_STATUS
-    
     NAME_BUFFER struct
       name_ UCHAR NCBNAMSZ dup (?)
       name_num UCHAR ?
@@ -80,7 +80,6 @@ ifndef NCB_INCLUDED
     NAME_BUFFER ends
     _NAME_BUFFER typedef NAME_BUFFER
     PNAME_BUFFER typedef ptr NAME_BUFFER
-    
     NAME_FLAGS_MASK equ 87h
     GROUP_NAME equ 80h
     UNIQUE_NAME equ 00h
@@ -97,7 +96,6 @@ ifndef NCB_INCLUDED
     SESSION_HEADER ends
     _SESSION_HEADER typedef SESSION_HEADER
     PSESSION_HEADER typedef ptr SESSION_HEADER
-    
     SESSION_BUFFER struct
       lsn UCHAR ?
       state UCHAR ?
@@ -108,7 +106,6 @@ ifndef NCB_INCLUDED
     SESSION_BUFFER ends
     _SESSION_BUFFER typedef SESSION_BUFFER
     PSESSION_BUFFER typedef ptr SESSION_BUFFER
-    
     LISTEN_OUTSTANDING equ 01h
     CALL_PENDING equ 02h
     SESSION_ESTABLISHED equ 03h
@@ -121,7 +118,6 @@ ifndef NCB_INCLUDED
     LANA_ENUM ends
     _LANA_ENUM typedef LANA_ENUM
     PLANA_ENUM typedef ptr LANA_ENUM
-    
     FIND_NAME_HEADER struct
       node_count WORD ?
       reserved UCHAR ?
@@ -129,7 +125,6 @@ ifndef NCB_INCLUDED
     FIND_NAME_HEADER ends
     _FIND_NAME_HEADER typedef FIND_NAME_HEADER
     PFIND_NAME_HEADER typedef ptr FIND_NAME_HEADER
-    
     FIND_NAME_BUFFER struct
       length_ UCHAR ?
       access_control UCHAR ?
@@ -140,7 +135,6 @@ ifndef NCB_INCLUDED
     FIND_NAME_BUFFER ends
     _FIND_NAME_BUFFER typedef FIND_NAME_BUFFER
     PFIND_NAME_BUFFER typedef ptr FIND_NAME_BUFFER
-    
     ACTION_HEADER struct
       transport_id ULONG ?
       action_code USHORT ?
@@ -148,7 +142,6 @@ ifndef NCB_INCLUDED
     ACTION_HEADER ends
     _ACTION_HEADER typedef ACTION_HEADER
     PACTION_HEADER typedef ptr ACTION_HEADER
-    
     ALL_TRANSPORTS equ <"M",0o,0o,0o>
     MS_NBF equ <"MNBF">
     NCBCALL equ 10h
@@ -218,7 +211,7 @@ ifndef NCB_INCLUDED
     NRC_SYSTEM equ 40h
     NRC_PENDING equ 0ffh
     Netbios proto WIN_STD_CALL_CONV :PNCB
-    NCB_POST equ < void>
+    NCB_POST equ <void CALLBACK>
   endif
   if _MSC_VER ge 1200
   endif
@@ -226,4 +219,3 @@ ifndef NCB_INCLUDED
     ;[...]
   endif
 endif
-

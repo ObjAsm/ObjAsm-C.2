@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\dvp.h', last modified: 19/04/2018 10:47
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\dvp.h
+;             Created on (UTC) 06/04/2024 06:15:55
+;             Last modified on (UTC) 21/02/2024 18:14:20
 
 ifndef __DVP_INCLUDED__
   __DVP_INCLUDED__ equ <>
@@ -33,44 +34,33 @@ ifndef __DVP_INCLUDED__
         ;[...]
       endif
       LPDDVIDEOPORTCONTAINER typedef ptr IDDVideoPortContainer
-      
       LPDIRECTDRAWVIDEOPORT typedef ptr IDirectDrawVideoPort
-      
       LPDIRECTDRAWVIDEOPORTNOTIFY typedef ptr IDirectDrawVideoPortNotify
-      
       LPDDVIDEOPORTCONNECT typedef ptr _DDVIDEOPORTCONNECT
-      
       LPDDVIDEOPORTCAPS typedef ptr _DDVIDEOPORTCAPS
-      
       LPDDVIDEOPORTDESC typedef ptr _DDVIDEOPORTDESC
-      
       LPDDVIDEOPORTINFO typedef ptr _DDVIDEOPORTINFO
-      
       LPDDVIDEOPORTBANDWIDTH typedef ptr _DDVIDEOPORTBANDWIDTH
-      
       LPDDVIDEOPORTSTATUS typedef ptr _DDVIDEOPORTSTATUS
-      
       LPDDVIDEOPORTNOTIFY typedef ptr _DDVIDEOPORTNOTIFY
-      
       DDVIDEOPORTCONTAINERCALLBACKS typedef IDDVideoPortContainerVtbl
-      
       DIRECTDRAWVIDEOPORTCALLBACKS typedef IDirectDrawVideoPortVtbl
-      
       DIRECTDRAWVIDEOPORTNOTIFYCALLBACKS typedef IDirectDrawVideoPortNotifyVtbl
-      
       TYPE_LPDDENUMVIDEOCALLBACK typedef proto WIN_STD_CALL_CONV :LPDDVIDEOPORTCAPS, :LPVOID
       LPDDENUMVIDEOCALLBACK typedef ptr TYPE_LPDDENUMVIDEOCALLBACK
+
       if Defined(_WIN32) and  not Defined(_NO_COM)
         INTERFACE equ <IDDVideoPortContainer>
-        DECLARE_INTERFACE_ IDDVideoPortContainer, IUnknown
-          STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-          STD_METHOD AddRef, :THIS_
-          STD_METHOD Release, :THIS_
-          STD_METHOD CreateVideoPort, :THIS_, :LPDDVIDEOPORTDESC, :ptr LPDIRECTDRAWVIDEOPORT, :ptr IUnknown
-          STD_METHOD EnumVideoPorts, :THIS_, :LPDDVIDEOPORTCAPS, :LPVOID, :LPDDENUMVIDEOCALLBACK
-          STD_METHOD GetVideoPortConnectInfo, :THIS_, :LPDWORD, :LPDDVIDEOPORTCONNECT
-          STD_METHOD QueryVideoPortStatus, :THIS_, :LPDDVIDEOPORTSTATUS
-        END_DECLARE_INTERFACE_
+        DECLARE_INTERFACE_(IDDVideoPortContainer, IUnknown)
+          STDMETHOD QueryInterface, :, :ptr 
+          STDMETHOD_ ULONG, AddRef
+          STDMETHOD_ ULONG, Release
+          STDMETHOD CreateVideoPort, :, :, :ptr , :ptr 
+          STDMETHOD EnumVideoPorts, :, :, :, :
+          STDMETHOD GetVideoPortConnectInfo, :, :, :
+          STDMETHOD QueryVideoPortStatus, :, :
+        DECLARE_INTERFACE__END
+
         if  not Defined(__cplusplus) or Defined(CINTERFACE)
           IVideoPortContainer_QueryInterface macro p, a, b
             exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -99,25 +89,26 @@ ifndef __DVP_INCLUDED__
       endif
       if Defined(_WIN32) and  not Defined(_NO_COM)
         INTERFACE equ <IDirectDrawVideoPort>
-        DECLARE_INTERFACE_ IDirectDrawVideoPort, IUnknown
-          STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-          STD_METHOD AddRef, :THIS_
-          STD_METHOD Release, :THIS_
-          STD_METHOD Flip, :THIS_, :DWORD
-          STD_METHOD GetBandwidthInfo, :THIS_, :DWORD, :DWORD, :DWORD, :LPDDVIDEOPORTBANDWIDTH
-          STD_METHOD GetColorControls, :THIS_
-          STD_METHOD GetInputFormats, :THIS_, :LPDDPIXELFORMAT, :DWORD
-          STD_METHOD GetOutputFormats, :THIS_, :LPDWORD, :LPDDPIXELFORMAT, :DWORD
-          STD_METHOD GetFieldPolarity, :THIS_
-          STD_METHOD GetVideoLine, :THIS_
-          STD_METHOD GetVideoSignalStatus, :THIS_
-          STD_METHOD SetColorControls, :THIS_
-          STD_METHOD SetTargetSurface, :THIS_, :DWORD
-          STD_METHOD StartVideo, :THIS_
-          STD_METHOD StopVideo, :THIS_
-          STD_METHOD UpdateVideo, :THIS_
-          STD_METHOD WaitForSync, :THIS_, :DWORD, :DWORD
-        END_DECLARE_INTERFACE_
+        DECLARE_INTERFACE_(IDirectDrawVideoPort, IUnknown)
+          STDMETHOD QueryInterface, :, :ptr 
+          STDMETHOD_ ULONG, AddRef
+          STDMETHOD_ ULONG, Release
+          STDMETHOD Flip, :, :
+          STDMETHOD GetBandwidthInfo, :, :, :, :, :
+          STDMETHOD GetColorControls, :
+          STDMETHOD GetInputFormats, :, :, :
+          STDMETHOD GetOutputFormats, :, :, :, :
+          STDMETHOD GetFieldPolarity, :
+          STDMETHOD GetVideoLine, :
+          STDMETHOD GetVideoSignalStatus, :
+          STDMETHOD SetColorControls, :
+          STDMETHOD SetTargetSurface, :, :
+          STDMETHOD StartVideo, :
+          STDMETHOD StopVideo
+          STDMETHOD UpdateVideo, :
+          STDMETHOD WaitForSync, :, :, :
+        DECLARE_INTERFACE__END
+
         if  not Defined(__cplusplus) or Defined(CINTERFACE)
           IVideoPort_QueryInterface macro p, a, b
             exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -177,13 +168,14 @@ ifndef __DVP_INCLUDED__
       if (_WIN32_WINNT ge _WIN32_WINNT_WINXP)
         if Defined(_WIN32) and  not Defined(_NO_COM)
           INTERFACE equ <IDirectDrawVideoPortNotify>
-          DECLARE_INTERFACE_ IDirectDrawVideoPortNotify, IUnknown
-            STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-            STD_METHOD AddRef, :THIS_
-            STD_METHOD Release, :THIS_
-            STD_METHOD AcquireNotification, :ptr THIS_, :LPDDVIDEOPORTNOTIFY
-            STD_METHOD ReleaseNotification, :THIS_
-          END_DECLARE_INTERFACE_
+          DECLARE_INTERFACE_(IDirectDrawVideoPortNotify, IUnknown)
+            STDMETHOD QueryInterface, :, :ptr 
+            STDMETHOD_ ULONG, AddRef
+            STDMETHOD_ ULONG, Release
+            STDMETHOD AcquireNotification, :ptr , :
+            STDMETHOD ReleaseNotification, :
+          DECLARE_INTERFACE__END
+
           if  not Defined(__cplusplus) or Defined(CINTERFACE)
             IVideoPortNotify_QueryInterface macro p, a, b
               exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -212,7 +204,6 @@ ifndef __DVP_INCLUDED__
         dwFlags DWORD ?
         dwReserved1 ULONG_PTR ?
       DDVIDEOPORTCONNECT ends
-
       _DDVIDEOPORTCONNECT typedef DDVIDEOPORTCONNECT
       DDVIDEOPORTCAPS struct
         dwSize DWORD ?
@@ -235,7 +226,6 @@ ifndef __DVP_INCLUDED__
         wNumFilterTapsX WORD ?
         wNumFilterTapsY WORD ?
       DDVIDEOPORTCAPS ends
-
       _DDVIDEOPORTCAPS typedef DDVIDEOPORTCAPS
       DDVPD_WIDTH equ 00000001h
       DDVPD_HEIGHT equ 00000002h
@@ -259,7 +249,6 @@ ifndef __DVP_INCLUDED__
         dwReserved2 ULONG_PTR ?
         dwReserved3 ULONG_PTR ?
       DDVIDEOPORTDESC ends
-
       _DDVIDEOPORTDESC typedef DDVIDEOPORTDESC
       DDVIDEOPORTINFO struct
         dwSize DWORD ?
@@ -276,7 +265,6 @@ ifndef __DVP_INCLUDED__
         dwReserved1 ULONG_PTR ?
         dwReserved2 ULONG_PTR ?
       DDVIDEOPORTINFO ends
-
       _DDVIDEOPORTINFO typedef DDVIDEOPORTINFO
       DDVIDEOPORTBANDWIDTH struct
         dwSize DWORD ?
@@ -288,7 +276,6 @@ ifndef __DVP_INCLUDED__
         dwReserved1 ULONG_PTR ?
         dwReserved2 ULONG_PTR ?
       DDVIDEOPORTBANDWIDTH ends
-
       _DDVIDEOPORTBANDWIDTH typedef DDVIDEOPORTBANDWIDTH
       DDVIDEOPORTSTATUS struct
         dwSize DWORD ?
@@ -299,7 +286,6 @@ ifndef __DVP_INCLUDED__
         dwReserved2 ULONG_PTR ?
         dwReserved3 ULONG_PTR ?
       DDVIDEOPORTSTATUS ends
-
       _DDVIDEOPORTSTATUS typedef DDVIDEOPORTSTATUS
       DDVIDEOPORTNOTIFY struct
         ApproximateTimeStamp LARGE_INTEGER <>
@@ -307,7 +293,6 @@ ifndef __DVP_INCLUDED__
         dwSurfaceIndex UINT ?
         lDone LONG ?
       DDVIDEOPORTNOTIFY ends
-
       _DDVIDEOPORTNOTIFY typedef DDVIDEOPORTNOTIFY
       DDVPCONNECT_DOUBLECLOCK equ 00000001h
       DDVPCONNECT_VACT equ 00000002h
@@ -394,4 +379,3 @@ ifndef __DVP_INCLUDED__
     endif
   endif
 endif
-

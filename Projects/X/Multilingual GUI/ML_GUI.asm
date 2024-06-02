@@ -22,7 +22,7 @@ GDIPVER equ 0100h
 % include &IncPath&Windows\GdiplusEnums.inc
 % include &IncPath&Windows\GdiplusGpStubs.inc
 % include &IncPath&Windows\GdiPlusFlat.inc
-;% include &IncPath&Windows\wininet.inc
+% include &IncPath&Windows\wininet.inc
 
 % includelib &LibPath&Windows\shell32.lib
 % includelib &LibPath&Windows\shlwapi.lib

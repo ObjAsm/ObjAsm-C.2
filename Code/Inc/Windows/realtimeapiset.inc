@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\realtimeapiset.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\realtimeapiset.h
+;             Created on (UTC) 06/04/2024 06:15:57
+;             Last modified on (UTC) 21/02/2024 18:13:14
 
 ifdef _MSC_VER
 endif
@@ -31,11 +32,10 @@ ifndef _APISETREALTIME_
       @DefProto DllImport, QueryUnbiasedInterruptTime, WIN_STD_CALL_CONV,, <:PULONGLONG>, 4
     endif
     @DefProto DllImport, QueryAuxiliaryCounterFrequency, WIN_STD_CALL_CONV,, <:PULONGLONG>, 4
-    @DefProto DllImport, ConvertAuxiliaryCounterToPerformanceCounter, WIN_STD_CALL_CONV,, <:ULONGLONG, :PULONGLONG, :PULONGLONG>, 16
-    @DefProto DllImport, ConvertPerformanceCounterToAuxiliaryCounter, WIN_STD_CALL_CONV,, <:ULONGLONG, :PULONGLONG, :PULONGLONG>, 16
+    @DefProto DllImport, ConvertAuxiliaryCounterToPerformanceCounter, WIN_STD_CALL_CONV,, <:ULONGLONG, :PULONGLONG, :PULONGLONG>, 12
+    @DefProto DllImport, ConvertPerformanceCounterToAuxiliaryCounter, WIN_STD_CALL_CONV,, <:ULONGLONG, :PULONGLONG, :PULONGLONG>, 12
   endif
   ifdef __cplusplus
     ;[...]
   endif
 endif
-

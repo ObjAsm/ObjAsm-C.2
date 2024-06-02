@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\dde.h', last modified: 19/04/2018 10:46
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\dde.h
+;             Created on (UTC) 06/04/2024 06:15:53
+;             Last modified on (UTC) 16/12/2023 11:07:52
 
 ifndef _DDEHEADER_INCLUDED_
   _DDEHEADER_INCLUDED_ equ <>
@@ -30,66 +31,60 @@ ifndef _DDEHEADER_INCLUDED_
     WM_DDE_LAST equ (WM_DDE_FIRST + 8)
     DDEACK struct
       ifndef _MAC
-        DDEACK_??51 record bAppReturnCode_??51:8, Bitfield1_??51:6, Bitfield2_??51:1, Bitfield3_??51:1
-        DDEACK_??51 <>
+        DDEACK_REC record DDEACK_REC_fAck:1, DDEACK_REC_fBusy:1, DDEACK_REC_reserved:6, DDEACK_REC_bAppReturnCode:8
+        DDEACK_BITS DDEACK_REC <>
       else
         ;[...]
       endif
     DDEACK ends
-
     DDEADVISE struct
       ifndef _MAC
-        DDEADVISE_??52 record reserved_??52:14, Bitfield1_??52:1, Bitfield2_??52:1
-        DDEADVISE_??52 <>
+        DDEADVISE_REC record DDEADVISE_REC_fAckReq:1, DDEADVISE_REC_fDeferUpd:1, DDEADVISE_REC_reserved:14
+        DDEADVISE_BITS DDEADVISE_REC <>
       else
         ;[...]
       endif
       cfFormat SWORD ?
     DDEADVISE ends
-
     DDEDATA struct
       ifndef _MAC
-        DDEDATA_??53 record unused_??53:12, Bitfield1_??53:1, Bitfield2_??53:1, Bitfield3_??53:1, Bitfield4_??53:1
-        DDEDATA_??53 <>
+        DDEDATA_REC record DDEDATA_REC_fAckReq:1, DDEDATA_REC_reserved:1, DDEDATA_REC_fRelease:1, DDEDATA_REC_fResponse:1, DDEDATA_REC_unused:12
+        DDEDATA_BITS DDEDATA_REC <>
       else
         ;[...]
       endif
       cfFormat SWORD ?
       Value BYTE 1 dup (?)
     DDEDATA ends
-
     DDEPOKE struct
       ifndef _MAC
-        DDEPOKE_??54 record unused_??54:13, Bitfield1_??54:1, Bitfield2_??54:2
-        DDEPOKE_??54 <>
+        DDEPOKE_REC record DDEPOKE_REC_fReserved:2, DDEPOKE_REC_fRelease:1, DDEPOKE_REC_unused:13
+        DDEPOKE_BITS DDEPOKE_REC <>
       else
         ;[...]
       endif
       cfFormat SWORD ?
       Value BYTE 1 dup (?)
     DDEPOKE ends
-
     DDELN struct
       ifndef _MAC
-        DDELN_??55 record unused_??55:13, Bitfield1_??55:1, Bitfield2_??55:1, Bitfield3_??55:1
-        DDELN_??55 <>
+        DDELN_REC record DDELN_REC_fAckReq:1, DDELN_REC_fDeferUpd:1, DDELN_REC_fRelease:1, DDELN_REC_unused:13
+        DDELN_BITS DDELN_REC <>
       else
         ;[...]
       endif
       cfFormat SWORD ?
     DDELN ends
-
     DDEUP struct
       ifndef _MAC
-        DDEUP_??56 record unused_??56:12, Bitfield1_??56:1, Bitfield2_??56:1, Bitfield3_??56:1, Bitfield4_??56:1
-        DDEUP_??56 <>
+        DDEUP_REC record DDEUP_REC_fAckReq:1, DDEUP_REC_fReserved:1, DDEUP_REC_fRelease:1, DDEUP_REC_fAck:1, DDEUP_REC_unused:12
+        DDEUP_BITS DDEUP_REC <>
       else
         ;[...]
       endif
       cfFormat SWORD ?
       rgb BYTE 1 dup (?)
     DDEUP ends
-
     DdeSetQualityOfService proto WIN_STD_CALL_CONV :HWND, :ptr SECURITY_QUALITY_OF_SERVICE, :PSECURITY_QUALITY_OF_SERVICE
     ImpersonateDdeClientWindow proto WIN_STD_CALL_CONV :HWND, :HWND
     PackDDElParam proto WIN_STD_CALL_CONV :UINT, :UINT_PTR, :UINT_PTR
@@ -103,4 +98,3 @@ ifndef _DDEHEADER_INCLUDED_
   if _MSC_VER ge 1200
   endif
 endif
-

@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 19/04/2018 10:43
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\guiddef.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\guiddef.h
+;             Created on (UTC) 22/05/2024 17:57:07
+;             Last modified on (UTC) 16/12/2023 11:05:18
 
 ifndef GUID_DEFINED
   GUID_DEFINED equ <>
@@ -14,13 +15,12 @@ ifndef GUID_DEFINED
       Data3 WORD ?
       Data4 BYTE 8 dup (?)
     GUID ends
-
     _GUID typedef GUID
   endif
 endif
-ifndef FAR
+ifndef FAR_
   ifdef _WIN32
-    ;FAR equ <>
+    FAR_ equ <>
   else
     ;[...]
   endif
@@ -39,21 +39,20 @@ ifndef EXTERN_C
     EXTERN_C equ <extern>
   endif
 endif
-ifdef DEFINE_GUID
-endif
-ifdef INITGUID
- DEFINE_GUID macro GUID_Name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-  GUID_Name GUID { l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8}}
- endm
-else
- DEFINE_GUID macro GUID_Name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-  externdef GUID_Name:GUID
-  s&GUID_Name textequ <{l, w1, w2, {b1, b2, b3, b4, b5, b6, b7, b8}}>
- endm
-endif
-DEFINE_OLEGUID macro GUID_Name, l, w1, w2
- DEFINE_GUID GUID_Name, l, w1, w2, 0C0h, 0, 0, 0, 0, 0, 0, 46h
-endm
+ifdef INITGUID                                                             
+  DEFINE_GUID macro GUID_Name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8   
+   GUID_Name GUID { l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8}}          
+  endm                                                                     
+else                                                                       
+  DEFINE_GUID macro GUID_Name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8   
+   externdef GUID_Name:GUID                                                
+   s&GUID_Name textequ <GUID {l, w1, w2, {b1, b2, b3, b4, b5, b6, b7, b8}}>
+  endm                                                                     
+endif                                                                      
+                                                                           
+DEFINE_OLEGUID macro GUID_Name, l, w1, w2                                  
+  DEFINE_GUID GUID_Name, l, w1, w2, 0C0h, 0, 0, 0, 0, 0, 0, 46h            
+endm                                                                       
 ifndef _GUIDDEF_H_
   _GUIDDEF_H_ equ <>
   ifndef __LPGUID_DEFINED__
@@ -87,7 +86,7 @@ ifndef _GUIDDEF_H_
     ifdef __midl_proxy
       __MIDL_CONST equ <>
     else
-      __MIDL_CONST equ <>
+      __MIDL_CONST equ <const>
     endif
     ifndef _REFGUID_DEFINED
       _REFGUID_DEFINED equ <>
@@ -102,7 +101,7 @@ ifndef _GUIDDEF_H_
       ifdef __cplusplus
         ;[...]
       else
-        REFIID typedef ptr IID
+        REFIID typedef ptr GUID
       endif
     endif
     ifndef _REFCLSID_DEFINED
@@ -110,7 +109,7 @@ ifndef _GUIDDEF_H_
       ifdef __cplusplus
         ;[...]
       else
-        REFCLSID typedef ptr IID
+        REFCLSID typedef ptr GUID
       endif
     endif
     ifndef _REFFMTID_DEFINED
@@ -118,14 +117,14 @@ ifndef _GUIDDEF_H_
       ifdef __cplusplus
         ;[...]
       else
-        REFFMTID typedef ptr IID
+        REFFMTID typedef ptr GUID
       endif
     endif
   endif
   if  not Defined(__midl)
     if  not Defined(_SYS_GUID_OPERATORS_)
       _SYS_GUID_OPERATORS_ equ <>
-      include string.inc
+;      include string.inc
       ifdef __cplusplus
         ;[...]
       else

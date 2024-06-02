@@ -41,6 +41,10 @@
 ;            szMax SIZE_ ?   <-- <>
 ;          NMDATETIMEFORMATQUERYW ends
 
+; TYPEKIND enum failed
+
+;STD_METHOD ccc.Invoke_    dont replace Invoke
+
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc
 SysSetup OOP, CON64, WIDE_STRING, DEBUG(WND);, RESGUARD)
 ;SILENT=TRUE

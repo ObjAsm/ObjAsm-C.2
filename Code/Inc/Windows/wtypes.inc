@@ -1,10 +1,11 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\wtypes.h', last modified: 19/04/2018 10:46
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\wtypes.h
+;             Created on (UTC) 22/05/2024 17:57:06
+;             Last modified on (UTC) 21/02/2024 18:18:14
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-  __REQUIRED_RPCNDR_H_VERSION__ equ 500
+  __REQUIRED_RPCNDR_H_VERSION__ equ 501
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
   __REQUIRED_RPCSAL_H_VERSION__ equ 100
@@ -17,6 +18,17 @@ endif
 ifndef __wtypes_h__
   __wtypes_h__ equ <>
   if Defined(_MSC_VER) and (_MSC_VER ge 1020)
+  endif
+  ifndef DECLSPEC_XFGVIRT
+    if Defined(_CONTROL_FLOW_GUARD_XFG)
+      DECLSPEC_XFGVIRT macro base, func
+        exitm <__declspec(xfg_virtual (base, func))>
+      endm
+    else
+      DECLSPEC_XFGVIRT macro base, func
+        exitm <>
+      endm
+    endif
   endif
   include wtypesbase.inc
   ifdef __cplusplus
@@ -77,9 +89,7 @@ ifndef __wtypes_h__
       PALETTEENTRY ends
       tagPALETTEENTRY typedef PALETTEENTRY
       PPALETTEENTRY typedef ptr tagPALETTEENTRY
-      
       LPPALETTEENTRY typedef ptr tagPALETTEENTRY
-      
     endif
     ifndef _LOGPALETTE_DEFINED
       _LOGPALETTE_DEFINED equ <>
@@ -90,9 +100,7 @@ ifndef __wtypes_h__
       LOGPALETTE ends
       tagLOGPALETTE typedef LOGPALETTE
       PLOGPALETTE typedef ptr tagLOGPALETTE
-      
       LPLOGPALETTE typedef ptr tagLOGPALETTE
-      
     endif
     ifndef _WINDEF_
       LPCRECTL typedef ptr RECTL
@@ -104,9 +112,7 @@ ifndef __wtypes_h__
       RECT ends
       tagRECT typedef RECT
       PRECT typedef ptr tagRECT
-      
       LPRECT typedef ptr tagRECT
-      
       LPCRECT typedef ptr RECT
     endif
     if 0
@@ -127,7 +133,7 @@ ifndef __wtypes_h__
     DVASPECT_ICON equ 4
     DVASPECT_DOCPRINT equ 8
     tagDVASPECT typedef DVASPECT
-    
+
     STGC typedef SDWORD
     STGC_DEFAULT equ 0
     STGC_OVERWRITE equ 1
@@ -135,19 +141,19 @@ ifndef __wtypes_h__
     STGC_DANGEROUSLYCOMMITMERELYTODISKCACHE equ 4
     STGC_CONSOLIDATE equ 8
     tagSTGC typedef STGC
-    
+
     STGMOVE typedef SDWORD
     STGMOVE_MOVE equ 0
     STGMOVE_COPY equ 1
     STGMOVE_SHALLOWCOPY equ 2
     tagSTGMOVE typedef STGMOVE
-    
+
     STATFLAG typedef SDWORD
     STATFLAG_DEFAULT equ 0
     STATFLAG_NONAME equ 1
     STATFLAG_NOOPEN equ 2
     tagSTATFLAG typedef STATFLAG
-    
+
     HCONTEXT typedef ptr
     ifndef _LCID_DEFINED
       _LCID_DEFINED equ <>
@@ -157,9 +163,9 @@ ifndef __wtypes_h__
       _LANGID_DEFINED equ <>
       LANGID typedef USHORT
     endif
-    WDT_INPROC_CALL equ 48746457h
-    WDT_REMOTE_CALL equ 52746457h
-    WDT_INPROC64_CALL equ 50746457h
+    WDT_INPROC_CALL equ (48746457h)
+    WDT_REMOTE_CALL equ (52746457h)
+    WDT_INPROC64_CALL equ (50746457h)
     userCLIPFORMAT struct
       fContext LONG ?
       union u
@@ -297,9 +303,7 @@ ifndef __wtypes_h__
       TEXTMETRICW ends
       tagTEXTMETRICW typedef TEXTMETRICW
       PTEXTMETRICW typedef ptr tagTEXTMETRICW
-      
       LPTEXTMETRICW typedef ptr tagTEXTMETRICW
-      
     endif
     ifndef _WIN32
       ;[...]
@@ -351,8 +355,8 @@ ifndef __wtypes_h__
         signscale USHORT ?
       ends
       Hi32 ULONG ?
-      union DUMMYUNIONNAME2
-        struct DUMMYSTRUCTNAME2
+      union
+        struct
           Lo32 ULONG ?
           Mid32 ULONG ?
         ends
@@ -379,11 +383,6 @@ ifndef __wtypes_h__
   endif
   LPBSTR typedef ptr BSTR
   VARIANT_BOOL typedef SWORD
-  if  not __STDC__ and (_MSC_VER le 1000)
-    _VARIANT_BOOL typedef VARIANT_BOOL
-  else
-    _VARIANT_BOOL equ </ ## />
-  endif
   ifndef _tagBSTRBLOB_DEFINED
     _tagBSTRBLOB_DEFINED equ <>
     BSTRBLOB struct
@@ -392,10 +391,9 @@ ifndef __wtypes_h__
     BSTRBLOB ends
     tagBSTRBLOB typedef BSTRBLOB
     LPBSTRBLOB typedef ptr tagBSTRBLOB
-    
   endif
-  VARIANT_TRUE equ (VARIANT_BOOL ptr - 1)
-  VARIANT_FALSE equ (VARIANT_BOOL ptr 0)
+  VARIANT_TRUE equ ((VARIANT_BOOL) - 1)
+  VARIANT_FALSE equ ((VARIANT_BOOL) 0)
   CLIPDATA struct
     cbSize ULONG ?
     ulClipFmt LONG ?
@@ -459,7 +457,7 @@ ifndef __wtypes_h__
   VT_ILLEGAL equ 0ffffh
   VT_ILLEGALMASKED equ 0fffh
   VT_TYPEMASK equ 0fffh
-  
+
   PROPID typedef ULONG
   ifndef PROPERTYKEY_DEFINED
     PROPERTYKEY_DEFINED equ <>
@@ -486,14 +484,14 @@ ifndef __wtypes_h__
   tagQUERYCONTEXT typedef QUERYCONTEXT
   TYSPEC typedef SDWORD
   TYSPEC_CLSID equ 0
-  TYSPEC_FILEEXT equ
-  TYSPEC_MIMETYPE equ
-  TYSPEC_FILENAME equ
-  TYSPEC_PROGID equ
-  TYSPEC_PACKAGENAME equ
-  TYSPEC_OBJECTID equ
+  TYSPEC_FILEEXT equ 1
+  TYSPEC_MIMETYPE equ 2
+  TYSPEC_FILENAME equ 3
+  TYSPEC_PROGID equ 4
+  TYSPEC_PACKAGENAME equ 5
+  TYSPEC_OBJECTID equ 6
   tagTYSPEC typedef TYSPEC
-  
+
   uCLSSPEC struct
     tyspec DWORD ?
     union tagged_union
@@ -521,4 +519,3 @@ ifndef __wtypes_h__
     ;[...]
   endif
 endif
-

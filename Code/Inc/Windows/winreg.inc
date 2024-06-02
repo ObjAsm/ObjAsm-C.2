@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 29/10/2018 17:30
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\winreg.h', last modified: 19/04/2018 09:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winreg.h
+;             Created on (UTC) 06/04/2024 06:16:03
+;             Last modified on (UTC) 21/02/2024 18:13:14
 
 ifndef _WINREG_
   _WINREG_ equ <>
@@ -22,7 +23,11 @@ ifndef _WINREG_
     ifndef WINVER
       WINVER equ 0500h
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     LSTATUS typedef LONG
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     RRF_RT_REG_NONE equ 00000001h
     RRF_RT_REG_SZ equ 00000002h
     RRF_RT_REG_EXPAND_SZ equ 00000004h
@@ -41,6 +46,9 @@ ifndef _WINREG_
     RRF_NOEXPAND equ 10000000h
     RRF_ZEROONFAILURE equ 20000000h
     REG_PROCESS_APPKEY equ 00000001h
+    REG_USE_CURRENT_SECURITY_CONTEXT equ 00000002h
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     REGSAM typedef ACCESS_MASK
     HKEY_CLASSES_ROOT equ ((80000000h))
     HKEY_CURRENT_USER equ ((80000001h))
@@ -53,6 +61,8 @@ ifndef _WINREG_
       HKEY_CURRENT_CONFIG equ ((80000005h))
       HKEY_DYN_DATA equ ((80000006h))
       HKEY_CURRENT_USER_LOCAL_SETTINGS equ ((80000007h))
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       ifndef _PROVIDER_STRUCTS_DEFINED
         _PROVIDER_STRUCTS_DEFINED equ <>
         PROVIDER_KEEPS_VALUE_LENGTH equ 1h
@@ -61,29 +71,23 @@ ifndef _WINREG_
           value_context LPVOID ?
           val_buff_ptr LPVOID ?
         val_context ends
-
         PVALCONTEXT typedef ptr val_context
-        
         PVALUEA struct
           pv_valuename LPSTR ?
           pv_valuelen SDWORD ?
           pv_value_context LPVOID ?
           pv_type DWORD ?
         PVALUEA ends
-
         pvalueA typedef PVALUEA
         PPVALUEA typedef ptr PVALUEA
-        
         PVALUEW struct
           pv_valuename LPWSTR ?
           pv_valuelen SDWORD ?
           pv_value_context LPVOID ?
           pv_type DWORD ?
         PVALUEW ends
-
         pvalueW typedef PVALUEW
         PPVALUEW typedef ptr PVALUEW
-        
         ifdef UNICODE
           PVALUE typedef PVALUEW
           PPVALUE typedef PPVALUEW
@@ -101,30 +105,24 @@ ifndef _WINREG_
           pi_flags DWORD ?
           pi_key_context LPVOID ?
         REG_PROVIDER ends
-
         provider_info typedef REG_PROVIDER
         PPROVIDER typedef ptr provider_info
-        
         VALENTA struct
           ve_valuename LPSTR ?
           ve_valuelen DWORD ?
           ve_valueptr DWORD_PTR ?
           ve_type DWORD ?
         VALENTA ends
-
         value_entA typedef VALENTA
         PVALENTA typedef ptr VALENTA
-        
         VALENTW struct
           ve_valuename LPWSTR ?
           ve_valuelen DWORD ?
           ve_valueptr DWORD_PTR ?
           ve_type DWORD ?
         VALENTW ends
-
         value_entW typedef VALENTW
         PVALENTW typedef ptr VALENTW
-        
         ifdef UNICODE
           VALENT typedef VALENTW
           PVALENT typedef PVALENTW
@@ -135,13 +133,17 @@ ifndef _WINREG_
       endif
     endif
     WIN31_CLASS equ <NULL>
+    REG_MUI_STRING_TRUNCATE equ 00000001h
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
-    REG_MUI_STRING_TRUNCATE equ 00000001h
     if (WINVER ge 0400h)
       REG_SECURE_CONNECTION equ 1
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, RegCloseKey, WIN_STD_CALL_CONV,, <:HKEY>, 4
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RegOverridePredefKey, WIN_STD_CALL_CONV,, <:HKEY, :HKEY>, 8
     @DefProto DllImport, RegOpenUserClassesRoot, WIN_STD_CALL_CONV,, <:HANDLE, :DWORD, :REGSAM, :PHKEY>, 16
     @DefProto DllImport, RegOpenCurrentUser, WIN_STD_CALL_CONV,, <:REGSAM, :PHKEY>, 8
@@ -154,6 +156,8 @@ ifndef _WINREG_
     else
       RegConnectRegistry equ <RegConnectRegistryA>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RegConnectRegistryExA, WIN_STD_CALL_CONV,, <:LPCSTR, :HKEY, :ULONG, :PHKEY>, 16
     @DefProto DllImport, RegConnectRegistryExW, WIN_STD_CALL_CONV,, <:LPCWSTR, :HKEY, :ULONG, :PHKEY>, 16
     ifdef UNICODE
@@ -161,6 +165,8 @@ ifndef _WINREG_
     else
       RegConnectRegistryEx equ <RegConnectRegistryExA>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, RegCreateKeyA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR, :PHKEY>, 12
     @DefProto DllImport, RegCreateKeyW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR, :PHKEY>, 12
     ifdef UNICODE
@@ -175,6 +181,8 @@ ifndef _WINREG_
     else
       RegCreateKeyEx equ <RegCreateKeyExA>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RegCreateKeyTransactedA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR, :DWORD, :LPSTR, :DWORD, :REGSAM, :LPSECURITY_ATTRIBUTES, :PHKEY, :LPDWORD, :HANDLE, :PVOID>, 44
     @DefProto DllImport, RegCreateKeyTransactedW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR, :DWORD, :LPWSTR, :DWORD, :REGSAM, :LPSECURITY_ATTRIBUTES, :PHKEY, :LPDWORD, :HANDLE, :PVOID>, 44
     ifdef UNICODE
@@ -182,6 +190,8 @@ ifndef _WINREG_
     else
       RegCreateKeyTransacted equ <RegCreateKeyTransactedA>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, RegDeleteKeyA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR>, 8
     @DefProto DllImport, RegDeleteKeyW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR>, 8
     ifdef UNICODE
@@ -196,6 +206,8 @@ ifndef _WINREG_
     else
       RegDeleteKeyEx equ <RegDeleteKeyExA>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RegDeleteKeyTransactedA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR, :REGSAM, :DWORD, :HANDLE, :PVOID>, 24
     @DefProto DllImport, RegDeleteKeyTransactedW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR, :REGSAM, :DWORD, :HANDLE, :PVOID>, 24
     ifdef UNICODE
@@ -203,9 +215,13 @@ ifndef _WINREG_
     else
       RegDeleteKeyTransacted equ <RegDeleteKeyTransactedA>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RegDisableReflectionKey, WIN_STD_CALL_CONV,, <:HKEY>, 4
     @DefProto DllImport, RegEnableReflectionKey, WIN_STD_CALL_CONV,, <:HKEY>, 4
     @DefProto DllImport, RegQueryReflectionKey, WIN_STD_CALL_CONV,, <:HKEY, :ptr BOOL>, 8
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, RegDeleteValueA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR>, 8
     @DefProto DllImport, RegDeleteValueW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR>, 8
     ifdef UNICODE
@@ -234,6 +250,8 @@ ifndef _WINREG_
     else
       RegEnumValue equ <RegEnumValueA>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RegFlushKey, WIN_STD_CALL_CONV,, <:HKEY>, 4
     @DefProto DllImport, RegGetKeySecurity, WIN_STD_CALL_CONV,, <:HKEY, :SECURITY_INFORMATION, :PSECURITY_DESCRIPTOR, :LPDWORD>, 16
     @DefProto DllImport, RegLoadKeyA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR, :LPCSTR>, 12
@@ -244,6 +262,8 @@ ifndef _WINREG_
       RegLoadKey equ <RegLoadKeyA>
     endif
     @DefProto DllImport, RegNotifyChangeKeyValue, WIN_STD_CALL_CONV,, <:HKEY, :BOOL, :DWORD, :HANDLE, :BOOL>, 20
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, RegOpenKeyA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR, :PHKEY>, 12
     @DefProto DllImport, RegOpenKeyW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR, :PHKEY>, 12
     ifdef UNICODE
@@ -258,6 +278,8 @@ ifndef _WINREG_
     else
       RegOpenKeyEx equ <RegOpenKeyExA>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RegOpenKeyTransactedA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR, :DWORD, :REGSAM, :PHKEY, :HANDLE, :PVOID>, 28
     @DefProto DllImport, RegOpenKeyTransactedW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR, :DWORD, :REGSAM, :PHKEY, :HANDLE, :PVOID>, 28
     ifdef UNICODE
@@ -265,6 +287,8 @@ ifndef _WINREG_
     else
       RegOpenKeyTransacted equ <RegOpenKeyTransactedA>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, RegQueryInfoKeyA, WIN_STD_CALL_CONV,, <:HKEY, :LPSTR, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :PFILETIME>, 48
     @DefProto DllImport, RegQueryInfoKeyW, WIN_STD_CALL_CONV,, <:HKEY, :LPWSTR, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :LPDWORD, :PFILETIME>, 48
     ifdef UNICODE
@@ -272,6 +296,8 @@ ifndef _WINREG_
     else
       RegQueryInfoKey equ <RegQueryInfoKeyA>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RegQueryValueA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR, :LPSTR, :PLONG>, 16
     @DefProto DllImport, RegQueryValueW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR, :LPWSTR, :PLONG>, 16
     ifdef UNICODE
@@ -288,6 +314,8 @@ ifndef _WINREG_
         RegQueryMultipleValues equ <RegQueryMultipleValuesA>
       endif
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, RegQueryValueExA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR, :LPDWORD, :LPDWORD, :LPBYTE, :LPDWORD>, 24
     @DefProto DllImport, RegQueryValueExW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR, :LPDWORD, :LPDWORD, :LPBYTE, :LPDWORD>, 24
     ifdef UNICODE
@@ -295,6 +323,8 @@ ifndef _WINREG_
     else
       RegQueryValueEx equ <RegQueryValueExA>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RegReplaceKeyA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR, :LPCSTR, :LPCSTR>, 16
     @DefProto DllImport, RegReplaceKeyW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR, :LPCWSTR, :LPCWSTR>, 16
     ifdef UNICODE
@@ -309,9 +339,13 @@ ifndef _WINREG_
     else
       RegRestoreKey equ <RegRestoreKeyA>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if (WINVER ge 0600h)
       @DefProto DllImport, RegRenameKey, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR, :LPCWSTR>, 12
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RegSaveKeyA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR, :LPSECURITY_ATTRIBUTES>, 12
     @DefProto DllImport, RegSaveKeyW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR, :LPSECURITY_ATTRIBUTES>, 12
     ifdef UNICODE
@@ -327,6 +361,8 @@ ifndef _WINREG_
     else
       RegSetValue equ <RegSetValueA>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, RegSetValueExA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR, :DWORD, :DWORD, :ptr BYTE, :DWORD>, 24
     @DefProto DllImport, RegSetValueExW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR, :DWORD, :DWORD, :ptr BYTE, :DWORD>, 24
     ifdef UNICODE
@@ -334,6 +370,8 @@ ifndef _WINREG_
     else
       RegSetValueEx equ <RegSetValueExA>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RegUnLoadKeyA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR>, 8
     @DefProto DllImport, RegUnLoadKeyW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR>, 8
     ifdef UNICODE
@@ -397,6 +435,8 @@ ifndef _WINREG_
         RegLoadAppKey equ <RegLoadAppKeyA>
       endif
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, InitiateSystemShutdownA, WIN_STD_CALL_CONV,, <:LPSTR, :LPSTR, :DWORD, :BOOL, :BOOL>, 20
     @DefProto DllImport, InitiateSystemShutdownW, WIN_STD_CALL_CONV,, <:LPWSTR, :LPWSTR, :DWORD, :BOOL, :BOOL>, 20
     ifdef UNICODE
@@ -442,6 +482,10 @@ ifndef _WINREG_
     SHUTDOWN_RESTART_BOOTOPTIONS equ 00000400h
     SHUTDOWN_SOFT_REBOOT equ 00000800h
     SHUTDOWN_MOBILE_UI equ 00001000h
+    SHUTDOWN_ARSO equ 00002000h
+    SHUTDOWN_CHECK_SAFE_FOR_SERVER equ 00004000h
+    SHUTDOWN_VAIL_CONTAINER equ 00008000h
+    SHUTDOWN_SYSTEM_INITIATED equ 00010000h
     @DefProto DllImport, InitiateShutdownA, WIN_STD_CALL_CONV,, <:LPSTR, :LPSTR, :DWORD, :DWORD, :DWORD>, 20
     @DefProto DllImport, InitiateShutdownW, WIN_STD_CALL_CONV,, <:LPWSTR, :LPWSTR, :DWORD, :DWORD, :DWORD>, 20
     ifdef UNICODE
@@ -450,6 +494,8 @@ ifndef _WINREG_
       InitiateShutdown equ <InitiateShutdownA>
     endif
     @DefProto DllImport, CheckForHiberboot, WIN_STD_CALL_CONV,, <:PBOOLEAN, :BOOLEAN>, 8
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RegSaveKeyExA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR, :LPSECURITY_ATTRIBUTES, :DWORD>, 16
     @DefProto DllImport, RegSaveKeyExW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR, :LPSECURITY_ATTRIBUTES, :DWORD>, 16
     ifdef UNICODE
@@ -464,4 +510,3 @@ ifndef _WINREG_
     ;[...]
   endif
 endif
-

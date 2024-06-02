@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\specstrings_strict.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\specstrings_strict.h
+;             Created on (UTC) 22/05/2024 17:57:08
+;             Last modified on (UTC) 16/12/2023 11:05:20
 
 ifndef __SPECSTRINGS_STRICT_LEVEL
   __SPECSTRINGS_STRICT_LEVEL equ 1
@@ -1087,7 +1088,7 @@ if (_MSC_VER ge 1400) and  not Defined(__midl) and  not Defined(_PREFAST_) and (
           exitm <SA_ ## x>
         endm
         DECL_SA macro name_, loc
-          ;exitm <[ source_annotation_attribute (loc) ] struct name_ { const char * ignored ; } ; typedef struct name_ name_ ;>
+          exitm <[ source_annotation_attribute (loc) ] struct name_ { const char * ignored ; } ; typedef struct name_ name_ ;>
         endm
       endif
       DECL_SA(OnParameterOnly, SA(Parameter))
@@ -1099,4 +1100,3 @@ if (_MSC_VER ge 1400) and  not Defined(__midl) and  not Defined(_PREFAST_) and (
     endif
   endif
 endif
-

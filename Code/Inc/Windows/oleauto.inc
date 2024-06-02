@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\oleauto.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\oleauto.h
+;             Created on (UTC) 06/04/2024 06:15:57
+;             Last modified on (UTC) 12/02/2024 17:05:56
 
 include winapifamily.inc
 if _MSC_VER ge 1200
@@ -56,12 +57,12 @@ if  not Defined(_OLEAUTO_H_)
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, DosDateTimeToVariantTime, WIN_STD_CALL_CONV,, <:USHORT, :USHORT, :ptr DOUBLE>, 12
-    @DefProto DllImport, VariantTimeToDosDateTime, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr USHORT, :ptr USHORT>, 16
+    @DefProto DllImport, VariantTimeToDosDateTime, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr USHORT, :ptr USHORT>, 12
   endif
   if (Defined(_WIN32) or Defined(_WIN64))
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, SystemTimeToVariantTime, WIN_STD_CALL_CONV,, <:LPSYSTEMTIME, :ptr DOUBLE>, 8
-      @DefProto DllImport, VariantTimeToSystemTime, WIN_STD_CALL_CONV,, <:DOUBLE, :LPSYSTEMTIME>, 12
+      @DefProto DllImport, VariantTimeToSystemTime, WIN_STD_CALL_CONV,, <:DOUBLE, :LPSYSTEMTIME>, 8
     endif
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
@@ -135,197 +136,197 @@ if  not Defined(_OLEAUTO_H_)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, VarUI1FromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr BYTE>, 8
     @DefProto DllImport, VarUI1FromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr BYTE>, 8
-    @DefProto DllImport, VarUI1FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr BYTE>, 12
+    @DefProto DllImport, VarUI1FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr BYTE>, 8
     @DefProto DllImport, VarUI1FromR4, WIN_STD_CALL_CONV,, <:FLOAT, :ptr BYTE>, 8
-    @DefProto DllImport, VarUI1FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr BYTE>, 12
-    @DefProto DllImport, VarUI1FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr BYTE>, 12
-    @DefProto DllImport, VarUI1FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr BYTE>, 12
+    @DefProto DllImport, VarUI1FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr BYTE>, 8
+    @DefProto DllImport, VarUI1FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr BYTE>, 8
+    @DefProto DllImport, VarUI1FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr BYTE>, 8
     @DefProto DllImport, VarUI1FromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr BYTE>, 16
     @DefProto DllImport, VarUI1FromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ptr BYTE>, 12
     @DefProto DllImport, VarUI1FromBool, WIN_STD_CALL_CONV,, <:VARIANT_BOOL, :ptr BYTE>, 8
     @DefProto DllImport, VarUI1FromI1, WIN_STD_CALL_CONV,, <:CHAR, :ptr BYTE>, 8
     @DefProto DllImport, VarUI1FromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr BYTE>, 8
     @DefProto DllImport, VarUI1FromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr BYTE>, 8
-    @DefProto DllImport, VarUI1FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr BYTE>, 12
+    @DefProto DllImport, VarUI1FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr BYTE>, 8
     @DefProto DllImport, VarUI1FromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr BYTE>, 8
     @DefProto DllImport, VarI2FromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr SHORT_>, 8
     @DefProto DllImport, VarI2FromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr SHORT_>, 8
-    @DefProto DllImport, VarI2FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr SHORT_>, 12
+    @DefProto DllImport, VarI2FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr SHORT_>, 8
     @DefProto DllImport, VarI2FromR4, WIN_STD_CALL_CONV,, <:FLOAT, :ptr SHORT_>, 8
-    @DefProto DllImport, VarI2FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr SHORT_>, 12
-    @DefProto DllImport, VarI2FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr SHORT_>, 12
-    @DefProto DllImport, VarI2FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr SHORT_>, 12
+    @DefProto DllImport, VarI2FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr SHORT_>, 8
+    @DefProto DllImport, VarI2FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr SHORT_>, 8
+    @DefProto DllImport, VarI2FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr SHORT_>, 8
     @DefProto DllImport, VarI2FromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr SHORT_>, 16
     @DefProto DllImport, VarI2FromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ptr SHORT_>, 12
     @DefProto DllImport, VarI2FromBool, WIN_STD_CALL_CONV,, <:VARIANT_BOOL, :ptr SHORT_>, 8
     @DefProto DllImport, VarI2FromI1, WIN_STD_CALL_CONV,, <:CHAR, :ptr SHORT_>, 8
     @DefProto DllImport, VarI2FromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr SHORT_>, 8
     @DefProto DllImport, VarI2FromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr SHORT_>, 8
-    @DefProto DllImport, VarI2FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr SHORT_>, 12
+    @DefProto DllImport, VarI2FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr SHORT_>, 8
     @DefProto DllImport, VarI2FromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr SHORT_>, 8
     @DefProto DllImport, VarI4FromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr LONG>, 8
     @DefProto DllImport, VarI4FromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr LONG>, 8
-    @DefProto DllImport, VarI4FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr LONG>, 12
+    @DefProto DllImport, VarI4FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr LONG>, 8
     @DefProto DllImport, VarI4FromR4, WIN_STD_CALL_CONV,, <:FLOAT, :ptr LONG>, 8
-    @DefProto DllImport, VarI4FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr LONG>, 12
-    @DefProto DllImport, VarI4FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr LONG>, 12
-    @DefProto DllImport, VarI4FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr LONG>, 12
+    @DefProto DllImport, VarI4FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr LONG>, 8
+    @DefProto DllImport, VarI4FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr LONG>, 8
+    @DefProto DllImport, VarI4FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr LONG>, 8
     @DefProto DllImport, VarI4FromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr LONG>, 16
     @DefProto DllImport, VarI4FromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ptr LONG>, 12
     @DefProto DllImport, VarI4FromBool, WIN_STD_CALL_CONV,, <:VARIANT_BOOL, :ptr LONG>, 8
     @DefProto DllImport, VarI4FromI1, WIN_STD_CALL_CONV,, <:CHAR, :ptr LONG>, 8
     @DefProto DllImport, VarI4FromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr LONG>, 8
     @DefProto DllImport, VarI4FromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr LONG>, 8
-    @DefProto DllImport, VarI4FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr LONG>, 12
+    @DefProto DllImport, VarI4FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr LONG>, 8
     @DefProto DllImport, VarI4FromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr LONG>, 8
     @DefProto DllImport, VarI8FromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr LONG64>, 8
     @DefProto DllImport, VarI8FromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr LONG64>, 8
     @DefProto DllImport, VarI8FromR4, WIN_STD_CALL_CONV,, <:FLOAT, :ptr LONG64>, 8
-    @DefProto DllImport, VarI8FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr LONG64>, 12
-    @DefProto DllImport, VarI8FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr LONG64>, 12
-    @DefProto DllImport, VarI8FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr LONG64>, 12
+    @DefProto DllImport, VarI8FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr LONG64>, 8
+    @DefProto DllImport, VarI8FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr LONG64>, 8
+    @DefProto DllImport, VarI8FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr LONG64>, 8
     @DefProto DllImport, VarI8FromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr LONG64>, 16
     @DefProto DllImport, VarI8FromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ptr LONG64>, 12
     @DefProto DllImport, VarI8FromBool, WIN_STD_CALL_CONV,, <:VARIANT_BOOL, :ptr LONG64>, 8
     @DefProto DllImport, VarI8FromI1, WIN_STD_CALL_CONV,, <:CHAR, :ptr LONG64>, 8
     @DefProto DllImport, VarI8FromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr LONG64>, 8
     @DefProto DllImport, VarI8FromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr LONG64>, 8
-    @DefProto DllImport, VarI8FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr LONG64>, 12
+    @DefProto DllImport, VarI8FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr LONG64>, 8
     @DefProto DllImport, VarI8FromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr LONG64>, 8
     @DefProto DllImport, VarR4FromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr FLOAT>, 8
     @DefProto DllImport, VarR4FromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr FLOAT>, 8
     @DefProto DllImport, VarR4FromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr FLOAT>, 8
-    @DefProto DllImport, VarR4FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr FLOAT>, 12
-    @DefProto DllImport, VarR4FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr FLOAT>, 12
-    @DefProto DllImport, VarR4FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr FLOAT>, 12
-    @DefProto DllImport, VarR4FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr FLOAT>, 12
+    @DefProto DllImport, VarR4FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr FLOAT>, 8
+    @DefProto DllImport, VarR4FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr FLOAT>, 8
+    @DefProto DllImport, VarR4FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr FLOAT>, 8
+    @DefProto DllImport, VarR4FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr FLOAT>, 8
     @DefProto DllImport, VarR4FromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr FLOAT>, 16
     @DefProto DllImport, VarR4FromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ptr FLOAT>, 12
     @DefProto DllImport, VarR4FromBool, WIN_STD_CALL_CONV,, <:VARIANT_BOOL, :ptr FLOAT>, 8
     @DefProto DllImport, VarR4FromI1, WIN_STD_CALL_CONV,, <:CHAR, :ptr FLOAT>, 8
     @DefProto DllImport, VarR4FromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr FLOAT>, 8
     @DefProto DllImport, VarR4FromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr FLOAT>, 8
-    @DefProto DllImport, VarR4FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr FLOAT>, 12
+    @DefProto DllImport, VarR4FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr FLOAT>, 8
     @DefProto DllImport, VarR4FromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr FLOAT>, 8
     @DefProto DllImport, VarR8FromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr DOUBLE>, 8
     @DefProto DllImport, VarR8FromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr DOUBLE>, 8
     @DefProto DllImport, VarR8FromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr DOUBLE>, 8
-    @DefProto DllImport, VarR8FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr DOUBLE>, 12
+    @DefProto DllImport, VarR8FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr DOUBLE>, 8
     @DefProto DllImport, VarR8FromR4, WIN_STD_CALL_CONV,, <:FLOAT, :ptr DOUBLE>, 8
-    @DefProto DllImport, VarR8FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr DOUBLE>, 12
-    @DefProto DllImport, VarR8FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr DOUBLE>, 12
+    @DefProto DllImport, VarR8FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr DOUBLE>, 8
+    @DefProto DllImport, VarR8FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr DOUBLE>, 8
     @DefProto DllImport, VarR8FromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr DOUBLE>, 16
     @DefProto DllImport, VarR8FromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ptr DOUBLE>, 12
     @DefProto DllImport, VarR8FromBool, WIN_STD_CALL_CONV,, <:VARIANT_BOOL, :ptr DOUBLE>, 8
     @DefProto DllImport, VarR8FromI1, WIN_STD_CALL_CONV,, <:CHAR, :ptr DOUBLE>, 8
     @DefProto DllImport, VarR8FromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr DOUBLE>, 8
     @DefProto DllImport, VarR8FromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr DOUBLE>, 8
-    @DefProto DllImport, VarR8FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr DOUBLE>, 12
+    @DefProto DllImport, VarR8FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr DOUBLE>, 8
     @DefProto DllImport, VarR8FromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr DOUBLE>, 8
     @DefProto DllImport, VarDateFromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr DATE>, 8
     @DefProto DllImport, VarDateFromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr DATE>, 8
     @DefProto DllImport, VarDateFromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr DATE>, 8
-    @DefProto DllImport, VarDateFromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr DATE>, 12
+    @DefProto DllImport, VarDateFromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr DATE>, 8
     @DefProto DllImport, VarDateFromR4, WIN_STD_CALL_CONV,, <:FLOAT, :ptr DATE>, 8
-    @DefProto DllImport, VarDateFromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr DATE>, 12
-    @DefProto DllImport, VarDateFromCy, WIN_STD_CALL_CONV,, <:CY, :ptr DATE>, 12
+    @DefProto DllImport, VarDateFromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr DATE>, 8
+    @DefProto DllImport, VarDateFromCy, WIN_STD_CALL_CONV,, <:CY, :ptr DATE>, 8
     @DefProto DllImport, VarDateFromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr DATE>, 16
     @DefProto DllImport, VarDateFromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ptr DATE>, 12
     @DefProto DllImport, VarDateFromBool, WIN_STD_CALL_CONV,, <:VARIANT_BOOL, :ptr DATE>, 8
     @DefProto DllImport, VarDateFromI1, WIN_STD_CALL_CONV,, <:CHAR, :ptr DATE>, 8
     @DefProto DllImport, VarDateFromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr DATE>, 8
     @DefProto DllImport, VarDateFromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr DATE>, 8
-    @DefProto DllImport, VarDateFromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr DATE>, 12
+    @DefProto DllImport, VarDateFromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr DATE>, 8
     @DefProto DllImport, VarDateFromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr DATE>, 8
     @DefProto DllImport, VarCyFromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr CY>, 8
     @DefProto DllImport, VarCyFromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr CY>, 8
     @DefProto DllImport, VarCyFromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr CY>, 8
-    @DefProto DllImport, VarCyFromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr CY>, 12
+    @DefProto DllImport, VarCyFromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr CY>, 8
     @DefProto DllImport, VarCyFromR4, WIN_STD_CALL_CONV,, <:FLOAT, :ptr CY>, 8
-    @DefProto DllImport, VarCyFromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr CY>, 12
-    @DefProto DllImport, VarCyFromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr CY>, 12
+    @DefProto DllImport, VarCyFromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr CY>, 8
+    @DefProto DllImport, VarCyFromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr CY>, 8
     @DefProto DllImport, VarCyFromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr CY>, 16
     @DefProto DllImport, VarCyFromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ptr CY>, 12
     @DefProto DllImport, VarCyFromBool, WIN_STD_CALL_CONV,, <:VARIANT_BOOL, :ptr CY>, 8
     @DefProto DllImport, VarCyFromI1, WIN_STD_CALL_CONV,, <:CHAR, :ptr CY>, 8
     @DefProto DllImport, VarCyFromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr CY>, 8
     @DefProto DllImport, VarCyFromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr CY>, 8
-    @DefProto DllImport, VarCyFromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr CY>, 12
+    @DefProto DllImport, VarCyFromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr CY>, 8
     @DefProto DllImport, VarCyFromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr CY>, 8
     @DefProto DllImport, VarBstrFromUI1, WIN_STD_CALL_CONV,, <:BYTE, :LCID, :ULONG, :ptr BSTR>, 16
     @DefProto DllImport, VarBstrFromI2, WIN_STD_CALL_CONV,, <:SHORT_, :LCID, :ULONG, :ptr BSTR>, 16
     @DefProto DllImport, VarBstrFromI4, WIN_STD_CALL_CONV,, <:LONG, :LCID, :ULONG, :ptr BSTR>, 16
-    @DefProto DllImport, VarBstrFromI8, WIN_STD_CALL_CONV,, <:LONG64, :LCID, :ULONG, :ptr BSTR>, 20
+    @DefProto DllImport, VarBstrFromI8, WIN_STD_CALL_CONV,, <:LONG64, :LCID, :ULONG, :ptr BSTR>, 16
     @DefProto DllImport, VarBstrFromR4, WIN_STD_CALL_CONV,, <:FLOAT, :LCID, :ULONG, :ptr BSTR>, 16
-    @DefProto DllImport, VarBstrFromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :LCID, :ULONG, :ptr BSTR>, 20
-    @DefProto DllImport, VarBstrFromCy, WIN_STD_CALL_CONV,, <:CY, :LCID, :ULONG, :ptr BSTR>, 20
-    @DefProto DllImport, VarBstrFromDate, WIN_STD_CALL_CONV,, <:DATE, :LCID, :ULONG, :ptr BSTR>, 20
+    @DefProto DllImport, VarBstrFromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :LCID, :ULONG, :ptr BSTR>, 16
+    @DefProto DllImport, VarBstrFromCy, WIN_STD_CALL_CONV,, <:CY, :LCID, :ULONG, :ptr BSTR>, 16
+    @DefProto DllImport, VarBstrFromDate, WIN_STD_CALL_CONV,, <:DATE, :LCID, :ULONG, :ptr BSTR>, 16
     @DefProto DllImport, VarBstrFromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ULONG, :ptr BSTR>, 16
     @DefProto DllImport, VarBstrFromBool, WIN_STD_CALL_CONV,, <:VARIANT_BOOL, :LCID, :ULONG, :ptr BSTR>, 16
     @DefProto DllImport, VarBstrFromI1, WIN_STD_CALL_CONV,, <:CHAR, :LCID, :ULONG, :ptr BSTR>, 16
     @DefProto DllImport, VarBstrFromUI2, WIN_STD_CALL_CONV,, <:USHORT, :LCID, :ULONG, :ptr BSTR>, 16
     @DefProto DllImport, VarBstrFromUI4, WIN_STD_CALL_CONV,, <:ULONG, :LCID, :ULONG, :ptr BSTR>, 16
-    @DefProto DllImport, VarBstrFromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :LCID, :ULONG, :ptr BSTR>, 20
+    @DefProto DllImport, VarBstrFromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :LCID, :ULONG, :ptr BSTR>, 16
     @DefProto DllImport, VarBstrFromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :LCID, :ULONG, :ptr BSTR>, 16
     @DefProto DllImport, VarBoolFromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr VARIANT_BOOL>, 8
     @DefProto DllImport, VarBoolFromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr VARIANT_BOOL>, 8
     @DefProto DllImport, VarBoolFromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr VARIANT_BOOL>, 8
-    @DefProto DllImport, VarBoolFromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr VARIANT_BOOL>, 12
+    @DefProto DllImport, VarBoolFromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr VARIANT_BOOL>, 8
     @DefProto DllImport, VarBoolFromR4, WIN_STD_CALL_CONV,, <:FLOAT, :ptr VARIANT_BOOL>, 8
-    @DefProto DllImport, VarBoolFromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr VARIANT_BOOL>, 12
-    @DefProto DllImport, VarBoolFromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr VARIANT_BOOL>, 12
-    @DefProto DllImport, VarBoolFromCy, WIN_STD_CALL_CONV,, <:CY, :ptr VARIANT_BOOL>, 12
+    @DefProto DllImport, VarBoolFromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr VARIANT_BOOL>, 8
+    @DefProto DllImport, VarBoolFromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr VARIANT_BOOL>, 8
+    @DefProto DllImport, VarBoolFromCy, WIN_STD_CALL_CONV,, <:CY, :ptr VARIANT_BOOL>, 8
     @DefProto DllImport, VarBoolFromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr VARIANT_BOOL>, 16
     @DefProto DllImport, VarBoolFromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ptr VARIANT_BOOL>, 12
     @DefProto DllImport, VarBoolFromI1, WIN_STD_CALL_CONV,, <:CHAR, :ptr VARIANT_BOOL>, 8
     @DefProto DllImport, VarBoolFromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr VARIANT_BOOL>, 8
     @DefProto DllImport, VarBoolFromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr VARIANT_BOOL>, 8
-    @DefProto DllImport, VarBoolFromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr VARIANT_BOOL>, 12
+    @DefProto DllImport, VarBoolFromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr VARIANT_BOOL>, 8
     @DefProto DllImport, VarBoolFromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr VARIANT_BOOL>, 8
     @DefProto DllImport, VarI1FromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr CHAR>, 8
     @DefProto DllImport, VarI1FromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr CHAR>, 8
     @DefProto DllImport, VarI1FromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr CHAR>, 8
-    @DefProto DllImport, VarI1FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr CHAR>, 12
+    @DefProto DllImport, VarI1FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr CHAR>, 8
     @DefProto DllImport, VarI1FromR4, WIN_STD_CALL_CONV,, <:FLOAT, :ptr CHAR>, 8
-    @DefProto DllImport, VarI1FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr CHAR>, 12
-    @DefProto DllImport, VarI1FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr CHAR>, 12
-    @DefProto DllImport, VarI1FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr CHAR>, 12
+    @DefProto DllImport, VarI1FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr CHAR>, 8
+    @DefProto DllImport, VarI1FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr CHAR>, 8
+    @DefProto DllImport, VarI1FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr CHAR>, 8
     @DefProto DllImport, VarI1FromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr CHAR>, 16
     @DefProto DllImport, VarI1FromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ptr CHAR>, 12
     @DefProto DllImport, VarI1FromBool, WIN_STD_CALL_CONV,, <:VARIANT_BOOL, :ptr CHAR>, 8
     @DefProto DllImport, VarI1FromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr CHAR>, 8
     @DefProto DllImport, VarI1FromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr CHAR>, 8
-    @DefProto DllImport, VarI1FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr CHAR>, 12
+    @DefProto DllImport, VarI1FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr CHAR>, 8
     @DefProto DllImport, VarI1FromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr CHAR>, 8
     @DefProto DllImport, VarUI2FromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr USHORT>, 8
     @DefProto DllImport, VarUI2FromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr USHORT>, 8
     @DefProto DllImport, VarUI2FromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr USHORT>, 8
-    @DefProto DllImport, VarUI2FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr USHORT>, 12
+    @DefProto DllImport, VarUI2FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr USHORT>, 8
     @DefProto DllImport, VarUI2FromR4, WIN_STD_CALL_CONV,, <:FLOAT, :ptr USHORT>, 8
-    @DefProto DllImport, VarUI2FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr USHORT>, 12
-    @DefProto DllImport, VarUI2FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr USHORT>, 12
-    @DefProto DllImport, VarUI2FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr USHORT>, 12
+    @DefProto DllImport, VarUI2FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr USHORT>, 8
+    @DefProto DllImport, VarUI2FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr USHORT>, 8
+    @DefProto DllImport, VarUI2FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr USHORT>, 8
     @DefProto DllImport, VarUI2FromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr USHORT>, 16
     @DefProto DllImport, VarUI2FromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ptr USHORT>, 12
     @DefProto DllImport, VarUI2FromBool, WIN_STD_CALL_CONV,, <:VARIANT_BOOL, :ptr USHORT>, 8
     @DefProto DllImport, VarUI2FromI1, WIN_STD_CALL_CONV,, <:CHAR, :ptr USHORT>, 8
     @DefProto DllImport, VarUI2FromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr USHORT>, 8
-    @DefProto DllImport, VarUI2FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr USHORT>, 12
+    @DefProto DllImport, VarUI2FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr USHORT>, 8
     @DefProto DllImport, VarUI2FromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr USHORT>, 8
     @DefProto DllImport, VarUI4FromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr ULONG>, 8
     @DefProto DllImport, VarUI4FromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr ULONG>, 8
     @DefProto DllImport, VarUI4FromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr ULONG>, 8
-    @DefProto DllImport, VarUI4FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr ULONG>, 12
+    @DefProto DllImport, VarUI4FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr ULONG>, 8
     @DefProto DllImport, VarUI4FromR4, WIN_STD_CALL_CONV,, <:FLOAT, :ptr ULONG>, 8
-    @DefProto DllImport, VarUI4FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr ULONG>, 12
-    @DefProto DllImport, VarUI4FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr ULONG>, 12
-    @DefProto DllImport, VarUI4FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr ULONG>, 12
+    @DefProto DllImport, VarUI4FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr ULONG>, 8
+    @DefProto DllImport, VarUI4FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr ULONG>, 8
+    @DefProto DllImport, VarUI4FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr ULONG>, 8
     @DefProto DllImport, VarUI4FromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr ULONG>, 16
     @DefProto DllImport, VarUI4FromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ptr ULONG>, 12
     @DefProto DllImport, VarUI4FromBool, WIN_STD_CALL_CONV,, <:VARIANT_BOOL, :ptr ULONG>, 8
     @DefProto DllImport, VarUI4FromI1, WIN_STD_CALL_CONV,, <:CHAR, :ptr ULONG>, 8
     @DefProto DllImport, VarUI4FromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr ULONG>, 8
-    @DefProto DllImport, VarUI4FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr ULONG>, 12
+    @DefProto DllImport, VarUI4FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr ULONG>, 8
     @DefProto DllImport, VarUI4FromDec, WIN_STD_CALL_CONV,, <:ptr DECIMAL, :ptr ULONG>, 8
     @DefProto DllImport, VarUI8FromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr ULONG64>, 8
     @DefProto DllImport, VarUI8FromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr ULONG64>, 8
@@ -334,11 +335,11 @@ if  not Defined(_OLEAUTO_H_)
     @DefProto DllImport, VarUI8FromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr ULONG64>, 8
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
-    @DefProto DllImport, VarUI8FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr ULONG64>, 12
+    @DefProto DllImport, VarUI8FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr ULONG64>, 8
     @DefProto DllImport, VarUI8FromR4, WIN_STD_CALL_CONV,, <:FLOAT, :ptr ULONG64>, 8
-    @DefProto DllImport, VarUI8FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr ULONG64>, 12
-    @DefProto DllImport, VarUI8FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr ULONG64>, 12
-    @DefProto DllImport, VarUI8FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr ULONG64>, 12
+    @DefProto DllImport, VarUI8FromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr ULONG64>, 8
+    @DefProto DllImport, VarUI8FromCy, WIN_STD_CALL_CONV,, <:CY, :ptr ULONG64>, 8
+    @DefProto DllImport, VarUI8FromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr ULONG64>, 8
     @DefProto DllImport, VarUI8FromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr ULONG64>, 16
     @DefProto DllImport, VarUI8FromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ptr ULONG64>, 12
     @DefProto DllImport, VarUI8FromBool, WIN_STD_CALL_CONV,, <:VARIANT_BOOL, :ptr ULONG64>, 8
@@ -349,18 +350,18 @@ if  not Defined(_OLEAUTO_H_)
     @DefProto DllImport, VarDecFromUI1, WIN_STD_CALL_CONV,, <:BYTE, :ptr DECIMAL>, 8
     @DefProto DllImport, VarDecFromI2, WIN_STD_CALL_CONV,, <:SHORT_, :ptr DECIMAL>, 8
     @DefProto DllImport, VarDecFromI4, WIN_STD_CALL_CONV,, <:LONG, :ptr DECIMAL>, 8
-    @DefProto DllImport, VarDecFromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr DECIMAL>, 12
+    @DefProto DllImport, VarDecFromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr DECIMAL>, 8
     @DefProto DllImport, VarDecFromR4, WIN_STD_CALL_CONV,, <:FLOAT, :ptr DECIMAL>, 8
-    @DefProto DllImport, VarDecFromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr DECIMAL>, 12
-    @DefProto DllImport, VarDecFromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr DECIMAL>, 12
-    @DefProto DllImport, VarDecFromCy, WIN_STD_CALL_CONV,, <:CY, :ptr DECIMAL>, 12
+    @DefProto DllImport, VarDecFromR8, WIN_STD_CALL_CONV,, <:DOUBLE, :ptr DECIMAL>, 8
+    @DefProto DllImport, VarDecFromDate, WIN_STD_CALL_CONV,, <:DATE, :ptr DECIMAL>, 8
+    @DefProto DllImport, VarDecFromCy, WIN_STD_CALL_CONV,, <:CY, :ptr DECIMAL>, 8
     @DefProto DllImport, VarDecFromStr, WIN_STD_CALL_CONV,, <:LPCOLESTR, :LCID, :ULONG, :ptr DECIMAL>, 16
     @DefProto DllImport, VarDecFromDisp, WIN_STD_CALL_CONV,, <:ptr IDispatch, :LCID, :ptr DECIMAL>, 12
     @DefProto DllImport, VarDecFromBool, WIN_STD_CALL_CONV,, <:VARIANT_BOOL, :ptr DECIMAL>, 8
     @DefProto DllImport, VarDecFromI1, WIN_STD_CALL_CONV,, <:CHAR, :ptr DECIMAL>, 8
     @DefProto DllImport, VarDecFromUI2, WIN_STD_CALL_CONV,, <:USHORT, :ptr DECIMAL>, 8
     @DefProto DllImport, VarDecFromUI4, WIN_STD_CALL_CONV,, <:ULONG, :ptr DECIMAL>, 8
-    @DefProto DllImport, VarDecFromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr DECIMAL>, 12
+    @DefProto DllImport, VarDecFromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr DECIMAL>, 8
   endif
   VarUI4FromUI4 macro in_, pOut
     exitm <(* (pOut) = (in_))>
@@ -368,10 +369,10 @@ if  not Defined(_OLEAUTO_H_)
   VarI4FromI4 macro in_, pOut
     exitm <(* (pOut) = (in_))>
   endm
-;  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
-;    @DefProto DllImport, VarI4FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr LONG>, 12
-;    @DefProto DllImport, VarI4FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr LONG>, 12
-;  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    @DefProto DllImport, VarI4FromI8, WIN_STD_CALL_CONV,, <:LONG64, :ptr LONG>, 8
+    @DefProto DllImport, VarI4FromUI8, WIN_STD_CALL_CONV,, <:ULONG64, :ptr LONG>, 8
+  endif
   VarUI8FromUI8 macro in_, pOut
     exitm <(* (pOut) = (in_))>
   endm
@@ -518,18 +519,18 @@ if  not Defined(_OLEAUTO_H_)
     @DefProto DllImport, VarDecRound, WIN_STD_CALL_CONV,, <:LPDECIMAL, :SDWORD, :LPDECIMAL>, 12
     @DefProto DllImport, VarDecCmp, WIN_STD_CALL_CONV,, <:LPDECIMAL, :LPDECIMAL>, 8
     @DefProto DllImport, VarDecCmpR8, WIN_STD_CALL_CONV,, <:LPDECIMAL, :REAL8>, 8
-    @DefProto DllImport, VarCyAdd, WIN_STD_CALL_CONV,, <:CY, :CY, :LPCY>, 20
-    @DefProto DllImport, VarCyMul, WIN_STD_CALL_CONV,, <:CY, :CY, :LPCY>, 20
-    @DefProto DllImport, VarCyMulI4, WIN_STD_CALL_CONV,, <:CY, :LONG, :LPCY>, 16
-    @DefProto DllImport, VarCyMulI8, WIN_STD_CALL_CONV,, <:CY, :LONG64, :LPCY>, 20
-    @DefProto DllImport, VarCySub, WIN_STD_CALL_CONV,, <:CY, :CY, :LPCY>, 20
-    @DefProto DllImport, VarCyAbs, WIN_STD_CALL_CONV,, <:CY, :LPCY>, 12
-    @DefProto DllImport, VarCyFix, WIN_STD_CALL_CONV,, <:CY, :LPCY>, 12
-    @DefProto DllImport, VarCyInt, WIN_STD_CALL_CONV,, <:CY, :LPCY>, 12
-    @DefProto DllImport, VarCyNeg, WIN_STD_CALL_CONV,, <:CY, :LPCY>, 12
-    @DefProto DllImport, VarCyRound, WIN_STD_CALL_CONV,, <:CY, :SDWORD, :LPCY>, 16
-    @DefProto DllImport, VarCyCmp, WIN_STD_CALL_CONV,, <:CY, :CY>, 16
-    @DefProto DllImport, VarCyCmpR8, WIN_STD_CALL_CONV,, <:CY, :REAL8>, 12
+    @DefProto DllImport, VarCyAdd, WIN_STD_CALL_CONV,, <:CY, :CY, :LPCY>, 12
+    @DefProto DllImport, VarCyMul, WIN_STD_CALL_CONV,, <:CY, :CY, :LPCY>, 12
+    @DefProto DllImport, VarCyMulI4, WIN_STD_CALL_CONV,, <:CY, :LONG, :LPCY>, 12
+    @DefProto DllImport, VarCyMulI8, WIN_STD_CALL_CONV,, <:CY, :LONG64, :LPCY>, 12
+    @DefProto DllImport, VarCySub, WIN_STD_CALL_CONV,, <:CY, :CY, :LPCY>, 12
+    @DefProto DllImport, VarCyAbs, WIN_STD_CALL_CONV,, <:CY, :LPCY>, 8
+    @DefProto DllImport, VarCyFix, WIN_STD_CALL_CONV,, <:CY, :LPCY>, 8
+    @DefProto DllImport, VarCyInt, WIN_STD_CALL_CONV,, <:CY, :LPCY>, 8
+    @DefProto DllImport, VarCyNeg, WIN_STD_CALL_CONV,, <:CY, :LPCY>, 8
+    @DefProto DllImport, VarCyRound, WIN_STD_CALL_CONV,, <:CY, :SDWORD, :LPCY>, 12
+    @DefProto DllImport, VarCyCmp, WIN_STD_CALL_CONV,, <:CY, :CY>, 8
+    @DefProto DllImport, VarCyCmpR8, WIN_STD_CALL_CONV,, <:CY, :REAL8>, 8
     @DefProto DllImport, VarBstrCat, WIN_STD_CALL_CONV,, <:BSTR, :BSTR, :LPBSTR>, 12
     @DefProto DllImport, VarBstrCmp, WIN_STD_CALL_CONV,, <:BSTR, :BSTR, :LCID, :ULONG>, 16
     @DefProto DllImport, VarR8Pow, WIN_STD_CALL_CONV,, <:REAL8, :REAL8, :ptr REAL8>, 12
@@ -548,7 +549,7 @@ if  not Defined(_OLEAUTO_H_)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, VarDateFromUdate, WIN_STD_CALL_CONV,, <:ptr UDATE, :ULONG, :ptr DATE>, 12
     @DefProto DllImport, VarDateFromUdateEx, WIN_STD_CALL_CONV,, <:ptr UDATE, :LCID, :ULONG, :ptr DATE>, 16
-    @DefProto DllImport, VarUdateFromDate, WIN_STD_CALL_CONV,, <:DATE, :ULONG, :ptr UDATE>, 16
+    @DefProto DllImport, VarUdateFromDate, WIN_STD_CALL_CONV,, <:DATE, :ULONG, :ptr UDATE>, 12
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetAltMonthNames, WIN_STD_CALL_CONV,, <:LCID, :ptr ptr LPOLESTR>, 8
@@ -568,7 +569,7 @@ if  not Defined(_OLEAUTO_H_)
     LPTYPELIB typedef ptr ITypeLib
     DISPID typedef LONG
     MEMBERID typedef DISPID
-    MEMBERID_NIL equ <DISPID_UNKNOWN>
+;    MEMBERID_NIL equ <DISPID_UNKNOWN>
     ID_DEFAULTINST equ -2
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
@@ -601,7 +602,7 @@ if  not Defined(_OLEAUTO_H_)
     REGKIND_REGISTER equ 1
     REGKIND_NONE equ 2
     tagREGKIND typedef REGKIND
-    
+
     LOAD_TLB_AS_32BIT equ 20h
     LOAD_TLB_AS_64BIT equ 40h
     MASK_TO_RESET_TLB_BITS equ <not (LOAD_TLB_AS_32BIT or LOAD_TLB_AS_64BIT)>
@@ -621,7 +622,6 @@ if  not Defined(_OLEAUTO_H_)
     PARAMDATA ends
     tagPARAMDATA typedef PARAMDATA
     LPPARAMDATA typedef ptr PARAMDATA
-    
     METHODDATA struct
       szName POINTER ?
       ppdata POINTER ?
@@ -634,14 +634,12 @@ if  not Defined(_OLEAUTO_H_)
     METHODDATA ends
     tagMETHODDATA typedef METHODDATA
     LPMETHODDATA typedef ptr METHODDATA
-    
     INTERFACEDATA struct
       pmethdata POINTER ?
       cMembers UINT ?
     INTERFACEDATA ends
     tagINTERFACEDATA typedef INTERFACEDATA
     LPINTERFACEDATA typedef ptr INTERFACEDATA
-    
     @DefProto DllImport, DispGetParam, WIN_STD_CALL_CONV,, <:ptr DISPPARAMS, :UINT, :VARTYPE, :ptr VARIANT, :ptr UINT>, 20
     @DefProto DllImport, DispGetIDsOfNames, WIN_STD_CALL_CONV,, <:ptr ITypeInfo, :ptr LPOLESTR, :UINT, :ptr DISPID>, 16
   endif
@@ -651,7 +649,7 @@ if  not Defined(_OLEAUTO_H_)
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, CreateDispTypeInfo, WIN_STD_CALL_CONV,, <:ptr INTERFACEDATA, :LCID, :ptr ptr ITypeInfo>, 12
     @DefProto DllImport, CreateStdDispatch, WIN_STD_CALL_CONV,, <:ptr IUnknown, :ptr, :ptr ITypeInfo, :ptr ptr IUnknown>, 16
-    @DefProto DllImport, DispCallFunc, WIN_STD_CALL_CONV,, <:ptr, :ULONG_PTR, :CALLCONV, :VARTYPE, :UINT, :ptr VARTYPE, :ptr ptr VARIANTARG, :ptr VARIANT>, 36
+    @DefProto DllImport, DispCallFunc, WIN_STD_CALL_CONV,, <:ptr, :ULONG_PTR, :CALLCONV, :VARTYPE, :UINT, :ptr VARTYPE, :ptr ptr VARIANTARG, :ptr VARIANT>, 32
     ACTIVEOBJECT_STRONG equ 0h
     ACTIVEOBJECT_WEAK equ 1h
     @DefProto DllImport, RegisterActiveObject, WIN_STD_CALL_CONV,, <:ptr IUnknown, :REFCLSID, :DWORD, :ptr DWORD>, 16
@@ -681,6 +679,9 @@ if  not Defined(_OLEAUTO_H_)
     V_RECORD macro X
       exitm <((X) - n1.n2.n3.brecVal.pvRecord)>
     endm
+    V_DECIMAL macro X
+      exitm <((X) - n1.decVal)>
+    endm
   else
     V_UNION macro X, Y
       exitm <((X) - Y)>
@@ -693,6 +694,9 @@ if  not Defined(_OLEAUTO_H_)
     endm
     V_RECORD macro X
       exitm <((X) - pvRecord)>
+    endm
+    V_DECIMAL macro X
+      exitm <((X) - decVal)>
     endm
   endif
   V_ISBYREF macro X
@@ -860,9 +864,6 @@ if  not Defined(_OLEAUTO_H_)
   V_BYREF macro X
     exitm <V_UNION(X, byref)>
   endm
-  V_DECIMAL macro X
-    exitm <V_UNION(X, decVal)>
-  endm
   V_DECIMALREF macro X
     exitm <V_UNION(X, pdecVal)>
   endm
@@ -872,4 +873,3 @@ if  not Defined(_OLEAUTO_H_)
 endif
 if _MSC_VER ge 1200
 endif
-

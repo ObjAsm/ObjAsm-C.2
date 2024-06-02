@@ -475,7 +475,7 @@ MethodEnd
 
 Method NetComConnection.OnFree, uses xsi
   SetObject xsi
-;  DbgHex xsi, "NetComConnection.OnFree"
+  DbgHex xsi, "NetComConnection.OnFree"
   OCall xsi.Done
   xBitSet [xsi].dFlags, NCC_FREED
 MethodEnd

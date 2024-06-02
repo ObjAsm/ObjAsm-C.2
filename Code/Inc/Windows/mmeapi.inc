@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\mmeapi.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\mmeapi.h
+;             Created on (UTC) 06/04/2024 06:15:56
+;             Last modified on (UTC) 21/02/2024 18:13:22
 
 ifdef _MSC_VER
 endif
@@ -9,6 +10,12 @@ ifndef _MMEAPI_H_
   _MMEAPI_H_ equ <>
   include apiset.inc
   include apisetcconv.inc
+  ifdef _CONTRACT_GEN
+    include nt.inc
+    include ntrtl.inc
+    include nturtl.inc
+    include windows.inc
+  endif
   include mmsyscom.inc
   ifdef __cplusplus
     ;[...]
@@ -52,12 +59,10 @@ ifndef _MMEAPI_H_
         lpNext POINTER ?
         reserved DWORD_PTR ?
       WAVEHDR ends
-
       wavehdr_tag typedef WAVEHDR
       PWAVEHDR typedef ptr WAVEHDR
       NPWAVEHDR typedef ptr WAVEHDR
       LPWAVEHDR typedef ptr WAVEHDR
-      
       WHDR_DONE equ 00000001h
       WHDR_PREPARED equ 00000002h
       WHDR_BEGINLOOP equ 00000004h
@@ -74,12 +79,10 @@ ifndef _MMEAPI_H_
           wReserved1 WORD ?
           dwSupport DWORD ?
         WAVEOUTCAPSA ends
-
         tagWAVEOUTCAPSA typedef WAVEOUTCAPSA
         PWAVEOUTCAPSA typedef ptr WAVEOUTCAPSA
         NPWAVEOUTCAPSA typedef ptr WAVEOUTCAPSA
         LPWAVEOUTCAPSA typedef ptr WAVEOUTCAPSA
-        
         WAVEOUTCAPSW struct
           wMid WORD ?
           wPid WORD ?
@@ -90,12 +93,10 @@ ifndef _MMEAPI_H_
           wReserved1 WORD ?
           dwSupport DWORD ?
         WAVEOUTCAPSW ends
-
         tagWAVEOUTCAPSW typedef WAVEOUTCAPSW
         PWAVEOUTCAPSW typedef ptr WAVEOUTCAPSW
         NPWAVEOUTCAPSW typedef ptr WAVEOUTCAPSW
         LPWAVEOUTCAPSW typedef ptr WAVEOUTCAPSW
-        
         ifdef UNICODE
           WAVEOUTCAPS typedef WAVEOUTCAPSW
           PWAVEOUTCAPS typedef PWAVEOUTCAPSW
@@ -120,12 +121,10 @@ ifndef _MMEAPI_H_
           ProductGuid GUID <>
           NameGuid GUID <>
         WAVEOUTCAPS2A ends
-
         tagWAVEOUTCAPS2A typedef WAVEOUTCAPS2A
         PWAVEOUTCAPS2A typedef ptr WAVEOUTCAPS2A
         NPWAVEOUTCAPS2A typedef ptr WAVEOUTCAPS2A
         LPWAVEOUTCAPS2A typedef ptr WAVEOUTCAPS2A
-        
         WAVEOUTCAPS2W struct
           wMid WORD ?
           wPid WORD ?
@@ -139,12 +138,10 @@ ifndef _MMEAPI_H_
           ProductGuid GUID <>
           NameGuid GUID <>
         WAVEOUTCAPS2W ends
-
         tagWAVEOUTCAPS2W typedef WAVEOUTCAPS2W
         PWAVEOUTCAPS2W typedef ptr WAVEOUTCAPS2W
         NPWAVEOUTCAPS2W typedef ptr WAVEOUTCAPS2W
         LPWAVEOUTCAPS2W typedef ptr WAVEOUTCAPS2W
-        
         ifdef UNICODE
           WAVEOUTCAPS2 typedef WAVEOUTCAPS2W
           PWAVEOUTCAPS2 typedef PWAVEOUTCAPS2W
@@ -175,12 +172,10 @@ ifndef _MMEAPI_H_
           wChannels WORD ?
           wReserved1 WORD ?
         WAVEINCAPSA ends
-
         tagWAVEINCAPSA typedef WAVEINCAPSA
         PWAVEINCAPSA typedef ptr WAVEINCAPSA
         NPWAVEINCAPSA typedef ptr WAVEINCAPSA
         LPWAVEINCAPSA typedef ptr WAVEINCAPSA
-        
         WAVEINCAPSW struct
           wMid WORD ?
           wPid WORD ?
@@ -190,12 +185,10 @@ ifndef _MMEAPI_H_
           wChannels WORD ?
           wReserved1 WORD ?
         WAVEINCAPSW ends
-
         tagWAVEINCAPSW typedef WAVEINCAPSW
         PWAVEINCAPSW typedef ptr WAVEINCAPSW
         NPWAVEINCAPSW typedef ptr WAVEINCAPSW
         LPWAVEINCAPSW typedef ptr WAVEINCAPSW
-        
         ifdef UNICODE
           WAVEINCAPS typedef WAVEINCAPSW
           PWAVEINCAPS typedef PWAVEINCAPSW
@@ -219,12 +212,10 @@ ifndef _MMEAPI_H_
           ProductGuid GUID <>
           NameGuid GUID <>
         WAVEINCAPS2A ends
-
         tagWAVEINCAPS2A typedef WAVEINCAPS2A
         PWAVEINCAPS2A typedef ptr WAVEINCAPS2A
         NPWAVEINCAPS2A typedef ptr WAVEINCAPS2A
         LPWAVEINCAPS2A typedef ptr WAVEINCAPS2A
-        
         WAVEINCAPS2W struct
           wMid WORD ?
           wPid WORD ?
@@ -237,12 +228,10 @@ ifndef _MMEAPI_H_
           ProductGuid GUID <>
           NameGuid GUID <>
         WAVEINCAPS2W ends
-
         tagWAVEINCAPS2W typedef WAVEINCAPS2W
         PWAVEINCAPS2W typedef ptr WAVEINCAPS2W
         NPWAVEINCAPS2W typedef ptr WAVEINCAPS2W
         LPWAVEINCAPS2W typedef ptr WAVEINCAPS2W
-        
         ifdef UNICODE
           WAVEINCAPS2 typedef WAVEINCAPS2W
           PWAVEINCAPS2 typedef PWAVEINCAPS2W
@@ -290,23 +279,19 @@ ifndef _MMEAPI_H_
           nAvgBytesPerSec DWORD ?
           nBlockAlign WORD ?
         WAVEFORMAT ends
-
         waveformat_tag typedef WAVEFORMAT
         PWAVEFORMAT typedef ptr WAVEFORMAT
         NPWAVEFORMAT typedef ptr WAVEFORMAT
         LPWAVEFORMAT typedef ptr WAVEFORMAT
-        
         WAVE_FORMAT_PCM equ 1
         PCMWAVEFORMAT struct
           wf WAVEFORMAT <>
           wBitsPerSample WORD ?
         PCMWAVEFORMAT ends
-
         pcmwaveformat_tag typedef PCMWAVEFORMAT
         PPCMWAVEFORMAT typedef ptr PCMWAVEFORMAT
         NPPCMWAVEFORMAT typedef ptr PCMWAVEFORMAT
         LPPCMWAVEFORMAT typedef ptr PCMWAVEFORMAT
-        
       endif
       ifndef _WAVEFORMATEX_
         _WAVEFORMATEX_ equ <>
@@ -319,12 +304,10 @@ ifndef _MMEAPI_H_
           wBitsPerSample WORD ?
           cbSize WORD ?
         WAVEFORMATEX ends
-
         tWAVEFORMATEX typedef WAVEFORMATEX
         PWAVEFORMATEX typedef ptr WAVEFORMATEX
         NPWAVEFORMATEX typedef ptr WAVEFORMATEX
         LPWAVEFORMATEX typedef ptr WAVEFORMATEX
-        
       endif
       LPCWAVEFORMATEX typedef ptr WAVEFORMATEX
       @DefProto DllImport, waveOutGetNumDevs, WIN_STD_CALL_CONV,, <>, 0
@@ -483,12 +466,10 @@ ifndef _MMEAPI_H_
           wChannelMask WORD ?
           dwSupport DWORD ?
         MIDIOUTCAPSA ends
-
         tagMIDIOUTCAPSA typedef MIDIOUTCAPSA
         PMIDIOUTCAPSA typedef ptr MIDIOUTCAPSA
         NPMIDIOUTCAPSA typedef ptr MIDIOUTCAPSA
         LPMIDIOUTCAPSA typedef ptr MIDIOUTCAPSA
-        
         MIDIOUTCAPSW struct
           wMid WORD ?
           wPid WORD ?
@@ -500,12 +481,10 @@ ifndef _MMEAPI_H_
           wChannelMask WORD ?
           dwSupport DWORD ?
         MIDIOUTCAPSW ends
-
         tagMIDIOUTCAPSW typedef MIDIOUTCAPSW
         PMIDIOUTCAPSW typedef ptr MIDIOUTCAPSW
         NPMIDIOUTCAPSW typedef ptr MIDIOUTCAPSW
         LPMIDIOUTCAPSW typedef ptr MIDIOUTCAPSW
-        
         ifdef UNICODE
           MIDIOUTCAPS typedef MIDIOUTCAPSW
           PMIDIOUTCAPS typedef PMIDIOUTCAPSW
@@ -531,12 +510,10 @@ ifndef _MMEAPI_H_
           ProductGuid GUID <>
           NameGuid GUID <>
         MIDIOUTCAPS2A ends
-
         tagMIDIOUTCAPS2A typedef MIDIOUTCAPS2A
         PMIDIOUTCAPS2A typedef ptr MIDIOUTCAPS2A
         NPMIDIOUTCAPS2A typedef ptr MIDIOUTCAPS2A
         LPMIDIOUTCAPS2A typedef ptr MIDIOUTCAPS2A
-        
         MIDIOUTCAPS2W struct
           wMid WORD ?
           wPid WORD ?
@@ -551,12 +528,10 @@ ifndef _MMEAPI_H_
           ProductGuid GUID <>
           NameGuid GUID <>
         MIDIOUTCAPS2W ends
-
         tagMIDIOUTCAPS2W typedef MIDIOUTCAPS2W
         PMIDIOUTCAPS2W typedef ptr MIDIOUTCAPS2W
         NPMIDIOUTCAPS2W typedef ptr MIDIOUTCAPS2W
         LPMIDIOUTCAPS2W typedef ptr MIDIOUTCAPS2W
-        
         ifdef UNICODE
           MIDIOUTCAPS2 typedef MIDIOUTCAPS2W
           PMIDIOUTCAPS2 typedef PMIDIOUTCAPS2W
@@ -594,12 +569,10 @@ ifndef _MMEAPI_H_
             dwSupport DWORD ?
           endif
         MIDIINCAPSA ends
-
         tagMIDIINCAPSA typedef MIDIINCAPSA
         PMIDIINCAPSA typedef ptr MIDIINCAPSA
         NPMIDIINCAPSA typedef ptr MIDIINCAPSA
         LPMIDIINCAPSA typedef ptr MIDIINCAPSA
-        
         MIDIINCAPSW struct
           wMid WORD ?
           wPid WORD ?
@@ -609,12 +582,10 @@ ifndef _MMEAPI_H_
             dwSupport DWORD ?
           endif
         MIDIINCAPSW ends
-
         tagMIDIINCAPSW typedef MIDIINCAPSW
         PMIDIINCAPSW typedef ptr MIDIINCAPSW
         NPMIDIINCAPSW typedef ptr MIDIINCAPSW
         LPMIDIINCAPSW typedef ptr MIDIINCAPSW
-        
         ifdef UNICODE
           MIDIINCAPS typedef MIDIINCAPSW
           PMIDIINCAPS typedef PMIDIINCAPSW
@@ -638,12 +609,10 @@ ifndef _MMEAPI_H_
           ProductGuid GUID <>
           NameGuid GUID <>
         MIDIINCAPS2A ends
-
         tagMIDIINCAPS2A typedef MIDIINCAPS2A
         PMIDIINCAPS2A typedef ptr MIDIINCAPS2A
         NPMIDIINCAPS2A typedef ptr MIDIINCAPS2A
         LPMIDIINCAPS2A typedef ptr MIDIINCAPS2A
-        
         MIDIINCAPS2W struct
           wMid WORD ?
           wPid WORD ?
@@ -656,12 +625,10 @@ ifndef _MMEAPI_H_
           ProductGuid GUID <>
           NameGuid GUID <>
         MIDIINCAPS2W ends
-
         tagMIDIINCAPS2W typedef MIDIINCAPS2W
         PMIDIINCAPS2W typedef ptr MIDIINCAPS2W
         NPMIDIINCAPS2W typedef ptr MIDIINCAPS2W
         LPMIDIINCAPS2W typedef ptr MIDIINCAPS2W
-        
         ifdef UNICODE
           MIDIINCAPS2 typedef MIDIINCAPS2W
           PMIDIINCAPS2 typedef PMIDIINCAPS2W
@@ -689,12 +656,10 @@ ifndef _MMEAPI_H_
           dwReserved DWORD_PTR 8 dup (?)
         endif
       MIDIHDR ends
-
       midihdr_tag typedef MIDIHDR
       PMIDIHDR typedef ptr MIDIHDR
       NPMIDIHDR typedef ptr MIDIHDR
       LPMIDIHDR typedef ptr MIDIHDR
-      
       if (WINVER ge 0400h)
         MIDIEVENT struct
           dwDeltaTime DWORD ?
@@ -702,14 +667,12 @@ ifndef _MMEAPI_H_
           dwEvent DWORD ?
           dwParms DWORD 1 dup (?)
         MIDIEVENT ends
-
         midievent_tag typedef MIDIEVENT
         MIDISTRMBUFFVER struct
           dwVersion DWORD ?
           dwMid DWORD ?
           dwOEMVersion DWORD ?
         MIDISTRMBUFFVER ends
-
         midistrmbuffver_tag typedef MIDISTRMBUFFVER
       endif
       MHDR_DONE equ 00000001h
@@ -732,7 +695,7 @@ ifndef _MMEAPI_H_
         MEVT_LONGMSG equ (80h)
         MEVT_COMMENT equ (82h)
         MEVT_VERSION equ (84h)
-        MIDISTRM_ERROR equ -2
+        MIDISTRM_ERROR equ (- 2)
         MIDIPROP_SET equ 80000000h
         MIDIPROP_GET equ 40000000h
         MIDIPROP_TIMEDIV equ 00000001h
@@ -741,18 +704,14 @@ ifndef _MMEAPI_H_
           cbStruct DWORD ?
           dwTimeDiv DWORD ?
         MIDIPROPTIMEDIV ends
-
         midiproptimediv_tag typedef MIDIPROPTIMEDIV
         LPMIDIPROPTIMEDIV typedef ptr MIDIPROPTIMEDIV
-        
         MIDIPROPTEMPO struct
           cbStruct DWORD ?
           dwTempo DWORD ?
         MIDIPROPTEMPO ends
-
         midiproptempo_tag typedef MIDIPROPTEMPO
         LPMIDIPROPTEMPO typedef ptr MIDIPROPTEMPO
-        
       endif
       @DefProto DllImport, midiOutGetNumDevs, WIN_STD_CALL_CONV,, <>, 0
       if (WINVER ge 0400h)
@@ -863,12 +822,10 @@ ifndef _MMEAPI_H_
           wReserved1 WORD ?
           dwSupport DWORD ?
         AUXCAPSA ends
-
         tagAUXCAPSA typedef AUXCAPSA
         PAUXCAPSA typedef ptr AUXCAPSA
         NPAUXCAPSA typedef ptr AUXCAPSA
         LPAUXCAPSA typedef ptr AUXCAPSA
-        
         AUXCAPSW struct
           wMid WORD ?
           wPid WORD ?
@@ -878,12 +835,10 @@ ifndef _MMEAPI_H_
           wReserved1 WORD ?
           dwSupport DWORD ?
         AUXCAPSW ends
-
         tagAUXCAPSW typedef AUXCAPSW
         PAUXCAPSW typedef ptr AUXCAPSW
         NPAUXCAPSW typedef ptr AUXCAPSW
         LPAUXCAPSW typedef ptr AUXCAPSW
-        
         ifdef UNICODE
           AUXCAPS typedef AUXCAPSW
           PAUXCAPS typedef PAUXCAPSW
@@ -907,12 +862,10 @@ ifndef _MMEAPI_H_
           ProductGuid GUID <>
           NameGuid GUID <>
         AUXCAPS2A ends
-
         tagAUXCAPS2A typedef AUXCAPS2A
         PAUXCAPS2A typedef ptr AUXCAPS2A
         NPAUXCAPS2A typedef ptr AUXCAPS2A
         LPAUXCAPS2A typedef ptr AUXCAPS2A
-        
         AUXCAPS2W struct
           wMid WORD ?
           wPid WORD ?
@@ -925,12 +878,10 @@ ifndef _MMEAPI_H_
           ProductGuid GUID <>
           NameGuid GUID <>
         AUXCAPS2W ends
-
         tagAUXCAPS2W typedef AUXCAPS2W
         PAUXCAPS2W typedef ptr AUXCAPS2W
         NPAUXCAPS2W typedef ptr AUXCAPS2W
         LPAUXCAPS2W typedef ptr AUXCAPS2W
-        
         ifdef UNICODE
           AUXCAPS2 typedef AUXCAPS2W
           PAUXCAPS2 typedef PAUXCAPS2W
@@ -1004,11 +955,9 @@ ifndef _MMEAPI_H_
           fdwSupport DWORD ?
           cDestinations DWORD ?
         MIXERCAPSA ends
-
         tagMIXERCAPSA typedef MIXERCAPSA
         PMIXERCAPSA typedef ptr MIXERCAPSA
         LPMIXERCAPSA typedef ptr MIXERCAPSA
-        
         MIXERCAPSW struct
           wMid WORD ?
           wPid WORD ?
@@ -1017,11 +966,9 @@ ifndef _MMEAPI_H_
           fdwSupport DWORD ?
           cDestinations DWORD ?
         MIXERCAPSW ends
-
         tagMIXERCAPSW typedef MIXERCAPSW
         PMIXERCAPSW typedef ptr MIXERCAPSW
         LPMIXERCAPSW typedef ptr MIXERCAPSW
-        
         ifdef UNICODE
           MIXERCAPS typedef MIXERCAPSW
           PMIXERCAPS typedef PMIXERCAPSW
@@ -1042,11 +989,9 @@ ifndef _MMEAPI_H_
           ProductGuid GUID <>
           NameGuid GUID <>
         MIXERCAPS2A ends
-
         tagMIXERCAPS2A typedef MIXERCAPS2A
         PMIXERCAPS2A typedef ptr MIXERCAPS2A
         LPMIXERCAPS2A typedef ptr MIXERCAPS2A
-        
         MIXERCAPS2W struct
           wMid WORD ?
           wPid WORD ?
@@ -1058,11 +1003,9 @@ ifndef _MMEAPI_H_
           ProductGuid GUID <>
           NameGuid GUID <>
         MIXERCAPS2W ends
-
         tagMIXERCAPS2W typedef MIXERCAPS2W
         PMIXERCAPS2W typedef ptr MIXERCAPS2W
         LPMIXERCAPS2W typedef ptr MIXERCAPS2W
-        
         ifdef UNICODE
           MIXERCAPS2 typedef MIXERCAPS2W
           PMIXERCAPS2 typedef PMIXERCAPS2W
@@ -1112,11 +1055,9 @@ ifndef _MMEAPI_H_
             szPname CHAR MAXPNAMELEN dup (?)
           ends
         MIXERLINEA ends
-
         tagMIXERLINEA typedef MIXERLINEA
         PMIXERLINEA typedef ptr MIXERLINEA
         LPMIXERLINEA typedef ptr MIXERLINEA
-        
         MIXERLINEW struct
           cbStruct DWORD ?
           dwDestination DWORD ?
@@ -1139,11 +1080,9 @@ ifndef _MMEAPI_H_
             szPname WCHAR MAXPNAMELEN dup (?)
           ends
         MIXERLINEW ends
-
         tagMIXERLINEW typedef MIXERLINEW
         PMIXERLINEW typedef ptr MIXERLINEW
         LPMIXERLINEW typedef ptr MIXERLINEW
-        
         ifdef UNICODE
           MIXERLINE typedef MIXERLINEW
           PMIXERLINE typedef PMIXERLINEW
@@ -1221,7 +1160,7 @@ ifndef _MMEAPI_H_
               lMinimum LONG ?
               lMaximum LONG ?
             ends
-            struct DUMMYSTRUCTNAME2
+            struct
               dwMinimum DWORD ?
               dwMaximum DWORD ?
             ends
@@ -1233,11 +1172,9 @@ ifndef _MMEAPI_H_
             dwReserved DWORD 6 dup (?)
           ends
         MIXERCONTROLA ends
-
         tagMIXERCONTROLA typedef MIXERCONTROLA
         PMIXERCONTROLA typedef ptr MIXERCONTROLA
         LPMIXERCONTROLA typedef ptr MIXERCONTROLA
-        
         MIXERCONTROLW struct
           cbStruct DWORD ?
           dwControlID DWORD ?
@@ -1251,7 +1188,7 @@ ifndef _MMEAPI_H_
               lMinimum LONG ?
               lMaximum LONG ?
             ends
-            struct DUMMYSTRUCTNAME2
+            struct
               dwMinimum DWORD ?
               dwMaximum DWORD ?
             ends
@@ -1263,11 +1200,9 @@ ifndef _MMEAPI_H_
             dwReserved DWORD 6 dup (?)
           ends
         MIXERCONTROLW ends
-
         tagMIXERCONTROLW typedef MIXERCONTROLW
         PMIXERCONTROLW typedef ptr MIXERCONTROLW
         LPMIXERCONTROLW typedef ptr MIXERCONTROLW
-        
         ifdef UNICODE
           MIXERCONTROL typedef MIXERCONTROLW
           PMIXERCONTROL typedef PMIXERCONTROLW
@@ -1350,11 +1285,9 @@ ifndef _MMEAPI_H_
           cbmxctrl DWORD ?
           pamxctrl LPMIXERCONTROLA ?
         MIXERLINECONTROLSA ends
-
         tagMIXERLINECONTROLSA typedef MIXERLINECONTROLSA
         PMIXERLINECONTROLSA typedef ptr MIXERLINECONTROLSA
         LPMIXERLINECONTROLSA typedef ptr MIXERLINECONTROLSA
-        
         MIXERLINECONTROLSW struct
           cbStruct DWORD ?
           dwLineID DWORD ?
@@ -1366,11 +1299,9 @@ ifndef _MMEAPI_H_
           cbmxctrl DWORD ?
           pamxctrl LPMIXERCONTROLW ?
         MIXERLINECONTROLSW ends
-
         tagMIXERLINECONTROLSW typedef MIXERLINECONTROLSW
         PMIXERLINECONTROLSW typedef ptr MIXERLINECONTROLSW
         LPMIXERLINECONTROLSW typedef ptr MIXERLINECONTROLSW
-        
         ifdef UNICODE
           MIXERLINECONTROLS typedef MIXERLINECONTROLSW
           PMIXERLINECONTROLS typedef PMIXERLINECONTROLSW
@@ -1409,32 +1340,26 @@ ifndef _MMEAPI_H_
         cbDetails DWORD ?
         paDetails LPVOID ?
       MIXERCONTROLDETAILS ends
-
       tMIXERCONTROLDETAILS typedef MIXERCONTROLDETAILS
       PMIXERCONTROLDETAILS typedef ptr MIXERCONTROLDETAILS
       LPMIXERCONTROLDETAILS typedef ptr MIXERCONTROLDETAILS
-      
       ifdef _WIN32
         MIXERCONTROLDETAILS_LISTTEXTA struct
           dwParam1 DWORD ?
           dwParam2 DWORD ?
           szName CHAR MIXER_LONG_NAME_CHARS dup (?)
         MIXERCONTROLDETAILS_LISTTEXTA ends
-
         tagMIXERCONTROLDETAILS_LISTTEXTA typedef MIXERCONTROLDETAILS_LISTTEXTA
         PMIXERCONTROLDETAILS_LISTTEXTA typedef ptr MIXERCONTROLDETAILS_LISTTEXTA
         LPMIXERCONTROLDETAILS_LISTTEXTA typedef ptr MIXERCONTROLDETAILS_LISTTEXTA
-        
         MIXERCONTROLDETAILS_LISTTEXTW struct
           dwParam1 DWORD ?
           dwParam2 DWORD ?
           szName WCHAR MIXER_LONG_NAME_CHARS dup (?)
         MIXERCONTROLDETAILS_LISTTEXTW ends
-
         tagMIXERCONTROLDETAILS_LISTTEXTW typedef MIXERCONTROLDETAILS_LISTTEXTW
         PMIXERCONTROLDETAILS_LISTTEXTW typedef ptr MIXERCONTROLDETAILS_LISTTEXTW
         LPMIXERCONTROLDETAILS_LISTTEXTW typedef ptr MIXERCONTROLDETAILS_LISTTEXTW
-        
         ifdef UNICODE
           MIXERCONTROLDETAILS_LISTTEXT typedef MIXERCONTROLDETAILS_LISTTEXTW
           PMIXERCONTROLDETAILS_LISTTEXT typedef PMIXERCONTROLDETAILS_LISTTEXTW
@@ -1450,27 +1375,21 @@ ifndef _MMEAPI_H_
       MIXERCONTROLDETAILS_BOOLEAN struct
         fValue LONG ?
       MIXERCONTROLDETAILS_BOOLEAN ends
-
       tMIXERCONTROLDETAILS_BOOLEAN typedef MIXERCONTROLDETAILS_BOOLEAN
       PMIXERCONTROLDETAILS_BOOLEAN typedef ptr MIXERCONTROLDETAILS_BOOLEAN
       LPMIXERCONTROLDETAILS_BOOLEAN typedef ptr MIXERCONTROLDETAILS_BOOLEAN
-      
       MIXERCONTROLDETAILS_SIGNED struct
         lValue LONG ?
       MIXERCONTROLDETAILS_SIGNED ends
-
       tMIXERCONTROLDETAILS_SIGNED typedef MIXERCONTROLDETAILS_SIGNED
       PMIXERCONTROLDETAILS_SIGNED typedef ptr MIXERCONTROLDETAILS_SIGNED
       LPMIXERCONTROLDETAILS_SIGNED typedef ptr MIXERCONTROLDETAILS_SIGNED
-      
       MIXERCONTROLDETAILS_UNSIGNED struct
         dwValue DWORD ?
       MIXERCONTROLDETAILS_UNSIGNED ends
-
       tMIXERCONTROLDETAILS_UNSIGNED typedef MIXERCONTROLDETAILS_UNSIGNED
       PMIXERCONTROLDETAILS_UNSIGNED typedef ptr MIXERCONTROLDETAILS_UNSIGNED
       LPMIXERCONTROLDETAILS_UNSIGNED typedef ptr MIXERCONTROLDETAILS_UNSIGNED
-      
       ifdef _WIN32
         @DefProto DllImport, mixerGetControlDetailsA, WIN_STD_CALL_CONV,, <:HMIXEROBJ, :LPMIXERCONTROLDETAILS, :DWORD>, 12
         @DefProto DllImport, mixerGetControlDetailsW, WIN_STD_CALL_CONV,, <:HMIXEROBJ, :LPMIXERCONTROLDETAILS, :DWORD>, 12
@@ -1495,4 +1414,3 @@ ifndef _MMEAPI_H_
     ;[...]
   endif
 endif
-

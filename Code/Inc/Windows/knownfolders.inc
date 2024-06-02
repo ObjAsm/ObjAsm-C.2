@@ -1,22 +1,21 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\knownfolders.h', last modified: 19/04/2018 10:46
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\knownfolders.h
+;             Created on (UTC) 06/04/2024 06:15:56
+;             Last modified on (UTC) 12/02/2024 17:06:02
 
 include winapifamily.inc
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
   ifdef DEFINE_KNOWN_FOLDER
   endif
   if Defined(INITGUID) or Defined(INITKNOWNFOLDERS)
-    DEFINE_KNOWN_FOLDER macro name_, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-      externdef name_:GUID
-      name_ GUID { l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8 } }
+    DEFINE_KNOWN_FOLDER macro GUID_Name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
+      GUID_Name GUID { l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8}}
     endm
   else
-    DEFINE_KNOWN_FOLDER macro name_, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
-      ;Creare a symbol with a GUID formatet conten => 00000000-0000-0000-0000-000000000000
-      externdef name_:GUID
-      @CatStr(<s>,name_,< textequ !<>,sGUIDf(l,8),<->,sGUIDf(w1,4),<->,sGUIDf(w2,4),<->,sGUIDf(b1,2),sGUIDf(b2,2),<->,sGUIDf(b3,2),sGUIDf(b4,2),sGUIDf(b5,2),sGUIDf(b6,2),sGUIDf(b7,2),sGUIDf(b8,2),<!>>) 
+    DEFINE_KNOWN_FOLDER macro GUID_Name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8
+      externdef GUID_Name:GUID
+      s&GUID_Name textequ <GUID {l, w1, w2, {b1, b2, b3, b4, b5, b6, b7, b8}}>
     endm
   endif
   DEFINE_KNOWN_FOLDER FOLDERID_NetworkFolder, 0D20BEEC4h, 5CA8h, 4905h, 0AEh, 3Bh, 0BFh, 25h, 1Eh, 0A0h, 9Bh, 53h
@@ -160,5 +159,5 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
   DEFINE_KNOWN_FOLDER FOLDERID_AppDataDocuments, 7be16610h, 1f7fh, 44ach, 0bfh, 0f0h, 83h, 0e1h, 5fh, 2fh, 0fch, 0a1h
   DEFINE_KNOWN_FOLDER FOLDERID_AppDataFavorites, 7cfbefbch, 0de1fh, 45aah, 0b8h, 43h, 0a5h, 42h, 0ach, 53h, 6ch, 0c9h
   DEFINE_KNOWN_FOLDER FOLDERID_AppDataProgramData, 559d40a3h, 0a036h, 40fah, 0afh, 61h, 84h, 0cbh, 43h, 0ah, 4dh, 34h
+  DEFINE_KNOWN_FOLDER FOLDERID_LocalStorage, 0B3EB08D3h, 0A1F3h, 496Bh, 86h, 5Ah, 42h, 0B5h, 36h, 0CDh, 0A0h, 0ECh
 endif
-

@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version C.01.00, 02/05/2019 09:11
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: 'C:\ObjAsm\Projects\32\h2IncX\Header_10.0.17763.0\Vfw.h', last modified: 22/10/2018 21:35
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\vfw.h
+;             Created on (UTC) 06/04/2024 06:16:02
+;             Last modified on (UTC) 16/12/2023 11:06:46
 
 ifndef _INC_VFW
   _INC_VFW equ <>
@@ -216,8 +217,10 @@ ifndef _INC_VFW
         dwReserved2 DWORD ?
         TYPE_GetData typedef proto WIN_STD_CALL_CONV :LPARAM, :LONG, :LPVOID, :LONG
         GetData typedef ptr TYPE_GetData
+
         TYPE_PutData typedef proto WIN_STD_CALL_CONV :LPARAM, :LONG, :LPVOID, :LONG
         PutData typedef ptr TYPE_PutData
+
       ICCOMPRESSFRAMES ends
       ICSETSTATUSPROC struct
         dwFlags DWORD ?
@@ -229,6 +232,7 @@ ifndef _INC_VFW
         ICSTATUS_YIELD equ 4
         TYPE_Status typedef proto WIN_STD_CALL_CONV :LPARAM, :UINT, :LONG
         Status typedef ptr TYPE_Status
+
       ICSETSTATUSPROC ends
       ICDECOMPRESS_HURRYUP equ 80000000h
       ICDECOMPRESS_UPDATE equ 40000000h
@@ -454,7 +458,7 @@ ifndef _INC_VFW
       ICDrawRenderBuffer macro hic
         exitm <ICSendMessage (hic, ICM_DRAW_RENDERBUFFER, 0, 0)>
       endm
-      ICSetStatusProc proto WIN_STD_CALL_CONV :HIC, :DWORD, :LRESULT, :ptr
+      ICSetStatusProc proto WIN_STD_CALL_CONV :HIC, :DWORD, :LRESULT, :POINTER
       ICDecompressOpen macro fccType, fccHandler, lpbiIn, lpbiOut
         exitm <ICLocate (fccType, fccHandler, lpbiIn, lpbiOut, ICMODE_DECOMPRESS)>
       endm
@@ -484,7 +488,6 @@ ifndef _INC_VFW
         cbState LONG ?
       COMPVARS ends
       PCOMPVARS typedef ptr COMPVARS
-      
       ICMF_COMPVARS_VALID equ 00000001h
       ICCompressorChoose proto WIN_STD_CALL_CONV :HWND, :UINT, :LPVOID, :LPVOID, :PCOMPVARS, :LPSTR
       ICMF_CHOOSE_KEYFRAME equ 0001h
@@ -542,7 +545,6 @@ ifndef _INC_VFW
         timeSetDIBits LONG ?
       DRAWDIBTIME ends
       LPDRAWDIBTIME typedef ptr DRAWDIBTIME
-      
       DrawDibTime proto WIN_STD_CALL_CONV :HDRAWDIB, :LPDRAWDIBTIME
       PD_CAN_DRAW_DIB equ 0001h
       PD_CAN_STRETCHDIB equ 0002h
@@ -713,7 +715,6 @@ ifndef _INC_VFW
       AVISTREAMINFOW ends
       _AVISTREAMINFOW typedef AVISTREAMINFOW
       LPAVISTREAMINFOW typedef ptr AVISTREAMINFOW
-      
       AVISTREAMINFOA struct
         fccType DWORD ?
         fccHandler DWORD ?
@@ -736,7 +737,6 @@ ifndef _INC_VFW
       AVISTREAMINFOA ends
       _AVISTREAMINFOA typedef AVISTREAMINFOA
       LPAVISTREAMINFOA typedef ptr AVISTREAMINFOA
-      
       ifdef UNICODE
         AVISTREAMINFO equ <AVISTREAMINFOW>
         LPAVISTREAMINFO equ <LPAVISTREAMINFOW>
@@ -762,7 +762,6 @@ ifndef _INC_VFW
       AVIFILEINFOW ends
       _AVIFILEINFOW typedef AVIFILEINFOW
       LPAVIFILEINFOW typedef ptr AVIFILEINFOW
-      
       AVIFILEINFOA struct
         dwMaxBytesPerSec DWORD ?
         dwFlags DWORD ?
@@ -779,7 +778,6 @@ ifndef _INC_VFW
       AVIFILEINFOA ends
       _AVIFILEINFOA typedef AVIFILEINFOA
       LPAVIFILEINFOA typedef ptr AVIFILEINFOA
-      
       ifdef UNICODE
         AVIFILEINFO equ <AVIFILEINFOW>
         LPAVIFILEINFO equ <LPAVIFILEINFOW>
@@ -798,6 +796,7 @@ ifndef _INC_VFW
       AVIFILECAPS_NOCOMPRESSION equ 00000020h
       TYPE_AVISAVECALLBACK typedef proto WIN_STD_CALL_CONV :SDWORD
       AVISAVECALLBACK typedef ptr TYPE_AVISAVECALLBACK
+
       AVICOMPRESSOPTIONS struct
         fccType DWORD ?
         fccHandler DWORD ?
@@ -812,7 +811,6 @@ ifndef _INC_VFW
         dwInterleaveEvery DWORD ?
       AVICOMPRESSOPTIONS ends
       LPAVICOMPRESSOPTIONS typedef ptr AVICOMPRESSOPTIONS
-      
       AVICOMPRESSF_INTERLEAVE equ 00000001h
       AVICOMPRESSF_DATARATE equ 00000002h
       AVICOMPRESSF_KEYFRAMES equ 00000004h
@@ -844,7 +842,8 @@ ifndef _INC_VFW
         else
           ;[...]
         endif
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE__END
+
       PAVISTREAM typedef ptr IAVIStream
       INTERFACE equ <IAVIStreaming>
       DECLARE_INTERFACE_ IAVIStreaming, IUnknown
@@ -853,7 +852,8 @@ ifndef _INC_VFW
         STD_METHOD Release, :THIS_
         STD_METHOD Begin, :THIS_, :LONG, :LONG
         STD_METHOD End_, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE__END
+
       PAVISTREAMING typedef ptr IAVIStreaming
       INTERFACE equ <IAVIEditStream>
       DECLARE_INTERFACE_ IAVIEditStream, IUnknown
@@ -865,15 +865,17 @@ ifndef _INC_VFW
         STD_METHOD Paste, :ptr THIS_, :ptr LONG, :PAVISTREAM, :LONG, :LONG
         STD_METHOD Clone, :ptr THIS_
         STD_METHOD SetInfo, :ptr THIS_, :LONG
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE__END
+
       PAVIEDITSTREAM typedef ptr IAVIEditStream
       INTERFACE equ <IAVIPersistFile>
       DECLARE_INTERFACE_ IAVIPersistFile, IPersistFile
         STD_METHOD Reserved1, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE__END
+
       PAVIPERSISTFILE typedef ptr IAVIPersistFile
       INTERFACE equ <IAVIFile>
-      PAVIFILE equ <IAVIFile ptr>
+      PAVIFILE equ <IAVIFile FAR *>
       DECLARE_INTERFACE_ IAVIFile, IUnknown
         STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
         STD_METHOD AddRef, :THIS_
@@ -885,7 +887,8 @@ ifndef _INC_VFW
         STD_METHOD ReadData, :THIS_, :LPVOID, :ptr LONG
         STD_METHOD EndRecord, :THIS_
         STD_METHOD DeleteStream, :THIS_, :LONG
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE__END
+
       PAVIFILE typedef ptr IAVIFile
       INTERFACE equ <IGetFrame>
       PGETFRAME equ <IGetFrame ptr>
@@ -897,7 +900,8 @@ ifndef _INC_VFW
         STD_METHOD Begin, :THIS_, :LONG, :LONG
         STD_METHOD End_, :THIS_
         STD_METHOD SetFormat, :THIS_, :LPVOID, :SDWORD, :SDWORD, :SDWORD, :SDWORD
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE__END
+
       PGETFRAME typedef ptr IGetFrame
       DEFINE_AVIGUID macro name_, l, w1, w2
         exitm <DEFINE_GUID(name_, l, w1, w2, 0C0h, 0, 0, 0, 0, 0, 0, 46h)>
@@ -1307,10 +1311,10 @@ ifndef _INC_VFW
         exitm <MCIWndSM (hwnd, MCI_STEP, 0, (n))>
       endm
       MCIWndDestroy macro hwnd
-        exitm <(VOID) MCIWndSM (hwnd, WM_CLOSE, 0, 0)>
+        exitm <MCIWndSM (hwnd, WM_CLOSE, 0, 0)>
       endm
       MCIWndSetZoom macro hwnd, iZoom
-        exitm <(VOID) MCIWndSM (hwnd, MCIWNDM_SETZOOM, 0, (iZoom))>
+        exitm <MCIWndSM (hwnd, MCIWNDM_SETZOOM, 0, (iZoom))>
       endm
       MCIWndGetZoom macro hwnd
         exitm <MCIWndSM (hwnd, MCIWNDM_GETZOOM, 0, 0)>
@@ -1334,7 +1338,7 @@ ifndef _INC_VFW
         exitm <MCIWndSM (hwnd, MCIWNDM_GETTIMEFORMAT, (len), (LPTSTR) (lp))>
       endm
       MCIWndValidateMedia macro hwnd
-        exitm <(VOID) MCIWndSM (hwnd, MCIWNDM_VALIDATEMEDIA, 0, 0)>
+        exitm <MCIWndSM (hwnd, MCIWNDM_VALIDATEMEDIA, 0, 0)>
       endm
       MCIWndSetRepeat macro hwnd, f
         exitm <MCIWndSM (hwnd, MCIWNDM_SETREPEAT, 0, (f))>
@@ -1349,13 +1353,13 @@ ifndef _INC_VFW
         exitm <MCIWndSetTimeFormat(hwnd, TEXT("ms"))>
       endm
       MCIWndSetActiveTimer macro hwnd, active
-        exitm <(VOID) MCIWndSM (hwnd, MCIWNDM_SETACTIVETIMER, (active), 0)>
+        exitm <MCIWndSM (hwnd, MCIWNDM_SETACTIVETIMER, (active), 0)>
       endm
       MCIWndSetInactiveTimer macro hwnd, inactive
-        exitm <(VOID) MCIWndSM (hwnd, MCIWNDM_SETINACTIVETIMER, (inactive), 0)>
+        exitm <MCIWndSM (hwnd, MCIWNDM_SETINACTIVETIMER, (inactive), 0)>
       endm
       MCIWndSetTimers macro hwnd, active, inactive
-        exitm <(VOID) MCIWndSM (hwnd, MCIWNDM_SETTIMERS, (active), (inactive))>
+        exitm <MCIWndSM (hwnd, MCIWNDM_SETTIMERS, (active), (inactive))>
       endm
       MCIWndGetActiveTimer macro hwnd
         exitm <MCIWndSM (hwnd, MCIWNDM_GETACTIVETIMER, 0, 0) ;>
@@ -1513,13 +1517,13 @@ ifndef _INC_VFW
         MCI_DELETE equ 0856h
       endif
       ifndef MCI_MODE_NOT_READY
-        MCI_MODE_NOT_READY equ 524
-        MCI_MODE_STOP equ 525
-        MCI_MODE_PLAY equ 526
-        MCI_MODE_RECORD equ 527
-        MCI_MODE_SEEK equ 528
-        MCI_MODE_PAUSE equ 529
-        MCI_MODE_OPEN equ 530
+        MCI_MODE_NOT_READY equ (524)
+        MCI_MODE_STOP equ (525)
+        MCI_MODE_PLAY equ (526)
+        MCI_MODE_RECORD equ (527)
+        MCI_MODE_SEEK equ (528)
+        MCI_MODE_PAUSE equ (529)
+        MCI_MODE_OPEN equ (530)
       endif
     endif
     if  not Defined(NOAVICAP) or  not Defined(NOVIDEO)
@@ -1528,8 +1532,8 @@ ifndef _INC_VFW
         LPHVIDEO typedef ptr HVIDEO
       endif
       VideoForWindowsVersion proto WIN_STD_CALL_CONV
-      DV_ERR_OK equ 0
-      DV_ERR_BASE equ 1
+      DV_ERR_OK equ (0)
+      DV_ERR_BASE equ (1)
       DV_ERR_NONSPECIFIC equ <(DV_ERR_BASE)>
       DV_ERR_BADFORMAT equ (DV_ERR_BASE + 1)
       DV_ERR_STILLPLAYING equ (DV_ERR_BASE + 2)
@@ -1583,7 +1587,6 @@ ifndef _INC_VFW
         videohdr_tag typedef VIDEOHDR
         PVIDEOHDR typedef ptr VIDEOHDR
         LPVIDEOHDR typedef ptr VIDEOHDR
-        
         VHDR_DONE equ 00000001h
         VHDR_PREPARED equ 00000002h
         VHDR_INQUEUE equ 00000004h
@@ -1603,7 +1606,6 @@ ifndef _INC_VFW
         channel_caps_tag typedef CHANNEL_CAPS
         PCHANNEL_CAPS typedef ptr CHANNEL_CAPS
         LPCHANNEL_CAPS typedef ptr CHANNEL_CAPS
-        
         VCAPS_OVERLAY equ 00000001h
         VCAPS_SRC_CAN_CLIP equ 00000002h
         VCAPS_DST_CAN_CLIP equ 00000004h
@@ -1930,7 +1932,6 @@ ifndef _INC_VFW
         tagCapDriverCaps typedef CAPDRIVERCAPS
         PCAPDRIVERCAPS typedef ptr CAPDRIVERCAPS
         LPCAPDRIVERCAPS typedef ptr CAPDRIVERCAPS
-        
         CAPSTATUS struct
           uiImageWidth UINT ?
           uiImageHeight UINT ?
@@ -1954,7 +1955,6 @@ ifndef _INC_VFW
         tagCapStatus typedef CAPSTATUS
         PCAPSTATUS typedef ptr CAPSTATUS
         LPCAPSTATUS typedef ptr CAPSTATUS
-        
         CAPTUREPARMS struct
           dwRequestMicroSecPerFrame DWORD ?
           fMakeUserHitOKToCapture BOOL ?
@@ -1984,7 +1984,6 @@ ifndef _INC_VFW
         tagCaptureParms typedef CAPTUREPARMS
         PCAPTUREPARMS typedef ptr CAPTUREPARMS
         LPCAPTUREPARMS typedef ptr CAPTUREPARMS
-        
         AVSTREAMMASTER_AUDIO equ 0
         AVSTREAMMASTER_NONE equ 1
         CAPINFOCHUNK struct
@@ -2124,4 +2123,3 @@ ifndef _INC_VFW
     endif
   endif
 endif
- 

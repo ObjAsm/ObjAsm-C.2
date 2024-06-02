@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\imm.h', last modified: 19/04/2018 10:46
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\imm.h
+;             Created on (UTC) 06/04/2024 06:15:55
+;             Last modified on (UTC) 21/02/2024 18:18:22
 
 include winapifamily.inc
 ifndef _IMM_
@@ -32,24 +33,20 @@ ifndef _IMM_
         ptCurrentPos POINT <>
         rcArea RECT <>
       COMPOSITIONFORM ends
-
       tagCOMPOSITIONFORM typedef COMPOSITIONFORM
       PCOMPOSITIONFORM typedef ptr COMPOSITIONFORM
       NPCOMPOSITIONFORM typedef ptr COMPOSITIONFORM
       LPCOMPOSITIONFORM typedef ptr COMPOSITIONFORM
-      
       CANDIDATEFORM struct
         dwIndex DWORD ?
         dwStyle DWORD ?
         ptCurrentPos POINT <>
         rcArea RECT <>
       CANDIDATEFORM ends
-
       tagCANDIDATEFORM typedef CANDIDATEFORM
       PCANDIDATEFORM typedef ptr CANDIDATEFORM
       NPCANDIDATEFORM typedef ptr CANDIDATEFORM
       LPCANDIDATEFORM typedef ptr CANDIDATEFORM
-      
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       CANDIDATELIST struct
@@ -61,34 +58,28 @@ ifndef _IMM_
         dwPageSize DWORD ?
         dwOffset DWORD 1 dup (?)
       CANDIDATELIST ends
-
       tagCANDIDATELIST typedef CANDIDATELIST
       PCANDIDATELIST typedef ptr CANDIDATELIST
       NPCANDIDATELIST typedef ptr CANDIDATELIST
       LPCANDIDATELIST typedef ptr CANDIDATELIST
-      
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
       REGISTERWORDA struct
         lpReading LPSTR ?
         lpWord LPSTR ?
       REGISTERWORDA ends
-
       tagREGISTERWORDA typedef REGISTERWORDA
       PREGISTERWORDA typedef ptr REGISTERWORDA
       NPREGISTERWORDA typedef ptr REGISTERWORDA
       LPREGISTERWORDA typedef ptr REGISTERWORDA
-      
       REGISTERWORDW struct
         lpReading LPWSTR ?
         lpWord LPWSTR ?
       REGISTERWORDW ends
-
       tagREGISTERWORDW typedef REGISTERWORDW
       PREGISTERWORDW typedef ptr REGISTERWORDW
       NPREGISTERWORDW typedef ptr REGISTERWORDW
       LPREGISTERWORDW typedef ptr REGISTERWORDW
-      
       ifdef UNICODE
         REGISTERWORD typedef REGISTERWORDW
         PREGISTERWORD typedef PREGISTERWORDW
@@ -113,12 +104,10 @@ ifndef _IMM_
           dwTargetStrLen DWORD ?
           dwTargetStrOffset DWORD ?
         RECONVERTSTRING ends
-
         tagRECONVERTSTRING typedef RECONVERTSTRING
         PRECONVERTSTRING typedef ptr RECONVERTSTRING
         NPRECONVERTSTRING typedef ptr RECONVERTSTRING
         LPRECONVERTSTRING typedef ptr RECONVERTSTRING
-        
       endif
     endif
     STYLE_DESCRIPTION_SIZE equ 32
@@ -127,22 +116,18 @@ ifndef _IMM_
         dwStyle DWORD ?
         szDescription CHAR STYLE_DESCRIPTION_SIZE dup (?)
       STYLEBUFA ends
-
       tagSTYLEBUFA typedef STYLEBUFA
       PSTYLEBUFA typedef ptr STYLEBUFA
       NPSTYLEBUFA typedef ptr STYLEBUFA
       LPSTYLEBUFA typedef ptr STYLEBUFA
-      
       STYLEBUFW struct
         dwStyle DWORD ?
         szDescription WCHAR STYLE_DESCRIPTION_SIZE dup (?)
       STYLEBUFW ends
-
       tagSTYLEBUFW typedef STYLEBUFW
       PSTYLEBUFW typedef ptr STYLEBUFW
       NPSTYLEBUFW typedef ptr STYLEBUFW
       LPSTYLEBUFW typedef ptr STYLEBUFW
-      
       ifdef UNICODE
         STYLEBUF typedef STYLEBUFW
         PSTYLEBUF typedef PSTYLEBUFW
@@ -169,12 +154,10 @@ ifndef _IMM_
           szString CHAR IMEMENUITEM_STRING_SIZE dup (?)
           hbmpItem HBITMAP ?
         IMEMENUITEMINFOA ends
-
         tagIMEMENUITEMINFOA typedef IMEMENUITEMINFOA
         PIMEMENUITEMINFOA typedef ptr IMEMENUITEMINFOA
         NPIMEMENUITEMINFOA typedef ptr IMEMENUITEMINFOA
         LPIMEMENUITEMINFOA typedef ptr IMEMENUITEMINFOA
-        
         IMEMENUITEMINFOW struct
           cbSize UINT ?
           fType UINT ?
@@ -186,12 +169,10 @@ ifndef _IMM_
           szString WCHAR IMEMENUITEM_STRING_SIZE dup (?)
           hbmpItem HBITMAP ?
         IMEMENUITEMINFOW ends
-
         tagIMEMENUITEMINFOW typedef IMEMENUITEMINFOW
         PIMEMENUITEMINFOW typedef ptr IMEMENUITEMINFOW
         NPIMEMENUITEMINFOW typedef ptr IMEMENUITEMINFOW
         LPIMEMENUITEMINFOW typedef ptr IMEMENUITEMINFOW
-        
         ifdef UNICODE
           IMEMENUITEMINFO typedef IMEMENUITEMINFOW
           PIMEMENUITEMINFO typedef PIMEMENUITEMINFOW
@@ -210,14 +191,13 @@ ifndef _IMM_
           cLineHeight UINT ?
           rcDocument RECT <>
         IMECHARPOSITION ends
-
         tagIMECHARPOSITION typedef IMECHARPOSITION
         PIMECHARPOSITION typedef ptr IMECHARPOSITION
         NPIMECHARPOSITION typedef ptr IMECHARPOSITION
         LPIMECHARPOSITION typedef ptr IMECHARPOSITION
-        
         TYPE_IMCENUMPROC typedef proto WIN_STD_CALL_CONV :HIMC, :LPARAM
         IMCENUMPROC typedef ptr TYPE_IMCENUMPROC
+
       endif
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -347,8 +327,10 @@ ifndef _IMM_
       ImmGetVirtualKey proto WIN_STD_CALL_CONV :HWND
       TYPE_REGISTERWORDENUMPROCA typedef proto WIN_STD_CALL_CONV :LPCSTR, :DWORD, :LPCSTR, :LPVOID
       REGISTERWORDENUMPROCA typedef ptr TYPE_REGISTERWORDENUMPROCA
+
       TYPE_REGISTERWORDENUMPROCW typedef proto WIN_STD_CALL_CONV :LPCWSTR, :DWORD, :LPCWSTR, :LPVOID
       REGISTERWORDENUMPROCW typedef ptr TYPE_REGISTERWORDENUMPROCW
+
       ifdef UNICODE
         REGISTERWORDENUMPROC equ <REGISTERWORDENUMPROCW>
       else
@@ -505,7 +487,7 @@ ifndef _IMM_
     GL_ID_REVERSECONVERSION equ 00000029h
     GL_ID_PRIVATE_FIRST equ 00008000h
     GL_ID_PRIVATE_LAST equ 0000FFFFh
-    IGP_GETIMEVERSION equ -4
+    IGP_GETIMEVERSION equ (- 4)
     IGP_PROPERTY equ 00000004h
     IGP_CONVERSION equ 00000008h
     IGP_SENTENCE equ 0000000ch
@@ -576,8 +558,8 @@ ifndef _IMM_
       IMR_QUERYCHARPOSITION equ 0006h
       IMR_DOCUMENTFEED equ 0007h
     endif
-    IMM_ERROR_NODATA equ -1
-    IMM_ERROR_GENERAL equ -2
+    IMM_ERROR_NODATA equ (- 1)
+    IMM_ERROR_GENERAL equ (- 2)
     IME_CONFIG_GENERAL equ 1
     IME_CONFIG_REGISTERWORD equ 2
     IME_CONFIG_SELECTDICTIONARY equ 3
@@ -632,4 +614,3 @@ ifndef _IMM_
     ;[...]
   endif
 endif
-

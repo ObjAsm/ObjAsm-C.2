@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\winscard.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winscard.h
+;             Created on (UTC) 06/04/2024 06:16:03
+;             Last modified on (UTC) 21/02/2024 18:13:14
 
 ifndef _WINSCARD_H_
   _WINSCARD_H_ equ <>
@@ -45,7 +46,7 @@ ifndef _WINSCARD_H_
     SCARDHANDLE typedef ULONG_PTR
     PSCARDHANDLE typedef ptr SCARDHANDLE
     LPSCARDHANDLE typedef ptr SCARDHANDLE
-    SCARD_AUTOALLOCATE equ -1
+    SCARD_AUTOALLOCATE equ (- 1)
     SCARD_SCOPE_USER equ 0
     SCARD_SCOPE_TERMINAL equ 1
     SCARD_SCOPE_SYSTEM equ 2
@@ -181,10 +182,8 @@ ifndef _WINSCARD_H_
       cbAtr DWORD ?
       rgbAtr BYTE 36 dup (?)
     SCARD_READERSTATEA ends
-
     PSCARD_READERSTATEA typedef ptr SCARD_READERSTATEA
     LPSCARD_READERSTATEA typedef ptr SCARD_READERSTATEA
-    
     SCARD_READERSTATEW struct
       szReader LPCWSTR ?
       pvUserData LPVOID ?
@@ -193,10 +192,8 @@ ifndef _WINSCARD_H_
       cbAtr DWORD ?
       rgbAtr BYTE 36 dup (?)
     SCARD_READERSTATEW ends
-
     PSCARD_READERSTATEW typedef ptr SCARD_READERSTATEW
     LPSCARD_READERSTATEW typedef ptr SCARD_READERSTATEW
-    
     ifdef UNICODE
       SCARD_READERSTATE typedef SCARD_READERSTATEW
       PSCARD_READERSTATE typedef PSCARD_READERSTATEW
@@ -237,11 +234,9 @@ ifndef _WINSCARD_H_
         rgbAtr BYTE 36 dup (?)
         rgbMask BYTE 36 dup (?)
       SCARD_ATRMASK ends
-
       _SCARD_ATRMASK typedef SCARD_ATRMASK
       PSCARD_ATRMASK typedef ptr SCARD_ATRMASK
       LPSCARD_ATRMASK typedef ptr SCARD_ATRMASK
-      
       SCardLocateCardsByATRA proto WIN_STD_CALL_CONV :SCARDCONTEXT, :LPSCARD_ATRMASK, :DWORD, :LPSCARD_READERSTATEA, :DWORD
       SCardLocateCardsByATRW proto WIN_STD_CALL_CONV :SCARDCONTEXT, :LPSCARD_ATRMASK, :DWORD, :LPSCARD_READERSTATEW, :DWORD
       ifdef UNICODE
@@ -301,8 +296,10 @@ ifndef _WINSCARD_H_
     SCERR_NOGUIDS equ 8000h
     TYPE_LPOCNCONNPROCA typedef proto WIN_STD_CALL_CONV :SCARDCONTEXT, :LPSTR, :LPSTR, :PVOID
     LPOCNCONNPROCA typedef ptr TYPE_LPOCNCONNPROCA
+
     TYPE_LPOCNCONNPROCW typedef proto WIN_STD_CALL_CONV :SCARDCONTEXT, :LPWSTR, :LPWSTR, :PVOID
     LPOCNCONNPROCW typedef ptr TYPE_LPOCNCONNPROCW
+
     ifdef UNICODE
       LPOCNCONNPROC equ <LPOCNCONNPROCW>
     else
@@ -310,8 +307,10 @@ ifndef _WINSCARD_H_
     endif
     TYPE_LPOCNCHKPROC typedef proto WIN_STD_CALL_CONV :SCARDCONTEXT, :SCARDHANDLE, :PVOID
     LPOCNCHKPROC typedef ptr TYPE_LPOCNCHKPROC
+
     TYPE_LPOCNDSCPROC typedef proto WIN_STD_CALL_CONV :SCARDCONTEXT, :SCARDHANDLE, :PVOID
     LPOCNDSCPROC typedef ptr TYPE_LPOCNDSCPROC
+
     OPENCARD_SEARCH_CRITERIAA struct
       dwStructSize DWORD ?
       lpstrGroupNames LPSTR ?
@@ -327,10 +326,8 @@ ifndef _WINSCARD_H_
       dwShareMode DWORD ?
       dwPreferredProtocols DWORD ?
     OPENCARD_SEARCH_CRITERIAA ends
-
     POPENCARD_SEARCH_CRITERIAA typedef ptr OPENCARD_SEARCH_CRITERIAA
     LPOPENCARD_SEARCH_CRITERIAA typedef ptr OPENCARD_SEARCH_CRITERIAA
-    
     OPENCARD_SEARCH_CRITERIAW struct
       dwStructSize DWORD ?
       lpstrGroupNames LPWSTR ?
@@ -346,10 +343,8 @@ ifndef _WINSCARD_H_
       dwShareMode DWORD ?
       dwPreferredProtocols DWORD ?
     OPENCARD_SEARCH_CRITERIAW ends
-
     POPENCARD_SEARCH_CRITERIAW typedef ptr OPENCARD_SEARCH_CRITERIAW
     LPOPENCARD_SEARCH_CRITERIAW typedef ptr OPENCARD_SEARCH_CRITERIAW
-    
     ifdef UNICODE
       OPENCARD_SEARCH_CRITERIA typedef OPENCARD_SEARCH_CRITERIAW
       POPENCARD_SEARCH_CRITERIA typedef POPENCARD_SEARCH_CRITERIAW
@@ -379,10 +374,8 @@ ifndef _WINSCARD_H_
       dwActiveProtocol DWORD ?
       hCardHandle SCARDHANDLE ?
     OPENCARDNAME_EXA ends
-
     POPENCARDNAME_EXA typedef ptr OPENCARDNAME_EXA
     LPOPENCARDNAME_EXA typedef ptr OPENCARDNAME_EXA
-    
     OPENCARDNAME_EXW struct
       dwStructSize DWORD ?
       hSCardContext SCARDCONTEXT ?
@@ -403,10 +396,8 @@ ifndef _WINSCARD_H_
       dwActiveProtocol DWORD ?
       hCardHandle SCARDHANDLE ?
     OPENCARDNAME_EXW ends
-
     POPENCARDNAME_EXW typedef ptr OPENCARDNAME_EXW
     LPOPENCARDNAME_EXW typedef ptr OPENCARDNAME_EXW
-    
     ifdef UNICODE
       OPENCARDNAME_EX typedef OPENCARDNAME_EXW
       POPENCARDNAME_EX typedef POPENCARDNAME_EXW
@@ -427,7 +418,7 @@ ifndef _WINSCARD_H_
     RSR_MATCH_TYPE_READER_AND_CONTAINER equ 1
     RSR_MATCH_TYPE_SERIAL_NUMBER equ 2
     RSR_MATCH_TYPE_ALL_CARDS equ 3
-    
+
     READER_SEL_REQUEST struct
       dwShareMode DWORD ?
       dwPreferredProtocols DWORD ?
@@ -448,18 +439,14 @@ ifndef _WINSCARD_H_
         ends
       ends
     READER_SEL_REQUEST ends
-
     PREADER_SEL_REQUEST typedef ptr READER_SEL_REQUEST
-    
     READER_SEL_RESPONSE struct
       cbReaderNameOffset DWORD ?
       cchReaderNameLength DWORD ?
       cbCardNameOffset DWORD ?
       cchCardNameLength DWORD ?
     READER_SEL_RESPONSE ends
-
     PREADER_SEL_RESPONSE typedef ptr READER_SEL_RESPONSE
-    
     SCardUIDlgSelectCardA proto WIN_STD_CALL_CONV :LPOPENCARDNAMEA_EX
     SCardUIDlgSelectCardW proto WIN_STD_CALL_CONV :LPOPENCARDNAMEW_EX
     ifdef UNICODE
@@ -492,10 +479,8 @@ ifndef _WINSCARD_H_
       lpfnDisconnect LPOCNDSCPROC ?
       hCardHandle SCARDHANDLE ?
     OPENCARDNAMEA ends
-
     POPENCARDNAMEA typedef ptr OPENCARDNAMEA
     LPOPENCARDNAMEA typedef ptr OPENCARDNAMEA
-    
     OPENCARDNAMEW struct
       dwStructSize DWORD ?
       hwndOwner HWND ?
@@ -521,10 +506,8 @@ ifndef _WINSCARD_H_
       lpfnDisconnect LPOCNDSCPROC ?
       hCardHandle SCARDHANDLE ?
     OPENCARDNAMEW ends
-
     POPENCARDNAMEW typedef ptr OPENCARDNAMEW
     LPOPENCARDNAMEW typedef ptr OPENCARDNAMEW
-    
     ifdef UNICODE
       OPENCARDNAME typedef OPENCARDNAMEW
       POPENCARDNAME typedef POPENCARDNAMEW
@@ -604,4 +587,3 @@ ifndef _WINSCARD_H_
     ;[...]
   endif
 endif
-

@@ -1,13 +1,14 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\minwindef.h', last modified: 19/04/2018 10:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\minwindef.h
+;             Created on (UTC) 22/05/2024 17:57:07
+;             Last modified on (UTC) 21/02/2024 18:13:36
 
 ifndef _MINWINDEF_
   _MINWINDEF_ equ <>
   include specstrings.inc
   include winapifamily.inc
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     ifndef NO_STRICT
       ifndef STRICT
         STRICT equ 1
@@ -41,26 +42,26 @@ ifndef _MINWINDEF_
       endif
     endif
     ifndef FALSE
-      ;FALSE equ 0
+      FALSE equ 0
     endif
     ifndef TRUE
-      ;TRUE equ 1
+      TRUE equ 1
     endif
     ifndef IN_
-      ;IN equ <>
+      IN_ equ <>
     endif
     ifndef OUT_
-      ;OUT equ <>
+      OUT_ equ <>
     endif
     ifndef OPTIONAL
       OPTIONAL equ <>
     endif
-    ;far equ <>
-    ;near equ <>
+    far_ equ <>
+    near_ equ <>
     if ( not Defined(_MAC)) and ((_MSC_VER ge 800) or Defined(_STDCALL_SUPPORTED))
-      ;pascal equ <__stdcall>
+      pascal_ equ <__stdcall>
     else
-      ;pascal equ <>
+      pascal_ equ <>
     endif
     if Defined(DOSWIN32) or Defined(_MAC)
       cdecl equ <_cdecl>
@@ -81,24 +82,24 @@ ifndef _MINWINDEF_
       WINAPIV equ <__cdecl>
       APIENTRY equ <WINAPI>
       APIPRIVATE equ <__stdcall>
-      ;PASCAL equ <__stdcall>
+      PASCAL_ equ <__stdcall>
     else
       CALLBACK equ <>
       WINAPI equ <>
       WINAPIV equ <>
       APIENTRY equ <WINAPI>
       APIPRIVATE equ <>
-      ;PASCAL equ <pascal>
+      PASCAL_ equ <pascal>
     endif
     ifndef _M_CEE_PURE
       ifndef WINAPI_INLINE
         WINAPI_INLINE equ <WINAPI>
       endif
     endif
-    ;FAR equ <far>
-    ;NEAR equ <near>
+    FAR_ equ <far>
+    NEAR_ equ <near>
     ifndef CONST
-      CONST_ equ <const_>
+      CONST equ <const>
     endif
     BOOL typedef SDWORD
     FLOAT typedef REAL4
@@ -168,17 +169,23 @@ ifndef _MINWINDEF_
         ifdef _WIN64
           TYPE_FARPROC typedef proto WIN_STD_CALL_CONV
           FARPROC typedef ptr TYPE_FARPROC
+
           TYPE_NEARPROC typedef proto WIN_STD_CALL_CONV
           NEARPROC typedef ptr TYPE_NEARPROC
+
           TYPE_PROC typedef proto WIN_STD_CALL_CONV
           PROC_ typedef ptr TYPE_PROC
+
         else
           TYPE_FARPROC typedef proto WIN_STD_CALL_CONV
           FARPROC typedef ptr TYPE_FARPROC
+
           TYPE_NEARPROC typedef proto WIN_STD_CALL_CONV
           NEARPROC typedef ptr TYPE_NEARPROC
+
           TYPE_PROC typedef proto WIN_STD_CALL_CONV
           PROC_ typedef ptr TYPE_PROC
+
         endif
       else
         ;[...]
@@ -214,11 +221,9 @@ ifndef _MINWINDEF_
     _FILETIME typedef FILETIME
     PFILETIME typedef ptr FILETIME
     LPFILETIME typedef ptr FILETIME
-    
     _FILETIME_ equ <>
     ifdef __cplusplus
       ;[...]
     endif
   endif
 endif
-

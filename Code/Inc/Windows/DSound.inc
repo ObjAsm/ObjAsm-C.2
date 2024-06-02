@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 17/11/2018 21:38
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\DSound.h', last modified: 19/04/2018 09:43
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\dsound.h
+;             Created on (UTC) 06/04/2024 06:15:55
+;             Last modified on (UTC) 21/02/2024 18:13:16
 
 include winapifamily.inc
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -40,7 +41,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
           y REAL4 ?
           z REAL4 ?
         D3DVECTOR ends
-
         _D3DVECTOR typedef D3DVECTOR
         D3DVECTOR_DEFINED equ <>
       endif
@@ -88,82 +88,44 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       IDirectSoundFullDuplex8 equ <IDirectSoundFullDuplex>
     endif
     LPDIRECTSOUND typedef ptr IDirectSound
-    
     LPDIRECTSOUNDBUFFER typedef ptr IDirectSoundBuffer
-    
     LPDIRECTSOUND3DLISTENER typedef ptr IDirectSound3DListener
-    
     LPDIRECTSOUND3DBUFFER typedef ptr IDirectSound3DBuffer
-    
     LPDIRECTSOUNDCAPTURE typedef ptr IDirectSoundCapture
-    
     LPDIRECTSOUNDCAPTUREBUFFER typedef ptr IDirectSoundCaptureBuffer
-    
     LPDIRECTSOUNDNOTIFY typedef ptr IDirectSoundNotify
-    
     if DIRECTSOUND_VERSION ge 0800h
       LPDIRECTSOUNDFXGARGLE typedef ptr IDirectSoundFXGargle
-      
       LPDIRECTSOUNDFXCHORUS typedef ptr IDirectSoundFXChorus
-      
       LPDIRECTSOUNDFXFLANGER typedef ptr IDirectSoundFXFlanger
-      
       LPDIRECTSOUNDFXECHO typedef ptr IDirectSoundFXEcho
-      
       LPDIRECTSOUNDFXDISTORTION typedef ptr IDirectSoundFXDistortion
-      
       LPDIRECTSOUNDFXCOMPRESSOR typedef ptr IDirectSoundFXCompressor
-      
       LPDIRECTSOUNDFXPARAMEQ typedef ptr IDirectSoundFXParamEq
-      
       LPDIRECTSOUNDFXWAVESREVERB typedef ptr IDirectSoundFXWavesReverb
-      
       LPDIRECTSOUNDFXI3DL2REVERB typedef ptr IDirectSoundFXI3DL2Reverb
-      
       LPDIRECTSOUNDCAPTUREFXAEC typedef ptr IDirectSoundCaptureFXAec
-      
       LPDIRECTSOUNDCAPTUREFXNOISESUPPRESS typedef ptr IDirectSoundCaptureFXNoiseSuppress
-      
       LPDIRECTSOUNDFULLDUPLEX typedef ptr IDirectSoundFullDuplex
-      
       LPDIRECTSOUND8 typedef ptr IDirectSound8
-      
       LPDIRECTSOUNDBUFFER8 typedef ptr IDirectSoundBuffer8
-      
       LPDIRECTSOUND3DLISTENER8 typedef ptr IDirectSound3DListener8
-      
       LPDIRECTSOUND3DBUFFER8 typedef ptr IDirectSound3DBuffer8
-      
       LPDIRECTSOUNDCAPTURE8 typedef ptr IDirectSoundCapture8
-      
       LPDIRECTSOUNDCAPTUREBUFFER8 typedef ptr IDirectSoundCaptureBuffer8
-      
       LPDIRECTSOUNDNOTIFY8 typedef ptr IDirectSoundNotify8
-      
       LPDIRECTSOUNDFXGARGLE8 typedef ptr IDirectSoundFXGargle8
-      
       LPDIRECTSOUNDFXCHORUS8 typedef ptr IDirectSoundFXChorus8
-      
       LPDIRECTSOUNDFXFLANGER8 typedef ptr IDirectSoundFXFlanger8
-      
       LPDIRECTSOUNDFXECHO8 typedef ptr IDirectSoundFXEcho8
-      
       LPDIRECTSOUNDFXDISTORTION8 typedef ptr IDirectSoundFXDistortion8
-      
       LPDIRECTSOUNDFXCOMPRESSOR8 typedef ptr IDirectSoundFXCompressor8
-      
       LPDIRECTSOUNDFXPARAMEQ8 typedef ptr IDirectSoundFXParamEq8
-      
       LPDIRECTSOUNDFXWAVESREVERB8 typedef ptr IDirectSoundFXWavesReverb8
-      
       LPDIRECTSOUNDFXI3DL2REVERB8 typedef ptr IDirectSoundFXI3DL2Reverb8
-      
       LPDIRECTSOUNDCAPTUREFXAEC8 typedef ptr IDirectSoundCaptureFXAec8
-      
       LPDIRECTSOUNDCAPTUREFXNOISESUPPRESS8 typedef ptr IDirectSoundCaptureFXNoiseSuppress8
-      
       LPDIRECTSOUNDFULLDUPLEX8 typedef ptr IDirectSoundFullDuplex8
-      
     endif
     if DIRECTSOUND_VERSION ge 0800h
       IID_IDirectSoundCapture8 equ <IID_IDirectSoundCapture>
@@ -230,10 +192,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       dwReserved1 DWORD ?
       dwReserved2 DWORD ?
     DSCAPS ends
-
     _DSCAPS typedef DSCAPS
     LPDSCAPS typedef ptr DSCAPS
-    
     LPCDSCAPS typedef ptr DSCAPS
     DSBCAPS struct
       dwSize DWORD ?
@@ -242,10 +202,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       dwUnlockTransferRate DWORD ?
       dwPlayCpuOverhead DWORD ?
     DSBCAPS ends
-
     _DSBCAPS typedef DSBCAPS
     LPDSBCAPS typedef ptr DSBCAPS
-    
     LPCDSBCAPS typedef ptr DSBCAPS
     if DIRECTSOUND_VERSION ge 0800h
       DSEFFECTDESC struct
@@ -255,10 +213,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         dwReserved1 DWORD_PTR ?
         dwReserved2 DWORD_PTR ?
       DSEFFECTDESC ends
-
       _DSEFFECTDESC typedef DSEFFECTDESC
       LPDSEFFECTDESC typedef ptr DSEFFECTDESC
-      
       LPCDSEFFECTDESC typedef ptr DSEFFECTDESC
       DSFX_LOCHARDWARE equ 00000001h
       DSFX_LOCSOFTWARE equ 00000002h
@@ -269,7 +225,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       DSFXR_FAILED equ 4
       DSFXR_UNKNOWN equ 5
       DSFXR_SENDLOOP equ 6
-      
+
       DSCEFFECTDESC struct
         dwSize DWORD ?
         dwFlags DWORD ?
@@ -278,10 +234,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         dwReserved1 DWORD ?
         dwReserved2 DWORD ?
       DSCEFFECTDESC ends
-
       _DSCEFFECTDESC typedef DSCEFFECTDESC
       LPDSCEFFECTDESC typedef ptr DSCEFFECTDESC
-      
       LPCDSCEFFECTDESC typedef ptr DSCEFFECTDESC
       DSCFX_LOCHARDWARE equ 00000001h
       DSCFX_LOCSOFTWARE equ 00000002h
@@ -298,10 +252,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         guid3DAlgorithm GUID <>
       endif
     DSBUFFERDESC ends
-
     _DSBUFFERDESC typedef DSBUFFERDESC
     LPDSBUFFERDESC typedef ptr DSBUFFERDESC
-    
     LPCDSBUFFERDESC typedef ptr DSBUFFERDESC
     DSBUFFERDESC1 struct
       dwSize DWORD ?
@@ -310,10 +262,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       dwReserved DWORD ?
       lpwfxFormat LPWAVEFORMATEX ?
     DSBUFFERDESC1 ends
-
     _DSBUFFERDESC1 typedef DSBUFFERDESC1
     LPDSBUFFERDESC1 typedef ptr DSBUFFERDESC1
-    
     LPCDSBUFFERDESC1 typedef ptr DSBUFFERDESC1
     DS3DBUFFER struct
       dwSize DWORD ?
@@ -327,10 +277,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       flMaxDistance D3DVALUE ?
       dwMode DWORD ?
     DS3DBUFFER ends
-
     _DS3DBUFFER typedef DS3DBUFFER
     LPDS3DBUFFER typedef ptr DS3DBUFFER
-    
     LPCDS3DBUFFER typedef ptr DS3DBUFFER
     DS3DLISTENER struct
       dwSize DWORD ?
@@ -342,10 +290,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       flRolloffFactor D3DVALUE ?
       flDopplerFactor D3DVALUE ?
     DS3DLISTENER ends
-
     _DS3DLISTENER typedef DS3DLISTENER
     LPDS3DLISTENER typedef ptr DS3DLISTENER
-    
     LPCDS3DLISTENER typedef ptr DS3DLISTENER
     DSCCAPS struct
       dwSize DWORD ?
@@ -353,10 +299,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       dwFormats DWORD ?
       dwChannels DWORD ?
     DSCCAPS ends
-
     _DSCCAPS typedef DSCCAPS
     LPDSCCAPS typedef ptr DSCCAPS
-    
     LPCDSCCAPS typedef ptr DSCCAPS
     DSCBUFFERDESC1 struct
       dwSize DWORD ?
@@ -365,10 +309,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       dwReserved DWORD ?
       lpwfxFormat LPWAVEFORMATEX ?
     DSCBUFFERDESC1 ends
-
     _DSCBUFFERDESC1 typedef DSCBUFFERDESC1
     LPDSCBUFFERDESC1 typedef ptr DSCBUFFERDESC1
-    
     DSCBUFFERDESC struct
       dwSize DWORD ?
       dwFlags DWORD ?
@@ -380,10 +322,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         lpDSCFXDesc LPDSCEFFECTDESC ?
       endif
     DSCBUFFERDESC ends
-
     _DSCBUFFERDESC typedef DSCBUFFERDESC
     LPDSCBUFFERDESC typedef ptr DSCBUFFERDESC
-    
     LPCDSCBUFFERDESC typedef ptr DSCBUFFERDESC
     DSCBCAPS struct
       dwSize DWORD ?
@@ -391,24 +331,22 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       dwBufferBytes DWORD ?
       dwReserved DWORD ?
     DSCBCAPS ends
-
     _DSCBCAPS typedef DSCBCAPS
     LPDSCBCAPS typedef ptr DSCBCAPS
-    
     LPCDSCBCAPS typedef ptr DSCBCAPS
     DSBPOSITIONNOTIFY struct
       dwOffset DWORD ?
       hEventNotify HANDLE ?
     DSBPOSITIONNOTIFY ends
-
     _DSBPOSITIONNOTIFY typedef DSBPOSITIONNOTIFY
     LPDSBPOSITIONNOTIFY typedef ptr DSBPOSITIONNOTIFY
-    
     LPCDSBPOSITIONNOTIFY typedef ptr DSBPOSITIONNOTIFY
     TYPE_LPDSENUMCALLBACKA typedef proto WIN_STD_CALL_CONV :LPGUID, :LPCSTR, :LPCSTR, :LPVOID
     LPDSENUMCALLBACKA typedef ptr TYPE_LPDSENUMCALLBACKA
+
     TYPE_LPDSENUMCALLBACKW typedef proto WIN_STD_CALL_CONV :LPGUID, :LPCWSTR, :LPCWSTR, :LPVOID
     LPDSENUMCALLBACKW typedef ptr TYPE_LPDSENUMCALLBACKW
+
     DirectSoundCreate proto WIN_STD_CALL_CONV :LPCGUID, :ptr LPDIRECTSOUND, :LPUNKNOWN
     DirectSoundEnumerateA proto WIN_STD_CALL_CONV :LPDSENUMCALLBACKA, :LPVOID
     DirectSoundEnumerateW proto WIN_STD_CALL_CONV :LPDSENUMCALLBACKW, :LPVOID
@@ -456,15 +394,17 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       LPREFERENCE_TIME typedef ptr REFERENCE_TIME
       DEFINE_GUID IID_IReferenceClock, 56a86897h, 0ad4h, 11ceh, 0b0h, 3ah, 00h, 20h, 0afh, 0bh, 0a7h, 70h
       INTERFACE equ <IReferenceClock>
-      DECLARE_INTERFACE_ IReferenceClock, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD GetTime, :ptr THIS_
-        STD_METHOD AdviseTime, :THIS_, :REFERENCE_TIME, :HANDLE, :LPDWORD
-        STD_METHOD AdvisePeriodic, :THIS_, :REFERENCE_TIME, :HANDLE, :LPDWORD
-        STD_METHOD Unadvise, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IReferenceClock, IUnknown)
+        ??Interface equ <DSBPOSITIONNOTIFY>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD GetTime, :ptr 
+        STDMETHOD AdviseTime, :, :, :, :
+        STDMETHOD AdvisePeriodic, :, :, :, :
+        STDMETHOD Unadvise, :
+      DECLARE_INTERFACE__END
+
     endif
     ifndef IReferenceClock_QueryInterface
       IReferenceClock_QueryInterface macro p, a, b
@@ -495,19 +435,21 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     endif
     DEFINE_GUID IID_IDirectSound, 279AFA83h, 4981h, 11CEh, 0A5h, 21h, 00h, 20h, 0AFh, 0Bh, 0E5h, 60h
     INTERFACE equ <IDirectSound>
-    DECLARE_INTERFACE_ IDirectSound, IUnknown
-      STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-      STD_METHOD AddRef, :THIS_
-      STD_METHOD Release, :THIS_
-      STD_METHOD CreateSoundBuffer, :THIS_, :ptr LPDIRECTSOUNDBUFFER, :LPUNKNOWN
-      STD_METHOD GetCaps, :THIS_
-      STD_METHOD DuplicateSoundBuffer, :THIS_, :ptr LPDIRECTSOUNDBUFFER
-      STD_METHOD SetCooperativeLevel, :THIS_, :DWORD
-      STD_METHOD Compact_, :THIS_
-      STD_METHOD GetSpeakerConfig, :THIS_
-      STD_METHOD SetSpeakerConfig, :THIS_
-      STD_METHOD Initialize, :THIS_
-    END_DECLARE_INTERFACE_
+    DECLARE_INTERFACE_(IDirectSound, IUnknown)
+      ??Interface equ <DSBPOSITIONNOTIFY>
+      STDMETHOD QueryInterface, :, :ptr 
+      STDMETHOD_ ULONG, AddRef
+      STDMETHOD_ ULONG, Release
+      STDMETHOD CreateSoundBuffer, :, :ptr , :
+      STDMETHOD GetCaps, :
+      STDMETHOD DuplicateSoundBuffer, :, :ptr 
+      STDMETHOD SetCooperativeLevel, :, :
+      STDMETHOD Compact_
+      STDMETHOD GetSpeakerConfig, :
+      STDMETHOD SetSpeakerConfig, :
+      STDMETHOD Initialize, :
+    DECLARE_INTERFACE__END
+
     IDirectSound_QueryInterface macro p, a, b
       exitm <IUnknown_QueryInterface(p, a, b)>
     endm
@@ -548,20 +490,22 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if DIRECTSOUND_VERSION ge 0800h
       DEFINE_GUID IID_IDirectSound8, 0C50A7E93h, 0F395h, 4834h, 9Eh, 0F6h, 7Fh, 0A9h, 9Dh, 0E5h, 09h, 66h
       INTERFACE equ <IDirectSound8>
-      DECLARE_INTERFACE_ IDirectSound8, IDirectSound
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD CreateSoundBuffer, :THIS_, :ptr LPDIRECTSOUNDBUFFER, :LPUNKNOWN
-        STD_METHOD GetCaps, :THIS_
-        STD_METHOD DuplicateSoundBuffer, :THIS_, :ptr LPDIRECTSOUNDBUFFER
-        STD_METHOD SetCooperativeLevel, :THIS_, :DWORD
-        STD_METHOD Compact_, :THIS_
-        STD_METHOD GetSpeakerConfig, :THIS_
-        STD_METHOD SetSpeakerConfig, :THIS_
-        STD_METHOD Initialize, :THIS_
-        STD_METHOD VerifyCertification, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectSound8, IDirectSound)
+        ??Interface equ <DSBPOSITIONNOTIFY>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD CreateSoundBuffer, :, :ptr , :
+        STDMETHOD GetCaps, :
+        STDMETHOD DuplicateSoundBuffer, :, :ptr 
+        STDMETHOD SetCooperativeLevel, :, :
+        STDMETHOD Compact_
+        STDMETHOD GetSpeakerConfig, :
+        STDMETHOD SetSpeakerConfig, :
+        STDMETHOD Initialize, :
+        STDMETHOD VerifyCertification, :
+      DECLARE_INTERFACE__END
+
       IDirectSound8_QueryInterface macro p, a, b
         exitm <IDirectSound_QueryInterface(p, a, b)>
       endm
@@ -605,29 +549,31 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     endif
     DEFINE_GUID IID_IDirectSoundBuffer, 279AFA85h, 4981h, 11CEh, 0A5h, 21h, 00h, 20h, 0AFh, 0Bh, 0E5h, 60h
     INTERFACE equ <IDirectSoundBuffer>
-    DECLARE_INTERFACE_ IDirectSoundBuffer, IUnknown
-      STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-      STD_METHOD AddRef, :THIS_
-      STD_METHOD Release, :THIS_
-      STD_METHOD GetCaps, :THIS_
-      STD_METHOD GetCurrentPosition, :THIS_, :LPDWORD
-      STD_METHOD GetFormat, :THIS_, :DWORD, :LPDWORD
-      STD_METHOD GetVolume, :THIS_
-      STD_METHOD GetPan, :THIS_
-      STD_METHOD GetFrequency, :THIS_
-      STD_METHOD GetStatus, :THIS_
-      STD_METHOD Initialize, :THIS_, :LPCDSBUFFERDESC
-      STD_METHOD Lock_, :THIS_, :DWORD, :ptr LPVOID, :LPDWORD, :ptr LPVOID, :LPDWORD, :DWORD
-      STD_METHOD Play, :THIS_, :DWORD, :DWORD
-      STD_METHOD SetCurrentPosition, :THIS_
-      STD_METHOD SetFormat, :THIS_
-      STD_METHOD SetVolume, :THIS_
-      STD_METHOD SetPan, :THIS_
-      STD_METHOD SetFrequency, :THIS_
-      STD_METHOD Stop, :THIS_
-      STD_METHOD Unlock, :THIS_, :DWORD, :LPVOID, :DWORD
-      STD_METHOD Restore, :THIS_
-    END_DECLARE_INTERFACE_
+    DECLARE_INTERFACE_(IDirectSoundBuffer, IUnknown)
+      ??Interface equ <DSBPOSITIONNOTIFY>
+      STDMETHOD QueryInterface, :, :ptr 
+      STDMETHOD_ ULONG, AddRef
+      STDMETHOD_ ULONG, Release
+      STDMETHOD GetCaps, :
+      STDMETHOD GetCurrentPosition, :, :
+      STDMETHOD GetFormat, :, :, :
+      STDMETHOD GetVolume, :
+      STDMETHOD GetPan, :
+      STDMETHOD GetFrequency, :
+      STDMETHOD GetStatus, :
+      STDMETHOD Initialize, :, :
+      STDMETHOD Lock_, :, :, :ptr , :, :ptr , :, :
+      STDMETHOD Play, :, :, :
+      STDMETHOD SetCurrentPosition, :
+      STDMETHOD SetFormat, :
+      STDMETHOD SetVolume, :
+      STDMETHOD SetPan, :
+      STDMETHOD SetFrequency, :
+      STDMETHOD Stop
+      STDMETHOD Unlock, :, :, :, :
+      STDMETHOD Restore
+    DECLARE_INTERFACE__END
+
     IDirectSoundBuffer_QueryInterface macro p, a, b
       exitm <IUnknown_QueryInterface(p, a, b)>
     endm
@@ -698,32 +644,34 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if DIRECTSOUND_VERSION ge 0800h
       DEFINE_GUID IID_IDirectSoundBuffer8, 6825a449h, 7524h, 4d82h, 92h, 0fh, 50h, 0e3h, 6ah, 0b3h, 0abh, 1eh
       INTERFACE equ <IDirectSoundBuffer8>
-      DECLARE_INTERFACE_ IDirectSoundBuffer8, IDirectSoundBuffer
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD GetCaps, :THIS_
-        STD_METHOD GetCurrentPosition, :THIS_, :LPDWORD
-        STD_METHOD GetFormat, :THIS_, :DWORD, :LPDWORD
-        STD_METHOD GetVolume, :THIS_
-        STD_METHOD GetPan, :THIS_
-        STD_METHOD GetFrequency, :THIS_
-        STD_METHOD GetStatus, :THIS_
-        STD_METHOD Initialize, :THIS_, :LPCDSBUFFERDESC
-        STD_METHOD Lock_, :THIS_, :DWORD, :ptr LPVOID, :LPDWORD, :ptr LPVOID, :LPDWORD, :DWORD
-        STD_METHOD Play, :THIS_, :DWORD, :DWORD
-        STD_METHOD SetCurrentPosition, :THIS_
-        STD_METHOD SetFormat, :THIS_
-        STD_METHOD SetVolume, :THIS_
-        STD_METHOD SetPan, :THIS_
-        STD_METHOD SetFrequency, :THIS_
-        STD_METHOD Stop, :THIS_
-        STD_METHOD Unlock, :THIS_, :DWORD, :LPVOID, :DWORD
-        STD_METHOD Restore, :THIS_
-        STD_METHOD SetFX, :THIS_, :LPDSEFFECTDESC, :LPDWORD
-        STD_METHOD AcquireResources, :THIS_, :DWORD, :LPDWORD
-        STD_METHOD GetObjectInPath, :THIS_, :DWORD, :REFGUID, :ptr LPVOID
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectSoundBuffer8, IDirectSoundBuffer)
+        ??Interface equ <DSBPOSITIONNOTIFY>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD GetCaps, :
+        STDMETHOD GetCurrentPosition, :, :
+        STDMETHOD GetFormat, :, :, :
+        STDMETHOD GetVolume, :
+        STDMETHOD GetPan, :
+        STDMETHOD GetFrequency, :
+        STDMETHOD GetStatus, :
+        STDMETHOD Initialize, :, :
+        STDMETHOD Lock_, :, :, :ptr , :, :ptr , :, :
+        STDMETHOD Play, :, :, :
+        STDMETHOD SetCurrentPosition, :
+        STDMETHOD SetFormat, :
+        STDMETHOD SetVolume, :
+        STDMETHOD SetPan, :
+        STDMETHOD SetFrequency, :
+        STDMETHOD Stop
+        STDMETHOD Unlock, :, :, :, :
+        STDMETHOD Restore
+        STDMETHOD SetFX, :, :, :
+        STDMETHOD AcquireResources, :, :, :
+        STDMETHOD GetObjectInPath, :, :, :, :ptr 
+      DECLARE_INTERFACE__END
+
       DEFINE_GUID GUID_All_Objects, 0aa114de5h, 0c262h, 4169h, 0a1h, 0c8h, 23h, 0d6h, 98h, 0cch, 73h, 0b5h
       IDirectSoundBuffer8_QueryInterface macro p, a, b
         exitm <IUnknown_QueryInterface(p, a, b)>
@@ -804,26 +752,28 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     endif
     DEFINE_GUID IID_IDirectSound3DListener, 279AFA84h, 4981h, 11CEh, 0A5h, 21h, 00h, 20h, 0AFh, 0Bh, 0E5h, 60h
     INTERFACE equ <IDirectSound3DListener>
-    DECLARE_INTERFACE_ IDirectSound3DListener, IUnknown
-      STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-      STD_METHOD AddRef, :THIS_
-      STD_METHOD Release, :THIS_
-      STD_METHOD GetAllParameters, :THIS_
-      STD_METHOD GetDistanceFactor, :ptr THIS_
-      STD_METHOD GetDopplerFactor, :ptr THIS_
-      STD_METHOD GetOrientation, :ptr THIS_, :ptr D3DVECTOR
-      STD_METHOD GetPosition, :ptr THIS_
-      STD_METHOD GetRolloffFactor, :ptr THIS_
-      STD_METHOD GetVelocity, :ptr THIS_
-      STD_METHOD SetAllParameters, :THIS_, :DWORD
-      STD_METHOD SetDistanceFactor, :THIS_, :DWORD
-      STD_METHOD SetDopplerFactor, :THIS_, :DWORD
-      STD_METHOD SetOrientation, :THIS_, :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :D3DVALUE, :DWORD
-      STD_METHOD SetPosition, :THIS_, :D3DVALUE, :D3DVALUE, :DWORD
-      STD_METHOD SetRolloffFactor, :THIS_, :DWORD
-      STD_METHOD SetVelocity, :THIS_, :D3DVALUE, :D3DVALUE, :DWORD
-      STD_METHOD CommitDeferredSettings, :THIS_
-    END_DECLARE_INTERFACE_
+    DECLARE_INTERFACE_(IDirectSound3DListener, IUnknown)
+      ??Interface equ <DSBPOSITIONNOTIFY>
+      STDMETHOD QueryInterface, :, :ptr 
+      STDMETHOD_ ULONG, AddRef
+      STDMETHOD_ ULONG, Release
+      STDMETHOD GetAllParameters, :
+      STDMETHOD GetDistanceFactor, :ptr 
+      STDMETHOD GetDopplerFactor, :ptr 
+      STDMETHOD GetOrientation, :ptr , :ptr 
+      STDMETHOD GetPosition, :ptr 
+      STDMETHOD GetRolloffFactor, :ptr 
+      STDMETHOD GetVelocity, :ptr 
+      STDMETHOD SetAllParameters, :, :
+      STDMETHOD SetDistanceFactor, :, :
+      STDMETHOD SetDopplerFactor, :, :
+      STDMETHOD SetOrientation, :, :, :, :, :, :, :
+      STDMETHOD SetPosition, :, :, :, :
+      STDMETHOD SetRolloffFactor, :, :
+      STDMETHOD SetVelocity, :, :, :, :
+      STDMETHOD CommitDeferredSettings
+    DECLARE_INTERFACE__END
+
     IDirectSound3DListener_QueryInterface macro p, a, b
       exitm <IUnknown_QueryInterface(p, a, b)>
     endm
@@ -884,29 +834,31 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     endif
     DEFINE_GUID IID_IDirectSound3DBuffer, 279AFA86h, 4981h, 11CEh, 0A5h, 21h, 00h, 20h, 0AFh, 0Bh, 0E5h, 60h
     INTERFACE equ <IDirectSound3DBuffer>
-    DECLARE_INTERFACE_ IDirectSound3DBuffer, IUnknown
-      STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-      STD_METHOD AddRef, :THIS_
-      STD_METHOD Release, :THIS_
-      STD_METHOD GetAllParameters, :THIS_
-      STD_METHOD GetConeAngles, :THIS_, :LPDWORD
-      STD_METHOD GetConeOrientation, :ptr THIS_
-      STD_METHOD GetConeOutsideVolume, :THIS_
-      STD_METHOD GetMaxDistance, :ptr THIS_
-      STD_METHOD GetMinDistance, :ptr THIS_
-      STD_METHOD GetMode, :THIS_
-      STD_METHOD GetPosition, :ptr THIS_
-      STD_METHOD GetVelocity, :ptr THIS_
-      STD_METHOD SetAllParameters, :THIS_, :DWORD
-      STD_METHOD SetConeAngles, :THIS_, :DWORD, :DWORD
-      STD_METHOD SetConeOrientation, :THIS_, :D3DVALUE, :D3DVALUE, :DWORD
-      STD_METHOD SetConeOutsideVolume, :THIS_, :DWORD
-      STD_METHOD SetMaxDistance, :THIS_, :DWORD
-      STD_METHOD SetMinDistance, :THIS_, :DWORD
-      STD_METHOD SetMode, :THIS_, :DWORD
-      STD_METHOD SetPosition, :THIS_, :D3DVALUE, :D3DVALUE, :DWORD
-      STD_METHOD SetVelocity, :THIS_, :D3DVALUE, :D3DVALUE, :DWORD
-    END_DECLARE_INTERFACE_
+    DECLARE_INTERFACE_(IDirectSound3DBuffer, IUnknown)
+      ??Interface equ <DSBPOSITIONNOTIFY>
+      STDMETHOD QueryInterface, :, :ptr 
+      STDMETHOD_ ULONG, AddRef
+      STDMETHOD_ ULONG, Release
+      STDMETHOD GetAllParameters, :
+      STDMETHOD GetConeAngles, :, :
+      STDMETHOD GetConeOrientation, :ptr 
+      STDMETHOD GetConeOutsideVolume, :
+      STDMETHOD GetMaxDistance, :ptr 
+      STDMETHOD GetMinDistance, :ptr 
+      STDMETHOD GetMode, :
+      STDMETHOD GetPosition, :ptr 
+      STDMETHOD GetVelocity, :ptr 
+      STDMETHOD SetAllParameters, :, :
+      STDMETHOD SetConeAngles, :, :, :
+      STDMETHOD SetConeOrientation, :, :, :, :
+      STDMETHOD SetConeOutsideVolume, :, :
+      STDMETHOD SetMaxDistance, :, :
+      STDMETHOD SetMinDistance, :, :
+      STDMETHOD SetMode, :, :
+      STDMETHOD SetPosition, :, :, :, :
+      STDMETHOD SetVelocity, :, :, :, :
+    DECLARE_INTERFACE__END
+
     IDirectSound3DBuffer_QueryInterface macro p, a, b
       exitm <IUnknown_QueryInterface(p, a, b)>
     endm
@@ -976,14 +928,16 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     endif
     DEFINE_GUID IID_IDirectSoundCapture, 0b0210781h, 89cdh, 11d0h, 0afh, 8h, 0h, 0a0h, 0c9h, 25h, 0cdh, 16h
     INTERFACE equ <IDirectSoundCapture>
-    DECLARE_INTERFACE_ IDirectSoundCapture, IUnknown
-      STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-      STD_METHOD AddRef, :THIS_
-      STD_METHOD Release, :THIS_
-      STD_METHOD CreateCaptureBuffer, :THIS_, :ptr LPDIRECTSOUNDCAPTUREBUFFER, :LPUNKNOWN
-      STD_METHOD GetCaps, :THIS_
-      STD_METHOD Initialize, :THIS_
-    END_DECLARE_INTERFACE_
+    DECLARE_INTERFACE_(IDirectSoundCapture, IUnknown)
+      ??Interface equ <DSBPOSITIONNOTIFY>
+      STDMETHOD QueryInterface, :, :ptr 
+      STDMETHOD_ ULONG, AddRef
+      STDMETHOD_ ULONG, Release
+      STDMETHOD CreateCaptureBuffer, :, :ptr , :
+      STDMETHOD GetCaps, :
+      STDMETHOD Initialize, :
+    DECLARE_INTERFACE__END
+
     IDirectSoundCapture_QueryInterface macro p, a, b
       exitm <IUnknown_QueryInterface(p, a, b)>
     endm
@@ -1008,20 +962,22 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     endif
     DEFINE_GUID IID_IDirectSoundCaptureBuffer, 0b0210782h, 89cdh, 11d0h, 0afh, 8h, 0h, 0a0h, 0c9h, 25h, 0cdh, 16h
     INTERFACE equ <IDirectSoundCaptureBuffer>
-    DECLARE_INTERFACE_ IDirectSoundCaptureBuffer, IUnknown
-      STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-      STD_METHOD AddRef, :THIS_
-      STD_METHOD Release, :THIS_
-      STD_METHOD GetCaps, :THIS_
-      STD_METHOD GetCurrentPosition, :THIS_, :LPDWORD
-      STD_METHOD GetFormat, :THIS_, :DWORD, :LPDWORD
-      STD_METHOD GetStatus, :THIS_
-      STD_METHOD Initialize, :THIS_, :LPCDSCBUFFERDESC
-      STD_METHOD Lock_, :THIS_, :DWORD, :ptr LPVOID, :LPDWORD, :ptr LPVOID, :LPDWORD, :DWORD
-      STD_METHOD Start, :THIS_
-      STD_METHOD Stop, :THIS_
-      STD_METHOD Unlock, :THIS_, :DWORD, :LPVOID, :DWORD
-    END_DECLARE_INTERFACE_
+    DECLARE_INTERFACE_(IDirectSoundCaptureBuffer, IUnknown)
+      ??Interface equ <DSBPOSITIONNOTIFY>
+      STDMETHOD QueryInterface, :, :ptr 
+      STDMETHOD_ ULONG, AddRef
+      STDMETHOD_ ULONG, Release
+      STDMETHOD GetCaps, :
+      STDMETHOD GetCurrentPosition, :, :
+      STDMETHOD GetFormat, :, :, :
+      STDMETHOD GetStatus, :
+      STDMETHOD Initialize, :, :
+      STDMETHOD Lock_, :, :, :ptr , :, :ptr , :, :
+      STDMETHOD Start, :
+      STDMETHOD Stop
+      STDMETHOD Unlock, :, :, :, :
+    DECLARE_INTERFACE__END
+
     IDirectSoundCaptureBuffer_QueryInterface macro p, a, b
       exitm <IUnknown_QueryInterface(p, a, b)>
     endm
@@ -1065,22 +1021,24 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if DIRECTSOUND_VERSION ge 0800h
       DEFINE_GUID IID_IDirectSoundCaptureBuffer8, 990df4h, 0dbbh, 4872h, 83h, 3eh, 6dh, 30h, 3eh, 80h, 0aeh, 0b6h
       INTERFACE equ <IDirectSoundCaptureBuffer8>
-      DECLARE_INTERFACE_ IDirectSoundCaptureBuffer8, IDirectSoundCaptureBuffer
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD GetCaps, :THIS_
-        STD_METHOD GetCurrentPosition, :THIS_, :LPDWORD
-        STD_METHOD GetFormat, :THIS_, :DWORD, :LPDWORD
-        STD_METHOD GetStatus, :THIS_
-        STD_METHOD Initialize, :THIS_, :LPCDSCBUFFERDESC
-        STD_METHOD Lock_, :THIS_, :DWORD, :ptr LPVOID, :LPDWORD, :ptr LPVOID, :LPDWORD, :DWORD
-        STD_METHOD Start, :THIS_
-        STD_METHOD Stop, :THIS_
-        STD_METHOD Unlock, :THIS_, :DWORD, :LPVOID, :DWORD
-        STD_METHOD GetObjectInPath, :THIS_, :DWORD, :REFGUID, :ptr LPVOID
-        STD_METHOD GetFXStatus, :DWORD, :LPDWORD
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectSoundCaptureBuffer8, IDirectSoundCaptureBuffer)
+        ??Interface equ <DSBPOSITIONNOTIFY>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD GetCaps, :
+        STDMETHOD GetCurrentPosition, :, :
+        STDMETHOD GetFormat, :, :, :
+        STDMETHOD GetStatus, :
+        STDMETHOD Initialize, :, :
+        STDMETHOD Lock_, :, :, :ptr , :, :ptr , :, :
+        STDMETHOD Start, :
+        STDMETHOD Stop
+        STDMETHOD Unlock, :, :, :, :
+        STDMETHOD GetObjectInPath, :, :, :, :ptr 
+        STDMETHOD GetFXStatus, :, :
+      DECLARE_INTERFACE__END
+
       IDirectSoundCaptureBuffer8_QueryInterface macro p, a, b
         exitm <IUnknown_QueryInterface(p, a, b)>
       endm
@@ -1130,12 +1088,14 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     endif
     DEFINE_GUID IID_IDirectSoundNotify, 0b0210783h, 89cdh, 11d0h, 0afh, 8h, 0h, 0a0h, 0c9h, 25h, 0cdh, 16h
     INTERFACE equ <IDirectSoundNotify>
-    DECLARE_INTERFACE_ IDirectSoundNotify, IUnknown
-      STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-      STD_METHOD AddRef, :THIS_
-      STD_METHOD Release, :THIS_
-      STD_METHOD SetNotificationPositions, :THIS_, :LPCDSBPOSITIONNOTIFY
-    END_DECLARE_INTERFACE_
+    DECLARE_INTERFACE_(IDirectSoundNotify, IUnknown)
+      ??Interface equ <DSBPOSITIONNOTIFY>
+      STDMETHOD QueryInterface, :, :ptr 
+      STDMETHOD_ ULONG, AddRef
+      STDMETHOD_ ULONG, Release
+      STDMETHOD SetNotificationPositions, :, :
+    DECLARE_INTERFACE__END
+
     IDirectSoundNotify_QueryInterface macro p, a, b
       exitm <IUnknown_QueryInterface(p, a, b)>
     endm
@@ -1158,19 +1118,20 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         ;[...]
       endif
       LPKSPROPERTYSET typedef ptr IKsPropertySet
-      
       KSPROPERTY_SUPPORT_GET equ 00000001h
       KSPROPERTY_SUPPORT_SET equ 00000002h
       DEFINE_GUID IID_IKsPropertySet, 31efac30h, 515ch, 11d0h, 0a9h, 0aah, 00h, 0aah, 00h, 61h, 0beh, 93h
       INTERFACE equ <IKsPropertySet>
-      DECLARE_INTERFACE_ IKsPropertySet, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD Get, :THIS_, :ULONG, :LPVOID, :ULONG, :LPVOID, :ULONG, :PULONG
-        STD_METHOD Set, :THIS_, :ULONG, :LPVOID, :ULONG, :LPVOID, :ULONG
-        STD_METHOD QuerySupport, :THIS_, :ULONG, :PULONG
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IKsPropertySet, IUnknown)
+        ??Interface equ <DSBPOSITIONNOTIFY>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD Get, :, :, :, :, :, :, :
+        STDMETHOD Set, :, :, :, :, :, :
+        STDMETHOD QuerySupport, :, :, :
+      DECLARE_INTERFACE__END
+
       IKsPropertySet_QueryInterface macro p, a, b
         exitm <IUnknown_QueryInterface(p, a, b)>
       endm
@@ -1200,23 +1161,23 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         dwRateHz DWORD ?
         dwWaveShape DWORD ?
       DSFXGargle ends
-
       _DSFXGargle typedef DSFXGargle
       LPDSFXGargle typedef ptr DSFXGargle
-      
       DSFXGARGLE_WAVE_TRIANGLE equ 0
       DSFXGARGLE_WAVE_SQUARE equ 1
       LPCDSFXGargle typedef ptr DSFXGargle
       DSFXGARGLE_RATEHZ_MIN equ 1
       DSFXGARGLE_RATEHZ_MAX equ 1000
       INTERFACE equ <IDirectSoundFXGargle>
-      DECLARE_INTERFACE_ IDirectSoundFXGargle, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD SetAllParameters, :THIS_
-        STD_METHOD GetAllParameters, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectSoundFXGargle, IUnknown)
+        ??Interface equ <DSFXGargle>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD SetAllParameters, :
+        STDMETHOD GetAllParameters, :
+      DECLARE_INTERFACE__END
+
       IDirectSoundFXGargle_QueryInterface macro p, a, b
         exitm <IUnknown_QueryInterface(p, a, b)>
       endm
@@ -1246,10 +1207,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         fDelay FLOAT ?
         lPhase LONG ?
       DSFXChorus ends
-
       _DSFXChorus typedef DSFXChorus
       LPDSFXChorus typedef ptr DSFXChorus
-      
       LPCDSFXChorus typedef ptr DSFXChorus
       DSFXCHORUS_WAVE_TRIANGLE equ 0
       DSFXCHORUS_WAVE_SIN equ 1
@@ -1271,13 +1230,15 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       DSFXCHORUS_PHASE_90 equ 3
       DSFXCHORUS_PHASE_180 equ 4
       INTERFACE equ <IDirectSoundFXChorus>
-      DECLARE_INTERFACE_ IDirectSoundFXChorus, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD SetAllParameters, :THIS_
-        STD_METHOD GetAllParameters, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectSoundFXChorus, IUnknown)
+        ??Interface equ <DSFXChorus>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD SetAllParameters, :
+        STDMETHOD GetAllParameters, :
+      DECLARE_INTERFACE__END
+
       IDirectSoundFXChorus_QueryInterface macro p, a, b
         exitm <IUnknown_QueryInterface(p, a, b)>
       endm
@@ -1307,10 +1268,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         fDelay FLOAT ?
         lPhase LONG ?
       DSFXFlanger ends
-
       _DSFXFlanger typedef DSFXFlanger
       LPDSFXFlanger typedef ptr DSFXFlanger
-      
       LPCDSFXFlanger typedef ptr DSFXFlanger
       DSFXFLANGER_WAVE_TRIANGLE equ 0
       DSFXFLANGER_WAVE_SIN equ 1
@@ -1332,13 +1291,15 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       DSFXFLANGER_PHASE_90 equ 3
       DSFXFLANGER_PHASE_180 equ 4
       INTERFACE equ <IDirectSoundFXFlanger>
-      DECLARE_INTERFACE_ IDirectSoundFXFlanger, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD SetAllParameters, :THIS_
-        STD_METHOD GetAllParameters, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectSoundFXFlanger, IUnknown)
+        ??Interface equ <DSFXFlanger>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD SetAllParameters, :
+        STDMETHOD GetAllParameters, :
+      DECLARE_INTERFACE__END
+
       IDirectSoundFXFlanger_QueryInterface macro p, a, b
         exitm <IUnknown_QueryInterface(p, a, b)>
       endm
@@ -1366,10 +1327,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         fRightDelay FLOAT ?
         lPanDelay LONG ?
       DSFXEcho ends
-
       _DSFXEcho typedef DSFXEcho
       LPDSFXEcho typedef ptr DSFXEcho
-      
       LPCDSFXEcho typedef ptr DSFXEcho
       DSFXECHO_WETDRYMIX_MIN equ 0.0
       DSFXECHO_WETDRYMIX_MAX equ 100.0
@@ -1382,13 +1341,15 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       DSFXECHO_PANDELAY_MIN equ 0
       DSFXECHO_PANDELAY_MAX equ 1
       INTERFACE equ <IDirectSoundFXEcho>
-      DECLARE_INTERFACE_ IDirectSoundFXEcho, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD SetAllParameters, :THIS_
-        STD_METHOD GetAllParameters, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectSoundFXEcho, IUnknown)
+        ??Interface equ <DSFXEcho>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD SetAllParameters, :
+        STDMETHOD GetAllParameters, :
+      DECLARE_INTERFACE__END
+
       IDirectSoundFXEcho_QueryInterface macro p, a, b
         exitm <IUnknown_QueryInterface(p, a, b)>
       endm
@@ -1416,10 +1377,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         fPostEQBandwidth FLOAT ?
         fPreLowpassCutoff FLOAT ?
       DSFXDistortion ends
-
       _DSFXDistortion typedef DSFXDistortion
       LPDSFXDistortion typedef ptr DSFXDistortion
-      
       LPCDSFXDistortion typedef ptr DSFXDistortion
       DSFXDISTORTION_GAIN_MIN equ -60.0
       DSFXDISTORTION_GAIN_MAX equ 0.0
@@ -1432,13 +1391,15 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       DSFXDISTORTION_PRELOWPASSCUTOFF_MIN equ 100.0
       DSFXDISTORTION_PRELOWPASSCUTOFF_MAX equ 8000.0
       INTERFACE equ <IDirectSoundFXDistortion>
-      DECLARE_INTERFACE_ IDirectSoundFXDistortion, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD SetAllParameters, :THIS_
-        STD_METHOD GetAllParameters, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectSoundFXDistortion, IUnknown)
+        ??Interface equ <DSFXDistortion>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD SetAllParameters, :
+        STDMETHOD GetAllParameters, :
+      DECLARE_INTERFACE__END
+
       IDirectSoundFXDistortion_QueryInterface macro p, a, b
         exitm <IUnknown_QueryInterface(p, a, b)>
       endm
@@ -1467,10 +1428,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         fRatio FLOAT ?
         fPredelay FLOAT ?
       DSFXCompressor ends
-
       _DSFXCompressor typedef DSFXCompressor
       LPDSFXCompressor typedef ptr DSFXCompressor
-      
       LPCDSFXCompressor typedef ptr DSFXCompressor
       DSFXCOMPRESSOR_GAIN_MIN equ -60.0
       DSFXCOMPRESSOR_GAIN_MAX equ 60.0
@@ -1485,13 +1444,15 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       DSFXCOMPRESSOR_PREDELAY_MIN equ 0.0
       DSFXCOMPRESSOR_PREDELAY_MAX equ 4.0
       INTERFACE equ <IDirectSoundFXCompressor>
-      DECLARE_INTERFACE_ IDirectSoundFXCompressor, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD SetAllParameters, :THIS_
-        STD_METHOD GetAllParameters, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectSoundFXCompressor, IUnknown)
+        ??Interface equ <DSFXCompressor>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD SetAllParameters, :
+        STDMETHOD GetAllParameters, :
+      DECLARE_INTERFACE__END
+
       IDirectSoundFXCompressor_QueryInterface macro p, a, b
         exitm <IUnknown_QueryInterface(p, a, b)>
       endm
@@ -1517,10 +1478,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         fBandwidth FLOAT ?
         fGain FLOAT ?
       DSFXParamEq ends
-
       _DSFXParamEq typedef DSFXParamEq
       LPDSFXParamEq typedef ptr DSFXParamEq
-      
       LPCDSFXParamEq typedef ptr DSFXParamEq
       DSFXPARAMEQ_CENTER_MIN equ 80.0
       DSFXPARAMEQ_CENTER_MAX equ 16000.0
@@ -1529,13 +1488,15 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       DSFXPARAMEQ_GAIN_MIN equ -15.0
       DSFXPARAMEQ_GAIN_MAX equ 15.0
       INTERFACE equ <IDirectSoundFXParamEq>
-      DECLARE_INTERFACE_ IDirectSoundFXParamEq, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD SetAllParameters, :THIS_
-        STD_METHOD GetAllParameters, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectSoundFXParamEq, IUnknown)
+        ??Interface equ <DSFXParamEq>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD SetAllParameters, :
+        STDMETHOD GetAllParameters, :
+      DECLARE_INTERFACE__END
+
       IDirectSoundFXParamEq_QueryInterface macro p, a, b
         exitm <IUnknown_QueryInterface(p, a, b)>
       endm
@@ -1570,17 +1531,15 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         flDensity FLOAT ?
         flHFReference FLOAT ?
       DSFXI3DL2Reverb ends
-
       _DSFXI3DL2Reverb typedef DSFXI3DL2Reverb
       LPDSFXI3DL2Reverb typedef ptr DSFXI3DL2Reverb
-      
       LPCDSFXI3DL2Reverb typedef ptr DSFXI3DL2Reverb
-      DSFX_I3DL2REVERB_ROOM_MIN equ -10000
+      DSFX_I3DL2REVERB_ROOM_MIN equ (- 10000)
       DSFX_I3DL2REVERB_ROOM_MAX equ 0
-      DSFX_I3DL2REVERB_ROOM_DEFAULT equ -1000
-      DSFX_I3DL2REVERB_ROOMHF_MIN equ -10000
+      DSFX_I3DL2REVERB_ROOM_DEFAULT equ (- 1000)
+      DSFX_I3DL2REVERB_ROOMHF_MIN equ (- 10000)
       DSFX_I3DL2REVERB_ROOMHF_MAX equ 0
-      DSFX_I3DL2REVERB_ROOMHF_DEFAULT equ -100
+      DSFX_I3DL2REVERB_ROOMHF_DEFAULT equ (- 100)
       DSFX_I3DL2REVERB_ROOMROLLOFFFACTOR_MIN equ 0.0
       DSFX_I3DL2REVERB_ROOMROLLOFFFACTOR_MAX equ 10.0
       DSFX_I3DL2REVERB_ROOMROLLOFFFACTOR_DEFAULT equ 0.0
@@ -1590,15 +1549,15 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       DSFX_I3DL2REVERB_DECAYHFRATIO_MIN equ 0.1
       DSFX_I3DL2REVERB_DECAYHFRATIO_MAX equ 2.0
       DSFX_I3DL2REVERB_DECAYHFRATIO_DEFAULT equ 0.83
-      DSFX_I3DL2REVERB_REFLECTIONS_MIN equ -10000
+      DSFX_I3DL2REVERB_REFLECTIONS_MIN equ (- 10000)
       DSFX_I3DL2REVERB_REFLECTIONS_MAX equ 1000
-      DSFX_I3DL2REVERB_REFLECTIONS_DEFAULT equ -2602
+      DSFX_I3DL2REVERB_REFLECTIONS_DEFAULT equ (- 2602)
       DSFX_I3DL2REVERB_REFLECTIONSDELAY_MIN equ 0.0
       DSFX_I3DL2REVERB_REFLECTIONSDELAY_MAX equ 0.3
       DSFX_I3DL2REVERB_REFLECTIONSDELAY_DEFAULT equ 0.007
-      DSFX_I3DL2REVERB_REVERB_MIN equ -10000
+      DSFX_I3DL2REVERB_REVERB_MIN equ (- 10000)
       DSFX_I3DL2REVERB_REVERB_MAX equ 2000
-      DSFX_I3DL2REVERB_REVERB_DEFAULT equ 200
+      DSFX_I3DL2REVERB_REVERB_DEFAULT equ (200)
       DSFX_I3DL2REVERB_REVERBDELAY_MIN equ 0.0
       DSFX_I3DL2REVERB_REVERBDELAY_MAX equ 0.1
       DSFX_I3DL2REVERB_REVERBDELAY_DEFAULT equ 0.011
@@ -1615,17 +1574,19 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       DSFX_I3DL2REVERB_QUALITY_MAX equ 3
       DSFX_I3DL2REVERB_QUALITY_DEFAULT equ 2
       INTERFACE equ <IDirectSoundFXI3DL2Reverb>
-      DECLARE_INTERFACE_ IDirectSoundFXI3DL2Reverb, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD SetAllParameters, :THIS_
-        STD_METHOD GetAllParameters, :THIS_
-        STD_METHOD SetPreset, :THIS_
-        STD_METHOD GetPreset, :THIS_
-        STD_METHOD SetQuality, :THIS_
-        STD_METHOD GetQuality, :ptr THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectSoundFXI3DL2Reverb, IUnknown)
+        ??Interface equ <DSFXI3DL2Reverb>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD SetAllParameters, :
+        STDMETHOD GetAllParameters, :
+        STDMETHOD SetPreset, :
+        STDMETHOD GetPreset, :
+        STDMETHOD SetQuality, :
+        STDMETHOD GetQuality, :ptr 
+      DECLARE_INTERFACE__END
+
       IDirectSoundFXI3DL2Reverb_QueryInterface macro p, a, b
         exitm <IUnknown_QueryInterface(p, a, b)>
       endm
@@ -1658,10 +1619,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         fReverbTime FLOAT ?
         fHighFreqRTRatio FLOAT ?
       DSFXWavesReverb ends
-
       _DSFXWavesReverb typedef DSFXWavesReverb
       LPDSFXWavesReverb typedef ptr DSFXWavesReverb
-      
       LPCDSFXWavesReverb typedef ptr DSFXWavesReverb
       DSFX_WAVESREVERB_INGAIN_MIN equ -96.0
       DSFX_WAVESREVERB_INGAIN_MAX equ 0.0
@@ -1676,13 +1635,15 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       DSFX_WAVESREVERB_HIGHFREQRTRATIO_MAX equ 0.999
       DSFX_WAVESREVERB_HIGHFREQRTRATIO_DEFAULT equ 0.001
       INTERFACE equ <IDirectSoundFXWavesReverb>
-      DECLARE_INTERFACE_ IDirectSoundFXWavesReverb, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD SetAllParameters, :THIS_
-        STD_METHOD GetAllParameters, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectSoundFXWavesReverb, IUnknown)
+        ??Interface equ <DSFXWavesReverb>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD SetAllParameters, :
+        STDMETHOD GetAllParameters, :
+      DECLARE_INTERFACE__END
+
       IDirectSoundFXWavesReverb_QueryInterface macro p, a, b
         exitm <IUnknown_QueryInterface(p, a, b)>
       endm
@@ -1708,10 +1669,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         fNoiseFill BOOL ?
         dwMode DWORD ?
       DSCFXAec ends
-
       _DSCFXAec typedef DSCFXAec
       LPDSCFXAec typedef ptr DSCFXAec
-      
       LPCDSCFXAec typedef ptr DSCFXAec
       DSCFX_AEC_MODE_PASS_THROUGH equ 0h
       DSCFX_AEC_MODE_HALF_DUPLEX equ 1h
@@ -1721,15 +1680,17 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       DSCFX_AEC_STATUS_HISTORY_PREVIOUSLY_DIVERGED equ 2h
       DSCFX_AEC_STATUS_CURRENTLY_CONVERGED equ 8h
       INTERFACE equ <IDirectSoundCaptureFXAec>
-      DECLARE_INTERFACE_ IDirectSoundCaptureFXAec, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD SetAllParameters, :THIS_
-        STD_METHOD GetAllParameters, :THIS_
-        STD_METHOD GetStatus, :THIS_
-        STD_METHOD Reset, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectSoundCaptureFXAec, IUnknown)
+        ??Interface equ <DSCFXAec>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD SetAllParameters, :
+        STDMETHOD GetAllParameters, :
+        STDMETHOD GetStatus, :
+        STDMETHOD Reset
+      DECLARE_INTERFACE__END
+
       IDirectSoundCaptureFXAec_QueryInterface macro p, a, b
         exitm <IUnknown_QueryInterface(p, a, b)>
       endm
@@ -1753,20 +1714,20 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       DSCFXNoiseSuppress struct
         fEnable BOOL ?
       DSCFXNoiseSuppress ends
-
       _DSCFXNoiseSuppress typedef DSCFXNoiseSuppress
       LPDSCFXNoiseSuppress typedef ptr DSCFXNoiseSuppress
-      
       LPCDSCFXNoiseSuppress typedef ptr DSCFXNoiseSuppress
       INTERFACE equ <IDirectSoundCaptureFXNoiseSuppress>
-      DECLARE_INTERFACE_ IDirectSoundCaptureFXNoiseSuppress, IUnknown
-        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-        STD_METHOD AddRef, :THIS_
-        STD_METHOD Release, :THIS_
-        STD_METHOD SetAllParameters, :THIS_
-        STD_METHOD GetAllParameters, :THIS_
-        STD_METHOD Reset, :THIS_
-      END_DECLARE_INTERFACE_
+      DECLARE_INTERFACE_(IDirectSoundCaptureFXNoiseSuppress, IUnknown)
+        ??Interface equ <DSCFXNoiseSuppress>
+        STDMETHOD QueryInterface, :, :ptr 
+        STDMETHOD_ ULONG, AddRef
+        STDMETHOD_ ULONG, Release
+        STDMETHOD SetAllParameters, :
+        STDMETHOD GetAllParameters, :
+        STDMETHOD Reset
+      DECLARE_INTERFACE__END
+
       IDirectSoundCaptureFXNoiseSuppress_QueryInterface macro p, a, b
         exitm <IUnknown_QueryInterface(p, a, b)>
       endm
@@ -1792,15 +1753,16 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
           ;[...]
         endif
         LPDIRECTSOUNDFULLDUPLEX typedef ptr IDirectSoundFullDuplex
-        
         DEFINE_GUID IID_IDirectSoundFullDuplex, 0edcb4c7ah, 0daabh, 4216h, 0a4h, 2eh, 6ch, 50h, 59h, 6dh, 0dch, 1dh
         INTERFACE equ <IDirectSoundFullDuplex>
-        DECLARE_INTERFACE_ IDirectSoundFullDuplex, IUnknown
-          STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
-          STD_METHOD AddRef, :THIS_
-          STD_METHOD Release, :THIS_
-          STD_METHOD Initialize, :THIS_, :LPCGUID, :LPCDSCBUFFERDESC, :LPCDSBUFFERDESC, :HWND, :DWORD, :LPLPDIRECTSOUNDCAPTUREBUFFER8, :LPLPDIRECTSOUNDBUFFER8
-        END_DECLARE_INTERFACE_
+        DECLARE_INTERFACE_(IDirectSoundFullDuplex, IUnknown)
+          ??Interface equ <DSCFXNoiseSuppress>
+          STDMETHOD QueryInterface, :, :ptr 
+          STDMETHOD_ ULONG, AddRef
+          STDMETHOD_ ULONG, Release
+          STDMETHOD Initialize, :, :, :, :, :, :, :, :
+        DECLARE_INTERFACE__END
+
         IDirectSoundFullDuplex_QueryInterface macro p, a, b
           exitm <IUnknown_QueryInterface(p, a, b)>
         endm
@@ -1972,7 +1934,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     DSFX_I3DL2_MATERIAL_PRESET_BRICKWALL equ 5
     DSFX_I3DL2_MATERIAL_PRESET_STONEWALL equ 6
     DSFX_I3DL2_MATERIAL_PRESET_CURTAIN equ 7
-    
+
     I3DL2_MATERIAL_PRESET_SINGLEWINDOW equ -2800, 0.71
     I3DL2_MATERIAL_PRESET_DOUBLEWINDOW equ -5000, 0.40
     I3DL2_MATERIAL_PRESET_THINDOOR equ -1800, 0.66
@@ -2011,7 +1973,7 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     DSFX_I3DL2_ENVIRONMENT_PRESET_MEDIUMHALL equ 27
     DSFX_I3DL2_ENVIRONMENT_PRESET_LARGEHALL equ 28
     DSFX_I3DL2_ENVIRONMENT_PRESET_PLATE equ 29
-    
+
     I3DL2_ENVIRONMENT_PRESET_DEFAULT equ -1000, - 100, 0.0, 1.49, 0.83, - 2602, 0.007, 200, 0.011, 100.0, 100.0, 5000.0
     I3DL2_ENVIRONMENT_PRESET_GENERIC equ -1000, - 100, 0.0, 1.49, 0.83, - 2602, 0.007, 200, 0.011, 100.0, 100.0, 5000.0
     I3DL2_ENVIRONMENT_PRESET_PADDEDCELL equ -1000, - 6000, 0.0, 0.17, 0.10, - 1204, 0.001, 207, 0.002, 100.0, 100.0, 5000.0
@@ -2068,4 +2030,3 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     ;[...]
   endif
 endif
-

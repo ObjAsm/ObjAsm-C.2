@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\Shlwapi.h', last modified: 19/04/2018 10:46
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\shlwapi.h
+;             Created on (UTC) 06/04/2024 06:15:58
+;             Last modified on (UTC) 21/02/2024 18:17:26
 
 ifndef _INC_SHLWAPI
   _INC_SHLWAPI equ <>
@@ -45,8 +46,6 @@ ifndef _INC_SHLWAPI
       endif
       ifndef __IBindCtx_FWD_DEFINED__
         __IBindCtx_FWD_DEFINED__ equ <>
-        ;IBindCtx typedef IBindCtx
-        
       endif
       ifdef __cplusplus
         ;[...]
@@ -90,15 +89,15 @@ ifndef _INC_SHLWAPI
           tagSFBS_FLAGS typedef SDWORD
           SFBS_FLAGS_ROUND_TO_NEAREST_DISPLAYED_DIGIT equ 0001h
           SFBS_FLAGS_TRUNCATE_UNDISPLAYED_DECIMAL_DIGITS equ 0002h
-          
+
           SFBS_FLAGS typedef SDWORD
-          @DefProto DllImport, StrFormatByteSizeEx, WIN_STD_CALL_CONV,, <:ULONGLONG, :SFBS_FLAGS, :PWSTR, :UINT>, 20
+          @DefProto DllImport, StrFormatByteSizeEx, WIN_STD_CALL_CONV,, <:ULONGLONG, :SFBS_FLAGS, :PWSTR, :UINT>, 16
         endif
         @DefProto DllImport, StrFormatByteSizeA, WIN_STD_CALL_CONV,, <:DWORD, :PSTR, :UINT>, 12
-        @DefProto DllImport, StrFormatByteSize64A, WIN_STD_CALL_CONV,, <:LONGLONG, :PSTR, :UINT>, 16
-        @DefProto DllImport, StrFormatByteSizeW, WIN_STD_CALL_CONV,, <:LONGLONG, :PWSTR, :UINT>, 16
-        @DefProto DllImport, StrFormatKBSizeW, WIN_STD_CALL_CONV,, <:LONGLONG, :PWSTR, :UINT>, 16
-        @DefProto DllImport, StrFormatKBSizeA, WIN_STD_CALL_CONV,, <:LONGLONG, :PSTR, :UINT>, 16
+        @DefProto DllImport, StrFormatByteSize64A, WIN_STD_CALL_CONV,, <:LONGLONG, :PSTR, :UINT>, 12
+        @DefProto DllImport, StrFormatByteSizeW, WIN_STD_CALL_CONV,, <:LONGLONG, :PWSTR, :UINT>, 12
+        @DefProto DllImport, StrFormatKBSizeW, WIN_STD_CALL_CONV,, <:LONGLONG, :PWSTR, :UINT>, 12
+        @DefProto DllImport, StrFormatKBSizeA, WIN_STD_CALL_CONV,, <:LONGLONG, :PSTR, :UINT>, 12
         @DefProto DllImport, StrFromTimeIntervalA, WIN_STD_CALL_CONV,, <:PSTR, :UINT, :DWORD, :SDWORD>, 16
         @DefProto DllImport, StrFromTimeIntervalW, WIN_STD_CALL_CONV,, <:PWSTR, :UINT, :DWORD, :SDWORD>, 16
         @DefProto DllImport, StrIsIntlEqualA, WIN_STD_CALL_CONV,, <:BOOL, :PCSTR, :PCSTR, :SDWORD>, 16
@@ -808,7 +807,7 @@ ifndef _INC_SHLWAPI
           URL_SCHEME_KNOWNFOLDER equ 26
         endif
         URL_SCHEME_MAXVALUE equ 27
-        
+
         URL_PART typedef SDWORD
         URL_PART_NONE equ 0
         URL_PART_SCHEME equ 1
@@ -817,7 +816,7 @@ ifndef _INC_SHLWAPI
         URL_PART_PASSWORD equ 4
         URL_PART_PORT equ 5
         URL_PART_QUERY equ 6
-        
+
         URLIS typedef SDWORD
         URLIS_URL equ 0
         URLIS_OPAQUE equ 1
@@ -826,7 +825,7 @@ ifndef _INC_SHLWAPI
         URLIS_APPLIABLE equ 4
         URLIS_DIRECTORY equ 5
         URLIS_HASQUERY equ 6
-        
+
         URL_UNESCAPE equ 10000000h
         URL_ESCAPE_UNSAFE equ 20000000h
         URL_PLUGGABLE_PROTOCOL equ 40000000h
@@ -946,10 +945,8 @@ ifndef _INC_SHLWAPI
           cchSuffix UINT ?
           nScheme UINT ?
         PARSEDURLA ends
-
         tagPARSEDURLA typedef PARSEDURLA
         PPARSEDURLA typedef ptr PARSEDURLA
-        
         PARSEDURLW struct
           cbSize DWORD ?
           pszProtocol LPCWSTR ?
@@ -958,10 +955,8 @@ ifndef _INC_SHLWAPI
           cchSuffix UINT ?
           nScheme UINT ?
         PARSEDURLW ends
-
         tagPARSEDURLW typedef PARSEDURLW
         PPARSEDURLW typedef ptr PARSEDURLW
-        
         ifdef UNICODE
           PARSEDURL typedef PARSEDURLW
           PPARSEDURL typedef PPARSEDURLW
@@ -1085,13 +1080,13 @@ ifndef _INC_SHLWAPI
         SHREGDEL_HKCU equ 00000001h
         SHREGDEL_HKLM equ 00000010h
         SHREGDEL_BOTH equ 00000011h
-        
+
         SHREGENUM_FLAGS typedef SDWORD
         SHREGENUM_DEFAULT equ 00000000h
         SHREGENUM_HKCU equ 00000001h
         SHREGENUM_HKLM equ 00000010h
         SHREGENUM_BOTH equ 00000011h
-        
+
         SHREGSET_HKCU equ 00000001h
         SHREGSET_FORCE_HKCU equ 00000002h
         SHREGSET_HKLM equ 00000004h
@@ -1181,7 +1176,7 @@ ifndef _INC_SHLWAPI
         if (NTDDI_VERSION ge NTDDI_WIN10_RS4)
           ASSOCF_APP_TO_APP equ 00010000h
         endif
-        
+
         ASSOCF typedef DWORD
         ASSOCSTR typedef SDWORD
         ASSOCSTR_COMMAND equ 1
@@ -1214,14 +1209,14 @@ ifndef _INC_SHLWAPI
           ASSOCSTR_APPICONREFERENCE equ 23
         endif
         ASSOCSTR_MAX equ 24
-        
+
         ASSOCKEY typedef SDWORD
         ASSOCKEY_SHELLEXECCLASS equ 1
         ASSOCKEY_APP equ 2
         ASSOCKEY_CLASS equ 3
         ASSOCKEY_BASECLASS equ 4
         ASSOCKEY_MAX equ 5
-        
+
         ASSOCDATA typedef SDWORD
         ASSOCDATA_MSIDESCRIPTOR equ 1
         ASSOCDATA_NOACTIVATEHANDLER equ 2
@@ -1232,10 +1227,10 @@ ifndef _INC_SHLWAPI
           ASSOCDATA_VALUE equ 6
         endif
         ASSOCDATA_MAX equ 7
-        
+
         ASSOCENUM typedef SDWORD
         ASSOCENUM_NONE equ 0
-        
+
         FILETYPEATTRIBUTEFLAGS typedef SDWORD
         FTA_None equ 00000000h
         FTA_Exclude equ 00000001h
@@ -1258,16 +1253,18 @@ ifndef _INC_SHLWAPI
         FTA_NoRecentDocs equ 00100000h
         FTA_SafeForElevation equ 00200000h
         FTA_AlwaysUseDirectInvoke equ 00400000h
-        
+
         DEFINE_ENUM_FLAG_OPERATORS(FILETYPEATTRIBUTEFLAGS)
         INTERFACE equ <IQueryAssociations>
-        DECLARE_INTERFACE_IID_ IQueryAssociations, IUnknown, "c46ca590-3c3f-11d2-bee6-0000f805ca57"
-          STD_METHOD Init, :THIS_, :LPCWSTR, :HKEY, :HWND
-          STD_METHOD GetString, :THIS_, :ASSOCSTR, :LPCWSTR, :LPWSTR, :ptr DWORD
-          STD_METHOD GetKey, :THIS_, :ASSOCKEY, :LPCWSTR, :ptr HKEY
-          STD_METHOD GetData, :THIS_, :ASSOCDATA, :LPCWSTR, :ptr, :ptr DWORD
-          STD_METHOD GetEnum, :THIS_, :ASSOCENUM, :LPCWSTR, :REFIID, :ptr ptr
-        END_DECLARE_INTERFACE_IID_
+        ??Interface equ <>
+;        DECLARE_INTERFACE_IID_ IQueryAssociations, IUnknown, "c46ca590-3c3f-11d2-bee6-0000f805ca57"
+;          STDMETHOD Init, :ptr, :ptr, :ptr, :ptr
+;          STDMETHOD GetString, :ptr, :ptr, :ptr, :ptr, :ptr 
+;          STDMETHOD GetKey, :ptr, :ptr, :ptr, :ptr 
+;          STDMETHOD GetData, :ptr, :ptr, :ptr, :ptr , :ptr 
+;          STDMETHOD GetEnum, :ptr, :ptr, :ptr, :ptr, :ptr ptr 
+;        DECLARE_INTERFACE_IID__END
+
         @DefProto DllImport, AssocCreate, WIN_STD_CALL_CONV,, <:CLSID, :REFIID, :ptr ptr>, 12
         @DefProto DllImport, SHGetAssocKeys, WIN_STD_CALL_CONV,, <:ptr IQueryAssociations, :ptr HKEY, :DWORD>, 12
         @DefProto DllImport, AssocQueryStringA, WIN_STD_CALL_CONV,, <:ASSOCF, :ASSOCSTR, :LPCSTR, :LPCSTR, :LPSTR, :ptr DWORD>, 24
@@ -1303,8 +1300,6 @@ ifndef _INC_SHLWAPI
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
         ifndef __IStream_FWD_DEFINED__
           __IStream_FWD_DEFINED__ equ <>
-          ;IStream typedef IStream
-          
         endif
         @DefProto DllImport, SHOpenRegStreamA, WIN_STD_CALL_CONV,, <:HKEY, :LPCSTR, :LPCSTR, :DWORD>, 16
         @DefProto DllImport, SHOpenRegStreamW, WIN_STD_CALL_CONV,, <:HKEY, :LPCWSTR, :LPCWSTR, :DWORD>, 16
@@ -1387,8 +1382,6 @@ ifndef _INC_SHLWAPI
       @DefProto DllImport, IStream_Size, WIN_STD_CALL_CONV,, <:ptr IStream, :ptr ULARGE_INTEGER>, 8
       ifndef __IConnectionPoint_FWD_DEFINED__
         __IConnectionPoint_FWD_DEFINED__ equ <>
-        ;IConnectionPoint typedef IConnectionPoint
-        
       endif
       @DefProto DllImport, ConnectToConnectionPoint, WIN_STD_CALL_CONV,, <:ptr IUnknown, :REFIID, :BOOL, :ptr IUnknown, :ptr DWORD, :ptr ptr IConnectionPoint>, 24
       if (NTDDI_VERSION ge NTDDI_VISTA)
@@ -1592,7 +1585,7 @@ ifndef _INC_SHLWAPI
         GLOBALCOUNTER_BANNERS_DATAMODEL_CACHE_MACHINEWIDE equ 58
       endif
       GLOBALCOUNTER_MAXIMUMVALUE equ 59
-      
+
       if (NTDDI_VERSION ge NTDDI_WIN7)
         @DefProto DllImport, SHGlobalCounterGetValue, WIN_STD_CALL_CONV,, <:SHGLOBALCOUNTER>, 4
         @DefProto DllImport, SHGlobalCounterIncrement, WIN_STD_CALL_CONV,, <:SHGLOBALCOUNTER>, 4
@@ -1613,9 +1606,7 @@ ifndef _INC_SHLWAPI
         piid POINTER ?
         dwOffset DWORD ?
       QITAB ends
-
       LPQITAB typedef ptr QITAB
-      
       LPCQITAB typedef ptr QITAB
       ifdef __cplusplus
         ;[...]
@@ -1697,7 +1688,7 @@ ifndef _INC_SHLWAPI
         CTF_COINIT_MTA equ 00001000h
         CTF_NOADDREFLIB equ 00002000h
       endif
-      
+
       SHCT_FLAGS typedef DWORD
       @DefProto DllImport, SHCreateThread, WIN_STD_CALL_CONV,, <:LPTHREAD_START_ROUTINE, :ptr, :SHCT_FLAGS, :LPTHREAD_START_ROUTINE>, 16
       @DefProto DllImport, SHCreateThreadWithHandle, WIN_STD_CALL_CONV,, <:LPTHREAD_START_ROUTINE, :ptr, :SHCT_FLAGS, :LPTHREAD_START_ROUTINE, :ptr HANDLE>, 20
@@ -1721,7 +1712,6 @@ ifndef _INC_SHLWAPI
         dwBuildNumber DWORD ?
         dwPlatformID DWORD ?
       DLLVERSIONINFO ends
-
       _DLLVERSIONINFO typedef DLLVERSIONINFO
       DLLVER_PLATFORM_WINDOWS equ 00000001h
       DLLVER_PLATFORM_NT equ 00000002h
@@ -1730,7 +1720,6 @@ ifndef _INC_SHLWAPI
         dwFlags DWORD ?
         ullVersion ULONGLONG ?
       DLLVERSIONINFO2 ends
-
       _DLLVERSIONINFO2 typedef DLLVERSIONINFO2
       DLLVER_MAJOR_MASK equ 0FFFF000000000000h
       DLLVER_MINOR_MASK equ 0000FFFF00000000h
@@ -1741,6 +1730,7 @@ ifndef _INC_SHLWAPI
       endm
       TYPE_DLLGETVERSIONPROC typedef proto WIN_STD_CALL_CONV :ptr DLLVERSIONINFO
       DLLGETVERSIONPROC typedef ptr TYPE_DLLGETVERSIONPROC
+
       @DefProto DllImport, DllInstall, WIN_STD_CALL_CONV,, <:BOOL, :PCWSTR>, 8
       if (_WIN32_IE ge 0602h)
         @DefProto DllImport, IsInternetESCEnabled, WIN_STD_CALL_CONV,, <>, 0
@@ -1767,4 +1757,3 @@ ifndef _INC_SHLWAPI
     endif
   endif
 endif
-

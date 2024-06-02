@@ -1,7 +1,8 @@
-;Include file created by h2incX, Version B.01.01, 29/10/2018 18:21
-;(C) 2018-today by Biterider, 2005-2009 by Japheth
-;Source file: '\ObjAsm\Projects\h2IncX\header\qos.h', last modified: 19/04/2018 09:44
-;Creation parameters: 
+;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+;(C) G. Friedrich April 2024
+;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\qos.h
+;             Created on (UTC) 22/05/2024 17:57:08
+;             Last modified on (UTC) 16/12/2023 11:05:40
 
 ifndef __QOS_H_
   __QOS_H_ equ <>
@@ -34,20 +35,16 @@ ifndef __QOS_H_
       MaxSduSize ULONG ?
       MinimumPolicedSize ULONG ?
     FLOWSPEC ends
-
     _flowspec typedef FLOWSPEC
     PFLOWSPEC typedef ptr FLOWSPEC
     LPFLOWSPEC typedef ptr FLOWSPEC
-    
     QOS_NOT_SPECIFIED equ 0FFFFFFFFh
     POSITIVE_INFINITY_RATE equ 0FFFFFFFEh
     QOS_OBJECT_HDR struct
       ObjectType ULONG ?
       ObjectLength ULONG ?
     QOS_OBJECT_HDR ends
-
     LPQOS_OBJECT_HDR typedef ptr QOS_OBJECT_HDR
-    
     QOS_GENERAL_ID_BASE equ 2000
     QOS_OBJECT_END_OF_LIST equ (00000001h + QOS_GENERAL_ID_BASE)
     QOS_OBJECT_SD_MODE equ (00000002h + QOS_GENERAL_ID_BASE)
@@ -57,10 +54,8 @@ ifndef __QOS_H_
       ObjectHdr QOS_OBJECT_HDR <>
       ShapeDiscardMode ULONG ?
     QOS_SD_MODE ends
-
     _QOS_SD_MODE typedef QOS_SD_MODE
     LPQOS_SD_MODE typedef ptr QOS_SD_MODE
-    
     TC_NONCONF_BORROW equ 0
     TC_NONCONF_SHAPE equ 1
     TC_NONCONF_DISCARD equ 2
@@ -69,10 +64,7 @@ ifndef __QOS_H_
       ObjectHdr QOS_OBJECT_HDR <>
       ShapingRate ULONG ?
     QOS_SHAPING_RATE ends
-
     _QOS_SHAPING_RATE typedef QOS_SHAPING_RATE
     LPQOS_SHAPING_RATE typedef ptr QOS_SHAPING_RATE
-    
   endif
 endif
-

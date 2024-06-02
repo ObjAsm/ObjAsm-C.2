@@ -39,7 +39,7 @@
 
 PCRE_MAJOR      equ   8
 PCRE_MINOR      equ   44
-PCRE_PRERELEASE equ
+PCRE_PRERELEASE equ 0
 PCRE_DATE       equ   2020-02-12
 
 
