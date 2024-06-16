@@ -49,6 +49,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method NetComProtocol.Done, uses xsi
+  DbgText "NetComProtocol.Done", "ResGuard"
   SetObject xsi
   invoke StrDispose, [xsi].pServiceName
   OCall [xsi].BlackList::NetComAddrCollection.Done

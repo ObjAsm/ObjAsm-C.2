@@ -6,4 +6,4 @@
 -W2
 -I".\h\um_10.0.22621.0"
 -o".\inc"
-".\h\MasterInclude.h"
+".\h\um_10.0.22621.0\iphlpapi.h"

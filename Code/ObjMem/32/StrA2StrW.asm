@@ -16,7 +16,7 @@
 ; Purpose:    Convert a ANSI string into a WIDE string.
 ; Arguments:  Arg1: -> Destination WIDE string buffer.
 ;             Arg2: -> Source ANSI string.
-; Return:     Nothing.
+; Return:     eax = Number of chars in string, not including the ZTC.
 
 OPTION PROLOGUE:NONE
 OPTION EPILOGUE:NONE

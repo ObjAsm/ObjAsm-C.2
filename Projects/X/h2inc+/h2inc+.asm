@@ -45,6 +45,8 @@
 
 ;STD_METHOD ccc.Invoke_    dont replace Invoke
 
+;@DefProto DllImport, SetFilePointerEx, WIN_STD_CALL_CONV,, <:HANDLE, :LARGE_INTEGER, :PLARGE_INTEGER, :DWORD>, 16    but should be 20
+
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc
 SysSetup OOP, CON64, WIDE_STRING, DEBUG(WND);, RESGUARD)
 ;SILENT=TRUE

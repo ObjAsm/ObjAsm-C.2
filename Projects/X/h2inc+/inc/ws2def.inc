@@ -1,4 +1,4 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 20:55:09
+;Include file created by h2inc+ version C.2.0 on (UTC) 15/06/2024 16:37:44
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\ws2def.h
 ;             Created on (UTC) 22/05/2024 17:57:06
@@ -424,8 +424,8 @@ ifndef _WS2DEF_
     SCOPE_ID struct
       union
         struct
-          ANONYMOUS_REC48 record ANONYMOUS_REC48_Level:4, ANONYMOUS_REC48_Zone:28
-          ANONYMOUS_REC48 <>
+          ANONYMOUS_REC5 record ANONYMOUS_REC5_Level:4, ANONYMOUS_REC5_Zone:28
+          ANONYMOUS_REC5 <>
         ends
         Value ULONG ?
       ends

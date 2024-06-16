@@ -312,7 +312,7 @@ ifndef _APISETFILE_
       @DefProto DllImport, SetFileInformationByHandle, WIN_STD_CALL_CONV,, <:HANDLE, :FILE_INFO_BY_HANDLE_CLASS, :LPVOID, :DWORD>, 16
     endif
     @DefProto DllImport, SetFilePointer, WIN_STD_CALL_CONV,, <:HANDLE, :LONG, :PLONG, :DWORD>, 16
-    @DefProto DllImport, SetFilePointerEx, WIN_STD_CALL_CONV,, <:HANDLE, :LARGE_INTEGER, :PLARGE_INTEGER, :DWORD>, 16
+    @DefProto DllImport, SetFilePointerEx, WIN_STD_CALL_CONV,, <:HANDLE, :LARGE_INTEGER, :PLARGE_INTEGER, :DWORD>, 20
     @DefProto DllImport, SetFileTime, WIN_STD_CALL_CONV,, <:HANDLE, :ptr FILETIME, :ptr FILETIME, :ptr FILETIME>, 16
     if _WIN32_WINNT ge 0501h
       @DefProto DllImport, SetFileValidData, WIN_STD_CALL_CONV,, <:HANDLE, :LONGLONG>, 8

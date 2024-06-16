@@ -6,8 +6,6 @@
 
 ifndef _WS2DEF_
   _WS2DEF_ equ <>
-  if _MSC_VER gt 1000
-  endif
   include winapifamily.inc
   if  not Defined(_WINSOCK_DEPRECATED_BY)
     if ((Defined(_WINSOCK_DEPRECATED_NO_WARNINGS) or Defined(BUILD_WINDOWS)) and  not Defined(_WINSOCK_DEPRECATE_WARNINGS)) or Defined(MIDL_PASS)
@@ -19,9 +17,6 @@ ifndef _WS2DEF_
         exitm <__declspec(deprecated ("Use " replacement " instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings"))>
       endm
     endif
-  endif
-  ifdef __cplusplus
-    ;[...]
   endif
   if  not Defined(_WINSOCK2API_) and Defined(_WINSOCKAPI_)
     .err <Do not include winsock.h and ws2def.h in the same module. Instead include only winsock2.h.>
@@ -814,7 +809,4 @@ ifndef _WS2DEF_
   NI_DGRAM equ 10h
   NI_MAXHOST equ 1025
   NI_MAXSERV equ 32
-  ifdef __cplusplus
-    ;[...]
-  endif
 endif

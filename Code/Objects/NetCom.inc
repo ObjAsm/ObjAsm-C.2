@@ -211,7 +211,7 @@ IO_SOCKJOB ends                                         ;  Minimal size of the b
 PIO_SOCKJOB typedef ptr IO_SOCKJOB                      ;  be sizeof ACCEPT_DATA
 
 ACCEPT_DATA struct 4
-  LocalHostAddr   BYTE        (sizeof(NETCOMADDR) + 16) dup(?)   ;Add 16 bytes, see AcceptEx
+  LocalHostAddr   BYTE        (sizeof(NETCOMADDR) + 16) dup(?)   ;16 BYTEs added, see AcceptEx
   RemoteHostAddr  BYTE        (sizeof(NETCOMADDR) + 16) dup(?)   ;  documentation
   pListener       PLISTENER   ?
   pConnection     POINTER     ?

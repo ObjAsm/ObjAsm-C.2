@@ -1861,7 +1861,8 @@ Override macro DstExpression:req, SrcExpression:req
               endif
               mov xdx, POINTER ptr [xcx]                ;;Make DMT indirection
             endif
-            mrm ($$Txo ptr [xdx - sizeof($$Txo - @WordSize]).??MtdExpr), %$$OffsetText, xcx
+;            mrm ($$Txo ptr [xdx - sizeof($$Txo - @WordSize)].??MtdExpr), %$$OffsetText, xcx
+            mov xcx, %$$OffsetText
           elseif ??MtdType eq ??MTDTYPE_DYNAMIC
             if type(??InsExpr) eq @WordSize
               if (opattr ??InsExpr) and OAT_REGISTER    ;;Is ??InsExpr a register?

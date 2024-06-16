@@ -1,13 +1,15 @@
 ; ==================================================================================================
 ; Title:      StopWatch.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
+; Version:    C.1.2
 ; Purpose:    ObjAsm support of performance monitoring objects.
 ; Link:       http://www.agner.org/assem/
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
 ;             Version C.1.1, October 2019
 ;               - Arithmetic bug in StopWatch.Stop 32 bit corrected.
+;             Version C.1.2, June 2024
+;               - Arithmetic bug in StopWatch.Stop 64 bit corrected.
 ; ==================================================================================================
 
 
@@ -218,7 +220,7 @@ Method StopWatch.Stop
       mov rax, qCount
       sub rax, [rcx].qStartCount
       sub rax, [rcx].qLagCount
-      mov [rcx].qAccCount, rax
+      add [rcx].qAccCount, rax
     endif
     mov [xcx].dStatus, SWS_STOPPED
   .endif

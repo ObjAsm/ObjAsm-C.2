@@ -192,6 +192,7 @@ Method NetComEngine.Done, uses xbx xdi xsi
 
   ;Shutdown WinSock
   invoke WSACleanup
+  DbgText "NetComEngine.Done", "ResGuard"
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -228,6 +229,10 @@ Method NetComEngine.Init, uses xbx xsi, pOwner:POINTER, dAcceptorCount:DWORD, \
     invoke GetHostName, addr cLocalHostName, lengthof cLocalHostName
     mov [xsi].pLocalHostName, $invoke(StrNew, addr cLocalHostName)
 
+;    mov xbx, [xsi].pOwner
+;    invoke MemClone, addr [xsi].LocalHostAddr, addr [xbx].$Obj(Sequencer).LocAddress, \
+;                     sizeof(NETCOMADDR)
+
     mov Hints.ai_flags, 0
     mov Hints.ai_family, AF_INETX
     mov Hints.ai_socktype, SOCK_STREAM
@@ -236,11 +241,13 @@ Method NetComEngine.Init, uses xbx xsi, pOwner:POINTER, dAcceptorCount:DWORD, \
     mov Hints.ai_canonname, NULL
     mov Hints.ai_addr, NULL
     mov Hints.ai_next, NULL
-    invoke GetAddrInfo, addr cLocalHostName, NULL, addr Hints, addr pResult
-    mov xax, pResult
-    invoke MemClone, addr [xsi].LocalHostAddr, [xax].ADDRINFOT.ai_addr, \
-                     DWORD ptr [xax].ADDRINFOT.ai_addrlen
-    invoke FreeAddrInfo, pResult
+    invoke GetAddrInfo, [xsi].pLocalHostName, NULL, addr Hints, addr pResult
+    .if eax == 0 && pResult != NULL
+      mov xax, pResult
+      invoke MemClone, addr [xsi].LocalHostAddr, [xax].ADDRINFOT.ai_addr, \
+                       DWORD ptr [xax].ADDRINFOT.ai_addrlen
+      invoke FreeAddrInfo, pResult
+    .endif
 
     ;Initialize the collections
     lea xbx, [xsi].IOJobs                               ;xbx -> NetComIOSockJobPool
