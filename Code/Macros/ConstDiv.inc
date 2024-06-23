@@ -53,27 +53,27 @@ cdiv macro imm32:req
 
   make_c32 &imm32
   IF mc32_a EQ 0
-    mov edx,mc32_m
+    mov edx, mc32_m
     mul edx
     IF mc32_s NE 0
-      shr edx,mc32_s
+      shr edx, mc32_s
     ENDIF
   ELSEIF mc32_a EQ 1
-    mov edx,mc32_m
-    add eax,1
+    mov edx, mc32_m
+    add eax, 1
     .if !CARRY?
       mul edx
     .endif
     IF mc32_s NE 0
-      shr edx,mc32_s
+      shr edx, mc32_s
     ENDIF
   ELSEIF mc32_a EQ 2
-    xor edx,edx
-    cmp eax,imm32
-    sbb edx,-1
+    xor edx, edx
+    cmp eax, imm32
+    sbb edx, -1
   ELSEIF mc32_a EQ 3
-    shr eax,mc32_s
-    mov edx,eax
+    shr eax, mc32_s
+    mov edx, eax
   ENDIF
 endm
 
@@ -100,27 +100,27 @@ cdiv64 macro imm32:req
 
   make_c32 &imm32
   IF mc32_a EQ 0
-    mov edx,mc32_m
+    mov edx, mc32_m
     mul rdx
     IF mc32_s NE 0
-      shr rdx,mc32_s
+      shr rdx, mc32_s
     ENDIF
   ELSEIF mc32_a EQ 1
-    mov edx,mc32_m
-    add rax,1
+    mov edx, mc32_m
+    add rax, 1
     .if !CARRY?
       mul rdx
     .endif
     IF mc32_s NE 0
-      shr rdx,mc32_s
+      shr rdx, mc32_s
     ENDIF
   ELSEIF mc32_a EQ 2
-    xor edx,edx
-    cmp rax,imm32
-    sbb rdx,-1
+    xor edx, edx
+    cmp rax, imm32
+    sbb rdx, -1
   ELSEIF mc32_a EQ 3
-    shr rax,mc32_s
-    mov rdx,rax
+    shr rax, mc32_s
+    mov rdx, rax
   ENDIF
 endm
 
@@ -156,38 +156,38 @@ cmod macro imm32:req
 
   make_c32 &imm32
   IF mc32_a EQ 0
-    mov edx,mc32_m
+    mov edx, mc32_m
     mul edx
     IF mc32_s NE 0
-      shrd eax,edx,mc32_s
+      shrd eax, edx, mc32_s
     ENDIF
     inc eax
-    mov edx,imm32
+    mov edx, imm32
     mul edx
 
   ELSEIF mc32_a EQ 1
-    mov edx,mc32_m
-    add eax,1
+    mov edx, mc32_m
+    add eax, 1
     .if !CARRY?
       mul edx
     .endif
     IF mc32_s NE 0
-      shrd eax,edx,mc32_s
+      shrd eax, edx, mc32_s
     ENDIF
     inc eax
-    mov edx,imm32
+    mov edx, imm32
     mul edx
   ELSEIF mc32_a EQ 2
-    mov edx,eax
-    xor eax,eax
-    cmp edx,imm32
-    sbb eax,-1
+    mov edx, eax
+    xor eax, eax
+    cmp edx, imm32
+    sbb eax, -1
     .if !ZERO?
-      sub edx,imm32
+      sub edx, imm32
     .endif
   ELSEIF mc32_a EQ 3
-    and eax,NOT(0ffffffffh SHL mc32_s)
-    mov edx,eax
+    and eax, NOT(0ffffffffh SHL mc32_s)
+    mov edx, eax
   ENDIF
 endm
 
@@ -214,38 +214,38 @@ cmod64 macro imm32:req
 
   make_c32 &imm32
   IF mc32_a EQ 0
-    mov edx,mc32_m
+    mov edx, mc32_m
     mul rdx
     IF mc32_s NE 0
-      shrd rax,rdx,mc32_s
+      shrd rax, rdx, mc32_s
     ENDIF
     inc rax
-    mov edx,imm32
+    mov edx, imm32
     mul rdx
 
   ELSEIF mc32_a EQ 1
-    mov edx,mc32_m
-    add rax,1
+    mov edx, mc32_m
+    add rax, 1
     .if !CARRY?
       mul rdx
     .endif
     IF mc32_s NE 0
-      shrd rax,rdx,mc32_s
+      shrd rax, rdx, mc32_s
     ENDIF
     inc rax
-    mov edx,imm32
+    mov edx, imm32
     mul rdx
   ELSEIF mc32_a EQ 2
-    mov rdx,rax
-    xor eax,eax
-    cmp rdx,imm32
-    sbb rax,-1
+    mov rdx, rax
+    xor eax, eax
+    cmp rdx, imm32
+    sbb rax, -1
     .if !ZERO?
-      sub rdx,imm32
+      sub rdx, imm32
     .endif
   ELSEIF mc32_a EQ 3
-    and rax,NOT(0ffffffffffffffffh SHL mc32_s)
-    mov rdx,rax
+    and rax, NOT(0ffffffffffffffffh SHL mc32_s)
+    mov rdx, rax
   ENDIF
 endm
 
@@ -283,48 +283,48 @@ cDivMod macro imm32:req
 
   make_c32 &imm32
   IF mc32_a EQ 0
-    mov edx,mc32_m
+    mov edx, mc32_m
     mul edx
     IF mc32_s NE 0
-      shrd eax,edx,mc32_s
+      shrd eax, edx, mc32_s
     ENDIF
     inc eax
     push xdx
-    mov edx,imm32
+    mov edx, imm32
     mul edx
     pop xax
     IF mc32_s NE 0
-      shr eax,mc32_s
+      shr eax, mc32_s
     ENDIF
   ELSEIF mc32_a EQ 1
-    mov edx,mc32_m
-    add eax,1
+    mov edx, mc32_m
+    add eax, 1
     .if !CARRY?
       mul edx
     .endif
     IF mc32_s NE 0
-      shrd eax,edx,mc32_s
+      shrd eax, edx, mc32_s
     ENDIF
     inc eax
     push xdx
-    mov edx,imm32
+    mov edx, imm32
     mul edx
     pop xax
     IF mc32_s NE 0
       shr eax,mc32_s
     ENDIF
   ELSEIF mc32_a EQ 2
-    mov edx,eax
-    xor eax,eax
-    cmp edx,imm32
-    sbb eax,-1
+    mov edx, eax
+    xor eax, eax
+    cmp edx, imm32
+    sbb eax, -1
     .if !ZERO?
-      sub edx,imm32
+      sub edx, imm32
     .endif
   ELSEIF mc32_a EQ 3
-    mov edx,eax
-    shr eax,mc32_s
-    and edx,NOT(0ffffffffh SHL mc32_s)
+    mov edx, eax
+    shr eax, mc32_s
+    and edx, NOT(0ffffffffh SHL mc32_s)
   ENDIF
 endm
 
@@ -352,48 +352,48 @@ cDivMod64 macro imm32:req
 
   make_c32 &imm32
   IF mc32_a EQ 0
-    mov edx,mc32_m
+    mov edx, mc32_m
     mul rdx
     IF mc32_s NE 0
-      shrd rax,rdx,mc32_s
+      shrd rax, rdx, mc32_s
     ENDIF
     inc rax
     push rdx
-    mov rdx,imm32
+    mov rdx, imm32
     mul rdx
     pop rax
     IF mc32_s NE 0
-      shr rax,mc32_s
+      shr rax, mc32_s
     ENDIF
   ELSEIF mc32_a EQ 1
-    mov edx,mc32_m
-    add rax,1
+    mov edx, mc32_m
+    add rax, 1
     .if !CARRY?
       mul rdx
     .endif
     IF mc32_s NE 0
-      shrd rax,rdx,mc32_s
+      shrd rax, rdx, mc32_s
     ENDIF
     inc rax
     push rdx
-    mov edx,imm32
+    mov edx, imm32
     mul rdx
     pop rax
     IF mc32_s NE 0
-      shr rax,mc32_s
+      shr rax, mc32_s
     ENDIF
   ELSEIF mc32_a EQ 2
-    mov rdx,rax
-    xor eax,eax
-    cmp rdx,imm32
-    sbb rax,-1
+    mov rdx, rax
+    xor eax, eax
+    cmp rdx, imm32
+    sbb rax, -1
     .if !ZERO?
-      sub rdx,imm32
+      sub rdx, imm32
     .endif
   ELSEIF mc32_a EQ 3
-    mov rdx,rax
-    shr rax,mc32_s
-    and rdx,NOT(0ffffffffffffffffh SHL mc32_s)
+    mov rdx, rax
+    shr rax, mc32_s
+    and rdx, NOT(0ffffffffffffffffh SHL mc32_s)
   ENDIF
 endm
 

@@ -1,12 +1,14 @@
 ; ==================================================================================================
 ; Title:      DbgOutMem_XP.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
+; Version:    C.1.2
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
 ;             Version C.1.1 June 2022
 ;               - Bitness and Platform independent code.
 ;               - UEFI adaptation and addition of UI64, I64, H64.
+;             Version C.1.2 June 2024
+;               - Infinite loop error using DBG_MEM_H8 format corrected.
 ; ==================================================================================================
 
 
@@ -475,7 +477,7 @@ ProcName proc uses xbx xdi xsi, pStart:POINTER, dSize:DWORD, dRepresentationForm
       add xdi, 4
 
       xor ecx, ecx
-      .while ecx < BYTES_PER_LINE
+      .while ecx < BYTES_PER_LINE && ebx != 0
         .if ebx > 0
           movzx edx, BYTE ptr [xsi]
           dec ebx

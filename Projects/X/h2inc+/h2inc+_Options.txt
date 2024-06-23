@@ -4,6 +4,5 @@
 -i
 -V1
 -W2
--I".\h\um_10.0.22621.0"
--o".\inc"
-".\h\um_10.0.22621.0\iphlpapi.h"
+-o".\inc_7zip_24.07"
+".\h_7zip_24.07\MasterInclude.h"
