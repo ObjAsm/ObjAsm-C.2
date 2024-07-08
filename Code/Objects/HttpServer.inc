@@ -205,6 +205,7 @@ Method HttpServer.ReceiveRequests, uses xsi
   local pRequest:PHTTP_REQUEST, dRequestSize:DWORD
 
   SetObject xsi
+  DbgText "HttpServer.ReceiveRequests"
   ;Allocate a 2 KB buffer. This size should work for most requests.
   ;The buffer size can be increased if required. Space is also required for an HTTP_REQUEST struct.
   mov dRequestSize, sizeof(HTTP_REQUEST) + 2048;
@@ -227,7 +228,7 @@ Method HttpServer.ReceiveRequests, uses xsi
                                      addr dBytesRead, NULL  ;Synch. call
       .if eax == NO_ERROR
         mov xcx, pRequest
-        DbgDec [xcx].HTTP_REQUEST.Verb
+        DbgDec [xcx].HTTP_REQUEST_V1.Verb
         .if [xcx].HTTP_REQUEST_V1.Verb == HttpVerbGET
           OCall xsi.SendResponse, pRequest, HSC_OK, \
                                   $OfsCStrA("OK"), $OfsCStrA("Hey, you hit the server.", 10, 13)

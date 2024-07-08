@@ -572,7 +572,7 @@ MethodEnd
 
 Method NetComConnection.OnWrite, uses xsi, pIOSockJob:PIO_SOCKJOB
   SetObject xsi
-;  DbgHex xsi, "NetComConnection.OnWrite"
+  DbgHex xsi, "NetComConnection.OnWrite"
   mov xcx, [xsi].pOwner
   ;Toss the completed IOSockJob back in the IOJobPool
   OCall [xcx].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOSockJobPool.FreeItem, pIOSockJob

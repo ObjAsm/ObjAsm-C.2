@@ -192,7 +192,7 @@ Method NetComEngine.Done, uses xbx xdi xsi
 
   ;Shutdown WinSock
   invoke WSACleanup
-  DbgText "NetComEngine.Done", "ResGuard"
+  DbgText "NetComEngine.Done"
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

@@ -148,7 +148,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=22
+MilestoneOnDateDate=8
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -183,7 +183,7 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,5967
+2=0,0,0,0,16645
 1=0,0,0,0,791
 6=0,0,0,0,90797
 4=0,0,0,0,667
@@ -219,16 +219,16 @@ ProductVer4Range=0
 36=0,0,0,0,1301
 30=0,0,0,0,0
 [Find]
-1="25773"
-2="OnTimer"
-3="printf"
-4="NCC_DISCONNECTED_LOCAL"
-5="NCC_DISCONNECTED_LOCAL or NCC_DISCONNECTED_REMOTE"
-6="CaptureDesktopImage"
-7="SendDlg.CtlsGet"
-8="NetComClientProtocol.Init"
-9="%li"
-10="OCall $ObjTmpl(NetComClientProtocol)::NetComClientProtocol.Init, xsi, $NetworkPort(25773)"
+1="QueueWrite"
+2="25773"
+3="OnTimer"
+4="printf"
+5="NCC_DISCONNECTED_LOCAL"
+6="NCC_DISCONNECTED_LOCAL or NCC_DISCONNECTED_REMOTE"
+7="CaptureDesktopImage"
+8="SendDlg.CtlsGet"
+9="NetComClientProtocol.Init"
+10="%li"
 [Collapse]
 17=,
 14=,
@@ -280,7 +280,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=1,2,20,3,9,10
 [PTimer]
-PTimer=651396402
+PTimer=651525246
 [GroupExpand]
 GroupExpand=1,1,1,1,0,0,1,1,0
 [RADebugBP]

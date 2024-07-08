@@ -233,7 +233,7 @@ GetLocHnsecs proc pDest:PDTL_HNSECS
   invoke GetSystemTimeAsFileTime, pDest                 ;Fast
   invoke FileTimeToLocalFileTime, pDest, pDest          ;Expensive
   test eax, eax
-  setz al
+  setnz al
   movzx eax, al
   ret
 GetLocHnsecs endp
@@ -589,7 +589,7 @@ TimeToStr endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DateTimeToStr
-; Purpose:
+; Purpose:    Convert a PDTL_DATE and DTL_TIME to a formated string representation.
 ; Arguments:  Arg1: -> Destination Buffer
 ;             Arg2: Date Format flags
 ;             Arg3: -> DTL_DATE
