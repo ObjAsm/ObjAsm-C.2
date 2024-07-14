@@ -128,6 +128,18 @@ HnsecsToDateTime proto :PDTL_DATETIME, :PDTL_HNSECS
 TimeToHnsecs proto :PDTL_HNSECS, :PDTL_TIME
 DateTimeToHnsecs proto :PDTL_HNSECS, :PDTL_DATETIME   ;Todo
 
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      SysTime2DateTime
+; Purpose:    Convert a SYSTIME struct to a DTL_DATETIME rearranging the position of some members.
+; Arguments:  Arg1: SYSTIME structure
+;             Arg2: (optional) Calendar
+; Note:       Uses eax.
+
+SysTime2DateTime macro SysTime:req, Calendar:=<CAL_GREGORIAN>
+  mov eax, DWORD ptr SysTime.wYear
+  mov DWORD ptr SysTime.wMonth, eax
+  mov SysTime.wYear, Calendar
+endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      SubTicks
@@ -254,7 +266,7 @@ GetUtcHnsecs endp
 ; Arguments:  Arg1: -> Destination Buffer
 ;             Arg2: Format flags
 ;             Arg3: -> DTL_DATE
-; Return:     eax = Number of bytes copied.
+; Return:     eax = Number of bytes copied, including the ZTC.
 
 PrependZeros macro Var, Count
   if Count eq 4
@@ -490,7 +502,7 @@ DateToStr endp
 ; Arguments:  Arg1: -> Destination Buffer
 ;             Arg2: Format flags
 ;             Arg3: -> DTL_TIME
-; Return:     eax = Number of bytes copied.
+; Return:     eax = Number of bytes copied, including the ZTC.
 
 TimeToStr proc uses xdi xsi pDest:PSTRING, dFormat:DWORD, pHMST:PDTL_TIME
   local dTimeFormat:DWORD, dHours:DWORD, dPeriod:DWORD, TimeSepChar:CHR, cLocaleBuffer[4]:CHR
@@ -595,18 +607,16 @@ TimeToStr endp
 ;             Arg3: -> DTL_DATE
 ;             Arg4: Time Format flags
 ;             Arg5: -> DTL_TIME
-; Return:     eax = Number of bytes copied.
+; Return:     eax = Number of bytes copied, including the ZTC.
 
 DateTimeToStr proc uses xbx pDest:PSTRING, dDateFormat:DWORD, pDate:PDTL_DATE, \
                                            dTimeFormat:DWORD, pTime:PDTL_TIME
   invoke DateToStr, pDest, dDateFormat, pDate
-  mov xbx, xax
-  mov xcx, pDest
-  add xcx, xax
-  mov CHR ptr [xax], " "
-  add xcx, sizeof(CHR)
-  invoke TimeToStr, xcx, dTimeFormat, pTime
-  lea xax, [xax + xbx + sizeof(CHR)]
+  mov ebx, eax                                          ;Including the ZTC
+  add xax, pDest
+  mov CHR ptr [xax - sizeof(CHR)], " "
+  invoke TimeToStr, xax, dTimeFormat, pTime
+  add eax, ebx
   ret
 DateTimeToStr endp
 

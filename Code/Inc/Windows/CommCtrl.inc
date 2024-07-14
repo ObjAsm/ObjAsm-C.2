@@ -1,4 +1,4 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
+@DefProto DllImport, ImageList_Create, WIN_STD_CALL_CONV,, <:SDWORD, :SDWORD, :UINT, :SDWORD, :SDWORD>, 20;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
 ;(C) G. Friedrich April 2024
 ;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\commctrl.h
 ;             Created on (UTC) 06/04/2024 06:15:52
@@ -382,7 +382,7 @@ ifndef _INC_COMMCTRL
           ILC_ORIGINALSIZE equ 00010000h
           ILC_HIGHQUALITYSCALE equ 00020000h
         endif
-        @DefProto DllImport, ImageList_Create, WIN_STD_CALL_CONV,, <:SDWORD, :SDWORD, :UINT, :SDWORD, :SDWORD>, 20
+        
         @DefProto DllImport, ImageList_Destroy, WIN_STD_CALL_CONV,, <:HIMAGELIST>, 4
         @DefProto DllImport, ImageList_GetImageCount, WIN_STD_CALL_CONV,, <:HIMAGELIST>, 4
         @DefProto DllImport, ImageList_SetImageCount, WIN_STD_CALL_CONV,, <:HIMAGELIST, :UINT>, 8

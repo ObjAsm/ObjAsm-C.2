@@ -5,7 +5,7 @@
 ; Purpose:    This file is designed for use with the translated header files of the h2inc+ project.
 ;             It must be included before the Windows.inc file.
 ;             This include file is *NOT* automatically generated.
-; Notes:      Check "h2inc+_Manual_Changes.txt" 
+; Notes:      Check "h2inc+_Manual_Changes.txt"
 
 
 ifndef _INC_WINASM
@@ -171,7 +171,7 @@ ifndef _INC_WINASM
   _FORCENAMELESSUNION       equ   -1                    ;required for VARIANT definition
 
   WINAPI_PARTITION_PHONE_RESTRICTED   equ   -1          ;Missing
-  
+
   _USE_ATTRIBUTES_FOR_SAL   equ   FALSE
   _MSVC_LANG                equ   202401
 

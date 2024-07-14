@@ -81,8 +81,10 @@ RenderPrototype proc uses xdi pProcName:PSTRINGA, pImportSpec:PSTRINGA
           lea xax, szEmpty                              ;Make sure it is a valid PSTRINGA
         .else
           .if dPtrCount == 0 && pName == NULL
-            .break .if $DoesStringMatchA?([xax], <void>)
-            .break .if $DoesStringMatchA?([xax], <VOID>)
+            DoesStringMatchA? [xax], <void>
+            .break .if ZERO?
+            DoesStringMatchA? [xax], <VOID>
+            .break .if ZERO?
           .endif
         .endif
                                                         ;Don't interpret xxx(void) as parameter

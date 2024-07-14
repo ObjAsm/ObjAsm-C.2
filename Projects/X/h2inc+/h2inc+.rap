@@ -374,16 +374,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="^M"
-2="LARGE_INTEGER"
-3="COBJMACROS"
-4="          ifdef COBJMACROS^M            ;[...]^M          endif^M"
-5="          ifdef COBJMACROS^M            ;[...]^M          endif^M        endif^M"
-6=";        if Defined(__cplusplus) and  not Defined(CINTERFACE)^M;          ;[...]^M;        else"
-7="        if Defined(__cplusplus) and  not Defined(CINTERFACE)^M          ;[...]^M        else"
-8="STDMETHOD"
-9="IMAGE_ARCHIVE_START"
-10="CryptSignCertificate"
+1="@DefProto m"
+2="@DefProto"
+3="dParamBytes"
+4="^M"
+5="LARGE_INTEGER"
+6="COBJMACROS"
+7="          ifdef COBJMACROS^M            ;[...]^M          endif^M"
+8="          ifdef COBJMACROS^M            ;[...]^M          endif^M        endif^M"
+9=";        if Defined(__cplusplus) and  not Defined(CINTERFACE)^M;          ;[...]^M;        else"
+10="        if Defined(__cplusplus) and  not Defined(CINTERFACE)^M          ;[...]^M        else"
 [Collapse]
 4=,,,,,,
 2=
