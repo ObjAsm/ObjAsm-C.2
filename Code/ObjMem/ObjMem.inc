@@ -1771,5 +1771,21 @@ else
   XVEC_MAX_CAPACITY equ VEC32_MAX_CAPACITY
 endif
 
+OPT_IS_BOOL     equ 0
+OPT_IS_BIT      equ 1
+OPT_IS_CHAR     equ 2
+OPT_IS_DECIMAL  equ 3
+OPT_IS_STRING   equ 4
 
+;(Command line) option table entry
+OPTION_ENTRY struct
+  pSwitch   PSTRING ?
+  bType     BYTE    ?
+  xOffset   XWORD   ?
+OPTION_ENTRY ends
+POPTION_ENTRY typedef ptr OPTION_ENTRY
+
+GetOption         proto :POPTION_ENTRY, :POINTER, :PSTRINGW
+GetOptions        proto :POPTION_ENTRY, :POINTER, :PSTRINGW
+ParseCmdLineArgs  proto :PSTRINGW
 

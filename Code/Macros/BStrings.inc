@@ -28,7 +28,7 @@
 ; Note: - Use ??StrSize (byte count including the ZTC) or
 ;         ??StrLength (character count without the ZTC).
 ;         Both values do not include the byte length header (DWORD).
-;       - The "Byte Lenght" prefix includes the ZTC.
+;       - The "Byte Lenght" prefix does NOT include the ZTC.
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -73,7 +73,7 @@ BString macro StrName, QuotedText:vararg
     endif
   endm
 
-% dd $$Count        ;;Set byte Count before the UNICODE string is placed
+% dd $$Count        ;;Set byte Count before the WIDE string is placed
 
   $$StrStart = $
   $$SrcLine textequ @CatStr(StrName, < dw >)

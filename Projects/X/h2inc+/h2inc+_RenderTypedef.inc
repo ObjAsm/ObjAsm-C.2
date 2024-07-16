@@ -118,7 +118,7 @@ RenderTypedef proc
   StmOutSave PrevOutStat                                ;Save output stream status
   invoke RenderTypedefEnum, TRUE
   .ifBitClr $ObjTmpl(Application).Options.dSelectiveOutput, OUTPUT_CONSTANTS
-    StmOutLoad PrevOutStat                            ;Restore initial output stream status
+    StmOutLoad PrevOutStat                              ;Restore initial output stream status
     mov CHRA ptr [xax], 0
   .endif
   jmp @Exit

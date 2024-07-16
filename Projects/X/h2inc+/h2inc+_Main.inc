@@ -53,82 +53,24 @@ Method Application.Done, uses xbx xsi
   ACall xbx.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Application.GetOption
-; Purpose:    Process a single option.
-; Arguments:  Arg1: -> WIDE Argument comming from commandline.
-; Return:     eax: TRUE if succeeded, otherwise FALSE.
-
-Method Application.GetOption, uses xbx xdi xsi, pArgument:PSTRINGW
-  SetObject xbx
-  mov xsi, pArgument
-  mov ax, [xsi]
-  .if ax == "/" || ax == "-"
-    movzx ecx, CHRW ptr [xsi + sizeof(CHRW)]
-    lea xdi, CmdLineSwitchTable
-    .while TRUE
-      movzx eax, [xdi].CMDLINE_SWITCH_ENTRY.wSwitch
-      test eax, eax                                     ;Table end marker
-      je @@EOM
-      .break .if ecx == eax
-      add xdi, sizeof(CMDLINE_SWITCH_ENTRY)
-    .endw
-
-    mov xdx, [xdi].CMDLINE_SWITCH_ENTRY.xOffset
-    lea xcx, [xbx].Options
-    add xdx, xcx
-
-    .if [xdi].CMDLINE_SWITCH_ENTRY.bType == CLS_IS_BOOL
-      mov BYTE ptr [xdx], TRUE
-      mov eax, TRUE
-    .elseif [xdi].CMDLINE_SWITCH_ENTRY.bType == CLS_IS_BIT
-      movzx ecx, CHRW ptr [xsi + 2*sizeof(CHRW)]
-      sub ecx, "0"
-      mov eax, 1
-      shl eax, cl
-      or DWORD ptr [xdx], eax
-      mov eax, TRUE
-    .elseif [xdi].CMDLINE_SWITCH_ENTRY.bType == CLS_IS_CHAR
-      m2m CHRW ptr [xdx], [xsi + 2*sizeof(CHRW)], cx
-    .elseif [xdi].CMDLINE_SWITCH_ENTRY.bType == CLS_IS_NUMBER
-      movzx ecx, CHRW ptr [xsi + 2*sizeof(CHRW)]
-      sub ecx, "0"
-      mov DWORD ptr [xdx], ecx
-      mov eax, TRUE
-    .elseif [xdi].CMDLINE_SWITCH_ENTRY.bType == CLS_IS_STRING
-      mov xdi, xdx
-      lea xsi, [xsi + 2*sizeof(CHRW)]
-      invoke PathUnquoteSpacesW, xsi
-      OCall [xbx].MemHeap::MemoryHeap.AddStrW, xsi
-      mov POINTER ptr [xdi], xax
-      mov eax, TRUE
-    .else
-      xor eax, eax
-    .endif
-  .else
-    xor eax, eax
-  .endif
-MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Application.GetOptions
+; Method:     Application.GetAppOptions
 ; Purpose:    Scan argument list for options.
-; Arguments:  Arg1: -> WIDE Argument list.
-;             Arg2: First argument from the list to start with.
-;             Arg3: Number of arguments in the ArgList.
-;             Arg4: -> Source Text.
+; Arguments:  Arg1: -> WIDE argument list.
+;             Arg2: Number of arguments in the argument list.
+;             Arg3: -> Source text.
 ; Return:     eax: TRUE if succeeded, otherwise FALSE.
 
-Method Application.GetOptions, uses xbx xdi xsi, pArgList:POINTER, dStart:DWORD, dCount:DWORD, \
-                                                 pSource:PSTRING
+Method Application.GetAppOptions, uses xbx xdi xsi, pArgList:POINTER, dCount:DWORD, pSource:PSTRING
   local cMessage[1024]:CHR
 
   SetObject xbx
-  mov edi, dStart
+  xor edi, edi
   mov xsi, pArgList
   .while edi < dCount
-    mov xdx, PSTRINGW ptr [xsi + xdi*sizeof(PSTRINGW)]
-    OCall xbx.GetOption, xdx
+    invoke GetOption, offset OptionDefTable, addr [xbx].Options, \
+                      PSTRINGW ptr [xsi + xdi*sizeof(PSTRINGW)]
     .if eax == FALSE
       lea eax, [edi + 1]
       .if eax == dCount                                 ;Last argument?
@@ -137,11 +79,9 @@ Method Application.GetOptions, uses xbx xdi xsi, pArgList:POINTER, dStart:DWORD,
         OCall [xbx].MemHeap::MemoryHeap.AddStrW, xsi
         mov [xbx].pFilespec, xax
       .else
-        ReleaseObject
-        mov xbx, PSTRINGW ptr [xsi + xdi*sizeof(PSTRINGW)]
         lea xsi, cMessage
-        WriteF xsi, "Incorrect parameter #¦UD in \`¦ST\`: ¦SU", eax, pSource, xbx
-        SetObject xbx
+        WriteF xsi, "Incorrect parameter #¦UD in \`¦ST\`: ¦SU", \
+               eax, pSource, PSTRINGW ptr [xsi + xdi*sizeof(PSTRINGW)]
         OCall xbx.ShowError, addr cMessage
         mov [xbx].Options.bShowUsage, TRUE
         mov [xbx].bTerminate, TRUE
@@ -165,8 +105,9 @@ MethodEnd
 .code
 Method Application.Init, uses xbx xdi xsi
   local cMessage[1024]:CHR, hFile:HANDLE, dBytesRead:DWORD
-  local dArgCount:DWORD, LocTime:SYSTEMTIME, cFullSearchPath[MAX_PATH]:CHRW
+  local LocTime:SYSTEMTIME, cFullSearchPath[MAX_PATH]:CHRW
   local cReadBuffer[1024]:CHRA, cEnvVar[1024]:CHRW
+  local dIndex:DWORD, pArgument:PSTRINGW, dArgCount:DWORD
 
   SetObject xbx
   ACall xbx.Init, NULL
@@ -196,30 +137,41 @@ Method Application.Init, uses xbx xdi xsi
   jne @@EOM
 
   OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Reading program arguments...")
-  ;Get CL arguments ---------------------------------------------------------------------
-;  mov xax, $invoke(GetCommandLine)
-  mov xax, $OfsDStrW('h2inc+.exe -@".\h2inc+_Options.txt"')
-  OCall xbx.ParseArguments, xax
-  mov [xbx].pCL_Args, xax
-  mov dArgCount, ecx
-  .if ecx == 1
+  ;Get Command Line arguments ---------------------------------------------------------------------
+;  invoke ParseCmdLineArgs, $invoke(GetCommandLine)
+  invoke ParseCmdLineArgs, $OfsDStrW('h2inc+.exe -@".\h2inc+_Options.txt"')
+  .if xax != NULL 
+    mov [xbx].pCL_Args, xax
+    mov dArgCount, ecx
+    .if ecx == 1
+      mov [xbx].Options.bShowUsage, TRUE
+      mov [xbx].bTerminate, TRUE
+      jmp @@EOM
+    .endif
+  
+;    ;Show me all commandline arguments
+;    test ecx, ecx
+;    .while !ZERO?
+;      DbgStrW POINTER ptr [xax], "Command Line Arguments"
+;      add xax, sizeof(POINTER)
+;      dec ecx
+;    .endw
+
+    add xax, sizeof(POINTER)                            ;Skip first argument (exe name)
+    dec dArgCount
+    OCall xbx.GetAppOptions, xax, dArgCount, $OfsCStr("command line")
+    .if eax == FALSE
+      mov [xbx].Options.bShowUsage, TRUE
+      mov [xbx].bTerminate, TRUE
+      jmp @@EOM
+    .endif
+  .else
+    OCall xbx.ShowError, $OfsCStr("Out of memory analysing the command line")
     mov [xbx].Options.bShowUsage, TRUE
     mov [xbx].bTerminate, TRUE
     jmp @@EOM
   .endif
-
-;  ;Show me all commandline arguments
-;  test ecx, ecx
-;  .while !ZERO?
-;    DbgStrW POINTER ptr [xax], "Show CL Arguments"
-;    add xax, sizeof(POINTER)
-;    dec ecx
-;  .endw
-
-  OCall xbx.GetOptions, [xbx].pCL_Args, 1, dArgCount, $OfsCStr("command line")
-  test eax, eax
-  jz @@EOM
-
+  
   ;Get EV arguments ---------------------------------------------------------------------
   mov CHR ptr cEnvVar, 0
   .if [xbx].Options.pEnvVar != NULL
@@ -255,21 +207,37 @@ Method Application.Init, uses xbx xdi xsi
       jmp @F
     .endif
   .endif
-  OCall xbx.ParseArguments, addr cEnvVar
-  mov [xbx].pEV_Args, xax
-  mov dArgCount, ecx
 
-;  ;Show me all Environment Variable arguments
-;  test ecx, ecx
-;  .while !ZERO?
-;    DbgStrW POINTER ptr [xax], "Show EV-Arguments"
-;    add xax, sizeof(POINTER)
-;    dec ecx
-;  .endw
+  invoke ParseCmdLineArgs, addr cEnvVar
+  .if xax != NULL 
+    mov [xbx].pEV_Args, xax
+    mov dArgCount, ecx
+    .if ecx == 1
+      mov [xbx].Options.bShowUsage, TRUE
+      mov [xbx].bTerminate, TRUE
+      jmp @@EOM
+    .endif
+  
+;    ;Show me all Environment Variable arguments
+;    test ecx, ecx
+;    .while !ZERO?
+;      DbgStrW POINTER ptr [xax], "EV-Arguments"
+;      add xax, sizeof(POINTER)
+;      dec ecx
+;    .endw
 
-  OCall xbx.GetOptions, [xbx].pEV_Args, 0, dArgCount, [xbx].Options.pEnvVar
-  test eax, eax
-  jz @@EOM
+    OCall xbx.GetAppOptions, xax, dArgCount, $OfsCStr("EV-Argument")
+    .if eax == FALSE
+      mov [xbx].Options.bShowUsage, TRUE
+      mov [xbx].bTerminate, TRUE
+      jmp @@EOM
+    .endif
+  .else
+    OCall xbx.ShowError, $OfsCStr("Out of memory analysing the EV-Argument")
+    mov [xbx].Options.bShowUsage, TRUE
+    mov [xbx].bTerminate, TRUE
+    jmp @@EOM
+  .endif
 
 @@:
   ;Check Filespec
@@ -416,91 +384,6 @@ Method Application.Init, uses xbx xdi xsi
   .if [xbx].Options.dSelectiveOutput == 0
     mov [xbx].Options.dSelectiveOutput, -1
   .endif
-MethodEnd
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Application.ParseArguments
-; Purpose:    Parse a WIDE CL-string and return an array of PSTRINGW to the command line arguments,
-;             along with a count of such arguments. Delimiters are white chars or CRLF.
-; Arguments:  Arg1: -> Input WIDE string.
-; Return:     xax -> Array of PSTRINGWs.
-;             ecx = Argument count.
-; Note:       1. Mermory allocated to hold the PSTRINGWs must be freed using MemFree.
-;             2. Arguments that are followed by an quoted string are retuned with the opening quote
-;                and the closing quote removed.
-
-Method Application.ParseArguments, uses xbx xdi xsi, pArgumentStringW:PSTRINGW
-.const
-JumpTable label POINTER
-  POINTER offset @@1
-  POINTER offset @@2
-  POINTER offset @@3
-  POINTER offset @@4
-  POINTER offset @@5
-
-.code
-  MemAlloc 1024
-  mov xsi, pArgumentStringW
-  xor ebx, ebx                                          ;Argument Count
-  mov edx, 1                                            ;Statemachine step
-
-@@0:
-  lea xdi, JumpTable
-  mov cx, CHRW ptr [xsi]
-  cmp cx, 0
-  je @@9
-  jmp POINTER ptr [xdi + xdx*sizeof(POINTER) - sizeof(POINTER)]
-
-@@1:
-  .if cx == SPC || cx == TAB || cx == LF || cx == CR  ;Start search
-    add xsi, sizeof(CHRW)
-    jmp @@0
-  .endif
-  mov edx, 2
-  jmp @@0
-
-@@2:
-  push xsi                                              ;Save start address
-  inc ebx
-  mov edx, 3
-  jmp @@0
-
-@@3:
-  .if cx == '"'                                         ;Opening quote
-    add xsi, sizeof(CHRW)                               ;Skip the quote
-    mov edx, 4
-    jmp @@0
-  .elseif cx == SPC || cx == TAB || cx == LF || cx == CR
-    mov edx, 5
-    jmp @@0
-  .endif
-  add xsi, sizeof(CHRW)
-  jmp @@0
-
-@@4:
-  .if cx == '"'                                         ;Search closing quote
-    add xsi, sizeof(CHRW)                               ;Skip the quote
-    mov edx, 5
-    jmp @@0
-  .endif
-  add xsi, sizeof(CHRW)                                 ;Skip the quote
-  jmp @@0
-
-@@5:
-  mov CHRW ptr [xsi], 0                                 ;ZTC
-  add xsi, sizeof(CHRW)
-  mov edx, 1                                            ;Start again
-  jmp @@0
-
-@@9:
-  mov ecx, ebx
-  test ecx, ecx
-  .while !ZERO?
-    pop xdx
-    mov PSTRINGW ptr [xax + xcx*sizeof(PSTRINGW) - sizeof(PSTRINGW)], xdx
-    dec ecx
-  .endw
-  mov ecx, ebx                                          ;Return argument count in ecx
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -951,12 +834,12 @@ Method Application.ShowWarning, uses xbx xdi, dWarningLevel:DWORD, pWarningMessa
     OCall xbx.SetColor, COLOR_REGULAR
 
     ifndef SILENT
-    if DEBUGGING
-      DbgSaveContext TRUE
-      DbgSetDestWnd "Output"
-      invoke DbgOutText, addr cMessage, DbgColorWarning, DbgColorBackground, 0, ??DbgDstWnd
-      DbgLoadContext
-    endif
+      if DEBUGGING
+        DbgSaveContext TRUE
+        DbgSetDestWnd "Output"
+        invoke DbgOutText, addr cMessage, DbgColorWarning, DbgColorBackground, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
     endif
   .endif
 MethodEnd

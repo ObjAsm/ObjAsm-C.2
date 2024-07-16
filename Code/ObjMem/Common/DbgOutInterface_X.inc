@@ -29,4 +29,3 @@ DbgOutInterface proc pIID:ptr GUID, dForeColor:DWORD, dBackColor:DWORD, pDest:PO
   ret
 DbgOutInterface endp
 
-end

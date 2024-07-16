@@ -666,5 +666,12 @@ uxShr
 uxShr
 sxShr
 sxShr
-  
+
 MulDiv64, sqMultiplicand, sqMultiplicator, sqDivisor
+
+GetOption, pOptDefTable, pStorage, pOption
+GetOptions, pOptDefTable, pStorage, pOptionList
+ParseCmdLineArgs, pCmdLineStrW
+
+
+

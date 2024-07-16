@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      h2inc+.asm
 ; Author:     G. Friedrich
-; Version:    C.2.0
+; Version:    C.2.1
 ; Purpose:    Creates MASM include files (.inc) from C header files (.h).
 ; Links:      http://masm32.com/board/index.php?topic=7006.msg75149#msg75149
 ;             C++ reference: https://en.cppreference.com/w/cpp
@@ -27,6 +27,8 @@
 ;                 - Support for multidimesional arrays added.
 ;                 - Record bit reversal added.
 ;                 - @ option added to specify additional options in an env. variable or in a file.
+;             Version C.2.1, July 2024
+;               - Command Line parsing and analysis replaced by ObjMem procs.
 ; ==================================================================================================
 
 ;void proto WIN_STD_CALL_CONV :ptr __RPC_USER
@@ -52,6 +54,7 @@ SysSetup OOP, CON64, WIDE_STRING, DEBUG(WND);, RESGUARD)
 ;SILENT=TRUE
 
 % include &MacPath&fMath.inc
+% include &MacPath&BStrings.inc
 
 % include &IncPath&Windows\ShellApi.inc
 % include &IncPath&Windows\shlwapi.inc
@@ -178,8 +181,7 @@ ObjectEnd
 
 Object Application, MyConsoleAppID, ConsoleApp          ;Console Interface App.
   RedefineMethod  Done
-  StaticMethod    GetOption,          PSTRINGW
-  StaticMethod    GetOptions,         POINTER, DWORD, DWORD, PSTRING
+  StaticMethod    GetAppOptions,      POINTER, DWORD, PSTRING
   RedefineMethod  Init
   StaticMethod    ParseArguments,     PSTRINGW
   StaticMethod    ProcessFile,        PSTRINGW, PSTRINGW, $ObjPtr(IncFile)

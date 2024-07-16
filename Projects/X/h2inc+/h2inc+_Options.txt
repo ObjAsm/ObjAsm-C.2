@@ -4,5 +4,5 @@
 -i
 -V1
 -W2
--o".\inc_7zip_24.07"
-".\h_7zip_24.07\MasterInclude.h"
+-o".\7zip\inc_7zip_24.07"
+".\7zip\h_7zip_24.07\MasterInclude.h"

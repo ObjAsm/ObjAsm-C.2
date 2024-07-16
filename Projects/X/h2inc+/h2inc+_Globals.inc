@@ -606,19 +606,6 @@ CONV_BASIC_TYPE_ENTRY <CTS_long or CTS_double,                            offset
 CONV_BASIC_TYPE_ENTRY <CTS_void,                                          offset szEmpty>
 DWORD 0
 
-;Command line switch table
-CMDLINE_SWITCH_ENTRY struct
-  wSwitch   CHRW    ?
-  bType     BYTE    ?
-  xOffset   XWORD   ?
-CMDLINE_SWITCH_ENTRY ends
-
-CLS_IS_BOOL     equ 0
-CLS_IS_BIT      equ 1
-CLS_IS_NUMBER   equ 2
-CLS_IS_CHAR     equ 3
-CLS_IS_STRING   equ 4
-
 OPTIONS struct
   bShowUsage          BYTE      FALSE         ;-h | -? command line switch
   pEnvVar             PSTRINGW  NULL          ;-@ command line switch
@@ -640,27 +627,27 @@ OPTIONS struct
   bOverwrite          BYTE      FALSE         ;-y command line switch
 OPTIONS ends
 
-CmdLineSwitchTable label BYTE
-  CMDLINE_SWITCH_ENTRY <"?", CLS_IS_BOOL,   offset OPTIONS.bShowUsage>
-  CMDLINE_SWITCH_ENTRY <"h", CLS_IS_BOOL,   offset OPTIONS.bShowUsage>
-  CMDLINE_SWITCH_ENTRY <"@", CLS_IS_STRING, offset OPTIONS.pEnvVar>
-  CMDLINE_SWITCH_ENTRY <"a", CLS_IS_BOOL,   offset OPTIONS.bAddAlign>
-  CMDLINE_SWITCH_ENTRY <"b", CLS_IS_BOOL,   offset OPTIONS.bBatchmode>
-  CMDLINE_SWITCH_ENTRY <"c", CLS_IS_BOOL,   offset OPTIONS.bIncludeComments>
-  CMDLINE_SWITCH_ENTRY <"d", CLS_IS_NUMBER, offset OPTIONS.dDllImport>
-  CMDLINE_SWITCH_ENTRY <"e", CLS_IS_BOOL,   offset OPTIONS.bCreateDefs>
-  CMDLINE_SWITCH_ENTRY <"I", CLS_IS_STRING, offset OPTIONS.pIncludeDirs>
-  CMDLINE_SWITCH_ENTRY <"i", CLS_IS_BOOL,   offset OPTIONS.bProcessInclude>
-  CMDLINE_SWITCH_ENTRY <"k", CLS_IS_NUMBER, offset OPTIONS.dDefaultCallConv>
-  CMDLINE_SWITCH_ENTRY <"l", CLS_IS_BOOL,   offset OPTIONS.bLoadLists>
-  CMDLINE_SWITCH_ENTRY <"m", CLS_IS_BOOL,   offset OPTIONS.bUntypedMembers>
-  CMDLINE_SWITCH_ENTRY <"o", CLS_IS_STRING, offset OPTIONS.pOutDir>
-  CMDLINE_SWITCH_ENTRY <"p", CLS_IS_BOOL,   offset OPTIONS.bUntypedParams>
-  CMDLINE_SWITCH_ENTRY <"s", CLS_IS_BIT,    offset OPTIONS.dSelectiveOutput>
-  CMDLINE_SWITCH_ENTRY <"V", CLS_IS_NUMBER, offset OPTIONS.dVerbosityLevel>
-  CMDLINE_SWITCH_ENTRY <"W", CLS_IS_NUMBER, offset OPTIONS.dWarningLevel>
-  CMDLINE_SWITCH_ENTRY <"y", CLS_IS_BOOL,   offset OPTIONS.bOverwrite>
-  BYTE 0
+OptionDefTable label BYTE
+  OPTION_ENTRY <$OfsTBStr("-?"), OPT_IS_BOOL,    offset OPTIONS.bShowUsage>
+  OPTION_ENTRY <$OfsTBStr("-h"), OPT_IS_BOOL,    offset OPTIONS.bShowUsage>
+  OPTION_ENTRY <$OfsTBStr("-@"), OPT_IS_STRING,  offset OPTIONS.pEnvVar>
+  OPTION_ENTRY <$OfsTBStr("-a"), OPT_IS_BOOL,    offset OPTIONS.bAddAlign>
+  OPTION_ENTRY <$OfsTBStr("-b"), OPT_IS_BOOL,    offset OPTIONS.bBatchmode>
+  OPTION_ENTRY <$OfsTBStr("-c"), OPT_IS_BOOL,    offset OPTIONS.bIncludeComments>
+  OPTION_ENTRY <$OfsTBStr("-d"), OPT_IS_DECIMAL, offset OPTIONS.dDllImport>
+  OPTION_ENTRY <$OfsTBStr("-e"), OPT_IS_BOOL,    offset OPTIONS.bCreateDefs>
+  OPTION_ENTRY <$OfsTBStr("-I"), OPT_IS_STRING,  offset OPTIONS.pIncludeDirs>
+  OPTION_ENTRY <$OfsTBStr("-i"), OPT_IS_BOOL,    offset OPTIONS.bProcessInclude>
+  OPTION_ENTRY <$OfsTBStr("-k"), OPT_IS_DECIMAL, offset OPTIONS.dDefaultCallConv>
+  OPTION_ENTRY <$OfsTBStr("-l"), OPT_IS_BOOL,    offset OPTIONS.bLoadLists>
+  OPTION_ENTRY <$OfsTBStr("-m"), OPT_IS_BOOL,    offset OPTIONS.bUntypedMembers>
+  OPTION_ENTRY <$OfsTBStr("-o"), OPT_IS_STRING,  offset OPTIONS.pOutDir>
+  OPTION_ENTRY <$OfsTBStr("-p"), OPT_IS_BOOL,    offset OPTIONS.bUntypedParams>
+  OPTION_ENTRY <$OfsTBStr("-s"), OPT_IS_BIT,     offset OPTIONS.dSelectiveOutput>
+  OPTION_ENTRY <$OfsTBStr("-V"), OPT_IS_DECIMAL, offset OPTIONS.dVerbosityLevel>
+  OPTION_ENTRY <$OfsTBStr("-W"), OPT_IS_DECIMAL, offset OPTIONS.dWarningLevel>
+  OPTION_ENTRY <$OfsTBStr("-y"), OPT_IS_BOOL,    offset OPTIONS.bOverwrite>
+  PSTRINGW NULL
 
 String cUsageHeader,"h2inc+ version ", @CatStr(<!">,<%VERSION>,<!">), ", ", @CatStr(<!">,<%COPYRIGHT>,<!">), CRLF
 String cUsageText,  "Usage: h2inc+ [Options] Filespec", CRLF
