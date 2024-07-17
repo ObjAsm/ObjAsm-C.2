@@ -955,8 +955,8 @@ if TARGET_BITNESS eq 32
   sxShl textequ <sqShl>
   uxShr textequ <uqShr>
   sxShr textequ <sqShr>
-  
- 
+
+
 elseif TARGET_BITNESS eq 64
   xword2hex textequ <qword2hex>
   hex2xword textequ <hex2qword>
@@ -1777,11 +1777,11 @@ OPT_IS_CHAR     equ 2
 OPT_IS_DECIMAL  equ 3
 OPT_IS_STRING   equ 4
 
-;(Command line) option table entry
+;Option table entry
 OPTION_ENTRY struct
-  pSwitch   PSTRING ?
-  bType     BYTE    ?
-  xOffset   XWORD   ?
+  pSwitch   PSTRINGW  ?       ;-> BSTR
+  bType     BYTE      ?
+  xOffset   XWORD     ?
 OPTION_ENTRY ends
 POPTION_ENTRY typedef ptr OPTION_ENTRY
 

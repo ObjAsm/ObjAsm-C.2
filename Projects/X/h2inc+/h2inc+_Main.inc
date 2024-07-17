@@ -47,6 +47,10 @@ Method Application.Done, uses xbx xsi
 
   MemFree [xbx].pCL_Args
   MemFree [xbx].pEV_Args
+  
+  invoke StrDispose, [xbx].Options.pEnvVar
+  invoke StrDispose, [xbx].Options.pIncludeDirs
+  invoke StrDispose, [xbx].Options.pOutDir
 
   OCall xbx.ShowInfo, VERBOSITY_NORMAL, $OfsCStr("Program exit")
 ;  invoke Sleep, 5000
@@ -157,7 +161,7 @@ Method Application.Init, uses xbx xdi xsi
 ;      dec ecx
 ;    .endw
 
-    add xax, sizeof(POINTER)                            ;Skip first argument (exe name)
+    add xax, sizeof(PSTRINGW)                           ;Skip first argument (Application name)
     dec dArgCount
     OCall xbx.GetAppOptions, xax, dArgCount, $OfsCStr("command line")
     .if eax == FALSE

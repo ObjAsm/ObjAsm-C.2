@@ -13,12 +13,12 @@
 ; Purpose:    Parse a WIDE command line string and return an array of PSTRINGW to the arguments,
 ;             along with a count of these arguments. Delimiters are white chars and CRLF.
 ; Arguments:  Arg1: -> Input WIDE string.
-; Return:     xax -> Array of PSTRINGWs. If xax = NULL, allocation failed or argument count is 0.
+; Return:     xax -> List of PSTRINGWs. If the memory allocation for the list failed, xax is NULL.
 ;             ecx = Argument count.
 ; Note:       1. Memory allocated to hold the PSTRINGWs must be freed using MemFree.
-;             2. Quoted arguments are retuned without quotation marks.
-;             3. The input string is modified with ZTCs at the end of each argument.
-;             4. The PSTRINGW list is always terminated with a NULL pointer. 
+;             2. The PSTRINGW list is always terminated with a NULL pointer. 
+;             3. Quoted arguments are retuned without quotation marks.
+;             4. The input string is modified with ZTCs at the end of each argument.
 
 align ALIGN_CODE
 ParseCmdLineArgs proc uses xbx xdi xsi, pCmdLineStrW:PSTRINGW
@@ -88,7 +88,7 @@ ParseCmdLineArgs proc uses xbx xdi xsi, pCmdLineStrW:PSTRINGW
     .endw
   .else
     shl xcx, $Log2(sizeof(POINTER))                     ;xcx = used stack space
-    add xsp, xcx                                        ;Restore stack
+    add xsp, xcx                                        ;Restore the stack
   .endif
   mov ecx, ebx                                          ;Return argument count in ecx
   ret

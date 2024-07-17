@@ -627,7 +627,7 @@ OPTIONS struct
   bOverwrite          BYTE      FALSE         ;-y command line switch
 OPTIONS ends
 
-OptionDefTable label BYTE
+OptionDefTable label OPTION_ENTRY
   OPTION_ENTRY <$OfsTBStr("-?"), OPT_IS_BOOL,    offset OPTIONS.bShowUsage>
   OPTION_ENTRY <$OfsTBStr("-h"), OPT_IS_BOOL,    offset OPTIONS.bShowUsage>
   OPTION_ENTRY <$OfsTBStr("-@"), OPT_IS_STRING,  offset OPTIONS.pEnvVar>

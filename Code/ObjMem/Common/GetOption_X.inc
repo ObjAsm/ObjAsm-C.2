@@ -11,10 +11,12 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetOption
 ; Purpose:    Process a single option.
-; Arguments:  Arg1: -> Option definition table.
+; Arguments:  Arg1: -> Option definition table. See OPTION_ENTRY definition.
 ;             Arg2: -> Application options storage.
-;             Arg3: -> Argument (WIDE string), e.g. /Verbosity:1
+;             Arg3: -> Argument (WIDE string), e.g. "/Verbosity:1"
 ; Return:     eax: TRUE if succeeded, otherwise FALSE.
+; Note:       String options are WIDE and must be disposed using StrDispose when no longer needed.
+;             Char options are of type CHRW.
 
 align ALIGN_CODE
 GetOption proc uses xbx xdi xsi, pOptDefTable:POPTION_ENTRY, pStorage:POINTER, pOption:PSTRINGW
@@ -31,7 +33,7 @@ GetOption proc uses xbx xdi xsi, pOptDefTable:POPTION_ENTRY, pStorage:POINTER, p
   .while TRUE
     mov xdx, [xsi].OPTION_ENTRY.pSwitch                 ;E.g.: "/Verbosity:" 
     cmp xdx, NULL
-    jz @@NotFound
+    jz @@Error                                          ;Not found!
     mov ebx, [xdx - sizeof(DWORD)]                      ;Get switch size in bytes, not including the ZTC
     .if [xsi].OPTION_ENTRY.bType == OPT_IS_BOOL
       add ebx, sizeof CHRW                              ;Include the ZTC to make sure that nothing
@@ -54,8 +56,10 @@ GetOption proc uses xbx xdi xsi, pOptDefTable:POPTION_ENTRY, pStorage:POINTER, p
     jmp @@Exit
 
   @CatStr(<@@>, OPT_IS_BIT):
-    movzx ecx, CHRW ptr [xsi + xbx]
+    mov ecx, DCHRW ptr [xsi + xbx]                      ;Include the next char too, should be the ZTC
     sub ecx, "0"
+    cmp ecx, 10                                         ;If it is not the ZTC, then ecx > 10
+    jae @@Error                                         ;Unsigned
     mov eax, 1
     shl eax, cl
     or DWORD ptr [xdi], eax
@@ -68,19 +72,19 @@ GetOption proc uses xbx xdi xsi, pOptDefTable:POPTION_ENTRY, pStorage:POINTER, p
     jmp @@Exit
 
   @CatStr(<@@>, OPT_IS_DECIMAL):
-    invoke dec2dword, addr [xsi + xbx]
+    invoke dec2dwordW, addr [xsi + xbx]
     mov DWORD ptr [xdi], eax
     mov eax, TRUE
     jmp @@Exit
 
   @CatStr(<@@>, OPT_IS_STRING):
     invoke PathUnquoteSpacesW, addr [xsi + xbx]
-    invoke StrNew, addr [xsi + xbx]
+    invoke StrNewW, addr [xsi + xbx]                    ;Create a copy
     mov POINTER ptr [xdi], xax
     mov eax, TRUE
     jmp @@Exit
 
-@@NotFound:
+@@Error:
   xor eax, eax
 @@Exit:
   ret
