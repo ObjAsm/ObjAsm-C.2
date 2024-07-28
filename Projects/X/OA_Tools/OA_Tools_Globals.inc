@@ -85,6 +85,7 @@ CStrA szComment,              "Comment"
 CStrA szANNOTATION,           "ANNOTATION"
 CStrA szUse,                  "use"
 CStrA szPrv,                  "prv"
+CStrA szUsing,                "using"
                               
 CStrA szDot,                  "."
                               

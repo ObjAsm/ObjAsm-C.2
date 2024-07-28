@@ -1,9 +1,11 @@
 ; ==================================================================================================
 ; Title:      OA_Tools.asm
 ; Author:     G. Friedrich
-; Version:    1.0.0
+; Version:    1.0.1
 ; Purpose:    ObjAsm Tools.
-; Notes:      Version 1.0.0, October 2017
+; Notes:      Version 1.0.1, July, 2024
+;               - Detection and handling of "using" in MASM64 SDK added by HSE.
+;             Version 1.0.0, October 2017
 ;               - First release.
 ; ==================================================================================================
 

@@ -25,7 +25,7 @@ DEFINE LUA_DLL_IMPORT
 % includelib &LibPath&Windows\Shell32.lib
 % includelib &LibPath&Windows\Comdlg32.lib
 % includelib &LibPath&Windows\Shlwapi.lib
-% includelib &LibPath&Lua\TARGET_MODE_STRING\lua546.lib
+% includelib &LibPath&Lua\TARGET_MODE_STRING\lua547.lib
 
 ;Load or build the following objects
 MakeObjects Primer, Stream

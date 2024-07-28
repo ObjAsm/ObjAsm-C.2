@@ -974,6 +974,12 @@ Method OAT_Child.CheckMtdReg, uses xbx xdi xsi
       .endif
     .endif
 
+    invoke StrCICompA, pWordStart, offset szUsing, dWordSize
+    .if eax == 0
+      GetRegisters
+      jmp @@NextLine   
+    .endif
+
     CheckRegInSentence
 
 @@NextLine:
@@ -1245,6 +1251,12 @@ Method OAT_Child.CheckPrcReg, uses xbx xdi xsi
       .if eax == 0
         HandleRegAnnotation
       .endif
+    .endif
+
+    invoke StrCICompA, pWordStart, offset szUsing, dWordSize
+    .if eax == 0
+      GetRegisters
+      jmp @@NextLine   
     .endif
 
     CheckRegInSentence
