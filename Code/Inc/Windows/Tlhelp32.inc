@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\tlhelp32.h
-;             Created on (UTC) 06/04/2024 06:15:58
-;             Last modified on (UTC) 21/02/2024 18:17:18
+;Include file created by h2incX, Version B.01.01, 11/11/2018 12:39
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\Tlhelp32.h', last modified: 19/04/2018 09:45
+;Creation parameters: 
 
 ifndef _INC_TOOLHELP32
   _INC_TOOLHELP32 equ <>
@@ -28,6 +27,7 @@ ifndef _INC_TOOLHELP32
       th32HeapID ULONG_PTR ?
       dwFlags DWORD ?
     HEAPLIST32 ends
+
     tagHEAPLIST32 typedef HEAPLIST32
     PHEAPLIST32 typedef ptr HEAPLIST32
     LPHEAPLIST32 typedef ptr HEAPLIST32
@@ -46,6 +46,7 @@ ifndef _INC_TOOLHELP32
       th32ProcessID DWORD ?
       th32HeapID ULONG_PTR ?
     HEAPENTRY32 ends
+
     tagHEAPENTRY32 typedef HEAPENTRY32
     PHEAPENTRY32 typedef ptr HEAPENTRY32
     LPHEAPENTRY32 typedef ptr HEAPENTRY32
@@ -67,6 +68,7 @@ ifndef _INC_TOOLHELP32
       dwFlags DWORD ?
       szExeFile WCHAR MAX_PATH dup (?)
     PROCESSENTRY32W ends
+
     tagPROCESSENTRY32W typedef PROCESSENTRY32W
     PPROCESSENTRY32W typedef ptr PROCESSENTRY32W
     LPPROCESSENTRY32W typedef ptr PROCESSENTRY32W
@@ -84,6 +86,7 @@ ifndef _INC_TOOLHELP32
       dwFlags DWORD ?
       szExeFile CHAR MAX_PATH dup (?)
     PROCESSENTRY32 ends
+
     tagPROCESSENTRY32 typedef PROCESSENTRY32
     PPROCESSENTRY32 typedef ptr PROCESSENTRY32
     LPPROCESSENTRY32 typedef ptr PROCESSENTRY32
@@ -105,6 +108,7 @@ ifndef _INC_TOOLHELP32
       tpDeltaPri LONG ?
       dwFlags DWORD ?
     THREADENTRY32 ends
+
     tagTHREADENTRY32 typedef THREADENTRY32
     PTHREADENTRY32 typedef ptr THREADENTRY32
     LPTHREADENTRY32 typedef ptr THREADENTRY32
@@ -122,6 +126,7 @@ ifndef _INC_TOOLHELP32
       szModule WCHAR MAX_MODULE_NAME32 + 1 dup (?)
       szExePath WCHAR MAX_PATH dup (?)
     MODULEENTRY32W ends
+
     tagMODULEENTRY32W typedef MODULEENTRY32W
     PMODULEENTRY32W typedef ptr MODULEENTRY32W
     LPMODULEENTRY32W typedef ptr MODULEENTRY32W
@@ -139,6 +144,7 @@ ifndef _INC_TOOLHELP32
       szModule SBYTE MAX_MODULE_NAME32 + 1 dup (?)
       szExePath SBYTE MAX_PATH dup (?)
     MODULEENTRY32 ends
+
     tagMODULEENTRY32 typedef MODULEENTRY32
     PMODULEENTRY32 typedef ptr MODULEENTRY32
     LPMODULEENTRY32 typedef ptr MODULEENTRY32
@@ -156,3 +162,4 @@ ifndef _INC_TOOLHELP32
     endif
   endif
 endif
+

@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winspool.h
-;             Created on (UTC) 06/04/2024 06:16:03
-;             Last modified on (UTC) 21/02/2024 18:13:16
+;Include file created by h2incX, Version B.01.01, 19/04/2018 10:43
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\winspool.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 ifndef _WINSPOOL_
   _WINSPOOL_ equ <>
@@ -25,6 +24,7 @@ ifndef _WINSPOOL_
     _PRINTER_INFO_1A typedef PRINTER_INFO_1A
     PPRINTER_INFO_1A typedef ptr PRINTER_INFO_1A
     LPPRINTER_INFO_1A typedef ptr PRINTER_INFO_1A
+    
     PRINTER_INFO_1W struct
       Flags DWORD ?
       pDescription LPWSTR ?
@@ -34,6 +34,7 @@ ifndef _WINSPOOL_
     _PRINTER_INFO_1W typedef PRINTER_INFO_1W
     PPRINTER_INFO_1W typedef ptr PRINTER_INFO_1W
     LPPRINTER_INFO_1W typedef ptr PRINTER_INFO_1W
+    
     ifdef UNICODE
       PRINTER_INFO_1 typedef PRINTER_INFO_1W
       PPRINTER_INFO_1 typedef PPRINTER_INFO_1W
@@ -69,6 +70,7 @@ ifndef _WINSPOOL_
     _PRINTER_INFO_2A typedef PRINTER_INFO_2A
     PPRINTER_INFO_2A typedef ptr PRINTER_INFO_2A
     LPPRINTER_INFO_2A typedef ptr PRINTER_INFO_2A
+    
     PRINTER_INFO_2W struct
       pServerName LPWSTR ?
       pPrinterName LPWSTR ?
@@ -95,6 +97,7 @@ ifndef _WINSPOOL_
     _PRINTER_INFO_2W typedef PRINTER_INFO_2W
     PPRINTER_INFO_2W typedef ptr PRINTER_INFO_2W
     LPPRINTER_INFO_2W typedef ptr PRINTER_INFO_2W
+    
     ifdef UNICODE
       PRINTER_INFO_2 typedef PRINTER_INFO_2W
       PPRINTER_INFO_2 typedef PPRINTER_INFO_2W
@@ -110,6 +113,7 @@ ifndef _WINSPOOL_
     _PRINTER_INFO_3 typedef PRINTER_INFO_3
     PPRINTER_INFO_3 typedef ptr PRINTER_INFO_3
     LPPRINTER_INFO_3 typedef ptr PRINTER_INFO_3
+    
     PRINTER_INFO_4A struct
       pPrinterName LPSTR ?
       pServerName LPSTR ?
@@ -118,6 +122,7 @@ ifndef _WINSPOOL_
     _PRINTER_INFO_4A typedef PRINTER_INFO_4A
     PPRINTER_INFO_4A typedef ptr PRINTER_INFO_4A
     LPPRINTER_INFO_4A typedef ptr PRINTER_INFO_4A
+    
     PRINTER_INFO_4W struct
       pPrinterName LPWSTR ?
       pServerName LPWSTR ?
@@ -126,6 +131,7 @@ ifndef _WINSPOOL_
     _PRINTER_INFO_4W typedef PRINTER_INFO_4W
     PPRINTER_INFO_4W typedef ptr PRINTER_INFO_4W
     LPPRINTER_INFO_4W typedef ptr PRINTER_INFO_4W
+    
     ifdef UNICODE
       PRINTER_INFO_4 typedef PRINTER_INFO_4W
       PPRINTER_INFO_4 typedef PPRINTER_INFO_4W
@@ -145,6 +151,7 @@ ifndef _WINSPOOL_
     _PRINTER_INFO_5A typedef PRINTER_INFO_5A
     PPRINTER_INFO_5A typedef ptr PRINTER_INFO_5A
     LPPRINTER_INFO_5A typedef ptr PRINTER_INFO_5A
+    
     PRINTER_INFO_5W struct
       pPrinterName LPWSTR ?
       pPortName LPWSTR ?
@@ -155,6 +162,7 @@ ifndef _WINSPOOL_
     _PRINTER_INFO_5W typedef PRINTER_INFO_5W
     PPRINTER_INFO_5W typedef ptr PRINTER_INFO_5W
     LPPRINTER_INFO_5W typedef ptr PRINTER_INFO_5W
+    
     ifdef UNICODE
       PRINTER_INFO_5 typedef PRINTER_INFO_5W
       PPRINTER_INFO_5 typedef PPRINTER_INFO_5W
@@ -170,6 +178,7 @@ ifndef _WINSPOOL_
     _PRINTER_INFO_6 typedef PRINTER_INFO_6
     PPRINTER_INFO_6 typedef ptr PRINTER_INFO_6
     LPPRINTER_INFO_6 typedef ptr PRINTER_INFO_6
+    
     PRINTER_INFO_7A struct
       pszObjectGUID LPSTR ?
       dwAction DWORD ?
@@ -177,6 +186,7 @@ ifndef _WINSPOOL_
     _PRINTER_INFO_7A typedef PRINTER_INFO_7A
     PPRINTER_INFO_7A typedef ptr PRINTER_INFO_7A
     LPPRINTER_INFO_7A typedef ptr PRINTER_INFO_7A
+    
     PRINTER_INFO_7W struct
       pszObjectGUID LPWSTR ?
       dwAction DWORD ?
@@ -184,6 +194,7 @@ ifndef _WINSPOOL_
     _PRINTER_INFO_7W typedef PRINTER_INFO_7W
     PPRINTER_INFO_7W typedef ptr PRINTER_INFO_7W
     LPPRINTER_INFO_7W typedef ptr PRINTER_INFO_7W
+    
     ifdef UNICODE
       PRINTER_INFO_7 typedef PRINTER_INFO_7W
       PPRINTER_INFO_7 typedef PPRINTER_INFO_7W
@@ -204,12 +215,14 @@ ifndef _WINSPOOL_
     _PRINTER_INFO_8A typedef PRINTER_INFO_8A
     PPRINTER_INFO_8A typedef ptr PRINTER_INFO_8A
     LPPRINTER_INFO_8A typedef ptr PRINTER_INFO_8A
+    
     PRINTER_INFO_8W struct
       pDevMode LPDEVMODEW ?
     PRINTER_INFO_8W ends
     _PRINTER_INFO_8W typedef PRINTER_INFO_8W
     PPRINTER_INFO_8W typedef ptr PRINTER_INFO_8W
     LPPRINTER_INFO_8W typedef ptr PRINTER_INFO_8W
+    
     ifdef UNICODE
       PRINTER_INFO_8 typedef PRINTER_INFO_8W
       PPRINTER_INFO_8 typedef PPRINTER_INFO_8W
@@ -225,12 +238,14 @@ ifndef _WINSPOOL_
     _PRINTER_INFO_9A typedef PRINTER_INFO_9A
     PPRINTER_INFO_9A typedef ptr PRINTER_INFO_9A
     LPPRINTER_INFO_9A typedef ptr PRINTER_INFO_9A
+    
     PRINTER_INFO_9W struct
       pDevMode LPDEVMODEW ?
     PRINTER_INFO_9W ends
     _PRINTER_INFO_9W typedef PRINTER_INFO_9W
     PPRINTER_INFO_9W typedef ptr PRINTER_INFO_9W
     LPPRINTER_INFO_9W typedef ptr PRINTER_INFO_9W
+    
     ifdef UNICODE
       PRINTER_INFO_9 typedef PRINTER_INFO_9W
       PPRINTER_INFO_9 typedef PPRINTER_INFO_9W
@@ -324,6 +339,7 @@ ifndef _WINSPOOL_
     _JOB_INFO_1A typedef JOB_INFO_1A
     PJOB_INFO_1A typedef ptr JOB_INFO_1A
     LPJOB_INFO_1A typedef ptr JOB_INFO_1A
+    
     JOB_INFO_1W struct
       JobId DWORD ?
       pPrinterName LPWSTR ?
@@ -342,6 +358,7 @@ ifndef _WINSPOOL_
     _JOB_INFO_1W typedef JOB_INFO_1W
     PJOB_INFO_1W typedef ptr JOB_INFO_1W
     LPJOB_INFO_1W typedef ptr JOB_INFO_1W
+    
     ifdef UNICODE
       JOB_INFO_1 typedef JOB_INFO_1W
       PJOB_INFO_1 typedef PJOB_INFO_1W
@@ -379,6 +396,7 @@ ifndef _WINSPOOL_
     _JOB_INFO_2A typedef JOB_INFO_2A
     PJOB_INFO_2A typedef ptr JOB_INFO_2A
     LPJOB_INFO_2A typedef ptr JOB_INFO_2A
+    
     JOB_INFO_2W struct
       JobId DWORD ?
       pPrinterName LPWSTR ?
@@ -407,6 +425,7 @@ ifndef _WINSPOOL_
     _JOB_INFO_2W typedef JOB_INFO_2W
     PJOB_INFO_2W typedef ptr JOB_INFO_2W
     LPJOB_INFO_2W typedef ptr JOB_INFO_2W
+    
     ifdef UNICODE
       JOB_INFO_2 typedef JOB_INFO_2W
       PJOB_INFO_2 typedef PJOB_INFO_2W
@@ -424,6 +443,7 @@ ifndef _WINSPOOL_
     _JOB_INFO_3 typedef JOB_INFO_3
     PJOB_INFO_3 typedef ptr JOB_INFO_3
     LPJOB_INFO_3 typedef ptr JOB_INFO_3
+    
     JOB_INFO_4A struct
       JobId DWORD ?
       pPrinterName LPSTR ?
@@ -453,6 +473,7 @@ ifndef _WINSPOOL_
     _JOB_INFO_4A typedef JOB_INFO_4A
     PJOB_INFO_4A typedef ptr JOB_INFO_4A
     LPJOB_INFO_4A typedef ptr JOB_INFO_4A
+    
     JOB_INFO_4W struct
       JobId DWORD ?
       pPrinterName LPWSTR ?
@@ -482,6 +503,7 @@ ifndef _WINSPOOL_
     _JOB_INFO_4W typedef JOB_INFO_4W
     PJOB_INFO_4W typedef ptr JOB_INFO_4W
     LPJOB_INFO_4W typedef ptr JOB_INFO_4W
+    
     ifdef UNICODE
       JOB_INFO_4 typedef JOB_INFO_4W
       PJOB_INFO_4 typedef PJOB_INFO_4W
@@ -501,9 +523,6 @@ ifndef _WINSPOOL_
     if (NTDDI_VERSION ge NTDDI_VISTA)
       JOB_CONTROL_RETAIN equ 8
       JOB_CONTROL_RELEASE equ 9
-    endif
-    if (NTDDI_VERSION ge NTDDI_WIN10)
-      JOB_CONTROL_SEND_TOAST equ 10
     endif
     JOB_STATUS_PAUSED equ 00000001h
     JOB_STATUS_ERROR equ 00000002h
@@ -532,6 +551,7 @@ ifndef _WINSPOOL_
     _ADDJOB_INFO_1A typedef ADDJOB_INFO_1A
     PADDJOB_INFO_1A typedef ptr ADDJOB_INFO_1A
     LPADDJOB_INFO_1A typedef ptr ADDJOB_INFO_1A
+    
     ADDJOB_INFO_1W struct
       Path LPWSTR ?
       JobId DWORD ?
@@ -539,6 +559,7 @@ ifndef _WINSPOOL_
     _ADDJOB_INFO_1W typedef ADDJOB_INFO_1W
     PADDJOB_INFO_1W typedef ptr ADDJOB_INFO_1W
     LPADDJOB_INFO_1W typedef ptr ADDJOB_INFO_1W
+    
     ifdef UNICODE
       ADDJOB_INFO_1 typedef ADDJOB_INFO_1W
       PADDJOB_INFO_1 typedef PADDJOB_INFO_1W
@@ -554,12 +575,14 @@ ifndef _WINSPOOL_
     _DRIVER_INFO_1A typedef DRIVER_INFO_1A
     PDRIVER_INFO_1A typedef ptr DRIVER_INFO_1A
     LPDRIVER_INFO_1A typedef ptr DRIVER_INFO_1A
+    
     DRIVER_INFO_1W struct
       pName LPWSTR ?
     DRIVER_INFO_1W ends
     _DRIVER_INFO_1W typedef DRIVER_INFO_1W
     PDRIVER_INFO_1W typedef ptr DRIVER_INFO_1W
     LPDRIVER_INFO_1W typedef ptr DRIVER_INFO_1W
+    
     ifdef UNICODE
       DRIVER_INFO_1 typedef DRIVER_INFO_1W
       PDRIVER_INFO_1 typedef PDRIVER_INFO_1W
@@ -580,6 +603,7 @@ ifndef _WINSPOOL_
     _DRIVER_INFO_2A typedef DRIVER_INFO_2A
     PDRIVER_INFO_2A typedef ptr DRIVER_INFO_2A
     LPDRIVER_INFO_2A typedef ptr DRIVER_INFO_2A
+    
     DRIVER_INFO_2W struct
       cVersion DWORD ?
       pName LPWSTR ?
@@ -591,6 +615,7 @@ ifndef _WINSPOOL_
     _DRIVER_INFO_2W typedef DRIVER_INFO_2W
     PDRIVER_INFO_2W typedef ptr DRIVER_INFO_2W
     LPDRIVER_INFO_2W typedef ptr DRIVER_INFO_2W
+    
     ifdef UNICODE
       DRIVER_INFO_2 typedef DRIVER_INFO_2W
       PDRIVER_INFO_2 typedef PDRIVER_INFO_2W
@@ -615,6 +640,7 @@ ifndef _WINSPOOL_
     _DRIVER_INFO_3A typedef DRIVER_INFO_3A
     PDRIVER_INFO_3A typedef ptr DRIVER_INFO_3A
     LPDRIVER_INFO_3A typedef ptr DRIVER_INFO_3A
+    
     DRIVER_INFO_3W struct
       cVersion DWORD ?
       pName LPWSTR ?
@@ -630,6 +656,7 @@ ifndef _WINSPOOL_
     _DRIVER_INFO_3W typedef DRIVER_INFO_3W
     PDRIVER_INFO_3W typedef ptr DRIVER_INFO_3W
     LPDRIVER_INFO_3W typedef ptr DRIVER_INFO_3W
+    
     ifdef UNICODE
       DRIVER_INFO_3 typedef DRIVER_INFO_3W
       PDRIVER_INFO_3 typedef PDRIVER_INFO_3W
@@ -655,6 +682,7 @@ ifndef _WINSPOOL_
     _DRIVER_INFO_4A typedef DRIVER_INFO_4A
     PDRIVER_INFO_4A typedef ptr DRIVER_INFO_4A
     LPDRIVER_INFO_4A typedef ptr DRIVER_INFO_4A
+    
     DRIVER_INFO_4W struct
       cVersion DWORD ?
       pName LPWSTR ?
@@ -671,6 +699,7 @@ ifndef _WINSPOOL_
     _DRIVER_INFO_4W typedef DRIVER_INFO_4W
     PDRIVER_INFO_4W typedef ptr DRIVER_INFO_4W
     LPDRIVER_INFO_4W typedef ptr DRIVER_INFO_4W
+    
     ifdef UNICODE
       DRIVER_INFO_4 typedef DRIVER_INFO_4W
       PDRIVER_INFO_4 typedef PDRIVER_INFO_4W
@@ -694,6 +723,7 @@ ifndef _WINSPOOL_
     _DRIVER_INFO_5A typedef DRIVER_INFO_5A
     PDRIVER_INFO_5A typedef ptr DRIVER_INFO_5A
     LPDRIVER_INFO_5A typedef ptr DRIVER_INFO_5A
+    
     DRIVER_INFO_5W struct
       cVersion DWORD ?
       pName LPWSTR ?
@@ -708,6 +738,7 @@ ifndef _WINSPOOL_
     _DRIVER_INFO_5W typedef DRIVER_INFO_5W
     PDRIVER_INFO_5W typedef ptr DRIVER_INFO_5W
     LPDRIVER_INFO_5W typedef ptr DRIVER_INFO_5W
+    
     ifdef UNICODE
       DRIVER_INFO_5 typedef DRIVER_INFO_5W
       PDRIVER_INFO_5 typedef PDRIVER_INFO_5W
@@ -739,6 +770,7 @@ ifndef _WINSPOOL_
     _DRIVER_INFO_6A typedef DRIVER_INFO_6A
     PDRIVER_INFO_6A typedef ptr DRIVER_INFO_6A
     LPDRIVER_INFO_6A typedef ptr DRIVER_INFO_6A
+    
     DRIVER_INFO_6W struct
       cVersion DWORD ?
       pName LPWSTR ?
@@ -761,6 +793,7 @@ ifndef _WINSPOOL_
     _DRIVER_INFO_6W typedef DRIVER_INFO_6W
     PDRIVER_INFO_6W typedef ptr DRIVER_INFO_6W
     LPDRIVER_INFO_6W typedef ptr DRIVER_INFO_6W
+    
     ifdef UNICODE
       DRIVER_INFO_6 typedef DRIVER_INFO_6W
       PDRIVER_INFO_6 typedef PDRIVER_INFO_6W
@@ -814,6 +847,7 @@ ifndef _WINSPOOL_
     _DRIVER_INFO_8A typedef DRIVER_INFO_8A
     PDRIVER_INFO_8A typedef ptr DRIVER_INFO_8A
     LPDRIVER_INFO_8A typedef ptr DRIVER_INFO_8A
+    
     DRIVER_INFO_8W struct
       cVersion DWORD ?
       pName LPWSTR ?
@@ -844,6 +878,7 @@ ifndef _WINSPOOL_
     _DRIVER_INFO_8W typedef DRIVER_INFO_8W
     PDRIVER_INFO_8W typedef ptr DRIVER_INFO_8W
     LPDRIVER_INFO_8W typedef ptr DRIVER_INFO_8W
+    
     ifdef UNICODE
       DRIVER_INFO_8 typedef DRIVER_INFO_8W
       PDRIVER_INFO_8 typedef PDRIVER_INFO_8W
@@ -873,6 +908,7 @@ ifndef _WINSPOOL_
     _DOC_INFO_1A typedef DOC_INFO_1A
     PDOC_INFO_1A typedef ptr DOC_INFO_1A
     LPDOC_INFO_1A typedef ptr DOC_INFO_1A
+    
     DOC_INFO_1W struct
       pDocName LPWSTR ?
       pOutputFile LPWSTR ?
@@ -881,6 +917,7 @@ ifndef _WINSPOOL_
     _DOC_INFO_1W typedef DOC_INFO_1W
     PDOC_INFO_1W typedef ptr DOC_INFO_1W
     LPDOC_INFO_1W typedef ptr DOC_INFO_1W
+    
     ifdef UNICODE
       DOC_INFO_1 typedef DOC_INFO_1W
       PDOC_INFO_1 typedef PDOC_INFO_1W
@@ -899,6 +936,7 @@ ifndef _WINSPOOL_
     _FORM_INFO_1A typedef FORM_INFO_1A
     PFORM_INFO_1A typedef ptr FORM_INFO_1A
     LPFORM_INFO_1A typedef ptr FORM_INFO_1A
+    
     FORM_INFO_1W struct
       Flags DWORD ?
       pName LPWSTR ?
@@ -908,6 +946,7 @@ ifndef _WINSPOOL_
     _FORM_INFO_1W typedef FORM_INFO_1W
     PFORM_INFO_1W typedef ptr FORM_INFO_1W
     LPFORM_INFO_1W typedef ptr FORM_INFO_1W
+    
     ifdef UNICODE
       FORM_INFO_1 typedef FORM_INFO_1W
       PFORM_INFO_1 typedef PFORM_INFO_1W
@@ -937,6 +976,7 @@ ifndef _WINSPOOL_
       _FORM_INFO_2A typedef FORM_INFO_2A
       PFORM_INFO_2A typedef ptr FORM_INFO_2A
       LPFORM_INFO_2A typedef ptr FORM_INFO_2A
+      
       FORM_INFO_2W struct
         Flags DWORD ?
         pName LPCWSTR ?
@@ -952,6 +992,7 @@ ifndef _WINSPOOL_
       _FORM_INFO_2W typedef FORM_INFO_2W
       PFORM_INFO_2W typedef ptr FORM_INFO_2W
       LPFORM_INFO_2W typedef ptr FORM_INFO_2W
+      
       ifdef UNICODE
         FORM_INFO_2 typedef FORM_INFO_2W
         PFORM_INFO_2 typedef PFORM_INFO_2W
@@ -972,6 +1013,7 @@ ifndef _WINSPOOL_
     _DOC_INFO_2A typedef DOC_INFO_2A
     PDOC_INFO_2A typedef ptr DOC_INFO_2A
     LPDOC_INFO_2A typedef ptr DOC_INFO_2A
+    
     DOC_INFO_2W struct
       pDocName LPWSTR ?
       pOutputFile LPWSTR ?
@@ -982,6 +1024,7 @@ ifndef _WINSPOOL_
     _DOC_INFO_2W typedef DOC_INFO_2W
     PDOC_INFO_2W typedef ptr DOC_INFO_2W
     LPDOC_INFO_2W typedef ptr DOC_INFO_2W
+    
     ifdef UNICODE
       DOC_INFO_2 typedef DOC_INFO_2W
       PDOC_INFO_2 typedef PDOC_INFO_2W
@@ -1002,6 +1045,7 @@ ifndef _WINSPOOL_
     _DOC_INFO_3A typedef DOC_INFO_3A
     PDOC_INFO_3A typedef ptr DOC_INFO_3A
     LPDOC_INFO_3A typedef ptr DOC_INFO_3A
+    
     DOC_INFO_3W struct
       pDocName LPWSTR ?
       pOutputFile LPWSTR ?
@@ -1011,6 +1055,7 @@ ifndef _WINSPOOL_
     _DOC_INFO_3W typedef DOC_INFO_3W
     PDOC_INFO_3W typedef ptr DOC_INFO_3W
     LPDOC_INFO_3W typedef ptr DOC_INFO_3W
+    
     ifdef UNICODE
       DOC_INFO_3 typedef DOC_INFO_3W
       PDOC_INFO_3 typedef PDOC_INFO_3W
@@ -1030,12 +1075,14 @@ ifndef _WINSPOOL_
     _PRINTPROCESSOR_INFO_1A typedef PRINTPROCESSOR_INFO_1A
     PPRINTPROCESSOR_INFO_1A typedef ptr PRINTPROCESSOR_INFO_1A
     LPPRINTPROCESSOR_INFO_1A typedef ptr PRINTPROCESSOR_INFO_1A
+    
     PRINTPROCESSOR_INFO_1W struct
       pName LPWSTR ?
     PRINTPROCESSOR_INFO_1W ends
     _PRINTPROCESSOR_INFO_1W typedef PRINTPROCESSOR_INFO_1W
     PPRINTPROCESSOR_INFO_1W typedef ptr PRINTPROCESSOR_INFO_1W
     LPPRINTPROCESSOR_INFO_1W typedef ptr PRINTPROCESSOR_INFO_1W
+    
     ifdef UNICODE
       PRINTPROCESSOR_INFO_1 typedef PRINTPROCESSOR_INFO_1W
       PPRINTPROCESSOR_INFO_1 typedef PPRINTPROCESSOR_INFO_1W
@@ -1054,8 +1101,9 @@ ifndef _WINSPOOL_
       PRINTPROCESSOR_CAPS_1 ends
       _PRINTPROCESSOR_CAPS_1 typedef PRINTPROCESSOR_CAPS_1
       PPRINTPROCESSOR_CAPS_1 typedef ptr PRINTPROCESSOR_CAPS_1
-      NORMAL_PRINT equ (00000000h)
-      REVERSE_PRINT equ (00000001h)
+      
+      NORMAL_PRINT equ 00000000h
+      REVERSE_PRINT equ 00000001h
     endif
     if (NTDDI_VERSION ge NTDDI_VISTA)
       PRINTPROCESSOR_CAPS_2 struct
@@ -1071,15 +1119,16 @@ ifndef _WINSPOOL_
       PRINTPROCESSOR_CAPS_2 ends
       _PRINTPROCESSOR_CAPS_2 typedef PRINTPROCESSOR_CAPS_2
       PPRINTPROCESSOR_CAPS_2 typedef ptr PRINTPROCESSOR_CAPS_2
-      PPCAPS_RIGHT_THEN_DOWN equ (00000001h)
+      
+      PPCAPS_RIGHT_THEN_DOWN equ 00000001h
       PPCAPS_DOWN_THEN_RIGHT equ (00000001h shl 1)
       PPCAPS_LEFT_THEN_DOWN equ (00000001h shl 2)
       PPCAPS_DOWN_THEN_LEFT equ (00000001h shl 3)
-      PPCAPS_BORDER_PRINT equ (00000001h)
-      PPCAPS_BOOKLET_EDGE equ (00000001h)
-      PPCAPS_REVERSE_PAGES_FOR_REVERSE_DUPLEX equ (00000001h)
+      PPCAPS_BORDER_PRINT equ 00000001h
+      PPCAPS_BOOKLET_EDGE equ 00000001h
+      PPCAPS_REVERSE_PAGES_FOR_REVERSE_DUPLEX equ 00000001h
       PPCAPS_DONT_SEND_EXTRA_PAGES_FOR_DUPLEX equ (00000001h shl 1)
-      PPCAPS_SQUARE_SCALING equ (00000001h)
+      PPCAPS_SQUARE_SCALING equ 00000001h
     endif
     PORT_INFO_1A struct
       pName LPSTR ?
@@ -1087,12 +1136,14 @@ ifndef _WINSPOOL_
     _PORT_INFO_1A typedef PORT_INFO_1A
     PPORT_INFO_1A typedef ptr PORT_INFO_1A
     LPPORT_INFO_1A typedef ptr PORT_INFO_1A
+    
     PORT_INFO_1W struct
       pName LPWSTR ?
     PORT_INFO_1W ends
     _PORT_INFO_1W typedef PORT_INFO_1W
     PPORT_INFO_1W typedef ptr PORT_INFO_1W
     LPPORT_INFO_1W typedef ptr PORT_INFO_1W
+    
     ifdef UNICODE
       PORT_INFO_1 typedef PORT_INFO_1W
       PPORT_INFO_1 typedef PPORT_INFO_1W
@@ -1112,6 +1163,7 @@ ifndef _WINSPOOL_
     _PORT_INFO_2A typedef PORT_INFO_2A
     PPORT_INFO_2A typedef ptr PORT_INFO_2A
     LPPORT_INFO_2A typedef ptr PORT_INFO_2A
+    
     PORT_INFO_2W struct
       pPortName LPWSTR ?
       pMonitorName LPWSTR ?
@@ -1122,6 +1174,7 @@ ifndef _WINSPOOL_
     _PORT_INFO_2W typedef PORT_INFO_2W
     PPORT_INFO_2W typedef ptr PORT_INFO_2W
     LPPORT_INFO_2W typedef ptr PORT_INFO_2W
+    
     ifdef UNICODE
       PORT_INFO_2 typedef PORT_INFO_2W
       PPORT_INFO_2 typedef PPORT_INFO_2W
@@ -1143,6 +1196,7 @@ ifndef _WINSPOOL_
     _PORT_INFO_3A typedef PORT_INFO_3A
     PPORT_INFO_3A typedef ptr PORT_INFO_3A
     LPPORT_INFO_3A typedef ptr PORT_INFO_3A
+    
     PORT_INFO_3W struct
       dwStatus DWORD ?
       pszStatus LPWSTR ?
@@ -1151,6 +1205,7 @@ ifndef _WINSPOOL_
     _PORT_INFO_3W typedef PORT_INFO_3W
     PPORT_INFO_3W typedef ptr PORT_INFO_3W
     LPPORT_INFO_3W typedef ptr PORT_INFO_3W
+    
     ifdef UNICODE
       PORT_INFO_3 typedef PORT_INFO_3W
       PPORT_INFO_3 typedef PPORT_INFO_3W
@@ -1181,12 +1236,14 @@ ifndef _WINSPOOL_
     _MONITOR_INFO_1A typedef MONITOR_INFO_1A
     PMONITOR_INFO_1A typedef ptr MONITOR_INFO_1A
     LPMONITOR_INFO_1A typedef ptr MONITOR_INFO_1A
+    
     MONITOR_INFO_1W struct
       pName LPWSTR ?
     MONITOR_INFO_1W ends
     _MONITOR_INFO_1W typedef MONITOR_INFO_1W
     PMONITOR_INFO_1W typedef ptr MONITOR_INFO_1W
     LPMONITOR_INFO_1W typedef ptr MONITOR_INFO_1W
+    
     ifdef UNICODE
       MONITOR_INFO_1 typedef MONITOR_INFO_1W
       PMONITOR_INFO_1 typedef PMONITOR_INFO_1W
@@ -1204,6 +1261,7 @@ ifndef _WINSPOOL_
     _MONITOR_INFO_2A typedef MONITOR_INFO_2A
     PMONITOR_INFO_2A typedef ptr MONITOR_INFO_2A
     LPMONITOR_INFO_2A typedef ptr MONITOR_INFO_2A
+    
     MONITOR_INFO_2W struct
       pName LPWSTR ?
       pEnvironment LPWSTR ?
@@ -1212,6 +1270,7 @@ ifndef _WINSPOOL_
     _MONITOR_INFO_2W typedef MONITOR_INFO_2W
     PMONITOR_INFO_2W typedef ptr MONITOR_INFO_2W
     LPMONITOR_INFO_2W typedef ptr MONITOR_INFO_2W
+    
     ifdef UNICODE
       MONITOR_INFO_2 typedef MONITOR_INFO_2W
       PMONITOR_INFO_2 typedef PMONITOR_INFO_2W
@@ -1227,12 +1286,14 @@ ifndef _WINSPOOL_
     _DATATYPES_INFO_1A typedef DATATYPES_INFO_1A
     PDATATYPES_INFO_1A typedef ptr DATATYPES_INFO_1A
     LPDATATYPES_INFO_1A typedef ptr DATATYPES_INFO_1A
+    
     DATATYPES_INFO_1W struct
       pName LPWSTR ?
     DATATYPES_INFO_1W ends
     _DATATYPES_INFO_1W typedef DATATYPES_INFO_1W
     PDATATYPES_INFO_1W typedef ptr DATATYPES_INFO_1W
     LPDATATYPES_INFO_1W typedef ptr DATATYPES_INFO_1W
+    
     ifdef UNICODE
       DATATYPES_INFO_1 typedef DATATYPES_INFO_1W
       PDATATYPES_INFO_1 typedef PDATATYPES_INFO_1W
@@ -1250,6 +1311,7 @@ ifndef _WINSPOOL_
     _PRINTER_DEFAULTSA typedef PRINTER_DEFAULTSA
     PPRINTER_DEFAULTSA typedef ptr PRINTER_DEFAULTSA
     LPPRINTER_DEFAULTSA typedef ptr PRINTER_DEFAULTSA
+    
     PRINTER_DEFAULTSW struct
       pDatatype LPWSTR ?
       pDevMode LPDEVMODEW ?
@@ -1258,6 +1320,7 @@ ifndef _WINSPOOL_
     _PRINTER_DEFAULTSW typedef PRINTER_DEFAULTSW
     PPRINTER_DEFAULTSW typedef ptr PRINTER_DEFAULTSW
     LPPRINTER_DEFAULTSW typedef ptr PRINTER_DEFAULTSW
+    
     ifdef UNICODE
       PRINTER_DEFAULTS typedef PRINTER_DEFAULTSW
       PPRINTER_DEFAULTS typedef PPRINTER_DEFAULTSW
@@ -1277,6 +1340,7 @@ ifndef _WINSPOOL_
     _PRINTER_ENUM_VALUESA typedef PRINTER_ENUM_VALUESA
     PPRINTER_ENUM_VALUESA typedef ptr PRINTER_ENUM_VALUESA
     LPPRINTER_ENUM_VALUESA typedef ptr PRINTER_ENUM_VALUESA
+    
     PRINTER_ENUM_VALUESW struct
       pValueName LPWSTR ?
       cbValueName DWORD ?
@@ -1287,6 +1351,7 @@ ifndef _WINSPOOL_
     _PRINTER_ENUM_VALUESW typedef PRINTER_ENUM_VALUESW
     PPRINTER_ENUM_VALUESW typedef ptr PRINTER_ENUM_VALUESW
     LPPRINTER_ENUM_VALUESW typedef ptr PRINTER_ENUM_VALUESW
+    
     ifdef UNICODE
       PRINTER_ENUM_VALUES typedef PRINTER_ENUM_VALUESW
       PPRINTER_ENUM_VALUES typedef PPRINTER_ENUM_VALUESW
@@ -1662,6 +1727,7 @@ ifndef _WINSPOOL_
     _PRINTER_NOTIFY_OPTIONS_TYPE typedef PRINTER_NOTIFY_OPTIONS_TYPE
     PPRINTER_NOTIFY_OPTIONS_TYPE typedef ptr PRINTER_NOTIFY_OPTIONS_TYPE
     LPPRINTER_NOTIFY_OPTIONS_TYPE typedef ptr PRINTER_NOTIFY_OPTIONS_TYPE
+    
     PRINTER_NOTIFY_OPTIONS_REFRESH equ 01h
     PRINTER_NOTIFY_OPTIONS struct
       Version DWORD ?
@@ -1672,6 +1738,7 @@ ifndef _WINSPOOL_
     _PRINTER_NOTIFY_OPTIONS typedef PRINTER_NOTIFY_OPTIONS
     PPRINTER_NOTIFY_OPTIONS typedef ptr PRINTER_NOTIFY_OPTIONS
     LPPRINTER_NOTIFY_OPTIONS typedef ptr PRINTER_NOTIFY_OPTIONS
+    
     PRINTER_NOTIFY_INFO_DISCARDED equ 01h
     PRINTER_NOTIFY_INFO_DATA struct
       Type_ WORD ?
@@ -1689,6 +1756,7 @@ ifndef _WINSPOOL_
     _PRINTER_NOTIFY_INFO_DATA typedef PRINTER_NOTIFY_INFO_DATA
     PPRINTER_NOTIFY_INFO_DATA typedef ptr PRINTER_NOTIFY_INFO_DATA
     LPPRINTER_NOTIFY_INFO_DATA typedef ptr PRINTER_NOTIFY_INFO_DATA
+    
     PRINTER_NOTIFY_INFO struct
       Version DWORD ?
       Flags DWORD ?
@@ -1698,6 +1766,7 @@ ifndef _WINSPOOL_
     _PRINTER_NOTIFY_INFO typedef PRINTER_NOTIFY_INFO
     PPRINTER_NOTIFY_INFO typedef ptr PRINTER_NOTIFY_INFO
     LPPRINTER_NOTIFY_INFO typedef ptr PRINTER_NOTIFY_INFO
+    
     if (NTDDI_VERSION ge NTDDI_WINXP)
       BINARY_CONTAINER struct
         cbBuf DWORD ?
@@ -1705,6 +1774,7 @@ ifndef _WINSPOOL_
       BINARY_CONTAINER ends
       _BINARY_CONTAINER typedef BINARY_CONTAINER
       PBINARY_CONTAINER typedef ptr BINARY_CONTAINER
+      
       BIDI_DATA struct
         dwBidiType DWORD ?
         union u
@@ -1718,6 +1788,7 @@ ifndef _WINSPOOL_
       _BIDI_DATA typedef BIDI_DATA
       PBIDI_DATA typedef ptr BIDI_DATA
       LPBIDI_DATA typedef ptr BIDI_DATA
+      
       BIDI_REQUEST_DATA struct
         dwReqNumber DWORD ?
         pSchema LPWSTR ?
@@ -1726,6 +1797,7 @@ ifndef _WINSPOOL_
       _BIDI_REQUEST_DATA typedef BIDI_REQUEST_DATA
       PBIDI_REQUEST_DATA typedef ptr BIDI_REQUEST_DATA
       LPBIDI_REQUEST_DATA typedef ptr BIDI_REQUEST_DATA
+      
       BIDI_REQUEST_CONTAINER struct
         Version DWORD ?
         Flags DWORD ?
@@ -1735,6 +1807,7 @@ ifndef _WINSPOOL_
       _BIDI_REQUEST_CONTAINER typedef BIDI_REQUEST_CONTAINER
       PBIDI_REQUEST_CONTAINER typedef ptr BIDI_REQUEST_CONTAINER
       LPBIDI_REQUEST_CONTAINER typedef ptr BIDI_REQUEST_CONTAINER
+      
       BIDI_RESPONSE_DATA struct
         dwResult DWORD ?
         dwReqNumber DWORD ?
@@ -1744,6 +1817,7 @@ ifndef _WINSPOOL_
       _BIDI_RESPONSE_DATA typedef BIDI_RESPONSE_DATA
       PBIDI_RESPONSE_DATA typedef ptr BIDI_RESPONSE_DATA
       LPBIDI_RESPONSE_DATA typedef ptr BIDI_RESPONSE_DATA
+      
       BIDI_RESPONSE_CONTAINER struct
         Version DWORD ?
         Flags DWORD ?
@@ -1753,6 +1827,7 @@ ifndef _WINSPOOL_
       _BIDI_RESPONSE_CONTAINER typedef BIDI_RESPONSE_CONTAINER
       PBIDI_RESPONSE_CONTAINER typedef ptr BIDI_RESPONSE_CONTAINER
       LPBIDI_RESPONSE_CONTAINER typedef ptr BIDI_RESPONSE_CONTAINER
+      
       BIDI_ACTION_ENUM_SCHEMA equ <L("EnumSchema")>
       BIDI_ACTION_GET equ <L("Get")>
       BIDI_ACTION_SET equ <L("Set")>
@@ -1767,7 +1842,7 @@ ifndef _WINSPOOL_
       BIDI_TEXT equ 5
       BIDI_ENUM equ 6
       BIDI_BLOB equ 7
-
+      
       BIDI_ACCESS_ADMINISTRATOR equ 1h
       BIDI_ACCESS_USER equ 2h
       ERROR_BIDI_STATUS_OK equ 0
@@ -1975,6 +2050,7 @@ ifndef _WINSPOOL_
     _PROVIDOR_INFO_1A typedef PROVIDOR_INFO_1A
     PPROVIDOR_INFO_1A typedef ptr PROVIDOR_INFO_1A
     LPPROVIDOR_INFO_1A typedef ptr PROVIDOR_INFO_1A
+    
     PROVIDOR_INFO_1W struct
       pName LPWSTR ?
       pEnvironment LPWSTR ?
@@ -1983,6 +2059,7 @@ ifndef _WINSPOOL_
     _PROVIDOR_INFO_1W typedef PROVIDOR_INFO_1W
     PPROVIDOR_INFO_1W typedef ptr PROVIDOR_INFO_1W
     LPPROVIDOR_INFO_1W typedef ptr PROVIDOR_INFO_1W
+    
     ifdef UNICODE
       PROVIDOR_INFO_1 typedef PROVIDOR_INFO_1W
       PPROVIDOR_INFO_1 typedef PPROVIDOR_INFO_1W
@@ -1998,12 +2075,14 @@ ifndef _WINSPOOL_
     _PROVIDOR_INFO_2A typedef PROVIDOR_INFO_2A
     PPROVIDOR_INFO_2A typedef ptr PROVIDOR_INFO_2A
     LPPROVIDOR_INFO_2A typedef ptr PROVIDOR_INFO_2A
+    
     PROVIDOR_INFO_2W struct
       pOrder LPWSTR ?
     PROVIDOR_INFO_2W ends
     _PROVIDOR_INFO_2W typedef PROVIDOR_INFO_2W
     PPROVIDOR_INFO_2W typedef ptr PROVIDOR_INFO_2W
     LPPROVIDOR_INFO_2W typedef ptr PROVIDOR_INFO_2W
+    
     ifdef UNICODE
       PROVIDOR_INFO_2 typedef PROVIDOR_INFO_2W
       PPROVIDOR_INFO_2 typedef PPROVIDOR_INFO_2W
@@ -2168,7 +2247,7 @@ ifndef _WINSPOOL_
       PRINTER_OPTION_CLIENT_CHANGE equ 1 shl 2
       PRINTER_OPTION_NO_CLIENT_DATA equ 1 shl 3
       _PRINTER_OPTION_FLAGS typedef PRINTER_OPTION_FLAGS
-
+      
       PRINTER_OPTIONSA struct
         cbSize UINT ?
         dwFlags DWORD ?
@@ -2176,6 +2255,7 @@ ifndef _WINSPOOL_
       _PRINTER_OPTIONSA typedef PRINTER_OPTIONSA
       PPRINTER_OPTIONSA typedef ptr PRINTER_OPTIONSA
       LPPRINTER_OPTIONSA typedef ptr PRINTER_OPTIONSA
+      
       PRINTER_OPTIONSW struct
         cbSize UINT ?
         dwFlags DWORD ?
@@ -2183,6 +2263,7 @@ ifndef _WINSPOOL_
       _PRINTER_OPTIONSW typedef PRINTER_OPTIONSW
       PPRINTER_OPTIONSW typedef ptr PRINTER_OPTIONSW
       LPPRINTER_OPTIONSW typedef ptr PRINTER_OPTIONSW
+      
       ifdef UNICODE
         PRINTER_OPTIONS typedef PRINTER_OPTIONSW
         PPRINTER_OPTIONS typedef PPRINTER_OPTIONSW
@@ -2207,12 +2288,14 @@ ifndef _WINSPOOL_
       PRINTER_CONNECTION_INFO_1A ends
       _PRINTER_CONNECTION_INFO_1A typedef PRINTER_CONNECTION_INFO_1A
       PPRINTER_CONNECTION_INFO_1A typedef ptr PRINTER_CONNECTION_INFO_1A
+      
       PRINTER_CONNECTION_INFO_1W struct
         dwFlags DWORD ?
         pszDriverName LPWSTR ?
       PRINTER_CONNECTION_INFO_1W ends
       _PRINTER_CONNECTION_INFO_1W typedef PRINTER_CONNECTION_INFO_1W
       PPRINTER_CONNECTION_INFO_1W typedef ptr PRINTER_CONNECTION_INFO_1W
+      
       ifdef UNICODE
         PRINTER_CONNECTION_INFO_1 typedef PRINTER_CONNECTION_INFO_1W
         PPRINTER_CONNECTION_INFO_1 typedef PPRINTER_CONNECTION_INFO_1W
@@ -2253,6 +2336,7 @@ ifndef _WINSPOOL_
       CORE_PRINTER_DRIVERA ends
       _CORE_PRINTER_DRIVERA typedef CORE_PRINTER_DRIVERA
       PCORE_PRINTER_DRIVERA typedef ptr CORE_PRINTER_DRIVERA
+      
       CORE_PRINTER_DRIVERW struct
         CoreDriverGUID GUID <>
         ftDriverDate FILETIME <>
@@ -2261,6 +2345,7 @@ ifndef _WINSPOOL_
       CORE_PRINTER_DRIVERW ends
       _CORE_PRINTER_DRIVERW typedef CORE_PRINTER_DRIVERW
       PCORE_PRINTER_DRIVERW typedef ptr CORE_PRINTER_DRIVERW
+      
       ifdef UNICODE
         CORE_PRINTER_DRIVER typedef CORE_PRINTER_DRIVERW
         PCORE_PRINTER_DRIVER typedef PCORE_PRINTER_DRIVERW
@@ -2307,7 +2392,7 @@ ifndef _WINSPOOL_
       kPropertyTypeNotificationReply equ 8
       kPropertyTypeNotificationOptions equ 9
       kPropertyTypeBuffer equ 10
-
+      
       EPrintXPSJobProgress typedef SDWORD
       kAddingDocumentSequence equ 0
       kDocumentSequenceAdded equ 1
@@ -2319,11 +2404,11 @@ ifndef _WINSPOOL_
       kFontAdded equ 7
       kImageAdded equ 8
       kXpsDocumentCommitted equ 9
-
+      
       EPrintXPSJobOperation typedef SDWORD
       kJobProduction equ 1
       kJobConsumption equ 2
-
+      
       PrintPropertyValue struct
         ePropertyType EPrintPropertyType ?
         union value
@@ -2361,7 +2446,7 @@ ifndef _WINSPOOL_
       PRINT_EXECUTION_CONTEXT_SPOOLER_ISOLATION_HOST equ 2
       PRINT_EXECUTION_CONTEXT_FILTER_PIPELINE equ 3
       PRINT_EXECUTION_CONTEXT_WOW64 equ 4
-
+      
       PRINT_EXECUTION_DATA struct
         context PRINT_EXECUTION_CONTEXT ?
         clientAppPID DWORD ?
@@ -2377,8 +2462,6 @@ ifndef _WINSPOOL_
       EnumJobNamedProperties proto WIN_STD_CALL_CONV :HANDLE, :DWORD, :ptr DWORD, :ptr ptr PrintNamedProperty
       GetPrintOutputInfo proto WIN_STD_CALL_CONV :HWND, :PCWSTR, :ptr HANDLE, :ptr PWSTR
       MS_PRINT_JOB_OUTPUT_FILE equ <L("MsPrintJobOutputFile")>
-    endif
-    if (NTDDI_VERSION ge NTDDI_WIN10_19H1)
     endif
   endif
   if _MSC_VER ge 1200

@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\stringapiset.h
-;             Created on (UTC) 06/04/2024 06:15:58
-;             Last modified on (UTC) 21/02/2024 18:13:16
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\stringapiset.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 ifdef _MSC_VER
 endif
@@ -15,11 +14,13 @@ ifndef _APISETSTRING_
   ifdef __cplusplus
     ;[...]
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_APP or WINAPI_PARTITION_GAMES)
-    if (WINVER ge 0600h)
+  if (WINVER ge 0600h)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CompareStringEx, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :LPCWCH, :SDWORD, :LPCWCH, :SDWORD, :LPNLSVERSIONINFO, :LPVOID, :LPARAM>, 36
       @DefProto DllImport, CompareStringOrdinal, WIN_STD_CALL_CONV,, <:LPCWCH, :SDWORD, :LPCWCH, :SDWORD, :BOOL>, 20
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, CompareStringW, WIN_STD_CALL_CONV,, <:LCID, :DWORD, :PCNZWCH, :SDWORD, :PCNZWCH, :SDWORD>, 24
     ifdef UNICODE
       CompareString equ <CompareStringW>
@@ -28,6 +29,8 @@ ifndef _APISETSTRING_
     ifdef UNICODE
       FoldString equ <FoldStringW>
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetStringTypeExW, WIN_STD_CALL_CONV,, <:LCID, :DWORD, :LPCWCH, :SDWORD, :LPWORD>, 20
     ifdef UNICODE
       GetStringTypeEx equ <GetStringTypeExW>
@@ -40,3 +43,4 @@ ifndef _APISETSTRING_
     ;[...]
   endif
 endif
+

@@ -1,11 +1,12 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\ws2def.h
-;             Created on (UTC) 22/05/2024 17:57:06
-;             Last modified on (UTC) 12/02/2024 17:05:30
+;Include file created by h2incX, Version B.01.01, 29/10/2018 18:21
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\ws2def.h', last modified: 19/04/2018 09:44
+;Creation parameters: 
 
 ifndef _WS2DEF_
   _WS2DEF_ equ <>
+  if _MSC_VER gt 1000
+  endif
   include winapifamily.inc
   if  not Defined(_WINSOCK_DEPRECATED_BY)
     if ((Defined(_WINSOCK_DEPRECATED_NO_WARNINGS) or Defined(BUILD_WINDOWS)) and  not Defined(_WINSOCK_DEPRECATE_WARNINGS)) or Defined(MIDL_PASS)
@@ -14,9 +15,12 @@ ifndef _WS2DEF_
       endm
     else
       _WINSOCK_DEPRECATED_BY macro replacement
-        exitm <__declspec(deprecated ("Use " replacement " instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings"))>
+        exitm <__declspec(deprecated ("Use " ## replacement ## " instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings"))>
       endm
     endif
+  endif
+  ifdef __cplusplus
+    ;[...]
   endif
   if  not Defined(_WINSOCK2API_) and Defined(_WINSOCKAPI_)
     .err <Do not include winsock.h and ws2def.h in the same module. Instead include only winsock2.h.>
@@ -32,7 +36,7 @@ ifndef _WS2DEF_
     endif
   endif
   include inaddr.inc
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     ADDRESS_FAMILY typedef USHORT
   endif
   AF_UNSPEC equ 0
@@ -42,7 +46,7 @@ ifndef _WS2DEF_
   AF_PUP equ 4
   AF_CHAOS equ 5
   AF_NS equ 6
-  AF_IPX equ <AF_NS>
+;  AF_IPX equ <AF_NS>
   AF_ISO equ 7
   AF_OSI equ <AF_ISO>
   AF_ECMA equ 8
@@ -83,7 +87,7 @@ ifndef _WS2DEF_
           AF_MAX equ 34
         else
           AF_HYPERV equ 34
-          AF_MAX equ 35
+;          AF_MAX equ 35
         endif
       endif
     endif
@@ -94,8 +98,6 @@ ifndef _WS2DEF_
   SOCK_RDM equ 4
   SOCK_SEQPACKET equ 5
   SOL_SOCKET equ 0ffffh
-  SOL_IP equ (SOL_SOCKET - 4)
-  SOL_IPV6 equ (SOL_SOCKET - 5)
   SO_DEBUG equ 0001h
   SO_ACCEPTCONN equ 0002h
   SO_REUSEADDR equ 0004h
@@ -127,12 +129,10 @@ ifndef _WS2DEF_
     SO_PORT_SCALABILITY equ 3006h
     SO_REUSE_UNICASTPORT equ 3007h
     SO_REUSE_MULTICASTPORT equ 3008h
-    SO_ORIGINAL_DST equ 300Fh
-    IP6T_SO_ORIGINAL_DST equ <SO_ORIGINAL_DST>
   endif
   WSK_SO_BASE equ 4000h
   TCP_NODELAY equ 0001h
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     SOCKADDR struct
       if (_WIN32_WINNT lt 0600h)
         sa_family u_short ?
@@ -144,6 +144,7 @@ ifndef _WS2DEF_
     sockaddr typedef SOCKADDR
     PSOCKADDR typedef ptr SOCKADDR
     LPSOCKADDR typedef ptr SOCKADDR
+    
     ifndef __CSADDR_DEFINED__
       __CSADDR_DEFINED__ equ <>
       SOCKET_ADDRESS struct
@@ -153,6 +154,7 @@ ifndef _WS2DEF_
       _SOCKET_ADDRESS typedef SOCKET_ADDRESS
       PSOCKET_ADDRESS typedef ptr SOCKET_ADDRESS
       LPSOCKET_ADDRESS typedef ptr SOCKET_ADDRESS
+      
     endif
     SOCKET_ADDRESS_LIST struct
       iAddressCount INT_ ?
@@ -161,6 +163,7 @@ ifndef _WS2DEF_
     _SOCKET_ADDRESS_LIST typedef SOCKET_ADDRESS_LIST
     PSOCKET_ADDRESS_LIST typedef ptr SOCKET_ADDRESS_LIST
     LPSOCKET_ADDRESS_LIST typedef ptr SOCKET_ADDRESS_LIST
+    
     if (_WIN32_WINNT ge 0600h)
       SIZEOF_SOCKET_ADDRESS_LIST macro AddressCount
         exitm <(FIELD_OFFSET(SOCKET_ADDRESS_LIST, Address) + AddressCount * sizeof(SOCKET_ADDRESS))>
@@ -175,15 +178,16 @@ ifndef _WS2DEF_
     _CSADDR_INFO typedef CSADDR_INFO
     PCSADDR_INFO typedef ptr CSADDR_INFO
     LPCSADDR_INFO typedef ptr CSADDR_INFO
+    
   endif
   _SS_MAXSIZE equ 128
-  _SS_ALIGNSIZE equ <(sizeof(QWORD))>
+  _SS_ALIGNSIZE equ <(sizeof(SQWORD))>
   if (_WIN32_WINNT ge 0600h)
     _SS_PAD1SIZE equ <(_SS_ALIGNSIZE - sizeof(USHORT))>
     _SS_PAD2SIZE equ <(_SS_MAXSIZE - (sizeof(USHORT) + _SS_PAD1SIZE + _SS_ALIGNSIZE))>
   else
-    _SS_PAD1SIZE equ <(_SS_ALIGNSIZE - sizeof(short))>
-    _SS_PAD2SIZE equ <(_SS_MAXSIZE - (sizeof(short) + _SS_PAD1SIZE + _SS_ALIGNSIZE))>
+    _SS_PAD1SIZE equ <(_SS_ALIGNSIZE - sizeof(SWORD short)>
+    _SS_PAD2SIZE equ <(_SS_MAXSIZE - (sizeof(SWORD short + _SS_PAD1SIZE + _SS_ALIGNSIZE))>
   endif
   SOCKADDR_STORAGE_LH struct
     ss_family ADDRESS_FAMILY ?
@@ -191,9 +195,10 @@ ifndef _WS2DEF_
     __ss_align SQWORD ?
     __ss_pad2 CHAR _SS_PAD2SIZE dup (?)
   SOCKADDR_STORAGE_LH ends
-  sockaddr_storage typedef SOCKADDR_STORAGE_LH
-  PSOCKADDR_STORAGE_LH typedef ptr SOCKADDR_STORAGE_LH
-  LPSOCKADDR_STORAGE_LH typedef ptr SOCKADDR_STORAGE_LH
+;  sockaddr_storage typedef SOCKADDR_STORAGE_LH
+;  PSOCKADDR_STORAGE_LH typedef ptr SOCKADDR_STORAGE_LH
+;  LPSOCKADDR_STORAGE_LH typedef ptr SOCKADDR_STORAGE_LH
+  
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     SOCKADDR_STORAGE_XP struct
       ss_family SWORD ?
@@ -201,9 +206,10 @@ ifndef _WS2DEF_
       __ss_align SQWORD ?
       __ss_pad2 CHAR _SS_PAD2SIZE dup (?)
     SOCKADDR_STORAGE_XP ends
-    sockaddr_storage_xp typedef SOCKADDR_STORAGE_XP
-    PSOCKADDR_STORAGE_XP typedef ptr SOCKADDR_STORAGE_XP
-    LPSOCKADDR_STORAGE_XP typedef ptr SOCKADDR_STORAGE_XP
+;    sockaddr_storage_xp typedef SOCKADDR_STORAGE_XP
+;    PSOCKADDR_STORAGE_XP typedef ptr SOCKADDR_STORAGE_XP
+;    LPSOCKADDR_STORAGE_XP typedef ptr SOCKADDR_STORAGE_XP
+    
   endif
   if (_WIN32_WINNT ge 0600h)
     SOCKADDR_STORAGE typedef SOCKADDR_STORAGE_LH
@@ -222,6 +228,7 @@ ifndef _WS2DEF_
     SOCKET_PROCESSOR_AFFINITY ends
     _SOCKET_PROCESSOR_AFFINITY typedef SOCKET_PROCESSOR_AFFINITY
     PSOCKET_PROCESSOR_AFFINITY typedef ptr SOCKET_PROCESSOR_AFFINITY
+    
   endif
   IOC_UNIX equ 00000000h
   IOC_WS2 equ 08000000h
@@ -323,6 +330,7 @@ ifndef _WS2DEF_
   IPPROTO_RESERVED_WNV equ 260
   IPPROTO_RESERVED_MAX equ 261
   PIPROTO typedef ptr IPPROTO
+  
   IPPORT_TCPMUX equ 1
   IPPORT_ECHO equ 7
   IPPORT_DISCARD equ 9
@@ -405,7 +413,7 @@ ifndef _WS2DEF_
   INADDR_LOOPBACK equ 7f000001h
   INADDR_BROADCAST equ 0ffffffffh
   INADDR_NONE equ 0ffffffffh
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     SCOPE_LEVEL typedef SDWORD
     ScopeLevelInterface equ 1
     ScopeLevelLink equ 2
@@ -415,17 +423,18 @@ ifndef _WS2DEF_
     ScopeLevelOrganization equ 8
     ScopeLevelGlobal equ 14
     ScopeLevelCount equ 16
-
+    
     SCOPE_ID struct
       union
         struct
-          ANONYMOUS_REC48 record ANONYMOUS_REC48_Level:4, ANONYMOUS_REC48_Zone:28
-          ANONYMOUS_REC48 <>
+          DUMMYRECORDNAME_??77 record Zone_??77:28, Level_??77:4
+          DUMMYRECORDNAME_??77 <>
         ends
         Value ULONG ?
       ends
     SCOPE_ID ends
     PSCOPE_ID typedef ptr SCOPE_ID
+    
     SCOPEID_UNSPECIFIED_INIT equ { 0 }
     SOCKADDR_IN struct
       if (_WIN32_WINNT lt 0600h)
@@ -439,6 +448,7 @@ ifndef _WS2DEF_
     SOCKADDR_IN ends
     sockaddr_in typedef SOCKADDR_IN
     PSOCKADDR_IN typedef ptr SOCKADDR_IN
+    
   endif
   if (_WIN32_WINNT ge 0601h)
     SOCKADDR_DL struct
@@ -448,6 +458,7 @@ ifndef _WS2DEF_
     SOCKADDR_DL ends
     sockaddr_dl typedef SOCKADDR_DL
     PSOCKADDR_DL typedef ptr SOCKADDR_DL
+    
   endif
   IOCPARM_MASK equ 7fh
   IOC_VOID equ 20000000h
@@ -469,6 +480,7 @@ ifndef _WS2DEF_
   WSABUF ends
   _WSABUF typedef WSABUF
   LPWSABUF typedef ptr WSABUF
+  
   WSAMSG struct
     name_ LPSOCKADDR ?
     namelen INT_ ?
@@ -488,6 +500,7 @@ ifndef _WS2DEF_
   _WSAMSG typedef WSAMSG
   PWSAMSG typedef ptr WSAMSG
   LPWSAMSG typedef ptr WSAMSG
+  
   if (_WIN32_WINNT ge 0600h)
     _WSACMSGHDR equ <cmsghdr>
   endif
@@ -499,6 +512,7 @@ ifndef _WS2DEF_
   _WSACMSGHDR typedef WSACMSGHDR
   PWSACMSGHDR typedef ptr WSACMSGHDR
   LPWSACMSGHDR typedef ptr WSACMSGHDR
+  
   if (_WIN32_WINNT ge 0600h)
     CMSGHDR typedef WSACMSGHDR
     PCMSGHDR typedef ptr WSACMSGHDR
@@ -550,9 +564,6 @@ ifndef _WS2DEF_
   AI_NUMERICHOST equ 00000004h
   AI_NUMERICSERV equ 00000008h
   AI_DNS_ONLY equ 00000010h
-  AI_FORCE_CLEAR_TEXT equ 00000020h
-  AI_BYPASS_DNS_CACHE equ 00000040h
-  AI_RETURN_TTL equ 00000080h
   AI_ALL equ 00000100h
   AI_ADDRCONFIG equ 00000400h
   AI_V4MAPPED equ 00000800h
@@ -562,12 +573,8 @@ ifndef _WS2DEF_
   AI_FQDN equ 00020000h
   AI_FILESERVER equ 00040000h
   AI_DISABLE_IDN_ENCODING equ 00080000h
-  AI_SECURE_WITH_FALLBACK equ 00100000h
-  AI_EXCLUSIVE_CUSTOM_SERVERS equ 00200000h
-  AI_RETURN_RESPONSE_FLAGS equ 10000000h
-  AI_REQUIRE_SECURE equ 20000000h
-  AI_RESOLUTION_HANDLE equ 40000000h
   AI_EXTENDED equ 80000000h
+  AI_RESOLUTION_HANDLE equ 40000000h
   ADDRINFOA struct
     ai_flags SDWORD ?
     ai_family SDWORD ?
@@ -580,6 +587,7 @@ ifndef _WS2DEF_
   ADDRINFOA ends
   addrinfo typedef ADDRINFOA
   PADDRINFOA typedef ptr ADDRINFOA
+  
   ADDRINFOW struct
     ai_flags SDWORD ?
     ai_family SDWORD ?
@@ -592,8 +600,9 @@ ifndef _WS2DEF_
   ADDRINFOW ends
   addrinfoW typedef ADDRINFOW
   PADDRINFOW typedef ptr ADDRINFOW
+  
   if (_WIN32_WINNT ge 0600h)
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       ADDRINFOEXA struct
         ai_flags SDWORD ?
         ai_family SDWORD ?
@@ -610,6 +619,7 @@ ifndef _WS2DEF_
       addrinfoexA typedef ADDRINFOEXA
       PADDRINFOEXA typedef ptr ADDRINFOEXA
       LPADDRINFOEXA typedef ptr ADDRINFOEXA
+      
     endif
     ADDRINFOEXW struct
       ai_flags SDWORD ?
@@ -627,13 +637,12 @@ ifndef _WS2DEF_
     addrinfoexW typedef ADDRINFOEXW
     PADDRINFOEXW typedef ptr ADDRINFOEXW
     LPADDRINFOEXW typedef ptr ADDRINFOEXW
+    
   endif
   if (_WIN32_WINNT ge 0602h)
     ADDRINFOEX_VERSION_2 equ 2
     ADDRINFOEX_VERSION_3 equ 3
     ADDRINFOEX_VERSION_4 equ 4
-    ADDRINFOEX_VERSION_5 equ 5
-    ADDRINFOEX_VERSION_6 equ 6
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       ADDRINFOEX2A struct
         ai_flags SDWORD ?
@@ -653,6 +662,7 @@ ifndef _WS2DEF_
       addrinfoex2A typedef ADDRINFOEX2A
       PADDRINFOEX2A typedef ptr ADDRINFOEX2A
       LPADDRINFOEX2A typedef ptr ADDRINFOEX2A
+      
     endif
     ADDRINFOEX2W struct
       ai_flags SDWORD ?
@@ -672,6 +682,7 @@ ifndef _WS2DEF_
     addrinfoex2W typedef ADDRINFOEX2W
     PADDRINFOEX2W typedef ptr ADDRINFOEX2W
     LPADDRINFOEX2W typedef ptr ADDRINFOEX2W
+    
     ADDRINFOEX3 struct
       ai_flags SDWORD ?
       ai_family SDWORD ?
@@ -691,6 +702,7 @@ ifndef _WS2DEF_
     addrinfoex3 typedef ADDRINFOEX3
     PADDRINFOEX3 typedef ptr ADDRINFOEX3
     LPADDRINFOEX3 typedef ptr ADDRINFOEX3
+    
     ADDRINFOEX4 struct
       ai_flags SDWORD ?
       ai_family SDWORD ?
@@ -711,97 +723,39 @@ ifndef _WS2DEF_
     addrinfoex4 typedef ADDRINFOEX4
     PADDRINFOEX4 typedef ptr ADDRINFOEX4
     LPADDRINFOEX4 typedef ptr ADDRINFOEX4
-    ADDRINFOEX5 struct
-      ai_flags SDWORD ?
-      ai_family SDWORD ?
-      ai_socktype SDWORD ?
-      ai_protocol SDWORD ?
-      ai_addrlen size_t ?
-      ai_canonname PWSTR ?
-      ai_addr POINTER ?
-      ai_blob POINTER ?
-      ai_bloblen size_t ?
-      ai_provider POINTER ?
-      ai_next POINTER ?
-      ai_version SDWORD ?
-      ai_fqdn PWSTR ?
-      ai_interfaceindex SDWORD ?
-      ai_resolutionhandle HANDLE ?
-      ai_ttl DWORD ?
-    ADDRINFOEX5 ends
-    addrinfoex5 typedef ADDRINFOEX5
-    PADDRINFOEX5 typedef ptr ADDRINFOEX5
-    LPADDRINFOEX5 typedef ptr ADDRINFOEX5
-    AI_DNS_SERVER_TYPE_UDP equ 1h
-    AI_DNS_SERVER_TYPE_DOH equ 2h
-    AI_DNS_SERVER_UDP_FALLBACK equ 1h
-    ADDRINFO_DNS_SERVER struct
-      ai_servertype DWORD ?
-      ai_flags QWORD ?
-      ai_addrlen DWORD ?
-      ai_addr POINTER ?
-      union
-        ai_template PWSTR ?
-      ends
-    ADDRINFO_DNS_SERVER ends
-    addrinfo_dns_server typedef ADDRINFO_DNS_SERVER
-    AI_DNS_RESPONSE_SECURE equ 1h
-    AI_DNS_RESPONSE_HOSTFILE equ 2h
-    ADDRINFOEX6 struct
-      ai_flags SDWORD ?
-      ai_family SDWORD ?
-      ai_socktype SDWORD ?
-      ai_protocol SDWORD ?
-      ai_addrlen size_t ?
-      ai_canonname PWSTR ?
-      ai_addr POINTER ?
-      ai_blob POINTER ?
-      ai_bloblen size_t ?
-      ai_provider POINTER ?
-      ai_next POINTER ?
-      ai_version SDWORD ?
-      ai_fqdn PWSTR ?
-      ai_interfaceindex SDWORD ?
-      ai_resolutionhandle HANDLE ?
-      ai_ttl DWORD ?
-      ai_numservers DWORD ?
-      ai_servers POINTER ?
-      ai_responseflags ULONG64 ?
-    ADDRINFOEX6 ends
-    addrinfoex6 typedef ADDRINFOEX6
-    PADDRINFOEX6 typedef ptr ADDRINFOEX6
+    
   endif
-  NS_ALL equ (0)
-  NS_SAP equ (1)
-  NS_NDS equ (2)
-  NS_PEER_BROWSE equ (3)
-  NS_SLP equ (5)
-  NS_DHCP equ (6)
-  NS_TCPIP_LOCAL equ (10)
-  NS_TCPIP_HOSTS equ (11)
-  NS_DNS equ (12)
-  NS_NETBT equ (13)
-  NS_WINS equ (14)
+  NS_ALL equ 0
+  NS_SAP equ 1
+  NS_NDS equ 2
+  NS_PEER_BROWSE equ 3
+  NS_SLP equ 5
+  NS_DHCP equ 6
+  NS_TCPIP_LOCAL equ 10
+  NS_TCPIP_HOSTS equ 11
+  NS_DNS equ 12
+  NS_NETBT equ 13
+  NS_WINS equ 14
   if (_WIN32_WINNT ge 0501h)
-    NS_NLA equ (15)
+    NS_NLA equ 15
   endif
   if (_WIN32_WINNT ge 0600h)
-    NS_BTH equ (16)
+    NS_BTH equ 16
   endif
-  NS_NBP equ (20)
-  NS_MS equ (30)
-  NS_STDA equ (31)
-  NS_NTDS equ (32)
+  NS_NBP equ 20
+  NS_MS equ 30
+  NS_STDA equ 31
+  NS_NTDS equ 32
   if (_WIN32_WINNT ge 0600h)
-    NS_EMAIL equ (37)
-    NS_PNRPNAME equ (38)
-    NS_PNRPCLOUD equ (39)
+    NS_EMAIL equ 37
+    NS_PNRPNAME equ 38
+    NS_PNRPCLOUD equ 39
   endif
-  NS_X500 equ (40)
-  NS_NIS equ (41)
-  NS_NISPLUS equ (42)
-  NS_WRQ equ (50)
-  NS_NETDES equ (60)
+  NS_X500 equ 40
+  NS_NIS equ 41
+  NS_NISPLUS equ 42
+  NS_WRQ equ 50
+  NS_NETDES equ 60
   NI_NOFQDN equ 01h
   NI_NUMERICHOST equ 02h
   NI_NAMEREQD equ 04h
@@ -809,4 +763,8 @@ ifndef _WS2DEF_
   NI_DGRAM equ 10h
   NI_MAXHOST equ 1025
   NI_MAXSERV equ 32
+  ifdef __cplusplus
+    ;[...]
+  endif
 endif
+

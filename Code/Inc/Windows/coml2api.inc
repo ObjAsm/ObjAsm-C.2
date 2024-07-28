@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\coml2api.h
-;             Created on (UTC) 06/04/2024 06:15:52
-;             Last modified on (UTC) 21/02/2024 18:13:22
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\coml2api.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 if  not Defined(_COML2API_H_)
   _COML2API_H_ equ <>
@@ -13,7 +12,7 @@ if  not Defined(_COML2API_H_)
   include combaseapi.inc
   include objidl.inc
   include propidlbase.inc
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     CWCSTORAGENAME equ 32
     STGM_DIRECT equ 00000000h
     STGM_TRANSACTED equ 00010000h
@@ -43,8 +42,6 @@ if  not Defined(_COML2API_H_)
     STGFMT_FILE equ 3
     STGFMT_ANY equ 4
     STGFMT_DOCFILE equ 5
-  endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
     STGFMT_DOCUMENT equ 0
     @DefProto DllImport, StgCreateDocfile, WIN_STD_CALL_CONV,, <:ptr WCHAR, :DWORD, :DWORD, :ptr ptr IStorage>, 16
     @DefProto DllImport, StgCreateDocfileOnILockBytes, WIN_STD_CALL_CONV,, <:ptr ILockBytes, :DWORD, :DWORD, :ptr ptr IStorage>, 16
@@ -68,6 +65,7 @@ if  not Defined(_COML2API_H_)
         pwcsTemplateFile POINTER ?
       endif
     STGOPTIONS ends
+
     tagSTGOPTIONS typedef STGOPTIONS
     @DefProto DllImport, StgCreateStorageEx, WIN_STD_CALL_CONV,, <:ptr WCHAR, :DWORD, :DWORD, :DWORD, :ptr STGOPTIONS, :PSECURITY_DESCRIPTOR, :REFIID, :ptr ptr>, 32
     @DefProto DllImport, StgOpenStorageEx, WIN_STD_CALL_CONV,, <:ptr WCHAR, :DWORD, :DWORD, :DWORD, :ptr STGOPTIONS, :PSECURITY_DESCRIPTOR, :REFIID, :ptr ptr>, 32
@@ -88,3 +86,4 @@ if  not Defined(_COML2API_H_)
     @DefProto DllImport, GetConvertStg, WIN_STD_CALL_CONV,, <:LPSTORAGE>, 4
   endif
 endif
+

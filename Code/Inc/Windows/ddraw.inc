@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\ddraw.h
-;             Created on (UTC) 06/04/2024 06:15:53
-;             Last modified on (UTC) 21/02/2024 18:14:20
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\ddraw.h', last modified: 19/04/2018 10:46
+;Creation parameters: 
 
 ifndef __DDRAW_INCLUDED__
   __DDRAW_INCLUDED__ equ <>
@@ -66,29 +65,44 @@ ifndef __DDRAW_INCLUDED__
       DEFINE_GUID IID_IDirectDrawGammaControl, 69C11C3Eh, 0B46Bh, 11D1h, 0ADh, 7Ah, 00h, 0C0h, 4Fh, 0C2h, 9Bh, 4Eh
     endif
     LPDIRECTDRAW typedef ptr IDirectDraw
+    
     LPDIRECTDRAW2 typedef ptr IDirectDraw2
+    
     LPDIRECTDRAW4 typedef ptr IDirectDraw4
+    
     LPDIRECTDRAW7 typedef ptr IDirectDraw7
+    
     LPDIRECTDRAWSURFACE typedef ptr IDirectDrawSurface
+    
     LPDIRECTDRAWSURFACE2 typedef ptr IDirectDrawSurface2
+    
     LPDIRECTDRAWSURFACE3 typedef ptr IDirectDrawSurface3
+    
     LPDIRECTDRAWSURFACE4 typedef ptr IDirectDrawSurface4
+    
     LPDIRECTDRAWSURFACE7 typedef ptr IDirectDrawSurface7
+    
     LPDIRECTDRAWPALETTE typedef ptr IDirectDrawPalette
+    
     LPDIRECTDRAWCLIPPER typedef ptr IDirectDrawClipper
+    
     LPDIRECTDRAWCOLORCONTROL typedef ptr IDirectDrawColorControl
+    
     LPDIRECTDRAWGAMMACONTROL typedef ptr IDirectDrawGammaControl
+    
     LPDDFXROP typedef ptr _DDFXROP
+    
     LPDDSURFACEDESC typedef ptr _DDSURFACEDESC
+    
     LPDDSURFACEDESC2 typedef ptr _DDSURFACEDESC2
+    
     LPDDCOLORCONTROL typedef ptr _DDCOLORCONTROL
+    
     if (Defined(WIN32) or Defined(_WIN32)) and  not Defined(_NO_COM)
       TYPE_LPDDENUMCALLBACKA typedef proto WIN_STD_CALL_CONV :ptr GUID, :LPSTR, :LPSTR, :LPVOID
       LPDDENUMCALLBACKA typedef ptr TYPE_LPDDENUMCALLBACKA
-
       TYPE_LPDDENUMCALLBACKW typedef proto WIN_STD_CALL_CONV :ptr GUID, :LPWSTR, :LPWSTR, :LPVOID
       LPDDENUMCALLBACKW typedef ptr TYPE_LPDDENUMCALLBACKW
-
       DirectDrawEnumerateW proto WIN_STD_CALL_CONV :LPDDENUMCALLBACKW, :LPVOID
       DirectDrawEnumerateA proto WIN_STD_CALL_CONV :LPDDENUMCALLBACKA, :LPVOID
       if  not Defined(HMONITOR_DECLARED) and (WINVER lt 0500h)
@@ -97,18 +111,14 @@ ifndef __DDRAW_INCLUDED__
       endif
       TYPE_LPDDENUMCALLBACKEXA typedef proto WIN_STD_CALL_CONV :ptr GUID, :LPSTR, :LPSTR, :LPVOID, :HMONITOR
       LPDDENUMCALLBACKEXA typedef ptr TYPE_LPDDENUMCALLBACKEXA
-
       TYPE_LPDDENUMCALLBACKEXW typedef proto WIN_STD_CALL_CONV :ptr GUID, :LPWSTR, :LPWSTR, :LPVOID, :HMONITOR
       LPDDENUMCALLBACKEXW typedef ptr TYPE_LPDDENUMCALLBACKEXW
-
       DirectDrawEnumerateExW proto WIN_STD_CALL_CONV :LPDDENUMCALLBACKEXW, :LPVOID, :DWORD
       DirectDrawEnumerateExA proto WIN_STD_CALL_CONV :LPDDENUMCALLBACKEXA, :LPVOID, :DWORD
       TYPE_LPDIRECTDRAWENUMERATEEXA typedef proto WIN_STD_CALL_CONV :LPDDENUMCALLBACKEXA, :LPVOID, :DWORD
       LPDIRECTDRAWENUMERATEEXA typedef ptr TYPE_LPDIRECTDRAWENUMERATEEXA
-
       TYPE_LPDIRECTDRAWENUMERATEEXW typedef proto WIN_STD_CALL_CONV :LPDDENUMCALLBACKEXW, :LPVOID, :DWORD
       LPDIRECTDRAWENUMERATEEXW typedef ptr TYPE_LPDIRECTDRAWENUMERATEEXW
-
       ifdef UNICODE
         LPDDENUMCALLBACK typedef LPDDENUMCALLBACKW
         DirectDrawEnumerate equ <DirectDrawEnumerateW>
@@ -142,25 +152,21 @@ ifndef __DDRAW_INCLUDED__
     endif
     TYPE_LPDDENUMMODESCALLBACK typedef proto WIN_STD_CALL_CONV :LPDDSURFACEDESC, :LPVOID
     LPDDENUMMODESCALLBACK typedef ptr TYPE_LPDDENUMMODESCALLBACK
-
     TYPE_LPDDENUMMODESCALLBACK2 typedef proto WIN_STD_CALL_CONV :LPDDSURFACEDESC2, :LPVOID
     LPDDENUMMODESCALLBACK2 typedef ptr TYPE_LPDDENUMMODESCALLBACK2
-
     TYPE_LPDDENUMSURFACESCALLBACK typedef proto WIN_STD_CALL_CONV :LPDIRECTDRAWSURFACE, :LPDDSURFACEDESC, :LPVOID
     LPDDENUMSURFACESCALLBACK typedef ptr TYPE_LPDDENUMSURFACESCALLBACK
-
     TYPE_LPDDENUMSURFACESCALLBACK2 typedef proto WIN_STD_CALL_CONV :LPDIRECTDRAWSURFACE4, :LPDDSURFACEDESC2, :LPVOID
     LPDDENUMSURFACESCALLBACK2 typedef ptr TYPE_LPDDENUMSURFACESCALLBACK2
-
     TYPE_LPDDENUMSURFACESCALLBACK7 typedef proto WIN_STD_CALL_CONV :LPDIRECTDRAWSURFACE7, :LPDDSURFACEDESC2, :LPVOID
     LPDDENUMSURFACESCALLBACK7 typedef ptr TYPE_LPDDENUMSURFACESCALLBACK7
-
     DDARGB struct
       blue BYTE ?
       green BYTE ?
       red BYTE ?
       alpha BYTE ?
     DDARGB ends
+
     _DDARGB typedef DDARGB
     LPDDARGB typedef ptr DDARGB
     DDRGBA struct
@@ -169,12 +175,14 @@ ifndef __DDRAW_INCLUDED__
       blue BYTE ?
       alpha BYTE ?
     DDRGBA ends
+
     _DDRGBA typedef DDRGBA
     LPDDRGBA typedef ptr DDRGBA
     DDCOLORKEY struct
       dwColorSpaceLowValue DWORD ?
       dwColorSpaceHighValue DWORD ?
     DDCOLORKEY ends
+
     _DDCOLORKEY typedef DDCOLORKEY
     LPDDCOLORKEY typedef ptr DDCOLORKEY
     DDBLTFX struct
@@ -188,12 +196,12 @@ ifndef __DDRAW_INCLUDED__
       dwZBufferHigh DWORD ?
       dwZBufferBaseDest DWORD ?
       dwZDestConstBitDepth DWORD ?
-      union
+      union DUMMYUNIONNAMEN(1)
         dwZDestConst DWORD ?
         lpDDSZBufferDest LPDIRECTDRAWSURFACE ?
       ends
       dwZSrcConstBitDepth DWORD ?
-      union
+      union DUMMYUNIONNAMEN(2)
         dwZSrcConst DWORD ?
         lpDDSZBufferSrc LPDIRECTDRAWSURFACE ?
       ends
@@ -201,16 +209,16 @@ ifndef __DDRAW_INCLUDED__
       dwAlphaEdgeBlend DWORD ?
       dwReserved DWORD ?
       dwAlphaDestConstBitDepth DWORD ?
-      union
+      union DUMMYUNIONNAMEN(3)
         dwAlphaDestConst DWORD ?
         lpDDSAlphaDest LPDIRECTDRAWSURFACE ?
       ends
       dwAlphaSrcConstBitDepth DWORD ?
-      union
+      union DUMMYUNIONNAMEN(4)
         dwAlphaSrcConst DWORD ?
         lpDDSAlphaSrc LPDIRECTDRAWSURFACE ?
       ends
-      union
+      union DUMMYUNIONNAMEN(5)
         dwFillColor DWORD ?
         dwFillDepth DWORD ?
         dwFillPixel DWORD ?
@@ -219,37 +227,43 @@ ifndef __DDRAW_INCLUDED__
       ddckDestColorkey DDCOLORKEY <>
       ddckSrcColorkey DDCOLORKEY <>
     DDBLTFX ends
+
     _DDBLTFX typedef DDBLTFX
     LPDDBLTFX typedef ptr DDBLTFX
     DDSCAPS struct
       dwCaps DWORD ?
     DDSCAPS ends
+
     _DDSCAPS typedef DDSCAPS
     LPDDSCAPS typedef ptr DDSCAPS
     DDOSCAPS struct
       dwCaps DWORD ?
     DDOSCAPS ends
+
     _DDOSCAPS typedef DDOSCAPS
     LPDDOSCAPS typedef ptr DDOSCAPS
     DDSCAPSEX struct
       dwCaps2 DWORD ?
       dwCaps3 DWORD ?
-      union
+      union DUMMYUNIONNAMEN(1)
         dwCaps4 DWORD ?
         dwVolumeDepth DWORD ?
       ends
     DDSCAPSEX ends
+
     _DDSCAPSEX typedef DDSCAPSEX
     LPDDSCAPSEX typedef ptr DDSCAPSEX
+    
     DDSCAPS2 struct
       dwCaps DWORD ?
       dwCaps2 DWORD ?
       dwCaps3 DWORD ?
-      union
+      union DUMMYUNIONNAMEN(1)
         dwCaps4 DWORD ?
         dwVolumeDepth DWORD ?
       ends
     DDSCAPS2 ends
+
     _DDSCAPS2 typedef DDSCAPS2
     LPDDSCAPS2 typedef ptr DDSCAPS2
     DD_ROP_SPACE equ (256 / 32)
@@ -291,6 +305,7 @@ ifndef __DDRAW_INCLUDED__
       dwReserved2 DWORD ?
       dwReserved3 DWORD ?
     DDCAPS_DX1 ends
+
     _DDCAPS_DX1 typedef DDCAPS_DX1
     LPDDCAPS_DX1 typedef ptr DDCAPS_DX1
     DDCAPS_DX3 struct
@@ -346,6 +361,7 @@ ifndef __DDRAW_INCLUDED__
       dwReserved5 DWORD ?
       dwReserved6 DWORD ?
     DDCAPS_DX3 ends
+
     _DDCAPS_DX3 typedef DDCAPS_DX3
     LPDDCAPS_DX3 typedef ptr DDCAPS_DX3
     DDCAPS_DX5 struct
@@ -406,6 +422,7 @@ ifndef __DDRAW_INCLUDED__
       dwNLVBFXCaps DWORD ?
       dwNLVBRops DWORD DD_ROP_SPACE dup (?)
     DDCAPS_DX5 ends
+
     _DDCAPS_DX5 typedef DDCAPS_DX5
     LPDDCAPS_DX5 typedef ptr DDCAPS_DX5
     DDCAPS_DX6 struct
@@ -467,6 +484,7 @@ ifndef __DDRAW_INCLUDED__
       dwNLVBRops DWORD DD_ROP_SPACE dup (?)
       ddsCaps DDSCAPS2 <>
     DDCAPS_DX6 ends
+
     _DDCAPS_DX6 typedef DDCAPS_DX6
     LPDDCAPS_DX6 typedef ptr DDCAPS_DX6
     DDCAPS_DX7 struct
@@ -528,6 +546,7 @@ ifndef __DDRAW_INCLUDED__
       dwNLVBRops DWORD DD_ROP_SPACE dup (?)
       ddsCaps DDSCAPS2 <>
     DDCAPS_DX7 ends
+
     _DDCAPS_DX7 typedef DDCAPS_DX7
     LPDDCAPS_DX7 typedef ptr DDCAPS_DX7
     if DIRECTDRAW_VERSION le 300h
@@ -546,7 +565,7 @@ ifndef __DDRAW_INCLUDED__
         dwSize DWORD ?
         dwFlags DWORD ?
         dwFourCC DWORD ?
-        union
+        union DUMMYUNIONNAMEN(1)
           dwRGBBitCount DWORD ?
           dwYUVBitCount DWORD ?
           dwZBufferBitDepth DWORD ?
@@ -555,7 +574,7 @@ ifndef __DDRAW_INCLUDED__
           dwBumpBitCount DWORD ?
           dwPrivateFormatBitCount DWORD ?
         ends
-        union
+        union DUMMYUNIONNAMEN(2)
           dwRBitMask DWORD ?
           dwYBitMask DWORD ?
           dwStencilBitDepth DWORD ?
@@ -563,7 +582,7 @@ ifndef __DDRAW_INCLUDED__
           dwBumpDuBitMask DWORD ?
           dwOperations DWORD ?
         ends
-        union
+        union DUMMYUNIONNAMEN(3)
           dwGBitMask DWORD ?
           dwUBitMask DWORD ?
           dwZBitMask DWORD ?
@@ -573,13 +592,13 @@ ifndef __DDRAW_INCLUDED__
             wBltMSTypes WORD ?
           ends
         ends
-        union
+        union DUMMYUNIONNAMEN(4)
           dwBBitMask DWORD ?
           dwVBitMask DWORD ?
           dwStencilBitMask DWORD ?
           dwBumpLuminanceBitMask DWORD ?
         ends
-        union
+        union DUMMYUNIONNAMEN(5)
           dwRGBAlphaBitMask DWORD ?
           dwYUVAlphaBitMask DWORD ?
           dwLuminanceAlphaBitMask DWORD ?
@@ -587,6 +606,7 @@ ifndef __DDRAW_INCLUDED__
           dwYUVZBitMask DWORD ?
         ends
       DDPIXELFORMAT ends
+
       _DDPIXELFORMAT typedef DDPIXELFORMAT
     endif
     LPDDPIXELFORMAT typedef ptr DDPIXELFORMAT
@@ -596,12 +616,12 @@ ifndef __DDRAW_INCLUDED__
       dwAlphaEdgeBlend DWORD ?
       dwReserved DWORD ?
       dwAlphaDestConstBitDepth DWORD ?
-      union
+      union DUMMYUNIONNAMEN(1)
         dwAlphaDestConst DWORD ?
         lpDDSAlphaDest LPDIRECTDRAWSURFACE ?
       ends
       dwAlphaSrcConstBitDepth DWORD ?
-      union
+      union DUMMYUNIONNAMEN(2)
         dwAlphaSrcConst DWORD ?
         lpDDSAlphaSrc LPDIRECTDRAWSURFACE ?
       ends
@@ -610,6 +630,7 @@ ifndef __DDRAW_INCLUDED__
       dwDDFX DWORD ?
       dwFlags DWORD ?
     DDOVERLAYFX ends
+
     _DDOVERLAYFX typedef DDOVERLAYFX
     LPDDOVERLAYFX typedef ptr DDOVERLAYFX
     DDBLTBATCH struct
@@ -619,6 +640,7 @@ ifndef __DDRAW_INCLUDED__
       dwFlags DWORD ?
       lpDDBltFx LPDDBLTFX ?
     DDBLTBATCH ends
+
     _DDBLTBATCH typedef DDBLTBATCH
     LPDDBLTBATCH typedef ptr DDBLTBATCH
     DDGAMMARAMP struct
@@ -626,6 +648,7 @@ ifndef __DDRAW_INCLUDED__
       green WORD 256 dup (?)
       blue WORD 256 dup (?)
     DDGAMMARAMP ends
+
     _DDGAMMARAMP typedef DDGAMMARAMP
     LPDDGAMMARAMP typedef ptr DDGAMMARAMP
     MAX_DDDEVICEID_STRING equ 512
@@ -643,8 +666,10 @@ ifndef __DDRAW_INCLUDED__
       dwRevision DWORD ?
       guidDeviceIdentifier GUID <>
     DDDEVICEIDENTIFIER ends
+
     tagDDDEVICEIDENTIFIER typedef DDDEVICEIDENTIFIER
     LPDDDEVICEIDENTIFIER typedef ptr DDDEVICEIDENTIFIER
+    
     DDDEVICEIDENTIFIER2 struct
       szDriver SBYTE MAX_DDDEVICEID_STRING dup (?)
       szDescription SBYTE MAX_DDDEVICEID_STRING dup (?)
@@ -660,8 +685,10 @@ ifndef __DDRAW_INCLUDED__
       guidDeviceIdentifier GUID <>
       dwWHQLLevel DWORD ?
     DDDEVICEIDENTIFIER2 ends
+
     tagDDDEVICEIDENTIFIER2 typedef DDDEVICEIDENTIFIER2
     LPDDDEVICEIDENTIFIER2 typedef ptr DDDEVICEIDENTIFIER2
+    
     DDGDI_GETHOSTIDENTIFIER equ 00000001h
     GET_WHQL_YEAR macro dwWHQLLevel
       exitm <((dwWHQLLevel) / 10000h)>
@@ -674,41 +701,37 @@ ifndef __DDRAW_INCLUDED__
     endm
     TYPE_LPCLIPPERCALLBACK typedef proto WIN_STD_CALL_CONV :LPDIRECTDRAWCLIPPER, :HWND, :DWORD, :LPVOID
     LPCLIPPERCALLBACK typedef ptr TYPE_LPCLIPPERCALLBACK
-
     ifdef STREAMING
       TYPE_LPSURFACESTREAMINGCALLBACK typedef proto WIN_STD_CALL_CONV :DWORD
       LPSURFACESTREAMINGCALLBACK typedef ptr TYPE_LPSURFACESTREAMINGCALLBACK
-
     endif
     if Defined(_WIN32) and  not Defined(_NO_COM)
       INTERFACE equ <IDirectDraw>
-      DECLARE_INTERFACE_(IDirectDraw, IUnknown)
-        ??Interface equ <DDDEVICEIDENTIFIER2>
-        STDMETHOD QueryInterface, :, :ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD Compact_
-        STDMETHOD CreateClipper, :, :ptr , :ptr 
-        STDMETHOD CreatePalette, :, :, :ptr , :ptr 
-        STDMETHOD CreateSurface, :, :ptr , :ptr 
-        STDMETHOD DuplicateSurface, :, :ptr 
-        STDMETHOD EnumDisplayModes, :, :, :, :
-        STDMETHOD EnumSurfaces, :, :, :, :
-        STDMETHOD FlipToGDISurface
-        STDMETHOD GetCaps, :, :
-        STDMETHOD GetDisplayMode, :
-        STDMETHOD GetFourCCCodes, :, :
-        STDMETHOD GetGDISurface, :ptr 
-        STDMETHOD GetMonitorFrequency, :
-        STDMETHOD GetScanLine, :
-        STDMETHOD GetVerticalBlankStatus, :
-        STDMETHOD Initialize, :ptr 
-        STDMETHOD RestoreDisplayMode
-        STDMETHOD SetCooperativeLevel, :, :
-        STDMETHOD SetDisplayMode, :, :, :
-        STDMETHOD WaitForVerticalBlank, :, :
-      DECLARE_INTERFACE__END
-
+      DECLARE_INTERFACE_ IDirectDraw, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD Compact_, :THIS_
+        STD_METHOD CreateClipper, :THIS_, :ptr LPDIRECTDRAWCLIPPER, :ptr IUnknown
+        STD_METHOD CreatePalette, :THIS_, :LPPALETTEENTRY, :ptr LPDIRECTDRAWPALETTE, :ptr IUnknown
+        STD_METHOD CreateSurface, :THIS_, :ptr LPDIRECTDRAWSURFACE, :ptr IUnknown
+        STD_METHOD DuplicateSurface, :THIS_, :ptr LPDIRECTDRAWSURFACE
+        STD_METHOD EnumDisplayModes, :THIS_, :LPDDSURFACEDESC, :LPVOID, :LPDDENUMMODESCALLBACK
+        STD_METHOD EnumSurfaces, :THIS_, :LPDDSURFACEDESC, :LPVOID, :LPDDENUMSURFACESCALLBACK
+        STD_METHOD FlipToGDISurface, :THIS_
+        STD_METHOD GetCaps, :THIS_, :LPDDCAPS
+        STD_METHOD GetDisplayMode, :THIS_
+        STD_METHOD GetFourCCCodes, :THIS_, :LPDWORD
+        STD_METHOD GetGDISurface, :ptr THIS_
+        STD_METHOD GetMonitorFrequency, :THIS_
+        STD_METHOD GetScanLine, :THIS_
+        STD_METHOD GetVerticalBlankStatus, :THIS_
+        STD_METHOD Initialize, :ptr THIS_
+        STD_METHOD RestoreDisplayMode, :THIS_
+        STD_METHOD SetCooperativeLevel, :THIS_, :DWORD
+        STD_METHOD SetDisplayMode, :THIS_, :DWORD, :DWORD
+        STD_METHOD WaitForVerticalBlank, :THIS_, :HANDLE
+      END_DECLARE_INTERFACE_
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirectDraw_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -785,34 +808,32 @@ ifndef __DDRAW_INCLUDED__
     endif
     if Defined(_WIN32) and  not Defined(_NO_COM)
       INTERFACE equ <IDirectDraw2>
-      DECLARE_INTERFACE_(IDirectDraw2, IUnknown)
-        ??Interface equ <DDDEVICEIDENTIFIER2>
-        STDMETHOD QueryInterface, :, :ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD Compact_
-        STDMETHOD CreateClipper, :, :ptr , :ptr 
-        STDMETHOD CreatePalette, :, :, :ptr , :ptr 
-        STDMETHOD CreateSurface, :, :ptr , :ptr 
-        STDMETHOD DuplicateSurface, :, :ptr 
-        STDMETHOD EnumDisplayModes, :, :, :, :
-        STDMETHOD EnumSurfaces, :, :, :, :
-        STDMETHOD FlipToGDISurface
-        STDMETHOD GetCaps, :, :
-        STDMETHOD GetDisplayMode, :
-        STDMETHOD GetFourCCCodes, :, :
-        STDMETHOD GetGDISurface, :ptr 
-        STDMETHOD GetMonitorFrequency, :
-        STDMETHOD GetScanLine, :
-        STDMETHOD GetVerticalBlankStatus, :
-        STDMETHOD Initialize, :ptr 
-        STDMETHOD RestoreDisplayMode
-        STDMETHOD SetCooperativeLevel, :, :
-        STDMETHOD SetDisplayMode, :, :, :, :, :
-        STDMETHOD WaitForVerticalBlank, :, :
-        STDMETHOD GetAvailableVidMem, :, :, :
-      DECLARE_INTERFACE__END
-
+      DECLARE_INTERFACE_ IDirectDraw2, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD Compact_, :THIS_
+        STD_METHOD CreateClipper, :THIS_, :ptr LPDIRECTDRAWCLIPPER, :ptr IUnknown
+        STD_METHOD CreatePalette, :THIS_, :LPPALETTEENTRY, :ptr LPDIRECTDRAWPALETTE, :ptr IUnknown
+        STD_METHOD CreateSurface, :THIS_, :ptr LPDIRECTDRAWSURFACE, :ptr IUnknown
+        STD_METHOD DuplicateSurface, :THIS_, :ptr LPDIRECTDRAWSURFACE
+        STD_METHOD EnumDisplayModes, :THIS_, :LPDDSURFACEDESC, :LPVOID, :LPDDENUMMODESCALLBACK
+        STD_METHOD EnumSurfaces, :THIS_, :LPDDSURFACEDESC, :LPVOID, :LPDDENUMSURFACESCALLBACK
+        STD_METHOD FlipToGDISurface, :THIS_
+        STD_METHOD GetCaps, :THIS_, :LPDDCAPS
+        STD_METHOD GetDisplayMode, :THIS_
+        STD_METHOD GetFourCCCodes, :THIS_, :LPDWORD
+        STD_METHOD GetGDISurface, :ptr THIS_
+        STD_METHOD GetMonitorFrequency, :THIS_
+        STD_METHOD GetScanLine, :THIS_
+        STD_METHOD GetVerticalBlankStatus, :THIS_
+        STD_METHOD Initialize, :ptr THIS_
+        STD_METHOD RestoreDisplayMode, :THIS_
+        STD_METHOD SetCooperativeLevel, :THIS_, :DWORD
+        STD_METHOD SetDisplayMode, :THIS_, :DWORD, :DWORD, :DWORD, :DWORD
+        STD_METHOD WaitForVerticalBlank, :THIS_, :HANDLE
+        STD_METHOD GetAvailableVidMem, :THIS_, :LPDWORD, :LPDWORD
+      END_DECLARE_INTERFACE_
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirectDraw2_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -892,38 +913,36 @@ ifndef __DDRAW_INCLUDED__
     endif
     if Defined(_WIN32) and  not Defined(_NO_COM)
       INTERFACE equ <IDirectDraw4>
-      DECLARE_INTERFACE_(IDirectDraw4, IUnknown)
-        ??Interface equ <DDDEVICEIDENTIFIER2>
-        STDMETHOD QueryInterface, :, :ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD Compact_
-        STDMETHOD CreateClipper, :, :ptr , :ptr 
-        STDMETHOD CreatePalette, :, :, :ptr , :ptr 
-        STDMETHOD CreateSurface, :, :ptr , :ptr 
-        STDMETHOD DuplicateSurface, :, :ptr 
-        STDMETHOD EnumDisplayModes, :, :, :, :
-        STDMETHOD EnumSurfaces, :, :, :, :
-        STDMETHOD FlipToGDISurface
-        STDMETHOD GetCaps, :, :
-        STDMETHOD GetDisplayMode, :
-        STDMETHOD GetFourCCCodes, :, :
-        STDMETHOD GetGDISurface, :ptr 
-        STDMETHOD GetMonitorFrequency, :
-        STDMETHOD GetScanLine, :
-        STDMETHOD GetVerticalBlankStatus, :
-        STDMETHOD Initialize, :ptr 
-        STDMETHOD RestoreDisplayMode
-        STDMETHOD SetCooperativeLevel, :, :
-        STDMETHOD SetDisplayMode, :, :, :, :, :
-        STDMETHOD WaitForVerticalBlank, :, :
-        STDMETHOD GetAvailableVidMem, :, :, :
-        STDMETHOD GetSurfaceFromDC, :, :ptr 
-        STDMETHOD RestoreAllSurfaces
-        STDMETHOD TestCooperativeLevel
-        STDMETHOD GetDeviceIdentifier, :, :
-      DECLARE_INTERFACE__END
-
+      DECLARE_INTERFACE_ IDirectDraw4, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD Compact_, :THIS_
+        STD_METHOD CreateClipper, :THIS_, :ptr LPDIRECTDRAWCLIPPER, :ptr IUnknown
+        STD_METHOD CreatePalette, :THIS_, :LPPALETTEENTRY, :ptr LPDIRECTDRAWPALETTE, :ptr IUnknown
+        STD_METHOD CreateSurface, :THIS_, :ptr LPDIRECTDRAWSURFACE4, :ptr IUnknown
+        STD_METHOD DuplicateSurface, :THIS_, :ptr LPDIRECTDRAWSURFACE4
+        STD_METHOD EnumDisplayModes, :THIS_, :LPDDSURFACEDESC2, :LPVOID, :LPDDENUMMODESCALLBACK2
+        STD_METHOD EnumSurfaces, :THIS_, :LPDDSURFACEDESC2, :LPVOID, :LPDDENUMSURFACESCALLBACK2
+        STD_METHOD FlipToGDISurface, :THIS_
+        STD_METHOD GetCaps, :THIS_, :LPDDCAPS
+        STD_METHOD GetDisplayMode, :THIS_
+        STD_METHOD GetFourCCCodes, :THIS_, :LPDWORD
+        STD_METHOD GetGDISurface, :ptr THIS_
+        STD_METHOD GetMonitorFrequency, :THIS_
+        STD_METHOD GetScanLine, :THIS_
+        STD_METHOD GetVerticalBlankStatus, :THIS_
+        STD_METHOD Initialize, :ptr THIS_
+        STD_METHOD RestoreDisplayMode, :THIS_
+        STD_METHOD SetCooperativeLevel, :THIS_, :DWORD
+        STD_METHOD SetDisplayMode, :THIS_, :DWORD, :DWORD, :DWORD, :DWORD
+        STD_METHOD WaitForVerticalBlank, :THIS_, :HANDLE
+        STD_METHOD GetAvailableVidMem, :THIS_, :LPDWORD, :LPDWORD
+        STD_METHOD GetSurfaceFromDC, :THIS_, :ptr LPDIRECTDRAWSURFACE4
+        STD_METHOD RestoreAllSurfaces, :THIS_
+        STD_METHOD TestCooperativeLevel, :THIS_
+        STD_METHOD GetDeviceIdentifier, :THIS_, :DWORD
+      END_DECLARE_INTERFACE_
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirectDraw4_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1015,40 +1034,38 @@ ifndef __DDRAW_INCLUDED__
     endif
     if Defined(_WIN32) and  not Defined(_NO_COM)
       INTERFACE equ <IDirectDraw7>
-      DECLARE_INTERFACE_(IDirectDraw7, IUnknown)
-        ??Interface equ <DDDEVICEIDENTIFIER2>
-        STDMETHOD QueryInterface, :, :ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD Compact_
-        STDMETHOD CreateClipper, :, :ptr , :ptr 
-        STDMETHOD CreatePalette, :, :, :ptr , :ptr 
-        STDMETHOD CreateSurface, :, :ptr , :ptr 
-        STDMETHOD DuplicateSurface, :, :ptr 
-        STDMETHOD EnumDisplayModes, :, :, :, :
-        STDMETHOD EnumSurfaces, :, :, :, :
-        STDMETHOD FlipToGDISurface
-        STDMETHOD GetCaps, :, :
-        STDMETHOD GetDisplayMode, :
-        STDMETHOD GetFourCCCodes, :, :
-        STDMETHOD GetGDISurface, :ptr 
-        STDMETHOD GetMonitorFrequency, :
-        STDMETHOD GetScanLine, :
-        STDMETHOD GetVerticalBlankStatus, :
-        STDMETHOD Initialize, :ptr 
-        STDMETHOD RestoreDisplayMode
-        STDMETHOD SetCooperativeLevel, :, :
-        STDMETHOD SetDisplayMode, :, :, :, :, :
-        STDMETHOD WaitForVerticalBlank, :, :
-        STDMETHOD GetAvailableVidMem, :, :, :
-        STDMETHOD GetSurfaceFromDC, :, :ptr 
-        STDMETHOD RestoreAllSurfaces
-        STDMETHOD TestCooperativeLevel
-        STDMETHOD GetDeviceIdentifier, :, :
-        STDMETHOD StartModeTest, :, :, :
-        STDMETHOD EvaluateMode, :, :ptr 
-      DECLARE_INTERFACE__END
-
+      DECLARE_INTERFACE_ IDirectDraw7, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD Compact_, :THIS_
+        STD_METHOD CreateClipper, :THIS_, :ptr LPDIRECTDRAWCLIPPER, :ptr IUnknown
+        STD_METHOD CreatePalette, :THIS_, :LPPALETTEENTRY, :ptr LPDIRECTDRAWPALETTE, :ptr IUnknown
+        STD_METHOD CreateSurface, :THIS_, :ptr LPDIRECTDRAWSURFACE7, :ptr IUnknown
+        STD_METHOD DuplicateSurface, :THIS_, :ptr LPDIRECTDRAWSURFACE7
+        STD_METHOD EnumDisplayModes, :THIS_, :LPDDSURFACEDESC2, :LPVOID, :LPDDENUMMODESCALLBACK2
+        STD_METHOD EnumSurfaces, :THIS_, :LPDDSURFACEDESC2, :LPVOID, :LPDDENUMSURFACESCALLBACK7
+        STD_METHOD FlipToGDISurface, :THIS_
+        STD_METHOD GetCaps, :THIS_, :LPDDCAPS
+        STD_METHOD GetDisplayMode, :THIS_
+        STD_METHOD GetFourCCCodes, :THIS_, :LPDWORD
+        STD_METHOD GetGDISurface, :ptr THIS_
+        STD_METHOD GetMonitorFrequency, :THIS_
+        STD_METHOD GetScanLine, :THIS_
+        STD_METHOD GetVerticalBlankStatus, :THIS_
+        STD_METHOD Initialize, :ptr THIS_
+        STD_METHOD RestoreDisplayMode, :THIS_
+        STD_METHOD SetCooperativeLevel, :THIS_, :DWORD
+        STD_METHOD SetDisplayMode, :THIS_, :DWORD, :DWORD, :DWORD, :DWORD
+        STD_METHOD WaitForVerticalBlank, :THIS_, :HANDLE
+        STD_METHOD GetAvailableVidMem, :THIS_, :LPDWORD, :LPDWORD
+        STD_METHOD GetSurfaceFromDC, :THIS_, :ptr LPDIRECTDRAWSURFACE7
+        STD_METHOD RestoreAllSurfaces, :THIS_
+        STD_METHOD TestCooperativeLevel, :THIS_
+        STD_METHOD GetDeviceIdentifier, :THIS_, :DWORD
+        STD_METHOD StartModeTest, :THIS_, :DWORD, :DWORD
+        STD_METHOD EvaluateMode, :THIS_, :ptr DWORD
+      END_DECLARE_INTERFACE_
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirectDraw7_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1146,17 +1163,15 @@ ifndef __DDRAW_INCLUDED__
     endif
     if Defined(_WIN32) and  not Defined(_NO_COM)
       INTERFACE equ <IDirectDrawPalette>
-      DECLARE_INTERFACE_(IDirectDrawPalette, IUnknown)
-        ??Interface equ <DDDEVICEIDENTIFIER2>
-        STDMETHOD QueryInterface, :, :ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetCaps, :
-        STDMETHOD GetEntries, :, :, :, :
-        STDMETHOD Initialize, :, :, :
-        STDMETHOD SetEntries, :, :, :, :
-      DECLARE_INTERFACE__END
-
+      DECLARE_INTERFACE_ IDirectDrawPalette, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetCaps, :THIS_
+        STD_METHOD GetEntries, :THIS_, :DWORD, :DWORD, :LPPALETTEENTRY
+        STD_METHOD Initialize, :THIS_, :DWORD, :LPPALETTEENTRY
+        STD_METHOD SetEntries, :THIS_, :DWORD, :DWORD, :LPPALETTEENTRY
+      END_DECLARE_INTERFACE_
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirectDrawPalette_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1185,19 +1200,17 @@ ifndef __DDRAW_INCLUDED__
     endif
     if Defined(_WIN32) and  not Defined(_NO_COM)
       INTERFACE equ <IDirectDrawClipper>
-      DECLARE_INTERFACE_(IDirectDrawClipper, IUnknown)
-        ??Interface equ <DDDEVICEIDENTIFIER2>
-        STDMETHOD QueryInterface, :, :ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetClipList, :, :, :
-        STDMETHOD GetHWnd, :ptr 
-        STDMETHOD Initialize, :, :
-        STDMETHOD IsClipListChanged, :ptr 
-        STDMETHOD SetClipList, :, :
-        STDMETHOD SetHWnd, :, :
-      DECLARE_INTERFACE__END
-
+      DECLARE_INTERFACE_ IDirectDrawClipper, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetClipList, :THIS_, :LPRGNDATA, :LPDWORD
+        STD_METHOD GetHWnd, :ptr THIS_
+        STD_METHOD Initialize, :THIS_, :DWORD
+        STD_METHOD IsClipListChanged, :ptr THIS_
+        STD_METHOD SetClipList, :THIS_, :DWORD
+        STD_METHOD SetHWnd, :THIS_, :HWND
+      END_DECLARE_INTERFACE_
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirectDrawClipper_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1232,46 +1245,44 @@ ifndef __DDRAW_INCLUDED__
     endif
     if Defined(_WIN32) and  not Defined(_NO_COM)
       INTERFACE equ <IDirectDrawSurface>
-      DECLARE_INTERFACE_(IDirectDrawSurface, IUnknown)
-        ??Interface equ <DDDEVICEIDENTIFIER2>
-        STDMETHOD QueryInterface, :, :ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD AddAttachedSurface, :
-        STDMETHOD AddOverlayDirtyRect, :
-        STDMETHOD Blt, :, :, :, :, :
-        STDMETHOD BltBatch, :, :, :
-        STDMETHOD BltFast, :, :, :, :, :
-        STDMETHOD DeleteAttachedSurface, :, :
-        STDMETHOD EnumAttachedSurfaces, :, :
-        STDMETHOD EnumOverlayZOrders, :, :, :
-        STDMETHOD Flip, :, :
-        STDMETHOD GetAttachedSurface, :, :ptr 
-        STDMETHOD GetBltStatus, :
-        STDMETHOD GetCaps, :
-        STDMETHOD GetClipper, :ptr 
-        STDMETHOD GetColorKey, :, :
-        STDMETHOD GetDC, :ptr 
-        STDMETHOD GetFlipStatus, :
-        STDMETHOD GetOverlayPosition, :, :
-        STDMETHOD GetPalette, :ptr 
-        STDMETHOD GetPixelFormat, :
-        STDMETHOD GetSurfaceDesc, :
-        STDMETHOD Initialize, :, :
-        STDMETHOD IsLost
-        STDMETHOD Lock_, :, :, :, :
-        STDMETHOD ReleaseDC, :
-        STDMETHOD Restore
-        STDMETHOD SetClipper, :
-        STDMETHOD SetColorKey, :, :
-        STDMETHOD SetOverlayPosition, :, :
-        STDMETHOD SetPalette, :
-        STDMETHOD Unlock, :
-        STDMETHOD UpdateOverlay, :, :, :, :, :
-        STDMETHOD UpdateOverlayDisplay, :
-        STDMETHOD UpdateOverlayZOrder, :, :
-      DECLARE_INTERFACE__END
-
+      DECLARE_INTERFACE_ IDirectDrawSurface, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD AddAttachedSurface, :THIS_
+        STD_METHOD AddOverlayDirtyRect, :THIS_
+        STD_METHOD Blt, :THIS_, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD, :LPDDBLTFX
+        STD_METHOD BltBatch, :THIS_, :DWORD, :DWORD
+        STD_METHOD BltFast, :THIS_, :DWORD, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD
+        STD_METHOD DeleteAttachedSurface, :THIS_, :LPDIRECTDRAWSURFACE
+        STD_METHOD EnumAttachedSurfaces, :THIS_, :LPDDENUMSURFACESCALLBACK
+        STD_METHOD EnumOverlayZOrders, :THIS_, :LPVOID, :LPDDENUMSURFACESCALLBACK
+        STD_METHOD Flip, :THIS_, :DWORD
+        STD_METHOD GetAttachedSurface, :THIS_, :ptr LPDIRECTDRAWSURFACE
+        STD_METHOD GetBltStatus, :THIS_
+        STD_METHOD GetCaps, :THIS_
+        STD_METHOD GetClipper, :ptr THIS_
+        STD_METHOD GetColorKey, :THIS_, :LPDDCOLORKEY
+        STD_METHOD GetDC, :ptr THIS_
+        STD_METHOD GetFlipStatus, :THIS_
+        STD_METHOD GetOverlayPosition, :THIS_, :LPLONG
+        STD_METHOD GetPalette, :ptr THIS_
+        STD_METHOD GetPixelFormat, :THIS_
+        STD_METHOD GetSurfaceDesc, :THIS_
+        STD_METHOD Initialize, :THIS_, :LPDDSURFACEDESC
+        STD_METHOD IsLost, :THIS_
+        STD_METHOD Lock_, :THIS_, :LPDDSURFACEDESC, :DWORD, :HANDLE
+        STD_METHOD ReleaseDC, :THIS_
+        STD_METHOD Restore, :THIS_
+        STD_METHOD SetClipper, :THIS_
+        STD_METHOD SetColorKey, :THIS_, :LPDDCOLORKEY
+        STD_METHOD SetOverlayPosition, :THIS_, :LONG
+        STD_METHOD SetPalette, :THIS_
+        STD_METHOD Unlock, :THIS_
+        STD_METHOD UpdateOverlay, :THIS_, :LPDIRECTDRAWSURFACE, :LPRECT, :DWORD, :LPDDOVERLAYFX
+        STD_METHOD UpdateOverlayDisplay, :THIS_
+        STD_METHOD UpdateOverlayZOrder, :THIS_, :LPDIRECTDRAWSURFACE
+      END_DECLARE_INTERFACE_
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirectDrawSurface_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1385,49 +1396,47 @@ ifndef __DDRAW_INCLUDED__
         ;[...]
       endif
       INTERFACE equ <IDirectDrawSurface2>
-      DECLARE_INTERFACE_(IDirectDrawSurface2, IUnknown)
-        ??Interface equ <DDDEVICEIDENTIFIER2>
-        STDMETHOD QueryInterface, :, :ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD AddAttachedSurface, :
-        STDMETHOD AddOverlayDirtyRect, :
-        STDMETHOD Blt, :, :, :, :, :
-        STDMETHOD BltBatch, :, :, :
-        STDMETHOD BltFast, :, :, :, :, :
-        STDMETHOD DeleteAttachedSurface, :, :
-        STDMETHOD EnumAttachedSurfaces, :, :
-        STDMETHOD EnumOverlayZOrders, :, :, :
-        STDMETHOD Flip, :, :
-        STDMETHOD GetAttachedSurface, :, :ptr 
-        STDMETHOD GetBltStatus, :
-        STDMETHOD GetCaps, :
-        STDMETHOD GetClipper, :ptr 
-        STDMETHOD GetColorKey, :, :
-        STDMETHOD GetDC, :ptr 
-        STDMETHOD GetFlipStatus, :
-        STDMETHOD GetOverlayPosition, :, :
-        STDMETHOD GetPalette, :ptr 
-        STDMETHOD GetPixelFormat, :
-        STDMETHOD GetSurfaceDesc, :
-        STDMETHOD Initialize, :, :
-        STDMETHOD IsLost
-        STDMETHOD Lock_, :, :, :, :
-        STDMETHOD ReleaseDC, :
-        STDMETHOD Restore
-        STDMETHOD SetClipper, :
-        STDMETHOD SetColorKey, :, :
-        STDMETHOD SetOverlayPosition, :, :
-        STDMETHOD SetPalette, :
-        STDMETHOD Unlock, :
-        STDMETHOD UpdateOverlay, :, :, :, :, :
-        STDMETHOD UpdateOverlayDisplay, :
-        STDMETHOD UpdateOverlayZOrder, :, :
-        STDMETHOD GetDDInterface, :ptr 
-        STDMETHOD PageLock, :
-        STDMETHOD PageUnlock, :
-      DECLARE_INTERFACE__END
-
+      DECLARE_INTERFACE_ IDirectDrawSurface2, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD AddAttachedSurface, :THIS_
+        STD_METHOD AddOverlayDirtyRect, :THIS_
+        STD_METHOD Blt, :THIS_, :LPDIRECTDRAWSURFACE2, :LPRECT, :DWORD, :LPDDBLTFX
+        STD_METHOD BltBatch, :THIS_, :DWORD, :DWORD
+        STD_METHOD BltFast, :THIS_, :DWORD, :LPDIRECTDRAWSURFACE2, :LPRECT, :DWORD
+        STD_METHOD DeleteAttachedSurface, :THIS_, :LPDIRECTDRAWSURFACE2
+        STD_METHOD EnumAttachedSurfaces, :THIS_, :LPDDENUMSURFACESCALLBACK
+        STD_METHOD EnumOverlayZOrders, :THIS_, :LPVOID, :LPDDENUMSURFACESCALLBACK
+        STD_METHOD Flip, :THIS_, :DWORD
+        STD_METHOD GetAttachedSurface, :THIS_, :ptr LPDIRECTDRAWSURFACE2
+        STD_METHOD GetBltStatus, :THIS_
+        STD_METHOD GetCaps, :THIS_
+        STD_METHOD GetClipper, :ptr THIS_
+        STD_METHOD GetColorKey, :THIS_, :LPDDCOLORKEY
+        STD_METHOD GetDC, :ptr THIS_
+        STD_METHOD GetFlipStatus, :THIS_
+        STD_METHOD GetOverlayPosition, :THIS_, :LPLONG
+        STD_METHOD GetPalette, :ptr THIS_
+        STD_METHOD GetPixelFormat, :THIS_
+        STD_METHOD GetSurfaceDesc, :THIS_
+        STD_METHOD Initialize, :THIS_, :LPDDSURFACEDESC
+        STD_METHOD IsLost, :THIS_
+        STD_METHOD Lock_, :THIS_, :LPDDSURFACEDESC, :DWORD, :HANDLE
+        STD_METHOD ReleaseDC, :THIS_
+        STD_METHOD Restore, :THIS_
+        STD_METHOD SetClipper, :THIS_
+        STD_METHOD SetColorKey, :THIS_, :LPDDCOLORKEY
+        STD_METHOD SetOverlayPosition, :THIS_, :LONG
+        STD_METHOD SetPalette, :THIS_
+        STD_METHOD Unlock, :THIS_
+        STD_METHOD UpdateOverlay, :THIS_, :LPDIRECTDRAWSURFACE2, :LPRECT, :DWORD, :LPDDOVERLAYFX
+        STD_METHOD UpdateOverlayDisplay, :THIS_
+        STD_METHOD UpdateOverlayZOrder, :THIS_, :LPDIRECTDRAWSURFACE2
+        STD_METHOD GetDDInterface, :ptr THIS_
+        STD_METHOD PageLock, :THIS_
+        STD_METHOD PageUnlock, :THIS_
+      END_DECLARE_INTERFACE_
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirectDrawSurface2_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1550,50 +1559,48 @@ ifndef __DDRAW_INCLUDED__
         ;[...]
       endif
       INTERFACE equ <IDirectDrawSurface3>
-      DECLARE_INTERFACE_(IDirectDrawSurface3, IUnknown)
-        ??Interface equ <DDDEVICEIDENTIFIER2>
-        STDMETHOD QueryInterface, :, :ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD AddAttachedSurface, :
-        STDMETHOD AddOverlayDirtyRect, :
-        STDMETHOD Blt, :, :, :, :, :
-        STDMETHOD BltBatch, :, :, :
-        STDMETHOD BltFast, :, :, :, :, :
-        STDMETHOD DeleteAttachedSurface, :, :
-        STDMETHOD EnumAttachedSurfaces, :, :
-        STDMETHOD EnumOverlayZOrders, :, :, :
-        STDMETHOD Flip, :, :
-        STDMETHOD GetAttachedSurface, :, :ptr 
-        STDMETHOD GetBltStatus, :
-        STDMETHOD GetCaps, :
-        STDMETHOD GetClipper, :ptr 
-        STDMETHOD GetColorKey, :, :
-        STDMETHOD GetDC, :ptr 
-        STDMETHOD GetFlipStatus, :
-        STDMETHOD GetOverlayPosition, :, :
-        STDMETHOD GetPalette, :ptr 
-        STDMETHOD GetPixelFormat, :
-        STDMETHOD GetSurfaceDesc, :
-        STDMETHOD Initialize, :, :
-        STDMETHOD IsLost
-        STDMETHOD Lock_, :, :, :, :
-        STDMETHOD ReleaseDC, :
-        STDMETHOD Restore
-        STDMETHOD SetClipper, :
-        STDMETHOD SetColorKey, :, :
-        STDMETHOD SetOverlayPosition, :, :
-        STDMETHOD SetPalette, :
-        STDMETHOD Unlock, :
-        STDMETHOD UpdateOverlay, :, :, :, :, :
-        STDMETHOD UpdateOverlayDisplay, :
-        STDMETHOD UpdateOverlayZOrder, :, :
-        STDMETHOD GetDDInterface, :ptr 
-        STDMETHOD PageLock, :
-        STDMETHOD PageUnlock, :
-        STDMETHOD SetSurfaceDesc, :, :
-      DECLARE_INTERFACE__END
-
+      DECLARE_INTERFACE_ IDirectDrawSurface3, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD AddAttachedSurface, :THIS_
+        STD_METHOD AddOverlayDirtyRect, :THIS_
+        STD_METHOD Blt, :THIS_, :LPDIRECTDRAWSURFACE3, :LPRECT, :DWORD, :LPDDBLTFX
+        STD_METHOD BltBatch, :THIS_, :DWORD, :DWORD
+        STD_METHOD BltFast, :THIS_, :DWORD, :LPDIRECTDRAWSURFACE3, :LPRECT, :DWORD
+        STD_METHOD DeleteAttachedSurface, :THIS_, :LPDIRECTDRAWSURFACE3
+        STD_METHOD EnumAttachedSurfaces, :THIS_, :LPDDENUMSURFACESCALLBACK
+        STD_METHOD EnumOverlayZOrders, :THIS_, :LPVOID, :LPDDENUMSURFACESCALLBACK
+        STD_METHOD Flip, :THIS_, :DWORD
+        STD_METHOD GetAttachedSurface, :THIS_, :ptr LPDIRECTDRAWSURFACE3
+        STD_METHOD GetBltStatus, :THIS_
+        STD_METHOD GetCaps, :THIS_
+        STD_METHOD GetClipper, :ptr THIS_
+        STD_METHOD GetColorKey, :THIS_, :LPDDCOLORKEY
+        STD_METHOD GetDC, :ptr THIS_
+        STD_METHOD GetFlipStatus, :THIS_
+        STD_METHOD GetOverlayPosition, :THIS_, :LPLONG
+        STD_METHOD GetPalette, :ptr THIS_
+        STD_METHOD GetPixelFormat, :THIS_
+        STD_METHOD GetSurfaceDesc, :THIS_
+        STD_METHOD Initialize, :THIS_, :LPDDSURFACEDESC
+        STD_METHOD IsLost, :THIS_
+        STD_METHOD Lock_, :THIS_, :LPDDSURFACEDESC, :DWORD, :HANDLE
+        STD_METHOD ReleaseDC, :THIS_
+        STD_METHOD Restore, :THIS_
+        STD_METHOD SetClipper, :THIS_
+        STD_METHOD SetColorKey, :THIS_, :LPDDCOLORKEY
+        STD_METHOD SetOverlayPosition, :THIS_, :LONG
+        STD_METHOD SetPalette, :THIS_
+        STD_METHOD Unlock, :THIS_
+        STD_METHOD UpdateOverlay, :THIS_, :LPDIRECTDRAWSURFACE3, :LPRECT, :DWORD, :LPDDOVERLAYFX
+        STD_METHOD UpdateOverlayDisplay, :THIS_
+        STD_METHOD UpdateOverlayZOrder, :THIS_, :LPDIRECTDRAWSURFACE3
+        STD_METHOD GetDDInterface, :ptr THIS_
+        STD_METHOD PageLock, :THIS_
+        STD_METHOD PageUnlock, :THIS_
+        STD_METHOD SetSurfaceDesc, :THIS_, :DWORD
+      END_DECLARE_INTERFACE_
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirectDrawSurface3_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1719,55 +1726,53 @@ ifndef __DDRAW_INCLUDED__
         ;[...]
       endif
       INTERFACE equ <IDirectDrawSurface4>
-      DECLARE_INTERFACE_(IDirectDrawSurface4, IUnknown)
-        ??Interface equ <DDDEVICEIDENTIFIER2>
-        STDMETHOD QueryInterface, :, :ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD AddAttachedSurface, :
-        STDMETHOD AddOverlayDirtyRect, :
-        STDMETHOD Blt, :, :, :, :, :
-        STDMETHOD BltBatch, :, :, :
-        STDMETHOD BltFast, :, :, :, :, :
-        STDMETHOD DeleteAttachedSurface, :, :
-        STDMETHOD EnumAttachedSurfaces, :, :
-        STDMETHOD EnumOverlayZOrders, :, :, :
-        STDMETHOD Flip, :, :
-        STDMETHOD GetAttachedSurface, :, :ptr 
-        STDMETHOD GetBltStatus, :
-        STDMETHOD GetCaps, :
-        STDMETHOD GetClipper, :ptr 
-        STDMETHOD GetColorKey, :, :
-        STDMETHOD GetDC, :ptr 
-        STDMETHOD GetFlipStatus, :
-        STDMETHOD GetOverlayPosition, :, :
-        STDMETHOD GetPalette, :ptr 
-        STDMETHOD GetPixelFormat, :
-        STDMETHOD GetSurfaceDesc, :
-        STDMETHOD Initialize, :, :
-        STDMETHOD IsLost
-        STDMETHOD Lock_, :, :, :, :
-        STDMETHOD ReleaseDC, :
-        STDMETHOD Restore
-        STDMETHOD SetClipper, :
-        STDMETHOD SetColorKey, :, :
-        STDMETHOD SetOverlayPosition, :, :
-        STDMETHOD SetPalette, :
-        STDMETHOD Unlock, :
-        STDMETHOD UpdateOverlay, :, :, :, :, :
-        STDMETHOD UpdateOverlayDisplay, :
-        STDMETHOD UpdateOverlayZOrder, :, :
-        STDMETHOD GetDDInterface, :ptr 
-        STDMETHOD PageLock, :
-        STDMETHOD PageUnlock, :
-        STDMETHOD SetSurfaceDesc, :, :
-        STDMETHOD SetPrivateData, :, :, :, :
-        STDMETHOD GetPrivateData, :, :, :
-        STDMETHOD FreePrivateData, :
-        STDMETHOD GetUniquenessValue, :
-        STDMETHOD ChangeUniquenessValue
-      DECLARE_INTERFACE__END
-
+      DECLARE_INTERFACE_ IDirectDrawSurface4, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD AddAttachedSurface, :THIS_
+        STD_METHOD AddOverlayDirtyRect, :THIS_
+        STD_METHOD Blt, :THIS_, :LPDIRECTDRAWSURFACE4, :LPRECT, :DWORD, :LPDDBLTFX
+        STD_METHOD BltBatch, :THIS_, :DWORD, :DWORD
+        STD_METHOD BltFast, :THIS_, :DWORD, :LPDIRECTDRAWSURFACE4, :LPRECT, :DWORD
+        STD_METHOD DeleteAttachedSurface, :THIS_, :LPDIRECTDRAWSURFACE4
+        STD_METHOD EnumAttachedSurfaces, :THIS_, :LPDDENUMSURFACESCALLBACK2
+        STD_METHOD EnumOverlayZOrders, :THIS_, :LPVOID, :LPDDENUMSURFACESCALLBACK2
+        STD_METHOD Flip, :THIS_, :DWORD
+        STD_METHOD GetAttachedSurface, :THIS_, :ptr LPDIRECTDRAWSURFACE4
+        STD_METHOD GetBltStatus, :THIS_
+        STD_METHOD GetCaps, :THIS_
+        STD_METHOD GetClipper, :ptr THIS_
+        STD_METHOD GetColorKey, :THIS_, :LPDDCOLORKEY
+        STD_METHOD GetDC, :ptr THIS_
+        STD_METHOD GetFlipStatus, :THIS_
+        STD_METHOD GetOverlayPosition, :THIS_, :LPLONG
+        STD_METHOD GetPalette, :ptr THIS_
+        STD_METHOD GetPixelFormat, :THIS_
+        STD_METHOD GetSurfaceDesc, :THIS_
+        STD_METHOD Initialize, :THIS_, :LPDDSURFACEDESC2
+        STD_METHOD IsLost, :THIS_
+        STD_METHOD Lock_, :THIS_, :LPDDSURFACEDESC2, :DWORD, :HANDLE
+        STD_METHOD ReleaseDC, :THIS_
+        STD_METHOD Restore, :THIS_
+        STD_METHOD SetClipper, :THIS_
+        STD_METHOD SetColorKey, :THIS_, :LPDDCOLORKEY
+        STD_METHOD SetOverlayPosition, :THIS_, :LONG
+        STD_METHOD SetPalette, :THIS_
+        STD_METHOD Unlock, :THIS_
+        STD_METHOD UpdateOverlay, :THIS_, :LPDIRECTDRAWSURFACE4, :LPRECT, :DWORD, :LPDDOVERLAYFX
+        STD_METHOD UpdateOverlayDisplay, :THIS_
+        STD_METHOD UpdateOverlayZOrder, :THIS_, :LPDIRECTDRAWSURFACE4
+        STD_METHOD GetDDInterface, :ptr THIS_
+        STD_METHOD PageLock, :THIS_
+        STD_METHOD PageUnlock, :THIS_
+        STD_METHOD SetSurfaceDesc, :THIS_, :DWORD
+        STD_METHOD SetPrivateData, :THIS_, :LPVOID, :DWORD, :DWORD
+        STD_METHOD GetPrivateData, :THIS_, :LPVOID, :LPDWORD
+        STD_METHOD FreePrivateData, :THIS_
+        STD_METHOD GetUniquenessValue, :THIS_
+        STD_METHOD ChangeUniquenessValue, :THIS_
+      END_DECLARE_INTERFACE_
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirectDrawSurface4_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1908,59 +1913,57 @@ ifndef __DDRAW_INCLUDED__
         ;[...]
       endif
       INTERFACE equ <IDirectDrawSurface7>
-      DECLARE_INTERFACE_(IDirectDrawSurface7, IUnknown)
-        ??Interface equ <DDDEVICEIDENTIFIER2>
-        STDMETHOD QueryInterface, :, :ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD AddAttachedSurface, :
-        STDMETHOD AddOverlayDirtyRect, :
-        STDMETHOD Blt, :, :, :, :, :
-        STDMETHOD BltBatch, :, :, :
-        STDMETHOD BltFast, :, :, :, :, :
-        STDMETHOD DeleteAttachedSurface, :, :
-        STDMETHOD EnumAttachedSurfaces, :, :
-        STDMETHOD EnumOverlayZOrders, :, :, :
-        STDMETHOD Flip, :, :
-        STDMETHOD GetAttachedSurface, :, :ptr 
-        STDMETHOD GetBltStatus, :
-        STDMETHOD GetCaps, :
-        STDMETHOD GetClipper, :ptr 
-        STDMETHOD GetColorKey, :, :
-        STDMETHOD GetDC, :ptr 
-        STDMETHOD GetFlipStatus, :
-        STDMETHOD GetOverlayPosition, :, :
-        STDMETHOD GetPalette, :ptr 
-        STDMETHOD GetPixelFormat, :
-        STDMETHOD GetSurfaceDesc, :
-        STDMETHOD Initialize, :, :
-        STDMETHOD IsLost
-        STDMETHOD Lock_, :, :, :, :
-        STDMETHOD ReleaseDC, :
-        STDMETHOD Restore
-        STDMETHOD SetClipper, :
-        STDMETHOD SetColorKey, :, :
-        STDMETHOD SetOverlayPosition, :, :
-        STDMETHOD SetPalette, :
-        STDMETHOD Unlock, :
-        STDMETHOD UpdateOverlay, :, :, :, :, :
-        STDMETHOD UpdateOverlayDisplay, :
-        STDMETHOD UpdateOverlayZOrder, :, :
-        STDMETHOD GetDDInterface, :ptr 
-        STDMETHOD PageLock, :
-        STDMETHOD PageUnlock, :
-        STDMETHOD SetSurfaceDesc, :, :
-        STDMETHOD SetPrivateData, :, :, :, :
-        STDMETHOD GetPrivateData, :, :, :
-        STDMETHOD FreePrivateData, :
-        STDMETHOD GetUniquenessValue, :
-        STDMETHOD ChangeUniquenessValue
-        STDMETHOD SetPriority, :
-        STDMETHOD GetPriority, :
-        STDMETHOD SetLOD, :
-        STDMETHOD GetLOD, :
-      DECLARE_INTERFACE__END
-
+      DECLARE_INTERFACE_ IDirectDrawSurface7, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD AddAttachedSurface, :THIS_
+        STD_METHOD AddOverlayDirtyRect, :THIS_
+        STD_METHOD Blt, :THIS_, :LPDIRECTDRAWSURFACE7, :LPRECT, :DWORD, :LPDDBLTFX
+        STD_METHOD BltBatch, :THIS_, :DWORD, :DWORD
+        STD_METHOD BltFast, :THIS_, :DWORD, :LPDIRECTDRAWSURFACE7, :LPRECT, :DWORD
+        STD_METHOD DeleteAttachedSurface, :THIS_, :LPDIRECTDRAWSURFACE7
+        STD_METHOD EnumAttachedSurfaces, :THIS_, :LPDDENUMSURFACESCALLBACK7
+        STD_METHOD EnumOverlayZOrders, :THIS_, :LPVOID, :LPDDENUMSURFACESCALLBACK7
+        STD_METHOD Flip, :THIS_, :DWORD
+        STD_METHOD GetAttachedSurface, :THIS_, :ptr LPDIRECTDRAWSURFACE7
+        STD_METHOD GetBltStatus, :THIS_
+        STD_METHOD GetCaps, :THIS_
+        STD_METHOD GetClipper, :ptr THIS_
+        STD_METHOD GetColorKey, :THIS_, :LPDDCOLORKEY
+        STD_METHOD GetDC, :ptr THIS_
+        STD_METHOD GetFlipStatus, :THIS_
+        STD_METHOD GetOverlayPosition, :THIS_, :LPLONG
+        STD_METHOD GetPalette, :ptr THIS_
+        STD_METHOD GetPixelFormat, :THIS_
+        STD_METHOD GetSurfaceDesc, :THIS_
+        STD_METHOD Initialize, :THIS_, :LPDDSURFACEDESC2
+        STD_METHOD IsLost, :THIS_
+        STD_METHOD Lock_, :THIS_, :LPDDSURFACEDESC2, :DWORD, :HANDLE
+        STD_METHOD ReleaseDC, :THIS_
+        STD_METHOD Restore, :THIS_
+        STD_METHOD SetClipper, :THIS_
+        STD_METHOD SetColorKey, :THIS_, :LPDDCOLORKEY
+        STD_METHOD SetOverlayPosition, :THIS_, :LONG
+        STD_METHOD SetPalette, :THIS_
+        STD_METHOD Unlock, :THIS_
+        STD_METHOD UpdateOverlay, :THIS_, :LPDIRECTDRAWSURFACE7, :LPRECT, :DWORD, :LPDDOVERLAYFX
+        STD_METHOD UpdateOverlayDisplay, :THIS_
+        STD_METHOD UpdateOverlayZOrder, :THIS_, :LPDIRECTDRAWSURFACE7
+        STD_METHOD GetDDInterface, :ptr THIS_
+        STD_METHOD PageLock, :THIS_
+        STD_METHOD PageUnlock, :THIS_
+        STD_METHOD SetSurfaceDesc, :THIS_, :DWORD
+        STD_METHOD SetPrivateData, :THIS_, :LPVOID, :DWORD, :DWORD
+        STD_METHOD GetPrivateData, :THIS_, :LPVOID, :LPDWORD
+        STD_METHOD FreePrivateData, :THIS_
+        STD_METHOD GetUniquenessValue, :THIS_
+        STD_METHOD ChangeUniquenessValue, :THIS_
+        STD_METHOD SetPriority, :THIS_
+        STD_METHOD GetPriority, :THIS_
+        STD_METHOD SetLOD, :THIS_
+        STD_METHOD GetLOD, :THIS_
+      END_DECLARE_INTERFACE_
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirectDrawSurface7_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -2114,15 +2117,13 @@ ifndef __DDRAW_INCLUDED__
       endif
       if Defined(_WIN32) and  not Defined(_NO_COM)
         INTERFACE equ <IDirectDrawColorControl>
-        DECLARE_INTERFACE_(IDirectDrawColorControl, IUnknown)
-          ??Interface equ <DDDEVICEIDENTIFIER2>
-          STDMETHOD QueryInterface, :, :ptr 
-          STDMETHOD_ ULONG, AddRef
-          STDMETHOD_ ULONG, Release
-          STDMETHOD GetColorControls, :
-          STDMETHOD SetColorControls, :
-        DECLARE_INTERFACE__END
-
+        DECLARE_INTERFACE_ IDirectDrawColorControl, IUnknown
+          STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
+          STD_METHOD AddRef, :THIS_
+          STD_METHOD Release, :THIS_
+          STD_METHOD GetColorControls, :THIS_
+          STD_METHOD SetColorControls, :THIS_
+        END_DECLARE_INTERFACE_
         if  not Defined(__cplusplus) or Defined(CINTERFACE)
           IDirectDrawColorControl_QueryInterface macro p, a, b
             exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -2145,15 +2146,13 @@ ifndef __DDRAW_INCLUDED__
       endif
       if Defined(_WIN32) and  not Defined(_NO_COM)
         INTERFACE equ <IDirectDrawGammaControl>
-        DECLARE_INTERFACE_(IDirectDrawGammaControl, IUnknown)
-          ??Interface equ <DDDEVICEIDENTIFIER2>
-          STDMETHOD QueryInterface, :, :ptr 
-          STDMETHOD_ ULONG, AddRef
-          STDMETHOD_ ULONG, Release
-          STDMETHOD GetGammaRamp, :, :
-          STDMETHOD SetGammaRamp, :, :
-        DECLARE_INTERFACE__END
-
+        DECLARE_INTERFACE_ IDirectDrawGammaControl, IUnknown
+          STD_METHOD QueryInterface, :THIS_, :ptr LPVOID
+          STD_METHOD AddRef, :THIS_
+          STD_METHOD Release, :THIS_
+          STD_METHOD GetGammaRamp, :THIS_, :LPDDGAMMARAMP
+          STD_METHOD SetGammaRamp, :THIS_, :LPDDGAMMARAMP
+        END_DECLARE_INTERFACE_
         if  not Defined(__cplusplus) or Defined(CINTERFACE)
           IDirectDrawGammaControl_QueryInterface macro p, a, b
             exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -2180,12 +2179,12 @@ ifndef __DDRAW_INCLUDED__
       dwFlags DWORD ?
       dwHeight DWORD ?
       dwWidth DWORD ?
-      union
+      union DUMMYUNIONNAMEN(1)
         lPitch LONG ?
         dwLinearSize DWORD ?
       ends
       dwBackBufferCount DWORD ?
-      union
+      union DUMMYUNIONNAMEN(2)
         dwMipMapCount DWORD ?
         dwZBufferBitDepth DWORD ?
         dwRefreshRate DWORD ?
@@ -2200,21 +2199,22 @@ ifndef __DDRAW_INCLUDED__
       ddpfPixelFormat DDPIXELFORMAT <>
       ddsCaps DDSCAPS <>
     DDSURFACEDESC ends
+
     _DDSURFACEDESC typedef DDSURFACEDESC
     DDSURFACEDESC2 struct
       dwSize DWORD ?
       dwFlags DWORD ?
       dwHeight DWORD ?
       dwWidth DWORD ?
-      union
+      union DUMMYUNIONNAMEN(1)
         lPitch LONG ?
         dwLinearSize DWORD ?
       ends
-      union
+      union DUMMYUNIONNAMEN(5)
         dwBackBufferCount DWORD ?
         dwDepth DWORD ?
       ends
-      union
+      union DUMMYUNIONNAMEN(2)
         dwMipMapCount DWORD ?
         dwRefreshRate DWORD ?
         dwSrcVBHandle DWORD ?
@@ -2222,20 +2222,21 @@ ifndef __DDRAW_INCLUDED__
       dwAlphaBitDepth DWORD ?
       dwReserved DWORD ?
       lpSurface LPVOID ?
-      union
+      union DUMMYUNIONNAMEN(3)
         ddckCKDestOverlay DDCOLORKEY <>
         dwEmptyFaceColor DWORD ?
       ends
       ddckCKDestBlt DDCOLORKEY <>
       ddckCKSrcOverlay DDCOLORKEY <>
       ddckCKSrcBlt DDCOLORKEY <>
-      union
+      union DUMMYUNIONNAMEN(4)
         ddpfPixelFormat DDPIXELFORMAT <>
         dwFVF DWORD ?
       ends
       ddsCaps DDSCAPS2 <>
       dwTextureStage DWORD ?
     DDSURFACEDESC2 ends
+
     _DDSURFACEDESC2 typedef DDSURFACEDESC2
     DDSD_CAPS equ 00000001h
     DDSD_HEIGHT equ 00000002h
@@ -2266,6 +2267,7 @@ ifndef __DDRAW_INCLUDED__
       guid GUID <>
       dwCompressionRatio DWORD ?
     DDOPTSURFACEDESC ends
+
     _DDOPTSURFACEDESC typedef DDOPTSURFACEDESC
     DDOSD_GUID equ 00000001h
     DDOSD_COMPRESSION_RATIO equ 00000002h
@@ -2289,6 +2291,7 @@ ifndef __DDRAW_INCLUDED__
       lColorEnable LONG ?
       dwReserved1 DWORD ?
     DDCOLORCONTROL ends
+
     _DDCOLORCONTROL typedef DDCOLORCONTROL
     DDCOLOR_BRIGHTNESS equ 00000001h
     DDCOLOR_CONTRAST equ 00000002h
@@ -2820,3 +2823,4 @@ ifndef __DDRAW_INCLUDED__
     endif
   endif
 endif
+

@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\mmsyscom.h
-;             Created on (UTC) 06/04/2024 06:15:56
-;             Last modified on (UTC) 21/02/2024 18:13:14
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\mmsyscom.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 include winapifamily.inc
 ifndef _INC_MMSYSCOM
@@ -82,10 +81,12 @@ ifndef _INC_MMSYSCOM
         ends
       ends
     MMTIME ends
+
     mmtime_tag typedef MMTIME
     PMMTIME typedef ptr MMTIME
     NPMMTIME typedef ptr MMTIME
     LPMMTIME typedef ptr MMTIME
+    
     TIME_MS equ 0001h
     TIME_SAMPLES equ 0002h
     TIME_BYTES equ 0004h
@@ -187,7 +188,6 @@ ifndef _INC_MMSYSCOM
     endif
     TYPE_DRVCALLBACK typedef proto WIN_STD_CALL_CONV :HDRVR, :UINT, :DWORD_PTR, :DWORD_PTR, :DWORD_PTR
     DRVCALLBACK typedef ptr TYPE_DRVCALLBACK
-
     LPDRVCALLBACK typedef ptr DRVCALLBACK
     ifdef _WIN32
       PDRVCALLBACK typedef ptr DRVCALLBACK
@@ -202,3 +202,4 @@ ifndef _INC_MMSYSCOM
     ;[...]
   endif
 endif
+

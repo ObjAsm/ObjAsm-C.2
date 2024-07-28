@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\datetimeapi.h
-;             Created on (UTC) 06/04/2024 06:15:53
-;             Last modified on (UTC) 21/02/2024 18:13:14
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\datetimeapi.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 ifdef _MSC_VER
 endif
@@ -15,7 +14,7 @@ ifndef _DATETIMEAPI_H_
   ifdef __cplusplus
     ;[...]
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetDateFormatA, WIN_STD_CALL_CONV,, <:LCID, :DWORD, :ptr SYSTEMTIME, :LPCSTR, :LPSTR, :SDWORD>, 24
     @DefProto DllImport, GetDateFormatW, WIN_STD_CALL_CONV,, <:LCID, :DWORD, :ptr SYSTEMTIME, :LPCWSTR, :LPWSTR, :SDWORD>, 24
     ifdef UNICODE
@@ -31,15 +30,16 @@ ifndef _DATETIMEAPI_H_
       GetTimeFormat equ <GetTimeFormatA>
     endif
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, GetTimeFormatEx, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :ptr SYSTEMTIME, :LPCWSTR, :LPWSTR, :SDWORD>, 24
     @DefProto DllImport, GetDateFormatEx, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :ptr SYSTEMTIME, :LPCWSTR, :LPWSTR, :SDWORD, :LPCWSTR>, 28
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     GetDurationFormatEx_DEFINED equ <>
-    @DefProto DllImport, GetDurationFormatEx, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :ptr SYSTEMTIME, :ULONGLONG, :LPCWSTR, :LPWSTR, :SDWORD>, 28
+    @DefProto DllImport, GetDurationFormatEx, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :ptr SYSTEMTIME, :ULONGLONG, :LPCWSTR, :LPWSTR, :SDWORD>, 32
   endif
   ifdef __cplusplus
     ;[...]
   endif
 endif
+

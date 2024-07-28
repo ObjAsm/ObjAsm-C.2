@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\ole2.h
-;             Created on (UTC) 06/04/2024 06:15:57
-;             Last modified on (UTC) 21/02/2024 18:13:14
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\ole2.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 include winapifamily.inc
 if _MSC_VER ge 1200
@@ -21,24 +20,22 @@ if  not Defined(_OLE2_H_)
   include coml2api.inc
   E_DRAW equ <VIEW_E_DRAW>
   DATA_E_FORMATETC equ <DV_E_FORMATETC>
-  OLEIVERB_PRIMARY equ (0)
-  OLEIVERB_SHOW equ (- 1)
-  OLEIVERB_OPEN equ (- 2)
-  OLEIVERB_HIDE equ (- 3)
-  OLEIVERB_UIACTIVATE equ (- 4)
-  OLEIVERB_INPLACEACTIVATE equ (- 5)
-  OLEIVERB_DISCARDUNDOSTATE equ (- 6)
+  OLEIVERB_PRIMARY equ 0
+  OLEIVERB_SHOW equ -1
+  OLEIVERB_OPEN equ -2
+  OLEIVERB_HIDE equ -3
+  OLEIVERB_UIACTIVATE equ -4
+  OLEIVERB_INPLACEACTIVATE equ -5
+  OLEIVERB_DISCARDUNDOSTATE equ -6
   EMBDHLP_INPROC_HANDLER equ 0000h
   EMBDHLP_INPROC_SERVER equ 0001h
   EMBDHLP_CREATENOW equ 00000000h
   EMBDHLP_DELAYCREATE equ 00010000h
   OLECREATE_LEAVERUNNING equ 00000001h
-  OLESTREAM_CONVERSION_DEFAULT equ 00000000h
-  OLESTREAM_CONVERSION_DISABLEOLELINK equ 00000001h
   include oleidl.inc
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if  not Defined(ISOLATION_AWARE_ENABLED) or  not ISOLATION_AWARE_ENABLED or  not Defined(_OBJBASE_H_) or  not Defined(CreateDataAdviseHolder)
-      @DefProto DllImport, CreateDataAdviseHolder, WIN_STD_CALL_CONV,, <:ptr LPDATAADVISEHOLDER>, 4
+;      @DefProto DllImport, CreateDataAdviseHolder, WIN_STD_CALL_CONV,, <:ptr LPDATAADVISEHOLDER>, 4
     endif
     @DefProto DllImport, OleBuildVersion, WIN_STD_CALL_CONV,, <>, 0
     @DefProto DllImport, WriteFmtUserTypeStg, WIN_STD_CALL_CONV,, <:LPSTORAGE, :CLIPFORMAT, :LPOLESTR>, 12
@@ -98,20 +95,20 @@ if  not Defined(_OLE2_H_)
     @DefProto DllImport, OleRegEnumFormatEtc, WIN_STD_CALL_CONV,, <:REFCLSID, :DWORD, :ptr LPENUMFORMATETC>, 12
     @DefProto DllImport, OleRegEnumVerbs, WIN_STD_CALL_CONV,, <:REFCLSID, :ptr LPENUMOLEVERB>, 8
     LPOLESTREAM typedef ptr _OLESTREAM
-    TYPE_Get typedef proto WIN_STD_CALL_CONV :LPOLESTREAM, :ptr, :DWORD
-    Get typedef ptr TYPE_Get
-
-    Put proto WIN_STD_CALL_CONV :LPOLESTREAM, :ptr, :DWORD
+    
+    OLESTREAMVTBL struct
+      TYPE_Get typedef proto WIN_STD_CALL_CONV :LPOLESTREAM, :ptr, :DWORD
+      Get typedef ptr TYPE_Get
+      TYPE_Put typedef proto WIN_STD_CALL_CONV :LPOLESTREAM, :ptr, :DWORD
+      Put typedef ptr TYPE_Put
+    OLESTREAMVTBL ends
+    _OLESTREAMVTBL typedef OLESTREAMVTBL
     LPOLESTREAMVTBL typedef ptr OLESTREAMVTBL
     OLESTREAM struct
       lpstbl LPOLESTREAMVTBL ?
     OLESTREAM ends
-    _OLESTREAM typedef OLESTREAM
-    TYPE_OLESTREAMQUERYCONVERTOLELINKCALLBACK typedef proto WIN_STD_CALL_CONV :LPCLSID, :LPOLESTR, :LPOLESTR, :LPOLESTR, :LPOLESTR, :ULONG, :PVOID
-    OLESTREAMQUERYCONVERTOLELINKCALLBACK typedef ptr TYPE_OLESTREAMQUERYCONVERTOLELINKCALLBACK
-
+;    _OLESTREAM typedef OLESTREAM
     @DefProto DllImport, OleConvertOLESTREAMToIStorage, WIN_STD_CALL_CONV,, <:LPOLESTREAM, :LPSTORAGE, :ptr DVTARGETDEVICE>, 12
-    @DefProto DllImport, OleConvertOLESTREAMToIStorage2, WIN_STD_CALL_CONV,, <:LPOLESTREAM, :LPSTORAGE, :ptr DVTARGETDEVICE, :DWORD, :PVOID, :OLESTREAMQUERYCONVERTOLELINKCALLBACK>, 24
     @DefProto DllImport, OleConvertIStorageToOLESTREAM, WIN_STD_CALL_CONV,, <:LPSTORAGE, :LPOLESTREAM>, 8
     @DefProto DllImport, OleDoAutoConvert, WIN_STD_CALL_CONV,, <:LPSTORAGE, :LPCLSID>, 8
     @DefProto DllImport, OleGetAutoConvert, WIN_STD_CALL_CONV,, <:REFCLSID, :LPCLSID>, 8
@@ -119,7 +116,6 @@ if  not Defined(_OLE2_H_)
     @DefProto DllImport, SetConvertStg, WIN_STD_CALL_CONV,, <:LPSTORAGE, :BOOL>, 8
     @DefProto DllImport, OleConvertIStorageToOLESTREAMEx, WIN_STD_CALL_CONV,, <:LPSTORAGE, :CLIPFORMAT, :LONG, :LONG, :DWORD, :LPSTGMEDIUM, :LPOLESTREAM>, 28
     @DefProto DllImport, OleConvertOLESTREAMToIStorageEx, WIN_STD_CALL_CONV,, <:LPOLESTREAM, :LPSTORAGE, :ptr CLIPFORMAT, :ptr LONG, :ptr LONG, :ptr DWORD, :LPSTGMEDIUM>, 28
-    @DefProto DllImport, OleConvertOLESTREAMToIStorageEx2, WIN_STD_CALL_CONV,, <:LPOLESTREAM, :LPSTORAGE, :ptr CLIPFORMAT, :ptr LONG, :ptr LONG, :ptr DWORD, :LPSTGMEDIUM, :DWORD, :PVOID, :OLESTREAMQUERYCONVERTOLELINKCALLBACK>, 40
   endif
   ifndef RC_INVOKED
     include poppack.inc
@@ -127,3 +123,4 @@ if  not Defined(_OLE2_H_)
 endif
 if _MSC_VER ge 1200
 endif
+

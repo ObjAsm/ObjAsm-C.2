@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winnt.h
-;             Created on (UTC) 06/04/2024 06:16:03
-;             Last modified on (UTC) 22/05/2024 20:32:21
+;Include file created by h2incX, Version B.01.02, 22/09/2018 21:43
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\winnt.h', last modified: 22/09/2018 17:04
+;Creation parameters:
 
 ifndef _WINNT_
   _WINNT_ equ <>
@@ -11,15 +10,8 @@ ifndef _WINNT_
   ifdef __cplusplus
     ;[...]
   endif
-;  include ctype.inc
+  include ctype.inc
   include winapifamily.inc
-  ifndef DECLSPEC_NOINITALL
-    if (_MSC_VER ge 1915) and  not Defined(MIDL_PASS) and  not Defined(SORTPP_PASS) and  not Defined(RC_INVOKED)
-      DECLSPEC_NOINITALL equ __pragma (warning (push)) __pragma (warning (disable : 4845)) __declspec(no_init_all) __pragma (warning (pop))
-    else
-      DECLSPEC_NOINITALL equ <>
-    endif
-  endif
   ANYSIZE_ARRAY equ 1
   ifndef DUMMYUNIONNAME
     if Defined(NONAMELESSUNION) or  not Defined(_MSC_EXTENSIONS)
@@ -97,7 +89,7 @@ ifndef _WINNT_
       exitm <FIELD_OFFSET(struct { char x ; t test ; }, test)>
     endm
   endif
-  if Defined(_AMD64_) or Defined(_X86_) or Defined(_ARM64EC_)
+  if Defined(_AMD64_) or Defined(_X86_)
     PROBE_ALIGNMENT macro _s
       exitm <TYPE_ALIGNMENT(DWORD)>
     endm
@@ -116,7 +108,9 @@ ifndef _WINNT_
       exitm <typedef char __C_ASSERT__ [ (e) ?1 : - 1 ]>
     endm
   else
-    ;[...]
+    C_ASSERT macro e
+      exitm <>
+    endm
   endif
   include basetsd.inc
   ifndef DECLSPEC_IMPORT
@@ -140,13 +134,6 @@ ifndef _WINNT_
       DECLSPEC_NOTHROW equ <>
     endif
   endif
-  ifndef DECLSPEC_RESTRICT
-    if (_MSC_VER ge 1915) and  not Defined(MIDL_PASS)
-      DECLSPEC_RESTRICT equ <__declspec(restrict)>
-    else
-      DECLSPEC_RESTRICT equ <>
-    endif
-  endif
   ifndef DECLSPEC_ALIGN
     if (_MSC_VER ge 1300) and  not Defined(MIDL_PASS)
       DECLSPEC_ALIGN macro x
@@ -158,19 +145,11 @@ ifndef _WINNT_
       endm
     endif
   endif
-  ifndef X86_CACHE_ALIGNMENT_SIZE
-    X86_CACHE_ALIGNMENT_SIZE equ 64
-  endif
-  ifndef ARM_CACHE_ALIGNMENT_SIZE
-    ARM_CACHE_ALIGNMENT_SIZE equ 128
-  endif
   ifndef SYSTEM_CACHE_ALIGNMENT_SIZE
     if Defined(_AMD64_) or Defined(_X86_)
-      SYSTEM_CACHE_ALIGNMENT_SIZE equ <X86_CACHE_ALIGNMENT_SIZE>
-    elseif Defined(_ARM64_) or Defined(_ARM_)
-      ;[...]
-    elseif  not Defined(RC_INVOKED)
-      .err <Must define a target architecture.>
+      SYSTEM_CACHE_ALIGNMENT_SIZE equ 64
+    else
+      SYSTEM_CACHE_ALIGNMENT_SIZE equ 128
     endif
   endif
   ifndef DECLSPEC_CACHEALIGN
@@ -256,7 +235,7 @@ ifndef _WINNT_
     endif
   endif
   ifndef DECLSPEC_CHPE_PATCHABLE
-    if Defined(_M_HYBRID) or Defined(_M_ARM64EC)
+    if _M_HYBRID
       DECLSPEC_CHPE_PATCHABLE equ <__declspec(hybrid_patchable)>
     else
       DECLSPEC_CHPE_PATCHABLE equ <>
@@ -310,7 +289,7 @@ ifndef _WINNT_
   else
     ;[...]
   endif
-  if  not Defined(_NTSYSTEM_) and  not Defined(_NTHALLIB_)
+  if  not Defined(_NTSYSTEM_)
     NTSYSAPI equ <DECLSPEC_IMPORT>
     NTSYSCALLAPI equ <DECLSPEC_IMPORT>
   else
@@ -367,9 +346,9 @@ ifndef _WINNT_
     LPCUWCHAR typedef ptr WCHAR
     PCUWCHAR typedef ptr WCHAR
     UCSCHAR typedef DWORD
-    UCSCHAR_INVALID_CHARACTER equ (0ffffffffh)
-    MIN_UCSCHAR equ (0)
-    MAX_UCSCHAR equ (0010FFFFh)
+    UCSCHAR_INVALID_CHARACTER equ 0ffffffffh
+    MIN_UCSCHAR equ 0
+    MAX_UCSCHAR equ 0010FFFFh
     PUCSCHAR typedef ptr UCSCHAR
     PCUCSCHAR typedef ptr UCSCHAR
     PUCSSTR typedef ptr UCSCHAR
@@ -494,14 +473,14 @@ ifndef _WINNT_
     if 0 and (_MSC_VER gt 1000)
       ;[...]
     else
-      DECLARE_HANDLE macro name
-        name typedef HANDLE
+      DECLARE_HANDLE macro name_
+        name_ typedef HANDLE
       endm
     endif
   else
     HANDLE typedef PVOID
     DECLARE_HANDLE macro name_
-      exitm <typedef HANDLE name_>
+      name_ typedef HANDLE
     endm
   endif
   PHANDLE typedef ptr HANDLE
@@ -522,8 +501,6 @@ ifndef _WINNT_
     EXTERN_C equ <extern>
     EXTERN_C_START equ <>
     EXTERN_C_END equ <>
-    WIN_NOEXCEPT equ <>
-    WIN_NOEXCEPT_PFN equ <>
   endif
   if Defined(_WIN32) or Defined(_MPPC_)
     ifdef _68K_
@@ -597,7 +574,7 @@ ifndef _WINNT_
   if ( not Defined(_MAC) and ( not Defined(MIDL_PASS) or Defined(__midl)) and ( not Defined(_M_IX86) or (Defined(_INTEGRAL_MAX_BITS) and _INTEGRAL_MAX_BITS ge 64)))
     LONGLONG typedef SQWORD
     ULONGLONG typedef QWORD
-    MAXLONGLONG equ (7fffffffffffffffh)
+    MAXLONGLONG equ 7fffffffffffffffh
   else
     if Defined(_MAC) and Defined(_MAC_INT_64)
       ;[...]
@@ -684,9 +661,6 @@ ifndef _WINNT_
     Int64ShrlMod32 proto WIN_STD_CALL_CONV :ULONGLONG, :DWORD
     if _MSC_VER ge 1200
     endif
-    Int64ShllMod32 proto WIN_STD_CALL_CONV :ULONGLONG, :DWORD
-    Int64ShraMod32 proto WIN_STD_CALL_CONV :LONGLONG, :DWORD
-    Int64ShrlMod32 proto WIN_STD_CALL_CONV :ULONGLONG, :DWORD
     if _MSC_VER ge 1200
     else
     endif
@@ -722,7 +696,7 @@ ifndef _WINNT_
   ANSI_NULL equ (0)
   UNICODE_NULL equ (0)
   UNICODE_STRING_MAX_BYTES equ (65534)
-  UNICODE_STRING_MAX_CHARS equ (32767)
+  UNICODE_STRING_MAX_CHARS equ 32767
   BOOLEAN typedef BYTE
   PBOOLEAN typedef ptr BOOLEAN
   LIST_ENTRY struct
@@ -765,24 +739,12 @@ ifndef _WINNT_
   MAXBYTE equ 0ffh
   MAXWORD equ 0ffffh
   MAXDWORD equ 0ffffffffh
-  ifdef __has_builtin
-    if __has_builtin(__builtin_offsetof)
-      FIELD_OFFSET macro type_, field
-        exitm <(__builtin_offsetof (type_, field))>
-      endm
-      UFIELD_OFFSET macro type_, field
-        exitm <(__builtin_offsetof (type_, field))>
-      endm
-    endif
-  endif
-  ifndef FIELD_OFFSET
-    FIELD_OFFSET macro type_, field
-      exitm <(and (((type_ *) 0) - field))>
-    endm
-    UFIELD_OFFSET macro type_, field
-      exitm <(and (((type_ *) 0) - field))>
-    endm
-  endif
+  FIELD_OFFSET macro type_, field
+    exitm <(and (((type_ *) 0) - field))>
+  endm
+  UFIELD_OFFSET macro type_, field
+    exitm <(and (((type_ *) 0) - field))>
+  endm
   RTL_FIELD_SIZE macro type_, field
     exitm <(sizeof(((type_ *) 0) - field))>
   endm
@@ -842,11 +804,9 @@ ifndef _WINNT_
   CONTAINING_RECORD macro address, type_, field
     exitm <((type_ *) ((address) - (and ((type_ *) 0) - field)))>
   endm
-;  include excpt.inc
+  include excpt.inc
   EXCEPTION_ROUTINE typedef proto :ptr _EXCEPTION_RECORD, :PVOID, :ptr _CONTEXT, :PVOID
   PEXCEPTION_ROUTINE typedef ptr EXCEPTION_ROUTINE
-  ENCLAVE_SHORT_ID_LENGTH equ 16
-  ENCLAVE_LONG_ID_LENGTH equ 32
   VER_SERVER_NT equ 80000000h
   VER_WORKSTATION_NT equ 40000000h
   VER_SUITE_SMALLBUSINESS equ 00000001h
@@ -987,7 +947,6 @@ ifndef _WINNT_
   PRODUCT_ENTERPRISE_S_EVALUATION equ 00000081h
   PRODUCT_ENTERPRISE_S_N_EVALUATION equ 00000082h
   PRODUCT_HOLOGRAPHIC equ 00000087h
-  PRODUCT_HOLOGRAPHIC_BUSINESS equ 00000088h
   PRODUCT_PRO_SINGLE_LANGUAGE equ 0000008Ah
   PRODUCT_PRO_CHINA equ 0000008Bh
   PRODUCT_ENTERPRISE_SUBSCRIPTION equ 0000008Ch
@@ -1014,26 +973,7 @@ ifndef _WINNT_
   PRODUCT_CLOUDN equ 000000B3h
   PRODUCT_HUBOS equ 000000B4h
   PRODUCT_ONECOREUPDATEOS equ 000000B6h
-  PRODUCT_CLOUDE equ 000000B7h
-  PRODUCT_IOTOS equ 000000B9h
-  PRODUCT_CLOUDEN equ 000000BAh
-  PRODUCT_IOTEDGEOS equ 000000BBh
-  PRODUCT_IOTENTERPRISE equ 000000BCh
-  PRODUCT_LITE equ 000000BDh
-  PRODUCT_IOTENTERPRISES equ 000000BFh
-  PRODUCT_XBOX_SYSTEMOS equ 000000C0h
-  PRODUCT_XBOX_GAMEOS equ 000000C2h
-  PRODUCT_XBOX_ERAOS equ 000000C3h
-  PRODUCT_XBOX_DURANGOHOSTOS equ 000000C4h
-  PRODUCT_XBOX_SCARLETTHOSTOS equ 000000C5h
-  PRODUCT_XBOX_KEYSTONE equ 000000C6h
-  PRODUCT_AZURE_SERVER_CLOUDHOST equ 000000C7h
-  PRODUCT_AZURE_SERVER_CLOUDMOS equ 000000C8h
-  PRODUCT_CLOUDEDITIONN equ 000000CAh
-  PRODUCT_CLOUDEDITION equ 000000CBh
-  PRODUCT_AZURESTACKHCI_SERVER_CORE equ 00000196h
-  PRODUCT_DATACENTER_SERVER_AZURE_EDITION equ 00000197h
-  PRODUCT_DATACENTER_SERVER_CORE_AZURE_EDITION equ 00000198h
+  PRODUCT_ANDROMEDA equ 000000B8h
   PRODUCT_UNLICENSED equ 0ABCDABCDh
   include sdkddkver.inc
   LANG_NEUTRAL equ 00h
@@ -1530,12 +1470,6 @@ ifndef _WINNT_
   COMPILETIME_OR_6FLAGS macro a, b, c_, d, e, f
     exitm <((a) or (b) or (c_) or (d) or (e) or (f))>
   endm
-  if  not Defined(WINDOWS_IGNORE_PACKING_MISMATCH) and  not Defined(__midl) and  not Defined(MIDL_PASS) and  not Defined(SORTPP_PASS) and  not Defined(RC_INVOKED)
-    if Defined(__cplusplus) and (_MSC_VER ge 1600)
-      ;[...]
-    elseif _MSC_VER ge 1300
-    endif
-  endif
   ifndef UMDF_USING_NTSTATUS
     ifndef WIN32_NO_STATUS
       STATUS_WAIT_0 equ (00000000h)
@@ -1588,7 +1522,6 @@ ifndef _WINNT_
       STATUS_ENTRYPOINT_NOT_FOUND equ (0C0000139h)
       STATUS_CONTROL_C_EXIT equ (0C000013Ah)
       STATUS_DLL_INIT_FAILED equ (0C0000142h)
-      STATUS_CONTROL_STACK_VIOLATION equ (0C00001B2h)
       STATUS_FLOAT_MULTIPLE_FAULTS equ (0C00002B4h)
       STATUS_FLOAT_MULTIPLE_TRAPS equ (0C00002B5h)
       STATUS_REG_NAT_CONSUMPTION equ (0C00002C9h)
@@ -1597,9 +1530,6 @@ ifndef _WINNT_
       STATUS_INVALID_CRUNTIME_PARAMETER equ (0C0000417h)
       STATUS_ASSERTION_FAILURE equ (0C0000420h)
       STATUS_ENCLAVE_VIOLATION equ (0C00004A2h)
-      STATUS_INTERRUPTED equ (0C0000515h)
-      STATUS_THREAD_NOT_RUNNING equ (0C0000516h)
-      STATUS_ALREADY_REGISTERED equ (0C0000718h)
       if Defined(STATUS_SUCCESS) or (_WIN32_WINNT gt 0500h) or (_WIN32_FUSION ge 0100h)
         STATUS_SXS_EARLY_DEACTIVATION equ (0C015000Fh)
         STATUS_SXS_INVALID_DEACTIVATION equ (0C0150010h)
@@ -1641,12 +1571,6 @@ ifndef _WINNT_
   XSAVE_FORMAT ends
   _XSAVE_FORMAT typedef XSAVE_FORMAT
   PXSAVE_FORMAT typedef ptr XSAVE_FORMAT
-  XSAVE_CET_U_FORMAT struct
-    Ia32CetUMsr DWORD64 ?
-    Ia32Pl3SspMsr DWORD64 ?
-  XSAVE_CET_U_FORMAT ends
-  _XSAVE_CET_U_FORMAT typedef XSAVE_CET_U_FORMAT
-  PXSAVE_CET_U_FORMAT typedef ptr XSAVE_CET_U_FORMAT
   XSAVE_AREA_HEADER struct
     Mask_ DWORD64 ?
     CompactionMask DWORD64 ?
@@ -1675,23 +1599,6 @@ ifndef _WINNT_
   XSTATE_CONTEXT ends
   _XSTATE_CONTEXT typedef XSTATE_CONTEXT
   PXSTATE_CONTEXT typedef ptr XSTATE_CONTEXT
-  KERNEL_CET_CONTEXT struct
-    Ssp DWORD64 ?
-    Rip_ DWORD64 ?
-    SegCs WORD ?
-    union
-      AllFlags WORD ?
-      struct
-        ANONYMOUS_REC0 record ANONYMOUS_REC0_Unused:14, ANONYMOUS_REC0_PopShadowStackOne:1, ANONYMOUS_REC0_UseWrss:1
-        ANONYMOUS_REC0 <>
-      ends
-    ends
-    Fill WORD 2 dup (?)
-  KERNEL_CET_CONTEXT ends
-  _KERNEL_CET_CONTEXT typedef KERNEL_CET_CONTEXT
-  PKERNEL_CET_CONTEXT typedef ptr KERNEL_CET_CONTEXT
-  if  not Defined(__midl) and  not Defined(MIDL_PASS)
-  endif
   SCOPE_TABLE_AMD64 struct
     Count DWORD ?
     struct ScopeRecord
@@ -1703,7 +1610,7 @@ ifndef _WINNT_
   SCOPE_TABLE_AMD64 ends
   _SCOPE_TABLE_AMD64 typedef SCOPE_TABLE_AMD64
   PSCOPE_TABLE_AMD64 typedef ptr SCOPE_TABLE_AMD64
-  if Defined(_AMD64_)
+  ifdef _AMD64_
     if Defined(_M_AMD64) and  not Defined(RC_INVOKED) and  not Defined(MIDL_PASS)
       ifdef __cplusplus
         ;[...]
@@ -1712,30 +1619,26 @@ ifndef _WINNT_
       BitTestAndComplement equ <_bittestandcomplement>
       BitTestAndSet equ <_bittestandset>
       BitTestAndReset equ <_bittestandreset>
-      if  not Defined(_M_ARM64EC)
-        InterlockedBitTestAndSet equ <_interlockedbittestandset>
-        InterlockedBitTestAndSetAcquire equ <_interlockedbittestandset>
-        InterlockedBitTestAndSetRelease equ <_interlockedbittestandset>
-        InterlockedBitTestAndSetNoFence equ <_interlockedbittestandset>
-        InterlockedBitTestAndReset equ <_interlockedbittestandreset>
-        InterlockedBitTestAndResetAcquire equ <_interlockedbittestandreset>
-        InterlockedBitTestAndResetRelease equ <_interlockedbittestandreset>
-        InterlockedBitTestAndResetNoFence equ <_interlockedbittestandreset>
-      endif
+      InterlockedBitTestAndSet equ <_interlockedbittestandset>
+      InterlockedBitTestAndSetAcquire equ <_interlockedbittestandset>
+      InterlockedBitTestAndSetRelease equ <_interlockedbittestandset>
+      InterlockedBitTestAndSetNoFence equ <_interlockedbittestandset>
+      InterlockedBitTestAndReset equ <_interlockedbittestandreset>
+      InterlockedBitTestAndResetAcquire equ <_interlockedbittestandreset>
+      InterlockedBitTestAndResetRelease equ <_interlockedbittestandreset>
+      InterlockedBitTestAndResetNoFence equ <_interlockedbittestandreset>
       BitTest64 equ <_bittest64>
       BitTestAndComplement64 equ <_bittestandcomplement64>
       BitTestAndSet64 equ <_bittestandset64>
       BitTestAndReset64 equ <_bittestandreset64>
-      if  not Defined(_M_ARM64EC)
-        InterlockedBitTestAndSet64 equ <_interlockedbittestandset64>
-        InterlockedBitTestAndSet64Acquire equ <_interlockedbittestandset64>
-        InterlockedBitTestAndSet64Release equ <_interlockedbittestandset64>
-        InterlockedBitTestAndSet64NoFence equ <_interlockedbittestandset64>
-        InterlockedBitTestAndReset64 equ <_interlockedbittestandreset64>
-        InterlockedBitTestAndReset64Acquire equ <_interlockedbittestandreset64>
-        InterlockedBitTestAndReset64Release equ <_interlockedbittestandreset64>
-        InterlockedBitTestAndReset64NoFence equ <_interlockedbittestandreset64>
-      endif
+      InterlockedBitTestAndSet64 equ <_interlockedbittestandset64>
+      InterlockedBitTestAndSet64Acquire equ <_interlockedbittestandset64>
+      InterlockedBitTestAndSet64Release equ <_interlockedbittestandset64>
+      InterlockedBitTestAndSet64NoFence equ <_interlockedbittestandset64>
+      InterlockedBitTestAndReset64 equ <_interlockedbittestandreset64>
+      InterlockedBitTestAndReset64Acquire equ <_interlockedbittestandreset64>
+      InterlockedBitTestAndReset64Release equ <_interlockedbittestandreset64>
+      InterlockedBitTestAndReset64NoFence equ <_interlockedbittestandreset64>
       _bittest proto WIN_STD_CALL_CONV :ptr LONG, :LONG
       _bittestandcomplement proto WIN_STD_CALL_CONV :ptr LONG, :LONG
       _bittestandset proto WIN_STD_CALL_CONV :ptr LONG, :LONG
@@ -1748,10 +1651,6 @@ ifndef _WINNT_
       _bittestandreset64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
       _interlockedbittestandset64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
       _interlockedbittestandreset64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
-      if  not Defined(_M_ARM64EC)
-      endif
-      if  not Defined(_M_ARM64EC)
-      endif
       BitScanForward equ <_BitScanForward>
       BitScanReverse equ <_BitScanReverse>
       BitScanForward64 equ <_BitScanForward64>
@@ -1761,387 +1660,237 @@ ifndef _WINNT_
       _BitScanForward64 proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD64
       _BitScanReverse64 proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD64
       InterlockedIncrement16 equ <_InterlockedIncrement16>
+      InterlockedIncrementAcquire16 equ <_InterlockedIncrement16>
+      InterlockedIncrementRelease16 equ <_InterlockedIncrement16>
+      InterlockedIncrementNoFence16 equ <_InterlockedIncrement16>
       InterlockedDecrement16 equ <_InterlockedDecrement16>
+      InterlockedDecrementAcquire16 equ <_InterlockedDecrement16>
+      InterlockedDecrementRelease16 equ <_InterlockedDecrement16>
+      InterlockedDecrementNoFence16 equ <_InterlockedDecrement16>
       InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
+      InterlockedCompareExchangeAcquire16 equ <_InterlockedCompareExchange16>
+      InterlockedCompareExchangeRelease16 equ <_InterlockedCompareExchange16>
+      InterlockedCompareExchangeNoFence16 equ <_InterlockedCompareExchange16>
       InterlockedAnd equ <_InterlockedAnd>
+      InterlockedAndAcquire equ <_InterlockedAnd>
+      InterlockedAndRelease equ <_InterlockedAnd>
+      InterlockedAndNoFence equ <_InterlockedAnd>
       InterlockedOr equ <_InterlockedOr>
+      InterlockedOrAcquire equ <_InterlockedOr>
+      InterlockedOrRelease equ <_InterlockedOr>
+      InterlockedOrNoFence equ <_InterlockedOr>
       InterlockedXor equ <_InterlockedXor>
+      InterlockedXorAcquire equ <_InterlockedXor>
+      InterlockedXorRelease equ <_InterlockedXor>
+      InterlockedXorNoFence equ <_InterlockedXor>
       InterlockedIncrement equ <_InterlockedIncrement>
+      InterlockedIncrementAcquire equ <_InterlockedIncrement>
+      InterlockedIncrementRelease equ <_InterlockedIncrement>
+      InterlockedIncrementNoFence equ <_InterlockedIncrement>
       InterlockedDecrement equ <_InterlockedDecrement>
+      InterlockedDecrementAcquire equ <_InterlockedDecrement>
+      InterlockedDecrementRelease equ <_InterlockedDecrement>
+      InterlockedDecrementNoFence equ <_InterlockedDecrement>
+      InterlockedAdd equ <_InlineInterlockedAdd>
+      InterlockedAddAcquire equ <_InlineInterlockedAdd>
+      InterlockedAddRelease equ <_InlineInterlockedAdd>
+      InterlockedAddNoFence equ <_InlineInterlockedAdd>
       InterlockedExchange equ <_InterlockedExchange>
+      InterlockedExchangeAcquire equ <_InterlockedExchange>
+      InterlockedExchangeNoFence equ <_InterlockedExchange>
       InterlockedExchangeAdd equ <_InterlockedExchangeAdd>
+      InterlockedExchangeAddAcquire equ <_InterlockedExchangeAdd>
+      InterlockedExchangeAddRelease equ <_InterlockedExchangeAdd>
+      InterlockedExchangeAddNoFence equ <_InterlockedExchangeAdd>
       InterlockedCompareExchange equ <_InterlockedCompareExchange>
+      InterlockedCompareExchangeAcquire equ <_InterlockedCompareExchange>
+      InterlockedCompareExchangeRelease equ <_InterlockedCompareExchange>
+      InterlockedCompareExchangeNoFence equ <_InterlockedCompareExchange>
       InterlockedAnd64 equ <_InterlockedAnd64>
+      InterlockedAnd64Acquire equ <_InterlockedAnd64>
+      InterlockedAnd64Release equ <_InterlockedAnd64>
+      InterlockedAnd64NoFence equ <_InterlockedAnd64>
+      InterlockedAndAffinity equ <InterlockedAnd64>
       InterlockedOr64 equ <_InterlockedOr64>
+      InterlockedOr64Acquire equ <_InterlockedOr64>
+      InterlockedOr64Release equ <_InterlockedOr64>
+      InterlockedOr64NoFence equ <_InterlockedOr64>
+      InterlockedOrAffinity equ <InterlockedOr64>
       InterlockedXor64 equ <_InterlockedXor64>
+      InterlockedXor64Acquire equ <_InterlockedXor64>
+      InterlockedXor64Release equ <_InterlockedXor64>
+      InterlockedXor64NoFence equ <_InterlockedXor64>
       InterlockedIncrement64 equ <_InterlockedIncrement64>
+      InterlockedIncrementAcquire64 equ <_InterlockedIncrement64>
+      InterlockedIncrementRelease64 equ <_InterlockedIncrement64>
+      InterlockedIncrementNoFence64 equ <_InterlockedIncrement64>
       InterlockedDecrement64 equ <_InterlockedDecrement64>
+      InterlockedDecrementAcquire64 equ <_InterlockedDecrement64>
+      InterlockedDecrementRelease64 equ <_InterlockedDecrement64>
+      InterlockedDecrementNoFence64 equ <_InterlockedDecrement64>
+      InterlockedAdd64 equ <_InlineInterlockedAdd64>
+      InterlockedAddAcquire64 equ <_InlineInterlockedAdd64>
+      InterlockedAddRelease64 equ <_InlineInterlockedAdd64>
+      InterlockedAddNoFence64 equ <_InlineInterlockedAdd64>
       InterlockedExchange64 equ <_InterlockedExchange64>
+      InterlockedExchangeAcquire64 equ <InterlockedExchange64>
+      InterlockedExchangeNoFence64 equ <InterlockedExchange64>
       InterlockedExchangeAdd64 equ <_InterlockedExchangeAdd64>
+      InterlockedExchangeAddAcquire64 equ <_InterlockedExchangeAdd64>
+      InterlockedExchangeAddRelease64 equ <_InterlockedExchangeAdd64>
+      InterlockedExchangeAddNoFence64 equ <_InterlockedExchangeAdd64>
       InterlockedCompareExchange64 equ <_InterlockedCompareExchange64>
+      InterlockedCompareExchangeAcquire64 equ <InterlockedCompareExchange64>
+      InterlockedCompareExchangeRelease64 equ <InterlockedCompareExchange64>
+      InterlockedCompareExchangeNoFence64 equ <InterlockedCompareExchange64>
       InterlockedCompareExchange128 equ <_InterlockedCompareExchange128>
       InterlockedExchangePointer equ <_InterlockedExchangePointer>
+      InterlockedExchangePointerNoFence equ <_InterlockedExchangePointer>
+      InterlockedExchangePointerAcquire equ <_InterlockedExchangePointer>
       InterlockedCompareExchangePointer equ <_InterlockedCompareExchangePointer>
-      if  not Defined(_M_ARM64EC)
-        InterlockedIncrementAcquire16 equ <_InterlockedIncrement16>
-        InterlockedIncrementRelease16 equ <_InterlockedIncrement16>
-        InterlockedIncrementNoFence16 equ <_InterlockedIncrement16>
-        InterlockedDecrement16 equ <_InterlockedDecrement16>
-        InterlockedDecrementAcquire16 equ <_InterlockedDecrement16>
-        InterlockedDecrementRelease16 equ <_InterlockedDecrement16>
-        InterlockedDecrementNoFence16 equ <_InterlockedDecrement16>
-        InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
-        InterlockedCompareExchangeAcquire16 equ <_InterlockedCompareExchange16>
-        InterlockedCompareExchangeRelease16 equ <_InterlockedCompareExchange16>
-        InterlockedCompareExchangeNoFence16 equ <_InterlockedCompareExchange16>
-        InterlockedAnd equ <_InterlockedAnd>
-        InterlockedAndAcquire equ <_InterlockedAnd>
-        InterlockedAndRelease equ <_InterlockedAnd>
-        InterlockedAndNoFence equ <_InterlockedAnd>
-        InterlockedOr equ <_InterlockedOr>
-        InterlockedOrAcquire equ <_InterlockedOr>
-        InterlockedOrRelease equ <_InterlockedOr>
-        InterlockedOrNoFence equ <_InterlockedOr>
-        InterlockedXor equ <_InterlockedXor>
-        InterlockedXorAcquire equ <_InterlockedXor>
-        InterlockedXorRelease equ <_InterlockedXor>
-        InterlockedXorNoFence equ <_InterlockedXor>
-        InterlockedIncrement equ <_InterlockedIncrement>
-        InterlockedIncrementAcquire equ <_InterlockedIncrement>
-        InterlockedIncrementRelease equ <_InterlockedIncrement>
-        InterlockedIncrementNoFence equ <_InterlockedIncrement>
-        InterlockedDecrement equ <_InterlockedDecrement>
-        InterlockedDecrementAcquire equ <_InterlockedDecrement>
-        InterlockedDecrementRelease equ <_InterlockedDecrement>
-        InterlockedDecrementNoFence equ <_InterlockedDecrement>
-        InterlockedAdd equ <_InlineInterlockedAdd>
-        InterlockedAddAcquire equ <_InlineInterlockedAdd>
-        InterlockedAddRelease equ <_InlineInterlockedAdd>
-        InterlockedAddNoFence equ <_InlineInterlockedAdd>
-        InterlockedExchange equ <_InterlockedExchange>
-        InterlockedExchangeAcquire equ <_InterlockedExchange>
-        InterlockedExchangeNoFence equ <_InterlockedExchange>
-        InterlockedExchangeAdd equ <_InterlockedExchangeAdd>
-        InterlockedExchangeAddAcquire equ <_InterlockedExchangeAdd>
-        InterlockedExchangeAddRelease equ <_InterlockedExchangeAdd>
-        InterlockedExchangeAddNoFence equ <_InterlockedExchangeAdd>
-        InterlockedCompareExchange equ <_InterlockedCompareExchange>
-        InterlockedCompareExchangeAcquire equ <_InterlockedCompareExchange>
-        InterlockedCompareExchangeRelease equ <_InterlockedCompareExchange>
-        InterlockedCompareExchangeNoFence equ <_InterlockedCompareExchange>
-        InterlockedAnd64 equ <_InterlockedAnd64>
-        InterlockedAnd64Acquire equ <_InterlockedAnd64>
-        InterlockedAnd64Release equ <_InterlockedAnd64>
-        InterlockedAnd64NoFence equ <_InterlockedAnd64>
-        InterlockedAndAffinity equ <InterlockedAnd64>
-        InterlockedOr64 equ <_InterlockedOr64>
-        InterlockedOr64Acquire equ <_InterlockedOr64>
-        InterlockedOr64Release equ <_InterlockedOr64>
-        InterlockedOr64NoFence equ <_InterlockedOr64>
-        InterlockedOrAffinity equ <InterlockedOr64>
-        InterlockedXor64 equ <_InterlockedXor64>
-        InterlockedXor64Acquire equ <_InterlockedXor64>
-        InterlockedXor64Release equ <_InterlockedXor64>
-        InterlockedXor64NoFence equ <_InterlockedXor64>
-        InterlockedIncrement64 equ <_InterlockedIncrement64>
-        InterlockedIncrementAcquire64 equ <_InterlockedIncrement64>
-        InterlockedIncrementRelease64 equ <_InterlockedIncrement64>
-        InterlockedIncrementNoFence64 equ <_InterlockedIncrement64>
-        InterlockedDecrement64 equ <_InterlockedDecrement64>
-        InterlockedDecrementAcquire64 equ <_InterlockedDecrement64>
-        InterlockedDecrementRelease64 equ <_InterlockedDecrement64>
-        InterlockedDecrementNoFence64 equ <_InterlockedDecrement64>
-        InterlockedAdd64 equ <_InlineInterlockedAdd64>
-        InterlockedAddAcquire64 equ <_InlineInterlockedAdd64>
-        InterlockedAddRelease64 equ <_InlineInterlockedAdd64>
-        InterlockedAddNoFence64 equ <_InlineInterlockedAdd64>
-        InterlockedExchange64 equ <_InterlockedExchange64>
-        InterlockedExchangeAcquire64 equ <InterlockedExchange64>
-        InterlockedExchangeNoFence64 equ <InterlockedExchange64>
-        InterlockedExchangeAdd64 equ <_InterlockedExchangeAdd64>
-        InterlockedExchangeAddAcquire64 equ <_InterlockedExchangeAdd64>
-        InterlockedExchangeAddRelease64 equ <_InterlockedExchangeAdd64>
-        InterlockedExchangeAddNoFence64 equ <_InterlockedExchangeAdd64>
-        InterlockedCompareExchange64 equ <_InterlockedCompareExchange64>
-        InterlockedCompareExchangeAcquire64 equ <InterlockedCompareExchange64>
-        InterlockedCompareExchangeRelease64 equ <InterlockedCompareExchange64>
-        InterlockedCompareExchangeNoFence64 equ <InterlockedCompareExchange64>
-        InterlockedCompareExchange128 equ <_InterlockedCompareExchange128>
-        InterlockedExchangePointer equ <_InterlockedExchangePointer>
-        InterlockedExchangePointerNoFence equ <_InterlockedExchangePointer>
-        InterlockedExchangePointerAcquire equ <_InterlockedExchangePointer>
-        InterlockedCompareExchangePointer equ <_InterlockedCompareExchangePointer>
-        InterlockedCompareExchangePointerAcquire equ <_InterlockedCompareExchangePointer>
-        InterlockedCompareExchangePointerRelease equ <_InterlockedCompareExchangePointer>
-        InterlockedCompareExchangePointerNoFence equ <_InterlockedCompareExchangePointer>
-        InterlockedExchangeAddSizeT macro a, b
-          exitm <InterlockedExchangeAdd64 (a, b)>
-        endm
-        InterlockedExchangeAddSizeTAcquire macro a, b
-          exitm <InterlockedExchangeAdd64 (a, b)>
-        endm
-        InterlockedExchangeAddSizeTNoFence macro a, b
-          exitm <InterlockedExchangeAdd64 (a, b)>
-        endm
-        InterlockedIncrementSizeT macro a
-          exitm <InterlockedIncrement64 (a)>
-        endm
-        InterlockedIncrementSizeTNoFence macro a
-          exitm <InterlockedIncrement64 (a)>
-        endm
-        InterlockedDecrementSizeT macro a
-          exitm <InterlockedDecrement64 (a)>
-        endm
-        InterlockedDecrementSizeTNoFence macro a
-          exitm <InterlockedDecrement64 (a)>
-        endm
-      endif
-      InterlockedIncrement16 proto WIN_STD_CALL_CONV :ptr SHORT_
-      InterlockedDecrement16 proto WIN_STD_CALL_CONV :ptr SHORT_
-      InterlockedCompareExchange16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_, :SHORT_
-      InterlockedAnd proto WIN_STD_CALL_CONV :ptr LONG, :LONG
-      InterlockedOr proto WIN_STD_CALL_CONV :ptr LONG, :LONG
-      InterlockedXor proto WIN_STD_CALL_CONV :ptr LONG, :LONG
-      InterlockedAnd64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
-      InterlockedOr64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
-      InterlockedXor64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
-      InterlockedIncrement proto WIN_STD_CALL_CONV :ptr LONG
-      InterlockedDecrement proto WIN_STD_CALL_CONV :ptr LONG
-      InterlockedExchange proto WIN_STD_CALL_CONV :ptr LONG, :LONG
-      InterlockedExchangeAdd proto WIN_STD_CALL_CONV :ptr LONG, :LONG
+      InterlockedCompareExchangePointerAcquire equ <_InterlockedCompareExchangePointer>
+      InterlockedCompareExchangePointerRelease equ <_InterlockedCompareExchangePointer>
+      InterlockedCompareExchangePointerNoFence equ <_InterlockedCompareExchangePointer>
+      InterlockedExchangeAddSizeT macro a, b
+        exitm <InterlockedExchangeAdd64 (a, b)>
+      endm
+      InterlockedExchangeAddSizeTAcquire macro a, b
+        exitm <InterlockedExchangeAdd64 (a, b)>
+      endm
+      InterlockedExchangeAddSizeTNoFence macro a, b
+        exitm <InterlockedExchangeAdd64 (a, b)>
+      endm
+      InterlockedIncrementSizeT macro a
+        exitm <InterlockedIncrement64 (a)>
+      endm
+      InterlockedIncrementSizeTNoFence macro a
+        exitm <InterlockedIncrement64 (a)>
+      endm
+      InterlockedDecrementSizeT macro a
+        exitm <InterlockedDecrement64 (a)>
+      endm
+      InterlockedDecrementSizeTNoFence macro a
+        exitm <InterlockedDecrement64 (a)>
+      endm
       if  not Defined(_X86AMD64_)
-        InterlockedAdd proto WIN_STD_CALL_CONV :ptr LONG, :LONG
       endif
-      InterlockedCompareExchange proto WIN_STD_CALL_CONV :ptr LONG, :LONG, :LONG
-      InterlockedIncrement64 proto WIN_STD_CALL_CONV :ptr LONG64
-      InterlockedDecrement64 proto WIN_STD_CALL_CONV :ptr LONG64
-      InterlockedExchange64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
-      InterlockedExchangeAdd64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
       if  not Defined(_X86AMD64_)
-        _InlineInterlockedAdd64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
       endif
-      InterlockedCompareExchange64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64, :LONG64
-      InterlockedCompareExchange128 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64, :LONG64, :ptr LONG64
-      InterlockedCompareExchangePointer proto WIN_STD_CALL_CONV :ptr PVOID, :PVOID, :PVOID
-      InterlockedExchangePointer proto WIN_STD_CALL_CONV :ptr PVOID, :PVOID
-      if  not Defined(_M_ARM64EC)
-        if _MSC_VER ge 1500
-        endif
+      if _MSC_VER ge 1500
       endif
-      if  not Defined(_M_ARM64EC)
-        if (_MSC_VER ge 1600)
-          InterlockedExchange8 equ <_InterlockedExchange8>
-          InterlockedExchange16 equ <_InterlockedExchange16>
-          InterlockedExchangeNoFence8 equ <InterlockedExchange8>
-          InterlockedExchangeAcquire8 equ <InterlockedExchange8>
-          InterlockedExchange8 proto WIN_STD_CALL_CONV :ptr CHAR, :CHAR
-          InterlockedExchange16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_
-          if  not Defined(_M_ARM64EC)
-          endif
-        endif
-        if _MSC_FULL_VER ge 140041204
-          InterlockedExchangeAdd8 equ <_InterlockedExchangeAdd8>
-          InterlockedAnd8 equ <_InterlockedAnd8>
-          InterlockedAndAcquire8 equ <_InterlockedAnd8>
-          InterlockedAndRelease8 equ <_InterlockedAnd8>
-          InterlockedAndNoFence8 equ <_InterlockedAnd8>
-          InterlockedOr8 equ <_InterlockedOr8>
-          InterlockedOrAcquire8 equ <_InterlockedOr8>
-          InterlockedOrRelease8 equ <_InterlockedOr8>
-          InterlockedOrNoFence8 equ <_InterlockedOr8>
-          InterlockedXor8 equ <_InterlockedXor8>
-          InterlockedXorAcquire8 equ <_InterlockedXor8>
-          InterlockedXorRelease8 equ <_InterlockedXor8>
-          InterlockedXorNoFence8 equ <_InterlockedXor8>
-          InterlockedAnd16 equ <_InterlockedAnd16>
-          InterlockedOr16 equ <_InterlockedOr16>
-          InterlockedXor16 equ <_InterlockedXor16>
-          InterlockedExchangeAdd8 proto WIN_STD_CALL_CONV :ptr SBYTE, :SBYTE
-          InterlockedAnd8 proto WIN_STD_CALL_CONV :ptr SBYTE, :SBYTE
-          InterlockedOr8 proto WIN_STD_CALL_CONV :ptr SBYTE, :SBYTE
-          InterlockedXor8 proto WIN_STD_CALL_CONV :ptr SBYTE, :SBYTE
-          InterlockedAnd16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_
-          InterlockedOr16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_
-          InterlockedXor16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_
-          if  not Defined(_M_ARM64EC)
-          endif
-        endif
+      if (_MSC_VER ge 1600)
+        InterlockedExchange8 equ <_InterlockedExchange8>
+        InterlockedExchange16 equ <_InterlockedExchange16>
       endif
-      if  not Defined(_M_ARM64EC)
-        CpuIdEx equ <__cpuidex>
-      else
-        __cpuidex equ <CPUIDEX64>
-        __cpuid equ <__CpuId>
+      if _MSC_FULL_VER ge 140041204
+        InterlockedExchangeAdd8 equ <_InterlockedExchangeAdd8>
+        InterlockedAnd8 equ <_InterlockedAnd8>
+        InterlockedOr8 equ <_InterlockedOr8>
+        InterlockedXor8 equ <_InterlockedXor8>
+        InterlockedAnd16 equ <_InterlockedAnd16>
+        InterlockedOr16 equ <_InterlockedOr16>
+        InterlockedXor16 equ <_InterlockedXor16>
       endif
-      if Defined(_M_ARM64EC)
-      endif
+      CpuIdEx equ <__cpuidex>
       __cpuidex proto WIN_STD_CALL_CONV :ptr SDWORD, :SDWORD, :SDWORD
-      if  not Defined(_M_ARM64EC)
-      else
-        __CpuId proto WIN_STD_CALL_CONV :ptr SDWORD, :SDWORD
-        __fastfail proto WIN_STD_CALL_CONV :DWORD
-        __readmsr proto WIN_STD_CALL_CONV :DWORD
-        __writemsr proto WIN_STD_CALL_CONV :DWORD, :QWORD
-      endif
-      if  not Defined(_M_ARM64EC)
-        CacheLineFlush macro Address
-          exitm <_mm_clflush (Address)>
-        endm
-        _mm_clflush proto WIN_STD_CALL_CONV :ptr VOID
-      endif
-      if  not Defined(_M_ARM64EC)
-        _ReadWriteBarrier proto WIN_STD_CALL_CONV
-        FastFence equ <__faststorefence>
-      endif
-      if  not Defined(_M_ARM64EC)
-        LoadFence equ <_mm_lfence>
-        MemoryFence equ <_mm_mfence>
-        StoreFence equ <_mm_sfence>
-        SpeculationFence equ <LoadFence>
-      endif
-      if  not Defined(_M_ARM64EC)
-        __faststorefence proto WIN_STD_CALL_CONV
-      endif
-      if  not Defined(_M_ARM64EC)
-        _mm_lfence proto WIN_STD_CALL_CONV
-        _mm_mfence proto WIN_STD_CALL_CONV
-        _mm_sfence proto WIN_STD_CALL_CONV
-        _mm_pause proto WIN_STD_CALL_CONV
-        _mm_prefetch proto WIN_STD_CALL_CONV :ptr CHAR, :SDWORD
-        _m_prefetchw proto WIN_STD_CALL_CONV :ptr VOID
-      endif
+      CacheLineFlush macro Address
+        exitm <_mm_clflush (Address)>
+      endm
+      _mm_clflush proto WIN_STD_CALL_CONV :ptr VOID
+      _ReadWriteBarrier proto WIN_STD_CALL_CONV
+      FastFence equ <__faststorefence>
+      LoadFence equ <_mm_lfence>
+      MemoryFence equ <_mm_mfence>
+      StoreFence equ <_mm_sfence>
+      __faststorefence proto WIN_STD_CALL_CONV
+      _mm_lfence proto WIN_STD_CALL_CONV
+      _mm_mfence proto WIN_STD_CALL_CONV
+      _mm_sfence proto WIN_STD_CALL_CONV
+      _mm_pause proto WIN_STD_CALL_CONV
+      _mm_prefetch proto WIN_STD_CALL_CONV :ptr CHAR, :SDWORD
+      _m_prefetchw proto WIN_STD_CALL_CONV :ptr VOID
       _MM_HINT_T0 equ 1
       _MM_HINT_T1 equ 2
       _MM_HINT_T2 equ 3
       _MM_HINT_NTA equ 0
-      if  not Defined(_M_ARM64EC)
-      endif
-      if  not Defined(_M_ARM64EC)
-      endif
-      if  not Defined(_M_ARM64EC)
-        YieldProcessor equ <_mm_pause>
-        MemoryBarrier equ <__faststorefence>
-        PreFetchCacheLine macro l, a
-          exitm <_mm_prefetch ((CHAR CONST *) a, l)>
-        endm
-        PrefetchForWrite macro p
-          exitm <_m_prefetchw (p)>
-        endm
-        ReadForWriteAccess macro p
-          exitm <(_m_prefetchw (p), * (p))>
-        endm
-        PF_TEMPORAL_LEVEL_1 equ <_MM_HINT_T0>
-        PF_TEMPORAL_LEVEL_2 equ <_MM_HINT_T1>
-        PF_TEMPORAL_LEVEL_3 equ <_MM_HINT_T2>
-        PF_NON_TEMPORAL_LEVEL_ALL equ <_MM_HINT_NTA>
-      endif
+      YieldProcessor equ <_mm_pause>
+      MemoryBarrier equ <__faststorefence>
+      PreFetchCacheLine macro l, a
+        exitm <_mm_prefetch ((CHAR CONST *) a, l)>
+      endm
+      PrefetchForWrite macro p
+        exitm <_m_prefetchw (p)>
+      endm
+      ReadForWriteAccess macro p
+        exitm <(_m_prefetchw (p), * (p))>
+      endm
+      PF_TEMPORAL_LEVEL_1 equ <_MM_HINT_T0>
+      PF_TEMPORAL_LEVEL_2 equ <_MM_HINT_T1>
+      PF_TEMPORAL_LEVEL_3 equ <_MM_HINT_T2>
+      PF_NON_TEMPORAL_LEVEL_ALL equ <_MM_HINT_NTA>
       ReadMxCsr equ <_mm_getcsr>
       WriteMxCsr equ <_mm_setcsr>
       _mm_getcsr proto WIN_STD_CALL_CONV
       _mm_setcsr proto WIN_STD_CALL_CONV :DWORD
-      if  not Defined(_M_ARM64EC)
-      endif
-      if  not Defined(_M_ARM64EC)
-        GetCallersEflags macro
-          exitm <__getcallerseflags ()>
-        endm
-        __getcallerseflags proto WIN_STD_CALL_CONV
-        GetSegmentLimit equ <__segmentlimit>
-        __segmentlimit proto WIN_STD_CALL_CONV :DWORD
-        ReadPMC equ <__readpmc>
-        __readpmc proto WIN_STD_CALL_CONV :DWORD
-        ReadTimeStampCounter macro
-          exitm <__rdtsc ()>
-        endm
-        __rdtsc proto WIN_STD_CALL_CONV
-        __movsb proto WIN_STD_CALL_CONV :PBYTE, :ptr BYTE, :SIZE_T
-        __movsw proto WIN_STD_CALL_CONV :PWORD, :ptr WORD, :SIZE_T
-        __movsd proto WIN_STD_CALL_CONV :PDWORD, :ptr DWORD, :SIZE_T
-        __movsq proto WIN_STD_CALL_CONV :PDWORD64, :ptr DWORD64, :SIZE_T
-        __stosb proto WIN_STD_CALL_CONV :PBYTE, :BYTE, :SIZE_T
-        __stosw proto WIN_STD_CALL_CONV :PWORD, :WORD, :SIZE_T
-        __stosd proto WIN_STD_CALL_CONV :PDWORD, :DWORD, :SIZE_T
-        __stosq proto WIN_STD_CALL_CONV :PDWORD64, :DWORD64, :SIZE_T
-        MultiplyHigh equ <__mulh>
-        UnsignedMultiplyHigh equ <__umulh>
-        MultiplyHigh proto WIN_STD_CALL_CONV :LONG64, :LONG64
-        UnsignedMultiplyHigh proto WIN_STD_CALL_CONV :DWORD64, :DWORD64
-      endif
-      if  not Defined(_M_ARM64EC)
-        PopulationCount64 equ <__popcnt64>
-      else
-        __popcnt64 equ <PopulationCount64>
-      endif
-      PopulationCount64 proto WIN_STD_CALL_CONV :DWORD64
+      GetCallersEflags macro
+        exitm <__getcallerseflags ()>
+      endm
+      __getcallerseflags proto WIN_STD_CALL_CONV
+      GetSegmentLimit equ <__segmentlimit>
+      __segmentlimit proto WIN_STD_CALL_CONV :DWORD
+      ReadPMC equ <__readpmc>
+      __readpmc proto WIN_STD_CALL_CONV :DWORD
+      ReadTimeStampCounter macro
+        exitm <__rdtsc ()>
+      endm
+      __rdtsc proto WIN_STD_CALL_CONV
+      __movsb proto WIN_STD_CALL_CONV :PBYTE, :ptr BYTE, :SIZE_T
+      __movsw proto WIN_STD_CALL_CONV :PWORD, :ptr WORD, :SIZE_T
+      __movsd proto WIN_STD_CALL_CONV :PDWORD, :ptr DWORD, :SIZE_T
+      __movsq proto WIN_STD_CALL_CONV :PDWORD64, :ptr DWORD64, :SIZE_T
+      __stosb proto WIN_STD_CALL_CONV :PBYTE, :BYTE, :SIZE_T
+      __stosw proto WIN_STD_CALL_CONV :PWORD, :WORD, :SIZE_T
+      __stosd proto WIN_STD_CALL_CONV :PDWORD, :DWORD, :SIZE_T
+      __stosq proto WIN_STD_CALL_CONV :PDWORD64, :DWORD64, :SIZE_T
+      MultiplyHigh equ <__mulh>
+      UnsignedMultiplyHigh equ <__umulh>
+      PopulationCount64 equ <__popcnt64>
       if _MSC_VER ge 1500
-        if  not Defined(_M_ARM64EC)
-        endif
       endif
-      if  not Defined(_M_ARM64EC)
-        ShiftLeft128 equ <__shiftleft128>
-        ShiftRight128 equ <__shiftright128>
-      else
-        __shiftleft128 equ <ShiftLeft128>
-        __shiftright128 equ <ShiftRight128>
+      ShiftLeft128 equ <__shiftleft128>
+      ShiftRight128 equ <__shiftright128>
+      Multiply128 equ <_mul128>
+      ifndef UnsignedMultiply128
+        UnsignedMultiply128 equ <_umul128>
       endif
-      ShiftLeft128 proto WIN_STD_CALL_CONV :DWORD64, :DWORD64, :BYTE
-      ShiftRight128 proto WIN_STD_CALL_CONV :DWORD64, :DWORD64, :BYTE
-      if  not Defined(_M_ARM64EC)
-      endif
-      if  not Defined(_M_ARM64EC)
-        Multiply128 equ <_mul128>
-      else
-        _mul128 equ <Multiply128>
-      endif
-      Multiply128 proto WIN_STD_CALL_CONV :LONG64, :LONG64, :ptr LONG64
-      if  not Defined(_M_ARM64EC)
-      endif
-      if  not Defined(UnsignedMultiply128)
-        UnsignedMultiply128 proto WIN_STD_CALL_CONV :DWORD64, :DWORD64, :ptr DWORD64
-;        if  not Defined(_M_ARM64EC)
-;          UnsignedMultiply128 equ <_umul128>
-;        else
-;          _umul128 equ <UnsignedMultiply128>
-;        endif
-        UnsignedMultiply128 proto WIN_STD_CALL_CONV :DWORD64, :DWORD64, :ptr DWORD64
-        Multiply128 proto WIN_STD_CALL_CONV :LONG64, :LONG64, :ptr LONG64
-        if  not Defined(_M_ARM64EC)
-        endif
-      endif
-      MultiplyExtract128 proto WIN_STD_CALL_CONV :LONG64, :LONG64, :BYTE
-      UnsignedMultiplyExtract128 proto WIN_STD_CALL_CONV :DWORD64, :DWORD64, :BYTE
-      if  not Defined(_M_ARM64EC)
-        __readgsbyte proto WIN_STD_CALL_CONV :DWORD
-        __readgsword proto WIN_STD_CALL_CONV :DWORD
-        __readgsdword proto WIN_STD_CALL_CONV :DWORD
-        __readgsqword proto WIN_STD_CALL_CONV :DWORD
-        __writegsbyte proto WIN_STD_CALL_CONV :DWORD, :BYTE
-        __writegsword proto WIN_STD_CALL_CONV :DWORD, :WORD
-        __writegsdword proto WIN_STD_CALL_CONV :DWORD, :DWORD
-        __writegsqword proto WIN_STD_CALL_CONV :DWORD, :DWORD64
-        if  not Defined(_MANAGED)
-          __incgsbyte proto WIN_STD_CALL_CONV :DWORD
-          __addgsbyte proto WIN_STD_CALL_CONV :DWORD, :BYTE
-          __incgsword proto WIN_STD_CALL_CONV :DWORD
-          __addgsword proto WIN_STD_CALL_CONV :DWORD, :WORD
-          __incgsdword proto WIN_STD_CALL_CONV :DWORD
-          __addgsdword proto WIN_STD_CALL_CONV :DWORD, :DWORD
-          __incgsqword proto WIN_STD_CALL_CONV :DWORD
-          __addgsqword proto WIN_STD_CALL_CONV :DWORD, :DWORD64
-          if 0
-            ;[...]
-          endif
+      __readgsbyte proto WIN_STD_CALL_CONV :DWORD
+      __readgsword proto WIN_STD_CALL_CONV :DWORD
+      __readgsdword proto WIN_STD_CALL_CONV :DWORD
+      __readgsqword proto WIN_STD_CALL_CONV :DWORD
+      __writegsbyte proto WIN_STD_CALL_CONV :DWORD, :BYTE
+      __writegsword proto WIN_STD_CALL_CONV :DWORD, :WORD
+      __writegsdword proto WIN_STD_CALL_CONV :DWORD, :DWORD
+      __writegsqword proto WIN_STD_CALL_CONV :DWORD, :DWORD64
+      if  not Defined(_MANAGED)
+        __incgsbyte proto WIN_STD_CALL_CONV :DWORD
+        __addgsbyte proto WIN_STD_CALL_CONV :DWORD, :BYTE
+        __incgsword proto WIN_STD_CALL_CONV :DWORD
+        __addgsword proto WIN_STD_CALL_CONV :DWORD, :WORD
+        __incgsdword proto WIN_STD_CALL_CONV :DWORD
+        __addgsdword proto WIN_STD_CALL_CONV :DWORD, :DWORD
+        __incgsqword proto WIN_STD_CALL_CONV :DWORD
+        __addgsqword proto WIN_STD_CALL_CONV :DWORD, :DWORD64
+        if 0
+          ;[...]
         endif
       endif
       ifdef __cplusplus
         ;[...]
       endif
     endif
-    if  not Defined(_ARM64EC_)
-      EXCEPTION_READ_FAULT equ 0
-      EXCEPTION_WRITE_FAULT equ 1
-      EXCEPTION_EXECUTE_FAULT equ 8
-    endif
+    EXCEPTION_READ_FAULT equ 0
+    EXCEPTION_WRITE_FAULT equ 1
+    EXCEPTION_EXECUTE_FAULT equ 8
     if  not Defined(RC_INVOKED)
       CONTEXT_AMD64 equ 00100000h
       CONTEXT_CONTROL equ (CONTEXT_AMD64 or 00000001h)
@@ -2152,7 +1901,6 @@ ifndef _WINNT_
       CONTEXT_FULL equ <(CONTEXT_CONTROL or CONTEXT_INTEGER or CONTEXT_FLOATING_POINT)>
       CONTEXT_ALL equ <(CONTEXT_CONTROL or CONTEXT_INTEGER or CONTEXT_SEGMENTS or CONTEXT_FLOATING_POINT or CONTEXT_DEBUG_REGISTERS)>
       CONTEXT_XSTATE equ (CONTEXT_AMD64 or 00000040h)
-      CONTEXT_KERNEL_CET equ (CONTEXT_AMD64 or 00000080h)
       if Defined(XBOX_SYSTEMOS)
         CONTEXT_KERNEL_DEBUGGER equ 04000000h
       endif
@@ -2160,7 +1908,6 @@ ifndef _WINNT_
       CONTEXT_SERVICE_ACTIVE equ 10000000h
       CONTEXT_EXCEPTION_REQUEST equ 40000000h
       CONTEXT_EXCEPTION_REPORTING equ 80000000h
-      CONTEXT_UNWOUND_TO_CALL equ 20000000h
     endif
     INITIAL_MXCSR equ 1f80h
     INITIAL_FPCSR equ 027fh
@@ -2238,8 +1985,7 @@ ifndef _WINNT_
     CONTEXT ends
     _CONTEXT typedef CONTEXT
     PCONTEXT typedef ptr CONTEXT
-;    RUNTIME_FUNCTION typedef _IMAGE_RUNTIME_FUNCTION_ENTRY
-    PRUNTIME_FUNCTION typedef ptr _IMAGE_RUNTIME_FUNCTION_ENTRY
+
     SCOPE_TABLE typedef SCOPE_TABLE_AMD64
     PSCOPE_TABLE typedef ptr SCOPE_TABLE_AMD64
     RUNTIME_FUNCTION_INDIRECT equ 1h
@@ -2248,7 +1994,25 @@ ifndef _WINNT_
     UNW_FLAG_UHANDLER equ 2h
     UNW_FLAG_CHAININFO equ 4h
     UNW_FLAG_NO_EPILOGUE equ 80000000h
-    UNWIND_CHAIN_LIMIT equ 32
+    UNWIND_HISTORY_TABLE_SIZE equ 12
+    UNWIND_HISTORY_TABLE_ENTRY struct
+      ImageBase DWORD64 ?
+      FunctionEntry POINTER ?
+    UNWIND_HISTORY_TABLE_ENTRY ends
+    _UNWIND_HISTORY_TABLE_ENTRY typedef UNWIND_HISTORY_TABLE_ENTRY
+    PUNWIND_HISTORY_TABLE_ENTRY typedef ptr UNWIND_HISTORY_TABLE_ENTRY
+    UNWIND_HISTORY_TABLE struct
+      Count DWORD ?
+      LocalHint BYTE ?
+      GlobalHint BYTE ?
+      Search BYTE ?
+      Once BYTE ?
+      LowAddress DWORD64 ?
+      HighAddress DWORD64 ?
+      Entry UNWIND_HISTORY_TABLE_ENTRY UNWIND_HISTORY_TABLE_SIZE dup (<>)
+    UNWIND_HISTORY_TABLE ends
+    _UNWIND_HISTORY_TABLE typedef UNWIND_HISTORY_TABLE
+    PUNWIND_HISTORY_TABLE typedef ptr UNWIND_HISTORY_TABLE
     GET_RUNTIME_FUNCTION_CALLBACK typedef proto :DWORD64, :PVOID
     PGET_RUNTIME_FUNCTION_CALLBACK typedef ptr GET_RUNTIME_FUNCTION_CALLBACK
     OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK typedef proto :HANDLE, :PVOID, :PDWORD, :ptr PRUNTIME_FUNCTION
@@ -2257,45 +2021,22 @@ ifndef _WINNT_
     DISPATCHER_CONTEXT struct
       ControlPc DWORD64 ?
       ImageBase DWORD64 ?
-      FunctionEntry PRUNTIME_FUNCTION ?
+      FunctionEntry POINTER ?
       EstablisherFrame DWORD64 ?
       TargetIp DWORD64 ?
       ContextRecord PCONTEXT ?
       LanguageHandler PEXCEPTION_ROUTINE ?
       HandlerData PVOID ?
-      HistoryTable POINTER ?
+      HistoryTable PUNWIND_HISTORY_TABLE ?
       ScopeIndex DWORD ?
       Fill0 DWORD ?
     DISPATCHER_CONTEXT ends
     _DISPATCHER_CONTEXT typedef DISPATCHER_CONTEXT
     PDISPATCHER_CONTEXT typedef ptr DISPATCHER_CONTEXT
-    if Defined(_ARM64EC_)
-      DISPATCHER_CONTEXT_ARM64EC struct
-        ControlPc DWORD64 ?
-        ImageBase DWORD64 ?
-        FunctionEntry PRUNTIME_FUNCTION ?
-        EstablisherFrame DWORD64 ?
-        union
-          TargetIp DWORD64 ?
-          TargetPc DWORD64 ?
-        ends
-        ContextRecord PCONTEXT ?
-        LanguageHandler PEXCEPTION_ROUTINE ?
-        HandlerData PVOID ?
-        HistoryTable POINTER ?
-        ScopeIndex DWORD ?
-        ControlPcIsUnwound BOOLEAN ?
-        NonVolatileRegisters PBYTE ?
-      DISPATCHER_CONTEXT_ARM64EC ends
-      _DISPATCHER_CONTEXT_ARM64EC typedef DISPATCHER_CONTEXT_ARM64EC
-      PDISPATCHER_CONTEXT_ARM64EC typedef ptr DISPATCHER_CONTEXT_ARM64EC
-    endif
-    TYPE_PEXCEPTION_FILTER typedef proto WIN_STD_CALL_CONV :ptr _EXCEPTION_POINTERS, :PVOID
-    PEXCEPTION_FILTER typedef ptr TYPE_PEXCEPTION_FILTER
-
-    TYPE_PTERMINATION_HANDLER typedef proto WIN_STD_CALL_CONV :BOOLEAN, :PVOID
-    PTERMINATION_HANDLER typedef ptr TYPE_PTERMINATION_HANDLER
-
+    TYPE_EXCEPTION_FILTER typedef proto WIN_STD_CALL_CONV :ptr _EXCEPTION_POINTERS, :PVOID
+    PEXCEPTION_FILTER typedef ptr TYPE_EXCEPTION_FILTER
+    TYPE_TERMINATION_HANDLER typedef proto WIN_STD_CALL_CONV :BOOLEAN, :PVOID
+    PTERMINATION_HANDLER typedef ptr TYPE_TERMINATION_HANDLER
     KNONVOLATILE_CONTEXT_POINTERS struct
       union
         FloatingContext PM128A 16 dup (?)
@@ -2318,7 +2059,7 @@ ifndef _WINNT_
           Xmm15_ PM128A ?
         ends
       ends
-      union
+      union DUMMYUNIONNAME2
         IntegerContext PDWORD64 16 dup (?)
         struct
           Rax_ PDWORD64 ?
@@ -2368,599 +2109,7 @@ ifndef _WINNT_
   SCOPE_TABLE_ARM64 ends
   _SCOPE_TABLE_ARM64 typedef SCOPE_TABLE_ARM64
   PSCOPE_TABLE_ARM64 typedef ptr SCOPE_TABLE_ARM64
-  if Defined(_ARM64_) or Defined(_CHPE_X86_ARM64_) or Defined(_ARM64EC_)
-    if  not Defined(_M_CEE_PURE)
-      if  not Defined(RC_INVOKED) and  not Defined(MIDL_PASS)
-        include intrin.inc
-        if Defined(_M_ARM64) or Defined(_M_ARM64EC)
-          BitTest equ <_bittest>
-          BitTestAndComplement equ <_bittestandcomplement>
-          BitTestAndSet equ <_bittestandset>
-          BitTestAndReset equ <_bittestandreset>
-          InterlockedBitTestAndSet equ <_interlockedbittestandset>
-          InterlockedBitTestAndSetAcquire equ <_interlockedbittestandset_acq>
-          InterlockedBitTestAndSetRelease equ <_interlockedbittestandset_rel>
-          InterlockedBitTestAndSetNoFence equ <_interlockedbittestandset_nf>
-          InterlockedBitTestAndReset equ <_interlockedbittestandreset>
-          InterlockedBitTestAndResetAcquire equ <_interlockedbittestandreset_acq>
-          InterlockedBitTestAndResetRelease equ <_interlockedbittestandreset_rel>
-          InterlockedBitTestAndResetNoFence equ <_interlockedbittestandreset_nf>
-          if Defined(_MSC_FULL_VER) and (_MSC_FULL_VER lt 192829395 or (_MSC_FULL_VER eq 192829395 and _MSC_BUILD lt 7))
-            __ARM64_COMPILER_BITTEST64_WORKAROUND equ <>
-          endif
-          if  not Defined(__ARM64_COMPILER_BITTEST64_WORKAROUND)
-            BitTest64 equ <_bittest64>
-            BitTestAndComplement64 equ <_bittestandcomplement64>
-            BitTestAndSet64 equ <_bittestandset64>
-            BitTestAndReset64 equ <_bittestandreset64>
-          else
-            _BitTest64 proto WIN_STD_CALL_CONV :ptr SQWORD, :SQWORD
-            _BitTestAndComplement64 proto WIN_STD_CALL_CONV :ptr SQWORD, :SQWORD
-            _BitTestAndReset64 proto WIN_STD_CALL_CONV :ptr SQWORD, :SQWORD
-            _BitTestAndSet64 proto WIN_STD_CALL_CONV :ptr SQWORD, :SQWORD
-            BitTest64 equ <_BitTest64>
-            BitTestAndComplement64 equ <_BitTestAndComplement64>
-            BitTestAndSet64 equ <_BitTestAndSet64>
-            BitTestAndReset64 equ <_BitTestAndReset64>
-          endif
-          InterlockedBitTestAndSet64 equ <_interlockedbittestandset64>
-          InterlockedBitTestAndSet64Acquire equ <_interlockedbittestandset64_acq>
-          InterlockedBitTestAndSet64Release equ <_interlockedbittestandset64_rel>
-          InterlockedBitTestAndSet64NoFence equ <_interlockedbittestandset64_nf>
-          InterlockedBitTestAndReset64 equ <_interlockedbittestandreset64>
-          InterlockedBitTestAndReset64Acquire equ <_interlockedbittestandreset64_acq>
-          InterlockedBitTestAndReset64Release equ <_interlockedbittestandreset64_rel>
-          InterlockedBitTestAndReset64NoFence equ <_interlockedbittestandreset64_nf>
-          if  not Defined(__ARM64_COMPILER_BITTEST64_WORKAROUND)
-          endif
-          BitScanForward equ <_BitScanForward>
-          BitScanReverse equ <_BitScanReverse>
-          BitScanForward64 equ <_BitScanForward64>
-          BitScanReverse64 equ <_BitScanReverse64>
-          InterlockedAnd8 equ <_InterlockedAnd8>
-          InterlockedOr8 equ <_InterlockedOr8>
-          InterlockedXor8 equ <_InterlockedXor8>
-          InterlockedExchangeAdd8 equ <_InterlockedExchangeAdd8>
-          InterlockedAnd16 equ <_InterlockedAnd16>
-          InterlockedOr16 equ <_InterlockedOr16>
-          InterlockedXor16 equ <_InterlockedXor16>
-          InterlockedIncrement16 equ <_InterlockedIncrement16>
-          InterlockedDecrement16 equ <_InterlockedDecrement16>
-          InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
-          InterlockedAnd equ <_InterlockedAnd>
-          InterlockedOr equ <_InterlockedOr>
-          InterlockedXor equ <_InterlockedXor>
-          InterlockedIncrement equ <_InterlockedIncrement>
-          InterlockedDecrement equ <_InterlockedDecrement>
-          InterlockedAdd equ <_InterlockedAdd>
-          InterlockedExchange equ <_InterlockedExchange>
-          InterlockedExchangeAdd equ <_InterlockedExchangeAdd>
-          InterlockedCompareExchange equ <_InterlockedCompareExchange>
-          InterlockedAnd64 equ <_InterlockedAnd64>
-          InterlockedAndAffinity equ <InterlockedAnd64>
-          InterlockedOr64 equ <_InterlockedOr64>
-          InterlockedOrAffinity equ <InterlockedOr64>
-          InterlockedXor64 equ <_InterlockedXor64>
-          InterlockedIncrement64 equ <_InterlockedIncrement64>
-          InterlockedDecrement64 equ <_InterlockedDecrement64>
-          InterlockedAdd64 equ <_InterlockedAdd64>
-          InterlockedExchange64 equ <_InterlockedExchange64>
-          InterlockedExchangeAdd64 equ <_InterlockedExchangeAdd64>
-          InterlockedCompareExchange64 equ <_InterlockedCompareExchange64>
-          InterlockedExchangePointer equ <_InterlockedExchangePointer>
-          InterlockedCompareExchangePointer equ <_InterlockedCompareExchangePointer>
-          InterlockedExchange16 equ <_InterlockedExchange16>
-          InterlockedExchange8 equ <_InterlockedExchange8>
-          InterlockedAndAcquire8 equ <_InterlockedAnd8_acq>
-          InterlockedAndRelease8 equ <_InterlockedAnd8_rel>
-          InterlockedAndNoFence8 equ <_InterlockedAnd8_nf>
-          InterlockedOrAcquire8 equ <_InterlockedOr8_acq>
-          InterlockedOrRelease8 equ <_InterlockedOr8_rel>
-          InterlockedOrNoFence8 equ <_InterlockedOr8_nf>
-          InterlockedXorAcquire8 equ <_InterlockedXor8_acq>
-          InterlockedXorRelease8 equ <_InterlockedXor8_rel>
-          InterlockedXorNoFence8 equ <_InterlockedXor8_nf>
-          InterlockedExchangeNoFence8 equ <_InterlockedExchange8_nf>
-          InterlockedExchangeAcquire8 equ <_InterlockedExchange8_acq>
-          InterlockedAndAcquire16 equ <_InterlockedAnd16_acq>
-          InterlockedAndRelease16 equ <_InterlockedAnd16_rel>
-          InterlockedAndNoFence16 equ <_InterlockedAnd16_nf>
-          InterlockedOrAcquire16 equ <_InterlockedOr16_acq>
-          InterlockedOrRelease16 equ <_InterlockedOr16_rel>
-          InterlockedOrNoFence16 equ <_InterlockedOr16_nf>
-          InterlockedXorAcquire16 equ <_InterlockedXor16_acq>
-          InterlockedXorRelease16 equ <_InterlockedXor16_rel>
-          InterlockedXorNoFence16 equ <_InterlockedXor16_nf>
-          InterlockedIncrementAcquire16 equ <_InterlockedIncrement16_acq>
-          InterlockedIncrementRelease16 equ <_InterlockedIncrement16_rel>
-          InterlockedIncrementNoFence16 equ <_InterlockedIncrement16_nf>
-          InterlockedDecrementAcquire16 equ <_InterlockedDecrement16_acq>
-          InterlockedDecrementRelease16 equ <_InterlockedDecrement16_rel>
-          InterlockedDecrementNoFence16 equ <_InterlockedDecrement16_nf>
-          InterlockedExchangeAcquire16 equ <_InterlockedExchange16_acq>
-          InterlockedExchangeNoFence16 equ <_InterlockedExchange16_nf>
-          InterlockedCompareExchangeAcquire16 equ <_InterlockedCompareExchange16_acq>
-          InterlockedCompareExchangeRelease16 equ <_InterlockedCompareExchange16_rel>
-          InterlockedCompareExchangeNoFence16 equ <_InterlockedCompareExchange16_nf>
-          InterlockedAndAcquire equ <_InterlockedAnd_acq>
-          InterlockedAndRelease equ <_InterlockedAnd_rel>
-          InterlockedAndNoFence equ <_InterlockedAnd_nf>
-          InterlockedOrAcquire equ <_InterlockedOr_acq>
-          InterlockedOrRelease equ <_InterlockedOr_rel>
-          InterlockedOrNoFence equ <_InterlockedOr_nf>
-          InterlockedXorAcquire equ <_InterlockedXor_acq>
-          InterlockedXorRelease equ <_InterlockedXor_rel>
-          InterlockedXorNoFence equ <_InterlockedXor_nf>
-          InterlockedIncrementAcquire equ <_InterlockedIncrement_acq>
-          InterlockedIncrementRelease equ <_InterlockedIncrement_rel>
-          InterlockedIncrementNoFence equ <_InterlockedIncrement_nf>
-          InterlockedDecrementAcquire equ <_InterlockedDecrement_acq>
-          InterlockedDecrementRelease equ <_InterlockedDecrement_rel>
-          InterlockedDecrementNoFence equ <_InterlockedDecrement_nf>
-          InterlockedAddAcquire equ <_InterlockedAdd_acq>
-          InterlockedAddRelease equ <_InterlockedAdd_rel>
-          InterlockedAddNoFence equ <_InterlockedAdd_nf>
-          InterlockedExchangeAcquire equ <_InterlockedExchange_acq>
-          InterlockedExchangeNoFence equ <_InterlockedExchange_nf>
-          InterlockedExchangeAddAcquire equ <_InterlockedExchangeAdd_acq>
-          InterlockedExchangeAddRelease equ <_InterlockedExchangeAdd_rel>
-          InterlockedExchangeAddNoFence equ <_InterlockedExchangeAdd_nf>
-          InterlockedCompareExchangeAcquire equ <_InterlockedCompareExchange_acq>
-          InterlockedCompareExchangeRelease equ <_InterlockedCompareExchange_rel>
-          InterlockedCompareExchangeNoFence equ <_InterlockedCompareExchange_nf>
-          InterlockedAndAcquire64 equ <_InterlockedAnd64_acq>
-          InterlockedAndRelease64 equ <_InterlockedAnd64_rel>
-          InterlockedAndNoFence64 equ <_InterlockedAnd64_nf>
-          InterlockedOrAcquire64 equ <_InterlockedOr64_acq>
-          InterlockedOrRelease64 equ <_InterlockedOr64_rel>
-          InterlockedOrNoFence64 equ <_InterlockedOr64_nf>
-          InterlockedXorAcquire64 equ <_InterlockedXor64_acq>
-          InterlockedXorRelease64 equ <_InterlockedXor64_rel>
-          InterlockedXorNoFence64 equ <_InterlockedXor64_nf>
-          InterlockedIncrementAcquire64 equ <_InterlockedIncrement64_acq>
-          InterlockedIncrementRelease64 equ <_InterlockedIncrement64_rel>
-          InterlockedIncrementNoFence64 equ <_InterlockedIncrement64_nf>
-          InterlockedDecrementAcquire64 equ <_InterlockedDecrement64_acq>
-          InterlockedDecrementRelease64 equ <_InterlockedDecrement64_rel>
-          InterlockedDecrementNoFence64 equ <_InterlockedDecrement64_nf>
-          InterlockedAddAcquire64 equ <_InterlockedAdd64_acq>
-          InterlockedAddRelease64 equ <_InterlockedAdd64_rel>
-          InterlockedAddNoFence64 equ <_InterlockedAdd64_nf>
-          InterlockedExchangeAcquire64 equ <_InterlockedExchange64_acq>
-          InterlockedExchangeNoFence64 equ <_InterlockedExchange64_nf>
-          InterlockedExchangeAddAcquire64 equ <_InterlockedExchangeAdd64_acq>
-          InterlockedExchangeAddRelease64 equ <_InterlockedExchangeAdd64_rel>
-          InterlockedExchangeAddNoFence64 equ <_InterlockedExchangeAdd64_nf>
-          InterlockedCompareExchangeAcquire64 equ <_InterlockedCompareExchange64_acq>
-          InterlockedCompareExchangeRelease64 equ <_InterlockedCompareExchange64_rel>
-          InterlockedCompareExchangeNoFence64 equ <_InterlockedCompareExchange64_nf>
-          InterlockedCompareExchange128 equ <_InterlockedCompareExchange128>
-          InterlockedAnd64Acquire equ <_InterlockedAnd64_acq>
-          InterlockedAnd64Release equ <_InterlockedAnd64_rel>
-          InterlockedAnd64NoFence equ <_InterlockedAnd64_nf>
-          InterlockedOr64Acquire equ <_InterlockedOr64_acq>
-          InterlockedOr64Release equ <_InterlockedOr64_rel>
-          InterlockedOr64NoFence equ <_InterlockedOr64_nf>
-          InterlockedXor64Acquire equ <_InterlockedXor64_acq>
-          InterlockedXor64Release equ <_InterlockedXor64_rel>
-          InterlockedXor64NoFence equ <_InterlockedXor64_nf>
-          InterlockedExchangePointerAcquire equ <_InterlockedExchangePointer_acq>
-          InterlockedExchangePointerNoFence equ <_InterlockedExchangePointer_nf>
-          InterlockedCompareExchangePointerAcquire equ <_InterlockedCompareExchangePointer_acq>
-          InterlockedCompareExchangePointerRelease equ <_InterlockedCompareExchangePointer_rel>
-          InterlockedCompareExchangePointerNoFence equ <_InterlockedCompareExchangePointer_nf>
-          InterlockedExchangeAddSizeT macro a, b
-            exitm <InterlockedExchangeAdd64 (a, b)>
-          endm
-          InterlockedExchangeAddSizeTAcquire macro a, b
-            exitm <InterlockedExchangeAddAcquire64 (a, b)>
-          endm
-          InterlockedExchangeAddSizeTNoFence macro a, b
-            exitm <InterlockedExchangeAddNoFence64 (a, b)>
-          endm
-          InterlockedIncrementSizeT macro a
-            exitm <InterlockedIncrement64 (a)>
-          endm
-          InterlockedIncrementSizeTNoFence macro a
-            exitm <InterlockedIncrementNoFence64 (a)>
-          endm
-          InterlockedDecrementSizeT macro a
-            exitm <InterlockedDecrement64 (a)>
-          endm
-          InterlockedDecrementSizeTNoFence macro a
-            exitm <InterlockedDecrementNoFence64 (a)>
-          endm
-        endif
-        if Defined(_M_ARM64) or Defined(_M_HYBRID_X86_ARM64) or Defined(_M_ARM64EC)
-          ARM64_PREFETCH_PLD equ (0 shl 3)
-          ARM64_PREFETCH_PLI equ (1 shl 3)
-          ARM64_PREFETCH_PST equ (2 shl 3)
-          ARM64_PREFETCH_L1 equ (0 shl 1)
-          ARM64_PREFETCH_L2 equ (1 shl 1)
-          ARM64_PREFETCH_L3 equ (2 shl 1)
-          ARM64_PREFETCH_KEEP equ (0 shl 0)
-          ARM64_PREFETCH_STRM equ (1 shl 0)
-          ARM64_PREFETCH macro a, b, c_
-            exitm <(ARM64_PREFETCH_ ## a or ARM64_PREFETCH_ ## b or ARM64_PREFETCH_ ## c_)>
-          endm
-          MemoryBarrier macro
-            exitm <__dmb (_ARM64_BARRIER_SY)>
-          endm
-          PreFetchCacheLine macro l, a
-            exitm <__prefetch2 ((const void *) (a), ARM64_PREFETCH(PLD, L1, KEEP))>
-          endm
-          PrefetchForWrite macro p
-            exitm <__prefetch2 ((const void *) (p), ARM64_PREFETCH(PST, L1, KEEP))>
-          endm
-          ReadForWriteAccess macro p
-            exitm <(__prefetch2 ((const void *) (p), ARM64_PREFETCH(PST, L1, KEEP)), * (p))>
-          endm
-          _DataSynchronizationBarrier macro
-            exitm <__dsb (_ARM64_BARRIER_SY)>
-          endm
-          _InstructionSynchronizationBarrier macro
-            exitm <__isb (_ARM64_BARRIER_SY)>
-          endm
-          YieldProcessor proto WIN_STD_CALL_CONV
-          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
-            ReadAcquire8 proto WIN_STD_CALL_CONV :ptr CHAR
-            ReadNoFence8 proto WIN_STD_CALL_CONV :ptr CHAR
-            WriteRelease8 proto WIN_STD_CALL_CONV :ptr CHAR, :CHAR
-            WriteNoFence8 proto WIN_STD_CALL_CONV :ptr CHAR, :CHAR
-            ReadAcquire16 proto WIN_STD_CALL_CONV :ptr SHORT_
-            ReadNoFence16 proto WIN_STD_CALL_CONV :ptr SHORT_
-            WriteRelease16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_
-            WriteNoFence16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_
-            ReadAcquire proto WIN_STD_CALL_CONV :ptr LONG
-            ReadNoFence proto WIN_STD_CALL_CONV :ptr LONG
-            WriteRelease proto WIN_STD_CALL_CONV :ptr LONG, :LONG
-            WriteNoFence proto WIN_STD_CALL_CONV :ptr LONG, :LONG
-            ReadAcquire64 proto WIN_STD_CALL_CONV :ptr LONG64
-            ReadNoFence64 proto WIN_STD_CALL_CONV :ptr LONG64
-            WriteRelease64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
-            WriteNoFence64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
-            BarrierAfterRead proto WIN_STD_CALL_CONV
-          endif
-          ARM64_SYSREG macro op0, op1, crn, crm, op2
-            exitm <(((op0 and 1) shl 14) or ((op1 and 7) shl 11) or ((crn and 15) shl 7) or ((crm and 15) shl 3) or ((op2 and 7) shl 0))>
-          endm
-          ARM64_SYSINSTR macro op0, op1, crn, crm, op2
-            exitm <(((op1 and 7) shl 11) or ((crn and 15) shl 7) or ((crm and 15) shl 3) or ((op2 and 7) shl 0))>
-          endm
-          ARM64_SYSREG_OP1 macro _Reg_
-            exitm <(((_Reg_) shr 11) and 7)>
-          endm
-          ARM64_SYSREG_CRN macro _Reg_
-            exitm <(((_Reg_) shr 7) and 15)>
-          endm
-          ARM64_SYSREG_CRM macro _Reg_
-            exitm <(((_Reg_) shr 3) and 15)>
-          endm
-          ARM64_SYSREG_OP2 macro _Reg_
-            exitm <((_Reg_) and 7)>
-          endm
-          ARM64_CNTVCT equ ARM64_SYSREG(3, 3, 14, 0, 2)
-          ARM64_PMCCNTR_EL0 equ ARM64_SYSREG(3, 3, 9, 13, 0)
-          ARM64_PMSELR_EL0 equ ARM64_SYSREG(3, 3, 9, 12, 5)
-          ARM64_PMXEVCNTR_EL0 equ ARM64_SYSREG(3, 3, 9, 13, 2)
-          ARM64_PMXEVCNTRn_EL0 macro n
-            exitm <ARM64_SYSREG(3, 3, 14, 8 + ((n) / 8), (n) % 8)>
-          endm
-          ARM64_TPIDR_EL0 equ ARM64_SYSREG(3, 3, 13, 0, 2)
-          ARM64_TPIDRRO_EL0 equ ARM64_SYSREG(3, 3, 13, 0, 3)
-          ARM64_TPIDR_EL1 equ ARM64_SYSREG(3, 0, 13, 0, 4)
-          PF_TEMPORAL_LEVEL_1 equ 0
-          PF_TEMPORAL_LEVEL_2 equ 1
-          PF_TEMPORAL_LEVEL_3 equ 2
-          PF_NON_TEMPORAL_LEVEL_ALL equ 3
-          if Defined(_M_HYBRID_X86_ARM64)
-            extern_ proto WIN_STD_CALL_CONV :ptr _os_wowa64_rdtsc
-          endif
-          if Defined(_M_HYBRID_X86_ARM64)
-          endif
-          ReadTimeStampCounter proto WIN_STD_CALL_CONV
-          if Defined(_M_HYBRID_X86_ARM64)
-          else
-          endif
-          ReadPMC proto WIN_STD_CALL_CONV :DWORD
-          MultiplyHigh equ <__mulh>
-          UnsignedMultiplyHigh equ <__umulh>
-        endif
-        if  not Defined(PopulationCount64)
-          PopulationCount64 proto WIN_STD_CALL_CONV :DWORD64
-        endif
-        if  not Defined(ShiftLeft128)
-          __shiftleft128 equ <ShiftLeft128>
-          __shiftright128 equ <ShiftRight128>
-          ShiftLeft128 proto WIN_STD_CALL_CONV :DWORD64, :DWORD64, :BYTE
-          ShiftRight128 proto WIN_STD_CALL_CONV :DWORD64, :DWORD64, :BYTE
-        endif
-        if  not Defined(ARM64_MULT_INTRINSICS_SUPPORTED)
-          if Defined(_MSC_VER) and  not Defined(__clang__)
-            ARM64_MULT_INTRINSICS_SUPPORTED equ 1
-          else
-            ARM64_MULT_INTRINSICS_SUPPORTED equ 0
-          endif
-        endif
-        if  not Defined(UnsignedMultiply128)
-          UnsignedMultiply128 proto WIN_STD_CALL_CONV :DWORD64, :DWORD64, :ptr DWORD64
-          if (Defined(_M_ARM64) or Defined(_M_HYBRID_X86_ARM64) or Defined(_M_ARM64EC)) and ARM64_MULT_INTRINSICS_SUPPORTED
-          else
-          endif
-          Multiply128 proto WIN_STD_CALL_CONV :LONG64, :LONG64, :ptr LONG64
-        endif
-        if  not Defined(_M_ARM64EC)
-          MultiplyExtract128 proto WIN_STD_CALL_CONV :LONG64, :LONG64, :BYTE
-          UnsignedMultiplyExtract128 proto WIN_STD_CALL_CONV :DWORD64, :DWORD64, :BYTE
-        endif
-        if Defined(_M_ARM64EC)
-          _mm_getcsr proto WIN_STD_CALL_CONV
-          _mm_setcsr proto WIN_STD_CALL_CONV :DWORD
-        endif
-      endif
-    else
-      ;[...]
-    endif
-    if Defined(_M_CEE_PURE)
-      ;[...]
-    endif
-    EXCEPTION_READ_FAULT equ 0
-    EXCEPTION_WRITE_FAULT equ 1
-    EXCEPTION_EXECUTE_FAULT equ 8
-    INITIAL_CPSR equ 10h
-    INITIAL_FPSCR equ 0
-  endif
-  if  not Defined(RC_INVOKED)
-    CONTEXT_ARM64 equ 00400000h
-    CONTEXT_ARM64_CONTROL equ (CONTEXT_ARM64 or 1h)
-    CONTEXT_ARM64_INTEGER equ (CONTEXT_ARM64 or 2h)
-    CONTEXT_ARM64_FLOATING_POINT equ (CONTEXT_ARM64 or 4h)
-    CONTEXT_ARM64_DEBUG_REGISTERS equ (CONTEXT_ARM64 or 8h)
-    CONTEXT_ARM64_X18 equ (CONTEXT_ARM64 or 10h)
-    CONTEXT_ARM64_FULL equ <(CONTEXT_ARM64_CONTROL or CONTEXT_ARM64_INTEGER or CONTEXT_ARM64_FLOATING_POINT)>
-    CONTEXT_ARM64_ALL equ <(CONTEXT_ARM64_CONTROL or CONTEXT_ARM64_INTEGER or CONTEXT_ARM64_FLOATING_POINT or CONTEXT_ARM64_DEBUG_REGISTERS or CONTEXT_ARM64_X18)>
-    if Defined(_ARM64_)
-      ;[...]
-    endif
-    CONTEXT_ARM64_UNWOUND_TO_CALL equ 20000000h
-    CONTEXT_ARM64_RET_TO_GUEST equ 04000000h
-    if Defined(_ARM64_) or Defined(_CHPE_X86_ARM64_) or Defined(_X86_)
-      CONTEXT_UNWOUND_TO_CALL equ <CONTEXT_ARM64_UNWOUND_TO_CALL>
-      CONTEXT_RET_TO_GUEST equ <CONTEXT_ARM64_RET_TO_GUEST>
-    endif
-  endif
-  ARM64_MAX_BREAKPOINTS equ 8
-  ARM64_MAX_WATCHPOINTS equ 2
-  ARM64_NT_NEON128 union
-    struct
-      Low_ ULONGLONG ?
-      High_ LONGLONG ?
-    ends
-    D REAL8 2 dup (?)
-    S REAL4 4 dup (?)
-    H WORD 8 dup (?)
-    B BYTE 16 dup (?)
-  ARM64_NT_NEON128 ends
-  _ARM64_NT_NEON128 typedef ARM64_NT_NEON128
-  PARM64_NT_NEON128 typedef ptr ARM64_NT_NEON128
-  if Defined(_ARM64_)
-    ;[...]
-  endif
-  if Defined(_ARM64_)
-    ;[...]
-  endif
-  ARM64_NT_CONTEXT struct
-    ContextFlags DWORD ?
-    Cpsr DWORD ?
-    union
-      struct
-        X0 DWORD64 ?
-        X1 DWORD64 ?
-        X2 DWORD64 ?
-        X3 DWORD64 ?
-        X4 DWORD64 ?
-        X5 DWORD64 ?
-        X6 DWORD64 ?
-        X7 DWORD64 ?
-        X8 DWORD64 ?
-        X9 DWORD64 ?
-        X10 DWORD64 ?
-        X11 DWORD64 ?
-        X12 DWORD64 ?
-        X13 DWORD64 ?
-        X14 DWORD64 ?
-        X15 DWORD64 ?
-        X16 DWORD64 ?
-        X17 DWORD64 ?
-        X18 DWORD64 ?
-        X19 DWORD64 ?
-        X20 DWORD64 ?
-        X21 DWORD64 ?
-        X22 DWORD64 ?
-        X23 DWORD64 ?
-        X24 DWORD64 ?
-        X25 DWORD64 ?
-        X26 DWORD64 ?
-        X27 DWORD64 ?
-        X28 DWORD64 ?
-        Fp DWORD64 ?
-        Lr DWORD64 ?
-      ends
-      X DWORD64 31 dup (?)
-    ends
-    Sp_ DWORD64 ?
-    Pc DWORD64 ?
-    V ARM64_NT_NEON128 32 dup (<>)
-    Fpcr DWORD ?
-    Fpsr DWORD ?
-    Bcr DWORD ARM64_MAX_BREAKPOINTS dup (?)
-    Bvr DWORD64 ARM64_MAX_BREAKPOINTS dup (?)
-    Wcr DWORD ARM64_MAX_WATCHPOINTS dup (?)
-    Wvr DWORD64 ARM64_MAX_WATCHPOINTS dup (?)
-  ARM64_NT_CONTEXT ends
-  _ARM64_NT_CONTEXT typedef ARM64_NT_CONTEXT
-  PARM64_NT_CONTEXT typedef ptr ARM64_NT_CONTEXT
-  if Defined(_ARM64_)
-    ;[...]
-  endif
-  ARM64EC_NT_CONTEXT struct
-    union
-      struct
-        AMD64_P1Home DWORD64 ?
-        AMD64_P2Home DWORD64 ?
-        AMD64_P3Home DWORD64 ?
-        AMD64_P4Home DWORD64 ?
-        AMD64_P5Home DWORD64 ?
-        AMD64_P6Home DWORD64 ?
-        ContextFlags DWORD ?
-        AMD64_MxCsr_copy DWORD ?
-        AMD64_SegCs WORD ?
-        AMD64_SegDs WORD ?
-        AMD64_SegEs WORD ?
-        AMD64_SegFs WORD ?
-        AMD64_SegGs WORD ?
-        AMD64_SegSs WORD ?
-        AMD64_EFlags DWORD ?
-        AMD64_Dr0 DWORD64 ?
-        AMD64_Dr1 DWORD64 ?
-        AMD64_Dr2 DWORD64 ?
-        AMD64_Dr3 DWORD64 ?
-        AMD64_Dr6 DWORD64 ?
-        AMD64_Dr7 DWORD64 ?
-        X8 DWORD64 ?
-        X0 DWORD64 ?
-        X1 DWORD64 ?
-        X27 DWORD64 ?
-        Sp_ DWORD64 ?
-        Fp DWORD64 ?
-        X25 DWORD64 ?
-        X26 DWORD64 ?
-        X2 DWORD64 ?
-        X3 DWORD64 ?
-        X4 DWORD64 ?
-        X5 DWORD64 ?
-        X19 DWORD64 ?
-        X20 DWORD64 ?
-        X21 DWORD64 ?
-        X22 DWORD64 ?
-        Pc DWORD64 ?
-        struct
-          AMD64_ControlWord WORD ?
-          AMD64_StatusWord WORD ?
-          AMD64_TagWord BYTE ?
-          AMD64_Reserved1 BYTE ?
-          AMD64_ErrorOpcode WORD ?
-          AMD64_ErrorOffset DWORD ?
-          AMD64_ErrorSelector WORD ?
-          AMD64_Reserved2 WORD ?
-          AMD64_DataOffset DWORD ?
-          AMD64_DataSelector WORD ?
-          AMD64_Reserved3 WORD ?
-          AMD64_MxCsr DWORD ?
-          AMD64_MxCsr_Mask DWORD ?
-          Lr DWORD64 ?
-          X16_0 WORD ?
-          AMD64_St0_Reserved1 WORD ?
-          AMD64_St0_Reserved2 DWORD ?
-          X6 DWORD64 ?
-          X16_1 WORD ?
-          AMD64_St1_Reserved1 WORD ?
-          AMD64_St1_Reserved2 DWORD ?
-          X7 DWORD64 ?
-          X16_2 WORD ?
-          AMD64_St2_Reserved1 WORD ?
-          AMD64_St2_Reserved2 DWORD ?
-          X9 DWORD64 ?
-          X16_3 WORD ?
-          AMD64_St3_Reserved1 WORD ?
-          AMD64_St3_Reserved2 DWORD ?
-          X10 DWORD64 ?
-          X17_0 WORD ?
-          AMD64_St4_Reserved1 WORD ?
-          AMD64_St4_Reserved2 DWORD ?
-          X11 DWORD64 ?
-          X17_1 WORD ?
-          AMD64_St5_Reserved1 WORD ?
-          AMD64_St5_Reserved2 DWORD ?
-          X12 DWORD64 ?
-          X17_2 WORD ?
-          AMD64_St6_Reserved1 WORD ?
-          AMD64_St6_Reserved2 DWORD ?
-          X15 DWORD64 ?
-          X17_3 WORD ?
-          AMD64_St7_Reserved1 WORD ?
-          AMD64_St7_Reserved2 DWORD ?
-          V ARM64_NT_NEON128 16 dup (<>)
-          AMD64_XSAVE_FORMAT_Reserved4 BYTE 96 dup (?)
-        ends
-        AMD64_VectorRegister ARM64_NT_NEON128 26 dup (<>)
-        AMD64_VectorControl DWORD64 ?
-        AMD64_DebugControl DWORD64 ?
-        AMD64_LastBranchToRip DWORD64 ?
-        AMD64_LastBranchFromRip DWORD64 ?
-        AMD64_LastExceptionToRip DWORD64 ?
-        AMD64_LastExceptionFromRip DWORD64 ?
-      ends
-      if Defined(_ARM64EC_)
-        AMD64_Context CONTEXT <>
-      endif
-    ends
-  ARM64EC_NT_CONTEXT ends
-  _ARM64EC_NT_CONTEXT typedef ARM64EC_NT_CONTEXT
-  PARM64EC_NT_CONTEXT typedef ptr ARM64EC_NT_CONTEXT
-  if Defined(_ARM64EC_) and  not Defined(RC_INVOKED) and  not Defined(MIDL_PASS)
-  endif
   if Defined(_ARM64_) or Defined(_CHPE_X86_ARM64_)
-    ;[...]
-  endif
-;  ARM64_RUNTIME_FUNCTION typedef _IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY
-  PARM64_RUNTIME_FUNCTION typedef ptr _IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY
-  if Defined(_ARM64_)
-    ;[...]
-  endif
-  UNW_FLAG_NHANDLER equ 0h
-  UNW_FLAG_EHANDLER equ 1h
-  UNW_FLAG_UHANDLER equ 2h
-  if Defined(_ARM64_) or Defined(_CHPE_X86_ARM64_)
-    ;[...]
-  endif
-  NONVOL_INT_NUMREG_ARM64 equ (11)
-  NONVOL_FP_NUMREG_ARM64 equ (8)
-  NONVOL_INT_SIZE_ARM64 equ <(NONVOL_INT_NUMREG_ARM64 * sizeof(DWORD64))>
-  NONVOL_FP_SIZE_ARM64 equ <(NONVOL_FP_NUMREG_ARM64 * sizeof(double))>
-  DISPATCHER_CONTEXT_NONVOLREG_ARM64 union
-    Buffer BYTE NONVOL_INT_SIZE_ARM64 + NONVOL_FP_SIZE_ARM64 dup (?)
-    struct
-      GpNvRegs DWORD64 NONVOL_INT_NUMREG_ARM64 dup (?)
-      FpNvRegs REAL8 NONVOL_FP_NUMREG_ARM64 dup (?)
-    ends
-  DISPATCHER_CONTEXT_NONVOLREG_ARM64 ends
-  _DISPATCHER_CONTEXT_NONVOLREG_ARM64 typedef DISPATCHER_CONTEXT_NONVOLREG_ARM64
-  if  not Defined(RC_INVOKED) and  not Defined(MIDL_PASS)
-  endif
-  DISPATCHER_CONTEXT_ARM64 struct
-    ControlPc ULONG_PTR ?
-    ImageBase ULONG_PTR ?
-    FunctionEntry PARM64_RUNTIME_FUNCTION ?
-    EstablisherFrame ULONG_PTR ?
-    TargetPc ULONG_PTR ?
-    ContextRecord PARM64_NT_CONTEXT ?
-    LanguageHandler PEXCEPTION_ROUTINE ?
-    HandlerData PVOID ?
-    HistoryTable POINTER ?
-    ScopeIndex DWORD ?
-    ControlPcIsUnwound BOOLEAN ?
-    NonVolatileRegisters PBYTE ?
-  DISPATCHER_CONTEXT_ARM64 ends
-  _DISPATCHER_CONTEXT_ARM64 typedef DISPATCHER_CONTEXT_ARM64
-  PDISPATCHER_CONTEXT_ARM64 typedef ptr DISPATCHER_CONTEXT_ARM64
-  if Defined(_ARM64_) or Defined(_CHPE_X86_ARM64_)
-    ;[...]
-  endif
-  if Defined(_ARM64_) or Defined(_CHPE_X86_ARM64_)
-    ;[...]
-  endif
-  if Defined(_ARM64_)
     ;[...]
   endif
   KNONVOLATILE_CONTEXT_POINTERS_ARM64 struct
@@ -2990,6 +2139,9 @@ ifndef _WINNT_
   if Defined(_ARM64_)
     ;[...]
   endif
+  if Defined(_CHPE_X86_ARM64_)
+    ;[...]
+  endif
   ifdef __cplusplus
     ;[...]
   endif
@@ -2998,7 +2150,7 @@ ifndef _WINNT_
     if Defined(_PREFAST_)
       ;[...]
     endif
-    if Defined(_AMD64_) and  not Defined(_ARM64EC_)
+    if Defined(_AMD64_)
       if Defined(_M_AMD64)
         __int2c proto WIN_STD_CALL_CONV
         if  not Defined(_PREFAST_)
@@ -3018,7 +2170,6 @@ ifndef _WINNT_
           endif
         else
           if  not Defined(_PREFAST_)
-            DbgRaiseAssertionFailure proto WIN_STD_CALL_CONV
           endif
         endif
       endif
@@ -3033,15 +2184,8 @@ ifndef _WINNT_
           endm
         endif
       endif
-    elseif Defined(_ARM64_) or Defined(_CHPE_X86_ARM64_) or Defined(_ARM64EC_)
-      if Defined(_M_ARM64) or Defined(_M_HYBRID_X86_ARM64) or Defined(_M_ARM64EC)
-        __break proto WIN_STD_CALL_CONV :SDWORD
-        if  not Defined(_PREFAST_)
-          DbgRaiseAssertionFailure macro
-            exitm <__break (0f001h)>
-          endm
-        endif
-      endif
+    elseif Defined(_ARM64_) or Defined(_CHPE_X86_ARM64_)
+      ;[...]
     elseif Defined(_ARM_)
       ;[...]
     endif
@@ -3091,9 +2235,7 @@ ifndef _WINNT_
         BitScanReverse equ <_BitScanReverse>
         _BitScanForward proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD
         _BitScanReverse proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD
-        _InlineBitScanForward64 proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD64
         BitScanForward64 equ <_InlineBitScanForward64>
-        _InlineBitScanReverse64 proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD64
         BitScanReverse64 equ <_InlineBitScanReverse64>
       endif
       if  not Defined(_MANAGED)
@@ -3113,10 +2255,6 @@ ifndef _WINNT_
         InterlockedCompareExchangeAcquire64 equ <_InterlockedCompareExchange64>
         InterlockedCompareExchangeRelease64 equ <_InterlockedCompareExchange64>
         InterlockedCompareExchangeNoFence64 equ <_InterlockedCompareExchange64>
-        InterlockedIncrement16 proto WIN_STD_CALL_CONV :ptr SHORT_
-        InterlockedDecrement16 proto WIN_STD_CALL_CONV :ptr SHORT_
-        InterlockedCompareExchange16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_, :SHORT_
-        InterlockedCompareExchange64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64, :LONG64
       endif
       InterlockedAnd equ <_InterlockedAnd>
       InterlockedAndAcquire equ <_InterlockedAnd>
@@ -3155,21 +2293,10 @@ ifndef _WINNT_
       InterlockedCompareExchangeRelease equ <_InterlockedCompareExchange>
       InterlockedCompareExchangeNoFence equ <_InterlockedCompareExchange>
       InterlockedExchange16 equ <_InterlockedExchange16>
-      InterlockedAnd proto WIN_STD_CALL_CONV :ptr LONG, :LONG
-      InterlockedOr proto WIN_STD_CALL_CONV :ptr LONG, :LONG
-      InterlockedXor proto WIN_STD_CALL_CONV :ptr LONG, :LONG
-      InterlockedIncrement proto c :ptr LONG
-      InterlockedDecrement proto c :ptr LONG
-      InterlockedExchange proto c :ptr LONG, :LONG
-      InterlockedExchangeAdd proto c :ptr LONG, :LONG
-      _InlineInterlockedAdd proto WIN_STD_CALL_CONV :ptr LONG, :LONG
-      InterlockedCompareExchange proto c :ptr LONG, :LONG, :LONG
-      _InlineInterlockedExchangePointer proto WIN_STD_CALL_CONV :ptr PVOID, :PVOID
       InterlockedExchangePointer equ <_InlineInterlockedExchangePointer>
       InterlockedExchangePointerAcquire equ <_InlineInterlockedExchangePointer>
       InterlockedExchangePointerRelease equ <_InlineInterlockedExchangePointer>
       InterlockedExchangePointerNoFence equ <_InlineInterlockedExchangePointer>
-      _InlineInterlockedCompareExchangePointer proto WIN_STD_CALL_CONV :ptr PVOID, :PVOID, :PVOID
       InterlockedCompareExchangePointer equ <_InlineInterlockedCompareExchangePointer>
       InterlockedCompareExchangePointerAcquire equ <_InlineInterlockedCompareExchangePointer>
       InterlockedCompareExchangePointerRelease equ <_InlineInterlockedCompareExchangePointer>
@@ -3178,49 +2305,29 @@ ifndef _WINNT_
         if (_MSC_VER ge 1600)
           InterlockedExchange8 equ <_InterlockedExchange8>
           InterlockedExchange16 equ <_InterlockedExchange16>
-          InterlockedExchangeNoFence8 equ <InterlockedExchange8>
-          InterlockedExchangeAcquire8 equ <InterlockedExchange8>
-          InterlockedExchange8 proto WIN_STD_CALL_CONV :ptr CHAR, :CHAR
-          InterlockedExchange16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_
         endif
         if _MSC_FULL_VER ge 140041204
           InterlockedExchangeAdd8 equ <_InterlockedExchangeAdd8>
           InterlockedAnd8 equ <_InterlockedAnd8>
-          InterlockedAndAcquire8 equ <_InterlockedAnd8>
-          InterlockedAndRelease8 equ <_InterlockedAnd8>
-          InterlockedAndNoFence8 equ <_InterlockedAnd8>
           InterlockedOr8 equ <_InterlockedOr8>
-          InterlockedOrAcquire8 equ <_InterlockedOr8>
-          InterlockedOrRelease8 equ <_InterlockedOr8>
-          InterlockedOrNoFence8 equ <_InterlockedOr8>
           InterlockedXor8 equ <_InterlockedXor8>
-          InterlockedXorAcquire8 equ <_InterlockedXor8>
-          InterlockedXorRelease8 equ <_InterlockedXor8>
-          InterlockedXorNoFence8 equ <_InterlockedXor8>
           InterlockedAnd16 equ <_InterlockedAnd16>
           InterlockedOr16 equ <_InterlockedOr16>
           InterlockedXor16 equ <_InterlockedXor16>
           InterlockedCompareExchange16 equ <_InterlockedCompareExchange16>
           InterlockedIncrement16 equ <_InterlockedIncrement16>
           InterlockedDecrement16 equ <_InterlockedDecrement16>
-          InterlockedExchangeAdd8 proto WIN_STD_CALL_CONV :ptr SBYTE, :SBYTE
-          InterlockedAnd8 proto WIN_STD_CALL_CONV :ptr SBYTE, :SBYTE
-          InterlockedOr8 proto WIN_STD_CALL_CONV :ptr SBYTE, :SBYTE
-          InterlockedXor8 proto WIN_STD_CALL_CONV :ptr SBYTE, :SBYTE
-          _InterlockedAnd16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_
-          InterlockedXor16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_
+          _InterlockedAnd16 proto c :ptr SHORT_, :SHORT_
           _InterlockedCompareExchange16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_, :SHORT_
           _InterlockedOr16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_
           _InterlockedIncrement16 proto WIN_STD_CALL_CONV :ptr SHORT_
           _InterlockedDecrement16 proto WIN_STD_CALL_CONV :ptr SHORT_
         endif
         InterlockedCompareExchange64 equ <_InterlockedCompareExchange64>
-        _InlineInterlockedAnd64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
         InterlockedAnd64 equ <_InlineInterlockedAnd64>
         InterlockedAnd64Acquire equ <_InlineInterlockedAnd64>
         InterlockedAnd64Release equ <_InlineInterlockedAnd64>
         InterlockedAnd64NoFence equ <_InlineInterlockedAnd64>
-        _InlineInterlockedAdd64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
         InterlockedAdd64 equ <_InlineInterlockedAdd64>
         InterlockedAddAcquire64 equ <_InlineInterlockedAdd64>
         InterlockedAddRelease64 equ <_InlineInterlockedAdd64>
@@ -3250,25 +2357,19 @@ ifndef _WINNT_
       _InterlockedXor proto WIN_STD_CALL_CONV :ptr LONG, :LONG
       InterlockedXor equ <_InterlockedXor>
       if  not Defined(_MANAGED)
-        _InlineInterlockedOr64 proto WIN_STD_CALL_CONV :ptr LONGLONG, :LONGLONG
         InterlockedOr64 equ <_InlineInterlockedOr64>
-        _InlineInterlockedXor64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
         InterlockedXor64 equ <_InlineInterlockedXor64>
-        _InlineInterlockedIncrement64 proto WIN_STD_CALL_CONV :ptr LONGLONG
         InterlockedIncrement64 equ <_InlineInterlockedIncrement64>
         InterlockedIncrementAcquire64 equ <InterlockedIncrement64>
         InterlockedIncrementRelease64 equ <InterlockedIncrement64>
         InterlockedIncrementNoFence64 equ <InterlockedIncrement64>
-        _InlineInterlockedDecrement64 proto WIN_STD_CALL_CONV :ptr LONGLONG
         InterlockedDecrement64 equ <_InlineInterlockedDecrement64>
         InterlockedDecrementAcquire64 equ <InterlockedDecrement64>
         InterlockedDecrementRelease64 equ <InterlockedDecrement64>
         InterlockedDecrementNoFence64 equ <InterlockedDecrement64>
-        _InlineInterlockedExchange64 proto WIN_STD_CALL_CONV :ptr LONGLONG, :LONGLONG
         InterlockedExchange64 equ <_InlineInterlockedExchange64>
         InterlockedExchangeAcquire64 equ <InterlockedExchange64>
         InterlockedExchangeNoFence64 equ <_InlineInterlockedExchange64>
-        _InlineInterlockedExchangeAdd64 proto WIN_STD_CALL_CONV :ptr LONGLONG, :LONGLONG
         InterlockedExchangeAdd64 equ <_InlineInterlockedExchangeAdd64>
         InterlockedExchangeAddNoFence64 equ <_InlineInterlockedExchangeAdd64>
         __incfsbyte proto WIN_STD_CALL_CONV :DWORD
@@ -3289,7 +2390,6 @@ ifndef _WINNT_
         __writefsbyte proto WIN_STD_CALL_CONV :DWORD, :BYTE
         __writefsword proto WIN_STD_CALL_CONV :DWORD, :WORD
         __writefsdword proto WIN_STD_CALL_CONV :DWORD, :DWORD
-        _ReadWriteBarrier proto WIN_STD_CALL_CONV
       endif
       if  not Defined(_MANAGED) and  not Defined(_M_HYBRID_X86_ARM64)
         _mm_pause proto WIN_STD_CALL_CONV
@@ -3301,7 +2401,6 @@ ifndef _WINNT_
     endif
     if  not Defined(MIDL_PASS) and Defined(_M_IX86)
       if  not Defined(_M_CEE_PURE) and  not Defined(_M_HYBRID_X86_ARM64)
-        MemoryBarrier proto WIN_STD_CALL_CONV
       endif
       if  not Defined(_M_HYBRID_X86_ARM64)
         _MM_HINT_T0 equ 1
@@ -3332,8 +2431,6 @@ ifndef _WINNT_
         endif
       endif
       if  not Defined(_MANAGED)
-        GetFiberData proto WIN_STD_CALL_CONV
-        GetCurrentFiber proto WIN_STD_CALL_CONV
       endif
     endif
     EXCEPTION_READ_FAULT equ 0
@@ -3401,7 +2498,8 @@ ifndef _WINNT_
       SegSs DWORD ?
       ExtendedRegisters BYTE MAXIMUM_SUPPORTED_EXTENSION dup (?)
     CONTEXT ends
-    _CONTEXT typedef CONTEXT
+
+;    _CONTEXT typedef CONTEXT
     PCONTEXT typedef ptr CONTEXT
     include poppack.inc
   endif
@@ -3418,99 +2516,24 @@ ifndef _WINNT_
           BaseHi BYTE ?
         ends
         struct Bits
-          Bits_REC record Bits_REC_BaseHi:8, Bits_REC_Granularity:1, Bits_REC_Default_Big:1, Bits_REC_Reserved_0:1, Bits_REC_Sys:1, Bits_REC_LimitHi:4, Bits_REC_Pres:1, Bits_REC_Dpl:2, Bits_REC_Type:5, Bits_REC_BaseMid:8
-          Bits_BITS Bits_REC <>
+          Bits_??0 record BaseMid_??0:8, Type_??0:5, Dpl_??0:2, Pres_??0:1, LimitHi_??0:4, Sys_??0:1, Reserved_0_??0:1, Default_Big_??0:1, Granularity_??0:1, BaseHi_??0:8
+          Bits_??0 <>
         ends
       ends
     LDT_ENTRY ends
     _LDT_ENTRY typedef LDT_ENTRY
     PLDT_ENTRY typedef ptr LDT_ENTRY
   endif
-  if Defined(_X86_)
-    KNONVOLATILE_CONTEXT_POINTERS struct
-      Dummy DWORD ?
-    KNONVOLATILE_CONTEXT_POINTERS ends
-    _KNONVOLATILE_CONTEXT_POINTERS typedef KNONVOLATILE_CONTEXT_POINTERS
-    PKNONVOLATILE_CONTEXT_POINTERS typedef ptr KNONVOLATILE_CONTEXT_POINTERS
-  endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if  not Defined(RC_INVOKED) and  not Defined(MIDL_PASS)
-      if ((Defined(_M_AMD64) or Defined(_M_IX86)) and  not Defined(_M_HYBRID_X86_ARM64) and  not Defined(_M_ARM64EC)) or Defined(_M_CEE_PURE)
+      if ((Defined(_M_AMD64) or Defined(_M_IX86)) and  not Defined(_M_HYBRID_X86_ARM64)) or Defined(_M_CEE_PURE)
         ifdef __cplusplus
           ;[...]
-        endif
-        ReadAcquire8 proto WIN_STD_CALL_CONV :ptr CHAR
-        ReadNoFence8 proto WIN_STD_CALL_CONV :ptr CHAR
-        WriteRelease8 proto WIN_STD_CALL_CONV :ptr CHAR, :CHAR
-        WriteNoFence8 proto WIN_STD_CALL_CONV :ptr CHAR, :CHAR
-        ReadAcquire16 proto WIN_STD_CALL_CONV :ptr SHORT_
-        ReadNoFence16 proto WIN_STD_CALL_CONV :ptr SHORT_
-        WriteRelease16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_
-        WriteNoFence16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_
-        ReadAcquire proto WIN_STD_CALL_CONV :ptr LONG
-        ReadNoFence proto WIN_STD_CALL_CONV :ptr LONG
-        WriteRelease proto WIN_STD_CALL_CONV :ptr LONG, :LONG
-        WriteNoFence proto WIN_STD_CALL_CONV :ptr LONG, :LONG
-        ReadAcquire64 proto WIN_STD_CALL_CONV :ptr LONG64
-        ReadNoFence64 proto WIN_STD_CALL_CONV :ptr LONG64
-        WriteRelease64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
-        WriteNoFence64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
-        if  not Defined(_M_CEE_PURE)
-          BarrierAfterRead proto WIN_STD_CALL_CONV
         endif
         ifdef __cplusplus
           ;[...]
         endif
       endif
-      ReadRaw8 proto WIN_STD_CALL_CONV :ptr CHAR
-      WriteRaw8 proto WIN_STD_CALL_CONV :ptr CHAR, :CHAR
-      ReadRaw16 proto WIN_STD_CALL_CONV :ptr SHORT_
-      WriteRaw16 proto WIN_STD_CALL_CONV :ptr SHORT_, :SHORT_
-      ReadRaw proto WIN_STD_CALL_CONV :ptr LONG
-      WriteRaw proto WIN_STD_CALL_CONV :ptr LONG, :LONG
-      ReadRaw64 proto WIN_STD_CALL_CONV :ptr LONG64
-      WriteRaw64 proto WIN_STD_CALL_CONV :ptr LONG64, :LONG64
-      ReadUCharAcquire proto WIN_STD_CALL_CONV :ptr BYTE
-      ReadUCharNoFence proto WIN_STD_CALL_CONV :ptr BYTE
-      ReadBooleanAcquire proto WIN_STD_CALL_CONV :ptr BOOLEAN
-      ReadBooleanNoFence proto WIN_STD_CALL_CONV :ptr BOOLEAN
-      ReadBooleanRaw proto WIN_STD_CALL_CONV :ptr BOOLEAN
-      ReadUCharRaw proto WIN_STD_CALL_CONV :ptr BYTE
-      WriteUCharRelease proto WIN_STD_CALL_CONV :ptr BYTE, :BYTE
-      WriteUCharNoFence proto WIN_STD_CALL_CONV :ptr BYTE, :BYTE
-      WriteBooleanRelease proto WIN_STD_CALL_CONV :ptr BOOLEAN, :BOOLEAN
-      WriteBooleanNoFence proto WIN_STD_CALL_CONV :ptr BOOLEAN, :BOOLEAN
-      WriteUCharRaw proto WIN_STD_CALL_CONV :ptr BYTE, :BYTE
-      ReadUShortAcquire proto WIN_STD_CALL_CONV :ptr WORD
-      ReadUShortNoFence proto WIN_STD_CALL_CONV :ptr WORD
-      ReadUShortRaw proto WIN_STD_CALL_CONV :ptr WORD
-      WriteUShortRelease proto WIN_STD_CALL_CONV :ptr WORD, :WORD
-      WriteUShortNoFence proto WIN_STD_CALL_CONV :ptr WORD, :WORD
-      WriteUShortRaw proto WIN_STD_CALL_CONV :ptr WORD, :WORD
-      ReadULongAcquire proto WIN_STD_CALL_CONV :ptr DWORD
-      ReadULongNoFence proto WIN_STD_CALL_CONV :ptr DWORD
-      ReadULongRaw proto WIN_STD_CALL_CONV :ptr DWORD
-      WriteULongRelease proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD
-      WriteULongNoFence proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD
-      WriteULongRaw proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD
-      ReadInt32Acquire proto WIN_STD_CALL_CONV :ptr INT32
-      ReadInt32NoFence proto WIN_STD_CALL_CONV :ptr INT32
-      ReadInt32Raw proto WIN_STD_CALL_CONV :ptr INT32
-      WriteInt32Release proto WIN_STD_CALL_CONV :ptr INT32, :INT32
-      WriteInt32NoFence proto WIN_STD_CALL_CONV :ptr INT32, :INT32
-      WriteInt32Raw proto WIN_STD_CALL_CONV :ptr INT32, :INT32
-      ReadUInt32Acquire proto WIN_STD_CALL_CONV :ptr UINT32
-      ReadUInt32NoFence proto WIN_STD_CALL_CONV :ptr UINT32
-      ReadUInt32Raw proto WIN_STD_CALL_CONV :ptr UINT32
-      WriteUInt32Release proto WIN_STD_CALL_CONV :ptr UINT32, :UINT32
-      WriteUInt32NoFence proto WIN_STD_CALL_CONV :ptr UINT32, :UINT32
-      WriteUInt32Raw proto WIN_STD_CALL_CONV :ptr UINT32, :UINT32
-      ReadULong64Acquire proto WIN_STD_CALL_CONV :ptr DWORD64
-      ReadULong64NoFence proto WIN_STD_CALL_CONV :ptr DWORD64
-      ReadULong64Raw proto WIN_STD_CALL_CONV :ptr DWORD64
-      WriteULong64Release proto WIN_STD_CALL_CONV :ptr DWORD64, :DWORD64
-      WriteULong64NoFence proto WIN_STD_CALL_CONV :ptr DWORD64, :DWORD64
-      WriteULong64Raw proto WIN_STD_CALL_CONV :ptr DWORD64, :DWORD64
       ReadSizeTAcquire equ <ReadULongPtrAcquire>
       ReadSizeTNoFence equ <ReadULongPtrNoFence>
       ReadSizeTRaw equ <ReadULongPtrRaw>
@@ -3518,12 +2541,6 @@ ifndef _WINNT_
       WriteSizeTNoFence equ <WriteULongPtrNoFence>
       WriteSizeTRaw equ <WriteULongPtrRaw>
       if  not Defined(_WIN64)
-        ReadPointerAcquire proto WIN_STD_CALL_CONV :ptr PVOID
-        ReadPointerNoFence proto WIN_STD_CALL_CONV :ptr PVOID
-        ReadPointerRaw proto WIN_STD_CALL_CONV :ptr PVOID
-        WritePointerRelease proto WIN_STD_CALL_CONV :ptr PVOID, :PVOID
-        WritePointerNoFence proto WIN_STD_CALL_CONV :ptr PVOID, :PVOID
-        WritePointerRaw proto WIN_STD_CALL_CONV :ptr PVOID, :PVOID
         ReadLongPtrAcquire equ <ReadAcquire>
         ReadLongPtrNoFence equ <ReadNoFence>
         ReadLongPtrRaw equ <ReadRaw>
@@ -3537,12 +2554,6 @@ ifndef _WINNT_
         WriteULongPtrNoFence equ <WriteULongNoFence>
         WriteULongPtrRaw equ <WriteULongRaw>
       else
-        ReadPointerAcquire proto WIN_STD_CALL_CONV :ptr PVOID
-        ReadPointerNoFence proto WIN_STD_CALL_CONV :ptr PVOID
-        ReadPointerRaw proto WIN_STD_CALL_CONV :ptr PVOID
-        WritePointerRelease proto WIN_STD_CALL_CONV :ptr PVOID, :PVOID
-        WritePointerNoFence proto WIN_STD_CALL_CONV :ptr PVOID, :PVOID
-        WritePointerRaw proto WIN_STD_CALL_CONV :ptr PVOID, :PVOID
         ReadLongPtrAcquire equ <ReadAcquire64>
         ReadLongPtrNoFence equ <ReadNoFence64>
         ReadLongPtrRaw equ <ReadRaw64>
@@ -3557,8 +2568,6 @@ ifndef _WINNT_
         WriteULongPtrRaw equ <WriteULong64Raw>
       endif
     endif
-  endif
-  if _MSC_VER ge 1200
   endif
   if  not Defined(RC_INVOKED)
     WOW64_CONTEXT_i386 equ 00010000h
@@ -3634,8 +2643,8 @@ ifndef _WINNT_
         BaseHi BYTE ?
       ends
       struct Bits
-        Bits_REC record Bits_REC_BaseHi:8, Bits_REC_Granularity:1, Bits_REC_Default_Big:1, Bits_REC_Reserved_0:1, Bits_REC_Sys:1, Bits_REC_LimitHi:4, Bits_REC_Pres:1, Bits_REC_Dpl:2, Bits_REC_Type:5, Bits_REC_BaseMid:8
-        Bits_BITS Bits_REC <>
+        Bits_??1 record BaseMid_??1:8, Type_??1:5, Dpl_??1:2, Pres_??1:1, LimitHi_??1:4, Sys_??1:1, Reserved_0_??1:1, Default_Big_??1:1, Granularity_??1:1, BaseHi_??1:8
+        Bits_??1 <>
       ends
     ends
   WOW64_LDT_ENTRY ends
@@ -3647,8 +2656,6 @@ ifndef _WINNT_
   WOW64_DESCRIPTOR_TABLE_ENTRY ends
   _WOW64_DESCRIPTOR_TABLE_ENTRY typedef WOW64_DESCRIPTOR_TABLE_ENTRY
   PWOW64_DESCRIPTOR_TABLE_ENTRY typedef ptr WOW64_DESCRIPTOR_TABLE_ENTRY
-  if _MSC_VER ge 1200
-  endif
   EXCEPTION_NONCONTINUABLE equ 1h
   EXCEPTION_UNWINDING equ 2h
   EXCEPTION_EXIT_UNWIND equ 4h
@@ -3656,7 +2663,6 @@ ifndef _WINNT_
   EXCEPTION_NESTED_CALL equ 10h
   EXCEPTION_TARGET_UNWIND equ 20h
   EXCEPTION_COLLIDED_UNWIND equ 40h
-  EXCEPTION_SOFTWARE_ORIGINATE equ 80h
   EXCEPTION_UNWIND equ <(EXCEPTION_UNWINDING or EXCEPTION_EXIT_UNWIND or EXCEPTION_TARGET_UNWIND or EXCEPTION_COLLIDED_UNWIND)>
   IS_UNWINDING macro Flag
     exitm <((Flag and EXCEPTION_UNWIND) != 0)>
@@ -3676,7 +2682,8 @@ ifndef _WINNT_
     NumberParameters DWORD ?
     ExceptionInformation ULONG_PTR EXCEPTION_MAXIMUM_PARAMETERS dup (?)
   EXCEPTION_RECORD ends
-  _EXCEPTION_RECORD typedef EXCEPTION_RECORD
+
+;  _EXCEPTION_RECORD typedef EXCEPTION_RECORD
   PEXCEPTION_RECORD typedef ptr EXCEPTION_RECORD
   EXCEPTION_RECORD32 struct
     ExceptionCode DWORD ?
@@ -3714,23 +2721,23 @@ ifndef _WINNT_
   PCLAIMS_BLOB typedef PVOID
   ACCESS_MASK typedef DWORD
   PACCESS_MASK typedef ptr ACCESS_MASK
-  DELETE equ (00010000h)
-  READ_CONTROL equ (00020000h)
-  WRITE_DAC equ (00040000h)
-  WRITE_OWNER equ (00080000h)
-  SYNCHRONIZE equ (00100000h)
-  STANDARD_RIGHTS_REQUIRED equ (000F0000h)
+  DELETE equ 00010000h
+  READ_CONTROL equ 00020000h
+  WRITE_DAC equ 00040000h
+  WRITE_OWNER equ 00080000h
+  SYNCHRONIZE equ 00100000h
+  STANDARD_RIGHTS_REQUIRED equ 000F0000h
   STANDARD_RIGHTS_READ equ <(READ_CONTROL)>
   STANDARD_RIGHTS_WRITE equ <(READ_CONTROL)>
   STANDARD_RIGHTS_EXECUTE equ <(READ_CONTROL)>
-  STANDARD_RIGHTS_ALL equ (001F0000h)
-  SPECIFIC_RIGHTS_ALL equ (0000FFFFh)
-  ACCESS_SYSTEM_SECURITY equ (01000000h)
-  MAXIMUM_ALLOWED equ (02000000h)
-  GENERIC_READ equ (80000000h)
-  GENERIC_WRITE equ (40000000h)
-  GENERIC_EXECUTE equ (20000000h)
-  GENERIC_ALL equ (10000000h)
+  STANDARD_RIGHTS_ALL equ 001F0000h
+  SPECIFIC_RIGHTS_ALL equ 0000FFFFh
+  ACCESS_SYSTEM_SECURITY equ 01000000h
+  MAXIMUM_ALLOWED equ 02000000h
+  GENERIC_READ equ 80000000h
+  GENERIC_WRITE equ 40000000h
+  GENERIC_EXECUTE equ 20000000h
+  GENERIC_ALL equ 10000000h
   GENERIC_MAPPING struct
     GenericRead ACCESS_MASK ?
     GenericWrite ACCESS_MASK ?
@@ -3774,9 +2781,9 @@ ifndef _WINNT_
     _SID typedef SID
     PISID typedef ptr SID
   endif
-  SID_REVISION equ (1)
-  SID_MAX_SUB_AUTHORITIES equ (15)
-  SID_RECOMMENDED_SUB_AUTHORITIES equ (1)
+  SID_REVISION equ 1
+  SID_MAX_SUB_AUTHORITIES equ 15
+  SID_RECOMMENDED_SUB_AUTHORITIES equ 1
   ifndef MIDL_PASS
     SECURITY_MAX_SID_SIZE equ <(sizeof(SID) - sizeof(DWORD) + (SID_MAX_SUB_AUTHORITIES * sizeof(DWORD)))>
     SECURITY_SID_SIZE macro SubAuthorityCount_
@@ -3834,205 +2841,204 @@ ifndef _WINNT_
   SECURITY_CREATOR_SID_AUTHORITY equ { 0, 0, 0, 0, 0, 3 }
   SECURITY_NON_UNIQUE_AUTHORITY equ { 0, 0, 0, 0, 0, 4 }
   SECURITY_RESOURCE_MANAGER_AUTHORITY equ { 0, 0, 0, 0, 0, 9 }
-  SECURITY_NULL_RID equ (00000000h)
-  SECURITY_WORLD_RID equ (00000000h)
-  SECURITY_LOCAL_RID equ (00000000h)
-  SECURITY_LOCAL_LOGON_RID equ (00000001h)
-  SECURITY_CREATOR_OWNER_RID equ (00000000h)
-  SECURITY_CREATOR_GROUP_RID equ (00000001h)
-  SECURITY_CREATOR_OWNER_SERVER_RID equ (00000002h)
-  SECURITY_CREATOR_GROUP_SERVER_RID equ (00000003h)
-  SECURITY_CREATOR_OWNER_RIGHTS_RID equ (00000004h)
+  SECURITY_NULL_RID equ 00000000h
+  SECURITY_WORLD_RID equ 00000000h
+  SECURITY_LOCAL_RID equ 00000000h
+  SECURITY_LOCAL_LOGON_RID equ 00000001h
+  SECURITY_CREATOR_OWNER_RID equ 00000000h
+  SECURITY_CREATOR_GROUP_RID equ 00000001h
+  SECURITY_CREATOR_OWNER_SERVER_RID equ 00000002h
+  SECURITY_CREATOR_GROUP_SERVER_RID equ 00000003h
+  SECURITY_CREATOR_OWNER_RIGHTS_RID equ 00000004h
   SECURITY_NT_AUTHORITY equ { 0, 0, 0, 0, 0, 5 }
-  SECURITY_DIALUP_RID equ (00000001h)
-  SECURITY_NETWORK_RID equ (00000002h)
-  SECURITY_BATCH_RID equ (00000003h)
-  SECURITY_INTERACTIVE_RID equ (00000004h)
-  SECURITY_LOGON_IDS_RID equ (00000005h)
-  SECURITY_LOGON_IDS_RID_COUNT equ (3)
-  SECURITY_SERVICE_RID equ (00000006h)
-  SECURITY_ANONYMOUS_LOGON_RID equ (00000007h)
-  SECURITY_PROXY_RID equ (00000008h)
-  SECURITY_ENTERPRISE_CONTROLLERS_RID equ (00000009h)
+  SECURITY_DIALUP_RID equ 00000001h
+  SECURITY_NETWORK_RID equ 00000002h
+  SECURITY_BATCH_RID equ 00000003h
+  SECURITY_INTERACTIVE_RID equ 00000004h
+  SECURITY_LOGON_IDS_RID equ 00000005h
+  SECURITY_LOGON_IDS_RID_COUNT equ 3
+  SECURITY_SERVICE_RID equ 00000006h
+  SECURITY_ANONYMOUS_LOGON_RID equ 00000007h
+  SECURITY_PROXY_RID equ 00000008h
+  SECURITY_ENTERPRISE_CONTROLLERS_RID equ 00000009h
   SECURITY_SERVER_LOGON_RID equ <SECURITY_ENTERPRISE_CONTROLLERS_RID>
-  SECURITY_PRINCIPAL_SELF_RID equ (0000000Ah)
-  SECURITY_AUTHENTICATED_USER_RID equ (0000000Bh)
-  SECURITY_RESTRICTED_CODE_RID equ (0000000Ch)
-  SECURITY_TERMINAL_SERVER_RID equ (0000000Dh)
-  SECURITY_REMOTE_LOGON_RID equ (0000000Eh)
-  SECURITY_THIS_ORGANIZATION_RID equ (0000000Fh)
-  SECURITY_IUSER_RID equ (00000011h)
-  SECURITY_LOCAL_SYSTEM_RID equ (00000012h)
-  SECURITY_LOCAL_SERVICE_RID equ (00000013h)
-  SECURITY_NETWORK_SERVICE_RID equ (00000014h)
-  SECURITY_NT_NON_UNIQUE equ (00000015h)
-  SECURITY_NT_NON_UNIQUE_SUB_AUTH_COUNT equ (3)
-  SECURITY_ENTERPRISE_READONLY_CONTROLLERS_RID equ (00000016h)
-  SECURITY_BUILTIN_DOMAIN_RID equ (00000020h)
-  SECURITY_WRITE_RESTRICTED_CODE_RID equ (00000021h)
-  SECURITY_PACKAGE_BASE_RID equ (00000040h)
-  SECURITY_PACKAGE_RID_COUNT equ (2)
-  SECURITY_PACKAGE_NTLM_RID equ (0000000Ah)
-  SECURITY_PACKAGE_SCHANNEL_RID equ (0000000Eh)
-  SECURITY_PACKAGE_DIGEST_RID equ (00000015h)
-  SECURITY_CRED_TYPE_BASE_RID equ (00000041h)
-  SECURITY_CRED_TYPE_RID_COUNT equ (2)
-  SECURITY_CRED_TYPE_THIS_ORG_CERT_RID equ (00000001h)
-  SECURITY_MIN_BASE_RID equ (00000050h)
-  SECURITY_SERVICE_ID_BASE_RID equ (00000050h)
-  SECURITY_SERVICE_ID_RID_COUNT equ (6)
-  SECURITY_RESERVED_ID_BASE_RID equ (00000051h)
-  SECURITY_APPPOOL_ID_BASE_RID equ (00000052h)
-  SECURITY_APPPOOL_ID_RID_COUNT equ (6)
-  SECURITY_VIRTUALSERVER_ID_BASE_RID equ (00000053h)
-  SECURITY_VIRTUALSERVER_ID_RID_COUNT equ (6)
-  SECURITY_USERMODEDRIVERHOST_ID_BASE_RID equ (00000054h)
-  SECURITY_USERMODEDRIVERHOST_ID_RID_COUNT equ (6)
-  SECURITY_CLOUD_INFRASTRUCTURE_SERVICES_ID_BASE_RID equ (00000055h)
-  SECURITY_CLOUD_INFRASTRUCTURE_SERVICES_ID_RID_COUNT equ (6)
-  SECURITY_WMIHOST_ID_BASE_RID equ (00000056h)
-  SECURITY_WMIHOST_ID_RID_COUNT equ (6)
-  SECURITY_TASK_ID_BASE_RID equ (00000057h)
-  SECURITY_NFS_ID_BASE_RID equ (00000058h)
-  SECURITY_COM_ID_BASE_RID equ (00000059h)
-  SECURITY_WINDOW_MANAGER_BASE_RID equ (0000005Ah)
-  SECURITY_RDV_GFX_BASE_RID equ (0000005Bh)
-  SECURITY_DASHOST_ID_BASE_RID equ (0000005Ch)
-  SECURITY_DASHOST_ID_RID_COUNT equ (6)
-  SECURITY_USERMANAGER_ID_BASE_RID equ (0000005Dh)
-  SECURITY_USERMANAGER_ID_RID_COUNT equ (6)
-  SECURITY_WINRM_ID_BASE_RID equ (0000005Eh)
-  SECURITY_WINRM_ID_RID_COUNT equ (6)
-  SECURITY_CCG_ID_BASE_RID equ (0000005Fh)
-  SECURITY_UMFD_BASE_RID equ (00000060h)
-  SECURITY_VIRTUALACCOUNT_ID_RID_COUNT equ (6)
-  SECURITY_MAX_BASE_RID equ (0000006Fh)
-  SECURITY_MAX_ALWAYS_FILTERED equ (000003E7h)
-  SECURITY_MIN_NEVER_FILTERED equ (000003E8h)
-  SECURITY_OTHER_ORGANIZATION_RID equ (000003E8h)
-  SECURITY_WINDOWSMOBILE_ID_BASE_RID equ (00000070h)
-  SECURITY_INSTALLER_GROUP_CAPABILITY_BASE equ (20h)
-  SECURITY_INSTALLER_GROUP_CAPABILITY_RID_COUNT equ (9)
-  SECURITY_INSTALLER_CAPABILITY_RID_COUNT equ (10)
-  SECURITY_LOCAL_ACCOUNT_RID equ (00000071h)
-  SECURITY_LOCAL_ACCOUNT_AND_ADMIN_RID equ (00000072h)
-  DOMAIN_GROUP_RID_AUTHORIZATION_DATA_IS_COMPOUNDED equ (000001F0h)
-  DOMAIN_GROUP_RID_AUTHORIZATION_DATA_CONTAINS_CLAIMS equ (000001F1h)
-  DOMAIN_GROUP_RID_ENTERPRISE_READONLY_DOMAIN_CONTROLLERS equ (000001F2h)
-  FOREST_USER_RID_MAX equ (000001F3h)
-  DOMAIN_USER_RID_ADMIN equ (000001F4h)
-  DOMAIN_USER_RID_GUEST equ (000001F5h)
-  DOMAIN_USER_RID_KRBTGT equ (000001F6h)
-  DOMAIN_USER_RID_DEFAULT_ACCOUNT equ (000001F7h)
-  DOMAIN_USER_RID_WDAG_ACCOUNT equ (000001F8h)
-  DOMAIN_USER_RID_MAX equ (000003E7h)
-  DOMAIN_GROUP_RID_ADMINS equ (00000200h)
-  DOMAIN_GROUP_RID_USERS equ (00000201h)
-  DOMAIN_GROUP_RID_GUESTS equ (00000202h)
-  DOMAIN_GROUP_RID_COMPUTERS equ (00000203h)
-  DOMAIN_GROUP_RID_CONTROLLERS equ (00000204h)
-  DOMAIN_GROUP_RID_CERT_ADMINS equ (00000205h)
-  DOMAIN_GROUP_RID_SCHEMA_ADMINS equ (00000206h)
-  DOMAIN_GROUP_RID_ENTERPRISE_ADMINS equ (00000207h)
-  DOMAIN_GROUP_RID_POLICY_ADMINS equ (00000208h)
-  DOMAIN_GROUP_RID_READONLY_CONTROLLERS equ (00000209h)
-  DOMAIN_GROUP_RID_CLONEABLE_CONTROLLERS equ (0000020Ah)
-  DOMAIN_GROUP_RID_CDC_RESERVED equ (0000020Ch)
-  DOMAIN_GROUP_RID_PROTECTED_USERS equ (0000020Dh)
-  DOMAIN_GROUP_RID_KEY_ADMINS equ (0000020Eh)
-  DOMAIN_GROUP_RID_ENTERPRISE_KEY_ADMINS equ (0000020Fh)
-  DOMAIN_ALIAS_RID_ADMINS equ (00000220h)
-  DOMAIN_ALIAS_RID_USERS equ (00000221h)
-  DOMAIN_ALIAS_RID_GUESTS equ (00000222h)
-  DOMAIN_ALIAS_RID_POWER_USERS equ (00000223h)
-  DOMAIN_ALIAS_RID_ACCOUNT_OPS equ (00000224h)
-  DOMAIN_ALIAS_RID_SYSTEM_OPS equ (00000225h)
-  DOMAIN_ALIAS_RID_PRINT_OPS equ (00000226h)
-  DOMAIN_ALIAS_RID_BACKUP_OPS equ (00000227h)
-  DOMAIN_ALIAS_RID_REPLICATOR equ (00000228h)
-  DOMAIN_ALIAS_RID_RAS_SERVERS equ (00000229h)
-  DOMAIN_ALIAS_RID_PREW2KCOMPACCESS equ (0000022Ah)
-  DOMAIN_ALIAS_RID_REMOTE_DESKTOP_USERS equ (0000022Bh)
-  DOMAIN_ALIAS_RID_NETWORK_CONFIGURATION_OPS equ (0000022Ch)
-  DOMAIN_ALIAS_RID_INCOMING_FOREST_TRUST_BUILDERS equ (0000022Dh)
-  DOMAIN_ALIAS_RID_MONITORING_USERS equ (0000022Eh)
-  DOMAIN_ALIAS_RID_LOGGING_USERS equ (0000022Fh)
-  DOMAIN_ALIAS_RID_AUTHORIZATIONACCESS equ (00000230h)
-  DOMAIN_ALIAS_RID_TS_LICENSE_SERVERS equ (00000231h)
-  DOMAIN_ALIAS_RID_DCOM_USERS equ (00000232h)
-  DOMAIN_ALIAS_RID_IUSERS equ (00000238h)
-  DOMAIN_ALIAS_RID_CRYPTO_OPERATORS equ (00000239h)
-  DOMAIN_ALIAS_RID_CACHEABLE_PRINCIPALS_GROUP equ (0000023Bh)
-  DOMAIN_ALIAS_RID_NON_CACHEABLE_PRINCIPALS_GROUP equ (0000023Ch)
-  DOMAIN_ALIAS_RID_EVENT_LOG_READERS_GROUP equ (0000023Dh)
-  DOMAIN_ALIAS_RID_CERTSVC_DCOM_ACCESS_GROUP equ (0000023Eh)
-  DOMAIN_ALIAS_RID_RDS_REMOTE_ACCESS_SERVERS equ (0000023Fh)
-  DOMAIN_ALIAS_RID_RDS_ENDPOINT_SERVERS equ (00000240h)
-  DOMAIN_ALIAS_RID_RDS_MANAGEMENT_SERVERS equ (00000241h)
-  DOMAIN_ALIAS_RID_HYPER_V_ADMINS equ (00000242h)
-  DOMAIN_ALIAS_RID_ACCESS_CONTROL_ASSISTANCE_OPS equ (00000243h)
-  DOMAIN_ALIAS_RID_REMOTE_MANAGEMENT_USERS equ (00000244h)
-  DOMAIN_ALIAS_RID_DEFAULT_ACCOUNT equ (00000245h)
-  DOMAIN_ALIAS_RID_STORAGE_REPLICA_ADMINS equ (00000246h)
-  DOMAIN_ALIAS_RID_DEVICE_OWNERS equ (00000247h)
+  SECURITY_PRINCIPAL_SELF_RID equ 0000000Ah
+  SECURITY_AUTHENTICATED_USER_RID equ 0000000Bh
+  SECURITY_RESTRICTED_CODE_RID equ 0000000Ch
+  SECURITY_TERMINAL_SERVER_RID equ 0000000Dh
+  SECURITY_REMOTE_LOGON_RID equ 0000000Eh
+  SECURITY_THIS_ORGANIZATION_RID equ 0000000Fh
+  SECURITY_IUSER_RID equ 00000011h
+  SECURITY_LOCAL_SYSTEM_RID equ 00000012h
+  SECURITY_LOCAL_SERVICE_RID equ 00000013h
+  SECURITY_NETWORK_SERVICE_RID equ 00000014h
+  SECURITY_NT_NON_UNIQUE equ 00000015h
+  SECURITY_NT_NON_UNIQUE_SUB_AUTH_COUNT equ 3
+  SECURITY_ENTERPRISE_READONLY_CONTROLLERS_RID equ 00000016h
+  SECURITY_BUILTIN_DOMAIN_RID equ 00000020h
+  SECURITY_WRITE_RESTRICTED_CODE_RID equ 00000021h
+  SECURITY_PACKAGE_BASE_RID equ 00000040h
+  SECURITY_PACKAGE_RID_COUNT equ 2
+  SECURITY_PACKAGE_NTLM_RID equ 0000000Ah
+  SECURITY_PACKAGE_SCHANNEL_RID equ 0000000Eh
+  SECURITY_PACKAGE_DIGEST_RID equ 00000015h
+  SECURITY_CRED_TYPE_BASE_RID equ 00000041h
+  SECURITY_CRED_TYPE_RID_COUNT equ 2
+  SECURITY_CRED_TYPE_THIS_ORG_CERT_RID equ 00000001h
+  SECURITY_MIN_BASE_RID equ 00000050h
+  SECURITY_SERVICE_ID_BASE_RID equ 00000050h
+  SECURITY_SERVICE_ID_RID_COUNT equ 6
+  SECURITY_RESERVED_ID_BASE_RID equ 00000051h
+  SECURITY_APPPOOL_ID_BASE_RID equ 00000052h
+  SECURITY_APPPOOL_ID_RID_COUNT equ 6
+  SECURITY_VIRTUALSERVER_ID_BASE_RID equ 00000053h
+  SECURITY_VIRTUALSERVER_ID_RID_COUNT equ 6
+  SECURITY_USERMODEDRIVERHOST_ID_BASE_RID equ 00000054h
+  SECURITY_USERMODEDRIVERHOST_ID_RID_COUNT equ 6
+  SECURITY_CLOUD_INFRASTRUCTURE_SERVICES_ID_BASE_RID equ 00000055h
+  SECURITY_CLOUD_INFRASTRUCTURE_SERVICES_ID_RID_COUNT equ 6
+  SECURITY_WMIHOST_ID_BASE_RID equ 00000056h
+  SECURITY_WMIHOST_ID_RID_COUNT equ 6
+  SECURITY_TASK_ID_BASE_RID equ 00000057h
+  SECURITY_NFS_ID_BASE_RID equ 00000058h
+  SECURITY_COM_ID_BASE_RID equ 00000059h
+  SECURITY_WINDOW_MANAGER_BASE_RID equ 0000005Ah
+  SECURITY_RDV_GFX_BASE_RID equ 0000005Bh
+  SECURITY_DASHOST_ID_BASE_RID equ 0000005Ch
+  SECURITY_DASHOST_ID_RID_COUNT equ 6
+  SECURITY_USERMANAGER_ID_BASE_RID equ 0000005Dh
+  SECURITY_USERMANAGER_ID_RID_COUNT equ 6
+  SECURITY_WINRM_ID_BASE_RID equ 0000005Eh
+  SECURITY_WINRM_ID_RID_COUNT equ 6
+  SECURITY_CCG_ID_BASE_RID equ 0000005Fh
+  SECURITY_UMFD_BASE_RID equ 00000060h
+  SECURITY_VIRTUALACCOUNT_ID_RID_COUNT equ 6
+  SECURITY_MAX_BASE_RID equ 0000006Fh
+  SECURITY_MAX_ALWAYS_FILTERED equ 000003E7h
+  SECURITY_MIN_NEVER_FILTERED equ 000003E8h
+  SECURITY_OTHER_ORGANIZATION_RID equ 000003E8h
+  SECURITY_WINDOWSMOBILE_ID_BASE_RID equ 00000070h
+  SECURITY_INSTALLER_GROUP_CAPABILITY_BASE equ 20h
+  SECURITY_INSTALLER_GROUP_CAPABILITY_RID_COUNT equ 9
+  SECURITY_INSTALLER_CAPABILITY_RID_COUNT equ 10
+  SECURITY_LOCAL_ACCOUNT_RID equ 00000071h
+  SECURITY_LOCAL_ACCOUNT_AND_ADMIN_RID equ 00000072h
+  DOMAIN_GROUP_RID_AUTHORIZATION_DATA_IS_COMPOUNDED equ 000001F0h
+  DOMAIN_GROUP_RID_AUTHORIZATION_DATA_CONTAINS_CLAIMS equ 000001F1h
+  DOMAIN_GROUP_RID_ENTERPRISE_READONLY_DOMAIN_CONTROLLERS equ 000001F2h
+  FOREST_USER_RID_MAX equ 000001F3h
+  DOMAIN_USER_RID_ADMIN equ 000001F4h
+  DOMAIN_USER_RID_GUEST equ 000001F5h
+  DOMAIN_USER_RID_KRBTGT equ 000001F6h
+  DOMAIN_USER_RID_DEFAULT_ACCOUNT equ 000001F7h
+  DOMAIN_USER_RID_WDAG_ACCOUNT equ 000001F8h
+  DOMAIN_USER_RID_MAX equ 000003E7h
+  DOMAIN_GROUP_RID_ADMINS equ 00000200h
+  DOMAIN_GROUP_RID_USERS equ 00000201h
+  DOMAIN_GROUP_RID_GUESTS equ 00000202h
+  DOMAIN_GROUP_RID_COMPUTERS equ 00000203h
+  DOMAIN_GROUP_RID_CONTROLLERS equ 00000204h
+  DOMAIN_GROUP_RID_CERT_ADMINS equ 00000205h
+  DOMAIN_GROUP_RID_SCHEMA_ADMINS equ 00000206h
+  DOMAIN_GROUP_RID_ENTERPRISE_ADMINS equ 00000207h
+  DOMAIN_GROUP_RID_POLICY_ADMINS equ 00000208h
+  DOMAIN_GROUP_RID_READONLY_CONTROLLERS equ 00000209h
+  DOMAIN_GROUP_RID_CLONEABLE_CONTROLLERS equ 0000020Ah
+  DOMAIN_GROUP_RID_CDC_RESERVED equ 0000020Ch
+  DOMAIN_GROUP_RID_PROTECTED_USERS equ 0000020Dh
+  DOMAIN_GROUP_RID_KEY_ADMINS equ 0000020Eh
+  DOMAIN_GROUP_RID_ENTERPRISE_KEY_ADMINS equ 0000020Fh
+  DOMAIN_ALIAS_RID_ADMINS equ 00000220h
+  DOMAIN_ALIAS_RID_USERS equ 00000221h
+  DOMAIN_ALIAS_RID_GUESTS equ 00000222h
+  DOMAIN_ALIAS_RID_POWER_USERS equ 00000223h
+  DOMAIN_ALIAS_RID_ACCOUNT_OPS equ 00000224h
+  DOMAIN_ALIAS_RID_SYSTEM_OPS equ 00000225h
+  DOMAIN_ALIAS_RID_PRINT_OPS equ 00000226h
+  DOMAIN_ALIAS_RID_BACKUP_OPS equ 00000227h
+  DOMAIN_ALIAS_RID_REPLICATOR equ 00000228h
+  DOMAIN_ALIAS_RID_RAS_SERVERS equ 00000229h
+  DOMAIN_ALIAS_RID_PREW2KCOMPACCESS equ 0000022Ah
+  DOMAIN_ALIAS_RID_REMOTE_DESKTOP_USERS equ 0000022Bh
+  DOMAIN_ALIAS_RID_NETWORK_CONFIGURATION_OPS equ 0000022Ch
+  DOMAIN_ALIAS_RID_INCOMING_FOREST_TRUST_BUILDERS equ 0000022Dh
+  DOMAIN_ALIAS_RID_MONITORING_USERS equ 0000022Eh
+  DOMAIN_ALIAS_RID_LOGGING_USERS equ 0000022Fh
+  DOMAIN_ALIAS_RID_AUTHORIZATIONACCESS equ 00000230h
+  DOMAIN_ALIAS_RID_TS_LICENSE_SERVERS equ 00000231h
+  DOMAIN_ALIAS_RID_DCOM_USERS equ 00000232h
+  DOMAIN_ALIAS_RID_IUSERS equ 00000238h
+  DOMAIN_ALIAS_RID_CRYPTO_OPERATORS equ 00000239h
+  DOMAIN_ALIAS_RID_CACHEABLE_PRINCIPALS_GROUP equ 0000023Bh
+  DOMAIN_ALIAS_RID_NON_CACHEABLE_PRINCIPALS_GROUP equ 0000023Ch
+  DOMAIN_ALIAS_RID_EVENT_LOG_READERS_GROUP equ 0000023Dh
+  DOMAIN_ALIAS_RID_CERTSVC_DCOM_ACCESS_GROUP equ 0000023Eh
+  DOMAIN_ALIAS_RID_RDS_REMOTE_ACCESS_SERVERS equ 0000023Fh
+  DOMAIN_ALIAS_RID_RDS_ENDPOINT_SERVERS equ 00000240h
+  DOMAIN_ALIAS_RID_RDS_MANAGEMENT_SERVERS equ 00000241h
+  DOMAIN_ALIAS_RID_HYPER_V_ADMINS equ 00000242h
+  DOMAIN_ALIAS_RID_ACCESS_CONTROL_ASSISTANCE_OPS equ 00000243h
+  DOMAIN_ALIAS_RID_REMOTE_MANAGEMENT_USERS equ 00000244h
+  DOMAIN_ALIAS_RID_DEFAULT_ACCOUNT equ 00000245h
+  DOMAIN_ALIAS_RID_STORAGE_REPLICA_ADMINS equ 00000246h
+  DOMAIN_ALIAS_RID_DEVICE_OWNERS equ 00000247h
   SECURITY_APP_PACKAGE_AUTHORITY equ { 0, 0, 0, 0, 0, 15 }
-  SECURITY_APP_PACKAGE_BASE_RID equ (00000002h)
-  SECURITY_BUILTIN_APP_PACKAGE_RID_COUNT equ (2)
-  SECURITY_APP_PACKAGE_RID_COUNT equ (8)
-  SECURITY_CAPABILITY_BASE_RID equ (00000003h)
-  SECURITY_CAPABILITY_APP_RID equ (00000400h)
-  SECURITY_CAPABILITY_APP_SILO_RID equ (00010000h)
-  SECURITY_BUILTIN_CAPABILITY_RID_COUNT equ (2)
-  SECURITY_CAPABILITY_RID_COUNT equ (5)
+  SECURITY_APP_PACKAGE_BASE_RID equ 00000002h
+  SECURITY_BUILTIN_APP_PACKAGE_RID_COUNT equ 2
+  SECURITY_APP_PACKAGE_RID_COUNT equ 8
+  SECURITY_CAPABILITY_BASE_RID equ 00000003h
+  SECURITY_CAPABILITY_APP_RID equ 000000400h
+  SECURITY_BUILTIN_CAPABILITY_RID_COUNT equ 2
+  SECURITY_CAPABILITY_RID_COUNT equ 5
   SECURITY_PARENT_PACKAGE_RID_COUNT equ <(SECURITY_APP_PACKAGE_RID_COUNT)>
-  SECURITY_CHILD_PACKAGE_RID_COUNT equ (12)
-  SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE equ (00000001h)
-  SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE equ (00000002h)
-  SECURITY_CAPABILITY_INTERNET_CLIENT equ (00000001h)
-  SECURITY_CAPABILITY_INTERNET_CLIENT_SERVER equ (00000002h)
-  SECURITY_CAPABILITY_PRIVATE_NETWORK_CLIENT_SERVER equ (00000003h)
-  SECURITY_CAPABILITY_PICTURES_LIBRARY equ (00000004h)
-  SECURITY_CAPABILITY_VIDEOS_LIBRARY equ (00000005h)
-  SECURITY_CAPABILITY_MUSIC_LIBRARY equ (00000006h)
-  SECURITY_CAPABILITY_DOCUMENTS_LIBRARY equ (00000007h)
-  SECURITY_CAPABILITY_ENTERPRISE_AUTHENTICATION equ (00000008h)
-  SECURITY_CAPABILITY_SHARED_USER_CERTIFICATES equ (00000009h)
-  SECURITY_CAPABILITY_REMOVABLE_STORAGE equ (0000000Ah)
-  SECURITY_CAPABILITY_APPOINTMENTS equ (0000000Bh)
-  SECURITY_CAPABILITY_CONTACTS equ (0000000Ch)
-  SECURITY_CAPABILITY_INTERNET_EXPLORER equ (00001000h)
+  SECURITY_CHILD_PACKAGE_RID_COUNT equ 12
+  SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE equ 00000001h
+  SECURITY_BUILTIN_PACKAGE_ANY_RESTRICTED_PACKAGE equ 00000002h
+  SECURITY_CAPABILITY_INTERNET_CLIENT equ 00000001h
+  SECURITY_CAPABILITY_INTERNET_CLIENT_SERVER equ 00000002h
+  SECURITY_CAPABILITY_PRIVATE_NETWORK_CLIENT_SERVER equ 00000003h
+  SECURITY_CAPABILITY_PICTURES_LIBRARY equ 00000004h
+  SECURITY_CAPABILITY_VIDEOS_LIBRARY equ 00000005h
+  SECURITY_CAPABILITY_MUSIC_LIBRARY equ 00000006h
+  SECURITY_CAPABILITY_DOCUMENTS_LIBRARY equ 00000007h
+  SECURITY_CAPABILITY_ENTERPRISE_AUTHENTICATION equ 00000008h
+  SECURITY_CAPABILITY_SHARED_USER_CERTIFICATES equ 00000009h
+  SECURITY_CAPABILITY_REMOVABLE_STORAGE equ 0000000Ah
+  SECURITY_CAPABILITY_APPOINTMENTS equ 0000000Bh
+  SECURITY_CAPABILITY_CONTACTS equ 0000000Ch
+  SECURITY_CAPABILITY_INTERNET_EXPLORER equ 00001000h
   SECURITY_MANDATORY_LABEL_AUTHORITY equ { 0, 0, 0, 0, 0, 16 }
-  SECURITY_MANDATORY_UNTRUSTED_RID equ (00000000h)
-  SECURITY_MANDATORY_LOW_RID equ (00001000h)
-  SECURITY_MANDATORY_MEDIUM_RID equ (00002000h)
+  SECURITY_MANDATORY_UNTRUSTED_RID equ 00000000h
+  SECURITY_MANDATORY_LOW_RID equ 00001000h
+  SECURITY_MANDATORY_MEDIUM_RID equ 00002000h
   SECURITY_MANDATORY_MEDIUM_PLUS_RID equ (SECURITY_MANDATORY_MEDIUM_RID + 100h)
-  SECURITY_MANDATORY_HIGH_RID equ (00003000h)
-  SECURITY_MANDATORY_SYSTEM_RID equ (00004000h)
-  SECURITY_MANDATORY_PROTECTED_PROCESS_RID equ (00005000h)
+  SECURITY_MANDATORY_HIGH_RID equ 00003000h
+  SECURITY_MANDATORY_SYSTEM_RID equ 00004000h
+  SECURITY_MANDATORY_PROTECTED_PROCESS_RID equ 00005000h
   SECURITY_MANDATORY_MAXIMUM_USER_RID equ <SECURITY_MANDATORY_SYSTEM_RID>
   MANDATORY_LEVEL_TO_MANDATORY_RID macro IL
     exitm <(IL * 1000h)>
   endm
   SECURITY_SCOPED_POLICY_ID_AUTHORITY equ { 0, 0, 0, 0, 0, 17 }
   SECURITY_AUTHENTICATION_AUTHORITY equ { 0, 0, 0, 0, 0, 18 }
-  SECURITY_AUTHENTICATION_AUTHORITY_RID_COUNT equ (1)
-  SECURITY_AUTHENTICATION_AUTHORITY_ASSERTED_RID equ (00000001h)
-  SECURITY_AUTHENTICATION_SERVICE_ASSERTED_RID equ (00000002h)
-  SECURITY_AUTHENTICATION_FRESH_KEY_AUTH_RID equ (00000003h)
-  SECURITY_AUTHENTICATION_KEY_TRUST_RID equ (00000004h)
-  SECURITY_AUTHENTICATION_KEY_PROPERTY_MFA_RID equ (00000005h)
-  SECURITY_AUTHENTICATION_KEY_PROPERTY_ATTESTATION_RID equ (00000006h)
+  SECURITY_AUTHENTICATION_AUTHORITY_RID_COUNT equ 1
+  SECURITY_AUTHENTICATION_AUTHORITY_ASSERTED_RID equ 00000001h
+  SECURITY_AUTHENTICATION_SERVICE_ASSERTED_RID equ 00000002h
+  SECURITY_AUTHENTICATION_FRESH_KEY_AUTH_RID equ 00000003h
+  SECURITY_AUTHENTICATION_KEY_TRUST_RID equ 00000004h
+  SECURITY_AUTHENTICATION_KEY_PROPERTY_MFA_RID equ 00000005h
+  SECURITY_AUTHENTICATION_KEY_PROPERTY_ATTESTATION_RID equ 00000006h
   SECURITY_PROCESS_TRUST_AUTHORITY equ { 0, 0, 0, 0, 0, 19 }
-  SECURITY_PROCESS_TRUST_AUTHORITY_RID_COUNT equ (2)
-  SECURITY_PROCESS_PROTECTION_TYPE_FULL_RID equ (00000400h)
-  SECURITY_PROCESS_PROTECTION_TYPE_LITE_RID equ (00000200h)
-  SECURITY_PROCESS_PROTECTION_TYPE_NONE_RID equ (00000000h)
-  SECURITY_PROCESS_PROTECTION_LEVEL_WINTCB_RID equ (00002000h)
-  SECURITY_PROCESS_PROTECTION_LEVEL_WINDOWS_RID equ (00001000h)
-  SECURITY_PROCESS_PROTECTION_LEVEL_APP_RID equ (00000800h)
-  SECURITY_PROCESS_PROTECTION_LEVEL_ANTIMALWARE_RID equ (00000600h)
-  SECURITY_PROCESS_PROTECTION_LEVEL_AUTHENTICODE_RID equ (00000400h)
-  SECURITY_PROCESS_PROTECTION_LEVEL_NONE_RID equ (00000000h)
+  SECURITY_PROCESS_TRUST_AUTHORITY_RID_COUNT equ 2
+  SECURITY_PROCESS_PROTECTION_TYPE_FULL_RID equ 00000400h
+  SECURITY_PROCESS_PROTECTION_TYPE_LITE_RID equ 00000200h
+  SECURITY_PROCESS_PROTECTION_TYPE_NONE_RID equ 00000000h
+  SECURITY_PROCESS_PROTECTION_LEVEL_WINTCB_RID equ 00002000h
+  SECURITY_PROCESS_PROTECTION_LEVEL_WINDOWS_RID equ 00001000h
+  SECURITY_PROCESS_PROTECTION_LEVEL_APP_RID equ 00000800h
+  SECURITY_PROCESS_PROTECTION_LEVEL_ANTIMALWARE_RID equ 00000600h
+  SECURITY_PROCESS_PROTECTION_LEVEL_AUTHENTICODE_RID equ 00000400h
+  SECURITY_PROCESS_PROTECTION_LEVEL_NONE_RID equ 00000000h
   SECURITY_TRUSTED_INSTALLER_RID1 equ 956008885
   SECURITY_TRUSTED_INSTALLER_RID2 equ 3418522649
   SECURITY_TRUSTED_INSTALLER_RID3 equ 1831038044
@@ -4159,30 +3165,28 @@ ifndef _WINNT_
   WinAuthenticationKeyPropertyAttestationSid equ 117
   WinAuthenticationFreshKeyAuthSid equ 118
   WinBuiltinDeviceOwnersSid equ 119
-
   SYSTEM_LUID equ { 3e7h, 0h }
   ANONYMOUS_LOGON_LUID equ { 3e6h, 0h }
   LOCALSERVICE_LUID equ { 3e5h, 0h }
   NETWORKSERVICE_LUID equ { 3e4h, 0h }
   IUSER_LUID equ { 3e3h, 0h }
-  PROTECTED_TO_SYSTEM_LUID equ { 3e2h, 0h }
-  SE_GROUP_MANDATORY equ (00000001h)
-  SE_GROUP_ENABLED_BY_DEFAULT equ (00000002h)
-  SE_GROUP_ENABLED equ (00000004h)
-  SE_GROUP_OWNER equ (00000008h)
-  SE_GROUP_USE_FOR_DENY_ONLY equ (00000010h)
-  SE_GROUP_INTEGRITY equ (00000020h)
-  SE_GROUP_INTEGRITY_ENABLED equ (00000040h)
-  SE_GROUP_LOGON_ID equ (0C0000000h)
-  SE_GROUP_RESOURCE equ (20000000h)
+  SE_GROUP_MANDATORY equ 00000001h
+  SE_GROUP_ENABLED_BY_DEFAULT equ 00000002h
+  SE_GROUP_ENABLED equ 00000004h
+  SE_GROUP_OWNER equ 00000008h
+  SE_GROUP_USE_FOR_DENY_ONLY equ 00000010h
+  SE_GROUP_INTEGRITY equ 00000020h
+  SE_GROUP_INTEGRITY_ENABLED equ 00000040h
+  SE_GROUP_LOGON_ID equ 0C0000000h
+  SE_GROUP_RESOURCE equ 20000000h
   SE_GROUP_VALID_ATTRIBUTES equ <(SE_GROUP_MANDATORY or SE_GROUP_ENABLED_BY_DEFAULT or SE_GROUP_ENABLED or SE_GROUP_OWNER or SE_GROUP_USE_FOR_DENY_ONLY or SE_GROUP_LOGON_ID or SE_GROUP_RESOURCE or SE_GROUP_INTEGRITY or SE_GROUP_INTEGRITY_ENABLED)>
-  ACL_REVISION equ (2)
-  ACL_REVISION_DS equ (4)
-  ACL_REVISION1 equ (1)
+  ACL_REVISION equ 2
+  ACL_REVISION_DS equ 4
+  ACL_REVISION1 equ 1
   MIN_ACL_REVISION equ <ACL_REVISION2>
-  ACL_REVISION2 equ (2)
-  ACL_REVISION3 equ (3)
-  ACL_REVISION4 equ (4)
+  ACL_REVISION2 equ 2
+  ACL_REVISION3 equ 3
+  ACL_REVISION4 equ 4
   MAX_ACL_REVISION equ <ACL_REVISION4>
   ACL struct
     AclRevision BYTE ?
@@ -4200,46 +3204,45 @@ ifndef _WINNT_
   ACE_HEADER ends
   _ACE_HEADER typedef ACE_HEADER
   PACE_HEADER typedef ptr ACE_HEADER
-  ACCESS_MIN_MS_ACE_TYPE equ (0h)
-  ACCESS_ALLOWED_ACE_TYPE equ (0h)
-  ACCESS_DENIED_ACE_TYPE equ (1h)
-  SYSTEM_AUDIT_ACE_TYPE equ (2h)
-  SYSTEM_ALARM_ACE_TYPE equ (3h)
-  ACCESS_MAX_MS_V2_ACE_TYPE equ (3h)
-  ACCESS_ALLOWED_COMPOUND_ACE_TYPE equ (4h)
-  ACCESS_MAX_MS_V3_ACE_TYPE equ (4h)
-  ACCESS_MIN_MS_OBJECT_ACE_TYPE equ (5h)
-  ACCESS_ALLOWED_OBJECT_ACE_TYPE equ (5h)
-  ACCESS_DENIED_OBJECT_ACE_TYPE equ (6h)
-  SYSTEM_AUDIT_OBJECT_ACE_TYPE equ (7h)
-  SYSTEM_ALARM_OBJECT_ACE_TYPE equ (8h)
-  ACCESS_MAX_MS_OBJECT_ACE_TYPE equ (8h)
-  ACCESS_MAX_MS_V4_ACE_TYPE equ (8h)
-  ACCESS_MAX_MS_ACE_TYPE equ (8h)
-  ACCESS_ALLOWED_CALLBACK_ACE_TYPE equ (9h)
-  ACCESS_DENIED_CALLBACK_ACE_TYPE equ (0Ah)
-  ACCESS_ALLOWED_CALLBACK_OBJECT_ACE_TYPE equ (0Bh)
-  ACCESS_DENIED_CALLBACK_OBJECT_ACE_TYPE equ (0Ch)
-  SYSTEM_AUDIT_CALLBACK_ACE_TYPE equ (0Dh)
-  SYSTEM_ALARM_CALLBACK_ACE_TYPE equ (0Eh)
-  SYSTEM_AUDIT_CALLBACK_OBJECT_ACE_TYPE equ (0Fh)
-  SYSTEM_ALARM_CALLBACK_OBJECT_ACE_TYPE equ (10h)
-  SYSTEM_MANDATORY_LABEL_ACE_TYPE equ (11h)
-  SYSTEM_RESOURCE_ATTRIBUTE_ACE_TYPE equ (12h)
-  SYSTEM_SCOPED_POLICY_ID_ACE_TYPE equ (13h)
-  SYSTEM_PROCESS_TRUST_LABEL_ACE_TYPE equ (14h)
-  SYSTEM_ACCESS_FILTER_ACE_TYPE equ (15h)
-  ACCESS_MAX_MS_V5_ACE_TYPE equ (15h)
-  OBJECT_INHERIT_ACE equ (1h)
-  CONTAINER_INHERIT_ACE equ (2h)
-  NO_PROPAGATE_INHERIT_ACE equ (4h)
-  INHERIT_ONLY_ACE equ (8h)
-  INHERITED_ACE equ (10h)
-  VALID_INHERIT_FLAGS equ (1Fh)
-  CRITICAL_ACE_FLAG equ (20h)
-  SUCCESSFUL_ACCESS_ACE_FLAG equ (40h)
-  FAILED_ACCESS_ACE_FLAG equ (80h)
-  TRUST_PROTECTED_FILTER_ACE_FLAG equ (40h)
+  ACCESS_MIN_MS_ACE_TYPE equ 0h
+  ACCESS_ALLOWED_ACE_TYPE equ 0h
+  ACCESS_DENIED_ACE_TYPE equ 1h
+  SYSTEM_AUDIT_ACE_TYPE equ 2h
+  SYSTEM_ALARM_ACE_TYPE equ 3h
+  ACCESS_MAX_MS_V2_ACE_TYPE equ 3h
+  ACCESS_ALLOWED_COMPOUND_ACE_TYPE equ 4h
+  ACCESS_MAX_MS_V3_ACE_TYPE equ 4h
+  ACCESS_MIN_MS_OBJECT_ACE_TYPE equ 5h
+  ACCESS_ALLOWED_OBJECT_ACE_TYPE equ 5h
+  ACCESS_DENIED_OBJECT_ACE_TYPE equ 6h
+  SYSTEM_AUDIT_OBJECT_ACE_TYPE equ 7h
+  SYSTEM_ALARM_OBJECT_ACE_TYPE equ 8h
+  ACCESS_MAX_MS_OBJECT_ACE_TYPE equ 8h
+  ACCESS_MAX_MS_V4_ACE_TYPE equ 8h
+  ACCESS_MAX_MS_ACE_TYPE equ 8h
+  ACCESS_ALLOWED_CALLBACK_ACE_TYPE equ 9h
+  ACCESS_DENIED_CALLBACK_ACE_TYPE equ 0Ah
+  ACCESS_ALLOWED_CALLBACK_OBJECT_ACE_TYPE equ 0Bh
+  ACCESS_DENIED_CALLBACK_OBJECT_ACE_TYPE equ 0Ch
+  SYSTEM_AUDIT_CALLBACK_ACE_TYPE equ 0Dh
+  SYSTEM_ALARM_CALLBACK_ACE_TYPE equ 0Eh
+  SYSTEM_AUDIT_CALLBACK_OBJECT_ACE_TYPE equ 0Fh
+  SYSTEM_ALARM_CALLBACK_OBJECT_ACE_TYPE equ 10h
+  SYSTEM_MANDATORY_LABEL_ACE_TYPE equ 11h
+  SYSTEM_RESOURCE_ATTRIBUTE_ACE_TYPE equ 12h
+  SYSTEM_SCOPED_POLICY_ID_ACE_TYPE equ 13h
+  SYSTEM_PROCESS_TRUST_LABEL_ACE_TYPE equ 14h
+  SYSTEM_ACCESS_FILTER_ACE_TYPE equ 15h
+  ACCESS_MAX_MS_V5_ACE_TYPE equ 15h
+  OBJECT_INHERIT_ACE equ 1h
+  CONTAINER_INHERIT_ACE equ 2h
+  NO_PROPAGATE_INHERIT_ACE equ 4h
+  INHERIT_ONLY_ACE equ 8h
+  INHERITED_ACE equ 10h
+  VALID_INHERIT_FLAGS equ 1Fh
+  SUCCESSFUL_ACCESS_ACE_FLAG equ 40h
+  FAILED_ACCESS_ACE_FLAG equ 80h
+  TRUST_PROTECTED_FILTER_ACE_FLAG equ 40h
   ACCESS_ALLOWED_ACE struct
     Header ACE_HEADER <>
     Mask_ ACCESS_MASK ?
@@ -4425,7 +3428,6 @@ ifndef _WINNT_
   AclRevisionInformation equ 1
   AclSizeInformation equ 2
   _ACL_INFORMATION_CLASS typedef ACL_INFORMATION_CLASS
-
   ACL_REVISION_INFORMATION struct
     AclRevision DWORD ?
   ACL_REVISION_INFORMATION ends
@@ -4438,25 +3440,25 @@ ifndef _WINNT_
   ACL_SIZE_INFORMATION ends
   _ACL_SIZE_INFORMATION typedef ACL_SIZE_INFORMATION
   PACL_SIZE_INFORMATION typedef ptr ACL_SIZE_INFORMATION
-  SECURITY_DESCRIPTOR_REVISION equ (1)
-  SECURITY_DESCRIPTOR_REVISION1 equ (1)
+  SECURITY_DESCRIPTOR_REVISION equ 1
+  SECURITY_DESCRIPTOR_REVISION1 equ 1
   SECURITY_DESCRIPTOR_MIN_LENGTH equ <(sizeof(SECURITY_DESCRIPTOR))>
   SECURITY_DESCRIPTOR_CONTROL typedef WORD
   PSECURITY_DESCRIPTOR_CONTROL typedef ptr WORD
-  SE_OWNER_DEFAULTED equ (0001h)
-  SE_GROUP_DEFAULTED equ (0002h)
-  SE_DACL_PRESENT equ (0004h)
-  SE_DACL_DEFAULTED equ (0008h)
-  SE_SACL_PRESENT equ (0010h)
-  SE_SACL_DEFAULTED equ (0020h)
-  SE_DACL_AUTO_INHERIT_REQ equ (0100h)
-  SE_SACL_AUTO_INHERIT_REQ equ (0200h)
-  SE_DACL_AUTO_INHERITED equ (0400h)
-  SE_SACL_AUTO_INHERITED equ (0800h)
-  SE_DACL_PROTECTED equ (1000h)
-  SE_SACL_PROTECTED equ (2000h)
-  SE_RM_CONTROL_VALID equ (4000h)
-  SE_SELF_RELATIVE equ (8000h)
+  SE_OWNER_DEFAULTED equ 0001h
+  SE_GROUP_DEFAULTED equ 0002h
+  SE_DACL_PRESENT equ 0004h
+  SE_DACL_DEFAULTED equ 0008h
+  SE_SACL_PRESENT equ 0010h
+  SE_SACL_DEFAULTED equ 0020h
+  SE_DACL_AUTO_INHERIT_REQ equ 0100h
+  SE_SACL_AUTO_INHERIT_REQ equ 0200h
+  SE_DACL_AUTO_INHERITED equ 0400h
+  SE_SACL_AUTO_INHERITED equ 0800h
+  SE_DACL_PROTECTED equ 1000h
+  SE_SACL_PROTECTED equ 2000h
+  SE_RM_CONTROL_VALID equ 4000h
+  SE_SELF_RELATIVE equ 8000h
   SECURITY_DESCRIPTOR_RELATIVE struct
     Revision BYTE ?
     Sbz1 BYTE ?
@@ -4506,12 +3508,12 @@ ifndef _WINNT_
   ACCESS_DS_SOURCE_W equ <L("DS")>
   ACCESS_DS_OBJECT_TYPE_NAME_A equ <"Directory Service Object">
   ACCESS_DS_OBJECT_TYPE_NAME_W equ <L("Directory Service Object")>
-  SE_PRIVILEGE_ENABLED_BY_DEFAULT equ (00000001h)
-  SE_PRIVILEGE_ENABLED equ (00000002h)
-  SE_PRIVILEGE_REMOVED equ (00000004h)
-  SE_PRIVILEGE_USED_FOR_ACCESS equ (80000000h)
+  SE_PRIVILEGE_ENABLED_BY_DEFAULT equ 00000001h
+  SE_PRIVILEGE_ENABLED equ 00000002h
+  SE_PRIVILEGE_REMOVED equ 00000004h
+  SE_PRIVILEGE_USED_FOR_ACCESS equ 80000000h
   SE_PRIVILEGE_VALID_ATTRIBUTES equ <(SE_PRIVILEGE_ENABLED_BY_DEFAULT or SE_PRIVILEGE_ENABLED or SE_PRIVILEGE_REMOVED or SE_PRIVILEGE_USED_FOR_ACCESS)>
-  PRIVILEGE_SET_ALL_NECESSARY equ (1)
+  PRIVILEGE_SET_ALL_NECESSARY equ 1
   PRIVILEGE_SET struct
     PrivilegeCount DWORD ?
     Control DWORD ?
@@ -4543,7 +3545,6 @@ ifndef _WINNT_
   AccessReasonTrustLabel equ 00900000h
   AccessReasonFilterAce equ 00a00000h
   _ACCESS_REASON_TYPE typedef ACCESS_REASON_TYPE
-
   ACCESS_REASON typedef DWORD
   ACCESS_REASONS struct
     Data ACCESS_REASON 32 dup (?)
@@ -4554,8 +3555,6 @@ ifndef _WINNT_
   SE_SECURITY_DESCRIPTOR_FLAG_NO_LABEL_ACE equ 00000002h
   SE_SECURITY_DESCRIPTOR_FLAG_NO_ACCESS_FILTER_ACE equ 00000004h
   SE_SECURITY_DESCRIPTOR_VALID_FLAGS equ 00000007h
-  SE_ACCESS_CHECK_FLAG_NO_LEARNING_MODE_LOGGING equ 00000008h
-  SE_ACCESS_CHECK_VALID_FLAGS equ 00000008h
   SE_SECURITY_DESCRIPTOR struct
     Size_ DWORD ?
     Flags DWORD ?
@@ -4626,12 +3625,6 @@ ifndef _WINNT_
   SE_SESSION_IMPERSONATION_CAPABILITY equ <L("sessionImpersonation")>
   SE_MUMA_CAPABILITY equ <L("muma")>
   SE_DEVELOPMENT_MODE_NETWORK_CAPABILITY equ <L("developmentModeNetwork")>
-  SE_LEARNING_MODE_LOGGING_CAPABILITY equ <L("learningModeLogging")>
-  SE_PERMISSIVE_LEARNING_MODE_CAPABILITY equ <L("permissiveLearningMode")>
-  SE_APP_SILO_VOLUME_ROOT_MINIMAL_CAPABILITY equ <L("isolatedWin32-volumeRootMinimal")>
-  SE_APP_SILO_PROFILES_ROOT_MINIMAL_CAPABILITY equ <L("isolatedWin32-profilesRootMinimal")>
-  SE_APP_SILO_USER_PROFILE_MINIMAL_CAPABILITY equ <L("isolatedWin32-userProfileMinimal")>
-  SE_APP_SILO_PRINT_CAPABILITY equ <L("isolatedWin32-print")>
   SECURITY_IMPERSONATION_LEVEL typedef SDWORD
   SecurityAnonymous equ 0
   SecurityIdentification equ 1
@@ -4645,15 +3638,15 @@ ifndef _WINNT_
   VALID_IMPERSONATION_LEVEL macro L
     exitm <(((L) >= SECURITY_MIN_IMPERSONATION_LEVEL) and ((L) <= SECURITY_MAX_IMPERSONATION_LEVEL))>
   endm
-  TOKEN_ASSIGN_PRIMARY equ (0001h)
-  TOKEN_DUPLICATE equ (0002h)
-  TOKEN_IMPERSONATE equ (0004h)
-  TOKEN_QUERY equ (0008h)
-  TOKEN_QUERY_SOURCE equ (0010h)
-  TOKEN_ADJUST_PRIVILEGES equ (0020h)
-  TOKEN_ADJUST_GROUPS equ (0040h)
-  TOKEN_ADJUST_DEFAULT equ (0080h)
-  TOKEN_ADJUST_SESSIONID equ (0100h)
+  TOKEN_ASSIGN_PRIMARY equ 0001h
+  TOKEN_DUPLICATE equ 0002h
+  TOKEN_IMPERSONATE equ 0004h
+  TOKEN_QUERY equ 0008h
+  TOKEN_QUERY_SOURCE equ 0010h
+  TOKEN_ADJUST_PRIVILEGES equ 0020h
+  TOKEN_ADJUST_GROUPS equ 0040h
+  TOKEN_ADJUST_DEFAULT equ 0080h
+  TOKEN_ADJUST_SESSIONID equ 0100h
   TOKEN_ALL_ACCESS_P equ <(STANDARD_RIGHTS_REQUIRED or TOKEN_ASSIGN_PRIMARY or TOKEN_DUPLICATE or TOKEN_IMPERSONATE or TOKEN_QUERY or TOKEN_QUERY_SOURCE or TOKEN_ADJUST_PRIVILEGES or TOKEN_ADJUST_GROUPS or TOKEN_ADJUST_DEFAULT)>
   if ((Defined(_WIN32_WINNT) and (_WIN32_WINNT gt 0400h)) or ( not Defined(_WIN32_WINNT)))
     TOKEN_ALL_ACCESS equ <(TOKEN_ALL_ACCESS_P or TOKEN_ADJUST_SESSIONID)>
@@ -4664,7 +3657,6 @@ ifndef _WINNT_
   TOKEN_WRITE equ <(STANDARD_RIGHTS_WRITE or TOKEN_ADJUST_PRIVILEGES or TOKEN_ADJUST_GROUPS or TOKEN_ADJUST_DEFAULT)>
   TOKEN_EXECUTE equ <(STANDARD_RIGHTS_EXECUTE)>
   TOKEN_TRUST_CONSTRAINT_MASK equ <(STANDARD_RIGHTS_READ or TOKEN_QUERY or TOKEN_QUERY_SOURCE)>
-  TOKEN_TRUST_ALLOWED_MASK equ <(TOKEN_TRUST_CONSTRAINT_MASK or TOKEN_DUPLICATE or TOKEN_IMPERSONATE)>
   if (NTDDI_VERSION ge NTDDI_WIN8)
     TOKEN_ACCESS_PSEUDO_HANDLE_WIN8 equ <(TOKEN_QUERY or TOKEN_QUERY_SOURCE)>
     TOKEN_ACCESS_PSEUDO_HANDLE equ <TOKEN_ACCESS_PSEUDO_HANDLE_WIN8>
@@ -4673,7 +3665,6 @@ ifndef _WINNT_
   TokenPrimary equ 1
   TokenImpersonation equ 2
   _TOKEN_TYPE typedef TOKEN_TYPE
-
   PTOKEN_TYPE typedef ptr TOKEN_TYPE
   TOKEN_ELEVATION_TYPE typedef SDWORD
   TokenElevationTypeDefault equ 1
@@ -4727,10 +3718,7 @@ ifndef _WINNT_
   TokenSingletonAttributes equ 43
   TokenBnoIsolation equ 44
   TokenChildProcessFlags equ 45
-  TokenIsLessPrivilegedAppContainer equ 46
-  TokenIsSandboxed equ 47
-  TokenIsAppSilo equ 48
-  MaxTokenInfoClass equ 49
+  MaxTokenInfoClass equ 46
   _TOKEN_INFORMATION_CLASS typedef TOKEN_INFORMATION_CLASS
   PTOKEN_INFORMATION_CLASS typedef ptr TOKEN_INFORMATION_CLASS
   TOKEN_USER struct
@@ -4741,10 +3729,10 @@ ifndef _WINNT_
   ifndef MIDL_PASS
     SE_TOKEN_USER struct
       union
-        TokenUser TOKEN_USER <>
+        TokenUser_ TOKEN_USER <>
         User SID_AND_ATTRIBUTES <>
       ends
-      union
+      union DUMMYUNIONNAME2
         Sid SID <>
         Buffer BYTE SECURITY_MAX_SID_SIZE dup (?)
       ends
@@ -4856,7 +3844,7 @@ ifndef _WINNT_
   TOKEN_ACCESS_INFORMATION ends
   _TOKEN_ACCESS_INFORMATION typedef TOKEN_ACCESS_INFORMATION
   PTOKEN_ACCESS_INFORMATION typedef ptr TOKEN_ACCESS_INFORMATION
-  POLICY_AUDIT_SUBCATEGORY_COUNT equ (59)
+  POLICY_AUDIT_SUBCATEGORY_COUNT equ 59
   TOKEN_AUDIT_POLICY struct
     PerUserPolicy BYTE ((POLICY_AUDIT_SUBCATEGORY_COUNT) shr 1) + 1 dup (?)
   TOKEN_AUDIT_POLICY ends
@@ -4887,7 +3875,7 @@ ifndef _WINNT_
     TokenId LUID <>
     AuthenticationId LUID <>
     ModifiedId LUID <>
-    TokenSource TOKEN_SOURCE <>
+    TokenSource_ TOKEN_SOURCE <>
   TOKEN_CONTROL ends
   _TOKEN_CONTROL typedef TOKEN_CONTROL
   PTOKEN_CONTROL typedef ptr TOKEN_CONTROL
@@ -4951,7 +3939,10 @@ ifndef _WINNT_
   CLAIM_SECURITY_ATTRIBUTE_DISABLED_BY_DEFAULT equ 0008h
   CLAIM_SECURITY_ATTRIBUTE_DISABLED equ 0010h
   CLAIM_SECURITY_ATTRIBUTE_MANDATORY equ 0020h
-  CLAIM_SECURITY_ATTRIBUTE_VALID_FLAGS equ <(CLAIM_SECURITY_ATTRIBUTE_NON_INHERITABLE or CLAIM_SECURITY_ATTRIBUTE_VALUE_CASE_SENSITIVE or CLAIM_SECURITY_ATTRIBUTE_USE_FOR_DENY_ONLY or CLAIM_SECURITY_ATTRIBUTE_DISABLED_BY_DEFAULT or CLAIM_SECURITY_ATTRIBUTE_DISABLED or CLAIM_SECURITY_ATTRIBUTE_MANDATORY)>
+  CLAIM_SECURITY_ATTRIBUTE_VALID_FLAGS equ <>
+  ;(CLAIM_SECURITY_ATTRIBUTE_NON_INHERITABLE or CLAIM_SECURITY_ATTRIBUTE_VALUE_CASE_SENSITIVE or
+  ;CLAIM_SECURITY_ATTRIBUTE_USE_FOR_DENY_ONLY or CLAIM_SECURITY_ATTRIBUTE_DISABLED_BY_DEFAULT or
+  ;CLAIM_SECURITY_ATTRIBUTE_DISABLED or CLAIM_SECURITY_ATTRIBUTE_MANDATORY)
   CLAIM_SECURITY_ATTRIBUTE_CUSTOM_FLAGS equ 0FFFF0000h
   CLAIM_SECURITY_ATTRIBUTE_V1 struct
     Name_ PWSTR ?
@@ -5023,27 +4014,26 @@ ifndef _WINNT_
   WRITE_RESTRICTED equ 8h
   SECURITY_INFORMATION typedef DWORD
   PSECURITY_INFORMATION typedef ptr DWORD
-  OWNER_SECURITY_INFORMATION equ (00000001h)
-  GROUP_SECURITY_INFORMATION equ (00000002h)
-  DACL_SECURITY_INFORMATION equ (00000004h)
-  SACL_SECURITY_INFORMATION equ (00000008h)
-  LABEL_SECURITY_INFORMATION equ (00000010h)
-  ATTRIBUTE_SECURITY_INFORMATION equ (00000020h)
-  SCOPE_SECURITY_INFORMATION equ (00000040h)
-  PROCESS_TRUST_LABEL_SECURITY_INFORMATION equ (00000080h)
-  ACCESS_FILTER_SECURITY_INFORMATION equ (00000100h)
-  BACKUP_SECURITY_INFORMATION equ (00010000h)
-  PROTECTED_DACL_SECURITY_INFORMATION equ (80000000h)
-  PROTECTED_SACL_SECURITY_INFORMATION equ (40000000h)
-  UNPROTECTED_DACL_SECURITY_INFORMATION equ (20000000h)
-  UNPROTECTED_SACL_SECURITY_INFORMATION equ (10000000h)
+  OWNER_SECURITY_INFORMATION equ 00000001h
+  GROUP_SECURITY_INFORMATION equ 00000002h
+  DACL_SECURITY_INFORMATION equ 00000004h
+  SACL_SECURITY_INFORMATION equ 00000008h
+  LABEL_SECURITY_INFORMATION equ 00000010h
+  ATTRIBUTE_SECURITY_INFORMATION equ 00000020h
+  SCOPE_SECURITY_INFORMATION equ 00000040h
+  PROCESS_TRUST_LABEL_SECURITY_INFORMATION equ 00000080h
+  ACCESS_FILTER_SECURITY_INFORMATION equ 00000100h
+  BACKUP_SECURITY_INFORMATION equ 00010000h
+  PROTECTED_DACL_SECURITY_INFORMATION equ 80000000h
+  PROTECTED_SACL_SECURITY_INFORMATION equ 40000000h
+  UNPROTECTED_DACL_SECURITY_INFORMATION equ 20000000h
+  UNPROTECTED_SACL_SECURITY_INFORMATION equ 10000000h
   SE_SIGNING_LEVEL typedef BYTE
   PSE_SIGNING_LEVEL typedef ptr BYTE
   SE_SIGNING_LEVEL_UNCHECKED equ 00000000h
   SE_SIGNING_LEVEL_UNSIGNED equ 00000001h
   SE_SIGNING_LEVEL_ENTERPRISE equ 00000002h
   SE_SIGNING_LEVEL_CUSTOM_1 equ 00000003h
-  SE_SIGNING_LEVEL_DEVELOPER equ <SE_SIGNING_LEVEL_CUSTOM_1>
   SE_SIGNING_LEVEL_AUTHENTICODE equ 00000004h
   SE_SIGNING_LEVEL_CUSTOM_2 equ 00000005h
   SE_SIGNING_LEVEL_STORE equ 00000006h
@@ -5065,9 +4055,14 @@ ifndef _WINNT_
   SeImageSignatureCatalogNotCached equ 4
   SeImageSignatureCatalogHint equ 5
   SeImageSignaturePackageCatalog equ 6
-  SeImageSignaturePplMitigated equ 7
   _SE_IMAGE_SIGNATURE_TYPE typedef SE_IMAGE_SIGNATURE_TYPE
   PSE_IMAGE_SIGNATURE_TYPE typedef ptr SE_IMAGE_SIGNATURE_TYPE
+  SE_LEARNING_MODE_DATA_TYPE typedef SDWORD
+  SeLearningModeInvalidType equ 0
+  SeLearningModeSettings equ 1
+  SeLearningModeMax equ 2
+  _SE_LEARNING_MODE_DATA_TYPE typedef SE_LEARNING_MODE_DATA_TYPE
+  SE_LEARNING_MODE_FLAG_PERMISSIVE equ 00000001h
   SECURITY_CAPABILITIES struct
     ifdef MIDL_PASS
       ;[...]
@@ -5081,48 +4076,48 @@ ifndef _WINNT_
   _SECURITY_CAPABILITIES typedef SECURITY_CAPABILITIES
   PSECURITY_CAPABILITIES typedef ptr SECURITY_CAPABILITIES
   LPSECURITY_CAPABILITIES typedef ptr SECURITY_CAPABILITIES
-  PROCESS_TERMINATE equ (0001h)
-  PROCESS_CREATE_THREAD equ (0002h)
-  PROCESS_SET_SESSIONID equ (0004h)
-  PROCESS_VM_OPERATION equ (0008h)
-  PROCESS_VM_READ equ (0010h)
-  PROCESS_VM_WRITE equ (0020h)
-  PROCESS_DUP_HANDLE equ (0040h)
-  PROCESS_CREATE_PROCESS equ (0080h)
-  PROCESS_SET_QUOTA equ (0100h)
-  PROCESS_SET_INFORMATION equ (0200h)
-  PROCESS_QUERY_INFORMATION equ (0400h)
-  PROCESS_SUSPEND_RESUME equ (0800h)
-  PROCESS_QUERY_LIMITED_INFORMATION equ (1000h)
-  PROCESS_SET_LIMITED_INFORMATION equ (2000h)
+  PROCESS_TERMINATE equ 0001h
+  PROCESS_CREATE_THREAD equ 0002h
+  PROCESS_SET_SESSIONID equ 0004h
+  PROCESS_VM_OPERATION equ 0008h
+  PROCESS_VM_READ equ 0010h
+  PROCESS_VM_WRITE equ 0020h
+  PROCESS_DUP_HANDLE equ 0040h
+  PROCESS_CREATE_PROCESS equ 0080h
+  PROCESS_SET_QUOTA equ 0100h
+  PROCESS_SET_INFORMATION equ 0200h
+  PROCESS_QUERY_INFORMATION equ 0400h
+  PROCESS_SUSPEND_RESUME equ 0800h
+  PROCESS_QUERY_LIMITED_INFORMATION equ 1000h
+  PROCESS_SET_LIMITED_INFORMATION equ 2000h
   if (NTDDI_VERSION ge NTDDI_VISTA)
     PROCESS_ALL_ACCESS equ (STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0FFFFh)
   else
     PROCESS_ALL_ACCESS equ (STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0FFFh)
   endif
-  THREAD_TERMINATE equ (0001h)
-  THREAD_SUSPEND_RESUME equ (0002h)
-  THREAD_GET_CONTEXT equ (0008h)
-  THREAD_SET_CONTEXT equ (0010h)
-  THREAD_QUERY_INFORMATION equ (0040h)
-  THREAD_SET_INFORMATION equ (0020h)
-  THREAD_SET_THREAD_TOKEN equ (0080h)
-  THREAD_IMPERSONATE equ (0100h)
-  THREAD_DIRECT_IMPERSONATION equ (0200h)
-  THREAD_SET_LIMITED_INFORMATION equ (0400h)
-  THREAD_QUERY_LIMITED_INFORMATION equ (0800h)
-  THREAD_RESUME equ (1000h)
+  THREAD_TERMINATE equ 0001h
+  THREAD_SUSPEND_RESUME equ 0002h
+  THREAD_GET_CONTEXT equ 0008h
+  THREAD_SET_CONTEXT equ 0010h
+  THREAD_QUERY_INFORMATION equ 0040h
+  THREAD_SET_INFORMATION equ 0020h
+  THREAD_SET_THREAD_TOKEN equ 0080h
+  THREAD_IMPERSONATE equ 0100h
+  THREAD_DIRECT_IMPERSONATION equ 0200h
+  THREAD_SET_LIMITED_INFORMATION equ 0400h
+  THREAD_QUERY_LIMITED_INFORMATION equ 0800h
+  THREAD_RESUME equ 1000h
   if (NTDDI_VERSION ge NTDDI_VISTA)
     THREAD_ALL_ACCESS equ (STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 0FFFFh)
   else
     THREAD_ALL_ACCESS equ (STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 3FFh)
   endif
-  JOB_OBJECT_ASSIGN_PROCESS equ (0001h)
-  JOB_OBJECT_SET_ATTRIBUTES equ (0002h)
-  JOB_OBJECT_QUERY equ (0004h)
-  JOB_OBJECT_TERMINATE equ (0008h)
-  JOB_OBJECT_SET_SECURITY_ATTRIBUTES equ (0010h)
-  JOB_OBJECT_IMPERSONATE equ (0020h)
+  JOB_OBJECT_ASSIGN_PROCESS equ 0001h
+  JOB_OBJECT_SET_ATTRIBUTES equ 0002h
+  JOB_OBJECT_QUERY equ 0004h
+  JOB_OBJECT_TERMINATE equ 0008h
+  JOB_OBJECT_SET_SECURITY_ATTRIBUTES equ 0010h
+  JOB_OBJECT_IMPERSONATE equ 0020h
   JOB_OBJECT_ALL_ACCESS equ (STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 3Fh)
   JOB_SET_ARRAY struct
     JobHandle HANDLE ?
@@ -5131,7 +4126,7 @@ ifndef _WINNT_
   JOB_SET_ARRAY ends
   _JOB_SET_ARRAY typedef JOB_SET_ARRAY
   PJOB_SET_ARRAY typedef ptr JOB_SET_ARRAY
-  FLS_MAXIMUM_AVAILABLE equ 4080
+  FLS_MAXIMUM_AVAILABLE equ 128
   TLS_MINIMUM_AVAILABLE equ 64
   EXCEPTION_REGISTRATION_RECORD struct
     Next POINTER ?
@@ -5196,8 +4191,8 @@ ifndef _WINNT_
   THREAD_DYNAMIC_CODE_ALLOW equ 1
   THREAD_BASE_PRIORITY_LOWRT equ 15
   THREAD_BASE_PRIORITY_MAX equ 2
-  THREAD_BASE_PRIORITY_MIN equ (- 2)
-  THREAD_BASE_PRIORITY_IDLE equ (- 15)
+  THREAD_BASE_PRIORITY_MIN equ -2
+  THREAD_BASE_PRIORITY_IDLE equ -15
   UMS_CREATE_THREAD_ATTRIBUTES struct
     UmsVersion DWORD ?
     UmsContext PVOID ?
@@ -5205,52 +4200,17 @@ ifndef _WINNT_
   UMS_CREATE_THREAD_ATTRIBUTES ends
   _UMS_CREATE_THREAD_ATTRIBUTES typedef UMS_CREATE_THREAD_ATTRIBUTES
   PUMS_CREATE_THREAD_ATTRIBUTES typedef ptr UMS_CREATE_THREAD_ATTRIBUTES
-  COMPONENT_KTM equ 01h
-  COMPONENT_VALID_FLAGS equ <(COMPONENT_KTM)>
-  COMPONENT_FILTER struct
-    ComponentFlags DWORD ?
-  COMPONENT_FILTER ends
-  _COMPONENT_FILTER typedef COMPONENT_FILTER
-  PCOMPONENT_FILTER typedef ptr COMPONENT_FILTER
+  WOW64_ARCHITECTURE_INFORMATION struct
+    WOW64_ARCHITECTURE_INFORMATION_??2 record Machine_??2:16, KernelMode_??2:1, UserMode_??2:1, Native_??2:1, Process_??2:1, ReservedZero0_??2:12
+    WOW64_ARCHITECTURE_INFORMATION_??2 <>
+  WOW64_ARCHITECTURE_INFORMATION ends
+  _WOW64_ARCHITECTURE_INFORMATION typedef WOW64_ARCHITECTURE_INFORMATION
   MEMORY_PRIORITY_LOWEST equ 0
   MEMORY_PRIORITY_VERY_LOW equ 1
   MEMORY_PRIORITY_LOW equ 2
   MEMORY_PRIORITY_MEDIUM equ 3
   MEMORY_PRIORITY_BELOW_NORMAL equ 4
   MEMORY_PRIORITY_NORMAL equ 5
-  DYNAMIC_EH_CONTINUATION_TARGET_ADD equ (00000001h)
-  DYNAMIC_EH_CONTINUATION_TARGET_PROCESSED equ (00000002h)
-  PROCESS_DYNAMIC_EH_CONTINUATION_TARGET struct
-    TargetAddress ULONG_PTR ?
-    Flags ULONG_PTR ?
-  PROCESS_DYNAMIC_EH_CONTINUATION_TARGET ends
-  _PROCESS_DYNAMIC_EH_CONTINUATION_TARGET typedef PROCESS_DYNAMIC_EH_CONTINUATION_TARGET
-  PPROCESS_DYNAMIC_EH_CONTINUATION_TARGET typedef ptr PROCESS_DYNAMIC_EH_CONTINUATION_TARGET
-  PROCESS_DYNAMIC_EH_CONTINUATION_TARGETS_INFORMATION struct
-    NumberOfTargets WORD ?
-    Reserved WORD ?
-    Reserved2 DWORD ?
-    Targets PPROCESS_DYNAMIC_EH_CONTINUATION_TARGET ?
-  PROCESS_DYNAMIC_EH_CONTINUATION_TARGETS_INFORMATION ends
-  _PROCESS_DYNAMIC_EH_CONTINUATION_TARGETS_INFORMATION typedef PROCESS_DYNAMIC_EH_CONTINUATION_TARGETS_INFORMATION
-  PPROCESS_DYNAMIC_EH_CONTINUATION_TARGETS_INFORMATION typedef ptr PROCESS_DYNAMIC_EH_CONTINUATION_TARGETS_INFORMATION
-  DYNAMIC_ENFORCED_ADDRESS_RANGE_ADD equ (00000001h)
-  DYNAMIC_ENFORCED_ADDRESS_RANGE_PROCESSED equ (00000002h)
-  PROCESS_DYNAMIC_ENFORCED_ADDRESS_RANGE struct
-    BaseAddress ULONG_PTR ?
-    Size_ SIZE_T ?
-    Flags DWORD ?
-  PROCESS_DYNAMIC_ENFORCED_ADDRESS_RANGE ends
-  _PROCESS_DYNAMIC_ENFORCED_ADDRESS_RANGE typedef PROCESS_DYNAMIC_ENFORCED_ADDRESS_RANGE
-  PPROCESS_DYNAMIC_ENFORCED_ADDRESS_RANGE typedef ptr PROCESS_DYNAMIC_ENFORCED_ADDRESS_RANGE
-  PROCESS_DYNAMIC_ENFORCED_ADDRESS_RANGES_INFORMATION struct
-    NumberOfRanges WORD ?
-    Reserved WORD ?
-    Reserved2 DWORD ?
-    Ranges PPROCESS_DYNAMIC_ENFORCED_ADDRESS_RANGE ?
-  PROCESS_DYNAMIC_ENFORCED_ADDRESS_RANGES_INFORMATION ends
-  _PROCESS_DYNAMIC_ENFORCED_ADDRESS_RANGES_INFORMATION typedef PROCESS_DYNAMIC_ENFORCED_ADDRESS_RANGES_INFORMATION
-  PPROCESS_DYNAMIC_ENFORCED_ADDRESS_RANGES_INFORMATION typedef ptr PROCESS_DYNAMIC_ENFORCED_ADDRESS_RANGES_INFORMATION
   QUOTA_LIMITS struct
     PagedPoolLimit SIZE_T ?
     NonPagedPoolLimit SIZE_T ?
@@ -5269,8 +4229,8 @@ ifndef _WINNT_
   RATE_QUOTA_LIMIT union
     RateData DWORD ?
     struct
-      ANONYMOUS_REC1 record ANONYMOUS_REC1_Reserved0:25, ANONYMOUS_REC1_RatePercent:7
-      ANONYMOUS_REC1 <>
+      DUMMYRECORDNAME_??3 record RatePercent_??3:7, Reserved0_??3:25
+      DUMMYRECORDNAME_??3 <>
     ends
   RATE_QUOTA_LIMIT ends
   _RATE_QUOTA_LIMIT typedef RATE_QUOTA_LIMIT
@@ -5323,21 +4283,15 @@ ifndef _WINNT_
   ProcessSystemCallFilterPolicy equ 11
   ProcessPayloadRestrictionPolicy equ 12
   ProcessChildProcessPolicy equ 13
-  ProcessSideChannelIsolationPolicy equ 14
-  ProcessUserShadowStackPolicy equ 15
-  ProcessRedirectionTrustPolicy equ 16
-  ProcessUserPointerAuthPolicy equ 17
-  ProcessSEHOPPolicy equ 18
-  ProcessActivationContextTrustPolicy equ 19
-  MaxProcessMitigationPolicy equ 20
+  MaxProcessMitigationPolicy equ 14
   _PROCESS_MITIGATION_POLICY typedef PROCESS_MITIGATION_POLICY
   PPROCESS_MITIGATION_POLICY typedef ptr PROCESS_MITIGATION_POLICY
   PROCESS_MITIGATION_ASLR_POLICY struct
     union
       Flags DWORD ?
       struct
-        ANONYMOUS_REC2 record ANONYMOUS_REC2_ReservedFlags:28, ANONYMOUS_REC2_DisallowStrippedImages:1, ANONYMOUS_REC2_EnableHighEntropy:1, ANONYMOUS_REC2_EnableForceRelocateImages:1, ANONYMOUS_REC2_EnableBottomUpRandomization:1
-        ANONYMOUS_REC2 <>
+        DUMMYRECORDNAME_??4 record EnableBottomUpRandomization_??4:1, EnableForceRelocateImages_??4:1, EnableHighEntropy_??4:1, DisallowStrippedImages_??4:1, ReservedFlags_??4:28
+        DUMMYRECORDNAME_??4 <>
       ends
     ends
   PROCESS_MITIGATION_ASLR_POLICY ends
@@ -5347,31 +4301,20 @@ ifndef _WINNT_
     union
       Flags DWORD ?
       struct
-        ANONYMOUS_REC3 record ANONYMOUS_REC3_ReservedFlags:30, ANONYMOUS_REC3_DisableAtlThunkEmulation:1, ANONYMOUS_REC3_Enable:1
-        ANONYMOUS_REC3 <>
+        DUMMYRECORDNAME_??5 record Enable_??5:1, DisableAtlThunkEmulation_??5:1, ReservedFlags_??5:30
+        DUMMYRECORDNAME_??5 <>
       ends
     ends
     Permanent BOOLEAN ?
   PROCESS_MITIGATION_DEP_POLICY ends
   _PROCESS_MITIGATION_DEP_POLICY typedef PROCESS_MITIGATION_DEP_POLICY
   PPROCESS_MITIGATION_DEP_POLICY typedef ptr PROCESS_MITIGATION_DEP_POLICY
-  PROCESS_MITIGATION_SEHOP_POLICY struct
-    union
-      Flags DWORD ?
-      struct
-        ANONYMOUS_REC4 record ANONYMOUS_REC4_ReservedFlags:31, ANONYMOUS_REC4_EnableSehop:1
-        ANONYMOUS_REC4 <>
-      ends
-    ends
-  PROCESS_MITIGATION_SEHOP_POLICY ends
-  _PROCESS_MITIGATION_SEHOP_POLICY typedef PROCESS_MITIGATION_SEHOP_POLICY
-  PPROCESS_MITIGATION_SEHOP_POLICY typedef ptr PROCESS_MITIGATION_SEHOP_POLICY
   PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY struct
     union
       Flags DWORD ?
       struct
-        ANONYMOUS_REC5 record ANONYMOUS_REC5_ReservedFlags:30, ANONYMOUS_REC5_HandleExceptionsPermanentlyEnabled:1, ANONYMOUS_REC5_RaiseExceptionOnInvalidHandleReference:1
-        ANONYMOUS_REC5 <>
+        DUMMYRECORDNAME_??6 record RaiseExceptionOnInvalidHandleReference_??6:1, HandleExceptionsPermanentlyEnabled_??6:1, ReservedFlags_??6:30
+        DUMMYRECORDNAME_??6 <>
       ends
     ends
   PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY ends
@@ -5381,8 +4324,8 @@ ifndef _WINNT_
     union
       Flags DWORD ?
       struct
-        ANONYMOUS_REC6 record ANONYMOUS_REC6_ReservedFlags:28, ANONYMOUS_REC6_AuditDisallowFsctlSystemCalls:1, ANONYMOUS_REC6_DisallowFsctlSystemCalls:1, ANONYMOUS_REC6_AuditDisallowWin32kSystemCalls:1, ANONYMOUS_REC6_DisallowWin32kSystemCalls:1
-        ANONYMOUS_REC6 <>
+        DUMMYRECORDNAME_??7 record DisallowWin32kSystemCalls_??7:1, AuditDisallowWin32kSystemCalls_??7:1, ReservedFlags_??7:30
+        DUMMYRECORDNAME_??7 <>
       ends
     ends
   PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY ends
@@ -5392,8 +4335,8 @@ ifndef _WINNT_
     union
       Flags DWORD ?
       struct
-        ANONYMOUS_REC7 record ANONYMOUS_REC7_ReservedFlags:31, ANONYMOUS_REC7_DisableExtensionPoints:1
-        ANONYMOUS_REC7 <>
+        DUMMYRECORDNAME_??8 record DisableExtensionPoints_??8:1, ReservedFlags_??8:31
+        DUMMYRECORDNAME_??8 <>
       ends
     ends
   PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY ends
@@ -5403,8 +4346,8 @@ ifndef _WINNT_
     union
       Flags DWORD ?
       struct
-        ANONYMOUS_REC8 record ANONYMOUS_REC8_ReservedFlags:28, ANONYMOUS_REC8_AuditProhibitDynamicCode:1, ANONYMOUS_REC8_AllowRemoteDowngrade:1, ANONYMOUS_REC8_AllowThreadOptOut:1, ANONYMOUS_REC8_ProhibitDynamicCode:1
-        ANONYMOUS_REC8 <>
+        DUMMYRECORDNAME_??9 record ProhibitDynamicCode_??9:1, AllowThreadOptOut_??9:1, AllowRemoteDowngrade_??9:1, AuditProhibitDynamicCode_??9:1, ReservedFlags_??9:28
+        DUMMYRECORDNAME_??9 <>
       ends
     ends
   PROCESS_MITIGATION_DYNAMIC_CODE_POLICY ends
@@ -5414,8 +4357,8 @@ ifndef _WINNT_
     union
       Flags DWORD ?
       struct
-        ANONYMOUS_REC9 record ANONYMOUS_REC9_ReservedFlags:27, ANONYMOUS_REC9_EnableXfgAuditMode:1, ANONYMOUS_REC9_EnableXfg:1, ANONYMOUS_REC9_StrictMode:1, ANONYMOUS_REC9_EnableExportSuppression:1, ANONYMOUS_REC9_EnableControlFlowGuard:1
-        ANONYMOUS_REC9 <>
+        DUMMYRECORDNAME_??10 record EnableControlFlowGuard_??10:1, EnableExportSuppression_??10:1, StrictMode_??10:1, ReservedFlags_??10:29
+        DUMMYRECORDNAME_??10 <>
       ends
     ends
   PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY ends
@@ -5425,8 +4368,8 @@ ifndef _WINNT_
     union
       Flags DWORD ?
       struct
-        ANONYMOUS_REC10 record ANONYMOUS_REC10_ReservedFlags:27, ANONYMOUS_REC10_AuditStoreSignedOnly:1, ANONYMOUS_REC10_AuditMicrosoftSignedOnly:1, ANONYMOUS_REC10_MitigationOptIn:1, ANONYMOUS_REC10_StoreSignedOnly:1, ANONYMOUS_REC10_MicrosoftSignedOnly:1
-        ANONYMOUS_REC10 <>
+        DUMMYRECORDNAME_??11 record MicrosoftSignedOnly_??11:1, StoreSignedOnly_??11:1, MitigationOptIn_??11:1, AuditMicrosoftSignedOnly_??11:1, AuditStoreSignedOnly_??11:1, ReservedFlags_??11:27
+        DUMMYRECORDNAME_??11 <>
       ends
     ends
   PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY ends
@@ -5436,8 +4379,8 @@ ifndef _WINNT_
     union
       Flags DWORD ?
       struct
-        ANONYMOUS_REC11 record ANONYMOUS_REC11_ReservedFlags:30, ANONYMOUS_REC11_AuditNonSystemFontLoading:1, ANONYMOUS_REC11_DisableNonSystemFonts:1
-        ANONYMOUS_REC11 <>
+        DUMMYRECORDNAME_??12 record DisableNonSystemFonts_??12:1, AuditNonSystemFontLoading_??12:1, ReservedFlags_??12:30
+        DUMMYRECORDNAME_??12 <>
       ends
     ends
   PROCESS_MITIGATION_FONT_DISABLE_POLICY ends
@@ -5447,8 +4390,8 @@ ifndef _WINNT_
     union
       Flags DWORD ?
       struct
-        ANONYMOUS_REC12 record ANONYMOUS_REC12_ReservedFlags:27, ANONYMOUS_REC12_AuditNoLowMandatoryLabelImages:1, ANONYMOUS_REC12_AuditNoRemoteImages:1, ANONYMOUS_REC12_PreferSystem32Images:1, ANONYMOUS_REC12_NoLowMandatoryLabelImages:1, ANONYMOUS_REC12_NoRemoteImages:1
-        ANONYMOUS_REC12 <>
+        DUMMYRECORDNAME_??13 record NoRemoteImages_??13:1, NoLowMandatoryLabelImages_??13:1, PreferSystem32Images_??13:1, AuditNoRemoteImages_??13:1, AuditNoLowMandatoryLabelImages_??13:1, ReservedFlags_??13:27
+        DUMMYRECORDNAME_??13 <>
       ends
     ends
   PROCESS_MITIGATION_IMAGE_LOAD_POLICY ends
@@ -5458,8 +4401,8 @@ ifndef _WINNT_
     union
       Flags DWORD ?
       struct
-        ANONYMOUS_REC13 record ANONYMOUS_REC13_ReservedFlags:28, ANONYMOUS_REC13_FilterId:4
-        ANONYMOUS_REC13 <>
+        DUMMYRECORDNAME_??14 record FilterId_??14:4, ReservedFlags_??14:28
+        DUMMYRECORDNAME_??14 <>
       ends
     ends
   PROCESS_MITIGATION_SYSTEM_CALL_FILTER_POLICY ends
@@ -5469,8 +4412,8 @@ ifndef _WINNT_
     union
       Flags DWORD ?
       struct
-        ANONYMOUS_REC14 record ANONYMOUS_REC14_ReservedFlags:20, ANONYMOUS_REC14_AuditRopSimExec:1, ANONYMOUS_REC14_EnableRopSimExec:1, ANONYMOUS_REC14_AuditRopCallerCheck:1, ANONYMOUS_REC14_EnableRopCallerCheck:1, ANONYMOUS_REC14_AuditRopStackPivot:1, ANONYMOUS_REC14_EnableRopStackPivot:1, ANONYMOUS_REC14_AuditImportAddressFilter:1, ANONYMOUS_REC14_EnableImportAddressFilter:1, ANONYMOUS_REC14_AuditExportAddressFilterPlus:1, ANONYMOUS_REC14_EnableExportAddressFilterPlus:1, ANONYMOUS_REC14_AuditExportAddressFilter:1, ANONYMOUS_REC14_EnableExportAddressFilter:1
-        ANONYMOUS_REC14 <>
+        DUMMYRECORDNAME_??15 record EnableExportAddressFilter_??15:1, AuditExportAddressFilter_??15:1, EnableExportAddressFilterPlus_??15:1, AuditExportAddressFilterPlus_??15:1, EnableImportAddressFilter_??15:1, AuditImportAddressFilter_??15:1, EnableRopStackPivot_??15:1, AuditRopStackPivot_??15:1, EnableRopCallerCheck_??15:1, AuditRopCallerCheck_??15:1, EnableRopSimExec_??15:1, AuditRopSimExec_??15:1, ReservedFlags_??15:20
+        DUMMYRECORDNAME_??15 <>
       ends
     ends
   PROCESS_MITIGATION_PAYLOAD_RESTRICTION_POLICY ends
@@ -5480,68 +4423,13 @@ ifndef _WINNT_
     union
       Flags DWORD ?
       struct
-        ANONYMOUS_REC15 record ANONYMOUS_REC15_ReservedFlags:29, ANONYMOUS_REC15_AllowSecureProcessCreation:1, ANONYMOUS_REC15_AuditNoChildProcessCreation:1, ANONYMOUS_REC15_NoChildProcessCreation:1
-        ANONYMOUS_REC15 <>
+        DUMMYRECORDNAME_??16 record NoChildProcessCreation_??16:1, AuditNoChildProcessCreation_??16:1, AllowSecureProcessCreation_??16:1, ReservedFlags_??16:29
+        DUMMYRECORDNAME_??16 <>
       ends
     ends
   PROCESS_MITIGATION_CHILD_PROCESS_POLICY ends
   _PROCESS_MITIGATION_CHILD_PROCESS_POLICY typedef PROCESS_MITIGATION_CHILD_PROCESS_POLICY
   PPROCESS_MITIGATION_CHILD_PROCESS_POLICY typedef ptr PROCESS_MITIGATION_CHILD_PROCESS_POLICY
-  PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY struct
-    union
-      Flags DWORD ?
-      struct
-        ANONYMOUS_REC16 record ANONYMOUS_REC16_ReservedFlags:27, ANONYMOUS_REC16_RestrictCoreSharing:1, ANONYMOUS_REC16_SpeculativeStoreBypassDisable:1, ANONYMOUS_REC16_DisablePageCombine:1, ANONYMOUS_REC16_IsolateSecurityDomain:1, ANONYMOUS_REC16_SmtBranchTargetIsolation:1
-        ANONYMOUS_REC16 <>
-      ends
-    ends
-  PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY ends
-  _PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY typedef PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY
-  PPROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY typedef ptr PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY
-  PROCESS_MITIGATION_USER_SHADOW_STACK_POLICY struct
-    union
-      Flags DWORD ?
-      struct
-        ANONYMOUS_REC17 record ANONYMOUS_REC17_ReservedFlags:22, ANONYMOUS_REC17_SetContextIpValidationRelaxedMode:1, ANONYMOUS_REC17_CetDynamicApisOutOfProcOnly:1, ANONYMOUS_REC17_AuditBlockNonCetBinaries:1, ANONYMOUS_REC17_BlockNonCetBinariesNonEhcont:1, ANONYMOUS_REC17_BlockNonCetBinaries:1, ANONYMOUS_REC17_EnableUserShadowStackStrictMode:1, ANONYMOUS_REC17_AuditSetContextIpValidation:1, ANONYMOUS_REC17_SetContextIpValidation:1, ANONYMOUS_REC17_AuditUserShadowStack:1, ANONYMOUS_REC17_EnableUserShadowStack:1
-        ANONYMOUS_REC17 <>
-      ends
-    ends
-  PROCESS_MITIGATION_USER_SHADOW_STACK_POLICY ends
-  _PROCESS_MITIGATION_USER_SHADOW_STACK_POLICY typedef PROCESS_MITIGATION_USER_SHADOW_STACK_POLICY
-  PPROCESS_MITIGATION_USER_SHADOW_STACK_POLICY typedef ptr PROCESS_MITIGATION_USER_SHADOW_STACK_POLICY
-  PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY struct
-    union
-      Flags DWORD ?
-      struct
-        ANONYMOUS_REC18 record ANONYMOUS_REC18_ReservedFlags:31, ANONYMOUS_REC18_EnablePointerAuthUserIp:1
-        ANONYMOUS_REC18 <>
-      ends
-    ends
-  PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY ends
-  _PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY typedef PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY
-  PPROCESS_MITIGATION_USER_POINTER_AUTH_POLICY typedef ptr PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY
-  PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY struct
-    union
-      Flags DWORD ?
-      struct
-        ANONYMOUS_REC19 record ANONYMOUS_REC19_ReservedFlags:30, ANONYMOUS_REC19_AuditRedirectionTrust:1, ANONYMOUS_REC19_EnforceRedirectionTrust:1
-        ANONYMOUS_REC19 <>
-      ends
-    ends
-  PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY ends
-  _PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY typedef PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY
-  PPROCESS_MITIGATION_REDIRECTION_TRUST_POLICY typedef ptr PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY
-  PROCESS_MITIGATION_ACTIVATION_CONTEXT_TRUST_POLICY struct
-    union
-      Flags DWORD ?
-      struct
-        ANONYMOUS_REC20 record ANONYMOUS_REC20_ReservedFlags:31, ANONYMOUS_REC20_AssemblyManifestRedirectionTrust:1
-        ANONYMOUS_REC20 <>
-      ends
-    ends
-  PROCESS_MITIGATION_ACTIVATION_CONTEXT_TRUST_POLICY ends
-  _PROCESS_MITIGATION_ACTIVATION_CONTEXT_TRUST_POLICY typedef PROCESS_MITIGATION_ACTIVATION_CONTEXT_TRUST_POLICY
-  PPROCESS_MITIGATION_ACTIVATION_CONTEXT_TRUST_POLICY typedef ptr PROCESS_MITIGATION_ACTIVATION_CONTEXT_TRUST_POLICY
   JOBOBJECT_BASIC_ACCOUNTING_INFORMATION struct
     TotalUserTime LARGE_INTEGER <>
     TotalKernelTime LARGE_INTEGER <>
@@ -5651,11 +4539,11 @@ ifndef _WINNT_
       JobHighMemoryLimit DWORD64 ?
       JobMemoryLimit DWORD64 ?
     ends
-    union
+    union DUMMYUNIONNAME2
       RateControlTolerance JOBOBJECT_RATE_CONTROL_TOLERANCE ?
       CpuRateControlTolerance JOBOBJECT_RATE_CONTROL_TOLERANCE ?
     ends
-    union
+    union DUMMYUNIONNAME3
       RateControlToleranceInterval JOBOBJECT_RATE_CONTROL_TOLERANCE_INTERVAL ?
       CpuRateControlToleranceInterval JOBOBJECT_RATE_CONTROL_TOLERANCE_INTERVAL ?
     ends
@@ -5696,11 +4584,11 @@ ifndef _WINNT_
       JobHighMemoryLimit DWORD64 ?
       JobMemoryLimit DWORD64 ?
     ends
-    union
+    union DUMMYUNIONNAME2
       RateControlTolerance JOBOBJECT_RATE_CONTROL_TOLERANCE ?
       CpuRateControlTolerance JOBOBJECT_RATE_CONTROL_TOLERANCE ?
     ends
-    union
+    union DUMMYUNIONNAME3
       RateControlToleranceLimit JOBOBJECT_RATE_CONTROL_TOLERANCE ?
       CpuRateControlToleranceLimit JOBOBJECT_RATE_CONTROL_TOLERANCE ?
     ends
@@ -5728,7 +4616,6 @@ ifndef _WINNT_
   JOB_OBJECT_NET_RATE_CONTROL_MAX_BANDWIDTH equ 2h
   JOB_OBJECT_NET_RATE_CONTROL_DSCP_TAG equ 4h
   JOB_OBJECT_NET_RATE_CONTROL_VALID_FLAGS equ 7h
-
   if  not Defined(SORTPP_PASS) and  not Defined(MIDL_PASS) and  not Defined(RC_INVOKED)
     DEFINE_ENUM_FLAG_OPERATORS(JOB_OBJECT_NET_RATE_CONTROL_FLAGS)
   endif
@@ -5744,7 +4631,6 @@ ifndef _WINNT_
   JOB_OBJECT_IO_RATE_CONTROL_FORCE_UNIT_ACCESS_ALL equ 4h
   JOB_OBJECT_IO_RATE_CONTROL_FORCE_UNIT_ACCESS_ON_SOFT_CAP equ 8h
   JOB_OBJECT_IO_RATE_CONTROL_VALID_FLAGS equ JOB_OBJECT_IO_RATE_CONTROL_ENABLE or JOB_OBJECT_IO_RATE_CONTROL_STANDALONE_VOLUME or JOB_OBJECT_IO_RATE_CONTROL_FORCE_UNIT_ACCESS_ALL or JOB_OBJECT_IO_RATE_CONTROL_FORCE_UNIT_ACCESS_ON_SOFT_CAP
-
   if  not Defined(SORTPP_PASS) and  not Defined(MIDL_PASS) and  not Defined(RC_INVOKED)
     DEFINE_ENUM_FLAG_OPERATORS(JOB_OBJECT_IO_RATE_CONTROL_FLAGS)
   endif
@@ -5798,7 +4684,6 @@ ifndef _WINNT_
   JOBOBJECT_IO_ATTRIBUTION_CONTROL_ENABLE equ 1h
   JOBOBJECT_IO_ATTRIBUTION_CONTROL_DISABLE equ 2h
   JOBOBJECT_IO_ATTRIBUTION_CONTROL_VALID_FLAGS equ 3h
-
   JOBOBJECT_IO_ATTRIBUTION_STATS struct
     IoCount ULONG_PTR ?
     TotalNonOverlappedQueueTime ULONGLONG ?
@@ -5857,7 +4742,10 @@ ifndef _WINNT_
   JOB_OBJECT_LIMIT_VALID_FLAGS equ 0007ffffh
   JOB_OBJECT_BASIC_LIMIT_VALID_FLAGS equ 000000ffh
   JOB_OBJECT_EXTENDED_LIMIT_VALID_FLAGS equ 00007fffh
-  JOB_OBJECT_NOTIFICATION_LIMIT_VALID_FLAGS equ <(JOB_OBJECT_LIMIT_JOB_READ_BYTES or JOB_OBJECT_LIMIT_JOB_WRITE_BYTES or JOB_OBJECT_LIMIT_JOB_TIME or JOB_OBJECT_LIMIT_JOB_MEMORY_LOW or JOB_OBJECT_LIMIT_JOB_MEMORY_HIGH or JOB_OBJECT_LIMIT_CPU_RATE_CONTROL or JOB_OBJECT_LIMIT_IO_RATE_CONTROL or JOB_OBJECT_LIMIT_NET_RATE_CONTROL)>
+  JOB_OBJECT_NOTIFICATION_LIMIT_VALID_FLAGS equ <>
+  ;(JOB_OBJECT_LIMIT_JOB_READ_BYTES or JOB_OBJECT_LIMIT_JOB_WRITE_BYTES or JOB_OBJECT_LIMIT_JOB_TIME or
+  ;JOB_OBJECT_LIMIT_JOB_MEMORY_LOW or JOB_OBJECT_LIMIT_JOB_MEMORY_HIGH or JOB_OBJECT_LIMIT_CPU_RATE_CONTROL or
+  ;JOB_OBJECT_LIMIT_IO_RATE_CONTROL or JOB_OBJECT_LIMIT_NET_RATE_CONTROL)
   JOB_OBJECT_UILIMIT_NONE equ 00000000h
   JOB_OBJECT_UILIMIT_HANDLES equ 00000001h
   JOB_OBJECT_UILIMIT_READCLIPBOARD equ 00000002h
@@ -5867,9 +4755,8 @@ ifndef _WINNT_
   JOB_OBJECT_UILIMIT_GLOBALATOMS equ 00000020h
   JOB_OBJECT_UILIMIT_DESKTOP equ 00000040h
   JOB_OBJECT_UILIMIT_EXITWINDOWS equ 00000080h
-  JOB_OBJECT_UILIMIT_IME equ 00000100h
-  JOB_OBJECT_UILIMIT_ALL equ 000001FFh
-  JOB_OBJECT_UI_VALID_FLAGS equ 000001FFh
+  JOB_OBJECT_UILIMIT_ALL equ 000000FFh
+  JOB_OBJECT_UI_VALID_FLAGS equ 000000FFh
   JOB_OBJECT_SECURITY_NO_ADMIN equ 00000001h
   JOB_OBJECT_SECURITY_RESTRICTED_TOKEN equ 00000002h
   JOB_OBJECT_SECURITY_ONLY_TOKEN equ 00000004h
@@ -5929,11 +4816,8 @@ ifndef _WINNT_
   JobObjectReserved23Information equ 45
   JobObjectReserved24Information equ 46
   JobObjectReserved25Information equ 47
-  JobObjectReserved26Information equ 48
-  JobObjectReserved27Information equ 49
-  MaxJobObjectInfoClass equ 50
+  MaxJobObjectInfoClass equ 48
   _JOBOBJECTINFOCLASS typedef JOBOBJECTINFOCLASS
-
   SILOOBJECT_BASIC_INFORMATION struct
     SiloId DWORD ?
     SiloParentId DWORD ?
@@ -5955,15 +4839,9 @@ ifndef _WINNT_
     ServiceSessionId DWORD ?
     State SERVERSILO_STATE ?
     ExitStatus DWORD ?
-    IsDownlevelContainer BOOLEAN ?
-    ApiSetSchema PVOID ?
-    HostApiSetSchema PVOID ?
   SERVERSILO_BASIC_INFORMATION ends
   _SERVERSILO_BASIC_INFORMATION typedef SERVERSILO_BASIC_INFORMATION
   PSERVERSILO_BASIC_INFORMATION typedef ptr SERVERSILO_BASIC_INFORMATION
-  MEMORY_PARTITION_QUERY_ACCESS equ 0001h
-  MEMORY_PARTITION_MODIFY_ACCESS equ 0002h
-  MEMORY_PARTITION_ALL_ACCESS equ <(STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or MEMORY_PARTITION_QUERY_ACCESS or MEMORY_PARTITION_MODIFY_ACCESS)>
   FIRMWARE_TYPE typedef SDWORD
   FirmwareTypeUnknown equ 0
   FirmwareTypeBios equ 1
@@ -5989,12 +4867,8 @@ ifndef _WINNT_
   RelationCache equ 2
   RelationProcessorPackage equ 3
   RelationGroup equ 4
-  RelationProcessorDie equ 5
-  RelationNumaNodeEx equ 6
-  RelationProcessorModule equ 7
   RelationAll equ 0ffffh
   _LOGICAL_PROCESSOR_RELATIONSHIP typedef LOGICAL_PROCESSOR_RELATIONSHIP
-
   LTP_PC_SMT equ 1h
   PROCESSOR_CACHE_TYPE typedef SDWORD
   CacheUnified equ 0
@@ -6002,7 +4876,6 @@ ifndef _WINNT_
   CacheData equ 2
   CacheTrace equ 3
   _PROCESSOR_CACHE_TYPE typedef PROCESSOR_CACHE_TYPE
-
   CACHE_FULLY_ASSOCIATIVE equ 0FFh
   CACHE_DESCRIPTOR struct
     Level BYTE ?
@@ -6040,12 +4913,8 @@ ifndef _WINNT_
   PPROCESSOR_RELATIONSHIP typedef ptr PROCESSOR_RELATIONSHIP
   NUMA_NODE_RELATIONSHIP struct
     NodeNumber DWORD ?
-    Reserved BYTE 18 dup (?)
-    GroupCount WORD ?
-    union
-      GroupMask GROUP_AFFINITY <>
-      GroupMasks GROUP_AFFINITY ANYSIZE_ARRAY dup (<>)
-    ends
+    Reserved BYTE 20 dup (?)
+    GroupMask GROUP_AFFINITY <>
   NUMA_NODE_RELATIONSHIP ends
   _NUMA_NODE_RELATIONSHIP typedef NUMA_NODE_RELATIONSHIP
   PNUMA_NODE_RELATIONSHIP typedef ptr NUMA_NODE_RELATIONSHIP
@@ -6055,12 +4924,8 @@ ifndef _WINNT_
     LineSize WORD ?
     CacheSize DWORD ?
     Type_ PROCESSOR_CACHE_TYPE ?
-    Reserved BYTE 18 dup (?)
-    GroupCount WORD ?
-    union
-      GroupMask GROUP_AFFINITY <>
-      GroupMasks GROUP_AFFINITY ANYSIZE_ARRAY dup (<>)
-    ends
+    Reserved BYTE 20 dup (?)
+    GroupMask GROUP_AFFINITY <>
   CACHE_RELATIONSHIP ends
   _CACHE_RELATIONSHIP typedef CACHE_RELATIONSHIP
   PCACHE_RELATIONSHIP typedef ptr CACHE_RELATIONSHIP
@@ -6108,15 +4973,15 @@ ifndef _WINNT_
         LastLevelCacheIndex BYTE ?
         NumaNodeIndex BYTE ?
         EfficiencyClass BYTE ?
-        union
+        union DUMMYUNIONNAME2
           SYSTEM_CPU_SET_INFORMATION_PARKED equ 1h
           SYSTEM_CPU_SET_INFORMATION_ALLOCATED equ 2h
           SYSTEM_CPU_SET_INFORMATION_ALLOCATED_TO_TARGET_PROCESS equ 4h
           SYSTEM_CPU_SET_INFORMATION_REALTIME equ 8h
           AllFlags BYTE ?
           struct
-            ANONYMOUS_REC21 record ANONYMOUS_REC21_ReservedFlags:4, ANONYMOUS_REC21_RealTime:1, ANONYMOUS_REC21_AllocatedToTargetProcess:1, ANONYMOUS_REC21_Allocated:1, ANONYMOUS_REC21_Parked:1
-            ANONYMOUS_REC21 <>
+            DUMMYRECORDNAME_??17 record Parked_??17:1, Allocated_??17:1, AllocatedToTargetProcess_??17:1, RealTime_??17:1, ReservedFlags_??17:4
+            DUMMYRECORDNAME_??17 <>
           ends
         ends
         union
@@ -6129,21 +4994,11 @@ ifndef _WINNT_
   _SYSTEM_CPU_SET_INFORMATION ends
   SYSTEM_CPU_SET_INFORMATION typedef _SYSTEM_CPU_SET_INFORMATION
   PSYSTEM_CPU_SET_INFORMATION typedef ptr _SYSTEM_CPU_SET_INFORMATION
-  SYSTEM_POOL_ZEROING_INFORMATION struct
-    PoolZeroingSupportPresent BOOLEAN ?
-  SYSTEM_POOL_ZEROING_INFORMATION ends
-  _SYSTEM_POOL_ZEROING_INFORMATION typedef SYSTEM_POOL_ZEROING_INFORMATION
-  PSYSTEM_POOL_ZEROING_INFORMATION typedef ptr SYSTEM_POOL_ZEROING_INFORMATION
   SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION struct
     CycleTime DWORD64 ?
   SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION ends
   _SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION typedef SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION
   PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION typedef ptr SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION
-  SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION struct
-    SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION_REC record SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION_REC_ReservedZero0:11, SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION_REC_WoW64Container:1, SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION_REC_Process:1, SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION_REC_Native:1, SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION_REC_UserMode:1, SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION_REC_KernelMode:1, SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION_REC_Machine:16
-    SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION_BITS SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION_REC <>
-  SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION ends
-  _SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION typedef SYSTEM_SUPPORTED_PROCESSOR_ARCHITECTURES_INFORMATION
   PROCESSOR_INTEL_386 equ 386
   PROCESSOR_INTEL_486 equ 486
   PROCESSOR_INTEL_PENTIUM equ 586
@@ -6216,36 +5071,18 @@ ifndef _WINNT_
   PF_ARM_V8_CRYPTO_INSTRUCTIONS_AVAILABLE equ 30
   PF_ARM_V8_CRC32_INSTRUCTIONS_AVAILABLE equ 31
   PF_RDTSCP_INSTRUCTION_AVAILABLE equ 32
-  PF_RDPID_INSTRUCTION_AVAILABLE equ 33
-  PF_ARM_V81_ATOMIC_INSTRUCTIONS_AVAILABLE equ 34
-  PF_MONITORX_INSTRUCTION_AVAILABLE equ 35
-  PF_SSSE3_INSTRUCTIONS_AVAILABLE equ 36
-  PF_SSE4_1_INSTRUCTIONS_AVAILABLE equ 37
-  PF_SSE4_2_INSTRUCTIONS_AVAILABLE equ 38
-  PF_AVX_INSTRUCTIONS_AVAILABLE equ 39
-  PF_AVX2_INSTRUCTIONS_AVAILABLE equ 40
-  PF_AVX512F_INSTRUCTIONS_AVAILABLE equ 41
-  PF_ERMS_AVAILABLE equ 42
-  PF_ARM_V82_DP_INSTRUCTIONS_AVAILABLE equ 43
-  PF_ARM_V83_JSCVT_INSTRUCTIONS_AVAILABLE equ 44
-  PF_ARM_V83_LRCPC_INSTRUCTIONS_AVAILABLE equ 45
-  XSTATE_LEGACY_FLOATING_POINT equ (0)
-  XSTATE_LEGACY_SSE equ (1)
-  XSTATE_GSSE equ (2)
+  XSTATE_LEGACY_FLOATING_POINT equ 0
+  XSTATE_LEGACY_SSE equ 1
+  XSTATE_GSSE equ 2
   XSTATE_AVX equ <(XSTATE_GSSE)>
-  XSTATE_MPX_BNDREGS equ (3)
-  XSTATE_MPX_BNDCSR equ (4)
-  XSTATE_AVX512_KMASK equ (5)
-  XSTATE_AVX512_ZMM_H equ (6)
-  XSTATE_AVX512_ZMM equ (7)
-  XSTATE_IPT equ (8)
-  XSTATE_PASID equ (10)
-  XSTATE_CET_U equ (11)
-  XSTATE_CET_S equ (12)
-  XSTATE_AMX_TILE_CONFIG equ (17)
-  XSTATE_AMX_TILE_DATA equ (18)
-  XSTATE_LWP equ (62)
-  MAXIMUM_XSTATE_FEATURES equ (64)
+  XSTATE_MPX_BNDREGS equ 3
+  XSTATE_MPX_BNDCSR equ 4
+  XSTATE_AVX512_KMASK equ 5
+  XSTATE_AVX512_ZMM_H equ 6
+  XSTATE_AVX512_ZMM equ 7
+  XSTATE_IPT equ 8
+  XSTATE_LWP equ 62
+  MAXIMUM_XSTATE_FEATURES equ 64
   XSTATE_MASK_LEGACY_FLOATING_POINT equ (1 shl (XSTATE_LEGACY_FLOATING_POINT))
   XSTATE_MASK_LEGACY_SSE equ (1 shl (XSTATE_LEGACY_SSE))
   XSTATE_MASK_LEGACY equ <(XSTATE_MASK_LEGACY_FLOATING_POINT or XSTATE_MASK_LEGACY_SSE)>
@@ -6254,34 +5091,16 @@ ifndef _WINNT_
   XSTATE_MASK_MPX equ ((1 shl (XSTATE_MPX_BNDREGS)) or (1 shl (XSTATE_MPX_BNDCSR)))
   XSTATE_MASK_AVX512 equ ((1 shl (XSTATE_AVX512_KMASK)) or (1 shl (XSTATE_AVX512_ZMM_H)) or (1 shl (XSTATE_AVX512_ZMM)))
   XSTATE_MASK_IPT equ (1 shl (XSTATE_IPT))
-  XSTATE_MASK_PASID equ (1 shl (XSTATE_PASID))
-  XSTATE_MASK_CET_U equ (1 shl (XSTATE_CET_U))
-  XSTATE_MASK_CET_S equ (1 shl (XSTATE_CET_S))
-  XSTATE_MASK_AMX_TILE_CONFIG equ (1 shl (XSTATE_AMX_TILE_CONFIG))
-  XSTATE_MASK_AMX_TILE_DATA equ (1 shl (XSTATE_AMX_TILE_DATA))
   XSTATE_MASK_LWP equ (1 shl (XSTATE_LWP))
-  if Defined(_AMD64_)
-    XSTATE_MASK_ALLOWED equ <(XSTATE_MASK_LEGACY or XSTATE_MASK_AVX or XSTATE_MASK_MPX or XSTATE_MASK_AVX512 or XSTATE_MASK_IPT or XSTATE_MASK_PASID or XSTATE_MASK_CET_U or XSTATE_MASK_AMX_TILE_CONFIG or XSTATE_MASK_AMX_TILE_DATA or XSTATE_MASK_LWP)>
-  elseif Defined(_X86_)
-    XSTATE_MASK_ALLOWED equ <(XSTATE_MASK_LEGACY or XSTATE_MASK_AVX or XSTATE_MASK_MPX or XSTATE_MASK_AVX512 or XSTATE_MASK_IPT or XSTATE_MASK_CET_U or XSTATE_MASK_LWP)>
-  endif
+  XSTATE_MASK_ALLOWED equ <(XSTATE_MASK_LEGACY or XSTATE_MASK_AVX or XSTATE_MASK_MPX or XSTATE_MASK_AVX512 or XSTATE_MASK_IPT or XSTATE_MASK_LWP)>
   XSTATE_MASK_PERSISTENT equ ((1 shl (XSTATE_MPX_BNDCSR)) or XSTATE_MASK_LWP)
-  XSTATE_MASK_USER_VISIBLE_SUPERVISOR equ <(XSTATE_MASK_CET_U)>
-  XSTATE_MASK_LARGE_FEATURES equ <(XSTATE_MASK_AMX_TILE_DATA)>
-  if Defined(_X86_)
-    if  not Defined(__midl) and  not Defined(MIDL_PASS)
-    endif
-  endif
-  XSTATE_COMPACTION_ENABLE equ (63)
+  XSTATE_COMPACTION_ENABLE equ 63
   XSTATE_COMPACTION_ENABLE_MASK equ (1 shl (XSTATE_COMPACTION_ENABLE))
-  XSTATE_ALIGN_BIT equ (1)
+  XSTATE_ALIGN_BIT equ 1
   XSTATE_ALIGN_MASK equ (1 shl (XSTATE_ALIGN_BIT))
-  XSTATE_XFD_BIT equ (2)
-  XSTATE_XFD_MASK equ (1 shl (XSTATE_XFD_BIT))
-  XSTATE_CONTROLFLAG_XSAVEOPT_MASK equ (1)
-  XSTATE_CONTROLFLAG_XSAVEC_MASK equ (2)
-  XSTATE_CONTROLFLAG_XFD_MASK equ (4)
-  XSTATE_CONTROLFLAG_VALID_MASK equ <(XSTATE_CONTROLFLAG_XSAVEOPT_MASK or XSTATE_CONTROLFLAG_XSAVEC_MASK or XSTATE_CONTROLFLAG_XFD_MASK)>
+  XSTATE_CONTROLFLAG_XSAVEOPT_MASK equ 1
+  XSTATE_CONTROLFLAG_XSAVEC_MASK equ 2
+  XSTATE_CONTROLFLAG_VALID_MASK equ <(XSTATE_CONTROLFLAG_XSAVEOPT_MASK or XSTATE_CONTROLFLAG_XSAVEC_MASK)>
   XSTATE_FEATURE struct
     Offset_ DWORD ?
     Size_ DWORD ?
@@ -6295,8 +5114,8 @@ ifndef _WINNT_
     union
       ControlFlags DWORD ?
       struct
-        ANONYMOUS_REC22 record ANONYMOUS_REC22_Filler:29, ANONYMOUS_REC22_ExtendedFeatureDisable:1, ANONYMOUS_REC22_CompactionEnabled:1, ANONYMOUS_REC22_OptimizedSave:1
-        ANONYMOUS_REC22 <>
+        DUMMYRECORDNAME_??18 record OptimizedSave_??18:1, CompactionEnabled_??18:1
+        DUMMYRECORDNAME_??18 <>
       ends
     ends
     Features XSTATE_FEATURE MAXIMUM_XSTATE_FEATURES dup (<>)
@@ -6304,10 +5123,6 @@ ifndef _WINNT_
     AlignedFeatures DWORD64 ?
     AllFeatureSize DWORD ?
     AllFeatures DWORD MAXIMUM_XSTATE_FEATURES dup (?)
-    EnabledUserVisibleSupervisorFeatures DWORD64 ?
-    ExtendedFeatureDisableFeatures DWORD64 ?
-    AllNonLargeFeatureSize DWORD ?
-    Spare DWORD ?
   XSTATE_CONFIGURATION ends
   _XSTATE_CONFIGURATION typedef XSTATE_CONFIGURATION
   PXSTATE_CONFIGURATION typedef ptr XSTATE_CONFIGURATION
@@ -6315,9 +5130,6 @@ ifndef _WINNT_
     BaseAddress PVOID ?
     AllocationBase PVOID ?
     AllocationProtect DWORD ?
-    if Defined(_WIN64)
-      PartitionId WORD ?
-    endif
     RegionSize SIZE_T ?
     State DWORD ?
     Protect DWORD ?
@@ -6349,11 +5161,9 @@ ifndef _WINNT_
   MEMORY_BASIC_INFORMATION64 ends
   _MEMORY_BASIC_INFORMATION64 typedef MEMORY_BASIC_INFORMATION64
   PMEMORY_BASIC_INFORMATION64 typedef ptr MEMORY_BASIC_INFORMATION64
-  CFG_CALL_TARGET_VALID equ (00000001h)
-  CFG_CALL_TARGET_PROCESSED equ (00000002h)
-  CFG_CALL_TARGET_CONVERT_EXPORT_SUPPRESSED_TO_VALID equ (00000004h)
-  CFG_CALL_TARGET_VALID_XFG equ (00000008h)
-  CFG_CALL_TARGET_CONVERT_XFG_TO_CFG equ (00000010h)
+  CFG_CALL_TARGET_VALID equ 00000001h
+  CFG_CALL_TARGET_PROCESSED equ 00000002h
+  CFG_CALL_TARGET_CONVERT_EXPORT_SUPPRESSED_TO_VALID equ 00000004h
   CFG_CALL_TARGET_INFO struct
     Offset_ ULONG_PTR ?
     Flags ULONG_PTR ?
@@ -6381,23 +5191,12 @@ ifndef _WINNT_
   PAGE_GUARD equ 100h
   PAGE_NOCACHE equ 200h
   PAGE_WRITECOMBINE equ 400h
-  PAGE_GRAPHICS_NOACCESS equ 0800h
-  PAGE_GRAPHICS_READONLY equ 1000h
-  PAGE_GRAPHICS_READWRITE equ 2000h
-  PAGE_GRAPHICS_EXECUTE equ 4000h
-  PAGE_GRAPHICS_EXECUTE_READ equ 8000h
-  PAGE_GRAPHICS_EXECUTE_READWRITE equ 10000h
-  PAGE_GRAPHICS_COHERENT equ 20000h
-  PAGE_GRAPHICS_NOCACHE equ 40000h
   PAGE_ENCLAVE_THREAD_CONTROL equ 80000000h
   PAGE_REVERT_TO_FILE_MAP equ 80000000h
   PAGE_TARGETS_NO_UPDATE equ 40000000h
   PAGE_TARGETS_INVALID equ 40000000h
   PAGE_ENCLAVE_UNVALIDATED equ 20000000h
-  PAGE_ENCLAVE_MASK equ 10000000h
-  PAGE_ENCLAVE_DECOMMIT equ (PAGE_ENCLAVE_MASK or 0)
-  PAGE_ENCLAVE_SS_FIRST equ (PAGE_ENCLAVE_MASK or 1)
-  PAGE_ENCLAVE_SS_REST equ (PAGE_ENCLAVE_MASK or 2)
+  PAGE_ENCLAVE_DECOMMIT equ 10000000h
   MEM_COMMIT equ 00001000h
   MEM_RESERVE equ 00002000h
   MEM_REPLACE_PLACEHOLDER equ 00004000h
@@ -6423,32 +5222,22 @@ ifndef _WINNT_
     HighestEndingAddress PVOID ?
     Alignment SIZE_T ?
   MEM_ADDRESS_REQUIREMENTS ends
-  _MEM_ADDRESS_REQUIREMENTS typedef MEM_ADDRESS_REQUIREMENTS
   PMEM_ADDRESS_REQUIREMENTS typedef ptr MEM_ADDRESS_REQUIREMENTS
-  MEM_EXTENDED_PARAMETER_GRAPHICS equ 00000001h
-  MEM_EXTENDED_PARAMETER_NONPAGED equ 00000002h
-  MEM_EXTENDED_PARAMETER_ZERO_PAGES_OPTIONAL equ 00000004h
-  MEM_EXTENDED_PARAMETER_NONPAGED_LARGE equ 00000008h
-  MEM_EXTENDED_PARAMETER_NONPAGED_HUGE equ 00000010h
-  MEM_EXTENDED_PARAMETER_SOFT_FAULT_PAGES equ 00000020h
-  MEM_EXTENDED_PARAMETER_EC_CODE equ 00000040h
-  MEM_EXTENDED_PARAMETER_IMAGE_NO_HPAT equ 00000080h
-  MEM_EXTENDED_PARAMETER_NUMA_NODE_MANDATORY equ <MINLONG64>
   MEM_EXTENDED_PARAMETER_TYPE typedef SDWORD
   MemExtendedParameterInvalidType equ 0
   MemExtendedParameterAddressRequirements equ 1
   MemExtendedParameterNumaNode equ 2
   MemExtendedParameterPartitionHandle equ 3
-  MemExtendedParameterUserPhysicalHandle equ 4
-  MemExtendedParameterAttributeFlags equ 5
-  MemExtendedParameterImageMachine equ 6
-  MemExtendedParameterMax equ 7
+  MemExtendedParameterMax equ 4
   PMEM_EXTENDED_PARAMETER_TYPE typedef ptr MEM_EXTENDED_PARAMETER_TYPE
   MEM_EXTENDED_PARAMETER_TYPE_BITS equ 8
   MEM_EXTENDED_PARAMETER struct
     struct
-      ANONYMOUS_REC23 record ANONYMOUS_REC23_Reserved:56, ANONYMOUS_REC23_Type:8
-      ANONYMOUS_REC23 <>
+;      DUMMYRECORDNAME_??19 record Type_??19:MEM_EXTENDED_PARAMETER_TYPE_BITS, Reserved_??19:64 - MEM_EXTENDED_PARAMETER_TYPE_BITS
+;      DUMMYRECORDNAME_??19 <>
+      DUMMYRECORDNAME_??19 record Type_??19:MEM_EXTENDED_PARAMETER_TYPE_BITS, Reserved_??19:32 - MEM_EXTENDED_PARAMETER_TYPE_BITS
+      DWORD ?
+      DUMMYRECORDNAME_??19 <>
     ends
     union
       ULong64 DWORD64 ?
@@ -6459,19 +5248,6 @@ ifndef _WINNT_
     ends
   MEM_EXTENDED_PARAMETER ends
   PMEM_EXTENDED_PARAMETER typedef ptr MEM_EXTENDED_PARAMETER
-  MEMORY_CURRENT_PARTITION_HANDLE equ (- 1)
-  MEMORY_SYSTEM_PARTITION_HANDLE equ (- 2)
-  MEMORY_EXISTING_VAD_PARTITION_HANDLE equ (- 3)
-  MEM_DEDICATED_ATTRIBUTE_NOT_SPECIFIED equ (- 1)
-  MEM_DEDICATED_ATTRIBUTE_TYPE typedef SDWORD
-  MemDedicatedAttributeReadBandwidth equ 0
-  MemDedicatedAttributeReadLatency equ 1
-  MemDedicatedAttributeWriteBandwidth equ 2
-  MemDedicatedAttributeWriteLatency equ 3
-  MemDedicatedAttributeMax equ 4
-  _MEM_DEDICATED_ATTRIBUTE_TYPE typedef MEM_DEDICATED_ATTRIBUTE_TYPE
-  PMEM_DEDICATED_ATTRIBUTE_TYPE typedef ptr MEM_DEDICATED_ATTRIBUTE_TYPE
-  SEC_HUGE_PAGES equ 00020000h
   SEC_PARTITION_OWNER_HANDLE equ 00040000h
   SEC_64K_PAGES equ 00080000h
   SEC_FILE equ 00800000h
@@ -6483,13 +5259,6 @@ ifndef _WINNT_
   SEC_WRITECOMBINE equ 40000000h
   SEC_LARGE_PAGES equ 80000000h
   SEC_IMAGE_NO_EXECUTE equ <(SEC_IMAGE or SEC_NOCACHE)>
-  MEM_SECTION_EXTENDED_PARAMETER_TYPE typedef SDWORD
-  MemSectionExtendedParameterInvalidType equ 0
-  MemSectionExtendedParameterUserPhysicalFlags equ 1
-  MemSectionExtendedParameterNumaNode equ 2
-  MemSectionExtendedParameterSigningLevel equ 3
-  MemSectionExtendedParameterMax equ 4
-  PMEM_SECTION_EXTENDED_PARAMETER_TYPE typedef ptr MEM_SECTION_EXTENDED_PARAMETER_TYPE
   MEM_PRIVATE equ 00020000h
   MEM_MAPPED equ 00040000h
   MEM_IMAGE equ 01000000h
@@ -6517,36 +5286,6 @@ ifndef _WINNT_
   _ENCLAVE_CREATE_INFO_VBS typedef ENCLAVE_CREATE_INFO_VBS
   PENCLAVE_CREATE_INFO_VBS typedef ptr ENCLAVE_CREATE_INFO_VBS
   ENCLAVE_VBS_FLAG_DEBUG equ 00000001h
-  ENCLAVE_TYPE_VBS_BASIC equ 00000011h
-  ENCLAVE_CREATE_INFO_VBS_BASIC struct
-    Flags DWORD ?
-    OwnerID BYTE 32 dup (?)
-  ENCLAVE_CREATE_INFO_VBS_BASIC ends
-  _ENCLAVE_CREATE_INFO_VBS_BASIC typedef ENCLAVE_CREATE_INFO_VBS_BASIC
-  PENCLAVE_CREATE_INFO_VBS_BASIC typedef ptr ENCLAVE_CREATE_INFO_VBS_BASIC
-  ENCLAVE_LOAD_DATA_VBS_BASIC struct
-    PageType DWORD ?
-  ENCLAVE_LOAD_DATA_VBS_BASIC ends
-  _ENCLAVE_LOAD_DATA_VBS_BASIC typedef ENCLAVE_LOAD_DATA_VBS_BASIC
-  PENCLAVE_LOAD_DATA_VBS_BASIC typedef ptr ENCLAVE_LOAD_DATA_VBS_BASIC
-  VBS_BASIC_PAGE_MEASURED_DATA equ 00000001h
-  VBS_BASIC_PAGE_UNMEASURED_DATA equ 00000002h
-  VBS_BASIC_PAGE_ZERO_FILL equ 00000003h
-  VBS_BASIC_PAGE_THREAD_DESCRIPTOR equ 00000004h
-  VBS_BASIC_PAGE_SYSTEM_CALL equ 00000005h
-  ENCLAVE_INIT_INFO_VBS_BASIC struct
-    FamilyId BYTE ENCLAVE_SHORT_ID_LENGTH dup (?)
-    ImageId BYTE ENCLAVE_SHORT_ID_LENGTH dup (?)
-    EnclaveSize ULONGLONG ?
-    EnclaveSvn DWORD ?
-    Reserved DWORD ?
-    union
-      SignatureInfoHandle HANDLE ?
-      Unused ULONGLONG ?
-    ends
-  ENCLAVE_INIT_INFO_VBS_BASIC ends
-  _ENCLAVE_INIT_INFO_VBS_BASIC typedef ENCLAVE_INIT_INFO_VBS_BASIC
-  PENCLAVE_INIT_INFO_VBS_BASIC typedef ptr ENCLAVE_INIT_INFO_VBS_BASIC
   ENCLAVE_INIT_INFO_VBS struct
     Length_ DWORD ?
     ThreadCount DWORD ?
@@ -6556,43 +5295,23 @@ ifndef _WINNT_
   if  not Defined(SORTPP_PASS) and  not Defined(MIDL_PASS) and  not Defined(RC_INVOKED)
     TYPE_ENCLAVE_TARGET_FUNCTION typedef proto WIN_STD_CALL_CONV :PVOID
     ENCLAVE_TARGET_FUNCTION typedef ptr TYPE_ENCLAVE_TARGET_FUNCTION
-
-;    ENCLAVE_TARGET_FUNCTION typedef proto :ptr PENCLAVE_TARGET_FUNCTION
-;    LPENCLAVE_TARGET_FUNCTION typedef PENCLAVE_TARGET_FUNCTION
+    PENCLAVE_TARGET_FUNCTION typedef proto :ptr ENCLAVE_TARGET_FUNCTION
+    LPENCLAVE_TARGET_FUNCTION typedef PENCLAVE_TARGET_FUNCTION
   endif
-  DEDICATED_MEMORY_CACHE_ELIGIBLE equ 1h
-  MEMORY_PARTITION_DEDICATED_MEMORY_ATTRIBUTE struct
-    Type_ MEM_DEDICATED_ATTRIBUTE_TYPE ?
-    Reserved DWORD ?
-    Value DWORD64 ?
-  MEMORY_PARTITION_DEDICATED_MEMORY_ATTRIBUTE ends
-  _MEMORY_PARTITION_DEDICATED_MEMORY_ATTRIBUTE typedef MEMORY_PARTITION_DEDICATED_MEMORY_ATTRIBUTE
-  PMEMORY_PARTITION_DEDICATED_MEMORY_ATTRIBUTE typedef ptr MEMORY_PARTITION_DEDICATED_MEMORY_ATTRIBUTE
-  MEMORY_PARTITION_DEDICATED_MEMORY_INFORMATION struct
-    NextEntryOffset DWORD ?
-    SizeOfInformation DWORD ?
-    Flags DWORD ?
-    AttributesOffset DWORD ?
-    AttributeCount DWORD ?
-    Reserved DWORD ?
-    TypeId DWORD64 ?
-  MEMORY_PARTITION_DEDICATED_MEMORY_INFORMATION ends
-  _MEMORY_PARTITION_DEDICATED_MEMORY_INFORMATION typedef MEMORY_PARTITION_DEDICATED_MEMORY_INFORMATION
-  PMEMORY_PARTITION_DEDICATED_MEMORY_INFORMATION typedef ptr MEMORY_PARTITION_DEDICATED_MEMORY_INFORMATION
-  FILE_READ_DATA equ (0001h)
-  FILE_LIST_DIRECTORY equ (0001h)
-  FILE_WRITE_DATA equ (0002h)
-  FILE_ADD_FILE equ (0002h)
-  FILE_APPEND_DATA equ (0004h)
-  FILE_ADD_SUBDIRECTORY equ (0004h)
-  FILE_CREATE_PIPE_INSTANCE equ (0004h)
-  FILE_READ_EA equ (0008h)
-  FILE_WRITE_EA equ (0010h)
-  FILE_EXECUTE equ (0020h)
-  FILE_TRAVERSE equ (0020h)
-  FILE_DELETE_CHILD equ (0040h)
-  FILE_READ_ATTRIBUTES equ (0080h)
-  FILE_WRITE_ATTRIBUTES equ (0100h)
+  FILE_READ_DATA equ 0001h
+  FILE_LIST_DIRECTORY equ 0001h
+  FILE_WRITE_DATA equ 0002h
+  FILE_ADD_FILE equ 0002h
+  FILE_APPEND_DATA equ 0004h
+  FILE_ADD_SUBDIRECTORY equ 0004h
+  FILE_CREATE_PIPE_INSTANCE equ 0004h
+  FILE_READ_EA equ 0008h
+  FILE_WRITE_EA equ 0010h
+  FILE_EXECUTE equ 0020h
+  FILE_TRAVERSE equ 0020h
+  FILE_DELETE_CHILD equ 0040h
+  FILE_READ_ATTRIBUTES equ 0080h
+  FILE_WRITE_ATTRIBUTES equ 0100h
   FILE_ALL_ACCESS equ (STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 1FFh)
   FILE_GENERIC_READ equ <(STANDARD_RIGHTS_READ or FILE_READ_DATA or FILE_READ_ATTRIBUTES or FILE_READ_EA or SYNCHRONIZE)>
   FILE_GENERIC_WRITE equ <(STANDARD_RIGHTS_WRITE or FILE_WRITE_DATA or FILE_WRITE_ATTRIBUTES or FILE_WRITE_EA or FILE_APPEND_DATA or SYNCHRONIZE)>
@@ -6625,7 +5344,6 @@ ifndef _WINNT_
   TREE_CONNECT_ATTRIBUTE_PRIVACY equ 00004000h
   TREE_CONNECT_ATTRIBUTE_INTEGRITY equ 00008000h
   TREE_CONNECT_ATTRIBUTE_GLOBAL equ 00000004h
-  TREE_CONNECT_ATTRIBUTE_PINNED equ 00000002h
   FILE_ATTRIBUTE_STRICTLY_SEQUENTIAL equ 20000000h
   FILE_NOTIFY_CHANGE_FILE_NAME equ 00000001h
   FILE_NOTIFY_CHANGE_DIR_NAME equ 00000002h
@@ -6653,9 +5371,6 @@ ifndef _WINNT_
   FILE_SUPPORTS_REMOTE_STORAGE equ 00000100h
   FILE_RETURNS_CLEANUP_RESULT_INFO equ 00000200h
   FILE_SUPPORTS_POSIX_UNLINK_RENAME equ 00000400h
-  FILE_SUPPORTS_BYPASS_IO equ 00000800h
-  FILE_SUPPORTS_STREAM_SNAPSHOTS equ 00001000h
-  FILE_SUPPORTS_CASE_SENSITIVE_DIRS equ 00002000h
   FILE_VOLUME_IS_COMPRESSED equ 00008000h
   FILE_SUPPORTS_OBJECT_IDS equ 00010000h
   FILE_SUPPORTS_ENCRYPTION equ 00020000h
@@ -6697,10 +5412,7 @@ ifndef _WINNT_
       AllocatedLength LARGE_INTEGER <>
       FileSize LARGE_INTEGER <>
       FileAttributes DWORD ?
-      union
-        ReparsePointTag DWORD ?
-        EaSize DWORD ?
-      ends
+      ReparsePointTag DWORD ?
       FileId LARGE_INTEGER <>
       ParentFileId LARGE_INTEGER <>
       FileNameLength DWORD ?
@@ -6709,37 +5421,6 @@ ifndef _WINNT_
     _FILE_NOTIFY_EXTENDED_INFORMATION typedef FILE_NOTIFY_EXTENDED_INFORMATION
     PFILE_NOTIFY_EXTENDED_INFORMATION typedef ptr FILE_NOTIFY_EXTENDED_INFORMATION
   endif
-  if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_NI)
-    FILE_NAME_FLAG_HARDLINK equ 0
-    FILE_NAME_FLAG_NTFS equ 01h
-    FILE_NAME_FLAG_DOS equ 02h
-    FILE_NAME_FLAG_BOTH equ 03h
-    FILE_NAME_FLAGS_UNSPECIFIED equ 80h
-    FILE_NOTIFY_FULL_INFORMATION struct
-      NextEntryOffset DWORD ?
-      Action DWORD ?
-      CreationTime LARGE_INTEGER <>
-      LastModificationTime LARGE_INTEGER <>
-      LastChangeTime LARGE_INTEGER <>
-      LastAccessTime LARGE_INTEGER <>
-      AllocatedLength LARGE_INTEGER <>
-      FileSize LARGE_INTEGER <>
-      FileAttributes DWORD ?
-      union
-        ReparsePointTag DWORD ?
-        EaSize DWORD ?
-      ends
-      FileId LARGE_INTEGER <>
-      ParentFileId LARGE_INTEGER <>
-      FileNameLength WORD ?
-      FileNameFlags BYTE ?
-      Reserved BYTE ?
-      FileName WCHAR 1 dup (?)
-    FILE_NOTIFY_FULL_INFORMATION ends
-    _FILE_NOTIFY_FULL_INFORMATION typedef FILE_NOTIFY_FULL_INFORMATION
-    PFILE_NOTIFY_FULL_INFORMATION typedef ptr FILE_NOTIFY_FULL_INFORMATION
-  endif
-  FILE_CS_FLAG_CASE_SENSITIVE_DIR equ 00000001h
   FILE_SEGMENT_ELEMENT union
     Buffer PVOID64 ?
     Alignment ULONGLONG ?
@@ -6766,15 +5447,12 @@ ifndef _WINNT_
   PREPARSE_GUID_DATA_BUFFER typedef ptr REPARSE_GUID_DATA_BUFFER
   REPARSE_GUID_DATA_BUFFER_HEADER_SIZE equ <UFIELD_OFFSET(REPARSE_GUID_DATA_BUFFER, GenericReparseBuffer)>
   MAXIMUM_REPARSE_DATA_BUFFER_SIZE equ (16 * 1024)
-  IO_REPARSE_TAG_RESERVED_ZERO equ (0)
-  IO_REPARSE_TAG_RESERVED_ONE equ (1)
-  IO_REPARSE_TAG_RESERVED_TWO equ (2)
+  IO_REPARSE_TAG_RESERVED_ZERO equ 0
+  IO_REPARSE_TAG_RESERVED_ONE equ 1
+  IO_REPARSE_TAG_RESERVED_TWO equ 2
   IO_REPARSE_TAG_RESERVED_RANGE equ <IO_REPARSE_TAG_RESERVED_TWO>
   IsReparseTagMicrosoft macro _tag
     exitm <(((_tag) and 80000000h))>
-  endm
-  IsReparseTagReserved macro _tag
-    exitm <(((_tag) and 40000000h))>
   endm
   IsReparseTagNameSurrogate macro _tag
     exitm <(((_tag) and 20000000h))>
@@ -6782,51 +5460,47 @@ ifndef _WINNT_
   IsReparseTagDirectory macro _tag
     exitm <(((_tag) and 10000000h))>
   endm
-  IO_REPARSE_TAG_RESERVED_INVALID equ (0C0008000h)
-  IO_REPARSE_TAG_MOUNT_POINT equ (0A0000003h)
-  IO_REPARSE_TAG_HSM equ (0C0000004h)
-  IO_REPARSE_TAG_HSM2 equ (80000006h)
-  IO_REPARSE_TAG_SIS equ (80000007h)
-  IO_REPARSE_TAG_WIM equ (80000008h)
-  IO_REPARSE_TAG_CSV equ (80000009h)
-  IO_REPARSE_TAG_DFS equ (8000000Ah)
-  IO_REPARSE_TAG_SYMLINK equ (0A000000Ch)
-  IO_REPARSE_TAG_DFSR equ (80000012h)
-  IO_REPARSE_TAG_DEDUP equ (80000013h)
-  IO_REPARSE_TAG_NFS equ (80000014h)
-  IO_REPARSE_TAG_FILE_PLACEHOLDER equ (80000015h)
-  IO_REPARSE_TAG_WOF equ (80000017h)
-  IO_REPARSE_TAG_WCI equ (80000018h)
-  IO_REPARSE_TAG_WCI_1 equ (90001018h)
-  IO_REPARSE_TAG_GLOBAL_REPARSE equ (0A0000019h)
-  IO_REPARSE_TAG_CLOUD equ (9000001Ah)
-  IO_REPARSE_TAG_CLOUD_1 equ (9000101Ah)
-  IO_REPARSE_TAG_CLOUD_2 equ (9000201Ah)
-  IO_REPARSE_TAG_CLOUD_3 equ (9000301Ah)
-  IO_REPARSE_TAG_CLOUD_4 equ (9000401Ah)
-  IO_REPARSE_TAG_CLOUD_5 equ (9000501Ah)
-  IO_REPARSE_TAG_CLOUD_6 equ (9000601Ah)
-  IO_REPARSE_TAG_CLOUD_7 equ (9000701Ah)
-  IO_REPARSE_TAG_CLOUD_8 equ (9000801Ah)
-  IO_REPARSE_TAG_CLOUD_9 equ (9000901Ah)
-  IO_REPARSE_TAG_CLOUD_A equ (9000A01Ah)
-  IO_REPARSE_TAG_CLOUD_B equ (9000B01Ah)
-  IO_REPARSE_TAG_CLOUD_C equ (9000C01Ah)
-  IO_REPARSE_TAG_CLOUD_D equ (9000D01Ah)
-  IO_REPARSE_TAG_CLOUD_E equ (9000E01Ah)
-  IO_REPARSE_TAG_CLOUD_F equ (9000F01Ah)
-  IO_REPARSE_TAG_CLOUD_MASK equ (0000F000h)
-  IO_REPARSE_TAG_APPEXECLINK equ (8000001Bh)
-  IO_REPARSE_TAG_PROJFS equ (9000001Ch)
-  IO_REPARSE_TAG_STORAGE_SYNC equ (8000001Eh)
-  IO_REPARSE_TAG_WCI_TOMBSTONE equ (0A000001Fh)
-  IO_REPARSE_TAG_UNHANDLED equ (80000020h)
-  IO_REPARSE_TAG_ONEDRIVE equ (80000021h)
-  IO_REPARSE_TAG_PROJFS_TOMBSTONE equ (0A0000022h)
-  IO_REPARSE_TAG_AF_UNIX equ (80000023h)
-  IO_REPARSE_TAG_WCI_LINK equ (0A0000027h)
-  IO_REPARSE_TAG_WCI_LINK_1 equ (0A0001027h)
-  IO_REPARSE_TAG_DATALESS_CIM equ (0A0000028h)
+  IO_REPARSE_TAG_MOUNT_POINT equ 0A0000003h
+  IO_REPARSE_TAG_HSM equ 0C0000004h
+  IO_REPARSE_TAG_HSM2 equ 80000006h
+  IO_REPARSE_TAG_SIS equ 80000007h
+  IO_REPARSE_TAG_WIM equ 80000008h
+  IO_REPARSE_TAG_CSV equ 80000009h
+  IO_REPARSE_TAG_DFS equ 8000000Ah
+  IO_REPARSE_TAG_SYMLINK equ 0A000000Ch
+  IO_REPARSE_TAG_DFSR equ 80000012h
+  IO_REPARSE_TAG_DEDUP equ 80000013h
+  IO_REPARSE_TAG_NFS equ 80000014h
+  IO_REPARSE_TAG_FILE_PLACEHOLDER equ 80000015h
+  IO_REPARSE_TAG_WOF equ 80000017h
+  IO_REPARSE_TAG_WCI equ 80000018h
+  IO_REPARSE_TAG_WCI_1 equ 90001018h
+  IO_REPARSE_TAG_GLOBAL_REPARSE equ 0A0000019h
+  IO_REPARSE_TAG_CLOUD equ 9000001Ah
+  IO_REPARSE_TAG_CLOUD_1 equ 9000101Ah
+  IO_REPARSE_TAG_CLOUD_2 equ 9000201Ah
+  IO_REPARSE_TAG_CLOUD_3 equ 9000301Ah
+  IO_REPARSE_TAG_CLOUD_4 equ 9000401Ah
+  IO_REPARSE_TAG_CLOUD_5 equ 9000501Ah
+  IO_REPARSE_TAG_CLOUD_6 equ 9000601Ah
+  IO_REPARSE_TAG_CLOUD_7 equ 9000701Ah
+  IO_REPARSE_TAG_CLOUD_8 equ 9000801Ah
+  IO_REPARSE_TAG_CLOUD_9 equ 9000901Ah
+  IO_REPARSE_TAG_CLOUD_A equ 9000A01Ah
+  IO_REPARSE_TAG_CLOUD_B equ 9000B01Ah
+  IO_REPARSE_TAG_CLOUD_C equ 9000C01Ah
+  IO_REPARSE_TAG_CLOUD_D equ 9000D01Ah
+  IO_REPARSE_TAG_CLOUD_E equ 9000E01Ah
+  IO_REPARSE_TAG_CLOUD_F equ 9000F01Ah
+  IO_REPARSE_TAG_CLOUD_MASK equ 0000F000h
+  IO_REPARSE_TAG_APPEXECLINK equ 8000001Bh
+  IO_REPARSE_TAG_PROJFS equ 9000001Ch
+  IO_REPARSE_TAG_STORAGE_SYNC equ 8000001Eh
+  IO_REPARSE_TAG_WCI_TOMBSTONE equ 0A000001Fh
+  IO_REPARSE_TAG_UNHANDLED equ 80000020h
+  IO_REPARSE_TAG_ONEDRIVE equ 80000021h
+  IO_REPARSE_TAG_PROJFS_TOMBSTONE equ 0A0000022h
+  IO_REPARSE_TAG_AF_UNIX equ 80000023h
   if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
     SCRUB_DATA_INPUT_FLAG_RESUME equ 00000001h
     SCRUB_DATA_INPUT_FLAG_SKIP_IN_SYNC equ 00000002h
@@ -6834,9 +5508,6 @@ ifndef _WINNT_
     SCRUB_DATA_INPUT_FLAG_IGNORE_REDUNDANCY equ 00000008h
     SCRUB_DATA_INPUT_FLAG_SKIP_DATA equ 00000010h
     SCRUB_DATA_INPUT_FLAG_SCRUB_BY_OBJECT_ID equ 00000020h
-    if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_19H2)
-      SCRUB_DATA_INPUT_FLAG_OPLOCK_NOT_ACQUIRED equ 00000040h
-    endif
     SCRUB_DATA_OUTPUT_FLAG_INCOMPLETE equ 00000001h
     SCRUB_DATA_OUTPUT_FLAG_NON_USER_DATA_RANGE equ 00010000h
     if (_WIN32_WINNT ge _WIN32_WINNT_WINBLUE)
@@ -6848,8 +5519,8 @@ ifndef _WINNT_
       Flags DWORD ?
       MaximumIos DWORD ?
       ObjectId DWORD 4 dup (?)
-      Reserved DWORD 41 dup (?)
-      ResumeContext BYTE 1040 dup (?)
+      Reserved DWORD 13 dup (?)
+      ResumeContext BYTE 816 dup (?)
     SCRUB_DATA_INPUT ends
     _SCRUB_DATA_INPUT typedef SCRUB_DATA_INPUT
     PSCRUB_DATA_INPUT typedef ptr SCRUB_DATA_INPUT
@@ -6882,31 +5553,11 @@ ifndef _WINNT_
       if (_WIN32_WINNT ge _WIN32_WINNT_WINBLUE)
         ResumeContextLength WORD ?
         ParityExtentDataOffset WORD ?
-        Reserved DWORD 9 dup (?)
+        Reserved DWORD 5 dup (?)
       else
-        Reserved DWORD 10 dup (?)
+        Reserved DWORD 6 dup (?)
       endif
-      if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_RS5)
-        NumberOfMetadataBytesProcessed ULONGLONG ?
-        NumberOfDataBytesProcessed ULONGLONG ?
-        TotalNumberOfMetadataBytesInUse ULONGLONG ?
-        TotalNumberOfDataBytesInUse ULONGLONG ?
-      else
-        Reserved2 ULONGLONG 4 dup (?)
-      endif
-      if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_FE)
-        DataBytesSkippedDueToNoAllocation ULONGLONG ?
-        DataBytesSkippedDueToInvalidRun ULONGLONG ?
-        DataBytesSkippedDueToIntegrityStream ULONGLONG ?
-        DataBytesSkippedDueToRegionBeingClean ULONGLONG ?
-        DataBytesSkippedDueToLockConflict ULONGLONG ?
-        DataBytesSkippedDueToNoScrubDataFlag ULONGLONG ?
-        DataBytesSkippedDueToNoScrubNonIntegrityStreamFlag ULONGLONG ?
-        DataBytesScrubbed ULONGLONG ?
-      else
-        Reserved3 ULONGLONG 8 dup (?)
-      endif
-      ResumeContext BYTE 1040 dup (?)
+      ResumeContext BYTE 816 dup (?)
     SCRUB_DATA_OUTPUT ends
     _SCRUB_DATA_OUTPUT typedef SCRUB_DATA_OUTPUT
     PSCRUB_DATA_OUTPUT typedef ptr SCRUB_DATA_OUTPUT
@@ -6918,13 +5569,11 @@ ifndef _WINNT_
     SharedVirtualDiskSnapshotsSupported equ 3
     SharedVirtualDiskCDPSnapshotsSupported equ 7
     _SharedVirtualDiskSupportType typedef SharedVirtualDiskSupportType
-
     SharedVirtualDiskHandleState typedef SDWORD
     SharedVirtualDiskHandleStateNone equ 0
     SharedVirtualDiskHandleStateFileShared equ 1
     SharedVirtualDiskHandleStateHandleShared equ 3
     _SharedVirtualDiskHandleState typedef SharedVirtualDiskHandleState
-
     SHARED_VIRTUAL_DISK_SUPPORT struct
       SharedVirtualDiskSupport SharedVirtualDiskSupportType ?
       HandleState SharedVirtualDiskHandleState ?
@@ -6934,38 +5583,6 @@ ifndef _WINNT_
     IsVirtualDiskFileShared macro HandleState
       exitm <(((HandleState) and SharedVirtualDiskHandleStateFileShared) != 0)>
     endm
-  endif
-  if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_RS5)
-    REARRANGE_FILE_DATA struct
-      SourceStartingOffset ULONGLONG ?
-      TargetOffset ULONGLONG ?
-      SourceFileHandle HANDLE ?
-      Length_ DWORD ?
-      Flags DWORD ?
-    REARRANGE_FILE_DATA ends
-    _REARRANGE_FILE_DATA typedef REARRANGE_FILE_DATA
-    PREARRANGE_FILE_DATA typedef ptr REARRANGE_FILE_DATA
-    if Defined(_WIN64)
-      REARRANGE_FILE_DATA32 struct
-        SourceStartingOffset ULONGLONG ?
-        TargetOffset ULONGLONG ?
-        SourceFileHandle UINT32 ?
-        Length_ DWORD ?
-        Flags DWORD ?
-      REARRANGE_FILE_DATA32 ends
-      _REARRANGE_FILE_DATA32 typedef REARRANGE_FILE_DATA32
-      PREARRANGE_FILE_DATA32 typedef ptr REARRANGE_FILE_DATA32
-    endif
-  endif
-  if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
-    SHUFFLE_FILE_FLAG_SKIP_INITIALIZING_NEW_CLUSTERS equ (00000001h)
-    SHUFFLE_FILE_DATA struct
-      StartingOffset LONGLONG ?
-      Length_ LONGLONG ?
-      Flags DWORD ?
-    SHUFFLE_FILE_DATA ends
-    _SHUFFLE_FILE_DATA typedef SHUFFLE_FILE_DATA
-    PSHUFFLE_FILE_DATA typedef ptr SHUFFLE_FILE_DATA
   endif
   IO_COMPLETION_MODIFY_STATE equ 0002h
   IO_COMPLETION_ALL_ACCESS equ (STANDARD_RIGHTS_REQUIRED or SYNCHRONIZE or 3h)
@@ -7016,7 +5633,6 @@ ifndef _WINNT_
   DEFINE_GUID GUID_CONSOLE_DISPLAY_STATE, 6fe69556h, 704ah, 47a0h, 8fh, 24h, 0c2h, 8dh, 93h, 6fh, 0dah, 47h
   DEFINE_GUID GUID_ALLOW_DISPLAY_REQUIRED, 0A9CEB8DAh, 0CD46h, 44FBh, 0A9h, 8Bh, 02h, 0AFh, 69h, 0DEh, 46h, 23h
   DEFINE_GUID GUID_VIDEO_CONSOLE_LOCK_TIMEOUT, 8ec4b3a5h, 6868h, 48c2h, 0beh, 75h, 4fh, 30h, 44h, 0beh, 88h, 0a7h
-  DEFINE_GUID GUID_ADVANCED_COLOR_QUALITY_BIAS, 684c3e69h, 0a4f7h, 4014h, 87h, 54h, 0d4h, 51h, 79h, 0a5h, 61h, 67h
   DEFINE_GUID GUID_ADAPTIVE_POWER_BEHAVIOR_SUBGROUP, 8619b916h, 0e004h, 4dd8h, 9bh, 66h, 0dah, 0e8h, 6fh, 80h, 66h, 98h
   DEFINE_GUID GUID_NON_ADAPTIVE_INPUT_TIMEOUT, 5adbbfbch, 74eh, 4da1h, 0bah, 38h, 0dbh, 8bh, 36h, 0b2h, 0c8h, 0f3h
   DEFINE_GUID GUID_ADAPTIVE_INPUT_CONTROLLER_STATE, 0e98fae9h, 0f45ah, 4de1h, 0a7h, 57h, 60h, 31h, 0f1h, 97h, 0f6h, 0eah
@@ -7026,7 +5642,6 @@ ifndef _WINNT_
   DEFINE_GUID GUID_DISK_IDLE_TIMEOUT, 58E39BA8h, 0B8E6h, 4EF6h, 90h, 0D0h, 89h, 0AEh, 32h, 0B2h, 58h, 0D6h
   DEFINE_GUID GUID_DISK_BURST_IGNORE_THRESHOLD, 80e3c60eh, 0bb94h, 4ad8h, 0bbh, 0e0h, 0dh, 31h, 95h, 0efh, 0c6h, 63h
   DEFINE_GUID GUID_DISK_ADAPTIVE_POWERDOWN, 396A32E1h, 499Ah, 40B2h, 91h, 24h, 0A9h, 6Ah, 0FEh, 70h, 76h, 67h
-  DEFINE_GUID GUID_DISK_NVME_NOPPME, 0fc7372b6h, 0ab2dh, 43eeh, 87h, 97h, 15h, 0e9h, 84h, 1fh, 2ch, 0cah
   DEFINE_GUID GUID_SLEEP_SUBGROUP, 238C9FA8h, 0AADh, 41EDh, 83h, 0F4h, 97h, 0BEh, 24h, 2Ch, 8Fh, 20h
   DEFINE_GUID GUID_SLEEP_IDLE_THRESHOLD, 81cd32e0h, 7833h, 44f3h, 87h, 37h, 70h, 81h, 0f3h, 8dh, 1fh, 70h
   DEFINE_GUID GUID_STANDBY_TIMEOUT, 29F6C1DBh, 86DAh, 48C5h, 9Fh, 0DBh, 0F2h, 0B6h, 7Bh, 1Fh, 44h, 0DAh
@@ -7042,12 +5657,6 @@ ifndef _WINNT_
   DEFINE_GUID GUID_STANDBY_RESERVE_GRACE_PERIOD, 0c763ee92h, 71e8h, 4127h, 84h, 0ebh, 0f6h, 0edh, 04h, 3ah, 3eh, 3dh
   DEFINE_GUID GUID_STANDBY_RESERVE_TIME, 468FE7E5h, 1158h, 46ECh, 88h, 0bch, 5bh, 96h, 0c9h, 0e4h, 4fh, 0d0h
   DEFINE_GUID GUID_STANDBY_RESET_PERCENT, 49cb11a5h, 56e2h, 4afbh, 9dh, 38h, 3dh, 0f4h, 78h, 72h, 0e2h, 1bh
-  DEFINE_GUID GUID_HUPR_ADAPTIVE_AWAY_DISPLAY_TIMEOUT, 0A7D6AB6h, 0AC83h, 4AD1h, 82h, 82h, 0ECh, 0A5h, 0B5h, 83h, 08h, 0F3h
-  GUID_HUPR_ADAPTIVE_DISPLAY_TIMEOUT equ <GUID_HUPR_ADAPTIVE_AWAY_DISPLAY_TIMEOUT>
-  DEFINE_GUID GUID_HUPR_ADAPTIVE_INATTENTIVE_DIM_TIMEOUT, 0CF8C6097h, 12B8h, 4279h, 0BBh, 0DDh, 44h, 60h, 1Eh, 0E5h, 20h, 9Dh
-  GUID_HUPR_ADAPTIVE_DIM_TIMEOUT equ <GUID_HUPR_ADAPTIVE_INATTENTIVE_DIM_TIMEOUT>
-  DEFINE_GUID GUID_HUPR_ADAPTIVE_INATTENTIVE_DISPLAY_TIMEOUT, 0EE16691Eh, 6AB3h, 4619h, 0BBh, 48h, 1Ch, 77h, 0C9h, 35h, 7Eh, 5Ah
-  DEFINE_GUID GUID_HUPR_ADAPTIVE_AWAY_DIM_TIMEOUT, 0A79C8E0Eh, 0F271h, 482Dh, 8Fh, 8Ah, 5Dh, 0B9h, 0A1h, 83h, 12h, 0DEh
   DEFINE_GUID GUID_ALLOW_STANDBY_STATES, 0abfc2519h, 3608h, 4c2ah, 94h, 0eah, 17h, 1bh, 0eh, 0d5h, 46h, 0abh
   DEFINE_GUID GUID_ALLOW_RTC_WAKE, 0BD3B718Ah, 0680h, 4D9Dh, 8Ah, 0B2h, 0E1h, 0D2h, 0B4h, 0ACh, 80h, 6Dh
   DEFINE_GUID GUID_LEGACY_RTC_MITIGATION, 1A34BDC3h, 7E6Bh, 442Eh, 0A9h, 0D0h, 64h, 0B6h, 0EFh, 37h, 8Eh, 84h
@@ -7134,8 +5743,7 @@ ifndef _WINNT_
   DEFINE_GUID GUID_PROCESSOR_PERF_AUTONOMOUS_MODE, 8baa4a8ah, 14c6h, 4451h, 8eh, 8bh, 14h, 0bdh, 0bdh, 19h, 75h, 37h
   PROCESSOR_PERF_AUTONOMOUS_MODE_DISABLED equ 0
   PROCESSOR_PERF_AUTONOMOUS_MODE_ENABLED equ 1
-  DEFINE_GUID GUID_PROCESSOR_PERF_ENERGY_PERFORMANCE_PREFERENCE, 36687f9eh, 0e3a5h, 4dbfh, 0b1h, 0dch, 15h, 0ebh, 38h, 1ch, 68h, 63h
-  DEFINE_GUID GUID_PROCESSOR_PERF_ENERGY_PERFORMANCE_PREFERENCE_1, 36687f9eh, 0e3a5h, 4dbfh, 0b1h, 0dch, 15h, 0ebh, 38h, 1ch, 68h, 64h
+;  DEFINE_GUID GUID_PROCESSOR_PERF_ENERGY_PERFORMANCE_PREFERENCE, 36687f9eh, 0e3a5h, 4dbfh, 0b1h, 0dch, 15h, 0ebh, 38h, 1ch, 68h, 63h
   PROCESSOR_PERF_PERFORMANCE_PREFERENCE equ 0ffh
   PROCESSOR_PERF_ENERGY_PREFERENCE equ 0
   DEFINE_GUID GUID_PROCESSOR_PERF_AUTONOMOUS_ACTIVITY_WINDOW, 0cfeda3d0h, 7697h, 4566h, 0a9h, 22h, 0a9h, 8h, 6ch, 0d4h, 9dh, 0fah
@@ -7165,20 +5773,19 @@ ifndef _WINNT_
   DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_MIN_CORES_1, 0cc5b647h, 0c1dfh, 4637h, 89h, 1ah, 0deh, 0c3h, 5ch, 31h, 85h, 84h
   DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_INCREASE_TIME, 2ddd5a84h, 5a71h, 437eh, 91h, 2ah, 0dbh, 0bh, 8ch, 78h, 87h, 32h
   DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_DECREASE_TIME, 0dfd10d17h, 0d5ebh, 45ddh, 87h, 7ah, 9ah, 34h, 0ddh, 0d1h, 5ch, 82h
-  DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_AFFINITY_HISTORY_DECREASE_FACTOR, 8f7b45e3h, 0c393h, 480ah, 87h, 8ch, 0f6h, 7ah, 0c3h, 0d0h, 70h, 82h
-  DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_AFFINITY_HISTORY_THRESHOLD, 5b33697bh, 0e89dh, 4d38h, 0aah, 46h, 9eh, 7dh, 0fbh, 7ch, 0d2h, 0f9h
+;  DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_AFFINITY_HISTORY_DECREASE_FACTOR, 8f7b45e3h, 0c393h, 480ah, 87h, 8ch, 0f6h, 7ah, 0c3h, 0d0h, 70h, 82h
+;  DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_AFFINITY_HISTORY_THRESHOLD, 5b33697bh, 0e89dh, 4d38h, 0aah, 46h, 9eh, 7dh, 0fbh, 7ch, 0d2h, 0f9h
   DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_AFFINITY_WEIGHTING, 0e70867f1h, 0fa2fh, 4f4eh, 0aeh, 0a1h, 4dh, 8ah, 0bh, 0a2h, 3bh, 20h
-  DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_OVER_UTILIZATION_HISTORY_DECREASE_FACTOR, 1299023ch, 0bc28h, 4f0ah, 81h, 0ech, 0d3h, 29h, 5ah, 8dh, 81h, 5dh
-  DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_OVER_UTILIZATION_HISTORY_THRESHOLD, 9ac18e92h, 0aa3ch, 4e27h, 0b3h, 07h, 01h, 0aeh, 37h, 30h, 71h, 29h
-  DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_OVER_UTILIZATION_WEIGHTING, 8809c2d8h, 0b155h, 42d4h, 0bch, 0dah, 0dh, 34h, 56h, 51h, 0b1h, 0dbh
-  DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_OVER_UTILIZATION_THRESHOLD, 943c8cb6h, 6f93h, 4227h, 0adh, 87h, 0e9h, 0a3h, 0feh, 0ech, 08h, 0d1h
+;  DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_OVER_UTILIZATION_HISTORY_DECREASE_FACTOR, 1299023ch, 0bc28h, 4f0ah, 81h, 0ech, 0d3h, 29h, 5ah, 8dh, 81h, 5dh
+;  DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_OVER_UTILIZATION_HISTORY_THRESHOLD, 9ac18e92h, 0aa3ch, 4e27h, 0b3h, 07h, 01h, 0aeh, 37h, 30h, 71h, 29h
+;  DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_OVER_UTILIZATION_WEIGHTING, 8809c2d8h, 0b155h, 42d4h, 0bch, 0dah, 0dh, 34h, 56h, 51h, 0b1h, 0dbh
+;  DEFINE_GUID GUID_PROCESSOR_CORE_PARKING_OVER_UTILIZATION_THRESHOLD, 943c8cb6h, 6f93h, 4227h, 0adh, 87h, 0e9h, 0a3h, 0feh, 0ech, 08h, 0d1h
   DEFINE_GUID GUID_PROCESSOR_PARKING_CORE_OVERRIDE, 0a55612aah, 0f624h, 42c6h, 0a4h, 43h, 73h, 97h, 0d0h, 64h, 0c0h, 4fh
   DEFINE_GUID GUID_PROCESSOR_PARKING_PERF_STATE, 447235c7h, 6a8dh, 4cc0h, 8eh, 24h, 9eh, 0afh, 70h, 0b9h, 6eh, 2bh
   DEFINE_GUID GUID_PROCESSOR_PARKING_PERF_STATE_1, 447235c7h, 6a8dh, 4cc0h, 8eh, 24h, 9eh, 0afh, 70h, 0b9h, 6eh, 2ch
   DEFINE_GUID GUID_PROCESSOR_PARKING_CONCURRENCY_THRESHOLD, 2430ab6fh, 0a520h, 44a2h, 96h, 01h, 0f7h, 0f2h, 3bh, 51h, 34h, 0b1h
   DEFINE_GUID GUID_PROCESSOR_PARKING_HEADROOM_THRESHOLD, 0f735a673h, 2066h, 4f80h, 0a0h, 0c5h, 0ddh, 0eeh, 0ch, 0f1h, 0bfh, 5dh
   DEFINE_GUID GUID_PROCESSOR_PARKING_DISTRIBUTION_THRESHOLD, 4bdaf4e9h, 0d103h, 46d7h, 0a5h, 0f0h, 62h, 80h, 12h, 16h, 16h, 0efh
-  DEFINE_GUID GUID_PROCESSOR_SOFT_PARKING_LATENCY, 97cfac41h, 2217h, 47ebh, 99h, 2dh, 61h, 8bh, 19h, 77h, 0c9h, 7h
   DEFINE_GUID GUID_PROCESSOR_PERF_HISTORY, 7d24baa7h, 0b84h, 480fh, 84h, 0ch, 1bh, 07h, 43h, 0c0h, 0fh, 5fh
   DEFINE_GUID GUID_PROCESSOR_PERF_HISTORY_1, 7d24baa7h, 0b84h, 480fh, 84h, 0ch, 1bh, 07h, 43h, 0c0h, 0fh, 60h
   DEFINE_GUID GUID_PROCESSOR_PERF_INCREASE_HISTORY, 99b3ef01h, 752fh, 46a1h, 80h, 0fbh, 77h, 30h, 1h, 1fh, 23h, 54h
@@ -7189,46 +5796,17 @@ ifndef _WINNT_
   DEFINE_GUID GUID_PROCESSOR_PERF_LATENCY_HINT_PERF_1, 619b7505h, 3bh, 4e82h, 0b7h, 0a6h, 4dh, 0d2h, 9ch, 30h, 9h, 72h
   DEFINE_GUID GUID_PROCESSOR_LATENCY_HINT_MIN_UNPARK, 616cdaa5h, 695eh, 4545h, 97h, 0adh, 97h, 0dch, 2dh, 1bh, 0ddh, 88h
   DEFINE_GUID GUID_PROCESSOR_LATENCY_HINT_MIN_UNPARK_1, 616cdaa5h, 695eh, 4545h, 97h, 0adh, 97h, 0dch, 2dh, 1bh, 0ddh, 89h
-  DEFINE_GUID GUID_PROCESSOR_MODULE_PARKING_POLICY, 0b0deaf6bh, 59c0h, 4523h, 8ah, 45h, 0cah, 7fh, 40h, 24h, 41h, 14h
-  DEFINE_GUID GUID_PROCESSOR_COMPLEX_PARKING_POLICY, 0b669a5e9h, 7b1dh, 4132h, 0bah, 0aah, 49h, 19h, 0ah, 0bch, 0feh, 0b6h
-  PARKING_TOPOLOGY_POLICY_DISABLED equ 0
-  PARKING_TOPOLOGY_POLICY_ROUNDROBIN equ 1
-  PARKING_TOPOLOGY_POLICY_SEQUENTIAL equ 2
-  DEFINE_GUID GUID_PROCESSOR_SMT_UNPARKING_POLICY, 0b28a6829h, 0c5f7h, 444eh, 8fh, 61h, 10h, 0e2h, 4eh, 85h, 0c5h, 32h
-  SMT_UNPARKING_POLICY_CORE equ 0
-  SMT_UNPARKING_POLICY_CORE_PER_THREAD equ 1
-  SMT_UNPARKING_POLICY_LP_ROUNDROBIN equ 2
-  SMT_UNPARKING_POLICY_LP_SEQUENTIAL equ 3
   DEFINE_GUID GUID_PROCESSOR_DISTRIBUTE_UTILITY, 0e0007330h, 0f589h, 42edh, 0a4h, 01h, 5dh, 0dbh, 10h, 0e7h, 85h, 0d3h
   DEFINE_GUID GUID_PROCESSOR_HETEROGENEOUS_POLICY, 7f2f5cfah, 0f10ch, 4823h, 0b5h, 0e1h, 0e9h, 3ah, 0e8h, 5fh, 46h, 0b5h
   DEFINE_GUID GUID_PROCESSOR_HETERO_DECREASE_TIME, 7f2492b6h, 60b1h, 45e5h, 0aeh, 55h, 77h, 3fh, 8ch, 0d5h, 0cah, 0ech
   DEFINE_GUID GUID_PROCESSOR_HETERO_INCREASE_TIME, 4009efa7h, 0e72dh, 4cbah, 9eh, 0dfh, 91h, 08h, 4eh, 0a8h, 0cbh, 0c3h
   DEFINE_GUID GUID_PROCESSOR_HETERO_DECREASE_THRESHOLD, 0f8861c27h, 95e7h, 475ch, 86h, 5bh, 13h, 0c0h, 0cbh, 3fh, 9dh, 6bh
-  DEFINE_GUID GUID_PROCESSOR_HETERO_DECREASE_THRESHOLD_1, 0f8861c27h, 95e7h, 475ch, 86h, 5bh, 13h, 0c0h, 0cbh, 3fh, 9dh, 6ch
   DEFINE_GUID GUID_PROCESSOR_HETERO_INCREASE_THRESHOLD, 0b000397dh, 9b0bh, 483dh, 98h, 0c9h, 69h, 2ah, 60h, 60h, 0cfh, 0bfh
-  DEFINE_GUID GUID_PROCESSOR_HETERO_INCREASE_THRESHOLD_1, 0b000397dh, 9b0bh, 483dh, 98h, 0c9h, 69h, 2ah, 60h, 60h, 0cfh, 0c0h
   DEFINE_GUID GUID_PROCESSOR_CLASS0_FLOOR_PERF, 0fddc842bh, 8364h, 4edch, 94h, 0cfh, 0c1h, 7fh, 60h, 0deh, 1ch, 80h
   DEFINE_GUID GUID_PROCESSOR_CLASS1_INITIAL_PERF, 1facfc65h, 0a930h, 4bc5h, 9fh, 38h, 50h, 4eh, 0c0h, 97h, 0bbh, 0c0h
   DEFINE_GUID GUID_PROCESSOR_THREAD_SCHEDULING_POLICY, 93b8b6dch, 698h, 4d1ch, 9eh, 0e4h, 6h, 44h, 0e9h, 0h, 0c8h, 5dh
   DEFINE_GUID GUID_PROCESSOR_SHORT_THREAD_SCHEDULING_POLICY, 0bae08b81h, 2d5eh, 4688h, 0adh, 6ah, 13h, 24h, 33h, 56h, 65h, 4bh
-  DEFINE_GUID GUID_PROCESSOR_SHORT_THREAD_RUNTIME_THRESHOLD, 0d92998c2h, 6a48h, 49cah, 85h, 0d4h, 8ch, 0ceh, 0ech, 29h, 45h, 70h
-  DEFINE_GUID GUID_PROCESSOR_SHORT_THREAD_ARCH_CLASS_UPPER_THRESHOLD, 828423ebh, 8662h, 4344h, 90h, 0f7h, 52h, 0bfh, 15h, 87h, 0fh, 5ah
-  DEFINE_GUID GUID_PROCESSOR_SHORT_THREAD_ARCH_CLASS_LOWER_THRESHOLD, 53824d46h, 87bdh, 4739h, 0aah, 1bh, 0aah, 79h, 3fh, 0ach, 36h, 0d6h
-  DEFINE_GUID GUID_PROCESSOR_LONG_THREAD_ARCH_CLASS_UPPER_THRESHOLD, 0bf903d33h, 9d24h, 49d3h, 0a4h, 68h, 0e6h, 5eh, 03h, 25h, 04h, 6ah
-  DEFINE_GUID GUID_PROCESSOR_LONG_THREAD_ARCH_CLASS_LOWER_THRESHOLD, 43f278bch, 0f8ah, 46d0h, 8bh, 31h, 9ah, 23h, 0e6h, 15h, 0d7h, 13h
   DEFINE_GUID GUID_SYSTEM_COOLING_POLICY, 94D3A615h, 0A899h, 4AC5h, 0AEh, 2Bh, 0E4h, 0D8h, 0F6h, 34h, 36h, 7Fh
-  DEFINE_GUID GUID_PROCESSOR_RESPONSIVENESS_DISABLE_THRESHOLD, 38b8383dh, 0cce0h, 4c79h, 9eh, 3eh, 56h, 0a4h, 0f1h, 7ch, 0c4h, 80h
-  DEFINE_GUID GUID_PROCESSOR_RESPONSIVENESS_DISABLE_THRESHOLD_1, 38b8383dh, 0cce0h, 4c79h, 9eh, 3eh, 56h, 0a4h, 0f1h, 7ch, 0c4h, 81h
-  DEFINE_GUID GUID_PROCESSOR_RESPONSIVENESS_ENABLE_THRESHOLD, 3d44e256h, 7222h, 4415h, 0a9h, 0edh, 9ch, 45h, 0fah, 3dh, 0d8h, 30h
-  DEFINE_GUID GUID_PROCESSOR_RESPONSIVENESS_ENABLE_THRESHOLD_1, 3d44e256h, 7222h, 4415h, 0a9h, 0edh, 9ch, 45h, 0fah, 3dh, 0d8h, 31h
-  DEFINE_GUID GUID_PROCESSOR_RESPONSIVENESS_DISABLE_TIME, 0f565999fh, 3fb0h, 411ah, 0a2h, 26h, 3fh, 1h, 98h, 0deh, 0c1h, 30h
-  DEFINE_GUID GUID_PROCESSOR_RESPONSIVENESS_DISABLE_TIME_1, 0f565999fh, 3fb0h, 411ah, 0a2h, 26h, 3fh, 1h, 98h, 0deh, 0c1h, 31h
-  DEFINE_GUID GUID_PROCESSOR_RESPONSIVENESS_ENABLE_TIME, 3d915188h, 7830h, 49aeh, 0a7h, 9ah, 0fh, 0b0h, 0a1h, 0e5h, 0a2h, 0h
-  DEFINE_GUID GUID_PROCESSOR_RESPONSIVENESS_ENABLE_TIME_1, 3d915188h, 7830h, 49aeh, 0a7h, 9ah, 0fh, 0b0h, 0a1h, 0e5h, 0a2h, 1h
-  DEFINE_GUID GUID_PROCESSOR_RESPONSIVENESS_EPP_CEILING, 4427c73bh, 9756h, 4a5ch, 0b8h, 4bh, 0c7h, 0bdh, 0a7h, 9ch, 73h, 20h
-  DEFINE_GUID GUID_PROCESSOR_RESPONSIVENESS_EPP_CEILING_1, 4427c73bh, 9756h, 4a5ch, 0b8h, 4bh, 0c7h, 0bdh, 0a7h, 9ch, 73h, 21h
-  DEFINE_GUID GUID_PROCESSOR_RESPONSIVENESS_PERF_FLOOR, 0ce8e92eeh, 6a86h, 4572h, 0bfh, 0e0h, 20h, 0c2h, 1dh, 3h, 0cdh, 40h
-  DEFINE_GUID GUID_PROCESSOR_RESPONSIVENESS_PERF_FLOOR_1, 0ce8e92eeh, 6a86h, 4572h, 0bfh, 0e0h, 20h, 0c2h, 1dh, 3h, 0cdh, 41h
   DEFINE_GUID GUID_LOCK_CONSOLE_ON_WAKE, 0E796BDBh, 100Dh, 47D6h, 0A2h, 0D5h, 0F7h, 0D2h, 0DAh, 0A5h, 1Fh, 51h
   DEFINE_GUID GUID_DEVICE_IDLE_POLICY, 4faab71ah, 92e5h, 4726h, 0b5h, 31h, 22h, 45h, 59h, 67h, 2dh, 19h
   POWER_DEVICE_IDLE_POLICY_PERFORMANCE equ 0
@@ -7242,7 +5820,6 @@ ifndef _WINNT_
   POWER_DISCONNECTED_STANDBY_MODE_AGGRESSIVE equ 1
   DEFINE_GUID GUID_ACDC_POWER_SOURCE, 5D3E9A59h, 0E9D5h, 4B00h, 0A6h, 0BDh, 0FFh, 34h, 0FFh, 51h, 65h, 48h
   DEFINE_GUID GUID_LIDSWITCH_STATE_CHANGE, 0BA3E0F4Dh, 0B817h, 4094h, 0A2h, 0D1h, 0D5h, 63h, 79h, 0E6h, 0A0h, 0F3h
-  DEFINE_GUID GUID_LIDSWITCH_STATE_RELIABILITY, 0AE4C4FF1h, 0D361h, 43F4h, 80h, 0AAh, 0BBh, 0B6h, 0EBh, 03h, 0DEh, 94h
   DEFINE_GUID GUID_BATTERY_PERCENTAGE_REMAINING, 0A7AD8041h, 0B45Ah, 4CAEh, 87h, 0A3h, 0EEh, 0CBh, 0B4h, 68h, 0A9h, 0E1h
   DEFINE_GUID GUID_BATTERY_COUNT, 7d263f15h, 0fca4h, 49e5h, 85h, 4bh, 0a9h, 0f2h, 0bfh, 0bdh, 5ch, 24h
   DEFINE_GUID GUID_GLOBAL_USER_PRESENCE, 786e8a1dh, 0b427h, 4344h, 92h, 7h, 9h, 0e7h, 0bh, 0dch, 0beh, 0a9h
@@ -7318,7 +5895,6 @@ ifndef _WINNT_
   LATENCY_TIME typedef SDWORD
   LT_DONT_CARE equ 0
   LT_LOWEST_LATENCY equ 1
-
   DIAGNOSTIC_REASON_VERSION equ 0
   DIAGNOSTIC_REASON_SIMPLE_STRING equ 00000001h
   DIAGNOSTIC_REASON_DETAILED_STRING equ 00000002h
@@ -7453,11 +6029,7 @@ ifndef _WINNT_
   EnergyTrackerCreate equ 92
   EnergyTrackerQuery equ 93
   UpdateBlackBoxRecorder equ 94
-  SessionAllowExternalDmaDevices equ 95
-  SendSuspendResumeNotification equ 96
-  BlackBoxRecorderDirectAccessBuffer equ 97
-  PowerInformationLevelMaximum equ 98
-
+  PowerInformationLevelMaximum equ 95
   POWER_USER_PRESENCE_TYPE typedef SDWORD
   UserNotPresent equ 0
   UserPresent equ 1
@@ -7482,7 +6054,7 @@ ifndef _WINNT_
   PPOWER_SESSION_TIMEOUTS typedef ptr POWER_SESSION_TIMEOUTS
   POWER_SESSION_RIT_STATE struct
     Active BOOLEAN ?
-    LastInputTime DWORD64 ?
+    LastInputTime DWORD ?
   POWER_SESSION_RIT_STATE ends
   _POWER_SESSION_RIT_STATE typedef POWER_SESSION_RIT_STATE
   PPOWER_SESSION_RIT_STATE typedef ptr POWER_SESSION_RIT_STATE
@@ -7493,11 +6065,6 @@ ifndef _WINNT_
   POWER_SESSION_WINLOGON ends
   _POWER_SESSION_WINLOGON typedef POWER_SESSION_WINLOGON
   PPOWER_SESSION_WINLOGON typedef ptr POWER_SESSION_WINLOGON
-  POWER_SESSION_ALLOW_EXTERNAL_DMA_DEVICES struct
-    IsAllowed BOOLEAN ?
-  POWER_SESSION_ALLOW_EXTERNAL_DMA_DEVICES ends
-  _POWER_SESSION_ALLOW_EXTERNAL_DMA_DEVICES typedef POWER_SESSION_ALLOW_EXTERNAL_DMA_DEVICES
-  PPOWER_SESSION_ALLOW_EXTERNAL_DMA_DEVICES typedef ptr POWER_SESSION_ALLOW_EXTERNAL_DMA_DEVICES
   POWER_IDLE_RESILIENCY struct
     CoalescingTimeout DWORD ?
     IdleResiliencyPeriod DWORD ?
@@ -7538,7 +6105,7 @@ ifndef _WINNT_
   MonitorRequestReasonWinrt equ 30
   MonitorRequestReasonUserInputKeyboard equ 31
   MonitorRequestReasonUserInputMouse equ 32
-  MonitorRequestReasonUserInputTouchpad equ 33
+  MonitorRequestReasonUserInputTouch equ 33
   MonitorRequestReasonUserInputPen equ 34
   MonitorRequestReasonUserInputAccelerometer equ 35
   MonitorRequestReasonUserInputHid equ 36
@@ -7550,24 +6117,12 @@ ifndef _WINNT_
   MonitorRequestReasonPdcSignalHeyCortana equ 42
   MonitorRequestReasonPdcSignalHolographicShell equ 43
   MonitorRequestReasonPdcSignalFingerprint equ 44
-  MonitorRequestReasonDirectedDrips equ 45
-  MonitorRequestReasonDim equ 46
-  MonitorRequestReasonBuiltinPanel equ 47
-  MonitorRequestReasonDisplayRequiredUnDim equ 48
-  MonitorRequestReasonBatteryCountChangeSuppressed equ 49
-  MonitorRequestReasonResumeModernStandby equ 50
-  MonitorRequestReasonTerminalInit equ 51
-  MonitorRequestReasonPdcSignalSensorsHumanPresence equ 52
-  MonitorRequestReasonBatteryPreCritical equ 53
-  MonitorRequestReasonUserInputTouch equ 54
-  MonitorRequestReasonMax equ 55
-
+  MonitorRequestReasonMax equ 45
   POWER_MONITOR_REQUEST_TYPE typedef SDWORD
   MonitorRequestTypeOff equ 0
   MonitorRequestTypeOnAndPresent equ 1
   MonitorRequestTypeToggleOn equ 2
   _POWER_MONITOR_REQUEST_TYPE typedef POWER_MONITOR_REQUEST_TYPE
-
   POWER_MONITOR_INVOCATION struct
     Console BOOLEAN ?
     RequestReason POWER_MONITOR_REQUEST_REASON ?
@@ -7586,7 +6141,6 @@ ifndef _WINNT_
   PoDc equ 1
   PoHot equ 2
   PoConditionMaximum equ 3
-
   SET_POWER_SETTING_VALUE struct
     Version DWORD ?
     Guid GUID <>
@@ -7595,7 +6149,7 @@ ifndef _WINNT_
     Data BYTE ANYSIZE_ARRAY dup (?)
   SET_POWER_SETTING_VALUE ends
   PSET_POWER_SETTING_VALUE typedef ptr SET_POWER_SETTING_VALUE
-  POWER_SETTING_VALUE_VERSION equ (1h)
+  POWER_SETTING_VALUE_VERSION equ 1h
   NOTIFY_USER_POWER_SETTING struct
     Guid GUID <>
   NOTIFY_USER_POWER_SETTING ends
@@ -7620,9 +6174,9 @@ ifndef _WINNT_
   PlatformRoleMaximum equ 9
   _POWER_PLATFORM_ROLE typedef POWER_PLATFORM_ROLE
   PPOWER_PLATFORM_ROLE typedef ptr POWER_PLATFORM_ROLE
-  POWER_PLATFORM_ROLE_V1 equ (00000001h)
+  POWER_PLATFORM_ROLE_V1 equ 00000001h
   POWER_PLATFORM_ROLE_V1_MAX equ (PlatformRolePerformanceServer + 1)
-  POWER_PLATFORM_ROLE_V2 equ (00000002h)
+  POWER_PLATFORM_ROLE_V2 equ 00000002h
   POWER_PLATFORM_ROLE_V2_MAX equ (PlatformRoleSlate + 1)
   if (NTDDI_VERSION ge NTDDI_WIN8)
     POWER_PLATFORM_ROLE_VERSION equ <POWER_PLATFORM_ROLE_V2>
@@ -7636,15 +6190,6 @@ ifndef _WINNT_
   POWER_PLATFORM_INFORMATION ends
   _POWER_PLATFORM_INFORMATION typedef POWER_PLATFORM_INFORMATION
   PPOWER_PLATFORM_INFORMATION typedef ptr POWER_PLATFORM_INFORMATION
-  POWER_SETTING_ALTITUDE typedef SDWORD
-  ALTITUDE_GROUP_POLICY equ 0
-  ALTITUDE_USER equ 1
-  ALTITUDE_RUNTIME_OVERRIDE equ 2
-  ALTITUDE_PROVISIONING equ 3
-  ALTITUDE_OEM_CUSTOMIZATION equ 4
-  ALTITUDE_INTERNAL_OVERRIDE equ 5
-  ALTITUDE_OS_DEFAULT equ 6
-  PPOWER_SETTING_ALTITUDE typedef ptr POWER_SETTING_ALTITUDE
   if (NTDDI_VERSION ge NTDDI_WINXP) or  not Defined(_BATCLASS_)
     BATTERY_REPORTING_SCALE struct
       Granularity DWORD ?
@@ -7960,8 +6505,8 @@ ifndef _WINNT_
     union Flags
       AsWORD WORD ?
       struct
-        ANONYMOUS_REC24 record ANONYMOUS_REC24_Reserved:14, ANONYMOUS_REC24_Disabled:1, ANONYMOUS_REC24_AllowScaling:1
-        ANONYMOUS_REC24 <>
+        DUMMYRECORDNAME_??20 record AllowScaling_??20:1, Disabled_??20:1, Reserved_??20:14
+        DUMMYRECORDNAME_??20 <>
       ends
     ends
     PolicyCount DWORD ?
@@ -7980,8 +6525,8 @@ ifndef _WINNT_
     DemotePercent BYTE ?
     PromotePercent BYTE ?
     Spare BYTE 2 dup (?)
-    PROCESSOR_POWER_POLICY_INFO_REC record PROCESSOR_POWER_POLICY_INFO_REC_Reserved:30, PROCESSOR_POWER_POLICY_INFO_REC_AllowPromotion:1, PROCESSOR_POWER_POLICY_INFO_REC_AllowDemotion:1
-    PROCESSOR_POWER_POLICY_INFO_BITS PROCESSOR_POWER_POLICY_INFO_REC <>
+    PROCESSOR_POWER_POLICY_INFO_??21 record AllowDemotion_??21:1, AllowPromotion_??21:1, Reserved_??21:30
+    PROCESSOR_POWER_POLICY_INFO_??21 <>
   PROCESSOR_POWER_POLICY_INFO ends
   _PROCESSOR_POWER_POLICY_INFO typedef PROCESSOR_POWER_POLICY_INFO
   PPROCESSOR_POWER_POLICY_INFO typedef ptr PROCESSOR_POWER_POLICY_INFO
@@ -7989,8 +6534,9 @@ ifndef _WINNT_
     Revision DWORD ?
     DynamicThrottle BYTE ?
     Spare BYTE 3 dup (?)
-    PROCESSOR_POWER_POLICY_REC record PROCESSOR_POWER_POLICY_REC_Reserved:31, PROCESSOR_POWER_POLICY_REC_DisableCStates:1
-    PROCESSOR_POWER_POLICY_BITS PROCESSOR_POWER_POLICY_REC <>
+;    PROCESSOR_POWER_POLICY_??22 record DisableCStates_??22:1, Reserved_??22:31
+;    PROCESSOR_POWER_POLICY_??22 <>
+    Flags DWORD ?
     PolicyCount DWORD ?
     Policy PROCESSOR_POWER_POLICY_INFO 3 dup (<>)
   PROCESSOR_POWER_POLICY ends
@@ -8006,8 +6552,8 @@ ifndef _WINNT_
       union Flags
         AsBYTE BYTE ?
         struct
-          ANONYMOUS_REC25 record ANONYMOUS_REC25_Reserved:3, ANONYMOUS_REC25_DecreasePolicy:2, ANONYMOUS_REC25_IncreasePolicy:2, ANONYMOUS_REC25_NoDomainAccounting:1
-          ANONYMOUS_REC25 <>
+          DUMMYRECORDNAME_??23 record NoDomainAccounting_??23:1, IncreasePolicy_??23:2, DecreasePolicy_??23:2, Reserved_??23:3
+          DUMMYRECORDNAME_??23 <>
         ends
       ends
     ends
@@ -8779,7 +7325,6 @@ ifndef _WINNT_
   PIMAGE_AUX_SYMBOL_EX typedef ptr IMAGE_AUX_SYMBOL_EX
   IMAGE_AUX_SYMBOL_TYPE typedef SDWORD
   IMAGE_AUX_SYMBOL_TYPE_TOKEN_DEF equ 1
-
   IMAGE_COMDAT_SELECT_NODUPLICATES equ 1
   IMAGE_COMDAT_SELECT_ANY equ 2
   IMAGE_COMDAT_SELECT_SAME_SIZE equ 3
@@ -8971,17 +7516,6 @@ ifndef _WINNT_
   IMAGE_REL_AMD64_SREL32 equ 000Eh
   IMAGE_REL_AMD64_PAIR equ 000Fh
   IMAGE_REL_AMD64_SSPAN32 equ 0010h
-  IMAGE_REL_AMD64_EHANDLER equ 0011h
-  IMAGE_REL_AMD64_IMPORT_BR equ 0012h
-  IMAGE_REL_AMD64_IMPORT_CALL equ 0013h
-  IMAGE_REL_AMD64_CFG_BR equ 0014h
-  IMAGE_REL_AMD64_CFG_BR_REX equ 0015h
-  IMAGE_REL_AMD64_CFG_CALL equ 0016h
-  IMAGE_REL_AMD64_INDIR_BR equ 0017h
-  IMAGE_REL_AMD64_INDIR_BR_REX equ 0018h
-  IMAGE_REL_AMD64_INDIR_CALL equ 0019h
-  IMAGE_REL_AMD64_INDIR_BR_SWITCHTABLE_FIRST equ 0020h
-  IMAGE_REL_AMD64_INDIR_BR_SWITCHTABLE_LAST equ 002Fh
   IMAGE_REL_IA64_ABSOLUTE equ 0000h
   IMAGE_REL_IA64_IMM14 equ 0001h
   IMAGE_REL_IA64_IMM22 equ 0002h
@@ -9158,7 +7692,7 @@ ifndef _WINNT_
   IMAGE_REL_BASED_ARM_MOV32 equ 5
   IMAGE_REL_BASED_THUMB_MOV32 equ 7
   IMAGE_ARCHIVE_START_SIZE equ 8
-  IMAGE_ARCHIVE_START equ <"!!<arch!>",0Ah>
+  IMAGE_ARCHIVE_START equ <"!<arch!>",0Ah>
   IMAGE_ARCHIVE_END equ <"`",0Ah>
   IMAGE_ARCHIVE_PAD equ 0Ah
   IMAGE_ARCHIVE_LINKER_MEMBER equ <"/               ">
@@ -9233,9 +7767,8 @@ ifndef _WINNT_
   IMAGE_SNAP_BY_ORDINAL32 macro Ordinal
     exitm <((Ordinal and IMAGE_ORDINAL_FLAG32) != 0)>
   endm
-  TYPE_PIMAGE_TLS_CALLBACK typedef proto WIN_STD_CALL_CONV :PVOID, :DWORD, :PVOID
-  PIMAGE_TLS_CALLBACK typedef ptr TYPE_PIMAGE_TLS_CALLBACK
-
+  TYPE_IMAGE_TLS_CALLBACK typedef proto WIN_STD_CALL_CONV :PVOID, :DWORD, :PVOID
+  PIMAGE_TLS_CALLBACK typedef ptr TYPE_IMAGE_TLS_CALLBACK
   IMAGE_TLS_DIRECTORY64 struct
     StartAddressOfRawData ULONGLONG ?
     EndAddressOfRawData ULONGLONG ?
@@ -9245,8 +7778,8 @@ ifndef _WINNT_
     union
       Characteristics DWORD ?
       struct
-        ANONYMOUS_REC26 record ANONYMOUS_REC26_Reserved1:8, ANONYMOUS_REC26_Alignment:4, ANONYMOUS_REC26_Reserved0:20
-        ANONYMOUS_REC26 <>
+        DUMMYRECORDNAME_??24 record Reserved0_??24:20, Alignment_??24:4, Reserved1_??24:8
+        DUMMYRECORDNAME_??24 <>
       ends
     ends
   IMAGE_TLS_DIRECTORY64 ends
@@ -9261,8 +7794,8 @@ ifndef _WINNT_
     union
       Characteristics DWORD ?
       struct
-        ANONYMOUS_REC27 record ANONYMOUS_REC27_Reserved1:8, ANONYMOUS_REC27_Alignment:4, ANONYMOUS_REC27_Reserved0:20
-        ANONYMOUS_REC27 <>
+        DUMMYRECORDNAME_??25 record Reserved0_??25:20, Alignment_??25:4, Reserved1_??25:8
+        DUMMYRECORDNAME_??25 <>
       ends
     ends
   IMAGE_TLS_DIRECTORY32 ends
@@ -9323,8 +7856,8 @@ ifndef _WINNT_
     union Attributes
       AllAttributes DWORD ?
       struct
-        ANONYMOUS_REC28 record ANONYMOUS_REC28_ReservedAttributes:31, ANONYMOUS_REC28_RvaBased:1
-        ANONYMOUS_REC28 <>
+        DUMMYRECORDNAME_??26 record RvaBased_??26:1, ReservedAttributes_??26:31
+        DUMMYRECORDNAME_??26 <>
       ends
     ends
     DllNameRVA DWORD ?
@@ -9353,17 +7886,17 @@ ifndef _WINNT_
   IMAGE_RESOURCE_DIRECTORY_ENTRY struct
     union
       struct
-        ANONYMOUS_REC29 record ANONYMOUS_REC29_NameIsString:1, ANONYMOUS_REC29_NameOffset:31
-        ANONYMOUS_REC29 <>
+        DUMMYRECORDNAME_??27 record NameOffset_??27:31, NameIsString_??27:1
+        DUMMYRECORDNAME_??27 <>
       ends
       Name_ DWORD ?
       Id WORD ?
     ends
-    union
+    union DUMMYUNIONNAME2
       OffsetToData DWORD ?
-      struct
-        ANONYMOUS_REC30 record ANONYMOUS_REC30_DataIsDirectory:1, ANONYMOUS_REC30_OffsetToDirectory:31
-        ANONYMOUS_REC30 <>
+      struct DUMMYSTRUCTNAME2
+        DUMMYSTRUCTNAME2_??28 record OffsetToDirectory_??28:31, DataIsDirectory_??28:1
+        DUMMYSTRUCTNAME2_??28 <>
       ends
     ends
   IMAGE_RESOURCE_DIRECTORY_ENTRY ends
@@ -9448,10 +7981,6 @@ ifndef _WINNT_
   endif
   IMAGE_DYNAMIC_RELOCATION_GUARD_RF_PROLOGUE equ 00000001h
   IMAGE_DYNAMIC_RELOCATION_GUARD_RF_EPILOGUE equ 00000002h
-  IMAGE_DYNAMIC_RELOCATION_GUARD_IMPORT_CONTROL_TRANSFER equ 00000003h
-  IMAGE_DYNAMIC_RELOCATION_GUARD_INDIR_CONTROL_TRANSFER equ 00000004h
-  IMAGE_DYNAMIC_RELOCATION_GUARD_SWITCHTABLE_BRANCH equ 00000005h
-  IMAGE_DYNAMIC_RELOCATION_FUNCTION_OVERRIDE equ 00000007h
   include pshpack1.inc
   IMAGE_PROLOGUE_DYNAMIC_RELOCATION_HEADER struct
     PrologueByteCount BYTE ?
@@ -9466,54 +7995,6 @@ ifndef _WINNT_
   IMAGE_EPILOGUE_DYNAMIC_RELOCATION_HEADER ends
   _IMAGE_EPILOGUE_DYNAMIC_RELOCATION_HEADER typedef IMAGE_EPILOGUE_DYNAMIC_RELOCATION_HEADER
   PIMAGE_EPILOGUE_DYNAMIC_RELOCATION_HEADER typedef ptr IMAGE_EPILOGUE_DYNAMIC_RELOCATION_HEADER
-  IMAGE_IMPORT_CONTROL_TRANSFER_DYNAMIC_RELOCATION struct
-    IMAGE_IMPORT_CONTROL_TRANSFER_DYNAMIC_RELOCATION_REC record IMAGE_IMPORT_CONTROL_TRANSFER_DYNAMIC_RELOCATION_REC_IATIndex:19, IMAGE_IMPORT_CONTROL_TRANSFER_DYNAMIC_RELOCATION_REC_IndirectCall:1, IMAGE_IMPORT_CONTROL_TRANSFER_DYNAMIC_RELOCATION_REC_PageRelativeOffset:12
-    IMAGE_IMPORT_CONTROL_TRANSFER_DYNAMIC_RELOCATION_BITS IMAGE_IMPORT_CONTROL_TRANSFER_DYNAMIC_RELOCATION_REC <>
-  IMAGE_IMPORT_CONTROL_TRANSFER_DYNAMIC_RELOCATION ends
-  _IMAGE_IMPORT_CONTROL_TRANSFER_DYNAMIC_RELOCATION typedef IMAGE_IMPORT_CONTROL_TRANSFER_DYNAMIC_RELOCATION
-  PIMAGE_IMPORT_CONTROL_TRANSFER_DYNAMIC_RELOCATION typedef ptr IMAGE_IMPORT_CONTROL_TRANSFER_DYNAMIC_RELOCATION
-  IMAGE_INDIR_CONTROL_TRANSFER_DYNAMIC_RELOCATION struct
-    IMAGE_INDIR_CONTROL_TRANSFER_DYNAMIC_RELOCATION_REC record IMAGE_INDIR_CONTROL_TRANSFER_DYNAMIC_RELOCATION_REC_Reserved:1, IMAGE_INDIR_CONTROL_TRANSFER_DYNAMIC_RELOCATION_REC_CfgCheck:1, IMAGE_INDIR_CONTROL_TRANSFER_DYNAMIC_RELOCATION_REC_RexWPrefix:1, IMAGE_INDIR_CONTROL_TRANSFER_DYNAMIC_RELOCATION_REC_IndirectCall:1, IMAGE_INDIR_CONTROL_TRANSFER_DYNAMIC_RELOCATION_REC_PageRelativeOffset:12
-    IMAGE_INDIR_CONTROL_TRANSFER_DYNAMIC_RELOCATION_BITS IMAGE_INDIR_CONTROL_TRANSFER_DYNAMIC_RELOCATION_REC <>
-  IMAGE_INDIR_CONTROL_TRANSFER_DYNAMIC_RELOCATION ends
-  _IMAGE_INDIR_CONTROL_TRANSFER_DYNAMIC_RELOCATION typedef IMAGE_INDIR_CONTROL_TRANSFER_DYNAMIC_RELOCATION
-  PIMAGE_INDIR_CONTROL_TRANSFER_DYNAMIC_RELOCATION typedef ptr IMAGE_INDIR_CONTROL_TRANSFER_DYNAMIC_RELOCATION
-  IMAGE_SWITCHTABLE_BRANCH_DYNAMIC_RELOCATION struct
-    IMAGE_SWITCHTABLE_BRANCH_DYNAMIC_RELOCATION_REC record IMAGE_SWITCHTABLE_BRANCH_DYNAMIC_RELOCATION_REC_RegisterNumber:4, IMAGE_SWITCHTABLE_BRANCH_DYNAMIC_RELOCATION_REC_PageRelativeOffset:12
-    IMAGE_SWITCHTABLE_BRANCH_DYNAMIC_RELOCATION_BITS IMAGE_SWITCHTABLE_BRANCH_DYNAMIC_RELOCATION_REC <>
-  IMAGE_SWITCHTABLE_BRANCH_DYNAMIC_RELOCATION ends
-  _IMAGE_SWITCHTABLE_BRANCH_DYNAMIC_RELOCATION typedef IMAGE_SWITCHTABLE_BRANCH_DYNAMIC_RELOCATION
-  PIMAGE_SWITCHTABLE_BRANCH_DYNAMIC_RELOCATION typedef ptr IMAGE_SWITCHTABLE_BRANCH_DYNAMIC_RELOCATION
-  IMAGE_FUNCTION_OVERRIDE_HEADER struct
-    FuncOverrideSize DWORD ?
-  IMAGE_FUNCTION_OVERRIDE_HEADER ends
-  _IMAGE_FUNCTION_OVERRIDE_HEADER typedef IMAGE_FUNCTION_OVERRIDE_HEADER
-  PIMAGE_FUNCTION_OVERRIDE_HEADER typedef ptr IMAGE_FUNCTION_OVERRIDE_HEADER
-  IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION struct
-    OriginalRva DWORD ?
-    BDDOffset DWORD ?
-    RvaSize DWORD ?
-    BaseRelocSize DWORD ?
-  IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION ends
-  _IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION typedef IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION
-  PIMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION typedef ptr IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION
-  IMAGE_BDD_INFO struct
-    Version DWORD ?
-    BDDSize DWORD ?
-  IMAGE_BDD_INFO ends
-  _IMAGE_BDD_INFO typedef IMAGE_BDD_INFO
-  PIMAGE_BDD_INFO typedef ptr IMAGE_BDD_INFO
-  IMAGE_BDD_DYNAMIC_RELOCATION struct
-    Left WORD ?
-    Right WORD ?
-    Value DWORD ?
-  IMAGE_BDD_DYNAMIC_RELOCATION ends
-  _IMAGE_BDD_DYNAMIC_RELOCATION typedef IMAGE_BDD_DYNAMIC_RELOCATION
-  PIMAGE_BDD_DYNAMIC_RELOCATION typedef ptr IMAGE_BDD_DYNAMIC_RELOCATION
-  IMAGE_FUNCTION_OVERRIDE_INVALID equ 0
-  IMAGE_FUNCTION_OVERRIDE_X64_REL32 equ 1
-  IMAGE_FUNCTION_OVERRIDE_ARM64_BRANCH26 equ 2
-  IMAGE_FUNCTION_OVERRIDE_ARM64_THUNK equ 3
   include poppack.inc
   IMAGE_LOAD_CONFIG_DIRECTORY32 struct
     Size_ DWORD ?
@@ -9557,14 +8038,6 @@ ifndef _WINNT_
     HotPatchTableOffset DWORD ?
     Reserved3 DWORD ?
     EnclaveConfigurationPointer DWORD ?
-    VolatileMetadataPointer DWORD ?
-    GuardEHContinuationTable DWORD ?
-    GuardEHContinuationCount DWORD ?
-    GuardXFGCheckFunctionPointer DWORD ?
-    GuardXFGDispatchFunctionPointer DWORD ?
-    GuardXFGTableDispatchFunctionPointer DWORD ?
-    CastGuardOsDeterminedFailureMode DWORD ?
-    GuardMemcpyFunctionPointer DWORD ?
   IMAGE_LOAD_CONFIG_DIRECTORY32 ends
   _IMAGE_LOAD_CONFIG_DIRECTORY32 typedef IMAGE_LOAD_CONFIG_DIRECTORY32
   PIMAGE_LOAD_CONFIG_DIRECTORY32 typedef ptr IMAGE_LOAD_CONFIG_DIRECTORY32
@@ -9610,14 +8083,6 @@ ifndef _WINNT_
     HotPatchTableOffset DWORD ?
     Reserved3 DWORD ?
     EnclaveConfigurationPointer ULONGLONG ?
-    VolatileMetadataPointer ULONGLONG ?
-    GuardEHContinuationTable ULONGLONG ?
-    GuardEHContinuationCount ULONGLONG ?
-    GuardXFGCheckFunctionPointer ULONGLONG ?
-    GuardXFGDispatchFunctionPointer ULONGLONG ?
-    GuardXFGTableDispatchFunctionPointer ULONGLONG ?
-    CastGuardOsDeterminedFailureMode ULONGLONG ?
-    GuardMemcpyFunctionPointer ULONGLONG ?
   IMAGE_LOAD_CONFIG_DIRECTORY64 ends
   _IMAGE_LOAD_CONFIG_DIRECTORY64 typedef IMAGE_LOAD_CONFIG_DIRECTORY64
   PIMAGE_LOAD_CONFIG_DIRECTORY64 typedef ptr IMAGE_LOAD_CONFIG_DIRECTORY64
@@ -9635,7 +8100,6 @@ ifndef _WINNT_
     BaseImageList DWORD ?
     BaseImageCount DWORD ?
     BufferOffset DWORD ?
-    ExtraPatchSize DWORD ?
   IMAGE_HOT_PATCH_INFO ends
   _IMAGE_HOT_PATCH_INFO typedef IMAGE_HOT_PATCH_INFO
   PIMAGE_HOT_PATCH_INFO typedef ptr IMAGE_HOT_PATCH_INFO
@@ -9658,7 +8122,6 @@ ifndef _WINNT_
   _IMAGE_HOT_PATCH_HASHES typedef IMAGE_HOT_PATCH_HASHES
   PIMAGE_HOT_PATCH_HASHES typedef ptr IMAGE_HOT_PATCH_HASHES
   IMAGE_HOT_PATCH_BASE_OBLIGATORY equ 00000001h
-  IMAGE_HOT_PATCH_BASE_CAN_ROLL_BACK equ 00000002h
   IMAGE_HOT_PATCH_CHUNK_INVERSE equ 80000000h
   IMAGE_HOT_PATCH_CHUNK_OBLIGATORY equ 40000000h
   IMAGE_HOT_PATCH_CHUNK_RESERVED equ 3FF03000h
@@ -9686,21 +8149,14 @@ ifndef _WINNT_
   IMAGE_GUARD_RF_INSTRUMENTED equ 00020000h
   IMAGE_GUARD_RF_ENABLE equ 00040000h
   IMAGE_GUARD_RF_STRICT equ 00080000h
-  IMAGE_GUARD_RETPOLINE_PRESENT equ 00100000h
-  IMAGE_GUARD_EH_CONTINUATION_TABLE_PRESENT equ 00400000h
-  IMAGE_GUARD_XFG_ENABLED equ 00800000h
-  IMAGE_GUARD_CASTGUARD_PRESENT equ 01000000h
-  IMAGE_GUARD_MEMCPY_PRESENT equ 02000000h
   IMAGE_GUARD_CF_FUNCTION_TABLE_SIZE_MASK equ 0F0000000h
   IMAGE_GUARD_CF_FUNCTION_TABLE_SIZE_SHIFT equ 28
   IMAGE_GUARD_FLAG_FID_SUPPRESSED equ 01h
   IMAGE_GUARD_FLAG_EXPORT_SUPPRESSED equ 02h
-  IMAGE_GUARD_FLAG_FID_LANGEXCPTHANDLER equ 04h
-  IMAGE_GUARD_FLAG_FID_XFG equ 08h
   IMAGE_CE_RUNTIME_FUNCTION_ENTRY struct
     FuncStart DWORD ?
-    IMAGE_CE_RUNTIME_FUNCTION_ENTRY_REC record IMAGE_CE_RUNTIME_FUNCTION_ENTRY_REC_ExceptionFlag:1, IMAGE_CE_RUNTIME_FUNCTION_ENTRY_REC_ThirtyTwoBit:1, IMAGE_CE_RUNTIME_FUNCTION_ENTRY_REC_FuncLen:22, IMAGE_CE_RUNTIME_FUNCTION_ENTRY_REC_PrologLen:8
-    IMAGE_CE_RUNTIME_FUNCTION_ENTRY_BITS IMAGE_CE_RUNTIME_FUNCTION_ENTRY_REC <>
+    IMAGE_CE_RUNTIME_FUNCTION_ENTRY_??29 record PrologLen_??29:8, FuncLen_??29:22, ThirtyTwoBit_??29:1, ExceptionFlag_??29:1
+    IMAGE_CE_RUNTIME_FUNCTION_ENTRY_??29 <>
   IMAGE_CE_RUNTIME_FUNCTION_ENTRY ends
   _IMAGE_CE_RUNTIME_FUNCTION_ENTRY typedef IMAGE_CE_RUNTIME_FUNCTION_ENTRY
   PIMAGE_CE_RUNTIME_FUNCTION_ENTRY typedef ptr IMAGE_CE_RUNTIME_FUNCTION_ENTRY
@@ -9709,43 +8165,25 @@ ifndef _WINNT_
     union
       UnwindData DWORD ?
       struct
-        ANONYMOUS_REC31 record ANONYMOUS_REC31_StackAdjust:10, ANONYMOUS_REC31_C:1, ANONYMOUS_REC31_L:1, ANONYMOUS_REC31_R:1, ANONYMOUS_REC31_Reg:3, ANONYMOUS_REC31_H:1, ANONYMOUS_REC31_Ret:2, ANONYMOUS_REC31_FunctionLength:11, ANONYMOUS_REC31_Flag:2
-        ANONYMOUS_REC31 <>
+        DUMMYRECORDNAME_??30 record Flag_??30:2, FunctionLength_??30:11, Ret_??30:2, H_??30:1, Reg_??30:3, R_??30:1, L_??30:1, C_??30:1, StackAdjust_??30:10
+        DUMMYRECORDNAME_??30 <>
       ends
     ends
   IMAGE_ARM_RUNTIME_FUNCTION_ENTRY ends
   _IMAGE_ARM_RUNTIME_FUNCTION_ENTRY typedef IMAGE_ARM_RUNTIME_FUNCTION_ENTRY
   PIMAGE_ARM_RUNTIME_FUNCTION_ENTRY typedef ptr IMAGE_ARM_RUNTIME_FUNCTION_ENTRY
-  ARM64_FNPDATA_FLAGS typedef SDWORD
-  PdataRefToFullXdata equ 0
-  PdataPackedUnwindFunction equ 1
-  PdataPackedUnwindFragment equ 2
-
-  ARM64_FNPDATA_CR typedef SDWORD
-  PdataCrUnchained equ 0
-  PdataCrUnchainedSavedLr equ 1
-  PdataCrChainedWithPac equ 2
-  PdataCrChained equ 3
-
   IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY struct
     BeginAddress DWORD ?
     union
       UnwindData DWORD ?
       struct
-        ANONYMOUS_REC32 record ANONYMOUS_REC32_FrameSize:9, ANONYMOUS_REC32_CR:2, ANONYMOUS_REC32_H:1, ANONYMOUS_REC32_RegI:4, ANONYMOUS_REC32_RegF:3, ANONYMOUS_REC32_FunctionLength:11, ANONYMOUS_REC32_Flag:2
-        ANONYMOUS_REC32 <>
+        DUMMYRECORDNAME_??31 record Flag_??31:2, FunctionLength_??31:11, RegF_??31:3, RegI_??31:4, H_??31:1, CR_??31:2, FrameSize_??31:9
+        DUMMYRECORDNAME_??31 <>
       ends
     ends
   IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY ends
   _IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY typedef IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY
   PIMAGE_ARM64_RUNTIME_FUNCTION_ENTRY typedef ptr IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY
-  IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY_XDATA union
-    HeaderData DWORD ?
-    struct
-      ANONYMOUS_REC33 record ANONYMOUS_REC33_CodeWords:5, ANONYMOUS_REC33_EpilogCount:5, ANONYMOUS_REC33_EpilogInHeader:1, ANONYMOUS_REC33_ExceptionDataPresent:1, ANONYMOUS_REC33_Version:2, ANONYMOUS_REC33_FunctionLength:18
-      ANONYMOUS_REC33 <>
-    ends
-  IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY_XDATA ends
   IMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY struct
     BeginAddress ULONGLONG ?
     EndAddress ULONGLONG ?
@@ -9773,10 +8211,11 @@ ifndef _WINNT_
     ends
   _IMAGE_RUNTIME_FUNCTION_ENTRY ends
   _PIMAGE_RUNTIME_FUNCTION_ENTRY typedef ptr _IMAGE_RUNTIME_FUNCTION_ENTRY
+  RUNTIME_FUNCTION typedef _IMAGE_RUNTIME_FUNCTION_ENTRY
+  PRUNTIME_FUNCTION typedef ptr _IMAGE_RUNTIME_FUNCTION_ENTRY
+
   IMAGE_IA64_RUNTIME_FUNCTION_ENTRY typedef _IMAGE_RUNTIME_FUNCTION_ENTRY
   PIMAGE_IA64_RUNTIME_FUNCTION_ENTRY typedef _PIMAGE_RUNTIME_FUNCTION_ENTRY
-  IMAGE_AMD64_RUNTIME_FUNCTION_ENTRY typedef _IMAGE_RUNTIME_FUNCTION_ENTRY
-  PIMAGE_AMD64_RUNTIME_FUNCTION_ENTRY typedef _PIMAGE_RUNTIME_FUNCTION_ENTRY
   if Defined(_AXP64_)
     IMAGE_AXP64_RUNTIME_FUNCTION_ENTRY typedef IMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY
     PIMAGE_AXP64_RUNTIME_FUNCTION_ENTRY typedef PIMAGE_ALPHA64_RUNTIME_FUNCTION_ENTRY
@@ -9793,8 +8232,8 @@ ifndef _WINNT_
     IMAGE_RUNTIME_FUNCTION_ENTRY typedef _IMAGE_RUNTIME_FUNCTION_ENTRY
     PIMAGE_RUNTIME_FUNCTION_ENTRY typedef _PIMAGE_RUNTIME_FUNCTION_ENTRY
   endif
-  IMAGE_ENCLAVE_LONG_ID_LENGTH equ <ENCLAVE_LONG_ID_LENGTH>
-  IMAGE_ENCLAVE_SHORT_ID_LENGTH equ <ENCLAVE_SHORT_ID_LENGTH>
+  IMAGE_ENCLAVE_LONG_ID_LENGTH equ 32
+  IMAGE_ENCLAVE_SHORT_ID_LENGTH equ 16
   IMAGE_ENCLAVE_CONFIG32 struct
     Size_ DWORD ?
     MinimumRequiredConfigSize DWORD ?
@@ -9878,21 +8317,12 @@ ifndef _WINNT_
   IMAGE_DEBUG_TYPE_OMAP_FROM_SRC equ 8
   IMAGE_DEBUG_TYPE_BORLAND equ 9
   IMAGE_DEBUG_TYPE_RESERVED10 equ 10
-  IMAGE_DEBUG_TYPE_BBT equ <IMAGE_DEBUG_TYPE_RESERVED10>
   IMAGE_DEBUG_TYPE_CLSID equ 11
   IMAGE_DEBUG_TYPE_VC_FEATURE equ 12
   IMAGE_DEBUG_TYPE_POGO equ 13
   IMAGE_DEBUG_TYPE_ILTCG equ 14
   IMAGE_DEBUG_TYPE_MPX equ 15
   IMAGE_DEBUG_TYPE_REPRO equ 16
-  IMAGE_DEBUG_TYPE_SPGO equ 18
-  IMAGE_DEBUG_TYPE_EX_DLLCHARACTERISTICS equ 20
-  IMAGE_DLLCHARACTERISTICS_EX_CET_COMPAT equ 01h
-  IMAGE_DLLCHARACTERISTICS_EX_CET_COMPAT_STRICT_MODE equ 02h
-  IMAGE_DLLCHARACTERISTICS_EX_CET_SET_CONTEXT_IP_VALIDATION_RELAXED_MODE equ 04h
-  IMAGE_DLLCHARACTERISTICS_EX_CET_DYNAMIC_APIS_ALLOW_IN_PROC equ 08h
-  IMAGE_DLLCHARACTERISTICS_EX_CET_RESERVED_1 equ 10h
-  IMAGE_DLLCHARACTERISTICS_EX_CET_RESERVED_2 equ 20h
   IMAGE_COFF_SYMBOLS_HEADER struct
     NumberOfSymbols DWORD ?
     LvaToFirstSymbol DWORD ?
@@ -9914,8 +8344,8 @@ ifndef _WINNT_
     cbProcSize DWORD ?
     cdwLocals DWORD ?
     cdwParams WORD ?
-    FPO_DATA_REC record FPO_DATA_REC_cbFrame:2, FPO_DATA_REC_reserved:1, FPO_DATA_REC_fUseBP:1, FPO_DATA_REC_fHasSEH:1, FPO_DATA_REC_cbRegs:3, FPO_DATA_REC_cbProlog:8
-    FPO_DATA_BITS FPO_DATA_REC <>
+    FPO_DATA_??32 record cbProlog_??32:8, cbRegs_??32:3, fHasSEH_??32:1, fUseBP_??32:1, reserved_??32:1, cbFrame_??32:2
+    FPO_DATA_??32 <>
   FPO_DATA ends
   _FPO_DATA typedef FPO_DATA
   PFPO_DATA typedef ptr FPO_DATA
@@ -9986,8 +8416,8 @@ ifndef _WINNT_
   IMAGE_SEPARATE_DEBUG_FLAGS_MASK equ 8000h
   IMAGE_SEPARATE_DEBUG_MISMATCH equ 8000h
   IMAGE_ARCHITECTURE_HEADER struct
-    IMAGE_ARCHITECTURE_HEADER_REC record IMAGE_ARCHITECTURE_HEADER_REC_FLD0:16, IMAGE_ARCHITECTURE_HEADER_REC_AmaskShift:8, IMAGE_ARCHITECTURE_HEADER_REC_FLD1:7, IMAGE_ARCHITECTURE_HEADER_REC_AmaskValue:1
-    IMAGE_ARCHITECTURE_HEADER_BITS IMAGE_ARCHITECTURE_HEADER_REC <>
+    IMAGE_ARCHITECTURE_HEADER_??33 record AmaskValue_??33:1, Bitfield1_??33:7, AmaskShift_??33:8, Bitfield3_??33:16
+    IMAGE_ARCHITECTURE_HEADER_??33 <>
     FirstEntryRVA DWORD ?
   IMAGE_ARCHITECTURE_HEADER ends
   _ImageArchitectureHeader typedef IMAGE_ARCHITECTURE_HEADER
@@ -10011,21 +8441,19 @@ ifndef _WINNT_
       Ordinal WORD ?
       Hint WORD ?
     ends
-    IMPORT_OBJECT_HEADER_REC record IMPORT_OBJECT_HEADER_REC_Reserved:11, IMPORT_OBJECT_HEADER_REC_NameType:3, IMPORT_OBJECT_HEADER_REC_Type:2
-    IMPORT_OBJECT_HEADER_BITS IMPORT_OBJECT_HEADER_REC <>
+    IMPORT_OBJECT_HEADER_??34 record Type_??34:2, NameType_??34:3, Reserved_??34:11
+    IMPORT_OBJECT_HEADER_??34 <>
   IMPORT_OBJECT_HEADER ends
   IMPORT_OBJECT_TYPE typedef SDWORD
   IMPORT_OBJECT_CODE equ 0
   IMPORT_OBJECT_DATA equ 1
   IMPORT_OBJECT_CONST equ 2
-
   IMPORT_OBJECT_NAME_TYPE typedef SDWORD
   IMPORT_OBJECT_ORDINAL equ 0
   IMPORT_OBJECT_NAME equ 1
   IMPORT_OBJECT_NAME_NO_PREFIX equ 2
   IMPORT_OBJECT_NAME_UNDECORATE equ 3
   IMPORT_OBJECT_NAME_EXPORTAS equ 4
-
   ifndef __IMAGE_COR20_HEADER_DEFINED__
     __IMAGE_COR20_HEADER_DEFINED__ equ <>
     ReplacesCorHdrNumericDefines typedef SDWORD
@@ -10054,7 +8482,6 @@ ifndef _WINNT_
     IMAGE_COR_EATJ_THUNK_SIZE equ 32
     MAX_CLASS_NAME equ 1024
     MAX_PACKAGE_NAME equ 1024
-
     IMAGE_COR20_HEADER struct
       cb DWORD ?
       MajorRuntimeVersion WORD ?
@@ -10074,101 +8501,65 @@ ifndef _WINNT_
     IMAGE_COR20_HEADER ends
     PIMAGE_COR20_HEADER typedef ptr IMAGE_COR20_HEADER
   endif
-  ifndef _APISETRTLSUPPORT_
-    _APISETRTLSUPPORT_ equ <>
-    include apiset.inc
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-      if (NTDDI_VERSION gt NTDDI_WINXP)
-        @DefProto DllImport, RtlCaptureStackBackTrace, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :ptr PVOID, :PDWORD>, 16
+  include apiset.inc
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    if (NTDDI_VERSION gt NTDDI_WINXP)
+      @DefProto DllImport, RtlCaptureStackBackTrace, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :ptr PVOID, :PDWORD>, 16
+    endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    if (NTDDI_VERSION gt NTDDI_WIN2K)
+      @DefProto DllImport, RtlCaptureContext, WIN_STD_CALL_CONV,, <:PCONTEXT>, 4
+    endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    @DefProto DllImport, RtlUnwind, WIN_STD_CALL_CONV,, <:PVOID, :PVOID, :PEXCEPTION_RECORD, :PVOID>, 16
+  endif
+  if Defined(_AMD64_)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      @DefProto DllImport, RtlAddFunctionTable, c,, <:PRUNTIME_FUNCTION, :DWORD, :DWORD64>
+      @DefProto DllImport, RtlDeleteFunctionTable, c,, <:PRUNTIME_FUNCTION>
+      @DefProto DllImport, RtlInstallFunctionTableCallback, c,, <:DWORD64, :DWORD64, :DWORD, :PGET_RUNTIME_FUNCTION_CALLBACK, :PVOID, :PCWSTR>
+      if (NTDDI_VERSION ge NTDDI_WIN8)
+        @DefProto DllImport, RtlAddGrowableFunctionTable, WIN_STD_CALL_CONV,, <:ptr PVOID, :PRUNTIME_FUNCTION, :DWORD, :DWORD, :ULONG_PTR, :ULONG_PTR>, 32
+        @DefProto DllImport, RtlGrowFunctionTable, WIN_STD_CALL_CONV,, <:PVOID, :DWORD>, 8
+        @DefProto DllImport, RtlDeleteGrowableFunctionTable, WIN_STD_CALL_CONV,, <:PVOID>, 4
       endif
-      if (NTDDI_VERSION gt NTDDI_WIN2K)
-        @DefProto DllImport, RtlCaptureContext, WIN_STD_CALL_CONV,, <:PCONTEXT>, 4
-      endif
-    endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-      if (NTDDI_VERSION ge NTDDI_WIN10_VB)
-        if Defined(_AMD64_)
-          @DefProto DllImport, RtlCaptureContext2, WIN_STD_CALL_CONV,, <:PCONTEXT>, 4
-        endif
-      endif
-    endif
-    if Defined(_AMD64_) or Defined(_ARM_) or Defined(_ARM64_)
-      UNWIND_HISTORY_TABLE_SIZE equ 12
-      UNWIND_HISTORY_TABLE_ENTRY struct
-        ImageBase ULONG_PTR ?
-        FunctionEntry PRUNTIME_FUNCTION ?
-      UNWIND_HISTORY_TABLE_ENTRY ends
-      _UNWIND_HISTORY_TABLE_ENTRY typedef UNWIND_HISTORY_TABLE_ENTRY
-      PUNWIND_HISTORY_TABLE_ENTRY typedef ptr UNWIND_HISTORY_TABLE_ENTRY
-      UNWIND_HISTORY_TABLE struct
-        Count DWORD ?
-        LocalHint BYTE ?
-        GlobalHint BYTE ?
-        Search BYTE ?
-        Once BYTE ?
-        LowAddress ULONG_PTR ?
-        HighAddress ULONG_PTR ?
-        Entry UNWIND_HISTORY_TABLE_ENTRY UNWIND_HISTORY_TABLE_SIZE dup (<>)
-      UNWIND_HISTORY_TABLE ends
-      _UNWIND_HISTORY_TABLE typedef UNWIND_HISTORY_TABLE
-      PUNWIND_HISTORY_TABLE typedef ptr UNWIND_HISTORY_TABLE
-    endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-      @DefProto DllImport, RtlUnwind, WIN_STD_CALL_CONV,, <:PVOID, :PVOID, :PEXCEPTION_RECORD, :PVOID>, 16
-    endif
-    if Defined(_AMD64_)
-      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
-        @DefProto DllImport, RtlAddFunctionTable, c,, <:PRUNTIME_FUNCTION, :DWORD, :DWORD64>
-        @DefProto DllImport, RtlDeleteFunctionTable, c,, <:PRUNTIME_FUNCTION>
-        @DefProto DllImport, RtlInstallFunctionTableCallback, c,, <:DWORD64, :DWORD64, :DWORD, :PGET_RUNTIME_FUNCTION_CALLBACK, :PVOID, :PCWSTR>
-      endif
-      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
-        if (NTDDI_VERSION ge NTDDI_WIN8)
-          @DefProto DllImport, RtlAddGrowableFunctionTable, WIN_STD_CALL_CONV,, <:ptr PVOID, :PRUNTIME_FUNCTION, :DWORD, :DWORD, :ULONG_PTR, :ULONG_PTR>, 24
-          @DefProto DllImport, RtlGrowFunctionTable, WIN_STD_CALL_CONV,, <:PVOID, :DWORD>, 8
-          @DefProto DllImport, RtlDeleteGrowableFunctionTable, WIN_STD_CALL_CONV,, <:PVOID>, 4
-        endif
-      endif
-      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-        @DefProto DllImport, RtlLookupFunctionEntry, WIN_STD_CALL_CONV,, <:DWORD64, :PDWORD64, :PUNWIND_HISTORY_TABLE>, 12
-        @DefProto DllImport, RtlRestoreContext, c,, <:PCONTEXT, :ptr _EXCEPTION_RECORD>
-        @DefProto DllImport, RtlUnwindEx, WIN_STD_CALL_CONV,, <:PVOID, :PVOID, :PEXCEPTION_RECORD, :PVOID, :PCONTEXT, :PUNWIND_HISTORY_TABLE>, 24
-        @DefProto DllImport, RtlVirtualUnwind, WIN_STD_CALL_CONV,, <:DWORD, :DWORD64, :DWORD64, :PRUNTIME_FUNCTION, :PCONTEXT, :ptr PVOID, :PDWORD64, :PKNONVOLATILE_CONTEXT_POINTERS>, 32
-        if Defined(_M_ARM64EC)
-          @DefProto DllImport, RtlIsEcCode, WIN_STD_CALL_CONV,, <:DWORD64>, 4
-        endif
-      endif
-    endif
-    if Defined(_ARM_)
-      ;[...]
-    endif
-    if Defined(_ARM64_)
-      ;[...]
-    endif
-    if Defined(_X86_)
-      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-        if (NTDDI_VERSION ge NTDDI_WIN10_FE)
-          @DefProto DllImport, RtlRestoreContext, c,, <:PCONTEXT, :ptr _EXCEPTION_RECORD>
-        endif
-      endif
-    endif
-    if Defined(_CHPE_X86_ARM64_)
-      ;[...]
-    endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-      @DefProto DllImport, RtlRaiseException, WIN_STD_CALL_CONV,, <:PEXCEPTION_RECORD>, 4
-      @DefProto DllImport, RtlPcToFileHeader, WIN_STD_CALL_CONV,, <:PVOID, :ptr PVOID>, 8
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
-      if (NTDDI_VERSION ge NTDDI_WIN2K)
-        @DefProto DllImport, RtlCompareMemory, WIN_STD_CALL_CONV,, <:ptr VOID, :ptr VOID, :SIZE_T>, 12
-      endif
+      @DefProto DllImport, RtlLookupFunctionEntry, WIN_STD_CALL_CONV,, <:DWORD64, :PDWORD64, :PUNWIND_HISTORY_TABLE>, 16
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      @DefProto DllImport, RtlRestoreContext, c,, <:PCONTEXT, :ptr _EXCEPTION_RECORD>
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+      @DefProto DllImport, RtlUnwindEx, WIN_STD_CALL_CONV,, <:PVOID, :PVOID, :PEXCEPTION_RECORD, :PVOID, :PCONTEXT, :PUNWIND_HISTORY_TABLE>, 24
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      @DefProto DllImport, RtlVirtualUnwind, WIN_STD_CALL_CONV,, <:DWORD, :DWORD64, :DWORD64, :PRUNTIME_FUNCTION, :PCONTEXT, :ptr PVOID, :PDWORD64, :PKNONVOLATILE_CONTEXT_POINTERS>, 40
+    endif
+  endif
+  if Defined(_ARM_)
+    ;[...]
+  endif
+  if Defined(_ARM64_)
+    ;[...]
+  endif
+  if Defined(_CHPE_X86_ARM64_)
+    ;[...]
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    @DefProto DllImport, RtlPcToFileHeader, WIN_STD_CALL_CONV,, <:PVOID, :ptr PVOID>, 8
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    if (NTDDI_VERSION ge NTDDI_WIN2K)
+      @DefProto DllImport, RtlCompareMemory, WIN_STD_CALL_CONV,, <:ptr VOID, :ptr VOID, :SIZE_T>, 12
     endif
   endif
   ifdef _MAC
     ;[...]
   else
-;    include string.inc
+    include string.inc
   endif
   ifndef _SLIST_HEADER_
     _SLIST_HEADER_ equ <>
@@ -10189,8 +8580,8 @@ ifndef _WINNT_
           Region ULONGLONG ?
         ends
         struct HeaderX64
-          HeaderX64_REC record HeaderX64_REC_NextEntry:60, HeaderX64_REC_Reserved:4, HeaderX64_REC_Sequence:48, HeaderX64_REC_Depth:16
-          HeaderX64_BITS HeaderX64_REC <>
+          HeaderX64_??35 record Depth_??35:16, Sequence_??35:48, Reserved_??35:4, NextEntry_??35:60
+          HeaderX64_??35 <>
         ends
       SLIST_HEADER ends
       _SLIST_HEADER typedef SLIST_HEADER
@@ -10220,9 +8611,6 @@ ifndef _WINNT_
     @DefProto DllImport, RtlInterlockedPushListSListEx, WIN_STD_CALL_CONV,, <:PSLIST_HEADER, :PSLIST_ENTRY, :PSLIST_ENTRY, :DWORD>, 16
     @DefProto DllImport, RtlInterlockedFlushSList, WIN_STD_CALL_CONV,, <:PSLIST_HEADER>, 4
     @DefProto DllImport, RtlQueryDepthSList, WIN_STD_CALL_CONV,, <:PSLIST_HEADER>, 4
-    if (NTDDI_VERSION ge NTDDI_WIN10_VB)
-      @DefProto DllImport, RtlGetReturnAddressHijackTarget, WIN_STD_CALL_CONV,, <>, 0
-    endif
   endif
   ifndef _RTL_RUN_ONCE_DEF
     _RTL_RUN_ONCE_DEF equ <>
@@ -10301,20 +8689,6 @@ ifndef _WINNT_
   FAST_FAIL_UNHANDLED_LSS_EXCEPTON equ 54
   FAST_FAIL_ADMINLESS_ACCESS_DENIED equ 55
   FAST_FAIL_UNEXPECTED_CALL equ 56
-  FAST_FAIL_CONTROL_INVALID_RETURN_ADDRESS equ 57
-  FAST_FAIL_UNEXPECTED_HOST_BEHAVIOR equ 58
-  FAST_FAIL_FLAGS_CORRUPTION equ 59
-  FAST_FAIL_VEH_CORRUPTION equ 60
-  FAST_FAIL_ETW_CORRUPTION equ 61
-  FAST_FAIL_RIO_ABORT equ 62
-  FAST_FAIL_INVALID_PFN equ 63
-  FAST_FAIL_GUARD_ICALL_CHECK_FAILURE_XFG equ 64
-  FAST_FAIL_CAST_GUARD equ 65
-  FAST_FAIL_HOST_VISIBILITY_CHANGE equ 66
-  FAST_FAIL_KERNEL_CET_SHADOW_STACK_ASSIST equ 67
-  FAST_FAIL_PATCH_CALLBACK_FAILED equ 68
-  FAST_FAIL_NTDLL_PATCH_FAILED equ 69
-  FAST_FAIL_INVALID_FLS_DATA equ 70
   FAST_FAIL_INVALID_FAST_FAIL_CODE equ 0FFFFFFFFh
   if _MSC_VER ge 1610
     __fastfail proto WIN_STD_CALL_CONV :DWORD
@@ -10337,7 +8711,6 @@ ifndef _WINNT_
   HEAP_CREATE_HARDENED equ 00000200h
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     if  not Defined(MIDL_PASS)
-      HEAP_MAKE_TAG_FLAGS proto WIN_STD_CALL_CONV :DWORD, :DWORD
     endif
   endif
   IS_TEXT_UNICODE_ASCII16 equ 0001h
@@ -10351,24 +8724,21 @@ ifndef _WINNT_
   IS_TEXT_UNICODE_ILLEGAL_CHARS equ 0100h
   IS_TEXT_UNICODE_ODD_LENGTH equ 0200h
   IS_TEXT_UNICODE_DBCS_LEADBYTE equ 0400h
-  IS_TEXT_UNICODE_UTF8 equ 0800h
   IS_TEXT_UNICODE_NULL_BYTES equ 1000h
   IS_TEXT_UNICODE_UNICODE_MASK equ 000Fh
   IS_TEXT_UNICODE_REVERSE_MASK equ 00F0h
   IS_TEXT_UNICODE_NOT_UNICODE_MASK equ 0F00h
   IS_TEXT_UNICODE_NOT_ASCII_MASK equ 0F000h
-  COMPRESSION_FORMAT_NONE equ (0000h)
-  COMPRESSION_FORMAT_DEFAULT equ (0001h)
-  COMPRESSION_FORMAT_LZNT1 equ (0002h)
-  COMPRESSION_FORMAT_XPRESS equ (0003h)
-  COMPRESSION_FORMAT_XPRESS_HUFF equ (0004h)
-  COMPRESSION_FORMAT_XP10 equ (0005h)
-  COMPRESSION_ENGINE_STANDARD equ (0000h)
-  COMPRESSION_ENGINE_MAXIMUM equ (0100h)
-  COMPRESSION_ENGINE_HIBER equ (0200h)
+  COMPRESSION_FORMAT_NONE equ 0000h
+  COMPRESSION_FORMAT_DEFAULT equ 0001h
+  COMPRESSION_FORMAT_LZNT1 equ 0002h
+  COMPRESSION_FORMAT_XPRESS equ 0003h
+  COMPRESSION_FORMAT_XPRESS_HUFF equ 0004h
+  COMPRESSION_ENGINE_STANDARD equ 0000h
+  COMPRESSION_ENGINE_MAXIMUM equ 0100h
+  COMPRESSION_ENGINE_HIBER equ 0200h
   if Defined(_DBG_MEMCPY_INLINE_) and  not Defined(MIDL_PASS) and  not Defined(_MEMCPY_INLINE_) and  not Defined(_CRTBLD)
     _MEMCPY_INLINE_ equ <>
-    memcpy_inline proto c :ptr, :ptr, :size_t
     memcpy equ <memcpy_inline>
   endif
   RtlEqualMemory macro Destination, Source, Length_
@@ -10387,16 +8757,10 @@ ifndef _WINNT_
     exitm <memset ((Destination), 0, (Length_))>
   endm
   if  not Defined(MIDL_PASS)
-    RtlConstantTimeEqualMemory proto WIN_STD_CALL_CONV :ptr, :ptr, :DWORD
-    if  not Defined(_M_CEE) and (Defined(_M_ARM) or Defined(_M_ARM64) or Defined(_M_ARM64EC))
+    if Defined(_M_AMD64)
     else
-    endif
-  endif
-  if  not Defined(MIDL_PASS)
-    RtlSecureZeroMemory proto WIN_STD_CALL_CONV :PVOID, :SIZE_T
-    if Defined(_M_AMD64) and  not Defined(_M_ARM64EC)
-    else
-      if  not Defined(_M_CEE) and (Defined(_M_ARM) or Defined(_M_ARM64) or Defined(_M_ARM64EC))
+      if  not Defined(_M_CEE) and (Defined(_M_ARM) or Defined(_M_ARM64))
+        ;[...]
       else
       endif
     endif
@@ -10414,7 +8778,6 @@ ifndef _WINNT_
   SEF_AI_USE_EXTRA_PARAMS equ 800h
   SEF_AVOID_OWNER_RESTRICTION equ 1000h
   SEF_FORCE_USER_MODE equ 2000h
-  SEF_NORMALIZE_OUTPUT_DESCRIPTOR equ 4000h
   SEF_MACL_VALID_FLAGS equ <(SEF_MACL_NO_WRITE_UP or SEF_MACL_NO_READ_UP or SEF_MACL_NO_EXECUTE_UP)>
   MESSAGE_RESOURCE_ENTRY struct
     Length_ WORD ?
@@ -10424,7 +8787,6 @@ ifndef _WINNT_
   _MESSAGE_RESOURCE_ENTRY typedef MESSAGE_RESOURCE_ENTRY
   PMESSAGE_RESOURCE_ENTRY typedef ptr MESSAGE_RESOURCE_ENTRY
   MESSAGE_RESOURCE_UNICODE equ 0001h
-  MESSAGE_RESOURCE_UTF8 equ 0002h
   MESSAGE_RESOURCE_BLOCK struct
     LowId DWORD ?
     HighId DWORD ?
@@ -10543,7 +8905,7 @@ ifndef _WINNT_
     endm
     if  not Defined(_WINBASE_) and  not Defined(MIDL_PASS)
       if (NTDDI_VERSION ge NTDDI_WIN2K)
-        @DefProto DllImport, VerSetConditionMask, WIN_STD_CALL_CONV,, <:ULONGLONG, :DWORD, :BYTE>, 12
+        @DefProto DllImport, VerSetConditionMask, WIN_STD_CALL_CONV,, <:ULONGLONG, :DWORD, :BYTE>, 16
       endif
     endif
   endif
@@ -10552,7 +8914,7 @@ ifndef _WINNT_
       @DefProto DllImport, RtlGetProductInfo, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :DWORD, :DWORD, :PDWORD>, 20
     endif
   endif
-  RTL_UMS_VERSION equ (0100h)
+  RTL_UMS_VERSION equ 0100h
   RTL_UMS_THREAD_INFO_CLASS typedef SDWORD
   UmsThreadInvalidInfoClass equ 0
   UmsThreadUserContext equ 1
@@ -10591,7 +8953,7 @@ ifndef _WINNT_
   if (NTDDI_VERSION ge NTDDI_WIN8)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, RtlCrc32, WIN_STD_CALL_CONV,, <:ptr, :size_t, :DWORD>, 12
-      @DefProto DllImport, RtlCrc64, WIN_STD_CALL_CONV,, <:ptr, :size_t, :ULONGLONG>, 12
+      @DefProto DllImport, RtlCrc64, WIN_STD_CALL_CONV,, <:ptr, :size_t, :ULONGLONG>, 16
     endif
   endif
   if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
@@ -10599,71 +8961,33 @@ ifndef _WINNT_
     OS_DEPLOYMENT_STANDARD equ 1
     OS_DEPLOYMENT_COMPACT equ 2
     _OS_DEPLOYEMENT_STATE_VALUES typedef OS_DEPLOYEMENT_STATE_VALUES
-
     @DefProto DllImport, RtlOsDeploymentState, WIN_STD_CALL_CONV,, <:DWORD>, 4
   endif
-  if (NTDDI_VERSION ge NTDDI_WIN10_RS2)
+  if (NTDDI_VERSION ge NTDDI_WIN10_RS2) and Defined(_AMD64_)
     NV_MEMORY_RANGE struct
       BaseAddress POINTER ?
       Length_ SIZE_T ?
     NV_MEMORY_RANGE ends
     _NV_MEMORY_RANGE typedef NV_MEMORY_RANGE
     PNV_MEMORY_RANGE typedef ptr NV_MEMORY_RANGE
-    FLUSH_NV_MEMORY_IN_FLAG_NO_DRAIN equ (00000001h)
-    FLUSH_NV_MEMORY_DEFAULT_TOKEN equ (- 1)
-    WRITE_NV_MEMORY_FLAG_FLUSH equ (00000001h)
-    WRITE_NV_MEMORY_FLAG_NON_TEMPORAL equ (00000002h)
-    WRITE_NV_MEMORY_FLAG_PERSIST equ <(WRITE_NV_MEMORY_FLAG_FLUSH or WRITE_NV_MEMORY_FLAG_NON_TEMPORAL)>
-    WRITE_NV_MEMORY_FLAG_NO_DRAIN equ (00000100h)
-    FILL_NV_MEMORY_FLAG_FLUSH equ (00000001h)
-    FILL_NV_MEMORY_FLAG_NON_TEMPORAL equ (00000002h)
-    FILL_NV_MEMORY_FLAG_PERSIST equ <(FILL_NV_MEMORY_FLAG_FLUSH or FILL_NV_MEMORY_FLAG_NON_TEMPORAL)>
-    FILL_NV_MEMORY_FLAG_NO_DRAIN equ (00000100h)
-    if Defined(_WIN64)
-      @DefProto DllImport, RtlGetNonVolatileToken, WIN_STD_CALL_CONV,, <:PVOID, :SIZE_T, :ptr PVOID>, 12
-      @DefProto DllImport, RtlFreeNonVolatileToken, WIN_STD_CALL_CONV,, <:PVOID>, 4
-      @DefProto DllImport, RtlFlushNonVolatileMemory, WIN_STD_CALL_CONV,, <:PVOID, :PVOID, :SIZE_T, :DWORD>, 16
-      @DefProto DllImport, RtlDrainNonVolatileFlush, WIN_STD_CALL_CONV,, <:PVOID>, 4
-      @DefProto DllImport, RtlWriteNonVolatileMemory, WIN_STD_CALL_CONV,, <:PVOID, :ptr VOID, :ptr VOID, :SIZE_T, :DWORD>, 20
-      if (NTDDI_VERSION ge NTDDI_WIN10_19H1)
-        @DefProto DllImport, RtlFillNonVolatileMemory, WIN_STD_CALL_CONV,, <:PVOID, :ptr VOID, :SIZE_T, :BYTE, :DWORD>, 20
-      endif
-      @DefProto DllImport, RtlFlushNonVolatileMemoryRanges, WIN_STD_CALL_CONV,, <:PVOID, :PNV_MEMORY_RANGE, :SIZE_T, :DWORD>, 16
-    else
-      RtlGetNonVolatileToken macro B, S, T
-        exitm <(ASSERT (! "Call not expected in 32-bit architecture"), STATUS_NOT_IMPLEMENTED)>
-      endm
-      RtlFreeNonVolatileToken macro T
-        exitm <(ASSERT (! "Call not expected in 32-bit architecture"), STATUS_NOT_IMPLEMENTED)>
-      endm
-      RtlFlushNonVolatileMemory macro T, B, S, F
-        exitm <(ASSERT (! "Call not expected in 32-bit architecture"), STATUS_NOT_IMPLEMENTED)>
-      endm
-      RtlDrainNonVolatileFlush macro T
-        exitm <(ASSERT (! "Call not expected in 32-bit architecture"), STATUS_NOT_IMPLEMENTED)>
-      endm
-      RtlWriteNonVolatileMemory macro T, D, S, L, F
-        exitm <(ASSERT (! "Call not expected in 32-bit architecture"), STATUS_NOT_IMPLEMENTED)>
-      endm
-      if (NTDDI_VERSION ge NTDDI_WIN10_19H1)
-        RtlFillNonVolatileMemory macro T, B, S, V, F
-          exitm <(ASSERT (! "Call not expected in 32-bit architecture"), STATUS_NOT_IMPLEMENTED)>
-        endm
-      endif
-      RtlFlushNonVolatileMemoryRanges macro T, R, N, F
-        exitm <(ASSERT (! "Call not expected in 32-bit architecture"), STATUS_NOT_IMPLEMENTED)>
-      endm
-    endif
+    FLUSH_NV_MEMORY_IN_FLAG_NO_DRAIN equ 00000001h
+    FLUSH_NV_MEMORY_DEFAULT_TOKEN equ -1
+    @DefProto DllImport, RtlGetNonVolatileToken, WIN_STD_CALL_CONV,, <:PVOID, :SIZE_T, :ptr PVOID>, 12
+    @DefProto DllImport, RtlFreeNonVolatileToken, WIN_STD_CALL_CONV,, <:PVOID>, 4
+    @DefProto DllImport, RtlFlushNonVolatileMemory, WIN_STD_CALL_CONV,, <:PVOID, :PVOID, :SIZE_T, :DWORD>, 16
+    @DefProto DllImport, RtlDrainNonVolatileFlush, WIN_STD_CALL_CONV,, <:PVOID>, 4
+    @DefProto DllImport, RtlWriteNonVolatileMemory, WIN_STD_CALL_CONV,, <:PVOID, :ptr VOID, :ptr VOID, :SIZE_T, :DWORD>, 20
+    @DefProto DllImport, RtlFlushNonVolatileMemoryRanges, WIN_STD_CALL_CONV,, <:PVOID, :PNV_MEMORY_RANGE, :SIZE_T, :DWORD>, 16
   endif
   if (NTDDI_VERSION ge NTDDI_WIN10_RS2)
     RTL_CORRELATION_VECTOR_STRING_LENGTH equ 129
     RTL_CORRELATION_VECTOR_VERSION_1 equ (1)
     RTL_CORRELATION_VECTOR_VERSION_2 equ (2)
     RTL_CORRELATION_VECTOR_VERSION_CURRENT equ <RTL_CORRELATION_VECTOR_VERSION_2>
-    RTL_CORRELATION_VECTOR_V1_PREFIX_LENGTH equ (16)
-    RTL_CORRELATION_VECTOR_V1_LENGTH equ (64)
-    RTL_CORRELATION_VECTOR_V2_PREFIX_LENGTH equ (22)
-    RTL_CORRELATION_VECTOR_V2_LENGTH equ (128)
+    RTL_CORRELATION_VECTOR_V1_PREFIX_LENGTH equ 16
+    RTL_CORRELATION_VECTOR_V1_LENGTH equ 64
+    RTL_CORRELATION_VECTOR_V2_PREFIX_LENGTH equ 22
+    RTL_CORRELATION_VECTOR_V2_LENGTH equ 128
     CORRELATION_VECTOR struct
       Version CHAR ?
       Vector CHAR RTL_CORRELATION_VECTOR_STRING_LENGTH dup (?)
@@ -10685,7 +9009,6 @@ ifndef _WINNT_
     _CUSTOM_SYSTEM_EVENT_TRIGGER_CONFIG typedef CUSTOM_SYSTEM_EVENT_TRIGGER_CONFIG
     PCUSTOM_SYSTEM_EVENT_TRIGGER_CONFIG typedef ptr CUSTOM_SYSTEM_EVENT_TRIGGER_CONFIG
     if  not Defined(MIDL_PASS)
-      CUSTOM_SYSTEM_EVENT_TRIGGER_INIT proto WIN_STD_CALL_CONV :PCUSTOM_SYSTEM_EVENT_TRIGGER_CONFIG, :PCWSTR
     endif
     RtlRaiseCustomSystemEventTrigger proto WIN_STD_CALL_CONV :PCUSTOM_SYSTEM_EVENT_TRIGGER_CONFIG
   endif
@@ -10708,7 +9031,6 @@ ifndef _WINNT_
   ImagePolicyEntryTypeOverride equ 12
   ImagePolicyEntryTypeMaximum equ 13
   _IMAGE_POLICY_ENTRY_TYPE typedef IMAGE_POLICY_ENTRY_TYPE
-
   IMAGE_POLICY_ID typedef SDWORD
   ImagePolicyIdNone equ 0
   ImagePolicyIdEtw equ 1
@@ -10724,7 +9046,6 @@ ifndef _WINNT_
   ImagePolicyIdScenarioId equ 11
   ImagePolicyIdMaximum equ 12
   _IMAGE_POLICY_ID typedef IMAGE_POLICY_ID
-
   IMAGE_POLICY_ENTRY struct
     Type_ IMAGE_POLICY_ENTRY_TYPE ?
     PolicyId IMAGE_POLICY_ID ?
@@ -10745,22 +9066,20 @@ ifndef _WINNT_
   IMAGE_POLICY_ENTRY ends
   _IMAGE_POLICY_ENTRY typedef IMAGE_POLICY_ENTRY
   PCIMAGE_POLICY_ENTRY typedef ptr IMAGE_POLICY_ENTRY
-  ifdef _MSC_EXTENSIONS
-    IMAGE_POLICY_METADATA struct
-      Version BYTE ?
-      Reserved0 BYTE 7 dup (?)
-      ApplicationId ULONGLONG ?
-      Policies IMAGE_POLICY_ENTRY 0 dup (<>)
-    IMAGE_POLICY_METADATA ends
-    _IMAGE_POLICY_METADATA typedef IMAGE_POLICY_METADATA
-    PCIMAGE_POLICY_METADATA typedef ptr IMAGE_POLICY_METADATA
-    IMAGE_POLICY_START macro _ApplicationId_
-      exitm <__pragma (const_seg (push, IMAGE_POLICY_SECTION_NAME)) ; EXTERN_C __declspec(dllexport) const IMAGE_POLICY_METADATA IMAGE_POLICY_METADATA_NAME = { IMAGE_POLICY_METADATA_VERSION, { 0 }, _ApplicationId_, {>
-    endm
-    IMAGE_POLICY_END macro
-      exitm <{ ImagePolicyEntryTypeNone, ImagePolicyIdNone, NULL } } } ; __pragma (const_seg (pop))>
-    endm
-  endif
+  IMAGE_POLICY_METADATA struct
+    Version BYTE ?
+    Reserved0 BYTE 7 dup (?)
+    ApplicationId ULONGLONG ?
+    Policies IMAGE_POLICY_ENTRY 0 dup (<>)
+  IMAGE_POLICY_METADATA ends
+  _IMAGE_POLICY_METADATA typedef IMAGE_POLICY_METADATA
+  PCIMAGE_POLICY_METADATA typedef ptr IMAGE_POLICY_METADATA
+  IMAGE_POLICY_START macro _ApplicationId_
+    exitm <__pragma (const_seg (push, IMAGE_POLICY_SECTION_NAME)) ; EXTERN_C __declspec(dllexport) const IMAGE_POLICY_METADATA IMAGE_POLICY_METADATA_NAME = { IMAGE_POLICY_METADATA_VERSION, { 0 }, _ApplicationId_, {>
+  endm
+  IMAGE_POLICY_END macro
+    exitm <{ ImagePolicyEntryTypeNone, ImagePolicyIdNone, NULL } } } ; __pragma (const_seg (pop))>
+  endm
   IMAGE_POLICY_BOOL macro _PolicyId_, _Value_
     exitm <{ ImagePolicyEntryTypeBool, _PolicyId_, (const VOID *) _Value_ },>
   endm
@@ -10797,39 +9116,6 @@ ifndef _WINNT_
   IMAGE_POLICY_OVERRIDE macro _PolicyId_
     exitm <{ ImagePolicyEntryTypeOverride, _PolicyId_, 0 },>
   endm
-  if (NTDDI_VERSION ge NTDDI_WIN10_VB)
-    @DefProto DllImport, RtlIsZeroMemory, WIN_STD_CALL_CONV,, <:PVOID, :SIZE_T>, 8
-    __drv_maxIRQL(APC_LEVEL)
-    @DefProto DllImport, RtlNormalizeSecurityDescriptor, WIN_STD_CALL_CONV,, <:ptr PSECURITY_DESCRIPTOR, :DWORD, :ptr PSECURITY_DESCRIPTOR, :PDWORD, :BOOLEAN>, 20
-  endif
-  if (NTDDI_VERSION ge NTDDI_WIN10_FE)
-    RTL_VIRTUAL_UNWIND2_VALIDATE_PAC equ 00000001h
-    RTL_SYSTEM_GLOBAL_DATA_ID typedef SDWORD
-    GlobalDataIdUnknown equ 0
-    GlobalDataIdRngSeedVersion equ 1
-    GlobalDataIdInterruptTime equ 2
-    GlobalDataIdTimeZoneBias equ 3
-    GlobalDataIdImageNumberLow equ 4
-    GlobalDataIdImageNumberHigh equ 5
-    GlobalDataIdTimeZoneId equ 6
-    GlobalDataIdNtMajorVersion equ 7
-    GlobalDataIdNtMinorVersion equ 8
-    GlobalDataIdSystemExpirationDate equ 9
-    GlobalDataIdKdDebuggerEnabled equ 10
-    GlobalDataIdCyclesPerYield equ 11
-    GlobalDataIdSafeBootMode equ 12
-    GlobalDataIdLastSystemRITEventTickCount equ 13
-    GlobalDataIdConsoleSharedDataFlags equ 14
-    GlobalDataIdNtSystemRootDrive equ 15
-    GlobalDataIdQpcShift equ 16
-    GlobalDataIdQpcBypassEnabled equ 17
-    GlobalDataIdQpcData equ 18
-    GlobalDataIdQpcBias equ 19
-    _RTL_SYSTEM_GLOBAL_DATA_ID typedef RTL_SYSTEM_GLOBAL_DATA_ID
-    PRTL_SYSTEM_GLOBAL_DATA_ID typedef ptr RTL_SYSTEM_GLOBAL_DATA_ID
-    @DefProto DllImport, RtlGetSystemGlobalData, WIN_STD_CALL_CONV,, <:RTL_SYSTEM_GLOBAL_DATA_ID, :PVOID, :DWORD>, 12
-    @DefProto DllImport, RtlSetSystemGlobalData, WIN_STD_CALL_CONV,, <:RTL_SYSTEM_GLOBAL_DATA_ID, :PVOID, :DWORD>, 12
-  endif
   RTL_CRITICAL_SECTION_DEBUG struct
     Type_ WORD ?
     CreatorBackTraceIndex WORD ?
@@ -10839,7 +9125,7 @@ ifndef _WINNT_
     ContentionCount DWORD ?
     Flags DWORD ?
     CreatorBackTraceIndexHigh WORD ?
-    Identifier WORD ?
+    SpareWORD WORD ?
   RTL_CRITICAL_SECTION_DEBUG ends
   _RTL_CRITICAL_SECTION_DEBUG typedef RTL_CRITICAL_SECTION_DEBUG
   PRTL_CRITICAL_SECTION_DEBUG typedef ptr RTL_CRITICAL_SECTION_DEBUG
@@ -10851,7 +9137,9 @@ ifndef _WINNT_
   RTL_CRITICAL_SECTION_FLAG_RESOURCE_TYPE equ 08000000h
   RTL_CRITICAL_SECTION_FLAG_FORCE_DEBUG_INFO equ 10000000h
   RTL_CRITICAL_SECTION_ALL_FLAG_BITS equ 0FF000000h
-  RTL_CRITICAL_SECTION_FLAG_RESERVED equ <(RTL_CRITICAL_SECTION_ALL_FLAG_BITS and (not (RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO or RTL_CRITICAL_SECTION_FLAG_DYNAMIC_SPIN or RTL_CRITICAL_SECTION_FLAG_STATIC_INIT or RTL_CRITICAL_SECTION_FLAG_RESOURCE_TYPE or RTL_CRITICAL_SECTION_FLAG_FORCE_DEBUG_INFO)))>
+  RTL_CRITICAL_SECTION_FLAG_RESERVED equ <>
+  ;(RTL_CRITICAL_SECTION_ALL_FLAG_BITS and (not (RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO or RTL_CRITICAL_SECTION_FLAG_DYNAMIC_SPIN or
+  ;RTL_CRITICAL_SECTION_FLAG_STATIC_INIT or RTL_CRITICAL_SECTION_FLAG_RESOURCE_TYPE or RTL_CRITICAL_SECTION_FLAG_FORCE_DEBUG_INFO)))
   RTL_CRITICAL_SECTION_DEBUG_FLAG_STATIC_INIT equ 00000001h
   RTL_CRITICAL_SECTION struct
     DebugInfo PRTL_CRITICAL_SECTION_DEBUG ?
@@ -10876,21 +9164,19 @@ ifndef _WINNT_
   PRTL_CONDITION_VARIABLE typedef ptr RTL_CONDITION_VARIABLE
   RTL_CONDITION_VARIABLE_INIT equ { 0 }
   RTL_CONDITION_VARIABLE_LOCKMODE_SHARED equ 1h
-  TYPE_PAPCFUNC typedef proto WIN_STD_CALL_CONV :ULONG_PTR
-  PAPCFUNC typedef ptr TYPE_PAPCFUNC
-
-  TYPE_PVECTORED_EXCEPTION_HANDLER typedef proto WIN_STD_CALL_CONV :ptr _EXCEPTION_POINTERS
-  PVECTORED_EXCEPTION_HANDLER typedef ptr TYPE_PVECTORED_EXCEPTION_HANDLER
-
+  TYPE_APCFUNC typedef proto WIN_STD_CALL_CONV :ULONG_PTR
+  PAPCFUNC typedef ptr TYPE_APCFUNC
+  TYPE_VECTORED_EXCEPTION_HANDLER typedef proto WIN_STD_CALL_CONV :ptr _EXCEPTION_POINTERS
+  PVECTORED_EXCEPTION_HANDLER typedef ptr TYPE_VECTORED_EXCEPTION_HANDLER
   HEAP_INFORMATION_CLASS typedef SDWORD
   HeapCompatibilityInformation equ 0
-  HeapEnableTerminationOnCorruption equ 1 if ((NTDDI_VERSION gt NTDDI_WINBLUE) or (NTDDI_VERSION eq NTDDI_WINBLUE and Defined(WINBLUE_KBSPRING14)))
+  HeapEnableTerminationOnCorruption equ 1
+  if ((NTDDI_VERSION gt NTDDI_WINBLUE) or (NTDDI_VERSION eq NTDDI_WINBLUE and Defined(WINBLUE_KBSPRING14)))
 
-    HeapOptimizeResources equ 3 endif
+    HeapOptimizeResources equ 3
+  endif
 
-  HeapTag equ 7
   _HEAP_INFORMATION_CLASS typedef HEAP_INFORMATION_CLASS
-
   if ((NTDDI_VERSION gt NTDDI_WINBLUE) or (NTDDI_VERSION eq NTDDI_WINBLUE and Defined(WINBLUE_KBSPRING14)))
     HEAP_OPTIMIZE_RESOURCES_CURRENT_VERSION equ 1
     HEAP_OPTIMIZE_RESOURCES_INFORMATION struct
@@ -10915,20 +9201,15 @@ ifndef _WINNT_
   endm
   TYPE_WAITORTIMERCALLBACKFUNC typedef proto WIN_STD_CALL_CONV :PVOID, :BOOLEAN
   WAITORTIMERCALLBACKFUNC typedef ptr TYPE_WAITORTIMERCALLBACKFUNC
-
   TYPE_WORKERCALLBACKFUNC typedef proto WIN_STD_CALL_CONV :PVOID
   WORKERCALLBACKFUNC typedef ptr TYPE_WORKERCALLBACKFUNC
-
   TYPE_APC_CALLBACK_FUNCTION typedef proto WIN_STD_CALL_CONV :DWORD, :PVOID, :PVOID
   APC_CALLBACK_FUNCTION typedef ptr TYPE_APC_CALLBACK_FUNCTION
-
   WAITORTIMERCALLBACK typedef WAITORTIMERCALLBACKFUNC
-  TYPE_PFLS_CALLBACK_FUNCTION typedef proto WIN_STD_CALL_CONV :PVOID
-  PFLS_CALLBACK_FUNCTION typedef ptr TYPE_PFLS_CALLBACK_FUNCTION
-
-  TYPE_PSECURE_MEMORY_CACHE_CALLBACK typedef proto WIN_STD_CALL_CONV :PVOID, :SIZE_T
-  PSECURE_MEMORY_CACHE_CALLBACK typedef ptr TYPE_PSECURE_MEMORY_CACHE_CALLBACK
-
+  TYPE_FLS_CALLBACK_FUNCTION typedef proto WIN_STD_CALL_CONV :PVOID
+  PFLS_CALLBACK_FUNCTION typedef ptr TYPE_FLS_CALLBACK_FUNCTION
+  TYPE_SECURE_MEMORY_CACHE_CALLBACK typedef proto WIN_STD_CALL_CONV :PVOID, :SIZE_T
+  PSECURE_MEMORY_CACHE_CALLBACK typedef ptr TYPE_SECURE_MEMORY_CACHE_CALLBACK
   WT_EXECUTEINLONGTHREAD equ 00000010h
   WT_EXECUTEDELETEWAIT equ 00000008h
   ACTIVATION_CONTEXT_INFO_CLASS typedef SDWORD
@@ -10943,7 +9224,6 @@ ifndef _WINNT_
   AssemblyDetailedInformationInActivationContxt equ 3
   FileInformationInAssemblyOfAssemblyInActivationContxt equ 4
   _ACTIVATION_CONTEXT_INFO_CLASS typedef ACTIVATION_CONTEXT_INFO_CLASS
-
   ACTIVATIONCONTEXTINFOCLASS equ <ACTIVATION_CONTEXT_INFO_CLASS>
   ACTIVATION_CONTEXT_QUERY_INDEX struct
     ulAssemblyIndex DWORD ?
@@ -10952,10 +9232,10 @@ ifndef _WINNT_
   _ACTIVATION_CONTEXT_QUERY_INDEX typedef ACTIVATION_CONTEXT_QUERY_INDEX
   PACTIVATION_CONTEXT_QUERY_INDEX typedef ptr ACTIVATION_CONTEXT_QUERY_INDEX
   PCACTIVATION_CONTEXT_QUERY_INDEX typedef ptr _ACTIVATION_CONTEXT_QUERY_INDEX
-  ACTIVATION_CONTEXT_PATH_TYPE_NONE equ (1)
-  ACTIVATION_CONTEXT_PATH_TYPE_WIN32_FILE equ (2)
-  ACTIVATION_CONTEXT_PATH_TYPE_URL equ (3)
-  ACTIVATION_CONTEXT_PATH_TYPE_ASSEMBLYREF equ (4)
+  ACTIVATION_CONTEXT_PATH_TYPE_NONE equ 1
+  ACTIVATION_CONTEXT_PATH_TYPE_WIN32_FILE equ 2
+  ACTIVATION_CONTEXT_PATH_TYPE_URL equ 3
+  ACTIVATION_CONTEXT_PATH_TYPE_ASSEMBLYREF equ 4
   ASSEMBLY_FILE_DETAILED_INFORMATION struct
     ulFlags DWORD ?
     ulFilenameLength DWORD ?
@@ -11000,7 +9280,6 @@ ifndef _WINNT_
   ACTCTX_RUN_LEVEL_HIGHEST_AVAILABLE equ 2
   ACTCTX_RUN_LEVEL_REQUIRE_ADMIN equ 3
   ACTCTX_RUN_LEVEL_NUMBERS equ 4
-
   ACTIVATION_CONTEXT_RUN_LEVEL_INFORMATION struct
     ulFlags DWORD ?
     RunLevel ACTCTX_REQUESTED_RUN_LEVEL ?
@@ -11013,12 +9292,9 @@ ifndef _WINNT_
   ACTCTX_COMPATIBILITY_ELEMENT_TYPE_UNKNOWN equ 0
   ACTCTX_COMPATIBILITY_ELEMENT_TYPE_OS equ 1
   ACTCTX_COMPATIBILITY_ELEMENT_TYPE_MITIGATION equ 2
-  ACTCTX_COMPATIBILITY_ELEMENT_TYPE_MAXVERSIONTESTED equ 3
-
   COMPATIBILITY_CONTEXT_ELEMENT struct
     Id GUID <>
     Type_ ACTCTX_COMPATIBILITY_ELEMENT_TYPE ?
-    MaxVersionTested ULONGLONG ?
   COMPATIBILITY_CONTEXT_ELEMENT ends
   _COMPATIBILITY_CONTEXT_ELEMENT typedef COMPATIBILITY_CONTEXT_ELEMENT
   PCOMPATIBILITY_CONTEXT_ELEMENT typedef ptr COMPATIBILITY_CONTEXT_ELEMENT
@@ -11042,11 +9318,6 @@ ifndef _WINNT_
   SUPPORTED_OS_INFO ends
   _SUPPORTED_OS_INFO typedef SUPPORTED_OS_INFO
   PSUPPORTED_OS_INFO typedef ptr SUPPORTED_OS_INFO
-  MAXVERSIONTESTED_INFO struct
-    MaxVersionTested ULONGLONG ?
-  MAXVERSIONTESTED_INFO ends
-  _MAXVERSIONTESTED_INFO typedef MAXVERSIONTESTED_INFO
-  PMAXVERSIONTESTED_INFO typedef ptr MAXVERSIONTESTED_INFO
   ACTIVATION_CONTEXT_DETAILED_INFORMATION struct
     dwFlags DWORD ?
     ulFormatVersion DWORD ?
@@ -11111,9 +9382,7 @@ ifndef _WINNT_
       DEVICEFAMILYINFOENUM_SERVER_NANO equ 0000000Dh
       DEVICEFAMILYINFOENUM_8828080 equ 0000000Eh
       DEVICEFAMILYINFOENUM_7067329 equ 0000000Fh
-      DEVICEFAMILYINFOENUM_WINDOWS_CORE equ 00000010h
-      DEVICEFAMILYINFOENUM_WINDOWS_CORE_HEADLESS equ 00000011h
-      DEVICEFAMILYINFOENUM_MAX equ 00000011h
+      DEVICEFAMILYINFOENUM_MAX equ 0000000Fh
       DEVICEFAMILYDEVICEFORM_UNKNOWN equ 00000000h
       DEVICEFAMILYDEVICEFORM_PHONE equ 00000001h
       DEVICEFAMILYDEVICEFORM_TABLET equ 00000002h
@@ -11148,19 +9417,7 @@ ifndef _WINNT_
       DEVICEFAMILYDEVICEFORM_XBOX_ONE_S equ 0000001Fh
       DEVICEFAMILYDEVICEFORM_XBOX_ONE_X equ 00000020h
       DEVICEFAMILYDEVICEFORM_XBOX_ONE_X_DEVKIT equ 00000021h
-      DEVICEFAMILYDEVICEFORM_XBOX_SERIES_X equ 00000022h
-      DEVICEFAMILYDEVICEFORM_XBOX_SERIES_X_DEVKIT equ 00000023h
-      DEVICEFAMILYDEVICEFORM_XBOX_SERIES_S equ 00000024h
-      DEVICEFAMILYDEVICEFORM_XBOX_RESERVED_01 equ 00000025h
-      DEVICEFAMILYDEVICEFORM_XBOX_RESERVED_02 equ 00000026h
-      DEVICEFAMILYDEVICEFORM_XBOX_RESERVED_03 equ 00000027h
-      DEVICEFAMILYDEVICEFORM_XBOX_RESERVED_04 equ 00000028h
-      DEVICEFAMILYDEVICEFORM_XBOX_RESERVED_05 equ 00000029h
-      DEVICEFAMILYDEVICEFORM_XBOX_RESERVED_06 equ 0000002Ah
-      DEVICEFAMILYDEVICEFORM_XBOX_RESERVED_07 equ 0000002Bh
-      DEVICEFAMILYDEVICEFORM_XBOX_RESERVED_08 equ 0000002Ch
-      DEVICEFAMILYDEVICEFORM_XBOX_RESERVED_09 equ 0000002Dh
-      DEVICEFAMILYDEVICEFORM_MAX equ 0000002Dh
+      DEVICEFAMILYDEVICEFORM_MAX equ 00000021h
       RtlGetDeviceFamilyInfoEnum proto WIN_STD_CALL_CONV :ptr ULONGLONG, :ptr DWORD, :ptr DWORD
       RtlConvertDeviceFamilyInfoToString proto WIN_STD_CALL_CONV :PDWORD, :PDWORD, :PWSTR, :PWSTR
       RtlSwitchedVVI proto WIN_STD_CALL_CONV :PRTL_OSVERSIONINFOEXW, :DWORD, :ULONGLONG
@@ -11208,10 +9465,6 @@ ifndef _WINNT_
   MAXLOGICALLOGNAMESIZE equ 256
   if _MSC_VER ge 1200
   endif
-;  EVENTSFORLOGFILE typedef _EVENTSFORLOGFILE
-  PEVENTSFORLOGFILE typedef ptr _EVENTSFORLOGFILE
-;  PACKEDEVENTINFO typedef _PACKEDEVENTINFO
-  PPACKEDEVENTINFO typedef ptr _PACKEDEVENTINFO
   if Defined(_MSC_EXTENSIONS)
     _EVENTSFORLOGFILE struct
       ulSize DWORD ?
@@ -11224,76 +9477,82 @@ ifndef _WINNT_
       ulNumEventsForLogFile DWORD ?
       ulOffsets DWORD 0 dup (?)
     _PACKEDEVENTINFO ends
+
+    EVENTSFORLOGFILE typedef _EVENTSFORLOGFILE
+    PEVENTSFORLOGFILE typedef ptr _EVENTSFORLOGFILE
+
+    PACKEDEVENTINFO typedef _PACKEDEVENTINFO
+    PPACKEDEVENTINFO typedef ptr _PACKEDEVENTINFO
+
   endif
   if _MSC_VER ge 1200
   else
   endif
-  KEY_QUERY_VALUE equ (0001h)
-  KEY_SET_VALUE equ (0002h)
-  KEY_CREATE_SUB_KEY equ (0004h)
-  KEY_ENUMERATE_SUB_KEYS equ (0008h)
-  KEY_NOTIFY equ (0010h)
-  KEY_CREATE_LINK equ (0020h)
-  KEY_WOW64_32KEY equ (0200h)
-  KEY_WOW64_64KEY equ (0100h)
-  KEY_WOW64_RES equ (0300h)
+  KEY_QUERY_VALUE equ 0001h
+  KEY_SET_VALUE equ 0002h
+  KEY_CREATE_SUB_KEY equ 0004h
+  KEY_ENUMERATE_SUB_KEYS equ 0008h
+  KEY_NOTIFY equ 0010h
+  KEY_CREATE_LINK equ 0020h
+  KEY_WOW64_32KEY equ 0200h
+  KEY_WOW64_64KEY equ 0100h
+  KEY_WOW64_RES equ 0300h
   KEY_READ equ <((STANDARD_RIGHTS_READ or KEY_QUERY_VALUE or KEY_ENUMERATE_SUB_KEYS or KEY_NOTIFY) and (not SYNCHRONIZE))>
   KEY_WRITE equ <((STANDARD_RIGHTS_WRITE or KEY_SET_VALUE or KEY_CREATE_SUB_KEY) and (not SYNCHRONIZE))>
   KEY_EXECUTE equ <((KEY_READ) and (not SYNCHRONIZE))>
   KEY_ALL_ACCESS equ <((STANDARD_RIGHTS_ALL or KEY_QUERY_VALUE or KEY_SET_VALUE or KEY_CREATE_SUB_KEY or KEY_ENUMERATE_SUB_KEYS or KEY_NOTIFY or KEY_CREATE_LINK) and (not SYNCHRONIZE))>
-  REG_OPTION_RESERVED equ (00000000h)
-  REG_OPTION_NON_VOLATILE equ (00000000h)
-  REG_OPTION_VOLATILE equ (00000001h)
-  REG_OPTION_CREATE_LINK equ (00000002h)
-  REG_OPTION_BACKUP_RESTORE equ (00000004h)
-  REG_OPTION_OPEN_LINK equ (00000008h)
-  REG_OPTION_DONT_VIRTUALIZE equ (00000010h)
+  REG_OPTION_RESERVED equ 00000000h
+  REG_OPTION_NON_VOLATILE equ 00000000h
+  REG_OPTION_VOLATILE equ 00000001h
+  REG_OPTION_CREATE_LINK equ 00000002h
+  REG_OPTION_BACKUP_RESTORE equ 00000004h
+  REG_OPTION_OPEN_LINK equ 00000008h
+  REG_OPTION_DONT_VIRTUALIZE equ 00000010h
   REG_LEGAL_OPTION equ <(REG_OPTION_RESERVED or REG_OPTION_NON_VOLATILE or REG_OPTION_VOLATILE or REG_OPTION_CREATE_LINK or REG_OPTION_BACKUP_RESTORE or REG_OPTION_OPEN_LINK or REG_OPTION_DONT_VIRTUALIZE)>
   REG_OPEN_LEGAL_OPTION equ <(REG_OPTION_RESERVED or REG_OPTION_BACKUP_RESTORE or REG_OPTION_OPEN_LINK or REG_OPTION_DONT_VIRTUALIZE)>
-  REG_CREATED_NEW_KEY equ (00000001h)
-  REG_OPENED_EXISTING_KEY equ (00000002h)
+  REG_CREATED_NEW_KEY equ 00000001h
+  REG_OPENED_EXISTING_KEY equ 00000002h
   REG_STANDARD_FORMAT equ 1
   REG_LATEST_FORMAT equ 2
   REG_NO_COMPRESSION equ 4
-  REG_WHOLE_HIVE_VOLATILE equ (00000001h)
-  REG_REFRESH_HIVE equ (00000002h)
-  REG_NO_LAZY_FLUSH equ (00000004h)
-  REG_FORCE_RESTORE equ (00000008h)
-  REG_APP_HIVE equ (00000010h)
-  REG_PROCESS_PRIVATE equ (00000020h)
-  REG_START_JOURNAL equ (00000040h)
-  REG_HIVE_EXACT_FILE_GROWTH equ (00000080h)
-  REG_HIVE_NO_RM equ (00000100h)
-  REG_HIVE_SINGLE_LOG equ (00000200h)
-  REG_BOOT_HIVE equ (00000400h)
-  REG_LOAD_HIVE_OPEN_HANDLE equ (00000800h)
-  REG_FLUSH_HIVE_FILE_GROWTH equ (00001000h)
-  REG_OPEN_READ_ONLY equ (00002000h)
-  REG_IMMUTABLE equ (00004000h)
-  REG_NO_IMPERSONATION_FALLBACK equ (00008000h)
+  REG_WHOLE_HIVE_VOLATILE equ 00000001h
+  REG_REFRESH_HIVE equ 00000002h
+  REG_NO_LAZY_FLUSH equ 00000004h
+  REG_FORCE_RESTORE equ 00000008h
+  REG_APP_HIVE equ 00000010h
+  REG_PROCESS_PRIVATE equ 00000020h
+  REG_START_JOURNAL equ 00000040h
+  REG_HIVE_EXACT_FILE_GROWTH equ 00000080h
+  REG_HIVE_NO_RM equ 00000100h
+  REG_HIVE_SINGLE_LOG equ 00000200h
+  REG_BOOT_HIVE equ 00000400h
+  REG_LOAD_HIVE_OPEN_HANDLE equ 00000800h
+  REG_FLUSH_HIVE_FILE_GROWTH equ 00001000h
+  REG_OPEN_READ_ONLY equ 00002000h
+  REG_IMMUTABLE equ 00004000h
   REG_APP_HIVE_OPEN_READ_ONLY equ <(REG_OPEN_READ_ONLY)>
   REG_FORCE_UNLOAD equ 1
   REG_UNLOAD_LEGAL_FLAGS equ <(REG_FORCE_UNLOAD)>
-  REG_NOTIFY_CHANGE_NAME equ (00000001h)
-  REG_NOTIFY_CHANGE_ATTRIBUTES equ (00000002h)
-  REG_NOTIFY_CHANGE_LAST_SET equ (00000004h)
-  REG_NOTIFY_CHANGE_SECURITY equ (00000008h)
-  REG_NOTIFY_THREAD_AGNOSTIC equ (10000000h)
+  REG_NOTIFY_CHANGE_NAME equ 00000001h
+  REG_NOTIFY_CHANGE_ATTRIBUTES equ 00000002h
+  REG_NOTIFY_CHANGE_LAST_SET equ 00000004h
+  REG_NOTIFY_CHANGE_SECURITY equ 00000008h
+  REG_NOTIFY_THREAD_AGNOSTIC equ 10000000h
   REG_LEGAL_CHANGE_FILTER equ <(REG_NOTIFY_CHANGE_NAME or REG_NOTIFY_CHANGE_ATTRIBUTES or REG_NOTIFY_CHANGE_LAST_SET or REG_NOTIFY_CHANGE_SECURITY or REG_NOTIFY_THREAD_AGNOSTIC)>
-  REG_NONE equ (0)
-  REG_SZ equ (1)
-  REG_EXPAND_SZ equ (2)
-  REG_BINARY equ (3)
-  REG_DWORD equ (4)
-  REG_DWORD_LITTLE_ENDIAN equ (4)
-  REG_DWORD_BIG_ENDIAN equ (5)
-  REG_LINK equ (6)
-  REG_MULTI_SZ equ (7)
-  REG_RESOURCE_LIST equ (8)
-  REG_FULL_RESOURCE_DESCRIPTOR equ (9)
-  REG_RESOURCE_REQUIREMENTS_LIST equ (10)
-  REG_QWORD equ (11)
-  REG_QWORD_LITTLE_ENDIAN equ (11)
+  REG_NONE equ 0
+  REG_SZ equ 1
+  REG_EXPAND_SZ equ 2
+  REG_BINARY equ 3
+  REG_DWORD equ 4
+  REG_DWORD_LITTLE_ENDIAN equ 4
+  REG_DWORD_BIG_ENDIAN equ 5
+  REG_LINK equ 6
+  REG_MULTI_SZ equ 7
+  REG_RESOURCE_LIST equ 8
+  REG_FULL_RESOURCE_DESCRIPTOR equ 9
+  REG_RESOURCE_REQUIREMENTS_LIST equ 10
+  REG_QWORD equ 11
+  REG_QWORD_LITTLE_ENDIAN equ 11
   SERVICE_KERNEL_DRIVER equ 00000001h
   SERVICE_FILE_SYSTEM_DRIVER equ 00000002h
   SERVICE_ADAPTER equ 00000004h
@@ -11326,7 +9585,6 @@ ifndef _WINNT_
   AdapterType equ SERVICE_ADAPTER
   RecognizerType equ SERVICE_RECOGNIZER_DRIVER
   _CM_SERVICE_NODE_TYPE typedef SERVICE_NODE_TYPE
-
   SERVICE_LOAD_TYPE typedef SDWORD
   BootLoad equ SERVICE_BOOT_START
   SystemLoad equ SERVICE_SYSTEM_START
@@ -11334,14 +9592,12 @@ ifndef _WINNT_
   DemandLoad equ SERVICE_DEMAND_START
   DisableLoad equ SERVICE_DISABLED
   _CM_SERVICE_LOAD_TYPE typedef SERVICE_LOAD_TYPE
-
   SERVICE_ERROR_TYPE typedef SDWORD
   IgnoreError equ SERVICE_ERROR_IGNORE
   NormalError equ SERVICE_ERROR_NORMAL
   SevereError equ SERVICE_ERROR_SEVERE
   CriticalError equ SERVICE_ERROR_CRITICAL
   _CM_ERROR_CONTROL_TYPE typedef SERVICE_ERROR_TYPE
-
   CM_SERVICE_NETWORK_BOOT_LOAD equ 00000001h
   CM_SERVICE_VIRTUAL_DISK_BOOT_LOAD equ 00000002h
   CM_SERVICE_USB_DISK_BOOT_LOAD equ 00000004h
@@ -11350,8 +9606,9 @@ ifndef _WINNT_
   CM_SERVICE_MEASURED_BOOT_LOAD equ 00000020h
   CM_SERVICE_VERIFIER_BOOT_LOAD equ 00000040h
   CM_SERVICE_WINPE_BOOT_LOAD equ 00000080h
-  CM_SERVICE_RAM_DISK_BOOT_LOAD equ 00000100h
-  CM_SERVICE_VALID_PROMOTION_MASK equ <(CM_SERVICE_NETWORK_BOOT_LOAD or CM_SERVICE_VIRTUAL_DISK_BOOT_LOAD or CM_SERVICE_USB_DISK_BOOT_LOAD or CM_SERVICE_SD_DISK_BOOT_LOAD or CM_SERVICE_USB3_DISK_BOOT_LOAD or CM_SERVICE_MEASURED_BOOT_LOAD or CM_SERVICE_VERIFIER_BOOT_LOAD or CM_SERVICE_WINPE_BOOT_LOAD or CM_SERVICE_RAM_DISK_BOOT_LOAD)>
+  CM_SERVICE_VALID_PROMOTION_MASK equ <>
+  ;(CM_SERVICE_NETWORK_BOOT_LOAD or CM_SERVICE_VIRTUAL_DISK_BOOT_LOAD or CM_SERVICE_USB_DISK_BOOT_LOAD or CM_SERVICE_SD_DISK_BOOT_LOAD or
+  ;CM_SERVICE_USB3_DISK_BOOT_LOAD or CM_SERVICE_MEASURED_BOOT_LOAD or CM_SERVICE_VERIFIER_BOOT_LOAD or CM_SERVICE_WINPE_BOOT_LOAD)
   ifndef _NTDDTAPE_WINNT_
     _NTDDTAPE_WINNT_ equ <>
     TAPE_ERASE_SHORT equ 0
@@ -11545,7 +9802,6 @@ ifndef _WINNT_
     TapeDriveMediaLifeExpired equ 12
     TapeDriveSnappedTape equ 13
     _TAPE_DRIVE_PROBLEM_TYPE typedef TAPE_DRIVE_PROBLEM_TYPE
-
   endif
   ifndef _NTTMAPI_
     _NTTMAPI_ equ <>
@@ -11555,44 +9811,44 @@ ifndef _WINNT_
     include ktmtypes.inc
     if _MSC_VER ge 1200
     endif
-    TRANSACTIONMANAGER_QUERY_INFORMATION equ (0001h)
-    TRANSACTIONMANAGER_SET_INFORMATION equ (0002h)
-    TRANSACTIONMANAGER_RECOVER equ (0004h)
-    TRANSACTIONMANAGER_RENAME equ (0008h)
-    TRANSACTIONMANAGER_CREATE_RM equ (0010h)
-    TRANSACTIONMANAGER_BIND_TRANSACTION equ (0020h)
+    TRANSACTIONMANAGER_QUERY_INFORMATION equ 0001h
+    TRANSACTIONMANAGER_SET_INFORMATION equ 0002h
+    TRANSACTIONMANAGER_RECOVER equ 0004h
+    TRANSACTIONMANAGER_RENAME equ 0008h
+    TRANSACTIONMANAGER_CREATE_RM equ 0010h
+    TRANSACTIONMANAGER_BIND_TRANSACTION equ 0020h
     TRANSACTIONMANAGER_GENERIC_READ equ <(STANDARD_RIGHTS_READ or TRANSACTIONMANAGER_QUERY_INFORMATION)>
     TRANSACTIONMANAGER_GENERIC_WRITE equ <(STANDARD_RIGHTS_WRITE or TRANSACTIONMANAGER_SET_INFORMATION or TRANSACTIONMANAGER_RECOVER or TRANSACTIONMANAGER_RENAME or TRANSACTIONMANAGER_CREATE_RM)>
     TRANSACTIONMANAGER_GENERIC_EXECUTE equ <(STANDARD_RIGHTS_EXECUTE)>
     TRANSACTIONMANAGER_ALL_ACCESS equ <(STANDARD_RIGHTS_REQUIRED or TRANSACTIONMANAGER_GENERIC_READ or TRANSACTIONMANAGER_GENERIC_WRITE or TRANSACTIONMANAGER_GENERIC_EXECUTE or TRANSACTIONMANAGER_BIND_TRANSACTION)>
-    TRANSACTION_QUERY_INFORMATION equ (0001h)
-    TRANSACTION_SET_INFORMATION equ (0002h)
-    TRANSACTION_ENLIST equ (0004h)
-    TRANSACTION_COMMIT equ (0008h)
-    TRANSACTION_ROLLBACK equ (0010h)
-    TRANSACTION_PROPAGATE equ (0020h)
-    TRANSACTION_RIGHT_RESERVED1 equ (0040h)
+    TRANSACTION_QUERY_INFORMATION equ 0001h
+    TRANSACTION_SET_INFORMATION equ 0002h
+    TRANSACTION_ENLIST equ 0004h
+    TRANSACTION_COMMIT equ 0008h
+    TRANSACTION_ROLLBACK equ 0010h
+    TRANSACTION_PROPAGATE equ 0020h
+    TRANSACTION_RIGHT_RESERVED1 equ 0040h
     TRANSACTION_GENERIC_READ equ <(STANDARD_RIGHTS_READ or TRANSACTION_QUERY_INFORMATION or SYNCHRONIZE)>
     TRANSACTION_GENERIC_WRITE equ <(STANDARD_RIGHTS_WRITE or TRANSACTION_SET_INFORMATION or TRANSACTION_COMMIT or TRANSACTION_ENLIST or TRANSACTION_ROLLBACK or TRANSACTION_PROPAGATE or SYNCHRONIZE)>
     TRANSACTION_GENERIC_EXECUTE equ <(STANDARD_RIGHTS_EXECUTE or TRANSACTION_COMMIT or TRANSACTION_ROLLBACK or SYNCHRONIZE)>
     TRANSACTION_ALL_ACCESS equ <(STANDARD_RIGHTS_REQUIRED or TRANSACTION_GENERIC_READ or TRANSACTION_GENERIC_WRITE or TRANSACTION_GENERIC_EXECUTE)>
     TRANSACTION_RESOURCE_MANAGER_RIGHTS equ <(TRANSACTION_GENERIC_READ or STANDARD_RIGHTS_WRITE or TRANSACTION_SET_INFORMATION or TRANSACTION_ENLIST or TRANSACTION_ROLLBACK or TRANSACTION_PROPAGATE or SYNCHRONIZE)>
-    RESOURCEMANAGER_QUERY_INFORMATION equ (0001h)
-    RESOURCEMANAGER_SET_INFORMATION equ (0002h)
-    RESOURCEMANAGER_RECOVER equ (0004h)
-    RESOURCEMANAGER_ENLIST equ (0008h)
-    RESOURCEMANAGER_GET_NOTIFICATION equ (0010h)
-    RESOURCEMANAGER_REGISTER_PROTOCOL equ (0020h)
-    RESOURCEMANAGER_COMPLETE_PROPAGATION equ (0040h)
+    RESOURCEMANAGER_QUERY_INFORMATION equ 0001h
+    RESOURCEMANAGER_SET_INFORMATION equ 0002h
+    RESOURCEMANAGER_RECOVER equ 0004h
+    RESOURCEMANAGER_ENLIST equ 0008h
+    RESOURCEMANAGER_GET_NOTIFICATION equ 0010h
+    RESOURCEMANAGER_REGISTER_PROTOCOL equ 0020h
+    RESOURCEMANAGER_COMPLETE_PROPAGATION equ 0040h
     RESOURCEMANAGER_GENERIC_READ equ <(STANDARD_RIGHTS_READ or RESOURCEMANAGER_QUERY_INFORMATION or SYNCHRONIZE)>
     RESOURCEMANAGER_GENERIC_WRITE equ <(STANDARD_RIGHTS_WRITE or RESOURCEMANAGER_SET_INFORMATION or RESOURCEMANAGER_RECOVER or RESOURCEMANAGER_ENLIST or RESOURCEMANAGER_GET_NOTIFICATION or RESOURCEMANAGER_REGISTER_PROTOCOL or RESOURCEMANAGER_COMPLETE_PROPAGATION or SYNCHRONIZE)>
     RESOURCEMANAGER_GENERIC_EXECUTE equ <(STANDARD_RIGHTS_EXECUTE or RESOURCEMANAGER_RECOVER or RESOURCEMANAGER_ENLIST or RESOURCEMANAGER_GET_NOTIFICATION or RESOURCEMANAGER_COMPLETE_PROPAGATION or SYNCHRONIZE)>
     RESOURCEMANAGER_ALL_ACCESS equ <(STANDARD_RIGHTS_REQUIRED or RESOURCEMANAGER_GENERIC_READ or RESOURCEMANAGER_GENERIC_WRITE or RESOURCEMANAGER_GENERIC_EXECUTE)>
-    ENLISTMENT_QUERY_INFORMATION equ (0001h)
-    ENLISTMENT_SET_INFORMATION equ (0002h)
-    ENLISTMENT_RECOVER equ (0004h)
-    ENLISTMENT_SUBORDINATE_RIGHTS equ (0008h)
-    ENLISTMENT_SUPERIOR_RIGHTS equ (0010h)
+    ENLISTMENT_QUERY_INFORMATION equ 0001h
+    ENLISTMENT_SET_INFORMATION equ 0002h
+    ENLISTMENT_RECOVER equ 0004h
+    ENLISTMENT_SUBORDINATE_RIGHTS equ 0008h
+    ENLISTMENT_SUPERIOR_RIGHTS equ 0010h
     ENLISTMENT_GENERIC_READ equ <(STANDARD_RIGHTS_READ or ENLISTMENT_QUERY_INFORMATION)>
     ENLISTMENT_GENERIC_WRITE equ <(STANDARD_RIGHTS_WRITE or ENLISTMENT_SET_INFORMATION or ENLISTMENT_RECOVER or ENLISTMENT_SUBORDINATE_RIGHTS or ENLISTMENT_SUPERIOR_RIGHTS)>
     ENLISTMENT_GENERIC_EXECUTE equ <(STANDARD_RIGHTS_EXECUTE or ENLISTMENT_RECOVER or ENLISTMENT_SUBORDINATE_RIGHTS or ENLISTMENT_SUPERIOR_RIGHTS)>
@@ -11602,13 +9858,11 @@ ifndef _WINNT_
     TransactionOutcomeCommitted equ 2
     TransactionOutcomeAborted equ 3
     _TRANSACTION_OUTCOME typedef TRANSACTION_OUTCOME
-
     TRANSACTION_STATE typedef SDWORD
     TransactionStateNormal equ 1
     TransactionStateIndoubt equ 2
     TransactionStateCommittedNotify equ 3
     _TRANSACTION_STATE typedef TRANSACTION_STATE
-
     TRANSACTION_BASIC_INFORMATION struct
       TransactionId GUID <>
       State DWORD ?
@@ -11696,7 +9950,6 @@ ifndef _WINNT_
     TransactionBindInformation equ 4
     TransactionDTCPrivateInformation equ 5
     _TRANSACTION_INFORMATION_CLASS typedef TRANSACTION_INFORMATION_CLASS
-
     TRANSACTIONMANAGER_INFORMATION_CLASS typedef SDWORD
     TransactionManagerBasicInformation equ 0
     TransactionManagerLogInformation equ 1
@@ -11705,12 +9958,10 @@ ifndef _WINNT_
     TransactionManagerOnlineProbeInformation equ 3
     TransactionManagerOldestTransactionInformation equ 5
     _TRANSACTIONMANAGER_INFORMATION_CLASS typedef TRANSACTIONMANAGER_INFORMATION_CLASS
-
     RESOURCEMANAGER_INFORMATION_CLASS typedef SDWORD
     ResourceManagerBasicInformation equ 0
     ResourceManagerCompletionInformation equ 1
     _RESOURCEMANAGER_INFORMATION_CLASS typedef RESOURCEMANAGER_INFORMATION_CLASS
-
     ENLISTMENT_BASIC_INFORMATION struct
       EnlistmentId GUID <>
       TransactionId GUID <>
@@ -11730,9 +9981,8 @@ ifndef _WINNT_
     EnlistmentRecoveryInformation equ 1
     EnlistmentCrmInformation equ 2
     _ENLISTMENT_INFORMATION_CLASS typedef ENLISTMENT_INFORMATION_CLASS
-
     TRANSACTION_LIST_ENTRY struct
-      UOW UOW <>
+      UOW_ UOW <>
     TRANSACTION_LIST_ENTRY ends
     _TRANSACTION_LIST_ENTRY typedef TRANSACTION_LIST_ENTRY
     PTRANSACTION_LIST_ENTRY typedef ptr TRANSACTION_LIST_ENTRY
@@ -11767,9 +10017,8 @@ ifndef _WINNT_
   PTP_VERSION typedef ptr DWORD
   TP_CALLBACK_INSTANCE typedef _TP_CALLBACK_INSTANCE
   PTP_CALLBACK_INSTANCE typedef ptr _TP_CALLBACK_INSTANCE
-  TYPE_PTP_SIMPLE_CALLBACK typedef proto WIN_STD_CALL_CONV :PTP_CALLBACK_INSTANCE, :PVOID
-  PTP_SIMPLE_CALLBACK typedef ptr TYPE_PTP_SIMPLE_CALLBACK
-
+  TYPE_TP_SIMPLE_CALLBACK typedef proto WIN_STD_CALL_CONV :PTP_CALLBACK_INSTANCE, :PVOID
+  PTP_SIMPLE_CALLBACK typedef ptr TYPE_TP_SIMPLE_CALLBACK
   TP_POOL typedef _TP_POOL
   PTP_POOL typedef ptr _TP_POOL
   TP_CALLBACK_PRIORITY typedef SDWORD
@@ -11779,7 +10028,6 @@ ifndef _WINNT_
   TP_CALLBACK_PRIORITY_INVALID equ 3
   TP_CALLBACK_PRIORITY_COUNT equ TP_CALLBACK_PRIORITY_INVALID
   _TP_CALLBACK_PRIORITY typedef TP_CALLBACK_PRIORITY
-
   TP_POOL_STACK_INFORMATION struct
     StackReserve SIZE_T ?
     StackCommit SIZE_T ?
@@ -11788,9 +10036,8 @@ ifndef _WINNT_
   PTP_POOL_STACK_INFORMATION typedef ptr TP_POOL_STACK_INFORMATION
   TP_CLEANUP_GROUP typedef _TP_CLEANUP_GROUP
   PTP_CLEANUP_GROUP typedef ptr _TP_CLEANUP_GROUP
-  TYPE_PTP_CLEANUP_GROUP_CANCEL_CALLBACK typedef proto WIN_STD_CALL_CONV :PVOID, :PVOID
-  PTP_CLEANUP_GROUP_CANCEL_CALLBACK typedef ptr TYPE_PTP_CLEANUP_GROUP_CANCEL_CALLBACK
-
+  TYPE_TP_CLEANUP_GROUP_CANCEL_CALLBACK typedef proto WIN_STD_CALL_CONV :PVOID, :PVOID
+  PTP_CLEANUP_GROUP_CANCEL_CALLBACK typedef ptr TYPE_TP_CLEANUP_GROUP_CANCEL_CALLBACK
   if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
     TP_CALLBACK_ENVIRON_V3 struct
       Version TP_VERSION ?
@@ -11803,8 +10050,8 @@ ifndef _WINNT_
       union u
         Flags DWORD ?
         struct s
-          s_REC record s_REC_Private:30, s_REC_Persistent:1, s_REC_LongFunction:1
-          s_BITS s_REC <>
+          s_??36 record LongFunction_??36:1, Persistent_??36:1, Private_??36:30
+          s_??36 <>
         ends
       ends
       CallbackPriority TP_CALLBACK_PRIORITY ?
@@ -11825,8 +10072,8 @@ ifndef _WINNT_
       union u
         Flags DWORD ?
         struct s
-          s_REC record s_REC_Private:30, s_REC_Persistent:1, s_REC_LongFunction:1
-          s_BITS s_REC <>
+          s_??37 record LongFunction_??37:1, Persistent_??37:1, Private_??37:30
+          s_??37 <>
         ends
       ends
     TP_CALLBACK_ENVIRON_V1 ends
@@ -11835,75 +10082,54 @@ ifndef _WINNT_
     PTP_CALLBACK_ENVIRON typedef ptr TP_CALLBACK_ENVIRON_V1
   endif
   if  not Defined(MIDL_PASS)
-    TpInitializeCallbackEnviron proto WIN_STD_CALL_CONV :PTP_CALLBACK_ENVIRON
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
     else
     endif
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
     endif
-    TpSetCallbackThreadpool proto WIN_STD_CALL_CONV :PTP_CALLBACK_ENVIRON, :PTP_POOL
-    TpSetCallbackCleanupGroup proto WIN_STD_CALL_CONV :PTP_CALLBACK_ENVIRON, :PTP_CLEANUP_GROUP, :PTP_CLEANUP_GROUP_CANCEL_CALLBACK
-    TpSetCallbackActivationContext proto WIN_STD_CALL_CONV :PTP_CALLBACK_ENVIRON, :ptr _ACTIVATION_CONTEXT
-    TpSetCallbackNoActivationContext proto WIN_STD_CALL_CONV :PTP_CALLBACK_ENVIRON
-    TpSetCallbackLongFunction proto WIN_STD_CALL_CONV :PTP_CALLBACK_ENVIRON
-    TpSetCallbackRaceWithDll proto WIN_STD_CALL_CONV :PTP_CALLBACK_ENVIRON, :PVOID
-    TpSetCallbackFinalizationCallback proto WIN_STD_CALL_CONV :PTP_CALLBACK_ENVIRON, :PTP_SIMPLE_CALLBACK
     if (_WIN32_WINNT ge _WIN32_WINNT_WIN7)
-      TpSetCallbackPriority proto WIN_STD_CALL_CONV :PTP_CALLBACK_ENVIRON, :TP_CALLBACK_PRIORITY
     endif
-    TpSetCallbackPersistent proto WIN_STD_CALL_CONV :PTP_CALLBACK_ENVIRON
-    TpDestroyCallbackEnviron proto WIN_STD_CALL_CONV :PTP_CALLBACK_ENVIRON
   endif
   TP_WORK typedef _TP_WORK
   PTP_WORK typedef ptr _TP_WORK
-  TYPE_PTP_WORK_CALLBACK typedef proto WIN_STD_CALL_CONV :PTP_CALLBACK_INSTANCE, :PVOID, :PTP_WORK
-  PTP_WORK_CALLBACK typedef ptr TYPE_PTP_WORK_CALLBACK
-
+  TYPE_TP_WORK_CALLBACK typedef proto WIN_STD_CALL_CONV :PTP_CALLBACK_INSTANCE, :PVOID, :PTP_WORK
+  PTP_WORK_CALLBACK typedef ptr TYPE_TP_WORK_CALLBACK
   TP_TIMER typedef _TP_TIMER
   PTP_TIMER typedef ptr _TP_TIMER
-  TYPE_PTP_TIMER_CALLBACK typedef proto WIN_STD_CALL_CONV :PTP_CALLBACK_INSTANCE, :PVOID, :PTP_TIMER
-  PTP_TIMER_CALLBACK typedef ptr TYPE_PTP_TIMER_CALLBACK
-
+  TYPE_TP_TIMER_CALLBACK typedef proto WIN_STD_CALL_CONV :PTP_CALLBACK_INSTANCE, :PVOID, :PTP_TIMER
+  PTP_TIMER_CALLBACK typedef ptr TYPE_TP_TIMER_CALLBACK
   TP_WAIT_RESULT typedef DWORD
   TP_WAIT typedef _TP_WAIT
   PTP_WAIT typedef ptr _TP_WAIT
-  TYPE_PTP_WAIT_CALLBACK typedef proto WIN_STD_CALL_CONV :PTP_CALLBACK_INSTANCE, :PVOID, :PTP_WAIT, :TP_WAIT_RESULT
-  PTP_WAIT_CALLBACK typedef ptr TYPE_PTP_WAIT_CALLBACK
-
+  TYPE_TP_WAIT_CALLBACK typedef proto WIN_STD_CALL_CONV :PTP_CALLBACK_INSTANCE, :PVOID, :PTP_WAIT, :TP_WAIT_RESULT
+  PTP_WAIT_CALLBACK typedef ptr TYPE_TP_WAIT_CALLBACK
   TP_IO typedef _TP_IO
   PTP_IO typedef ptr _TP_IO
-  if Defined(_M_AMD64) and  not Defined(_M_ARM64EC) and  not Defined(__midl)
-    NtCurrentTeb proto WIN_STD_CALL_CONV
-    GetCurrentFiber proto WIN_STD_CALL_CONV
-    GetFiberData proto WIN_STD_CALL_CONV
+  if Defined(_M_AMD64) and  not Defined(__midl)
   endif
   if Defined(_M_ARM) and  not Defined(__midl) and  not Defined(_M_CEE_PURE)
     ;[...]
   endif
-  if (Defined(_M_ARM64) or Defined(_M_ARM64EC)) and  not Defined(__midl) and  not Defined(_M_CEE_PURE)
-    NtCurrentTeb proto WIN_STD_CALL_CONV
-    GetCurrentFiber proto WIN_STD_CALL_CONV
-    GetFiberData proto WIN_STD_CALL_CONV
+  if Defined(_M_ARM64) and  not Defined(__midl) and  not Defined(_M_CEE_PURE)
+    ;[...]
   endif
   if Defined(_M_IX86) and  not Defined(MIDL_PASS)
     PcTeb equ 18h
     if  not Defined(_M_CEE_PURE)
-      NtCurrentTeb proto WIN_STD_CALL_CONV
     endif
   endif
   if (_WIN32_WINNT gt 0500h) or (_WIN32_FUSION ge 0100h) or ISOLATION_AWARE_ENABLED
-    ACTIVATION_CONTEXT_SECTION_ASSEMBLY_INFORMATION equ (1)
-    ACTIVATION_CONTEXT_SECTION_DLL_REDIRECTION equ (2)
-    ACTIVATION_CONTEXT_SECTION_WINDOW_CLASS_REDIRECTION equ (3)
-    ACTIVATION_CONTEXT_SECTION_COM_SERVER_REDIRECTION equ (4)
-    ACTIVATION_CONTEXT_SECTION_COM_INTERFACE_REDIRECTION equ (5)
-    ACTIVATION_CONTEXT_SECTION_COM_TYPE_LIBRARY_REDIRECTION equ (6)
-    ACTIVATION_CONTEXT_SECTION_COM_PROGID_REDIRECTION equ (7)
-    ACTIVATION_CONTEXT_SECTION_GLOBAL_OBJECT_RENAME_TABLE equ (8)
-    ACTIVATION_CONTEXT_SECTION_CLR_SURROGATES equ (9)
-    ACTIVATION_CONTEXT_SECTION_APPLICATION_SETTINGS equ (10)
-    ACTIVATION_CONTEXT_SECTION_COMPATIBILITY_INFO equ (11)
-    ACTIVATION_CONTEXT_SECTION_WINRT_ACTIVATABLE_CLASSES equ (12)
+    ACTIVATION_CONTEXT_SECTION_ASSEMBLY_INFORMATION equ 1
+    ACTIVATION_CONTEXT_SECTION_DLL_REDIRECTION equ 2
+    ACTIVATION_CONTEXT_SECTION_WINDOW_CLASS_REDIRECTION equ 3
+    ACTIVATION_CONTEXT_SECTION_COM_SERVER_REDIRECTION equ 4
+    ACTIVATION_CONTEXT_SECTION_COM_INTERFACE_REDIRECTION equ 5
+    ACTIVATION_CONTEXT_SECTION_COM_TYPE_LIBRARY_REDIRECTION equ 6
+    ACTIVATION_CONTEXT_SECTION_COM_PROGID_REDIRECTION equ 7
+    ACTIVATION_CONTEXT_SECTION_GLOBAL_OBJECT_RENAME_TABLE equ 8
+    ACTIVATION_CONTEXT_SECTION_CLR_SURROGATES equ 9
+    ACTIVATION_CONTEXT_SECTION_APPLICATION_SETTINGS equ 10
+    ACTIVATION_CONTEXT_SECTION_COMPATIBILITY_INFO equ 11
   endif
   ifdef __cplusplus
     ;[...]

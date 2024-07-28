@@ -1,11 +1,10 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\shtypes.h
-;             Created on (UTC) 06/04/2024 06:15:58
-;             Last modified on (UTC) 21/02/2024 18:17:36
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\shtypes.h', last modified: 19/04/2018 10:46
+;Creation parameters: 
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-  __REQUIRED_RPCNDR_H_VERSION__ equ 501
+  __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
   __REQUIRED_RPCSAL_H_VERSION__ equ 100
@@ -18,17 +17,6 @@ endif
 ifndef __shtypes_h__
   __shtypes_h__ equ <>
   if Defined(_MSC_VER) and (_MSC_VER ge 1020)
-  endif
-  ifndef DECLSPEC_XFGVIRT
-    if Defined(_CONTROL_FLOW_GUARD_XFG)
-      DECLSPEC_XFGVIRT macro base, func
-        exitm <__declspec(xfg_virtual (base, func))>
-      endm
-    else
-      DECLSPEC_XFGVIRT macro base, func
-        exitm <>
-      endm
-    endif
   endif
   include wtypes.inc
   include unknwn.inc
@@ -94,10 +82,10 @@ ifndef __shtypes_h__
     PCITEMID_CHILD equ <LPCITEMIDLIST>
     PUITEMID_CHILD equ <LPITEMIDLIST>
     PCUITEMID_CHILD equ <LPCITEMIDLIST>
-    PCUITEMID_CHILD_ARRAY equ <LPCITEMIDLIST>
-    PCUIDLIST_RELATIVE_ARRAY equ <LPCITEMIDLIST>
-    PCIDLIST_ABSOLUTE_ARRAY equ <LPCITEMIDLIST>
-    PCUIDLIST_ABSOLUTE_ARRAY equ <LPCITEMIDLIST>
+    PCUITEMID_CHILD_ARRAY equ <ptr LPCITEMIDLIST>
+    PCUIDLIST_RELATIVE_ARRAY equ <ptr LPCITEMIDLIST>
+    PCIDLIST_ABSOLUTE_ARRAY equ <ptr LPCITEMIDLIST>
+    PCUIDLIST_ABSOLUTE_ARRAY equ <ptr LPCITEMIDLIST>
   endif
   ifdef MIDL_PASS
     ;[...]
@@ -107,7 +95,7 @@ ifndef __shtypes_h__
   STRRET_OFFSET equ 1h
   STRRET_CSTR equ 2h
   tagSTRRET_TYPE typedef STRRET_TYPE
-
+  
   if Defined(_MSC_VER) and (_MSC_VER ge 1200)
   endif
   include pshpack8.inc
@@ -132,6 +120,7 @@ ifndef __shtypes_h__
   SHELLDETAILS ends
   _SHELLDETAILS typedef SHELLDETAILS
   LPSHELLDETAILS typedef ptr _SHELLDETAILS
+  
   include poppack.inc
   if (_WIN32_IE ge _WIN32_IE_IE60SP2)
     PERCEIVED typedef SDWORD
@@ -152,7 +141,7 @@ ifndef __shtypes_h__
     PERCEIVED_TYPE_CONTACTS equ 10
     PERCEIVED_TYPE_LAST equ 10
     tagPERCEIVED typedef PERCEIVED
-
+    
     PERCEIVEDFLAG_UNDEFINED equ 0000h
     PERCEIVEDFLAG_SOFTCODED equ 0001h
     PERCEIVEDFLAG_HARDCODED equ 0002h
@@ -176,7 +165,7 @@ ifndef __shtypes_h__
   ifdef __cplusplus
     ;[...]
   else
-    REFKNOWNFOLDERID equ <ptr>
+    REFKNOWNFOLDERID equ <ptr KNOWNFOLDERID>
   endif
   KF_REDIRECT_FLAGS typedef DWORD
   FOLDERTYPEID typedef GUID
@@ -186,7 +175,7 @@ ifndef __shtypes_h__
   ifdef __cplusplus
     ;[...]
   else
-    REFFOLDERTYPEID equ <ptr>
+    REFFOLDERTYPEID equ <ptr FOLDERTYPEID>
   endif
   TASKOWNERID typedef GUID
   if 0
@@ -195,7 +184,7 @@ ifndef __shtypes_h__
   ifdef __cplusplus
     ;[...]
   else
-    REFTASKOWNERID equ <ptr>
+    REFTASKOWNERID equ <ptr TASKOWNERID>
   endif
   ELEMENTID typedef GUID
   if 0
@@ -204,7 +193,7 @@ ifndef __shtypes_h__
   ifdef __cplusplus
     ;[...]
   else
-    REFELEMENTID equ <ptr>
+    REFELEMENTID equ <ptr ELEMENTID>
   endif
   ifndef LF_FACESIZE
     LOGFONTA struct
@@ -265,7 +254,7 @@ ifndef __shtypes_h__
   SHCOLSTATE_FIXED_RATIO equ 4000h
   SHCOLSTATE_DISPLAYMASK equ 0f000h
   tagSHCOLSTATE typedef SHCOLSTATE
-
+  
   SHCOLSTATEF typedef DWORD
   SHCOLUMNID typedef PROPERTYKEY
   LPCSHCOLUMNID typedef ptr SHCOLUMNID
@@ -287,7 +276,7 @@ ifndef __shtypes_h__
   SCALE_400_PERCENT equ 400
   SCALE_450_PERCENT equ 450
   SCALE_500_PERCENT equ 500
-
+  
   if _MSC_VER ge 1200
   endif
   externdef __MIDL_itf_shtypes_0000_0000_v0_0_c_ifspec:RPC_IF_HANDLE
@@ -296,3 +285,4 @@ ifndef __shtypes_h__
     ;[...]
   endif
 endif
+

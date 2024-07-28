@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\shlobj.h
-;             Created on (UTC) 06/04/2024 06:15:58
-;             Last modified on (UTC) 21/02/2024 18:24:32
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\ShlObj.h', last modified: 19/04/2018 21:54
+;Creation parameters: 
 
 ifndef _SHLOBJ_H_
   _SHLOBJ_H_ equ <>
@@ -108,33 +107,29 @@ ifndef _SHLOBJ_H_
     if  not Defined(__cplusplus) and Defined(_MSC_VER) and (_MSC_VER ge 1200)
     endif
     INTERFACE equ <INewShortcutHookA>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(INewShortcutHookA, IUnknown, "000214e1-0000-0000-c000-000000000046")
-;      STDMETHOD QueryInterface, :, :ptr ptr 
-;      STDMETHOD_ ULONG, AddRef
-;      STDMETHOD_ ULONG, Release
-;      STDMETHOD SetReferent, :, :
-;      STDMETHOD GetReferent, :, :
-;      STDMETHOD SetFolder, :
-;      STDMETHOD GetFolder, :, :
-;      STDMETHOD GetName, :, :
-;      STDMETHOD GetExtension, :, :
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ INewShortcutHookA, IUnknown, "000214e1-0000-0000-c000-000000000046"
+;      STD_METHOD QueryInterface, :THIS_, :ptr ptr
+;      STD_METHOD AddRef, :THIS_
+;      STD_METHOD Release, :THIS_
+      STD_METHOD SetReferent, :THIS_, :HWND
+      STD_METHOD GetReferent, :THIS_, :SDWORD
+      STD_METHOD SetFolder, :THIS_
+      STD_METHOD GetFolder, :THIS_, :SDWORD
+      STD_METHOD GetName, :THIS_, :SDWORD
+      STD_METHOD GetExtension, :THIS_, :SDWORD
+    END_DECLARE_INTERFACE_IID_
     INTERFACE equ <INewShortcutHookW>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(INewShortcutHookW, IUnknown, "000214f7-0000-0000-c000-000000000046")
-;      STDMETHOD QueryInterface, :, :ptr ptr 
-;      STDMETHOD_ ULONG, AddRef
-;      STDMETHOD_ ULONG, Release
-;      STDMETHOD SetReferent, :, :
-;      STDMETHOD GetReferent, :, :
-;      STDMETHOD SetFolder, :
-;      STDMETHOD GetFolder, :, :
-;      STDMETHOD GetName, :, :
-;      STDMETHOD GetExtension, :, :
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ INewShortcutHookW, IUnknown, "000214f7-0000-0000-c000-000000000046"
+;      STD_METHOD QueryInterface, :THIS_, :ptr ptr
+;      STD_METHOD AddRef, :THIS_
+;      STD_METHOD Release, :THIS_
+      STD_METHOD SetReferent, :THIS_, :HWND
+      STD_METHOD GetReferent, :THIS_, :SDWORD
+      STD_METHOD SetFolder, :THIS_
+      STD_METHOD GetFolder, :THIS_, :SDWORD
+      STD_METHOD GetName, :THIS_, :SDWORD
+      STD_METHOD GetExtension, :THIS_, :SDWORD
+    END_DECLARE_INTERFACE_IID_
     ifdef UNICODE
       INewShortcutHook equ <INewShortcutHookW>
       INewShortcutHookVtbl equ <INewShortcutHookWVtbl>
@@ -143,18 +138,14 @@ ifndef _SHLOBJ_H_
       INewShortcutHookVtbl equ <INewShortcutHookAVtbl>
     endif
     INTERFACE equ <ICopyHookA>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(ICopyHookA, IUnknown, "000214EF-0000-0000-c000-000000000046")
-;      STDMETHOD_ UINT, CopyCallback, :, :, :, :, :, :, :
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ ICopyHookA, IUnknown, "000214EF-0000-0000-c000-000000000046"
+      STD_METHOD CopyCallback, :THIS_, :UINT, :UINT, :PCSTR, :DWORD, :PCSTR, :DWORD
+    END_DECLARE_INTERFACE_IID_
     LPCOPYHOOKA typedef ptr ICopyHookA
     INTERFACE equ <ICopyHookW>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(ICopyHookW, IUnknown, "000214FC-0000-0000-c000-000000000046")
-;      STDMETHOD_ UINT, CopyCallback, :, :, :, :, :, :, :
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ ICopyHookW, IUnknown, "000214FC-0000-0000-c000-000000000046"
+      STD_METHOD CopyCallback, :THIS_, :UINT, :UINT, :PCWSTR, :DWORD, :PCWSTR, :DWORD
+    END_DECLARE_INTERFACE_IID_
     LPCOPYHOOKW typedef ptr ICopyHookW
     ifdef UNICODE
       ICopyHook equ <ICopyHookW>
@@ -167,12 +158,10 @@ ifndef _SHLOBJ_H_
     endif
     if (NTDDI_VERSION lt NTDDI_WIN2K)
       INTERFACE equ <IFileViewerSite>
-      ??Interface equ <>
-;      DECLARE_INTERFACE_IID_(IFileViewerSite, IUnknown, "000214f3-0000-0000-c000-000000000046")
-;        STDMETHOD SetPinnedWindow, :
-;        STDMETHOD GetPinnedWindow, :ptr 
-;      DECLARE_INTERFACE_IID__END
-
+      DECLARE_INTERFACE_IID_ IFileViewerSite, IUnknown, "000214f3-0000-0000-c000-000000000046"
+        STD_METHOD SetPinnedWindow, :THIS_
+        STD_METHOD GetPinnedWindow, :ptr THIS_
+      END_DECLARE_INTERFACE_IID_
       LPFILEVIEWERSITE typedef ptr IFileViewerSite
       include pshpack8.inc
       FVSHOWINFO struct
@@ -185,6 +174,7 @@ ifndef _SHLOBJ_H_
         strNewFile OLECHAR MAX_PATH dup (?)
       FVSHOWINFO ends
       LPFVSHOWINFO typedef ptr FVSHOWINFO
+      
       include poppack.inc
       FVSIF_RECT equ 00000001h
       FVSIF_PINNED equ 00000002h
@@ -192,22 +182,18 @@ ifndef _SHLOBJ_H_
       FVSIF_NEWFILE equ 80000000h
       FVSIF_CANVIEWIT equ 40000000h
       INTERFACE equ <IFileViewerA>
-      ??Interface equ <>
-;      DECLARE_INTERFACE_IID(IFileViewerA, "000214f0-0000-0000-c000-000000000046")
-;        STDMETHOD ShowInitialize, :
-;        STDMETHOD Show, :
-;        STDMETHOD PrintTo, :, :
-;      DECLARE_INTERFACE_IID_END
-
+      DECLARE_INTERFACE_IID IFileViewerA, "000214f0-0000-0000-c000-000000000046"
+        STD_METHOD ShowInitialize, :THIS_
+        STD_METHOD Show, :THIS_
+        STD_METHOD PrintTo, :THIS_, :BOOL
+      END_DECLARE_INTERFACE_IID
       LPFILEVIEWERA typedef ptr IFileViewerA
       INTERFACE equ <IFileViewerW>
-      ??Interface equ <>
-;      DECLARE_INTERFACE_IID(IFileViewerW, "000214f8-0000-0000-c000-000000000046")
-;        STDMETHOD ShowInitialize, :
-;        STDMETHOD Show, :
-;        STDMETHOD PrintTo, :, :
-;      DECLARE_INTERFACE_IID_END
-
+      DECLARE_INTERFACE_IID IFileViewerW, "000214f8-0000-0000-c000-000000000046"
+        STD_METHOD ShowInitialize, :THIS_
+        STD_METHOD Show, :THIS_
+        STD_METHOD PrintTo, :THIS_, :BOOL
+      END_DECLARE_INTERFACE_IID
       LPFILEVIEWERW typedef ptr IFileViewerW
       ifdef UNICODE
         IFileViewer equ <IFileViewerW>
@@ -235,12 +221,10 @@ ifndef _SHLOBJ_H_
       PANE_PRIVACY equ 7
     endif
     INTERFACE equ <ICurrentWorkingDirectory>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(ICurrentWorkingDirectory, IUnknown, "91956D21-9276-11d1-921A-006097DF5BD4")
-;      STDMETHOD GetDirectory, :, :
-;      STDMETHOD SetDirectory, :
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ ICurrentWorkingDirectory, IUnknown, "91956D21-9276-11d1-921A-006097DF5BD4"
+      STD_METHOD GetDirectory, :THIS_, :DWORD
+      STD_METHOD SetDirectory, :THIS_
+    END_DECLARE_INTERFACE_IID_
     DWFRF_NORMAL equ 0000h
     DWFRF_DELETECONFIGDATA equ 0001h
     DWFAF_HIDDEN equ 0001h
@@ -248,19 +232,15 @@ ifndef _SHLOBJ_H_
     DWFAF_GROUP2 equ 0004h
     DWFAF_AUTOHIDE equ 0010h
     INTERFACE equ <IDockingWindowFrame>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(IDockingWindowFrame, IOleWindow, "47d2657a-7b27-11d0-8ca9-00a0c92dbfe8")
-;      STDMETHOD AddToolbar, :ptr , :, :
-;      STDMETHOD RemoveToolbar, :ptr , :
-;      STDMETHOD FindToolbar, :, :, :ptr ptr 
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ IDockingWindowFrame, IOleWindow, "47d2657a-7b27-11d0-8ca9-00a0c92dbfe8"
+      STD_METHOD AddToolbar, :ptr THIS_, :PCWSTR, :DWORD
+      STD_METHOD RemoveToolbar, :ptr THIS_, :DWORD
+      STD_METHOD FindToolbar, :THIS_, :REFIID, :ptr ptr
+    END_DECLARE_INTERFACE_IID_
     INTERFACE equ <IThumbnailCapture>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(IThumbnailCapture, IUnknown, "4ea39266-7211-409f-b622-f63dbd16c533")
-;      STDMETHOD CaptureThumbnail, :ptr , :ptr , :ptr 
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ IThumbnailCapture, IUnknown, "4ea39266-7211-409f-b622-f63dbd16c533"
+      STD_METHOD CaptureThumbnail, :ptr THIS_, :ptr IUnknown, :ptr HBITMAP
+    END_DECLARE_INTERFACE_IID_
     LPTHUMBNAILCAPTURE typedef ptr IThumbnailCapture
     if (NTDDI_VERSION ge NTDDI_WIN2K and NTDDI_VERSION lt NTDDI_VISTA)
       include pshpack8.inc
@@ -270,43 +250,40 @@ ifndef _SHLOBJ_H_
       ENUMSHELLIMAGESTOREDATA ends
       _EnumImageStoreDATAtag typedef ENUMSHELLIMAGESTOREDATA
       PENUMSHELLIMAGESTOREDATA typedef ptr ENUMSHELLIMAGESTOREDATA
+      
       include poppack.inc
       INTERFACE equ <IEnumShellImageStore>
-      ??Interface equ <>
-;      DECLARE_INTERFACE_IID_(IEnumShellImageStore, IUnknown, "6DFD582B-92E3-11D1-98A3-00C04FB687DA")
-;        STDMETHOD QueryInterface, :, :ptr ptr 
-;        STDMETHOD_ ULONG, AddRef
-;        STDMETHOD_ ULONG, Release
-;        STDMETHOD Reset
-;        STDMETHOD Next, :, :ptr , :ptr 
-;        STDMETHOD Skip, :
-;        STDMETHOD Clone, :ptr ptr 
-;      DECLARE_INTERFACE_IID__END
-
+      DECLARE_INTERFACE_IID_ IEnumShellImageStore, IUnknown, "6DFD582B-92E3-11D1-98A3-00C04FB687DA"
+;        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+;        STD_METHOD AddRef, :THIS_
+;        STD_METHOD Release, :THIS_
+        STD_METHOD Reset, :THIS_
+        STD_METHOD Next, :THIS_, :ptr PENUMSHELLIMAGESTOREDATA, :ptr ULONG
+        STD_METHOD Skip, :THIS_
+        STD_METHOD Clone, :ptr ptr THIS_
+      END_DECLARE_INTERFACE_IID_
       LPENUMSHELLIMAGESTORE typedef ptr IEnumShellImageStore
       SHIMSTCAPFLAG_LOCKABLE equ 0001h
       SHIMSTCAPFLAG_PURGEABLE equ 0002h
       INTERFACE equ <IShellImageStore>
-      ??Interface equ <>
-;      DECLARE_INTERFACE_IID_(IShellImageStore, IUnknown, "48C8118C-B924-11D1-98D5-00C04FB687DA")
-;        STDMETHOD QueryInterface, :, :ptr ptr 
-;        STDMETHOD_ ULONG, AddRef
-;        STDMETHOD_ ULONG, Release
-;        STDMETHOD Open, :, :ptr 
-;        STDMETHOD Create, :, :ptr 
-;        STDMETHOD ReleaseLock, :ptr 
-;        STDMETHOD Close, :ptr 
-;        STDMETHOD Commit, :ptr 
-;        STDMETHOD IsLocked
-;        STDMETHOD GetMode, :ptr 
-;        STDMETHOD GetCapabilities, :ptr 
-;        STDMETHOD AddEntry, :, :ptr , :, :
-;        STDMETHOD GetEntry, :, :, :ptr 
-;        STDMETHOD DeleteEntry, :
-;        STDMETHOD IsEntryInStore, :, :ptr 
-;        STDMETHOD Enum, :ptr 
-;      DECLARE_INTERFACE_IID__END
-
+      DECLARE_INTERFACE_IID_ IShellImageStore, IUnknown, "48C8118C-B924-11D1-98D5-00C04FB687DA"
+;        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+;        STD_METHOD AddRef, :THIS_
+;        STD_METHOD Release, :THIS_
+        STD_METHOD Open, :THIS_, :ptr DWORD
+        STD_METHOD Create, :THIS_, :ptr DWORD
+        STD_METHOD ReleaseLock, :ptr THIS_
+        STD_METHOD Close, :ptr THIS_
+        STD_METHOD Commit, :ptr THIS_
+        STD_METHOD IsLocked, :THIS_
+        STD_METHOD GetMode, :ptr THIS_
+        STD_METHOD GetCapabilities, :ptr THIS_
+        STD_METHOD AddEntry, :THIS_, :ptr FILETIME, :DWORD, :HBITMAP
+        STD_METHOD GetEntry, :THIS_, :DWORD, :ptr HBITMAP
+        STD_METHOD DeleteEntry, :THIS_
+        STD_METHOD IsEntryInStore, :THIS_, :ptr FILETIME
+        STD_METHOD Enum, :ptr THIS_
+      END_DECLARE_INTERFACE_IID_
       LPSHELLIMAGESTORE typedef ptr IShellImageStore
     endif
     ISFB_MASK_STATE equ 00000001h
@@ -343,26 +320,23 @@ ifndef _SHLOBJ_H_
       pidl PIDLIST_ABSOLUTE ?
     BANDINFOSFB ends
     PBANDINFOSFB typedef ptr BANDINFOSFB
+    
     include poppack.inc
     INTERFACE equ <IShellFolderBand>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(IShellFolderBand, IUnknown, "7FE80CC8-C247-11d0-B93A-00A0C90312E1")
-;      STDMETHOD InitializeSFB, :ptr , :
-;      STDMETHOD SetBandInfoSFB, :
-;      STDMETHOD GetBandInfoSFB, :
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ IShellFolderBand, IUnknown, "7FE80CC8-C247-11d0-B93A-00A0C90312E1"
+      STD_METHOD InitializeSFB, :ptr THIS_, :PCIDLIST_ABSOLUTE
+      STD_METHOD SetBandInfoSFB, :THIS_
+      STD_METHOD GetBandInfoSFB, :THIS_
+    END_DECLARE_INTERFACE_IID_
     SFBID_PIDLCHANGED equ 0
-
+    
     INTERFACE equ <IDeskBarClient>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(IDeskBarClient, IOleWindow, "EB0FE175-1A3A-11D0-89B3-00A0C90A90AC")
-;      STDMETHOD SetDeskBarSite, :ptr 
-;      STDMETHOD SetModeDBC, :
-;      STDMETHOD UIActivateDBC, :
-;      STDMETHOD GetSize, :, :
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ IDeskBarClient, IOleWindow, "EB0FE175-1A3A-11D0-89B3-00A0C90A90AC"
+      STD_METHOD SetDeskBarSite, :ptr THIS_
+      STD_METHOD SetModeDBC, :THIS_
+      STD_METHOD UIActivateDBC, :THIS_
+      STD_METHOD GetSize, :THIS_, :LPRECT
+    END_DECLARE_INTERFACE_IID_
     DBC_GS_IDEAL equ 0
     DBC_GS_SIZEDOWN equ 1
     DBC_HIDE equ 0
@@ -373,8 +347,7 @@ ifndef _SHLOBJ_H_
     DBCID_CLSIDOFBAR equ 2
     DBCID_RESIZE equ 3
     DBCID_GETBAR equ 4
-    DBCID_UPDATESIZE equ 5
-
+    
     SSM_CLEAR equ 0000h
     SSM_SET equ 0001h
     SSM_REFRESH equ 0002h
@@ -388,31 +361,27 @@ ifndef _SHLOBJ_H_
     SCHEME_DONOTUSE equ 0040h
     SCHEME_CREATE equ 0080h
     INTERFACE equ <IActiveDesktopP>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(IActiveDesktopP, IUnknown, "52502EE0-EC80-11D0-89AB-00C04FC2972D")
-;      STDMETHOD QueryInterface, :, :ptr ptr 
-;      STDMETHOD_ ULONG, AddRef
-;      STDMETHOD_ ULONG, Release
-;      STDMETHOD SetSafeMode, :
-;      STDMETHOD EnsureUpdateHTML
-;      STDMETHOD SetScheme, :, :
-;      STDMETHOD GetScheme, :, :ptr , :
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ IActiveDesktopP, IUnknown, "52502EE0-EC80-11D0-89AB-00C04FC2972D"
+;      STD_METHOD QueryInterface, :THIS_, :ptr ptr
+;      STD_METHOD AddRef, :THIS_
+;      STD_METHOD Release, :THIS_
+      STD_METHOD SetSafeMode, :THIS_
+      STD_METHOD EnsureUpdateHTML, :THIS_
+      STD_METHOD SetScheme, :THIS_, :DWORD
+      STD_METHOD GetScheme, :THIS_, :ptr DWORD, :DWORD
+    END_DECLARE_INTERFACE_IID_
     LPACTIVEDESKTOPP typedef ptr IActiveDesktopP
     GADOF_DIRTY equ 00000001h
     INTERFACE equ <IADesktopP2>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(IADesktopP2, IUnknown, "B22754E2-4574-11d1-9888-006097DEACF9")
-;      STDMETHOD QueryInterface, :, :ptr ptr 
-;      STDMETHOD_ ULONG, AddRef
-;      STDMETHOD_ ULONG, Release
-;      STDMETHOD ReReadWallpaper
-;      STDMETHOD GetADObjectFlags, :ptr , :
-;      STDMETHOD UpdateAllDesktopSubscriptions
-;      STDMETHOD MakeDynamicChanges, :ptr 
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ IADesktopP2, IUnknown, "B22754E2-4574-11d1-9888-006097DEACF9"
+;      STD_METHOD QueryInterface, :THIS_, :ptr ptr
+;      STD_METHOD AddRef, :THIS_
+;      STD_METHOD Release, :THIS_
+      STD_METHOD ReReadWallpaper, :THIS_
+      STD_METHOD GetADObjectFlags, :ptr THIS_, :DWORD
+      STD_METHOD UpdateAllDesktopSubscriptions, :THIS_
+      STD_METHOD MakeDynamicChanges, :ptr THIS_
+    END_DECLARE_INTERFACE_IID_
     LPADESKTOPP2 typedef ptr IADesktopP2
     include pshpack1.inc
     SHCOLUMNINFO struct
@@ -425,6 +394,7 @@ ifndef _SHLOBJ_H_
       wszDescription WCHAR MAX_COLUMN_DESC_LEN dup (?)
     SHCOLUMNINFO ends
     LPSHCOLUMNINFO typedef ptr SHCOLUMNINFO
+    
     LPCSHCOLUMNINFO typedef ptr SHCOLUMNINFO
     include poppack.inc
     include pshpack8.inc
@@ -434,6 +404,7 @@ ifndef _SHLOBJ_H_
       wszFolder WCHAR MAX_PATH dup (?)
     SHCOLUMNINIT ends
     LPSHCOLUMNINIT typedef ptr SHCOLUMNINIT
+    
     LPCSHCOLUMNINIT typedef ptr SHCOLUMNINIT
     SHCDF_UPDATEITEM equ 00000001h
     SHCOLUMNDATA struct
@@ -444,19 +415,18 @@ ifndef _SHLOBJ_H_
       wszFile WCHAR MAX_PATH dup (?)
     SHCOLUMNDATA ends
     LPSHCOLUMNDATA typedef ptr SHCOLUMNDATA
+    
     LPCSHCOLUMNDATA typedef ptr SHCOLUMNDATA
     include poppack.inc
     INTERFACE equ <IColumnProvider>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(IColumnProvider, IUnknown, "E8025004-1C42-11d2-BE2C-00A0C9A83DA1")
-;      STDMETHOD QueryInterface, :, :ptr ptr 
-;      STDMETHOD_ ULONG, AddRef
-;      STDMETHOD_ ULONG, Release
-;      STDMETHOD Initialize, :
-;      STDMETHOD GetColumnInfo, :, :ptr 
-;      STDMETHOD GetItemData, :, :, :ptr 
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ IColumnProvider, IUnknown, "E8025004-1C42-11d2-BE2C-00A0C9A83DA1"
+;      STD_METHOD QueryInterface, :THIS_, :ptr ptr
+;      STD_METHOD AddRef, :THIS_
+;      STD_METHOD Release, :THIS_
+      STD_METHOD Initialize, :THIS_
+      STD_METHOD GetColumnInfo, :THIS_, :ptr SHCOLUMNINFO
+      STD_METHOD GetItemData, :THIS_, :LPCSHCOLUMNDATA, :ptr VARIANT
+    END_DECLARE_INTERFACE_IID_
     if (NTDDI_VERSION ge NTDDI_WIN2K)
       SHChangeProductKeyAsIDList struct
         cb USHORT ?
@@ -465,6 +435,7 @@ ifndef _SHLOBJ_H_
       SHChangeProductKeyAsIDList ends
       _SHChangeProductKeyAsIDList typedef SHChangeProductKeyAsIDList
       LPSHChangeProductKeyAsIDList typedef ptr SHChangeProductKeyAsIDList
+      
     endif
     if (NTDDI_VERSION ge NTDDI_VISTA)
       @DefProto DllImport, SHChangeNotifyRegisterThread, WIN_STD_CALL_CONV,, <:SCNRT_STATUS>, 4
@@ -484,13 +455,11 @@ ifndef _SHLOBJ_H_
     @DefProto DllImport, SHCreatePropSheetExtArray, WIN_STD_CALL_CONV,, <:HKEY, :PCWSTR, :UINT>, 12
     if (NTDDI_VERSION ge NTDDI_WIN2K and NTDDI_VERSION lt NTDDI_VISTA)
       INTERFACE equ <IDefViewFrame>
-      ??Interface equ <>
-;      DECLARE_INTERFACE_IID_(IDefViewFrame, IUnknown, "710EB7A0-45ED-11D0-924A-0020AFC7AC4D")
-;        STDMETHOD GetWindowLV, :ptr 
-;        STDMETHOD ReleaseWindowLV
-;        STDMETHOD GetShellFolder, :ptr ptr 
-;      DECLARE_INTERFACE_IID__END
-
+      DECLARE_INTERFACE_IID_ IDefViewFrame, IUnknown, "710EB7A0-45ED-11D0-924A-0020AFC7AC4D"
+        STD_METHOD GetWindowLV, :ptr THIS_
+        STD_METHOD ReleaseWindowLV, :THIS_
+        STD_METHOD GetShellFolder, :ptr ptr THIS_
+      END_DECLARE_INTERFACE_IID_
     endif
     if (NTDDI_VERSION lt NTDDI_VISTA)
       PPCF_ADDQUOTES equ 00000001h
@@ -504,11 +473,9 @@ ifndef _SHLOBJ_H_
       @DefProto DllImport, SHLoadOLE, WIN_STD_CALL_CONV,, <:LPARAM>, 4
     endif
     INTERFACE equ <IDocViewSite>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(IDocViewSite, IUnknown, "87D605E0-C511-11CF-89A9-00A0C9054129")
-;      STDMETHOD OnSetTitle, :ptr 
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ IDocViewSite, IUnknown, "87D605E0-C511-11CF-89A9-00A0C9054129"
+      STD_METHOD OnSetTitle, :ptr THIS_
+    END_DECLARE_INTERFACE_IID_
     OPENPROPS_NONE equ 0000h
     OPENPROPS_INHIBITPIF equ 8000h
     GETPROPS_NONE equ 0000h
@@ -516,23 +483,19 @@ ifndef _SHLOBJ_H_
     CLOSEPROPS_NONE equ 0000h
     CLOSEPROPS_DISCARD equ 0001h
     INTERFACE equ <IInitializeObject>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(IInitializeObject, IUnknown, "4622AD16-FF23-11d0-8D34-00A0C90F2719")
-;      STDMETHOD Initialize
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ IInitializeObject, IUnknown, "4622AD16-FF23-11d0-8D34-00A0C90F2719"
+      STD_METHOD Initialize, :THIS_
+    END_DECLARE_INTERFACE_IID_
     BMICON_LARGE equ 0
     BMICON_SMALL equ 1
-
+    
     INTERFACE equ <IBanneredBar>
-    ??Interface equ <>
-;    DECLARE_INTERFACE_IID_(IBanneredBar, IUnknown, "596A9A94-013E-11d1-8D34-00A0C90F2719")
-;      STDMETHOD SetIconSize, :
-;      STDMETHOD GetIconSize, :ptr 
-;      STDMETHOD SetBitmap, :
-;      STDMETHOD GetBitmap, :ptr 
-;    DECLARE_INTERFACE_IID__END
-
+    DECLARE_INTERFACE_IID_ IBanneredBar, IUnknown, "596A9A94-013E-11d1-8D34-00A0C90F2719"
+      STD_METHOD SetIconSize, :THIS_
+      STD_METHOD GetIconSize, :ptr THIS_
+      STD_METHOD SetBitmap, :THIS_
+      STD_METHOD GetBitmap, :ptr THIS_
+    END_DECLARE_INTERFACE_IID_
     include pshpack8.inc
     TBIF_APPEND equ 0
     TBIF_PREPEND equ 1
@@ -615,6 +578,7 @@ ifndef _SHLOBJ_H_
     AASHELLMENUFILENAME ends
     tagAAMENUFILENAME typedef AASHELLMENUFILENAME
     LPAASHELLMENUFILENAME typedef ptr AASHELLMENUFILENAME
+    
     AASHELLMENUITEM struct
       lpReserved1 POINTER ?
       iReserved SDWORD ?
@@ -624,10 +588,13 @@ ifndef _SHLOBJ_H_
     AASHELLMENUITEM ends
     tagAASHELLMENUITEM typedef AASHELLMENUITEM
     LPAASHELLMENUITEM typedef ptr AASHELLMENUITEM
+    
     include poppack.inc
     if (_WIN32_IE ge _WIN32_IE_XP)
       @DefProto DllImport, ImportPrivacySettings, WIN_STD_CALL_CONV,, <:PCWSTR, :ptr BOOL, :ptr BOOL>, 12
       ifndef IEnumPrivacyRecords
+        ;IEnumPrivacyRecords typedef IEnumPrivacyRecords
+        
       endif
       @DefProto DllImport, DoPrivacyDlg, WIN_STD_CALL_CONV,, <:HWND, :PCWSTR, :ptr IEnumPrivacyRecords, :BOOL>, 16
     endif
@@ -642,3 +609,4 @@ ifndef _SHLOBJ_H_
     endif
   endif
 endif
+

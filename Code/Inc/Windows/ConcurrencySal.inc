@@ -1,15 +1,14 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\concurrencysal.h
-;             Created on (UTC) 22/05/2024 17:57:06
-;             Last modified on (UTC) 21/02/2024 17:17:18
+;Include file created by h2incX, Version B.01.01, 02/09/2018 16:44
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\ConcurrencySal.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 ifndef CONCURRENCYSAL_H
   CONCURRENCYSAL_H equ <>
   ifdef __cplusplus
     ;[...]
   endif
-  if  not Defined(__midl) and Defined(_PREFAST_) and  not Defined(_SDV_)
+  if  not Defined(__midl) and Defined(_PREFAST_) and _MSC_VER ge 1000 and  not Defined(_SDV_)
     ;[...]
   else
     ifndef _Interlocked_operand_
@@ -112,21 +111,6 @@ ifndef CONCURRENCYSAL_H
     _Has_lock_kind_ macro kind
       exitm <>
     endm
-    ifdef __cplusplus
-      ;[...]
-    endif
-    _Detaches_lock_ macro detached, lock_
-      exitm <>
-    endm
-    _Moves_lock_ macro target, source
-      exitm <>
-    endm
-    _Replaces_lock_ macro target, source
-      exitm <>
-    endm
-    _Swaps_locks_ macro left, right
-      exitm <>
-    endm
     __guarded_by macro lock_
       exitm <>
     endm
@@ -208,3 +192,4 @@ ifndef CONCURRENCYSAL_H
     ;[...]
   endif
 endif
+

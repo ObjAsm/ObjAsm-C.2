@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\http.h
-;             Created on (UTC) 06/04/2024 06:15:55
-;             Last modified on (UTC) 21/02/2024 18:15:26
+;Include file created by h2incX, Version C.1.1, 19/12/2020 17:58
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: 'D:\ObjAsm\Projects\Experimental\h2IncX\10.0.19041.0\um\http.h', last modified: 06/12/2019 15:44
+;Creation parameters: 
 
 ifndef __HTTP_H__
   __HTTP_H__ equ <>
@@ -31,59 +30,67 @@ ifndef __HTTP_H__
         HttpServerListenEndpointProperty equ 9
         HttpServerChannelBindProperty equ 10
         HttpServerProtectionLevelProperty equ 11
-        HttpServerDelegationProperty equ 16
         _HTTP_SERVER_PROPERTY typedef HTTP_SERVER_PROPERTY
         PHTTP_SERVER_PROPERTY typedef ptr HTTP_SERVER_PROPERTY
+        
         HTTP_MAX_SERVER_QUEUE_LENGTH equ 7FFFFFFFh
         HTTP_MIN_SERVER_QUEUE_LENGTH equ 1
-        HTTP_PROPERTY_FLAGS struct
-          HTTP_PROPERTY_FLAGS_REC record HTTP_PROPERTY_FLAGS_REC_Filler:31, HTTP_PROPERTY_FLAGS_REC_Present:1
-          HTTP_PROPERTY_FLAGS_BITS HTTP_PROPERTY_FLAGS_REC <>
+        HTTP_PROPERTY_FLAGS struct 8
+          HTTP_PROPERTY_FLAGS_??100 record Present_??100:1
+          HTTP_PROPERTY_FLAGS_??100 <>
         HTTP_PROPERTY_FLAGS ends
         _HTTP_PROPERTY_FLAGS typedef HTTP_PROPERTY_FLAGS
         PHTTP_PROPERTY_FLAGS typedef ptr HTTP_PROPERTY_FLAGS
+        
         HTTP_ENABLED_STATE typedef SDWORD
         HttpEnabledStateActive equ 0
         HttpEnabledStateInactive equ 1
         _HTTP_ENABLED_STATE typedef HTTP_ENABLED_STATE
         PHTTP_ENABLED_STATE typedef ptr HTTP_ENABLED_STATE
-        HTTP_STATE_INFO struct
+        
+        HTTP_STATE_INFO struct 8
           Flags HTTP_PROPERTY_FLAGS <>
           State HTTP_ENABLED_STATE ?
         HTTP_STATE_INFO ends
         _HTTP_STATE_INFO typedef HTTP_STATE_INFO
         PHTTP_STATE_INFO typedef ptr HTTP_STATE_INFO
+        
         HTTP_503_RESPONSE_VERBOSITY typedef SDWORD
         Http503ResponseVerbosityBasic equ 0
         Http503ResponseVerbosityLimited equ 1
         Http503ResponseVerbosityFull equ 2
         _HTTP_503_RESPONSE_VERBOSITY typedef HTTP_503_RESPONSE_VERBOSITY
         PHTTP_503_RESPONSE_VERBOSITY typedef ptr HTTP_503_RESPONSE_VERBOSITY
+        
         HTTP_QOS_SETTING_TYPE typedef SDWORD
         HttpQosSettingTypeBandwidth equ 0
         HttpQosSettingTypeConnectionLimit equ 1
         HttpQosSettingTypeFlowRate equ 2
         _HTTP_QOS_SETTING_TYPE typedef HTTP_QOS_SETTING_TYPE
         PHTTP_QOS_SETTING_TYPE typedef ptr HTTP_QOS_SETTING_TYPE
-        HTTP_QOS_SETTING_INFO struct
+        
+        HTTP_QOS_SETTING_INFO struct 8
           QosType HTTP_QOS_SETTING_TYPE ?
           QosSetting PVOID ?
         HTTP_QOS_SETTING_INFO ends
         _HTTP_QOS_SETTING_INFO typedef HTTP_QOS_SETTING_INFO
         PHTTP_QOS_SETTING_INFO typedef ptr HTTP_QOS_SETTING_INFO
-        HTTP_CONNECTION_LIMIT_INFO struct
+        
+        HTTP_CONNECTION_LIMIT_INFO struct 8
           Flags HTTP_PROPERTY_FLAGS <>
           MaxConnections ULONG ?
         HTTP_CONNECTION_LIMIT_INFO ends
         _HTTP_CONNECTION_LIMIT_INFO typedef HTTP_CONNECTION_LIMIT_INFO
         PHTTP_CONNECTION_LIMIT_INFO typedef ptr HTTP_CONNECTION_LIMIT_INFO
-        HTTP_BANDWIDTH_LIMIT_INFO struct
+        
+        HTTP_BANDWIDTH_LIMIT_INFO struct 8
           Flags HTTP_PROPERTY_FLAGS <>
           MaxBandwidth ULONG ?
         HTTP_BANDWIDTH_LIMIT_INFO ends
         _HTTP_BANDWIDTH_LIMIT_INFO typedef HTTP_BANDWIDTH_LIMIT_INFO
         PHTTP_BANDWIDTH_LIMIT_INFO typedef ptr HTTP_BANDWIDTH_LIMIT_INFO
-        HTTP_FLOWRATE_INFO struct
+        
+        HTTP_FLOWRATE_INFO struct 8
           Flags HTTP_PROPERTY_FLAGS <>
           MaxBandwidth ULONG ?
           MaxPeakBandwidth ULONG ?
@@ -91,6 +98,7 @@ ifndef __HTTP_H__
         HTTP_FLOWRATE_INFO ends
         _HTTP_FLOWRATE_INFO typedef HTTP_FLOWRATE_INFO
         PHTTP_FLOWRATE_INFO typedef ptr HTTP_FLOWRATE_INFO
+        
         HTTP_MIN_ALLOWED_BANDWIDTH_THROTTLING_RATE equ (1024)
         HTTP_LIMIT_INFINITE equ (- 1)
         HTTP_SERVICE_CONFIG_TIMEOUT_KEY typedef SDWORD
@@ -98,15 +106,17 @@ ifndef __HTTP_H__
         HeaderWaitTimeout equ 1
         _HTTP_SERVICE_CONFIG_TIMEOUT_KEY typedef HTTP_SERVICE_CONFIG_TIMEOUT_KEY
         PHTTP_SERVICE_CONFIG_TIMEOUT_KEY typedef ptr HTTP_SERVICE_CONFIG_TIMEOUT_KEY
+        
         HTTP_SERVICE_CONFIG_TIMEOUT_PARAM typedef USHORT
         PHTTP_SERVICE_CONFIG_TIMEOUT_PARAM typedef ptr USHORT
-        HTTP_SERVICE_CONFIG_TIMEOUT_SET struct
+        HTTP_SERVICE_CONFIG_TIMEOUT_SET struct 8
           KeyDesc HTTP_SERVICE_CONFIG_TIMEOUT_KEY ?
           ParamDesc HTTP_SERVICE_CONFIG_TIMEOUT_PARAM ?
         HTTP_SERVICE_CONFIG_TIMEOUT_SET ends
         _HTTP_SERVICE_CONFIG_TIMEOUT_SET typedef HTTP_SERVICE_CONFIG_TIMEOUT_SET
         PHTTP_SERVICE_CONFIG_TIMEOUT_SET typedef ptr HTTP_SERVICE_CONFIG_TIMEOUT_SET
-        HTTP_TIMEOUT_LIMIT_INFO struct
+        
+        HTTP_TIMEOUT_LIMIT_INFO struct 8
           Flags HTTP_PROPERTY_FLAGS <>
           EntityBody USHORT ?
           DrainEntityBody USHORT ?
@@ -117,26 +127,30 @@ ifndef __HTTP_H__
         HTTP_TIMEOUT_LIMIT_INFO ends
         _HTTP_TIMEOUT_LIMIT_INFO typedef HTTP_TIMEOUT_LIMIT_INFO
         PHTTP_TIMEOUT_LIMIT_INFO typedef ptr HTTP_TIMEOUT_LIMIT_INFO
+        
         HTTP_SERVICE_CONFIG_SETTING_KEY typedef SDWORD
         HttpNone equ 0
         HttpTlsThrottle equ 1
         _HTTP_SERVICE_CONFIG_SETTING_KEY typedef HTTP_SERVICE_CONFIG_SETTING_KEY
         PHTTP_SERVICE_CONFIG_SETTING_KEY typedef ptr HTTP_SERVICE_CONFIG_SETTING_KEY
+        
         HTTP_SERVICE_CONFIG_SETTING_PARAM typedef ULONG
         PHTTP_SERVICE_CONFIG_SETTING_PARAM typedef ptr ULONG
-        HTTP_SERVICE_CONFIG_SETTING_SET struct
+        HTTP_SERVICE_CONFIG_SETTING_SET struct 8
           KeyDesc HTTP_SERVICE_CONFIG_SETTING_KEY ?
           ParamDesc HTTP_SERVICE_CONFIG_SETTING_PARAM ?
         HTTP_SERVICE_CONFIG_SETTING_SET ends
         _HTTP_SERVICE_CONFIG_SETTING_SET typedef HTTP_SERVICE_CONFIG_SETTING_SET
         PHTTP_SERVICE_CONFIG_SETTING_SET typedef ptr HTTP_SERVICE_CONFIG_SETTING_SET
-        HTTP_LISTEN_ENDPOINT_INFO struct
+        
+        HTTP_LISTEN_ENDPOINT_INFO struct 8
           Flags HTTP_PROPERTY_FLAGS <>
           EnableSharing BOOLEAN ?
         HTTP_LISTEN_ENDPOINT_INFO ends
         _HTTP_LISTEN_ENDPOINT_INFO typedef HTTP_LISTEN_ENDPOINT_INFO
         PHTTP_LISTEN_ENDPOINT_INFO typedef ptr HTTP_LISTEN_ENDPOINT_INFO
-        HTTP_SERVER_AUTHENTICATION_DIGEST_PARAMS struct
+        
+        HTTP_SERVER_AUTHENTICATION_DIGEST_PARAMS struct 8
           DomainNameLength USHORT ?
           DomainName PWSTR ?
           RealmLength USHORT ?
@@ -144,21 +158,23 @@ ifndef __HTTP_H__
         HTTP_SERVER_AUTHENTICATION_DIGEST_PARAMS ends
         _HTTP_SERVER_AUTHENTICATION_DIGEST_PARAMS typedef HTTP_SERVER_AUTHENTICATION_DIGEST_PARAMS
         PHTTP_SERVER_AUTHENTICATION_DIGEST_PARAMS typedef ptr HTTP_SERVER_AUTHENTICATION_DIGEST_PARAMS
-        HTTP_SERVER_AUTHENTICATION_BASIC_PARAMS struct
+        
+        HTTP_SERVER_AUTHENTICATION_BASIC_PARAMS struct 8
           RealmLength USHORT ?
           Realm PWSTR ?
         HTTP_SERVER_AUTHENTICATION_BASIC_PARAMS ends
         _HTTP_SERVER_AUTHENTICATION_BASIC_PARAMS typedef HTTP_SERVER_AUTHENTICATION_BASIC_PARAMS
         PHTTP_SERVER_AUTHENTICATION_BASIC_PARAMS typedef ptr HTTP_SERVER_AUTHENTICATION_BASIC_PARAMS
-        HTTP_AUTH_ENABLE_BASIC equ (00000001h)
-        HTTP_AUTH_ENABLE_DIGEST equ (00000002h)
-        HTTP_AUTH_ENABLE_NTLM equ (00000004h)
-        HTTP_AUTH_ENABLE_NEGOTIATE equ (00000008h)
-        HTTP_AUTH_ENABLE_KERBEROS equ (00000010h)
+        
+        HTTP_AUTH_ENABLE_BASIC equ 00000001h
+        HTTP_AUTH_ENABLE_DIGEST equ 00000002h
+        HTTP_AUTH_ENABLE_NTLM equ 00000004h
+        HTTP_AUTH_ENABLE_NEGOTIATE equ 00000008h
+        HTTP_AUTH_ENABLE_KERBEROS equ 00000010h
         HTTP_AUTH_ENABLE_ALL equ <(HTTP_AUTH_ENABLE_BASIC or HTTP_AUTH_ENABLE_DIGEST or HTTP_AUTH_ENABLE_NTLM or HTTP_AUTH_ENABLE_NEGOTIATE or HTTP_AUTH_ENABLE_KERBEROS)>
-        HTTP_AUTH_EX_FLAG_ENABLE_KERBEROS_CREDENTIAL_CACHING equ (01h)
-        HTTP_AUTH_EX_FLAG_CAPTURE_CREDENTIAL equ (02h)
-        HTTP_SERVER_AUTHENTICATION_INFO struct
+        HTTP_AUTH_EX_FLAG_ENABLE_KERBEROS_CREDENTIAL_CACHING equ 01h
+        HTTP_AUTH_EX_FLAG_CAPTURE_CREDENTIAL equ 02h
+        HTTP_SERVER_AUTHENTICATION_INFO struct 8
           Flags HTTP_PROPERTY_FLAGS <>
           AuthSchemes ULONG ?
           ReceiveMutualAuth BOOLEAN ?
@@ -170,45 +186,49 @@ ifndef __HTTP_H__
         HTTP_SERVER_AUTHENTICATION_INFO ends
         _HTTP_SERVER_AUTHENTICATION_INFO typedef HTTP_SERVER_AUTHENTICATION_INFO
         PHTTP_SERVER_AUTHENTICATION_INFO typedef ptr HTTP_SERVER_AUTHENTICATION_INFO
+        
         if _WIN32_WINNT ge _WIN32_WINNT_WIN7
           HTTP_SERVICE_BINDING_TYPE typedef SDWORD
           HttpServiceBindingTypeNone equ 0
           HttpServiceBindingTypeW equ 1
           HttpServiceBindingTypeA equ 2
           _HTTP_SERVICE_BINDING_TYPE typedef HTTP_SERVICE_BINDING_TYPE
-
-          HTTP_SERVICE_BINDING_BASE struct
+          
+          HTTP_SERVICE_BINDING_BASE struct 8
             Type_ HTTP_SERVICE_BINDING_TYPE ?
           HTTP_SERVICE_BINDING_BASE ends
           _HTTP_SERVICE_BINDING_BASE typedef HTTP_SERVICE_BINDING_BASE
           PHTTP_SERVICE_BINDING_BASE typedef ptr HTTP_SERVICE_BINDING_BASE
-          HTTP_SERVICE_BINDING_A struct
+          
+          HTTP_SERVICE_BINDING_A struct 8
             Base HTTP_SERVICE_BINDING_BASE <>
             Buffer PCHAR ?
             BufferSize ULONG ?
           HTTP_SERVICE_BINDING_A ends
           _HTTP_SERVICE_BINDING_A typedef HTTP_SERVICE_BINDING_A
           PHTTP_SERVICE_BINDING_A typedef ptr HTTP_SERVICE_BINDING_A
-          HTTP_SERVICE_BINDING_W struct
+          
+          HTTP_SERVICE_BINDING_W struct 8
             Base HTTP_SERVICE_BINDING_BASE <>
             Buffer PWCHAR ?
             BufferSize ULONG ?
           HTTP_SERVICE_BINDING_W ends
           _HTTP_SERVICE_BINDING_W typedef HTTP_SERVICE_BINDING_W
           PHTTP_SERVICE_BINDING_W typedef ptr HTTP_SERVICE_BINDING_W
+          
           HTTP_AUTHENTICATION_HARDENING_LEVELS typedef SDWORD
           HttpAuthenticationHardeningLegacy equ 0
           HttpAuthenticationHardeningMedium equ 1
           HttpAuthenticationHardeningStrict equ 2
           _HTTP_AUTHENTICATION_HARDENING_LEVELS typedef HTTP_AUTHENTICATION_HARDENING_LEVELS
-
+          
           HTTP_CHANNEL_BIND_PROXY equ 1h
           HTTP_CHANNEL_BIND_PROXY_COHOSTING equ 20h
           HTTP_CHANNEL_BIND_NO_SERVICE_NAME_CHECK equ 2h
           HTTP_CHANNEL_BIND_DOTLESS_SERVICE equ 4h
           HTTP_CHANNEL_BIND_SECURE_CHANNEL_TOKEN equ 8h
           HTTP_CHANNEL_BIND_CLIENT_SERVICE equ 10h
-          HTTP_CHANNEL_BIND_INFO struct
+          HTTP_CHANNEL_BIND_INFO struct 8
             Hardening HTTP_AUTHENTICATION_HARDENING_LEVELS ?
             Flags ULONG ?
             ServiceNames POINTER ?
@@ -216,7 +236,8 @@ ifndef __HTTP_H__
           HTTP_CHANNEL_BIND_INFO ends
           _HTTP_CHANNEL_BIND_INFO typedef HTTP_CHANNEL_BIND_INFO
           PHTTP_CHANNEL_BIND_INFO typedef ptr HTTP_CHANNEL_BIND_INFO
-          HTTP_REQUEST_CHANNEL_BIND_STATUS struct
+          
+          HTTP_REQUEST_CHANNEL_BIND_STATUS struct 8
             ServiceName PHTTP_SERVICE_BINDING_BASE ?
             ChannelToken PUCHAR ?
             ChannelTokenSize ULONG ?
@@ -224,8 +245,9 @@ ifndef __HTTP_H__
           HTTP_REQUEST_CHANNEL_BIND_STATUS ends
           _HTTP_REQUEST_CHANNEL_BIND_STATUS typedef HTTP_REQUEST_CHANNEL_BIND_STATUS
           PHTTP_REQUEST_CHANNEL_BIND_STATUS typedef ptr HTTP_REQUEST_CHANNEL_BIND_STATUS
+          
         endif
-        HTTP_REQUEST_TOKEN_BINDING_INFO struct
+        HTTP_REQUEST_TOKEN_BINDING_INFO struct 8
           TokenBinding PUCHAR ?
           TokenBindingSize ULONG ?
           EKM PUCHAR ?
@@ -234,6 +256,7 @@ ifndef __HTTP_H__
         HTTP_REQUEST_TOKEN_BINDING_INFO ends
         _HTTP_REQUEST_TOKEN_BINDING_INFO typedef HTTP_REQUEST_TOKEN_BINDING_INFO
         PHTTP_REQUEST_TOKEN_BINDING_INFO typedef ptr HTTP_REQUEST_TOKEN_BINDING_INFO
+        
         HTTP_LOG_FIELD_DATE equ 00000001h
         HTTP_LOG_FIELD_TIME equ 00000002h
         HTTP_LOG_FIELD_CLIENT_IP equ 00000004h
@@ -264,8 +287,6 @@ ifndef __HTTP_H__
         HTTP_LOG_FIELD_SITE_ID equ 01000000h
         HTTP_LOG_FIELD_REASON equ 02000000h
         HTTP_LOG_FIELD_QUEUE_NAME equ 04000000h
-        HTTP_LOG_FIELD_CORRELATION_ID equ 40000000h
-        HTTP_LOG_FIELD_FAULT_CODE equ 80000000h
         HTTP_LOGGING_TYPE typedef SDWORD
         HttpLoggingTypeW3C equ 0
         HttpLoggingTypeIIS equ 1
@@ -273,6 +294,7 @@ ifndef __HTTP_H__
         HttpLoggingTypeRaw equ 3
         _HTTP_LOGGING_TYPE typedef HTTP_LOGGING_TYPE
         PHTTP_LOGGING_TYPE typedef ptr HTTP_LOGGING_TYPE
+        
         HTTP_LOGGING_ROLLOVER_TYPE typedef SDWORD
         HttpLoggingRolloverSize equ 0
         HttpLoggingRolloverDaily equ 1
@@ -281,12 +303,13 @@ ifndef __HTTP_H__
         HttpLoggingRolloverHourly equ 4
         _HTTP_LOGGING_ROLLOVER_TYPE typedef HTTP_LOGGING_ROLLOVER_TYPE
         PHTTP_LOGGING_ROLLOVER_TYPE typedef ptr HTTP_LOGGING_ROLLOVER_TYPE
+        
         HTTP_MIN_ALLOWED_LOG_FILE_ROLLOVER_SIZE equ ((1 * 1024 * 1024))
-        HTTP_LOGGING_FLAG_LOCAL_TIME_ROLLOVER equ (00000001h)
-        HTTP_LOGGING_FLAG_USE_UTF8_CONVERSION equ (00000002h)
-        HTTP_LOGGING_FLAG_LOG_ERRORS_ONLY equ (00000004h)
-        HTTP_LOGGING_FLAG_LOG_SUCCESS_ONLY equ (00000008h)
-        HTTP_LOGGING_INFO struct
+        HTTP_LOGGING_FLAG_LOCAL_TIME_ROLLOVER equ 00000001h
+        HTTP_LOGGING_FLAG_USE_UTF8_CONVERSION equ 00000002h
+        HTTP_LOGGING_FLAG_LOG_ERRORS_ONLY equ 00000004h
+        HTTP_LOGGING_FLAG_LOG_SUCCESS_ONLY equ 00000008h
+        HTTP_LOGGING_INFO struct 8
           Flags HTTP_PROPERTY_FLAGS <>
           LoggingFlags ULONG ?
           SoftwareName PCWSTR ?
@@ -304,12 +327,14 @@ ifndef __HTTP_H__
         HTTP_LOGGING_INFO ends
         _HTTP_LOGGING_INFO typedef HTTP_LOGGING_INFO
         PHTTP_LOGGING_INFO typedef ptr HTTP_LOGGING_INFO
-        HTTP_BINDING_INFO struct
+        
+        HTTP_BINDING_INFO struct 8
           Flags HTTP_PROPERTY_FLAGS <>
           RequestQueueHandle HANDLE ?
         HTTP_BINDING_INFO ends
         _HTTP_BINDING_INFO typedef HTTP_BINDING_INFO
         PHTTP_BINDING_INFO typedef ptr HTTP_BINDING_INFO
+        
       endif
       if _WIN32_WINNT ge _WIN32_WINNT_WIN7
         HTTP_PROTECTION_LEVEL_TYPE typedef SDWORD
@@ -318,17 +343,18 @@ ifndef __HTTP_H__
         HttpProtectionLevelRestricted equ 2
         _HTTP_PROTECTION_LEVEL_TYPE typedef HTTP_PROTECTION_LEVEL_TYPE
         PHTTP_PROTECTION_LEVEL_TYPE typedef ptr HTTP_PROTECTION_LEVEL_TYPE
-        HTTP_PROTECTION_LEVEL_INFO struct
+        
+        HTTP_PROTECTION_LEVEL_INFO struct 8
           Flags HTTP_PROPERTY_FLAGS <>
           Level HTTP_PROTECTION_LEVEL_TYPE ?
         HTTP_PROTECTION_LEVEL_INFO ends
         _HTTP_PROTECTION_LEVEL_INFO typedef HTTP_PROTECTION_LEVEL_INFO
         PHTTP_PROTECTION_LEVEL_INFO typedef ptr HTTP_PROTECTION_LEVEL_INFO
+        
       endif
       if _WIN32_WINNT ge 0600h
-        HTTP_CREATE_REQUEST_QUEUE_FLAG_OPEN_EXISTING equ (00000001h)
-        HTTP_CREATE_REQUEST_QUEUE_FLAG_CONTROLLER equ (00000002h)
-        HTTP_CREATE_REQUEST_QUEUE_FLAG_DELEGATION equ (00000008h)
+        HTTP_CREATE_REQUEST_QUEUE_FLAG_OPEN_EXISTING equ 00000001h
+        HTTP_CREATE_REQUEST_QUEUE_FLAG_CONTROLLER equ 00000002h
       endif
       HTTP_RECEIVE_REQUEST_FLAG_COPY_BODY equ 00000001h
       HTTP_RECEIVE_REQUEST_FLAG_FLUSH_BODY equ 00000002h
@@ -358,12 +384,8 @@ ifndef __HTTP_H__
         PHTTP_SERVER_SESSION_ID typedef ptr HTTP_OPAQUE_ID
         HTTP_CLIENT_REQUEST_ID typedef HTTP_OPAQUE_ID
         PHTTP_CLIENT_REQUEST_ID typedef ptr HTTP_OPAQUE_ID
-        HTTP_CLIENT_CONNECTION_ID typedef HTTP_OPAQUE_ID
-        PHTTP_CLIENT_CONNECTION_ID typedef ptr HTTP_OPAQUE_ID
-        HTTP_CLIENT_STREAM_ID typedef HTTP_OPAQUE_ID
-        PHTTP_CLIENT_STREAM_ID typedef ptr HTTP_OPAQUE_ID
       endif
-      HTTP_NULL_ID equ (0)
+      HTTP_NULL_ID equ 0
       HTTP_IS_NULL_ID macro pid
         exitm <(HTTP_NULL_ID == * (pid))>
       endm
@@ -371,20 +393,20 @@ ifndef __HTTP_H__
         exitm <(* (pid) = HTTP_NULL_ID)>
       endm
       HTTP_BYTE_RANGE_TO_EOF equ (- 1)
-      HTTP_BYTE_RANGE struct
+      HTTP_BYTE_RANGE struct 8
         StartingOffset ULARGE_INTEGER <>
         Length_ ULARGE_INTEGER <>
       HTTP_BYTE_RANGE ends
       _HTTP_BYTE_RANGE typedef HTTP_BYTE_RANGE
       PHTTP_BYTE_RANGE typedef ptr HTTP_BYTE_RANGE
-      ifdef HTTP_VERSION
-      endif
-      HTTP_VERSION struct
+      
+      HTTP_VERSION_ struct 8
         MajorVersion USHORT ?
         MinorVersion USHORT ?
-      HTTP_VERSION ends
-      _HTTP_VERSION typedef HTTP_VERSION
-      PHTTP_VERSION typedef ptr HTTP_VERSION
+      HTTP_VERSION_ ends
+      _HTTP_VERSION typedef HTTP_VERSION_
+      PHTTP_VERSION typedef ptr HTTP_VERSION_
+      
       HTTP_VERSION_UNKNOWN equ { 0, 0 }
       HTTP_VERSION_0_9 equ { 0, 9 }
       HTTP_VERSION_1_0 equ { 1, 0 }
@@ -392,7 +414,7 @@ ifndef __HTTP_H__
       HTTP_VERSION_2_0 equ { 2, 0 }
       HTTP_VERSION_3_0 equ { 3, 0 }
       HTTP_SET_VERSION macro version, major, minor
-        exitm <do { (version).MajorVersion = (major) ; (version).MinorVersion = (minor) ; } while (0)>
+        exitm <do { (version).MajorVersion = (major) ; (version).MinorVersion = (minor) ; } while (0, 0)>
       endm
       HTTP_EQUAL_VERSION macro version, major, minor
         exitm <((version).MajorVersion == (major) and (version).MinorVersion == (minor))>
@@ -418,6 +440,7 @@ ifndef __HTTP_H__
       HttpSchemeMaximum equ 2
       _HTTP_URI_SCHEME typedef HTTP_SCHEME
       PHTTP_URI_SCHEME typedef ptr HTTP_SCHEME
+      
       HTTP_VERB typedef SDWORD
       HttpVerbUnparsed equ 0
       HttpVerbUnknown equ 1
@@ -442,6 +465,7 @@ ifndef __HTTP_H__
       HttpVerbMaximum equ 20
       _HTTP_VERB typedef HTTP_VERB
       PHTTP_VERB typedef ptr HTTP_VERB
+      
       HTTP_HEADER_ID typedef SDWORD
       HttpHeaderCacheControl equ 0
       HttpHeaderConnection equ 1
@@ -499,13 +523,15 @@ ifndef __HTTP_H__
       HttpHeaderMaximum equ 41
       _HTTP_HEADER_ID typedef HTTP_HEADER_ID
       PHTTP_HEADER_ID typedef ptr HTTP_HEADER_ID
-      HTTP_KNOWN_HEADER struct
+      
+      HTTP_KNOWN_HEADER struct 8
         RawValueLength USHORT ?
         pRawValue PCSTR ?
       HTTP_KNOWN_HEADER ends
       _HTTP_KNOWN_HEADER typedef HTTP_KNOWN_HEADER
       PHTTP_KNOWN_HEADER typedef ptr HTTP_KNOWN_HEADER
-      HTTP_UNKNOWN_HEADER struct
+      
+      HTTP_UNKNOWN_HEADER struct 8
         NameLength USHORT ?
         RawValueLength USHORT ?
         pName PCSTR ?
@@ -513,17 +539,20 @@ ifndef __HTTP_H__
       HTTP_UNKNOWN_HEADER ends
       _HTTP_UNKNOWN_HEADER typedef HTTP_UNKNOWN_HEADER
       PHTTP_UNKNOWN_HEADER typedef ptr HTTP_UNKNOWN_HEADER
+      
       if _WIN32_WINNT ge 0600h
         HTTP_LOG_DATA_TYPE typedef SDWORD
         HttpLogDataTypeFields equ 0
         _HTTP_LOG_DATA_TYPE typedef HTTP_LOG_DATA_TYPE
         PHTTP_LOG_DATA_TYPE typedef ptr HTTP_LOG_DATA_TYPE
-        HTTP_LOG_DATA struct
+        
+        HTTP_LOG_DATA struct 8
           Type_ HTTP_LOG_DATA_TYPE ?
         HTTP_LOG_DATA ends
         _HTTP_LOG_DATA typedef HTTP_LOG_DATA
         PHTTP_LOG_DATA typedef ptr HTTP_LOG_DATA
-        HTTP_LOG_FIELDS_DATA struct
+        
+        HTTP_LOG_FIELDS_DATA struct 8
           Base HTTP_LOG_DATA <>
           UserNameLength USHORT ?
           UriStemLength USHORT ?
@@ -557,17 +586,18 @@ ifndef __HTTP_H__
         HTTP_LOG_FIELDS_DATA ends
         _HTTP_LOG_FIELDS_DATA typedef HTTP_LOG_FIELDS_DATA
         PHTTP_LOG_FIELDS_DATA typedef ptr HTTP_LOG_FIELDS_DATA
+        
       endif
       HTTP_DATA_CHUNK_TYPE typedef SDWORD
       HttpDataChunkFromMemory equ 0
       HttpDataChunkFromFileHandle equ 1
       HttpDataChunkFromFragmentCache equ 2
       HttpDataChunkFromFragmentCacheEx equ 3
-      HttpDataChunkTrailers equ 4
-      HttpDataChunkMaximum equ 5
+      HttpDataChunkMaximum equ 4
       _HTTP_DATA_CHUNK_TYPE typedef HTTP_DATA_CHUNK_TYPE
       PHTTP_DATA_CHUNK_TYPE typedef ptr HTTP_DATA_CHUNK_TYPE
-      HTTP_DATA_CHUNK struct
+      
+      HTTP_DATA_CHUNK struct 8
         DataChunkType HTTP_DATA_CHUNK_TYPE ?
         union
           struct FromMemory
@@ -586,15 +616,12 @@ ifndef __HTTP_H__
             ByteRange HTTP_BYTE_RANGE <>
             pFragmentName PCWSTR ?
           ends
-          struct Trailers
-            TrailerCount USHORT ?
-            pTrailers PHTTP_UNKNOWN_HEADER ?
-          ends
         ends
       HTTP_DATA_CHUNK ends
       _HTTP_DATA_CHUNK typedef HTTP_DATA_CHUNK
       PHTTP_DATA_CHUNK typedef ptr HTTP_DATA_CHUNK
-      HTTP_REQUEST_HEADERS struct
+      
+      HTTP_REQUEST_HEADERS struct 8
         UnknownHeaderCount USHORT ?
         pUnknownHeaders PHTTP_UNKNOWN_HEADER ?
         TrailerCount USHORT ?
@@ -603,7 +630,8 @@ ifndef __HTTP_H__
       HTTP_REQUEST_HEADERS ends
       _HTTP_REQUEST_HEADERS typedef HTTP_REQUEST_HEADERS
       PHTTP_REQUEST_HEADERS typedef ptr HTTP_REQUEST_HEADERS
-      HTTP_RESPONSE_HEADERS struct
+      
+      HTTP_RESPONSE_HEADERS struct 8
         UnknownHeaderCount USHORT ?
         pUnknownHeaders PHTTP_UNKNOWN_HEADER ?
         TrailerCount USHORT ?
@@ -612,37 +640,28 @@ ifndef __HTTP_H__
       HTTP_RESPONSE_HEADERS ends
       _HTTP_RESPONSE_HEADERS typedef HTTP_RESPONSE_HEADERS
       PHTTP_RESPONSE_HEADERS typedef ptr HTTP_RESPONSE_HEADERS
+      
       HTTP_DELEGATE_REQUEST_PROPERTY_ID typedef SDWORD
       DelegateRequestReservedProperty equ 0
-      DelegateRequestDelegateUrlProperty equ 1
       _HTTP_DELEGATE_REQUEST_PROPERTY_ID typedef HTTP_DELEGATE_REQUEST_PROPERTY_ID
       PHTTP_DELEGATE_REQUEST_PROPERTY_ID typedef ptr HTTP_DELEGATE_REQUEST_PROPERTY_ID
-      HTTP_DELEGATE_REQUEST_PROPERTY_INFO struct
-        PropertyId HTTP_DELEGATE_REQUEST_PROPERTY_ID ?
+      
+      HTTP_DELEGATE_REQUEST_PROPERTY_INFO struct 8
+        ProperyId HTTP_DELEGATE_REQUEST_PROPERTY_ID ?
         PropertyInfoLength ULONG ?
         PropertyInfo PVOID ?
       HTTP_DELEGATE_REQUEST_PROPERTY_INFO ends
       _HTTP_DELEGATE_REQUEST_PROPERTY_INFO typedef HTTP_DELEGATE_REQUEST_PROPERTY_INFO
       PHTTP_DELEGATE_REQUEST_PROPERTY_INFO typedef ptr HTTP_DELEGATE_REQUEST_PROPERTY_INFO
-      HTTP_CREATE_REQUEST_QUEUE_PROPERTY_ID typedef SDWORD
-      CreateRequestQueueExternalIdProperty equ 1
-      CreateRequestQueueMax equ 2
-      _HTTP_CREATE_REQUEST_QUEUE_PROPERTY_ID typedef HTTP_CREATE_REQUEST_QUEUE_PROPERTY_ID
-      PHTTP_CREATE_REQUEST_QUEUE_PROPERTY_ID typedef ptr HTTP_CREATE_REQUEST_QUEUE_PROPERTY_ID
-      HTTP_CREATE_REQUEST_QUEUE_PROPERTY_INFO struct
-        PropertyId HTTP_CREATE_REQUEST_QUEUE_PROPERTY_ID ?
-        PropertyInfoLength ULONG ?
-        PropertyInfo PVOID ?
-      HTTP_CREATE_REQUEST_QUEUE_PROPERTY_INFO ends
-      _HTTP_CREATE_REQUEST_QUEUE_PROPERTY_INFO typedef HTTP_CREATE_REQUEST_QUEUE_PROPERTY_INFO
-      PHTTP_CREATE_REQUEST_QUEUE_PROPERTY_INFO typedef ptr HTTP_CREATE_REQUEST_QUEUE_PROPERTY_INFO
-      HTTP_TRANSPORT_ADDRESS struct
+      
+      HTTP_TRANSPORT_ADDRESS struct 8
         pRemoteAddress PSOCKADDR ?
         pLocalAddress PSOCKADDR ?
       HTTP_TRANSPORT_ADDRESS ends
       _HTTP_TRANSPORT_ADDRESS typedef HTTP_TRANSPORT_ADDRESS
       PHTTP_TRANSPORT_ADDRESS typedef ptr HTTP_TRANSPORT_ADDRESS
-      HTTP_COOKED_URL struct
+      
+      HTTP_COOKED_URL struct 8
         FullUrlLength USHORT ?
         HostLength USHORT ?
         AbsPathLength USHORT ?
@@ -654,6 +673,7 @@ ifndef __HTTP_H__
       HTTP_COOKED_URL ends
       _HTTP_COOKED_URL typedef HTTP_COOKED_URL
       PHTTP_COOKED_URL typedef ptr HTTP_COOKED_URL
+      
       HTTP_URL_CONTEXT typedef ULONGLONG
       if _WIN32_WINNT ge 0600h
         HTTP_URL_FLAG_REMOVE_ALL equ 00000001h
@@ -663,6 +683,7 @@ ifndef __HTTP_H__
         HttpAuthStatusFailure equ 2
         _HTTP_AUTH_STATUS typedef HTTP_AUTH_STATUS
         PHTTP_AUTH_STATUS typedef ptr HTTP_AUTH_STATUS
+        
         HTTP_REQUEST_AUTH_TYPE typedef SDWORD
         HttpRequestAuthTypeNone equ 0
         HttpRequestAuthTypeBasic equ 1
@@ -672,8 +693,9 @@ ifndef __HTTP_H__
         HttpRequestAuthTypeKerberos equ 5
         _HTTP_REQUEST_AUTH_TYPE typedef HTTP_REQUEST_AUTH_TYPE
         PHTTP_REQUEST_AUTH_TYPE typedef ptr HTTP_REQUEST_AUTH_TYPE
+        
       endif
-      HTTP_SSL_CLIENT_CERT_INFO struct
+      HTTP_SSL_CLIENT_CERT_INFO struct 8
         CertFlags ULONG ?
         CertEncodedSize ULONG ?
         pCertEncoded PUCHAR ?
@@ -682,11 +704,11 @@ ifndef __HTTP_H__
       HTTP_SSL_CLIENT_CERT_INFO ends
       _HTTP_SSL_CLIENT_CERT_INFO typedef HTTP_SSL_CLIENT_CERT_INFO
       PHTTP_SSL_CLIENT_CERT_INFO typedef ptr HTTP_SSL_CLIENT_CERT_INFO
+      
       if _WIN32_WINNT ge _WIN32_WINNT_WIN7
         HTTP_RECEIVE_SECURE_CHANNEL_TOKEN equ 1h
-        HTTP_RECEIVE_FULL_CHAIN equ 2h
       endif
-      HTTP_SSL_INFO struct
+      HTTP_SSL_INFO struct 8
         ServerCertKeySize USHORT ?
         ConnectionKeySize USHORT ?
         ServerCertIssuerSize ULONG ?
@@ -698,7 +720,8 @@ ifndef __HTTP_H__
       HTTP_SSL_INFO ends
       _HTTP_SSL_INFO typedef HTTP_SSL_INFO
       PHTTP_SSL_INFO typedef ptr HTTP_SSL_INFO
-      HTTP_SSL_PROTOCOL_INFO struct
+      
+      HTTP_SSL_PROTOCOL_INFO struct 8
         Protocol ULONG ?
         CipherType ULONG ?
         CipherStrength ULONG ?
@@ -709,6 +732,7 @@ ifndef __HTTP_H__
       HTTP_SSL_PROTOCOL_INFO ends
       _HTTP_SSL_PROTOCOL_INFO typedef HTTP_SSL_PROTOCOL_INFO
       PHTTP_SSL_PROTOCOL_INFO typedef ptr HTTP_SSL_PROTOCOL_INFO
+      
       HTTP_REQUEST_SIZING_TYPE typedef SDWORD
       HttpRequestSizingTypeTlsHandshakeLeg1ClientData equ 0
       HttpRequestSizingTypeTlsHandshakeLeg1ServerData equ 1
@@ -718,11 +742,12 @@ ifndef __HTTP_H__
       HttpRequestSizingTypeMax equ 5
       _HTTP_REQUEST_SIZING_TYPE typedef HTTP_REQUEST_SIZING_TYPE
       PHTTP_REQUEST_SIZING_TYPE typedef ptr HTTP_REQUEST_SIZING_TYPE
+      
       HTTP_REQUEST_SIZING_INFO_FLAG_TCP_FAST_OPEN equ 00000001h
       HTTP_REQUEST_SIZING_INFO_FLAG_TLS_SESSION_RESUMPTION equ 00000002h
       HTTP_REQUEST_SIZING_INFO_FLAG_TLS_FALSE_START equ 00000004h
       HTTP_REQUEST_SIZING_INFO_FLAG_FIRST_REQUEST equ 00000008h
-      HTTP_REQUEST_SIZING_INFO struct
+      HTTP_REQUEST_SIZING_INFO struct 8
         Flags ULONGLONG ?
         RequestIndex ULONG ?
         RequestSizingCount ULONG ?
@@ -730,6 +755,7 @@ ifndef __HTTP_H__
       HTTP_REQUEST_SIZING_INFO ends
       _HTTP_REQUEST_SIZING_INFO typedef HTTP_REQUEST_SIZING_INFO
       PHTTP_REQUEST_SIZING_INFO typedef ptr HTTP_REQUEST_SIZING_INFO
+      
       HTTP_REQUEST_TIMING_TYPE typedef SDWORD
       HttpRequestTimingTypeConnectionStart equ 0
       HttpRequestTimingTypeDataStart equ 1
@@ -764,12 +790,14 @@ ifndef __HTTP_H__
       HttpRequestTimingTypeMax equ 30
       _HTTP_REQUEST_TIMING_TYPE typedef HTTP_REQUEST_TIMING_TYPE
       PHTTP_REQUEST_TIMING_TYPE typedef ptr HTTP_REQUEST_TIMING_TYPE
-      HTTP_REQUEST_TIMING_INFO struct
+      
+      HTTP_REQUEST_TIMING_INFO struct 8
         RequestTimingCount ULONG ?
         RequestTiming ULONGLONG HttpRequestTimingTypeMax dup (?)
       HTTP_REQUEST_TIMING_INFO ends
       _HTTP_REQUEST_TIMING_INFO typedef HTTP_REQUEST_TIMING_INFO
       PHTTP_REQUEST_TIMING_INFO typedef ptr HTTP_REQUEST_TIMING_INFO
+      
       if _WIN32_WINNT ge 0600h
         HTTP_REQUEST_INFO_TYPE typedef SDWORD
         HttpRequestInfoTypeAuth equ 0
@@ -784,19 +812,21 @@ ifndef __HTTP_H__
         HttpRequestInfoTypeTcpInfoV1 equ 9
         _HTTP_REQUEST_INFO_TYPE typedef HTTP_REQUEST_INFO_TYPE
         PHTTP_REQUEST_INFO_TYPE typedef ptr HTTP_REQUEST_INFO_TYPE
-        HTTP_REQUEST_INFO struct
+        
+        HTTP_REQUEST_INFO struct 8
           InfoType HTTP_REQUEST_INFO_TYPE ?
           InfoLength ULONG ?
           pInfo PVOID ?
         HTTP_REQUEST_INFO ends
         _HTTP_REQUEST_INFO typedef HTTP_REQUEST_INFO
         PHTTP_REQUEST_INFO typedef ptr HTTP_REQUEST_INFO
+        
         ifndef __SECSTATUS_DEFINED__
           SECURITY_STATUS typedef LONG
           __SECSTATUS_DEFINED__ equ <>
         endif
-        HTTP_REQUEST_AUTH_FLAG_TOKEN_FOR_CACHED_CRED equ (00000001h)
-        HTTP_REQUEST_AUTH_INFO struct
+        HTTP_REQUEST_AUTH_FLAG_TOKEN_FOR_CACHED_CRED equ 00000001h
+        HTTP_REQUEST_AUTH_INFO struct 8
           AuthStatus HTTP_AUTH_STATUS ?
           SecStatus SECURITY_STATUS ?
           Flags ULONG ?
@@ -813,13 +843,14 @@ ifndef __HTTP_H__
         HTTP_REQUEST_AUTH_INFO ends
         _HTTP_REQUEST_AUTH_INFO typedef HTTP_REQUEST_AUTH_INFO
         PHTTP_REQUEST_AUTH_INFO typedef ptr HTTP_REQUEST_AUTH_INFO
+        
       endif
-      HTTP_REQUEST_V1 struct
+      HTTP_REQUEST_V1 struct 8
         Flags ULONG ?
         ConnectionId HTTP_CONNECTION_ID ?
         RequestId HTTP_REQUEST_ID ?
         UrlContext HTTP_URL_CONTEXT ?
-        Version HTTP_VERSION <>
+        Version HTTP_VERSION_ <>
         Verb HTTP_VERB ?
         UnknownVerbLength USHORT ?
         RawUrlLength USHORT ?
@@ -836,16 +867,16 @@ ifndef __HTTP_H__
       HTTP_REQUEST_V1 ends
       _HTTP_REQUEST_V1 typedef HTTP_REQUEST_V1
       PHTTP_REQUEST_V1 typedef ptr HTTP_REQUEST_V1
+      
       if _WIN32_WINNT ge 0600h
         ifdef __cplusplus
           ;[...]
         else
-          HTTP_REQUEST_V2 struct
-            RequestInfoCount USHORT ?
-            pRequestInfo PHTTP_REQUEST_INFO ?
+          HTTP_REQUEST_V2 struct 8
+            HTTP_REQUEST_V1 <>
+            RequestInfoCount  USHORT  ?
+            pRequestInfo  PHTTP_REQUEST_INFO  ?
           HTTP_REQUEST_V2 ends
-          _HTTP_REQUEST_V2 typedef HTTP_REQUEST_V2
-          PHTTP_REQUEST_V2 typedef ptr HTTP_REQUEST_V2
         endif
         HTTP_REQUEST typedef HTTP_REQUEST_V2
       else
@@ -855,10 +886,9 @@ ifndef __HTTP_H__
       HTTP_REQUEST_FLAG_MORE_ENTITY_BODY_EXISTS equ 00000001h
       HTTP_REQUEST_FLAG_IP_ROUTED equ 00000002h
       HTTP_REQUEST_FLAG_HTTP2 equ 00000004h
-      HTTP_REQUEST_FLAG_HTTP3 equ 00000008h
-      HTTP_RESPONSE_V1 struct
+      HTTP_RESPONSE_V1 struct 8
         Flags ULONG ?
-        Version HTTP_VERSION <>
+        Version HTTP_VERSION_ <>
         StatusCode USHORT ?
         ReasonLength USHORT ?
         pReason PCSTR ?
@@ -868,6 +898,7 @@ ifndef __HTTP_H__
       HTTP_RESPONSE_V1 ends
       _HTTP_RESPONSE_V1 typedef HTTP_RESPONSE_V1
       PHTTP_RESPONSE_V1 typedef ptr HTTP_RESPONSE_V1
+      
       if _WIN32_WINNT ge 0600h
         HTTP_RESPONSE_FLAG_MULTIPLE_ENCODINGS_AVAILABLE equ 00000001h
         HTTP_RESPONSE_FLAG_MORE_ENTITY_BODY_EXISTS equ 00000002h
@@ -878,15 +909,17 @@ ifndef __HTTP_H__
         HttpResponseInfoTypeChannelBind equ 3
         _HTTP_RESPONSE_INFO_TYPE typedef HTTP_RESPONSE_INFO_TYPE
         PHTTP_RESPONSE_INFO_TYPE typedef HTTP_RESPONSE_INFO_TYPE
-        HTTP_RESPONSE_INFO struct
+        
+        HTTP_RESPONSE_INFO struct 8
           Type_ HTTP_RESPONSE_INFO_TYPE ?
           Length_ ULONG ?
           pInfo PVOID ?
         HTTP_RESPONSE_INFO ends
         _HTTP_RESPONSE_INFO typedef HTTP_RESPONSE_INFO
         PHTTP_RESPONSE_INFO typedef ptr HTTP_RESPONSE_INFO
+        
         HTTP_RESPONSE_INFO_FLAGS_PRESERVE_ORDER equ 00000001h
-        HTTP_MULTIPLE_KNOWN_HEADERS struct
+        HTTP_MULTIPLE_KNOWN_HEADERS struct 8
           HeaderId HTTP_HEADER_ID ?
           Flags ULONG ?
           KnownHeaderCount USHORT ?
@@ -894,27 +927,28 @@ ifndef __HTTP_H__
         HTTP_MULTIPLE_KNOWN_HEADERS ends
         _HTTP_MULTIPLE_KNOWN_HEADERS typedef HTTP_MULTIPLE_KNOWN_HEADERS
         PHTTP_MULTIPLE_KNOWN_HEADERS typedef ptr HTTP_MULTIPLE_KNOWN_HEADERS
+        
         ifdef __cplusplus
           ;[...]
         else
-          HTTP_RESPONSE_V2 struct
-            ResponseInfoCount USHORT ?
+          HTTP_RESPONSE_V2 struct 8
+            HTTP_RESPONSE_V1 <>
+            ResponseInfoCount USHORT  ?
             pResponseInfo PHTTP_RESPONSE_INFO ?
           HTTP_RESPONSE_V2 ends
-          _HTTP_RESPONSE_V2 typedef HTTP_RESPONSE_V2
-          PHTTP_RESPONSE_V2 typedef ptr HTTP_RESPONSE_V2
         endif
         HTTP_RESPONSE typedef HTTP_RESPONSE_V2
       else
         HTTP_RESPONSE typedef HTTP_RESPONSE_V1
       endif
       PHTTP_RESPONSE typedef ptr HTTP_RESPONSE
-      HTTPAPI_VERSION struct
+      HTTPAPI_VERSION struct 8
         HttpApiMajorVersion USHORT ?
         HttpApiMinorVersion USHORT ?
       HTTPAPI_VERSION ends
       _HTTPAPI_VERSION typedef HTTPAPI_VERSION
       PHTTPAPI_VERSION typedef ptr HTTPAPI_VERSION
+      
       if _WIN32_WINNT ge 0600h
         HTTPAPI_VERSION_2 equ { 2, 0 }
       endif
@@ -938,12 +972,14 @@ ifndef __HTTP_H__
       HttpCachePolicyMaximum equ 3
       _HTTP_CACHE_POLICY_TYPE typedef HTTP_CACHE_POLICY_TYPE
       PHTTP_CACHE_POLICY_TYPE typedef ptr HTTP_CACHE_POLICY_TYPE
-      HTTP_CACHE_POLICY struct
+      
+      HTTP_CACHE_POLICY struct 8
         Policy HTTP_CACHE_POLICY_TYPE ?
         SecondsToLive ULONG ?
       HTTP_CACHE_POLICY ends
       _HTTP_CACHE_POLICY typedef HTTP_CACHE_POLICY
       PHTTP_CACHE_POLICY typedef ptr HTTP_CACHE_POLICY
+      
       HTTP_SERVICE_CONFIG_ID typedef SDWORD
       HttpServiceConfigIPListenList equ 0
       HttpServiceConfigSSLCertInfo equ 1
@@ -965,36 +1001,42 @@ ifndef __HTTP_H__
       HttpServiceConfigMax equ 13
       _HTTP_SERVICE_CONFIG_ID typedef HTTP_SERVICE_CONFIG_ID
       PHTTP_SERVICE_CONFIG_ID typedef ptr HTTP_SERVICE_CONFIG_ID
+      
       HTTP_SERVICE_CONFIG_QUERY_TYPE typedef SDWORD
       HttpServiceConfigQueryExact equ 0
       HttpServiceConfigQueryNext equ 1
       HttpServiceConfigQueryMax equ 2
       _HTTP_SERVICE_CONFIG_QUERY_TYPE typedef HTTP_SERVICE_CONFIG_QUERY_TYPE
       PHTTP_SERVICE_CONFIG_QUERY_TYPE typedef ptr HTTP_SERVICE_CONFIG_QUERY_TYPE
-      HTTP_SERVICE_CONFIG_SSL_KEY struct
+      
+      HTTP_SERVICE_CONFIG_SSL_KEY struct 8
         pIpPort PSOCKADDR ?
       HTTP_SERVICE_CONFIG_SSL_KEY ends
       _HTTP_SERVICE_CONFIG_SSL_KEY typedef HTTP_SERVICE_CONFIG_SSL_KEY
       PHTTP_SERVICE_CONFIG_SSL_KEY typedef ptr HTTP_SERVICE_CONFIG_SSL_KEY
-      HTTP_SERVICE_CONFIG_SSL_KEY_EX struct
+      
+      HTTP_SERVICE_CONFIG_SSL_KEY_EX struct 8
         IpPort SOCKADDR_STORAGE <>
       HTTP_SERVICE_CONFIG_SSL_KEY_EX ends
       _HTTP_SERVICE_CONFIG_SSL_KEY_EX typedef HTTP_SERVICE_CONFIG_SSL_KEY_EX
       PHTTP_SERVICE_CONFIG_SSL_KEY_EX typedef ptr HTTP_SERVICE_CONFIG_SSL_KEY_EX
+      
       if _WIN32_WINNT ge _WIN32_WINNT_WIN8
-        HTTP_SERVICE_CONFIG_SSL_SNI_KEY struct
+        HTTP_SERVICE_CONFIG_SSL_SNI_KEY struct 8
           IpPort SOCKADDR_STORAGE <>
           Host PWSTR ?
         HTTP_SERVICE_CONFIG_SSL_SNI_KEY ends
         _HTTP_SERVICE_CONFIG_SSL_SNI_KEY typedef HTTP_SERVICE_CONFIG_SSL_SNI_KEY
         PHTTP_SERVICE_CONFIG_SSL_SNI_KEY typedef ptr HTTP_SERVICE_CONFIG_SSL_SNI_KEY
-        HTTP_SERVICE_CONFIG_SSL_CCS_KEY struct
+        
+        HTTP_SERVICE_CONFIG_SSL_CCS_KEY struct 8
           LocalAddress SOCKADDR_STORAGE <>
         HTTP_SERVICE_CONFIG_SSL_CCS_KEY ends
         _HTTP_SERVICE_CONFIG_SSL_CCS_KEY typedef HTTP_SERVICE_CONFIG_SSL_CCS_KEY
         PHTTP_SERVICE_CONFIG_SSL_CCS_KEY typedef ptr HTTP_SERVICE_CONFIG_SSL_CCS_KEY
+        
       endif
-      HTTP_SERVICE_CONFIG_SSL_PARAM struct
+      HTTP_SERVICE_CONFIG_SSL_PARAM struct 8
         SslHashLength ULONG ?
         pSslHash PVOID ?
         AppId GUID <>
@@ -1008,77 +1050,49 @@ ifndef __HTTP_H__
       HTTP_SERVICE_CONFIG_SSL_PARAM ends
       _HTTP_SERVICE_CONFIG_SSL_PARAM typedef HTTP_SERVICE_CONFIG_SSL_PARAM
       PHTTP_SERVICE_CONFIG_SSL_PARAM typedef ptr HTTP_SERVICE_CONFIG_SSL_PARAM
+      
       HTTP_SSL_SERVICE_CONFIG_EX_PARAM_TYPE typedef SDWORD
       ExParamTypeHttp2Window equ 0
       ExParamTypeHttp2SettingsLimits equ 1
       ExParamTypeHttpPerformance equ 2
-      ExParamTypeTlsRestrictions equ 3
-      ExParamTypeErrorHeaders equ 4
-      ExParamTypeTlsSessionTicketKeys equ 5
-      ExParamTypeMax equ 6
+      ExParamTypeMax equ 3
       _HTTP_SSL_SERVICE_CONFIG_EX_PARAM_TYPE typedef HTTP_SSL_SERVICE_CONFIG_EX_PARAM_TYPE
       PHTTP_SSL_SERVICE_CONFIG_EX_PARAM_TYPE typedef ptr HTTP_SSL_SERVICE_CONFIG_EX_PARAM_TYPE
-      HTTP2_WINDOW_SIZE_PARAM struct
+      
+      HTTP2_WINDOW_SIZE_PARAM struct 8
         Http2ReceiveWindowSize DWORD ?
       HTTP2_WINDOW_SIZE_PARAM ends
       _HTTP2_WINDOW_SIZE_PARAM typedef HTTP2_WINDOW_SIZE_PARAM
       PHTTP2_WINDOW_SIZE_PARAM typedef ptr HTTP2_WINDOW_SIZE_PARAM
-      HTTP2_SETTINGS_LIMITS_PARAM struct
+      
+      HTTP2_SETTINGS_LIMITS_PARAM struct 8
         Http2MaxSettingsPerFrame DWORD ?
         Http2MaxSettingsPerMinute DWORD ?
       HTTP2_SETTINGS_LIMITS_PARAM ends
       _HTTP2_SETTINGS_LIMITS_PARAM typedef HTTP2_SETTINGS_LIMITS_PARAM
       PHTTP2_SETTINGS_LIMITS_PARAM typedef ptr HTTP2_SETTINGS_LIMITS_PARAM
-      HTTP_PERFORMANCE_PARAM_TYPE typedef SDWORD
-      PerformanceParamSendBufferingFlags equ 0
-      PerformanceParamAggressiveICW equ 1
-      PerformanceParamMaxSendBufferSize equ 2
-      PerformanceParamMaxConcurrentClientStreams equ 3
-      PerformanceParamMaxReceiveBufferSize equ 4
-      PerformanceParamDecryptOnSspiThread equ 5
-      PerformanceParamMax equ 6
-      _HTTP_PERFORMANCE_PARAM_TYPE typedef HTTP_PERFORMANCE_PARAM_TYPE
-      PHTTP_PERFORMANCE_PARAM_TYPE typedef ptr HTTP_PERFORMANCE_PARAM_TYPE
-      HTTP_PERFORMANCE_PARAM struct
-        Type_ HTTP_PERFORMANCE_PARAM_TYPE ?
-        BufferSize ULONG ?
-        Buffer PVOID ?
+      
+      HTTP_PERFORMANCE_PARAM struct 8
+        SendBufferingFlags ULONGLONG ?
+        EnableAggressiveICW BOOLEAN ?
+        MaxBufferedSendBytes ULONG ?
+        MaxConcurrentClientStreams ULONG ?
       HTTP_PERFORMANCE_PARAM ends
       _HTTP_PERFORMANCE_PARAM typedef HTTP_PERFORMANCE_PARAM
       PHTTP_PERFORMANCE_PARAM typedef ptr HTTP_PERFORMANCE_PARAM
-      HTTP_TLS_RESTRICTIONS_PARAM struct
-        RestrictionCount ULONG ?
-        TlsRestrictions PVOID ?
-      HTTP_TLS_RESTRICTIONS_PARAM ends
-      _HTTP_TLS_RESTRICTIONS_PARAM typedef HTTP_TLS_RESTRICTIONS_PARAM
-      PHTTP_TLS_RESTRICTIONS_PARAM typedef ptr HTTP_TLS_RESTRICTIONS_PARAM
-      HTTP_ERROR_HEADERS_PARAM struct
-        StatusCode USHORT ?
-        HeaderCount USHORT ?
-        Headers PHTTP_UNKNOWN_HEADER ?
-      HTTP_ERROR_HEADERS_PARAM ends
-      _HTTP_ERROR_HEADERS_PARAM typedef HTTP_ERROR_HEADERS_PARAM
-      PHTTP_ERROR_HEADERS_PARAM typedef ptr HTTP_ERROR_HEADERS_PARAM
-      HTTP_TLS_SESSION_TICKET_KEYS_PARAM struct
-        SessionTicketKeyCount ULONG ?
-        SessionTicketKeys PVOID ?
-      HTTP_TLS_SESSION_TICKET_KEYS_PARAM ends
-      _HTTP_TLS_SESSION_TICKET_KEYS_PARAM typedef HTTP_TLS_SESSION_TICKET_KEYS_PARAM
-      PHTTP_TLS_SESSION_TICKET_KEYS_PARAM typedef ptr HTTP_TLS_SESSION_TICKET_KEYS_PARAM
-      HTTP_SERVICE_CONFIG_SSL_PARAM_EX struct
+      
+      HTTP_SERVICE_CONFIG_SSL_PARAM_EX struct 8
         ParamType HTTP_SSL_SERVICE_CONFIG_EX_PARAM_TYPE ?
         Flags ULONGLONG ?
         union
           Http2WindowSizeParam HTTP2_WINDOW_SIZE_PARAM <>
           Http2SettingsLimitsParam HTTP2_SETTINGS_LIMITS_PARAM <>
           HttpPerformanceParam HTTP_PERFORMANCE_PARAM <>
-          HttpTlsRestrictionsParam HTTP_TLS_RESTRICTIONS_PARAM <>
-          HttpErrorHeadersParam HTTP_ERROR_HEADERS_PARAM <>
-          HttpTlsSessionTicketKeysParam HTTP_TLS_SESSION_TICKET_KEYS_PARAM <>
         ends
       HTTP_SERVICE_CONFIG_SSL_PARAM_EX ends
       _HTTP_SERVICE_CONFIG_SSL_PARAM_EX typedef HTTP_SERVICE_CONFIG_SSL_PARAM_EX
       PHTTP_SERVICE_CONFIG_SSL_PARAM_EX typedef ptr HTTP_SERVICE_CONFIG_SSL_PARAM_EX
+      
       HTTP_SERVICE_CONFIG_SSL_FLAG_USE_DS_MAPPER equ 00000001h
       HTTP_SERVICE_CONFIG_SSL_FLAG_NEGOTIATE_CLIENT_CERT equ 00000002h
       if _WIN32_WINNT lt 0600h
@@ -1094,69 +1108,76 @@ ifndef __HTTP_H__
       HTTP_SERVICE_CONFIG_SSL_FLAG_DISABLE_LEGACY_TLS equ 00000400h
       HTTP_SERVICE_CONFIG_SSL_FLAG_ENABLE_SESSION_TICKET equ 00000800h
       HTTP_SERVICE_CONFIG_SSL_FLAG_DISABLE_TLS12 equ 00001000h
-      HTTP_SERVICE_CONFIG_SSL_FLAG_ENABLE_CLIENT_CORRELATION equ 00002000h
-      HTTP_SERVICE_CONFIG_SSL_FLAG_DISABLE_SESSION_ID equ 00004000h
-      HTTP_SERVICE_CONFIG_SSL_SET struct
+      HTTP_SERVICE_CONFIG_SSL_SET struct 8
         KeyDesc HTTP_SERVICE_CONFIG_SSL_KEY <>
         ParamDesc HTTP_SERVICE_CONFIG_SSL_PARAM <>
       HTTP_SERVICE_CONFIG_SSL_SET ends
       _HTTP_SERVICE_CONFIG_SSL_SET typedef HTTP_SERVICE_CONFIG_SSL_SET
       PHTTP_SERVICE_CONFIG_SSL_SET typedef ptr HTTP_SERVICE_CONFIG_SSL_SET
+      
       if _WIN32_WINNT ge _WIN32_WINNT_WIN8
-        HTTP_SERVICE_CONFIG_SSL_SNI_SET struct
+        HTTP_SERVICE_CONFIG_SSL_SNI_SET struct 8
           KeyDesc HTTP_SERVICE_CONFIG_SSL_SNI_KEY <>
           ParamDesc HTTP_SERVICE_CONFIG_SSL_PARAM <>
         HTTP_SERVICE_CONFIG_SSL_SNI_SET ends
         _HTTP_SERVICE_CONFIG_SSL_SNI_SET typedef HTTP_SERVICE_CONFIG_SSL_SNI_SET
         PHTTP_SERVICE_CONFIG_SSL_SNI_SET typedef ptr HTTP_SERVICE_CONFIG_SSL_SNI_SET
-        HTTP_SERVICE_CONFIG_SSL_CCS_SET struct
+        
+        HTTP_SERVICE_CONFIG_SSL_CCS_SET struct 8
           KeyDesc HTTP_SERVICE_CONFIG_SSL_CCS_KEY <>
           ParamDesc HTTP_SERVICE_CONFIG_SSL_PARAM <>
         HTTP_SERVICE_CONFIG_SSL_CCS_SET ends
         _HTTP_SERVICE_CONFIG_SSL_CCS_SET typedef HTTP_SERVICE_CONFIG_SSL_CCS_SET
         PHTTP_SERVICE_CONFIG_SSL_CCS_SET typedef ptr HTTP_SERVICE_CONFIG_SSL_CCS_SET
-        HTTP_SERVICE_CONFIG_SSL_SET_EX struct
+        
+        HTTP_SERVICE_CONFIG_SSL_SET_EX struct 8
           KeyDesc HTTP_SERVICE_CONFIG_SSL_KEY_EX <>
           ParamDesc HTTP_SERVICE_CONFIG_SSL_PARAM_EX <>
         HTTP_SERVICE_CONFIG_SSL_SET_EX ends
         _HTTP_SERVICE_CONFIG_SSL_SET_EX typedef HTTP_SERVICE_CONFIG_SSL_SET_EX
         PHTTP_SERVICE_CONFIG_SSL_SET_EX typedef ptr HTTP_SERVICE_CONFIG_SSL_SET_EX
-        HTTP_SERVICE_CONFIG_SSL_SNI_SET_EX struct
+        
+        HTTP_SERVICE_CONFIG_SSL_SNI_SET_EX struct 8
           KeyDesc HTTP_SERVICE_CONFIG_SSL_SNI_KEY <>
           ParamDesc HTTP_SERVICE_CONFIG_SSL_PARAM_EX <>
         HTTP_SERVICE_CONFIG_SSL_SNI_SET_EX ends
         _HTTP_SERVICE_CONFIG_SSL_SNI_SET_EX typedef HTTP_SERVICE_CONFIG_SSL_SNI_SET_EX
         PHTTP_SERVICE_CONFIG_SSL_SNI_SET_EX typedef ptr HTTP_SERVICE_CONFIG_SSL_SNI_SET_EX
-        HTTP_SERVICE_CONFIG_SSL_CCS_SET_EX struct
+        
+        HTTP_SERVICE_CONFIG_SSL_CCS_SET_EX struct 8
           KeyDesc HTTP_SERVICE_CONFIG_SSL_CCS_KEY <>
           ParamDesc HTTP_SERVICE_CONFIG_SSL_PARAM_EX <>
         HTTP_SERVICE_CONFIG_SSL_CCS_SET_EX ends
         _HTTP_SERVICE_CONFIG_SSL_CCS_SET_EX typedef HTTP_SERVICE_CONFIG_SSL_CCS_SET_EX
         PHTTP_SERVICE_CONFIG_SSL_CCS_SET_EX typedef ptr HTTP_SERVICE_CONFIG_SSL_CCS_SET_EX
+        
       endif
-      HTTP_SERVICE_CONFIG_SSL_QUERY struct
+      HTTP_SERVICE_CONFIG_SSL_QUERY struct 8
         QueryDesc HTTP_SERVICE_CONFIG_QUERY_TYPE ?
         KeyDesc HTTP_SERVICE_CONFIG_SSL_KEY <>
         dwToken DWORD ?
       HTTP_SERVICE_CONFIG_SSL_QUERY ends
       _HTTP_SERVICE_CONFIG_SSL_QUERY typedef HTTP_SERVICE_CONFIG_SSL_QUERY
       PHTTP_SERVICE_CONFIG_SSL_QUERY typedef ptr HTTP_SERVICE_CONFIG_SSL_QUERY
+      
       if _WIN32_WINNT ge _WIN32_WINNT_WIN8
-        HTTP_SERVICE_CONFIG_SSL_SNI_QUERY struct
+        HTTP_SERVICE_CONFIG_SSL_SNI_QUERY struct 8
           QueryDesc HTTP_SERVICE_CONFIG_QUERY_TYPE ?
           KeyDesc HTTP_SERVICE_CONFIG_SSL_SNI_KEY <>
           dwToken DWORD ?
         HTTP_SERVICE_CONFIG_SSL_SNI_QUERY ends
         _HTTP_SERVICE_CONFIG_SSL_SNI_QUERY typedef HTTP_SERVICE_CONFIG_SSL_SNI_QUERY
         PHTTP_SERVICE_CONFIG_SSL_SNI_QUERY typedef ptr HTTP_SERVICE_CONFIG_SSL_SNI_QUERY
-        HTTP_SERVICE_CONFIG_SSL_CCS_QUERY struct
+        
+        HTTP_SERVICE_CONFIG_SSL_CCS_QUERY struct 8
           QueryDesc HTTP_SERVICE_CONFIG_QUERY_TYPE ?
           KeyDesc HTTP_SERVICE_CONFIG_SSL_CCS_KEY <>
           dwToken DWORD ?
         HTTP_SERVICE_CONFIG_SSL_CCS_QUERY ends
         _HTTP_SERVICE_CONFIG_SSL_CCS_QUERY typedef HTTP_SERVICE_CONFIG_SSL_CCS_QUERY
         PHTTP_SERVICE_CONFIG_SSL_CCS_QUERY typedef ptr HTTP_SERVICE_CONFIG_SSL_CCS_QUERY
-        HTTP_SERVICE_CONFIG_SSL_QUERY_EX struct
+        
+        HTTP_SERVICE_CONFIG_SSL_QUERY_EX struct 8
           QueryDesc HTTP_SERVICE_CONFIG_QUERY_TYPE ?
           KeyDesc HTTP_SERVICE_CONFIG_SSL_KEY_EX <>
           dwToken DWORD ?
@@ -1164,7 +1185,8 @@ ifndef __HTTP_H__
         HTTP_SERVICE_CONFIG_SSL_QUERY_EX ends
         _HTTP_SERVICE_CONFIG_SSL_QUERY_EX typedef HTTP_SERVICE_CONFIG_SSL_QUERY_EX
         PHTTP_SERVICE_CONFIG_SSL_QUERY_EX typedef ptr HTTP_SERVICE_CONFIG_SSL_QUERY_EX
-        HTTP_SERVICE_CONFIG_SSL_SNI_QUERY_EX struct
+        
+        HTTP_SERVICE_CONFIG_SSL_SNI_QUERY_EX struct 8
           QueryDesc HTTP_SERVICE_CONFIG_QUERY_TYPE ?
           KeyDesc HTTP_SERVICE_CONFIG_SSL_SNI_KEY <>
           dwToken DWORD ?
@@ -1172,7 +1194,8 @@ ifndef __HTTP_H__
         HTTP_SERVICE_CONFIG_SSL_SNI_QUERY_EX ends
         _HTTP_SERVICE_CONFIG_SSL_SNI_QUERY_EX typedef HTTP_SERVICE_CONFIG_SSL_SNI_QUERY_EX
         PHTTP_SERVICE_CONFIG_SSL_SNI_QUERY_EX typedef ptr HTTP_SERVICE_CONFIG_SSL_SNI_QUERY_EX
-        HTTP_SERVICE_CONFIG_SSL_CCS_QUERY_EX struct
+        
+        HTTP_SERVICE_CONFIG_SSL_CCS_QUERY_EX struct 8
           QueryDesc HTTP_SERVICE_CONFIG_QUERY_TYPE ?
           KeyDesc HTTP_SERVICE_CONFIG_SSL_CCS_KEY <>
           dwToken DWORD ?
@@ -1180,236 +1203,153 @@ ifndef __HTTP_H__
         HTTP_SERVICE_CONFIG_SSL_CCS_QUERY_EX ends
         _HTTP_SERVICE_CONFIG_SSL_CCS_QUERY_EX typedef HTTP_SERVICE_CONFIG_SSL_CCS_QUERY_EX
         PHTTP_SERVICE_CONFIG_SSL_CCS_QUERY_EX typedef ptr HTTP_SERVICE_CONFIG_SSL_CCS_QUERY_EX
+        
       endif
-      HTTP_SERVICE_CONFIG_IP_LISTEN_PARAM struct
+      HTTP_SERVICE_CONFIG_IP_LISTEN_PARAM struct 8
         AddrLength USHORT ?
         pAddress PSOCKADDR ?
       HTTP_SERVICE_CONFIG_IP_LISTEN_PARAM ends
       _HTTP_SERVICE_CONFIG_IP_LISTEN_PARAM typedef HTTP_SERVICE_CONFIG_IP_LISTEN_PARAM
       PHTTP_SERVICE_CONFIG_IP_LISTEN_PARAM typedef ptr HTTP_SERVICE_CONFIG_IP_LISTEN_PARAM
-      HTTP_SERVICE_CONFIG_IP_LISTEN_QUERY struct
+      
+      HTTP_SERVICE_CONFIG_IP_LISTEN_QUERY struct 8
         AddrCount ULONG ?
         AddrList SOCKADDR_STORAGE ANYSIZE_ARRAY dup (<>)
       HTTP_SERVICE_CONFIG_IP_LISTEN_QUERY ends
       _HTTP_SERVICE_CONFIG_IP_LISTEN_QUERY typedef HTTP_SERVICE_CONFIG_IP_LISTEN_QUERY
       PHTTP_SERVICE_CONFIG_IP_LISTEN_QUERY typedef ptr HTTP_SERVICE_CONFIG_IP_LISTEN_QUERY
-      HTTP_SERVICE_CONFIG_URLACL_KEY struct
+      
+      HTTP_SERVICE_CONFIG_URLACL_KEY struct 8
         pUrlPrefix PWSTR ?
       HTTP_SERVICE_CONFIG_URLACL_KEY ends
       _HTTP_SERVICE_CONFIG_URLACL_KEY typedef HTTP_SERVICE_CONFIG_URLACL_KEY
       PHTTP_SERVICE_CONFIG_URLACL_KEY typedef ptr HTTP_SERVICE_CONFIG_URLACL_KEY
-      HTTP_SERVICE_CONFIG_URLACL_PARAM struct
+      
+      HTTP_SERVICE_CONFIG_URLACL_PARAM struct 8
         pStringSecurityDescriptor PWSTR ?
       HTTP_SERVICE_CONFIG_URLACL_PARAM ends
       _HTTP_SERVICE_CONFIG_URLACL_PARAM typedef HTTP_SERVICE_CONFIG_URLACL_PARAM
       PHTTP_SERVICE_CONFIG_URLACL_PARAM typedef ptr HTTP_SERVICE_CONFIG_URLACL_PARAM
-      HTTP_SERVICE_CONFIG_URLACL_SET struct
+      
+      HTTP_SERVICE_CONFIG_URLACL_SET struct 8
         KeyDesc HTTP_SERVICE_CONFIG_URLACL_KEY <>
         ParamDesc HTTP_SERVICE_CONFIG_URLACL_PARAM <>
       HTTP_SERVICE_CONFIG_URLACL_SET ends
       _HTTP_SERVICE_CONFIG_URLACL_SET typedef HTTP_SERVICE_CONFIG_URLACL_SET
       PHTTP_SERVICE_CONFIG_URLACL_SET typedef ptr HTTP_SERVICE_CONFIG_URLACL_SET
-      HTTP_SERVICE_CONFIG_URLACL_QUERY struct
+      
+      HTTP_SERVICE_CONFIG_URLACL_QUERY struct 8
         QueryDesc HTTP_SERVICE_CONFIG_QUERY_TYPE ?
         KeyDesc HTTP_SERVICE_CONFIG_URLACL_KEY <>
         dwToken DWORD ?
       HTTP_SERVICE_CONFIG_URLACL_QUERY ends
       _HTTP_SERVICE_CONFIG_URLACL_QUERY typedef HTTP_SERVICE_CONFIG_URLACL_QUERY
       PHTTP_SERVICE_CONFIG_URLACL_QUERY typedef ptr HTTP_SERVICE_CONFIG_URLACL_QUERY
+      
       HTTP_SERVICE_CONFIG_CACHE_KEY typedef SDWORD
       MaxCacheResponseSize equ 0
       CacheRangeChunkSize equ 1
       _HTTP_SERVICE_CONFIG_CACHE_KEY typedef HTTP_SERVICE_CONFIG_CACHE_KEY
       PHTTP_SERVICE_CONFIG_CACHE_KEY typedef ptr HTTP_SERVICE_CONFIG_CACHE_KEY
+      
       HTTP_SERVICE_CONFIG_CACHE_PARAM typedef ULONG
       PHTTP_SERVICE_CONFIG_CACHE_PARAM typedef ptr ULONG
-      HTTP_SERVICE_CONFIG_CACHE_SET struct
+      HTTP_SERVICE_CONFIG_CACHE_SET struct 8
         KeyDesc HTTP_SERVICE_CONFIG_CACHE_KEY ?
         ParamDesc HTTP_SERVICE_CONFIG_CACHE_PARAM ?
       HTTP_SERVICE_CONFIG_CACHE_SET ends
       PHTTP_SERVICE_CONFIG_CACHE_SET typedef ptr HTTP_SERVICE_CONFIG_CACHE_SET
+      
       HTTP_REQUEST_PROPERTY typedef SDWORD
       HttpRequestPropertyIsb equ 0
       HttpRequestPropertyTcpInfoV0 equ 1
       HttpRequestPropertyQuicStats equ 2
       HttpRequestPropertyTcpInfoV1 equ 3
       HttpRequestPropertySni equ 4
-      HttpRequestPropertyStreamError equ 5
-      HttpRequestPropertyWskApiTimings equ 6
-      HttpRequestPropertyQuicApiTimings equ 7
       _HTTP_REQUEST_PROPERTY typedef HTTP_REQUEST_PROPERTY
       PHTTP_REQUEST_PROPERTY typedef ptr HTTP_REQUEST_PROPERTY
-      HTTP_QUERY_REQUEST_QUALIFIER_TCP struct
+      
+      HTTP_QUERY_REQUEST_QUALIFIER_TCP struct 8
         Freshness ULONGLONG ?
       HTTP_QUERY_REQUEST_QUALIFIER_TCP ends
       _HTTP_QUERY_REQUEST_QUALIFIER_TCP typedef HTTP_QUERY_REQUEST_QUALIFIER_TCP
       PHTTP_QUERY_REQUEST_QUALIFIER_TCP typedef ptr HTTP_QUERY_REQUEST_QUALIFIER_TCP
-      HTTP_QUERY_REQUEST_QUALIFIER_QUIC struct
+      
+      HTTP_QUERY_REQUEST_QUALIFIER_QUIC struct 8
         Freshness ULONGLONG ?
       HTTP_QUERY_REQUEST_QUALIFIER_QUIC ends
       _HTTP_QUERY_REQUEST_QUALIFIER_QUIC typedef HTTP_QUERY_REQUEST_QUALIFIER_QUIC
       PHTTP_QUERY_REQUEST_QUALIFIER_QUIC typedef ptr HTTP_QUERY_REQUEST_QUALIFIER_QUIC
+      
       HTTP_REQUEST_PROPERTY_SNI_HOST_MAX_LENGTH equ 255
       HTTP_REQUEST_PROPERTY_SNI_FLAG_SNI_USED equ 00000001h
       HTTP_REQUEST_PROPERTY_SNI_FLAG_NO_SNI equ 00000002h
-      HTTP_REQUEST_PROPERTY_SNI struct
+      HTTP_REQUEST_PROPERTY_SNI struct 8
         Hostname WCHAR HTTP_REQUEST_PROPERTY_SNI_HOST_MAX_LENGTH + 1 dup (?)
         Flags ULONG ?
       HTTP_REQUEST_PROPERTY_SNI ends
       _HTTP_REQUEST_PROPERTY_SNI typedef HTTP_REQUEST_PROPERTY_SNI
       PHTTP_REQUEST_PROPERTY_SNI typedef ptr HTTP_REQUEST_PROPERTY_SNI
-      HTTP_REQUEST_PROPERTY_STREAM_ERROR struct
-        ErrorCode ULONG ?
-      HTTP_REQUEST_PROPERTY_STREAM_ERROR ends
-      _HTTP_REQUEST_PROPERTY_STREAM_ERROR typedef HTTP_REQUEST_PROPERTY_STREAM_ERROR
-      PHTTP_REQUEST_PROPERTY_STREAM_ERROR typedef ptr HTTP_REQUEST_PROPERTY_STREAM_ERROR
-      HTTP_WSK_API_TIMINGS struct
-        ConnectCount ULONGLONG ?
-        ConnectSum ULONGLONG ?
-        DisconnectCount ULONGLONG ?
-        DisconnectSum ULONGLONG ?
-        SendCount ULONGLONG ?
-        SendSum ULONGLONG ?
-        ReceiveCount ULONGLONG ?
-        ReceiveSum ULONGLONG ?
-        ReleaseCount ULONGLONG ?
-        ReleaseSum ULONGLONG ?
-        ControlSocketCount ULONGLONG ?
-        ControlSocketSum ULONGLONG ?
-      HTTP_WSK_API_TIMINGS ends
-      _HTTP_WSK_API_TIMINGS typedef HTTP_WSK_API_TIMINGS
-      PHTTP_WSK_API_TIMINGS typedef ptr HTTP_WSK_API_TIMINGS
-      HTTP_QUIC_STREAM_API_TIMINGS struct
-        OpenCount ULONGLONG ?
-        OpenSum ULONGLONG ?
-        CloseCount ULONGLONG ?
-        CloseSum ULONGLONG ?
-        StartCount ULONGLONG ?
-        StartSum ULONGLONG ?
-        ShutdownCount ULONGLONG ?
-        ShutdownSum ULONGLONG ?
-        SendCount ULONGLONG ?
-        SendSum ULONGLONG ?
-        ReceiveSetEnabledCount ULONGLONG ?
-        ReceiveSetEnabledSum ULONGLONG ?
-        GetParamCount ULONGLONG ?
-        GetParamSum ULONGLONG ?
-        SetParamCount ULONGLONG ?
-        SetParamSum ULONGLONG ?
-        SetCallbackHandlerCount ULONGLONG ?
-        SetCallbackHandlerSum ULONGLONG ?
-      HTTP_QUIC_STREAM_API_TIMINGS ends
-      _HTTP_QUIC_STREAM_API_TIMINGS typedef HTTP_QUIC_STREAM_API_TIMINGS
-      PHTTP_QUIC_STREAM_API_TIMINGS typedef ptr HTTP_QUIC_STREAM_API_TIMINGS
-      HTTP_QUIC_CONNECTION_API_TIMINGS struct
-        OpenTime ULONGLONG ?
-        CloseTime ULONGLONG ?
-        StartTime ULONGLONG ?
-        ShutdownTime ULONGLONG ?
-        SecConfigCreateTime ULONGLONG ?
-        SecConfigDeleteTime ULONGLONG ?
-        GetParamCount ULONGLONG ?
-        GetParamSum ULONGLONG ?
-        SetParamCount ULONGLONG ?
-        SetParamSum ULONGLONG ?
-        SetCallbackHandlerCount ULONGLONG ?
-        SetCallbackHandlerSum ULONGLONG ?
-        ControlStreamTimings HTTP_QUIC_STREAM_API_TIMINGS <>
-      HTTP_QUIC_CONNECTION_API_TIMINGS ends
-      _HTTP_QUIC_CONNECTION_API_TIMINGS typedef HTTP_QUIC_CONNECTION_API_TIMINGS
-      PHTTP_QUIC_CONNECTION_API_TIMINGS typedef ptr HTTP_QUIC_CONNECTION_API_TIMINGS
-      HTTP_QUIC_API_TIMINGS struct
-        ConnectionTimings HTTP_QUIC_CONNECTION_API_TIMINGS <>
-        StreamTimings HTTP_QUIC_STREAM_API_TIMINGS <>
-      HTTP_QUIC_API_TIMINGS ends
-      _HTTP_QUIC_API_TIMINGS typedef HTTP_QUIC_API_TIMINGS
-      PHTTP_QUIC_API_TIMINGS typedef ptr HTTP_QUIC_API_TIMINGS
-      HTTP_QUIC_STREAM_REQUEST_STATS struct
-        StreamWaitStart ULONGLONG ?
-        StreamWaitEnd ULONGLONG ?
-        RequestHeadersCompressionStart ULONGLONG ?
-        RequestHeadersCompressionEnd ULONGLONG ?
-        ResponseHeadersDecompressionStart ULONGLONG ?
-        ResponseHeadersDecompressionEnd ULONGLONG ?
-        RequestHeadersCompressedSize ULONGLONG ?
-        ResponseHeadersCompressedSize ULONGLONG ?
-      HTTP_QUIC_STREAM_REQUEST_STATS ends
-      _HTTP_QUIC_STREAM_REQUEST_STATS typedef HTTP_QUIC_STREAM_REQUEST_STATS
-      PHTTP_QUIC_STREAM_REQUEST_STATS typedef ptr HTTP_QUIC_STREAM_REQUEST_STATS
-      HTTP_QUIC_KEEPALIVE_TIMEOUT_DISABLED equ (- 1)
-      HTTP_FEATURE_ID typedef SDWORD
-      HttpFeatureUnknown equ 0
-      HttpFeatureResponseTrailers equ 1
-      HttpFeatureApiTimings equ 2
-      HttpFeatureDelegateEx equ 3
-      HttpFeatureHttp3 equ 4
-      HttpFeatureLast equ 5
-      HttpFeaturemax equ 0FFFFFFFFh
-      _HTTP_FEATURE_ID typedef HTTP_FEATURE_ID
-      PHTTP_FEATURE_ID typedef ptr HTTP_FEATURE_ID
+      
       if  not Defined(HTTPAPI_LINKAGE)
         HTTPAPI_LINKAGE equ <DECLSPEC_IMPORT>
       endif
-      HttpInitialize proto WIN_STD_CALL_CONV :HTTPAPI_VERSION, :ULONG, :PVOID
-      HttpTerminate proto WIN_STD_CALL_CONV :ULONG, :PVOID
-      HttpCreateHttpHandle proto WIN_STD_CALL_CONV :PHANDLE, :ULONG
+      @DefProto DllImport, HttpInitialize, WIN_STD_CALL_CONV,, <:HTTPAPI_VERSION, :ULONG, :PVOID>, 12
+      @DefProto DllImport, HttpTerminate, WIN_STD_CALL_CONV,, <:ULONG, :PVOID>, 8
+      @DefProto DllImport, HttpCreateHttpHandle, WIN_STD_CALL_CONV,, <:PHANDLE, :ULONG>, 8
       if _WIN32_WINNT ge 0600h
-        HttpCreateRequestQueue proto WIN_STD_CALL_CONV :HTTPAPI_VERSION, :PCWSTR, :PSECURITY_ATTRIBUTES, :ULONG, :PHANDLE
-        HttpCloseRequestQueue proto WIN_STD_CALL_CONV :HANDLE
-        HttpSetRequestQueueProperty proto WIN_STD_CALL_CONV :HANDLE, :HTTP_SERVER_PROPERTY, :PVOID, :ULONG, :ULONG, :PVOID
-        HttpQueryRequestQueueProperty proto WIN_STD_CALL_CONV :HANDLE, :HTTP_SERVER_PROPERTY, :PVOID, :ULONG, :ULONG, :PULONG, :PVOID
-        HttpSetRequestProperty proto WIN_STD_CALL_CONV :HANDLE, :HTTP_OPAQUE_ID, :HTTP_REQUEST_PROPERTY, :PVOID, :ULONG, :LPOVERLAPPED
-        HttpShutdownRequestQueue proto WIN_STD_CALL_CONV :HANDLE
+        @DefProto DllImport, HttpCreateRequestQueue, WIN_STD_CALL_CONV,, <:HTTPAPI_VERSION, :PCWSTR, :PSECURITY_ATTRIBUTES, :ULONG, :PHANDLE>, 20
+        @DefProto DllImport, HttpCloseRequestQueue, WIN_STD_CALL_CONV,, <:HANDLE>, 4
+        @DefProto DllImport, HttpSetRequestQueueProperty, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_SERVER_PROPERTY, :PVOID, :ULONG, :ULONG, :PVOID>, 24
+        @DefProto DllImport, HttpQueryRequestQueueProperty, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_SERVER_PROPERTY, :PVOID, :ULONG, :ULONG, :PULONG, :PVOID>, 28
+        @DefProto DllImport, HttpShutdownRequestQueue, WIN_STD_CALL_CONV,, <:HANDLE>, 4
       endif
-      HttpReceiveClientCertificate proto WIN_STD_CALL_CONV :HANDLE, :HTTP_CONNECTION_ID, :ULONG, :PHTTP_SSL_CLIENT_CERT_INFO, :ULONG, :PULONG, :LPOVERLAPPED
+      @DefProto DllImport, HttpReceiveClientCertificate, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_CONNECTION_ID, :ULONG, :PHTTP_SSL_CLIENT_CERT_INFO, :ULONG, :PULONG, :LPOVERLAPPED>, 28
       if _WIN32_WINNT ge 0600h
-        HttpCreateServerSession proto WIN_STD_CALL_CONV :HTTPAPI_VERSION, :PHTTP_SERVER_SESSION_ID, :ULONG
-        HttpCloseServerSession proto WIN_STD_CALL_CONV :HTTP_SERVER_SESSION_ID
-        HttpQueryServerSessionProperty proto WIN_STD_CALL_CONV :HTTP_SERVER_SESSION_ID, :HTTP_SERVER_PROPERTY, :PVOID, :ULONG, :PULONG
-        HttpSetServerSessionProperty proto WIN_STD_CALL_CONV :HTTP_SERVER_SESSION_ID, :HTTP_SERVER_PROPERTY, :PVOID, :ULONG
+        @DefProto DllImport, HttpCreateServerSession, WIN_STD_CALL_CONV,, <:HTTPAPI_VERSION, :PHTTP_SERVER_SESSION_ID, :ULONG>, 12
+        @DefProto DllImport, HttpCloseServerSession, WIN_STD_CALL_CONV,, <:HTTP_SERVER_SESSION_ID>, 4
+        @DefProto DllImport, HttpQueryServerSessionProperty, WIN_STD_CALL_CONV,, <:HTTP_SERVER_SESSION_ID, :HTTP_SERVER_PROPERTY, :PVOID, :ULONG, :PULONG>, 20
+        @DefProto DllImport, HttpSetServerSessionProperty, WIN_STD_CALL_CONV,, <:HTTP_SERVER_SESSION_ID, :HTTP_SERVER_PROPERTY, :PVOID, :ULONG>, 16
       endif
-      HttpAddUrl proto WIN_STD_CALL_CONV :HANDLE, :PCWSTR, :PVOID
-      HttpRemoveUrl proto WIN_STD_CALL_CONV :HANDLE, :PCWSTR
+      @DefProto DllImport, HttpAddUrl, WIN_STD_CALL_CONV,, <:HANDLE, :PCWSTR, :PVOID>, 12
+      @DefProto DllImport, HttpRemoveUrl, WIN_STD_CALL_CONV,, <:HANDLE, :PCWSTR>, 8
       if _WIN32_WINNT ge 0600h
-        HttpCreateUrlGroup proto WIN_STD_CALL_CONV :HTTP_SERVER_SESSION_ID, :PHTTP_URL_GROUP_ID, :ULONG
-        HttpCloseUrlGroup proto WIN_STD_CALL_CONV :HTTP_URL_GROUP_ID
-        HttpAddUrlToUrlGroup proto WIN_STD_CALL_CONV :HTTP_URL_GROUP_ID, :PCWSTR, :HTTP_URL_CONTEXT, :ULONG
-        HttpRemoveUrlFromUrlGroup proto WIN_STD_CALL_CONV :HTTP_URL_GROUP_ID, :PCWSTR, :ULONG
-        HttpSetUrlGroupProperty proto WIN_STD_CALL_CONV :HTTP_URL_GROUP_ID, :HTTP_SERVER_PROPERTY, :PVOID, :ULONG
-        HttpQueryUrlGroupProperty proto WIN_STD_CALL_CONV :HTTP_URL_GROUP_ID, :HTTP_SERVER_PROPERTY, :PVOID, :ULONG, :PULONG
+        @DefProto DllImport, HttpCreateUrlGroup, WIN_STD_CALL_CONV,, <:HTTP_SERVER_SESSION_ID, :PHTTP_URL_GROUP_ID, :ULONG>, 12
+        @DefProto DllImport, HttpCloseUrlGroup, WIN_STD_CALL_CONV,, <:HTTP_URL_GROUP_ID>, 4
+        @DefProto DllImport, HttpAddUrlToUrlGroup, WIN_STD_CALL_CONV,, <:HTTP_URL_GROUP_ID, :PCWSTR, :HTTP_URL_CONTEXT, :ULONG>, 16
+        @DefProto DllImport, HttpRemoveUrlFromUrlGroup, WIN_STD_CALL_CONV,, <:HTTP_URL_GROUP_ID, :PCWSTR, :ULONG>, 12
+        @DefProto DllImport, HttpSetUrlGroupProperty, WIN_STD_CALL_CONV,, <:HTTP_URL_GROUP_ID, :HTTP_SERVER_PROPERTY, :PVOID, :ULONG>, 16
+        @DefProto DllImport, HttpQueryUrlGroupProperty, WIN_STD_CALL_CONV,, <:HTTP_URL_GROUP_ID, :HTTP_SERVER_PROPERTY, :PVOID, :ULONG, :PULONG>, 20
       endif
       if _WIN32_WINNT ge _WIN32_WINNT_WIN8
-        HttpPrepareUrl proto WIN_STD_CALL_CONV :PVOID, :ULONG, :PCWSTR, :ptr PWSTR
+        @DefProto DllImport, HttpPrepareUrl, WIN_STD_CALL_CONV,, <:PVOID, :ULONG, :PCWSTR, :ptr PWSTR>, 16
       endif
-      HttpReceiveHttpRequest proto WIN_STD_CALL_CONV :HANDLE, :HTTP_REQUEST_ID, :ULONG, :PHTTP_REQUEST, :ULONG, :PULONG, :LPOVERLAPPED
-      HttpReceiveRequestEntityBody proto WIN_STD_CALL_CONV :HANDLE, :HTTP_REQUEST_ID, :ULONG, :PVOID, :ULONG, :PULONG, :LPOVERLAPPED
+      @DefProto DllImport, HttpReceiveHttpRequest, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_REQUEST_ID, :ULONG, :PHTTP_REQUEST, :ULONG, :PULONG, :LPOVERLAPPED>, 32
+      @DefProto DllImport, HttpReceiveRequestEntityBody, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_REQUEST_ID, :ULONG, :PVOID, :ULONG, :PULONG, :LPOVERLAPPED>, 32
       if _WIN32_WINNT ge 0600h
-        HttpSendHttpResponse proto WIN_STD_CALL_CONV :HANDLE, :HTTP_REQUEST_ID, :ULONG, :PHTTP_RESPONSE, :PHTTP_CACHE_POLICY, :PULONG, :PVOID, :ULONG, :LPOVERLAPPED, :PHTTP_LOG_DATA
+        @DefProto DllImport, HttpSendHttpResponse, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_REQUEST_ID, :ULONG, :PHTTP_RESPONSE, :PHTTP_CACHE_POLICY, :PULONG, :PVOID, :ULONG, :LPOVERLAPPED, :PHTTP_LOG_DATA>, 44
       else
-        HttpSendHttpResponse proto WIN_STD_CALL_CONV :HANDLE, :HTTP_REQUEST_ID, :ULONG, :PHTTP_RESPONSE, :PVOID, :PULONG, :PVOID, :ULONG, :LPOVERLAPPED, :PVOID
+        @DefProto DllImport, HttpSendHttpResponse, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_REQUEST_ID, :ULONG, :PHTTP_RESPONSE, :PVOID, :PULONG, :PVOID, :ULONG, :LPOVERLAPPED, :PVOID>, 44
       endif
       if _WIN32_WINNT ge 0600h
-        HttpSendResponseEntityBody proto WIN_STD_CALL_CONV :HANDLE, :HTTP_REQUEST_ID, :ULONG, :USHORT, :PHTTP_DATA_CHUNK, :PULONG, :PVOID, :ULONG, :LPOVERLAPPED, :PHTTP_LOG_DATA
+        @DefProto DllImport, HttpSendResponseEntityBody, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_REQUEST_ID, :ULONG, :USHORT, :PHTTP_DATA_CHUNK, :PULONG, :PVOID, :ULONG, :LPOVERLAPPED, :PHTTP_LOG_DATA>, 44
       else
-        HttpSendResponseEntityBody proto WIN_STD_CALL_CONV :HANDLE, :HTTP_REQUEST_ID, :ULONG, :USHORT, :PHTTP_DATA_CHUNK, :PULONG, :PVOID, :ULONG, :LPOVERLAPPED, :PVOID
+        @DefProto DllImport, HttpSendResponseEntityBody, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_REQUEST_ID, :ULONG, :USHORT, :PHTTP_DATA_CHUNK, :PULONG, :PVOID, :ULONG, :LPOVERLAPPED, :PVOID>, 44
       endif
-      HttpDeclarePush proto WIN_STD_CALL_CONV :HANDLE, :HTTP_REQUEST_ID, :HTTP_VERB, :PCWSTR, :PCSTR, :PHTTP_REQUEST_HEADERS
-      HttpWaitForDisconnect proto WIN_STD_CALL_CONV :HANDLE, :HTTP_CONNECTION_ID, :LPOVERLAPPED
+      @DefProto DllImport, HttpDeclarePush, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_REQUEST_ID, :HTTP_VERB, :PCWSTR, :PCSTR, :PHTTP_REQUEST_HEADERS>, 28
+      @DefProto DllImport, HttpWaitForDisconnect, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_CONNECTION_ID, :LPOVERLAPPED>, 12
       if _WIN32_WINNT ge 0600h
-        HttpWaitForDisconnectEx proto WIN_STD_CALL_CONV :HANDLE, :HTTP_CONNECTION_ID, :ULONG, :LPOVERLAPPED
-        HttpCancelHttpRequest proto WIN_STD_CALL_CONV :HANDLE, :HTTP_REQUEST_ID, :LPOVERLAPPED
-        HttpWaitForDemandStart proto WIN_STD_CALL_CONV :HANDLE, :LPOVERLAPPED
-        HttpIsFeatureSupported proto WIN_STD_CALL_CONV :HTTP_FEATURE_ID
-        HttpDelegateRequestEx proto WIN_STD_CALL_CONV :HANDLE, :HANDLE, :HTTP_REQUEST_ID, :HTTP_URL_GROUP_ID, :ULONG, :PHTTP_DELEGATE_REQUEST_PROPERTY_INFO
-        HttpFindUrlGroupId proto WIN_STD_CALL_CONV :PCWSTR, :HANDLE, :PHTTP_URL_GROUP_ID
+        @DefProto DllImport, HttpWaitForDisconnectEx, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_CONNECTION_ID, :ULONG, :LPOVERLAPPED>, 16
+        @DefProto DllImport, HttpCancelHttpRequest, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_REQUEST_ID, :LPOVERLAPPED>, 16
+        @DefProto DllImport, HttpWaitForDemandStart, WIN_STD_CALL_CONV,, <:HANDLE, :LPOVERLAPPED>, 8
       endif
-      HttpFlushResponseCache proto WIN_STD_CALL_CONV :HANDLE, :PCWSTR, :ULONG, :LPOVERLAPPED
-      HttpAddFragmentToCache proto WIN_STD_CALL_CONV :HANDLE, :PCWSTR, :PHTTP_DATA_CHUNK, :PHTTP_CACHE_POLICY, :LPOVERLAPPED
-      HttpReadFragmentFromCache proto WIN_STD_CALL_CONV :HANDLE, :PCWSTR, :PHTTP_BYTE_RANGE, :PVOID, :ULONG, :PULONG, :LPOVERLAPPED
-      HttpSetServiceConfiguration proto WIN_STD_CALL_CONV :HANDLE, :HTTP_SERVICE_CONFIG_ID, :PVOID, :ULONG, :LPOVERLAPPED
-      HttpUpdateServiceConfiguration proto WIN_STD_CALL_CONV :HANDLE, :HTTP_SERVICE_CONFIG_ID, :PVOID, :ULONG, :LPOVERLAPPED
-      HttpDeleteServiceConfiguration proto WIN_STD_CALL_CONV :HANDLE, :HTTP_SERVICE_CONFIG_ID, :PVOID, :ULONG, :LPOVERLAPPED
-      HttpQueryServiceConfiguration proto WIN_STD_CALL_CONV :HANDLE, :HTTP_SERVICE_CONFIG_ID, :PVOID, :ULONG, :PVOID, :ULONG, :PULONG, :LPOVERLAPPED
+      @DefProto DllImport, HttpFlushResponseCache, WIN_STD_CALL_CONV,, <:HANDLE, :PCWSTR, :ULONG, :LPOVERLAPPED>, 16
+      @DefProto DllImport, HttpAddFragmentToCache, WIN_STD_CALL_CONV,, <:HANDLE, :PCWSTR, :PHTTP_DATA_CHUNK, :PHTTP_CACHE_POLICY, :LPOVERLAPPED>, 20
+      @DefProto DllImport, HttpReadFragmentFromCache, WIN_STD_CALL_CONV,, <:HANDLE, :PCWSTR, :PHTTP_BYTE_RANGE, :PVOID, :ULONG, :PULONG, :LPOVERLAPPED>, 28
+      @DefProto DllImport, HttpSetServiceConfiguration, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_SERVICE_CONFIG_ID, :PVOID, :ULONG, :LPOVERLAPPED>, 20
+      @DefProto DllImport, HttpUpdateServiceConfiguration, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_SERVICE_CONFIG_ID, :PVOID, :ULONG, :LPOVERLAPPED>, 20
+      @DefProto DllImport, HttpDeleteServiceConfiguration, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_SERVICE_CONFIG_ID, :PVOID, :ULONG, :LPOVERLAPPED>, 20
+      @DefProto DllImport, HttpQueryServiceConfiguration, WIN_STD_CALL_CONV,, <:HANDLE, :HTTP_SERVICE_CONFIG_ID, :PVOID, :ULONG, :PVOID, :ULONG, :PULONG, :LPOVERLAPPED>, 32
       HttpGetExtension proto WIN_STD_CALL_CONV :HTTPAPI_VERSION, :ULONG, :PVOID, :ULONG
       ifdef __cplusplus
         ;[...]
@@ -1417,3 +1357,4 @@ ifndef __HTTP_H__
     endif
   endif
 endif
+ 

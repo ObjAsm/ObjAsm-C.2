@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\gdiplusenums.h
-;             Created on (UTC) 06/04/2024 06:15:55
-;             Last modified on (UTC) 16/12/2023 11:07:10
+;Include file created by h2incX, Version C.01.00, 30/03/2019 18:59
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: 'D:\ObjAsm\Projects\32\h2IncX\header\GdiplusEnums.h', last modified: 22/10/2018 20:35
+;Creation parameters: 
 
 ifndef _GDIPLUSENUMS_H
   _GDIPLUSENUMS_H equ <>
@@ -13,17 +12,17 @@ ifndef _GDIPLUSENUMS_H
     FillMode typedef SDWORD
     FillModeAlternate equ 0
     FillModeWinding equ 1
-
+    
     QualityMode typedef SDWORD
     QualityModeInvalid equ -1
     QualityModeDefault equ 0
     QualityModeLow equ 1
     QualityModeHigh equ 2
-
+    
     CompositingMode typedef SDWORD
     CompositingModeSourceOver equ 0
     CompositingModeSourceCopy equ 1
-
+    
     CompositingQuality typedef SDWORD
     CompositingQualityInvalid equ QualityModeInvalid
     CompositingQualityDefault equ QualityModeDefault
@@ -31,7 +30,7 @@ ifndef _GDIPLUSENUMS_H
     CompositingQualityHighQuality equ QualityModeHigh
     CompositingQualityGammaCorrected equ 1
     CompositingQualityAssumeLinear equ 2
-
+    
     Unit typedef SDWORD
     UnitWorld equ 0
     UnitDisplay equ 1
@@ -40,7 +39,7 @@ ifndef _GDIPLUSENUMS_H
     UnitInch equ 4
     UnitDocument equ 5
     UnitMillimeter equ 6
-
+    
     MetafileFrameUnit typedef SDWORD
     MetafileFrameUnitPixel equ UnitPixel
     MetafileFrameUnitPoint equ UnitPoint
@@ -48,19 +47,19 @@ ifndef _GDIPLUSENUMS_H
     MetafileFrameUnitDocument equ UnitDocument
     MetafileFrameUnitMillimeter equ UnitMillimeter
     MetafileFrameUnitGdi equ 1
-
+    
     CoordinateSpace typedef SDWORD
     CoordinateSpaceWorld equ 0
     CoordinateSpacePage equ 1
     CoordinateSpaceDevice equ 2
-
+    
     WrapMode typedef SDWORD
     WrapModeTile equ 0
     WrapModeTileFlipX equ 1
     WrapModeTileFlipY equ 2
     WrapModeTileFlipXY equ 3
     WrapModeClamp equ 4
-
+    
     HatchStyle typedef SDWORD
     HatchStyleHorizontal equ 0
     HatchStyleVertical equ 1
@@ -119,7 +118,7 @@ ifndef _GDIPLUSENUMS_H
     HatchStyleLargeGrid equ HatchStyleCross
     HatchStyleMin equ HatchStyleHorizontal
     HatchStyleMax equ HatchStyleTotal - 1
-
+    
     DashStyle typedef SDWORD
     DashStyleSolid equ 0
     DashStyleDash equ 1
@@ -127,12 +126,12 @@ ifndef _GDIPLUSENUMS_H
     DashStyleDashDot equ 3
     DashStyleDashDotDot equ 4
     DashStyleCustom equ 5
-
+    
     DashCap typedef SDWORD
     DashCapFlat equ 0
     DashCapRound equ 2
     DashCapTriangle equ 3
-
+    
     LineCap typedef SDWORD
     LineCapFlat equ 0
     LineCapSquare equ 1
@@ -145,17 +144,17 @@ ifndef _GDIPLUSENUMS_H
     LineCapArrowAnchor equ 14h
     LineCapCustom equ 0ffh
     LineCapAnchorMask equ 0f0h
-
+    
     CustomLineCapType typedef SDWORD
     CustomLineCapTypeDefault equ 0
     CustomLineCapTypeAdjustableArrow equ 1
-
+    
     LineJoin typedef SDWORD
     LineJoinMiter equ 0
     LineJoinBevel equ 1
     LineJoinRound equ 2
     LineJoinMiterClipped equ 3
-
+    
     PathPointType typedef SDWORD
     PathPointTypeStart equ 0
     PathPointTypeLine equ 1
@@ -165,17 +164,17 @@ ifndef _GDIPLUSENUMS_H
     PathPointTypePathMarker equ 20h
     PathPointTypeCloseSubpath equ 80h
     PathPointTypeBezier3 equ 3
-
+    
     WarpMode typedef SDWORD
     WarpModePerspective equ 0
     WarpModeBilinear equ 1
-
+    
     LinearGradientMode typedef SDWORD
     LinearGradientModeHorizontal equ 0
     LinearGradientModeVertical equ 1
     LinearGradientModeForwardDiagonal equ 2
     LinearGradientModeBackwardDiagonal equ 3
-
+    
     CombineMode typedef SDWORD
     CombineModeReplace equ 0
     CombineModeIntersect equ 1
@@ -183,12 +182,12 @@ ifndef _GDIPLUSENUMS_H
     CombineModeXor equ 3
     CombineModeExclude equ 4
     CombineModeComplement equ 5
-
+    
     ImageType typedef SDWORD
     ImageTypeUnknown equ 0
     ImageTypeBitmap equ 1
     ImageTypeMetafile equ 2
-
+    
     InterpolationMode typedef SDWORD
     InterpolationModeInvalid equ QualityModeInvalid
     InterpolationModeDefault equ QualityModeDefault
@@ -199,18 +198,18 @@ ifndef _GDIPLUSENUMS_H
     InterpolationModeNearestNeighbor equ 3
     InterpolationModeHighQualityBilinear equ 4
     InterpolationModeHighQualityBicubic equ 5
-
+    
     PenAlignment typedef SDWORD
     PenAlignmentCenter equ 0
     PenAlignmentInset equ 1
-
+    
     BrushType typedef SDWORD
     BrushTypeSolidColor equ 0
     BrushTypeHatchFill equ 1
     BrushTypeTextureFill equ 2
     BrushTypePathGradient equ 3
     BrushTypeLinearGradient equ 4
-
+    
     PenType typedef SDWORD
     PenTypeSolidColor equ BrushTypeSolidColor
     PenTypeHatchFill equ BrushTypeHatchFill
@@ -218,16 +217,16 @@ ifndef _GDIPLUSENUMS_H
     PenTypePathGradient equ BrushTypePathGradient
     PenTypeLinearGradient equ BrushTypeLinearGradient
     PenTypeUnknown equ -1
-
+    
     MatrixOrder typedef SDWORD
     MatrixOrderPrepend equ 0
     MatrixOrderAppend equ 1
-
+    
     GenericFontFamily typedef SDWORD
     GenericFontFamilySerif equ 0
     GenericFontFamilySansSerif equ 1
     GenericFontFamilyMonospace equ 2
-
+    
     FontStyle typedef SDWORD
     FontStyleRegular equ 0
     FontStyleBold equ 1
@@ -235,19 +234,19 @@ ifndef _GDIPLUSENUMS_H
     FontStyleBoldItalic equ 3
     FontStyleUnderline equ 4
     FontStyleStrikeout equ 8
-
+    
     SmoothingMode typedef SDWORD
     SmoothingModeInvalid equ QualityModeInvalid
     SmoothingModeDefault equ QualityModeDefault
     SmoothingModeHighSpeed equ QualityModeLow
     SmoothingModeHighQuality equ QualityModeHigh
-    SmoothingModeNone equ 3
-    SmoothingModeAntiAlias equ 4
+    SmoothingModeNone equ 1
+    SmoothingModeAntiAlias equ 2
     if (GDIPVER ge 0110h)
       SmoothingModeAntiAlias8x4 equ SmoothingModeAntiAlias
-      SmoothingModeAntiAlias8x8 equ 5
+      SmoothingModeAntiAlias8x8
     endif
-
+    
     PixelOffsetMode typedef SDWORD
     PixelOffsetModeInvalid equ QualityModeInvalid
     PixelOffsetModeDefault equ QualityModeDefault
@@ -255,7 +254,7 @@ ifndef _GDIPLUSENUMS_H
     PixelOffsetModeHighQuality equ QualityModeHigh
     PixelOffsetModeNone equ 1
     PixelOffsetModeHalf equ 2
-
+    
     TextRenderingHint typedef SDWORD
     TextRenderingHintSystemDefault equ 0
     TextRenderingHintSingleBitPerPixelGridFit equ 1
@@ -263,7 +262,7 @@ ifndef _GDIPLUSENUMS_H
     TextRenderingHintAntiAliasGridFit equ 3
     TextRenderingHintAntiAlias equ 4
     TextRenderingHintClearTypeGridFit equ 5
-
+    
     MetafileType typedef SDWORD
     MetafileTypeInvalid equ 0
     MetafileTypeWmf equ 1
@@ -271,12 +270,12 @@ ifndef _GDIPLUSENUMS_H
     MetafileTypeEmf equ 3
     MetafileTypeEmfPlusOnly equ 4
     MetafileTypeEmfPlusDual equ 5
-
+    
     EmfType typedef SDWORD
     EmfTypeEmfOnly equ MetafileTypeEmf
     EmfTypeEmfPlusOnly equ MetafileTypeEmfPlusOnly
     EmfTypeEmfPlusDual equ MetafileTypeEmfPlusDual
-
+    
     ObjectType typedef SDWORD
     ObjectTypeInvalid equ 0
     ObjectTypeBrush equ 1
@@ -295,7 +294,7 @@ ifndef _GDIPLUSENUMS_H
       ObjectTypeMax equ ObjectTypeCustomLineCap
     endif
     ObjectTypeMin equ ObjectTypeBrush
-
+    
     ObjectTypeIsValid proto WIN_STD_CALL_CONV :ObjectType
     GDIP_EMFPLUS_RECORD_BASE equ 00004000h
     GDIP_WMF_RECORD_BASE equ 00010000h
@@ -576,7 +575,7 @@ ifndef _GDIPLUSENUMS_H
     EmfPlusRecordTotal equ 59
     EmfPlusRecordTypeMax equ EmfPlusRecordTotal - 1
     EmfPlusRecordTypeMin equ EmfPlusRecordTypeHeader
-
+    
     StringFormatFlags typedef SDWORD
     StringFormatFlagsDirectionRightToLeft equ 00000001h
     StringFormatFlagsDirectionVertical equ 00000002h
@@ -588,7 +587,7 @@ ifndef _GDIPLUSENUMS_H
     StringFormatFlagsLineLimit equ 00002000h
     StringFormatFlagsNoClip equ 00004000h
     StringFormatFlagsBypassGDI equ 80000000h
-
+    
     StringTrimming typedef SDWORD
     StringTrimmingNone equ 0
     StringTrimmingCharacter equ 1
@@ -596,33 +595,33 @@ ifndef _GDIPLUSENUMS_H
     StringTrimmingEllipsisCharacter equ 3
     StringTrimmingEllipsisWord equ 4
     StringTrimmingEllipsisPath equ 5
-
+    
     StringDigitSubstitute typedef SDWORD
     StringDigitSubstituteUser equ 0
     StringDigitSubstituteNone equ 1
     StringDigitSubstituteNational equ 2
     StringDigitSubstituteTraditional equ 3
-
+    
     HotkeyPrefix typedef SDWORD
     HotkeyPrefixNone equ 0
     HotkeyPrefixShow equ 1
     HotkeyPrefixHide equ 2
-
+    
     StringAlignment typedef SDWORD
     StringAlignmentNear equ 0
     StringAlignmentCenter equ 1
     StringAlignmentFar equ 2
-
+    
     DriverStringOptions typedef SDWORD
     DriverStringOptionsCmapLookup equ 1
     DriverStringOptionsVertical equ 2
     DriverStringOptionsRealizedAdvance equ 4
     DriverStringOptionsLimitSubpixel equ 8
-
+    
     FlushIntention typedef SDWORD
     FlushIntentionFlush equ 0
     FlushIntentionSync equ 1
-
+    
     EncoderParameterValueType typedef SDWORD
     EncoderParameterValueTypeByte equ 1
     EncoderParameterValueTypeASCII equ 2
@@ -633,9 +632,10 @@ ifndef _GDIPLUSENUMS_H
     EncoderParameterValueTypeUndefined equ 7
     EncoderParameterValueTypeRationalRange equ 8
     if (GDIPVER ge 0110h)
-      EncoderParameterValueTypePointer equ 9
+      EncoderParameterValueTypePointer equ 9 
     endif
-
+    
+    
     EncoderValue typedef SDWORD
     EncoderValueColorTypeCMYK equ 0
     EncoderValueColorTypeYCCK equ 1
@@ -665,24 +665,26 @@ ifndef _GDIPLUSENUMS_H
       EncoderValueColorTypeGray equ 24
       EncoderValueColorTypeRGB equ 25
     endif
-
+    
     EmfToWmfBitsFlags typedef SDWORD
     EmfToWmfBitsFlagsDefault equ 00000000h
     EmfToWmfBitsFlagsEmbedEmf equ 00000001h
     EmfToWmfBitsFlagsIncludePlaceable equ 00000002h
     EmfToWmfBitsFlagsNoXORClip equ 00000004h
-
+    
     if (GDIPVER ge 0110h)
       ConvertToEmfPlusFlags typedef SDWORD
       ConvertToEmfPlusFlagsDefault equ 00000000h
       ConvertToEmfPlusFlagsRopUsed equ 00000001h
       ConvertToEmfPlusFlagsText equ 00000002h
       ConvertToEmfPlusFlagsInvalidRecord equ 00000004h
+      
     endif
     GpTestControlEnum typedef SDWORD
     TestControlForceBilinear equ 0
     TestControlNoICM equ 1
     TestControlGetBuildNumber equ 2
-
+    
   endif
 endif
+ 

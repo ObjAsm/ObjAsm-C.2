@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\securitybaseapi.h
-;             Created on (UTC) 06/04/2024 06:15:58
-;             Last modified on (UTC) 21/02/2024 18:13:14
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\securitybaseapi.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 ifdef _MSC_VER
 endif
@@ -27,11 +26,13 @@ ifndef _APISECUREBASE_
     ifdef UNICODE
       AccessCheckByTypeAndAuditAlarm equ <AccessCheckByTypeAndAuditAlarmW>
     endif
-    @DefProto DllImport, AccessCheckByTypeResultListAndAuditAlarmW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPVOID, :LPCWSTR, :LPCWSTR, :PSECURITY_DESCRIPTOR, :PSID, :DWORD, :AUDIT_EVENT_TYPE, :DWORD, :POBJECT_TYPE_LIST, :DWORD, :PGENERIC_MAPPING, :BOOL, :LPDWORD, :LPDWORD, :LPBOOL>, 64
+    ;@DefProto DllImport, AccessCheckByTypeResultListAndAuditAlarmW, WIN_STD_CALL_CONV,, \
+    ;<:LPCWSTR, :LPVOID, :LPCWSTR, :LPCWSTR, :PSECURITY_DESCRIPTOR, :PSID, :DWORD, :AUDIT_EVENT_TYPE, :DWORD, :POBJECT_TYPE_LIST, :DWORD, :PGENERIC_MAPPING, :BOOL, :LPDWORD, :LPDWORD, :LPBOOL>, 64
     ifdef UNICODE
       AccessCheckByTypeResultListAndAuditAlarm equ <AccessCheckByTypeResultListAndAuditAlarmW>
     endif
-    @DefProto DllImport, AccessCheckByTypeResultListAndAuditAlarmByHandleW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPVOID, :HANDLE, :LPCWSTR, :LPCWSTR, :PSECURITY_DESCRIPTOR, :PSID, :DWORD, :AUDIT_EVENT_TYPE, :DWORD, :POBJECT_TYPE_LIST, :DWORD, :PGENERIC_MAPPING, :BOOL, :LPDWORD, :LPDWORD, :LPBOOL>, 68
+    ;@DefProto DllImport, AccessCheckByTypeResultListAndAuditAlarmByHandleW, WIN_STD_CALL_CONV,, \
+    ;<:LPCWSTR, :LPVOID, :HANDLE, :LPCWSTR, :LPCWSTR, :PSECURITY_DESCRIPTOR, :PSID, :DWORD, :AUDIT_EVENT_TYPE, :DWORD, :POBJECT_TYPE_LIST, :DWORD, :PGENERIC_MAPPING, :BOOL, :LPDWORD, :LPDWORD, :LPBOOL>, 68
     ifdef UNICODE
       AccessCheckByTypeResultListAndAuditAlarmByHandle equ <AccessCheckByTypeResultListAndAuditAlarmByHandleW>
     endif
@@ -67,11 +68,7 @@ ifndef _APISECUREBASE_
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, AdjustTokenGroups, WIN_STD_CALL_CONV,, <:HANDLE, :BOOL, :PTOKEN_GROUPS, :DWORD, :PTOKEN_GROUPS, :PDWORD>, 24
-  endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
     @DefProto DllImport, AdjustTokenPrivileges, WIN_STD_CALL_CONV,, <:HANDLE, :BOOL, :PTOKEN_PRIVILEGES, :DWORD, :PTOKEN_PRIVILEGES, :PDWORD>, 24
-  endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, AllocateAndInitializeSid, WIN_STD_CALL_CONV,, <:PSID_IDENTIFIER_AUTHORITY, :BYTE, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :ptr PSID>, 44
     @DefProto DllImport, AllocateLocallyUniqueId, WIN_STD_CALL_CONV,, <:PLUID>, 4
   endif
@@ -234,9 +231,6 @@ ifndef _APISECUREBASE_
   endif
   if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
-      SIGNING_LEVEL_FILE_CACHE_FLAG_NOT_VALIDATED equ 01h
-      SIGNING_LEVEL_FILE_CACHE_FLAG_VALIDATE_ONLY equ 04h
-      SIGNING_LEVEL_MICROSOFT equ 8
       @DefProto DllImport, SetCachedSigningLevel, WIN_STD_CALL_CONV,, <:PHANDLE, :ULONG, :ULONG, :HANDLE>, 16
       @DefProto DllImport, GetCachedSigningLevel, WIN_STD_CALL_CONV,, <:HANDLE, :PULONG, :PULONG, :PUCHAR, :PULONG, :PULONG>, 24
     endif
@@ -255,3 +249,4 @@ ifndef _APISECUREBASE_
     ;[...]
   endif
 endif
+

@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\joystickapi.h
-;             Created on (UTC) 06/04/2024 06:15:56
-;             Last modified on (UTC) 21/02/2024 18:13:22
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\joystickapi.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 ifdef _MSC_VER
 endif
@@ -16,7 +15,7 @@ ifndef _JOYSTICKAPI_H_
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     ifndef MMNOJOY
-      JOYERR_NOERROR equ (0)
+      JOYERR_NOERROR equ 0
       JOYERR_PARMS equ (JOYERR_BASE + 5)
       JOYERR_NOCANDO equ (JOYERR_BASE + 6)
       JOYERR_UNPLUGGED equ (JOYERR_BASE + 7)
@@ -124,10 +123,12 @@ ifndef _JOYSTICKAPI_H_
             szOEMVxD CHAR MAX_JOYSTICKOEMVXDNAME dup (?)
           endif
         JOYCAPSA ends
+
         tagJOYCAPSA typedef JOYCAPSA
         PJOYCAPSA typedef ptr JOYCAPSA
         NPJOYCAPSA typedef ptr JOYCAPSA
         LPJOYCAPSA typedef ptr JOYCAPSA
+        
         JOYCAPSW struct
           wMid WORD ?
           wPid WORD ?
@@ -156,10 +157,12 @@ ifndef _JOYSTICKAPI_H_
             szOEMVxD WCHAR MAX_JOYSTICKOEMVXDNAME dup (?)
           endif
         JOYCAPSW ends
+
         tagJOYCAPSW typedef JOYCAPSW
         PJOYCAPSW typedef ptr JOYCAPSW
         NPJOYCAPSW typedef ptr JOYCAPSW
         LPJOYCAPSW typedef ptr JOYCAPSW
+        
         ifdef UNICODE
           JOYCAPS typedef JOYCAPSW
           PJOYCAPS typedef PJOYCAPSW
@@ -200,10 +203,12 @@ ifndef _JOYSTICKAPI_H_
           ProductGuid GUID <>
           NameGuid GUID <>
         JOYCAPS2A ends
+
         tagJOYCAPS2A typedef JOYCAPS2A
         PJOYCAPS2A typedef ptr JOYCAPS2A
         NPJOYCAPS2A typedef ptr JOYCAPS2A
         LPJOYCAPS2A typedef ptr JOYCAPS2A
+        
         JOYCAPS2W struct
           wMid WORD ?
           wPid WORD ?
@@ -233,10 +238,12 @@ ifndef _JOYSTICKAPI_H_
           ProductGuid GUID <>
           NameGuid GUID <>
         JOYCAPS2W ends
+
         tagJOYCAPS2W typedef JOYCAPS2W
         PJOYCAPS2W typedef ptr JOYCAPS2W
         NPJOYCAPS2W typedef ptr JOYCAPS2W
         LPJOYCAPS2W typedef ptr JOYCAPS2W
+        
         ifdef UNICODE
           JOYCAPS2 typedef JOYCAPS2W
           PJOYCAPS2 typedef PJOYCAPS2W
@@ -257,10 +264,12 @@ ifndef _JOYSTICKAPI_H_
         wZpos UINT ?
         wButtons UINT ?
       JOYINFO ends
+
       joyinfo_tag typedef JOYINFO
       PJOYINFO typedef ptr JOYINFO
       NPJOYINFO typedef ptr JOYINFO
       LPJOYINFO typedef ptr JOYINFO
+      
       if (WINVER ge 0400h)
         JOYINFOEX struct
           dwSize DWORD ?
@@ -277,10 +286,12 @@ ifndef _JOYSTICKAPI_H_
           dwReserved1 DWORD ?
           dwReserved2 DWORD ?
         JOYINFOEX ends
+
         joyinfoex_tag typedef JOYINFOEX
         PJOYINFOEX typedef ptr JOYINFOEX
         NPJOYINFOEX typedef ptr JOYINFOEX
         LPJOYINFOEX typedef ptr JOYINFOEX
+        
       endif
       if (WINVER ge 0400h)
         @DefProto DllImport, joyGetPosEx, WIN_STD_CALL_CONV,, <:UINT, :LPJOYINFOEX>, 8
@@ -311,3 +322,4 @@ ifndef _JOYSTICKAPI_H_
     ;[...]
   endif
 endif
+

@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\shlguid.h
-;             Created on (UTC) 06/04/2024 06:15:58
-;             Last modified on (UTC) 21/02/2024 18:17:24
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\shlguid.h', last modified: 19/04/2018 10:46
+;Creation parameters: 
 
 include winapifamily.inc
 if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -128,9 +127,8 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
       include exdisp.inc
       include shldisp.inc
     endif
-    externdef CLSID_CUrlHistory:GUID
+    DEFINE_GUID CLSID_CUrlHistory, 3C374A40h, 0BAE4h, 11CFh, 0BFh, 7Dh, 00h, 0AAh, 00h, 69h, 46h, 0EEh
     SID_SUrlHistory equ <CLSID_CUrlHistory>
-    externdef CLSID_CUrlHistoryBoth:GUID
     DEFINE_GUID CLSID_CURLSearchHook, 0CFBFAE00h, 17A6h, 11D0h, 99h, 0CBh, 00h, 0C0h, 4Fh, 0D6h, 44h, 97h
     SID_SInternetExplorer equ <IID_IWebBrowserApp>
     SID_SWebBrowserApp equ <IID_IWebBrowserApp>
@@ -288,7 +286,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
   DEFINE_GUID BHID_AssociationArray, 0bea9ef17h, 82f1h, 4f60h, 92h, 84h, 4fh, 8dh, 0b7h, 5ch, 3bh, 0e9h
   DEFINE_GUID BHID_Filter, 38d08778h, 0f557h, 4690h, 9eh, 0bfh, 0bah, 54h, 70h, 6ah, 0d8h, 0f7h
   DEFINE_GUID BHID_EnumAssocHandlers, 0b8ab0b9ch, 0c2ech, 4f7ah, 91h, 8dh, 31h, 49h, 00h, 0e6h, 28h, 0ah
-  DEFINE_GUID BHID_StorageItem, 404e2109h, 77d2h, 4699h, 0a5h, 0a0h, 4fh, 0dfh, 10h, 0dbh, 98h, 37h
   DEFINE_GUID BHID_FilePlaceholder, 8677dcebh, 0aae0h, 4005h, 8dh, 3dh, 54h, 7fh, 0a8h, 52h, 0f8h, 25h
   DEFINE_GUID CATID_FilePlaceholderMergeHandler, 3e9c9a51h, 0d4aah, 4870h, 0b4h, 7ch, 74h, 24h, 0b4h, 91h, 0f1h, 0cch
   if _WIN32_IE ge 0600h
@@ -320,7 +317,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
   DEFINE_GUID CPFG_CREDENTIAL_PROVIDER_LOGO, 2d837775h, 0f6cdh, 464eh, 0a7h, 45h, 48h, 2fh, 0d0h, 0b4h, 74h, 93h
   DEFINE_GUID CPFG_CREDENTIAL_PROVIDER_LABEL, 286bbff3h, 0bad4h, 438fh, 0b0h, 7h, 79h, 0b7h, 26h, 7ch, 3dh, 48h
   DEFINE_GUID CPFG_STANDALONE_SUBMIT_BUTTON, 0b7b0ad8h, 0cc36h, 4d59h, 80h, 2bh, 82h, 0f7h, 14h, 0fah, 70h, 22h
-  DEFINE_GUID CPFG_STYLE_LINK_AS_BUTTON, 088fa508h, 94a6h, 4430h, 0a4h, 0cbh, 6fh, 0c6h, 0e3h, 0c0h, 0b9h, 0e2h
   include knownfolders.inc
   DEFINE_GUID FOLDERTYPEID_Invalid, 57807898h, 8c4fh, 4462h, 0bbh, 63h, 71h, 04h, 23h, 80h, 0b1h, 09h
   DEFINE_GUID FOLDERTYPEID_Generic, 5c4f28b5h, 0f869h, 4e84h, 8eh, 60h, 0f1h, 1dh, 0b9h, 7ch, 5ch, 0c7h
@@ -330,7 +326,6 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
   DEFINE_GUID FOLDERTYPEID_Pictures, 0b3690e58h, 0e961h, 423bh, 0b6h, 87h, 38h, 6eh, 0bfh, 0d8h, 32h, 39h
   DEFINE_GUID FOLDERTYPEID_Music, 94d6ddcch, 4a68h, 4175h, 0a3h, 74h, 0bdh, 58h, 4ah, 51h, 0bh, 78h
   DEFINE_GUID FOLDERTYPEID_Videos, 5fa96407h, 7e77h, 483ch, 0ach, 93h, 69h, 1dh, 05h, 85h, 0dh, 0e8h
-  DEFINE_GUID FOLDERTYPEID_Downloads, 885a186eh, 0a440h, 4adah, 81h, 2bh, 0dbh, 87h, 1bh, 94h, 22h, 59h
   DEFINE_GUID FOLDERTYPEID_UserFiles, 0cd0fc69bh, 71e2h, 46e5h, 96h, 90h, 5bh, 0cdh, 9fh, 57h, 0aah, 0b3h
   DEFINE_GUID FOLDERTYPEID_UsersLibraries, 0c4d98f09h, 6124h, 4fe0h, 99h, 42h, 82h, 64h, 16h, 8h, 2dh, 0a9h
   DEFINE_GUID FOLDERTYPEID_OtherUsers, 0b337fd00h, 9dd5h, 4635h, 0a6h, 0d4h, 0dah, 33h, 0fdh, 10h, 2bh, 7ah
@@ -386,3 +381,4 @@ if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
   DEFINE_GUID ItemIndex_Property_GUID, 92a053dah, 2969h, 4021h, 0bfh, 27h, 51h, 4ch, 0fch, 2eh, 4ah, 69h
   DEFINE_GUID CATID_SearchableApplication, 366c292ah, 0d9b3h, 4dbfh, 0bbh, 70h, 0e6h, 2eh, 0c3h, 0d0h, 0bbh, 0bfh
 endif
+

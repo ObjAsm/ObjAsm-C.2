@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\d3d9caps.h
-;             Created on (UTC) 22/05/2024 17:57:06
-;             Last modified on (UTC) 21/02/2024 18:14:22
+;Include file created by h2incX, Version B.01.01, 15/11/2018 21:48
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\d3d9caps.h', last modified: 19/04/2018 09:46
+;Creation parameters: 
 
 ifndef _d3d9CAPS_H
   _d3d9CAPS_H equ <>
@@ -20,6 +19,7 @@ ifndef _d3d9CAPS_H
         NumTemps INT_ ?
         StaticFlowControlDepth INT_ ?
       D3DVSHADERCAPS2_0 ends
+
       _D3DVSHADERCAPS2_0 typedef D3DVSHADERCAPS2_0
       D3DVS20CAPS_PREDICATION equ (1 shl 0)
       D3DVS20_MAX_DYNAMICFLOWCONTROLDEPTH equ 24
@@ -35,6 +35,7 @@ ifndef _d3d9CAPS_H
         StaticFlowControlDepth INT_ ?
         NumInstructionSlots INT_ ?
       D3DPSHADERCAPS2_0 ends
+
       _D3DPSHADERCAPS2_0 typedef D3DPSHADERCAPS2_0
       D3DPS20CAPS_ARBITRARYSWIZZLE equ (1 shl 0)
       D3DPS20CAPS_GRADIENTINSTRUCTIONS equ (1 shl 1)
@@ -57,6 +58,7 @@ ifndef _d3d9CAPS_H
           MaxOverlayDisplayWidth UINT ?
           MaxOverlayDisplayHeight UINT ?
         D3DOVERLAYCAPS ends
+
         _D3DOVERLAYCAPS typedef D3DOVERLAYCAPS
         D3DOVERLAYCAPS_FULLRANGERGB equ 00000001h
         D3DOVERLAYCAPS_LIMITEDRANGERGB equ 00000002h
@@ -73,6 +75,7 @@ ifndef _d3d9CAPS_H
           BlockAlignmentSize UINT ?
           ProtectedMemorySize ULONGLONG ?
         D3DCONTENTPROTECTIONCAPS ends
+
         _D3DCONTENTPROTECTIONCAPS typedef D3DCONTENTPROTECTIONCAPS
         D3DCPCAPS_SOFTWARE equ 00000001h
         D3DCPCAPS_HARDWARE equ 00000002h
@@ -113,7 +116,6 @@ ifndef _d3d9CAPS_H
         VolumeTextureAddressCaps DWORD ?
         LineCaps DWORD ?
         MaxTextureWidth DWORD ?
-        MaxTextureHeight DWORD ?
         MaxVolumeExtent DWORD ?
         MaxTextureRepeat DWORD ?
         MaxTextureAspectRatio DWORD ?
@@ -160,6 +162,7 @@ ifndef _d3d9CAPS_H
         MaxVertexShader30InstructionSlots DWORD ?
         MaxPixelShader30InstructionSlots DWORD ?
       D3DCAPS9 ends
+
       _D3DCAPS9 typedef D3DCAPS9
       D3DCAPS_OVERLAY equ 00000800h
       D3DCAPS_READ_SCANLINE equ 00020000h
@@ -382,3 +385,4 @@ ifndef _d3d9CAPS_H
     endif
   endif
 endif
+

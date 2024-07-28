@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\servprov.h
-;             Created on (UTC) 06/04/2024 06:15:58
-;             Last modified on (UTC) 21/02/2024 18:16:56
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\servprov.h', last modified: 19/04/2018 10:45
+;Creation parameters: 
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
   __REQUIRED_RPCNDR_H_VERSION__ equ 500
@@ -23,19 +22,10 @@ ifndef __servprov_h__
   __servprov_h__ equ <>
   if Defined(_MSC_VER) and (_MSC_VER ge 1020)
   endif
-  ifndef DECLSPEC_XFGVIRT
-    if Defined(_CONTROL_FLOW_GUARD_XFG)
-      DECLSPEC_XFGVIRT macro base, func
-        exitm <__declspec(xfg_virtual (base, func))>
-      endm
-    else
-      DECLSPEC_XFGVIRT macro base, func
-        exitm <>
-      endm
-    endif
-  endif
   ifndef __IServiceProvider_FWD_DEFINED__
     __IServiceProvider_FWD_DEFINED__ equ <>
+    ;IServiceProvider typedef IServiceProvider
+    
   endif
   include objidl.inc
   ifdef __cplusplus
@@ -58,20 +48,18 @@ ifndef __servprov_h__
           IServiceProviderVtbl struct
             BEGIN_INTERFACE
             ??Interface equ <IServiceProviderVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
             STD_METHOD QueryInterface, :ptr IServiceProvider, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
             STD_METHOD AddRef, :ptr IServiceProvider
-            DECLSPEC_XFGVIRT(IUnknown, Release)
             STD_METHOD Release, :ptr IServiceProvider
-            DECLSPEC_XFGVIRT(IServiceProvider, QueryService)
             STD_METHOD QueryService, :ptr IServiceProvider, :REFGUID, :REFIID, :ptr ptr
             ??Interface equ <>
             END_INTERFACE
           IServiceProviderVtbl ends
+
           IServiceProvider struct
             lpVtbl POINTER ?
           IServiceProvider ends
+
           ifdef COBJMACROS
             ;[...]
           endif
@@ -89,3 +77,4 @@ ifndef __servprov_h__
     ;[...]
   endif
 endif
+

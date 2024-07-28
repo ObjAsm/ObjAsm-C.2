@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winefs.h
-;             Created on (UTC) 06/04/2024 06:16:03
-;             Last modified on (UTC) 16/12/2023 11:07:16
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\winefs.h', last modified: 19/04/2018 10:44
+;Creation parameters: 
 
 include winapifamily.inc
 ifndef __WINEFS_H__
@@ -34,8 +33,10 @@ ifndef __WINEFS_H__
         endif
         pbData PBYTE ?
       EFS_CERTIFICATE_BLOB ends
+
       _CERTIFICATE_BLOB typedef EFS_CERTIFICATE_BLOB
       PEFS_CERTIFICATE_BLOB typedef ptr EFS_CERTIFICATE_BLOB
+      
       EFS_HASH_BLOB struct
         ifdef MIDL_PASS
           ;[...]
@@ -46,8 +47,10 @@ ifndef __WINEFS_H__
         endif
         pbData PBYTE ?
       EFS_HASH_BLOB ends
+
       _EFS_HASH_BLOB typedef EFS_HASH_BLOB
       PEFS_HASH_BLOB typedef ptr EFS_HASH_BLOB
+      
       if (NTDDI_VERSION ge NTDDI_WINXP)
         EFS_RPC_BLOB struct
           ifdef MIDL_PASS
@@ -59,8 +62,10 @@ ifndef __WINEFS_H__
           endif
           pbData PBYTE ?
         EFS_RPC_BLOB ends
+
         _EFS_RPC_BLOB typedef EFS_RPC_BLOB
         PEFS_RPC_BLOB typedef ptr EFS_RPC_BLOB
+        
       endif
       if (NTDDI_VERSION ge NTDDI_VISTA)
         EFS_PIN_BLOB struct
@@ -77,8 +82,10 @@ ifndef __WINEFS_H__
           endif
           pbData PBYTE ?
         EFS_PIN_BLOB ends
+
         _EFS_PIN_BLOB typedef EFS_PIN_BLOB
         PEFS_PIN_BLOB typedef ptr EFS_PIN_BLOB
+        
       endif
       if (NTDDI_VERSION ge NTDDI_WINXP)
         EFS_KEY_INFO struct
@@ -87,15 +94,19 @@ ifndef __WINEFS_H__
           Algorithm ALG_ID ?
           KeyLength ULONG ?
         EFS_KEY_INFO ends
+
         _EFS_KEY_INFO typedef EFS_KEY_INFO
         PEFS_KEY_INFO typedef ptr EFS_KEY_INFO
+        
       endif
       if (NTDDI_VERSION ge NTDDI_WIN7)
         EFS_COMPATIBILITY_INFO struct
           EfsVersion DWORD ?
         EFS_COMPATIBILITY_INFO ends
+
         _EFS_COMPATIBILITY_INFO typedef EFS_COMPATIBILITY_INFO
         PEFS_COMPATIBILITY_INFO typedef ptr EFS_COMPATIBILITY_INFO
+        
       endif
       if (NTDDI_VERSION ge NTDDI_WINBLUE)
         EFS_COMPATIBILITY_VERSION_NCRYPT_PROTECTOR equ 5
@@ -113,8 +124,10 @@ ifndef __WINEFS_H__
           EfsVersion DWORD ?
           SubVersion DWORD ?
         EFS_VERSION_INFO ends
+
         _EFS_VERSION_INFO typedef EFS_VERSION_INFO
         PEFS_VERSION_INFO typedef ptr EFS_VERSION_INFO
+        
         EFS_IS_APPX_VERSION macro __v, __subV
           exitm <((__v == EFS_COMPATIBILITY_VERSION_PFILE_PROTECTOR) and (__subV == EFS_PFILE_SUBVER_APPX))>
         endm
@@ -125,22 +138,28 @@ ifndef __WINEFS_H__
           dwHashOffset DWORD ?
           cbHash DWORD ?
         EFS_DECRYPTION_STATUS_INFO ends
+
         _EFS_DECRYPTION_STATUS_INFO typedef EFS_DECRYPTION_STATUS_INFO
         PEFS_DECRYPTION_STATUS_INFO typedef ptr EFS_DECRYPTION_STATUS_INFO
+        
         EFS_ENCRYPTION_STATUS_INFO struct
           bHasCurrentKey BOOL ?
           dwEncryptionError DWORD ?
         EFS_ENCRYPTION_STATUS_INFO ends
+
         _EFS_ENCRYPTION_STATUS_INFO typedef EFS_ENCRYPTION_STATUS_INFO
         PEFS_ENCRYPTION_STATUS_INFO typedef ptr EFS_ENCRYPTION_STATUS_INFO
+        
       endif
       ENCRYPTION_CERTIFICATE struct
         cbTotalLength DWORD ?
         pUserSid POINTER ?
         pCertBlob PEFS_CERTIFICATE_BLOB ?
       ENCRYPTION_CERTIFICATE ends
+
       _ENCRYPTION_CERTIFICATE typedef ENCRYPTION_CERTIFICATE
       PENCRYPTION_CERTIFICATE typedef ptr ENCRYPTION_CERTIFICATE
+      
       MAX_SID_SIZE equ 256
       ENCRYPTION_CERTIFICATE_HASH struct
         cbTotalLength DWORD ?
@@ -151,8 +170,10 @@ ifndef __WINEFS_H__
         endif
         lpDisplayInformation LPWSTR ?
       ENCRYPTION_CERTIFICATE_HASH ends
+
       _ENCRYPTION_CERTIFICATE_HASH typedef ENCRYPTION_CERTIFICATE_HASH
       PENCRYPTION_CERTIFICATE_HASH typedef ptr ENCRYPTION_CERTIFICATE_HASH
+      
       ENCRYPTION_CERTIFICATE_HASH_LIST struct
         ifdef MIDL_PASS
           ;[...]
@@ -163,8 +184,10 @@ ifndef __WINEFS_H__
         endif
         pUsers POINTER ?
       ENCRYPTION_CERTIFICATE_HASH_LIST ends
+
       _ENCRYPTION_CERTIFICATE_HASH_LIST typedef ENCRYPTION_CERTIFICATE_HASH_LIST
       PENCRYPTION_CERTIFICATE_HASH_LIST typedef ptr ENCRYPTION_CERTIFICATE_HASH_LIST
+      
       ENCRYPTION_CERTIFICATE_LIST struct
         ifdef MIDL_PASS
           ;[...]
@@ -175,8 +198,10 @@ ifndef __WINEFS_H__
         endif
         pUsers POINTER ?
       ENCRYPTION_CERTIFICATE_LIST ends
+
       _ENCRYPTION_CERTIFICATE_LIST typedef ENCRYPTION_CERTIFICATE_LIST
       PENCRYPTION_CERTIFICATE_LIST typedef ptr ENCRYPTION_CERTIFICATE_LIST
+      
       if (NTDDI_VERSION ge NTDDI_VISTA)
         EFS_METADATA_ADD_USER equ 00000001h
         EFS_METADATA_REMOVE_USER equ 00000002h
@@ -188,8 +213,10 @@ ifndef __WINEFS_H__
           pEncryptionCertificate PENCRYPTION_CERTIFICATE ?
           pEfsStreamSignature PEFS_RPC_BLOB ?
         ENCRYPTED_FILE_METADATA_SIGNATURE ends
+
         _ENCRYPTED_FILE_METADATA_SIGNATURE typedef ENCRYPTED_FILE_METADATA_SIGNATURE
         PENCRYPTED_FILE_METADATA_SIGNATURE typedef ptr ENCRYPTED_FILE_METADATA_SIGNATURE
+        
       endif
       if (NTDDI_VERSION ge NTDDI_WIN8)
         ENCRYPTION_PROTECTOR struct
@@ -200,8 +227,10 @@ ifndef __WINEFS_H__
           endif
           lpProtectorDescriptor LPWSTR ?
         ENCRYPTION_PROTECTOR ends
+
         _ENCRYPTION_PROTECTOR typedef ENCRYPTION_PROTECTOR
         PENCRYPTION_PROTECTOR typedef ptr ENCRYPTION_PROTECTOR
+        
         ENCRYPTION_PROTECTOR_LIST struct
           nProtectors DWORD ?
           ifdef MIDL_PASS
@@ -209,8 +238,10 @@ ifndef __WINEFS_H__
           endif
           pProtectors POINTER ?
         ENCRYPTION_PROTECTOR_LIST ends
+
         _ENCRYPTION_PROTECTOR_LIST typedef ENCRYPTION_PROTECTOR_LIST
         PENCRYPTION_PROTECTOR_LIST typedef ptr ENCRYPTION_PROTECTOR_LIST
+        
       endif
       @DefProto DllImport, QueryUsersOnEncryptedFile, WIN_STD_CALL_CONV,, <:LPCWSTR, :ptr PENCRYPTION_CERTIFICATE_HASH_LIST>, 8
       @DefProto DllImport, QueryRecoveryAgentsOnEncryptedFile, WIN_STD_CALL_CONV,, <:LPCWSTR, :ptr PENCRYPTION_CERTIFICATE_HASH_LIST>, 8
@@ -244,3 +275,4 @@ ifndef __WINEFS_H__
     endif
   endif
 endif
+

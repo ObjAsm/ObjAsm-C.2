@@ -1,6 +1,6 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\specstrings_undef.h
-;             Created on (UTC) 22/05/2024 17:57:08
-;             Last modified on (UTC) 16/12/2023 11:05:20
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\specstrings_undef.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
+
 

@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\strsafe.h
-;             Created on (UTC) 22/05/2024 17:57:06
-;             Last modified on (UTC) 21/02/2024 18:13:38
+;Include file created by h2incX, Version C.01.00, 30/03/2019 18:59
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: 'D:\ObjAsm\Projects\32\h2IncX\header\strsafe.h', last modified: 22/10/2018 20:36
+;Creation parameters: 
 
 ifndef _STRSAFE_H_INCLUDED_
   _STRSAFE_H_INCLUDED_ equ <>
@@ -119,39 +118,79 @@ ifndef _STRSAFE_H_INCLUDED_
   STRSAFE_PCNZCH typedef ptr SBYTE
   STRSAFE_PCNZWCH typedef ptr wchar_t
   STRSAFE_PCUNZWCH typedef ptr wchar_t
-  StringLengthWorkerA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :ptr size_t
-  StringLengthWorkerW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :ptr size_t
-  ifdef ALIGNMENT_MACHINE
-    UnalignedStringLengthWorkerW proto WIN_STD_CALL_CONV :STRSAFE_PCUNZWCH, :size_t, :ptr size_t
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    StringLengthWorkerA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :ptr size_t
   endif
-  StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr STRSAFE_PCNZCH, :ptr size_t, :size_t, :DWORD
-  StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr STRSAFE_PCNZWCH, :ptr size_t, :size_t, :DWORD
-  StringValidateDestA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :size_t
-  StringValidateDestAndLengthA proto WIN_STD_CALL_CONV :STRSAFE_LPCSTR, :size_t, :ptr size_t, :size_t
-  StringValidateDestW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :size_t
-  StringValidateDestAndLengthW proto WIN_STD_CALL_CONV :STRSAFE_LPCWSTR, :size_t, :ptr size_t, :size_t
-  StringExValidateDestA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :size_t, :DWORD
-  StringExValidateDestAndLengthA proto WIN_STD_CALL_CONV :STRSAFE_LPCSTR, :size_t, :ptr size_t, :size_t, :DWORD
-  StringExValidateDestW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :size_t, :DWORD
-  StringExValidateDestAndLengthW proto WIN_STD_CALL_CONV :STRSAFE_LPCWSTR, :size_t, :ptr size_t, :size_t, :DWORD
-  StringCopyWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t, :STRSAFE_PCNZCH, :size_t
-  StringCopyWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t, :STRSAFE_PCNZWCH, :size_t
-  StringVPrintfWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t, :STRSAFE_LPCSTR, :va_list
-  ifdef STRSAFE_LOCALE_FUNCTIONS
-    StringVPrintf_lWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t, :STRSAFE_LPCSTR, :_locale_t, :va_list
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    StringLengthWorkerW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :ptr size_t
+    ifdef ALIGNMENT_MACHINE
+      UnalignedStringLengthWorkerW proto WIN_STD_CALL_CONV :STRSAFE_PCUNZWCH, :size_t, :ptr size_t
+    endif
   endif
-  StringVPrintfWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t, :STRSAFE_LPCWSTR, :va_list
-  ifdef STRSAFE_LOCALE_FUNCTIONS
-    StringVPrintf_lWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t, :STRSAFE_LPCWSTR, :_locale_t, :va_list
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr STRSAFE_PCNZCH, :ptr size_t, :size_t, :DWORD
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr STRSAFE_PCNZWCH, :ptr size_t, :size_t, :DWORD
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    StringValidateDestA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :size_t
+    StringValidateDestAndLengthA proto WIN_STD_CALL_CONV :STRSAFE_LPCSTR, :size_t, :ptr size_t, :size_t
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    StringValidateDestW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :size_t
+    StringValidateDestAndLengthW proto WIN_STD_CALL_CONV :STRSAFE_LPCWSTR, :size_t, :ptr size_t, :size_t
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    StringExValidateDestA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :size_t, :DWORD
+    StringExValidateDestAndLengthA proto WIN_STD_CALL_CONV :STRSAFE_LPCSTR, :size_t, :ptr size_t, :size_t, :DWORD
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    StringExValidateDestW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :size_t, :DWORD
+    StringExValidateDestAndLengthW proto WIN_STD_CALL_CONV :STRSAFE_LPCWSTR, :size_t, :ptr size_t, :size_t, :DWORD
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    StringCopyWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t, :STRSAFE_PCNZCH, :size_t
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    StringCopyWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t, :STRSAFE_PCNZWCH, :size_t
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    StringVPrintfWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t, :STRSAFE_LPCSTR, :va_list
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    ifdef STRSAFE_LOCALE_FUNCTIONS
+      StringVPrintf_lWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t, :STRSAFE_LPCSTR, :_locale_t, :va_list
+    endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    StringVPrintfWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t, :STRSAFE_LPCWSTR, :va_list
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    ifdef STRSAFE_LOCALE_FUNCTIONS
+      StringVPrintf_lWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t, :STRSAFE_LPCWSTR, :_locale_t, :va_list
+    endif
   endif
   ifndef STRSAFE_LIB_IMPL
-    StringGetsWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t
-    StringGetsWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      StringGetsWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+      StringGetsWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t
+    endif
   endif
-  StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :DWORD
-  StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :DWORD
-  StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
-  StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :DWORD
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :DWORD
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
+  endif
   __WARNING_CYCLOMATIC_COMPLEXITY equ 28734
   __WARNING_USING_UNINIT_VAR equ 6001
   __WARNING_RETURN_UNINIT_VAR equ 6101
@@ -174,1538 +213,809 @@ ifndef _STRSAFE_H_INCLUDED_
   ifndef STRSAFE_LIB_IMPL
     ifndef STRSAFE_NO_CCH_FUNCTIONS
       ifdef UNICODE
-        StringCchCopy equ <StringCchCopyW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchCopy equ <StringCchCopyW>
+        endif
       else
-        StringCchCopy equ <StringCchCopyA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchCopy equ <StringCchCopyA>
+        endif
       endif
-      StringCchCopyA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR
-      StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :STRSAFE_MAX_LENGTH
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      StringCchCopyW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR
-      StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :STRSAFE_MAX_LENGTH
-      if_ proto WIN_STD_CALL_CONV :cchDest
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCchCopyA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCchCopyW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR
+      endif
     endif
     ifndef STRSAFE_NO_CB_FUNCTIONS
       ifdef UNICODE
-        StringCbCopy equ <StringCbCopyW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbCopy equ <StringCbCopyW>
+        endif
       else
-        StringCbCopy equ <StringCbCopyA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbCopy equ <StringCbCopyA>
+        endif
       endif
-      StringCbCopyA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR
-      sizeof(char)
-      StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :STRSAFE_MAX_LENGTH
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      StringCbCopyW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR
-      sizeof(wchar_t)
-      StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :STRSAFE_MAX_LENGTH
-      if_ proto WIN_STD_CALL_CONV :cchDest
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCbCopyA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCbCopyW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR
+      endif
     endif
     ifndef STRSAFE_NO_CCH_FUNCTIONS
       ifdef UNICODE
-        StringCchCopyEx equ <StringCchCopyExW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchCopyEx equ <StringCchCopyExW>
+        endif
       else
-        StringCchCopyEx equ <StringCchCopyExA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchCopyEx equ <StringCchCopyExA>
+        endif
       endif
-      StringCchCopyExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
-      StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszSrc, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchCopied, :pszSrc, :STRSAFE_MAX_LENGTH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      sizeof(char)
-      StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-      sizeof(char)
-      StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcchRemaining
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      StringCchCopyExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
-      StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszSrc, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchCopied, :pszSrc, :STRSAFE_MAX_LENGTH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      sizeof(wchar_t)
-      StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-      sizeof(wchar_t)
-      StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcchRemaining
-      if_ proto WIN_STD_CALL_CONV :cchDest
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCchCopyExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCchCopyExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
+      endif
     endif
     ifndef STRSAFE_NO_CB_FUNCTIONS
       ifdef UNICODE
-        StringCbCopyEx equ <StringCbCopyExW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbCopyEx equ <StringCbCopyExW>
+        endif
       else
-        StringCbCopyEx equ <StringCbCopyExA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbCopyEx equ <StringCbCopyExA>
+        endif
       endif
-      StringCbCopyExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
-      sizeof(char)
-      StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszSrc, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      __analysis_assume_nullterminated(pszDest)
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchCopied, :pszSrc, :STRSAFE_MAX_LENGTH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(char)
-      StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-      StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcbRemaining
-      pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(char)
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      StringCbCopyExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
-      sizeof(wchar_t)
-      StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszSrc, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      __analysis_assume_nullterminated(pszDest)
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchCopied, :pszSrc, :STRSAFE_MAX_LENGTH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags
-      cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(wchar_t)
-      StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-      StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcbRemaining
-      pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(wchar_t)
-      if_ proto WIN_STD_CALL_CONV :cchDest
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCbCopyExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCbCopyExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
+      endif
     endif
     ifndef STRSAFE_NO_CCH_FUNCTIONS
       ifdef UNICODE
-        StringCchCopyN equ <StringCchCopyNW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchCopyN equ <StringCchCopyNW>
+        endif
       else
-        StringCchCopyN equ <StringCchCopyNA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchCopyN equ <StringCchCopyNA>
+        endif
       endif
-      StringCchCopyNA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t
-      StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :cchToCopy
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :cchToCopy
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      StringCchCopyNW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t
-      StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :cchToCopy
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :cchToCopy
-      if_ proto WIN_STD_CALL_CONV :cchDest
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCchCopyNA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCchCopyNW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t
+      endif
     endif
     ifndef STRSAFE_NO_CB_FUNCTIONS
       ifdef UNICODE
-        StringCbCopyN equ <StringCbCopyNW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbCopyN equ <StringCbCopyNW>
+        endif
       else
-        StringCbCopyN equ <StringCbCopyNA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbCopyN equ <StringCbCopyNA>
+        endif
       endif
-      StringCbCopyNA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t
-      sizeof(char)
-      StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      sizeof(char)
-      if_ proto WIN_STD_CALL_CONV :cchToCopy
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :cchToCopy
-      StringCbCopyNW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t
-      sizeof(wchar_t)
-      StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      sizeof(wchar_t)
-      if_ proto WIN_STD_CALL_CONV :cchToCopy
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :cchToCopy
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCbCopyNA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCbCopyNW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t
+      endif
     endif
     ifndef STRSAFE_NO_CCH_FUNCTIONS
       ifdef UNICODE
-        StringCchCopyNEx equ <StringCchCopyNExW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchCopyNEx equ <StringCchCopyNExW>
+        endif
       else
-        StringCchCopyNEx equ <StringCchCopyNExA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchCopyNEx equ <StringCchCopyNExA>
+        endif
       endif
-      StringCchCopyNExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
-      StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszSrc, :ptr cchToCopy, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchToCopy :ptr ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchCopied, :pszSrc, :cchToCopy
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      sizeof(char)
-      StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-      sizeof(char)
-      StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcchRemaining
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      StringCchCopyNExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
-      StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszSrc, :ptr cchToCopy, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchToCopy :ptr ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchCopied, :pszSrc, :cchToCopy
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      sizeof(wchar_t)
-      StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-      sizeof(wchar_t)
-      StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcchRemaining
-      if_ proto WIN_STD_CALL_CONV :cchDest
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCchCopyNExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCchCopyNExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
+      endif
     endif
     ifndef STRSAFE_NO_CB_FUNCTIONS
       ifdef UNICODE
-        StringCbCopyNEx equ <StringCbCopyNExW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbCopyNEx equ <StringCbCopyNExW>
+        endif
       else
-        StringCbCopyNEx equ <StringCbCopyNExA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbCopyNEx equ <StringCbCopyNExA>
+        endif
       endif
-      StringCbCopyNExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
-      sizeof(char)
-      StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      sizeof(char)
-      StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszSrc, :ptr cchToCopy, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchToCopy :ptr ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      __analysis_assume_nullterminated(pszDest)
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchCopied, :pszSrc, :cchToCopy
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(char)
-      StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-      StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcbRemaining
-      pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(char)
-      StringCbCopyNExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
-      sizeof(wchar_t)
-      StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      sizeof(wchar_t)
-      StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszSrc, :ptr cchToCopy, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchToCopy :ptr ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      __analysis_assume_nullterminated(pszDest)
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchCopied, :pszSrc, :cchToCopy
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags
-      cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(wchar_t)
-      StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-      StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcbRemaining
-      pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(wchar_t)
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCbCopyNExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCbCopyNExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
+      endif
     endif
     ifndef STRSAFE_NO_CCH_FUNCTIONS
       ifdef UNICODE
-        StringCchCat equ <StringCchCatW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchCat equ <StringCchCatW>
+        endif
       else
-        StringCchCat equ <StringCchCatA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchCat equ <StringCchCatA>
+        endif
       endif
-      StringCchCatA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR
-      StringValidateDestAndLengthA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :STRSAFE_MAX_LENGTH
-      StringCchCatW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR
-      StringValidateDestAndLengthW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :STRSAFE_MAX_LENGTH
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCchCatA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCchCatW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR
+      endif
     endif
     ifndef STRSAFE_NO_CB_FUNCTIONS
       ifdef UNICODE
-        StringCbCat equ <StringCbCatW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbCat equ <StringCbCatW>
+        endif
       else
-        StringCbCat equ <StringCbCatA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbCat equ <StringCbCatA>
+        endif
       endif
-      StringCbCatA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR
-      sizeof(char)
-      StringValidateDestAndLengthA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :STRSAFE_MAX_LENGTH
-      StringCbCatW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR
-      sizeof(wchar_t)
-      StringValidateDestAndLengthW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :STRSAFE_MAX_LENGTH
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCbCatA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCbCatW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR
+      endif
     endif
     ifndef STRSAFE_NO_CCH_FUNCTIONS
       ifdef UNICODE
-        StringCchCatEx equ <StringCchCatExW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchCatEx equ <StringCchCatExW>
+        endif
       else
-        StringCchCatEx equ <StringCchCatExA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchCatEx equ <StringCchCatExA>
+        endif
       endif
-      StringCchCatExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
-      StringExValidateDestAndLengthA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszSrc, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchRemaining
-      if_ proto WIN_STD_CALL_CONV :ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDestEnd, :cchRemaining, :ptr cchCopied, :pszSrc, :STRSAFE_MAX_LENGTH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      sizeof(char)
-      StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-      sizeof(char)
-      StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :cchDestLength, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcchRemaining
-      StringCchCatExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
-      StringExValidateDestAndLengthW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszSrc, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchRemaining
-      if_ proto WIN_STD_CALL_CONV :ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDestEnd, :cchRemaining, :ptr cchCopied, :pszSrc, :STRSAFE_MAX_LENGTH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      sizeof(wchar_t)
-      StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-      sizeof(wchar_t)
-      StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :cchDestLength, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcchRemaining
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCchCatExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCchCatExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
+      endif
     endif
     ifndef STRSAFE_NO_CB_FUNCTIONS
       ifdef UNICODE
-        StringCbCatEx equ <StringCbCatExW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbCatEx equ <StringCbCatExW>
+        endif
       else
-        StringCbCatEx equ <StringCbCatExA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbCatEx equ <StringCbCatExA>
+        endif
       endif
-      StringCbCatExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
-      sizeof(char)
-      StringExValidateDestAndLengthA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszSrc, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchRemaining
-      if_ proto WIN_STD_CALL_CONV :ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDestEnd, :cchRemaining, :ptr cchCopied, :pszSrc, :STRSAFE_MAX_LENGTH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(char)
-      StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-      StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :cchDestLength, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcbRemaining
-      pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(char)
-      StringCbCatExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
-      sizeof(wchar_t)
-      StringExValidateDestAndLengthW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszSrc, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchRemaining
-      if_ proto WIN_STD_CALL_CONV :ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDestEnd, :cchRemaining, :ptr cchCopied, :pszSrc, :STRSAFE_MAX_LENGTH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags
-      cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(wchar_t)
-      StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-      StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :cchDestLength, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcbRemaining
-      pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(wchar_t)
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCbCatExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCbCatExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
+      endif
     endif
     ifndef STRSAFE_NO_CCH_FUNCTIONS
       ifdef UNICODE
-        StringCchCatN equ <StringCchCatNW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchCatN equ <StringCchCatNW>
+        endif
       else
-        StringCchCatN equ <StringCchCatNA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchCatN equ <StringCchCatNA>
+        endif
       endif
-      StringCchCatNA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t
-      StringValidateDestAndLengthA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :cchToAppend
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :cchToAppend
-      StringCchCatNW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t
-      StringValidateDestAndLengthW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :cchToAppend
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :cchToAppend
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCchCatNA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCchCatNW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t
+      endif
     endif
     ifndef STRSAFE_NO_CB_FUNCTIONS
       ifdef UNICODE
-        StringCbCatN equ <StringCbCatNW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbCatN equ <StringCbCatNW>
+        endif
       else
-        StringCbCatN equ <StringCbCatNA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbCatN equ <StringCbCatNA>
+        endif
       endif
-      StringCbCatNA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t
-      sizeof(char)
-      StringValidateDestAndLengthA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      sizeof(char)
-      if_ proto WIN_STD_CALL_CONV :cchToAppend
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :cchToAppend
-      StringCbCatNW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t
-      sizeof(wchar_t)
-      StringValidateDestAndLengthW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      sizeof(wchar_t)
-      if_ proto WIN_STD_CALL_CONV :cchToAppend
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszSrc, :cchToAppend
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCbCatNA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCbCatNW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t
+      endif
     endif
     ifndef STRSAFE_NO_CCH_FUNCTIONS
       ifdef UNICODE
-        StringCchCatNEx equ <StringCchCatNExW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchCatNEx equ <StringCchCatNExW>
+        endif
       else
-        StringCchCatNEx equ <StringCchCatNExA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchCatNEx equ <StringCchCatNExA>
+        endif
       endif
-      StringCchCatNExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
-      StringExValidateDestAndLengthA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszSrc, :ptr cchToAppend, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchRemaining
-      if_ proto WIN_STD_CALL_CONV :cchToAppend :ptr ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDestEnd, :cchRemaining, :ptr cchCopied, :pszSrc, :cchToAppend
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      sizeof(char)
-      StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-      sizeof(char)
-      StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :cchDestLength, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcchRemaining
-      StringCchCatNExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
-      StringExValidateDestAndLengthW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszSrc, :ptr cchToAppend, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchRemaining
-      if_ proto WIN_STD_CALL_CONV :cchToAppend :ptr ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDestEnd, :cchRemaining, :ptr cchCopied, :pszSrc, :cchToAppend
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      sizeof(wchar_t)
-      StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-      sizeof(wchar_t)
-      StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :cchDestLength, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcchRemaining
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCchCatNExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCchCatNExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
+      endif
     endif
     ifndef STRSAFE_NO_CB_FUNCTIONS
       ifdef UNICODE
-        StringCbCatNEx equ <StringCbCatNExW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbCatNEx equ <StringCbCatNExW>
+        endif
       else
-        StringCbCatNEx equ <StringCbCatNExA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbCatNEx equ <StringCbCatNExA>
+        endif
       endif
-      StringCbCatNExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
-      sizeof(char)
-      StringExValidateDestAndLengthA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      sizeof(char)
-      StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszSrc, :ptr cchToAppend, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchRemaining
-      if_ proto WIN_STD_CALL_CONV :cchToAppend :ptr ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringCopyWorkerA proto WIN_STD_CALL_CONV :pszDestEnd, :cchRemaining, :ptr cchCopied, :pszSrc, :cchToAppend
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(char)
-      StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-      StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :cchDestLength, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcbRemaining
-      pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(char)
-      StringCbCatNExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
-      sizeof(wchar_t)
-      StringExValidateDestAndLengthW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchDestLength, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      sizeof(wchar_t)
-      StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszSrc, :ptr cchToAppend, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchRemaining
-      if_ proto WIN_STD_CALL_CONV :cchToAppend :ptr ptr pszSrc
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringCopyWorkerW proto WIN_STD_CALL_CONV :pszDestEnd, :cchRemaining, :ptr cchCopied, :pszSrc, :cchToAppend
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags
-      cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(wchar_t)
-      StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-      StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :cchDestLength, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcbRemaining
-      pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(wchar_t)
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCbCatNExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_PCNZCH, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCbCatNExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_PCNZWCH, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
+      endif
     endif
     ifndef STRSAFE_NO_CCH_FUNCTIONS
       ifdef UNICODE
-        StringCchVPrintf equ <StringCchVPrintfW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchVPrintf equ <StringCchVPrintfW>
+        endif
       else
-        StringCchVPrintf equ <StringCchVPrintfA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchVPrintf equ <StringCchVPrintfA>
+        endif
       endif
-      StringCchVPrintfA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :va_list
-      StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringVPrintfWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :argList
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      StringCchVPrintfW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :va_list
-      StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringVPrintfWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :argList
-      if_ proto WIN_STD_CALL_CONV :cchDest
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCchVPrintfA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :va_list
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCchVPrintfW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :va_list
+      endif
     endif
     if Defined(STRSAFE_LOCALE_FUNCTIONS) and  not Defined(STRSAFE_NO_CCH_FUNCTIONS)
       ifdef UNICODE
-        StringCchVPrintf_l equ <StringCchVPrintf_lW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchVPrintf_l equ <StringCchVPrintf_lW>
+        endif
       else
-        StringCchVPrintf_l equ <StringCchVPrintf_lA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchVPrintf_l equ <StringCchVPrintf_lA>
+        endif
       endif
-      StringCchVPrintf_lA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :_locale_t, :va_list
-      StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringVPrintf_lWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :locale, :argList
-      StringCchVPrintf_lW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :_locale_t, :va_list
-      StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringVPrintf_lWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :locale, :argList
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCchVPrintf_lA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :_locale_t, :va_list
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCchVPrintf_lW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :_locale_t, :va_list
+      endif
     endif
     ifndef STRSAFE_NO_CB_FUNCTIONS
       ifdef UNICODE
-        StringCbVPrintf equ <StringCbVPrintfW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbVPrintf equ <StringCbVPrintfW>
+        endif
       else
-        StringCbVPrintf equ <StringCbVPrintfA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbVPrintf equ <StringCbVPrintfA>
+        endif
       endif
-      StringCbVPrintfA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :va_list
-      sizeof(char)
-      StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringVPrintfWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :argList
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      StringCbVPrintfW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :va_list
-      sizeof(wchar_t)
-      StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringVPrintfWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :argList
-      if_ proto WIN_STD_CALL_CONV :cchDest
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCbVPrintfA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :va_list
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCbVPrintfW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :va_list
+      endif
     endif
     if Defined(STRSAFE_LOCALE_FUNCTIONS) and  not Defined(STRSAFE_NO_CB_FUNCTIONS)
       ifdef UNICODE
-        StringCbVPrintf_l equ <StringCbVPrintf_lW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbVPrintf_l equ <StringCbVPrintf_lW>
+        endif
       else
-        StringCbVPrintf_l equ <StringCbVPrintf_lA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbVPrintf_l equ <StringCbVPrintf_lA>
+        endif
       endif
-      StringCbVPrintf_lA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :_locale_t, :va_list
-      sizeof(char)
-      StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringVPrintf_lWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :locale, :argList
-      StringCbVPrintf_lW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :_locale_t, :va_list
-      sizeof(wchar_t)
-      StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringVPrintf_lWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :locale, :argList
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCbVPrintf_lA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :_locale_t, :va_list
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCbVPrintf_lW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :_locale_t, :va_list
+      endif
     endif
     ifndef _M_CEE_PURE
       ifndef STRSAFE_NO_CCH_FUNCTIONS
         ifdef UNICODE
-          StringCchPrintf equ <StringCchPrintfW>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+            StringCchPrintf equ <StringCchPrintfW>
+          endif
         else
-          StringCchPrintf equ <StringCchPrintfA>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+            StringCchPrintf equ <StringCchPrintfA>
+          endif
         endif
-        StringCchPrintfA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :vararg
-        StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        va_start proto WIN_STD_CALL_CONV :argList, :pszFormat
-        StringVPrintfWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        StringCchPrintfW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :vararg
-        StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        va_start proto WIN_STD_CALL_CONV :argList, :pszFormat
-        StringVPrintfWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
-        if_ proto WIN_STD_CALL_CONV :cchDest
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchPrintfA proto c :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :vararg
+        endif
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchPrintfW proto c :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :vararg
+        endif
       endif
       if Defined(STRSAFE_LOCALE_FUNCTIONS) and  not Defined(STRSAFE_NO_CCH_FUNCTIONS)
         ifdef UNICODE
-          StringCchPrintf_l equ <StringCchPrintf_lW>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+            StringCchPrintf_l equ <StringCchPrintf_lW>
+          endif
         else
-          StringCchPrintf_l equ <StringCchPrintf_lA>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+            StringCchPrintf_l equ <StringCchPrintf_lA>
+          endif
         endif
-        StringCchPrintf_lA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :_locale_t, :vararg
-        StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        va_start proto WIN_STD_CALL_CONV :argList, :locale
-        StringVPrintf_lWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :locale, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
-        StringCchPrintf_lW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :_locale_t, :vararg
-        StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        va_start proto WIN_STD_CALL_CONV :argList, :locale
-        StringVPrintf_lWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :locale, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchPrintf_lA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :_locale_t, :vararg
+        endif
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchPrintf_lW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :_locale_t, :vararg
+        endif
       endif
       ifndef STRSAFE_NO_CB_FUNCTIONS
         ifdef UNICODE
-          StringCbPrintf equ <StringCbPrintfW>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+            StringCbPrintf equ <StringCbPrintfW>
+          endif
         else
-          StringCbPrintf equ <StringCbPrintfA>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+            StringCbPrintf equ <StringCbPrintfA>
+          endif
         endif
-        StringCbPrintfA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :vararg
-        sizeof(char)
-        StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        va_start proto WIN_STD_CALL_CONV :argList, :pszFormat
-        StringVPrintfWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        StringCbPrintfW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :vararg
-        sizeof(wchar_t)
-        StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        va_start proto WIN_STD_CALL_CONV :argList, :pszFormat
-        StringVPrintfWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
-        if_ proto WIN_STD_CALL_CONV :cchDest
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbPrintfA proto c :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :vararg
+        endif
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbPrintfW proto c :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :vararg
+        endif
       endif
       if Defined(STRSAFE_LOCALE_FUNCTIONS) and  not Defined(STRSAFE_NO_CB_FUNCTIONS)
         ifdef UNICODE
-          StringCbPrintf_l equ <StringCbPrintf_lW>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+            StringCbPrintf_l equ <StringCbPrintf_lW>
+          endif
         else
-          StringCbPrintf_l equ <StringCbPrintf_lA>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+            StringCbPrintf_l equ <StringCbPrintf_lA>
+          endif
         endif
-        StringCbPrintf_lA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :_locale_t, :vararg
-        sizeof(char)
-        StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        va_start proto WIN_STD_CALL_CONV :argList, :locale
-        StringVPrintf_lWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :locale, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
-        StringCbPrintf_lW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :_locale_t, :vararg
-        sizeof(wchar_t)
-        StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        va_start proto WIN_STD_CALL_CONV :argList, :locale
-        StringVPrintf_lWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL, :pszFormat, :locale, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbPrintf_lA proto c :STRSAFE_LPSTR, :size_t, :STRSAFE_LPCSTR, :_locale_t, :vararg
+        endif
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbPrintf_lW proto c :STRSAFE_LPWSTR, :size_t, :STRSAFE_LPCWSTR, :_locale_t, :vararg
+        endif
       endif
       ifndef STRSAFE_NO_CCH_FUNCTIONS
         ifdef UNICODE
-          StringCchPrintfEx equ <StringCchPrintfExW>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+            StringCchPrintfEx equ <StringCchPrintfExW>
+          endif
         else
-          StringCchPrintfEx equ <StringCchPrintfExA>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+            StringCchPrintfEx equ <StringCchPrintfExA>
+          endif
         endif
-        StringCchPrintfExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :vararg
-        StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-        if_ proto WIN_STD_CALL_CONV :pszDest
-        va_start proto WIN_STD_CALL_CONV :argList, :pszFormat
-        StringVPrintfWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-        sizeof(char)
-        StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-        sizeof(char)
-        StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-        if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-        if_ proto WIN_STD_CALL_CONV :pcchRemaining
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        StringCchPrintfExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :vararg
-        StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-        if_ proto WIN_STD_CALL_CONV :pszDest
-        va_start proto WIN_STD_CALL_CONV :argList, :pszFormat
-        StringVPrintfWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-        sizeof(wchar_t)
-        StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-        sizeof(wchar_t)
-        StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-        if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-        if_ proto WIN_STD_CALL_CONV :pcchRemaining
-        if_ proto WIN_STD_CALL_CONV :cchDest
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchPrintfExA proto c :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :vararg
+        endif
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchPrintfExW proto c :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :vararg
+        endif
       endif
       if Defined(STRSAFE_LOCALE_FUNCTIONS) and  not Defined(STRSAFE_NO_CCH_FUNCTIONS)
         ifdef UNICODE
-          StringCchPrintf_lEx equ <StringCchPrintf_lExW>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+            StringCchPrintf_lEx equ <StringCchPrintf_lExW>
+          endif
         else
-          StringCchPrintf_lEx equ <StringCchPrintf_lExA>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+            StringCchPrintf_lEx equ <StringCchPrintf_lExA>
+          endif
         endif
-        StringCchPrintf_lExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :_locale_t, :vararg
-        StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-        if_ proto WIN_STD_CALL_CONV :pszDest
-        va_start proto WIN_STD_CALL_CONV :argList, :locale
-        StringVPrintf_lWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :locale, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-        sizeof(char)
-        StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-        sizeof(char)
-        StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-        if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-        if_ proto WIN_STD_CALL_CONV :pcchRemaining
-        StringCchPrintf_lExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :_locale_t, :vararg
-        StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-        if_ proto WIN_STD_CALL_CONV :pszDest
-        va_start proto WIN_STD_CALL_CONV :argList, :locale
-        StringVPrintf_lWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :locale, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-        sizeof(wchar_t)
-        StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-        sizeof(wchar_t)
-        StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-        if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-        if_ proto WIN_STD_CALL_CONV :pcchRemaining
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchPrintf_lExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :_locale_t, :vararg
+        endif
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchPrintf_lExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :_locale_t, :vararg
+        endif
       endif
       ifndef STRSAFE_NO_CB_FUNCTIONS
         ifdef UNICODE
-          StringCbPrintfEx equ <StringCbPrintfExW>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+            StringCbPrintfEx equ <StringCbPrintfExW>
+          endif
         else
-          StringCbPrintfEx equ <StringCbPrintfExA>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+            StringCbPrintfEx equ <StringCbPrintfExA>
+          endif
         endif
-        StringCbPrintfExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :vararg
-        sizeof(char)
-        StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-        if_ proto WIN_STD_CALL_CONV :pszDest
-        __analysis_assume_nullterminated(pszDest)
-        va_start proto WIN_STD_CALL_CONV :argList, :pszFormat
-        StringVPrintfWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-        cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-        sizeof(char)
-        StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-        StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-        if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-        if_ proto WIN_STD_CALL_CONV :pcbRemaining
-        pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-        sizeof(char)
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        StringCbPrintfExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :vararg
-        sizeof(wchar_t)
-        StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-        if_ proto WIN_STD_CALL_CONV :pszDest
-        __analysis_assume_nullterminated(pszDest)
-        va_start proto WIN_STD_CALL_CONV :argList, :pszFormat
-        StringVPrintfWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags
-        cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-        sizeof(wchar_t)
-        StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-        StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-        if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-        if_ proto WIN_STD_CALL_CONV :pcbRemaining
-        pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-        sizeof(wchar_t)
-        if_ proto WIN_STD_CALL_CONV :cchDest
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbPrintfExA proto c :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :vararg
+        endif
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbPrintfExW proto c :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :vararg
+        endif
       endif
       if Defined(STRSAFE_LOCALE_FUNCTIONS) and  not Defined(STRSAFE_NO_CB_FUNCTIONS)
         ifdef UNICODE
-          StringCbPrintf_lEx equ <StringCbPrintf_lExW>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+            StringCbPrintf_lEx equ <StringCbPrintf_lExW>
+          endif
         else
-          StringCbPrintf_lEx equ <StringCbPrintf_lExA>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+            StringCbPrintf_lEx equ <StringCbPrintf_lExA>
+          endif
         endif
-        StringCbPrintf_lExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :_locale_t, :vararg
-        sizeof(char)
-        StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-        if_ proto WIN_STD_CALL_CONV :pszDest
-        va_start proto WIN_STD_CALL_CONV :argList, :locale
-        StringVPrintf_lWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :locale, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-        cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-        sizeof(char)
-        StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-        StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-        if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-        if_ proto WIN_STD_CALL_CONV :pcbRemaining
-        pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-        sizeof(char)
-        StringCbPrintf_lExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :_locale_t, :vararg
-        sizeof(wchar_t)
-        StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-        if_ proto WIN_STD_CALL_CONV :pszDest
-        va_start proto WIN_STD_CALL_CONV :argList, :locale
-        StringVPrintf_lWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :locale, :argList
-        va_end proto WIN_STD_CALL_CONV :argList
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags
-        cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-        sizeof(wchar_t)
-        StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-        StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-        if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-        if_ proto WIN_STD_CALL_CONV :pcbRemaining
-        pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-        sizeof(wchar_t)
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbPrintf_lExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :_locale_t, :vararg
+        endif
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbPrintf_lExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :_locale_t, :vararg
+        endif
       endif
     endif
     ifndef STRSAFE_NO_CCH_FUNCTIONS
       ifdef UNICODE
-        StringCchVPrintfEx equ <StringCchVPrintfExW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchVPrintfEx equ <StringCchVPrintfExW>
+        endif
       else
-        StringCchVPrintfEx equ <StringCchVPrintfExA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchVPrintfEx equ <StringCchVPrintfExA>
+        endif
       endif
-      StringCchVPrintfExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :va_list
-      StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringVPrintfWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :argList
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      sizeof(char)
-      StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-      sizeof(char)
-      StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcchRemaining
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      StringCchVPrintfExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :va_list
-      StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringVPrintfWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :argList
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      sizeof(wchar_t)
-      StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-      sizeof(wchar_t)
-      StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcchRemaining
-      if_ proto WIN_STD_CALL_CONV :cchDest
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCchVPrintfExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :va_list
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCchVPrintfExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :va_list
+      endif
     endif
     if Defined(STRSAFE_LOCALE_FUNCTIONS) and  not Defined(STRSAFE_NO_CCH_FUNCTIONS)
       ifdef UNICODE
-        StringCchVPrintf_lEx equ <StringCchVPrintf_lExW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchVPrintf_lEx equ <StringCchVPrintf_lExW>
+        endif
       else
-        StringCchVPrintf_lEx equ <StringCchVPrintf_lExA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchVPrintf_lEx equ <StringCchVPrintf_lExA>
+        endif
       endif
-      StringCchVPrintf_lExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :_locale_t, :va_list
-      StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringVPrintf_lWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :locale, :argList
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      sizeof(char)
-      StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-      sizeof(char)
-      StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcchRemaining
-      StringCchVPrintf_lExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :_locale_t, :va_list
-      StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringVPrintf_lWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :locale, :argList
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      sizeof(wchar_t)
-      StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-      sizeof(wchar_t)
-      StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcchRemaining
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCchVPrintf_lExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :_locale_t, :va_list
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCchVPrintf_lExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :_locale_t, :va_list
+      endif
     endif
     ifndef STRSAFE_NO_CB_FUNCTIONS
       ifdef UNICODE
-        StringCbVPrintfEx equ <StringCbVPrintfExW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbVPrintfEx equ <StringCbVPrintfExW>
+        endif
       else
-        StringCbVPrintfEx equ <StringCbVPrintfExA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbVPrintfEx equ <StringCbVPrintfExA>
+        endif
       endif
-      StringCbVPrintfExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :va_list
-      sizeof(char)
-      StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      __analysis_assume_nullterminated(pszDest)
-      StringVPrintfWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :argList
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(char)
-      StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-      StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcbRemaining
-      pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(char)
-      StringCbVPrintfExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :va_list
-      sizeof(wchar_t)
-      StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      __analysis_assume_nullterminated(pszDest)
-      StringVPrintfWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :argList
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags
-      cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(wchar_t)
-      StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-      StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcbRemaining
-      pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(wchar_t)
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCbVPrintfExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :va_list
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCbVPrintfExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :va_list
+      endif
     endif
     if Defined(STRSAFE_LOCALE_FUNCTIONS) and  not Defined(STRSAFE_NO_CB_FUNCTIONS)
       ifdef UNICODE
-        StringCbVPrintf_lEx equ <StringCbVPrintf_lExW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbVPrintf_lEx equ <StringCbVPrintf_lExW>
+        endif
       else
-        StringCbVPrintf_lEx equ <StringCbVPrintf_lExA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbVPrintf_lEx equ <StringCbVPrintf_lExA>
+        endif
       endif
-      StringCbVPrintf_lExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :_locale_t, :va_list
-      sizeof(char)
-      StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringVPrintf_lWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :locale, :argList
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-      cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(char)
-      StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-      StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcbRemaining
-      pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(char)
-      StringCbVPrintf_lExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :_locale_t, :va_list
-      sizeof(wchar_t)
-      StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr pszFormat, :NULL, :STRSAFE_MAX_CCH, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :ptr pszFormat
-      if_ proto WIN_STD_CALL_CONV :pszDest
-      StringVPrintf_lWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength, :pszFormat, :locale, :argList
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags
-      cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(wchar_t)
-      StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :cchDest
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-      StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_
-      if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-      if_ proto WIN_STD_CALL_CONV :pcbRemaining
-      pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-      sizeof(wchar_t)
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCbVPrintf_lExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD, :STRSAFE_LPCSTR, :_locale_t, :va_list
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCbVPrintf_lExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD, :STRSAFE_LPCWSTR, :_locale_t, :va_list
+      endif
     endif
     ifndef STRSAFE_LIB_IMPL
       ifndef STRSAFE_NO_CCH_FUNCTIONS
         ifdef UNICODE
-          StringCchGets equ <StringCchGetsW>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+            StringCchGets equ <StringCchGetsW>
+          endif
         else
-          StringCchGets equ <StringCchGetsA>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+            StringCchGets equ <StringCchGetsA>
+          endif
         endif
-        StringCchGetsA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t
-        StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        StringGetsWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        StringCchGetsW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t
-        StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        StringGetsWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL
-        if_ proto WIN_STD_CALL_CONV :cchDest
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchGetsA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t
+        endif
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchGetsW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t
+        endif
       endif
       ifndef STRSAFE_NO_CB_FUNCTIONS
         ifdef UNICODE
-          StringCbGets equ <StringCbGetsW>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+            StringCbGets equ <StringCbGetsW>
+          endif
         else
-          StringCbGets equ <StringCbGetsA>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+            StringCbGets equ <StringCbGetsA>
+          endif
         endif
-        StringCbGetsA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t
-        sizeof(char)
-        StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        StringGetsWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        StringCbGetsW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t
-        sizeof(wchar_t)
-        StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        StringGetsWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :NULL
-        if_ proto WIN_STD_CALL_CONV :cchDest
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbGetsA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t
+        endif
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbGetsW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t
+        endif
       endif
       ifndef STRSAFE_NO_CCH_FUNCTIONS
         ifdef UNICODE
-          StringCchGetsEx equ <StringCchGetsExW>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+            StringCchGetsEx equ <StringCchGetsExW>
+          endif
         else
-          StringCchGetsEx equ <StringCchGetsExA>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+            StringCchGetsEx equ <StringCchGetsExA>
+          endif
         endif
-        StringCchGetsExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
-        StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :pszDest
-        StringGetsWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-        sizeof(char)
-        StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-        sizeof(char)
-        StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_ :||_
-        if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-        if_ proto WIN_STD_CALL_CONV :pcchRemaining
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        StringCchGetsExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
-        StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :pszDest
-        StringGetsWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-        sizeof(wchar_t)
-        StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cchDest
-        sizeof(wchar_t)
-        StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_ :||_
-        if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-        if_ proto WIN_STD_CALL_CONV :pcchRemaining
-        if_ proto WIN_STD_CALL_CONV :cchDest
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchGetsExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
+        endif
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchGetsExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
+        endif
       endif
       ifndef STRSAFE_NO_CB_FUNCTIONS
         ifdef UNICODE
-          StringCbGetsEx equ <StringCbGetsExW>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+            StringCbGetsEx equ <StringCbGetsExW>
+          endif
         else
-          StringCbGetsEx equ <StringCbGetsExA>
+          if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+            StringCbGetsEx equ <StringCbGetsExA>
+          endif
         endif
-        StringCbGetsExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
-        sizeof(char)
-        StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :pszDest
-        StringGetsWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags :ptr cchRemaining
-        cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-        sizeof(char)
-        StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-        StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_ :||_
-        if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-        if_ proto WIN_STD_CALL_CONV :pcbRemaining
-        pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-        sizeof(char)
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        StringCbGetsExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
-        sizeof(wchar_t)
-        StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :STRSAFE_MAX_CCH, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :cchDest
-        if_ proto WIN_STD_CALL_CONV :pszDest
-        StringGetsWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :ptr cchNewDestLength
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :ptr ptr dwFlags
-        cbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-        sizeof(wchar_t)
-        StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :pszDestEnd, :cbRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :FAILED :ptr ptr dwFlags :ptr cbDest
-        StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :pszDest, :cbDest, :0, :ptr pszDestEnd, :ptr cchRemaining, :dwFlags
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED :||_ :||_
-        if_ proto WIN_STD_CALL_CONV :ppszDestEnd
-        if_ proto WIN_STD_CALL_CONV :pcbRemaining
-        pcbRemaining proto WIN_STD_CALL_CONV :ptr cchRemaining
-        sizeof(wchar_t)
-        if_ proto WIN_STD_CALL_CONV :cchDest
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbGetsExA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
+        endif
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbGetsExW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
+        endif
       endif
     endif
     ifndef STRSAFE_NO_CCH_FUNCTIONS
       ifdef UNICODE
-        StringCchLength equ <StringCchLengthW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCchLength equ <StringCchLengthW>
+        endif
       else
-        StringCchLength equ <StringCchLengthA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCchLength equ <StringCchLengthA>
+        endif
       endif
-      StringCchLengthA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :ptr size_t
-      if_ proto WIN_STD_CALL_CONV :psz :||_
-      StringLengthWorkerA proto WIN_STD_CALL_CONV :psz, :cchMax, :pcchLength
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr pcchLength
-      StringCchLengthW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :ptr size_t
-      if_ proto WIN_STD_CALL_CONV :psz :||_
-      StringLengthWorkerW proto WIN_STD_CALL_CONV :psz, :cchMax, :pcchLength
-      if_ proto WIN_STD_CALL_CONV :FAILED :ptr pcchLength
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCchLengthA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :ptr size_t
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCchLengthW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :ptr size_t
+      endif
     endif
     ifndef STRSAFE_NO_CB_FUNCTIONS
       ifdef UNICODE
-        StringCbLength equ <StringCbLengthW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          StringCbLength equ <StringCbLengthW>
+        endif
       else
-        StringCbLength equ <StringCbLengthA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          StringCbLength equ <StringCbLengthA>
+        endif
       endif
-      StringCbLengthA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :ptr size_t
-      sizeof(char)
-      if_ proto WIN_STD_CALL_CONV :psz :||_
-      StringLengthWorkerA proto WIN_STD_CALL_CONV :psz, :cchMax, :ptr cchLength
-      if_ proto WIN_STD_CALL_CONV :pcbLength
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      sizeof(char)
-      StringCbLengthW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :ptr size_t
-      sizeof(wchar_t)
-      if_ proto WIN_STD_CALL_CONV :psz :||_
-      StringLengthWorkerW proto WIN_STD_CALL_CONV :psz, :cchMax, :ptr cchLength
-      if_ proto WIN_STD_CALL_CONV :pcbLength
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-      sizeof(wchar_t)
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+        StringCbLengthA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :ptr size_t
+      endif
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        StringCbLengthW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :ptr size_t
+      endif
     endif
     ifndef STRSAFE_NO_CCH_FUNCTIONS
       ifdef UNICODE
-        UnalignedStringCchLength equ <UnalignedStringCchLengthW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          UnalignedStringCchLength equ <UnalignedStringCchLengthW>
+        endif
       else
-        UnalignedStringCchLength equ <StringCchLengthA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          UnalignedStringCchLength equ <StringCchLengthA>
+        endif
       endif
-      ifdef ALIGNMENT_MACHINE
-        UnalignedStringCchLengthW proto WIN_STD_CALL_CONV :STRSAFE_PCUNZWCH, :size_t, :ptr size_t
-        if_ proto WIN_STD_CALL_CONV :psz :||_
-        UnalignedStringLengthWorkerW proto WIN_STD_CALL_CONV :psz, :cchMax, :pcchLength
-        if_ proto WIN_STD_CALL_CONV :FAILED :ptr pcchLength
-      else
-        UnalignedStringCchLengthW equ <StringCchLengthW>
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        ifdef ALIGNMENT_MACHINE
+          UnalignedStringCchLengthW proto WIN_STD_CALL_CONV :STRSAFE_PCUNZWCH, :size_t, :ptr size_t
+        else
+          UnalignedStringCchLengthW equ <StringCchLengthW>
+        endif
       endif
     endif
     ifndef STRSAFE_NO_CB_FUNCTIONS
       ifdef UNICODE
-        UnalignedStringCbLength equ <UnalignedStringCbLengthW>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+          UnalignedStringCbLength equ <UnalignedStringCbLengthW>
+        endif
       else
-        UnalignedStringCbLength equ <StringCbLengthA>
+        if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+          UnalignedStringCbLength equ <StringCbLengthA>
+        endif
       endif
-      ifdef ALIGNMENT_MACHINE
-        UnalignedStringCbLengthW proto WIN_STD_CALL_CONV :STRSAFE_PCUNZWCH, :size_t, :ptr size_t
-        sizeof(wchar_t)
-        if_ proto WIN_STD_CALL_CONV :psz :||_
-        UnalignedStringLengthWorkerW proto WIN_STD_CALL_CONV :psz, :cchMax, :ptr cchLength
-        if_ proto WIN_STD_CALL_CONV :pcbLength
-        if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-        sizeof(wchar_t)
-      else
-        UnalignedStringCbLengthW equ <StringCbLengthW>
+      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+        ifdef ALIGNMENT_MACHINE
+          UnalignedStringCbLengthW proto WIN_STD_CALL_CONV :STRSAFE_PCUNZWCH, :size_t, :ptr size_t
+        else
+          UnalignedStringCbLengthW equ <StringCbLengthW>
+        endif
       endif
     endif
   endif
   if Defined(STRSAFE_LIB_IMPL) or  not Defined(STRSAFE_LIB)
-    StringLengthWorkerA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :ptr size_t
-    while_ proto WIN_STD_CALL_CONV :ptr ptr cchMax
-    if_ proto WIN_STD_CALL_CONV :cchMax
-    if_ proto WIN_STD_CALL_CONV :pcchLength
-    if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-    StringLengthWorkerW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :ptr size_t
-    while_ proto WIN_STD_CALL_CONV :ptr ptr cchMax
-    if_ proto WIN_STD_CALL_CONV :cchMax
-    if_ proto WIN_STD_CALL_CONV :pcchLength
-    if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-    ifdef ALIGNMENT_MACHINE
-      UnalignedStringLengthWorkerW proto WIN_STD_CALL_CONV :STRSAFE_PCUNZWCH, :size_t, :ptr size_t
-      while_ proto WIN_STD_CALL_CONV :ptr ptr cchMax
-      if_ proto WIN_STD_CALL_CONV :cchMax
-      if_ proto WIN_STD_CALL_CONV :pcchLength
-      if_ proto WIN_STD_CALL_CONV :SUCCEEDED
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      StringLengthWorkerA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :ptr size_t
     endif
-    StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr STRSAFE_PCNZCH, :ptr size_t, :size_t, :DWORD
-    if_ proto WIN_STD_CALL_CONV :ptr ptr pcchToRead
-    if_ proto WIN_STD_CALL_CONV :ptr dwFlags :ptr ptr ppszSrc
-    if_ proto WIN_STD_CALL_CONV :pcchToRead
-    StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr STRSAFE_PCNZWCH, :ptr size_t, :size_t, :DWORD
-    if_ proto WIN_STD_CALL_CONV :ptr ptr pcchToRead
-    if_ proto WIN_STD_CALL_CONV :ptr dwFlags :ptr ptr ppszSrc
-    if_ proto WIN_STD_CALL_CONV :pcchToRead
-    StringValidateDestA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :size_t
-    if_ proto WIN_STD_CALL_CONV :cchDest :||_
-    StringValidateDestAndLengthA proto WIN_STD_CALL_CONV :STRSAFE_LPCSTR, :size_t, :ptr size_t, :size_t
-    StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :cchMax
-    if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-    StringLengthWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :pcchDestLength
-    StringValidateDestW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :size_t
-    if_ proto WIN_STD_CALL_CONV :cchDest :||_
-    StringValidateDestAndLengthW proto WIN_STD_CALL_CONV :STRSAFE_LPCWSTR, :size_t, :ptr size_t, :size_t
-    StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :cchMax
-    if_ proto WIN_STD_CALL_CONV :SUCCEEDED
-    StringLengthWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :pcchDestLength
-    StringExValidateDestA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :size_t, :DWORD
-    if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-    if_ proto WIN_STD_CALL_CONV :pszDest :ptr cchDest :||_
-    StringValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :cchMax
-    StringExValidateDestAndLengthA proto WIN_STD_CALL_CONV :STRSAFE_LPCSTR, :size_t, :ptr size_t, :size_t, :DWORD
-    if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-    StringExValidateDestA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :cchMax, :dwFlags
-    if_ proto WIN_STD_CALL_CONV :FAILED :||_
-    StringLengthWorkerA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :pcchDestLength
-    StringValidateDestAndLengthA proto WIN_STD_CALL_CONV :pszDest, :cchDest, :pcchDestLength, :cchMax
-    StringExValidateDestW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :size_t, :DWORD
-    if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-    if_ proto WIN_STD_CALL_CONV :pszDest :ptr cchDest :||_
-    StringValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :cchMax
-    StringExValidateDestAndLengthW proto WIN_STD_CALL_CONV :STRSAFE_LPCWSTR, :size_t, :ptr size_t, :size_t, :DWORD
-    if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-    StringExValidateDestW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :cchMax, :dwFlags
-    if_ proto WIN_STD_CALL_CONV :FAILED :||_
-    StringLengthWorkerW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :pcchDestLength
-    StringValidateDestAndLengthW proto WIN_STD_CALL_CONV :pszDest, :cchDest, :pcchDestLength, :cchMax
-    StringCopyWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t, :STRSAFE_PCNZCH, :size_t
-    while_ proto WIN_STD_CALL_CONV :ptr ptr ptr cchDest
-    if_ proto WIN_STD_CALL_CONV :cchDest
-    if_ proto WIN_STD_CALL_CONV :pcchNewDestLength
-    StringCopyWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t, :STRSAFE_PCNZWCH, :size_t
-    while_ proto WIN_STD_CALL_CONV :ptr ptr ptr cchDest
-    if_ proto WIN_STD_CALL_CONV :cchDest
-    if_ proto WIN_STD_CALL_CONV :pcchNewDestLength
-    StringVPrintfWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t, :STRSAFE_LPCSTR, :va_list
-    if (STRSAFE_USE_SECURE_CRT eq 1) and  not Defined(STRSAFE_LIB_IMPL)
-      _vsnprintf_s proto WIN_STD_CALL_CONV :pszDest, :cchDest, :cchMax, :pszFormat, :argList
-    else
-      _vsnprintf proto WIN_STD_CALL_CONV :pszDest, :cchMax, :pszFormat, :argList
-    endif
-    if_ proto WIN_STD_CALL_CONV :iRet_ :||_ :iRet_ :>
-    if_ proto WIN_STD_CALL_CONV :size_t :iRet_ :==
-    cchNewDestLength proto WIN_STD_CALL_CONV :size_t
-    if_ proto WIN_STD_CALL_CONV :pcchNewDestLength
-    ifdef STRSAFE_LOCALE_FUNCTIONS
-      StringVPrintf_lWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t, :STRSAFE_LPCSTR, :_locale_t, :va_list
-      if (STRSAFE_USE_SECURE_CRT eq 1) and  not Defined(STRSAFE_LIB_IMPL)
-        _vsnprintf_s_l proto WIN_STD_CALL_CONV :pszDest, :cchDest, :cchMax, :pszFormat, :locale, :argList
-      else
-        _vsnprintf_l proto WIN_STD_CALL_CONV :pszDest, :cchMax, :pszFormat, :locale, :argList
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+      StringLengthWorkerW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :ptr size_t
+      ifdef ALIGNMENT_MACHINE
+        UnalignedStringLengthWorkerW proto WIN_STD_CALL_CONV :STRSAFE_PCUNZWCH, :size_t, :ptr size_t
       endif
-      if_ proto WIN_STD_CALL_CONV :iRet_ :||_ :iRet_ :>
-      if_ proto WIN_STD_CALL_CONV :size_t :iRet_ :==
-      cchNewDestLength proto WIN_STD_CALL_CONV :size_t
-      if_ proto WIN_STD_CALL_CONV :pcchNewDestLength
     endif
-    StringVPrintfWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t, :STRSAFE_LPCWSTR, :va_list
-    if (STRSAFE_USE_SECURE_CRT eq 1) and  not Defined(STRSAFE_LIB_IMPL)
-      _vsnwprintf_s proto WIN_STD_CALL_CONV :pszDest, :cchDest, :cchMax, :pszFormat, :argList
-    else
-      _vsnwprintf proto WIN_STD_CALL_CONV :pszDest, :cchMax, :pszFormat, :argList
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      StringExValidateSrcA proto WIN_STD_CALL_CONV :ptr STRSAFE_PCNZCH, :ptr size_t, :size_t, :DWORD
     endif
-    if_ proto WIN_STD_CALL_CONV :iRet_ :||_ :iRet_ :>
-    if_ proto WIN_STD_CALL_CONV :size_t :iRet_ :==
-    cchNewDestLength proto WIN_STD_CALL_CONV :size_t
-    if_ proto WIN_STD_CALL_CONV :pcchNewDestLength
-    ifdef STRSAFE_LOCALE_FUNCTIONS
-      StringVPrintf_lWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t, :STRSAFE_LPCWSTR, :_locale_t, :va_list
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+      StringExValidateSrcW proto WIN_STD_CALL_CONV :ptr STRSAFE_PCNZWCH, :ptr size_t, :size_t, :DWORD
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      StringValidateDestA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :size_t
+      StringValidateDestAndLengthA proto WIN_STD_CALL_CONV :STRSAFE_LPCSTR, :size_t, :ptr size_t, :size_t
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+      StringValidateDestW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :size_t
+      StringValidateDestAndLengthW proto WIN_STD_CALL_CONV :STRSAFE_LPCWSTR, :size_t, :ptr size_t, :size_t
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      StringExValidateDestA proto WIN_STD_CALL_CONV :STRSAFE_PCNZCH, :size_t, :size_t, :DWORD
+      StringExValidateDestAndLengthA proto WIN_STD_CALL_CONV :STRSAFE_LPCSTR, :size_t, :ptr size_t, :size_t, :DWORD
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+      StringExValidateDestW proto WIN_STD_CALL_CONV :STRSAFE_PCNZWCH, :size_t, :size_t, :DWORD
+      StringExValidateDestAndLengthW proto WIN_STD_CALL_CONV :STRSAFE_LPCWSTR, :size_t, :ptr size_t, :size_t, :DWORD
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      StringCopyWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t, :STRSAFE_PCNZCH, :size_t
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+      StringCopyWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t, :STRSAFE_PCNZWCH, :size_t
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      StringVPrintfWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t, :STRSAFE_LPCSTR, :va_list
       if (STRSAFE_USE_SECURE_CRT eq 1) and  not Defined(STRSAFE_LIB_IMPL)
-        _vsnwprintf_s_l proto WIN_STD_CALL_CONV :pszDest, :cchDest, :cchMax, :pszFormat, :locale, :argList
       else
-        _vsnwprintf_l proto WIN_STD_CALL_CONV :pszDest, :cchMax, :pszFormat, :locale, :argList
       endif
-      if_ proto WIN_STD_CALL_CONV :iRet_ :||_ :iRet_ :>
-      if_ proto WIN_STD_CALL_CONV :size_t :iRet_ :==
-      cchNewDestLength proto WIN_STD_CALL_CONV :size_t
-      if_ proto WIN_STD_CALL_CONV :pcchNewDestLength
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      ifdef STRSAFE_LOCALE_FUNCTIONS
+        StringVPrintf_lWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t, :STRSAFE_LPCSTR, :_locale_t, :va_list
+        if (STRSAFE_USE_SECURE_CRT eq 1) and  not Defined(STRSAFE_LIB_IMPL)
+        else
+        endif
+      endif
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+      StringVPrintfWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t, :STRSAFE_LPCWSTR, :va_list
+      if (STRSAFE_USE_SECURE_CRT eq 1) and  not Defined(STRSAFE_LIB_IMPL)
+      else
+      endif
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+      ifdef STRSAFE_LOCALE_FUNCTIONS
+        StringVPrintf_lWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t, :STRSAFE_LPCWSTR, :_locale_t, :va_list
+        if (STRSAFE_USE_SECURE_CRT eq 1) and  not Defined(STRSAFE_LIB_IMPL)
+        else
+        endif
+      endif
     endif
   endif
   ifndef STRSAFE_LIB_IMPL
-    StringGetsWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t
-    if_ proto WIN_STD_CALL_CONV :cchDest
-    while_ proto WIN_STD_CALL_CONV :cchDest
-    getc(stdin)
-    if_ proto WIN_STD_CALL_CONV :i
-    if_ proto WIN_STD_CALL_CONV :cchNewDestLength
-    ch_ proto WIN_STD_CALL_CONV :SBYTE
-    if_ proto WIN_STD_CALL_CONV :ch_
-    if_ proto WIN_STD_CALL_CONV :pcchNewDestLength
-    StringGetsWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t
-    if_ proto WIN_STD_CALL_CONV :cchDest
-    while_ proto WIN_STD_CALL_CONV :cchDest
-    getwc(stdin)
-    if_ proto WIN_STD_CALL_CONV :ch_
-    if_ proto WIN_STD_CALL_CONV :cchNewDestLength
-    if_ proto WIN_STD_CALL_CONV :ch_
-    if_ proto WIN_STD_CALL_CONV :pcchNewDestLength
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      StringGetsWorkerA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :ptr size_t
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+      StringGetsWorkerW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :ptr size_t
+    endif
   endif
   if Defined(STRSAFE_LIB_IMPL) or  not Defined(STRSAFE_LIB)
-    StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :DWORD
-    if_ proto WIN_STD_CALL_CONV :cbRemaining
-    memset proto WIN_STD_CALL_CONV :pszDestEnd, :STRSAFE_GET_FILL_PATTERN, :cbRemaining
-    StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :DWORD
-    if_ proto WIN_STD_CALL_CONV :cbRemaining
-    memset proto WIN_STD_CALL_CONV :pszDestEnd, :STRSAFE_GET_FILL_PATTERN, :cbRemaining
-    StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
-    sizeof(char)
-    if_ proto WIN_STD_CALL_CONV :cchDest :ptr ptr dwFlags
-    if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-    memset proto WIN_STD_CALL_CONV :pszDest, :STRSAFE_GET_FILL_PATTERN, :cbDest
-    if_ proto WIN_STD_CALL_CONV :STRSAFE_GET_FILL_PATTERN :==
-    if_ proto WIN_STD_CALL_CONV :cchDest
-    if_ proto WIN_STD_CALL_CONV :cchDest :ptr ptr dwFlags
-    StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
-    sizeof(wchar_t)
-    if_ proto WIN_STD_CALL_CONV :cchDest :ptr ptr dwFlags
-    if_ proto WIN_STD_CALL_CONV :ptr dwFlags
-    memset proto WIN_STD_CALL_CONV :pszDest, :STRSAFE_GET_FILL_PATTERN, :cbDest
-    if_ proto WIN_STD_CALL_CONV :STRSAFE_GET_FILL_PATTERN :==
-    if_ proto WIN_STD_CALL_CONV :cchDest
-    if_ proto WIN_STD_CALL_CONV :cchDest :ptr ptr dwFlags
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      StringExHandleFillBehindNullA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :DWORD
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+      StringExHandleFillBehindNullW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :DWORD
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      StringExHandleOtherFlagsA proto WIN_STD_CALL_CONV :STRSAFE_LPSTR, :size_t, :size_t, :ptr STRSAFE_LPSTR, :ptr size_t, :DWORD
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+      StringExHandleOtherFlagsW proto WIN_STD_CALL_CONV :STRSAFE_LPWSTR, :size_t, :size_t, :ptr STRSAFE_LPWSTR, :ptr size_t, :DWORD
+    endif
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    endif
   endif
-  ifdef DEPRECATE_SUPPORTED
-  else
-    StringLengthWorkerA equ <StringLengthWorkerA_instead_use_StringCchLengthA_or_StringCbLengthA>
-    StringLengthWorkerW equ <StringLengthWorkerW_instead_use_StringCchLengthW_or_StringCbLengthW>
-    UnalignedStringLengthWorkerW equ <UnalignedStringLengthWorkerW_instead_use_UnalignedStringCchLengthW>
-    StringExValidateSrcA equ <StringExValidateSrcA_do_not_call_this_function>
-    StringExValidateSrcW equ <StringExValidateSrcW_do_not_call_this_function>
-    StringValidateDestA equ <StringValidateDestA_do_not_call_this_function>
-    StringValidateDestAndLengthA equ <StringValidateDestAndLengthA_do_not_call_this_function>
-    StringValidateDestW equ <StringValidateDestW_do_not_call_this_function>
-    StringValidateDestAndLengthW equ <StringValidateDestAndLengthW_do_not_call_this_function>
-    StringExValidateDestA equ <StringExValidateDestA_do_not_call_this_function>
-    StringExValidateDestAndLengthA equ <StringExValidateDestAndLengthA_do_not_call_this_function>
-    StringExValidateDestW equ <StringExValidateDestW_do_not_call_this_function>
-    StringExValidateDestAndLengthW equ <StringExValidateDestAndLengthW_do_not_call_this_function>
-    StringCopyWorkerA equ <StringCopyWorkerA_instead_use_StringCchCopyA_or_StringCbCopyA>
-    StringCopyWorkerW equ <StringCopyWorkerW_instead_use_StringCchCopyW_or_StringCbCopyW>
-    StringVPrintfWorkerA equ <StringVPrintfWorkerA_instead_use_StringCchVPrintfA_or_StringCbVPrintfA>
-    StringVPrintfWorkerW equ <StringVPrintfWorkerW_instead_use_StringCchVPrintfW_or_StringCbVPrintfW>
-    StringGetsWorkerA equ <StringGetsWorkerA_instead_use_StringCchGetsA_or_StringCbGetsA>
-    StringGetsWorkerW equ <StringGetsWorkerW_instead_use_StringCchGetsW_or_StringCbGetsW>
-    StringExHandleFillBehindNullA equ <StringExHandleFillBehindNullA_do_not_call_this_function>
-    StringExHandleFillBehindNullW equ <StringExHandleFillBehindNullW_do_not_call_this_function>
-    StringExHandleOtherFlagsA equ <StringExHandleOtherFlagsA_do_not_call_this_function>
-    StringExHandleOtherFlagsW equ <StringExHandleOtherFlagsW_do_not_call_this_function>
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    ifdef DEPRECATE_SUPPORTED
+    else
+      StringLengthWorkerA equ <StringLengthWorkerA_instead_use_StringCchLengthA_or_StringCbLengthA>
+      StringLengthWorkerW equ <StringLengthWorkerW_instead_use_StringCchLengthW_or_StringCbLengthW>
+      UnalignedStringLengthWorkerW equ <UnalignedStringLengthWorkerW_instead_use_UnalignedStringCchLengthW>
+      StringExValidateSrcA equ <StringExValidateSrcA_do_not_call_this_function>
+      StringExValidateSrcW equ <StringExValidateSrcW_do_not_call_this_function>
+      StringValidateDestA equ <StringValidateDestA_do_not_call_this_function>
+      StringValidateDestAndLengthA equ <StringValidateDestAndLengthA_do_not_call_this_function>
+      StringValidateDestW equ <StringValidateDestW_do_not_call_this_function>
+      StringValidateDestAndLengthW equ <StringValidateDestAndLengthW_do_not_call_this_function>
+      StringExValidateDestA equ <StringExValidateDestA_do_not_call_this_function>
+      StringExValidateDestAndLengthA equ <StringExValidateDestAndLengthA_do_not_call_this_function>
+      StringExValidateDestW equ <StringExValidateDestW_do_not_call_this_function>
+      StringExValidateDestAndLengthW equ <StringExValidateDestAndLengthW_do_not_call_this_function>
+      StringCopyWorkerA equ <StringCopyWorkerA_instead_use_StringCchCopyA_or_StringCbCopyA>
+      StringCopyWorkerW equ <StringCopyWorkerW_instead_use_StringCchCopyW_or_StringCbCopyW>
+      StringVPrintfWorkerA equ <StringVPrintfWorkerA_instead_use_StringCchVPrintfA_or_StringCbVPrintfA>
+      StringVPrintfWorkerW equ <StringVPrintfWorkerW_instead_use_StringCchVPrintfW_or_StringCbVPrintfW>
+      StringGetsWorkerA equ <StringGetsWorkerA_instead_use_StringCchGetsA_or_StringCbGetsA>
+      StringGetsWorkerW equ <StringGetsWorkerW_instead_use_StringCchGetsW_or_StringCbGetsW>
+      StringExHandleFillBehindNullA equ <StringExHandleFillBehindNullA_do_not_call_this_function>
+      StringExHandleFillBehindNullW equ <StringExHandleFillBehindNullW_do_not_call_this_function>
+      StringExHandleOtherFlagsA equ <StringExHandleOtherFlagsA_do_not_call_this_function>
+      StringExHandleOtherFlagsW equ <StringExHandleOtherFlagsW_do_not_call_this_function>
+    endif
   endif
 endif
+ 

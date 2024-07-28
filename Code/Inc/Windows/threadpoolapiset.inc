@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\threadpoolapiset.h
-;             Created on (UTC) 06/04/2024 06:15:58
-;             Last modified on (UTC) 21/02/2024 18:13:22
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\threadpoolapiset.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 ifdef _MSC_VER
 endif
@@ -15,10 +14,9 @@ ifndef _THREADPOOLAPISET_H_
   ifdef __cplusplus
     ;[...]
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     TYPE_PTP_WIN32_IO_CALLBACK typedef proto WIN_STD_CALL_CONV :PTP_CALLBACK_INSTANCE, :PVOID, :PVOID, :ULONG, :ULONG_PTR, :PTP_IO
     PTP_WIN32_IO_CALLBACK typedef ptr TYPE_PTP_WIN32_IO_CALLBACK
-
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, CreateThreadpool, WIN_STD_CALL_CONV,, <:PVOID>, 4
       @DefProto DllImport, SetThreadpoolThreadMaximum, WIN_STD_CALL_CONV,, <:PTP_POOL, :DWORD>, 8
@@ -55,13 +53,11 @@ ifndef _THREADPOOLAPISET_H_
       @DefProto DllImport, CancelThreadpoolIo, WIN_STD_CALL_CONV,, <:PTP_IO>, 4
       @DefProto DllImport, WaitForThreadpoolIoCallbacks, WIN_STD_CALL_CONV,, <:PTP_IO, :BOOL>, 8
       @DefProto DllImport, CloseThreadpoolIo, WIN_STD_CALL_CONV,, <:PTP_IO>, 4
-    endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, SetThreadpoolTimerEx, WIN_STD_CALL_CONV,, <:PTP_TIMER, :PFILETIME, :DWORD, :DWORD>, 16
       @DefProto DllImport, SetThreadpoolWaitEx, WIN_STD_CALL_CONV,, <:PTP_WAIT, :HANDLE, :PFILETIME, :PVOID>, 16
     endif
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if (_WIN32_WINNT ge 0600h)
     endif
   endif
@@ -69,3 +65,4 @@ ifndef _THREADPOOLAPISET_H_
     ;[...]
   endif
 endif
+

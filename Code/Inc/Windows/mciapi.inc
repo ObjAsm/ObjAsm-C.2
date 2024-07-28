@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\mciapi.h
-;             Created on (UTC) 06/04/2024 06:15:56
-;             Last modified on (UTC) 21/02/2024 18:13:22
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\mciapi.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 ifdef _MSC_VER
 endif
@@ -25,7 +24,6 @@ ifndef _MCIAPI_H_
     endif
     TYPE_YIELDPROC typedef proto WIN_STD_CALL_CONV :MCIDEVICEID, :DWORD
     YIELDPROC typedef ptr TYPE_YIELDPROC
-
     ifdef _WIN32
       @DefProto DllImport, mciSendCommandA, WIN_STD_CALL_CONV,, <:MCIDEVICEID, :UINT, :DWORD_PTR, :DWORD_PTR>, 16
       @DefProto DllImport, mciSendCommandW, WIN_STD_CALL_CONV,, <:MCIDEVICEID, :UINT, :DWORD_PTR, :DWORD_PTR>, 16
@@ -322,9 +320,11 @@ ifndef _MCIAPI_H_
     MCI_GENERIC_PARMS struct
       dwCallback DWORD_PTR ?
     MCI_GENERIC_PARMS ends
+
     tagMCI_GENERIC_PARMS typedef MCI_GENERIC_PARMS
     PMCI_GENERIC_PARMS typedef ptr MCI_GENERIC_PARMS
     LPMCI_GENERIC_PARMS typedef ptr MCI_GENERIC_PARMS
+    
     ifdef _WIN32
       MCI_OPEN_PARMSA struct
         dwCallback DWORD_PTR ?
@@ -333,9 +333,11 @@ ifndef _MCIAPI_H_
         lpstrElementName LPCSTR ?
         lpstrAlias LPCSTR ?
       MCI_OPEN_PARMSA ends
+
       tagMCI_OPEN_PARMSA typedef MCI_OPEN_PARMSA
       PMCI_OPEN_PARMSA typedef ptr MCI_OPEN_PARMSA
       LPMCI_OPEN_PARMSA typedef ptr MCI_OPEN_PARMSA
+      
       MCI_OPEN_PARMSW struct
         dwCallback DWORD_PTR ?
         wDeviceID MCIDEVICEID ?
@@ -343,9 +345,11 @@ ifndef _MCIAPI_H_
         lpstrElementName LPCWSTR ?
         lpstrAlias LPCWSTR ?
       MCI_OPEN_PARMSW ends
+
       tagMCI_OPEN_PARMSW typedef MCI_OPEN_PARMSW
       PMCI_OPEN_PARMSW typedef ptr MCI_OPEN_PARMSW
       LPMCI_OPEN_PARMSW typedef ptr MCI_OPEN_PARMSW
+      
       ifdef UNICODE
         MCI_OPEN_PARMS typedef MCI_OPEN_PARMSW
         PMCI_OPEN_PARMS typedef PMCI_OPEN_PARMSW
@@ -363,40 +367,50 @@ ifndef _MCIAPI_H_
       dwFrom DWORD ?
       dwTo DWORD ?
     MCI_PLAY_PARMS ends
+
     tagMCI_PLAY_PARMS typedef MCI_PLAY_PARMS
     PMCI_PLAY_PARMS typedef ptr MCI_PLAY_PARMS
     LPMCI_PLAY_PARMS typedef ptr MCI_PLAY_PARMS
+    
     MCI_SEEK_PARMS struct
       dwCallback DWORD_PTR ?
       dwTo DWORD ?
     MCI_SEEK_PARMS ends
+
     tagMCI_SEEK_PARMS typedef MCI_SEEK_PARMS
     PMCI_SEEK_PARMS typedef ptr MCI_SEEK_PARMS
     LPMCI_SEEK_PARMS typedef ptr MCI_SEEK_PARMS
+    
     MCI_STATUS_PARMS struct
       dwCallback DWORD_PTR ?
       dwReturn DWORD_PTR ?
       dwItem DWORD ?
       dwTrack DWORD ?
     MCI_STATUS_PARMS ends
+
     tagMCI_STATUS_PARMS typedef MCI_STATUS_PARMS
     PMCI_STATUS_PARMS typedef ptr MCI_STATUS_PARMS
     LPMCI_STATUS_PARMS typedef ptr MCI_STATUS_PARMS
+    
     ifdef _WIN32
       MCI_INFO_PARMSA struct
         dwCallback DWORD_PTR ?
         lpstrReturn LPSTR ?
         dwRetSize DWORD ?
       MCI_INFO_PARMSA ends
+
       tagMCI_INFO_PARMSA typedef MCI_INFO_PARMSA
       LPMCI_INFO_PARMSA typedef ptr MCI_INFO_PARMSA
+      
       MCI_INFO_PARMSW struct
         dwCallback DWORD_PTR ?
         lpstrReturn LPWSTR ?
         dwRetSize DWORD ?
       MCI_INFO_PARMSW ends
+
       tagMCI_INFO_PARMSW typedef MCI_INFO_PARMSW
       LPMCI_INFO_PARMSW typedef ptr MCI_INFO_PARMSW
+      
       ifdef UNICODE
         MCI_INFO_PARMS typedef MCI_INFO_PARMSW
         LPMCI_INFO_PARMS typedef LPMCI_INFO_PARMSW
@@ -412,9 +426,11 @@ ifndef _MCIAPI_H_
       dwReturn DWORD ?
       dwItem DWORD ?
     MCI_GETDEVCAPS_PARMS ends
+
     tagMCI_GETDEVCAPS_PARMS typedef MCI_GETDEVCAPS_PARMS
     PMCI_GETDEVCAPS_PARMS typedef ptr MCI_GETDEVCAPS_PARMS
     LPMCI_GETDEVCAPS_PARMS typedef ptr MCI_GETDEVCAPS_PARMS
+    
     ifdef _WIN32
       MCI_SYSINFO_PARMSA struct
         dwCallback DWORD_PTR ?
@@ -423,9 +439,11 @@ ifndef _MCIAPI_H_
         dwNumber DWORD ?
         wDeviceType UINT ?
       MCI_SYSINFO_PARMSA ends
+
       tagMCI_SYSINFO_PARMSA typedef MCI_SYSINFO_PARMSA
       PMCI_SYSINFO_PARMSA typedef ptr MCI_SYSINFO_PARMSA
       LPMCI_SYSINFO_PARMSA typedef ptr MCI_SYSINFO_PARMSA
+      
       MCI_SYSINFO_PARMSW struct
         dwCallback DWORD_PTR ?
         lpstrReturn LPWSTR ?
@@ -433,9 +451,11 @@ ifndef _MCIAPI_H_
         dwNumber DWORD ?
         wDeviceType UINT ?
       MCI_SYSINFO_PARMSW ends
+
       tagMCI_SYSINFO_PARMSW typedef MCI_SYSINFO_PARMSW
       PMCI_SYSINFO_PARMSW typedef ptr MCI_SYSINFO_PARMSW
       LPMCI_SYSINFO_PARMSW typedef ptr MCI_SYSINFO_PARMSW
+      
       ifdef UNICODE
         MCI_SYSINFO_PARMS typedef MCI_SYSINFO_PARMSW
         PMCI_SYSINFO_PARMS typedef PMCI_SYSINFO_PARMSW
@@ -453,9 +473,11 @@ ifndef _MCIAPI_H_
       dwTimeFormat DWORD ?
       dwAudio DWORD ?
     MCI_SET_PARMS ends
+
     tagMCI_SET_PARMS typedef MCI_SET_PARMS
     PMCI_SET_PARMS typedef ptr MCI_SET_PARMS
     LPMCI_SET_PARMS typedef ptr MCI_SET_PARMS
+    
     MCI_BREAK_PARMS struct
       dwCallback DWORD_PTR ?
       ifdef _WIN32
@@ -465,24 +487,30 @@ ifndef _MCIAPI_H_
         ;[...]
       endif
     MCI_BREAK_PARMS ends
+
     tagMCI_BREAK_PARMS typedef MCI_BREAK_PARMS
     PMCI_BREAK_PARMS typedef ptr MCI_BREAK_PARMS
     LPMCI_BREAK_PARMS typedef ptr MCI_BREAK_PARMS
+    
     ifdef _WIN32
       MCI_SAVE_PARMSA struct
         dwCallback DWORD_PTR ?
         lpfilename LPCSTR ?
       MCI_SAVE_PARMSA ends
+
       tagMCI_SAVE_PARMSA typedef MCI_SAVE_PARMSA
       PMCI_SAVE_PARMSA typedef ptr MCI_SAVE_PARMSA
       LPMCI_SAVE_PARMSA typedef ptr MCI_SAVE_PARMSA
+      
       MCI_SAVE_PARMSW struct
         dwCallback DWORD_PTR ?
         lpfilename LPCWSTR ?
       MCI_SAVE_PARMSW ends
+
       tagMCI_SAVE_PARMSW typedef MCI_SAVE_PARMSW
       PMCI_SAVE_PARMSW typedef ptr MCI_SAVE_PARMSW
       LPMCI_SAVE_PARMSW typedef ptr MCI_SAVE_PARMSW
+      
       ifdef UNICODE
         MCI_SAVE_PARMS typedef MCI_SAVE_PARMSW
         PMCI_SAVE_PARMS typedef PMCI_SAVE_PARMSW
@@ -500,16 +528,20 @@ ifndef _MCIAPI_H_
         dwCallback DWORD_PTR ?
         lpfilename LPCSTR ?
       MCI_LOAD_PARMSA ends
+
       tagMCI_LOAD_PARMSA typedef MCI_LOAD_PARMSA
       PMCI_LOAD_PARMSA typedef ptr MCI_LOAD_PARMSA
       LPMCI_LOAD_PARMSA typedef ptr MCI_LOAD_PARMSA
+      
       MCI_LOAD_PARMSW struct
         dwCallback DWORD_PTR ?
         lpfilename LPCWSTR ?
       MCI_LOAD_PARMSW ends
+
       tagMCI_LOAD_PARMSW typedef MCI_LOAD_PARMSW
       PMCI_LOAD_PARMSW typedef ptr MCI_LOAD_PARMSW
       LPMCI_LOAD_PARMSW typedef ptr MCI_LOAD_PARMSW
+      
       ifdef UNICODE
         MCI_LOAD_PARMS typedef MCI_LOAD_PARMSW
         PMCI_LOAD_PARMS typedef PMCI_LOAD_PARMSW
@@ -527,8 +559,10 @@ ifndef _MCIAPI_H_
       dwFrom DWORD ?
       dwTo DWORD ?
     MCI_RECORD_PARMS ends
+
     tagMCI_RECORD_PARMS typedef MCI_RECORD_PARMS
     LPMCI_RECORD_PARMS typedef ptr MCI_RECORD_PARMS
+    
     MCI_VD_MODE_PARK equ (MCI_VD_OFFSET + 1)
     MCI_VD_MEDIA_CLV equ (MCI_VD_OFFSET + 2)
     MCI_VD_MEDIA_CAV equ (MCI_VD_OFFSET + 3)
@@ -562,31 +596,39 @@ ifndef _MCIAPI_H_
       dwTo DWORD ?
       dwSpeed DWORD ?
     MCI_VD_PLAY_PARMS ends
+
     tagMCI_VD_PLAY_PARMS typedef MCI_VD_PLAY_PARMS
     PMCI_VD_PLAY_PARMS typedef ptr MCI_VD_PLAY_PARMS
     LPMCI_VD_PLAY_PARMS typedef ptr MCI_VD_PLAY_PARMS
+    
     MCI_VD_STEP_PARMS struct
       dwCallback DWORD_PTR ?
       dwFrames DWORD ?
     MCI_VD_STEP_PARMS ends
+
     tagMCI_VD_STEP_PARMS typedef MCI_VD_STEP_PARMS
     PMCI_VD_STEP_PARMS typedef ptr MCI_VD_STEP_PARMS
     LPMCI_VD_STEP_PARMS typedef ptr MCI_VD_STEP_PARMS
+    
     ifdef _WIN32
       MCI_VD_ESCAPE_PARMSA struct
         dwCallback DWORD_PTR ?
         lpstrCommand LPCSTR ?
       MCI_VD_ESCAPE_PARMSA ends
+
       tagMCI_VD_ESCAPE_PARMSA typedef MCI_VD_ESCAPE_PARMSA
       PMCI_VD_ESCAPE_PARMSA typedef ptr MCI_VD_ESCAPE_PARMSA
       LPMCI_VD_ESCAPE_PARMSA typedef ptr MCI_VD_ESCAPE_PARMSA
+      
       MCI_VD_ESCAPE_PARMSW struct
         dwCallback DWORD_PTR ?
         lpstrCommand LPCWSTR ?
       MCI_VD_ESCAPE_PARMSW ends
+
       tagMCI_VD_ESCAPE_PARMSW typedef MCI_VD_ESCAPE_PARMSW
       PMCI_VD_ESCAPE_PARMSW typedef ptr MCI_VD_ESCAPE_PARMSW
       LPMCI_VD_ESCAPE_PARMSW typedef ptr MCI_VD_ESCAPE_PARMSW
+      
       ifdef UNICODE
         MCI_VD_ESCAPE_PARMS typedef MCI_VD_ESCAPE_PARMSW
         PMCI_VD_ESCAPE_PARMS typedef PMCI_VD_ESCAPE_PARMSW
@@ -633,9 +675,11 @@ ifndef _MCIAPI_H_
         lpstrAlias LPCSTR ?
         dwBufferSeconds DWORD ?
       MCI_WAVE_OPEN_PARMSA ends
+
       tagMCI_WAVE_OPEN_PARMSA typedef MCI_WAVE_OPEN_PARMSA
       PMCI_WAVE_OPEN_PARMSA typedef ptr MCI_WAVE_OPEN_PARMSA
       LPMCI_WAVE_OPEN_PARMSA typedef ptr MCI_WAVE_OPEN_PARMSA
+      
       MCI_WAVE_OPEN_PARMSW struct
         dwCallback DWORD_PTR ?
         wDeviceID MCIDEVICEID ?
@@ -644,9 +688,11 @@ ifndef _MCIAPI_H_
         lpstrAlias LPCWSTR ?
         dwBufferSeconds DWORD ?
       MCI_WAVE_OPEN_PARMSW ends
+
       tagMCI_WAVE_OPEN_PARMSW typedef MCI_WAVE_OPEN_PARMSW
       PMCI_WAVE_OPEN_PARMSW typedef ptr MCI_WAVE_OPEN_PARMSW
       LPMCI_WAVE_OPEN_PARMSW typedef ptr MCI_WAVE_OPEN_PARMSW
+      
       ifdef UNICODE
         MCI_WAVE_OPEN_PARMS typedef MCI_WAVE_OPEN_PARMSW
         PMCI_WAVE_OPEN_PARMS typedef PMCI_WAVE_OPEN_PARMSW
@@ -664,9 +710,11 @@ ifndef _MCIAPI_H_
       dwFrom DWORD ?
       dwTo DWORD ?
     MCI_WAVE_DELETE_PARMS ends
+
     tagMCI_WAVE_DELETE_PARMS typedef MCI_WAVE_DELETE_PARMS
     PMCI_WAVE_DELETE_PARMS typedef ptr MCI_WAVE_DELETE_PARMS
     LPMCI_WAVE_DELETE_PARMS typedef ptr MCI_WAVE_DELETE_PARMS
+    
     MCI_WAVE_SET_PARMS struct
       dwCallback DWORD_PTR ?
       dwTimeFormat DWORD ?
@@ -688,9 +736,11 @@ ifndef _MCIAPI_H_
       wBitsPerSample WORD ?
       wReserved5 WORD ?
     MCI_WAVE_SET_PARMS ends
+
     tagMCI_WAVE_SET_PARMS typedef MCI_WAVE_SET_PARMS
     PMCI_WAVE_SET_PARMS typedef ptr MCI_WAVE_SET_PARMS
     LPMCI_WAVE_SET_PARMS typedef ptr MCI_WAVE_SET_PARMS
+    
     MCI_SEQ_DIV_PPQN equ (0 + MCI_SEQ_OFFSET)
     MCI_SEQ_DIV_SMPTE_24 equ (1 + MCI_SEQ_OFFSET)
     MCI_SEQ_DIV_SMPTE_25 equ (2 + MCI_SEQ_OFFSET)
@@ -725,9 +775,11 @@ ifndef _MCIAPI_H_
       dwMaster DWORD ?
       dwOffset DWORD ?
     MCI_SEQ_SET_PARMS ends
+
     tagMCI_SEQ_SET_PARMS typedef MCI_SEQ_SET_PARMS
     PMCI_SEQ_SET_PARMS typedef ptr MCI_SEQ_SET_PARMS
     LPMCI_SEQ_SET_PARMS typedef ptr MCI_SEQ_SET_PARMS
+    
     MCI_ANIM_OPEN_WS equ 00010000h
     MCI_ANIM_OPEN_PARENT equ 00020000h
     MCI_ANIM_OPEN_NOSTATIC equ 00040000h
@@ -775,9 +827,11 @@ ifndef _MCIAPI_H_
         dwStyle DWORD ?
         hWndParent HWND ?
       MCI_ANIM_OPEN_PARMSA ends
+
       tagMCI_ANIM_OPEN_PARMSA typedef MCI_ANIM_OPEN_PARMSA
       PMCI_ANIM_OPEN_PARMSA typedef ptr MCI_ANIM_OPEN_PARMSA
       LPMCI_ANIM_OPEN_PARMSA typedef ptr MCI_ANIM_OPEN_PARMSA
+      
       MCI_ANIM_OPEN_PARMSW struct
         dwCallback DWORD_PTR ?
         wDeviceID MCIDEVICEID ?
@@ -787,9 +841,11 @@ ifndef _MCIAPI_H_
         dwStyle DWORD ?
         hWndParent HWND ?
       MCI_ANIM_OPEN_PARMSW ends
+
       tagMCI_ANIM_OPEN_PARMSW typedef MCI_ANIM_OPEN_PARMSW
       PMCI_ANIM_OPEN_PARMSW typedef ptr MCI_ANIM_OPEN_PARMSW
       LPMCI_ANIM_OPEN_PARMSW typedef ptr MCI_ANIM_OPEN_PARMSW
+      
       ifdef UNICODE
         MCI_ANIM_OPEN_PARMS typedef MCI_ANIM_OPEN_PARMSW
         PMCI_ANIM_OPEN_PARMS typedef PMCI_ANIM_OPEN_PARMSW
@@ -808,16 +864,20 @@ ifndef _MCIAPI_H_
       dwTo DWORD ?
       dwSpeed DWORD ?
     MCI_ANIM_PLAY_PARMS ends
+
     tagMCI_ANIM_PLAY_PARMS typedef MCI_ANIM_PLAY_PARMS
     PMCI_ANIM_PLAY_PARMS typedef ptr MCI_ANIM_PLAY_PARMS
     LPMCI_ANIM_PLAY_PARMS typedef ptr MCI_ANIM_PLAY_PARMS
+    
     MCI_ANIM_STEP_PARMS struct
       dwCallback DWORD_PTR ?
       dwFrames DWORD ?
     MCI_ANIM_STEP_PARMS ends
+
     tagMCI_ANIM_STEP_PARMS typedef MCI_ANIM_STEP_PARMS
     PMCI_ANIM_STEP_PARMS typedef ptr MCI_ANIM_STEP_PARMS
     LPMCI_ANIM_STEP_PARMS typedef ptr MCI_ANIM_STEP_PARMS
+    
     ifdef _WIN32
       MCI_ANIM_WINDOW_PARMSA struct
         dwCallback DWORD_PTR ?
@@ -825,18 +885,22 @@ ifndef _MCIAPI_H_
         nCmdShow UINT ?
         lpstrText LPCSTR ?
       MCI_ANIM_WINDOW_PARMSA ends
+
       tagMCI_ANIM_WINDOW_PARMSA typedef MCI_ANIM_WINDOW_PARMSA
       PMCI_ANIM_WINDOW_PARMSA typedef ptr MCI_ANIM_WINDOW_PARMSA
       LPMCI_ANIM_WINDOW_PARMSA typedef ptr MCI_ANIM_WINDOW_PARMSA
+      
       MCI_ANIM_WINDOW_PARMSW struct
         dwCallback DWORD_PTR ?
         hWnd HWND ?
         nCmdShow UINT ?
         lpstrText LPCWSTR ?
       MCI_ANIM_WINDOW_PARMSW ends
+
       tagMCI_ANIM_WINDOW_PARMSW typedef MCI_ANIM_WINDOW_PARMSW
       PMCI_ANIM_WINDOW_PARMSW typedef ptr MCI_ANIM_WINDOW_PARMSW
       LPMCI_ANIM_WINDOW_PARMSW typedef ptr MCI_ANIM_WINDOW_PARMSW
+      
       ifdef UNICODE
         MCI_ANIM_WINDOW_PARMS typedef MCI_ANIM_WINDOW_PARMSW
         PMCI_ANIM_WINDOW_PARMS typedef PMCI_ANIM_WINDOW_PARMSW
@@ -858,6 +922,7 @@ ifndef _MCIAPI_H_
         rc RECT <>
       endif
     MCI_ANIM_RECT_PARMS ends
+
     tagMCI_ANIM_RECT_PARMS typedef MCI_ANIM_RECT_PARMS
     PMCI_ANIM_RECT_PARMS typedef ptr MCI_ANIM_RECT_PARMS
     LPMCI_ANIM_RECT_PARMS typedef ptr MCI_ANIM_RECT_PARMS
@@ -866,9 +931,11 @@ ifndef _MCIAPI_H_
       rc RECT <>
       hDC HDC ?
     MCI_ANIM_UPDATE_PARMS ends
+
     tagMCI_ANIM_UPDATE_PARMS typedef MCI_ANIM_UPDATE_PARMS
     PMCI_ANIM_UPDATE_PARMS typedef ptr MCI_ANIM_UPDATE_PARMS
     LPMCI_ANIM_UPDATE_PARMS typedef ptr MCI_ANIM_UPDATE_PARMS
+    
     MCI_OVLY_OPEN_WS equ 00010000h
     MCI_OVLY_OPEN_PARENT equ 00020000h
     MCI_OVLY_STATUS_HWND equ 00004001h
@@ -902,9 +969,11 @@ ifndef _MCIAPI_H_
         dwStyle DWORD ?
         hWndParent HWND ?
       MCI_OVLY_OPEN_PARMSA ends
+
       tagMCI_OVLY_OPEN_PARMSA typedef MCI_OVLY_OPEN_PARMSA
       PMCI_OVLY_OPEN_PARMSA typedef ptr MCI_OVLY_OPEN_PARMSA
       LPMCI_OVLY_OPEN_PARMSA typedef ptr MCI_OVLY_OPEN_PARMSA
+      
       MCI_OVLY_OPEN_PARMSW struct
         dwCallback DWORD_PTR ?
         wDeviceID MCIDEVICEID ?
@@ -914,9 +983,11 @@ ifndef _MCIAPI_H_
         dwStyle DWORD ?
         hWndParent HWND ?
       MCI_OVLY_OPEN_PARMSW ends
+
       tagMCI_OVLY_OPEN_PARMSW typedef MCI_OVLY_OPEN_PARMSW
       PMCI_OVLY_OPEN_PARMSW typedef ptr MCI_OVLY_OPEN_PARMSW
       LPMCI_OVLY_OPEN_PARMSW typedef ptr MCI_OVLY_OPEN_PARMSW
+      
       ifdef UNICODE
         MCI_OVLY_OPEN_PARMS typedef MCI_OVLY_OPEN_PARMSW
         PMCI_OVLY_OPEN_PARMS typedef PMCI_OVLY_OPEN_PARMSW
@@ -936,18 +1007,22 @@ ifndef _MCIAPI_H_
         nCmdShow UINT ?
         lpstrText LPCSTR ?
       MCI_OVLY_WINDOW_PARMSA ends
+
       tagMCI_OVLY_WINDOW_PARMSA typedef MCI_OVLY_WINDOW_PARMSA
       PMCI_OVLY_WINDOW_PARMSA typedef ptr MCI_OVLY_WINDOW_PARMSA
       LPMCI_OVLY_WINDOW_PARMSA typedef ptr MCI_OVLY_WINDOW_PARMSA
+      
       MCI_OVLY_WINDOW_PARMSW struct
         dwCallback DWORD_PTR ?
         hWnd HWND ?
         nCmdShow UINT ?
         lpstrText LPCWSTR ?
       MCI_OVLY_WINDOW_PARMSW ends
+
       tagMCI_OVLY_WINDOW_PARMSW typedef MCI_OVLY_WINDOW_PARMSW
       PMCI_OVLY_WINDOW_PARMSW typedef ptr MCI_OVLY_WINDOW_PARMSW
       LPMCI_OVLY_WINDOW_PARMSW typedef ptr MCI_OVLY_WINDOW_PARMSW
+      
       ifdef UNICODE
         MCI_OVLY_WINDOW_PARMS typedef MCI_OVLY_WINDOW_PARMSW
         PMCI_OVLY_WINDOW_PARMS typedef PMCI_OVLY_WINDOW_PARMSW
@@ -969,26 +1044,32 @@ ifndef _MCIAPI_H_
         rc RECT <>
       endif
     MCI_OVLY_RECT_PARMS ends
+
     tagMCI_OVLY_RECT_PARMS typedef MCI_OVLY_RECT_PARMS
     PMCI_OVLY_RECT_PARMS typedef ptr MCI_OVLY_RECT_PARMS
     LPMCI_OVLY_RECT_PARMS typedef ptr MCI_OVLY_RECT_PARMS
+    
     ifdef _WIN32
       MCI_OVLY_SAVE_PARMSA struct
         dwCallback DWORD_PTR ?
         lpfilename LPCSTR ?
         rc RECT <>
       MCI_OVLY_SAVE_PARMSA ends
+
       tagMCI_OVLY_SAVE_PARMSA typedef MCI_OVLY_SAVE_PARMSA
       PMCI_OVLY_SAVE_PARMSA typedef ptr MCI_OVLY_SAVE_PARMSA
       LPMCI_OVLY_SAVE_PARMSA typedef ptr MCI_OVLY_SAVE_PARMSA
+      
       MCI_OVLY_SAVE_PARMSW struct
         dwCallback DWORD_PTR ?
         lpfilename LPCWSTR ?
         rc RECT <>
       MCI_OVLY_SAVE_PARMSW ends
+
       tagMCI_OVLY_SAVE_PARMSW typedef MCI_OVLY_SAVE_PARMSW
       PMCI_OVLY_SAVE_PARMSW typedef ptr MCI_OVLY_SAVE_PARMSW
       LPMCI_OVLY_SAVE_PARMSW typedef ptr MCI_OVLY_SAVE_PARMSW
+      
       ifdef UNICODE
         MCI_OVLY_SAVE_PARMS typedef MCI_OVLY_SAVE_PARMSW
         PMCI_OVLY_SAVE_PARMS typedef PMCI_OVLY_SAVE_PARMSW
@@ -1007,17 +1088,21 @@ ifndef _MCIAPI_H_
         lpfilename LPCSTR ?
         rc RECT <>
       MCI_OVLY_LOAD_PARMSA ends
+
       tagMCI_OVLY_LOAD_PARMSA typedef MCI_OVLY_LOAD_PARMSA
       PMCI_OVLY_LOAD_PARMSA typedef ptr MCI_OVLY_LOAD_PARMSA
       LPMCI_OVLY_LOAD_PARMSA typedef ptr MCI_OVLY_LOAD_PARMSA
+      
       MCI_OVLY_LOAD_PARMSW struct
         dwCallback DWORD_PTR ?
         lpfilename LPCWSTR ?
         rc RECT <>
       MCI_OVLY_LOAD_PARMSW ends
+
       tagMCI_OVLY_LOAD_PARMSW typedef MCI_OVLY_LOAD_PARMSW
       PMCI_OVLY_LOAD_PARMSW typedef ptr MCI_OVLY_LOAD_PARMSW
       LPMCI_OVLY_LOAD_PARMSW typedef ptr MCI_OVLY_LOAD_PARMSW
+      
       ifdef UNICODE
         MCI_OVLY_LOAD_PARMS typedef MCI_OVLY_LOAD_PARMSW
         PMCI_OVLY_LOAD_PARMS typedef PMCI_OVLY_LOAD_PARMSW
@@ -1041,3 +1126,4 @@ ifndef _MCIAPI_H_
     ;[...]
   endif
 endif
+

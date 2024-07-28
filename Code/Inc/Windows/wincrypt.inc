@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\wincrypt.h
-;             Created on (UTC) 06/04/2024 06:16:02
-;             Last modified on (UTC) 21/02/2024 18:13:14
+;Include file created by h2incX, Version B.01.01, 19/04/2018 10:44
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\wincrypt.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 ifndef __WINCRYPT_H__
   __WINCRYPT_H__ equ <>
@@ -19,7 +18,7 @@ ifndef __WINCRYPT_H__
   ifdef __cplusplus
     ;[...]
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     ifndef _HRESULT_DEFINED
       _HRESULT_DEFINED equ <>
       HRESULT typedef SDWORD
@@ -37,7 +36,7 @@ ifndef __WINCRYPT_H__
       DECLSPEC_IMPORT equ <>
     endif
     ifndef CONST
-      CONST equ <const>
+      CONST_ equ <const_>
     endif
     ifndef IN_
       IN_ equ <>
@@ -77,16 +76,16 @@ ifndef __WINCRYPT_H__
       exitm <(x and (15 shl 9))>
     endm
     GET_ALG_SID macro x
-      exitm <(x and (511))>
+      exitm <(x and 511)>
     endm
-    ALG_CLASS_ANY equ (0)
+    ALG_CLASS_ANY equ 0
     ALG_CLASS_SIGNATURE equ (1 shl 13)
     ALG_CLASS_MSG_ENCRYPT equ (2 shl 13)
     ALG_CLASS_DATA_ENCRYPT equ (3 shl 13)
     ALG_CLASS_HASH equ (4 shl 13)
     ALG_CLASS_KEY_EXCHANGE equ (5 shl 13)
     ALG_CLASS_ALL equ (7 shl 13)
-    ALG_TYPE_ANY equ (0)
+    ALG_TYPE_ANY equ 0
     ALG_TYPE_DSS equ (1 shl 9)
     ALG_TYPE_RSA equ (2 shl 9)
     ALG_TYPE_BLOCK equ (3 shl 9)
@@ -99,9 +98,9 @@ ifndef __WINCRYPT_H__
     if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
       ALG_TYPE_THIRDPARTY equ (8 shl 9)
     endif
-    ALG_SID_ANY equ (0)
+    ALG_SID_ANY equ 0
     if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
-      ALG_SID_THIRDPARTY_ANY equ (0)
+      ALG_SID_THIRDPARTY_ANY equ 0
     endif
     ALG_SID_RSA_ANY equ 0
     ALG_SID_RSA_PKCS equ 1
@@ -258,6 +257,7 @@ ifndef __WINCRYPT_H__
       VTableProvStruc ends
       _VTableProvStruc typedef VTableProvStruc
       PVTableProvStruc typedef ptr VTableProvStruc
+      
     endif
     ifndef HCRYPTPROV_DEFINED
       HCRYPTPROV_DEFINED equ <>
@@ -487,10 +487,6 @@ ifndef __WINCRYPT_H__
       PP_SECURE_KEYEXCHANGE_PIN equ 47
       PP_SECURE_SIGNATURE_PIN equ 48
     endif
-    if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
-      PP_DISMISS_PIN_UI_SEC equ 49
-      PP_IS_PFX_EPHEMERAL equ 50
-    endif
     PROV_RSA_FULL equ 1
     PROV_RSA_SIG equ 2
     PROV_DSS equ 3
@@ -624,6 +620,7 @@ ifndef __WINCRYPT_H__
     CMS_KEY_INFO ends
     _CMS_KEY_INFO typedef CMS_KEY_INFO
     PCMS_KEY_INFO typedef ptr CMS_KEY_INFO
+    
     HMAC_INFO struct
       HashAlgid ALG_ID ?
       pbInnerString POINTER ?
@@ -633,6 +630,7 @@ ifndef __WINCRYPT_H__
     HMAC_INFO ends
     _HMAC_Info typedef HMAC_INFO
     PHMAC_INFO typedef ptr HMAC_INFO
+    
     SCHANNEL_ALG struct
       dwUse DWORD ?
       Algid ALG_ID ?
@@ -642,6 +640,7 @@ ifndef __WINCRYPT_H__
     SCHANNEL_ALG ends
     _SCHANNEL_ALG typedef SCHANNEL_ALG
     PSCHANNEL_ALG typedef ptr SCHANNEL_ALG
+    
     SCHANNEL_MAC_KEY equ 00000000h
     SCHANNEL_ENC_KEY equ 00000001h
     INTERNATIONAL_USAGE equ 00000001h
@@ -672,6 +671,7 @@ ifndef __WINCRYPT_H__
     BLOBHEADER ends
     _PUBLICKEYSTRUC typedef BLOBHEADER
     PUBLICKEYSTRUC typedef BLOBHEADER
+    
     RSAPUBKEY struct
       magic DWORD ?
       bitlen DWORD ?
@@ -686,6 +686,7 @@ ifndef __WINCRYPT_H__
     DSSPUBKEY typedef DHPUBKEY
     KEAPUBKEY typedef DHPUBKEY
     TEKPUBKEY typedef DHPUBKEY
+    
     DSSSEED struct
       counter DWORD ?
       seed BYTE 20 dup (?)
@@ -700,6 +701,7 @@ ifndef __WINCRYPT_H__
     DHPUBKEY_VER3 ends
     _PUBKEYVER3 typedef DHPUBKEY_VER3
     DSSPUBKEY_VER3 typedef DHPUBKEY_VER3
+    
     DHPRIVKEY_VER3 struct
       magic DWORD ?
       bitlenP DWORD ?
@@ -710,6 +712,7 @@ ifndef __WINCRYPT_H__
     DHPRIVKEY_VER3 ends
     _PRIVKEYVER3 typedef DHPRIVKEY_VER3
     DSSPRIVKEY_VER3 typedef DHPRIVKEY_VER3
+    
     KEY_TYPE_SUBTYPE struct
       dwKeySpec DWORD ?
       Type_ GUID <>
@@ -717,6 +720,7 @@ ifndef __WINCRYPT_H__
     KEY_TYPE_SUBTYPE ends
     _KEY_TYPE_SUBTYPE typedef KEY_TYPE_SUBTYPE
     PKEY_TYPE_SUBTYPE typedef ptr KEY_TYPE_SUBTYPE
+    
     CERT_FORTEZZA_DATA_PROP struct
       SerialNumber BYTE 8 dup (?)
       CertIndex SDWORD ?
@@ -732,6 +736,7 @@ ifndef __WINCRYPT_H__
       CRYPT_RC4_KEY_STATE ends
       _CRYPT_RC4_KEY_STATE typedef CRYPT_RC4_KEY_STATE
       PCRYPT_RC4_KEY_STATE typedef ptr CRYPT_RC4_KEY_STATE
+      
       CRYPT_DES_KEY_STATE struct
         Key BYTE 8 dup (?)
         IV BYTE 8 dup (?)
@@ -739,6 +744,7 @@ ifndef __WINCRYPT_H__
       CRYPT_DES_KEY_STATE ends
       _CRYPT_DES_KEY_STATE typedef CRYPT_DES_KEY_STATE
       PCRYPT_DES_KEY_STATE typedef ptr CRYPT_DES_KEY_STATE
+      
       CRYPT_3DES_KEY_STATE struct
         Key BYTE 24 dup (?)
         IV BYTE 8 dup (?)
@@ -746,26 +752,29 @@ ifndef __WINCRYPT_H__
       CRYPT_3DES_KEY_STATE ends
       _CRYPT_3DES_KEY_STATE typedef CRYPT_3DES_KEY_STATE
       PCRYPT_3DES_KEY_STATE typedef ptr CRYPT_3DES_KEY_STATE
+      
     endif
     if (NTDDI_VERSION ge NTDDI_VISTA)
       CRYPT_AES_128_KEY_STATE struct
         Key BYTE 16 dup (?)
         IV BYTE 16 dup (?)
-        EncryptionState BYTE 11 * 16 dup (?)
-        DecryptionState BYTE 11 * 16 dup (?)
+        EncryptionState BYTE 16 dup (?)
+        DecryptionState BYTE 16 dup (?)
         Feedback BYTE 16 dup (?)
       CRYPT_AES_128_KEY_STATE ends
       _CRYPT_AES_128_KEY_STATE typedef CRYPT_AES_128_KEY_STATE
       PCRYPT_AES_128_KEY_STATE typedef ptr CRYPT_AES_128_KEY_STATE
+      
       CRYPT_AES_256_KEY_STATE struct
         Key BYTE 32 dup (?)
         IV BYTE 16 dup (?)
-        EncryptionState BYTE 15 * 16 dup (?)
-        DecryptionState BYTE 15 * 16 dup (?)
+        EncryptionState BYTE 16*15 dup (?)
+        DecryptionState BYTE 16*15 dup (?)
         Feedback BYTE 16 dup (?)
       CRYPT_AES_256_KEY_STATE ends
       _CRYPT_AES_256_KEY_STATE typedef CRYPT_AES_256_KEY_STATE
       PCRYPT_AES_256_KEY_STATE typedef ptr CRYPT_AES_256_KEY_STATE
+      
     endif
     ifndef CRYPTO_BLOBS_DEFINED
       CRYPTO_BLOBS_DEFINED equ <>
@@ -799,6 +808,7 @@ ifndef __WINCRYPT_H__
       PCRYPT_DER_BLOB typedef ptr CRYPT_INTEGER_BLOB
       CRYPT_ATTR_BLOB typedef CRYPT_INTEGER_BLOB
       PCRYPT_ATTR_BLOB typedef ptr CRYPT_INTEGER_BLOB
+      
     endif
     CMS_DH_KEY_INFO struct
       dwVersion DWORD ?
@@ -809,8 +819,9 @@ ifndef __WINCRYPT_H__
     CMS_DH_KEY_INFO ends
     _CMS_DH_KEY_INFO typedef CMS_DH_KEY_INFO
     PCMS_DH_KEY_INFO typedef ptr CMS_DH_KEY_INFO
+    
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, CryptAcquireContextA, WIN_STD_CALL_CONV,, <:ptr HCRYPTPROV, :LPCSTR, :LPCSTR, :DWORD, :DWORD>, 20
     @DefProto DllImport, CryptAcquireContextW, WIN_STD_CALL_CONV,, <:ptr HCRYPTPROV, :LPCWSTR, :LPCWSTR, :DWORD, :DWORD>, 20
     ifdef UNICODE
@@ -819,10 +830,10 @@ ifndef __WINCRYPT_H__
       CryptAcquireContext equ <CryptAcquireContextA>
     endif
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, CryptReleaseContext, WIN_STD_CALL_CONV,, <:HCRYPTPROV, :DWORD>, 8
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, CryptGenKey, WIN_STD_CALL_CONV,, <:HCRYPTPROV, :ALG_ID, :DWORD, :ptr HCRYPTKEY>, 16
     @DefProto DllImport, CryptDeriveKey, WIN_STD_CALL_CONV,, <:HCRYPTPROV, :ALG_ID, :HCRYPTHASH, :DWORD, :ptr HCRYPTKEY>, 20
     @DefProto DllImport, CryptDestroyKey, WIN_STD_CALL_CONV,, <:HCRYPTKEY>, 4
@@ -895,16 +906,16 @@ ifndef __WINCRYPT_H__
     @DefProto DllImport, CryptDuplicateKey, WIN_STD_CALL_CONV,, <:HCRYPTKEY, :ptr DWORD, :DWORD, :ptr HCRYPTKEY>, 16
     @DefProto DllImport, CryptDuplicateHash, WIN_STD_CALL_CONV,, <:HCRYPTHASH, :ptr DWORD, :DWORD, :ptr HCRYPTHASH>, 16
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED)
     if (NTDDI_VERSION ge NTDDI_WS03)
       GetEncSChannel proto c :ptr ptr BYTE, :ptr DWORD
     endif
   endif
   if  not Defined(_DDK_DRIVER_)
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       include bcrypt.inc
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       include ncrypt.inc
       HCRYPTPROV_OR_NCRYPT_KEY_HANDLE typedef ULONG_PTR
       HCRYPTPROV_LEGACY typedef ULONG_PTR
@@ -915,12 +926,14 @@ ifndef __WINCRYPT_H__
       CRYPT_BIT_BLOB ends
       _CRYPT_BIT_BLOB typedef CRYPT_BIT_BLOB
       PCRYPT_BIT_BLOB typedef ptr CRYPT_BIT_BLOB
+      
       CRYPT_ALGORITHM_IDENTIFIER struct
         pszObjId LPSTR ?
         Parameters CRYPT_OBJID_BLOB <>
       CRYPT_ALGORITHM_IDENTIFIER ends
       _CRYPT_ALGORITHM_IDENTIFIER typedef CRYPT_ALGORITHM_IDENTIFIER
       PCRYPT_ALGORITHM_IDENTIFIER typedef ptr CRYPT_ALGORITHM_IDENTIFIER
+      
       szOID_RSA equ <"1.2.840.113549">
       szOID_PKCS equ <"1.2.840.113549.1">
       szOID_RSA_HASH equ <"1.2.840.113549.2">
@@ -971,8 +984,6 @@ ifndef __WINCRYPT_H__
       szOID_RSA_preferSignedData equ <"1.2.840.113549.1.9.15.1">
       szOID_TIMESTAMP_TOKEN equ <"1.2.840.113549.1.9.16.1.4">
       szOID_RFC3161_counterSign equ <"1.3.6.1.4.1.311.3.3.1">
-      szOID_RFC3161v21_counterSign equ <"1.3.6.1.4.1.311.3.3.2">
-      szOID_RFC3161v21_thumbprints equ <"1.3.6.1.4.1.311.3.3.3">
       szOID_RSA_SMIMEalg equ <"1.2.840.113549.1.9.16.3">
       szOID_RSA_SMIMEalgESDH equ <"1.2.840.113549.1.9.16.3.5">
       szOID_RSA_SMIMEalgCMS3DESwrap equ <"1.2.840.113549.1.9.16.3.6">
@@ -1121,12 +1132,14 @@ ifndef __WINCRYPT_H__
       CRYPT_OBJID_TABLE ends
       _CRYPT_OBJID_TABLE typedef CRYPT_OBJID_TABLE
       PCRYPT_OBJID_TABLE typedef ptr CRYPT_OBJID_TABLE
+      
       CRYPT_HASH_INFO struct
         HashAlgorithm CRYPT_ALGORITHM_IDENTIFIER <>
         Hash CRYPT_HASH_BLOB <>
       CRYPT_HASH_INFO ends
       _CRYPT_HASH_INFO typedef CRYPT_HASH_INFO
       PCRYPT_HASH_INFO typedef ptr CRYPT_HASH_INFO
+      
       CERT_EXTENSION struct
         pszObjId LPSTR ?
         fCritical BOOL ?
@@ -1134,6 +1147,7 @@ ifndef __WINCRYPT_H__
       CERT_EXTENSION ends
       _CERT_EXTENSION typedef CERT_EXTENSION
       PCERT_EXTENSION typedef ptr CERT_EXTENSION
+      
       PCCERT_EXTENSION typedef ptr CERT_EXTENSION
       CRYPT_ATTRIBUTE_TYPE_VALUE struct
         pszObjId LPSTR ?
@@ -1141,6 +1155,7 @@ ifndef __WINCRYPT_H__
       CRYPT_ATTRIBUTE_TYPE_VALUE ends
       _CRYPT_ATTRIBUTE_TYPE_VALUE typedef CRYPT_ATTRIBUTE_TYPE_VALUE
       PCRYPT_ATTRIBUTE_TYPE_VALUE typedef ptr CRYPT_ATTRIBUTE_TYPE_VALUE
+      
       CRYPT_ATTRIBUTE struct
         pszObjId LPSTR ?
         cValue DWORD ?
@@ -1148,12 +1163,14 @@ ifndef __WINCRYPT_H__
       CRYPT_ATTRIBUTE ends
       _CRYPT_ATTRIBUTE typedef CRYPT_ATTRIBUTE
       PCRYPT_ATTRIBUTE typedef ptr CRYPT_ATTRIBUTE
+      
       CRYPT_ATTRIBUTES struct
         cAttr DWORD ?
         rgAttr PCRYPT_ATTRIBUTE ?
       CRYPT_ATTRIBUTES ends
       _CRYPT_ATTRIBUTES typedef CRYPT_ATTRIBUTES
       PCRYPT_ATTRIBUTES typedef ptr CRYPT_ATTRIBUTES
+      
       CERT_RDN_ATTR struct
         pszObjId LPSTR ?
         dwValueType DWORD ?
@@ -1161,6 +1178,7 @@ ifndef __WINCRYPT_H__
       CERT_RDN_ATTR ends
       _CERT_RDN_ATTR typedef CERT_RDN_ATTR
       PCERT_RDN_ATTR typedef ptr CERT_RDN_ATTR
+      
       szOID_COMMON_NAME equ <"2.5.4.3">
       szOID_SUR_NAME equ <"2.5.4.4">
       szOID_DEVICE_SERIAL_NUMBER equ <"2.5.4.5">
@@ -1248,24 +1266,28 @@ ifndef __WINCRYPT_H__
       CERT_RDN ends
       _CERT_RDN typedef CERT_RDN
       PCERT_RDN typedef ptr CERT_RDN
+      
       CERT_NAME_INFO struct
         cRDN DWORD ?
         rgRDN PCERT_RDN ?
       CERT_NAME_INFO ends
       _CERT_NAME_INFO typedef CERT_NAME_INFO
       PCERT_NAME_INFO typedef ptr CERT_NAME_INFO
+      
       CERT_NAME_VALUE struct
         dwValueType DWORD ?
         Value CERT_RDN_VALUE_BLOB <>
       CERT_NAME_VALUE ends
       _CERT_NAME_VALUE typedef CERT_NAME_VALUE
       PCERT_NAME_VALUE typedef ptr CERT_NAME_VALUE
+      
       CERT_PUBLIC_KEY_INFO struct
         Algorithm CRYPT_ALGORITHM_IDENTIFIER <>
         PublicKey CRYPT_BIT_BLOB <>
       CERT_PUBLIC_KEY_INFO ends
       _CERT_PUBLIC_KEY_INFO typedef CERT_PUBLIC_KEY_INFO
       PCERT_PUBLIC_KEY_INFO typedef ptr CERT_PUBLIC_KEY_INFO
+      
       CERT_RSA_PUBLIC_KEY_OBJID equ <szOID_RSA_RSA>
       CERT_DEFAULT_OID_PUBLIC_KEY_SIGN equ <szOID_RSA_RSA>
       CERT_DEFAULT_OID_PUBLIC_KEY_XCHG equ <szOID_RSA_RSA>
@@ -1277,6 +1299,7 @@ ifndef __WINCRYPT_H__
       CRYPT_ECC_PRIVATE_KEY_INFO ends
       _CRYPT_ECC_PRIVATE_KEY_INFO typedef CRYPT_ECC_PRIVATE_KEY_INFO
       PCRYPT_ECC_PRIVATE_KEY_INFO typedef ptr CRYPT_ECC_PRIVATE_KEY_INFO
+      
       CRYPT_ECC_PRIVATE_KEY_INFO_v1 equ 1
       CRYPT_PRIVATE_KEY_INFO struct
         Version DWORD ?
@@ -1286,21 +1309,20 @@ ifndef __WINCRYPT_H__
       CRYPT_PRIVATE_KEY_INFO ends
       _CRYPT_PRIVATE_KEY_INFO typedef CRYPT_PRIVATE_KEY_INFO
       PCRYPT_PRIVATE_KEY_INFO typedef ptr CRYPT_PRIVATE_KEY_INFO
+      
       CRYPT_ENCRYPTED_PRIVATE_KEY_INFO struct
         EncryptionAlgorithm CRYPT_ALGORITHM_IDENTIFIER <>
         EncryptedPrivateKey CRYPT_DATA_BLOB <>
       CRYPT_ENCRYPTED_PRIVATE_KEY_INFO ends
       _CRYPT_ENCRYPTED_PRIVATE_KEY_INFO typedef CRYPT_ENCRYPTED_PRIVATE_KEY_INFO
       PCRYPT_ENCRYPTED_PRIVATE_KEY_INFO typedef ptr CRYPT_ENCRYPTED_PRIVATE_KEY_INFO
+      
       TYPE_PCRYPT_DECRYPT_PRIVATE_KEY_FUNC typedef proto WIN_STD_CALL_CONV :CRYPT_ALGORITHM_IDENTIFIER, :CRYPT_DATA_BLOB, :ptr BYTE, :ptr DWORD, :LPVOID
       PCRYPT_DECRYPT_PRIVATE_KEY_FUNC typedef ptr TYPE_PCRYPT_DECRYPT_PRIVATE_KEY_FUNC
-
       TYPE_PCRYPT_ENCRYPT_PRIVATE_KEY_FUNC typedef proto WIN_STD_CALL_CONV :ptr CRYPT_ALGORITHM_IDENTIFIER, :ptr CRYPT_DATA_BLOB, :ptr BYTE, :ptr DWORD, :LPVOID
       PCRYPT_ENCRYPT_PRIVATE_KEY_FUNC typedef ptr TYPE_PCRYPT_ENCRYPT_PRIVATE_KEY_FUNC
-
       TYPE_PCRYPT_RESOLVE_HCRYPTPROV_FUNC typedef proto WIN_STD_CALL_CONV :ptr CRYPT_PRIVATE_KEY_INFO, :ptr HCRYPTPROV, :LPVOID
       PCRYPT_RESOLVE_HCRYPTPROV_FUNC typedef ptr TYPE_PCRYPT_RESOLVE_HCRYPTPROV_FUNC
-
       CRYPT_PKCS8_IMPORT_PARAMS struct
         PrivateKey CRYPT_DIGEST_BLOB <>
         pResolvehCryptProvFunc PCRYPT_RESOLVE_HCRYPTPROV_FUNC ?
@@ -1312,6 +1334,7 @@ ifndef __WINCRYPT_H__
       PCRYPT_PKCS8_IMPORT_PARAMS typedef ptr CRYPT_PKCS8_IMPORT_PARAMS
       CRYPT_PRIVATE_KEY_BLOB_AND_PARAMS typedef CRYPT_PKCS8_IMPORT_PARAMS
       PCRYPT_PRIVATE_KEY_BLOB_AND_PARAMS typedef ptr CRYPT_PKCS8_IMPORT_PARAMS
+      
       CRYPT_PKCS8_EXPORT_PARAMS struct
         hCryptProv HCRYPTPROV ?
         dwKeySpec DWORD ?
@@ -1321,6 +1344,7 @@ ifndef __WINCRYPT_H__
       CRYPT_PKCS8_EXPORT_PARAMS ends
       _CRYPT_PKCS8_EXPORT_PARAMS typedef CRYPT_PKCS8_EXPORT_PARAMS
       PCRYPT_PKCS8_EXPORT_PARAMS typedef ptr CRYPT_PKCS8_EXPORT_PARAMS
+      
       CERT_INFO struct
         dwVersion DWORD ?
         SerialNumber CRYPT_INTEGER_BLOB <>
@@ -1337,6 +1361,7 @@ ifndef __WINCRYPT_H__
       CERT_INFO ends
       _CERT_INFO typedef CERT_INFO
       PCERT_INFO typedef ptr CERT_INFO
+      
       CERT_V1 equ 0
       CERT_V2 equ 1
       CERT_V3 equ 2
@@ -1359,6 +1384,7 @@ ifndef __WINCRYPT_H__
       CRL_ENTRY ends
       _CRL_ENTRY typedef CRL_ENTRY
       PCRL_ENTRY typedef ptr CRL_ENTRY
+      
       CRL_INFO struct
         dwVersion DWORD ?
         SignatureAlgorithm CRYPT_ALGORITHM_IDENTIFIER <>
@@ -1372,6 +1398,7 @@ ifndef __WINCRYPT_H__
       CRL_INFO ends
       _CRL_INFO typedef CRL_INFO
       PCRL_INFO typedef ptr CRL_INFO
+      
       CRL_V1 equ 0
       CRL_V2 equ 1
       CERT_BUNDLE_CERTIFICATE equ 0
@@ -1383,12 +1410,14 @@ ifndef __WINCRYPT_H__
       CERT_OR_CRL_BLOB ends
       _CERT_OR_CRL_BLOB typedef CERT_OR_CRL_BLOB
       PCERT_OR_CRL_BLOB typedef ptr CERT_OR_CRL_BLOB
+      
       CERT_OR_CRL_BUNDLE struct
         cItem DWORD ?
         rgItem PCERT_OR_CRL_BLOB ?
       CERT_OR_CRL_BUNDLE ends
       _CERT_OR_CRL_BUNDLE typedef CERT_OR_CRL_BUNDLE
       PCERT_OR_CRL_BUNDLE typedef ptr CERT_OR_CRL_BUNDLE
+      
       CERT_REQUEST_INFO struct
         dwVersion DWORD ?
         Subject CERT_NAME_BLOB <>
@@ -1398,6 +1427,7 @@ ifndef __WINCRYPT_H__
       CERT_REQUEST_INFO ends
       _CERT_REQUEST_INFO typedef CERT_REQUEST_INFO
       PCERT_REQUEST_INFO typedef ptr CERT_REQUEST_INFO
+      
       CERT_REQUEST_V1 equ 0
       CERT_KEYGEN_REQUEST_INFO struct
         dwVersion DWORD ?
@@ -1406,6 +1436,7 @@ ifndef __WINCRYPT_H__
       CERT_KEYGEN_REQUEST_INFO ends
       _CERT_KEYGEN_REQUEST_INFO typedef CERT_KEYGEN_REQUEST_INFO
       PCERT_KEYGEN_REQUEST_INFO typedef ptr CERT_KEYGEN_REQUEST_INFO
+      
       CERT_KEYGEN_REQUEST_V1 equ 0
       CERT_SIGNED_CONTENT_INFO struct
         ToBeSigned CRYPT_DER_BLOB <>
@@ -1414,6 +1445,7 @@ ifndef __WINCRYPT_H__
       CERT_SIGNED_CONTENT_INFO ends
       _CERT_SIGNED_CONTENT_INFO typedef CERT_SIGNED_CONTENT_INFO
       PCERT_SIGNED_CONTENT_INFO typedef ptr CERT_SIGNED_CONTENT_INFO
+      
       CTL_USAGE struct
         cUsageIdentifier DWORD ?
         rgpszUsageIdentifier POINTER ?
@@ -1422,6 +1454,7 @@ ifndef __WINCRYPT_H__
       PCTL_USAGE typedef ptr CTL_USAGE
       CERT_ENHKEY_USAGE typedef CTL_USAGE
       PCERT_ENHKEY_USAGE typedef ptr CTL_USAGE
+      
       PCCTL_USAGE typedef ptr CTL_USAGE
       PCCERT_ENHKEY_USAGE typedef ptr CERT_ENHKEY_USAGE
       CTL_ENTRY struct
@@ -1431,6 +1464,7 @@ ifndef __WINCRYPT_H__
       CTL_ENTRY ends
       _CTL_ENTRY typedef CTL_ENTRY
       PCTL_ENTRY typedef ptr CTL_ENTRY
+      
       CTL_INFO struct
         dwVersion DWORD ?
         SubjectUsage CTL_USAGE <>
@@ -1446,6 +1480,7 @@ ifndef __WINCRYPT_H__
       CTL_INFO ends
       _CTL_INFO typedef CTL_INFO
       PCTL_INFO typedef ptr CTL_INFO
+      
       CTL_V1 equ 0
       CRYPT_TIME_STAMP_REQUEST_INFO struct
         pszTimeStampAlgorithm LPSTR ?
@@ -1456,12 +1491,14 @@ ifndef __WINCRYPT_H__
       CRYPT_TIME_STAMP_REQUEST_INFO ends
       _CRYPT_TIME_STAMP_REQUEST_INFO typedef CRYPT_TIME_STAMP_REQUEST_INFO
       PCRYPT_TIME_STAMP_REQUEST_INFO typedef ptr CRYPT_TIME_STAMP_REQUEST_INFO
+      
       CRYPT_ENROLLMENT_NAME_VALUE_PAIR struct
         pwszName LPWSTR ?
         pwszValue LPWSTR ?
       CRYPT_ENROLLMENT_NAME_VALUE_PAIR ends
       _CRYPT_ENROLLMENT_NAME_VALUE_PAIR typedef CRYPT_ENROLLMENT_NAME_VALUE_PAIR
       PCRYPT_ENROLLMENT_NAME_VALUE_PAIR typedef ptr CRYPT_ENROLLMENT_NAME_VALUE_PAIR
+      
       CRYPT_CSP_PROVIDER struct
         dwKeySpec DWORD ?
         pwszProviderName LPWSTR ?
@@ -1469,6 +1506,7 @@ ifndef __WINCRYPT_H__
       CRYPT_CSP_PROVIDER ends
       _CRYPT_CSP_PROVIDER typedef CRYPT_CSP_PROVIDER
       PCRYPT_CSP_PROVIDER typedef ptr CRYPT_CSP_PROVIDER
+      
       CERT_ENCODING_TYPE_MASK equ 0000FFFFh
       CMSG_ENCODING_TYPE_MASK equ 0FFFF0000h
       GET_CERT_ENCODING_TYPE macro X
@@ -1498,10 +1536,8 @@ ifndef __WINCRYPT_H__
       CRYPT_FORMAT_CRLF equ <CRYPT_FORMAT_RDN_CRLF>
       TYPE_PFN_CRYPT_ALLOC typedef proto WIN_STD_CALL_CONV :size_t
       PFN_CRYPT_ALLOC typedef ptr TYPE_PFN_CRYPT_ALLOC
-
       TYPE_PFN_CRYPT_FREE typedef proto WIN_STD_CALL_CONV :LPVOID
       PFN_CRYPT_FREE typedef ptr TYPE_PFN_CRYPT_FREE
-
       CRYPT_ENCODE_PARA struct
         cbSize DWORD ?
         pfnAlloc PFN_CRYPT_ALLOC ?
@@ -1509,6 +1545,7 @@ ifndef __WINCRYPT_H__
       CRYPT_ENCODE_PARA ends
       _CRYPT_ENCODE_PARA typedef CRYPT_ENCODE_PARA
       PCRYPT_ENCODE_PARA typedef ptr CRYPT_ENCODE_PARA
+      
       @DefProto DllImport, CryptEncodeObjectEx, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR, :ptr, :DWORD, :PCRYPT_ENCODE_PARA, :ptr, :ptr DWORD>, 28
       @DefProto DllImport, CryptEncodeObject, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR, :ptr, :ptr BYTE, :ptr DWORD>, 20
       CRYPT_ENCODE_NO_SIGNATURE_BYTE_REVERSAL_FLAG equ 8h
@@ -1528,6 +1565,7 @@ ifndef __WINCRYPT_H__
       CRYPT_DECODE_PARA ends
       _CRYPT_DECODE_PARA typedef CRYPT_DECODE_PARA
       PCRYPT_DECODE_PARA typedef ptr CRYPT_DECODE_PARA
+      
       @DefProto DllImport, CryptDecodeObjectEx, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR, :ptr BYTE, :DWORD, :DWORD, :PCRYPT_DECODE_PARA, :ptr, :ptr DWORD>, 32
       @DefProto DllImport, CryptDecodeObject, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR, :ptr BYTE, :DWORD, :DWORD, :ptr, :ptr DWORD>, 28
       CRYPT_DECODE_NOCOPY_FLAG equ 1h
@@ -1725,9 +1763,6 @@ ifndef __WINCRYPT_H__
       szOID_ENCRYPTED_KEY_HASH equ <"1.3.6.1.4.1.311.21.21">
       szOID_CERTSRV_CROSSCA_VERSION equ <"1.3.6.1.4.1.311.21.22">
       szOID_NTDS_REPLICATION equ <"1.3.6.1.4.1.311.25.1">
-      szOID_NTDS_CA_SECURITY_EXT equ <"1.3.6.1.4.1.311.25.2">
-      szOID_NTDS_OBJECTSID equ <"1.3.6.1.4.1.311.25.2.1">
-      wszURI_NTDS_OBJECTSID_PREFIX equ <L("tag:microsoft.com,2022-09-14:sid:")>
       szOID_SUBJECT_DIR_ATTRS equ <"2.5.29.9">
       szOID_PKIX_KP equ <"1.3.6.1.5.5.7.3">
       szOID_PKIX_KP_SERVER_AUTH equ <"1.3.6.1.5.5.7.3.1">
@@ -1863,6 +1898,7 @@ ifndef __WINCRYPT_H__
       CERT_EXTENSIONS ends
       _CERT_EXTENSIONS typedef CERT_EXTENSIONS
       PCERT_EXTENSIONS typedef ptr CERT_EXTENSIONS
+      
       CERT_UNICODE_RDN_ERR_INDEX_MASK equ 3FFh
       CERT_UNICODE_RDN_ERR_INDEX_SHIFT equ 22
       CERT_UNICODE_ATTR_ERR_INDEX_MASK equ 003Fh
@@ -1885,12 +1921,14 @@ ifndef __WINCRYPT_H__
       CERT_AUTHORITY_KEY_ID_INFO ends
       _CERT_AUTHORITY_KEY_ID_INFO typedef CERT_AUTHORITY_KEY_ID_INFO
       PCERT_AUTHORITY_KEY_ID_INFO typedef ptr CERT_AUTHORITY_KEY_ID_INFO
+      
       CERT_PRIVATE_KEY_VALIDITY struct
         NotBefore FILETIME <>
         NotAfter FILETIME <>
       CERT_PRIVATE_KEY_VALIDITY ends
       _CERT_PRIVATE_KEY_VALIDITY typedef CERT_PRIVATE_KEY_VALIDITY
       PCERT_PRIVATE_KEY_VALIDITY typedef ptr CERT_PRIVATE_KEY_VALIDITY
+      
       CERT_KEY_ATTRIBUTES_INFO struct
         KeyId CRYPT_DATA_BLOB <>
         IntendedKeyUsage CRYPT_BIT_BLOB <>
@@ -1898,6 +1936,7 @@ ifndef __WINCRYPT_H__
       CERT_KEY_ATTRIBUTES_INFO ends
       _CERT_KEY_ATTRIBUTES_INFO typedef CERT_KEY_ATTRIBUTES_INFO
       PCERT_KEY_ATTRIBUTES_INFO typedef ptr CERT_KEY_ATTRIBUTES_INFO
+      
       CERT_DIGITAL_SIGNATURE_KEY_USAGE equ 80h
       CERT_NON_REPUDIATION_KEY_USAGE equ 40h
       CERT_KEY_ENCIPHERMENT_KEY_USAGE equ 20h
@@ -1914,6 +1953,7 @@ ifndef __WINCRYPT_H__
       CERT_POLICY_ID ends
       _CERT_POLICY_ID typedef CERT_POLICY_ID
       PCERT_POLICY_ID typedef ptr CERT_POLICY_ID
+      
       CERT_KEY_USAGE_RESTRICTION_INFO struct
         cCertPolicyId DWORD ?
         rgCertPolicyId PCERT_POLICY_ID ?
@@ -1921,12 +1961,14 @@ ifndef __WINCRYPT_H__
       CERT_KEY_USAGE_RESTRICTION_INFO ends
       _CERT_KEY_USAGE_RESTRICTION_INFO typedef CERT_KEY_USAGE_RESTRICTION_INFO
       PCERT_KEY_USAGE_RESTRICTION_INFO typedef ptr CERT_KEY_USAGE_RESTRICTION_INFO
+      
       CERT_OTHER_NAME struct
         pszObjId LPSTR ?
         Value CRYPT_OBJID_BLOB <>
       CERT_OTHER_NAME ends
       _CERT_OTHER_NAME typedef CERT_OTHER_NAME
       PCERT_OTHER_NAME typedef ptr CERT_OTHER_NAME
+      
       CERT_ALT_NAME_ENTRY struct
         dwAltNameChoice DWORD ?
         union
@@ -1941,6 +1983,7 @@ ifndef __WINCRYPT_H__
       CERT_ALT_NAME_ENTRY ends
       _CERT_ALT_NAME_ENTRY typedef CERT_ALT_NAME_ENTRY
       PCERT_ALT_NAME_ENTRY typedef ptr CERT_ALT_NAME_ENTRY
+      
       CERT_ALT_NAME_OTHER_NAME equ 1
       CERT_ALT_NAME_RFC822_NAME equ 2
       CERT_ALT_NAME_DNS_NAME equ 3
@@ -1956,6 +1999,7 @@ ifndef __WINCRYPT_H__
       CERT_ALT_NAME_INFO ends
       _CERT_ALT_NAME_INFO typedef CERT_ALT_NAME_INFO
       PCERT_ALT_NAME_INFO typedef ptr CERT_ALT_NAME_INFO
+      
       CERT_ALT_NAME_ENTRY_ERR_INDEX_MASK equ 0FFh
       CERT_ALT_NAME_ENTRY_ERR_INDEX_SHIFT equ 16
       CERT_ALT_NAME_VALUE_ERR_INDEX_MASK equ 0000FFFFh
@@ -1975,6 +2019,7 @@ ifndef __WINCRYPT_H__
       CERT_BASIC_CONSTRAINTS_INFO ends
       _CERT_BASIC_CONSTRAINTS_INFO typedef CERT_BASIC_CONSTRAINTS_INFO
       PCERT_BASIC_CONSTRAINTS_INFO typedef ptr CERT_BASIC_CONSTRAINTS_INFO
+      
       CERT_CA_SUBJECT_FLAG equ 80h
       CERT_END_ENTITY_SUBJECT_FLAG equ 40h
       CERT_BASIC_CONSTRAINTS2_INFO struct
@@ -1984,12 +2029,14 @@ ifndef __WINCRYPT_H__
       CERT_BASIC_CONSTRAINTS2_INFO ends
       _CERT_BASIC_CONSTRAINTS2_INFO typedef CERT_BASIC_CONSTRAINTS2_INFO
       PCERT_BASIC_CONSTRAINTS2_INFO typedef ptr CERT_BASIC_CONSTRAINTS2_INFO
+      
       CERT_POLICY_QUALIFIER_INFO struct
         pszPolicyQualifierId LPSTR ?
         Qualifier CRYPT_OBJID_BLOB <>
       CERT_POLICY_QUALIFIER_INFO ends
       _CERT_POLICY_QUALIFIER_INFO typedef CERT_POLICY_QUALIFIER_INFO
       PCERT_POLICY_QUALIFIER_INFO typedef ptr CERT_POLICY_QUALIFIER_INFO
+      
       CERT_POLICY_INFO struct
         pszPolicyIdentifier LPSTR ?
         cPolicyQualifier DWORD ?
@@ -1997,12 +2044,14 @@ ifndef __WINCRYPT_H__
       CERT_POLICY_INFO ends
       _CERT_POLICY_INFO typedef CERT_POLICY_INFO
       PCERT_POLICY_INFO typedef ptr CERT_POLICY_INFO
+      
       CERT_POLICIES_INFO struct
         cPolicyInfo DWORD ?
         rgPolicyInfo POINTER ?
       CERT_POLICIES_INFO ends
       _CERT_POLICIES_INFO typedef CERT_POLICIES_INFO
       PCERT_POLICIES_INFO typedef ptr CERT_POLICIES_INFO
+      
       CERT_POLICY_QUALIFIER_NOTICE_REFERENCE struct
         pszOrganization LPSTR ?
         cNoticeNumbers DWORD ?
@@ -2010,12 +2059,14 @@ ifndef __WINCRYPT_H__
       CERT_POLICY_QUALIFIER_NOTICE_REFERENCE ends
       _CERT_POLICY_QUALIFIER_NOTICE_REFERENCE typedef CERT_POLICY_QUALIFIER_NOTICE_REFERENCE
       PCERT_POLICY_QUALIFIER_NOTICE_REFERENCE typedef ptr CERT_POLICY_QUALIFIER_NOTICE_REFERENCE
+      
       CERT_POLICY_QUALIFIER_USER_NOTICE struct
         pNoticeReference POINTER ?
         pszDisplayText LPWSTR ?
       CERT_POLICY_QUALIFIER_USER_NOTICE ends
       _CERT_POLICY_QUALIFIER_USER_NOTICE typedef CERT_POLICY_QUALIFIER_USER_NOTICE
       PCERT_POLICY_QUALIFIER_USER_NOTICE typedef ptr CERT_POLICY_QUALIFIER_USER_NOTICE
+      
       CPS_URLS struct
         pszURL LPWSTR ?
         pAlgorithm POINTER ?
@@ -2023,6 +2074,7 @@ ifndef __WINCRYPT_H__
       CPS_URLS ends
       _CPS_URLS typedef CPS_URLS
       PCPS_URLS typedef ptr CPS_URLS
+      
       CERT_POLICY95_QUALIFIER1 struct
         pszPracticesReference LPWSTR ?
         pszNoticeIdentifier LPSTR ?
@@ -2032,18 +2084,21 @@ ifndef __WINCRYPT_H__
       CERT_POLICY95_QUALIFIER1 ends
       _CERT_POLICY95_QUALIFIER1 typedef CERT_POLICY95_QUALIFIER1
       PCERT_POLICY95_QUALIFIER1 typedef ptr CERT_POLICY95_QUALIFIER1
+      
       CERT_POLICY_MAPPING struct
         pszIssuerDomainPolicy LPSTR ?
         pszSubjectDomainPolicy LPSTR ?
       CERT_POLICY_MAPPING ends
       _CERT_POLICY_MAPPING typedef CERT_POLICY_MAPPING
       PCERT_POLICY_MAPPING typedef ptr CERT_POLICY_MAPPING
+      
       CERT_POLICY_MAPPINGS_INFO struct
         cPolicyMapping DWORD ?
         rgPolicyMapping PCERT_POLICY_MAPPING ?
       CERT_POLICY_MAPPINGS_INFO ends
       _CERT_POLICY_MAPPINGS_INFO typedef CERT_POLICY_MAPPINGS_INFO
       PCERT_POLICY_MAPPINGS_INFO typedef ptr CERT_POLICY_MAPPINGS_INFO
+      
       CERT_POLICY_CONSTRAINTS_INFO struct
         fRequireExplicitPolicy BOOL ?
         dwRequireExplicitPolicySkipCerts DWORD ?
@@ -2052,6 +2107,7 @@ ifndef __WINCRYPT_H__
       CERT_POLICY_CONSTRAINTS_INFO ends
       _CERT_POLICY_CONSTRAINTS_INFO typedef CERT_POLICY_CONSTRAINTS_INFO
       PCERT_POLICY_CONSTRAINTS_INFO typedef ptr CERT_POLICY_CONSTRAINTS_INFO
+      
       CRYPT_CONTENT_INFO_SEQUENCE_OF_ANY struct
         pszObjId LPSTR ?
         cValue DWORD ?
@@ -2059,18 +2115,21 @@ ifndef __WINCRYPT_H__
       CRYPT_CONTENT_INFO_SEQUENCE_OF_ANY ends
       _CRYPT_CONTENT_INFO_SEQUENCE_OF_ANY typedef CRYPT_CONTENT_INFO_SEQUENCE_OF_ANY
       PCRYPT_CONTENT_INFO_SEQUENCE_OF_ANY typedef ptr CRYPT_CONTENT_INFO_SEQUENCE_OF_ANY
+      
       CRYPT_CONTENT_INFO struct
         pszObjId LPSTR ?
         Content CRYPT_DER_BLOB <>
       CRYPT_CONTENT_INFO ends
       _CRYPT_CONTENT_INFO typedef CRYPT_CONTENT_INFO
       PCRYPT_CONTENT_INFO typedef ptr CRYPT_CONTENT_INFO
+      
       CRYPT_SEQUENCE_OF_ANY struct
         cValue DWORD ?
         rgValue PCRYPT_DER_BLOB ?
       CRYPT_SEQUENCE_OF_ANY ends
       _CRYPT_SEQUENCE_OF_ANY typedef CRYPT_SEQUENCE_OF_ANY
       PCRYPT_SEQUENCE_OF_ANY typedef ptr CRYPT_SEQUENCE_OF_ANY
+      
       CERT_AUTHORITY_KEY_ID2_INFO struct
         KeyId CRYPT_DATA_BLOB <>
         AuthorityCertIssuer CERT_ALT_NAME_INFO <>
@@ -2078,12 +2137,14 @@ ifndef __WINCRYPT_H__
       CERT_AUTHORITY_KEY_ID2_INFO ends
       _CERT_AUTHORITY_KEY_ID2_INFO typedef CERT_AUTHORITY_KEY_ID2_INFO
       PCERT_AUTHORITY_KEY_ID2_INFO typedef ptr CERT_AUTHORITY_KEY_ID2_INFO
+      
       CERT_ACCESS_DESCRIPTION struct
         pszAccessMethod LPSTR ?
         AccessLocation CERT_ALT_NAME_ENTRY <>
       CERT_ACCESS_DESCRIPTION ends
       _CERT_ACCESS_DESCRIPTION typedef CERT_ACCESS_DESCRIPTION
       PCERT_ACCESS_DESCRIPTION typedef ptr CERT_ACCESS_DESCRIPTION
+      
       CERT_AUTHORITY_INFO_ACCESS struct
         cAccDescr DWORD ?
         rgAccDescr PCERT_ACCESS_DESCRIPTION ?
@@ -2092,6 +2153,7 @@ ifndef __WINCRYPT_H__
       PCERT_AUTHORITY_INFO_ACCESS typedef ptr CERT_AUTHORITY_INFO_ACCESS
       CERT_SUBJECT_INFO_ACCESS typedef CERT_AUTHORITY_INFO_ACCESS
       PCERT_SUBJECT_INFO_ACCESS typedef ptr CERT_AUTHORITY_INFO_ACCESS
+      
       szOID_PKIX_ACC_DESCR equ <"1.3.6.1.5.5.7.48">
       szOID_PKIX_OCSP equ <"1.3.6.1.5.5.7.48.1">
       szOID_PKIX_CA_ISSUERS equ <"1.3.6.1.5.5.7.48.2">
@@ -2115,6 +2177,7 @@ ifndef __WINCRYPT_H__
       CRL_DIST_POINT_NAME ends
       _CRL_DIST_POINT_NAME typedef CRL_DIST_POINT_NAME
       PCRL_DIST_POINT_NAME typedef ptr CRL_DIST_POINT_NAME
+      
       CRL_DIST_POINT_NO_NAME equ 0
       CRL_DIST_POINT_FULL_NAME equ 1
       CRL_DIST_POINT_ISSUER_RDN_NAME equ 2
@@ -2125,6 +2188,7 @@ ifndef __WINCRYPT_H__
       CRL_DIST_POINT ends
       _CRL_DIST_POINT typedef CRL_DIST_POINT
       PCRL_DIST_POINT typedef ptr CRL_DIST_POINT
+      
       CRL_REASON_UNUSED_FLAG equ 80h
       CRL_REASON_KEY_COMPROMISE_FLAG equ 40h
       CRL_REASON_CA_COMPROMISE_FLAG equ 20h
@@ -2140,6 +2204,7 @@ ifndef __WINCRYPT_H__
       CRL_DIST_POINTS_INFO ends
       _CRL_DIST_POINTS_INFO typedef CRL_DIST_POINTS_INFO
       PCRL_DIST_POINTS_INFO typedef ptr CRL_DIST_POINTS_INFO
+      
       CRL_DIST_POINT_ERR_INDEX_MASK equ 7Fh
       CRL_DIST_POINT_ERR_INDEX_SHIFT equ 24
       GET_CRL_DIST_POINT_ERR_INDEX macro X
@@ -2156,6 +2221,7 @@ ifndef __WINCRYPT_H__
       CROSS_CERT_DIST_POINTS_INFO ends
       _CROSS_CERT_DIST_POINTS_INFO typedef CROSS_CERT_DIST_POINTS_INFO
       PCROSS_CERT_DIST_POINTS_INFO typedef ptr CROSS_CERT_DIST_POINTS_INFO
+      
       CROSS_CERT_DIST_POINT_ERR_INDEX_MASK equ 0FFh
       CROSS_CERT_DIST_POINT_ERR_INDEX_SHIFT equ 24
       GET_CROSS_CERT_DIST_POINT_ERR_INDEX macro X
@@ -2167,6 +2233,7 @@ ifndef __WINCRYPT_H__
       CERT_PAIR ends
       _CERT_PAIR typedef CERT_PAIR
       PCERT_PAIR typedef ptr CERT_PAIR
+      
       CRL_ISSUING_DIST_POINT struct
         DistPointName CRL_DIST_POINT_NAME <>
         fOnlyContainsUserCerts BOOL ?
@@ -2176,6 +2243,7 @@ ifndef __WINCRYPT_H__
       CRL_ISSUING_DIST_POINT ends
       _CRL_ISSUING_DIST_POINT typedef CRL_ISSUING_DIST_POINT
       PCRL_ISSUING_DIST_POINT typedef ptr CRL_ISSUING_DIST_POINT
+      
       CERT_GENERAL_SUBTREE struct
         Base CERT_ALT_NAME_ENTRY <>
         dwMinimum DWORD ?
@@ -2184,6 +2252,7 @@ ifndef __WINCRYPT_H__
       CERT_GENERAL_SUBTREE ends
       _CERT_GENERAL_SUBTREE typedef CERT_GENERAL_SUBTREE
       PCERT_GENERAL_SUBTREE typedef ptr CERT_GENERAL_SUBTREE
+      
       CERT_NAME_CONSTRAINTS_INFO struct
         cPermittedSubtree DWORD ?
         rgPermittedSubtree PCERT_GENERAL_SUBTREE ?
@@ -2192,6 +2261,7 @@ ifndef __WINCRYPT_H__
       CERT_NAME_CONSTRAINTS_INFO ends
       _CERT_NAME_CONSTRAINTS_INFO typedef CERT_NAME_CONSTRAINTS_INFO
       PCERT_NAME_CONSTRAINTS_INFO typedef ptr CERT_NAME_CONSTRAINTS_INFO
+      
       CERT_EXCLUDED_SUBTREE_BIT equ 80000000h
       IS_CERT_EXCLUDED_SUBTREE macro X
         exitm <(0 != (X and CERT_EXCLUDED_SUBTREE_BIT))>
@@ -2208,6 +2278,7 @@ ifndef __WINCRYPT_H__
       CERT_DSS_PARAMETERS ends
       _CERT_DSS_PARAMETERS typedef CERT_DSS_PARAMETERS
       PCERT_DSS_PARAMETERS typedef ptr CERT_DSS_PARAMETERS
+      
       CERT_DSS_R_LEN equ 20
       CERT_DSS_S_LEN equ 20
       CERT_DSS_SIGNATURE_LEN equ <(CERT_DSS_R_LEN + CERT_DSS_S_LEN)>
@@ -2218,18 +2289,21 @@ ifndef __WINCRYPT_H__
       CERT_DH_PARAMETERS ends
       _CERT_DH_PARAMETERS typedef CERT_DH_PARAMETERS
       PCERT_DH_PARAMETERS typedef ptr CERT_DH_PARAMETERS
+      
       CERT_ECC_SIGNATURE struct
         r CRYPT_UINT_BLOB <>
         s CRYPT_UINT_BLOB <>
       CERT_ECC_SIGNATURE ends
       _CERT_ECC_SIGNATURE typedef CERT_ECC_SIGNATURE
       PCERT_ECC_SIGNATURE typedef ptr CERT_ECC_SIGNATURE
+      
       CERT_X942_DH_VALIDATION_PARAMS struct
         seed CRYPT_BIT_BLOB <>
         pgenCounter DWORD ?
       CERT_X942_DH_VALIDATION_PARAMS ends
       _CERT_X942_DH_VALIDATION_PARAMS typedef CERT_X942_DH_VALIDATION_PARAMS
       PCERT_X942_DH_VALIDATION_PARAMS typedef ptr CERT_X942_DH_VALIDATION_PARAMS
+      
       CERT_X942_DH_PARAMETERS struct
         p CRYPT_UINT_BLOB <>
         g CRYPT_UINT_BLOB <>
@@ -2239,6 +2313,7 @@ ifndef __WINCRYPT_H__
       CERT_X942_DH_PARAMETERS ends
       _CERT_X942_DH_PARAMETERS typedef CERT_X942_DH_PARAMETERS
       PCERT_X942_DH_PARAMETERS typedef ptr CERT_X942_DH_PARAMETERS
+      
       CRYPT_X942_COUNTER_BYTE_LENGTH equ 4
       CRYPT_X942_KEY_LENGTH_BYTE_LENGTH equ 4
       CRYPT_X942_PUB_INFO_BYTE_LENGTH equ (512 / 8)
@@ -2250,6 +2325,7 @@ ifndef __WINCRYPT_H__
       CRYPT_X942_OTHER_INFO ends
       _CRYPT_X942_OTHER_INFO typedef CRYPT_X942_OTHER_INFO
       PCRYPT_X942_OTHER_INFO typedef ptr CRYPT_X942_OTHER_INFO
+      
       CRYPT_ECC_CMS_SHARED_INFO_SUPPPUBINFO_BYTE_LENGTH equ 4
       CRYPT_ECC_CMS_SHARED_INFO struct
         Algorithm CRYPT_ALGORITHM_IDENTIFIER <>
@@ -2258,6 +2334,7 @@ ifndef __WINCRYPT_H__
       CRYPT_ECC_CMS_SHARED_INFO ends
       _CRYPT_ECC_CMS_SHARED_INFO typedef CRYPT_ECC_CMS_SHARED_INFO
       PCRYPT_ECC_CMS_SHARED_INFO typedef ptr CRYPT_ECC_CMS_SHARED_INFO
+      
       CRYPT_RC2_CBC_PARAMETERS struct
         dwVersion DWORD ?
         fIV BOOL ?
@@ -2265,6 +2342,7 @@ ifndef __WINCRYPT_H__
       CRYPT_RC2_CBC_PARAMETERS ends
       _CRYPT_RC2_CBC_PARAMETERS typedef CRYPT_RC2_CBC_PARAMETERS
       PCRYPT_RC2_CBC_PARAMETERS typedef ptr CRYPT_RC2_CBC_PARAMETERS
+      
       CRYPT_RC2_40BIT_VERSION equ 160
       CRYPT_RC2_56BIT_VERSION equ 52
       CRYPT_RC2_64BIT_VERSION equ 120
@@ -2275,24 +2353,28 @@ ifndef __WINCRYPT_H__
       CRYPT_SMIME_CAPABILITY ends
       _CRYPT_SMIME_CAPABILITY typedef CRYPT_SMIME_CAPABILITY
       PCRYPT_SMIME_CAPABILITY typedef ptr CRYPT_SMIME_CAPABILITY
+      
       CRYPT_SMIME_CAPABILITIES struct
         cCapability DWORD ?
         rgCapability PCRYPT_SMIME_CAPABILITY ?
       CRYPT_SMIME_CAPABILITIES ends
       _CRYPT_SMIME_CAPABILITIES typedef CRYPT_SMIME_CAPABILITIES
       PCRYPT_SMIME_CAPABILITIES typedef ptr CRYPT_SMIME_CAPABILITIES
+      
       CERT_QC_STATEMENT struct
         pszStatementId LPSTR ?
         StatementInfo CRYPT_OBJID_BLOB <>
       CERT_QC_STATEMENT ends
       _CERT_QC_STATEMENT typedef CERT_QC_STATEMENT
       PCERT_QC_STATEMENT typedef ptr CERT_QC_STATEMENT
+      
       CERT_QC_STATEMENTS_EXT_INFO struct
         cStatement DWORD ?
         rgStatement PCERT_QC_STATEMENT ?
       CERT_QC_STATEMENTS_EXT_INFO ends
       _CERT_QC_STATEMENTS_EXT_INFO typedef CERT_QC_STATEMENTS_EXT_INFO
       PCERT_QC_STATEMENTS_EXT_INFO typedef ptr CERT_QC_STATEMENTS_EXT_INFO
+      
       szOID_QC_EU_COMPLIANCE equ <"0.4.0.1862.1.1">
       szOID_QC_SSCD equ <"0.4.0.1862.1.4">
       CRYPT_MASK_GEN_ALGORITHM struct
@@ -2301,6 +2383,7 @@ ifndef __WINCRYPT_H__
       CRYPT_MASK_GEN_ALGORITHM ends
       _CRYPT_MASK_GEN_ALGORITHM typedef CRYPT_MASK_GEN_ALGORITHM
       PCRYPT_MASK_GEN_ALGORITHM typedef ptr CRYPT_MASK_GEN_ALGORITHM
+      
       CRYPT_RSA_SSA_PSS_PARAMETERS struct
         HashAlgorithm CRYPT_ALGORITHM_IDENTIFIER <>
         MaskGenAlgorithm CRYPT_MASK_GEN_ALGORITHM <>
@@ -2309,6 +2392,7 @@ ifndef __WINCRYPT_H__
       CRYPT_RSA_SSA_PSS_PARAMETERS ends
       _CRYPT_RSA_SSA_PSS_PARAMETERS typedef CRYPT_RSA_SSA_PSS_PARAMETERS
       PCRYPT_RSA_SSA_PSS_PARAMETERS typedef ptr CRYPT_RSA_SSA_PSS_PARAMETERS
+      
       PKCS_RSA_SSA_PSS_TRAILER_FIELD_BC equ 1
       CRYPT_PSOURCE_ALGORITHM struct
         pszObjId LPSTR ?
@@ -2316,6 +2400,7 @@ ifndef __WINCRYPT_H__
       CRYPT_PSOURCE_ALGORITHM ends
       _CRYPT_PSOURCE_ALGORITHM typedef CRYPT_PSOURCE_ALGORITHM
       PCRYPT_PSOURCE_ALGORITHM typedef ptr CRYPT_PSOURCE_ALGORITHM
+      
       CRYPT_RSAES_OAEP_PARAMETERS struct
         HashAlgorithm CRYPT_ALGORITHM_IDENTIFIER <>
         MaskGenAlgorithm CRYPT_MASK_GEN_ALGORITHM <>
@@ -2323,6 +2408,7 @@ ifndef __WINCRYPT_H__
       CRYPT_RSAES_OAEP_PARAMETERS ends
       _CRYPT_RSAES_OAEP_PARAMETERS typedef CRYPT_RSAES_OAEP_PARAMETERS
       PCRYPT_RSAES_OAEP_PARAMETERS typedef ptr CRYPT_RSAES_OAEP_PARAMETERS
+      
       szOID_VERISIGN_PRIVATE_6_9 equ <"2.16.840.1.113733.1.6.9">
       szOID_VERISIGN_ONSITE_JURISDICTION_HASH equ <"2.16.840.1.113733.1.6.11">
       szOID_VERISIGN_BITSTRING_6_13 equ <"2.16.840.1.113733.1.6.13">
@@ -2383,12 +2469,14 @@ ifndef __WINCRYPT_H__
       CMC_TAGGED_ATTRIBUTE ends
       _CMC_TAGGED_ATTRIBUTE typedef CMC_TAGGED_ATTRIBUTE
       PCMC_TAGGED_ATTRIBUTE typedef ptr CMC_TAGGED_ATTRIBUTE
+      
       CMC_TAGGED_CERT_REQUEST struct
         dwBodyPartID DWORD ?
         SignedCertRequest CRYPT_DER_BLOB <>
       CMC_TAGGED_CERT_REQUEST ends
       _CMC_TAGGED_CERT_REQUEST typedef CMC_TAGGED_CERT_REQUEST
       PCMC_TAGGED_CERT_REQUEST typedef ptr CMC_TAGGED_CERT_REQUEST
+      
       CMC_TAGGED_REQUEST struct
         dwTaggedRequestChoice DWORD ?
         union
@@ -2397,6 +2485,7 @@ ifndef __WINCRYPT_H__
       CMC_TAGGED_REQUEST ends
       _CMC_TAGGED_REQUEST typedef CMC_TAGGED_REQUEST
       PCMC_TAGGED_REQUEST typedef ptr CMC_TAGGED_REQUEST
+      
       CMC_TAGGED_CERT_REQUEST_CHOICE equ 1
       CMC_TAGGED_CONTENT_INFO struct
         dwBodyPartID DWORD ?
@@ -2404,6 +2493,7 @@ ifndef __WINCRYPT_H__
       CMC_TAGGED_CONTENT_INFO ends
       _CMC_TAGGED_CONTENT_INFO typedef CMC_TAGGED_CONTENT_INFO
       PCMC_TAGGED_CONTENT_INFO typedef ptr CMC_TAGGED_CONTENT_INFO
+      
       CMC_TAGGED_OTHER_MSG struct
         dwBodyPartID DWORD ?
         pszObjId LPSTR ?
@@ -2411,6 +2501,7 @@ ifndef __WINCRYPT_H__
       CMC_TAGGED_OTHER_MSG ends
       _CMC_TAGGED_OTHER_MSG typedef CMC_TAGGED_OTHER_MSG
       PCMC_TAGGED_OTHER_MSG typedef ptr CMC_TAGGED_OTHER_MSG
+      
       CMC_DATA_INFO struct
         cTaggedAttribute DWORD ?
         rgTaggedAttribute PCMC_TAGGED_ATTRIBUTE ?
@@ -2423,6 +2514,7 @@ ifndef __WINCRYPT_H__
       CMC_DATA_INFO ends
       _CMC_DATA_INFO typedef CMC_DATA_INFO
       PCMC_DATA_INFO typedef ptr CMC_DATA_INFO
+      
       CMC_RESPONSE_INFO struct
         cTaggedAttribute DWORD ?
         rgTaggedAttribute PCMC_TAGGED_ATTRIBUTE ?
@@ -2433,12 +2525,14 @@ ifndef __WINCRYPT_H__
       CMC_RESPONSE_INFO ends
       _CMC_RESPONSE_INFO typedef CMC_RESPONSE_INFO
       PCMC_RESPONSE_INFO typedef ptr CMC_RESPONSE_INFO
+      
       CMC_PEND_INFO struct
         PendToken CRYPT_DATA_BLOB <>
         PendTime FILETIME <>
       CMC_PEND_INFO ends
       _CMC_PEND_INFO typedef CMC_PEND_INFO
       PCMC_PEND_INFO typedef ptr CMC_PEND_INFO
+      
       CMC_STATUS_INFO struct
         dwStatus DWORD ?
         cBodyList DWORD ?
@@ -2452,6 +2546,7 @@ ifndef __WINCRYPT_H__
       CMC_STATUS_INFO ends
       _CMC_STATUS_INFO typedef CMC_STATUS_INFO
       PCMC_STATUS_INFO typedef ptr CMC_STATUS_INFO
+      
       CMC_OTHER_INFO_NO_CHOICE equ 0
       CMC_OTHER_INFO_FAIL_CHOICE equ 1
       CMC_OTHER_INFO_PEND_CHOICE equ 2
@@ -2482,6 +2577,7 @@ ifndef __WINCRYPT_H__
       CMC_ADD_EXTENSIONS_INFO ends
       _CMC_ADD_EXTENSIONS_INFO typedef CMC_ADD_EXTENSIONS_INFO
       PCMC_ADD_EXTENSIONS_INFO typedef ptr CMC_ADD_EXTENSIONS_INFO
+      
       CMC_ADD_ATTRIBUTES_INFO struct
         dwCmcDataReference DWORD ?
         cCertReference DWORD ?
@@ -2491,6 +2587,7 @@ ifndef __WINCRYPT_H__
       CMC_ADD_ATTRIBUTES_INFO ends
       _CMC_ADD_ATTRIBUTES_INFO typedef CMC_ADD_ATTRIBUTES_INFO
       PCMC_ADD_ATTRIBUTES_INFO typedef ptr CMC_ADD_ATTRIBUTES_INFO
+      
       CERT_TEMPLATE_EXT struct
         pszObjId LPSTR ?
         dwMajorVersion DWORD ?
@@ -2499,6 +2596,7 @@ ifndef __WINCRYPT_H__
       CERT_TEMPLATE_EXT ends
       _CERT_TEMPLATE_EXT typedef CERT_TEMPLATE_EXT
       PCERT_TEMPLATE_EXT typedef ptr CERT_TEMPLATE_EXT
+      
       CERT_HASHED_URL struct
         HashAlgorithm CRYPT_ALGORITHM_IDENTIFIER <>
         Hash CRYPT_HASH_BLOB <>
@@ -2506,6 +2604,7 @@ ifndef __WINCRYPT_H__
       CERT_HASHED_URL ends
       _CERT_HASHED_URL typedef CERT_HASHED_URL
       PCERT_HASHED_URL typedef ptr CERT_HASHED_URL
+      
       CERT_LOGOTYPE_DETAILS struct
         pwszMimeType LPWSTR ?
         cHashedUrl DWORD ?
@@ -2513,12 +2612,14 @@ ifndef __WINCRYPT_H__
       CERT_LOGOTYPE_DETAILS ends
       _CERT_LOGOTYPE_DETAILS typedef CERT_LOGOTYPE_DETAILS
       PCERT_LOGOTYPE_DETAILS typedef ptr CERT_LOGOTYPE_DETAILS
+      
       CERT_LOGOTYPE_REFERENCE struct
         cHashedUrl DWORD ?
         rgHashedUrl PCERT_HASHED_URL ?
       CERT_LOGOTYPE_REFERENCE ends
       _CERT_LOGOTYPE_REFERENCE typedef CERT_LOGOTYPE_REFERENCE
       PCERT_LOGOTYPE_REFERENCE typedef ptr CERT_LOGOTYPE_REFERENCE
+      
       CERT_LOGOTYPE_IMAGE_INFO struct
         dwLogotypeImageInfoChoice DWORD ?
         dwFileSize DWORD ?
@@ -2533,6 +2634,7 @@ ifndef __WINCRYPT_H__
       CERT_LOGOTYPE_IMAGE_INFO ends
       _CERT_LOGOTYPE_IMAGE_INFO typedef CERT_LOGOTYPE_IMAGE_INFO
       PCERT_LOGOTYPE_IMAGE_INFO typedef ptr CERT_LOGOTYPE_IMAGE_INFO
+      
       CERT_LOGOTYPE_GRAY_SCALE_IMAGE_INFO_CHOICE equ 1
       CERT_LOGOTYPE_COLOR_IMAGE_INFO_CHOICE equ 2
       CERT_LOGOTYPE_NO_IMAGE_RESOLUTION_CHOICE equ 0
@@ -2544,6 +2646,7 @@ ifndef __WINCRYPT_H__
       CERT_LOGOTYPE_IMAGE ends
       _CERT_LOGOTYPE_IMAGE typedef CERT_LOGOTYPE_IMAGE
       PCERT_LOGOTYPE_IMAGE typedef ptr CERT_LOGOTYPE_IMAGE
+      
       CERT_LOGOTYPE_AUDIO_INFO struct
         dwFileSize DWORD ?
         dwPlayTime DWORD ?
@@ -2553,12 +2656,14 @@ ifndef __WINCRYPT_H__
       CERT_LOGOTYPE_AUDIO_INFO ends
       _CERT_LOGOTYPE_AUDIO_INFO typedef CERT_LOGOTYPE_AUDIO_INFO
       PCERT_LOGOTYPE_AUDIO_INFO typedef ptr CERT_LOGOTYPE_AUDIO_INFO
+      
       CERT_LOGOTYPE_AUDIO struct
         LogotypeDetails CERT_LOGOTYPE_DETAILS <>
         pLogotypeAudioInfo PCERT_LOGOTYPE_AUDIO_INFO ?
       CERT_LOGOTYPE_AUDIO ends
       _CERT_LOGOTYPE_AUDIO typedef CERT_LOGOTYPE_AUDIO
       PCERT_LOGOTYPE_AUDIO typedef ptr CERT_LOGOTYPE_AUDIO
+      
       CERT_LOGOTYPE_DATA struct
         cLogotypeImage DWORD ?
         rgLogotypeImage PCERT_LOGOTYPE_IMAGE ?
@@ -2567,6 +2672,7 @@ ifndef __WINCRYPT_H__
       CERT_LOGOTYPE_DATA ends
       _CERT_LOGOTYPE_DATA typedef CERT_LOGOTYPE_DATA
       PCERT_LOGOTYPE_DATA typedef ptr CERT_LOGOTYPE_DATA
+      
       CERT_LOGOTYPE_INFO struct
         dwLogotypeInfoChoice DWORD ?
         union
@@ -2576,6 +2682,7 @@ ifndef __WINCRYPT_H__
       CERT_LOGOTYPE_INFO ends
       _CERT_LOGOTYPE_INFO typedef CERT_LOGOTYPE_INFO
       PCERT_LOGOTYPE_INFO typedef ptr CERT_LOGOTYPE_INFO
+      
       CERT_LOGOTYPE_DIRECT_INFO_CHOICE equ 1
       CERT_LOGOTYPE_INDIRECT_INFO_CHOICE equ 2
       CERT_OTHER_LOGOTYPE_INFO struct
@@ -2584,6 +2691,7 @@ ifndef __WINCRYPT_H__
       CERT_OTHER_LOGOTYPE_INFO ends
       _CERT_OTHER_LOGOTYPE_INFO typedef CERT_OTHER_LOGOTYPE_INFO
       PCERT_OTHER_LOGOTYPE_INFO typedef ptr CERT_OTHER_LOGOTYPE_INFO
+      
       szOID_LOYALTY_OTHER_LOGOTYPE equ <"1.3.6.1.5.5.7.20.1">
       szOID_BACKGROUND_OTHER_LOGOTYPE equ <"1.3.6.1.5.5.7.20.2">
       CERT_LOGOTYPE_EXT_INFO struct
@@ -2596,6 +2704,7 @@ ifndef __WINCRYPT_H__
       CERT_LOGOTYPE_EXT_INFO ends
       _CERT_LOGOTYPE_EXT_INFO typedef CERT_LOGOTYPE_EXT_INFO
       PCERT_LOGOTYPE_EXT_INFO typedef ptr CERT_LOGOTYPE_EXT_INFO
+      
       CERT_BIOMETRIC_DATA struct
         dwTypeOfBiometricDataChoice DWORD ?
         union
@@ -2606,6 +2715,7 @@ ifndef __WINCRYPT_H__
       CERT_BIOMETRIC_DATA ends
       _CERT_BIOMETRIC_DATA typedef CERT_BIOMETRIC_DATA
       PCERT_BIOMETRIC_DATA typedef ptr CERT_BIOMETRIC_DATA
+      
       CERT_BIOMETRIC_PREDEFINED_DATA_CHOICE equ 1
       CERT_BIOMETRIC_OID_DATA_CHOICE equ 2
       CERT_BIOMETRIC_PICTURE_TYPE equ 0
@@ -2616,6 +2726,7 @@ ifndef __WINCRYPT_H__
       CERT_BIOMETRIC_EXT_INFO ends
       _CERT_BIOMETRIC_EXT_INFO typedef CERT_BIOMETRIC_EXT_INFO
       PCERT_BIOMETRIC_EXT_INFO typedef ptr CERT_BIOMETRIC_EXT_INFO
+      
       OCSP_SIGNATURE_INFO struct
         SignatureAlgorithm CRYPT_ALGORITHM_IDENTIFIER <>
         Signature CRYPT_BIT_BLOB <>
@@ -2624,12 +2735,14 @@ ifndef __WINCRYPT_H__
       OCSP_SIGNATURE_INFO ends
       _OCSP_SIGNATURE_INFO typedef OCSP_SIGNATURE_INFO
       POCSP_SIGNATURE_INFO typedef ptr OCSP_SIGNATURE_INFO
+      
       OCSP_SIGNED_REQUEST_INFO struct
         ToBeSigned CRYPT_DER_BLOB <>
         pOptionalSignatureInfo POCSP_SIGNATURE_INFO ?
       OCSP_SIGNED_REQUEST_INFO ends
       _OCSP_SIGNED_REQUEST_INFO typedef OCSP_SIGNED_REQUEST_INFO
       POCSP_SIGNED_REQUEST_INFO typedef ptr OCSP_SIGNED_REQUEST_INFO
+      
       OCSP_CERT_ID struct
         HashAlgorithm CRYPT_ALGORITHM_IDENTIFIER <>
         IssuerNameHash CRYPT_HASH_BLOB <>
@@ -2638,6 +2751,7 @@ ifndef __WINCRYPT_H__
       OCSP_CERT_ID ends
       _OCSP_CERT_ID typedef OCSP_CERT_ID
       POCSP_CERT_ID typedef ptr OCSP_CERT_ID
+      
       OCSP_REQUEST_ENTRY struct
         CertId OCSP_CERT_ID <>
         cExtension DWORD ?
@@ -2645,6 +2759,7 @@ ifndef __WINCRYPT_H__
       OCSP_REQUEST_ENTRY ends
       _OCSP_REQUEST_ENTRY typedef OCSP_REQUEST_ENTRY
       POCSP_REQUEST_ENTRY typedef ptr OCSP_REQUEST_ENTRY
+      
       OCSP_REQUEST_INFO struct
         dwVersion DWORD ?
         pRequestorName PCERT_ALT_NAME_ENTRY ?
@@ -2655,6 +2770,7 @@ ifndef __WINCRYPT_H__
       OCSP_REQUEST_INFO ends
       _OCSP_REQUEST_INFO typedef OCSP_REQUEST_INFO
       POCSP_REQUEST_INFO typedef ptr OCSP_REQUEST_INFO
+      
       OCSP_REQUEST_V1 equ 0
       OCSP_RESPONSE_INFO struct
         dwStatus DWORD ?
@@ -2663,6 +2779,7 @@ ifndef __WINCRYPT_H__
       OCSP_RESPONSE_INFO ends
       _OCSP_RESPONSE_INFO typedef OCSP_RESPONSE_INFO
       POCSP_RESPONSE_INFO typedef ptr OCSP_RESPONSE_INFO
+      
       OCSP_SUCCESSFUL_RESPONSE equ 0
       OCSP_MALFORMED_REQUEST_RESPONSE equ 1
       OCSP_INTERNAL_ERROR_RESPONSE equ 2
@@ -2676,12 +2793,14 @@ ifndef __WINCRYPT_H__
       OCSP_BASIC_SIGNED_RESPONSE_INFO ends
       _OCSP_BASIC_SIGNED_RESPONSE_INFO typedef OCSP_BASIC_SIGNED_RESPONSE_INFO
       POCSP_BASIC_SIGNED_RESPONSE_INFO typedef ptr OCSP_BASIC_SIGNED_RESPONSE_INFO
+      
       OCSP_BASIC_REVOKED_INFO struct
         RevocationDate FILETIME <>
         dwCrlReasonCode DWORD ?
       OCSP_BASIC_REVOKED_INFO ends
       _OCSP_BASIC_REVOKED_INFO typedef OCSP_BASIC_REVOKED_INFO
       POCSP_BASIC_REVOKED_INFO typedef ptr OCSP_BASIC_REVOKED_INFO
+      
       OCSP_BASIC_RESPONSE_ENTRY struct
         CertId OCSP_CERT_ID <>
         dwCertStatus DWORD ?
@@ -2695,6 +2814,7 @@ ifndef __WINCRYPT_H__
       OCSP_BASIC_RESPONSE_ENTRY ends
       _OCSP_BASIC_RESPONSE_ENTRY typedef OCSP_BASIC_RESPONSE_ENTRY
       POCSP_BASIC_RESPONSE_ENTRY typedef ptr OCSP_BASIC_RESPONSE_ENTRY
+      
       OCSP_BASIC_GOOD_CERT_STATUS equ 0
       OCSP_BASIC_REVOKED_CERT_STATUS equ 1
       OCSP_BASIC_UNKNOWN_CERT_STATUS equ 2
@@ -2713,6 +2833,7 @@ ifndef __WINCRYPT_H__
       OCSP_BASIC_RESPONSE_INFO ends
       _OCSP_BASIC_RESPONSE_INFO typedef OCSP_BASIC_RESPONSE_INFO
       POCSP_BASIC_RESPONSE_INFO typedef ptr OCSP_BASIC_RESPONSE_INFO
+      
       OCSP_BASIC_RESPONSE_V1 equ 0
       OCSP_BASIC_BY_NAME_RESPONDER_ID equ 1
       OCSP_BASIC_BY_KEY_RESPONDER_ID equ 2
@@ -2723,6 +2844,7 @@ ifndef __WINCRYPT_H__
       CERT_SUPPORTED_ALGORITHM_INFO ends
       _CERT_SUPPORTED_ALGORITHM_INFO typedef CERT_SUPPORTED_ALGORITHM_INFO
       PCERT_SUPPORTED_ALGORITHM_INFO typedef ptr CERT_SUPPORTED_ALGORITHM_INFO
+      
       CERT_TPM_SPECIFICATION_INFO struct
         pwszFamily LPWSTR ?
         dwLevel DWORD ?
@@ -2730,6 +2852,7 @@ ifndef __WINCRYPT_H__
       CERT_TPM_SPECIFICATION_INFO ends
       _CERT_TPM_SPECIFICATION_INFO typedef CERT_TPM_SPECIFICATION_INFO
       PCERT_TPM_SPECIFICATION_INFO typedef ptr CERT_TPM_SPECIFICATION_INFO
+      
       HCRYPTOIDFUNCSET typedef ptr
       HCRYPTOIDFUNCADDR typedef ptr
       CRYPT_OID_ENCODE_OBJECT_FUNC equ <"CryptDllEncodeObject">
@@ -2755,6 +2878,7 @@ ifndef __WINCRYPT_H__
       CRYPT_OID_FUNC_ENTRY ends
       _CRYPT_OID_FUNC_ENTRY typedef CRYPT_OID_FUNC_ENTRY
       PCRYPT_OID_FUNC_ENTRY typedef ptr CRYPT_OID_FUNC_ENTRY
+      
       CRYPT_INSTALL_OID_FUNC_BEFORE_FLAG equ 1
       @DefProto DllImport, CryptInstallOIDFunctionAddress, WIN_STD_CALL_CONV,, <:HMODULE, :DWORD, :LPCSTR, :DWORD, :ptr CRYPT_OID_FUNC_ENTRY, :DWORD>, 24
       @DefProto DllImport, CryptInitOIDFunctionSet, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD>, 8
@@ -2764,7 +2888,7 @@ ifndef __WINCRYPT_H__
       @DefProto DllImport, CryptGetDefaultOIDFunctionAddress, WIN_STD_CALL_CONV,, <:HCRYPTOIDFUNCSET, :DWORD, :LPCWSTR, :DWORD, :ptr ptr, :ptr HCRYPTOIDFUNCADDR>, 24
       @DefProto DllImport, CryptFreeOIDFunctionAddress, WIN_STD_CALL_CONV,, <:HCRYPTOIDFUNCADDR, :DWORD>, 8
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CryptRegisterOIDFunction, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR, :LPCSTR, :LPCWSTR, :LPCSTR>, 20
       @DefProto DllImport, CryptUnregisterOIDFunction, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR, :LPCSTR>, 12
       @DefProto DllImport, CryptRegisterDefaultOIDFunction, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR, :DWORD, :LPCWSTR>, 16
@@ -2773,11 +2897,10 @@ ifndef __WINCRYPT_H__
       @DefProto DllImport, CryptUnregisterDefaultOIDFunction, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR, :LPCWSTR>, 12
       @DefProto DllImport, CryptSetOIDFunctionValue, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR, :LPCSTR, :LPCWSTR, :DWORD, :ptr BYTE, :DWORD>, 28
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CryptGetOIDFunctionValue, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR, :LPCSTR, :LPCWSTR, :ptr DWORD, :ptr BYTE, :ptr DWORD>, 28
       TYPE_PFN_CRYPT_ENUM_OID_FUNC typedef proto WIN_STD_CALL_CONV :DWORD, :LPCSTR, :LPCSTR, :DWORD, :ptr DWORD, :ptr LPCWSTR, :ptr ptr BYTE, :ptr DWORD, :ptr
       PFN_CRYPT_ENUM_OID_FUNC typedef ptr TYPE_PFN_CRYPT_ENUM_OID_FUNC
-
       @DefProto DllImport, CryptEnumOIDFunction, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR, :LPCSTR, :DWORD, :ptr, :PFN_CRYPT_ENUM_OID_FUNC>, 24
       CRYPT_MATCH_ANY_ENCODING_TYPE equ 0FFFFFFFFh
       CALG_OID_INFO_CNG_ONLY equ 0FFFFFFFFh
@@ -2810,6 +2933,7 @@ ifndef __WINCRYPT_H__
       CRYPT_OID_INFO ends
       _CRYPT_OID_INFO typedef CRYPT_OID_INFO
       PCRYPT_OID_INFO typedef ptr CRYPT_OID_INFO
+      
       CCRYPT_OID_INFO typedef CRYPT_OID_INFO
       PCCRYPT_OID_INFO typedef ptr CRYPT_OID_INFO
       CRYPT_HASH_ALG_OID_GROUP_ID equ 1
@@ -2849,15 +2973,14 @@ ifndef __WINCRYPT_H__
       CRYPT_OID_INFO_OID_GROUP_BIT_LEN_MASK equ 0FFF0000h
       CRYPT_OID_INFO_OID_GROUP_BIT_LEN_SHIFT equ 16
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CryptRegisterOIDInfo, WIN_STD_CALL_CONV,, <:PCCRYPT_OID_INFO, :DWORD>, 8
       CRYPT_INSTALL_OID_INFO_BEFORE_FLAG equ 1
       @DefProto DllImport, CryptUnregisterOIDInfo, WIN_STD_CALL_CONV,, <:PCCRYPT_OID_INFO>, 4
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       TYPE_PFN_CRYPT_ENUM_OID_INFO typedef proto WIN_STD_CALL_CONV :PCCRYPT_OID_INFO, :ptr
       PFN_CRYPT_ENUM_OID_INFO typedef ptr TYPE_PFN_CRYPT_ENUM_OID_INFO
-
       @DefProto DllImport, CryptEnumOIDInfo, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :ptr, :PFN_CRYPT_ENUM_OID_INFO>, 16
       @DefProto DllImport, CryptFindLocalizedName, WIN_STD_CALL_CONV,, <:LPCWSTR>, 4
       CRYPT_LOCALIZED_NAME_ENCODING_TYPE equ 0
@@ -2869,6 +2992,7 @@ ifndef __WINCRYPT_H__
       CERT_STRONG_SIGN_SERIALIZED_INFO ends
       _CERT_STRONG_SIGN_SERIALIZED_INFO typedef CERT_STRONG_SIGN_SERIALIZED_INFO
       PCERT_STRONG_SIGN_SERIALIZED_INFO typedef ptr CERT_STRONG_SIGN_SERIALIZED_INFO
+      
       CERT_STRONG_SIGN_ECDSA_ALGORITHM equ <L("ECDSA")>
       CERT_STRONG_SIGN_PARA struct
         cbSize DWORD ?
@@ -2881,6 +3005,7 @@ ifndef __WINCRYPT_H__
       CERT_STRONG_SIGN_PARA ends
       _CERT_STRONG_SIGN_PARA typedef CERT_STRONG_SIGN_PARA
       PCERT_STRONG_SIGN_PARA typedef ptr CERT_STRONG_SIGN_PARA
+      
       PCCERT_STRONG_SIGN_PARA typedef ptr CERT_STRONG_SIGN_PARA
       CERT_STRONG_SIGN_SERIALIZED_INFO_CHOICE equ 1
       CERT_STRONG_SIGN_OID_INFO_CHOICE equ 2
@@ -2924,6 +3049,7 @@ ifndef __WINCRYPT_H__
       CERT_ISSUER_SERIAL_NUMBER ends
       _CERT_ISSUER_SERIAL_NUMBER typedef CERT_ISSUER_SERIAL_NUMBER
       PCERT_ISSUER_SERIAL_NUMBER typedef ptr CERT_ISSUER_SERIAL_NUMBER
+      
       CERT_ID struct
         dwIdChoice DWORD ?
         union
@@ -2934,6 +3060,7 @@ ifndef __WINCRYPT_H__
       CERT_ID ends
       _CERT_ID typedef CERT_ID
       PCERT_ID typedef ptr CERT_ID
+      
       CERT_ID_ISSUER_SERIAL_NUMBER equ 1
       CERT_ID_KEY_IDENTIFIER equ 2
       CERT_ID_SHA1_HASH equ 3
@@ -2962,6 +3089,7 @@ ifndef __WINCRYPT_H__
       CMSG_SIGNER_ENCODE_INFO ends
       _CMSG_SIGNER_ENCODE_INFO typedef CMSG_SIGNER_ENCODE_INFO
       PCMSG_SIGNER_ENCODE_INFO typedef ptr CMSG_SIGNER_ENCODE_INFO
+      
       CMSG_SIGNED_ENCODE_INFO struct
         cbSize DWORD ?
         cSigners DWORD ?
@@ -2977,8 +3105,7 @@ ifndef __WINCRYPT_H__
       CMSG_SIGNED_ENCODE_INFO ends
       _CMSG_SIGNED_ENCODE_INFO typedef CMSG_SIGNED_ENCODE_INFO
       PCMSG_SIGNED_ENCODE_INFO typedef ptr CMSG_SIGNED_ENCODE_INFO
-;      CMSG_RECIPIENT_ENCODE_INFO typedef _CMSG_RECIPIENT_ENCODE_INFO
-      PCMSG_RECIPIENT_ENCODE_INFO typedef ptr _CMSG_RECIPIENT_ENCODE_INFO
+      
       CMSG_ENVELOPED_ENCODE_INFO struct
         cbSize DWORD ?
         hCryptProv HCRYPTPROV_LEGACY ?
@@ -3000,6 +3127,7 @@ ifndef __WINCRYPT_H__
       CMSG_ENVELOPED_ENCODE_INFO ends
       _CMSG_ENVELOPED_ENCODE_INFO typedef CMSG_ENVELOPED_ENCODE_INFO
       PCMSG_ENVELOPED_ENCODE_INFO typedef ptr CMSG_ENVELOPED_ENCODE_INFO
+      
       CMSG_KEY_TRANS_RECIPIENT_ENCODE_INFO struct
         cbSize DWORD ?
         KeyEncryptionAlgorithm CRYPT_ALGORITHM_IDENTIFIER <>
@@ -3010,6 +3138,7 @@ ifndef __WINCRYPT_H__
       CMSG_KEY_TRANS_RECIPIENT_ENCODE_INFO ends
       _CMSG_KEY_TRANS_RECIPIENT_ENCODE_INFO typedef CMSG_KEY_TRANS_RECIPIENT_ENCODE_INFO
       PCMSG_KEY_TRANS_RECIPIENT_ENCODE_INFO typedef ptr CMSG_KEY_TRANS_RECIPIENT_ENCODE_INFO
+      
       CMSG_RECIPIENT_ENCRYPTED_KEY_ENCODE_INFO struct
         cbSize DWORD ?
         RecipientPublicKey CRYPT_BIT_BLOB <>
@@ -3019,6 +3148,7 @@ ifndef __WINCRYPT_H__
       CMSG_RECIPIENT_ENCRYPTED_KEY_ENCODE_INFO ends
       _CMSG_RECIPIENT_ENCRYPTED_KEY_ENCODE_INFO typedef CMSG_RECIPIENT_ENCRYPTED_KEY_ENCODE_INFO
       PCMSG_RECIPIENT_ENCRYPTED_KEY_ENCODE_INFO typedef ptr CMSG_RECIPIENT_ENCRYPTED_KEY_ENCODE_INFO
+      
       CMSG_KEY_AGREE_RECIPIENT_ENCODE_INFO struct
         cbSize DWORD ?
         KeyEncryptionAlgorithm CRYPT_ALGORITHM_IDENTIFIER <>
@@ -3038,6 +3168,7 @@ ifndef __WINCRYPT_H__
       CMSG_KEY_AGREE_RECIPIENT_ENCODE_INFO ends
       _CMSG_KEY_AGREE_RECIPIENT_ENCODE_INFO typedef CMSG_KEY_AGREE_RECIPIENT_ENCODE_INFO
       PCMSG_KEY_AGREE_RECIPIENT_ENCODE_INFO typedef ptr CMSG_KEY_AGREE_RECIPIENT_ENCODE_INFO
+      
       CMSG_KEY_AGREE_EPHEMERAL_KEY_CHOICE equ 1
       CMSG_KEY_AGREE_STATIC_KEY_CHOICE equ 2
       CMSG_MAIL_LIST_RECIPIENT_ENCODE_INFO struct
@@ -3056,6 +3187,7 @@ ifndef __WINCRYPT_H__
       CMSG_MAIL_LIST_RECIPIENT_ENCODE_INFO ends
       _CMSG_MAIL_LIST_RECIPIENT_ENCODE_INFO typedef CMSG_MAIL_LIST_RECIPIENT_ENCODE_INFO
       PCMSG_MAIL_LIST_RECIPIENT_ENCODE_INFO typedef ptr CMSG_MAIL_LIST_RECIPIENT_ENCODE_INFO
+      
       CMSG_MAIL_LIST_HANDLE_KEY_CHOICE equ 1
       _CMSG_RECIPIENT_ENCODE_INFO struct
         dwRecipientChoice DWORD ?
@@ -3065,6 +3197,9 @@ ifndef __WINCRYPT_H__
           pMailList PCMSG_MAIL_LIST_RECIPIENT_ENCODE_INFO ?
         ends
       _CMSG_RECIPIENT_ENCODE_INFO ends
+      CMSG_RECIPIENT_ENCODE_INFO typedef _CMSG_RECIPIENT_ENCODE_INFO
+      PCMSG_RECIPIENT_ENCODE_INFO typedef ptr _CMSG_RECIPIENT_ENCODE_INFO
+      
       CMSG_KEY_TRANS_RECIPIENT equ 1
       CMSG_KEY_AGREE_RECIPIENT equ 2
       CMSG_MAIL_LIST_RECIPIENT equ 3
@@ -3074,12 +3209,14 @@ ifndef __WINCRYPT_H__
       CMSG_RC2_AUX_INFO ends
       _CMSG_RC2_AUX_INFO typedef CMSG_RC2_AUX_INFO
       PCMSG_RC2_AUX_INFO typedef ptr CMSG_RC2_AUX_INFO
+      
       CMSG_SP3_COMPATIBLE_AUX_INFO struct
         cbSize DWORD ?
         dwFlags DWORD ?
       CMSG_SP3_COMPATIBLE_AUX_INFO ends
       _CMSG_SP3_COMPATIBLE_AUX_INFO typedef CMSG_SP3_COMPATIBLE_AUX_INFO
       PCMSG_SP3_COMPATIBLE_AUX_INFO typedef ptr CMSG_SP3_COMPATIBLE_AUX_INFO
+      
       CMSG_SP3_COMPATIBLE_ENCRYPT_FLAG equ 80000000h
       CMSG_RC4_AUX_INFO struct
         cbSize DWORD ?
@@ -3087,6 +3224,7 @@ ifndef __WINCRYPT_H__
       CMSG_RC4_AUX_INFO ends
       _CMSG_RC4_AUX_INFO typedef CMSG_RC4_AUX_INFO
       PCMSG_RC4_AUX_INFO typedef ptr CMSG_RC4_AUX_INFO
+      
       CMSG_RC4_NO_SALT_FLAG equ 40000000h
       CMSG_SIGNED_AND_ENVELOPED_ENCODE_INFO struct
         cbSize DWORD ?
@@ -3095,6 +3233,7 @@ ifndef __WINCRYPT_H__
       CMSG_SIGNED_AND_ENVELOPED_ENCODE_INFO ends
       _CMSG_SIGNED_AND_ENVELOPED_ENCODE_INFO typedef CMSG_SIGNED_AND_ENVELOPED_ENCODE_INFO
       PCMSG_SIGNED_AND_ENVELOPED_ENCODE_INFO typedef ptr CMSG_SIGNED_AND_ENVELOPED_ENCODE_INFO
+      
       CMSG_HASHED_ENCODE_INFO struct
         cbSize DWORD ?
         hCryptProv HCRYPTPROV_LEGACY ?
@@ -3103,6 +3242,7 @@ ifndef __WINCRYPT_H__
       CMSG_HASHED_ENCODE_INFO ends
       _CMSG_HASHED_ENCODE_INFO typedef CMSG_HASHED_ENCODE_INFO
       PCMSG_HASHED_ENCODE_INFO typedef ptr CMSG_HASHED_ENCODE_INFO
+      
       CMSG_ENCRYPTED_ENCODE_INFO struct
         cbSize DWORD ?
         ContentEncryptionAlgorithm CRYPT_ALGORITHM_IDENTIFIER <>
@@ -3110,10 +3250,10 @@ ifndef __WINCRYPT_H__
       CMSG_ENCRYPTED_ENCODE_INFO ends
       _CMSG_ENCRYPTED_ENCODE_INFO typedef CMSG_ENCRYPTED_ENCODE_INFO
       PCMSG_ENCRYPTED_ENCODE_INFO typedef ptr CMSG_ENCRYPTED_ENCODE_INFO
+      
       TYPE_PFN_CMSG_STREAM_OUTPUT typedef proto WIN_STD_CALL_CONV :ptr, :ptr BYTE, :DWORD, :BOOL
       PFN_CMSG_STREAM_OUTPUT typedef ptr TYPE_PFN_CMSG_STREAM_OUTPUT
-
-      CMSG_INDEFINITE_LENGTH equ (0FFFFFFFFh)
+      CMSG_INDEFINITE_LENGTH equ 0FFFFFFFFh
       CMSG_STREAM_INFO struct
         cbContent DWORD ?
         pfnStreamOutput PFN_CMSG_STREAM_OUTPUT ?
@@ -3121,6 +3261,7 @@ ifndef __WINCRYPT_H__
       CMSG_STREAM_INFO ends
       _CMSG_STREAM_INFO typedef CMSG_STREAM_INFO
       PCMSG_STREAM_INFO typedef ptr CMSG_STREAM_INFO
+      
       CMSG_BARE_CONTENT_FLAG equ 00000001h
       CMSG_LENGTH_ONLY_FLAG equ 00000002h
       CMSG_DETACHED_FLAG equ 00000004h
@@ -3184,6 +3325,7 @@ ifndef __WINCRYPT_H__
       CMSG_SIGNER_INFO ends
       _CMSG_SIGNER_INFO typedef CMSG_SIGNER_INFO
       PCMSG_SIGNER_INFO typedef ptr CMSG_SIGNER_INFO
+      
       CMSG_CMS_SIGNER_INFO struct
         dwVersion DWORD ?
         SignerId CERT_ID <>
@@ -3195,6 +3337,7 @@ ifndef __WINCRYPT_H__
       CMSG_CMS_SIGNER_INFO ends
       _CMSG_CMS_SIGNER_INFO typedef CMSG_CMS_SIGNER_INFO
       PCMSG_CMS_SIGNER_INFO typedef ptr CMSG_CMS_SIGNER_INFO
+      
       CMSG_ATTR typedef CRYPT_ATTRIBUTES
       PCMSG_ATTR typedef ptr CRYPT_ATTRIBUTES
       CMSG_SIGNED_DATA_V1 equ 1
@@ -3221,6 +3364,7 @@ ifndef __WINCRYPT_H__
       CMSG_KEY_TRANS_RECIPIENT_INFO ends
       _CMSG_KEY_TRANS_RECIPIENT_INFO typedef CMSG_KEY_TRANS_RECIPIENT_INFO
       PCMSG_KEY_TRANS_RECIPIENT_INFO typedef ptr CMSG_KEY_TRANS_RECIPIENT_INFO
+      
       CMSG_RECIPIENT_ENCRYPTED_KEY_INFO struct
         RecipientId CERT_ID <>
         EncryptedKey CRYPT_DATA_BLOB <>
@@ -3229,6 +3373,7 @@ ifndef __WINCRYPT_H__
       CMSG_RECIPIENT_ENCRYPTED_KEY_INFO ends
       _CMSG_RECIPIENT_ENCRYPTED_KEY_INFO typedef CMSG_RECIPIENT_ENCRYPTED_KEY_INFO
       PCMSG_RECIPIENT_ENCRYPTED_KEY_INFO typedef ptr CMSG_RECIPIENT_ENCRYPTED_KEY_INFO
+      
       CMSG_KEY_AGREE_RECIPIENT_INFO struct
         dwVersion DWORD ?
         dwOriginatorChoice DWORD ?
@@ -3243,6 +3388,7 @@ ifndef __WINCRYPT_H__
       CMSG_KEY_AGREE_RECIPIENT_INFO ends
       _CMSG_KEY_AGREE_RECIPIENT_INFO typedef CMSG_KEY_AGREE_RECIPIENT_INFO
       PCMSG_KEY_AGREE_RECIPIENT_INFO typedef ptr CMSG_KEY_AGREE_RECIPIENT_INFO
+      
       CMSG_KEY_AGREE_ORIGINATOR_CERT equ 1
       CMSG_KEY_AGREE_ORIGINATOR_PUBLIC_KEY equ 2
       CMSG_MAIL_LIST_RECIPIENT_INFO struct
@@ -3255,6 +3401,7 @@ ifndef __WINCRYPT_H__
       CMSG_MAIL_LIST_RECIPIENT_INFO ends
       _CMSG_MAIL_LIST_RECIPIENT_INFO typedef CMSG_MAIL_LIST_RECIPIENT_INFO
       PCMSG_MAIL_LIST_RECIPIENT_INFO typedef ptr CMSG_MAIL_LIST_RECIPIENT_INFO
+      
       CMSG_CMS_RECIPIENT_INFO struct
         dwRecipientChoice DWORD ?
         union
@@ -3265,6 +3412,7 @@ ifndef __WINCRYPT_H__
       CMSG_CMS_RECIPIENT_INFO ends
       _CMSG_CMS_RECIPIENT_INFO typedef CMSG_CMS_RECIPIENT_INFO
       PCMSG_CMS_RECIPIENT_INFO typedef ptr CMSG_CMS_RECIPIENT_INFO
+      
       CMSG_ENVELOPED_RECIPIENT_V0 equ 0
       CMSG_ENVELOPED_RECIPIENT_V2 equ 2
       CMSG_ENVELOPED_RECIPIENT_V3 equ 3
@@ -3302,6 +3450,7 @@ ifndef __WINCRYPT_H__
       CMSG_CTRL_VERIFY_SIGNATURE_EX_PARA ends
       _CMSG_CTRL_VERIFY_SIGNATURE_EX_PARA typedef CMSG_CTRL_VERIFY_SIGNATURE_EX_PARA
       PCMSG_CTRL_VERIFY_SIGNATURE_EX_PARA typedef ptr CMSG_CTRL_VERIFY_SIGNATURE_EX_PARA
+      
       CMSG_VERIFY_SIGNER_PUBKEY equ 1
       CMSG_VERIFY_SIGNER_CERT equ 2
       CMSG_VERIFY_SIGNER_CHAIN equ 3
@@ -3317,6 +3466,7 @@ ifndef __WINCRYPT_H__
       CMSG_CTRL_DECRYPT_PARA ends
       _CMSG_CTRL_DECRYPT_PARA typedef CMSG_CTRL_DECRYPT_PARA
       PCMSG_CTRL_DECRYPT_PARA typedef ptr CMSG_CTRL_DECRYPT_PARA
+      
       CMSG_CTRL_KEY_TRANS_DECRYPT_PARA struct
         cbSize DWORD ?
         union
@@ -3329,6 +3479,7 @@ ifndef __WINCRYPT_H__
       CMSG_CTRL_KEY_TRANS_DECRYPT_PARA ends
       _CMSG_CTRL_KEY_TRANS_DECRYPT_PARA typedef CMSG_CTRL_KEY_TRANS_DECRYPT_PARA
       PCMSG_CTRL_KEY_TRANS_DECRYPT_PARA typedef ptr CMSG_CTRL_KEY_TRANS_DECRYPT_PARA
+      
       CMSG_CTRL_KEY_AGREE_DECRYPT_PARA struct
         cbSize DWORD ?
         union
@@ -3343,6 +3494,7 @@ ifndef __WINCRYPT_H__
       CMSG_CTRL_KEY_AGREE_DECRYPT_PARA ends
       _CMSG_CTRL_KEY_AGREE_DECRYPT_PARA typedef CMSG_CTRL_KEY_AGREE_DECRYPT_PARA
       PCMSG_CTRL_KEY_AGREE_DECRYPT_PARA typedef ptr CMSG_CTRL_KEY_AGREE_DECRYPT_PARA
+      
       CMSG_CTRL_MAIL_LIST_DECRYPT_PARA struct
         cbSize DWORD ?
         hCryptProv HCRYPTPROV ?
@@ -3356,6 +3508,7 @@ ifndef __WINCRYPT_H__
       CMSG_CTRL_MAIL_LIST_DECRYPT_PARA ends
       _CMSG_CTRL_MAIL_LIST_DECRYPT_PARA typedef CMSG_CTRL_MAIL_LIST_DECRYPT_PARA
       PCMSG_CTRL_MAIL_LIST_DECRYPT_PARA typedef ptr CMSG_CTRL_MAIL_LIST_DECRYPT_PARA
+      
       CMSG_CTRL_ADD_SIGNER_UNAUTH_ATTR_PARA struct
         cbSize DWORD ?
         dwSignerIndex DWORD ?
@@ -3363,6 +3516,7 @@ ifndef __WINCRYPT_H__
       CMSG_CTRL_ADD_SIGNER_UNAUTH_ATTR_PARA ends
       _CMSG_CTRL_ADD_SIGNER_UNAUTH_ATTR_PARA typedef CMSG_CTRL_ADD_SIGNER_UNAUTH_ATTR_PARA
       PCMSG_CTRL_ADD_SIGNER_UNAUTH_ATTR_PARA typedef ptr CMSG_CTRL_ADD_SIGNER_UNAUTH_ATTR_PARA
+      
       CMSG_CTRL_DEL_SIGNER_UNAUTH_ATTR_PARA struct
         cbSize DWORD ?
         dwSignerIndex DWORD ?
@@ -3370,6 +3524,7 @@ ifndef __WINCRYPT_H__
       CMSG_CTRL_DEL_SIGNER_UNAUTH_ATTR_PARA ends
       _CMSG_CTRL_DEL_SIGNER_UNAUTH_ATTR_PARA typedef CMSG_CTRL_DEL_SIGNER_UNAUTH_ATTR_PARA
       PCMSG_CTRL_DEL_SIGNER_UNAUTH_ATTR_PARA typedef ptr CMSG_CTRL_DEL_SIGNER_UNAUTH_ATTR_PARA
+      
       CryptMsgVerifyCountersignatureEncoded proto WIN_STD_CALL_CONV :HCRYPTPROV_LEGACY, :DWORD, :PBYTE, :DWORD, :PBYTE, :DWORD, :PCERT_INFO
       CryptMsgVerifyCountersignatureEncodedEx proto WIN_STD_CALL_CONV :HCRYPTPROV_LEGACY, :DWORD, :PBYTE, :DWORD, :PBYTE, :DWORD, :DWORD, :ptr, :DWORD, :ptr
       CMSG_VERIFY_COUNTER_SIGN_ENABLE_STRONG_FLAG equ 00000001h
@@ -3377,22 +3532,17 @@ ifndef __WINCRYPT_H__
       CryptMsgCountersignEncoded proto WIN_STD_CALL_CONV :DWORD, :PBYTE, :DWORD, :DWORD, :PCMSG_SIGNER_ENCODE_INFO, :PBYTE, :PDWORD
       TYPE_PFN_CMSG_ALLOC typedef proto WIN_STD_CALL_CONV :size_t
       PFN_CMSG_ALLOC typedef ptr TYPE_PFN_CMSG_ALLOC
-
       TYPE_PFN_CMSG_FREE typedef proto WIN_STD_CALL_CONV :ptr
       PFN_CMSG_FREE typedef ptr TYPE_PFN_CMSG_FREE
-
       CMSG_OID_GEN_ENCRYPT_KEY_FUNC equ <"CryptMsgDllGenEncryptKey">
       TYPE_PFN_CMSG_GEN_ENCRYPT_KEY typedef proto WIN_STD_CALL_CONV :ptr HCRYPTPROV, :PCRYPT_ALGORITHM_IDENTIFIER, :PVOID, :PCERT_PUBLIC_KEY_INFO, :PFN_CMSG_ALLOC, :ptr HCRYPTKEY, :ptr PBYTE, :PDWORD
       PFN_CMSG_GEN_ENCRYPT_KEY typedef ptr TYPE_PFN_CMSG_GEN_ENCRYPT_KEY
-
       CMSG_OID_EXPORT_ENCRYPT_KEY_FUNC equ <"CryptMsgDllExportEncryptKey">
       TYPE_PFN_CMSG_EXPORT_ENCRYPT_KEY typedef proto WIN_STD_CALL_CONV :HCRYPTPROV, :HCRYPTKEY, :PCERT_PUBLIC_KEY_INFO, :PBYTE, :PDWORD
       PFN_CMSG_EXPORT_ENCRYPT_KEY typedef ptr TYPE_PFN_CMSG_EXPORT_ENCRYPT_KEY
-
       CMSG_OID_IMPORT_ENCRYPT_KEY_FUNC equ <"CryptMsgDllImportEncryptKey">
       TYPE_PFN_CMSG_IMPORT_ENCRYPT_KEY typedef proto WIN_STD_CALL_CONV :HCRYPTPROV, :DWORD, :PCRYPT_ALGORITHM_IDENTIFIER, :PCRYPT_ALGORITHM_IDENTIFIER, :PBYTE, :DWORD, :ptr HCRYPTKEY
       PFN_CMSG_IMPORT_ENCRYPT_KEY typedef ptr TYPE_PFN_CMSG_IMPORT_ENCRYPT_KEY
-
       CMSG_DEFAULT_INSTALLABLE_FUNC_OID equ (1)
       CMSG_CONTENT_ENCRYPT_INFO struct
         cbSize DWORD ?
@@ -3416,6 +3566,7 @@ ifndef __WINCRYPT_H__
       CMSG_CONTENT_ENCRYPT_INFO ends
       _CMSG_CONTENT_ENCRYPT_INFO typedef CMSG_CONTENT_ENCRYPT_INFO
       PCMSG_CONTENT_ENCRYPT_INFO typedef ptr CMSG_CONTENT_ENCRYPT_INFO
+      
       CMSG_CONTENT_ENCRYPT_PAD_ENCODED_LEN_FLAG equ 00000001h
       CMSG_CONTENT_ENCRYPT_FREE_PARA_FLAG equ 00000001h
       CMSG_CONTENT_ENCRYPT_FREE_OBJID_FLAG equ 00000002h
@@ -3424,7 +3575,6 @@ ifndef __WINCRYPT_H__
       CMSG_OID_CAPI1_GEN_CONTENT_ENCRYPT_KEY_FUNC equ <CMSG_OID_GEN_CONTENT_ENCRYPT_KEY_FUNC>
       TYPE_PFN_CMSG_GEN_CONTENT_ENCRYPT_KEY typedef proto WIN_STD_CALL_CONV :PCMSG_CONTENT_ENCRYPT_INFO, :DWORD, :ptr
       PFN_CMSG_GEN_CONTENT_ENCRYPT_KEY typedef ptr TYPE_PFN_CMSG_GEN_CONTENT_ENCRYPT_KEY
-
       CMSG_OID_CNG_GEN_CONTENT_ENCRYPT_KEY_FUNC equ <"CryptMsgDllCNGGenContentEncryptKey">
       CMSG_KEY_TRANS_ENCRYPT_INFO struct
         cbSize DWORD ?
@@ -3435,13 +3585,13 @@ ifndef __WINCRYPT_H__
       CMSG_KEY_TRANS_ENCRYPT_INFO ends
       _CMSG_KEY_TRANS_ENCRYPT_INFO typedef CMSG_KEY_TRANS_ENCRYPT_INFO
       PCMSG_KEY_TRANS_ENCRYPT_INFO typedef ptr CMSG_KEY_TRANS_ENCRYPT_INFO
+      
       CMSG_KEY_TRANS_ENCRYPT_FREE_PARA_FLAG equ 00000001h
       CMSG_KEY_TRANS_ENCRYPT_FREE_OBJID_FLAG equ 00000002h
       CMSG_OID_EXPORT_KEY_TRANS_FUNC equ <"CryptMsgDllExportKeyTrans">
       CMSG_OID_CAPI1_EXPORT_KEY_TRANS_FUNC equ <CMSG_OID_EXPORT_KEY_TRANS_FUNC>
       TYPE_PFN_CMSG_EXPORT_KEY_TRANS typedef proto WIN_STD_CALL_CONV :PCMSG_CONTENT_ENCRYPT_INFO, :PCMSG_KEY_TRANS_RECIPIENT_ENCODE_INFO, :PCMSG_KEY_TRANS_ENCRYPT_INFO, :DWORD, :ptr
       PFN_CMSG_EXPORT_KEY_TRANS typedef ptr TYPE_PFN_CMSG_EXPORT_KEY_TRANS
-
       CMSG_OID_CNG_EXPORT_KEY_TRANS_FUNC equ <"CryptMsgDllCNGExportKeyTrans">
       CMSG_KEY_AGREE_KEY_ENCRYPT_INFO struct
         cbSize DWORD ?
@@ -3449,6 +3599,7 @@ ifndef __WINCRYPT_H__
       CMSG_KEY_AGREE_KEY_ENCRYPT_INFO ends
       _CMSG_KEY_AGREE_KEY_ENCRYPT_INFO typedef CMSG_KEY_AGREE_KEY_ENCRYPT_INFO
       PCMSG_KEY_AGREE_KEY_ENCRYPT_INFO typedef ptr CMSG_KEY_AGREE_KEY_ENCRYPT_INFO
+      
       CMSG_KEY_AGREE_ENCRYPT_INFO struct
         cbSize DWORD ?
         dwRecipientIndex DWORD ?
@@ -3465,6 +3616,7 @@ ifndef __WINCRYPT_H__
       CMSG_KEY_AGREE_ENCRYPT_INFO ends
       _CMSG_KEY_AGREE_ENCRYPT_INFO typedef CMSG_KEY_AGREE_ENCRYPT_INFO
       PCMSG_KEY_AGREE_ENCRYPT_INFO typedef ptr CMSG_KEY_AGREE_ENCRYPT_INFO
+      
       CMSG_KEY_AGREE_ENCRYPT_FREE_PARA_FLAG equ 00000001h
       CMSG_KEY_AGREE_ENCRYPT_FREE_MATERIAL_FLAG equ 00000002h
       CMSG_KEY_AGREE_ENCRYPT_FREE_PUBKEY_ALG_FLAG equ 00000004h
@@ -3475,7 +3627,6 @@ ifndef __WINCRYPT_H__
       CMSG_OID_CAPI1_EXPORT_KEY_AGREE_FUNC equ <CMSG_OID_EXPORT_KEY_AGREE_FUNC>
       TYPE_PFN_CMSG_EXPORT_KEY_AGREE typedef proto WIN_STD_CALL_CONV :PCMSG_CONTENT_ENCRYPT_INFO, :PCMSG_KEY_AGREE_RECIPIENT_ENCODE_INFO, :PCMSG_KEY_AGREE_ENCRYPT_INFO, :DWORD, :ptr
       PFN_CMSG_EXPORT_KEY_AGREE typedef ptr TYPE_PFN_CMSG_EXPORT_KEY_AGREE
-
       CMSG_OID_CNG_EXPORT_KEY_AGREE_FUNC equ <"CryptMsgDllCNGExportKeyAgree">
       CMSG_MAIL_LIST_ENCRYPT_INFO struct
         cbSize DWORD ?
@@ -3486,28 +3637,25 @@ ifndef __WINCRYPT_H__
       CMSG_MAIL_LIST_ENCRYPT_INFO ends
       _CMSG_MAIL_LIST_ENCRYPT_INFO typedef CMSG_MAIL_LIST_ENCRYPT_INFO
       PCMSG_MAIL_LIST_ENCRYPT_INFO typedef ptr CMSG_MAIL_LIST_ENCRYPT_INFO
+      
       CMSG_MAIL_LIST_ENCRYPT_FREE_PARA_FLAG equ 00000001h
       CMSG_MAIL_LIST_ENCRYPT_FREE_OBJID_FLAG equ 00000002h
       CMSG_OID_EXPORT_MAIL_LIST_FUNC equ <"CryptMsgDllExportMailList">
       CMSG_OID_CAPI1_EXPORT_MAIL_LIST_FUNC equ <CMSG_OID_EXPORT_MAIL_LIST_FUNC>
       TYPE_PFN_CMSG_EXPORT_MAIL_LIST typedef proto WIN_STD_CALL_CONV :PCMSG_CONTENT_ENCRYPT_INFO, :PCMSG_MAIL_LIST_RECIPIENT_ENCODE_INFO, :PCMSG_MAIL_LIST_ENCRYPT_INFO, :DWORD, :ptr
       PFN_CMSG_EXPORT_MAIL_LIST typedef ptr TYPE_PFN_CMSG_EXPORT_MAIL_LIST
-
       CMSG_OID_IMPORT_KEY_TRANS_FUNC equ <"CryptMsgDllImportKeyTrans">
       CMSG_OID_CAPI1_IMPORT_KEY_TRANS_FUNC equ <CMSG_OID_IMPORT_KEY_TRANS_FUNC>
       TYPE_PFN_CMSG_IMPORT_KEY_TRANS typedef proto WIN_STD_CALL_CONV :PCRYPT_ALGORITHM_IDENTIFIER, :PCMSG_CTRL_KEY_TRANS_DECRYPT_PARA, :DWORD, :ptr, :ptr HCRYPTKEY
       PFN_CMSG_IMPORT_KEY_TRANS typedef ptr TYPE_PFN_CMSG_IMPORT_KEY_TRANS
-
       CMSG_OID_IMPORT_KEY_AGREE_FUNC equ <"CryptMsgDllImportKeyAgree">
       CMSG_OID_CAPI1_IMPORT_KEY_AGREE_FUNC equ <CMSG_OID_IMPORT_KEY_AGREE_FUNC>
       TYPE_PFN_CMSG_IMPORT_KEY_AGREE typedef proto WIN_STD_CALL_CONV :PCRYPT_ALGORITHM_IDENTIFIER, :PCMSG_CTRL_KEY_AGREE_DECRYPT_PARA, :DWORD, :ptr, :ptr HCRYPTKEY
       PFN_CMSG_IMPORT_KEY_AGREE typedef ptr TYPE_PFN_CMSG_IMPORT_KEY_AGREE
-
       CMSG_OID_IMPORT_MAIL_LIST_FUNC equ <"CryptMsgDllImportMailList">
       CMSG_OID_CAPI1_IMPORT_MAIL_LIST_FUNC equ <CMSG_OID_IMPORT_MAIL_LIST_FUNC>
       TYPE_PFN_CMSG_IMPORT_MAIL_LIST typedef proto WIN_STD_CALL_CONV :PCRYPT_ALGORITHM_IDENTIFIER, :PCMSG_CTRL_MAIL_LIST_DECRYPT_PARA, :DWORD, :ptr, :ptr HCRYPTKEY
       PFN_CMSG_IMPORT_MAIL_LIST typedef ptr TYPE_PFN_CMSG_IMPORT_MAIL_LIST
-
       CMSG_CNG_CONTENT_DECRYPT_INFO struct
         cbSize DWORD ?
         ContentEncryptionAlgorithm CRYPT_ALGORITHM_IDENTIFIER <>
@@ -3521,18 +3669,16 @@ ifndef __WINCRYPT_H__
       CMSG_CNG_CONTENT_DECRYPT_INFO ends
       _CMSG_CNG_CONTENT_DECRYPT_INFO typedef CMSG_CNG_CONTENT_DECRYPT_INFO
       PCMSG_CNG_CONTENT_DECRYPT_INFO typedef ptr CMSG_CNG_CONTENT_DECRYPT_INFO
+      
       CMSG_OID_CNG_IMPORT_KEY_TRANS_FUNC equ <"CryptMsgDllCNGImportKeyTrans">
       TYPE_PFN_CMSG_CNG_IMPORT_KEY_TRANS typedef proto WIN_STD_CALL_CONV :PCMSG_CNG_CONTENT_DECRYPT_INFO, :PCMSG_CTRL_KEY_TRANS_DECRYPT_PARA, :DWORD, :ptr
       PFN_CMSG_CNG_IMPORT_KEY_TRANS typedef ptr TYPE_PFN_CMSG_CNG_IMPORT_KEY_TRANS
-
       CMSG_OID_CNG_IMPORT_KEY_AGREE_FUNC equ <"CryptMsgDllCNGImportKeyAgree">
       TYPE_PFN_CMSG_CNG_IMPORT_KEY_AGREE typedef proto WIN_STD_CALL_CONV :PCMSG_CNG_CONTENT_DECRYPT_INFO, :PCMSG_CTRL_KEY_AGREE_DECRYPT_PARA, :DWORD, :ptr
       PFN_CMSG_CNG_IMPORT_KEY_AGREE typedef ptr TYPE_PFN_CMSG_CNG_IMPORT_KEY_AGREE
-
       CMSG_OID_CNG_IMPORT_CONTENT_ENCRYPT_KEY_FUNC equ <"CryptMsgDllCNGImportContentEncryptKey">
       TYPE_PFN_CMSG_CNG_IMPORT_CONTENT_ENCRYPT_KEY typedef proto WIN_STD_CALL_CONV :PCMSG_CNG_CONTENT_DECRYPT_INFO, :DWORD, :ptr
       PFN_CMSG_CNG_IMPORT_CONTENT_ENCRYPT_KEY typedef ptr TYPE_PFN_CMSG_CNG_IMPORT_CONTENT_ENCRYPT_KEY
-
       HCERTSTORE typedef ptr
       CERT_CONTEXT struct
         dwCertEncodingType DWORD ?
@@ -3543,6 +3689,7 @@ ifndef __WINCRYPT_H__
       CERT_CONTEXT ends
       _CERT_CONTEXT typedef CERT_CONTEXT
       PCERT_CONTEXT typedef ptr CERT_CONTEXT
+      
       PCCERT_CONTEXT typedef ptr CERT_CONTEXT
       CRL_CONTEXT struct
         dwCertEncodingType DWORD ?
@@ -3553,6 +3700,7 @@ ifndef __WINCRYPT_H__
       CRL_CONTEXT ends
       _CRL_CONTEXT typedef CRL_CONTEXT
       PCRL_CONTEXT typedef ptr CRL_CONTEXT
+      
       PCCRL_CONTEXT typedef ptr CRL_CONTEXT
       CTL_CONTEXT struct
         dwMsgAndCertEncodingType DWORD ?
@@ -3566,6 +3714,7 @@ ifndef __WINCRYPT_H__
       CTL_CONTEXT ends
       _CTL_CONTEXT typedef CTL_CONTEXT
       PCTL_CONTEXT typedef ptr CTL_CONTEXT
+      
       PCCTL_CONTEXT typedef ptr CTL_CONTEXT
       CERT_KEY_PROV_HANDLE_PROP_ID equ 1
       CERT_KEY_PROV_INFO_PROP_ID equ 2
@@ -3662,17 +3811,16 @@ ifndef __WINCRYPT_H__
       CERT_CLR_DELETE_KEY_PROP_ID equ 125
       CERT_NOT_BEFORE_FILETIME_PROP_ID equ 126
       CERT_NOT_BEFORE_ENHKEY_USAGE_PROP_ID equ 127
-      CERT_DISALLOWED_CA_FILETIME_PROP_ID equ 128
-      CERT_FIRST_RESERVED_PROP_ID equ 129
+      CERT_FIRST_RESERVED_PROP_ID equ 128
       CERT_LAST_RESERVED_PROP_ID equ 00007FFFh
       CERT_FIRST_USER_PROP_ID equ 00008000h
       CERT_LAST_USER_PROP_ID equ 0000FFFFh
       if Defined(__cplusplus) and  not Defined(SORTPP_PASS)
         ;[...]
       else
-;        WINCRYPT_DWORD_CPP_ONLY equ <>
+        WINCRYPT_DWORD_CPP_ONLY equ <>
       endif
-      WINCRYPT_DWORD_CPP_ONLY typedef SDWORD
+;      WINCRYPT_DWORD_CPP_ONLY typedef SDWORD
       IS_CERT_HASH_PROP_ID macro X
         exitm <(CERT_SHA1_HASH_PROP_ID == (X) or CERT_MD5_HASH_PROP_ID == (X) or CERT_SHA256_HASH_PROP_ID == (X) or CERT_SIGNATURE_HASH_PROP_ID == (X))>
       endm
@@ -3708,7 +3856,6 @@ ifndef __WINCRYPT_H__
       szOID_CERT_SIGNATURE_HASH_PROP_ID equ <"1.3.6.1.4.1.311.10.11.15">
       szOID_DISALLOWED_HASH equ <szOID_CERT_SIGNATURE_HASH_PROP_ID>
       szOID_CERT_DISALLOWED_FILETIME_PROP_ID equ <"1.3.6.1.4.1.311.10.11.104">
-      szOID_CERT_DISALLOWED_CA_FILETIME_PROP_ID equ <"1.3.6.1.4.1.311.10.11.128">
       CERT_ACCESS_STATE_WRITE_PERSIST_FLAG equ 1h
       CERT_ACCESS_STATE_SYSTEM_STORE_FLAG equ 2h
       CERT_ACCESS_STATE_LM_SYSTEM_STORE_FLAG equ 4h
@@ -3725,6 +3872,7 @@ ifndef __WINCRYPT_H__
       CRYPT_KEY_PROV_PARAM ends
       _CRYPT_KEY_PROV_PARAM typedef CRYPT_KEY_PROV_PARAM
       PCRYPT_KEY_PROV_PARAM typedef ptr CRYPT_KEY_PROV_PARAM
+      
       CRYPT_KEY_PROV_INFO struct
         pwszContainerName LPWSTR ?
         pwszProvName LPWSTR ?
@@ -3736,6 +3884,7 @@ ifndef __WINCRYPT_H__
       CRYPT_KEY_PROV_INFO ends
       _CRYPT_KEY_PROV_INFO typedef CRYPT_KEY_PROV_INFO
       PCRYPT_KEY_PROV_INFO typedef ptr CRYPT_KEY_PROV_INFO
+      
       CERT_SET_KEY_PROV_HANDLE_PROP_ID equ 00000001h
       CERT_SET_KEY_CONTEXT_PROP_ID equ 00000001h
       CERT_NCRYPT_KEY_SPEC equ 0FFFFFFFFh
@@ -3749,18 +3898,21 @@ ifndef __WINCRYPT_H__
       CERT_KEY_CONTEXT ends
       _CERT_KEY_CONTEXT typedef CERT_KEY_CONTEXT
       PCERT_KEY_CONTEXT typedef ptr CERT_KEY_CONTEXT
+      
       ROOT_INFO_LUID struct
         LowPart DWORD ?
         HighPart LONG ?
       ROOT_INFO_LUID ends
       _ROOT_INFO_LUID typedef ROOT_INFO_LUID
       PROOT_INFO_LUID typedef ptr ROOT_INFO_LUID
+      
       CRYPT_SMART_CARD_ROOT_INFO struct
         rgbCardID BYTE 16 dup (?)
         luid ROOT_INFO_LUID <>
       CRYPT_SMART_CARD_ROOT_INFO ends
       _CRYPT_SMART_CARD_ROOT_INFO typedef CRYPT_SMART_CARD_ROOT_INFO
       PCRYPT_SMART_CARD_ROOT_INFO typedef ptr CRYPT_SMART_CARD_ROOT_INFO
+      
       CERT_STORE_PROV_MSG equ (1)
       CERT_STORE_PROV_MEMORY equ (2)
       CERT_STORE_PROV_FILE equ (3)
@@ -3830,7 +3982,7 @@ ifndef __WINCRYPT_H__
           hKeyBase HKEY ?
           pvBase POINTER ?
         ends
-        union
+        union DUMMYUNIONNAME2
           pvSystemStore POINTER ?
           pszSystemStore LPCSTR ?
           pwszSystemStore LPCWSTR ?
@@ -3838,6 +3990,7 @@ ifndef __WINCRYPT_H__
       CERT_SYSTEM_STORE_RELOCATE_PARA ends
       _CERT_SYSTEM_STORE_RELOCATE_PARA typedef CERT_SYSTEM_STORE_RELOCATE_PARA
       PCERT_SYSTEM_STORE_RELOCATE_PARA typedef ptr CERT_SYSTEM_STORE_RELOCATE_PARA
+      
       CERT_SYSTEM_STORE_UNPROTECTED_FLAG equ 40000000h
       CERT_SYSTEM_STORE_DEFER_READ_FLAG equ 20000000h
       CERT_SYSTEM_STORE_LOCATION_MASK equ 00FF0000h
@@ -3850,7 +4003,6 @@ ifndef __WINCRYPT_H__
       CERT_SYSTEM_STORE_CURRENT_USER_GROUP_POLICY_ID equ 7
       CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY_ID equ 8
       CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE_ID equ 9
-      CERT_SYSTEM_STORE_LOCAL_MACHINE_WCOS_ID equ 10
       CERT_SYSTEM_STORE_CURRENT_USER equ (CERT_SYSTEM_STORE_CURRENT_USER_ID shl CERT_SYSTEM_STORE_LOCATION_SHIFT)
       CERT_SYSTEM_STORE_LOCAL_MACHINE equ (CERT_SYSTEM_STORE_LOCAL_MACHINE_ID shl CERT_SYSTEM_STORE_LOCATION_SHIFT)
       CERT_SYSTEM_STORE_CURRENT_SERVICE equ (CERT_SYSTEM_STORE_CURRENT_SERVICE_ID shl CERT_SYSTEM_STORE_LOCATION_SHIFT)
@@ -3859,7 +4011,6 @@ ifndef __WINCRYPT_H__
       CERT_SYSTEM_STORE_CURRENT_USER_GROUP_POLICY equ (CERT_SYSTEM_STORE_CURRENT_USER_GROUP_POLICY_ID shl CERT_SYSTEM_STORE_LOCATION_SHIFT)
       CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY equ (CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY_ID shl CERT_SYSTEM_STORE_LOCATION_SHIFT)
       CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE equ (CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE_ID shl CERT_SYSTEM_STORE_LOCATION_SHIFT)
-      CERT_SYSTEM_STORE_LOCAL_MACHINE_WCOS equ (CERT_SYSTEM_STORE_LOCAL_MACHINE_WCOS_ID shl CERT_SYSTEM_STORE_LOCATION_SHIFT)
       CERT_GROUP_POLICY_SYSTEM_STORE_REGPATH equ <L("Software\Policies\Microsoft\SystemCertificates")>
       CERT_EFSBLOB_REGPATH equ <CERT_GROUP_POLICY_SYSTEM_STORE_REGPATH L("\EFS")>
       CERT_EFSBLOB_VALUE_NAME equ <L("EFSBlob")>
@@ -3933,6 +4084,7 @@ ifndef __WINCRYPT_H__
       CERT_REGISTRY_STORE_CLIENT_GPT_PARA ends
       _CERT_REGISTRY_STORE_CLIENT_GPT_PARA typedef CERT_REGISTRY_STORE_CLIENT_GPT_PARA
       PCERT_REGISTRY_STORE_CLIENT_GPT_PARA typedef ptr CERT_REGISTRY_STORE_CLIENT_GPT_PARA
+      
       CERT_REGISTRY_STORE_ROAMING_FLAG equ 40000h
       CERT_REGISTRY_STORE_ROAMING_PARA struct
         hKey HKEY ?
@@ -3940,6 +4092,7 @@ ifndef __WINCRYPT_H__
       CERT_REGISTRY_STORE_ROAMING_PARA ends
       _CERT_REGISTRY_STORE_ROAMING_PARA typedef CERT_REGISTRY_STORE_ROAMING_PARA
       PCERT_REGISTRY_STORE_ROAMING_PARA typedef ptr CERT_REGISTRY_STORE_ROAMING_PARA
+      
       CERT_REGISTRY_STORE_MY_IE_DIRTY_FLAG equ 80000h
       CERT_REGISTRY_STORE_EXTERNAL_FLAG equ 100000h
       CERT_IE_DIRTY_FLAGS_REGPATH equ <L("Software\Microsoft\Cryptography\IEDirtyFlags")>
@@ -3953,6 +4106,7 @@ ifndef __WINCRYPT_H__
       CERT_LDAP_STORE_OPENED_PARA ends
       _CERT_LDAP_STORE_OPENED_PARA typedef CERT_LDAP_STORE_OPENED_PARA
       PCERT_LDAP_STORE_OPENED_PARA typedef ptr CERT_LDAP_STORE_OPENED_PARA
+      
       CERT_LDAP_STORE_UNBIND_FLAG equ 80000h
       @DefProto DllImport, CertOpenStore, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD, :HCRYPTPROV_LEGACY, :DWORD, :ptr>, 20
       HCERTSTOREPROV typedef ptr
@@ -3967,9 +4121,9 @@ ifndef __WINCRYPT_H__
       CERT_STORE_PROV_INFO ends
       _CERT_STORE_PROV_INFO typedef CERT_STORE_PROV_INFO
       PCERT_STORE_PROV_INFO typedef ptr CERT_STORE_PROV_INFO
+      
       TYPE_PFN_CERT_DLL_OPEN_STORE_PROV_FUNC typedef proto WIN_STD_CALL_CONV :LPCSTR, :DWORD, :HCRYPTPROV_LEGACY, :DWORD, :ptr, :HCERTSTORE, :PCERT_STORE_PROV_INFO
       PFN_CERT_DLL_OPEN_STORE_PROV_FUNC typedef ptr TYPE_PFN_CERT_DLL_OPEN_STORE_PROV_FUNC
-
       CERT_STORE_PROV_EXTERNAL_FLAG equ 1h
       CERT_STORE_PROV_DELETED_FLAG equ 2h
       CERT_STORE_PROV_NO_PERSIST_FLAG equ 4h
@@ -4002,47 +4156,33 @@ ifndef __WINCRYPT_H__
       CERT_STORE_PROV_GET_CTL_PROPERTY_FUNC equ 22
       TYPE_PFN_CERT_STORE_PROV_CLOSE typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :DWORD
       PFN_CERT_STORE_PROV_CLOSE typedef ptr TYPE_PFN_CERT_STORE_PROV_CLOSE
-
       TYPE_PFN_CERT_STORE_PROV_READ_CERT typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCERT_CONTEXT, :DWORD, :ptr PCCERT_CONTEXT
       PFN_CERT_STORE_PROV_READ_CERT typedef ptr TYPE_PFN_CERT_STORE_PROV_READ_CERT
-
       CERT_STORE_PROV_WRITE_ADD_FLAG equ 1h
       TYPE_PFN_CERT_STORE_PROV_WRITE_CERT typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCERT_CONTEXT, :DWORD
       PFN_CERT_STORE_PROV_WRITE_CERT typedef ptr TYPE_PFN_CERT_STORE_PROV_WRITE_CERT
-
       TYPE_PFN_CERT_STORE_PROV_DELETE_CERT typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCERT_CONTEXT, :DWORD
       PFN_CERT_STORE_PROV_DELETE_CERT typedef ptr TYPE_PFN_CERT_STORE_PROV_DELETE_CERT
-
       TYPE_PFN_CERT_STORE_PROV_SET_CERT_PROPERTY typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCERT_CONTEXT, :DWORD, :DWORD, :ptr
       PFN_CERT_STORE_PROV_SET_CERT_PROPERTY typedef ptr TYPE_PFN_CERT_STORE_PROV_SET_CERT_PROPERTY
-
       TYPE_PFN_CERT_STORE_PROV_READ_CRL typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCRL_CONTEXT, :DWORD, :ptr PCCRL_CONTEXT
       PFN_CERT_STORE_PROV_READ_CRL typedef ptr TYPE_PFN_CERT_STORE_PROV_READ_CRL
-
       TYPE_PFN_CERT_STORE_PROV_WRITE_CRL typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCRL_CONTEXT, :DWORD
       PFN_CERT_STORE_PROV_WRITE_CRL typedef ptr TYPE_PFN_CERT_STORE_PROV_WRITE_CRL
-
       TYPE_PFN_CERT_STORE_PROV_DELETE_CRL typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCRL_CONTEXT, :DWORD
       PFN_CERT_STORE_PROV_DELETE_CRL typedef ptr TYPE_PFN_CERT_STORE_PROV_DELETE_CRL
-
       TYPE_PFN_CERT_STORE_PROV_SET_CRL_PROPERTY typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCRL_CONTEXT, :DWORD, :DWORD, :ptr
       PFN_CERT_STORE_PROV_SET_CRL_PROPERTY typedef ptr TYPE_PFN_CERT_STORE_PROV_SET_CRL_PROPERTY
-
       TYPE_PFN_CERT_STORE_PROV_READ_CTL typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCTL_CONTEXT, :DWORD, :ptr PCCTL_CONTEXT
       PFN_CERT_STORE_PROV_READ_CTL typedef ptr TYPE_PFN_CERT_STORE_PROV_READ_CTL
-
       TYPE_PFN_CERT_STORE_PROV_WRITE_CTL typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCTL_CONTEXT, :DWORD
       PFN_CERT_STORE_PROV_WRITE_CTL typedef ptr TYPE_PFN_CERT_STORE_PROV_WRITE_CTL
-
       TYPE_PFN_CERT_STORE_PROV_DELETE_CTL typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCTL_CONTEXT, :DWORD
       PFN_CERT_STORE_PROV_DELETE_CTL typedef ptr TYPE_PFN_CERT_STORE_PROV_DELETE_CTL
-
       TYPE_PFN_CERT_STORE_PROV_SET_CTL_PROPERTY typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCTL_CONTEXT, :DWORD, :DWORD, :ptr
       PFN_CERT_STORE_PROV_SET_CTL_PROPERTY typedef ptr TYPE_PFN_CERT_STORE_PROV_SET_CTL_PROPERTY
-
       TYPE_PFN_CERT_STORE_PROV_CONTROL typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :DWORD, :DWORD, :ptr
       PFN_CERT_STORE_PROV_CONTROL typedef ptr TYPE_PFN_CERT_STORE_PROV_CONTROL
-
       CERT_STORE_PROV_FIND_INFO struct
         cbSize DWORD ?
         dwMsgAndCertEncodingType DWORD ?
@@ -4052,35 +4192,27 @@ ifndef __WINCRYPT_H__
       CERT_STORE_PROV_FIND_INFO ends
       _CERT_STORE_PROV_FIND_INFO typedef CERT_STORE_PROV_FIND_INFO
       PCERT_STORE_PROV_FIND_INFO typedef ptr CERT_STORE_PROV_FIND_INFO
+      
       CCERT_STORE_PROV_FIND_INFO typedef CERT_STORE_PROV_FIND_INFO
       PCCERT_STORE_PROV_FIND_INFO typedef ptr CERT_STORE_PROV_FIND_INFO
       TYPE_PFN_CERT_STORE_PROV_FIND_CERT typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCERT_STORE_PROV_FIND_INFO, :PCCERT_CONTEXT, :DWORD, :ptr ptr, :ptr PCCERT_CONTEXT
       PFN_CERT_STORE_PROV_FIND_CERT typedef ptr TYPE_PFN_CERT_STORE_PROV_FIND_CERT
-
       TYPE_PFN_CERT_STORE_PROV_FREE_FIND_CERT typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCERT_CONTEXT, :ptr, :DWORD
       PFN_CERT_STORE_PROV_FREE_FIND_CERT typedef ptr TYPE_PFN_CERT_STORE_PROV_FREE_FIND_CERT
-
       TYPE_PFN_CERT_STORE_PROV_GET_CERT_PROPERTY typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCERT_CONTEXT, :DWORD, :DWORD, :ptr, :ptr DWORD
       PFN_CERT_STORE_PROV_GET_CERT_PROPERTY typedef ptr TYPE_PFN_CERT_STORE_PROV_GET_CERT_PROPERTY
-
       TYPE_PFN_CERT_STORE_PROV_FIND_CRL typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCERT_STORE_PROV_FIND_INFO, :PCCRL_CONTEXT, :DWORD, :ptr ptr, :ptr PCCRL_CONTEXT
       PFN_CERT_STORE_PROV_FIND_CRL typedef ptr TYPE_PFN_CERT_STORE_PROV_FIND_CRL
-
       TYPE_PFN_CERT_STORE_PROV_FREE_FIND_CRL typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCRL_CONTEXT, :ptr, :DWORD
       PFN_CERT_STORE_PROV_FREE_FIND_CRL typedef ptr TYPE_PFN_CERT_STORE_PROV_FREE_FIND_CRL
-
       TYPE_PFN_CERT_STORE_PROV_GET_CRL_PROPERTY typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCRL_CONTEXT, :DWORD, :DWORD, :ptr, :ptr DWORD
       PFN_CERT_STORE_PROV_GET_CRL_PROPERTY typedef ptr TYPE_PFN_CERT_STORE_PROV_GET_CRL_PROPERTY
-
       TYPE_PFN_CERT_STORE_PROV_FIND_CTL typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCERT_STORE_PROV_FIND_INFO, :PCCTL_CONTEXT, :DWORD, :ptr ptr, :ptr PCCTL_CONTEXT
       PFN_CERT_STORE_PROV_FIND_CTL typedef ptr TYPE_PFN_CERT_STORE_PROV_FIND_CTL
-
       TYPE_PFN_CERT_STORE_PROV_FREE_FIND_CTL typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCTL_CONTEXT, :ptr, :DWORD
       PFN_CERT_STORE_PROV_FREE_FIND_CTL typedef ptr TYPE_PFN_CERT_STORE_PROV_FREE_FIND_CTL
-
       TYPE_PFN_CERT_STORE_PROV_GET_CTL_PROPERTY typedef proto WIN_STD_CALL_CONV :HCERTSTOREPROV, :PCCTL_CONTEXT, :DWORD, :DWORD, :ptr, :ptr DWORD
       PFN_CERT_STORE_PROV_GET_CTL_PROPERTY typedef ptr TYPE_PFN_CERT_STORE_PROV_GET_CTL_PROPERTY
-
       @DefProto DllImport, CertDuplicateStore, WIN_STD_CALL_CONV,, <:HCERTSTORE>, 4
       CERT_STORE_SAVE_AS_STORE equ 1
       CERT_STORE_SAVE_AS_PKCS7 equ 2
@@ -4176,12 +4308,12 @@ ifndef __WINCRYPT_H__
       @DefProto DllImport, CertGetCertificateContextProperty, WIN_STD_CALL_CONV,, <:PCCERT_CONTEXT, :DWORD, :ptr, :ptr DWORD>, 16
       @DefProto DllImport, CertEnumCertificateContextProperties, WIN_STD_CALL_CONV,, <:PCCERT_CONTEXT, :DWORD>, 8
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CertCreateCTLEntryFromCertificateContextProperties, WIN_STD_CALL_CONV,, <:PCCERT_CONTEXT, :DWORD, :PCRYPT_ATTRIBUTE, :DWORD, :ptr, :PCTL_ENTRY, :ptr DWORD>, 28
       CTL_ENTRY_FROM_PROP_CHAIN_FLAG equ 1h
       @DefProto DllImport, CertSetCertificateContextPropertiesFromCTLEntry, WIN_STD_CALL_CONV,, <:PCCERT_CONTEXT, :PCTL_ENTRY, :DWORD>, 12
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CertGetCRLFromStore, WIN_STD_CALL_CONV,, <:HCERTSTORE, :PCCERT_CONTEXT, :PCCRL_CONTEXT, :ptr DWORD>, 16
       @DefProto DllImport, CertEnumCRLsInStore, WIN_STD_CALL_CONV,, <:HCERTSTORE, :PCCRL_CONTEXT>, 8
       @DefProto DllImport, CertFindCRLInStore, WIN_STD_CALL_CONV,, <:HCERTSTORE, :DWORD, :DWORD, :DWORD, :ptr, :PCCRL_CONTEXT>, 24
@@ -4199,6 +4331,7 @@ ifndef __WINCRYPT_H__
       CRL_FIND_ISSUED_FOR_PARA ends
       _CRL_FIND_ISSUED_FOR_PARA typedef CRL_FIND_ISSUED_FOR_PARA
       PCRL_FIND_ISSUED_FOR_PARA typedef ptr CRL_FIND_ISSUED_FOR_PARA
+      
       CRL_FIND_ISSUED_FOR_SET_STRONG_PROPERTIES_FLAG equ 10h
       @DefProto DllImport, CertDuplicateCRLContext, WIN_STD_CALL_CONV,, <:PCCRL_CONTEXT>, 4
       @DefProto DllImport, CertCreateCRLContext, WIN_STD_CALL_CONV,, <:DWORD, :ptr BYTE, :DWORD>, 12
@@ -4247,6 +4380,7 @@ ifndef __WINCRYPT_H__
       CTL_ANY_SUBJECT_INFO ends
       _CTL_ANY_SUBJECT_INFO typedef CTL_ANY_SUBJECT_INFO
       PCTL_ANY_SUBJECT_INFO typedef ptr CTL_ANY_SUBJECT_INFO
+      
       @DefProto DllImport, CertFindCTLInStore, WIN_STD_CALL_CONV,, <:HCERTSTORE, :DWORD, :DWORD, :DWORD, :ptr, :PCCTL_CONTEXT>, 24
       CTL_FIND_ANY equ 0
       CTL_FIND_SHA1_HASH equ 1
@@ -4262,6 +4396,7 @@ ifndef __WINCRYPT_H__
       CTL_FIND_USAGE_PARA ends
       _CTL_FIND_USAGE_PARA typedef CTL_FIND_USAGE_PARA
       PCTL_FIND_USAGE_PARA typedef ptr CTL_FIND_USAGE_PARA
+      
       CTL_FIND_NO_LIST_ID_CBDATA equ 0FFFFFFFFh
       CTL_FIND_NO_SIGNER_PTR equ ((PCERT_INFO) - 1)
       CTL_FIND_SAME_USAGE_FLAG equ 1h
@@ -4273,6 +4408,7 @@ ifndef __WINCRYPT_H__
       CTL_FIND_SUBJECT_PARA ends
       _CTL_FIND_SUBJECT_PARA typedef CTL_FIND_SUBJECT_PARA
       PCTL_FIND_SUBJECT_PARA typedef ptr CTL_FIND_SUBJECT_PARA
+      
       @DefProto DllImport, CertAddEncodedCTLToStore, WIN_STD_CALL_CONV,, <:HCERTSTORE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :ptr PCCTL_CONTEXT>, 24
       @DefProto DllImport, CertAddCTLContextToStore, WIN_STD_CALL_CONV,, <:HCERTSTORE, :PCCTL_CONTEXT, :DWORD, :ptr PCCTL_CONTEXT>, 16
       @DefProto DllImport, CertSerializeCTLStoreElement, WIN_STD_CALL_CONV,, <:PCCTL_CONTEXT, :DWORD, :ptr BYTE, :ptr DWORD>, 16
@@ -4296,7 +4432,6 @@ ifndef __WINCRYPT_H__
       @DefProto DllImport, CertGetStoreProperty, WIN_STD_CALL_CONV,, <:HCERTSTORE, :DWORD, :ptr, :ptr DWORD>, 16
       TYPE_PFN_CERT_CREATE_CONTEXT_SORT_FUNC typedef proto WIN_STD_CALL_CONV :DWORD, :DWORD, :DWORD, :ptr
       PFN_CERT_CREATE_CONTEXT_SORT_FUNC typedef ptr TYPE_PFN_CERT_CREATE_CONTEXT_SORT_FUNC
-
       CERT_CREATE_CONTEXT_PARA struct
         cbSize DWORD ?
         pfnFree PFN_CRYPT_FREE ?
@@ -4306,6 +4441,7 @@ ifndef __WINCRYPT_H__
       CERT_CREATE_CONTEXT_PARA ends
       _CERT_CREATE_CONTEXT_PARA typedef CERT_CREATE_CONTEXT_PARA
       PCERT_CREATE_CONTEXT_PARA typedef ptr CERT_CREATE_CONTEXT_PARA
+      
       @DefProto DllImport, CertCreateContext, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :ptr BYTE, :DWORD, :DWORD, :PCERT_CREATE_CONTEXT_PARA>, 24
       CERT_CREATE_CONTEXT_NOCOPY_FLAG equ 1h
       CERT_CREATE_CONTEXT_SORTED_FLAG equ 2h
@@ -4316,6 +4452,7 @@ ifndef __WINCRYPT_H__
       CERT_SYSTEM_STORE_INFO ends
       _CERT_SYSTEM_STORE_INFO typedef CERT_SYSTEM_STORE_INFO
       PCERT_SYSTEM_STORE_INFO typedef ptr CERT_SYSTEM_STORE_INFO
+      
       CERT_PHYSICAL_STORE_INFO struct
         cbSize DWORD ?
         pszOpenStoreProvider LPSTR ?
@@ -4327,27 +4464,25 @@ ifndef __WINCRYPT_H__
       CERT_PHYSICAL_STORE_INFO ends
       _CERT_PHYSICAL_STORE_INFO typedef CERT_PHYSICAL_STORE_INFO
       PCERT_PHYSICAL_STORE_INFO typedef ptr CERT_PHYSICAL_STORE_INFO
+      
       CERT_PHYSICAL_STORE_ADD_ENABLE_FLAG equ 1h
       CERT_PHYSICAL_STORE_OPEN_DISABLE_FLAG equ 2h
       CERT_PHYSICAL_STORE_REMOTE_OPEN_DISABLE_FLAG equ 4h
       CERT_PHYSICAL_STORE_INSERT_COMPUTER_NAME_ENABLE_FLAG equ 8h
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CertRegisterSystemStore, WIN_STD_CALL_CONV,, <:ptr, :DWORD, :PCERT_SYSTEM_STORE_INFO, :ptr>, 16
       @DefProto DllImport, CertRegisterPhysicalStore, WIN_STD_CALL_CONV,, <:ptr, :DWORD, :LPCWSTR, :PCERT_PHYSICAL_STORE_INFO, :ptr>, 20
       @DefProto DllImport, CertUnregisterSystemStore, WIN_STD_CALL_CONV,, <:ptr, :DWORD>, 8
       @DefProto DllImport, CertUnregisterPhysicalStore, WIN_STD_CALL_CONV,, <:ptr, :DWORD, :LPCWSTR>, 12
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       TYPE_PFN_CERT_ENUM_SYSTEM_STORE_LOCATION typedef proto WIN_STD_CALL_CONV :LPCWSTR, :DWORD, :ptr, :ptr
       PFN_CERT_ENUM_SYSTEM_STORE_LOCATION typedef ptr TYPE_PFN_CERT_ENUM_SYSTEM_STORE_LOCATION
-
       TYPE_PFN_CERT_ENUM_SYSTEM_STORE typedef proto WIN_STD_CALL_CONV :ptr, :DWORD, :PCERT_SYSTEM_STORE_INFO, :ptr, :ptr
       PFN_CERT_ENUM_SYSTEM_STORE typedef ptr TYPE_PFN_CERT_ENUM_SYSTEM_STORE
-
       TYPE_PFN_CERT_ENUM_PHYSICAL_STORE typedef proto WIN_STD_CALL_CONV :ptr, :DWORD, :LPCWSTR, :PCERT_PHYSICAL_STORE_INFO, :ptr, :ptr
       PFN_CERT_ENUM_PHYSICAL_STORE typedef ptr TYPE_PFN_CERT_ENUM_PHYSICAL_STORE
-
       CERT_PHYSICAL_STORE_PREDEFINED_ENUM_FLAG equ 1h
       CERT_PHYSICAL_STORE_DEFAULT_NAME equ <L(".Default")>
       CERT_PHYSICAL_STORE_GROUP_POLICY_NAME equ <L(".GroupPolicy")>
@@ -4370,19 +4505,19 @@ ifndef __WINCRYPT_H__
       CRYPT_OID_SYSTEM_STORE_LOCATION_VALUE_NAME equ <L("SystemStoreLocation")>
       @DefProto DllImport, CertGetEnhancedKeyUsage, WIN_STD_CALL_CONV,, <:PCCERT_CONTEXT, :DWORD, :PCERT_ENHKEY_USAGE, :ptr DWORD>, 16
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CertSetEnhancedKeyUsage, WIN_STD_CALL_CONV,, <:PCCERT_CONTEXT, :PCERT_ENHKEY_USAGE>, 8
       @DefProto DllImport, CertAddEnhancedKeyUsageIdentifier, WIN_STD_CALL_CONV,, <:PCCERT_CONTEXT, :LPCSTR>, 8
       @DefProto DllImport, CertRemoveEnhancedKeyUsageIdentifier, WIN_STD_CALL_CONV,, <:PCCERT_CONTEXT, :LPCSTR>, 8
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CertGetValidUsages, WIN_STD_CALL_CONV,, <:DWORD, :ptr PCCERT_CONTEXT, :ptr SDWORD, :ptr LPSTR, :ptr DWORD>, 20
       @DefProto DllImport, CryptMsgGetAndVerifySigner, WIN_STD_CALL_CONV,, <:HCRYPTMSG, :DWORD, :ptr HCERTSTORE, :DWORD, :ptr PCCERT_CONTEXT, :ptr DWORD>, 24
       CMSG_TRUSTED_SIGNER_FLAG equ 1h
       CMSG_SIGNER_ONLY_FLAG equ 2h
       CMSG_USE_SIGNER_INDEX_FLAG equ 4h
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CryptMsgSignCTL, WIN_STD_CALL_CONV,, <:DWORD, :ptr BYTE, :DWORD, :PCMSG_SIGNED_ENCODE_INFO, :DWORD, :ptr BYTE, :ptr DWORD>, 28
       CMSG_CMS_ENCAPSULATED_CTL_FLAG equ 00008000h
       @DefProto DllImport, CryptMsgEncodeAndSignCTL, WIN_STD_CALL_CONV,, <:DWORD, :PCTL_INFO, :PCMSG_SIGNED_ENCODE_INFO, :DWORD, :ptr BYTE, :ptr DWORD>, 24
@@ -4391,7 +4526,7 @@ ifndef __WINCRYPT_H__
       @DefProto DllImport, CertFindSubjectInSortedCTL, WIN_STD_CALL_CONV,, <:PCRYPT_DATA_BLOB, :PCCTL_CONTEXT, :DWORD, :ptr, :PCRYPT_DER_BLOB>, 20
       @DefProto DllImport, CertEnumSubjectInSortedCTL, WIN_STD_CALL_CONV,, <:PCCTL_CONTEXT, :ptr ptr, :PCRYPT_DER_BLOB, :PCRYPT_DER_BLOB>, 16
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       CTL_VERIFY_USAGE_PARA struct
         cbSize DWORD ?
         ListIdentifier CRYPT_DATA_BLOB <>
@@ -4402,6 +4537,7 @@ ifndef __WINCRYPT_H__
       CTL_VERIFY_USAGE_PARA ends
       _CTL_VERIFY_USAGE_PARA typedef CTL_VERIFY_USAGE_PARA
       PCTL_VERIFY_USAGE_PARA typedef ptr CTL_VERIFY_USAGE_PARA
+      
       CTL_VERIFY_USAGE_STATUS struct
         cbSize DWORD ?
         dwError DWORD ?
@@ -4413,16 +4549,17 @@ ifndef __WINCRYPT_H__
       CTL_VERIFY_USAGE_STATUS ends
       _CTL_VERIFY_USAGE_STATUS typedef CTL_VERIFY_USAGE_STATUS
       PCTL_VERIFY_USAGE_STATUS typedef ptr CTL_VERIFY_USAGE_STATUS
+      
       CERT_VERIFY_INHIBIT_CTL_UPDATE_FLAG equ 1h
       CERT_VERIFY_TRUSTED_SIGNERS_FLAG equ 2h
       CERT_VERIFY_NO_TIME_CHECK_FLAG equ 4h
       CERT_VERIFY_ALLOW_MORE_USAGE_FLAG equ 8h
       CERT_VERIFY_UPDATED_CTL_FLAG equ 1h
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CertVerifyCTLUsage, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :ptr, :PCTL_USAGE, :DWORD, :PCTL_VERIFY_USAGE_PARA, :PCTL_VERIFY_USAGE_STATUS>, 28
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       CERT_REVOCATION_CRL_INFO struct
         cbSize DWORD ?
         pBaseCrlContext PCCRL_CONTEXT ?
@@ -4432,8 +4569,7 @@ ifndef __WINCRYPT_H__
       CERT_REVOCATION_CRL_INFO ends
       _CERT_REVOCATION_CRL_INFO typedef CERT_REVOCATION_CRL_INFO
       PCERT_REVOCATION_CRL_INFO typedef ptr CERT_REVOCATION_CRL_INFO
-;      CERT_REVOCATION_CHAIN_PARA typedef _CERT_REVOCATION_CHAIN_PARA
-      PCERT_REVOCATION_CHAIN_PARA typedef ptr _CERT_REVOCATION_CHAIN_PARA
+      
       CERT_REVOCATION_PARA struct
         cbSize DWORD ?
         pIssuerCert PCCERT_CONTEXT ?
@@ -4453,6 +4589,7 @@ ifndef __WINCRYPT_H__
       CERT_REVOCATION_PARA ends
       _CERT_REVOCATION_PARA typedef CERT_REVOCATION_PARA
       PCERT_REVOCATION_PARA typedef ptr CERT_REVOCATION_PARA
+      
       CERT_REVOCATION_STATUS struct
         cbSize DWORD ?
         dwIndex DWORD ?
@@ -4463,11 +4600,12 @@ ifndef __WINCRYPT_H__
       CERT_REVOCATION_STATUS ends
       _CERT_REVOCATION_STATUS typedef CERT_REVOCATION_STATUS
       PCERT_REVOCATION_STATUS typedef ptr CERT_REVOCATION_STATUS
+      
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CertVerifyRevocation, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :DWORD, :ptr PVOID, :DWORD, :PCERT_REVOCATION_PARA, :PCERT_REVOCATION_STATUS>, 28
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       CERT_CONTEXT_REVOCATION_TYPE equ 1
       CERT_VERIFY_REV_CHAIN_FLAG equ 00000001h
       CERT_VERIFY_CACHE_ONLY_BASED_REVOCATION equ 00000002h
@@ -4479,20 +4617,20 @@ ifndef __WINCRYPT_H__
       @DefProto DllImport, CertCompareCertificate, WIN_STD_CALL_CONV,, <:DWORD, :PCERT_INFO, :PCERT_INFO>, 12
       @DefProto DllImport, CertCompareCertificateName, WIN_STD_CALL_CONV,, <:DWORD, :PCERT_NAME_BLOB, :PCERT_NAME_BLOB>, 12
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CertIsRDNAttrsInCertificateName, WIN_STD_CALL_CONV,, <:DWORD, :DWORD, :PCERT_NAME_BLOB, :PCERT_RDN>, 16
       CERT_UNICODE_IS_RDN_ATTRS_FLAG equ 1h
       CERT_CASE_INSENSITIVE_IS_RDN_ATTRS_FLAG equ 2h
       @DefProto DllImport, CertComparePublicKeyInfo, WIN_STD_CALL_CONV,, <:DWORD, :PCERT_PUBLIC_KEY_INFO, :PCERT_PUBLIC_KEY_INFO>, 12
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CertGetPublicKeyLength, WIN_STD_CALL_CONV,, <:DWORD, :PCERT_PUBLIC_KEY_INFO>, 8
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CryptVerifyCertificateSignature, WIN_STD_CALL_CONV,, <:HCRYPTPROV_LEGACY, :DWORD, :ptr BYTE, :DWORD, :PCERT_PUBLIC_KEY_INFO>, 20
       @DefProto DllImport, CryptVerifyCertificateSignatureEx, WIN_STD_CALL_CONV,, <:HCRYPTPROV_LEGACY, :DWORD, :DWORD, :ptr, :DWORD, :ptr, :DWORD, :ptr>, 32
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       CRYPT_VERIFY_CERT_SIGN_SUBJECT_BLOB equ 1
       CRYPT_VERIFY_CERT_SIGN_SUBJECT_CERT equ 2
       CRYPT_VERIFY_CERT_SIGN_SUBJECT_CRL equ 3
@@ -4510,6 +4648,7 @@ ifndef __WINCRYPT_H__
       CRYPT_VERIFY_CERT_SIGN_STRONG_PROPERTIES_INFO ends
       _CRYPT_VERIFY_CERT_SIGN_STRONG_PROPERTIES_INFO typedef CRYPT_VERIFY_CERT_SIGN_STRONG_PROPERTIES_INFO
       PCRYPT_VERIFY_CERT_SIGN_STRONG_PROPERTIES_INFO typedef ptr CRYPT_VERIFY_CERT_SIGN_STRONG_PROPERTIES_INFO
+      
       CRYPT_VERIFY_CERT_SIGN_CHECK_WEAK_HASH_FLAG equ 00000008h
       CRYPT_VERIFY_CERT_SIGN_WEAK_HASH_INFO struct
         cCNGHashAlgid DWORD ?
@@ -4518,57 +4657,54 @@ ifndef __WINCRYPT_H__
       CRYPT_VERIFY_CERT_SIGN_WEAK_HASH_INFO ends
       _CRYPT_VERIFY_CERT_SIGN_WEAK_HASH_INFO typedef CRYPT_VERIFY_CERT_SIGN_WEAK_HASH_INFO
       PCRYPT_VERIFY_CERT_SIGN_WEAK_HASH_INFO typedef ptr CRYPT_VERIFY_CERT_SIGN_WEAK_HASH_INFO
+      
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CertIsStrongHashToSign, WIN_STD_CALL_CONV,, <:PCCERT_STRONG_SIGN_PARA, :LPCWSTR, :PCCERT_CONTEXT>, 12
       @DefProto DllImport, CryptHashToBeSigned, WIN_STD_CALL_CONV,, <:HCRYPTPROV_LEGACY, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :ptr DWORD>, 24
       @DefProto DllImport, CryptHashCertificate, WIN_STD_CALL_CONV,, <:HCRYPTPROV_LEGACY, :ALG_ID, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :ptr DWORD>, 28
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       if (NTDDI_VERSION ge NTDDI_VISTA)
         @DefProto DllImport, CryptHashCertificate2, WIN_STD_CALL_CONV,, <:LPCWSTR, :DWORD, :ptr, :ptr BYTE, :DWORD, :ptr BYTE, :ptr DWORD>, 28
       endif
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
-;      @DefProto DllImport, CryptSignCertificate, WIN_STD_CALL_CONV,, <ifdef CMSG_SIGNER_ENCODE_INFO_HAS_IUM_FIELDS
-;        :BCRYPT_KEY_HANDLE,else
-;         :HCRYPTPROV_OR_NCRYPT_KEY_HANDLE,endif
-;       :DWORD, :DWORD, :ptr BYTE, :DWORD, :PCRYPT_ALGORITHM_IDENTIFIER, :ptr, :ptr BYTE, :ptr DWORD>, 40
-;      @DefProto DllImport, CryptSignAndEncodeCertificate, WIN_STD_CALL_CONV,, <ifdef CMSG_SIGNER_ENCODE_INFO_HAS_IUM_FIELDS
-;        :BCRYPT_KEY_HANDLE,else
-;         :HCRYPTPROV_OR_NCRYPT_KEY_HANDLE,endif
-;       :DWORD, :DWORD, :LPCSTR, :ptr, :PCRYPT_ALGORITHM_IDENTIFIER, :ptr, :ptr BYTE, :ptr DWORD>, 40
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
+      ifdef CMSG_SIGNER_ENCODE_INFO_HAS_IUM_FIELDS
+        @DefProto DllImport, CryptSignCertificate, WIN_STD_CALL_CONV,, <:BCRYPT_KEY_HANDLE,:DWORD, :DWORD, :ptr BYTE, :DWORD, :PCRYPT_ALGORITHM_IDENTIFIER, :ptr , :ptr BYTE, :ptr DWORD>, 40
+        @DefProto DllImport, CryptSignAndEncodeCertificate, WIN_STD_CALL_CONV,, <:BCRYPT_KEY_HANDLE,:DWORD, :DWORD, :LPSTR, :ptr , :PCRYPT_ALGORITHM_IDENTIFIER, :ptr , :ptr BYTE, :ptr DWORD>, 40
+      else
+        @DefProto DllImport, CryptSignCertificate, WIN_STD_CALL_CONV,, <:HCRYPTPROV_OR_NCRYPT_KEY_HANDLE,:DWORD, :DWORD, :ptr BYTE, :DWORD, :PCRYPT_ALGORITHM_IDENTIFIER, :ptr , :ptr BYTE, :ptr DWORD>, 40
+        @DefProto DllImport, CryptSignAndEncodeCertificate, WIN_STD_CALL_CONV,, <:HCRYPTPROV_OR_NCRYPT_KEY_HANDLE,:DWORD, :DWORD, :LPSTR, :ptr , :PCRYPT_ALGORITHM_IDENTIFIER, :ptr , :ptr BYTE, :ptr DWORD>, 40
+      endif
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       CRYPT_OID_EXTRACT_ENCODED_SIGNATURE_PARAMETERS_FUNC equ <"CryptDllExtractEncodedSignatureParameters">
       TYPE_PFN_CRYPT_EXTRACT_ENCODED_SIGNATURE_PARAMETERS_FUNC typedef proto WIN_STD_CALL_CONV :DWORD, :PCRYPT_ALGORITHM_IDENTIFIER, :ptr ptr, :ptr LPWSTR
       PFN_CRYPT_EXTRACT_ENCODED_SIGNATURE_PARAMETERS_FUNC typedef ptr TYPE_PFN_CRYPT_EXTRACT_ENCODED_SIGNATURE_PARAMETERS_FUNC
-
       CRYPT_OID_SIGN_AND_ENCODE_HASH_FUNC equ <"CryptDllSignAndEncodeHash">
       TYPE_PFN_CRYPT_SIGN_AND_ENCODE_HASH_FUNC typedef proto WIN_STD_CALL_CONV :NCRYPT_KEY_HANDLE, :DWORD, :PCRYPT_ALGORITHM_IDENTIFIER, :ptr, :LPCWSTR, :LPCWSTR, :ptr BYTE, :DWORD, :ptr BYTE, :ptr DWORD
       PFN_CRYPT_SIGN_AND_ENCODE_HASH_FUNC typedef ptr TYPE_PFN_CRYPT_SIGN_AND_ENCODE_HASH_FUNC
-
       CRYPT_OID_VERIFY_ENCODED_SIGNATURE_FUNC equ <"CryptDllVerifyEncodedSignature">
       TYPE_PFN_CRYPT_VERIFY_ENCODED_SIGNATURE_FUNC typedef proto WIN_STD_CALL_CONV :DWORD, :PCERT_PUBLIC_KEY_INFO, :PCRYPT_ALGORITHM_IDENTIFIER, :ptr, :LPCWSTR, :LPCWSTR, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD
       PFN_CRYPT_VERIFY_ENCODED_SIGNATURE_FUNC typedef ptr TYPE_PFN_CRYPT_VERIFY_ENCODED_SIGNATURE_FUNC
-
       @DefProto DllImport, CertVerifyTimeValidity, WIN_STD_CALL_CONV,, <:LPFILETIME, :PCERT_INFO>, 8
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CertVerifyCRLTimeValidity, WIN_STD_CALL_CONV,, <:LPFILETIME, :PCRL_INFO>, 8
       @DefProto DllImport, CertVerifyValidityNesting, WIN_STD_CALL_CONV,, <:PCERT_INFO, :PCERT_INFO>, 8
       @DefProto DllImport, CertVerifyCRLRevocation, WIN_STD_CALL_CONV,, <:DWORD, :PCERT_INFO, :DWORD, :ptr PCRL_INFO>, 16
       @DefProto DllImport, CertAlgIdToOID, WIN_STD_CALL_CONV,, <:DWORD>, 4
       @DefProto DllImport, CertOIDToAlgId, WIN_STD_CALL_CONV,, <:LPCSTR>, 4
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CertFindExtension, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD, :ptr CERT_EXTENSION>, 12
       @DefProto DllImport, CertFindAttribute, WIN_STD_CALL_CONV,, <:LPCSTR, :DWORD, :ptr CRYPT_ATTRIBUTE>, 12
       @DefProto DllImport, CertFindRDNAttr, WIN_STD_CALL_CONV,, <:LPCSTR, :PCERT_NAME_INFO>, 8
       @DefProto DllImport, CertGetIntendedKeyUsage, WIN_STD_CALL_CONV,, <:DWORD, :PCERT_INFO, :ptr BYTE, :DWORD>, 16
       HCRYPTDEFAULTCONTEXT typedef ptr
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CryptInstallDefaultContext, WIN_STD_CALL_CONV,, <:HCRYPTPROV, :DWORD, :ptr, :DWORD, :ptr, :ptr HCRYPTDEFAULTCONTEXT>, 24
       CRYPT_DEFAULT_CONTEXT_AUTO_RELEASE_FLAG equ 00000001h
       CRYPT_DEFAULT_CONTEXT_PROCESS_FLAG equ 00000002h
@@ -4580,6 +4716,7 @@ ifndef __WINCRYPT_H__
       CRYPT_DEFAULT_CONTEXT_MULTI_OID_PARA ends
       _CRYPT_DEFAULT_CONTEXT_MULTI_OID_PARA typedef CRYPT_DEFAULT_CONTEXT_MULTI_OID_PARA
       PCRYPT_DEFAULT_CONTEXT_MULTI_OID_PARA typedef ptr CRYPT_DEFAULT_CONTEXT_MULTI_OID_PARA
+      
       @DefProto DllImport, CryptUninstallDefaultContext, WIN_STD_CALL_CONV,, <:HCRYPTDEFAULTCONTEXT, :DWORD, :ptr>, 12
       @DefProto DllImport, CryptExportPublicKeyInfo, WIN_STD_CALL_CONV,, <:HCRYPTPROV_OR_NCRYPT_KEY_HANDLE, :DWORD, :DWORD, :PCERT_PUBLIC_KEY_INFO, :ptr DWORD>, 20
       @DefProto DllImport, CryptExportPublicKeyInfoEx, WIN_STD_CALL_CONV,, <:HCRYPTPROV_OR_NCRYPT_KEY_HANDLE, :DWORD, :DWORD, :LPSTR, :DWORD, :ptr, :PCERT_PUBLIC_KEY_INFO, :ptr DWORD>, 32
@@ -4587,30 +4724,27 @@ ifndef __WINCRYPT_H__
       CRYPT_OID_EXPORT_PUBLIC_KEY_INFO_EX2_FUNC equ <"CryptDllExportPublicKeyInfoEx2">
       TYPE_PFN_CRYPT_EXPORT_PUBLIC_KEY_INFO_EX2_FUNC typedef proto WIN_STD_CALL_CONV :NCRYPT_KEY_HANDLE, :DWORD, :LPSTR, :DWORD, :ptr, :PCERT_PUBLIC_KEY_INFO, :ptr DWORD
       PFN_CRYPT_EXPORT_PUBLIC_KEY_INFO_EX2_FUNC typedef ptr TYPE_PFN_CRYPT_EXPORT_PUBLIC_KEY_INFO_EX2_FUNC
-
       if (NTDDI_VERSION ge NTDDI_WIN7)
         @DefProto DllImport, CryptExportPublicKeyInfoFromBCryptKeyHandle, WIN_STD_CALL_CONV,, <:BCRYPT_KEY_HANDLE, :DWORD, :LPSTR, :DWORD, :ptr, :PCERT_PUBLIC_KEY_INFO, :ptr DWORD>, 28
         CRYPT_OID_EXPORT_PUBLIC_KEY_INFO_FROM_BCRYPT_HANDLE_FUNC equ <"CryptDllExportPublicKeyInfoFromBCryptKeyHandle">
         TYPE_PFN_CRYPT_EXPORT_PUBLIC_KEY_INFO_FROM_BCRYPT_HANDLE_FUNC typedef proto WIN_STD_CALL_CONV :BCRYPT_KEY_HANDLE, :DWORD, :LPSTR, :DWORD, :ptr, :PCERT_PUBLIC_KEY_INFO, :ptr DWORD
         PFN_CRYPT_EXPORT_PUBLIC_KEY_INFO_FROM_BCRYPT_HANDLE_FUNC typedef ptr TYPE_PFN_CRYPT_EXPORT_PUBLIC_KEY_INFO_FROM_BCRYPT_HANDLE_FUNC
-
       endif
       @DefProto DllImport, CryptImportPublicKeyInfo, WIN_STD_CALL_CONV,, <:HCRYPTPROV, :DWORD, :PCERT_PUBLIC_KEY_INFO, :ptr HCRYPTKEY>, 16
       CRYPT_OID_IMPORT_PUBLIC_KEY_INFO_FUNC equ <"CryptDllImportPublicKeyInfoEx">
       @DefProto DllImport, CryptImportPublicKeyInfoEx, WIN_STD_CALL_CONV,, <:HCRYPTPROV, :DWORD, :PCERT_PUBLIC_KEY_INFO, :ALG_ID, :DWORD, :ptr, :ptr HCRYPTKEY>, 28
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       if (NTDDI_VERSION ge NTDDI_VISTA)
         @DefProto DllImport, CryptImportPublicKeyInfoEx2, WIN_STD_CALL_CONV,, <:DWORD, :PCERT_PUBLIC_KEY_INFO, :DWORD, :ptr, :ptr BCRYPT_KEY_HANDLE>, 20
         CRYPT_OID_IMPORT_PUBLIC_KEY_INFO_EX2_FUNC equ <"CryptDllImportPublicKeyInfoEx2">
         TYPE_PFN_IMPORT_PUBLIC_KEY_INFO_EX2_FUNC typedef proto WIN_STD_CALL_CONV :DWORD, :PCERT_PUBLIC_KEY_INFO, :DWORD, :ptr, :ptr BCRYPT_KEY_HANDLE
         PFN_IMPORT_PUBLIC_KEY_INFO_EX2_FUNC typedef ptr TYPE_PFN_IMPORT_PUBLIC_KEY_INFO_EX2_FUNC
-
       endif
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CryptAcquireCertificatePrivateKey, WIN_STD_CALL_CONV,, <:PCCERT_CONTEXT, :DWORD, :ptr, :ptr HCRYPTPROV_OR_NCRYPT_KEY_HANDLE, :ptr DWORD, :ptr BOOL>, 24
       CRYPT_ACQUIRE_CACHE_FLAG equ 00000001h
       CRYPT_ACQUIRE_USE_PROV_INFO_FLAG equ 00000002h
@@ -4623,27 +4757,25 @@ ifndef __WINCRYPT_H__
       CRYPT_ACQUIRE_PREFER_NCRYPT_KEY_FLAG equ 00020000h
       CRYPT_ACQUIRE_ONLY_NCRYPT_KEY_FLAG equ 00040000h
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CryptFindCertificateKeyProvInfo, WIN_STD_CALL_CONV,, <:PCCERT_CONTEXT, :DWORD, :ptr>, 12
       CRYPT_FIND_USER_KEYSET_FLAG equ 00000001h
       CRYPT_FIND_MACHINE_KEYSET_FLAG equ 00000002h
       CRYPT_FIND_SILENT_KEYSET_FLAG equ 00000040h
       TYPE_PFN_IMPORT_PRIV_KEY_FUNC typedef proto WIN_STD_CALL_CONV :HCRYPTPROV, :ptr CRYPT_PRIVATE_KEY_INFO, :DWORD, :ptr
       PFN_IMPORT_PRIV_KEY_FUNC typedef ptr TYPE_PFN_IMPORT_PRIV_KEY_FUNC
-
       CRYPT_OID_IMPORT_PRIVATE_KEY_INFO_FUNC equ <"CryptDllImportPrivateKeyInfoEx">
       @DefProto DllImport, CryptImportPKCS8, WIN_STD_CALL_CONV,, <:CRYPT_PKCS8_IMPORT_PARAMS, :DWORD, :ptr HCRYPTPROV, :ptr>, 16
       TYPE_PFN_EXPORT_PRIV_KEY_FUNC typedef proto WIN_STD_CALL_CONV :HCRYPTPROV, :DWORD, :LPSTR, :DWORD, :ptr, :ptr CRYPT_PRIVATE_KEY_INFO, :ptr DWORD
       PFN_EXPORT_PRIV_KEY_FUNC typedef ptr TYPE_PFN_EXPORT_PRIV_KEY_FUNC
-
       CRYPT_OID_EXPORT_PRIVATE_KEY_INFO_FUNC equ <"CryptDllExportPrivateKeyInfoEx">
       CRYPT_DELETE_KEYSET equ <CRYPT_DELETEKEYSET>
       @DefProto DllImport, CryptExportPKCS8, WIN_STD_CALL_CONV,, <:HCRYPTPROV, :DWORD, :LPSTR, :DWORD, :ptr, :ptr BYTE, :ptr DWORD>, 28
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED)
       @DefProto DllImport, CryptExportPKCS8Ex, WIN_STD_CALL_CONV,, <:ptr CRYPT_PKCS8_EXPORT_PARAMS, :DWORD, :ptr, :ptr BYTE, :ptr DWORD>, 20
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CryptHashPublicKeyInfo, WIN_STD_CALL_CONV,, <:HCRYPTPROV_LEGACY, :ALG_ID, :DWORD, :DWORD, :PCERT_PUBLIC_KEY_INFO, :ptr BYTE, :ptr DWORD>, 28
       @DefProto DllImport, CertRDNValueToStrA, WIN_STD_CALL_CONV,, <:DWORD, :PCERT_RDN_VALUE_BLOB, :LPSTR, :DWORD>, 16
       @DefProto DllImport, CertRDNValueToStrW, WIN_STD_CALL_CONV,, <:DWORD, :PCERT_RDN_VALUE_BLOB, :LPWSTR, :DWORD>, 16
@@ -4703,7 +4835,6 @@ ifndef __WINCRYPT_H__
       CERT_NAME_SEARCH_ALL_NAMES_FLAG equ 2h
       TYPE_PFN_CRYPT_GET_SIGNER_CERTIFICATE typedef proto WIN_STD_CALL_CONV :ptr, :DWORD, :PCERT_INFO, :HCERTSTORE
       PFN_CRYPT_GET_SIGNER_CERTIFICATE typedef ptr TYPE_PFN_CRYPT_GET_SIGNER_CERTIFICATE
-
       CRYPT_SIGN_MESSAGE_PARA struct
         cbSize DWORD ?
         dwMsgEncodingType DWORD ?
@@ -4727,6 +4858,7 @@ ifndef __WINCRYPT_H__
       CRYPT_SIGN_MESSAGE_PARA ends
       _CRYPT_SIGN_MESSAGE_PARA typedef CRYPT_SIGN_MESSAGE_PARA
       PCRYPT_SIGN_MESSAGE_PARA typedef ptr CRYPT_SIGN_MESSAGE_PARA
+      
       CRYPT_MESSAGE_BARE_CONTENT_OUT_FLAG equ 00000001h
       CRYPT_MESSAGE_ENCAPSULATED_CONTENT_OUT_FLAG equ 00000002h
       CRYPT_MESSAGE_KEYID_SIGNER_FLAG equ 00000004h
@@ -4743,6 +4875,7 @@ ifndef __WINCRYPT_H__
       CRYPT_VERIFY_MESSAGE_PARA ends
       _CRYPT_VERIFY_MESSAGE_PARA typedef CRYPT_VERIFY_MESSAGE_PARA
       PCRYPT_VERIFY_MESSAGE_PARA typedef ptr CRYPT_VERIFY_MESSAGE_PARA
+      
       CRYPT_ENCRYPT_MESSAGE_PARA struct
         cbSize DWORD ?
         dwMsgEncodingType DWORD ?
@@ -4754,6 +4887,7 @@ ifndef __WINCRYPT_H__
       CRYPT_ENCRYPT_MESSAGE_PARA ends
       _CRYPT_ENCRYPT_MESSAGE_PARA typedef CRYPT_ENCRYPT_MESSAGE_PARA
       PCRYPT_ENCRYPT_MESSAGE_PARA typedef ptr CRYPT_ENCRYPT_MESSAGE_PARA
+      
       CRYPT_MESSAGE_KEYID_RECIPIENT_FLAG equ 4h
       CRYPT_DECRYPT_MESSAGE_PARA struct
         cbSize DWORD ?
@@ -4766,6 +4900,7 @@ ifndef __WINCRYPT_H__
       CRYPT_DECRYPT_MESSAGE_PARA ends
       _CRYPT_DECRYPT_MESSAGE_PARA typedef CRYPT_DECRYPT_MESSAGE_PARA
       PCRYPT_DECRYPT_MESSAGE_PARA typedef ptr CRYPT_DECRYPT_MESSAGE_PARA
+      
       CRYPT_HASH_MESSAGE_PARA struct
         cbSize DWORD ?
         dwMsgEncodingType DWORD ?
@@ -4775,6 +4910,7 @@ ifndef __WINCRYPT_H__
       CRYPT_HASH_MESSAGE_PARA ends
       _CRYPT_HASH_MESSAGE_PARA typedef CRYPT_HASH_MESSAGE_PARA
       PCRYPT_HASH_MESSAGE_PARA typedef ptr CRYPT_HASH_MESSAGE_PARA
+      
       CRYPT_KEY_SIGN_MESSAGE_PARA struct
         cbSize DWORD ?
         dwMsgAndCertEncodingType DWORD ?
@@ -4789,6 +4925,7 @@ ifndef __WINCRYPT_H__
       CRYPT_KEY_SIGN_MESSAGE_PARA ends
       _CRYPT_KEY_SIGN_MESSAGE_PARA typedef CRYPT_KEY_SIGN_MESSAGE_PARA
       PCRYPT_KEY_SIGN_MESSAGE_PARA typedef ptr CRYPT_KEY_SIGN_MESSAGE_PARA
+      
       CRYPT_KEY_VERIFY_MESSAGE_PARA struct
         cbSize DWORD ?
         dwMsgEncodingType DWORD ?
@@ -4796,8 +4933,9 @@ ifndef __WINCRYPT_H__
       CRYPT_KEY_VERIFY_MESSAGE_PARA ends
       _CRYPT_KEY_VERIFY_MESSAGE_PARA typedef CRYPT_KEY_VERIFY_MESSAGE_PARA
       PCRYPT_KEY_VERIFY_MESSAGE_PARA typedef ptr CRYPT_KEY_VERIFY_MESSAGE_PARA
+      
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CryptSignMessage, WIN_STD_CALL_CONV,, <:PCRYPT_SIGN_MESSAGE_PARA, :BOOL, :DWORD, :ptr ptr BYTE, :ptr DWORD, :ptr BYTE, :ptr DWORD>, 28
       @DefProto DllImport, CryptVerifyMessageSignature, WIN_STD_CALL_CONV,, <:PCRYPT_VERIFY_MESSAGE_PARA, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :ptr DWORD, :ptr PCCERT_CONTEXT>, 28
       @DefProto DllImport, CryptGetMessageSignerCount, WIN_STD_CALL_CONV,, <:DWORD, :ptr BYTE, :DWORD>, 12
@@ -4813,8 +4951,6 @@ ifndef __WINCRYPT_H__
       @DefProto DllImport, CryptVerifyDetachedMessageHash, WIN_STD_CALL_CONV,, <:PCRYPT_HASH_MESSAGE_PARA, :ptr BYTE, :DWORD, :DWORD, :ptr ptr BYTE, :ptr DWORD, :ptr BYTE, :ptr DWORD>, 32
       @DefProto DllImport, CryptSignMessageWithKey, WIN_STD_CALL_CONV,, <:PCRYPT_KEY_SIGN_MESSAGE_PARA, :ptr BYTE, :DWORD, :ptr BYTE, :ptr DWORD>, 20
       @DefProto DllImport, CryptVerifyMessageSignatureWithKey, WIN_STD_CALL_CONV,, <:PCRYPT_KEY_VERIFY_MESSAGE_PARA, :PCERT_PUBLIC_KEY_INFO, :ptr BYTE, :DWORD, :ptr BYTE, :ptr DWORD>, 24
-    endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, CertOpenSystemStoreA, WIN_STD_CALL_CONV,, <:HCRYPTPROV_LEGACY, :LPCSTR>, 8
       @DefProto DllImport, CertOpenSystemStoreW, WIN_STD_CALL_CONV,, <:HCRYPTPROV_LEGACY, :LPCWSTR>, 8
       ifdef UNICODE
@@ -4822,8 +4958,6 @@ ifndef __WINCRYPT_H__
       else
         CertOpenSystemStore equ <CertOpenSystemStoreA>
       endif
-    endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
       @DefProto DllImport, CertAddEncodedCertificateToSystemStoreA, WIN_STD_CALL_CONV,, <:LPCSTR, :ptr BYTE, :DWORD>, 12
       @DefProto DllImport, CertAddEncodedCertificateToSystemStoreW, WIN_STD_CALL_CONV,, <:LPCWSTR, :ptr BYTE, :DWORD>, 12
       ifdef UNICODE
@@ -4832,7 +4966,7 @@ ifndef __WINCRYPT_H__
         CertAddEncodedCertificateToSystemStore equ <CertAddEncodedCertificateToSystemStoreA>
       endif
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_PKG_WINTRUST or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_PKG_WINTRUST)
       CERT_CHAIN struct
         cCerts DWORD ?
         certs PCERT_BLOB ?
@@ -4840,9 +4974,10 @@ ifndef __WINCRYPT_H__
       CERT_CHAIN ends
       _CERT_CHAIN typedef CERT_CHAIN
       PCERT_CHAIN typedef ptr CERT_CHAIN
+      
       FindCertsByIssuer proto WIN_STD_CALL_CONV :PCERT_CHAIN, :ptr DWORD, :ptr DWORD, :ptr BYTE, :DWORD, :LPCWSTR, :DWORD
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CryptQueryObject, WIN_STD_CALL_CONV,, <:DWORD, :ptr, :DWORD, :DWORD, :DWORD, :ptr DWORD, :ptr DWORD, :ptr DWORD, :ptr HCERTSTORE, :ptr HCRYPTMSG, :ptr ptr>, 44
       CERT_QUERY_OBJECT_FILE equ 00000001h
       CERT_QUERY_OBJECT_BLOB equ 00000002h
@@ -4874,7 +5009,11 @@ ifndef __WINCRYPT_H__
       CERT_QUERY_CONTENT_FLAG_PFX equ (1 shl CERT_QUERY_CONTENT_PFX)
       CERT_QUERY_CONTENT_FLAG_CERT_PAIR equ (1 shl CERT_QUERY_CONTENT_CERT_PAIR)
       CERT_QUERY_CONTENT_FLAG_PFX_AND_LOAD equ (1 shl CERT_QUERY_CONTENT_PFX_AND_LOAD)
-      CERT_QUERY_CONTENT_FLAG_ALL equ <(CERT_QUERY_CONTENT_FLAG_CERT or CERT_QUERY_CONTENT_FLAG_CTL or CERT_QUERY_CONTENT_FLAG_CRL or CERT_QUERY_CONTENT_FLAG_SERIALIZED_STORE or CERT_QUERY_CONTENT_FLAG_SERIALIZED_CERT or CERT_QUERY_CONTENT_FLAG_SERIALIZED_CTL or CERT_QUERY_CONTENT_FLAG_SERIALIZED_CRL or CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED or CERT_QUERY_CONTENT_FLAG_PKCS7_UNSIGNED or CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED or CERT_QUERY_CONTENT_FLAG_PKCS10 or CERT_QUERY_CONTENT_FLAG_PFX or CERT_QUERY_CONTENT_FLAG_CERT_PAIR)>
+      CERT_QUERY_CONTENT_FLAG_ALL equ <>
+      ;(CERT_QUERY_CONTENT_FLAG_CERT or CERT_QUERY_CONTENT_FLAG_CTL or CERT_QUERY_CONTENT_FLAG_CRL or CERT_QUERY_CONTENT_FLAG_SERIALIZED_STORE or 
+      ;CERT_QUERY_CONTENT_FLAG_SERIALIZED_CERT or CERT_QUERY_CONTENT_FLAG_SERIALIZED_CTL or CERT_QUERY_CONTENT_FLAG_SERIALIZED_CRL or 
+      ;CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED or CERT_QUERY_CONTENT_FLAG_PKCS7_UNSIGNED or CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED or 
+      ;CERT_QUERY_CONTENT_FLAG_PKCS10 or CERT_QUERY_CONTENT_FLAG_PFX or CERT_QUERY_CONTENT_FLAG_CERT_PAIR)
       CERT_QUERY_CONTENT_FLAG_ALL_ISSUER_CERT equ <(CERT_QUERY_CONTENT_FLAG_CERT or CERT_QUERY_CONTENT_FLAG_SERIALIZED_STORE or CERT_QUERY_CONTENT_FLAG_SERIALIZED_CERT or CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED or CERT_QUERY_CONTENT_FLAG_PKCS7_UNSIGNED)>
       CERT_QUERY_FORMAT_BINARY equ 1
       CERT_QUERY_FORMAT_BASE64_ENCODED equ 2
@@ -4884,7 +5023,7 @@ ifndef __WINCRYPT_H__
       CERT_QUERY_FORMAT_FLAG_ASN_ASCII_HEX_ENCODED equ (1 shl CERT_QUERY_FORMAT_ASN_ASCII_HEX_ENCODED)
       CERT_QUERY_FORMAT_FLAG_ALL equ <(CERT_QUERY_FORMAT_FLAG_BINARY or CERT_QUERY_FORMAT_FLAG_BASE64_ENCODED or CERT_QUERY_FORMAT_FLAG_ASN_ASCII_HEX_ENCODED)>
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CryptMemAlloc, WIN_STD_CALL_CONV,, <:ULONG>, 4
       @DefProto DllImport, CryptMemRealloc, WIN_STD_CALL_CONV,, <:LPVOID, :ULONG>, 8
       @DefProto DllImport, CryptMemFree, WIN_STD_CALL_CONV,, <:LPVOID>, 4
@@ -4892,19 +5031,19 @@ ifndef __WINCRYPT_H__
       PHCRYPTASYNC typedef ptr HANDLE
       TYPE_PFN_CRYPT_ASYNC_PARAM_FREE_FUNC typedef proto WIN_STD_CALL_CONV :LPSTR, :LPVOID
       PFN_CRYPT_ASYNC_PARAM_FREE_FUNC typedef ptr TYPE_PFN_CRYPT_ASYNC_PARAM_FREE_FUNC
-
       @DefProto DllImport, CryptCreateAsyncHandle, WIN_STD_CALL_CONV,, <:DWORD, :PHCRYPTASYNC>, 8
       @DefProto DllImport, CryptSetAsyncParam, WIN_STD_CALL_CONV,, <:HCRYPTASYNC, :LPSTR, :LPVOID, :PFN_CRYPT_ASYNC_PARAM_FREE_FUNC>, 16
       @DefProto DllImport, CryptGetAsyncParam, WIN_STD_CALL_CONV,, <:HCRYPTASYNC, :LPSTR, :ptr LPVOID, :ptr PFN_CRYPT_ASYNC_PARAM_FREE_FUNC>, 16
       @DefProto DllImport, CryptCloseAsyncHandle, WIN_STD_CALL_CONV,, <:HCRYPTASYNC>, 4
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       CRYPT_BLOB_ARRAY struct
         cBlob DWORD ?
         rgBlob PCRYPT_DATA_BLOB ?
       CRYPT_BLOB_ARRAY ends
       _CRYPT_BLOB_ARRAY typedef CRYPT_BLOB_ARRAY
       PCRYPT_BLOB_ARRAY typedef ptr CRYPT_BLOB_ARRAY
+      
       CRYPT_CREDENTIALS struct
         cbSize DWORD ?
         pszCredentialsOid LPCSTR ?
@@ -4912,6 +5051,7 @@ ifndef __WINCRYPT_H__
       CRYPT_CREDENTIALS ends
       _CRYPT_CREDENTIALS typedef CRYPT_CREDENTIALS
       PCRYPT_CREDENTIALS typedef ptr CRYPT_CREDENTIALS
+      
       CREDENTIAL_OID_PASSWORD_CREDENTIALS_A equ (1)
       CREDENTIAL_OID_PASSWORD_CREDENTIALS_W equ (2)
       ifdef UNICODE
@@ -4926,6 +5066,7 @@ ifndef __WINCRYPT_H__
       CRYPT_PASSWORD_CREDENTIALSA ends
       _CRYPT_PASSWORD_CREDENTIALSA typedef CRYPT_PASSWORD_CREDENTIALSA
       PCRYPT_PASSWORD_CREDENTIALSA typedef ptr CRYPT_PASSWORD_CREDENTIALSA
+      
       CRYPT_PASSWORD_CREDENTIALSW struct
         cbSize DWORD ?
         pszUsername LPWSTR ?
@@ -4933,6 +5074,7 @@ ifndef __WINCRYPT_H__
       CRYPT_PASSWORD_CREDENTIALSW ends
       _CRYPT_PASSWORD_CREDENTIALSW typedef CRYPT_PASSWORD_CREDENTIALSW
       PCRYPT_PASSWORD_CREDENTIALSW typedef ptr CRYPT_PASSWORD_CREDENTIALSW
+      
       ifdef UNICODE
         CRYPT_PASSWORD_CREDENTIALS typedef CRYPT_PASSWORD_CREDENTIALSW
         PCRYPT_PASSWORD_CREDENTIALS typedef PCRYPT_PASSWORD_CREDENTIALSW
@@ -4944,7 +5086,6 @@ ifndef __WINCRYPT_H__
       SCHEME_OID_RETRIEVE_ENCODED_OBJECTW_FUNC equ <"SchemeDllRetrieveEncodedObjectW">
       TYPE_PFN_FREE_ENCODED_OBJECT_FUNC typedef proto WIN_STD_CALL_CONV :LPCSTR, :PCRYPT_BLOB_ARRAY, :LPVOID
       PFN_FREE_ENCODED_OBJECT_FUNC typedef ptr TYPE_PFN_FREE_ENCODED_OBJECT_FUNC
-
       CONTEXT_OID_CREATE_OBJECT_CONTEXT_FUNC equ <"ContextDllCreateObjectContext">
       CONTEXT_OID_CERTIFICATE equ (1)
       CONTEXT_OID_CRL equ (2)
@@ -4992,6 +5133,7 @@ ifndef __WINCRYPT_H__
       CRYPTNET_URL_CACHE_PRE_FETCH_INFO ends
       _CRYPTNET_URL_CACHE_PRE_FETCH_INFO typedef CRYPTNET_URL_CACHE_PRE_FETCH_INFO
       PCRYPTNET_URL_CACHE_PRE_FETCH_INFO typedef ptr CRYPTNET_URL_CACHE_PRE_FETCH_INFO
+      
       CRYPTNET_URL_CACHE_PRE_FETCH_NONE equ 0
       CRYPTNET_URL_CACHE_PRE_FETCH_BLOB equ 1
       CRYPTNET_URL_CACHE_PRE_FETCH_CRL equ 2
@@ -5006,6 +5148,7 @@ ifndef __WINCRYPT_H__
       CRYPTNET_URL_CACHE_FLUSH_INFO ends
       _CRYPTNET_URL_CACHE_FLUSH_INFO typedef CRYPTNET_URL_CACHE_FLUSH_INFO
       PCRYPTNET_URL_CACHE_FLUSH_INFO typedef ptr CRYPTNET_URL_CACHE_FLUSH_INFO
+      
       CRYPTNET_URL_CACHE_DEFAULT_FLUSH equ 0
       CRYPTNET_URL_CACHE_DISABLE_FLUSH equ 0FFFFFFFFh
       CRYPTNET_URL_CACHE_RESPONSE_INFO struct
@@ -5019,6 +5162,7 @@ ifndef __WINCRYPT_H__
       CRYPTNET_URL_CACHE_RESPONSE_INFO ends
       _CRYPTNET_URL_CACHE_RESPONSE_INFO typedef CRYPTNET_URL_CACHE_RESPONSE_INFO
       PCRYPTNET_URL_CACHE_RESPONSE_INFO typedef ptr CRYPTNET_URL_CACHE_RESPONSE_INFO
+      
       CRYPTNET_URL_CACHE_RESPONSE_NONE equ 0
       CRYPTNET_URL_CACHE_RESPONSE_HTTP equ 1
       CRYPTNET_URL_CACHE_RESPONSE_VALIDATED equ 8000h
@@ -5038,9 +5182,10 @@ ifndef __WINCRYPT_H__
       CRYPT_RETRIEVE_AUX_INFO ends
       _CRYPT_RETRIEVE_AUX_INFO typedef CRYPT_RETRIEVE_AUX_INFO
       PCRYPT_RETRIEVE_AUX_INFO typedef ptr CRYPT_RETRIEVE_AUX_INFO
+      
       CRYPT_RETRIEVE_MAX_ERROR_CONTENT_LENGTH equ 1000h
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CryptRetrieveObjectByUrlA, WIN_STD_CALL_CONV,, <:LPCSTR, :LPCSTR, :DWORD, :DWORD, :ptr LPVOID, :HCRYPTASYNC, :PCRYPT_CREDENTIALS, :LPVOID, :PCRYPT_RETRIEVE_AUX_INFO>, 36
       @DefProto DllImport, CryptRetrieveObjectByUrlW, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCSTR, :DWORD, :DWORD, :ptr LPVOID, :HCRYPTASYNC, :PCRYPT_CREDENTIALS, :LPVOID, :PCRYPT_RETRIEVE_AUX_INFO>, 36
       ifdef UNICODE
@@ -5050,28 +5195,26 @@ ifndef __WINCRYPT_H__
       endif
       TYPE_PFN_CRYPT_CANCEL_RETRIEVAL typedef proto WIN_STD_CALL_CONV :DWORD, :ptr
       PFN_CRYPT_CANCEL_RETRIEVAL typedef ptr TYPE_PFN_CRYPT_CANCEL_RETRIEVAL
-
       @DefProto DllImport, CryptInstallCancelRetrieval, WIN_STD_CALL_CONV,, <:PFN_CRYPT_CANCEL_RETRIEVAL, :ptr, :DWORD, :ptr>, 16
       @DefProto DllImport, CryptUninstallCancelRetrieval, WIN_STD_CALL_CONV,, <:DWORD, :ptr>, 8
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED)
       @DefProto DllImport, CryptCancelAsyncRetrieval, WIN_STD_CALL_CONV,, <:HCRYPTASYNC>, 4
       CRYPT_PARAM_ASYNC_RETRIEVAL_COMPLETION equ (1)
       TYPE_PFN_CRYPT_ASYNC_RETRIEVAL_COMPLETION_FUNC typedef proto WIN_STD_CALL_CONV :LPVOID, :DWORD, :LPCSTR, :LPSTR, :LPVOID
       PFN_CRYPT_ASYNC_RETRIEVAL_COMPLETION_FUNC typedef ptr TYPE_PFN_CRYPT_ASYNC_RETRIEVAL_COMPLETION_FUNC
-
       CRYPT_ASYNC_RETRIEVAL_COMPLETION struct
         pfnCompletion PFN_CRYPT_ASYNC_RETRIEVAL_COMPLETION_FUNC ?
         pvCompletion LPVOID ?
       CRYPT_ASYNC_RETRIEVAL_COMPLETION ends
       _CRYPT_ASYNC_RETRIEVAL_COMPLETION typedef CRYPT_ASYNC_RETRIEVAL_COMPLETION
       PCRYPT_ASYNC_RETRIEVAL_COMPLETION typedef ptr CRYPT_ASYNC_RETRIEVAL_COMPLETION
+      
       CRYPT_PARAM_CANCEL_ASYNC_RETRIEVAL equ (2)
       TYPE_PFN_CANCEL_ASYNC_RETRIEVAL_FUNC typedef proto WIN_STD_CALL_CONV :HCRYPTASYNC
       PFN_CANCEL_ASYNC_RETRIEVAL_FUNC typedef ptr TYPE_PFN_CANCEL_ASYNC_RETRIEVAL_FUNC
-
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       CRYPT_GET_URL_FROM_PROPERTY equ 00000001h
       CRYPT_GET_URL_FROM_EXTENSION equ 00000002h
       CRYPT_GET_URL_FROM_UNAUTH_ATTRIBUTE equ 00000004h
@@ -5082,6 +5225,7 @@ ifndef __WINCRYPT_H__
       CRYPT_URL_ARRAY ends
       _CRYPT_URL_ARRAY typedef CRYPT_URL_ARRAY
       PCRYPT_URL_ARRAY typedef ptr CRYPT_URL_ARRAY
+      
       CRYPT_URL_INFO struct
         cbSize DWORD ?
         dwSyncDeltaTime DWORD ?
@@ -5090,6 +5234,7 @@ ifndef __WINCRYPT_H__
       CRYPT_URL_INFO ends
       _CRYPT_URL_INFO typedef CRYPT_URL_INFO
       PCRYPT_URL_INFO typedef ptr CRYPT_URL_INFO
+      
       @DefProto DllImport, CryptGetObjectUrl, WIN_STD_CALL_CONV,, <:LPCSTR, :LPVOID, :DWORD, :PCRYPT_URL_ARRAY, :ptr DWORD, :PCRYPT_URL_INFO, :ptr DWORD, :LPVOID>, 32
       URL_OID_GET_OBJECT_URL_FUNC equ <"UrlDllGetObjectUrl">
       URL_OID_CERTIFICATE_ISSUER equ (1)
@@ -5111,20 +5256,22 @@ ifndef __WINCRYPT_H__
       CERT_CRL_CONTEXT_PAIR ends
       _CERT_CRL_CONTEXT_PAIR typedef CERT_CRL_CONTEXT_PAIR
       PCERT_CRL_CONTEXT_PAIR typedef ptr CERT_CRL_CONTEXT_PAIR
+      
       PCCERT_CRL_CONTEXT_PAIR typedef ptr CERT_CRL_CONTEXT_PAIR
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED)
       CRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO struct
         cbSize DWORD ?
         iDeltaCrlIndicator SDWORD ?
         pftCacheResync LPFILETIME ?
         pLastSyncTime LPFILETIME ?
         pMaxAgeTime LPFILETIME ?
-        pChainPara PCERT_REVOCATION_CHAIN_PARA ?
+        pChainPara POINTER ?
         pDeltaCrlIndicator PCRYPT_INTEGER_BLOB ?
       CRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO ends
       _CRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO typedef CRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO
       PCRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO typedef ptr CRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO
+      
       @DefProto DllImport, CryptGetTimeValidObject, WIN_STD_CALL_CONV,, <:LPCSTR, :LPVOID, :PCCERT_CONTEXT, :LPFILETIME, :DWORD, :DWORD, :ptr LPVOID, :PCRYPT_CREDENTIALS, :PCRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO>, 36
       TIME_VALID_OID_GET_OBJECT_FUNC equ <"TimeValidDllGetObject">
       TIME_VALID_OID_GET_CTL equ (1)
@@ -5140,12 +5287,12 @@ ifndef __WINCRYPT_H__
       TIME_VALID_OID_FLUSH_FRESHEST_CRL_FROM_CERT equ (4)
       TIME_VALID_OID_FLUSH_FRESHEST_CRL_FROM_CRL equ (5)
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CertCreateSelfSignCertificate, WIN_STD_CALL_CONV,, <:HCRYPTPROV_OR_NCRYPT_KEY_HANDLE, :PCERT_NAME_BLOB, :DWORD, :PCRYPT_KEY_PROV_INFO, :PCRYPT_ALGORITHM_IDENTIFIER, :PSYSTEMTIME, :PSYSTEMTIME, :PCERT_EXTENSIONS>, 32
       CERT_CREATE_SELFSIGN_NO_SIGN equ 1
       CERT_CREATE_SELFSIGN_NO_KEY_INFO equ 2
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CryptGetKeyIdentifierProperty, WIN_STD_CALL_CONV,, <:ptr CRYPT_HASH_BLOB, :DWORD, :DWORD, :LPCWSTR, :ptr, :ptr, :ptr DWORD>, 28
       CRYPT_KEYID_MACHINE_FLAG equ 00000020h
       CRYPT_KEYID_ALLOC_FLAG equ 00008000h
@@ -5154,11 +5301,10 @@ ifndef __WINCRYPT_H__
       CRYPT_KEYID_SET_NEW_FLAG equ 00002000h
       TYPE_PFN_CRYPT_ENUM_KEYID_PROP typedef proto WIN_STD_CALL_CONV :ptr CRYPT_HASH_BLOB, :DWORD, :ptr, :ptr, :DWORD, :ptr DWORD, :ptr ptr, :ptr DWORD
       PFN_CRYPT_ENUM_KEYID_PROP typedef ptr TYPE_PFN_CRYPT_ENUM_KEYID_PROP
-
       @DefProto DllImport, CryptEnumKeyIdentifierProperties, WIN_STD_CALL_CONV,, <:ptr CRYPT_HASH_BLOB, :DWORD, :DWORD, :LPCWSTR, :ptr, :ptr, :PFN_CRYPT_ENUM_KEYID_PROP>, 28
       @DefProto DllImport, CryptCreateKeyIdentifierFromCSP, WIN_STD_CALL_CONV,, <:DWORD, :LPCSTR, :ptr PUBLICKEYSTRUC, :DWORD, :DWORD, :ptr, :ptr BYTE, :ptr DWORD>, 32
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       CERT_CHAIN_CONFIG_REGPATH equ <L("Software\Microsoft\Cryptography\OID\EncodingType 0\CertDllCreateCertificateChainEngine\Config")>
       CERT_CHAIN_MAX_URL_RETRIEVAL_BYTE_COUNT_VALUE_NAME equ <L("MaxUrlRetrievalByteCount")>
       CERT_CHAIN_MAX_URL_RETRIEVAL_BYTE_COUNT_DEFAULT equ (100 * 1024 * 1024)
@@ -5207,7 +5353,6 @@ ifndef __WINCRYPT_H__
       CERT_CHAIN_WEAK_SHA256_ALLOW_NAME equ <L("Sha256Allow")>
       CERT_CHAIN_MIN_PUB_KEY_BIT_LENGTH_DISABLE equ 0FFFFFFFFh
       CERT_CHAIN_ENABLE_WEAK_SETTINGS_FLAG equ 80000000h
-      CERT_CHAIN_DISABLE_ECC_PARA_FLAG equ 00000010h
       CERT_CHAIN_DISABLE_ALL_EKU_WEAK_FLAG equ 00010000h
       CERT_CHAIN_ENABLE_ALL_EKU_HYGIENE_FLAG equ 00020000h
       CERT_CHAIN_DISABLE_OPT_IN_SERVER_AUTH_WEAK_FLAG equ 00040000h
@@ -5226,10 +5371,15 @@ ifndef __WINCRYPT_H__
       CERT_CHAIN_DISABLE_MOTW_FILE_HASH_WEAK_FLAG equ 00002000h
       CERT_CHAIN_DISABLE_TIMESTAMP_HASH_WEAK_FLAG equ 00004000h
       CERT_CHAIN_DISABLE_MOTW_TIMESTAMP_HASH_WEAK_FLAG equ 00008000h
-      CERT_CHAIN_DISABLE_WEAK_FLAGS equ <(CERT_CHAIN_DISABLE_ECC_PARA_FLAG or CERT_CHAIN_DISABLE_ALL_EKU_WEAK_FLAG or CERT_CHAIN_DISABLE_SERVER_AUTH_WEAK_FLAG or CERT_CHAIN_DISABLE_OPT_IN_SERVER_AUTH_WEAK_FLAG or CERT_CHAIN_DISABLE_CODE_SIGNING_WEAK_FLAG or CERT_CHAIN_DISABLE_MOTW_CODE_SIGNING_WEAK_FLAG or CERT_CHAIN_DISABLE_TIMESTAMP_WEAK_FLAG or CERT_CHAIN_DISABLE_MOTW_TIMESTAMP_WEAK_FLAG)>
+      CERT_CHAIN_DISABLE_WEAK_FLAGS equ <>
+      ;(CERT_CHAIN_DISABLE_ALL_EKU_WEAK_FLAG or CERT_CHAIN_DISABLE_SERVER_AUTH_WEAK_FLAG or CERT_CHAIN_DISABLE_OPT_IN_SERVER_AUTH_WEAK_FLAG or 
+      ;CERT_CHAIN_DISABLE_CODE_SIGNING_WEAK_FLAG or CERT_CHAIN_DISABLE_MOTW_CODE_SIGNING_WEAK_FLAG or CERT_CHAIN_DISABLE_TIMESTAMP_WEAK_FLAG or 
+      ;CERT_CHAIN_DISABLE_MOTW_TIMESTAMP_WEAK_FLAG)
       CERT_CHAIN_DISABLE_FILE_HASH_WEAK_FLAGS equ <(CERT_CHAIN_DISABLE_FILE_HASH_WEAK_FLAG or CERT_CHAIN_DISABLE_MOTW_FILE_HASH_WEAK_FLAG)>
       CERT_CHAIN_DISABLE_TIMESTAMP_HASH_WEAK_FLAGS equ <(CERT_CHAIN_DISABLE_TIMESTAMP_HASH_WEAK_FLAG or CERT_CHAIN_DISABLE_MOTW_TIMESTAMP_HASH_WEAK_FLAG)>
-      CERT_CHAIN_ENABLE_HYGIENE_FLAGS equ <(CERT_CHAIN_ENABLE_ALL_EKU_HYGIENE_FLAG or CERT_CHAIN_ENABLE_SERVER_AUTH_HYGIENE_FLAG or CERT_CHAIN_ENABLE_CODE_SIGNING_HYGIENE_FLAG or CERT_CHAIN_ENABLE_MOTW_CODE_SIGNING_HYGIENE_FLAG or CERT_CHAIN_ENABLE_TIMESTAMP_HYGIENE_FLAG or CERT_CHAIN_ENABLE_MOTW_TIMESTAMP_HYGIENE_FLAG)>
+      CERT_CHAIN_ENABLE_HYGIENE_FLAGS equ <>
+      ;(CERT_CHAIN_ENABLE_ALL_EKU_HYGIENE_FLAG or CERT_CHAIN_ENABLE_SERVER_AUTH_HYGIENE_FLAG or CERT_CHAIN_ENABLE_CODE_SIGNING_HYGIENE_FLAG or 
+      ;CERT_CHAIN_ENABLE_MOTW_CODE_SIGNING_HYGIENE_FLAG or CERT_CHAIN_ENABLE_TIMESTAMP_HYGIENE_FLAG or CERT_CHAIN_ENABLE_MOTW_TIMESTAMP_HYGIENE_FLAG)
       CERT_CHAIN_MOTW_WEAK_FLAGS equ <(CERT_CHAIN_DISABLE_MOTW_CODE_SIGNING_WEAK_FLAG or CERT_CHAIN_DISABLE_MOTW_TIMESTAMP_WEAK_FLAG or CERT_CHAIN_ENABLE_MOTW_CODE_SIGNING_HYGIENE_FLAG or CERT_CHAIN_ENABLE_MOTW_TIMESTAMP_HYGIENE_FLAG or CERT_CHAIN_MOTW_IGNORE_AFTER_TIME_WEAK_FLAG)>
       CERT_CHAIN_OPT_IN_WEAK_FLAGS equ <(CERT_CHAIN_DISABLE_OPT_IN_SERVER_AUTH_WEAK_FLAG)>
       CERT_CHAIN_AUTO_CURRENT_USER equ 1
@@ -5337,9 +5487,9 @@ ifndef __WINCRYPT_H__
       CERT_CHAIN_CRL_VALIDITY_EXT_PERIOD_HOURS_VALUE_NAME equ <L("CRLValidityExtensionPeriod")>
       CERT_CHAIN_CRL_VALIDITY_EXT_PERIOD_HOURS_DEFAULT equ 12
       HCERTCHAINENGINE typedef HANDLE
-      HCCE_CURRENT_USER equ <(NULL)>
-      HCCE_LOCAL_MACHINE equ (1h)
-      HCCE_SERIAL_LOCAL_MACHINE equ (2h)
+      HCCE_CURRENT_USER equ <((HCERTCHAINENGINE) NULL)>
+      HCCE_LOCAL_MACHINE equ ((HCERTCHAINENGINE) 1h)
+      HCCE_SERIAL_LOCAL_MACHINE equ ((HCERTCHAINENGINE) 2h)
       CERT_CHAIN_CACHE_END_CERT equ 00000001h
       CERT_CHAIN_THREAD_STORE_SYNC equ 00000002h
       CERT_CHAIN_CACHE_ONLY_URL_RETRIEVAL equ 00000004h
@@ -5367,6 +5517,7 @@ ifndef __WINCRYPT_H__
       CERT_CHAIN_ENGINE_CONFIG ends
       _CERT_CHAIN_ENGINE_CONFIG typedef CERT_CHAIN_ENGINE_CONFIG
       PCERT_CHAIN_ENGINE_CONFIG typedef ptr CERT_CHAIN_ENGINE_CONFIG
+      
       if (NTDDI_VERSION ge NTDDI_WIN8)
         CERT_CHAIN_EXCLUSIVE_ENABLE_CA_FLAG equ 00000001h
       endif
@@ -5379,6 +5530,7 @@ ifndef __WINCRYPT_H__
       CERT_TRUST_STATUS ends
       _CERT_TRUST_STATUS typedef CERT_TRUST_STATUS
       PCERT_TRUST_STATUS typedef ptr CERT_TRUST_STATUS
+      
       CERT_TRUST_NO_ERROR equ 00000000h
       CERT_TRUST_IS_NOT_TIME_VALID equ 00000001h
       CERT_TRUST_IS_NOT_TIME_NESTED equ 00000002h
@@ -5427,7 +5579,6 @@ ifndef __WINCRYPT_H__
         CERT_TRUST_IS_CA_TRUSTED equ 00004000h
         CERT_TRUST_HAS_AUTO_UPDATE_WEAK_SIGNATURE equ 00008000h
         CERT_TRUST_HAS_ALLOW_WEAK_SIGNATURE equ 00020000h
-        CERT_TRUST_BEFORE_DISALLOWED_CA_FILETIME equ 00200000h
       endif
       CERT_TRUST_IS_COMPLEX_CHAIN equ 00010000h
       CERT_TRUST_SSL_TIME_VALID equ 01000000h
@@ -5443,6 +5594,7 @@ ifndef __WINCRYPT_H__
       CERT_REVOCATION_INFO ends
       _CERT_REVOCATION_INFO typedef CERT_REVOCATION_INFO
       PCERT_REVOCATION_INFO typedef ptr CERT_REVOCATION_INFO
+      
       CERT_TRUST_LIST_INFO struct
         cbSize DWORD ?
         pCtlEntry PCTL_ENTRY ?
@@ -5450,6 +5602,7 @@ ifndef __WINCRYPT_H__
       CERT_TRUST_LIST_INFO ends
       _CERT_TRUST_LIST_INFO typedef CERT_TRUST_LIST_INFO
       PCERT_TRUST_LIST_INFO typedef ptr CERT_TRUST_LIST_INFO
+      
       CERT_CHAIN_ELEMENT struct
         cbSize DWORD ?
         pCertContext PCCERT_CONTEXT ?
@@ -5461,6 +5614,7 @@ ifndef __WINCRYPT_H__
       CERT_CHAIN_ELEMENT ends
       _CERT_CHAIN_ELEMENT typedef CERT_CHAIN_ELEMENT
       PCERT_CHAIN_ELEMENT typedef ptr CERT_CHAIN_ELEMENT
+      
       PCCERT_CHAIN_ELEMENT typedef ptr CERT_CHAIN_ELEMENT
       CERT_SIMPLE_CHAIN struct
         cbSize DWORD ?
@@ -5473,10 +5627,10 @@ ifndef __WINCRYPT_H__
       CERT_SIMPLE_CHAIN ends
       _CERT_SIMPLE_CHAIN typedef CERT_SIMPLE_CHAIN
       PCERT_SIMPLE_CHAIN typedef ptr CERT_SIMPLE_CHAIN
+      
       PCCERT_SIMPLE_CHAIN typedef ptr CERT_SIMPLE_CHAIN
-;      CERT_CHAIN_CONTEXT typedef _CERT_CHAIN_CONTEXT
-      PCERT_CHAIN_CONTEXT typedef ptr _CERT_CHAIN_CONTEXT
-      PCCERT_CHAIN_CONTEXT typedef ptr CERT_CHAIN_CONTEXT
+      
+;      PCCERT_CHAIN_CONTEXT typedef ptr CERT_CHAIN_CONTEXT
       _CERT_CHAIN_CONTEXT struct
         cbSize DWORD ?
         TrustStatus CERT_TRUST_STATUS <>
@@ -5489,6 +5643,9 @@ ifndef __WINCRYPT_H__
         dwCreateFlags DWORD ?
         ChainId GUID <>
       _CERT_CHAIN_CONTEXT ends
+      CERT_CHAIN_CONTEXT typedef _CERT_CHAIN_CONTEXT
+      PCERT_CHAIN_CONTEXT typedef ptr _CERT_CHAIN_CONTEXT
+
       USAGE_MATCH_TYPE_AND equ 00000000h
       USAGE_MATCH_TYPE_OR equ 00000001h
       CERT_USAGE_MATCH struct
@@ -5497,12 +5654,14 @@ ifndef __WINCRYPT_H__
       CERT_USAGE_MATCH ends
       _CERT_USAGE_MATCH typedef CERT_USAGE_MATCH
       PCERT_USAGE_MATCH typedef ptr CERT_USAGE_MATCH
+      
       CTL_USAGE_MATCH struct
         dwType DWORD ?
         Usage CTL_USAGE <>
       CTL_USAGE_MATCH ends
       _CTL_USAGE_MATCH typedef CTL_USAGE_MATCH
       PCTL_USAGE_MATCH typedef ptr CTL_USAGE_MATCH
+      
       CERT_CHAIN_PARA struct
         cbSize DWORD ?
         RequestedUsage CERT_USAGE_MATCH <>
@@ -5518,6 +5677,7 @@ ifndef __WINCRYPT_H__
       CERT_CHAIN_PARA ends
       _CERT_CHAIN_PARA typedef CERT_CHAIN_PARA
       PCERT_CHAIN_PARA typedef ptr CERT_CHAIN_PARA
+      
       CERT_CHAIN_STRONG_SIGN_DISABLE_END_CHECK_FLAG equ 00000001h
       CERT_CHAIN_REVOCATION_CHECK_END_CERT equ 10000000h
       CERT_CHAIN_REVOCATION_CHECK_CHAIN equ 20000000h
@@ -5536,7 +5696,6 @@ ifndef __WINCRYPT_H__
       CERT_CHAIN_HAS_MOTW equ 00004000h
       CERT_CHAIN_ONLY_ADDITIONAL_AND_AUTH_ROOT equ 00008000h
       CERT_CHAIN_OPT_IN_WEAK_SIGNATURE equ 00010000h
-      CERT_CHAIN_ENABLE_DISALLOWED_CA equ 00020000h
       @DefProto DllImport, CertGetCertificateChain, WIN_STD_CALL_CONV,, <:HCERTCHAINENGINE, :PCCERT_CONTEXT, :LPFILETIME, :HCERTSTORE, :PCERT_CHAIN_PARA, :DWORD, :LPVOID, :ptr PCCERT_CHAIN_CONTEXT>, 32
       @DefProto DllImport, CertFreeCertificateChain, WIN_STD_CALL_CONV,, <:PCCERT_CHAIN_CONTEXT>, 4
       @DefProto DllImport, CertDuplicateCertificateChain, WIN_STD_CALL_CONV,, <:PCCERT_CHAIN_CONTEXT>, 4
@@ -5550,23 +5709,26 @@ ifndef __WINCRYPT_H__
         pftCacheResync LPFILETIME ?
         cbMaxUrlRetrievalByteCount DWORD ?
       _CERT_REVOCATION_CHAIN_PARA ends
+      CERT_REVOCATION_CHAIN_PARA typedef _CERT_REVOCATION_CHAIN_PARA
+      PCERT_REVOCATION_CHAIN_PARA typedef ptr _CERT_REVOCATION_CHAIN_PARA
+      
       REVOCATION_OID_CRL_REVOCATION equ (1)
       CRL_REVOCATION_INFO struct
         pCrlEntry PCRL_ENTRY ?
         pCrlContext PCCRL_CONTEXT ?
-        pCrlIssuerChain PCCERT_CHAIN_CONTEXT ?
+        pCrlIssuerChain POINTER ?         ;PCCERT_CHAIN_CONTEXT
       CRL_REVOCATION_INFO ends
       _CRL_REVOCATION_INFO typedef CRL_REVOCATION_INFO
       PCRL_REVOCATION_INFO typedef ptr CRL_REVOCATION_INFO
+      
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, CertFindChainInStore, WIN_STD_CALL_CONV,, <:HCERTSTORE, :DWORD, :DWORD, :DWORD, :ptr, :PCCERT_CHAIN_CONTEXT>, 24
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       CERT_CHAIN_FIND_BY_ISSUER equ 1
       TYPE_PFN_CERT_CHAIN_FIND_BY_ISSUER_CALLBACK typedef proto WIN_STD_CALL_CONV :PCCERT_CONTEXT, :ptr
       PFN_CERT_CHAIN_FIND_BY_ISSUER_CALLBACK typedef ptr TYPE_PFN_CERT_CHAIN_FIND_BY_ISSUER_CALLBACK
-
       CERT_CHAIN_FIND_ISSUER_PARA struct
         cbSize DWORD ?
         pszUsageIdentifier LPCSTR ?
@@ -5585,6 +5747,7 @@ ifndef __WINCRYPT_H__
       PCERT_CHAIN_FIND_ISSUER_PARA typedef ptr CERT_CHAIN_FIND_ISSUER_PARA
       CERT_CHAIN_FIND_BY_ISSUER_PARA typedef CERT_CHAIN_FIND_ISSUER_PARA
       PCERT_CHAIN_FIND_BY_ISSUER_PARA typedef ptr CERT_CHAIN_FIND_ISSUER_PARA
+      
       CERT_CHAIN_FIND_BY_ISSUER_COMPARE_KEY_FLAG equ 0001h
       CERT_CHAIN_FIND_BY_ISSUER_COMPLEX_CHAIN_FLAG equ 0002h
       CERT_CHAIN_FIND_BY_ISSUER_CACHE_ONLY_URL_FLAG equ 0004h
@@ -5598,6 +5761,7 @@ ifndef __WINCRYPT_H__
       CERT_CHAIN_POLICY_PARA ends
       _CERT_CHAIN_POLICY_PARA typedef CERT_CHAIN_POLICY_PARA
       PCERT_CHAIN_POLICY_PARA typedef ptr CERT_CHAIN_POLICY_PARA
+      
       CERT_CHAIN_POLICY_STATUS struct
         cbSize DWORD ?
         dwError DWORD ?
@@ -5607,6 +5771,7 @@ ifndef __WINCRYPT_H__
       CERT_CHAIN_POLICY_STATUS ends
       _CERT_CHAIN_POLICY_STATUS typedef CERT_CHAIN_POLICY_STATUS
       PCERT_CHAIN_POLICY_STATUS typedef ptr CERT_CHAIN_POLICY_STATUS
+      
       CERT_CHAIN_POLICY_IGNORE_NOT_TIME_VALID_FLAG equ 00000001h
       CERT_CHAIN_POLICY_IGNORE_CTL_NOT_TIME_VALID_FLAG equ 00000002h
       CERT_CHAIN_POLICY_IGNORE_NOT_TIME_NESTED_FLAG equ 00000004h
@@ -5647,12 +5812,14 @@ ifndef __WINCRYPT_H__
       AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_PARA ends
       _AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_PARA typedef AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_PARA
       PAUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_PARA typedef ptr AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_PARA
+      
       AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_STATUS struct
         cbSize DWORD ?
         fCommercial BOOL ?
       AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_STATUS ends
       _AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_STATUS typedef AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_STATUS
       PAUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_STATUS typedef ptr AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_STATUS
+      
       AUTHENTICODE_TS_EXTRA_CERT_CHAIN_POLICY_PARA struct
         cbSize DWORD ?
         dwRegPolicySettings DWORD ?
@@ -5660,6 +5827,7 @@ ifndef __WINCRYPT_H__
       AUTHENTICODE_TS_EXTRA_CERT_CHAIN_POLICY_PARA ends
       _AUTHENTICODE_TS_EXTRA_CERT_CHAIN_POLICY_PARA typedef AUTHENTICODE_TS_EXTRA_CERT_CHAIN_POLICY_PARA
       PAUTHENTICODE_TS_EXTRA_CERT_CHAIN_POLICY_PARA typedef ptr AUTHENTICODE_TS_EXTRA_CERT_CHAIN_POLICY_PARA
+      
       HTTPSPolicyCallbackData struct
         union
           cbStruct DWORD ?
@@ -5675,6 +5843,7 @@ ifndef __WINCRYPT_H__
       PHTTPSPolicyCallbackData typedef ptr HTTPSPolicyCallbackData
       SSL_EXTRA_CERT_CHAIN_POLICY_PARA typedef HTTPSPolicyCallbackData
       PSSL_EXTRA_CERT_CHAIN_POLICY_PARA typedef ptr HTTPSPolicyCallbackData
+      
       BASIC_CONSTRAINTS_CERT_CHAIN_POLICY_CA_FLAG equ 80000000h
       BASIC_CONSTRAINTS_CERT_CHAIN_POLICY_END_ENTITY_FLAG equ 40000000h
       MICROSOFT_ROOT_CERT_CHAIN_POLICY_ENABLE_TEST_ROOT_FLAG equ 00010000h
@@ -5686,6 +5855,7 @@ ifndef __WINCRYPT_H__
       EV_EXTRA_CERT_CHAIN_POLICY_PARA ends
       _EV_EXTRA_CERT_CHAIN_POLICY_PARA typedef EV_EXTRA_CERT_CHAIN_POLICY_PARA
       PEV_EXTRA_CERT_CHAIN_POLICY_PARA typedef ptr EV_EXTRA_CERT_CHAIN_POLICY_PARA
+      
       EV_EXTRA_CERT_CHAIN_POLICY_STATUS struct
         cbSize DWORD ?
         dwQualifiers DWORD ?
@@ -5693,6 +5863,7 @@ ifndef __WINCRYPT_H__
       EV_EXTRA_CERT_CHAIN_POLICY_STATUS ends
       _EV_EXTRA_CERT_CHAIN_POLICY_STATUS typedef EV_EXTRA_CERT_CHAIN_POLICY_STATUS
       PEV_EXTRA_CERT_CHAIN_POLICY_STATUS typedef ptr EV_EXTRA_CERT_CHAIN_POLICY_STATUS
+      
       SSL_F12_ERROR_TEXT_LENGTH equ 256
       SSL_F12_EXTRA_CERT_CHAIN_POLICY_STATUS struct
         cbSize DWORD ?
@@ -5703,6 +5874,7 @@ ifndef __WINCRYPT_H__
       SSL_F12_EXTRA_CERT_CHAIN_POLICY_STATUS ends
       _SSL_F12_EXTRA_CERT_CHAIN_POLICY_STATUS typedef SSL_F12_EXTRA_CERT_CHAIN_POLICY_STATUS
       PSSL_F12_EXTRA_CERT_CHAIN_POLICY_STATUS typedef ptr SSL_F12_EXTRA_CERT_CHAIN_POLICY_STATUS
+      
       CERT_CHAIN_POLICY_SSL_F12_SUCCESS_LEVEL equ 0
       CERT_CHAIN_POLICY_SSL_F12_WARNING_LEVEL equ 1
       CERT_CHAIN_POLICY_SSL_F12_ERROR_LEVEL equ 2
@@ -5720,6 +5892,7 @@ ifndef __WINCRYPT_H__
       SSL_HPKP_HEADER_EXTRA_CERT_CHAIN_POLICY_PARA ends
       _SSL_HPKP_HEADER_EXTRA_CERT_CHAIN_POLICY_PARA typedef SSL_HPKP_HEADER_EXTRA_CERT_CHAIN_POLICY_PARA
       PSSL_HPKP_HEADER_EXTRA_CERT_CHAIN_POLICY_PARA typedef ptr SSL_HPKP_HEADER_EXTRA_CERT_CHAIN_POLICY_PARA
+      
       SSL_KEY_PIN_EXTRA_CERT_CHAIN_POLICY_PARA struct
         cbSize DWORD ?
         dwReserved DWORD ?
@@ -5727,6 +5900,7 @@ ifndef __WINCRYPT_H__
       SSL_KEY_PIN_EXTRA_CERT_CHAIN_POLICY_PARA ends
       _SSL_KEY_PIN_EXTRA_CERT_CHAIN_POLICY_PARA typedef SSL_KEY_PIN_EXTRA_CERT_CHAIN_POLICY_PARA
       PSSL_KEY_PIN_EXTRA_CERT_CHAIN_POLICY_PARA typedef ptr SSL_KEY_PIN_EXTRA_CERT_CHAIN_POLICY_PARA
+      
       SSL_KEY_PIN_ERROR_TEXT_LENGTH equ 512
       SSL_KEY_PIN_EXTRA_CERT_CHAIN_POLICY_STATUS struct
         cbSize DWORD ?
@@ -5735,6 +5909,7 @@ ifndef __WINCRYPT_H__
       SSL_KEY_PIN_EXTRA_CERT_CHAIN_POLICY_STATUS ends
       _SSL_KEY_PIN_EXTRA_CERT_CHAIN_POLICY_STATUS typedef SSL_KEY_PIN_EXTRA_CERT_CHAIN_POLICY_STATUS
       PSSL_KEY_PIN_EXTRA_CERT_CHAIN_POLICY_STATUS typedef ptr SSL_KEY_PIN_EXTRA_CERT_CHAIN_POLICY_STATUS
+      
       CERT_CHAIN_POLICY_SSL_KEY_PIN_MISMATCH_ERROR equ -2
       CERT_CHAIN_POLICY_SSL_KEY_PIN_MITM_ERROR equ -1
       CERT_CHAIN_POLICY_SSL_KEY_PIN_SUCCESS equ 0
@@ -5831,25 +6006,27 @@ ifndef __WINCRYPT_H__
       PKCS12_PBES2_EXPORT_PARAMS ends
       _PKCS12_PBES2_EXPORT_PARAMS typedef PKCS12_PBES2_EXPORT_PARAMS
       PPKCS12_PBES2_EXPORT_PARAMS typedef ptr PKCS12_PBES2_EXPORT_PARAMS
+      
       PKCS12_PBES2_ALG_AES256_SHA256 equ <L("AES256-SHA256")>
       PKCS12_CONFIG_REGPATH equ <L("Software\Microsoft\Windows\CurrentVersion\PFX")>
       PKCS12_ENCRYPT_CERTIFICATES_VALUE_NAME equ <L("EncryptCertificates")>
       @DefProto DllImport, PFXExportCertStore, WIN_STD_CALL_CONV,, <:HCERTSTORE, :ptr CRYPT_DATA_BLOB, :LPCWSTR, :DWORD>, 16
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       if (NTDDI_VERSION ge NTDDI_VISTA)
         HCERT_SERVER_OCSP_RESPONSE typedef ptr VOID
-;        CERT_SERVER_OCSP_RESPONSE_CONTEXT typedef _CERT_SERVER_OCSP_RESPONSE_CONTEXT
-        PCERT_SERVER_OCSP_RESPONSE_CONTEXT typedef ptr _CERT_SERVER_OCSP_RESPONSE_CONTEXT
-        PCCERT_SERVER_OCSP_RESPONSE_CONTEXT typedef ptr CERT_SERVER_OCSP_RESPONSE_CONTEXT
+
+        PCCERT_SERVER_OCSP_RESPONSE_CONTEXT typedef ptr; CERT_SERVER_OCSP_RESPONSE_CONTEXT
         _CERT_SERVER_OCSP_RESPONSE_CONTEXT struct
           cbSize DWORD ?
           pbEncodedOcspResponse POINTER ?
           cbEncodedOcspResponse DWORD ?
         _CERT_SERVER_OCSP_RESPONSE_CONTEXT ends
+        CERT_SERVER_OCSP_RESPONSE_CONTEXT typedef _CERT_SERVER_OCSP_RESPONSE_CONTEXT
+        PCERT_SERVER_OCSP_RESPONSE_CONTEXT typedef ptr _CERT_SERVER_OCSP_RESPONSE_CONTEXT
+        
         TYPE_PFN_CERT_SERVER_OCSP_RESPONSE_UPDATE_CALLBACK typedef proto WIN_STD_CALL_CONV :PCCERT_CHAIN_CONTEXT, :PCCERT_SERVER_OCSP_RESPONSE_CONTEXT, :PCCRL_CONTEXT, :PCCRL_CONTEXT, :PVOID, :DWORD
         PFN_CERT_SERVER_OCSP_RESPONSE_UPDATE_CALLBACK typedef ptr TYPE_PFN_CERT_SERVER_OCSP_RESPONSE_UPDATE_CALLBACK
-
         CERT_SERVER_OCSP_RESPONSE_OPEN_PARA struct
           cbSize DWORD ?
           dwFlags DWORD ?
@@ -5860,6 +6037,7 @@ ifndef __WINCRYPT_H__
         CERT_SERVER_OCSP_RESPONSE_OPEN_PARA ends
         _CERT_SERVER_OCSP_RESPONSE_OPEN_PARA typedef CERT_SERVER_OCSP_RESPONSE_OPEN_PARA
         PCERT_SERVER_OCSP_RESPONSE_OPEN_PARA typedef ptr CERT_SERVER_OCSP_RESPONSE_OPEN_PARA
+        
         CERT_SERVER_OCSP_RESPONSE_OPEN_PARA_READ_FLAG equ 00000001h
         CERT_SERVER_OCSP_RESPONSE_OPEN_PARA_WRITE_FLAG equ 00000002h
         @DefProto DllImport, CertOpenServerOcspResponse, WIN_STD_CALL_CONV,, <:PCCERT_CHAIN_CONTEXT, :DWORD, :PCERT_SERVER_OCSP_RESPONSE_OPEN_PARA>, 12
@@ -5872,7 +6050,7 @@ ifndef __WINCRYPT_H__
       endif
       @DefProto DllImport, CertRetrieveLogoOrBiometricInfo, WIN_STD_CALL_CONV,, <:PCCERT_CONTEXT, :LPCSTR, :DWORD, :DWORD, :DWORD, :ptr, :ptr ptr BYTE, :ptr DWORD, :ptr LPWSTR>, 36
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       CERT_RETRIEVE_ISSUER_LOGO equ (1)
       CERT_RETRIEVE_SUBJECT_LOGO equ (2)
       CERT_RETRIEVE_COMMUNITY_LOGO equ (3)
@@ -5889,6 +6067,7 @@ ifndef __WINCRYPT_H__
         CERT_SELECT_CHAIN_PARA ends
         _CERT_SELECT_CHAIN_PARA typedef CERT_SELECT_CHAIN_PARA
         PCERT_SELECT_CHAIN_PARA typedef ptr CERT_SELECT_CHAIN_PARA
+        
         PCCERT_SELECT_CHAIN_PARA typedef ptr CERT_SELECT_CHAIN_PARA
         CERT_SELECT_MAX_PARA equ 500
         CERT_SELECT_CRITERIA struct
@@ -5898,6 +6077,7 @@ ifndef __WINCRYPT_H__
         CERT_SELECT_CRITERIA ends
         _CERT_SELECT_CRITERIA typedef CERT_SELECT_CRITERIA
         PCERT_SELECT_CRITERIA typedef ptr CERT_SELECT_CRITERIA
+        
         PCCERT_SELECT_CRITERIA typedef ptr CERT_SELECT_CRITERIA
         CERT_SELECT_BY_ENHKEY_USAGE equ 1
         CERT_SELECT_BY_KEY_USAGE equ 2
@@ -5941,6 +6121,7 @@ ifndef __WINCRYPT_H__
         CRYPT_TIMESTAMP_REQUEST ends
         _CRYPT_TIMESTAMP_REQUEST typedef CRYPT_TIMESTAMP_REQUEST
         PCRYPT_TIMESTAMP_REQUEST typedef ptr CRYPT_TIMESTAMP_REQUEST
+        
         CRYPT_TIMESTAMP_RESPONSE struct
           dwStatus DWORD ?
           cFreeText DWORD ?
@@ -5950,6 +6131,7 @@ ifndef __WINCRYPT_H__
         CRYPT_TIMESTAMP_RESPONSE ends
         _CRYPT_TIMESTAMP_RESPONSE typedef CRYPT_TIMESTAMP_RESPONSE
         PCRYPT_TIMESTAMP_RESPONSE typedef ptr CRYPT_TIMESTAMP_RESPONSE
+        
         TIMESTAMP_STATUS_GRANTED equ 0
         TIMESTAMP_STATUS_GRANTED_WITH_MODS equ 1
         TIMESTAMP_STATUS_REJECTED equ 2
@@ -5971,6 +6153,7 @@ ifndef __WINCRYPT_H__
         CRYPT_TIMESTAMP_ACCURACY ends
         _CRYPT_TIMESTAMP_ACCURACY typedef CRYPT_TIMESTAMP_ACCURACY
         PCRYPT_TIMESTAMP_ACCURACY typedef ptr CRYPT_TIMESTAMP_ACCURACY
+        
         CRYPT_TIMESTAMP_INFO struct
           dwVersion DWORD ?
           pszTSAPolicyId LPSTR ?
@@ -5987,6 +6170,7 @@ ifndef __WINCRYPT_H__
         CRYPT_TIMESTAMP_INFO ends
         _CRYPT_TIMESTAMP_INFO typedef CRYPT_TIMESTAMP_INFO
         PCRYPT_TIMESTAMP_INFO typedef ptr CRYPT_TIMESTAMP_INFO
+        
         CRYPT_TIMESTAMP_CONTEXT struct
           cbEncoded DWORD ?
           pbEncoded POINTER ?
@@ -5994,6 +6178,7 @@ ifndef __WINCRYPT_H__
         CRYPT_TIMESTAMP_CONTEXT ends
         _CRYPT_TIMESTAMP_CONTEXT typedef CRYPT_TIMESTAMP_CONTEXT
         PCRYPT_TIMESTAMP_CONTEXT typedef ptr CRYPT_TIMESTAMP_CONTEXT
+        
         CRYPT_TIMESTAMP_PARA struct
           pszTSAPolicyId LPCSTR ?
           fRequestCerts BOOL ?
@@ -6003,6 +6188,7 @@ ifndef __WINCRYPT_H__
         CRYPT_TIMESTAMP_PARA ends
         _CRYPT_TIMESTAMP_PARA typedef CRYPT_TIMESTAMP_PARA
         PCRYPT_TIMESTAMP_PARA typedef ptr CRYPT_TIMESTAMP_PARA
+        
         CryptRetrieveTimeStamp proto WIN_STD_CALL_CONV :LPCWSTR, :DWORD, :DWORD, :LPCSTR, :ptr CRYPT_TIMESTAMP_PARA, :ptr BYTE, :DWORD, :ptr PCRYPT_TIMESTAMP_CONTEXT, :ptr PCCERT_CONTEXT, :ptr HCERTSTORE
         TIMESTAMP_DONT_HASH_DATA equ 00000001h
         TIMESTAMP_VERIFY_CONTEXT_SIGNATURE equ 00000020h
@@ -6010,7 +6196,7 @@ ifndef __WINCRYPT_H__
         CryptVerifyTimeStampSignature proto WIN_STD_CALL_CONV :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :HCERTSTORE, :ptr PCRYPT_TIMESTAMP_CONTEXT, :ptr PCCERT_CONTEXT, :ptr HCERTSTORE
       endif
     endif
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_PHONE_RESTRICTED or WINAPI_PARTITION_SYSTEM)
       if (NTDDI_VERSION ge NTDDI_WIN8)
         CRYPT_OBJECT_LOCATOR_SPN_NAME_TYPE equ 1
         CRYPT_OBJECT_LOCATOR_LAST_RESERVED_NAME_TYPE equ 32
@@ -6025,22 +6211,16 @@ ifndef __WINCRYPT_H__
         CRYPT_OBJECT_LOCATOR_RELEASE_DLL_UNLOAD equ 4
         TYPE_PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FLUSH typedef proto WIN_STD_CALL_CONV :LPVOID, :ptr PCERT_NAME_BLOB, :DWORD
         PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FLUSH typedef ptr TYPE_PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FLUSH
-
         TYPE_PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_GET typedef proto WIN_STD_CALL_CONV :LPVOID, :PCRYPT_DATA_BLOB, :DWORD, :PCERT_NAME_BLOB, :ptr PBYTE, :ptr DWORD, :ptr PCWSTR, :ptr PCRYPT_DATA_BLOB
         PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_GET typedef ptr TYPE_PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_GET
-
         TYPE_PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_RELEASE typedef proto WIN_STD_CALL_CONV :DWORD, :LPVOID
         PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_RELEASE typedef ptr TYPE_PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_RELEASE
-
         TYPE_PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FREE_PASSWORD typedef proto WIN_STD_CALL_CONV :LPVOID, :PCWSTR
         PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FREE_PASSWORD typedef ptr TYPE_PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FREE_PASSWORD
-
         TYPE_PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FREE typedef proto WIN_STD_CALL_CONV :LPVOID, :PBYTE
         PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FREE typedef ptr TYPE_PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FREE
-
         TYPE_PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FREE_IDENTIFIER typedef proto WIN_STD_CALL_CONV :LPVOID, :PCRYPT_DATA_BLOB
         PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FREE_IDENTIFIER typedef ptr TYPE_PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FREE_IDENTIFIER
-
         CRYPT_OBJECT_LOCATOR_PROVIDER_TABLE struct
           cbSize DWORD ?
           pfnGet PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_GET ?
@@ -6051,13 +6231,12 @@ ifndef __WINCRYPT_H__
         CRYPT_OBJECT_LOCATOR_PROVIDER_TABLE ends
         _CRYPT_OBJECT_LOCATOR_PROVIDER_TABLE typedef CRYPT_OBJECT_LOCATOR_PROVIDER_TABLE
         PCRYPT_OBJECT_LOCATOR_PROVIDER_TABLE typedef ptr CRYPT_OBJECT_LOCATOR_PROVIDER_TABLE
+        
         TYPE_PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_INITIALIZE typedef proto WIN_STD_CALL_CONV :PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_FLUSH, :LPVOID, :ptr DWORD, :ptr PCRYPT_OBJECT_LOCATOR_PROVIDER_TABLE, :ptr ptr
         PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_INITIALIZE typedef ptr TYPE_PFN_CRYPT_OBJECT_LOCATOR_PROVIDER_INITIALIZE
-
         @DefProto DllImport, CertIsWeakHash, WIN_STD_CALL_CONV,, <:DWORD, :LPCWSTR, :DWORD, :PCCERT_CHAIN_CONTEXT, :LPFILETIME, :LPCWSTR>, 24
         TYPE_PFN_CERT_IS_WEAK_HASH typedef proto WIN_STD_CALL_CONV :DWORD, :LPCWSTR, :DWORD, :PCCERT_CHAIN_CONTEXT, :LPFILETIME, :LPCWSTR
         PFN_CERT_IS_WEAK_HASH typedef ptr TYPE_PFN_CERT_IS_WEAK_HASH
-
         CERT_FILE_HASH_USE_TYPE equ 1
         CERT_TIMESTAMP_HASH_USE_TYPE equ 2
       endif
@@ -6073,7 +6252,7 @@ ifndef __WINCRYPT_H__
       endif
     endif
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     ifndef _WINCRYPT_NO_DPAPI
       include dpapi.inc
     endif

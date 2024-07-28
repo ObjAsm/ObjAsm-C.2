@@ -1,8 +1,7 @@
-@DefProto DllImport, ImageList_Create, WIN_STD_CALL_CONV,, <:SDWORD, :SDWORD, :UINT, :SDWORD, :SDWORD>, 20;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\commctrl.h
-;             Created on (UTC) 06/04/2024 06:15:52
-;             Last modified on (UTC) 21/02/2024 18:17:18
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\CommCtrl.h', last modified: 19/04/2018 10:46
+;Creation parameters: 
 
 ifndef _INC_COMMCTRL
   _INC_COMMCTRL equ <>
@@ -62,6 +61,7 @@ ifndef _INC_COMMCTRL
       INITCOMMONCONTROLSEX ends
       tagINITCOMMONCONTROLSEX typedef INITCOMMONCONTROLSEX
       LPINITCOMMONCONTROLSEX typedef ptr INITCOMMONCONTROLSEX
+      
       ICC_LISTVIEW_CLASSES equ 00000001h
       ICC_TREEVIEW_CLASSES equ 00000002h
       ICC_BAR_CLASSES equ 00000004h
@@ -105,6 +105,7 @@ ifndef _INC_COMMCTRL
       COLORSCHEME ends
       tagCOLORSCHEME typedef COLORSCHEME
       LPCOLORSCHEME typedef ptr COLORSCHEME
+      
       CCM_SETCOLORSCHEME equ (CCM_FIRST + 2)
       CCM_GETCOLORSCHEME equ (CCM_FIRST + 3)
       CCM_GETDROPTARGET equ (CCM_FIRST + 4)
@@ -164,6 +165,7 @@ ifndef _INC_COMMCTRL
       NMTOOLTIPSCREATED ends
       tagNMTOOLTIPSCREATED typedef NMTOOLTIPSCREATED
       LPNMTOOLTIPSCREATED typedef ptr NMTOOLTIPSCREATED
+      
       NMMOUSE struct
         hdr NMHDR <>
         dwItemSpec DWORD_PTR ?
@@ -173,6 +175,7 @@ ifndef _INC_COMMCTRL
       NMMOUSE ends
       tagNMMOUSE typedef NMMOUSE
       LPNMMOUSE typedef ptr NMMOUSE
+      
       NMCLICK typedef NMMOUSE
       LPNMCLICK typedef LPNMMOUSE
       NMOBJECTNOTIFY struct
@@ -189,6 +192,7 @@ ifndef _INC_COMMCTRL
       NMOBJECTNOTIFY ends
       tagNMOBJECTNOTIFY typedef NMOBJECTNOTIFY
       LPNMOBJECTNOTIFY typedef ptr NMOBJECTNOTIFY
+      
       NMKEY struct
         hdr NMHDR <>
         nVKey UINT ?
@@ -196,6 +200,7 @@ ifndef _INC_COMMCTRL
       NMKEY ends
       tagNMKEY typedef NMKEY
       LPNMKEY typedef ptr NMKEY
+      
       NMCHAR struct
         hdr NMHDR <>
         ch_ UINT ?
@@ -204,6 +209,7 @@ ifndef _INC_COMMCTRL
       NMCHAR ends
       tagNMCHAR typedef NMCHAR
       LPNMCHAR typedef ptr NMCHAR
+      
       if (_WIN32_IE ge 0600h)
         NMCUSTOMTEXT struct
           hdr NMHDR <>
@@ -216,6 +222,7 @@ ifndef _INC_COMMCTRL
         NMCUSTOMTEXT ends
         tagNMCUSTOMTEXT typedef NMCUSTOMTEXT
         LPNMCUSTOMTEXT typedef ptr NMCUSTOMTEXT
+        
       endif
       NM_FIRST equ (0 - 0)
       NM_LAST equ (0 - 99)
@@ -262,10 +269,6 @@ ifndef _INC_COMMCTRL
       if (NTDDI_VERSION ge NTDDI_VISTA)
         TRBN_FIRST equ (0 - 1501)
         TRBN_LAST equ (0 - 1519)
-      endif
-      if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
-        EN_FIRST equ (0 - 1520)
-        EN_LAST equ (0 - 1540)
       endif
       MSGF_COMMCTRL_BEGINDRAG equ 4200h
       MSGF_COMMCTRL_SIZEHEADER equ 4201h
@@ -318,12 +321,14 @@ ifndef _INC_COMMCTRL
       NMCUSTOMDRAW ends
       tagNMCUSTOMDRAWINFO typedef NMCUSTOMDRAW
       LPNMCUSTOMDRAW typedef ptr NMCUSTOMDRAW
+      
       NMTTCUSTOMDRAW struct
         nmcd NMCUSTOMDRAW <>
         uDrawFlags UINT ?
       NMTTCUSTOMDRAW ends
       tagNMTTCUSTOMDRAW typedef NMTTCUSTOMDRAW
       LPNMTTCUSTOMDRAW typedef ptr NMTTCUSTOMDRAW
+      
       NMCUSTOMSPLITRECTINFO struct
         hdr NMHDR <>
         rcClient RECT <>
@@ -332,12 +337,14 @@ ifndef _INC_COMMCTRL
       NMCUSTOMSPLITRECTINFO ends
       tagNMCUSTOMSPLITRECTINFO typedef NMCUSTOMSPLITRECTINFO
       LPNMCUSTOMSPLITRECTINFO typedef ptr NMCUSTOMSPLITRECTINFO
+      
       NM_GETCUSTOMSPLITRECT equ (BCN_FIRST + 0003h)
       ifndef NOIMAGEAPIS
         CLR_NONE equ 0FFFFFFFFh
         CLR_DEFAULT equ 0FF000000h
         ifndef HIMAGELIST
-          HIMAGELIST typedef ptr _IMAGELIST
+          HIMAGELIST typedef ptr _HIMAGELIST
+          
         endif
         ifndef IMAGELISTDRAWPARAMS
           IMAGELISTDRAWPARAMS struct
@@ -363,6 +370,7 @@ ifndef _INC_COMMCTRL
           IMAGELISTDRAWPARAMS ends
           _IMAGELISTDRAWPARAMS typedef IMAGELISTDRAWPARAMS
           LPIMAGELISTDRAWPARAMS typedef ptr IMAGELISTDRAWPARAMS
+          
           IMAGELISTDRAWPARAMS_V3_SIZE equ <CCSIZEOF_STRUCT(IMAGELISTDRAWPARAMS, dwRop)>
         endif
         ILC_MASK equ 00000001h
@@ -382,7 +390,7 @@ ifndef _INC_COMMCTRL
           ILC_ORIGINALSIZE equ 00010000h
           ILC_HIGHQUALITYSCALE equ 00020000h
         endif
-        
+        @DefProto DllImport, ImageList_Create, WIN_STD_CALL_CONV,, <:SDWORD, :SDWORD, :UINT, :SDWORD, :SDWORD>, 20
         @DefProto DllImport, ImageList_Destroy, WIN_STD_CALL_CONV,, <:HIMAGELIST>, 4
         @DefProto DllImport, ImageList_GetImageCount, WIN_STD_CALL_CONV,, <:HIMAGELIST>, 4
         @DefProto DllImport, ImageList_SetImageCount, WIN_STD_CALL_CONV,, <:HIMAGELIST, :UINT>, 8
@@ -442,8 +450,8 @@ ifndef _INC_COMMCTRL
           else
             ImageList_LoadImage equ <ImageList_LoadImageA>
           endif
-          ILCF_MOVE equ (00000000h)
-          ILCF_SWAP equ (00000001h)
+          ILCF_MOVE equ 00000000h
+          ILCF_SWAP equ 00000001h
           @DefProto DllImport, ImageList_Copy, WIN_STD_CALL_CONV,, <:HIMAGELIST, :SDWORD, :HIMAGELIST, :SDWORD, :UINT>, 20
           @DefProto DllImport, ImageList_BeginDrag, WIN_STD_CALL_CONV,, <:HIMAGELIST, :SDWORD, :SDWORD, :SDWORD>, 16
           @DefProto DllImport, ImageList_EndDrag, WIN_STD_CALL_CONV,, <>, 0
@@ -480,6 +488,7 @@ ifndef _INC_COMMCTRL
             IMAGEINFO ends
             _IMAGEINFO typedef IMAGEINFO
             LPIMAGEINFO typedef ptr IMAGEINFO
+            
           endif
           @DefProto DllImport, ImageList_GetIconSize, WIN_STD_CALL_CONV,, <:HIMAGELIST, :ptr SDWORD, :ptr SDWORD>, 12
           @DefProto DllImport, ImageList_SetIconSize, WIN_STD_CALL_CONV,, <:HIMAGELIST, :SDWORD, :SDWORD>, 12
@@ -546,12 +555,14 @@ ifndef _INC_COMMCTRL
         HD_TEXTFILTERA ends
         _HD_TEXTFILTERA typedef HD_TEXTFILTERA
         LPHD_TEXTFILTERA typedef ptr HD_TEXTFILTERA
+        
         HD_TEXTFILTERW struct
           pszText LPWSTR ?
           cchTextMax INT_ ?
         HD_TEXTFILTERW ends
         _HD_TEXTFILTERW typedef HD_TEXTFILTERW
         LPHD_TEXTFILTERW typedef ptr HD_TEXTFILTERW
+        
         HD_ITEMA equ <HDITEMA>
         HD_ITEMW equ <HDITEMW>
         HD_ITEM equ <HDITEM>
@@ -573,6 +584,7 @@ ifndef _INC_COMMCTRL
         HDITEMA ends
         _HD_ITEMA typedef HDITEMA
         LPHDITEMA typedef ptr HDITEMA
+        
         HDITEMA_V1_SIZE equ <CCSIZEOF_STRUCT(HDITEMA, lParam)>
         HDITEMW_V1_SIZE equ <CCSIZEOF_STRUCT(HDITEMW, lParam)>
         HDITEMW struct
@@ -593,6 +605,7 @@ ifndef _INC_COMMCTRL
         HDITEMW ends
         _HD_ITEMW typedef HDITEMW
         LPHDITEMW typedef ptr HDITEMW
+        
         ifdef UNICODE
           HDITEM equ <HDITEMW>
           LPHDITEM equ <LPHDITEMW>
@@ -650,7 +663,7 @@ ifndef _INC_COMMCTRL
           HDM_INSERTITEM equ <HDM_INSERTITEMA>
         endif
         Header_InsertItem macro hwndHD, i, phdi
-          exitm <SNDMSG ((hwndHD), HDM_INSERTITEM, (i), (const HD_ITEM *) (phdi))>
+          exitm <SNDMSG ((hwndHD), HDM_INSERTITEM, (i), HD_ITEM ptr (phdi))>
         endm
         HDM_DELETEITEM equ (HDM_FIRST + 2)
         Header_DeleteItem macro hwndHD, i
@@ -674,7 +687,7 @@ ifndef _INC_COMMCTRL
           HDM_SETITEM equ <HDM_SETITEMA>
         endif
         Header_SetItem macro hwndHD, i, phdi
-          exitm <SNDMSG ((hwndHD), HDM_SETITEM, (i), (const HD_ITEM *) (phdi))>
+          exitm <SNDMSG ((hwndHD), HDM_SETITEM, (i), HD_ITEM ptr (phdi))>
         endm
         HD_LAYOUT equ <HDLAYOUT>
         HDLAYOUT struct
@@ -683,6 +696,7 @@ ifndef _INC_COMMCTRL
         HDLAYOUT ends
         _HD_LAYOUT typedef HDLAYOUT
         LPHDLAYOUT typedef ptr HDLAYOUT
+        
         HDM_LAYOUT equ (HDM_FIRST + 5)
         Header_Layout macro hwndHD, playout
           exitm <SNDMSG ((hwndHD), HDM_LAYOUT, 0, (HD_LAYOUT *) (playout))>
@@ -710,6 +724,7 @@ ifndef _INC_COMMCTRL
         HDHITTESTINFO ends
         _HD_HITTESTINFO typedef HDHITTESTINFO
         LPHDHITTESTINFO typedef ptr HDHITTESTINFO
+        
         HDSIL_NORMAL equ 0
         HDSIL_STATE equ 1
         HDM_HITTEST equ (HDM_FIRST + 6)
@@ -796,11 +811,11 @@ ifndef _INC_COMMCTRL
           endm
           HDM_GETFOCUSEDITEM equ (HDM_FIRST + 27)
           Header_GetFocusedItem macro hwnd
-            exitm <SNDMSG ((hwnd), HDM_GETFOCUSEDITEM, (0), (0))>
+            exitm <SNDMSG ((hwnd), HDM_GETFOCUSEDITEM, 0, 0)>
           endm
           HDM_SETFOCUSEDITEM equ (HDM_FIRST + 28)
           Header_SetFocusedItem macro hwnd, iItem
-            exitm <SNDMSG ((hwnd), HDM_SETFOCUSEDITEM, (0), (iItem))>
+            exitm <SNDMSG ((hwnd), HDM_SETFOCUSEDITEM, 0, (iItem))>
           endm
         endif
         HDN_ITEMCHANGINGA equ (HDN_FIRST - 0)
@@ -867,6 +882,7 @@ ifndef _INC_COMMCTRL
         NMHEADERA ends
         tagNMHEADERA typedef NMHEADERA
         LPNMHEADERA typedef ptr NMHEADERA
+        
         NMHEADERW struct
           hdr NMHDR <>
           iItem SDWORD ?
@@ -875,6 +891,7 @@ ifndef _INC_COMMCTRL
         NMHEADERW ends
         tagNMHEADERW typedef NMHEADERW
         LPNMHEADERW typedef ptr NMHEADERW
+        
         ifdef UNICODE
           NMHEADER equ <NMHEADERW>
           LPNMHEADER equ <LPNMHEADERW>
@@ -893,6 +910,7 @@ ifndef _INC_COMMCTRL
         NMHDDISPINFOW ends
         tagNMHDDISPINFOW typedef NMHDDISPINFOW
         LPNMHDDISPINFOW typedef ptr NMHDDISPINFOW
+        
         NMHDDISPINFOA struct
           hdr NMHDR <>
           iItem SDWORD ?
@@ -904,6 +922,7 @@ ifndef _INC_COMMCTRL
         NMHDDISPINFOA ends
         tagNMHDDISPINFOA typedef NMHDDISPINFOA
         LPNMHDDISPINFOA typedef ptr NMHDDISPINFOA
+        
         ifdef UNICODE
           NMHDDISPINFO equ <NMHDDISPINFOW>
           LPNMHDDISPINFO equ <LPNMHDDISPINFOW>
@@ -918,6 +937,7 @@ ifndef _INC_COMMCTRL
         NMHDFILTERBTNCLICK ends
         tagNMHDFILTERBTNCLICK typedef NMHDFILTERBTNCLICK
         LPNMHDFILTERBTNCLICK typedef ptr NMHDFILTERBTNCLICK
+        
       endif
       ifndef NOTOOLBAR
         ifdef _WIN32
@@ -947,6 +967,7 @@ ifndef _INC_COMMCTRL
         _TBBUTTON typedef TBBUTTON
         PTBBUTTON typedef ptr TBBUTTON
         LPTBBUTTON typedef ptr TBBUTTON
+        
         LPCTBBUTTON typedef ptr TBBUTTON
         COLORMAP struct
           from COLORREF ?
@@ -954,6 +975,7 @@ ifndef _INC_COMMCTRL
         COLORMAP ends
         _COLORMAP typedef COLORMAP
         LPCOLORMAP typedef ptr COLORMAP
+        
         @DefProto DllImport, CreateToolbarEx, WIN_STD_CALL_CONV,, <:HWND, :DWORD, :UINT, :SDWORD, :HINSTANCE, :UINT_PTR, :LPCTBBUTTON, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :SDWORD, :UINT>, 52
         @DefProto DllImport, CreateMappedBitmap, WIN_STD_CALL_CONV,, <:HINSTANCE, :INT_PTR, :UINT, :LPCOLORMAP, :SDWORD>, 20
         CMB_MASKED equ 02h
@@ -1019,6 +1041,7 @@ ifndef _INC_COMMCTRL
         NMTBCUSTOMDRAW ends
         _NMTBCUSTOMDRAW typedef NMTBCUSTOMDRAW
         LPNMTBCUSTOMDRAW typedef ptr NMTBCUSTOMDRAW
+        
         TBCDRF_NOEDGES equ 00010000h
         TBCDRF_HILITEHOTTRACK equ 00020000h
         TBCDRF_NOOFFSET equ 00040000h
@@ -1051,6 +1074,7 @@ ifndef _INC_COMMCTRL
           TBADDBITMAP ends
           tagTBADDBITMAP typedef TBADDBITMAP
           LPTBADDBITMAP typedef ptr TBADDBITMAP
+          
           HINST_COMMCTRL equ ((HINSTANCE) - 1)
           IDB_STD_SMALL_COLOR equ 0
           IDB_STD_LARGE_COLOR equ 1
@@ -1112,6 +1136,7 @@ ifndef _INC_COMMCTRL
           TBSAVEPARAMSA ends
           tagTBSAVEPARAMSA typedef TBSAVEPARAMSA
           LPTBSAVEPARAMSA typedef ptr TBSAVEPARAMSA
+          
           TBSAVEPARAMSW struct
             hkr HKEY ?
             pszSubKey LPCWSTR ?
@@ -1119,6 +1144,7 @@ ifndef _INC_COMMCTRL
           TBSAVEPARAMSW ends
           tagTBSAVEPARAMSW typedef TBSAVEPARAMSW
           LPTBSAVEPARAMW typedef ptr TBSAVEPARAMSW
+          
           ifdef UNICODE
             TBSAVEPARAMS equ <TBSAVEPARAMSW>
             LPTBSAVEPARAMS equ <LPTBSAVEPARAMSW>
@@ -1183,6 +1209,7 @@ ifndef _INC_COMMCTRL
           dwFlags DWORD ?
         TBINSERTMARK ends
         LPTBINSERTMARK typedef ptr TBINSERTMARK
+        
         TBIMHT_AFTER equ 00000001h
         TBIMHT_BACKGROUND equ 00000002h
         TB_GETINSERTMARK equ (WM_USER + 79)
@@ -1214,6 +1241,7 @@ ifndef _INC_COMMCTRL
           nButtons SDWORD ?
         TBREPLACEBITMAP ends
         LPTBREPLACEBITMAP typedef ptr TBREPLACEBITMAP
+        
         ifdef _WIN32
           TBBF_LARGE equ 0001h
           TB_GETBITMAPFLAGS equ (WM_USER + 41)
@@ -1238,6 +1266,7 @@ ifndef _INC_COMMCTRL
             cchText SDWORD ?
           TBBUTTONINFOA ends
           LPTBBUTTONINFOA typedef ptr TBBUTTONINFOA
+          
           TBBUTTONINFOW struct
             cbSize UINT ?
             dwMask DWORD ?
@@ -1251,6 +1280,7 @@ ifndef _INC_COMMCTRL
             cchText SDWORD ?
           TBBUTTONINFOW ends
           LPTBBUTTONINFOW typedef ptr TBBUTTONINFOW
+          
           ifdef UNICODE
             TBBUTTONINFO equ <TBBUTTONINFOW>
             LPTBBUTTONINFO equ <LPTBBUTTONINFOW>
@@ -1309,6 +1339,7 @@ ifndef _INC_COMMCTRL
               cyButtonSpacing SDWORD ?
             TBMETRICS ends
             LPTBMETRICS typedef ptr TBMETRICS
+            
             TB_GETMETRICS equ (WM_USER + 101)
             TB_SETMETRICS equ (WM_USER + 102)
           endif
@@ -1340,6 +1371,7 @@ ifndef _INC_COMMCTRL
           NMTBHOTITEM ends
           tagNMTBHOTITEM typedef NMTBHOTITEM
           LPNMTBHOTITEM typedef ptr NMTBHOTITEM
+          
           HICF_OTHER equ 00000000h
           HICF_MOUSE equ 00000001h
           HICF_ARROWKEYS equ 00000002h
@@ -1379,6 +1411,7 @@ ifndef _INC_COMMCTRL
           NMTBSAVE ends
           tagNMTBSAVE typedef NMTBSAVE
           LPNMTBSAVE typedef ptr NMTBSAVE
+          
           NMTBRESTORE struct
             hdr NMHDR <>
             pData POINTER ?
@@ -1391,6 +1424,7 @@ ifndef _INC_COMMCTRL
           NMTBRESTORE ends
           tagNMTBRESTORE typedef NMTBRESTORE
           LPNMTBRESTORE typedef ptr NMTBRESTORE
+          
           NMTBGETINFOTIPA struct
             hdr NMHDR <>
             pszText LPSTR ?
@@ -1400,6 +1434,7 @@ ifndef _INC_COMMCTRL
           NMTBGETINFOTIPA ends
           tagNMTBGETINFOTIPA typedef NMTBGETINFOTIPA
           LPNMTBGETINFOTIPA typedef ptr NMTBGETINFOTIPA
+          
           NMTBGETINFOTIPW struct
             hdr NMHDR <>
             pszText LPWSTR ?
@@ -1409,6 +1444,7 @@ ifndef _INC_COMMCTRL
           NMTBGETINFOTIPW ends
           tagNMTBGETINFOTIPW typedef NMTBGETINFOTIPW
           LPNMTBGETINFOTIPW typedef ptr NMTBGETINFOTIPW
+          
           ifdef UNICODE
             TBN_GETINFOTIP equ <TBN_GETINFOTIPW>
             NMTBGETINFOTIP equ <NMTBGETINFOTIPW>
@@ -1431,6 +1467,7 @@ ifndef _INC_COMMCTRL
             cchText SDWORD ?
           NMTBDISPINFOA ends
           LPNMTBDISPINFOA typedef ptr NMTBDISPINFOA
+          
           NMTBDISPINFOW struct
             hdr NMHDR <>
             dwMask DWORD ?
@@ -1441,6 +1478,7 @@ ifndef _INC_COMMCTRL
             cchText SDWORD ?
           NMTBDISPINFOW ends
           LPNMTBDISPINFOW typedef ptr NMTBDISPINFOW
+          
           ifdef UNICODE
             TBN_GETDISPINFO equ <TBN_GETDISPINFOW>
             NMTBDISPINFO equ <NMTBDISPINFOW>
@@ -1474,6 +1512,7 @@ ifndef _INC_COMMCTRL
           NMTOOLBARA ends
           tagNMTOOLBARA typedef NMTOOLBARA
           LPNMTOOLBARA typedef ptr NMTOOLBARA
+          
           NMTOOLBARW struct
             hdr NMHDR <>
             iItem SDWORD ?
@@ -1484,6 +1523,7 @@ ifndef _INC_COMMCTRL
           NMTOOLBARW ends
           tagNMTOOLBARW typedef NMTOOLBARW
           LPNMTOOLBARW typedef ptr NMTOOLBARW
+          
           ifdef UNICODE
             NMTOOLBAR equ <NMTOOLBARW>
             LPNMTOOLBAR equ <LPNMTOOLBARW>
@@ -1525,6 +1565,7 @@ ifndef _INC_COMMCTRL
         REBARINFO ends
         tagREBARINFO typedef REBARINFO
         LPREBARINFO typedef ptr REBARINFO
+        
         RBBS_BREAK equ 00000001h
         RBBS_FIXEDSIZE equ 00000002h
         RBBS_CHILDEDGE equ 00000004h
@@ -1583,6 +1624,7 @@ ifndef _INC_COMMCTRL
         REBARBANDINFOA ends
         tagREBARBANDINFOA typedef REBARBANDINFOA
         LPREBARBANDINFOA typedef ptr REBARBANDINFOA
+        
         LPCREBARBANDINFOA typedef ptr REBARBANDINFOA
         REBARBANDINFOA_V3_SIZE equ <CCSIZEOF_STRUCT(REBARBANDINFOA, wID)>
         REBARBANDINFOW_V3_SIZE equ <CCSIZEOF_STRUCT(REBARBANDINFOW, wID)>
@@ -1616,6 +1658,7 @@ ifndef _INC_COMMCTRL
         REBARBANDINFOW ends
         tagREBARBANDINFOW typedef REBARBANDINFOW
         LPREBARBANDINFOW typedef ptr REBARBANDINFOW
+        
         LPCREBARBANDINFOW typedef ptr REBARBANDINFOW
         ifdef UNICODE
           REBARBANDINFO equ <REBARBANDINFOW>
@@ -1722,6 +1765,7 @@ ifndef _INC_COMMCTRL
         NMREBARCHILDSIZE ends
         tagNMREBARCHILDSIZE typedef NMREBARCHILDSIZE
         LPNMREBARCHILDSIZE typedef ptr NMREBARCHILDSIZE
+        
         NMREBAR struct
           hdr NMHDR <>
           dwMask DWORD ?
@@ -1732,6 +1776,7 @@ ifndef _INC_COMMCTRL
         NMREBAR ends
         tagNMREBAR typedef NMREBAR
         LPNMREBAR typedef ptr NMREBAR
+        
         RBNM_ID equ 00000001h
         RBNM_STYLE equ 00000002h
         RBNM_LPARAM equ 00000004h
@@ -1743,6 +1788,7 @@ ifndef _INC_COMMCTRL
         NMRBAUTOSIZE ends
         tagNMRBAUTOSIZE typedef NMRBAUTOSIZE
         LPNMRBAUTOSIZE typedef ptr NMRBAUTOSIZE
+        
         NMREBARCHEVRON struct
           hdr NMHDR <>
           uBand UINT ?
@@ -1753,6 +1799,7 @@ ifndef _INC_COMMCTRL
         NMREBARCHEVRON ends
         tagNMREBARCHEVRON typedef NMREBARCHEVRON
         LPNMREBARCHEVRON typedef ptr NMREBARCHEVRON
+        
         if (_WIN32_IE ge 0600h)
           NMREBARSPLITTER struct
             hdr NMHDR <>
@@ -1760,6 +1807,7 @@ ifndef _INC_COMMCTRL
           NMREBARSPLITTER ends
           tagNMREBARSPLITTER typedef NMREBARSPLITTER
           LPNMREBARSPLITTER typedef ptr NMREBARSPLITTER
+          
         endif
         if (NTDDI_VERSION ge NTDDI_WINXP)
           RBAB_AUTOSIZE equ 0001h
@@ -1775,6 +1823,7 @@ ifndef _INC_COMMCTRL
           NMREBARAUTOBREAK ends
           tagNMREBARAUTOBREAK typedef NMREBARAUTOBREAK
           LPNMREBARAUTOBREAK typedef ptr NMREBARAUTOBREAK
+          
         endif
         RBHT_NOWHERE equ 0001h
         RBHT_CAPTION equ 0002h
@@ -1791,6 +1840,7 @@ ifndef _INC_COMMCTRL
         RBHITTESTINFO ends
         _RB_HITTESTINFO typedef RBHITTESTINFO
         LPRBHITTESTINFO typedef ptr RBHITTESTINFO
+        
       endif
       ifndef NOTOOLTIPS
         ifdef _WIN32
@@ -1832,6 +1882,7 @@ ifndef _INC_COMMCTRL
         tagTOOLINFOA typedef TTTOOLINFOA
         PTOOLINFOA typedef ptr TTTOOLINFOA
         LPTTTOOLINFOA typedef ptr TTTOOLINFOA
+        
         TTTOOLINFOW struct
           cbSize UINT ?
           uFlags UINT ?
@@ -1848,6 +1899,7 @@ ifndef _INC_COMMCTRL
         tagTOOLINFOW typedef TTTOOLINFOW
         PTOOLINFOW typedef ptr TTTOOLINFOW
         LPTTTOOLINFOW typedef ptr TTTOOLINFOW
+        
         ifdef UNICODE
           TTTOOLINFO equ <TTTOOLINFOW>
           PTOOLINFO equ <PTOOLINFOW>
@@ -1943,6 +1995,7 @@ ifndef _INC_COMMCTRL
           TTGETTITLE ends
           _TTGETTITLE typedef TTGETTITLE
           PTTGETTITLE typedef ptr TTGETTITLE
+          
         endif
         ifdef UNICODE
           TTM_ADDTOOL equ <TTM_ADDTOOLW>
@@ -1982,6 +2035,7 @@ ifndef _INC_COMMCTRL
         TTHITTESTINFOA ends
         _TT_HITTESTINFOA typedef TTHITTESTINFOA
         LPTTHITTESTINFOA typedef ptr TTHITTESTINFOA
+        
         TTHITTESTINFOW struct
           hwnd HWND ?
           pt POINT <>
@@ -1989,6 +2043,7 @@ ifndef _INC_COMMCTRL
         TTHITTESTINFOW ends
         _TT_HITTESTINFOW typedef TTHITTESTINFOW
         LPTTHITTESTINFOW typedef ptr TTHITTESTINFOW
+        
         ifdef UNICODE
           TTHITTESTINFO equ <TTHITTESTINFOW>
           LPTTHITTESTINFO equ <LPTTHITTESTINFOW>
@@ -2027,6 +2082,7 @@ ifndef _INC_COMMCTRL
         NMTTDISPINFOA ends
         tagNMTTDISPINFOA typedef NMTTDISPINFOA
         LPNMTTDISPINFOA typedef ptr NMTTDISPINFOA
+        
         NMTTDISPINFOW struct
           hdr NMHDR <>
           lpszText LPWSTR ?
@@ -2037,6 +2093,7 @@ ifndef _INC_COMMCTRL
         NMTTDISPINFOW ends
         tagNMTTDISPINFOW typedef NMTTDISPINFOW
         LPNMTTDISPINFOW typedef ptr NMTTDISPINFOW
+        
         ifdef UNICODE
           NMTTDISPINFO equ <NMTTDISPINFOW>
           LPNMTTDISPINFO equ <LPNMTTDISPINFOW>
@@ -2225,6 +2282,7 @@ ifndef _INC_COMMCTRL
         DRAGLISTINFO ends
         tagDRAGLISTINFO typedef DRAGLISTINFO
         LPDRAGLISTINFO typedef ptr DRAGLISTINFO
+        
         DL_BEGINDRAG equ (WM_USER + 133)
         DL_DRAGGING equ (WM_USER + 134)
         DL_DROPPED equ (WM_USER + 135)
@@ -2236,7 +2294,7 @@ ifndef _INC_COMMCTRL
         DRAGLISTMSGSTRING equ <TEXT("commctrl_DragListMsg")>
         @DefProto DllImport, MakeDragList, WIN_STD_CALL_CONV,, <:HWND>, 4
         @DefProto DllImport, DrawInsert, WIN_STD_CALL_CONV,, <:HWND, :HWND, :SDWORD>, 12
-        @DefProto DllImport, LBItemFromPt, WIN_STD_CALL_CONV,, <:HWND, :POINT, :BOOL>, 12
+        @DefProto DllImport, LBItemFromPt, WIN_STD_CALL_CONV,, <:HWND, :POINT, :BOOL>, 16
       endif
       ifndef NOUPDOWN
         ifdef _WIN32
@@ -2256,6 +2314,7 @@ ifndef _INC_COMMCTRL
         UDACCEL ends
         _UDACCEL typedef UDACCEL
         LPUDACCEL typedef ptr UDACCEL
+        
         UD_MAXVAL equ 7fffh
         UD_MINVAL equ <(- UD_MAXVAL)>
         UDS_WRAP equ 0001h
@@ -2293,6 +2352,7 @@ ifndef _INC_COMMCTRL
         NMUPDOWN ends
         _NM_UPDOWN typedef NMUPDOWN
         LPNMUPDOWN typedef ptr NMUPDOWN
+        
         UDN_DELTAPOS equ (UDN_FIRST - 1)
       endif
       ifndef NOPROGRESS
@@ -2320,6 +2380,7 @@ ifndef _INC_COMMCTRL
           iHigh SDWORD ?
         PBRANGE ends
         PPBRANGE typedef ptr PBRANGE
+        
         PBM_GETRANGE equ (WM_USER + 7)
         PBM_GETPOS equ (WM_USER + 8)
         PBM_SETBARCOLOR equ (WM_USER + 9)
@@ -2389,9 +2450,9 @@ ifndef _INC_COMMCTRL
       CCS_NOMOVEX equ <(CCS_VERT or CCS_NOMOVEY)>
       ifdef _WIN32
         if (NTDDI_VERSION ge NTDDI_WINXP)
-          INVALID_LINK_INDEX equ (- 1)
+          INVALID_LINK_INDEX equ -1
           MAX_LINKID_TEXT equ 48
-          L_MAX_URL_LENGTH equ <(2048 + 32 + 3)>
+          L_MAX_URL_LENGTH equ <(2048 + 32 + 3)>      ;sizeof("://")
           WC_LINK equ <L("SysLink")>
           LWS_TRANSPARENT equ 0001h
           LWS_IGNORERETURN equ 0002h
@@ -2422,18 +2483,21 @@ ifndef _INC_COMMCTRL
           LITEM ends
           tagLITEM typedef LITEM
           PLITEM typedef ptr LITEM
+          
           LHITTESTINFO struct
             pt POINT <>
             item LITEM <>
           LHITTESTINFO ends
           tagLHITTESTINFO typedef LHITTESTINFO
           PLHITTESTINFO typedef ptr LHITTESTINFO
+          
           NMLINK struct
             hdr NMHDR <>
             item LITEM <>
           NMLINK ends
           tagNMLINK typedef NMLINK
           PNMLINK typedef ptr NMLINK
+          
           LM_HITTEST equ (WM_USER + 300h)
           LM_GETIDEALHEIGHT equ (WM_USER + 301h)
           LM_SETITEM equ (WM_USER + 302h)
@@ -2493,7 +2557,7 @@ ifndef _INC_COMMCTRL
         endm
         LVM_GETIMAGELIST equ (LVM_FIRST + 2)
         ListView_GetImageList macro hwnd, iImageList
-          exitm <SNDMSG ((hwnd), LVM_GETIMAGELIST, (INT) (iImageList), 0)>
+          exitm <SNDMSG ((hwnd), LVM_GETIMAGELIST, (iImageList), 0)>
         endm
         LVSIL_NORMAL equ 0
         LVSIL_SMALL equ 1
@@ -2531,12 +2595,12 @@ ifndef _INC_COMMCTRL
         INDEXTOSTATEIMAGEMASK macro i
           exitm <((i) shl 12)>
         endm
-        I_INDENTCALLBACK equ (- 1)
+        I_INDENTCALLBACK equ -1
         LV_ITEMA equ <LVITEMA>
         LV_ITEMW equ <LVITEMW>
         if (NTDDI_VERSION ge NTDDI_WINXP)
-          I_GROUPIDCALLBACK equ (- 1)
-          I_GROUPIDNONE equ (- 2)
+          I_GROUPIDCALLBACK equ -1
+          I_GROUPIDNONE equ -2
         endif
         LV_ITEM equ <LVITEM>
         LVITEMA_V1_SIZE equ <CCSIZEOF_STRUCT(LVITEMA, lParam)>
@@ -2573,6 +2637,7 @@ ifndef _INC_COMMCTRL
         LVITEMA ends
         tagLVITEMA typedef LVITEMA
         LPLVITEMA typedef ptr LVITEMA
+        
         LVITEMW struct
           mask_ UINT ?
           iItem SDWORD ?
@@ -2596,6 +2661,7 @@ ifndef _INC_COMMCTRL
         LVITEMW ends
         tagLVITEMW typedef LVITEMW
         LPLVITEMW typedef ptr LVITEMW
+        
         ifdef UNICODE
           LVITEM equ <LVITEMW>
           LPLVITEM equ <LPLVITEMW>
@@ -2612,8 +2678,8 @@ ifndef _INC_COMMCTRL
         else
           LPSTR_TEXTCALLBACK equ <LPSTR_TEXTCALLBACKA>
         endif
-        I_IMAGECALLBACK equ (- 1)
-        I_IMAGENONE equ (- 2)
+        I_IMAGECALLBACK equ -1
+        I_IMAGENONE equ -2
         if (NTDDI_VERSION ge NTDDI_WINXP)
           I_COLUMNSCALLBACK equ (- 1)
         endif
@@ -2635,7 +2701,7 @@ ifndef _INC_COMMCTRL
           LVM_SETITEM equ <LVM_SETITEMA>
         endif
         ListView_SetItem macro hwnd, pitem
-          exitm <SNDMSG ((hwnd), LVM_SETITEM, 0, (const LV_ITEM *) (pitem))>
+          exitm <SNDMSG ((hwnd), LVM_SETITEM, 0, LV_ITEM ptr (pitem))>
         endm
         LVM_INSERTITEMA equ (LVM_FIRST + 7)
         LVM_INSERTITEMW equ (LVM_FIRST + 77)
@@ -2645,7 +2711,7 @@ ifndef _INC_COMMCTRL
           LVM_INSERTITEM equ <LVM_INSERTITEMA>
         endif
         ListView_InsertItem macro hwnd, pitem
-          exitm <SNDMSG ((hwnd), LVM_INSERTITEM, 0, (const LV_ITEM *) (pitem))>
+          exitm <SNDMSG ((hwnd), LVM_INSERTITEM, 0, LV_ITEM ptr (pitem))>
         endm
         LVM_DELETEITEM equ (LVM_FIRST + 8)
         ListView_DeleteItem macro hwnd, i
@@ -2700,6 +2766,7 @@ ifndef _INC_COMMCTRL
         LVFINDINFOA ends
         tagLVFINDINFOA typedef LVFINDINFOA
         LPFINDINFOA typedef ptr LVFINDINFOA
+        
         LVFINDINFOW struct
           flags UINT ?
           psz LPCWSTR ?
@@ -2709,6 +2776,7 @@ ifndef _INC_COMMCTRL
         LVFINDINFOW ends
         tagLVFINDINFOW typedef LVFINDINFOW
         LPFINDINFOW typedef ptr LVFINDINFOW
+        
         ifdef UNICODE
           LVFINDINFO equ <LVFINDINFOW>
         else
@@ -2722,7 +2790,7 @@ ifndef _INC_COMMCTRL
           LVM_FINDITEM equ <LVM_FINDITEMA>
         endif
         ListView_FindItem macro hwnd, iStart, plvfi
-          exitm <SNDMSG ((hwnd), LVM_FINDITEM, (iStart), (const LV_FINDINFO *) (plvfi))>
+          exitm <SNDMSG ((hwnd), LVM_FINDITEM, (iStart), LV_FINDINFO ptr (plvfi))>
         endm
         LVIR_BOUNDS equ 0
         LVIR_ICON equ 1
@@ -2781,6 +2849,7 @@ ifndef _INC_COMMCTRL
         LVHITTESTINFO ends
         tagLVHITTESTINFO typedef LVHITTESTINFO
         LPLVHITTESTINFO typedef ptr LVHITTESTINFO
+        
         LVM_HITTEST equ (LVM_FIRST + 18)
         ListView_HitTest macro hwndLV, pinfo
           exitm <SNDMSG ((hwndLV), LVM_HITTEST, 0, (LV_HITTESTINFO *) (pinfo))>
@@ -2844,6 +2913,7 @@ ifndef _INC_COMMCTRL
         LVCOLUMNA ends
         tagLVCOLUMNA typedef LVCOLUMNA
         LPLVCOLUMNA typedef ptr LVCOLUMNA
+        
         LVCOLUMNW struct
           mask_ UINT ?
           fmt SDWORD ?
@@ -2861,6 +2931,7 @@ ifndef _INC_COMMCTRL
         LVCOLUMNW ends
         tagLVCOLUMNW typedef LVCOLUMNW
         LPLVCOLUMNW typedef ptr LVCOLUMNW
+        
         ifdef UNICODE
           LVCOLUMN equ <LVCOLUMNW>
           LPLVCOLUMN equ <LPLVCOLUMNW>
@@ -2917,7 +2988,7 @@ ifndef _INC_COMMCTRL
           LVM_SETCOLUMN equ <LVM_SETCOLUMNA>
         endif
         ListView_SetColumn macro hwnd, iCol, pcol
-          exitm <SNDMSG ((hwnd), LVM_SETCOLUMN, (iCol), (const LV_COLUMN *) (pcol))>
+          exitm <SNDMSG ((hwnd), LVM_SETCOLUMN, (iCol), LV_COLUMN ptr (pcol))>
         endm
         LVM_INSERTCOLUMNA equ (LVM_FIRST + 27)
         LVM_INSERTCOLUMNW equ (LVM_FIRST + 97)
@@ -2927,7 +2998,7 @@ ifndef _INC_COMMCTRL
           LVM_INSERTCOLUMN equ <LVM_INSERTCOLUMNA>
         endif
         ListView_InsertColumn macro hwnd, iCol, pcol
-          exitm <SNDMSG ((hwnd), LVM_INSERTCOLUMN, (iCol), (const LV_COLUMN *) (pcol))>
+          exitm <SNDMSG ((hwnd), LVM_INSERTCOLUMN, (iCol), LV_COLUMN ptr (pcol))>
         endm
         LVM_DELETECOLUMN equ (LVM_FIRST + 28)
         ListView_DeleteColumn macro hwnd, iCol
@@ -3032,7 +3103,6 @@ ifndef _INC_COMMCTRL
         endm
         TYPE_PFNLVCOMPARE typedef proto WIN_STD_CALL_CONV :LPARAM, :LPARAM, :LPARAM
         PFNLVCOMPARE typedef ptr TYPE_PFNLVCOMPARE
-
         LVM_SORTITEMS equ (LVM_FIRST + 48)
         ListView_SortItems macro hwndLV, _pfnCompare, _lPrm
           exitm <SNDMSG ((hwndLV), LVM_SORTITEMS, (_lPrm), (PFNLVCOMPARE) (_pfnCompare))>
@@ -3137,11 +3207,11 @@ ifndef _INC_COMMCTRL
         endm
         LVM_SETHOTCURSOR equ (LVM_FIRST + 62)
         ListView_SetHotCursor macro hwnd, hcur
-          exitm <SNDMSG ((hwnd), LVM_SETHOTCURSOR, 0, (hcur))>
+          exitm <(HCURSOR) SNDMSG ((hwnd), LVM_SETHOTCURSOR, 0, (hcur))>
         endm
         LVM_GETHOTCURSOR equ (LVM_FIRST + 63)
         ListView_GetHotCursor macro hwnd
-          exitm <SNDMSG ((hwnd), LVM_GETHOTCURSOR, 0, 0)>
+          exitm <(HCURSOR) SNDMSG ((hwnd), LVM_GETHOTCURSOR, 0, 0)>
         endm
         LVM_APPROXIMATEVIEWRECT equ (LVM_FIRST + 64)
         ListView_ApproximateViewRect macro hwnd, iWidth, iHeight, iCount
@@ -3198,6 +3268,7 @@ ifndef _INC_COMMCTRL
         LVBKIMAGEA ends
         tagLVBKIMAGEA typedef LVBKIMAGEA
         LPLVBKIMAGEA typedef ptr LVBKIMAGEA
+        
         LVBKIMAGEW struct
           ulFlags ULONG ?
           hbm HBITMAP ?
@@ -3208,6 +3279,7 @@ ifndef _INC_COMMCTRL
         LVBKIMAGEW ends
         tagLVBKIMAGEW typedef LVBKIMAGEW
         LPLVBKIMAGEW typedef ptr LVBKIMAGEW
+        
         LVBKIF_SOURCE_NONE equ 00000000h
         LVBKIF_SOURCE_HBITMAP equ 00000001h
         LVBKIF_SOURCE_URL equ 00000002h
@@ -3306,6 +3378,7 @@ ifndef _INC_COMMCTRL
           LVGROUP ends
           tagLVGROUP typedef LVGROUP
           PLVGROUP typedef ptr LVGROUP
+          
           LVM_INSERTGROUP equ (LVM_FIRST + 145)
           ListView_InsertGroup macro hwnd, index, pgrp
             exitm <SNDMSG ((hwnd), LVM_INSERTGROUP, (index), (pgrp))>
@@ -3366,6 +3439,7 @@ ifndef _INC_COMMCTRL
           LVGROUPMETRICS ends
           tagLVGROUPMETRICS typedef LVGROUPMETRICS
           PLVGROUPMETRICS typedef ptr LVGROUPMETRICS
+          
           LVM_SETGROUPMETRICS equ (LVM_FIRST + 155)
           ListView_SetGroupMetrics macro hwnd, pGroupMetrics
             exitm <SNDMSG ((hwnd), LVM_SETGROUPMETRICS, 0, (pGroupMetrics))>
@@ -3380,7 +3454,6 @@ ifndef _INC_COMMCTRL
           endm
           TYPE_PFNLVGROUPCOMPARE typedef proto WIN_STD_CALL_CONV :SDWORD, :SDWORD, :ptr
           PFNLVGROUPCOMPARE typedef ptr TYPE_PFNLVGROUPCOMPARE
-
           LVM_SORTGROUPS equ (LVM_FIRST + 158)
           ListView_SortGroups macro hwnd, _pfnGroupCompate, _plv
             exitm <SNDMSG ((hwnd), LVM_SORTGROUPS, (_pfnGroupCompate), (_plv))>
@@ -3392,6 +3465,7 @@ ifndef _INC_COMMCTRL
           LVINSERTGROUPSORTED ends
           tagLVINSERTGROUPSORTED typedef LVINSERTGROUPSORTED
           PLVINSERTGROUPSORTED typedef ptr LVINSERTGROUPSORTED
+          
           LVM_INSERTGROUPSORTED equ (LVM_FIRST + 159)
           ListView_InsertGroupSorted macro hwnd, structInsert
             exitm <SNDMSG ((hwnd), LVM_INSERTGROUPSORTED, (structInsert), 0)>
@@ -3435,6 +3509,7 @@ ifndef _INC_COMMCTRL
           LVTILEVIEWINFO ends
           tagLVTILEVIEWINFO typedef LVTILEVIEWINFO
           PLVTILEVIEWINFO typedef ptr LVTILEVIEWINFO
+          
           LVTILEINFO struct
             cbSize UINT ?
             iItem SDWORD ?
@@ -3446,6 +3521,7 @@ ifndef _INC_COMMCTRL
           LVTILEINFO ends
           tagLVTILEINFO typedef LVTILEINFO
           PLVTILEINFO typedef ptr LVTILEINFO
+          
           LVTILEINFO_V5_SIZE equ <CCSIZEOF_STRUCT(LVTILEINFO, puColumns)>
           LVM_SETTILEVIEWINFO equ (LVM_FIRST + 162)
           ListView_SetTileViewInfo macro hwnd, ptvi
@@ -3470,6 +3546,7 @@ ifndef _INC_COMMCTRL
             dwReserved DWORD ?
           LVINSERTMARK ends
           LPLVINSERTMARK typedef ptr LVINSERTMARK
+          
           LVIM_AFTER equ 00000001h
           LVM_SETINSERTMARK equ (LVM_FIRST + 166)
           ListView_SetInsertMark macro hwnd, lvim
@@ -3504,6 +3581,7 @@ ifndef _INC_COMMCTRL
           LVSETINFOTIP ends
           tagLVSETINFOTIP typedef LVSETINFOTIP
           PLVSETINFOTIP typedef ptr LVSETINFOTIP
+          
           LVM_SETINFOTIP equ (LVM_FIRST + 173)
           ListView_SetInfoTip macro hwndLV, plvInfoTip
             exitm <SNDMSG ((hwndLV), LVM_SETINFOTIP, 0, (plvInfoTip))>
@@ -3526,7 +3604,7 @@ ifndef _INC_COMMCTRL
           endm
           LVM_CANCELEDITLABEL equ (LVM_FIRST + 179)
           ListView_CancelEditLabel macro hwnd
-            exitm <SNDMSG ((hwnd), LVM_CANCELEDITLABEL, 0, 0)>
+            exitm <(VOID) SNDMSG ((hwnd), LVM_CANCELEDITLABEL, 0, 0)>
           endm
           LVM_MAPINDEXTOID equ (LVM_FIRST + 180)
           ListView_MapIndexToID macro hwnd, index
@@ -3553,7 +3631,7 @@ ifndef _INC_COMMCTRL
             endm
             LVM_GETFOOTERRECT equ (LVM_FIRST + 205)
             ListView_GetFooterRect macro hwnd, prc
-              exitm <SNDMSG ((hwnd), LVM_GETFOOTERRECT, (0), (prc))>
+              exitm <SNDMSG ((hwnd), LVM_GETFOOTERRECT, 0, (prc))>
             endm
             LVFF_ITEMCOUNT equ 00000001h
             LVFOOTERINFO struct
@@ -3564,9 +3642,10 @@ ifndef _INC_COMMCTRL
             LVFOOTERINFO ends
             tagLVFOOTERINFO typedef LVFOOTERINFO
             LPLVFOOTERINFO typedef ptr LVFOOTERINFO
+            
             LVM_GETFOOTERINFO equ (LVM_FIRST + 206)
             ListView_GetFooterInfo macro hwnd, plvfi
-              exitm <SNDMSG ((hwnd), LVM_GETFOOTERINFO, (0), (plvfi))>
+              exitm <SNDMSG ((hwnd), LVM_GETFOOTERINFO, 0, (plvfi))>
             endm
             LVM_GETFOOTERITEMRECT equ (LVM_FIRST + 207)
             ListView_GetFooterItemRect macro hwnd, iItem, prc
@@ -3585,6 +3664,7 @@ ifndef _INC_COMMCTRL
             LVFOOTERITEM ends
             tagLVFOOTERITEM typedef LVFOOTERITEM
             LPLVFOOTERITEM typedef ptr LVFOOTERITEM
+            
             LVM_GETFOOTERITEM equ (LVM_FIRST + 208)
             ListView_GetFooterItem macro hwnd, iItem, pfi
               exitm <SNDMSG ((hwnd), LVM_GETFOOTERITEM, (iItem), (pfi))>
@@ -3595,6 +3675,7 @@ ifndef _INC_COMMCTRL
             LVITEMINDEX ends
             tagLVITEMINDEX typedef LVITEMINDEX
             PLVITEMINDEX typedef ptr LVITEMINDEX
+            
             LVM_GETITEMINDEXRECT equ (LVM_FIRST + 209)
             ListView_GetItemIndexRect macro hwnd, plvii, iSubItem, code, prc
               exitm <SNDMSG ((hwnd), LVM_GETITEMINDEXRECT, (LVITEMINDEX *) (plvii), ((prc) ? ((((LPRECT) (prc)) - top = (iSubItem)), (((LPRECT) (prc)) - left = (code)), (prc)) : (LPRECT) NULL))>
@@ -3640,6 +3721,7 @@ ifndef _INC_COMMCTRL
         NMLISTVIEW ends
         tagNMLISTVIEW typedef NMLISTVIEW
         LPNMLISTVIEW typedef ptr NMLISTVIEW
+        
         NMITEMACTIVATE struct
           hdr NMHDR <>
           iItem SDWORD ?
@@ -3653,6 +3735,7 @@ ifndef _INC_COMMCTRL
         NMITEMACTIVATE ends
         tagNMITEMACTIVATE typedef NMITEMACTIVATE
         LPNMITEMACTIVATE typedef ptr NMITEMACTIVATE
+        
         LVKF_ALT equ 0001h
         LVKF_CONTROL equ 0002h
         LVKF_SHIFT equ 0004h
@@ -3675,6 +3758,7 @@ ifndef _INC_COMMCTRL
         NMLVCUSTOMDRAW ends
         tagNMLVCUSTOMDRAW typedef NMLVCUSTOMDRAW
         LPNMLVCUSTOMDRAW typedef ptr NMLVCUSTOMDRAW
+        
         LVCDI_ITEM equ 00000000h
         LVCDI_GROUP equ 00000001h
         LVCDI_ITEMSLIST equ 00000002h
@@ -3687,6 +3771,7 @@ ifndef _INC_COMMCTRL
         NMLVCACHEHINT ends
         tagNMLVCACHEHINT typedef NMLVCACHEHINT
         LPNMLVCACHEHINT typedef ptr NMLVCACHEHINT
+        
         LPNM_CACHEHINT equ <LPNMLVCACHEHINT>
         PNM_CACHEHINT equ <LPNMLVCACHEHINT>
         NM_CACHEHINT equ <NMLVCACHEHINT>
@@ -3697,6 +3782,7 @@ ifndef _INC_COMMCTRL
         NMLVFINDITEMA ends
         tagNMLVFINDITEMA typedef NMLVFINDITEMA
         LPNMLVFINDITEMA typedef ptr NMLVFINDITEMA
+        
         NMLVFINDITEMW struct
           hdr NMHDR <>
           iStart SDWORD ?
@@ -3704,6 +3790,7 @@ ifndef _INC_COMMCTRL
         NMLVFINDITEMW ends
         tagNMLVFINDITEMW typedef NMLVFINDITEMW
         LPNMLVFINDITEMW typedef ptr NMLVFINDITEMW
+        
         PNM_FINDITEMA equ <LPNMLVFINDITEMA>
         LPNM_FINDITEMA equ <LPNMLVFINDITEMA>
         NM_FINDITEMA equ <NMLVFINDITEMA>
@@ -3732,6 +3819,7 @@ ifndef _INC_COMMCTRL
         NMLVODSTATECHANGE ends
         tagNMLVODSTATECHANGE typedef NMLVODSTATECHANGE
         LPNMLVODSTATECHANGE typedef ptr NMLVODSTATECHANGE
+        
         PNM_ODSTATECHANGE equ <LPNMLVODSTATECHANGE>
         LPNM_ODSTATECHANGE equ <LPNMLVODSTATECHANGE>
         NM_ODSTATECHANGE equ <NMLVODSTATECHANGE>
@@ -3783,12 +3871,14 @@ ifndef _INC_COMMCTRL
         NMLVDISPINFOA ends
         tagLVDISPINFO typedef NMLVDISPINFOA
         LPNMLVDISPINFOA typedef ptr NMLVDISPINFOA
+        
         NMLVDISPINFOW struct
           hdr NMHDR <>
           item LVITEMW <>
         NMLVDISPINFOW ends
         tagLVDISPINFOW typedef NMLVDISPINFOW
         LPNMLVDISPINFOW typedef ptr NMLVDISPINFOW
+        
         ifdef UNICODE
           NMLVDISPINFO equ <NMLVDISPINFOW>
         else
@@ -3806,6 +3896,7 @@ ifndef _INC_COMMCTRL
         NMLVKEYDOWN ends
         tagLVKEYDOWN typedef NMLVKEYDOWN
         LPNMLVKEYDOWN typedef ptr NMLVKEYDOWN
+        
         ifdef _WIN32
           include poppack.inc
         endif
@@ -3819,6 +3910,7 @@ ifndef _INC_COMMCTRL
           NMLVLINK ends
           tagNMLVLINK typedef NMLVLINK
           PNMLVLINK typedef ptr NMLVLINK
+          
         endif
         NMLVGETINFOTIPA struct
           hdr NMHDR <>
@@ -3831,6 +3923,7 @@ ifndef _INC_COMMCTRL
         NMLVGETINFOTIPA ends
         tagNMLVGETINFOTIPA typedef NMLVGETINFOTIPA
         LPNMLVGETINFOTIPA typedef ptr NMLVGETINFOTIPA
+        
         NMLVGETINFOTIPW struct
           hdr NMHDR <>
           dwFlags DWORD ?
@@ -3842,6 +3935,7 @@ ifndef _INC_COMMCTRL
         NMLVGETINFOTIPW ends
         tagNMLVGETINFOTIPW typedef NMLVGETINFOTIPW
         LPNMLVGETINFOTIPW typedef ptr NMLVGETINFOTIPW
+        
         LVGIT_UNFOLDED equ 0001h
         LVN_GETINFOTIPA equ (LVN_FIRST - 57)
         LVN_GETINFOTIPW equ (LVN_FIRST - 58)
@@ -3876,6 +3970,7 @@ ifndef _INC_COMMCTRL
           NMLVSCROLL ends
           tagNMLVSCROLL typedef NMLVSCROLL
           LPNMLVSCROLL typedef ptr NMLVSCROLL
+          
           LVN_BEGINSCROLL equ (LVN_FIRST - 80)
           LVN_ENDSCROLL equ (LVN_FIRST - 81)
         endif
@@ -3937,6 +4032,7 @@ ifndef _INC_COMMCTRL
         if (NTDDI_VERSION ge NTDDI_WINTHRESHOLD)
         endif
         HTREEITEM typedef ptr _TREEITEM
+        
         TVIF_TEXT equ 0001h
         TVIF_IMAGE equ 0002h
         TVIF_PARAM equ 0004h
@@ -3973,9 +4069,10 @@ ifndef _INC_COMMCTRL
           NMTVSTATEIMAGECHANGING ends
           tagNMTVSTATEIMAGECHANGING typedef NMTVSTATEIMAGECHANGING
           LPNMTVSTATEIMAGECHANGING typedef ptr NMTVSTATEIMAGECHANGING
+          
         endif
-        I_CHILDRENCALLBACK equ (- 1)
-        I_CHILDRENAUTO equ (- 2)
+        I_CHILDRENCALLBACK equ -1
+        I_CHILDRENAUTO equ -2
         LPTV_ITEMW equ <LPTVITEMW>
         LPTV_ITEMA equ <LPTVITEMA>
         TV_ITEMW equ <TVITEMW>
@@ -3996,6 +4093,7 @@ ifndef _INC_COMMCTRL
         TVITEMA ends
         tagTVITEMA typedef TVITEMA
         LPTVITEMA typedef ptr TVITEMA
+        
         TVITEMW struct
           mask_ UINT ?
           hItem HTREEITEM ?
@@ -4010,6 +4108,7 @@ ifndef _INC_COMMCTRL
         TVITEMW ends
         tagTVITEMW typedef TVITEMW
         LPTVITEMW typedef ptr TVITEMW
+        
         TVITEMEXA struct
           mask_ UINT ?
           hItem HTREEITEM ?
@@ -4033,6 +4132,7 @@ ifndef _INC_COMMCTRL
         TVITEMEXA ends
         tagTVITEMEXA typedef TVITEMEXA
         LPTVITEMEXA typedef ptr TVITEMEXA
+        
         TVITEMEXW struct
           mask_ UINT ?
           hItem HTREEITEM ?
@@ -4056,6 +4156,7 @@ ifndef _INC_COMMCTRL
         TVITEMEXW ends
         tagTVITEMEXW typedef TVITEMEXW
         LPTVITEMEXW typedef ptr TVITEMEXW
+        
         ifdef UNICODE
           TVITEMEX typedef TVITEMEXW
           LPTVITEMEX typedef LPTVITEMEXW
@@ -4092,6 +4193,7 @@ ifndef _INC_COMMCTRL
         TVINSERTSTRUCTA ends
         tagTVINSERTSTRUCTA typedef TVINSERTSTRUCTA
         LPTVINSERTSTRUCTA typedef ptr TVINSERTSTRUCTA
+        
         TVINSERTSTRUCTW struct
           hParent HTREEITEM ?
           hInsertAfter HTREEITEM ?
@@ -4102,6 +4204,7 @@ ifndef _INC_COMMCTRL
         TVINSERTSTRUCTW ends
         tagTVINSERTSTRUCTW typedef TVINSERTSTRUCTW
         LPTVINSERTSTRUCTW typedef ptr TVINSERTSTRUCTW
+        
         ifdef UNICODE
           TVINSERTSTRUCT equ <TVINSERTSTRUCTW>
           LPTVINSERTSTRUCT equ <LPTVINSERTSTRUCTW>
@@ -4253,7 +4356,7 @@ ifndef _INC_COMMCTRL
           TVM_SETITEM equ <TVM_SETITEMA>
         endif
         TreeView_SetItem macro hwnd, pitem
-          exitm <SNDMSG ((hwnd), TVM_SETITEM, 0, (const TV_ITEM *) (pitem))>
+          exitm <SNDMSG ((hwnd), TVM_SETITEM, 0, TV_ITEM ptr (pitem))>
         endm
         TVM_EDITLABELA equ (TV_FIRST + 14)
         TVM_EDITLABELW equ (TV_FIRST + 65)
@@ -4286,6 +4389,7 @@ ifndef _INC_COMMCTRL
         TVHITTESTINFO ends
         tagTVHITTESTINFO typedef TVHITTESTINFO
         LPTVHITTESTINFO typedef ptr TVHITTESTINFO
+        
         TVHT_NOWHERE equ 0001h
         TVHT_ONITEMICON equ 0002h
         TVHT_ONITEMLABEL equ 0004h
@@ -4453,7 +4557,7 @@ ifndef _INC_COMMCTRL
           TVITEMPART typedef SDWORD
           TVGIPR_BUTTON equ 0001h
           _TVITEMPART typedef TVITEMPART
-
+          
           TVGETITEMPARTRECTINFO struct
             hti HTREEITEM ?
             prc POINTER ?
@@ -4467,7 +4571,6 @@ ifndef _INC_COMMCTRL
         endif
         TYPE_PFNTVCOMPARE typedef proto WIN_STD_CALL_CONV :LPARAM, :LPARAM, :LPARAM
         PFNTVCOMPARE typedef ptr TYPE_PFNTVCOMPARE
-
         LPTV_SORTCB equ <LPTVSORTCB>
         TV_SORTCB equ <TVSORTCB>
         TVSORTCB struct
@@ -4477,6 +4580,7 @@ ifndef _INC_COMMCTRL
         TVSORTCB ends
         tagTVSORTCB typedef TVSORTCB
         LPTVSORTCB typedef ptr TVSORTCB
+        
         LPNM_TREEVIEWA equ <LPNMTREEVIEWA>
         LPNM_TREEVIEWW equ <LPNMTREEVIEWW>
         NM_TREEVIEWW equ <NMTREEVIEWW>
@@ -4492,6 +4596,7 @@ ifndef _INC_COMMCTRL
         NMTREEVIEWA ends
         tagNMTREEVIEWA typedef NMTREEVIEWA
         LPNMTREEVIEWA typedef ptr NMTREEVIEWA
+        
         NMTREEVIEWW struct
           hdr NMHDR <>
           action UINT ?
@@ -4501,6 +4606,7 @@ ifndef _INC_COMMCTRL
         NMTREEVIEWW ends
         tagNMTREEVIEWW typedef NMTREEVIEWW
         LPNMTREEVIEWW typedef ptr NMTREEVIEWW
+        
         ifdef UNICODE
           NMTREEVIEW equ <NMTREEVIEWW>
           LPNMTREEVIEW equ <LPNMTREEVIEWW>
@@ -4529,12 +4635,14 @@ ifndef _INC_COMMCTRL
         NMTVDISPINFOA ends
         tagTVDISPINFOA typedef NMTVDISPINFOA
         LPNMTVDISPINFOA typedef ptr NMTVDISPINFOA
+        
         NMTVDISPINFOW struct
           hdr NMHDR <>
           item TVITEMW <>
         NMTVDISPINFOW ends
         tagTVDISPINFOW typedef NMTVDISPINFOW
         LPNMTVDISPINFOW typedef ptr NMTVDISPINFOW
+        
         ifdef UNICODE
           NMTVDISPINFO equ <NMTVDISPINFOW>
           LPNMTVDISPINFO equ <LPNMTVDISPINFOW>
@@ -4549,12 +4657,14 @@ ifndef _INC_COMMCTRL
           NMTVDISPINFOEXA ends
           tagTVDISPINFOEXA typedef NMTVDISPINFOEXA
           LPNMTVDISPINFOEXA typedef ptr NMTVDISPINFOEXA
+          
           NMTVDISPINFOEXW struct
             hdr NMHDR <>
             item TVITEMEXW <>
           NMTVDISPINFOEXW ends
           tagTVDISPINFOEXW typedef NMTVDISPINFOEXW
           LPNMTVDISPINFOEXW typedef ptr NMTVDISPINFOEXW
+          
           ifdef UNICODE
             NMTVDISPINFOEX equ <NMTVDISPINFOEXW>
             LPNMTVDISPINFOEX equ <LPNMTVDISPINFOEXW>
@@ -4605,6 +4715,7 @@ ifndef _INC_COMMCTRL
         NMTVKEYDOWN ends
         tagTVKEYDOWN typedef NMTVKEYDOWN
         LPNMTVKEYDOWN typedef ptr NMTVKEYDOWN
+        
         ifdef _WIN32
           include poppack.inc
         endif
@@ -4642,6 +4753,7 @@ ifndef _INC_COMMCTRL
         NMTVCUSTOMDRAW ends
         tagNMTVCUSTOMDRAW typedef NMTVCUSTOMDRAW
         LPNMTVCUSTOMDRAW typedef ptr NMTVCUSTOMDRAW
+        
         NMTVGETINFOTIPA struct
           hdr NMHDR <>
           pszText LPSTR ?
@@ -4651,6 +4763,7 @@ ifndef _INC_COMMCTRL
         NMTVGETINFOTIPA ends
         tagNMTVGETINFOTIPA typedef NMTVGETINFOTIPA
         LPNMTVGETINFOTIPA typedef ptr NMTVGETINFOTIPA
+        
         NMTVGETINFOTIPW struct
           hdr NMHDR <>
           pszText LPWSTR ?
@@ -4660,6 +4773,7 @@ ifndef _INC_COMMCTRL
         NMTVGETINFOTIPW ends
         tagNMTVGETINFOTIPW typedef NMTVGETINFOTIPW
         LPNMTVGETINFOTIPW typedef ptr NMTVGETINFOTIPW
+        
         ifdef UNICODE
           TVN_GETINFOTIP equ <TVN_GETINFOTIPW>
           NMTVGETINFOTIP equ <NMTVGETINFOTIPW>
@@ -4727,6 +4841,7 @@ ifndef _INC_COMMCTRL
         COMBOBOXEXITEMA ends
         tagCOMBOBOXEXITEMA typedef COMBOBOXEXITEMA
         PCOMBOBOXEXITEMA typedef ptr COMBOBOXEXITEMA
+        
         PCCOMBOEXITEMA typedef ptr COMBOBOXEXITEMA
         COMBOBOXEXITEMW struct
           mask_ UINT ?
@@ -4741,6 +4856,7 @@ ifndef _INC_COMMCTRL
         COMBOBOXEXITEMW ends
         tagCOMBOBOXEXITEMW typedef COMBOBOXEXITEMW
         PCOMBOBOXEXITEMW typedef ptr COMBOBOXEXITEMW
+        
         PCCOMBOEXITEMW typedef ptr COMBOBOXEXITEMW
         ifdef UNICODE
           COMBOBOXEXITEM equ <COMBOBOXEXITEMW>
@@ -4794,11 +4910,13 @@ ifndef _INC_COMMCTRL
           ceItem COMBOBOXEXITEMA <>
         NMCOMBOBOXEXA ends
         PNMCOMBOBOXEXA typedef ptr NMCOMBOBOXEXA
+        
         NMCOMBOBOXEXW struct
           hdr NMHDR <>
           ceItem COMBOBOXEXITEMW <>
         NMCOMBOBOXEXW ends
         PNMCOMBOBOXEXW typedef ptr NMCOMBOBOXEXW
+        
         ifdef UNICODE
           NMCOMBOBOXEX equ <NMCOMBOBOXEXW>
           PNMCOMBOBOXEX equ <PNMCOMBOBOXEXW>
@@ -4839,6 +4957,7 @@ ifndef _INC_COMMCTRL
         NMCBEDRAGBEGINW ends
         LPNMCBEDRAGBEGINW typedef ptr NMCBEDRAGBEGINW
         PNMCBEDRAGBEGINW typedef ptr NMCBEDRAGBEGINW
+        
         NMCBEDRAGBEGINA struct
           hdr NMHDR <>
           iItemid SDWORD ?
@@ -4846,6 +4965,7 @@ ifndef _INC_COMMCTRL
         NMCBEDRAGBEGINA ends
         LPNMCBEDRAGBEGINA typedef ptr NMCBEDRAGBEGINA
         PNMCBEDRAGBEGINA typedef ptr NMCBEDRAGBEGINA
+        
         ifdef UNICODE
           NMCBEDRAGBEGIN equ <NMCBEDRAGBEGINW>
           LPNMCBEDRAGBEGIN equ <LPNMCBEDRAGBEGINW>
@@ -4864,6 +4984,7 @@ ifndef _INC_COMMCTRL
         NMCBEENDEDITW ends
         LPNMCBEENDEDITW typedef ptr NMCBEENDEDITW
         PNMCBEENDEDITW typedef ptr NMCBEENDEDITW
+        
         NMCBEENDEDITA struct
           hdr NMHDR <>
           fChanged BOOL ?
@@ -4873,6 +4994,7 @@ ifndef _INC_COMMCTRL
         NMCBEENDEDITA ends
         LPNMCBEENDEDITA typedef ptr NMCBEENDEDITA
         PNMCBEENDEDITA typedef ptr NMCBEENDEDITA
+        
         ifdef UNICODE
           NMCBEENDEDIT equ <NMCBEENDEDITW>
           LPNMCBEENDEDIT equ <LPNMCBEENDEDITW>
@@ -4949,6 +5071,7 @@ ifndef _INC_COMMCTRL
         TCITEMHEADERA ends
         tagTCITEMHEADERA typedef TCITEMHEADERA
         LPTCITEMHEADERA typedef ptr TCITEMHEADERA
+        
         TCITEMHEADERW struct
           mask_ UINT ?
           lpReserved1 UINT ?
@@ -4959,6 +5082,7 @@ ifndef _INC_COMMCTRL
         TCITEMHEADERW ends
         tagTCITEMHEADERW typedef TCITEMHEADERW
         LPTCITEMHEADERW typedef ptr TCITEMHEADERW
+        
         ifdef UNICODE
           TCITEMHEADER equ <TCITEMHEADERW>
           LPTCITEMHEADER equ <LPTCITEMHEADERW>
@@ -4980,6 +5104,7 @@ ifndef _INC_COMMCTRL
         TCITEMA ends
         tagTCITEMA typedef TCITEMA
         LPTCITEMA typedef ptr TCITEMA
+        
         TCITEMW struct
           mask_ UINT ?
           dwState DWORD ?
@@ -4991,6 +5116,7 @@ ifndef _INC_COMMCTRL
         TCITEMW ends
         tagTCITEMW typedef TCITEMW
         LPTCITEMW typedef ptr TCITEMW
+        
         ifdef UNICODE
           TCITEM equ <TCITEMW>
           LPTCITEM equ <LPTCITEMW>
@@ -5026,7 +5152,7 @@ ifndef _INC_COMMCTRL
           TCM_INSERTITEM equ <TCM_INSERTITEMA>
         endif
         TabCtrl_InsertItem macro hwnd, iItem, pitem
-          exitm <SNDMSG ((hwnd), TCM_INSERTITEM, (iItem), (const TC_ITEM *) (pitem))>
+          exitm <SNDMSG ((hwnd), TCM_INSERTITEM, (iItem), TC_ITEM ptr (pitem))>
         endm
         TCM_DELETEITEM equ (TCM_FIRST + 8)
         TabCtrl_DeleteItem macro hwnd, i
@@ -5060,6 +5186,7 @@ ifndef _INC_COMMCTRL
         TCHITTESTINFO ends
         tagTCHITTESTINFO typedef TCHITTESTINFO
         LPTCHITTESTINFO typedef ptr TCHITTESTINFO
+        
         TCM_HITTEST equ (TCM_FIRST + 13)
         TabCtrl_HitTest macro hwndTC, pinfo
           exitm <SNDMSG ((hwndTC), TCM_HITTEST, 0, (TC_HITTESTINFO *) (pinfo))>
@@ -5289,6 +5416,7 @@ ifndef _INC_COMMCTRL
             endif
           MCHITTESTINFO ends
           PMCHITTESTINFO typedef ptr MCHITTESTINFO
+          
           MCHITTESTINFO_V1_SIZE equ <CCSIZEOF_STRUCT(MCHITTESTINFO, st)>
           MCHT_TITLE equ 00010000h
           MCHT_CALENDAR equ 00020000h
@@ -5390,6 +5518,7 @@ ifndef _INC_COMMCTRL
             MCGRIDINFO ends
             tagMCGRIDINFO typedef MCGRIDINFO
             PMCGRIDINFO typedef ptr MCGRIDINFO
+            
             MCM_GETCALENDARGRIDINFO equ (MCM_FIRST + 24)
             MonthCal_GetCalendarGridInfo macro hmc, pmcGridInfo
               exitm <SNDMSG (hmc, MCM_GETCALENDARGRIDINFO, 0, (PMCGRIDINFO) (pmcGridInfo))>
@@ -5426,6 +5555,7 @@ ifndef _INC_COMMCTRL
           NMSELCHANGE ends
           tagNMSELCHANGE typedef NMSELCHANGE
           LPNMSELCHANGE typedef ptr NMSELCHANGE
+          
           MCN_SELCHANGE equ (MCN_FIRST - 3)
           NMDAYSTATE struct
             nmhdr NMHDR <>
@@ -5435,6 +5565,7 @@ ifndef _INC_COMMCTRL
           NMDAYSTATE ends
           tagNMDAYSTATE typedef NMDAYSTATE
           LPNMDAYSTATE typedef ptr NMDAYSTATE
+          
           MCN_GETDAYSTATE equ (MCN_FIRST - 1)
           NMSELECT typedef NMSELCHANGE
           LPNMSELECT typedef ptr NMSELCHANGE
@@ -5446,6 +5577,7 @@ ifndef _INC_COMMCTRL
           NMVIEWCHANGE ends
           tagNMVIEWCHANGE typedef NMVIEWCHANGE
           LPNMVIEWCHANGE typedef ptr NMVIEWCHANGE
+          
           MCN_VIEWCHANGE equ (MCN_FIRST - 4)
           MCS_DAYSTATE equ 0001h
           MCS_MULTISELECT equ 0002h
@@ -5483,6 +5615,7 @@ ifndef _INC_COMMCTRL
             DATETIMEPICKERINFO ends
             tagDATETIMEPICKERINFO typedef DATETIMEPICKERINFO
             LPDATETIMEPICKERINFO typedef ptr DATETIMEPICKERINFO
+            
           endif
           DTM_FIRST equ 1000h
           DTM_GETSYSTEMTIME equ (DTM_FIRST + 1)
@@ -5569,6 +5702,7 @@ ifndef _INC_COMMCTRL
           NMDATETIMECHANGE ends
           tagNMDATETIMECHANGE typedef NMDATETIMECHANGE
           LPNMDATETIMECHANGE typedef ptr NMDATETIMECHANGE
+          
           DTN_USERSTRINGA equ (DTN_FIRST2 - 5)
           DTN_USERSTRINGW equ (DTN_FIRST - 5)
           NMDATETIMESTRINGA struct
@@ -5579,6 +5713,7 @@ ifndef _INC_COMMCTRL
           NMDATETIMESTRINGA ends
           tagNMDATETIMESTRINGA typedef NMDATETIMESTRINGA
           LPNMDATETIMESTRINGA typedef ptr NMDATETIMESTRINGA
+          
           NMDATETIMESTRINGW struct
             nmhdr NMHDR <>
             pszUserString LPCWSTR ?
@@ -5587,6 +5722,7 @@ ifndef _INC_COMMCTRL
           NMDATETIMESTRINGW ends
           tagNMDATETIMESTRINGW typedef NMDATETIMESTRINGW
           LPNMDATETIMESTRINGW typedef ptr NMDATETIMESTRINGW
+          
           ifdef UNICODE
             DTN_USERSTRING equ <DTN_USERSTRINGW>
             NMDATETIMESTRING equ <NMDATETIMESTRINGW>
@@ -5606,6 +5742,7 @@ ifndef _INC_COMMCTRL
           NMDATETIMEWMKEYDOWNA ends
           tagNMDATETIMEWMKEYDOWNA typedef NMDATETIMEWMKEYDOWNA
           LPNMDATETIMEWMKEYDOWNA typedef ptr NMDATETIMEWMKEYDOWNA
+          
           NMDATETIMEWMKEYDOWNW struct
             nmhdr NMHDR <>
             nVirtKey SDWORD ?
@@ -5614,6 +5751,7 @@ ifndef _INC_COMMCTRL
           NMDATETIMEWMKEYDOWNW ends
           tagNMDATETIMEWMKEYDOWNW typedef NMDATETIMEWMKEYDOWNW
           LPNMDATETIMEWMKEYDOWNW typedef ptr NMDATETIMEWMKEYDOWNW
+          
           ifdef UNICODE
             DTN_WMKEYDOWN equ <DTN_WMKEYDOWNW>
             NMDATETIMEWMKEYDOWN equ <NMDATETIMEWMKEYDOWNW>
@@ -5634,6 +5772,7 @@ ifndef _INC_COMMCTRL
           NMDATETIMEFORMATA ends
           tagNMDATETIMEFORMATA typedef NMDATETIMEFORMATA
           LPNMDATETIMEFORMATA typedef ptr NMDATETIMEFORMATA
+          
           NMDATETIMEFORMATW struct
             nmhdr NMHDR <>
             pszFormat LPCWSTR ?
@@ -5643,6 +5782,7 @@ ifndef _INC_COMMCTRL
           NMDATETIMEFORMATW ends
           tagNMDATETIMEFORMATW typedef NMDATETIMEFORMATW
           LPNMDATETIMEFORMATW typedef ptr NMDATETIMEFORMATW
+          
           ifdef UNICODE
             DTN_FORMAT equ <DTN_FORMATW>
             NMDATETIMEFORMAT equ <NMDATETIMEFORMATW>
@@ -5661,6 +5801,7 @@ ifndef _INC_COMMCTRL
           NMDATETIMEFORMATQUERYA ends
           tagNMDATETIMEFORMATQUERYA typedef NMDATETIMEFORMATQUERYA
           LPNMDATETIMEFORMATQUERYA typedef ptr NMDATETIMEFORMATQUERYA
+          
           NMDATETIMEFORMATQUERYW struct
             nmhdr NMHDR <>
             pszFormat LPCWSTR ?
@@ -5668,6 +5809,7 @@ ifndef _INC_COMMCTRL
           NMDATETIMEFORMATQUERYW ends
           tagNMDATETIMEFORMATQUERYW typedef NMDATETIMEFORMATQUERYW
           LPNMDATETIMEFORMATQUERYW typedef ptr NMDATETIMEFORMATQUERYW
+          
           ifdef UNICODE
             DTN_FORMATQUERY equ <DTN_FORMATQUERYW>
             NMDATETIMEFORMATQUERY equ <NMDATETIMEFORMATQUERYW>
@@ -5708,6 +5850,7 @@ ifndef _INC_COMMCTRL
         NMIPADDRESS ends
         tagNMIPADDRESS typedef NMIPADDRESS
         LPNMIPADDRESS typedef ptr NMIPADDRESS
+        
         MAKEIPRANGE macro low_, high_
           exitm <((((high_) shl 8) + (low_)))>
         endm
@@ -5823,6 +5966,7 @@ ifndef _INC_COMMCTRL
           iScroll SDWORD ?
         NMPGSCROLL ends
         LPNMPGSCROLL typedef ptr NMPGSCROLL
+        
         ifdef _WIN32
           include poppack.inc
         endif
@@ -5836,6 +5980,7 @@ ifndef _INC_COMMCTRL
           iHeight SDWORD ?
         NMPGCALCSIZE ends
         LPNMPGCALCSIZE typedef ptr NMPGCALCSIZE
+        
         PGN_HOTITEMCHANGE equ (PGN_FIRST - 3)
         NMPGHOTITEM struct
           hdr NMHDR <>
@@ -5845,6 +5990,7 @@ ifndef _INC_COMMCTRL
         NMPGHOTITEM ends
         tagNMPGHOTITEM typedef NMPGHOTITEM
         LPNMPGHOTITEM typedef ptr NMPGHOTITEM
+        
       endif
       ifndef NONATIVEFONTCTL
         WC_NATIVEFONTCTLW equ <L("NativeFontCtl")>
@@ -5885,6 +6031,7 @@ ifndef _INC_COMMCTRL
             uAlign UINT ?
           BUTTON_IMAGELIST ends
           PBUTTON_IMAGELIST typedef ptr BUTTON_IMAGELIST
+          
           BCM_GETIDEALSIZE equ (BCM_FIRST + 0001h)
           Button_GetIdealSize macro hwnd, psize
             exitm <SNDMSG ((hwnd), BCM_GETIDEALSIZE, 0, (psize))>
@@ -5911,6 +6058,7 @@ ifndef _INC_COMMCTRL
           NMBCHOTITEM ends
           tagNMBCHOTITEM typedef NMBCHOTITEM
           LPNMBCHOTITEM typedef ptr NMBCHOTITEM
+          
           BCN_HOTITEMCHANGE equ (BCN_FIRST + 0001h)
           BST_HOT equ 0200h
         endif
@@ -5936,6 +6084,7 @@ ifndef _INC_COMMCTRL
           BUTTON_SPLITINFO ends
           tagBUTTON_SPLITINFO typedef BUTTON_SPLITINFO
           PBUTTON_SPLITINFO typedef ptr BUTTON_SPLITINFO
+          
           BCM_SETDROPDOWNSTATE equ (BCM_FIRST + 0006h)
           Button_SetDropDownState macro hwnd, fDropDown
             exitm <SNDMSG ((hwnd), BCM_SETDROPDOWNSTATE, (fDropDown), 0)>
@@ -5966,13 +6115,14 @@ ifndef _INC_COMMCTRL
               exitm <SNDMSG ((hwnd), BCM_SETSHIELD, 0, fRequired)>
             endm
           endif
-          BCCL_NOGLYPH equ (- 1)
+          BCCL_NOGLYPH equ -1
           NMBCDROPDOWN struct
             hdr NMHDR <>
             rcButton RECT <>
           NMBCDROPDOWN ends
           tagNMBCDROPDOWN typedef NMBCDROPDOWN
           LPNMBCDROPDOWN typedef ptr NMBCDROPDOWN
+          
           BCN_DROPDOWN equ (BCN_FIRST + 0002h)
         endif
       endif
@@ -6001,13 +6151,6 @@ ifndef _INC_COMMCTRL
         else
           ;[...]
         endif
-        if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
-          ES_EX_ALLOWEOL_CR equ 0001h
-          ES_EX_ALLOWEOL_LF equ 0002h
-          ES_EX_ALLOWEOL_ALL equ <(ES_EX_ALLOWEOL_CR or ES_EX_ALLOWEOL_LF)>
-          ES_EX_CONVERT_EOL_ON_PASTE equ 0004h
-          ES_EX_ZOOMABLE equ 0010h
-        endif
         if (NTDDI_VERSION ge NTDDI_WINXP)
           EM_SETCUEBANNER equ (ECM_FIRST + 1)
           Edit_SetCueBannerText macro hwnd, lpcwText
@@ -6028,6 +6171,7 @@ ifndef _INC_COMMCTRL
           EDITBALLOONTIP ends
           _tagEDITBALLOONTIP typedef EDITBALLOONTIP
           PEDITBALLOONTIP typedef ptr EDITBALLOONTIP
+          
           EM_SHOWBALLOONTIP equ (ECM_FIRST + 3)
           Edit_ShowBalloonTip macro hwnd, peditballoontip
             exitm <SNDMSG ((hwnd), EM_SHOWBALLOONTIP, 0, (peditballoontip))>
@@ -6055,85 +6199,6 @@ ifndef _INC_COMMCTRL
         Edit_TakeFocus macro hwndCtl
           exitm <(SNDMSG ((hwndCtl), EM_TAKEFOCUS, 0, 0))>
         endm
-        if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
-          EC_ENDOFLINE typedef SDWORD
-          EC_ENDOFLINE_DETECTFROMCONTENT equ 0
-          EC_ENDOFLINE_CRLF equ 1
-          EC_ENDOFLINE_CR equ 2
-          EC_ENDOFLINE_LF equ 3
-
-          EM_SETEXTENDEDSTYLE equ (ECM_FIRST + 10)
-          Edit_SetExtendedStyle macro hwndCtl, dw_, dwMask
-            exitm <SNDMSG ((hwndCtl), EM_SETEXTENDEDSTYLE, (dwMask), (dw_))>
-          endm
-          EM_GETEXTENDEDSTYLE equ (ECM_FIRST + 11)
-          Edit_GetExtendedStyle macro hwndCtl
-            exitm <SNDMSG ((hwndCtl), EM_GETEXTENDEDSTYLE, 0, 0)>
-          endm
-          EM_SETENDOFLINE equ (ECM_FIRST + 12)
-          Edit_SetEndOfLine macro hwndCtl, eolType
-            exitm <SNDMSG ((hwndCtl), EM_SETENDOFLINE, (eolType), 0)>
-          endm
-          EM_GETENDOFLINE equ (ECM_FIRST + 13)
-          Edit_GetEndOfLine macro hwndCtl
-            exitm <(EC_ENDOFLINE) SNDMSG ((hwndCtl), EM_GETENDOFLINE, 0, 0)>
-          endm
-          EM_ENABLESEARCHWEB equ (ECM_FIRST + 14)
-          Edit_EnableSearchWeb macro hwndCtl, enable
-            exitm <SNDMSG ((hwndCtl), EM_ENABLESEARCHWEB, (enable), 0)>
-          endm
-          EM_SEARCHWEB equ (ECM_FIRST + 15)
-          Edit_SearchWeb macro hwndCtl
-            exitm <SNDMSG ((hwndCtl), EM_SEARCHWEB, 0, 0)>
-          endm
-          EM_SETCARETINDEX equ (ECM_FIRST + 17)
-          Edit_SetCaretIndex macro hwndCtl, newCaretPosition
-            exitm <SNDMSG ((hwndCtl), EM_SETCARETINDEX, (newCaretIndex), 0)>
-          endm
-          EM_GETCARETINDEX equ (ECM_FIRST + 18)
-          Edit_GetCaretIndex macro hwndCtl
-            exitm <SNDMSG ((hwndCtl), EM_GETCARETINDEX, 0, 0)>
-          endm
-          EM_GETZOOM equ (WM_USER + 224)
-          Edit_GetZoom macro hwndCtl, numerator, denominator
-            exitm <SNDMSG ((hwndCtl), EM_GETZOOM, (numerator), (denominator))>
-          endm
-          EM_SETZOOM equ (WM_USER + 225)
-          Edit_SetZoom macro hwndCtl, numerator, denominator
-            exitm <SNDMSG ((hwndCtl), EM_SETZOOM, (numerator), (denominator))>
-          endm
-          EM_FILELINEFROMCHAR equ (ECM_FIRST + 19)
-          Edit_GetFileLineFromChar macro hwndCtl, characterIndex
-            exitm <SNDMSG ((hwndCtl), EM_FILELINEFROMCHAR, (characterIndex), 0)>
-          endm
-          EM_FILELINEINDEX equ (ECM_FIRST + 20)
-          Edit_GetFileLineIndex macro hwndCtl, lineNumber
-            exitm <SNDMSG ((hwndCtl), EM_FILELINEINDEX, (lineNumber), 0)>
-          endm
-          EM_FILELINELENGTH equ (ECM_FIRST + 21)
-          Edit_GetFileLineLength macro hwndCtl, characterIndex
-            exitm <SNDMSG ((hwndCtl), EM_FILELINELENGTH, (characterIndex), 0)>
-          endm
-          EM_GETFILELINE equ (ECM_FIRST + 22)
-          Edit_GetFileLine macro hwndCtl, lineNumber, textBuffer
-            exitm <SNDMSG ((hwndCtl), EM_GETFILELINE, (lineNumber), (textBuffer))>
-          endm
-          EM_GETFILELINECOUNT equ (ECM_FIRST + 23)
-          Edit_GetFileLineCount macro hwndCtl
-            exitm <SNDMSG ((hwndCtl), EM_GETFILELINECOUNT, 0, 0)>
-          endm
-          EN_SEARCHWEB equ (EN_FIRST - 0)
-          EC_SEARCHWEB_ENTRYPOINT typedef SDWORD
-          EC_SEARCHWEB_ENTRYPOINT_EXTERNAL equ 0
-          EC_SEARCHWEB_ENTRYPOINT_CONTEXTMENU equ 1
-
-          NMSEARCHWEB struct
-            hdr NMHDR <>
-            entrypoint EC_SEARCHWEB_ENTRYPOINT ?
-            hasQueryText BOOL ?
-            invokeSucceeded BOOL ?
-          NMSEARCHWEB ends
-        endif
       endif
       ifndef NOLISTBOX
         ifdef _WIN32
@@ -6199,7 +6264,6 @@ ifndef _INC_COMMCTRL
           endif
           TYPE_PFTASKDIALOGCALLBACK typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :WPARAM, :LPARAM, :LONG_PTR
           PFTASKDIALOGCALLBACK typedef ptr TYPE_PFTASKDIALOGCALLBACK
-
           _TASKDIALOG_FLAGS typedef SDWORD
           TDF_ENABLE_HYPERLINKS equ 0001h
           TDF_USE_HICON_MAIN equ 0002h
@@ -6221,7 +6285,7 @@ ifndef _INC_COMMCTRL
             TDF_NO_SET_FOREGROUND equ 00010000h
           endif
           TDF_SIZE_TO_CONTENT equ 01000000h
-
+          
           TASKDIALOG_FLAGS typedef SDWORD
           TASKDIALOG_MESSAGES typedef SDWORD
           TDM_NAVIGATE_PAGE equ WM_USER + 101
@@ -6240,7 +6304,7 @@ ifndef _INC_COMMCTRL
           TDM_SET_BUTTON_ELEVATION_REQUIRED_STATE equ WM_USER + 115
           TDM_UPDATE_ICON equ WM_USER + 116
           _TASKDIALOG_MESSAGES typedef TASKDIALOG_MESSAGES
-
+          
           TASKDIALOG_NOTIFICATIONS typedef SDWORD
           TDN_CREATED equ 0
           TDN_NAVIGATED equ 1
@@ -6254,7 +6318,7 @@ ifndef _INC_COMMCTRL
           TDN_HELP equ 9
           TDN_EXPANDO_BUTTON_CLICKED equ 10
           _TASKDIALOG_NOTIFICATIONS typedef TASKDIALOG_NOTIFICATIONS
-
+          
           TASKDIALOG_BUTTON struct
             nButtonID SDWORD ?
             pszButtonText PCWSTR ?
@@ -6266,12 +6330,12 @@ ifndef _INC_COMMCTRL
           TDE_FOOTER equ 2
           TDE_MAIN_INSTRUCTION equ 3
           _TASKDIALOG_ELEMENTS typedef TASKDIALOG_ELEMENTS
-
+          
           TASKDIALOG_ICON_ELEMENTS typedef SDWORD
           TDIE_ICON_MAIN equ 0
           TDIE_ICON_FOOTER equ 1
           _TASKDIALOG_ICON_ELEMENTS typedef TASKDIALOG_ICON_ELEMENTS
-
+          
           TD_WARNING_ICON equ MAKEINTRESOURCEW(- 1)
           TD_ERROR_ICON equ MAKEINTRESOURCEW(- 2)
           TD_INFORMATION_ICON equ MAKEINTRESOURCEW(- 3)
@@ -6285,7 +6349,7 @@ ifndef _INC_COMMCTRL
           TDCBF_CANCEL_BUTTON equ 0008h
           TDCBF_RETRY_BUTTON equ 0010h
           TDCBF_CLOSE_BUTTON equ 0020h
-
+          
           TASKDIALOG_COMMON_BUTTON_FLAGS typedef SDWORD
           TASKDIALOGCONFIG struct
             cbSize UINT ?
@@ -6310,7 +6374,7 @@ ifndef _INC_COMMCTRL
             pszExpandedInformation PCWSTR ?
             pszExpandedControlText PCWSTR ?
             pszCollapsedControlText PCWSTR ?
-            union
+            union DUMMYUNIONNAME2
               hFooterIcon HICON ?
               pszFooterIcon PCWSTR ?
             ends
@@ -6355,6 +6419,7 @@ ifndef _INC_COMMCTRL
             TRACKMOUSEEVENT ends
             tagTRACKMOUSEEVENT typedef TRACKMOUSEEVENT
             LPTRACKMOUSEEVENT typedef ptr TRACKMOUSEEVENT
+            
           endif
           @DefProto DllImport, _TrackMouseEvent, WIN_STD_CALL_CONV,, <:LPTRACKMOUSEEVENT>, 4
         endif
@@ -6398,7 +6463,6 @@ ifndef _INC_COMMCTRL
       if (NTDDI_VERSION ge NTDDI_WINXP)
         TYPE_SUBCLASSPROC typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :WPARAM, :LPARAM, :UINT_PTR, :DWORD_PTR
         SUBCLASSPROC typedef ptr TYPE_SUBCLASSPROC
-
         SetWindowSubclass proto WIN_STD_CALL_CONV :HWND, :SUBCLASSPROC, :UINT_PTR, :DWORD_PTR
         GetWindowSubclass proto WIN_STD_CALL_CONV :HWND, :SUBCLASSPROC, :UINT_PTR, :ptr DWORD_PTR
         RemoveWindowSubclass proto WIN_STD_CALL_CONV :HWND, :SUBCLASSPROC, :UINT_PTR
@@ -6408,7 +6472,7 @@ ifndef _INC_COMMCTRL
         _LI_METRIC typedef SDWORD
         LIM_SMALL equ 0
         LIM_LARGE equ 1
-
+        
         @DefProto DllImport, LoadIconMetric, WIN_STD_CALL_CONV,, <:HINSTANCE, :PCWSTR, :SDWORD, :ptr HICON>, 16
         @DefProto DllImport, LoadIconWithScaleDown, WIN_STD_CALL_CONV,, <:HINSTANCE, :PCWSTR, :SDWORD, :SDWORD, :ptr HICON>, 20
       endif
@@ -6428,3 +6492,4 @@ ifndef _INC_COMMCTRL
     endif
   endif
 endif
+

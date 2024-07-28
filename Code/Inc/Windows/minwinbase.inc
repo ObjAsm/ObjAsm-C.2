@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\minwinbase.h
-;             Created on (UTC) 06/04/2024 06:15:56
-;             Last modified on (UTC) 21/02/2024 18:13:36
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\minwinbase.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 ifndef _MINWINBASE_
   _MINWINBASE_ equ <>
@@ -24,9 +23,11 @@ ifndef _MINWINBASE_
     lpSecurityDescriptor LPVOID ?
     bInheritHandle BOOL ?
   SECURITY_ATTRIBUTES ends
+
   _SECURITY_ATTRIBUTES typedef SECURITY_ATTRIBUTES
   PSECURITY_ATTRIBUTES typedef ptr SECURITY_ATTRIBUTES
   LPSECURITY_ATTRIBUTES typedef ptr SECURITY_ATTRIBUTES
+  
   OVERLAPPED struct
     Internal ULONG_PTR ?
     InternalHigh ULONG_PTR ?
@@ -39,25 +40,31 @@ ifndef _MINWINBASE_
     ends
     hEvent HANDLE ?
   OVERLAPPED ends
+
   _OVERLAPPED typedef OVERLAPPED
   LPOVERLAPPED typedef ptr OVERLAPPED
+  
   OVERLAPPED_ENTRY struct
     lpCompletionKey ULONG_PTR ?
     lpOverlapped LPOVERLAPPED ?
     Internal ULONG_PTR ?
     dwNumberOfBytesTransferred DWORD ?
   OVERLAPPED_ENTRY ends
+
   _OVERLAPPED_ENTRY typedef OVERLAPPED_ENTRY
   LPOVERLAPPED_ENTRY typedef ptr OVERLAPPED_ENTRY
+  
   ifndef _FILETIME_
     _FILETIME_ equ <>
     FILETIME struct
       dwLowDateTime DWORD ?
       dwHighDateTime DWORD ?
     FILETIME ends
+
     _FILETIME typedef FILETIME
     PFILETIME typedef ptr FILETIME
     LPFILETIME typedef ptr FILETIME
+    
   endif
   SYSTEMTIME struct
     wYear WORD ?
@@ -69,9 +76,11 @@ ifndef _MINWINBASE_
     wSecond WORD ?
     wMilliseconds WORD ?
   SYSTEMTIME ends
+
   _SYSTEMTIME typedef SYSTEMTIME
   PSYSTEMTIME typedef ptr SYSTEMTIME
   LPSYSTEMTIME typedef ptr SYSTEMTIME
+  
   WIN32_FIND_DATAA struct
     dwFileAttributes DWORD ?
     ftCreationTime FILETIME <>
@@ -87,9 +96,11 @@ ifndef _MINWINBASE_
       ;[...]
     endif
   WIN32_FIND_DATAA ends
+
   _WIN32_FIND_DATAA typedef WIN32_FIND_DATAA
   PWIN32_FIND_DATAA typedef ptr WIN32_FIND_DATAA
   LPWIN32_FIND_DATAA typedef ptr WIN32_FIND_DATAA
+  
   WIN32_FIND_DATAW struct
     dwFileAttributes DWORD ?
     ftCreationTime FILETIME <>
@@ -105,9 +116,11 @@ ifndef _MINWINBASE_
       ;[...]
     endif
   WIN32_FIND_DATAW ends
+
   _WIN32_FIND_DATAW typedef WIN32_FIND_DATAW
   PWIN32_FIND_DATAW typedef ptr WIN32_FIND_DATAW
   LPWIN32_FIND_DATAW typedef ptr WIN32_FIND_DATAW
+  
   ifdef UNICODE
     WIN32_FIND_DATA typedef WIN32_FIND_DATAW
     PWIN32_FIND_DATA typedef PWIN32_FIND_DATAW
@@ -123,7 +136,7 @@ ifndef _MINWINBASE_
     FindExInfoBasic equ 1
     FindExInfoMaxInfoLevel equ 2
     _FINDEX_INFO_LEVELS typedef FINDEX_INFO_LEVELS
-
+    
     FIND_FIRST_EX_CASE_SENSITIVE equ 00000001h
     FIND_FIRST_EX_LARGE_FETCH equ 00000002h
     if (NTDDI_VERSION ge NTDDI_WIN10_RS4)
@@ -135,27 +148,24 @@ ifndef _MINWINBASE_
     FindExSearchLimitToDevices equ 2
     FindExSearchMaxSearchOp equ 3
     _FINDEX_SEARCH_OPS typedef FINDEX_SEARCH_OPS
-
+    
   endif
   if (_WIN32_WINNT ge 0400h)
     if (NTDDI_VERSION ge NTDDI_WIN10_RS3)
       READ_DIRECTORY_NOTIFY_INFORMATION_CLASS typedef SDWORD
       ReadDirectoryNotifyInformation equ 1
       ReadDirectoryNotifyExtendedInformation equ 2
-      if (NTDDI_VERSION ge NTDDI_WIN10_NI)
-        ReadDirectoryNotifyFullInformation equ 3
-      endif
-      ReadDirectoryNotifyMaximumInformation equ 4
       _READ_DIRECTORY_NOTIFY_INFORMATION_CLASS typedef READ_DIRECTORY_NOTIFY_INFORMATION_CLASS
       PREAD_DIRECTORY_NOTIFY_INFORMATION_CLASS typedef ptr READ_DIRECTORY_NOTIFY_INFORMATION_CLASS
+      
     endif
   endif
   GET_FILEEX_INFO_LEVELS typedef SDWORD
   GetFileExInfoStandard equ 0
   GetFileExMaxInfoLevel equ 1
   _GET_FILEEX_INFO_LEVELS typedef GET_FILEEX_INFO_LEVELS
-
-  if (NTDDI_VERSION ge NTDDI_LONGHORN)
+  
+  if (_WIN32_WINNT ge _WIN32_WINNT_LONGHORN)
     FILE_INFO_BY_HANDLE_CLASS typedef SDWORD
     FileBasicInfo equ 0
     FileStandardInfo equ 1
@@ -173,24 +183,21 @@ ifndef _MINWINBASE_
     FileRemoteProtocolInfo equ 13
     FileFullDirectoryInfo equ 14
     FileFullDirectoryRestartInfo equ 15
-    if (NTDDI_VERSION ge NTDDI_WIN8)
+    if (_WIN32_WINNT ge _WIN32_WINNT_WIN8)
       FileStorageInfo equ 16
       FileAlignmentInfo equ 17
       FileIdInfo equ 18
       FileIdExtdDirectoryInfo equ 19
       FileIdExtdDirectoryRestartInfo equ 20
     endif
-    if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
+    if (_WIN32_WINNT ge _WIN32_WINNT_WIN10_RS1)
       FileDispositionInfoEx equ 21
       FileRenameInfoEx equ 22
     endif
-    if (NTDDI_VERSION ge NTDDI_WIN10_19H1)
-      FileCaseSensitiveInfo equ 23
-      FileNormalizedNameInfo equ 24
-    endif
-    MaximumFileInfoByHandleClass equ 25
+    MaximumFileInfoByHandleClass equ 23
     _FILE_INFO_BY_HANDLE_CLASS typedef FILE_INFO_BY_HANDLE_CLASS
     PFILE_INFO_BY_HANDLE_CLASS typedef ptr FILE_INFO_BY_HANDLE_CLASS
+    
   endif
   CRITICAL_SECTION typedef RTL_CRITICAL_SECTION
   PCRITICAL_SECTION typedef PRTL_CRITICAL_SECTION
@@ -200,7 +207,6 @@ ifndef _MINWINBASE_
   LPCRITICAL_SECTION_DEBUG typedef PRTL_CRITICAL_SECTION_DEBUG
   TYPE_LPOVERLAPPED_COMPLETION_ROUTINE typedef proto WIN_STD_CALL_CONV :DWORD, :DWORD, :LPOVERLAPPED
   LPOVERLAPPED_COMPLETION_ROUTINE typedef ptr TYPE_LPOVERLAPPED_COMPLETION_ROUTINE
-
   LOCKFILE_FAIL_IMMEDIATELY equ 00000001h
   LOCKFILE_EXCLUSIVE_LOCK equ 00000002h
   PROCESS_HEAP_ENTRY struct
@@ -222,9 +228,11 @@ ifndef _MINWINBASE_
       ends
     ends
   PROCESS_HEAP_ENTRY ends
+
   _PROCESS_HEAP_ENTRY typedef PROCESS_HEAP_ENTRY
   LPPROCESS_HEAP_ENTRY typedef ptr PROCESS_HEAP_ENTRY
   PPROCESS_HEAP_ENTRY typedef ptr PROCESS_HEAP_ENTRY
+  
   PROCESS_HEAP_REGION equ 0001h
   PROCESS_HEAP_UNCOMMITTED_RANGE equ 0002h
   PROCESS_HEAP_ENTRY_BUSY equ 0004h
@@ -244,8 +252,10 @@ ifndef _MINWINBASE_
       SimpleReasonString LPWSTR ?
     ends
   REASON_CONTEXT ends
+
   _REASON_CONTEXT typedef REASON_CONTEXT
   PREASON_CONTEXT typedef ptr REASON_CONTEXT
+  
   EXCEPTION_DEBUG_EVENT equ 1
   CREATE_THREAD_DEBUG_EVENT equ 2
   CREATE_PROCESS_DEBUG_EVENT equ 3
@@ -257,25 +267,27 @@ ifndef _MINWINBASE_
   RIP_EVENT equ 9
   TYPE_PTHREAD_START_ROUTINE typedef proto WIN_STD_CALL_CONV :LPVOID
   PTHREAD_START_ROUTINE typedef ptr TYPE_PTHREAD_START_ROUTINE
-
   LPTHREAD_START_ROUTINE typedef PTHREAD_START_ROUTINE
   TYPE_PENCLAVE_ROUTINE typedef proto WIN_STD_CALL_CONV :LPVOID
   PENCLAVE_ROUTINE typedef ptr TYPE_PENCLAVE_ROUTINE
-
   LPENCLAVE_ROUTINE typedef PENCLAVE_ROUTINE
   EXCEPTION_DEBUG_INFO struct
     ExceptionRecord EXCEPTION_RECORD <>
     dwFirstChance DWORD ?
   EXCEPTION_DEBUG_INFO ends
+
   _EXCEPTION_DEBUG_INFO typedef EXCEPTION_DEBUG_INFO
   LPEXCEPTION_DEBUG_INFO typedef ptr EXCEPTION_DEBUG_INFO
+  
   CREATE_THREAD_DEBUG_INFO struct
     hThread HANDLE ?
     lpThreadLocalBase LPVOID ?
     lpStartAddress LPTHREAD_START_ROUTINE ?
   CREATE_THREAD_DEBUG_INFO ends
+
   _CREATE_THREAD_DEBUG_INFO typedef CREATE_THREAD_DEBUG_INFO
   LPCREATE_THREAD_DEBUG_INFO typedef ptr CREATE_THREAD_DEBUG_INFO
+  
   CREATE_PROCESS_DEBUG_INFO struct
     hFile HANDLE ?
     hProcess HANDLE ?
@@ -288,18 +300,24 @@ ifndef _MINWINBASE_
     lpImageName LPVOID ?
     fUnicode WORD ?
   CREATE_PROCESS_DEBUG_INFO ends
+
   _CREATE_PROCESS_DEBUG_INFO typedef CREATE_PROCESS_DEBUG_INFO
   LPCREATE_PROCESS_DEBUG_INFO typedef ptr CREATE_PROCESS_DEBUG_INFO
+  
   EXIT_THREAD_DEBUG_INFO struct
     dwExitCode DWORD ?
   EXIT_THREAD_DEBUG_INFO ends
+
   _EXIT_THREAD_DEBUG_INFO typedef EXIT_THREAD_DEBUG_INFO
   LPEXIT_THREAD_DEBUG_INFO typedef ptr EXIT_THREAD_DEBUG_INFO
+  
   EXIT_PROCESS_DEBUG_INFO struct
     dwExitCode DWORD ?
   EXIT_PROCESS_DEBUG_INFO ends
+
   _EXIT_PROCESS_DEBUG_INFO typedef EXIT_PROCESS_DEBUG_INFO
   LPEXIT_PROCESS_DEBUG_INFO typedef ptr EXIT_PROCESS_DEBUG_INFO
+  
   LOAD_DLL_DEBUG_INFO struct
     hFile HANDLE ?
     lpBaseOfDll LPVOID ?
@@ -308,26 +326,34 @@ ifndef _MINWINBASE_
     lpImageName LPVOID ?
     fUnicode WORD ?
   LOAD_DLL_DEBUG_INFO ends
+
   _LOAD_DLL_DEBUG_INFO typedef LOAD_DLL_DEBUG_INFO
   LPLOAD_DLL_DEBUG_INFO typedef ptr LOAD_DLL_DEBUG_INFO
+  
   UNLOAD_DLL_DEBUG_INFO struct
     lpBaseOfDll LPVOID ?
   UNLOAD_DLL_DEBUG_INFO ends
+
   _UNLOAD_DLL_DEBUG_INFO typedef UNLOAD_DLL_DEBUG_INFO
   LPUNLOAD_DLL_DEBUG_INFO typedef ptr UNLOAD_DLL_DEBUG_INFO
+  
   OUTPUT_DEBUG_STRING_INFO struct
     lpDebugStringData LPSTR ?
     fUnicode WORD ?
     nDebugStringLength WORD ?
   OUTPUT_DEBUG_STRING_INFO ends
+
   _OUTPUT_DEBUG_STRING_INFO typedef OUTPUT_DEBUG_STRING_INFO
   LPOUTPUT_DEBUG_STRING_INFO typedef ptr OUTPUT_DEBUG_STRING_INFO
+  
   RIP_INFO struct
     dwError DWORD ?
     dwType DWORD ?
   RIP_INFO ends
+
   _RIP_INFO typedef RIP_INFO
   LPRIP_INFO typedef ptr RIP_INFO
+  
   DEBUG_EVENT struct
     dwDebugEventCode DWORD ?
     dwProcessId DWORD ?
@@ -344,8 +370,10 @@ ifndef _MINWINBASE_
       RipInfo RIP_INFO <>
     ends
   DEBUG_EVENT ends
+
   _DEBUG_EVENT typedef DEBUG_EVENT
   LPDEBUG_EVENT typedef ptr DEBUG_EVENT
+  
   if  not Defined(MIDL_PASS)
     LPCONTEXT typedef PCONTEXT
   endif
@@ -402,3 +430,4 @@ ifndef _MINWINBASE_
     endif
   endif
 endif
+

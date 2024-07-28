@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\wsipv6ok.h
-;             Created on (UTC) 06/04/2024 06:16:03
-;             Last modified on (UTC) 16/12/2023 11:07:20
+;Include file created by h2incX, Version B.01.01, 26/11/2018 23:24
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: 'D:\MASM32\ObjAsm\Projects\h2IncX\header\wsipv6ok.h', last modified: 19/04/2018 09:43
+;Creation parameters: 
 
 ifndef _WSIPV6OK_
   _WSIPV6OK_ equ <>
@@ -75,3 +74,4 @@ ifndef _WSIPV6OK_
     endif
   endif
 endif
+

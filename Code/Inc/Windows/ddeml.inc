@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\ddeml.h
-;             Created on (UTC) 06/04/2024 06:15:53
-;             Last modified on (UTC) 21/02/2024 18:18:22
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\ddeml.h', last modified: 19/04/2018 10:46
+;Creation parameters: 
 
 include winapifamily.inc
 ifndef _INC_DDEMLH
@@ -22,8 +21,10 @@ ifndef _INC_DDEMLH
       hszSvc HSZ ?
       hszTopic HSZ ?
     HSZPAIR ends
+
     tagHSZPAIR typedef HSZPAIR
     PHSZPAIR typedef ptr HSZPAIR
+    
     CONVCONTEXT struct
       cb UINT ?
       wFlags UINT ?
@@ -33,8 +34,10 @@ ifndef _INC_DDEMLH
       dwSecurity DWORD ?
       qos SECURITY_QUALITY_OF_SERVICE <>
     CONVCONTEXT ends
+
     tagCONVCONTEXT typedef CONVCONTEXT
     PCONVCONTEXT typedef ptr CONVCONTEXT
+    
     CONVINFO struct
       cb DWORD ?
       hUser DWORD_PTR ?
@@ -53,8 +56,10 @@ ifndef _INC_DDEMLH
       hwnd HWND ?
       hwndPartner HWND ?
     CONVINFO ends
+
     tagCONVINFO typedef CONVINFO
     PCONVINFO typedef ptr CONVINFO
+    
     XST_NULL equ 0
     XST_INCOMPLETE equ 1
     XST_CONNECTED equ 2
@@ -151,7 +156,6 @@ ifndef _INC_DDEMLH
     FNCALLBACK typedef proto :UINT, :UINT, :HCONV, :HSZ, :HSZ, :HDDEDATA, :ULONG_PTR, :ULONG_PTR
     TYPE_PFNCALLBACK typedef proto WIN_STD_CALL_CONV :UINT, :UINT, :HCONV, :HSZ, :HSZ, :HDDEDATA, :ULONG_PTR, :ULONG_PTR
     PFNCALLBACK typedef ptr TYPE_PFNCALLBACK
-
     CBR_BLOCK equ ((HDDEDATA) - 1)
     DdeInitializeA proto WIN_STD_CALL_CONV :LPDWORD, :PFNCALLBACK, :DWORD, :DWORD
     DdeInitializeW proto WIN_STD_CALL_CONV :LPDWORD, :PFNCALLBACK, :DWORD, :DWORD
@@ -253,8 +257,10 @@ ifndef _INC_DDEMLH
         cbData DWORD ?
         Data DWORD 8 dup (?)
       DDEML_MSG_HOOK_DATA ends
+
       tagDDEML_MSG_HOOK_DATA typedef DDEML_MSG_HOOK_DATA
       PDDEML_MSG_HOOK_DATA typedef ptr DDEML_MSG_HOOK_DATA
+      
       MONMSGSTRUCT struct
         cb UINT ?
         hwndTo HWND ?
@@ -265,8 +271,10 @@ ifndef _INC_DDEMLH
         lParam LPARAM ?
         dmhd DDEML_MSG_HOOK_DATA <>
       MONMSGSTRUCT ends
+
       tagMONMSGSTRUCT typedef MONMSGSTRUCT
       PMONMSGSTRUCT typedef ptr MONMSGSTRUCT
+      
       MONCBSTRUCT struct
         cb UINT ?
         dwTime DWORD ?
@@ -284,8 +292,10 @@ ifndef _INC_DDEMLH
         cbData DWORD ?
         Data DWORD 8 dup (?)
       MONCBSTRUCT ends
+
       tagMONCBSTRUCT typedef MONCBSTRUCT
       PMONCBSTRUCT typedef ptr MONCBSTRUCT
+      
       MONHSZSTRUCTA struct
         cb UINT ?
         fsAction BOOL ?
@@ -294,8 +304,10 @@ ifndef _INC_DDEMLH
         hTask HANDLE ?
         str_ CHAR 1 dup (?)
       MONHSZSTRUCTA ends
+
       tagMONHSZSTRUCTA typedef MONHSZSTRUCTA
       PMONHSZSTRUCTA typedef ptr MONHSZSTRUCTA
+      
       MONHSZSTRUCTW struct
         cb UINT ?
         fsAction BOOL ?
@@ -304,8 +316,10 @@ ifndef _INC_DDEMLH
         hTask HANDLE ?
         str_ WCHAR 1 dup (?)
       MONHSZSTRUCTW ends
+
       tagMONHSZSTRUCTW typedef MONHSZSTRUCTW
       PMONHSZSTRUCTW typedef ptr MONHSZSTRUCTW
+      
       ifdef UNICODE
         MONHSZSTRUCT typedef MONHSZSTRUCTW
         PMONHSZSTRUCT typedef PMONHSZSTRUCTW
@@ -323,8 +337,10 @@ ifndef _INC_DDEMLH
         dwTime DWORD ?
         hTask HANDLE ?
       MONERRSTRUCT ends
+
       tagMONERRSTRUCT typedef MONERRSTRUCT
       PMONERRSTRUCT typedef ptr MONERRSTRUCT
+      
       MONLINKSTRUCT struct
         cb UINT ?
         dwTime DWORD ?
@@ -339,8 +355,10 @@ ifndef _INC_DDEMLH
         hConvServer HCONV ?
         hConvClient HCONV ?
       MONLINKSTRUCT ends
+
       tagMONLINKSTRUCT typedef MONLINKSTRUCT
       PMONLINKSTRUCT typedef ptr MONLINKSTRUCT
+      
       MONCONVSTRUCT struct
         cb UINT ?
         fConnect BOOL ?
@@ -351,8 +369,10 @@ ifndef _INC_DDEMLH
         hConvClient HCONV ?
         hConvServer HCONV ?
       MONCONVSTRUCT ends
+
       tagMONCONVSTRUCT typedef MONCONVSTRUCT
       PMONCONVSTRUCT typedef ptr MONCONVSTRUCT
+      
       MAX_MONITORS equ 4
       APPCLASS_MONITOR equ 00000001h
       XTYP_MONITOR equ (00F0h or XCLASS_NOTIFICATION or XTYPF_NOBLOCK)
@@ -372,3 +392,4 @@ ifndef _INC_DDEMLH
   if _MSC_VER ge 1200
   endif
 endif
+

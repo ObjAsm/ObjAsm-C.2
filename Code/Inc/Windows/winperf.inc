@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winperf.h
-;             Created on (UTC) 06/04/2024 06:16:03
-;             Last modified on (UTC) 12/02/2024 17:05:38
+;Include file created by h2incX, Version B.01.01, 19/04/2018 10:49
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\winperf.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 include winapifamily.inc
 ifndef _WINPERF_
@@ -33,6 +32,7 @@ ifndef _WINPERF_
     PERF_DATA_BLOCK ends
     _PERF_DATA_BLOCK typedef PERF_DATA_BLOCK
     PPERF_DATA_BLOCK typedef ptr PERF_DATA_BLOCK
+    
     PERF_OBJECT_TYPE struct
       TotalByteLength DWORD ?
       DefinitionLength DWORD ?
@@ -59,9 +59,8 @@ ifndef _WINPERF_
     PERF_OBJECT_TYPE ends
     _PERF_OBJECT_TYPE typedef PERF_OBJECT_TYPE
     PPERF_OBJECT_TYPE typedef ptr PERF_OBJECT_TYPE
-    PERF_NO_INSTANCES equ (- 1)
-    PERF_METADATA_MULTIPLE_INSTANCES equ (- 2)
-    PERF_METADATA_NO_INSTANCES equ (- 3)
+    
+    PERF_NO_INSTANCES equ -1
     PERF_SIZE_DWORD equ 00000000h
     PERF_SIZE_LARGE equ 00000100h
     PERF_SIZE_ZERO equ 00000200h
@@ -161,6 +160,7 @@ ifndef _WINPERF_
     PERF_COUNTER_DEFINITION ends
     _PERF_COUNTER_DEFINITION typedef PERF_COUNTER_DEFINITION
     PPERF_COUNTER_DEFINITION typedef ptr PERF_COUNTER_DEFINITION
+    
     PERF_NO_UNIQUE_ID equ -1
     PERF_INSTANCE_DEFINITION struct
       ByteLength DWORD ?
@@ -172,31 +172,36 @@ ifndef _WINPERF_
     PERF_INSTANCE_DEFINITION ends
     _PERF_INSTANCE_DEFINITION typedef PERF_INSTANCE_DEFINITION
     PPERF_INSTANCE_DEFINITION typedef ptr PERF_INSTANCE_DEFINITION
+    
     PERF_COUNTER_BLOCK struct
       ByteLength DWORD ?
     PERF_COUNTER_BLOCK ends
     _PERF_COUNTER_BLOCK typedef PERF_COUNTER_BLOCK
     PPERF_COUNTER_BLOCK typedef ptr PERF_COUNTER_BLOCK
+    
+    PERF_QUERY_OBJECTS equ (80000000h)
+    PERF_QUERY_GLOBAL equ (80000001h)
+    PERF_QUERY_COSTLY equ (80000002h)
     TYPE_PM_OPEN_PROC typedef proto WIN_STD_CALL_CONV :LPWSTR
     PM_OPEN_PROC typedef ptr TYPE_PM_OPEN_PROC
-
-    TYPE_PM_COLLECT_PROC typedef proto WIN_STD_CALL_CONV :LPWSTR, :ptr ptr, :ptr DWORD, :ptr DWORD
+    TYPE_PM_COLLECT_PROC typedef proto WIN_STD_CALL_CONV :LPWSTR, :ptr LPVOID, :LPDWORD, :LPDWORD
     PM_COLLECT_PROC typedef ptr TYPE_PM_COLLECT_PROC
-
     TYPE_PM_CLOSE_PROC typedef proto WIN_STD_CALL_CONV
     PM_CLOSE_PROC typedef ptr TYPE_PM_CLOSE_PROC
-
+    TYPE_PM_QUERY_PROC typedef proto WIN_STD_CALL_CONV :LPDWORD, :ptr LPVOID, :LPDWORD, :LPDWORD
+    PM_QUERY_PROC typedef ptr TYPE_PM_QUERY_PROC
     if ((Defined(_WIN32_WINDOWS) and _WIN32_WINDOWS ge 0501h) or _WIN32_WINNT ge 0501h or (Defined(NTDDI_VERSION) and NTDDI_VERSION ge NTDDI_WINXP))
-      MAX_PERF_OBJECTS_IN_QUERY_FUNCTION equ (64)
+      MAX_PERF_OBJECTS_IN_QUERY_FUNCTION equ 64
       WINPERF_LOG_NONE equ 0
       WINPERF_LOG_USER equ 1
       WINPERF_LOG_DEBUG equ 2
       WINPERF_LOG_VERBOSE equ 3
     else
-      MAX_PERF_OBJECTS_IN_QUERY_FUNCTION equ (8)
+      MAX_PERF_OBJECTS_IN_QUERY_FUNCTION equ 8
     endif
     include poppack.inc
   endif
   if _MSC_VER ge 1200
   endif
 endif
+

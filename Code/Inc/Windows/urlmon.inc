@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\urlmon.h
-;             Created on (UTC) 06/04/2024 06:16:02
-;             Last modified on (UTC) 21/02/2024 18:16:58
+;Include file created by h2incX, Version B.01.02, 23/09/2018 18:52
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\urlmon.h', last modified: 19/04/2018 10:45
+;Creation parameters:
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
   __REQUIRED_RPCNDR_H_VERSION__ equ 500
@@ -23,181 +22,225 @@ ifndef __urlmon_h__
   __urlmon_h__ equ <>
   if Defined(_MSC_VER) and (_MSC_VER ge 1020)
   endif
-  ifndef DECLSPEC_XFGVIRT
-    if Defined(_CONTROL_FLOW_GUARD_XFG)
-      DECLSPEC_XFGVIRT macro base, func
-        exitm <__declspec(xfg_virtual (base, func))>
-      endm
-    else
-      DECLSPEC_XFGVIRT macro base, func
-        exitm <>
-      endm
-    endif
-  endif
   ifndef __IPersistMoniker_FWD_DEFINED__
     __IPersistMoniker_FWD_DEFINED__ equ <>
+    ;IPersistMoniker typedef IPersistMoniker
   endif
   ifndef __IMonikerProp_FWD_DEFINED__
     __IMonikerProp_FWD_DEFINED__ equ <>
+    ;IMonikerProp typedef IMonikerProp
   endif
   ifndef __IBindProtocol_FWD_DEFINED__
     __IBindProtocol_FWD_DEFINED__ equ <>
+    ;IBindProtocol typedef IBindProtocol
   endif
   ifndef __IBinding_FWD_DEFINED__
     __IBinding_FWD_DEFINED__ equ <>
+    ;IBinding typedef IBinding
   endif
   ifndef __IBindStatusCallback_FWD_DEFINED__
     __IBindStatusCallback_FWD_DEFINED__ equ <>
+    ;IBindStatusCallback typedef IBindStatusCallback
   endif
   ifndef __IBindStatusCallbackEx_FWD_DEFINED__
     __IBindStatusCallbackEx_FWD_DEFINED__ equ <>
+    ;IBindStatusCallbackEx typedef IBindStatusCallbackEx
   endif
   ifndef __IAuthenticate_FWD_DEFINED__
     __IAuthenticate_FWD_DEFINED__ equ <>
+    ;IAuthenticate typedef IAuthenticate
   endif
   ifndef __IAuthenticateEx_FWD_DEFINED__
     __IAuthenticateEx_FWD_DEFINED__ equ <>
+    ;IAuthenticateEx typedef IAuthenticateEx
   endif
   ifndef __IHttpNegotiate_FWD_DEFINED__
     __IHttpNegotiate_FWD_DEFINED__ equ <>
+    ;IHttpNegotiate typedef IHttpNegotiate
   endif
   ifndef __IHttpNegotiate2_FWD_DEFINED__
     __IHttpNegotiate2_FWD_DEFINED__ equ <>
+    ;IHttpNegotiate2 typedef IHttpNegotiate2
   endif
   ifndef __IHttpNegotiate3_FWD_DEFINED__
     __IHttpNegotiate3_FWD_DEFINED__ equ <>
+    ;IHttpNegotiate3 typedef IHttpNegotiate3
   endif
   ifndef __IWinInetFileStream_FWD_DEFINED__
     __IWinInetFileStream_FWD_DEFINED__ equ <>
+    ;IWinInetFileStream typedef IWinInetFileStream
   endif
   ifndef __IWindowForBindingUI_FWD_DEFINED__
     __IWindowForBindingUI_FWD_DEFINED__ equ <>
+    ;IWindowForBindingUI typedef IWindowForBindingUI
   endif
   ifndef __ICodeInstall_FWD_DEFINED__
     __ICodeInstall_FWD_DEFINED__ equ <>
+    ;ICodeInstall typedef ICodeInstall
   endif
   ifndef __IUri_FWD_DEFINED__
     __IUri_FWD_DEFINED__ equ <>
+    ;IUri typedef IUri
   endif
   ifndef __IUriContainer_FWD_DEFINED__
     __IUriContainer_FWD_DEFINED__ equ <>
+    ;IUriContainer typedef IUriContainer
   endif
   ifndef __IUriBuilder_FWD_DEFINED__
     __IUriBuilder_FWD_DEFINED__ equ <>
+    ;IUriBuilder typedef IUriBuilder
   endif
   ifndef __IUriBuilderFactory_FWD_DEFINED__
     __IUriBuilderFactory_FWD_DEFINED__ equ <>
+    ;IUriBuilderFactory typedef IUriBuilderFactory
   endif
   ifndef __IWinInetInfo_FWD_DEFINED__
     __IWinInetInfo_FWD_DEFINED__ equ <>
+    ;IWinInetInfo typedef IWinInetInfo
   endif
   ifndef __IHttpSecurity_FWD_DEFINED__
     __IHttpSecurity_FWD_DEFINED__ equ <>
+    ;IHttpSecurity typedef IHttpSecurity
   endif
   ifndef __IWinInetHttpInfo_FWD_DEFINED__
     __IWinInetHttpInfo_FWD_DEFINED__ equ <>
+    ;IWinInetHttpInfo typedef IWinInetHttpInfo
   endif
   ifndef __IWinInetHttpTimeouts_FWD_DEFINED__
     __IWinInetHttpTimeouts_FWD_DEFINED__ equ <>
+    ;IWinInetHttpTimeouts typedef IWinInetHttpTimeouts
   endif
   ifndef __IWinInetCacheHints_FWD_DEFINED__
     __IWinInetCacheHints_FWD_DEFINED__ equ <>
+    ;IWinInetCacheHints typedef IWinInetCacheHints
   endif
   ifndef __IWinInetCacheHints2_FWD_DEFINED__
     __IWinInetCacheHints2_FWD_DEFINED__ equ <>
+    ;IWinInetCacheHints2 typedef IWinInetCacheHints2
   endif
   ifndef __IBindHost_FWD_DEFINED__
     __IBindHost_FWD_DEFINED__ equ <>
+    ;IBindHost typedef IBindHost
   endif
   ifndef __IInternet_FWD_DEFINED__
     __IInternet_FWD_DEFINED__ equ <>
+    ;IInternet typedef IInternet
   endif
   ifndef __IInternetBindInfo_FWD_DEFINED__
     __IInternetBindInfo_FWD_DEFINED__ equ <>
+    ;IInternetBindInfo typedef IInternetBindInfo
   endif
   ifndef __IInternetBindInfoEx_FWD_DEFINED__
     __IInternetBindInfoEx_FWD_DEFINED__ equ <>
+    ;IInternetBindInfoEx typedef IInternetBindInfoEx
   endif
   ifndef __IInternetProtocolRoot_FWD_DEFINED__
     __IInternetProtocolRoot_FWD_DEFINED__ equ <>
+    ;IInternetProtocolRoot typedef IInternetProtocolRoot
   endif
   ifndef __IInternetProtocol_FWD_DEFINED__
     __IInternetProtocol_FWD_DEFINED__ equ <>
+    ;IInternetProtocol typedef IInternetProtocol
   endif
   ifndef __IInternetProtocolEx_FWD_DEFINED__
     __IInternetProtocolEx_FWD_DEFINED__ equ <>
+    ;IInternetProtocolEx typedef IInternetProtocolEx
   endif
   ifndef __IInternetProtocolSink_FWD_DEFINED__
     __IInternetProtocolSink_FWD_DEFINED__ equ <>
+    ;IInternetProtocolSink typedef IInternetProtocolSink
   endif
   ifndef __IInternetProtocolSinkStackable_FWD_DEFINED__
     __IInternetProtocolSinkStackable_FWD_DEFINED__ equ <>
+    ;IInternetProtocolSinkStackable typedef IInternetProtocolSinkStackable
   endif
   ifndef __IInternetSession_FWD_DEFINED__
     __IInternetSession_FWD_DEFINED__ equ <>
+    ;IInternetSession typedef IInternetSession
   endif
   ifndef __IInternetThreadSwitch_FWD_DEFINED__
     __IInternetThreadSwitch_FWD_DEFINED__ equ <>
+    ;IInternetThreadSwitch typedef IInternetThreadSwitch
   endif
   ifndef __IInternetPriority_FWD_DEFINED__
     __IInternetPriority_FWD_DEFINED__ equ <>
+    ;IInternetPriority typedef IInternetPriority
   endif
   ifndef __IInternetProtocolInfo_FWD_DEFINED__
     __IInternetProtocolInfo_FWD_DEFINED__ equ <>
+    ;IInternetProtocolInfo typedef IInternetProtocolInfo
   endif
   ifndef __IInternetSecurityMgrSite_FWD_DEFINED__
     __IInternetSecurityMgrSite_FWD_DEFINED__ equ <>
+    ;IInternetSecurityMgrSite typedef IInternetSecurityMgrSite
   endif
   ifndef __IInternetSecurityManager_FWD_DEFINED__
     __IInternetSecurityManager_FWD_DEFINED__ equ <>
+    ;IInternetSecurityManager typedef IInternetSecurityManager
   endif
   ifndef __IInternetSecurityManagerEx_FWD_DEFINED__
     __IInternetSecurityManagerEx_FWD_DEFINED__ equ <>
+    ;IInternetSecurityManagerEx typedef IInternetSecurityManagerEx
   endif
   ifndef __IInternetSecurityManagerEx2_FWD_DEFINED__
     __IInternetSecurityManagerEx2_FWD_DEFINED__ equ <>
+    ;IInternetSecurityManagerEx2 typedef IInternetSecurityManagerEx2
   endif
   ifndef __IZoneIdentifier_FWD_DEFINED__
     __IZoneIdentifier_FWD_DEFINED__ equ <>
+    ;IZoneIdentifier typedef IZoneIdentifier
   endif
   ifndef __IZoneIdentifier2_FWD_DEFINED__
     __IZoneIdentifier2_FWD_DEFINED__ equ <>
+    ;IZoneIdentifier2 typedef IZoneIdentifier2
   endif
   ifndef __IInternetHostSecurityManager_FWD_DEFINED__
     __IInternetHostSecurityManager_FWD_DEFINED__ equ <>
+    ;IInternetHostSecurityManager typedef IInternetHostSecurityManager
   endif
   ifndef __IInternetZoneManager_FWD_DEFINED__
     __IInternetZoneManager_FWD_DEFINED__ equ <>
+    ;IInternetZoneManager typedef IInternetZoneManager
   endif
   ifndef __IInternetZoneManagerEx_FWD_DEFINED__
     __IInternetZoneManagerEx_FWD_DEFINED__ equ <>
+    ;IInternetZoneManagerEx typedef IInternetZoneManagerEx
   endif
   ifndef __IInternetZoneManagerEx2_FWD_DEFINED__
     __IInternetZoneManagerEx2_FWD_DEFINED__ equ <>
+    ;IInternetZoneManagerEx2 typedef IInternetZoneManagerEx2
   endif
   ifndef __ISoftDistExt_FWD_DEFINED__
     __ISoftDistExt_FWD_DEFINED__ equ <>
+    ;ISoftDistExt typedef ISoftDistExt
   endif
   ifndef __ICatalogFileInfo_FWD_DEFINED__
     __ICatalogFileInfo_FWD_DEFINED__ equ <>
+    ;ICatalogFileInfo typedef ICatalogFileInfo
   endif
   ifndef __IDataFilter_FWD_DEFINED__
     __IDataFilter_FWD_DEFINED__ equ <>
+    ;IDataFilter typedef IDataFilter
   endif
   ifndef __IEncodingFilterFactory_FWD_DEFINED__
     __IEncodingFilterFactory_FWD_DEFINED__ equ <>
+    ;IEncodingFilterFactory typedef IEncodingFilterFactory
   endif
   ifndef __IWrappedProtocol_FWD_DEFINED__
     __IWrappedProtocol_FWD_DEFINED__ equ <>
+    ;IWrappedProtocol typedef IWrappedProtocol
   endif
   ifndef __IGetBindHandle_FWD_DEFINED__
     __IGetBindHandle_FWD_DEFINED__ equ <>
+    ;IGetBindHandle typedef IGetBindHandle
   endif
   ifndef __IBindCallbackRedirect_FWD_DEFINED__
     __IBindCallbackRedirect_FWD_DEFINED__ equ <>
+    ;IBindCallbackRedirect typedef IBindCallbackRedirect
   endif
   ifndef __IBindHttpSecurity_FWD_DEFINED__
     __IBindHttpSecurity_FWD_DEFINED__ equ <>
+    ;IBindHttpSecurity typedef IBindHttpSecurity
   endif
   include objidl.inc
   include oleidl.inc
@@ -302,7 +345,6 @@ ifndef __urlmon_h__
     FMFD_RESPECTTEXTPLAIN equ 00000010h
     FMFD_RETURNUPDATEDIMGMIMES equ 00000020h
     FMFD_RESERVED_1 equ 00000040h
-    FMFD_RESERVED_2 equ 00000080h
     UAS_EXACTLEGACY equ 00001000h
     @DefProto DllImport, ObtainUserAgentString, WIN_STD_CALL_CONV,, <:DWORD, :LPSTR, :ptr DWORD>, 12
     @DefProto DllImport, CompareSecurityIds, WIN_STD_CALL_CONV,, <:ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD>, 20
@@ -317,7 +359,6 @@ ifndef __urlmon_h__
       IE_EPM_OBJECT_FILE equ 5
       IE_EPM_OBJECT_NAMED_PIPE equ 6
       IE_EPM_OBJECT_REGISTRY equ 7
-
       @DefProto DllImport, SetAccessForIEAppContainer, WIN_STD_CALL_CONV,, <:HANDLE, :IEObjectType, :DWORD>, 12
     endif
     URLMON_OPTION_USERAGENT equ 10000001h
@@ -415,7 +456,6 @@ ifndef __urlmon_h__
     INET_E_RESERVED_2 equ _HRESULT_TYPEDEF_(800C001Fh)
     INET_E_RESERVED_3 equ _HRESULT_TYPEDEF_(800C0020h)
     INET_E_RESERVED_4 equ _HRESULT_TYPEDEF_(800C0021h)
-    INET_E_RESERVED_5 equ _HRESULT_TYPEDEF_(800C0022h)
     INET_E_ERROR_FIRST equ _HRESULT_TYPEDEF_(800C0002h)
     INET_E_CODE_DOWNLOAD_DECLINED equ _HRESULT_TYPEDEF_(800C0100h)
     INET_E_RESULT_DISPATCHED equ _HRESULT_TYPEDEF_(800C0200h)
@@ -446,27 +486,36 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IPersistMonikerVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IPersistMoniker, :REFIID, :ptr ptr
+          PIPersistMonikerVtbl_QueryInterface typedef ptr TYPE_IPersistMonikerVtbl_QueryInterface
+          TYPE_IPersistMonikerVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IPersistMoniker
+          PIPersistMonikerVtbl_AddRef typedef ptr TYPE_IPersistMonikerVtbl_AddRef
+          TYPE_IPersistMonikerVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IPersistMoniker
+          PIPersistMonikerVtbl_Release typedef ptr TYPE_IPersistMonikerVtbl_Release
+          TYPE_IPersistMonikerVtbl_GetClassID typedef proto WIN_STD_CALL_CONV :ptr IPersistMoniker, :ptr CLSID
+          PIPersistMonikerVtbl_GetClassID typedef ptr TYPE_IPersistMonikerVtbl_GetClassID
+          TYPE_IPersistMonikerVtbl_IsDirty typedef proto WIN_STD_CALL_CONV :ptr IPersistMoniker
+          PIPersistMonikerVtbl_IsDirty typedef ptr TYPE_IPersistMonikerVtbl_IsDirty
+          TYPE_IPersistMonikerVtbl_Load typedef proto WIN_STD_CALL_CONV :ptr IPersistMoniker, :BOOL, :ptr IMoniker, :LPBC, :DWORD
+          PIPersistMonikerVtbl_Load typedef ptr TYPE_IPersistMonikerVtbl_Load
+          TYPE_IPersistMonikerVtbl_Save typedef proto WIN_STD_CALL_CONV :ptr IPersistMoniker, :ptr IMoniker, :LPBC, :BOOL
+          PIPersistMonikerVtbl_Save typedef ptr TYPE_IPersistMonikerVtbl_Save
+          TYPE_IPersistMonikerVtbl_SaveCompleted typedef proto WIN_STD_CALL_CONV :ptr IPersistMoniker, :ptr IMoniker, :LPBC
+          PIPersistMonikerVtbl_SaveCompleted typedef ptr TYPE_IPersistMonikerVtbl_SaveCompleted
+          TYPE_IPersistMonikerVtbl_GetCurMoniker typedef proto WIN_STD_CALL_CONV :ptr IPersistMoniker, :ptr ptr IMoniker
+          PIPersistMonikerVtbl_GetCurMoniker typedef ptr TYPE_IPersistMonikerVtbl_GetCurMoniker
           IPersistMonikerVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IPersistMonikerVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IPersistMoniker, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IPersistMoniker
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IPersistMoniker
-            DECLSPEC_XFGVIRT(IPersistMoniker, GetClassID)
-            STD_METHOD GetClassID, :ptr IPersistMoniker, :ptr CLSID
-            DECLSPEC_XFGVIRT(IPersistMoniker, IsDirty)
-            STD_METHOD IsDirty, :ptr IPersistMoniker
-            DECLSPEC_XFGVIRT(IPersistMoniker, Load)
-            STD_METHOD Load, :ptr IPersistMoniker, :BOOL, :ptr IMoniker, :LPBC, :DWORD
-            DECLSPEC_XFGVIRT(IPersistMoniker, Save)
-            STD_METHOD Save, :ptr IPersistMoniker, :ptr IMoniker, :LPBC, :BOOL
-            DECLSPEC_XFGVIRT(IPersistMoniker, SaveCompleted)
-            STD_METHOD SaveCompleted, :ptr IPersistMoniker, :ptr IMoniker, :LPBC
-            DECLSPEC_XFGVIRT(IPersistMoniker, GetCurMoniker)
-            STD_METHOD GetCurMoniker, :ptr IPersistMoniker, :ptr ptr IMoniker
+            ??Interface equ <IPersistMoniker>
+            QueryInterface PIPersistMonikerVtbl_QueryInterface ?
+            AddRef PIPersistMonikerVtbl_AddRef ?
+            Release PIPersistMonikerVtbl_Release ?
+            GetClassID PIPersistMonikerVtbl_GetClassID ?
+            IsDirty PIPersistMonikerVtbl_IsDirty ?
+            Load PIPersistMonikerVtbl_Load ?
+            Save PIPersistMonikerVtbl_Save ?
+            SaveCompleted PIPersistMonikerVtbl_SaveCompleted ?
+            GetCurMoniker PIPersistMonikerVtbl_GetCurMoniker ?
             ??Interface equ <>
             END_INTERFACE
           IPersistMonikerVtbl ends
@@ -493,22 +542,25 @@ ifndef __urlmon_h__
         TRUSTEDDOWNLOADPROP equ 3h
         POPUPLEVELPROP equ 4h
         __MIDL_IMonikerProp_0001 typedef MONIKERPROPERTY
-
         externdef IID_IMonikerProp:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IMonikerPropVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IMonikerProp, :REFIID, :ptr ptr
+          PIMonikerPropVtbl_QueryInterface typedef ptr TYPE_IMonikerPropVtbl_QueryInterface
+          TYPE_IMonikerPropVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IMonikerProp
+          PIMonikerPropVtbl_AddRef typedef ptr TYPE_IMonikerPropVtbl_AddRef
+          TYPE_IMonikerPropVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IMonikerProp
+          PIMonikerPropVtbl_Release typedef ptr TYPE_IMonikerPropVtbl_Release
+          TYPE_IMonikerPropVtbl_utProperty typedef proto WIN_STD_CALL_CONV :ptr IMonikerProp, :MONIKERPROPERTY, :LPCWSTR
+          PIMonikerPropVtbl_utProperty typedef ptr TYPE_IMonikerPropVtbl_utProperty
           IMonikerPropVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IMonikerPropVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IMonikerProp, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IMonikerProp
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IMonikerProp
-            DECLSPEC_XFGVIRT(IMonikerProp, PutProperty)
-            STD_METHOD PutProperty, :ptr IMonikerProp, :MONIKERPROPERTY, :LPCWSTR
+            ??Interface equ <IMonikerProp>
+            QueryInterface PIMonikerPropVtbl_QueryInterface ?
+            AddRef PIMonikerPropVtbl_AddRef ?
+            Release PIMonikerPropVtbl_Release ?
+            utProperty PIMonikerPropVtbl_utProperty ?
             ??Interface equ <>
             END_INTERFACE
           IMonikerPropVtbl ends
@@ -532,17 +584,21 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IBindProtocolVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IBindProtocol, :REFIID, :ptr ptr
+          PIBindProtocolVtbl_QueryInterface typedef ptr TYPE_IBindProtocolVtbl_QueryInterface
+          TYPE_IBindProtocolVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IBindProtocol
+          PIBindProtocolVtbl_AddRef typedef ptr TYPE_IBindProtocolVtbl_AddRef
+          TYPE_IBindProtocolVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IBindProtocol
+          PIBindProtocolVtbl_Release typedef ptr TYPE_IBindProtocolVtbl_Release
+          TYPE_IBindProtocolVtbl_CreateBinding typedef proto WIN_STD_CALL_CONV :ptr IBindProtocol, :LPCWSTR, :ptr IBindCtx, :ptr ptr IBinding
+          PIBindProtocolVtbl_CreateBinding typedef ptr TYPE_IBindProtocolVtbl_CreateBinding
           IBindProtocolVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IBindProtocolVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IBindProtocol, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IBindProtocol
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IBindProtocol
-            DECLSPEC_XFGVIRT(IBindProtocol, CreateBinding)
-            STD_METHOD CreateBinding, :ptr IBindProtocol, :LPCWSTR, :ptr IBindCtx, :ptr ptr IBinding
+            ??Interface equ <IBindProtocol>
+            QueryInterface PIBindProtocolVtbl_QueryInterface ?
+            AddRef PIBindProtocolVtbl_AddRef ?
+            Release PIBindProtocolVtbl_Release ?
+            CreateBinding PIBindProtocolVtbl_CreateBinding ?
             ??Interface equ <>
             END_INTERFACE
           IBindProtocolVtbl ends
@@ -566,27 +622,36 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IBindingVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IBinding, :REFIID, :ptr ptr
+          PIBindingVtbl_QueryInterface typedef ptr TYPE_IBindingVtbl_QueryInterface
+          TYPE_IBindingVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IBinding
+          PIBindingVtbl_AddRef typedef ptr TYPE_IBindingVtbl_AddRef
+          TYPE_IBindingVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IBinding
+          PIBindingVtbl_Release typedef ptr TYPE_IBindingVtbl_Release
+          TYPE_IBindingVtbl_Abort typedef proto WIN_STD_CALL_CONV :ptr IBinding
+          PIBindingVtbl_Abort typedef ptr TYPE_IBindingVtbl_Abort
+          TYPE_IBindingVtbl_Suspend typedef proto WIN_STD_CALL_CONV :ptr IBinding
+          PIBindingVtbl_Suspend typedef ptr TYPE_IBindingVtbl_Suspend
+          TYPE_IBindingVtbl_Resume typedef proto WIN_STD_CALL_CONV :ptr IBinding
+          PIBindingVtbl_Resume typedef ptr TYPE_IBindingVtbl_Resume
+          TYPE_IBindingVtbl_SetPriority typedef proto WIN_STD_CALL_CONV :ptr IBinding, :LONG
+          PIBindingVtbl_SetPriority typedef ptr TYPE_IBindingVtbl_SetPriority
+          TYPE_IBindingVtbl_GetPriority typedef proto WIN_STD_CALL_CONV :ptr IBinding, :ptr LONG
+          PIBindingVtbl_GetPriority typedef ptr TYPE_IBindingVtbl_GetPriority
+          TYPE_IBindingVtbl_GetBindResult typedef proto WIN_STD_CALL_CONV :ptr IBinding, :ptr CLSID, :ptr DWORD, :ptr LPOLESTR, :ptr DWORD
+          PIBindingVtbl_GetBindResult typedef ptr TYPE_IBindingVtbl_GetBindResult
           IBindingVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IBindingVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IBinding, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IBinding
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IBinding
-            DECLSPEC_XFGVIRT(IBinding, Abort)
-            STD_METHOD Abort, :ptr IBinding
-            DECLSPEC_XFGVIRT(IBinding, Suspend)
-            STD_METHOD Suspend, :ptr IBinding
-            DECLSPEC_XFGVIRT(IBinding, Resume)
-            STD_METHOD Resume, :ptr IBinding
-            DECLSPEC_XFGVIRT(IBinding, SetPriority)
-            STD_METHOD SetPriority, :ptr IBinding, :LONG
-            DECLSPEC_XFGVIRT(IBinding, GetPriority)
-            STD_METHOD GetPriority, :ptr IBinding, :ptr LONG
-            DECLSPEC_XFGVIRT(IBinding, GetBindResult)
-            STD_METHOD GetBindResult, :ptr IBinding, :ptr CLSID, :ptr DWORD, :ptr LPOLESTR, :ptr DWORD
+            ??Interface equ <IBinding>
+            QueryInterface PIBindingVtbl_QueryInterface ?
+            AddRef PIBindingVtbl_AddRef ?
+            Release PIBindingVtbl_Release ?
+            Abort PIBindingVtbl_Abort ?
+            Suspend PIBindingVtbl_Suspend ?
+            Resume PIBindingVtbl_Resume ?
+            SetPriority PIBindingVtbl_SetPriority ?
+            GetPriority PIBindingVtbl_GetPriority ?
+            GetBindResult PIBindingVtbl_GetBindResult ?
             ??Interface equ <>
             END_INTERFACE
           IBindingVtbl ends
@@ -602,7 +667,7 @@ ifndef __urlmon_h__
       endif
     endif
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     ifndef _LPBINDSTATUSCALLBACK_DEFINED
       _LPBINDSTATUSCALLBACK_DEFINED equ <>
       externdef __MIDL_itf_urlmon_0000_0004_v0_0_c_ifspec:RPC_IF_HANDLE
@@ -617,12 +682,10 @@ ifndef __urlmon_h__
         BINDVERB_CUSTOM equ 3h
         BINDVERB_RESERVED1 equ 4h
         __MIDL_IBindStatusCallback_0001 typedef BINDVERB
-
         BINDINFOF typedef SDWORD
         BINDINFOF_URLENCODESTGMEDDATA equ 1h
         BINDINFOF_URLENCODEDEXTRAINFO equ 2h
         __MIDL_IBindStatusCallback_0002 typedef BINDINFOF
-
         BINDF typedef SDWORD
         BINDF_ASYNCHRONOUS equ 1h
         BINDF_ASYNCSTORAGE equ 2h
@@ -656,13 +719,11 @@ ifndef __urlmon_h__
         BINDF_RESERVED_7 equ 40000000h
         BINDF_RESERVED_8 equ 20000000h
         __MIDL_IBindStatusCallback_0003 typedef BINDF
-
         URL_ENCODING typedef SDWORD
         URL_ENCODING_NONE equ 0
         URL_ENCODING_ENABLE_UTF8 equ 10000000h
         URL_ENCODING_DISABLE_UTF8 equ 20000000h
         __MIDL_IBindStatusCallback_0004 typedef URL_ENCODING
-
         BINDINFO struct
           cbSize ULONG ?
           szExtraInfo LPWSTR ?
@@ -730,7 +791,6 @@ ifndef __urlmon_h__
         BINDINFO_OPTIONS_DISABLEAUTOREDIRECTS equ 40000000h
         BINDINFO_OPTIONS_SHDOCVW_NAVIGATE equ 80000000h
         __MIDL_IBindStatusCallback_0005 typedef BINDINFO_OPTIONS
-
         BSCF typedef SDWORD
         BSCF_FIRSTDATANOTIFICATION equ 1h
         BSCF_INTERMEDIATEDATANOTIFICATION equ 2h
@@ -740,118 +800,126 @@ ifndef __urlmon_h__
         BSCF_SKIPDRAINDATAFORFILEURLS equ 20h
         BSCF_64BITLENGTHDOWNLOAD equ 40h
         __MIDL_IBindStatusCallback_0006 typedef BSCF
-
         BINDSTATUS typedef SDWORD
         BINDSTATUS_FINDINGRESOURCE equ 1
-        BINDSTATUS_CONNECTING equ 2
-        BINDSTATUS_REDIRECTING equ 3
-        BINDSTATUS_BEGINDOWNLOADDATA equ 4
-        BINDSTATUS_DOWNLOADINGDATA equ 5
-        BINDSTATUS_ENDDOWNLOADDATA equ 6
-        BINDSTATUS_BEGINDOWNLOADCOMPONENTS equ 7
-        BINDSTATUS_INSTALLINGCOMPONENTS equ 8
-        BINDSTATUS_ENDDOWNLOADCOMPONENTS equ 9
-        BINDSTATUS_USINGCACHEDCOPY equ 10
-        BINDSTATUS_SENDINGREQUEST equ 11
-        BINDSTATUS_CLASSIDAVAILABLE equ 12
-        BINDSTATUS_MIMETYPEAVAILABLE equ 13
-        BINDSTATUS_CACHEFILENAMEAVAILABLE equ 14
-        BINDSTATUS_BEGINSYNCOPERATION equ 15
-        BINDSTATUS_ENDSYNCOPERATION equ 16
-        BINDSTATUS_BEGINUPLOADDATA equ 17
-        BINDSTATUS_UPLOADINGDATA equ 18
-        BINDSTATUS_ENDUPLOADDATA equ 19
-        BINDSTATUS_PROTOCOLCLASSID equ 20
-        BINDSTATUS_ENCODING equ 21
-        BINDSTATUS_VERIFIEDMIMETYPEAVAILABLE equ 22
-        BINDSTATUS_CLASSINSTALLLOCATION equ 23
-        BINDSTATUS_DECODING equ 24
-        BINDSTATUS_LOADINGMIMEHANDLER equ 25
-        BINDSTATUS_CONTENTDISPOSITIONATTACH equ 26
-        BINDSTATUS_FILTERREPORTMIMETYPE equ 27
-        BINDSTATUS_CLSIDCANINSTANTIATE equ 28
-        BINDSTATUS_IUNKNOWNAVAILABLE equ 29
-        BINDSTATUS_DIRECTBIND equ 30
-        BINDSTATUS_RAWMIMETYPE equ 31
-        BINDSTATUS_PROXYDETECTING equ 32
-        BINDSTATUS_ACCEPTRANGES equ 33
-        BINDSTATUS_COOKIE_SENT equ 34
-        BINDSTATUS_COMPACT_POLICY_RECEIVED equ 35
-        BINDSTATUS_COOKIE_SUPPRESSED equ 36
-        BINDSTATUS_COOKIE_STATE_UNKNOWN equ 37
-        BINDSTATUS_COOKIE_STATE_ACCEPT equ 38
-        BINDSTATUS_COOKIE_STATE_REJECT equ 39
-        BINDSTATUS_COOKIE_STATE_PROMPT equ 40
-        BINDSTATUS_COOKIE_STATE_LEASH equ 41
-        BINDSTATUS_COOKIE_STATE_DOWNGRADE equ 42
-        BINDSTATUS_POLICY_HREF equ 43
-        BINDSTATUS_P3P_HEADER equ 44
-        BINDSTATUS_SESSION_COOKIE_RECEIVED equ 45
-        BINDSTATUS_PERSISTENT_COOKIE_RECEIVED equ 46
-        BINDSTATUS_SESSION_COOKIES_ALLOWED equ 47
-        BINDSTATUS_CACHECONTROL equ 48
-        BINDSTATUS_CONTENTDISPOSITIONFILENAME equ 49
-        BINDSTATUS_MIMETEXTPLAINMISMATCH equ 50
-        BINDSTATUS_PUBLISHERAVAILABLE equ 51
-        BINDSTATUS_DISPLAYNAMEAVAILABLE equ 52
-        BINDSTATUS_SSLUX_NAVBLOCKED equ 53
-        BINDSTATUS_SERVER_MIMETYPEAVAILABLE equ 54
-        BINDSTATUS_SNIFFED_CLASSIDAVAILABLE equ 55
-        BINDSTATUS_64BIT_PROGRESS equ 56
-        BINDSTATUS_LAST equ BINDSTATUS_64BIT_PROGRESS 57
-        BINDSTATUS_RESERVED_0 equ 58
-        BINDSTATUS_RESERVED_1 equ 59
-        BINDSTATUS_RESERVED_2 equ 60
-        BINDSTATUS_RESERVED_3 equ 61
-        BINDSTATUS_RESERVED_4 equ 62
-        BINDSTATUS_RESERVED_5 equ 63
-        BINDSTATUS_RESERVED_6 equ 64
-        BINDSTATUS_RESERVED_7 equ 65
-        BINDSTATUS_RESERVED_8 equ 66
-        BINDSTATUS_RESERVED_9 equ 67
-        BINDSTATUS_RESERVED_A equ 68
-        BINDSTATUS_RESERVED_B equ 69
-        BINDSTATUS_RESERVED_C equ 70
-        BINDSTATUS_RESERVED_D equ 71
-        BINDSTATUS_RESERVED_E equ 72
-        BINDSTATUS_RESERVED_F equ 73
-        BINDSTATUS_RESERVED_10 equ 74
-        BINDSTATUS_RESERVED_11 equ 75
-        BINDSTATUS_RESERVED_12 equ 76
-        BINDSTATUS_RESERVED_13 equ 77
-        BINDSTATUS_RESERVED_14 equ 78
-        BINDSTATUS_LAST_PRIVATE equ BINDSTATUS_RESERVED_14
+        BINDSTATUS_CONNECTING equ
+        BINDSTATUS_REDIRECTING equ
+        BINDSTATUS_BEGINDOWNLOADDATA equ
+        BINDSTATUS_DOWNLOADINGDATA equ
+        BINDSTATUS_ENDDOWNLOADDATA equ
+        BINDSTATUS_BEGINDOWNLOADCOMPONENTS equ
+        BINDSTATUS_INSTALLINGCOMPONENTS equ
+        BINDSTATUS_ENDDOWNLOADCOMPONENTS equ
+        BINDSTATUS_USINGCACHEDCOPY equ
+        BINDSTATUS_SENDINGREQUEST equ
+        BINDSTATUS_CLASSIDAVAILABLE equ
+        BINDSTATUS_MIMETYPEAVAILABLE equ
+        BINDSTATUS_CACHEFILENAMEAVAILABLE equ
+        BINDSTATUS_BEGINSYNCOPERATION equ
+        BINDSTATUS_ENDSYNCOPERATION equ
+        BINDSTATUS_BEGINUPLOADDATA equ
+        BINDSTATUS_UPLOADINGDATA equ
+        BINDSTATUS_ENDUPLOADDATA equ
+        BINDSTATUS_PROTOCOLCLASSID equ
+        BINDSTATUS_ENCODING equ
+        BINDSTATUS_VERIFIEDMIMETYPEAVAILABLE equ
+        BINDSTATUS_CLASSINSTALLLOCATION equ
+        BINDSTATUS_DECODING equ
+        BINDSTATUS_LOADINGMIMEHANDLER equ
+        BINDSTATUS_CONTENTDISPOSITIONATTACH equ
+        BINDSTATUS_FILTERREPORTMIMETYPE equ
+        BINDSTATUS_CLSIDCANINSTANTIATE equ
+        BINDSTATUS_IUNKNOWNAVAILABLE equ
+        BINDSTATUS_DIRECTBIND equ
+        BINDSTATUS_RAWMIMETYPE equ
+        BINDSTATUS_PROXYDETECTING equ
+        BINDSTATUS_ACCEPTRANGES equ
+        BINDSTATUS_COOKIE_SENT equ
+        BINDSTATUS_COMPACT_POLICY_RECEIVED equ
+        BINDSTATUS_COOKIE_SUPPRESSED equ
+        BINDSTATUS_COOKIE_STATE_UNKNOWN equ
+        BINDSTATUS_COOKIE_STATE_ACCEPT equ
+        BINDSTATUS_COOKIE_STATE_REJECT equ
+        BINDSTATUS_COOKIE_STATE_PROMPT equ
+        BINDSTATUS_COOKIE_STATE_LEASH equ
+        BINDSTATUS_COOKIE_STATE_DOWNGRADE equ
+        BINDSTATUS_POLICY_HREF equ
+        BINDSTATUS_P3P_HEADER equ
+        BINDSTATUS_SESSION_COOKIE_RECEIVED equ
+        BINDSTATUS_PERSISTENT_COOKIE_RECEIVED equ
+        BINDSTATUS_SESSION_COOKIES_ALLOWED equ
+        BINDSTATUS_CACHECONTROL equ
+        BINDSTATUS_CONTENTDISPOSITIONFILENAME equ
+        BINDSTATUS_MIMETEXTPLAINMISMATCH equ
+        BINDSTATUS_PUBLISHERAVAILABLE equ
+        BINDSTATUS_DISPLAYNAMEAVAILABLE equ
+        BINDSTATUS_SSLUX_NAVBLOCKED equ
+        BINDSTATUS_SERVER_MIMETYPEAVAILABLE equ
+        BINDSTATUS_SNIFFED_CLASSIDAVAILABLE equ
+        BINDSTATUS_64BIT_PROGRESS equ
+        BINDSTATUS_LAST equ BINDSTATUS_64BIT_PROGRESS
+        BINDSTATUS_RESERVED_0 equ
+        BINDSTATUS_RESERVED_1 equ
+        BINDSTATUS_RESERVED_2 equ
+        BINDSTATUS_RESERVED_3 equ
+        BINDSTATUS_RESERVED_4 equ
+        BINDSTATUS_RESERVED_5 equ
+        BINDSTATUS_RESERVED_6 equ
+        BINDSTATUS_RESERVED_7 equ
+        BINDSTATUS_RESERVED_8 equ
+        BINDSTATUS_RESERVED_9 equ
+        BINDSTATUS_RESERVED_A equ
+        BINDSTATUS_RESERVED_B equ
+        BINDSTATUS_RESERVED_C equ
+        BINDSTATUS_RESERVED_D equ
+        BINDSTATUS_RESERVED_E equ
+        BINDSTATUS_RESERVED_F equ
+        BINDSTATUS_RESERVED_10 equ
+        BINDSTATUS_RESERVED_11 equ
+        BINDSTATUS_RESERVED_12 equ
+        BINDSTATUS_RESERVED_13 equ
+        BINDSTATUS_LAST_PRIVATE equ BINDSTATUS_RESERVED_13
         tagBINDSTATUS typedef BINDSTATUS
-
         externdef IID_IBindStatusCallback:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IBindStatusCallbackVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallback, :REFIID, :ptr ptr
+          PIBindStatusCallbackVtbl_QueryInterface typedef ptr TYPE_IBindStatusCallbackVtbl_QueryInterface
+          TYPE_IBindStatusCallbackVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallback
+          PIBindStatusCallbackVtbl_AddRef typedef ptr TYPE_IBindStatusCallbackVtbl_AddRef
+          TYPE_IBindStatusCallbackVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallback
+          PIBindStatusCallbackVtbl_Release typedef ptr TYPE_IBindStatusCallbackVtbl_Release
+          TYPE_IBindStatusCallbackVtbl_OnStartBinding typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallback, :DWORD, :ptr IBinding
+          PIBindStatusCallbackVtbl_OnStartBinding typedef ptr TYPE_IBindStatusCallbackVtbl_OnStartBinding
+          TYPE_IBindStatusCallbackVtbl_GetPriority typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallback, :ptr LONG
+          PIBindStatusCallbackVtbl_GetPriority typedef ptr TYPE_IBindStatusCallbackVtbl_GetPriority
+          TYPE_IBindStatusCallbackVtbl_OnLowResource typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallback, :DWORD
+          PIBindStatusCallbackVtbl_OnLowResource typedef ptr TYPE_IBindStatusCallbackVtbl_OnLowResource
+          TYPE_IBindStatusCallbackVtbl_OnProgress typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallback, :ULONG, :ULONG, :ULONG, :LPCWSTR
+          PIBindStatusCallbackVtbl_OnProgress typedef ptr TYPE_IBindStatusCallbackVtbl_OnProgress
+          TYPE_IBindStatusCallbackVtbl_OnStopBinding typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallback, :HRESULT, :LPCWSTR
+          PIBindStatusCallbackVtbl_OnStopBinding typedef ptr TYPE_IBindStatusCallbackVtbl_OnStopBinding
+          TYPE_IBindStatusCallbackVtbl_GetBindInfo typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallback, :ptr DWORD, :ptr BINDINFO
+          PIBindStatusCallbackVtbl_GetBindInfo typedef ptr TYPE_IBindStatusCallbackVtbl_GetBindInfo
+          TYPE_IBindStatusCallbackVtbl_OnDataAvailable typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallback, :DWORD, :DWORD, :ptr FORMATETC, :ptr STGMEDIUM
+          PIBindStatusCallbackVtbl_OnDataAvailable typedef ptr TYPE_IBindStatusCallbackVtbl_OnDataAvailable
+          TYPE_IBindStatusCallbackVtbl_OnObjectAvailable typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallback, :REFIID, :ptr IUnknown
+          PIBindStatusCallbackVtbl_OnObjectAvailable typedef ptr TYPE_IBindStatusCallbackVtbl_OnObjectAvailable
           IBindStatusCallbackVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IBindStatusCallbackVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IBindStatusCallback, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IBindStatusCallback
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IBindStatusCallback
-            DECLSPEC_XFGVIRT(IBindStatusCallback, OnStartBinding)
-            STD_METHOD OnStartBinding, :ptr IBindStatusCallback, :DWORD, :ptr IBinding
-            DECLSPEC_XFGVIRT(IBindStatusCallback, GetPriority)
-            STD_METHOD GetPriority, :ptr IBindStatusCallback, :ptr LONG
-            DECLSPEC_XFGVIRT(IBindStatusCallback, OnLowResource)
-            STD_METHOD OnLowResource, :ptr IBindStatusCallback, :DWORD
-            DECLSPEC_XFGVIRT(IBindStatusCallback, OnProgress)
-            STD_METHOD OnProgress, :ptr IBindStatusCallback, :ULONG, :ULONG, :ULONG, :LPCWSTR
-            DECLSPEC_XFGVIRT(IBindStatusCallback, OnStopBinding)
-            STD_METHOD OnStopBinding, :ptr IBindStatusCallback, :HRESULT, :LPCWSTR
-            DECLSPEC_XFGVIRT(IBindStatusCallback, GetBindInfo)
-            STD_METHOD GetBindInfo, :ptr IBindStatusCallback, :ptr DWORD, :ptr BINDINFO
-            DECLSPEC_XFGVIRT(IBindStatusCallback, OnDataAvailable)
-            STD_METHOD OnDataAvailable, :ptr IBindStatusCallback, :DWORD, :DWORD, :ptr FORMATETC, :ptr STGMEDIUM
-            DECLSPEC_XFGVIRT(IBindStatusCallback, OnObjectAvailable)
-            STD_METHOD OnObjectAvailable, :ptr IBindStatusCallback, :REFIID, :ptr IUnknown
+            ??Interface equ <IBindStatusCallback>
+            QueryInterface PIBindStatusCallbackVtbl_QueryInterface ?
+            AddRef PIBindStatusCallbackVtbl_AddRef ?
+            Release PIBindStatusCallbackVtbl_Release ?
+            OnStartBinding PIBindStatusCallbackVtbl_OnStartBinding ?
+            GetPriority PIBindStatusCallbackVtbl_GetPriority ?
+            OnLowResource PIBindStatusCallbackVtbl_OnLowResource ?
+            OnProgress PIBindStatusCallbackVtbl_OnProgress ?
+            OnStopBinding PIBindStatusCallbackVtbl_OnStopBinding ?
+            GetBindInfo PIBindStatusCallbackVtbl_GetBindInfo ?
+            OnDataAvailable PIBindStatusCallbackVtbl_OnDataAvailable ?
+            OnObjectAvailable PIBindStatusCallbackVtbl_OnObjectAvailable ?
             ??Interface equ <>
             END_INTERFACE
           IBindStatusCallbackVtbl ends
@@ -910,38 +978,49 @@ ifndef __urlmon_h__
         BINDF2_RESERVED_2 equ 40000000h
         BINDF2_RESERVED_1 equ 80000000h
         __MIDL_IBindStatusCallbackEx_0001 typedef BINDF2
-
         externdef IID_IBindStatusCallbackEx:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IBindStatusCallbackExVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallbackEx, :REFIID, :ptr ptr
+          PIBindStatusCallbackExVtbl_QueryInterface typedef ptr TYPE_IBindStatusCallbackExVtbl_QueryInterface
+          TYPE_IBindStatusCallbackExVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallbackEx
+          PIBindStatusCallbackExVtbl_AddRef typedef ptr TYPE_IBindStatusCallbackExVtbl_AddRef
+          TYPE_IBindStatusCallbackExVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallbackEx
+          PIBindStatusCallbackExVtbl_Release typedef ptr TYPE_IBindStatusCallbackExVtbl_Release
+          TYPE_IBindStatusCallbackExVtbl_OnStartBinding typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallbackEx, :DWORD, :ptr IBinding
+          PIBindStatusCallbackExVtbl_OnStartBinding typedef ptr TYPE_IBindStatusCallbackExVtbl_OnStartBinding
+          TYPE_IBindStatusCallbackExVtbl_GetPriority typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallbackEx, :ptr LONG
+          PIBindStatusCallbackExVtbl_GetPriority typedef ptr TYPE_IBindStatusCallbackExVtbl_GetPriority
+          TYPE_IBindStatusCallbackExVtbl_OnLowResource typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallbackEx, :DWORD
+          PIBindStatusCallbackExVtbl_OnLowResource typedef ptr TYPE_IBindStatusCallbackExVtbl_OnLowResource
+          TYPE_IBindStatusCallbackExVtbl_OnProgress typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallbackEx, :ULONG, :ULONG, :ULONG, :LPCWSTR
+          PIBindStatusCallbackExVtbl_OnProgress typedef ptr TYPE_IBindStatusCallbackExVtbl_OnProgress
+          TYPE_IBindStatusCallbackExVtbl_OnStopBinding typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallbackEx, :HRESULT, :LPCWSTR
+          PIBindStatusCallbackExVtbl_OnStopBinding typedef ptr TYPE_IBindStatusCallbackExVtbl_OnStopBinding
+          TYPE_IBindStatusCallbackExVtbl_GetBindInfo typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallbackEx, :ptr DWORD, :ptr BINDINFO
+          PIBindStatusCallbackExVtbl_GetBindInfo typedef ptr TYPE_IBindStatusCallbackExVtbl_GetBindInfo
+          TYPE_IBindStatusCallbackExVtbl_OnDataAvailable typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallbackEx, :DWORD, :DWORD, :ptr FORMATETC, :ptr STGMEDIUM
+          PIBindStatusCallbackExVtbl_OnDataAvailable typedef ptr TYPE_IBindStatusCallbackExVtbl_OnDataAvailable
+          TYPE_IBindStatusCallbackExVtbl_OnObjectAvailable typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallbackEx, :REFIID, :ptr IUnknown
+          PIBindStatusCallbackExVtbl_OnObjectAvailable typedef ptr TYPE_IBindStatusCallbackExVtbl_OnObjectAvailable
+          TYPE_IBindStatusCallbackExVtbl_GetBindInfoEx typedef proto WIN_STD_CALL_CONV :ptr IBindStatusCallbackEx, :ptr DWORD, :ptr BINDINFO, :ptr DWORD, :ptr DWORD
+          PIBindStatusCallbackExVtbl_GetBindInfoEx typedef ptr TYPE_IBindStatusCallbackExVtbl_GetBindInfoEx
           IBindStatusCallbackExVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IBindStatusCallbackExVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IBindStatusCallbackEx, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IBindStatusCallbackEx
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IBindStatusCallbackEx
-            DECLSPEC_XFGVIRT(IBindStatusCallback, OnStartBinding)
-            STD_METHOD OnStartBinding, :ptr IBindStatusCallbackEx, :DWORD, :ptr IBinding
-            DECLSPEC_XFGVIRT(IBindStatusCallback, GetPriority)
-            STD_METHOD GetPriority, :ptr IBindStatusCallbackEx, :ptr LONG
-            DECLSPEC_XFGVIRT(IBindStatusCallback, OnLowResource)
-            STD_METHOD OnLowResource, :ptr IBindStatusCallbackEx, :DWORD
-            DECLSPEC_XFGVIRT(IBindStatusCallback, OnProgress)
-            STD_METHOD OnProgress, :ptr IBindStatusCallbackEx, :ULONG, :ULONG, :ULONG, :LPCWSTR
-            DECLSPEC_XFGVIRT(IBindStatusCallback, OnStopBinding)
-            STD_METHOD OnStopBinding, :ptr IBindStatusCallbackEx, :HRESULT, :LPCWSTR
-            DECLSPEC_XFGVIRT(IBindStatusCallback, GetBindInfo)
-            STD_METHOD GetBindInfo, :ptr IBindStatusCallbackEx, :ptr DWORD, :ptr BINDINFO
-            DECLSPEC_XFGVIRT(IBindStatusCallback, OnDataAvailable)
-            STD_METHOD OnDataAvailable, :ptr IBindStatusCallbackEx, :DWORD, :DWORD, :ptr FORMATETC, :ptr STGMEDIUM
-            DECLSPEC_XFGVIRT(IBindStatusCallback, OnObjectAvailable)
-            STD_METHOD OnObjectAvailable, :ptr IBindStatusCallbackEx, :REFIID, :ptr IUnknown
-            DECLSPEC_XFGVIRT(IBindStatusCallbackEx, GetBindInfoEx)
-            STD_METHOD GetBindInfoEx, :ptr IBindStatusCallbackEx, :ptr DWORD, :ptr BINDINFO, :ptr DWORD, :ptr DWORD
+            ??Interface equ <IBindStatusCallbackEx>
+            QueryInterface PIBindStatusCallbackExVtbl_QueryInterface ?
+            AddRef PIBindStatusCallbackExVtbl_AddRef ?
+            Release PIBindStatusCallbackExVtbl_Release ?
+            OnStartBinding PIBindStatusCallbackExVtbl_OnStartBinding ?
+            GetPriority PIBindStatusCallbackExVtbl_GetPriority ?
+            OnLowResource PIBindStatusCallbackExVtbl_OnLowResource ?
+            OnProgress PIBindStatusCallbackExVtbl_OnProgress ?
+            OnStopBinding PIBindStatusCallbackExVtbl_OnStopBinding ?
+            GetBindInfo PIBindStatusCallbackExVtbl_GetBindInfo ?
+            OnDataAvailable PIBindStatusCallbackExVtbl_OnDataAvailable ?
+            OnObjectAvailable PIBindStatusCallbackExVtbl_OnObjectAvailable ?
+            GetBindInfoEx PIBindStatusCallbackExVtbl_GetBindInfoEx ?
             ??Interface equ <>
             END_INTERFACE
           IBindStatusCallbackExVtbl ends
@@ -967,17 +1046,21 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IAuthenticateVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IAuthenticate, :REFIID, :ptr ptr
+          PIAuthenticateVtbl_QueryInterface typedef ptr TYPE_IAuthenticateVtbl_QueryInterface
+          TYPE_IAuthenticateVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IAuthenticate
+          PIAuthenticateVtbl_AddRef typedef ptr TYPE_IAuthenticateVtbl_AddRef
+          TYPE_IAuthenticateVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IAuthenticate
+          PIAuthenticateVtbl_Release typedef ptr TYPE_IAuthenticateVtbl_Release
+          TYPE_IAuthenticateVtbl_Authenticate typedef proto WIN_STD_CALL_CONV :ptr IAuthenticate, :ptr HWND, :ptr LPWSTR, :ptr LPWSTR
+          PIAuthenticateVtbl_Authenticate typedef ptr TYPE_IAuthenticateVtbl_Authenticate
           IAuthenticateVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IAuthenticateVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IAuthenticate, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IAuthenticate
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IAuthenticate
-            DECLSPEC_XFGVIRT(IAuthenticate, Authenticate)
-            STD_METHOD Authenticate, :ptr IAuthenticate, :ptr HWND, :ptr LPWSTR, :ptr LPWSTR
+            ??Interface equ <IAuthenticate>
+            QueryInterface PIAuthenticateVtbl_QueryInterface ?
+            AddRef PIAuthenticateVtbl_AddRef ?
+            Release PIAuthenticateVtbl_Release ?
+            Authenticate PIAuthenticateVtbl_Authenticate ?
             ??Interface equ <>
             END_INTERFACE
           IAuthenticateVtbl ends
@@ -1002,7 +1085,6 @@ ifndef __urlmon_h__
         AUTHENTICATEF_BASIC equ 2h
         AUTHENTICATEF_HTTP equ 4h
         __MIDL_IAuthenticateEx_0001 typedef AUTHENTICATEF
-
         AUTHENTICATEINFO struct
           dwFlags DWORD ?
           dwReserved DWORD ?
@@ -1012,19 +1094,24 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IAuthenticateExVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IAuthenticateEx, :REFIID, :ptr ptr
+          PIAuthenticateExVtbl_QueryInterface typedef ptr TYPE_IAuthenticateExVtbl_QueryInterface
+          TYPE_IAuthenticateExVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IAuthenticateEx
+          PIAuthenticateExVtbl_AddRef typedef ptr TYPE_IAuthenticateExVtbl_AddRef
+          TYPE_IAuthenticateExVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IAuthenticateEx
+          PIAuthenticateExVtbl_Release typedef ptr TYPE_IAuthenticateExVtbl_Release
+          TYPE_IAuthenticateExVtbl_Authenticate typedef proto WIN_STD_CALL_CONV :ptr IAuthenticateEx, :ptr HWND, :ptr LPWSTR, :ptr LPWSTR
+          PIAuthenticateExVtbl_Authenticate typedef ptr TYPE_IAuthenticateExVtbl_Authenticate
+          TYPE_IAuthenticateExVtbl_AuthenticateEx typedef proto WIN_STD_CALL_CONV :ptr IAuthenticateEx, :ptr HWND, :ptr LPWSTR, :ptr LPWSTR, :ptr AUTHENTICATEINFO
+          PIAuthenticateExVtbl_AuthenticateEx typedef ptr TYPE_IAuthenticateExVtbl_AuthenticateEx
           IAuthenticateExVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IAuthenticateExVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IAuthenticateEx, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IAuthenticateEx
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IAuthenticateEx
-            DECLSPEC_XFGVIRT(IAuthenticate, Authenticate)
-            STD_METHOD Authenticate, :ptr IAuthenticateEx, :ptr HWND, :ptr LPWSTR, :ptr LPWSTR
-            DECLSPEC_XFGVIRT(IAuthenticateEx, AuthenticateEx)
-            STD_METHOD AuthenticateEx, :ptr IAuthenticateEx, :ptr HWND, :ptr LPWSTR, :ptr LPWSTR, :ptr AUTHENTICATEINFO
+            ??Interface equ <IAuthenticateEx>
+            QueryInterface PIAuthenticateExVtbl_QueryInterface ?
+            AddRef PIAuthenticateExVtbl_AddRef ?
+            Release PIAuthenticateExVtbl_Release ?
+            Authenticate PIAuthenticateExVtbl_Authenticate ?
+            AuthenticateEx PIAuthenticateExVtbl_AuthenticateEx ?
             ??Interface equ <>
             END_INTERFACE
           IAuthenticateExVtbl ends
@@ -1048,19 +1135,24 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IHttpNegotiateVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate, :REFIID, :ptr ptr
+          PIHttpNegotiateVtbl_QueryInterface typedef ptr TYPE_IHttpNegotiateVtbl_QueryInterface
+          TYPE_IHttpNegotiateVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate
+          PIHttpNegotiateVtbl_AddRef typedef ptr TYPE_IHttpNegotiateVtbl_AddRef
+          TYPE_IHttpNegotiateVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate
+          PIHttpNegotiateVtbl_Release typedef ptr TYPE_IHttpNegotiateVtbl_Release
+          TYPE_IHttpNegotiateVtbl_BeginningTransaction typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate, :LPCWSTR, :LPCWSTR, :DWORD, :ptr LPWSTR
+          PIHttpNegotiateVtbl_BeginningTransaction typedef ptr TYPE_IHttpNegotiateVtbl_BeginningTransaction
+          TYPE_IHttpNegotiateVtbl_OnResponse typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate, :DWORD, :LPCWSTR, :LPCWSTR, :ptr LPWSTR
+          PIHttpNegotiateVtbl_OnResponse typedef ptr TYPE_IHttpNegotiateVtbl_OnResponse
           IHttpNegotiateVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IHttpNegotiateVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IHttpNegotiate, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IHttpNegotiate
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IHttpNegotiate
-            DECLSPEC_XFGVIRT(IHttpNegotiate, BeginningTransaction)
-            STD_METHOD BeginningTransaction, :ptr IHttpNegotiate, :LPCWSTR, :LPCWSTR, :DWORD, :ptr LPWSTR
-            DECLSPEC_XFGVIRT(IHttpNegotiate, OnResponse)
-            STD_METHOD OnResponse, :ptr IHttpNegotiate, :DWORD, :LPCWSTR, :LPCWSTR, :ptr LPWSTR
+            ??Interface equ <IHttpNegotiate>
+            QueryInterface PIHttpNegotiateVtbl_QueryInterface ?
+            AddRef PIHttpNegotiateVtbl_AddRef ?
+            Release PIHttpNegotiateVtbl_Release ?
+            BeginningTransaction PIHttpNegotiateVtbl_BeginningTransaction ?
+            OnResponse PIHttpNegotiateVtbl_OnResponse ?
             ??Interface equ <>
             END_INTERFACE
           IHttpNegotiateVtbl ends
@@ -1084,21 +1176,27 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IHttpNegotiate2Vtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate2, :REFIID, :ptr ptr
+          PIHttpNegotiate2Vtbl_QueryInterface typedef ptr TYPE_IHttpNegotiate2Vtbl_QueryInterface
+          TYPE_IHttpNegotiate2Vtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate2
+          PIHttpNegotiate2Vtbl_AddRef typedef ptr TYPE_IHttpNegotiate2Vtbl_AddRef
+          TYPE_IHttpNegotiate2Vtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate2
+          PIHttpNegotiate2Vtbl_Release typedef ptr TYPE_IHttpNegotiate2Vtbl_Release
+          TYPE_IHttpNegotiate2Vtbl_BeginningTransaction typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate2, :LPCWSTR, :LPCWSTR, :DWORD, :ptr LPWSTR
+          PIHttpNegotiate2Vtbl_BeginningTransaction typedef ptr TYPE_IHttpNegotiate2Vtbl_BeginningTransaction
+          TYPE_IHttpNegotiate2Vtbl_OnResponse typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate2, :DWORD, :LPCWSTR, :LPCWSTR, :ptr LPWSTR
+          PIHttpNegotiate2Vtbl_OnResponse typedef ptr TYPE_IHttpNegotiate2Vtbl_OnResponse
+          TYPE_IHttpNegotiate2Vtbl_GetRootSecurityId typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate2, :ptr BYTE, :ptr DWORD, :DWORD_PTR
+          PIHttpNegotiate2Vtbl_GetRootSecurityId typedef ptr TYPE_IHttpNegotiate2Vtbl_GetRootSecurityId
           IHttpNegotiate2Vtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IHttpNegotiate2Vtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IHttpNegotiate2, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IHttpNegotiate2
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IHttpNegotiate2
-            DECLSPEC_XFGVIRT(IHttpNegotiate, BeginningTransaction)
-            STD_METHOD BeginningTransaction, :ptr IHttpNegotiate2, :LPCWSTR, :LPCWSTR, :DWORD, :ptr LPWSTR
-            DECLSPEC_XFGVIRT(IHttpNegotiate, OnResponse)
-            STD_METHOD OnResponse, :ptr IHttpNegotiate2, :DWORD, :LPCWSTR, :LPCWSTR, :ptr LPWSTR
-            DECLSPEC_XFGVIRT(IHttpNegotiate2, GetRootSecurityId)
-            STD_METHOD GetRootSecurityId, :ptr IHttpNegotiate2, :ptr BYTE, :ptr DWORD, :DWORD_PTR
+            ??Interface equ <IHttpNegotiate2>
+            QueryInterface PIHttpNegotiate2Vtbl_QueryInterface ?
+            AddRef PIHttpNegotiate2Vtbl_AddRef ?
+            Release PIHttpNegotiate2Vtbl_Release ?
+            BeginningTransaction PIHttpNegotiate2Vtbl_BeginningTransaction ?
+            OnResponse PIHttpNegotiate2Vtbl_OnResponse ?
+            GetRootSecurityId PIHttpNegotiate2Vtbl_GetRootSecurityId ?
             ??Interface equ <>
             END_INTERFACE
           IHttpNegotiate2Vtbl ends
@@ -1122,23 +1220,30 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IHttpNegotiate3Vtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate3, :REFIID, :ptr ptr
+          PIHttpNegotiate3Vtbl_QueryInterface typedef ptr TYPE_IHttpNegotiate3Vtbl_QueryInterface
+          TYPE_IHttpNegotiate3Vtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate3
+          PIHttpNegotiate3Vtbl_AddRef typedef ptr TYPE_IHttpNegotiate3Vtbl_AddRef
+          TYPE_IHttpNegotiate3Vtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate3
+          PIHttpNegotiate3Vtbl_Release typedef ptr TYPE_IHttpNegotiate3Vtbl_Release
+          TYPE_IHttpNegotiate3Vtbl_BeginningTransaction typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate3, :LPCWSTR, :LPCWSTR, :DWORD, :ptr LPWSTR
+          PIHttpNegotiate3Vtbl_BeginningTransaction typedef ptr TYPE_IHttpNegotiate3Vtbl_BeginningTransaction
+          TYPE_IHttpNegotiate3Vtbl_OnResponse typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate3, :DWORD, :LPCWSTR, :LPCWSTR, :ptr LPWSTR
+          PIHttpNegotiate3Vtbl_OnResponse typedef ptr TYPE_IHttpNegotiate3Vtbl_OnResponse
+          TYPE_IHttpNegotiate3Vtbl_GetRootSecurityId typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate3, :ptr BYTE, :ptr DWORD, :DWORD_PTR
+          PIHttpNegotiate3Vtbl_GetRootSecurityId typedef ptr TYPE_IHttpNegotiate3Vtbl_GetRootSecurityId
+          TYPE_IHttpNegotiate3Vtbl_GetSerializedClientCertContext typedef proto WIN_STD_CALL_CONV :ptr IHttpNegotiate3, :ptr ptr BYTE, :ptr DWORD
+          PIHttpNegotiate3Vtbl_GetSerializedClientCertContext typedef ptr TYPE_IHttpNegotiate3Vtbl_GetSerializedClientCertContext
           IHttpNegotiate3Vtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IHttpNegotiate3Vtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IHttpNegotiate3, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IHttpNegotiate3
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IHttpNegotiate3
-            DECLSPEC_XFGVIRT(IHttpNegotiate, BeginningTransaction)
-            STD_METHOD BeginningTransaction, :ptr IHttpNegotiate3, :LPCWSTR, :LPCWSTR, :DWORD, :ptr LPWSTR
-            DECLSPEC_XFGVIRT(IHttpNegotiate, OnResponse)
-            STD_METHOD OnResponse, :ptr IHttpNegotiate3, :DWORD, :LPCWSTR, :LPCWSTR, :ptr LPWSTR
-            DECLSPEC_XFGVIRT(IHttpNegotiate2, GetRootSecurityId)
-            STD_METHOD GetRootSecurityId, :ptr IHttpNegotiate3, :ptr BYTE, :ptr DWORD, :DWORD_PTR
-            DECLSPEC_XFGVIRT(IHttpNegotiate3, GetSerializedClientCertContext)
-            STD_METHOD GetSerializedClientCertContext, :ptr IHttpNegotiate3, :ptr ptr BYTE, :ptr DWORD
+            ??Interface equ <IHttpNegotiate3>
+            QueryInterface PIHttpNegotiate3Vtbl_QueryInterface ?
+            AddRef PIHttpNegotiate3Vtbl_AddRef ?
+            Release PIHttpNegotiate3Vtbl_Release ?
+            BeginningTransaction PIHttpNegotiate3Vtbl_BeginningTransaction ?
+            OnResponse PIHttpNegotiate3Vtbl_OnResponse ?
+            GetRootSecurityId PIHttpNegotiate3Vtbl_GetRootSecurityId ?
+            GetSerializedClientCertContext PIHttpNegotiate3Vtbl_GetSerializedClientCertContext ?
             ??Interface equ <>
             END_INTERFACE
           IHttpNegotiate3Vtbl ends
@@ -1162,19 +1267,24 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IWinInetFileStreamVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IWinInetFileStream, :REFIID, :ptr ptr
+          PIWinInetFileStreamVtbl_QueryInterface typedef ptr TYPE_IWinInetFileStreamVtbl_QueryInterface
+          TYPE_IWinInetFileStreamVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IWinInetFileStream
+          PIWinInetFileStreamVtbl_AddRef typedef ptr TYPE_IWinInetFileStreamVtbl_AddRef
+          TYPE_IWinInetFileStreamVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IWinInetFileStream
+          PIWinInetFileStreamVtbl_Release typedef ptr TYPE_IWinInetFileStreamVtbl_Release
+          TYPE_IWinInetFileStreamVtbl_SetHandleForUnlock typedef proto WIN_STD_CALL_CONV :ptr IWinInetFileStream, :DWORD_PTR, :DWORD_PTR
+          PIWinInetFileStreamVtbl_SetHandleForUnlock typedef ptr TYPE_IWinInetFileStreamVtbl_SetHandleForUnlock
+          TYPE_IWinInetFileStreamVtbl_SetDeleteFile typedef proto WIN_STD_CALL_CONV :ptr IWinInetFileStream, :DWORD_PTR
+          PIWinInetFileStreamVtbl_SetDeleteFile typedef ptr TYPE_IWinInetFileStreamVtbl_SetDeleteFile
           IWinInetFileStreamVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IWinInetFileStreamVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IWinInetFileStream, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IWinInetFileStream
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IWinInetFileStream
-            DECLSPEC_XFGVIRT(IWinInetFileStream, SetHandleForUnlock)
-            STD_METHOD SetHandleForUnlock, :ptr IWinInetFileStream, :DWORD_PTR, :DWORD_PTR
-            DECLSPEC_XFGVIRT(IWinInetFileStream, SetDeleteFile)
-            STD_METHOD SetDeleteFile, :ptr IWinInetFileStream, :DWORD_PTR
+            ??Interface equ <IWinInetFileStream>
+            QueryInterface PIWinInetFileStreamVtbl_QueryInterface ?
+            AddRef PIWinInetFileStreamVtbl_AddRef ?
+            Release PIWinInetFileStreamVtbl_Release ?
+            SetHandleForUnlock PIWinInetFileStreamVtbl_SetHandleForUnlock ?
+            SetDeleteFile PIWinInetFileStreamVtbl_SetDeleteFile ?
             ??Interface equ <>
             END_INTERFACE
           IWinInetFileStreamVtbl ends
@@ -1198,17 +1308,21 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IWindowForBindingUIVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IWindowForBindingUI, :REFIID, :ptr ptr
+          PIWindowForBindingUIVtbl_QueryInterface typedef ptr TYPE_IWindowForBindingUIVtbl_QueryInterface
+          TYPE_IWindowForBindingUIVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IWindowForBindingUI
+          PIWindowForBindingUIVtbl_AddRef typedef ptr TYPE_IWindowForBindingUIVtbl_AddRef
+          TYPE_IWindowForBindingUIVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IWindowForBindingUI
+          PIWindowForBindingUIVtbl_Release typedef ptr TYPE_IWindowForBindingUIVtbl_Release
+          TYPE_IWindowForBindingUIVtbl_GetWindow typedef proto WIN_STD_CALL_CONV :ptr IWindowForBindingUI, :REFGUID, :ptr HWND
+          PIWindowForBindingUIVtbl_GetWindow typedef ptr TYPE_IWindowForBindingUIVtbl_GetWindow
           IWindowForBindingUIVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IWindowForBindingUIVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IWindowForBindingUI, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IWindowForBindingUI
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IWindowForBindingUI
-            DECLSPEC_XFGVIRT(IWindowForBindingUI, GetWindow)
-            STD_METHOD GetWindow, :ptr IWindowForBindingUI, :REFGUID, :ptr HWND
+            ??Interface equ <IWindowForBindingUI>
+            QueryInterface PIWindowForBindingUIVtbl_QueryInterface ?
+            AddRef PIWindowForBindingUIVtbl_AddRef ?
+            Release PIWindowForBindingUIVtbl_Release ?
+            GetWindow PIWindowForBindingUIVtbl_GetWindow ?
             ??Interface equ <>
             END_INTERFACE
           IWindowForBindingUIVtbl ends
@@ -1230,34 +1344,38 @@ ifndef __urlmon_h__
         LPCODEINSTALL typedef ptr ICodeInstall
         CIP_STATUS typedef SDWORD
         CIP_DISK_FULL equ 0
-        CIP_ACCESS_DENIED equ 1
-        CIP_NEWER_VERSION_EXISTS equ 2
-        CIP_OLDER_VERSION_EXISTS equ 3
-        CIP_NAME_CONFLICT equ 4
-        CIP_TRUST_VERIFICATION_COMPONENT_MISSING equ 5
-        CIP_EXE_SELF_REGISTERATION_TIMEOUT equ 6
-        CIP_UNSAFE_TO_ABORT equ 7
-        CIP_NEED_REBOOT equ 8
-        CIP_NEED_REBOOT_UI_PERMISSION equ 9
+        CIP_ACCESS_DENIED equ
+        CIP_NEWER_VERSION_EXISTS equ
+        CIP_OLDER_VERSION_EXISTS equ
+        CIP_NAME_CONFLICT equ
+        CIP_TRUST_VERIFICATION_COMPONENT_MISSING equ
+        CIP_EXE_SELF_REGISTERATION_TIMEOUT equ
+        CIP_UNSAFE_TO_ABORT equ
+        CIP_NEED_REBOOT equ
+        CIP_NEED_REBOOT_UI_PERMISSION equ
         __MIDL_ICodeInstall_0001 typedef CIP_STATUS
-
         externdef IID_ICodeInstall:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_ICodeInstallVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr ICodeInstall, :REFIID, :ptr ptr
+          PICodeInstallVtbl_QueryInterface typedef ptr TYPE_ICodeInstallVtbl_QueryInterface
+          TYPE_ICodeInstallVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr ICodeInstall
+          PICodeInstallVtbl_AddRef typedef ptr TYPE_ICodeInstallVtbl_AddRef
+          TYPE_ICodeInstallVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr ICodeInstall
+          PICodeInstallVtbl_Release typedef ptr TYPE_ICodeInstallVtbl_Release
+          TYPE_ICodeInstallVtbl_GetWindow typedef proto WIN_STD_CALL_CONV :ptr ICodeInstall, :REFGUID, :ptr HWND
+          PICodeInstallVtbl_GetWindow typedef ptr TYPE_ICodeInstallVtbl_GetWindow
+          TYPE_ICodeInstallVtbl_OnCodeInstallProblem typedef proto WIN_STD_CALL_CONV :ptr ICodeInstall, :ULONG, :LPCWSTR, :LPCWSTR, :DWORD
+          PICodeInstallVtbl_OnCodeInstallProblem typedef ptr TYPE_ICodeInstallVtbl_OnCodeInstallProblem
           ICodeInstallVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <ICodeInstallVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr ICodeInstall, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr ICodeInstall
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr ICodeInstall
-            DECLSPEC_XFGVIRT(IWindowForBindingUI, GetWindow)
-            STD_METHOD GetWindow, :ptr ICodeInstall, :REFGUID, :ptr HWND
-            DECLSPEC_XFGVIRT(ICodeInstall, OnCodeInstallProblem)
-            STD_METHOD OnCodeInstallProblem, :ptr ICodeInstall, :ULONG, :LPCWSTR, :LPCWSTR, :DWORD
+            ??Interface equ <ICodeInstall>
+            QueryInterface PICodeInstallVtbl_QueryInterface ?
+            AddRef PICodeInstallVtbl_AddRef ?
+            Release PICodeInstallVtbl_Release ?
+            GetWindow PICodeInstallVtbl_GetWindow ?
+            OnCodeInstallProblem PICodeInstallVtbl_OnCodeInstallProblem ?
             ??Interface equ <>
             END_INTERFACE
           ICodeInstallVtbl ends
@@ -1304,78 +1422,104 @@ ifndef __urlmon_h__
           Uri_PROPERTY_ZONE equ 18
           Uri_PROPERTY_DWORD_LAST equ Uri_PROPERTY_ZONE
           __MIDL_IUri_0001 typedef Uri_PROPERTY
-
           Uri_HOST_TYPE typedef SDWORD
           Uri_HOST_UNKNOWN equ 0
-          Uri_HOST_DNS equ 1
-          Uri_HOST_IPV4 equ 2
-          Uri_HOST_IPV6 equ 3
-          Uri_HOST_IDN equ 4
+          Uri_HOST_DNS equ
+          Uri_HOST_IPV4 equ
+          Uri_HOST_IPV6 equ
+          Uri_HOST_IDN equ
           __MIDL_IUri_0002 typedef Uri_HOST_TYPE
-
           externdef IID_IUri:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IUriVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IUri, :REFIID, :ptr ptr
+            PIUriVtbl_QueryInterface typedef ptr TYPE_IUriVtbl_QueryInterface
+            TYPE_IUriVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IUri
+            PIUriVtbl_AddRef typedef ptr TYPE_IUriVtbl_AddRef
+            TYPE_IUriVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IUri
+            PIUriVtbl_Release typedef ptr TYPE_IUriVtbl_Release
+            TYPE_IUriVtbl_GetPropertyBSTR typedef proto WIN_STD_CALL_CONV :ptr IUri, :Uri_PROPERTY, :ptr BSTR, :DWORD
+            PIUriVtbl_GetPropertyBSTR typedef ptr TYPE_IUriVtbl_GetPropertyBSTR
+            TYPE_IUriVtbl_GetPropertyLength typedef proto WIN_STD_CALL_CONV :ptr IUri, :Uri_PROPERTY, :ptr DWORD, :DWORD
+            PIUriVtbl_GetPropertyLength typedef ptr TYPE_IUriVtbl_GetPropertyLength
+            TYPE_IUriVtbl_GetPropertyDWORD typedef proto WIN_STD_CALL_CONV :ptr IUri, :Uri_PROPERTY, :ptr DWORD, :DWORD
+            PIUriVtbl_GetPropertyDWORD typedef ptr TYPE_IUriVtbl_GetPropertyDWORD
+            TYPE_IUriVtbl_HasProperty typedef proto WIN_STD_CALL_CONV :ptr IUri, :Uri_PROPERTY, :ptr BOOL
+            PIUriVtbl_HasProperty typedef ptr TYPE_IUriVtbl_HasProperty
+            TYPE_IUriVtbl_GetAbsoluteUri typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetAbsoluteUri typedef ptr TYPE_IUriVtbl_GetAbsoluteUri
+            TYPE_IUriVtbl_GetAuthority typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetAuthority typedef ptr TYPE_IUriVtbl_GetAuthority
+            TYPE_IUriVtbl_GetDisplayUri typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetDisplayUri typedef ptr TYPE_IUriVtbl_GetDisplayUri
+            TYPE_IUriVtbl_GetDomain typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetDomain typedef ptr TYPE_IUriVtbl_GetDomain
+            TYPE_IUriVtbl_GetExtension typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetExtension typedef ptr TYPE_IUriVtbl_GetExtension
+            TYPE_IUriVtbl_GetFragment typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetFragment typedef ptr TYPE_IUriVtbl_GetFragment
+            TYPE_IUriVtbl_GetHost typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetHost typedef ptr TYPE_IUriVtbl_GetHost
+            TYPE_IUriVtbl_GetPassword typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetPassword typedef ptr TYPE_IUriVtbl_GetPassword
+            TYPE_IUriVtbl_GetPath typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetPath typedef ptr TYPE_IUriVtbl_GetPath
+            TYPE_IUriVtbl_GetPathAndQuery typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetPathAndQuery typedef ptr TYPE_IUriVtbl_GetPathAndQuery
+            TYPE_IUriVtbl_GetQuery typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetQuery typedef ptr TYPE_IUriVtbl_GetQuery
+            TYPE_IUriVtbl_GetRawUri typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetRawUri typedef ptr TYPE_IUriVtbl_GetRawUri
+            TYPE_IUriVtbl_GetSchemeName typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetSchemeName typedef ptr TYPE_IUriVtbl_GetSchemeName
+            TYPE_IUriVtbl_GetUserInfo typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetUserInfo typedef ptr TYPE_IUriVtbl_GetUserInfo
+            TYPE_IUriVtbl_GetUserName typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr BSTR
+            PIUriVtbl_GetUserName typedef ptr TYPE_IUriVtbl_GetUserName
+            TYPE_IUriVtbl_GetHostType typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr DWORD
+            PIUriVtbl_GetHostType typedef ptr TYPE_IUriVtbl_GetHostType
+            TYPE_IUriVtbl_GetPort typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr DWORD
+            PIUriVtbl_GetPort typedef ptr TYPE_IUriVtbl_GetPort
+            TYPE_IUriVtbl_GetScheme typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr DWORD
+            PIUriVtbl_GetScheme typedef ptr TYPE_IUriVtbl_GetScheme
+            TYPE_IUriVtbl_GetZone typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr DWORD
+            PIUriVtbl_GetZone typedef ptr TYPE_IUriVtbl_GetZone
+            TYPE_IUriVtbl_GetProperties typedef proto WIN_STD_CALL_CONV :ptr IUri, :LPDWORD
+            PIUriVtbl_GetProperties typedef ptr TYPE_IUriVtbl_GetProperties
+            TYPE_IUriVtbl_IsEqual typedef proto WIN_STD_CALL_CONV :ptr IUri, :ptr IUri, :ptr BOOL
+            PIUriVtbl_IsEqual typedef ptr TYPE_IUriVtbl_IsEqual
             IUriVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IUriVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IUri, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IUri
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IUri
-              DECLSPEC_XFGVIRT(IUri, GetPropertyBSTR)
-              STD_METHOD GetPropertyBSTR, :ptr IUri, :Uri_PROPERTY, :ptr BSTR, :DWORD
-              DECLSPEC_XFGVIRT(IUri, GetPropertyLength)
-              STD_METHOD GetPropertyLength, :ptr IUri, :Uri_PROPERTY, :ptr DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IUri, GetPropertyDWORD)
-              STD_METHOD GetPropertyDWORD, :ptr IUri, :Uri_PROPERTY, :ptr DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IUri, HasProperty)
-              STD_METHOD HasProperty, :ptr IUri, :Uri_PROPERTY, :ptr BOOL
-              DECLSPEC_XFGVIRT(IUri, GetAbsoluteUri)
-              STD_METHOD GetAbsoluteUri, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetAuthority)
-              STD_METHOD GetAuthority, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetDisplayUri)
-              STD_METHOD GetDisplayUri, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetDomain)
-              STD_METHOD GetDomain, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetExtension)
-              STD_METHOD GetExtension, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetFragment)
-              STD_METHOD GetFragment, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetHost)
-              STD_METHOD GetHost, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetPassword)
-              STD_METHOD GetPassword, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetPath)
-              STD_METHOD GetPath, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetPathAndQuery)
-              STD_METHOD GetPathAndQuery, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetQuery)
-              STD_METHOD GetQuery, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetRawUri)
-              STD_METHOD GetRawUri, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetSchemeName)
-              STD_METHOD GetSchemeName, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetUserInfo)
-              STD_METHOD GetUserInfo, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetUserName)
-              STD_METHOD GetUserName, :ptr IUri, :ptr BSTR
-              DECLSPEC_XFGVIRT(IUri, GetHostType)
-              STD_METHOD GetHostType, :ptr IUri, :ptr DWORD
-              DECLSPEC_XFGVIRT(IUri, GetPort)
-              STD_METHOD GetPort, :ptr IUri, :ptr DWORD
-              DECLSPEC_XFGVIRT(IUri, GetScheme)
-              STD_METHOD GetScheme, :ptr IUri, :ptr DWORD
-              DECLSPEC_XFGVIRT(IUri, GetZone)
-              STD_METHOD GetZone, :ptr IUri, :ptr DWORD
-              DECLSPEC_XFGVIRT(IUri, GetProperties)
-              STD_METHOD GetProperties, :ptr IUri, :LPDWORD
-              DECLSPEC_XFGVIRT(IUri, IsEqual)
-              STD_METHOD IsEqual, :ptr IUri, :ptr IUri, :ptr BOOL
+              ??Interface equ <IUri>
+              QueryInterface PIUriVtbl_QueryInterface ?
+              AddRef PIUriVtbl_AddRef ?
+              Release PIUriVtbl_Release ?
+              GetPropertyBSTR PIUriVtbl_GetPropertyBSTR ?
+              GetPropertyLength PIUriVtbl_GetPropertyLength ?
+              GetPropertyDWORD PIUriVtbl_GetPropertyDWORD ?
+              HasProperty PIUriVtbl_HasProperty ?
+              GetAbsoluteUri PIUriVtbl_GetAbsoluteUri ?
+              GetAuthority PIUriVtbl_GetAuthority ?
+              GetDisplayUri PIUriVtbl_GetDisplayUri ?
+              GetDomain PIUriVtbl_GetDomain ?
+              GetExtension PIUriVtbl_GetExtension ?
+              GetFragment PIUriVtbl_GetFragment ?
+              GetHost PIUriVtbl_GetHost ?
+              GetPassword PIUriVtbl_GetPassword ?
+              GetPath_ PIUriVtbl_GetPath ?
+              GetPathAndQuery PIUriVtbl_GetPathAndQuery ?
+              GetQuery PIUriVtbl_GetQuery ?
+              GetRawUri PIUriVtbl_GetRawUri ?
+              GetSchemeName PIUriVtbl_GetSchemeName ?
+              GetUserInfo PIUriVtbl_GetUserInfo ?
+              GetUserName_ PIUriVtbl_GetUserName ?
+              GetHostType PIUriVtbl_GetHostType ?
+              GetPort PIUriVtbl_GetPort ?
+              GetScheme PIUriVtbl_GetScheme ?
+              GetZone PIUriVtbl_GetZone ?
+              GetProperties PIUriVtbl_GetProperties ?
+              IsEqual PIUriVtbl_IsEqual ?
               ??Interface equ <>
               END_INTERFACE
             IUriVtbl ends
@@ -1455,17 +1599,21 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IUriContainerVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IUriContainer, :REFIID, :ptr ptr
+          PIUriContainerVtbl_QueryInterface typedef ptr TYPE_IUriContainerVtbl_QueryInterface
+          TYPE_IUriContainerVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IUriContainer
+          PIUriContainerVtbl_AddRef typedef ptr TYPE_IUriContainerVtbl_AddRef
+          TYPE_IUriContainerVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IUriContainer
+          PIUriContainerVtbl_Release typedef ptr TYPE_IUriContainerVtbl_Release
+          TYPE_IUriContainerVtbl_GetIUri typedef proto WIN_STD_CALL_CONV :ptr IUriContainer, :ptr ptr IUri
+          PIUriContainerVtbl_GetIUri typedef ptr TYPE_IUriContainerVtbl_GetIUri
           IUriContainerVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IUriContainerVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IUriContainer, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IUriContainer
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IUriContainer
-            DECLSPEC_XFGVIRT(IUriContainer, GetIUri)
-            STD_METHOD GetIUri, :ptr IUriContainer, :ptr ptr IUri
+            ??Interface equ <IUriContainer>
+            QueryInterface PIUriContainerVtbl_QueryInterface ?
+            AddRef PIUriContainerVtbl_AddRef ?
+            Release PIUriContainerVtbl_Release ?
+            GetIUri PIUriContainerVtbl_GetIUri ?
             ??Interface equ <>
             END_INTERFACE
           IUriContainerVtbl ends
@@ -1483,61 +1631,87 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IUriBuilderVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :REFIID, :ptr ptr
+          PIUriBuilderVtbl_QueryInterface typedef ptr TYPE_IUriBuilderVtbl_QueryInterface
+          TYPE_IUriBuilderVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder
+          PIUriBuilderVtbl_AddRef typedef ptr TYPE_IUriBuilderVtbl_AddRef
+          TYPE_IUriBuilderVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder
+          PIUriBuilderVtbl_Release typedef ptr TYPE_IUriBuilderVtbl_Release
+          TYPE_IUriBuilderVtbl_CreateUriSimple typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :DWORD, :DWORD_PTR, :ptr ptr IUri
+          PIUriBuilderVtbl_CreateUriSimple typedef ptr TYPE_IUriBuilderVtbl_CreateUriSimple
+          TYPE_IUriBuilderVtbl_CreateUri typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :DWORD, :DWORD, :DWORD_PTR, :ptr ptr IUri
+          PIUriBuilderVtbl_CreateUri typedef ptr TYPE_IUriBuilderVtbl_CreateUri
+          TYPE_IUriBuilderVtbl_CreateUriWithFlags typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :DWORD, :DWORD, :DWORD, :DWORD_PTR, :ptr ptr IUri
+          PIUriBuilderVtbl_CreateUriWithFlags typedef ptr TYPE_IUriBuilderVtbl_CreateUriWithFlags
+          TYPE_IUriBuilderVtbl_GetIUri typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :ptr ptr IUri
+          PIUriBuilderVtbl_GetIUri typedef ptr TYPE_IUriBuilderVtbl_GetIUri
+          TYPE_IUriBuilderVtbl_SetIUri typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :ptr IUri
+          PIUriBuilderVtbl_SetIUri typedef ptr TYPE_IUriBuilderVtbl_SetIUri
+          TYPE_IUriBuilderVtbl_GetFragment typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :ptr DWORD, :ptr LPCWSTR
+          PIUriBuilderVtbl_GetFragment typedef ptr TYPE_IUriBuilderVtbl_GetFragment
+          TYPE_IUriBuilderVtbl_GetHost typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :ptr DWORD, :ptr LPCWSTR
+          PIUriBuilderVtbl_GetHost typedef ptr TYPE_IUriBuilderVtbl_GetHost
+          TYPE_IUriBuilderVtbl_GetPassword typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :ptr DWORD, :ptr LPCWSTR
+          PIUriBuilderVtbl_GetPassword typedef ptr TYPE_IUriBuilderVtbl_GetPassword
+          TYPE_IUriBuilderVtbl_GetPath typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :ptr DWORD, :ptr LPCWSTR
+          PIUriBuilderVtbl_GetPath typedef ptr TYPE_IUriBuilderVtbl_GetPath
+          TYPE_IUriBuilderVtbl_GetPort typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :ptr BOOL, :ptr DWORD
+          PIUriBuilderVtbl_GetPort typedef ptr TYPE_IUriBuilderVtbl_GetPort
+          TYPE_IUriBuilderVtbl_GetQuery typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :ptr DWORD, :ptr LPCWSTR
+          PIUriBuilderVtbl_GetQuery typedef ptr TYPE_IUriBuilderVtbl_GetQuery
+          TYPE_IUriBuilderVtbl_GetSchemeName typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :ptr DWORD, :ptr LPCWSTR
+          PIUriBuilderVtbl_GetSchemeName typedef ptr TYPE_IUriBuilderVtbl_GetSchemeName
+          TYPE_IUriBuilderVtbl_GetUserName typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :ptr DWORD, :ptr LPCWSTR
+          PIUriBuilderVtbl_GetUserName typedef ptr TYPE_IUriBuilderVtbl_GetUserName
+          TYPE_IUriBuilderVtbl_SetFragment typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :LPCWSTR
+          PIUriBuilderVtbl_SetFragment typedef ptr TYPE_IUriBuilderVtbl_SetFragment
+          TYPE_IUriBuilderVtbl_SetHost typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :LPCWSTR
+          PIUriBuilderVtbl_SetHost typedef ptr TYPE_IUriBuilderVtbl_SetHost
+          TYPE_IUriBuilderVtbl_SetPassword typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :LPCWSTR
+          PIUriBuilderVtbl_SetPassword typedef ptr TYPE_IUriBuilderVtbl_SetPassword
+          TYPE_IUriBuilderVtbl_SetPath typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :LPCWSTR
+          PIUriBuilderVtbl_SetPath typedef ptr TYPE_IUriBuilderVtbl_SetPath
+          TYPE_IUriBuilderVtbl_SetPort typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :BOOL, :DWORD
+          PIUriBuilderVtbl_SetPort typedef ptr TYPE_IUriBuilderVtbl_SetPort
+          TYPE_IUriBuilderVtbl_SetQuery typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :LPCWSTR
+          PIUriBuilderVtbl_SetQuery typedef ptr TYPE_IUriBuilderVtbl_SetQuery
+          TYPE_IUriBuilderVtbl_SetSchemeName typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :LPCWSTR
+          PIUriBuilderVtbl_SetSchemeName typedef ptr TYPE_IUriBuilderVtbl_SetSchemeName
+          TYPE_IUriBuilderVtbl_SetUserName typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :LPCWSTR
+          PIUriBuilderVtbl_SetUserName typedef ptr TYPE_IUriBuilderVtbl_SetUserName
+          TYPE_IUriBuilderVtbl_RemoveProperties typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :DWORD
+          PIUriBuilderVtbl_RemoveProperties typedef ptr TYPE_IUriBuilderVtbl_RemoveProperties
+          TYPE_IUriBuilderVtbl_HasBeenModified typedef proto WIN_STD_CALL_CONV :ptr IUriBuilder, :ptr BOOL
+          PIUriBuilderVtbl_HasBeenModified typedef ptr TYPE_IUriBuilderVtbl_HasBeenModified
           IUriBuilderVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IUriBuilderVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IUriBuilder, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IUriBuilder
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IUriBuilder
-            DECLSPEC_XFGVIRT(IUriBuilder, CreateUriSimple)
-            STD_METHOD CreateUriSimple, :ptr IUriBuilder, :DWORD, :DWORD_PTR, :ptr ptr IUri
-            DECLSPEC_XFGVIRT(IUriBuilder, CreateUri)
-            STD_METHOD CreateUri, :ptr IUriBuilder, :DWORD, :DWORD, :DWORD_PTR, :ptr ptr IUri
-            DECLSPEC_XFGVIRT(IUriBuilder, CreateUriWithFlags)
-            STD_METHOD CreateUriWithFlags, :ptr IUriBuilder, :DWORD, :DWORD, :DWORD, :DWORD_PTR, :ptr ptr IUri
-            DECLSPEC_XFGVIRT(IUriBuilder, GetIUri)
-            STD_METHOD GetIUri, :ptr IUriBuilder, :ptr ptr IUri
-            DECLSPEC_XFGVIRT(IUriBuilder, SetIUri)
-            STD_METHOD SetIUri, :ptr IUriBuilder, :ptr IUri
-            DECLSPEC_XFGVIRT(IUriBuilder, GetFragment)
-            STD_METHOD GetFragment, :ptr IUriBuilder, :ptr DWORD, :ptr LPCWSTR
-            DECLSPEC_XFGVIRT(IUriBuilder, GetHost)
-            STD_METHOD GetHost, :ptr IUriBuilder, :ptr DWORD, :ptr LPCWSTR
-            DECLSPEC_XFGVIRT(IUriBuilder, GetPassword)
-            STD_METHOD GetPassword, :ptr IUriBuilder, :ptr DWORD, :ptr LPCWSTR
-            DECLSPEC_XFGVIRT(IUriBuilder, GetPath)
-            STD_METHOD GetPath, :ptr IUriBuilder, :ptr DWORD, :ptr LPCWSTR
-            DECLSPEC_XFGVIRT(IUriBuilder, GetPort)
-            STD_METHOD GetPort, :ptr IUriBuilder, :ptr BOOL, :ptr DWORD
-            DECLSPEC_XFGVIRT(IUriBuilder, GetQuery)
-            STD_METHOD GetQuery, :ptr IUriBuilder, :ptr DWORD, :ptr LPCWSTR
-            DECLSPEC_XFGVIRT(IUriBuilder, GetSchemeName)
-            STD_METHOD GetSchemeName, :ptr IUriBuilder, :ptr DWORD, :ptr LPCWSTR
-            DECLSPEC_XFGVIRT(IUriBuilder, GetUserName)
-            STD_METHOD GetUserName, :ptr IUriBuilder, :ptr DWORD, :ptr LPCWSTR
-            DECLSPEC_XFGVIRT(IUriBuilder, SetFragment)
-            STD_METHOD SetFragment, :ptr IUriBuilder, :LPCWSTR
-            DECLSPEC_XFGVIRT(IUriBuilder, SetHost)
-            STD_METHOD SetHost, :ptr IUriBuilder, :LPCWSTR
-            DECLSPEC_XFGVIRT(IUriBuilder, SetPassword)
-            STD_METHOD SetPassword, :ptr IUriBuilder, :LPCWSTR
-            DECLSPEC_XFGVIRT(IUriBuilder, SetPath)
-            STD_METHOD SetPath, :ptr IUriBuilder, :LPCWSTR
-            DECLSPEC_XFGVIRT(IUriBuilder, SetPort)
-            STD_METHOD SetPort, :ptr IUriBuilder, :BOOL, :DWORD
-            DECLSPEC_XFGVIRT(IUriBuilder, SetQuery)
-            STD_METHOD SetQuery, :ptr IUriBuilder, :LPCWSTR
-            DECLSPEC_XFGVIRT(IUriBuilder, SetSchemeName)
-            STD_METHOD SetSchemeName, :ptr IUriBuilder, :LPCWSTR
-            DECLSPEC_XFGVIRT(IUriBuilder, SetUserName)
-            STD_METHOD SetUserName, :ptr IUriBuilder, :LPCWSTR
-            DECLSPEC_XFGVIRT(IUriBuilder, RemoveProperties)
-            STD_METHOD RemoveProperties, :ptr IUriBuilder, :DWORD
-            DECLSPEC_XFGVIRT(IUriBuilder, HasBeenModified)
-            STD_METHOD HasBeenModified, :ptr IUriBuilder, :ptr BOOL
+            ??Interface equ <IUriBuilder>
+            QueryInterface PIUriBuilderVtbl_QueryInterface ?
+            AddRef PIUriBuilderVtbl_AddRef ?
+            Release PIUriBuilderVtbl_Release ?
+            CreateUriSimple PIUriBuilderVtbl_CreateUriSimple ?
+            CreateUri_ PIUriBuilderVtbl_CreateUri ?
+            CreateUriWithFlags PIUriBuilderVtbl_CreateUriWithFlags ?
+            GetIUri PIUriBuilderVtbl_GetIUri ?
+            SetIUri PIUriBuilderVtbl_SetIUri ?
+            GetFragment PIUriBuilderVtbl_GetFragment ?
+            GetHost PIUriBuilderVtbl_GetHost ?
+            GetPassword PIUriBuilderVtbl_GetPassword ?
+            GetPath_ PIUriBuilderVtbl_GetPath ?
+            GetPort PIUriBuilderVtbl_GetPort ?
+            GetQuery PIUriBuilderVtbl_GetQuery ?
+            GetSchemeName PIUriBuilderVtbl_GetSchemeName ?
+            GetUserName_ PIUriBuilderVtbl_GetUserName ?
+            SetFragment PIUriBuilderVtbl_SetFragment ?
+            SetHost PIUriBuilderVtbl_SetHost ?
+            SetPassword PIUriBuilderVtbl_SetPassword ?
+            SetPath PIUriBuilderVtbl_SetPath ?
+            SetPort_ PIUriBuilderVtbl_SetPort ?
+            SetQuery PIUriBuilderVtbl_SetQuery ?
+            SetSchemeName PIUriBuilderVtbl_SetSchemeName ?
+            SetUserName PIUriBuilderVtbl_SetUserName ?
+            RemoveProperties PIUriBuilderVtbl_RemoveProperties ?
+            HasBeenModified PIUriBuilderVtbl_HasBeenModified ?
             ??Interface equ <>
             END_INTERFACE
           IUriBuilderVtbl ends
@@ -1555,19 +1729,24 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IUriBuilderFactoryVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IUriBuilderFactory, :REFIID, :ptr ptr
+          PIUriBuilderFactoryVtbl_QueryInterface typedef ptr TYPE_IUriBuilderFactoryVtbl_QueryInterface
+          TYPE_IUriBuilderFactoryVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IUriBuilderFactory
+          PIUriBuilderFactoryVtbl_AddRef typedef ptr TYPE_IUriBuilderFactoryVtbl_AddRef
+          TYPE_IUriBuilderFactoryVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IUriBuilderFactory
+          PIUriBuilderFactoryVtbl_Release typedef ptr TYPE_IUriBuilderFactoryVtbl_Release
+          TYPE_IUriBuilderFactoryVtbl_CreateIUriBuilder typedef proto WIN_STD_CALL_CONV :ptr IUriBuilderFactory, :DWORD, :DWORD_PTR, :ptr ptr IUriBuilder
+          PIUriBuilderFactoryVtbl_CreateIUriBuilder typedef ptr TYPE_IUriBuilderFactoryVtbl_CreateIUriBuilder
+          TYPE_IUriBuilderFactoryVtbl_CreateInitializedIUriBuilder typedef proto WIN_STD_CALL_CONV :ptr IUriBuilderFactory, :DWORD, :DWORD_PTR, :ptr ptr IUriBuilder
+          PIUriBuilderFactoryVtbl_CreateInitializedIUriBuilder typedef ptr TYPE_IUriBuilderFactoryVtbl_CreateInitializedIUriBuilder
           IUriBuilderFactoryVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IUriBuilderFactoryVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IUriBuilderFactory, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IUriBuilderFactory
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IUriBuilderFactory
-            DECLSPEC_XFGVIRT(IUriBuilderFactory, CreateIUriBuilder)
-            STD_METHOD CreateIUriBuilder, :ptr IUriBuilderFactory, :DWORD, :DWORD_PTR, :ptr ptr IUriBuilder
-            DECLSPEC_XFGVIRT(IUriBuilderFactory, CreateInitializedIUriBuilder)
-            STD_METHOD CreateInitializedIUriBuilder, :ptr IUriBuilderFactory, :DWORD, :DWORD_PTR, :ptr ptr IUriBuilder
+            ??Interface equ <IUriBuilderFactory>
+            QueryInterface PIUriBuilderFactoryVtbl_QueryInterface ?
+            AddRef PIUriBuilderFactoryVtbl_AddRef ?
+            Release PIUriBuilderFactoryVtbl_Release ?
+            CreateIUriBuilder PIUriBuilderFactoryVtbl_CreateIUriBuilder ?
+            CreateInitializedIUriBuilder PIUriBuilderFactoryVtbl_CreateInitializedIUriBuilder ?
             ??Interface equ <>
             END_INTERFACE
           IUriBuilderFactoryVtbl ends
@@ -1594,17 +1773,21 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IWinInetInfoVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IWinInetInfo, :REFIID, :ptr ptr
+          PIWinInetInfoVtbl_QueryInterface typedef ptr TYPE_IWinInetInfoVtbl_QueryInterface
+          TYPE_IWinInetInfoVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IWinInetInfo
+          PIWinInetInfoVtbl_AddRef typedef ptr TYPE_IWinInetInfoVtbl_AddRef
+          TYPE_IWinInetInfoVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IWinInetInfo
+          PIWinInetInfoVtbl_Release typedef ptr TYPE_IWinInetInfoVtbl_Release
+          TYPE_IWinInetInfoVtbl_QueryOption typedef proto WIN_STD_CALL_CONV :ptr IWinInetInfo, :DWORD, :LPVOID, :ptr DWORD
+          PIWinInetInfoVtbl_QueryOption typedef ptr TYPE_IWinInetInfoVtbl_QueryOption
           IWinInetInfoVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IWinInetInfoVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IWinInetInfo, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IWinInetInfo
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IWinInetInfo
-            DECLSPEC_XFGVIRT(IWinInetInfo, QueryOption)
-            STD_METHOD QueryOption, :ptr IWinInetInfo, :DWORD, :LPVOID, :ptr DWORD
+            ??Interface equ <IWinInetInfo>
+            QueryInterface PIWinInetInfoVtbl_QueryInterface ?
+            AddRef PIWinInetInfoVtbl_AddRef ?
+            Release PIWinInetInfoVtbl_Release ?
+            QueryOption PIWinInetInfoVtbl_QueryOption ?
             ??Interface equ <>
             END_INTERFACE
           IWinInetInfoVtbl ends
@@ -1631,19 +1814,24 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IHttpSecurityVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IHttpSecurity, :REFIID, :ptr ptr
+          PIHttpSecurityVtbl_QueryInterface typedef ptr TYPE_IHttpSecurityVtbl_QueryInterface
+          TYPE_IHttpSecurityVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IHttpSecurity
+          PIHttpSecurityVtbl_AddRef typedef ptr TYPE_IHttpSecurityVtbl_AddRef
+          TYPE_IHttpSecurityVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IHttpSecurity
+          PIHttpSecurityVtbl_Release typedef ptr TYPE_IHttpSecurityVtbl_Release
+          TYPE_IHttpSecurityVtbl_GetWindow typedef proto WIN_STD_CALL_CONV :ptr IHttpSecurity, :REFGUID, :ptr HWND
+          PIHttpSecurityVtbl_GetWindow typedef ptr TYPE_IHttpSecurityVtbl_GetWindow
+          TYPE_IHttpSecurityVtbl_OnSecurityProblem typedef proto WIN_STD_CALL_CONV :ptr IHttpSecurity, :DWORD
+          PIHttpSecurityVtbl_OnSecurityProblem typedef ptr TYPE_IHttpSecurityVtbl_OnSecurityProblem
           IHttpSecurityVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IHttpSecurityVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IHttpSecurity, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IHttpSecurity
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IHttpSecurity
-            DECLSPEC_XFGVIRT(IWindowForBindingUI, GetWindow)
-            STD_METHOD GetWindow, :ptr IHttpSecurity, :REFGUID, :ptr HWND
-            DECLSPEC_XFGVIRT(IHttpSecurity, OnSecurityProblem)
-            STD_METHOD OnSecurityProblem, :ptr IHttpSecurity, :DWORD
+            ??Interface equ <IHttpSecurity>
+            QueryInterface PIHttpSecurityVtbl_QueryInterface ?
+            AddRef PIHttpSecurityVtbl_AddRef ?
+            Release PIHttpSecurityVtbl_Release ?
+            GetWindow PIHttpSecurityVtbl_GetWindow ?
+            OnSecurityProblem PIHttpSecurityVtbl_OnSecurityProblem ?
             ??Interface equ <>
             END_INTERFACE
           IHttpSecurityVtbl ends
@@ -1667,19 +1855,24 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IWinInetHttpInfoVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IWinInetHttpInfo, :REFIID, :ptr ptr
+          PIWinInetHttpInfoVtbl_QueryInterface typedef ptr TYPE_IWinInetHttpInfoVtbl_QueryInterface
+          TYPE_IWinInetHttpInfoVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IWinInetHttpInfo
+          PIWinInetHttpInfoVtbl_AddRef typedef ptr TYPE_IWinInetHttpInfoVtbl_AddRef
+          TYPE_IWinInetHttpInfoVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IWinInetHttpInfo
+          PIWinInetHttpInfoVtbl_Release typedef ptr TYPE_IWinInetHttpInfoVtbl_Release
+          TYPE_IWinInetHttpInfoVtbl_QueryOption typedef proto WIN_STD_CALL_CONV :ptr IWinInetHttpInfo, :DWORD, :LPVOID, :ptr DWORD
+          PIWinInetHttpInfoVtbl_QueryOption typedef ptr TYPE_IWinInetHttpInfoVtbl_QueryOption
+          TYPE_IWinInetHttpInfoVtbl_QueryInfo typedef proto WIN_STD_CALL_CONV :ptr IWinInetHttpInfo, :DWORD, :LPVOID, :ptr DWORD, :ptr DWORD, :ptr DWORD
+          PIWinInetHttpInfoVtbl_QueryInfo typedef ptr TYPE_IWinInetHttpInfoVtbl_QueryInfo
           IWinInetHttpInfoVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IWinInetHttpInfoVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IWinInetHttpInfo, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IWinInetHttpInfo
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IWinInetHttpInfo
-            DECLSPEC_XFGVIRT(IWinInetInfo, QueryOption)
-            STD_METHOD QueryOption, :ptr IWinInetHttpInfo, :DWORD, :LPVOID, :ptr DWORD
-            DECLSPEC_XFGVIRT(IWinInetHttpInfo, QueryInfo)
-            STD_METHOD QueryInfo, :ptr IWinInetHttpInfo, :DWORD, :LPVOID, :ptr DWORD, :ptr DWORD, :ptr DWORD
+            ??Interface equ <IWinInetHttpInfo>
+            QueryInterface PIWinInetHttpInfoVtbl_QueryInterface ?
+            AddRef PIWinInetHttpInfoVtbl_AddRef ?
+            Release PIWinInetHttpInfoVtbl_Release ?
+            QueryOption PIWinInetHttpInfoVtbl_QueryOption ?
+            QueryInfo PIWinInetHttpInfoVtbl_QueryInfo ?
             ??Interface equ <>
             END_INTERFACE
           IWinInetHttpInfoVtbl ends
@@ -1704,17 +1897,21 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IWinInetHttpTimeoutsVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IWinInetHttpTimeouts, :REFIID, :ptr ptr
+          PIWinInetHttpTimeoutsVtbl_QueryInterface typedef ptr TYPE_IWinInetHttpTimeoutsVtbl_QueryInterface
+          TYPE_IWinInetHttpTimeoutsVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IWinInetHttpTimeouts
+          PIWinInetHttpTimeoutsVtbl_AddRef typedef ptr TYPE_IWinInetHttpTimeoutsVtbl_AddRef
+          TYPE_IWinInetHttpTimeoutsVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IWinInetHttpTimeouts
+          PIWinInetHttpTimeoutsVtbl_Release typedef ptr TYPE_IWinInetHttpTimeoutsVtbl_Release
+          TYPE_IWinInetHttpTimeoutsVtbl_GetRequestTimeouts typedef proto WIN_STD_CALL_CONV :ptr IWinInetHttpTimeouts, :ptr DWORD, :ptr DWORD, :ptr DWORD
+          PIWinInetHttpTimeoutsVtbl_GetRequestTimeouts typedef ptr TYPE_IWinInetHttpTimeoutsVtbl_GetRequestTimeouts
           IWinInetHttpTimeoutsVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IWinInetHttpTimeoutsVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IWinInetHttpTimeouts, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IWinInetHttpTimeouts
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IWinInetHttpTimeouts
-            DECLSPEC_XFGVIRT(IWinInetHttpTimeouts, GetRequestTimeouts)
-            STD_METHOD GetRequestTimeouts, :ptr IWinInetHttpTimeouts, :ptr DWORD, :ptr DWORD, :ptr DWORD
+            ??Interface equ <IWinInetHttpTimeouts>
+            QueryInterface PIWinInetHttpTimeoutsVtbl_QueryInterface ?
+            AddRef PIWinInetHttpTimeoutsVtbl_AddRef ?
+            Release PIWinInetHttpTimeoutsVtbl_Release ?
+            GetRequestTimeouts PIWinInetHttpTimeoutsVtbl_GetRequestTimeouts ?
             ??Interface equ <>
             END_INTERFACE
           IWinInetHttpTimeoutsVtbl ends
@@ -1739,17 +1936,21 @@ ifndef __urlmon_h__
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IWinInetCacheHintsVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IWinInetCacheHints, :REFIID, :ptr ptr
+            PIWinInetCacheHintsVtbl_QueryInterface typedef ptr TYPE_IWinInetCacheHintsVtbl_QueryInterface
+            TYPE_IWinInetCacheHintsVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IWinInetCacheHints
+            PIWinInetCacheHintsVtbl_AddRef typedef ptr TYPE_IWinInetCacheHintsVtbl_AddRef
+            TYPE_IWinInetCacheHintsVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IWinInetCacheHints
+            PIWinInetCacheHintsVtbl_Release typedef ptr TYPE_IWinInetCacheHintsVtbl_Release
+            TYPE_IWinInetCacheHintsVtbl_SetCacheExtension typedef proto WIN_STD_CALL_CONV :ptr IWinInetCacheHints, :LPCWSTR, :LPVOID, :ptr DWORD, :ptr DWORD, :ptr DWORD
+            PIWinInetCacheHintsVtbl_SetCacheExtension typedef ptr TYPE_IWinInetCacheHintsVtbl_SetCacheExtension
             IWinInetCacheHintsVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IWinInetCacheHintsVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IWinInetCacheHints, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IWinInetCacheHints
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IWinInetCacheHints
-              DECLSPEC_XFGVIRT(IWinInetCacheHints, SetCacheExtension)
-              STD_METHOD SetCacheExtension, :ptr IWinInetCacheHints, :LPCWSTR, :LPVOID, :ptr DWORD, :ptr DWORD, :ptr DWORD
+              ??Interface equ <IWinInetCacheHints>
+              QueryInterface PIWinInetCacheHintsVtbl_QueryInterface ?
+              AddRef PIWinInetCacheHintsVtbl_AddRef ?
+              Release PIWinInetCacheHintsVtbl_Release ?
+              SetCacheExtension PIWinInetCacheHintsVtbl_SetCacheExtension ?
               ??Interface equ <>
               END_INTERFACE
             IWinInetCacheHintsVtbl ends
@@ -1775,19 +1976,24 @@ ifndef __urlmon_h__
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IWinInetCacheHints2Vtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IWinInetCacheHints2, :REFIID, :ptr ptr
+            PIWinInetCacheHints2Vtbl_QueryInterface typedef ptr TYPE_IWinInetCacheHints2Vtbl_QueryInterface
+            TYPE_IWinInetCacheHints2Vtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IWinInetCacheHints2
+            PIWinInetCacheHints2Vtbl_AddRef typedef ptr TYPE_IWinInetCacheHints2Vtbl_AddRef
+            TYPE_IWinInetCacheHints2Vtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IWinInetCacheHints2
+            PIWinInetCacheHints2Vtbl_Release typedef ptr TYPE_IWinInetCacheHints2Vtbl_Release
+            TYPE_IWinInetCacheHints2Vtbl_SetCacheExtension typedef proto WIN_STD_CALL_CONV :ptr IWinInetCacheHints2, :LPCWSTR, :LPVOID, :ptr DWORD, :ptr DWORD, :ptr DWORD
+            PIWinInetCacheHints2Vtbl_SetCacheExtension typedef ptr TYPE_IWinInetCacheHints2Vtbl_SetCacheExtension
+            TYPE_IWinInetCacheHints2Vtbl_SetCacheExtension2 typedef proto WIN_STD_CALL_CONV :ptr IWinInetCacheHints2, :LPCWSTR, :ptr WCHAR, :ptr DWORD, :ptr DWORD, :ptr DWORD
+            PIWinInetCacheHints2Vtbl_SetCacheExtension2 typedef ptr TYPE_IWinInetCacheHints2Vtbl_SetCacheExtension2
             IWinInetCacheHints2Vtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IWinInetCacheHints2Vtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IWinInetCacheHints2, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IWinInetCacheHints2
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IWinInetCacheHints2
-              DECLSPEC_XFGVIRT(IWinInetCacheHints, SetCacheExtension)
-              STD_METHOD SetCacheExtension, :ptr IWinInetCacheHints2, :LPCWSTR, :LPVOID, :ptr DWORD, :ptr DWORD, :ptr DWORD
-              DECLSPEC_XFGVIRT(IWinInetCacheHints2, SetCacheExtension2)
-              STD_METHOD SetCacheExtension2, :ptr IWinInetCacheHints2, :LPCWSTR, :ptr WCHAR, :ptr DWORD, :ptr DWORD, :ptr DWORD
+              ??Interface equ <IWinInetCacheHints2>
+              QueryInterface PIWinInetCacheHints2Vtbl_QueryInterface ?
+              AddRef PIWinInetCacheHints2Vtbl_AddRef ?
+              Release PIWinInetCacheHints2Vtbl_Release ?
+              SetCacheExtension PIWinInetCacheHints2Vtbl_SetCacheExtension ?
+              SetCacheExtension2 PIWinInetCacheHints2Vtbl_SetCacheExtension2 ?
               ??Interface equ <>
               END_INTERFACE
             IWinInetCacheHints2Vtbl ends
@@ -1815,21 +2021,27 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IBindHostVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IBindHost, :REFIID, :ptr ptr
+          PIBindHostVtbl_QueryInterface typedef ptr TYPE_IBindHostVtbl_QueryInterface
+          TYPE_IBindHostVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IBindHost
+          PIBindHostVtbl_AddRef typedef ptr TYPE_IBindHostVtbl_AddRef
+          TYPE_IBindHostVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IBindHost
+          PIBindHostVtbl_Release typedef ptr TYPE_IBindHostVtbl_Release
+          TYPE_IBindHostVtbl_CreateMoniker typedef proto WIN_STD_CALL_CONV :ptr IBindHost, :LPOLESTR, :ptr IBindCtx, :ptr ptr IMoniker, :DWORD
+          PIBindHostVtbl_CreateMoniker typedef ptr TYPE_IBindHostVtbl_CreateMoniker
+          TYPE_IBindHostVtbl_MonikerBindToStorage typedef proto WIN_STD_CALL_CONV :ptr IBindHost, :ptr IMoniker, :ptr IBindCtx, :ptr IBindStatusCallback, :REFIID, :ptr ptr
+          PIBindHostVtbl_MonikerBindToStorage typedef ptr TYPE_IBindHostVtbl_MonikerBindToStorage
+          TYPE_IBindHostVtbl_MonikerBindToObject typedef proto WIN_STD_CALL_CONV :ptr IBindHost, :ptr IMoniker, :ptr IBindCtx, :ptr IBindStatusCallback, :REFIID, :ptr ptr
+          PIBindHostVtbl_MonikerBindToObject typedef ptr TYPE_IBindHostVtbl_MonikerBindToObject
           IBindHostVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IBindHostVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IBindHost, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IBindHost
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IBindHost
-            DECLSPEC_XFGVIRT(IBindHost, CreateMoniker)
-            STD_METHOD CreateMoniker, :ptr IBindHost, :LPOLESTR, :ptr IBindCtx, :ptr ptr IMoniker, :DWORD
-            DECLSPEC_XFGVIRT(IBindHost, MonikerBindToStorage)
-            STD_METHOD MonikerBindToStorage, :ptr IBindHost, :ptr IMoniker, :ptr IBindCtx, :ptr IBindStatusCallback, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IBindHost, MonikerBindToObject)
-            STD_METHOD MonikerBindToObject, :ptr IBindHost, :ptr IMoniker, :ptr IBindCtx, :ptr IBindStatusCallback, :REFIID, :ptr ptr
+            ??Interface equ <IBindHost>
+            QueryInterface PIBindHostVtbl_QueryInterface ?
+            AddRef PIBindHostVtbl_AddRef ?
+            Release PIBindHostVtbl_Release ?
+            CreateMoniker PIBindHostVtbl_CreateMoniker ?
+            MonikerBindToStorage PIBindHostVtbl_MonikerBindToStorage ?
+            MonikerBindToObject PIBindHostVtbl_MonikerBindToObject ?
             ??Interface equ <>
             END_INTERFACE
           IBindHostVtbl ends
@@ -1890,15 +2102,18 @@ ifndef __urlmon_h__
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternet, :REFIID, :ptr ptr
+            PIInternetVtbl_QueryInterface typedef ptr TYPE_IInternetVtbl_QueryInterface
+            TYPE_IInternetVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternet
+            PIInternetVtbl_AddRef typedef ptr TYPE_IInternetVtbl_AddRef
+            TYPE_IInternetVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternet
+            PIInternetVtbl_Release typedef ptr TYPE_IInternetVtbl_Release
             IInternetVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternet, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternet
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternet
+              ??Interface equ <IInternet>
+              QueryInterface PIInternetVtbl_QueryInterface ?
+              AddRef PIInternetVtbl_AddRef ?
+              Release PIInternetVtbl_Release ?
               ??Interface equ <>
               END_INTERFACE
             IInternetVtbl ends
@@ -1920,50 +2135,53 @@ ifndef __urlmon_h__
           LPIINTERNETBINDINFO typedef ptr IInternetBindInfo
           BINDSTRING typedef SDWORD
           BINDSTRING_HEADERS equ 1
-          BINDSTRING_ACCEPT_MIMES equ 2
-          BINDSTRING_EXTRA_URL equ 3
-          BINDSTRING_LANGUAGE equ 4
-          BINDSTRING_USERNAME equ 5
-          BINDSTRING_PASSWORD equ 6
-          BINDSTRING_UA_PIXELS equ 7
-          BINDSTRING_UA_COLOR equ 8
-          BINDSTRING_OS equ 9
-          BINDSTRING_USER_AGENT equ 10
-          BINDSTRING_ACCEPT_ENCODINGS equ 11
-          BINDSTRING_POST_COOKIE equ 12
-          BINDSTRING_POST_DATA_MIME equ 13
-          BINDSTRING_URL equ 14
-          BINDSTRING_IID equ 15
-          BINDSTRING_FLAG_BIND_TO_OBJECT equ 16
-          BINDSTRING_PTR_BIND_CONTEXT equ 17
-          BINDSTRING_XDR_ORIGIN equ 18
-          BINDSTRING_DOWNLOADPATH equ 19
-          BINDSTRING_ROOTDOC_URL equ 20
-          BINDSTRING_INITIAL_FILENAME equ 21
-          BINDSTRING_PROXY_USERNAME equ 22
-          BINDSTRING_PROXY_PASSWORD equ 23
-          BINDSTRING_ENTERPRISE_ID equ 24
-          BINDSTRING_DOC_URL equ 25
-          BINDSTRING_SAMESITE_COOKIE_LEVEL equ 26
+          BINDSTRING_ACCEPT_MIMES equ
+          BINDSTRING_EXTRA_URL equ
+          BINDSTRING_LANGUAGE equ
+          BINDSTRING_USERNAME equ
+          BINDSTRING_PASSWORD equ
+          BINDSTRING_UA_PIXELS equ
+          BINDSTRING_UA_COLOR equ
+          BINDSTRING_OS equ
+          BINDSTRING_USER_AGENT equ
+          BINDSTRING_ACCEPT_ENCODINGS equ
+          BINDSTRING_POST_COOKIE equ
+          BINDSTRING_POST_DATA_MIME equ
+          BINDSTRING_URL equ
+          BINDSTRING_IID equ
+          BINDSTRING_FLAG_BIND_TO_OBJECT equ
+          BINDSTRING_PTR_BIND_CONTEXT equ
+          BINDSTRING_XDR_ORIGIN equ
+          BINDSTRING_DOWNLOADPATH equ
+          BINDSTRING_ROOTDOC_URL equ
+          BINDSTRING_INITIAL_FILENAME equ
+          BINDSTRING_PROXY_USERNAME equ
+          BINDSTRING_PROXY_PASSWORD equ
+          BINDSTRING_ENTERPRISE_ID equ
+          BINDSTRING_DOC_URL equ
           tagBINDSTRING typedef BINDSTRING
-
           externdef IID_IInternetBindInfo:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetBindInfoVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetBindInfo, :REFIID, :ptr ptr
+            PIInternetBindInfoVtbl_QueryInterface typedef ptr TYPE_IInternetBindInfoVtbl_QueryInterface
+            TYPE_IInternetBindInfoVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetBindInfo
+            PIInternetBindInfoVtbl_AddRef typedef ptr TYPE_IInternetBindInfoVtbl_AddRef
+            TYPE_IInternetBindInfoVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetBindInfo
+            PIInternetBindInfoVtbl_Release typedef ptr TYPE_IInternetBindInfoVtbl_Release
+            TYPE_IInternetBindInfoVtbl_GetBindInfo typedef proto WIN_STD_CALL_CONV :ptr IInternetBindInfo, :ptr DWORD, :ptr BINDINFO
+            PIInternetBindInfoVtbl_GetBindInfo typedef ptr TYPE_IInternetBindInfoVtbl_GetBindInfo
+            TYPE_IInternetBindInfoVtbl_GetBindString typedef proto WIN_STD_CALL_CONV :ptr IInternetBindInfo, :ULONG, :ptr LPOLESTR, :ULONG, :ptr ULONG
+            PIInternetBindInfoVtbl_GetBindString typedef ptr TYPE_IInternetBindInfoVtbl_GetBindString
             IInternetBindInfoVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetBindInfoVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternetBindInfo, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternetBindInfo
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternetBindInfo
-              DECLSPEC_XFGVIRT(IInternetBindInfo, GetBindInfo)
-              STD_METHOD GetBindInfo, :ptr IInternetBindInfo, :ptr DWORD, :ptr BINDINFO
-              DECLSPEC_XFGVIRT(IInternetBindInfo, GetBindString)
-              STD_METHOD GetBindString, :ptr IInternetBindInfo, :ULONG, :ptr LPOLESTR, :ULONG, :ptr ULONG
+              ??Interface equ <IInternetBindInfo>
+              QueryInterface PIInternetBindInfoVtbl_QueryInterface ?
+              AddRef PIInternetBindInfoVtbl_AddRef ?
+              Release PIInternetBindInfoVtbl_Release ?
+              GetBindInfo PIInternetBindInfoVtbl_GetBindInfo ?
+              GetBindString PIInternetBindInfoVtbl_GetBindString ?
               ??Interface equ <>
               END_INTERFACE
             IInternetBindInfoVtbl ends
@@ -1987,21 +2205,27 @@ ifndef __urlmon_h__
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetBindInfoExVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetBindInfoEx, :REFIID, :ptr ptr
+            PIInternetBindInfoExVtbl_QueryInterface typedef ptr TYPE_IInternetBindInfoExVtbl_QueryInterface
+            TYPE_IInternetBindInfoExVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetBindInfoEx
+            PIInternetBindInfoExVtbl_AddRef typedef ptr TYPE_IInternetBindInfoExVtbl_AddRef
+            TYPE_IInternetBindInfoExVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetBindInfoEx
+            PIInternetBindInfoExVtbl_Release typedef ptr TYPE_IInternetBindInfoExVtbl_Release
+            TYPE_IInternetBindInfoExVtbl_GetBindInfo typedef proto WIN_STD_CALL_CONV :ptr IInternetBindInfoEx, :ptr DWORD, :ptr BINDINFO
+            PIInternetBindInfoExVtbl_GetBindInfo typedef ptr TYPE_IInternetBindInfoExVtbl_GetBindInfo
+            TYPE_IInternetBindInfoExVtbl_GetBindString typedef proto WIN_STD_CALL_CONV :ptr IInternetBindInfoEx, :ULONG, :ptr LPOLESTR, :ULONG, :ptr ULONG
+            PIInternetBindInfoExVtbl_GetBindString typedef ptr TYPE_IInternetBindInfoExVtbl_GetBindString
+            TYPE_IInternetBindInfoExVtbl_GetBindInfoEx typedef proto WIN_STD_CALL_CONV :ptr IInternetBindInfoEx, :ptr DWORD, :ptr BINDINFO, :ptr DWORD, :ptr DWORD
+            PIInternetBindInfoExVtbl_GetBindInfoEx typedef ptr TYPE_IInternetBindInfoExVtbl_GetBindInfoEx
             IInternetBindInfoExVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetBindInfoExVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternetBindInfoEx, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternetBindInfoEx
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternetBindInfoEx
-              DECLSPEC_XFGVIRT(IInternetBindInfo, GetBindInfo)
-              STD_METHOD GetBindInfo, :ptr IInternetBindInfoEx, :ptr DWORD, :ptr BINDINFO
-              DECLSPEC_XFGVIRT(IInternetBindInfo, GetBindString)
-              STD_METHOD GetBindString, :ptr IInternetBindInfoEx, :ULONG, :ptr LPOLESTR, :ULONG, :ptr ULONG
-              DECLSPEC_XFGVIRT(IInternetBindInfoEx, GetBindInfoEx)
-              STD_METHOD GetBindInfoEx, :ptr IInternetBindInfoEx, :ptr DWORD, :ptr BINDINFO, :ptr DWORD, :ptr DWORD
+              ??Interface equ <IInternetBindInfoEx>
+              QueryInterface PIInternetBindInfoExVtbl_QueryInterface ?
+              AddRef PIInternetBindInfoExVtbl_AddRef ?
+              Release PIInternetBindInfoExVtbl_Release ?
+              GetBindInfo PIInternetBindInfoExVtbl_GetBindInfo ?
+              GetBindString PIInternetBindInfoExVtbl_GetBindString ?
+              GetBindInfoEx PIInternetBindInfoExVtbl_GetBindInfoEx ?
               ??Interface equ <>
               END_INTERFACE
             IInternetBindInfoExVtbl ends
@@ -2038,7 +2262,6 @@ ifndef __urlmon_h__
           PD_FORCE_SWITCH equ 10000h
           PI_PREFERDEFAULTHANDLER equ 20000h
           _tagPI_FLAGS typedef PI_FLAGS
-
           PROTOCOLDATA struct
             grfFlags DWORD ?
             dwState DWORD ?
@@ -2056,27 +2279,36 @@ ifndef __urlmon_h__
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetProtocolRootVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolRoot, :REFIID, :ptr ptr
+            PIInternetProtocolRootVtbl_QueryInterface typedef ptr TYPE_IInternetProtocolRootVtbl_QueryInterface
+            TYPE_IInternetProtocolRootVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolRoot
+            PIInternetProtocolRootVtbl_AddRef typedef ptr TYPE_IInternetProtocolRootVtbl_AddRef
+            TYPE_IInternetProtocolRootVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolRoot
+            PIInternetProtocolRootVtbl_Release typedef ptr TYPE_IInternetProtocolRootVtbl_Release
+            TYPE_IInternetProtocolRootVtbl_Start typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolRoot, :LPCWSTR, :ptr IInternetProtocolSink, :ptr IInternetBindInfo, :DWORD, :HANDLE_PTR
+            PIInternetProtocolRootVtbl_Start typedef ptr TYPE_IInternetProtocolRootVtbl_Start
+            TYPE_IInternetProtocolRootVtbl_Continue typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolRoot, :ptr PROTOCOLDATA
+            PIInternetProtocolRootVtbl_Continue typedef ptr TYPE_IInternetProtocolRootVtbl_Continue
+            TYPE_IInternetProtocolRootVtbl_Abort typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolRoot, :HRESULT, :DWORD
+            PIInternetProtocolRootVtbl_Abort typedef ptr TYPE_IInternetProtocolRootVtbl_Abort
+            TYPE_IInternetProtocolRootVtbl_Terminate typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolRoot, :DWORD
+            PIInternetProtocolRootVtbl_Terminate typedef ptr TYPE_IInternetProtocolRootVtbl_Terminate
+            TYPE_IInternetProtocolRootVtbl_Suspend typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolRoot
+            PIInternetProtocolRootVtbl_Suspend typedef ptr TYPE_IInternetProtocolRootVtbl_Suspend
+            TYPE_IInternetProtocolRootVtbl_Resume typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolRoot
+            PIInternetProtocolRootVtbl_Resume typedef ptr TYPE_IInternetProtocolRootVtbl_Resume
             IInternetProtocolRootVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetProtocolRootVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternetProtocolRoot, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternetProtocolRoot
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternetProtocolRoot
-              DECLSPEC_XFGVIRT(IInternetProtocolRoot, Start)
-              STD_METHOD Start, :ptr IInternetProtocolRoot, :LPCWSTR, :ptr IInternetProtocolSink, :ptr IInternetBindInfo, :DWORD, :HANDLE_PTR
-              DECLSPEC_XFGVIRT(IInternetProtocolRoot, Continue)
-              STD_METHOD Continue, :ptr IInternetProtocolRoot, :ptr PROTOCOLDATA
-              DECLSPEC_XFGVIRT(IInternetProtocolRoot, Abort)
-              STD_METHOD Abort, :ptr IInternetProtocolRoot, :HRESULT, :DWORD
-              DECLSPEC_XFGVIRT(IInternetProtocolRoot, Terminate)
-              STD_METHOD Terminate, :ptr IInternetProtocolRoot, :DWORD
-              DECLSPEC_XFGVIRT(IInternetProtocolRoot, Suspend)
-              STD_METHOD Suspend, :ptr IInternetProtocolRoot
-              DECLSPEC_XFGVIRT(IInternetProtocolRoot, Resume)
-              STD_METHOD Resume, :ptr IInternetProtocolRoot
+              ??Interface equ <IInternetProtocolRoot>
+              QueryInterface PIInternetProtocolRootVtbl_QueryInterface ?
+              AddRef PIInternetProtocolRootVtbl_AddRef ?
+              Release PIInternetProtocolRootVtbl_Release ?
+              Start PIInternetProtocolRootVtbl_Start ?
+              Continue PIInternetProtocolRootVtbl_Continue ?
+              Abort PIInternetProtocolRootVtbl_Abort ?
+              Terminate PIInternetProtocolRootVtbl_Terminate ?
+              Suspend PIInternetProtocolRootVtbl_Suspend ?
+              Resume PIInternetProtocolRootVtbl_Resume ?
               ??Interface equ <>
               END_INTERFACE
             IInternetProtocolRootVtbl ends
@@ -2100,35 +2332,48 @@ ifndef __urlmon_h__
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetProtocolVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocol, :REFIID, :ptr ptr
+            PIInternetProtocolVtbl_QueryInterface typedef ptr TYPE_IInternetProtocolVtbl_QueryInterface
+            TYPE_IInternetProtocolVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocol
+            PIInternetProtocolVtbl_AddRef typedef ptr TYPE_IInternetProtocolVtbl_AddRef
+            TYPE_IInternetProtocolVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocol
+            PIInternetProtocolVtbl_Release typedef ptr TYPE_IInternetProtocolVtbl_Release
+            TYPE_IInternetProtocolVtbl_Start typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocol, :LPCWSTR, :ptr IInternetProtocolSink, :ptr IInternetBindInfo, :DWORD, :HANDLE_PTR
+            PIInternetProtocolVtbl_Start typedef ptr TYPE_IInternetProtocolVtbl_Start
+            TYPE_IInternetProtocolVtbl_Continue typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocol, :ptr PROTOCOLDATA
+            PIInternetProtocolVtbl_Continue typedef ptr TYPE_IInternetProtocolVtbl_Continue
+            TYPE_IInternetProtocolVtbl_Abort typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocol, :HRESULT, :DWORD
+            PIInternetProtocolVtbl_Abort typedef ptr TYPE_IInternetProtocolVtbl_Abort
+            TYPE_IInternetProtocolVtbl_Terminate typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocol, :DWORD
+            PIInternetProtocolVtbl_Terminate typedef ptr TYPE_IInternetProtocolVtbl_Terminate
+            TYPE_IInternetProtocolVtbl_Suspend typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocol
+            PIInternetProtocolVtbl_Suspend typedef ptr TYPE_IInternetProtocolVtbl_Suspend
+            TYPE_IInternetProtocolVtbl_Resume typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocol
+            PIInternetProtocolVtbl_Resume typedef ptr TYPE_IInternetProtocolVtbl_Resume
+            TYPE_IInternetProtocolVtbl_Read typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocol, :ptr, :ULONG, :ptr ULONG
+            PIInternetProtocolVtbl_Read typedef ptr TYPE_IInternetProtocolVtbl_Read
+            TYPE_IInternetProtocolVtbl_Seek typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocol, :LARGE_INTEGER, :DWORD, :ptr ULARGE_INTEGER
+            PIInternetProtocolVtbl_Seek typedef ptr TYPE_IInternetProtocolVtbl_Seek
+            TYPE_IInternetProtocolVtbl_LockRequest typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocol, :DWORD
+            PIInternetProtocolVtbl_LockRequest typedef ptr TYPE_IInternetProtocolVtbl_LockRequest
+            TYPE_IInternetProtocolVtbl_UnlockRequest typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocol
+            PIInternetProtocolVtbl_UnlockRequest typedef ptr TYPE_IInternetProtocolVtbl_UnlockRequest
             IInternetProtocolVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetProtocolVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternetProtocol, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternetProtocol
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternetProtocol
-              DECLSPEC_XFGVIRT(IInternetProtocolRoot, Start)
-              STD_METHOD Start, :ptr IInternetProtocol, :LPCWSTR, :ptr IInternetProtocolSink, :ptr IInternetBindInfo, :DWORD, :HANDLE_PTR
-              DECLSPEC_XFGVIRT(IInternetProtocolRoot, Continue)
-              STD_METHOD Continue, :ptr IInternetProtocol, :ptr PROTOCOLDATA
-              DECLSPEC_XFGVIRT(IInternetProtocolRoot, Abort)
-              STD_METHOD Abort, :ptr IInternetProtocol, :HRESULT, :DWORD
-              DECLSPEC_XFGVIRT(IInternetProtocolRoot, Terminate)
-              STD_METHOD Terminate, :ptr IInternetProtocol, :DWORD
-              DECLSPEC_XFGVIRT(IInternetProtocolRoot, Suspend)
-              STD_METHOD Suspend, :ptr IInternetProtocol
-              DECLSPEC_XFGVIRT(IInternetProtocolRoot, Resume)
-              STD_METHOD Resume, :ptr IInternetProtocol
-              DECLSPEC_XFGVIRT(IInternetProtocol, Read)
-              STD_METHOD Read, :ptr IInternetProtocol, :ptr, :ULONG, :ptr ULONG
-              DECLSPEC_XFGVIRT(IInternetProtocol, Seek)
-              STD_METHOD Seek, :ptr IInternetProtocol, :LARGE_INTEGER, :DWORD, :ptr ULARGE_INTEGER
-              DECLSPEC_XFGVIRT(IInternetProtocol, LockRequest)
-              STD_METHOD LockRequest, :ptr IInternetProtocol, :DWORD
-              DECLSPEC_XFGVIRT(IInternetProtocol, UnlockRequest)
-              STD_METHOD UnlockRequest, :ptr IInternetProtocol
+              ??Interface equ <IInternetProtocol>
+              QueryInterface PIInternetProtocolVtbl_QueryInterface ?
+              AddRef PIInternetProtocolVtbl_AddRef ?
+              Release PIInternetProtocolVtbl_Release ?
+              Start PIInternetProtocolVtbl_Start ?
+              Continue PIInternetProtocolVtbl_Continue ?
+              Abort PIInternetProtocolVtbl_Abort ?
+              Terminate PIInternetProtocolVtbl_Terminate ?
+              Suspend PIInternetProtocolVtbl_Suspend ?
+              Resume PIInternetProtocolVtbl_Resume ?
+              Read PIInternetProtocolVtbl_Read ?
+              Seek PIInternetProtocolVtbl_Seek ?
+              LockRequest PIInternetProtocolVtbl_LockRequest ?
+              UnlockRequest PIInternetProtocolVtbl_UnlockRequest ?
               ??Interface equ <>
               END_INTERFACE
             IInternetProtocolVtbl ends
@@ -2152,37 +2397,51 @@ ifndef __urlmon_h__
             if Defined(__cplusplus) and  not Defined(CINTERFACE)
               ;[...]
             else
+              TYPE_IInternetProtocolExVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolEx, :REFIID, :ptr ptr
+              PIInternetProtocolExVtbl_QueryInterface typedef ptr TYPE_IInternetProtocolExVtbl_QueryInterface
+              TYPE_IInternetProtocolExVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolEx
+              PIInternetProtocolExVtbl_AddRef typedef ptr TYPE_IInternetProtocolExVtbl_AddRef
+              TYPE_IInternetProtocolExVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolEx
+              PIInternetProtocolExVtbl_Release typedef ptr TYPE_IInternetProtocolExVtbl_Release
+              TYPE_IInternetProtocolExVtbl_Start typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolEx, :LPCWSTR, :ptr IInternetProtocolSink, :ptr IInternetBindInfo, :DWORD, :HANDLE_PTR
+              PIInternetProtocolExVtbl_Start typedef ptr TYPE_IInternetProtocolExVtbl_Start
+              TYPE_IInternetProtocolExVtbl_Continue typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolEx, :ptr PROTOCOLDATA
+              PIInternetProtocolExVtbl_Continue typedef ptr TYPE_IInternetProtocolExVtbl_Continue
+              TYPE_IInternetProtocolExVtbl_Abort typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolEx, :HRESULT, :DWORD
+              PIInternetProtocolExVtbl_Abort typedef ptr TYPE_IInternetProtocolExVtbl_Abort
+              TYPE_IInternetProtocolExVtbl_Terminate typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolEx, :DWORD
+              PIInternetProtocolExVtbl_Terminate typedef ptr TYPE_IInternetProtocolExVtbl_Terminate
+              TYPE_IInternetProtocolExVtbl_Suspend typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolEx
+              PIInternetProtocolExVtbl_Suspend typedef ptr TYPE_IInternetProtocolExVtbl_Suspend
+              TYPE_IInternetProtocolExVtbl_Resume typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolEx
+              PIInternetProtocolExVtbl_Resume typedef ptr TYPE_IInternetProtocolExVtbl_Resume
+              TYPE_IInternetProtocolExVtbl_Read typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolEx, :ptr, :ULONG, :ptr ULONG
+              PIInternetProtocolExVtbl_Read typedef ptr TYPE_IInternetProtocolExVtbl_Read
+              TYPE_IInternetProtocolExVtbl_Seek typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolEx, :LARGE_INTEGER, :DWORD, :ptr ULARGE_INTEGER
+              PIInternetProtocolExVtbl_Seek typedef ptr TYPE_IInternetProtocolExVtbl_Seek
+              TYPE_IInternetProtocolExVtbl_LockRequest typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolEx, :DWORD
+              PIInternetProtocolExVtbl_LockRequest typedef ptr TYPE_IInternetProtocolExVtbl_LockRequest
+              TYPE_IInternetProtocolExVtbl_UnlockRequest typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolEx
+              PIInternetProtocolExVtbl_UnlockRequest typedef ptr TYPE_IInternetProtocolExVtbl_UnlockRequest
+              TYPE_IInternetProtocolExVtbl_StartEx typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolEx, :ptr IUri, :ptr IInternetProtocolSink, :ptr IInternetBindInfo, :DWORD, :HANDLE_PTR
+              PIInternetProtocolExVtbl_StartEx typedef ptr TYPE_IInternetProtocolExVtbl_StartEx
               IInternetProtocolExVtbl struct
                 BEGIN_INTERFACE
-                ??Interface equ <IInternetProtocolExVtbl>
-                DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-                STD_METHOD QueryInterface, :ptr IInternetProtocolEx, :REFIID, :ptr ptr
-                DECLSPEC_XFGVIRT(IUnknown, AddRef)
-                STD_METHOD AddRef, :ptr IInternetProtocolEx
-                DECLSPEC_XFGVIRT(IUnknown, Release)
-                STD_METHOD Release, :ptr IInternetProtocolEx
-                DECLSPEC_XFGVIRT(IInternetProtocolRoot, Start)
-                STD_METHOD Start, :ptr IInternetProtocolEx, :LPCWSTR, :ptr IInternetProtocolSink, :ptr IInternetBindInfo, :DWORD, :HANDLE_PTR
-                DECLSPEC_XFGVIRT(IInternetProtocolRoot, Continue)
-                STD_METHOD Continue, :ptr IInternetProtocolEx, :ptr PROTOCOLDATA
-                DECLSPEC_XFGVIRT(IInternetProtocolRoot, Abort)
-                STD_METHOD Abort, :ptr IInternetProtocolEx, :HRESULT, :DWORD
-                DECLSPEC_XFGVIRT(IInternetProtocolRoot, Terminate)
-                STD_METHOD Terminate, :ptr IInternetProtocolEx, :DWORD
-                DECLSPEC_XFGVIRT(IInternetProtocolRoot, Suspend)
-                STD_METHOD Suspend, :ptr IInternetProtocolEx
-                DECLSPEC_XFGVIRT(IInternetProtocolRoot, Resume)
-                STD_METHOD Resume, :ptr IInternetProtocolEx
-                DECLSPEC_XFGVIRT(IInternetProtocol, Read)
-                STD_METHOD Read, :ptr IInternetProtocolEx, :ptr, :ULONG, :ptr ULONG
-                DECLSPEC_XFGVIRT(IInternetProtocol, Seek)
-                STD_METHOD Seek, :ptr IInternetProtocolEx, :LARGE_INTEGER, :DWORD, :ptr ULARGE_INTEGER
-                DECLSPEC_XFGVIRT(IInternetProtocol, LockRequest)
-                STD_METHOD LockRequest, :ptr IInternetProtocolEx, :DWORD
-                DECLSPEC_XFGVIRT(IInternetProtocol, UnlockRequest)
-                STD_METHOD UnlockRequest, :ptr IInternetProtocolEx
-                DECLSPEC_XFGVIRT(IInternetProtocolEx, StartEx)
-                STD_METHOD StartEx, :ptr IInternetProtocolEx, :ptr IUri, :ptr IInternetProtocolSink, :ptr IInternetBindInfo, :DWORD, :HANDLE_PTR
+                ??Interface equ <IInternetProtocolEx>
+                QueryInterface PIInternetProtocolExVtbl_QueryInterface ?
+                AddRef PIInternetProtocolExVtbl_AddRef ?
+                Release PIInternetProtocolExVtbl_Release ?
+                Start PIInternetProtocolExVtbl_Start ?
+                Continue PIInternetProtocolExVtbl_Continue ?
+                Abort PIInternetProtocolExVtbl_Abort ?
+                Terminate PIInternetProtocolExVtbl_Terminate ?
+                Suspend PIInternetProtocolExVtbl_Suspend ?
+                Resume PIInternetProtocolExVtbl_Resume ?
+                Read PIInternetProtocolExVtbl_Read ?
+                Seek PIInternetProtocolExVtbl_Seek ?
+                LockRequest PIInternetProtocolExVtbl_LockRequest ?
+                UnlockRequest PIInternetProtocolExVtbl_UnlockRequest ?
+                StartEx PIInternetProtocolExVtbl_StartEx ?
                 ??Interface equ <>
                 END_INTERFACE
               IInternetProtocolExVtbl ends
@@ -2207,23 +2466,30 @@ ifndef __urlmon_h__
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetProtocolSinkVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolSink, :REFIID, :ptr ptr
+            PIInternetProtocolSinkVtbl_QueryInterface typedef ptr TYPE_IInternetProtocolSinkVtbl_QueryInterface
+            TYPE_IInternetProtocolSinkVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolSink
+            PIInternetProtocolSinkVtbl_AddRef typedef ptr TYPE_IInternetProtocolSinkVtbl_AddRef
+            TYPE_IInternetProtocolSinkVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolSink
+            PIInternetProtocolSinkVtbl_Release typedef ptr TYPE_IInternetProtocolSinkVtbl_Release
+            TYPE_IInternetProtocolSinkVtbl_Switch typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolSink, :ptr PROTOCOLDATA
+            PIInternetProtocolSinkVtbl_Switch typedef ptr TYPE_IInternetProtocolSinkVtbl_Switch
+            TYPE_IInternetProtocolSinkVtbl_ReportProgress typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolSink, :ULONG, :LPCWSTR
+            PIInternetProtocolSinkVtbl_ReportProgress typedef ptr TYPE_IInternetProtocolSinkVtbl_ReportProgress
+            TYPE_IInternetProtocolSinkVtbl_ReportData typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolSink, :DWORD, :ULONG, :ULONG
+            PIInternetProtocolSinkVtbl_ReportData typedef ptr TYPE_IInternetProtocolSinkVtbl_ReportData
+            TYPE_IInternetProtocolSinkVtbl_ReportResult typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolSink, :HRESULT, :DWORD, :LPCWSTR
+            PIInternetProtocolSinkVtbl_ReportResult typedef ptr TYPE_IInternetProtocolSinkVtbl_ReportResult
             IInternetProtocolSinkVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetProtocolSinkVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternetProtocolSink, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternetProtocolSink
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternetProtocolSink
-              DECLSPEC_XFGVIRT(IInternetProtocolSink, Switch)
-              STD_METHOD Switch, :ptr IInternetProtocolSink, :ptr PROTOCOLDATA
-              DECLSPEC_XFGVIRT(IInternetProtocolSink, ReportProgress)
-              STD_METHOD ReportProgress, :ptr IInternetProtocolSink, :ULONG, :LPCWSTR
-              DECLSPEC_XFGVIRT(IInternetProtocolSink, ReportData)
-              STD_METHOD ReportData, :ptr IInternetProtocolSink, :DWORD, :ULONG, :ULONG
-              DECLSPEC_XFGVIRT(IInternetProtocolSink, ReportResult)
-              STD_METHOD ReportResult, :ptr IInternetProtocolSink, :HRESULT, :DWORD, :LPCWSTR
+              ??Interface equ <IInternetProtocolSink>
+              QueryInterface PIInternetProtocolSinkVtbl_QueryInterface ?
+              AddRef PIInternetProtocolSinkVtbl_AddRef ?
+              Release PIInternetProtocolSinkVtbl_Release ?
+              Switch PIInternetProtocolSinkVtbl_Switch ?
+              ReportProgress PIInternetProtocolSinkVtbl_ReportProgress ?
+              ReportData PIInternetProtocolSinkVtbl_ReportData ?
+              ReportResult PIInternetProtocolSinkVtbl_ReportResult ?
               ??Interface equ <>
               END_INTERFACE
             IInternetProtocolSinkVtbl ends
@@ -2247,21 +2513,27 @@ ifndef __urlmon_h__
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetProtocolSinkStackableVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolSinkStackable, :REFIID, :ptr ptr
+            PIInternetProtocolSinkStackableVtbl_QueryInterface typedef ptr TYPE_IInternetProtocolSinkStackableVtbl_QueryInterface
+            TYPE_IInternetProtocolSinkStackableVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolSinkStackable
+            PIInternetProtocolSinkStackableVtbl_AddRef typedef ptr TYPE_IInternetProtocolSinkStackableVtbl_AddRef
+            TYPE_IInternetProtocolSinkStackableVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolSinkStackable
+            PIInternetProtocolSinkStackableVtbl_Release typedef ptr TYPE_IInternetProtocolSinkStackableVtbl_Release
+            TYPE_IInternetProtocolSinkStackableVtbl_SwitchSink typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolSinkStackable, :ptr IInternetProtocolSink
+            PIInternetProtocolSinkStackableVtbl_SwitchSink typedef ptr TYPE_IInternetProtocolSinkStackableVtbl_SwitchSink
+            TYPE_IInternetProtocolSinkStackableVtbl_CommitSwitch typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolSinkStackable
+            PIInternetProtocolSinkStackableVtbl_CommitSwitch typedef ptr TYPE_IInternetProtocolSinkStackableVtbl_CommitSwitch
+            TYPE_IInternetProtocolSinkStackableVtbl_RollbackSwitch typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolSinkStackable
+            PIInternetProtocolSinkStackableVtbl_RollbackSwitch typedef ptr TYPE_IInternetProtocolSinkStackableVtbl_RollbackSwitch
             IInternetProtocolSinkStackableVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetProtocolSinkStackableVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternetProtocolSinkStackable, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternetProtocolSinkStackable
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternetProtocolSinkStackable
-              DECLSPEC_XFGVIRT(IInternetProtocolSinkStackable, SwitchSink)
-              STD_METHOD SwitchSink, :ptr IInternetProtocolSinkStackable, :ptr IInternetProtocolSink
-              DECLSPEC_XFGVIRT(IInternetProtocolSinkStackable, CommitSwitch)
-              STD_METHOD CommitSwitch, :ptr IInternetProtocolSinkStackable
-              DECLSPEC_XFGVIRT(IInternetProtocolSinkStackable, RollbackSwitch)
-              STD_METHOD RollbackSwitch, :ptr IInternetProtocolSinkStackable
+              ??Interface equ <IInternetProtocolSinkStackable>
+              QueryInterface PIInternetProtocolSinkStackableVtbl_QueryInterface ?
+              AddRef PIInternetProtocolSinkStackableVtbl_AddRef ?
+              Release PIInternetProtocolSinkStackableVtbl_Release ?
+              SwitchSink PIInternetProtocolSinkStackableVtbl_SwitchSink ?
+              CommitSwitch PIInternetProtocolSinkStackableVtbl_CommitSwitch ?
+              RollbackSwitch PIInternetProtocolSinkStackableVtbl_RollbackSwitch ?
               ??Interface equ <>
               END_INTERFACE
             IInternetProtocolSinkStackableVtbl ends
@@ -2285,34 +2557,43 @@ ifndef __urlmon_h__
           OIBDG_APARTMENTTHREADED equ 100h
           OIBDG_DATAONLY equ 1000h
           _tagOIBDG_FLAGS typedef OIBDG_FLAGS
-
           externdef IID_IInternetSession:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetSessionVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetSession, :REFIID, :ptr ptr
+            PIInternetSessionVtbl_QueryInterface typedef ptr TYPE_IInternetSessionVtbl_QueryInterface
+            TYPE_IInternetSessionVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetSession
+            PIInternetSessionVtbl_AddRef typedef ptr TYPE_IInternetSessionVtbl_AddRef
+            TYPE_IInternetSessionVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetSession
+            PIInternetSessionVtbl_Release typedef ptr TYPE_IInternetSessionVtbl_Release
+            TYPE_IInternetSessionVtbl_RegisterNameSpace typedef proto WIN_STD_CALL_CONV :ptr IInternetSession, :ptr IClassFactory, :REFCLSID, :LPCWSTR, :ULONG, :ptr LPCWSTR, :DWORD
+            PIInternetSessionVtbl_RegisterNameSpace typedef ptr TYPE_IInternetSessionVtbl_RegisterNameSpace
+            TYPE_IInternetSessionVtbl_UnregisterNameSpace typedef proto WIN_STD_CALL_CONV :ptr IInternetSession, :ptr IClassFactory, :LPCWSTR
+            PIInternetSessionVtbl_UnregisterNameSpace typedef ptr TYPE_IInternetSessionVtbl_UnregisterNameSpace
+            TYPE_IInternetSessionVtbl_RegisterMimeFilter typedef proto WIN_STD_CALL_CONV :ptr IInternetSession, :ptr IClassFactory, :REFCLSID, :LPCWSTR
+            PIInternetSessionVtbl_RegisterMimeFilter typedef ptr TYPE_IInternetSessionVtbl_RegisterMimeFilter
+            TYPE_IInternetSessionVtbl_UnregisterMimeFilter typedef proto WIN_STD_CALL_CONV :ptr IInternetSession, :ptr IClassFactory, :LPCWSTR
+            PIInternetSessionVtbl_UnregisterMimeFilter typedef ptr TYPE_IInternetSessionVtbl_UnregisterMimeFilter
+            TYPE_IInternetSessionVtbl_CreateBinding typedef proto WIN_STD_CALL_CONV :ptr IInternetSession, :LPBC, :LPCWSTR, :ptr IUnknown, :ptr ptr IUnknown, :ptr ptr IInternetProtocol, :DWORD
+            PIInternetSessionVtbl_CreateBinding typedef ptr TYPE_IInternetSessionVtbl_CreateBinding
+            TYPE_IInternetSessionVtbl_SetSessionOption typedef proto WIN_STD_CALL_CONV :ptr IInternetSession, :DWORD, :LPVOID, :DWORD, :DWORD
+            PIInternetSessionVtbl_SetSessionOption typedef ptr TYPE_IInternetSessionVtbl_SetSessionOption
+            TYPE_IInternetSessionVtbl_GetSessionOption typedef proto WIN_STD_CALL_CONV :ptr IInternetSession, :DWORD, :LPVOID, :ptr DWORD, :DWORD
+            PIInternetSessionVtbl_GetSessionOption typedef ptr TYPE_IInternetSessionVtbl_GetSessionOption
             IInternetSessionVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetSessionVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternetSession, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternetSession
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternetSession
-              DECLSPEC_XFGVIRT(IInternetSession, RegisterNameSpace)
-              STD_METHOD RegisterNameSpace, :ptr IInternetSession, :ptr IClassFactory, :REFCLSID, :LPCWSTR, :ULONG, :ptr LPCWSTR, :DWORD
-              DECLSPEC_XFGVIRT(IInternetSession, UnregisterNameSpace)
-              STD_METHOD UnregisterNameSpace, :ptr IInternetSession, :ptr IClassFactory, :LPCWSTR
-              DECLSPEC_XFGVIRT(IInternetSession, RegisterMimeFilter)
-              STD_METHOD RegisterMimeFilter, :ptr IInternetSession, :ptr IClassFactory, :REFCLSID, :LPCWSTR
-              DECLSPEC_XFGVIRT(IInternetSession, UnregisterMimeFilter)
-              STD_METHOD UnregisterMimeFilter, :ptr IInternetSession, :ptr IClassFactory, :LPCWSTR
-              DECLSPEC_XFGVIRT(IInternetSession, CreateBinding)
-              STD_METHOD CreateBinding, :ptr IInternetSession, :LPBC, :LPCWSTR, :ptr IUnknown, :ptr ptr IUnknown, :ptr ptr IInternetProtocol, :DWORD
-              DECLSPEC_XFGVIRT(IInternetSession, SetSessionOption)
-              STD_METHOD SetSessionOption, :ptr IInternetSession, :DWORD, :LPVOID, :DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IInternetSession, GetSessionOption)
-              STD_METHOD GetSessionOption, :ptr IInternetSession, :DWORD, :LPVOID, :ptr DWORD, :DWORD
+              ??Interface equ <IInternetSession>
+              QueryInterface PIInternetSessionVtbl_QueryInterface ?
+              AddRef PIInternetSessionVtbl_AddRef ?
+              Release PIInternetSessionVtbl_Release ?
+              RegisterNameSpace PIInternetSessionVtbl_RegisterNameSpace ?
+              UnregisterNameSpace PIInternetSessionVtbl_UnregisterNameSpace ?
+              RegisterMimeFilter PIInternetSessionVtbl_RegisterMimeFilter ?
+              UnregisterMimeFilter PIInternetSessionVtbl_UnregisterMimeFilter ?
+              CreateBinding PIInternetSessionVtbl_CreateBinding ?
+              SetSessionOption PIInternetSessionVtbl_SetSessionOption ?
+              GetSessionOption PIInternetSessionVtbl_GetSessionOption ?
               ??Interface equ <>
               END_INTERFACE
             IInternetSessionVtbl ends
@@ -2336,19 +2617,24 @@ ifndef __urlmon_h__
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetThreadSwitchVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetThreadSwitch, :REFIID, :ptr ptr
+            PIInternetThreadSwitchVtbl_QueryInterface typedef ptr TYPE_IInternetThreadSwitchVtbl_QueryInterface
+            TYPE_IInternetThreadSwitchVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetThreadSwitch
+            PIInternetThreadSwitchVtbl_AddRef typedef ptr TYPE_IInternetThreadSwitchVtbl_AddRef
+            TYPE_IInternetThreadSwitchVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetThreadSwitch
+            PIInternetThreadSwitchVtbl_Release typedef ptr TYPE_IInternetThreadSwitchVtbl_Release
+            TYPE_IInternetThreadSwitchVtbl_repare typedef proto WIN_STD_CALL_CONV :ptr IInternetThreadSwitch
+            PIInternetThreadSwitchVtbl_repare typedef ptr TYPE_IInternetThreadSwitchVtbl_repare
+            TYPE_IInternetThreadSwitchVtbl_Continue typedef proto WIN_STD_CALL_CONV :ptr IInternetThreadSwitch
+            PIInternetThreadSwitchVtbl_Continue typedef ptr TYPE_IInternetThreadSwitchVtbl_Continue
             IInternetThreadSwitchVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetThreadSwitchVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternetThreadSwitch, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternetThreadSwitch
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternetThreadSwitch
-              DECLSPEC_XFGVIRT(IInternetThreadSwitch, Prepare)
-              STD_METHOD Prepare, :ptr IInternetThreadSwitch
-              DECLSPEC_XFGVIRT(IInternetThreadSwitch, Continue)
-              STD_METHOD Continue, :ptr IInternetThreadSwitch
+              ??Interface equ <IInternetThreadSwitch>
+              QueryInterface PIInternetThreadSwitchVtbl_QueryInterface ?
+              AddRef PIInternetThreadSwitchVtbl_AddRef ?
+              Release PIInternetThreadSwitchVtbl_Release ?
+              repare PIInternetThreadSwitchVtbl_repare ?
+              Continue PIInternetThreadSwitchVtbl_Continue ?
               ??Interface equ <>
               END_INTERFACE
             IInternetThreadSwitchVtbl ends
@@ -2372,19 +2658,24 @@ ifndef __urlmon_h__
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetPriorityVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetPriority, :REFIID, :ptr ptr
+            PIInternetPriorityVtbl_QueryInterface typedef ptr TYPE_IInternetPriorityVtbl_QueryInterface
+            TYPE_IInternetPriorityVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetPriority
+            PIInternetPriorityVtbl_AddRef typedef ptr TYPE_IInternetPriorityVtbl_AddRef
+            TYPE_IInternetPriorityVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetPriority
+            PIInternetPriorityVtbl_Release typedef ptr TYPE_IInternetPriorityVtbl_Release
+            TYPE_IInternetPriorityVtbl_SetPriority typedef proto WIN_STD_CALL_CONV :ptr IInternetPriority, :LONG
+            PIInternetPriorityVtbl_SetPriority typedef ptr TYPE_IInternetPriorityVtbl_SetPriority
+            TYPE_IInternetPriorityVtbl_GetPriority typedef proto WIN_STD_CALL_CONV :ptr IInternetPriority, :ptr LONG
+            PIInternetPriorityVtbl_GetPriority typedef ptr TYPE_IInternetPriorityVtbl_GetPriority
             IInternetPriorityVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetPriorityVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternetPriority, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternetPriority
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternetPriority
-              DECLSPEC_XFGVIRT(IInternetPriority, SetPriority)
-              STD_METHOD SetPriority, :ptr IInternetPriority, :LONG
-              DECLSPEC_XFGVIRT(IInternetPriority, GetPriority)
-              STD_METHOD GetPriority, :ptr IInternetPriority, :ptr LONG
+              ??Interface equ <IInternetPriority>
+              QueryInterface PIInternetPriorityVtbl_QueryInterface ?
+              AddRef PIInternetPriorityVtbl_AddRef ?
+              Release PIInternetPriorityVtbl_Release ?
+              SetPriority PIInternetPriorityVtbl_SetPriority ?
+              GetPriority PIInternetPriorityVtbl_GetPriority ?
               ??Interface equ <>
               END_INTERFACE
             IInternetPriorityVtbl ends
@@ -2406,71 +2697,75 @@ ifndef __urlmon_h__
           LPIINTERNETPROTOCOLINFO typedef ptr IInternetProtocolInfo
           PARSEACTION typedef SDWORD
           PARSE_CANONICALIZE equ 1
-          PARSE_FRIENDLY equ 1
-          PARSE_SECURITY_URL equ 2
-          PARSE_ROOTDOCUMENT equ 3
-          PARSE_DOCUMENT equ 4
-          PARSE_ANCHOR equ 5
-          PARSE_ENCODE_IS_UNESCAPE equ 6
-          PARSE_DECODE_IS_ESCAPE equ 7
-          PARSE_PATH_FROM_URL equ 8
-          PARSE_URL_FROM_PATH equ 9
-          PARSE_MIME equ 10
-          PARSE_SERVER equ 11
-          PARSE_SCHEMA equ 12
-          PARSE_SITE equ 13
-          PARSE_DOMAIN equ 14
-          PARSE_LOCATION equ 15
-          PARSE_SECURITY_DOMAIN equ 16
-          PARSE_ESCAPE equ 17
-          PARSE_UNESCAPE equ 18
+          PARSE_FRIENDLY equ
+          PARSE_SECURITY_URL equ
+          PARSE_ROOTDOCUMENT equ
+          PARSE_DOCUMENT equ
+          PARSE_ANCHOR equ
+          PARSE_ENCODE_IS_UNESCAPE equ
+          PARSE_DECODE_IS_ESCAPE equ
+          PARSE_PATH_FROM_URL equ
+          PARSE_URL_FROM_PATH equ
+          PARSE_MIME equ
+          PARSE_SERVER equ
+          PARSE_SCHEMA equ
+          PARSE_SITE equ
+          PARSE_DOMAIN equ
+          PARSE_LOCATION equ
+          PARSE_SECURITY_DOMAIN equ
+          PARSE_ESCAPE equ
+          PARSE_UNESCAPE equ
           _tagPARSEACTION typedef PARSEACTION
-
           PSUACTION typedef SDWORD
           PSU_DEFAULT equ 1
           PSU_SECURITY_URL_ONLY equ
           _tagPSUACTION typedef PSUACTION
-
           QUERYOPTION typedef SDWORD
           QUERY_EXPIRATION_DATE equ 1
-          QUERY_TIME_OF_LAST_CHANGE equ 2
-          QUERY_CONTENT_ENCODING equ 3
-          QUERY_CONTENT_TYPE equ 4
-          QUERY_REFRESH equ 5
-          QUERY_RECOMBINE equ 6
-          QUERY_CAN_NAVIGATE equ 7
-          QUERY_USES_NETWORK equ 8
-          QUERY_IS_CACHED equ 9
-          QUERY_IS_INSTALLEDENTRY equ 10
-          QUERY_IS_CACHED_OR_MAPPED equ 11
-          QUERY_USES_CACHE equ 12
-          QUERY_IS_SECURE equ 13
-          QUERY_IS_SAFE equ 14
-          QUERY_USES_HISTORYFOLDER equ 15
-          QUERY_IS_CACHED_AND_USABLE_OFFLINE equ 16
+          QUERY_TIME_OF_LAST_CHANGE equ
+          QUERY_CONTENT_ENCODING equ
+          QUERY_CONTENT_TYPE equ
+          QUERY_REFRESH equ
+          QUERY_RECOMBINE equ
+          QUERY_CAN_NAVIGATE equ
+          QUERY_USES_NETWORK equ
+          QUERY_IS_CACHED equ
+          QUERY_IS_INSTALLEDENTRY equ
+          QUERY_IS_CACHED_OR_MAPPED equ
+          QUERY_USES_CACHE equ
+          QUERY_IS_SECURE equ
+          QUERY_IS_SAFE equ
+          QUERY_USES_HISTORYFOLDER equ
+          QUERY_IS_CACHED_AND_USABLE_OFFLINE equ
           _tagQUERYOPTION typedef QUERYOPTION
-
           externdef IID_IInternetProtocolInfo:IID
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetProtocolInfoVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolInfo, :REFIID, :ptr ptr
+            PIInternetProtocolInfoVtbl_QueryInterface typedef ptr TYPE_IInternetProtocolInfoVtbl_QueryInterface
+            TYPE_IInternetProtocolInfoVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolInfo
+            PIInternetProtocolInfoVtbl_AddRef typedef ptr TYPE_IInternetProtocolInfoVtbl_AddRef
+            TYPE_IInternetProtocolInfoVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolInfo
+            PIInternetProtocolInfoVtbl_Release typedef ptr TYPE_IInternetProtocolInfoVtbl_Release
+            TYPE_IInternetProtocolInfoVtbl_arseUrl typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolInfo, :LPCWSTR, :PARSEACTION, :DWORD, :LPWSTR, :DWORD, :ptr DWORD, :DWORD
+            PIInternetProtocolInfoVtbl_arseUrl typedef ptr TYPE_IInternetProtocolInfoVtbl_arseUrl
+            TYPE_IInternetProtocolInfoVtbl_CombineUrl typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolInfo, :LPCWSTR, :LPCWSTR, :DWORD, :LPWSTR, :DWORD, :ptr DWORD, :DWORD
+            PIInternetProtocolInfoVtbl_CombineUrl typedef ptr TYPE_IInternetProtocolInfoVtbl_CombineUrl
+            TYPE_IInternetProtocolInfoVtbl_CompareUrl typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolInfo, :LPCWSTR, :LPCWSTR, :DWORD
+            PIInternetProtocolInfoVtbl_CompareUrl typedef ptr TYPE_IInternetProtocolInfoVtbl_CompareUrl
+            TYPE_IInternetProtocolInfoVtbl_QueryInfo typedef proto WIN_STD_CALL_CONV :ptr IInternetProtocolInfo, :LPCWSTR, :QUERYOPTION, :DWORD, :LPVOID, :DWORD, :ptr DWORD, :DWORD
+            PIInternetProtocolInfoVtbl_QueryInfo typedef ptr TYPE_IInternetProtocolInfoVtbl_QueryInfo
             IInternetProtocolInfoVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetProtocolInfoVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternetProtocolInfo, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternetProtocolInfo
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternetProtocolInfo
-              DECLSPEC_XFGVIRT(IInternetProtocolInfo, ParseUrl)
-              STD_METHOD ParseUrl, :ptr IInternetProtocolInfo, :LPCWSTR, :PARSEACTION, :DWORD, :LPWSTR, :DWORD, :ptr DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IInternetProtocolInfo, CombineUrl)
-              STD_METHOD CombineUrl, :ptr IInternetProtocolInfo, :LPCWSTR, :LPCWSTR, :DWORD, :LPWSTR, :DWORD, :ptr DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IInternetProtocolInfo, CompareUrl)
-              STD_METHOD CompareUrl, :ptr IInternetProtocolInfo, :LPCWSTR, :LPCWSTR, :DWORD
-              DECLSPEC_XFGVIRT(IInternetProtocolInfo, QueryInfo)
-              STD_METHOD QueryInfo, :ptr IInternetProtocolInfo, :LPCWSTR, :QUERYOPTION, :DWORD, :LPVOID, :DWORD, :ptr DWORD, :DWORD
+              ??Interface equ <IInternetProtocolInfo>
+              QueryInterface PIInternetProtocolInfoVtbl_QueryInterface ?
+              AddRef PIInternetProtocolInfoVtbl_AddRef ?
+              Release PIInternetProtocolInfoVtbl_Release ?
+              arseUrl PIInternetProtocolInfoVtbl_arseUrl ?
+              CombineUrl PIInternetProtocolInfoVtbl_CombineUrl ?
+              CompareUrl PIInternetProtocolInfoVtbl_CompareUrl ?
+              QueryInfo PIInternetProtocolInfoVtbl_QueryInfo ?
               ??Interface equ <>
               END_INTERFACE
             IInternetProtocolInfoVtbl ends
@@ -2552,36 +2847,35 @@ ifndef __urlmon_h__
           _INTERNETFEATURELIST_DEFINED equ <>
           INTERNETFEATURELIST typedef SDWORD
           FEATURE_OBJECT_CACHING equ 0
-          FEATURE_ZONE_ELEVATION equ 1
-          FEATURE_MIME_HANDLING equ 2
-          FEATURE_MIME_SNIFFING equ 3
-          FEATURE_WINDOW_RESTRICTIONS equ 4
-          FEATURE_WEBOC_POPUPMANAGEMENT equ 5
-          FEATURE_BEHAVIORS equ 6
-          FEATURE_DISABLE_MK_PROTOCOL equ 7
-          FEATURE_LOCALMACHINE_LOCKDOWN equ 8
-          FEATURE_SECURITYBAND equ 9
-          FEATURE_RESTRICT_ACTIVEXINSTALL equ 10
-          FEATURE_VALIDATE_NAVIGATE_URL equ 11
-          FEATURE_RESTRICT_FILEDOWNLOAD equ 12
-          FEATURE_ADDON_MANAGEMENT equ 13
-          FEATURE_PROTOCOL_LOCKDOWN equ 14
-          FEATURE_HTTP_USERNAME_PASSWORD_DISABLE equ 15
-          FEATURE_SAFE_BINDTOOBJECT equ 16
-          FEATURE_UNC_SAVEDFILECHECK equ 17
-          FEATURE_GET_URL_DOM_FILEPATH_UNENCODED equ 18
-          FEATURE_TABBED_BROWSING equ 19
-          FEATURE_SSLUX equ 20
-          FEATURE_DISABLE_NAVIGATION_SOUNDS equ 21
-          FEATURE_DISABLE_LEGACY_COMPRESSION equ 22
-          FEATURE_FORCE_ADDR_AND_STATUS equ 23
-          FEATURE_XMLHTTP equ 24
-          FEATURE_DISABLE_TELNET_PROTOCOL equ 25
-          FEATURE_FEEDS equ 26
-          FEATURE_BLOCK_INPUT_PROMPTS equ 27
-          FEATURE_ENTRY_COUNT equ 28
+          FEATURE_ZONE_ELEVATION equ
+          FEATURE_MIME_HANDLING equ
+          FEATURE_MIME_SNIFFING equ
+          FEATURE_WINDOW_RESTRICTIONS equ
+          FEATURE_WEBOC_POPUPMANAGEMENT equ
+          FEATURE_BEHAVIORS equ
+          FEATURE_DISABLE_MK_PROTOCOL equ
+          FEATURE_LOCALMACHINE_LOCKDOWN equ
+          FEATURE_SECURITYBAND equ
+          FEATURE_RESTRICT_ACTIVEXINSTALL equ
+          FEATURE_VALIDATE_NAVIGATE_URL equ
+          FEATURE_RESTRICT_FILEDOWNLOAD equ
+          FEATURE_ADDON_MANAGEMENT equ
+          FEATURE_PROTOCOL_LOCKDOWN equ
+          FEATURE_HTTP_USERNAME_PASSWORD_DISABLE equ
+          FEATURE_SAFE_BINDTOOBJECT equ
+          FEATURE_UNC_SAVEDFILECHECK equ
+          FEATURE_GET_URL_DOM_FILEPATH_UNENCODED equ
+          FEATURE_TABBED_BROWSING equ
+          FEATURE_SSLUX equ
+          FEATURE_DISABLE_NAVIGATION_SOUNDS equ
+          FEATURE_DISABLE_LEGACY_COMPRESSION equ
+          FEATURE_FORCE_ADDR_AND_STATUS equ
+          FEATURE_XMLHTTP equ
+          FEATURE_DISABLE_TELNET_PROTOCOL equ
+          FEATURE_FEEDS equ
+          FEATURE_BLOCK_INPUT_PROMPTS equ
+          FEATURE_ENTRY_COUNT equ
           _tagINTERNETFEATURELIST typedef INTERNETFEATURELIST
-
           SET_FEATURE_ON_THREAD equ 00000001h
           SET_FEATURE_ON_PROCESS equ 00000002h
           SET_FEATURE_IN_REGISTRY equ 00000004h
@@ -2650,19 +2944,24 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IInternetSecurityMgrSiteVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityMgrSite, :REFIID, :ptr ptr
+          PIInternetSecurityMgrSiteVtbl_QueryInterface typedef ptr TYPE_IInternetSecurityMgrSiteVtbl_QueryInterface
+          TYPE_IInternetSecurityMgrSiteVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityMgrSite
+          PIInternetSecurityMgrSiteVtbl_AddRef typedef ptr TYPE_IInternetSecurityMgrSiteVtbl_AddRef
+          TYPE_IInternetSecurityMgrSiteVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityMgrSite
+          PIInternetSecurityMgrSiteVtbl_Release typedef ptr TYPE_IInternetSecurityMgrSiteVtbl_Release
+          TYPE_IInternetSecurityMgrSiteVtbl_GetWindow typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityMgrSite, :ptr HWND
+          PIInternetSecurityMgrSiteVtbl_GetWindow typedef ptr TYPE_IInternetSecurityMgrSiteVtbl_GetWindow
+          TYPE_IInternetSecurityMgrSiteVtbl_EnableModeless typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityMgrSite, :BOOL
+          PIInternetSecurityMgrSiteVtbl_EnableModeless typedef ptr TYPE_IInternetSecurityMgrSiteVtbl_EnableModeless
           IInternetSecurityMgrSiteVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IInternetSecurityMgrSiteVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IInternetSecurityMgrSite, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IInternetSecurityMgrSite
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IInternetSecurityMgrSite
-            DECLSPEC_XFGVIRT(IInternetSecurityMgrSite, GetWindow)
-            STD_METHOD GetWindow, :ptr IInternetSecurityMgrSite, :ptr HWND
-            DECLSPEC_XFGVIRT(IInternetSecurityMgrSite, EnableModeless)
-            STD_METHOD EnableModeless, :ptr IInternetSecurityMgrSite, :BOOL
+            ??Interface equ <IInternetSecurityMgrSite>
+            QueryInterface PIInternetSecurityMgrSiteVtbl_QueryInterface ?
+            AddRef PIInternetSecurityMgrSiteVtbl_AddRef ?
+            Release PIInternetSecurityMgrSiteVtbl_Release ?
+            GetWindow PIInternetSecurityMgrSiteVtbl_GetWindow ?
+            EnableModeless PIInternetSecurityMgrSiteVtbl_EnableModeless ?
             ??Interface equ <>
             END_INTERFACE
           IInternetSecurityMgrSiteVtbl ends
@@ -2715,46 +3014,54 @@ ifndef __urlmon_h__
         PUAF_NOUIIFLOCKED equ 100000h
         PUAF_DRAGPROTOCOLCHECK equ 200000h
         __MIDL_IInternetSecurityManager_0001 typedef PUAF
-
         PUAFOUT typedef SDWORD
         PUAFOUT_DEFAULT equ 0
         PUAFOUT_ISLOCKZONEPOLICY equ 1h
         __MIDL_IInternetSecurityManager_0002 typedef PUAFOUT
-
         SZM_FLAGS typedef SDWORD
         SZM_CREATE equ 0
         SZM_DELETE equ 1h
         __MIDL_IInternetSecurityManager_0003 typedef SZM_FLAGS
-
         externdef IID_IInternetSecurityManager:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IInternetSecurityManagerVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManager, :REFIID, :ptr ptr
+          PIInternetSecurityManagerVtbl_QueryInterface typedef ptr TYPE_IInternetSecurityManagerVtbl_QueryInterface
+          TYPE_IInternetSecurityManagerVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManager
+          PIInternetSecurityManagerVtbl_AddRef typedef ptr TYPE_IInternetSecurityManagerVtbl_AddRef
+          TYPE_IInternetSecurityManagerVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManager
+          PIInternetSecurityManagerVtbl_Release typedef ptr TYPE_IInternetSecurityManagerVtbl_Release
+          TYPE_IInternetSecurityManagerVtbl_SetSecuritySite typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManager, :ptr IInternetSecurityMgrSite
+          PIInternetSecurityManagerVtbl_SetSecuritySite typedef ptr TYPE_IInternetSecurityManagerVtbl_SetSecuritySite
+          TYPE_IInternetSecurityManagerVtbl_GetSecuritySite typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManager, :ptr ptr IInternetSecurityMgrSite
+          PIInternetSecurityManagerVtbl_GetSecuritySite typedef ptr TYPE_IInternetSecurityManagerVtbl_GetSecuritySite
+          TYPE_IInternetSecurityManagerVtbl_MapUrlToZone typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManager, :LPCWSTR, :ptr DWORD, :DWORD
+          PIInternetSecurityManagerVtbl_MapUrlToZone typedef ptr TYPE_IInternetSecurityManagerVtbl_MapUrlToZone
+          TYPE_IInternetSecurityManagerVtbl_GetSecurityId typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManager, :LPCWSTR, :ptr BYTE, :ptr DWORD, :DWORD_PTR
+          PIInternetSecurityManagerVtbl_GetSecurityId typedef ptr TYPE_IInternetSecurityManagerVtbl_GetSecurityId
+          TYPE_IInternetSecurityManagerVtbl_rocessUrlAction typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManager, :LPCWSTR, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :DWORD
+          PIInternetSecurityManagerVtbl_rocessUrlAction typedef ptr TYPE_IInternetSecurityManagerVtbl_rocessUrlAction
+          TYPE_IInternetSecurityManagerVtbl_QueryCustomPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManager, :LPCWSTR, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :ptr BYTE, :DWORD, :DWORD
+          PIInternetSecurityManagerVtbl_QueryCustomPolicy typedef ptr TYPE_IInternetSecurityManagerVtbl_QueryCustomPolicy
+          TYPE_IInternetSecurityManagerVtbl_SetZoneMapping typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManager, :DWORD, :LPCWSTR, :DWORD
+          PIInternetSecurityManagerVtbl_SetZoneMapping typedef ptr TYPE_IInternetSecurityManagerVtbl_SetZoneMapping
+          TYPE_IInternetSecurityManagerVtbl_GetZoneMappings typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManager, :DWORD, :ptr ptr IEnumString, :DWORD
+          PIInternetSecurityManagerVtbl_GetZoneMappings typedef ptr TYPE_IInternetSecurityManagerVtbl_GetZoneMappings
           IInternetSecurityManagerVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IInternetSecurityManagerVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IInternetSecurityManager, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IInternetSecurityManager
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IInternetSecurityManager
-            DECLSPEC_XFGVIRT(IInternetSecurityManager, SetSecuritySite)
-            STD_METHOD SetSecuritySite, :ptr IInternetSecurityManager, :ptr IInternetSecurityMgrSite
-            DECLSPEC_XFGVIRT(IInternetSecurityManager, GetSecuritySite)
-            STD_METHOD GetSecuritySite, :ptr IInternetSecurityManager, :ptr ptr IInternetSecurityMgrSite
-            DECLSPEC_XFGVIRT(IInternetSecurityManager, MapUrlToZone)
-            STD_METHOD MapUrlToZone, :ptr IInternetSecurityManager, :LPCWSTR, :ptr DWORD, :DWORD
-            DECLSPEC_XFGVIRT(IInternetSecurityManager, GetSecurityId)
-            STD_METHOD GetSecurityId, :ptr IInternetSecurityManager, :LPCWSTR, :ptr BYTE, :ptr DWORD, :DWORD_PTR
-            DECLSPEC_XFGVIRT(IInternetSecurityManager, ProcessUrlAction)
-            STD_METHOD ProcessUrlAction, :ptr IInternetSecurityManager, :LPCWSTR, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :DWORD
-            DECLSPEC_XFGVIRT(IInternetSecurityManager, QueryCustomPolicy)
-            STD_METHOD QueryCustomPolicy, :ptr IInternetSecurityManager, :LPCWSTR, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :ptr BYTE, :DWORD, :DWORD
-            DECLSPEC_XFGVIRT(IInternetSecurityManager, SetZoneMapping)
-            STD_METHOD SetZoneMapping, :ptr IInternetSecurityManager, :DWORD, :LPCWSTR, :DWORD
-            DECLSPEC_XFGVIRT(IInternetSecurityManager, GetZoneMappings)
-            STD_METHOD GetZoneMappings, :ptr IInternetSecurityManager, :DWORD, :ptr ptr IEnumString, :DWORD
+            ??Interface equ <IInternetSecurityManager>
+            QueryInterface PIInternetSecurityManagerVtbl_QueryInterface ?
+            AddRef PIInternetSecurityManagerVtbl_AddRef ?
+            Release PIInternetSecurityManagerVtbl_Release ?
+            SetSecuritySite PIInternetSecurityManagerVtbl_SetSecuritySite ?
+            GetSecuritySite PIInternetSecurityManagerVtbl_GetSecuritySite ?
+            MapUrlToZone PIInternetSecurityManagerVtbl_MapUrlToZone ?
+            GetSecurityId PIInternetSecurityManagerVtbl_GetSecurityId ?
+            rocessUrlAction PIInternetSecurityManagerVtbl_rocessUrlAction ?
+            QueryCustomPolicy PIInternetSecurityManagerVtbl_QueryCustomPolicy ?
+            SetZoneMapping PIInternetSecurityManagerVtbl_SetZoneMapping ?
+            GetZoneMappings PIInternetSecurityManagerVtbl_GetZoneMappings ?
             ??Interface equ <>
             END_INTERFACE
           IInternetSecurityManagerVtbl ends
@@ -2778,33 +3085,45 @@ ifndef __urlmon_h__
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetSecurityManagerExVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx, :REFIID, :ptr ptr
+            PIInternetSecurityManagerExVtbl_QueryInterface typedef ptr TYPE_IInternetSecurityManagerExVtbl_QueryInterface
+            TYPE_IInternetSecurityManagerExVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx
+            PIInternetSecurityManagerExVtbl_AddRef typedef ptr TYPE_IInternetSecurityManagerExVtbl_AddRef
+            TYPE_IInternetSecurityManagerExVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx
+            PIInternetSecurityManagerExVtbl_Release typedef ptr TYPE_IInternetSecurityManagerExVtbl_Release
+            TYPE_IInternetSecurityManagerExVtbl_SetSecuritySite typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx, :ptr IInternetSecurityMgrSite
+            PIInternetSecurityManagerExVtbl_SetSecuritySite typedef ptr TYPE_IInternetSecurityManagerExVtbl_SetSecuritySite
+            TYPE_IInternetSecurityManagerExVtbl_GetSecuritySite typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx, :ptr ptr IInternetSecurityMgrSite
+            PIInternetSecurityManagerExVtbl_GetSecuritySite typedef ptr TYPE_IInternetSecurityManagerExVtbl_GetSecuritySite
+            TYPE_IInternetSecurityManagerExVtbl_MapUrlToZone typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx, :LPCWSTR, :ptr DWORD, :DWORD
+            PIInternetSecurityManagerExVtbl_MapUrlToZone typedef ptr TYPE_IInternetSecurityManagerExVtbl_MapUrlToZone
+            TYPE_IInternetSecurityManagerExVtbl_GetSecurityId typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx, :LPCWSTR, :ptr BYTE, :ptr DWORD, :DWORD_PTR
+            PIInternetSecurityManagerExVtbl_GetSecurityId typedef ptr TYPE_IInternetSecurityManagerExVtbl_GetSecurityId
+            TYPE_IInternetSecurityManagerExVtbl_rocessUrlAction typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx, :LPCWSTR, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :DWORD
+            PIInternetSecurityManagerExVtbl_rocessUrlAction typedef ptr TYPE_IInternetSecurityManagerExVtbl_rocessUrlAction
+            TYPE_IInternetSecurityManagerExVtbl_QueryCustomPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx, :LPCWSTR, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :ptr BYTE, :DWORD, :DWORD
+            PIInternetSecurityManagerExVtbl_QueryCustomPolicy typedef ptr TYPE_IInternetSecurityManagerExVtbl_QueryCustomPolicy
+            TYPE_IInternetSecurityManagerExVtbl_SetZoneMapping typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx, :DWORD, :LPCWSTR, :DWORD
+            PIInternetSecurityManagerExVtbl_SetZoneMapping typedef ptr TYPE_IInternetSecurityManagerExVtbl_SetZoneMapping
+            TYPE_IInternetSecurityManagerExVtbl_GetZoneMappings typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx, :DWORD, :ptr ptr IEnumString, :DWORD
+            PIInternetSecurityManagerExVtbl_GetZoneMappings typedef ptr TYPE_IInternetSecurityManagerExVtbl_GetZoneMappings
+            TYPE_IInternetSecurityManagerExVtbl_rocessUrlActionEx typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx, :LPCWSTR, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :DWORD, :ptr DWORD
+            PIInternetSecurityManagerExVtbl_rocessUrlActionEx typedef ptr TYPE_IInternetSecurityManagerExVtbl_rocessUrlActionEx
             IInternetSecurityManagerExVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetSecurityManagerExVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternetSecurityManagerEx, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternetSecurityManagerEx
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternetSecurityManagerEx
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, SetSecuritySite)
-              STD_METHOD SetSecuritySite, :ptr IInternetSecurityManagerEx, :ptr IInternetSecurityMgrSite
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, GetSecuritySite)
-              STD_METHOD GetSecuritySite, :ptr IInternetSecurityManagerEx, :ptr ptr IInternetSecurityMgrSite
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, MapUrlToZone)
-              STD_METHOD MapUrlToZone, :ptr IInternetSecurityManagerEx, :LPCWSTR, :ptr DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, GetSecurityId)
-              STD_METHOD GetSecurityId, :ptr IInternetSecurityManagerEx, :LPCWSTR, :ptr BYTE, :ptr DWORD, :DWORD_PTR
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, ProcessUrlAction)
-              STD_METHOD ProcessUrlAction, :ptr IInternetSecurityManagerEx, :LPCWSTR, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, QueryCustomPolicy)
-              STD_METHOD QueryCustomPolicy, :ptr IInternetSecurityManagerEx, :LPCWSTR, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :ptr BYTE, :DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, SetZoneMapping)
-              STD_METHOD SetZoneMapping, :ptr IInternetSecurityManagerEx, :DWORD, :LPCWSTR, :DWORD
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, GetZoneMappings)
-              STD_METHOD GetZoneMappings, :ptr IInternetSecurityManagerEx, :DWORD, :ptr ptr IEnumString, :DWORD
-              DECLSPEC_XFGVIRT(IInternetSecurityManagerEx, ProcessUrlActionEx)
-              STD_METHOD ProcessUrlActionEx, :ptr IInternetSecurityManagerEx, :LPCWSTR, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :DWORD, :ptr DWORD
+              ??Interface equ <IInternetSecurityManagerEx>
+              QueryInterface PIInternetSecurityManagerExVtbl_QueryInterface ?
+              AddRef PIInternetSecurityManagerExVtbl_AddRef ?
+              Release PIInternetSecurityManagerExVtbl_Release ?
+              SetSecuritySite PIInternetSecurityManagerExVtbl_SetSecuritySite ?
+              GetSecuritySite PIInternetSecurityManagerExVtbl_GetSecuritySite ?
+              MapUrlToZone PIInternetSecurityManagerExVtbl_MapUrlToZone ?
+              GetSecurityId PIInternetSecurityManagerExVtbl_GetSecurityId ?
+              rocessUrlAction PIInternetSecurityManagerExVtbl_rocessUrlAction ?
+              QueryCustomPolicy PIInternetSecurityManagerExVtbl_QueryCustomPolicy ?
+              SetZoneMapping PIInternetSecurityManagerExVtbl_SetZoneMapping ?
+              GetZoneMappings PIInternetSecurityManagerExVtbl_GetZoneMappings ?
+              rocessUrlActionEx PIInternetSecurityManagerExVtbl_rocessUrlActionEx ?
               ??Interface equ <>
               END_INTERFACE
             IInternetSecurityManagerExVtbl ends
@@ -2829,41 +3148,57 @@ ifndef __urlmon_h__
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetSecurityManagerEx2Vtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2, :REFIID, :ptr ptr
+            PIInternetSecurityManagerEx2Vtbl_QueryInterface typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_QueryInterface
+            TYPE_IInternetSecurityManagerEx2Vtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2
+            PIInternetSecurityManagerEx2Vtbl_AddRef typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_AddRef
+            TYPE_IInternetSecurityManagerEx2Vtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2
+            PIInternetSecurityManagerEx2Vtbl_Release typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_Release
+            TYPE_IInternetSecurityManagerEx2Vtbl_SetSecuritySite typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2, :ptr IInternetSecurityMgrSite
+            PIInternetSecurityManagerEx2Vtbl_SetSecuritySite typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_SetSecuritySite
+            TYPE_IInternetSecurityManagerEx2Vtbl_GetSecuritySite typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2, :ptr ptr IInternetSecurityMgrSite
+            PIInternetSecurityManagerEx2Vtbl_GetSecuritySite typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_GetSecuritySite
+            TYPE_IInternetSecurityManagerEx2Vtbl_MapUrlToZone typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2, :LPCWSTR, :ptr DWORD, :DWORD
+            PIInternetSecurityManagerEx2Vtbl_MapUrlToZone typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_MapUrlToZone
+            TYPE_IInternetSecurityManagerEx2Vtbl_GetSecurityId typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2, :LPCWSTR, :ptr BYTE, :ptr DWORD, :DWORD_PTR
+            PIInternetSecurityManagerEx2Vtbl_GetSecurityId typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_GetSecurityId
+            TYPE_IInternetSecurityManagerEx2Vtbl_rocessUrlAction typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2, :LPCWSTR, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :DWORD
+            PIInternetSecurityManagerEx2Vtbl_rocessUrlAction typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_rocessUrlAction
+            TYPE_IInternetSecurityManagerEx2Vtbl_QueryCustomPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2, :LPCWSTR, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :ptr BYTE, :DWORD, :DWORD
+            PIInternetSecurityManagerEx2Vtbl_QueryCustomPolicy typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_QueryCustomPolicy
+            TYPE_IInternetSecurityManagerEx2Vtbl_SetZoneMapping typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2, :DWORD, :LPCWSTR, :DWORD
+            PIInternetSecurityManagerEx2Vtbl_SetZoneMapping typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_SetZoneMapping
+            TYPE_IInternetSecurityManagerEx2Vtbl_GetZoneMappings typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2, :DWORD, :ptr ptr IEnumString, :DWORD
+            PIInternetSecurityManagerEx2Vtbl_GetZoneMappings typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_GetZoneMappings
+            TYPE_IInternetSecurityManagerEx2Vtbl_rocessUrlActionEx typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2, :LPCWSTR, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :DWORD, :ptr DWORD
+            PIInternetSecurityManagerEx2Vtbl_rocessUrlActionEx typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_rocessUrlActionEx
+            TYPE_IInternetSecurityManagerEx2Vtbl_MapUrlToZoneEx2 typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2, :ptr IUri, :ptr DWORD, :DWORD, :ptr LPWSTR, :ptr DWORD
+            PIInternetSecurityManagerEx2Vtbl_MapUrlToZoneEx2 typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_MapUrlToZoneEx2
+            TYPE_IInternetSecurityManagerEx2Vtbl_rocessUrlActionEx2 typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2, :ptr IUri, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :DWORD_PTR, :ptr DWORD
+            PIInternetSecurityManagerEx2Vtbl_rocessUrlActionEx2 typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_rocessUrlActionEx2
+            TYPE_IInternetSecurityManagerEx2Vtbl_GetSecurityIdEx2 typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2, :ptr IUri, :ptr BYTE, :ptr DWORD, :DWORD_PTR
+            PIInternetSecurityManagerEx2Vtbl_GetSecurityIdEx2 typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_GetSecurityIdEx2
+            TYPE_IInternetSecurityManagerEx2Vtbl_QueryCustomPolicyEx2 typedef proto WIN_STD_CALL_CONV :ptr IInternetSecurityManagerEx2, :ptr IUri, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :ptr BYTE, :DWORD, :DWORD_PTR
+            PIInternetSecurityManagerEx2Vtbl_QueryCustomPolicyEx2 typedef ptr TYPE_IInternetSecurityManagerEx2Vtbl_QueryCustomPolicyEx2
             IInternetSecurityManagerEx2Vtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetSecurityManagerEx2Vtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternetSecurityManagerEx2, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternetSecurityManagerEx2
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternetSecurityManagerEx2
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, SetSecuritySite)
-              STD_METHOD SetSecuritySite, :ptr IInternetSecurityManagerEx2, :ptr IInternetSecurityMgrSite
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, GetSecuritySite)
-              STD_METHOD GetSecuritySite, :ptr IInternetSecurityManagerEx2, :ptr ptr IInternetSecurityMgrSite
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, MapUrlToZone)
-              STD_METHOD MapUrlToZone, :ptr IInternetSecurityManagerEx2, :LPCWSTR, :ptr DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, GetSecurityId)
-              STD_METHOD GetSecurityId, :ptr IInternetSecurityManagerEx2, :LPCWSTR, :ptr BYTE, :ptr DWORD, :DWORD_PTR
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, ProcessUrlAction)
-              STD_METHOD ProcessUrlAction, :ptr IInternetSecurityManagerEx2, :LPCWSTR, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, QueryCustomPolicy)
-              STD_METHOD QueryCustomPolicy, :ptr IInternetSecurityManagerEx2, :LPCWSTR, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :ptr BYTE, :DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, SetZoneMapping)
-              STD_METHOD SetZoneMapping, :ptr IInternetSecurityManagerEx2, :DWORD, :LPCWSTR, :DWORD
-              DECLSPEC_XFGVIRT(IInternetSecurityManager, GetZoneMappings)
-              STD_METHOD GetZoneMappings, :ptr IInternetSecurityManagerEx2, :DWORD, :ptr ptr IEnumString, :DWORD
-              DECLSPEC_XFGVIRT(IInternetSecurityManagerEx, ProcessUrlActionEx)
-              STD_METHOD ProcessUrlActionEx, :ptr IInternetSecurityManagerEx2, :LPCWSTR, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :DWORD, :ptr DWORD
-              DECLSPEC_XFGVIRT(IInternetSecurityManagerEx2, MapUrlToZoneEx2)
-              STD_METHOD MapUrlToZoneEx2, :ptr IInternetSecurityManagerEx2, :ptr IUri, :ptr DWORD, :DWORD, :ptr LPWSTR, :ptr DWORD
-              DECLSPEC_XFGVIRT(IInternetSecurityManagerEx2, ProcessUrlActionEx2)
-              STD_METHOD ProcessUrlActionEx2, :ptr IInternetSecurityManagerEx2, :ptr IUri, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :DWORD_PTR, :ptr DWORD
-              DECLSPEC_XFGVIRT(IInternetSecurityManagerEx2, GetSecurityIdEx2)
-              STD_METHOD GetSecurityIdEx2, :ptr IInternetSecurityManagerEx2, :ptr IUri, :ptr BYTE, :ptr DWORD, :DWORD_PTR
-              DECLSPEC_XFGVIRT(IInternetSecurityManagerEx2, QueryCustomPolicyEx2)
-              STD_METHOD QueryCustomPolicyEx2, :ptr IInternetSecurityManagerEx2, :ptr IUri, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :ptr BYTE, :DWORD, :DWORD_PTR
+              ??Interface equ <IInternetSecurityManagerEx2>
+              QueryInterface PIInternetSecurityManagerEx2Vtbl_QueryInterface ?
+              AddRef PIInternetSecurityManagerEx2Vtbl_AddRef ?
+              Release PIInternetSecurityManagerEx2Vtbl_Release ?
+              SetSecuritySite PIInternetSecurityManagerEx2Vtbl_SetSecuritySite ?
+              GetSecuritySite PIInternetSecurityManagerEx2Vtbl_GetSecuritySite ?
+              MapUrlToZone PIInternetSecurityManagerEx2Vtbl_MapUrlToZone ?
+              GetSecurityId PIInternetSecurityManagerEx2Vtbl_GetSecurityId ?
+              rocessUrlAction PIInternetSecurityManagerEx2Vtbl_rocessUrlAction ?
+              QueryCustomPolicy PIInternetSecurityManagerEx2Vtbl_QueryCustomPolicy ?
+              SetZoneMapping PIInternetSecurityManagerEx2Vtbl_SetZoneMapping ?
+              GetZoneMappings PIInternetSecurityManagerEx2Vtbl_GetZoneMappings ?
+              rocessUrlActionEx PIInternetSecurityManagerEx2Vtbl_rocessUrlActionEx ?
+              MapUrlToZoneEx2 PIInternetSecurityManagerEx2Vtbl_MapUrlToZoneEx2 ?
+              rocessUrlActionEx2 PIInternetSecurityManagerEx2Vtbl_rocessUrlActionEx2 ?
+              GetSecurityIdEx2 PIInternetSecurityManagerEx2Vtbl_GetSecurityIdEx2 ?
+              QueryCustomPolicyEx2 PIInternetSecurityManagerEx2Vtbl_QueryCustomPolicyEx2 ?
               ??Interface equ <>
               END_INTERFACE
             IInternetSecurityManagerEx2Vtbl ends
@@ -2886,21 +3221,27 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IZoneIdentifierVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier, :REFIID, :ptr ptr
+          PIZoneIdentifierVtbl_QueryInterface typedef ptr TYPE_IZoneIdentifierVtbl_QueryInterface
+          TYPE_IZoneIdentifierVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier
+          PIZoneIdentifierVtbl_AddRef typedef ptr TYPE_IZoneIdentifierVtbl_AddRef
+          TYPE_IZoneIdentifierVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier
+          PIZoneIdentifierVtbl_Release typedef ptr TYPE_IZoneIdentifierVtbl_Release
+          TYPE_IZoneIdentifierVtbl_GetId typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier, :ptr DWORD
+          PIZoneIdentifierVtbl_GetId typedef ptr TYPE_IZoneIdentifierVtbl_GetId
+          TYPE_IZoneIdentifierVtbl_SetId typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier, :DWORD
+          PIZoneIdentifierVtbl_SetId typedef ptr TYPE_IZoneIdentifierVtbl_SetId
+          TYPE_IZoneIdentifierVtbl_Remove typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier
+          PIZoneIdentifierVtbl_Remove typedef ptr TYPE_IZoneIdentifierVtbl_Remove
           IZoneIdentifierVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IZoneIdentifierVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IZoneIdentifier, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IZoneIdentifier
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IZoneIdentifier
-            DECLSPEC_XFGVIRT(IZoneIdentifier, GetId)
-            STD_METHOD GetId, :ptr IZoneIdentifier, :ptr DWORD
-            DECLSPEC_XFGVIRT(IZoneIdentifier, SetId)
-            STD_METHOD SetId, :ptr IZoneIdentifier, :DWORD
-            DECLSPEC_XFGVIRT(IZoneIdentifier, Remove)
-            STD_METHOD Remove, :ptr IZoneIdentifier
+            ??Interface equ <IZoneIdentifier>
+            QueryInterface PIZoneIdentifierVtbl_QueryInterface ?
+            AddRef PIZoneIdentifierVtbl_AddRef ?
+            Release PIZoneIdentifierVtbl_Release ?
+            GetId PIZoneIdentifierVtbl_GetId ?
+            SetId PIZoneIdentifierVtbl_SetId ?
+            Remove PIZoneIdentifierVtbl_Remove ?
             ??Interface equ <>
             END_INTERFACE
           IZoneIdentifierVtbl ends
@@ -2922,33 +3263,45 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IZoneIdentifier2Vtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier2, :REFIID, :ptr ptr
+          PIZoneIdentifier2Vtbl_QueryInterface typedef ptr TYPE_IZoneIdentifier2Vtbl_QueryInterface
+          TYPE_IZoneIdentifier2Vtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier2
+          PIZoneIdentifier2Vtbl_AddRef typedef ptr TYPE_IZoneIdentifier2Vtbl_AddRef
+          TYPE_IZoneIdentifier2Vtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier2
+          PIZoneIdentifier2Vtbl_Release typedef ptr TYPE_IZoneIdentifier2Vtbl_Release
+          TYPE_IZoneIdentifier2Vtbl_GetId typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier2, :ptr DWORD
+          PIZoneIdentifier2Vtbl_GetId typedef ptr TYPE_IZoneIdentifier2Vtbl_GetId
+          TYPE_IZoneIdentifier2Vtbl_SetId typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier2, :DWORD
+          PIZoneIdentifier2Vtbl_SetId typedef ptr TYPE_IZoneIdentifier2Vtbl_SetId
+          TYPE_IZoneIdentifier2Vtbl_Remove typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier2
+          PIZoneIdentifier2Vtbl_Remove typedef ptr TYPE_IZoneIdentifier2Vtbl_Remove
+          TYPE_IZoneIdentifier2Vtbl_GetLastWriterPackageFamilyName typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier2, :ptr LPWSTR
+          PIZoneIdentifier2Vtbl_GetLastWriterPackageFamilyName typedef ptr TYPE_IZoneIdentifier2Vtbl_GetLastWriterPackageFamilyName
+          TYPE_IZoneIdentifier2Vtbl_SetLastWriterPackageFamilyName typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier2, :LPCWSTR
+          PIZoneIdentifier2Vtbl_SetLastWriterPackageFamilyName typedef ptr TYPE_IZoneIdentifier2Vtbl_SetLastWriterPackageFamilyName
+          TYPE_IZoneIdentifier2Vtbl_RemoveLastWriterPackageFamilyName typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier2
+          PIZoneIdentifier2Vtbl_RemoveLastWriterPackageFamilyName typedef ptr TYPE_IZoneIdentifier2Vtbl_RemoveLastWriterPackageFamilyName
+          TYPE_IZoneIdentifier2Vtbl_GetAppZoneId typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier2, :ptr DWORD
+          PIZoneIdentifier2Vtbl_GetAppZoneId typedef ptr TYPE_IZoneIdentifier2Vtbl_GetAppZoneId
+          TYPE_IZoneIdentifier2Vtbl_SetAppZoneId typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier2, :DWORD
+          PIZoneIdentifier2Vtbl_SetAppZoneId typedef ptr TYPE_IZoneIdentifier2Vtbl_SetAppZoneId
+          TYPE_IZoneIdentifier2Vtbl_RemoveAppZoneId typedef proto WIN_STD_CALL_CONV :ptr IZoneIdentifier2
+          PIZoneIdentifier2Vtbl_RemoveAppZoneId typedef ptr TYPE_IZoneIdentifier2Vtbl_RemoveAppZoneId
           IZoneIdentifier2Vtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IZoneIdentifier2Vtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IZoneIdentifier2, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IZoneIdentifier2
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IZoneIdentifier2
-            DECLSPEC_XFGVIRT(IZoneIdentifier, GetId)
-            STD_METHOD GetId, :ptr IZoneIdentifier2, :ptr DWORD
-            DECLSPEC_XFGVIRT(IZoneIdentifier, SetId)
-            STD_METHOD SetId, :ptr IZoneIdentifier2, :DWORD
-            DECLSPEC_XFGVIRT(IZoneIdentifier, Remove)
-            STD_METHOD Remove, :ptr IZoneIdentifier2
-            DECLSPEC_XFGVIRT(IZoneIdentifier2, GetLastWriterPackageFamilyName)
-            STD_METHOD GetLastWriterPackageFamilyName, :ptr IZoneIdentifier2, :ptr LPWSTR
-            DECLSPEC_XFGVIRT(IZoneIdentifier2, SetLastWriterPackageFamilyName)
-            STD_METHOD SetLastWriterPackageFamilyName, :ptr IZoneIdentifier2, :LPCWSTR
-            DECLSPEC_XFGVIRT(IZoneIdentifier2, RemoveLastWriterPackageFamilyName)
-            STD_METHOD RemoveLastWriterPackageFamilyName, :ptr IZoneIdentifier2
-            DECLSPEC_XFGVIRT(IZoneIdentifier2, GetAppZoneId)
-            STD_METHOD GetAppZoneId, :ptr IZoneIdentifier2, :ptr DWORD
-            DECLSPEC_XFGVIRT(IZoneIdentifier2, SetAppZoneId)
-            STD_METHOD SetAppZoneId, :ptr IZoneIdentifier2, :DWORD
-            DECLSPEC_XFGVIRT(IZoneIdentifier2, RemoveAppZoneId)
-            STD_METHOD RemoveAppZoneId, :ptr IZoneIdentifier2
+            ??Interface equ <IZoneIdentifier2>
+            QueryInterface PIZoneIdentifier2Vtbl_QueryInterface ?
+            AddRef PIZoneIdentifier2Vtbl_AddRef ?
+            Release PIZoneIdentifier2Vtbl_Release ?
+            GetId PIZoneIdentifier2Vtbl_GetId ?
+            SetId PIZoneIdentifier2Vtbl_SetId ?
+            Remove PIZoneIdentifier2Vtbl_Remove ?
+            GetLastWriterPackageFamilyName PIZoneIdentifier2Vtbl_GetLastWriterPackageFamilyName ?
+            SetLastWriterPackageFamilyName PIZoneIdentifier2Vtbl_SetLastWriterPackageFamilyName ?
+            RemoveLastWriterPackageFamilyName PIZoneIdentifier2Vtbl_RemoveLastWriterPackageFamilyName ?
+            GetAppZoneId PIZoneIdentifier2Vtbl_GetAppZoneId ?
+            SetAppZoneId PIZoneIdentifier2Vtbl_SetAppZoneId ?
+            RemoveAppZoneId PIZoneIdentifier2Vtbl_RemoveAppZoneId ?
             ??Interface equ <>
             END_INTERFACE
           IZoneIdentifier2Vtbl ends
@@ -2971,21 +3324,27 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IInternetHostSecurityManagerVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetHostSecurityManager, :REFIID, :ptr ptr
+          PIInternetHostSecurityManagerVtbl_QueryInterface typedef ptr TYPE_IInternetHostSecurityManagerVtbl_QueryInterface
+          TYPE_IInternetHostSecurityManagerVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetHostSecurityManager
+          PIInternetHostSecurityManagerVtbl_AddRef typedef ptr TYPE_IInternetHostSecurityManagerVtbl_AddRef
+          TYPE_IInternetHostSecurityManagerVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetHostSecurityManager
+          PIInternetHostSecurityManagerVtbl_Release typedef ptr TYPE_IInternetHostSecurityManagerVtbl_Release
+          TYPE_IInternetHostSecurityManagerVtbl_GetSecurityId typedef proto WIN_STD_CALL_CONV :ptr IInternetHostSecurityManager, :ptr BYTE, :ptr DWORD, :DWORD_PTR
+          PIInternetHostSecurityManagerVtbl_GetSecurityId typedef ptr TYPE_IInternetHostSecurityManagerVtbl_GetSecurityId
+          TYPE_IInternetHostSecurityManagerVtbl_rocessUrlAction typedef proto WIN_STD_CALL_CONV :ptr IInternetHostSecurityManager, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :DWORD
+          PIInternetHostSecurityManagerVtbl_rocessUrlAction typedef ptr TYPE_IInternetHostSecurityManagerVtbl_rocessUrlAction
+          TYPE_IInternetHostSecurityManagerVtbl_QueryCustomPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetHostSecurityManager, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :ptr BYTE, :DWORD, :DWORD
+          PIInternetHostSecurityManagerVtbl_QueryCustomPolicy typedef ptr TYPE_IInternetHostSecurityManagerVtbl_QueryCustomPolicy
           IInternetHostSecurityManagerVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IInternetHostSecurityManagerVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IInternetHostSecurityManager, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IInternetHostSecurityManager
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IInternetHostSecurityManager
-            DECLSPEC_XFGVIRT(IInternetHostSecurityManager, GetSecurityId)
-            STD_METHOD GetSecurityId, :ptr IInternetHostSecurityManager, :ptr BYTE, :ptr DWORD, :DWORD_PTR
-            DECLSPEC_XFGVIRT(IInternetHostSecurityManager, ProcessUrlAction)
-            STD_METHOD ProcessUrlAction, :ptr IInternetHostSecurityManager, :DWORD, :ptr BYTE, :DWORD, :ptr BYTE, :DWORD, :DWORD, :DWORD
-            DECLSPEC_XFGVIRT(IInternetHostSecurityManager, QueryCustomPolicy)
-            STD_METHOD QueryCustomPolicy, :ptr IInternetHostSecurityManager, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :ptr BYTE, :DWORD, :DWORD
+            ??Interface equ <IInternetHostSecurityManager>
+            QueryInterface PIInternetHostSecurityManagerVtbl_QueryInterface ?
+            AddRef PIInternetHostSecurityManagerVtbl_AddRef ?
+            Release PIInternetHostSecurityManagerVtbl_Release ?
+            GetSecurityId PIInternetHostSecurityManagerVtbl_GetSecurityId ?
+            rocessUrlAction PIInternetHostSecurityManagerVtbl_rocessUrlAction ?
+            QueryCustomPolicy PIInternetHostSecurityManagerVtbl_QueryCustomPolicy ?
             ??Interface equ <>
             END_INTERFACE
           IInternetHostSecurityManagerVtbl ends
@@ -3033,8 +3392,7 @@ ifndef __urlmon_h__
     URLACTION_SCRIPT_NAVIGATE equ 0000140Ah
     URLACTION_PLUGGABLE_PROTOCOL_XHR equ 0000140Bh
     URLACTION_ALLOW_VBSCRIPT_IE equ 0000140Ch
-    URLACTION_ALLOW_JSCRIPT_IE equ 0000140Dh
-    URLACTION_SCRIPT_CURR_MAX equ 0000140Dh
+    URLACTION_SCRIPT_CURR_MAX equ 0000140Ch
     URLACTION_SCRIPT_MAX equ 000015ffh
     URLACTION_HTML_MIN equ 00001600h
     URLACTION_HTML_SUBMIT_FORMS equ 00001601h
@@ -3196,15 +3554,14 @@ ifndef __urlmon_h__
         URLZONE_INVALID equ -1
         URLZONE_PREDEFINED_MIN equ 0
         URLZONE_LOCAL_MACHINE equ 0
-        URLZONE_INTRANET equ 1
-        URLZONE_TRUSTED equ 2
-        URLZONE_INTERNET equ 3
-        URLZONE_UNTRUSTED equ 4
+        URLZONE_INTRANET equ
+        URLZONE_TRUSTED equ
+        URLZONE_INTERNET equ
+        URLZONE_UNTRUSTED equ
         URLZONE_PREDEFINED_MAX equ 999
         URLZONE_USER_MIN equ 1000
         URLZONE_USER_MAX equ 10000
         tagURLZONE typedef URLZONE
-
         URLZONE_ESC_FLAG equ 100h
         URLTEMPLATE typedef SDWORD
         URLTEMPLATE_CUSTOM equ 0
@@ -3216,11 +3573,9 @@ ifndef __urlmon_h__
         URLTEMPLATE_HIGH equ 12000h
         URLTEMPLATE_PREDEFINED_MAX equ 20000h
         tagURLTEMPLATE typedef URLTEMPLATE
-
         __MIDL_IInternetZoneManager_0001 typedef SDWORD
         MAX_ZONE_PATH equ 260
         MAX_ZONE_DESCRIPTION equ 200
-
         ZAFLAGS typedef SDWORD
         ZAFLAGS_CUSTOM_EDIT equ 1h
         ZAFLAGS_ADD_SITES equ 2h
@@ -3235,7 +3590,6 @@ ifndef __urlmon_h__
         ZAFLAGS_VERIFY_TEMPLATE_SETTINGS equ 20000h
         ZAFLAGS_NO_CACHE equ 40000h
         __MIDL_IInternetZoneManager_0002 typedef ZAFLAGS
-
         ZONEATTRIBUTES struct
           cbSize ULONG ?
           szDisplayName WCHAR 260 dup (?)
@@ -3253,44 +3607,58 @@ ifndef __urlmon_h__
         URLZONEREG_HKLM equ
         URLZONEREG_HKCU equ
         _URLZONEREG typedef URLZONEREG
-
         externdef IID_IInternetZoneManager:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IInternetZoneManagerVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager, :REFIID, :ptr ptr
+          PIInternetZoneManagerVtbl_QueryInterface typedef ptr TYPE_IInternetZoneManagerVtbl_QueryInterface
+          TYPE_IInternetZoneManagerVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager
+          PIInternetZoneManagerVtbl_AddRef typedef ptr TYPE_IInternetZoneManagerVtbl_AddRef
+          TYPE_IInternetZoneManagerVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager
+          PIInternetZoneManagerVtbl_Release typedef ptr TYPE_IInternetZoneManagerVtbl_Release
+          TYPE_IInternetZoneManagerVtbl_GetZoneAttributes typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager, :DWORD, :ptr ZONEATTRIBUTES
+          PIInternetZoneManagerVtbl_GetZoneAttributes typedef ptr TYPE_IInternetZoneManagerVtbl_GetZoneAttributes
+          TYPE_IInternetZoneManagerVtbl_SetZoneAttributes typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager, :DWORD, :ptr ZONEATTRIBUTES
+          PIInternetZoneManagerVtbl_SetZoneAttributes typedef ptr TYPE_IInternetZoneManagerVtbl_SetZoneAttributes
+          TYPE_IInternetZoneManagerVtbl_GetZoneCustomPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager, :DWORD, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :URLZONEREG
+          PIInternetZoneManagerVtbl_GetZoneCustomPolicy typedef ptr TYPE_IInternetZoneManagerVtbl_GetZoneCustomPolicy
+          TYPE_IInternetZoneManagerVtbl_SetZoneCustomPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager, :DWORD, :REFGUID, :ptr BYTE, :DWORD, :URLZONEREG
+          PIInternetZoneManagerVtbl_SetZoneCustomPolicy typedef ptr TYPE_IInternetZoneManagerVtbl_SetZoneCustomPolicy
+          TYPE_IInternetZoneManagerVtbl_GetZoneActionPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG
+          PIInternetZoneManagerVtbl_GetZoneActionPolicy typedef ptr TYPE_IInternetZoneManagerVtbl_GetZoneActionPolicy
+          TYPE_IInternetZoneManagerVtbl_SetZoneActionPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG
+          PIInternetZoneManagerVtbl_SetZoneActionPolicy typedef ptr TYPE_IInternetZoneManagerVtbl_SetZoneActionPolicy
+          TYPE_IInternetZoneManagerVtbl_romptAction typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager, :DWORD, :HWND, :LPCWSTR, :LPCWSTR, :DWORD
+          PIInternetZoneManagerVtbl_romptAction typedef ptr TYPE_IInternetZoneManagerVtbl_romptAction
+          TYPE_IInternetZoneManagerVtbl_LogAction typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager, :DWORD, :LPCWSTR, :LPCWSTR, :DWORD
+          PIInternetZoneManagerVtbl_LogAction typedef ptr TYPE_IInternetZoneManagerVtbl_LogAction
+          TYPE_IInternetZoneManagerVtbl_CreateZoneEnumerator typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager, :ptr DWORD, :ptr DWORD, :DWORD
+          PIInternetZoneManagerVtbl_CreateZoneEnumerator typedef ptr TYPE_IInternetZoneManagerVtbl_CreateZoneEnumerator
+          TYPE_IInternetZoneManagerVtbl_GetZoneAt typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager, :DWORD, :DWORD, :ptr DWORD
+          PIInternetZoneManagerVtbl_GetZoneAt typedef ptr TYPE_IInternetZoneManagerVtbl_GetZoneAt
+          TYPE_IInternetZoneManagerVtbl_DestroyZoneEnumerator typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager, :DWORD
+          PIInternetZoneManagerVtbl_DestroyZoneEnumerator typedef ptr TYPE_IInternetZoneManagerVtbl_DestroyZoneEnumerator
+          TYPE_IInternetZoneManagerVtbl_CopyTemplatePoliciesToZone typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManager, :DWORD, :DWORD, :DWORD
+          PIInternetZoneManagerVtbl_CopyTemplatePoliciesToZone typedef ptr TYPE_IInternetZoneManagerVtbl_CopyTemplatePoliciesToZone
           IInternetZoneManagerVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IInternetZoneManagerVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IInternetZoneManager, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IInternetZoneManager
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IInternetZoneManager
-            DECLSPEC_XFGVIRT(IInternetZoneManager, GetZoneAttributes)
-            STD_METHOD GetZoneAttributes, :ptr IInternetZoneManager, :DWORD, :ptr ZONEATTRIBUTES
-            DECLSPEC_XFGVIRT(IInternetZoneManager, SetZoneAttributes)
-            STD_METHOD SetZoneAttributes, :ptr IInternetZoneManager, :DWORD, :ptr ZONEATTRIBUTES
-            DECLSPEC_XFGVIRT(IInternetZoneManager, GetZoneCustomPolicy)
-            STD_METHOD GetZoneCustomPolicy, :ptr IInternetZoneManager, :DWORD, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :URLZONEREG
-            DECLSPEC_XFGVIRT(IInternetZoneManager, SetZoneCustomPolicy)
-            STD_METHOD SetZoneCustomPolicy, :ptr IInternetZoneManager, :DWORD, :REFGUID, :ptr BYTE, :DWORD, :URLZONEREG
-            DECLSPEC_XFGVIRT(IInternetZoneManager, GetZoneActionPolicy)
-            STD_METHOD GetZoneActionPolicy, :ptr IInternetZoneManager, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG
-            DECLSPEC_XFGVIRT(IInternetZoneManager, SetZoneActionPolicy)
-            STD_METHOD SetZoneActionPolicy, :ptr IInternetZoneManager, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG
-            DECLSPEC_XFGVIRT(IInternetZoneManager, PromptAction)
-            STD_METHOD PromptAction, :ptr IInternetZoneManager, :DWORD, :HWND, :LPCWSTR, :LPCWSTR, :DWORD
-            DECLSPEC_XFGVIRT(IInternetZoneManager, LogAction)
-            STD_METHOD LogAction, :ptr IInternetZoneManager, :DWORD, :LPCWSTR, :LPCWSTR, :DWORD
-            DECLSPEC_XFGVIRT(IInternetZoneManager, CreateZoneEnumerator)
-            STD_METHOD CreateZoneEnumerator, :ptr IInternetZoneManager, :ptr DWORD, :ptr DWORD, :DWORD
-            DECLSPEC_XFGVIRT(IInternetZoneManager, GetZoneAt)
-            STD_METHOD GetZoneAt, :ptr IInternetZoneManager, :DWORD, :DWORD, :ptr DWORD
-            DECLSPEC_XFGVIRT(IInternetZoneManager, DestroyZoneEnumerator)
-            STD_METHOD DestroyZoneEnumerator, :ptr IInternetZoneManager, :DWORD
-            DECLSPEC_XFGVIRT(IInternetZoneManager, CopyTemplatePoliciesToZone)
-            STD_METHOD CopyTemplatePoliciesToZone, :ptr IInternetZoneManager, :DWORD, :DWORD, :DWORD
+            ??Interface equ <IInternetZoneManager>
+            QueryInterface PIInternetZoneManagerVtbl_QueryInterface ?
+            AddRef PIInternetZoneManagerVtbl_AddRef ?
+            Release PIInternetZoneManagerVtbl_Release ?
+            GetZoneAttributes PIInternetZoneManagerVtbl_GetZoneAttributes ?
+            SetZoneAttributes PIInternetZoneManagerVtbl_SetZoneAttributes ?
+            GetZoneCustomPolicy PIInternetZoneManagerVtbl_GetZoneCustomPolicy ?
+            SetZoneCustomPolicy PIInternetZoneManagerVtbl_SetZoneCustomPolicy ?
+            GetZoneActionPolicy PIInternetZoneManagerVtbl_GetZoneActionPolicy ?
+            SetZoneActionPolicy PIInternetZoneManagerVtbl_SetZoneActionPolicy ?
+            romptAction PIInternetZoneManagerVtbl_romptAction ?
+            LogAction PIInternetZoneManagerVtbl_LogAction ?
+            CreateZoneEnumerator PIInternetZoneManagerVtbl_CreateZoneEnumerator ?
+            GetZoneAt PIInternetZoneManagerVtbl_GetZoneAt ?
+            DestroyZoneEnumerator PIInternetZoneManagerVtbl_DestroyZoneEnumerator ?
+            CopyTemplatePoliciesToZone PIInternetZoneManagerVtbl_CopyTemplatePoliciesToZone ?
             ??Interface equ <>
             END_INTERFACE
           IInternetZoneManagerVtbl ends
@@ -3314,43 +3682,60 @@ ifndef __urlmon_h__
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetZoneManagerExVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :REFIID, :ptr ptr
+            PIInternetZoneManagerExVtbl_QueryInterface typedef ptr TYPE_IInternetZoneManagerExVtbl_QueryInterface
+            TYPE_IInternetZoneManagerExVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx
+            PIInternetZoneManagerExVtbl_AddRef typedef ptr TYPE_IInternetZoneManagerExVtbl_AddRef
+            TYPE_IInternetZoneManagerExVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx
+            PIInternetZoneManagerExVtbl_Release typedef ptr TYPE_IInternetZoneManagerExVtbl_Release
+            TYPE_IInternetZoneManagerExVtbl_GetZoneAttributes typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :DWORD, :ptr ZONEATTRIBUTES
+            PIInternetZoneManagerExVtbl_GetZoneAttributes typedef ptr TYPE_IInternetZoneManagerExVtbl_GetZoneAttributes
+            TYPE_IInternetZoneManagerExVtbl_SetZoneAttributes typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :DWORD, :ptr ZONEATTRIBUTES
+            PIInternetZoneManagerExVtbl_SetZoneAttributes typedef ptr TYPE_IInternetZoneManagerExVtbl_SetZoneAttributes
+            TYPE_IInternetZoneManagerExVtbl_GetZoneCustomPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :DWORD, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :URLZONEREG
+            PIInternetZoneManagerExVtbl_GetZoneCustomPolicy typedef ptr TYPE_IInternetZoneManagerExVtbl_GetZoneCustomPolicy
+            TYPE_IInternetZoneManagerExVtbl_SetZoneCustomPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :DWORD, :REFGUID, :ptr BYTE, :DWORD, :URLZONEREG
+            PIInternetZoneManagerExVtbl_SetZoneCustomPolicy typedef ptr TYPE_IInternetZoneManagerExVtbl_SetZoneCustomPolicy
+            TYPE_IInternetZoneManagerExVtbl_GetZoneActionPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG
+            PIInternetZoneManagerExVtbl_GetZoneActionPolicy typedef ptr TYPE_IInternetZoneManagerExVtbl_GetZoneActionPolicy
+            TYPE_IInternetZoneManagerExVtbl_SetZoneActionPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG
+            PIInternetZoneManagerExVtbl_SetZoneActionPolicy typedef ptr TYPE_IInternetZoneManagerExVtbl_SetZoneActionPolicy
+            TYPE_IInternetZoneManagerExVtbl_romptAction typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :DWORD, :HWND, :LPCWSTR, :LPCWSTR, :DWORD
+            PIInternetZoneManagerExVtbl_romptAction typedef ptr TYPE_IInternetZoneManagerExVtbl_romptAction
+            TYPE_IInternetZoneManagerExVtbl_LogAction typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :DWORD, :LPCWSTR, :LPCWSTR, :DWORD
+            PIInternetZoneManagerExVtbl_LogAction typedef ptr TYPE_IInternetZoneManagerExVtbl_LogAction
+            TYPE_IInternetZoneManagerExVtbl_CreateZoneEnumerator typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :ptr DWORD, :ptr DWORD, :DWORD
+            PIInternetZoneManagerExVtbl_CreateZoneEnumerator typedef ptr TYPE_IInternetZoneManagerExVtbl_CreateZoneEnumerator
+            TYPE_IInternetZoneManagerExVtbl_GetZoneAt typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :DWORD, :DWORD, :ptr DWORD
+            PIInternetZoneManagerExVtbl_GetZoneAt typedef ptr TYPE_IInternetZoneManagerExVtbl_GetZoneAt
+            TYPE_IInternetZoneManagerExVtbl_DestroyZoneEnumerator typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :DWORD
+            PIInternetZoneManagerExVtbl_DestroyZoneEnumerator typedef ptr TYPE_IInternetZoneManagerExVtbl_DestroyZoneEnumerator
+            TYPE_IInternetZoneManagerExVtbl_CopyTemplatePoliciesToZone typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :DWORD, :DWORD, :DWORD
+            PIInternetZoneManagerExVtbl_CopyTemplatePoliciesToZone typedef ptr TYPE_IInternetZoneManagerExVtbl_CopyTemplatePoliciesToZone
+            TYPE_IInternetZoneManagerExVtbl_GetZoneActionPolicyEx typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG, :DWORD
+            PIInternetZoneManagerExVtbl_GetZoneActionPolicyEx typedef ptr TYPE_IInternetZoneManagerExVtbl_GetZoneActionPolicyEx
+            TYPE_IInternetZoneManagerExVtbl_SetZoneActionPolicyEx typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG, :DWORD
+            PIInternetZoneManagerExVtbl_SetZoneActionPolicyEx typedef ptr TYPE_IInternetZoneManagerExVtbl_SetZoneActionPolicyEx
             IInternetZoneManagerExVtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetZoneManagerExVtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternetZoneManagerEx, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternetZoneManagerEx
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternetZoneManagerEx
-              DECLSPEC_XFGVIRT(IInternetZoneManager, GetZoneAttributes)
-              STD_METHOD GetZoneAttributes, :ptr IInternetZoneManagerEx, :DWORD, :ptr ZONEATTRIBUTES
-              DECLSPEC_XFGVIRT(IInternetZoneManager, SetZoneAttributes)
-              STD_METHOD SetZoneAttributes, :ptr IInternetZoneManagerEx, :DWORD, :ptr ZONEATTRIBUTES
-              DECLSPEC_XFGVIRT(IInternetZoneManager, GetZoneCustomPolicy)
-              STD_METHOD GetZoneCustomPolicy, :ptr IInternetZoneManagerEx, :DWORD, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :URLZONEREG
-              DECLSPEC_XFGVIRT(IInternetZoneManager, SetZoneCustomPolicy)
-              STD_METHOD SetZoneCustomPolicy, :ptr IInternetZoneManagerEx, :DWORD, :REFGUID, :ptr BYTE, :DWORD, :URLZONEREG
-              DECLSPEC_XFGVIRT(IInternetZoneManager, GetZoneActionPolicy)
-              STD_METHOD GetZoneActionPolicy, :ptr IInternetZoneManagerEx, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG
-              DECLSPEC_XFGVIRT(IInternetZoneManager, SetZoneActionPolicy)
-              STD_METHOD SetZoneActionPolicy, :ptr IInternetZoneManagerEx, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG
-              DECLSPEC_XFGVIRT(IInternetZoneManager, PromptAction)
-              STD_METHOD PromptAction, :ptr IInternetZoneManagerEx, :DWORD, :HWND, :LPCWSTR, :LPCWSTR, :DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManager, LogAction)
-              STD_METHOD LogAction, :ptr IInternetZoneManagerEx, :DWORD, :LPCWSTR, :LPCWSTR, :DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManager, CreateZoneEnumerator)
-              STD_METHOD CreateZoneEnumerator, :ptr IInternetZoneManagerEx, :ptr DWORD, :ptr DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManager, GetZoneAt)
-              STD_METHOD GetZoneAt, :ptr IInternetZoneManagerEx, :DWORD, :DWORD, :ptr DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManager, DestroyZoneEnumerator)
-              STD_METHOD DestroyZoneEnumerator, :ptr IInternetZoneManagerEx, :DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManager, CopyTemplatePoliciesToZone)
-              STD_METHOD CopyTemplatePoliciesToZone, :ptr IInternetZoneManagerEx, :DWORD, :DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManagerEx, GetZoneActionPolicyEx)
-              STD_METHOD GetZoneActionPolicyEx, :ptr IInternetZoneManagerEx, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG, :DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManagerEx, SetZoneActionPolicyEx)
-              STD_METHOD SetZoneActionPolicyEx, :ptr IInternetZoneManagerEx, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG, :DWORD
+              ??Interface equ <IInternetZoneManagerEx>
+              QueryInterface PIInternetZoneManagerExVtbl_QueryInterface ?
+              AddRef PIInternetZoneManagerExVtbl_AddRef ?
+              Release PIInternetZoneManagerExVtbl_Release ?
+              GetZoneAttributes PIInternetZoneManagerExVtbl_GetZoneAttributes ?
+              SetZoneAttributes PIInternetZoneManagerExVtbl_SetZoneAttributes ?
+              GetZoneCustomPolicy PIInternetZoneManagerExVtbl_GetZoneCustomPolicy ?
+              SetZoneCustomPolicy PIInternetZoneManagerExVtbl_SetZoneCustomPolicy ?
+              GetZoneActionPolicy PIInternetZoneManagerExVtbl_GetZoneActionPolicy ?
+              SetZoneActionPolicy PIInternetZoneManagerExVtbl_SetZoneActionPolicy ?
+              romptAction PIInternetZoneManagerExVtbl_romptAction ?
+              LogAction PIInternetZoneManagerExVtbl_LogAction ?
+              CreateZoneEnumerator PIInternetZoneManagerExVtbl_CreateZoneEnumerator ?
+              GetZoneAt PIInternetZoneManagerExVtbl_GetZoneAt ?
+              DestroyZoneEnumerator PIInternetZoneManagerExVtbl_DestroyZoneEnumerator ?
+              CopyTemplatePoliciesToZone PIInternetZoneManagerExVtbl_CopyTemplatePoliciesToZone ?
+              GetZoneActionPolicyEx PIInternetZoneManagerExVtbl_GetZoneActionPolicyEx ?
+              SetZoneActionPolicyEx PIInternetZoneManagerExVtbl_SetZoneActionPolicyEx ?
               ??Interface equ <>
               END_INTERFACE
             IInternetZoneManagerExVtbl ends
@@ -3377,51 +3762,72 @@ ifndef __urlmon_h__
           if Defined(__cplusplus) and  not Defined(CINTERFACE)
             ;[...]
           else
+            TYPE_IInternetZoneManagerEx2Vtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :REFIID, :ptr ptr
+            PIInternetZoneManagerEx2Vtbl_QueryInterface typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_QueryInterface
+            TYPE_IInternetZoneManagerEx2Vtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2
+            PIInternetZoneManagerEx2Vtbl_AddRef typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_AddRef
+            TYPE_IInternetZoneManagerEx2Vtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2
+            PIInternetZoneManagerEx2Vtbl_Release typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_Release
+            TYPE_IInternetZoneManagerEx2Vtbl_GetZoneAttributes typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD, :ptr ZONEATTRIBUTES
+            PIInternetZoneManagerEx2Vtbl_GetZoneAttributes typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_GetZoneAttributes
+            TYPE_IInternetZoneManagerEx2Vtbl_SetZoneAttributes typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD, :ptr ZONEATTRIBUTES
+            PIInternetZoneManagerEx2Vtbl_SetZoneAttributes typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_SetZoneAttributes
+            TYPE_IInternetZoneManagerEx2Vtbl_GetZoneCustomPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :URLZONEREG
+            PIInternetZoneManagerEx2Vtbl_GetZoneCustomPolicy typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_GetZoneCustomPolicy
+            TYPE_IInternetZoneManagerEx2Vtbl_SetZoneCustomPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD, :REFGUID, :ptr BYTE, :DWORD, :URLZONEREG
+            PIInternetZoneManagerEx2Vtbl_SetZoneCustomPolicy typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_SetZoneCustomPolicy
+            TYPE_IInternetZoneManagerEx2Vtbl_GetZoneActionPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG
+            PIInternetZoneManagerEx2Vtbl_GetZoneActionPolicy typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_GetZoneActionPolicy
+            TYPE_IInternetZoneManagerEx2Vtbl_SetZoneActionPolicy typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG
+            PIInternetZoneManagerEx2Vtbl_SetZoneActionPolicy typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_SetZoneActionPolicy
+            TYPE_IInternetZoneManagerEx2Vtbl_romptAction typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD, :HWND, :LPCWSTR, :LPCWSTR, :DWORD
+            PIInternetZoneManagerEx2Vtbl_romptAction typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_romptAction
+            TYPE_IInternetZoneManagerEx2Vtbl_LogAction typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD, :LPCWSTR, :LPCWSTR, :DWORD
+            PIInternetZoneManagerEx2Vtbl_LogAction typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_LogAction
+            TYPE_IInternetZoneManagerEx2Vtbl_CreateZoneEnumerator typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :ptr DWORD, :ptr DWORD, :DWORD
+            PIInternetZoneManagerEx2Vtbl_CreateZoneEnumerator typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_CreateZoneEnumerator
+            TYPE_IInternetZoneManagerEx2Vtbl_GetZoneAt typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD, :DWORD, :ptr DWORD
+            PIInternetZoneManagerEx2Vtbl_GetZoneAt typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_GetZoneAt
+            TYPE_IInternetZoneManagerEx2Vtbl_DestroyZoneEnumerator typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD
+            PIInternetZoneManagerEx2Vtbl_DestroyZoneEnumerator typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_DestroyZoneEnumerator
+            TYPE_IInternetZoneManagerEx2Vtbl_CopyTemplatePoliciesToZone typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD, :DWORD, :DWORD
+            PIInternetZoneManagerEx2Vtbl_CopyTemplatePoliciesToZone typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_CopyTemplatePoliciesToZone
+            TYPE_IInternetZoneManagerEx2Vtbl_GetZoneActionPolicyEx typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG, :DWORD
+            PIInternetZoneManagerEx2Vtbl_GetZoneActionPolicyEx typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_GetZoneActionPolicyEx
+            TYPE_IInternetZoneManagerEx2Vtbl_SetZoneActionPolicyEx typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG, :DWORD
+            PIInternetZoneManagerEx2Vtbl_SetZoneActionPolicyEx typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_SetZoneActionPolicyEx
+            TYPE_IInternetZoneManagerEx2Vtbl_GetZoneAttributesEx typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD, :ptr ZONEATTRIBUTES, :DWORD
+            PIInternetZoneManagerEx2Vtbl_GetZoneAttributesEx typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_GetZoneAttributesEx
+            TYPE_IInternetZoneManagerEx2Vtbl_GetZoneSecurityState typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :DWORD, :BOOL, :LPDWORD, :ptr BOOL
+            PIInternetZoneManagerEx2Vtbl_GetZoneSecurityState typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_GetZoneSecurityState
+            TYPE_IInternetZoneManagerEx2Vtbl_GetIESecurityState typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2, :BOOL, :LPDWORD, :ptr BOOL, :BOOL
+            PIInternetZoneManagerEx2Vtbl_GetIESecurityState typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_GetIESecurityState
+            TYPE_IInternetZoneManagerEx2Vtbl_FixUnsecureSettings typedef proto WIN_STD_CALL_CONV :ptr IInternetZoneManagerEx2
+            PIInternetZoneManagerEx2Vtbl_FixUnsecureSettings typedef ptr TYPE_IInternetZoneManagerEx2Vtbl_FixUnsecureSettings
             IInternetZoneManagerEx2Vtbl struct
               BEGIN_INTERFACE
-              ??Interface equ <IInternetZoneManagerEx2Vtbl>
-              DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-              STD_METHOD QueryInterface, :ptr IInternetZoneManagerEx2, :REFIID, :ptr ptr
-              DECLSPEC_XFGVIRT(IUnknown, AddRef)
-              STD_METHOD AddRef, :ptr IInternetZoneManagerEx2
-              DECLSPEC_XFGVIRT(IUnknown, Release)
-              STD_METHOD Release, :ptr IInternetZoneManagerEx2
-              DECLSPEC_XFGVIRT(IInternetZoneManager, GetZoneAttributes)
-              STD_METHOD GetZoneAttributes, :ptr IInternetZoneManagerEx2, :DWORD, :ptr ZONEATTRIBUTES
-              DECLSPEC_XFGVIRT(IInternetZoneManager, SetZoneAttributes)
-              STD_METHOD SetZoneAttributes, :ptr IInternetZoneManagerEx2, :DWORD, :ptr ZONEATTRIBUTES
-              DECLSPEC_XFGVIRT(IInternetZoneManager, GetZoneCustomPolicy)
-              STD_METHOD GetZoneCustomPolicy, :ptr IInternetZoneManagerEx2, :DWORD, :REFGUID, :ptr ptr BYTE, :ptr DWORD, :URLZONEREG
-              DECLSPEC_XFGVIRT(IInternetZoneManager, SetZoneCustomPolicy)
-              STD_METHOD SetZoneCustomPolicy, :ptr IInternetZoneManagerEx2, :DWORD, :REFGUID, :ptr BYTE, :DWORD, :URLZONEREG
-              DECLSPEC_XFGVIRT(IInternetZoneManager, GetZoneActionPolicy)
-              STD_METHOD GetZoneActionPolicy, :ptr IInternetZoneManagerEx2, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG
-              DECLSPEC_XFGVIRT(IInternetZoneManager, SetZoneActionPolicy)
-              STD_METHOD SetZoneActionPolicy, :ptr IInternetZoneManagerEx2, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG
-              DECLSPEC_XFGVIRT(IInternetZoneManager, PromptAction)
-              STD_METHOD PromptAction, :ptr IInternetZoneManagerEx2, :DWORD, :HWND, :LPCWSTR, :LPCWSTR, :DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManager, LogAction)
-              STD_METHOD LogAction, :ptr IInternetZoneManagerEx2, :DWORD, :LPCWSTR, :LPCWSTR, :DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManager, CreateZoneEnumerator)
-              STD_METHOD CreateZoneEnumerator, :ptr IInternetZoneManagerEx2, :ptr DWORD, :ptr DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManager, GetZoneAt)
-              STD_METHOD GetZoneAt, :ptr IInternetZoneManagerEx2, :DWORD, :DWORD, :ptr DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManager, DestroyZoneEnumerator)
-              STD_METHOD DestroyZoneEnumerator, :ptr IInternetZoneManagerEx2, :DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManager, CopyTemplatePoliciesToZone)
-              STD_METHOD CopyTemplatePoliciesToZone, :ptr IInternetZoneManagerEx2, :DWORD, :DWORD, :DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManagerEx, GetZoneActionPolicyEx)
-              STD_METHOD GetZoneActionPolicyEx, :ptr IInternetZoneManagerEx2, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG, :DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManagerEx, SetZoneActionPolicyEx)
-              STD_METHOD SetZoneActionPolicyEx, :ptr IInternetZoneManagerEx2, :DWORD, :DWORD, :ptr BYTE, :DWORD, :URLZONEREG, :DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManagerEx2, GetZoneAttributesEx)
-              STD_METHOD GetZoneAttributesEx, :ptr IInternetZoneManagerEx2, :DWORD, :ptr ZONEATTRIBUTES, :DWORD
-              DECLSPEC_XFGVIRT(IInternetZoneManagerEx2, GetZoneSecurityState)
-              STD_METHOD GetZoneSecurityState, :ptr IInternetZoneManagerEx2, :DWORD, :BOOL, :LPDWORD, :ptr BOOL
-              DECLSPEC_XFGVIRT(IInternetZoneManagerEx2, GetIESecurityState)
-              STD_METHOD GetIESecurityState, :ptr IInternetZoneManagerEx2, :BOOL, :LPDWORD, :ptr BOOL, :BOOL
-              DECLSPEC_XFGVIRT(IInternetZoneManagerEx2, FixUnsecureSettings)
-              STD_METHOD FixUnsecureSettings, :ptr IInternetZoneManagerEx2
+              ??Interface equ <IInternetZoneManagerEx2>
+              QueryInterface PIInternetZoneManagerEx2Vtbl_QueryInterface ?
+              AddRef PIInternetZoneManagerEx2Vtbl_AddRef ?
+              Release PIInternetZoneManagerEx2Vtbl_Release ?
+              GetZoneAttributes PIInternetZoneManagerEx2Vtbl_GetZoneAttributes ?
+              SetZoneAttributes PIInternetZoneManagerEx2Vtbl_SetZoneAttributes ?
+              GetZoneCustomPolicy PIInternetZoneManagerEx2Vtbl_GetZoneCustomPolicy ?
+              SetZoneCustomPolicy PIInternetZoneManagerEx2Vtbl_SetZoneCustomPolicy ?
+              GetZoneActionPolicy PIInternetZoneManagerEx2Vtbl_GetZoneActionPolicy ?
+              SetZoneActionPolicy PIInternetZoneManagerEx2Vtbl_SetZoneActionPolicy ?
+              romptAction PIInternetZoneManagerEx2Vtbl_romptAction ?
+              LogAction PIInternetZoneManagerEx2Vtbl_LogAction ?
+              CreateZoneEnumerator PIInternetZoneManagerEx2Vtbl_CreateZoneEnumerator ?
+              GetZoneAt PIInternetZoneManagerEx2Vtbl_GetZoneAt ?
+              DestroyZoneEnumerator PIInternetZoneManagerEx2Vtbl_DestroyZoneEnumerator ?
+              CopyTemplatePoliciesToZone PIInternetZoneManagerEx2Vtbl_CopyTemplatePoliciesToZone ?
+              GetZoneActionPolicyEx PIInternetZoneManagerEx2Vtbl_GetZoneActionPolicyEx ?
+              SetZoneActionPolicyEx PIInternetZoneManagerEx2Vtbl_SetZoneActionPolicyEx ?
+              GetZoneAttributesEx PIInternetZoneManagerEx2Vtbl_GetZoneAttributesEx ?
+              GetZoneSecurityState PIInternetZoneManagerEx2Vtbl_GetZoneSecurityState ?
+              GetIESecurityState PIInternetZoneManagerEx2Vtbl_GetIESecurityState ?
+              FixUnsecureSettings PIInternetZoneManagerEx2Vtbl_FixUnsecureSettings ?
               ??Interface equ <>
               END_INTERFACE
             IInternetZoneManagerEx2Vtbl ends
@@ -3481,23 +3887,30 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_ISoftDistExtVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr ISoftDistExt, :REFIID, :ptr ptr
+          PISoftDistExtVtbl_QueryInterface typedef ptr TYPE_ISoftDistExtVtbl_QueryInterface
+          TYPE_ISoftDistExtVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr ISoftDistExt
+          PISoftDistExtVtbl_AddRef typedef ptr TYPE_ISoftDistExtVtbl_AddRef
+          TYPE_ISoftDistExtVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr ISoftDistExt
+          PISoftDistExtVtbl_Release typedef ptr TYPE_ISoftDistExtVtbl_Release
+          TYPE_ISoftDistExtVtbl_rocessSoftDist typedef proto WIN_STD_CALL_CONV :ptr ISoftDistExt, :LPCWSTR, :ptr IXMLElement, :LPSOFTDISTINFO
+          PISoftDistExtVtbl_rocessSoftDist typedef ptr TYPE_ISoftDistExtVtbl_rocessSoftDist
+          TYPE_ISoftDistExtVtbl_GetFirstCodeBase typedef proto WIN_STD_CALL_CONV :ptr ISoftDistExt, :ptr LPWSTR, :LPDWORD
+          PISoftDistExtVtbl_GetFirstCodeBase typedef ptr TYPE_ISoftDistExtVtbl_GetFirstCodeBase
+          TYPE_ISoftDistExtVtbl_GetNextCodeBase typedef proto WIN_STD_CALL_CONV :ptr ISoftDistExt, :ptr LPWSTR, :LPDWORD
+          PISoftDistExtVtbl_GetNextCodeBase typedef ptr TYPE_ISoftDistExtVtbl_GetNextCodeBase
+          TYPE_ISoftDistExtVtbl_AsyncInstallDistributionUnit typedef proto WIN_STD_CALL_CONV :ptr ISoftDistExt, :ptr IBindCtx, :LPVOID, :DWORD, :LPCODEBASEHOLD
+          PISoftDistExtVtbl_AsyncInstallDistributionUnit typedef ptr TYPE_ISoftDistExtVtbl_AsyncInstallDistributionUnit
           ISoftDistExtVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <ISoftDistExtVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr ISoftDistExt, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr ISoftDistExt
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr ISoftDistExt
-            DECLSPEC_XFGVIRT(ISoftDistExt, ProcessSoftDist)
-            STD_METHOD ProcessSoftDist, :ptr ISoftDistExt, :LPCWSTR, :ptr IXMLElement, :LPSOFTDISTINFO
-            DECLSPEC_XFGVIRT(ISoftDistExt, GetFirstCodeBase)
-            STD_METHOD GetFirstCodeBase, :ptr ISoftDistExt, :ptr LPWSTR, :LPDWORD
-            DECLSPEC_XFGVIRT(ISoftDistExt, GetNextCodeBase)
-            STD_METHOD GetNextCodeBase, :ptr ISoftDistExt, :ptr LPWSTR, :LPDWORD
-            DECLSPEC_XFGVIRT(ISoftDistExt, AsyncInstallDistributionUnit)
-            STD_METHOD AsyncInstallDistributionUnit, :ptr ISoftDistExt, :ptr IBindCtx, :LPVOID, :DWORD, :LPCODEBASEHOLD
+            ??Interface equ <ISoftDistExt>
+            QueryInterface PISoftDistExtVtbl_QueryInterface ?
+            AddRef PISoftDistExtVtbl_AddRef ?
+            Release PISoftDistExtVtbl_Release ?
+            rocessSoftDist PISoftDistExtVtbl_rocessSoftDist ?
+            GetFirstCodeBase PISoftDistExtVtbl_GetFirstCodeBase ?
+            GetNextCodeBase PISoftDistExtVtbl_GetNextCodeBase ?
+            AsyncInstallDistributionUnit_ PISoftDistExtVtbl_AsyncInstallDistributionUnit ?
             ??Interface equ <>
             END_INTERFACE
           ISoftDistExtVtbl ends
@@ -3523,19 +3936,24 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_ICatalogFileInfoVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr ICatalogFileInfo, :REFIID, :ptr ptr
+          PICatalogFileInfoVtbl_QueryInterface typedef ptr TYPE_ICatalogFileInfoVtbl_QueryInterface
+          TYPE_ICatalogFileInfoVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr ICatalogFileInfo
+          PICatalogFileInfoVtbl_AddRef typedef ptr TYPE_ICatalogFileInfoVtbl_AddRef
+          TYPE_ICatalogFileInfoVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr ICatalogFileInfo
+          PICatalogFileInfoVtbl_Release typedef ptr TYPE_ICatalogFileInfoVtbl_Release
+          TYPE_ICatalogFileInfoVtbl_GetCatalogFile typedef proto WIN_STD_CALL_CONV :ptr ICatalogFileInfo, :ptr LPSTR
+          PICatalogFileInfoVtbl_GetCatalogFile typedef ptr TYPE_ICatalogFileInfoVtbl_GetCatalogFile
+          TYPE_ICatalogFileInfoVtbl_GetJavaTrust typedef proto WIN_STD_CALL_CONV :ptr ICatalogFileInfo, :ptr ptr
+          PICatalogFileInfoVtbl_GetJavaTrust typedef ptr TYPE_ICatalogFileInfoVtbl_GetJavaTrust
           ICatalogFileInfoVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <ICatalogFileInfoVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr ICatalogFileInfo, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr ICatalogFileInfo
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr ICatalogFileInfo
-            DECLSPEC_XFGVIRT(ICatalogFileInfo, GetCatalogFile)
-            STD_METHOD GetCatalogFile, :ptr ICatalogFileInfo, :ptr LPSTR
-            DECLSPEC_XFGVIRT(ICatalogFileInfo, GetJavaTrust)
-            STD_METHOD GetJavaTrust, :ptr ICatalogFileInfo, :ptr ptr
+            ??Interface equ <ICatalogFileInfo>
+            QueryInterface PICatalogFileInfoVtbl_QueryInterface ?
+            AddRef PICatalogFileInfoVtbl_AddRef ?
+            Release PICatalogFileInfoVtbl_Release ?
+            GetCatalogFile PICatalogFileInfoVtbl_GetCatalogFile ?
+            GetJavaTrust PICatalogFileInfoVtbl_GetJavaTrust ?
             ??Interface equ <>
             END_INTERFACE
           ICatalogFileInfoVtbl ends
@@ -3559,21 +3977,27 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IDataFilterVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IDataFilter, :REFIID, :ptr ptr
+          PIDataFilterVtbl_QueryInterface typedef ptr TYPE_IDataFilterVtbl_QueryInterface
+          TYPE_IDataFilterVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IDataFilter
+          PIDataFilterVtbl_AddRef typedef ptr TYPE_IDataFilterVtbl_AddRef
+          TYPE_IDataFilterVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IDataFilter
+          PIDataFilterVtbl_Release typedef ptr TYPE_IDataFilterVtbl_Release
+          TYPE_IDataFilterVtbl_DoEncode typedef proto WIN_STD_CALL_CONV :ptr IDataFilter, :DWORD, :LONG, :ptr BYTE, :LONG, :ptr BYTE, :LONG, :ptr LONG, :ptr LONG, :DWORD
+          PIDataFilterVtbl_DoEncode typedef ptr TYPE_IDataFilterVtbl_DoEncode
+          TYPE_IDataFilterVtbl_DoDecode typedef proto WIN_STD_CALL_CONV :ptr IDataFilter, :DWORD, :LONG, :ptr BYTE, :LONG, :ptr BYTE, :LONG, :ptr LONG, :ptr LONG, :DWORD
+          PIDataFilterVtbl_DoDecode typedef ptr TYPE_IDataFilterVtbl_DoDecode
+          TYPE_IDataFilterVtbl_SetEncodingLevel typedef proto WIN_STD_CALL_CONV :ptr IDataFilter, :DWORD
+          PIDataFilterVtbl_SetEncodingLevel typedef ptr TYPE_IDataFilterVtbl_SetEncodingLevel
           IDataFilterVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IDataFilterVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IDataFilter, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IDataFilter
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IDataFilter
-            DECLSPEC_XFGVIRT(IDataFilter, DoEncode)
-            STD_METHOD DoEncode, :ptr IDataFilter, :DWORD, :LONG, :ptr BYTE, :LONG, :ptr BYTE, :LONG, :ptr LONG, :ptr LONG, :DWORD
-            DECLSPEC_XFGVIRT(IDataFilter, DoDecode)
-            STD_METHOD DoDecode, :ptr IDataFilter, :DWORD, :LONG, :ptr BYTE, :LONG, :ptr BYTE, :LONG, :ptr LONG, :ptr LONG, :DWORD
-            DECLSPEC_XFGVIRT(IDataFilter, SetEncodingLevel)
-            STD_METHOD SetEncodingLevel, :ptr IDataFilter, :DWORD
+            ??Interface equ <IDataFilter>
+            QueryInterface PIDataFilterVtbl_QueryInterface ?
+            AddRef PIDataFilterVtbl_AddRef ?
+            Release PIDataFilterVtbl_Release ?
+            DoEncode PIDataFilterVtbl_DoEncode ?
+            DoDecode PIDataFilterVtbl_DoDecode ?
+            SetEncodingLevel PIDataFilterVtbl_SetEncodingLevel ?
             ??Interface equ <>
             END_INTERFACE
           IDataFilterVtbl ends
@@ -3612,19 +4036,24 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IEncodingFilterFactoryVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IEncodingFilterFactory, :REFIID, :ptr ptr
+          PIEncodingFilterFactoryVtbl_QueryInterface typedef ptr TYPE_IEncodingFilterFactoryVtbl_QueryInterface
+          TYPE_IEncodingFilterFactoryVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IEncodingFilterFactory
+          PIEncodingFilterFactoryVtbl_AddRef typedef ptr TYPE_IEncodingFilterFactoryVtbl_AddRef
+          TYPE_IEncodingFilterFactoryVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IEncodingFilterFactory
+          PIEncodingFilterFactoryVtbl_Release typedef ptr TYPE_IEncodingFilterFactoryVtbl_Release
+          TYPE_IEncodingFilterFactoryVtbl_FindBestFilter typedef proto WIN_STD_CALL_CONV :ptr IEncodingFilterFactory, :LPCWSTR, :LPCWSTR, :DATAINFO, :ptr ptr IDataFilter
+          PIEncodingFilterFactoryVtbl_FindBestFilter typedef ptr TYPE_IEncodingFilterFactoryVtbl_FindBestFilter
+          TYPE_IEncodingFilterFactoryVtbl_GetDefaultFilter typedef proto WIN_STD_CALL_CONV :ptr IEncodingFilterFactory, :LPCWSTR, :LPCWSTR, :ptr ptr IDataFilter
+          PIEncodingFilterFactoryVtbl_GetDefaultFilter typedef ptr TYPE_IEncodingFilterFactoryVtbl_GetDefaultFilter
           IEncodingFilterFactoryVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IEncodingFilterFactoryVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IEncodingFilterFactory, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IEncodingFilterFactory
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IEncodingFilterFactory
-            DECLSPEC_XFGVIRT(IEncodingFilterFactory, FindBestFilter)
-            STD_METHOD FindBestFilter, :ptr IEncodingFilterFactory, :LPCWSTR, :LPCWSTR, :DATAINFO, :ptr ptr IDataFilter
-            DECLSPEC_XFGVIRT(IEncodingFilterFactory, GetDefaultFilter)
-            STD_METHOD GetDefaultFilter, :ptr IEncodingFilterFactory, :LPCWSTR, :LPCWSTR, :ptr ptr IDataFilter
+            ??Interface equ <IEncodingFilterFactory>
+            QueryInterface PIEncodingFilterFactoryVtbl_QueryInterface ?
+            AddRef PIEncodingFilterFactoryVtbl_AddRef ?
+            Release PIEncodingFilterFactoryVtbl_Release ?
+            FindBestFilter PIEncodingFilterFactoryVtbl_FindBestFilter ?
+            GetDefaultFilter PIEncodingFilterFactoryVtbl_GetDefaultFilter ?
             ??Interface equ <>
             END_INTERFACE
           IEncodingFilterFactoryVtbl ends
@@ -3675,17 +4104,21 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IWrappedProtocolVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IWrappedProtocol, :REFIID, :ptr ptr
+          PIWrappedProtocolVtbl_QueryInterface typedef ptr TYPE_IWrappedProtocolVtbl_QueryInterface
+          TYPE_IWrappedProtocolVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IWrappedProtocol
+          PIWrappedProtocolVtbl_AddRef typedef ptr TYPE_IWrappedProtocolVtbl_AddRef
+          TYPE_IWrappedProtocolVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IWrappedProtocol
+          PIWrappedProtocolVtbl_Release typedef ptr TYPE_IWrappedProtocolVtbl_Release
+          TYPE_IWrappedProtocolVtbl_GetWrapperCode typedef proto WIN_STD_CALL_CONV :ptr IWrappedProtocol, :ptr LONG, :DWORD_PTR
+          PIWrappedProtocolVtbl_GetWrapperCode typedef ptr TYPE_IWrappedProtocolVtbl_GetWrapperCode
           IWrappedProtocolVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IWrappedProtocolVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IWrappedProtocol, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IWrappedProtocol
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IWrappedProtocol
-            DECLSPEC_XFGVIRT(IWrappedProtocol, GetWrapperCode)
-            STD_METHOD GetWrapperCode, :ptr IWrappedProtocol, :ptr LONG, :DWORD_PTR
+            ??Interface equ <IWrappedProtocol>
+            QueryInterface PIWrappedProtocolVtbl_QueryInterface ?
+            AddRef PIWrappedProtocolVtbl_AddRef ?
+            Release PIWrappedProtocolVtbl_Release ?
+            GetWrapperCode PIWrappedProtocolVtbl_GetWrapperCode ?
             ??Interface equ <>
             END_INTERFACE
           IWrappedProtocolVtbl ends
@@ -3708,24 +4141,27 @@ ifndef __urlmon_h__
         BINDHANDLETYPES typedef SDWORD
         BINDHANDLETYPES_APPCACHE equ 0
         BINDHANDLETYPES_DEPENDENCY equ 1h
-        BINDHANDLETYPES_COUNT equ ( BINDHANDLETYPES_DEPENDENCY + 1 ) 
+        BINDHANDLETYPES_COUNT equ
         __MIDL_IGetBindHandle_0001 typedef BINDHANDLETYPES
-
         externdef IID_IGetBindHandle:IID
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IGetBindHandleVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IGetBindHandle, :REFIID, :ptr ptr
+          PIGetBindHandleVtbl_QueryInterface typedef ptr TYPE_IGetBindHandleVtbl_QueryInterface
+          TYPE_IGetBindHandleVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IGetBindHandle
+          PIGetBindHandleVtbl_AddRef typedef ptr TYPE_IGetBindHandleVtbl_AddRef
+          TYPE_IGetBindHandleVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IGetBindHandle
+          PIGetBindHandleVtbl_Release typedef ptr TYPE_IGetBindHandleVtbl_Release
+          TYPE_IGetBindHandleVtbl_GetBindHandle typedef proto WIN_STD_CALL_CONV :ptr IGetBindHandle, :BINDHANDLETYPES, :ptr HANDLE
+          PIGetBindHandleVtbl_GetBindHandle typedef ptr TYPE_IGetBindHandleVtbl_GetBindHandle
           IGetBindHandleVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IGetBindHandleVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IGetBindHandle, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IGetBindHandle
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IGetBindHandle
-            DECLSPEC_XFGVIRT(IGetBindHandle, GetBindHandle)
-            STD_METHOD GetBindHandle, :ptr IGetBindHandle, :BINDHANDLETYPES, :ptr HANDLE
+            ??Interface equ <IGetBindHandle>
+            QueryInterface PIGetBindHandleVtbl_QueryInterface ?
+            AddRef PIGetBindHandleVtbl_AddRef ?
+            Release PIGetBindHandleVtbl_Release ?
+            GetBindHandle PIGetBindHandleVtbl_GetBindHandle ?
             ??Interface equ <>
             END_INTERFACE
           IGetBindHandleVtbl ends
@@ -3758,17 +4194,21 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IBindCallbackRedirectVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IBindCallbackRedirect, :REFIID, :ptr ptr
+          PIBindCallbackRedirectVtbl_QueryInterface typedef ptr TYPE_IBindCallbackRedirectVtbl_QueryInterface
+          TYPE_IBindCallbackRedirectVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IBindCallbackRedirect
+          PIBindCallbackRedirectVtbl_AddRef typedef ptr TYPE_IBindCallbackRedirectVtbl_AddRef
+          TYPE_IBindCallbackRedirectVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IBindCallbackRedirect
+          PIBindCallbackRedirectVtbl_Release typedef ptr TYPE_IBindCallbackRedirectVtbl_Release
+          TYPE_IBindCallbackRedirectVtbl_Redirect typedef proto WIN_STD_CALL_CONV :ptr IBindCallbackRedirect, :LPCWSTR, :ptr VARIANT_BOOL
+          PIBindCallbackRedirectVtbl_Redirect typedef ptr TYPE_IBindCallbackRedirectVtbl_Redirect
           IBindCallbackRedirectVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IBindCallbackRedirectVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IBindCallbackRedirect, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IBindCallbackRedirect
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IBindCallbackRedirect
-            DECLSPEC_XFGVIRT(IBindCallbackRedirect, Redirect)
-            STD_METHOD Redirect, :ptr IBindCallbackRedirect, :LPCWSTR, :ptr VARIANT_BOOL
+            ??Interface equ <IBindCallbackRedirect>
+            QueryInterface PIBindCallbackRedirectVtbl_QueryInterface ?
+            AddRef PIBindCallbackRedirectVtbl_AddRef ?
+            Release PIBindCallbackRedirectVtbl_Release ?
+            Redirect PIBindCallbackRedirectVtbl_Redirect ?
             ??Interface equ <>
             END_INTERFACE
           IBindCallbackRedirectVtbl ends
@@ -3791,17 +4231,21 @@ ifndef __urlmon_h__
         if Defined(__cplusplus) and  not Defined(CINTERFACE)
           ;[...]
         else
+          TYPE_IBindHttpSecurityVtbl_QueryInterface typedef proto WIN_STD_CALL_CONV :ptr IBindHttpSecurity, :REFIID, :ptr ptr
+          PIBindHttpSecurityVtbl_QueryInterface typedef ptr TYPE_IBindHttpSecurityVtbl_QueryInterface
+          TYPE_IBindHttpSecurityVtbl_AddRef typedef proto WIN_STD_CALL_CONV :ptr IBindHttpSecurity
+          PIBindHttpSecurityVtbl_AddRef typedef ptr TYPE_IBindHttpSecurityVtbl_AddRef
+          TYPE_IBindHttpSecurityVtbl_Release typedef proto WIN_STD_CALL_CONV :ptr IBindHttpSecurity
+          PIBindHttpSecurityVtbl_Release typedef ptr TYPE_IBindHttpSecurityVtbl_Release
+          TYPE_IBindHttpSecurityVtbl_GetIgnoreCertMask typedef proto WIN_STD_CALL_CONV :ptr IBindHttpSecurity, :ptr DWORD
+          PIBindHttpSecurityVtbl_GetIgnoreCertMask typedef ptr TYPE_IBindHttpSecurityVtbl_GetIgnoreCertMask
           IBindHttpSecurityVtbl struct
             BEGIN_INTERFACE
-            ??Interface equ <IBindHttpSecurityVtbl>
-            DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-            STD_METHOD QueryInterface, :ptr IBindHttpSecurity, :REFIID, :ptr ptr
-            DECLSPEC_XFGVIRT(IUnknown, AddRef)
-            STD_METHOD AddRef, :ptr IBindHttpSecurity
-            DECLSPEC_XFGVIRT(IUnknown, Release)
-            STD_METHOD Release, :ptr IBindHttpSecurity
-            DECLSPEC_XFGVIRT(IBindHttpSecurity, GetIgnoreCertMask)
-            STD_METHOD GetIgnoreCertMask, :ptr IBindHttpSecurity, :ptr DWORD
+            ??Interface equ <IBindHttpSecurity>
+            QueryInterface PIBindHttpSecurityVtbl_QueryInterface ?
+            AddRef PIBindHttpSecurityVtbl_AddRef ?
+            Release PIBindHttpSecurityVtbl_Release ?
+            GetIgnoreCertMask PIBindHttpSecurityVtbl_GetIgnoreCertMask ?
             ??Interface equ <>
             END_INTERFACE
           IBindHttpSecurityVtbl ends
@@ -3819,22 +4263,22 @@ ifndef __urlmon_h__
   endif
   externdef __MIDL_itf_urlmon_0000_0055_v0_0_c_ifspec:RPC_IF_HANDLE
   externdef __MIDL_itf_urlmon_0000_0055_v0_0_s_ifspec:RPC_IF_HANDLE
-  BSTR_UserSize proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr BSTR
-  BSTR_UserMarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
-  BSTR_UserUnmarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
-  BSTR_UserFree proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BSTR
-  HWND_UserSize proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr HWND
-  HWND_UserMarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr HWND
-  HWND_UserUnmarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr HWND
-  HWND_UserFree proto WIN_STD_CALL_CONV :ptr DWORD, :ptr HWND
-  BSTR_UserSize64 proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr BSTR
-  BSTR_UserMarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
-  BSTR_UserUnmarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
-  BSTR_UserFree64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BSTR
-  HWND_UserSize64 proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr HWND
-  HWND_UserMarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr HWND
-  HWND_UserUnmarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr HWND
-  HWND_UserFree64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr HWND
+  ;Warning: duplicate proto = BSTR_UserSize proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr BSTR
+  ;Warning: duplicate proto = BSTR_UserMarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
+  ;Warning: duplicate proto = BSTR_UserUnmarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
+  ;Warning: duplicate proto = BSTR_UserFree proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BSTR
+  ;Warning: duplicate proto = HWND_UserSize proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr HWND
+  ;Warning: duplicate proto = HWND_UserMarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr HWND
+  ;Warning: duplicate proto = HWND_UserUnmarshal proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr HWND
+  ;Warning: duplicate proto = HWND_UserFree proto WIN_STD_CALL_CONV :ptr DWORD, :ptr HWND
+  ;Warning: duplicate proto = BSTR_UserSize64 proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr BSTR
+  ;Warning: duplicate proto = BSTR_UserMarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
+  ;Warning: duplicate proto = BSTR_UserUnmarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr BSTR
+  ;Warning: duplicate proto = BSTR_UserFree64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BSTR
+  ;Warning: duplicate proto = HWND_UserSize64 proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr HWND
+  ;Warning: duplicate proto = HWND_UserMarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr HWND
+  ;Warning: duplicate proto = HWND_UserUnmarshal64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr HWND
+  ;Warning: duplicate proto = HWND_UserFree64 proto WIN_STD_CALL_CONV :ptr DWORD, :ptr HWND
   IBinding_GetBindResult_Proxy proto WIN_STD_CALL_CONV :ptr IBinding, :ptr CLSID, :ptr DWORD, :ptr LPOLESTR, :ptr DWORD
   IBinding_GetBindResult_Stub proto WIN_STD_CALL_CONV :ptr IBinding, :ptr CLSID, :ptr DWORD, :ptr LPOLESTR, :DWORD
   IBindStatusCallback_GetBindInfo_Proxy proto WIN_STD_CALL_CONV :ptr IBindStatusCallback, :ptr DWORD, :ptr BINDINFO
@@ -3855,3 +4299,4 @@ ifndef __urlmon_h__
     ;[...]
   endif
 endif
+

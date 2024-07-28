@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\shellapi.h
-;             Created on (UTC) 06/04/2024 06:15:58
-;             Last modified on (UTC) 21/02/2024 18:22:52
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\shellapi.h', last modified: 19/04/2018 10:49
+;Creation parameters: 
 
 include winapifamily.inc
 if Defined(_MSC_VER) and (_MSC_VER ge 1200)
@@ -49,9 +48,6 @@ ifndef _INC_SHELLAPI
   ifdef __cplusplus
     ;[...]
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_GAMES)
-    @DefProto DllImport, CommandLineToArgvW, WIN_STD_CALL_CONV,, <:LPCWSTR, :ptr SDWORD>, 8
-  endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
     DECLARE_HANDLE HDROP
     @DefProto DllImport, DragQueryFileA, WIN_STD_CALL_CONV,, <:HDROP, :UINT, :LPSTR, :UINT>, 16
@@ -78,6 +74,7 @@ ifndef _INC_SHELLAPI
     else
       FindExecutable equ <FindExecutableA>
     endif
+    @DefProto DllImport, CommandLineToArgvW, WIN_STD_CALL_CONV,, <:LPCWSTR, :ptr SDWORD>, 8
     @DefProto DllImport, ShellAboutA, WIN_STD_CALL_CONV,, <:HWND, :LPCSTR, :LPCSTR, :HICON>, 16
     @DefProto DllImport, ShellAboutW, WIN_STD_CALL_CONV,, <:HWND, :LPCWSTR, :LPCWSTR, :HICON>, 16
     ifdef UNICODE
@@ -115,8 +112,10 @@ ifndef _INC_SHELLAPI
         lpFileList PZZSTR ?
         grfKeyState DWORD ?
       DRAGINFOA ends
+
       _DRAGINFOA typedef DRAGINFOA
       LPDRAGINFOA typedef ptr DRAGINFOA
+      
       DRAGINFOW struct
         uSize UINT ?
         pt POINT <>
@@ -124,8 +123,10 @@ ifndef _INC_SHELLAPI
         lpFileList PZZWSTR ?
         grfKeyState DWORD ?
       DRAGINFOW ends
+
       _DRAGINFOW typedef DRAGINFOW
       LPDRAGINFOW typedef ptr DRAGINFOW
+      
       ifdef UNICODE
         DRAGINFO typedef DRAGINFOW
         LPDRAGINFO typedef LPDRAGINFOW
@@ -168,8 +169,10 @@ ifndef _INC_SHELLAPI
         rc RECT <>
         lParam LPARAM ?
       APPBARDATA ends
+
       _AppBarData typedef APPBARDATA
       PAPPBARDATA typedef ptr APPBARDATA
+      
       @DefProto DllImport, SHAppBarMessage, WIN_STD_CALL_CONV,, <:DWORD, :PAPPBARDATA>, 8
       @DefProto DllImport, DoEnvironmentSubstA, WIN_STD_CALL_CONV,, <:LPSTR, :UINT>, 8
       @DefProto DllImport, DoEnvironmentSubstW, WIN_STD_CALL_CONV,, <:LPWSTR, :UINT>, 8
@@ -227,8 +230,10 @@ ifndef _INC_SHELLAPI
         hNameMappings LPVOID ?
         lpszProgressTitle PCSTR ?
       SHFILEOPSTRUCTA ends
+
       _SHFILEOPSTRUCTA typedef SHFILEOPSTRUCTA
       LPSHFILEOPSTRUCTA typedef ptr SHFILEOPSTRUCTA
+      
       SHFILEOPSTRUCTW struct
         hwnd HWND ?
         wFunc UINT ?
@@ -239,8 +244,10 @@ ifndef _INC_SHELLAPI
         hNameMappings LPVOID ?
         lpszProgressTitle PCWSTR ?
       SHFILEOPSTRUCTW ends
+
       _SHFILEOPSTRUCTW typedef SHFILEOPSTRUCTW
       LPSHFILEOPSTRUCTW typedef ptr SHFILEOPSTRUCTW
+      
       ifdef UNICODE
         SHFILEOPSTRUCT typedef SHFILEOPSTRUCTW
         LPSHFILEOPSTRUCT typedef LPSHFILEOPSTRUCTW
@@ -262,16 +269,20 @@ ifndef _INC_SHELLAPI
         cchOldPath SDWORD ?
         cchNewPath SDWORD ?
       SHNAMEMAPPINGA ends
+
       _SHNAMEMAPPINGA typedef SHNAMEMAPPINGA
       LPSHNAMEMAPPINGA typedef ptr SHNAMEMAPPINGA
+      
       SHNAMEMAPPINGW struct
         pszOldPath LPWSTR ?
         pszNewPath LPWSTR ?
         cchOldPath SDWORD ?
         cchNewPath SDWORD ?
       SHNAMEMAPPINGW ends
+
       _SHNAMEMAPPINGW typedef SHNAMEMAPPINGW
       LPSHNAMEMAPPINGW typedef ptr SHNAMEMAPPINGW
+      
       ifdef UNICODE
         SHNAMEMAPPING typedef SHNAMEMAPPINGW
         LPSHNAMEMAPPING typedef LPSHNAMEMAPPINGW
@@ -363,8 +374,10 @@ ifndef _INC_SHELLAPI
         ends
         hProcess HANDLE ?
       SHELLEXECUTEINFOA ends
+
       _SHELLEXECUTEINFOA typedef SHELLEXECUTEINFOA
       LPSHELLEXECUTEINFOA typedef ptr SHELLEXECUTEINFOA
+      
       SHELLEXECUTEINFOW struct
         cbSize DWORD ?
         fMask ULONG ?
@@ -387,8 +400,10 @@ ifndef _INC_SHELLAPI
         ends
         hProcess HANDLE ?
       SHELLEXECUTEINFOW ends
+
       _SHELLEXECUTEINFOW typedef SHELLEXECUTEINFOW
       LPSHELLEXECUTEINFOW typedef ptr SHELLEXECUTEINFOW
+      
       ifdef UNICODE
         SHELLEXECUTEINFO typedef SHELLEXECUTEINFOW
         LPSHELLEXECUTEINFO typedef LPSHELLEXECUTEINFOW
@@ -419,8 +434,10 @@ ifndef _INC_SHELLAPI
           lpStartupInfo LPSTARTUPINFOW ?
           lpProcessInformation LPPROCESS_INFORMATION ?
         SHCREATEPROCESSINFOW ends
+
         _SHCREATEPROCESSINFOW typedef SHCREATEPROCESSINFOW
         PSHCREATEPROCESSINFOW typedef ptr SHCREATEPROCESSINFOW
+        
         @DefProto DllImport, SHCreateProcessAsUserW, WIN_STD_CALL_CONV,, <:PSHCREATEPROCESSINFOW>, 4
       endif
       if (NTDDI_VERSION ge NTDDI_VISTA)
@@ -440,12 +457,13 @@ ifndef _INC_SHELLAPI
           ASSOCCLASS_FIXED_PROGID_STR equ 10
           ASSOCCLASS_PROTOCOL_STR equ 11
         endif
-
+        
         ASSOCIATIONELEMENT struct
           ac ASSOCCLASS ?
           hkClass HKEY ?
           pszClass PCWSTR ?
         ASSOCIATIONELEMENT ends
+
         @DefProto DllImport, AssocCreateForClasses, WIN_STD_CALL_CONV,, <:ptr ASSOCIATIONELEMENT, :ULONG, :REFIID, :ptr ptr>, 16
       endif
       if (NTDDI_VERSION ge NTDDI_WIN2K)
@@ -458,8 +476,10 @@ ifndef _INC_SHELLAPI
             ;[...]
           endif
         SHQUERYRBINFO ends
+
         _SHQUERYRBINFO typedef SHQUERYRBINFO
         LPSHQUERYRBINFO typedef ptr SHQUERYRBINFO
+        
         SHERB_NOCONFIRMATION equ 00000001h
         SHERB_NOPROGRESSUI equ 00000002h
         SHERB_NOSOUND equ 00000004h
@@ -491,7 +511,7 @@ ifndef _INC_SHELLAPI
         if (NTDDI_VERSION ge NTDDI_WIN8)
           QUNS_APP equ 7
         endif
-
+        
         @DefProto DllImport, SHQueryUserNotificationState, WIN_STD_CALL_CONV,, <:ptr QUERY_USER_NOTIFICATION_STATE>, 4
       endif
       if (NTDDI_VERSION ge NTDDI_WIN7)
@@ -528,8 +548,10 @@ ifndef _INC_SHELLAPI
           hBalloonIcon HICON ?
         endif
       NOTIFYICONDATAA ends
+
       _NOTIFYICONDATAA typedef NOTIFYICONDATAA
       PNOTIFYICONDATAA typedef ptr NOTIFYICONDATAA
+      
       NOTIFYICONDATAW struct
         cbSize DWORD ?
         hWnd HWND ?
@@ -561,8 +583,10 @@ ifndef _INC_SHELLAPI
           hBalloonIcon HICON ?
         endif
       NOTIFYICONDATAW ends
+
       _NOTIFYICONDATAW typedef NOTIFYICONDATAW
       PNOTIFYICONDATAW typedef ptr NOTIFYICONDATAW
+      
       ifdef UNICODE
         NOTIFYICONDATA typedef NOTIFYICONDATAW
         PNOTIFYICONDATA typedef PNOTIFYICONDATAW
@@ -648,8 +672,10 @@ ifndef _INC_SHELLAPI
         uID UINT ?
         guidItem GUID <>
       NOTIFYICONIDENTIFIER ends
+
       _NOTIFYICONIDENTIFIER typedef NOTIFYICONIDENTIFIER
       PNOTIFYICONIDENTIFIER typedef ptr NOTIFYICONIDENTIFIER
+      
       @DefProto DllImport, Shell_NotifyIconA, WIN_STD_CALL_CONV,, <:DWORD, :PNOTIFYICONDATAA>, 8
       @DefProto DllImport, Shell_NotifyIconW, WIN_STD_CALL_CONV,, <:DWORD, :PNOTIFYICONDATAW>, 8
       ifdef UNICODE
@@ -669,6 +695,7 @@ ifndef _INC_SHELLAPI
           szDisplayName CHAR MAX_PATH dup (?)
           szTypeName CHAR 80 dup (?)
         SHFILEINFOA ends
+
         _SHFILEINFOA typedef SHFILEINFOA
         SHFILEINFOW struct
           hIcon HICON ?
@@ -677,6 +704,7 @@ ifndef _INC_SHELLAPI
           szDisplayName WCHAR MAX_PATH dup (?)
           szTypeName WCHAR 80 dup (?)
         SHFILEINFOW ends
+
         _SHFILEINFOW typedef SHFILEINFOW
         ifdef UNICODE
           SHFILEINFO typedef SHFILEINFOW
@@ -719,6 +747,7 @@ ifndef _INC_SHELLAPI
           iIcon SDWORD ?
           szPath WCHAR MAX_PATH dup (?)
         SHSTOCKICONINFO ends
+
         _SHSTOCKICONINFO typedef SHSTOCKICONINFO
         SHGSI_ICONLOCATION equ 0
         SHGSI_ICON equ <SHGFI_ICON>
@@ -823,7 +852,7 @@ ifndef _INC_SHELLAPI
         SIID_MEDIABDRE equ 139
         SIID_CLUSTEREDDRIVE equ 140
         SIID_MAX_ICONS equ 181
-
+        
         SIID_INVALID equ ((SHSTOCKICONID) - 1)
         @DefProto DllImport, SHGetStockIconInfo, WIN_STD_CALL_CONV,, <:SHSTOCKICONID, :UINT, :ptr SHSTOCKICONINFO>, 12
       endif
@@ -879,8 +908,10 @@ ifndef _INC_SHELLAPI
           dwFlags DWORD ?
           bModal BOOL ?
         OPEN_PRINTER_PROPS_INFOA ends
+
         _OPEN_PRINTER_PROPS_INFOA typedef OPEN_PRINTER_PROPS_INFOA
         POPEN_PRINTER_PROPS_INFOA typedef ptr OPEN_PRINTER_PROPS_INFOA
+        
         OPEN_PRINTER_PROPS_INFOW struct
           dwSize DWORD ?
           pszSheetName LPWSTR ?
@@ -888,8 +919,10 @@ ifndef _INC_SHELLAPI
           dwFlags DWORD ?
           bModal BOOL ?
         OPEN_PRINTER_PROPS_INFOW ends
+
         _OPEN_PRINTER_PROPS_INFOW typedef OPEN_PRINTER_PROPS_INFOW
         POPEN_PRINTER_PROPS_INFOW typedef ptr OPEN_PRINTER_PROPS_INFOW
+        
         ifdef UNICODE
           OPEN_PRINTER_PROPS_INFO typedef OPEN_PRINTER_PROPS_INFOW
           POPEN_PRINTER_PROPS_INFO typedef POPEN_PRINTER_PROPS_INFOW
@@ -983,10 +1016,8 @@ ifndef _INC_SHELLAPI
       endif
       TYPE_PFNCANSHAREFOLDERW typedef proto WIN_STD_CALL_CONV :PCWSTR
       PFNCANSHAREFOLDERW typedef ptr TYPE_PFNCANSHAREFOLDERW
-
       TYPE_PFNSHOWSHAREFOLDERUIW typedef proto WIN_STD_CALL_CONV :HWND, :PCWSTR
       PFNSHOWSHAREFOLDERUIW typedef ptr TYPE_PFNSHOWSHAREFOLDERUIW
-
     endif
   endif
   ifdef __cplusplus
@@ -1008,8 +1039,10 @@ ifndef _INC_SHELLAPI
         PortNumber USHORT ?
         PrefixLength BYTE ?
       NC_ADDRESS ends
+
       tagNC_ADDRESS typedef NC_ADDRESS
       PNC_ADDRESS typedef ptr NC_ADDRESS
+      
       NCM_SETALLOWTYPE equ (WM_USER + 2)
       NetAddr_SetAllowType macro hwnd, addrMask
         exitm <SNDMSG (hwnd, NCM_SETALLOWTYPE, addrMask, 0)>
@@ -1032,3 +1065,4 @@ ifndef _INC_SHELLAPI
 endif
 if Defined(_MSC_VER) and (_MSC_VER ge 1200)
 endif
+

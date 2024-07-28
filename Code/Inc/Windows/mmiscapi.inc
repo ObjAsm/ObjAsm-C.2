@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\mmiscapi.h
-;             Created on (UTC) 06/04/2024 06:15:56
-;             Last modified on (UTC) 21/02/2024 18:13:20
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\mmiscapi.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 ifdef _MSC_VER
 endif
@@ -23,9 +22,11 @@ ifndef _MMISCAPI_H_
           lpszDCIAliasName LPCWSTR ?
           dnDevNode DWORD ?
         DRVCONFIGINFOEX ends
+
         PDRVCONFIGINFOEX typedef ptr DRVCONFIGINFOEX
         NPDRVCONFIGINFOEX typedef ptr DRVCONFIGINFOEX
         LPDRVCONFIGINFOEX typedef ptr DRVCONFIGINFOEX
+        
       else
         ;[...]
       endif
@@ -51,10 +52,12 @@ ifndef _MMISCAPI_H_
               lpszDCISectionName LPCWSTR ?
               lpszDCIAliasName LPCWSTR ?
             DRVCONFIGINFO ends
+
             tagDRVCONFIGINFO typedef DRVCONFIGINFO
             PDRVCONFIGINFO typedef ptr DRVCONFIGINFO
             NPDRVCONFIGINFO typedef ptr DRVCONFIGINFO
             LPDRVCONFIGINFO typedef ptr DRVCONFIGINFO
+            
           else
             ;[...]
           endif
@@ -64,7 +67,6 @@ ifndef _MMISCAPI_H_
           ifdef _WIN32
             TYPE_DRIVERPROC typedef proto WIN_STD_CALL_CONV :DWORD_PTR, :HDRVR, :UINT, :LPARAM, :LPARAM
             DRIVERPROC typedef ptr TYPE_DRIVERPROC
-
             @DefProto DllImport, CloseDriver, WIN_STD_CALL_CONV,, <:HDRVR, :LPARAM, :LPARAM>, 12
             @DefProto DllImport, OpenDriver, WIN_STD_CALL_CONV,, <:LPCWSTR, :LPCWSTR, :LPARAM>, 12
             @DefProto DllImport, SendDriverMessage, WIN_STD_CALL_CONV,, <:HDRVR, :UINT, :LPARAM, :LPARAM>, 16
@@ -87,7 +89,6 @@ ifndef _MMISCAPI_H_
       sndOpenSound proto WIN_STD_CALL_CONV :LPCWSTR, :LPCWSTR, :INT32, :PHANDLE
       TYPE_DRIVERMSGPROC typedef proto WIN_STD_CALL_CONV :DWORD, :DWORD, :DWORD_PTR, :DWORD_PTR, :DWORD_PTR
       DRIVERMSGPROC typedef ptr TYPE_DRIVERMSGPROC
-
       mmDrvInstall proto WIN_STD_CALL_CONV :HDRVR, :LPCWSTR, :DRIVERMSGPROC, :UINT
     endif
     ifndef MMNOMMIO
@@ -114,7 +115,6 @@ ifndef _MMISCAPI_H_
       DECLARE_HANDLE HMMIO
       TYPE_MMIOPROC typedef proto WIN_STD_CALL_CONV :LPSTR, :UINT, :LPARAM, :LPARAM
       MMIOPROC typedef ptr TYPE_MMIOPROC
-
       LPMMIOPROC typedef ptr MMIOPROC
       MMIOINFO struct
         dwFlags DWORD ?
@@ -134,10 +134,12 @@ ifndef _MMISCAPI_H_
         dwReserved2 DWORD ?
         hmmio HMMIO ?
       MMIOINFO ends
+
       _MMIOINFO typedef MMIOINFO
       PMMIOINFO typedef ptr MMIOINFO
       NPMMIOINFO typedef ptr MMIOINFO
       LPMMIOINFO typedef ptr MMIOINFO
+      
       LPCMMIOINFO typedef ptr MMIOINFO
       MMCKINFO struct
         ckid FOURCC ?
@@ -146,10 +148,12 @@ ifndef _MMISCAPI_H_
         dwDataOffset DWORD ?
         dwFlags DWORD ?
       MMCKINFO ends
+
       _MMCKINFO typedef MMCKINFO
       PMMCKINFO typedef ptr MMCKINFO
       NPMMCKINFO typedef ptr MMCKINFO
       LPMMCKINFO typedef ptr MMCKINFO
+      
       LPCMMCKINFO typedef ptr MMCKINFO
       MMIO_RWMODE equ 00000003h
       MMIO_SHAREMODE equ 00000070h
@@ -255,3 +259,4 @@ ifndef _MMISCAPI_H_
     ;[...]
   endif
 endif
+

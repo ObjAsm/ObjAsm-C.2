@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\sdkddkver.h
-;             Created on (UTC) 22/05/2024 17:57:08
-;             Last modified on (UTC) 21/02/2024 18:17:06
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\sdkddkver.h', last modified: 19/04/2018 10:45
+;Creation parameters: 
 
 ifndef _INC_SDKDDKVER
   _INC_SDKDDKVER equ <>
@@ -66,7 +65,6 @@ ifndef _INC_SDKDDKVER
   _WIN32_IE_WINBLUE equ <_WIN32_IE_IE100>
   _WIN32_IE_WINTHRESHOLD equ <_WIN32_IE_IE110>
   _WIN32_IE_WIN10 equ <_WIN32_IE_IE110>
-  NTDDI_WIN4 equ 04000000h
   NTDDI_WIN2K equ 05000000h
   NTDDI_WIN2KSP1 equ 05000100h
   NTDDI_WIN2KSP2 equ 05000200h
@@ -107,14 +105,7 @@ ifndef _INC_SDKDDKVER
   NTDDI_WIN10_RS2 equ 0A000003h
   NTDDI_WIN10_RS3 equ 0A000004h
   NTDDI_WIN10_RS4 equ 0A000005h
-  NTDDI_WIN10_RS5 equ 0A000006h
-  NTDDI_WIN10_19H1 equ 0A000007h
-  NTDDI_WIN10_VB equ 0A000008h
-  NTDDI_WIN10_MN equ 0A000009h
-  NTDDI_WIN10_FE equ 0A00000Ah
-  NTDDI_WIN10_CO equ 0A00000Bh
-  NTDDI_WIN10_NI equ 0A00000Ch
-  WDK_NTDDI_VERSION equ <NTDDI_WIN10_NI>
+  WDK_NTDDI_VERSION equ <NTDDI_WIN10_RS4>
   OSVERSION_MASK equ 0FFFF0000h
   SPVERSION_MASK equ 0000FF00h
   SUBVERSION_MASK equ 000000FFh
@@ -167,7 +158,7 @@ ifndef _INC_SDKDDKVER
         NTDDI_VERSION equ <WDK_NTDDI_VERSION>
       endif
     else
-      NTDDI_VERSION equ 0A00000Ch
+      NTDDI_VERSION equ 0A000005h
     endif
   endif
   ifndef WINVER
@@ -226,3 +217,4 @@ ifndef _INC_SDKDDKVER
     endif
   endif
 endif
+

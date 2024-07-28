@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\consoleapi2.h
-;             Created on (UTC) 06/04/2024 06:15:52
-;             Last modified on (UTC) 21/02/2024 18:13:22
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\consoleapi2.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 ifdef _MSC_VER
 endif
@@ -52,8 +51,10 @@ ifndef _APISETCONSOLEL2_
       dwSize DWORD ?
       bVisible BOOL ?
     CONSOLE_CURSOR_INFO ends
+
     _CONSOLE_CURSOR_INFO typedef CONSOLE_CURSOR_INFO
     PCONSOLE_CURSOR_INFO typedef ptr CONSOLE_CURSOR_INFO
+    
     @DefProto DllImport, GetConsoleCursorInfo, WIN_STD_CALL_CONV,, <:HANDLE, :PCONSOLE_CURSOR_INFO>, 8
     @DefProto DllImport, SetConsoleCursorInfo, WIN_STD_CALL_CONV,, <:HANDLE, :ptr CONSOLE_CURSOR_INFO>, 8
     CONSOLE_SCREEN_BUFFER_INFO struct
@@ -63,8 +64,10 @@ ifndef _APISETCONSOLEL2_
       srWindow SMALL_RECT <>
       dwMaximumWindowSize COORD <>
     CONSOLE_SCREEN_BUFFER_INFO ends
+
     _CONSOLE_SCREEN_BUFFER_INFO typedef CONSOLE_SCREEN_BUFFER_INFO
     PCONSOLE_SCREEN_BUFFER_INFO typedef ptr CONSOLE_SCREEN_BUFFER_INFO
+    
     @DefProto DllImport, GetConsoleScreenBufferInfo, WIN_STD_CALL_CONV,, <:HANDLE, :PCONSOLE_SCREEN_BUFFER_INFO>, 8
     CONSOLE_SCREEN_BUFFER_INFOEX struct
       cbSize ULONG ?
@@ -77,8 +80,10 @@ ifndef _APISETCONSOLEL2_
       bFullscreenSupported BOOL ?
       ColorTable COLORREF 16 dup (?)
     CONSOLE_SCREEN_BUFFER_INFOEX ends
+
     _CONSOLE_SCREEN_BUFFER_INFOEX typedef CONSOLE_SCREEN_BUFFER_INFOEX
     PCONSOLE_SCREEN_BUFFER_INFOEX typedef ptr CONSOLE_SCREEN_BUFFER_INFOEX
+    
     @DefProto DllImport, GetConsoleScreenBufferInfoEx, WIN_STD_CALL_CONV,, <:HANDLE, :PCONSOLE_SCREEN_BUFFER_INFOEX>, 8
     @DefProto DllImport, SetConsoleScreenBufferInfoEx, WIN_STD_CALL_CONV,, <:HANDLE, :PCONSOLE_SCREEN_BUFFER_INFOEX>, 8
     @DefProto DllImport, SetConsoleScreenBufferSize, WIN_STD_CALL_CONV,, <:HANDLE, :COORD>, 8
@@ -158,3 +163,4 @@ ifndef _APISETCONSOLEL2_
     ;[...]
   endif
 endif
+

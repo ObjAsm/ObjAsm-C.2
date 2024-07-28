@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\richedit.h
-;             Created on (UTC) 06/04/2024 06:15:57
-;             Last modified on (UTC) 16/12/2023 11:07:52
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\Richedit.h', last modified: 19/04/2018 10:46
+;Creation parameters: 
 
 ifndef _RICHEDIT_
   _RICHEDIT_ equ <>
@@ -109,7 +108,7 @@ ifndef _RICHEDIT_
     TM_SINGLECODEPAGE equ 16
     TM_MULTICODEPAGE equ 32
     tagTextMode typedef TEXTMODE
-
+    
     EM_AUTOURLDETECT equ (WM_USER + 91)
     if (_RICHEDIT_VER ge 0800h)
       AURL_ENABLEURL equ 1
@@ -244,8 +243,6 @@ ifndef _RICHEDIT_
     EM_GETIMEPROPERTY equ (WM_USER + 244)
     EM_GETQUERYRTFOBJ equ (WM_USER + 269)
     EM_SETQUERYRTFOBJ equ (WM_USER + 270)
-    EM_SETQUERYCONVERTOLELINKCALLBACK equ (WM_USER + 403)
-    EM_SETDISABLEOLELINKCONVERSION equ (WM_USER + 404)
     EPR_0 equ 0
     EPR_270 equ 1
     EPR_180 equ 2
@@ -295,8 +292,8 @@ ifndef _RICHEDIT_
         dxCellMargin LONG ?
         dxIndent LONG ?
         dyHeight LONG ?
-        TABLEROWPARMS_REC record TABLEROWPARMS_REC_Filler:24, TABLEROWPARMS_REC_fIdentCells:1, TABLEROWPARMS_REC_fWrap:1, TABLEROWPARMS_REC_fKeepFollow:1, TABLEROWPARMS_REC_fKeep:1, TABLEROWPARMS_REC_fRTL:1, TABLEROWPARMS_REC_nAlignment:3
-        TABLEROWPARMS_BITS TABLEROWPARMS_REC <>
+        TABLEROWPARMS_??75 record nAlignment_??75:3, fRTL_??75:1, fKeep_??75:1, fKeepFollow_??75:1, fWrap_??75:1, fIdentCells_??75:1
+        TABLEROWPARMS_??75 <>
         cpStartRow LONG ?
         bTableLevel BYTE ?
         iCell BYTE ?
@@ -304,8 +301,8 @@ ifndef _RICHEDIT_
       _tableRowParms typedef TABLEROWPARMS
       TABLECELLPARMS struct
         dxWidth LONG ?
-        TABLECELLPARMS_REC record TABLECELLPARMS_REC_Filler:9, TABLECELLPARMS_REC_fMergeCont:1, TABLECELLPARMS_REC_fMergeStart:1, TABLECELLPARMS_REC_fVertical:1, TABLECELLPARMS_REC_fMergePrev:1, TABLECELLPARMS_REC_fMergeTop:1, TABLECELLPARMS_REC_nVertAlign:2
-        TABLECELLPARMS_BITS TABLECELLPARMS_REC <>
+        TABLECELLPARMS_??76 record nVertAlign_??76:2, fMergeTop_??76:1, fMergePrev_??76:1, fVertical_??76:1, fMergeStart_??76:1, fMergeCont_??76:1
+        TABLECELLPARMS_??76 <>
         wShading WORD ?
         dxBrdrLeft SHORT_ ?
         dyBrdrTop SHORT_ ?
@@ -324,7 +321,6 @@ ifndef _RICHEDIT_
       EM_CALLAUTOCORRECTPROC equ (WM_USER + 255)
       TYPE_AutoCorrectProc typedef proto WIN_STD_CALL_CONV :LANGID, :ptr WCHAR, :ptr WCHAR, :LONG, :ptr LONG
       AutoCorrectProc typedef ptr TYPE_AutoCorrectProc
-
       ATP_NOCHANGE equ 0
       ATP_CHANGE equ 1
       ATP_NODELIMITER equ 2
@@ -484,7 +480,6 @@ ifndef _RICHEDIT_
     ifdef _WIN32
       TYPE_EDITWORDBREAKPROCEX typedef proto WIN_STD_CALL_CONV :ptr SBYTE, :LONG, :BYTE, :INT_
       EDITWORDBREAKPROCEX typedef ptr TYPE_EDITWORDBREAKPROCEX
-
     endif
     CHARFORMATA struct 4
       cbSize UINT ?
@@ -522,7 +517,7 @@ ifndef _RICHEDIT_
     if Defined(__cplusplus)
       ;[...]
     else
-      CHARFORMAT2W struct
+      CHARFORMAT2W struct 4
         cbSize UINT ?
         dwMask DWORD ?
         dwEffects DWORD ?
@@ -554,7 +549,7 @@ ifndef _RICHEDIT_
         endif
       CHARFORMAT2W ends
       _charformat2w typedef CHARFORMAT2W
-      CHARFORMAT2A struct
+      CHARFORMAT2A struct 4
         cbSize UINT ?
         dwMask DWORD ?
         dwEffects DWORD ?
@@ -729,7 +724,6 @@ ifndef _RICHEDIT_
     endif
     TYPE_EDITSTREAMCALLBACK typedef proto WIN_STD_CALL_CONV :DWORD_PTR, :LPBYTE, :LONG, :ptr LONG
     EDITSTREAMCALLBACK typedef ptr TYPE_EDITSTREAMCALLBACK
-
     EDITSTREAM struct 4
       dwCookie DWORD_PTR ?
       dwError DWORD ?
@@ -1057,7 +1051,7 @@ ifndef _RICHEDIT_
     UID_PASTE equ 5
     UID_AUTOTABLE equ 6
     _undonameid typedef UNDONAMEID
-
+    
     ST_DEFAULT equ 0
     ST_KEEPUNDO equ 1
     ST_SELECTION equ 2
@@ -1140,7 +1134,7 @@ ifndef _RICHEDIT_
     khyphChangeAfter equ 5
     khyphDelAndChange equ 6
     tagKHYPH typedef KHYPH
-
+    
     HYPHRESULT struct
       khyph KHYPH ?
       ichHyph SDWORD ?
@@ -1153,7 +1147,6 @@ ifndef _RICHEDIT_
       dxHyphenateZone SHORT_ ?
       TYPE_pfnHyphenate typedef proto WIN_STD_CALL_CONV :ptr WCHAR, :LANGID, :SDWORD, :ptr HYPHRESULT
       pfnHyphenate typedef ptr TYPE_pfnHyphenate
-
     HYPHENATEINFO ends
     tagHyphenateInfo typedef HYPHENATEINFO
     ifdef _WIN32
@@ -1177,3 +1170,4 @@ ifndef _RICHEDIT_
     endif
   endif
 endif
+

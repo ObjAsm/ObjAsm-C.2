@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\d3d9.h
-;             Created on (UTC) 22/05/2024 17:57:06
-;             Last modified on (UTC) 21/02/2024 18:14:20
+;Include file created by h2incX, Version B.01.01, 15/11/2018 21:48
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\d3d9.h', last modified: 19/04/2018 09:46
+;Creation parameters: 
 
 ifndef _D3D9_H_
   _D3D9_H_ equ <>
@@ -59,7 +58,55 @@ ifndef _D3D9_H_
       ifdef __cplusplus
         ;[...]
       endif
+      ;IDirect3D9 typedef IDirect3D9
+      
+      ;IDirect3DDevice9 typedef IDirect3DDevice9
+      
+      ;IDirect3DStateBlock9 typedef IDirect3DStateBlock9
+      
+      ;IDirect3DVertexDeclaration9 typedef IDirect3DVertexDeclaration9
+      
+      ;IDirect3DVertexShader9 typedef IDirect3DVertexShader9
+      
+      ;IDirect3DPixelShader9 typedef IDirect3DPixelShader9
+      
+      ;IDirect3DResource9 typedef IDirect3DResource9
+      
+      ;IDirect3DBaseTexture9 typedef IDirect3DBaseTexture9
+      
+      ;IDirect3DTexture9 typedef IDirect3DTexture9
+      
+      ;IDirect3DVolumeTexture9 typedef IDirect3DVolumeTexture9
+      
+      ;IDirect3DCubeTexture9 typedef IDirect3DCubeTexture9
+      
+      ;IDirect3DVertexBuffer9 typedef IDirect3DVertexBuffer9
+      
+      ;IDirect3DIndexBuffer9 typedef IDirect3DIndexBuffer9
+      
+      ;IDirect3DSurface9 typedef IDirect3DSurface9
+      
+      ;IDirect3DVolume9 typedef IDirect3DVolume9
+      
+      ;IDirect3DSwapChain9 typedef IDirect3DSwapChain9
+      
+      ;IDirect3DQuery9 typedef IDirect3DQuery9
+      
       if  not Defined(D3D_DISABLE_9EX)
+        ;IDirect3D9Ex typedef IDirect3D9Ex
+        
+        ;IDirect3DDevice9Ex typedef IDirect3DDevice9Ex
+        
+        ;IDirect3DSwapChain9Ex typedef IDirect3DSwapChain9Ex
+        
+        ;IDirect3D9ExOverlayExtension typedef IDirect3D9ExOverlayExtension
+        
+        ;IDirect3DDevice9Video typedef IDirect3DDevice9Video
+        
+        ;IDirect3DAuthenticatedChannel9 typedef IDirect3DAuthenticatedChannel9
+        
+        ;IDirect3DCryptoSession9 typedef IDirect3DCryptoSession9
+        
       endif
       include d3d9types.inc
       include d3d9caps.inc
@@ -75,31 +122,31 @@ ifndef _D3D9_H_
       D3DPERF_SetOptions proto WIN_STD_CALL_CONV :DWORD
       D3DPERF_GetStatus proto WIN_STD_CALL_CONV
       INTERFACE equ <IDirect3D9>
-      DECLARE_INTERFACE_(IDirect3D9, IUnknown)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD RegisterSoftwareDevice, :ptr 
-        STDMETHOD_ UINT, GetAdapterCount
-        STDMETHOD GetAdapterIdentifier, :, :, :ptr 
-        STDMETHOD_ UINT, GetAdapterModeCount, :, :
-        STDMETHOD EnumAdapterModes, :, :, :, :ptr 
-        STDMETHOD GetAdapterDisplayMode, :, :ptr 
-        STDMETHOD CheckDeviceType, :, :, :, :, :
-        STDMETHOD CheckDeviceFormat, :, :, :, :, :, :
-        STDMETHOD CheckDeviceMultiSampleType, :, :, :, :, :, :ptr 
-        STDMETHOD CheckDepthStencilMatch, :, :, :, :, :
-        STDMETHOD CheckDeviceFormatConversion, :, :, :, :
-        STDMETHOD GetDeviceCaps, :, :, :ptr 
-        STDMETHOD_ HMONITOR, GetAdapterMonitor, :
-        STDMETHOD CreateDevice, :, :, :, :, :ptr , :ptr ptr 
+      DECLARE_INTERFACE_ IDirect3D9, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD RegisterSoftwareDevice, :ptr THIS_
+        STD_METHOD GetAdapterCount, :THIS_
+        STD_METHOD GetAdapterIdentifier, :THIS_, :DWORD, :ptr D3DADAPTER_IDENTIFIER9
+        STD_METHOD GetAdapterModeCount, :THIS_, :D3DFORMAT
+        STD_METHOD EnumAdapterModes, :THIS_, :D3DFORMAT, :UINT, :ptr D3DDISPLAYMODE
+        STD_METHOD GetAdapterDisplayMode, :THIS_, :ptr D3DDISPLAYMODE
+        STD_METHOD CheckDeviceType, :THIS_, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :BOOL
+        STD_METHOD CheckDeviceFormat, :THIS_, :D3DDEVTYPE, :D3DFORMAT, :DWORD, :D3DRESOURCETYPE, :D3DFORMAT
+        STD_METHOD CheckDeviceMultiSampleType, :THIS_, :D3DDEVTYPE, :D3DFORMAT, :BOOL, :D3DMULTISAMPLE_TYPE, :ptr DWORD
+        STD_METHOD CheckDepthStencilMatch, :THIS_, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :D3DFORMAT
+        STD_METHOD CheckDeviceFormatConversion, :THIS_, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT
+        STD_METHOD GetDeviceCaps, :THIS_, :D3DDEVTYPE, :ptr D3DCAPS9
+        STD_METHOD GetAdapterMonitor, :THIS_
+        STD_METHOD CreateDevice, :THIS_, :D3DDEVTYPE, :HWND, :DWORD, :ptr D3DPRESENT_PARAMETERS, :ptr ptr IDirect3DDevice9
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3D9 typedef ptr IDirect3D9
       PDIRECT3D9 typedef ptr IDirect3D9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3D9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -156,133 +203,133 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DDevice9>
-      DECLARE_INTERFACE_(IDirect3DDevice9, IUnknown)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD TestCooperativeLevel
-        STDMETHOD_ UINT, GetAvailableTextureMem
-        STDMETHOD EvictManagedResources
-        STDMETHOD GetDirect3D, :ptr ptr 
-        STDMETHOD GetDeviceCaps, :ptr 
-        STDMETHOD GetDisplayMode, :, :ptr 
-        STDMETHOD GetCreationParameters, :ptr 
-        STDMETHOD SetCursorProperties, :, :, :ptr 
-        STDMETHOD_ void, SetCursorPosition, :, :, :
-        STDMETHOD_ BOOL, ShowCursor, :
-        STDMETHOD CreateAdditionalSwapChain, :ptr , :ptr ptr 
-        STDMETHOD GetSwapChain, :, :ptr ptr 
-        STDMETHOD_ UINT, GetNumberOfSwapChains
-        STDMETHOD Reset, :ptr 
-        STDMETHOD Present, :ptr , :ptr , :, :ptr 
-        STDMETHOD GetBackBuffer, :, :, :, :ptr ptr 
-        STDMETHOD GetRasterStatus, :, :ptr 
-        STDMETHOD SetDialogBoxMode, :
-        STDMETHOD_ void, SetGammaRamp, :, :, :ptr 
-        STDMETHOD_ void, GetGammaRamp, :, :ptr 
-        STDMETHOD CreateTexture, :, :, :, :, :, :, :ptr ptr , :ptr 
-        STDMETHOD CreateVolumeTexture, :, :, :, :, :, :, :, :ptr ptr , :ptr 
-        STDMETHOD CreateCubeTexture, :, :, :, :, :, :ptr ptr , :ptr 
-        STDMETHOD CreateVertexBuffer, :, :, :, :, :ptr ptr , :ptr 
-        STDMETHOD CreateIndexBuffer, :, :, :, :, :ptr ptr , :ptr 
-        STDMETHOD CreateRenderTarget, :, :, :, :, :, :, :ptr ptr , :ptr 
-        STDMETHOD CreateDepthStencilSurface, :, :, :, :, :, :, :ptr ptr , :ptr 
-        STDMETHOD UpdateSurface, :ptr , :ptr , :ptr , :ptr 
-        STDMETHOD UpdateTexture, :ptr , :ptr 
-        STDMETHOD GetRenderTargetData, :ptr , :ptr 
-        STDMETHOD GetFrontBufferData, :, :ptr 
-        STDMETHOD StretchRect, :ptr , :ptr , :ptr , :ptr , :
-        STDMETHOD ColorFill, :ptr , :ptr , :
-        STDMETHOD CreateOffscreenPlainSurface, :, :, :, :, :ptr ptr , :ptr 
-        STDMETHOD SetRenderTarget, :, :ptr 
-        STDMETHOD GetRenderTarget, :, :ptr ptr 
-        STDMETHOD SetDepthStencilSurface, :ptr 
-        STDMETHOD GetDepthStencilSurface, :ptr ptr 
-        STDMETHOD BeginScene
-        STDMETHOD EndScene
-        STDMETHOD Clear, :, :ptr , :, :, :, :
-        STDMETHOD SetTransform, :, :ptr 
-        STDMETHOD GetTransform, :, :ptr 
-        STDMETHOD MultiplyTransform, :, :ptr 
-        STDMETHOD SetViewport, :ptr 
-        STDMETHOD GetViewport, :ptr 
-        STDMETHOD SetMaterial, :ptr 
-        STDMETHOD GetMaterial, :ptr 
-        STDMETHOD SetLight, :, :ptr 
-        STDMETHOD GetLight, :, :ptr 
-        STDMETHOD LightEnable, :, :
-        STDMETHOD GetLightEnable, :, :ptr 
-        STDMETHOD SetClipPlane, :, :ptr 
-        STDMETHOD GetClipPlane, :, :ptr 
-        STDMETHOD SetRenderState, :, :
-        STDMETHOD GetRenderState, :, :ptr 
-        STDMETHOD CreateStateBlock, :, :ptr ptr 
-        STDMETHOD BeginStateBlock
-        STDMETHOD EndStateBlock, :ptr ptr 
-        STDMETHOD SetClipStatus, :ptr 
-        STDMETHOD GetClipStatus, :ptr 
-        STDMETHOD GetTexture, :, :ptr ptr 
-        STDMETHOD SetTexture, :, :ptr 
-        STDMETHOD GetTextureStageState, :, :, :ptr 
-        STDMETHOD SetTextureStageState, :, :, :
-        STDMETHOD GetSamplerState, :, :, :ptr 
-        STDMETHOD SetSamplerState, :, :, :
-        STDMETHOD ValidateDevice, :ptr 
-        STDMETHOD SetPaletteEntries, :, :ptr 
-        STDMETHOD GetPaletteEntries, :, :ptr 
-        STDMETHOD SetCurrentTexturePalette, :
-        STDMETHOD GetCurrentTexturePalette, :ptr 
-        STDMETHOD SetScissorRect, :ptr 
-        STDMETHOD GetScissorRect, :ptr 
-        STDMETHOD SetSoftwareVertexProcessing, :
-        STDMETHOD_ BOOL, GetSoftwareVertexProcessing
-        STDMETHOD SetNPatchMode, :
-        STDMETHOD_ float, GetNPatchMode
-        STDMETHOD DrawPrimitive, :, :, :
-        STDMETHOD DrawIndexedPrimitive, :, :, :, :, :, :
-        STDMETHOD DrawPrimitiveUP, :, :, :ptr , :
-        STDMETHOD DrawIndexedPrimitiveUP, :, :, :, :, :ptr , :, :ptr , :
-        STDMETHOD ProcessVertices, :, :, :, :ptr , :ptr , :
-        STDMETHOD CreateVertexDeclaration, :ptr , :ptr ptr 
-        STDMETHOD SetVertexDeclaration, :ptr 
-        STDMETHOD GetVertexDeclaration, :ptr ptr 
-        STDMETHOD SetFVF, :
-        STDMETHOD GetFVF, :ptr 
-        STDMETHOD CreateVertexShader, :ptr , :ptr ptr 
-        STDMETHOD SetVertexShader, :ptr 
-        STDMETHOD GetVertexShader, :ptr ptr 
-        STDMETHOD SetVertexShaderConstantF, :, :ptr , :
-        STDMETHOD GetVertexShaderConstantF, :, :ptr , :
-        STDMETHOD SetVertexShaderConstantI, :, :ptr , :
-        STDMETHOD GetVertexShaderConstantI, :, :ptr , :
-        STDMETHOD SetVertexShaderConstantB, :, :ptr , :
-        STDMETHOD GetVertexShaderConstantB, :, :ptr , :
-        STDMETHOD SetStreamSource, :, :ptr , :, :
-        STDMETHOD GetStreamSource, :, :ptr ptr , :ptr , :ptr 
-        STDMETHOD SetStreamSourceFreq, :, :
-        STDMETHOD GetStreamSourceFreq, :, :ptr 
-        STDMETHOD SetIndices, :ptr 
-        STDMETHOD GetIndices, :ptr ptr 
-        STDMETHOD CreatePixelShader, :ptr , :ptr ptr 
-        STDMETHOD SetPixelShader, :ptr 
-        STDMETHOD GetPixelShader, :ptr ptr 
-        STDMETHOD SetPixelShaderConstantF, :, :ptr , :
-        STDMETHOD GetPixelShaderConstantF, :, :ptr , :
-        STDMETHOD SetPixelShaderConstantI, :, :ptr , :
-        STDMETHOD GetPixelShaderConstantI, :, :ptr , :
-        STDMETHOD SetPixelShaderConstantB, :, :ptr , :
-        STDMETHOD GetPixelShaderConstantB, :, :ptr , :
-        STDMETHOD DrawRectPatch, :, :ptr , :ptr 
-        STDMETHOD DrawTriPatch, :, :ptr , :ptr 
-        STDMETHOD DeletePatch, :
-        STDMETHOD CreateQuery, :, :ptr ptr 
+      DECLARE_INTERFACE_ IDirect3DDevice9, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD TestCooperativeLevel, :THIS_
+        STD_METHOD GetAvailableTextureMem, :THIS_
+        STD_METHOD EvictManagedResources, :THIS_
+        STD_METHOD GetDirect3D, :ptr ptr THIS_
+        STD_METHOD GetDeviceCaps, :ptr THIS_
+        STD_METHOD GetDisplayMode, :THIS_, :ptr D3DDISPLAYMODE
+        STD_METHOD GetCreationParameters, :ptr THIS_
+        STD_METHOD SetCursorProperties, :THIS_, :UINT, :ptr IDirect3DSurface9
+        STD_METHOD SetCursorPosition, :THIS_, :SDWORD, :DWORD
+        STD_METHOD ShowCursor, :THIS_
+        STD_METHOD CreateAdditionalSwapChain, :ptr THIS_, :ptr ptr IDirect3DSwapChain9
+        STD_METHOD GetSwapChain, :THIS_, :ptr ptr IDirect3DSwapChain9
+        STD_METHOD GetNumberOfSwapChains, :THIS_
+        STD_METHOD Reset, :ptr THIS_
+        STD_METHOD Present, :ptr THIS_, :ptr RECT, :HWND, :ptr RGNDATA
+        STD_METHOD GetBackBuffer, :THIS_, :UINT, :D3DBACKBUFFER_TYPE, :ptr ptr IDirect3DSurface9
+        STD_METHOD GetRasterStatus, :THIS_, :ptr D3DRASTER_STATUS
+        STD_METHOD SetDialogBoxMode, :THIS_
+        STD_METHOD SetGammaRamp, :THIS_, :DWORD, :ptr D3DGAMMARAMP
+        STD_METHOD GetGammaRamp, :THIS_, :ptr D3DGAMMARAMP
+        STD_METHOD CreateTexture, :THIS_, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr ptr IDirect3DTexture9, :ptr HANDLE
+        STD_METHOD CreateVolumeTexture, :THIS_, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr ptr IDirect3DVolumeTexture9, :ptr HANDLE
+        STD_METHOD CreateCubeTexture, :THIS_, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr ptr IDirect3DCubeTexture9, :ptr HANDLE
+        STD_METHOD CreateVertexBuffer, :THIS_, :DWORD, :DWORD, :D3DPOOL, :ptr ptr IDirect3DVertexBuffer9, :ptr HANDLE
+        STD_METHOD CreateIndexBuffer, :THIS_, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr ptr IDirect3DIndexBuffer9, :ptr HANDLE
+        STD_METHOD CreateRenderTarget, :THIS_, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr ptr IDirect3DSurface9, :ptr HANDLE
+        STD_METHOD CreateDepthStencilSurface, :THIS_, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr ptr IDirect3DSurface9, :ptr HANDLE
+        STD_METHOD UpdateSurface, :ptr THIS_, :ptr RECT, :ptr IDirect3DSurface9, :ptr POINT
+        STD_METHOD UpdateTexture, :ptr THIS_, :ptr IDirect3DBaseTexture9
+        STD_METHOD GetRenderTargetData, :ptr THIS_, :ptr IDirect3DSurface9
+        STD_METHOD GetFrontBufferData, :THIS_, :ptr IDirect3DSurface9
+        STD_METHOD StretchRect, :ptr THIS_, :ptr RECT, :ptr IDirect3DSurface9, :ptr RECT, :D3DTEXTUREFILTERTYPE
+        STD_METHOD ColorFill, :ptr THIS_, :ptr RECT, :D3DCOLOR
+        STD_METHOD CreateOffscreenPlainSurface, :THIS_, :UINT, :D3DFORMAT, :D3DPOOL, :ptr ptr IDirect3DSurface9, :ptr HANDLE
+        STD_METHOD SetRenderTarget, :THIS_, :ptr IDirect3DSurface9
+        STD_METHOD GetRenderTarget, :THIS_, :ptr ptr IDirect3DSurface9
+        STD_METHOD SetDepthStencilSurface, :ptr THIS_
+        STD_METHOD GetDepthStencilSurface, :ptr ptr THIS_
+        STD_METHOD BeginScene, :THIS_
+        STD_METHOD EndScene, :THIS_
+        STD_METHOD Clear, :THIS_, :ptr D3DRECT, :DWORD, :D3DCOLOR, :REAL4, :DWORD
+        STD_METHOD SetTransform, :THIS_, :ptr D3DMATRIX
+        STD_METHOD GetTransform, :THIS_, :ptr D3DMATRIX
+        STD_METHOD MultiplyTransform, :THIS_, :ptr D3DMATRIX
+        STD_METHOD SetViewport, :ptr THIS_
+        STD_METHOD GetViewport, :ptr THIS_
+        STD_METHOD SetMaterial, :ptr THIS_
+        STD_METHOD GetMaterial, :ptr THIS_
+        STD_METHOD SetLight, :THIS_, :ptr D3DLIGHT9
+        STD_METHOD GetLight, :THIS_, :ptr D3DLIGHT9
+        STD_METHOD LightEnable, :THIS_, :BOOL
+        STD_METHOD GetLightEnable, :THIS_, :ptr BOOL
+        STD_METHOD SetClipPlane, :THIS_, :ptr REAL4
+        STD_METHOD GetClipPlane, :THIS_, :ptr REAL4
+        STD_METHOD SetRenderState, :THIS_, :DWORD
+        STD_METHOD GetRenderState, :THIS_, :ptr DWORD
+        STD_METHOD CreateStateBlock, :THIS_, :ptr ptr IDirect3DStateBlock9
+        STD_METHOD BeginStateBlock, :THIS_
+        STD_METHOD EndStateBlock, :ptr ptr THIS_
+        STD_METHOD SetClipStatus, :ptr THIS_
+        STD_METHOD GetClipStatus, :ptr THIS_
+        STD_METHOD GetTexture, :THIS_, :ptr ptr IDirect3DBaseTexture9
+        STD_METHOD SetTexture, :THIS_, :ptr IDirect3DBaseTexture9
+        STD_METHOD GetTextureStageState, :THIS_, :D3DTEXTURESTAGESTATETYPE, :ptr DWORD
+        STD_METHOD SetTextureStageState, :THIS_, :D3DTEXTURESTAGESTATETYPE, :DWORD
+        STD_METHOD GetSamplerState, :THIS_, :D3DSAMPLERSTATETYPE, :ptr DWORD
+        STD_METHOD SetSamplerState, :THIS_, :D3DSAMPLERSTATETYPE, :DWORD
+        STD_METHOD ValidateDevice, :ptr THIS_
+        STD_METHOD SetPaletteEntries, :THIS_, :ptr PALETTEENTRY
+        STD_METHOD GetPaletteEntries, :THIS_, :ptr PALETTEENTRY
+        STD_METHOD SetCurrentTexturePalette, :THIS_
+        STD_METHOD GetCurrentTexturePalette, :ptr THIS_
+        STD_METHOD SetScissorRect, :ptr THIS_
+        STD_METHOD GetScissorRect, :ptr THIS_
+        STD_METHOD SetSoftwareVertexProcessing, :THIS_
+        STD_METHOD GetSoftwareVertexProcessing, :THIS_
+        STD_METHOD SetNPatchMode, :THIS_
+        STD_METHOD GetNPatchMode, :THIS_
+        STD_METHOD DrawPrimitive, :THIS_, :UINT, :UINT
+        STD_METHOD DrawIndexedPrimitive, :THIS_, :INT_, :UINT, :UINT, :UINT, :UINT
+        STD_METHOD DrawPrimitiveUP, :THIS_, :UINT, :ptr, :UINT
+        STD_METHOD DrawIndexedPrimitiveUP, :THIS_, :UINT, :UINT, :UINT, :ptr, :D3DFORMAT, :ptr, :UINT
+        STD_METHOD ProcessVertices, :THIS_, :UINT, :UINT, :ptr IDirect3DVertexBuffer9, :ptr IDirect3DVertexDeclaration9, :DWORD
+        STD_METHOD CreateVertexDeclaration, :ptr THIS_, :ptr ptr IDirect3DVertexDeclaration9
+        STD_METHOD SetVertexDeclaration, :ptr THIS_
+        STD_METHOD GetVertexDeclaration, :ptr ptr THIS_
+        STD_METHOD SetFVF, :THIS_
+        STD_METHOD GetFVF, :ptr THIS_
+        STD_METHOD CreateVertexShader, :ptr THIS_, :ptr ptr IDirect3DVertexShader9
+        STD_METHOD SetVertexShader, :ptr THIS_
+        STD_METHOD GetVertexShader, :ptr ptr THIS_
+        STD_METHOD SetVertexShaderConstantF, :THIS_, :ptr REAL4, :UINT
+        STD_METHOD GetVertexShaderConstantF, :THIS_, :ptr REAL4, :UINT
+        STD_METHOD SetVertexShaderConstantI, :THIS_, :ptr SDWORD, :UINT
+        STD_METHOD GetVertexShaderConstantI, :THIS_, :ptr SDWORD, :UINT
+        STD_METHOD SetVertexShaderConstantB, :THIS_, :ptr BOOL, :UINT
+        STD_METHOD GetVertexShaderConstantB, :THIS_, :ptr BOOL, :UINT
+        STD_METHOD SetStreamSource, :THIS_, :ptr IDirect3DVertexBuffer9, :UINT, :UINT
+        STD_METHOD GetStreamSource, :THIS_, :ptr ptr IDirect3DVertexBuffer9, :ptr UINT, :ptr UINT
+        STD_METHOD SetStreamSourceFreq, :THIS_, :UINT
+        STD_METHOD GetStreamSourceFreq, :THIS_, :ptr UINT
+        STD_METHOD SetIndices, :ptr THIS_
+        STD_METHOD GetIndices, :ptr ptr THIS_
+        STD_METHOD CreatePixelShader, :ptr THIS_, :ptr ptr IDirect3DPixelShader9
+        STD_METHOD SetPixelShader, :ptr THIS_
+        STD_METHOD GetPixelShader, :ptr ptr THIS_
+        STD_METHOD SetPixelShaderConstantF, :THIS_, :ptr REAL4, :UINT
+        STD_METHOD GetPixelShaderConstantF, :THIS_, :ptr REAL4, :UINT
+        STD_METHOD SetPixelShaderConstantI, :THIS_, :ptr SDWORD, :UINT
+        STD_METHOD GetPixelShaderConstantI, :THIS_, :ptr SDWORD, :UINT
+        STD_METHOD SetPixelShaderConstantB, :THIS_, :ptr BOOL, :UINT
+        STD_METHOD GetPixelShaderConstantB, :THIS_, :ptr BOOL, :UINT
+        STD_METHOD DrawRectPatch, :THIS_, :ptr REAL4, :ptr D3DRECTPATCH_INFO
+        STD_METHOD DrawTriPatch, :THIS_, :ptr REAL4, :ptr D3DTRIPATCH_INFO
+        STD_METHOD DeletePatch, :THIS_
+        STD_METHOD CreateQuery, :THIS_, :ptr ptr IDirect3DQuery9
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3DDEVICE9 typedef ptr IDirect3DDevice9
       PDIRECT3DDEVICE9 typedef ptr IDirect3DDevice9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DDevice9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -645,20 +692,20 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DStateBlock9>
-      DECLARE_INTERFACE_(IDirect3DStateBlock9, IUnknown)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD Capture
-        STDMETHOD Apply
+      DECLARE_INTERFACE_ IDirect3DStateBlock9, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD Capture, :THIS_
+        STD_METHOD Apply, :THIS_
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3DSTATEBLOCK9 typedef ptr IDirect3DStateBlock9
       PDIRECT3DSTATEBLOCK9 typedef ptr IDirect3DStateBlock9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DStateBlock9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -682,24 +729,24 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DSwapChain9>
-      DECLARE_INTERFACE_(IDirect3DSwapChain9, IUnknown)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD Present, :ptr , :ptr , :, :ptr , :
-        STDMETHOD GetFrontBufferData, :ptr 
-        STDMETHOD GetBackBuffer, :, :, :ptr ptr 
-        STDMETHOD GetRasterStatus, :ptr 
-        STDMETHOD GetDisplayMode, :ptr 
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD GetPresentParameters, :ptr 
+      DECLARE_INTERFACE_ IDirect3DSwapChain9, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD Present, :ptr THIS_, :ptr RECT, :HWND, :ptr RGNDATA, :DWORD
+        STD_METHOD GetFrontBufferData, :ptr THIS_
+        STD_METHOD GetBackBuffer, :THIS_, :D3DBACKBUFFER_TYPE, :ptr ptr IDirect3DSurface9
+        STD_METHOD GetRasterStatus, :ptr THIS_
+        STD_METHOD GetDisplayMode, :ptr THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD GetPresentParameters, :ptr THIS_
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3DSWAPCHAIN9 typedef ptr IDirect3DSwapChain9
       PDIRECT3DSWAPCHAIN9 typedef ptr IDirect3DSwapChain9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DSwapChain9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -735,22 +782,22 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DResource9>
-      DECLARE_INTERFACE_(IDirect3DResource9, IUnknown)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD SetPrivateData, :, :ptr , :, :
-        STDMETHOD GetPrivateData, :, :ptr , :ptr 
-        STDMETHOD FreePrivateData, :
-        STDMETHOD_ DWORD, SetPriority, :
-        STDMETHOD_ DWORD, GetPriority
-        STDMETHOD_ void, PreLoad
-        STDMETHOD_ D3DRESOURCETYPE, GetType
-      DECLARE_INTERFACE__END
-
+      DECLARE_INTERFACE_ IDirect3DResource9, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD SetPrivateData, :THIS_, :ptr, :DWORD, :DWORD
+        STD_METHOD GetPrivateData, :THIS_, :ptr, :ptr DWORD
+        STD_METHOD FreePrivateData, :THIS_
+        STD_METHOD SetPriority, :THIS_
+        STD_METHOD GetPriority, :THIS_
+        STD_METHOD PreLoad, :THIS_
+        STD_METHOD GetType, :THIS_
+      END_DECLARE_INTERFACE_
       LPDIRECT3DRESOURCE9 typedef ptr IDirect3DResource9
       PDIRECT3DRESOURCE9 typedef ptr IDirect3DResource9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DResource9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -789,19 +836,19 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DVertexDeclaration9>
-      DECLARE_INTERFACE_(IDirect3DVertexDeclaration9, IUnknown)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD GetDeclaration, :ptr , :ptr 
+      DECLARE_INTERFACE_ IDirect3DVertexDeclaration9, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD GetDeclaration, :ptr THIS_, :ptr UINT
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3DVERTEXDECLARATION9 typedef ptr IDirect3DVertexDeclaration9
       PDIRECT3DVERTEXDECLARATION9 typedef ptr IDirect3DVertexDeclaration9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DVertexDeclaration9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -822,19 +869,19 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DVertexShader9>
-      DECLARE_INTERFACE_(IDirect3DVertexShader9, IUnknown)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD GetFunction, :ptr , :ptr 
+      DECLARE_INTERFACE_ IDirect3DVertexShader9, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD GetFunction, :ptr THIS_, :ptr UINT
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3DVERTEXSHADER9 typedef ptr IDirect3DVertexShader9
       PDIRECT3DVERTEXSHADER9 typedef ptr IDirect3DVertexShader9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DVertexShader9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -855,19 +902,19 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DPixelShader9>
-      DECLARE_INTERFACE_(IDirect3DPixelShader9, IUnknown)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD GetFunction, :ptr , :ptr 
+      DECLARE_INTERFACE_ IDirect3DPixelShader9, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD GetFunction, :ptr THIS_, :ptr UINT
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3DPIXELSHADER9 typedef ptr IDirect3DPixelShader9
       PDIRECT3DPIXELSHADER9 typedef ptr IDirect3DPixelShader9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DPixelShader9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -888,28 +935,28 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DBaseTexture9>
-      DECLARE_INTERFACE_(IDirect3DBaseTexture9, IDirect3DResource9)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD SetPrivateData, :, :ptr , :, :
-        STDMETHOD GetPrivateData, :, :ptr , :ptr 
-        STDMETHOD FreePrivateData, :
-        STDMETHOD_ DWORD, SetPriority, :
-        STDMETHOD_ DWORD, GetPriority
-        STDMETHOD_ void, PreLoad
-        STDMETHOD_ D3DRESOURCETYPE, GetType
-        STDMETHOD_ DWORD, SetLOD, :
-        STDMETHOD_ DWORD, GetLOD
-        STDMETHOD_ DWORD, GetLevelCount
-        STDMETHOD SetAutoGenFilterType, :
-        STDMETHOD_ D3DTEXTUREFILTERTYPE, GetAutoGenFilterType
-        STDMETHOD_ void, GenerateMipSubLevels
-      DECLARE_INTERFACE__END
-
+      DECLARE_INTERFACE_ IDirect3DBaseTexture9, IDirect3DResource9
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD SetPrivateData, :THIS_, :ptr, :DWORD, :DWORD
+        STD_METHOD GetPrivateData, :THIS_, :ptr, :ptr DWORD
+        STD_METHOD FreePrivateData, :THIS_
+        STD_METHOD SetPriority, :THIS_
+        STD_METHOD GetPriority, :THIS_
+        STD_METHOD PreLoad, :THIS_
+        STD_METHOD GetType, :THIS_
+        STD_METHOD SetLOD, :THIS_
+        STD_METHOD GetLOD, :THIS_
+        STD_METHOD GetLevelCount, :THIS_
+        STD_METHOD SetAutoGenFilterType, :THIS_
+        STD_METHOD GetAutoGenFilterType, :THIS_
+        STD_METHOD GenerateMipSubLevels, :THIS_
+      END_DECLARE_INTERFACE_
       LPDIRECT3DBASETEXTURE9 typedef ptr IDirect3DBaseTexture9
       PDIRECT3DBASETEXTURE9 typedef ptr IDirect3DBaseTexture9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DBaseTexture9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -966,36 +1013,36 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DTexture9>
-      DECLARE_INTERFACE_(IDirect3DTexture9, IDirect3DBaseTexture9)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD SetPrivateData, :, :ptr , :, :
-        STDMETHOD GetPrivateData, :, :ptr , :ptr 
-        STDMETHOD FreePrivateData, :
-        STDMETHOD_ DWORD, SetPriority, :
-        STDMETHOD_ DWORD, GetPriority
-        STDMETHOD_ void, PreLoad
-        STDMETHOD_ D3DRESOURCETYPE, GetType
-        STDMETHOD_ DWORD, SetLOD, :
-        STDMETHOD_ DWORD, GetLOD
-        STDMETHOD_ DWORD, GetLevelCount
-        STDMETHOD SetAutoGenFilterType, :
-        STDMETHOD_ D3DTEXTUREFILTERTYPE, GetAutoGenFilterType
-        STDMETHOD_ void, GenerateMipSubLevels
-        STDMETHOD GetLevelDesc, :, :ptr 
-        STDMETHOD GetSurfaceLevel, :, :ptr ptr 
-        STDMETHOD LockRect, :, :ptr , :ptr , :
-        STDMETHOD UnlockRect, :
-        STDMETHOD AddDirtyRect, :ptr 
+      DECLARE_INTERFACE_ IDirect3DTexture9, IDirect3DBaseTexture9
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD SetPrivateData, :THIS_, :ptr, :DWORD, :DWORD
+        STD_METHOD GetPrivateData, :THIS_, :ptr, :ptr DWORD
+        STD_METHOD FreePrivateData, :THIS_
+        STD_METHOD SetPriority, :THIS_
+        STD_METHOD GetPriority, :THIS_
+        STD_METHOD PreLoad, :THIS_
+        STD_METHOD GetType, :THIS_
+        STD_METHOD SetLOD, :THIS_
+        STD_METHOD GetLOD, :THIS_
+        STD_METHOD GetLevelCount, :THIS_
+        STD_METHOD SetAutoGenFilterType, :THIS_
+        STD_METHOD GetAutoGenFilterType, :THIS_
+        STD_METHOD GenerateMipSubLevels, :THIS_
+        STD_METHOD GetLevelDesc, :THIS_, :ptr D3DSURFACE_DESC
+        STD_METHOD GetSurfaceLevel, :THIS_, :ptr ptr IDirect3DSurface9
+        STD_METHOD LockRect, :THIS_, :ptr D3DLOCKED_RECT, :ptr RECT, :DWORD
+        STD_METHOD UnlockRect, :THIS_
+        STD_METHOD AddDirtyRect, :ptr THIS_
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3DTEXTURE9 typedef ptr IDirect3DTexture9
       PDIRECT3DTEXTURE9 typedef ptr IDirect3DTexture9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DTexture9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1067,36 +1114,36 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DVolumeTexture9>
-      DECLARE_INTERFACE_(IDirect3DVolumeTexture9, IDirect3DBaseTexture9)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD SetPrivateData, :, :ptr , :, :
-        STDMETHOD GetPrivateData, :, :ptr , :ptr 
-        STDMETHOD FreePrivateData, :
-        STDMETHOD_ DWORD, SetPriority, :
-        STDMETHOD_ DWORD, GetPriority
-        STDMETHOD_ void, PreLoad
-        STDMETHOD_ D3DRESOURCETYPE, GetType
-        STDMETHOD_ DWORD, SetLOD, :
-        STDMETHOD_ DWORD, GetLOD
-        STDMETHOD_ DWORD, GetLevelCount
-        STDMETHOD SetAutoGenFilterType, :
-        STDMETHOD_ D3DTEXTUREFILTERTYPE, GetAutoGenFilterType
-        STDMETHOD_ void, GenerateMipSubLevels
-        STDMETHOD GetLevelDesc, :, :ptr 
-        STDMETHOD GetVolumeLevel, :, :ptr ptr 
-        STDMETHOD LockBox, :, :ptr , :ptr , :
-        STDMETHOD UnlockBox, :
-        STDMETHOD AddDirtyBox, :ptr 
+      DECLARE_INTERFACE_ IDirect3DVolumeTexture9, IDirect3DBaseTexture9
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD SetPrivateData, :THIS_, :ptr, :DWORD, :DWORD
+        STD_METHOD GetPrivateData, :THIS_, :ptr, :ptr DWORD
+        STD_METHOD FreePrivateData, :THIS_
+        STD_METHOD SetPriority, :THIS_
+        STD_METHOD GetPriority, :THIS_
+        STD_METHOD PreLoad, :THIS_
+        STD_METHOD GetType, :THIS_
+        STD_METHOD SetLOD, :THIS_
+        STD_METHOD GetLOD, :THIS_
+        STD_METHOD GetLevelCount, :THIS_
+        STD_METHOD SetAutoGenFilterType, :THIS_
+        STD_METHOD GetAutoGenFilterType, :THIS_
+        STD_METHOD GenerateMipSubLevels, :THIS_
+        STD_METHOD GetLevelDesc, :THIS_, :ptr D3DVOLUME_DESC
+        STD_METHOD GetVolumeLevel, :THIS_, :ptr ptr IDirect3DVolume9
+        STD_METHOD LockBox, :THIS_, :ptr D3DLOCKED_BOX, :ptr D3DBOX, :DWORD
+        STD_METHOD UnlockBox, :THIS_
+        STD_METHOD AddDirtyBox, :ptr THIS_
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3DVOLUMETEXTURE9 typedef ptr IDirect3DVolumeTexture9
       PDIRECT3DVOLUMETEXTURE9 typedef ptr IDirect3DVolumeTexture9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DVolumeTexture9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1168,36 +1215,36 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DCubeTexture9>
-      DECLARE_INTERFACE_(IDirect3DCubeTexture9, IDirect3DBaseTexture9)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD SetPrivateData, :, :ptr , :, :
-        STDMETHOD GetPrivateData, :, :ptr , :ptr 
-        STDMETHOD FreePrivateData, :
-        STDMETHOD_ DWORD, SetPriority, :
-        STDMETHOD_ DWORD, GetPriority
-        STDMETHOD_ void, PreLoad
-        STDMETHOD_ D3DRESOURCETYPE, GetType
-        STDMETHOD_ DWORD, SetLOD, :
-        STDMETHOD_ DWORD, GetLOD
-        STDMETHOD_ DWORD, GetLevelCount
-        STDMETHOD SetAutoGenFilterType, :
-        STDMETHOD_ D3DTEXTUREFILTERTYPE, GetAutoGenFilterType
-        STDMETHOD_ void, GenerateMipSubLevels
-        STDMETHOD GetLevelDesc, :, :ptr 
-        STDMETHOD GetCubeMapSurface, :, :, :ptr ptr 
-        STDMETHOD LockRect, :, :, :ptr , :ptr , :
-        STDMETHOD UnlockRect, :, :
-        STDMETHOD AddDirtyRect, :, :ptr 
+      DECLARE_INTERFACE_ IDirect3DCubeTexture9, IDirect3DBaseTexture9
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD SetPrivateData, :THIS_, :ptr, :DWORD, :DWORD
+        STD_METHOD GetPrivateData, :THIS_, :ptr, :ptr DWORD
+        STD_METHOD FreePrivateData, :THIS_
+        STD_METHOD SetPriority, :THIS_
+        STD_METHOD GetPriority, :THIS_
+        STD_METHOD PreLoad, :THIS_
+        STD_METHOD GetType, :THIS_
+        STD_METHOD SetLOD, :THIS_
+        STD_METHOD GetLOD, :THIS_
+        STD_METHOD GetLevelCount, :THIS_
+        STD_METHOD SetAutoGenFilterType, :THIS_
+        STD_METHOD GetAutoGenFilterType, :THIS_
+        STD_METHOD GenerateMipSubLevels, :THIS_
+        STD_METHOD GetLevelDesc, :THIS_, :ptr D3DSURFACE_DESC
+        STD_METHOD GetCubeMapSurface, :THIS_, :UINT, :ptr ptr IDirect3DSurface9
+        STD_METHOD LockRect, :THIS_, :UINT, :ptr D3DLOCKED_RECT, :ptr RECT, :DWORD
+        STD_METHOD UnlockRect, :THIS_, :UINT
+        STD_METHOD AddDirtyRect, :THIS_, :ptr RECT
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3DCUBETEXTURE9 typedef ptr IDirect3DCubeTexture9
       PDIRECT3DCUBETEXTURE9 typedef ptr IDirect3DCubeTexture9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DCubeTexture9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1269,28 +1316,28 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DVertexBuffer9>
-      DECLARE_INTERFACE_(IDirect3DVertexBuffer9, IDirect3DResource9)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD SetPrivateData, :, :ptr , :, :
-        STDMETHOD GetPrivateData, :, :ptr , :ptr 
-        STDMETHOD FreePrivateData, :
-        STDMETHOD_ DWORD, SetPriority, :
-        STDMETHOD_ DWORD, GetPriority
-        STDMETHOD_ void, PreLoad
-        STDMETHOD_ D3DRESOURCETYPE, GetType
-        STDMETHOD Lock_, :, :, :ptr ptr , :
-        STDMETHOD Unlock
-        STDMETHOD GetDesc, :ptr 
+      DECLARE_INTERFACE_ IDirect3DVertexBuffer9, IDirect3DResource9
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD SetPrivateData, :THIS_, :ptr, :DWORD, :DWORD
+        STD_METHOD GetPrivateData, :THIS_, :ptr, :ptr DWORD
+        STD_METHOD FreePrivateData, :THIS_
+        STD_METHOD SetPriority, :THIS_
+        STD_METHOD GetPriority, :THIS_
+        STD_METHOD PreLoad, :THIS_
+        STD_METHOD GetType, :THIS_
+        STD_METHOD Lock_, :THIS_, :UINT, :ptr ptr, :DWORD
+        STD_METHOD Unlock, :THIS_
+        STD_METHOD GetDesc, :ptr THIS_
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3DVERTEXBUFFER9 typedef ptr IDirect3DVertexBuffer9
       PDIRECT3DVERTEXBUFFER9 typedef ptr IDirect3DVertexBuffer9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DVertexBuffer9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1338,28 +1385,28 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DIndexBuffer9>
-      DECLARE_INTERFACE_(IDirect3DIndexBuffer9, IDirect3DResource9)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD SetPrivateData, :, :ptr , :, :
-        STDMETHOD GetPrivateData, :, :ptr , :ptr 
-        STDMETHOD FreePrivateData, :
-        STDMETHOD_ DWORD, SetPriority, :
-        STDMETHOD_ DWORD, GetPriority
-        STDMETHOD_ void, PreLoad
-        STDMETHOD_ D3DRESOURCETYPE, GetType
-        STDMETHOD Lock_, :, :, :ptr ptr , :
-        STDMETHOD Unlock
-        STDMETHOD GetDesc, :ptr 
+      DECLARE_INTERFACE_ IDirect3DIndexBuffer9, IDirect3DResource9
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD SetPrivateData, :THIS_, :ptr, :DWORD, :DWORD
+        STD_METHOD GetPrivateData, :THIS_, :ptr, :ptr DWORD
+        STD_METHOD FreePrivateData, :THIS_
+        STD_METHOD SetPriority, :THIS_
+        STD_METHOD GetPriority, :THIS_
+        STD_METHOD PreLoad, :THIS_
+        STD_METHOD GetType, :THIS_
+        STD_METHOD Lock_, :THIS_, :UINT, :ptr ptr, :DWORD
+        STD_METHOD Unlock, :THIS_
+        STD_METHOD GetDesc, :ptr THIS_
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3DINDEXBUFFER9 typedef ptr IDirect3DIndexBuffer9
       PDIRECT3DINDEXBUFFER9 typedef ptr IDirect3DIndexBuffer9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DIndexBuffer9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1407,31 +1454,31 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DSurface9>
-      DECLARE_INTERFACE_(IDirect3DSurface9, IDirect3DResource9)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD SetPrivateData, :, :ptr , :, :
-        STDMETHOD GetPrivateData, :, :ptr , :ptr 
-        STDMETHOD FreePrivateData, :
-        STDMETHOD_ DWORD, SetPriority, :
-        STDMETHOD_ DWORD, GetPriority
-        STDMETHOD_ void, PreLoad
-        STDMETHOD_ D3DRESOURCETYPE, GetType
-        STDMETHOD GetContainer, :, :ptr ptr 
-        STDMETHOD GetDesc, :ptr 
-        STDMETHOD LockRect, :ptr , :ptr , :
-        STDMETHOD UnlockRect
-        STDMETHOD GetDC, :ptr 
-        STDMETHOD ReleaseDC, :
+      DECLARE_INTERFACE_ IDirect3DSurface9, IDirect3DResource9
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD SetPrivateData, :THIS_, :ptr, :DWORD, :DWORD
+        STD_METHOD GetPrivateData, :THIS_, :ptr, :ptr DWORD
+        STD_METHOD FreePrivateData, :THIS_
+        STD_METHOD SetPriority, :THIS_
+        STD_METHOD GetPriority, :THIS_
+        STD_METHOD PreLoad, :THIS_
+        STD_METHOD GetType, :THIS_
+        STD_METHOD GetContainer, :THIS_, :ptr ptr
+        STD_METHOD GetDesc, :ptr THIS_
+        STD_METHOD LockRect, :ptr THIS_, :ptr RECT, :DWORD
+        STD_METHOD UnlockRect, :THIS_
+        STD_METHOD GetDC, :ptr THIS_
+        STD_METHOD ReleaseDC, :THIS_
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3DSURFACE9 typedef ptr IDirect3DSurface9
       PDIRECT3DSURFACE9 typedef ptr IDirect3DSurface9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DSurface9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1488,25 +1535,25 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DVolume9>
-      DECLARE_INTERFACE_(IDirect3DVolume9, IUnknown)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD SetPrivateData, :, :ptr , :, :
-        STDMETHOD GetPrivateData, :, :ptr , :ptr 
-        STDMETHOD FreePrivateData, :
-        STDMETHOD GetContainer, :, :ptr ptr 
-        STDMETHOD GetDesc, :ptr 
-        STDMETHOD LockBox, :ptr , :ptr , :
-        STDMETHOD UnlockBox
+      DECLARE_INTERFACE_ IDirect3DVolume9, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD SetPrivateData, :THIS_, :ptr, :DWORD, :DWORD
+        STD_METHOD GetPrivateData, :THIS_, :ptr, :ptr DWORD
+        STD_METHOD FreePrivateData, :THIS_
+        STD_METHOD GetContainer, :THIS_, :ptr ptr
+        STD_METHOD GetDesc, :ptr THIS_
+        STD_METHOD LockBox, :ptr THIS_, :ptr D3DBOX, :DWORD
+        STD_METHOD UnlockBox, :THIS_
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3DVOLUME9 typedef ptr IDirect3DVolume9
       PDIRECT3DVOLUME9 typedef ptr IDirect3DVolume9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DVolume9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1545,22 +1592,22 @@ ifndef _D3D9_H_
         ;[...]
       endif
       INTERFACE equ <IDirect3DQuery9>
-      DECLARE_INTERFACE_(IDirect3DQuery9, IUnknown)
-        STDMETHOD QueryInterface, :, :ptr ptr 
-        STDMETHOD_ ULONG, AddRef
-        STDMETHOD_ ULONG, Release
-        STDMETHOD GetDevice, :ptr ptr 
-        STDMETHOD_ D3DQUERYTYPE, GetType
-        STDMETHOD_ DWORD, GetDataSize
-        STDMETHOD Issue, :
-        STDMETHOD GetData, :ptr , :, :
+      DECLARE_INTERFACE_ IDirect3DQuery9, IUnknown
+        STD_METHOD QueryInterface, :THIS_, :ptr ptr
+        STD_METHOD AddRef, :THIS_
+        STD_METHOD Release, :THIS_
+        STD_METHOD GetDevice, :ptr ptr THIS_
+        STD_METHOD GetType, :THIS_
+        STD_METHOD GetDataSize, :THIS_
+        STD_METHOD Issue, :THIS_
+        STD_METHOD GetData, :ptr THIS_, :DWORD, :DWORD
         ifdef D3D_DEBUG_INFO
           ;[...]
         endif
-      DECLARE_INTERFACE__END
-
+      END_DECLARE_INTERFACE_
       LPDIRECT3DQUERY9 typedef ptr IDirect3DQuery9
       PDIRECT3DQUERY9 typedef ptr IDirect3DQuery9
+      
       if  not Defined(__cplusplus) or Defined(CINTERFACE)
         IDirect3DQuery9_QueryInterface macro p, a, b
           exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1674,33 +1721,33 @@ ifndef _D3D9_H_
         D3DERR_PRESENT_STATISTICS_DISJOINT equ MAKE_D3DHRESULT(2180)
         Direct3DCreate9Ex proto WIN_STD_CALL_CONV :UINT, :ptr ptr IDirect3D9Ex
         INTERFACE equ <IDirect3D9Ex>
-        DECLARE_INTERFACE_(IDirect3D9Ex, IDirect3D9)
-          STDMETHOD QueryInterface, :, :ptr ptr 
-          STDMETHOD_ ULONG, AddRef
-          STDMETHOD_ ULONG, Release
-          STDMETHOD RegisterSoftwareDevice, :ptr 
-          STDMETHOD_ UINT, GetAdapterCount
-          STDMETHOD GetAdapterIdentifier, :, :, :ptr 
-          STDMETHOD_ UINT, GetAdapterModeCount, :, :
-          STDMETHOD EnumAdapterModes, :, :, :, :ptr 
-          STDMETHOD GetAdapterDisplayMode, :, :ptr 
-          STDMETHOD CheckDeviceType, :, :, :, :, :
-          STDMETHOD CheckDeviceFormat, :, :, :, :, :, :
-          STDMETHOD CheckDeviceMultiSampleType, :, :, :, :, :, :ptr 
-          STDMETHOD CheckDepthStencilMatch, :, :, :, :, :
-          STDMETHOD CheckDeviceFormatConversion, :, :, :, :
-          STDMETHOD GetDeviceCaps, :, :, :ptr 
-          STDMETHOD_ HMONITOR, GetAdapterMonitor, :
-          STDMETHOD CreateDevice, :, :, :, :, :ptr , :ptr ptr 
-          STDMETHOD_ UINT, GetAdapterModeCountEx, :, :ptr 
-          STDMETHOD EnumAdapterModesEx, :, :ptr , :, :ptr 
-          STDMETHOD GetAdapterDisplayModeEx, :, :ptr , :ptr 
-          STDMETHOD CreateDeviceEx, :, :, :, :, :ptr , :ptr , :ptr ptr 
-          STDMETHOD GetAdapterLUID, :, :ptr 
-        DECLARE_INTERFACE__END
-
+        DECLARE_INTERFACE_ IDirect3D9Ex, IDirect3D9
+          STD_METHOD QueryInterface, :THIS_, :ptr ptr
+          STD_METHOD AddRef, :THIS_
+          STD_METHOD Release, :THIS_
+          STD_METHOD RegisterSoftwareDevice, :ptr THIS_
+          STD_METHOD GetAdapterCount, :THIS_
+          STD_METHOD GetAdapterIdentifier, :THIS_, :DWORD, :ptr D3DADAPTER_IDENTIFIER9
+          STD_METHOD GetAdapterModeCount, :THIS_, :D3DFORMAT
+          STD_METHOD EnumAdapterModes, :THIS_, :D3DFORMAT, :UINT, :ptr D3DDISPLAYMODE
+          STD_METHOD GetAdapterDisplayMode, :THIS_, :ptr D3DDISPLAYMODE
+          STD_METHOD CheckDeviceType, :THIS_, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :BOOL
+          STD_METHOD CheckDeviceFormat, :THIS_, :D3DDEVTYPE, :D3DFORMAT, :DWORD, :D3DRESOURCETYPE, :D3DFORMAT
+          STD_METHOD CheckDeviceMultiSampleType, :THIS_, :D3DDEVTYPE, :D3DFORMAT, :BOOL, :D3DMULTISAMPLE_TYPE, :ptr DWORD
+          STD_METHOD CheckDepthStencilMatch, :THIS_, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT, :D3DFORMAT
+          STD_METHOD CheckDeviceFormatConversion, :THIS_, :D3DDEVTYPE, :D3DFORMAT, :D3DFORMAT
+          STD_METHOD GetDeviceCaps, :THIS_, :D3DDEVTYPE, :ptr D3DCAPS9
+          STD_METHOD GetAdapterMonitor, :THIS_
+          STD_METHOD CreateDevice, :THIS_, :D3DDEVTYPE, :HWND, :DWORD, :ptr D3DPRESENT_PARAMETERS, :ptr ptr IDirect3DDevice9
+          STD_METHOD GetAdapterModeCountEx, :THIS_, :ptr D3DDISPLAYMODEFILTER
+          STD_METHOD EnumAdapterModesEx, :THIS_, :ptr D3DDISPLAYMODEFILTER, :UINT, :ptr D3DDISPLAYMODEEX
+          STD_METHOD GetAdapterDisplayModeEx, :THIS_, :ptr D3DDISPLAYMODEEX, :ptr D3DDISPLAYROTATION
+          STD_METHOD CreateDeviceEx, :THIS_, :D3DDEVTYPE, :HWND, :DWORD, :ptr D3DPRESENT_PARAMETERS, :ptr D3DDISPLAYMODEEX, :ptr ptr IDirect3DDevice9Ex
+          STD_METHOD GetAdapterLUID, :THIS_, :ptr LUID
+        END_DECLARE_INTERFACE_
         LPDIRECT3D9EX typedef ptr IDirect3D9Ex
         PDIRECT3D9EX typedef ptr IDirect3D9Ex
+        
         if  not Defined(__cplusplus) or Defined(CINTERFACE)
           IDirect3D9Ex_QueryInterface macro p, a, b
             exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -1772,145 +1819,145 @@ ifndef _D3D9_H_
           ;[...]
         endif
         INTERFACE equ <IDirect3DDevice9Ex>
-        DECLARE_INTERFACE_(IDirect3DDevice9Ex, IDirect3DDevice9)
-          STDMETHOD QueryInterface, :, :ptr ptr 
-          STDMETHOD_ ULONG, AddRef
-          STDMETHOD_ ULONG, Release
-          STDMETHOD TestCooperativeLevel
-          STDMETHOD_ UINT, GetAvailableTextureMem
-          STDMETHOD EvictManagedResources
-          STDMETHOD GetDirect3D, :ptr ptr 
-          STDMETHOD GetDeviceCaps, :ptr 
-          STDMETHOD GetDisplayMode, :, :ptr 
-          STDMETHOD GetCreationParameters, :ptr 
-          STDMETHOD SetCursorProperties, :, :, :ptr 
-          STDMETHOD_ void, SetCursorPosition, :, :, :
-          STDMETHOD_ BOOL, ShowCursor, :
-          STDMETHOD CreateAdditionalSwapChain, :ptr , :ptr ptr 
-          STDMETHOD GetSwapChain, :, :ptr ptr 
-          STDMETHOD_ UINT, GetNumberOfSwapChains
-          STDMETHOD Reset, :ptr 
-          STDMETHOD Present, :ptr , :ptr , :, :ptr 
-          STDMETHOD GetBackBuffer, :, :, :, :ptr ptr 
-          STDMETHOD GetRasterStatus, :, :ptr 
-          STDMETHOD SetDialogBoxMode, :
-          STDMETHOD_ void, SetGammaRamp, :, :, :ptr 
-          STDMETHOD_ void, GetGammaRamp, :, :ptr 
-          STDMETHOD CreateTexture, :, :, :, :, :, :, :ptr ptr , :ptr 
-          STDMETHOD CreateVolumeTexture, :, :, :, :, :, :, :, :ptr ptr , :ptr 
-          STDMETHOD CreateCubeTexture, :, :, :, :, :, :ptr ptr , :ptr 
-          STDMETHOD CreateVertexBuffer, :, :, :, :, :ptr ptr , :ptr 
-          STDMETHOD CreateIndexBuffer, :, :, :, :, :ptr ptr , :ptr 
-          STDMETHOD CreateRenderTarget, :, :, :, :, :, :, :ptr ptr , :ptr 
-          STDMETHOD CreateDepthStencilSurface, :, :, :, :, :, :, :ptr ptr , :ptr 
-          STDMETHOD UpdateSurface, :ptr , :ptr , :ptr , :ptr 
-          STDMETHOD UpdateTexture, :ptr , :ptr 
-          STDMETHOD GetRenderTargetData, :ptr , :ptr 
-          STDMETHOD GetFrontBufferData, :, :ptr 
-          STDMETHOD StretchRect, :ptr , :ptr , :ptr , :ptr , :
-          STDMETHOD ColorFill, :ptr , :ptr , :
-          STDMETHOD CreateOffscreenPlainSurface, :, :, :, :, :ptr ptr , :ptr 
-          STDMETHOD SetRenderTarget, :, :ptr 
-          STDMETHOD GetRenderTarget, :, :ptr ptr 
-          STDMETHOD SetDepthStencilSurface, :ptr 
-          STDMETHOD GetDepthStencilSurface, :ptr ptr 
-          STDMETHOD BeginScene
-          STDMETHOD EndScene
-          STDMETHOD Clear, :, :ptr , :, :, :, :
-          STDMETHOD SetTransform, :, :ptr 
-          STDMETHOD GetTransform, :, :ptr 
-          STDMETHOD MultiplyTransform, :, :ptr 
-          STDMETHOD SetViewport, :ptr 
-          STDMETHOD GetViewport, :ptr 
-          STDMETHOD SetMaterial, :ptr 
-          STDMETHOD GetMaterial, :ptr 
-          STDMETHOD SetLight, :, :ptr 
-          STDMETHOD GetLight, :, :ptr 
-          STDMETHOD LightEnable, :, :
-          STDMETHOD GetLightEnable, :, :ptr 
-          STDMETHOD SetClipPlane, :, :ptr 
-          STDMETHOD GetClipPlane, :, :ptr 
-          STDMETHOD SetRenderState, :, :
-          STDMETHOD GetRenderState, :, :ptr 
-          STDMETHOD CreateStateBlock, :, :ptr ptr 
-          STDMETHOD BeginStateBlock
-          STDMETHOD EndStateBlock, :ptr ptr 
-          STDMETHOD SetClipStatus, :ptr 
-          STDMETHOD GetClipStatus, :ptr 
-          STDMETHOD GetTexture, :, :ptr ptr 
-          STDMETHOD SetTexture, :, :ptr 
-          STDMETHOD GetTextureStageState, :, :, :ptr 
-          STDMETHOD SetTextureStageState, :, :, :
-          STDMETHOD GetSamplerState, :, :, :ptr 
-          STDMETHOD SetSamplerState, :, :, :
-          STDMETHOD ValidateDevice, :ptr 
-          STDMETHOD SetPaletteEntries, :, :ptr 
-          STDMETHOD GetPaletteEntries, :, :ptr 
-          STDMETHOD SetCurrentTexturePalette, :
-          STDMETHOD GetCurrentTexturePalette, :ptr 
-          STDMETHOD SetScissorRect, :ptr 
-          STDMETHOD GetScissorRect, :ptr 
-          STDMETHOD SetSoftwareVertexProcessing, :
-          STDMETHOD_ BOOL, GetSoftwareVertexProcessing
-          STDMETHOD SetNPatchMode, :
-          STDMETHOD_ float, GetNPatchMode
-          STDMETHOD DrawPrimitive, :, :, :
-          STDMETHOD DrawIndexedPrimitive, :, :, :, :, :, :
-          STDMETHOD DrawPrimitiveUP, :, :, :ptr , :
-          STDMETHOD DrawIndexedPrimitiveUP, :, :, :, :, :ptr , :, :ptr , :
-          STDMETHOD ProcessVertices, :, :, :, :ptr , :ptr , :
-          STDMETHOD CreateVertexDeclaration, :ptr , :ptr ptr 
-          STDMETHOD SetVertexDeclaration, :ptr 
-          STDMETHOD GetVertexDeclaration, :ptr ptr 
-          STDMETHOD SetFVF, :
-          STDMETHOD GetFVF, :ptr 
-          STDMETHOD CreateVertexShader, :ptr , :ptr ptr 
-          STDMETHOD SetVertexShader, :ptr 
-          STDMETHOD GetVertexShader, :ptr ptr 
-          STDMETHOD SetVertexShaderConstantF, :, :ptr , :
-          STDMETHOD GetVertexShaderConstantF, :, :ptr , :
-          STDMETHOD SetVertexShaderConstantI, :, :ptr , :
-          STDMETHOD GetVertexShaderConstantI, :, :ptr , :
-          STDMETHOD SetVertexShaderConstantB, :, :ptr , :
-          STDMETHOD GetVertexShaderConstantB, :, :ptr , :
-          STDMETHOD SetStreamSource, :, :ptr , :, :
-          STDMETHOD GetStreamSource, :, :ptr ptr , :ptr , :ptr 
-          STDMETHOD SetStreamSourceFreq, :, :
-          STDMETHOD GetStreamSourceFreq, :, :ptr 
-          STDMETHOD SetIndices, :ptr 
-          STDMETHOD GetIndices, :ptr ptr 
-          STDMETHOD CreatePixelShader, :ptr , :ptr ptr 
-          STDMETHOD SetPixelShader, :ptr 
-          STDMETHOD GetPixelShader, :ptr ptr 
-          STDMETHOD SetPixelShaderConstantF, :, :ptr , :
-          STDMETHOD GetPixelShaderConstantF, :, :ptr , :
-          STDMETHOD SetPixelShaderConstantI, :, :ptr , :
-          STDMETHOD GetPixelShaderConstantI, :, :ptr , :
-          STDMETHOD SetPixelShaderConstantB, :, :ptr , :
-          STDMETHOD GetPixelShaderConstantB, :, :ptr , :
-          STDMETHOD DrawRectPatch, :, :ptr , :ptr 
-          STDMETHOD DrawTriPatch, :, :ptr , :ptr 
-          STDMETHOD DeletePatch, :
-          STDMETHOD CreateQuery, :, :ptr ptr 
-          STDMETHOD SetConvolutionMonoKernel, :, :, :ptr , :ptr 
-          STDMETHOD ComposeRects, :ptr , :ptr , :ptr , :, :ptr , :, :, :
-          STDMETHOD PresentEx, :ptr , :ptr , :, :ptr , :
-          STDMETHOD GetGPUThreadPriority, :ptr 
-          STDMETHOD SetGPUThreadPriority, :
-          STDMETHOD WaitForVBlank, :
-          STDMETHOD CheckResourceResidency, :ptr ptr , :
-          STDMETHOD SetMaximumFrameLatency, :
-          STDMETHOD GetMaximumFrameLatency, :ptr 
-          STDMETHOD CheckDeviceState, :
-          STDMETHOD CreateRenderTargetEx, :, :, :, :, :, :, :ptr ptr , :ptr , :
-          STDMETHOD CreateOffscreenPlainSurfaceEx, :, :, :, :, :ptr ptr , :ptr , :
-          STDMETHOD CreateDepthStencilSurfaceEx, :, :, :, :, :, :, :ptr ptr , :ptr , :
-          STDMETHOD ResetEx, :ptr , :ptr 
-          STDMETHOD GetDisplayModeEx, :, :ptr , :ptr 
-        DECLARE_INTERFACE__END
-
+        DECLARE_INTERFACE_ IDirect3DDevice9Ex, IDirect3DDevice9
+          STD_METHOD QueryInterface, :THIS_, :ptr ptr
+          STD_METHOD AddRef, :THIS_
+          STD_METHOD Release, :THIS_
+          STD_METHOD TestCooperativeLevel, :THIS_
+          STD_METHOD GetAvailableTextureMem, :THIS_
+          STD_METHOD EvictManagedResources, :THIS_
+          STD_METHOD GetDirect3D, :ptr ptr THIS_
+          STD_METHOD GetDeviceCaps, :ptr THIS_
+          STD_METHOD GetDisplayMode, :THIS_, :ptr D3DDISPLAYMODE
+          STD_METHOD GetCreationParameters, :ptr THIS_
+          STD_METHOD SetCursorProperties, :THIS_, :UINT, :ptr IDirect3DSurface9
+          STD_METHOD SetCursorPosition, :THIS_, :SDWORD, :DWORD
+          STD_METHOD ShowCursor, :THIS_
+          STD_METHOD CreateAdditionalSwapChain, :ptr THIS_, :ptr ptr IDirect3DSwapChain9
+          STD_METHOD GetSwapChain, :THIS_, :ptr ptr IDirect3DSwapChain9
+          STD_METHOD GetNumberOfSwapChains, :THIS_
+          STD_METHOD Reset, :ptr THIS_
+          STD_METHOD Present, :ptr THIS_, :ptr RECT, :HWND, :ptr RGNDATA
+          STD_METHOD GetBackBuffer, :THIS_, :UINT, :D3DBACKBUFFER_TYPE, :ptr ptr IDirect3DSurface9
+          STD_METHOD GetRasterStatus, :THIS_, :ptr D3DRASTER_STATUS
+          STD_METHOD SetDialogBoxMode, :THIS_
+          STD_METHOD SetGammaRamp, :THIS_, :DWORD, :ptr D3DGAMMARAMP
+          STD_METHOD GetGammaRamp, :THIS_, :ptr D3DGAMMARAMP
+          STD_METHOD CreateTexture, :THIS_, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr ptr IDirect3DTexture9, :ptr HANDLE
+          STD_METHOD CreateVolumeTexture, :THIS_, :UINT, :UINT, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr ptr IDirect3DVolumeTexture9, :ptr HANDLE
+          STD_METHOD CreateCubeTexture, :THIS_, :UINT, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr ptr IDirect3DCubeTexture9, :ptr HANDLE
+          STD_METHOD CreateVertexBuffer, :THIS_, :DWORD, :DWORD, :D3DPOOL, :ptr ptr IDirect3DVertexBuffer9, :ptr HANDLE
+          STD_METHOD CreateIndexBuffer, :THIS_, :DWORD, :D3DFORMAT, :D3DPOOL, :ptr ptr IDirect3DIndexBuffer9, :ptr HANDLE
+          STD_METHOD CreateRenderTarget, :THIS_, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr ptr IDirect3DSurface9, :ptr HANDLE
+          STD_METHOD CreateDepthStencilSurface, :THIS_, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr ptr IDirect3DSurface9, :ptr HANDLE
+          STD_METHOD UpdateSurface, :ptr THIS_, :ptr RECT, :ptr IDirect3DSurface9, :ptr POINT
+          STD_METHOD UpdateTexture, :ptr THIS_, :ptr IDirect3DBaseTexture9
+          STD_METHOD GetRenderTargetData, :ptr THIS_, :ptr IDirect3DSurface9
+          STD_METHOD GetFrontBufferData, :THIS_, :ptr IDirect3DSurface9
+          STD_METHOD StretchRect, :ptr THIS_, :ptr RECT, :ptr IDirect3DSurface9, :ptr RECT, :D3DTEXTUREFILTERTYPE
+          STD_METHOD ColorFill, :ptr THIS_, :ptr RECT, :D3DCOLOR
+          STD_METHOD CreateOffscreenPlainSurface, :THIS_, :UINT, :D3DFORMAT, :D3DPOOL, :ptr ptr IDirect3DSurface9, :ptr HANDLE
+          STD_METHOD SetRenderTarget, :THIS_, :ptr IDirect3DSurface9
+          STD_METHOD GetRenderTarget, :THIS_, :ptr ptr IDirect3DSurface9
+          STD_METHOD SetDepthStencilSurface, :ptr THIS_
+          STD_METHOD GetDepthStencilSurface, :ptr ptr THIS_
+          STD_METHOD BeginScene, :THIS_
+          STD_METHOD EndScene, :THIS_
+          STD_METHOD Clear, :THIS_, :ptr D3DRECT, :DWORD, :D3DCOLOR, :REAL4, :DWORD
+          STD_METHOD SetTransform, :THIS_, :ptr D3DMATRIX
+          STD_METHOD GetTransform, :THIS_, :ptr D3DMATRIX
+          STD_METHOD MultiplyTransform, :THIS_, :ptr D3DMATRIX
+          STD_METHOD SetViewport, :ptr THIS_
+          STD_METHOD GetViewport, :ptr THIS_
+          STD_METHOD SetMaterial, :ptr THIS_
+          STD_METHOD GetMaterial, :ptr THIS_
+          STD_METHOD SetLight, :THIS_, :ptr D3DLIGHT9
+          STD_METHOD GetLight, :THIS_, :ptr D3DLIGHT9
+          STD_METHOD LightEnable, :THIS_, :BOOL
+          STD_METHOD GetLightEnable, :THIS_, :ptr BOOL
+          STD_METHOD SetClipPlane, :THIS_, :ptr REAL4
+          STD_METHOD GetClipPlane, :THIS_, :ptr REAL4
+          STD_METHOD SetRenderState, :THIS_, :DWORD
+          STD_METHOD GetRenderState, :THIS_, :ptr DWORD
+          STD_METHOD CreateStateBlock, :THIS_, :ptr ptr IDirect3DStateBlock9
+          STD_METHOD BeginStateBlock, :THIS_
+          STD_METHOD EndStateBlock, :ptr ptr THIS_
+          STD_METHOD SetClipStatus, :ptr THIS_
+          STD_METHOD GetClipStatus, :ptr THIS_
+          STD_METHOD GetTexture, :THIS_, :ptr ptr IDirect3DBaseTexture9
+          STD_METHOD SetTexture, :THIS_, :ptr IDirect3DBaseTexture9
+          STD_METHOD GetTextureStageState, :THIS_, :D3DTEXTURESTAGESTATETYPE, :ptr DWORD
+          STD_METHOD SetTextureStageState, :THIS_, :D3DTEXTURESTAGESTATETYPE, :DWORD
+          STD_METHOD GetSamplerState, :THIS_, :D3DSAMPLERSTATETYPE, :ptr DWORD
+          STD_METHOD SetSamplerState, :THIS_, :D3DSAMPLERSTATETYPE, :DWORD
+          STD_METHOD ValidateDevice, :ptr THIS_
+          STD_METHOD SetPaletteEntries, :THIS_, :ptr PALETTEENTRY
+          STD_METHOD GetPaletteEntries, :THIS_, :ptr PALETTEENTRY
+          STD_METHOD SetCurrentTexturePalette, :THIS_
+          STD_METHOD GetCurrentTexturePalette, :ptr THIS_
+          STD_METHOD SetScissorRect, :ptr THIS_
+          STD_METHOD GetScissorRect, :ptr THIS_
+          STD_METHOD SetSoftwareVertexProcessing, :THIS_
+          STD_METHOD GetSoftwareVertexProcessing, :THIS_
+          STD_METHOD SetNPatchMode, :THIS_
+          STD_METHOD GetNPatchMode, :THIS_
+          STD_METHOD DrawPrimitive, :THIS_, :UINT, :UINT
+          STD_METHOD DrawIndexedPrimitive, :THIS_, :INT_, :UINT, :UINT, :UINT, :UINT
+          STD_METHOD DrawPrimitiveUP, :THIS_, :UINT, :ptr, :UINT
+          STD_METHOD DrawIndexedPrimitiveUP, :THIS_, :UINT, :UINT, :UINT, :ptr, :D3DFORMAT, :ptr, :UINT
+          STD_METHOD ProcessVertices, :THIS_, :UINT, :UINT, :ptr IDirect3DVertexBuffer9, :ptr IDirect3DVertexDeclaration9, :DWORD
+          STD_METHOD CreateVertexDeclaration, :ptr THIS_, :ptr ptr IDirect3DVertexDeclaration9
+          STD_METHOD SetVertexDeclaration, :ptr THIS_
+          STD_METHOD GetVertexDeclaration, :ptr ptr THIS_
+          STD_METHOD SetFVF, :THIS_
+          STD_METHOD GetFVF, :ptr THIS_
+          STD_METHOD CreateVertexShader, :ptr THIS_, :ptr ptr IDirect3DVertexShader9
+          STD_METHOD SetVertexShader, :ptr THIS_
+          STD_METHOD GetVertexShader, :ptr ptr THIS_
+          STD_METHOD SetVertexShaderConstantF, :THIS_, :ptr REAL4, :UINT
+          STD_METHOD GetVertexShaderConstantF, :THIS_, :ptr REAL4, :UINT
+          STD_METHOD SetVertexShaderConstantI, :THIS_, :ptr SDWORD, :UINT
+          STD_METHOD GetVertexShaderConstantI, :THIS_, :ptr SDWORD, :UINT
+          STD_METHOD SetVertexShaderConstantB, :THIS_, :ptr BOOL, :UINT
+          STD_METHOD GetVertexShaderConstantB, :THIS_, :ptr BOOL, :UINT
+          STD_METHOD SetStreamSource, :THIS_, :ptr IDirect3DVertexBuffer9, :UINT, :UINT
+          STD_METHOD GetStreamSource, :THIS_, :ptr ptr IDirect3DVertexBuffer9, :ptr UINT, :ptr UINT
+          STD_METHOD SetStreamSourceFreq, :THIS_, :UINT
+          STD_METHOD GetStreamSourceFreq, :THIS_, :ptr UINT
+          STD_METHOD SetIndices, :ptr THIS_
+          STD_METHOD GetIndices, :ptr ptr THIS_
+          STD_METHOD CreatePixelShader, :ptr THIS_, :ptr ptr IDirect3DPixelShader9
+          STD_METHOD SetPixelShader, :ptr THIS_
+          STD_METHOD GetPixelShader, :ptr ptr THIS_
+          STD_METHOD SetPixelShaderConstantF, :THIS_, :ptr REAL4, :UINT
+          STD_METHOD GetPixelShaderConstantF, :THIS_, :ptr REAL4, :UINT
+          STD_METHOD SetPixelShaderConstantI, :THIS_, :ptr SDWORD, :UINT
+          STD_METHOD GetPixelShaderConstantI, :THIS_, :ptr SDWORD, :UINT
+          STD_METHOD SetPixelShaderConstantB, :THIS_, :ptr BOOL, :UINT
+          STD_METHOD GetPixelShaderConstantB, :THIS_, :ptr BOOL, :UINT
+          STD_METHOD DrawRectPatch, :THIS_, :ptr REAL4, :ptr D3DRECTPATCH_INFO
+          STD_METHOD DrawTriPatch, :THIS_, :ptr REAL4, :ptr D3DTRIPATCH_INFO
+          STD_METHOD DeletePatch, :THIS_
+          STD_METHOD CreateQuery, :THIS_, :ptr ptr IDirect3DQuery9
+          STD_METHOD SetConvolutionMonoKernel, :THIS_, :UINT, :ptr REAL4, :ptr REAL4
+          STD_METHOD ComposeRects, :ptr THIS_, :ptr IDirect3DSurface9, :ptr IDirect3DVertexBuffer9, :UINT, :ptr IDirect3DVertexBuffer9, :D3DCOMPOSERECTSOP, :SDWORD, :SDWORD
+          STD_METHOD PresentEx, :ptr THIS_, :ptr RECT, :HWND, :ptr RGNDATA, :DWORD
+          STD_METHOD GetGPUThreadPriority, :ptr THIS_
+          STD_METHOD SetGPUThreadPriority, :THIS_
+          STD_METHOD WaitForVBlank, :THIS_
+          STD_METHOD CheckResourceResidency, :ptr ptr THIS_, :UINT32
+          STD_METHOD SetMaximumFrameLatency, :THIS_
+          STD_METHOD GetMaximumFrameLatency, :ptr THIS_
+          STD_METHOD CheckDeviceState, :THIS_
+          STD_METHOD CreateRenderTargetEx, :THIS_, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr ptr IDirect3DSurface9, :ptr HANDLE, :DWORD
+          STD_METHOD CreateOffscreenPlainSurfaceEx, :THIS_, :UINT, :D3DFORMAT, :D3DPOOL, :ptr ptr IDirect3DSurface9, :ptr HANDLE, :DWORD
+          STD_METHOD CreateDepthStencilSurfaceEx, :THIS_, :UINT, :D3DFORMAT, :D3DMULTISAMPLE_TYPE, :DWORD, :BOOL, :ptr ptr IDirect3DSurface9, :ptr HANDLE, :DWORD
+          STD_METHOD ResetEx, :ptr THIS_, :ptr D3DDISPLAYMODEEX
+          STD_METHOD GetDisplayModeEx, :THIS_, :ptr D3DDISPLAYMODEEX, :ptr D3DDISPLAYROTATION
+        END_DECLARE_INTERFACE_
         LPDIRECT3DDEVICE9EX typedef ptr IDirect3DDevice9Ex
         PDIRECT3DDEVICE9EX typedef ptr IDirect3DDevice9Ex
+        
         if  not Defined(__cplusplus) or Defined(CINTERFACE)
           IDirect3DDevice9Ex_QueryInterface macro p, a, b
             exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -2318,24 +2365,24 @@ ifndef _D3D9_H_
           ;[...]
         endif
         INTERFACE equ <IDirect3DSwapChain9Ex>
-        DECLARE_INTERFACE_(IDirect3DSwapChain9Ex, IDirect3DSwapChain9)
-          STDMETHOD QueryInterface, :, :ptr ptr 
-          STDMETHOD_ ULONG, AddRef
-          STDMETHOD_ ULONG, Release
-          STDMETHOD Present, :ptr , :ptr , :, :ptr , :
-          STDMETHOD GetFrontBufferData, :ptr 
-          STDMETHOD GetBackBuffer, :, :, :ptr ptr 
-          STDMETHOD GetRasterStatus, :ptr 
-          STDMETHOD GetDisplayMode, :ptr 
-          STDMETHOD GetDevice, :ptr ptr 
-          STDMETHOD GetPresentParameters, :ptr 
-          STDMETHOD GetLastPresentCount, :ptr 
-          STDMETHOD GetPresentStats, :ptr 
-          STDMETHOD GetDisplayModeEx, :ptr , :ptr 
-        DECLARE_INTERFACE__END
-
+        DECLARE_INTERFACE_ IDirect3DSwapChain9Ex, IDirect3DSwapChain9
+          STD_METHOD QueryInterface, :THIS_, :ptr ptr
+          STD_METHOD AddRef, :THIS_
+          STD_METHOD Release, :THIS_
+          STD_METHOD Present, :ptr THIS_, :ptr RECT, :HWND, :ptr RGNDATA, :DWORD
+          STD_METHOD GetFrontBufferData, :ptr THIS_
+          STD_METHOD GetBackBuffer, :THIS_, :D3DBACKBUFFER_TYPE, :ptr ptr IDirect3DSurface9
+          STD_METHOD GetRasterStatus, :ptr THIS_
+          STD_METHOD GetDisplayMode, :ptr THIS_
+          STD_METHOD GetDevice, :ptr ptr THIS_
+          STD_METHOD GetPresentParameters, :ptr THIS_
+          STD_METHOD GetLastPresentCount, :ptr THIS_
+          STD_METHOD GetPresentStats, :ptr THIS_
+          STD_METHOD GetDisplayModeEx, :ptr THIS_, :ptr D3DDISPLAYROTATION
+        END_DECLARE_INTERFACE_
         LPDIRECT3DSWAPCHAIN9EX typedef ptr IDirect3DSwapChain9Ex
         PDIRECT3DSWAPCHAIN9EX typedef ptr IDirect3DSwapChain9Ex
+        
         if  not Defined(__cplusplus) or Defined(CINTERFACE)
           IDirect3DSwapChain9Ex_QueryInterface macro p, a, b
             exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -2382,15 +2429,15 @@ ifndef _D3D9_H_
       endif
       if  not Defined(D3D_DISABLE_9EX)
         INTERFACE equ <IDirect3D9ExOverlayExtension>
-        DECLARE_INTERFACE_(IDirect3D9ExOverlayExtension, IUnknown)
-          STDMETHOD QueryInterface, :, :ptr ptr 
-          STDMETHOD_ ULONG, AddRef
-          STDMETHOD_ ULONG, Release
-          STDMETHOD CheckDeviceOverlayType, :, :, :, :, :, :ptr , :, :ptr 
-        DECLARE_INTERFACE__END
-
+        DECLARE_INTERFACE_ IDirect3D9ExOverlayExtension, IUnknown
+          STD_METHOD QueryInterface, :THIS_, :ptr ptr
+          STD_METHOD AddRef, :THIS_
+          STD_METHOD Release, :THIS_
+          STD_METHOD CheckDeviceOverlayType, :THIS_, :D3DDEVTYPE, :UINT, :UINT, :D3DFORMAT, :ptr D3DDISPLAYMODEEX, :D3DDISPLAYROTATION, :ptr D3DOVERLAYCAPS
+        END_DECLARE_INTERFACE_
         LPDIRECT3D9EXOVERLAYEXTENSION typedef ptr IDirect3D9ExOverlayExtension
         PDIRECT3D9EXOVERLAYEXTENSION typedef ptr IDirect3D9ExOverlayExtension
+        
         if  not Defined(__cplusplus) or Defined(CINTERFACE)
           IDirect3D9ExOverlayExtension_QueryInterface macro p, a, b
             exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -2408,17 +2455,17 @@ ifndef _D3D9_H_
           ;[...]
         endif
         INTERFACE equ <IDirect3DDevice9Video>
-        DECLARE_INTERFACE_(IDirect3DDevice9Video, IUnknown)
-          STDMETHOD QueryInterface, :, :ptr ptr 
-          STDMETHOD_ ULONG, AddRef
-          STDMETHOD_ ULONG, Release
-          STDMETHOD GetContentProtectionCaps, :ptr , :ptr , :ptr 
-          STDMETHOD CreateAuthenticatedChannel, :, :ptr ptr , :ptr 
-          STDMETHOD CreateCryptoSession, :ptr , :ptr , :ptr ptr , :ptr 
-        DECLARE_INTERFACE__END
-
+        DECLARE_INTERFACE_ IDirect3DDevice9Video, IUnknown
+          STD_METHOD QueryInterface, :THIS_, :ptr ptr
+          STD_METHOD AddRef, :THIS_
+          STD_METHOD Release, :THIS_
+          STD_METHOD GetContentProtectionCaps, :ptr THIS_, :ptr GUID, :ptr D3DCONTENTPROTECTIONCAPS
+          STD_METHOD CreateAuthenticatedChannel, :THIS_, :ptr ptr IDirect3DAuthenticatedChannel9, :ptr HANDLE
+          STD_METHOD CreateCryptoSession, :ptr THIS_, :ptr GUID, :ptr ptr IDirect3DCryptoSession9, :ptr HANDLE
+        END_DECLARE_INTERFACE_
         LPDIRECT3DDEVICE9VIDEO typedef ptr IDirect3DDevice9Video
         PDIRECT3DDEVICE9VIDEO typedef ptr IDirect3DDevice9Video
+        
         if  not Defined(__cplusplus) or Defined(CINTERFACE)
           IDirect3DDevice9Video_QueryInterface macro p, a, b
             exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -2442,19 +2489,19 @@ ifndef _D3D9_H_
           ;[...]
         endif
         INTERFACE equ <IDirect3DAuthenticatedChannel9>
-        DECLARE_INTERFACE_(IDirect3DAuthenticatedChannel9, IUnknown)
-          STDMETHOD QueryInterface, :, :ptr ptr 
-          STDMETHOD_ ULONG, AddRef
-          STDMETHOD_ ULONG, Release
-          STDMETHOD GetCertificateSize, :ptr 
-          STDMETHOD GetCertificate, :, :ptr 
-          STDMETHOD NegotiateKeyExchange, :, :ptr 
-          STDMETHOD Query, :, :ptr , :, :ptr 
-          STDMETHOD Configure, :, :ptr , :ptr 
-        DECLARE_INTERFACE__END
-
+        DECLARE_INTERFACE_ IDirect3DAuthenticatedChannel9, IUnknown
+          STD_METHOD QueryInterface, :THIS_, :ptr ptr
+          STD_METHOD AddRef, :THIS_
+          STD_METHOD Release, :THIS_
+          STD_METHOD GetCertificateSize, :ptr THIS_
+          STD_METHOD GetCertificate, :THIS_, :ptr BYTE
+          STD_METHOD NegotiateKeyExchange, :THIS_, :ptr VOID
+          STD_METHOD Query, :THIS_, :ptr VOID, :UINT, :ptr VOID
+          STD_METHOD Configure, :THIS_, :ptr VOID, :ptr D3DAUTHENTICATEDCHANNEL_CONFIGURE_OUTPUT
+        END_DECLARE_INTERFACE_
         LPDIRECT3DAUTHENTICATEDCHANNEL9 typedef ptr IDirect3DAuthenticatedChannel9
         PDIRECT3DAUTHENTICATEDCHANNEL9 typedef ptr IDirect3DAuthenticatedChannel9
+        
         if  not Defined(__cplusplus) or Defined(CINTERFACE)
           IDirect3DAuthenticatedChannel9_QueryInterface macro p, a, b
             exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -2484,23 +2531,23 @@ ifndef _D3D9_H_
           ;[...]
         endif
         INTERFACE equ <IDirect3DCryptoSession9>
-        DECLARE_INTERFACE_(IDirect3DCryptoSession9, IUnknown)
-          STDMETHOD QueryInterface, :, :ptr ptr 
-          STDMETHOD_ ULONG, AddRef
-          STDMETHOD_ ULONG, Release
-          STDMETHOD GetCertificateSize, :ptr 
-          STDMETHOD GetCertificate, :, :ptr 
-          STDMETHOD NegotiateKeyExchange, :, :ptr 
-          STDMETHOD EncryptionBlt, :ptr , :ptr , :, :ptr 
-          STDMETHOD DecryptionBlt, :ptr , :ptr , :, :ptr , :ptr , :ptr 
-          STDMETHOD GetSurfacePitch, :ptr , :ptr 
-          STDMETHOD StartSessionKeyRefresh, :ptr , :
-          STDMETHOD FinishSessionKeyRefresh
-          STDMETHOD GetEncryptionBltKey, :ptr , :
-        DECLARE_INTERFACE__END
-
+        DECLARE_INTERFACE_ IDirect3DCryptoSession9, IUnknown
+          STD_METHOD QueryInterface, :THIS_, :ptr ptr
+          STD_METHOD AddRef, :THIS_
+          STD_METHOD Release, :THIS_
+          STD_METHOD GetCertificateSize, :ptr THIS_
+          STD_METHOD GetCertificate, :THIS_, :ptr BYTE
+          STD_METHOD NegotiateKeyExchange, :THIS_, :ptr VOID
+          STD_METHOD EncryptionBlt, :ptr THIS_, :ptr IDirect3DSurface9, :UINT, :ptr VOID
+          STD_METHOD DecryptionBlt, :ptr THIS_, :ptr IDirect3DSurface9, :UINT, :ptr D3DENCRYPTED_BLOCK_INFO, :ptr VOID, :ptr VOID
+          STD_METHOD GetSurfacePitch, :ptr THIS_, :ptr UINT
+          STD_METHOD StartSessionKeyRefresh, :ptr THIS_, :UINT
+          STD_METHOD FinishSessionKeyRefresh, :THIS_
+          STD_METHOD GetEncryptionBltKey, :ptr THIS_, :UINT
+        END_DECLARE_INTERFACE_
         LPDIRECT3DCRYPTOSESSION9 typedef ptr IDirect3DCryptoSession9
         PDIRECT3DCRYPTOSESSION9 typedef ptr IDirect3DCryptoSession9
+        
         if  not Defined(__cplusplus) or Defined(CINTERFACE)
           IDirect3DCryptoSession9_QueryInterface macro p, a, b
             exitm <(p) - lpVtbl - QueryInterface (p, a, b)>
@@ -2548,3 +2595,4 @@ ifndef _D3D9_H_
     endif
   endif
 endif
+

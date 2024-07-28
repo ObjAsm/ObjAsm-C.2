@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winsock2.h
-;             Created on (UTC) 06/04/2024 06:16:03
-;             Last modified on (UTC) 21/02/2024 18:15:28
+;Include file created by h2incX, Version B.01.01, 29/10/2018 18:21
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\WinSock2.h', last modified: 19/04/2018 09:44
+;Creation parameters: 
 
 ifndef _WINSOCK2API_
   _WINSOCK2API_ equ <>
@@ -15,7 +14,8 @@ ifndef _WINSOCK2API_
       endm
     else
       _WINSOCK_DEPRECATED_BY macro replacement
-        exitm <__declspec(deprecated ("Use " replacement " instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings"))>
+       echo <Use replacement instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings>
+       exitm <>
       endm
     endif
   endif
@@ -75,10 +75,10 @@ ifndef _WINSOCK2API_
   fd_set ends
   __WSAFDIsSet proto WIN_STD_CALL_CONV :SOCKET, :ptr fd_set
   FD_CLR macro fd, set
-    exitm <do { u_int __i ; for (__i = 0 ; __i < ((fd_set FAR *) (set)) - fd_count ; __i +) { if (((fd_set FAR *) (set)) - fd_array [ __i ] == fd) { while (__i < ((fd_set FAR *) (set)) - fd_count - 1) { ((fd_set FAR *) (set)) - fd_array [ __i ] = ((fd_set FAR *) (set)) - fd_array [ __i + 1 ] ; __i + ; } ((fd_set FAR *) (set)) - fd_count - ; break ; } } } while (0)>
+    exitm <do { u_int __i ; for (__i = 0 ; __i < ((fd_set FAR *) (set)) - fd_count ; __i +) { if (((fd_set FAR *) (set)) - fd_array [ __i ] == fd) { while (__i < ((fd_set FAR *) (set)) - fd_count - 1) { ((fd_set FAR *) (set)) - fd_array [ __i ] = ((fd_set FAR *) (set)) - fd_array [ __i + 1 ] ; __i + ; } ((fd_set FAR *) (set)) - fd_count - ; break ; } } } while (0, 0)>
   endm
   FD_SET macro fd, set
-    exitm <do { u_int __i ; for (__i = 0 ; __i < ((fd_set FAR *) (set)) - fd_count ; __i +) { if (((fd_set FAR *) (set)) - fd_array [ __i ] == (fd)) { break ; } } if (__i == ((fd_set FAR *) (set)) - fd_count) { if (((fd_set FAR *) (set)) - fd_count < FD_SETSIZE) { ((fd_set FAR *) (set)) - fd_array [ __i ] = (fd) ; ((fd_set FAR *) (set)) - fd_count + ; } } } while (0)>
+    exitm <do { u_int __i ; for (__i = 0 ; __i < ((fd_set FAR *) (set)) - fd_count ; __i +) { if (((fd_set FAR *) (set)) - fd_array [ __i ] == (fd)) { break ; } } if (__i == ((fd_set FAR *) (set)) - fd_count) { if (((fd_set FAR *) (set)) - fd_count < FD_SETSIZE) { ((fd_set FAR *) (set)) - fd_array [ __i ] = (fd) ; ((fd_set FAR *) (set)) - fd_count + ; } } } while (0, 0)>
   endm
   FD_ZERO macro set
     exitm <(((fd_set FAR *) (set)) - fd_count = 0)>
@@ -184,13 +184,9 @@ ifndef _WINSOCK2API_
       union S_un
         struct S_un_b
           s_b1 u_char ?
-          s_b2 u_char ?
-          s_b3 u_char ?
-          s_b4 u_char ?
         ends
         struct S_un_w
           s_w1 u_short ?
-          s_w2 u_short ?
         ends
         S_addr u_long ?
       ends
@@ -224,9 +220,10 @@ ifndef _WINSOCK2API_
   WSADATA ends
   WSAData typedef WSADATA
   LPWSADATA typedef ptr WSADATA
+  
   INVALID_SOCKET equ (not 0)
-  SOCKET_ERROR equ (- 1)
-  FROM_PROTOCOL_INFO equ (- 1)
+  SOCKET_ERROR equ -1
+  FROM_PROTOCOL_INFO equ -1
   SOCK_STREAM equ 1
   SOCK_DGRAM equ 2
   SOCK_RAW equ 3
@@ -448,6 +445,7 @@ ifndef _WINSOCK2API_
     LPWSAEVENT equ <LPHANDLE>
     WSAOVERLAPPED equ <OVERLAPPED>
     LPWSAOVERLAPPED typedef ptr _OVERLAPPED
+    
     WSA_IO_PENDING equ <(ERROR_IO_PENDING)>
     WSA_IO_INCOMPLETE equ <(ERROR_IO_INCOMPLETE)>
     WSA_INVALID_HANDLE equ <(ERROR_INVALID_HANDLE)>
@@ -474,6 +472,7 @@ ifndef _WINSOCK2API_
     WSAOVERLAPPED ends
     _WSAOVERLAPPED typedef WSAOVERLAPPED
     LPWSAOVERLAPPED typedef ptr WSAOVERLAPPED
+    
     WSA_IO_PENDING equ <(WSAEWOULDBLOCK)>
     WSA_IO_INCOMPLETE equ <(WSAEWOULDBLOCK)>
     WSA_INVALID_HANDLE equ <(WSAENOTSOCK)>
@@ -497,6 +496,7 @@ ifndef _WINSOCK2API_
     QOS ends
     _QualityOfService typedef QOS
     LPQOS typedef ptr QOS
+    
   endif
   CF_ACCEPT equ 0000h
   CF_REJECT equ 0001h
@@ -513,6 +513,7 @@ ifndef _WINSOCK2API_
   WSANETWORKEVENTS ends
   _WSANETWORKEVENTS typedef WSANETWORKEVENTS
   LPWSANETWORKEVENTS typedef ptr WSANETWORKEVENTS
+  
   ifndef GUID_DEFINED
     include guiddef.inc
   endif
@@ -525,6 +526,7 @@ ifndef _WINSOCK2API_
   WSAPROTOCOLCHAIN ends
   _WSAPROTOCOLCHAIN typedef WSAPROTOCOLCHAIN
   LPWSAPROTOCOLCHAIN typedef ptr WSAPROTOCOLCHAIN
+  
   WSAPROTOCOL_LEN equ 255
   WSAPROTOCOL_INFOA struct
     dwServiceFlags1 DWORD ?
@@ -550,6 +552,7 @@ ifndef _WINSOCK2API_
   WSAPROTOCOL_INFOA ends
   _WSAPROTOCOL_INFOA typedef WSAPROTOCOL_INFOA
   LPWSAPROTOCOL_INFOA typedef ptr WSAPROTOCOL_INFOA
+  
   WSAPROTOCOL_INFOW struct
     dwServiceFlags1 DWORD ?
     dwServiceFlags2 DWORD ?
@@ -574,6 +577,7 @@ ifndef _WINSOCK2API_
   WSAPROTOCOL_INFOW ends
   _WSAPROTOCOL_INFOW typedef WSAPROTOCOL_INFOW
   LPWSAPROTOCOL_INFOW typedef ptr WSAPROTOCOL_INFOW
+  
   ifdef UNICODE
     WSAPROTOCOL_INFO typedef WSAPROTOCOL_INFOW
     LPWSAPROTOCOL_INFO typedef LPWSAPROTOCOL_INFOW
@@ -622,10 +626,8 @@ ifndef _WINSOCK2API_
   WSA_FLAG_REGISTERED_IO equ 100h
   TYPE_LPCONDITIONPROC typedef proto WIN_STD_CALL_CONV :LPWSABUF, :LPWSABUF, :LPQOS, :LPQOS, :LPWSABUF, :LPWSABUF, :ptr GROUP_, :DWORD_PTR
   LPCONDITIONPROC typedef ptr TYPE_LPCONDITIONPROC
-
   TYPE_LPWSAOVERLAPPED_COMPLETION_ROUTINE typedef proto WIN_STD_CALL_CONV :DWORD, :DWORD, :LPWSAOVERLAPPED, :DWORD
   LPWSAOVERLAPPED_COMPLETION_ROUTINE typedef ptr TYPE_LPWSAOVERLAPPED_COMPLETION_ROUTINE
-
   if (_WIN32_WINNT ge 0501h)
     SIO_NSP_NOTIFY_CHANGE equ _WSAIOW(IOC_WS2, 25)
     WSACOMPLETIONTYPE typedef SDWORD
@@ -637,6 +639,7 @@ ifndef _WINSOCK2API_
     _WSACOMPLETIONTYPE typedef WSACOMPLETIONTYPE
     PWSACOMPLETIONTYPE typedef ptr WSACOMPLETIONTYPE
     LPWSACOMPLETIONTYPE typedef ptr WSACOMPLETIONTYPE
+    
     WSACOMPLETION struct
       Type_ WSACOMPLETIONTYPE ?
       union Parameters
@@ -662,6 +665,7 @@ ifndef _WINSOCK2API_
     _WSACOMPLETION typedef WSACOMPLETION
     PWSACOMPLETION typedef ptr WSACOMPLETION
     LPWSACOMPLETION typedef ptr WSACOMPLETION
+    
   endif
   TH_NETDEV equ 00000001h
   TH_TAPI equ 00000002h
@@ -679,75 +683,76 @@ ifndef _WINSOCK2API_
     BLOB ends
     _BLOB typedef BLOB
     LPBLOB typedef ptr BLOB
+    
   endif
-  SERVICE_MULTIPLE equ (00000001h)
-  NS_ALL equ (0)
-  NS_SAP equ (1)
-  NS_NDS equ (2)
-  NS_PEER_BROWSE equ (3)
-  NS_SLP equ (5)
-  NS_DHCP equ (6)
-  NS_TCPIP_LOCAL equ (10)
-  NS_TCPIP_HOSTS equ (11)
-  NS_DNS equ (12)
-  NS_NETBT equ (13)
-  NS_WINS equ (14)
+  SERVICE_MULTIPLE equ 00000001h
+  NS_ALL equ 0
+  NS_SAP equ 1
+  NS_NDS equ 2
+  NS_PEER_BROWSE equ 3
+  NS_SLP equ 5
+  NS_DHCP equ 6
+  NS_TCPIP_LOCAL equ 10
+  NS_TCPIP_HOSTS equ 11
+  NS_DNS equ 12
+  NS_NETBT equ 13
+  NS_WINS equ 14
   if (_WIN32_WINNT ge 0501h)
-    NS_NLA equ (15)
+    NS_NLA equ 15
   endif
   if (_WIN32_WINNT ge 0600h)
-    NS_BTH equ (16)
+    NS_BTH equ 16
   endif
-  NS_NBP equ (20)
-  NS_MS equ (30)
-  NS_STDA equ (31)
-  NS_NTDS equ (32)
+  NS_NBP equ 20
+  NS_MS equ 30
+  NS_STDA equ 31
+  NS_NTDS equ 32
   if (_WIN32_WINNT ge 0600h)
-    NS_EMAIL equ (37)
-    NS_PNRPNAME equ (38)
-    NS_PNRPCLOUD equ (39)
+    NS_EMAIL equ 37
+    NS_PNRPNAME equ 38
+    NS_PNRPCLOUD equ 39
   endif
-  NS_X500 equ (40)
-  NS_NIS equ (41)
-  NS_NISPLUS equ (42)
-  NS_WRQ equ (50)
-  NS_NETDES equ (60)
-  NS_ALL equ (0)
-  NS_SAP equ (1)
-  NS_NDS equ (2)
-  NS_PEER_BROWSE equ (3)
-  NS_SLP equ (5)
-  NS_DHCP equ (6)
-  NS_TCPIP_LOCAL equ (10)
-  NS_TCPIP_HOSTS equ (11)
-  NS_DNS equ (12)
-  NS_NETBT equ (13)
-  NS_WINS equ (14)
+  NS_X500 equ 40
+  NS_NIS equ 41
+  NS_NISPLUS equ 42
+  NS_WRQ equ 50
+  NS_NETDES equ 60
+  NS_ALL equ 0
+  NS_SAP equ 1
+  NS_NDS equ 2
+  NS_PEER_BROWSE equ 3
+  NS_SLP equ 5
+  NS_DHCP equ 6
+  NS_TCPIP_LOCAL equ 10
+  NS_TCPIP_HOSTS equ 11
+  NS_DNS equ 12
+  NS_NETBT equ 13
+  NS_WINS equ 14
   if (_WIN32_WINNT ge 0501h)
-    NS_NLA equ (15)
+    NS_NLA equ 15
   endif
   if (_WIN32_WINNT ge 0600h)
-    NS_BTH equ (16)
+    NS_BTH equ 16
   endif
-  NS_LOCALNAME equ (19)
-  NS_NBP equ (20)
-  NS_MS equ (30)
-  NS_STDA equ (31)
-  NS_NTDS equ (32)
+  NS_LOCALNAME equ 19
+  NS_NBP equ 20
+  NS_MS equ 30
+  NS_STDA equ 31
+  NS_NTDS equ 32
   if (_WIN32_WINNT ge 0600h)
-    NS_EMAIL equ (37)
-    NS_PNRPNAME equ (38)
-    NS_PNRPCLOUD equ (39)
+    NS_EMAIL equ 37
+    NS_PNRPNAME equ 38
+    NS_PNRPCLOUD equ 39
   endif
-  NS_X500 equ (40)
-  NS_NIS equ (41)
-  NS_NISPLUS equ (42)
-  NS_WRQ equ (50)
-  NS_NETDES equ (60)
-  RES_UNUSED_1 equ (00000001h)
-  RES_FLUSH_CACHE equ (00000002h)
+  NS_X500 equ 40
+  NS_NIS equ 41
+  NS_NISPLUS equ 42
+  NS_WRQ equ 50
+  NS_NETDES equ 60
+  RES_UNUSED_1 equ 00000001h
+  RES_FLUSH_CACHE equ 00000002h
   ifndef RES_SERVICE
-    RES_SERVICE equ (00000004h)
+    RES_SERVICE equ 00000004h
   endif
   SERVICE_TYPE_VALUE_IPXPORTA equ <"IpxSocket">
   SERVICE_TYPE_VALUE_IPXPORTW equ <L("IpxSocket")>
@@ -777,12 +782,14 @@ ifndef _WINSOCK2API_
   _AFPROTOCOLS typedef AFPROTOCOLS
   PAFPROTOCOLS typedef ptr AFPROTOCOLS
   LPAFPROTOCOLS typedef ptr AFPROTOCOLS
+  
   WSAECOMPARATOR typedef SDWORD
   COMP_EQUAL equ 0
   COMP_NOTLESS equ 1
   _WSAEcomparator typedef WSAECOMPARATOR
   PWSAECOMPARATOR typedef ptr WSAECOMPARATOR
   LPWSAECOMPARATOR typedef ptr WSAECOMPARATOR
+  
   WSAVERSION struct
     dwVersion DWORD ?
     ecHow WSAECOMPARATOR ?
@@ -790,6 +797,7 @@ ifndef _WINSOCK2API_
   _WSAVersion typedef WSAVERSION
   PWSAVERSION typedef ptr WSAVERSION
   LPWSAVERSION typedef ptr WSAVERSION
+  
   WSAQUERYSETA struct
     dwSize DWORD ?
     lpszServiceInstanceName LPSTR ?
@@ -810,6 +818,7 @@ ifndef _WINSOCK2API_
   _WSAQuerySetA typedef WSAQUERYSETA
   PWSAQUERYSETA typedef ptr WSAQUERYSETA
   LPWSAQUERYSETA typedef ptr WSAQUERYSETA
+  
   WSAQUERYSETW struct
     dwSize DWORD ?
     lpszServiceInstanceName LPWSTR ?
@@ -830,6 +839,7 @@ ifndef _WINSOCK2API_
   _WSAQuerySetW typedef WSAQUERYSETW
   PWSAQUERYSETW typedef ptr WSAQUERYSETW
   LPWSAQUERYSETW typedef ptr WSAQUERYSETW
+  
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     WSAQUERYSET2A struct
       dwSize DWORD ?
@@ -850,6 +860,7 @@ ifndef _WINSOCK2API_
     _WSAQuerySet2A typedef WSAQUERYSET2A
     PWSAQUERYSET2A typedef ptr WSAQUERYSET2A
     LPWSAQUERYSET2A typedef ptr WSAQUERYSET2A
+    
     WSAQUERYSET2W struct
       dwSize DWORD ?
       lpszServiceInstanceName LPWSTR ?
@@ -869,6 +880,7 @@ ifndef _WINSOCK2API_
     _WSAQuerySet2W typedef WSAQUERYSET2W
     PWSAQUERYSET2W typedef ptr WSAQUERYSET2W
     LPWSAQUERYSET2W typedef ptr WSAQUERYSET2W
+    
     ifdef UNICODE
       WSAQUERYSET typedef WSAQUERYSETW
       PWSAQUERYSET typedef PWSAQUERYSETW
@@ -885,38 +897,31 @@ ifndef _WINSOCK2API_
       LPWSAQUERYSET2 typedef LPWSAQUERYSET2A
     endif
   endif
-  LUP_DEEP equ 00000001h
-  LUP_CONTAINERS equ 00000002h
-  LUP_NOCONTAINERS equ 00000004h
-  LUP_NEAREST equ 00000008h
-  LUP_RETURN_NAME equ 00000010h
-  LUP_RETURN_TYPE equ 00000020h
-  LUP_RETURN_VERSION equ 00000040h
-  LUP_RETURN_COMMENT equ 00000080h
-  LUP_RETURN_ADDR equ 00000100h
-  LUP_RETURN_BLOB equ 00000200h
-  LUP_RETURN_ALIASES equ 00000400h
-  LUP_RETURN_QUERY_STRING equ 00000800h
-  LUP_RETURN_ALL equ 00000FF0h
-  LUP_RES_SERVICE equ 00008000h
-  LUP_FLUSHCACHE equ 00001000h
-  LUP_FLUSHPREVIOUS equ 00002000h
-  LUP_NON_AUTHORITATIVE equ 00004000h
-  LUP_SECURE equ 00008000h
-  LUP_RETURN_PREFERRED_NAMES equ 00010000h
-  LUP_DNS_ONLY equ 00020000h
-  LUP_RETURN_RESPONSE_FLAGS equ 00040000h
+  LUP_DEEP equ 0001h
+  LUP_CONTAINERS equ 0002h
+  LUP_NOCONTAINERS equ 0004h
+  LUP_NEAREST equ 0008h
+  LUP_RETURN_NAME equ 0010h
+  LUP_RETURN_TYPE equ 0020h
+  LUP_RETURN_VERSION equ 0040h
+  LUP_RETURN_COMMENT equ 0080h
+  LUP_RETURN_ADDR equ 0100h
+  LUP_RETURN_BLOB equ 0200h
+  LUP_RETURN_ALIASES equ 0400h
+  LUP_RETURN_QUERY_STRING equ 0800h
+  LUP_RETURN_ALL equ 0FF0h
+  LUP_RES_SERVICE equ 8000h
+  LUP_FLUSHCACHE equ 1000h
+  LUP_FLUSHPREVIOUS equ 2000h
+  LUP_NON_AUTHORITATIVE equ 4000h
+  LUP_SECURE equ 8000h
+  LUP_RETURN_PREFERRED_NAMES equ 10000h
+  LUP_DNS_ONLY equ 20000h
   LUP_ADDRCONFIG equ 00100000h
   LUP_DUAL_ADDR equ 00200000h
   LUP_FILESERVER equ 00400000h
   LUP_DISABLE_IDN_ENCODING equ 00800000h
   LUP_API_ANSI equ 01000000h
-  LUP_EXTENDED_QUERYSET equ 02000000h
-  LUP_SECURE_WITH_FALLBACK equ 04000000h
-  LUP_EXCLUSIVE_CUSTOM_SERVERS equ 08000000h
-  LUP_REQUIRE_SECURE equ 10000000h
-  LUP_RETURN_TTL equ 20000000h
-  LUP_FORCE_CLEAR_TEXT equ 40000000h
   LUP_RESOLUTION_HANDLE equ 80000000h
   RESULT_IS_ALIAS equ 0001h
   if (_WIN32_WINNT ge 0501h)
@@ -931,6 +936,7 @@ ifndef _WINSOCK2API_
   _WSAESETSERVICEOP typedef WSAESETSERVICEOP
   PWSAESETSERVICEOP typedef ptr WSAESETSERVICEOP
   LPWSAESETSERVICEOP typedef ptr WSAESETSERVICEOP
+  
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     WSANSCLASSINFOA struct
       lpszName LPSTR ?
@@ -942,6 +948,7 @@ ifndef _WINSOCK2API_
     _WSANSClassInfoA typedef WSANSCLASSINFOA
     PWSANSCLASSINFOA typedef ptr WSANSCLASSINFOA
     LPWSANSCLASSINFOA typedef ptr WSANSCLASSINFOA
+    
   endif
   WSANSCLASSINFOW struct
     lpszName LPWSTR ?
@@ -953,6 +960,7 @@ ifndef _WINSOCK2API_
   _WSANSClassInfoW typedef WSANSCLASSINFOW
   PWSANSCLASSINFOW typedef ptr WSANSCLASSINFOW
   LPWSANSCLASSINFOW typedef ptr WSANSCLASSINFOW
+  
   ifdef UNICODE
     WSANSCLASSINFO typedef WSANSCLASSINFOW
     PWSANSCLASSINFO typedef PWSANSCLASSINFOW
@@ -974,6 +982,7 @@ ifndef _WINSOCK2API_
     _WSAServiceClassInfoA typedef WSASERVICECLASSINFOA
     PWSASERVICECLASSINFOA typedef ptr WSASERVICECLASSINFOA
     LPWSASERVICECLASSINFOA typedef ptr WSASERVICECLASSINFOA
+    
   endif
   WSASERVICECLASSINFOW struct
     lpServiceClassId LPGUID ?
@@ -984,6 +993,7 @@ ifndef _WINSOCK2API_
   _WSAServiceClassInfoW typedef WSASERVICECLASSINFOW
   PWSASERVICECLASSINFOW typedef ptr WSASERVICECLASSINFOW
   LPWSASERVICECLASSINFOW typedef ptr WSASERVICECLASSINFOW
+  
   ifdef UNICODE
     WSASERVICECLASSINFO typedef WSASERVICECLASSINFOW
     PWSASERVICECLASSINFO typedef PWSASERVICECLASSINFOW
@@ -1005,6 +1015,7 @@ ifndef _WINSOCK2API_
   _WSANAMESPACE_INFOA typedef WSANAMESPACE_INFOA
   PWSANAMESPACE_INFOA typedef ptr WSANAMESPACE_INFOA
   LPWSANAMESPACE_INFOA typedef ptr WSANAMESPACE_INFOA
+  
   WSANAMESPACE_INFOW struct
     NSProviderId GUID <>
     dwNameSpace DWORD ?
@@ -1015,6 +1026,7 @@ ifndef _WINSOCK2API_
   _WSANAMESPACE_INFOW typedef WSANAMESPACE_INFOW
   PWSANAMESPACE_INFOW typedef ptr WSANAMESPACE_INFOW
   LPWSANAMESPACE_INFOW typedef ptr WSANAMESPACE_INFOW
+  
   WSANAMESPACE_INFOEXA struct
     NSProviderId GUID <>
     dwNameSpace DWORD ?
@@ -1026,6 +1038,7 @@ ifndef _WINSOCK2API_
   _WSANAMESPACE_INFOEXA typedef WSANAMESPACE_INFOEXA
   PWSANAMESPACE_INFOEXA typedef ptr WSANAMESPACE_INFOEXA
   LPWSANAMESPACE_INFOEXA typedef ptr WSANAMESPACE_INFOEXA
+  
   WSANAMESPACE_INFOEXW struct
     NSProviderId GUID <>
     dwNameSpace DWORD ?
@@ -1037,6 +1050,7 @@ ifndef _WINSOCK2API_
   _WSANAMESPACE_INFOEXW typedef WSANAMESPACE_INFOEXW
   PWSANAMESPACE_INFOEXW typedef ptr WSANAMESPACE_INFOEXW
   LPWSANAMESPACE_INFOEXW typedef ptr WSANAMESPACE_INFOEXW
+  
   ifdef UNICODE
     WSANAMESPACE_INFO typedef WSANAMESPACE_INFOW
     PWSANAMESPACE_INFO typedef PWSANAMESPACE_INFOW
@@ -1071,6 +1085,7 @@ ifndef _WINSOCK2API_
     pollfd typedef WSAPOLLFD
     PWSAPOLLFD typedef ptr WSAPOLLFD
     LPWSAPOLLFD typedef ptr WSAPOLLFD
+    
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, accept, WIN_STD_CALL_CONV,, <:SOCKET, :ptr sockaddr, :ptr SDWORD>, 12
@@ -1078,7 +1093,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_ACCEPT typedef proto WIN_STD_CALL_CONV :SOCKET, :ptr sockaddr, :ptr SDWORD
     LPFN_ACCEPT typedef ptr TYPE_LPFN_ACCEPT
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, bind, WIN_STD_CALL_CONV,, <:SOCKET, :ptr sockaddr, :SDWORD>, 12
@@ -1086,7 +1100,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_BIND typedef proto WIN_STD_CALL_CONV :SOCKET, :ptr sockaddr, :SDWORD
     LPFN_BIND typedef ptr TYPE_LPFN_BIND
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, closesocket, WIN_STD_CALL_CONV,, <:SOCKET>, 4
@@ -1094,7 +1107,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_CLOSESOCKET typedef proto WIN_STD_CALL_CONV :SOCKET
     LPFN_CLOSESOCKET typedef ptr TYPE_LPFN_CLOSESOCKET
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, connect, WIN_STD_CALL_CONV,, <:SOCKET, :ptr sockaddr, :SDWORD>, 12
@@ -1102,7 +1114,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_CONNECT typedef proto WIN_STD_CALL_CONV :SOCKET, :ptr sockaddr, :SDWORD
     LPFN_CONNECT typedef ptr TYPE_LPFN_CONNECT
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, ioctlsocket, WIN_STD_CALL_CONV,, <:SOCKET, :SDWORD, :ptr u_long>, 12
@@ -1110,7 +1121,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_IOCTLSOCKET typedef proto WIN_STD_CALL_CONV :SOCKET, :SDWORD, :ptr u_long
     LPFN_IOCTLSOCKET typedef ptr TYPE_LPFN_IOCTLSOCKET
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, getpeername, WIN_STD_CALL_CONV,, <:SOCKET, :ptr sockaddr, :ptr SDWORD>, 12
@@ -1118,7 +1128,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_GETPEERNAME typedef proto WIN_STD_CALL_CONV :SOCKET, :ptr sockaddr, :ptr SDWORD
     LPFN_GETPEERNAME typedef ptr TYPE_LPFN_GETPEERNAME
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, getsockname, WIN_STD_CALL_CONV,, <:SOCKET, :ptr sockaddr, :ptr SDWORD>, 12
@@ -1126,7 +1135,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_GETSOCKNAME typedef proto WIN_STD_CALL_CONV :SOCKET, :ptr sockaddr, :ptr SDWORD
     LPFN_GETSOCKNAME typedef ptr TYPE_LPFN_GETSOCKNAME
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, getsockopt, WIN_STD_CALL_CONV,, <:SOCKET, :SDWORD, :SDWORD, :ptr SBYTE, :ptr SDWORD>, 20
@@ -1134,7 +1142,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_GETSOCKOPT typedef proto WIN_STD_CALL_CONV :SOCKET, :SDWORD, :SDWORD, :ptr SBYTE, :ptr SDWORD
     LPFN_GETSOCKOPT typedef ptr TYPE_LPFN_GETSOCKOPT
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, htonl, WIN_STD_CALL_CONV,, <:u_long>, 4
@@ -1142,7 +1149,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_HTONL typedef proto WIN_STD_CALL_CONV :u_long
     LPFN_HTONL typedef ptr TYPE_LPFN_HTONL
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, htons, WIN_STD_CALL_CONV,, <:u_short>, 4
@@ -1150,7 +1156,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_HTONS typedef proto WIN_STD_CALL_CONV :u_short
     LPFN_HTONS typedef ptr TYPE_LPFN_HTONS
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     _WINSOCK_DEPRECATED_BY("inet_pton() or InetPton()")
@@ -1159,7 +1164,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_INET_ADDR typedef proto WIN_STD_CALL_CONV :ptr SBYTE
     LPFN_INET_ADDR typedef ptr TYPE_LPFN_INET_ADDR
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     _WINSOCK_DEPRECATED_BY("inet_ntop() or InetNtop()")
@@ -1168,7 +1172,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_INET_NTOA typedef proto WIN_STD_CALL_CONV :in_addr
     LPFN_INET_NTOA typedef ptr TYPE_LPFN_INET_NTOA
-
   endif
   if  not Defined(NO_EXTRA_HTON_FUNCTIONS) and  not Defined(__midl) and (Defined(INCL_EXTRA_HTON_FUNCTIONS) or NTDDI_VERSION ge NTDDI_WIN8)
     _WS2_32_WINSOCK_SWAP_LONG macro l
@@ -1202,7 +1205,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_LISTEN typedef proto WIN_STD_CALL_CONV :SOCKET, :SDWORD
     LPFN_LISTEN typedef ptr TYPE_LPFN_LISTEN
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, ntohl, WIN_STD_CALL_CONV,, <:u_long>, 4
@@ -1210,7 +1212,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_NTOHL typedef proto WIN_STD_CALL_CONV :u_long
     LPFN_NTOHL typedef ptr TYPE_LPFN_NTOHL
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, ntohs, WIN_STD_CALL_CONV,, <:u_short>, 4
@@ -1218,7 +1219,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_NTOHS typedef proto WIN_STD_CALL_CONV :u_short
     LPFN_NTOHS typedef ptr TYPE_LPFN_NTOHS
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, recv, WIN_STD_CALL_CONV,, <:SOCKET, :ptr SBYTE, :SDWORD, :SDWORD>, 16
@@ -1226,7 +1226,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_RECV typedef proto WIN_STD_CALL_CONV :SOCKET, :ptr SBYTE, :SDWORD, :SDWORD
     LPFN_RECV typedef ptr TYPE_LPFN_RECV
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, recvfrom, WIN_STD_CALL_CONV,, <:SOCKET, :ptr SBYTE, :SDWORD, :SDWORD, :ptr sockaddr, :ptr SDWORD>, 24
@@ -1234,7 +1233,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_RECVFROM typedef proto WIN_STD_CALL_CONV :SOCKET, :ptr SBYTE, :SDWORD, :SDWORD, :ptr sockaddr, :ptr SDWORD
     LPFN_RECVFROM typedef ptr TYPE_LPFN_RECVFROM
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, select, WIN_STD_CALL_CONV,, <:SDWORD, :ptr fd_set, :ptr fd_set, :ptr fd_set, :ptr timeval>, 20
@@ -1242,7 +1240,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_SELECT typedef proto WIN_STD_CALL_CONV :SDWORD, :ptr fd_set, :ptr fd_set, :ptr fd_set, :ptr timeval
     LPFN_SELECT typedef ptr TYPE_LPFN_SELECT
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, send, WIN_STD_CALL_CONV,, <:SOCKET, :ptr SBYTE, :SDWORD, :SDWORD>, 16
@@ -1250,7 +1247,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_SEND typedef proto WIN_STD_CALL_CONV :SOCKET, :ptr SBYTE, :SDWORD, :SDWORD
     LPFN_SEND typedef ptr TYPE_LPFN_SEND
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, sendto, WIN_STD_CALL_CONV,, <:SOCKET, :ptr SBYTE, :SDWORD, :SDWORD, :ptr sockaddr, :SDWORD>, 24
@@ -1258,7 +1254,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_SENDTO typedef proto WIN_STD_CALL_CONV :SOCKET, :ptr SBYTE, :SDWORD, :SDWORD, :ptr sockaddr, :SDWORD
     LPFN_SENDTO typedef ptr TYPE_LPFN_SENDTO
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, setsockopt, WIN_STD_CALL_CONV,, <:SOCKET, :SDWORD, :SDWORD, :ptr SBYTE, :SDWORD>, 20
@@ -1266,7 +1261,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_SETSOCKOPT typedef proto WIN_STD_CALL_CONV :SOCKET, :SDWORD, :SDWORD, :ptr SBYTE, :SDWORD
     LPFN_SETSOCKOPT typedef ptr TYPE_LPFN_SETSOCKOPT
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, shutdown, WIN_STD_CALL_CONV,, <:SOCKET, :SDWORD>, 8
@@ -1274,7 +1268,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_SHUTDOWN typedef proto WIN_STD_CALL_CONV :SOCKET, :SDWORD
     LPFN_SHUTDOWN typedef ptr TYPE_LPFN_SHUTDOWN
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, socket, WIN_STD_CALL_CONV,, <:SDWORD, :SDWORD, :SDWORD>, 12
@@ -1282,25 +1275,24 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_SOCKET typedef proto WIN_STD_CALL_CONV :SDWORD, :SDWORD, :SDWORD
     LPFN_SOCKET typedef ptr TYPE_LPFN_SOCKET
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     _WINSOCK_DEPRECATED_BY("getnameinfo() or GetNameInfoW()")
     @DefProto DllImport, gethostbyaddr, WIN_STD_CALL_CONV,, <:ptr SBYTE, :SDWORD, :SDWORD>, 12
   endif
   if INCL_WINSOCK_API_TYPEDEFS
-    TYPE_LPFN_GETHOSTBYADDR typedef proto WIN_STD_CALL_CONV :ptr SBYTE, :SDWORD, :SDWORD
-    LPFN_GETHOSTBYADDR typedef ptr TYPE_LPFN_GETHOSTBYADDR
-
+    addr_ typedef ptr ptr ptr hostent
+    len typedef hostent
+    ) typedef hostent
+    
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     _WINSOCK_DEPRECATED_BY("getaddrinfo() or GetAddrInfoW()")
     @DefProto DllImport, gethostbyname, WIN_STD_CALL_CONV,, <:ptr SBYTE>, 4
   endif
   if INCL_WINSOCK_API_TYPEDEFS
-    TYPE_LPFN_GETHOSTBYNAME typedef proto WIN_STD_CALL_CONV :ptr SBYTE
-    LPFN_GETHOSTBYNAME typedef ptr TYPE_LPFN_GETHOSTBYNAME
-
+    ) typedef ptr ptr ptr hostent
+    
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, gethostname, WIN_STD_CALL_CONV,, <:ptr SBYTE, :SDWORD>, 8
@@ -1308,7 +1300,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_GETHOSTNAME typedef proto WIN_STD_CALL_CONV :ptr SBYTE, :SDWORD
     LPFN_GETHOSTNAME typedef ptr TYPE_LPFN_GETHOSTNAME
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, GetHostNameW, WIN_STD_CALL_CONV,, <:PWSTR, :SDWORD>, 8
@@ -1316,39 +1307,36 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_GETHOSTNAMEW typedef proto WIN_STD_CALL_CONV :PWSTR, :SDWORD
     LPFN_GETHOSTNAMEW typedef ptr TYPE_LPFN_GETHOSTNAMEW
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, getservbyport, WIN_STD_CALL_CONV,, <:SDWORD, :ptr SBYTE>, 8
   endif
   if INCL_WINSOCK_API_TYPEDEFS
-    TYPE_LPFN_GETSERVBYPORT typedef proto WIN_STD_CALL_CONV :SDWORD, :ptr SBYTE
-    LPFN_GETSERVBYPORT typedef ptr TYPE_LPFN_GETSERVBYPORT
-
+    port typedef ptr ptr servent
+    ) typedef ptr servent
+    
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, getservbyname, WIN_STD_CALL_CONV,, <:ptr SBYTE, :ptr SBYTE>, 8
   endif
   if INCL_WINSOCK_API_TYPEDEFS
-    TYPE_LPFN_GETSERVBYNAME typedef proto WIN_STD_CALL_CONV :ptr SBYTE, :ptr SBYTE
-    LPFN_GETSERVBYNAME typedef ptr TYPE_LPFN_GETSERVBYNAME
-
+    name_ typedef ptr ptr ptr servent
+    ) typedef ptr servent
+    
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, getprotobynumber, WIN_STD_CALL_CONV,, <:SDWORD>, 4
   endif
   if INCL_WINSOCK_API_TYPEDEFS
-    TYPE_LPFN_GETPROTOBYNUMBER typedef proto WIN_STD_CALL_CONV :SDWORD
-    LPFN_GETPROTOBYNUMBER typedef ptr TYPE_LPFN_GETPROTOBYNUMBER
-
+    ) typedef ptr ptr protoent
+    
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, getprotobyname, WIN_STD_CALL_CONV,, <:ptr SBYTE>, 4
   endif
   if INCL_WINSOCK_API_TYPEDEFS
-    TYPE_LPFN_GETPROTOBYNAME typedef proto WIN_STD_CALL_CONV :ptr SBYTE
-    LPFN_GETPROTOBYNAME typedef ptr TYPE_LPFN_GETPROTOBYNAME
-
+    ) typedef ptr ptr ptr protoent
+    
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSAStartup, WIN_STD_CALL_CONV,, <:WORD, :LPWSADATA>, 8
@@ -1356,7 +1344,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSASTARTUP typedef proto WIN_STD_CALL_CONV :WORD, :LPWSADATA
     LPFN_WSASTARTUP typedef ptr TYPE_LPFN_WSASTARTUP
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSACleanup, WIN_STD_CALL_CONV,, <>, 0
@@ -1364,7 +1351,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSACLEANUP typedef proto WIN_STD_CALL_CONV
     LPFN_WSACLEANUP typedef ptr TYPE_LPFN_WSACLEANUP
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSASetLastError, WIN_STD_CALL_CONV,, <:SDWORD>, 4
@@ -1372,7 +1358,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSASETLASTERROR typedef proto WIN_STD_CALL_CONV :SDWORD
     LPFN_WSASETLASTERROR typedef ptr TYPE_LPFN_WSASETLASTERROR
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSAGetLastError, WIN_STD_CALL_CONV,, <>, 0
@@ -1380,7 +1365,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSAGETLASTERROR typedef proto WIN_STD_CALL_CONV
     LPFN_WSAGETLASTERROR typedef ptr TYPE_LPFN_WSAGETLASTERROR
-
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if INCL_WINSOCK_API_PROTOTYPES
@@ -1390,7 +1374,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSAISBLOCKING typedef proto WIN_STD_CALL_CONV
       LPFN_WSAISBLOCKING typedef ptr TYPE_LPFN_WSAISBLOCKING
-
     endif
     if INCL_WINSOCK_API_PROTOTYPES
       _WINSOCK_DEPRECATED_BY("Winsock 2")
@@ -1399,7 +1382,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSAUNHOOKBLOCKINGHOOK typedef proto WIN_STD_CALL_CONV
       LPFN_WSAUNHOOKBLOCKINGHOOK typedef ptr TYPE_LPFN_WSAUNHOOKBLOCKINGHOOK
-
     endif
     if INCL_WINSOCK_API_PROTOTYPES
       _WINSOCK_DEPRECATED_BY("Winsock 2")
@@ -1408,7 +1390,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSASETBLOCKINGHOOK typedef proto WIN_STD_CALL_CONV :FARPROC
       LPFN_WSASETBLOCKINGHOOK typedef ptr TYPE_LPFN_WSASETBLOCKINGHOOK
-
     endif
     if INCL_WINSOCK_API_PROTOTYPES
       _WINSOCK_DEPRECATED_BY("Winsock 2")
@@ -1417,7 +1398,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSACANCELBLOCKINGCALL typedef proto WIN_STD_CALL_CONV
       LPFN_WSACANCELBLOCKINGCALL typedef ptr TYPE_LPFN_WSACANCELBLOCKINGCALL
-
     endif
     if INCL_WINSOCK_API_PROTOTYPES
       _WINSOCK_DEPRECATED_BY("getservbyname()")
@@ -1426,7 +1406,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSAASYNCGETSERVBYNAME typedef proto WIN_STD_CALL_CONV :HWND, :u_int, :ptr SBYTE, :ptr SBYTE, :ptr SBYTE, :SDWORD
       LPFN_WSAASYNCGETSERVBYNAME typedef ptr TYPE_LPFN_WSAASYNCGETSERVBYNAME
-
     endif
     if INCL_WINSOCK_API_PROTOTYPES
       _WINSOCK_DEPRECATED_BY("getservbyport()")
@@ -1435,7 +1414,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSAASYNCGETSERVBYPORT typedef proto WIN_STD_CALL_CONV :HWND, :u_int, :SDWORD, :ptr SBYTE, :ptr SBYTE, :SDWORD
       LPFN_WSAASYNCGETSERVBYPORT typedef ptr TYPE_LPFN_WSAASYNCGETSERVBYPORT
-
     endif
     if INCL_WINSOCK_API_PROTOTYPES
       _WINSOCK_DEPRECATED_BY("getprotobyname()")
@@ -1444,7 +1422,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSAASYNCGETPROTOBYNAME typedef proto WIN_STD_CALL_CONV :HWND, :u_int, :ptr SBYTE, :ptr SBYTE, :SDWORD
       LPFN_WSAASYNCGETPROTOBYNAME typedef ptr TYPE_LPFN_WSAASYNCGETPROTOBYNAME
-
     endif
     if INCL_WINSOCK_API_PROTOTYPES
       _WINSOCK_DEPRECATED_BY("getprotobynumber()")
@@ -1453,7 +1430,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSAASYNCGETPROTOBYNUMBER typedef proto WIN_STD_CALL_CONV :HWND, :u_int, :SDWORD, :ptr SBYTE, :SDWORD
       LPFN_WSAASYNCGETPROTOBYNUMBER typedef ptr TYPE_LPFN_WSAASYNCGETPROTOBYNUMBER
-
     endif
     if INCL_WINSOCK_API_PROTOTYPES
       _WINSOCK_DEPRECATED_BY("GetAddrInfoExW()")
@@ -1462,7 +1438,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSAASYNCGETHOSTBYNAME typedef proto WIN_STD_CALL_CONV :HWND, :u_int, :ptr SBYTE, :ptr SBYTE, :SDWORD
       LPFN_WSAASYNCGETHOSTBYNAME typedef ptr TYPE_LPFN_WSAASYNCGETHOSTBYNAME
-
     endif
     if INCL_WINSOCK_API_PROTOTYPES
       _WINSOCK_DEPRECATED_BY("getnameinfo() or GetNameInfoW()")
@@ -1471,7 +1446,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSAASYNCGETHOSTBYADDR typedef proto WIN_STD_CALL_CONV :HWND, :u_int, :ptr SBYTE, :SDWORD, :SDWORD, :ptr SBYTE, :SDWORD
       LPFN_WSAASYNCGETHOSTBYADDR typedef ptr TYPE_LPFN_WSAASYNCGETHOSTBYADDR
-
     endif
     if INCL_WINSOCK_API_PROTOTYPES
       @DefProto DllImport, WSACancelAsyncRequest, WIN_STD_CALL_CONV,, <:HANDLE>, 4
@@ -1479,7 +1453,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSACANCELASYNCREQUEST typedef proto WIN_STD_CALL_CONV :HANDLE
       LPFN_WSACANCELASYNCREQUEST typedef ptr TYPE_LPFN_WSACANCELASYNCREQUEST
-
     endif
     if INCL_WINSOCK_API_PROTOTYPES
       _WINSOCK_DEPRECATED_BY("WSAEventSelect()")
@@ -1488,7 +1461,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSAASYNCSELECT typedef proto WIN_STD_CALL_CONV :SOCKET, :HWND, :u_int, :SDWORD
       LPFN_WSAASYNCSELECT typedef ptr TYPE_LPFN_WSAASYNCSELECT
-
     endif
   endif
   if INCL_WINSOCK_API_PROTOTYPES
@@ -1497,7 +1469,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSAACCEPT typedef proto WIN_STD_CALL_CONV :SOCKET, :ptr sockaddr, :LPINT, :LPCONDITIONPROC, :DWORD_PTR
     LPFN_WSAACCEPT typedef ptr TYPE_LPFN_WSAACCEPT
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSACloseEvent, WIN_STD_CALL_CONV,, <:WSAEVENT>, 4
@@ -1505,7 +1476,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSACLOSEEVENT typedef proto WIN_STD_CALL_CONV :WSAEVENT
     LPFN_WSACLOSEEVENT typedef ptr TYPE_LPFN_WSACLOSEEVENT
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSAConnect, WIN_STD_CALL_CONV,, <:SOCKET, :ptr sockaddr, :SDWORD, :LPWSABUF, :LPWSABUF, :LPQOS, :LPQOS>, 28
@@ -1524,7 +1494,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSACONNECT typedef proto WIN_STD_CALL_CONV :SOCKET, :ptr sockaddr, :SDWORD, :LPWSABUF, :LPWSABUF, :LPQOS, :LPQOS
     LPFN_WSACONNECT typedef ptr TYPE_LPFN_WSACONNECT
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSACreateEvent, WIN_STD_CALL_CONV,, <>, 0
@@ -1532,7 +1501,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSACREATEEVENT typedef proto WIN_STD_CALL_CONV
     LPFN_WSACREATEEVENT typedef ptr TYPE_LPFN_WSACREATEEVENT
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     _WINSOCK_DEPRECATED_BY("WSADuplicateSocketW()")
@@ -1547,10 +1515,8 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSADUPLICATESOCKETA typedef proto WIN_STD_CALL_CONV :SOCKET, :DWORD, :LPWSAPROTOCOL_INFOA
     LPFN_WSADUPLICATESOCKETA typedef ptr TYPE_LPFN_WSADUPLICATESOCKETA
-
     TYPE_LPFN_WSADUPLICATESOCKETW typedef proto WIN_STD_CALL_CONV :SOCKET, :DWORD, :LPWSAPROTOCOL_INFOW
     LPFN_WSADUPLICATESOCKETW typedef ptr TYPE_LPFN_WSADUPLICATESOCKETW
-
     ifdef UNICODE
       LPFN_WSADUPLICATESOCKET equ <LPFN_WSADUPLICATESOCKETW>
     else
@@ -1563,7 +1529,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSAENUMNETWORKEVENTS typedef proto WIN_STD_CALL_CONV :SOCKET, :WSAEVENT, :LPWSANETWORKEVENTS
     LPFN_WSAENUMNETWORKEVENTS typedef ptr TYPE_LPFN_WSAENUMNETWORKEVENTS
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     _WINSOCK_DEPRECATED_BY("WSAEnumProtocolsW()")
@@ -1578,10 +1543,8 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSAENUMPROTOCOLSA typedef proto WIN_STD_CALL_CONV :LPINT, :LPWSAPROTOCOL_INFOA, :LPDWORD
     LPFN_WSAENUMPROTOCOLSA typedef ptr TYPE_LPFN_WSAENUMPROTOCOLSA
-
     TYPE_LPFN_WSAENUMPROTOCOLSW typedef proto WIN_STD_CALL_CONV :LPINT, :LPWSAPROTOCOL_INFOW, :LPDWORD
     LPFN_WSAENUMPROTOCOLSW typedef ptr TYPE_LPFN_WSAENUMPROTOCOLSW
-
     ifdef UNICODE
       LPFN_WSAENUMPROTOCOLS equ <LPFN_WSAENUMPROTOCOLSW>
     else
@@ -1594,7 +1557,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSAEVENTSELECT typedef proto WIN_STD_CALL_CONV :SOCKET, :WSAEVENT, :SDWORD
     LPFN_WSAEVENTSELECT typedef ptr TYPE_LPFN_WSAEVENTSELECT
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSAGetOverlappedResult, WIN_STD_CALL_CONV,, <:SOCKET, :LPWSAOVERLAPPED, :LPDWORD, :BOOL, :LPDWORD>, 20
@@ -1602,7 +1564,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSAGETOVERLAPPEDRESULT typedef proto WIN_STD_CALL_CONV :SOCKET, :LPWSAOVERLAPPED, :LPDWORD, :BOOL, :LPDWORD
     LPFN_WSAGETOVERLAPPEDRESULT typedef ptr TYPE_LPFN_WSAGETOVERLAPPEDRESULT
-
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if INCL_WINSOCK_API_PROTOTYPES
@@ -1611,7 +1572,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSAGETQOSBYNAME typedef proto WIN_STD_CALL_CONV :SOCKET, :LPWSABUF, :LPQOS
       LPFN_WSAGETQOSBYNAME typedef ptr TYPE_LPFN_WSAGETQOSBYNAME
-
     endif
   endif
   if INCL_WINSOCK_API_PROTOTYPES
@@ -1620,7 +1580,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSAHTONL typedef proto WIN_STD_CALL_CONV :SOCKET, :u_long, :ptr u_long
     LPFN_WSAHTONL typedef ptr TYPE_LPFN_WSAHTONL
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSAHtons, WIN_STD_CALL_CONV,, <:SOCKET, :u_short, :ptr u_short>, 12
@@ -1628,7 +1587,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSAHTONS typedef proto WIN_STD_CALL_CONV :SOCKET, :u_short, :ptr u_short
     LPFN_WSAHTONS typedef ptr TYPE_LPFN_WSAHTONS
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSAIoctl, WIN_STD_CALL_CONV,, <:SOCKET, :DWORD, :LPVOID, :DWORD, :LPVOID, :DWORD, :LPDWORD, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE>, 36
@@ -1636,7 +1594,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSAIOCTL typedef proto WIN_STD_CALL_CONV :SOCKET, :DWORD, :LPVOID, :DWORD, :LPVOID, :DWORD, :LPDWORD, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE
     LPFN_WSAIOCTL typedef ptr TYPE_LPFN_WSAIOCTL
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSAJoinLeaf, WIN_STD_CALL_CONV,, <:SOCKET, :ptr sockaddr, :SDWORD, :LPWSABUF, :LPWSABUF, :LPQOS, :LPQOS, :DWORD>, 32
@@ -1644,7 +1601,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSAJOINLEAF typedef proto WIN_STD_CALL_CONV :SOCKET, :ptr sockaddr, :SDWORD, :LPWSABUF, :LPWSABUF, :LPQOS, :LPQOS, :DWORD
     LPFN_WSAJOINLEAF typedef ptr TYPE_LPFN_WSAJOINLEAF
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSANtohl, WIN_STD_CALL_CONV,, <:SOCKET, :u_long, :ptr u_long>, 12
@@ -1652,7 +1608,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSANTOHL typedef proto WIN_STD_CALL_CONV :SOCKET, :u_long, :ptr u_long
     LPFN_WSANTOHL typedef ptr TYPE_LPFN_WSANTOHL
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSANtohs, WIN_STD_CALL_CONV,, <:SOCKET, :u_short, :ptr u_short>, 12
@@ -1660,7 +1615,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSANTOHS typedef proto WIN_STD_CALL_CONV :SOCKET, :u_short, :ptr u_short
     LPFN_WSANTOHS typedef ptr TYPE_LPFN_WSANTOHS
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSARecv, WIN_STD_CALL_CONV,, <:SOCKET, :LPWSABUF, :DWORD, :LPDWORD, :LPDWORD, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE>, 28
@@ -1668,7 +1622,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSARECV typedef proto WIN_STD_CALL_CONV :SOCKET, :LPWSABUF, :DWORD, :LPDWORD, :LPDWORD, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE
     LPFN_WSARECV typedef ptr TYPE_LPFN_WSARECV
-
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if INCL_WINSOCK_API_PROTOTYPES
@@ -1678,7 +1631,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSARECVDISCONNECT typedef proto WIN_STD_CALL_CONV :SOCKET, :LPWSABUF
       LPFN_WSARECVDISCONNECT typedef ptr TYPE_LPFN_WSARECVDISCONNECT
-
     endif
   endif
   if INCL_WINSOCK_API_PROTOTYPES
@@ -1687,7 +1639,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSARECVFROM typedef proto WIN_STD_CALL_CONV :SOCKET, :LPWSABUF, :DWORD, :LPDWORD, :LPDWORD, :ptr sockaddr, :LPINT, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE
     LPFN_WSARECVFROM typedef ptr TYPE_LPFN_WSARECVFROM
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSAResetEvent, WIN_STD_CALL_CONV,, <:WSAEVENT>, 4
@@ -1695,7 +1646,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSARESETEVENT typedef proto WIN_STD_CALL_CONV :WSAEVENT
     LPFN_WSARESETEVENT typedef ptr TYPE_LPFN_WSARESETEVENT
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSASend, WIN_STD_CALL_CONV,, <:SOCKET, :LPWSABUF, :DWORD, :LPDWORD, :DWORD, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE>, 28
@@ -1703,7 +1653,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSASEND typedef proto WIN_STD_CALL_CONV :SOCKET, :LPWSABUF, :DWORD, :LPDWORD, :DWORD, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE
     LPFN_WSASEND typedef ptr TYPE_LPFN_WSASEND
-
   endif
   if (_WIN32_WINNT ge 0600h)
     if INCL_WINSOCK_API_PROTOTYPES
@@ -1718,7 +1667,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSASENDDISCONNECT typedef proto WIN_STD_CALL_CONV :SOCKET, :LPWSABUF
       LPFN_WSASENDDISCONNECT typedef ptr TYPE_LPFN_WSASENDDISCONNECT
-
     endif
   endif
   if INCL_WINSOCK_API_PROTOTYPES
@@ -1727,7 +1675,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSASENDTO typedef proto WIN_STD_CALL_CONV :SOCKET, :LPWSABUF, :DWORD, :LPDWORD, :DWORD, :ptr sockaddr, :SDWORD, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE
     LPFN_WSASENDTO typedef ptr TYPE_LPFN_WSASENDTO
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     @DefProto DllImport, WSASetEvent, WIN_STD_CALL_CONV,, <:WSAEVENT>, 4
@@ -1735,7 +1682,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSASETEVENT typedef proto WIN_STD_CALL_CONV :WSAEVENT
     LPFN_WSASETEVENT typedef ptr TYPE_LPFN_WSASETEVENT
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     _WINSOCK_DEPRECATED_BY("WSASocketW()")
@@ -1750,10 +1696,8 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSASOCKETA typedef proto WIN_STD_CALL_CONV :SDWORD, :SDWORD, :SDWORD, :LPWSAPROTOCOL_INFOA, :GROUP_, :DWORD
     LPFN_WSASOCKETA typedef ptr TYPE_LPFN_WSASOCKETA
-
     TYPE_LPFN_WSASOCKETW typedef proto WIN_STD_CALL_CONV :SDWORD, :SDWORD, :SDWORD, :LPWSAPROTOCOL_INFOW, :GROUP_, :DWORD
     LPFN_WSASOCKETW typedef ptr TYPE_LPFN_WSASOCKETW
-
     ifdef UNICODE
       LPFN_WSASOCKET equ <LPFN_WSASOCKETW>
     else
@@ -1766,7 +1710,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSAWAITFORMULTIPLEEVENTS typedef proto WIN_STD_CALL_CONV :DWORD, :ptr WSAEVENT, :BOOL, :DWORD, :BOOL
     LPFN_WSAWAITFORMULTIPLEEVENTS typedef ptr TYPE_LPFN_WSAWAITFORMULTIPLEEVENTS
-
   endif
   if INCL_WINSOCK_API_PROTOTYPES
     _WINSOCK_DEPRECATED_BY("WSAAddressToStringW()")
@@ -1781,10 +1724,8 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSAADDRESSTOSTRINGA typedef proto WIN_STD_CALL_CONV :LPSOCKADDR, :DWORD, :LPWSAPROTOCOL_INFOA, :LPSTR, :LPDWORD
     LPFN_WSAADDRESSTOSTRINGA typedef ptr TYPE_LPFN_WSAADDRESSTOSTRINGA
-
     TYPE_LPFN_WSAADDRESSTOSTRINGW typedef proto WIN_STD_CALL_CONV :LPSOCKADDR, :DWORD, :LPWSAPROTOCOL_INFOW, :LPWSTR, :LPDWORD
     LPFN_WSAADDRESSTOSTRINGW typedef ptr TYPE_LPFN_WSAADDRESSTOSTRINGW
-
     ifdef UNICODE
       LPFN_WSAADDRESSTOSTRING equ <LPFN_WSAADDRESSTOSTRINGW>
     else
@@ -1804,10 +1745,8 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSASTRINGTOADDRESSA typedef proto WIN_STD_CALL_CONV :LPSTR, :INT_, :LPWSAPROTOCOL_INFOA, :LPSOCKADDR, :LPINT
     LPFN_WSASTRINGTOADDRESSA typedef ptr TYPE_LPFN_WSASTRINGTOADDRESSA
-
     TYPE_LPFN_WSASTRINGTOADDRESSW typedef proto WIN_STD_CALL_CONV :LPWSTR, :INT_, :LPWSAPROTOCOL_INFOW, :LPSOCKADDR, :LPINT
     LPFN_WSASTRINGTOADDRESSW typedef ptr TYPE_LPFN_WSASTRINGTOADDRESSW
-
     ifdef UNICODE
       LPFN_WSASTRINGTOADDRESS equ <LPFN_WSASTRINGTOADDRESSW>
     else
@@ -1827,10 +1766,8 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSALOOKUPSERVICEBEGINA typedef proto WIN_STD_CALL_CONV :LPWSAQUERYSETA, :DWORD, :LPHANDLE
     LPFN_WSALOOKUPSERVICEBEGINA typedef ptr TYPE_LPFN_WSALOOKUPSERVICEBEGINA
-
     TYPE_LPFN_WSALOOKUPSERVICEBEGINW typedef proto WIN_STD_CALL_CONV :LPWSAQUERYSETW, :DWORD, :LPHANDLE
     LPFN_WSALOOKUPSERVICEBEGINW typedef ptr TYPE_LPFN_WSALOOKUPSERVICEBEGINW
-
     ifdef UNICODE
       LPFN_WSALOOKUPSERVICEBEGIN equ <LPFN_WSALOOKUPSERVICEBEGINW>
     else
@@ -1850,10 +1787,8 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSALOOKUPSERVICENEXTA typedef proto WIN_STD_CALL_CONV :HANDLE, :DWORD, :LPDWORD, :LPWSAQUERYSETA
     LPFN_WSALOOKUPSERVICENEXTA typedef ptr TYPE_LPFN_WSALOOKUPSERVICENEXTA
-
     TYPE_LPFN_WSALOOKUPSERVICENEXTW typedef proto WIN_STD_CALL_CONV :HANDLE, :DWORD, :LPDWORD, :LPWSAQUERYSETW
     LPFN_WSALOOKUPSERVICENEXTW typedef ptr TYPE_LPFN_WSALOOKUPSERVICENEXTW
-
     ifdef UNICODE
       LPFN_WSALOOKUPSERVICENEXT equ <LPFN_WSALOOKUPSERVICENEXTW>
     else
@@ -1867,7 +1802,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSANSPIOCTL typedef proto WIN_STD_CALL_CONV :HANDLE, :DWORD, :LPVOID, :DWORD, :LPVOID, :DWORD, :LPDWORD, :LPWSACOMPLETION
       LPFN_WSANSPIOCTL typedef ptr TYPE_LPFN_WSANSPIOCTL
-
     endif
   endif
   if INCL_WINSOCK_API_PROTOTYPES
@@ -1876,7 +1810,6 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSALOOKUPSERVICEEND typedef proto WIN_STD_CALL_CONV :HANDLE
     LPFN_WSALOOKUPSERVICEEND typedef ptr TYPE_LPFN_WSALOOKUPSERVICEEND
-
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if INCL_WINSOCK_API_PROTOTYPES
@@ -1892,10 +1825,8 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSAINSTALLSERVICECLASSA typedef proto WIN_STD_CALL_CONV :LPWSASERVICECLASSINFOA
       LPFN_WSAINSTALLSERVICECLASSA typedef ptr TYPE_LPFN_WSAINSTALLSERVICECLASSA
-
       TYPE_LPFN_WSAINSTALLSERVICECLASSW typedef proto WIN_STD_CALL_CONV :LPWSASERVICECLASSINFOW
       LPFN_WSAINSTALLSERVICECLASSW typedef ptr TYPE_LPFN_WSAINSTALLSERVICECLASSW
-
       ifdef UNICODE
         LPFN_WSAINSTALLSERVICECLASS equ <LPFN_WSAINSTALLSERVICECLASSW>
       else
@@ -1908,7 +1839,6 @@ ifndef _WINSOCK2API_
     if INCL_WINSOCK_API_TYPEDEFS
       TYPE_LPFN_WSAREMOVESERVICECLASS typedef proto WIN_STD_CALL_CONV :LPGUID
       LPFN_WSAREMOVESERVICECLASS typedef ptr TYPE_LPFN_WSAREMOVESERVICECLASS
-
     endif
   endif
   if INCL_WINSOCK_API_PROTOTYPES
@@ -1927,11 +1857,9 @@ ifndef _WINSOCK2API_
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       TYPE_LPFN_WSAGETSERVICECLASSINFOA typedef proto WIN_STD_CALL_CONV :LPGUID, :LPGUID, :LPDWORD, :LPWSASERVICECLASSINFOA
       LPFN_WSAGETSERVICECLASSINFOA typedef ptr TYPE_LPFN_WSAGETSERVICECLASSINFOA
-
     endif
     TYPE_LPFN_WSAGETSERVICECLASSINFOW typedef proto WIN_STD_CALL_CONV :LPGUID, :LPGUID, :LPDWORD, :LPWSASERVICECLASSINFOW
     LPFN_WSAGETSERVICECLASSINFOW typedef ptr TYPE_LPFN_WSAGETSERVICECLASSINFOW
-
     ifdef UNICODE
       LPFN_WSAGETSERVICECLASSINFO equ <LPFN_WSAGETSERVICECLASSINFOW>
     else
@@ -1961,10 +1889,8 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSAENUMNAMESPACEPROVIDERSA typedef proto WIN_STD_CALL_CONV :LPDWORD, :LPWSANAMESPACE_INFOA
     LPFN_WSAENUMNAMESPACEPROVIDERSA typedef ptr TYPE_LPFN_WSAENUMNAMESPACEPROVIDERSA
-
     TYPE_LPFN_WSAENUMNAMESPACEPROVIDERSW typedef proto WIN_STD_CALL_CONV :LPDWORD, :LPWSANAMESPACE_INFOW
     LPFN_WSAENUMNAMESPACEPROVIDERSW typedef ptr TYPE_LPFN_WSAENUMNAMESPACEPROVIDERSW
-
     ifdef UNICODE
       LPFN_WSAENUMNAMESPACEPROVIDERS equ <LPFN_WSAENUMNAMESPACEPROVIDERSW>
     else
@@ -1973,10 +1899,8 @@ ifndef _WINSOCK2API_
     if (_WIN32_WINNT ge 0600h)
       TYPE_LPFN_WSAENUMNAMESPACEPROVIDERSEXA typedef proto WIN_STD_CALL_CONV :LPDWORD, :LPWSANAMESPACE_INFOEXA
       LPFN_WSAENUMNAMESPACEPROVIDERSEXA typedef ptr TYPE_LPFN_WSAENUMNAMESPACEPROVIDERSEXA
-
       TYPE_LPFN_WSAENUMNAMESPACEPROVIDERSEXW typedef proto WIN_STD_CALL_CONV :LPDWORD, :LPWSANAMESPACE_INFOEXW
       LPFN_WSAENUMNAMESPACEPROVIDERSEXW typedef ptr TYPE_LPFN_WSAENUMNAMESPACEPROVIDERSEXW
-
       ifdef UNICODE
         LPFN_WSAENUMNAMESPACEPROVIDERSEX equ <LPFN_WSAENUMNAMESPACEPROVIDERSEXW>
       else
@@ -2000,11 +1924,9 @@ ifndef _WINSOCK2API_
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       TYPE_LPFN_WSAGETSERVICECLASSNAMEBYCLASSIDA typedef proto WIN_STD_CALL_CONV :LPGUID, :LPSTR, :LPDWORD
       LPFN_WSAGETSERVICECLASSNAMEBYCLASSIDA typedef ptr TYPE_LPFN_WSAGETSERVICECLASSNAMEBYCLASSIDA
-
     endif
     TYPE_LPFN_WSAGETSERVICECLASSNAMEBYCLASSIDW typedef proto WIN_STD_CALL_CONV :LPGUID, :LPWSTR, :LPDWORD
     LPFN_WSAGETSERVICECLASSNAMEBYCLASSIDW typedef ptr TYPE_LPFN_WSAGETSERVICECLASSNAMEBYCLASSIDW
-
     ifdef UNICODE
       LPFN_WSAGETSERVICECLASSNAMEBYCLASSID equ <LPFN_WSAGETSERVICECLASSNAMEBYCLASSIDW>
     else
@@ -2024,10 +1946,8 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSASETSERVICEA typedef proto WIN_STD_CALL_CONV :LPWSAQUERYSETA, :WSAESETSERVICEOP, :DWORD
     LPFN_WSASETSERVICEA typedef ptr TYPE_LPFN_WSASETSERVICEA
-
     TYPE_LPFN_WSASETSERVICEW typedef proto WIN_STD_CALL_CONV :LPWSAQUERYSETW, :WSAESETSERVICEOP, :DWORD
     LPFN_WSASETSERVICEW typedef ptr TYPE_LPFN_WSASETSERVICEW
-
     ifdef UNICODE
       LPFN_WSASETSERVICE equ <LPFN_WSASETSERVICEW>
     else
@@ -2040,68 +1960,50 @@ ifndef _WINSOCK2API_
   if INCL_WINSOCK_API_TYPEDEFS
     TYPE_LPFN_WSAPROVIDERCONFIGCHANGE typedef proto WIN_STD_CALL_CONV :LPHANDLE, :LPWSAOVERLAPPED, :LPWSAOVERLAPPED_COMPLETION_ROUTINE
     LPFN_WSAPROVIDERCONFIGCHANGE typedef ptr TYPE_LPFN_WSAPROVIDERCONFIGCHANGE
-
   endif
   if (_WIN32_WINNT ge 0600h)
     if INCL_WINSOCK_API_PROTOTYPES
       @DefProto DllImport, WSAPoll, WIN_STD_CALL_CONV,, <:LPWSAPOLLFD, :ULONG, :INT_>, 12
     endif
   endif
-  SOCK_NOTIFY_REGISTRATION struct
-    socket SOCKET ?
-    completionKey PVOID ?
-    eventFilter UINT16 ?
-    operation UINT8 ?
-    triggerFlags UINT8 ?
-    registrationResult DWORD ?
-  SOCK_NOTIFY_REGISTRATION ends
-  SOCK_NOTIFY_REGISTER_EVENT_NONE equ 00h
-  SOCK_NOTIFY_REGISTER_EVENT_IN equ 01h
-  SOCK_NOTIFY_REGISTER_EVENT_OUT equ 02h
-  SOCK_NOTIFY_REGISTER_EVENT_HANGUP equ 04h
-  SOCK_NOTIFY_REGISTER_EVENTS_ALL equ <(SOCK_NOTIFY_REGISTER_EVENT_IN or SOCK_NOTIFY_REGISTER_EVENT_OUT or SOCK_NOTIFY_REGISTER_EVENT_HANGUP)>
-  SOCK_NOTIFY_EVENT_IN equ <SOCK_NOTIFY_REGISTER_EVENT_IN>
-  SOCK_NOTIFY_EVENT_OUT equ <SOCK_NOTIFY_REGISTER_EVENT_OUT>
-  SOCK_NOTIFY_EVENT_HANGUP equ <SOCK_NOTIFY_REGISTER_EVENT_HANGUP>
-  SOCK_NOTIFY_EVENT_ERR equ 40h
-  SOCK_NOTIFY_EVENT_REMOVE equ 80h
-  SOCK_NOTIFY_EVENTS_ALL equ <(SOCK_NOTIFY_REGISTER_EVENTS_ALL or SOCK_NOTIFY_EVENT_ERR or SOCK_NOTIFY_EVENT_REMOVE)>
-  SOCK_NOTIFY_OP_NONE equ 00h
-  SOCK_NOTIFY_OP_ENABLE equ 01h
-  SOCK_NOTIFY_OP_DISABLE equ 02h
-  SOCK_NOTIFY_OP_REMOVE equ 04h
-  SOCK_NOTIFY_TRIGGER_ONESHOT equ 01h
-  SOCK_NOTIFY_TRIGGER_PERSISTENT equ 02h
-  SOCK_NOTIFY_TRIGGER_LEVEL equ 04h
-  SOCK_NOTIFY_TRIGGER_EDGE equ 08h
-  SOCK_NOTIFY_TRIGGER_ALL equ <(SOCK_NOTIFY_TRIGGER_ONESHOT or SOCK_NOTIFY_TRIGGER_PERSISTENT or SOCK_NOTIFY_TRIGGER_LEVEL or SOCK_NOTIFY_TRIGGER_EDGE)>
-  if (NTDDI_VERSION ge NTDDI_WIN10_MN)
-    if INCL_WINSOCK_API_PROTOTYPES
-      @DefProto DllImport, ProcessSocketNotifications, WIN_STD_CALL_CONV,, <:HANDLE, :UINT32, :ptr SOCK_NOTIFY_REGISTRATION, :UINT32, :ULONG, :ptr OVERLAPPED_ENTRY, :ptr UINT32>, 28
-      if  not Defined(__midl)
-        SocketNotificationRetrieveEvents proto WIN_STD_CALL_CONV :ptr OVERLAPPED_ENTRY
-      endif
-    endif
-  endif
   LPSOCKADDR_IN typedef ptr sockaddr_in
+  
   LINGER typedef linger
+  
   PLINGER typedef ptr linger
+  
   LPLINGER typedef ptr linger
-;  FD_SET typedef fd_set
+  
+  FD_SET_ typedef fd_set
+  
   PFD_SET typedef ptr fd_set
+  
   LPFD_SET typedef ptr fd_set
+  
   HOSTENT typedef hostent
+  
   PHOSTENT typedef ptr hostent
+  
   LPHOSTENT typedef ptr hostent
+  
   SERVENT typedef servent
+  
   PSERVENT typedef ptr servent
+  
   LPSERVENT typedef ptr servent
+  
   PROTOENT typedef protoent
+  
   PPROTOENT typedef ptr protoent
+  
   LPPROTOENT typedef ptr protoent
+  
   TIMEVAL typedef timeval
+  
   PTIMEVAL typedef ptr timeval
+  
   LPTIMEVAL typedef ptr timeval
+  
   WSAMAKEASYNCREPLY macro buflen, error_
     exitm <MAKELONG(buflen, error_)>
   endm
@@ -2132,3 +2034,4 @@ ifndef _WINSOCK2API_
     endif
   endif
 endif
+

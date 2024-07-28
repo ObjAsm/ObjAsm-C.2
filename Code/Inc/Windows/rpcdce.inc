@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\rpcdce.h
-;             Created on (UTC) 22/05/2024 17:57:08
-;             Last modified on (UTC) 08/01/2024 17:04:22
+;Include file created by h2incX, Version B.01.01, 01/10/2012 08:50
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\rpcdce.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 include winapifamily.inc
 ifndef __RPCDCE_H__
@@ -14,7 +13,7 @@ ifndef __RPCDCE_H__
   endif
   if _MSC_VER ge 1200
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     ifndef IN_
       IN_ equ <>
     endif
@@ -72,7 +71,7 @@ ifndef __RPCDCE_H__
       uuid_vector_t equ <UUID_VECTOR>
     endif
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     RPC_IF_HANDLE typedef ptr
     ifndef IFID_DEFINED
       IFID_DEFINED equ <>
@@ -97,7 +96,6 @@ ifndef __RPCDCE_H__
     RPC_C_USE_INTRANET_PORT equ 2h
     RPC_C_DONT_FAIL equ 4h
     RPC_C_RPCHTTP_USE_LOAD_BALANCE equ 8h
-    RPC_C_TRY_ENFORCE_MAX_CALLS equ 10h
     if (NTDDI_VERSION lt NTDDI_VISTA)
       RPC_C_MQ_TEMPORARY equ 0000h
       RPC_C_MQ_PERMANENT equ 0001h
@@ -169,11 +167,12 @@ ifndef __RPCDCE_H__
     RPC_POLICY ends
     _RPC_POLICY typedef RPC_POLICY
     PRPC_POLICY typedef ptr RPC_POLICY
+    
     RPC_OBJECT_INQ_FN typedef proto :ptr UUID, :ptr UUID, :ptr RPC_STATUS
     RPC_IF_CALLBACK_FN typedef proto :RPC_IF_HANDLE, :ptr
     RPC_SECURITY_CALLBACK_FN typedef proto :ptr
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     RPC_MGR_EPV equ <void>
     RPC_STATS_VECTOR struct
       Count DWORD ?
@@ -189,7 +188,7 @@ ifndef __RPCDCE_H__
     RPC_IF_ID_VECTOR ends
     @DefProto DllImport, RpcBindingCopy, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr RPC_BINDING_HANDLE>, 8
     @DefProto DllImport, RpcBindingFree, WIN_STD_CALL_CONV,, <:ptr RPC_BINDING_HANDLE>, 4
-    @DefProto DllImport, RpcBindingSetOption, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :DWORD, :ULONG_PTR>, 12
+    @DefProto DllImport, RpcBindingSetOption, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :DWORD, :ULONG_PTR>, 16
     @DefProto DllImport, RpcBindingInqOption, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :DWORD, :ptr ULONG_PTR>, 12
     if  not Defined(_KRPCENV_)
       ifdef RPC_UNICODE_SUPPORTED
@@ -209,7 +208,6 @@ ifndef __RPCDCE_H__
     @DefProto DllImport, RpcSsGetContextBinding, WIN_STD_CALL_CONV,, <:ptr, :ptr RPC_BINDING_HANDLE>, 8
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
-    @DefProto DllImport, RpcBindingInqMaxCalls, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr DWORD>, 8
     @DefProto DllImport, RpcBindingInqObject, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr UUID>, 8
     @DefProto DllImport, RpcBindingReset, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE>, 4
     @DefProto DllImport, RpcBindingSetObject, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr UUID>, 8
@@ -217,8 +215,8 @@ ifndef __RPCDCE_H__
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RpcMgmtInqDefaultProtectLevel, WIN_STD_CALL_CONV,, <:DWORD, :ptr DWORD>, 8
   endif
-  ifdef RPC_UNICODE_SUPPORTED
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+    ifdef RPC_UNICODE_SUPPORTED
       @DefProto DllImport, RpcBindingToStringBindingA, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr RPC_CSTR>, 8
       @DefProto DllImport, RpcBindingToStringBindingW, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr RPC_WSTR>, 8
       ifdef UNICODE
@@ -226,15 +224,15 @@ ifndef __RPCDCE_H__
       else
         RpcBindingToStringBinding equ <RpcBindingToStringBindingA>
       endif
+    else
+      @DefProto DllImport, RpcBindingToStringBinding, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr RPC_CSTR>, 8
     endif
-  else
-    @DefProto DllImport, RpcBindingToStringBinding, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr RPC_CSTR>, 8
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RpcBindingVectorFree, WIN_STD_CALL_CONV,, <:ptr ptr RPC_BINDING_VECTOR>, 4
-  endif
-  if  not Defined(_KRPCENV_)
-    ifdef RPC_UNICODE_SUPPORTED
+    if  not Defined(_KRPCENV_)
+      ifdef RPC_UNICODE_SUPPORTED
+      endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
         @DefProto DllImport, RpcStringBindingComposeA, WIN_STD_CALL_CONV,, <:RPC_CSTR, :RPC_CSTR, :RPC_CSTR, :RPC_CSTR, :RPC_CSTR, :ptr RPC_CSTR>, 24
         @DefProto DllImport, RpcStringBindingComposeW, WIN_STD_CALL_CONV,, <:RPC_WSTR, :RPC_WSTR, :RPC_WSTR, :RPC_WSTR, :RPC_WSTR, :ptr RPC_WSTR>, 24
@@ -244,12 +242,12 @@ ifndef __RPCDCE_H__
           RpcStringBindingCompose equ <RpcStringBindingComposeA>
         endif
       endif
-    else
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      else
         @DefProto DllImport, RpcStringBindingCompose, WIN_STD_CALL_CONV,, <:RPC_CSTR, :RPC_CSTR, :RPC_CSTR, :RPC_CSTR, :RPC_CSTR, :ptr RPC_CSTR>, 24
       endif
-    endif
-    ifdef RPC_UNICODE_SUPPORTED
+      ifdef RPC_UNICODE_SUPPORTED
+      endif
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
         @DefProto DllImport, RpcStringBindingParseA, WIN_STD_CALL_CONV,, <:RPC_CSTR, :ptr RPC_CSTR, :ptr RPC_CSTR, :ptr RPC_CSTR, :ptr RPC_CSTR, :ptr RPC_CSTR>, 24
         @DefProto DllImport, RpcStringBindingParseW, WIN_STD_CALL_CONV,, <:RPC_WSTR, :ptr RPC_WSTR, :ptr RPC_WSTR, :ptr RPC_WSTR, :ptr RPC_WSTR, :ptr RPC_WSTR>, 24
@@ -259,13 +257,13 @@ ifndef __RPCDCE_H__
           RpcStringBindingParse equ <RpcStringBindingParseA>
         endif
       endif
-    else
       if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+      else
         @DefProto DllImport, RpcStringBindingParse, WIN_STD_CALL_CONV,, <:RPC_CSTR, :ptr RPC_CSTR, :ptr RPC_CSTR, :ptr RPC_CSTR, :ptr RPC_CSTR, :ptr RPC_CSTR>, 24
       endif
     endif
-  endif
-  ifdef RPC_UNICODE_SUPPORTED
+    ifdef RPC_UNICODE_SUPPORTED
+    endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, RpcStringFreeA, WIN_STD_CALL_CONV,, <:ptr RPC_CSTR>, 4
       @DefProto DllImport, RpcStringFreeW, WIN_STD_CALL_CONV,, <:ptr RPC_WSTR>, 4
@@ -275,13 +273,13 @@ ifndef __RPCDCE_H__
         RpcStringFree equ <RpcStringFreeA>
       endif
     endif
-  else
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    else
       @DefProto DllImport, RpcStringFree, WIN_STD_CALL_CONV,, <:ptr RPC_CSTR>, 4
     endif
-  endif
-  @DefProto DllImport, RpcIfInqId, WIN_STD_CALL_CONV,, <:RPC_IF_HANDLE, :ptr RPC_IF_ID>, 8
-  ifdef RPC_UNICODE_SUPPORTED
+    @DefProto DllImport, RpcIfInqId, WIN_STD_CALL_CONV,, <:RPC_IF_HANDLE, :ptr RPC_IF_ID>, 8
+    ifdef RPC_UNICODE_SUPPORTED
+    endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, RpcNetworkIsProtseqValidA, WIN_STD_CALL_CONV,, <:RPC_CSTR>, 4
       @DefProto DllImport, RpcNetworkIsProtseqValidW, WIN_STD_CALL_CONV,, <:RPC_WSTR>, 4
@@ -291,12 +289,12 @@ ifndef __RPCDCE_H__
         RpcNetworkIsProtseqValid equ <RpcNetworkIsProtseqValidA>
       endif
     endif
-  else
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    else
       @DefProto DllImport, RpcNetworkIsProtseqValid, WIN_STD_CALL_CONV,, <:RPC_CSTR>, 4
     endif
+    @DefProto DllImport, RpcMgmtInqComTimeout, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr DWORD>, 8
   endif
-  @DefProto DllImport, RpcMgmtInqComTimeout, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr DWORD>, 8
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, RpcMgmtSetComTimeout, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :DWORD>, 8
     @DefProto DllImport, RpcMgmtSetCancelTimeout, WIN_STD_CALL_CONV,, <:SDWORD>, 4
@@ -408,8 +406,8 @@ ifndef __RPCDCE_H__
     @DefProto DllImport, RpcMgmtEnableIdleCleanup, WIN_STD_CALL_CONV,, <>, 0
     @DefProto DllImport, RpcMgmtInqIfIds, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr ptr RPC_IF_ID_VECTOR>, 8
     @DefProto DllImport, RpcIfIdVectorFree, WIN_STD_CALL_CONV,, <:ptr ptr RPC_IF_ID_VECTOR>, 4
-  endif
-  ifdef RPC_UNICODE_SUPPORTED
+    ifdef RPC_UNICODE_SUPPORTED
+    endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, RpcMgmtInqServerPrincNameA, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :DWORD, :ptr RPC_CSTR>, 12
       @DefProto DllImport, RpcMgmtInqServerPrincNameW, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :DWORD, :ptr RPC_WSTR>, 12
@@ -419,12 +417,10 @@ ifndef __RPCDCE_H__
         RpcMgmtInqServerPrincName equ <RpcMgmtInqServerPrincNameA>
       endif
     endif
-  else
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    else
       @DefProto DllImport, RpcMgmtInqServerPrincName, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :DWORD, :ptr RPC_WSTR>, 12
     endif
-  endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     ifdef RPC_UNICODE_SUPPORTED
       @DefProto DllImport, RpcServerInqDefaultPrincNameA, WIN_STD_CALL_CONV,, <:DWORD, :ptr RPC_CSTR>, 8
       @DefProto DllImport, RpcServerInqDefaultPrincNameW, WIN_STD_CALL_CONV,, <:DWORD, :ptr RPC_WSTR>, 8
@@ -523,6 +519,7 @@ ifndef __RPCDCE_H__
     RPC_SECURITY_QOS ends
     _RPC_SECURITY_QOS typedef RPC_SECURITY_QOS
     PRPC_SECURITY_QOS typedef ptr RPC_SECURITY_QOS
+    
     ifndef _AUTH_IDENTITY_DEFINED
       _AUTH_IDENTITY_DEFINED equ <>
       SEC_WINNT_AUTH_IDENTITY_ANSI equ 1h
@@ -538,6 +535,7 @@ ifndef __RPCDCE_H__
       SEC_WINNT_AUTH_IDENTITY_W ends
       _SEC_WINNT_AUTH_IDENTITY_W typedef SEC_WINNT_AUTH_IDENTITY_W
       PSEC_WINNT_AUTH_IDENTITY_W typedef ptr SEC_WINNT_AUTH_IDENTITY_W
+      
       if (NTDDI_VERSION ge NTDDI_VISTA)
         _AUTH_IDENTITY_A_DEFINED equ <>
       endif
@@ -552,6 +550,7 @@ ifndef __RPCDCE_H__
       SEC_WINNT_AUTH_IDENTITY_A ends
       _SEC_WINNT_AUTH_IDENTITY_A typedef SEC_WINNT_AUTH_IDENTITY_A
       PSEC_WINNT_AUTH_IDENTITY_A typedef ptr SEC_WINNT_AUTH_IDENTITY_A
+      
       ifdef UNICODE
         SEC_WINNT_AUTH_IDENTITY equ <SEC_WINNT_AUTH_IDENTITY_W>
         PSEC_WINNT_AUTH_IDENTITY equ <PSEC_WINNT_AUTH_IDENTITY_W>
@@ -594,6 +593,7 @@ ifndef __RPCDCE_H__
         RPC_HTTP_TRANSPORT_CREDENTIALS_W ends
         _RPC_HTTP_TRANSPORT_CREDENTIALS_W typedef RPC_HTTP_TRANSPORT_CREDENTIALS_W
         PRPC_HTTP_TRANSPORT_CREDENTIALS_W typedef ptr RPC_HTTP_TRANSPORT_CREDENTIALS_W
+        
         RPC_HTTP_TRANSPORT_CREDENTIALS_A struct
           TransportCredentials POINTER ?
           Flags DWORD ?
@@ -604,6 +604,7 @@ ifndef __RPCDCE_H__
         RPC_HTTP_TRANSPORT_CREDENTIALS_A ends
         _RPC_HTTP_TRANSPORT_CREDENTIALS_A typedef RPC_HTTP_TRANSPORT_CREDENTIALS_A
         PRPC_HTTP_TRANSPORT_CREDENTIALS_A typedef ptr RPC_HTTP_TRANSPORT_CREDENTIALS_A
+        
         if (NTDDI_VERSION ge NTDDI_VISTA)
           RPC_HTTP_TRANSPORT_CREDENTIALS_V2_W struct
             TransportCredentials POINTER ?
@@ -618,6 +619,7 @@ ifndef __RPCDCE_H__
           RPC_HTTP_TRANSPORT_CREDENTIALS_V2_W ends
           _RPC_HTTP_TRANSPORT_CREDENTIALS_V2_W typedef RPC_HTTP_TRANSPORT_CREDENTIALS_V2_W
           PRPC_HTTP_TRANSPORT_CREDENTIALS_V2_W typedef ptr RPC_HTTP_TRANSPORT_CREDENTIALS_V2_W
+          
           RPC_HTTP_TRANSPORT_CREDENTIALS_V2_A struct
             TransportCredentials POINTER ?
             Flags DWORD ?
@@ -631,6 +633,7 @@ ifndef __RPCDCE_H__
           RPC_HTTP_TRANSPORT_CREDENTIALS_V2_A ends
           _RPC_HTTP_TRANSPORT_CREDENTIALS_V2_A typedef RPC_HTTP_TRANSPORT_CREDENTIALS_V2_A
           PRPC_HTTP_TRANSPORT_CREDENTIALS_V2_A typedef ptr RPC_HTTP_TRANSPORT_CREDENTIALS_V2_A
+          
         endif
         if (NTDDI_VERSION ge NTDDI_WIN7)
           RPC_HTTP_TRANSPORT_CREDENTIALS_V3_W struct
@@ -646,6 +649,7 @@ ifndef __RPCDCE_H__
           RPC_HTTP_TRANSPORT_CREDENTIALS_V3_W ends
           _RPC_HTTP_TRANSPORT_CREDENTIALS_V3_W typedef RPC_HTTP_TRANSPORT_CREDENTIALS_V3_W
           PRPC_HTTP_TRANSPORT_CREDENTIALS_V3_W typedef ptr RPC_HTTP_TRANSPORT_CREDENTIALS_V3_W
+          
           RPC_HTTP_TRANSPORT_CREDENTIALS_V3_A struct
             TransportCredentials RPC_AUTH_IDENTITY_HANDLE ?
             Flags DWORD ?
@@ -659,6 +663,7 @@ ifndef __RPCDCE_H__
           RPC_HTTP_TRANSPORT_CREDENTIALS_V3_A ends
           _RPC_HTTP_TRANSPORT_CREDENTIALS_V3_A typedef RPC_HTTP_TRANSPORT_CREDENTIALS_V3_A
           PRPC_HTTP_TRANSPORT_CREDENTIALS_V3_A typedef ptr RPC_HTTP_TRANSPORT_CREDENTIALS_V3_A
+          
         endif
         RPC_SECURITY_QOS_V2_W struct
           Version DWORD ?
@@ -672,6 +677,7 @@ ifndef __RPCDCE_H__
         RPC_SECURITY_QOS_V2_W ends
         _RPC_SECURITY_QOS_V2_W typedef RPC_SECURITY_QOS_V2_W
         PRPC_SECURITY_QOS_V2_W typedef ptr RPC_SECURITY_QOS_V2_W
+        
         RPC_SECURITY_QOS_V2_A struct
           Version DWORD ?
           Capabilities DWORD ?
@@ -684,6 +690,7 @@ ifndef __RPCDCE_H__
         RPC_SECURITY_QOS_V2_A ends
         _RPC_SECURITY_QOS_V2_A typedef RPC_SECURITY_QOS_V2_A
         PRPC_SECURITY_QOS_V2_A typedef ptr RPC_SECURITY_QOS_V2_A
+        
         if (NTDDI_VERSION ge NTDDI_WS03)
           RPC_C_SECURITY_QOS_VERSION_3 equ 3
           RPC_SECURITY_QOS_V3_W struct
@@ -699,6 +706,7 @@ ifndef __RPCDCE_H__
           RPC_SECURITY_QOS_V3_W ends
           _RPC_SECURITY_QOS_V3_W typedef RPC_SECURITY_QOS_V3_W
           PRPC_SECURITY_QOS_V3_W typedef ptr RPC_SECURITY_QOS_V3_W
+          
           RPC_SECURITY_QOS_V3_A struct
             Version DWORD ?
             Capabilities DWORD ?
@@ -712,6 +720,7 @@ ifndef __RPCDCE_H__
           RPC_SECURITY_QOS_V3_A ends
           _RPC_SECURITY_QOS_V3_A typedef RPC_SECURITY_QOS_V3_A
           PRPC_SECURITY_QOS_V3_A typedef ptr RPC_SECURITY_QOS_V3_A
+          
         endif
         if (NTDDI_VERSION ge NTDDI_VISTA)
           RPC_C_SECURITY_QOS_VERSION_4 equ 4
@@ -729,6 +738,7 @@ ifndef __RPCDCE_H__
           RPC_SECURITY_QOS_V4_W ends
           _RPC_SECURITY_QOS_V4_W typedef RPC_SECURITY_QOS_V4_W
           PRPC_SECURITY_QOS_V4_W typedef ptr RPC_SECURITY_QOS_V4_W
+          
           RPC_SECURITY_QOS_V4_A struct
             Version DWORD ?
             Capabilities DWORD ?
@@ -743,6 +753,7 @@ ifndef __RPCDCE_H__
           RPC_SECURITY_QOS_V4_A ends
           _RPC_SECURITY_QOS_V4_A typedef RPC_SECURITY_QOS_V4_A
           PRPC_SECURITY_QOS_V4_A typedef ptr RPC_SECURITY_QOS_V4_A
+          
         endif
         if (NTDDI_VERSION ge NTDDI_WIN8)
           RPC_C_SECURITY_QOS_VERSION_5 equ 5
@@ -761,6 +772,7 @@ ifndef __RPCDCE_H__
           RPC_SECURITY_QOS_V5_W ends
           _RPC_SECURITY_QOS_V5_W typedef RPC_SECURITY_QOS_V5_W
           PRPC_SECURITY_QOS_V5_W typedef ptr RPC_SECURITY_QOS_V5_W
+          
           RPC_SECURITY_QOS_V5_A struct
             Version DWORD ?
             Capabilities DWORD ?
@@ -776,6 +788,7 @@ ifndef __RPCDCE_H__
           RPC_SECURITY_QOS_V5_A ends
           _RPC_SECURITY_QOS_V5_A typedef RPC_SECURITY_QOS_V5_A
           PRPC_SECURITY_QOS_V5_A typedef ptr RPC_SECURITY_QOS_V5_A
+          
         endif
       endif
     endif
@@ -848,16 +861,16 @@ ifndef __RPCDCE_H__
         endif
       endif
     endif
-    if (NTDDI_VERSION ge NTDDI_VISTA)
-      if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
-        RPC_PROTSEQ_TCP equ (1h)
-        RPC_PROTSEQ_NMP equ (2h)
-        RPC_PROTSEQ_LRPC equ (3h)
-        RPC_PROTSEQ_HTTP equ (4h)
-        RPC_BHT_OBJECT_UUID_VALID equ (1h)
-        RPC_BHO_NONCAUSAL equ (1h)
-        RPC_BHO_DONTLINGER equ (2h)
-        RPC_BHO_EXCLUSIVE_AND_GUARANTEED equ (4h)
+    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
+      if (NTDDI_VERSION ge NTDDI_VISTA)
+        RPC_PROTSEQ_TCP equ 1h
+        RPC_PROTSEQ_NMP equ 2h
+        RPC_PROTSEQ_LRPC equ 3h
+        RPC_PROTSEQ_HTTP equ 4h
+        RPC_BHT_OBJECT_UUID_VALID equ 1h
+        RPC_BHO_NONCAUSAL equ 1h
+        RPC_BHO_DONTLINGER equ 2h
+        RPC_BHO_EXCLUSIVE_AND_GUARANTEED equ 4h
         RPC_BINDING_HANDLE_TEMPLATE_V1_W struct
           Version DWORD ?
           Flags DWORD ?
@@ -871,6 +884,7 @@ ifndef __RPCDCE_H__
         RPC_BINDING_HANDLE_TEMPLATE_V1_W ends
         _RPC_BINDING_HANDLE_TEMPLATE_V1_W typedef RPC_BINDING_HANDLE_TEMPLATE_V1_W
         PRPC_BINDING_HANDLE_TEMPLATE_V1_W typedef ptr RPC_BINDING_HANDLE_TEMPLATE_V1_W
+        
         RPC_BINDING_HANDLE_TEMPLATE_V1_A struct
           Version DWORD ?
           Flags DWORD ?
@@ -884,6 +898,7 @@ ifndef __RPCDCE_H__
         RPC_BINDING_HANDLE_TEMPLATE_V1_A ends
         _RPC_BINDING_HANDLE_TEMPLATE_V1_A typedef RPC_BINDING_HANDLE_TEMPLATE_V1_A
         PRPC_BINDING_HANDLE_TEMPLATE_V1_A typedef ptr RPC_BINDING_HANDLE_TEMPLATE_V1_A
+        
         RPC_BINDING_HANDLE_SECURITY_V1_W struct
           Version DWORD ?
           ServerPrincName POINTER ?
@@ -894,6 +909,7 @@ ifndef __RPCDCE_H__
         RPC_BINDING_HANDLE_SECURITY_V1_W ends
         _RPC_BINDING_HANDLE_SECURITY_V1_W typedef RPC_BINDING_HANDLE_SECURITY_V1_W
         PRPC_BINDING_HANDLE_SECURITY_V1_W typedef ptr RPC_BINDING_HANDLE_SECURITY_V1_W
+        
         ifdef _AUTH_IDENTITY_A_DEFINED
           RPC_BINDING_HANDLE_SECURITY_V1_A struct
             Version DWORD ?
@@ -905,6 +921,7 @@ ifndef __RPCDCE_H__
           RPC_BINDING_HANDLE_SECURITY_V1_A ends
           _RPC_BINDING_HANDLE_SECURITY_V1_A typedef RPC_BINDING_HANDLE_SECURITY_V1_A
           PRPC_BINDING_HANDLE_SECURITY_V1_A typedef ptr RPC_BINDING_HANDLE_SECURITY_V1_A
+          
         endif
         RPC_BINDING_HANDLE_OPTIONS_V1 struct
           Version DWORD ?
@@ -914,6 +931,7 @@ ifndef __RPCDCE_H__
         RPC_BINDING_HANDLE_OPTIONS_V1 ends
         _RPC_BINDING_HANDLE_OPTIONS_V1 typedef RPC_BINDING_HANDLE_OPTIONS_V1
         PRPC_BINDING_HANDLE_OPTIONS_V1 typedef ptr RPC_BINDING_HANDLE_OPTIONS_V1
+        
         ifdef UNICODE
           RPC_BINDING_HANDLE_TEMPLATE_V1 equ <RPC_BINDING_HANDLE_TEMPLATE_V1_W>
           PRPC_BINDING_HANDLE_TEMPLATE_V1 equ <PRPC_BINDING_HANDLE_TEMPLATE_V1_W>
@@ -953,22 +971,19 @@ ifndef __RPCDCE_H__
         RPCHTTP_RS_ACCESS_2 equ 4
         RPCHTTP_RS_INTERFACE equ 5
         _RPC_HTTP_REDIRECTOR_STAGE typedef RPC_HTTP_REDIRECTOR_STAGE
-
+        
       endif
     endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       if (NTDDI_VERSION ge NTDDI_WS03)
         TYPE_RPC_NEW_HTTP_PROXY_CHANNEL typedef proto WIN_STD_CALL_CONV :RPC_HTTP_REDIRECTOR_STAGE, :RPC_WSTR, :RPC_WSTR, :RPC_WSTR, :RPC_WSTR, :ptr, :ptr, :ptr, :ptr, :DWORD, :ptr RPC_WSTR, :ptr RPC_WSTR
         RPC_NEW_HTTP_PROXY_CHANNEL typedef ptr TYPE_RPC_NEW_HTTP_PROXY_CHANNEL
-
       else
         TYPE_RPC_NEW_HTTP_PROXY_CHANNEL typedef proto WIN_STD_CALL_CONV :ptr WORD, :ptr WORD, :ptr BYTE, :ptr ptr WORD
         RPC_NEW_HTTP_PROXY_CHANNEL typedef ptr TYPE_RPC_NEW_HTTP_PROXY_CHANNEL
-
       endif
       TYPE_RPC_HTTP_PROXY_FREE_STRING typedef proto WIN_STD_CALL_CONV :RPC_WSTR
       RPC_HTTP_PROXY_FREE_STRING typedef ptr TYPE_RPC_HTTP_PROXY_FREE_STRING
-
     endif
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
@@ -984,9 +999,7 @@ ifndef __RPCDCE_H__
     @DefProto DllImport, RpcRevertToSelf, WIN_STD_CALL_CONV,, <>, 0
     @DefProto DllImport, RpcImpersonateClientContainer, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE>, 4
     @DefProto DllImport, RpcRevertContainerImpersonation, WIN_STD_CALL_CONV,, <>, 0
-  endif
-  ifdef RPC_UNICODE_SUPPORTED
-    if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    ifdef RPC_UNICODE_SUPPORTED
       @DefProto DllImport, RpcBindingInqAuthClientA, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr RPC_AUTHZ_HANDLE, :ptr RPC_CSTR, :ptr DWORD, :ptr DWORD, :ptr DWORD>, 24
       @DefProto DllImport, RpcBindingInqAuthClientW, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr RPC_AUTHZ_HANDLE, :ptr RPC_WSTR, :ptr DWORD, :ptr DWORD, :ptr DWORD>, 24
       @DefProto DllImport, RpcBindingInqAuthClientExA, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr RPC_AUTHZ_HANDLE, :ptr RPC_CSTR, :ptr DWORD, :ptr DWORD, :ptr DWORD, :DWORD>, 28
@@ -1005,7 +1018,6 @@ ifndef __RPCDCE_H__
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
       TYPE_RPC_AUTH_KEY_RETRIEVAL_FN typedef proto WIN_STD_CALL_CONV :ptr, :RPC_WSTR, :DWORD, :ptr ptr, :ptr RPC_STATUS
       RPC_AUTH_KEY_RETRIEVAL_FN typedef ptr TYPE_RPC_AUTH_KEY_RETRIEVAL_FN
-
       @DefProto DllImport, RpcServerCompleteSecurityCallback, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :RPC_STATUS>, 8
       @DefProto DllImport, RpcServerRegisterAuthInfoA, WIN_STD_CALL_CONV,, <:RPC_CSTR, :DWORD, :RPC_AUTH_KEY_RETRIEVAL_FN, :ptr>, 16
       @DefProto DllImport, RpcServerRegisterAuthInfoW, WIN_STD_CALL_CONV,, <:RPC_WSTR, :DWORD, :RPC_AUTH_KEY_RETRIEVAL_FN, :ptr>, 16
@@ -1029,19 +1041,16 @@ ifndef __RPCDCE_H__
         RpcBindingSetAuthInfoEx equ <RpcBindingSetAuthInfoExA>
       endif
     endif
-  else
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    else
       @DefProto DllImport, RpcBindingInqAuthClient, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr RPC_AUTHZ_HANDLE, :ptr RPC_WSTR, :ptr DWORD, :ptr DWORD, :ptr DWORD>, 24
       @DefProto DllImport, RpcBindingInqAuthClientEx, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr RPC_AUTHZ_HANDLE, :ptr RPC_CSTR, :ptr DWORD, :ptr DWORD, :ptr DWORD, :DWORD>, 28
       @DefProto DllImport, RpcBindingInqAuthInfo, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr RPC_CSTR, :ptr DWORD, :ptr DWORD, :ptr RPC_AUTH_IDENTITY_HANDLE, :ptr DWORD>, 24
       @DefProto DllImport, RpcBindingSetAuthInfo, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :RPC_CSTR, :DWORD, :DWORD, :RPC_AUTH_IDENTITY_HANDLE, :DWORD>, 24
       TYPE_RPC_AUTH_KEY_RETRIEVAL_FN typedef proto WIN_STD_CALL_CONV :ptr, :ptr BYTE, :DWORD, :ptr ptr, :ptr RPC_STATUS
       RPC_AUTH_KEY_RETRIEVAL_FN typedef ptr TYPE_RPC_AUTH_KEY_RETRIEVAL_FN
-
       @DefProto DllImport, RpcServerRegisterAuthInfo, WIN_STD_CALL_CONV,, <:RPC_CSTR, :DWORD, :RPC_AUTH_KEY_RETRIEVAL_FN, :ptr>, 16
     endif
-  endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     if (NTDDI_VERSION ge NTDDI_WINXP)
       if  not Defined(_M_IA64)
         RPC_CLIENT_INFORMATION1 struct
@@ -1051,6 +1060,7 @@ ifndef __RPCDCE_H__
           AuthFlags DWORD ?
         RPC_CLIENT_INFORMATION1 ends
         PRPC_CLIENT_INFORMATION1 typedef ptr RPC_CLIENT_INFORMATION1
+        
       endif
     endif
     @DefProto DllImport, RpcBindingServerFromClient, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr RPC_BINDING_HANDLE>, 8
@@ -1107,9 +1117,9 @@ ifndef __RPCDCE_H__
       @DefProto DllImport, RpcEpRegister, WIN_STD_CALL_CONV,, <:RPC_IF_HANDLE, :ptr RPC_BINDING_VECTOR, :ptr UUID_VECTOR, :RPC_CSTR>, 16
     endif
     @DefProto DllImport, RpcEpUnregister, WIN_STD_CALL_CONV,, <:RPC_IF_HANDLE, :ptr RPC_BINDING_VECTOR, :ptr UUID_VECTOR>, 12
-  endif
-  DCE_C_ERROR_STRING_LEN equ 256
-  ifdef RPC_UNICODE_SUPPORTED
+    DCE_C_ERROR_STRING_LEN equ 256
+    ifdef RPC_UNICODE_SUPPORTED
+    endif
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
       @DefProto DllImport, DceErrorInqTextA, WIN_STD_CALL_CONV,, <:RPC_STATUS, :RPC_CSTR>, 8
       @DefProto DllImport, DceErrorInqTextW, WIN_STD_CALL_CONV,, <:RPC_STATUS, :RPC_WSTR>, 8
@@ -1119,12 +1129,10 @@ ifndef __RPCDCE_H__
         DceErrorInqText equ <DceErrorInqTextA>
       endif
     endif
-  else
     if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
+    else
       @DefProto DllImport, DceErrorInqText, WIN_STD_CALL_CONV,, <:RPC_STATUS, :RPC_CSTR>, 8
     endif
-  endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     RPC_EP_INQ_HANDLE typedef ptr I_RPC_HANDLE
     RPC_C_EP_ALL_ELTS equ 0
     RPC_C_EP_MATCH_BY_IF equ 1
@@ -1151,7 +1159,6 @@ ifndef __RPCDCE_H__
     @DefProto DllImport, RpcMgmtEpUnregister, WIN_STD_CALL_CONV,, <:RPC_BINDING_HANDLE, :ptr RPC_IF_ID, :RPC_BINDING_HANDLE, :ptr UUID>, 16
     TYPE_RPC_MGMT_AUTHORIZATION_FN typedef proto WIN_STD_CALL_CONV :RPC_BINDING_HANDLE, :DWORD, :ptr RPC_STATUS
     RPC_MGMT_AUTHORIZATION_FN typedef ptr TYPE_RPC_MGMT_AUTHORIZATION_FN
-
     RPC_C_MGMT_INQ_IF_IDS equ 0
     RPC_C_MGMT_INQ_PRINC_NAME equ 1
     RPC_C_MGMT_INQ_STATS equ 2
@@ -1193,6 +1200,7 @@ ifndef __RPCDCE_H__
           Backlog DWORD ?
         RPC_ENDPOINT_TEMPLATEW ends
         PRPC_ENDPOINT_TEMPLATEW typedef ptr RPC_ENDPOINT_TEMPLATEW
+        
         RPC_ENDPOINT_TEMPLATEA struct
           Version DWORD ?
           ProtSeq RPC_CSTR ?
@@ -1201,6 +1209,7 @@ ifndef __RPCDCE_H__
           Backlog DWORD ?
         RPC_ENDPOINT_TEMPLATEA ends
         PRPC_ENDPOINT_TEMPLATEA typedef ptr RPC_ENDPOINT_TEMPLATEA
+        
         ifdef UNICODE
           RPC_ENDPOINT_TEMPLATE equ <RPC_ENDPOINT_TEMPLATEW>
           PRPC_ENDPOINT_TEMPLATE equ <PRPC_ENDPOINT_TEMPLATEW>
@@ -1217,6 +1226,7 @@ ifndef __RPCDCE_H__
           Backlog DWORD ?
         RPC_ENDPOINT_TEMPLATE ends
         PRPC_ENDPOINT_TEMPLATE typedef ptr RPC_ENDPOINT_TEMPLATE
+        
       endif
       ifdef RPC_UNICODE_SUPPORTED
         RPC_INTERFACE_TEMPLATEA struct
@@ -1233,6 +1243,7 @@ ifndef __RPCDCE_H__
           SecurityDescriptor POINTER ?
         RPC_INTERFACE_TEMPLATEA ends
         PRPC_INTERFACE_TEMPLATEA typedef ptr RPC_INTERFACE_TEMPLATEA
+        
         RPC_INTERFACE_TEMPLATEW struct
           Version DWORD ?
           IfSpec RPC_IF_HANDLE ?
@@ -1247,6 +1258,7 @@ ifndef __RPCDCE_H__
           SecurityDescriptor POINTER ?
         RPC_INTERFACE_TEMPLATEW ends
         PRPC_INTERFACE_TEMPLATEW typedef ptr RPC_INTERFACE_TEMPLATEW
+        
         ifdef UNICODE
           RPC_INTERFACE_TEMPLATE equ <RPC_INTERFACE_TEMPLATEW>
           PRPC_INTERFACE_TEMPLATE equ <PRPC_INTERFACE_TEMPLATEW>
@@ -1269,6 +1281,7 @@ ifndef __RPCDCE_H__
           SecurityDescriptor POINTER ?
         RPC_INTERFACE_TEMPLATE ends
         PRPC_INTERFACE_TEMPLATE typedef ptr RPC_INTERFACE_TEMPLATE
+        
       endif
       RPC_INTERFACE_GROUP_IDLE_CALLBACK_FN typedef proto :RPC_INTERFACE_GROUP, :ptr, :DWORD
       ifdef RPC_UNICODE_SUPPORTED

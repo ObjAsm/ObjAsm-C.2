@@ -1,13 +1,12 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\rpcndr.h
-;             Created on (UTC) 22/05/2024 17:57:08
-;             Last modified on (UTC) 12/02/2024 17:05:32
+;Include file created by h2incX, Version B.01.01, 19/04/2018 10:46
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\rpcndr.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 if _MSC_VER ge 1200
 endif
 ifndef __RPCNDR_H_VERSION__
-  __RPCNDR_H_VERSION__ equ (501)
+  __RPCNDR_H_VERSION__ equ 500
 endif
 ifndef __RPCNDR_H__
   __RPCNDR_H__ equ <>
@@ -28,7 +27,7 @@ ifndef __RPCNDR_H__
   ifdef __cplusplus
     ;[...]
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     NDR_CHAR_REP_MASK equ 0000000Fh
     NDR_INT_REP_MASK equ 000000F0h
     NDR_FLOAT_REP_MASK equ 0000FF00h
@@ -45,16 +44,6 @@ ifndef __RPCNDR_H__
     else
       NDR_LOCAL_DATA_REPRESENTATION equ 00000010h
       NDR_LOCAL_ENDIAN equ <NDR_LITTLE_ENDIAN>
-    endif
-    if (NTDDI_VERSION ge NTDDI_WIN10_NI)
-      TARGET_IS_NT1012_OR_LATER equ 1
-    else
-      TARGET_IS_NT1012_OR_LATER equ 0
-    endif
-    if (NTDDI_VERSION ge NTDDI_WIN10_RS1)
-      TARGET_IS_NT102_OR_LATER equ 1
-    else
-      TARGET_IS_NT102_OR_LATER equ 0
     endif
     if (0A00h le _WIN32_WINNT)
       TARGET_IS_NT100_OR_LATER equ 1
@@ -101,7 +90,7 @@ ifndef __RPCNDR_H__
     else
       TARGET_IS_NT351_OR_WIN95_OR_LATER equ 0
     endif
-    small_ equ <char>
+;    small equ <char>
 ;    byte typedef BYTE
     cs_byte typedef byte
     boolean typedef BYTE
@@ -109,9 +98,9 @@ ifndef __RPCNDR_H__
       _HYPER_DEFINED equ <>
       if ( not Defined(_M_IX86) or (Defined(_INTEGRAL_MAX_BITS) and _INTEGRAL_MAX_BITS ge 64))
         hyper equ <__int64>
-        MIDL_uhyper equ <unsigned __int64>
+        MIDL_uhyper equ <>
       else
-        hyper typedef REAL8
+        hyper equ <QWORD>
         MIDL_uhyper typedef REAL8
       endif
     endif
@@ -141,8 +130,8 @@ ifndef __RPCNDR_H__
     endif
     MIDL_user_allocate proto WIN_STD_CALL_CONV :size_t
     MIDL_user_free proto WIN_STD_CALL_CONV :ptr
-    I_RpcDefaultAllocate proto WIN_STD_CALL_CONV :handle_t, :size_t, :POINTER
-    I_RpcDefaultFree proto WIN_STD_CALL_CONV :handle_t, :ptr, :POINTER
+    I_RpcDefaultAllocate proto WIN_STD_CALL_CONV :handle_t, :size_t, :ptr
+    I_RpcDefaultFree proto WIN_STD_CALL_CONV :handle_t, :ptr, :ptr
     RPC_VAR_ENTRY equ <__cdecl>
     if Defined(_M_IX86) or Defined(_M_AMD64) or Defined(_M_IA64)
       __MIDL_DECLSPEC_DLLIMPORT equ <__declspec(dllimport)>
@@ -152,30 +141,29 @@ ifndef __RPCNDR_H__
       __MIDL_DECLSPEC_DLLEXPORT equ <>
     endif
     NDR_CCONTEXT typedef ptr
-    _NDR_SCONTEXT struct
+    STRUCT_0 struct
       pad POINTER 2 dup (?)
       userContext POINTER ?
-    _NDR_SCONTEXT ends
-    NDR_SCONTEXT typedef ptr _NDR_SCONTEXT
+    STRUCT_0 ends
+    NDR_SCONTEXT typedef ptr STRUCT_0
+    
     NDRSContextValue macro hContext
       exitm <(and (hContext) - userContext)>
     endm
     cbNDRContext equ 20
     TYPE_NDR_RUNDOWN typedef proto WIN_STD_CALL_CONV :ptr
     NDR_RUNDOWN typedef ptr TYPE_NDR_RUNDOWN
-
     TYPE_NDR_NOTIFY_ROUTINE typedef proto WIN_STD_CALL_CONV
     NDR_NOTIFY_ROUTINE typedef ptr TYPE_NDR_NOTIFY_ROUTINE
-
     TYPE_NDR_NOTIFY2_ROUTINE typedef proto WIN_STD_CALL_CONV :boolean
     NDR_NOTIFY2_ROUTINE typedef ptr TYPE_NDR_NOTIFY2_ROUTINE
-
     SCONTEXT_QUEUE struct
       NumberOfObjects DWORD ?
       ArrayOfObjects POINTER ?
     SCONTEXT_QUEUE ends
     _SCONTEXT_QUEUE typedef SCONTEXT_QUEUE
     PSCONTEXT_QUEUE typedef ptr SCONTEXT_QUEUE
+    
     @DefProto DllImport, NDRCContextBinding, WIN_STD_CALL_CONV,, <:NDR_CCONTEXT>, 4
     @DefProto DllImport, NDRCContextMarshall, WIN_STD_CALL_CONV,, <:NDR_CCONTEXT, :ptr>, 8
     @DefProto DllImport, NDRCContextUnmarshall, WIN_STD_CALL_CONV,, <:ptr NDR_CCONTEXT, :RPC_BINDING_HANDLE, :ptr, :DWORD>, 16
@@ -303,7 +291,6 @@ ifndef __RPCNDR_H__
     RPC_LENGTH typedef DWORD
     TYPE_EXPR_EVAL typedef proto WIN_STD_CALL_CONV :ptr _MIDL_STUB_MESSAGE
     EXPR_EVAL typedef ptr TYPE_EXPR_EVAL
-
     PFORMAT_STRING typedef ptr BYTE
     ARRAY_INFO struct
       Dimension SDWORD ?
@@ -314,11 +301,13 @@ ifndef __RPCNDR_H__
       ActualCountArray POINTER ?
     ARRAY_INFO ends
     PARRAY_INFO typedef ptr ARRAY_INFO
+    
     PNDR_ASYNC_MESSAGE typedef ptr _NDR_ASYNC_MESSAGE
+    
     PNDR_CORRELATION_INFO typedef ptr _NDR_CORRELATION_INFO
+    
     PFORMAT_STRING typedef ptr BYTE
-;    MIDL_SYNTAX_INFO typedef _MIDL_SYNTAX_INFO
-    PMIDL_SYNTAX_INFO typedef ptr _MIDL_SYNTAX_INFO
+
     MIDL_STUB_MESSAGE struct
       RpcMsg PRPC_MESSAGE ?
       Buffer POINTER ?
@@ -344,10 +333,8 @@ ifndef __RPCNDR_H__
       ActualCount DWORD ?
       TYPE_pfnAllocate typedef proto WIN_STD_CALL_CONV :size_t
       pfnAllocate typedef ptr TYPE_pfnAllocate
-
       TYPE_pfnFree typedef proto WIN_STD_CALL_CONV :ptr
       pfnFree typedef ptr TYPE_pfnFree
-
       StackTop POINTER ?
       pPresentedType POINTER ?
       pTransmitType POINTER ?
@@ -356,8 +343,8 @@ ifndef __RPCNDR_H__
       FullPtrXlatTables POINTER ?
       FullPtrRefId DWORD ?
       PointerLength DWORD ?
-      MIDL_STUB_MESSAGE_REC record MIDL_STUB_MESSAGE_REC_fUnused3:16, MIDL_STUB_MESSAGE_REC_fUnused2:3, MIDL_STUB_MESSAGE_REC_fNeedMCCP:1, MIDL_STUB_MESSAGE_REC_fInFree:1, MIDL_STUB_MESSAGE_REC_fHasMemoryValidateCallback:1, MIDL_STUB_MESSAGE_REC_fBufferValid:1, MIDL_STUB_MESSAGE_REC_fIsOicf:1, MIDL_STUB_MESSAGE_REC_fIsOut:1, MIDL_STUB_MESSAGE_REC_fIsIn:1, MIDL_STUB_MESSAGE_REC_fHasNewCorrDesc:1, MIDL_STUB_MESSAGE_REC_fHasExtensions:1, MIDL_STUB_MESSAGE_REC_fHasReturn:1, MIDL_STUB_MESSAGE_REC_fUnused1:1, MIDL_STUB_MESSAGE_REC_fDontCallFreeInst:1, MIDL_STUB_MESSAGE_REC_fInDontFree:1
-      MIDL_STUB_MESSAGE_BITS MIDL_STUB_MESSAGE_REC <>
+      MIDL_STUB_MESSAGE_??59 record fInDontFree_??59:1, fDontCallFreeInst_??59:1, fUnused1_??59:1, fHasReturn_??59:1, fHasExtensions_??59:1, fHasNewCorrDesc_??59:1, fIsIn_??59:1, fIsOut_??59:1, fIsOicf_??59:1, fBufferValid_??59:1, fHasMemoryValidateCallback_??59:1, fInFree_??59:1, fNeedMCCP_??59:1, fUnused2_??59:3, fUnused3_??59:16
+      MIDL_STUB_MESSAGE_??59 <>
       dwDestContext DWORD ?
       pvDestContext POINTER ?
       SavedContextHandles POINTER ?
@@ -385,22 +372,20 @@ ifndef __RPCNDR_H__
       Reserved51_4 INT_PTR ?
       Reserved51_5 INT_PTR ?
     MIDL_STUB_MESSAGE ends
-    _MIDL_STUB_MESSAGE typedef MIDL_STUB_MESSAGE
+;    _MIDL_STUB_MESSAGE typedef MIDL_STUB_MESSAGE
     PMIDL_STUB_MESSAGE typedef ptr MIDL_STUB_MESSAGE
-;    MIDL_STUB_MESSAGE typedef _MIDL_STUB_MESSAGE
-    PMIDL_STUB_MESSAGE typedef ptr _MIDL_STUB_MESSAGE
-    TYPE_GENERIC_BINDING_ROUTINE typedef proto WIN_STD_CALL_CONV :ptr
-    GENERIC_BINDING_ROUTINE typedef ptr TYPE_GENERIC_BINDING_ROUTINE
 
+    TYPE_GENERIC_BINDING_ROUTINE typedef proto WIN_STD_CALL_CONV :ptr 
+    GENERIC_BINDING_ROUTINE typedef ptr TYPE_GENERIC_BINDING_ROUTINE
     TYPE_GENERIC_UNBIND_ROUTINE typedef proto WIN_STD_CALL_CONV :ptr, :ptr BYTE
     GENERIC_UNBIND_ROUTINE typedef ptr TYPE_GENERIC_UNBIND_ROUTINE
-
     GENERIC_BINDING_ROUTINE_PAIR struct
       pfnBind GENERIC_BINDING_ROUTINE ?
       pfnUnbind GENERIC_UNBIND_ROUTINE ?
     GENERIC_BINDING_ROUTINE_PAIR ends
     _GENERIC_BINDING_ROUTINE_PAIR typedef GENERIC_BINDING_ROUTINE_PAIR
     PGENERIC_BINDING_ROUTINE_PAIR typedef ptr GENERIC_BINDING_ROUTINE_PAIR
+    
     GENERIC_BINDING_INFO struct
       pObj POINTER ?
       Size_ DWORD ?
@@ -409,16 +394,14 @@ ifndef __RPCNDR_H__
     GENERIC_BINDING_INFO ends
     __GENERIC_BINDING_INFO typedef GENERIC_BINDING_INFO
     PGENERIC_BINDING_INFO typedef ptr GENERIC_BINDING_INFO
-    ifdef __cplusplus
-      ;[...]
-    elseif (Defined(_MSC_VER)) and  not Defined(MIDL_PASS)
+    
+    if (Defined(_MSC_VER)) and  not Defined(MIDL_PASS)
       NDR_SHAREABLE equ <__inline>
     else
       NDR_SHAREABLE equ <static>
     endif
     TYPE_XMIT_HELPER_ROUTINE typedef proto WIN_STD_CALL_CONV :PMIDL_STUB_MESSAGE
     XMIT_HELPER_ROUTINE typedef ptr TYPE_XMIT_HELPER_ROUTINE
-
     XMIT_ROUTINE_QUINTUPLE struct
       pfnTranslateToXmit XMIT_HELPER_ROUTINE ?
       pfnTranslateFromXmit XMIT_HELPER_ROUTINE ?
@@ -427,23 +410,20 @@ ifndef __RPCNDR_H__
     XMIT_ROUTINE_QUINTUPLE ends
     _XMIT_ROUTINE_QUINTUPLE typedef XMIT_ROUTINE_QUINTUPLE
     PXMIT_ROUTINE_QUINTUPLE typedef ptr XMIT_ROUTINE_QUINTUPLE
+    
     TYPE_USER_MARSHAL_SIZING_ROUTINE typedef proto WIN_STD_CALL_CONV :ptr DWORD, :DWORD, :ptr
     USER_MARSHAL_SIZING_ROUTINE typedef ptr TYPE_USER_MARSHAL_SIZING_ROUTINE
-
     TYPE_USER_MARSHAL_MARSHALLING_ROUTINE typedef proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr
     USER_MARSHAL_MARSHALLING_ROUTINE typedef ptr TYPE_USER_MARSHAL_MARSHALLING_ROUTINE
-
     TYPE_USER_MARSHAL_UNMARSHALLING_ROUTINE typedef proto WIN_STD_CALL_CONV :ptr DWORD, :ptr BYTE, :ptr
     USER_MARSHAL_UNMARSHALLING_ROUTINE typedef ptr TYPE_USER_MARSHAL_UNMARSHALLING_ROUTINE
-
     TYPE_USER_MARSHAL_FREEING_ROUTINE typedef proto WIN_STD_CALL_CONV :ptr DWORD, :ptr
     USER_MARSHAL_FREEING_ROUTINE typedef ptr TYPE_USER_MARSHAL_FREEING_ROUTINE
-
     USER_MARSHAL_ROUTINE_QUADRUPLE struct
       pfnBufferSize USER_MARSHAL_SIZING_ROUTINE ?
       pfnMarshall USER_MARSHAL_MARSHALLING_ROUTINE ?
       pfnUnmarshall USER_MARSHAL_UNMARSHALLING_ROUTINE ?
-      pfnFree USER_MARSHAL_FREEING_ROUTINE ?
+      pfnFree_ USER_MARSHAL_FREEING_ROUTINE ?
     USER_MARSHAL_ROUTINE_QUADRUPLE ends
     _USER_MARSHAL_ROUTINE_QUADRUPLE typedef USER_MARSHAL_ROUTINE_QUADRUPLE
     USER_MARSHAL_CB_SIGNATURE equ <'USRC'>
@@ -453,7 +433,7 @@ ifndef __RPCNDR_H__
     USER_MARSHAL_CB_UNMARSHALL equ 2
     USER_MARSHAL_CB_FREE equ 3
     _USER_MARSHAL_CB_TYPE typedef USER_MARSHAL_CB_TYPE
-
+    
     USER_MARSHAL_CB struct
       Flags DWORD ?
       pStubMsg PMIDL_STUB_MESSAGE ?
@@ -475,10 +455,13 @@ ifndef __RPCNDR_H__
     endm
     USER_CALL_IS_ASYNC equ 0100h
     USER_CALL_NEW_CORRELATION_DESC equ 0200h
-    TYPE_pfnAllocate typedef proto WIN_STD_CALL_CONV :size_t
-    pfnAllocate typedef ptr TYPE_pfnAllocate
-
-;    void proto WIN_STD_CALL_CONV :ptr __RPC_USER
+    MALLOC_FREE_STRUCT struct
+      TYPE_pfnAllocate typedef proto WIN_STD_CALL_CONV :size_t
+      pfnAllocate typedef ptr TYPE_pfnAllocate
+      TYPE_pfnFree typedef proto WIN_STD_CALL_CONV :ptr
+      pfnFree typedef ptr TYPE_pfnFree
+    MALLOC_FREE_STRUCT ends
+    _MALLOC_FREE_STRUCT typedef MALLOC_FREE_STRUCT
     COMM_FAULT_OFFSETS struct
       CommOffset SWORD ?
       FaultOffset SWORD ?
@@ -489,22 +472,17 @@ ifndef __RPCNDR_H__
     IDL_CS_IN_PLACE_CONVERT equ 1
     IDL_CS_NEW_BUFFER_CONVERT equ 2
     _IDL_CS_CONVERT typedef IDL_CS_CONVERT
-
+    
     TYPE_CS_TYPE_NET_SIZE_ROUTINE typedef proto WIN_STD_CALL_CONV :RPC_BINDING_HANDLE, :DWORD, :DWORD, :ptr IDL_CS_CONVERT, :ptr DWORD, :ptr error_status_t
     CS_TYPE_NET_SIZE_ROUTINE typedef ptr TYPE_CS_TYPE_NET_SIZE_ROUTINE
-
     TYPE_CS_TYPE_LOCAL_SIZE_ROUTINE typedef proto WIN_STD_CALL_CONV :RPC_BINDING_HANDLE, :DWORD, :DWORD, :ptr IDL_CS_CONVERT, :ptr DWORD, :ptr error_status_t
     CS_TYPE_LOCAL_SIZE_ROUTINE typedef ptr TYPE_CS_TYPE_LOCAL_SIZE_ROUTINE
-
     TYPE_CS_TYPE_TO_NETCS_ROUTINE typedef proto WIN_STD_CALL_CONV :RPC_BINDING_HANDLE, :DWORD, :ptr, :DWORD, :ptr byte, :ptr DWORD, :ptr error_status_t
     CS_TYPE_TO_NETCS_ROUTINE typedef ptr TYPE_CS_TYPE_TO_NETCS_ROUTINE
-
     TYPE_CS_TYPE_FROM_NETCS_ROUTINE typedef proto WIN_STD_CALL_CONV :RPC_BINDING_HANDLE, :DWORD, :ptr byte, :DWORD, :DWORD, :ptr, :ptr DWORD, :ptr error_status_t
     CS_TYPE_FROM_NETCS_ROUTINE typedef ptr TYPE_CS_TYPE_FROM_NETCS_ROUTINE
-
     TYPE_CS_TAG_GETTING_ROUTINE typedef proto WIN_STD_CALL_CONV :RPC_BINDING_HANDLE, :SDWORD, :ptr DWORD, :ptr DWORD, :ptr DWORD, :ptr error_status_t
     CS_TAG_GETTING_ROUTINE typedef ptr TYPE_CS_TAG_GETTING_ROUTINE
-
     RpcCsGetTags proto WIN_STD_CALL_CONV :RPC_BINDING_HANDLE, :SDWORD, :ptr DWORD, :ptr DWORD, :ptr DWORD, :ptr error_status_t
     NDR_CS_SIZE_CONVERT_ROUTINES struct
       pfnNetSize CS_TYPE_NET_SIZE_ROUTINE ?
@@ -527,10 +505,8 @@ ifndef __RPCNDR_H__
       RpcInterfaceInformation POINTER ?
       TYPE_pfnAllocate typedef proto WIN_STD_CALL_CONV :size_t
       pfnAllocate typedef ptr TYPE_pfnAllocate
-
       TYPE_pfnFree typedef proto WIN_STD_CALL_CONV :ptr
       pfnFree typedef ptr TYPE_pfnFree
-
       union IMPLICIT_HANDLE_INFO
         pAutoHandle POINTER ?
         pPrimitiveHandle POINTER ?
@@ -574,11 +550,9 @@ ifndef __RPCNDR_H__
     endif
     TYPE_STUB_THUNK typedef proto WIN_STD_CALL_CONV :PMIDL_STUB_MESSAGE
     STUB_THUNK typedef ptr TYPE_STUB_THUNK
-
     ifndef _MANAGED
       TYPE_SERVER_ROUTINE typedef proto WIN_STD_CALL_CONV
       SERVER_ROUTINE typedef ptr TYPE_SERVER_ROUTINE
-
     else
       ;[...]
     endif
@@ -588,39 +562,20 @@ ifndef __RPCNDR_H__
     MIDL_METHOD_PROPERTY ends
     _MIDL_METHOD_PROPERTY typedef MIDL_METHOD_PROPERTY
     PMIDL_METHOD_PROPERTY typedef ptr MIDL_METHOD_PROPERTY
+    
     MIDL_METHOD_PROPERTY_MAP struct
       Count DWORD ?
       Properties POINTER ?
     MIDL_METHOD_PROPERTY_MAP ends
     _MIDL_METHOD_PROPERTY_MAP typedef MIDL_METHOD_PROPERTY_MAP
     PMIDL_METHOD_PROPERTY_MAP typedef ptr MIDL_METHOD_PROPERTY_MAP
+    
     MIDL_INTERFACE_METHOD_PROPERTIES struct
       MethodCount WORD ?
       MethodProperties POINTER ?
     MIDL_INTERFACE_METHOD_PROPERTIES ends
     _MIDL_INTERFACE_METHOD_PROPERTIES typedef MIDL_INTERFACE_METHOD_PROPERTIES
-    MIDL_SERVER_INFO struct
-      pStubDesc PMIDL_STUB_DESC ?
-      DispatchTable POINTER ?
-      ProcString PFORMAT_STRING ?
-      FmtStringOffset POINTER ?
-      ThunkTable POINTER ?
-      pTransferSyntax PRPC_SYNTAX_IDENTIFIER ?
-      nCount ULONG_PTR ?
-      pSyntaxInfo PMIDL_SYNTAX_INFO ?
-    MIDL_SERVER_INFO ends
-    _MIDL_SERVER_INFO_ typedef MIDL_SERVER_INFO
-    PMIDL_SERVER_INFO typedef ptr MIDL_SERVER_INFO
-    MIDL_STUBLESS_PROXY_INFO struct
-      pStubDesc PMIDL_STUB_DESC ?
-      ProcFormatString PFORMAT_STRING ?
-      FormatStringOffset POINTER ?
-      pTransferSyntax PRPC_SYNTAX_IDENTIFIER ?
-      nCount ULONG_PTR ?
-      pSyntaxInfo PMIDL_SYNTAX_INFO ?
-    MIDL_STUBLESS_PROXY_INFO ends
-    _MIDL_STUBLESS_PROXY_INFO typedef MIDL_STUBLESS_PROXY_INFO
-    PMIDL_STUBLESS_PROXY_INFO typedef ptr MIDL_STUBLESS_PROXY_INFO
+
     MIDL_SYNTAX_INFO struct
       TransferSyntax RPC_SYNTAX_IDENTIFIER <>
       DispatchTable POINTER ?
@@ -633,17 +588,42 @@ ifndef __RPCNDR_H__
     MIDL_SYNTAX_INFO ends
     _MIDL_SYNTAX_INFO typedef MIDL_SYNTAX_INFO
     PMIDL_SYNTAX_INFO typedef ptr MIDL_SYNTAX_INFO
+   
+    MIDL_SERVER_INFO struct
+      pStubDesc PMIDL_STUB_DESC ?
+      DispatchTable POINTER ?
+      ProcString PFORMAT_STRING ?
+      FmtStringOffset POINTER ?
+      ThunkTable POINTER ?
+      pTransferSyntax PRPC_SYNTAX_IDENTIFIER ?
+      nCount ULONG_PTR ?
+      pSyntaxInfo PMIDL_SYNTAX_INFO ?
+    MIDL_SERVER_INFO ends
+    _MIDL_SERVER_INFO_ typedef MIDL_SERVER_INFO
+    PMIDL_SERVER_INFO typedef ptr MIDL_SERVER_INFO
+    
+    MIDL_STUBLESS_PROXY_INFO struct
+      pStubDesc PMIDL_STUB_DESC ?
+      ProcFormatString PFORMAT_STRING ?
+      FormatStringOffset POINTER ?
+      pTransferSyntax PRPC_SYNTAX_IDENTIFIER ?
+      nCount ULONG_PTR ?
+      pSyntaxInfo PMIDL_SYNTAX_INFO ?
+    MIDL_STUBLESS_PROXY_INFO ends
+    _MIDL_STUBLESS_PROXY_INFO typedef MIDL_STUBLESS_PROXY_INFO
+    PMIDL_STUBLESS_PROXY_INFO typedef ptr MIDL_STUBLESS_PROXY_INFO
+
     PARAM_OFFSETTABLE typedef ptr WORD
     PPARAM_OFFSETTABLE typedef ptr WORD
     CLIENT_CALL_RETURN union
-      Pointer POINTER ?
+      Pointer_ POINTER ?
       Simple LONG_PTR ?
     CLIENT_CALL_RETURN ends
     _CLIENT_CALL_RETURN typedef CLIENT_CALL_RETURN
     XLAT_SIDE typedef SDWORD
     XLAT_SERVER equ 1
     XLAT_CLIENT equ 2
-
+    
     FULL_PTR_XLAT_TABLES struct
       RefIdToPointer POINTER ?
       PointerToRefId POINTER ?
@@ -652,6 +632,7 @@ ifndef __RPCNDR_H__
     FULL_PTR_XLAT_TABLES ends
     _FULL_PTR_XLAT_TABLES typedef FULL_PTR_XLAT_TABLES
     PFULL_PTR_XLAT_TABLES typedef ptr FULL_PTR_XLAT_TABLES
+    
     system_handle_t typedef SDWORD
     SYSTEM_HANDLE_FILE equ 0
     SYSTEM_HANDLE_SEMAPHORE equ 1
@@ -669,11 +650,11 @@ ifndef __RPCNDR_H__
     SYSTEM_HANDLE_MAX equ 12
     SYSTEM_HANDLE_INVALID equ 0FFh
     _system_handle_t typedef system_handle_t
-
+    
     MidlInterceptionInfoVersionOne equ 1
-
+    
     MidlWinrtTypeSerializationInfoVersionOne equ 1
-
+    
     MIDL_WINRT_TYPE_SERIALIZATION_INFO_CURRENT_VERSION equ <MidlWinrtTypeSerializationInfoVersionOne>
     MIDL_INTERCEPTION_INFO struct
       Version DWORD ?
@@ -684,6 +665,7 @@ ifndef __RPCNDR_H__
     MIDL_INTERCEPTION_INFO ends
     _MIDL_INTERCEPTION_INFO typedef MIDL_INTERCEPTION_INFO
     PMIDL_INTERCEPTION_INFO typedef ptr MIDL_INTERCEPTION_INFO
+    
     MIDL_WINRT_TYPE_SERIALIZATION_INFO struct
       Version DWORD ?
       TypeFormatString PFORMAT_STRING ?
@@ -693,6 +675,7 @@ ifndef __RPCNDR_H__
     MIDL_WINRT_TYPE_SERIALIZATION_INFO ends
     _MIDL_WINRT_TYPE_SERIALIZATION_INFO typedef MIDL_WINRT_TYPE_SERIALIZATION_INFO
     PMIDL_WINRT_TYPE_SERIALIZATION_INFO typedef ptr MIDL_WINRT_TYPE_SERIALIZATION_INFO
+    
     NdrClientGetSupportedSyntaxes proto WIN_STD_CALL_CONV :ptr RPC_CLIENT_INTERFACE, :ptr DWORD, :ptr ptr MIDL_SYNTAX_INFO
     NdrServerGetSupportedSyntaxes proto WIN_STD_CALL_CONV :ptr RPC_SERVER_INTERFACE, :ptr DWORD, :ptr ptr MIDL_SYNTAX_INFO, :ptr DWORD
     @DefProto DllImport, NdrSimpleTypeMarshall, WIN_STD_CALL_CONV,, <:PMIDL_STUB_MESSAGE, :ptr BYTE, :BYTE>, 12
@@ -855,21 +838,21 @@ ifndef __RPCNDR_H__
     STUB_CALL_SERVER equ 1
     STUB_MARSHAL equ 2
     STUB_CALL_SERVER_NO_HRESULT equ 3
-
+    
     PROXY_PHASE typedef SDWORD
     PROXY_CALCSIZE equ 0
     PROXY_GETBUFFER equ 1
     PROXY_MARSHAL equ 2
     PROXY_SENDRECEIVE equ 3
     PROXY_UNMARSHAL equ 4
-
+    
     @DefProto DllImport, NdrAsyncServerCall, WIN_STD_CALL_CONV,, <:PRPC_MESSAGE>, 4
     @DefProto DllImport, NdrAsyncStubCall, WIN_STD_CALL_CONV,, <:ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD>, 16
   endif
   if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, NdrDcomAsyncStubCall, WIN_STD_CALL_CONV,, <:ptr IRpcStubBuffer, :ptr IRpcChannelBuffer, :PRPC_MESSAGE, :ptr DWORD>, 16
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, NdrStubCall2, WIN_STD_CALL_CONV,, <:ptr, :ptr, :PRPC_MESSAGE, :ptr DWORD>, 16
     @DefProto DllImport, NdrServerCall2, WIN_STD_CALL_CONV,, <:PRPC_MESSAGE>, 4
     @DefProto DllImport, NdrStubCall, WIN_STD_CALL_CONV,, <:ptr, :ptr, :PRPC_MESSAGE, :ptr DWORD>, 16
@@ -878,7 +861,7 @@ ifndef __RPCNDR_H__
     @DefProto DllImport, NdrServerMarshall, WIN_STD_CALL_CONV,, <:ptr, :ptr, :PMIDL_STUB_MESSAGE, :PFORMAT_STRING>, 16
     @DefProto DllImport, NdrMapCommAndFaultStatus, WIN_STD_CALL_CONV,, <:PMIDL_STUB_MESSAGE, :ptr DWORD, :ptr DWORD, :RPC_STATUS>, 16
     RPC_SS_THREAD_HANDLE typedef ptr
-    Size_ typedef ptr
+    _Size_ typedef ptr
     RPC_CLIENT_FREE typedef proto :ptr
     @DefProto DllImport, RpcSsAllocate, WIN_STD_CALL_CONV,, <:size_t>, 4
     @DefProto DllImport, RpcSsDisableAllocate, WIN_STD_CALL_CONV,, <>, 0
@@ -912,7 +895,7 @@ ifndef __RPCNDR_H__
     @DefProto DllImport, NdrOleAllocate, WIN_STD_CALL_CONV,, <:size_t>, 4
     @DefProto DllImport, NdrOleFree, WIN_STD_CALL_CONV,, <:ptr>, 4
     ifdef CONST_VTABLE
-      CONST_VTBL equ <const>
+      CONST_VTBL equ <>
     else
       CONST_VTBL equ <>
     endif
@@ -939,58 +922,25 @@ ifndef __RPCNDR_H__
         endm
       endif
     endif
-    ifndef DECLSPEC_XFGVIRT
-;      if _CONTROL_FLOW_GUARD_XFG
-;        DECLSPEC_XFGVIRT macro base, func
-;          exitm <__declspec(xfg_virtual (base, func))>
-;        endm
-;      else
-;        DECLSPEC_XFGVIRT macro base, func
-;          exitm <>
-;        endm
-;      endif
-    endif
-    ifndef DECLSPEC_XFGREUSE
-;      if _CONTROL_FLOW_GUARD_XFG
-;        DECLSPEC_XFGREUSE macro vtbl, func
-;          exitm <__declspec(xfg_reuse_typehash (vtbl, func))>
-;        endm
-;      else
-;        DECLSPEC_XFGREUSE macro vtbl, func
-;          exitm <>
-;        endm
-;      endif
-    endif
     MIDL_INTERFACE macro x
       exitm <struct DECLSPEC_UUID(x) DECLSPEC_NOVTABLE>
     endm
     if _MSC_VER ge 1100
       EXTERN_GUID macro itf, l1, s1, s2, c1, c2, c3, c4, c5, c6, c7, c8
-        exitm <EXTERN_C const IID DECLSPEC_SELECTANY itf = { l1, s1, s2, { c1, c2, c3, c4, c5, c6, c7, c8 } }>
+        itf IID { l1, s1, s2, { c1, c2, c3, c4, c5, c6, c7, c8 } }
       endm
     else
       EXTERN_GUID macro itf, l1, s1, s2, c1, c2, c3, c4, c5, c6, c7, c8
-        exitm <EXTERN_C const IID itf>
+        itf IID {}
       endm
-    endif
-    if Defined(__cplusplus) and Defined(__cpp_inline_variables)
-      ;[...]
-    else
-      if (_MSC_VER ge 1100)
-        MIDL_CONSTINIT_CONST_INLINE_VARIABLE equ <EXTERN_C const __declspec(selectany)>
-      else
-        MIDL_CONSTINIT_CONST_INLINE_VARIABLE equ <static const>
-      endif
     endif
     NDR_USER_MARSHAL_INFO_LEVEL1 struct
       Buffer POINTER ?
       BufferSize DWORD ?
       TYPE_pfnAllocate typedef proto WIN_STD_CALL_CONV :size_t
       pfnAllocate typedef ptr TYPE_pfnAllocate
-
       TYPE_pfnFree typedef proto WIN_STD_CALL_CONV :ptr
       pfnFree typedef ptr TYPE_pfnFree
-
       pRpcChannelBuffer POINTER ?
       Reserved ULONG_PTR 5 dup (?)
     NDR_USER_MARSHAL_INFO_LEVEL1 ends

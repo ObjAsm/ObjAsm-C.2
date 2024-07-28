@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\commdlg.h
-;             Created on (UTC) 06/04/2024 06:15:52
-;             Last modified on (UTC) 21/02/2024 18:17:20
+;Include file created by h2incX, Version B.01.01, 19/04/2018 10:43
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\commdlg.h', last modified: 19/04/2018 10:46
+;Creation parameters: 
 
 include winapifamily.inc
 if _MSC_VER ge 1200
@@ -49,7 +48,6 @@ ifndef _INC_COMMDLG
       endif
       TYPE_LPOFNHOOKPROC typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :WPARAM, :LPARAM
       LPOFNHOOKPROC typedef ptr TYPE_LPOFNHOOKPROC
-
       ifndef CDSIZEOF_STRUCT
         CDSIZEOF_STRUCT macro structname, member
           exitm <((((LPBYTE) (and ((structname *) 0) - member) - ((LPBYTE) ((structname *) 0)))) + sizeof(((structname *) 0) - member))>
@@ -84,6 +82,7 @@ ifndef _INC_COMMDLG
       OPENFILENAME_NT4A ends
       tagOFN_NT4A typedef OPENFILENAME_NT4A
       LPOPENFILENAME_NT4A typedef ptr OPENFILENAME_NT4A
+      
       OPENFILENAME_NT4W struct
         lStructSize DWORD ?
         hwndOwner HWND ?
@@ -108,6 +107,7 @@ ifndef _INC_COMMDLG
       OPENFILENAME_NT4W ends
       tagOFN_NT4W typedef OPENFILENAME_NT4W
       LPOPENFILENAME_NT4W typedef ptr OPENFILENAME_NT4W
+      
       ifdef UNICODE
         OPENFILENAME_NT4 typedef OPENFILENAME_NT4W
         LPOPENFILENAME_NT4 typedef LPOPENFILENAME_NT4W
@@ -147,6 +147,7 @@ ifndef _INC_COMMDLG
       OPENFILENAMEA ends
       tagOFNA typedef OPENFILENAMEA
       LPOPENFILENAMEA typedef ptr OPENFILENAMEA
+      
       OPENFILENAMEW struct
         lStructSize DWORD ?
         hwndOwner HWND ?
@@ -179,6 +180,7 @@ ifndef _INC_COMMDLG
       OPENFILENAMEW ends
       tagOFNW typedef OPENFILENAMEW
       LPOPENFILENAMEW typedef ptr OPENFILENAMEW
+      
       ifdef UNICODE
         OPENFILENAME typedef OPENFILENAMEW
         LPOPENFILENAME typedef LPOPENFILENAMEW
@@ -254,7 +256,6 @@ ifndef _INC_COMMDLG
       OFN_SHAREWARN equ 0
       TYPE_LPCCHOOKPROC typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :WPARAM, :LPARAM
       LPCCHOOKPROC typedef ptr TYPE_LPCCHOOKPROC
-
       if (WINVER ge 0400h)
         OFNOTIFYA struct
           hdr NMHDR <>
@@ -263,6 +264,7 @@ ifndef _INC_COMMDLG
         OFNOTIFYA ends
         _OFNOTIFYA typedef OFNOTIFYA
         LPOFNOTIFYA typedef ptr OFNOTIFYA
+        
         OFNOTIFYW struct
           hdr NMHDR <>
           lpOFN LPOPENFILENAMEW ?
@@ -270,6 +272,7 @@ ifndef _INC_COMMDLG
         OFNOTIFYW ends
         _OFNOTIFYW typedef OFNOTIFYW
         LPOFNOTIFYW typedef ptr OFNOTIFYW
+        
         ifdef UNICODE
           OFNOTIFY typedef OFNOTIFYW
           LPOFNOTIFY typedef LPOFNOTIFYW
@@ -285,6 +288,7 @@ ifndef _INC_COMMDLG
         OFNOTIFYEXA ends
         _OFNOTIFYEXA typedef OFNOTIFYEXA
         LPOFNOTIFYEXA typedef ptr OFNOTIFYEXA
+        
         OFNOTIFYEXW struct
           hdr NMHDR <>
           lpOFN LPOPENFILENAMEW ?
@@ -293,6 +297,7 @@ ifndef _INC_COMMDLG
         OFNOTIFYEXW ends
         _OFNOTIFYEXW typedef OFNOTIFYEXW
         LPOFNOTIFYEXW typedef ptr OFNOTIFYEXW
+        
         ifdef UNICODE
           OFNOTIFYEX typedef OFNOTIFYEXW
           LPOFNOTIFYEX typedef LPOFNOTIFYEXW
@@ -381,6 +386,7 @@ ifndef _INC_COMMDLG
         CHOOSECOLORA ends
         tagCHOOSECOLORA typedef CHOOSECOLORA
         LPCHOOSECOLORA typedef ptr CHOOSECOLORA
+        
         CHOOSECOLORW struct
           lStructSize DWORD ?
           hwndOwner HWND ?
@@ -394,6 +400,7 @@ ifndef _INC_COMMDLG
         CHOOSECOLORW ends
         tagCHOOSECOLORW typedef CHOOSECOLORW
         LPCHOOSECOLORW typedef ptr CHOOSECOLORW
+        
         ifdef UNICODE
           CHOOSECOLOR typedef CHOOSECOLORW
           LPCHOOSECOLOR typedef LPCHOOSECOLORW
@@ -424,7 +431,6 @@ ifndef _INC_COMMDLG
       endif
       TYPE_LPFRHOOKPROC typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :WPARAM, :LPARAM
       LPFRHOOKPROC typedef ptr TYPE_LPFRHOOKPROC
-
       FINDREPLACEA struct
         lStructSize DWORD ?
         hwndOwner HWND ?
@@ -440,6 +446,7 @@ ifndef _INC_COMMDLG
       FINDREPLACEA ends
       tagFINDREPLACEA typedef FINDREPLACEA
       LPFINDREPLACEA typedef ptr FINDREPLACEA
+      
       FINDREPLACEW struct
         lStructSize DWORD ?
         hwndOwner HWND ?
@@ -455,6 +462,7 @@ ifndef _INC_COMMDLG
       FINDREPLACEW ends
       tagFINDREPLACEW typedef FINDREPLACEW
       LPFINDREPLACEW typedef ptr FINDREPLACEW
+      
       ifdef UNICODE
         FINDREPLACE typedef FINDREPLACEW
         LPFINDREPLACE typedef LPFINDREPLACEW
@@ -481,11 +489,6 @@ ifndef _INC_COMMDLG
       FR_HIDEWHOLEWORD equ 00010000h
       if (NTDDI_VERSION ge NTDDI_WIN2K)
         FR_RAW equ 00020000h
-        if (NTDDI_VERSION ge NTDDI_WIN10_RS5)
-          FR_SHOWWRAPAROUND equ 00040000h
-          FR_NOWRAPAROUND equ 00080000h
-          FR_WRAPAROUND equ 00100000h
-        endif
         FR_MATCHDIAC equ 20000000h
         FR_MATCHKASHIDA equ 40000000h
         FR_MATCHALEFHAMZA equ 80000000h
@@ -520,7 +523,6 @@ ifndef _INC_COMMDLG
       endm
       TYPE_LPCFHOOKPROC typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :WPARAM, :LPARAM
       LPCFHOOKPROC typedef ptr TYPE_LPCFHOOKPROC
-
       CHOOSEFONTA struct
         lStructSize DWORD ?
         hwndOwner HWND ?
@@ -678,10 +680,8 @@ ifndef _INC_COMMDLG
       CD_LBSELADD equ 2
       TYPE_LPPRINTHOOKPROC typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :WPARAM, :LPARAM
       LPPRINTHOOKPROC typedef ptr TYPE_LPPRINTHOOKPROC
-
       TYPE_LPSETUPHOOKPROC typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :WPARAM, :LPARAM
       LPSETUPHOOKPROC typedef ptr TYPE_LPSETUPHOOKPROC
-
       PRINTDLGA struct
         lStructSize DWORD ?
         hwndOwner HWND ?
@@ -705,6 +705,7 @@ ifndef _INC_COMMDLG
       PRINTDLGA ends
       tagPDA typedef PRINTDLGA
       LPPRINTDLGA typedef ptr PRINTDLGA
+      
       PRINTDLGW struct
         lStructSize DWORD ?
         hwndOwner HWND ?
@@ -728,6 +729,7 @@ ifndef _INC_COMMDLG
       PRINTDLGW ends
       tagPDW typedef PRINTDLGW
       LPPRINTDLGW typedef ptr PRINTDLGW
+      
       ifdef UNICODE
         PRINTDLG typedef PRINTDLGW
         LPPRINTDLG typedef LPPRINTDLGW
@@ -744,28 +746,24 @@ ifndef _INC_COMMDLG
       endif
       if (WINVER ge 0500h)
         ifdef STDMETHOD
-          INTERFACE equ <IPrintDialogCallback>
-          ??Interface equ <>
-;          DECLARE_INTERFACE_IID_ IPrintDialogCallback, IUnknown, "5852A2C3-6530-11D1-B6A3-0000F8757BF9"
-;            STDMETHOD QueryInterface, :ptr, :ptr ptr 
-;            STDMETHOD_ ULONG, AddRef
-;            STDMETHOD_ ULONG, Release
-;            STDMETHOD InitDone
-;            STDMETHOD SelectionChange
-;            STDMETHOD HandleMessage, :ptr, :ptr, :ptr, :ptr, :ptr 
-;          DECLARE_INTERFACE_IID__END
-
-          INTERFACE equ <IPrintDialogServices>
-          ??Interface equ <>
-;          DECLARE_INTERFACE_IID_ IPrintDialogServices, IUnknown, "509AAEDA-5639-11D1-B6A1-0000F8757BF9"
-;            STDMETHOD QueryInterface, :ptr, :ptr ptr 
-;            STDMETHOD_ ULONG, AddRef
-;            STDMETHOD_ ULONG, Release
-;            STDMETHOD GetCurrentDevMode, :ptr, :ptr 
-;            STDMETHOD GetCurrentPrinterName, :ptr, :ptr 
-;            STDMETHOD GetCurrentPortName, :ptr, :ptr 
-;          DECLARE_INTERFACE_IID__END
-
+;          INTERFACE equ <IPrintDialogCallback>
+;          _DECLARE_INTERFACE_IID_ IPrintDialogCallback, IUnknown, "5852A2C3-6530-11D1-B6A3-0000F8757BF9"
+;            STD_METHOD QueryInterface, :THIS_, :ptr ptr
+;            STD_METHOD AddRef, :THIS_
+;            STD_METHOD Release, :THIS_
+;            STD_METHOD InitDone, :THIS_
+;            STD_METHOD SelectionChange, :THIS_
+;            STD_METHOD HandleMessage, :THIS_, :UINT, :WPARAM, :LPARAM, :ptr LRESULT
+;          END_DECLARE_INTERFACE_IID_
+;          INTERFACE equ <IPrintDialogServices>
+;          _DECLARE_INTERFACE_IID_ IPrintDialogServices, IUnknown, "509AAEDA-5639-11D1-B6A1-0000F8757BF9"
+;            STD_METHOD QueryInterface, :THIS_, :ptr ptr
+;            STD_METHOD AddRef, :THIS_
+;            STD_METHOD Release, :THIS_
+;            STD_METHOD GetCurrentDevMode, :THIS_, :ptr UINT
+;            STD_METHOD GetCurrentPrinterName, :THIS_, :ptr UINT
+;            STD_METHOD GetCurrentPortName, :THIS_, :ptr UINT
+;          END_DECLARE_INTERFACE_IID_
           PRINTPAGERANGE struct
             nFromPage DWORD ?
             nToPage DWORD ?
@@ -798,6 +796,7 @@ ifndef _INC_COMMDLG
           PRINTDLGEXA ends
           tagPDEXA typedef PRINTDLGEXA
           LPPRINTDLGEXA typedef ptr PRINTDLGEXA
+          
           PRINTDLGEXW struct
             lStructSize DWORD ?
             hwndOwner HWND ?
@@ -823,6 +822,7 @@ ifndef _INC_COMMDLG
           PRINTDLGEXW ends
           tagPDEXW typedef PRINTDLGEXW
           LPPRINTDLGEXW typedef ptr PRINTDLGEXW
+          
           ifdef UNICODE
             PRINTDLGEX typedef PRINTDLGEXW
             LPPRINTDLGEX typedef LPPRINTDLGEXW
@@ -897,10 +897,8 @@ ifndef _INC_COMMDLG
         WM_PSD_YAFULLPAGERECT equ (WM_USER + 6)
         TYPE_LPPAGEPAINTHOOK typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :WPARAM, :LPARAM
         LPPAGEPAINTHOOK typedef ptr TYPE_LPPAGEPAINTHOOK
-
         TYPE_LPPAGESETUPHOOK typedef proto WIN_STD_CALL_CONV :HWND, :UINT, :WPARAM, :LPARAM
         LPPAGESETUPHOOK typedef ptr TYPE_LPPAGESETUPHOOK
-
         PAGESETUPDLGA struct
           lStructSize DWORD ?
           hwndOwner HWND ?
@@ -919,6 +917,7 @@ ifndef _INC_COMMDLG
         PAGESETUPDLGA ends
         tagPSDA typedef PAGESETUPDLGA
         LPPAGESETUPDLGA typedef ptr PAGESETUPDLGA
+        
         PAGESETUPDLGW struct
           lStructSize DWORD ?
           hwndOwner HWND ?
@@ -937,6 +936,7 @@ ifndef _INC_COMMDLG
         PAGESETUPDLGW ends
         tagPSDW typedef PAGESETUPDLGW
         LPPAGESETUPDLGW typedef ptr PAGESETUPDLGW
+        
         ifdef UNICODE
           PAGESETUPDLG typedef PAGESETUPDLGW
           LPPAGESETUPDLG typedef LPPAGESETUPDLGW

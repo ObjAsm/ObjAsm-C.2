@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\winsock.h
-;             Created on (UTC) 06/04/2024 06:16:03
-;             Last modified on (UTC) 21/02/2024 18:15:28
+;Include file created by h2incX, Version B.01.01, 29/10/2018 18:21
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\winsock.h', last modified: 19/04/2018 09:44
+;Creation parameters: 
 
 include winapifamily.inc
 ifndef _WINSOCKAPI_
@@ -219,7 +218,7 @@ ifndef _WINSOCKAPI_
       imr_interface in_addr <>
     ip_mreq ends
     INVALID_SOCKET equ (not 0)
-    SOCKET_ERROR equ (- 1)
+    SOCKET_ERROR equ -1
     SOCK_STREAM equ 1
     SOCK_DGRAM equ 2
     SOCK_RAW equ 3
@@ -460,6 +459,7 @@ ifndef _WINSOCKAPI_
     _TRANSMIT_FILE_BUFFERS typedef TRANSMIT_FILE_BUFFERS
     PTRANSMIT_FILE_BUFFERS typedef ptr TRANSMIT_FILE_BUFFERS
     LPTRANSMIT_FILE_BUFFERS typedef ptr TRANSMIT_FILE_BUFFERS
+    
     TF_DISCONNECT equ 01h
     TF_REUSE_SOCKET equ 02h
     TF_WRITE_BEHIND equ 04h
@@ -470,29 +470,53 @@ ifndef _WINSOCKAPI_
       ;[...]
     endif
     SOCKADDR typedef sockaddr
+    
     PSOCKADDR typedef ptr sockaddr
+    
     LPSOCKADDR typedef ptr sockaddr
+    
     SOCKADDR_IN typedef sockaddr_in
+    
     PSOCKADDR_IN typedef ptr sockaddr_in
+    
     LPSOCKADDR_IN typedef ptr sockaddr_in
+    
     LINGER typedef linger
+    
     PLINGER typedef ptr linger
+    
     LPLINGER typedef ptr linger
-;    FD_SET typedef fd_set
+    
+    FD_SET_ typedef fd_set
+    
     PFD_SET typedef ptr fd_set
+    
     LPFD_SET typedef ptr fd_set
+    
     HOSTENT typedef hostent
+    
     PHOSTENT typedef ptr hostent
+    
     LPHOSTENT typedef ptr hostent
+    
     SERVENT typedef servent
+    
     PSERVENT typedef ptr servent
+    
     LPSERVENT typedef ptr servent
+    
     PROTOENT typedef protoent
+    
     PPROTOENT typedef ptr protoent
+    
     LPPROTOENT typedef ptr protoent
+    
     TIMEVAL typedef timeval
+    
     PTIMEVAL typedef ptr timeval
+    
     LPTIMEVAL typedef ptr timeval
+    
     WSAMAKEASYNCREPLY macro buflen, error_
       exitm <MAKELONG(buflen, error_)>
     endm
@@ -520,3 +544,4 @@ ifndef _WINSOCKAPI_
     endif
   endif
 endif
+

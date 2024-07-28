@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\consoleapi3.h
-;             Created on (UTC) 06/04/2024 06:15:52
-;             Last modified on (UTC) 21/02/2024 18:13:24
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\consoleapi3.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 ifdef _MSC_VER
 endif
@@ -34,8 +33,10 @@ ifndef _APISETCONSOLEL3_
           FontWeight UINT ?
           FaceName WCHAR LF_FACESIZE dup (?)
         CONSOLE_FONT_INFOEX ends
+
         _CONSOLE_FONT_INFOEX typedef CONSOLE_FONT_INFOEX
         PCONSOLE_FONT_INFOEX typedef ptr CONSOLE_FONT_INFOEX
+        
         @DefProto DllImport, GetCurrentConsoleFontEx, WIN_STD_CALL_CONV,, <:HANDLE, :BOOL, :PCONSOLE_FONT_INFOEX>, 12
         @DefProto DllImport, SetCurrentConsoleFontEx, WIN_STD_CALL_CONV,, <:HANDLE, :BOOL, :PCONSOLE_FONT_INFOEX>, 12
       endif
@@ -49,8 +50,10 @@ ifndef _APISETCONSOLEL3_
         dwSelectionAnchor COORD <>
         srSelection SMALL_RECT <>
       CONSOLE_SELECTION_INFO ends
+
       _CONSOLE_SELECTION_INFO typedef CONSOLE_SELECTION_INFO
       PCONSOLE_SELECTION_INFO typedef ptr CONSOLE_SELECTION_INFO
+      
       @DefProto DllImport, GetConsoleSelectionInfo, WIN_STD_CALL_CONV,, <:PCONSOLE_SELECTION_INFO>, 4
       HISTORY_NO_DUP_FLAG equ 1h
       CONSOLE_HISTORY_INFO struct
@@ -59,8 +62,10 @@ ifndef _APISETCONSOLEL3_
         NumberOfHistoryBuffers UINT ?
         dwFlags DWORD ?
       CONSOLE_HISTORY_INFO ends
+
       _CONSOLE_HISTORY_INFO typedef CONSOLE_HISTORY_INFO
       PCONSOLE_HISTORY_INFO typedef ptr CONSOLE_HISTORY_INFO
+      
       @DefProto DllImport, GetConsoleHistoryInfo, WIN_STD_CALL_CONV,, <:PCONSOLE_HISTORY_INFO>, 4
       @DefProto DllImport, SetConsoleHistoryInfo, WIN_STD_CALL_CONV,, <:PCONSOLE_HISTORY_INFO>, 4
       CONSOLE_FULLSCREEN equ 1
@@ -151,3 +156,4 @@ ifndef _APISETCONSOLEL3_
     ;[...]
   endif
 endif
+

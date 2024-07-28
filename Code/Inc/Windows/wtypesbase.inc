@@ -1,11 +1,10 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\wtypesbase.h
-;             Created on (UTC) 22/05/2024 17:57:06
-;             Last modified on (UTC) 21/02/2024 18:18:14
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\wtypesbase.h', last modified: 28/08/2017 15:00
+;Creation parameters: 
 
 ifndef __REQUIRED_RPCNDR_H_VERSION__
-  __REQUIRED_RPCNDR_H_VERSION__ equ 501
+  __REQUIRED_RPCNDR_H_VERSION__ equ 500
 endif
 ifndef __REQUIRED_RPCSAL_H_VERSION__
   __REQUIRED_RPCSAL_H_VERSION__ equ 100
@@ -18,17 +17,6 @@ endif
 ifndef __wtypesbase_h__
   __wtypesbase_h__ equ <>
   if Defined(_MSC_VER) and (_MSC_VER ge 1020)
-  endif
-  ifndef DECLSPEC_XFGVIRT
-    if Defined(_CONTROL_FLOW_GUARD_XFG)
-      DECLSPEC_XFGVIRT macro base, func
-        exitm <__declspec(xfg_virtual (base, func))>
-      endm
-    else
-      DECLSPEC_XFGVIRT macro base, func
-        exitm <>
-      endm
-    endif
   endif
   include basetsd.inc
   include guiddef.inc
@@ -95,7 +83,9 @@ ifndef __wtypesbase_h__
         FILETIME ends
         _FILETIME typedef FILETIME
         PFILETIME typedef ptr _FILETIME
+        
         LPFILETIME typedef ptr _FILETIME
+        
       endif
       ifndef _SYSTEMTIME_
         _SYSTEMTIME_ equ <>
@@ -111,7 +101,9 @@ ifndef __wtypesbase_h__
         SYSTEMTIME ends
         _SYSTEMTIME typedef SYSTEMTIME
         PSYSTEMTIME typedef ptr _SYSTEMTIME
+        
         LPSYSTEMTIME typedef ptr _SYSTEMTIME
+        
       endif
       ifndef _SECURITY_ATTRIBUTES_
         _SECURITY_ATTRIBUTES_ equ <>
@@ -122,7 +114,9 @@ ifndef __wtypesbase_h__
         SECURITY_ATTRIBUTES ends
         _SECURITY_ATTRIBUTES typedef SECURITY_ATTRIBUTES
         PSECURITY_ATTRIBUTES typedef ptr _SECURITY_ATTRIBUTES
+        
         LPSECURITY_ATTRIBUTES typedef ptr _SECURITY_ATTRIBUTES
+        
       endif
       ifndef SECURITY_DESCRIPTOR_REVISION
         SECURITY_DESCRIPTOR_CONTROL typedef USHORT
@@ -148,6 +142,7 @@ ifndef __wtypesbase_h__
         SECURITY_DESCRIPTOR ends
         _SECURITY_DESCRIPTOR typedef SECURITY_DESCRIPTOR
         PISECURITY_DESCRIPTOR typedef ptr _SECURITY_DESCRIPTOR
+        
       endif
     endif
     COAUTHIDENTITY struct
@@ -199,7 +194,7 @@ ifndef __wtypesbase_h__
     MEMCTX_UNKNOWN equ -1
     MEMCTX_SAME equ -2
     tagMEMCTX typedef MEMCTX
-
+    
     ifndef _ROTREGFLAGS_DEFINED
       _ROTREGFLAGS_DEFINED equ <>
       ROTREGFLAGS_ALLOWANYCLIENT equ 1h
@@ -219,8 +214,6 @@ ifndef __wtypesbase_h__
       APPIDREGFLAGS_RESERVED5 equ 400h
       APPIDREGFLAGS_AAA_NO_IMPLICIT_ACTIVATE_AS_IU equ 800h
       APPIDREGFLAGS_RESERVED7 equ 1000h
-      APPIDREGFLAGS_RESERVED8 equ 2000h
-      APPIDREGFLAGS_RESERVED9 equ 4000h
     endif
     ifndef _DCOMSCM_REMOTECALL_FLAGS_DEFINED
       _DCOMSCM_REMOTECALL_FLAGS_DEFINED equ <>
@@ -250,19 +243,19 @@ ifndef __wtypesbase_h__
     CLSCTX_DISABLE_AAA equ 8000h
     CLSCTX_ENABLE_AAA equ 10000h
     CLSCTX_FROM_DEFAULT_CONTEXT equ 20000h
-    CLSCTX_ACTIVATE_X86_SERVER equ 40000h
-    CLSCTX_ACTIVATE_32_BIT_SERVER equ CLSCTX_ACTIVATE_X86_SERVER
+    CLSCTX_ACTIVATE_32_BIT_SERVER equ 40000h
     CLSCTX_ACTIVATE_64_BIT_SERVER equ 80000h
     CLSCTX_ENABLE_CLOAKING equ 100000h
     CLSCTX_APPCONTAINER equ 400000h
     CLSCTX_ACTIVATE_AAA_AS_IU equ 800000h
-    CLSCTX_RESERVED6 equ 1000000h
-    CLSCTX_ACTIVATE_ARM32_SERVER equ 2000000h
-    CLSCTX_ALLOW_LOWER_TRUST_REGISTRATION equ 4000000h
     CLSCTX_PS_DLL equ 80000000h
     tagCLSCTX typedef CLSCTX
-
-    CLSCTX_VALID_MASK equ <(CLSCTX_INPROC_SERVER or CLSCTX_INPROC_HANDLER or CLSCTX_LOCAL_SERVER or CLSCTX_INPROC_SERVER16 or CLSCTX_REMOTE_SERVER or CLSCTX_NO_CODE_DOWNLOAD or CLSCTX_NO_CUSTOM_MARSHAL or CLSCTX_ENABLE_CODE_DOWNLOAD or CLSCTX_NO_FAILURE_LOG or CLSCTX_DISABLE_AAA or CLSCTX_ENABLE_AAA or CLSCTX_FROM_DEFAULT_CONTEXT or CLSCTX_ACTIVATE_X86_SERVER or CLSCTX_ACTIVATE_64_BIT_SERVER or CLSCTX_ENABLE_CLOAKING or CLSCTX_APPCONTAINER or CLSCTX_ACTIVATE_AAA_AS_IU or CLSCTX_RESERVED6 or CLSCTX_ACTIVATE_ARM32_SERVER or CLSCTX_ALLOW_LOWER_TRUST_REGISTRATION or CLSCTX_PS_DLL)>
+    
+    CLSCTX_VALID_MASK equ <>
+    ;(CLSCTX_INPROC_SERVER or CLSCTX_INPROC_HANDLER or CLSCTX_LOCAL_SERVER or CLSCTX_INPROC_SERVER16 or CLSCTX_REMOTE_SERVER or 
+    ;CLSCTX_NO_CODE_DOWNLOAD or CLSCTX_NO_CUSTOM_MARSHAL or CLSCTX_ENABLE_CODE_DOWNLOAD or CLSCTX_NO_FAILURE_LOG or 
+    ;CLSCTX_DISABLE_AAA or CLSCTX_ENABLE_AAA or CLSCTX_FROM_DEFAULT_CONTEXT or CLSCTX_ACTIVATE_32_BIT_SERVER or 
+    ;CLSCTX_ACTIVATE_64_BIT_SERVER or CLSCTX_ENABLE_CLOAKING or CLSCTX_APPCONTAINER or CLSCTX_ACTIVATE_AAA_AS_IU or CLSCTX_PS_DLL)
     MSHLFLAGS typedef SDWORD
     MSHLFLAGS_NORMAL equ 0
     MSHLFLAGS_TABLESTRONG equ 1
@@ -273,16 +266,15 @@ ifndef __wtypesbase_h__
     MSHLFLAGS_RESERVED3 equ 32
     MSHLFLAGS_RESERVED4 equ 64
     tagMSHLFLAGS typedef MSHLFLAGS
-
+    
     MSHCTX typedef SDWORD
     MSHCTX_LOCAL equ 0
     MSHCTX_NOSHAREDMEM equ 1
     MSHCTX_DIFFERENTMACHINE equ 2
     MSHCTX_INPROC equ 3
     MSHCTX_CROSSCTX equ 4
-    MSHCTX_CONTAINER equ 5
     tagMSHCTX typedef MSHCTX
-
+    
     BYTE_BLOB struct
       clSize ULONG ?
       abData byte 1 dup (?)
@@ -349,6 +341,7 @@ ifndef __wtypesbase_h__
     BLOB ends
     tagBLOB typedef BLOB
     LPBLOB typedef ptr tagBLOB
+    
   endif
   ifndef SID_IDENTIFIER_AUTHORITY_DEFINED
     SID_IDENTIFIER_AUTHORITY_DEFINED equ <>
@@ -357,6 +350,7 @@ ifndef __wtypesbase_h__
     SID_IDENTIFIER_AUTHORITY ends
     _SID_IDENTIFIER_AUTHORITY typedef SID_IDENTIFIER_AUTHORITY
     PSID_IDENTIFIER_AUTHORITY typedef ptr _SID_IDENTIFIER_AUTHORITY
+    
   endif
   ifndef SID_DEFINED
     SID_DEFINED equ <>
@@ -368,12 +362,14 @@ ifndef __wtypesbase_h__
     SID ends
     _SID typedef SID
     PISID typedef ptr _SID
+    
     SID_AND_ATTRIBUTES struct
       Sid POINTER ?
       Attributes DWORD ?
     SID_AND_ATTRIBUTES ends
     _SID_AND_ATTRIBUTES typedef SID_AND_ATTRIBUTES
     PSID_AND_ATTRIBUTES typedef ptr _SID_AND_ATTRIBUTES
+    
   endif
   if _MSC_VER ge 1200
   endif
@@ -383,3 +379,4 @@ ifndef __wtypesbase_h__
     ;[...]
   endif
 endif
+

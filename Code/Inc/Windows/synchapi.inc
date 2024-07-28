@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\synchapi.h
-;             Created on (UTC) 06/04/2024 06:15:58
-;             Last modified on (UTC) 21/02/2024 18:13:16
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\synchapi.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 ifdef _MSC_VER
 endif
@@ -15,10 +14,12 @@ ifndef _SYNCHAPI_H_
   ifdef __cplusplus
     ;[...]
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     SRWLOCK_INIT equ <RTL_SRWLOCK_INIT>
     SRWLOCK typedef RTL_SRWLOCK
     PSRWLOCK typedef ptr RTL_SRWLOCK
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, InitializeSRWLock, WIN_STD_CALL_CONV,, <:PSRWLOCK>, 4
       @DefProto DllImport, ReleaseSRWLockExclusive, WIN_STD_CALL_CONV,, <:PSRWLOCK>, 4
@@ -54,7 +55,6 @@ ifndef _SYNCHAPI_H_
     INIT_ONCE_CTX_RESERVED_BITS equ <RTL_RUN_ONCE_CTX_RESERVED_BITS>
     TYPE_PINIT_ONCE_FN typedef proto WIN_STD_CALL_CONV :PINIT_ONCE, :PVOID, :ptr PVOID
     PINIT_ONCE_FN typedef ptr TYPE_PINIT_ONCE_FN
-
     if (_WIN32_WINNT ge 0600h)
       @DefProto DllImport, InitOnceInitialize, WIN_STD_CALL_CONV,, <:PINIT_ONCE>, 4
       @DefProto DllImport, InitOnceExecuteOnce, WIN_STD_CALL_CONV,, <:PINIT_ONCE, :PINIT_ONCE_FN, :PVOID, :ptr LPVOID>, 16
@@ -114,7 +114,6 @@ ifndef _SYNCHAPI_H_
     if (_WIN32_WINNT ge 0400h) or (_WIN32_WINDOWS gt 0400h)
       TYPE_PTIMERAPCROUTINE typedef proto WIN_STD_CALL_CONV :LPVOID, :DWORD, :DWORD
       PTIMERAPCROUTINE typedef ptr TYPE_PTIMERAPCROUTINE
-
       @DefProto DllImport, OpenWaitableTimerW, WIN_STD_CALL_CONV,, <:DWORD, :BOOL, :LPCWSTR>, 12
       ifdef UNICODE
         OpenWaitableTimer equ <OpenWaitableTimerW>
@@ -156,6 +155,8 @@ ifndef _SYNCHAPI_H_
         endif
       endif
     endif
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP or WINAPI_PARTITION_SYSTEM)
     SYNCHRONIZATION_BARRIER typedef RTL_BARRIER
     PSYNCHRONIZATION_BARRIER typedef PRTL_BARRIER
     LPSYNCHRONIZATION_BARRIER typedef PRTL_BARRIER
@@ -165,6 +166,8 @@ ifndef _SYNCHAPI_H_
     EnterSynchronizationBarrier proto WIN_STD_CALL_CONV :LPSYNCHRONIZATION_BARRIER, :DWORD
     InitializeSynchronizationBarrier proto WIN_STD_CALL_CONV :LPSYNCHRONIZATION_BARRIER, :LONG, :LONG
     DeleteSynchronizationBarrier proto WIN_STD_CALL_CONV :LPSYNCHRONIZATION_BARRIER
+  endif
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, Sleep, WIN_STD_CALL_CONV,, <:DWORD>, 4
     WaitOnAddress proto WIN_STD_CALL_CONV :ptr VOID, :PVOID, :SIZE_T, :DWORD
     WakeByAddressSingle proto WIN_STD_CALL_CONV :PVOID
@@ -175,7 +178,7 @@ ifndef _SYNCHAPI_H_
       @DefProto DllImport, SignalObjectAndWait, WIN_STD_CALL_CONV,, <:HANDLE, :HANDLE, :DWORD, :BOOL>, 16
     endif
   endif
-  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM or WINAPI_PARTITION_GAMES)
+  if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP or WINAPI_PARTITION_SYSTEM)
     @DefProto DllImport, WaitForMultipleObjects, WIN_STD_CALL_CONV,, <:DWORD, :ptr HANDLE, :BOOL, :DWORD>, 16
     @DefProto DllImport, CreateSemaphoreW, WIN_STD_CALL_CONV,, <:LPSECURITY_ATTRIBUTES, :LONG, :LONG, :LPCWSTR>, 16
     ifdef UNICODE
@@ -190,3 +193,4 @@ ifndef _SYNCHAPI_H_
     ;[...]
   endif
 endif
+

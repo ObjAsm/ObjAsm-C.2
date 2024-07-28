@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\gdiplusflat.h
-;             Created on (UTC) 06/04/2024 06:15:55
-;             Last modified on (UTC) 16/12/2023 11:07:10
+;Include file created by h2incX, Version C.01.00, 30/03/2019 18:59
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: 'D:\ObjAsm\Projects\32\h2IncX\header\GdiplusFlat.h', last modified: 22/10/2018 20:35
+;Creation parameters: 
 
 ifndef _FLATAPI_H
   _FLATAPI_H equ <>
@@ -13,21 +12,6 @@ ifndef _FLATAPI_H
     ifdef __cplusplus
       ;[...]
     endif
-
-    include gdiplusenums.inc
-
-    GpFillMode typedef FillMode
-    GpMatrixOrder typedef MatrixOrder
-    GpWrapMode typedef WrapMode
-    GpUnit typedef Unit
-    GpLineCap typedef LineCap
-    GpLineJoin typedef LineJoin
-    GpDashCap typedef DashCap
-    GpPenAlignment typedef PenAlignment
-    GpFlushIntention typedef FlushIntention
-    GpCoordinateSpace typedef CoordinateSpace
-    
-
     GdipCreatePath proto WIN_STD_CALL_CONV :GpFillMode, :ptr ptr GpPath
     GdipCreatePath2 proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr GDIPCONST, :INT_, :GpFillMode, :ptr ptr GpPath
     GdipCreatePath2I proto WIN_STD_CALL_CONV :ptr GDIPCONST, :ptr GDIPCONST, :INT_, :GpFillMode, :ptr ptr GpPath
@@ -664,3 +648,4 @@ ifndef _FLATAPI_H
     endif
   endif
 endif
+ 

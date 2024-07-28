@@ -1,8 +1,7 @@
-;Include file created by h2inc+ version C.2.0 on (UTC) 25/05/2024 16:54:49
-;(C) G. Friedrich April 2024
-;Source file: d:\objasm\projects\x\h2inc+\h\um_10.0.22621.0\tvout.h
-;             Created on (UTC) 22/05/2024 17:57:06
-;             Last modified on (UTC) 16/12/2023 11:07:04
+;Include file created by h2incX, Version B.01.01, 10/09/2018 22:03
+;(C) 2018-today by Biterider, 2005-2009 by Japheth
+;Source file: '\ObjAsm\Projects\h2IncX\header\tvout.h', last modified: 19/04/2018 10:43
+;Creation parameters: 
 
 include winapifamily.inc
 ifndef __TVOUT__
@@ -38,9 +37,11 @@ ifndef __TVOUT__
       bCP_APSTriggerBits ULONG ?
       bOEMCopyProtection UCHAR 256 dup (?)
     VIDEOPARAMETERS ends
+
     _VIDEOPARAMETERS typedef VIDEOPARAMETERS
     PVIDEOPARAMETERS typedef ptr VIDEOPARAMETERS
     LPVIDEOPARAMETERS typedef ptr VIDEOPARAMETERS
+    
     VP_COMMAND_GET equ 0001h
     VP_COMMAND_SET equ 0002h
     VP_FLAGS_TV_MODE equ 0001h
@@ -81,3 +82,4 @@ ifndef __TVOUT__
     VP_CP_CMD_CHANGE equ 0004h
   endif
 endif
+
