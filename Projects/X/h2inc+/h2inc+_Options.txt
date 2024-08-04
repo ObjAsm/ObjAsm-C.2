@@ -4,5 +4,5 @@
 -i
 -V1
 -W2
--o".\7zip\inc_7zip_24.07"
-".\7zip\h_7zip_24.07\MasterInclude.h"
+-o".\MKL"
+"C:\Program Files (x86)\Intel\oneAPI\mkl\2024.2\include\mkl.h"

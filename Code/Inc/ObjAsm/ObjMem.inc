@@ -1789,3 +1789,49 @@ GetOption         proto :POPTION_ENTRY, :POINTER, :PSTRINGW
 GetOptions        proto :POPTION_ENTRY, :POINTER, :PSTRINGW
 ParseCmdLineArgs  proto :PSTRINGW
 
+% include &IncPath&ObjAsm\DateTime.inc
+
+DateToStrA        proto :PSTRINGA, :DWORD, :PDTL_DATE
+DateToStrW        proto :PSTRINGW, :DWORD, :PDTL_DATE
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  DateToStr textequ <DateToStrA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  DateToStr textequ <DateToStrW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
+TimeToStrA        proto :PSTRINGA, :DWORD, :PDTL_TIME
+TimeToStrW        proto :PSTRINGW, :DWORD, :PDTL_TIME
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  TimeToStr textequ <TimeToStrA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  TimeToStr textequ <TimeToStrW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
+DateTimeToStrA    proto :PSTRINGA, :DWORD, :PDTL_DATE, :DWORD, :PDTL_TIME
+DateTimeToStrW    proto :PSTRINGW, :DWORD, :PDTL_DATE, :DWORD, :PDTL_TIME
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  DateTimeToStr textequ <DateTimeToStrA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  DateTimeToStr textequ <DateTimeToStrW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
+IsLeapYear        proto :DWORD
+GetSystemMillis   proto :PDTL_MILLIS
+
+GetUtcHnsecs      proto :PDTL_HNSECS
+GetLocHnsecs      proto :PDTL_HNSECS
+GetSysHnsecs      proto :PDTL_HNSECS
+TimeToHnsecs      proto :PDTL_HNSECS, :PDTL_TIME
+
+HnsecsToTime      proto :PDTL_TIME, :PDTL_HNSECS
+HnsecsToDate      proto :PDTL_DATE, :PDTL_HNSECS
+HnsecsToDateTime  proto :PDTL_DATETIME, :PDTL_HNSECS
+
+
+

@@ -673,5 +673,27 @@ GetOption, pOptDefTable, pStorage, pOption
 GetOptions, pOptDefTable, pStorage, pOptionList
 ParseCmdLineArgs, pCmdLineStrW
 
+DateToStrA, pDest, dFormat, pDate
+DateToStrW, pDest, dFormat, pDate
+DateToStr, pDest, dFormat, pDate
+TimeToStrA, pDest, dFormat, pHMST
+TimeToStrW, pDest, dFormat, pHMST
+TimeToStr, pDest, dFormat, pHMST
+
+DateTimeToStrA, pDest, dDateFormat, pDate, dTimeFormat, pTime
+DateTimeToStrW, pDest, dDateFormat, pDate, dTimeFormat, pTime
+DateTimeToStr, pDest, dDateFormat, pDate, dTimeFormat, pTime
+
+IsLeapYear, dYear
+GetSystemMillis, pDest
+
+GetUtcHnsecs, pDest
+GetLocHnsecs, pDest
+GetSysHnsecs, pDest
+TimeToHnsecs, pHnsecs, pTime
+
+HnsecsToTime, pTime, pHnsecs
+HnsecsToDate, pDate, pHnsecs
+HnsecsToDateTime, pDateTime, pHnsecs
 
 
