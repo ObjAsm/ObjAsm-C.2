@@ -1,0 +1,39 @@
+;Include file created by h2inc+ version C.2.0 on (UTC) 17/07/2024 16:54:49
+;(C) G. Friedrich July 2024
+;Source file: luaconf.h, last modified: 11/01/2021 14:01
+
+
+ifdef LUA_DLL_IMPORT
+  LUA_IMPORT_ATTR textequ <DllImport>
+else
+  LUA_IMPORT_ATTR textequ <extern> 
+endif
+
+LUA_INT_INT equ 1
+LUA_INT_LONG equ 2
+LUA_INT_LONGLONG equ 3
+
+LUA_FLOAT_FLOAT equ 1
+LUA_FLOAT_DOUBLE equ 2
+LUA_FLOAT_LONGDOUBLE equ 3
+
+LUALIB_API equ <LUA_API>
+LUAMOD_API equ <LUA_API>
+
+if TARGET_BITNESS eq 32
+  LUA_INTEGER equ <SDWORD>
+  LUA_UNSIGNED equ <DWORD>
+  LUA_MAXINTEGER equ <INT_MAX>
+  LUA_MININTEGER equ <INT_MIN>
+  LUA_MAXUNSIGNED equ <UINT_MAX>
+else
+  LUA_INTEGER equ <SQWORD>
+  LUA_UNSIGNED equ <QWORD>
+  LUA_MAXINTEGER equ <LLONG_MAX>
+  LUA_MININTEGER equ <LLONG_MIN>
+  LUA_MAXUNSIGNED equ <ULLONG_MAX>
+endif
+
+LUA_IDSIZE equ 60
+LUA_KCONTEXT equ POINTER
+LUAL_BUFFERSIZE equ 16384
