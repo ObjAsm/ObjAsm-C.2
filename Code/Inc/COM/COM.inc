@@ -401,3 +401,17 @@ DefGUID macro GUIDSymbol:req, GUIDStr:req
     .err <DefGUID incorrect input string>
   endif
 endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:     TypeMissing
+; Purpose:   Set a varint to the missing state. Frequently used for optional parameters.
+; Arguments: Arg1: Varint variables.
+
+TypeMissing macro Variants:vararg
+    local Variant
+
+    for Variant, <Variants>
+      mov Variant.vt, VT_ERROR
+      mov Variant.scode, DISP_E_PARAMNOTFOUND
+    endm
+endm

@@ -1763,11 +1763,13 @@ if TARGET_BITNESS eq 64
   PointerVector textequ <QWordVector>
   PTRVEC_MAX_CAPACITY equ VEC64_MAX_CAPACITY
   XWordVector textequ <QWordVector>
+  VEC64_MAX_CAPACITY equ 0FFFFFFFFh/sizeof(QWORD)
   XVEC_MAX_CAPACITY equ VEC64_MAX_CAPACITY
 else
   PointerVector textequ <DWordVector>
   PTRVEC_MAX_CAPACITY equ VEC32_MAX_CAPACITY
   XWordVector textequ <DWordVector>
+  VEC32_MAX_CAPACITY equ 0FFFFFFFFh/sizeof(DWORD)
   XVEC_MAX_CAPACITY equ VEC32_MAX_CAPACITY
 endif
 

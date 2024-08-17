@@ -28,16 +28,16 @@ Debug=0
 17=..\..\..\Code\Objects\Collection.inc
 18=..\..\..\Code\Objects\XWCollection.inc
 19=..\..\..\Code\Objects\QWordVector.inc
-20=..\..\..\Code\Objects\QWordVector.asm
+20=
 21=..\..\..\Code\Objects\TVector.inc
 22=..\..\..\Code\Objects\XWordVector.inc
 23=..\..\..\Code\Objects\ByteVector.inc
 24=..\..\..\Code\Objects\WordVector.inc
 25=..\..\..\Code\Objects\DWordVector.inc
-26=..\..\..\Code\Objects\ByteVector.asm
-27=..\..\..\Code\Objects\DWordVector.asm
-28=..\..\..\Code\Objects\WordVector.asm
-29=..\..\..\Code\ObjMem\64\MemShift.asm
+26=
+27=
+28=
+29=
 
 [MakeFiles]
 0=Demo05.rap
@@ -94,16 +94,16 @@ Group=Added files,Assembly,Resources,Misc,Modules,Objects,Macros
 17=6
 18=6
 19=6
-20=5
+20=
 21=6
 22=6
 23=1
 24=6
 25=6
-26=5
-27=5
-28=5
-29=5
+26=
+27=
+28=
+29=
 
 [VerInf]
 FV=1.0.0.0
@@ -134,7 +134,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=28
+MilestoneOnDateDate=17
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -171,7 +171,7 @@ ProductVer4Range=0
 [Size]
 2=0,0,0,0,1134
 3=0,0,0,0,61339
-1=0,0,1870,602,283
+1=0,0,1870,602,3224
 4=0,0,0,0,4236
 5=0,0,694,587,100460
 6=0,0,0,0,17549
@@ -187,11 +187,14 @@ ProductVer4Range=0
 13=0,0,0,0,412
 17=0,0,0,0,11731
 18=0,0,0,0,1063
-29=0,0,0,0,1355
-21=0,0,0,0,18414
-27=0,0,0,0,641
+29=
+21=0,0,0,0,2169
+27=
 25=0,0,0,0,440
 22=0,0,0,0,499
+26=0,0,0,0,0
+20=
+28=
 
 [BookMark]
 0=
@@ -210,16 +213,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="Vector_"
-2="PushMethodArgs"
-3="MethodInvoke"
-4="OCall m"
-5="SetFilePointerEx"
-6="Seek"
-7="DWordVector"
-8="MakeObjects"
-9="QWordVector"
-10="Insert"
+1="VEC64_MAX_CAPACITY"
+2="XVEC_MAX_CAPACITY"
+3="Vector_"
+4="PushMethodArgs"
+5="MethodInvoke"
+6="OCall m"
+7="SetFilePointerEx"
+8="Seek"
+9="DWordVector"
+10="MakeObjects"
 [Collapse]
 1=
 4=1
@@ -244,10 +247,11 @@ ProductVer4Range=0
 27=
 25=
 22=
+26=
 [AutoLoad]
-AutoLoad=1,12
+AutoLoad=1,12,26,21
 [PTimer]
-PTimer=470622143
+PTimer=471115440
 [GroupExpand]
 GroupExpand=0,1,1,0,1,1,1,0
 [RADebugBP]

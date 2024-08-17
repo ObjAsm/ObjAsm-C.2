@@ -9,9 +9,13 @@ ifndef s_addr
       union S_un
         struct S_un_b
           s_b1 UCHAR ?
+          s_b2 UCHAR ?
+          s_b3 UCHAR ?
+          s_b4 UCHAR ?
         ends
         struct S_un_w
           s_w1 USHORT ?
+          s_w2 USHORT ?
         ends
         S_addr ULONG ?
       ends

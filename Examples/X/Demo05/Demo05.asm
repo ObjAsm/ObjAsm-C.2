@@ -12,7 +12,7 @@
 SysSetup OOP, NUI64, WIDE_STRING, DEBUG(WND)            ;Load OOP files and OS related objects
 
 MakeObjects Primer, Stream, DiskStream
-MakeObjects XWordVector, ByteVector
+MakeObjects Vector, XWordVector, ByteVector
 
 .code                                                   ;Begin Code segment
 

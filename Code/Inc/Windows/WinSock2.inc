@@ -184,9 +184,13 @@ ifndef _WINSOCK2API_
       union S_un
         struct S_un_b
           s_b1 u_char ?
+          s_b2 u_char ?
+          s_b3 u_char ?
+          s_b4 u_char ?
         ends
         struct S_un_w
           s_w1 u_short ?
+          s_w2 u_short ?
         ends
         S_addr u_long ?
       ends

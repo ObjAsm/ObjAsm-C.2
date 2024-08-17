@@ -1,4 +1,4 @@
-//RC-file created by Inc2RC from Demo01B_Shared.inc on 2024-01-03, 12:47:21.86
+//RC-file created by Inc2RC from Demo01B_Shared.inc on 2024-08-17, 11:10:40.02
 
 #define APP_TITLE "Demo01B"
 #define ABOUT_TEXT "Demo01B"
@@ -7,8 +7,8 @@
 #define VER_FILEVERSION_STR "2.0"
 #define VER_PRODUCTVERSION 2,0,0,0
 #define VER_PRODUCTVERSION_STR "2.0"
-#define BUILD_NUMBER 85
-#define BUILD_DATE_STR "2024-01-03"
+#define BUILD_NUMBER 86
+#define BUILD_DATE_STR "2024-08-17"
 #define BUILD_BITNESS 64
 #define BUILD_MODE DBG
 #define BUILD_BIN_FORMAT EXE
