@@ -312,7 +312,7 @@ Method HttpServer.HandlePostRequest, uses xbx xdi xsi, pRequest:PHTTP_REQUEST
             add xbx, xdi
           .ColNext
 
-          invoke Base64Decode, pEntityBuffer, dTotalBytesRead
+          invoke Base64Decode, pEntityBuffer, dTotalBytesRead, NULL
           .if xax
             mov xbx, xax
             mov CDS.dwData, DGB_MSG_ID                        ;Set DebugCenter identifier

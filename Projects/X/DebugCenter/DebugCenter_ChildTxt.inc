@@ -5,17 +5,24 @@
 ; Purpose:    ObjAsm DebugCenter text MDI child window.
 ; ==================================================================================================
 
+TSB_STYLE   equ     WS_CHILD or WS_VISIBLE or SBARS_TOOLTIPS or SBARS_SIZEGRIP
 
 EDTSTYLE    equ     WS_CHILD or WS_VISIBLE or WS_TABSTOP or \
                     WS_VSCROLL or WS_HSCROLL or ES_AUTOVSCROLL or ES_AUTOHSCROLL or \
                     ES_MULTILINE or ES_WANTRETURN or ES_NOHIDESEL
 
-RICHEDITID  equ     250
+IDC_TXTRICHEDIT     equ     100
+IDC_TXTSTATUSBAR    equ     200
+
 
 CStr szDbgMdiChildTxtClass, "OAC_DbgMdiChildTxt"                ;Debug Center Child Textoutput
 CStr szPropREdtIptor,       "OAP_REdtIptor"
 
 CALC_KEY_TIMEOUT  equ   1000
+
+TxtStatusbar DEF_STATUSBAR {IDC_TXTSTATUSBAR, TSB_STYLE, 0, 2}
+  DEF_STATUSBAR_PART {180, 100, 1, SBT_SUNKEN, NULL}
+  DEF_STATUSBAR_PART {  0,  -2, 0, SBT_SUNKEN, NULL}            ;Spring type
 
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -26,7 +33,10 @@ Object REdtIptor, REDT_IPTOR_ID, MsgInterceptor
   RedefineMethod    WndProc,          DWORD, WPARAM, LPARAM
 
   VirtualEvent      OnDropFiles,      WM_DROPFILES
+  VirtualEvent      OnKeyDown,        WM_KEYDOWN
   VirtualEvent      OnNotify,         WM_NOTIFY
+  VirtualEvent      OnLButtonDown,    WM_LBUTTONDOWN
+  VirtualEvent      OnLButtonUp,      WM_LBUTTONUP
   VirtualEvent      OnRButtonDown,    WM_RBUTTONDOWN
   VirtualEvent      OnRButtonUp,      WM_RBUTTONUP
 
@@ -55,6 +65,7 @@ Object DbgMdiChildTxt, DBG_MDI_CHILD_TXT_ID, DbgMdiChild
   RedefineMethod    SaveTo,           PSTRING
   VirtualMethod     SelectAll
   StaticMethod      Startup
+  VirtualMethod     UpdateStatusbar
   RedefineMethod    ZoomIn
   RedefineMethod    ZoomOut
 
@@ -63,6 +74,7 @@ Object DbgMdiChildTxt, DBG_MDI_CHILD_TXT_ID, DbgMdiChild
 
   DefineVariable    hEdit,            HWND,               0
   DefineVariable    pEdtIptor,        $ObjPtr(REdtIptor), NULL
+  DefineVariable    pStatusbar,       $ObjPtr(Statusbar), NULL
 ObjectEnd
 
 
@@ -195,6 +207,7 @@ MethodEnd
 
 Method DbgMdiChildTxt.Done, uses xsi
   SetObject xsi
+  Destroy [xsi].pStatusbar
   Destroy [xsi].pEdtIptor
   ACall xsi.Done
 MethodEnd
@@ -389,13 +402,16 @@ Method DbgMdiChildTxt.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   invoke CreateWindowEx, WS_EX_LEFT or WS_EX_CLIENTEDGE or WS_EX_ACCEPTFILES or ES_EX_ZOOMABLE, \
                          offset szRichEdit20, NULL, EDTSTYLE, \
-                         0, 0, 10, 10, [xsi].hWnd, RICHEDITID, hInstance, NULL
+                         0, 0, 10, 10, [xsi].hWnd, IDC_TXTRICHEDIT, hInstance, NULL
   mov [xsi].hEdit, xax
   invoke SendMessage, [xsi].hEdit, EM_SETEVENTMASK, 0, ENM_SELCHANGE
   invoke SendMessage, [xsi].hEdit, EM_SETZOOM, $ObjTmpl(DebugCenter).dTxtZoomFactor, ZOOM_BASE
 
   mov [xsi].pEdtIptor, $New(REdtIptor)
   OCall xax::REdtIptor.Init, xsi, [xsi].hEdit, offset szPropREdtIptor
+
+  mov [xsi].pStatusbar, $New(Statusbar)
+  OCall xax::Statusbar.Init, xsi, [xsi].hWnd, offset TxtStatusbar
   xor eax, eax
 MethodEnd
 
@@ -439,7 +455,7 @@ Method DbgMdiChildTxt.OnNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov xax, lParam
   .if [xax].NMHDR.code == EN_SELCHANGE
     mov xdx, [xax].NMHDR.idFrom
-    .if xdx == RICHEDITID
+    .if xdx == IDC_TXTRICHEDIT
       mov xcx, [xsi].pOwner
       invoke SendMessage, [xcx].$Obj(DbgMdiClient).hWnd, WM_MDIGETACTIVE, 0, 0
       .if xax == [xsi].hWnd
@@ -459,13 +475,24 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero.
 
-Method DbgMdiChildTxt.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
-  local CRect:RECT
+Method DbgMdiChildTxt.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+  local SbRect:RECT, CRect:RECT, dHeight:DWORD, dTop:DWORD
 
   SetObject xsi
   .if wParam != SIZE_MINIMIZED
     invoke GetClientRect, [xsi].hWnd, addr CRect
-    invoke MoveWindow, [xsi].hEdit, 0, 0, CRect.right, CRect.bottom, TRUE
+
+    mov xbx, [xsi].pStatusbar
+    invoke GetWindowRect, [xbx].$Obj(Statusbar).hWnd, addr SbRect
+    mov eax, SbRect.bottom
+    sub eax, SbRect.top
+    mov dHeight, eax
+    mov ecx, CRect.bottom
+    sub ecx, eax
+    mov dTop, ecx
+    invoke MoveWindow, [xbx].$Obj(Statusbar).hWnd, 0, dTop, CRect.right, dHeight, TRUE
+
+    invoke MoveWindow, [xsi].hEdit, 0, 0, CRect.right, dTop, TRUE
   .endif
   invoke DefMDIChildProc, [xsi].hWnd, WM_SIZE, wParam, lParam
 MethodEnd
@@ -730,6 +757,47 @@ Method DbgMdiChildTxt.Startup
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     DbgMdiChildTxt.UpdateStatusbar
+; Purpose:    Draw new information on the Statusbar.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method DbgMdiChildTxt.UpdateStatusbar, uses xdi xsi
+  local dFirstCharIndex:DWORD, dLastCharIndex:DWORD, dSelCount:DWORD
+  local dLineNumber:DWORD, dLineCharPos:DWORD
+  local cTextBuffer[1024]:CHR
+
+  SetObject xsi
+  lea xdi, cTextBuffer
+  invoke SendMessage, [xsi].hEdit, EM_GETSEL, addr dFirstCharIndex, addr dLastCharIndex
+  mov eax, dLastCharIndex
+  sub eax, dFirstCharIndex
+  mov dSelCount, eax
+  .if eax == 0
+    WriteF xdi, "No text selec"                     ;"selected" is an import => has to be split
+    WriteF xdi, "ted", dFirstCharIndex, dLastCharIndex, dSelCount
+  .else
+    WriteF xdi, "Selection from character index ¦UD to ¦UD", dFirstCharIndex, dLastCharIndex
+    .if dSelCount == 1
+      WriteF xdi, " (1 character)"
+    .else
+      WriteF xdi, " (¦UD characters)", dSelCount
+    .endif
+  .endif
+  OCall [xsi].pStatusbar::Statusbar.SetPartText, 1, addr cTextBuffer, SBT_SUNKEN
+
+  lea xdi, cTextBuffer
+  invoke SendMessage, [xsi].hEdit, EM_LINEFROMCHAR, dFirstCharIndex, 0
+  mov dLineNumber, eax
+  invoke SendMessage, [xsi].hEdit, EM_LINEINDEX , dLineNumber, 0
+  mov ecx, dFirstCharIndex
+  sub ecx, eax
+  mov dLineCharPos, ecx
+  WriteF xdi, "Caret at line ¦UD, position ¦UD", dLineNumber, dLineCharPos
+  OCall [xsi].pStatusbar::Statusbar.SetPartText, 0, addr cTextBuffer, SBT_SUNKEN
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     DbgMdiChildTxt.ZoomIn
 ; Purpose:    Increase the output size.
 ; Arguments:  None.
@@ -794,7 +862,7 @@ MethodEnd
 ; Return:     eax = Result of the message processing and depends on the message.
 
 Method REdtIptor.WndProc,, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
-  ;DbgMessage uMsg
+  DbgMessage uMsg
   invoke GetProp, pSelf, offset szPropREdtIptor
   OCall xax::REdtIptor.Dispatch, pSelf, uMsg, wParam, lParam
 MethodEnd
@@ -855,6 +923,20 @@ Method REdtIptor.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     REdtIptor.OnKeyDown
+; Purpose:    Event procedure for WM_KEYDOWN message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = Zero.
+
+Method REdtIptor.OnKeyDown, uses xsi, wParam:WPARAM, lParam:LPARAM
+  SetObject xsi
+  invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_KEYDOWN, wParam, lParam
+  OCall [xsi].pOwner::DbgMdiChildTxt.UpdateStatusbar
+  xor eax, eax
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     REdtIptor.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -875,6 +957,34 @@ Method REdtIptor.OnNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
     .endif
   .endif
   invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_NOTIFY, wParam, lParam
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     REdtIptor.OnLButtonDown
+; Purpose:    Event procedure for WM_LBUTTONDOWN message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = Zero.
+
+Method REdtIptor.OnLButtonDown, uses xsi, wParam:WPARAM, lParam:LPARAM
+  SetObject xsi
+  invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_LBUTTONDOWN, wParam, lParam
+  OCall [xsi].pOwner::DbgMdiChildTxt.UpdateStatusbar
+  xor eax, eax
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     REdtIptor.OnLButtonUp
+; Purpose:    Event procedure for WM_LBUTTONUP message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = Zero.
+
+Method REdtIptor.OnLButtonUp, uses xsi, wParam:WPARAM, lParam:LPARAM
+  SetObject xsi
+  invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_LBUTTONUP, wParam, lParam
+  OCall [xsi].pOwner::DbgMdiChildTxt.UpdateStatusbar
+  xor eax, eax
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

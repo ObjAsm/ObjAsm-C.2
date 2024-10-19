@@ -151,15 +151,3 @@ DBGCMD_BMP              equ     00000003h
 
 IDI_TRAY                equ     1020
 WM_SHELLNOTIFY          equ     WM_USER + 5
-
-
-.const
-TxtMsg label BYTE                                           ;Size = 58
-BYTE 000h, 000h, 01ch, 000h, 000h, 000h, 054h, 000h, 065h   ;......T.e
-BYTE 000h, 073h, 000h, 074h, 000h, 057h, 000h, 069h, 000h   ;.s.t.W.i.
-BYTE 06eh, 000h, 064h, 000h, 06fh, 000h, 077h, 000h, 000h   ;n.d.o.w..
-BYTE 000h, 002h, 000h, 01eh, 000h, 000h, 000h, 000h, 000h   ;.........
-BYTE 000h, 000h, 0ffh, 0ffh, 0ffh, 000h, 000h, 000h, 000h   ;..ÿÿÿ....
-BYTE 080h, 048h, 000h, 061h, 000h, 06ch, 000h, 06ch, 000h   ;€H.a.l.l.
-BYTE 06fh, 000h, 000h, 000h
-

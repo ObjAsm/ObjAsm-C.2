@@ -4266,37 +4266,81 @@ endm
 ; Arguments:  Expression of the form SymbolName1:Register1, SymbolName2:Register2...
 ; Example:    LocReg pOwner:xdx
 ;             LocReg pMemBlock:$SubReg(r14, @WordSize)
+; Note:       To use this macro with a procedure, _ProcName_ must be defined previously.
+;             E.g.: _ProcName_ textequ <Base64Encode>
+;             This is necessary because of the non-working @ProcName.
+
+
+;LocReg macro ExpressionList:vararg
+;  ifb <??ObjectContext>
+;    .err LocReg - out of method context
+;  else
+;    for $$Expression, <ExpressionList>
+;      $$Pos1 InStr <$$Expression>, <:>
+;      if $$Pos1 ne 0
+;        $$SymName textequ @CatStr(%??ObjectContext, %??MethodContext, <_>, @SubStr(<$$Expression>, 1, $$Pos1 - 1))
+;        $$RegName SubStr <$$Expression>, $$Pos1 + 1
+;      else
+;        .err LocReg - syntax error: $$Expression
+;      endif
+;
+;      if TARGET_BITNESS eq 64
+;        %$$SymName equ $$RegName
+;      else
+;        %ifidni <$$RegName>, <$SubReg($$RegName, 1)>
+;          local $$SymName:BYTE
+;        %elseifidni <$$RegName>, <$SubReg($$RegName, 2)>
+;          local $$SymName:WORD
+;        %elseifidni <$$RegName>, <$SubReg($$RegName, 4)>
+;          %local $$SymName:DWORD
+;        %elseifidni <$$RegName>, <$SubReg($$RegName, 8)>
+;          local $$SymName:QWORD
+;        else
+;          echo $$RegName - Unknown register size
+;        endif
+;      endif
+;    endm
+;  endif
+;endm
 
 LocReg macro ExpressionList:vararg
-  ifb <??ObjectContext>
-    .err LocReg - out of method context
+  ifb ??ObjectContext
+    ifb <%_ProcName_>
+      .err LocReg - no code context
+      exitm
+    else
+      ??CodeContext textequ <_ProcName_>
+    endif
   else
-    for $$Expression, <ExpressionList>
-      $$Pos1 InStr <$$Expression>, <:>
-      if $$Pos1 ne 0
-        $$SName textequ @CatStr(%??ObjectContext, %??MethodContext, <_>, @SubStr(<$$Expression>, 1, $$Pos1 - 1))
-        $$RName SubStr <$$Expression>, $$Pos1 + 1
-      else
-        .err LocReg - syntax error: $$Expression
-      endif
-
-      if TARGET_BITNESS eq 64
-        %$$SName equ $$RName
-      else
-        %ifidni <$$RName>, <$SubReg($$RName, 1)>
-          local $$SName:BYTE
-        %elseifidni <$$RName>, <$SubReg($$RName, 2)>
-          local $$SName:WORD
-        %elseifidni <$$RName>, <$SubReg($$RName, 4)>
-          %local $$SName:DWORD
-        %elseifidni <$$RName>, <$SubReg($$RName, 8)>
-          local $$SName:QWORD
-        else
-          echo $$RName - Unknown register size
-        endif
-      endif
-    endm
+    ??CodeContext textequ @CatStr(%??ObjectContext, %??MethodContext)
   endif
+
+  for $$Expression, <ExpressionList>
+    $$Pos1 InStr <$$Expression>, <:>
+    if $$Pos1 ne 0
+      $$SymName textequ @CatStr(%??CodeContext, <_>, @SubStr(<$$Expression>, 1, $$Pos1 - 1))
+      $$RegName SubStr <$$Expression>, $$Pos1 + 1
+    else
+      .err LocReg - syntax error: $$Expression
+      exitm
+    endif
+
+    if TARGET_BITNESS eq 64
+      %$$SymName equ $$RegName
+    else
+      %ifidni <$$RegName>, <$SubReg($$RegName, 1)>
+        local $$SymName:BYTE
+      %elseifidni <$$RegName>, <$SubReg($$RegName, 2)>
+        local $$SymName:WORD
+      %elseifidni <$$RegName>, <$SubReg($$RegName, 4)>
+        %local $$SymName:DWORD
+      %elseifidni <$$RegName>, <$SubReg($$RegName, 8)>
+        local $$SymName:DWORD                           ;Must be 32 bit
+      else
+        echo $$RegName - Unknown register size
+      endif
+    endif
+  endm
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -4304,11 +4348,19 @@ endm
 ; Purpose:    Replaces the Expression with the corresponding local or register.
 ; Arguments:  SymbolName declared with LocReg.
 
+;$LocReg macro SymbolName
+;  ifb <??ObjectContext>
+;    .err $LocReg - out of method context
+;  else
+;    exitm @CatStr(%??ObjectContext, %??MethodContext, <_>, SymbolName)
+;  endif
+;endm
+
 $LocReg macro SymbolName
-  ifb <??ObjectContext>
-    .err $LocReg - out of method context
+  ifb <??CodeContext>
+    .err $LocReg - no code context
   else
-    exitm @CatStr(%??ObjectContext, %??MethodContext, <_>, SymbolName)
+    exitm @CatStr(%??CodeContext, <_>, SymbolName)
   endif
 endm
 
@@ -4318,13 +4370,13 @@ endm
 ; Arguments:  SymbolName declared with LocReg.
 
 $LocReg32 macro SymbolName
-  ifb <??ObjectContext>
-    .err $LocReg - out of method context
+  ifb <??CodeContext>
+    .err $LocReg32 - no code context
   else
-    if (opattr @CatStr(%??ObjectContext, %??MethodContext, <_>, SymbolName)) and OAT_REGISTER
-      exitm $SubReg(@CatStr(%??ObjectContext, %??MethodContext, <_>, SymbolName), 4)
+    if (opattr @CatStr(%??CodeContext, <_>, SymbolName)) and OAT_REGISTER
+      exitm $SubReg(@CatStr(%??CodeContext, <_>, SymbolName), 4)
     else
-      exitm @CatStr(%??ObjectContext, %??MethodContext, <_>, SymbolName)
+      exitm @CatStr(%??CodeContext, <_>, SymbolName)
     endif
   endif
 endm
@@ -4336,27 +4388,58 @@ endm
 ;             name, otherwise the method argument is used.
 ; Arguments:  Expression of the form SymbolName1:Register1, SymbolName2:Register2...
 ; Example:    ArgReg pOwner:rdx
+; Note:       To use this macro with a procedure, _ProcName_ must be defined previously.
+;             E.g.: _ProcName_ textequ <Base64Encode>
+;             This is necessary because of the non-working @ProcName.
+
+;ArgReg_ macro ExpressionList:vararg
+;  ifb <??ObjectContext>
+;    .err ArgReg - out of method context
+;  else
+;    for $$Expression, <ExpressionList>
+;      $$Pos1 InStr <$$Expression>, <:>
+;      if $$Pos1 ne 0
+;        $$SymName textequ @CatStr(%??ObjectContext, %??MethodContext, <_>, @SubStr(<$$Expression>, 1, $$Pos1 - 1))
+;        $$RegName SubStr <$$Expression>, $$Pos1 + 1
+;      else
+;        .err ArgReg - syntax error: $$Expression
+;      endif
+;
+;      if TARGET_BITNESS eq 64
+;        %$$SymName equ $$RegName
+;      else
+;        %$$SymName SubStr <$$Expression>, 1, $$Pos1 - 1
+;      endif
+;    endm
+;  endif
+;endm
 
 ArgReg macro ExpressionList:vararg
-  ifb <??ObjectContext>
-    .err ArgReg - out of method context
+  ifb ??ObjectContext
+    ifb <%_ProcName_>
+      .err ArgReg - no code context
+      exitm
+    else
+      ??CodeContext textequ <_ProcName_>
+    endif
   else
-    for $$Expression, <ExpressionList>
-      $$Pos1 InStr <$$Expression>, <:>
-      if $$Pos1 ne 0
-        $$SName textequ @CatStr(%??ObjectContext, %??MethodContext, <_>, @SubStr(<$$Expression>, 1, $$Pos1 - 1))
-        $$RName SubStr <$$Expression>, $$Pos1 + 1
-      else
-        .err ArgReg - syntax error: $$Expression
-      endif
-
-      if TARGET_BITNESS eq 64
-        %$$SName equ $$RName
-      else
-        %$$SName SubStr <$$Expression>, 1, $$Pos1 - 1
-      endif
-    endm
+    ??CodeContext textequ @CatStr(%??ObjectContext, %??MethodContext)
   endif
+
+  for $$Expression, <ExpressionList>
+    $$Pos1 InStr <$$Expression>, <:>
+    if $$Pos1 ne 0
+      $$SymName textequ @CatStr(%??CodeContext, <_>, @SubStr(<$$Expression>, 1, $$Pos1 - 1))
+    else
+      .err ArgReg - syntax error: $$Expression
+    endif
+
+    if TARGET_BITNESS eq 64
+      %$$SymName SubStr <$$Expression>, $$Pos1 + 1
+    else
+      %$$SymName SubStr <$$Expression>, 1, $$Pos1 - 1
+    endif
+  endm
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -4364,11 +4447,19 @@ endm
 ; Purpose:    Replaces the Expression with the corresponding argument or register.
 ; Arguments:  SymbolName.
 
+;$ArgReg macro SymbolName
+;  ifb <??ObjectContext>
+;    .err $ArgReg - out of method context
+;  else
+;    exitm @CatStr(%??ObjectContext, %??MethodContext, <_>, SymbolName)
+;  endif
+;endm
+
 $ArgReg macro SymbolName
-  ifb <??ObjectContext>
-    .err $ArgReg - out of method context
+  ifb <??CodeContext>
+    .err $ArgReg - no code context
   else
-    exitm @CatStr(%??ObjectContext, %??MethodContext, <_>, SymbolName)
+    exitm @CatStr(%??CodeContext, <_>, SymbolName)
   endif
 endm
 

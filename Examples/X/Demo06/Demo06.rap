@@ -153,7 +153,7 @@ Group=Added files,Assembly,Resources,Misc,Modules,Objects,Macros
 7=00FFFFFF
 
 [Size]
-2=0,0,1914,602,192
+2=0,0,1914,602,7007
 3=0,0,1987,598,285
 1=453,0,453,706,711
 4=0,0,705,592,0
@@ -264,7 +264,7 @@ Group=Added files,Assembly,Resources,Misc,Modules,Objects,Macros
 [BreakPoint]
 0=
 [AutoLoad]
-AutoLoad=1
+AutoLoad=1,2
 [RADebugBP]
 2=459
 6=
@@ -302,7 +302,7 @@ AutoLoad=1
 5=
 30=
 [PTimer]
-PTimer=1201884967
+PTimer=1205683811
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [VersionControl]
@@ -315,7 +315,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=3
+MilestoneOnDateDate=18
 MilestoneOnDateTimeYear=2020
 MilestoneOnDateTimeMonth=1
 MilestoneOnDateTimeDate=15
@@ -339,12 +339,13 @@ ProductVer2Range=0
 ProductVer3Range=0
 ProductVer4Range=0
 [Find]
-1="szBandFrameClass"
-2="WS_BANDFRAME"
-3="BandFrame"
-4="SBSTYLE"
-5="szDemoChild06"
-6="szAppClassName"
-7="szDemoApp06"
-8="TBSTYLE"
-9="DemoApp06"
+1="Statusbar"
+2="AppStatusbar"
+3="szBandFrameClass"
+4="WS_BANDFRAME"
+5="BandFrame"
+6="SBSTYLE"
+7="szDemoChild06"
+8="szAppClassName"
+9="szDemoApp06"
+10="TBSTYLE"

@@ -29,8 +29,8 @@ DbgPostServer proc pData:POINTER, dDataSize:DWORD
   local hConnection:HINTERNET, hRequest:HINTERNET
    
   mov dResult, FALSE
-  invoke Base64Encode, pData, dDataSize
-  .if xax != 0
+  invoke Base64Encode, pData, dDataSize, NULL
+  .if xax != NULL
     mov pEncyptedData, xax
     mov dEncyptedDataSize, ecx
     invoke InternetConnectA, hDbgInternet, pDbgIpStrA, wDbgIpPort, NULL, NULL, \

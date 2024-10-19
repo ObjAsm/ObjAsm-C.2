@@ -20,28 +20,31 @@
 ;             Version 2.3.0, November 2023
 ;               - Communication via HTTP-Server added.
 ;
-;             The URL registration for Http.sys requires extended rights. 
-;             To avoid having to start DebugCenter with admin rights every time, a permanent
-;             registration can be carried out using NETSH. NETSH must be executed from a 
-;             command console with admin rights. Enter the following command in the console:
-;             netsh http add urlacl url=http://+:8080/ sddl=D:(A;;GX;;;;S-1-1-0) listen=yes delegate=no
-;             "sddl=D:(A;;GX;;;;S-1-1-0)" is the replacement for the localised EVERYONE.
-;             A registration for the currently logged in user can be done by entering:
-;             netsh http add urlacl url=http://+:8080/ user=%USERDOMAIN%\%USERNAME%
-;             The URL must be exacly the same as the used in the code!
+;                 The URL registration for Http.sys requires extended rights. 
+;                 To avoid having to start DebugCenter with admin rights every time, a permanent
+;                 registration can be carried out using NETSH. NETSH must be executed from a 
+;                 command console with admin rights. Enter the following command in the console:
+;                 netsh http add urlacl url=http://+:8080/ sddl=D:(A;;GX;;;;S-1-1-0) listen=yes delegate=no
+;                 "sddl=D:(A;;GX;;;;S-1-1-0)" is the replacement for the localised EVERYONE.
+;                 A registration for the currently logged in user can be done by entering:
+;                 netsh http add urlacl url=http://+:8080/ user=%USERDOMAIN%\%USERNAME%
+;                 The URL must be exacly the same as the used in the code!
+;
+;               - Statusbar added to CildTxt to show caret and selection information
 ; ==================================================================================================
 
 ;Wishlist:
 ;- translate some strings from Globals to resource definitions
 ;- upgrade resource definitions like OA_Tools
 ;- restore MFT_RIGHTJUSTIFY to Help item in menu bar => flashing problem in XMenu object
+;- ChildPlot idea from HSE https://masm32.com/board/index.php?topic=12321.0
 
 
 WIN32_LEAN_AND_MEAN         equ 1                       ;Necessary to exclude WinSock.inc
 INTERNET_PROTOCOL_VERSION   equ 4
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS related objects
+SysSetup OOP, WIN32, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS related objects
 
 % include &MacPath&DlgTmpl.inc                          ;Load dialog tempate support
 % include &MacPath&ConstDiv.inc
@@ -57,7 +60,6 @@ SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS r
 % include &IncPath&Windows\UxTheme.inc
 % include &IncPath&Windows\vsstyle.inc
 % include &IncPath&Windows\WinSock2.inc
-;% include &IncPath&Windows\wininet.inc
 % include &IncPath&Windows\http.inc
 
 

@@ -328,7 +328,6 @@ SysSetup macro Arguments:vararg
     % include &IncPath&UEFI\UefiGUID.inc
     % include &IncPath&UEFI\UefiUtil.inc
   endif
-;  % include &MacPath&ConstDiv.inc
 
   if TARGET_PLATFORM eq PLATFORM_WINDOWS
     if TARGET_BIN_FORMAT ne BIN_FORMAT_LIB                ;;Only load libs when target is not a lib
@@ -605,6 +604,11 @@ SysSetup macro Arguments:vararg
   % include &MacPath&Debug.inc
 
   TARGET_SUFFIX CatStr $ToStr(%TARGET_BITNESS), TARGET_STR_AFFIX
+  
+  ??ObjectContext textequ <>
+  ??MethodContext textequ <>
+  ??CodeContext textequ <>
+  _ProcName_ textequ <>
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

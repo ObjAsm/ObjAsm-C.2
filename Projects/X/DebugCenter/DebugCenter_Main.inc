@@ -252,7 +252,7 @@ Method DebugCenter.Done, uses xsi
   Destroy [xsi].pToolbarWindow
   Destroy [xsi].pXMenu
   Destroy [xsi].pMagnetism
-  
+
   OCall [xsi].Server::HttpServer.Done
 
   ACall xsi.Done
@@ -1126,7 +1126,7 @@ Method DebugCenter.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local CFD:CHARFORMAT, DCI:DBG_CHILD_INFO, dDbgCmd:DWORD, dParam1:DWORD, dParam2:DWORD, FWI:FLASHWINFO
 
   SetObject xsi
-  
+
   mov xcx, lParam
   .if [xcx].COPYDATASTRUCT.dwData == DGB_MSG_ID         ;Yes!, our message...
     mov xbx, [xcx].COPYDATASTRUCT.lpData
@@ -1340,7 +1340,7 @@ Method DebugCenter.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         .endif
 
       .elseif [xcx].DBG_HEADER_INFO.bBlockID == DBG_MSG_STR             ;Text (ANSI or WIDE)
-        m2m dParam2, [xcx].DBG_STR_INFO.dBackColor, eax                       
+        m2m dParam2, [xcx].DBG_STR_INFO.dBackColor, eax
         mov DCI.pCaption, $addr(xbx + DBG_HEADER_INFO)
         m2z DCI.pChild
         mov DCI.dObjID, DBG_MDI_CHILD_TXT_ID
@@ -1384,7 +1384,7 @@ Method DebugCenter.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         invoke SendMessage, [xdi].$Obj(DbgMdiChildTxt).hEdit, EM_SCROLLCARET, 0, 0      ;Make caret visible
 
       .elseif [xcx].DBG_HEADER_INFO.bBlockID == DBG_MSG_BMP     ;Bitmap
-        m2m dParam2, [xcx].DBG_BMP_INFO.dBackColor, eax                       
+        m2m dParam2, [xcx].DBG_BMP_INFO.dBackColor, eax
         mov DCI.pCaption, $addr(xbx + DBG_HEADER_INFO)
         m2z DCI.pChild
         mov DCI.dObjID, DBG_MDI_CHILD_BMP_ID

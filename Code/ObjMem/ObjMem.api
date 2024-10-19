@@ -612,8 +612,10 @@ CalcVarianceQW, pArray, xCount, pVariance
 CalcVarianceR4, pArray, xCount, pVariance
 CalcVarianceR8, pArray, xCount, pVariance
 
-Base64Encode, pDataBuffer, dDataSize
-Base64Decode, pDataBuffer, dDataSize
+Base32Encode, pDataBuffer, dDataSize, pAlphabet
+Base32Decode, pDataBuffer, dDataSize, pDecodeTable
+Base64Encode, pDataBuffer, dDataSize, pAlphabet
+Base64Decode, pDataBuffer, dDataSize, pDecodeTable
 
 sqqqMul, sdMultiplicandLo, sdMultiplicandHi, sdMultiplicatorLo, sdMultiplicatorHi
 sqqqDiv, sdDividendLo, sdDividendHi, sdDivisorLo, sdDivisorHi
@@ -695,5 +697,3 @@ TimeToHnsecs, pHnsecs, pTime
 HnsecsToTime, pTime, pHnsecs
 HnsecsToDate, pDate, pHnsecs
 HnsecsToDateTime, pDateTime, pHnsecs
-
-

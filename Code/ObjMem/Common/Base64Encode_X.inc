@@ -1,58 +1,69 @@
 ; ==================================================================================================
 ; Title:      Base64Encode_X.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.1.1
 ; Notes:      Version C.1.0, November 2023.
 ;               - First release.
 ;               - Bitness neutral code.
+;             Version C.1.1, October 2024
+;               - Encode alphabet added.
+;               - Bug corrections.
 ; ==================================================================================================
 
 
 % include &MacPath&ConstDiv.inc
 
+externdef BASE64_DEFAULT_ALPHABET:CHRA
+
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Base64Encode
-; Purpose:    Encode a data stream using the BASE64 algoritm.
-; Arguments:  Arg1: -> Data buffer.
-;             Arg2: Data size in BYTEs.
-; Return:     xax -> Encoded buffer. When no longer needed, it should be freed using MemFree.
-;             ecx = Encoded buffer size in BYTEs.
+; Purpose:    Encode a data stream using the BASE64 algoritm. The output stream contains ANSI
+;             characters from the passed alphabet (BASE64_DEFAULT_ALPHABET, BASE64_URL_ALPHABET)
+; Arguments:  Arg1: -> Input data buffer.
+;             Arg2: Input data size in BYTEs.
+;             Arg3: Character alphabet used to encode the data. If NULL, BASE64_DEFAULT_ALPHABET
+;                   is used. BASE64_URL_ALPHABET can be used to encode URL content.
+; Return:     xax -> Encoded data. When no longer needed, it should be released using MemFree.
+;             ecx = Encoded data size in BYTEs. Always a multiple of 4.
 ; Links:      https://en.wikipedia.org/wiki/Base64
 ;             https://datatracker.ietf.org/doc/html/rfc4648
+; Note:       No ZTC is added to the encoded buffer.
 ;
 ; Layout:
 ;                    ———————————————————————————————————————————————
-; Remaninder = 2    |   A   |   B   |   C   |   D   |   E   |XXXXXXX|   Data (X: don't touch)
-;                   |———————————————————————————————————————————————|
-; 6R2               |  Q  |  U  |  J  |  D  |  R  |  E  |  U  |  =  |   Digits (= means 3Dh)
-;                    ———————————————————————————————————————————————
-;                    ———————————————————————————————————————————————
-; Remaninder = 1    |   A   |   B   |   C   |   D   |XXXXXXX|XXXXXXX|
-;                   |———————————————————————————————————————————————|
-; 5R1               |  Q  |  U  |  J  |  D  |  R  |  A  |  =  |  =  |
-;                    ———————————————————————————————————————————————
-;                    ———————————————————————————————————————————————
 ; Remaninder = 0    |   A   |   B   |   C   |   D   |   E   |   F   |
 ;                   |———————————————————————————————————————————————|
-; 8R0               |  Q  |  U  |  J  |  D  |  R  |  E  |  V  |  G  |
+; 8R0               |  a  |  b  |  c  |  d  |  e  |  f  |  g  |  h  |
+;                    ———————————————————————————————————————————————
+;                    ———————————————————————————————————————————————
+; Remaninder = 4    |   A   |   B   |   C   |   D   |   E   |XXXXXXX|   Data (X: don't touched BYTE)
+;                   |———————————————————————————————————————————————|
+; 6R4               |  a  |  b  |  c  |  d  |  e  |  f  |  g  |  =  |   Output chars ('=' padding)
+;                    ———————————————————————————————————————————————
+;                    ———————————————————————————————————————————————
+; Remaninder = 2    |   A   |   B   |   C   |   D   |XXXXXXX|XXXXXXX|
+;                   |———————————————————————————————————————————————|
+; 5R2               |  a  |  b  |  c  |  d  |  e  |  f  |  =  |  =  |
 ;                    ———————————————————————————————————————————————
 
-.const
-BASE64_CHARS CHRA "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+BASE64_PADDING  equ '='
 
 .code
 align ALIGN_CODE
-Base64Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD
-  local pEncodedDataBuffer:POINTER, dEncodedDataSize:DWORD, dRemainder:DWORD
+Base64Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphabet:POINTER
+  _ProcName_ textequ <Base64Encode>
+  ArgReg pDataBuffer:xcx, dDataSize:edx
+  LocReg pEncodedDataBuffer:r10
+  local dEncodedDataSize:DWORD
 
   mov dEncodedDataSize, 0
-  mov pEncodedDataBuffer, NULL
-  mov eax, dDataSize
-  .if eax != 0 && pDataBuffer != NULL
+  mov $LocReg(pEncodedDataBuffer), NULL
+  mov eax, $ArgReg(dDataSize)
+  mov xsi, $ArgReg(pDataBuffer)
+  .if eax != 0 && xsi != NULL
     shl eax, 2
     cDivMod 3
-    mov ebx, eax                                ;ebx always > 0
-    mov dRemainder, edx
+    mov ebx, eax                                        ;ebx always > 0, edx rem from division by 3!
     add eax, edx
     .if edx == 1
       add eax, 2
@@ -60,10 +71,12 @@ Base64Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD
     mov dEncodedDataSize, eax
     MemAlloc eax
     .if xax
-      mov pEncodedDataBuffer, xax
-      mov xsi, pDataBuffer
+      mov xcx, pAlphabet
+      mov $LocReg(pEncodedDataBuffer), xax
+      test xcx, xcx
+      lea xdx, BASE64_DEFAULT_ALPHABET
       mov xdi, xax
-      mov xcx, offset BASE64_CHARS
+      cmovz xcx, xdx
       .while TRUE
         movzx eax, CHRA ptr [xsi]
         mov edx, eax
@@ -72,7 +85,7 @@ Base64Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD
         stosb
         dec ebx
         jz @@Remainder_1
-  
+
         inc xsi
         movzx eax, CHRA ptr [xsi]
         mov ah, dl
@@ -82,7 +95,7 @@ Base64Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD
         stosb
         dec ebx
         jz @@Remainder_2
-  
+
         movzx eax, DCHRA ptr [xsi]
         xchg al, ah
         mov edx, eax
@@ -96,27 +109,28 @@ Base64Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD
         sub ebx, 2
         jz @@Exit
       .endw
-  
+
     @@Remainder_1:
       shl edx, 4
-      and edx, 0111111b
+      and edx, 0110000b
       mov al, [xcx + xdx]
       stosb
-      mov DCHRA ptr [xdi], '=='                         ;Padding
-      jmp @@Exit
+      mov ax, BASE64_PADDING shl 8 + BASE64_PADDING     ;"==" Padding
+      jmp @@Quit
     @@Remainder_2:
       xor edx, edx
       mov dh, CHRA ptr [xsi]
       shr edx, 6
-      mov ah, '='                                       ;Padding
-      and edx, 0111111b
+      mov ah, BASE64_PADDING                            ;"=" Padding
+      and edx, 0111100b
       mov al, [xcx + xdx]
-      mov [xdi], ax
+    @@Quit:
+      stosw
     .endif
   .endif
 
 @@Exit:
-  mov xax, pEncodedDataBuffer
+  mov xax, $LocReg(pEncodedDataBuffer)
   mov ecx, dEncodedDataSize
   ret
 Base64Encode endp

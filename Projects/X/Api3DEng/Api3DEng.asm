@@ -39,6 +39,7 @@ start proc
   SysInit
 
   ResGuard_Start
+  fSetPrecision REAL4
   OCall $ObjTmpl(Api3DEngApp)::Api3DEngApp.Init
   OCall $ObjTmpl(Api3DEngApp)::Api3DEngApp.Run
   OCall $ObjTmpl(Api3DEngApp)::Api3DEngApp.Done

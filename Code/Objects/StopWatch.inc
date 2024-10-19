@@ -28,13 +28,14 @@ SWS_RUNNING    equ    1
 ;
 ;  New SW::StopWatch
 ;  OCall SW::StopWatch.Init, NULL
-;  s2s SW.r8Resolution, $CReal8(1000.0), xax, xcx
+;  s2s SW.r8Resolution, $CReal8(1000.0), xax, xcx   ;miliseconds
 ;  OCall SW::StopWatch.Start
 ;  ...
 ;  OCall SW::StopWatch.Stop
 ;  OCall SW::StopWatch.GetTime
 ;  lea xdi, cBuffer
 ;  WriteF xdi, "Runtime = ¦UX ms", xax
+;  OCall SW::StopWatch.Done
 
 Object StopWatch, StopWatchID, Primer
   VirtualMethod     GetTime

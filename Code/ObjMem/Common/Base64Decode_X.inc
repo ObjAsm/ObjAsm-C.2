@@ -1,91 +1,90 @@
 ; ==================================================================================================
 ; Title:      Base64Encode_X.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.1.1
 ; Notes:      Version C.1.0, November 2023.
 ;               - First release.
 ;               - Bitness neutral code.
+;             Version C.1.1, October 2024
+;               - Decode table added.
+;               - Bug corrections.
 ; ==================================================================================================
 
+
+externdef BASE64_DEFAULT_DECODE_TABLE:BYTE
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Base64Decode
 ; Purpose:    Decode a data stream using the BASE64 algoritm.
 ; Arguments:  Arg1: -> Encoded data buffer.
 ;             Arg2: Encoded data size in BYTEs (always a multiple of 4).
-; Return:     xax -> Decoded buffer. When no longer needed, it should be freed using MemFree.
-;             ecx = Decoded buffer size in BYTEs.
+;             Arg3: Decode table. If NULL, BASE64_DEFAULT_DECODE_TABLE is used.
+;                   BASE64_URL_DECODE_TABLE can be used to decode URL content.
+; Return:     xax -> Decoded data. When no longer needed, it should be freed using MemFree.
+;             ecx = Decoded data size in BYTEs.
+;             On error, xax and ecx are zero.
 ; Links:      https://en.wikipedia.org/wiki/Base64
 ;             https://datatracker.ietf.org/doc/html/rfc4648
 ;
 ; Layout:
 ;                    ———————————————————————————————————————————————
-;                   |  Q  |  U  |  J  |  D  |  R  |  E  |  U  |  =  |   Digits (= means 3Dh)
-;                   |———————————————————————————————————————————————|
-;                   |   A   |   B   |   C   |   D   |   E   |XXXXXXX|
-;                    ———————————————————————————————————————————————
-;                    ———————————————————————————————————————————————
-;                   |  Q  |  U  |  J  |  D  |  R  |  A  |  =  |  =  |
-;                   |———————————————————————————————————————————————|
-;                   |   A   |   B   |   C   |   D   |XXXXXXX|XXXXXXX|
-;                    ———————————————————————————————————————————————
-;                    ———————————————————————————————————————————————
-;                   |  Q  |  U  |  J  |  D  |  R  |  E  |  V  |  G  |
+;                   |  a  |  b  |  c  |  d  |  e  |  f  |  g  |  h  |
 ;                   |———————————————————————————————————————————————|
 ;                   |   A   |   B   |   C   |   D   |   E   |   F   |
 ;                    ———————————————————————————————————————————————
+;                    ———————————————————————————————————————————————
+;                   |  a  |  b  |  c  |  d  |  e  |  f  |  g  |  =  |   Input chars (= means 3Dh)
+;                   |———————————————————————————————————————————————
+;                   |   A   |   B   |   C   |   D   |   E   |           Output data
+;                    ———————————————————————————————————————
+;                    ———————————————————————————————————————————————
+;                   |  a  |  b  |  c  |  d  |  e  |  f  |  =  |  =  |
+;                   |———————————————————————————————————————————————
+;                   |   A   |   B   |   C   |   D   |
+;                    ———————————————————————————————
 
-.const
-BASE64_DECODE_TABLE label BYTE
-  ;  NUL SOH STX ETX EDT ENQ ACK BEL  BS TAB  LF  VF  FF  CR  SO  SI
-  db 000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000
-  ;  DLE DC1 DC2 DC3 DC4 NAK SYN ETB CAN BM  SUB ESC FS  GS  RS  US
-  db 000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000
-  ;  SPC   !   "   #   $   %   &   '   (   )   *   +   ,   -   .   /
-  db 000,000,000,000,000,000,000,000,000,000,000,062,000,000,000,063  ;+,/
-  ;    0   1   2   3   4   5   6   7   8   9   :   ;   <   =   >   ?
-  db 052,053,054,055,056,057,058,059,060,061,000,000,000,000,000,000  ;0..9
-  ;    @   A   B   C   D   E   F   G   H   I   J   K   L   M   N   O
-  db 000,000,001,002,003,004,005,006,007,008,009,010,011,012,013,014  ;A..O
-  ;    P   Q   R   S   T   U   V   W   X   Y   Z   [   \   ]   ^   _
-  db 015,016,017,018,019,020,021,022,023,024,025,000,000,000,000,000  ;P..Z
-  ;    `   a   b   c   d   e   f   g   h   i   j   k   l   m   n   o
-  db 000,026,027,028,029,030,031,032,033,034,035,036,037,038,039,040  ;a..o
-  ;    p   q   r   s   t   u   v   w   x   y   z   {   |   }   ~
-  db 041,042,043,044,045,046,047,048,049,050,051,000,000,000,000,000  ;p..z
-  db 000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000
-  db 000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000
-  db 000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000
-  db 000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000
-  db 000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000
-  db 000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000
-  db 000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000
-  db 000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000
+BASE64_PADDING  equ '='
 
 B64GetCharInto macro Reg32:req
   movzx Reg32, CHRA ptr [xsi]
-  movzx Reg32, BYTE ptr [$SubReg(Reg32, @WordSize)  + xbx]
+  movzx Reg32, BYTE ptr [$SubReg(Reg32, @WordSize) + xbx]
+  cmp Reg32, 255                                        ;Valid alphabet character?
+  jz @@Error
+endm
+
+B64GetChar2Into macro Reg32:req
+  movzx Reg32, CHRA ptr [xsi]
+  .break .if Reg32 == BASE64_PADDING                    ;Padding character?
+  movzx Reg32, BYTE ptr [$SubReg(Reg32, @WordSize) + xbx]
+  cmp Reg32, 255                                        ;Valid alphabet character?
+  jz @@Error
 endm
 
 .code
 align ALIGN_CODE
-Base64Decode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD
-  local pDecodedDataBuffer:POINTER, dDecodedDataSize:DWORD, dCount:DWORD
+Base64Decode proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, pDecodeTable:POINTER
+  local pDecodedDataBuffer:POINTER, dDecodedDataSize:DWORD
+  _ProcName_ textequ <Base64Decode>
+  ArgReg pEncDataBuffer:xcx, dEncDataSize:edx, pDecodeTable:R8
+  LocReg dCount:r10d
 
   mov dDecodedDataSize, 0
   mov pDecodedDataBuffer, NULL
-  mov eax, dDataSize
-  .if eax != 0 && pDataBuffer != NULL
+  mov eax, $ArgReg(dEncDataSize)
+  mov xsi, $ArgReg(pEncDataBuffer)
+  .if eax != 0 && xsi != NULL
     lea eax, [2*eax + eax]
     shr eax, 2
     mov dDecodedDataSize, eax
-    mov dCount, eax
-    lea xbx, BASE64_DECODE_TABLE
+    mov $LocReg(dCount), eax
+    mov xbx, $ArgReg(pDecodeTable)
     MemAlloc eax
     .if xax
       mov pDecodedDataBuffer, xax
-      mov xsi, pDataBuffer
+      test xbx, xbx
+      lea xdx, BASE64_DEFAULT_DECODE_TABLE
       mov xdi, xax
+      cmovz xbx, xdx
       .while TRUE
         B64GetCharInto edx
         inc xsi
@@ -95,37 +94,39 @@ Base64Decode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD
         shr eax, 4
         or eax, edx
         stosb
-        
+        dec $LocReg(dCount)
+
         inc xsi
-        B64GetCharInto eax
+        B64GetChar2Into eax
         mov edx, eax
-        and ecx, 1111b 
+        and ecx, 1111b
         shl ecx, 4
         shr eax, 2
         or eax, ecx
         stosb
-        
+        dec $LocReg(dCount)
+
         inc xsi
-        B64GetCharInto eax
+        B64GetChar2Into eax
         mov ecx, eax
         shl edx, 6
         or eax, edx
         stosb
-        sub dCount, 3
+        dec $LocReg(dCount)
         .break .if ZERO?
         inc xsi
       .endw
     .endif
   .endif
 
-  .if ecx == -4
-    dec dDecodedDataSize
-    .if CHRA ptr [xsi - 1] == '='
-      dec dDecodedDataSize
-    .endif
-  .endif
-
-  mov xax, pDecodedDataBuffer
   mov ecx, dDecodedDataSize
+  sub ecx, $LocReg(dCount)
+  mov xax, pDecodedDataBuffer
+  ret
+
+@@Error:
+  MemFree pDecodedDataBuffer
+  xor eax, eax
+  xor ecx, ecx
   ret
 Base64Decode endp

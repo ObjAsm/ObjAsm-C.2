@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-externdef HexCharTableW:WORD
+externdef HexCharTableW:CHRW
 
 .const
 align ALIGN_DATA

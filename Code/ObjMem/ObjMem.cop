@@ -23,3 +23,8 @@ else
   TARGET_BITNESS equ 64
   TARGET_SUFFIX CatStr <64>, TARGET_STR_AFFIX
 endif
+
+??ObjectContext textequ <>
+??MethodContext textequ <>
+??CodeContext textequ <>
+_ProcName_ textequ <>

@@ -1710,8 +1710,19 @@ CalcVarianceQW    proto :POINTER, :XWORD, :POINTER
 CalcVarianceR4    proto :POINTER, :XWORD, :POINTER
 CalcVarianceR8    proto :POINTER, :XWORD, :POINTER
 
-Base64Encode  proto :POINTER, :DWORD
-Base64Decode  proto :POINTER, :DWORD
+externdef BASE32_DEFAULT_ALPHABET:CHRA
+externdef BASE32_DEFAULT_DECODE_TABLE:BYTE
+externdef BASE32_HEX_ALPHABET:CHRA
+externdef BASE32_HEX_DECODE_TABLE:BYTE
+externdef BASE64_DEFAULT_ALPHABET:CHRA
+externdef BASE64_DEFAULT_DECODE_TABLE:BYTE
+externdef BASE64_URL_ALPHABET:CHRA
+externdef BASE64_URL_DECODE_TABLE:BYTE
+
+Base32Encode  proto :POINTER, :DWORD, :POINTER
+Base32Decode  proto :POINTER, :DWORD, :POINTER
+Base64Encode  proto :POINTER, :DWORD, :POINTER
+Base64Decode  proto :POINTER, :DWORD, :POINTER
 
 _chkstk proto c
 _alloca_probe_8 proto c

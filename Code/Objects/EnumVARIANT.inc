@@ -13,7 +13,7 @@ externdef IID_IEnumVARIANT:GUID      ;{00020404-0000-0000-C000-000000000046}
 ; Object:     IEnumVARIANT
 ; Purpose:    Implements a COM IEnumVARIANT interface object.
 
-Object  IEnumVARIANT, IEnumVARIANTID, IUnknown
+Object IEnumVARIANT, IEnumVARIANTID, IUnknown
   InterfaceMethod    Next,          DWORD, POINTER, POINTER
   InterfaceMethod    Skip,          DWORD
   InterfaceMethod    Reset
