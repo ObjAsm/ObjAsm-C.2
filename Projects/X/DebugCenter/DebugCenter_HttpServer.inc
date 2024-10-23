@@ -319,6 +319,8 @@ Method HttpServer.HandlePostRequest, uses xbx xdi xsi, pRequest:PHTTP_REQUEST
             mov CDS.lpData, xax
             mov CDS.cbData, ecx
             mov xcx, [xsi].pOwner
+
+            ;Reuse the existing WM_COPYDATA code
             invoke SendMessage, [xcx].$Obj(Window).hWnd, WM_COPYDATA, -1, addr CDS
             MemFree xbx
           .endif

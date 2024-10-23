@@ -178,7 +178,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=11
+MilestoneOnDateDate=21
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -213,9 +213,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,21058
-3=0,0,0,0,0
-1=0,0,1840,631,1001
+2=0,0,0,0,28733
+3=0,0,0,0,889
+1=0,0,1840,631,259
 4=0,0,0,0,2764
 1001=0,0,0,0,460
 5=0,0,0,0,0
@@ -283,16 +283,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="OnPaint"
-2="OnCreate"
-3="ChartDef"
+1="DATAPOINTS"
+2="$CFloat"
+3="OnMouseWheel"
 4="Chart"
-5="cFloatMin"
-6=".Scan"
-7="OnSize"
-8="TabCtrl"
-9="ChartXYSeries.Draw"
-10="DWORD2HEX_MAX_CHARS"
+5="ChartDef"
+6="OnPaint"
+7="OnCreate"
+8="cFloatMin"
+9=".Scan"
+10="OnSize"
 [Collapse]
 1=
 8=
@@ -342,7 +342,7 @@ ProductVer4Range=0
 40=
 38=
 [AutoLoad]
-AutoLoad=50,7,2,49,34,1,4
+AutoLoad=1,2,50,7,49,34,3
 [RADebugBP]
 2=
 5=
@@ -383,6 +383,6 @@ AutoLoad=50,7,2,49,34,1,4
 27=
 50=
 [PTimer]
-PTimer=1680740455
+PTimer=1684043924
 [GroupExpand]
 GroupExpand=0,1,1,1,0,1,1,0

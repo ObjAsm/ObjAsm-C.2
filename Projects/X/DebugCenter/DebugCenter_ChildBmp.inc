@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-CStr szDbgMdiChildBmpClass, "OAC_DbgMdiChildBmp"                         ;Debug Window Child Textoutput
+CStr szDbgMdiChildBmpClass, "OAC_DbgMdiChildBmp"                         ;Debug Window Child
 
 Object DbgMdiChildBmp, DBG_MDI_CHILD_BMP_ID, DbgMdiChild
   RedefineMethod    ClpBrdClear
@@ -22,6 +22,7 @@ Object DbgMdiChildBmp, DBG_MDI_CHILD_BMP_ID, DbgMdiChild
   RedefineMethod    SaveAs,           PSTRING, PSTRING          ;-> Filter, -> Def. extension
   RedefineMethod    SaveTo,           PSTRING
   VirtualMethod     SetBitmap,        POINTER                   ;-> BbgBmpInfo
+  RedefineMethod    UpdateStatusbar
   RedefineMethod    ZoomIn
   RedefineMethod    ZoomOut
   StaticMethod      Startup
@@ -112,6 +113,7 @@ Method DbgMdiChildBmp.ClpBrdCut, uses xsi
     invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE or RDW_ERASE
   .endif
   ACall xsi.ClpBrdCut
+  OCall xsi.UpdateStatusbar
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -137,6 +139,7 @@ Method DbgMdiChildBmp.ClpBrdPaste, uses xsi
   invoke CloseClipboard
   invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE or RDW_ERASE
   ACall xsi.ClpBrdPaste
+  OCall xsi.UpdateStatusbar
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -151,9 +154,9 @@ Method DbgMdiChildBmp.ClpBrdSetBtns, uses xbx xdi xsi
   SetObject xsi
   mov xcx, [xsi].pOwner
   mov xdi, [xcx].$Obj(DbgMdiClient).pOwner
-  mov hMenu, $invoke(GetMenu, [xdi].$Obj(DebugCenter).hWnd) ;Get the current menu
+  mov hMenu, $invoke(GetMenu, [xdi].$Obj(Application).hWnd) ;Get the current menu
   .if [xsi].pBmp == NULL
-    mov xbx, [xdi].$Obj(DebugCenter).pToolbarEdit
+    mov xbx, [xdi].$Obj(Application).pToolbarEdit
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, FALSE
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, FALSE
     mov xbx, hMenu
@@ -162,14 +165,14 @@ Method DbgMdiChildBmp.ClpBrdSetBtns, uses xbx xdi xsi
     invoke EnableMenuItem, xbx, IDM_EDIT_CLEAR, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_ERASE, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_CALC, MF_BYCOMMAND or MF_GRAYED
-    mov xbx, $ObjTmpl(DebugCenter).hMenuContext
+    mov xbx, $ObjTmpl(Application).hMenuContext
     invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_CLEAR, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_ERASE, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_CALC, MF_BYCOMMAND or MF_GRAYED
   .else
-    mov xbx, [xdi].$Obj(DebugCenter).pToolbarEdit
+    mov xbx, [xdi].$Obj(Application).pToolbarEdit
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, TRUE
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, TRUE
     mov xbx, hMenu
@@ -178,7 +181,7 @@ Method DbgMdiChildBmp.ClpBrdSetBtns, uses xbx xdi xsi
     invoke EnableMenuItem, xbx, IDM_EDIT_CLEAR, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_ERASE, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_CALC, MF_BYCOMMAND or MF_GRAYED
-    mov xbx, $ObjTmpl(DebugCenter).hMenuContext
+    mov xbx, $ObjTmpl(Application).hMenuContext
     invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_CLEAR, MF_BYCOMMAND or MF_ENABLED
@@ -191,7 +194,7 @@ Method DbgMdiChildBmp.ClpBrdSetBtns, uses xbx xdi xsi
     dec dActivate
   .endif
 
-  mov xbx, [xdi].$Obj(DebugCenter).pToolbarEdit
+  mov xbx, [xdi].$Obj(Application).pToolbarEdit
   invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_PASTE, dActivate
   .if dActivate
     mov edi, MF_BYCOMMAND or MF_ENABLED
@@ -199,7 +202,7 @@ Method DbgMdiChildBmp.ClpBrdSetBtns, uses xbx xdi xsi
     mov edi, MF_BYCOMMAND or MF_GRAYED
   .endif
   invoke EnableMenuItem, hMenu, IDM_EDIT_PASTE, edi
-  invoke EnableMenuItem, $ObjTmpl(DebugCenter).hMenuContext, IDM_EDIT_PASTE, edi
+  invoke EnableMenuItem, $ObjTmpl(Application).hMenuContext, IDM_EDIT_PASTE, edi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -224,6 +227,7 @@ MethodEnd
 
 Method DbgMdiChildBmp.Erase
   OCall ClpBrdClear
+  OCall UpdateStatusbar
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -240,7 +244,7 @@ Method DbgMdiChildBmp.Init, uses xbx xdi xsi, pOwner:POINTER, pTitle:PSTRING, dB
   SetObject xsi
   ACall xsi.Init, pOwner, NULL                          ;hWnd is set in WndProc
   m2m [xsi].dBackColor, dBackColor, ecx
-  m2m [xsi].dZoomFactor, $ObjTmpl(DebugCenter).dTxtZoomFactor, eax
+  m2m [xsi].dZoomFactor, $ObjTmpl(Application).dTxtZoomFactor, eax
   mov xdi, pOwner
   invoke CreateMDIWindow, offset szDbgMdiChildBmpClass, pTitle, \
              WS_HSCROLL or WS_VSCROLL, CW_USEDEFAULT, CW_USEDEFAULT, \
@@ -250,12 +254,12 @@ Method DbgMdiChildBmp.Init, uses xbx xdi xsi, pOwner:POINTER, pTitle:PSTRING, dB
     inc [xdi].$Obj(DbgMdiClient).dChildCount
     mov xbx, [xdi].$Obj(DbgMdiClient).pOwner
     .if [xdi].$Obj(DbgMdiClient).dChildCount == 1       ;First child window ?
-      invoke SendMessage, [xbx].$Obj(DebugCenter).hWnd, WM_CANCELMODE, 0, 0   ;Close any opened submenu
+      invoke SendMessage, [xbx].$Obj(Application).hWnd, WM_CANCELMODE, 0, 0   ;Close any opened submenu
       invoke SendMessage, [xdi].$Obj(DbgMdiClient).hWnd, WM_MDISETMENU, \
-                          [xbx].$Obj(DebugCenter).hMenuChild, [xbx].$Obj(DebugCenter).hMenuChildWnd
-      OCall xbx::DebugCenter.EnableActions, TRUE
+                          [xbx].$Obj(Application).hMenuChild, [xbx].$Obj(Application).hMenuChildWnd
+      OCall xbx::Application.EnableActions, TRUE
       invoke DrawMenuBar, [xbx].$Obj(MdiApp).hWnd             ;Redraw the new menu bar
-      OCall xbx::DebugCenter.ManageOptions, DBG_MDI_CHILD_BMP_ID
+      OCall xbx::Application.ManageOptions, DBG_MDI_CHILD_BMP_ID
     .endif
 
     ;Install Magnetism
@@ -264,10 +268,10 @@ Method DbgMdiChildBmp.Init, uses xbx xdi xsi, pOwner:POINTER, pTitle:PSTRING, dB
 
     invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
   .else
-    mov edx, $ObjTmpl(DebugCenter).dLanguage
+    mov edx, $ObjTmpl(Application).dLanguage
     add edx, 125
     invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
-    invoke MessageBox, [xbx].$Obj(DebugCenter).hWnd, addr cMsg, offset szError, \
+    invoke MessageBox, [xbx].$Obj(Application).hWnd, addr cMsg, offset szError, \
                        MB_OK or MB_ICONERROR
   .endif
 MethodEnd
@@ -572,9 +576,9 @@ Method DbgMdiChildBmp.OnRButtonUp,, wParam:WPARAM, lParam:LPARAM
   local Pnt:POINT
 
   invoke GetCursorPos, addr Pnt
-  invoke GetSubMenu, $ObjTmpl(DebugCenter).hMenuContext, 0
-  invoke TrackPopupMenu, xax, TPM_LEFTALIGN, Pnt.x, Pnt.y, 0, $ObjTmpl(DebugCenter).hWnd, NULL
-  invoke PostMessage, $ObjTmpl(DebugCenter).hWnd, WM_NULL, 0, 0
+  invoke GetSubMenu, $ObjTmpl(Application).hMenuContext, 0
+  invoke TrackPopupMenu, xax, TPM_LEFTALIGN, Pnt.x, Pnt.y, 0, $ObjTmpl(Application).hWnd, NULL
+  invoke PostMessage, $ObjTmpl(Application).hWnd, WM_NULL, 0, 0
   xor eax, eax
 MethodEnd
 
@@ -691,20 +695,20 @@ Method DbgMdiChildBmp.Open, uses xbx xdi xsi, pFileName:PSTRING
           jmp @@Error
         .endif
       .else
-        mov edx, $ObjTmpl(DebugCenter).dLanguage
+        mov edx, $ObjTmpl(Application).dLanguage
         add edx, 126
         invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
         invoke MessageBox, [xsi].hWnd, addr cMsg, offset szDebugCenter, MB_OK or MB_ICONERROR
       .endif
     .else
-      mov edx, $ObjTmpl(DebugCenter).dLanguage
+      mov edx, $ObjTmpl(Application).dLanguage
       add edx, 123
       invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
       invoke MessageBox, [xsi].hWnd, addr cMsg, offset szDebugCenter, MB_OK or MB_ICONERROR
     .endif
   .else
 @@Error:
-    mov edx, $ObjTmpl(DebugCenter).dLanguage
+    mov edx, $ObjTmpl(Application).dLanguage
     add edx, 121
     invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
     invoke MessageBox, [xsi].hWnd, addr cMsg, offset szDebugCenter, \
@@ -734,8 +738,8 @@ Method DbgMdiChildBmp.Print, uses xbx xdi xsi
   m2m PrtDlg.hwndOwner, [xsi].hWnd, xax
   mov xdx, [xsi].pOwner
   mov xbx, [xdx].$Obj(DbgMdiClient).pOwner
-  m2m PrtDlg.hDevMode, [xbx].$Obj(DebugCenter).hDevMode, xax
-  m2m PrtDlg.hDevNames, [xbx].$Obj(DebugCenter).hDevNames, xcx
+  m2m PrtDlg.hDevMode, [xbx].$Obj(Application).hDevMode, xax
+  m2m PrtDlg.hDevNames, [xbx].$Obj(Application).hDevNames, xcx
   m2z PrtDlg.hDC
   mov PrtDlg.Flags, PD_NOSELECTION or PD_RETURNDC
   m2z PrtDlg.nFromPage
@@ -753,8 +757,8 @@ Method DbgMdiChildBmp.Print, uses xbx xdi xsi
   m2z PrtDlg.hSetupTemplate
 
   .if $invoke(PrintDlg, addr PrtDlg)
-    m2m [xbx].$Obj(DebugCenter).hDevMode, PrtDlg.hDevMode, xax
-    m2m [xbx].$Obj(DebugCenter).hDevNames, PrtDlg.hDevNames, xcx
+    m2m [xbx].$Obj(Application).hDevMode, PrtDlg.hDevMode, xax
+    m2m [xbx].$Obj(Application).hDevNames, PrtDlg.hDevNames, xcx
     .ifBitSet $invoke(GetDeviceCaps, PrtDlg.hDC, RASTERCAPS), RC_BITBLT
       mov DocInfo.cbSize, sizeof(DocInfo)
       m2m DocInfo.lpszDocName, offset szDebugCenter, xax
@@ -771,20 +775,20 @@ Method DbgMdiChildBmp.Print, uses xbx xdi xsi
 
       ;Set paper margins using the Viewport
       invoke SetMapMode, PrtDlg.hDC, MM_ISOTROPIC
-      invoke MulDiv, [xbx].$Obj(DebugCenter).PrintMargin.left, LogPix.x, 2540
+      invoke MulDiv, [xbx].$Obj(Application).PrintMargin.left, LogPix.x, 2540
       sub eax, PageOffset.x
       mov edi, eax
-      invoke MulDiv, [xbx].$Obj(DebugCenter).PrintMargin.top, LogPix.y, 2540
+      invoke MulDiv, [xbx].$Obj(Application).PrintMargin.top, LogPix.y, 2540
       sub eax, PageOffset.y
       invoke SetViewportOrgEx, PrtDlg.hDC, edi, eax, NULL
 
-      mov eax, [xbx].$Obj(DebugCenter).PrintMargin.left
-      add eax, [xbx].$Obj(DebugCenter).PrintMargin.right
+      mov eax, [xbx].$Obj(Application).PrintMargin.left
+      add eax, [xbx].$Obj(Application).PrintMargin.right
       invoke MulDiv, eax, LogPix.x, -2540
       add eax, Pagrsize.x
       mov PrintSize.x, eax
-      mov eax, [xbx].$Obj(DebugCenter).PrintMargin.top
-      add eax, [xbx].$Obj(DebugCenter).PrintMargin.bottom
+      mov eax, [xbx].$Obj(Application).PrintMargin.top
+      add eax, [xbx].$Obj(Application).PrintMargin.bottom
       invoke MulDiv, eax, LogPix.y, -2540
       add eax, Pagrsize.y
       mov PrintSize.y, eax
@@ -808,7 +812,7 @@ Method DbgMdiChildBmp.Print, uses xbx xdi xsi
       invoke EndDoc, PrtDlg.hDC
       invoke DeleteDC, PrtDlg.hDC
     .else
-      mov edx, $ObjTmpl(DebugCenter).dLanguage
+      mov edx, $ObjTmpl(Application).dLanguage
       add edx, 124
       invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
       invoke MessageBox, [xsi].hWnd, addr cMsg, offset szDebugCenter, MB_OK or MB_ICONERROR
@@ -905,6 +909,40 @@ Method DbgMdiChildBmp.Startup
   mov WC.hCursor, $invoke(LoadCursor, 0, IDC_ARROW)
 
   invoke RegisterClassEx, addr WC
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     DbgMdiChildBmp.UpdateStatusbar
+; Purpose:    Draw new information on the Statusbar.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method DbgMdiChildBmp.UpdateStatusbar, uses xbx xdi xsi
+  local cTextBuffer[1024]:CHR, wResText[1024]:CHRW, dWidth:DWORD, dHeight:DWORD
+
+;  DbgText "DbgMdiChildBmp.UpdateStatusbar"
+  SetObject xsi
+  mov xcx, [xsi].pOwner
+  mov xbx, [xcx].$Obj(DbgMdiClient).pOwner
+
+  .if [xsi].pBmp != NULL
+    mov xcx, [xsi].pBmp
+    m2m dWidth, [xcx].BITMAPINFO.bmiHeader.biWidth, eax
+    m2m dHeight, [xcx].BITMAPINFO.bmiHeader.biHeight, eax
+    lea xdi, cTextBuffer
+    mov edx, [xbx].$Obj(Application).dLanguage
+    add edx, 150                                        ;"Bitmap size"
+    invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+    WriteF xdi, "¦SU: ¦UD x ¦UD ", addr wResText, dWidth, dHeight
+    mov edx, [xbx].$Obj(Application).dLanguage
+    add edx, 151                                        ;"pixel"
+    invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+    WriteF xdi, "¦SU", addr wResText
+    OCall [xbx].$Obj(Application).pStatusbar::Statusbar.SetPartText, 1, addr cTextBuffer, SBT_SUNKEN
+  .else
+    OCall [xbx].$Obj(Application).pStatusbar::Statusbar.SetPartText, 1, NULL, SBT_SUNKEN
+  .endif
+  OCall [xbx].$Obj(Application).pStatusbar::Statusbar.SetPartText, 2, NULL, SBT_SUNKEN
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

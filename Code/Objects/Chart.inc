@@ -129,7 +129,7 @@ CHT_SCALE_BASIC_DATA struc
   dGridMjrLineStyle DWORD       PS_DASH
   dGridMnrLineSize  DWORD       1
   dGridMnrLineStyle DWORD       PS_DASH
-  CHT_SCALE_STRINGS             {}
+  CHT_SCALE_STRINGS             {NULL, NULL}
 CHT_SCALE_BASIC_DATA ends
 PCHT_SCALE_BASIC_DATA typedef ptr CHT_SCALE_BASIC_DATA
 

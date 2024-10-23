@@ -17,10 +17,10 @@ else
 endif
 
 ;Don't change the order of the next 3 string allocations
-CStr szLoadFilter,      "Debug Center files (*.rtf, *.bmp)", 0, "*.rtf", 3Bh, "*.bmp", 0, \
-                        "Rich Text Format files (*.rtf)", 0, "*.rtf"
-CStr szBmpFilter,       "Bitmap files (*.bmp)", 0, "*.bmp", 0
-CStr szRtfFilter,       "Rich Text Format files (*.rtf)", 0, "*.rtf", 0
+CStr szLoadFilter,      "Debug Center (*.rtf, *.bmp)", 0, "*.rtf", 3Bh, "*.bmp", 0, \
+                        "Rich Text (*.rtf)", 0, "*.rtf"
+CStr szBmpFilter,       "Bitmap (*.bmp)", 0, "*.bmp", 0
+CStr szRtfFilter,       "Rich Text (*.rtf)", 0, "*.rtf", 0
 
 CStr szRtfExt,          ".rtf"
 CStr szBmpExt,          ".bmp"
@@ -67,47 +67,48 @@ DEBUG_CENTER_ID         equ     10000
 DBG_MDI_CLIENT_ID       equ     10001
 DBG_MDI_CHILD_ID        equ     10002
 DBG_MDI_CHILD_BMP_ID    equ     10003
-DBG_MDI_CHILD_TXT_ID    equ     10004
-REDT_IPTOR_ID           equ     10005
+DBG_MDI_CHILD_CHT_ID    equ     10004
+DBG_MDI_CHILD_TXT_ID    equ     10005
+REDT_IPTOR_ID           equ     10006
 
 ;Bitmap IDs
 IDB_APP                 equ     000
 IDB_APP_CHILDTXT        equ     001
 IDB_APP_CHILDBMP        equ     002
 
-IDB_FILE_OPEN           equ     003
-IDB_FILE_SAVE           equ     004
-IDB_FILE_SAVEAS         equ     005
-IDB_FILE_CLOSE          equ     006
-IDB_FILE_PAGEUP         equ     007
-IDB_FILE_PRINTERSETUP   equ     008
-IDB_FILE_PRINT          equ     009
-IDB_FILE_PIN            equ     010
-IDB_FILE_SETUP          equ     011
-IDB_FILE_EXIT           equ     012
+IDB_FILE_OPEN           equ     004
+IDB_FILE_SAVE           equ     005
+IDB_FILE_SAVEAS         equ     006
+IDB_FILE_CLOSE          equ     007
+IDB_FILE_PAGEUP         equ     008
+IDB_FILE_PRINTERSETUP   equ     009
+IDB_FILE_PRINT          equ     010
+IDB_FILE_PIN            equ     011
+IDB_FILE_SETUP          equ     012
+IDB_FILE_EXIT           equ     013
 
-IDB_EDIT_CUT            equ     013
-IDB_EDIT_COPY           equ     014
-IDB_EDIT_PASTE          equ     015
-IDB_EDIT_DELETE         equ     016
-IDB_EDIT_ERASE          equ     017
-IDB_EDIT_ERASEALL       equ     018
-IDB_EDIT_FIND           equ     019
-IDB_EDIT_CALC           equ     020
+IDB_EDIT_CUT            equ     014
+IDB_EDIT_COPY           equ     015
+IDB_EDIT_PASTE          equ     016
+IDB_EDIT_DELETE         equ     017
+IDB_EDIT_ERASE          equ     018
+IDB_EDIT_ERASEALL       equ     019
+IDB_EDIT_FIND           equ     020
+IDB_EDIT_CALC           equ     021
 
-IDB_WINDOW_CASCADE      equ     021
-IDB_WINDOW_TILE_HOR     equ     022
-IDB_WINDOW_TILE_VER     equ     023
-IDB_WINDOW_ARRANGE      equ     024
-IDB_WINDOW_NEXT         equ     025
-IDB_WINDOW_PREV         equ     026
-IDB_WINDOW_ZOOMIN       equ     027
-IDB_WINDOW_ZOOMOUT      equ     028
+IDB_WINDOW_CASCADE      equ     022
+IDB_WINDOW_TILE_HOR     equ     023
+IDB_WINDOW_TILE_VER     equ     024
+IDB_WINDOW_ARRANGE      equ     025
+IDB_WINDOW_NEXT         equ     026
+IDB_WINDOW_PREV         equ     027
+IDB_WINDOW_ZOOMIN       equ     028
+IDB_WINDOW_ZOOMOUT      equ     029
 IDB_WINDOW_CLOSE        equ     IDM_WINDOW_CLOSE
-IDB_WINDOW_CLOSEALL     equ     029
+IDB_WINDOW_CLOSEALL     equ     030
 
-IDB_HELP_HELP           equ     030
-IDB_HELP_ABOUT          equ     031
+IDB_HELP_HELP           equ     031
+IDB_HELP_ABOUT          equ     032
 
 ;Control IDs
 IDC_TOOLBARFILE         equ     100

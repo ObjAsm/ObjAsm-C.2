@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      Debug.inc
 ; Author:     G. Friedrich
-; Version:    C.2.2
+; Version:    C.2.4
 ; Purpose:    ObjAsm debug macros.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
@@ -26,12 +26,19 @@
 ;               - DbgCpuFlags added.
 ;             Version C.2.1, January 2024
 ;               - DbgMemBlock / DbgMStr added.
+;             Version C.2.2, July 2024
+;               - Bugfix.
+;             Version C.2.3, October 2024
+;               - Bugfix.
+;               - Display information added to the statusbar.
+;             Version C.2.4, November 2024
+;               - XY Plotting added (DbgCht...).
 ; ==================================================================================================
 
 ;Supported debugging macros:
 ;———————————————————————————
-;  - DbgClose, DbgCloseAll, DbgCloseTxt, DbgCloseBmp
-;  - DbgClear, DbgClearAll, DbgClearTxt, DbgClearBmp
+;  - DbgClose, DbgCloseAll, DbgCloseTxt, DbgCloseBmp, DbgCloseCht
+;  - DbgClear, DbgClearAll, DbgClearTxt, DbgClearBmp, DbgClearCht
 ;  - DbgLine, DbgLine2, DbgText, DbgTextF, DbgWarning
 ;  - DbgBkgnd, DbgBkgndTxt, DbgBkgndBmp, DbgFrontTxt, DbgFrontBmp, DbgFront
 ;  - DbgFlashWnd, DbgFlashMenu, DbgTileHor, DbgTileVer, DbgCascade, DbgArrange
@@ -49,6 +56,8 @@
 ;  - DbgIMT, DbgSMT
 ;  - DbgAttach, DbgBreak
 ;  - DbgVec2, DbgVec3, DbgVec4, dbgPlane, DbgQuaternion
+;  - DbgMemBlock, DbgMStr
+;  - DbgChtOption, DbgChtAdd
 
 ;DEBUGGING  = TRUE / FALSE   ;Turns debugging output ON or OFF.
 ;TRACING    = TRUE / FALSE   ;Turns trace output ON or OFF.
@@ -187,6 +196,17 @@ else
   DBG_MEM_STR equ DBG_MEM_STRW
 endif
 
+DBG_CHT_SCALEX_MIN        equ   001
+DBG_CHT_SCALEX_MAX        equ   002
+DBG_CHT_SCALEX_AUTO       equ   003
+DBG_CHT_SCALEX_TITLE      equ   004
+DBG_CHT_SCALEY_MIN        equ   005
+DBG_CHT_SCALEY_MAX        equ   006
+DBG_CHT_SCALEY_AUTO       equ   007
+DBG_CHT_SCALEY_TITLE      equ   008
+DBG_CHT_SERIES_COLOR      equ   009
+DBG_CHT_SERIES_MARKER     equ   010
+DBG_CHT_SERIES_ADD        equ   011
 
 DBG_FLOAT_RESOLUTION      equ   12
 DBG_FLOAT_BUFFERSIZE      equ   32        ;(DBG_FLOAT_RESOLUTION + 9) to keep the stack
@@ -1279,7 +1299,7 @@ DbgWriteF macro Color:=<DbgColorForeground>, Dest, Format, Args:vararg
 
     $$sz1 textequ GetMemBSS(1024*sizeof(CHR))           ;;Get a buffer to write the string
     mov xbx, offset $$sz1
-    
+
     %WriteF xbx, Format, $$sz2
     invoke DbgOutText, offset $$sz1, Color, DbgColorBackground, DBG_EFFECT_NORMAL, ??DbgDstWnd
     DbgShowSrcInfo ??DbgDstWnd
@@ -1573,7 +1593,7 @@ DbgFloat macro Var:req, InfoText, Dest
       else
         DbgSaveContext TRUE, Var
         DbgSetDestWnd Dest
-        fInit                                           ;;Reset FPU to be sure that all
+        ;fInit                                           ;;Reset FPU to be sure that all
         if ??DbgDataSize eq 4                           ;;comming computations are performed well
           fld REAL4 ptr [xbx]
         elseif ??DbgDataSize eq 8
@@ -1860,7 +1880,7 @@ endm
 
 DbgCpuFlags macro InfoText, Dest
   if DEBUGGING
-    DbgSaveContext FALSE, XWORD ptr [xsp + TARGET_BITNESS/4*sizeof(XWORD)] 
+    DbgSaveContext FALSE, XWORD ptr [xsp + TARGET_BITNESS/4*sizeof(XWORD)]
     DbgSetDestWnd Dest
     invoke DbgOutTextA, $OfsCStrA("CPU Flags "), DbgColorFPU, DbgColorBackground, \
                         DBG_EFFECT_BOLD, ??DbgDstWnd
@@ -2493,6 +2513,29 @@ DbgCloseBmp macro Dest
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DbgCloseCht
+; Purpose:    Close specific Chart child window of the Debug window.
+; Arguments:  Arg1: Target Debug Window name.
+
+DbgCloseCht macro Dest
+  if DEBUGGING
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_CLOSE_CHT, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_CLOSE_CHT, 0, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
+    endif
+  endif
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      DbgClearAll
 ; Purpose:    Clear the content of all child windows of the Debug window.
 ; Arguments:  None.
@@ -2573,6 +2616,52 @@ endm
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      DbgClearBmp
 ; Purpose:    Clear the content of a specific bitmap child window of the Debug window.
+; Arguments:  Arg1: Target Debug Window name.
+
+DbgClearBmp macro Dest
+  if DEBUGGING
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_CLEAR_BMP, DbgColorBackground, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_CLEAR_BMP, DbgColorBackground, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
+    endif
+  endif
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DbgClearCht
+; Purpose:    Clear the content of a specific chart child window of the Debug window.
+; Arguments:  Arg1: Target Debug Window name.
+
+DbgClearCht macro Dest
+  if DEBUGGING
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      ifidn DBG_DEVICE, <WND>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_CLEAR_CHT, DbgColorBackground, 0, ??DbgDstWnd
+        DbgLoadContext
+      elseifidn DBG_DEVICE, <NET>
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        invoke DbgOutCmd, DBG_CMD_CLEAR_CHT, DbgColorBackground, 0, ??DbgDstWnd
+        DbgLoadContext
+      endif
+    endif
+  endif
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DbgClearGph
+; Purpose:    Clear the content of a specific Graphic child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
 
 DbgClearBmp macro Dest
@@ -2894,7 +2983,7 @@ DbgMemBlock macro Var:req, InfoText, Dest
                           DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, ??DbgDstWnd
       .if [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed != 0
         invoke DbgOutMem, xbx, [xbx - MEMBLOCK_HEADER_SIZE].MemBlockHeader.dUsed, DBG_MEM_NONE, \
-                          DbgColorMemory, DbgColorForeground, DbgColorBackground, ??DbgDstWnd 
+                          DbgColorMemory, DbgColorForeground, DbgColorBackground, ??DbgDstWnd
       .endif
       ;;Check Payload alignment
       mov xdi, xbx
@@ -2905,7 +2994,7 @@ DbgMemBlock macro Var:req, InfoText, Dest
                            DBG_EFFECT_NORMAL or DBG_EFFECT_NEWLINE, ??DbgDstWnd
       .endif
       DbgShowTxtInfo InfoText, ??DbgDstWnd
-      DbgShowSrcInfo ??DbgDstWnd      
+      DbgShowSrcInfo ??DbgDstWnd
       DbgLoadContext
     endif
   endif
@@ -2948,9 +3037,171 @@ DbgMStr macro Var:req, InfoText, Dest
       .endif
 
       DbgShowTxtInfo InfoText, ??DbgDstWnd
-      DbgShowSrcInfo ??DbgDstWnd      
+      DbgShowSrcInfo ??DbgDstWnd
       DbgLoadContext
     endif
   endif
 endm
 
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DbgChtOption
+; Purpose:    Set chart options on the debug device.
+; Arguments:  Arg1: Option ID
+;             Arg2: -> Option value
+;             Arg3: Optional destination Window name.
+
+DbgChtOption macro OptionID, Var, Dest
+  if DEBUGGING
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      if OptionID eq DBG_CHT_SCALEX_TITLE
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        %invoke DbgOutChartOption, OptionID, $OfsCStr(Var), ??StrSize, ??DbgDstWnd
+        DbgLoadContext
+      elseif OptionID eq DBG_CHT_SCALEY_TITLE
+        DbgSaveContext
+        DbgSetDestWnd Dest
+        %invoke DbgOutChartOption, OptionID, $OfsCStr(Var), ??StrSize, ??DbgDstWnd
+        DbgLoadContext
+      else
+        DbgSaveContext TRUE, Var
+        DbgSetDestWnd Dest
+        if OptionID eq DBG_CHT_SCALEX_MIN
+          $$Optionsize equ <sizeof(FLOAT)>
+        elseif OptionID eq DBG_CHT_SCALEX_MAX
+          $$Optionsize textequ <sizeof(FLOAT)>
+        elseif OptionID eq DBG_CHT_SCALEX_AUTO
+          $$Optionsize equ <sizeof(BYTE)>
+        elseif OptionID eq DBG_CHT_SCALEY_MIN
+          $$Optionsize equ <sizeof(FLOAT)>
+        elseif OptionID eq DBG_CHT_SCALEY_MAX
+          $$Optionsize equ <sizeof(FLOAT)>
+        elseif OptionID eq DBG_CHT_SCALEY_AUTO
+          $$Optionsize equ <sizeof(BYTE)>
+        else
+          $$Optionsize equ <4>
+        endif
+        %invoke DbgOutChartOption, OptionID, ??VarXBX, $$Optionsize, ??DbgDstWnd
+        DbgLoadContext
+      endif
+    endif
+  endif
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DbgChtSeriesOption
+; Purpose:    Set chart series options on the debug device.
+; Arguments:  Arg1: Option ID
+;             Arg2: Series ID
+;             Arg2: Option value
+;             Arg3: Optional destination Window name.
+
+DBG_PLOT_SERIES_OPTION struct
+  dID     DWORD ?
+  dOption DWORD ?
+DBG_PLOT_SERIES_OPTION ends
+
+.data?
+DbgPlotSeriesOption DBG_PLOT_SERIES_OPTION {}           ;;Theadsafe due to DbgSaveContext
+
+DbgChtSeriesOption macro OptionID, SeriesID, SeriesOption, Dest
+  if DEBUGGING
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      DbgSaveContext
+      DbgSetDestWnd Dest
+      lea xdx, DbgPlotSeriesOption
+      m2m [xdx].DBG_PLOT_SERIES_OPTION.dID, SeriesID, eax
+      m2m [xdx].DBG_PLOT_SERIES_OPTION.dOption, SeriesOption, eax
+      %invoke DbgOutChartOption, OptionID, xdx, sizeof(DbgPlotSeriesOption), ??DbgDstWnd
+      DbgLoadContext
+    endif
+  endif
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      DbgChtSeriesAdd
+; Purpose:    Add a new point to a chart series on the debug device.
+; Arguments:  Arg1: Series ID
+;             Arg2: X Value
+;             Arg3: Y Value
+;             Arg4: Optional destination Window name.
+
+DBG_PLOT_POINT struct
+  dSeriesID DWORD ?
+  fX        REAL4 ?                                       ;Keep in synch with CHT_FLOAT used
+  fY        REAL4 ?                                       ;to compile DebugCenter
+DBG_PLOT_POINT ends
+
+.data?
+DbgPlotPoint DBG_PLOT_POINT {}                            ;;Theadsafe due to DbgSaveContext
+
+DbgChtSeriesAdd macro SeriesID, VarX, VarY, Dest
+  if DEBUGGING
+    if TARGET_PLATFORM eq PLATFORM_WINDOWS
+      DbgSaveContext
+      DbgSetDestWnd Dest
+      
+      lea xdx, DbgPlotPoint
+      m2m [xdx].DBG_PLOT_POINT.dSeriesID, SeriesID, eax
+
+      ??DbgDataSizeX = type(VarX)
+      if (??DbgDataSizeX ne 0) and (??DbgDataSizeX ne 4) and \ 
+         (??DbgDataSizeX ne 8) and (??DbgDataSizeX ne 10)
+        .err <DbgChtAdd - wrong X argument type>
+      else
+        if (opattr VarX) and OAT_REGISTER                  ;;Is Var a register?
+          .err <DbgChtAdd - invalid X parameter>
+        endif
+      endif
+      
+      ??DbgDataSizeY = type(VarY)
+      if (??DbgDataSizeX ne 0) and (??DbgDataSizeY ne 4) and \
+         (??DbgDataSizeY ne 8) and (??DbgDataSizeY ne 10)
+        .err <DbgChtAdd - wrong Y argument type>
+      else
+        if (opattr VarY) and OAT_REGISTER                  ;;Is Var a register?
+          .err <DbgChtAdd - invalid Y parameter>
+        endif
+      endif
+
+      if ??DbgDataSizeX eq 0
+        m2m [xdx].DBG_PLOT_POINT.fX, $CReal4(&VarX), ecx
+      elseif ??DbgDataSizeX eq 4
+        m2m [xdx].DBG_PLOT_POINT.fX, VarX, ecx
+      elseif ??DbgDataSizeX eq 8
+        if TARGET_BITNESS eq 32
+          fld REAL8 ptr VarX
+          fst FLOAT ptr [xdx].DBG_PLOT_POINT.fX
+        else
+          m2m [xdx].DBG_PLOT_POINT.fX, VarX, xcx
+        endif
+      elseif ??DbgDataSizeX eq 10
+        fld REAL10 ptr VarX
+        fst FLOAT ptr [xdx].DBG_PLOT_POINT.fX
+      else
+        .err <DbgChtAdd - error storing X value>
+      endif
+
+      if ??DbgDataSizeY eq 0
+        m2m [xdx].DBG_PLOT_POINT.fY, $CReal4(&VarY), ecx
+      elseif ??DbgDataSizeY eq 4
+        m2m [xdx].DBG_PLOT_POINT.fY, VarY, eax
+      elseif ??DbgDataSizeY eq 8
+        if TARGET_BITNESS eq 32
+          fld REAL8 ptr VarY
+          fst FLOAT ptr [xdx].DBG_PLOT_POINT.fY
+        else
+          m2m [xdx].DBG_PLOT_POINT.fX, VarY, xax
+        endif
+      elseif ??DbgDataSizeY eq 10
+        fld REAL10 ptr VarY
+        fst FLOAT ptr [xdx].DBG_PLOT_POINT.fY
+      else
+        .err <DbgChtAdd - error storing Y value>
+      endif
+
+      invoke DbgOutChartOption, DBG_CHT_SERIES_ADD, xdx, sizeof(DBG_PLOT_POINT), ??DbgDstWnd
+      DbgLoadContext
+    endif
+  endif
+endm

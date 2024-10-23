@@ -14,14 +14,15 @@ externdef BASE32_DEFAULT_ALPHABET:CHRA
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Base32Encode
-; Purpose:    Encode a data stream using the BASE32 algoritm. The output stream contains ANSI
-;             characters from the passed alphabet (BASE32_DEFAULT_ALPHABET, BASE32_URL_ALPHABET)
+; Purpose:    Encode a data stream using the BASE32 algorithm. The output stream contains only
+;             characters from the specified alphabet (BASE32_DEFAULT_ALPHABET, BASE32_URL_ALPHABET)
 ; Arguments:  Arg1: -> Input data buffer.
 ;             Arg2: Input data size in BYTEs.
 ;             Arg3: Character alphabet used to encode the data. If NULL, BASE32_DEFAULT_ALPHABET
 ;                   is used. BASE32_HEX_ALPHABET can be used to encode special content.
-; Return:     xax -> Encoded data. When no longer needed, it should be released using MemFree.
-;             ecx = Encoded data size in BYTEs. Always a multiple of 8.
+; Return:     xax -> Buffer containing the encoded data. When no longer needed, it should be
+;                    released using MemFree.
+;             ecx = Encoded data size in BYTEs, always a multiple of 8*sizeof(CHR)
 ; Links:      https://en.wikipedia.org/wiki/Base32
 ;             https://datatracker.ietf.org/doc/html/rfc4648
 ; Note:       No ZTC is added to the encoded buffer.
@@ -59,10 +60,30 @@ BASE32_PADDING  equ '='
 B32_ADD_TABLE label BYTE
   db 0, 5, 2, 7, 4
 
+B32StoreCharAtIndex macro Reg:req
+  if TARGET_STR_TYPE eq STR_TYPE_ANSI
+    mov al, [xcx + Reg]
+    stosb
+  else
+    movzx ax, BYTE ptr [xcx + Reg]
+    stosw
+  endif
+endm
+
+B32FillPadding macro Count:req
+  mov $SubReg(eax, sizeof(CHR)), '='
+  if Count eq 1
+    stosc
+  else
+    mov ecx, Count
+    rep stosc
+  endif
+endm
+
 .code
 align ALIGN_CODE
-Base32Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphabet:POINTER
-  _ProcName_ textequ <Base32Encode>
+ProcName proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphabet:POINTER
+  _ProcName_ textequ <%ProcName>
   ArgReg pDataBuffer:xcx, dDataSize:edx
   LocReg pEncodedDataBuffer:r10
   local dEncodedDataSize:DWORD
@@ -93,8 +114,7 @@ Base32Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphab
         inc xsi
         mov edx, eax
         shr eax, 3
-        mov al, [xcx + xax]
-        stosb
+        B32StoreCharAtIndex xax
         dec ebx
         jz @@Remainder_1
 
@@ -103,15 +123,13 @@ Base32Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphab
         mov dl, al
         shr ax, 6
         and xax, 011111b
-        mov al, [xcx + xax]
-        stosb
+        B32StoreCharAtIndex xax
         dec ebx
 
         mov al, dl
         shr al, 1
         and xax, 011111b
-        mov al, [xcx + xax]
-        stosb
+        B32StoreCharAtIndex xax
         dec ebx
         jz @@Remainder_3
 
@@ -120,8 +138,7 @@ Base32Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphab
         mov dl, al
         shr ax, 4
         and xax, 011111b
-        mov al, [xcx + xax]
-        stosb
+        B32StoreCharAtIndex xax
         dec ebx
         jz @@Remainder_4
 
@@ -130,15 +147,13 @@ Base32Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphab
         mov dl, al
         shr ax, 7
         and xax, 011111b
-        mov al, [xcx + xax]
-        stosb
+        B32StoreCharAtIndex xax
         dec ebx
 
         mov al, dl
         shr al, 2
         and xax, 011111b
-        mov al, [xcx + xax]
-        stosb
+        B32StoreCharAtIndex xax
         dec ebx
         jz @@Remainder_6
 
@@ -148,13 +163,12 @@ Base32Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphab
         shr ax, 5
         and xax, 011111b
         mov al, [xcx + xax]
-        stosb
+        stosc
         dec ebx
 
         mov al, dl
         and xax, 011111b
-        mov al, [xcx + xax]
-        stosb
+        B32StoreCharAtIndex xax
         dec ebx
         jz @@Quit
       .endw
@@ -163,39 +177,29 @@ Base32Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphab
       lodsb
       shl dl, 2
       and xdx, 011100b
-      mov al, [xcx + xdx]
-      stosb
-      mov eax, '===='
-      stosd                                             ;"======" Padding
-      stosw
+      B32StoreCharAtIndex xdx
+      B32FillPadding 6                                  ;"======" Padding
       jmp @@Quit
 
     @@Remainder_3:
       shl dl, 4
       and xdx, 010000b
-      mov al, [xcx + xdx]
-      stosb
-      mov eax, '===='
-      stosd                                             ;"====" Padding
+      B32StoreCharAtIndex xdx
+      B32FillPadding 4                                  ;"====" Padding
       jmp @@Quit
       
     @@Remainder_4:
       shl dl, 1
       and xdx, 011110b
-      mov al, [xcx + xdx]
-      stosb
-      mov ax, '=='
-      stosw 
-      stosb                                             ;"===" Padding
+      B32StoreCharAtIndex xdx
+      B32FillPadding 3                                  ;"===" Padding
       jmp @@Quit
 
     @@Remainder_6:
       shl dl, 3
       and xdx, 011000b
-      mov al, [xcx + xdx]
-      stosb
-      mov al, '='
-      stosb                                             ;"=" Padding
+      B32StoreCharAtIndex xdx
+      B32FillPadding 1                                  ;"=" Padding
 
 @@Quit:
       mov xax, $LocReg(pEncodedDataBuffer)
@@ -204,4 +208,4 @@ Base32Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphab
 
   mov ecx, dEncodedDataSize
   ret
-Base32Encode endp
+ProcName endp

@@ -41,6 +41,7 @@ DBG_MSG_HDR               equ   00
 DBG_MSG_CMD               equ   01
 DBG_MSG_STR               equ   02
 DBG_MSG_BMP               equ   03
+DBG_MSG_CHT               equ   04
 
 DBG_EFFECT_NORMAL         equ   00000000h     ;Regular text
 DBG_EFFECT_BOLD           equ   00000001h     ;CFE_BOLD
@@ -53,9 +54,11 @@ DBG_CHARTYPE_WIDE         equ   80000000h     ;if not set => ANSI (BIT31)
 
 DBG_CMD_CLEAR_TXT         equ   00
 DBG_CMD_CLEAR_BMP         equ   01
+DBG_CMD_CLEAR_CHT         equ   26
 DBG_CMD_CLEAR_ALL         equ   02
 DBG_CMD_CLOSE_TXT         equ   03
 DBG_CMD_CLOSE_BMP         equ   04
+DBG_CMD_CLOSE_CHT         equ   25
 DBG_CMD_CLOSE_ALL         equ   05
 DBG_CMD_SINGLE_LINE       equ   06            ;char 2500 or 2014
 DBG_CMD_DOUBLE_LINE       equ   07            ;Char 2550
@@ -96,7 +99,7 @@ DBG_IP_PORT textequ <8080>                    ;Default value
 
 DBG_HEADER_INFO struc 1                       ;Size = 6t
   bBlockID    BYTE    DBG_MSG_HDR
-  bInfo       BYTE    ?                       ;Not used
+  bInfo       BYTE    ?
   dBlockLen   DWORD   ?                       ;Size of this structure + payload size
 DBG_HEADER_INFO ends
 ;Destination WIDE string & ZTC follow this structure
@@ -124,6 +127,11 @@ if TARGET_PLATFORM eq PLATFORM_WINDOWS
   DBG_BMP_INFO ends
   ;Bitmap data follow this structure
 endif
+
+DBG_CHT_INFO struc 1
+              DBG_HEADER_INFO {DBG_MSG_CHT}
+DBG_CHT_INFO ends
+;Additional data bytes may follow this structure
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 

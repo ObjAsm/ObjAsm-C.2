@@ -1040,6 +1040,7 @@ if TARGET_PLATFORM eq PLATFORM_WINDOWS
   DbgOutBitmap proto :HANDLE, :DWORD, :POINTER
   DbgOutApiErr proto :DWORD, :DWORD, :DWORD, :POINTER
   DbgOutComErr proto :DWORD, :DWORD, :DWORD, :POINTER
+  DbgOutChartOption proto :BYTE, :POINTER, :DWORD, :POINTER
   DbgShowTraceMethod proto :POINTER, :DWORD, :POINTER, :DWORD, :DWORD, :POINTER
 
   DbgOutInterfaceName proto :ptr GUID, :DWORD, :DWORD, :POINTER
@@ -1073,6 +1074,7 @@ endif
 
 DbgOutMem proto :POINTER, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :POINTER
 DbgOutFPU proto :POINTER, :DWORD, :DWORD
+DbgOutChartOption proto :BYTE, :POINTER, :DWORD, :POINTER
 DbgShowObjectHeader proto :POINTER, :POINTER, :DWORD, :DWORD, :POINTER
 
 DbgOutTextA proto :POINTER, :DWORD, :DWORD, :DWORD, :POINTER
@@ -1105,6 +1107,7 @@ else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
 
+DbgBuildChtMsg proto :BYTE, :POINTER, :DWORD, :POINTER
 
 ;OOP model procedures
 GetObjectID proto :POINTER
@@ -1719,10 +1722,37 @@ externdef BASE64_DEFAULT_DECODE_TABLE:BYTE
 externdef BASE64_URL_ALPHABET:CHRA
 externdef BASE64_URL_DECODE_TABLE:BYTE
 
-Base32Encode  proto :POINTER, :DWORD, :POINTER
-Base32Decode  proto :POINTER, :DWORD, :POINTER
-Base64Encode  proto :POINTER, :DWORD, :POINTER
-Base64Decode  proto :POINTER, :DWORD, :POINTER
+Base32EncodeA  proto :POINTER, :DWORD, :POINTER
+Base32EncodeW  proto :POINTER, :DWORD, :POINTER
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  Base32Encode textequ <Base32EncodeA>
+else
+  Base32Encode textequ <Base32EncodeW>
+endif
+
+Base32DecodeA  proto :POINTER, :DWORD, :POINTER
+Base32DecodeW  proto :POINTER, :DWORD, :POINTER
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  Base32Decode textequ <Base32DecodeA>
+else
+  Base32Decode textequ <Base32DecodeW>
+endif
+
+Base64EncodeA  proto :POINTER, :DWORD, :POINTER
+Base64EncodeW  proto :POINTER, :DWORD, :POINTER
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  Base64Encode textequ <Base64EncodeA>
+else
+  Base64Encode textequ <Base64EncodeW>
+endif
+
+Base64DecodeA  proto :POINTER, :DWORD, :POINTER
+Base64DecodeW  proto :POINTER, :DWORD, :POINTER
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  Base64Decode textequ <Base64DecodeA>
+else
+  Base64Decode textequ <Base64DecodeW>
+endif
 
 _chkstk proto c
 _alloca_probe_8 proto c
@@ -1772,14 +1802,14 @@ IHFP_SSE3   equ   32    ;Availability of SSE3 technology
 ;Objects
 if TARGET_BITNESS eq 64
   PointerVector textequ <QWordVector>
-  PTRVEC_MAX_CAPACITY equ VEC64_MAX_CAPACITY
+  PTRVEC_MAX_CAPACITY equ QWordVector_MaxCapacity
   XWordVector textequ <QWordVector>
-  XVEC_MAX_CAPACITY equ VEC64_MAX_CAPACITY
+  XVEC_MAX_CAPACITY equ QWordVector_MaxCapacity
 else
   PointerVector textequ <DWordVector>
-  PTRVEC_MAX_CAPACITY equ VEC32_MAX_CAPACITY
+  PTRVEC_MAX_CAPACITY equ DWordVector_MaxCapacity
   XWordVector textequ <DWordVector>
-  XVEC_MAX_CAPACITY equ VEC32_MAX_CAPACITY
+  XVEC_MAX_CAPACITY equ DWordVector_MaxCapacity
 endif
 
 OPT_IS_BOOL     equ 0

@@ -116,7 +116,7 @@ Method DialogAbout.CtlsSet, uses xbx xsi
 
   SetObject xsi
   mov xax, [xsi].pOwner
-  mov ebx, [xax].$Obj(DebugCenter).dLanguage
+  mov ebx, [xax].$Obj(Application).dLanguage
   invoke LoadString, hInstance, addr [ebx + 104], addr cAboutStr, lengthof(cAboutStr)
   invoke SendMessage, [xsi].hWnd, WM_SETTEXT, 0, addr cAboutStr
 

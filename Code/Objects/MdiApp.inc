@@ -251,7 +251,8 @@ Method MdiClientWnd.Init, uses xbx xsi, pOwner:POINTER
   mov ClientCreate.idFirstChild, IDM_FIRSTCHILD
   invoke CreateWindowEx, WS_EX_CLIENTEDGE, $OfsCStr("MDICLIENT"), 0, \
                          WS_CHILD or WS_CLIPCHILDREN or WS_VISIBLE or WS_VSCROLL or WS_HSCROLL, \
-                         0, 0, 0, 0, [xbx].$Obj(MdiApp).hWnd, NULL, hInstance, addr ClientCreate
+                         0, 0, CW_USEDEFAULT, CW_USEDEFAULT, [xbx].$Obj(MdiApp).hWnd, NULL, \
+                         hInstance, addr ClientCreate
   ACall xsi.Init, pOwner, xax
   Subclass MdiClientWnd                                 ;Uses xsi
   xor eax, eax

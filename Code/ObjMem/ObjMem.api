@@ -561,11 +561,13 @@ DbgOutCmd, bCommand, dParam1, dParam2, pDestWndNameW
 DbgOutText, pString, dForeColor, dBackColor, dEffects, pDestWndNameW
 DbgOutTextA, pStringA, dForeColor, dBackColor, dEffects, pDestWndNameW
 DbgOutTextW, pStringW, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgOutChartOption, OptionID, pValue, dValueSize, pDestWndNameW
 DbgBuildCmdMsg, bCommand, dParam1, dParam2, DestWndNameW
 DbgBuildBmpMsg, hBmp, dBackColor, pDestWndNameW
 DbgBuildStrMsg, pString, dForeColor, dBackColor, dEffects, pDestWndNameW
 DbgBuildStrMsgA, pStringA, dForeColor, dBackColor, dEffects, pDestWndNameW
 DbgBuildStrMsgW, pStringW, dForeColor, dBackColor, dEffects, pDestWndNameW
+DbgBuildChtMsg, ID, pData, dVDataSize, pDestWndNameW
 DbgOutText_UEFI, pString, dForeColor, dBackColor, dEffects, pDestWndNameW
 DbgOutTextA_UEFI, pStringA, dForeColor, dBackColor, dEffects, pDestWndNameW
 DbgOutTextW_UEFI, pStringW, dForeColor, dBackColor, dEffects, pDestWndNameW
@@ -616,6 +618,14 @@ Base32Encode, pDataBuffer, dDataSize, pAlphabet
 Base32Decode, pDataBuffer, dDataSize, pDecodeTable
 Base64Encode, pDataBuffer, dDataSize, pAlphabet
 Base64Decode, pDataBuffer, dDataSize, pDecodeTable
+Base32EncodeA, pDataBuffer, dDataSize, pAlphabet
+Base32DecodeA, pDataBuffer, dDataSize, pDecodeTable
+Base64EncodeA, pDataBuffer, dDataSize, pAlphabet
+Base64DecodeA, pDataBuffer, dDataSize, pDecodeTable
+Base32EncodeW, pDataBuffer, dDataSize, pAlphabet
+Base32DecodeW, pDataBuffer, dDataSize, pDecodeTable
+Base64EncodeW, pDataBuffer, dDataSize, pAlphabet
+Base64DecodeW, pDataBuffer, dDataSize, pDecodeTable
 
 sqqqMul, sdMultiplicandLo, sdMultiplicandHi, sdMultiplicatorLo, sdMultiplicatorHi
 sqqqDiv, sdDividendLo, sdDividendHi, sdDivisorLo, sdDivisorHi

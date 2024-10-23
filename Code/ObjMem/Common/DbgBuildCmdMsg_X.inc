@@ -66,7 +66,10 @@ DbgBuildCmdMsg proc uses xsi bCommand:BYTE, dParam1:DWORD, dParam2:DWORD, \
     .endif
     mov xax, pBuffer
     mov xdx, xsi
+    mov ecx, dBufferSize
+  .else
+    xor ecx, ecx
+    mov xdx, xcx
   .endif
-  mov ecx, dBufferSize
   ret
 DbgBuildCmdMsg endp

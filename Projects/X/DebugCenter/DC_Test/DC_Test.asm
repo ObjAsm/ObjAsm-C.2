@@ -27,6 +27,8 @@ SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO, TRACE, STKGUARD)
 % include &IncPath&Windows\ShellApi.inc
 % include &IncPath&Windows\wininet.inc
 
+.const
+bAuto BYTE FALSE
 
 CStr szMyStr, "Here is my string"
 CReal4 r4MyFloat1, 12.3456789
@@ -43,6 +45,24 @@ include DC_Test_Globals.inc
 include DC_Test_Main.inc
 
 pApp equ offset $ObjTmpl(DC_Test)
+
+CReal4 MyXMin, -10.0
+CReal4 MyXMax, +10.0
+
+CReal4 MyYMin, -5.0
+CReal4 MyYMax, +5.0
+
+CReal4 MyX1,  0.0
+CReal4 MyY1, +1.0
+
+CReal4 MyX2,  1.0
+CReal4 MyY2, +1.5
+
+CReal4 MyX3,  2.0
+CReal4 MyY3, +1.2
+
+CReal4 MyX4,  3.0
+CReal4 MyY4, +1.1
 
 start proc
   SysInit
@@ -76,6 +96,29 @@ start proc
   DbgBmp xax, "BMP1"
   invoke LoadBitmap, hInstance, $OfsCStr("BMP_TEST2")
   DbgBmp xax, "BMP2"
+
+;  DbgCloseWnd
+
+;  DbgClearCht "MyChart"
+  DbgChtOption DBG_CHT_SCALEX_MIN, MyXMin, "MyChart"
+  DbgChtOption DBG_CHT_SCALEX_MAX, MyXMax, "MyChart"
+  DbgChtOption DBG_CHT_SCALEX_TITLE, "MyTitleX", "MyChart"
+  DbgChtOption DBG_CHT_SCALEX_AUTO, bAuto, "MyChart"
+
+  DbgChtOption DBG_CHT_SCALEY_MIN, MyYMin, "MyChart"
+  DbgChtOption DBG_CHT_SCALEY_MAX, MyYMax, "MyChart"
+  DbgChtOption DBG_CHT_SCALEY_TITLE, "MyTitleY", "MyChart"
+  DbgChtOption DBG_CHT_SCALEY_AUTO, bAuto, "MyChart"
+
+  DbgChtSeriesAdd 1, +0.5, +0.5, "MyChart"
+  DbgChtSeriesAdd 1, MyX2, MyY2, "MyChart"
+  DbgChtSeriesAdd 2, MyX3, MyY3, "MyChart"
+  DbgChtSeriesAdd 2, MyX4, MyY4, "MyChart"
+
+  DbgChtSeriesOption DBG_CHT_SERIES_COLOR, 1, $RGB(255,0,0), "MyChart"
+  DbgChtSeriesOption DBG_CHT_SERIES_MARKER, 1, 3, "MyChart"
+;  DbgCloseCht "MyChart"
+
   DbgTileHor
 
   DbgLine2
@@ -139,7 +182,6 @@ start proc
   DbgClearTxt "Performance data"
   DbgClearBmp "BMP1"
   DbgPinWnd FALSE
-;  DbgCloseWnd
 
   SysDone
 

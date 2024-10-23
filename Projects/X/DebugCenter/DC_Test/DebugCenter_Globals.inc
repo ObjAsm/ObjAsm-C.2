@@ -87,6 +87,7 @@ DbgMdiChildID           equ     10002
 DbgMdiChildBmpID        equ     10003
 DbgMdiChildTxtID        equ     10004
 REDT_IPTOR_ID           equ     10005
+DbgMdiChildGrphID       equ     10006
 
 ;Bitmap IDs
 IDB_APP                 equ     000

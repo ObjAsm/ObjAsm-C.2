@@ -54,7 +54,7 @@ Method ChartSeries.GetToolTipText, uses xbx xdi xsi, pBuffer:PSTRING, dDataIndex
   .else
     mov xdi, [xdx].$Obj(ChartWnd).ScaleY2.pUnit
   .endif
-    
+
   invoke wsprintf, pBuffer, $OfsCStr("Series Name: %s", CRLF, "Description: %s", CRLF, \
                                      "  X = %s %s", CRLF, "  Y = %s %s"), \
                    [xsi].pName, [xsi].pDescription, \
@@ -71,8 +71,8 @@ MethodEnd
 Method ChartSeries.Init, uses xsi, pOwner:POINTER, dCapacity:DWORD
   SetObject xsi
   ACall xsi.Init, pOwner, sizeof(CHT_FLOAT)
-  OCall xsi.DimAppend, 2, ARR_MEM_ZERO                  ;X:0, Y:1
-  OCall xsi.DimAppend, dCapacity, ARR_MEM_ZERO          ;data
+  OCall xsi.DimAppend, 2, ARR_MEM_ZERO                  ;Dimension index: X:0, Y:1
+  OCall xsi.DimAppend, dCapacity, ARR_MEM_ZERO          ;Data set to zero
   OCall pOwner::Collection.Insert, xsi
 MethodEnd
 
@@ -103,6 +103,7 @@ MethodEnd
 Method ChartSeries.Scan, uses xbx xdi xsi, dFrom:DWORD, dCount:DWORD
   local dMaxX:DWORD, dMinX:DWORD, dMaxY:DWORD, dMinY:DWORD      ;They are all indices
 
+;  DbgText "ChartSeries.Scan"
   SetObject xsi
   .if dCount != 0
     mov edi, dFrom

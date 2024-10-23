@@ -19,6 +19,7 @@ Object DbgMdiChild, DBG_MDI_CHILD_ID, MdiChildWnd               ;MDI Child desce
   VirtualMethod     Save
   VirtualMethod     SaveAs,           PSTRING, PSTRING          ;-> Filter, -> Def. extension
   VirtualMethod     SaveTo,           PSTRING                   ;-> FileName
+  VirtualAbstract   UpdateStatusbar
   VirtualAbstract   ZoomIn
   VirtualAbstract   ZoomOut
 
@@ -94,10 +95,14 @@ Method DbgMdiChild.Done, uses xbx xsi
   .if ZERO?                                             ;Last child ?
     mov xbx, [xcx].$Obj(DbgMdiClient).pOwner
     invoke SendMessage, [xcx].$Obj(DbgMdiClient).hWnd, WM_MDISETMENU, \
-                        [xbx].$Obj(DebugCenter).hMenuInit, NULL
-    OCall xbx::DebugCenter.EnableActions, FALSE
-    OCall xbx::DebugCenter.ManageOptions, 0
+                        [xbx].$Obj(Application).hMenuInit, NULL
+    OCall xbx::Application.EnableActions, FALSE
+    OCall xbx::Application.ManageOptions, 0
     invoke DrawMenuBar, [xbx].$Obj(MdiApp).hWnd         ;Redraw the new menu bar
+
+    ;Clear Statusbar
+    OCall [xbx].$Obj(Application).pStatusbar::Statusbar.SetPartText, 1, NULL, SBT_SUNKEN
+    OCall [xbx].$Obj(Application).pStatusbar::Statusbar.SetPartText, 2, NULL, SBT_SUNKEN
   .endif
 
   ACall xsi.Done
@@ -112,16 +117,17 @@ MethodEnd
 
 Method DbgMdiChild.OnMdiActivate, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
-  ;Manage Menu and Toolbar options
+  ;Manage Menu, Statusbar and Toolbar options
   mov xax, lParam
   .if xax == [xsi].hWnd
     invoke GetObjectID, xsi
     mov xcx, [xsi].pOwner
-    OCall [xcx].$Obj(DbgMdiClient).pOwner::DebugCenter.ManageOptions, eax
+    OCall [xcx].$Obj(DbgMdiClient).pOwner::Application.ManageOptions, eax
     OCall xsi.ClpBrdSetBtns
+    OCall xsi.UpdateStatusbar
   .elseif xax == NULL                                   ;Last Child!
     mov xcx, [xsi].pOwner
-    OCall [xcx].$Obj(DbgMdiClient).pOwner::DebugCenter.ManageOptions, eax
+    OCall [xcx].$Obj(DbgMdiClient).pOwner::Application.ManageOptions, eax
   .endif
 
   invoke DefMDIChildProc, [xsi].hWnd, WM_MDIACTIVATE, wParam, lParam
@@ -165,7 +171,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method DbgMdiChild.SaveAs, uses xbx xsi, pFilter:PSTRING, pDefExt:PSTRING
-  local OpenFileName:OPENFILENAME, cInitDir[MAX_PATH]:CHR, cFileName[MAX_PATH]:CHR
+  local OpenFileName:OPENFILENAME, cInitDir[MAX_PATH]:CHR, cFileName[MAX_PATH]:CHR, cResText[1024]:CHR
 
   SetObject xsi
 
@@ -191,8 +197,12 @@ Method DbgMdiChild.SaveAs, uses xbx xsi, pFilter:PSTRING, pDefExt:PSTRING
   m2z OpenFileName.nMaxFileTitle
   lea xax, cInitDir
   m2z CHR ptr [xax]
-  m2m OpenFileName.lpstrInitialDir, [xbx].$Obj(DebugCenter).pDirectory, xax
-  c2m OpenFileName.lpstrTitle, $OfsCStr("Save as ..."), xcx
+  m2m OpenFileName.lpstrInitialDir, [xbx].$Obj(Application).pDirectory, xax
+  mov edx, [xbx].$Obj(Application).dLanguage
+  add edx, 171                                      ;"Save as"
+  invoke LoadString, hInstance, edx, addr cResText, lengthof cResText
+  lea xcx, cResText
+  mov OpenFileName.lpstrTitle, xcx
   m2m OpenFileName.lpstrDefExt, pDefExt, xax
   mov OpenFileName.Flags, OFN_EXPLORER or OFN_FILEMUSTEXIST or OFN_LONGNAMES or \
                           OFN_HIDEREADONLY or OFN_OVERWRITEPROMPT
@@ -209,8 +219,8 @@ Method DbgMdiChild.SaveAs, uses xbx xsi, pFilter:PSTRING, pDefExt:PSTRING
     invoke StrRScan, addr cFileName, "\"
     .if xax != NULL
       m2z BYTE ptr [xax]
-      invoke StrDispose, [xbx].$Obj(DebugCenter).pDirectory
-      mov [xbx].$Obj(DebugCenter).pDirectory, $invoke(StrNew, addr cFileName)
+      invoke StrDispose, [xbx].$Obj(Application).pDirectory
+      mov [xbx].$Obj(Application).pDirectory, $invoke(StrNew, addr cFileName)
     .endif
   .endif
   xor eax, eax

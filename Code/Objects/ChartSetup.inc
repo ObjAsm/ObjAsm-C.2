@@ -43,12 +43,9 @@ Method ChartSetup.CtlsGet, uses xbx xdi xsi
   .ifBitSet [xdi].$Obj(ChartWnd).ScaleY2.dFlags, CHT_SCALE_SHOW_TAB
     OCall [xsi].TabScaleY2::ChartTabScale.CtlsGet
   .endif
-  xor ebx, ebx
-  .while ebx < [xsi].TabSeriesColl.dCount
-    OCall [xsi].TabSeriesColl::Collection.ItemAt, ebx
+  .ColForEach [xsi].TabSeriesColl, ebx
     OCall xax::ChartTabSeries.CtlsGet
-    inc ebx
-  .endw
+  .ColNext
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -75,12 +72,9 @@ Method ChartSetup.CtlsSet, uses xbx xdi xsi
   .ifBitSet [xdi].$Obj(ChartWnd).ScaleY2.dFlags, CHT_SCALE_SHOW_TAB
     OCall [xsi].TabScaleY2::ChartTabScale.CtlsSet
   .endif
-  xor ebx, ebx
-  .while ebx < [xsi].TabSeriesColl.dCount
-    OCall [xsi].TabSeriesColl::Collection.ItemAt, ebx
+  .ColForEach [xsi].TabSeriesColl, ebx
     OCall xax::ChartTabSeries.CtlsSet
-    inc ebx
-  .endw
+  .ColNext
   mov eax, TRUE
 MethodEnd
 
@@ -254,8 +248,7 @@ Method ChartSetup.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov pIconImageList, xax
   mov pBuffer, xdx
   xor ebx, ebx
-  .while ebx < [xdi].$Obj(Collection).dCount
-    OCall xdi::Collection.ItemAt, ebx
+  .ColForEach [xdi], ebx
     .ifBitSet [xax].$Obj(ChartSeries).dFlags, CHT_SERIES_SHOW_TAB
       OCall xax::ChartSeries.GetSetupDialogTab, [xsi].TabControl.hWnd, pIconImageList
       mov pSeriesTab, xax
@@ -276,8 +269,7 @@ Method ChartSetup.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         inc [xsi].dTabCount
       .endif
     .endif
-    inc ebx
-  .endw
+  .ColNext
 
   .if [xsi].dTabCount != 0
     invoke SendMessage, [xsi].TabControl.hWnd, TCM_SETCURSEL, [xsi].dSelTabIndex, 0
@@ -308,10 +300,7 @@ Method ChartSetup.Restore, uses xbx xdi xsi
   .ifBitSet [xdi].$Obj(ChartWnd).ScaleY2.dFlags, CHT_SCALE_SHOW_TAB
     OCall [xsi].TabScaleY2::ChartTabScale.Restore
   .endif
-  xor ebx, ebx
-  .while ebx < [xsi].TabSeriesColl.dCount
-    OCall [xsi].TabSeriesColl::Collection.ItemAt, ebx
+  .ColForEach [xsi].TabSeriesColl, ebx
     OCall xax::ChartTabSeries.Restore
-    inc ebx
-  .endw
+  .ColNext
 MethodEnd

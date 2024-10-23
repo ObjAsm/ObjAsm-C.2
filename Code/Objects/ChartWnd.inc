@@ -138,6 +138,11 @@ Method ChartWnd.Calc, uses xbx xdi xsi, hDC:HWND, pOutRect:PRECT
   mov [xsi].PlotRect.top, eax
 
   ;Determine the left plot border -----------------------------------
+  m2z TextSize1.x
+  m2z TextSize1.y
+  m2z TextSize2.x
+  m2z TextSize2.y
+
   .ifBitSet [xsi].dFlags, CHT_WND_SHOW_Y1
     m2m [xsi].PlotRect.left, [xsi].DrawRect.left, eax
 
@@ -701,11 +706,11 @@ Method ChartWnd.DrawScaleX, uses xbx xdi xsi, hDC:HDC
       .ifBitSet [xsi].ScaleX.dFlags, CHT_SCALE_SHOW_MJR_DIV
         invoke MoveToEx, hDC, sdPosition, [xsi].PlotRect.bottom, addr LastPoint
         invoke LineTo, hDC, sdPosition, dDivMjrEnd
-      .else 
+      .else
         .ifBitSet [xsi].ScaleX.dFlags, CHT_SCALE_SHOW_MNR_DIV
           invoke MoveToEx, hDC, sdPosition, [xsi].PlotRect.bottom, addr LastPoint
           invoke LineTo, hDC, sdPosition, dDivMnrEnd
-        .endif 
+        .endif
       .endif
 
       ;Draw major grid lines
@@ -909,18 +914,20 @@ Method ChartWnd.DrawScaleX, uses xbx xdi xsi, hDC:HDC
 
   ;Draw X scale title
   .ifBitSet [xsi].ScaleX.dFlags, CHT_SCALE_SHOW_TITLE
-    SaveFpuContext FpuContext
-    lea xbx, [xsi]
-    invoke StrLength, [xsi].ScaleX.pTitle
-    .if eax != 0
-      mov edi, eax
-      invoke SetTextAlign, hDC, TA_CENTER or TA_BOTTOM
-      mov edx, [xsi].PlotRect.right
-      add edx, [xsi].PlotRect.left
-      shr edx, 1
-      invoke TextOut, hDC, edx, [xsi].DrawRect.bottom, [xsi].ScaleX.pTitle, edi
+    .if [xsi].ScaleX.pTitle
+      SaveFpuContext FpuContext
+      lea xbx, [xsi]
+      invoke StrLength, [xsi].ScaleX.pTitle
+      .if eax != 0
+        mov edi, eax
+        invoke SetTextAlign, hDC, TA_CENTER or TA_BOTTOM
+        mov edx, [xsi].PlotRect.right
+        add edx, [xsi].PlotRect.left
+        shr edx, 1
+        invoke TextOut, hDC, edx, [xsi].DrawRect.bottom, [xsi].ScaleX.pTitle, edi
+      .endif
+      LoadFpuContext FpuContext
     .endif
-    LoadFpuContext FpuContext
   .endif
 
   ;Restore previous DC resources
@@ -1166,18 +1173,22 @@ Method ChartWnd.DrawScaleY1, uses xbx xdi xsi, hDC:HDC
   invoke DeleteObject, hMnrGridPen
   invoke DeleteObject, hDivPen
 
-  ;Draw Y scale title -----------------------------------------------
+  ;Draw Y1 scale title -----------------------------------------------
   .ifBitSet [xsi].ScaleY1.dFlags, CHT_SCALE_SHOW_TITLE
-    .if [xsi].ScaleY1.pTitle != NULL
-      invoke StrLength, [xsi].ScaleY1.pTitle
-      .if eax != 0
-        mov edi, eax
-        invoke SelectObject, hDC, [xsi].hFontVert
-        invoke SetTextAlign, hDC, TA_CENTER or TA_TOP
-        mov eax, [xsi].PlotRect.bottom
-        add eax, [xsi].PlotRect.top
-        shr eax, 1
-        invoke TextOut, hDC, [xsi].DrawRect.left, eax, [xsi].ScaleY1.pTitle, edi
+    .if [xsi].ScaleY1.pTitle
+      .if [xsi].ScaleY1.pTitle != NULL
+        SaveFpuContext FpuContext
+        invoke StrLength, [xsi].ScaleY1.pTitle
+        .if eax != 0
+          mov edi, eax
+          invoke SelectObject, hDC, [xsi].hFontVert
+          invoke SetTextAlign, hDC, TA_CENTER or TA_TOP
+          mov eax, [xsi].PlotRect.bottom
+          add eax, [xsi].PlotRect.top
+          shr eax, 1
+          invoke TextOut, hDC, [xsi].DrawRect.left, eax, [xsi].ScaleY1.pTitle, edi
+        .endif
+        LoadFpuContext FpuContext
       .endif
     .endif
   .endif
@@ -1425,9 +1436,10 @@ Method ChartWnd.DrawScaleY2, uses xbx xdi xsi, hDC:HDC
   invoke DeleteObject, hMnrGridPen
   invoke DeleteObject, hDivPen
 
-  ;Draw Y scale title -----------------------------------------------
+  ;Draw Y2 scale title -----------------------------------------------
   .ifBitSet [xsi].ScaleY2.dFlags, CHT_SCALE_SHOW_TITLE
     .if [xsi].ScaleY2.pTitle != NULL
+      SaveFpuContext FpuContext
       invoke StrLength, [xsi].ScaleY2.pTitle
       .if eax != 0
         mov edi, eax
@@ -1438,6 +1450,7 @@ Method ChartWnd.DrawScaleY2, uses xbx xdi xsi, hDC:HDC
         shr eax, 1
         invoke TextOut, hDC, [xsi].DrawRect.right, eax, [xsi].ScaleY2.pTitle, edi
       .endif
+      LoadFpuContext FpuContext
     .endif
   .endif
 
@@ -1581,9 +1594,8 @@ ifdef INCLUDE_CHART_SETUP_DIALOG
     .endif
   .else
     ;Check if a series was clicked
-    xor ebx, ebx
-    .while ebx != [xsi].InfoAreas.dCount
-      mov xdi, $OCall([xsi].InfoAreas::DataCollection.ItemAt, ebx)
+    .ColForEach [xsi].InfoAreas, ebx
+      mov xdi, xax
       invoke PtInRect, addr [xdi].ChartInfoArea.Rect, DblClkPnt
       .if eax != FALSE
         mov xdx, [xdi].ChartInfoArea.pSeries
@@ -1594,8 +1606,7 @@ ifdef INCLUDE_CHART_SETUP_DIALOG
           .break
         .endif
       .endif
-      inc ebx
-    .endw
+    .ColNext
     .if ebx == [xsi].InfoAreas.dCount
       .ifBitSet [xsi].dFlags, CHT_WND_SHOW_GENERAL_TAB
         ;Launch the general tab on the setup dialog
@@ -2282,7 +2293,7 @@ MethodEnd
 Method ChartWnd.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   local PS:PAINTSTRUCT, ClientRect:RECT
 
-  ;DbgText "ChartWnd.OnPaint"
+;  DbgText "ChartWnd.OnPaint"
   SetObject xsi
   invoke BeginPaint, [xsi].hWnd, addr PS
   invoke GetClientRect, [xsi].hWnd, addr ClientRect
@@ -2372,24 +2383,18 @@ Method ChartWnd.Show, uses xbx xdi xsi, hDC:HDC, pRect:PRECT
   .ifBitClr [xsi].dFlags, CHT_WND_SHOWN_FIRST_TIME
 
     ;Scan all series
-    xor ebx, ebx
-    .while ebx < [xsi].Data.dCount
-      OCall [xsi].Data::Collection.ItemAt, ebx
+    .ColForEach [xsi].Data, ebx
       OCall xax::ChartSeries.Scan, [xax].$Obj(ChartSeries).dDataFrom, \
                                    [xax].$Obj(ChartSeries).dDataCount
-      inc ebx
-    .endw
+    .ColNext
 
     ;Set fDataMin and fDataMax values for the ScaleX
     fld cFloatMin                                         ;Min
-    xor ebx, ebx
     fld cFloatMax                                         ;Min | Max
     xor edi, edi                                          ;Reset flag
-    .while ebx < [xsi].Data.dCount
-      OCall [xsi].Data::Collection.ItemAt, ebx
+    .ColForEach [xsi].Data, ebx
       GetScaleMinMax 0, dDataMinXIndex, dDataMaxXIndex    ;Modifies edi
-      inc ebx
-    .endw
+    .ColNext
     .if edi != 0                                          ;Check if something has changed
       fstp CHT_FLOAT ptr [xsi].ScaleX.fDataMin
       fstp CHT_FLOAT ptr [xsi].ScaleX.fDataMax
@@ -2399,16 +2404,13 @@ Method ChartWnd.Show, uses xbx xdi xsi, hDC:HDC, pRect:PRECT
 
     ;Set fDataMin and fDataMax values for the ScaleY1
     fld cFloatMin                                         ;Min
-    xor ebx, ebx
     fld cFloatMax                                         ;Min | Max
     xor edi, edi                                          ;Reset flag
-    .while ebx < [xsi].Data.dCount
-      OCall [xsi].Data::Collection.ItemAt, ebx
+    .ColForEach [xsi].Data, ebx
       .ifBitClr [xax].$Obj(ChartSeries).dFlags, CHT_SERIES_USE_Y2
         GetScaleMinMax 1, dDataMinYIndex, dDataMaxYIndex  ;Modifies edi
       .endif
-      inc ebx
-    .endw
+    .ColNext
     .if edi != 0                                          ;Check if something has changed
       fstp CHT_FLOAT ptr [xsi].ScaleY1.fDataMin
       fstp CHT_FLOAT ptr [xsi].ScaleY1.fDataMax
@@ -2418,16 +2420,13 @@ Method ChartWnd.Show, uses xbx xdi xsi, hDC:HDC, pRect:PRECT
 
     ;Set fDataMin and fDataMax values for the ScaleY2
     fld cFloatMin                                         ;Min
-    xor ebx, ebx
     fld cFloatMax                                         ;Min | Max
     xor edi, edi                                          ;Reset flag
-    .while ebx < [xsi].Data.dCount
-      OCall [xsi].Data::Collection.ItemAt, ebx
+    .ColForEach [xsi].Data, ebx
       .ifBitSet [xax].$Obj(ChartSeries).dFlags, CHT_SERIES_USE_Y2
         GetScaleMinMax 1, dDataMinYIndex, dDataMaxYIndex  ;Modifies edi
       .endif
-      inc ebx
-    .endw
+    .ColNext
     .if edi != 0                                          ;Check if something has changed
       fstp CHT_FLOAT ptr [xsi].ScaleY2.fDataMin
       fstp CHT_FLOAT ptr [xsi].ScaleY2.fDataMax
@@ -2462,15 +2461,13 @@ Method ChartWnd.Show, uses xbx xdi xsi, hDC:HDC, pRect:PRECT
     BitSet [xsi].dFlags, CHT_WND_SHOW_Y1
   .else
     BitClr [xsi].dFlags, CHT_WND_SHOW_Y1
-    xor ebx, ebx
-    .while ebx < [xsi].Data.dCount
-      OCall [xsi].Data::Collection.ItemAt, ebx
+    .ColForEach [xsi].Data, ebx
+      ;Check if a series did not use Y2 => use Y1
       .ifBitClr [xax].$Obj(ChartSeries).dFlags, CHT_SERIES_USE_Y2
         BitSet [xsi].dFlags, CHT_WND_SHOW_Y1
         .break
       .endif
-      inc ebx
-    .endw
+    .ColNext
   .endif
 
   ;Check if we need an Y2 scale
@@ -2478,15 +2475,12 @@ Method ChartWnd.Show, uses xbx xdi xsi, hDC:HDC, pRect:PRECT
     BitSet [xsi].dFlags, CHT_WND_SHOW_Y2
   .else
     BitClr [xsi].dFlags, CHT_WND_SHOW_Y2
-    xor ebx, ebx
-    .while ebx < [xsi].Data.dCount
-      OCall [xsi].Data::Collection.ItemAt, ebx
+    .ColForEach [xsi].Data, ebx
       .ifBitSet [xax].$Obj(ChartSeries).dFlags, CHT_SERIES_USE_Y2
         BitSet [xsi].dFlags, CHT_WND_SHOW_Y2
         .break
       .endif
-      inc ebx
-    .endw
+    .ColNext
   .endif
 
   ;Draw frame, scales, etc.
@@ -2506,12 +2500,9 @@ Method ChartWnd.Show, uses xbx xdi xsi, hDC:HDC, pRect:PRECT
   mov eax, [xsi].PlotRect.right
   mov ecx, [xsi].PlotRect.bottom
   .if (SDWORD ptr eax > [xsi].PlotRect.left) && (SDWORD ptr ecx > [xsi].PlotRect.top)
-    xor ebx, ebx
-    .while ebx != [xsi].Data.dCount
-      OCall [xsi].Data::Collection.ItemAt, ebx
+    .ColForEach [xsi].Data, ebx
       OCall xax::ChartSeries.Draw, xdi                  ;Polymorphic call
-      inc ebx
-    .endw
+    .ColNext
   .endif
 
   ;Copy the drawn chart on memory DC to window DC

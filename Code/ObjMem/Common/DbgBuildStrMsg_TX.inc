@@ -9,7 +9,7 @@
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgBuildStrMsgA / DbgBuildStrMsgW
-; Purpose:    Debug helper proc that builds a structure in mem to send a string to the
+; Purpose:    Debug helper proc that builds a structure in memory to send a string to the
 ;             DebugCenter server.
 ; Arguments:  Arg1: -> Zero terminated string.
 ;             Arg2: Foreground RGB color value.
@@ -62,7 +62,9 @@ ProcName proc pString:POINTER, dForeColor:DWORD, dBackColor:DWORD, dEffects:DWOR
     mov [xax].DBG_STR_INFO.dEffects, edx
     invoke MemClone, addr [xax + sizeof(DBG_STR_INFO)], pString, dSize4
     mov xax, pData
+    mov ecx, dSize
+  .else
+    xor ecx, ecx
   .endif
-  mov ecx, dSize
   ret
 ProcName endp

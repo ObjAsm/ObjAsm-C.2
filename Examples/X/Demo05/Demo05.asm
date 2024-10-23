@@ -34,7 +34,7 @@ start proc uses xbx xdi xsi                             ;Program entry point
   DbgClearAll                                           ;Clear all DebugCenter windows
 
   mov xbx, offset $ObjTmpl(%XWordVector)                ;Use the object template
-  OCall xbx::%XWordVector.Init, NULL, 1, 1, XVEC_MAX_CAPACITY
+  OCall xbx::%XWordVector.Init, NULL, 1, 1, $Obj(%XWordVector)_MaxCapacity
   OCall xbx::%XWordVector.Insert, 10
   OCall xbx::%XWordVector.Insert, 20
   OCall xbx::%XWordVector.Insert, 30
@@ -93,7 +93,7 @@ start proc uses xbx xdi xsi                             ;Program entry point
 
   ;Make some DWORD Vector operations
   mov xbx, offset $ObjTmpl(ByteVector)                  ;Use the object template
-  OCall xbx::ByteVector.Init, NULL, 1, 1, XVEC_MAX_CAPACITY
+  OCall xbx::ByteVector.Init, NULL, 1, 1, $Obj(ByteVector)_MaxCapacity
   OCall xbx::ByteVector.Insert, 10
   OCall xbx::ByteVector.Insert, 20
   OCall xbx::ByteVector.Insert, 30

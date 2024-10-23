@@ -16,11 +16,12 @@ Object DialogFindText, DialogFindTextID, DialogModelessIndirect
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
   RedefineMethod    Done
-  RedefineMethod    Init,           POINTER, HWND, $ObjPtr(Stream)  ;-> Owner, -> Parent, -> Stream
+  RedefineMethod    Init,           POINTER, HWND, DWORD, $ObjPtr(Stream)
   RedefineMethod    OnCommand,      WPARAM, LPARAM
   RedefineMethod    OnInitDialog,   WPARAM, LPARAM
 
   DefineVariable    pStream,        $ObjPtr(Stream),    NULL
+  DefineVariable    dLanguage,      DWORD,              0
 ObjectEnd
 
 
@@ -171,13 +172,15 @@ MethodEnd
 ; Purpose:    Initialize the DialogFindText dialog object.
 ; Arguments:  Arg1: -> Owner object.
 ;             Arg2: Parent window HANDLE.
-;             Arg3: -> Stream object.
+;             Arg3: Language.
+;             Arg: -> Stream object.
 ; Return:     Nothing.
 
-Method DialogFindText.Init,, pOwner:POINTER, hParent:HWND, pStream:$ObjPtr(Stream)
+Method DialogFindText.Init,, pOwner:POINTER, hParent:HWND, dLanguage:DWORD, pStream:$ObjPtr(Stream)
 ;  DbgText "DialogFindText.Init"
   SetObject xcx
-  m2m [xcx].pStream, pStream, xax
+  m2m [xcx].pStream, pStream, xdx
+  m2m [xcx].dLanguage, dLanguage, eax
   mov xdx, pOwner
   lea xax, [xdx].$Obj(WinApp).hActiveMlsDlg
   ACall Init, xdx, hParent, offset DIALOGFINDTEXT, xax
@@ -220,7 +223,7 @@ Method DialogFindText.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .if xax == -1
       invoke SendMessage, xbx, WM_GETTEXTLENGTH, 0, 0
       .if xax == 0
-        mov edx, $ObjTmpl(DebugCenter).dLanguage
+        mov edx, [xsi].dLanguage
         add edx, 127
         invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
         invoke MessageBox, [xsi].hWnd, addr cMsg, offset szNotification, MB_OK or MB_ICONEXCLAMATION
@@ -249,7 +252,7 @@ Method DialogFindText.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke SendMessage, xbx, CB_GETLBTEXT, dComboIndex, xax
     invoke SendMessage, [xsi].hParent, EM_FINDTEXTEX, dFlags, addr FTXTX
     .if eax == -1
-      mov edx, $ObjTmpl(DebugCenter).dLanguage
+      mov edx, [xsi].dLanguage
       add edx, 128
       invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
       invoke MessageBox, [xsi].hWnd, addr cMsg, offset szNotification, MB_OK or MB_ICONEXCLAMATION

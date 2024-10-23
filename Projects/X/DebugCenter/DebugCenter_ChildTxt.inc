@@ -5,25 +5,16 @@
 ; Purpose:    ObjAsm DebugCenter text MDI child window.
 ; ==================================================================================================
 
-TSB_STYLE   equ     WS_CHILD or WS_VISIBLE or SBARS_TOOLTIPS or SBARS_SIZEGRIP
-
 EDTSTYLE    equ     WS_CHILD or WS_VISIBLE or WS_TABSTOP or \
                     WS_VSCROLL or WS_HSCROLL or ES_AUTOVSCROLL or ES_AUTOHSCROLL or \
                     ES_MULTILINE or ES_WANTRETURN or ES_NOHIDESEL
 
-IDC_TXTRICHEDIT     equ     100
-IDC_TXTSTATUSBAR    equ     200
+IDC_RICHEDIT        equ     100
 
-
-CStr szDbgMdiChildTxtClass, "OAC_DbgMdiChildTxt"                ;Debug Center Child Textoutput
+CStr szDbgMdiChildTxtClass, "OAC_DbgMdiChildTxt"                ;Debug Center Child
 CStr szPropREdtIptor,       "OAP_REdtIptor"
 
 CALC_KEY_TIMEOUT  equ   1000
-
-TxtStatusbar DEF_STATUSBAR {IDC_TXTSTATUSBAR, TSB_STYLE, 0, 2}
-  DEF_STATUSBAR_PART {180, 100, 1, SBT_SUNKEN, NULL}
-  DEF_STATUSBAR_PART {  0,  -2, 0, SBT_SUNKEN, NULL}            ;Spring type
-
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -37,6 +28,7 @@ Object REdtIptor, REDT_IPTOR_ID, MsgInterceptor
   VirtualEvent      OnNotify,         WM_NOTIFY
   VirtualEvent      OnLButtonDown,    WM_LBUTTONDOWN
   VirtualEvent      OnLButtonUp,      WM_LBUTTONUP
+  VirtualEvent      OnMouseMove,      WM_MOUSEMOVE
   VirtualEvent      OnRButtonDown,    WM_RBUTTONDOWN
   VirtualEvent      OnRButtonUp,      WM_RBUTTONUP
 
@@ -65,7 +57,7 @@ Object DbgMdiChildTxt, DBG_MDI_CHILD_TXT_ID, DbgMdiChild
   RedefineMethod    SaveTo,           PSTRING
   VirtualMethod     SelectAll
   StaticMethod      Startup
-  VirtualMethod     UpdateStatusbar
+  RedefineMethod    UpdateStatusbar
   RedefineMethod    ZoomIn
   RedefineMethod    ZoomOut
 
@@ -74,7 +66,6 @@ Object DbgMdiChildTxt, DBG_MDI_CHILD_TXT_ID, DbgMdiChild
 
   DefineVariable    hEdit,            HWND,               0
   DefineVariable    pEdtIptor,        $ObjPtr(REdtIptor), NULL
-  DefineVariable    pStatusbar,       $ObjPtr(Statusbar), NULL
 ObjectEnd
 
 
@@ -151,10 +142,10 @@ Method DbgMdiChildTxt.ClpBrdSetBtns, uses xbx xdi xsi
   invoke SendMessage, [xsi].hEdit, EM_GETSEL, addr dBegPos, addr dEndPos
   mov xcx, [xsi].pOwner
   mov xdi, [xcx].$Obj(DbgMdiClient).pOwner
-  mov hMenu, $invoke(GetMenu, [xdi].$Obj(DebugCenter).hWnd)           ;Get the current menu
+  mov hMenu, $invoke(GetMenu, [xdi].$Obj(Application).hWnd)           ;Get the current menu
   mov eax, dEndPos
   .if eax == dBegPos
-    mov xbx, [xdi].$Obj(DebugCenter).pToolbarEdit
+    mov xbx, [xdi].$Obj(Application).pToolbarEdit
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, FALSE
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, FALSE
     mov xbx, hMenu
@@ -162,13 +153,13 @@ Method DbgMdiChildTxt.ClpBrdSetBtns, uses xbx xdi xsi
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_CLEAR, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_CALC, MF_BYCOMMAND or MF_GRAYED
-    mov xbx, $ObjTmpl(DebugCenter).hMenuContext
+    mov xbx, $ObjTmpl(Application).hMenuContext
     invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_CLEAR, MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_CALC, MF_BYCOMMAND or MF_GRAYED
   .else
-    mov xbx, [xdi].$Obj(DebugCenter).pToolbarEdit
+    mov xbx, [xdi].$Obj(Application).pToolbarEdit
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, TRUE
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, TRUE
     mov xbx, hMenu
@@ -176,7 +167,7 @@ Method DbgMdiChildTxt.ClpBrdSetBtns, uses xbx xdi xsi
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_CLEAR, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_CALC, MF_BYCOMMAND or MF_ENABLED
-    mov xbx, $ObjTmpl(DebugCenter).hMenuContext
+    mov xbx, $ObjTmpl(Application).hMenuContext
     invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_CLEAR, MF_BYCOMMAND or MF_ENABLED
@@ -188,7 +179,7 @@ Method DbgMdiChildTxt.ClpBrdSetBtns, uses xbx xdi xsi
     dec dActivate
   .endif
 
-  mov xbx, [xdi].$Obj(DebugCenter).pToolbarEdit
+  mov xbx, [xdi].$Obj(Application).pToolbarEdit
   invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_PASTE, dActivate
   .if dActivate
     mov edi, MF_BYCOMMAND or MF_ENABLED
@@ -196,7 +187,7 @@ Method DbgMdiChildTxt.ClpBrdSetBtns, uses xbx xdi xsi
     mov edi, MF_BYCOMMAND or MF_GRAYED
   .endif
   invoke EnableMenuItem, hMenu, IDM_EDIT_PASTE, edi
-  invoke EnableMenuItem, $ObjTmpl(DebugCenter).hMenuContext, IDM_EDIT_PASTE, edi
+  invoke EnableMenuItem, $ObjTmpl(Application).hMenuContext, IDM_EDIT_PASTE, edi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -207,7 +198,6 @@ MethodEnd
 
 Method DbgMdiChildTxt.Done, uses xsi
   SetObject xsi
-  Destroy [xsi].pStatusbar
   Destroy [xsi].pEdtIptor
   ACall xsi.Done
 MethodEnd
@@ -367,12 +357,12 @@ Method DbgMdiChildTxt.Init, uses xbx xdi xsi, pOwner:POINTER, pTitle:PSTRINGW, h
     inc [xdi].$Obj(DbgMdiClient).dChildCount
     mov xbx, [xdi].$Obj(DbgMdiClient).pOwner
     .if [xdi].$Obj(DbgMdiClient).dChildCount == 1       ;First child window ?
-      invoke SendMessage, [xbx].$Obj(DebugCenter).hWnd, WM_CANCELMODE, 0, 0 ;Close any opened submenu
+      invoke SendMessage, [xbx].$Obj(Application).hWnd, WM_CANCELMODE, 0, 0 ;Close any opened submenu
       invoke SendMessage, [xdi].$Obj(DbgMdiClient).hWnd, WM_MDISETMENU, \
-                          [xbx].$Obj(DebugCenter).hMenuChild, [xbx].$Obj(DebugCenter).hMenuChildWnd
-      OCall xbx::DebugCenter.EnableActions, TRUE
-      invoke DrawMenuBar, [xbx].$Obj(DebugCenter).hWnd  ;Redraw the new menu bar
-      OCall xbx::DebugCenter.ManageOptions, DBG_MDI_CHILD_TXT_ID
+                          [xbx].$Obj(Application).hMenuChild, [xbx].$Obj(Application).hMenuChildWnd
+      OCall xbx::Application.EnableActions, TRUE
+      invoke DrawMenuBar, [xbx].$Obj(Application).hWnd  ;Redraw the new menu bar
+      OCall xbx::Application.ManageOptions, DBG_MDI_CHILD_TXT_ID
     .endif
 
     ;Install Magnetism
@@ -381,10 +371,10 @@ Method DbgMdiChildTxt.Init, uses xbx xdi xsi, pOwner:POINTER, pTitle:PSTRINGW, h
 
     invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
   .else
-    mov edx, $ObjTmpl(DebugCenter).dLanguage
+    mov edx, $ObjTmpl(Application).dLanguage
     add edx, 125
     invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
-    invoke MessageBox, [xbx].$Obj(DebugCenter).hWnd, addr cMsg, offset szError, \
+    invoke MessageBox, [xbx].$Obj(Application).hWnd, addr cMsg, offset szError, \
                        MB_OK or MB_ICONERROR
   .endif
 MethodEnd
@@ -400,18 +390,17 @@ ES_EX_ZOOMABLE equ 0010h
 
 Method DbgMdiChildTxt.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
-  invoke CreateWindowEx, WS_EX_LEFT or WS_EX_CLIENTEDGE or WS_EX_ACCEPTFILES or ES_EX_ZOOMABLE, \
-                         offset szRichEdit20, NULL, EDTSTYLE, \
-                         0, 0, 10, 10, [xsi].hWnd, IDC_TXTRICHEDIT, hInstance, NULL
+  invoke CreateWindowEx, WS_EX_LEFT or WS_EX_CLIENTEDGE or WS_EX_ACCEPTFILES or \
+                  ES_NOHIDESEL or ES_EX_ZOOMABLE, \
+                  offset szRichEdit20, NULL, EDTSTYLE, \
+                  0, 0, CW_USEDEFAULT, CW_USEDEFAULT, [xsi].hWnd, IDC_RICHEDIT, hInstance, NULL
   mov [xsi].hEdit, xax
   invoke SendMessage, [xsi].hEdit, EM_SETEVENTMASK, 0, ENM_SELCHANGE
-  invoke SendMessage, [xsi].hEdit, EM_SETZOOM, $ObjTmpl(DebugCenter).dTxtZoomFactor, ZOOM_BASE
+  invoke SendMessage, [xsi].hEdit, EM_SETZOOM, $ObjTmpl(Application).dTxtZoomFactor, ZOOM_BASE
 
   mov [xsi].pEdtIptor, $New(REdtIptor)
   OCall xax::REdtIptor.Init, xsi, [xsi].hEdit, offset szPropREdtIptor
 
-  mov [xsi].pStatusbar, $New(Statusbar)
-  OCall xax::Statusbar.Init, xsi, [xsi].hWnd, offset TxtStatusbar
   xor eax, eax
 MethodEnd
 
@@ -455,7 +444,7 @@ Method DbgMdiChildTxt.OnNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov xax, lParam
   .if [xax].NMHDR.code == EN_SELCHANGE
     mov xdx, [xax].NMHDR.idFrom
-    .if xdx == IDC_TXTRICHEDIT
+    .if xdx == IDC_RICHEDIT
       mov xcx, [xsi].pOwner
       invoke SendMessage, [xcx].$Obj(DbgMdiClient).hWnd, WM_MDIGETACTIVE, 0, 0
       .if xax == [xsi].hWnd
@@ -476,23 +465,12 @@ MethodEnd
 ; Return:     eax = Zero.
 
 Method DbgMdiChildTxt.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
-  local SbRect:RECT, CRect:RECT, dHeight:DWORD, dTop:DWORD
+  local CRect:RECT
 
   SetObject xsi
   .if wParam != SIZE_MINIMIZED
     invoke GetClientRect, [xsi].hWnd, addr CRect
-
-    mov xbx, [xsi].pStatusbar
-    invoke GetWindowRect, [xbx].$Obj(Statusbar).hWnd, addr SbRect
-    mov eax, SbRect.bottom
-    sub eax, SbRect.top
-    mov dHeight, eax
-    mov ecx, CRect.bottom
-    sub ecx, eax
-    mov dTop, ecx
-    invoke MoveWindow, [xbx].$Obj(Statusbar).hWnd, 0, dTop, CRect.right, dHeight, TRUE
-
-    invoke MoveWindow, [xsi].hEdit, 0, 0, CRect.right, dTop, TRUE
+    invoke MoveWindow, [xsi].hEdit, 0, 0, CRect.right, CRect.bottom, TRUE
   .endif
   invoke DefMDIChildProc, [xsi].hWnd, WM_SIZE, wParam, lParam
 MethodEnd
@@ -522,7 +500,7 @@ Method DbgMdiChildTxt.Open, uses xsi, pFileName:PSTRING
   c2m EdtStrm.pfnCallback, offset REOpenText, xax
   invoke SendMessage, [xsi].hEdit, EM_STREAMIN, SF_RTF, addr EdtStrm
   .if EdtStrm.dwError != 0
-    mov edx, $ObjTmpl(DebugCenter).dLanguage
+    mov edx, $ObjTmpl(Application).dLanguage
     add edx, 121
     invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
     invoke MessageBox, [xsi].hWnd, addr cMsg, offset szDebugCenter, \
@@ -550,8 +528,8 @@ Method DbgMdiChildTxt.Print, uses xbx xdi xsi
   m2m PrtDlg.hwndOwner, [xsi].hWnd, xax
   mov xdx, [xsi].pOwner
   mov xbx, [xdx].$Obj(DbgMdiClient).pOwner
-  m2m PrtDlg.hDevMode, [xbx].$Obj(DebugCenter).hDevMode, xdx
-  m2z PrtDlg.hDevNames                                  ;[xcx].$Obj(DebugCenter).hDevNames
+  m2m PrtDlg.hDevMode, [xbx].$Obj(Application).hDevMode, xdx
+  m2z PrtDlg.hDevNames                                  ;[xcx].$Obj(Application).hDevNames
   m2z PrtDlg.hDC
   mov PrtDlg.Flags, PD_NOSELECTION or PD_RETURNDC
   m2z PrtDlg.nFromPage
@@ -569,8 +547,8 @@ Method DbgMdiChildTxt.Print, uses xbx xdi xsi
   m2z PrtDlg.hSetupTemplate
 
   .if $invoke(PrintDlg, addr PrtDlg)
-    m2m [xbx].$Obj(DebugCenter).hDevMode, PrtDlg.hDevMode, xax
-    m2m [xbx].$Obj(DebugCenter).hDevNames, PrtDlg.hDevNames, xcx
+    m2m [xbx].$Obj(Application).hDevMode, PrtDlg.hDevMode, xax
+    m2m [xbx].$Obj(Application).hDevNames, PrtDlg.hDevNames, xcx
     .ifBitSet $invoke(GetDeviceCaps, PrtDlg.hDC, RASTERCAPS), RC_BITBLT
       mov DocInfo.cbSize, sizeof(DocInfo)
       m2m DocInfo.lpszDocName, offset szDebugCenter, xax
@@ -587,20 +565,20 @@ Method DbgMdiChildTxt.Print, uses xbx xdi xsi
 
       ;Set paper margins using the Viewport
       invoke SetMapMode, PrtDlg.hDC, MM_ISOTROPIC
-      invoke MulDiv, [xbx].$Obj(DebugCenter).PrintMargin.left, LogPix.x, 2540
+      invoke MulDiv, [xbx].$Obj(Application).PrintMargin.left, LogPix.x, 2540
       sub eax, PageOffset.x
       mov edi, eax
-      invoke MulDiv, [xbx].$Obj(DebugCenter).PrintMargin.top, LogPix.y, 2540
+      invoke MulDiv, [xbx].$Obj(Application).PrintMargin.top, LogPix.y, 2540
       sub eax, PageOffset.y
       invoke SetViewportOrgEx, PrtDlg.hDC, edi, eax, NULL
 
-      mov eax, [xbx].$Obj(DebugCenter).PrintMargin.left
-      add eax, [xbx].$Obj(DebugCenter).PrintMargin.right
+      mov eax, [xbx].$Obj(Application).PrintMargin.left
+      add eax, [xbx].$Obj(Application).PrintMargin.right
       invoke MulDiv, eax, LogPix.x, -2540
       add eax, PageSize.x
       mov PrintSize.x, eax
-      mov eax, [xbx].$Obj(DebugCenter).PrintMargin.top
-      add eax, [xbx].$Obj(DebugCenter).PrintMargin.bottom
+      mov eax, [xbx].$Obj(Application).PrintMargin.top
+      add eax, [xbx].$Obj(Application).PrintMargin.bottom
       invoke MulDiv, eax, LogPix.y, -2540
       add eax, PageSize.y
       mov PrintSize.y, eax
@@ -665,7 +643,7 @@ Method DbgMdiChildTxt.Print, uses xbx xdi xsi
       invoke EndDoc, PrtDlg.hDC
       invoke DeleteDC, PrtDlg.hDC
     .else
-      mov edx, $ObjTmpl(DebugCenter).dLanguage
+      mov edx, $ObjTmpl(Application).dLanguage
       add edx, 124
       invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
       invoke MessageBox, [xsi].hWnd, addr cMsg, offset szDebugCenter, \
@@ -710,7 +688,7 @@ Method DbgMdiChildTxt.SaveTo, uses xsi, pFileName:PSTRING
   m2m EdtStrm.pfnCallback, offset RESaveText, xax
   invoke SendMessage, [xsi].hEdit, EM_STREAMOUT, SF_RTF, addr EdtStrm
   .if EdtStrm.dwError != 0
-    mov edx, $ObjTmpl(DebugCenter).dLanguage
+    mov edx, $ObjTmpl(Application).dLanguage
     add edx, 122
     invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
     invoke MessageBox, [xsi].hWnd, addr cMsg, offset szDebugCenter, \
@@ -762,39 +740,83 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DbgMdiChildTxt.UpdateStatusbar, uses xdi xsi
+Method DbgMdiChildTxt.UpdateStatusbar, uses xbx xdi xsi
   local dFirstCharIndex:DWORD, dLastCharIndex:DWORD, dSelCount:DWORD
-  local dLineNumber:DWORD, dLineCharPos:DWORD
-  local cTextBuffer[1024]:CHR
+  local dLineNumberFirst:DWORD, dLineCharPos:DWORD, dFirstLineCharIndex:DWORD
+  local dLineCount:DWORD, cTextBuffer[1024]:CHR, wResText[1024]:CHRW
 
+;  DbgText "DbgMdiChildTxt.UpdateStatusbar"
   SetObject xsi
-  lea xdi, cTextBuffer
-  invoke SendMessage, [xsi].hEdit, EM_GETSEL, addr dFirstCharIndex, addr dLastCharIndex
-  mov eax, dLastCharIndex
-  sub eax, dFirstCharIndex
-  mov dSelCount, eax
-  .if eax == 0
-    WriteF xdi, "No text selec"                     ;"selected" is an import => has to be split
-    WriteF xdi, "ted", dFirstCharIndex, dLastCharIndex, dSelCount
-  .else
-    WriteF xdi, "Selection from character index ¦UD to ¦UD", dFirstCharIndex, dLastCharIndex
-    .if dSelCount == 1
-      WriteF xdi, " (1 character)"
-    .else
-      WriteF xdi, " (¦UD characters)", dSelCount
-    .endif
-  .endif
-  OCall [xsi].pStatusbar::Statusbar.SetPartText, 1, addr cTextBuffer, SBT_SUNKEN
+  mov xax, [xsi].pOwner
+  invoke SendMessage, [xax].$Obj(DbgMdiClient).hWnd, WM_MDIGETACTIVE, 0, 0
+  .if xax == [xsi].hWnd                               ;Only if this window is the active one
+    mov xcx, [xsi].pOwner
+    mov xbx, [xcx].$Obj(DbgMdiClient).pOwner          ;xbx -> Application
 
-  lea xdi, cTextBuffer
-  invoke SendMessage, [xsi].hEdit, EM_LINEFROMCHAR, dFirstCharIndex, 0
-  mov dLineNumber, eax
-  invoke SendMessage, [xsi].hEdit, EM_LINEINDEX , dLineNumber, 0
-  mov ecx, dFirstCharIndex
-  sub ecx, eax
-  mov dLineCharPos, ecx
-  WriteF xdi, "Caret at line ¦UD, position ¦UD", dLineNumber, dLineCharPos
-  OCall [xsi].pStatusbar::Statusbar.SetPartText, 0, addr cTextBuffer, SBT_SUNKEN
+    invoke SendMessage, [xsi].hEdit, EM_GETSEL, addr dFirstCharIndex, addr dLastCharIndex
+    mov eax, dLastCharIndex
+    sub eax, dFirstCharIndex
+    mov dSelCount, eax
+    invoke SendMessage, [xsi].hEdit, EM_LINEFROMCHAR, dFirstCharIndex, 0
+    mov dLineNumberFirst, eax
+    invoke SendMessage, [xsi].hEdit, EM_LINEFROMCHAR, dLastCharIndex, 0
+    sub eax, dLineNumberFirst
+    inc eax
+    mov dLineCount, eax
+
+    .if dSelCount == 0
+      OCall [xbx].$Obj(Application).pStatusbar::Statusbar.SetPartText, 2, NULL, SBT_SUNKEN
+    .else
+      lea xdi, cTextBuffer
+      mov edx, [xbx].$Obj(Application).dLanguage
+      add edx, 142                                      ;"Selection"
+      invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+      WriteF xdi, "¦SU: ", addr wResText
+      mov edx, [xbx].$Obj(Application).dLanguage
+      .if dSelCount == 1
+        add edx, 143                                    ;"character"
+        invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+        WriteF xdi, "1 ¦SU", addr wResText
+      .else
+        add edx, 144                                    ;"characters"
+        invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+        WriteF xdi, "¦UD ¦SU", dSelCount, addr wResText
+      .endif
+      WriteF xdi, ", "
+      mov edx, [xbx].$Obj(Application).dLanguage
+      .if dLineCount == 1
+        add edx, 145                                    ;"line"
+        invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+        WriteF xdi, "1 ¦SU", addr wResText
+      .else
+        add edx, 146                                    ;"lines"
+        invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+        WriteF xdi, "¦UD ¦SU", dLineCount, addr wResText
+      .endif
+      OCall [xbx].$Obj(Application).pStatusbar::Statusbar.SetPartText, 2, addr cTextBuffer, SBT_SUNKEN
+    .endif
+
+    lea xdi, cTextBuffer
+    invoke GetWindowText, [xsi].hWnd, xdi, lengthof(cTextBuffer)
+    lea xdi, [xdi + sizeof(CHR)*xax]
+    invoke SendMessage, [xsi].hEdit, EM_LINEINDEX, dLineNumberFirst, 0
+    mov dFirstLineCharIndex, eax
+    mov ecx, dFirstCharIndex
+    sub ecx, eax
+    mov dLineCharPos, ecx
+    mov edx, [xbx].$Obj(Application).dLanguage
+    add edx, 140                                        ;"Caret at line"
+    invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+    inc dLineNumberFirst                                ;First line index is 0 => 1
+    WriteF xdi, ": ¦SU ¦UD, ", addr wResText, dLineNumberFirst
+    mov edx, [xbx].$Obj(Application).dLanguage
+    add edx, 141                                        ;"position"
+    invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+    mov eax, dFirstLineCharIndex
+    sub dFirstCharIndex, eax
+    WriteF xdi, "¦SU ¦UD", addr wResText, dFirstCharIndex
+    OCall [xbx].$Obj(Application).pStatusbar::Statusbar.SetPartText, 1, addr cTextBuffer, SBT_SUNKEN
+  .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -862,7 +884,7 @@ MethodEnd
 ; Return:     eax = Result of the message processing and depends on the message.
 
 Method REdtIptor.WndProc,, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
-  DbgMessage uMsg
+;  DbgMessage uMsg
   invoke GetProp, pSelf, offset szPropREdtIptor
   OCall xax::REdtIptor.Dispatch, pSelf, uMsg, wParam, lParam
 MethodEnd
@@ -879,10 +901,10 @@ Method REdtIptor.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
   SetObject xsi
   .if $invoke(DragQueryFile, wParam, -1, NULL, 0) > 1
-    mov edx, $ObjTmpl(DebugCenter).dLanguage
+    mov edx, $ObjTmpl(Application).dLanguage
     add edx, 120
     invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
-    invoke MessageBox, $ObjTmpl(DebugCenter).hWnd, addr cMsg, offset szDebugCenter, \
+    invoke MessageBox, $ObjTmpl(Application).hWnd, addr cMsg, offset szDebugCenter, \
                        MB_OK or MB_ICONEXCLAMATION
   .endif
   invoke DragQueryFile, wParam, 0, NULL, 0
@@ -901,13 +923,13 @@ Method REdtIptor.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         jmp @@Exit
       .endif
     .endif
-    mov edx, $ObjTmpl(DebugCenter).dLanguage
+    mov edx, $ObjTmpl(Application).dLanguage
     add edx, 121
     invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
     invoke MessageBox, [xsi].hWnd, addr cMsg, \
                        offset szDebugCenter, MB_OK or MB_ICONERROR
   .else
-    mov edx, $ObjTmpl(DebugCenter).dLanguage
+    mov edx, $ObjTmpl(Application).dLanguage
     add edx, 126
     invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
     invoke MessageBox, [xsi].hWnd, addr cMsg, \
@@ -988,6 +1010,22 @@ Method REdtIptor.OnLButtonUp, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     REdtIptor.OnMouseMove
+; Purpose:    Event procedure for WM_MOUSEMOVE message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = Zero.
+
+Method REdtIptor.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
+  SetObject xsi
+  invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_MOUSEMOVE, wParam, lParam
+  .ifBitSet wParam, MK_LBUTTON
+    OCall [xsi].pOwner::DbgMdiChildTxt.UpdateStatusbar
+  .endif
+  xor eax, eax
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     REdtIptor.OnRButtonDown
 ; Purpose:    Event procedure for WM_RBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -1014,9 +1052,9 @@ Method REdtIptor.OnRButtonUp,, wParam:WPARAM, lParam:LPARAM
   local Pnt:POINT
 
   invoke GetCursorPos, addr Pnt
-  invoke GetSubMenu, $ObjTmpl(DebugCenter).hMenuContext, 0
-  invoke TrackPopupMenu, xax, TPM_LEFTALIGN, Pnt.x, Pnt.y, 0, $ObjTmpl(DebugCenter).hWnd, NULL
-  invoke PostMessage, $ObjTmpl(DebugCenter).hWnd, WM_NULL, 0, 0
+  invoke GetSubMenu, $ObjTmpl(Application).hMenuContext, 0
+  invoke TrackPopupMenu, xax, TPM_LEFTALIGN, Pnt.x, Pnt.y, 0, $ObjTmpl(Application).hWnd, NULL
+  invoke PostMessage, $ObjTmpl(Application).hWnd, WM_NULL, 0, 0
   xor eax, eax
 MethodEnd
 

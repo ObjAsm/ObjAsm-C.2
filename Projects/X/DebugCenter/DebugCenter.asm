@@ -20,9 +20,9 @@
 ;             Version 2.3.0, November 2023
 ;               - Communication via HTTP-Server added.
 ;
-;                 The URL registration for Http.sys requires extended rights. 
+;                 The URL registration for Http.sys requires extended rights.
 ;                 To avoid having to start DebugCenter with admin rights every time, a permanent
-;                 registration can be carried out using NETSH. NETSH must be executed from a 
+;                 registration can be carried out using NETSH. NETSH must be executed from a
 ;                 command console with admin rights. Enter the following command in the console:
 ;                 netsh http add urlacl url=http://+:8080/ sddl=D:(A;;GX;;;;S-1-1-0) listen=yes delegate=no
 ;                 "sddl=D:(A;;GX;;;;S-1-1-0)" is the replacement for the localised EVERYONE.
@@ -30,22 +30,25 @@
 ;                 netsh http add urlacl url=http://+:8080/ user=%USERDOMAIN%\%USERNAME%
 ;                 The URL must be exacly the same as the used in the code!
 ;
-;               - Statusbar added to CildTxt to show caret and selection information
+;             Version 2.4.0, October 2024
+;               - Information from child windows added to the statusbar.
+;               - Plotting capabilities added.
+;                 Original idea from HSE https://masm32.com/board/index.php?topic=12321.0
 ; ==================================================================================================
 
 ;Wishlist:
-;- translate some strings from Globals to resource definitions
-;- upgrade resource definitions like OA_Tools
-;- restore MFT_RIGHTJUSTIFY to Help item in menu bar => flashing problem in XMenu object
-;- ChildPlot idea from HSE https://masm32.com/board/index.php?topic=12321.0
+;- Translate some strings from DebugCenter_Globals.inc to resource definitions
+;- Upgrade resource definitions like OA_Tools
+;- Flashing problem in XMenu object
 
 
 WIN32_LEAN_AND_MEAN         equ 1                       ;Necessary to exclude WinSock.inc
 INTERNET_PROTOCOL_VERSION   equ 4
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN32, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS related objects
 
+% include &MacPath&fMath.inc
 % include &MacPath&DlgTmpl.inc                          ;Load dialog tempate support
 % include &MacPath&ConstDiv.inc
 % include &COMPath&COM.inc
@@ -65,7 +68,7 @@ SysSetup OOP, WIN32, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS r
 
 % includelib &LibPath&Windows\Kernel32.lib
 % includelib &LibPath&Windows\Shell32.lib
-% includelib &LibPath&Windows\OLE32.lib
+% includelib &LibPath&Windows\Ole32.lib
 % includelib &LibPath&Windows\Comctl32.lib
 % includelib &LibPath&Windows\ComDlg32.lib
 % includelib &LibPath&Windows\shlwapi.lib
@@ -73,6 +76,9 @@ SysSetup OOP, WIN32, WIDE_STRING;, DEBUG(CON, INFO)     ;Load OOP files and OS r
 % includelib &LibPath&Windows\UxTheme.lib
 % includelib &LibPath&Windows\httpapi.lib
 % includelib &LibPath&Windows\wininet.lib
+% includelib &LibPath&Windows\OleAut32.lib
+
+INCLUDE_CHART_SETUP_DIALOG = TRUE
 
 if DEBUGGING eq FALSE
   % include &MacPath&DebugShare.inc
@@ -81,16 +87,18 @@ endif
 MakeObjects Primer, Stream, DiskStream                  ;Load or build the following objects
 MakeObjects Collection, DataCollection, SortedCollection, SortedDataCollection, XWCollection
 MakeObjects WinPrimer, Window, WinApp, MdiApp
-MakeObjects Button, Hyperlink, IconButton
+MakeObjects Button, Hyperlink, IconButton, ColorButton
 MakeObjects RegKey, IDL, IniFile
 MakeObjects Dialog, DialogModal, DialogModalIndirect
 MakeObjects DialogModeless, DialogModelessIndirect
 MakeObjects SimpleImageList, MaskedImageList
 MakeObjects MsgInterceptor, XMenu, Magnetism
-MakeObjects WinControl, Toolbar, Rebar, Statusbar, Tooltip, TextView, Image
+MakeObjects WinControl, Toolbar, Rebar, Statusbar, TabCtrl, Tooltip, TextView, Image
+MakeObjects Array, Chart, ChartXY
 
-include DebugCenter_Globals.inc                         ;Include application globals
+
 include DebugCenter_DlgFindText.inc
+include DebugCenter_Globals.inc                         ;Include application globals
 include DebugCenter_HttpServer.inc
 include DebugCenter_Main.inc                            ;Include DebugCenter main object
 
@@ -98,9 +106,9 @@ start proc uses xbx                                     ;Program entry point
   mov xbx, $invoke(LoadLibrary, $OfsCStr("RichEd20.dll"))
   SysInit                                               ;Runtime initialization of OOP model
 
-  OCall $ObjTmpl(DebugCenter)::DebugCenter.Init         ;Initialize the object data
-  OCall $ObjTmpl(DebugCenter)::DebugCenter.Run          ;Execute the application
-  OCall $ObjTmpl(DebugCenter)::DebugCenter.Done         ;Finalize it
+  OCall $ObjTmpl(Application)::Application.Init         ;Initialize the object data
+  OCall $ObjTmpl(Application)::Application.Run          ;Execute the application
+  OCall $ObjTmpl(Application)::Application.Done         ;Finalize it
 
   SysDone                                               ;Runtime finalization of the OOP model
   invoke FreeLibrary, xbx                               ;Unload RichEdit library

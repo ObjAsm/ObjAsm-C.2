@@ -15,9 +15,9 @@ externdef BASE64_DEFAULT_DECODE_TABLE:BYTE
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Base64Decode
-; Purpose:    Decode a data stream using the BASE64 algoritm.
-; Arguments:  Arg1: -> Encoded data buffer.
-;             Arg2: Encoded data size in BYTEs (always a multiple of 4).
+; Purpose:    Decode a CHR stream using the BASE64 algoritm.
+; Arguments:  Arg1: -> Encoded CHR data buffer.
+;             Arg2: Encoded data size in BYTEs (always a multiple of 4*sizeof(CHR)).
 ;             Arg3: Decode table. If NULL, BASE64_DEFAULT_DECODE_TABLE is used.
 ;                   BASE64_URL_DECODE_TABLE can be used to decode URL content.
 ; Return:     xax -> Decoded data. When no longer needed, it should be freed using MemFree.
@@ -46,14 +46,22 @@ externdef BASE64_DEFAULT_DECODE_TABLE:BYTE
 BASE64_PADDING  equ '='
 
 B64GetCharInto macro Reg32:req
-  movzx Reg32, CHRA ptr [xsi]
+  movzx Reg32, CHR ptr [xsi]
+  if TARGET_STR_TYPE eq STR_TYPE_WIDE
+    cmp Reg32, 255                                      ;Valid alphabet character?
+    jbe @@Error
+  endif
   movzx Reg32, BYTE ptr [$SubReg(Reg32, @WordSize) + xbx]
   cmp Reg32, 255                                        ;Valid alphabet character?
   jz @@Error
 endm
 
 B64GetChar2Into macro Reg32:req
-  movzx Reg32, CHRA ptr [xsi]
+  movzx Reg32, CHR ptr [xsi]
+  if TARGET_STR_TYPE eq STR_TYPE_WIDE
+    cmp Reg32, 255                                      ;Valid alphabet character?
+    jbe @@Error
+  endif
   .break .if Reg32 == BASE64_PADDING                    ;Padding character?
   movzx Reg32, BYTE ptr [$SubReg(Reg32, @WordSize) + xbx]
   cmp Reg32, 255                                        ;Valid alphabet character?
@@ -62,11 +70,11 @@ endm
 
 .code
 align ALIGN_CODE
-Base64Decode proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, pDecodeTable:POINTER
-  local pDecodedDataBuffer:POINTER, dDecodedDataSize:DWORD
-  _ProcName_ textequ <Base64Decode>
+ProcName proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, pDecodeTable:POINTER
+  _ProcName_ textequ <%ProcName>
   ArgReg pEncDataBuffer:xcx, dEncDataSize:edx, pDecodeTable:R8
   LocReg dCount:r10d
+  local pDecodedDataBuffer:POINTER, dDecodedDataSize:DWORD
 
   mov dDecodedDataSize, 0
   mov pDecodedDataBuffer, NULL
@@ -87,7 +95,7 @@ Base64Decode proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, p
       cmovz xbx, xdx
       .while TRUE
         B64GetCharInto edx
-        inc xsi
+        add xsi, sizeof(CHR)
         B64GetCharInto eax
         mov ecx, eax
         shl edx, 2
@@ -96,7 +104,7 @@ Base64Decode proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, p
         stosb
         dec $LocReg(dCount)
 
-        inc xsi
+        add xsi, sizeof(CHR)
         B64GetChar2Into eax
         mov edx, eax
         and ecx, 1111b
@@ -106,7 +114,7 @@ Base64Decode proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, p
         stosb
         dec $LocReg(dCount)
 
-        inc xsi
+        add xsi, sizeof(CHR)
         B64GetChar2Into eax
         mov ecx, eax
         shl edx, 6
@@ -114,7 +122,7 @@ Base64Decode proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, p
         stosb
         dec $LocReg(dCount)
         .break .if ZERO?
-        inc xsi
+        add xsi, sizeof(CHR)
       .endw
     .endif
   .endif
@@ -129,4 +137,4 @@ Base64Decode proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, p
   xor eax, eax
   xor ecx, ecx
   ret
-Base64Decode endp
+ProcName endp

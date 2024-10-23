@@ -4270,39 +4270,6 @@ endm
 ;             E.g.: _ProcName_ textequ <Base64Encode>
 ;             This is necessary because of the non-working @ProcName.
 
-
-;LocReg macro ExpressionList:vararg
-;  ifb <??ObjectContext>
-;    .err LocReg - out of method context
-;  else
-;    for $$Expression, <ExpressionList>
-;      $$Pos1 InStr <$$Expression>, <:>
-;      if $$Pos1 ne 0
-;        $$SymName textequ @CatStr(%??ObjectContext, %??MethodContext, <_>, @SubStr(<$$Expression>, 1, $$Pos1 - 1))
-;        $$RegName SubStr <$$Expression>, $$Pos1 + 1
-;      else
-;        .err LocReg - syntax error: $$Expression
-;      endif
-;
-;      if TARGET_BITNESS eq 64
-;        %$$SymName equ $$RegName
-;      else
-;        %ifidni <$$RegName>, <$SubReg($$RegName, 1)>
-;          local $$SymName:BYTE
-;        %elseifidni <$$RegName>, <$SubReg($$RegName, 2)>
-;          local $$SymName:WORD
-;        %elseifidni <$$RegName>, <$SubReg($$RegName, 4)>
-;          %local $$SymName:DWORD
-;        %elseifidni <$$RegName>, <$SubReg($$RegName, 8)>
-;          local $$SymName:QWORD
-;        else
-;          echo $$RegName - Unknown register size
-;        endif
-;      endif
-;    endm
-;  endif
-;endm
-
 LocReg macro ExpressionList:vararg
   ifb ??ObjectContext
     ifb <%_ProcName_>
@@ -4391,28 +4358,6 @@ endm
 ; Note:       To use this macro with a procedure, _ProcName_ must be defined previously.
 ;             E.g.: _ProcName_ textequ <Base64Encode>
 ;             This is necessary because of the non-working @ProcName.
-
-;ArgReg_ macro ExpressionList:vararg
-;  ifb <??ObjectContext>
-;    .err ArgReg - out of method context
-;  else
-;    for $$Expression, <ExpressionList>
-;      $$Pos1 InStr <$$Expression>, <:>
-;      if $$Pos1 ne 0
-;        $$SymName textequ @CatStr(%??ObjectContext, %??MethodContext, <_>, @SubStr(<$$Expression>, 1, $$Pos1 - 1))
-;        $$RegName SubStr <$$Expression>, $$Pos1 + 1
-;      else
-;        .err ArgReg - syntax error: $$Expression
-;      endif
-;
-;      if TARGET_BITNESS eq 64
-;        %$$SymName equ $$RegName
-;      else
-;        %$$SymName SubStr <$$Expression>, 1, $$Pos1 - 1
-;      endif
-;    endm
-;  endif
-;endm
 
 ArgReg macro ExpressionList:vararg
   ifb ??ObjectContext

@@ -254,8 +254,8 @@ MethodEnd
 Method ConnectionPoint.FireEvent, uses xsi, dParameter:DWORD
   DbgText "ConnectionPoint.FireEvent", "ConnectionPoint"
   SetObject xsi
-  OCall [xsi].ConnectedInterfaces::DataCollection.ForEach, $MethodAddr(xsi.FireNow), \
-                                                           XWORD ptr dParameter, NULL
+  mov xdx, $MethodAddr(xsi::ConnectionPoint.FireNow)
+  OCall [xsi].ConnectedInterfaces::DataCollection.ForEach, xdx, XWORD ptr dParameter, NULL
 MethodEnd
 
 

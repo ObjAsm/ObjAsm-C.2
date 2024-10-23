@@ -15,7 +15,7 @@
 ;             Arg2: Background RGB color value.
 ;             Arg3: -> Destination Window WIDE name.
 ; Return:     xax -> Allocated memory containig the message.
-;                 When no longer needed, it should be deallocated using MemFree.
+;                   When no longer needed, it should be deallocated using MemFree.
 ;             ecx = Byte size of the allocated memory block.
 
 ; dSize = sizeof(DBG_HEADER_INFO) + sizeof(pDest) + sizeof(DBG_BMP_INFO) + sizeof(Bitmap)
@@ -73,8 +73,12 @@ DbgBuildBmpMsg proc uses xdi xsi hBmp:HANDLE, dBackColor:DWORD, pDest:POINTER
       .endif
       invoke ReleaseDC, 0, hDC
       mov xax, pData
+      mov ecx, dSize
+    .else
+      xor ecx, ecx
     .endif
+  .else
+    xor ecx, ecx
   .endif
-  mov ecx, dSize
   ret
 DbgBuildBmpMsg endp

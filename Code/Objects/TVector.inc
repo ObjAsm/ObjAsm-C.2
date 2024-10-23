@@ -39,7 +39,7 @@
 
 % &??ObjName&_ItemType  textequ <TVEC_ITEM_TYPE>
 % &??ObjName&_PVecProc  typedef proto :TVEC_ITEM_TYPE, :XWORD, :XWORD
-% &??ObjName&_MaxCapacity equ   0FFFFFFFFh/sizeof(TVEC_ITEM_TYPE)
+% &??ObjName&_MaxCapacity equ 0FFFFFFFFh/sizeof(TVEC_ITEM_TYPE)
 
   RedefineMethod    Delete,         TVEC_ITEM_TYPE        ;xItem
   RedefineMethod    DeleteAt,       DWORD                 ;Index in range [0..Count-1]

@@ -23,8 +23,9 @@ externdef BASE64_DEFAULT_ALPHABET:CHRA
 ;             Arg2: Input data size in BYTEs.
 ;             Arg3: Character alphabet used to encode the data. If NULL, BASE64_DEFAULT_ALPHABET
 ;                   is used. BASE64_URL_ALPHABET can be used to encode URL content.
-; Return:     xax -> Encoded data. When no longer needed, it should be released using MemFree.
-;             ecx = Encoded data size in BYTEs. Always a multiple of 4.
+; Return:     xax -> Buffer containing the encoded data. When no longer needed, it should be
+;                    released using MemFree.
+;             ecx = Encoded data size in BYTEs, always a multiple of 4*sizeof(CHR)
 ; Links:      https://en.wikipedia.org/wiki/Base64
 ;             https://datatracker.ietf.org/doc/html/rfc4648
 ; Note:       No ZTC is added to the encoded buffer.
@@ -48,10 +49,30 @@ externdef BASE64_DEFAULT_ALPHABET:CHRA
 
 BASE64_PADDING  equ '='
 
+B64StoreCharAtIndex macro Reg:req
+  if TARGET_STR_TYPE eq STR_TYPE_ANSI
+    mov al, [xcx + Reg]
+    stosb
+  else
+    movzx ax, BYTE ptr [xcx + Reg]
+    stosw
+  endif
+endm
+
+B64FillPadding macro Count:req
+  mov $SubReg(eax, sizeof(CHR)), '='
+  if Count eq 1
+    stosc
+  else
+    mov ecx, Count
+    rep stosc
+  endif
+endm
+
 .code
 align ALIGN_CODE
-Base64Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphabet:POINTER
-  _ProcName_ textequ <Base64Encode>
+ProcName proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphabet:POINTER
+  _ProcName_ textequ <%ProcName>
   ArgReg pDataBuffer:xcx, dDataSize:edx
   LocReg pEncodedDataBuffer:r10
   local dEncodedDataSize:DWORD
@@ -81,8 +102,7 @@ Base64Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphab
         movzx eax, CHRA ptr [xsi]
         mov edx, eax
         shr eax, 2
-        mov al, [xcx + xax]
-        stosb
+        B64StoreCharAtIndex xax
         dec ebx
         jz @@Remainder_1
 
@@ -91,8 +111,7 @@ Base64Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphab
         mov ah, dl
         shr eax, 4
         and eax, 0111111b
-        mov al, [xcx + xax]
-        stosb
+        B64StoreCharAtIndex xax
         dec ebx
         jz @@Remainder_2
 
@@ -107,30 +126,30 @@ Base64Encode proc uses xbx xdi xsi pDataBuffer:POINTER, dDataSize:DWORD, pAlphab
         mov ah, [xcx + xdx]
         stosw
         sub ebx, 2
-        jz @@Exit
+        jz @@Quit
       .endw
 
     @@Remainder_1:
       shl edx, 4
       and edx, 0110000b
-      mov al, [xcx + xdx]
-      stosb
-      mov ax, BASE64_PADDING shl 8 + BASE64_PADDING     ;"==" Padding
+      B64StoreCharAtIndex xdx
+      B64FillPadding 2                                  ;"==" Padding
       jmp @@Quit
+
     @@Remainder_2:
       xor edx, edx
       mov dh, CHRA ptr [xsi]
       shr edx, 6
-      mov ah, BASE64_PADDING                            ;"=" Padding
       and edx, 0111100b
-      mov al, [xcx + xdx]
+      B64StoreCharAtIndex xdx
+      B64FillPadding 1
+
     @@Quit:
-      stosw
+      mov xax, $LocReg(pEncodedDataBuffer)
     .endif
   .endif
 
 @@Exit:
-  mov xax, $LocReg(pEncodedDataBuffer)
   mov ecx, dEncodedDataSize
   ret
-Base64Encode endp
+ProcName endp

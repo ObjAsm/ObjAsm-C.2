@@ -1,16 +1,18 @@
 ; ==================================================================================================
 ; Title:      WinPrimer.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
+; Version:    C.1.2
 ; Purpose:    ObjAsm support of WinPrimer objects.
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
 ;             Version C.1.1, February 2021
 ;               - Done method added. Call DestroyWindow at life end of descendents.
+;             Version C.1.2
+;               - WM_GETOBJECTINSTANCE changed to BFFFh to avoid conflicts with OS control messages.
 ; ==================================================================================================
 
 
-WM_GETOBJECTINSTANCE  equ   7FFFh                       ;Last possible WM_USER message
+WM_GETOBJECTINSTANCE  equ   0BFFFh                       ;Last possible WM_APP message
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Object:     WinPrimer

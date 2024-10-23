@@ -49,11 +49,10 @@ ToolbarWindow DEF_TOOLBAR {IDC_TOOLBARWINDOW, TBSTYLE, TBSTYLE_EX_MIXEDBUTTONS, 
 
 SBSTYLE     equ     WS_CHILD or WS_VISIBLE or SBARS_TOOLTIPS or SBARS_SIZEGRIP
 
-AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SBSTYLE, 0, 4}
-  DEF_STATUSBAR_PART {320, 100, 3, SBT_NOBORDERS, NULL}
-  DEF_STATUSBAR_PART {120,  20, 1, SBT_SUNKEN,    NULL}
-  DEF_STATUSBAR_PART {120,  -2, 0, SBT_SUNKEN,    NULL} ;Spring
-  DEF_STATUSBAR_PART {120, 100, 2, SBT_SUNKEN,    NULL}
+AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SBSTYLE, 0, 3}
+  DEF_STATUSBAR_PART {240, 100, 2, SBT_NOBORDERS, NULL}
+  DEF_STATUSBAR_PART {300, 200, 1, SBT_SUNKEN,    NULL}
+  DEF_STATUSBAR_PART {0,    -2, 0, SBT_SUNKEN,    NULL} ;Spring
 
 ;##\ Not used yet
 ;TextFlags  record  TF_Unused:24=0, TF_FILTERACT:1=FALSE, \
@@ -64,7 +63,7 @@ AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SBSTYLE, 0, 4}
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-Object DbgMdiClient, DBG_MDI_CLIENT_ID, MdiClientWnd               ;MDI client window.
+Object DbgMdiClient, DBG_MDI_CLIENT_ID, MdiClientWnd            ;MDI client window.
   RedefineMethod    Done
   RedefineMethod    Init,               POINTER                 ;-> Owner
 
@@ -78,7 +77,7 @@ ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-Object DebugCenter, DEBUG_CENTER_ID, MdiApp                     ;MDI application.
+Object Application, DEBUG_CENTER_ID, MdiApp                     ;MDI application.
   VirtualMethod     ChangeLanguage,     DWORD                   ;IDLANG_XXX
   RedefineMethod    Done
   VirtualMethod     EnableActions,      DWORD                   ;TRUE / FALSE
@@ -131,10 +130,11 @@ ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-include DebugCenter_Child.inc
-include DebugCenter_ChildTxt.inc
-include DebugCenter_ChildBmp.inc
 include DebugCenter_About.inc
+include DebugCenter_Child.inc           ;Ancestor
+include DebugCenter_ChildBmp.inc        ;Bitmap visualization
+include DebugCenter_ChildCht.inc        ;Charting
+include DebugCenter_ChildTxt.inc        ;Text output
 
 % CStrW cDbgRegKey, DEBUG_CENTER_REGKEY
 
@@ -144,11 +144,11 @@ hCBTProc  HANDLE  ?
 
 .code
 ; ==================================================================================================
-;    DebugCenter implementation
+;    Application implementation
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.ChangeLanguage
+; Method:     Application.ChangeLanguage
 ; Purpose:    Switch the application language.
 ; Arguments:  Arg1: Language ID.
 ; Return:     Nothing.
@@ -164,7 +164,7 @@ SetButtonText macro ButtonCommand:req, TextIndex:req
   invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_SETBUTTONINFO, ButtonCommand, addr tbbi
 endm
 
-Method DebugCenter.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
+Method Application.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
   local MenuInfo:MENUITEMINFO, tbbi:TBBUTTONINFO, cButtonText[256]:CHR
 
   SetObject xsi
@@ -223,16 +223,24 @@ Method DebugCenter.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
   SetButtonText IDM_WINDOW_CLOSEALL, 59
   SetButtonText IDM_WINDOW_ZOOMIN, 57
   SetButtonText IDM_WINDOW_ZOOMOUT, 58
+
+  mov xdx, [xsi].pClientWnd
+  mov xcx, [xdx].$Obj(DbgMdiClient).hWnd
+  invoke SendMessage, xcx, WM_MDIGETACTIVE, 0, 0
+  .if xax
+    invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    OCall xax::DbgMdiChild.UpdateStatusbar
+  .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.Done
+; Method:     Application.Done
 ; Purpose:    Finalize the MDI application object. Objects associated with window controls are
 ;             destroyed by Windows automatically when WM_DESTROY is send.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DebugCenter.Done, uses xsi
+Method Application.Done, uses xsi
   SetObject xsi
   invoke DeleteObject, [xsi].hFont
   invoke StrDispose, [xsi].pDirectory
@@ -259,12 +267,12 @@ Method DebugCenter.Done, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.EnableActions
+; Method:     Application.EnableActions
 ; Purpose:    Enable or disable MDI child actions.
 ; Arguments:  Arg1: Enable TRUE/False.
 ; Return:     Nothing.
 
-Method DebugCenter.EnableActions, uses xsi, dAction:DWORD
+Method Application.EnableActions, uses xsi, dAction:DWORD
   SetObject xsi
   OCall [xsi].pToolbarFile::Toolbar.BtnEnable, IDM_FILE_CLOSE, dAction
 
@@ -276,12 +284,12 @@ Method DebugCenter.EnableActions, uses xsi, dAction:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.Init
+; Method:     Application.Init
 ; Purpose:    Initialize the MDI application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DebugCenter.Init, uses xbx xdi xsi
+Method Application.Init, uses xbx xdi xsi
   local WP:WINDOWPLACEMENT, pRegKey:POINTER, dState:DWORD, cBuffer[MAX_PATH]:CHR
 
   SetObject xsi
@@ -298,6 +306,7 @@ Method DebugCenter.Init, uses xbx xdi xsi
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APP")
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APP_CHILD_TXT")
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APP_CHILD_BMP")
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APP_CHILD_CHT")
 
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_OPEN")
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_SAVE")
@@ -331,6 +340,8 @@ Method DebugCenter.Init, uses xbx xdi xsi
 
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_HELP_HELP")
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_HELP_ABOUT")
+
+
 
   ;Obtain handles for possible menus and submenus
   mov [xsi].hMenuInit, $invoke(LoadMenu, hInstance, $OfsCStr("MDIMENUINIT"))
@@ -472,7 +483,7 @@ Method DebugCenter.Init, uses xbx xdi xsi
 
     ;Create XMenu
     mov [xsi].pXMenu, $New(XMenu)
-    mov xdi, $MethodAddr(DebugCenter.StatusbarHelp)
+    mov xdi, $MethodAddr(Application.StatusbarHelp)
     mov xax, [xsi].pClientWnd
     OCall [xsi].pXMenu::XMenu.Init, xsi, [xsi].hWnd, [xax].$Obj(DbgMdiClient).hWnd, \
                                     [xsi].hMenuChildWnd, xbx, \
@@ -510,17 +521,133 @@ Method DebugCenter.Init, uses xbx xdi xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.ManageOptions
+; Method:     Application.ManageOptions
 ; Purpose:    Manage menu and toolbar buttons.
 ; Arguments:  Arg1: ObjectID activated, zero for none.
 ; Return:     Nothing.
 
-Method DebugCenter.ManageOptions, uses xbx xdi xsi, dObjID:DWORD
+Method Application.ManageOptions, uses xbx xdi xsi, dObjID:DWORD
   local hMenu:HMENU
 
   SetObject xsi
   mov hMenu, $invoke(GetMenu, [xsi].hWnd)     ;Get the current menu
-  .if dObjID == 0
+  .if dObjID == DBG_MDI_CHILD_TXT_ID ;----------------------------------------------
+    mov xbx, [xsi].pToolbarFile
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVE, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEAS, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSE, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, TRUE
+
+    mov xbx, [xsi].pToolbarEdit
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_ERASE, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_ERASEALL, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, TRUE
+
+    mov xbx, [xsi].pToolbarWindow
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMIN, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMOUT, TRUE
+
+    mov xdi, hMenu
+    invoke EnableMenuItem, xdi, IDM_FILE_SAVE,      MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_FILE_SAVEAS,    MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_FILE_CLOSE,     MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_FILE_PAGESETUP, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_FILE_PRINT,     MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_SELECTALL, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_ERASE,     MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_ERASEALL,  MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_FIND,      MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_CALC,      MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_WINDOW_ZOOMIN,  MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_WINDOW_ZOOMOUT, MF_BYCOMMAND or MF_ENABLED
+
+    mov xdi, [xsi].hMenuContext
+    invoke EnableMenuItem, xdi, IDM_EDIT_SELECTALL, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_ERASE,     MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_ERASEALL,  MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_FIND,      MF_BYCOMMAND or MF_ENABLED
+
+  .elseif dObjID == DBG_MDI_CHILD_BMP_ID ;------------------------------------------
+    mov xbx, [xsi].pToolbarFile
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVE, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEAS, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSE, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, TRUE
+
+    mov xbx, [xsi].pToolbarEdit
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_ERASE, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_ERASEALL, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, FALSE
+
+    mov xbx, [xsi].pToolbarWindow
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMIN, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMOUT, TRUE
+
+    mov xdi, hMenu
+    invoke EnableMenuItem, xdi, IDM_FILE_SAVE,      MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_FILE_SAVEAS,    MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_FILE_CLOSE,     MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_FILE_PAGESETUP, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_FILE_PRINT,     MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_SELECTALL, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_EDIT_ERASE,     MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_ERASEALL,  MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_FIND,      MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_EDIT_CALC,      MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_WINDOW_ZOOMIN,  MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_WINDOW_ZOOMOUT, MF_BYCOMMAND or MF_ENABLED
+
+    mov xdi, [xsi].hMenuContext
+    invoke EnableMenuItem, xdi, IDM_EDIT_SELECTALL, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_EDIT_ERASE,     MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_ERASEALL,  MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_FIND,      MF_BYCOMMAND or MF_GRAYED
+
+  .elseif dObjID == DBG_MDI_CHILD_CHT_ID ;------------------------------------------
+    mov xbx, [xsi].pToolbarFile
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVE, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEAS, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSE, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, TRUE
+
+    mov xbx, [xsi].pToolbarEdit
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_PASTE, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CLEAR, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_ERASE, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_ERASEALL, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, FALSE
+
+    mov xbx, [xsi].pToolbarWindow
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMIN, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMOUT, FALSE
+
+    mov xdi, hMenu
+    invoke EnableMenuItem, xdi, IDM_FILE_SAVE,      MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_FILE_SAVEAS,    MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_FILE_CLOSE,     MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_FILE_PAGESETUP, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_FILE_PRINT,     MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_EDIT_CUT,       MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_EDIT_COPY,      MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_EDIT_PASTE,     MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_EDIT_CLEAR,     MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_EDIT_SELECTALL, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_EDIT_ERASE,     MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_ERASEALL,  MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_FIND,      MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_EDIT_CALC,      MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_WINDOW_ZOOMIN,  MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_WINDOW_ZOOMOUT, MF_BYCOMMAND or MF_GRAYED
+
+    mov xdi, [xsi].hMenuContext
+    invoke EnableMenuItem, xdi, IDM_EDIT_SELECTALL, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_EDIT_ERASE,     MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_ERASEALL,  MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xdi, IDM_EDIT_FIND,      MF_BYCOMMAND or MF_GRAYED
+
+  .else ;---------------------------------------------------------------------------
     mov xbx, [xsi].pToolbarFile
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVE, FALSE
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEAS, FALSE
@@ -554,6 +681,8 @@ Method DebugCenter.ManageOptions, uses xbx xdi xsi, dObjID:DWORD
     invoke EnableMenuItem, xdi, IDM_EDIT_ERASEALL,  MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xdi, IDM_EDIT_FIND,      MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xdi, IDM_EDIT_CALC,      MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_WINDOW_ZOOMIN,  MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xdi, IDM_WINDOW_ZOOMOUT, MF_BYCOMMAND or MF_GRAYED
 
     mov xdi, [xsi].hMenuContext
     invoke EnableMenuItem, xdi, IDM_EDIT_CUT,       MF_BYCOMMAND or MF_GRAYED
@@ -565,73 +694,6 @@ Method DebugCenter.ManageOptions, uses xbx xdi xsi, dObjID:DWORD
     invoke EnableMenuItem, xdi, IDM_EDIT_ERASEALL,  MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xdi, IDM_EDIT_FIND,      MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xdi, IDM_EDIT_CALC,      MF_BYCOMMAND or MF_GRAYED
-
-  .elseif dObjID == DBG_MDI_CHILD_TXT_ID
-    mov xbx, [xsi].pToolbarFile
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVE, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEAS, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSE, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, TRUE
-
-    mov xbx, [xsi].pToolbarEdit
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_ERASE, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_ERASEALL, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, TRUE
-
-    mov xbx, [xsi].pToolbarWindow
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMIN, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMOUT, TRUE
-
-    mov xdi, hMenu
-    invoke EnableMenuItem, xdi, IDM_FILE_SAVE,      MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_FILE_SAVEAS,    MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_FILE_CLOSE,     MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_FILE_PAGESETUP, MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_FILE_PRINT,     MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_EDIT_SELECTALL, MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_EDIT_ERASE,     MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_EDIT_ERASEALL,  MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_EDIT_FIND,      MF_BYCOMMAND or MF_ENABLED
-
-    mov xdi, [xsi].hMenuContext
-    invoke EnableMenuItem, xdi, IDM_EDIT_SELECTALL, MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_EDIT_ERASE,     MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_EDIT_ERASEALL,  MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_EDIT_FIND,      MF_BYCOMMAND or MF_ENABLED
-
-  .else                                                 ;DbgMdiChildBmp
-    mov xbx, [xsi].pToolbarFile
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVE, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEAS, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSE, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, TRUE
-
-    mov xbx, [xsi].pToolbarEdit
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_ERASE, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_ERASEALL, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, FALSE
-
-    mov xbx, [xsi].pToolbarWindow
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMIN, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMOUT, TRUE
-
-    mov xdi, hMenu
-    invoke EnableMenuItem, xdi, IDM_FILE_OPEN,      MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_FILE_SAVE,      MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_FILE_SAVEAS,    MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_FILE_CLOSE,     MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_FILE_PAGESETUP, MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_FILE_PRINT,     MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_EDIT_SELECTALL, MF_BYCOMMAND or MF_GRAYED
-    invoke EnableMenuItem, xdi, IDM_EDIT_ERASE,     MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_EDIT_ERASEALL,  MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_EDIT_FIND,      MF_BYCOMMAND or MF_GRAYED
-
-    mov xdi, [xsi].hMenuContext
-    invoke EnableMenuItem, xdi, IDM_EDIT_SELECTALL, MF_BYCOMMAND or MF_GRAYED
-    invoke EnableMenuItem, xdi, IDM_EDIT_ERASE,     MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_EDIT_ERASEALL,  MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xdi, IDM_EDIT_FIND,      MF_BYCOMMAND or MF_GRAYED
   .endif
 MethodEnd
 
@@ -649,13 +711,13 @@ CBTProc proc uses xbx dCode:DWORD, wParam:WPARAM, lParam:LPARAM
   .if dCode == HCBT_ACTIVATE
     lea xbx, cText
 
-    mov edx, $ObjTmpl(DebugCenter).dLanguage
+    mov edx, $ObjTmpl(Application).dLanguage
     add edx, 102
     invoke LoadString, hInstance, edx, xbx, lengthof cText
     invoke GetDlgItem, wParam, IDYES
     invoke SetWindowText, xax, xbx
 
-    mov edx, $ObjTmpl(DebugCenter).dLanguage
+    mov edx, $ObjTmpl(Application).dLanguage
     add edx, 103
     invoke LoadString, hInstance, edx, xbx, lengthof cText
     invoke GetDlgItem, wParam, IDNO
@@ -671,13 +733,13 @@ CBTProc proc uses xbx dCode:DWORD, wParam:WPARAM, lParam:LPARAM
 CBTProc endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.OnClose
+; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE (and WM_QUERYENDSESSION) message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method DebugCenter.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local dMsg:DWORD
   local cCaption[512]:CHR, cText[1024]:CHR
 
@@ -710,34 +772,42 @@ Method DebugCenter.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.OnCommand
+; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-CloseChild proc hWnd:HWND, lParam:DWORD
+CloseChild proc uses xbx hWnd:HWND, lParam:DWORD
   invoke SendMessage, hWnd, WM_GETOBJECTINSTANCE, 0, 0
   .if eax != NULL
-    invoke SendMessage, hWnd, WM_CLOSE, 0, 0
+    mov xbx, xax
+    invoke GetObjectID, xax
+    .if eax == DBG_MDI_CHILD_BMP_ID || DBG_MDI_CHILD_CHT_ID || eax == DBG_MDI_CHILD_TXT_ID
+      invoke SendMessage, hWnd, WM_CLOSE, 0, 0
+    .endif
   .endif
   mov eax, TRUE                                         ;Continue enumeration
   ret
 CloseChild endp
 
-EraseChild proc hWnd:HWND, lParam:DWORD
+EraseChild proc uses xbx hWnd:HWND, lParam:DWORD
   invoke SendMessage, hWnd, WM_GETOBJECTINSTANCE, 0, 0
   .if xax != NULL
-    OCall xax::DbgMdiChild.Erase
+    mov xbx, xax
+    invoke GetObjectID, xax
+    .if eax == DBG_MDI_CHILD_BMP_ID || DBG_MDI_CHILD_CHT_ID || eax == DBG_MDI_CHILD_TXT_ID
+      OCall xbx::DbgMdiChild.Erase
+    .endif
   .endif
   mov eax, TRUE                                         ;Continue enumeration
   ret
 EraseChild endp
 
-Method DebugCenter.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local hChildWnd:HWND, pDlg:POINTER, pChild:POINTER, cMsg[1024]:CHR
   local OpenFileName:OPENFILENAME, cInitDir[MAX_PATH]:CHR, cFileName[MAX_PATH]:CHR
-  local PageSetup:PAGESETUPDLG, AboutDlg:$Obj(DialogAbout)
+  local PageSetup:PAGESETUPDLG, AboutDlg:$Obj(DialogAbout), cResText[1024]:CHR
 
   SetObject xsi
   mov xcx, [xsi].pClientWnd
@@ -763,7 +833,12 @@ Method DebugCenter.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     lea xax, cInitDir
     m2z CHR ptr [xax]
     m2m OpenFileName.lpstrInitialDir, [xsi].pDirectory, eax
-    c2m OpenFileName.lpstrTitle, $OfsCStr("Open file..."), xcx
+
+    mov edx, [xsi].dLanguage
+    add edx, 170                                      ;"Open file"
+    invoke LoadString, hInstance, edx, addr cResText, lengthof cResText
+    lea xcx, cResText
+    mov OpenFileName.lpstrTitle, xcx
     m2m OpenFileName.lpstrDefExt, offset szRtfExt, xax
     mov OpenFileName.Flags, OFN_EXPLORER or OFN_FILEMUSTEXIST or OFN_LONGNAMES or OFN_HIDEREADONLY
     invoke GetOpenFileName, addr OpenFileName
@@ -785,7 +860,7 @@ Method DebugCenter.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
             OCall xdi::DbgMdiChildBmp.Init, [xsi].pClientWnd, addr cFileName, DBG_COLOR_BACKGROUND_WND_LIGHT
             OCall xdi::DbgMdiChildBmp.Open, addr cFileName
           .else
-            mov edx, $ObjTmpl(DebugCenter).dLanguage
+            mov edx, $ObjTmpl(Application).dLanguage
             add edx, 123
             invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
             invoke MessageBox, [xsi].hWnd, addr cMsg, offset szDebugCenter, MB_OK or MB_ICONERROR
@@ -954,7 +1029,7 @@ Method DebugCenter.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .if [xdi].$Obj(REdtIptor).pFindDialog == NULL
         invoke SendMessage, [xdi].$Obj(REdtIptor).hWnd, EM_SETSEL, 0, 0 ;Move caret to 1st position
         mov pDlg, $New(DialogFindText)
-        OCall pDlg::DialogFindText.Init, xsi, [xdi].$Obj(REdtIptor).hWnd, NULL
+        OCall pDlg::DialogFindText.Init, xsi, [xdi].$Obj(REdtIptor).hWnd, [xsi].dLanguage, NULL
         OCall pDlg::DialogFindText.Show
         mov xcx, pChild
         mov xax, [xcx].$Obj(DbgMdiChildTxt).pEdtIptor
@@ -1083,7 +1158,7 @@ Method DebugCenter.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.OnCopyData
+; Method:     Application.OnCopyData
 ; Purpose:    Event procedure for WM_COPYDATA message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
@@ -1122,8 +1197,10 @@ ChildSearch proc uses xbx xdi hWnd:HWND, lParam:PDBG_CHILD_INFO
   ret
 ChildSearch endp
 
-Method DebugCenter.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local CFD:CHARFORMAT, DCI:DBG_CHILD_INFO, dDbgCmd:DWORD, dParam1:DWORD, dParam2:DWORD, FWI:FLASHWINFO
+Method Application.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
+  local CFD:CHARFORMAT, DCI:DBG_CHILD_INFO, FWI:FLASHWINFO
+  local dDbgCmd:DWORD, dParam1:DWORD, dParam2:DWORD
+  local DbgPnt:DBG_PLOT_POINT, DbgSerOpt:DBG_PLOT_SERIES_OPTION
 
   SetObject xsi
 
@@ -1135,7 +1212,7 @@ Method DebugCenter.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       mov xcx, xbx
       mov eax, [xbx].DBG_HEADER_INFO.dBlockLen
       add xcx, xax
-      .if [xcx].DBG_HEADER_INFO.bBlockID == DBG_MSG_CMD    ;Command
+      .if [xcx].DBG_HEADER_INFO.bBlockID == DBG_MSG_CMD ;Command
         movzx eax, [xcx].DBG_CMD_INFO.bInfo
         .if eax == DBG_CMD_CLEAR_TXT || eax == DBG_CMD_CLEAR_BMP
           m2m dParam1, [xcx].DBG_CMD_INFO.dParam1, edx
@@ -1149,16 +1226,19 @@ Method DebugCenter.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           invoke EnumChildWindows, [xdi].$Obj(DbgMdiClient).hWnd, offset ChildSearch, addr DCI
           .if DCI.pChild != NULL
             OCall DCI.pChild::DbgMdiChild.Erase
+            OCall DCI.pChild::DbgMdiChild.UpdateStatusbar
           .endif
 
         .elseif eax ==  DBG_CMD_CLEAR_ALL
           invoke EnumChildWindows, [xdi].$Obj(DbgMdiClient).hWnd, offset EraseChild, 0
 
-        .elseif eax == DBG_CMD_CLOSE_TXT || eax == DBG_CMD_CLOSE_BMP
-          .if eax == DBG_CMD_CLEAR_TXT
-            mov DCI.dObjID, DBG_MDI_CHILD_TXT_ID
-          .else
+        .elseif eax == DBG_CMD_CLOSE_CHT || eax == DBG_CMD_CLOSE_BMP || eax == DBG_CMD_CLOSE_TXT
+          .if eax == DBG_CMD_CLOSE_CHT
+            mov DCI.dObjID, DBG_MDI_CHILD_CHT_ID
+          .elseif eax == DBG_CMD_CLOSE_BMP
             mov DCI.dObjID, DBG_MDI_CHILD_BMP_ID
+          .else
+            mov DCI.dObjID, DBG_MDI_CHILD_TXT_ID
           .endif
           m2z DCI.pChild
           mov DCI.pCaption, $addr(xbx + DBG_HEADER_INFO)
@@ -1400,6 +1480,143 @@ Method DebugCenter.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         add xdx, xax
         OCall xdi::DbgMdiChildBmp.SetBitmap, xdx
         invoke RedrawWindow, [xdi].$Obj(DbgMdiChildBmp).hWnd, NULL, NULL, RDW_INVALIDATE or RDW_UPDATENOW
+        OCall xdi::DbgMdiChild.UpdateStatusbar
+
+      .elseif [xcx].DBG_HEADER_INFO.bBlockID == DBG_MSG_CHT     ;Chart
+        mov DCI.pCaption, $addr(xbx + DBG_HEADER_INFO)
+        m2z DCI.pChild
+        mov DCI.dObjID, DBG_MDI_CHILD_CHT_ID
+        invoke EnumChildWindows, [xdi].$Obj(DbgMdiClient).hWnd, offset ChildSearch, addr DCI
+        .if DCI.pChild == NULL
+          mov xdi, $New(DbgMdiChildCht)
+          OCall xdi::DbgMdiChildCht.Init, [xsi].pClientWnd, addr [xbx + DBG_HEADER_INFO], 0
+        .else
+          mov xdi, DCI.pChild
+        .endif
+        mov xdx, xbx
+        mov eax, [xbx].DBG_HEADER_INFO.dBlockLen
+        add xdx, xax                                    ;xdx -> DBG_CHT_INFO
+        lea xcx, [xdx + sizeof(DBG_CHT_INFO)]           ;xcx -> Payload
+        .if [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEX_MIN
+          m2m [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.fSetupMin, CHT_FLOAT ptr [xcx], xax
+          BitClr [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.dFlags, CHT_SCALE_AUTO_MIN
+          OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
+
+        .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEX_MAX
+          m2m [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.fSetupMax, CHT_FLOAT ptr [xcx], xax
+          BitClr [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.dFlags, CHT_SCALE_AUTO_MAX
+          OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
+
+        .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEX_AUTO
+          .if BYTE ptr [xcx] == TRUE
+            BitSet [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.dFlags, CHT_SCALE_AUTO_MIN or CHT_SCALE_AUTO_MAX
+          .else
+            BitClr [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.dFlags, CHT_SCALE_AUTO_MIN or CHT_SCALE_AUTO_MAX
+          .endif
+          OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
+
+        .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEX_TITLE
+          mov xbx, xcx
+          invoke StrDispose, [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.pDescription
+          invoke StrNew, xbx
+          mov [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.pDescription, xax
+          OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
+
+        .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEY_MIN
+          m2m [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.fSetupMin, CHT_FLOAT ptr [xcx], xax
+          BitClr [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.dFlags, CHT_SCALE_AUTO_MIN
+          OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
+
+        .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEY_MAX
+          m2m [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.fSetupMax, CHT_FLOAT ptr [xcx], xax
+          BitClr [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.dFlags, CHT_SCALE_AUTO_MAX
+          OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
+
+        .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEY_AUTO
+          .if BYTE ptr [xcx] == TRUE
+            BitSet [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.dFlags, CHT_SCALE_AUTO_MIN or CHT_SCALE_AUTO_MAX
+          .else
+            BitClr [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.dFlags, CHT_SCALE_AUTO_MIN or CHT_SCALE_AUTO_MAX
+          .endif
+          OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
+
+        .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEY_TITLE
+          mov xbx, xcx
+          invoke StrDispose, [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.pDescription
+          invoke StrNew, xbx
+          mov [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.pDescription, xax
+          OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
+
+        .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SERIES_COLOR
+          s2s DbgSerOpt, DBG_PLOT_SERIES_OPTION ptr [xcx], xmm0, xmm1, xax, xdx
+          mov eax, DbgSerOpt.DBG_PLOT_SERIES_OPTION.dID
+          dec eax
+          OCall [xdi].$Obj(DbgMdiChildCht).Chart.Data::Collection.ItemAt, eax
+          .if xax
+            mov edx, DbgSerOpt.DBG_PLOT_SERIES_OPTION.dOption   ;edx = RGB Color
+            mov [xax].$Obj(ChartXYSeries).Setup.LineColor, edx
+            mov [xax].$Obj(ChartXYSeries).Setup.MarkerFillColor, edx
+            OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
+          .endif
+
+        .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SERIES_MARKER
+          s2s DbgSerOpt, DBG_PLOT_SERIES_OPTION ptr [xcx], xmm0, xmm1, xax, xdx
+          mov eax, DbgSerOpt.DBG_PLOT_SERIES_OPTION.dID
+          dec eax
+          OCall [xdi].$Obj(DbgMdiChildCht).Chart.Data::Collection.ItemAt, eax
+          .if xax
+            mov edx, DbgSerOpt.DBG_PLOT_SERIES_OPTION.dOption   ;edx = Marker ID
+            mov [xax].$Obj(ChartXYSeries).Setup.dMarkerShape, edx
+            OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
+          .endif
+
+        .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SERIES_ADD
+          s2s DbgPnt, DBG_PLOT_POINT ptr [xcx], xmm0, xmm1, xax, xcx
+          mov eax, DbgPnt.DBG_PLOT_POINT.dSeriesID
+          dec eax
+          xor ebx, ebx
+          .if eax == [xdi].$Obj(DbgMdiChildCht).Chart.Data.dCount
+            ;Create a new chart series
+            mov xbx, $New(ChartXYSeries)
+            OCall xbx::ChartXYSeries.Init, addr [xdi].$Obj(DbgMdiChildCht).Chart.Data, 100 ;Intial capa = 100
+            mov [xbx].$Obj(ChartXYSeries).dDataFrom, 0
+            mov [xbx].$Obj(ChartXYSeries).dDataCount, 0
+            mov [xbx].$Obj(ChartXYSeries).Setup.LineColor, $RGB(000,192,000)
+            mov [xbx].$Obj(ChartXYSeries).Setup.dLineWidth, 1
+            mov [xbx].$Obj(ChartXYSeries).Setup.MarkerFillColor, $RGB(000,192,000)
+            mov [xbx].$Obj(ChartXYSeries).Setup.dMarkerSize, 7
+            mov [xbx].$Obj(ChartXYSeries).Setup.dMarkerShape, CHTXY_MARKER_SQUARE
+            mov [xbx].$Obj(ChartXYSeries).dFlags, CHT_SERIES_SHOW_DEPICTION or CHT_SERIES_SHOW_MARKER or CHT_SERIES_SHOW_TAB
+          .elseif eax < [xdi].$Obj(DbgMdiChildCht).Chart.Data.dCount
+            mov xbx, $OCall([xdi].$Obj(DbgMdiChildCht).Chart.Data::Collection.ItemAt, eax)
+          .endif
+          .if xbx
+            mov xcx, [xbx].$Obj(ChartXYSeries).pDims
+            mov edx, [xcx + 1*sizeof(DWORD)]                    ;edx = max capacity
+            mov eax, [xbx].$Obj(ChartXYSeries).dDataCount       ;Actual data count
+            .if eax >= edx
+              add eax, 100                                      ;Allocate additional 100 points
+              OCall xbx::ChartXYSeries.DimResize, 1, eax, ARR_PRESERVE  ;Index 1 = #Points
+            .endif
+            OCall xbx::ChartXYSeries.ItemAt, 0, [xbx].$Obj(ChartXYSeries).dDataCount
+            .if xax != NULL
+              fld DbgPnt.fX
+              fstp CHT_FLOAT ptr [xax]                          ;Insert new X value
+            .endif
+            OCall xbx::ChartXYSeries.ItemAt, 1, [xbx].$Obj(ChartXYSeries).dDataCount
+            .if xax != NULL
+              fld DbgPnt.fY
+              fstp CHT_FLOAT ptr [xax]                          ;Insert new Y value
+            .endif
+            inc [xbx].$Obj(ChartXYSeries).dDataCount            ;Update the data count
+            BitClr [xdi].$Obj(DbgMdiChildCht).Chart.dFlags, CHT_WND_SHOWN_FIRST_TIME
+            OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
+          .endif
+
+        .endif
+        invoke RedrawWindow, [xdi].$Obj(DbgMdiChildCht).hWnd, NULL, NULL, RDW_INVALIDATE or RDW_UPDATENOW
+        OCall xdi::DbgMdiChild.UpdateStatusbar
+
       .else
         ;Not implemented features
       .endif
@@ -1415,13 +1632,13 @@ Method DebugCenter.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.OnCreate
+; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method DebugCenter.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local LogFnt:LOGFONT, hDC:HDC
 
   SetObject xsi
@@ -1486,13 +1703,13 @@ Method DebugCenter.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.OnDestroy
+; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero.
 
-Method DebugCenter.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   local WP:WINDOWPLACEMENT, pRegKey:POINTER
 
   SetObject xsi
@@ -1533,25 +1750,25 @@ Method DebugCenter.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.OnEraseBkgnd
+; Method:     Application.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Non zero => we do the job.
 
-Method DebugCenter.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
+Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, 1
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.OnNotify
+; Method:     Application.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method DebugCenter.OnNotify,, wParam:WPARAM, lParam:LPARAM
-;  DbgText "DebugCenter.OnNotify"
+Method Application.OnNotify,, wParam:WPARAM, lParam:LPARAM
+;  DbgText "Application.OnNotify"
   SetObject xcx
   mov xax, lParam
   assume xax: ptr TOOLTIPTEXT
@@ -1611,12 +1828,12 @@ Method DebugCenter.OnNotify,, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.OnShellNotify
+; Method:     Application.OnShellNotify
 ; Purpose:    Event procedure for WM_SHELLNOTIFY message.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DebugCenter.OnShellNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnShellNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
   local Pnt:POINT
 
   SetObject xsi
@@ -1634,13 +1851,13 @@ Method DebugCenter.OnShellNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.OnSize
+; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero.
 
-Method DebugCenter.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local CRect:RECT, RbRect:RECT, SbRect:RECT
   local dTop:DWORD, dHeight:DWORD, dCWidth:DWORD
 
@@ -1687,17 +1904,17 @@ Method DebugCenter.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.Startup
+; Method:     Application.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DebugCenter.Startup
+Method Application.Startup
   local WC:WNDCLASSEX
 
   mov WC.cbSize, sizeof(WNDCLASSEX)
   mov WC.style, CLSSTYLE
-  m2m WC.lpfnWndProc, $MethodAddr(DebugCenter.WndProc), xax
+  m2m WC.lpfnWndProc, $MethodAddr(Application.WndProc), xax
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
   m2m WC.hInstance, hInstance, xax
@@ -1713,12 +1930,12 @@ Method DebugCenter.Startup
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DebugCenter.StatusbarHelp
+; Method:     Application.StatusbarHelp
 ; Purpose:    Display a help string on panel 0 of the statusbar.
 ; Arguments:  Arg1: -> Help string.
 ; Return:     Nothing.
 
-Method DebugCenter.StatusbarHelp,, pHelpStr:PSTRING
+Method Application.StatusbarHelp,, pHelpStr:PSTRING
   SetObject xcx
   OCall [xcx].pStatusbar::Statusbar.SetPartText, 0, pHelpStr, SBT_NOBORDERS
 MethodEnd
@@ -1782,7 +1999,7 @@ Method DbgMdiClient.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .if $invoke(StrComp, xdi, offset szRtfExt) == 0
         mov xdi, $New(DbgMdiChildTxt)
         mov xax, [xsi].pOwner
-        OCall xdi::DbgMdiChildTxt.Init, xsi, pFileName, [xax].$Obj(DebugCenter).hFont, DBG_COLOR_BACKGROUND_WND_LIGHT
+        OCall xdi::DbgMdiChildTxt.Init, xsi, pFileName, [xax].$Obj(Application).hFont, DBG_COLOR_BACKGROUND_WND_LIGHT
         OCall xdi::DbgMdiChildTxt.Open, pFileName
       .else
         .if $invoke(StrComp, xdi, offset szBmpExt) == 0
@@ -1799,7 +2016,7 @@ Method DbgMdiClient.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .endif
     jmp @@OK
   @@Error:
-    mov edx, $ObjTmpl(DebugCenter).dLanguage
+    mov edx, $ObjTmpl(Application).dLanguage
     add edx, 123
     invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
     invoke MessageBox, [xsi].hWnd, addr cMsg, \
