@@ -33,11 +33,10 @@
 ;             Version 2.4.0, October 2024
 ;               - Information from child windows added to the statusbar.
 ;               - Plotting capabilities added.
-;                 Original idea from HSE https://masm32.com/board/index.php?topic=12321.0
+;                 Original idea from HSE - https://masm32.com/board/index.php?topic=12321.0
 ; ==================================================================================================
 
 ;Wishlist:
-;- Translate some strings from DebugCenter_Globals.inc to resource definitions
 ;- Upgrade resource definitions like OA_Tools
 ;- Flashing problem in XMenu object
 

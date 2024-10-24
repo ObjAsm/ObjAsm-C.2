@@ -1276,9 +1276,9 @@ Method Application.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           m2z CFD.dwEffects
           invoke SendMessage, [xdi].$Obj(DbgMdiChildTxt).hEdit, EM_SETCHARFORMAT, SCF_SELECTION, addr CFD
           .if dDbgCmd == DBG_CMD_SINGLE_LINE
-            invoke SendMessageW, [xdi].$Obj(DbgMdiChildTxt).hEdit, EM_REPLACESEL, FALSE, offset cSingleLine
+            invoke SendMessageW, [xdi].$Obj(DbgMdiChildTxt).hEdit, EM_REPLACESEL, FALSE, offset wSingleLine
           .elseif dDbgCmd == DBG_CMD_DOUBLE_LINE
-            invoke SendMessageW, [xdi].$Obj(DbgMdiChildTxt).hEdit, EM_REPLACESEL, FALSE, offset cDoubleLine
+            invoke SendMessageW, [xdi].$Obj(DbgMdiChildTxt).hEdit, EM_REPLACESEL, FALSE, offset wDoubleLine
           .endif
           invoke SendMessageW, [xdi].$Obj(DbgMdiChildTxt).hEdit, EM_REPLACESEL, FALSE, offset wCRLF
 

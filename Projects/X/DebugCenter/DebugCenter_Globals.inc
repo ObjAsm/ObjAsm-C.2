@@ -46,8 +46,8 @@ CStr szTxtZoom,         "TxtZoom"
 CStr szBmpZoom,         "BmpZoom"
 CStr szExeName,         "DebugCenter.exe"
 
-cSingleLine  CHR  70 dup(2500h), 0
-cDoubleLine  CHR  70 dup(2550h), 0
+wSingleLine  CHRW   70 dup(2500h), 0
+wDoubleLine  CHRW   70 dup(2550h), 0
 
 
 if DEBUGGING eq FALSE

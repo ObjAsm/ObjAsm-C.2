@@ -64,7 +64,7 @@ Debug=1
 47=..\..\..\Code\ObjMem\Common\DbgOutChartOption_X.inc
 48=..\..\..\Code\ObjMem\ObjMem.api
 55=..\..\..\Code\ObjMem\ObjMem.inc
-56=DC_Test_Plot\DC_Test.exe
+56=
 57=..\..\..\Code\Objects\Chart.inc
 58=..\..\..\Code\Objects\ChartSeries.inc
 59=..\..\..\Code\Objects\ChartSetup.inc
@@ -168,7 +168,7 @@ Group=Added files,Assembly,Resources,Misc,Modules,Objects,Macros,Exes
 53=6
 54=2
 55=1
-56=8
+56=
 57=6
 58=6
 59=6
@@ -210,7 +210,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=23
+MilestoneOnDateDate=24
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -245,9 +245,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,806,424,50941
-3=0,0,2127,589,876
-1=0,0,694,487,2407
+2=0,0,806,424,54459
+3=0,0,2127,589,523
+1=0,0,694,487,2123
 4=0,0,706,573,53505
 1001=0,0,0,0,460
 5=0,0,0,0,30904
@@ -274,7 +274,7 @@ ProductVer4Range=0
 43=0,0,0,0,4159
 42=0,0,0,0,1031
 44=0,0,0,0,3465
-47=0,0,0,0,1193
+47=0,0,0,0,330
 35=0,0,0,0,919
 37=0,0,0,0,34582
 40=0,0,0,0,484
@@ -287,7 +287,7 @@ ProductVer4Range=0
 48=0,0,0,0,16148
 38=0,0,0,0,6057
 27=0,0,0,0,6708
-46=0,0,0,0,616
+46=0,0,0,0,327
 45=0,0,0,0,0
 41=0,0,0,0,598
 39=0,0,0,0,9818
@@ -309,6 +309,7 @@ ProductVer4Range=0
 58=0,0,0,0,5377
 64=0,0,0,0,1519
 65=0,0,0,0,22026
+56=
 
 [BookMark]
 0=
@@ -327,16 +328,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="ChangeLanguage"
-2="UpdateStatusbar"
-3="Save"
-4="szBmpFilter"
-5="szLoadFilter"
-6=".Show"
-7="cResText"
-8="LoadStringW"
-9="dLineNumberFirst"
-10="101"
+1="cSingleLine"
+2="ChangeLanguage"
+3="UpdateStatusbar"
+4="Save"
+5="szBmpFilter"
+6="szLoadFilter"
+7=".Show"
+8="cResText"
+9="LoadStringW"
+10="dLineNumberFirst"
 "
 [Collapse]
 7=,,
@@ -402,9 +403,9 @@ ProductVer4Range=0
 64=
 65=16391
 [AutoLoad]
-AutoLoad=1,2,18,13,57
+AutoLoad=1,3,2
 [PTimer]
-PTimer=390845076
+PTimer=391513966
 [RADebugBP]
 5=
 2=
@@ -460,4 +461,4 @@ PTimer=390845076
 59=
 58=
 [GroupExpand]
-GroupExpand=1,1,0,1,1,0,1,1,0
+GroupExpand=1,1,1,1,1,0,1,1,0
