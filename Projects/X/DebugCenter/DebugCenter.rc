@@ -313,7 +313,7 @@ BEGIN
   IDLANG_ENGLISH + 104, "About this application"
   IDLANG_ENGLISH + 105, "Designed with ObjAsm"
   IDLANG_ENGLISH + 106, "Visit our Homepage"
-  IDLANG_ENGLISH + 107, "Send us an Email to"
+  IDLANG_ENGLISH + 107, "Send us an E-Mail to"
 
   IDLANG_ENGLISH + 120, "Only one file will be loaded."
   IDLANG_ENGLISH + 121, "Error reading the file."
@@ -426,7 +426,7 @@ BEGIN
   IDLANG_GERMAN  + 104, "Über diese Anwendung"
   IDLANG_GERMAN  + 105, "Mit ObjAsm entwickelt"
   IDLANG_GERMAN  + 106, "Besuchen Sie unsere Homepage"
-  IDLANG_GERMAN  + 107, "Senden Sie uns eine Email an"
+  IDLANG_GERMAN  + 107, "Senden Sie uns eine E-Mail an"
 
   IDLANG_GERMAN  + 120, "Nur eine Datei wird geöffnet."
   IDLANG_GERMAN  + 121, "Fehler beim Lesen der Datei."
@@ -539,7 +539,7 @@ BEGIN
   IDLANG_ITALIAN + 104, "Su questa applicazione"
   IDLANG_ITALIAN + 105, "Progettato con ObjAsm"
   IDLANG_ITALIAN + 106, "Visita la nostra Homepage"
-  IDLANG_ITALIAN + 107, "Inviaci una mail a"
+  IDLANG_ITALIAN + 107, "Inviaci una E-Mail a"
 
   IDLANG_ITALIAN + 120, "Verrà caricato solo un file."
   IDLANG_ITALIAN + 121, "Errore nella lettura del file."
@@ -766,7 +766,7 @@ BEGIN
   IDLANG_SPANISH + 104, "Acerca de esta aplicación"
   IDLANG_SPANISH + 105, "Diseñado con ObjAsm"
   IDLANG_SPANISH + 106, "Visite nuesta página Web"
-  IDLANG_SPANISH + 107, "Envíenos un Email a"
+  IDLANG_SPANISH + 107, "Envíenos un E-Mail a"
 
   IDLANG_SPANISH + 120, "Sólo se cargará un archivo."
   IDLANG_SPANISH + 121, "Error al leer el archivo."
@@ -783,8 +783,8 @@ BEGIN
   IDLANG_SPANISH + 142, "Selección"
   IDLANG_SPANISH + 143, "character"
   IDLANG_SPANISH + 144, "characteres"
-  IDLANG_SPANISH + 145, "linea"
-  IDLANG_SPANISH + 146, "lineas"
+  IDLANG_SPANISH + 145, "línea"
+  IDLANG_SPANISH + 146, "líneas"
 
   IDLANG_SPANISH + 150, "Tamaño del Bitmap"
   IDLANG_SPANISH + 151, "pixel"

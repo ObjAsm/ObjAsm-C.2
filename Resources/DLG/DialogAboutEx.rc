@@ -16,7 +16,7 @@ BEGIN
     CTEXT           "", IDC_DAB_TEXT, 46,10,140,55
     ICON            "ICON_APP", IDC_DAB_ICON, 13,9,32,32
     CONTROL         "", IDC_STATIC, "Static", SS_BLACKFRAME | SS_SUNKEN, 45,68,143,1
-    CONTROL         "ICON_MAIL|Send us an Email|mailto:objasm@gmx.net", IDC_DAB_MAIL,
+    CONTROL         "ICON_MAIL|Send us an E-Mail|mailto:objasm@gmx.net", IDC_DAB_MAIL,
                     "Hyperlink", WS_TABSTOP, 10,74,100,14
     CONTROL         "ICON_LINK|Visit our Homepage|http://objasm.x10host.com/", IDC_DAB_LINK,
                     "Hyperlink", WS_TABSTOP, 10,87,100,14

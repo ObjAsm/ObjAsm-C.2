@@ -27,6 +27,7 @@ CHTXY_MARKER_RHOMBUS_VER  equ   8
 CHTXY_MARKER_CROSS        equ   9
 CHTXY_MARKER_STAR_4       equ   10
 CHTXY_MARKER_STAR_8       equ   11
+CHTXY_MARKER_LAST         equ   CHTXY_MARKER_STAR_8
 
 SeriesSetupXY struct
   dLineWidth          DWORD       ?

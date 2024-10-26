@@ -71,8 +71,6 @@ Method ChartTabSeries.Restore, uses xbx xsi
 
   ;Restore from local copies
   mov xbx, [xsi].pOwner
-  invoke StrDispose, [xbx].$Obj(ChartSeries).pName
-  mov [xbx].$Obj(ChartSeries).pName, $invoke(StrNew, [xsi].pLocalName)
-  invoke StrDispose, [xbx].$Obj(ChartSeries).pDescription
-  mov [xbx].$Obj(ChartSeries).pDescription, $invoke(StrNew, [xsi].pLocalDescription)
+  invoke StrReplace, [xbx].$Obj(ChartSeries).pName, [xsi].pLocalName
+  invoke StrReplace, [xbx].$Obj(ChartSeries).pDescription, [xsi].pLocalDescription
 MethodEnd

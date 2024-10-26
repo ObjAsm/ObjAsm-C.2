@@ -184,7 +184,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=25
+MilestoneOnDateDate=26
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -221,8 +221,8 @@ ProductVer4Range=0
 [Size]
 2=0,0,1914,602,6706
 3=0,0,0,0,229
-1=453,0,453,706,1143
-4=0,0,0,0,5272
+1=453,0,453,706,1280
+4=0,0,0,0,467
 1001=0,0,0,0,460
 5=0,0,0,0,46714
 6=0,0,0,0,13544
@@ -232,7 +232,7 @@ ProductVer4Range=0
 11=0,0,0,0,36958
 13=0,0,0,0,6633
 14=0,0,0,0,1749
-15=0,0,0,0,939
+15=0,0,0,0,940
 10=0,0,0,0,9168
 12=0,0,0,0,2343
 16=0,0,0,0,21981
@@ -242,7 +242,7 @@ ProductVer4Range=0
 20=0,0,0,0,9760
 21=0,0,0,0,223023
 22=0,0,0,0,163461
-23=0,0,0,0,19124
+23=0,0,0,0,1608
 24=0,0,0,0,8531
 25=0,0,0,0,1475
 27=0,0,0,0,4892
@@ -288,16 +288,16 @@ ProductVer4Range=0
 9=
 
 [Find]
-1="SIZE_ ?"
-2="DestroyItem"
-3="VER_FILEVERSION"
-4="VARARG"
-5="vmovd"
-6="SortedTriData.Compare"
-7=".Compare"
-8="CloneRect"
-9="s2s"
-10="SubRegMM"
+1="fSetPrecision"
+2="finit"
+3="SIZE_ ?"
+4="DestroyItem"
+5="VER_FILEVERSION"
+6="VARARG"
+7="vmovd"
+8="SortedTriData.Compare"
+9=".Compare"
+10="CloneRect"
 [Collapse]
 2=,
 1=
@@ -319,7 +319,7 @@ ProductVer4Range=0
 19=,
 20=
 10=
-21=,,,,,,,,,,,,,,,,,,
+21=,,,,,,,,,,,,,,,,,
 22=,,,,,,
 23=,,
 24=
@@ -356,7 +356,7 @@ ProductVer4Range=0
 [BreakPoint]
 0=
 [AutoLoad]
-AutoLoad=1,15,21
+AutoLoad=1,15
 [RADebugBP]
 2=
 50=
@@ -397,7 +397,8 @@ AutoLoad=1,15,21
 48=
 28=
 20=
+15=
 [PTimer]
-PTimer=2121499674
+PTimer=2123192612
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0

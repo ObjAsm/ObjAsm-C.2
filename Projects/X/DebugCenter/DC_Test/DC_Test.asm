@@ -11,11 +11,11 @@ WIN32_LEAN_AND_MEAN         equ 1                       ;Necessary to exclude Wi
 INTERNET_PROTOCOL_VERSION   equ 4
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO, TRACE, STKGUARD)
-;SysSetup OOP, WIN64, WIDE_STRING, DEBUG(NET, INFO, TRACE, STKGUARD)
+;SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO, TRACE, STKGUARD)
+SysSetup OOP, WIN64, WIDE_STRING, DEBUG(NET, INFO, TRACE);, STKGUARD)
 ;DBG_IP_ADDR textequ <"localhost">
-;DBG_IP_ADDR textequ <"178.83.163.108">
-;DBG_IP_PORT textequ <8080>
+DBG_IP_ADDR textequ <"192.168.1.43">
+DBG_IP_PORT textequ <8080>
 
 
 % includelib &LibPath&Windows\shell32.lib

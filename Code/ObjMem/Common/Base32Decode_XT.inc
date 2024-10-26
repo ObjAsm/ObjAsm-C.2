@@ -83,8 +83,7 @@ align ALIGN_CODE
 ProcName proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, pDecodeTable:POINTER
   _ProcName_ textequ <%ProcName>
   ArgReg pEncDataBuffer:xcx, dEncDataSize:edx, pDecodeTable:R8
-  LocReg dCount:r10d
-  local pDecodedDataBuffer:POINTER, dDecodedDataSize:DWORD
+  local pDecodedDataBuffer:POINTER, dDecodedDataSize:DWORD, dCount:DWORD
 
   mov dDecodedDataSize, 0
   mov pDecodedDataBuffer, NULL
@@ -94,7 +93,7 @@ ProcName proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, pDeco
     lea eax, [4*eax + eax]
     shr eax, 3
     mov dDecodedDataSize, eax
-    mov $LocReg(dCount), eax
+    mov dCount, eax
     mov xbx, $ArgReg(pDecodeTable)
     MemAlloc eax
     .if xax
@@ -112,7 +111,7 @@ ProcName proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, pDeco
         shr eax, 2
         or eax, edx
         stosb
-        dec $LocReg(dCount)
+        dec dCount
 
         add xsi, sizeof(CHR)
         B32GetChar2Into edx
@@ -125,7 +124,7 @@ ProcName proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, pDeco
         shr eax, 4
         or eax, ecx
         stosb
-        dec $LocReg(dCount)
+        dec dCount
 
         add xsi, sizeof(CHR)
         B32GetChar2Into eax
@@ -134,7 +133,7 @@ ProcName proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, pDeco
         shr eax, 1
         or eax, edx
         stosb
-        dec $LocReg(dCount)
+        dec dCount
 
         add xsi, sizeof(CHR)
         shl ecx, 7
@@ -147,14 +146,14 @@ ProcName proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, pDeco
         shr edx, 3
         or eax, edx
         stosb
-        dec $LocReg(dCount)
+        dec dCount
 
         add xsi, sizeof(CHR)
         B32GetChar2Into eax
         shl ecx, 5
         or eax, ecx
         stosb
-        dec $LocReg(dCount)
+        dec dCount
 
         .break .if ZERO?
         add xsi, sizeof(CHR)
@@ -163,7 +162,7 @@ ProcName proc uses xbx xdi xsi pEncDataBuffer:POINTER, dEncDataSize:DWORD, pDeco
   .endif
 
   mov ecx, dDecodedDataSize
-  sub ecx, $LocReg(dCount)
+  sub ecx, dCount
   mov xax, pDecodedDataBuffer
   ret
 

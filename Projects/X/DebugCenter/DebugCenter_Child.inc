@@ -219,8 +219,7 @@ Method DbgMdiChild.SaveAs, uses xbx xsi, pFilter:PSTRING, pDefExt:PSTRING
     invoke StrRScan, addr cFileName, "\"
     .if xax != NULL
       m2z BYTE ptr [xax]
-      invoke StrDispose, [xbx].$Obj(Application).pDirectory
-      mov [xbx].$Obj(Application).pDirectory, $invoke(StrNew, addr cFileName)
+      invoke StrReplace, [xbx].$Obj(Application).pDirectory, addr cFileName
     .endif
   .endif
   xor eax, eax

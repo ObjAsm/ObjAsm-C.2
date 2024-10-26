@@ -12,6 +12,7 @@ TBSTYLE   equ   WS_CHILD or WS_VISIBLE or WS_CLIPCHILDREN or TBSTYLE_TOOLTIPS or
                 CCS_NORESIZE or CCS_NODIVIDER or CCS_ADJUSTABLE or TBSTYLE_FLAT or TBSTYLE_LIST
 
 WAIT_TIMEOUT  equ   102h
+POINT_ALLOCATION_INCREMENT equ 100
 
 .const
 ToolbarFile DEF_TOOLBAR {IDC_TOOLBARFILE, TBSTYLE, TBSTYLE_EX_MIXEDBUTTONS, \
@@ -870,8 +871,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         invoke StrRScan, addr cFileName, "\"
         .if xax != NULL
           m2z CHR ptr [xax]
-          invoke StrDispose, [xsi].pDirectory
-          mov [xsi].pDirectory, $invoke(StrNew, addr cFileName)
+          invoke StrReplace, [xsi].pDirectory, addr cFileName
         .endif
       .endif
     .endif
@@ -1508,18 +1508,16 @@ Method Application.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
 
         .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEX_AUTO
-          .if BYTE ptr [xcx] == TRUE
-            BitSet [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.dFlags, CHT_SCALE_AUTO_MIN or CHT_SCALE_AUTO_MAX
-          .else
+          .if BYTE ptr [xcx] == FALSE
             BitClr [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.dFlags, CHT_SCALE_AUTO_MIN or CHT_SCALE_AUTO_MAX
+          .else
+            BitSet [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.dFlags, CHT_SCALE_AUTO_MIN or CHT_SCALE_AUTO_MAX
           .endif
           OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
 
         .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEX_TITLE
           mov xbx, xcx
-          invoke StrDispose, [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.pDescription
-          invoke StrNew, xbx
-          mov [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.pDescription, xax
+          invoke StrReplace, [xdi].$Obj(DbgMdiChildCht).Chart.ScaleX.pDescription, xbx
           OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
 
         .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEY_MIN
@@ -1533,18 +1531,16 @@ Method Application.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
 
         .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEY_AUTO
-          .if BYTE ptr [xcx] == TRUE
-            BitSet [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.dFlags, CHT_SCALE_AUTO_MIN or CHT_SCALE_AUTO_MAX
-          .else
+          .if BYTE ptr [xcx] == FALSE
             BitClr [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.dFlags, CHT_SCALE_AUTO_MIN or CHT_SCALE_AUTO_MAX
+          .else
+            BitSet [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.dFlags, CHT_SCALE_AUTO_MIN or CHT_SCALE_AUTO_MAX
           .endif
           OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
 
         .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SCALEY_TITLE
           mov xbx, xcx
-          invoke StrDispose, [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.pDescription
-          invoke StrNew, xbx
-          mov [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.pDescription, xax
+          invoke StrReplace, [xdi].$Obj(DbgMdiChildCht).Chart.ScaleY1.pDescription, xbx
           OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
 
         .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SERIES_COLOR
@@ -1566,8 +1562,10 @@ Method Application.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           OCall [xdi].$Obj(DbgMdiChildCht).Chart.Data::Collection.ItemAt, eax
           .if xax
             mov edx, DbgSerOpt.DBG_PLOT_SERIES_OPTION.dOption   ;edx = Marker ID
-            mov [xax].$Obj(ChartXYSeries).Setup.dMarkerShape, edx
-            OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
+            .if edx <= CHTXY_MARKER_LAST
+              mov [xax].$Obj(ChartXYSeries).Setup.dMarkerShape, edx
+              OCall [xdi].$Obj(DbgMdiChildCht).Chart::ChartWnd.Refresh
+            .endif
           .endif
 
         .elseif [xdx].DBG_CHT_INFO.bInfo == DBG_CHT_SERIES_ADD
@@ -1578,7 +1576,8 @@ Method Application.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           .if eax == [xdi].$Obj(DbgMdiChildCht).Chart.Data.dCount
             ;Create a new chart series
             mov xbx, $New(ChartXYSeries)
-            OCall xbx::ChartXYSeries.Init, addr [xdi].$Obj(DbgMdiChildCht).Chart.Data, 100 ;Intial capa = 100
+            OCall xbx::ChartXYSeries.Init, addr [xdi].$Obj(DbgMdiChildCht).Chart.Data, \
+                                           POINT_ALLOCATION_INCREMENT ;Intial capa
             mov [xbx].$Obj(ChartXYSeries).dDataFrom, 0
             mov [xbx].$Obj(ChartXYSeries).dDataCount, 0
             mov [xbx].$Obj(ChartXYSeries).Setup.LineColor, $RGB(000,192,000)
@@ -1586,7 +1585,8 @@ Method Application.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
             mov [xbx].$Obj(ChartXYSeries).Setup.MarkerFillColor, $RGB(000,192,000)
             mov [xbx].$Obj(ChartXYSeries).Setup.dMarkerSize, 7
             mov [xbx].$Obj(ChartXYSeries).Setup.dMarkerShape, CHTXY_MARKER_SQUARE
-            mov [xbx].$Obj(ChartXYSeries).dFlags, CHT_SERIES_SHOW_DEPICTION or CHT_SERIES_SHOW_MARKER or CHT_SERIES_SHOW_TAB
+            mov [xbx].$Obj(ChartXYSeries).dFlags, \
+                CHT_SERIES_SHOW_DEPICTION or CHT_SERIES_SHOW_MARKER or CHT_SERIES_SHOW_TAB
           .elseif eax < [xdi].$Obj(DbgMdiChildCht).Chart.Data.dCount
             mov xbx, $OCall([xdi].$Obj(DbgMdiChildCht).Chart.Data::Collection.ItemAt, eax)
           .endif
@@ -1595,7 +1595,7 @@ Method Application.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
             mov edx, [xcx + 1*sizeof(DWORD)]                    ;edx = max capacity
             mov eax, [xbx].$Obj(ChartXYSeries).dDataCount       ;Actual data count
             .if eax >= edx
-              add eax, 100                                      ;Allocate additional 100 points
+              add eax, POINT_ALLOCATION_INCREMENT               ;Allocate additional points
               OCall xbx::ChartXYSeries.DimResize, 1, eax, ARR_PRESERVE  ;Index 1 = #Points
             .endif
             OCall xbx::ChartXYSeries.ItemAt, 0, [xbx].$Obj(ChartXYSeries).dDataCount

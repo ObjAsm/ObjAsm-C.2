@@ -192,6 +192,11 @@ StrTitleA, pStringA
 StrTitleW, pStringW
 BStrTitle, pBStr
 
+StrReplace, pOldString, pNewString
+StrReplaceA, pOldStringA, pNewStringA
+StrReplaceW, pOldStringW, pNewStringW
+BStrReplace, pOldBStr, pNewBStr
+
 StrFilter, pString, pPattern
 StrFilterA, pStringA, pPatternA
 StrFilterW, pStringW, pPatternW
