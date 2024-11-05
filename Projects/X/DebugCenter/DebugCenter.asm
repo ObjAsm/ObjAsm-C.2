@@ -34,11 +34,11 @@
 ;               - Information from child windows added to the statusbar.
 ;               - Plotting capabilities added.
 ;                 Original idea from HSE - https://masm32.com/board/index.php?topic=12321.0
+;               - XMenu flashing update. 
 ; ==================================================================================================
 
 ;Wishlist:
 ;- Upgrade resource definitions like OA_Tools
-;- Flashing problem in XMenu object
 
 
 WIN32_LEAN_AND_MEAN         equ 1                       ;Necessary to exclude WinSock.inc

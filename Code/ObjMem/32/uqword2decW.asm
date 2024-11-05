@@ -24,6 +24,6 @@ ProcName textequ <uqword2decW>
 ; Note:       The destination buffer must be at least 42 BYTEs large to allocate the output string
 ;             (20 WIDE characters + ZTC = 42 BYTEs).
 
-% include &ObjMemPath&Common\uqword2decT32.inc
+% include &ObjMemPath&Common\uqword2dec_T32.inc
 
 end

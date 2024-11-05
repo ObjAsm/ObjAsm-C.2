@@ -22,6 +22,6 @@ ProcName equ <TimeToStrA>
 ;             Arg3: -> DTL_TIME
 ; Return:     eax = Number of bytes copied, including the ZTC.
 
-% include &ObjMemPath&Common\TimeToStr_XT.inc
+% include &ObjMemPath&Common\TimeToStr_TX.inc
 
 end

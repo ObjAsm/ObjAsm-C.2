@@ -267,6 +267,8 @@ endm
 COM_INTERFACE_END macro
   ;;Terminate structure definition
   ??Interface ends
+
+%echo  P%??InterfaceName typedef ptr ??Interface            ;;Pointer type to interface struct 
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -391,7 +393,7 @@ endm
 ; Macro:     DefGUID
 ; Purpose:   Define a symbol with a formated GUID string.
 ; Arguments: Arg1: GUID symbol.
-;            Arg2: GUID string.
+;            Arg2: GUID string. Definition: sIID_IXXX textequ <12345678-1234-1234-1234-1234567890AB>
 
 DefGUID macro GUIDSymbol:req, GUIDStr:req
   if @SizeStr(GUIDStr) eq 36

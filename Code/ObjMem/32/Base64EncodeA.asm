@@ -29,6 +29,6 @@ ProcName equ <Base64EncodeA>
 ;             https://datatracker.ietf.org/doc/html/rfc4648
 ; Note:       No ZTC is added to the encoded buffer.
 
-% include &ObjMemPath&Common\\Base64Encode_XT.inc
+% include &ObjMemPath&Common\\Base64Encode_TX.inc
 
 end

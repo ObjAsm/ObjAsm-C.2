@@ -712,3 +712,31 @@ TimeToHnsecs, pHnsecs, pTime
 HnsecsToTime, pTime, pHnsecs
 HnsecsToDate, pDate, pHnsecs
 HnsecsToDateTime, pDateTime, pHnsecs
+
+uxword2base, pDest, xword, base
+sxword2base, pDest, xword, base
+xword2base, pDest, xword, base
+uqword2base, pDest, qword, base
+sqword2base, pDest, qword, base
+xqord2base, pDest, qword, base
+udword2base, pDest, dword, base
+sdword2base, pDest, dword, base
+xdord2base, pDest, dword, base
+uxword2baseA, pDest, xword, base
+sxword2baseA, pDest, xword, base
+xword2baseA, pDest, xword, base
+uqword2baseA, pDest, qword, base
+sqword2baseA, pDest, qword, base
+xqord2baseA, pDest, qword, base
+udword2baseA, pDest, dword, base
+sdword2baseA, pDest, dword, base
+xdord2baseA, pDest, dword, base
+uxword2baseW, pDest, xword, base
+sxword2baseW, pDest, xword, base
+xword2baseW, pDest, xword, base
+uqword2baseW, pDest, qword, base
+sqword2baseW, pDest, qword, base
+xqord2baseW, pDest, qword, base
+udword2baseW, pDest, dword, base
+sdword2baseW, pDest, dword, base
+xdord2baseW, pDest, dword, base

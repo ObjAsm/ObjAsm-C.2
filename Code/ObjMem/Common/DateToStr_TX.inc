@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      DateToStr_XT.inc
+; Title:      DateToStr_TX.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2023

@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      uqword2decT32.inc
+; Title:      uqword2dec_T32.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, May 2022

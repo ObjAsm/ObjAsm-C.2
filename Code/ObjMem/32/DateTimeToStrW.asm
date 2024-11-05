@@ -24,6 +24,6 @@ ProcName equ <DateTimeToStrW>
 ;             Arg5: -> DTL_TIME
 ; Return:     eax = Number of bytes copied, including the ZTC.
 
-% include &ObjMemPath&Common\DateTimeToStr_XT.inc
+% include &ObjMemPath&Common\DateTimeToStr_TX.inc
 
 end

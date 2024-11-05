@@ -1284,94 +1284,28 @@ MethodEnd
 ; Return:     Nothing.
 
 FMB_Params struc
-  pXMenu        POINTER   ?       ;-> XMenu
-  BkColor1      RGBQUAD   {}      ;High background color
-  BkColor2      RGBQUAD   {}      ;Default background color
-  dRepetitions  DWORD     ?       ;Flashing loops
+  pXMenu        POINTER   ?
+  BkColor1      RGBQUAD   {}
+  BkColor2      RGBQUAD   {}
+  dRepetitions  DWORD     ?
 FMB_Params ends
 
 FlashMenuBar proc uses xbx xdi xsi, pFMBParam:ptr FMB_Params
-  local hDC:HDC, WRect:RECT, MRect:RECT, hBrush:HBRUSH, dPrevItemEnd:DWORD
-  local MBI0:MENUBARINFO, MBI:MENUBARINFO, dItemIndex:DWORD
-
   mov xsi, pFMBParam
   mov xdi, [xsi].FMB_Params.pXMenu
-  mov hDC, $invoke(GetWindowDC, [xdi].$Obj(XMenu).hWnd)
-  mov MBI0.cbSize, sizeof(MBI)
-  mov MBI.cbSize, sizeof(MBI)
-
-  mov hBrush, $invoke(CreateSolidBrush, [xsi].FMB_Params.BkColor1)    ;Used to fill the gap between
-                                                                      ;the Menubar items/end
   mov ebx, [xsi].FMB_Params.dRepetitions
   test ebx, ebx
   .while !ZERO?
-    ;The window can be resized during the flashing process. 
-    ;Therefore, all these calculations have to be done in each loop.
-    invoke GetWindowRect, [xdi].$Obj(XMenu).hWnd, addr WRect
-    invoke GetMenuBarInfo, [xdi].$Obj(XMenu).hWnd, OBJID_MENU, 0, addr MBI0
-    m2m dPrevItemEnd, MBI0.rcBar.left, eax
-  
-    mov dItemIndex, 1
-    .while TRUE
-      invoke GetMenuBarInfo, [xdi].$Obj(XMenu).hWnd, OBJID_MENU, dItemIndex, addr MBI
-      .break .if eax == 0
-      mov eax, dPrevItemEnd
-      .if eax != MBI.rcBar.left
-        ;Calc MRect to fill the gap and exit. It can only have one gap!  
-        mov ecx, WRect.left
-        mov edx, WRect.top
-        mov eax, MBI.rcBar.left
-        sub eax, ecx
-        mov MRect.right, eax
-        mov eax, dPrevItemEnd
-        sub eax, ecx
-        mov MRect.left, eax
-        mov eax, MBI0.rcBar.top
-        sub eax, edx
-        mov MRect.top, eax 
-        mov eax, MBI0.rcBar.bottom
-        sub eax, edx
-        mov MRect.bottom, eax
-        jmp @F
-      .endif
-      m2m dPrevItemEnd, MBI.rcBar.right, eax
-      inc dItemIndex
-    .endw
-  
-    mov eax, dPrevItemEnd
-    .if eax < MBI0.rcBar.right
-      ;Fill the gab at the end
-      mov ecx, WRect.left
-      mov edx, WRect.top
-      sub eax, ecx
-      mov MRect.left, eax
-      mov eax, MBI0.rcBar.right
-      sub eax, ecx
-      mov MRect.right, eax
-      mov eax, MBI0.rcBar.top
-      sub eax, edx
-      mov MRect.top, eax
-      mov eax, MBI0.rcBar.bottom
-      sub eax, edx
-      mov MRect.bottom, eax
-    .endif
-
-  @@:
-    ;Flash now
     OCall xdi::XMenu.SetMenuBarBkColor, [xsi].FMB_Params.BkColor1
     invoke DrawMenuBar, [xdi].$Obj(XMenu).hWnd
-    invoke FillRect, hDC, addr MRect, hBrush            ;Fill the gap now 
     invoke Sleep, 100
     OCall xdi::XMenu.SetMenuBarBkColor, [xsi].FMB_Params.BkColor2
     invoke DrawMenuBar, [xdi].$Obj(XMenu).hWnd
-    invoke Sleep, 300
+    invoke Sleep, 150
     dec ebx
   .endw
-
-  ;Housekeeping
+;  invoke DrawMenuBar, [xdi].$Obj(XMenu).hWnd            ;Final update
   MemFree xsi
-  invoke DeleteObject, hBrush
-  invoke ReleaseDC, [xdi].$Obj(XMenu).hWnd, hDC
   BitClr [xdi].$Obj(XMenu).dFlags, XMF_FLASHING
   ret
 FlashMenuBar endp

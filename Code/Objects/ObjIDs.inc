@@ -482,3 +482,7 @@ FFTID                             equ     0000012600
 
 ;ODBC
 ODBCID                            equ     0000012700
+
+;XLMDOM
+XmlDocumentID                     equ     0000012720
+XmlNodeID                         equ     0000012721

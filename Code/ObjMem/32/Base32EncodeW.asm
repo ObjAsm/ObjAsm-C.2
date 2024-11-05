@@ -29,6 +29,6 @@ ProcName equ <Base32EncodeW>
 ;             https://datatracker.ietf.org/doc/html/rfc4648
 ; Note:       No ZTC is added to the encoded buffer.
 
-% include &ObjMemPath&Common\\Base32Encode_XT.inc
+% include &ObjMemPath&Common\\Base32Encode_TX.inc
 
 end

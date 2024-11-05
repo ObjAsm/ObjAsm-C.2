@@ -79,6 +79,11 @@ BIT61    equ    2000000000000000h
 BIT62    equ    4000000000000000h
 BIT63    equ    8000000000000000h
 
+if TARGET_BITNESS eq 32
+  BIT_SIGN equ BIT31
+else
+  BIT_SIGN equ BIT63
+endif
 
 DOUBLEBYTE union
   WORD                       ?

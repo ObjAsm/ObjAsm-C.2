@@ -210,7 +210,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=26
+MilestoneOnDateDate=2
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -247,11 +247,11 @@ ProductVer4Range=0
 [Size]
 2=0,0,806,424,71085
 3=0,0,2127,589,523
-1=0,0,694,487,1498
+1=0,0,694,487,4876
 4=0,0,706,573,27874
 1001=0,0,0,0,460
 5=0,0,0,0,30904
-6=0,0,601,582,13381
+6=0,0,601,582,50460
 7=0,0,0,0,29563
 8=0,0,0,0,22796
 11=0,0,706,600,10766
@@ -269,7 +269,7 @@ ProductVer4Range=0
 21=0,0,0,0,96311
 22=0,0,1939,424,10958
 23=0,0,0,0,1331
-25=0,0,802,423,19291
+25=0,0,802,423,23798
 26=0,0,1068,628,146795
 43=0,0,0,0,4159
 42=0,0,0,0,1031
@@ -299,7 +299,7 @@ ProductVer4Range=0
 51=0,0,0,0,11857
 52=0,0,0,0,11182
 53=0,0,0,0,437
-54=0,0,1300,620,220
+54=0,0,1300,620,926
 55=0,0,0,0,14144
 60=0,0,0,0,4181
 59=0,0,0,0,11336
@@ -331,16 +331,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="Base64"
-2="POINT_ALLOCATION_INCREMENT"
-3="100"
-4="StrDispose"
-5="cSingleLine"
-6="ChangeLanguage"
-7="UpdateStatusbar"
-8="Save"
-9="szBmpFilter"
-10="szLoadFilter"
+1="Flash"
+2="OOP Support"
+3="FlashMenuBar"
+4="Base64"
+5="POINT_ALLOCATION_INCREMENT"
+6="100"
+7="StrDispose"
+8="cSingleLine"
+9="ChangeLanguage"
+10="UpdateStatusbar"
 "
 [Collapse]
 7=,,
@@ -409,9 +409,9 @@ ProductVer4Range=0
 62=
 66=
 [AutoLoad]
-AutoLoad=1,2,4,19
+AutoLoad=2,4,19,1,25,3,54
 [PTimer]
-PTimer=540867121
+PTimer=549269808
 [RADebugBP]
 5=
 2=

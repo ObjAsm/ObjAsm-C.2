@@ -3465,9 +3465,9 @@ ICall macro Expression:req, Args:vararg
         push $$IName
         mov edx, [$$IName]                              ;;Make indirection
         call (??ImpIfc ptr [edx]).??MtdExpr
-        if $$StackCorr ne 0
-          add esp, $$StackCorr                          ;;Correct the stack
-        endif
+;        if $$StackCorr ne 0
+;          add esp, $$StackCorr                          ;;Correct the stack §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+;        endif
       else
         $$ProcType CatStr <TYPE_>, ??ImpIfc, ??MtdExpr
         GetInstance64 ??InsExpr

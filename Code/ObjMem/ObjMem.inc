@@ -851,6 +851,50 @@ else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
 
+sqword2baseA proto :POINTER, :QWORD, :DWORD
+sqword2baseW proto :POINTER, :QWORD, :DWORD
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  sqword2base textequ <sqword2baseA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  sqword2base textequ <sqword2baseW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
+uqword2baseA proto :POINTER, :QWORD, :DWORD
+uqword2baseW proto :POINTER, :QWORD, :DWORD
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  uqword2base textequ <uqword2baseA>
+  qword2base textequ <uqword2baseA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  uqword2base textequ <uqword2baseW>
+  qword2base textequ <uqword2baseW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
+sdword2baseA proto :POINTER, :DWORD, :DWORD
+sdword2baseW proto :POINTER, :DWORD, :DWORD
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  sdword2base textequ <sdword2baseA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  sdword2base textequ <sdword2baseW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
+udword2baseA proto :POINTER, :DWORD, :DWORD
+udword2baseW proto :POINTER, :DWORD, :DWORD
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  udword2base textequ <udword2baseA>
+  dword2base textequ <udword2baseA>
+elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
+  udword2base textequ <udword2baseW>
+  dword2base textequ <udword2baseW>
+else
+  echo Warning: incompatible TARGET_STR_TYPE
+endif
+
 Mem2HexA proto :POINTER, :POINTER, :DWORD
 Mem2HexW proto :POINTER, :POINTER, :DWORD
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
@@ -967,6 +1011,9 @@ if TARGET_BITNESS eq 32
   uxShr textequ <uqShr>
   sxShr textequ <sqShr>
 
+  uxword2base textequ <udword2base>
+  sxword2base textequ <sdword2base>
+  xword2base textequ <udword2base>
 
 elseif TARGET_BITNESS eq 64
   xword2hex textequ <qword2hex>
@@ -1010,6 +1057,10 @@ elseif TARGET_BITNESS eq 64
   sxShl textequ <soShl>
   uxShr textequ <uoShr>
   sxShr textequ <soShr>
+
+  uxword2base textequ <uqword2base>
+  sxword2base textequ <sqword2base>
+  xword2base textequ <uqword2base>
 else
   %echo Warning: incompatible Bitness: $ToStr(%TARGET_BITNESS)
 endif

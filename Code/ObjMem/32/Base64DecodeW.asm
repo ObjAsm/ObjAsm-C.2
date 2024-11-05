@@ -27,6 +27,6 @@ ProcName equ <Base64DecodeW>
 ; Links:      https://en.wikipedia.org/wiki/Base64
 ;             https://datatracker.ietf.org/doc/html/rfc4648
 
-% include &ObjMemPath&Common\\Base64Decode_XT.inc
+% include &ObjMemPath&Common\\Base64Decode_TX.inc
 
 end

@@ -27,6 +27,6 @@ ProcName equ <Base32DecodeW>
 ; Links:      https://en.wikipedia.org/wiki/Base32
 ;             https://datatracker.ietf.org/doc/html/rfc4648
 
-% include &ObjMemPath&Common\\Base32Decode_XT.inc
+% include &ObjMemPath&Common\\Base32Decode_TX.inc
 
 end

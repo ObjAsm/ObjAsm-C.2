@@ -162,7 +162,8 @@ endif
 
 Method Primer.Init,, pOwner:POINTER
   SetObject xcx
-  m2m [xcx].pOwner, pOwner, xax
+  ?mov xdx, pOwner
+  mov [xcx].pOwner, xdx
 MethodEnd
 
 endif
