@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  IsPntInRect
 ; Purpose:    Check if a point is within a rect.
@@ -19,6 +18,8 @@
 ; Return:     rax = TRUE or FALSE.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 IsPntInRect proc pPoint:POINTER, pRect:POINTER
   mov eax, [rcx].POINT.x
@@ -38,6 +39,7 @@ IsPntInRect proc pPoint:POINTER, pRect:POINTER
   inc rax
   ret
 IsPntInRect endp
+
 OPTION PROC:DEFAULT
 
 end

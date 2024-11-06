@@ -8,7 +8,6 @@
 ; ==================================================================================================
 
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  sooyMul / sqqoMul
 ; Purpose:    Calculate a signed extended precision multiplication, emulating the imul x86 instr.
@@ -19,6 +18,7 @@
 ;             Arg4: Multiplier signed high word.
 ; Return:     xbx:xcx:xdx:xax = Signed product (256/128 bit).
 
+.code
 align ALIGN_CODE
 ProcName proc sxMultiplicandLo:SXWORD, sxMultiplicandHi:SXWORD, \
               sxMultiplierLo:SXWORD, sxMultiplierHi:SXWORD

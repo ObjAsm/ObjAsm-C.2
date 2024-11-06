@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrECopyW
 ; Purpose:    Copy a WIDE string to a buffer and return the address of the ZTC.
@@ -19,6 +18,7 @@
 ;             Arg2: -> Source WIDE string.
 ; Return:     rax -> ZTC.
 
+.code
 align ALIGN_CODE
 StrECopyW proc uses rbx pDstStrW:POINTER, pSrcStrW:POINTER
   invoke StrSizeW, rdx                                  ;pSrcStrW

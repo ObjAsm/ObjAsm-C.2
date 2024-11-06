@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <Base32EncodeA>
+ProcName textequ <Base32EncodeA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Base32EncodeA
 ; Purpose:    Encode a data stream using the BASE32 algorithm. The output stream contains only

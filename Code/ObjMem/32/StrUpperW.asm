@@ -13,9 +13,8 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <StrUpperW>
+ProcName textequ <StrUpperW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrUpperW
 ; Purpose:    Convert all WIDE string characters into uppercase.

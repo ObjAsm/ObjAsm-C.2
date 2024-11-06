@@ -12,7 +12,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCCatW
 ; Purpose:    Concatenate 2 WIDE strings with length limitation.
@@ -24,6 +23,7 @@
 ;                   ZTC.
 ; Return:     rax = Number of added BYTEs.
 
+.code
 align ALIGN_CODE
 StrCCatW proc pDstStringW:POINTER, pSrcStringW:POINTER, dMaxChars:DWORD
   invoke StrEndW, rcx

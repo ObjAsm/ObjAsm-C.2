@@ -10,9 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.const
-
-align ALIGN_DATA
-wError  WORD  "E", "r", "r", "o", "r", 0
+% include &ObjMemPath&Common\CWStr_Error_X.inc
 
 end

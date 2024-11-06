@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <StrStartsWithA>
+ProcName textequ <StrStartsWithA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrStartsWithA
 ; Purpose:    Compare the beginning of a string.

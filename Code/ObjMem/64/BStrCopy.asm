@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrCopy
 ; Purpose:    Copy a BStr to a destination buffer.
@@ -18,6 +17,7 @@
 ;             Arg2: Source BStr.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 BStrCopy proc pDstBStr:POINTER, pSrcBStr:POINTER        ;rcx -> DstBStr, rdx -> SrcBStr
   sub rdx, 4

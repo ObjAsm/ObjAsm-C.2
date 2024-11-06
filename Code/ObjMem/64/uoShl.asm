@@ -11,9 +11,8 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <uoShl>
+ProcName textequ <uoShl>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uoShl
 ; Purpose:    Shift left of an unsigned OWORD (signed and unsigned procs are identical).

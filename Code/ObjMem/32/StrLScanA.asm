@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrLScanA
 ; Purpose:    Scan for a character from the beginning of an ANSI string.
@@ -18,9 +17,9 @@
 ;             Arg2: Character to search.
 ; Return:     eax -> Character address or NULL if not found.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrLScanA proc pStringA:POINTER, cChar:CHRA
   invoke StrLengthA, [esp + 4]                          ;pStringA
@@ -29,7 +28,7 @@ StrLScanA proc pStringA:POINTER, cChar:CHRA
   mov ecx, eax                                          ;ecx (counter) = length
   mov al, [esp + 8]                                     ;Load Char
   push edi                                              ;Save edi onto stack
-  mov edi, [esp + 8]                                    ;edi -> StringA
+  mov edi, [esp + 8]                                    ;edi -> STRINGA
   repne scasb
   mov eax, 0                                            ;Dont't change flags!
   jne @F
@@ -40,7 +39,6 @@ StrLScanA proc pStringA:POINTER, cChar:CHRA
   ret 8
 StrLScanA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

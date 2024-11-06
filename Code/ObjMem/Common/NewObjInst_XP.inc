@@ -14,6 +14,7 @@
 ; Arguments:  Arg1: Object ID.
 ; Return:     xax -> New object instance or NULL if failed.
 
+.code
 align ALIGN_CODE
 ProcName proc uses xbx xdi xsi dObjectID:DWORD
   invoke GetObjectTemplate, dObjectID                   ;xax -> Template, ecx = Template size

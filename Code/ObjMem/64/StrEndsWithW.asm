@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <StrEndsWithW>
+ProcName textequ <StrEndsWithW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrEndsWithW
 ; Purpose:    Compare the ending of a string.

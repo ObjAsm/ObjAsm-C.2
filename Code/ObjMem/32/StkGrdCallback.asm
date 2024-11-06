@@ -16,7 +16,6 @@ CStr StkGrdMessage, "The application may be unstable.", 10, 13,\
                     "Press 'No' to launch the debugger or ", 10, 13,\
                     "'Cancel' to abort the application."
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StkGrdCallback
 ; Purpose:    StackGuard notification callback procedure.
@@ -26,9 +25,9 @@ CStr StkGrdMessage, "The application may be unstable.", 10, 13,\
 ; Arguments:  None.
 ; Return:     ZERO flag set if NO was pressed
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StkGrdCallback proc
   pushad                                                ;Save all registers
@@ -42,7 +41,6 @@ StkGrdCallback proc
   ret
 StkGrdCallback endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

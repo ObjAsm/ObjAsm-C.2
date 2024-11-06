@@ -11,7 +11,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uqqqRem
 ; Purpose:    Calculate the remainder of the division of 2 unsigned QWORDs.
@@ -22,6 +21,7 @@
 ;             Arg4: Divisor unsigned high word.
 ; Return:     edx:eax = Unsigned remainder.
 
+.code
 align ALIGN_CODE
 uqqqRem proc uses ebx dDividendLo:DWORD, dDividendHi:DWORD, \
                       dDivisorLo:DWORD, dDivisorHi:DWORD

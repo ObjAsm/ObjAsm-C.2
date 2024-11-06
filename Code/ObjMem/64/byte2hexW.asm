@@ -12,7 +12,6 @@
 
 externdef HexCharTableW:CHRW
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  byte2hexW
 ; Purpose:    Convert a BYTE to its hexadecimal WIDE string representation.

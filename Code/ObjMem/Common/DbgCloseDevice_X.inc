@@ -9,7 +9,6 @@
 
 externdef hDbgDev:HANDLE
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgCloseDevice
 ; Purpose:    Close the connection to the output device.
@@ -19,6 +18,7 @@ externdef hDbgDev:HANDLE
 OPTION PROLOGUE:NONE
 OPTION EPILOGUE:NONE
 
+.code
 align ALIGN_CODE
 DbgCloseDevice proc
   .if hDbgDev != 0

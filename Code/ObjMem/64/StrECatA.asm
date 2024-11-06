@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrECatA
 ; Purpose:    Append an ANSI string to another and return the address of the ending zero character.
@@ -20,6 +19,7 @@
 ;             Arg2: -> Source ANSI string.
 ; Return:     rax -> ZTC.
 
+.code
 align ALIGN_CODE
 StrECatA proc pDstStrA:POINTER, pSrcStrA:POINTER
   invoke StrEndA, rcx                                   ;pDstStrA

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MemComp
 ; Purpose:    Compare 2 memory blocks.
@@ -23,6 +22,8 @@
 ;             If MemBlock1 == MemBlock2, then eax = 0.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 MemComp proc pMemBlock1:POINTER, pMemBlock2:POINTER, dCount:DWORD
   xor eax, eax
@@ -68,6 +69,7 @@ MemComp proc pMemBlock1:POINTER, pMemBlock2:POINTER, dCount:DWORD
   mov eax, -1                                           ;In case that the difference is in bits > 31
   ret
 MemComp endp
+
 OPTION PROC:DEFAULT
 
 end

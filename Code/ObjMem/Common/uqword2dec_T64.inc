@@ -19,6 +19,8 @@
 ; Return:     eax = Number of BYTEs copied to the destination buffer, including the ZTC.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 ProcName proc pBuffer:POINTER, qValue:QWORD    ;e.g. 1844'6744'0737'0955'1615
   ;rcx -> Buffer, rdx = QWORD
@@ -184,4 +186,5 @@ ProcName proc pBuffer:POINTER, qValue:QWORD    ;e.g. 1844'6744'0737'0955'1615
   lea eax, [ecx + 2*sizeof(CHR)]                ;eax = number of BYTEs written incl. the ZTC
   ret
 ProcName endp
+
 OPTION PROC:DEFAULT

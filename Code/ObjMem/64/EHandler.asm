@@ -59,7 +59,6 @@ ExceptRecord          EXCEPTION_RECORD <>
 LSH_RetValue          QWORD ?                   ;Language Specific Handler, return value
 
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  EHandler
 ; Purpose:    ASM exception handler
@@ -71,6 +70,7 @@ LSH_RetValue          QWORD ?                   ;Language Specific Handler, retu
 ;             http://www.nynaeve.net/?p=113
 ; Return:     rax = ExceptionContinueSearch.
 
+.code
 align ALIGN_CODE
 EHandler proc uses rsi rdi pExceptionRecord:POINTER, pEstablisherFrame:POINTER, \
                            pContextRecord:POINTER, pDispatcherContext:POINTER

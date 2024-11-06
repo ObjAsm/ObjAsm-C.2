@@ -11,9 +11,8 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 SRC_TYPE equ <REAL8>
-ProcName equ <CalcVarianceR8>
+ProcName textequ <CalcVarianceR8>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  CalcVarianceR8
 ; Purpose:    Calculate the MSE of an array of REAL8s.

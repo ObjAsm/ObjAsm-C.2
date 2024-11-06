@@ -10,9 +10,8 @@
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc
 SysSetup OOP, Lib64, WIDE_STRING
 
-ProcName equ <MsgBoxW>
+ProcName textequ <MsgBoxW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MsgBoxW
 ; Purpose:    Show a customized MessageBox.

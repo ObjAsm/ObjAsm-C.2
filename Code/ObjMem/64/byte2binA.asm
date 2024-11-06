@@ -11,10 +11,9 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <byte2binA>
+ProcName textequ <byte2binA>
 VALUE_TYPE textequ <BYTE>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  byte2binA
 ; Purpose:    Convert a BYTE to its binary ANSI string representation.

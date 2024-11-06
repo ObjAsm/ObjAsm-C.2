@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  sqqqMul
 ; Purpose:    Multiply 2 signed QWORDs.
@@ -21,6 +20,7 @@
 ;             Arg4 Multiplier high signed word.
 ; Return:     rdx:rax = Signed product.
 
+.code
 align ALIGN_CODE
 sqqqMul proc sdMultiplicandLo:SDWORD, sdMultiplicandHi:SDWORD, \
              sdMultiplierLo:SDWORD, sdMultiplierHi:SDWORD

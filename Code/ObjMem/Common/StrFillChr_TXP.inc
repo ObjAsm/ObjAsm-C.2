@@ -16,6 +16,7 @@
 ;             Arg3: Character Count.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 ProcName proc pString:POINTER, dCount:DWORD, cChar:CHR
   if TARGET_STR_TYPE eq STR_TYPE_WIDE

@@ -15,6 +15,7 @@
 ;             Arg2: DWORD Cookie received from previous ComEventsAdvice call.
 ; Return:     eax = HRESULT.
 
+.code
 align ALIGN_CODE
 ComEventsUnadvice proc pICP:POINTER, dPrvCookie:DWORD
   ICall pICP::IConnectionPoint.Unadvise, dPrvCookie

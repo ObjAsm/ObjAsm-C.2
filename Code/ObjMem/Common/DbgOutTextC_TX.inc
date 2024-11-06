@@ -20,6 +20,7 @@ externdef DbgColorError:DWORD
 ;             Arg6: -> Destination Window WIDE name.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 ProcName proc pString:POINTER, dMaxLength:DWORD, dForeColor:DWORD, dBackColor:DWORD, \
               dEffects:DWORD, pDest:POINTER

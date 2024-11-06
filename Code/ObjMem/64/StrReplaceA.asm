@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <StrReplaceA>
+ProcName textequ <StrReplaceA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrReplaceA
 ; Purpose:    Dispose an existing ANSI string and replace it with a new one.

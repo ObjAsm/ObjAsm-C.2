@@ -16,6 +16,7 @@
 ; Arguments:  Arg1: -> String.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 StrDispose_UEFI proc pString:POINTER
   ?mov ecx, pString 

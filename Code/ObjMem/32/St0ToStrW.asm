@@ -12,7 +12,6 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  St0ToStrW
 ; Purpose:    Create a WIDE string representation of the content of the st(0) FPU register.

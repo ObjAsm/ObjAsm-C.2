@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrCScan
 ; Purpose:    Scan from the beginning of a BStr for a character with length limitation.
@@ -20,6 +19,8 @@
 ; Return:     rax -> Character address or NULL if not found.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 BStrCScan proc pBStr:POINTER, dMaxChars:DWORD, wChar:WORD
   push rdi 
@@ -45,6 +46,7 @@ BStrCScan proc pBStr:POINTER, dMaxChars:DWORD, wChar:WORD
   pop rdi
   ret
 BStrCScan endp
+
 OPTION PROC:DEFAULT
 
 end

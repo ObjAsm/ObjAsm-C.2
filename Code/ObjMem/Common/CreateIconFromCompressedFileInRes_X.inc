@@ -22,6 +22,7 @@
 ;             Arg3: Desired icon height.
 ; Return:     xax = Icon HANDLE.
 
+.code
 align ALIGN_CODE
 CreateIconFromCompressedFileInRes proc uses xbx xdi xsi hInst:HINSTANCE, xResourceID:XWORD, \
                                                         dDesiredCx:DWORD, dDesiredCy:DWORD

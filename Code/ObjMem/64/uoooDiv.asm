@@ -11,7 +11,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uoooDiv
 ; Purpose:    Divide 2 unsigned OWORDs.
@@ -22,6 +21,7 @@
 ;             Arg4: Divisor unsigned high word.
 ; Return:     rdx:rax = Unsigned quotient.
 
+.code
 align ALIGN_CODE
 uoooDiv proc uses rbx rsi qDividendLo:QWORD, qDividendHi:QWORD, \
                           qDivisorLo:QWORD, qDivisorHi:QWORD

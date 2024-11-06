@@ -24,7 +24,6 @@
 
 .code
 align ALIGN_CODE
-
 _alloca_probe_16 proc c
   push ecx
   lea ecx, [esp] + 8            ;TOS before entering this function

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrECopyA
 ; Purpose:    Copy an ANSI string to a buffer and return the address of the ZTC.
@@ -19,6 +18,7 @@
 ;             Arg2: -> Source ANSI string.
 ; Return:     rax -> ZTC.
 
+.code
 align ALIGN_CODE
 StrECopyA proc uses rbx pDstStrA:POINTER, pSrcStrA:POINTER
   invoke StrSizeA, rdx                                  ;pSrcStrA

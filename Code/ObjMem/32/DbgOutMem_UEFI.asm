@@ -10,10 +10,9 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemUefi.cop
 
-ProcName equ <DbgOutMem_UEFI>
+ProcName textequ <DbgOutMem_UEFI>
 BYTES_PER_LINE equ 8      ;Must be a multiple of 8
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutMem_UEFI
 ; Purpose:    Output the content of a memory block.

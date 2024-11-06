@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrSizeW
 ; Purpose:    Determine the size of a WIDE string including the ZTC.
@@ -18,6 +17,8 @@
 ; Return:     rax = Size of the string in BYTEs.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 StrSizeW proc pStringW:POINTER
   mov rax, rcx
@@ -114,6 +115,7 @@ align @WordSize
   add rax, 8
   ret
 StrSizeW endp
+
 OPTION PROC:DEFAULT
 
 end

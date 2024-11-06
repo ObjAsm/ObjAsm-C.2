@@ -20,6 +20,7 @@
 ;             3. Quoted arguments are retuned without quotation marks.
 ;             4. The input string is modified with ZTCs at the end of each argument.
 
+.code
 align ALIGN_CODE
 ParseCmdLineArgs proc uses xbx xdi xsi, pCmdLineStrW:PSTRINGW
   mov xsi, pCmdLineStrW

@@ -10,13 +10,13 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  ShortToLongPathNameA
 ; Purpose:    Allocate a new ANSI string containing the long path of a short path string.
 ; Arguments:  Arg1: -> Short path ANSI string.
 ; Return:     rax -> Long path ANSI string or NULL if failed.
 
+.code
 align ALIGN_CODE
 ShortToLongPathNameA proc uses rdi rsi pShortPathNameA:POINTER
   local Buffer[MAX_PATH]:CHRA

@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <Base64DecodeW>
+ProcName textequ <Base64DecodeW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Base64DecodeW
 ; Purpose:    Decode a CHRW stream using the BASE64 algoritm.

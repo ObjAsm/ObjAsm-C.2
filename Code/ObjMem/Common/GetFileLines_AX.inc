@@ -30,6 +30,7 @@ endif
 ; Notes:     - Lines must be terminated with the ANSI char sequence 13, 10 (CRLF).
 ;            - The last line may not terminate with a CRLF.
 
+.code
 align ALIGN_CODE
 GetFileLinesA proc uses xbx xdi xsi hFile:HANDLE
   local pListBeg:POINTER, pListEnd:POINTER, dListSize:DWORD

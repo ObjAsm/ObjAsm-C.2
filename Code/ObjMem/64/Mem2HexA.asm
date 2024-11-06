@@ -12,7 +12,6 @@
 
 externdef HexCharTableA:CHRA
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Mem2HexA
 ; Purpose:    Convert the memory content into a hex ANSI string representation.
@@ -22,6 +21,8 @@ externdef HexCharTableA:CHRA
 ; Return:     Nothing.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 Mem2HexA proc pBuffer:POINTER, pMem:POINTER, dCount:DWORD
   ;rcx -> Buffer, rdx -> Mem, r8d = dCount
@@ -36,6 +37,7 @@ Mem2HexA proc pBuffer:POINTER, pMem:POINTER, dCount:DWORD
   m2z CHRA ptr [rcx]                                    ;Set ZTC
   ret
 Mem2HexA endp
+
 OPTION PROC:DEFAULT
 
 end

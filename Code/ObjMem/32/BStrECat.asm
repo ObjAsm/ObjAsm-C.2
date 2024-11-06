@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrECat
 ; Purpose:    Append a BStr to another and return the address of the ending zero character.
@@ -20,9 +19,9 @@
 ;             Arg2: -> Source BStr.
 ; Return:     eax -> ZTC.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 BStrECat proc pDstBStr:POINTER, pSrcBStr:POINTER
   mov ecx, [esp + 8]                                    ;ecx -> SrcBStr
@@ -41,7 +40,6 @@ BStrECat proc pDstBStr:POINTER, pSrcBStr:POINTER
   ret 8
 BStrECat endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <SetShellPerceivedTypeW>
+ProcName textequ <SetShellPerceivedTypeW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SetShellPerceivedTypeW
 ; Purpose:    Set shell perception of a file type.

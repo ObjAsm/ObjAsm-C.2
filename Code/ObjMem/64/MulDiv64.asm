@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MulDiv64
 ; Purpose:    Multiply 2 signed QWORDs and divide the product by another signed QWORD 
@@ -22,6 +21,7 @@
 ;             Arg3: Signed divisor.
 ; Return:     rdx:rax = Signed result.
 
+.code
 MulDiv64 proc uses rbx sqMultiplicand:SQWORD, sqMultiplier:SQWORD, sqDivisor:SQWORD
   mov rax, sqMultiplier
   cqo                                                 ;Sign extend to rdx:rax

@@ -10,16 +10,15 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrAllocW
 ; Purpose:    Allocate space for a WIDE string with n characters.
 ; Arguments:  Arg1: Character count without the ZTC.
 ; Return:     eax -> New allocated WIDE string or NULL if failed.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrAllocW proc dChars:DWORD
   mov eax, [esp + 4]                                    ;eax = dChars
@@ -29,7 +28,6 @@ StrAllocW proc dChars:DWORD
   ret 4
 StrAllocW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

@@ -26,6 +26,7 @@ externdef DbgColorError:DWORD
 ;             Arg6: -> Destination Window WIDE name.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 ProcName proc uses xbx xdi xsi, pStart:POINTER, dSize:DWORD, dRepresentationFormat:DWORD, \
                                 dMemColor:DWORD, dRepColor:DWORD, dBackColor:DWORD, pDest:POINTER

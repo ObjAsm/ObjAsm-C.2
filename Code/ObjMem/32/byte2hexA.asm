@@ -12,7 +12,6 @@
 
 externdef HexCharTableA:CHRA
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  byte2hexA
 ; Purpose:    Convert a BYTE to its hexadecimal ANSI string representation.
@@ -24,6 +23,7 @@ externdef HexCharTableA:CHRA
 
 OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 byte2hexA proc pBuffer:POINTER, bValue:BYTE
   mov edx, [esp + 4]                                    ;edx -> Buffer

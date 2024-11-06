@@ -15,6 +15,7 @@
 ;             Arg2: Repetition count.
 ; Return:     xax -> New BSTR or NULL if failed.
 
+.code
 align ALIGN_CODE
 BStrRepChr proc uses xbx wChar:CHRW, dReps:DWORD
   invoke BStrAlloc, dReps

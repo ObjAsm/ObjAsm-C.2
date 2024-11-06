@@ -10,9 +10,8 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <StrNewA>
+ProcName textequ <StrNewA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrNewA
 ; Purpose:    Allocate a new copy of the source string.

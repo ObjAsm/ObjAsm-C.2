@@ -11,7 +11,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  soooDivRem
 ; Purpose:    Divide 2 signed OWORDs.
@@ -24,6 +23,7 @@
 ;             rbx:rcx = Signed remainder.
 ; Note:       Don't include rbx in the uses clause.
 
+.code
 align ALIGN_CODE
 soooDivRem proc uses rdi rsi sqDividendLo:SQWORD, sqDividendHi:SQWORD, \
                              sqDivisorLo:SQWORD, sqDivisorHi:SQWORD

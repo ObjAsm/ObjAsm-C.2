@@ -1,8 +1,8 @@
 ; ==================================================================================================
 ; Title:      sqword2decA.asm
 ; Author:     G. Friedrich
-; Version:    C.1.1
-; Notes:      Version C.1.1, May 2022
+; Version:    C.1.0
+; Notes:      Version C.1.0, May 2022
 ;               - First release.
 ; ==================================================================================================
 
@@ -14,7 +14,6 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 externdef TwoDecDigitTableA:BYTE
 ProcName textequ <sqword2decA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  sqword2decA
 ; Purpose:    Convert a signed QWORD to its decimal ANSI string representation.
@@ -24,6 +23,6 @@ ProcName textequ <sqword2decA>
 ; Note:       The destination buffer must be at least 21 BYTEs large to allocate the output string
 ;             (Sign + 19 ANSI characters + ZTC = 21 BYTEs).
 
-% include &ObjMemPath&Common\sqword2decT64.inc
+% include &ObjMemPath&Common\sqword2dec_T64.inc
 
 end

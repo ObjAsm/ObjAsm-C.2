@@ -15,6 +15,7 @@
 ;             Arg2: Repetition count.
 ; Return:     xax -> New string or NULL if failed.
 
+.code
 align ALIGN_CODE
 ProcName proc uses xbx cChar:CHR, dReps:DWORD
   invoke StrAlloc, dReps

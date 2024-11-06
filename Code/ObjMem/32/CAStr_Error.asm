@@ -10,9 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.const
-
-align ALIGN_DATA
-bError  BYTE  "E", "r", "r", "o", "r", 0
+% include &ObjMemPath&Common\CAStr_Error_X.inc
 
 end

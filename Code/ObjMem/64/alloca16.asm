@@ -23,7 +23,6 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 .code
-
 align ALIGN_CODE
 
 _alloca_probe_16 proc c

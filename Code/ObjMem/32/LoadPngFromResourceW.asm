@@ -14,7 +14,6 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 externdef hInstance:HANDLE
 ProcName textequ <LoadPngFromResourceW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  LoadPngFromResourceW
 ; Purpose:    Load a PNG resource and return a bitmap HANDLE.

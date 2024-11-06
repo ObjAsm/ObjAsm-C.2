@@ -31,6 +31,8 @@ endm
 ; Return:     Nothing.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 ProcName proc pBuffer:POINTER, Value:VALUE_TYPE
   mov ecx, [esp + 4]                                    ;ecx -> Buffer
@@ -44,4 +46,5 @@ ProcName proc pBuffer:POINTER, Value:VALUE_TYPE
   m2z CHRW ptr [ecx + sizeof(CHRW)*??CHARS]             ;Write ZTC
   ret 8
 ProcName endp
+
 OPTION PROC:DEFAULT

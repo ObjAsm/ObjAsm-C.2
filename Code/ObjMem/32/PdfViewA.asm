@@ -14,9 +14,8 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &IncPath&Windows\shlwapi.inc
 % include &IncPath&Windows\shellapi.inc
 
-ProcName equ <PdfViewA>
+ProcName textequ <PdfViewA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  PdfViewA
 ; Purpose:    Display a PDF document on a named destination.

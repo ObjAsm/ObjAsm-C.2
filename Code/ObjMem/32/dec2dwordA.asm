@@ -17,7 +17,6 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <dec2dwordA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  dec2dwordA
 ; Purpose:    Convert a decimal ANSI string to a DWORD.

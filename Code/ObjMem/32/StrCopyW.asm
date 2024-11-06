@@ -12,7 +12,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCopyW
 ; Purpose:    Copy a WIDE string to a destination buffer.
@@ -20,9 +19,9 @@
 ; Return:     eax = Number of BYTEs copied, including the ZTC.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrCopyW proc pBuffer:POINTER, pSrcStringW:POINTER
   invoke StrSizeW, [esp + 8]                            ;pSrcStringW
@@ -30,7 +29,6 @@ StrCopyW proc pBuffer:POINTER, pSrcStringW:POINTER
   ret 8
 StrCopyW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

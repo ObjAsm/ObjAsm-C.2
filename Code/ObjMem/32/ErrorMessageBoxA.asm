@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  ErrorMessageBoxA
 ; Purpose:    Show a Messagebox containing an error string in the locale language and an user str.
@@ -20,6 +19,7 @@
 ;             Arg4: API error code.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 ErrorMessageBoxA proc uses ebx hWnd:HWND, pUserMsgA:POINTER, wLangID:WORD, dErrorCode:DWORD
   local pBuffer:POINTER

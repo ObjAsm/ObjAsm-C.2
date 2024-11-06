@@ -19,7 +19,6 @@ WS_EX_LAYERED   equ   80000h
 LMA_ALPHA       equ   2
 LMA_COLORKEY    equ   1
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  WndFadeOut
 ; Purpose:    Fade out a window when WS_EX_LAYERED is set.
@@ -30,6 +29,7 @@ LMA_COLORKEY    equ   1
 ;             Arg5: Delay between steps.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 WndFadeOut proc uses ebx edi, hWnd:HWND, dStart:DWORD, dStop:DWORD, dStep:DWORD, dSleep:DWORD
   local VerInfo:OSVERSIONINFO

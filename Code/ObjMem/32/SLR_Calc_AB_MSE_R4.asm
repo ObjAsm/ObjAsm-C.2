@@ -10,10 +10,9 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-SRC_TYPE equ <REAL4>
-ProcName equ <SLR_Calc_AB_MSE_R4>
+SRC_TYPE textequ <REAL4>
+ProcName textequ <SLR_Calc_AB_MSE_R4>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SLR_Calc_AB_MSE_R4
 ; Purpose:    Calculate the Slope (A) and Intercept (B) values of the linear equation y = A*x + B

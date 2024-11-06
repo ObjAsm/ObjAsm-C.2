@@ -11,10 +11,9 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <qword2binW>
+ProcName textequ <qword2binW>
 VALUE_TYPE textequ <QWORD>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  qword2binW
 ; Purpose:    Convert a QWORD to its binary WIDE string representation.

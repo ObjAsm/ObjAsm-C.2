@@ -16,6 +16,7 @@
 ;             Arg4: Memory block attributes [0, MEM_INIT_ZERO].
 ; Return:     xax -> New memory block.
 
+.code
 align ALIGN_CODE
 MemReAlloc_UEFI proc uses xbx pMemBlock:POINTER, dMemSize:DWORD, dNewMemSize:DWORD, dAttr:DWORD
   local pNewMemBlock:POINTER

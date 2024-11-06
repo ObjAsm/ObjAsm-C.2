@@ -22,6 +22,7 @@ externdef dRandomSeed:DWORD
 ; Arguments:  Arg1: Range limit (max. = 07FFFFFFFh).
 ; Return:     eax = random number in the range [0..Limit-1].
 
+.code
 align ALIGN_CODE
 Random32 proc dRangeLimit:DWORD
   local q:DWORD

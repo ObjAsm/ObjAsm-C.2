@@ -11,7 +11,6 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GUID2StrW
 ; Purpose:    Convert a GUID to a WIDE string.

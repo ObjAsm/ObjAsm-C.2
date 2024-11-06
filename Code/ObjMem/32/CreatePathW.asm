@@ -10,13 +10,13 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  CreatePathW
 ; Purpose:    Create a path on the destination drive.
 ; Arguments:  Arg1: -> Wide path string.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 CreatePathW proc uses ebx esi pPathNameW:POINTER
   local FFD:WIN32_FIND_DATAW

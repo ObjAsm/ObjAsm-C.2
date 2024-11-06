@@ -8,27 +8,17 @@
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
+TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
+ProcName textequ <FileExistW>
+
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  FileExistW
 ; Purpose:    Check the existence of a file.
 ; Arguments:  Arg1: -> WIDE file name.
-; Return:     rax = TRUE if the file exists, otherwise FALSE.
+; Return:     eax = TRUE if the file exists, otherwise FALSE.
 
-align ALIGN_CODE
-FileExistW proc pFileNameW:POINTER
-  local wfd:WIN32_FIND_DATAW
-
-  invoke FindFirstFileW, rcx, addr wfd
-  .if rax == INVALID_HANDLE_VALUE
-    xor eax, eax                                        ;FALSE = NOT exist
-  .else
-    invoke FindClose, rax
-    mov rax, TRUE                                       ;TRUE = exist
-  .endif
-  ret
-FileExistW endp
+% include &ObjMemPath&Common\FileExist_TX.inc
 
 end

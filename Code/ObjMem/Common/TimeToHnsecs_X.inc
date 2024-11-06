@@ -14,6 +14,7 @@
 ;             Arg2 -> DTL_TIME
 ; Return:     rax or edx::eax = Time.
 
+.code
 align ALIGN_CODE
 if TARGET_BITNESS eq 32
   TimeToHnsecs proc uses ebx edi pHnsecs:PDTL_HNSECS, pTime:PDTL_TIME

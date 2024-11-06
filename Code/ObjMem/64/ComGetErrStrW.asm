@@ -13,7 +13,6 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <ComGetErrStrW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  ComGetErrStrW
 ; Purpose:    Return a description WIDE string from a COM error code.

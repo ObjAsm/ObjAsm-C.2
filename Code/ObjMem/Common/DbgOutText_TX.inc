@@ -11,7 +11,6 @@
 
 externdef DbgColorError:DWORD
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutTextA / DbgOutTextW
 ; Purpose:    Send a string to the debug output device.
@@ -22,6 +21,7 @@ externdef DbgColorError:DWORD
 ;             Arg5: -> Destination window WIDE name.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 ProcName proc uses xbx pString:POINTER, dForeColor:DWORD, dBackColor:DWORD, dEffects:DWORD, pDest:POINTER
   local dResult:DWORD, CDS:COPYDATASTRUCT, dCharsWritten:DWORD

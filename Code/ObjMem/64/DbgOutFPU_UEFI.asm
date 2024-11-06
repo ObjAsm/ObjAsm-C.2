@@ -12,7 +12,6 @@
 
 ProcName textequ <DbgOutFPU_UEFI>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutFPU_UEFI
 ; Purpose:    Display the content of the FPU.

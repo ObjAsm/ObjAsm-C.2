@@ -10,13 +10,13 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrAlloc
 ; Purpose:    Allocate space for a BStr with n characters. The length field is set to zero.
 ; Arguments:  Arg1: Character count.
 ; Return:     rax -> New allocated BStr or NULL if failed.
 
+.code
 align ALIGN_CODE
 BStrAlloc proc dCharCount:DWORD                         ;ecx = dChars
   lea rdx, [2*rcx + 6]                                  ;Convert to word sized & add DWORD + ZTC

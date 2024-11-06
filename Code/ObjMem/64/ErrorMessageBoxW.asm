@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  ErrorMessageBoxW
 ; Purpose:    Show a messagebox containing an error string in the locale lenguage and an user string.
@@ -20,6 +19,7 @@
 ;             Arg4: API error code. 
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 ErrorMessageBoxW proc uses rbx rdi rsi hWnd:HWND, pUserMsgW:POINTER, wLangID:WORD, dErrorCode:DWORD
   local pBuffer:POINTER

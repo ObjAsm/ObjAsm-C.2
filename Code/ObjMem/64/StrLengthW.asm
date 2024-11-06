@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrLengthW
 ; Purpose:    Determine the length of a WIDE string not including the ZTC.
@@ -18,6 +17,8 @@
 ; Return:     rax = Length of the string in characters.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 StrLengthW proc pStringW:POINTER
   push rdi
@@ -31,6 +32,7 @@ StrLengthW proc pStringW:POINTER
   pop rdi
   ret
 StrLengthW endp
+
 OPTION PROC:DEFAULT
 
 end

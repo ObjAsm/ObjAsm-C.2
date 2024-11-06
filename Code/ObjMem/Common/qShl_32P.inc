@@ -9,7 +9,6 @@
 ; ==================================================================================================
 
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  sqShl/uqShl
 ; Purpose:    Shift left of a signed/unsigned QWORD (signed and unsigned procs are identical).
@@ -17,6 +16,7 @@
 ;             Arg2: Shift count in cl.
 ; Return:     edx:eax Shifted value.
 
+.code
 align ALIGN_CODE
 ProcName proc
 ; Handle shifts of 64 or more bits (all get 0)

@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <Base32DecodeW>
+ProcName textequ <Base32DecodeW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Base32DecodeW
 ; Purpose:    Decode a data stream using the BASE32 algoritm.

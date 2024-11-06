@@ -34,7 +34,6 @@ CheckPointAndAdjustPosition macro
   .endif
 endm
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MoveWindowVisible
 ; Purpose:    On a multimonitor system, move a window but remains always in the visible region.
@@ -43,6 +42,7 @@ endm
 ;             Arg3: Target Y position in pixel.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 MoveWindowVisible proc uses rdi rsi hWnd:HANDLE, sdXPos:SDWORD, sdYPos:SDWORD
   local WndRect:RECT, dWndHeight:DWORD, dWndWidth:DWORD, MI:MONITORINFO, Pnt:POINT

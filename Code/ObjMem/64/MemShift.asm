@@ -12,7 +12,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MemShift
 ; Purpose:    Copy a memory block from a source to a destination buffer.
@@ -24,9 +23,9 @@
 ;             Arg3: Number of BYTEs to shift.
 ; Return:     rax = Number of BYTEs shifted.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 MemShift proc pDstMem:POINTER, pSrcMem:POINTER, dByteCount:DWORD
   push rdi
@@ -89,6 +88,7 @@ MemShift proc pDstMem:POINTER, pSrcMem:POINTER, dByteCount:DWORD
   pop rdi
   ret
 MemShift endp
+
 OPTION PROC:DEFAULT
 
 end

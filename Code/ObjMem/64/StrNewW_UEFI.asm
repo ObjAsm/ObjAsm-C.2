@@ -10,9 +10,8 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemUefi.cop
 
-ProcName equ <StrNewW_UEFI>
+ProcName textequ <StrNewW_UEFI>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrNewW_UEFI
 ; Purpose:    Allocate a new copy of the source string.

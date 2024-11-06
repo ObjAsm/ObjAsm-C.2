@@ -18,7 +18,6 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 ProcName textequ <uqword2baseA>
 Signed equ FALSE
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uqword2baseA
 ; Purpose:    Convert an unsigned qword to a defined base.
@@ -27,7 +26,6 @@ Signed equ FALSE
 ;             Arg3: Base.
 ; Return:     xax -> Transformed number to base x.
 ;             ecx = BYTEs contained in the buffer, including the ZTC.
-
 
 % include &ObjMemPath&Common\xword2base_TX.inc
 

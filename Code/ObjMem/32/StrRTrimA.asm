@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <StrRTrimA>
+ProcName textequ <StrRTrimA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrRTrimA
 ; Purpose:    Trim blank characters from the end of an ANSI string.

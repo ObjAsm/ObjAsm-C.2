@@ -10,7 +10,6 @@
 
 USE_OVERFLOW_FLAG equ 1
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Normalize
 ; Purpose:    Auxiliary procedure that normalizes a XWORD so that the highest order bit is 1.
@@ -20,6 +19,7 @@ USE_OVERFLOW_FLAG equ 1
 ;             ecx = Number of shifts required to normalize the input number.
 ;             ZF = 1 if the input number was zero, otherwise 0.
 
+.code
 align ALIGN_CODE
 Normalize proc uses xbx uxNumberLo:XWORD, uxNumberHi:XWORD
   xor ecx, ecx                                          ;Reset shift counter

@@ -12,7 +12,6 @@
 
 % include &IncPath&Windows\Windows.inc
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrDispose
 ; Purpose:    Free the memory allocated for the string using StrNew, StrCNew, StrLENew or
@@ -21,9 +20,9 @@
 ; Arguments:  Arg1: -> String.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrDispose proc pString:POINTER
   .if POINTER ptr [esp + 4] != NULL
@@ -32,7 +31,6 @@ StrDispose proc pString:POINTER
   ret 4
 StrDispose endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

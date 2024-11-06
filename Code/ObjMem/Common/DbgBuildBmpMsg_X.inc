@@ -22,6 +22,7 @@
 ;         ---------------------------------------   --------------------------------------
 ;                         dSize1                                     dSize2
 
+.code
 align ALIGN_CODE
 DbgBuildBmpMsg proc uses xdi xsi hBmp:HANDLE, dBackColor:DWORD, pDest:POINTER
   local pData:POINTER, hDC:HDC, BMI:BITMAPINFO, dSize:DWORD, dSize1:DWORD, dSize2:DWORD

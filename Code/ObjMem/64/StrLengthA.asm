@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrLengthA
 ; Purpose:    Determine the length of an ANSI string not including the zero terminating character.
@@ -18,6 +17,8 @@
 ; Return:     eax = Length of the string in characters.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 StrLengthA proc pString:POINTER
   push rdi
@@ -31,6 +32,7 @@ StrLengthA proc pString:POINTER
   pop rdi
   ret
 StrLengthA endp
+
 OPTION PROC:DEFAULT
 
 end

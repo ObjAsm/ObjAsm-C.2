@@ -1,8 +1,8 @@
 ; ==================================================================================================
 ; Title:      sqword2decW.asm
 ; Author:     G. Friedrich
-; Version:    C.1.1
-; Notes:      Version C.1.1, May 2022
+; Version:    C.1.0
+; Notes:      Version C.1.0, May 2022
 ;               - First release.
 ; ==================================================================================================
 
@@ -14,7 +14,6 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 externdef TwoDecDigitTableW:WORD
 ProcName textequ <sqword2decW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  sqword2decW
 ; Purpose:    Convert a signed SQWORD to its decimal WIDE string representation.
@@ -24,6 +23,6 @@ ProcName textequ <sqword2decW>
 ; Note:       The destination buffer must be at least 42 BYTEs large to allocate the output string
 ;             (Sign + 19 WIDE characters + ZTC = 42 BYTEs).
 
-% include &ObjMemPath&Common\sqword2decT64.inc
+% include &ObjMemPath&Common\sqword2dec_T64.inc
 
 end

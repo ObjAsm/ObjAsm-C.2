@@ -14,7 +14,6 @@
 
 externdef TwoDecDigitTableW:WORD
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  udword2decW
 ; Purpose:    Convert an unsigned DWORD to its decimal WIDE string representation.
@@ -24,9 +23,9 @@ externdef TwoDecDigitTableW:WORD
 ; Note:       The destination buffer must be at least 22 BYTEs large to allocate the output string
 ;             (10 WIDE characters + ZTC = 22 BYTEs).
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 udword2decW proc pBuffer:POINTER, dValue:DWORD
   mov eax, [esp + 8]                    ;eax -> dValue
@@ -130,7 +129,6 @@ udword2decW proc pBuffer:POINTER, dValue:DWORD
   ret 8
 udword2decW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrLRTrimW
 ; Purpose:    Trim blank characters from the beginning and the end of a WIDE string.
@@ -18,9 +17,9 @@
 ;             Arg2: -> Source WIDE string.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrLRTrimW proc pBuffer:POINTER, pSrcStringW:POINTER
   mov ecx, [esp + 8]                                    ;ecx -> SrcStringW
@@ -63,7 +62,6 @@ align ALIGN_CODE
   ret 8
 StrLRTrimW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

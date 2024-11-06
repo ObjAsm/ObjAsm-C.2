@@ -12,7 +12,6 @@
 
 % include &MacPath&Strings.inc
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetExceptionStrA
 ; Purpose:    Translate an exception code to an ANSI string.
@@ -20,6 +19,8 @@
 ; Return:     rax -> ANSI string.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 GetExceptionStrA proc dExceptionCode:DWORD
   cmp ecx, 0C0000005h                                   ;EXCEPTION_ACCESS_VIOLATION
@@ -105,6 +106,7 @@ GetExceptionStrA proc dExceptionCode:DWORD
   mov rax, $OfsCStrA("UNKNOWN_EXCEPTION")
   ret
 GetExceptionStrA endp
+
 OPTION PROC:DEFAULT
 
 end

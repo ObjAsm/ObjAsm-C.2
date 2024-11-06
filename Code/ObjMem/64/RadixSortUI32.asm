@@ -12,7 +12,6 @@
 
 % include &ObjMemPath&Common\RadixSort64.inc            ;Helper macros
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RadixSortUI32
 ; Purpose:    Ascending sort of an array of DWORDs using the "4 passes radix sort" algorithm.
@@ -29,6 +28,7 @@
 ; Links:      - http://www.codercorner.com/RadixSortRevisited.htm
 ;             - http://en.wikipedia.org/wiki/Radix_sort
 
+.code
 align ALIGN_CODE
 RadixSortUI32 proc uses rbx rdi rsi pArray:POINTER, dCount:DWORD, pWorkArea:POINTER
   ;rcx -> Array, edx = dCount, r8 -> WorkArea

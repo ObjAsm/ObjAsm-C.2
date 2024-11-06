@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MemFillW
 ; Purpose:    Fill a memory block with a given word value.
@@ -21,9 +20,9 @@
 ;             Arg3: Word value to fill with.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 MemFillW proc pMem:POINTER, dCount:DWORD, wFillText:WORD
   mov ax, [esp + 12]                                    ;ax = FillText
@@ -54,7 +53,6 @@ MemFillW proc pMem:POINTER, dCount:DWORD, wFillText:WORD
   ret 12
 MemFillW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

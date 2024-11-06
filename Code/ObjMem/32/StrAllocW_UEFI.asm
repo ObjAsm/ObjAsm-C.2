@@ -10,9 +10,8 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemUefi.cop
 
-ProcName equ <StrAllocW_UEFI>
+ProcName textequ <StrAllocW_UEFI>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrAllocW_UEFI
 ; Purpose:    Allocate space for a string with n characters.

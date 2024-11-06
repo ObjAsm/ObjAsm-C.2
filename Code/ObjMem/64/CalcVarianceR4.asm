@@ -11,9 +11,8 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 SRC_TYPE equ <REAL4>
-ProcName equ <CalcVarianceR4>
+ProcName textequ <CalcVarianceR4>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  CalcVarianceR4
 ; Purpose:    Calculate the MSE of an array of REAL4s.

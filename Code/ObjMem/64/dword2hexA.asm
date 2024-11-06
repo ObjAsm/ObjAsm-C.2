@@ -12,7 +12,6 @@
 
 externdef HexCharTableA:CHRA
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  dword2hexA
 ; Purpose:    Convert a DWORD to its hexadecimal ANSI string representation.

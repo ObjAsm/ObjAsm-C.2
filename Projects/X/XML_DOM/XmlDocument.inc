@@ -2,9 +2,11 @@
 ; Title:      XmlDocument.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Purpose:    ObjAsm DOMXML objects.
+; Purpose:    ObjAsm DOM-XML objects.
 ; Notes:      Version C.1.0, November 2024
 ;               - First release.
+;               - This is a port from sources of Veria Kalantary - Ideas of East Company
+;                 http://www.IdeasofEast.com; http://www.ioe.co.ir
 ; Links:      https://learn.microsoft.com/en-us/dotnet/standard/data/xml/xml-document-object-model-dom
 ; ==================================================================================================
 
@@ -92,7 +94,7 @@ Method XmlNode.AddChild, uses xsi, pNodeName:PSTRING
   ICall pDocument::IXMLDOMDocument.put_async, VARIANT_FALSE
   mov bstr, $invoke(Str2NewBSTR, pNodeName)
   ICall pDocument::IXMLDOMDocument.createElement, bstr, addr pChild
-  invoke DisposeBSTR, bstr
+  invoke BStrDispose, bstr
   ICall [xsi].pNode::IXMLDOMNode.appendChild, pChild, addr pNewNode
   .if eax != S_OK && pNewNode != NULL
     ICall pNewNode::IXMLDOMNode.Release
@@ -126,9 +128,9 @@ Method XmlNode.GetAttribute, uses xsi, Attribute:PSTRING
   SetObject xsi
   mov bstr, $invoke(Str2NewBSTR, Attribute)
   ICall [xsi].pNode::IXMLDOMElement.getAttribute, bstr, addr var
-  invoke DisposeBSTR, bstr
+  invoke BStrDispose, bstr
   mov pStr, $invoke(BSTR2NewStr, var.bstrVal)
-  invoke DisposeBSTR, bstr
+  invoke BStrDispose, bstr
   mov xax, pStr
 MethodEnd
 
@@ -145,7 +147,7 @@ Method XmlNode.GetChildNode, uses xsi, dIndex:DWORD
   ICall [xsi].pNode::IXMLDOMNode.get_childNodes, addr pNodes
   ICall pNodes::IXMLDOMNodeList.get_item, dIndex, addr pNode
   ICall pNode::IXMLDOMNode.get_nodeTypeString, addr bstr
-  invoke CompBSTRs, bstr, $OfsCBStr("text")
+  invoke BStrComp, bstr, $OfsCBStr("text")
   .if eax == 0
     mov xax, pNode
   .else
@@ -229,7 +231,7 @@ Method XmlNode.GetName
   SetObject xcx
   ICall [xcx].pNode::IXMLDOMNode.get_nodeName, addr bstr
   mov pStr, $invoke(BSTR2NewStr, bstr)
-  invoke DisposeBSTR, bstr
+  invoke BStrDispose, bstr
   mov xax, pStr
 MethodEnd
 
@@ -261,7 +263,7 @@ Method XmlNode.GetText
   SetObject xcx
   ICall [xcx].pNode::IXMLDOMNode.get_text, addr bstr
   mov pStr, $invoke(BSTR2NewStr, bstr)
-  invoke DisposeBSTR, bstr
+  invoke BStrDispose, bstr
   mov xax, pStr
 MethodEnd
 
@@ -277,7 +279,7 @@ Method XmlNode.GetType, uses xsi
   SetObject xsi
   ICall [xsi].pNode::IXMLDOMNode.get_nodeTypeString, addr bstr
   mov pStr, $invoke(BSTR2NewStr, bstr)
-  invoke DisposeBSTR, bstr
+  invoke BStrDispose, bstr
   mov xax, pStr
 MethodEnd
 
@@ -304,7 +306,7 @@ Method XmlNode.GetXML
   SetObject xcx
   ICall [xcx].pNode::IXMLDOMNode.get_xml, addr bstr
   mov pStr, $invoke(BSTR2NewStr, bstr)
-  invoke DisposeBSTR, bstr
+  invoke BStrDispose, bstr
   mov xax, pStr
 MethodEnd
 
@@ -321,7 +323,7 @@ Method XmlNode.HasAttribute, uses xsi, Attribute:PSTRING
   SetObject xsi
   mov bstr, $invoke(Str2NewBSTR, Attribute)
   ICall [xsi].pNode::IXMLDOMElement.getAttributeNode, bstr, addr pAttribute
-  invoke DisposeBSTR, bstr
+  invoke BStrDispose, bstr
   .if pAttribute == NULL
     mov eax, FALSE
   .else
@@ -368,7 +370,7 @@ Method XmlNode.IsTextElement, uses xsi
         ICall [xsi].pNode::IXMLDOMNode.get_childNodes, addr pNodes
         ICall pNodes::IXMLDOMNodeList.get_item, 0, addr pNode
         ICall pNode::IXMLDOMNode.get_nodeTypeString, addr bstr
-        invoke CompBSTRs, bstr, $OfsCBStr("text")
+        invoke BStrComp, bstr, $OfsCBStr("text")
         .if eax == 0
           mov eax, TRUE
         .else
@@ -439,7 +441,7 @@ Method XmlNode.SetAttribute, uses xsi, Attribute:PSTRING, Value:PSTRING
   ICall pDocument::IXMLDOMDocument.createAttribute, bstr, addr pAttribute
   ICall pAttribute::IXMLDOMAttribute.put_value, var
   ICall [xsi].pNode::IXMLDOMElement.setAttributeNode, pAttribute, addr pPrvAttribute
-  invoke DisposeBSTR, bstr
+  invoke BStrDispose, bstr
   .if pPrvAttribute != NULL
     ICall pPrvAttribute::IXMLDOMAttribute.Release
   .endif
@@ -472,7 +474,7 @@ Method XmlNode.SetText, uses xsi, Value:PSTRING
   SetObject xsi
   mov bstr, $invoke(Str2NewBSTR, Value)
   ICall [xsi].pNode::IXMLDOMNode.put_text, bstr
-  invoke DisposeBSTR, bstr
+  invoke BStrDispose, bstr
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -556,7 +558,7 @@ Method XmlDocument.CreateElement, uses xsi, ElementName:PSTRING
   SetObject xsi
   mov bstr, $invoke(Str2NewBSTR, ElementName)
   ICall [xsi].pDocument::IXMLDOMDocument.createElement, bstr, addr pChild
-  invoke DisposeBSTR, bstr
+  invoke BStrDispose, bstr
   mov xax, pChild
 MethodEnd
 
@@ -599,7 +601,7 @@ Method XmlDocument.GetXML
   SetObject xcx
   OCall xcx.SaveToXML, addr bstr
   mov pStr, $invoke(BSTR2NewStr, bstr)
-  invoke DisposeBSTR, bstr
+  invoke BStrDispose, bstr
   mov xax, pStr
 MethodEnd
 
@@ -674,7 +676,7 @@ Method XmlDocument.LoadFromXML, uses xsi, pXML:PSTRING
   SetObject xsi
   mov bstr, $invoke(Str2NewBSTR, pXML)
   ICall [xsi].pDocument::IXMLDOMDocument.loadXML, bstr, addr bIsSuccessful
-  invoke DisposeBSTR, bstr
+  invoke BStrDispose, bstr
   mov [xsi].DocumentElement.pNode, $OCall(xsi.GetDocumentElement)
   xor eax, eax
   cmp bIsSuccessful, VARIANT_TRUE

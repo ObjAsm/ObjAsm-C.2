@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrToSt0W
 ; Purpose:    Load a WIDE string representation of a floating point number into the st(0)
@@ -20,6 +19,7 @@
 ; Note:       - Based on the work of Raymond Filiatreault (FpuLib).
 ;             - Source string should not be greater than 19 chars + zero terminator.
 
+.code
 align ALIGN_CODE
 StrToSt0W proc uses ebx esi edi pSource:POINTER
   local bBuffer[1024]:BYTE

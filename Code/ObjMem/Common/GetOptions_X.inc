@@ -18,6 +18,7 @@
 ;             ecx: failed option index.
 ;             xdx: -> failed WIDE string argument.
 
+.code
 align ALIGN_CODE
 GetOptions proc uses xbx xsi, pOptDefTable:POPTION_ENTRY, pStorage:POINTER, pOptionList:PSTRINGW
   mov xsi, pOptionList

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCompW
 ; Purpose:    Compare 2 WIDE strings with case sensitivity.
@@ -21,8 +20,10 @@
 ;             If string 1 > string 2, then eax > 0.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
-StrCompW proc pStr1W:POINTER, pStr2W:POINTER
+StrCompW proc pString1W:POINTER, pString2W:POINTER
   xor r8, r8
   xor eax, eax
 @@:
@@ -38,6 +39,7 @@ StrCompW proc pStr1W:POINTER, pStr2W:POINTER
   sub eax, ecx
   ret
 StrCompW endp
+
 OPTION PROC:DEFAULT
 
 end

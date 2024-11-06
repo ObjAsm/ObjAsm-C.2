@@ -8,7 +8,6 @@
 ; ==================================================================================================
 
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uoooMul/soooMul
 ; Purpose:    Multiply 2 signed/unsigned OWORDs.
@@ -21,6 +20,7 @@
 ; Note:       Both signed and unsigned routines are the same, since multiply's
 ;             work out the same in 2's complement.
 
+.code
 align ALIGN_CODE
 ProcName proc uses rbx qMultiplicandLo:TypeArg, qMultiplicandHi:TypeArg, \
                        qMultiplierLo:TypeArg, qMultiplierHi:TypeArg

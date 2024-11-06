@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemUefi.cop
 
-ProcName equ <StrAllocW_UEFI>
+ProcName textequ <StrAllocW_UEFI>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrAllocW_UEFI
 ; Purpose:    Allocate space for a string with n characters.

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Bmp2Rgn
 ; Purpose:    Create a GDI region based on a device dependant or independent bitmap (DDB or DIB).
@@ -19,6 +18,7 @@
 ;             Arg2: RGB transparet color.
 ; Return:     rax = Region HANDLE or zero if failed.
 
+.code
 align ALIGN_CODE
 Bmp2Rgn proc uses rbx rdi rsi hBmp:HANDLE, dTransparentColor:DWORD
   local Bmp:BITMAP, BmpInfoHdr:BITMAPINFOHEADER, hDC:HDC

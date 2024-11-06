@@ -22,6 +22,7 @@
 ;             xcx = Uncompressed data size in BYTEs.
 ; Note:       User should free the decompressed memory when no longer required using MemFree.
 
+.code
 align ALIGN_CODE
 DecompressMem proc pCompressedData:POINTER, dCompressedDataSize:DWORD, dDecompressionAlgorithm:DWORD
   local hDecompressor:DECOMPRESSOR_HANDLE, xDataSize:XWORD

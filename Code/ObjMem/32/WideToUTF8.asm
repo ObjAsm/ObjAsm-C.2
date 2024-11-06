@@ -12,7 +12,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  WideToUTF8
 ; Purpose:    Convert an WIDE string to an UTF8 encoded stream.

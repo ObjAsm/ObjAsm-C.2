@@ -14,9 +14,8 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &IncPath&Windows\shlwapi.inc
 % include &IncPath&Windows\shellapi.inc
 
-ProcName equ <PdfViewW>
+ProcName textequ <PdfViewW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  PdfViewW
 ; Purpose:    Display a PDF document on a named destination.

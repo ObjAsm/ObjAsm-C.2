@@ -10,9 +10,8 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <soyoDivRem>
+ProcName textequ <soyoDivRem>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  soyoDivRem
 ; Purpose:    Calculate a signed extended precision division, emulating the idiv x86 instrunction.

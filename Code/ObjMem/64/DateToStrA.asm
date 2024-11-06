@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <DateToStrA>
+ProcName textequ <DateToStrA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DateToStrA
 ; Purpose:    Convert a DTL_DATE to a formated string representation.

@@ -10,13 +10,13 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOpenLog
 ; Purpose:    Open a Log-File.
 ; Arguments:  None.
 ; Return:     eax = TRUE if it was opened, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 DbgOpenLog proc
   local cFileName[MAX_PATH]:CHRW

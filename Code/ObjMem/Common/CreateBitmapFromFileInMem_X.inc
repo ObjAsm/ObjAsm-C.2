@@ -16,6 +16,7 @@
 ; Return:     xax = HBITMAP.
 ; Links:      http://www.masmforum.com/board/index.php?topic=16267.msg134453#msg134453
 
+.code
 align ALIGN_CODE
 CreateBitmapFromFileInMem proc uses xbx xdi pBitmapData:POINTER
   invoke CreateDC, $OfsCStr("DISPLAY"), NULL, NULL, NULL

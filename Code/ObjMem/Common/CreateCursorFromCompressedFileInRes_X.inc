@@ -23,6 +23,7 @@
 ;             Arg3: Desired cursor height.
 ; Return:     xax = Cursor HANDLE.
 
+.code
 align ALIGN_CODE
 CreateCursorFromCompressedFileInRes proc uses xbx xdi xsi hInst:HINSTANCE, xResourceID:XWORD, \
                                                           dDesiredCx:DWORD, dDesiredCy:DWORD

@@ -16,6 +16,7 @@
 ;             Arg2: -> hecto-nano-seconds
 ; Return:     eax = TRUE id succeeded, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 HnsecsToTime proc uses xbx pTime:PDTL_TIME, pHnsecs:PDTL_HNSECS
   if TARGET_BITNESS eq 32

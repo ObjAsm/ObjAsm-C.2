@@ -12,7 +12,6 @@
 
 externdef HexCharTableW:WORD
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  qword2hexW
 ; Purpose:    Convert a QWORD to its hexadecimal WIDE string representation.
@@ -22,9 +21,9 @@ externdef HexCharTableW:WORD
 ; Note:       The destination buffer must be at least 34 BYTEs large to allocate the output string
 ;             (16 character WORDs + ZTC = 34 BYTEs).
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 qword2hexW proc pBuffer:POINTER, qValue:QWORD
   mov edx, [esp + 4]                                    ;edx -> Buffer
@@ -64,7 +63,6 @@ qword2hexW proc pBuffer:POINTER, qValue:QWORD
   ret 12
 qword2hexW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

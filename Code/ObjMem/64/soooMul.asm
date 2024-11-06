@@ -11,10 +11,9 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <soooMul>
+ProcName textequ <soooMul>
 TypeArg equ <SQWORD>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  soooMul
 ; Purpose:    Multiply 2 signed OWORDs.

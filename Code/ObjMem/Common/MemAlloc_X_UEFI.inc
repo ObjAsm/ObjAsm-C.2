@@ -17,6 +17,7 @@
 ;             Arg3: Memory type.
 ; Return:     xax -> Memory block or NULL if failed.
 
+.code
 align ALIGN_CODE
 MemAlloc_UEFI proc uses xbx dAttr:DWORD, dMemSize:DWORD, dType:DWORD
   local pMemBlock:POINTER

@@ -1,8 +1,8 @@
 ; ==================================================================================================
 ; Title:      SLR_Calc_AB_XP.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
-; Notes:      Version C.1.1, July 2022
+; Version:    C.1.0
+; Notes:      Version C.1.0, July 2022
 ;               - First release.
 ; ==================================================================================================
 
@@ -22,6 +22,8 @@
 ; Formulas:   A = (XY*N-X*Y)/Q
 ;             B = (Y-A*X)/N
 
+.code
+align ALIGN_CODE
 ProcName proc pSlrData:PSLR_DATA
   ?mov ecx, pSlrData
   .if xcx != NULL

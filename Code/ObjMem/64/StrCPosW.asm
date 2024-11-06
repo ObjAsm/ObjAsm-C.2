@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCPosW
 ; Purpose:    Scan for WIDE string2 into WIDE string1 with length limitation.
@@ -19,6 +18,7 @@
 ;             Arg3: Maximal character count.
 ; Return:     rax -> String position or NULL if not found.
 
+.code
 align ALIGN_CODE
 StrCPosW proc uses rbx rdi rsi pString1W:POINTER, pString2W:POINTER, dMaxChars:DWORD
   invoke StrLengthW, rdx                                ;pString2W -> searched string

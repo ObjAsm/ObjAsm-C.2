@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  ActivatePrevInstanceA
 ; Purpose:    Activate a previously existing instance of an application.
@@ -18,6 +17,7 @@
 ;             Arg2: -> ANSI class name.
 ; Return:     rax = TRUE if activated, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 ActivatePrevInstanceA proc uses rdi pStringIDA:POINTER, pClassNameA:POINTER
   invoke GetPrevInstanceA, rcx, rdx                     ;pStringIDA, pClassNameA

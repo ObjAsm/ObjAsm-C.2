@@ -12,7 +12,6 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DecompressFileFromRes
 ; Purpose:    Load a compressed file stored as RCDATA resource and decompress it.

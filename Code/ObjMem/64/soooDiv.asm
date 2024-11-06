@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  soooDiv
 ; Purpose:    Divide 2 signed OWORDs.
@@ -21,6 +20,7 @@
 ;             Arg4: Divisor unsigned high word.
 ; Return:     rdx:rax = Unsigned quotient.
 
+.code
 align ALIGN_CODE
 soooDiv proc uses rbx rdi rsi sqDividendLo:SQWORD, sqDividendHi:SQWORD, \
                               sqDivisorLo:SQWORD, sqDivisorHi:SQWORD

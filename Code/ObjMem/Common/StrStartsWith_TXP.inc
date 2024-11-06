@@ -15,6 +15,7 @@
 ;             Arg2: -> Prefix string.
 ; Return:     eax = TRUE of the beginning matches, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 ProcName proc pString:POINTER, pPrefix:POINTER
   invoke StrLength, pPrefix

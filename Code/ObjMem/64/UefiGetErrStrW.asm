@@ -13,7 +13,6 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <UefiGetErrStrW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  UefiGetErrStrW
 ; Purpose:    Return a description WIDE string from an UEFI error code.

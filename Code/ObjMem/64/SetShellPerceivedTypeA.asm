@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <SetShellPerceivedTypeA>
+ProcName textequ <SetShellPerceivedTypeA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SetShellPerceivedTypeA
 ; Purpose:    Set shell perception of a file type.

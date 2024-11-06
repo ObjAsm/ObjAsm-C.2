@@ -12,7 +12,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCCatA
 ; Purpose:    Concatenate 2 ANSI strings with length limitation.
@@ -24,9 +23,9 @@
 ;                   ZTC.
 ; Return:     eax = Number of added BYTEs.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrCCatA proc pBuffer:POINTER, pSrcStringA:POINTER, dMaxChars:DWORD
   invoke StrEndA, [esp + 4]
@@ -42,7 +41,6 @@ StrCCatA proc pBuffer:POINTER, pSrcStringA:POINTER, dMaxChars:DWORD
   ret 12
 StrCCatA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

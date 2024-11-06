@@ -15,13 +15,13 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetLogProcCount
 ; Purpose:    Return the number of logical CPUs on the current system.
 ; Arguments:  None
 ; Return:     eax = Number of logical processors.
 
+.code
 align ALIGN_CODE
 GetLogProcCount proc uses rbx rdi rsi pMaskTable:POINTER
   local dProcessAffinity:DWORD, dSystemAffinity:DWORD, hCurrentProcessHandle:HANDLE

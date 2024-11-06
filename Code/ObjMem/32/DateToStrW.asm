@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <DateToStrW>
+ProcName textequ <DateToStrW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DateToStrW
 ; Purpose:    Convert a DTL_DATE to a formated string representation.

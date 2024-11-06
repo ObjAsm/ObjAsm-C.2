@@ -10,9 +10,8 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <uqoqDivRem>
+ProcName textequ <uqoqDivRem>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uqoqDivRem
 ; Purpose:    Calculate an unsigned extended precision division, emulating the div x86 instrunction.

@@ -12,7 +12,6 @@
 
 % include &ObjMemPath&Common\RadixSort64.inc            ;Helper macros
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RadixSortPtrF64
 ; Purpose:    Ascending sort of an array of POINTERs to structures containing a
@@ -50,6 +49,7 @@
 ;.                                  —————————————
 ;.
 
+.code
 align ALIGN_CODE
 RadixSortPtrF64 proc uses rbx rdi rsi pArray:POINTER, dCount:DWORD, dOffset:DWORD, pWorkArea:POINTER
   ;rcx -> Array, edx = dCount, r8 = dOffset, r9 -> WorkArea

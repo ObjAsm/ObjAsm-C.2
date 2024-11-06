@@ -17,6 +17,7 @@
 ;             Arg5: -> DTL_TIME
 ; Return:     eax = Number of bytes copied, including the ZTC.
 
+.code
 align ALIGN_CODE
 ProcName proc uses xbx pDest:PSTRING, dDateFormat:DWORD, pDate:PDTL_DATE, \
                                       dTimeFormat:DWORD, pTime:PDTL_TIME

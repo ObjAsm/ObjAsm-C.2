@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrLRTrim
 ; Purpose:    Trim blank characters from the beginning and the end of a BStr.
@@ -19,6 +18,8 @@
 ; Return:     Nothing.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 BStrLRTrim proc pDstBStr:POINTER, pSrcBStr:POINTER      ;rcx -> DstBStr, rdx -> SrcBStr
   push rdi
@@ -64,6 +65,7 @@ BStrLRTrim proc pDstBStr:POINTER, pSrcBStr:POINTER      ;rcx -> DstBStr, rdx -> 
   pop rdi
   ret
 BStrLRTrim endp
+
 OPTION PROC:DEFAULT
 
 end

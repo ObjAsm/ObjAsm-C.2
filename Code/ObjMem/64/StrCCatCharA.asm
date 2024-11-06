@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCCatCharA
 ; Purpose:    Append a character to the end of an ANSI string with length limitation.
@@ -19,6 +18,7 @@
 ;             Arg3: Maximal number of characters that fit into the destination buffer.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 StrCCatCharA proc pBuffer:POINTER, cChar:CHRA, dMaxChars:DWORD
   invoke StrEndA, rcx                                   ;pBuffer

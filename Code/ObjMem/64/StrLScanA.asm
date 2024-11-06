@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrLScanA
 ; Purpose:    Scan for a character from the beginning of an ANSI string. 
@@ -18,6 +17,7 @@
 ;             Arg2: Character to search.
 ; Return:     rax -> Character address or NULL if not found.
 
+.code
 align ALIGN_CODE
 StrLScanA proc uses rbx rdi pStringA:POINTER, bChar:CHRA
   mov bl, dl

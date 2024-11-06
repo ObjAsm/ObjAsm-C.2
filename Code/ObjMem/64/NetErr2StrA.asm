@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  NetErr2StrA
 ; Purpose:    Translate a network error code to an ANSI string.
@@ -19,6 +18,7 @@
 ;             Arg3: Buffer size in characters, inclusive ZTC.
 ; Return:     eax = Number CHRA stored in the output buffer, excluding the ZTC.
 
+.code
 align ALIGN_CODE
 NetErr2StrA proc uses rbx rdi dError:DWORD, pBuffer:POINTER, dMaxChars:DWORD
   m2z CHRA ptr [rdx]                                    ;rdx = pBuffer

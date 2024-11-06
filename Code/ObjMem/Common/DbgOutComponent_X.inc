@@ -15,6 +15,7 @@
 ;             Arg3: Background RGB color value.
 ;             Arg4: -> Destination Window WIDE name.
 
+.code
 align ALIGN_CODE
 DbgOutComponent proc pIID:ptr GUID, dForeColor:DWORD, dBackColor:DWORD, pDestWnd:POINTER
   invoke DbgOutTextA, $OfsCStrA("Component: "), dForeColor, dBackColor, DBG_EFFECT_NORMAL, pDestWnd

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCICompW
 ; Purpose:    Compare 2 WIDE strings without case sensitivity and length limitation.
@@ -20,9 +19,9 @@
 ;             If string 1 = string 2, then eax = 0.
 ;             If string 1 > string 2, then eax > 0.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrCICompW proc pString1W:POINTER, pString2W:POINTER, dMaxLen:DWORD
   push ebx                                              ;Save ebx
@@ -80,7 +79,6 @@ align ALIGN_CODE
   ret 12
 StrCICompW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

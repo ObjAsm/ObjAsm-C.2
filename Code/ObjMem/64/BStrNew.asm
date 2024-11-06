@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrNew
 ; Purpose:    Allocate an new copy of the source BStr.
@@ -21,6 +20,7 @@
 ; Arguments:  Arg1: -> Source BStr.
 ; Return:     rax -> New BStr copy or NULL.
 
+.code
 align ALIGN_CODE
 BStrNew proc uses rdi pBStr:POINTER
   .if rcx == NULL

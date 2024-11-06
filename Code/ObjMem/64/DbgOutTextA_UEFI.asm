@@ -13,7 +13,6 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 ProcName textequ <DbgOutTextA_UEFI>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutTextA_UEFI
 ; Purpose:    Send an ANSI string to the debug output device.

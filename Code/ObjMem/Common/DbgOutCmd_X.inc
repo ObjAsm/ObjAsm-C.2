@@ -18,6 +18,7 @@
 ;             Arg4: -> Destination Window WIDE name.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 DbgOutCmd proc bCommand:BYTE, dParam1:DWORD, dParam2:DWORD, pTargetWnd:POINTER
   local dResult:DWORD, CDS:COPYDATASTRUCT, pData:POINTER

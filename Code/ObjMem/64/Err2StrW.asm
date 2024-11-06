@@ -12,7 +12,6 @@
 
 % include &MacPath&Strings.inc
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Err2StrW
 ; Purpose:    Translate a system error code to a WIDE string.
@@ -21,6 +20,7 @@
 ;             Arg3: Buffer size in characters, inclusive ZTC.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 Err2StrW proc dError:DWORD, pBuffer:POINTER, dMaxChars:DWORD
   .if rdx != NULL

@@ -12,7 +12,6 @@
 
 externdef HexCharTableW:CHRW
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  word2hexW
 ; Purpose:    Convert a WORD to its hexadecimal WIDE string representation.
@@ -24,6 +23,7 @@ externdef HexCharTableW:CHRW
 
 OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 word2hexW proc pBuffer:POINTER, wValue:WORD
   mov edx, [esp + 4]                                    ;edx -> Buffer

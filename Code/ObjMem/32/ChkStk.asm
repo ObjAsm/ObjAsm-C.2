@@ -47,7 +47,6 @@
 
 .code
 align ALIGN_CODE
-
 _chkstk proc c
   push ecx
 

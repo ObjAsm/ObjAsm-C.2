@@ -11,7 +11,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uqqqDivRem
 ; Purpose:    Divide 2 unsigned QWORDs.
@@ -24,6 +23,7 @@
 ;             ebx:ecx = Unsigned remainder.
 ; Note:       Don't include ebx in the uses clause.
 
+.code
 align ALIGN_CODE
 uqqqDivRem proc uses esi dDividendLo:DWORD, dDividendHi:DWORD, \
                          dDivisorLo:DWORD, dDivisorHi:DWORD

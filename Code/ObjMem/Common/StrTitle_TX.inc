@@ -15,6 +15,8 @@
 ; Return:     xax -> Formatted String.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 ProcName proc uses xbx pString:POINTER
 
@@ -103,4 +105,5 @@ else
   ret
 endif
 ProcName endp
+
 OPTION PROC:DEFAULT

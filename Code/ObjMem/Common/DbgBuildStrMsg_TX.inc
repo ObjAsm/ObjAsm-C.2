@@ -26,6 +26,7 @@
 ;         ---------------------------------------   --------------------------------------
 ;                         dSize1                                     dSize3  
 
+.code
 align ALIGN_CODE
 ProcName proc pString:POINTER, dForeColor:DWORD, dBackColor:DWORD, dEffects:DWORD, pDest:POINTER
   local pData:POINTER, dSize:DWORD, dSize1:DWORD, dSize2:DWORD, dSize3:DWORD, dSize4:DWORD

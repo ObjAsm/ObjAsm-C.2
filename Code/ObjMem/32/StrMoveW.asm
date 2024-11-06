@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrMoveW
 ; Purpose:    Move part of a WIDE string. The ending zero charactrer is not appended automatically.
@@ -20,9 +19,9 @@
 ;             Arg3: Character count.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrMoveW proc pBuffer:POINTER, pSrcStringW:POINTER, dCharCount:DWORD
   mov eax, [esp + 12]                                   ;dCharCount
@@ -31,7 +30,6 @@ StrMoveW proc pBuffer:POINTER, pSrcStringW:POINTER, dCharCount:DWORD
   ret 12
 StrMoveW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

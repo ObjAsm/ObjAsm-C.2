@@ -26,6 +26,7 @@
 ;                                   -------------                          ---------------
 ;                                       esi                                     dSize
 
+.code
 align ALIGN_CODE
 DbgBuildCmdMsg proc uses xsi bCommand:BYTE, dParam1:DWORD, dParam2:DWORD, \
                              pPayload:POINTER, dPayloadSize:DWORD, pDest:POINTER

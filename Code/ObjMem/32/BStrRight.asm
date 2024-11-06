@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrRight
 ; Purpose:    Copy the right n characters from the source string into the destination buffer.
@@ -19,9 +18,9 @@
 ;             Arg3: Character count.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 BStrRight proc pDstBStr:POINTER, pSrcBStr:POINTER, dCharCount:DWORD
   mov ecx, [esp + 8]                                    ;ecx -> SrcBStr
@@ -45,7 +44,6 @@ BStrRight proc pDstBStr:POINTER, pSrcBStr:POINTER, dCharCount:DWORD
   ret 12
 BStrRight endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

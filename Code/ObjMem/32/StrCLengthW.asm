@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCLengthW
 ; Purpose:    Get the character count of the source WIDE string with length limitation.
@@ -18,9 +17,9 @@
 ;             Arg3: Maximal character count.
 ; Return:     eax = Limited character count.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrCLengthW proc pStringW:POINTER, dMaxChars:DWORD
   push edi
@@ -36,7 +35,6 @@ StrCLengthW proc pStringW:POINTER, dMaxChars:DWORD
   ret 8
 StrCLengthW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

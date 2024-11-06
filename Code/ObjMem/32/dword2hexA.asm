@@ -12,7 +12,6 @@
 
 externdef HexCharTableA:BYTE
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  dword2hexA
 ; Purpose:    Convert a DWORD to its hexadecimal ANSI string representation.
@@ -24,6 +23,7 @@ externdef HexCharTableA:BYTE
 
 OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 dword2hexA proc pBuffer:POINTER, dValue:DWORD
   mov edx, [esp + 4]                                    ;edx -> Buffer

@@ -19,6 +19,7 @@
 ;             Arg4: -> Destination Window WIDE name.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 DbgOutComErr proc uses xbx dErrCode:DWORD, dForeColor:DWORD, dBackColor:DWORD, pDest:POINTER
   local bHexBuffer[16]:CHRA                             ;13 ANSI characters + filler

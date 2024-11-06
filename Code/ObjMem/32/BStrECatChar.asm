@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrECatChar
 ; Purpose:    Append a WIDE character to a BStr and return the address of the ZTC.
@@ -20,9 +19,9 @@
 ;             Arg2: -> WIDE character.
 ; Return:     eax -> ZTC.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 BStrECatChar proc pDstBStr:POINTER, cChar:CHRW
   mov ecx, [esp + 4]                                    ;ecx -> DstBStr
@@ -35,7 +34,6 @@ BStrECatChar proc pDstBStr:POINTER, cChar:CHRW
   ret 8
 BStrECatChar endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

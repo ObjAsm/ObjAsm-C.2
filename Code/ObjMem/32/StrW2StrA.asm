@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrW2StrA
 ; Purpose:    Convert a WIDE string into an ANSI string. Wide characters are converted to BYTEs by
@@ -19,9 +18,9 @@
 ;             Arg2: -> Source WIDE string.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrW2StrA proc pBuffer:POINTER, pSrcStringW:POINTER
   push edi
@@ -48,7 +47,6 @@ align ALIGN_CODE
   ret 8
 StrW2StrA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

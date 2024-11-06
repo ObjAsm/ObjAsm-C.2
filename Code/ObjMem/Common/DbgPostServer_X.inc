@@ -23,6 +23,7 @@ INTERNET_PROTOCOL_VERSION   equ 4
 ;             Arg2: DataSize.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 DbgPostServer proc pData:POINTER, dDataSize:DWORD
   local dResult:DWORD, pEncyptedData:POINTER, dEncyptedDataSize:DWORD, dContext:DWORD

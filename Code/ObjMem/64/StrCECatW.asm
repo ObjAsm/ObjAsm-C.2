@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCECatW
 ; Purpose:    Concatenate 2 WIDE strings with length limitation and return the ZTC address. 
@@ -22,6 +21,7 @@
 ;                   ZTC.
 ; Return:     rax -> ZTC.
 
+.code
 align ALIGN_CODE
 StrCECatW proc pDstStrW:POINTER, pSrcStrW:POINTER, dMaxChars:DWORD
   invoke StrEndW, rcx                                   ;pDstStrW

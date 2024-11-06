@@ -12,7 +12,6 @@
 
 TBM_FIRSTPIXEL equ  80000000h
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DrawTransparentBitmap
 ; Purpose:    Draw a bitmap with transparency on a device context.
@@ -28,6 +27,7 @@ TBM_FIRSTPIXEL equ  80000000h
 ;             (http://support.microsoft.com/default.aspx?scid=kb;EN-US;q79212)
 ;             Transcribed by Ernest Murphy.
 
+.code
 align ALIGN_CODE
 DrawTransparentBitmap proc hDC:HANDLE, hBitmap:HANDLE, xStart:DWORD, yStart:DWORD,
                            cTransparentColor:DWORD

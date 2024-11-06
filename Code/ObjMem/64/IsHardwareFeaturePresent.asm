@@ -10,13 +10,13 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  IsHardwareFeaturePresent
 ; Purpose:    Check if a CPU hardware feature is present on the system.
 ; Arguments:  Arg1: CPUID feature ID.
 ; Return:     rax = TRUE or FALSE.
 
+.code
 align ALIGN_CODE
 IsHardwareFeaturePresent proc uses rbx bFeature:BYTE
   ;This will test to see if CPUID is available on the system

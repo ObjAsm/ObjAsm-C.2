@@ -1,8 +1,8 @@
 ; ==================================================================================================
 ; Title:      SetClientSize_X.inc
 ; Author:     MichelW / G. Friedrich
-; Version:    C.1.1
-; Notes:      Version C.1.1, January 2021
+; Version:    C.1.0
+; Notes:      Version C.1.0, January 2021
 ;               - Code based on this article:
 ;                 https://devblogs.microsoft.com/oldnewthing/20030911-00/?p=42553
 ;             Version C.1.0, October 2017
@@ -18,6 +18,7 @@
 ;             Arg3: Client area height in pixel.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 SetClientSize proc uses xbx hWnd:HWND, dCx:DWORD, dCy:DWORD
   local hMenu:HMENU, rcWindow:RECT, rcTemp:RECT

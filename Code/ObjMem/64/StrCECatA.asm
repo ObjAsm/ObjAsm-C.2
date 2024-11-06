@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCECatA
 ; Purpose:    Concatenate 2 ANSI strings with length limitation and return the ZTC address.
@@ -22,6 +21,7 @@
 ;                   ZTC.
 ; Return:     rax -> ZTC.
 
+.code
 align ALIGN_CODE
 StrCECatA proc pDstStrA:POINTER, pSrcStrA:POINTER, dMaxChars:DWORD
   invoke StrEndA, rcx                                   ;pDstStrA

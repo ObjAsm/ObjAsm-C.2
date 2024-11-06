@@ -13,7 +13,6 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <StrCNewW_UEFI>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCNewW_UEFI
 ; Purpose:    Allocate a new copy of the source WIDE string with length limitation.
@@ -25,6 +24,6 @@ ProcName textequ <StrCNewW_UEFI>
 ;             Arg2: Maximal character count.
 ; Return:     rax -> New WIDE string copy.
 
-% include &ObjMemPath&Common\StrCNewT64P.inc
+% include &ObjMemPath&Common\StrCNew_T64P.inc
 
 end

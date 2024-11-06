@@ -10,9 +10,8 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemUefi.cop
 
-ProcName equ <NewObjInst_UEFI>
+ProcName textequ <NewObjInst_UEFI>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  NewObjInst_UEFI
 ; Purpose:    Create an object instance from an object ID.

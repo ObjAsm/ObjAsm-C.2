@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrDispose
 ; Purpose:    Free the memory allocated for the string using StrNew, StrCNew, StrLENew or
@@ -19,6 +18,7 @@
 ; Arguments:  Arg1: -> String.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 StrDispose proc pString:POINTER
   .if rcx != NULL

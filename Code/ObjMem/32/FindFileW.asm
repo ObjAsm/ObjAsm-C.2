@@ -22,7 +22,6 @@ FIND_FILE_PARAMSW struct
   cPreStr     CHRW       MAX_PATH DUP(?)
 FIND_FILE_PARAMSW ends
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  FindFileW
 ; Purpose:    Search for a file in a list of paths.

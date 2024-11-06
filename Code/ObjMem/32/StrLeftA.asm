@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure: StrLeftA
 ; Purpose:   Extract the left n characters of the source ANSI string.
@@ -18,9 +17,9 @@
 ;            Arg2: -> Source ANSI string.
 ; Return:    eax = Number of copied characters, not including the ZTC.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrLeftA proc pBuffer:POINTER, pSrcStringA:POINTER, dCharCount:DWORD
   invoke StrCLengthA, [esp + 12], [esp + 12]            ;pSrcStringA, dCharCount
@@ -33,7 +32,6 @@ StrLeftA proc pBuffer:POINTER, pSrcStringA:POINTER, dCharCount:DWORD
   ret 12
 StrLeftA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

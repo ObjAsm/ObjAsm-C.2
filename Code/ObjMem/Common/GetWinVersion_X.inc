@@ -17,6 +17,7 @@
 ; Return:     Nothing.
 ; Links:      https://www.geoffchappell.com/studies/windows/win32/ntdll/api/ldrinit/getntversionnumbers.htm
 
+.code
 align ALIGN_CODE
 GetWinVersion proc pMajorVersion:POINTER, pMinorVersion:POINTER, pBuildNumber:POINTER
   local hLib:HANDLE

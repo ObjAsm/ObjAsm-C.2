@@ -25,6 +25,7 @@
 ;                                   -------------                          ---------------
 ;                                       esi                                     dSize
 
+.code
 align ALIGN_CODE
 DbgBuildChtMsg proc uses xsi bChartMsgID:BYTE, pPayload:POINTER, dPayloadSize:DWORD, pDest:POINTER
   local pBuffer:POINTER, dBufferSize:DWORD

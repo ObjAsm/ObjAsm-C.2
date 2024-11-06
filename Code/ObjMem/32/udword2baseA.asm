@@ -18,7 +18,6 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 ProcName textequ <udword2baseA>
 Signed equ FALSE
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  udword2baseA
 ; Purpose:    Convert an unsigned dword to a defined base.

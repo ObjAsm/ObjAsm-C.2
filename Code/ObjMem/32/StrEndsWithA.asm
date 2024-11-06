@@ -12,9 +12,8 @@
 
 TARGET_STR_TYPE = STR_TYPE_ANSI
 TARGET_STR_AFFIX textequ <A>
-ProcName equ <StrEndsWithA>
+ProcName textequ <StrEndsWithA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrEndsWithA
 ; Purpose:    Compare the ending of a string.

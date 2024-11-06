@@ -12,7 +12,6 @@
 
 externdef HexCharTableA:BYTE
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Mem2HexA
 ; Purpose:    Convert the memory content into a hex ANSI string representation.
@@ -21,9 +20,9 @@ externdef HexCharTableA:BYTE
 ;             Arg3: Byte count.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 Mem2HexA proc pBuffer:POINTER, pMem:POINTER, dCount:DWORD
   mov edx, [esp + 4]                                    ;edx -> Buffer
@@ -41,7 +40,6 @@ Mem2HexA proc pBuffer:POINTER, pMem:POINTER, dCount:DWORD
   ret 12
 Mem2HexA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

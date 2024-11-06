@@ -18,6 +18,7 @@
 ;             Arg6: -> Destination Window WIDE name.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 DbgShowTraceMethod proc uses xbx pMName:POINTER, dCount:DWORD, pTicks:POINTER, \
                                  dForeground:DWORD, dBackground:DWORD, pDest:POINTER

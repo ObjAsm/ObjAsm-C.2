@@ -18,6 +18,7 @@
 ; Note:       String options are WIDE and must be disposed using StrDispose when no longer needed.
 ;             Char options are of type CHRW.
 
+.code
 align ALIGN_CODE
 GetOption proc uses xbx xdi xsi, pOptDefTable:POPTION_ENTRY, pStorage:POINTER, pOption:PSTRINGW
   .const

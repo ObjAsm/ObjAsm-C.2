@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  IsHardwareFeaturePresent
 ; Purpose:    Check if a CPU hardware feature is present on the system.
@@ -18,9 +17,9 @@
 ; Arguments:  Arg1: CPUID feature ID.
 ; Return:     eax = TRUE or FALSE.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 IsHardwareFeaturePresent proc bFeature:BYTE
   ;This will test to see if CPUID is available on the system
@@ -97,7 +96,6 @@ align ALIGN_CODE
   ret 4
 IsHardwareFeaturePresent endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

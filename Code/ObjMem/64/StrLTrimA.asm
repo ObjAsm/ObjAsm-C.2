@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrLTrimA
 ; Purpose:    Trim blank characters from the beginning of an ANSI string.
@@ -18,6 +17,7 @@
 ;             Arg2: -> Source ANSI string.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 StrLTrimA proc uses rbx pBuffer:POINTER, pSrcStringA:POINTER
 @@:

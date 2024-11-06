@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrECatCharW
 ; Purpose:    Append a character to a WIDE string and return the address of the ending zero.
@@ -20,9 +19,9 @@
 ;             Arg2: -> Wide character.
 ; Return:     eax -> ZTC.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrECatCharW proc pBuffer:POINTER, cChar:CHRW
   invoke StrEndW, [esp + 4]                             ;pBuffer
@@ -32,7 +31,6 @@ StrECatCharW proc pBuffer:POINTER, cChar:CHRW
   ret 8
 StrECatCharW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

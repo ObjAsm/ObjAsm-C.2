@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCatCharW
 ; Purpose:    Append a character to the end of an WIDE string.
@@ -18,6 +17,7 @@
 ;             Arg2: WIDE character.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 StrCatCharW proc pBuffer:POINTER, wChar:CHRW
   invoke StrEndW, rcx                                   ;pBuffer

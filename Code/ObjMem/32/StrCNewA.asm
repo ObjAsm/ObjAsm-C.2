@@ -13,7 +13,6 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <StrCNewA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCNewA
 ; Purpose:    Allocate a new copy of the source ANSI string with length limitation.
@@ -25,6 +24,6 @@ ProcName textequ <StrCNewA>
 ;             Arg2: Maximal character count.
 ; Return:     eax -> New ANSI string copy.
 
-% include &ObjMemPath&Common\StrCNewT32P.inc
+% include &ObjMemPath&Common\StrCNew_T32P.inc
 
 end

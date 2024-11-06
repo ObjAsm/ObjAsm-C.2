@@ -10,9 +10,8 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <uyooMul>
+ProcName textequ <uyooMul>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uyooMul
 ; Purpose:    Multiply 2 unsigned OWORDs with extended precision.

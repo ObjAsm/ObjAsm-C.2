@@ -376,8 +376,6 @@ DbgWndMsgTableCount equ ($ - DbgWndMsgTable)/sizeof(DOM)
   DbgMsgBufferRes    CHRA   "Reserved message ("
   DbgMsgCodeRes      CHRA   "00000000h)", 0
 
-.code
-
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutMsg
 ; Purpose:    Identify a windows message with a string.
@@ -387,6 +385,7 @@ DbgWndMsgTableCount equ ($ - DbgWndMsgTable)/sizeof(DOM)
 ;             Arg4: -> Destination window name.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 DbgOutMsg proc dMsgID:DWORD, dForeColor:DWORD, dBackColor:DWORD, pDest:POINTER
   mov edx, dMsgID                                       ;edx = window message

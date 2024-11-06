@@ -10,9 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.const
-
-align ALIGN_DATA
-bCRLF  BYTE  13, 10, 0
+% include &ObjMemPath&Common\CAStr_CRLF_X.inc
 
 end

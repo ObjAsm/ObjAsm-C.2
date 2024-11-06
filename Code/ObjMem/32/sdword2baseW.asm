@@ -18,7 +18,6 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ProcName textequ <sdword2baseW>
 Signed equ TRUE
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  sdword2baseW
 ; Purpose:    Convert a signed dword to a defined base.

@@ -13,6 +13,7 @@
 ; Arguments:  Arg1: -> Memory block.
 ; Return:     xax = EFI_SUCCESS or an UEFI error code.
 
+.code
 align ALIGN_CODE
 MemFree_UEFI proc pMemBlock:POINTER
   mov xax, pBootServices

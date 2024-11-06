@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCPosA
 ; Purpose:    Scan for ANSI string2 into ANSI string1 with length limitation.
@@ -19,9 +18,9 @@
 ;             Arg3: Maximal character count.
 ; Return:     eax -> String position or NULL if not found.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrCPosA proc pString1A:POINTER, pString2A:POINTER, dMaxChars:DWORD
   push edi
@@ -64,7 +63,6 @@ align ALIGN_CODE
   ret 12
 StrCPosA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

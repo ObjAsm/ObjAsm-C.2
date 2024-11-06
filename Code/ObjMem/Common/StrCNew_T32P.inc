@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      StrCNewT32P.inc
+; Title:      StrCNew_T32P.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, June 2022
@@ -21,6 +21,7 @@
 OPTION PROLOGUE:NONE
 OPTION EPILOGUE:NONE
 
+.code
 align ALIGN_CODE
 ProcName proc pString:POINTER, dMaxChars:DWORD
   mov eax, [esp + 4]                                    ;eax -> String

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrLeftA
 ; Purpose:    Extract the left n characters of the source ANSI string.
@@ -18,6 +17,7 @@
 ;             Arg2: -> Source ANSI string.
 ; Return:     eax = Number of copied characters, not including the ZTC.
 
+.code
 align ALIGN_CODE
 StrLeftA proc uses rbx pBuffer:POINTER, pSrcStringA:POINTER, dCharCount:DWORD
   invoke StrCLengthA, pSrcStringA, dCharCount

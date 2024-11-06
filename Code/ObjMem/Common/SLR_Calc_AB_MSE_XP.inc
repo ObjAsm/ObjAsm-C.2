@@ -1,8 +1,8 @@
 ; ==================================================================================================
 ; Title:      SLR_Calc_AB_MSE_XP.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
-; Notes:      Version C.1.1, July 2022
+; Version:    C.1.0
+; Notes:      Version C.1.0, July 2022
 ;               - First release.
 ; ==================================================================================================
 
@@ -24,6 +24,7 @@
 ;             B = (Y-A*X)/N
 ;             MSE = (Y2 - 2*A*XY - 2*B*Y + A^2*X2 + 2*A*B*X)/N + B^2
 
+.code
 align ALIGN_CODE
 ProcName proc pSlrData:PSLR_DATA
   ?mov ecx, pSlrData

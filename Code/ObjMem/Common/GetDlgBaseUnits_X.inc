@@ -15,6 +15,7 @@
 ; Return:     eax = X DBU.
 ;             ecx = Y DBU.
 
+.code
 align ALIGN_CODE
 GetDlgBaseUnits proc hDC:HDC
   local StrExtend:SIZE_, TM:TEXTMETRIC

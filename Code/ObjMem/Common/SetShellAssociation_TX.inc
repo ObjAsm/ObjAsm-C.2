@@ -28,6 +28,7 @@
 ; Return:     eax = HRESULT.
 ; Note:       dGlobal = TRUE requires adminitrative rights.
 
+.code
 align ALIGN_CODE
 ProcName proc uses xbx dGlobal:DWORD, pExtension:POINTER, pVerb:POINTER, pApplication:POINTER, \
                        pArguments:POINTER

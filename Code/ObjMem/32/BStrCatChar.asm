@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrCatChar
 ; Purpose:    Append a character to the end of a BStr.
@@ -18,9 +17,9 @@
 ;             Arg2: Wide character.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 BStrCatChar proc pDstBStr:POINTER, wChar:WORD
   mov ecx, [esp + 4]                                    ;ecx = pDstBStr
@@ -32,7 +31,6 @@ BStrCatChar proc pDstBStr:POINTER, wChar:WORD
   ret 8
 BStrCatChar endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

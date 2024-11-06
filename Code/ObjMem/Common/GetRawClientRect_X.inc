@@ -15,6 +15,7 @@
 ;             Arg2: -> RECT.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 GetRawClientRect proc uses xbx xdi hWnd:HWND, pRect:PRECT
   mov xdi, pRect

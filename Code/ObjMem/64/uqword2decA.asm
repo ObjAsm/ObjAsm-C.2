@@ -14,7 +14,6 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 externdef TwoDecDigitTableA:BYTE
 ProcName textequ <uqword2decA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uqword2decA
 ; Purpose:    Convert an unsigned QWORD into its decimal ANSI string representation.

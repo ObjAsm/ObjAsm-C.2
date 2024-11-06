@@ -11,9 +11,8 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 SRC_TYPE equ <DWORD>
-ProcName equ <CalcVarianceDW>
+ProcName textequ <CalcVarianceDW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  CalcVarianceDW
 ; Purpose:    Calculate the MSE of an array of DWORDs.

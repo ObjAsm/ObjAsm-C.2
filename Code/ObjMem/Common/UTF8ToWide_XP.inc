@@ -22,6 +22,7 @@
 ; Notes:      - The destination WIDE string is always terminated with a ZTC.
 ;               (only if buffer size >= 2).
 
+.code
 align ALIGN_CODE
 UTF8ToWide proc uses xbx xdi xsi pDest:POINTER, pSource:POINTER, dBufferSize:DWORD
   if TARGET_BITNESS eq 32

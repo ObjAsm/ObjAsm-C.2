@@ -15,7 +15,6 @@
 
 externdef TwoDecDigitTableA:BYTE
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  sdword2decA
 ; Purpose:    Convert a signed DWORD to its decimal ANSI string representation.
@@ -25,9 +24,9 @@ externdef TwoDecDigitTableA:BYTE
 ; Note:       The destination buffer must be at least 12 BYTEs large to allocate the output string
 ;             (Sign + 10 ANSI characters + ZTC = 12 BYTEs).
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 sdword2decA proc pBuffer:POINTER, sdValue:SDWORD
   mov eax, [esp + 8]                    ;eax = sdValue
@@ -137,7 +136,6 @@ sdword2decA proc pBuffer:POINTER, sdValue:SDWORD
   ret 8
 sdword2decA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

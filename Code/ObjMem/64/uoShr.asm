@@ -11,7 +11,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uoShr
 ; Purpose:    Shift right of an unsigned OWORD.
@@ -19,6 +18,7 @@
 ;             Arg2: Shift count in cl.
 ; Return:     rdx:rax Shifted value.
 
+.code
 align ALIGN_CODE
 uoShr proc
 ; Handle shifts of 128 bits or more (if shifting 128 bits or more, the result

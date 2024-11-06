@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrCECopy
 ; Purpose:    Copy the the source BStr with length limitation and return the address of the ZTC.
@@ -20,6 +19,7 @@
 ;             Arg3: Maximal number of charachters the destination string can hold including the ZTC.
 ; Return:     rax = NULL or -> ZTC.
 
+.code
 align ALIGN_CODE
 BStrCECopy proc pDstBStr:POINTER, pSrcBStr:POINTER, dMaxChars:DWORD  ;rcx -> DstBStr, rdx -> SrcBStr
   shl r8, 1                                             ;r8 = dMaxChars in BYTEs

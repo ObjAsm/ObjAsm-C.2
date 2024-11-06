@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MemZero
 ; Purpose:    Fill a memory block with zeros. A bit faster than MemFillB.
@@ -21,6 +20,8 @@
 ; Return:     Nothing.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 MemZero proc pMem:POINTER, dCount:DWORD
   ;rcx -> Memory block, edx = dCount
@@ -50,6 +51,7 @@ MemZero proc pMem:POINTER, dCount:DWORD
 @@:
   ret
 MemZero endp
+
 OPTION PROC:DEFAULT
 
 end

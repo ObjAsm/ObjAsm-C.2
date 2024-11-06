@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  IsScrollBarVisible
 ; Purpose:    Determine if a Scrollbar is currently visible. 
@@ -18,6 +17,7 @@
 ;             Arg2: Scrollbar type [SB_HORZ or SB_VERT].
 ; Return:     eax = TRUE if the scrollbar is visible, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 IsScrollBarVisible proc hWnd:HWND, dScrollbarType:DWORD
   invoke GetWindowLongPtr, rcx, GWL_STYLE

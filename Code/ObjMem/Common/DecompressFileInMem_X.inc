@@ -22,6 +22,7 @@
 ;             ecx = Uncompressed data size in BYTEs.
 ; Note:       User should free the decompressed memory when no longer required using MemFree.
 
+.code
 align ALIGN_CODE
 DecompressFileInMem proc pCompressedBuffer:POINTER, dCompressedBufferSize:DWORD
   ?mov ecx, pCompressedBuffer

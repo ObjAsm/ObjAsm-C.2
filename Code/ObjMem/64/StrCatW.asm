@@ -12,7 +12,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCatW
 ; Purpose:    Concatenate 2 WIDE strings.
@@ -20,6 +19,7 @@
 ;             Arg2: Source WIDE string.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 StrCatW proc pDstStrW:POINTER, pSrcStrW:POINTER
   invoke StrEndW, rcx                                   ;pDstStrW

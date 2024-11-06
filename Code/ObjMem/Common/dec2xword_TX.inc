@@ -20,6 +20,8 @@
 ;             rcx = Conversion result. Zero if succeeded, otherwise failed.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 
 CharReg equ $SubReg(xax, sizeof(CHR))
@@ -73,4 +75,5 @@ else
   ret
 endif
 ProcName endp
+
 OPTION PROC:DEFAULT

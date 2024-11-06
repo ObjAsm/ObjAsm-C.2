@@ -21,6 +21,7 @@
 ;             ecx = Compressed data size in BYTEs.
 ; Note:       User should free the returned memory when no longer required using MemFree.
 
+.code
 align ALIGN_CODE
 CompressMem proc pUncompressedData:POINTER, dUncompressedDataSize:DWORD, dCompressionAlgorithm:DWORD 
   local hCompressor:COMPRESSOR_HANDLE

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCatCharA
 ; Purpose:    Append a character to the end of an ANSI string.
@@ -18,6 +17,7 @@
 ;             Arg2: ANSI character.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 StrCatCharA proc pBuffer:POINTER, bChar:CHRA
   invoke StrEndA, rcx                                   ;pBuffer

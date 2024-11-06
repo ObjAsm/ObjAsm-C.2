@@ -11,9 +11,8 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 SRC_TYPE equ <QWORD>
-ProcName equ <CalcVarianceQW>
+ProcName textequ <CalcVarianceQW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  CalcVarianceQW
 ; Purpose:    Calculate the MSE of an array of QWORDs.

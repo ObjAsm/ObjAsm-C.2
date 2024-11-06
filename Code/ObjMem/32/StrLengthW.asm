@@ -10,16 +10,15 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrLengthW
 ; Purpose:    Determine the length of a WIDE string not including the zero terminating character.
 ; Arguments:  Arg1: -> Wide string.
 ; Return:     eax = Length of the string in characters.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrLengthW proc pStringW:POINTER
   mov eax, DWORD ptr [esp + 4]                          ;eax -> pStringW
@@ -74,7 +73,6 @@ StrLengthW proc pStringW:POINTER
   ret 4
 StrLengthW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

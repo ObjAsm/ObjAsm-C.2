@@ -8,7 +8,6 @@
 ; ==================================================================================================
 
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutChartOption
 ; Purpose:    Send a chart option value to the Debug Center Window.
@@ -18,6 +17,7 @@
 ;             Arg4: -> Destination Window WIDE name.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 DbgOutChartOption proc bID:BYTE, pValue:POINTER, dValueSize:DWORD, pDest:POINTER
   local dResult:DWORD, CDS:COPYDATASTRUCT, pData:POINTER

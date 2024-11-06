@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 
 Set2BinCharsW macro Index
   mov eax, 00300030h
@@ -34,9 +33,9 @@ endm
 ; Notes:      To allocate the output string, the destination buffer must be at least 130 BYTEs large.
 ;             (64 character WORDs + ZTC = 130 BYTEs).
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 qword2binW proc pBuffer:POINTER, qValue:QWORD
   mov ecx, [esp + 4]                                    ;ecx -> Buffer
@@ -78,7 +77,6 @@ qword2binW proc pBuffer:POINTER, qValue:QWORD
   ret 12
 qword2binW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

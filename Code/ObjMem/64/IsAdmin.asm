@@ -10,13 +10,13 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  IsAdmin
 ; Purpose:    Check if the current user has administrator rights.
 ; Arguments:  None.
 ; Return:     rax = TRUE or FALSE.
 
+.code
 align ALIGN_CODE
 IsAdmin proc uses rbx rdi rsi
   local hCurrentThread:HANDLE, hAccessToken:HANDLE, hCurrentProcess:HANDLE

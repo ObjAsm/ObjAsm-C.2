@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrLeftW
 ; Purpose:    Extract the left n characters of the source WIDE string.
@@ -18,6 +17,7 @@
 ;             Arg2: -> Source WIDE string.
 ; Return:     eax = Number of copied characters, not including the ZTC.
 
+.code
 align ALIGN_CODE
 StrLeftW proc uses rbx pBuffer:POINTER, pSrcStringW:POINTER, dCharCount:DWORD
   invoke StrCLengthW, pSrcStringW, dCharCount

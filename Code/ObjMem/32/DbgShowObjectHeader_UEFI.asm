@@ -12,7 +12,6 @@
 
 ProcName textequ <DbgShowObjectHeader_UEFI>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgShowObjectHeader_UEFI
 ; Purpose:    Output heading object information.

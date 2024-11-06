@@ -11,7 +11,6 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  IsLeapYear
 ; Purpose:    Check if a given year is a leap year (Gregorian calendar only).

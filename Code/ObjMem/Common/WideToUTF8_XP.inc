@@ -20,6 +20,7 @@
 ;                   1: buffer full
 ; Notes:      - The destination stream is always zero terminated.
 
+.code
 align ALIGN_CODE
 WideToUTF8 proc uses xbx xdi xsi pDest:POINTER, pSource:POINTER, dBufferSize:DWORD
   xor eax, eax

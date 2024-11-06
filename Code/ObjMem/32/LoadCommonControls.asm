@@ -10,9 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-% include &IncPath&Windows\CommCtrl.inc
-
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  LoadCommonControls
 ; Purpose:    Invoke InitCommonControls with a correctly filled input structure.
@@ -20,15 +17,6 @@
 ;                   ICC_USEREX_CLASSES, etc.
 ; Return:     Nothing.
 
-align ALIGN_CODE
-LoadCommonControls proc dFlags:DWORD
-  local icce:INITCOMMONCONTROLSEX
-
-  invoke InitCommonControls
-  mov icce.dwSize, sizeof INITCOMMONCONTROLSEX
-  m2m icce.dwICC, dFlags, edx
-  invoke InitCommonControlsEx, addr icce
-  ret
-LoadCommonControls endp
+% include &ObjMemPath&Common\LoadCommonControls_X.inc
 
 end

@@ -11,9 +11,8 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <sqShl>
+ProcName textequ <sqShl>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  sqShl
 ; Purpose:    Shift left of a signed QWORD (signed and unsigned procs are identical).

@@ -14,7 +14,6 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 externdef TwoDecDigitTableW:WORD
 ProcName textequ <uqword2decW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uqword2decW
 ; Purpose:    Convert an unsigned QWORD to its decimal WIDE string representation.

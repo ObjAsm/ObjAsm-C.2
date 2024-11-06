@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrIFilterW
 ; Purpose:    Perform a case insensitive string match test using wildcards (* and ?).
@@ -19,6 +18,8 @@
 ; Return:     eax = TRUE if strings match, otherwise FALSE.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 StrIFilterW proc pStringW:POINTER, pFilterW:POINTER
   ;rcx -> StringW, rdx -> FilterW
@@ -88,6 +89,7 @@ StrIFilterW proc pStringW:POINTER, pFilterW:POINTER
 
   ret
 StrIFilterW endp
+
 OPTION PROC:DEFAULT
 
 end

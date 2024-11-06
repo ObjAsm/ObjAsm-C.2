@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <SetShellAssociationA>
+ProcName textequ <SetShellAssociationA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SetShellAssociationA
 ; Purpose:    Set association for a file extension.

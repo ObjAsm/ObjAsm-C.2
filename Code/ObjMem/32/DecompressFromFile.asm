@@ -12,7 +12,6 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DecompressFromFile
 ; Purpose:    Decompress file data that was previously compressed with one of the Cabinet

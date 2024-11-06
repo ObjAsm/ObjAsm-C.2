@@ -12,7 +12,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCatW
 ; Purpose:    Concatenate 2 WIDE strings.
@@ -20,9 +19,9 @@
 ;             Arg2: Source WIDE string.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrCatW proc pDstStrW:POINTER, pSrcStrW:POINTER
   invoke StrEndW, [esp + 4]                             ;pDstStrW
@@ -31,7 +30,6 @@ StrCatW proc pDstStrW:POINTER, pSrcStrW:POINTER
   ret 8
 StrCatW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

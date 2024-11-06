@@ -14,7 +14,6 @@
 % include &COMPath&COM.inc
 % include &IncPath&Windows\ocidl.inc
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  ComEventsUnadvice
 ; Purpose:    Notificate the Event source that pISource will NOT recieve Events any more.

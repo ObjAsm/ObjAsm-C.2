@@ -12,7 +12,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCatA
 ; Purpose:    Concatenate 2 ANSI strings.
@@ -20,9 +19,9 @@
 ;             Arg2: Source ANSI string.
 ; Return:     eax = Number of added BYTEs.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrCatA proc pDstStrA:POINTER, pSrcStrA:POINTER
   invoke StrEndA, [esp + 4]                             ;pDstStrA
@@ -31,7 +30,6 @@ StrCatA proc pDstStrA:POINTER, pSrcStrA:POINTER
   ret 8
 StrCatA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

@@ -12,7 +12,6 @@
 
 % include &MacPath&Strings.inc
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetExceptionStrW
 ; Purpose:    Translate an exception code to a WIDE string.
@@ -20,6 +19,8 @@
 ; Return:     rax -> WIDE string.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 GetExceptionStrW proc dExceptionCode:DWORD
   cmp ecx, 0C0000005h                                   ;EXCEPTION_ACCESS_VIOLATION
@@ -105,6 +106,7 @@ GetExceptionStrW proc dExceptionCode:DWORD
   mov rax, $OfsCStrW("UNKNOWN_EXCEPTION")
   ret
 GetExceptionStrW endp
+
 OPTION PROC:DEFAULT
 
 end

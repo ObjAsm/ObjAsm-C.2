@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrECat
 ; Purpose:    Append a BStr to another and return the address of the ZTC.
@@ -20,6 +19,7 @@
 ;             Arg2: -> Added BStr.
 ; Return:     rax -> ZTC.
 
+.code
 align ALIGN_CODE
 BStrECat proc uses rbx pDstBStr:POINTER, pAddBStr:POINTER  ;rcx -> DstBStr, rdx -> AddBStr
   mov r8d, DWORD ptr [rdx - 4]

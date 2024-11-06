@@ -11,7 +11,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  soooRem
 ; Purpose:    Calculate the remainder of the division of 2 signed OWORDs.
@@ -22,6 +21,7 @@
 ;             Arg4: Divisor signed high word.
 ; Return:     rdx:rax = Signed remainder.
 
+.code
 align ALIGN_CODE
 soooRem proc uses rdi rsi sqDividendLo:SQWORD, sqDividendHi:SQWORD, \
                           sqDivisorLo:SQWORD, sqDivisorHi:SQWORD

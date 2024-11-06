@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrCat
 ; Purpose:    Concatenate 2 BStrs.
@@ -18,6 +17,7 @@
 ;             Arg2: Source BStr.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 BStrCat proc pDstBStr:POINTER, pSrcBStr:POINTER         ;rcx -> DstBStr, rdx -> SrcBStr
   mov r9, rdx

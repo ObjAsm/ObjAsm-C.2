@@ -1,8 +1,8 @@
 ; ==================================================================================================
 ; Title:      SendChildrenMessage_X.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
-; Notes:      Version C.1.1, January 2020.
+; Version:    C.1.0
+; Notes:      Version C.1.0, January 2020.
 ;               - First release.
 ;               - Bitness neutral version.
 ; ==================================================================================================

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCECatW
 ; Purpose:    Concatenate 2 WIDE strings with length limitation and return the ending zero character
@@ -22,9 +21,9 @@
 ;                   ZTC.
 ; Return:     eax -> ZTC.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrCECatW proc pBuffer:POINTER, pSrcStringW:POINTER, dMaxChars:DWORD
   invoke StrEndW, [esp + 4]                             ;pBuffer
@@ -39,7 +38,6 @@ StrCECatW proc pBuffer:POINTER, pSrcStringW:POINTER, dMaxChars:DWORD
   ret 12
 StrCECatW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

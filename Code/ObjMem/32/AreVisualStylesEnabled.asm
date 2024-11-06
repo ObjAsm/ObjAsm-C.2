@@ -12,16 +12,15 @@
 
 % include &IncPath&Windows\uxtheme.inc
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  AreVisualStylesEnabled
 ; Purpose:    Determine if there is an activated theme for the running application
 ; Arguments:  None.
 ; Return:     eax = TRUE if the application is themed, otherwise FALSE.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 AreVisualStylesEnabled proc
   .if $invoke(IsThemeActive) != 0
@@ -30,7 +29,6 @@ AreVisualStylesEnabled proc
   ret
 AreVisualStylesEnabled endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

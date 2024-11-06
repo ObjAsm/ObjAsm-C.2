@@ -10,9 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.const
-
-align ALIGN_DATA
-bTAB  BYTE  9, 0
+% include &ObjMemPath&Common\CAStr_TAB_X.inc
 
 end

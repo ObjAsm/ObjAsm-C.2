@@ -17,6 +17,7 @@ externdef p1stOMD:POINTER
 ; Return:     xax -> Object template or NULL if not found.
 ;             ecx = Object template size or zero if not found.
 
+.code
 align ALIGN_CODE
 GetObjectTemplate proc dObjectID:DWORD
   mov eax, dObjectID

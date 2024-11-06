@@ -10,9 +10,8 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <NewObjInst>
+ProcName textequ <NewObjInst>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  NewObjInst
 ; Purpose:    Create an object instance from an object ID.

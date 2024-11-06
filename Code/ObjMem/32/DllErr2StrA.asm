@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DllErr2StrA
 ; Purpose:    Translate an error code to an ANSI string stored in a DLL.
@@ -20,9 +19,9 @@
 ;             Arg4: -> DLL ANSI name.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 DllErr2StrA proc dError:DWORD, pBuffer:POINTER, dMaxChars:DWORD, pDllNameA:POINTER
   mov eax, POINTER ptr [esp + 8]                        ;pBuffer
@@ -44,7 +43,6 @@ DllErr2StrA proc dError:DWORD, pBuffer:POINTER, dMaxChars:DWORD, pDllNameA:POINT
   ret 16
 DllErr2StrA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

@@ -18,6 +18,7 @@
 ;             Arg3: Background RGB color value.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 ProcName proc uses xbx xdi xsi pDest:POINTER, dForeColor:DWORD, dBackColor:DWORD
   local FPU_Buffer:FPU_CONTEXT, dLevels:DWORD

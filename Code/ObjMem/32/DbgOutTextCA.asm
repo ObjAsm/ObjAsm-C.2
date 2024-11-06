@@ -15,7 +15,6 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <DbgOutTextCA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutTextCA
 ; Purpose:    Send a counted ANSI string to the debug output device.

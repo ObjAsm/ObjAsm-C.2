@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-CStrW szDbgInvalidDevPtr, "Invalid device pointer"
-%CStrW szDbgRegKey,       DEBUG_CENTER_REGKEY
+% include &ObjMemPath&Common\DbgConstants_X.inc
 
 end

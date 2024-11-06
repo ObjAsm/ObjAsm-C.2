@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrRightA
 ; Purpose:    Copy the right n characters from the source string into the destination buffer.
@@ -19,6 +18,7 @@
 ;             Arg3: Character count.
 ; Return:     rax = Number of characters.
 
+.code
 align ALIGN_CODE
 StrRightA proc uses rbx rdi rsi pDstStringA:POINTER, pSrcStringA:POINTER, dCharCount:DWORD
   mov rdi, rcx

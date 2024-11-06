@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCPosW
 ; Purpose:    Scan from the beginning of a WIDE string for a character.
@@ -18,9 +17,9 @@
 ;             Arg2: Character to search for.
 ; Return:     eax -> Character position or NULL if not found.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrCPosW proc pString1W:POINTER, pString2W:POINTER, dMaxChars:DWORD
   push edi
@@ -63,7 +62,6 @@ align ALIGN_CODE
   ret 12
 StrCPosW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

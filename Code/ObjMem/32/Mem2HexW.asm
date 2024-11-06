@@ -12,7 +12,6 @@
 
 externdef HexCharTableW:WORD
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Mem2HexW
 ; Purpose:    Convert the memory content into a hex WIDE string representation.
@@ -21,9 +20,9 @@ externdef HexCharTableW:WORD
 ;             Arg3: Byte count.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 Mem2HexW proc pBuffer:POINTER, pMem:POINTER, dCount:DWORD
   mov edx, [esp + 4]                                    ;edx -> Buffer
@@ -41,7 +40,6 @@ Mem2HexW proc pBuffer:POINTER, pMem:POINTER, dCount:DWORD
   ret 12
 Mem2HexW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

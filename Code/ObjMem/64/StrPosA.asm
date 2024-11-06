@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrPosA
 ; Purpose:    Find the occurence of string 2 into string1.
@@ -18,6 +17,7 @@
 ;             Arg2: -> Searched ANSI string.
 ; Return:     rax -> String occurence or NULL if not found.
 
+.code
 align ALIGN_CODE
 StrPosA proc uses rbx rdi rsi pString1A:POINTER, pString2A:POINTER
   mov rdi, rcx                                          ;rdi -> String1A

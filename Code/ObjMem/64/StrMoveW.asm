@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrMoveW
 ; Purpose:    Move part of a WIDE string. The ZTC is NOT appended automatically.
@@ -20,6 +19,7 @@
 ;             Arg3: Character count.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 StrMoveW proc pDstStringW:POINTER, pSrcStringW:POINTER, dCharCount:DWORD
   mov eax, r8d                                          ;dCharCount

@@ -13,6 +13,7 @@
 ; Arguments:  Arg1: -> hecto-nano-seconds
 ; Return:     rax / edx::eax = hecto-nano-second count.
 
+.code
 align ALIGN_CODE
 GetSysHnsecs proc pDest:PDTL_HNSECS
   GetInterruptTicks

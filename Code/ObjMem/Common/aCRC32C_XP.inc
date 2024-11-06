@@ -16,6 +16,8 @@
 ; Return:     eax = CRC32C.
 ; Link:       https://en.wikipedia.org/wiki/Cyclic_redundancy_check
 
+.code
+align ALIGN_CODE
 aCRC32C proc uses xbx pAlignedMem:POINTER, dByteCount:DWORD
 .const
 DigestPosBytesJumpTableA label POINTER

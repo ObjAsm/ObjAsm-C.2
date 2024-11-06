@@ -14,7 +14,6 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 option stackbase:rbp
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  St0ToStrA
 ; Purpose:    Create an ANSI string representation of the content of the st(0) FPU register.

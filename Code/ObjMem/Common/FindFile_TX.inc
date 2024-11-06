@@ -1,13 +1,14 @@
 ; ==================================================================================================
 ; Title:      FindFile_TX.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
-; Notes:      Version C.1.1, November 2020.
+; Version:    C.1.0
+; Notes:      Version C.1.0, November 2020.
 ;               - First release.
 ;               - Character and bitness neutral code.
 ; ==================================================================================================
 
 
+.code
 align ALIGN_CODE
 ??SearchInDir proc uses xbx xdi xsi pFindFileParams:POINTER, pPosStr:POINTER
   local cPosStr[MAX_PATH]:CHR

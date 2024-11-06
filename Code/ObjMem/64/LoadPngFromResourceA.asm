@@ -14,7 +14,6 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 externdef hInstance:HANDLE
 ProcName textequ <LoadPngFromResourceA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  LoadPngFromResourceA
 ; Purpose:    Load a PNG resource and return a bitmap HANDLE.

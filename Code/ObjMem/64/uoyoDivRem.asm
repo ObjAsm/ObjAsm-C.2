@@ -10,9 +10,8 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <uoyoDivRem>
+ProcName textequ <uoyoDivRem>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uoyoDivRem
 ; Purpose:    Calculate a unsigned extended precision division, emulating the div x86 instruction.

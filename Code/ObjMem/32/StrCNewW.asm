@@ -13,7 +13,6 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <StrCNewW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCNewW
 ; Purpose:    Allocate a new copy of the source WIDE string with length limitation.
@@ -25,6 +24,6 @@ ProcName textequ <StrCNewW>
 ;             Arg2: Maximal character count.
 ; Return:     eax -> New WIDE string copy.
 
-% include &ObjMemPath&Common\StrCNewT32P.inc
+% include &ObjMemPath&Common\StrCNew_T32P.inc
 
 end

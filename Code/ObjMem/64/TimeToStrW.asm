@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <TimeToStrW>
+ProcName textequ <TimeToStrW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  TimeToStrA
 ; Purpose:    Convert a DTL_TIME to a formated string representation.

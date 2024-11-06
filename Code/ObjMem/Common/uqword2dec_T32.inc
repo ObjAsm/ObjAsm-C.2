@@ -17,6 +17,7 @@
 ;             Arg2: QWORD value.
 ; Return:     eax = Number of BYTEs copied to the destination buffer, including the ZTC.
 
+.code
 align ALIGN_CODE
 ProcName proc uses ebx edi esi pBuffer:POINTER, qValue:QWORD
   local cBuffer[2*24*sizeof(CHR)]:CHR                     ;21 chars + 3 filler for alignment

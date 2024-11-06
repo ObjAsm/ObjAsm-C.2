@@ -10,8 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
-
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrEnd
 ; Purpose:    Get the address of the ZTC.
@@ -19,12 +17,15 @@
 ; Return:     rax -> ZTC.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 BStrEnd proc pBStr:POINTER
   mov eax, DWORD ptr [rcx - 4]                          ;Length of BStr
   add rax, rcx
   ret
 BStrEnd endp
+
 OPTION PROC:DEFAULT
 
 end

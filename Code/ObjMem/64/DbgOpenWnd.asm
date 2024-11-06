@@ -10,13 +10,13 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOpenWnd
 ; Purpose:    Open a "Debug Center" instance.
 ; Arguments:  None.
 ; Return:     eax = TRUE if it was opened, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 DbgOpenWnd proc uses rbx
   local StartupInfo:STARTUPINFO, ProcessInforamtion:PROCESS_INFORMATION

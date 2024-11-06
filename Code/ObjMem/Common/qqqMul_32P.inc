@@ -9,7 +9,6 @@
 ; ==================================================================================================
 
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uqqqMul/sqqqMul
 ; Purpose:    Multiply 2 signed/unsigned QWORDs.
@@ -22,6 +21,7 @@
 ; Note:       Both signed and unsigned routines are the same, since multiply's
 ;             work out the same in 2's complement.
 
+.code
 align ALIGN_CODE
 ProcName proc uses ebx dMultiplicandLo:TypeArg, dMultiplicandHi:TypeArg, \
                        dMultiplierLo:TypeArg, dMultiplierHi:TypeArg

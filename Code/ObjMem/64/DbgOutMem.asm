@@ -13,10 +13,9 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <DbgOutMem>
+ProcName textequ <DbgOutMem>
 BYTES_PER_LINE equ 16     ;Must be a multiple of 8
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutMem
 ; Purpose:    Output the content of a memory block.

@@ -13,7 +13,6 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <dec2qwordA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  dec2qwordA
 ; Purpose:    Convert a decimal ANSI string to a QWORD.

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrRTrim
 ; Purpose:    Trim blank characters from the end of a BStr.
@@ -18,6 +17,7 @@
 ;             Arg2: -> Source BStr.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 BStrRTrim proc uses edi esi pDstBStr:POINTER, pSrcBStr:POINTER
   mov edi, pSrcBStr                                     ;edi -> SrcBStr

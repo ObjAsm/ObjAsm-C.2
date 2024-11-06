@@ -9,7 +9,6 @@
 ; ==================================================================================================
 
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  soShl/uoShl
 ; Purpose:    Shift left of a signed/unsigned OWORD (signed and unsigned procs are identical).
@@ -17,6 +16,7 @@
 ;             Arg2: Shift count in cl.
 ; Return:     rdx:rax Shifted value.
 
+.code
 align ALIGN_CODE
 ProcName proc
 ; Handle shifts of 128 or more bits (all get 0)

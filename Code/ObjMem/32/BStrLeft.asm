@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure: BStrLeft
 ; Purpose:   Extract the left n characters of the source BStr.
@@ -18,9 +17,9 @@
 ;            Arg2: -> Source BStr.
 ; Return:    eax = Number of copied characters, not including the ZTC.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 BStrLeft proc pDstBStr:POINTER, pSrcBStr:POINTER, dCharCount:DWORD
   mov ecx, [esp + 8]                                    ;ecx -> SrcBStr
@@ -42,7 +41,6 @@ BStrLeft proc pDstBStr:POINTER, pSrcBStr:POINTER, dCharCount:DWORD
   ret 12
 BStrLeft endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

@@ -20,16 +20,15 @@ NextCharA macro
   rcl edx, 1                                            ;Pass the carry from prev operation
 endm
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  bin2qwordA
 ; Purpose:    Load an ANSI string binary representation of a QWORD.
 ; Arguments:  Arg1: -> ANSI binary string.
 ; Return:     edx::eax = QWORD.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 bin2qwordA proc pBuffer:POINTER
   push ebx
@@ -48,7 +47,6 @@ bin2qwordA proc pBuffer:POINTER
   ret 4
 bin2qwordA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

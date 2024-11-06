@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrRScanW
 ; Purpose:    Scan from the end of a WIDE string for a character.
@@ -18,6 +17,7 @@
 ;             Arg2: Character to search for.
 ; Return:     rax -> Character address or NULL if not found.
 
+.code
 align ALIGN_CODE
 StrRScanW proc uses rbx rdi pStringW:POINTER, wChar:CHRW
   mov rdi, rcx

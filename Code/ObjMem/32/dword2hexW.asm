@@ -12,7 +12,6 @@
 
 externdef HexCharTableW:BYTE
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  dword2hexW
 ; Purpose:    Convert a DWORD to its hexadecimal WIDE string representation.
@@ -24,6 +23,7 @@ externdef HexCharTableW:BYTE
 
 OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 dword2hexW proc pBuffer:POINTER, dValue:DWORD
   mov edx, [esp + 4]                                    ;edx -> Buffer

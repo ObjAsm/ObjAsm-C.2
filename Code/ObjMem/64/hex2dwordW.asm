@@ -13,7 +13,6 @@
 externdef h2dw_Tbl1:BYTE
 externdef h2dw_Tbl2:BYTE
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  hex2dwordW
 ; Purpose:    Load a WIDE string hexadecimal representation of a DWORD.
@@ -21,6 +20,8 @@ externdef h2dw_Tbl2:BYTE
 ; Return:     eax = DWORD.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 hex2dwordW proc pHexW:POINTER
   movzx edx, CHRW ptr [rcx]
@@ -50,6 +51,7 @@ hex2dwordW proc pHexW:POINTER
 
   ret
 hex2dwordW endp
+
 OPTION PROC:DEFAULT
 
 end

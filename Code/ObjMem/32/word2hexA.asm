@@ -12,7 +12,6 @@
 
 externdef HexCharTableA:CHRA
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  word2hexA
 ; Purpose:    Convert a WORD to its hexadecimal ANSI string representation.
@@ -24,6 +23,7 @@ externdef HexCharTableA:CHRA
 
 OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 word2hexA proc pBuffer:POINTER, wValue:WORD
   mov edx, [esp + 4]                                    ;edx -> Buffer

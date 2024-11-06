@@ -13,7 +13,6 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <DbgBuildStrMsgW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgBuildStrMsgW
 ; Purpose:    Debug helper proc that builds a structure in memory to send a WIDE string to the

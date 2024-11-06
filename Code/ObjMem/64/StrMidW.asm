@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrMidW
 ; Purpose:    Extract a substring from a WIDE source string.
@@ -20,6 +19,7 @@
 ;             Arg3: Character count.
 ; Return:     eax = Number of copied characters.
 
+.code
 align ALIGN_CODE
 StrMidW proc pBuffer:POINTER, pSrcStringW:POINTER, dStartChar:DWORD, dCharCount:DWORD
   invoke StrLengthW, rdx

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCompA
 ; Purpose:    Compare 2 ANSI strings with case sensitivity.
@@ -21,8 +20,10 @@
 ;             If string 1 > string 2, then eax > 0.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
-StrCompA proc pStr1:POINTER, pStr2:POINTER
+StrCompA proc pString1A:POINTER, pString2A:POINTER
   xor r8, r8
   xor eax, eax
 @@:
@@ -38,6 +39,7 @@ StrCompA proc pStr1:POINTER, pStr2:POINTER
   sub eax, ecx
   ret
 StrCompA endp
+
 OPTION PROC:DEFAULT
 
 end

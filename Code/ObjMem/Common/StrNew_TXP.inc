@@ -17,6 +17,7 @@
 ; Arguments:  Arg1: -> Source WIDE string.
 ; Return:     xax -> New string copy.
 
+.code
 align ALIGN_CODE
 ProcName proc uses xbx xdi xsi pString:POINTER
   if TARGET_BITNESS eq 32

@@ -17,6 +17,7 @@
 ;             Arg5: -> Destination window WIDE name.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 ProcName proc pObjectName:POINTER, pInstance:POINTER, dForeColor:DWORD, dBackColor:DWORD, pDest:POINTER
   local bNum[20]:CHRA

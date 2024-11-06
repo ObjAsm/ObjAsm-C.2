@@ -17,6 +17,7 @@
 ; Arguments:  Arg1: COM error code.
 ; Return:     xax -> Error string.
 
+.code
 align ALIGN_CODE
 ProcName proc dErrCode:DWORD
   ?mov ecx, dErrCode

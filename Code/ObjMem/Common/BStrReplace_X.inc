@@ -15,6 +15,7 @@
 ;             Arg2: -> new BSTR.
 ; Return:     rax -> New allocated BSTR or NULL if failed.
 
+.code
 align ALIGN_CODE
 BStrReplace proc pOldBStr:POINTER, pNewBStr:POINTER
   invoke BStrDispose, pOldBStr

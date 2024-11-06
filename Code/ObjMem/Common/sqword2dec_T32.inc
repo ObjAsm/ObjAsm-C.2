@@ -1,8 +1,8 @@
 ; ==================================================================================================
-; Title:      sqword2decT32.inc
+; Title:      sqword2dec_T32.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
-; Notes:      Version C.1.1, May 2022
+; Version:    C.1.0
+; Notes:      Version C.1.0, May 2022
 ;               - First release.
 ; Links       https://publik.tuwien.ac.at/files/publik_287602.pdf
 ;             https://calc.penjee.com/  128 hex calculator
@@ -17,6 +17,7 @@
 ;             Arg2: SQWORD value.
 ; Return:     eax = Number of BYTEs copied to the destination buffer, including the ZTC.
 
+.code
 align ALIGN_CODE
 ProcName proc uses ebx edi esi pBuffer:POINTER, sqValue:SQWORD
   local cBuffer[2*24*sizeof(CHR)]:CHR                     ;21 chars + 3 filler for alignment

@@ -48,7 +48,6 @@ MBX_DlgInfo ends
 MBX_CAPTION_HEADER       equ <MsgBoxData@>
 MBX_CAPTION_HEADER_CHARS = @SizeStr(%MBX_CAPTION_HEADER)
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MsgBoxA / MsgBoxW
 ; Purpose:    Show a customized MessageBox.
@@ -60,6 +59,7 @@ MBX_CAPTION_HEADER_CHARS = @SizeStr(%MBX_CAPTION_HEADER)
 ; Note:       Caption, text etc. are transferred via a caption string which contains a header and
 ;             the address of a MsgBoxInfo structure in text form.
 
+.code
 align ALIGN_CODE
 ProcName proc hParent:HANDLE, pText:POINTER, pCaption:POINTER, dFlags:DWORD
   local cTransferInfo[MBX_CAPTION_HEADER_CHARS + XWORD2HEX_MAX_CHARS]:CHR, MBX_Info:MBX_DlgInfo

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MemClone
 ; Purpose:    Copy a memory block from a source to a destination buffer.
@@ -22,9 +21,9 @@
 ;             Arg3: Number of BYTEs to copy.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 MemClone proc pDstMem:POINTER, pSrcMem:POINTER, dCount:DWORD
   push edi
@@ -42,7 +41,6 @@ MemClone proc pDstMem:POINTER, pSrcMem:POINTER, dCount:DWORD
   ret 12
 MemClone endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

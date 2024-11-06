@@ -10,16 +10,15 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOpenCon
 ; Purpose:    Open a new console for the calling process.
 ; Arguments:  None.
 ; Return:     eax = TRUE if it was opened, otherwise FALSE.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 DbgOpenCon proc
   .if hDbgDev == 0
@@ -37,7 +36,6 @@ DbgOpenCon proc
   ret 0
 DbgOpenCon endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

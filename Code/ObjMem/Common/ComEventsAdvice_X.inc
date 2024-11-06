@@ -19,6 +19,7 @@
 ;             Arg5: -> DWORD Cookie.
 ; Return:     eax = HRESULT.
 
+.code
 align ALIGN_CODE
 ComEventsAdvice proc pISrcAny:POINTER, pISinkUnk:POINTER, pIID:POINTER, ppICP:POINTER, pCookie:POINTER
   local pICPC:POINTER

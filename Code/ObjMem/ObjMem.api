@@ -18,31 +18,31 @@ StrNewA, pStringW
 StrNewW, pStringA
 StrNewA_UEFI, pStringW
 StrNewW_UEFI, pStringA
-BStrNew, pBStr
+BStrNew, BSTR
 
 StrCNew, pString, dChars
 StrCNewA, pStringA, dChars
 StrCNewW, pStringW, dChars
 StrCNewA_UEFI, pStringA, dChars
 StrCNewW_UEFI, pStringW, dChars
-BStrCNew, pBStr, dChars
+BStrCNew, BSTR, dChars
 
 StrDispose, pString
 StrDisposeA, pStringA
 StrDisposeW, pStringW
 StrDisposeA_UEFI, pStringA
 StrDisposeW_UEFI, pStringW
-BStrDispose, pBStr
+BStrDispose, BSTR
 
 StrLength, pString
 StrLengthA, pStringA
 StrLengthW, pStringW
-BStrLength, pBStr
+BStrLength, BSTR
 
 StrSize, pString
 StrSizeA, pStringA
 StrSizeW, pStringW
-BStrSize, pBStr
+BStrSize, BSTR
 
 StrCLength, pString
 StrCLengthA, pStringA
@@ -55,7 +55,7 @@ StrLimLenW, pStringW, dMaxLength
 StrEnd, pString
 StrEndA, pStringA
 StrEndW, pStringW
-BStrEnd, pBStr
+BStrEnd, BSTR
 
 StrMove, pDstString, pSrcString, dChars
 StrMoveA, pDstStringA, pSrcStringA, dChars
@@ -120,32 +120,32 @@ BStrCCat, pDstBStr, pBCatString, dMaxChars
 StrComp, pString1, pString2
 StrCompA, pStringA1, pStringA2
 StrCompW, pStringW1, pStringW2
-BStrComp, pBStr1, pBStr2
+BStrComp, BSTR1, BSTR2
 
 StrCComp, pString1, pString2, dChars
 StrCCompA, pStringA1, pStringA2, dChars
 StrCCompW, pStringW1, pStringW2, dChars
-BStrCComp, pBStr1, pBStr2, dChars
+BStrCComp, BSTR1, BSTR2, dChars
 
 StrIComp, pString1, pString2
 StrICompA, pStringA1, pStringA2
 StrICompW, pStringW1, pStringW2
-BStrIComp, pBStr1, pBStr2
+BStrIComp, BSTR1, BSTR2
 
 StrCIComp, pString1, pString2, dChars
 StrCICompA, pStringA1, pStringA2, dChars
 StrCICompW, pStringW1, pStringW2, dChars
-BStrCIComp, pBStr1, pBStr2, dChars
+BStrCIComp, BSTR1, BSTR2, dChars
 
 StrLScan, pString, Char
 StrLScanA, pStringA, bChar
 StrLScanW, pStringW, wChar
-BStrLScan, pBStr, wChar
+BStrLScan, BSTR, wChar
 
 StrRScan, pString, Char
 StrRScanA, pStringA, bChar
 StrRScanW, pStringW, wChar
-BStrRScan, pBStr, wChar
+BStrRScan, BSTR, wChar
 
 StrCScan, pString, dMaxCount, Char
 StrCScanA, pStringA, dMaxCount, bChar
@@ -180,32 +180,39 @@ BStrRTrim, pDstBStr, pSrcBStr
 StrUpper, pString
 StrUpperA, pStringA
 StrUpperW, pStringW
-BStrUpper, pBStr
+BStrUpper, BSTR
 
 StrLower, pString
 StrLowerA, pStringA
 StrLowerW, pStringW
-BStrLower, pBStr
+BStrLower, BSTR
 
 StrTitle, pString
 StrTitleA, pStringA
 StrTitleW, pStringW
-BStrTitle, pBStr
+BStrTitle, BSTR
 
 StrReplace, pOldString, pNewString
 StrReplaceA, pOldStringA, pNewStringA
 StrReplaceW, pOldStringW, pNewStringW
-BStrReplace, pOldBStr, pNewBStr
+BStrReplace, OldBSTR, NewBSTR
+
+BStr2NewStringA, BSTR
+BStr2NewStringW, BSTR
+StrA2NewBStr, pStringA
+StrW2NewBStr, pStringW
+StrA2NewStrW, pStringA
+StrW2NewStrA, pStringW
 
 StrFilter, pString, pPattern
 StrFilterA, pStringA, pPatternA
 StrFilterW, pStringW, pPatternW
-BStrFilter, pBStr, pBPattern
+BStrFilter, BSTR, pBPattern
 
 StrIFilter, pString, pPattern
 StrIFilterA, pStringA, pPatternA
 StrIFilterW, pStringW, pPatternW
-BStrIFilter, pBStr, pBPattern
+BStrIFilter, BSTR, pBPattern
 
 StrMid, pDstString, pSrcString, dCharFrom, dCharCount
 StrMidA, pDstStringA, pSrcStringA, dCharFrom, dCharCount
@@ -225,12 +232,12 @@ BStrRight, pDstBStr, pSrcBStr, dCharCount
 StrStartsWith, pString, pPrefix
 StrStartsWithA, pStringA, pPrefix
 StrStartsWithW, pStringB, pPrefix
-BStrStartsWith, pBStr, pPrefix
+BStrStartsWith, BSTR, pPrefix
 
 StrEndsWith, pString, pSuffix
 StrEndsWithA, pStringA, pSuffix
 StrEndsWithW, pStringB, pSuffix
-BStrEndsWith, pBStr, pSuffix
+BStrEndsWith, BSTR, pSuffix
 
 StrRepChr, Character, dCount
 StrRepChrA, CharacterA, dCount
@@ -269,7 +276,7 @@ GetAncestorID, dObjectID
 GUID2Str, pString, pGUID
 GUID2StrA, pStringA, pGUID
 GUID2StrW, pStringW, pGUID
-GUID2BStr, pBStr, pGUID
+GUID2BStr, BSTR, pGUID
 
 byte2bin, pBinString, byte
 byte2binA, pBinStringA, byte

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCCopyA
 ; Purpose:    Copy the the source ANSI string with length limitation.
@@ -21,9 +20,9 @@
 ;             Arg3: Maximal number of charachters to copy, excluding the ZTC.
 ; Return:     eax = Number of copied BYTEs, including the ZTC.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrCCopyA proc pBuffer:POINTER, pSrcStringA:POINTER, dMaxChars:DWORD
   invoke StrCLengthA, [esp + 12], [esp + 12]            ;pSrcStringA, dMaxChars
@@ -37,7 +36,6 @@ StrCCopyA proc pBuffer:POINTER, pSrcStringA:POINTER, dMaxChars:DWORD
   ret 12
 StrCCopyA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

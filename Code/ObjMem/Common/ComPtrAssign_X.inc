@@ -15,6 +15,7 @@
 ; Arguments:  Arg1: -> Old Interface pointer.
 ;             Arg2: New Interface pointer.
 
+.code
 align ALIGN_CODE
 ComPtrAssign proc ppOldInterface:POINTER, pNewInterface:POINTER
   .if pNewInterface != NULL                             ;1st increment the reference count to avoid

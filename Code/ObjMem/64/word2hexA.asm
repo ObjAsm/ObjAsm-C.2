@@ -12,7 +12,6 @@
 
 externdef HexCharTableA:CHRA
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  word2hexA
 ; Purpose:    Convert a DORD to its hexadecimal ANSI string representation.
@@ -24,6 +23,7 @@ externdef HexCharTableA:CHRA
 
 OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 word2hexA proc pBuffer:POINTER, wValue:WORD
   ;rcx -> Buffer, dx = wValue

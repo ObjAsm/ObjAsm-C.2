@@ -9,7 +9,6 @@
 ; ==================================================================================================
 
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrRTrimA / StrRTrimW
 ; Purpose:    Trim blank characters from the end of a string.
@@ -17,6 +16,7 @@
 ;             Arg2: -> Source string.
 ; Return:     eax = Number of characters copied into the destination buffer (not counting the ZTC).
 
+.code
 align ALIGN_CODE
 ProcName proc uses xsi pDstString:POINTER, pSrcString:POINTER
 
@@ -52,4 +52,3 @@ endif
 @@:
   ret
 ProcName endp
-

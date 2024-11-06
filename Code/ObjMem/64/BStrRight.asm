@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrRight
 ; Purpose:    Copy the right n characters from the source string into the destination BStr, that must
@@ -20,6 +19,7 @@
 ;             Arg3: Character count.
 ; Return:     rax = Copied characters.
 
+.code
 align ALIGN_CODE
 BStrRight proc uses rbx pDstBStr:POINTER, pSrcBStr:POINTER, dCharCount:DWORD
   ;rcx -> DstBStr, rdx -> SrcBStr, r8d: dCharCount

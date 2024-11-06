@@ -12,7 +12,6 @@
 
 % include &MacPath&Strings.inc
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Err2StrA
 ; Purpose:    Translate a system error code to an ANSI string.
@@ -21,6 +20,7 @@
 ;             Arg3: Buffer size in characters, inclusive ZTC.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 Err2StrA proc dError:DWORD, pBuffer:POINTER, dMaxChars:DWORD
   .if rdx != NULL

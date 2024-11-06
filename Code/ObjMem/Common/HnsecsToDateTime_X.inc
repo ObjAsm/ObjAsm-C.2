@@ -14,6 +14,7 @@
 ;             Arg2: -> hecto-nano-seconds
 ; Return:     eax = TRUE id succeeded, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 HnsecsToDateTime proc pDateTime:PDTL_DATETIME, pHnsecs:PDTL_HNSECS
   invoke FileTimeToSystemTime, pHnsecs, pDateTime

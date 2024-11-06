@@ -13,6 +13,7 @@
 ; Arguments:  Arg1: -> Destination variable
 ; Return:     rax / edx::eax = millisecond count.
 
+.code
 align ALIGN_CODE
 GetSystemMillis proc pDest:PDTL_MILLIS
   invoke GetTickCount64                                 ;In 32 bit, the 64 bit counter value

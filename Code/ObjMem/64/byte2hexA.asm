@@ -12,7 +12,6 @@
 
 externdef HexCharTableA:CHRA
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  byte2hexA
 ; Purpose:    Convert a BYTE to its hexadecimal ANSI string representation.

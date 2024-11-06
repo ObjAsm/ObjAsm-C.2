@@ -14,6 +14,7 @@
 ; Arguments:  None.
 ; Return:     eax = TRUE or FALSE.
 
+.code
 align ALIGN_CODE
 AppsUseLightTheme proc
   local hKey:HKEY, dValueType:DWORD, dValue:DWORD, dValueSize:DWORD

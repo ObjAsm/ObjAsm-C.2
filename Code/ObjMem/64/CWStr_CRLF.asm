@@ -10,9 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.const
-
-align ALIGN_DATA
-wCRLF  WORD  13, 10, 0
+% include &ObjMemPath&Common\CWStr_CRLF_X.inc
 
 end

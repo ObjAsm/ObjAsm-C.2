@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrFilterA
 ; Purpose:    Perform a case sensitive string match test using wildcards (* and ?).
@@ -18,14 +17,14 @@
 ;             Arg2: -> Filter ANSI string.
 ; Return:     eax = TRUE if strings match, otherwise FALSE.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrFilterA proc pStringA:POINTER, pFilterA:POINTER
   push edi
   push esi
-  mov edi, [esp + 12]                                   ;edi -> StringA
+  mov edi, [esp + 12]                                   ;edi -> STRINGA
   mov esi, [esp + 16]                                   ;esi -> FilterA
   
   .while 1
@@ -84,7 +83,6 @@ StrFilterA proc pStringA:POINTER, pFilterA:POINTER
   ret 8
 StrFilterA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

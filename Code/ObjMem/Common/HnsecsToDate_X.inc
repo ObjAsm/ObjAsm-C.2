@@ -14,6 +14,7 @@
 ;             Arg2: -> hecto-nano-seconds
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 HnsecsToDate proc pDate:PDTL_DATE, pHnsecs:PDTL_HNSECS
   local SysTime:SYSTEMTIME

@@ -11,10 +11,9 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <word2binA>
+ProcName textequ <word2binA>
 VALUE_TYPE textequ <WORD>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  word2binA
 ; Purpose:    Convert a WORD to its binary ANSI string representation.

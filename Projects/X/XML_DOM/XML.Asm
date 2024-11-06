@@ -2,7 +2,7 @@
 ; Title:      XML.asm
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Purpose:    ObjAsm XML Test.
+; Purpose:    ObjAsm DOM-XML Test.
 ; Notes:      Version C.1.0, November 2024
 ;               - First release.
 ;               - This is a port from sources of Veria Kalantary - Ideas of East Company

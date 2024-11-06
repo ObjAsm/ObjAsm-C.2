@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  ActivatePrevInstanceW
 ; Purpose:    Activate a previously existing instance of an application.
@@ -18,6 +17,7 @@
 ;             Arg2: -> WIDE class name.
 ; Return:     eax = TRUE if activated, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 ActivatePrevInstanceW proc uses edi pStringIDW:POINTER, pClassNameW:POINTER
   invoke GetPrevInstanceW, pStringIDW, pClassNameW

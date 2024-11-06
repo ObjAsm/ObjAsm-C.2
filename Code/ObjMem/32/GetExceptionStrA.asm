@@ -10,16 +10,15 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetExceptionStrA
 ; Purpose:    Translate an exception code to an ANSI string.
 ; Arguments:  Arg1: Exception code.
 ; Return:     eax -> ANSI string.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 GetExceptionStrA proc dExceptionCode:DWORD
   mov eax, [esp + 4]                                    ;dExceptionCode
@@ -107,7 +106,6 @@ GetExceptionStrA proc dExceptionCode:DWORD
   ret 4
 GetExceptionStrA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

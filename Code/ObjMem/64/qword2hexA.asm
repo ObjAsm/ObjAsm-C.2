@@ -12,7 +12,6 @@
 
 externdef HexCharTableA:CHRA
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  qword2hexA
 ; Purpose:    Convert a QWORD to its hexadecimal ANSI string representation.
@@ -23,6 +22,8 @@ externdef HexCharTableA:CHRA
 ;             (16 character BYTEs + ZTC = 17 BYTEs).
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 qword2hexA proc pBuffer:POINTER, qValue:QWORD
   ;rcx -> Buffer, rdx = qValue
@@ -63,6 +64,7 @@ qword2hexA proc pBuffer:POINTER, qValue:QWORD
   m2z CHRA ptr [rcx + 16*sizeof(CHRA)]                              ;Set ZTC
   ret
 qword2hexA endp
+
 OPTION PROC:DEFAULT
 
 end

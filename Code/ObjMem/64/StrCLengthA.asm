@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCLengthA
 ; Purpose:    Get the character count of the source ANSI string with length limitation.
@@ -18,6 +17,7 @@
 ;             Arg3: Maximal character count.
 ; Return:     eax = Limited character count.
 
+.code
 align ALIGN_CODE
 StrCLengthA proc pStringA:POINTER, dMaxChars:DWORD
   push rdi

@@ -1,8 +1,8 @@
 ; ==================================================================================================
-; Title:      sqword2decT64.inc
+; Title:      sqword2dec_T64.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
-; Notes:      Version C.1.1, May 2022
+; Version:    C.1.0
+; Notes:      Version C.1.0, May 2022
 ;               - First release.
 ;               - Character and bitness neutral code.
 ; links:      https://publik.tuwien.ac.at/files/publik_287602.pdf
@@ -19,6 +19,8 @@
 ; Return:     eax = Number of BYTEs copied to the destination buffer, including the ZTC.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 ProcName proc pBuffer:POINTER, sqValue:SQWORD   ;e.g. 1844'6744'0737'0955'1615
   ;rcx -> Buffer, rdx = SQWORD

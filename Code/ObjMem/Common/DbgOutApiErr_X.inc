@@ -17,6 +17,7 @@
 ;             Arg4: -> Destination Window WIDE name.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 DbgOutApiErr proc dErrorCode:DWORD, dForeColor:DWORD, dBackColor:DWORD, pDest:POINTER
   local pBuffer:POINTER, cHexBuffer[16]:CHRA

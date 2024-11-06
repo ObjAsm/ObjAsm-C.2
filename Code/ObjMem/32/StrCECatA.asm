@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCECatA
 ; Purpose:    Concatenate 2 ANSI strings with length limitation and return the ending zero character
@@ -22,9 +21,9 @@
 ;                   ZTC.
 ; Return:     eax -> ZTC.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrCECatA proc pBuffer:POINTER, pSrcStringA:POINTER, dMaxChars:DWORD
   invoke StrEndA, [esp + 4]                             ;pBuffer
@@ -37,7 +36,6 @@ StrCECatA proc pBuffer:POINTER, pSrcStringA:POINTER, dMaxChars:DWORD
   ret 12
 StrCECatA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

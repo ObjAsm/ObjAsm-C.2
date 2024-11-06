@@ -15,6 +15,8 @@
 ; Return:     xax -> String.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 ProcName proc pString:POINTER
 
@@ -72,4 +74,5 @@ else
   ret
 endif
 ProcName endp
+
 OPTION PROC:DEFAULT

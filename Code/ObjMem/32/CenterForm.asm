@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  CenterForm
 ; Purpose:    Calculate the starting coordinate of a window based on the screen and the window size.
@@ -18,9 +17,9 @@
 ;             Arg2: Screen size in pixel.
 ; Return:     eax = Starting point in pixel.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 CenterForm proc dWindowSize:DWORD, dScreenSize:DWORD
   mov eax, [esp + 8]                                    ;Screen size
@@ -29,7 +28,6 @@ CenterForm proc dWindowSize:DWORD, dScreenSize:DWORD
   ret 8
 CenterForm endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

@@ -11,9 +11,8 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <Base32EncodeW>
+ProcName textequ <Base32EncodeW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Base32EncodeW
 ; Purpose:    Encode a data stream using the BASE32 algorithm. The output stream contains only

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  IsGUIDEqual
 ; Purpose:    Compare 2 GUIDs.
@@ -18,9 +17,9 @@
 ;             Arg2: -> GUID2.
 ; Return:     eax = TRUE if they are equal, otherwise FALSE.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 IsGUIDEqual proc pGUID1:POINTER, pGUID2:POINTER
   mov eax, [esp + 4]
@@ -44,7 +43,6 @@ IsGUIDEqual proc pGUID1:POINTER, pGUID2:POINTER
   ret 8
 IsGUIDEqual endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

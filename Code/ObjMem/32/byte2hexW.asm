@@ -12,7 +12,6 @@
 
 externdef HexCharTableW:CHRW
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  byte2hexW
 ; Purpose:    Convert a BYTE to its hexadecimal WIDE string representation.
@@ -24,6 +23,7 @@ externdef HexCharTableW:CHRW
 
 OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 byte2hexW proc pBuffer:POINTER, bValue:BYTE
   mov edx, [esp + 4]                                    ;edx -> Buffer

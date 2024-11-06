@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrLTrimW
 ; Purpose:    Trim blank characters from the beginning of a WIDE string.
@@ -18,6 +17,7 @@
 ;             Arg2: -> Source WIDE string.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 StrLTrimW proc uses rbx pBuffer:POINTER, pSrcStringW:POINTER
 @@:

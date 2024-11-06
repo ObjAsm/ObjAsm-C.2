@@ -10,9 +10,8 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <uoqqMul>
+ProcName textequ <uoqqMul>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uoqqMul
 ; Purpose:    Multiply 2 unsigned QWORDs with extended precision.

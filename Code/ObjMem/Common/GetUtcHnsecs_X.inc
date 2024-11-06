@@ -13,6 +13,7 @@
 ; Arguments:  Arg1: -> hecto-nano-seconds
 ; Return:     Nothing, always succeed.
 
+.code
 align ALIGN_CODE
 GetUtcHnsecs proc pDest:PDTL_HNSECS
   invoke GetSystemTimeAsFileTime, pDest                 ;Fast

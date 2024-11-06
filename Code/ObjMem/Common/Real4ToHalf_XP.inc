@@ -1,8 +1,8 @@
 ; ==================================================================================================
 ; Title:      Real4ToHalf_XP.inc
 ; Author:     AW @ http://masm32.com/board/index.php?topic=7406.0, G. Friedrich
-; Version:    C.1.1
-; Notes:      Version C.1.1, April 2020.
+; Version:    C.1.0
+; Notes:      Version C.1.0, April 2020.
 ;               - First release.
 ;               - Bitness neutral version.
 ; ==================================================================================================
@@ -18,6 +18,7 @@
 ;                VCVTPS2PH xmm1, xmm0, 0
 ;                movd eax, xmm1
 
+.code
 align ALIGN_CODE
 Real4ToHalf proc uses xbx xsi r4Value:REAL4
   ?mov ecx, r4Value

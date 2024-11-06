@@ -7,7 +7,6 @@
 ; ==================================================================================================
 
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutBitmap
 ; Purpose:    Send a bitmap to the Debug Center Window.
@@ -16,6 +15,7 @@
 ;             Arg3: -> Destination Window WIDE name.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 DbgOutBitmap proc hBmp:HANDLE, dBackColor:DWORD, pDest:POINTER
   local dResult:DWORD, CDS:COPYDATASTRUCT, pData:POINTER

@@ -10,13 +10,13 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetBottomWindow
 ; Purpose:    Get the Z order bottom child window HANDLE.
 ; Arguments:  Arg1: Parenat HWND.
 ; Return:     eax = Z order bottom child window HANDLE.
 
+.code
 align ALIGN_CODE
 GetBottomWindow proc uses edi hWnd:HANDLE
   invoke GetTopWindow, hWnd

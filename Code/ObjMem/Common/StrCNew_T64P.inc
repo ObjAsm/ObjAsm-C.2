@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      StrCNewT64P.inc
+; Title:      StrCNew_T64P.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, June 2022
@@ -18,6 +18,7 @@
 ;             Arg2: Maximal character count.
 ; Return:     rax -> New string copy.
 
+.code
 align ALIGN_CODE
 ProcName proc uses rbx rdi pString:POINTER, dMaxChars:DWORD
   mov rax, rcx                                          ;rax -> String

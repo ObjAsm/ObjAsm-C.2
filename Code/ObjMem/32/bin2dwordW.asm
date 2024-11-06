@@ -11,10 +11,9 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <bin2dwordW>
+ProcName textequ <bin2dwordW>
 BIT_COUNT = 32
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  bin2dwordW
 ; Purpose:    Conversion of an WIDE input string that contains a binary number in the form of a 

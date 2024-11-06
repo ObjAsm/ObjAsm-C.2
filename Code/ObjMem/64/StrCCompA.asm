@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCCompA
 ; Purpose:    Compare 2 ANSI strings with case sensitivity up to a maximal number of characters.
@@ -22,6 +21,8 @@
 ;             If string 1 > string 2, then eax > 0.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 StrCCompA proc pStr1A:POINTER, pStr2A:POINTER, dMaxChars:DWORD
   ;rcx -> Str1A, rdx -> Str2A, r8d = dMaxChars
@@ -46,6 +47,7 @@ StrCCompA proc pStr1A:POINTER, pStr2A:POINTER, dMaxChars:DWORD
   sub eax, ecx                                          ;Subtract to see which is lower
   ret                                                   ;Return
 StrCCompA endp
+
 OPTION PROC:DEFAULT
 
 end

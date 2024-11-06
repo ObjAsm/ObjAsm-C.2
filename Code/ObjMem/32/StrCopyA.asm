@@ -12,7 +12,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCopyA
 ; Purpose:    Copy an ANSI string to a destination buffer.
@@ -20,8 +19,7 @@
 ;             Arg2: Source ANSI string.
 ; Return:     eax = Number of BYTEs copied, including the ZTC.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
 align ALIGN_CODE
 StrCopyA proc pBuffer:POINTER, pSrcStrA:POINTER
@@ -30,7 +28,6 @@ StrCopyA proc pBuffer:POINTER, pSrcStrA:POINTER
   ret 8
 StrCopyA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

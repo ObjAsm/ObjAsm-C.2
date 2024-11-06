@@ -1,8 +1,8 @@
 ; ==================================================================================================
 ; Title:      udword2decT64.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
-; Notes:      Version C.1.1, May 2022
+; Version:    C.1.0
+; Notes:      Version C.1.0, May 2022
 ;               - First release.
 ;               - Character neutral code.
 ; links:      https://publik.tuwien.ac.at/files/publik_287602.pdf
@@ -19,6 +19,8 @@
 ; Return:     eax = Number of BYTEs copied to the destination buffer, including the ZTC.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 ProcName proc pBuffer:POINTER, dValue:DWORD
   ;rcx -> Buffer, edx = DWORD

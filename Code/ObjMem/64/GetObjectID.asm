@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetObjectID
 ; Purpose:    Retrieve the type ID of an object instance.
@@ -18,6 +17,8 @@
 ; Return:     eax = Object class ID.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 GetObjectID proc pObjectInstance:POINTER
   or rcx, rcx
@@ -30,6 +31,7 @@ GetObjectID proc pObjectInstance:POINTER
   xor eax, eax
   ret
 GetObjectID endp
+
 OPTION PROC:DEFAULT
 
 end

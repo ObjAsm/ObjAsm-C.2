@@ -16,6 +16,7 @@
 ;             Arg3: Character Count.
 ; Return:     Nothing
 
+.code
 align ALIGN_CODE
 BStrFillChr proc pString:POINTER, dCount:DWORD, wChar:CHRW
   invoke MemFillW, pString, dCount, wChar

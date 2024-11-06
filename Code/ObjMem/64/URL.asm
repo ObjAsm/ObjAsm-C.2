@@ -14,7 +14,6 @@
 
 externdef HexCharTableW:CHRW
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  UrlEscDecode
 ; Purpose:    Translate a wide string containig URL escape sequences to a plain wide string.

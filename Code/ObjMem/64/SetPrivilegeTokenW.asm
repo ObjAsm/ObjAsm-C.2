@@ -14,7 +14,6 @@ TypeOpenProcessToken      typedef proto :HANDLE, :DWORD, :POINTER
 TypeLookupPrivilegeValueW typedef proto :POINTER, :POINTER, :POINTER
 TypeAdjustTokenPrivileges typedef proto :HANDLE, :DWORD, :POINTER, :DWORD, :POINTER, :POINTER
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SetPrivilegeTokenW
 ; Purpose:    Enable privilege tokens.
@@ -23,6 +22,7 @@ TypeAdjustTokenPrivileges typedef proto :HANDLE, :DWORD, :POINTER, :DWORD, :POIN
 ;             Arg3: Eanble = TRUE, disable = FALSE
 ; Return:     eax = Zero if failed.
 
+.code
 align ALIGN_CODE
 SetPrivilegeTokenW proc uses rbx hProcess:HANDLE, pPrivilegeNameW:POINTER, dEnable:DWORD
   local TokenPriv:TOKEN_PRIVILEGES, PrevTokenPriv:TOKEN_PRIVILEGES

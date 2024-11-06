@@ -13,7 +13,6 @@
 externdef h2dw_Tbl1:BYTE
 externdef h2dw_Tbl2:BYTE
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  hex2qwordW
 ; Purpose:    Load a WIDE string hexadecimal representation of a QWORD.
@@ -21,6 +20,8 @@ externdef h2dw_Tbl2:BYTE
 ; Return:     rax = QWORD.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 hex2qwordW proc pHexW:POINTER
   movzx edx, CHRA ptr [rcx]
@@ -74,6 +75,7 @@ hex2qwordW proc pHexW:POINTER
 
   ret
 hex2qwordW endp
+
 OPTION PROC:DEFAULT
 
 end

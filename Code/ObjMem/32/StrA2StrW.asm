@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrA2StrW
 ; Purpose:    Convert a ANSI string into a WIDE string.
@@ -18,9 +17,9 @@
 ;             Arg2: -> Source ANSI string.
 ; Return:     eax = Number of chars in string, not including the ZTC.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrA2StrW proc pDstStrW:POINTER, pSrcStrA:POINTER
   push edi
@@ -48,7 +47,6 @@ StrA2StrW proc pDstStrW:POINTER, pSrcStrA:POINTER
   ret 8
 StrA2StrW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

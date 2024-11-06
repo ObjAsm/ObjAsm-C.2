@@ -17,7 +17,6 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <dec2dwordW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  dec2dwordW
 ; Purpose:    Convert a decimal WIDE string to a DWORD.

@@ -17,6 +17,7 @@
 ; Return:     eax = HINSTANCE. See ShellExecute return values. 
 ;             A value greater than 32 indicates success.
 
+.code
 align ALIGN_CODE
 ProcName proc uses xbx hParent:HWND, pFileName:POINTER, pDestination:POINTER
   local cApplication[1024]:CHR, dChrCnt:DWORD

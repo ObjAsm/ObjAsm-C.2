@@ -186,6 +186,21 @@ else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
 
+BStr2NewStrA proto :POINTER
+BStr2NewStrW proto :POINTER
+StrA2NewBStr proto :POINTER
+StrW2NewBStr proto :POINTER
+StrA2NewStrW proto :POINTER
+StrW2NewStrA proto :POINTER
+
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  Str2NewBSTR textequ <StrA2NewBStr>
+  BSTR2NewStr textequ <BStr2NewStrA>
+else
+  Str2NewBSTR textequ <StrW2NewBStr>
+  BSTR2NewStr textequ <BStr2NewStrW>
+endif
+
 BStrEnd proto :POINTER
 StrEndA proto :POINTER
 StrEndW proto :POINTER
@@ -329,7 +344,7 @@ else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
 
-BStrComp textequ <StrCompW>
+BStrComp proto :POINTER, :POINTER
 StrCompA proto :POINTER, :POINTER
 StrCompW proto :POINTER, :POINTER
 if TARGET_STR_TYPE eq STR_TYPE_ANSI

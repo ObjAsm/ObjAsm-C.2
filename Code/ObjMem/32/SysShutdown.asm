@@ -51,7 +51,6 @@ SHTDN_REASON_VALID_BIT_MASK                 equ 0C0FFFFFFh
 
 externdef wSysStandby_SeShutdownPrivilege:WORD
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SysShutdown
 ; Purpose:    Shut down the system.
@@ -59,6 +58,7 @@ externdef wSysStandby_SeShutdownPrivilege:WORD
 ;             Arg2: Shutdown reason (see System Shutdown Reason Codes).
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 SysShutdown proc dType:DWORD, dReason:DWORD
   invoke GetCurrentProcess

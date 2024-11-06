@@ -11,4 +11,5 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 % include &ObjMemPath&Common\\Base32HexAlphabet_X.inc
+
 end

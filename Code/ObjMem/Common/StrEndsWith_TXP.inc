@@ -17,6 +17,7 @@
 ;             Arg2: -> Suffix string.
 ; Return:     eax = TRUE of the ending matches, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 ProcName proc uses xbx pString:POINTER, pSuffix:POINTER
   invoke StrEnd, pString

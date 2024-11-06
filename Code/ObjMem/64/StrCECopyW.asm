@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCECopyW
 ; Purpose:    Copy the the source WIDE string with length limitation and return the ZTC address.
@@ -21,6 +20,7 @@
 ;             Arg3: Maximal number of characters not including the ZTC.
 ; Return:     rax -> ZTC.
 
+.code
 align ALIGN_CODE
 StrCECopyW proc uses rbx pDstStrW:POINTER, pSrcStrW:POINTER, dMaxChars:DWORD
   invoke StrCLengthW, rdx, r8d                          ;pSrcStrW, dMaxChars

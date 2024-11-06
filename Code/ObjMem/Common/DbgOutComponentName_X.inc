@@ -7,7 +7,6 @@
 ; ==================================================================================================
 
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutComponentName
 ; Purpose:    Identify a COM-Component.
@@ -17,6 +16,7 @@
 ;             Arg4: -> Destination Window WIDE name.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 DbgOutComponentName proc uses xbx pIID:ptr GUID, dForeColor:DWORD, dBackColor:DWORD, pDestWnd:POINTER
   local hKey:HANDLE, SubKey[260]:CHRA, dSubKeyLength:DWORD

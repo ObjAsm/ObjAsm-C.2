@@ -15,6 +15,7 @@
 ;             Arg2: -> Prefix BSTR.
 ; Return:     eax = TRUE of the beginning matches, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 BStrStartsWith proc pString:POINTER, pPrefix:POINTER
   ?mov xdx, pPrefix

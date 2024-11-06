@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  ParseA
 ; Purpose:    Extract a comma separated substring from a source string.
@@ -22,6 +21,7 @@
 ;                   3: non matching quotation marks.
 ;                   4: empty quote.
 
+.code
 align ALIGN_CODE
 ParseA proc uses edi esi pBuffer:POINTER, pInStr:POINTER, ArgNum:DWORD
   local cmdBuffer[2048]:CHRA

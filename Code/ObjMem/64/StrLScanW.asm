@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrLScanW
 ; Purpose:    Scan for a character from the beginning of a WIDE string. 
@@ -18,6 +17,7 @@
 ;             Arg2: Character to search for.
 ; Return:     rax -> Character address or NULL if not found.
 
+.code
 align ALIGN_CODE
 StrLScanW proc uses rbx rdi pStringW:POINTER, wChar:CHRW
   mov rbx, rdx

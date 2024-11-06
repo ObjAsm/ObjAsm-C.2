@@ -15,6 +15,7 @@
 ;             Arg2: -> Suffix BSTR.
 ; Return:     eax = TRUE of the ending matches, otherwise FALSE.
 
+.code
 align ALIGN_CODE
 BStrEndsWith proc pString:POINTER, pSuffix:POINTER
   ?mov xdx, pSuffix

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrECopy
 ; Purpose:    Copy a BStr to a buffer and return the address of the ZTC.
@@ -19,6 +18,7 @@
 ;             Arg2: -> Source BStr buffer.
 ; Return:     rax -> ZTC.
 
+.code
 align ALIGN_CODE
 BStrECopy proc uses rbx pDstBStr:POINTER, pSrcBStr:POINTER       ;rcx -> DstBStr, rdx -> SrcBStr
   sub rdx, 4

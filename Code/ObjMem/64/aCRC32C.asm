@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  aCRC32C
 ; Purpose:    Compute the CRC-32C (Castagnoli), using the polynomial 11EDC6F41h from an aligned

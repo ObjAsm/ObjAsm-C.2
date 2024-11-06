@@ -15,6 +15,7 @@
 ;             Arg2: -> New string.
 ; Return:     rax -> New allocated string or NULL if failed.
 
+.code
 align ALIGN_CODE
 ProcName proc pOldString:POINTER, pNewString:POINTER
   invoke StrDispose, pOldString

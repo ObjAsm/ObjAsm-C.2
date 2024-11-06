@@ -61,6 +61,7 @@ COLOR_WHITE         equ 0x0F
 ;             RdHi + GrLo + BlHi  =  COLOR_LIGHTGRAY
 ;             RdHi + GrLo + BlLo  =  COLOR_DARKGRAY
 
+.code
 align ALIGN_CODE
 RGB24To16ColorIndex proc dColor:DWORD
   mov ecx, dColor

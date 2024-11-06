@@ -11,10 +11,9 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <bin2byteA>
+ProcName textequ <bin2byteA>
 BIT_COUNT = 8
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  bin2byteA
 ; Purpose:    Conversion of an ANSI input string that contains a binary number in the form of a 

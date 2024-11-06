@@ -12,7 +12,6 @@
 
 externdef HexCharTableW:CHRW
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  dword2hexW
 ; Purpose:    Convert a DWORD to its hexadecimal WIDE string representation.

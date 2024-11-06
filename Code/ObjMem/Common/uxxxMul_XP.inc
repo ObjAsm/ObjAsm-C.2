@@ -8,7 +8,6 @@
 ; ==================================================================================================
 
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uooywordMul / uqqowordMul
 ; Purpose:    Calculate an extended precision unsigned multiplication, emulating the mul x86 instr.
@@ -18,6 +17,7 @@
 ;             Arg4: Multiplier unsigned high word.
 ; Return:     xbx:xcx:xdx:xax = Unsigned product (128/256 bit).
 
+.code
 align ALIGN_CODE
 ProcName proc xMultiplicandLo:XWORD, xMultiplicandHi:XWORD, \
               xMultiplierLo:XWORD, xMultiplierHi:XWORD

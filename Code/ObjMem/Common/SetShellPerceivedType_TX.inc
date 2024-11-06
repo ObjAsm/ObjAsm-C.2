@@ -22,6 +22,7 @@
 ; Note:       To retrieve the perceived type use the AssocGetPerceivedType API.
 ;             dGlobal = TRUE requires adminitrative rights.
 
+.code
 align ALIGN_CODE
 ProcName proc uses xbx dGlobal:DWORD, pExtension:POINTER, pPerceivedType:POINTER
   local hHive:HANDLE, hKey:HANDLE, dResult:DWORD, cBuffer[2*MAX_PATH]:CHR

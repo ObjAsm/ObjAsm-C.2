@@ -1,8 +1,8 @@
 ; ==================================================================================================
 ; Title:      SLR_Init_XP.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
-; Notes:      Version C.1.1, July 2022
+; Version:    C.1.0
+; Notes:      Version C.1.0, July 2022
 ;               - First release.
 ; ==================================================================================================
 
@@ -21,6 +21,7 @@
 ;             X2 = X*(2*N - 1)/3
 ;             Q = N^2*(N^2-1)/12
 
+.code
 align ALIGN_CODE
 SLR_Init proc pSlrData:PSLR_DATA
   ?mov ecx, pSlrData

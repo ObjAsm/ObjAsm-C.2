@@ -11,10 +11,9 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <qword2binA>
+ProcName textequ <qword2binA>
 VALUE_TYPE textequ <QWORD>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  qword2binA
 ; Purpose:    Convert a QWORD to its binary ANSI string representation.

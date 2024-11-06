@@ -13,7 +13,6 @@
 .const
 dTen    DWORD    10
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrToSt0A
 ; Purpose:    Load an ANSI string representation of a floating point number into the st(0)
@@ -23,6 +22,7 @@ dTen    DWORD    10
 ; Note:       - Based on the work of Raymond Filiatreault (FpuLib).
 ;             - Source string should not be greater than 19 chars + zero terminator.
 
+.code
 align ALIGN_CODE
 StrToSt0A proc uses ebx esi edi pSource:POINTER
   local tBCD:TBYTE, wStatusWord:WORD

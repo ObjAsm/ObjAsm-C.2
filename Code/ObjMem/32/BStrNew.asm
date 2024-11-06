@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrNew
 ; Purpose:    Allocate an new copy of the source BStr.
@@ -21,9 +20,9 @@
 ; Arguments:  Arg1: -> Source BStr.
 ; Return:     eax -> New BStr copy.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 BStrNew proc pBStr:POINTER
   mov eax, [esp + 4]                                    ;eax -> BStr
@@ -48,7 +47,6 @@ BStrNew proc pBStr:POINTER
   ret 4
 BStrNew endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

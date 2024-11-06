@@ -19,6 +19,7 @@
 ; Return:     xax -> Uncompressed data or NULL if failed.
 ;             ecx = Uncompressed data size in BYTEs.
 
+.code
 align ALIGN_CODE
 DecompressFileFromRes proc hInst:HINSTANCE, xFileResID:XWORD
   local hResInfo:HRSRC, hResData:HGLOBAL

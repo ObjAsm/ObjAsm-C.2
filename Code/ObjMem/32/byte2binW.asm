@@ -11,10 +11,9 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <byte2binW>
+ProcName textequ <byte2binW>
 VALUE_TYPE textequ <BYTE>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  byte2binW
 ; Purpose:    Convert a BYTE to its binary WIDE string representation.

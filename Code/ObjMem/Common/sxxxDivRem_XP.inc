@@ -13,7 +13,6 @@ USE_OVERFLOW_FLAG equ 1
 DIV_SIGN  equ 1
 REM_SIGN  equ 2
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  syooDivRem / soqqDivRem
 ; Purpose:    Calculate a signed extended precision division, emulating the idiv x86 instr.
@@ -31,6 +30,7 @@ REM_SIGN  equ 2
 ;             The remainder is always less than the divisor in magnitude.
 ;             Don't include xbx in the uses clause.
 
+.code
 align ALIGN_CODE
 ProcName proc sxDividendLoLo:SXWORD, sxDividendHiLo:SXWORD, \
               sxDividendLoHi:SXWORD, sxDividendHiHi:SXWORD, \

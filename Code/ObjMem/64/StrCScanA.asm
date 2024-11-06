@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCScanA
 ; Purpose:    Scan from the beginning of ANSI string for a character with length limitation.
@@ -19,6 +18,7 @@
 ;             Arg3: ANSI character to search for.
 ; Return:     rax -> Character address or NULL if not found.
 
+.code
 align ALIGN_CODE
 StrCScanA proc uses rdi pStringA:POINTER, dMaxCount:DWORD, bChar:CHRA
   mov rdi, rcx

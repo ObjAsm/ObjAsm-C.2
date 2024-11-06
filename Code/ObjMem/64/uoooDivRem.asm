@@ -11,7 +11,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  uoooDivRem
 ; Purpose:    Divide 2 unsigned OWORDs.
@@ -24,6 +23,7 @@
 ;             rbx:rcx = Unsigned remainder.
 ; Note:       Don't include rbx in the uses clause.
 
+.code
 align ALIGN_CODE
 uoooDivRem proc uses rsi qDividendLo:QWORD, qDividendHi:QWORD, \
                          qDivisorLo:QWORD, qDivisorHi:QWORD

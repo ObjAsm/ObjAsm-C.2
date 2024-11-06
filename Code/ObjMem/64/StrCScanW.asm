@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCScanW
 ; Purpose:    Scan from the beginning of a WIDE string for a character with length limitation.
@@ -19,6 +18,7 @@
 ;             Arg3: WIDE character to search for.
 ; Return:     rax -> Character address or NULL if not found.
 
+.code
 align ALIGN_CODE
 StrCScanW proc uses rdi pStringW:POINTER, dMaxCount:DWORD, wChar:CHRW
   mov rdi, rcx                                          ;pStringW

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrLength
 ; Purpose:    Determine the length of a BStr not including the ZTC.
@@ -18,12 +17,15 @@
 ; Return:     rax = Length of the string in characters.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 BStrLength proc pBStr:POINTER
   mov eax, DWORD ptr [rcx - 4]                          ;Get the byte length DWORD
   shr rax, 1                                            ;Character count
   ret
 BStrLength endp
+
 OPTION PROC:DEFAULT
 
 end

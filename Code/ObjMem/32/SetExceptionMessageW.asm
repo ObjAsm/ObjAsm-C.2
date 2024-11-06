@@ -24,7 +24,6 @@ hCBTProcW         HANDLE     ?
 pPrevUnhandledExceptionFilterW  POINTER  ?
 
 .code
-
 align ALIGN_CODE
 CBTProcW proc dCode:DWORD, wParam:WPARAM, lParam:LPARAM
   .if dCode == HCBT_ACTIVATE

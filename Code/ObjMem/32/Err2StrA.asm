@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  Err2StrA
 ; Purpose:    Translate a system error code to an ANSI string.
@@ -19,9 +18,9 @@
 ;             Arg3: Buffer size in characters, inclusive ZTC.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 Err2StrA proc dError:DWORD, pBuffer:POINTER, dMaxChars:DWORD
   mov eax, POINTER ptr [esp + 8]                        ;pBuffer
@@ -35,7 +34,6 @@ Err2StrA proc dError:DWORD, pBuffer:POINTER, dMaxChars:DWORD
   ret 12
 Err2StrA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

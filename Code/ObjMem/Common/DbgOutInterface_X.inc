@@ -18,6 +18,7 @@ externdef DbgColorError:DWORD
 ;             Arg4: -> Destination Window WIDE name.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 DbgOutInterface proc pIID:ptr GUID, dForeColor:DWORD, dBackColor:DWORD, pDest:POINTER
   .if pIID == NULL

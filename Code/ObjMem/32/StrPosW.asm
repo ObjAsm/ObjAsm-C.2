@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrPosW
 ; Purpose:    Find the occurence of string 2 into string1.
@@ -18,9 +17,9 @@
 ;             Arg2: -> Searched WIDE string.
 ; Return:     eax -> string occurence or NULL if not found.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrPosW proc pString1W:POINTER, pString2W:POINTER
   push edi
@@ -63,7 +62,6 @@ align ALIGN_CODE
   ret 8
 StrPosW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

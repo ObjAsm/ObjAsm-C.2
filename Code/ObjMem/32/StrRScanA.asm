@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure: StrRScanA
 ; Purpose:   Scan from the end of an ANSI string for a character.
@@ -18,9 +17,9 @@
 ;            Arg2: Character to search for.
 ; Return:    eax -> Character address or NULL if not found.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrRScanA proc pStringA:POINTER, cChar:CHRA
   invoke StrLengthA, [esp + 4]                          ;pStringA
@@ -28,7 +27,7 @@ StrRScanA proc pStringA:POINTER, cChar:CHRA
   je @@Exit                                             ;Lenght = 0
   push edi
   std
-  mov edi, [esp + 8]                                    ;edi -> StringA
+  mov edi, [esp + 8]                                    ;edi -> STRINGA
   mov ecx, eax
   lea edi, [edi + eax - 1]
   mov al, [esp + 12]                                    ;al = cChar
@@ -43,7 +42,6 @@ StrRScanA proc pStringA:POINTER, cChar:CHRA
   ret 8
 StrRScanA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure: BStrECopy
 ; Purpose:   Copy a BStr to a buffer and return the address of the ZTC.
@@ -19,9 +18,10 @@
 ;            Arg2: -> Source BStr buffer.
 ; Return:    eax -> ZTC.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
 
+OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 BStrECopy proc pDstBStr:POINTER, pSrcBStr:POINTER
   mov eax, [esp + 4]                                    ;eax -> DstBStr
@@ -37,7 +37,6 @@ BStrECopy proc pDstBStr:POINTER, pSrcBStr:POINTER
   ret 8
 BStrECopy endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

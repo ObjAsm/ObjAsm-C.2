@@ -11,7 +11,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  sqqqDivRem
 ; Purpose:    Divide 2 signed QWORDs.
@@ -24,6 +23,7 @@
 ;             ebx:ecx = Signend remainder.
 ; Note:       Don't include ebx in the uses clause.
 
+.code
 align ALIGN_CODE
 sqqqDivRem proc uses edi esi sdDividendLo:SDWORD, sdDividendHi:SDWORD, \
                              sdDivisorLo:SDWORD, sdDivisorHi:SDWORD

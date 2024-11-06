@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCCopyW
 ; Purpose:    Copy the the source WIDE string with length limitation.
@@ -21,6 +20,7 @@
 ;             Arg3: Maximal number of charachters to copy, excluding the ZTC.
 ; Return:     rax = Number of copied BYTEs, including the ZTC.
 
+.code
 align ALIGN_CODE
 StrCCopyW proc uses rdi pBuffer:POINTER, pSrcStringW:POINTER, dMaxChars:DWORD
   ;rcx = pBuffer, rdx = pSrcStringW, r8d = dMaxChars

@@ -2,7 +2,7 @@
 ; Title:      XML_Shared.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
-; Purpose:    ObjAsm XML Test.
+; Purpose:    ObjAsm DOM-XML Test.
 ; Notes:      Version C.1.0, November 2024
 ;               - First release.
 ; ==================================================================================================
@@ -18,8 +18,8 @@ VER_PRODUCTVERSION            equ       1,0,0,0
 VER_PRODUCTVERSION_STR        equ       <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       2
-BUILD_DATE_STR                textequ   <2024-11-05>
+BUILD_NUMBER                  equ       4
+BUILD_DATE_STR                textequ   <2024-11-06>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       RLS
 

@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  sqqqDiv
 ; Purpose:    Divide 2 signed QWORDs.
@@ -21,6 +20,7 @@
 ;             Arg4: Divisor signed high word.
 ; Return:     rax = edx::eax = Signed quotient.
 
+.code
 align ALIGN_CODE
 sqqqDiv proc sdDividendLo:SDWORD, sdDividendHi:SDWORD, \
              sdDivisorLo:SDWORD, sdDivisorHi:SDWORD

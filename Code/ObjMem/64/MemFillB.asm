@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MemFillB
 ; Purpose:    Fill a memory block with a given byte value.
@@ -22,6 +21,8 @@
 ; Return:     Nothing.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 MemFillB proc pMem:POINTER, dCount:DWORD, bFillByte:BYTE
   ;rcx -> Memory block, edx = dCount; r8b = fill BYTE
@@ -60,6 +61,7 @@ MemFillB proc pMem:POINTER, dCount:DWORD, bFillByte:BYTE
 @@:
   ret
 MemFillB endp
+
 OPTION PROC:DEFAULT
 
 end

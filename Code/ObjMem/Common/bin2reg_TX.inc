@@ -25,6 +25,8 @@ NextChar macro
 endm
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 ProcName proc pString:POINTER
   ?mov ecx, [esp + 4]                                   ;xcx -> Buffer
@@ -37,4 +39,5 @@ ProcName proc pString:POINTER
   not eax
   ret
 ProcName endp
+
 OPTION PROC:DEFAULT

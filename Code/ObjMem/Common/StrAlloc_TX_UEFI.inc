@@ -14,6 +14,7 @@
 ; Arguments:  Arg1: Character count without the ZTC.
 ; Return:     rax -> New allocated string or NULL if failed.
 
+.code
 align ALIGN_CODE
 ProcName proc dChars:DWORD
   local pBuffer:POINTER

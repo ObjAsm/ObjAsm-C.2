@@ -29,6 +29,7 @@
 ;             - f_ALIGN: Add a heading space to align the output with other negative numbers
 ;             - f_PLUS: like f_ALIGN, but using a "+" character.
 
+.code
 align ALIGN_CODE
 St0ToStrA proc uses xdi xsi pBuffer:POINTER, dPadding:DWORD, dDecimals:DWORD, dFlags:DWORD
   local dTempDw         :DWORD

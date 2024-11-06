@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetFileHashA
 ; Purpose:    Compute the hash value from the content of a file.
@@ -25,6 +24,7 @@
 ;             for SHAx) and an algorithm ID, for MD5 set dHashType to GFH_MD5.
 ;             See ObjMem.inc GFH_xxx.
 
+.code
 align ALIGN_CODE
 GetFileHashA proc pHash:POINTER, pFileNameA:POINTER, dHashType:DWORD
   local hProv:HANDLE, hHash:HANDLE, hFile:HANDLE

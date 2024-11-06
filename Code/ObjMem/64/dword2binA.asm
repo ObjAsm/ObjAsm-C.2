@@ -11,10 +11,9 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <dword2binA>
+ProcName textequ <dword2binA>
 VALUE_TYPE textequ <DWORD>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  dword2binA
 ; Purpose:    Convert a DWORD to its binary ANSI string representation.

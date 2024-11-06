@@ -12,7 +12,6 @@
 
 externdef HexCharTableA:BYTE
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  qword2hexA
 ; Purpose:    Convert a QWORD to its hexadecimal ANSI string representation.
@@ -22,9 +21,9 @@ externdef HexCharTableA:BYTE
 ; Note:       The destination buffer must be at least 17 BYTEs large to allocate the output string
 ;             (16 character BYTEs + ZTC = 17 BYTEs).
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 qword2hexA proc pBuffer:POINTER, qValue:QWORD
   mov edx, [esp + 4]                                    ;edx -> Buffer
@@ -64,8 +63,7 @@ qword2hexA proc pBuffer:POINTER, qValue:QWORD
   ret 12
 qword2hexA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 
 ;Version C.1.0
@@ -78,8 +76,7 @@ OPTION EPILOGUE:EpilogueDef
 ;    mov BYTE ptr [eax + pos], reg
 ;endm
 ;
-;OPTION PROLOGUE:NONE
-;OPTION EPILOGUE:NONE
+;OPTION PROC:NONE;
 ;
 ;align ALIGN_CODE
 ;qword2hex proc pBuffer:POINTER, qValue:QWORD

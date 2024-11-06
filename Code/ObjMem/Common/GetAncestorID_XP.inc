@@ -16,6 +16,7 @@ externdef p1stOMD:POINTER
 ; Arguments:  Arg1: -> Object class ID.
 ; Return:     eax = Ancestor type ID or zero if not found.
 
+.code
 align ALIGN_CODE
 GetAncestorID proc dObjectID:DWORD
   mov eax, dObjectID

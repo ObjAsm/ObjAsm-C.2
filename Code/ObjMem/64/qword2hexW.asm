@@ -14,7 +14,6 @@
 
 externdef HexCharTableW:CHRW
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  qword2hexW
 ; Purpose:    Convert a QWORD to its hexadecimal WIDE string representation.
@@ -25,6 +24,8 @@ externdef HexCharTableW:CHRW
 ;             (16 character WORDs + ZTC = 34 BYTEs).
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 qword2hexW proc pBuffer:POINTER, qValue:QWORD
   ;rcx -> Buffer, edx = dValue
@@ -47,6 +48,7 @@ qword2hexW proc pBuffer:POINTER, qValue:QWORD
   m2z CHRW ptr [rcx + 16*sizeof(CHRW)]                              ;Set ZTC
   ret
 qword2hexW endp
+
 OPTION PROC:DEFAULT
 
 end

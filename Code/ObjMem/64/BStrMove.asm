@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrMove
 ; Purpose:    Move part of a BStr. The ZTC is not appended automatically.
@@ -20,6 +19,7 @@
 ;             Arg3: Character count.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 BStrMove proc pDstBStr:POINTER, pSrcBStr:POINTER, dCharCount:DWORD
   ;rcx -> DstBStr, rdx -> SrcBStr, r8d = dCharCount

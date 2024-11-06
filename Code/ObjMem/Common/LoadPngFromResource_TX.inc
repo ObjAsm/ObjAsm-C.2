@@ -21,6 +21,7 @@ GDIPVER equ 0100h
 ; Arguments:  Arg1: -> Resource name or ID. 
 ; Return:     xax = hBitmap or zero if failed.
 
+.code
 align ALIGN_CODE
 ProcName proc pResName:PSTRING
   local GPSI:GdiplusStartupInput, xToken:XWORD

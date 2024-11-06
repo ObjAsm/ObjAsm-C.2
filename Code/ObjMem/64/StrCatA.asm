@@ -12,7 +12,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCatA
 ; Purpose:    Concatenate 2 ANSI strings.
@@ -20,6 +19,7 @@
 ;             Arg2: Source ANSI string.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 StrCatA proc pDstStrA:POINTER, pSrcStrA:POINTER
   invoke StrEndA, rcx                                   ;pDstStrA

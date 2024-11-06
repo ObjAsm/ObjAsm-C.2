@@ -20,6 +20,7 @@
 ; Formulas:   Var = Y2/N-(Y/N)^2  or  (Y2*N-Y^2)/N^2
 ;             where Y: Sum(y), Y2: Sum(y^2), N:Population count = Array size.
 
+.code
 align ALIGN_CODE
 ProcName proc pArray:POINTER, xCount:XWORD, pVariance:POINTER
   ?mov ecx, pArray

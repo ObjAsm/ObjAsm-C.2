@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  WaitForProcess
 ; Purpose:    Synchronisation procedure that waits until a process has finished.
@@ -18,9 +17,9 @@
 ;             Arg2: Timeout value in ms.
 ; Return:     eax = Wait result (WAIT_ABANDONED, WAIT_OBJECT_0 or WAIT_TIMEOUT).
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 WaitForProcess proc dProcessID:DWORD, dTimeOut:DWORD
   invoke OpenProcess, SYNCHRONIZE, FALSE, [esp + 4]     ;dProcessID
@@ -38,7 +37,6 @@ WaitForProcess proc dProcessID:DWORD, dTimeOut:DWORD
   ret 8
 WaitForProcess endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

@@ -17,6 +17,7 @@
 ;             Arg3: -> DTL_DATE
 ; Return:     eax = Number of bytes copied, including the ZTC.
 
+.code
 align ALIGN_CODE
 ProcName proc uses xdi xsi pDest:PSTRING, dFormat:DWORD, pDate:PDTL_DATE
   local DateSepChar:CHR, cLocaleBuffer[4]:CHR

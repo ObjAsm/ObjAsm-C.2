@@ -17,6 +17,7 @@
 ;             Arg2: Resource ID.
 ; Return:     xax = HBITMAP or NULL if failed.
 
+.code
 align ALIGN_CODE
 CreateBitmapFromCompressedFileInRes proc hInst:HINSTANCE, xResourceID:XWORD
   local pData:POINTER, hBitmap:HBITMAP

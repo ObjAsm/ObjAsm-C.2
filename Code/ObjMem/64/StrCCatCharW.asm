@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrCCatCharW
 ; Purpose:    Append a character to the end of a WIDE string with length limitation.
@@ -19,6 +18,7 @@
 ;             Arg3: Maximal number of characters that fit into the destination buffer.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 StrCCatCharW proc pBuffer:POINTER, cChar:CHRW, dMaxChars:DWORD
   invoke StrEndW, rcx                                   ;pBuffer

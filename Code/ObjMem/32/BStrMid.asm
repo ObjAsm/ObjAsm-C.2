@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrMid
 ; Purpose:    Extract a substring from a BStr string.
@@ -20,9 +19,9 @@
 ;             Arg3: Character count.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 BStrMid proc pDstBStr:POINTER, pSrcBStr:POINTER, dStart:DWORD, dCount:DWORD
   mov ecx, [esp + 8]                                    ;ecx -> SrcBStr
@@ -62,7 +61,6 @@ BStrMid proc pDstBStr:POINTER, pSrcBStr:POINTER, dStart:DWORD, dCount:DWORD
   ret 16
 BStrMid endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

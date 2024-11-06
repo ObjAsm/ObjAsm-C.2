@@ -10,16 +10,15 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrEndA
 ; Purpose:    Get the address of the zero character that terminates the string.
 ; Arguments:  Arg1: -> Source ANSI string.
 ; Return:     eax -> ZTC.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrEndA proc pStringA:POINTER
   mov eax, DWORD ptr [esp + 4]
@@ -74,7 +73,6 @@ StrEndA proc pStringA:POINTER
   ret 4
 StrEndA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

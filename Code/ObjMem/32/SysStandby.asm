@@ -12,16 +12,15 @@
 
 CStrW wSysStandby_SeShutdownPrivilege, "SeShutdownPrivilege"
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SysStandby
 ; Purpose:    Set the system in standby modus.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 SysStandby proc
   invoke GetCurrentProcess
@@ -35,7 +34,6 @@ SysStandby proc
   ret
 SysStandby endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

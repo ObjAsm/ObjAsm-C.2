@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  MemSwap
 ; Purpose:    Exchange the memory content from a memory buffer to another.
@@ -23,6 +22,8 @@
 ; Return:     Nothing.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 MemSwap proc pMem1:POINTER, pMem2:POINTER, dCount:DWORD
   mov r10, rdx
@@ -66,6 +67,7 @@ MemSwap proc pMem1:POINTER, pMem2:POINTER, dCount:DWORD
 @@:
   ret
 MemSwap endp
+
 OPTION PROC:DEFAULT
 
 end

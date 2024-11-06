@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DllErr2StrW
 ; Purpose:    Translate an error code to a WIDE string stored in a DLL.
@@ -20,6 +19,7 @@
 ;             Arg4: -> DLL WIDE name.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 DllErr2StrW proc uses rbx dError:DWORD, pBuffer:POINTER, dMaxChars:DWORD, pDllNameW:POINTER
   ;ecx = dError, rdx -> Buffer, r8d = dMaxChars, r9 -> DllNameA

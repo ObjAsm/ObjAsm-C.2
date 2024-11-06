@@ -13,9 +13,8 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-ProcName equ <StrLowerA>
+ProcName textequ <StrLowerA>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrLowerA
 ; Purpose:    Convert all ANSI string characters into uppercase.

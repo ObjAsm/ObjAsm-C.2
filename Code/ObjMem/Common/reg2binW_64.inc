@@ -36,6 +36,8 @@ endm
 ; Return:     Nothing.
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 ProcName proc pBuffer:POINTER, Value:VALUE_TYPE
   ??CHARS = type(VALUE_TYPE)*8
@@ -47,4 +49,5 @@ ProcName proc pBuffer:POINTER, Value:VALUE_TYPE
   m2z CHRW ptr [rcx + sizeof(CHRW)*??CHARS]             ;Write ZTC
   ret
 ProcName endp
+
 OPTION PROC:DEFAULT

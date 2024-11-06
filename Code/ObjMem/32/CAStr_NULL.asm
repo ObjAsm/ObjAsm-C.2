@@ -10,9 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.const
-
-align ALIGN_DATA
-bNULL  BYTE  0
+% include &ObjMemPath&Common\CAStr_NULL_X.inc
 
 end

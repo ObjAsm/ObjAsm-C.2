@@ -12,7 +12,6 @@
 
 ProcName textequ <DbgShowObjectHeader>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgShowObjectHeader
 ; Purpose:    Output heading object information.

@@ -12,7 +12,6 @@
 
 % include &ObjMemPath&Common\RadixSort32.inc            ;Helper macros
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RadixSortF32
 ; Purpose:    Ascending sort of an array of single precision floats (REAL4) using a modified
@@ -28,9 +27,9 @@
 ; Links:      - http://www.codercorner.com/RadixSortRevisited.htm
 ;             - http://en.wikipedia.org/wiki/Radix_sort
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 RadixSortF32 proc pArray:POINTER, dCount:DWORD, pWorkArea:POINTER
   push ebx
@@ -73,7 +72,6 @@ RadixSortF32 proc pArray:POINTER, dCount:DWORD, pWorkArea:POINTER
   ret 8
 RadixSortF32 endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

@@ -20,16 +20,15 @@ NextCharW macro
   rcl edx, 1                                            ;Pass the carry from prev operation
 endm
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  bin2qwordW
 ; Purpose:    Compute a WIDE string binary representation of a QWORD.
 ; Arguments:  Arg1: -> WIDE binary string.
 ; Return:     edx::eax = QWORD.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 bin2qwordW proc pBuffer:POINTER
   push ebx
@@ -48,7 +47,6 @@ bin2qwordW proc pBuffer:POINTER
   ret 4
 bin2qwordW endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

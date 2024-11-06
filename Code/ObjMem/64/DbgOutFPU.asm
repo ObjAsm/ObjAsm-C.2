@@ -12,7 +12,6 @@
 
 ProcName textequ <DbgOutFPU>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  DbgOutFPU
 ; Purpose:    Display the content of the FPU.

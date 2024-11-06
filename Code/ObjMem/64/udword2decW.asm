@@ -1,8 +1,8 @@
 ; ==================================================================================================
 ; Title:      udword2decW.asm
 ; Author:     G. Friedrich
-; Version:    C.1.1
-; Notes:      Version C.1.1, May 2022
+; Version:    C.1.0
+; Notes:      Version C.1.0, May 2022
 ;               - First release.
 ; ==================================================================================================
 
@@ -14,7 +14,6 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 externdef TwoDecDigitTableW:WORD
 ProcName textequ <udword2decW>
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  udword2decW
 ; Purpose:    Convert an unsigned DWORD to its decimal WIDE string representation.
@@ -24,6 +23,6 @@ ProcName textequ <udword2decW>
 ; Note:       The destination buffer must be at least 22 BYTEs large to allocate the output string
 ;             (10 WIDE characters + ZTC = 22 BYTEs).
 
-% include &ObjMemPath&Common\udword2decT64.inc
+% include &ObjMemPath&Common\udword2dec_T64.inc
 
 end

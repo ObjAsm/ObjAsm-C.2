@@ -21,6 +21,7 @@
 ;             Arg4: File HANDLE.
 ; Return:     eax = TRUE if succeeded, otherwaise FALSE.
 
+.code
 align ALIGN_CODE
 CompressMemToFile proc pUncompressedData:POINTER, dUncompressedDataSize:DWORD, \
                        dCompressionAlgorithm:DWORD, hFile:HANDLE

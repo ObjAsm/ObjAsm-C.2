@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrECatCharA
 ; Purpose:    Append a character to an ANSI string and return the address of the ending zero.
@@ -20,9 +19,9 @@
 ;             Arg2: -> ANSI character.
 ; Return:     eax -> ZTC.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrECatCharA proc pBuffer:POINTER, bcChar:CHRA
   invoke StrEndA, [esp + 4]                             ;pBuffer
@@ -32,7 +31,6 @@ StrECatCharA proc pBuffer:POINTER, bcChar:CHRA
   ret 8
 StrECatCharA endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
+OPTION PROC:DEFAULT
 
 end

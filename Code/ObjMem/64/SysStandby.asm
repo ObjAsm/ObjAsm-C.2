@@ -12,13 +12,13 @@
 
 CStrW wSysStandby_SeShutdownPrivilege, "SeShutdownPrivilege"
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SysStandby
 ; Purpose:    Set the system in standby modus.
 ; Arguments:  None.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 SysStandby proc uses rdi
   invoke GetCurrentProcess

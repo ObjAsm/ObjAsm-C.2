@@ -16,6 +16,7 @@
 ;             Arg2: -> GUID.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 GUID2BStr proc uses xdi xsi pBString:POINTER, pGUID:POINTER
   if TARGET_BITNESS eq 32

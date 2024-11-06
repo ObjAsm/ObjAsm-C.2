@@ -22,7 +22,6 @@ FIND_FILE_PARAMSA struct
   cPreStr     CHRA       MAX_PATH DUP(?)
 FIND_FILE_PARAMSA ends
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  FindFileA
 ; Purpose:    Search for a file in a list of paths.

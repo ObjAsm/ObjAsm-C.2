@@ -8,36 +8,18 @@
 
 
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
+TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
+ProcName textequ <GetPrevInstanceA>
+
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetPrevInstanceA
-; Purpose:    Return a HANDLE to a previously running instance of an application.
+; Purpose:    Return a ANDLE to a previously running instance of an application.
 ; Arguments:  Arg1: -> ANSI application name.
 ;             Arg2: -> ANSI class name.
 ; Return:     rax = Window HANDLE of the application instance or zero if failed.
 
-align ALIGN_CODE
-GetPrevInstanceA proc uses rdi pStrIDA:POINTER, pClassNameA:POINTER
-  invoke CreateSemaphore, 0, 0, 1, pStrIDA
-  mov rdi, rax                                          ;edi = Semaphore HANDLE
-  invoke GetLastError
-  cmp eax, ERROR_ALREADY_EXISTS
-  je @@1
-  cmp eax, ERROR_SUCCESS
-  jne @@2                                               ;Find other instance
-  xor eax, eax
-  jmp @@Exit
-@@1:
-  invoke CloseHandle, rdi                               ;Close the Semaphore HANDLE
-@@2:
-  invoke FindWindow, pClassNameA, NULL                  ;Try to find another instance
-  test rax, rax                                         ;already running
-  jz @@Exit                                             ;return 0 to exit
-  invoke GetLastActivePopup, rax                        ;eax = hWnd
-@@Exit:
-  ret
-GetPrevInstanceA endp
+; % include &ObjMemPath&Common\GetPrevInstance_TX.inc
 
 end

@@ -19,6 +19,7 @@ externdef DbgColorError:DWORD
 ;             Arg5: -> Destination window WIDE name.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 ProcName proc uses xbx pString:POINTER, dForeColor:DWORD, dBackColor:DWORD, dEffects:DWORD, pDest:POINTER
   .if pString == NULL

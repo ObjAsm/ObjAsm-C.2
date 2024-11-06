@@ -10,7 +10,6 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrCNew
 ; Purpose:    Allocate a new copy of the source BStr with length limitation.
@@ -21,6 +20,7 @@
 ;             Arg2: Maximal character count.
 ; Return:     rax -> New BStr copy or NULL.
 
+.code
 align ALIGN_CODE
 BStrCNew proc uses rdi pBStr:POINTER, dMaxChars:DWORD   ;rcx -> DstBStr, edx = dMaxChars
   .if rcx == NULL

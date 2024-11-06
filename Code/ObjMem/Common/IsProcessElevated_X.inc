@@ -15,6 +15,7 @@
 ; Example:    invoke GetCurrentProcess
 ;             invoke IsProcessElevated, xax
 
+.code
 align ALIGN_CODE
 IsProcessElevated proc uses xbx, hProcess:HANDLE
   local hToken:HANDLE

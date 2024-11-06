@@ -12,7 +12,6 @@
 
 % include &IncPath&Windows\Psapi.inc
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  FindModuleByAddrA
 ; Purpose:    Find the module name from an address on a WinNT system.
@@ -20,6 +19,7 @@
 ;             Arg2: -> ANSI module name buffer.
 ; Return:     eax = Number of characters copied into the buffer.
 
+.code
 align ALIGN_CODE
 FindModuleByAddrA proc uses edi esi ebx pAddress:POINTER, pModuleNameA:POINTER
   local dPID:DWORD
