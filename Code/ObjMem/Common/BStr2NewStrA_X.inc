@@ -17,15 +17,15 @@
 .code
 align ALIGN_CODE
 BStr2NewStrA proc bstr:POINTER
-	local pBuffer:PSTRING, dBufferLen:DWORD
+  local pBuffer:PSTRING, dBufferLen:DWORD
 
-	invoke WideCharToMultiByte, CP_ACP, 0, bstr, -1, pBuffer, 0, NULL, NULL
+  invoke WideCharToMultiByte, CP_ACP, 0, bstr, -1, pBuffer, 0, NULL, NULL
   .if eax != 0
-  	mov dBufferLen, eax
-  	invoke GlobalAlloc, GPTR, eax
-  	mov pBuffer, xax
-  	invoke WideCharToMultiByte, CP_ACP, 0, bstr, -1, pBuffer, dBufferLen, NULL, NULL
-  	mov xax, pBuffer
+    mov dBufferLen, eax
+    invoke GlobalAlloc, GPTR, eax
+    mov pBuffer, xax
+    invoke WideCharToMultiByte, CP_ACP, 0, bstr, -1, pBuffer, dBufferLen, NULL, NULL
+    mov xax, pBuffer
   .endif
-	ret
+  ret
 BStr2NewStrA endp

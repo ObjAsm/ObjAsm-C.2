@@ -10,8 +10,8 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetPrevInstance
 ; Purpose:    Return a HANDLE to a previously running instance of an application.
-; Arguments:  Arg1: -> Application name.
-;             Arg2: -> Class name.
+; Arguments:  Arg1: -> Any application ID name.
+;             Arg2: -> Window class name.
 ; Return:     rax = Window HANDLE of the application instance or zero if failed.
 
 .code
@@ -29,7 +29,7 @@ ProcName proc uses xdi pStrID:POINTER, pClassName:POINTER
 @@1:
   invoke CloseHandle, xdi                               ;Close the Semaphore HANDLE
 @@2:
-  invoke FindWindow, pClassName, NULL                  ;Try to find another instance
+  invoke FindWindow, pClassName, NULL                   ;Try to find another instance
   test xax, xax                                         ;already running
   jz @@Exit                                             ;return 0 to exit
   invoke GetLastActivePopup, xax                        ;xax = hWnd

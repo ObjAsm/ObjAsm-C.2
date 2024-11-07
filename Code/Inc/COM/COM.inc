@@ -267,8 +267,6 @@ endm
 COM_INTERFACE_END macro
   ;;Terminate structure definition
   ??Interface ends
-
-%echo  P%??InterfaceName typedef ptr ??Interface            ;;Pointer type to interface struct 
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

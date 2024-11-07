@@ -16,10 +16,10 @@ ProcName textequ <GetPrevInstanceW>
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetPrevInstanceW
 ; Purpose:    Return a HANDLE to a previously running instance of an application.
-; Arguments:  Arg1: -> WIDE application name.
-;             Arg2: -> WIDE class name.
-; Return:     rax = Window HANDLE of the application instance or zero if failed.
+; Arguments:  Arg1: -> Any application ID WIDE name.
+;             Arg2: -> WIDE Window class name.
+; Return:     eax = Window HANDLE of the application instance or zero if failed.
 
-; % include &ObjMemPath&Common\GetPrevInstance_TX.inc
+% include &ObjMemPath&Common\GetPrevInstance_TX.inc
 
 end

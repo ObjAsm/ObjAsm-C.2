@@ -18,17 +18,17 @@
 .code
 align ALIGN_CODE
 StrW2NewBStr proc pStringW:POINTER
-	local bstr:BSTR, dBufferSize:DWORD
+  local bstr:BSTR, dBufferSize:DWORD
 
-	invoke StrSizeW, pStringW
+  invoke StrSizeW, pStringW
   .if eax != 0
-  	mov dBufferSize, eax
-  	mov bstr, $invoke(SysAllocStringByteLen, NULL, eax)
-  	mov ecx, dBufferSize
-  	sub ecx, sizeof(CHRW)                                ;This value does not include the ZTC
-  	mov [xax - sizeof DWORD], ecx
-  	invoke MemClone, xax, pStringW, dBufferSize
-  	mov xax, bstr
+    mov dBufferSize, eax
+    mov bstr, $invoke(BStrAlloc, eax)
+    mov ecx, dBufferSize
+    sub ecx, sizeof(CHRW)                                ;This value does not include the ZTC
+    mov [xax - sizeof DWORD], ecx
+    invoke MemClone, xax, pStringW, dBufferSize
+    mov xax, bstr
   .endif
-	ret
+  ret
 StrW2NewBStr endp

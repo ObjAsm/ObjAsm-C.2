@@ -44,22 +44,22 @@ ProcName proc uses xbx xdi pBuffer:POINTER, xInput:XWORD, dBase:DWORD
       neg xax
     .endif
   endif
-	push 0                                                 ;Push ZTC
-	.repeat
+  push 0                                                 ;Push ZTC
+  .repeat
     xor edx, edx
-  	div xcx
-  	push XWORD ptr [xbx + xdx*sizeof(CHR)]
-  	test xax, xax
-	.until ZERO?
-	xor ecx, ecx
-	.repeat
+    div xcx
+    push XWORD ptr [xbx + xdx*sizeof(CHR)]
+    test xax, xax
+  .until ZERO?
+  xor ecx, ecx
+  .repeat
     pop xax
     add ecx, sizeof(CHR)
-  	stosc
-  	test al, al
-	.until ZERO?
-	sub xdi, pBuffer                                       ;Return the number of BYTEs in the buffer,
-	mov ecx, edi                                           ;including the ZTC
+    stosc
+    test al, al
+  .until ZERO?
+  sub xdi, pBuffer                                       ;Return the number of BYTEs in the buffer,
+  mov ecx, edi                                           ;including the ZTC
   mov xax, xdi                                           ;Return -> Buffer  
-	ret
+  ret
 ProcName endp

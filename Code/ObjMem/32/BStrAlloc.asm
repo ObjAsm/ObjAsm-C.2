@@ -1,9 +1,11 @@
 ; ==================================================================================================
 ; Title:      BStrAlloc.asm
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.1.1
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
+;             Version C.1.1, November 2024
+;               - Allocation done using SysAllocStringByteLen.
 ; ==================================================================================================
 
 
@@ -23,7 +25,7 @@ align ALIGN_CODE
 BStrAlloc proc dChars:DWORD
   mov ecx, [esp + 4]                                    ;ecx = dChars
   lea edx, [2*ecx + 6]                                  ;Convert to word sized & add DWORD + ZTC
-  invoke GlobalAlloc, 0, edx                            ;GMEM_FIXED = 0
+  invoke SysAllocStringByteLen, NULL, edx
   .if eax != NULL
     m2z DWORD ptr [eax]                                 ;Set length field to zero
     add eax, 4                                          ;Point to the WIDE character array

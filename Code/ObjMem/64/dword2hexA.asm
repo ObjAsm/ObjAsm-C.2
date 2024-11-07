@@ -22,6 +22,8 @@ externdef HexCharTableA:CHRA
 ;             (8 character BYTEs + ZTC = 9 BYTEs).
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 dword2hexA proc pBuffer:POINTER, dValue:DWORD
   ;rcx -> Buffer, edx = dValue

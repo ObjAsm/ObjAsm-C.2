@@ -17,15 +17,15 @@
 .code
 align ALIGN_CODE
 BStr2NewStrW proc bstr:POINTER
-	local pBuffer:PSTRING, dBufferSize:DWORD
+  local pBuffer:PSTRING, dBufferSize:DWORD
 
-	invoke StrSizeW, bstr
+  invoke StrSizeW, bstr
   .if eax != 0
-  	mov dBufferSize, eax
-  	invoke GlobalAlloc, GPTR, eax
-  	mov pBuffer, xax
-  	invoke MemClone, xax, bstr, dBufferSize
-  	mov xax, pBuffer
+    mov dBufferSize, eax
+    invoke GlobalAlloc, GPTR, eax
+    mov pBuffer, xax
+    invoke MemClone, xax, bstr, dBufferSize
+    mov xax, pBuffer
   .endif
-	ret
+  ret
 BStr2NewStrW endp

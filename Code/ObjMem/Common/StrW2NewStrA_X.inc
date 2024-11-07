@@ -17,16 +17,16 @@
 .code
 align ALIGN_CODE
 StrW2NewStrA proc pStringW:POINTER
-	local pStringA:PSTRINGA, dCharCount:DWORD
+  local pStringA:PSTRINGA, dCharCount:DWORD
 
-	invoke StrLengthW, pStringW
-	mov dCharCount, eax
-	invoke StrAllocA, eax
-	.if xax != NULL
-	  mov pStringA, xax
-	  inc dCharCount
-  	invoke WideCharToMultiByte, CP_ACP, 0, pStringW, dCharCount, xax, dCharCount, NULL, NULL
-  	mov xax, pStringA
+  invoke StrLengthW, pStringW
+  mov dCharCount, eax
+  invoke StrAllocA, eax
+  .if xax != NULL
+    mov pStringA, xax
+    inc dCharCount
+    invoke WideCharToMultiByte, CP_ACP, 0, pStringW, dCharCount, xax, dCharCount, NULL, NULL
+    mov xax, pStringA
   .endif
-	ret
+  ret
 StrW2NewStrA endp

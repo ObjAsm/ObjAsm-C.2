@@ -25,5 +25,5 @@ BStrComp proc bstr1:POINTER, bstr2:POINTER
   .if ZERO?
     invoke StrCompW, xcx, xdx
   .endif
-	ret
+  ret
 BStrComp endp

@@ -15,7 +15,7 @@ Debug=1
 4=..\..\..\Code\Inc\Windows\oaidl.inc
 5=OcxContainer_Shared.inc
 6=..\..\..\Code\Macros\WinHelpers.inc
-7=..\..\..\Code\ObjMem\X\ComEventsAdvice.asm
+7=
 8=OcxContainer_Globals.inc
 9=..\..\..\Code\Objects\ObjIDs.inc
 10=..\..\..\Code\Macros\System.inc
@@ -107,7 +107,7 @@ Group=Added files,Assembly,Resources,Misc,Modules,Objects,Macros,Dialogs
 4=1
 5=2
 6=7
-7=1
+7=
 8=1
 9=1
 10=7
@@ -185,7 +185,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=15
+MilestoneOnDateDate=7
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -221,19 +221,19 @@ ProductVer4Range=0
 
 [Size]
 2=0,0,0,0,9224
-1=0,0,0,0,1555
+1=0,0,0,0,4341
 6=0,0,0,0,4305
 4=0,0,0,0,35382
 31=0,0,0,0,6690
 8=0,0,0,0,262
-7=0,0,0,0,590
+7=
 9=0,0,0,0,9918
 10=0,0,0,0,20306
 5=0,0,1838,628,1172
 12=0,0,0,0,18583
 11=
 14=
-13=0,0,1213,691,427
+13=0,0,1213,691,5323
 15=0,0,0,0,2950
 18=
 21=
@@ -250,7 +250,7 @@ ProductVer4Range=0
 28=0,0,0,0,250
 29=
 30=0,0,0,0,344
-3=0,0,0,0,8272
+3=0,0,0,0,1762
 32=
 40=0,0,0,0,4319
 42=0,0,0,0,3264
@@ -275,16 +275,16 @@ ProductVer4Range=0
 53=
 54=
 [Find]
-1="MethodAddr"
-2="szOcxContainerDemoApp"
-3="classFactory"
-4="CloneRect"
-5="RECt"
-6="s2s"
-7="m2m"
-8="; Return:    "
-9=";            Arg2:"
-10="; Arguments: "
+1="IFlashObjectInterface"
+2="COM_INTERFACE_BEG"
+3="IShockwaveFlashVtbl"
+4="MethodAddr"
+5="szOcxContainerDemoApp"
+6="classFactory"
+7="CloneRect"
+8="RECt"
+9="s2s"
+10="m2m"
 [Collapse]
 36=
 3=
@@ -354,9 +354,9 @@ ProductVer4Range=0
 [BreakPoint]
 0=
 [AutoLoad]
-AutoLoad=1,3,2
+AutoLoad=1
 [PTimer]
-PTimer=473971418
+PTimer=483023621
 [GroupExpand]
 GroupExpand=1,1,0,1,0,0,1,1,0
 [RADebugBP]

@@ -22,6 +22,8 @@ externdef HexCharTableW:CHRW
 ;             (8 character WORDs + ZTC = 18 BYTEs).
 
 OPTION PROC:NONE
+
+.code
 align ALIGN_CODE
 dword2hexW proc pBuffer:POINTER, dValue:DWORD
   ;rcx -> Buffer, edx = dValue

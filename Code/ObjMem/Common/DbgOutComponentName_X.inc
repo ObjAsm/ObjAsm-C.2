@@ -22,7 +22,7 @@ DbgOutComponentName proc uses xbx pIID:ptr GUID, dForeColor:DWORD, dBackColor:DW
   local hKey:HANDLE, SubKey[260]:CHRA, dSubKeyLength:DWORD
 
   lea xbx, SubKey
-	FillStringA [xbx], <CLSID\{>
+  FillStringA [xbx], <CLSID\{>
   invoke GUID2StrA, addr SubKey[7], pIID
   invoke DbgOutTextA, addr SubKey[7] , dForeColor, dBackColor, DBG_EFFECT_NORMAL, pDestWnd
   FillStringA [xbx + 43], <}>
