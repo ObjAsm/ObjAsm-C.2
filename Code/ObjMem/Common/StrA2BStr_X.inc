@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      Str2BStrA.asm
+; Title:      StrA2BStr_X.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2017
@@ -7,42 +7,24 @@
 ; ==================================================================================================
 
 
-% include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
-% include &ObjMemPath&ObjMemWin.cop
-
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  Str2BStrA
+; Procedure:  StrA2BStr
 ; Purpose:    Convert a ANSI string into a BStr.
 ; Arguments:  Arg1: -> Destination BStr buffer = Buffer address + sizeof(DWORD).
 ;             Arg2: -> Source ANSI string.
-; Return:     eax = String length.
+; Return:     eax = Number of BYTEs in the BSTR, including the ZTC.
 
 .code
 align ALIGN_CODE
-Str2BStrA proc uses rdi rsi pDstBStr:POINTER, pSrcStrA:POINTER
-  mov rdi, pDstBStr
-  mov rsi, pSrcStrA
-  invoke StrLengthA, rsi
-  mov ecx, eax
-  add rsi, rax
-  inc ecx
-  shl eax, 1
-  push rax
-  add rdi, rax
-  xor eax, eax
-  std
-@@:
-  lodsb
-  stosw
-  dec ecx
-  test ecx, ecx
-  jne @B
-  cld
-  pop rax
-  mov rdi, pDstBStr
-  mov DCHRW ptr [rdi - sizeof(DCHRW)], eax
-  shr eax, 1
-  ret
-Str2BStrA endp
+StrA2BStr proc pDstBStr:POINTER, pSrcStrA:POINTER
+  local dSize:DWORD
 
-end
+  invoke StrSizeA, pSrcStrA
+  mov dSize, eax
+  invoke MultiByteToWideChar, CP_ACP, 0, pSrcStrA, dSize, pDstBStr, dSize
+  add eax, eax                                          ;Get number of BYTEs
+  mov xdx, pDstBStr
+  lea ecx, [eax - sizeof(CHRW)]                         ;Subract ZTC space
+  mov DWORD ptr [xdx - sizeof(DWORD)], ecx              ;Store BSTR storage
+  ret
+StrA2BStr endp

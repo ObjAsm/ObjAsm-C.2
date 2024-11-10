@@ -15,8 +15,7 @@ externdef hDbgDev:HANDLE
 ; Arguments:  None.
 ; Return:     Nothing.
 
-OPTION PROLOGUE:NONE
-OPTION EPILOGUE:NONE
+OPTION PROC:NONE
 
 .code
 align ALIGN_CODE
@@ -27,6 +26,4 @@ DbgCloseDevice proc
   ret
 DbgCloseDevice endp
 
-OPTION PROLOGUE:PrologueDef
-OPTION EPILOGUE:EpilogueDef
-
+OPTION PROC:DEFAULT

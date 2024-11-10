@@ -21,6 +21,7 @@
 
 OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrCompW proc pString1W:POINTER, pString2W:POINTER
   push edi

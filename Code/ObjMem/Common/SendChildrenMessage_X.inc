@@ -15,7 +15,6 @@ CHILD_MSG struc
 CHILD_MSG ends
 PCHILD_MSG typedef ptr CHILD_MSG
 
-.code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SendChildMessage
 ; Purpose:    Callback procedure for EnumChildWindows that sends a message to a child window.
@@ -23,6 +22,7 @@ PCHILD_MSG typedef ptr CHILD_MSG
 ;             Arg2: -> CHILD_MSG structure.
 ; Return:     eax = always TRUE (continue the enumeration).
 
+.code
 align ALIGN_CODE
 SendChildMessage proc hWnd:HWND, lParam:PCHILD_MSG
   mov xax, lParam
@@ -41,6 +41,7 @@ SendChildMessage endp
 ;             Arg4: lParam.
 ; Return:     Nothing.
 
+.code
 align ALIGN_CODE
 SendChildrenMessage proc hWnd:HWND, dMsgID:DWORD, wParam:WPARAM, lParam:LPARAM
   local ChildMsg:CHILD_MSG

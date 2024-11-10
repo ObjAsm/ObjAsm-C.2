@@ -17,20 +17,18 @@
 
 .code
 align ALIGN_CODE
-StrA2NewBStr proc pStringA:POINTER
-  local bstr:BSTR, dBufferCharCapacity:DWORD
+StrA2NewBStr proc uses xbx pStringA:POINTER
+  local bstr:BSTR
 
-  invoke StrSizeA, pStringA
+  invoke StrLengthA, pStringA
   .if eax != 0
-    mov dBufferCharCapacity, eax
-    lea ecx, [sizeof(CHRW)*eax]
-    mov bstr, $invoke(BStrAlloc, ecx)
-    invoke MultiByteToWideChar, CP_ACP, 0, pStringA, -1, xax, dBufferCharCapacity
-    mov ecx, dBufferCharCapacity
-    dec ecx                                              ;This value does not include the ZTC 
+    mov ebx, eax
+    mov bstr, $invoke(BStrAlloc, eax)
+    inc ebx                                             ;Include the ZTC
+    invoke MultiByteToWideChar, CP_ACP, 0, pStringA, ebx, xax, ebx
     mov xax, bstr
-    add ecx, ecx
-    mov [xax - sizeof DWORD], ecx
+    lea edx, [sizeof(CHRW)*ebx - sizeof(CHRW)]          ;Convert to BYTE count, without the ZTC
+    mov [xax - sizeof DWORD], edx                       ;Store the BYTE count
   .endif
   ret
 StrA2NewBStr endp

@@ -194,11 +194,11 @@ StrA2NewStrW proto :POINTER
 StrW2NewStrA proto :POINTER
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  Str2NewBSTR textequ <StrA2NewBStr>
-  BSTR2NewStr textequ <BStr2NewStrA>
+  Str2NewBStr textequ <StrA2NewBStr>
+  BStr2NewStr textequ <BStr2NewStrA>
 else
-  Str2NewBSTR textequ <StrW2NewBStr>
-  BSTR2NewStr textequ <BStr2NewStrW>
+  Str2NewBStr textequ <StrW2NewBStr>
+  BStr2NewStr textequ <BStr2NewStrW>
 endif
 
 BStrEnd proto :POINTER
@@ -621,12 +621,12 @@ else
   echo Warning: incompatible TARGET_STR_TYPE
 endif
 
-Str2BStrA proto :POINTER, :POINTER
-Str2BStrW proto :POINTER, :POINTER
+StrA2BStr proto :POINTER, :POINTER
+StrW2BStr proto :POINTER, :POINTER
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
-  Str2BStr textequ <Str2BStrA>
+  Str2BStr textequ <StrA2BStr>
 elseif TARGET_STR_TYPE eq STR_TYPE_WIDE
-  Str2BStr textequ <Str2BStrW>
+  Str2BStr textequ <StrW2BStr>
 else
   echo Warning: incompatible TARGET_STR_TYPE
 endif

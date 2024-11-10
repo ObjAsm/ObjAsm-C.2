@@ -19,6 +19,7 @@
 ;             Arg2: Source ANSI string.
 ; Return:     rax = Number of BYTEs copied, including the ZTC.
 
+.code
 align ALIGN_CODE
 StrCopyA proc pDstStrA:POINTER, pSrcStrA:POINTER
   invoke StrSizeA, rdx

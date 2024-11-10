@@ -1,11 +1,9 @@
 ; ==================================================================================================
-; Title:      StrCopyW.asm
+; Title:      StrW2BStr.asm
 ; Author:     G. Friedrich
-; Version:    C.1.1
+; Version:    C.1.0
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
-;             Version C.1.1, July 2022
-;               - Return value added.
 ; ==================================================================================================
 
 
@@ -13,18 +11,12 @@
 % include &ObjMemPath&ObjMemWin.cop
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  StrCopyW
-; Purpose:    Copy a WIDE string to a destination buffer.
-; Arguments:  Arg1: Destrination WIDE string buffer.
-;             Arg2: Source WIDE string.
+; Procedure:  StrW2BStr
+; Purpose:    Convert a WIDE string into a BStr.
+; Arguments:  Arg1: -> Destination BStr buffer = Buffer address + sizeof(DWORD).
+;             Arg2: -> Source WIDE string.
 ; Return:     eax = Number of BYTEs in the BSTR, including the ZTC.
 
-.code
-align ALIGN_CODE
-StrCopyW proc pDstStringW:POINTER, pSrcStringW:POINTER
-  invoke StrSizeW, rdx
-  invoke MemShift, pDstStringW, pSrcStringW, eax
-  ret
-StrCopyW endp
+% include &ObjMemPath&Common\StrW2BStr_X.inc
 
 end

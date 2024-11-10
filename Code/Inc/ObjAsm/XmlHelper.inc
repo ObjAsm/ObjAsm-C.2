@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      XML_Helper.inc
+; Title:      XmlHelper.inc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Purpose:    DOM-XML helper definitions.

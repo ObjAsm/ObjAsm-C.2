@@ -28,6 +28,7 @@ DIGIT_TABLE CHR '0','1','2','3','4','5','6','7','8','9'
             CHR 'N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
             CHR  0 dup(@WordSize - sizeof(CHR))       ;Ensure no access violation 
 
+
 .code
 align ALIGN_CODE
 ProcName proc uses xbx xdi pBuffer:POINTER, xInput:XWORD, dBase:DWORD

@@ -18,7 +18,7 @@ SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND);, ResGuard)  ;Load OOP files and O
 % include &IncPath&Windows\Ole2.inc
 % include &IncPath&Windows\commctrl.inc
 % include &IncPath&Windows\sGUID.inc
-include XML_Helper.inc                                  ;XML definitions
+% include &IncPath&ObjAsm\XmlHelper.inc                 ;XML definitions
 
 % includelib &LibPath&Windows\oleaut32.lib
 % includelib &LibPath&Windows\ole32.lib
@@ -31,7 +31,7 @@ MakeObjects Primer, Stream, WinPrimer
 MakeObjects Button, Hyperlink
 MakeObjects Window, Dialog, DialogModal, DialogAbout
 MakeObjects WinApp, SdiApp
-include XmlDocument.inc                                 ;XML objects
+MakeObjects XmlDocument                                 ;XML objects
 
 .const                                                  ;Global GUIDs
 DefGUID CLSID_DOMDocument, %sCLSID_DOMDocument
@@ -41,6 +41,7 @@ DefGUID IID_IXMLDOMDocument, %sIID_IXMLDOMDocument
 DefGUID IID_IXMLDOMElement, %sIID_IXMLDOMElement
 
 .code
+
 include XML_Globals.inc                                 ;Application globals
 include XML_Main.inc                                    ;Application object
 

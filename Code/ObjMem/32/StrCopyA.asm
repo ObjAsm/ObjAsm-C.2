@@ -21,6 +21,7 @@
 
 OPTION PROC:NONE
 
+.code
 align ALIGN_CODE
 StrCopyA proc pBuffer:POINTER, pSrcStrA:POINTER
   invoke StrSizeA, [esp + 8]
