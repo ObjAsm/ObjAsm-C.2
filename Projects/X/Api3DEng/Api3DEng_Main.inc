@@ -490,8 +490,6 @@ MethodEnd
 
 Method Api3DEngApp.OnTimer, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
-  invoke KillTimer, [xsi].hWnd, 100
-
   lea xdx, [xsi].RotVector1
 
   fld [xdx].D3Vector.r4X
@@ -535,8 +533,6 @@ Method Api3DEngApp.OnTimer, uses xsi, wParam:WPARAM, lParam:LPARAM
 
   OCall [xsi].pScene::D3Scene.Project
   invoke RedrawWindow, [xsi].hWnd, 0, 0, RDW_ERASE or RDW_INVALIDATE or RDW_UPDATENOW
-
-  mov [xsi].hTimer, $invoke(SetTimer, [xsi].hWnd, 100, TIMER_INTERVAL, NULL)
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

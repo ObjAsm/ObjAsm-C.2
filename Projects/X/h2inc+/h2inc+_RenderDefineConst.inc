@@ -11,7 +11,7 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderDefineConst
 ; Purpose:    EQU invocation called by PPCH_Define.
-; Arguments:  Arg1 -> Name.
+; Arguments:  Arg1: -> Name.
 ; Return:     Nothing.
 
 RenderDefineConst proc uses xdi xsi pName:PSTRINGA

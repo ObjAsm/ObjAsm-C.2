@@ -718,7 +718,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     ExcelHost.GetSheetName
 ; Purpose:    Return the name of a specified Worksheet.
-; Arguments:  Arg1 -> Worksheet interface.
+; Arguments:  Arg1: -> Worksheet interface.
 ; Return:     xax -> Name string or NULL.
 
 Method ExcelHost.GetSheetName,, pIXlWorksheet:POINTER

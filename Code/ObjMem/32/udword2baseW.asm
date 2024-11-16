@@ -24,7 +24,7 @@ Signed equ FALSE
 ; Arguments:  Arg1: -> Buffer
 ;             Arg2: Number
 ;             Arg3: Base.
-; Return:     xax -> Transformed number to base x.
+; Return:     eax -> Transformed number to base x.
 ;             ecx = BYTEs contained in the buffer, including the ZTC.
 
 

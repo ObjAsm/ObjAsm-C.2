@@ -11,7 +11,7 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderExternMember
 ; Purpose:    Get an extern declaration.
-; Arguments:  Arg1 -> First token.
+; Arguments:  Arg1: -> First token.
 ;             xbx -> IncFile.
 ; Return:     xax -> Next token, NULL if failed.
 

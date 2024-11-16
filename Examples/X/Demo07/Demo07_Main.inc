@@ -127,7 +127,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Application.EnableActions
 ; Purpose:    Enable or disable MDI child actions.
-; Arguments:  Enable TRUE/FALSE.
+; Arguments:  Arg1: Enable TRUE/FALSE.
 ; Return:     Nothing.
 
 Method Application.EnableActions, uses xsi, dAction:DWORD

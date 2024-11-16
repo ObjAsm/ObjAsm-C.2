@@ -11,8 +11,8 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderPrototype
 ; Purpose:    Translate a function prototype.
-; Arguments:  Arg1 -> Function name.
-;             Arg2 -> Import specification (for example WINOLEAPI). Can be NULL.
+; Arguments:  Arg1: -> Function name.
+;             Arg2: -> Import specification (for example WINOLEAPI). Can be NULL.
 ;             xbx -> IncFile.
 ; Return:     Nothing.
 ; Link:       https://msdn.microsoft.com/en-us/library/zw3za17w.aspx

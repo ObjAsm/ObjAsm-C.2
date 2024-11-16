@@ -101,7 +101,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     ConsoleApp.Init
 ; Purpose:    Initialize the ConsoleApp object.
-; Arguments:  Arg1 -> Owner.
+; Arguments:  Arg1: -> Owner.
 ; Return:     Nothing.
 
 Method ConsoleApp.Init, uses xsi, pOwner:POINTER

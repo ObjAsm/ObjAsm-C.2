@@ -19,7 +19,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ;             Arg2: Uncompressed data size in bytes.
 ;             Arg3: Compression algorithm [COMPRESS_ALGORITHM_MSZIP, COMPRESS_ALGORITHM_XPRESS,
 ;                   COMPRESS_ALGORITHM_XPRESS_HUFF, COMPRESS_ALGORITHM_LZMS].
-; Return:     xax -> Compressed data or NULL if failed.
+; Return:     eax -> Compressed data or NULL if failed.
 ;             ecx = Compressed data size in BYTEs.
 ; Note:       User should free the returned memory when no longer required using MemFree.
 

@@ -11,7 +11,7 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderTypedefContainer
 ; Purpose:    Parse Typedef of a structure or union.
-; Arguments:  Arg1 -> ContainerType (structure or union).
+; Arguments:  Arg1: -> ContainerType (structure or union).
 ;             xbx -> IncFile.
 ; Return:     xax -> Last token or NULL if failed.
 ; Syntax:     typedef struct/union <macro> tname name;

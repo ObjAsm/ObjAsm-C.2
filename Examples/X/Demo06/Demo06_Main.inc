@@ -110,7 +110,7 @@ CStr szChildClassName, "OAC_Child"
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Application.ChangeLanguage
 ; Purpose:    Switch the application language.
-; Arguments:  Arg1 = Language ID.
+; Arguments:  Arg1: Language ID.
 ; Return:     Nothing.
 
 Method Application.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
@@ -169,7 +169,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Application.EnableActions
 ; Purpose:    Enable or disable MDI child actions.
-; Arguments:  Arg1 = Enable TRUE/FALSE.
+; Arguments:  Arg1: Enable TRUE/FALSE.
 ; Return:     Nothing.
 
 Method Application.EnableActions, uses xsi, dAction:DWORD

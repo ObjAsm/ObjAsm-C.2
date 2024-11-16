@@ -20,8 +20,8 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ;             Arg2: Compressed data size in BYTEs.
 ;             Arg3: Decompression algorithm [COMPRESS_ALGORITHM_MSZIP, COMPRESS_ALGORITHM_XPRESS,
 ;                   COMPRESS_ALGORITHM_XPRESS_HUFF, COMPRESS_ALGORITHM_LZMS].
-; Return:     xax -> Uncompressed data or NULL if failed.
-;             xcx = Uncompressed data size in BYTEs.
+; Return:     rax -> Uncompressed data or NULL if failed.
+;             ecx = Uncompressed data size in BYTEs.
 ; Note:       User should free the decompressed memory when no longer required using MemFree.
 
 % include &ObjMemPath&Common\DecompressMem_X.inc

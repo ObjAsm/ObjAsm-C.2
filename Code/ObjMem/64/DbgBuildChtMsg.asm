@@ -19,10 +19,10 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ;             Arg2: -> Payload. If NULL, the space (Payload size) is reserved anyway.
 ;             Arg3: Payload size (DWORD).
 ;             Arg4: -> Destination Window WIDE name.
-; Return:     xax -> Allocated memory containig the message.
+; Return:     rax -> Allocated memory containig the message.
 ;                 When no longer needed, it should be deallocated using MemFree.
 ;             ecx = Byte size of the allocated memory block.
-;             xdx -> Payload into message buffer.
+;             rdx -> Payload into message buffer.
 
 % include &ObjMemPath&Common\\DbgBuildChtMsg_X.inc
 

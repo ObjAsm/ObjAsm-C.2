@@ -11,7 +11,7 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderInterfaceBlock
 ; Purpose:    Translate all members of a block (structure, union, enum).
-; Arguments:  Arg1 -> Name.
+; Arguments:  Arg1: -> Name.
 ;             xax -> '{'
 ;             xbx -> IncFile.
 ; Return:     xax -> Last token or NULL if failed.

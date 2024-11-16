@@ -488,7 +488,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     ClientWnd.Init
 ; Purpose:    Initialize the MdiClientWnd object.
-; Arguments:  Arg1 -> Owner object.
+; Arguments:  Arg1: -> Owner object.
 ; Return:     Nothing.
 
 Method ClientWnd.Init, uses xsi, pOwner:POINTER

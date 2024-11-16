@@ -55,7 +55,7 @@ endm
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     MemoryHeap.AddBStrA
 ; Purpose:    Add a BStrA into the MemoryHeap.
-; Arguments:  Arg1 -> Original string, must NOT be zero terminated.
+; Arguments:  Arg1: -> Original string, must NOT be zero terminated.
 ;             Arg2: String length, not including the ZTC, if any.
 ; Return:     xax -> New string in MemoryHeap.
 

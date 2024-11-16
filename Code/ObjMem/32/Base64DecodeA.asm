@@ -20,9 +20,9 @@ ProcName textequ <Base64DecodeA>
 ;             Arg2: Encoded data size in BYTEs (always a multiple of 4*sizeof(CHR)).
 ;             Arg3: Decode table. If NULL, BASE64_DEFAULT_DECODE_TABLE is used.
 ;                   BASE64_URL_DECODE_TABLE can be used to decode URL content.
-; Return:     xax -> Decoded data. When no longer needed, it should be freed using MemFree.
+; Return:     eax -> Decoded data. When no longer needed, it should be freed using MemFree.
 ;             ecx = Decoded data size in BYTEs.
-;             On error, xax and ecx are zero.
+;             On error, eax and ecx are zero.
 ; Links:      https://en.wikipedia.org/wiki/Base64
 ;             https://datatracker.ietf.org/doc/html/rfc4648
 

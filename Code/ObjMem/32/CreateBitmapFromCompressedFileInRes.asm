@@ -19,7 +19,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ;             with Huffman encoding, MSZIP or LZMS.
 ; Arguments:  Arg1: Instance HANDLE.
 ;             Arg2: Resource ID.
-; Return:     xax = HBITMAP or NULL if failed.
+; Return:     eax = HBITMAP or NULL if failed.
 
 % include &ObjMemPath&Common\CreateBitmapFromCompressedFileInRes_X.inc
 

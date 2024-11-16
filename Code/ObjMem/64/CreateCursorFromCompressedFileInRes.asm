@@ -21,7 +21,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ;             Arg2: Resource ID.
 ;             Arg3: Desired cursor width.
 ;             Arg3: Desired cursor height.
-; Return:     xax = Cursor HANDLE.
+; Return:     rax = Cursor HANDLE.
 
 % include &ObjMemPath&Common\CreateCursorFromCompressedFileInRes_X.inc
 

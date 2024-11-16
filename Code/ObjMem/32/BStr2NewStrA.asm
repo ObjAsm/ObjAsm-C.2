@@ -14,7 +14,7 @@
 ; Procedure:  BStr2NewStrA
 ; Purpose:    Create a new STRINGA with the content of a BSTR.
 ; Arguments:  Arg1: BSTR.
-; Return:     xax -> STRINGA. When no longer needed, it must be freed using StrDisposeA.
+; Return:     eax -> STRINGA. When no longer needed, it must be freed using StrDisposeA.
 
 % include &ObjMemPath&Common\BStr2NewStrA_X.inc
 

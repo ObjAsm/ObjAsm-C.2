@@ -19,7 +19,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ;             with Huffman encoding, MSZIP or LZMS.
 ; Arguments:  Arg1: Instance HANDLE.
 ;             Arg2: Resource ID.
-; Return:     xax -> Uncompressed data or NULL if failed.
+; Return:     rax -> Uncompressed data or NULL if failed.
 ;             ecx = Uncompressed data size in BYTEs.
 
 % include &ObjMemPath&Common\DecompressFileFromRes_X.inc

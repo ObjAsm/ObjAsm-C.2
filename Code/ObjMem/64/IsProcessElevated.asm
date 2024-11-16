@@ -16,7 +16,7 @@
 ; Arguments:  Arg: Process HANDLE.
 ; Return:     eax = TRUE or FALSE.
 ; Example:    invoke GetCurrentProcess
-;             invoke IsProcessElevated, xax
+;             invoke IsProcessElevated, rax
 
 % include &ObjMemPath&Common\IsProcessElevated_X.inc
 

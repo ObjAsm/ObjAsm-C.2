@@ -19,7 +19,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ;             compressed data and what algorithm to use.
 ; Arguments:  Arg1: -> Compressed data.
 ;             Arg2: Compressed data size in BYTEs.
-; Return:     xax -> Uncompressed data or NULL if failed.
+; Return:     eax -> Uncompressed data or NULL if failed.
 ;             ecx = Uncompressed data size in BYTEs.
 ; Note:       User should free the decompressed memory when no longer required using MemFree.
 

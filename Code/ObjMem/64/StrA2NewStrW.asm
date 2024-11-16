@@ -14,7 +14,7 @@
 ; Procedure:  StrA2NewStrW
 ; Purpose:    Create a new StringW with the content of a STRINGA.
 ; Arguments:  Arg1: -> STRINGA.
-; Return:     xax -> STRINGW. When no longer needed, it must be freed using StrDisposeW.
+; Return:     rax -> STRINGW. When no longer needed, it must be freed using StrDisposeW.
 
 % include &ObjMemPath&Common\StrA2NewStrW_X.inc
 

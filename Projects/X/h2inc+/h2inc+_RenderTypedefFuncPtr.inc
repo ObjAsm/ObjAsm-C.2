@@ -11,7 +11,7 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderTypedefFuncPtr
 ; Purpose:    Translate a typedef function pointer.
-; Arguments:  Arg1 -> Parent.
+; Arguments:  Arg1: -> Parent.
 ; Return:     xax -> Last Token, usually ';' or NULL if failed.
 ;             xdx -> Name.
 ; Syntax:     typedef function pointer

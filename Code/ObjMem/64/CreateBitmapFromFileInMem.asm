@@ -16,7 +16,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ; Purpose:    Create a bitmap from bitmap file data stored in memory.
 ; Arguments:  Arg1: -> Bitmap data as stored in a .bmp file:
 ;                   [BITMAPFILEHEADER][BITMAPINFOHEADER][Bits]
-; Return:     xax = HBITMAP.
+; Return:     rax = HBITMAP or zero if failed.
 ; Links:      http://www.masmforum.com/board/index.php?topic=16267.msg134453#msg134453
 
 % include &ObjMemPath&Common\CreateBitmapFromFileInMem_X.inc

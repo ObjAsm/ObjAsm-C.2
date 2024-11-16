@@ -310,7 +310,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     D3Scene.DestroyObject
 ; Purpose:    Destroy a D3Object from the D3Scene object.
-; Arguments:  Arg1 -> D3Light object.
+; Arguments:  Arg1: -> D3Light object.
 ; Return:     Nothing.
 
 Method D3Scene.DestroyObject,, pObject:$ObjPtr(D3Object)

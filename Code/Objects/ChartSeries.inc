@@ -79,7 +79,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     ChartSeries.Load
 ; Purpose:    Load buffer data from a stream object.
-; Arguments:  Arg1 -> Stream object.
+; Arguments:  Arg1: -> Stream object.
 ; Return:     Nothing.
 
 Method ChartSeries.Load, uses xsi, pStream:$ObjPtr(Stream)

@@ -11,7 +11,7 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderEnumMember
 ; Purpose:    Render an enumerator declaration (member of an enumeration).
-; Arguments:  Arg1 -> Token.
+; Arguments:  Arg1: -> Token.
 ;             xbx -> IncFile.
 ; Return:     xax -> Last Token, usually ';' or NULL if failed.
 

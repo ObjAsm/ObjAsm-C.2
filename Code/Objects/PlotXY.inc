@@ -1648,7 +1648,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     DataBufferXY.Load
 ; Purpose:    Load buffer data from a stream object.
-; Arguments:  Arg1 -> Stream object.
+; Arguments:  Arg1: -> Stream object.
 ; Return:     Nothing.
 
 Method DataBufferXY.Load, uses xsi, pStream:$ObjPtr(Stream)

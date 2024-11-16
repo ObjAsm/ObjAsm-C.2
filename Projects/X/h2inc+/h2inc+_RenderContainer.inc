@@ -30,7 +30,7 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderContainer
 ; Purpose:    Render a structure or union.
-; Arguments:  Arg1 -> ContainerType ("struct" or "union").
+; Arguments:  Arg1: -> ContainerType ("struct" or "union").
 ;             Arg2: TRUE if the container is embedded in another container.
 ;             xbx -> IncFile.
 ; Return:     xax -> Last token or NULL if failed.

@@ -11,7 +11,7 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderMacroCall
 ; Purpose:    A known macro has been found.
-; Arguments:  Arg1 -> Macro Name
+; Arguments:  Arg1: -> Macro Name
 ;             Arg2: Macro Flags (MCF_xxx).
 ;             Arg3: Flag to write LF after macro invocation.
 ;             xbx -> IncFile.

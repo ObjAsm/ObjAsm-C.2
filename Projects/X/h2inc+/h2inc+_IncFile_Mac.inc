@@ -74,7 +74,7 @@ endm
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      IsStructure?
 ; Purpose:    Check if token is a structure name.
-; Arguments:  Arg1 -> Token to be tested. Must be a Var or a non volatile register.
+; Arguments:  Arg1: -> Token to be tested. Must be a Var or a non volatile register.
 ; Return:     eax = TRUE if token is a known structure name, otherwise FALSE
 
 IsStructure? macro pToken:req
@@ -87,7 +87,7 @@ endm
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      IsValidName?
 ; Purpose:    Check if token is a valid name.
-; Arguments:  Arg1 -> Token to be tested.
+; Arguments:  Arg1: -> Token to be tested.
 ; Return:     eax = TRUE if valid, otherwise FALSE.
 
 IsValidName? macro pToken:req
@@ -248,7 +248,7 @@ endm
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      IsPublicPrivateProtected?
 ; Purpose:    Check if token is 'private', 'public' or 'protected'.
-; Arguments:  Arg1 -> Token.
+; Arguments:  Arg1: -> Token.
 ; Return:     eax = TRUE if found, otherwise FALSE.
 
 IsPublicPrivateProtected? macro pToken

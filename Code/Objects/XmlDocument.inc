@@ -38,7 +38,7 @@ Object XmlNode, XmlNodeID, Primer
   VirtualMethod   PrevSibling
   VirtualMethod   NextSibling
   VirtualMethod   SetAttribute,       PSTRING, PSTRING
-  VirtualMethod   SetNode,            ptr IXMLDOMElement
+  VirtualMethod   SetNode,            PIXMLDOMElement
   VirtualMethod   SetText,            PSTRING
   VirtualMethod   SetValue,           PSTRING
 
@@ -52,7 +52,7 @@ ObjectEnd
 
 Object XmlDocument, XmlDocumentID, Primer
   VirtualMethod   AddChild,           PSTRING
-  VirtualMethod   AddChildToParent,   ptr IXMLDOMNode, ptr IXMLDOMNode
+  VirtualMethod   AddChildToParent,   PIXMLDOMNode, PIXMLDOMNode
   VirtualMethod   Clear
   VirtualMethod   CreateElement,      PSTRING
   RedefineMethod  Done
@@ -84,8 +84,8 @@ if IMPLEMENT
 ; Return:     xax -> New node.
 
 Method XmlNode.AddChild, uses xsi, pNodeName:PSTRING
-  local bstr:BSTR, pDocument:ptr IXMLDOMDocument
-  local pChild:ptr IXMLDOMElement, pNewNode:ptr IXMLDOMNode
+  local bstr:BSTR, pDocument:PIXMLDOMDocument
+  local pChild:PIXMLDOMElement, pNewNode:PIXMLDOMNode
 
   SetObject xsi
   invoke CoCreateInstance, addr CLSID_DOMDocument, NULL, \
@@ -141,7 +141,7 @@ MethodEnd
 ; Return:     xax -> Node or NULL if failed.
 
 Method XmlNode.GetChildNode, uses xsi, dIndex:DWORD
-  local bstr:BSTR, pNodes:ptr IXMLDOMNodeList, pNode:ptr IXMLDOMNode, pElement:ptr IXMLDOMElement
+  local bstr:BSTR, pNodes:PIXMLDOMNodeList, pNode:PIXMLDOMNode, pElement:PIXMLDOMElement
 
   SetObject xsi
   ICall [xsi].pNode::IXMLDOMNode.get_childNodes, addr pNodes
@@ -194,7 +194,7 @@ MethodEnd
 ; Return:     xax -> First child node or NULL if failed.
 
 Method XmlNode.GetFirstChild, uses xsi
-  local pNode:ptr IXMLDOMNode, pElement:PIXMLDOMElement
+  local pNode:PIXMLDOMNode, pElement:PIXMLDOMElement
 
   SetObject xsi
   ICall [xsi].pNode::IXMLDOMNode.get_firstChild, addr pNode
@@ -210,7 +210,7 @@ MethodEnd
 ; Return:     xax -> Last child node or NULL if failed.
 
 Method XmlNode.GetLastChild, uses xsi
-  local pNode:ptr IXMLDOMNode, pElement:PIXMLDOMElement
+  local pNode:PIXMLDOMNode, pElement:PIXMLDOMElement
 
   SetObject xsi
   ICall [xsi].pNode::IXMLDOMNode.get_lastChild, addr pNode
@@ -242,7 +242,7 @@ MethodEnd
 ; Return:     xax -> Parent node.
 
 Method XmlNode.GetParentNode
-  local pNode:ptr IXMLDOMNode, pElement:PIXMLDOMElement
+  local pNode:PIXMLDOMNode, pElement:PIXMLDOMElement
 
   SetObject xcx
   ICall [xcx].pNode::IXMLDOMNode.get_parentNode, addr pNode
@@ -273,11 +273,11 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     xax -> Type string. When no longer needed, it must be freed using StrDispose.
 
-Method XmlNode.GetType, uses xsi
+Method XmlNode.GetType
   local bstr:BSTR, pStr:PSTRING
 
-  SetObject xsi
-  ICall [xsi].pNode::IXMLDOMNode.get_nodeTypeString, addr bstr
+  SetObject xcx
+  ICall [xcx].pNode::IXMLDOMNode.get_nodeTypeString, addr bstr
   mov pStr, $invoke(BStr2NewStr, bstr)
   invoke BStrDispose, bstr
   mov xax, pStr
@@ -356,7 +356,7 @@ MethodEnd
 ; Return:     eax = TRUE or FALSE.
 
 Method XmlNode.IsTextElement, uses xsi
-  local bstr:BSTR, pType:POINTER, pNode:ptr IXMLDOMNode, pNodes:PIXMLDOMNodeList
+  local bstr:BSTR, pType:POINTER, pNode:PIXMLDOMNode, pNodes:PIXMLDOMNodeList
 
   SetObject xsi
   mov pType, $OCall(xsi.GetType)
@@ -392,7 +392,7 @@ MethodEnd
 ; Return:     xax -> Previous sibling node.
 
 Method XmlNode.PrevSibling
-  local pNode:ptr IXMLDOMNode, pElement:PIXMLDOMElement
+  local pNode:PIXMLDOMNode, pElement:PIXMLDOMElement
 
   SetObject xcx
   ICall [xcx].pNode::IXMLDOMNode.get_previousSibling, addr pNode
@@ -408,7 +408,7 @@ MethodEnd
 ; Return:     xax -> Next sibling node.
 
 Method XmlNode.NextSibling
-  local pNode:ptr IXMLDOMNode, pElement:PIXMLDOMElement
+  local pNode:PIXMLDOMNode, pElement:PIXMLDOMElement
 
   SetObject xcx
   ICall [xcx].pNode::IXMLDOMNode.get_nextSibling, addr pNode
@@ -456,7 +456,7 @@ MethodEnd
 ; Arguments:  Arg1: -> IXMLDOMElement
 ; Return:     Nothing.
 
-Method XmlNode.SetNode,, pNode:ptr IXMLDOMElement
+Method XmlNode.SetNode,, pNode:PIXMLDOMElement
   SetObject xcx
   ?mov xdx, pNode
   mov [xcx].pNode, xdx
@@ -521,8 +521,8 @@ MethodEnd
 ;             Arg2: -> Parent node.
 ; Return:     Nothing.
 
-Method XmlDocument.AddChildToParent,, pChild:ptr IXMLDOMNode, pParent:ptr IXMLDOMNode
-  local pNewNode:ptr IXMLDOMNode
+Method XmlDocument.AddChildToParent,, pChild:PIXMLDOMNode, pParent:PIXMLDOMNode
+  local pNewNode:PIXMLDOMNode
 
   ICall pParent::IXMLDOMNode.appendChild, pChild, addr pNewNode
   .if eax != S_OK && pNewNode != NULL
@@ -623,7 +623,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     XmlDocument.LoadFromFile
 ; Purpose:    Load XML data from a file.
-; Arguments:  Arg1 -> File name.
+; Arguments:  Arg1: -> File name.
 ; Return:     eax = TRUE or FALSE if failed.
 
 Method XmlDocument.LoadFromFile, uses xsi, pFileName:PSTRING

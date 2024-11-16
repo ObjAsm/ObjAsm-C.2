@@ -11,9 +11,9 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderFurtherTypes
 ; Purpose:    Check out if there come some pointer definitions behind.
-; Arguments:  Arg1 -> Container Type.
-;             Arg2 -> Container Tag.
-;             Arg3 -> Last token
+; Arguments:  Arg1: -> Container Type.
+;             Arg2: -> Container Tag.
+;             Arg3: -> Last token
 ;             xbx -> IncFile.
 ; Return:     xax -> Next token or NULL if failed.
 

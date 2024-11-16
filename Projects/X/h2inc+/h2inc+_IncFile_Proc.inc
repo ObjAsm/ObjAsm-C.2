@@ -9,8 +9,8 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  BStrCompA
 ; Purpose:    Comparison routine for BStrA strings.
-; Arguments:  Arg1 -> String 1.
-;             Arg2 -> String 2.
+; Arguments:  Arg1: -> String 1.
+;             Arg2: -> String 2.
 ; Return:     eax: comparison result. Zero if strings are identical.
 
 BStrCompA proc uses xdi xsi pBStrA:PSTRINGA, pStrA:PSTRINGA
@@ -134,7 +134,7 @@ InsertEqui endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  InsertDefItem
 ; Purpose:    Add a prototype to a list.
-; Arguments:  Arg1 -> Function Name.
+; Arguments:  Arg1: -> Function Name.
 ;             Arg2: Parameter bytes.
 ; Return:     Nothing.
 
@@ -276,7 +276,7 @@ IsNumOperator? endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  IsReservedWord?
 ; Purpose:    Check if token is a reserved word.
-; Arguments:  Arg1 -> token to check.
+; Arguments:  Arg1: -> token to check.
 ; Return:     eax = FALSE if token is not reserved.
 
 IsReservedWord? proc pToken:PTOKEN
@@ -291,7 +291,7 @@ IsReservedWord? endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  IsMacro?
 ; Purpose:    Check if token is a macro.
-; Arguments:  Arg1 -> token to check.
+; Arguments:  Arg1: -> token to check.
 ; Return:     eax = 0 if FALSE, 1 if macro was previously defined, 2 if it is a known macro.
 ;             ecx = Index in the range [0..Count].
 
@@ -308,7 +308,7 @@ IsMacro? endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  IsEquate
 ; Purpose:    Check if token is an equate.
-; Arguments:  Arg1 -> token to check.
+; Arguments:  Arg1: -> token to check.
 ; Return:     eax = 0 if FALSE, 1 if macros was previously defined, 2 if it is a known equate.
 ;             ecx = Index in the range [0..Count].
 
@@ -325,7 +325,7 @@ IsEquate? endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  IsQualifier?
 ; Purpose:    Check if token is a qualifier.
-; Arguments:  Arg1 -> token to check.
+; Arguments:  Arg1: -> token to check.
 ; Return:     eax = 0 if FALSE, 1 if qualifier was previously defined, 2 if it is a known qualifier.
 ;             ecx = Index in the range [0..Count-1].
 
@@ -342,7 +342,7 @@ IsQualifier? endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  IsString?
 ; Purpose:    Check if token is a string.
-; Arguments:  Arg1 -> token to check.
+; Arguments:  Arg1: -> token to check.
 ; Return:     eax = TRUE if token is a string, otherwise FALSE.
 
 IsString? proc pToken:PTOKEN
@@ -492,7 +492,7 @@ IsFunctionPtr? endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  IsUnionStruct?
 ; Purpose:    Check if token is "union" or "struct".
-; Arguments:  Arg1 -> token.
+; Arguments:  Arg1: -> token.
 ; Return:     eax = TRUE if found, otherwise FALSE.
 
 IsUnionStruct? proc pToken:PTOKEN
@@ -509,7 +509,7 @@ IsUnionStruct? endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  TranslateToken
 ; Purpose:    Translate tokens like "__export" or "__stdcall".
-; Arguments:  Arg1 -> Token.
+; Arguments:  Arg1: -> Token.
 ; Return:     xax -> translated Token.
 ;             edx = FASLE if no translation occured.
 
@@ -553,7 +553,7 @@ TranslateReservedWord endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  TranslateStruct
 ; Purpose:    Translate known struct.
-; Arguments:  Arg1 -> Token.
+; Arguments:  Arg1: -> Token.
 ; Return:     xax -> translated structure.
 ;             edx = FALSE if no macht found.
 
@@ -583,7 +583,7 @@ TranslateStruct endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  TranslateType
 ; Purpose:    Translate known type.
-; Arguments:  Arg1 -> Token.
+; Arguments:  Arg1: -> Token.
 ; Return:     xax -> translated type.
 ;             edx = FALSE if no macht found.
 
@@ -613,7 +613,7 @@ TranslateType endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  TranslateTypeQualifier
 ; Purpose:    Convert type qualifiers.
-; Arguments:  Arg1 -> Type qualifier.
+; Arguments:  Arg1: -> Type qualifier.
 ; Return:     xax -> Converted type qualifier.
 
 TranslateTypeQualifier proc pTypeQual:PTOKEN
@@ -632,7 +632,7 @@ TranslateTypeQualifier endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  TranslateNumOperator
 ; Purpose:    Translate operator in #define lines.
-; Arguments:  Arg1 -> Token.
+; Arguments:  Arg1: -> Token.
 ; Return:     xax -> translated or original Token.
 ;             edx: TRUE if translated, otherwise FALSE.
 
@@ -673,7 +673,7 @@ TranslateNumOperator endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  TranslateLogOperator
 ; Purpose:    Translate operator in #define lines.
-; Arguments:  Arg1 -> Token.
+; Arguments:  Arg1: -> Token.
 ; Return:     xax -> translated or original Token.
 ;             edx: TRUE if translated, otherwise FALSE.
 
@@ -913,7 +913,7 @@ GetInterfaceName endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SkipName
 ; Purpose:    Skip name of a struct/union.
-; Arguments:  Arg1 -> Name.
+; Arguments:  Arg1: -> Name.
 ;             Arg2: Name flags. if != 0 => skip parentheses.
 ; Return:     Nothing.
 
@@ -938,7 +938,7 @@ SkipName endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SkipAnnotations
 ; Purpose:    Skip all comming annotations.
-; Arguments:  Arg1 -> Token.
+; Arguments:  Arg1: -> Token.
 ;             xbx -> IncFile.
 ; Return:     xax -> Next Token or NULL. If xax == NULL, ZERO is set.
 
@@ -965,7 +965,7 @@ SkipAnnotations endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  SkipMacros
 ; Purpose:    Skip all comming macros.
-; Arguments:  Arg1 -> Token.
+; Arguments:  Arg1: -> Token.
 ;             xbx -> IncFile.
 ; Return:     xax -> Next Token or NULL. If xax == NULL, ZERO is set.
 
@@ -1171,7 +1171,7 @@ Ifdef_Ifndef endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  WriteStackList
 ; Purpose:    Writes tokens contained in a StackList to the output stream.
-; Arguments:  Arg1 -> StackList.
+; Arguments:  Arg1: -> StackList.
 ; Return:     Nothing.
 
 WriteStackList proc uses xdi xsi pStackList:POINTER
@@ -1216,7 +1216,7 @@ WriteStackList endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetCallConvString
 ; Purpose:    Return the correct calling convention.
-; Arguments:  Arg1 -> CallConv qualifier (PTQ_xxx).
+; Arguments:  Arg1: -> CallConv qualifier (PTQ_xxx).
 ; Return:     xax -> CallConv string. Can not be NULL.
 
 GetCallConvString proc dQualifiers:DWORD
@@ -1240,7 +1240,7 @@ GetCallConvString endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetProtoQualifier
 ; Purpose:    Check proto qualifier (E.g. CALLBACK, WINAPI, WINGDIAPI, THEMEAPI, etc.).
-; Arguments:  Arg1 -> Token.
+; Arguments:  Arg1: -> Token.
 ; Return:     xax -> List item or NULL if not found.
 ; Link:       https://learn.microsoft.com/en-us/cpp/cpp/declspec?view=msvc-170
 
@@ -1296,7 +1296,7 @@ GetProtoQualifier endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetBlockName
 ; Purpose:    Find name of a struct/union, if any.
-; Arguments:  Arg1 -> Buffer used when the name is a macro invocation.
+; Arguments:  Arg1: -> Buffer used when the name is a macro invocation.
 ; Return:     xax -> Block Name or NULL.
 ;             edx = flags (if name is a macro).
 

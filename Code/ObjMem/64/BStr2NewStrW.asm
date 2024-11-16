@@ -14,7 +14,7 @@
 ; Procedure:  BStr2NewStrW
 ; Purpose:    Create a new STRINGW with the content of a BSTR.
 ; Arguments:  Arg1: BSTR.
-; Return:     xax -> STRINGW. When no longer needed, it must be freed using StrDisposeW.
+; Return:     rax -> STRINGW. When no longer needed, it must be freed using StrDisposeW.
 
 % include &ObjMemPath&Common\BStr2NewStrW_X.inc
 

@@ -10,8 +10,8 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  TimeToHnsecs
 ; Purpose:    Convert DTL_TIME information into hecto-nano-seconds.
-; Arguments:  Arg1 -> hnsecs or NULL
-;             Arg2 -> DTL_TIME
+; Arguments:  Arg1: -> hnsecs or NULL
+;             Arg2: -> DTL_TIME
 ; Return:     rax or edx::eax = Time.
 
 .code

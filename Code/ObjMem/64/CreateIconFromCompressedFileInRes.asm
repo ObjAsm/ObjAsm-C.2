@@ -21,7 +21,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ;             Arg2: Resource ID.
 ;             Arg3: Desired icon width.
 ;             Arg3: Desired icon height.
-; Return:     xax = Icon HANDLE.
+; Return:     rax = Icon HANDLE.
 
 % include &ObjMemPath&Common\CreateIconFromCompressedFileInRes_X.inc
 

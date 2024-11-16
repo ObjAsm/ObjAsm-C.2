@@ -16,7 +16,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 ; Purpose:    Parse a WIDE command line string and return an array of PSTRINGW to the arguments,
 ;             along with a count of these arguments. Delimiters are white chars and CRLF.
 ; Arguments:  Arg1: -> Input WIDE string.
-; Return:     xax -> Array of PSTRINGWs. If xax = NULL, allocation failed or argument count is 0.
+; Return:     rax -> Array of PSTRINGWs. If rax = NULL, allocation failed or argument count is 0.
 ;             ecx = Argument count.
 ; Note:       1. Memory allocated to hold the PSTRINGWs must be freed using MemFree.
 ;             2. Quoted arguments are retuned without quotation marks.

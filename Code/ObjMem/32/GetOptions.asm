@@ -19,7 +19,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 ;             Arg3: -> List of WIDE string arguments.
 ; Return:     eax: TRUE if succeeded, otherwise FALSE.
 ;             ecx: failed option index.
-;             xdx: -> failed WIDE string argument.
+;             edx: -> failed WIDE string argument.
 
 % include &ObjMemPath&Common\GetOptions_X.inc
 

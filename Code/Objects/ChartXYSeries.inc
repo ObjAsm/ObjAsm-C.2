@@ -785,7 +785,7 @@ endif
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     ChartXYSeries.Load
 ; Purpose:    Load buffer data from a stream object.
-; Arguments:  Arg1 -> Stream object.
+; Arguments:  Arg1: -> Stream object.
 ; Return:     Nothing.
 
 Method ChartXYSeries.Load, uses xsi, pStream:$ObjPtr(Stream)

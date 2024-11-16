@@ -21,9 +21,9 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  WriteContainerMember
 ; Purpose:    Write member to the output stream.
-; Arguments:  Arg1 -> Member name.
-;             Arg2 -> Member type.
-;             Arg3 -> List with collected DUP info.
+; Arguments:  Arg1: -> Member name.
+;             Arg2: -> Member type.
+;             Arg3: -> List with collected DUP info.
 ;             Arg4: Number of indirections.
 ; Return:     Nothing.
 
@@ -87,8 +87,8 @@ WriteContainerMember endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderContainerMember
 ; Purpose:    Get a struct or union declaration of a single member.
-; Arguments:  Arg1 -> First token after 'union {' or 'struct {'.
-;             Arg2 -> Struct or union name. Can be NULL.
+; Arguments:  Arg1: -> First token after 'union {' or 'struct {'.
+;             Arg2: -> Struct or union name. Can be NULL.
 ;             xbx -> IncFile.
 ; Return:     xax -> Last processed token, usually ';' or NULL if failed.
 ; Link:       https://en.cppreference.com/w/c/language/bit_field

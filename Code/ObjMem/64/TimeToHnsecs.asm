@@ -14,8 +14,8 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  TimeToHnsecs
 ; Purpose:    Convert DTL_TIME information into hecto-nano-seconds.
-; Arguments:  Arg1 -> hnsecs or NULL
-;             Arg2 -> DTL_TIME
+; Arguments:  Arg1: -> hnsecs or NULL
+;             Arg2: -> DTL_TIME
 ; Return:     rax = Time.
 
 % include &ObjMemPath&Common\TimeToHnsecs_X.inc

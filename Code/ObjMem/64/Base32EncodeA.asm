@@ -21,7 +21,7 @@ ProcName textequ <Base32EncodeA>
 ;             Arg2: Input data size in BYTEs.
 ;             Arg3: Character alphabet used to encode the data. If NULL, BASE32_DEFAULT_ALPHABET
 ;                   is used. BASE32_HEX_ALPHABET can be used to encode special content.
-; Return:     xax -> Buffer containing the encoded data. When no longer needed, it should be
+; Return:     rax -> Buffer containing the encoded data. When no longer needed, it should be
 ;                    released using MemFree.
 ;             ecx = Encoded data size in BYTEs, always a multiple of 8*sizeof(CHRA)
 ; Links:      https://en.wikipedia.org/wiki/Base32

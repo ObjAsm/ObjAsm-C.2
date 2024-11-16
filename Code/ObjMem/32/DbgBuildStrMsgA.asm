@@ -22,7 +22,7 @@ ProcName textequ <DbgBuildStrMsgA>
 ;             Arg3: Background RGB color value.
 ;             Arg4: Effect value (DBG_EFFECT_XXX)
 ;             Arg5: -> Destination window WIDE name.
-; Return:     xax -> Allocated memory containig the message.
+; Return:     eax -> Allocated memory containig the message.
 ;                 When no longer needed, it should be deallocated using MemFree.
 ;             ecx = byte size of the allocated memory block.
 

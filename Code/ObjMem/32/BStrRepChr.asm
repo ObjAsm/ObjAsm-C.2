@@ -15,7 +15,7 @@
 ; Purpose:    Create a new BSTR filled with a given char.
 ; Arguments:  Arg1: Used character.
 ;             Arg2: Repetition count.
-; Return:     xax -> New BSTR or NULL if failed.
+; Return:     eax -> New BSTR or NULL if failed.
 
 % include &ObjMemPath&Common\BStrRepChr_X.inc
 

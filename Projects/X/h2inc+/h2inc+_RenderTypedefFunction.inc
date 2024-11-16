@@ -11,7 +11,7 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderTypedefFunction
 ; Purpose:    Translate a typedef function.
-; Arguments:  Arg1 -> Name.
+; Arguments:  Arg1: -> Name.
 ; Return:     Nothing.
 ; Syntax:     typedef <qualifiers> returntype name(<parameters>)<{...}>;
 ;             or in a class definition:

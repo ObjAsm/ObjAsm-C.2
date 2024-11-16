@@ -18,7 +18,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ; Arguments:  Arg1: Bitamp HANDLE.
 ;             Arg2: Background RGB color value.
 ;             Arg3: -> Destination Window WIDE name.
-; Return:     xax -> Allocated memory containig the message.
+; Return:     eax -> Allocated memory containig the message.
 ;                 When no longer needed, it should be deallocated using MemFree.
 ;             ecx = Byte size of the allocated memory block.
 

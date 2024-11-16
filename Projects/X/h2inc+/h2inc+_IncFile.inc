@@ -81,7 +81,7 @@ d3CharOps dd ">>=", "<<="
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.AddComment
 ; Purpose:    Store the comment for later output.
-; Arguments:  Arg1 -> Comment string
+; Arguments:  Arg1: -> Comment string
 ; Return:     Nothing.
 
 Method IncFile.AddComment, uses xsi, pCommentText:PSTRINGA
@@ -97,7 +97,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.CreateDefFile
 ; Purpose:    Create a new .def file.
-; Arguments:  Arg1 -> FileName.
+; Arguments:  Arg1: -> FileName.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method IncFile.CreateDefFile, uses xbx xdi xsi, pFileName:PSTRINGW
@@ -510,8 +510,8 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.Init
 ; Purpose:    Instance initialization.
-; Arguments:  Arg1 -> Full Path and FileName of the h-file.
-;             Arg2 -> Parent IncFile object that created (included) this instance or NULL.
+; Arguments:  Arg1: -> Full Path and FileName of the h-file.
+;             Arg2: -> Parent IncFile object that created (included) this instance or NULL.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 .data?
@@ -725,7 +725,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.ParseHeaderLine
 ; Purpose:    Process a source text line
-; Arguments:  Arg1 -> Text line into input buffer.
+; Arguments:  Arg1: -> Text line into input buffer.
 ;             Arg2: Weak Line End flag.
 ; Return:     Nothing.
 
@@ -899,7 +899,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.Save
 ; Purpose:    Write output buffer to file.
-; Arguments:  Arg1 -> Full Path and FileName of the inc-file.
+; Arguments:  Arg1: -> Full Path and FileName of the inc-file.
 ; Return:     eax = TRUE is succeded, otherwise FALSE.
 
 Method IncFile.Save, uses xbx xdi xsi, pFullFileName:PSTRINGW
@@ -1073,7 +1073,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IncFile.StmWrite
 ; Purpose:    Write a string to the output stream. Indentation is implemented here.
-; Arguments:  Arg1 -> Text.
+; Arguments:  Arg1: -> Text.
 ; Return:     xax -> current StreamOut position.
 
 Method IncFile.StmWrite, uses xbx, pText:PSTRINGA

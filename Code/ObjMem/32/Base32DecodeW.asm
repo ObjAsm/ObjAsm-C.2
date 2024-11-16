@@ -20,9 +20,9 @@ ProcName textequ <Base32DecodeW>
 ;             Arg2: Encoded data size in BYTEs (always a multiple of 8*sizeof(CHRW)).
 ;             Arg3: Decode table. If NULL, BASE32_DEFAULT_DECODE_TABLE is used.
 ;                   BASE32_HEX_DECODE_TABLE can be used to decode special content.
-; Return:     xax -> Decoded CHRW data. When no longer needed, it should be freed using MemFree.
+; Return:     eax -> Decoded CHRW data. When no longer needed, it should be freed using MemFree.
 ;             ecx = Decoded data size in BYTEs.
-;             On error, xax and ecx are zero.
+;             On error, eax and ecx are zero.
 ; Links:      https://en.wikipedia.org/wiki/Base32
 ;             https://datatracker.ietf.org/doc/html/rfc4648
 

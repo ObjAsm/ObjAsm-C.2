@@ -144,6 +144,7 @@ ifndef _INC_WINASM
   ;WIN32_LEAN_AND_MEAN       equ   1
   WINVER                    equ   _WIN32_WINNT_WIN10
   _WIN32_WINNT              equ   _WIN32_WINNT_WIN10
+
   _WIN32_IE                 equ   _WIN32_IE_IE100
   _M_HYBRID                 equ   0
   _WIN32_FUSION             equ   100h                  ;This causes activation context structs and APIs to be included.

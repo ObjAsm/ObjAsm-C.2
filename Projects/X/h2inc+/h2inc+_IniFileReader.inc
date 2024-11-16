@@ -33,8 +33,8 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IniFileReader.Init
 ; Purpose:    Initializes the object.
-; Arguments:  Arg1 -> Owner.
-;             Arg2 -> MemoryHeap.
+; Arguments:  Arg1: -> Owner.
+;             Arg2: -> MemoryHeap.
 ; Return:     eax = BYTEs read.
 
 Method IniFileReader.Init, uses xbx xdi xsi, pOwner:POINTER, pMemHeap:$ObjPtr(MemoryHeap)
@@ -88,7 +88,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     IniFileReader.LoadList
 ; Purpose:    Scans h2inc+.ini for a given section.
-; Arguments:  Arg1 -> LIST_SETUP of that list.
+; Arguments:  Arg1: -> LIST_SETUP of that list.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method IniFileReader.LoadList, uses xbx xdi xsi, pListSetup:PLIST_SETUP

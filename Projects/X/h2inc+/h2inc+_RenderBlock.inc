@@ -11,7 +11,7 @@
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  RenderBlock
 ; Purpose:    Get members of a block (structures, unions, enums) in between {...}.
-; Arguments:  Arg1 -> Block name.
+; Arguments:  Arg1: -> Block name.
 ;             Arg2: Block type: RBT_CONTAINER (struct/union), RBT_EXTERN or RBT_ENUM
 ;             xbx -> IncFile.
 ; Return:     xax -> Last Token or NULL if failed.
