@@ -10,9 +10,9 @@
 
 CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRAW; or CS_DROPSHADOW
 
-CStr szDC_Test, "DC_Test"                               ;Creates szDC_Test string in .const
+CStr szDC_Test, "Application"                           ;Creates szDC_Test string in .const
 
-Object DC_Test, ApplicationID, SdiApp                      ;Single Document Interface App.
+Object Application, ApplicationID, SdiApp               ;Single Document Interface App.
   RedefineMethod    Init                                ;Init method redefinition
   StaticMethod      Startup                             ;Startup method redefinition
   RedefineMethod    WndProc,    DWORD, WPARAM, LPARAM
@@ -30,16 +30,16 @@ ObjectEnd                                               ;Ends object definition
 
 .code
 ; ==================================================================================================
-;    DC_Test implementation
+;    Application implementation
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DC_Test.Init
+; Method:     Application.Init
 ; Purpose:    Initialize the SDI application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DC_Test.Init, uses xsi
+Method Application.Init, uses xsi
   local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD
   local bBuffer[10]:BYTE
 
@@ -62,13 +62,13 @@ Method DC_Test.Init, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DC_Test.OnCommand
+; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method DC_Test.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   local cFileName[1024]:CHR, Dlg:$Obj(DialogAbout), hIcon:HICON
 
   SetObject xsi
@@ -100,13 +100,13 @@ Method DC_Test.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DC_Test.OnClose
+; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method DC_Test.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure ?"), $OfsCStr("Application exit"), \
                      MB_YESNO or MB_ICONQUESTION
@@ -118,13 +118,13 @@ Method DC_Test.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DC_Test.OnPaint
+; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method DC_Test.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   local PS:PAINTSTRUCT, hDC:HDC, Rct:RECT
 
   SetObject xsi
@@ -138,17 +138,17 @@ Method DC_Test.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DC_Test.Startup
+; Method:     Application.Startup
 ; Purpose:    Register the object class with the OS.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DC_Test.Startup
+Method Application.Startup
   local WC:WNDCLASSEX
 
   mov WC.cbSize, sizeof WNDCLASSEX
   mov WC.style, CLSSTYLE
-  m2m WC.lpfnWndProc, $MethodAddr(DC_Test.WndProc), xax
+  m2m WC.lpfnWndProc, $MethodAddr(Application.WndProc), xax
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
   m2m WC.hInstance, hInstance, xdx
@@ -164,7 +164,7 @@ Method DC_Test.Startup
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DC_Test.WindowProc
+; Method:     Application.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.
 ;             Arg2: First message parameter.
@@ -172,8 +172,8 @@ MethodEnd
 ;             Window handle is passed in pSelf.
 ; Return:     eax = Result of the message processing and depends on the message.
 
-Method DC_Test.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
-  DbgMessage uMsg,, "DC_Test Messages"                  ;Ouputs messages send to this Window
+Method Application.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
+  DbgMessage uMsg,, "Application Messages"              ;Ouputs messages send to this Window
 
   .if uMsg == WM_NCCREATE
     mov xax, lParam

@@ -128,7 +128,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=27
+MilestoneOnDateDate=1
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -165,10 +165,10 @@ ProductVer4Range=0
 [Size]
 2=0,0,802,423,95551
 3=0,0,0,0,388
-1=480,488,480,244,622
-4=0,0,0,0,442
+1=480,488,480,244,4070
+4=0,0,0,0,113
 1001=0,0,0,0,460
-5=0,0,0,0,6732
+5=0,0,0,0,6237
 6=0,0,0,0,137207
 7=0,0,0,0,22730
 8=0,0,0,0,13287
@@ -213,16 +213,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="$LocReg(dCount)"
-2="Base64"
-3="DbgCloseAll"
-4="MyXMin"
-5="DBG_CHT_SCALEX_AUTO"
-6="DBG_CHT_SCALEX_TITLE"
-7="FillText"
-8="$$FillText"
-9="$$Fill"
-10="$$FillString"
+1="DC_Test"
+2="$LocReg(dCount)"
+3="Base64"
+4="DbgCloseAll"
+5="MyXMin"
+6="DBG_CHT_SCALEX_AUTO"
+7="DBG_CHT_SCALEX_TITLE"
+8="FillText"
+9="$$FillText"
+10="$$Fill"
 [Collapse]
 1=
 2=,,,
@@ -254,7 +254,7 @@ ProductVer4Range=0
 21=
 17=
 [AutoLoad]
-AutoLoad=1,2,19,5,17
+AutoLoad=1
 [RADebugBP]
 1=
 2=
@@ -276,6 +276,6 @@ AutoLoad=1,2,19,5,17
 19=
 17=
 [PTimer]
-PTimer=691797243
+PTimer=691907305
 [GroupExpand]
 GroupExpand=0,1,1,0,0,1,1,0

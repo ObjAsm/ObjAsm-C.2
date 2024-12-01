@@ -10,10 +10,10 @@
 
 CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRAW; or CS_DROPSHADOW
 
-CStr szMSChartDemoApp, "MSChartDemoApp"                 ;Creates szMSChartDemoApp string in .const
+CStr szMSChartDemoApp, "Application"                    ;Creates szMSChartDemoApp string in .const
 
 
-Object MSChartDemoApp, ApplicationID, SdiApp               ;Single Document Interface App.
+Object Application, ApplicationID, SdiApp               ;Single Document Interface App.
   RedefineMethod    Done
   RedefineMethod    Init                                ;Init method redefinition
   RedefineMethod    OnSize,         WPARAM, LPARAM
@@ -100,28 +100,28 @@ MethodEnd
 
 
 ; ==================================================================================================
-;    MSChartDemoApp implementation
+;    Application implementation
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     MSChartDemoApp.Done
+; Method:     Application.Done
 ; Purpose:    Finalize the SDI application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method MSChartDemoApp.Done, uses xsi
+Method Application.Done, uses xsi
   SetObject xsi
   OCall [xsi].Chart::MSChart.Done
   ACall xsi.Done
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     MSChartDemoApp.Init
+; Method:     Application.Init
 ; Purpose:    Initialize the SDI application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method MSChartDemoApp.Init, uses xbx xsi
+Method Application.Init, uses xbx xsi
   local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD
 
   local pIVcPlot:POINTER, pIVcTitle:POINTER
@@ -245,13 +245,13 @@ Method MSChartDemoApp.Init, uses xbx xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     MSChartDemoApp.OnCommand
+; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method MSChartDemoApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout), hIcon:HICON
 
   SetObject xsi
@@ -281,13 +281,13 @@ Method MSChartDemoApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     MSChartDemoApp.OnClose
+; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method MSChartDemoApp.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure ?"), $OfsCStr("Application exit"), \
                      MB_YESNO or MB_ICONQUESTION
@@ -299,13 +299,13 @@ Method MSChartDemoApp.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     MSChartDemoApp.OnPaint
+; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method MSChartDemoApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   local PS:PAINTSTRUCT, hDC:HDC, Rct:RECT
 
   SetObject xsi
@@ -319,13 +319,13 @@ Method MSChartDemoApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     MSChartDemoApp.OnEraseBkgnd
+; Method:     Application.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = nonzero if the background was erased, otherwise zero.
 
-Method MSChartDemoApp.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
+Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   local CRect:RECT
 
   SetObject xcx
@@ -338,13 +338,13 @@ Method MSChartDemoApp.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     MSChartDemoApp.OnSize
+; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method MSChartDemoApp.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov xax, lParam
   mov ebx, eax
@@ -354,17 +354,17 @@ Method MSChartDemoApp.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     MSChartDemoApp.Startup
+; Method:     Application.Startup
 ; Purpose:    Register the object class with the OS.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method MSChartDemoApp.Startup
+Method Application.Startup
   local WC:WNDCLASSEX
 
   mov WC.cbSize, sizeof WNDCLASSEX
   mov WC.style, CLSSTYLE
-  m2m WC.lpfnWndProc, $MethodAddr(MSChartDemoApp.WndProc), xdx
+  m2m WC.lpfnWndProc, $MethodAddr(Application.WndProc), xdx
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
   m2m WC.hInstance, hInstance, xdx

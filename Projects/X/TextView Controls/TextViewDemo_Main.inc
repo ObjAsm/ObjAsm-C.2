@@ -322,7 +322,7 @@ Method Application.Startup
 
   mov WC.cbSize, sizeof(WNDCLASSEX)
   mov WC.style, CLSSTYLE
-  m2m WC.lpfnWndProc, $MethodAddr(SdiApp.WndProc), xax
+  m2m WC.lpfnWndProc, $MethodAddr(Application.WndProc), xax
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
   m2m WC.hInstance, hInstance, xax

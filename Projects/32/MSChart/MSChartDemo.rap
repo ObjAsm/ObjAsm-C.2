@@ -137,7 +137,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=23
+MilestoneOnDateDate=1
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -173,11 +173,11 @@ ProductVer4Range=0
 
 [Size]
 2=0,0,0,0,51381
-1=0,0,0,0,1246
+1=0,0,0,0,834
 6=0,0,0,0,3329
 4=0,0,0,0,1150
 31=0,0,1213,691,1416
-8=0,0,0,0,12955
+8=0,0,0,0,567
 7=0,0,0,0,3995
 9=0,0,0,0,6700
 10=0,0,0,0,3304
@@ -221,16 +221,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="FireNow"
-2="??EVENT_ENTRY.pHandler"
-3="??EVENT_ENTRY"
-4="AxisLabelActivated"
-5="MSChartAxisFormatDlg.Init"
-6="dAxisID"
-7="VtChAxisId"
-8="IVcPlot"
-9="vArg"
-10="get_Axis"
+1="MSChartDemoApp"
+2="FireNow"
+3="??EVENT_ENTRY.pHandler"
+4="??EVENT_ENTRY"
+5="AxisLabelActivated"
+6="MSChartAxisFormatDlg.Init"
+7="dAxisID"
+8="VtChAxisId"
+9="IVcPlot"
+10="vArg"
 [Collapse]
 15=,
 6=
@@ -258,9 +258,9 @@ ProductVer4Range=0
 21=
 19=
 [AutoLoad]
-AutoLoad=1,8,4,5,11
+AutoLoad=1
 [PTimer]
-PTimer=94411311
+PTimer=94490264
 [GroupExpand]
 GroupExpand=1,1,0,1,0,0,1,1,0
 [RADebugBP]

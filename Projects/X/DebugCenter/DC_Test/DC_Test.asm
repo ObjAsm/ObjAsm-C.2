@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      DC_Test.asm
+; Title:      Application.asm
 ; Authors:    G. Friedrich
 ; Version:    C.1.0
 ; Purpose:    ObjAsm DebugCenter test application.
@@ -44,7 +44,7 @@ MakeObjects WinApp, SdiApp
 include DC_Test_Globals.inc
 include DC_Test_Main.inc
 
-pApp equ offset $ObjTmpl(DC_Test)
+pApp equ offset $ObjTmpl(Application)
 
 CReal4 MyXMin, -10.0
 CReal4 MyXMax, +10.0
@@ -122,17 +122,17 @@ start proc
   DbgTileHor
 
   DbgLine2
-  DbgTraceObject $ObjTmpl(DC_Test)
-  OCall $ObjTmpl(DC_Test)::DC_Test.Init                         ;Initialize the object data
-  OCall $ObjTmpl(DC_Test)::DC_Test.ErrorSet, STM_OPEN_ERROR     ;20000014h
-  DbgObject $ObjTmpl(DC_Test)::DC_Test                          ;Check the dErrorCode value! 
-  DbgIMT $ObjTmpl(DC_Test)::DC_Test 
-  DbgVMT $ObjTmpl(DC_Test)::DC_Test 
-  OCall $ObjTmpl(DC_Test)::DC_Test.Run                          ;Execute the application
-  OCall $ObjTmpl(DC_Test)::DC_Test.Done                         ;Finalize it
+  DbgTraceObject $ObjTmpl(Application)
+  OCall $ObjTmpl(Application)::Application.Init                         ;Initialize the object data
+  OCall $ObjTmpl(Application)::Application.ErrorSet, STM_OPEN_ERROR     ;20000014h
+  DbgObject $ObjTmpl(Application)::Application                          ;Check the dErrorCode value! 
+  DbgIMT $ObjTmpl(Application)::Application 
+  DbgVMT $ObjTmpl(Application)::Application 
+  OCall $ObjTmpl(Application)::Application.Run                          ;Execute the application
+  OCall $ObjTmpl(Application)::Application.Done                         ;Finalize it
 
   DbgHex pApp, "Here in Code"
-;  DbgTraceShow DC_Test,, "Performance data"
+;  DbgTraceShow Application,, "Performance data"
   DbgLine
   DbgText "Hip hop..."
   DbgHex hInstance

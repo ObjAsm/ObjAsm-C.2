@@ -65,9 +65,9 @@ start proc
 
   invoke CoInitialize, 0
 
-  OCall $ObjTmpl(MSChartDemoApp)::MSChartDemoApp.Init
-  OCall $ObjTmpl(MSChartDemoApp)::MSChartDemoApp.Run
-  OCall $ObjTmpl(MSChartDemoApp)::MSChartDemoApp.Done
+  OCall $ObjTmpl(Application)::Application.Init
+  OCall $ObjTmpl(Application)::Application.Run
+  OCall $ObjTmpl(Application)::Application.Done
 
   invoke CoUninitialize
 
