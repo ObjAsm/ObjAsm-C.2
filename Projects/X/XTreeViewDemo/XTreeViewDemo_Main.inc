@@ -15,7 +15,7 @@ XTV_Def DEF_XTV {100, WS_CLIPSIBLINGS, WS_EX_ACCEPTFILES or WS_EX_NOPARENTNOTIFY
                  $OfsTStr("Title"), {<0,0,200,300>}}
 
 
-Object XTVDemoApp, MySdiAppID, SdiApp
+Object Application, ApplicationID, SdiApp
   RedefineMethod    Done
   RedefineMethod    Init
   RedefineMethod    OnSize,             WPARAM, LPARAM
@@ -50,28 +50,28 @@ WIDTH_LEVEL_3   equ  WIDTH_LEVEL_1
 .code
 
 ; ==================================================================================================
-;    XTVDemoApp implementation
+;    Application implementation
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.Done
+; Method:     Application.Done
 ; Purpose:    Finalize the SDI application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method XTVDemoApp.Done, uses xsi
+Method Application.Done, uses xsi
   SetObject xsi
   OCall [xsi].XTV::XCustomTreeView.Done
   ACall xsi.Done
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.Init
+; Method:     Application.Init
 ; Purpose:    Initialize the SDI application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method XTVDemoApp.Init, uses xsi
+Method Application.Init, uses xsi
   local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD
 ;  local Dlg:TVDialog
 
@@ -96,13 +96,13 @@ Method XTVDemoApp.Init, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.OnClose
+; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method XTVDemoApp.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure ?"), $OfsCStr("Application exit"), \
                  MB_YESNO or MB_ICONQUESTION
@@ -114,13 +114,13 @@ Method XTVDemoApp.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.OnCommand
+; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method XTVDemoApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout), hIcon:HICON
 
   SetObject xsi
@@ -149,13 +149,13 @@ Method XTVDemoApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.OnCreate
+; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero.
 
-Method XTVDemoApp.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local pNode0:$ObjPtr(XCustomNode), pNodeX:$ObjPtr(XCustomNode), pNodeY:$ObjPtr(XCustomNode)
 
   SetObject xsi
@@ -236,38 +236,38 @@ Method XTVDemoApp.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.OnFocus
+; Method:     Application.OnFocus
 ; Purpose:    Event procedure for WM_KILLFOCUS and WM_SETFOCUS messages.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero.
 
-Method XTVDemoApp.OnFocus,, wParam:WPARAM, lParam:LPARAM
+Method Application.OnFocus,, wParam:WPARAM, lParam:LPARAM
   SetObject xcx
   invoke SendMessage, [xcx].XTV.hWnd, eax, wParam, lParam     ;eax = Message
   xor eax, eax
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.OnMouseWheel
+; Method:     Application.OnMouseWheel
 ; Purpose:    Forward the message WM_MOUSEWHEEL to the focused window.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method XTVDemoApp.OnMouseWheel,, wParam:WPARAM, lParam:LPARAM
+Method Application.OnMouseWheel,, wParam:WPARAM, lParam:LPARAM
   SetObject xcx
   invoke SendMessage, [xcx].XTV.hWnd, WM_MOUSEWHEEL, wParam, lParam
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.OnPaint
+; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method XTVDemoApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   local PS:PAINTSTRUCT, hDC:HDC, Rct:RECT
 
   SetObject xsi
@@ -280,14 +280,14 @@ Method XTVDemoApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.OnSize
+; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero.
 
-Method XTVDemoApp.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
-;  DbgText "XTVDemoApp.OnSize"
+Method Application.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+;  DbgText "Application.OnSize"
   SetObject xsi
   .if [xsi].XTV.hWnd != 0
     PntS2Regs lParam, ebx
@@ -298,67 +298,67 @@ Method XTVDemoApp.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.OnSettingChange
+; Method:     Application.OnSettingChange
 ; Purpose:    Event handler for WM_SETTINGCHANGE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero.
 
-Method XTVDemoApp.OnSettingChange,, wParam:WPARAM, lParam:LPARAM
-;  DbgText "XTVDemoApp.OnSettingChange"
+Method Application.OnSettingChange,, wParam:WPARAM, lParam:LPARAM
+;  DbgText "Application.OnSettingChange"
   SetObject xcx
   invoke SendMessage, [xcx].XTV.hWnd, WM_SETTINGCHANGE, wParam, lParam
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.OnSysColorChange
+; Method:     Application.OnSysColorChange
 ; Purpose:    Event handler for WM_SYSCOLORCHANGE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero.
 
-Method XTVDemoApp.OnSysColorChange,, wParam:WPARAM, lParam:LPARAM
-;  DbgText "XTVDemoApp.OnSysColorChange"
+Method Application.OnSysColorChange,, wParam:WPARAM, lParam:LPARAM
+;  DbgText "Application.OnSysColorChange"
   SetObject xcx
   invoke SendMessage, [xcx].XTV.hWnd, WM_SYSCOLORCHANGE, wParam, lParam
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.OnKeyDown
+; Method:     Application.OnKeyDown
 ; Purpose:    Forward this message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Message return value.
 
-Method XTVDemoApp.OnKeyDown,, wParam:WPARAM, lParam:LPARAM
+Method Application.OnKeyDown,, wParam:WPARAM, lParam:LPARAM
   SetObject xcx
   invoke SendMessage, [xcx].XTV.hWnd, WM_KEYDOWN, wParam, lParam
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.OnKeyUp
+; Method:     Application.OnKeyUp
 ; Purpose:    Forward this message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Message return value.
 
-Method XTVDemoApp.OnKeyUp,, wParam:WPARAM, lParam:LPARAM
+Method Application.OnKeyUp,, wParam:WPARAM, lParam:LPARAM
   SetObject xcx
   invoke SendMessage, [xcx].XTV.hWnd, WM_KEYUP, wParam, lParam
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.Startup
+; Method:     Application.Startup
 ; Purpose:    Register the object class with the OS.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method XTVDemoApp.Startup
+Method Application.Startup
   local WC:WNDCLASSEX
 
   mov WC.cbSize, sizeof WNDCLASSEX
   mov WC.style, CLSSTYLE
-  m2m WC.lpfnWndProc, $MethodAddr(XTVDemoApp.WndProc), xax
+  m2m WC.lpfnWndProc, $MethodAddr(Application.WndProc), xax
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
   m2m WC.hInstance, hInstance, xax
@@ -373,14 +373,14 @@ Method XTVDemoApp.Startup
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     XTVDemoApp.WindowProc
+; Method:     Application.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.
 ;             Arg2: First message parameter.
 ;             Arg3: Second message parameter.
 ; Return:     eax = Result of the message processing and depends on the message.
 
-Method XTVDemoApp.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
+Method Application.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
 ;  DbgMessage uMsg
   .if uMsg == WM_NCCREATE
     mov xax, lParam

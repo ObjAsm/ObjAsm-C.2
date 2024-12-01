@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-Object ScriptHostApp, -1, DialogModal    ;DialogModeless
+Object Application, ApplicationID, DialogModal    ;DialogModeless
   VirtualMethod     EnableControls,     DWORD
   VirtualMethod     FileLoad,           PSTRING
   VirtualMethod     FileSave,           PSTRING, POINTER, DWORD
@@ -45,7 +45,7 @@ ObjectEnd
 .code
 
 ; ==================================================================================================
-;    ScriptHostApp implementation
+;    Application implementation
 ; ==================================================================================================
 
 SHD_CTRL_LOAD    equ   BIT00
@@ -56,12 +56,12 @@ SHD_CTRL_SCRIPT  equ   BIT04
 SHD_CTRL_OUTPUT  equ   BIT05
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ScriptHostApp.EnableControls
+; Method:     Application.EnableControls
 ; Purpose:    Load a file into the memory block.
 ; Arguments:  Arg1: Enable flag [SHD_xxx...].
 ; Return:     xax -> MemBlock or NULL if failed.
 
-Method ScriptHostApp.EnableControls, uses xsi, dEnable:DWORD
+Method Application.EnableControls, uses xsi, dEnable:DWORD
   SetObject xsi
   invoke GetDlgItem, [xsi].hWnd, IDC_BTN_LOAD
   xor edx, edx
@@ -108,12 +108,12 @@ Method ScriptHostApp.EnableControls, uses xsi, dEnable:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ScriptHostApp.FileLoad
+; Method:     Application.FileLoad
 ; Purpose:    Load a file into the memory block.
 ; Arguments:  Arg1: -> FileName.
 ; Return:     eax: TRUE if succeeded, otherwise FALSE.
 
-Method ScriptHostApp.FileLoad, uses xbx xsi, pFileName:PSTRING
+Method Application.FileLoad, uses xbx xsi, pFileName:PSTRING
   local hFile:HANDLE, dFileSize:DWORD, dBytesRead:DWORD, pMemBlock:POINTER
   local cBuffer[1024*sizeof CHR]:CHR
 
@@ -165,14 +165,14 @@ Method ScriptHostApp.FileLoad, uses xbx xsi, pFileName:PSTRING
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ScriptHostApp.FileSave
+; Method:     Application.FileSave
 ; Purpose:    Write memory block into a file.
 ; Arguments:  Arg1: -> FileName.
 ;             Arg2: -> Memblock.
 ;             Arg3: -> MemSize.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method ScriptHostApp.FileSave, uses xsi, pFileName:PSTRING, pMemBlock:POINTER, dMemSize:DWORD
+Method Application.FileSave, uses xsi, pFileName:PSTRING, pMemBlock:POINTER, dMemSize:DWORD
   local hFile:HANDLE, dBytesWritten:DWORD, dResult:DWORD
   local cBuffer[1024*sizeof CHR]:CHR
 
@@ -210,13 +210,13 @@ Method ScriptHostApp.FileSave, uses xsi, pFileName:PSTRING, pMemBlock:POINTER, d
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ScriptHostApp.OnCommand
+; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method ScriptHostApp.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local AbtDlg:$Obj(DialogAbout), hIcon:HICON
   local OpenFileName:OPENFILENAME, cFileName[MAX_PATH*sizeof CHR]:CHR, cBuffer[1024*sizeof CHR]:CHR
   local pContent:PSTRINGW, pScript:PSTRINGW
@@ -320,13 +320,13 @@ Method ScriptHostApp.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ScriptHostApp.OnDestroy
+; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero.
 
-Method ScriptHostApp.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   .if [xsi].hEditFont != 0
     invoke DeleteObject, [xsi].hEditFont
@@ -344,13 +344,13 @@ Method ScriptHostApp.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ScriptHostApp.OnDropFiles
+; Method:     Application.OnDropFiles
 ; Purpose:    Event procedure for WM_DROPFILES message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero.
 
-Method ScriptHostApp.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov edi, $32($invoke(DragQueryFile, wParam, 0, NULL, 0))
   inc edi                                               ;Include ZTC
@@ -372,24 +372,24 @@ Method ScriptHostApp.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ScriptHostApp.OnEnableModeless
+; Method:     Application.OnEnableModeless
 ; Purpose:    Event procedure for SHM_ENABLEMODELESS message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     Nothing.
 
-Method ScriptHostApp.OnEnableModeless,, wParam:WPARAM, lParam:LPARAM
-  DbgWarning "ScriptHostApp.OnEnableModeless"
+Method Application.OnEnableModeless,, wParam:WPARAM, lParam:LPARAM
+  DbgWarning "Application.OnEnableModeless"
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ScriptHostApp.OnError
+; Method:     Application.OnError
 ; Purpose:    Event procedure for SHM_ERROR message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     Nothing.
 
-Method ScriptHostApp.OnError, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnError, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[1024]:CHR
 
   SetObject xsi
@@ -406,27 +406,27 @@ Method ScriptHostApp.OnError, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ScriptHostApp.OnFinished
+; Method:     Application.OnFinished
 ; Purpose:    Event procedure for SHM_FINISHED message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     Nothing.
 
-Method ScriptHostApp.OnFinished,, wParam:WPARAM, lParam:LPARAM
-;  DbgText "ScriptHostApp.OnFinished"
+Method Application.OnFinished,, wParam:WPARAM, lParam:LPARAM
+;  DbgText "Application.OnFinished"
   SetObject xcx
   OCall xcx.EnableControls, SHD_CTRL_LOAD or SHD_CTRL_SAVE or SHD_CTRL_RUN or \
                             SHD_CTRL_SCRIPT or SHD_CTRL_OUTPUT
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ScriptHostApp.OnInitDialog
+; Method:     Application.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero.
 
-Method ScriptHostApp.OnInitDialog, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnInitDialog, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local LogFnt:LOGFONT, hDC:HDC
 
   SetObject xsi
@@ -481,7 +481,7 @@ Method ScriptHostApp.OnInitDialog, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd                                               ;setting the default keyboard focus.
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ScriptHostApp.OnSize
+; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
@@ -497,13 +497,13 @@ BORDER_VSPACE     equ   10
 SPLITTER_VSPACE   equ   1
 SPLITTER_HEIGTH   equ   8
 
-Method ScriptHostApp.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local DlgRect:RECT, SpHorRect:RECT
   local hControl:HWND, CtlRect:RECT
   local X1:DWORD, Y1:DWORD
   local dEditWidth:DWORD
 
-  DbgText "ScriptHostApp.OnSize"
+  DbgText "Application.OnSize"
   .if wParam != SIZE_MINIMIZED
     SetObject xsi
     invoke GetClientRect, [xsi].hWnd, addr DlgRect

@@ -82,9 +82,9 @@ start proc uses xbx
   invoke InitCommonControls
   mov xbx, $invoke(LoadLibraryW, $OfsCStrW("RichEd20.dll"))
 
-  OCall $ObjTmpl(ScriptHostApp)::ScriptHostApp.Init, NULL, 0, IDD_MAIN
-  OCall $ObjTmpl(ScriptHostApp)::ScriptHostApp.Show
-  OCall $ObjTmpl(ScriptHostApp)::ScriptHostApp.Done
+  OCall $ObjTmpl(Application)::Application.Init, NULL, 0, IDD_MAIN
+  OCall $ObjTmpl(Application)::Application.Show
+  OCall $ObjTmpl(Application)::Application.Done
 
   invoke FreeLibrary, xbx
 

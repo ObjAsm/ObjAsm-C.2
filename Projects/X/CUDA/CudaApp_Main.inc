@@ -1,17 +1,19 @@
 ; ==================================================================================================
 ; Title:      CudaApp_Main.inc
 ; Author:     G. Friedrich
-; Version:    See CudaApp.asm
+; Version:    See Application.asm
 ; Purpose:    ObjAsm CUDA application.
 ; ==================================================================================================
 
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Object:     CudaApp
+; Object:     Application
 ; Purpose:    Dialog main application.
 
-Object CudaApp,, DlgApp
+Object Application,, DlgApp
   RedefineMethod    Init
+
+  VirtualEvent      OnClose,    WM_CLOSE, WM_QUERYENDSESSION
 ObjectEnd
 
 
@@ -48,7 +50,7 @@ CStr MessageFormat, "%16.7f"
 
 .code
 ; ==================================================================================================
-;    CudaApp implementation
+;    Application implementation
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -71,7 +73,7 @@ LoadPtxRes proc hInst:HANDLE, pResName:PSTRING
 LoadPtxRes endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     CudaApp.Init
+; Method:     Application.Init
 ; Purpose:    Initialize the application object.
 ; Arguments:  None.
 ; Return:     Nothing.
@@ -89,7 +91,7 @@ CudaCheckResult macro
 @@:
 endm
 
-Method CudaApp.Init, uses xbx xdi xsi
+Method Application.Init, uses xbx xdi xsi
   local CudaDevice:CUdevice, CudaModule:CUmodule, CudaFunction:CUfunction
   local CudaContext:CUcontext, CudaContextversion:DWORD
   local NumberArray       [256*sizeof(REAL4)]:REAL4
@@ -139,7 +141,7 @@ Method CudaApp.Init, uses xbx xdi xsi
   else
     invoke LoadPtxRes, hInstance, $OfsCStr("LOG2_64")
   endif
-  invoke cuModuleLoadData, addr CudaModule, xax;offset @CatStr(<PTX_Log2_>, %TARGET_BITNESS)
+  invoke cuModuleLoadData, addr CudaModule, xax           ;offset @CatStr(<PTX_Log2_>, %TARGET_BITNESS)
   CudaCheckResult
   invoke cuModuleGetFunction, addr CudaFunction, CudaModule, $OfsCStrA("log_2")
   CudaCheckResult
@@ -213,4 +215,22 @@ Method CudaApp.Init, uses xbx xdi xsi
   invoke CreateDialogParam, hInstance, IDD_DLG_MAIN, 0, $MethodAddr(DlgApp.WndProc), xsi
   invoke SetDlgItemText, [xsi].hWnd, IDC_STC_MESSAGE, addr Message
 
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Application.OnClose
+; Purpose:    Event procedure for WM_CLOSE message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = Zero if handled.
+
+Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
+  SetObject xsi
+  invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure ?"), $OfsCStr("Application exit"), \
+                     MB_YESNO or MB_ICONQUESTION
+  .if eax == IDNO
+    xor eax, eax
+  .else
+    invoke DefWindowProc, [xsi].hWnd, WM_CLOSE, wParam, lParam
+  .endif
 MethodEnd

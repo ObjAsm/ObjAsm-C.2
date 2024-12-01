@@ -17,7 +17,7 @@ TIMERID         equ   125
 
 CStr szFireworksApp, "FireworksApp"
 
-Object FireworksApp, MySdiAppID, SdiApp
+Object FireworksApp, ApplicationID, SdiApp
   RedefineMethod    Init
   StaticMethod      Startup
 

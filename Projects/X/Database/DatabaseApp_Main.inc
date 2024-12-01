@@ -57,7 +57,7 @@ AppStatusbar DEF_STATUSBAR {IDC_APP_SBR, SBR_STYLE, 0, 2}
 
 CStr szApplicationClass, "OAC_DatabaseExplorer"
 
-Object Application, MySdiAppID, SdiApp                  ;Single Document Interface App.
+Object Application, ApplicationID, SdiApp                  ;Single Document Interface App.
 ;  VirtualMethod     Check1
 ;  VirtualMethod     Check2
 ;  VirtualMethod     Check3

@@ -156,7 +156,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=28
+MilestoneOnDateDate=30
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -191,8 +191,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,238
-1=0,0,0,0,1341
+2=0,0,0,0,568
+1=0,0,0,0,2124
 6=0,0,1456,414,587
 4=0,0,0,0,225
 31=0,0,1213,691,11371
@@ -207,7 +207,7 @@ ProductVer4Range=0
 14=0,0,0,0,814
 13=0,0,0,0,18129
 12=0,0,0,0,1628
-16=
+16=0,0,0,0,4468
 17=0,0,0,0,456
 20=0,0,0,0,1401
 18=0,0,0,0,7559
@@ -245,16 +245,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="IDC_TEXT_ABOUT"
-2="OnCommand"
-3="GetComPortNames"
-4="DialogComPortSelection"
-5="echo"
-6="$PushMethodArgs"
-7="MethodInvoke m"
-8="MethodInvoke"
-9="OCall"
-10="IDD_DLG_COMPORT_SELECTION"
+1="MySdiAppID"
+2="ArduinoApp"
+3="IDC_TEXT_ABOUT"
+4="OnCommand"
+5="GetComPortNames"
+6="DialogComPortSelection"
+7="echo"
+8="$PushMethodArgs"
+9="MethodInvoke m"
+10="MethodInvoke"
 [Collapse]
 1=
 2=
@@ -369,9 +369,9 @@ ProductVer4Range=0
 32=
 37=
 [AutoLoad]
-AutoLoad=1,2
+AutoLoad=1,2,16,14
 [PTimer]
-PTimer=1198766996
+PTimer=1205054950
 [GroupExpand]
 GroupExpand=1,1,1,1,0,1,1,0
 [RADebugBP]
@@ -403,3 +403,4 @@ GroupExpand=1,1,1,1,0,1,1,0
 33=
 35=
 21=
+16=

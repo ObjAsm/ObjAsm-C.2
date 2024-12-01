@@ -132,7 +132,7 @@ MethodEnd
 ; Note:       Window handle is passed in pSelf (hidden parameter).
 
 Method DlgApp.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
-;  DbgMessage uMsg,, "DlgApp Messages"
+  ;DbgMessage uMsg,, "DlgApp Messages"
   .if uMsg == WM_INITDIALOG
     mov xsi, lParam
     test xsi, xsi

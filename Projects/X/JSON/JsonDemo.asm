@@ -32,9 +32,9 @@ start proc
   DbgClearAll
   ResGuard_Start
 
-  OCall $ObjTmpl(JsonDemoApp)::JsonDemoApp.Init
-  OCall $ObjTmpl(JsonDemoApp)::JsonDemoApp.Run
-  OCall $ObjTmpl(JsonDemoApp)::JsonDemoApp.Done
+  OCall $ObjTmpl(Application)::Application.Init
+  OCall $ObjTmpl(Application)::Application.Run
+  OCall $ObjTmpl(Application)::Application.Done
 
   ResGuard_Show
   ResGuard_Stop

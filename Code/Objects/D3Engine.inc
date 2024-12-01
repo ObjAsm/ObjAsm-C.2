@@ -241,6 +241,7 @@ Object D3Object, D3ObjectID, Streamable
   RedefineMethod  Load,             $ObjPtr(Stream), PDESER_INFO  ;-> Stream, -> DESER_INFO
   VirtualMethod   Move,             PD3Vector, PD3Vector          ;-> Rotation, -> Displ.
   VirtualMethod   Project,          $ObjPtr(D3Camera), XWORD
+  VirtualMethod   Scale,            REAL4
   RedefineMethod  Store,            $ObjPtr(Stream)               ;-> Stream
 
   DefineVariable  pTriangles,       $ObjPtr(Collection),          NULL
@@ -282,13 +283,13 @@ ObjectEnd
 
 if IMPLEMENT
 
-% include &ObjPath&D3Math.inc
+% include .\D3Math.inc
 
-% include &ObjPath&D3VectronCollection.inc
-% include &ObjPath&D3Triangle.inc
-% include &ObjPath&D3Object.inc
-% include &ObjPath&D3Light.inc
-% include &ObjPath&D3Camera.inc
-% include &ObjPath&D3Scene.inc
+% include .\D3VectronCollection.inc
+% include .\D3Triangle.inc
+% include .\D3Object.inc
+% include .\D3Light.inc
+% include .\D3Camera.inc
+% include .\D3Scene.inc
 
 endif

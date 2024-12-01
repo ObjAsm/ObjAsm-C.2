@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      RibbonApp.asm
+; Title:      Application.asm
 ; Author:     G. Friedrich
 ; Version:    1.0.0
 ; Purpose:    ObjAsm Ribbon Application.
@@ -60,9 +60,9 @@ start proc
   invoke InitCommonControls
 
   DbgClearAll
-  OCall $ObjTmpl(RibbonApp)::RibbonApp.Init
-  OCall $ObjTmpl(RibbonApp)::RibbonApp.Run
-  OCall $ObjTmpl(RibbonApp)::RibbonApp.Done
+  OCall $ObjTmpl(Application)::Application.Init
+  OCall $ObjTmpl(Application)::Application.Run
+  OCall $ObjTmpl(Application)::Application.Done
 
   invoke CoUninitialize
 

@@ -13,7 +13,7 @@ CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRA
 CStr szMSChartDemoApp, "MSChartDemoApp"                 ;Creates szMSChartDemoApp string in .const
 
 
-Object MSChartDemoApp, MySdiAppID, SdiApp               ;Single Document Interface App.
+Object MSChartDemoApp, ApplicationID, SdiApp               ;Single Document Interface App.
   RedefineMethod    Done
   RedefineMethod    Init                                ;Init method redefinition
   RedefineMethod    OnSize,         WPARAM, LPARAM

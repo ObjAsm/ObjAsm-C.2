@@ -99,13 +99,13 @@ Method Tab1.CtlsGet, uses xbx xdi xsi
   mov xbx, [xsi].hWnd
   mov xcx, [xsi].pOwner                                 ;xcx -> TabControl
   mov xax, [xcx].$Obj(TabCtrl).pOwner                   ;xax -> OAT_Setup
-  mov xdi, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> OAT_App
+  mov xdi, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> Application
 
-  .if [xdi].$Obj(OAT_App).Setup.pExternalEditor != NULL
-    invoke StrDispose, [xdi].$Obj(OAT_App).Setup.pExternalEditor
+  .if [xdi].$Obj(Application).Setup.pExternalEditor != NULL
+    invoke StrDispose, [xdi].$Obj(Application).Setup.pExternalEditor
   .endif
   invoke GetDlgItemText, xbx, IDC_EDT_EXTERNAL_EDITOR, addr cBuffer, lengthof cBuffer
-  mov [xdi].$Obj(OAT_App).Setup.pExternalEditor, $invoke(StrNew, addr cBuffer)
+  mov [xdi].$Obj(Application).Setup.pExternalEditor, $invoke(StrNew, addr cBuffer)
 
   invoke IsDlgButtonChecked, xbx, IDC_RBN_CRLF
   .if eax != FALSE
@@ -118,38 +118,38 @@ Method Tab1.CtlsGet, uses xbx xdi xsi
       mov eax, 2                                        ;CF
     .endif
   .endif
-  mov [xdi].$Obj(OAT_App).Setup.dLineTerminator, eax
+  mov [xdi].$Obj(Application).Setup.dLineTerminator, eax
 
 
   invoke GetDlgItemInt, xbx, IDC_EDT_ZOOM, NULL, FALSE
-  mov [xdi].$Obj(OAT_App).Setup.dZoomfactor, eax
+  mov [xdi].$Obj(Application).Setup.dZoomfactor, eax
 
   invoke SendMessage, [xsi].hComboBox, CB_GETCURSEL, 0, 0
   .if eax != CB_ERR
     invoke SendMessage, [xsi].hComboBox, CB_GETITEMDATA, eax, 0
     .if xax != CB_ERR
-      invoke StrCopy, addr [xdi].$Obj(OAT_App).Setup.cFontFaceName, addr [xax].CB_FontData.cFaceName
+      invoke StrCopy, addr [xdi].$Obj(Application).Setup.cFontFaceName, addr [xax].CB_FontData.cFaceName
     .endif
   .endif
 
   invoke GetDlgItemInt, xbx, IDC_EDT_FONT_SIZE, NULL, FALSE
-  mov [xdi].$Obj(OAT_App).Setup.dFontSize, eax
+  mov [xdi].$Obj(Application).Setup.dFontSize, eax
 
   invoke IsDlgButtonChecked, xbx, IDC_CHK_CLOSE_NO_FINDING
-  mov [xdi].$Obj(OAT_App).Setup.dCloseIfNoFinding, eax
+  mov [xdi].$Obj(Application).Setup.dCloseIfNoFinding, eax
 
   invoke IsDlgButtonChecked, xbx, IDC_CHK_USE_ANNOTATIONS
-  mov [xdi].$Obj(OAT_App).Setup.dUseAnnotations, eax
+  mov [xdi].$Obj(Application).Setup.dUseAnnotations, eax
 
   invoke IsDlgButtonChecked, xbx, IDC_RBN_32BIT
   .if eax != FALSE
-    mov [xdi].$Obj(OAT_App).Setup.dTestBitness, OATF_TEST_32
+    mov [xdi].$Obj(Application).Setup.dTestBitness, OATF_TEST_32
   .else
     invoke IsDlgButtonChecked, xbx, IDC_RBN_64BIT
     .if eax != FALSE
-      mov [xdi].$Obj(OAT_App).Setup.dTestBitness, OATF_TEST_64
+      mov [xdi].$Obj(Application).Setup.dTestBitness, OATF_TEST_64
     .else
-      mov [xdi].$Obj(OAT_App).Setup.dTestBitness, OATF_TEST_MX
+      mov [xdi].$Obj(Application).Setup.dTestBitness, OATF_TEST_MX
     .endif
   .endif
 MethodEnd
@@ -168,28 +168,28 @@ Method Tab1.CtlsSet, uses xbx xdi xsi
   mov xbx, [xsi].hWnd
   mov xcx, [xsi].pOwner                                 ;xcx -> TabControl
   mov xax, [xcx].$Obj(TabCtrl).pOwner                   ;xax -> OAT_Setup
-  mov xdi, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> OAT_App
+  mov xdi, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> Application
 
-  invoke SetDlgItemText, xbx, IDC_EDT_EXTERNAL_EDITOR, [xdi].$Obj(OAT_App).Setup.pExternalEditor
-  .if [xdi].$Obj(OAT_App).Setup.dLineTerminator == 1
+  invoke SetDlgItemText, xbx, IDC_EDT_EXTERNAL_EDITOR, [xdi].$Obj(Application).Setup.pExternalEditor
+  .if [xdi].$Obj(Application).Setup.dLineTerminator == 1
     mov eax, IDC_RBN_LF
-  .elseif [xdi].$Obj(OAT_App).Setup.dLineTerminator == 2
+  .elseif [xdi].$Obj(Application).Setup.dLineTerminator == 2
     mov eax, IDC_RBN_CR
   .else
     mov eax, IDC_RBN_CRLF
   .endif
   invoke CheckRadioButton, xbx, IDC_RBN_CRLF, IDC_RBN_CR, eax
-  invoke SetDlgItemInt, xbx, IDC_EDT_ZOOM, [xdi].$Obj(OAT_App).Setup.dZoomfactor, FALSE
-  invoke SendMessage, [xsi].hComboBox, CB_SELECTSTRING, -1, addr [xdi].$Obj(OAT_App).Setup.cFontFaceName
-  invoke SetDlgItemInt, xbx, IDC_EDT_FONT_SIZE, [xdi].$Obj(OAT_App).Setup.dFontSize, FALSE
-  invoke CheckDlgButton, xbx, IDC_CHK_CLOSE_NO_FINDING, [xdi].$Obj(OAT_App).Setup.dCloseIfNoFinding
-  invoke CheckDlgButton, xbx, IDC_CHK_USE_ANNOTATIONS, [xdi].$Obj(OAT_App).Setup.dUseAnnotations
+  invoke SetDlgItemInt, xbx, IDC_EDT_ZOOM, [xdi].$Obj(Application).Setup.dZoomfactor, FALSE
+  invoke SendMessage, [xsi].hComboBox, CB_SELECTSTRING, -1, addr [xdi].$Obj(Application).Setup.cFontFaceName
+  invoke SetDlgItemInt, xbx, IDC_EDT_FONT_SIZE, [xdi].$Obj(Application).Setup.dFontSize, FALSE
+  invoke CheckDlgButton, xbx, IDC_CHK_CLOSE_NO_FINDING, [xdi].$Obj(Application).Setup.dCloseIfNoFinding
+  invoke CheckDlgButton, xbx, IDC_CHK_USE_ANNOTATIONS, [xdi].$Obj(Application).Setup.dUseAnnotations
   xor eax, eax
-  .ifBitSet [xdi].$Obj(OAT_App).Setup.dTestBitness, OATF_TEST_32
+  .ifBitSet [xdi].$Obj(Application).Setup.dTestBitness, OATF_TEST_32
     mov eax, IDC_RBN_32BIT
-  .elseIfBitSet [xdi].$Obj(OAT_App).Setup.dTestBitness, OATF_TEST_64
+  .elseIfBitSet [xdi].$Obj(Application).Setup.dTestBitness, OATF_TEST_64
     mov eax, IDC_RBN_64BIT
-  .elseIfBitSet [xdi].$Obj(OAT_App).Setup.dTestBitness, OATF_TEST_MX
+  .elseIfBitSet [xdi].$Obj(Application).Setup.dTestBitness, OATF_TEST_MX
     mov eax, IDC_RBN_MIXED
   .endif
   invoke CheckRadioButton, xbx, IDC_RBN_32BIT, IDC_RBN_MIXED, eax
@@ -351,8 +351,8 @@ Method Tab1.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov xbx, [xsi].hWnd
   mov xcx, [xsi].pOwner                                 ;xcx -> TabControl
   mov xax, [xcx].$Obj(TabCtrl).pOwner                   ;xax -> OAT_Setup
-  mov xdx, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> OAT_App
-  mov edi, [xdx].$Obj(OAT_App).dLanguage
+  mov xdx, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> Application
+  mov edi, [xdx].$Obj(Application).dLanguage
   lea xbx, cBuffer
 
   SetItemString IDC_GRP_APPLICATION,      IDS_TAB1_APPLICATION

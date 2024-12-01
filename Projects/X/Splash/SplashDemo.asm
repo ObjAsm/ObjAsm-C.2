@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      SplashDemo.asm
+; Title:      Application.asm
 ; Author:     G. Friedrich
 ; Version:    1.0.0
 ; Purpose:    ObjAsm Splash Application.
@@ -47,13 +47,13 @@ start proc
   OCall $ObjTmpl(Splash)::Splash.Init, NULL, xax, $RGB(255, 0, 255)
   OCall $ObjTmpl(Splash)::Splash.FadeIn
   invoke Sleep, 2000
-  OCall $ObjTmpl(SplashDemo)::SplashDemo.Init
+  OCall $ObjTmpl(Application)::Application.Init
   invoke Sleep, 1000
   OCall $ObjTmpl(Splash)::Splash.FadeOut
   OCall $ObjTmpl(Splash)::Splash.Done
   invoke DeleteObject, hBmp
-  OCall $ObjTmpl(SplashDemo)::SplashDemo.Run
-  OCall $ObjTmpl(SplashDemo)::SplashDemo.Done
+  OCall $ObjTmpl(Application)::Application.Run
+  OCall $ObjTmpl(Application)::Application.Done
 
   ResGuard_Show
   ResGuard_Stop

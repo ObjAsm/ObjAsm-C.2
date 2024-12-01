@@ -65,28 +65,28 @@ Method D3Triangle.Colorize, uses xbx xdi xsi, pLight:$ObjPtr(D3Light), Unused:XW
     mov [xsi].OutColor2, eax
     mov [xsi].OutColor3, eax
   .else
-    ;Colorize the
-    xor eax, eax
-    movzx eax, [xsi].SrcColor.RGBQUAD.rgbBlue
-    fildReg eax                                         ;              2
+    ;Colorize the rest
+    movzx xax, [xsi].SrcColor.RGBQUAD.rgbBlue
+    fildReg xax                                         ;              2
     fmul st(0), st(1)                                   ;    Normal   /\
-    fistpReg eax                                        ;       \  21/  \ Triangle
+    fistpReg xax                                        ;       \  21/  \ Triangle
     mov [xsi].OutColor1.RGBQUAD.rgbBlue, al             ;        \  /    \
                                                         ;         \/______\3
-    mov al, [xsi].SrcColor.RGBQUAD.rgbGreen             ;         1|  31
-    fildReg eax                                         ;          |
+    movzx xax, [xsi].SrcColor.RGBQUAD.rgbGreen             ;         1|  31
+    fildReg xax                                         ;          |
     fmul st(0), st(1)                                   ;          |
-    fistpReg eax                                        ;          |
+    fistpReg xax                                        ;          |
     mov [xsi].OutColor1.RGBQUAD.rgbGreen, al            ;        1L| Light beam
                                                         ;          |
-    mov al, [xsi].SrcColor.RGBQUAD.rgbRed               ;          |
-    fildReg eax                                         ;          |
+    movzx xax, [xsi].SrcColor.RGBQUAD.rgbRed               ;          |
+    fildReg xax                                         ;          |
     fmul st(0), st(1)                                   ;         L*
-    fistpReg eax                                        ;     Light source
+    fistpReg xax                                        ;     Light source
     mov [xsi].OutColor1.RGBQUAD.rgbRed, al
 
-    m2m [xsi].OutColor2, [xsi].OutColor1, eax
-    m2m [xsi].OutColor3, [xsi].OutColor1, eax
+    mov eax, [xsi].OutColor1
+    mov [xsi].OutColor2, eax
+    mov [xsi].OutColor3, eax
   .endif
 
   fUnload
@@ -184,27 +184,27 @@ Polygon3 struc
 Polygon3 ends
 
 ;; % includelib ...\Msimg32.lib  is needed
-;TriVertex3 struc
-;  V1  TriVertex   {?, ?, ?, ?, ?, ?}
-;  V2  TriVertex   {?, ?, ?, ?, ?, ?}
-;  V3  TriVertex   {?, ?, ?, ?, ?, ?}
-;TriVertex3 ends
-;
-;.const
-;  D3GRADIENTTRIANGLE  GradientTriangle  {0, 1, 2}
-;
-;.code
-;Method D3Triangle.Draw, uses xsi, hDC:HDC, pObjProj:POINTER
-;  local TrVx3:TriVertex3, Poly3:Polygon3
-;  local hPrevBrush:HBRUSH, hBrush:HBRUSH
-;  local hPrevPen:HPEN, hPen:HPEN
-;
-;  SetObject xsi
-;;  SetVertex 1
-;;  SetVertex 2
-;;  SetVertex 3
-;;  invoke GradientFill, hDC, addr TrVx3, 3, offset D3GRADIENTTRIANGLE, 1, GRADIENT_FILL_TRIANGLE
-;
+TriVertex3 struc
+  V1  TriVertex   {?, ?, ?, ?, ?, ?}
+  V2  TriVertex   {?, ?, ?, ?, ?, ?}
+  V3  TriVertex   {?, ?, ?, ?, ?, ?}
+TriVertex3 ends
+
+.const
+  D3GRADIENTTRIANGLE  GradientTriangle  {0, 1, 2}
+
+.code
+Method D3Triangle.Draw, uses xsi, hDC:HDC, pObjProj:POINTER
+  local TrVx3:TriVertex3, Poly3:Polygon3
+  local hPrevBrush:HBRUSH, hBrush:HBRUSH
+  local hPrevPen:HPEN, hPen:HPEN
+
+  SetObject xsi
+  SetVertex 1
+  SetVertex 2
+  SetVertex 3
+  invoke GradientFill, hDC, addr TrVx3, 3, offset D3GRADIENTTRIANGLE, 1, GRADIENT_FILL_TRIANGLE
+
 ;  SetPoint 1
 ;  SetPoint 2
 ;  SetPoint 3
@@ -217,20 +217,20 @@ Polygon3 ends
 ;  invoke Polygon, hDC, addr Poly3, 4
 ;  invoke DeleteObject, $invoke(SelectObject, hDC, hPrevPen)
 ;  invoke DeleteObject, $invoke(SelectObject, hDC, hPrevBrush)
-;MethodEnd
-
-Method D3Triangle.Draw, uses xsi, hDC:HDC, pObjProj:POINTER
-  local Poly3:Polygon3, hPrevBrush:HBRUSH, hBrush:HBRUSH
-
-  SetObject xsi
-  SetPoint 1
-  SetPoint 2
-  SetPoint 3
-  mov hBrush, $invoke(CreateSolidBrush, DWORD ptr [xsi].OutColor1)
-  mov hPrevBrush, $invoke(SelectObject, hDC, hBrush)
-  invoke Polygon, hDC, addr Poly3, 3
-  invoke DeleteObject, $invoke(SelectObject, hDC, hPrevBrush)
 MethodEnd
+
+;Method D3Triangle.Draw, uses xsi, hDC:HDC, pObjProj:POINTER
+;  local Poly3:Polygon3, hPrevBrush:HBRUSH, hBrush:HBRUSH
+;
+;  SetObject xsi
+;  SetPoint 1
+;  SetPoint 2
+;  SetPoint 3
+;  mov hBrush, $invoke(CreateSolidBrush, DWORD ptr [xsi].OutColor1)
+;  mov hPrevBrush, $invoke(SelectObject, hDC, hBrush)
+;  invoke Polygon, hDC, addr Poly3, 3
+;  invoke DeleteObject, $invoke(SelectObject, hDC, hPrevBrush)
+;MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     D3Triangle.Load

@@ -23,7 +23,7 @@ Object SendDlg,, DialogModal
 ObjectEnd
 
 
-Object NetComClient, MySdiAppID, SdiApp                 ;Single Document Interface App.
+Object NetComClient, ApplicationID, SdiApp                 ;Single Document Interface App.
   RedefineMethod    Done
   RedefineMethod    Init                                ;Init method redefinition
   StaticMethod      Startup

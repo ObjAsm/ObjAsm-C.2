@@ -40,16 +40,16 @@ MakeObjects WinApp, SdiApp
 MakeObjects .\DialogComPortSelection
 
 include ArduinoCom_Globals.inc                          ;Application globals
-include ArduinoCom_Main.inc                             ;ArduinoApp object
+include ArduinoCom_Main.inc                             ;Application object
 
 .code
 start proc                                              ;Program entry point
   SysInit                                               ;Runtime initialization of OOP model
   DbgClearAll
 
-  OCall $ObjTmpl(ArduinoApp)::ArduinoApp.Init           ;Initialize application
-  OCall $ObjTmpl(ArduinoApp)::ArduinoApp.Run            ;Execute application
-  OCall $ObjTmpl(ArduinoApp)::ArduinoApp.Done           ;Finalize application
+  OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
+  OCall $ObjTmpl(Application)::Application.Run          ;Execute application
+  OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
 
   SysDone                                               ;Runtime finalization of the OOP model
   invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS

@@ -136,7 +136,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=26
+MilestoneOnDateDate=30
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -171,8 +171,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,3322
-1=0,0,0,0,828
+2=0,0,0,0,713
+1=0,0,0,0,1509
 6=0,0,1456,414,59484
 4=0,0,0,0,241
 31=0,0,1213,691,1416
@@ -217,16 +217,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="IDM_WEBCAM_SET_AVI"
-2="IDM_WIDM_WEBCAM_SET_AVI"
-3="IDM_WEBCAM_CAPTURE"
-4="szDemoApp02"
-5="hWebCam"
-6="dCaptureIndex"
-7="NOAVIFILE"
-8="IAVIFile"
-9="far"
-10="WM_COMMAND"
+1="WebCamApp"
+2="IDM_WEBCAM_SET_AVI"
+3="IDM_WIDM_WEBCAM_SET_AVI"
+4="IDM_WEBCAM_CAPTURE"
+5="szDemoApp02"
+6="hWebCam"
+7="dCaptureIndex"
+8="NOAVIFILE"
+9="IAVIFile"
+10="far"
 [Collapse]
 1=
 2=
@@ -341,7 +341,7 @@ ProductVer4Range=0
 [AutoLoad]
 AutoLoad=1,2
 [PTimer]
-PTimer=946475819
+PTimer=946543538
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

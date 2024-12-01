@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      PixelmapApp.asm
+; Title:      Application.asm
 ; Author:     G. Friedrich
 ; Version:    1.0.0
 ; Purpose:    ObjAsm Pixelmap Application.
@@ -29,15 +29,15 @@ MakeObjects WinApp, SdiApp
 MakeObjects Pixelmap
 
 include PixelmapApp_Globals.inc                         ;Include application globals
-include PixelmapApp_Main.inc                            ;Include PixelmapApp object
+include PixelmapApp_Main.inc                            ;Include Application object
 
 start proc                                              ;Program entry point
   SysInit                                               ;Runtime initialization of OOP model
 
   ResGuard_Start
-  OCall $ObjTmpl(PixelmapApp)::PixelmapApp.Init         ;Initialize the object data
-  OCall $ObjTmpl(PixelmapApp)::PixelmapApp.Run          ;Execute the application
-  OCall $ObjTmpl(PixelmapApp)::PixelmapApp.Done         ;Finalize it
+  OCall $ObjTmpl(Application)::Application.Init         ;Initialize the object data
+  OCall $ObjTmpl(Application)::Application.Run          ;Execute the application
+  OCall $ObjTmpl(Application)::Application.Done         ;Finalize it
   ResGuard_Show
   ResGuard_Stop
 

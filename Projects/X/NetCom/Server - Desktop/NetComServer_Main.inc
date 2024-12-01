@@ -11,7 +11,7 @@ CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRA
 CStr szNetComServer, "OAC_NetComServer"                 ;Creates szNetComServer string in .const
 
 
-Object NetComServer, MySdiAppID, SdiApp                 ;Single Document Interface App.
+Object NetComServer, ApplicationID, SdiApp                 ;Single Document Interface App.
   RedefineMethod    Done
   RedefineMethod    Init                                ;Init method redefinition
   StaticMethod      Startup

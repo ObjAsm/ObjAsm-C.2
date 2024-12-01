@@ -40,7 +40,7 @@ CStr szChildWnd,      "OAC_Child"                       ;Used by Startup and Shu
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-Object ChildWnd, , MdiChildWnd                          ;MDI child window.
+Object ChildWnd, ChildWndID, MdiChildWnd                ;MDI child window.
   RedefineMethod    Done
   RedefineMethod    Init,               POINTER, PSTRING  ;-> Owner, -> Caption
   RedefineMethod    OnGetMinMaxInfo,    WPARAM, LPARAM
@@ -55,7 +55,7 @@ ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-Object ClientWnd, MyClientWndID, MdiClientWnd           ;MDI client window.
+Object ClientWnd, ClientWndID, MdiClientWnd             ;MDI client window.
   RedefineMethod    Done
   RedefineMethod    Init,               POINTER         ;-> Owner
 
@@ -67,7 +67,7 @@ ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-Object Application, , MdiApp                            ;MDI application = Frame window.
+Object Application, ApplicationID, MdiApp               ;MDI application = Frame window.
   RedefineMethod    Done
   VirtualMethod     EnableActions,      DWORD           ;TRUE/FALSE
   RedefineMethod    Init

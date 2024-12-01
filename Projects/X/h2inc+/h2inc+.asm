@@ -179,7 +179,7 @@ ObjectEnd
 ; Notes:    - File and path names are handled using WIDE strings.
 ;           - Text is handled using ANSI strings.
 
-Object Application, MyConsoleAppID, ConsoleApp          ;Console Interface App.
+Object Application, ApplicationID, ConsoleApp           ;Console Interface App.
   RedefineMethod  Done
   StaticMethod    GetAppOptions,      POINTER, DWORD, PSTRING
   RedefineMethod  Init

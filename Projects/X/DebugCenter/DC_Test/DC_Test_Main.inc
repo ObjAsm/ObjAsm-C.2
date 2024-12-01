@@ -12,7 +12,7 @@ CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRA
 
 CStr szDC_Test, "DC_Test"                               ;Creates szDC_Test string in .const
 
-Object DC_Test, MySdiAppID, SdiApp                      ;Single Document Interface App.
+Object DC_Test, ApplicationID, SdiApp                      ;Single Document Interface App.
   RedefineMethod    Init                                ;Init method redefinition
   StaticMethod      Startup                             ;Startup method redefinition
   RedefineMethod    WndProc,    DWORD, WPARAM, LPARAM

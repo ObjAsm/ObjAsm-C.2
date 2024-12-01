@@ -28,7 +28,7 @@ MakeObjects Dialog, DialogModal, DialogAbout, Image
 MakeObjects WinApp, SdiApp
 
 include ImageApp_Globals.inc                            ;Application globals
-include ImageApp_Main.inc                               ;ImagApp object
+include ImageApp_Main.inc                               ;Application object
 
 
 start proc                                              ;Program entry point
@@ -36,9 +36,9 @@ start proc                                              ;Program entry point
   DbgClearAll
 
   invoke CoInitialize, 0
-  OCall $ObjTmpl(ImagApp)::ImagApp.Init                 ;Initialize application
-  OCall $ObjTmpl(ImagApp)::ImagApp.Run                  ;Execute application
-  OCall $ObjTmpl(ImagApp)::ImagApp.Done                 ;Finalize application
+  OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
+  OCall $ObjTmpl(Application)::Application.Run          ;Execute application
+  OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
   invoke CoUninitialize
 
   SysDone                                               ;Runtime finalization of the OOP model

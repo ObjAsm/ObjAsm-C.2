@@ -194,7 +194,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method DialogFindText.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local FTXTX:FINDTEXTEX, dSelBeg:DWORD, dSelEnd:DWORD, dFlags:DWORD, pBuffer:POINTER, dSize:dWORD
+  local FindTxt:FINDTEXTEX, dSelBeg:DWORD, dSelEnd:DWORD, dFlags:DWORD, dSize:dWORD
   local dComboIndex:DWORD, cMsg[1024]:CHR
 
   SetObject xsi
@@ -203,12 +203,12 @@ Method DialogFindText.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov xbx, $invoke(GetDlgItem, [xsi].hWnd, IDC_FTXT_COMBO)
     invoke SendMessage, [xsi].hParent, EM_GETSEL, addr dSelBeg, addr dSelEnd
     .if $invoke(IsDlgButtonChecked, [xsi].hWnd, IDC_FTXT_FINDDOWNRADIO) == BST_CHECKED
-      m2m FTXTX.chrg.cpMin, dSelEnd, edx
-      mov FTXTX.chrg.cpMax, -1
+      m2m FindTxt.chrg.cpMin, dSelEnd, edx
+      mov FindTxt.chrg.cpMax, -1
       mov dFlags, FR_DOWN
     .else
-      m2m FTXTX.chrg.cpMin, dSelBeg, edx
-      m2z FTXTX.chrg.cpMax
+      m2m FindTxt.chrg.cpMin, dSelBeg, edx
+      m2z FindTxt.chrg.cpMax
       m2z dFlags
     .endif
 
@@ -229,38 +229,44 @@ Method DialogFindText.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         invoke MessageBox, [xsi].hWnd, addr cMsg, offset szNotification, MB_OK or MB_ICONEXCLAMATION
         ExitMethod
       .endif
+      .if eax < 80
+        mov eax, 80                                     ;At least 80 chars
+      .endif
       lea xax, [sizeof(CHR)*xax + sizeof(CHR)]          ;Add room for the ZTC
       mov dSize, eax
-      mov xdi, $MemAlloc(dSize)
-      invoke SendMessage, xbx, WM_GETTEXT, dSize, xax
-      invoke SendMessage, xbx, CB_FINDSTRINGEXACT, -1, xdi
-      .if eax == CB_ERR
-        invoke SendMessage, xbx, CB_ADDSTRING, 0, xdi
+      MemAlloc dSize
+      .if xax != NULL
+        mov xdi, xax
+        invoke SendMessage, xbx, WM_GETTEXT, dSize, xax
+        invoke SendMessage, xbx, CB_FINDSTRINGEXACT, -1, xdi
+        .if eax == CB_ERR
+          invoke SendMessage, xbx, CB_ADDSTRING, 0, xdi
+        .endif
+        mov dComboIndex, eax
+        MemFree xdi
       .endif
-      mov dComboIndex, eax
-      MemFree xdi
       invoke SendMessage, xbx, CB_SETCURSEL, dComboIndex, 0
     .else
       mov dComboIndex, eax
     .endif
 
     invoke SendMessage, xbx, CB_GETLBTEXTLEN, dComboIndex, 0
-    lea xax, [sizeof(CHR)*xax + sizeof(CHR)]            ;Add room for the ZTC
-    mov dSize, eax
-    mov pBuffer, $MemAlloc(dSize)
-    mov FTXTX.lpstrText, xax
-    invoke SendMessage, xbx, CB_GETLBTEXT, dComboIndex, xax
-    invoke SendMessage, [xsi].hParent, EM_FINDTEXTEX, dFlags, addr FTXTX
-    .if eax == -1
-      mov edx, [xsi].dLanguage
-      add edx, 128
-      invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
-      invoke MessageBox, [xsi].hWnd, addr cMsg, offset szNotification, MB_OK or MB_ICONEXCLAMATION
-    .else
-      invoke SendMessage, [xsi].hParent, EM_SETSEL, FTXTX.chrgText.cpMin, FTXTX.chrgText.cpMax
-      invoke SetFocus, [xsi].hParent
+    invoke StrAlloc, eax
+    .if xax != NULL 
+      mov FindTxt.lpstrText, xax
+      invoke SendMessage, xbx, CB_GETLBTEXT, dComboIndex, xax
+      invoke SendMessage, [xsi].hParent, EM_FINDTEXTEX, dFlags, addr FindTxt
+      .if eax == -1
+        mov edx, [xsi].dLanguage
+        add edx, 128
+        invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
+        invoke MessageBox, [xsi].hWnd, addr cMsg, offset szNotification, MB_OK or MB_ICONEXCLAMATION
+      .else
+        invoke SendMessage, [xsi].hParent, EM_SETSEL, FindTxt.chrgText.cpMin, FindTxt.chrgText.cpMax
+        invoke SetFocus, [xsi].hParent
+      .endif
+      invoke StrDispose, FindTxt.lpstrText
     .endif
-    MemFree pBuffer
 
   .elseif ax == IDCANCEL
     OCall xsi.DestroyDialog, wParam

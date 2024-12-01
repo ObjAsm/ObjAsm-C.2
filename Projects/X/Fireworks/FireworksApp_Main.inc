@@ -17,9 +17,9 @@ DEFAULT_HEIGHT  equ   420
 
 TIMERID         equ   125
 
-CStr szFireworksApp, "FireworksApp"
+CStr szFireworksApp, "Application"
 
-Object FireworksApp, MySdiAppID, SdiApp
+Object Application, ApplicationID, SdiApp
   RedefineMethod    Init
   StaticMethod      Startup
 
@@ -35,16 +35,16 @@ ObjectEnd
 
 .code
 ; ==================================================================================================
-;    FireworksApp implementation
+;    Application implementation
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     FireworksApp.Init
-; Purpose:    Initialize the FireworksApp application object.
+; Method:     Application.Init
+; Purpose:    Initialize the Application application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method FireworksApp.Init, uses xsi
+Method Application.Init, uses xsi
   local CRect:RECT
 
   SetObject xsi
@@ -63,13 +63,13 @@ Method FireworksApp.Init, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     FireworksApp.OnClose
+; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method FireworksApp.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure ?"), $OfsCStr("Application exit"), \
                      MB_YESNO or MB_ICONQUESTION
@@ -87,13 +87,13 @@ Method FireworksApp.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     FireworksApp.OnTimer
+; Method:     Application.OnTimer
 ; Purpose:    Event procedure for WM_TIMER message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method FireworksApp.OnTimer, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnTimer, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[1024]:CHR
 
   SetObject xsi
@@ -108,17 +108,17 @@ Method FireworksApp.OnTimer, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     FireworksApp.Startup
+; Method:     Application.Startup
 ; Purpose:    Register the object class with the OS.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method FireworksApp.Startup
+Method Application.Startup
   local WC:WNDCLASSEX
 
   mov WC.cbSize, sizeof WNDCLASSEX
   mov WC.style, CLS_STYLE
-  m2m WC.lpfnWndProc, $MethodAddr(FireworksApp.WndProc), xdx
+  m2m WC.lpfnWndProc, $MethodAddr(Application.WndProc), xdx
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
   m2m WC.hInstance, hInstance, xdx

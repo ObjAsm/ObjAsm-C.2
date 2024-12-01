@@ -62,7 +62,8 @@ Debug=1
 51=..\..\..\Code\Objects\SortedCollection.inc
 52=..\..\..\Code\Objects\SortedDataCollection.inc
 53=..\..\..\Code\Objects\DialogAbout.inc
-54=
+54=ThreadHelper.inc
+55=..\..\..\Code\Objects\StopWatch.inc
 
 [MakeFiles]
 0=Api3DEng.rap
@@ -153,7 +154,8 @@ Group=Added files,Assembly,Resources,Misc,Modules,Objects,Macros
 51=6
 52=6
 53=6
-54=
+54=1
+55=6
 
 [VerInf]
 FV=1.0.0.0
@@ -184,7 +186,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=12
+MilestoneOnDateDate=30
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -219,21 +221,21 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1914,602,8109
+2=0,0,1914,602,1356
 3=0,0,0,0,229
-1=453,0,453,706,1280
+1=453,0,453,706,852
 4=0,0,0,0,467
 1001=0,0,0,0,460
 5=0,0,0,0,46714
 6=0,0,0,0,13544
 7=0,0,0,0,127417
 8=0,0,0,0,3241
-9=0,0,1800,599,406
+9=0,0,1800,599,2305
 11=0,0,0,0,36958
 13=0,0,0,0,6633
 14=0,0,0,0,1749
 15=0,0,0,0,940
-10=0,0,0,0,9168
+10=0,0,0,0,13972
 12=0,0,0,0,2343
 16=0,0,0,0,21981
 17=0,0,0,0,26136
@@ -250,7 +252,7 @@ ProductVer4Range=0
 31=0,0,0,0,2723
 30=0,0,0,0,1541
 33=0,0,1802,628,4079
-32=0,0,632,592,8926
+32=0,0,632,592,10087
 34=0,0,0,0,5451
 26=0,0,0,0,4056
 35=0,0,0,0,1111
@@ -260,20 +262,21 @@ ProductVer4Range=0
 39=0,0,0,0,4049
 43=0,0,0,0,231
 48=0,0,0,0,2213
-41=0,0,0,0,186
+41=0,0,1524,627,13347
 45=0,0,0,0,230
 49=0,0,0,0,14735
-50=0,0,0,0,9427
+50=0,0,0,0,5939
 47=0,0,0,0,254
 51=0,0,1840,601,7391
 46=0,0,0,0,236
 40=0,0,0,0,186
-44=0,0,632,592,232
+44=0,0,632,592,10233
 42=0,0,0,0,230
 52=0,0,1840,601,1891
 53=0,0,0,0,232
-54=
+54=0,0,0,0,6933
 28=0,0,0,0,3270
+55=0,0,0,0,1505
 
 [BookMark]
 0=
@@ -288,16 +291,16 @@ ProductVer4Range=0
 9=
 
 [Find]
-1="fSetPrecision"
-2="finit"
-3="SIZE_ ?"
-4="DestroyItem"
-5="VER_FILEVERSION"
-6="VARARG"
-7="vmovd"
-8="SortedTriData.Compare"
-9=".Compare"
-10="CloneRect"
+1="TIMER_INTERVAL"
+2="SceneAnimate"
+3="Api3DEngApp"
+4="hEventEnd"
+5="hEventBeg"
+6="hWaitTimer"
+7="hDrawThread"
+8="hTimer"
+9="ThreadWorker"
+10="StopWatch"
 [Collapse]
 2=,
 1=
@@ -353,10 +356,11 @@ ProductVer4Range=0
 53=
 54=
 28=
+55=
 [BreakPoint]
 0=
 [AutoLoad]
-AutoLoad=1,2
+AutoLoad=1,2,9,41,44
 [RADebugBP]
 2=
 50=
@@ -399,6 +403,6 @@ AutoLoad=1,2
 20=
 15=
 [PTimer]
-PTimer=2123829143
+PTimer=2291755034
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0

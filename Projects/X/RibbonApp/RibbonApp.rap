@@ -185,7 +185,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=13
+MilestoneOnDateDate=30
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -221,15 +221,15 @@ ProductVer4Range=0
 
 [Size]
 2=0,0,0,0,8549
-1=0,0,0,0,632
+1=0,0,0,0,2027
 6=0,0,0,0,416
 4=0,0,0,0,2977
 31=0,0,0,0,6690
-8=0,0,0,0,164
+8=0,0,0,0,182
 7=0,0,0,0,17301
 9=0,0,0,0,9918
 10=0,0,0,0,24879
-5=0,0,522,610,1089
+5=0,0,522,610,182
 12=0,0,0,0,18583
 11=0,0,0,0,19236
 14=0,0,0,0,0
@@ -247,10 +247,10 @@ ProductVer4Range=0
 25=
 26=0,0,1875,601,408
 27=0,0,0,0,58404
-28=0,0,0,0,242
+28=0,0,0,0,155
 29=
 30=0,0,0,0,344
-3=0,0,0,0,234
+3=0,0,0,0,543
 32=0,0,0,0,4724
 40=0,0,0,0,4319
 42=
@@ -275,16 +275,16 @@ ProductVer4Range=0
 53=
 54=
 [Find]
-1="GUID2StrA"
-2="DbgOutInterfaceName"
-3="\ObjAsm\Projects\\X\RibbonApp"
-4="; Return:    "
-5=";            Arg2:"
-6="; Arguments: "
-7="; Purpose:   "
-8="; Method:    "
-9="\X\"
-10="New ma"
+1="RibbonApp"
+2="GUID2StrA"
+3="DbgOutInterfaceName"
+4="\ObjAsm\Projects\\X\RibbonApp"
+5="; Return:    "
+6=";            Arg2:"
+7="; Arguments: "
+8="; Purpose:   "
+9="; Method:    "
+10="\X\"
 [Collapse]
 36=
 3=
@@ -354,9 +354,9 @@ ProductVer4Range=0
 [BreakPoint]
 0=
 [AutoLoad]
-AutoLoad=1
+AutoLoad=1,3
 [PTimer]
-PTimer=674393939
+PTimer=674441814
 [GroupExpand]
 GroupExpand=1,1,0,1,0,0,1,1,0
 [RADebugBP]

@@ -2,7 +2,7 @@
 ; Title:      TranslucentWindow.asm
 ; Author:     G. Friedrich
 ; Version:    1.0.0
-; Purpose:    ObjAsm Splash Application.
+; Purpose:    ObjAsm Application.
 ; Notes:      Version 1.0.0, October 2017
 ;               - First release.
 ; ==================================================================================================
@@ -27,9 +27,9 @@ include TranslucentWindow_Main.inc
 start proc
   SysInit
 
-  OCall $ObjTmpl(TranslucentWindow)::TranslucentWindow.Init
-  OCall $ObjTmpl(TranslucentWindow)::TranslucentWindow.Run
-  OCall $ObjTmpl(TranslucentWindow)::TranslucentWindow.Done
+  OCall $ObjTmpl(Application)::Application.Init
+  OCall $ObjTmpl(Application)::Application.Run
+  OCall $ObjTmpl(Application)::Application.Done
 
   SysDone
   invoke ExitProcess, 0

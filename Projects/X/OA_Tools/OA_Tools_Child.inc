@@ -55,9 +55,9 @@ Method EditIptor.OnRButtonUp,, wParam:WPARAM, lParam:LPARAM
   local Pnt:POINT
 
   invoke GetCursorPos, addr Pnt
-  invoke GetSubMenu, $ObjTmpl(OAT_App).hMenuChildContext, 0
-  invoke TrackPopupMenu, xax, TPM_LEFTALIGN, Pnt.x, Pnt.y, 0, $ObjTmpl(OAT_App).hWnd, NULL
-  invoke PostMessage, $ObjTmpl(OAT_App).hWnd, WM_NULL, 0, 0
+  invoke GetSubMenu, $ObjTmpl(Application).hMenuChildContext, 0
+  invoke TrackPopupMenu, xax, TPM_LEFTALIGN, Pnt.x, Pnt.y, 0, $ObjTmpl(Application).hWnd, NULL
+  invoke PostMessage, $ObjTmpl(Application).hWnd, WM_NULL, 0, 0
   xor eax, eax
 MethodEnd
 
@@ -211,29 +211,29 @@ Method OAT_Child.ClpBrdSetBtns, uses xbx xdi xsi
   invoke SendMessage, [xsi].hEdit, EM_GETSEL, addr dBegPos, addr dEndPos
   mov xcx, [xsi].pOwner
   mov xdi, [xcx].$Obj(OAT_Client).pOwner
-  mov hMenu, $invoke(GetMenu, [xdi].$Obj(OAT_App).hWnd)           ;Get the current menu
+  mov hMenu, $invoke(GetMenu, [xdi].$Obj(Application).hWnd)           ;Get the current menu
   mov eax, dEndPos
   .if eax == dBegPos
-    lea xbx, [xdi].$Obj(OAT_App).TbEdit
+    lea xbx, [xdi].$Obj(Application).TbEdit
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, FALSE
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, FALSE
     mov xbx, hMenu
     invoke EnableMenuItem, xbx, IDM_EDIT_CUT,    MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY,   MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_GRAYED
-    mov xbx, $ObjTmpl(OAT_App).hMenuChildContext
+    mov xbx, $ObjTmpl(Application).hMenuChildContext
     invoke EnableMenuItem, xbx, IDM_EDIT_CUT,    MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY,   MF_BYCOMMAND or MF_GRAYED
     invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_GRAYED
   .else
-    lea xbx, [xdi].$Obj(OAT_App).TbEdit
+    lea xbx, [xdi].$Obj(Application).TbEdit
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, TRUE
     invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, TRUE
     mov xbx, hMenu
     invoke EnableMenuItem, xbx, IDM_EDIT_CUT,    MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY,   MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_ENABLED
-    mov xbx, $ObjTmpl(OAT_App).hMenuChildContext
+    mov xbx, $ObjTmpl(Application).hMenuChildContext
     invoke EnableMenuItem, xbx, IDM_EDIT_CUT,    MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_COPY,   MF_BYCOMMAND or MF_ENABLED
     invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_ENABLED
@@ -244,7 +244,7 @@ Method OAT_Child.ClpBrdSetBtns, uses xbx xdi xsi
     dec dActivate
   .endif
 
-  lea xbx, [xdi].$Obj(OAT_App).TbEdit
+  lea xbx, [xdi].$Obj(Application).TbEdit
   invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_PASTE, dActivate
   .if dActivate
     mov edi, MF_BYCOMMAND or MF_ENABLED
@@ -252,7 +252,7 @@ Method OAT_Child.ClpBrdSetBtns, uses xbx xdi xsi
     mov edi, MF_BYCOMMAND or MF_GRAYED
   .endif
   invoke EnableMenuItem, hMenu, IDM_EDIT_PASTE, edi
-  invoke EnableMenuItem, $ObjTmpl(OAT_App).hMenuChildContext, IDM_EDIT_PASTE, edi
+  invoke EnableMenuItem, $ObjTmpl(Application).hMenuChildContext, IDM_EDIT_PASTE, edi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -270,12 +270,12 @@ Method OAT_Child.Done, uses xbx xdi xsi
 
   ;Main menu update
   .if ZERO?                                             ;No more child windows ?
-    OCall xbx::OAT_App.EnableActions, FALSE
+    OCall xbx::Application.EnableActions, FALSE
     invoke SendMessage, [xdi].$Obj(OAT_Client).hWnd, WM_MDISETMENU, \
-                        [xbx].$Obj(OAT_App).hMenuInit, NULL
-    OCall xbx::OAT_App.ChangeMnuLanguage, [xbx].$Obj(OAT_App).dLanguage
-    OCall xbx::OAT_App.SetToolMenu
-    invoke DrawMenuBar, [xbx].$Obj(OAT_App).hWnd        ;Redraw the new menu bar
+                        [xbx].$Obj(Application).hMenuInit, NULL
+    OCall xbx::Application.ChangeMnuLanguage, [xbx].$Obj(Application).dLanguage
+    OCall xbx::Application.SetToolMenu
+    invoke DrawMenuBar, [xbx].$Obj(Application).hWnd        ;Redraw the new menu bar
   .endif
 
   ;Release resources
@@ -308,19 +308,19 @@ Method OAT_Child.Init, uses xbx xdi xsi, pOwner:POINTER, pFileName:PSTRING, dFla
                           CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, \
                           [xdi].$Obj(OAT_Client).hWnd, hInstance, pSelf
   .if xax != NULL
-    mov xbx, [xdi].$Obj(OAT_Client).pOwner              ;xbx -> OAT_App
+    mov xbx, [xdi].$Obj(OAT_Client).pOwner              ;xbx -> Application
 
     ;Copy color information
-    invoke MemClone, addr [xsi].Color, addr [xbx].$Obj(OAT_App).Setup.Color, sizeof ColorData
+    invoke MemClone, addr [xsi].Color, addr [xbx].$Obj(Application).Setup.Color, sizeof ColorData
 
     .if [xdi].$Obj(OAT_Client).dChildCount == 1         ;First child window ?
       invoke SendMessage, [xdi].$Obj(OAT_Client).hWnd, WM_MDISETMENU, \
-                          [xbx].$Obj(OAT_App).hMenuChild, \
-                          [xbx].$Obj(OAT_App).hMenuChildWnd
-      OCall xbx::OAT_App.ChangeMnuLanguage, [xbx].$Obj(OAT_App).dLanguage
-      OCall xbx::OAT_App.EnableActions, TRUE
-      OCall xbx::OAT_App.SetToolMenu
-      invoke DrawMenuBar, [xbx].$Obj(OAT_App).hWnd      ;Redraw the new menu bar
+                          [xbx].$Obj(Application).hMenuChild, \
+                          [xbx].$Obj(Application).hMenuChildWnd
+      OCall xbx::Application.ChangeMnuLanguage, [xbx].$Obj(Application).dLanguage
+      OCall xbx::Application.EnableActions, TRUE
+      OCall xbx::Application.SetToolMenu
+      invoke DrawMenuBar, [xbx].$Obj(Application).hWnd      ;Redraw the new menu bar
     .endif
 
     OCall xsi.AnalyseFile                               ;Gather file information
@@ -359,21 +359,21 @@ Method OAT_Child.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   mov [xsi].hEdit, xax
   invoke SendMessage, [xsi].hEdit, EM_SETEVENTMASK, 0, ENM_SELCHANGE  ;Enable EN_SELCHANGE messages
   mov xcx, [xsi].pOwner                                 ;xcx -> OAT_Client
-  mov xax, [xcx].$Obj(OAT_Client).pOwner                ;xax -> OAT_App
-  invoke SendMessage, [xsi].hEdit, EM_SETBKGNDCOLOR, 0, [xax].$Obj(OAT_App).Setup.Color.Bkground
+  mov xax, [xcx].$Obj(OAT_Client).pOwner                ;xax -> Application
+  invoke SendMessage, [xsi].hEdit, EM_SETBKGNDCOLOR, 0, [xax].$Obj(Application).Setup.Color.Bkground
 
   New [xsi].EdtIptor::EditIptor
   OCall [xsi].EdtIptor::EditIptor.Init, xsi, [xsi].hEdit, offset szPropEditIptor
 
   mov xax, [xsi].pOwner                                 ;xax -> pClient
-  mov xbx, [xax].$Obj(OAT_Client).pOwner                ;xbx -> OAT_App
-  m2m [xsi].dZoom, [xbx].$Obj(OAT_App).Setup.dZoomfactor, eax
+  mov xbx, [xax].$Obj(OAT_Client).pOwner                ;xbx -> Application
+  m2m [xsi].dZoom, [xbx].$Obj(Application).Setup.dZoomfactor, eax
   invoke SendMessage, [xsi].hEdit, EM_SETZOOM, [xsi].dZoom, ZOOM_BASE
 
-  invoke StrCCopy, addr LogFnt.lfFaceName, addr [xbx].$Obj(OAT_App).Setup.cFontFaceName, LF_FACESIZE
+  invoke StrCCopy, addr LogFnt.lfFaceName, addr [xbx].$Obj(Application).Setup.cFontFaceName, LF_FACESIZE
   mov hDC, $invoke(GetDC, [xsi].hWnd)
   invoke GetDeviceCaps, hDC, LOGPIXELSY
-  invoke MulDiv, [xbx].$Obj(OAT_App).Setup.dFontSize, eax, -72
+  invoke MulDiv, [xbx].$Obj(Application).Setup.dFontSize, eax, -72
   mov LogFnt.lfHeight, eax
   m2z LogFnt.lfWidth
   m2z LogFnt.lfEscapement
@@ -668,9 +668,9 @@ Method OAT_Child.WriteLineNumber, uses xbx xsi, dLineNumber:DWORD
   mov xbx, [xcx].$Obj(OAT_Client).pOwner
   inc dLineNumber                                       ;First LineNumber = 1 (1-Base)
   invoke dword2decA, addr cBuffer, dLineNumber
-  OCall xsi::OAT_Child.WriteA, $OfsCStrA(" ("), [xbx].$Obj(OAT_App).Setup.Color.Information, 0
-  OCall xsi::OAT_Child.WriteA, addr cBuffer, [xbx].$Obj(OAT_App).Setup.Color.Information, 0
-  OCall xsi::OAT_Child.WriteA, $OfsCStrA(")", 13, 10), [xbx].$Obj(OAT_App).Setup.Color.Information, 0
+  OCall xsi::OAT_Child.WriteA, $OfsCStrA(" ("), [xbx].$Obj(Application).Setup.Color.Information, 0
+  OCall xsi::OAT_Child.WriteA, addr cBuffer, [xbx].$Obj(Application).Setup.Color.Information, 0
+  OCall xsi::OAT_Child.WriteA, $OfsCStrA(")", 13, 10), [xbx].$Obj(Application).Setup.Color.Information, 0
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -686,8 +686,8 @@ Method OAT_Child.WriteResStr, uses xsi, dResStrID:DWORD, Color:COLORREF, dEffect
 
   SetObject xsi
   mov xax, [xsi].pOwner                                  ;xax -> OAT_Client
-  mov xcx, [xax].$Obj(OAT_Client).pOwner                 ;xcx -> OAT_App
-  mov edx, [xcx].$Obj(OAT_App).dLanguage
+  mov xcx, [xax].$Obj(OAT_Client).pOwner                 ;xcx -> Application
+  mov edx, [xcx].$Obj(Application).dLanguage
   add edx, dResStrID
   invoke LoadString, hInstance, edx, addr cBuffer, sizeof cBuffer
   .if eax != 0

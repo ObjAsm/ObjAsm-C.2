@@ -109,11 +109,9 @@ WindowID                          equ     0000000166
 DlgAppID                          equ     0000000167
 ConsoleAppID                      equ     0000000168
 
-MySdiAppID                        equ     0000000170      ;for test or demo purposes only!
-MyMdiAppID                        equ     0000000171      ;for test or demo purposes only!
-MyClientWndID                     equ     0000000172      ;for test or demo purposes only!
-MyChildWndID                      equ     0000000173      ;for test or demo purposes only!
-MyConsoleAppID                    equ     0000000174      ;for test or demo purposes only!
+ApplicationID                     equ     0000000170
+ClientWndID                     equ     0000000172      ;for test or demo purposes only!
+ChildWndID                      equ     0000000173      ;for test or demo purposes only!
 
 ;Windows dialog objects
 DialogID                          equ     0000000180

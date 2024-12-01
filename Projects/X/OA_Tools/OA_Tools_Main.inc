@@ -181,7 +181,7 @@ ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-Object OAT_App, OAT_APP_ID, MdiApp                      ;MDI application.
+Object Application, OAT_APP_ID, MdiApp                  ;MDI application.
   VirtualMethod     ChangeBtnLanguage,  DWORD           ;IDLANG_XXX
   VirtualMethod     ChangeMnuLanguage,  DWORD           ;IDLANG_XXX
   VirtualMethod     ChangeLanguage,     DWORD           ;IDLANG_XXX
@@ -228,7 +228,7 @@ ObjectEnd
 
 
 ; ==================================================================================================
-;    OAT_App implementation
+;    Application implementation
 ; ==================================================================================================
 
 include OA_Tools_Child.inc
@@ -255,12 +255,12 @@ CloseEnumProc proc hWnd:HWND, lParam:LPARAM
 CloseEnumProc endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.ChangeBtnLanguage
+; Method:     Application.ChangeBtnLanguage
 ; Purpose:    Switch the toolbar button application language.
 ; Arguments:  Arg1: Language ID.
 ; Return:     Nothing.
 
-Method OAT_App.ChangeBtnLanguage, uses xbx xdi xsi, dLanguage:DWORD
+Method Application.ChangeBtnLanguage, uses xbx xdi xsi, dLanguage:DWORD
   SetButtonText macro ButtonCommand:req, TextIndex:req
     mov eax, dLanguage
     add eax, TextIndex
@@ -304,12 +304,12 @@ Method OAT_App.ChangeBtnLanguage, uses xbx xdi xsi, dLanguage:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.ChangeMnuLanguage
+; Method:     Application.ChangeMnuLanguage
 ; Purpose:    Set the language radiobutton on the menu.
 ; Arguments:  Arg1: Language ID.
 ; Return:     Nothing.
 
-Method OAT_App.ChangeMnuLanguage, uses xdi xsi, dLanguage:DWORD
+Method Application.ChangeMnuLanguage, uses xdi xsi, dLanguage:DWORD
   SetObject xsi
   mov eax, dLanguage
   cdiv LANGUAGE_STEP
@@ -322,12 +322,12 @@ Method OAT_App.ChangeMnuLanguage, uses xdi xsi, dLanguage:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.ChangeLanguage
+; Method:     Application.ChangeLanguage
 ; Purpose:    Switch the application language.
 ; Arguments:  Arg1: Language ID.
 ; Return:     Nothing.
 
-Method OAT_App.ChangeLanguage, uses xsi, dLanguage:DWORD
+Method Application.ChangeLanguage, uses xsi, dLanguage:DWORD
   SetObject xsi
   m2m [xsi].dLanguage, dLanguage, eax                   ;Save setting
 
@@ -339,12 +339,12 @@ Method OAT_App.ChangeLanguage, uses xsi, dLanguage:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.CheckDroppedFiles
+; Method:     Application.CheckDroppedFiles
 ; Purpose:    Perform a check specified by the flags on the dropped files.
 ; Arguments:  Arg1: Flags: Checks to perform.
 ; Return:     eax = TRUE if the command was executed or FALSE if the operation was aborted.
 
-Method OAT_App.CheckDroppedFiles, uses xbx xdi xsi, dFlags:DWORD
+Method Application.CheckDroppedFiles, uses xbx xdi xsi, dFlags:DWORD
   local pFileName:PSTRING, MenuBkColor:RGBQUAD
   
   SetObject xsi
@@ -378,7 +378,7 @@ Method OAT_App.CheckDroppedFiles, uses xbx xdi xsi, dFlags:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.CheckSelectedFiles
+; Method:     Application.CheckSelectedFiles
 ; Purpose:    Select one or more files and perform a check specified by the flags.
 ; Arguments:  Arg1: Flags: Checks to perform.
 ; Return:     eax = TRUE if the command was executed or FALSE if the operation was aborted.
@@ -394,7 +394,7 @@ MultiFileSpec_OAT_App struc
   FS2 COMDLG_FILTERSPEC {}
 MultiFileSpec_OAT_App ends
 
-Method OAT_App.CheckSelectedFiles, uses xbx xdi xsi, dFlags:DWORD
+Method Application.CheckSelectedFiles, uses xbx xdi xsi, dFlags:DWORD
   local pIFODlg: POINTER, MFS:MultiFileSpec_OAT_App, pIFileDialog2:POINTER
   local pISIArr:POINTER, dCount:DWORD, pIShellItem:POINTER, pFileName:POINTER
   local cBuffer[MAX_PATH]:CHR, MenuBkColor:RGBQUAD
@@ -483,13 +483,13 @@ Method OAT_App.CheckSelectedFiles, uses xbx xdi xsi, dFlags:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.Done
+; Method:     Application.Done
 ; Purpose:    Finalize the application object. Objects associated with window controls are
 ;             destroyed by Windows automatically when WM_DESTROY is send.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method OAT_App.Done, uses xsi
+Method Application.Done, uses xsi
   SetObject xsi
   .if [xsi].pWorkDirectoryW != NULL
     invoke StrDispose, [xsi].pWorkDirectoryW
@@ -507,12 +507,12 @@ Method OAT_App.Done, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.EnableActions
+; Method:     Application.EnableActions
 ; Purpose:    Enable or disable MDI child actions.
 ; Arguments:  Arg1: Enable TRUE/FALSE.
 ; Return:     Nothing.
 
-Method OAT_App.EnableActions, uses xbx xdi xsi, dAction:DWORD
+Method Application.EnableActions, uses xbx xdi xsi, dAction:DWORD
   SetObject xsi
   OCall [xsi].TbEdit::Toolbar.BtnEnable, IDM_EDIT_CUT,        dAction
   OCall [xsi].TbEdit::Toolbar.BtnEnable, IDM_EDIT_COPY,       dAction
@@ -552,7 +552,7 @@ Method OAT_App.EnableActions, uses xbx xdi xsi, dAction:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.Init
+; Method:     Application.Init
 ; Purpose:    Initialize the application object.
 ; Arguments:  None.
 ; Return:     Nothing.
@@ -596,7 +596,7 @@ ReadToolData macro ID:req
   %mov [xsi].Setup.Tool&ID.pCommand, xax
 endm
 
-Method OAT_App.Init, uses xbx xdi xsi
+Method Application.Init, uses xbx xdi xsi
   local pSBHelp:POINTER, WP:WINDOWPLACEMENT, pRegKey:POINTER, cBuffer[2*MAX_PATH]:CHR
 
   SetObject xsi
@@ -767,7 +767,7 @@ Method OAT_App.Init, uses xbx xdi xsi
   mov xdi, [xax].$Obj(OAT_Client).hWnd
 
   ;Create and initialize XMenu
-  m2m pSBHelp, $MethodAddr(OAT_App.StatusbarHelp), xax
+  m2m pSBHelp, $MethodAddr(Application.StatusbarHelp), xax
   OCall [xsi].Menu::XMenu.Init, xsi, [xsi].hWnd, xdi, [xsi].hMenuChildWnd, \
                                 xbx, pSBHelp, [xsi].dLanguage
 
@@ -781,13 +781,13 @@ Method OAT_App.Init, uses xbx xdi xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.ExecuteCommand
+; Method:     Application.ExecuteCommand
 ; Purpose:    Execute a Shell Command.
 ; Arguments:  Arg1: -> Command string.
 ;             Arg2: -> Output child.
 ; Return:     eax = Command termination code.
 
-Method OAT_App.ExecuteCommand, uses xbx xsi, pCommand:PSTRING, pChild:$ObjPtr(OAT_Child)
+Method Application.ExecuteCommand, uses xbx xsi, pCommand:PSTRING, pChild:$ObjPtr(OAT_Child)
   local SecAtt:SECURITY_ATTRIBUTES
   local StartupInfo:STARTUPINFO
   local ProcessInfo:PROCESS_INFORMATION
@@ -842,13 +842,13 @@ Method OAT_App.ExecuteCommand, uses xbx xsi, pCommand:PSTRING, pChild:$ObjPtr(OA
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.ExecuteChecks
+; Method:     Application.ExecuteChecks
 ; Purpose:    Execute the give commands.
 ; Arguments:  Arg1: -> File name.
 ;             Arg2: Flags = Checks to perform.
 ; Return:     Nothing.
 
-Method OAT_App.ExecuteChecks, uses xbx xsi, pFileName:PSTRING, dFlags:DWORD
+Method Application.ExecuteChecks, uses xbx xsi, pFileName:PSTRING, dFlags:DWORD
   SetObject xsi
 
   ;Create child window
@@ -878,13 +878,13 @@ CBTProc proc uses xbx dCode:DWORD, wParam:WPARAM, lParam:LPARAM
   .if dCode == HCBT_ACTIVATE
     lea xbx, cText
 
-    mov edx, $ObjTmpl(OAT_App).dLanguage
+    mov edx, $ObjTmpl(Application).dLanguage
     add edx, IDS_DLG_EXIT_YES
     invoke LoadString, hInstance, edx, xbx, lengthof cText
     invoke GetDlgItem, wParam, IDYES
     invoke SetWindowText, xax, xbx
 
-    mov edx, $ObjTmpl(OAT_App).dLanguage
+    mov edx, $ObjTmpl(Application).dLanguage
     add edx, IDS_DLG_EXIT_NO
     invoke LoadString, hInstance, edx, xbx, lengthof cText
     invoke GetDlgItem, wParam, IDNO
@@ -900,13 +900,13 @@ CBTProc proc uses xbx dCode:DWORD, wParam:WPARAM, lParam:LPARAM
 CBTProc endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    OAT_App.OnClose
+; Method:    Application.OnClose
 ; Purpose:   Event procedure for WM_CLOSE (and WM_QUERYENDSESSION) message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = Zero if handled.
 
-Method OAT_App.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local dMsg:DWORD
   local cCaption[512]:CHR, cText[1024]:CHR
 
@@ -938,7 +938,7 @@ Method OAT_App.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.OnCommand
+; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
@@ -991,7 +991,7 @@ ExecuteTool macro ID:req
   .endif
 endm
 
-Method OAT_App.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local hChildWnd:HWND, AboutDlg:$Obj(OAT_About), SetupDlg:$Obj(OAT_Setup)
   local dMemSize:DWORD, hGlobalMem:HANDLE, pGlobalMem:POINTER
   local cBuffer[MAX_PATH]:CHR, cParam[MAX_PATH]:CHR, MenuBkColor:RGBQUAD
@@ -1355,13 +1355,13 @@ Method OAT_App.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.OnCreate
+; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method OAT_App.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
 
   ;Initialize statusbar
@@ -1389,13 +1389,13 @@ Method OAT_App.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.OnDestroy
+; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method OAT_App.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   local WP:WINDOWPLACEMENT, pRegKey:POINTER
 
   SetObject xsi
@@ -1499,13 +1499,13 @@ Method OAT_App.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.OnKeyUp
+; Method:     Application.OnKeyUp
 ; Purpose:    Event procedure for WM_KEYUP message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method OAT_App.OnKeyUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnKeyUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov xbx, [xsi].pClientWnd
   .if wParam == VK_F6
@@ -1515,24 +1515,24 @@ Method OAT_App.OnKeyUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.OnEraseBkgnd
+; Method:     Application.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Non zero => we do the job.
 
-Method OAT_App.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
+Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, -1
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.OnNotify
+; Method:     Application.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method OAT_App.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local cToolTipText[256]:CHR
 
   SetObject xsi
@@ -1578,13 +1578,13 @@ Method OAT_App.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.OnSize
+; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method OAT_App.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   local dHeight:DWORD, dTop:DWORD, CtRect:RECT, SbRect:RECT, RbRect:RECT
 
   .if wParam != SIZE_MINIMIZED
@@ -1622,7 +1622,7 @@ Method OAT_App.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.SetToolMenu
+; Method:     Application.SetToolMenu
 ; Purpose:    Updates the Tool Menu.
 ; Arguments:  None.
 ; Return:     Nothing.
@@ -1640,7 +1640,7 @@ InsertToolItem macro ID:req
   .endif
 endm
 
-Method OAT_App.SetToolMenu, uses xbx xdi xsi
+Method Application.SetToolMenu, uses xbx xdi xsi
   local MenuInfo:MENUITEMINFO, cBuffer[MAX_PATH]:CHR
 
   SetObject xsi
@@ -1667,17 +1667,17 @@ Method OAT_App.SetToolMenu, uses xbx xdi xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.Startup
+; Method:     Application.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method OAT_App.Startup
+Method Application.Startup
   local WC:WNDCLASSEX
 
   mov WC.cbSize, sizeof WNDCLASSEX
   mov WC.style, CLSSTYLE
-  m2m WC.lpfnWndProc, $MethodAddr(OAT_App.WndProc), xax
+  m2m WC.lpfnWndProc, $MethodAddr(Application.WndProc), xax
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
   m2m WC.hInstance, hInstance, xax
@@ -1692,12 +1692,12 @@ Method OAT_App.Startup
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.StatusbarHelp
+; Method:     Application.StatusbarHelp
 ; Purpose:    Display a help string on panel 0 of the statusbar.
 ; Arguments:  Arg1: -> Help string.
 ; Return:     Nothing.
 
-Method OAT_App.StatusbarHelp,, pHelpStr:PSTRING
+Method Application.StatusbarHelp,, pHelpStr:PSTRING
   SetObject xcx
   OCall [xcx].Status::Statusbar.SetPartText, 0, pHelpStr, SBT_NOBORDERS
 MethodEnd

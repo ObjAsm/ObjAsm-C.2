@@ -33,9 +33,9 @@ start proc
 
   ResGuard_Start
 
-  OCall $ObjTmpl(XTVDemoApp)::XTVDemoApp.Init           ;Initialize the object data
-  OCall $ObjTmpl(XTVDemoApp)::XTVDemoApp.Run            ;Execute the application
-  OCall $ObjTmpl(XTVDemoApp)::XTVDemoApp.Done           ;Finalize it
+  OCall $ObjTmpl(Application)::Application.Init         ;Initialize the object data
+  OCall $ObjTmpl(Application)::Application.Run          ;Execute the application
+  OCall $ObjTmpl(Application)::Application.Done         ;Finalize it
 
   ResGuard_Show
   ResGuard_Stop

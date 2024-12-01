@@ -126,7 +126,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=4
+MilestoneOnDateDate=30
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -161,9 +161,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,480,367,4416
+2=0,0,480,367,691
 3=0,0,0,0,253
-1=480,488,480,244,902
+1=480,488,480,244,1454
 4=0,0,0,0,1683
 1001=0,0,0,0,460
 5=
@@ -204,16 +204,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="SetCursor"
-2="cXTV_CursorArrow"
-3="CURSOR_XTV_ARROW"
-4="GetSysColor"
-5="dColorBackground"
-6="m2m [xcx].XTVN_DISP_INFO.ContentRect.bottom, [xcx].XTVN_DISP_INFO.sdNodeBot, ecx"
-7="m2m"
-8=";            Arg3:"
-9=";            Arg2:"
-10="; Return:    "
+1="XTVDemoApp"
+2="SetCursor"
+3="cXTV_CursorArrow"
+4="CURSOR_XTV_ARROW"
+5="GetSysColor"
+6="dColorBackground"
+7="m2m [xcx].XTVN_DISP_INFO.ContentRect.bottom, [xcx].XTVN_DISP_INFO.sdNodeBot, ecx"
+8="m2m"
+9=";            Arg3:"
+10=";            Arg2:"
 [Collapse]
 1=
 2=
@@ -240,7 +240,7 @@ ProductVer4Range=0
 17=
 25=,
 [AutoLoad]
-AutoLoad=1,6
+AutoLoad=
 [RADebugBP]
 14=
 2=
@@ -264,6 +264,6 @@ AutoLoad=1,6
 24=
 10=
 [PTimer]
-PTimer=638390465
+PTimer=638441652
 [GroupExpand]
 GroupExpand=0,1,1,0,0,1,1,0

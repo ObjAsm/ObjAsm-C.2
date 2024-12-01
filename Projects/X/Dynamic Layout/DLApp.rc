@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      DLApp.rc
+; Title:      Application.rc
 ; Author:     G. Friedrich
 ; Version:    See DLApp.asm
 ; Purpose:    ObjAsm Dynamic Window Layout Application resource file.

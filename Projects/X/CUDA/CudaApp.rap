@@ -136,7 +136,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=15
+MilestoneOnDateDate=30
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -171,18 +171,18 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,159
-1=0,0,0,0,732
+2=0,0,0,0,4181
+1=0,0,0,0,948
 6=0,0,1456,414,59484
-4=0,0,0,0,464
+4=0,0,0,0,1168
 31=0,0,1213,691,1416
 8=0,0,777,591,20469
 7=0,0,0,0,151
 9=0,0,0,0,17332
 10=0,0,0,0,18138
 5=0,0,0,0,54462
-3=0,0,0,0,218
-11=0,0,1783,588,867
+3=0,0,0,0,180
+11=0,0,1783,588,399
 15=0,0,0,0,5891
 14=0,0,0,0
 13=
@@ -197,8 +197,8 @@ ProductVer4Range=0
 25=0,0,0,0,140
 21=
 22=
-26=0,0,0,0,2480
-27=0,0,0,0,269
+26=0,0,0,0,4780
+27=0,0,1524,627,268
 
 [BookMark]
 0=
@@ -217,8 +217,8 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="xIdleCount"
-2="CudaApp"
+1="CudaApp"
+2="xIdleCount"
 3="CudaApp"
 4="DemoApp02"
 5="WM_COMMAND"
@@ -339,9 +339,9 @@ ProductVer4Range=0
 25=
 27=
 [AutoLoad]
-AutoLoad=1,2,3,11
+AutoLoad=1
 [PTimer]
-PTimer=1090400306
+PTimer=1093053634
 [GroupExpand]
 GroupExpand=1,1,1,1,0,1,1,0
 [RADebugBP]

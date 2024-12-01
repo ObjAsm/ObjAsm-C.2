@@ -13,7 +13,7 @@ CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRA
 CStr szApplicationClass, "OAC_Application"              ;Creates szApplicationClass string in .const
 
 
-Object Application, MySdiAppID, SdiApp                  ;Single Document Interface App.
+Object Application, ApplicationID, SdiApp                  ;Single Document Interface App.
   RedefineMethod    Done
   RedefineMethod    Init                                ;Init method redefinition
   StaticMethod      Startup

@@ -12,7 +12,7 @@ CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRA
 
 CStr szApplication, "Application"                       ;Creates szApplication string in .const
 
-Object Application, MySdiAppID, SdiApp
+Object Application, ApplicationID, SdiApp
   RedefineMethod    Done
   RedefineMethod    Init
   StaticMethod      Startup

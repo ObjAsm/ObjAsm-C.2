@@ -26,7 +26,7 @@ Method Tab2.CtlsGet, uses xbx xdi xsi
   mov xbx, [xsi].hWnd
   mov xcx, [xsi].pOwner                                 ;xcx -> TabControl
   mov xax, [xcx].$Obj(TabCtrl).pOwner                   ;xax -> OAT_Setup
-  mov xdi, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> OAT_App
+  mov xdi, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> Application
   GetTool 0
   GetTool 1
   GetTool 2
@@ -48,8 +48,8 @@ MethodEnd
 ;                   Windows from setting the default keyboard focus.
 
 SetTool macro ID:req
-  %invoke SetDlgItemText, xbx, IDC_EDT_NAME_&ID, [xdi].$Obj(OAT_App).Setup.Tool&ID.pName
-  %invoke SetDlgItemText, xbx, IDC_EDT_CMD_&ID, [xdi].$Obj(OAT_App).Setup.Tool&ID.pCommand
+  %invoke SetDlgItemText, xbx, IDC_EDT_NAME_&ID, [xdi].$Obj(Application).Setup.Tool&ID.pName
+  %invoke SetDlgItemText, xbx, IDC_EDT_CMD_&ID, [xdi].$Obj(Application).Setup.Tool&ID.pCommand
 endm
 
 Method Tab2.CtlsSet, uses xbx xdi xsi
@@ -57,7 +57,7 @@ Method Tab2.CtlsSet, uses xbx xdi xsi
   mov xbx, [xsi].hWnd
   mov xcx, [xsi].pOwner                                 ;xcx -> TabControl
   mov xax, [xcx].$Obj(TabCtrl).pOwner                   ;xax -> OAT_Setup
-  mov xdi, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> OAT_App
+  mov xdi, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> Application
   SetTool 0
   SetTool 1
   SetTool 2
@@ -136,8 +136,8 @@ Method Tab2.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov xbx, [xsi].hWnd
   mov xcx, [xsi].pOwner                                 ;xcx -> TabControl
   mov xax, [xcx].$Obj(TabCtrl).pOwner                   ;xax -> OAT_Setup
-  mov xdx, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> OAT_App
-  mov edi, [xdx].$Obj(OAT_App).dLanguage
+  mov xdx, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> Application
+  mov edi, [xdx].$Obj(Application).dLanguage
   lea xbx, cBuffer
 
   SetItemString IDC_STC_TOOL,   IDS_TAB2_TOOL

@@ -144,7 +144,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=3
+MilestoneOnDateDate=30
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -179,9 +179,9 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,7707
+2=0,0,0,0,520
 3=0,0,0,0,590
-1=453,0,453,706,1534
+1=453,0,453,706,2089
 4=0,0,0,0,609
 1001=0,0,0,0,460
 5=0,0,0,0,29060
@@ -232,18 +232,18 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="BUILD_BIN_EXTENSION_STR"
-2="APP_TITLE"
-3="SUFFIX"
-4="SUFFIX_STR"
-5="BUILD_BIN_SUFFIX_STR"
-6="Notif"
-7="FBF_BACK_ENABLED"
-8="FBN_SHIFT_PRESSED"
-9="FBN_CONTROL_PRESSED"
-10="FBN_CONTROL"
+1="DemoApp10"
+2="BUILD_BIN_EXTENSION_STR"
+3="APP_TITLE"
+4="SUFFIX"
+5="SUFFIX_STR"
+6="BUILD_BIN_SUFFIX_STR"
+7="Notif"
+8="FBF_BACK_ENABLED"
+9="FBN_SHIFT_PRESSED"
+10="FBN_CONTROL_PRESSED"
 [Collapse]
-2=207979925,1037567297,25100
+2=71664789,1036518720,25100
 8=,,
 1=
 5=,,,
@@ -278,9 +278,9 @@ ProductVer4Range=0
 32=
 34=
 [AutoLoad]
-AutoLoad=1
+AutoLoad=1,2
 [PTimer]
-PTimer=554380993
+PTimer=554469228
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0
 [RADebugBP]

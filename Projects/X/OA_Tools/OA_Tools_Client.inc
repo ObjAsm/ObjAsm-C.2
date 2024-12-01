@@ -52,13 +52,13 @@ Method OAT_Client.OnDropFiles, uses xbx, wParam:WPARAM, lParam:LPARAM
   local Pnt:POINT
 
   SetObject xcx
-  mov xbx, [xcx].pOwner                                 ;xbx -> OAT_App
+  mov xbx, [xcx].pOwner                                 ;xbx -> Application
   ?mov xdx, wParam
-  mov [xbx].$Obj(OAT_App).hDrop, xdx
+  mov [xbx].$Obj(Application).hDrop, xdx
   invoke GetCursorPos, addr Pnt
-  invoke GetSubMenu, [xbx].$Obj(OAT_App).hMenuDropContext, 0
-  invoke TrackPopupMenu, xax, TPM_LEFTALIGN, Pnt.x, Pnt.y, 0, $ObjTmpl(OAT_App).hWnd, NULL
-  invoke PostMessage, [xbx].$Obj(OAT_App).hWnd, WM_NULL, 0, 0
+  invoke GetSubMenu, [xbx].$Obj(Application).hMenuDropContext, 0
+  invoke TrackPopupMenu, xax, TPM_LEFTALIGN, Pnt.x, Pnt.y, 0, $ObjTmpl(Application).hWnd, NULL
+  invoke PostMessage, [xbx].$Obj(Application).hWnd, WM_NULL, 0, 0
   xor eax, eax
 MethodEnd
 

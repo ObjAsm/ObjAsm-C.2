@@ -25,15 +25,15 @@ MakeObjects Dialog, DialogModal, DialogAbout
 MakeObjects WinApp, SdiApp
 
 include WebCam_Globals.inc                              ;Application globals
-include WebCam_Main.inc                                 ;WebCamApp object
+include WebCam_Main.inc                                 ;Application object
 
 .code
 start proc                                              ;Program entry point
   SysInit                                               ;Runtime initialization of OOP model
 
-  OCall $ObjTmpl(WebCamApp)::WebCamApp.Init             ;Initialize application
-  OCall $ObjTmpl(WebCamApp)::WebCamApp.Run              ;Execute application
-  OCall $ObjTmpl(WebCamApp)::WebCamApp.Done             ;Finalize application
+  OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
+  OCall $ObjTmpl(Application)::Application.Run          ;Execute application
+  OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
 
   SysDone                                               ;Runtime finalization of the OOP model
   invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS

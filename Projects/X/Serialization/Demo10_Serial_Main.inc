@@ -76,7 +76,7 @@ ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-Object DemoApp10, DemoApp10ID, MdiApp                   ;MDI application.
+Object Application, ApplicationID, MdiApp               ;MDI application.
   VirtualMethod     ChangeLanguage,   DWORD             ;IDLANG_XXX
   RedefineMethod    Deserialize,      PDESER_INFO
   RedefineMethod    Done
@@ -152,18 +152,18 @@ ObjectEnd
 
 
 ; ==================================================================================================
-;    DemoApp10 implementation
+;    Application implementation
 ; ==================================================================================================
 
 ;##\
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.ChangeLanguage
+; Method:     Application.ChangeLanguage
 ; Purpose:    Switch the application language.
 ; Arguments:  Arg1: Language ID.
 ; Return:     Nothing.
 
-Method DemoApp10.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
+Method Application.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
   SetButtonText macro ButtonCommand:req, TextIndex:req
     mov eax, dLangID
     add eax, TextIndex
@@ -233,25 +233,25 @@ Method DemoApp10.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.Deserialize
+; Method:     Application.Deserialize
 ; Purpose:    Restore serialized members to its original values.
 ; Arguments:  Arg1: -> DESER_INFO.
 ; Return:     Nothing.
 
-Method DemoApp10.Deserialize, uses xsi, pDeserInfo:PDESER_INFO
+Method Application.Deserialize, uses xsi, pDeserInfo:PDESER_INFO
   SetObject xsi
   ACall xsi.Deserialize, pDeserInfo
   OCall [xsi].pClientWnd::MyChildWnd.Deserialize, pDeserInfo
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.Done
+; Method:     Application.Done
 ; Purpose:    Finalize the application object. Objects associated with window controls are
 ;             destroyed by Windows automatically when WM_DESTROY is send.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DemoApp10.Done, uses xsi
+Method Application.Done, uses xsi
   SetObject xsi
   OCall [xsi].IconImageList::MaskedImageList.Done
   OCall [xsi].RBar::Rebar.Done
@@ -268,12 +268,12 @@ Method DemoApp10.Done, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.EnableActions
+; Method:     Application.EnableActions
 ; Purpose:    Enable or disable MDI child actions.
 ; Arguments:  Arg1: Enable TRUE/FALSE.
 ; Return:     Nothing.
 
-Method DemoApp10.EnableActions, uses xsi, dAction:DWORD
+Method Application.EnableActions, uses xsi, dAction:DWORD
   SetObject xsi
   OCall [xsi].TbFile::Toolbar.BtnEnable, IDM_FILE_CLOSE, dAction
   OCall [xsi].TbWindow::Toolbar.BtnEnable, IDM_WINDOW_CASCADE,  dAction
@@ -284,12 +284,12 @@ Method DemoApp10.EnableActions, uses xsi, dAction:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.Init
+; Method:     Application.Init
 ; Purpose:    Initialize the application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DemoApp10.Init, uses xbx xdi xsi
+Method Application.Init, uses xbx xdi xsi
   local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD, pSBHelp:POINTER
 
   SetObject xsi
@@ -348,7 +348,7 @@ Method DemoApp10.Init, uses xbx xdi xsi
   mov xdi, [xax].$Obj(MyClientWnd).hWnd
 
   ;Create and initialize XMenu
-  m2m pSBHelp, $MethodAddr(DemoApp10.StatusbarHelp), xax
+  m2m pSBHelp, $MethodAddr(Application.StatusbarHelp), xax
   OCall [xsi].Menu::XMenu.Init, xsi, [xsi].hWnd, xdi, [xsi].hMenuChildWnd, \
                                 xbx, pSBHelp, IDLANG_ENGLISH
 
@@ -357,14 +357,14 @@ Method DemoApp10.Init, uses xbx xdi xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.Load
+; Method:     Application.Load
 ; Purpose:    Load and initialize the streamable instance from a stream object. Descendant objects
 ;             should redefine this method and load new members.
 ; Arguments:  Arg1: -> Stream object.
 ;             Arg2: -> DESER_INFO.
 ; Return:     Nothing.
 
-Method DemoApp10.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
+Method Application.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   local WP:WINDOWPLACEMENT
 
   SetObject xsi
@@ -396,12 +396,12 @@ Method DemoApp10.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.LoadContext
+; Method:     Application.LoadContext
 ; Purpose:    Load the complete application context from a disk stream.
 ; Arguments:  Arg1: -> File name.
 ; Return:     Nothing.
 
-Method DemoApp10.LoadContext, uses xbx xdi xsi, pStreamName:PSTRING
+Method Application.LoadContext, uses xbx xdi xsi, pStreamName:PSTRING
   local DskStm:$Obj(DiskStream), DLTbl:$Obj(DesLUT), DeserInfo:DESER_INFO
 
   SetObject xsi
@@ -423,13 +423,13 @@ Method DemoApp10.LoadContext, uses xbx xdi xsi, pStreamName:PSTRING
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.OnClose
+; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE and WM_QUERYENDSESSION message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method DemoApp10.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local dMsg:DWORD
 
   SetObject xsi
@@ -450,13 +450,13 @@ Method DemoApp10.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.OnCommand
+; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method DemoApp10.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local hChildWnd:HWND, AboutDlg:$Obj(DialogAbout), SetupDlg:$Obj(DialogSetup), hIcon:HICON
   local cBuffer[MAX_PATH]:CHR
 
@@ -554,13 +554,13 @@ Method DemoApp10.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.OnCreate
+; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method DemoApp10.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
 
   ;Initialize project window
@@ -598,13 +598,13 @@ Method DemoApp10.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.OnDestroy
+; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method DemoApp10.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   .if [xsi].hMenuInit
     invoke DestroyMenu, [xsi].hMenuInit
@@ -618,24 +618,24 @@ Method DemoApp10.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.OnEraseBkgnd
+; Method:     Application.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Non zero => we do the job.
 
-Method DemoApp10.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
+Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, -1
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.OnSize
+; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method DemoApp10.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   local dHeight:DWORD, dWidth:DWORD, dTop:DWORD
   local CtRect:RECT, SbRect:RECT, RbRect:RECT
   local ProjWndRect:RECT, PropWndRect:RECT, SpVerRect:RECT, SpHorRect:RECT
@@ -724,17 +724,17 @@ CloseEnumProc proc hWnd:HWND, lParam:LPARAM
 CloseEnumProc endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.Startup
+; Method:     Application.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method DemoApp10.Startup
+Method Application.Startup
   local WC:WNDCLASSEX
 
   mov WC.cbSize, sizeof WNDCLASSEX
   mov WC.style, CLSSTYLE
-  m2m WC.lpfnWndProc, $MethodAddr(DemoApp10.WndProc), xax
+  m2m WC.lpfnWndProc, $MethodAddr(Application.WndProc), xax
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
   m2m WC.hInstance, hInstance, xax
@@ -749,23 +749,23 @@ Method DemoApp10.Startup
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.StatusbarHelp
+; Method:     Application.StatusbarHelp
 ; Purpose:    Display a help string on panel 0 of the statusbar.
 ; Arguments:  Arg1: -> Help string.
 ; Return:     Nothing.
 
-Method DemoApp10.StatusbarHelp,, pHelpStr:PSTRING
+Method Application.StatusbarHelp,, pHelpStr:PSTRING
   SetObject xcx
   OCall [xcx].Status::Statusbar.SetPartText, 0, pHelpStr, SBT_NOBORDERS
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.SaveContext
+; Method:     Application.SaveContext
 ; Purpose:    Store the complete application context in a disk stream.
 ; Arguments:  Arg1: -> File name.
 ; Return:     Nothing.
 
-Method DemoApp10.SaveContext, uses xdi xsi, pStreamName:PSTRING
+Method Application.SaveContext, uses xdi xsi, pStreamName:PSTRING
   local DskStm:$Obj(DiskStream)
 
   SetObject xsi
@@ -778,13 +778,13 @@ Method DemoApp10.SaveContext, uses xdi xsi, pStreamName:PSTRING
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DemoApp10.Store
+; Method:     Application.Store
 ; Purpose:    Store the streamable instance in a stream object. Descendant objects should redefine
 ;             this method and store new members.
 ; Arguments:  Arg1: -> Stream object.
 ; Return:     Nothing.
 
-Method DemoApp10.Store, uses xsi, pStream:$ObjPtr(Stream)
+Method Application.Store, uses xsi, pStream:$ObjPtr(Stream)
   local WP:WINDOWPLACEMENT
 
   SetObject xsi
@@ -971,10 +971,10 @@ Method MyChildWnd.Done, uses xbx xdi xsi
 
   ;Main menu update
   .if ZERO?                                             ;No more child windows ?
-    OCall xbx::DemoApp10.EnableActions, FALSE
+    OCall xbx::Application.EnableActions, FALSE
     invoke SendMessage, [xdi].$Obj(MyClientWnd).hWnd, WM_MDISETMENU, \
-                        [xbx].$Obj(DemoApp10).hMenuInit, NULL
-    invoke DrawMenuBar, [xbx].$Obj(DemoApp10).hWnd      ;Redraw the new menu bar
+                        [xbx].$Obj(Application).hMenuInit, NULL
+    invoke DrawMenuBar, [xbx].$Obj(Application).hWnd      ;Redraw the new menu bar
   .endif
   ACall xsi.Done
 MethodEnd
@@ -997,17 +997,17 @@ Method MyChildWnd.Init, uses xbx xdi xsi, pOwner:POINTER, pTitle:PSTRING
                           [xdi].$Obj(MyClientWnd).hWnd, hInstance, pSelf
   .if xax != NULL
     .if [xdi].$Obj(MyClientWnd).dChildCount == 1        ;First child window ?
-      mov xbx, [xdi].$Obj(MyClientWnd).pOwner           ;xbx -> DemoApp10
-      OCall xbx::DemoApp10.EnableActions, TRUE
+      mov xbx, [xdi].$Obj(MyClientWnd).pOwner           ;xbx -> Application
+      OCall xbx::Application.EnableActions, TRUE
       invoke SendMessage, [xdi].$Obj(MyClientWnd).hWnd, WM_MDISETMENU, \
-                          [xbx].$Obj(DemoApp10).hMenuChild, \
-                          [xbx].$Obj(DemoApp10).hMenuChildWnd
-      invoke DrawMenuBar, [xbx].$Obj(DemoApp10).hWnd    ;Redraw the new menu bar
+                          [xbx].$Obj(Application).hMenuChild, \
+                          [xbx].$Obj(Application).hMenuChildWnd
+      invoke DrawMenuBar, [xbx].$Obj(Application).hWnd    ;Redraw the new menu bar
     .endif
 
     invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
   .else
-    invoke MessageBox, [xdi].$Obj(DemoApp10).hWnd, $OfsCStr("Window creation error"), \
+    invoke MessageBox, [xdi].$Obj(Application).hWnd, $OfsCStr("Window creation error"), \
                        offset szError, MB_OK or MB_ICONERROR
   .endif
 MethodEnd
@@ -1055,7 +1055,7 @@ Method MyChildWnd.OnCommand, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
 
     mov xax, [xsi].pOwner
     mov xcx, [xax].$Obj(MyClientWnd).pOwner
-    mov xax, [xcx].$Obj(DemoApp10).hMenuChild
+    mov xax, [xcx].$Obj(Application).hMenuChild
     invoke GetSubMenu, xax, IDMENUCOLOR
     invoke CheckMenuRadioItem, xax, IDM_COLOR_BLACK, IDM_COLOR_WHITE, edi, MF_BYCOMMAND
     xor eax, eax
@@ -1112,7 +1112,7 @@ Method MyChildWnd.OnMdiActivate, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov xax, lParam
   .if xax == [xsi].hWnd                               ;Activate child window
     ;Color popup menu update
-    invoke GetSubMenu, [xdx].$Obj(DemoApp10).hMenuChild, IDMENUCOLOR
+    invoke GetSubMenu, [xdx].$Obj(Application).hMenuChild, IDMENUCOLOR
     mov xcx, xax
     mov eax, [xsi].dColorIndex
     add eax, IDM_COLOR_BLACK
@@ -1279,7 +1279,7 @@ Method DialogSetup.OnInitDialog, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke ShowWindow, [xsi].TabDialog1.hWnd, SW_SHOWDEFAULT
 
   OCall [xsi].TabDialog2::Tab2.Init, xbx, [xbx].$Obj(TabCtrl).hWnd, $OfsCStr("SETUPTAB2"), \
-                                               addr $ObjTmpl(DemoApp10).hActiveMlsDlg
+                                               addr $ObjTmpl(Application).hActiveMlsDlg
 
   OCall [xsi].TabDialog2::Tab2.Show
   invoke ShowWindow, [xsi].TabDialog2.hWnd, SW_HIDE
@@ -1305,7 +1305,7 @@ MethodEnd
 
 Method Tab1.Init, uses xsi, pOwner:POINTER, hParent:HWND, pTemplate:POINTER
   SetObject xsi
-  ACall xsi.Init, pOwner, hParent, pTemplate, addr $ObjTmpl(DemoApp10).hActiveMlsDlg
+  ACall xsi.Init, pOwner, hParent, pTemplate, addr $ObjTmpl(Application).hActiveMlsDlg
   mov [xsi].hBackBrush, $invoke(CreateHatchBrush, HS_DIAGCROSS, $RGB(0, 0, 255))
 MethodEnd
 

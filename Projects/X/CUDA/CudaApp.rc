@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      CudaApp.rc
+; Title:      Application.rc
 ; Author:     G. Friedrich
 ; Version:    C.1.0
 ; Purpose:    ObjAsm CUDA demo application resource file.

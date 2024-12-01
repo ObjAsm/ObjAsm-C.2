@@ -90,10 +90,10 @@ if IMPLEMENT
       .if [xsi].dOrdering == TSV_ASCENDING
         fld xItem1
         fcomp xItem2
-	    .else
+      .else
         fld xItem1
         fcomp xItem2
-	    .endif
+      .endif
     elseif TVectorOrdering eq TSV_ASCENDING
       fld xItem1
       fcomp xItem2
@@ -106,21 +106,21 @@ if IMPLEMENT
     sbb eax, eax
     or al, cl
   else                                                  ;Integer comparison
-	  if TVectorOrdering eq TSV_MODIFIABLE
+    if TVectorOrdering eq TSV_MODIFIABLE
       .if [xsi].dOrdering == TSV_ASCENDING
-	      mov $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem1
-	      sub $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem2
-	    .else
-    	  mov $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem2
-	      sub $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem1
-	    .endif
-	  elseif TVectorOrdering eq TSV_ASCENDING
-	    mov $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem1
-	    sub $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem2
-	  elseif TVectorOrdering eq TSV_DESCENDING
-	    mov $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem2
-	    sub $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem1
-	  endif
+        mov $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem1
+        sub $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem2
+      .else
+        mov $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem2
+        sub $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem1
+      .endif
+    elseif TVectorOrdering eq TSV_ASCENDING
+      mov $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem1
+      sub $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem2
+    elseif TVectorOrdering eq TSV_DESCENDING
+      mov $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem2
+      sub $SubReg(eax, sizeof(TVEC_ITEM_TYPE)), xItem1
+    endif
   endif
 MethodEnd
 

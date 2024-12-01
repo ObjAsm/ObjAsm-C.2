@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      WebCam_Main.inc
 ; Author:     G. Friedrich
-; Version:    See WebCam_Main.asm
+; Version:    See WebCam.asm
 ; Purpose:    ObjAsm WebCam Application.
 ; ==================================================================================================
 
@@ -17,7 +17,7 @@ TARGET_SIZE_X   equ   320
 TARGET_SIZE_Y   equ   240
 
 
-Object WebCamApp, MySdiAppID, SdiApp                    ;Single Document Interface App.
+Object Application, ApplicationID, SdiApp               ;Single Document Interface App.
   RedefineMethod    Init                                ;Init method redefinition
   StaticMethod      Startup
 
@@ -34,16 +34,16 @@ ObjectEnd                                               ;Ends object definition
 
 .code
 ; ==================================================================================================
-;    WebCamApp implementation
+;    Application implementation
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     WebCamApp.Init
+; Method:     Application.Init
 ; Purpose:    Initialize the SDI application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method WebCamApp.Init, uses xsi
+Method Application.Init, uses xsi
   local dWndPosX:DWORD, dWndPosY:DWORD
 
   SetObject xsi
@@ -66,13 +66,13 @@ Method WebCamApp.Init, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     WebCamApp.OnCommand
+; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method WebCamApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout)
   local CapDrvCaps:CAPDRIVERCAPS, CaptureParms:CAPTUREPARMS, hIcon:HICON
 
@@ -147,13 +147,13 @@ Method WebCamApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     WebCamApp.OnCreate
+; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method WebCamApp.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
 
   invoke capCreateCaptureWindow, $OfsCStr("WebCamOut"), WS_VISIBLE or WS_CHILD or WS_BORDER,
@@ -176,13 +176,13 @@ Method WebCamApp.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     WebCamApp.OnClose
+; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method WebCamApp.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure ?"), $OfsCStr("Application exit"), \
                      MB_YESNO or MB_ICONQUESTION
@@ -197,13 +197,13 @@ Method WebCamApp.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     WebCamApp.OnPaint
+; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method WebCamApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   local PS:PAINTSTRUCT, hDC:HDC, Rct:RECT
 
   SetObject xsi
@@ -217,12 +217,12 @@ Method WebCamApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     WebCamApp.Startup
-; Purpose:    Register the WebCamApp window class with the operating system.
+; Method:     Application.Startup
+; Purpose:    Register the Application window class with the operating system.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method WebCamApp.Startup
+Method Application.Startup
   local WC:WNDCLASSEX
 
   mov WC.cbSize, sizeof(WNDCLASSEX)

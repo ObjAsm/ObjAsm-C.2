@@ -154,7 +154,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=3
+MilestoneOnDateDate=30
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -189,8 +189,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1907,628,2231
-1=0,0,0,0,491
+2=0,0,1907,628,8747
+1=0,0,0,0,326
 6=0,0,1456,414,7231
 4=0,0,0,0,441
 31=
@@ -243,16 +243,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="_MAX_CHARS equ"
-2="sdword2decA"
-3="DbgDec m"
-4="44"
-5="sub rsp"
-6="DbgHex"
-7="@@?"
-8="EscDecodeGetHex"
-9="Json"
-10="POINTER "
+1="JsonDemoApp"
+2="_MAX_CHARS equ"
+3="sdword2decA"
+4="DbgDec m"
+5="44"
+6="sub rsp"
+7="DbgHex"
+8="@@?"
+9="EscDecodeGetHex"
+10="Json"
 [Collapse]
 1=
 2=
@@ -360,15 +360,15 @@ ProductVer4Range=0
 12=
 11=
 10=
-5=,,
+5=,,,
 15=
 25=
 27=
 32=,268435456,,
 [AutoLoad]
-AutoLoad=1,2,32,5
+AutoLoad=1,2
 [PTimer]
-PTimer=1238154372
+PTimer=1238195403
 [GroupExpand]
 GroupExpand=1,1,1,1,0,1,1,0
 [RADebugBP]

@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      SkinApp.asm
+; Title:      Application.asm
 ; Author:     G. Friedrich
 ; Version:    1.0.0
 ; Purpose:    ObjAsm Skined Application.
@@ -33,7 +33,7 @@ MakeObjects WinApp, SdiApp
 
 .code
 include SkinApp_Globals.inc                             ;Include application globals
-include SkinApp_Main.inc                                ;Include SkinApp referenced object
+include SkinApp_Main.inc                                ;Include Application referenced object
 
 start proc                                              ;Program entry point
   SysInit                                               ;Runtime initialization of OOP model
@@ -41,9 +41,9 @@ start proc                                              ;Program entry point
   ResGuard_Start
 
   invoke CoInitializeEx, NULL, COINIT_APARTMENTTHREADED or COINIT_DISABLE_OLE1DDE
-  OCall $ObjTmpl(SkinApp)::SkinApp.Init                 ;Initialize the object data
-  OCall $ObjTmpl(SkinApp)::SkinApp.Run                  ;Execute the application
-  OCall $ObjTmpl(SkinApp)::SkinApp.Done                 ;Finalize it
+  OCall $ObjTmpl(Application)::Application.Init         ;Initialize the object data
+  OCall $ObjTmpl(Application)::Application.Run          ;Execute the application
+  OCall $ObjTmpl(Application)::Application.Done         ;Finalize it
   invoke CoUninitialize
 
   ResGuard_Show

@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      CudaApp_Globals.inc
 ; Author:     G. Friedrich
-; Version:    See CudaApp.asm
+; Version:    See Application.asm
 ; Purpose:    ObjAsm CUDA application.
 ; ==================================================================================================
 

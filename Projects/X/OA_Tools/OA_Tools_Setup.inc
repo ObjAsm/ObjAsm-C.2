@@ -93,16 +93,16 @@ SetItemString macro iID:req, sID:req
 endm
 
 GetTool macro ID:req
-  %.if [xdi].$Obj(OAT_App).Setup.Tool&ID.pName != NULL
-    %invoke StrDispose, [xdi].$Obj(OAT_App).Setup.Tool&ID.pName
+  %.if [xdi].$Obj(Application).Setup.Tool&ID.pName != NULL
+    %invoke StrDispose, [xdi].$Obj(Application).Setup.Tool&ID.pName
   .endif
   %invoke GetDlgItemText, xbx, IDC_EDT_NAME_&ID, addr cBuffer, lengthof cBuffer
-  mov [xdi].$Obj(OAT_App).Setup.Tool&ID.pName, $invoke(StrNew, addr cBuffer)
-  .if [xdi].$Obj(OAT_App).Setup.Tool&ID.pCommand != NULL
-    %invoke StrDispose, [xdi].$Obj(OAT_App).Setup.Tool&ID.pCommand
+  mov [xdi].$Obj(Application).Setup.Tool&ID.pName, $invoke(StrNew, addr cBuffer)
+  .if [xdi].$Obj(Application).Setup.Tool&ID.pCommand != NULL
+    %invoke StrDispose, [xdi].$Obj(Application).Setup.Tool&ID.pCommand
   .endif
   %invoke GetDlgItemText, xbx, IDC_EDT_CMD_&ID, addr cBuffer, lengthof cBuffer
-  mov [xdi].$Obj(OAT_App).Setup.Tool&ID.pCommand, $invoke(StrNew, addr cBuffer)
+  mov [xdi].$Obj(Application).Setup.Tool&ID.pCommand, $invoke(StrNew, addr cBuffer)
 endm
 
 .code
@@ -183,8 +183,8 @@ Method OAT_Setup.GetFileName, uses xbx xdi xsi
                            offset IID_IFileOpenDialog, addr pIFODlg
   .if SUCCEEDED(eax)
     lea xdi, cBuffer
-    mov xcx, [xsi].pOwner                                 ;xcx -> OAT_App
-    mov ebx, [xcx].$Obj(OAT_App).dLanguage
+    mov xcx, [xsi].pOwner                                 ;xcx -> Application
+    mov ebx, [xcx].$Obj(Application).dLanguage
 
     invoke LoadString, hInstance, addr [ebx + IDS_TOOL_FILTER_NAME_0], xdi, lengthof cBuffer
     mov MFS.FS0.pszName, $invoke(StrNew, xdi)
@@ -218,8 +218,8 @@ Method OAT_Setup.GetFileName, uses xbx xdi xsi
       ICall pIFileDialog2::IFileDialog2.Release
     .endif
 
-    mov xcx, [xsi].pOwner                                 ;xcx -> OAT_App
-    invoke SHCreateItemFromParsingName, [xcx].$Obj(OAT_App).pWorkDirectoryW, NULL, \
+    mov xcx, [xsi].pOwner                                 ;xcx -> Application
+    invoke SHCreateItemFromParsingName, [xcx].$Obj(Application).pWorkDirectoryW, NULL, \
                                         offset IID_IShellItem, addr pIShellItem
     ICall pIFODlg::IFileOpenDialog.SetDefaultFolder, pIShellItem
     ICall pIShellItem::IShellItem.Release
@@ -233,11 +233,11 @@ Method OAT_Setup.GetFileName, uses xbx xdi xsi
 
     ICall pIFODlg::IFileOpenDialog.GetFolder, addr pIShellItem
     ICall pIShellItem::IShellItem.GetDisplayName, SIGDN_FILESYSPATH, addr pFileName
-    mov xdi, [xsi].pOwner                                 ;xdi -> OAT_App
-    .if [xdi].$Obj(OAT_App).pWorkDirectoryW != NULL
-      invoke StrDispose, [xdi].$Obj(OAT_App).pWorkDirectoryW
+    mov xdi, [xsi].pOwner                                 ;xdi -> Application
+    .if [xdi].$Obj(Application).pWorkDirectoryW != NULL
+      invoke StrDispose, [xdi].$Obj(Application).pWorkDirectoryW
     .endif
-    mov [xdi].$Obj(OAT_App).pWorkDirectoryW, $invoke(StrNewW, pFileName)
+    mov [xdi].$Obj(Application).pWorkDirectoryW, $invoke(StrNewW, pFileName)
 
     .if pISIArr != NULL
       ICall pISIArr::IShellItemArray.GetItemAt, 0, addr pIShellItem
@@ -288,7 +288,7 @@ Method OAT_Setup.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   LoWord(wParam)
   .if ax == IDOK
     OCall xsi.CtlsGet
-    OCall [xsi].pOwner::OAT_App.SetToolMenu
+    OCall [xsi].pOwner::Application.SetToolMenu
   .endif
   OCall xsi.DestroyDialog, wParam
 MethodEnd
@@ -322,22 +322,22 @@ Method OAT_Setup.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   OCall xbx::TabCtrl.Init, xsi, [xsi].hWnd, addr [xsi].IconImageList, addr CtrlSetup
 
   OCall [xsi].TabDialog1::Tab1.Init, xbx, [xbx].$Obj(TabCtrl).hWnd, SETUP_TAB_MAIN, \
-                                          addr $ObjTmpl(OAT_App).hActiveMlsDlg
+                                          addr $ObjTmpl(Application).hActiveMlsDlg
   OCall [xsi].TabDialog1::Tab1.Show
   invoke ShowWindow, [xsi].TabDialog1.hWnd, SW_SHOWDEFAULT
 
   OCall [xsi].TabDialog2::Tab2.Init, xbx, [xbx].$Obj(TabCtrl).hWnd, SETUP_TAB_TOOLS, \
-                                          addr $ObjTmpl(OAT_App).hActiveMlsDlg
+                                          addr $ObjTmpl(Application).hActiveMlsDlg
   OCall [xsi].TabDialog2::Tab2.Show
   invoke ShowWindow, [xsi].TabDialog2.hWnd, SW_HIDE
 
   OCall [xsi].TabDialog3::Tab3.Init, xbx, [xbx].$Obj(TabCtrl).hWnd, SETUP_TAB_COLORS, \
-                                          addr $ObjTmpl(OAT_App).hActiveMlsDlg
+                                          addr $ObjTmpl(Application).hActiveMlsDlg
   OCall [xsi].TabDialog3::Tab3.Show
   invoke ShowWindow, [xsi].TabDialog3.hWnd, SW_HIDE
 
-  mov xcx, [xsi].pOwner                                 ;xcx -> OAT_App
-  mov edi, [xcx].$Obj(OAT_App).dLanguage
+  mov xcx, [xsi].pOwner                                 ;xcx -> Application
+  mov edi, [xcx].$Obj(Application).dLanguage
   lea xbx, cBuffer
 
   mov edx, edi

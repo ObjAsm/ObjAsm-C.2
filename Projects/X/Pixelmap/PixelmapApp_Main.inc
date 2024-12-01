@@ -12,7 +12,7 @@ APPEXSTYLE  equ  WS_EX_LEFT or WS_EX_APPWINDOW
 
 CStr szPixelmapApp, "OAC_PixelmapApp"                   ;Creates szPixelmapApp string in .const
 
-Object PixelmapApp, MySdiAppID, SdiApp                  ;Single Document Interface App.
+Object Application, ApplicationID, SdiApp                  ;Single Document Interface App.
   RedefineMethod    Done
   RedefineMethod    Init                                ;Init method redefinition
   StaticMethod      Startup
@@ -88,16 +88,16 @@ WUCircle endp
 
 
 ; ==================================================================================================
-;    PixelmapApp implementation
+;    Application implementation
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    PixelmapApp.Done
+; Method:    Application.Done
 ; Purpose:   Release resources & finalize the application object.
 ; Arguments: None.
 ; Return:    Nothing.
 
-Method PixelmapApp.Done, uses xsi
+Method Application.Done, uses xsi
   SetObject xsi
   OCall [xsi].Pxm1::Pixelmap.Done
   OCall [xsi].Pxm2::Pixelmap.Done
@@ -106,12 +106,12 @@ Method PixelmapApp.Done, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    PixelmapApp.Init
+; Method:    Application.Init
 ; Purpose:   Initialize the SDI application object.
 ; Arguments: None.
 ; Return:    Nothing.
 
-Method PixelmapApp.Init, uses xsi
+Method Application.Init, uses xsi
   local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD
   local CRct:RECT, DRect:RECT
 
@@ -166,13 +166,13 @@ Method PixelmapApp.Init, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    PixelmapApp.OnCommand
+; Method:    Application.OnCommand
 ; Purpose:   Event procedure for WM_COMMAND message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = Zero if handled.
 
-Method PixelmapApp.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout), hIcon:HICON
 
   SetObject xsi
@@ -202,13 +202,13 @@ Method PixelmapApp.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    PixelmapApp.OnClose
+; Method:    Application.OnClose
 ; Purpose:   Event procedure for WM_CLOSE message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = Zero if handled.
 
-Method PixelmapApp.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure ?"), \
                      $OfsCStr("Application exit"), MB_YESNO or MB_ICONQUESTION
@@ -220,13 +220,13 @@ Method PixelmapApp.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    PixelmapApp.OnMouseMove
+; Method:    Application.OnMouseMove
 ; Purpose:   Event procedure for WM_MOUSEMOVE message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = Zero if handled.
 
-Method PixelmapApp.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
   local Rct:RECT, Pt:POINT
   
   SetObject xsi
@@ -253,13 +253,13 @@ Method PixelmapApp.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    PixelmapApp.OnPaint
+; Method:    Application.OnPaint
 ; Purpose:   Event procedure for WM_PAINT message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = Zero if handled.
 
-Method PixelmapApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   local PS:PAINTSTRUCT, hDC:HDC, CRect:RECT
 
   SetObject xsi
@@ -273,17 +273,17 @@ Method PixelmapApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    PixelmapApp.Startup
+; Method:    Application.Startup
 ; Purpose:   Register the object class with the OS.
 ; Arguments: None.
 ; Return:    Nothing.
 
-Method PixelmapApp.Startup
+Method Application.Startup
   local WC:WNDCLASSEX
 
   mov WC.cbSize, sizeof WNDCLASSEX
   mov WC.style, CLSSTYLE
-  m2m WC.lpfnWndProc, $MethodAddr(PixelmapApp.WndProc), xax
+  m2m WC.lpfnWndProc, $MethodAddr(Application.WndProc), xax
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
   m2m WC.hInstance, hInstance, xax

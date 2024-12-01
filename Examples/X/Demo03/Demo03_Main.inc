@@ -40,7 +40,7 @@ AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SB_STYLE, 0, 4}
 ;  DEF_STATUSBAR_PART {120, 100, 2, SBT_SUNKEN, NULL}
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-Object Application, MySdiAppID, SdiApp                ;Single Document Interface App.
+Object Application, ApplicationID, SdiApp                ;Single Document Interface App.
   RedefineMethod    Done
   RedefineMethod    Init
   StaticMethod      Startup

@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      DLApp.asm
+; Title:      Application.asm
 ; Author:     G. Friedrich
 ; Version:    1.0.0
 ; Purpose:    ObjAsm Dynamic Window Layout Application.
@@ -23,16 +23,16 @@ MakeObjects WinApp, SdiApp
 
 
 include DLApp_Globals.inc                               ;Application globals
-include DLApp_Main.inc                                  ;DLApp object
+include DLApp_Main.inc                                  ;Application object
 
 .code
 start proc                                              ;Program entry point
   SysInit                                               ;Runtime initialization of OOP model
 
   ResGuard_Start
-  OCall $ObjTmpl(DLApp)::DLApp.Init                     ;Initialize application
-  OCall $ObjTmpl(DLApp)::DLApp.Run                      ;Execute application
-  OCall $ObjTmpl(DLApp)::DLApp.Done                     ;Finalize application
+  OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
+  OCall $ObjTmpl(Application)::Application.Run          ;Execute application
+  OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
   ResGuard_Show
   ResGuard_Stop
 

@@ -11,7 +11,7 @@ CLSSTYLE equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRA
 CStr szOcxContainerDemoApp, "OAC_OcxContainerDemo"
 
 
-Object OcxContainerDemo, MySdiAppID, SdiApp
+Object Application, ApplicationID, SdiApp
   StaticMethod      CreateCtrl
   RedefineMethod    Done
   RedefineMethod    Init
@@ -35,16 +35,16 @@ ObjectEnd
 if IMPLEMENT
 
 ; ==================================================================================================
-;    OcxContainerDemo implementation
+;    Application implementation
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OcxContainerDemo.Done
+; Method:     Application.Done
 ; Purpose:    Finalize the SDI application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method OcxContainerDemo.Done, uses xbx xsi
+Method Application.Done, uses xbx xsi
   SetObject xsi
   mov xbx, [xsi].pIControl
   .if xbx != NULL
@@ -56,12 +56,12 @@ Method OcxContainerDemo.Done, uses xbx xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OcxContainerDemo.Init
+; Method:     Application.Init
 ; Purpose:    Initializesthe SDI application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method OcxContainerDemo.Init, uses xsi
+Method Application.Init, uses xsi
   local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD
 
   SetObject xsi
@@ -89,12 +89,12 @@ Method OcxContainerDemo.Init, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OcxContainerDemo.CreateCtrl
+; Method:     Application.CreateCtrl
 ; Purpose:    Create a control and customizes it.
 ; Arguments:  None.
 ; Return:     eax -> OcxClientSite or NULL if failed.
 
-Method OcxContainerDemo.CreateCtrl, uses xbx xsi
+Method Application.CreateCtrl, uses xbx xsi
   local pClientSite:POINTER, cBuffer[MAX_PATH]:CHRW
 
   SetObject xsi
@@ -127,13 +127,13 @@ Method OcxContainerDemo.CreateCtrl, uses xbx xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OcxContainerDemo.OnCommand
+; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method OcxContainerDemo.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout), hIcon:HICON
 
   SetObject xsi
@@ -163,13 +163,13 @@ Method OcxContainerDemo.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OcxContainerDemo.OnClose
+; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method OcxContainerDemo.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure ?"), $OfsCStr("Application exit"), \
                      MB_YESNO or MB_ICONQUESTION
@@ -181,13 +181,13 @@ Method OcxContainerDemo.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OcxContainerDemo.OnPaint
+; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method OcxContainerDemo.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   local PS:PAINTSTRUCT, hDC:HDC, Rct:RECT
 
   SetObject xsi
@@ -201,13 +201,13 @@ Method OcxContainerDemo.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OcxContainerDemo.OnSize
+; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method OcxContainerDemo.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   local Rect:RECT
 
   .if (wParam == SIZE_RESTORED || wParam == SIZE_MAXIMIZED)
@@ -233,17 +233,17 @@ Method OcxContainerDemo.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OcxContainerDemo.Startup
+; Method:     Application.Startup
 ; Purpose:    Register the object class with the OS.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method OcxContainerDemo.Startup
+Method Application.Startup
   local WC:WNDCLASSEX
 
   mov WC.cbSize, sizeof WNDCLASSEX
   mov WC.style, CLSSTYLE
-  m2m WC.lpfnWndProc, $MethodAddr(OcxContainerDemo.WndProc), xax
+  m2m WC.lpfnWndProc, $MethodAddr(Application.WndProc), xax
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
   m2m WC.hInstance, hInstance, xax

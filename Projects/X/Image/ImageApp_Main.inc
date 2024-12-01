@@ -15,7 +15,7 @@ CStr szImagApp, "OAC_ImagApp"
 WM_APPSTR equ 0C000h
 
 
-Object ImagApp, MySdiAppID, SdiApp
+Object Application, ApplicationID, SdiApp
   RedefineMethod    Done
   RedefineMethod    Init
   StaticMethod      Startup
@@ -31,16 +31,16 @@ ObjectEnd
 
 .code
 ; ==================================================================================================
-;    ImagApp implementation
+;    Application implementation
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ImagApp.Done
+; Method:     Application.Done
 ; Purpose:    Finalize the SDI application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method ImagApp.Done, uses xsi
+Method Application.Done, uses xsi
   SetObject xsi
   OCall [xsi].Img1::Image.Done
   OCall [xsi].Img2::Image.Done
@@ -48,12 +48,12 @@ Method ImagApp.Done, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ImagApp.Init
+; Method:     Application.Init
 ; Purpose:    Initialize the SDI application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method ImagApp.Init, uses xsi
+Method Application.Init, uses xsi
   local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD
 
   SetObject xsi
@@ -78,13 +78,13 @@ Method ImagApp.Init, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ImagApp.OnCommand
+; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method ImagApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout), hIcon:HICON
 
   SetObject xsi
@@ -114,13 +114,13 @@ Method ImagApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ImagApp.OnPaint
+; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method ImagApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   local PS:PAINTSTRUCT, hDC:HDC, DstRect:RECT
 
   SetObject xsi
@@ -165,12 +165,12 @@ Method ImagApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ImagApp.Startup
-; Purpose:    Register the ImagApp window class with the operating system.
+; Method:     Application.Startup
+; Purpose:    Register the Application window class with the operating system.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method ImagApp.Startup
+Method Application.Startup
   local WC:WNDCLASSEX
 
   mov WC.cbSize, sizeof(WNDCLASSEX)

@@ -59,7 +59,7 @@ ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-Object ClientWnd, MyClientWndID, MdiClientWnd           ;MDI client window.
+Object ClientWnd, ClientWndID, MdiClientWnd           ;MDI client window.
   RedefineMethod    Done
   RedefineMethod    Init,               POINTER         ;-> Owner
 

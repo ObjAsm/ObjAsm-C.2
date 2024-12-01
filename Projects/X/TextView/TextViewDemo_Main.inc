@@ -9,7 +9,7 @@
 CStr szApplication, "OAC_Application"
 
 
-Object Application, MySdiAppID, SdiApp
+Object Application, ApplicationID, SdiApp
   RedefineMethod    Init
   StaticMethod      Startup
 

@@ -165,7 +165,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=26
+MilestoneOnDateDate=30
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -200,8 +200,8 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,0,0,1578
-1=0,0,0,0,3486
+2=0,0,0,0,677
+1=0,0,0,0,3346
 6=0,0,0,0,63073
 4=0,0,0,0,1597
 31=0,0,1213,691,24722
@@ -231,7 +231,7 @@ ProductVer4Range=0
 34=0,0,0,0,50
 36=0,0,0,0,416
 35=0,0,0,0,25176
-20=0,0,0,0,145248
+20=0,0,0,0,123718
 21=0,0,1706,628,989
 16=0,0,747,576,12244
 37=0,0,0,0,302
@@ -359,7 +359,7 @@ ProductVer4Range=0
 24=
 22=
 21=
-20=,,,,
+20=,,,
 19=,
 18=
 17=
@@ -377,18 +377,18 @@ ProductVer4Range=0
 25=
 44=
 [Find]
-1="ITypeInfo"
-2="ITypeInfo.Invoke"
-3="IActiveScriptSite"
-4="WSF_DEBUG"
-5="WSH"
-6="IScriptOutput"
-7="IID_IScriptOutput"
-8="ResGuard"
-9="mov xbx, $New(Component)"
-10="OCall [xsi].Interfaces::Collection.Init, xsi, 2, 1, COL_MAX_CAPACITY ;Min 2 interfaces"
+1="ScriptHostApp"
+2="ITypeInfo"
+3="ITypeInfo.Invoke"
+4="IActiveScriptSite"
+5="WSF_DEBUG"
+6="WSH"
+7="IScriptOutput"
+8="IID_IScriptOutput"
+9="ResGuard"
+10="mov xbx, $New(Component)"
 [AutoLoad]
-AutoLoad=1,2,16,3,20,33,13,24
+AutoLoad=1,2
 [RADebugBP]
 36=
 1=
@@ -410,6 +410,6 @@ AutoLoad=1,2,16,3,20,33,13,24
 33=
 5=
 [PTimer]
-PTimer=554056522
+PTimer=554622928
 [GroupExpand]
 GroupExpand=1,1,0,1,0,0,1,1,1,1,0

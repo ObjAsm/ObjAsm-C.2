@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-Object Application, MySdiAppID, SdiApp                    ;Single Document Interface App.
+Object Application, ApplicationID, SdiApp                    ;Single Document Interface App.
   RedefineMethod    Done
   RedefineMethod    Init
   StaticMethod      Startup

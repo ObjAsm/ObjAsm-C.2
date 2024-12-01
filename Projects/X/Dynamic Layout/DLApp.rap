@@ -175,10 +175,10 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,1839,628,3490
-1=0,0,1839,628,532
+2=0,0,1839,628,184
+1=0,0,1839,628,705
 6=0,0,1456,414,19153
-4=0,0,0,0,958
+4=0,0,0,0,175
 31=0,0,1213,691,1416
 8=0,0,777,591,20469
 7=0,0,0,0,1093
@@ -186,7 +186,7 @@ ProductVer4Range=0
 10=0,0,0,0,18138
 5=0,0,0,0,54462
 3=0,0,0,0,160
-11=0,0,1783,588,1387
+11=0,0,1783,588,177
 15=0,0,0,0,5891
 14=0,0,0,0
 13=0,0,0,0,848
@@ -223,16 +223,16 @@ ProductVer4Range=0
 0=
 
 [Find]
-1="LoadAccelerators"
-2=" LoadAccelerators"
-3="DLF_USE_INI_X"
-4="DLF_LOAD_INI_X"
-5="IniSize"
-6="dDeltaX"
-7="DL_HEADER"
-8="OnInitWindow"
-9="WM_CREATE"
-10="DlgChildrenInfo"
+1="DLApp"
+2="LoadAccelerators"
+3=" LoadAccelerators"
+4="DLF_USE_INI_X"
+5="DLF_LOAD_INI_X"
+6="IniSize"
+7="dDeltaX"
+8="DL_HEADER"
+9="OnInitWindow"
+10="WM_CREATE"
 [Collapse]
 1=
 2=4
@@ -345,9 +345,9 @@ ProductVer4Range=0
 25=
 27=
 [AutoLoad]
-AutoLoad=1,2,14
+AutoLoad=1,2
 [PTimer]
-PTimer=1343163244
+PTimer=1343265182
 [GroupExpand]
 GroupExpand=1,1,1,1,0,1,1,0
 [RADebugBP]

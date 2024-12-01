@@ -1,5 +1,5 @@
 ; ==================================================================================================
-; Title:      CudaApp.asm
+; Title:      Application.asm
 ; Author:     G. Friedrich
 ; Version:    1.0.0
 ; Purpose:    ObjAsm CUDA demo application.
@@ -10,7 +10,7 @@
 
 
 % include @Environ(OBJASM_PATH)\Code\Macros\Model.inc   ;Include & initialize standard modules
-SysSetup OOP, WIN32, WIDE_STRING;, DEBUG(WND)            ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND)            ;Load OOP files and OS related objects
 
 % include &MacPath&fMath.inc
 
@@ -31,16 +31,16 @@ MakeObjects WinApp, DlgApp
 
 
 include CudaApp_Globals.inc                             ;Application globals
-include CudaApp_Main.inc                                ;CudaApp object
+include CudaApp_Main.inc                                ;Application object
 
 .code
 start proc                                              ;Program entry point
   SysInit                                               ;Runtime initialization of OOP model
 
 ;  DbgClearAll
-  OCall $ObjTmpl(CudaApp)::CudaApp.Init                 ;Initialize application
-  OCall $ObjTmpl(CudaApp)::CudaApp.Run                  ;Execute application
-  OCall $ObjTmpl(CudaApp)::CudaApp.Done                 ;Finalize application
+  OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
+  OCall $ObjTmpl(Application)::Application.Run          ;Execute application
+  OCall $ObjTmpl(Application)::Application.Done         ;Finalize application
 
   SysDone                                               ;Runtime finalization of the OOP model
   invoke ExitProcess, 0                                 ;Exit program returning 0 to the OS

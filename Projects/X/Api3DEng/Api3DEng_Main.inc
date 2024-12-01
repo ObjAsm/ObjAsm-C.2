@@ -8,8 +8,12 @@
 
 CLSSTYLE        equ CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or CS_VREDRAW or CS_HREDRAW
 SBSTYLE         equ WS_CHILD or WS_VISIBLE or SBARS_TOOLTIPS or SBARS_SIZEGRIP
-TIMER_INTERVAL  equ 10
 ROTSPEED        equ 0.025
+
+FPS               = 60
+TIMER_RESOLUTION  = 1
+TIMER_PERIOD      = 1000/FPS
+OBJECT_RESOLUTION = 1
 
 .const
 AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SBSTYLE, 0, 4}
@@ -32,16 +36,19 @@ DplVector2      D3Vector      {  550.0,  250.0,  000.0}       ;Grey sphere initi
 
 CStr szApi3DEngApp, "OAC_Api3DEngApp"
 
-Object Api3DEngApp, MySdiAppID, SdiApp                        ;SDI application.
+Object Application, ApplicationID, SdiApp                        ;SDI application.
+  StaticMethod      Animate,     DWORD
+  StaticMethod      Draw
   RedefineMethod    Done
   RedefineMethod    Init
   RedefineMethod    OnSize,           WPARAM, LPARAM
-  VirtualMethod     RotateCamera,     DWORD
-  VirtualMethod     RotateSphere,     DWORD, DWORD
-  VirtualMethod     SceneAnimate,     DWORD
-  VirtualMethod     SceneWireDraw
+  StaticMethod      RotateCamera,     DWORD
+  StaticMethod      RotateSphere,     DWORD, DWORD
+  StaticMethod      SceneWireDraw
   StaticMethod      Startup
-  VirtualMethod     StatusbarHelp,    POINTER                 ;-> Help string
+  StaticMethod      StatusbarHelp,    POINTER                 ;-> Help string
+  StaticMethod      Move1
+  StaticMethod      Move2
 
   VirtualEvent      OnClose,          WM_CLOSE, WM_QUERYENDSESSION
   VirtualEvent      OnCommand,        WM_COMMAND
@@ -50,13 +57,11 @@ Object Api3DEngApp, MySdiAppID, SdiApp                        ;SDI application.
   VirtualEvent      OnEraseBkgnd,     WM_ERASEBKGND
   VirtualEvent      OnKeyDown,        WM_KEYDOWN
   VirtualEvent      OnPaint,          WM_PAINT
-  VirtualEvent      OnTimer,          WM_TIMER
 
   DefineVariable    pIconImageList,   $ObjPtr(MaskedImageList),  NULL
   DefineVariable    pStatusbar,       $ObjPtr(Statusbar),        NULL
   DefineVariable    pXMenu,           $ObjPtr(XMenu),            NULL
   DefineVariable    hMenuInit,        HMENU,      0
-  DefineVariable    hTimer,           HANDLE,     0
 
   DefineVariable    pScene,           $ObjPtr(D3Scene),          NULL
   DefineVariable    pObject1,         $ObjPtr(D3Object),         NULL
@@ -71,6 +76,19 @@ Object Api3DEngApp, MySdiAppID, SdiApp                        ;SDI application.
   DefineVariable    hPrevMemPen,      HPEN,       0
   DefineVariable    hPrevMemBrush,    HBRUSH,     0
   DefineVariable    dSlow,            DWORD,      FALSE
+  DefineVariable    hDrawThread,      HANDLE,     0
+  DefineVariable    hEventWorkInit1,  HANDLE,     0
+  DefineVariable    hEventWorkInit2,  HANDLE,     0
+  DefineVariable    hEventWorkDone1,  HANDLE,     0                       ;Keep hEventWorkDone1 &
+  DefineVariable    hEventWorkDone2,  HANDLE,     0                       ;hEventWorkDone2 together
+  DefineVariable    hWorkerThread1,   HANDLE,     0
+  DefineVariable    hWorkerThread2,   HANDLE,     0
+  DefineVariable    dStopDrawing,     DWORD,      FALSE
+  DefineVariable    dStopWorking,     DWORD,      FALSE
+  DefineVariable    dPauseDrawing,    DWORD,      FALSE
+  DefineVariable    dAnimating,       DWORD,      TRUE
+  DefineVariable    dFrameCounter,    DWORD,      0
+  DefineVariable    hWaitTimer,       HANDLE,     0
 
   DefineVariable    RotVector1,       D3Vector,   { 000.0, 000.0, 000.0}  ;Blue sphere rot. vector
   DefineVariable    RotVector2,       D3Vector,   { 000.0, 000.0, 000.0}  ;Grey sphere rot. vector
@@ -78,24 +96,84 @@ Object Api3DEngApp, MySdiAppID, SdiApp                        ;SDI application.
   DefineVariable    OrbitVector,      D3Vector,   { 000.0, 000.0, 000.0}  ;Orbit vector
   DefineVariable    CamDplVector,     D3Vector,   { 000.0, 000.0, 000.0}  ;Camera displacement
   DefineVariable    CamRotVector,     D3Vector,   { 0.000, 0.000, 0.000}  ;Camera rotation
+
+  Embed   SW,  StopWatch
 ObjectEnd
 
 
 
 ; ==================================================================================================
-;    Api3DEngApp implementation
+;    Application implementation
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.Done
+; Method:     Application.Animate
+; Purpose:    Animate the scene.
+; Arguments:  Arg1: => TRUE, starts the animation, FALSE, stops it.
+; Return:     Nothing.
+
+Method Application.Animate, uses xsi, dAction:DWORD
+  SetObject xsi
+  ?mov edx, dAction
+  mov [xsi].dAnimating, edx
+  .if edx != FALSE
+    mov [xsi].dPauseDrawing, FALSE
+  .else
+    mov [xsi].dPauseDrawing, TRUE
+  .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Application.Draw
+; Purpose:    Drawing thread procedure.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method Application.Draw, uses xsi
+  local FT:FILETIME
+
+  SetObject xsi
+  mov FT.dwHighDateTime, 0
+  mov FT.dwLowDateTime, 0
+  invoke timeBeginPeriod, TIMER_RESOLUTION
+  invoke SetWaitableTimer, [xsi].hWaitTimer, addr FT, TIMER_PERIOD, NULL, NULL, FALSE
+
+  .while TRUE
+    invoke WaitForSingleObject, [xsi].hWaitTimer, 500
+    .break .if [xsi].dStopDrawing != FALSE
+    .continue .if [xsi].dPauseDrawing != FALSE
+    invoke SetEvent, [xsi].hEventWorkInit1                ;Start Worker 1
+    invoke SetEvent, [xsi].hEventWorkInit2                ;Start Worker 2
+    invoke WaitForMultipleObjects, 2, addr [xsi].hEventWorkDone1, TRUE, -1  ;Wait for completion
+    OCall [xsi].pScene::D3Scene.Project                   ;Render the scene
+    invoke RedrawWindow, [xsi].hWnd, 0, 0, RDW_ERASE or RDW_INVALIDATE or RDW_UPDATENOW ;Update
+  .endw
+  invoke CancelWaitableTimer, [xsi].hWaitTimer
+  invoke timeEndPeriod, TIMER_RESOLUTION
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Application.Done
 ; Purpose:    Finalize the SDI application object. Objects associated with window controls are
 ;             destroyed by Windows automatically when WM_DESTROY is send.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method Api3DEngApp.Done, uses xsi
+Method Application.Done, uses xsi
   SetObject xsi
 
+  mov [xsi].dStopDrawing, TRUE                          ;Signal stop drawing
+  invoke WaitForSingleObject, [xsi].hDrawThread, 100
+  invoke CloseHandle, [xsi].hDrawThread
+
+  mov [xsi].dStopWorking, TRUE                          ;Signal stop working
+  invoke SetEvent, [xsi].hEventWorkInit1                ;Start Worker 1
+  invoke SetEvent, [xsi].hEventWorkInit2                ;Start Worker 2
+  invoke WaitForMultipleObjects, 2, addr [xsi].hWorkerThread1, TRUE, 100
+  invoke CloseHandle, [xsi].hWorkerThread1
+  invoke CloseHandle, [xsi].hWorkerThread2
+
+  invoke CloseHandle, [xsi].hWaitTimer
   invoke DeleteObject, $invoke(SelectObject, [xsi].hMemDC, [xsi].hPrevMemPen)
   invoke DeleteObject, $invoke(SelectObject, [xsi].hMemDC, [xsi].hPrevMemBrush)
   invoke DeleteObject, $invoke(SelectObject, [xsi].hMemDC, [xsi].hPrevMemBmp)
@@ -111,12 +189,12 @@ Method Api3DEngApp.Done, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.Init
+; Method:     Application.Init
 ; Purpose:    Initialize the SDI application object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method Api3DEngApp.Init, uses xbx xdi xsi
+Method Application.Init, uses xbx xdi xsi
   local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD
 
   SetObject xsi
@@ -162,11 +240,27 @@ Method Api3DEngApp.Init, uses xbx xdi xsi
 
   ;Create XMenu
   mov [xsi].pXMenu, $New(XMenu)
-  mov xdi, $MethodAddr(Api3DEngApp.StatusbarHelp)
+  mov xdi, $MethodAddr(Application.StatusbarHelp)
   OCall [xsi].pXMenu::XMenu.Init, xsi, [xsi].hWnd, 0, [xsi].hMenuInit, xbx, \
                                   xdi, IDLANG_ENGLISH
 
+  OCall [xsi].SW::StopWatch.Init, xsi
+  s2s [xsi].SW.r8Resolution, $CReal8(1000.0), xax, xcx   ;miliseconds
+  OCall [xsi].SW::StopWatch.Start
   ;-------------------------------------------------------------------------------------
+
+  mov [xsi].hEventWorkInit1, $invoke(CreateEvent, NULL, FALSE, FALSE, NULL)
+  mov [xsi].hEventWorkInit2, $invoke(CreateEvent, NULL, FALSE, FALSE, NULL)
+  mov [xsi].hEventWorkDone1, $invoke(CreateEvent, NULL, FALSE, FALSE, NULL)
+  mov [xsi].hEventWorkDone2, $invoke(CreateEvent, NULL, FALSE, FALSE, NULL)
+  mov [xsi].hWaitTimer, $invoke(CreateWaitableTimer, NULL, FALSE, NULL)
+
+  mov xbx, $MethodAddr(Application.Draw)
+  mov [xsi].hDrawThread, $invoke(CreateThread, NULL, 0, xbx, xsi, CREATE_SUSPENDED, NULL)
+  mov xbx, $MethodAddr(Application.Move1)
+  mov [xsi].hWorkerThread1, $invoke(CreateThread, NULL, 0, xbx, xsi, CREATE_SUSPENDED, NULL)
+  mov xbx, $MethodAddr(Application.Move2)
+  mov [xsi].hWorkerThread2, $invoke(CreateThread, NULL, 0, xbx, xsi, CREATE_SUSPENDED, NULL)
 
   ;Create the scene, camera and light
   mov [xsi].pScene, $New(D3Scene)
@@ -177,12 +271,12 @@ Method Api3DEngApp.Init, uses xbx xdi xsi
   OCall [xsi].pLight1::D3Light.Move, offset DplVctrLight1
 
   ;Create big blue sphere
-  OCall [xsi].pScene::D3Scene.CreateGeoSphere, 20, 16, 100.0, $RGB(0, 0, 255)
+  OCall [xsi].pScene::D3Scene.CreateGeoSphere, OBJECT_RESOLUTION*20, OBJECT_RESOLUTION*16, 100.0, $RGB(0, 0, 255)
   mov [xsi].pObject1, xax
   OCall [xsi].pObject1::D3Object.Move, NULL, offset DplVector1
 
   ;Create little grey sphere
-  OCall [xsi].pScene::D3Scene.CreateGeoSphere, 12, 10, 25.0, $RGB(128, 128, 128)
+  OCall [xsi].pScene::D3Scene.CreateGeoSphere, OBJECT_RESOLUTION*12, OBJECT_RESOLUTION*10, 25.0, $RGB(128, 128, 128)
   mov [xsi].pObject2, xax
   OCall [xsi].pObject2::D3Object.Move, NULL, offset DplVector2
 
@@ -190,19 +284,22 @@ Method Api3DEngApp.Init, uses xbx xdi xsi
   OCall [xsi].pScene::D3Scene.Project
 
   ;-------------------------------------------------------------------------------------
+  invoke ResumeThread, [xsi].hWorkerThread1
+  invoke ResumeThread, [xsi].hWorkerThread2
+  invoke ResumeThread, [xsi].hDrawThread
 
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
   invoke UpdateWindow, [xsi].hWnd
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.OnClose
+; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE and WM_QUERYENDSESSION message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method Api3DEngApp.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   invoke MessageBox, [xsi].hWnd, $OfsCStr("Are you sure ?"), $OfsCStr("Application exit"), \
                  MB_YESNO or MB_ICONQUESTION
@@ -214,13 +311,13 @@ Method Api3DEngApp.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.OnCommand
+; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method Api3DEngApp.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[MAX_PATH]:CHR, Dlg:$Obj(DialogAbout)
   local DskStm:$Obj(DiskStream), DLUT:$Obj(DesLUT), DeserInfo:DESER_INFO, hIcon:HICON
 
@@ -241,7 +338,7 @@ Method Api3DEngApp.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke DestroyIcon, hIcon
     xor eax, eax
 
-    .elseif ax == IDM_FILE_OPEN
+  .elseif ax == IDM_FILE_OPEN
       invoke FileExist, offset szScene
       .if eax != FALSE
         lea xdi, DskStm
@@ -312,8 +409,11 @@ Method Api3DEngApp.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     xor eax, eax
 
   .elseif ax == IDM_SCENE_ANIMATE
-    OCall xsi.SceneAnimate, TRUE
-
+    .if [xsi].dAnimating == FALSE
+      OCall xsi.Animate, TRUE
+    .else
+      OCall xsi.Animate, FALSE
+    .endif
   .elseif ax == IDM_SCENE_X1
     OCall xsi.RotateSphere, 0, 0
   .elseif ax == IDM_SCENE_X2
@@ -342,13 +442,13 @@ Method Api3DEngApp.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.OnCreate
+; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = 0 to continue creation of the window.
 
-Method Api3DEngApp.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov [xsi].pStatusbar, $New(Statusbar)
   OCall [xsi].pStatusbar::Statusbar.Init, xsi, [xsi].hWnd, offset AppStatusbar
@@ -356,76 +456,102 @@ Method Api3DEngApp.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.OnDestroy
+; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero.
 
-Method Api3DEngApp.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
-  .if [xsi].hTimer != 0
-    invoke KillTimer, [xsi].hWnd, 100
-  .endif
   invoke DestroyMenu, [xsi].hMenuInit
   invoke DestroyAcceleratorTable, [xsi].hAccelerators
   xor eax, eax
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.OnEraseBkgnd
+; Method:     Application.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Non zero if handled.
 
-Method Api3DEngApp.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
+Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, 1                            ;To avoid flicker, we take care of repainting the background
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.OnKeyDown
+; Method:     Application.OnKeyDown
 ; Purpose:    Event procedure for WM_KEYDOWN message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method Api3DEngApp.OnKeyDown, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnKeyDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   .if wParam == VK_SPACE
-    OCall xsi.SceneAnimate, TRUE
+    .if [xsi].dAnimating == FALSE
+      OCall xsi.Animate, TRUE
+    .else
+      OCall xsi.Animate, FALSE
+    .endif
   .elseif wParam == VK_NUMPAD7
+    OCall xsi.Animate, FALSE
     OCall xsi.RotateSphere, 0, 0
   .elseif wParam == VK_NUMPAD4
+    OCall xsi.Animate, FALSE
     OCall xsi.RotateSphere, 0, 1
   .elseif wParam == VK_NUMPAD8
+    OCall xsi.Animate, FALSE
     OCall xsi.RotateSphere, 1, 0
   .elseif wParam == VK_NUMPAD5
+    OCall xsi.Animate, FALSE
     OCall xsi.RotateSphere, 1, 1
   .elseif wParam == VK_NUMPAD9
+    OCall xsi.Animate, FALSE
     OCall xsi.RotateSphere, 2, 0
   .elseif wParam == VK_NUMPAD6
+    OCall xsi.Animate, FALSE
     OCall xsi.RotateSphere, 2, 1
   .elseif wParam == VK_NUMPAD1
+    OCall xsi.Animate, FALSE
     OCall xsi.RotateCamera, 0
   .elseif wParam == VK_NUMPAD3
+    OCall xsi.Animate, FALSE
     OCall xsi.RotateCamera, 1
   .elseif wParam == "T"
+    OCall xsi.Animate, FALSE
     OCall xsi.SceneWireDraw
   .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.OnPaint
+; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method Api3DEngApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
-  local PS:PAINTSTRUCT, hDC:HDC, Rct:RECT
+Method Application.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+  local PS:PAINTSTRUCT, hDC:HDC, Rct:RECT, xTime:XWORD, cBuffer[100]:CHR
 
   SetObject xsi
+  inc [xsi].dFrameCounter
+  OCall [xsi].SW::StopWatch.Stop
+  OCall [xsi].SW::StopWatch.GetTime
+  .if xax != 0
+    mov xTime, xax
+    mov eax, [xsi].dFrameCounter
+    mov ecx, 1000
+    mul ecx
+    xor edx, edx
+    div xTime
+    lea xbx, cBuffer
+    WriteF xbx, "¦UX fps", xax
+    invoke SetWindowText, [xsi].hWnd, addr cBuffer
+  .endif
+  OCall [xsi].SW::StopWatch.Start
+
   mov hDC, $invoke(BeginPaint, [xsi].hWnd, addr PS)
   invoke GetClientRect, [xsi].hWnd, addr Rct
   .if [xsi].dSlow != FALSE
@@ -443,13 +569,13 @@ Method Api3DEngApp.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.OnSize
+; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method Api3DEngApp.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local Rct:RECT, hDC:HDC
 
   .if wParam != SIZE_MINIMIZED
@@ -482,69 +608,78 @@ Method Api3DEngApp.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.OnTimer
-; Purpose:    Event procedure for WM_TIMER message.
-; Arguments:  Arg1: First message parameter.
-;             Arg2: Second message parameter.
-; Return:     eax = Zero if handled.
+; Method:     Application.MoveX
+; Purpose:    ThreadProc for each Object to move.
+; Arguments:  None.
+; Return:     Nothing.
 
-Method Api3DEngApp.OnTimer, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.Move1, uses xsi
   SetObject xsi
-  lea xdx, [xsi].RotVector1
+  .While TRUE
+    invoke WaitForSingleObject, [xsi].hEventWorkInit1, -1
+    .break .if [xsi].dStopWorking != FALSE
+    lea xdx, [xsi].RotVector1
 
-  fld [xdx].D3Vector.r4X
-  fadd r4RotInc1
-  fFitTrigRange
-  fstp [xdx].D3Vector.r4X
+    fld [xdx].D3Vector.r4X
+    fadd r4RotInc1
+    fFitTrigRange
+    fstp [xdx].D3Vector.r4X
 
-  fld [xdx].D3Vector.r4Y
-  fadd r4RotInc1
-  fFitTrigRange
-  fstp [xdx].D3Vector.r4Y
+    fld [xdx].D3Vector.r4Y
+    fadd r4RotInc1
+    fFitTrigRange
+    fstp [xdx].D3Vector.r4Y
 
-  fld [xdx].D3Vector.r4Z
-  fadd r4RotInc1
-  fFitTrigRange
-  fstp [xdx].D3Vector.r4Z
+    fld [xdx].D3Vector.r4Z
+    fadd r4RotInc1
+    fFitTrigRange
+    fstp [xdx].D3Vector.r4Z
 
-  OCall [xsi].pObject1::D3Object.Move, addr [xsi].RotVector1, offset DplVector1
+    OCall [xsi].pObject1::D3Object.Move, addr [xsi].RotVector1, offset DplVector1
+    invoke SetEvent, [xsi].hEventWorkDone1
+  .endw
+MethodEnd
 
-  lea xdx, [xsi].OrbitVector
-  fld r4OrbitRadius
-  fld [xsi].r4OrbitAngle
-  fsincos
-  fmul st(0), st(2)
-  fstp [xdx].D3Vector.r4X
-  fmulp st(1), st(0)
-  fstp [xdx].D3Vector.r4Z
-  m2z [xdx].D3Vector.r4Y
-  invoke VectorAddVector, xdx, xdx, offset DplVector1
+Method Application.Move2, uses xsi
+  SetObject xsi
+  .While TRUE
+    invoke WaitForSingleObject, [xsi].hEventWorkInit2, -1
+    .break .if [xsi].dStopWorking != FALSE
+    lea xdx, [xsi].OrbitVector
+    fld r4OrbitRadius
+    fld [xsi].r4OrbitAngle
+    fsincos
+    fmul st(0), st(2)
+    fstp [xdx].D3Vector.r4X
+    fmulp st(1), st(0)
+    fstp [xdx].D3Vector.r4Z
+    m2z [xdx].D3Vector.r4Y
+    invoke VectorAddVector, xdx, xdx, offset DplVector1
 
-  fld [xsi].r4OrbitAngle
-  fadd r4OrbAngInc
-  fstp [xsi].r4OrbitAngle
+    fld [xsi].r4OrbitAngle
+    fadd r4OrbAngInc
+    fstp [xsi].r4OrbitAngle
 
-  lea xdx, [xsi].RotVector2
-  fld [xdx].D3Vector.r4Y
-  fadd r4RotInc2
-  fstp [xdx].D3Vector.r4Y
+    lea xdx, [xsi].RotVector2
+    fld [xdx].D3Vector.r4Y
+    fadd r4RotInc2
+    fstp [xdx].D3Vector.r4Y
 
-  OCall [xsi].pObject2::D3Object.Move, addr [xsi].RotVector2 , addr [xsi].OrbitVector
-
-  OCall [xsi].pScene::D3Scene.Project
-  invoke RedrawWindow, [xsi].hWnd, 0, 0, RDW_ERASE or RDW_INVALIDATE or RDW_UPDATENOW
+    OCall [xsi].pObject2::D3Object.Move, addr [xsi].RotVector2 , addr [xsi].OrbitVector
+    invoke SetEvent, [xsi].hEventWorkDone2
+  .endw
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.RotateCamera
+; Method:     Application.RotateCamera
 ; Purpose:    Rotate the scene camera.
 ; Arguments:  Direction.
 ; Return:     Nothing.
 
-Method Api3DEngApp.RotateCamera, uses xsi, dDirection:DWORD
+Method Application.RotateCamera, uses xsi, dDirection:DWORD
   SetObject xsi
 
-  OCall xsi.SceneAnimate, FALSE                         ;Stop animation
+  OCall xsi.Animate, FALSE                         ;Stop animation
 
   lea xdx, [xsi].CamRotVector
   fld [xdx].D3Vector.r4X
@@ -562,16 +697,16 @@ Method Api3DEngApp.RotateCamera, uses xsi, dDirection:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.RotateSphere
+; Method:     Application.RotateSphere
 ; Purpose:    Rotate the big blue sphere.
 ; Arguments:  Arg1: Rotation axis.
 ;             Arg2: Direction.
 ; Return:     Nothing.
 
-Method Api3DEngApp.RotateSphere, uses xsi, dAxis:DWORD, dDirection:DWORD
-  SetObject xsi, Api3DEngApp
+Method Application.RotateSphere, uses xsi, dAxis:DWORD, dDirection:DWORD
+  SetObject xsi, Application
 
-  OCall xsi.SceneAnimate, FALSE                         ;Stop animation
+  OCall xsi.Animate, FALSE                         ;Stop animation
   OCall [xsi].pScene::D3Scene.Clear
 
   lea xdx, [xsi].RotVector1
@@ -610,54 +745,31 @@ Method Api3DEngApp.RotateSphere, uses xsi, dAxis:DWORD, dDirection:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.SceneAnimate
-; Purpose:    Animate the scene.
-; Arguments:  Arg1: => TRUE, starts the animation, FALSE, stops it.
-; Return:     Nothing.
-
-Method Api3DEngApp.SceneAnimate, uses xsi, dAction:DWORD
-  SetObject xsi
-  .if dAction != FALSE
-    .if [xsi].hTimer != 0
-      invoke KillTimer, [xsi].hWnd, 100
-      m2z [xsi].hTimer
-    .else
-      mov [xsi].hTimer, $invoke(SetTimer, [xsi].hWnd, 100, TIMER_INTERVAL, NULL)
-    .endif
-  .else
-    .if [xsi].hTimer != 0
-      invoke KillTimer, [xsi].hWnd, 100
-      m2z [xsi].hTimer
-    .endif
-  .endif
-MethodEnd
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.SceneWireDraw
+; Method:     Application.SceneWireDraw
 ; Purpose:    Draw the scene showing all triangles with wires.
 ; Arguments:  None
 ; Return:     Nothing.
 
-Method Api3DEngApp.SceneWireDraw, uses xsi
-    SetObject xsi
-    OCall xsi.SceneAnimate, FALSE
-    mov [xsi].dSlow, TRUE
-    invoke RedrawWindow, [xsi].hWnd, 0, 0, RDW_ERASE or RDW_INVALIDATE or RDW_UPDATENOW
-    m2z [xsi].dSlow
+Method Application.SceneWireDraw, uses xsi
+  SetObject xsi
+  OCall xsi.Animate, FALSE
+  mov [xsi].dSlow, TRUE
+  invoke RedrawWindow, [xsi].hWnd, 0, 0, RDW_ERASE or RDW_INVALIDATE or RDW_UPDATENOW
+  mov [xsi].dSlow, FALSE
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.Startup
+; Method:     Application.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method Api3DEngApp.Startup
+Method Application.Startup
   local WC:WNDCLASSEX
 
   mov WC.cbSize, sizeof(WNDCLASSEX)
   mov WC.style, CLSSTYLE
-  m2m WC.lpfnWndProc, $MethodAddr(Api3DEngApp.WndProc), xax
+  m2m WC.lpfnWndProc, $MethodAddr(Application.WndProc), xax
   m2z WC.cbClsExtra
   m2z WC.cbWndExtra
   m2m WC.hInstance, hInstance, xax
@@ -672,12 +784,12 @@ Method Api3DEngApp.Startup
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Api3DEngApp.StatusbarHelp
+; Method:     Application.StatusbarHelp
 ; Purpose:    Display a help string on panel 0 of the statusbar.
 ; Arguments:  Arg1: -> help string.
 ; Return:     Nothing.
 
-Method Api3DEngApp.StatusbarHelp,, pHelpStr:POINTER
+Method Application.StatusbarHelp,, pHelpStr:POINTER
   SetObject xcx
   OCall [xcx].pStatusbar::Statusbar.SetPartText, 0, pHelpStr, SBT_NOBORDERS
 MethodEnd

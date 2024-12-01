@@ -22,24 +22,24 @@ Method Tab3.CtlsGet, uses xbx xdi xsi
   mov xbx, [xsi].hWnd
   mov xcx, [xsi].pOwner                                 ;xcx -> TabControl
   mov xax, [xcx].$Obj(TabCtrl).pOwner                   ;xax -> OAT_Setup
-  mov xdi, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> OAT_App
+  mov xdi, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> Application
   invoke SendDlgItemMessage, xbx, IDC_UDC_NOTIFICATION, BM_GETCOLOR, 0, 0
-  mov [xdi].$Obj(OAT_App).Setup.Color.Notification, eax
+  mov [xdi].$Obj(Application).Setup.Color.Notification, eax
   invoke SendDlgItemMessage, xbx, IDC_UDC_COMMENT,      BM_GETCOLOR, 0, 0
-  mov [xdi].$Obj(OAT_App).Setup.Color.Information, eax
+  mov [xdi].$Obj(Application).Setup.Color.Information, eax
   invoke SendDlgItemMessage, xbx, IDC_UDC_FAILIURE,     BM_GETCOLOR, 0, 0
-  mov [xdi].$Obj(OAT_App).Setup.Color.Failure, eax
+  mov [xdi].$Obj(Application).Setup.Color.Failure, eax
   invoke SendDlgItemMessage, xbx, IDC_UDC_BKGROUND,     BM_GETCOLOR, 0, 0
-  mov [xdi].$Obj(OAT_App).Setup.Color.Bkground, eax
+  mov [xdi].$Obj(Application).Setup.Color.Bkground, eax
 
   invoke SendDlgItemMessage, xbx, IDC_UDC_REG_ERROR,    BM_GETCOLOR, 0, 0
-  mov [xdi].$Obj(OAT_App).Setup.Color.RegError, eax
+  mov [xdi].$Obj(Application).Setup.Color.RegError, eax
   invoke SendDlgItemMessage, xbx, IDC_UDC_REG_WARNING,  BM_GETCOLOR, 0, 0
-  mov [xdi].$Obj(OAT_App).Setup.Color.RegWarning, eax
+  mov [xdi].$Obj(Application).Setup.Color.RegWarning, eax
   invoke SendDlgItemMessage, xbx, IDC_UDC_ARG_WARNING,  BM_GETCOLOR, 0, 0
-  mov [xdi].$Obj(OAT_App).Setup.Color.ArgWarning, eax
+  mov [xdi].$Obj(Application).Setup.Color.ArgWarning, eax
   invoke SendDlgItemMessage, xbx, IDC_UDC_LOC_WARNING,  BM_GETCOLOR, 0, 0
-  mov [xdi].$Obj(OAT_App).Setup.Color.LocWarning, eax
+  mov [xdi].$Obj(Application).Setup.Color.LocWarning, eax
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -55,24 +55,24 @@ Method Tab3.CtlsSet, uses xbx xdi xsi
   mov xbx, [xsi].hWnd
   mov xcx, [xsi].pOwner                                 ;xcx -> TabControl
   mov xax, [xcx].$Obj(TabCtrl).pOwner                   ;xax -> OAT_Setup
-  mov xdi, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> OAT_App
+  mov xdi, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> Application
 
-  mov eax, [xdi].$Obj(OAT_App).Setup.Color.Notification
+  mov eax, [xdi].$Obj(Application).Setup.Color.Notification
   invoke SendDlgItemMessage, xbx, IDC_UDC_NOTIFICATION, BM_SETCOLOR, 0, xax
-  mov eax, [xdi].$Obj(OAT_App).Setup.Color.Information
+  mov eax, [xdi].$Obj(Application).Setup.Color.Information
   invoke SendDlgItemMessage, xbx, IDC_UDC_COMMENT,      BM_SETCOLOR, 0, xax
-  mov eax, [xdi].$Obj(OAT_App).Setup.Color.Failure
+  mov eax, [xdi].$Obj(Application).Setup.Color.Failure
   invoke SendDlgItemMessage, xbx, IDC_UDC_FAILIURE,     BM_SETCOLOR, 0, xax
-  mov eax, [xdi].$Obj(OAT_App).Setup.Color.Bkground
+  mov eax, [xdi].$Obj(Application).Setup.Color.Bkground
   invoke SendDlgItemMessage, xbx, IDC_UDC_BKGROUND,     BM_SETCOLOR, 0, xax
 
-  mov eax, [xdi].$Obj(OAT_App).Setup.Color.RegError
+  mov eax, [xdi].$Obj(Application).Setup.Color.RegError
   invoke SendDlgItemMessage, xbx, IDC_UDC_REG_ERROR,    BM_SETCOLOR, 0, xax
-  mov eax, [xdi].$Obj(OAT_App).Setup.Color.RegWarning
+  mov eax, [xdi].$Obj(Application).Setup.Color.RegWarning
   invoke SendDlgItemMessage, xbx, IDC_UDC_REG_WARNING,  BM_SETCOLOR, 0, xax
-  mov eax, [xdi].$Obj(OAT_App).Setup.Color.ArgWarning
+  mov eax, [xdi].$Obj(Application).Setup.Color.ArgWarning
   invoke SendDlgItemMessage, xbx, IDC_UDC_ARG_WARNING,  BM_SETCOLOR, 0, xax
-  mov eax, [xdi].$Obj(OAT_App).Setup.Color.LocWarning
+  mov eax, [xdi].$Obj(Application).Setup.Color.LocWarning
   invoke SendDlgItemMessage, xbx, IDC_UDC_LOC_WARNING,  BM_SETCOLOR, 0, xax
   xor eax, eax
 MethodEnd
@@ -91,8 +91,8 @@ Method Tab3.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov xbx, [xsi].hWnd
   mov xcx, [xsi].pOwner                                 ;xcx -> TabControl
   mov xax, [xcx].$Obj(TabCtrl).pOwner                   ;xax -> OAT_Setup
-  mov xdx, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> OAT_App
-  mov edi, [xdx].$Obj(OAT_App).dLanguage
+  mov xdx, [xax].$Obj(OAT_Setup).pOwner                 ;xdi -> Application
+  mov edi, [xdx].$Obj(Application).dLanguage
   lea xbx, cBuffer
 
   SetItemString IDC_UDC_NOTIFICATION, IDS_TAB3_COLOR_NOTIF
@@ -135,9 +135,9 @@ Method Tab3.OnCommand, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov CC.lpCustColors, xdi
   mov xcx, [xsi].pOwner                                 ;xcx -> TabControl
   mov xdx, [xcx].$Obj(TabCtrl).pOwner                   ;xax -> OAT_Dialog
-  mov xax, [xdx].$Obj(OAT_Setup).pOwner                 ;xdi -> OAT_App
+  mov xax, [xdx].$Obj(OAT_Setup).pOwner                 ;xdi -> Application
 
-  lea xdx, [xax].$Obj(OAT_App).Setup.Color
+  lea xdx, [xax].$Obj(Application).Setup.Color
   invoke MemClone, xdi, xdx, sizeof ColorData
 
   ;Fill the 2 remaining colors with white

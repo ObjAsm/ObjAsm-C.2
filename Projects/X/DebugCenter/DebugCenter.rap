@@ -210,7 +210,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=2
+MilestoneOnDateDate=23
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -247,12 +247,12 @@ ProductVer4Range=0
 [Size]
 2=0,0,806,424,71085
 3=0,0,2127,589,523
-1=0,0,694,487,4876
+1=0,0,694,487,1523
 4=0,0,706,573,27874
 1001=0,0,0,0,460
-5=0,0,0,0,30904
+5=0,0,0,0,0
 6=0,0,601,582,50460
-7=0,0,0,0,29563
+7=0,0,0,0,33161
 8=0,0,0,0,22796
 11=0,0,706,600,10766
 10=0,0,0,0,4696
@@ -290,7 +290,7 @@ ProductVer4Range=0
 46=0,0,0,0,327
 45=0,0,0,0,0
 41=0,0,0,0,598
-39=0,0,0,0,9818
+39=0,0,0,0,9043
 36=0,0,0,0,1375
 28=0,0,0,0,3597
 49=0,0,0,0,0
@@ -331,16 +331,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="Flash"
-2="OOP Support"
-3="FlashMenuBar"
-4="Base64"
-5="POINT_ALLOCATION_INCREMENT"
-6="100"
-7="StrDispose"
-8="cSingleLine"
-9="ChangeLanguage"
-10="UpdateStatusbar"
+1="UpdateStatusbar"
+2="FTXTX"
+3="FR_MATCHCASE"
+4="FR_WHOLEWORD"
+5="Flash"
+6="OOP Support"
+7="FlashMenuBar"
+8="Base64"
+9="POINT_ALLOCATION_INCREMENT"
+10="100"
 "
 [Collapse]
 7=,,
@@ -409,9 +409,9 @@ ProductVer4Range=0
 62=
 66=
 [AutoLoad]
-AutoLoad=2,4,19,1,25,3,54
+AutoLoad=1,2,5,39,7
 [PTimer]
-PTimer=549269808
+PTimer=579291636
 [RADebugBP]
 5=
 2=

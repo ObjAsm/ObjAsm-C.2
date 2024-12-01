@@ -747,7 +747,7 @@ GetNextWord proc uses xbx pStart:PSTRINGA, dSkipStrings:DWORD
 GetNextWord endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.CheckMtdArg
+; Method:     Application.CheckMtdArg
 ; Purpose:    Verify the use object method arguments.
 ; Arguments:  None.
 ; Return:     eax: Number of findings.
@@ -827,7 +827,7 @@ Method OAT_Child.CheckMtdArg, uses xbx xdi xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     OAT_App.CheckMtdLoc
+; Method:     OAT_Child.CheckMtdLoc
 ; Purpose:    Verify the use of method local variables in the currently opened stream.
 ; Arguments:  None.
 ; Return:     eax = Number of findings. -1 means an error.

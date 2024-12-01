@@ -227,25 +227,39 @@ Method D3Object.Move, uses xsi, pRotation:PD3Vector, pDisplacement:PD3Vector
   mov xUseVo, TRUE
 
   .if pRotation != NULL
+    mov xdi, [xsi].pVectrons
+
     mov xdx, pRotation
     fld [xdx].D3Vector.r4X
     fsincos
-    OCall [xsi].pVectrons::D3VectronCollection.ForEach, offset RotateX, xUseVo, NULL
-    m2z xUseVo
+    .ColForEach [xdi], ebx
+      mov xcx, xax
+      mov xdx, xUseVo
+      Rotate r4X, r4Y, r4Z
+    .ColNext
+    mov xUseVo, FALSE
     fUnload 2
 
     mov xdx, pRotation
     fld [xdx].D3Vector.r4Y
     fsincos
-    OCall [xsi].pVectrons::D3VectronCollection.ForEach, offset RotateY, xUseVo, NULL
-    m2z xUseVo
+    .ColForEach [xdi], ebx
+      mov xcx, xax
+      mov xdx, xUseVo
+      Rotate r4Y, r4X, r4Z
+    .ColNext
+    mov xUseVo, FALSE
     fUnload 2
 
     mov xdx, pRotation
     fld [xdx].D3Vector.r4Z
     fsincos
-    OCall [xsi].pVectrons::D3VectronCollection.ForEach, offset RotateZ, xUseVo, NULL
-    m2z xUseVo
+    .ColForEach [xdi], ebx
+      mov xcx, xax
+      mov xdx, xUseVo
+      Rotate r4Z, r4X, r4Y
+    .ColNext
+    mov xUseVo, FALSE
     fUnload 2
   .endif
 
@@ -436,9 +450,51 @@ MethodEnd
 ; Return:     Nothing.
 
 Method D3Object.Store, uses xsi, pStream:$ObjPtr(Stream)
-  SetObject xsi, D3Object
+  SetObject xsi
   ACall xsi.Store, pStream
   OCall pStream::Stream.Put, [xsi].pVectrons
   OCall pStream::Stream.Put, [xsi].pTriangles
   OCall pStream::Stream.BinWrite32, [xsi].dFlags
 MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     D3Object.Scale
+; Purpose:    Scale a D3Object.
+; Arguments:  Arg1: Factor.
+; Return:     Nothing.
+
+Method D3Object.Scale, uses xbx xdi xsi, r4ScaleFactor:REAL4
+  local DWVector:$Obj(SortedDWordVector), pTriangle:$ObjPtr(D3Triangle)
+
+  SetObject xsi
+  New DWVector::SortedDWordVector
+  OCall DWVector::SortedDWordVector.Init, xsi, 100, 100, 0FFFFFFFFh/sizeof(DWORD)
+  mov xdi, [xsi].pTriangles
+  .ColForEach [xdi], ebx
+    mov pTriangle, xax
+    OCall DWVector::SortedDWordVector.Insert, [xax].$Obj(D3Triangle).dIndex1 
+    mov xax, pTriangle
+    OCall DWVector::SortedDWordVector.Insert, [xax].$Obj(D3Triangle).dIndex2 
+    mov xax, pTriangle
+    OCall DWVector::SortedDWordVector.Insert, [xax].$Obj(D3Triangle).dIndex3
+  .ColNext 
+  
+  .VecForEach DWVector::SortedDWordVector, ebx
+    OCall [xsi].pVectrons::D3VectronCollection.ItemAt, DWORD ptr [xax]
+    mov xdi, xax
+    fld r4ScaleFactor
+    fld [xdi].D3Vectron.Vo.r4X
+    fmul st(0), st(1)
+    fstp [xdi].D3Vectron.Vo.r4X
+    fld [xdi].D3Vectron.Vo.r4Y
+    fmul st(0), st(1)
+    fstp [xdi].D3Vectron.Vo.r4Y
+    fld [xdi].D3Vectron.Vo.r4Z
+    fmulp st(1), st(0)
+    fstp [xdi].D3Vectron.Vo.r4Z
+  .VecNext
+  
+  OCall DWVector::SortedDWordVector.Done
+  
+MethodEnd
+

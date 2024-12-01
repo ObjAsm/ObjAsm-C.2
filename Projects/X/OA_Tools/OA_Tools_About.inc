@@ -75,8 +75,8 @@ Method OAT_About.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xsi].hStcVersion, WM_SETFONT, xax, TRUE
 
   ;Set strings in the selected language
-  mov xcx, [xsi].pOwner                                 ;xcx -> OAT_App
-  mov edi, [xcx].$Obj(OAT_App).dLanguage
+  mov xcx, [xsi].pOwner                                 ;xcx -> Application
+  mov edi, [xcx].$Obj(Application).dLanguage
   lea xbx, cBuffer
 
   mov edx, edi

@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-Object SkinApp, MySdiAppID, SdiApp                          ;Single Document Interface App.
+Object Application, ApplicationID, SdiApp               ;Single Document Interface App.
   RedefineMethod    Done
   VirtualMethod     DrawButtons
   VirtualMethod     DrawCaptionText
@@ -38,7 +38,7 @@ ObjectEnd
 
 
 ; ==================================================================================================
-;    SkinApp implementation
+;    Application implementation
 ; ==================================================================================================
 
 CLSSTYLE          equ   CS_BYTEALIGNWINDOW or CS_BYTEALIGNCLIENT or \
@@ -65,12 +65,12 @@ RgnBtnMaximize  DEF_REGIONBUTTON {IDC_BTNMAXIMIZE, 0, 0, 0, 0, $OfsTStr("BUTTON_
 .code
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.Done
+; Method:    Application.Done
 ; Purpose:   Finalize the SDI application object.
 ; Arguments: None.
 ; Return:    Nothing.
 
-Method SkinApp.Done, uses xsi
+Method Application.Done, uses xsi
   SetObject xsi
   invoke DestroyMenu, [xsi].hContextMenu
   OCall [xsi].IconImageList::MaskedImageList.Done
@@ -84,12 +84,12 @@ Method SkinApp.Done, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.DrawButtons
+; Method:    Application.DrawButtons
 ; Purpose:   Draw the Close, Minimize and Maximize buttons.
 ; Arguments: None.
 ; Return:    Nothing.
 
-Method SkinApp.DrawButtons, uses xsi
+Method Application.DrawButtons, uses xsi
   local Rct:RECT
 
   SetObject xsi
@@ -103,12 +103,12 @@ Method SkinApp.DrawButtons, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.DrawCaptionText
+; Method:    Application.DrawCaptionText
 ; Purpose:   Draw the application caption.
 ; Arguments: Active state.
 ; Return:    Nothing.
 
-Method SkinApp.DrawCaptionText, uses xbx xsi
+Method Application.DrawCaptionText, uses xbx xsi
   local hDC:HDC, dPrvColor:DWORD, dPrvBkMode:DWORD, pCaptionText:PSTRING
 
   SetObject xsi
@@ -142,12 +142,12 @@ Method SkinApp.DrawCaptionText, uses xbx xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.Init
+; Method:    Application.Init
 ; Purpose:   Initialize the SDI application object.
 ; Arguments: None.
 ; Return:    Nothing.
 
-Method SkinApp.Init, uses xbx xsi
+Method Application.Init, uses xbx xsi
   local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD
 
   SetObject xsi
@@ -185,13 +185,13 @@ Method SkinApp.Init, uses xbx xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.OnActivateApp
+; Method:    Application.OnActivateApp
 ; Purpose:   Event procedure for WM_ACTIVATEAPP message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = Zero if handled.
 
-Method SkinApp.OnActivateApp, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnActivateApp, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov xax, wParam
   and eax, 01b
@@ -201,13 +201,13 @@ Method SkinApp.OnActivateApp, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.OnClose
+; Method:    Application.OnClose
 ; Purpose:   Event procedure for WM_CLOSE message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = Zero if handled.
 
-Method SkinApp.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local Dlg:$Obj(SkinnedMsgBox)
 
   SetObject xsi
@@ -228,13 +228,13 @@ Method SkinApp.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.OnCommand
+; Method:    Application.OnCommand
 ; Purpose:   Event procedure for WM_COMMAND message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = Zero if handled.
 
-Method SkinApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   local WP:WINDOWPLACEMENT, Dlg:$Obj(SkinnedDialogAbout)
 
   SetObject xsi
@@ -268,13 +268,13 @@ Method SkinApp.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.OnCreate
+; Method:    Application.OnCreate
 ; Purpose:   Event procedure for WM_CREATE message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = Zero if handled.
 
-Method SkinApp.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   OCall [xsi].BtnClose::RgnButton.Init, xsi, [xsi].hWnd, offset RgnBtnClose
   OCall [xsi].BtnMinimize::RgnButton.Init, xsi, [xsi].hWnd, offset RgnBtnMinimize
@@ -283,13 +283,13 @@ Method SkinApp.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.OnEnable
+; Method:    Application.OnEnable
 ; Purpose:   Event procedure for WM_ENABLE message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = Zero if handled.
 
-Method SkinApp.OnEnable, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnEnable, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov xax, wParam
   and eax, 01b
@@ -299,13 +299,13 @@ Method SkinApp.OnEnable, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.OnNcActivate
+; Method:    Application.OnNcActivate
 ; Purpose:   Event procedure for WM_NCACTIVATE message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = TRUE => Windows will proceed with default processing.
 
-Method SkinApp.OnNcActivate, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnNcActivate, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov xax, wParam
   and eax, 01b
@@ -315,27 +315,27 @@ Method SkinApp.OnNcActivate, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.OnNcCreate
+; Method:    Application.OnNcCreate
 ; Purpose:   Event procedure for WM_NCCREATE message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = Zero if handled.
 ; Important: Create the ElasticSkin object here to intercept messages as soon as possible.
 
-Method SkinApp.OnNcCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnNcCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   OCall [xsi].Skin::ElasticSkin.Init, xsi, [xsi].hWnd, $OfsCStr("WNDSKIN"), TRUE
   invoke DefWindowProc, [xsi].hWnd, WM_NCCREATE, wParam, lParam
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.OnNcPaint
+; Method:    Application.OnNcPaint
 ; Purpose:   Event procedure for WM_NCPAINT message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = Zero if handled.
 
-Method SkinApp.OnNcPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnNcPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   OCall xsi.DrawCaptionText
   OCall xsi.DrawButtons
@@ -343,13 +343,13 @@ Method SkinApp.OnNcPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.OnPaint
+; Method:    Application.OnPaint
 ; Purpose:   Event procedure for WM_PAINT message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = Zero if handled.
 
-Method SkinApp.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local Rct1:RECT, Rct2:RECT
 
   SetObject xsi
@@ -368,13 +368,13 @@ Method SkinApp.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.OnRButtonUp
+; Method:    Application.OnRButtonUp
 ; Purpose:   Event procedure for WM_RBUTTONUP message.
 ; Arguments: Arg1: First message parameter.
 ;            Arg2: Second message parameter.
 ; Return:    eax = Zero if handled.
 
-Method SkinApp.OnRButtonUp, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Application.OnRButtonUp, uses xsi, wParam:WPARAM, lParam:LPARAM
   local Pnt:POINT
 
   SetObject xsi
@@ -390,17 +390,17 @@ Method SkinApp.OnRButtonUp, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    SkinApp.Startup
+; Method:    Application.Startup
 ; Purpose:   Register the object class with the OS.
 ; Arguments: None.
 ; Return:    Nothing.
 
-Method SkinApp.Startup
+Method Application.Startup
   local WC:WNDCLASSEX
 
   mov WC.cbSize, sizeof WNDCLASSEX
   mov WC.style, CLSSTYLE
-  m2m WC.lpfnWndProc, $MethodAddr(SkinApp.WndProc), xax
+  m2m WC.lpfnWndProc, $MethodAddr(Application.WndProc), xax
   mov WC.cbClsExtra, 0
   mov WC.cbWndExtra, 0
   m2m WC.hInstance, hInstance, xax

@@ -89,7 +89,7 @@ Method D3Camera.Draw, uses xbx xdi xsi, hDC:HDC, dSlow:DWORD
     OCall pObjectProjections::DataCollection.ItemAt, [xsi].TriData.dObjectIndex
     OCall [xsi].TriData.pTriangle::D3Triangle.Draw, hDC, xax
     .if dSlow == TRUE
-      invoke Sleep, 10
+      invoke Sleep, 2
     .endif
     add xdi, sizeof(POINTER)
     dec ebx

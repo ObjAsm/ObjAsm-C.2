@@ -28,13 +28,13 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 Rotate macro X:req, Y:req, Z:req
-  mov xax, pVectron
-  mov xdx, xUseVo
-  add xax, sizeof(D3Vector)                             ;xax -> Vt
+  ?mov ecx, pVectron
+  ?mov edx, xUseVo
+  lea xax, [xcx + sizeof(D3Vector)]                     ;xax -> Vt
   .if edx == FALSE                                      ;xUseVo
     mov xdx, xax                                        ;xdx -> Vt
   .else
-    mov xdx, pVectron                                   ;xdx -> Vo
+    mov xdx, xcx                                        ;xdx -> Vo
     m2m [xax].D3Vector.X, [xdx].D3Vector.X, xcx
   .endif
   ;FPU register usage           ;    0    |    1    |    2    |    3    |    4
@@ -72,14 +72,12 @@ RotateZ endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 Translate proc pVectron:PD3Vectron, xUseVo:XWORD, xUnused:XWORD
-  mov xax, pVectron
-  mov xdx, xUseVo
-  add xax, sizeof(D3Vector)
-  .if edx == FALSE                                      ;xUseVo
-    mov xdx, xax
-  .else
-    mov xdx, pVectron
-  .endif
+  ?mov ecx, pVectron
+  ?mov edx, xUseVo
+  lea xax, [xcx + sizeof(D3Vector)]
+  cmp edx, FALSE
+  cmovz xdx, xax
+  cmovnz xdx, xcx
   ;FPU register usage           ;    0    |    1    |    2    |    3    |    4    |    5
   fld [xdx].D3Vector.r4X        ;   r4X   |  DispZ  |  DispY  |  DispX  |         |
   fadd st(0), st(3)             ;r4X+DispX|  DispZ  |  DispY  |  DispX  |         |
@@ -96,15 +94,15 @@ Translate endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 MoveVo2Vt proc pVectron:PD3Vectron, xUnused1:XWORD, xUnused2:XWORD
-  mov xcx, pVectron
-  s2s [xcx].D3Vectron.Vt, [xcx].D3Vectron.Vo, xax, xdx
+  ?mov ecx, pVectron
+  s2s [xcx].D3Vectron.Vt, [xcx].D3Vectron.Vo, xmm0, xmm1, xax, xdx
   ret
 MoveVo2Vt endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 VectorCrossVector proc pDstVector:PD3Vector, pSrcVector1:PD3Vector, pSrcVector2:PD3Vector
-  mov xcx, pDstVector
-  mov xdx, pSrcVector1
+  ?mov ecx, pDstVector
+  ?mov edx, pSrcVector1
   mov xax, pSrcVector2
   fld [xdx].D3Vector.r4Y
   fmul [xax].D3Vector.r4Z
@@ -132,8 +130,8 @@ VectorCrossVector endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 VectorDotVector proc pVector1:PD3Vector, pVector2:PD3Vector
-  mov xcx, pVector1
-  mov xdx, pVector2
+  ?mov ecx, pVector1
+  ?mov edx, pVector2
   fld [xcx].D3Vector.r4X
   fmul [xdx].D3Vector.r4X
   fld [xcx].D3Vector.r4Y
@@ -147,8 +145,8 @@ VectorDotVector endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 VectorCrossVectorDotVector proc pVector1:PD3Vector, pVector2:PD3Vector, pVector3:PD3Vector
-  mov xcx, pVector1
-  mov xdx, pVector2
+  ?mov ecx, pVector1
+  ?mov edx, pVector2
   mov xax, pVector3
   fld [xcx].D3Vector.r4Y
   fmul [xdx].D3Vector.r4Z
@@ -178,8 +176,8 @@ VectorCrossVectorDotVector endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 VectorAddVector proc pDstVector:PD3Vector, pSrcVector1:PD3Vector, pSrcVector2:PD3Vector
-  mov xcx, pDstVector
-  mov xdx, pSrcVector1
+  ?mov ecx, pDstVector
+  ?mov edx, pSrcVector1
   mov xax, pSrcVector2
   fld [xdx].D3Vector.r4X
   fadd [xax].D3Vector.r4X
@@ -196,8 +194,8 @@ VectorAddVector endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 VectorSubVector proc pDstVector:PD3Vector, pSrcVector1:PD3Vector, pSrcVector2:PD3Vector
-  mov xcx, pDstVector
-  mov xdx, pSrcVector1
+  ?mov ecx, pDstVector
+  ?mov edx, pSrcVector1
   mov xax, pSrcVector2
   fld [xdx].D3Vector.r4X
   fsub [xax].D3Vector.r4X
@@ -214,7 +212,7 @@ VectorSubVector endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 VectorModulus proc pVector:PD3Vector
-  mov xcx, pVector
+  ?mov ecx, pVector
   fld [xcx].D3Vector.r4X
   fmul [xcx].D3Vector.r4X
   fld [xcx].D3Vector.r4Y
@@ -229,8 +227,8 @@ VectorModulus endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 VectorScale proc pDstVector:PD3Vector, pSrcVector:PD3Vector, pFactor:PD3Vector
-  mov xcx, pDstVector
-  mov xdx, pSrcVector
+  ?mov ecx, pDstVector
+  ?mov edx, pSrcVector
   mov xax, pFactor
   fld1
   fld REAL4 ptr [xax]
@@ -250,8 +248,8 @@ VectorScale endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 VectorNormalize proc pDstVector:PD3Vector, pSrcVector:PD3Vector
-  mov xcx, pDstVector
-  mov xdx, pSrcVector
+  ?mov ecx, pDstVector
+  ?mov edx, pSrcVector
   ;Get Vector Modulus
   fld1
   fld [xdx].D3Vector.r4X
