@@ -131,7 +131,7 @@ endif
 ; Macro:      SysSetup
 ; Purpose:    Load and configure standard modules.
 ; Arguments:  Support level: OOP, WIN32/WIN64, CON32/CON64, NUI32/NUI64, LIB32/LIB64.
-;             Debug Switches : SHOWINFO, TRACE, RESGUARD, STKGUARD
+;             Debug Switches : INFO, TRACE, RESGUARD, STKGUARD
 ;             Source identification: "..." (also used as LOG file name)
 ;             Default string type: ANSI_STRING or WIDE_STRING
 ; Return:     Nothing.

@@ -49,7 +49,7 @@ MethodEnd
 
 Method DataCollection.DestroyItem,, pItem:POINTER
   .if pItem != NULL
-    MemFree pItem                                       ;Frees data from process heap
+    MemFree pItem                                       ;Free data from process heap
   .endif
 MethodEnd
 

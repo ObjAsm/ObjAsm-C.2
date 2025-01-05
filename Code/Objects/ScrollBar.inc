@@ -63,7 +63,7 @@ MethodEnd
 
 Method ScrollBar.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PDEF_SCROLLBAR
   SetObject xsi
-  mov xcx, pDefStruc
+  mov xbx, pDefStruc
   assume xbx:PDEF_SCROLLBAR
   mov eax, [xbx].dStyle
   or eax, WS_CHILD or WS_VISIBLE

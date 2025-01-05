@@ -156,7 +156,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=30
+MilestoneOnDateDate=17
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -194,7 +194,7 @@ ProductVer4Range=0
 2=0,0,480,367,389
 3=0,0,0,0,162
 1=480,488,480,244,1669
-4=0,0,0,0,1938
+4=0,0,0,0,7614
 1001=0,0,0,0,460
 5=0,0,0,0,3925
 6=0,0,0,0,58934
@@ -247,16 +247,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="SkinApp"
-2="OnDestroy"
-3="hContextMenu"
-4="Error in XMenuItem.Done"
-5="MENU_APP"
-6="Bug"
-7="xdi"
-8="dImageWidth"
-9="di"
-10="bx"
+1="520"
+2="SkinApp"
+3="OnDestroy"
+4="hContextMenu"
+5="Error in XMenuItem.Done"
+6="MENU_APP"
+7="Bug"
+8="xdi"
+9="dImageWidth"
+10="di"
 [Collapse]
 1=
 2=
@@ -296,9 +296,9 @@ ProductVer4Range=0
 40=
 35=
 [AutoLoad]
-AutoLoad=1,2
+AutoLoad=1,2,4
 [PTimer]
-PTimer=228759977
+PTimer=228825539
 [RADebugBP]
 2=
 15=

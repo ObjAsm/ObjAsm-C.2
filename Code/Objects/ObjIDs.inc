@@ -109,9 +109,10 @@ WindowID                          equ     0000000166
 DlgAppID                          equ     0000000167
 ConsoleAppID                      equ     0000000168
 
-ApplicationID                     equ     0000000170
-ClientWndID                     equ     0000000172      ;for test or demo purposes only!
-ChildWndID                      equ     0000000173      ;for test or demo purposes only!
+;Generic Application IDs
+ApplicationID                     equ     0000000170      ;For test or demo purposes only!
+ClientWndID                       equ     0000000172      ;For test or demo purposes only!
+ChildWndID                        equ     0000000173      ;For test or demo purposes only!
 
 ;Windows dialog objects
 DialogID                          equ     0000000180
@@ -425,11 +426,12 @@ NetComProtocolID                  equ     0000012106
 NetComFileID                      equ     0000012107
 NetComFileEventsID                equ     0000012108
 
-;CodeEditor
-CodeEditorID                      equ     0000012200
-CodeEditorViewID                  equ     0000012201
-CodeEditorTextLineID              equ     0000012202
+;ACE
+AsmCodeEditorID                   equ     0000012200
+CodeViewID                        equ     0000012201
+TextLineID                        equ     0000012202
 KeywordListID                     equ     0000012203
+KeywordGroupListID                equ     0000012204
 
 ;Database objects (DataBase.inc)
 DB_FieldID                        equ     0000012300

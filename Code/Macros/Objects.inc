@@ -1742,17 +1742,17 @@ endm
 ; Macro:      SetOwner
 ; Purpose:    Link a register to an object owner object type and instance at compile-time.
 ; Arguments:  Arg1: Register, i.e.: rax, rbx, ...
-;             Arg2: Object name.
+;             Arg2: Owner object name.
 ;             Arg3: (optional) Instance POINTER. Default is pSelf.
 
 SetOwner macro RegName:req, ObjName:req, pInstance:=<pSelf>
   if (opattr RegName) and OAT_REGISTER                  ;;Is RegName a register?
     %ifb <??RegisterCasted>
       ??RegisterCasted textequ <RegName>                ;;Set first member in list
-      ??ObjectAssumed textequ <ObjName>
+      ??ObjectAssumed CatStr ??ObjPfx, <ObjName>
     else
-      ??RegisterCasted CatStr <RegName>, <!,>, ??RegisterCasted  ;;Add more members.
-      ??ObjectAssumed CatStr <ObjName>, <!,>, ??ObjectAssumed
+      ??RegisterCasted CatStr <RegName>, <!,>, ??RegisterCasted  ;;Add more members
+      ??ObjectAssumed CatStr ??ObjPfx, <ObjName>, <!,>, ??ObjectAssumed
     endif
 
     if (opattr pInstance) and OAT_REGISTER              ;;Is pInstance a register?
