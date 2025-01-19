@@ -427,11 +427,18 @@ NetComFileID                      equ     0000012107
 NetComFileEventsID                equ     0000012108
 
 ;ACE
-AsmCodeEditorID                   equ     0000012200
-CodeViewID                        equ     0000012201
-TextLineID                        equ     0000012202
-KeywordListID                     equ     0000012203
-KeywordGroupListID                equ     0000012204
+AsmDevEnvID                       equ     0000012200
+ADE_ClientWndID                   equ     0000012201
+ADE_ChildWndID                    equ     0000012202
+ADE_EditorID                      equ     0000012203
+ADE_EditorDisplayID               equ     0000012204
+ADE_EditorViewID                  equ     0000012205
+ADE_EditorTextLineID              equ     0000012206
+ADE_KeywordGroupListID            equ     0000012207
+ADE_KeywordListID                 equ     0000012208
+ADE_EditorSharedResourcesID       equ     0000012209
+ADE_EditorResourcesID             equ     0000012210
+ADE_ScrollBarVertID               equ     0000012211
 
 ;Database objects (DataBase.inc)
 DB_FieldID                        equ     0000012300

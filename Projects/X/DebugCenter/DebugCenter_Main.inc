@@ -821,7 +821,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov OpenFileName.lStructSize, sizeof(OPENFILENAME)
     m2m OpenFileName.hwndOwner, [xsi].hWnd, xax
     m2m OpenFileName.hInstance, hInstance, xcx
-    m2m OpenFileName.lpstrFilter, offset szLoadFilter, eax
+    m2m OpenFileName.lpstrFilter, offset szLoadFilter, xax
     m2z OpenFileName.lpstrCustomFilter
     m2z OpenFileName.nMaxCustFilter
     m2z OpenFileName.nFilterIndex
@@ -833,7 +833,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     m2z OpenFileName.nMaxFileTitle
     lea xax, cInitDir
     m2z CHR ptr [xax]
-    m2m OpenFileName.lpstrInitialDir, [xsi].pDirectory, eax
+    m2m OpenFileName.lpstrInitialDir, [xsi].pDirectory, xax
 
     mov edx, [xsi].dLanguage
     add edx, 170                                      ;"Open file"

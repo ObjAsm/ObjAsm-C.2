@@ -57,13 +57,13 @@ MethodEnd
 ; Return:     eax = Error code.
 
 Method IniFile.Init, uses xbx xsi, pOwner:POINTER, pFileName:PSTRING
-  local cBuffer[1024]:CHR, pPart:POINTER
+  local cBuffer[1024]:CHR
 
   SetObject xsi
   ACall xsi.Init, pOwner                                ;Ancestor initialization call
   lea xbx, cBuffer
   ;We need to create a full path for the (S)GetPrivateProfileXXX APIs.
-  invoke GetFullPathName, pFileName, lengthof cBuffer - 1, xbx, addr pPart
+  invoke GetFullPathName, pFileName, lengthof cBuffer - 1, xbx, NULL
   .if (eax == 0) || (eax > lengthof cBuffer - 1)
     OCall xsi.ErrorReport, NULL, INI_INIT_ERROR         ;Returns the error code
   .else
