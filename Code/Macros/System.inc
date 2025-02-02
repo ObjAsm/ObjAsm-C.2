@@ -4644,3 +4644,34 @@ Enum macro Args, InitCount:=<0>
     $$Count = $$Count + 1
   endm
 endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      Subroutine
+; Purpose:    Implement a procedure into a procedure.
+; Arguments:  Arg1: Subroutine name.
+; Example:    Subroutine MyRoutine
+; Note:       Use rbp as stackbase pointer
+;             if TARGET_BITNESS eq 64
+;               option stackbase:rbp
+;             endif
+
+Subroutine macro SubName:req
+  %SubName:
+  if TARGET_BITNESS eq 64
+    sub rsp, 28h
+  endif
+endm
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      ExitSub
+; Purpose:    Implement a return from a subroutine.
+; Arguments:  None.
+
+ExitSub macro
+  if TARGET_BITNESS eq 64
+    add rsp, 28h
+  endif
+  retn
+endm
+
+

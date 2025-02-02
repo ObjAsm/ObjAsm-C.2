@@ -439,6 +439,7 @@ ADE_KeywordListID                 equ     0000012208
 ADE_EditorSharedResourcesID       equ     0000012209
 ADE_EditorResourcesID             equ     0000012210
 ADE_ScrollBarVertID               equ     0000012211
+ADE_DialogAboutID                 equ     0000012212
 
 ;Database objects (DataBase.inc)
 DB_FieldID                        equ     0000012300

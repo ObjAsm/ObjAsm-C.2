@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      Objects.inc
 ; Author:     G. Friedrich
-; Version:    C.1.5
+; Version:    C.1.6
 ; Purpose:    ObjAsm object support using MASM compatible assembers (UASM, ASMC, JWASM, ML)
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
@@ -17,7 +17,9 @@
 ;               - Mitigation measures against multiple inclusion of object definition files.
 ;             Version C.1.5, September 2022
 ;               - $PushMethodArgs renamend to $PushMethodArgs32 => intended for 32 bits.
-;               - Stack correction bug for vararg methods in 32 bit fixed.  
+;               - Stack correction bug for vararg methods in 32 bit fixed.
+;             Version C.1.6, February 2025
+;               - SetObject corrected by HSE to support NameSapces.
 ; ==================================================================================================
 
 
@@ -89,14 +91,14 @@ OBJASM_NAMESPACE        textequ <OA>                    ;Default namespace
 ??ObjectCount           = 0
 ??StartupMtdCount       = 0
 ??ShutdownMtdCount      = 0
-??ObjRedefIndex         = 2                             ;Modify method names when there is a duplication 
+??ObjRedefIndex         = 2                             ;Modify method names when there is a duplication
 
 if TARGET_BITNESS eq 32
-  ??ABSTRACT_ERROR_PROC equ <0FFFFFFFFh>                ;May be redefined to an error procedure
-  ??OBSOLETE_ERROR_PROC equ <0DEADBEEFh>                ;May be redefined to an error procedure
+  ??ABSTRACT_ERROR_PROC equ <0FFFFFFFFh>                ;Can be redefined to an error procedure
+  ??OBSOLETE_ERROR_PROC equ <0DEADBEEFh>                ;Can be redefined to an error procedure
 else
-  ??ABSTRACT_ERROR_PROC equ <0FFFFFFFFFFFFFFFFh>        ;May be redefined to an error procedure
-  ??OBSOLETE_ERROR_PROC equ <0BADC0FFEE0DDF00Dh>        ;May be redefined to an error procedure
+  ??ABSTRACT_ERROR_PROC equ <0FFFFFFFFFFFFFFFFh>        ;Can be redefined to an error procedure
+  ??OBSOLETE_ERROR_PROC equ <0BADC0FFEE0DDF00Dh>        ;Can be redefined to an error procedure
 endif
 ??RegisterCasted        textequ <>
 
@@ -455,7 +457,7 @@ InterfaceAbstract macro MtdName:req, Args:vararg
     %$$Index = &??ObjName&_IfcMtdCount + 1
     %&??ObjName&_IfcMtdCount = $$Index
     @CatStr(%??ObjName, <_IfcMethodName_>, %$$Index) textequ <MtdName>
-  
+
     ;;Set a mark. If you prefer, you can set it equal to an offset of an error handler procedure.
     %@CatStr(%??ObjName, <_IfcMethodProc_>, %$$Index) textequ <??ABSTRACT_ERROR_PROC>
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
@@ -498,7 +500,7 @@ VirtualAbstract macro MtdName:req, Args:vararg
     %$$Index = &??ObjName&_VtlMtdCount + 1
     %&??ObjName&_VtlMtdCount = $$Index
     @CatStr(%??ObjName, <_VtlMethodName_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
-  
+
     ;;Set a mark. If you prefer, you can set it to an error handler procedure address.
     %@CatStr(%??ObjName, <_VtlMethodProc_>, %$$Index) textequ <??ABSTRACT_ERROR_PROC>
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
@@ -541,7 +543,7 @@ DynamicAbstract macro MtdName:req, Args:vararg
     %$$Index = &??ObjName&_DynMtdCount + 1
     %&??ObjName&_DynMtdCount = $$Index
     @CatStr(%??ObjName, <_DynMtdName_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
-  
+
     ;;Set a marker. If you prefer, you can set it equal to an offset of an error handler procedure.
     %@CatStr(%??ObjName, <_DynMtdProc_>, %$$Index) textequ <??ABSTRACT_ERROR_PROC>
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
@@ -599,14 +601,14 @@ StaticMethod macro MtdName:req, Args:vararg
         endif
       endif
     endm
-  
+
     PrototypeMethod %??ObjName, MtdName, Args
     %$$Index = &??ObjName&_StcMtdCount + 1
     %&??ObjName&_StcMtdCount = $$Index
     @CatStr(%??ObjName, <_StcMethod_Name_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
     %&??ObjName&_&MtdName&_Access = ??MethodAccess
     @CatStr(%??ObjName, %??MtdPfx, MtdName, <_MtdType>) = ??MTDTYPE_STATIC
-  
+
     if MAKETEMPL ne FALSE
       ifidn <MtdName>, <Startup>
         %@CatStr(<StartupObjName_>, %??StartupMtdCount) textequ <??ObjName>
@@ -646,7 +648,7 @@ InlineMethod macro MtdName:req, Args:vararg
         endif
       endif
     endm
-  
+
     %$$Index = &??ObjName&_IlnMtdCount + 1
     %&??ObjName&_IlnMtdCount = $$Index
     @CatStr(%??ObjName, <_IlnMethodName_>, %$$Index) textequ @CatStr(%??MtdPfx, MtdName)
@@ -834,12 +836,12 @@ DefineVariable macro VarName:req, VarType:=<DWORD>, VarInit:=<?>, VarInitMore:va
     %&??ObjName&_VCount = $$Index
     @CatStr(%??ObjName, <_VarName_>, %$$Index) textequ <VarName>
     @CatStr(%??ObjName, <_VarType_>, %$$Index) textequ <VarType>
-  
+
     ??VarInitValue textequ <VarInit>
     for ??VarPart:= <?>, <VarInitMore>
       ??VarInitValue CatStr ??VarInitValue, <, >, <??VarPart>
     endm
-  
+
     %@CatStr(%??ObjName, <_VarInit_>, %$$Index) textequ <??VarInitValue>
   endif
 endm
@@ -1700,7 +1702,12 @@ SetObject macro Register:req, ObjName:=<>, pInstance
     ifb <ObjName>
       $$OName textequ <??ObjectContext>
     else
-      $$OName CatStr ??ObjPfx, <ObjName>
+      PreParseExpr ObjName
+      if $ParseObjExpr(ObjName) eq FALSE
+        @Err <SetObject Error: syntax error in ObjName>
+      else
+        $$OName textequ <??ObjExpr>
+      endif
     endif
 
     %ifb <??RegisterCasted>
@@ -2691,7 +2698,7 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
       else
         %exitm <$$StackCorrection>                      ;;Return number of bytes to remove
       endif                                             ;; from stack by the caller
-    endif                                               
+    endif
   endif
 endm
 

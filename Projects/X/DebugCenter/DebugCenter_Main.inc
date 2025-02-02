@@ -781,7 +781,7 @@ MethodEnd
 
 CloseChild proc uses xbx hWnd:HWND, lParam:DWORD
   invoke SendMessage, hWnd, WM_GETOBJECTINSTANCE, 0, 0
-  .if eax != NULL
+  .if xax != NULL
     mov xbx, xax
     invoke GetObjectID, xax
     .if eax == DBG_MDI_CHILD_BMP_ID || DBG_MDI_CHILD_CHT_ID || eax == DBG_MDI_CHILD_TXT_ID
@@ -1996,7 +1996,7 @@ Method DbgMdiClient.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke DragQueryFile, wParam, ebx, xax, edi
     mov xdi, $invoke(StrRScan, pFileName, '.')
     .if xdi != NULL
-      .if $invoke(StrComp, xdi, offset szRtfExt) == 0
+      .if $invoke(StrComp, xdi, offset ) == 0
         mov xdi, $New(DbgMdiChildTxt)
         mov xax, [xsi].pOwner
         OCall xdi::DbgMdiChildTxt.Init, xsi, pFileName, [xax].$Obj(Application).hFont, DBG_COLOR_BACKGROUND_WND_LIGHT

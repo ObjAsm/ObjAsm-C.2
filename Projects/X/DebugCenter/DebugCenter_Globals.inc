@@ -17,7 +17,7 @@ else
 endif
 
 ;Don't change the order of the next 3 string allocations
-CStr szLoadFilter,      "Debug Center (*.rtf, *.bmp)", 0, "*.rtf", 3Bh, "*.bmp", 0, \
+CStr szLoadFilter,      "Debug Center (*.rtf, *.bmp)", 0, "*.rtf;*.bmp", 0, \
                         "Rich Text (*.rtf)", 0, "*.rtf"
 CStr szBmpFilter,       "Bitmap (*.bmp)", 0, "*.bmp", 0
 CStr szRtfFilter,       "Rich Text (*.rtf)", 0, "*.rtf", 0
