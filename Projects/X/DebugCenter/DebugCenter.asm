@@ -35,6 +35,8 @@
 ;               - Plotting capabilities added.
 ;                 Original idea from HSE - https://masm32.com/board/index.php?topic=12321.0
 ;               - XMenu flashing update. 
+;             Version 2.4.1, February 2025
+;               - Update bug on the Statusbar corrected.
 ; ==================================================================================================
 
 ;Wishlist:

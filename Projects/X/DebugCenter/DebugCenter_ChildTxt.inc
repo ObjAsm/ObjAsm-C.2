@@ -213,6 +213,7 @@ Method DbgMdiChildTxt.Erase, uses xsi
   invoke SendMessage, [xsi].hEdit, EM_SETSEL, 0, -1
   OCall xsi.ClpBrdClear
   invoke SendMessage, [xsi].hEdit, EM_SETZOOM, [xsi].dZoomFactor, TXT_ZOOM_BASE
+  OCall xsi.UpdateStatusbar
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

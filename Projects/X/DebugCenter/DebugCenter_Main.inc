@@ -1226,7 +1226,6 @@ Method Application.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           invoke EnumChildWindows, [xdi].$Obj(DbgMdiClient).hWnd, offset ChildSearch, addr DCI
           .if DCI.pChild != NULL
             OCall DCI.pChild::DbgMdiChild.Erase
-            OCall DCI.pChild::DbgMdiChild.UpdateStatusbar
           .endif
 
         .elseif eax ==  DBG_CMD_CLEAR_ALL
@@ -1996,7 +1995,7 @@ Method DbgMdiClient.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke DragQueryFile, wParam, ebx, xax, edi
     mov xdi, $invoke(StrRScan, pFileName, '.')
     .if xdi != NULL
-      .if $invoke(StrComp, xdi, offset ) == 0
+      .if $invoke(StrComp, xdi, offset szRtfExt) == 0
         mov xdi, $New(DbgMdiChildTxt)
         mov xax, [xsi].pOwner
         OCall xdi::DbgMdiChildTxt.Init, xsi, pFileName, [xax].$Obj(Application).hFont, DBG_COLOR_BACKGROUND_WND_LIGHT

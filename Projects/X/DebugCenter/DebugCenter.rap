@@ -210,7 +210,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=27
+MilestoneOnDateDate=9
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -245,12 +245,12 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,806,424,47153
+2=0,0,806,424,51852
 3=0,0,2127,589,523
-1=0,0,694,487,2627
+1=0,0,694,487,2712
 4=0,0,706,573,12814
 1001=0,0,0,0,460
-5=0,0,0,0,19268
+5=0,0,0,0,8649
 6=0,0,601,582,76010
 7=0,0,0,0,9187
 8=0,0,0,0,22796
@@ -263,7 +263,7 @@ ProductVer4Range=0
 15=0,0,0,0,781
 16=0,0,0,0,30
 17=0,0,0,0,4421
-18=0,0,0,0,1302
+18=0,0,0,0,645
 19=0,0,1603,627,13306
 20=0,0,0,0,3179
 21=0,0,0,0,96311
@@ -299,7 +299,7 @@ ProductVer4Range=0
 51=0,0,0,0,11857
 52=0,0,0,0,11182
 53=0,0,0,0,437
-54=0,0,1300,620,926
+54=0,0,1300,620,595
 55=0,0,0,0,14144
 60=0,0,0,0,4181
 59=0,0,0,0,11336
@@ -331,16 +331,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="Magnetism.Done"
-2="WM_MDISETMENU"
-3="WM_MDIMAXIMIZE"
-4="WM_MDIMAXIMIZE "
-5="CreateMDIWindow"
-6="OnMdiActivate"
-7="OnSize"
-8="SC_MINIMIZE"
-9="UpdateStatusbar"
-10="FTXTX"
+1=".Erase"
+2="DbgMdiChild.Erase"
+3="Magnetism.Done"
+4="WM_MDISETMENU"
+5="WM_MDIMAXIMIZE"
+6="WM_MDIMAXIMIZE "
+7="CreateMDIWindow"
+8="OnMdiActivate"
+9="OnSize"
+10="SC_MINIMIZE"
 "
 [Collapse]
 7=,,
@@ -349,12 +349,12 @@ ProductVer4Range=0
 12=
 1=
 19=
-2=,,1342152688,2145357793,6383
-5=2147483647,2147483647,1072759615,28666
+2=,,1342021616,214535757,6383
+5=2147483647,2147483647,1072759615,28664
 4=
 11=
 9=
-18=6291455
+18=2097151
 23=
 21=,,
 6=,,,,,
@@ -409,9 +409,9 @@ ProductVer4Range=0
 62=
 66=
 [AutoLoad]
-AutoLoad=1,2,39,18,45,7,5
+AutoLoad=1,2,39,18,45,7,5,3,54
 [PTimer]
-PTimer=611409730
+PTimer=635564480
 [RADebugBP]
 5=
 2=

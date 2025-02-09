@@ -494,3 +494,6 @@ ODBCID                            equ     0000012700
 ;XLMDOM
 XmlDocumentID                     equ     0000012720
 XmlNodeID                         equ     0000012721
+
+;DirectoryWatcher
+DirectoryWatcherID                equ     0000012730
