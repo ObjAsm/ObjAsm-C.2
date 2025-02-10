@@ -1,10 +1,13 @@
 ; ==================================================================================================
 ; Title:      DirectoryWatcher.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.1.1
 ; Purpose:    ObjAsm support of Windows directory watching objects.
 ; Notes:      Version C.1.0, February 2025
 ;               - First release.
+;             Version C.1.1, February 2025
+;               - Shutdown sequence corrected.
+;               - ProcessChanges loop offset calculation corrected.
 ; ==================================================================================================
 
 
@@ -81,7 +84,7 @@ if IMPLEMENT
 
 Method DirectoryWatcher.Done, uses xsi
   SetObject xsi
-  invoke SetEvent, [xsi + sizeof HANDLE].WatchEvents          ;Set stop event on the watch thread
+  invoke SetEvent, [xsi + sizeof HANDLE].WatchEvents          ;Trigger stop event
   invoke WaitForSingleObject, [xsi].hProcessThread, 3000      ;Wait until all has stopped
 
   invoke CloseHandle, [xsi].WatchEvents
@@ -103,7 +106,7 @@ MethodEnd
 ;             Arg5: Context parameter for the callback procedure.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method DirectoryWatcher.Init, uses xsi, pOwner:POINTER, pDirectoryName:PSTRINGW, dFlags:DWORD, \
+Method DirectoryWatcher.Init, uses xsi, pOwner:POINTER, pDirectoryNameW:PSTRINGW, dFlags:DWORD, \
                                         pCallBack:ptr DWCALLBACK, lParam:LPARAM
   local dRetValue:DWORD
 
@@ -114,10 +117,10 @@ Method DirectoryWatcher.Init, uses xsi, pOwner:POINTER, pDirectoryName:PSTRINGW,
   mov dRetValue, FALSE
 
   ;Create a handle for a directory to look for
-  invoke CreateFile, pDirectoryName, \
-                     GENERIC_READ, FILE_SHARE_DELETE or FILE_SHARE_READ or FILE_SHARE_WRITE, \
-                     NULL, OPEN_EXISTING, \
-                     FILE_FLAG_BACKUP_SEMANTICS or FILE_FLAG_OVERLAPPED, NULL
+  invoke CreateFileW, pDirectoryNameW, \
+                      GENERIC_READ, FILE_SHARE_DELETE or FILE_SHARE_READ or FILE_SHARE_WRITE, \
+                      NULL, OPEN_EXISTING, \
+                      FILE_FLAG_BACKUP_SEMANTICS or FILE_FLAG_OVERLAPPED, NULL
   .if xax != INVALID_HANDLE_VALUE
     mov [xsi].hDirectory, xax
     invoke CreateEvent, NULL, TRUE , FALSE , NULL       ;Create a stop event: manual reset, not signaled
@@ -146,13 +149,13 @@ Method DirectoryWatcher.Init, uses xsi, pOwner:POINTER, pDirectoryName:PSTRINGW,
 
           mov xax, $MethodAddr(DirectoryWatcher.ProcessChanges)
           invoke CreateThread, NULL, 0, xax, xsi, CREATE_SUSPENDED, NULL
-          mov [xsi].hWatcherThread, xax
+          mov [xsi].hProcessThread, xax
           invoke ResumeThread, xax
 
           mov xax, $MethodAddr(DirectoryWatcher.Run)
           invoke CreateThread, NULL, 0, xax , xsi, CREATE_SUSPENDED, NULL
           mov [xsi].hWatcherThread, xax
-          mov [xsi + sizeof(HANDLE)].ProcessEvents, xax   ;Signals the exit condition of ProcessChanges
+          mov [xsi + sizeof(HANDLE)].ProcessEvents, xax   ;Signals the exit of hWatcherThread
           invoke ResumeThread, xax
 
           mov dRetValue, TRUE
@@ -183,10 +186,10 @@ Method DirectoryWatcher.ProcessChanges, uses xbx xdi xsi
         invoke ReleaseSRWLockShared, addr [xsi].SRWLock
         mov pMemBlock, xbx
         .break .if xbx == NULL
+        add xbx, sizeof LDLL_MEMBER                     ;xbx -> FILE_NOTIFY_INFORMATION
         .while TRUE
-          add xbx, sizeof LDLL_MEMBER                   ;xbx -> FILE_NOTIFY_INFORMATION
           invoke MemClone, addr cFileNameW, addr [xbx].FILE_NOTIFY_INFORMATION.FileName, \
-                           [xbx].FILE_NOTIFY_INFORMATION.FileNameLength
+                           [xbx].FILE_NOTIFY_INFORMATION.FileNameLength  ;eax = # bytes copied
           m2z CHRW ptr cFileNameW[xax]
 
          ;Perform the callback passing the LPARAM as the first parameter (pSelf)

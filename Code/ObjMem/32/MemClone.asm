@@ -1,9 +1,11 @@
 ; ==================================================================================================
 ; Title:      MemClone.asm
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.1.1
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
+;             Version C.1.1, February 2025
+;               - Return value added for compatibility with the 64 bit procedure.
 ; ==================================================================================================
 
 
@@ -19,7 +21,7 @@
 ; Arguments:  Arg1: -> Destination buffer.
 ;             Arg2: -> Source buffer.
 ;             Arg3: Number of BYTEs to copy.
-; Return:     Nothing.
+; Return:     eax = Number of copied BYTEs.
 
 OPTION PROC:NONE
 
@@ -31,9 +33,10 @@ MemClone proc pDstMem:POINTER, pSrcMem:POINTER, dCount:DWORD
   mov edi, [esp + 12]                                   ;edi -> DstMem
   mov esi, [esp + 16]                                   ;esi -> SrcMem
   mov ecx, [esp + 20]                                   ;ecx = dCount
+  mov eax, ecx                                          ;eax = dCount
   shr ecx, 2
   rep movsd
-  mov ecx, [esp + 20]                                   ;dCount
+  mov ecx, eax
   and ecx, 3
   rep movsb
   pop esi

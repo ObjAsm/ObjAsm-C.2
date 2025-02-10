@@ -210,7 +210,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=9
+MilestoneOnDateDate=10
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -245,7 +245,7 @@ ProductVer4Range=0
 7=00FFFFFF
 
 [Size]
-2=0,0,806,424,51852
+2=0,0,806,424,75943
 3=0,0,2127,589,523
 1=0,0,694,487,2712
 4=0,0,706,573,12814
@@ -279,7 +279,7 @@ ProductVer4Range=0
 37=0,0,0,0,91943
 40=0,0,0,0,484
 29=0,0,0,0,878
-34=0,0,0,0,3716
+34=0,0,0,0,2010
 33=0,0,0,0
 32=0,0,0,0,4088
 31=0,0,0,0,0
@@ -299,7 +299,7 @@ ProductVer4Range=0
 51=0,0,0,0,11857
 52=0,0,0,0,11182
 53=0,0,0,0,437
-54=0,0,1300,620,595
+54=0,0,1300,620,694
 55=0,0,0,0,14144
 60=0,0,0,0,4181
 59=0,0,0,0,11336
@@ -331,16 +331,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1=".Erase"
-2="DbgMdiChild.Erase"
-3="Magnetism.Done"
-4="WM_MDISETMENU"
-5="WM_MDIMAXIMIZE"
-6="WM_MDIMAXIMIZE "
-7="CreateMDIWindow"
-8="OnMdiActivate"
-9="OnSize"
-10="SC_MINIMIZE"
+1="VER_PRODUCTVERSION_STR"
+2=".Erase"
+3="DbgMdiChild.Erase"
+4="Magnetism.Done"
+5="WM_MDISETMENU"
+6="WM_MDIMAXIMIZE"
+7="WM_MDIMAXIMIZE "
+8="CreateMDIWindow"
+9="OnMdiActivate"
+10="OnSize"
 "
 [Collapse]
 7=,,
@@ -409,9 +409,9 @@ ProductVer4Range=0
 62=
 66=
 [AutoLoad]
-AutoLoad=1,2,39,18,45,7,5,3,54
+AutoLoad=1,2,39,18,45,7,5,3,34,54
 [PTimer]
-PTimer=635564480
+PTimer=635774542
 [RADebugBP]
 5=
 2=

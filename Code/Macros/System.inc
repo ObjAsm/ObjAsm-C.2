@@ -1215,7 +1215,7 @@ endif
 ; Arguments:  Arg1: Location containing the string to be compared.
 ;             Arg2: String to compare with.
 ; Return:     In case that NoMatchLabel is not specified use the flags.
-;             Zero indicates that the String match.
+;             Zero indicates that the String matches.
 ; Example 1:  DoesStringMatchA? myString, <Hello>
 ; Example 2:  mov xax, pString
 ;             DoesStringMatchA? [xax], <Hello>
@@ -1276,7 +1276,7 @@ endm
 ; Arguments:  Arg1: Location containing the string to be compared.
 ;             Arg2: String to compare with.
 ; Return:     In case that NoMatchLabel is not specified use the flags.
-;             Zero indicates that the String match.
+;             Zero indicates that the String matches.
 ; Example:    DoesStringMatchW? myString, <Hello>
 ; Note:       Arg1 must have read access for the size of Arg2!
 
