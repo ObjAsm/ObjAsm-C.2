@@ -81,9 +81,9 @@ Method SdiApp.Run, uses xbx xdi xsi
           .continue .if $invoke(IsDialogMessage, [xsi].hActiveMlsDlg, xbx) != NULL
         .endif
         invoke TranslateAccelerator, [xsi].hWnd, [xsi].hAccelerators, xbx
-        .if eax == 0                                    ;No accel translated
-          invoke TranslateMessage, xbx                  ;=> translate the message
-          invoke DispatchMessage, xbx
+        .if eax == 0                                    ;No accelerator translated
+          invoke TranslateMessage, xbx                  ;Translate the message
+          invoke DispatchMessage, xbx                   ;Send the message
         .endif
         xor edi, edi                                    ;Reset idle counter
       .endif

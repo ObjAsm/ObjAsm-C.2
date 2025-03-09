@@ -1,10 +1,12 @@
 ; ==================================================================================================
 ; Title:      BStrReplace_X.inc
 ; Author:     G. Friedrich
-; Version:    C.1.0
+; Version:    C.1.1
 ; Notes:      Version C.1.0, October 2024
 ;               - First release.
 ;               - Character and bitness neutral code.
+;             Version C.1.1, March 2025
+;               - Indirection bug corrected.
 ; ==================================================================================================
 
 
@@ -17,8 +19,11 @@
 
 .code
 align ALIGN_CODE
-BStrReplace proc pOldBStr:POINTER, pNewBStr:POINTER
-  invoke BStrDispose, pOldBStr
-  mov pOldBStr, $invoke(BStrNew, pNewBStr)
+BStrReplace proc ppOldBStr:POINTER, pNewBStr:POINTER
+  mov xax, ppOldString
+  invoke BStrDispose, POINTER ptr [xax]
+  invoke BStrNew, pNewBStr
+  mov xcx, ppOldString
+  mov [xcx], xax
   ret
 BStrReplace endp

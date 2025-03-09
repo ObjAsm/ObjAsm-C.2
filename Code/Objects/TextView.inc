@@ -2341,7 +2341,7 @@ Method TextView.OnSetFont, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   invoke GetObject, wParam, sizeof(LogFont), addr LogFont
   .if xax != 0
-    invoke StrReplace, [xsi].pDefaultFontFace, addr LogFont.lfFaceName
+    invoke StrReplace, addr [xsi].pDefaultFontFace, addr LogFont.lfFaceName
     OCall xsi.Reset
     OCall xsi.Parse
     OCall xsi.Calc
@@ -2362,7 +2362,7 @@ Method TextView.OnSetText, uses xsi, wParam:WPARAM, lParam:LPARAM
   ;DbgText "TextView.OnSetText"
   SetObject xsi
   invoke DefWindowProc, [xsi].hWnd, WM_SETTEXT, wParam, lParam
-  invoke StrReplace, [xsi].pMarkupText, lParam
+  invoke StrReplace, addr [xsi].pMarkupText, lParam
   OCall xsi.Reset
   OCall xsi.Parse
   OCall xsi.SetExtent

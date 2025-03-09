@@ -386,7 +386,7 @@ Method ChartTabScale.Restore, uses xbx xsi
   assume xbx:PCHT_SCALE_BASIC_DATA
   invoke MemClone, xbx, addr [xsi].LocalScaleData, \
                    sizeof(CHT_SCALE_BASIC_DATA) - sizeof(CHT_SCALE_STRINGS)
-  invoke StrReplace, [xbx].pDescription, [xsi].pLocalDescription
-  invoke StrReplace, [xbx].pUnit, [xsi].pLocalUnit
+  invoke StrReplace, addr [xbx].pDescription, [xsi].pLocalDescription
+  invoke StrReplace, addr [xbx].pUnit, [xsi].pLocalUnit
   assume xbx:NOTHING
 MethodEnd

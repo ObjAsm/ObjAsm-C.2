@@ -1,12 +1,14 @@
 ; ==================================================================================================
 ; Title:      MdiApp.inc
 ; Author:     G. Friedrich
-; Version:    C.1.1
+; Version:    C.1.2
 ; Purpose:    ObjAsm support of Windows MDI application objects.
-; Notes:      Version C.1.1, January 2020
-;               - MdiApp.OnNCDestroy moved to WinApp.
-;             Version C.1.0, October 2017
+; Notes:      Version C.1.0, October 2017
 ;               - First release.
+;             Version C.1.1, January 2020
+;               - MdiApp.OnNCDestroy moved to WinApp.
+;             Version C.1.2, March 2025
+;               - MdiApp.Run Accelerator handling corrected.
 ; ==================================================================================================
 
 
@@ -156,16 +158,15 @@ Method MdiApp.Run, uses xbx xdi xsi
           .continue .if $invoke(IsDialogMessage, [xsi].hActiveMlsDlg, xbx) != NULL
         .endif
         invoke TranslateAccelerator, [xsi].hWnd, [xsi].hAccelerators, xbx
-        mov xcx, [xsi].pClientWnd
-        .if xcx != NULL
-          mov xdi, xax
-          invoke TranslateMDISysAccel, [xcx].$Obj(MdiClientWnd).hWnd, xbx
-          mov xcx, xdi
-        .endif
-        test xax, xcx
-        .if ZERO?                                       ;eax = ecx = FALSE / NULL
-          invoke TranslateMessage, xbx
-          invoke DispatchMessage, xbx
+        .if eax == 0                                    ;No accelerator translated
+          mov xcx, [xsi].pClientWnd
+          .if xcx != NULL
+            invoke TranslateMDISysAccel, [xcx].$Obj(MdiClientWnd).hWnd, xbx
+          .endif
+          .if eax == 0                                  ;No accelerator translated
+            invoke TranslateMessage, xbx                ;Translate the message
+            invoke DispatchMessage, xbx                 ;Send the message
+          .endif
         .endif
         xor edi, edi                                    ;Reset idle counter
       .endif
