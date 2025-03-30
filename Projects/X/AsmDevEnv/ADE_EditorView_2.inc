@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ADE_EditorView_2.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm Assembler Development Environment.
 ; ==================================================================================================
 
@@ -186,22 +186,6 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-IncFont macro DrawAttr
-  .if &DrawAttr&.DRAW_ATTR.dPointSize < 80
-    invoke DeleteDrawAttrFont, addr &DrawAttr
-    inc &DrawAttr&.DRAW_ATTR.dPointSize
-    invoke CreateDrawAttrFont, [xsi].hTextDC, addr &DrawAttr
-  .endif
-endm
-
-DecFont macro DrawAttr
-  .if &DrawAttr&.DRAW_ATTR.dPointSize > 1
-    invoke DeleteDrawAttrFont, addr &DrawAttr
-    dec &DrawAttr&.DRAW_ATTR.dPointSize
-    invoke CreateDrawAttrFont, [xsi].hTextDC, addr &DrawAttr
-  .endif
-endm
-
 Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local dMenuKeyPressed:DWORD, dShiftKeyPressed:DWORD, dControlKeyPressed:DWORD
   local dLength:DWORD, dMaxIndex:DWORD, RefLoc:LOCATION
@@ -243,11 +227,11 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .endif
 
   .elseif dControlKeyPressed != FALSE && wParam == 'C'
-    OCall xsi.ClipboardCopy
+    OCall xsi.ClpBrdCopy
 
   .elseif dControlKeyPressed != FALSE && wParam == 'X'
     OCall xsi.CaretRefLocSave, addr RefLoc            ;Calculate a caret reference position before deletion
-    OCall xsi.ClipboardCut
+    OCall xsi.ClpBrdCut
     .if eax != FALSE
       OCall xsi.CaretRefLocLoad, addr RefLoc          ;Restore caret info
       inc dNeedRedrawing
@@ -256,7 +240,7 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif dControlKeyPressed != FALSE && wParam == 'V'
     OCall xsi.CaretRefLocSave, addr RefLoc            ;Calculate a caret reference position before deletion
-    OCall xsi.ClipboardPaste
+    OCall xsi.ClpBrdPaste
     .if eax != FALSE
       OCall xsi.CaretRefLocLoad, addr RefLoc          ;Restore caret info
       inc dNeedRedrawing
@@ -463,9 +447,21 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .endif
 
   .elseif wParam == VK_HOME
-    ;Search the first non blank char from index 0 up to the current caret index
-    mov xax, [xsi].CaretLocation.pTextLine
-    .if xax != NULL
+    .if dControlKeyPressed != FALSE
+      OCall xsi.ScrollVisPageUp, -1                     ;Use saturation
+      OCall xsi.ScrollPageLeft, -1                      ;Use saturation
+      mov xax, [xsi].p1stVisLine
+      mov [xsi].CaretLocation.pTextLine, xax
+      mov [xsi].CaretLocation.dCharIndex, 0
+      mov [xsi].CaretLocation.dLineNumber, 1 
+      mov [xsi].sdCaretVisLineOffset, 0 
+      inc dNeedRedrawing
+    .else
+      mov xax, [xsi].CaretLocation.pTextLine
+      .if xax == NULL
+        ret
+      .endif
+      ;Search the first non blank char from index 0 up to the current caret index
       ;Set loop limits
       mov xcx, [xax].$Obj(EditorTextLine).pBuffer
       m2m dLength, [xax].$Obj(EditorTextLine).dLength, edx
@@ -492,9 +488,9 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         inc dNeedRedrawing
       .endif
       mov [xsi].CaretLocation.dCharIndex, edi
-      OCall xsi.CaretSet
     .endif
-
+    OCall xsi.CaretSet
+  
     .if dShiftKeyPressed != FALSE
       OCall xsi.SelectUpToCaretLocation
       inc dNeedRedrawing
@@ -506,9 +502,23 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .endif
 
   .elseif wParam == VK_END
-    ;Search the last char in line
-    mov xax, [xsi].CaretLocation.pTextLine
-    .if xax != NULL
+    .if dControlKeyPressed != FALSE
+      OCall xsi.ScrollVisPageDown, -1                   ;Use saturation
+      OCall xsi.ScrollPageLeft, -1                      ;Use saturation
+      mov xax, [xsi].p1stVisLine
+      mov [xsi].CaretLocation.pTextLine, xax
+      mov ecx, [xax].$Obj(EditorTextLine).dLength
+      mov [xsi].CaretLocation.dCharIndex, ecx
+      mov edx, [xsi].d1stVisLineNum
+      mov [xsi].CaretLocation.dLineNumber, edx  
+      mov [xsi].sdCaretVisLineOffset, 0    
+      inc dNeedRedrawing
+    .else
+      ;Search the last char in line
+      mov xax, [xsi].CaretLocation.pTextLine
+      .if xax == NULL
+        ret
+      .endif
       ;Is the horz index out of screen?
       mov edx, [xax].$Obj(EditorTextLine).dLength       ;Get last caret char index
       mov eax, [xsi].dCharMaxFullVis
@@ -522,7 +532,7 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .endif
     .endif
     OCall xsi.CaretSet
-
+  
     .if dShiftKeyPressed != FALSE
       OCall xsi.SelectUpToCaretLocation
       inc dNeedRedrawing
@@ -660,27 +670,6 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .endif
     .endif
 
-  .elseif wParam == 'A' && dControlKeyPressed != FALSE
-    .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_BLOCK_MODE
-      mov xcx, [xbx].$Obj(Editor).TextLines.pFirstMember
-      .if xcx != NULL
-        lea xdx, [xcx - offset $Obj(EditorTextLine).Link]
-        mov [xbx].$Obj(Editor).SelectionFst.pTextLine, xdx
-        mov [xbx].$Obj(Editor).SelectionFst.dCharIndex, 0
-        mov [xbx].$Obj(Editor).SelectionFst.dLineNumber, 1
-
-        mov xcx, [xbx].$Obj(Editor).TextLines.pLastMember
-        lea xdx, [xcx - offset $Obj(EditorTextLine).Link]
-        mov [xbx].$Obj(Editor).SelectionLst.pTextLine, xdx
-        mov eax, [xdx].$Obj(EditorTextLine).dLength
-        mov [xbx].$Obj(Editor).SelectionLst.dCharIndex, eax
-        mov [xbx].$Obj(Editor).SelectionLst.dLineNumber, 2
-
-        OCall xbx::Editor.SelectionSet
-        inc dNeedRedrawing
-      .endif
-    .endif
-
   .elseif wParam == 'B' && dControlKeyPressed != FALSE
     ;Toggle Block Mode
 ;    OCall xsi.CaretHide
@@ -693,59 +682,6 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     OCall xsi.UpdateStatusPanel
     inc dNeedRedrawing
 
-  .elseif wParam == VK_ADD
-    .if dControlKeyPressed != FALSE
-      mov xdi, [xsi].pResources
-      IncFont [xdi].$Obj(EditorResources).EditorTextRegular
-      IncFont [xdi].$Obj(EditorResources).EditorTextSelect
-      IncFont [xdi].$Obj(EditorResources).EditorTextHighlight
-      IncFont [xdi].$Obj(EditorResources).EditorTextQuote
-      IncFont [xdi].$Obj(EditorResources).EditorTextComment
-      IncFont [xdi].$Obj(EditorResources).EditorTextNumber
-      IncFont [xdi].$Obj(EditorResources).EditorTextOperator
-      IncFont [xdi].$Obj(EditorResources).SelBarTextRegular
-      IncFont [xdi].$Obj(EditorResources).SelBarTextSelect
-      .ColForEach [xdi].$Obj(EditorResources).KeywordGroups
-        lea xbx, [xax].KEYWORDGROUP
-        IncFont [xbx]
-      .ColNext
-
-      mov eax, [xdi].$Obj(EditorResources).dCodeLineSpace
-      add eax, [xdi].$Obj(EditorResources).EditorTextRegular.FontMetric.y
-      mov [xsi].dTextLineHeight, eax
-      OCall xsi.SetGuiLayout
-      OCall xsi.CaretDestroy
-      OCall xsi.CaretNew
-      OCall xsi.CaretSet
-      inc dNeedRedrawing
-    .endif
-
-  .elseif wParam == VK_SUBTRACT
-    .if dControlKeyPressed != FALSE
-      mov xdi, [xsi].pResources
-      DecFont [xdi].$Obj(EditorResources).EditorTextRegular
-      DecFont [xdi].$Obj(EditorResources).EditorTextSelect
-      DecFont [xdi].$Obj(EditorResources).EditorTextHighlight
-      DecFont [xdi].$Obj(EditorResources).EditorTextQuote
-      DecFont [xdi].$Obj(EditorResources).EditorTextComment
-      DecFont [xdi].$Obj(EditorResources).EditorTextNumber
-      DecFont [xdi].$Obj(EditorResources).EditorTextOperator
-      DecFont [xdi].$Obj(EditorResources).SelBarTextRegular
-      DecFont [xdi].$Obj(EditorResources).SelBarTextSelect
-      .ColForEach [xdi].$Obj(EditorResources).KeywordGroups
-        lea xbx, [xax].KEYWORDGROUP
-        DecFont [xbx]
-      .ColNext
-
-      mov eax, [xdi].$Obj(EditorResources).dCodeLineSpace
-      add eax, [xdi].$Obj(EditorResources).EditorTextRegular.FontMetric.y
-      mov [xsi].dTextLineHeight, eax
-      OCall xsi.SetGuiLayout
-      OCall xsi.CaretDestroy
-      OCall xsi.CaretNew
-      OCall xsi.CaretSet
-      inc dNeedRedrawing
-    .endif
   .endif
 
   .if dNeedRedrawing != 0

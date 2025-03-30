@@ -197,7 +197,8 @@ MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     WebTextTranslator.Translate
-; Purpose:    Translates .
+; Purpose:    Translates a given text. For a better translation, a hint thext can be supplied, e.g.
+;             a context keyword.
 ; Arguments:  Arg1: -> Text to be translated.
 ;             Arg2: -> Text hint.
 ; Return:     xax -> Translated wide text. The returned string must be deallocated using StrDispose.

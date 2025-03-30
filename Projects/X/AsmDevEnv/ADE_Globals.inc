@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ADE_Globals.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm Assembler Development Environment.
 ; ==================================================================================================
 
@@ -136,6 +136,10 @@ DefaultTabWidth             equ   2
 IDC_SPLITHORZ               equ   101
 IDC_SCROLLBARVERT           equ   110
 IDC_SCROLLBARHORZ           equ   111
+
+ZOOM_FACTOR_INIT            equ   1024
+ZOOM_FACTOR_MIN             equ   ZOOM_FACTOR_INIT/8
+ZOOM_FACTOR_MAX             equ   ZOOM_FACTOR_INIT*8
 
 .data
 dSetupOption1   DWORD   3     ;None

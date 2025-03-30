@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ADE_EditorTextLine.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm Assembler Development Environment.
 ; ==================================================================================================
 
@@ -315,19 +315,25 @@ CHAR_TABLE_ENTRIES = ($ - offset CharTable)/sizeof(BYTE)
 ; Arguments:  Arg1: New char capacity not including the ZTC.
 ; Return:     xax -> Character buffer or NULL if failed.
 
-Method EditorTextLine.BufferResize, uses xsi, dNewCapacity:DWORD
+Method EditorTextLine.BufferResize, uses xbx xsi, dNewCapacity:DWORD
   SetObject xsi
-  mov eax, dNewCapacity
-  .if eax != [xsi].dCharCapacity || [xsi].pBuffer == NULL
+  mov xcx, [xsi].pOwner
+
+  mov ebx, dNewCapacity
+  .if ebx > [xcx].$Obj(Editor).dMaxTextLineChrCount
+    mov [xcx].$Obj(Editor).dMaxTextLineChrCount, ebx    ;Keep tack of the max line length
+  .endif
+
+  .if ebx != [xsi].dCharCapacity || [xsi].pBuffer == NULL
     ;Calc requested size that matches the given granularity
-    inc eax                                             ;Always add size for the ZTC
-    add eax, TLN_GRANULARITY - 1
-    and eax, DWORD ptr not(TLN_GRANULARITY - 1)
+    inc ebx                                             ;Always add size for the ZTC
+    add ebx, TLN_GRANULARITY - 1
+    and ebx, DWORD ptr not(TLN_GRANULARITY - 1)
     if TARGET_STR_TYPE eq STR_TYPE_WIDE
-      add eax, eax
+      add ebx, ebx
     endif
 
-    mov ecx, eax
+    mov ecx, ebx
     if TARGET_STR_TYPE eq STR_TYPE_WIDE
       shr ecx, 1
     endif
@@ -335,22 +341,20 @@ Method EditorTextLine.BufferResize, uses xsi, dNewCapacity:DWORD
     .if ecx != [xsi].dCharCapacity                      ;check if the capacity has changed
       ;Capacity has changed
       .if [xsi].pBuffer != NULL
-        MemReAlloc [xsi].pBuffer, eax, MEM_DEFAULT
+        MemReAlloc [xsi].pBuffer, ebx
       .else
-        MemAlloc eax, MEM_DEFAULT
+        MemAlloc ebx
         .if xax != NULL
           m2z CHR ptr [xax]                             ;Set ZTC
         .endif
       .endif
       .if xax != NULL
         mov [xsi].pBuffer, xax
-        invoke HeapSize, hProcessHeap, HEAP_NO_SERIALIZE, xax
         if TARGET_STR_TYPE eq STR_TYPE_WIDE
-          shr eax, 1
+          shr ebx, 1
         endif
-        dec eax
-        mov [xsi].dCharCapacity, eax                    ;In characters not including the ZTC
-        mov xax, [xsi].pBuffer
+        dec ebx
+        mov [xsi].dCharCapacity, ebx                    ;In characters not including the ZTC
       .else
         OCall xsi.ErrorReport, NULL, TLE_OUTOFMEMORY
         .if [xsi].dErrorCode != OBJ_OK
@@ -620,6 +624,7 @@ Method EditorTextLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRE
   ;Start building words
   mov xdi, [xsi].pBuffer                                ;xdi -> Word begin
   .if xdi == NULL
+    mov dLastCharIndex, 0                               ;Required for Subroutine DrawRestOfLine
     call DrawRestOfLine                                 ;Fill the rest
     mov eax, dMultilineCommentExitChar
     ret
@@ -1130,6 +1135,11 @@ Method EditorTextLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineNumbe
     mov eax, dLineNumber
     inc eax
     OCall xdi::Editor.InformInsertionOf, eax
+    inc [xdi].$Obj(Editor).dTotalLineCount
+    .ifBitClr [xsi].dFlags, TLF_HIDDEN
+      inc [xdi].$Obj(Editor).dVisTextLineCount
+    .endif
+
     OCall xsi.SetDirty
     mov xax, pNewTextLine
     BitSet [xax].$Obj(EditorTextLine).dFlags, TLF_DIRTY_LINE_CURR
@@ -1147,6 +1157,10 @@ Method EditorTextLine.LineDelete, uses xbx xsi, dLineNumber:DWORD
   SetObject xsi
   mov xbx, [xsi].pOwner                                 ;xbx -> Editor
   OCall xbx::Editor.InformDeletionOf, dLineNumber
+  dec [xbx].$Obj(Editor).dTotalLineCount
+  .ifBitClr [xsi].dFlags, TLF_HIDDEN
+    dec [xbx].$Obj(Editor).dVisTextLineCount
+  .endif
   OCall xsi.SetDirty
 
   ;Set Dirty marker on previous line

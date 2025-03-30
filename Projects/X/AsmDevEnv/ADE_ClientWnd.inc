@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ADE_ClientWnd.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm Assembler Development Environment.
 ; ==================================================================================================
 
@@ -94,7 +94,9 @@ MethodEnd
 ; Return:     eax = Zero.
 
 Method ClientWnd.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local pFileName:PSTRING, cMsg[1024]:CHR
+  local pFileName:PSTRING;, cMsg[1024]:CHR
+
+  ANNOTATION use:wParam lParam
 
   SetObject xsi
   mov xbx, $invoke(DragQueryFile, wParam, -1, NULL, 0)
@@ -202,6 +204,46 @@ Method ClientWnd.Store, uses xbx xsi, pStream:$ObjPtr(Stream)
       invoke GetWindow, xbx, GW_HWNDPREV
     .endw
   .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     ClientWnd.UpdateEditors
+; Purpose:    Update all open Editor instances.
+; Arguments:  None.
+; Return:     Nothing.
+
+UpdateEditor proc uses xbx xdi xsi hWnd:HWND, hMdiActiveWnd:HWND
+  local pDisplay:$ObjPtr(EditorDisplay)
+  
+  invoke SendMessage, hWnd, WM_GETOBJECTINSTANCE, 0, 0
+  .if xax != NULL
+    mov xbx, xax
+    invoke GetObjectID, xax
+    .if eax == ADE_EditorID
+      .ColForEach [xbx].$Obj(Editor).EditorDisplays, esi
+        mov pDisplay, xax
+        lea xdi, [xax].$Obj(EditorDisplay).View
+        OCall xdi::EditorView.SetGuiLayout
+        mov xcx, pDisplay
+        invoke RedrawWindow, [xcx].$Obj(EditorDisplay).hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW
+        mov xax, hWnd
+        .if xax == hMdiActiveWnd
+          OCall xdi::EditorView.CaretDestroy
+          OCall xdi::EditorView.CaretNew
+          OCall xdi::EditorView.CaretSet
+          OCall xdi::EditorView.CaretShow
+        .endif
+      .ColNext
+    .endif
+  .endif
+  mov eax, TRUE                                         ;Continue enumeration
+  ret
+UpdateEditor endp
+
+Method ClientWnd.UpdateEditors, uses xsi
+  SetObject xsi
+  invoke SendMessage, [xsi].hWnd, WM_MDIGETACTIVE, 0, 0
+  invoke EnumChildWindows, [xsi].hWnd, offset UpdateEditor, xax
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

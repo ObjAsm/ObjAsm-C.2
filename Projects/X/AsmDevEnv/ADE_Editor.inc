@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ADE_Editor.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm Assembler Editor implementation.
 ; ==================================================================================================
 
@@ -17,6 +17,162 @@ EIF_CARET_LOCKED            equ   BIT04
 ; ==================================================================================================
 ; Editor implementation
 ; ==================================================================================================
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Editor.ClpBrdDelete
+; Purpose:    Clipboard delete opration.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method Editor.ClpBrdDelete, uses xbx xsi
+  SetObject xsi
+  invoke GetFocus                                       ;Get the Viewthat has the focus
+  .if xax != 0
+    invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    .if xax != NULL
+      mov xbx, xax
+      invoke GetObjectID, xax
+      .if eax == ADE_EditorViewID
+        OCall xbx::EditorView.ClpBrdDelete
+        .if eax != FALSE
+          invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW   ;Redraw Views
+          OCall xbx::EditorView.CaretSet
+        .endif
+      .endif
+    .endif
+  .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Editor.ClpBrdCopy
+; Purpose:    Clipboard copy opration.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method Editor.ClpBrdCopy, uses xbx xsi
+  SetObject xsi
+  invoke GetFocus                                       ;Get the Viewthat has the focus
+  .if xax != 0
+    invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    .if xax != NULL
+      mov xbx, xax
+      invoke GetObjectID, xax
+      .if eax == ADE_EditorViewID
+        OCall xbx::EditorView.ClpBrdCopy
+      .endif
+    .endif
+  .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Editor.ClpBrdCut
+; Purpose:    Clipboard cut opration.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method Editor.ClpBrdCut, uses xbx xsi
+  SetObject xsi
+  invoke GetFocus                                       ;Get the Viewthat has the focus
+  .if xax != 0
+    invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    .if xax != NULL
+      mov xbx, xax
+      invoke GetObjectID, xax
+      .if eax == ADE_EditorViewID
+        OCall xbx::EditorView.ClpBrdCut
+        .if eax != FALSE
+          invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW   ;Redraw Views
+          OCall xbx::EditorView.CaretSet
+        .endif
+      .endif
+    .endif
+  .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Editor.ClpBrdPaste
+; Purpose:    Clipboard paste opration.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+; Link:       https://msdn.microsoft.com/en-us/library/windows/desktop/ms649016(v=vs.85).aspx#_win32_Copying_Information_to_the_Clipboard
+; Note:       CF_TEXT = Each line ends with a carriage return/linefeed (CR-LF) combination. 
+;             A null character signals the end of the data. Use this format for ANSI text.
+
+Method Editor.ClpBrdPaste, uses xbx xsi
+  SetObject xsi
+  invoke GetFocus                                       ;Get the Viewthat has the focus
+  .if xax != 0
+    invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    .if xax != NULL
+      mov xbx, xax
+      invoke GetObjectID, xax
+      .if eax == ADE_EditorViewID
+        OCall xbx::EditorView.ClpBrdPaste
+        .if eax != FALSE
+          invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW   ;Redraw Views
+          OCall xbx::EditorView.CaretSet
+        .endif
+      .endif
+    .endif
+  .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Editor.ClpBrdSetBtns
+; Purpose:    Set the cut, copy & paste clipboard buttons.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method Editor.ClpBrdSetBtns, uses xbx xdi xsi
+  local hMenu:HMENU, dActivate:DWORD
+
+  SetObject xsi
+  mov xcx, [xsi].pOwner
+  mov xdi, [xcx].$Obj(ClientWnd).pOwner
+  mov hMenu, $invoke(GetMenu, [xdi].$Obj(Application).hWnd)   ;Get the current menu
+  .if [xsi].SelectionRange.pBegSelInfo == NULL || [xsi].SelectionRange.pEndSelInfo == NULL
+    lea xbx, [xdi].$Obj(Application).TbEdit
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_DELETE, FALSE
+    mov xbx, hMenu
+    invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_GRAYED
+    mov xbx, $ObjTmpl(Application).hMenuContextEditor
+    invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_GRAYED
+  .else
+    lea xbx, [xdi].$Obj(Application).TbEdit
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_DELETE, TRUE
+    mov xbx, hMenu
+    invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_ENABLED
+    mov xbx, $ObjTmpl(Application).hMenuContextEditor
+    invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_ENABLED
+  .endif
+
+  mov dActivate, TRUE
+  .if !$invoke(IsClipboardFormatAvailable, CF_TEXT)
+    dec dActivate
+  .endif
+
+  lea xbx, [xdi].$Obj(Application).TbEdit
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_PASTE, dActivate
+  .if dActivate
+    mov ebx, MF_BYCOMMAND or MF_ENABLED
+  .else
+    mov ebx, MF_BYCOMMAND or MF_GRAYED
+  .endif
+  invoke EnableMenuItem, hMenu, IDM_EDIT_PASTE, ebx
+  invoke EnableMenuItem, [xdi].$Obj(Application).hMenuContextEditor, IDM_EDIT_PASTE, ebx
+MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Editor.Done
@@ -35,11 +191,99 @@ Method Editor.Done, uses xbx xdi xsi
 
   ;Main menu update
   .if [xdi].$Obj(ClientWnd).dChildCount == 0              ;No more child windows ?
-    OCall xbx::Application.EnableActions, FALSE
+    OCall xbx::Application.ManageGuiCmds, 0
     invoke SendMessage, [xdi].$Obj(ClientWnd).hWnd, WM_MDISETMENU, \
                         [xbx].$Obj(Application).hMenuInit, NULL
     invoke DrawMenuBar, [xbx].$Obj(Application).hWnd      ;Redraw the new menu bar
   .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Editor.FindFrom
+; Purpose:    Searches a string from a starting location.
+; Arguments:  Arg1: -> Search string.
+;             Arg2: -> Start line number.
+;             Arg3: -> Start char index.
+;             Arg4: -> EditorView
+; Return:     Nothing.
+
+Method Editor.FindFrom, uses xbx xdi xsi, pSearchString:PSTRING, pLineNumber:POINTER, pCharIndex:POINTER
+  local sdCaretVisLineOffset:SDWORD, dCurrLineNumber:DWORD, dTargLineNumber:DWORD
+  local dRetVal:DWORD
+
+  SetObject xsi
+  mov dRetVal, FALSE
+  OCall xsi.SelectionResetAll
+  mov dCurrLineNumber, 1
+  mov xax, pLineNumber
+  mov ecx, DWORD ptr [xax]
+  mov dTargLineNumber, ecx
+  xor ebx, ebx
+  mov xax, [xsi].TextLines.pFirstMember
+  .if xax != NULL
+    sub xax, offset $Obj(EditorTextLine).Link
+    mov sdCaretVisLineOffset, 0
+    ;Goto the starting line number
+    .while ecx != dCurrLineNumber
+      mov xax, [xax].$Obj(EditorTextLine).Link.pLinkFwrd
+      .break .if xax == NULL
+      sub xax, offset $Obj(EditorTextLine).Link
+      inc sdCaretVisLineOffset
+      inc dCurrLineNumber
+    .endw
+    .if xax != NULL
+      mov xdx, pCharIndex
+      mov edi, DWORD ptr [xdx]
+      .if edi > [xax].$Obj(EditorTextLine).dLength
+        mov edi, [xax].$Obj(EditorTextLine).dLength
+      .endif
+      .while TRUE
+        mov xbx, xax
+        mov xdx, [xbx].$Obj(EditorTextLine).pBuffer
+        lea xcx, [xdx + sizeof(CHR)*xdi]
+        invoke StrPos, xcx, pSearchString
+        .break .if xax != NULL
+        mov xax, [xbx].$Obj(EditorTextLine).Link.pLinkFwrd
+        .break .if xax == NULL
+        sub xax, offset $Obj(EditorTextLine).Link
+        inc sdCaretVisLineOffset
+        inc dCurrLineNumber
+        xor edi, edi
+      .endw
+      .if xax != NULL
+        mov [xsi].SelectionFst.LOCATION.pTextLine, xbx
+        mov [xsi].SelectionLst.LOCATION.pTextLine, xbx
+        mov edx, dCurrLineNumber
+        mov [xsi].SelectionFst.LOCATION.dLineNumber, edx
+        mov [xsi].SelectionLst.LOCATION.dLineNumber, edx
+        sub xax, [xbx].$Obj(EditorTextLine).pBuffer
+        shr eax, 1
+        mov [xsi].SelectionFst.LOCATION.dCharIndex, eax
+        mov [xsi].SelectionLst.LOCATION.dCharIndex, eax
+        invoke StrLength, pSearchString
+        add [xsi].SelectionLst.LOCATION.dCharIndex, eax
+        OCall xsi.SelectionSet
+
+        mov xax, [xsi].TextLines.pFirstMember
+        sub xax, offset $Obj(EditorTextLine).Link
+        mov xbx, [xsi].pFocusedView
+        mov [xbx].$Obj(EditorView).p1stVisLine, xax
+        mov [xbx].$Obj(EditorView).d1StVisLineCount, 0
+        mov [xbx].$Obj(EditorView).d1stVisLineNum, 1
+        OCall [xsi].pFocusedView::EditorView.ScrollVisPageDown, sdCaretVisLineOffset
+        .ColForEach [xsi].EditorDisplays, ebx
+          invoke RedrawWindow, [xax].$Obj(EditorDisplay).hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
+        .ColNext
+        mov dRetVal, TRUE
+      .endif
+      mov xax, pLineNumber
+      m2m DWORD ptr [xax], dCurrLineNumber, edx
+      mov xdx, pCharIndex
+      mov eax, [xsi].SelectionLst.LOCATION.dCharIndex
+      mov DWORD ptr [xdx], eax
+    .endif    
+  .endif
+  mov eax, dRetVal
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -51,10 +295,6 @@ MethodEnd
 Method Editor.InformDeletionOf, uses xbx xsi, dLineNumber:DWORD
   SetObject xsi
   .ColForEach [xsi].EditorDisplays, ebx
-    .ifBitClr [xax].$Obj(EditorTextLine).dFlags, TLF_HIDDEN
-      dec [xsi].dVisTextLineCount
-      dec [xsi].dTotalLineCount
-    .endif
     OCall xax::EditorDisplay.InformDeletionOf, dLineNumber
   .ColNext
 MethodEnd
@@ -119,8 +359,9 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
       invoke SendMessage, [xdi].$Obj(ClientWnd).hWnd, WM_MDISETMENU, \
                           [xbx].$Obj(Application).hMenuChild, \
                           [xbx].$Obj(Application).hMenuChildWnd
-      OCall xbx::Application.EnableActions, TRUE
+      OCall xbx::Application.ManageGuiCmds, ADE_EditorID
       invoke DrawMenuBar, [xbx].$Obj(Application).hWnd  ;Redraw the new menu bar
+      OCall xbx::Application.ManageGuiCmds, ADE_EditorID
     .endif
 
     OCall [xsi].EditorDisplays::Collection.Init, xsi, 2, 0, 2
@@ -140,6 +381,7 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
     invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
     invoke SetFocus, [xbx].$Obj(EditorDisplay).View.hWnd
   .else
+    DbgApiError
     invoke MessageBox, [xdi].$Obj(Application).hWnd, $OfsCStr("Window creation error"), \
                        offset szError, MB_OK or MB_ICONERROR
   .endif
@@ -207,7 +449,7 @@ Method Editor.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   ANNOTATION use:wParam lParam
 
   SetObject xsi
-  DbgText "Editor.OnClose"
+;  DbgText "Editor.OnClose"
   invoke GetKeyState, VK_CONTROL
   and ax, BIT15
   .if ZERO?                          ;If CTRL pressed => close without asking
@@ -231,7 +473,7 @@ Method Editor.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
       .endif
     .endif
   .endif
-  invoke DefWindowProc, [xsi].hWnd, WM_CLOSE, wParam, lParam
+  invoke DefMDIChildProc, [xsi].hWnd, WM_CLOSE, wParam, lParam
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -282,7 +524,10 @@ Method Editor.OnSetFocus,, wParam:WPARAM, lParam:LPARAM
 
 ;  DbgText "Editor.OnSetFocus"
   SetObject xcx
-  invoke SetFocus, [xcx].hLastFocusedView
+  mov xax, [xcx].pFocusedView
+  .if xax != NULL
+    invoke SetFocus, [xax].$Obj(EditorView).hWnd
+  .endif
   xor eax, eax
 MethodEnd
 
@@ -342,9 +587,12 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRING
         mov eax, dFileSize
         mov CHRA ptr [xax + xdi - sizeof(CHRA)], 0      ;Set ZTC
 
-        ;Start searching for line ends
         .while TRUE
-          invoke StrLScanA, xdi, LF
+          ;Start searching for line ends
+          mov eax, dFileSize
+          sub xax, xdi
+          add xax, pFileBuffer
+          invoke StrLFScanA, xdi, eax
           .break .if xax == NULL
           mov pFileLineBegin, xdi
           .if xax > xdi && CHRA ptr [xax - sizeof(CHRA)] == CR
@@ -367,7 +615,7 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRING
             mov xbx, xax
             inc dFileLineLength                         ;Include ZTC
   if TARGET_STR_TYPE eq STR_TYPE_WIDE
-            invoke MultiByteToWideChar, CP_UTF8, 0, pFileLineBegin, dFileLineLength, \
+            invoke MultiByteToWideChar, CP_ACP, 0, pFileLineBegin, dFileLineLength, \
                                         [xbx].$Obj(EditorTextLine).pBuffer, dFileLineLength
   else
             invoke MemClone, [xbx].$Obj(EditorTextLine).pBuffer, pFileLineBegin, dFileLineLength
@@ -387,6 +635,148 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRING
       DbgText "Failed to allocate memory for file read operation"
     .endif
     invoke CloseHandle, hFile
+  .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Editor.Print
+; Purpose:    Output the editor content to the printer.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method Editor.Print, uses xbx xdi xsi
+  local PrtDlg:PRINTDLG, DocInfo:DOCINFO, cMsg[1024]:CHR
+  local LogFnt:LOGFONT, hFont:HFONT, hPrvFont:HFONT, dLineCount:DWORD
+  local cPrtBuffer[256]:CHR, dPosY:DWORD, TM:TEXTMETRIC
+  local LogPix:POINT, PageSize:POINT, PageOffset:POINT, PrintSize:POINT
+
+  SetObject xsi
+
+  mov PrtDlg.lStructSize, sizeof(PrtDlg)
+  m2m PrtDlg.hwndOwner, [xsi].hWnd, xax
+  mov xdx, [xsi].pOwner
+  mov xbx, [xdx].$Obj(ClientWnd).pOwner
+  m2m PrtDlg.hDevMode, [xbx].$Obj(Application).hDevMode, xdx
+  m2z PrtDlg.hDevNames                                  ;[xcx].$Obj(Application).hDevNames
+  m2z PrtDlg.hDC
+  mov PrtDlg.Flags, PD_NOSELECTION or PD_RETURNDC
+  m2z PrtDlg.nFromPage
+  m2z PrtDlg.nToPage
+  m2z PrtDlg.nMinPage
+  m2z PrtDlg.nMaxPage
+  mov PrtDlg.nCopies, 1
+  m2m PrtDlg.hInstance, hInstance, xdx
+  m2z PrtDlg.lCustData
+  m2z PrtDlg.lpfnPrintHook
+  m2z PrtDlg.lpfnSetupHook
+  m2z PrtDlg.lpPrintTemplateName
+  m2z PrtDlg.lpSetupTemplateName
+  m2z PrtDlg.hPrintTemplate
+  m2z PrtDlg.hSetupTemplate
+
+  .if $invoke(PrintDlg, addr PrtDlg)
+    m2m [xbx].$Obj(Application).hDevMode, PrtDlg.hDevMode, xax
+    m2m [xbx].$Obj(Application).hDevNames, PrtDlg.hDevNames, xcx
+    .ifBitSet $invoke(GetDeviceCaps, PrtDlg.hDC, RASTERCAPS), RC_BITBLT
+      mov DocInfo.cbSize, sizeof(DocInfo)
+;      m2m DocInfo.lpszDocName, offset szDebugCenter, xax
+      m2z DocInfo.lpszOutput
+      m2z DocInfo.lpszDatatype
+      m2z DocInfo.fwType
+
+      mov PageSize.x, $32($invoke(GetDeviceCaps, PrtDlg.hDC, PHYSICALWIDTH))
+      mov PageSize.y, $32($invoke(GetDeviceCaps, PrtDlg.hDC, PHYSICALHEIGHT))
+      mov PageOffset.x, $32($invoke(GetDeviceCaps, PrtDlg.hDC, PHYSICALOFFSETX))
+      mov PageOffset.y, $32($invoke(GetDeviceCaps, PrtDlg.hDC, PHYSICALOFFSETY))
+      mov LogPix.x, $32($invoke(GetDeviceCaps, PrtDlg.hDC, LOGPIXELSX))
+      mov LogPix.y, $32($invoke(GetDeviceCaps, PrtDlg.hDC, LOGPIXELSY))
+
+      ;Set paper margins using the Viewport
+      invoke SetMapMode, PrtDlg.hDC, MM_ISOTROPIC
+      invoke MulDiv, [xbx].$Obj(Application).PrintMargin.left, LogPix.x, 2540
+      sub eax, PageOffset.x
+      mov edi, eax
+      invoke MulDiv, [xbx].$Obj(Application).PrintMargin.top, LogPix.y, 2540
+      sub eax, PageOffset.y
+      invoke SetViewportOrgEx, PrtDlg.hDC, edi, eax, NULL
+
+      mov eax, [xbx].$Obj(Application).PrintMargin.left
+      add eax, [xbx].$Obj(Application).PrintMargin.right
+      invoke MulDiv, eax, LogPix.x, -2540
+      add eax, PageSize.x
+      mov PrintSize.x, eax
+      mov eax, [xbx].$Obj(Application).PrintMargin.top
+      add eax, [xbx].$Obj(Application).PrintMargin.bottom
+      invoke MulDiv, eax, LogPix.y, -2540
+      add eax, PageSize.y
+      mov PrintSize.y, eax
+      invoke SetWindowExtEx, PrtDlg.hDC, PrintSize.x, PrintSize.y, NULL
+      invoke SetViewportExtEx, PrtDlg.hDC, PrintSize.x, PrintSize.y, NULL
+      invoke CreateRectRgn, 0, 0, PrintSize.x, PrintSize.y
+      mov xbx, xax
+      invoke SelectClipRgn, PrtDlg.hDC, xbx
+      invoke DeleteObject, xbx
+
+      ;Set DC font
+;      FillString LogFnt.lfFaceName, <DBG_FONT_TEXT>
+      invoke GetDeviceCaps, PrtDlg.hDC, LOGPIXELSY
+      invoke MulDiv, 10, eax, -72
+      mov LogFnt.lfHeight, eax
+      m2z LogFnt.lfWidth
+      m2z LogFnt.lfEscapement
+      m2z LogFnt.lfOrientation
+      mov LogFnt.lfWeight, FW_DONTCARE
+      m2z LogFnt.lfItalic
+      m2z LogFnt.lfUnderline
+      m2z LogFnt.lfStrikeOut
+      mov LogFnt.lfCharSet, DEFAULT_CHARSET
+      mov LogFnt.lfOutPrecision, OUT_DEFAULT_PRECIS
+      mov LogFnt.lfClipPrecision, CLIP_DEFAULT_PRECIS
+      mov LogFnt.lfQuality, CLEARTYPE_QUALITY
+      mov LogFnt.lfPitchAndFamily, DEFAULT_PITCH or FF_DONTCARE
+      mov hFont, $invoke(CreateFontIndirect, addr LogFnt)
+
+      ;Start printing
+      invoke StartDoc, PrtDlg.hDC, addr DocInfo
+      invoke StartPage, PrtDlg.hDC
+      mov hPrvFont, $invoke(SelectObject, PrtDlg.hDC, hFont)
+
+      invoke GetTextMetrics, PrtDlg.hDC, addr TM
+      m2m dPosY, TM.tmHeight, edx
+
+;      mov dLineCount, $32($invoke(SendMessage, [xsi].hEdit, EM_GETLINECOUNT, 0, 0))
+;      lea xdi, cPrtBuffer
+;      xor ebx, ebx
+;      .while ebx < dLineCount
+;        invoke MemZero, xdi, sizeof(cPrtBuffer)
+;        mov WORD ptr [xdi], lengthof cPrtBuffer - 1     ;Let room for the terminating zero
+;        invoke SendMessage, [xsi].hEdit, EM_GETLINE, xbx, xdi
+;        invoke StrLength, xdi
+;        invoke TextOut, PrtDlg.hDC, 0, dPosY, xdi, eax
+;        inc xbx                                         ;Increment line count
+;        mov eax, TM.tmHeight
+;        add dPosY, eax
+;        add eax, dPosY                                  ;Check if line upper point is under the
+;        .if eax > PrintSize.y                           ;  Print lower limit
+;          m2z dPosY
+;          invoke EndPage, PrtDlg.hDC
+;          invoke StartPage, PrtDlg.hDC
+;        .endif
+;      .endw
+;
+;      invoke SelectObject, PrtDlg.hDC, hPrvFont
+;      invoke DeleteObject, hFont
+;
+;      invoke EndPage, PrtDlg.hDC
+;      invoke EndDoc, PrtDlg.hDC
+;      invoke DeleteDC, PrtDlg.hDC
+    .else
+;      mov edx, $ObjTmpl(Application).dLanguage
+;      add edx, 124
+;      invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
+;      invoke MessageBox, [xsi].hWnd, addr cMsg, offset szDebugCenter, \
+;                         MB_OK or MB_ICONERROR
+    .endif
   .endif
 MethodEnd
 
@@ -428,10 +818,12 @@ Method Editor.Save, uses xbx xsi
             .ifBitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_DIRTY_LINE_NEXT
               BitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_SAVED_LINE_NEXT
             .endif
-            mov eax, [xbx].$Obj(EditorTextLine).dLength
-            invoke WideCharToMultiByte, CP_UTF8, 0, [xbx].$Obj(EditorTextLine).pBuffer, \
-                                        [xbx].$Obj(EditorTextLine).dLength, \
-                                        pMemBuffer, dMemBufferSize, NULL, NULL
+            xor eax, eax
+            .if [xbx].$Obj(EditorTextLine).pBuffer != NULL
+              invoke WideCharToMultiByte, CP_ACP, 0, [xbx].$Obj(EditorTextLine).pBuffer, \
+                                          [xbx].$Obj(EditorTextLine).dLength, \
+                                          pMemBuffer, dMemBufferSize, NULL, NULL
+            .endif
             mov xcx, pMemBuffer
             mov DCHRA ptr [xcx + xax], LF*256 + CR      ;Add CRLF to the end   
             add eax, 2                                  ;Add these 2 characters
@@ -464,7 +856,7 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method Editor.SaveAs, uses xbx xsi
+Method Editor.SaveAs, uses xsi
   local dResult:DWORD, pIFileDialog2:POINTER
   local pIFSDlg:POINTER, pIShellItem:POINTER, pDisplayName:PSTRINGW
 
@@ -503,6 +895,38 @@ Method Editor.SaveAs, uses xbx xsi
     ICall pIFSDlg::IFileSaveDialog.Release
   .endif
   mov eax, dResult
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Editor.SelectAll
+; Purpose:    Select all lines.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method Editor.SelectAll, uses xsi
+;  DbgText "Editor.SelectAll"
+  SetObject xsi
+  xor eax, eax
+  .ifBitClr [xsi].dFlags, EIF_BLOCK_MODE
+    mov xcx, [xsi].TextLines.pFirstMember
+    .if xcx != NULL
+      lea xdx, [xcx - offset $Obj(EditorTextLine).Link]
+      mov [xsi].SelectionFst.pTextLine, xdx
+      mov [xsi].SelectionFst.dCharIndex, 0
+      mov [xsi].SelectionFst.dLineNumber, 1
+
+      mov xcx, [xsi].TextLines.pLastMember
+      lea xdx, [xcx - offset $Obj(EditorTextLine).Link]
+      mov [xsi].SelectionLst.pTextLine, xdx
+      mov eax, [xdx].$Obj(EditorTextLine).dLength
+      mov [xsi].SelectionLst.dCharIndex, eax
+      mov [xsi].SelectionLst.dLineNumber, 2
+
+      OCall xsi.SelectionSet
+      invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE
+      mov eax, TRUE
+    .endif
+  .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -570,6 +994,8 @@ Method Editor.SelectionDelete, uses xbx xdi xsi
     OCall xsi.SelectionResetAll
     mov [xsi].dSelectionVisLineCnt, 0
   .endif
+  
+  OCall xsi.ClpBrdSetBtns
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -578,10 +1004,11 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     eax = TRUE if the change has a visual impact, otherwise FALSE.
 
-Method Editor.SelectionResetAll, uses xsi
+Method Editor.SelectionResetAll, uses xbx xsi
 ;  DbgText "Editor.SelectionReset"
   SetObject xsi
   OCall xsi.SelectionResetLines
+  mov ebx, eax
   mov [xsi].SelectionRange.pBegSelInfo, NULL
   mov [xsi].SelectionRange.pEndSelInfo, NULL
   mov [xsi].SelectionFst.pTextLine, NULL
@@ -591,6 +1018,9 @@ Method Editor.SelectionResetAll, uses xsi
   mov [xsi].SelectionLst.dCharIndex, 0
   mov [xsi].SelectionLst.dLineNumber, 0
   mov [xsi].dSelectionVisLineCnt, 0
+
+  OCall xsi.ClpBrdSetBtns
+  mov eax, ebx
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -620,6 +1050,7 @@ Method Editor.SelectionResetLines, uses xbx xdi xsi
       sub xbx, offset $Obj(EditorTextLine).Link
     .endw
   .endif
+
   xor eax, eax
   cmp dNeedRedrawing, 0
   setnz al
@@ -636,10 +1067,10 @@ Method Editor.SelectionSet, uses xdi xbx xsi
   SetObject xsi
 ;  DbgText "Editor.SelectionSet"
 
+  mov [xsi].dSelectionVisLineCnt, 0
   .if [xsi].SelectionFst.pTextLine != NULL && [xsi].SelectionLst.pTextLine != NULL 
     lea xcx, [xsi].SelectionFst
     lea xdx, [xsi].SelectionLst
-    mov [xsi].dSelectionVisLineCnt, 0
   
     ;Sanity check
     .if SDWORD ptr [xcx].LOCATION.dCharIndex < 0
@@ -653,6 +1084,11 @@ Method Editor.SelectionSet, uses xdi xbx xsi
     mov eax, [xcx].LOCATION.dLineNumber
     .if eax == [xdx].LOCATION.dLineNumber
       mov eax, [xcx].LOCATION.dCharIndex
+      .if eax == [xdx].LOCATION.dCharIndex
+        mov [xsi].SelectionRange.pBegSelInfo, NULL        ;Reset selection begin
+        mov [xsi].SelectionRange.pEndSelInfo, NULL        ;Reset selection end
+        jmp @@Exit                                        ;Nothing selected => Exit
+      .endif
       .if eax > [xdx].LOCATION.dCharIndex
         xchg xcx, xdx                                     ;Switch POINTERs
       .endif
@@ -715,10 +1151,8 @@ Method Editor.SelectionSet, uses xdi xbx xsi
           inc [xsi].dSelectionVisLineCnt
         .endif
   
-  ;      DbgEditor xsi,, "Editor"
         mov [xax].$Obj(EditorTextLine).Selection.dBegIndex, ecx   ;Set begin index of 1st line
         .while xax != xdi
-  ;        DbgTextLine xax,, "TextLine"
           mov xcx, xax
           ;Move to the next line
           mov xax, [xax].$Obj(EditorTextLine).Link.pLinkFwrd
@@ -736,9 +1170,10 @@ Method Editor.SelectionSet, uses xdi xbx xsi
         mov [xax].$Obj(EditorTextLine).Selection.dEndIndex, edx
       .endif
     .endif
-  .else
-    mov [xsi].dSelectionVisLineCnt, 0
   .endif
+
+@@Exit:
+  OCall xsi.ClpBrdSetBtns
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -801,6 +1236,91 @@ Method Editor.Store, uses xsi, pStream:$ObjPtr(Stream)
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Editor.UpdateStatusbar
+; Purpose:    Draw new information on the Statusbar.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method Editor.UpdateStatusbar, uses xbx xdi xsi
+  local dFirstCharIndex:DWORD, dLastCharIndex:DWORD, dSelCount:DWORD
+  local dLineNumberFirst:DWORD, dLineCharPos:DWORD, dFirstLineCharIndex:DWORD
+  local dLineCount:DWORD, cTextBuffer[1024]:CHR, wResText[1024]:CHRW
+
+;  DbgText "DbgMdiChildTxt.UpdateStatusbar"
+  SetObject xsi
+  mov xax, [xsi].pOwner
+  invoke SendMessage, [xax].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+  .if xax == [xsi].hWnd                                 ;Only if this window is the active one
+    mov xcx, [xsi].pOwner
+    mov xbx, [xcx].$Obj(ClientWnd).pOwner               ;xbx -> Application
+
+;    invoke SendMessage, [xsi].hEdit, EM_GETSEL, addr dFirstCharIndex, addr dLastCharIndex
+;    mov eax, dLastCharIndex
+;    sub eax, dFirstCharIndex
+;    mov dSelCount, eax
+;    invoke SendMessage, [xsi].hEdit, EM_LINEFROMCHAR, dFirstCharIndex, 0
+;    mov dLineNumberFirst, eax
+;    invoke SendMessage, [xsi].hEdit, EM_LINEFROMCHAR, dLastCharIndex, 0
+;    sub eax, dLineNumberFirst
+;    inc eax
+;    mov dLineCount, eax
+
+    .if dSelCount == 0
+      OCall [xbx].$Obj(Application).SBar::Statusbar.SetPartText, 2, NULL, SBT_SUNKEN
+    .else
+      lea xdi, cTextBuffer
+      mov edx, [xbx].$Obj(Application).dLangID
+      add edx, 142                                      ;"Selection"
+      invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+      WriteF xdi, "¦SU: ", addr wResText
+      mov edx, [xbx].$Obj(Application).dLangID
+      .if dSelCount == 1
+        add edx, 143                                    ;"character"
+        invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+        WriteF xdi, "1 ¦SU", addr wResText
+      .else
+        add edx, 144                                    ;"characters"
+        invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+        WriteF xdi, "¦UD ¦SU", dSelCount, addr wResText
+      .endif
+      WriteF xdi, ", "
+      mov edx, [xbx].$Obj(Application).dLangID
+      .if dLineCount == 1
+        add edx, 145                                    ;"line"
+        invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+        WriteF xdi, "1 ¦SU", addr wResText
+      .else
+        add edx, 146                                    ;"lines"
+        invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+        WriteF xdi, "¦UD ¦SU", dLineCount, addr wResText
+      .endif
+      OCall [xbx].$Obj(Application).SBar::Statusbar.SetPartText, 2, addr cTextBuffer, SBT_SUNKEN
+    .endif
+
+;    lea xdi, cTextBuffer
+;    invoke GetWindowText, [xsi].hWnd, xdi, lengthof(cTextBuffer)
+;    lea xdi, [xdi + sizeof(CHR)*xax]
+;    invoke SendMessage, [xsi].hEdit, EM_LINEINDEX, dLineNumberFirst, 0
+;    mov dFirstLineCharIndex, eax
+;    mov ecx, dFirstCharIndex
+;    sub ecx, eax
+;    mov dLineCharPos, ecx
+;    mov edx, [xbx].$Obj(Application).dLanguage
+;    add edx, 140                                        ;"Caret at line"
+;    invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+;    inc dLineNumberFirst                                ;First line index is 0 => 1
+;    WriteF xdi, ": ¦SU ¦UD, ", addr wResText, dLineNumberFirst
+;    mov edx, [xbx].$Obj(Application).dLanguage
+;    add edx, 141                                        ;"position"
+;    invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+;    mov eax, dFirstLineCharIndex
+;    sub dFirstCharIndex, eax
+;    WriteF xdi, "¦SU ¦UD", addr wResText, dFirstCharIndex
+;    OCall [xbx].$Obj(Application).pStatusbar::Statusbar.SetPartText, 1, addr cTextBuffer, SBT_SUNKEN
+  .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Editor.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.
@@ -810,6 +1330,8 @@ MethodEnd
 ;             Window HANDLE is passed in pSelf (hidden parameter).
 
 Method Editor.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
+  ANNOTATION use:wParam lParam
+
 ;  DbgMessage uMsg,, "Editor"
   .if uMsg == WM_NCCREATE
     mov xax, lParam

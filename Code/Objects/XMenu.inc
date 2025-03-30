@@ -10,12 +10,12 @@
 ;              - DialogModalIndirect.inc
 ;             This object requires unique MenuItemIDs to work properly!
 ;             NEVER use a command ID = 0! (The OS has problems with the first MenuBar item).
-;             Version C.1.2, November 2023
-;               - Flashing test added to Done method.
-;             Version C.1.1, December 2020
-;               - Minor changes to avaoid this probem http://masm32.com/board/index.php?topic=8928.0
 ;             Version C.1.0, October 2017
 ;               - First release.
+;             Version C.1.1, December 2020
+;               - Minor changes to avaoid this probem http://masm32.com/board/index.php?topic=8928.0
+;             Version C.1.2, November 2023
+;               - Flashing test added to Done method.
 ; ==================================================================================================
 
 
@@ -559,7 +559,7 @@ Method XMenu.Convert, uses xbx xdi xsi, hMenu:HMENU, dIsMenuBar:DWORD
       mov Rect.right, eax
       mov Rect.bottom, eax
 
-      mov eax, [xbx].$Obj(XMenuItem).dType 
+      mov eax, [xbx].$Obj(XMenuItem).dType
       .if eax == MENU_TYPE_MAINBAR
         invoke SelectObject, hDC, [xsi].hFontTxtNorm
         invoke DrawText, hDC, [xbx].$Obj(XMenuItem).pMenuStr, -1, \
@@ -604,7 +604,7 @@ Method XMenu.Convert, uses xbx xdi xsi, hMenu:HMENU, dIsMenuBar:DWORD
           mov eax, Rect.right
         .endif
 
-        mov ecx, [xbx].$Obj(XMenuItem).dID 
+        mov ecx, [xbx].$Obj(XMenuItem).dID
         .if ecx < 50000 || ecx > 50009
           .if SDWORD ptr eax > sdMaxRegTextWidth
             mov sdMaxRegTextWidth, eax                  ;Store max regular text width
@@ -642,7 +642,7 @@ Method XMenu.Convert, uses xbx xdi xsi, hMenu:HMENU, dIsMenuBar:DWORD
       invoke GetMenuItemInfo, hMenu, ebx, MF_BYPOSITION, addr MenuInfo
       mov xax, MenuInfo.dwItemData
       .if xax != NULL
-        mov ecx, [xax].$Obj(XMenuItem).dType 
+        mov ecx, [xax].$Obj(XMenuItem).dType
         .if ecx == MENU_TYPE_SIDEBAR
           m2m [xax].$Obj(XMenuItem).dHeight, dTotalHeight, ecx
         .else
@@ -777,7 +777,7 @@ Method XMenu.DrawMenuBarText, uses xbx xdi xsi, pDIS:PDRAWITEMSTRUCT
     invoke GetSysColor, COLOR_BTNSHADOW
     invoke SetTextColor, [xdi].DRAWITEMSTRUCT.hDC, eax
     mov dPrevColor, eax
-    mov xdx, [xbx].$Obj(XMenuItem).pMenuStr 
+    mov xdx, [xbx].$Obj(XMenuItem).pMenuStr
     .if xdx != NULL
       invoke DrawText, [xdi].DRAWITEMSTRUCT.hDC, xdx, -1, \
                        addr Rect, DT_CENTER or DT_VCENTER or DT_SINGLELINE
@@ -795,7 +795,7 @@ Method XMenu.DrawMenuBarText, uses xbx xdi xsi, pDIS:PDRAWITEMSTRUCT
       invoke GetSysColor, eax
       mov dPrevColor, $32($invoke(SetTextColor, [xdi].DRAWITEMSTRUCT.hDC, eax))
 
-      mov xdx, [xbx].$Obj(XMenuItem).pMenuStr 
+      mov xdx, [xbx].$Obj(XMenuItem).pMenuStr
       .if xdx != NULL
         invoke DrawText, [xdi].DRAWITEMSTRUCT.hDC, xdx, -1, \
                          addr Rect, DT_CENTER or DT_VCENTER or DT_SINGLELINE
@@ -804,7 +804,7 @@ Method XMenu.DrawMenuBarText, uses xbx xdi xsi, pDIS:PDRAWITEMSTRUCT
       ;Item is disabled
       invoke GetSysColor, COLOR_GRAYTEXT
       mov dPrevColor, $32($invoke(SetTextColor, [xdi].DRAWITEMSTRUCT.hDC, eax))
-      mov xdx, [xbx].$Obj(XMenuItem).pMenuStr 
+      mov xdx, [xbx].$Obj(XMenuItem).pMenuStr
       .if xdx != NULL
         invoke DrawText, [xdi].DRAWITEMSTRUCT.hDC, [xbx].$Obj(XMenuItem).pMenuStr, -1, \
                          addr Rect, DT_CENTER or DT_VCENTER or DT_SINGLELINE
@@ -1799,7 +1799,7 @@ Method XMenu.SetMenuBarBkColor, uses xsi, Color:RGBQUAD
   invoke GetMenu, [xsi].hWnd
   lea xdx, MenuInfo
   invoke SetMenuInfo, xax, xdx
-  invoke DeleteObject, MenuInfo.hbrBack 
+  invoke DeleteObject, MenuInfo.hbrBack
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

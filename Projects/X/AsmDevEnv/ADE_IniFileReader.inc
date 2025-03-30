@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ADE_IniFileReader.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm IniFile reader implementation.
 ; ==================================================================================================
 

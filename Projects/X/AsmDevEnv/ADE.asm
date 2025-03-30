@@ -1,15 +1,15 @@
 ; ==================================================================================================
-; Title:      ACE.asm
+; Title:      ADE.asm
 ; Author:     G. Friedrich
 ; Version:    1.0.0
-; Purpose:    ObjAsm Assembler Development Environment.
+; Purpose:    ObjAsm Assembler Development Environment. (ASM DevSuite Pro)
 ; Notes:      Version 1.0.0, November 2024
 ;               - First release.
 ; ==================================================================================================
 
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files and OS related objects
 
 % include &MacPath&DlgTmpl.inc                          ;Dialog Template macros for XMenu
 % include &MacPath&ConstDiv.inc
@@ -58,7 +58,7 @@ DefGUID IID_IFileDialog2, %sIID_IFileDialog2
 .code
 ;Load or build the following objects
 MakeObjects Primer, Stream, DiskStream
-MakeObjects Collection, SortedCollection, DataCollection, SortedDataCollection
+MakeObjects Collection, SortedCollection, DataCollection, SortedDataCollection, StrCollection
 MakeObjects WinPrimer, Window, Dialog, DialogModal, DialogModeless
 MakeObjects SimpleImageList, MaskedImageList
 MakeObjects Button, IconButton, Hyperlink

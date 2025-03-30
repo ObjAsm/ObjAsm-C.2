@@ -1,14 +1,14 @@
 ; ==================================================================================================
 ; Title:      ADE_Helper.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm Assembler Development Environment.
 ; ==================================================================================================
 
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      GetCharType
-; Purpose:    return the type (CHR_XXX) from a given character. 
+; Purpose:    Return the type (CHR_XXX) from a given character. 
 ; Arguments:  Arg1: Character in a 32 bit register.
 ;             Arg2: 32 bit register containing the character type.
 ; Return:     Arg2
@@ -148,6 +148,7 @@ endm
 ; Return:     eax = color value.
 ;             xcx -> Last processed char. If no more info is present, xcx = NULL.
 
+align ALIGN_CODE
 GetColorFromString proc uses xbx xsi pString:PSTRING, dDefaultColor:DWORD
   mov xsi, pString
   mov ebx, dDefaultColor
@@ -229,6 +230,7 @@ GetColorFromString endp
 ;             xcx -> Last processed char. If no more info is present, xcx = NULL.
 ;             edx = String length.
 
+align ALIGN_CODE
 GetStringFromString proc uses xsi pString:PSTRING
   mov xsi, pString
   mov xcx, xsi
@@ -292,6 +294,7 @@ GetStringFromString endp
 ; Return:     eax = SDWORD.
 ;             xcx -> Last processed char. If no more info is present, xcx = NULL.
 
+align ALIGN_CODE
 GetIntegerFromString proc uses xsi pString:PSTRING, sdDefaultValue:SDWORD
   invoke GetStringFromString, pString
   .if xax != NULL
@@ -313,6 +316,7 @@ GetIntegerFromString endp
 ;             Arg4: Default background color.
 ;             xcx -> Last processed char. If no more info is present, xcx = NULL.
 
+align ALIGN_CODE
 GetFgBgAttrFromString proc uses xbx xdi pString:PSTRING, pFgBgAttr:PFGBG_ATTR, \
                                         DefFgColor:DWORD, DefBgColor:DWORD
   mov xax, pString
@@ -339,6 +343,7 @@ GetFgBgAttrFromString endp
 ; Purpose:    Delete the font contained in the DRAW_ATTR structure.
 ; Arguments:  Arg1: -> DRAW_ATTR.
 
+align ALIGN_CODE
 DeleteDrawAttrFont proc uses xbx pDrawAttr:PDRAW_ATTR
   mov xbx, pDrawAttr
   invoke DeleteObject, [xbx].DRAW_ATTR.hFont
@@ -351,6 +356,7 @@ DeleteDrawAttrFont endp
 ; Purpose:    Delete the font and backgound brush contained in the in the DRAW_ATTR structure.
 ; Arguments:  Arg1: -> DRAW_ATTR.
 
+align ALIGN_CODE
 DeleteDrawAttrResources proc uses xbx pDrawAttr:PDRAW_ATTR
   mov xbx, pDrawAttr
   invoke DeleteObject, [xbx].DRAW_ATTR.Background.hBrush
@@ -362,25 +368,26 @@ DeleteDrawAttrResources endp
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  CreateDrawAttrFont
 ; Purpose:    Create the font specified in the DRAW_ATTR structure.
-; Arguments:  Arg1: DC HANDLE.
-;             Arg2: -> DRAW_ATTR.
+; Arguments:  Arg1: -> DRAW_ATTR.
 
-CreateDrawAttrFont proc uses xbx hDC:HDC, pDrawAttr:PDRAW_ATTR
+align ALIGN_CODE
+CreateDrawAttrFont proc uses xdi xbx pDrawAttr:PDRAW_ATTR
   local hPrevFont:HFONT, CharSize:POINT
 
   mov xbx, pDrawAttr
 
   ;Create font
-  invoke GetDeviceCaps, hDC, LOGPIXELSY
-  invoke MulDiv, [xbx].DRAW_ATTR.dPointSize, eax, -72
+  mov xdi, $invoke(GetDC, 0)
+  invoke GetDeviceCaps, xdi, LOGPIXELSY
+  invoke MulDiv, [xbx].DRAW_ATTR.dCurrPointSize, eax, -72
   mov [xbx].DRAW_ATTR.LogFont.lfHeight, eax
   invoke CreateFontIndirect, addr [xbx].DRAW_ATTR.LogFont
   mov [xbx].DRAW_ATTR.hFont, xax
 
   ;Test if the font is monospaced
-  mov hPrevFont, $invoke(SelectObject, hDC, [xbx].DRAW_ATTR.hFont)
-  invoke GetTextExtentPoint32, hDC, addr cMetricChar, 1, addr [xbx].DRAW_ATTR.FontMetric
-  invoke GetTextExtentPoint32, hDC, $OfsCStr("."), 1, addr CharSize
+  mov hPrevFont, $invoke(SelectObject, xdi, [xbx].DRAW_ATTR.hFont)
+  invoke GetTextExtentPoint32, xdi, addr cMetricChar, 1, addr [xbx].DRAW_ATTR.FontMetric
+  invoke GetTextExtentPoint32, xdi, $OfsCStr("."), 1, addr CharSize
   mov eax, [xbx].DRAW_ATTR.FontMetric.x
   .if eax == CharSize.x
     BitSet [xbx].DRAW_ATTR.dFlags, FONT_MONOSPACED
@@ -388,7 +395,8 @@ CreateDrawAttrFont proc uses xbx hDC:HDC, pDrawAttr:PDRAW_ATTR
     BitClr [xbx].DRAW_ATTR.dFlags, FONT_MONOSPACED
   .endif
 
-  invoke SelectObject, hDC, hPrevFont
+  invoke SelectObject, xdi, hPrevFont
+  invoke ReleaseDC, 0, xdi
   ret
 CreateDrawAttrFont endp
 
@@ -398,13 +406,14 @@ CreateDrawAttrFont endp
 ; Arguments:  Arg1: DC HANDLE.
 ;             Arg2: -> DRAW_ATTR.
 
+align ALIGN_CODE
 CreateDrawAttrResources proc uses xbx hDC:HDC, pDrawAttr:PDRAW_ATTR
   mov xbx, pDrawAttr
   ;Create the background brush
   invoke CreateSolidBrush, [xbx].DRAW_ATTR.Background.Color
   mov [xbx].DRAW_ATTR.Background.hBrush, xax
   ;Create the font
-  invoke CreateDrawAttrFont, hDC, xbx
+  invoke CreateDrawAttrFont, xbx
   ret
 CreateDrawAttrResources endp
 
@@ -419,6 +428,7 @@ CreateDrawAttrResources endp
 ;             Arg6: Default background color.
 ;Return:      xcx -> Last processed char. If no more info is present, xcx = NULL.
 
+align ALIGN_CODE
 GetDrawAttrFromString proc uses xbx xdi xsi pDrawAttr:PDRAW_ATTR, pString:PSTRING, \
                                             pFontDef:PFONT_DEF, hDC:HDC, \
                                             DefFgColor:DWORD, DefBgColor:DWORD
@@ -429,7 +439,8 @@ GetDrawAttrFromString proc uses xbx xdi xsi pDrawAttr:PDRAW_ATTR, pString:PSTRIN
   mov xdi, xcx                                          ;Save return value
 
   ;Copy the previously loaded font definition
-  invoke MemClone, addr [xbx].DRAW_ATTR.dPointSize, pFontDef, sizeof FONT_DEF
+  lea xcx, [xbx + sizeof(FGBG_ATTR)]                    ;xcx -> FONT_DEF
+  invoke MemClone, xcx, pFontDef, sizeof FONT_DEF
 
   ;Update the font emphasis values
   .if xdi != NULL
@@ -456,7 +467,7 @@ GetDrawAttrFromString proc uses xbx xdi xsi pDrawAttr:PDRAW_ATTR, pString:PSTRIN
     .endif
   .endif
   
-  invoke CreateDrawAttrFont, hDC, xbx
+  invoke CreateDrawAttrFont, xbx
   
   mov xcx, xdi
   ret
@@ -471,6 +482,7 @@ GetDrawAttrFromString endp
 ;             Arg4: Default Font Point Size.
 ; Return:     Nothing.
 
+align ALIGN_CODE
 GetFontDefFromString proc uses xbx xdi xsi pFontDef:PFONT_DEF, pString:PSTRING, \
                                            pDefFontFace:PSTRING, dDefFontPointSize:DWORD
   mov xax, pString
@@ -507,7 +519,8 @@ GetFontDefFromString proc uses xbx xdi xsi pFontDef:PFONT_DEF, pString:PSTRING, 
   .else
     mov eax, dDefFontPointSize
   .endif
-  mov [xbx].FONT_DEF.dPointSize, eax
+  mov [xbx].FONT_DEF.dInitPointSize, eax
+  mov [xbx].FONT_DEF.dCurrPointSize, eax
   ret
 GetFontDefFromString endp
 
@@ -518,6 +531,7 @@ GetFontDefFromString endp
 ; Return:     eax = Main veriosn number.
 ;             ecx = Subversion number.
 
+align ALIGN_CODE
 GetVersionFromString proc uses xbx pString:PSTRING
   invoke StrLScan, pString, '.'
   xor ecx, ecx
@@ -540,6 +554,7 @@ GetVersionFromString endp
 ;             Arg2: Character count.
 ; Return:     eax = TRUE if the string is a binaray number, otherwise FALSE.
 
+align ALIGN_CODE
 IsBinNumber proc uses xbx xsi pStart:PSTRING, dCount:DWORD
   mov xsi, pStart
   xor ebx, ebx
@@ -575,6 +590,7 @@ IsBinNumber endp
 ;             Arg2: Character count.
 ; Return:     eax = TRUE if the string is a decimal number, otherwise FALSE.
 
+align ALIGN_CODE
 IsDecNumber proc uses xbx xsi pStart:PSTRING, dCount:DWORD
   mov xsi, pStart
   xor ebx, ebx
@@ -612,6 +628,7 @@ IsDecNumber endp
 ;             Arg2: Character count.
 ; Return:     eax = TRUE if the string is a hexadecimal number, otherwise FALSE.
 
+align ALIGN_CODE
 IsHexNumber proc uses xbx xsi pStart:PSTRING, dCount:DWORD
   mov xsi, pStart
   xor ebx, ebx
@@ -655,6 +672,7 @@ IsHexNumber endp
 ;             Arg2: Character count.
 ; Return:     eax = TRUE if the string is a octal number, otherwise FALSE.
 
+align ALIGN_CODE
 IsOctNumber proc uses xbx xsi pStart:PSTRING, dCount:DWORD
   mov xsi, pStart
   xor ebx, ebx
@@ -684,8 +702,29 @@ IsOctNumber proc uses xbx xsi pStart:PSTRING, dCount:DWORD
 IsOctNumber endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  StrLFScanA
+; Purpose:    Scan for a LF char.
+; Arguments:  Arg1: -> String
+;             Arg2: Character count.
+; Return:     Xax -> CHR occurence.
+
+align ALIGN_CODE
+StrLFScanA proc uses rbx rdi pStringA:POINTER, dCount:DWORD
+  mov rdi, rcx
+  mov ecx, edx                                          ;rcx (counter) = length
+  mov al, LF                                            ;Search for LF
+  repne scasb
+  mov rax, NULL                                         ;Dont't change flags!
+  jne @F
+  lea rax, [rdi - sizeof(CHRA)]
+@@:
+  ret
+StrLFScanA endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  ShowKeywords
 
+align ALIGN_CODE
 ShowKeywords proc uses xbx xdi pCKW:$ObjPtr(KeywordCollection)
   mov xbx, pCKW
   .ColForEach [xbx], edi

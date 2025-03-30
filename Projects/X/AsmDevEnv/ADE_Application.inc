@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ADE_Application.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm Assembler Development Environment.
 ; ==================================================================================================
 
@@ -34,6 +34,8 @@ Method Application.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
   endm
 
   local MenuInfo:MENUITEMINFO, tbbi:TBBUTTONINFO, cButtonText[256]:CHR, pPos:POINTER
+
+  ANNOTATION use:pPos
 
   SetObject xsi
   m2m [xsi].dLangID, dLangID, eax                       ;Save setting
@@ -74,15 +76,23 @@ Method Application.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
   mov tbbi.TBBUTTONINFO.cchText, lengthof cButtonText - 1
 
   lea xbx, [xsi].TbFile
-  SetButtonText IDM_FILE_NEW,   01
-  SetButtonText IDM_FILE_CLOSE, 02
+  SetButtonText IDM_FILE_NEW,         01
+  SetButtonText IDM_FILE_CLOSE,       02
+  SetButtonText IDM_FILE_CLOSEALL,    35
 
   lea xbx, [xsi].TbWindow
-  SetButtonText IDM_WINDOW_CASCADE,  31
-  SetButtonText IDM_WINDOW_TILE_HOR, 32
-  SetButtonText IDM_WINDOW_TILE_VER, 33
-  SetButtonText IDM_WINDOW_ARRANGE,  34
-  SetButtonText IDM_WINDOW_CLOSEALL, 35
+  SetButtonText IDM_WINDOW_CASCADE,   31
+  SetButtonText IDM_WINDOW_TILE_HOR,  32
+  SetButtonText IDM_WINDOW_TILE_VER,  33
+  SetButtonText IDM_WINDOW_ARRANGE,   34
+
+  mov xdx, [xsi].pClientWnd
+  mov xcx, [xdx].$Obj(ClientWnd).hWnd
+  invoke SendMessage, xcx, WM_MDIGETACTIVE, 0, 0
+  .if xax
+    invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+    OCall xax::ChildWnd.UpdateStatusbar
+  .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -106,13 +116,20 @@ MethodEnd
 
 Method Application.Done, uses xsi
   SetObject xsi
+  .if [xsi].hDevMode != 0
+    invoke GlobalFree, [xsi].hDevMode
+  .endif
+  .if [xsi].hDevNames != 0
+    invoke GlobalFree, [xsi].hDevNames
+  .endif
+
   ;Destroy resources
   OCall [xsi].EditorSharedResources::EditorSharedResources.Done
   OCall [xsi].CodeEditorResources::EditorResources.Done
   
   OCall [xsi].IconImageList::MaskedImageList.Done
   OCall [xsi].RBar::Rebar.Done
-  OCall [xsi].Status::Statusbar.Done
+  OCall [xsi].SBar::Statusbar.Done
   OCall [xsi].TbFile::Toolbar.Done
   OCall [xsi].TbWindow::Toolbar.Done
   OCall [xsi].PropWnd::PropertiesWnd.Done
@@ -120,25 +137,81 @@ Method Application.Done, uses xsi
   OCall [xsi].SplitterVert::Splitter.Done
   OCall [xsi].SplitterHorz::Splitter.Done
   OCall [xsi].Menu::XMenu.Done
+  
+  OCall [xsi].FindDlg::DialogModeless.Done
+
   Destroy [xsi].pClientWnd
   ACall xsi.Done
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Application.EnableActions
-; Purpose:    Enable or disable MDI child actions.
-; Arguments:  Arg1: Enable TRUE/FALSE.
+; Procedure:  CenterWindowOnPrimaryDisplay
+; Purpose:    Calculate the coordinates of a window, based on its size, to center it on the 
+;             primary monitor.
+; Arguments:  Arg1: -> POINT containing on exit the position coordiantes of the window.
+;             Arg2: -> POINT containing on entry the size of the window and on exit the updated size.
 ; Return:     Nothing.
 
-Method Application.EnableActions, uses xsi, dAction:DWORD
-  SetObject xsi
-  OCall [xsi].TbFile::Toolbar.BtnEnable, IDM_FILE_CLOSE, dAction
-  OCall [xsi].TbWindow::Toolbar.BtnEnable, IDM_WINDOW_CASCADE,  dAction
-  OCall [xsi].TbWindow::Toolbar.BtnEnable, IDM_WINDOW_TILE_HOR, dAction
-  OCall [xsi].TbWindow::Toolbar.BtnEnable, IDM_WINDOW_TILE_VER, dAction
-  OCall [xsi].TbWindow::Toolbar.BtnEnable, IDM_WINDOW_ARRANGE,  dAction
-  OCall [xsi].TbWindow::Toolbar.BtnEnable, IDM_WINDOW_CLOSEALL, dAction
-MethodEnd
+.data
+align ALIGN_DATA
+DlgChildrenInfo label DL_HEADER
+DL_HEADER     {DLF_LOAD_MINMAX or DLF_LIMIT_MIN or DLF_LIMIT_MAX_Y or DLF_ADD_GRIPPER}
+DL_CHILD_INFO {{100, 000, 000, 000}}      ;Search button
+DL_CHILD_INFO {{100, 000, 000, 000}}      ;Replace button
+DL_CHILD_INFO {{100, 000, 000, 000}}      ;Replace All button
+DL_CHILD_INFO {{100, 100, 000, 000}}      ;Help button
+DL_CHILD_INFO {{100, 100, 000, 000}}      ;Cancel button
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Search Label
+DL_CHILD_INFO {{000, 000, 100, 000}}      ;Search Combo
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Replace Label
+DL_CHILD_INFO {{000, 000, 100, 000}}      ;Replace Combo
+DL_CHILD_INFO {{000, 000, 000, 100}}      ;Group Scope
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button Curr File
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button Open Files
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button Proj Files
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button All Files
+DL_CHILD_INFO {{000, 000, 000, 100}}      ;Group Options
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Match Case
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Whole Word
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Ignore Space
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Use RegEx
+DL_CHILD_INFO {{000, 000, 000, 100}}      ;Group Diection
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button Down
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button Up
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button All
+DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Wrap around
+
+.code
+align ALIGN_CODE
+CenterWindowOnPrimaryDisplay proc pWndPos:PPOINT, pWndSize:PPOINT
+  invoke GetSystemMetrics, SM_CXSCREEN
+  mov ecx, eax
+  mov xdx, pWndSize
+  sub eax, [xdx].POINT.x
+  .if SIGN?
+    mov [xdx].POINT.x, ecx
+    xor eax, eax
+  .else
+    shr eax, 1
+  .endif
+  mov xcx, pWndPos
+  mov [xcx].POINT.x, eax
+
+  invoke GetSystemMetrics, SM_CYSCREEN
+  mov ecx, eax
+  mov xdx, pWndSize
+  sub eax, [xdx].POINT.y
+  .if SIGN?
+    mov [xdx].POINT.y, ecx
+    xor eax, eax
+  .else
+    shr eax, 1
+  .endif
+  mov xcx, pWndPos
+  mov [xcx].POINT.y, eax
+
+  ret
+CenterWindowOnPrimaryDisplay endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Application.Init
@@ -147,7 +220,8 @@ MethodEnd
 ; Return:     Nothing.
 
 Method Application.Init, uses xbx xdi xsi
-  local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD, pSBHelp:POINTER
+;  local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD, pSBHelp:POINTER
+;  local hDC:HDC, WndRect:RECT, WndPos:POINT, WndSize:POINT
   local hDC:HDC
 
   SetObject xsi
@@ -163,40 +237,68 @@ Method Application.Init, uses xbx xdi xsi
   ;Load application & menu icons
   lea xbx, [xsi].IconImageList
   OCall xbx::MaskedImageList.Init, xsi, 16, 16, 1
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APP")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APP_CHILD")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_NEW")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CLOSE")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_SETUP")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_EXIT")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_CASCADE")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_TILE_HOR")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_TILE_VER")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_ARRANGE")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_CLOSEALL")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_HELP_HELP")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_HELP_ABOUT")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CONTEXT_SAVE")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CONTEXT_LOAD")
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APP")               ;00
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APP_CHILD")         ;01
+                                                                                  
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_NEW")          ;02
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_OPEN")         ;03
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_SAVE")         ;04
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_SAVEAS")       ;05
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_SAVEALL")      ;06
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_CLOSE")        ;07
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_CLOSEALL")     ;08
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_PAGESETUP")    ;09
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_PRINTERSETUP") ;10
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_PRINT")        ;11
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_PIN")          ;12
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_SETUP")        ;13
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_EXIT")         ;14
+                                                                                  
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_CUT")          ;15
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_COPY")         ;16
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_PASTE")        ;17
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_CLEAR")        ;18
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_FIND")         ;19
 
-  mov [xsi].hAccelerators, $invoke(LoadAccelerators, hInstance, $OfsCStr("MDIACCEL"))
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_CASCADE")    ;20
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_TILE_HOR")   ;21
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_TILE_VER")   ;22
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_ARRANGE")    ;23
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_NEXT")       ;24
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_PREV")       ;25
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_ZOOMIN")     ;26
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_ZOOMOUT")    ;27
+                                                                                  
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_HELP_HELP")         ;28
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_HELP_ABOUT")        ;29
+                                                                                  
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CONTEXT_SAVE")      ;33
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CONTEXT_LOAD")      ;34
+
+  mov [xsi].hAccelerators, $invoke(LoadAccelerators, hInstance, $OfsCStr("HOTKEYS"))
 
   ;Obtain handles for possible menus and submenus
   mov [xsi].hMenuInit, $invoke(LoadMenu, hInstance, $OfsCStr("MDIMENUINIT"))
-
   mov [xsi].hMenuChild, $invoke(LoadMenu, hInstance, $OfsCStr("MDIMENUCHILD"))
   mov [xsi].hMenuChildWnd, $invoke(GetSubMenu, [xsi].hMenuChild, 3)
+  mov [xsi].hMenuContextEditor, $invoke(LoadMenu, hInstance, $OfsCStr("CONTEXTMENU_EDITOR"))
 
-  ;Create the MDI Frame window
-  mov dWndWidth, 1600
-  mov dWndHeight, 800
-  mov dWndPosX, $32($invoke(CenterForm, dWndWidth, $32($invoke(GetSystemMetrics, SM_CXSCREEN))))
-  mov dWndPosY, $32($invoke(CenterForm, dWndHeight, $32($invoke(GetSystemMetrics, SM_CYSCREEN))))
+
+;  ;Create the MDI Frame window in the center of the monitor
+;  mov WndSize.x, 1600
+;  mov WndSize.y, 800
+;  invoke CenterWindowOnPrimaryDisplay, addr WndPos, addr WndSize
+;
+;  invoke CreateWindowEx, WS_EX_APPWINDOW or WS_EX_WINDOWEDGE,
+;                         offset szApplicationClassName, offset szAppTitle, \
+;                         WS_OVERLAPPEDWINDOW or WS_CLIPCHILDREN, \
+;                         WndPos.x, WndPos.y, WndSize.x, WndSize.y, \
+;                         NULL, [xsi].hMenuInit, hInstance, pSelf
 
   invoke CreateWindowEx, WS_EX_APPWINDOW or WS_EX_WINDOWEDGE,
                          offset szApplicationClassName, offset szAppTitle, \
                          WS_OVERLAPPEDWINDOW or WS_CLIPCHILDREN, \
-                         dWndPosX, dWndPosY, dWndWidth, dWndHeight, \
+                         CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,\
                          NULL, [xsi].hMenuInit, hInstance, pSelf
 
   ;Create and Initialize Client window
@@ -214,9 +316,12 @@ Method Application.Init, uses xbx xdi xsi
   invoke ReleaseDC, [xsi].hWnd, hDC
 
   ;Create and initialize XMenu
-  m2m pSBHelp, $MethodAddr(Application.StatusbarHelp), xax
+  mov xbx, $MethodAddr(Application.StatusbarHelp)
   OCall [xsi].Menu::XMenu.Init, xsi, [xsi].hWnd, xdi, [xsi].hMenuChildWnd, \
-                                addr [xsi].IconImageList, pSBHelp, IDLANG_ENGLISH
+                                addr [xsi].IconImageList, xbx, IDLANG_ENGLISH
+
+  OCall [xsi].FindDlg::FindDialog.Init, xsi
+  c2m [xsi].FindDlg.pDynamicLayout, offset DlgChildrenInfo, xcx
 
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
   invoke UpdateWindow, [xsi].hWnd
@@ -288,6 +393,92 @@ Method Application.LoadContext, uses xbx xdi xsi, pStreamName:PSTRING
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Application.ManageGuiCmds
+; Purpose:    Enable/Disable menu items and toolbar buttons.
+; Arguments:  Arg1: ObjectID activated, zero for none.
+; Return:     Nothing.
+
+Method Application.ManageGuiCmds, uses xbx xsi, dObjID:DWORD
+  SetObject xsi
+  .if dObjID == ADE_EditorID ;----------------------------------------------
+    lea xbx, [xsi].TbFile
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVE, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEAS, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEALL, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSE, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSEALL, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, TRUE
+
+    lea xbx, [xsi].TbEdit
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, TRUE
+
+    lea xbx, [xsi].TbWindow
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_CASCADE, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_HOR, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_VER, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ARRANGE, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMIN, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMOUT, TRUE
+
+    mov xbx, $invoke(GetMenu, [xsi].hWnd)               ;Get the current menu
+    invoke EnableMenuItem, xbx, IDM_FILE_SAVE,          MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_FILE_SAVEAS,        MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_FILE_SAVEALL,       MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_FILE_CLOSE,         MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_FILE_CLOSEALL,      MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_FILE_PAGESETUP,     MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_FILE_PRINTERSETUP,  MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_FILE_PRINT,         MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL,     MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMIN,      MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMOUT,     MF_BYCOMMAND or MF_ENABLED
+
+    mov xbx, [xsi].hMenuContextEditor
+    invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL,     MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_ENABLED
+
+  .else
+    lea xbx, [xsi].TbFile
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVE, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEAS, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEALL, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSE, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSEALL, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, FALSE
+
+    lea xbx, [xsi].TbEdit
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, FALSE
+
+    lea xbx, [xsi].TbWindow
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_CASCADE, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_HOR, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_VER, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ARRANGE, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMIN, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMOUT, FALSE
+
+    mov xbx, $invoke(GetMenu, [xsi].hWnd)               ;Get the current menu
+    invoke EnableMenuItem, xbx, IDM_FILE_SAVE,          MF_BYCOMMAND or MF_DISABLED
+    invoke EnableMenuItem, xbx, IDM_FILE_SAVEAS,        MF_BYCOMMAND or MF_DISABLED
+    invoke EnableMenuItem, xbx, IDM_FILE_SAVEALL,       MF_BYCOMMAND or MF_DISABLED
+    invoke EnableMenuItem, xbx, IDM_FILE_CLOSE,         MF_BYCOMMAND or MF_DISABLED
+    invoke EnableMenuItem, xbx, IDM_FILE_CLOSEALL,      MF_BYCOMMAND or MF_DISABLED
+    invoke EnableMenuItem, xbx, IDM_FILE_PAGESETUP,     MF_BYCOMMAND or MF_DISABLED
+    invoke EnableMenuItem, xbx, IDM_FILE_PRINTERSETUP,  MF_BYCOMMAND or MF_DISABLED
+    invoke EnableMenuItem, xbx, IDM_FILE_PRINT,         MF_BYCOMMAND or MF_DISABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL,     MF_BYCOMMAND or MF_DISABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_DISABLED
+    invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMIN,      MF_BYCOMMAND or MF_DISABLED
+    invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMOUT,     MF_BYCOMMAND or MF_DISABLED
+
+    mov xbx, [xsi].hMenuContextEditor
+    invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL,     MF_BYCOMMAND or MF_DISABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_DISABLED
+  .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  CBTProc
 ; Purpose:    Customization procedure using SetWindowsHookEx.
 ; Arguments:  Arg1: Hook code.
@@ -331,6 +522,7 @@ CBTProc endp
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
+align ALIGN_CODE
 AskDirtyEditor proc uses xbx xdi hWnd:HWND, lParam:XWORD
   local cCaption[512]:CHR, cText[1024]:CHR
 
@@ -402,6 +594,7 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
+align ALIGN_CODE
 SaveEditor proc uses xbx hWnd:HWND, lParam:XWORD
   invoke SendMessage, hWnd, WM_GETOBJECTINSTANCE, 0, 0
   .if xax != NULL
@@ -420,10 +613,10 @@ SaveEditor proc uses xbx hWnd:HWND, lParam:XWORD
 SaveEditor endp
 
 Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local hChildWnd:HWND, AboutDlg:$Obj(DialogAbout), SetupDlg:$Obj(SetupDlg)
+  local hChildWnd:HWND, AboutDlg:$Obj(DialogAbout), SetupDlg:$Obj(SetupDialog)
   local pIFODlg:POINTER, pIFileDialog2:POINTER, cBuffer[MAX_PATH]:CHR
-  local pIFSDlg:POINTER
-  local pISIArr:POINTER, dCount:DWORD, pIShellItem:POINTER, pDisplayName:POINTER, hIcon:HICON
+  local PageSetup:PAGESETUPDLG
+  local pISIArr:POINTER, dCount:DWORD, pIShellItem:POINTER, pDisplayName:POINTER
 
   ANNOTATION use:wParam lParam
 
@@ -436,11 +629,6 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       OCall xax::Editor.Init, [xsi].pClientWnd, addr [xsi].CodeEditorResources, NULL
     .endif
     xor eax, eax
-
-  .elseif ax == IDM_BREAK
-    int 3
-    xor eax, eax
-  
   .elseif ax == IDM_FILE_OPEN                           ;Open a file
     invoke CoCreateInstance, offset CLSID_FileOpenDialog, NULL, CLSCTX_ALL, \
                              offset IID_IFileOpenDialog, addr pIFODlg
@@ -477,16 +665,11 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .endif
     xor eax, eax
 
-  
 ;;    mov edx, [xsi].dLanguage
 ;;    add edx, 170                                      ;"Open file"
 ;;    invoke LoadString, hInstance, edx, addr cResText, lengthof cResText
 ;;    lea xcx, cResText
 ;;    mov OpenFileName.lpstrTitle, xcx
-
-  .elseif ax == IDM_FILE_SAVE_ALL
-    invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, offset SaveEditor, 0
-    xor eax, eax
 
   .elseif ax == IDM_FILE_SAVE
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
@@ -503,8 +686,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .endif
     .endif
     xor eax, eax
-
-  .elseif ax == IDM_FILE_SAVE_AS
+  .elseif ax == IDM_FILE_SAVEAS
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
     invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
     .if xax != NULL
@@ -515,36 +697,128 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .endif
     .endif
     xor eax, eax
-
+  .elseif ax == IDM_FILE_SAVEALL
+    invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, offset SaveEditor, 0
+    xor eax, eax
   .elseif (ax == IDM_FILE_CLOSE) || (ax == SC_CLOSE)    ;Close the active window
     mov hChildWnd, $invoke(SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0)
     invoke SendMessage, hChildWnd, WM_CLOSE, 0, 0
     xor eax, eax
-
+  .elseif ax == IDM_FILE_CLOSEALL                     ;Attempt to close all windows
+    invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, offset CloseEnumProc, 0
+    xor eax, eax
+  .elseif ax == IDM_FILE_PAGESETUP
+    mov PageSetup.lStructSize, sizeof(PageSetup)
+    m2m PageSetup.hwndOwner, [xsi].hWnd, xax
+    m2m PageSetup.hDevMode, [xsi].hDevMode, xcx
+    m2m PageSetup.hDevNames, [xsi].hDevNames, xax
+    mov PageSetup.Flags, PSD_INHUNDREDTHSOFMILLIMETERS or PSD_MARGINS or PSD_MINMARGINS
+    m2z PageSetup.ptPaperSize.x
+    m2z PageSetup.ptPaperSize.y
+    m2z PageSetup.rtMinMargin.left
+    m2z PageSetup.rtMinMargin.top
+    m2z PageSetup.rtMinMargin.right
+    m2z PageSetup.rtMinMargin.bottom
+    s2s PageSetup.rtMargin, [xsi].PrintMargin, xax, xcx
+    m2m PageSetup.hInstance, hInstance, xax
+    m2z PageSetup.lCustData
+    m2z PageSetup.lpfnPageSetupHook
+    m2z PageSetup.lpfnPagePaintHook
+    m2z PageSetup.lpPageSetupTemplateName
+    m2z PageSetup.hPageSetupTemplate
+    .if $invoke(PageSetupDlg, addr PageSetup)
+      m2m [xsi].hDevMode, PageSetup.hDevMode, xax
+      m2m [xsi].hDevNames, PageSetup.hDevNames, xcx
+      s2s [xsi].PrintMargin, PageSetup.rtMargin, xax, xcx
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_FILE_PRINT
+    invoke SendMessage, xbx, WM_MDIGETACTIVE, 0, 0
+    .if xax
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      OCall xax::ChildWnd.Print                         ;Polymorphic call
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_FILE_PIN
+    lea xdi, [xsi].TbFile
+    invoke SendMessage, [xdi].$Obj(Toolbar).hWnd, TB_GETSTATE, IDM_FILE_PIN, 0
+    .ifBitSet eax, TBSTATE_CHECKED
+      BitClr eax, TBSTATE_CHECKED
+      invoke SendMessage, [xdi].$Obj(Toolbar).hWnd, TB_SETSTATE, IDM_FILE_PIN, eax
+      invoke SetWindowPos, [xsi].hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE
+    .else
+      BitSet eax, TBSTATE_CHECKED
+      invoke SendMessage, [xdi].$Obj(Toolbar).hWnd, TB_SETSTATE, IDM_FILE_PIN, eax
+      invoke SetWindowPos, [xsi].hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_FILE_SETUP
+    New SetupDlg::SetupDialog
+    OCall SetupDlg::SetupDialog.Init, xsi, [xsi].hWnd
+    OCall SetupDlg::SetupDialog.Show
+    OCall SetupDlg::SetupDialog.Done
+    xor eax, eax
+  .elseif ax == IDM_FILE_EXIT
+    invoke SendMessage, [xsi].hWnd, WM_CLOSE, 0, 0
+    xor eax, eax
+  .elseif ax == IDM_FILE_BREAK
+    int 3
+    xor eax, eax
+  
   .elseif ax == SC_RESTORE                              ;Restore the active window
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIRESTORE, xax, 0
     xor eax, eax
-
   .elseif ax == SC_MINIMIZE                             ;Minimize the active window
     mov hChildWnd, $invoke(SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0)
     invoke ShowWindow, xax, SW_MINIMIZE
     xor eax, eax
-
   .elseif ax == SC_MAXIMIZE                             ;Maximize the active window
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIMAXIMIZE, xax, 0
     xor eax, eax
 
-  .elseif ax == IDM_FILE_SETUP
-    New SetupDlg::SetupDlg
-    OCall SetupDlg::SetupDlg.Init, xsi, [xsi].hWnd
-    OCall SetupDlg::SetupDlg.Show
-    OCall SetupDlg::SetupDlg.Done
+  .elseif ax == IDM_EDIT_COPY
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      OCall xax::ChildWnd.ClpBrdCopy                 ;Polymorphic call
+    .endif
     xor eax, eax
-
-  .elseif ax == IDM_FILE_EXIT
-    invoke SendMessage, [xsi].hWnd, WM_CLOSE, 0, 0
+  .elseif ax == IDM_EDIT_CUT
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      OCall xax::ChildWnd.ClpBrdCut                  ;Polymorphic call
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_EDIT_PASTE
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      OCall xax::ChildWnd.ClpBrdPaste                ;Polymorphic call
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_EDIT_DELETE
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      OCall xax::ChildWnd.ClpBrdDelete                ;Polymorphic call
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_EDIT_SELECTALL
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax != 0
+      mov xdi, $invoke(SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0)
+      invoke GetObjectID, xdi
+      .if eax == ADE_EditorID
+        OCall xdi::Editor.SelectAll
+        xor eax, eax
+      .endif
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_EDIT_FIND
+    OCall [xsi].FindDlg::DialogModeless.Show
     xor eax, eax
 
   ;Messages for language selection
@@ -569,10 +843,44 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .elseif ax == IDM_WINDOW_ARRANGE
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIICONARRANGE, 0, 0
     xor eax, eax
-  .elseif ax == IDM_WINDOW_CLOSEALL                     ;Attempt to close all windows
-    invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, offset CloseEnumProc, 0
-    xor eax, eax
 
+  .elseif ax == IDM_WINDOW_ZOOMIN
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax != 0
+     invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      .if xax != NULL
+        mov xdi, xax
+        invoke GetObjectID, xax
+        .if eax == ADE_EditorID
+          mov xdi, [xdi].$Obj(Editor).pResources
+          invoke MulDiv, [xdi].$Obj(EditorResources).dZoomFactor, 11, 10
+          OCall xdi::EditorResources.Zoom, eax
+          .if eax != FALSE
+            OCall xbx::ClientWnd.UpdateEditors
+          .endif
+        .endif
+      .endif
+    .endif 
+    xor eax, eax
+  .elseif ax == IDM_WINDOW_ZOOMOUT
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax != 0
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      .if xax != NULL
+        mov xdi, xax
+        invoke GetObjectID, xax
+        .if eax == ADE_EditorID
+          mov xdi, [xdi].$Obj(Editor).pResources
+          invoke MulDiv, [xdi].$Obj(EditorResources).dZoomFactor, 10, 11
+          OCall xdi::EditorResources.Zoom, eax
+          .if eax != FALSE
+            OCall xbx::ClientWnd.UpdateEditors
+          .endif
+        .endif
+      .endif
+    .endif 
+    xor eax, eax
+  
   ;Messages for help menu
   .elseif ax == IDM_HELP_HELP
     invoke ExpandEnvironmentStrings, $OfsCStr("\Help\ObjAsm_Reference_Volume-I.pdf"), \
@@ -626,9 +934,9 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   OCall [xsi].SplitterHorz::Splitter.Init, xsi, [xsi].hWnd, SPT_FLAG_HORIZONTAL, 200, 55, 75
 
   ;Initialize statusbar
-  OCall [xsi].Status::Statusbar.Init, xsi, [xsi].hWnd, offset AppStatusbar
+  OCall [xsi].SBar::Statusbar.Init, xsi, [xsi].hWnd, offset AppStatusbar
 
-  ;Create rebar, toolbars
+  ;Create rebar and toolbars
   OCall [xsi].RBar::Rebar.Init, xsi, [xsi].hWnd
 
   OCall [xsi].TbWindow::Toolbar.Init, xsi, [xsi].hWnd, offset ToolbarWindow, \
@@ -637,6 +945,12 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   OCall [xsi].TbWindow::Toolbar.GetWidth
   OCall [xsi].RBar::Rebar.InsertBand, [xsi].TbWindow.hWnd, eax, ebx
 
+  OCall [xsi].TbEdit::Toolbar.Init, xsi, [xsi].hWnd, offset ToolbarEdit, \
+             addr [xsi].IconImageList, NULL, NULL
+  mov ebx, $32($OCall([xsi].TbEdit::Toolbar.GetHeight))
+  OCall [xsi].TbEdit::Toolbar.GetWidth
+  OCall [xsi].RBar::Rebar.InsertBand, [xsi].TbEdit.hWnd, eax, ebx
+
   OCall [xsi].TbFile::Toolbar.Init, xsi, [xsi].hWnd, offset ToolbarFile, \
              addr [xsi].IconImageList, NULL, NULL
   mov ebx, $32($OCall([xsi].TbFile::Toolbar.GetHeight))
@@ -644,7 +958,7 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   OCall [xsi].RBar::Rebar.InsertBand, [xsi].TbFile.hWnd, eax, ebx
 
   ;Disable toolbar buttons
-  OCall xsi.EnableActions, FALSE
+  OCall xsi.ManageGuiCmds, 0
 
   xor eax, eax
 MethodEnd
@@ -665,6 +979,9 @@ Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
   .if [xsi].hMenuChild
     invoke DestroyMenu, [xsi].hMenuChild
+  .endif
+  .if [xsi].hMenuContextEditor
+    invoke DestroyMenu, [xsi].hMenuContextEditor
   .endif
   .if [xsi].hAccelerators
     invoke DestroyAcceleratorTable, [xsi].hAccelerators
@@ -712,11 +1029,11 @@ Method Application.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
     invoke MoveWindow, [xsi].RBar.hWnd, 0, 0, dWidth, eax, FALSE
 
     ;Place statusbar
-    invoke GetWindowRect, [xsi].Status.hWnd, addr SbRect
+    invoke GetWindowRect, [xsi].SBar.hWnd, addr SbRect
     mov eax, SbRect.bottom
     sub eax, SbRect.top
     sub dHeight, eax
-    invoke MoveWindow, [xsi].Status.hWnd, 0, dHeight, dWidth, eax, FALSE
+    invoke MoveWindow, [xsi].SBar.hWnd, 0, dHeight, dWidth, eax, FALSE
     mov ecx, dTop
     sub dHeight, ecx
 
@@ -814,7 +1131,7 @@ MethodEnd
 
 Method Application.StatusbarHelp,, pHelpStr:PSTRING
   SetObject xcx
-  OCall [xcx].Status::Statusbar.SetPartText, 0, pHelpStr, SBT_NOBORDERS
+  OCall [xcx].SBar::Statusbar.SetPartText, 0, pHelpStr, SBT_NOBORDERS
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -861,3 +1178,4 @@ Method Application.Store, uses xsi, pStream:$ObjPtr(Stream)
   ;Store MDI client window object & MDI child window objects
   OCall pStream::Stream.Put, [xsi].pClientWnd
 MethodEnd
+

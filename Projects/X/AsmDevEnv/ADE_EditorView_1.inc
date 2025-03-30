@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ADE_EditorView_1.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm Assembler Development Environment.
 ; ==================================================================================================
 
@@ -315,7 +315,7 @@ Method EditorView.CaretSet, uses xdi xsi
       mov eax, [xsi].sdCaretVisLineOffset
       cmp eax, 0 
       .if !SIGN? && eax <= [xsi].dLineMaxPartVis
-        mul [xsi].dTextLineHeight
+        mul [xdi].$Obj(EditorResources).dTextLineHeight
         mov CaretPosition.y, eax
 
         ;Add offset to the caret position
@@ -355,15 +355,33 @@ Method EditorView.CaretShow, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     EditorView.ClipboardCopy
+; Method:     EditorView.ClpBrdDelete
+; Purpose:    Clipboard delete opration.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method EditorView.ClpBrdDelete, uses xsi
+  local RefLoc:LOCATION
+
+;  DbgText "EditorView.ClpBrdDelete"
+  SetObject xsi
+  OCall xsi.CaretRefLocSave, addr RefLoc                ;Calculate a caret reference position before deletion
+  mov xcx, [xsi].pOwner
+  OCall [xcx].$Obj(EditorDisplay).pOwner::Editor.SelectionDelete
+  OCall xsi.CaretRefLocLoad, addr RefLoc                ;Restore caret info
+  mov eax, TRUE
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     EditorView.ClpBrdCopy
 ; Purpose:    Clipboard copy opration.
 ; Arguments:  None.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method EditorView.ClipboardCopy, uses xbx xdi xsi
-  local dResult:DWORD, hBuffer:HANDLE, pGlobalMem:POINTER, dCharCounter:DWORD
+Method EditorView.ClpBrdCopy, uses xbx xdi xsi
+  local dResult:DWORD, hBuffer:HANDLE, pGlobalMem:POINTER
 
-;  DbgText "EditorView.ClipboardCopy"
+;  DbgText "EditorView.ClpBrdCopy"
   SetObject xsi
   mov xcx, [xsi].pOwner
   mov xbx, [xcx].$Obj(EditorDisplay).pOwner             ;xbx -> Editor
@@ -435,24 +453,28 @@ Method EditorView.ClipboardCopy, uses xbx xdi xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     EditorView.ClipboardCut
+; Method:     EditorView.ClpBrdCut
 ; Purpose:    Clipboard cut opration.
 ; Arguments:  None.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method EditorView.ClipboardCut, uses xsi
-;  DbgText "EditorView.ClipboardCut"
+Method EditorView.ClpBrdCut, uses xsi
+  local RefLoc:LOCATION
+  
+;  DbgText "EditorView.ClpBrdCut"
   SetObject xsi
-  OCall xsi.ClipboardCopy
+  OCall xsi.ClpBrdCopy
   .if eax != FALSE
+    OCall xsi.CaretRefLocSave, addr RefLoc              ;Calculate a caret reference position before deletion
     mov xcx, [xsi].pOwner
     OCall [xcx].$Obj(EditorDisplay).pOwner::Editor.SelectionDelete
+    OCall xsi.CaretRefLocLoad, addr RefLoc              ;Restore caret info
     mov eax, TRUE
   .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     EditorView.ClipboardPaste
+; Method:     EditorView.ClpBrdPaste
 ; Purpose:    Clipboard paste opration.
 ; Arguments:  None.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
@@ -460,16 +482,18 @@ MethodEnd
 ; Note:       CF_TEXT = Each line ends with a carriage return/linefeed (CR-LF) combination. 
 ;             A null character signals the end of the data. Use this format for ANSI text.
 
-Method EditorView.ClipboardPaste, uses xbx xdi xsi
-  local pTextLine:$ObjPtr(EditorTextLine), dResult:DWORD
-  local dBreakIndex:DWORD, pGlobalMem:POINTER, dCharIndex:DWORD, dLineNumber:DWORD
+Method EditorView.ClpBrdPaste, uses xbx xdi xsi
+  local pTextLine:$ObjPtr(EditorTextLine), dResult:DWORD, RefLoc:LOCATION
+  local pGlobalMem:POINTER, dCharIndex:DWORD, dLineNumber:DWORD
 
-;  DbgText "EditorView.ClipboardPaste"
+;  DbgText "EditorView.ClpBrdPaste"
   SetObject xsi
   mov xcx, [xsi].pOwner
   mov xbx, [xcx].$Obj(EditorDisplay).pOwner
   mov dResult, FALSE
+  OCall xsi.CaretRefLocSave, addr RefLoc                ;Calculate a caret reference position before deletion
   OCall xbx::Editor.SelectionDelete
+  OCall xsi.CaretRefLocLoad, addr RefLoc                ;Restore caret info
   invoke IsClipboardFormatAvailable, CF_TEXT + (CF_UNICODETEXT - CF_TEXT)*(sizeof(CHR) - sizeof(CHRA))
   .if eax != FALSE
     invoke OpenClipboard, [xsi].hWnd
@@ -521,7 +545,6 @@ Method EditorView.ClipboardPaste, uses xbx xdi xsi
           m2m [xsi].CaretLocation.pTextLine, pTextLine, xax
           m2m [xsi].CaretLocation.dLineNumber, dLineNumber, eax
           m2m [xsi].CaretLocation.dCharIndex, dCharIndex, eax
-          OCall xsi.CaretSet
 
           invoke GlobalUnlock, pGlobalMem
           mov dResult, TRUE
@@ -555,7 +578,7 @@ Method EditorView.ClientPos2Index, uses xbx xdi xsi, pIndex:PPOINT, pClientPos:P
   .if SIGN?
     dec edx                                             ;Adjust edx if eax is negative
   .endif                                                ;sbb can not be used when eax is negative
-  idiv [xsi].dTextLineHeight
+  idiv [xbx].$Obj(EditorResources).dTextLineHeight
   ;Store result
   mov xdx, pIndex
   mov [xdx].POINT.y, eax
@@ -580,34 +603,6 @@ Method EditorView.ClientPos2Index, uses xbx xdi xsi, pIndex:PPOINT, pClientPos:P
   ;Store result
   mov xdx, pIndex
   mov [xdx].POINT.x, eax
-MethodEnd
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     EditorView.ClientPos2Location
-; Purpose:    Convert cursor coords to caret location.
-; Arguments:  Arg1: -> LOCATION structure
-;             Arg2: -> POINT structure with the the position in client coords.
-; Return:     Nothing.
-
-Method EditorView.ClientPos2Location, uses xbx xsi, pLocation:PLOCATION, pClientPos:PPOINT
-  local Index:POINT
-
-;  DbgText "EditorView.ClientPos2Location"
-  SetObject xsi
-  mov xbx, pLocation
-  OCall xsi.ClientPos2Index, addr Index, pClientPos
-  mov edx, Index.y
-  mov [xsi].sdCaretVisLineOffset, edx 
-  OCall xsi.VertIndex2TextLine, edx
-  mov [xbx].LOCATION.pTextLine, xax
-  OCall xsi.VertIndex2LineNumber, Index.y
-  mov [xbx].LOCATION.dLineNumber, eax
-  mov edx, Index.x
-  .if SDWORD ptr edx < 0
-    xor edx, edx
-  .endif
-  add edx, [xsi].d1stVisCharIndex
-  mov [xbx].LOCATION.dCharIndex, edx
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -654,7 +649,7 @@ Method EditorView.DrawSelectionBar, uses xbx xdi xsi
   mov CurrLineIndicatorRect.top, ecx
   mov PrevLineIndicatorRect.bottom, ecx
 
-  mov edx, [xsi].dTextLineHeight
+  mov edx, [xdi].$Obj(EditorResources).dTextLineHeight
   mov LineNumberRect.bottom, edx
   mov LineFoldingRect.bottom, edx
   mov NextLineIndicatorRect.bottom, edx
@@ -722,7 +717,8 @@ Method EditorView.DrawSelectionBar, uses xbx xdi xsi
     .break .if xax == NULL
     mov xdi, xax
     add ebx, ecx
-    mov eax, [xsi].dTextLineHeight
+    mov xcx, [xsi].pResources
+    mov eax, [xcx].$Obj(EditorResources).dTextLineHeight
     add LineNumberRect.top, eax
     add LineNumberRect.bottom, eax
     add LineFoldingRect.top, eax
@@ -856,7 +852,7 @@ Method EditorView.Init, uses xbx xdi xsi, pOwner:POINTER, pRect:PRECT, pResource
   ;Calculate the line height
   mov ecx, [xax].$Obj(EditorResources).dCodeLineSpace
   add ecx, [xax].$Obj(EditorResources).EditorTextRegular.FontMetric.y
-  mov [xsi].dTextLineHeight, ecx
+  mov [xax].$Obj(EditorResources).dTextLineHeight, ecx
 
   ;Set 1st visible line
   mov xdx, pOwner
@@ -909,6 +905,139 @@ Method EditorView.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   mov [xdx].$Obj(Editor).SelectionFst.pTextLine, xax
   mov [xdx].$Obj(Editor).SelectionFst.dCharIndex, 0
   mov [xdx].$Obj(Editor).SelectionFst.dLineNumber, 1
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     EditorView.OnGesture
+; Purpose:    Event procedure for WM_GESTURE message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter. lParam = info HANDLE identifying the gesture command
+; Return:     eax = Zero if handled.
+; Link:       https://docs.microsoft.com/en-us/windows/win32/wintouch/improving-the-single-finger-panning-experience
+
+Method EditorView.OnGesture, uses xsi, wParam:WPARAM, lParam:LPARAM
+  local GestInfo:GESTUREINFO, bHandled:BOOL, dNeedRedrawing:DWORD
+  local dControlKeyPressed:DWORD
+
+  ;DbgText "ChartWnd.OnGesture"
+  SetObject xsi
+  mov dNeedRedrawing, FALSE
+  mov bHandled, FALSE
+  mov dControlKeyPressed, 0
+
+  ;Get status of modifier keys
+  invoke GetKeyState, VK_CONTROL
+  .ifBitSet eax, BIT07
+    mov dControlKeyPressed, TRUE
+  .endif
+
+  ;Populate and retrieve the extra message info.
+  invoke MemZero, addr GestInfo, sizeof GestInfo
+  mov GestInfo.cbSize, sizeof GestInfo
+  invoke GetGestureInfo, lParam, addr GestInfo
+
+  .if eax != FALSE
+    ;Now interpret the gesture
+    .if GestInfo.dwID == GID_ZOOM
+      .ifBitSet GestInfo.dwFlags, GF_BEGIN
+        mov eax, DWORD ptr GestInfo.ullArguments
+        mov [xsi].dGestureZoomFirst, eax
+        mov [xsi].dGestureZoomLast, eax
+        mov xcx, [xsi].pResources
+        m2m [xcx].$Obj(EditorResources).dInitZoomFactor, [xcx].$Obj(EditorResources).dZoomFactor, edx
+      .else
+        mov ecx, DWORD ptr GestInfo.ullArguments
+        .if ecx != [xsi].dGestureZoomLast             ;Take an action if the value has changed
+          mov [xsi].dGestureZoomLast, ecx             ;Remember the last value
+          mov eax, ecx
+          sub eax, [xsi].dGestureZoomFirst            ;Calc the difference
+          sal eax, 1                                  ;Scale it by x2
+          mov xcx, [xsi].pResources
+          add eax, [xcx].$Obj(EditorResources).dInitZoomFactor  ;Add the opeation initial value
+          OCall xcx::EditorResources.Zoom, eax
+          .if eax != FALSE
+            mov xax, [xsi].pOwner
+            mov xcx, [xax].$Obj(EditorDisplay).pOwner
+            OCall [xcx].$Obj(Editor).pOwner::ClientWnd.UpdateEditors
+            inc dNeedRedrawing
+          .endif
+        .endif
+      .endif
+
+      .if dNeedRedrawing
+        invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW
+      .endif
+      mov bHandled, TRUE
+
+    .elseif GestInfo.dwID == GID_PAN
+      ;Code for panning goes here
+      .ifBitSet GestInfo.dwFlags, GF_BEGIN
+        movsx eax, GestInfo.ptsLocation.x
+        movsx ecx, GestInfo.ptsLocation.y
+        mov [xsi].GesturePanPos.x, eax
+        mov [xsi].GesturePanPos.y, ecx
+
+      .else
+        .if dControlKeyPressed
+          mov xax, [xsi].pOwner
+          mov edx, [xax].$Obj(EditorDisplay).ScrollPage.x
+        .else
+          mov edx, 1
+        .endif
+        movsx ecx, GestInfo.ptsLocation.x
+        mov eax, ecx
+        sub eax, [xsi].GesturePanPos.x
+        mov [xsi].GesturePanPos.x, ecx
+        .if SIGN?
+          OCall xsi.ScrollPageRight, edx
+          add dNeedRedrawing, eax
+        .elseif !ZERO?
+          OCall xsi.ScrollPageLeft, edx
+          add dNeedRedrawing, eax
+        .endif
+
+        .if dControlKeyPressed
+          mov xax, [xsi].pOwner
+          mov edx, [xax].$Obj(EditorDisplay).ScrollPage.y
+        .else
+          mov edx, 1
+        .endif
+        movsx ecx, GestInfo.ptsLocation.y
+        mov eax, ecx
+        sub eax, [xsi].GesturePanPos.y
+        mov [xsi].GesturePanPos.y, ecx
+        DbgDec eax
+        .if SIGN?
+          OCall xsi.ScrollVisPageDown, edx
+          .if eax != 0
+            inc dNeedRedrawing
+            dec [xsi].sdCaretVisLineOffset
+          .endif
+        .elseif !ZERO?
+          OCall xsi.ScrollVisPageUp, edx
+          .if eax != 0
+            inc dNeedRedrawing
+            inc [xsi].sdCaretVisLineOffset
+          .endif
+        .endif
+
+        .if dNeedRedrawing
+          invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW
+          OCall xsi.CaretSet
+        .endif
+
+      .endif
+      mov bHandled, TRUE
+
+      invoke CloseGestureInfoHandle, lParam             ;Close the gesture handle
+    .endif
+  .endif
+
+  .if bHandled
+    xor eax, eax
+  .else
+    invoke DefWindowProc, [xsi].hWnd, WM_GESTURE, wParam, lParam
+  .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1046,10 +1175,10 @@ Method EditorView.OnLButtonDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     ;In regular mode, limit the x position to the text length
     .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_BLOCK_MODE
       mov edx, [xax].$Obj(EditorTextLine).dLength
-      sub edx, [xsi].d1stVisCharIndex
+      sub edx, [xsi].d1stVisCharIndex                   ;edx can be negative!
       mov ecx, Index.x
       cmp ecx, edx
-      cmova ecx, edx
+      cmovg ecx, edx
       mov Index.x, ecx
     .endif
     mov xdi, xax
@@ -1061,7 +1190,13 @@ Method EditorView.OnLButtonDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov [xsi].CaretLocation.dCharIndex, edx
     OCall xsi.GetLineNumber, xdi
     mov [xsi].CaretLocation.dLineNumber, eax
-    m2m [xsi].sdCaretVisLineOffset, Index.y, edx    
+    m2m [xsi].sdCaretVisLineOffset, Index.y, edx
+    
+    .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_BLOCK_MODE
+      .if SDWORD ptr Index.x < 0
+        OCall xsi.ScrollCaretInViewLeft
+      .endif
+    .endif
 
     invoke GetKeyState, VK_SHIFT
     .ifBitClr eax, BIT07
@@ -1141,7 +1276,8 @@ MethodEnd
 ; Return:     Nothing.
 
 Method EditorView.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
-  local CursorPos:POINT, CaretLocation:LOCATION
+;  local CursorPos:POINT, CaretLocation:LOCATION
+  local Point:POINT, Index:POINT
 
   ANNOTATION use:wParam lParam
 
@@ -1153,27 +1289,65 @@ Method EditorView.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   BitClr [xsi].dFlags, EVF_LBUTTON_DOWN
   invoke ReleaseCapture
 
-  ;Move the caret to the LButtonUp position
-  PntS2Pnt CursorPos, lParam
-  OCall xsi.ClientPos2Location, addr CaretLocation, addr CursorPos
-  .if CaretLocation.pTextLine != NULL
+  .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_CARET_LOCKED
+    ;Move the caret to the LButtonUp position
+    PntS2Pnt Point, lParam
+    ;Compute Caret Index.x and Index.y
+    OCall xsi.ClientPos2Index, addr Index, addr Point
+    OCall xsi.VertIndex2TextLine, Index.y
+    .if xax == NULL
+      ;Limit the y position to the last visible EditorTextLine
+      mov xax, [xsi].p1stVisLine
+      xor edx, edx
+      .while xax != NULL                                ;Search the last visible EditorTextLine
+        mov xcx, xax
+        GotoNextVisTextLine xax
+        .break .if xax == NULL
+        inc edx
+      .endw
+      mov Index.y, edx
+      mov xax, xcx                                      ;xax -> Last visible EditorTextLine
+    .endif
+    .if xax == NULL
+      mov [xsi].d1stVisCharIndex, 0
+      OCall xsi.CaretHide
+      jmp @@EOM
+    .endif
+  
+    ;In regular mode, limit the x position to the text length
     .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_BLOCK_MODE
-      mov xcx, CaretLocation.pTextLine
-      
-      mov eax, [xcx].$Obj(EditorTextLine).dLength
-      mov ecx, CaretLocation.dCharIndex
-      .if ecx > eax
-        mov CaretLocation.dCharIndex, eax
+      mov edx, [xax].$Obj(EditorTextLine).dLength
+      sub edx, [xsi].d1stVisCharIndex                   ;edx can be negative!
+      mov ecx, Index.x
+      cmp ecx, edx
+      cmovg ecx, edx
+      mov Index.x, ecx
+    .endif
+    
+    .if SDWORD ptr Index.x < 0
+      mov Index.x,0
+    .endif
+    mov xdi, xax
+  
+    ;At this point xdi -> current TextLine, Index.x & Index.y are set
+    mov [xsi].CaretLocation.pTextLine, xdi
+    mov edx, [xsi].d1stVisCharIndex
+    add edx, Index.x
+    mov [xsi].CaretLocation.dCharIndex, edx
+    OCall xsi.GetLineNumber, xdi
+    mov [xsi].CaretLocation.dLineNumber, eax
+    m2m [xsi].sdCaretVisLineOffset, Index.y, edx
+    
+    .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_BLOCK_MODE
+      .if SDWORD ptr Index.x < 0
+        OCall xsi.ScrollCaretInViewLeft
       .endif
     .endif
-    .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_CARET_LOCKED
-      s2s [xsi].CaretLocation, CaretLocation, xmm0, xmm1, xax, xcx
-      OCall xsi.CaretSet
-    .else
-      BitClr [xbx].$Obj(Editor).dFlags, EIF_CARET_LOCKED
-    .endif
-    OCall xsi.CaretShow
+    OCall xsi.CaretSet
+  .else
+    BitClr [xbx].$Obj(Editor).dFlags, EIF_CARET_LOCKED
   .endif
+  OCall xsi.CaretShow
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1292,14 +1466,14 @@ Method EditorView.OnMouseMove, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         ;Scroll the view horizontally to see the caret
         mov ecx, CursorPos1.x
         .if SDWORD ptr ecx >= [xsi].TextRect.right
-          OCall xsi.ScrollVisLineRight
+          OCall xsi.ScrollLineRight
           .if eax != 0
             inc dNeedRedrawing
 ;            DoCursorPositionDelay x, right
 ;            SynthesizeMouseMove
           .endif
         .elseif SDWORD ptr ecx < [xsi].TextRect.left
-          OCall xsi.ScrollVisLineLeft
+          OCall xsi.ScrollLineLeft
           .if eax != 0
             inc dNeedRedrawing
 ;            DoCursorPositionDelay x, left
@@ -1414,17 +1588,15 @@ Method EditorView.OnMouseWheel, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
         ;Regular scroll = 1 Line
         .if SDWORD ptr ecx < 0
           OCall xsi.ScrollVisLineDown              ;Goto next visible line with saturation
-          add dNeedRedrawing, eax
           .if eax != 0
+            inc dNeedRedrawing
             dec [xsi].sdCaretVisLineOffset
-            OCall xsi.CaretSet
           .endif
         .else
           OCall xsi.ScrollVisLineUp                ;Goto previous visible line with saturation
-          add dNeedRedrawing, eax
           .if eax != 0
+            inc dNeedRedrawing
             inc [xsi].sdCaretVisLineOffset
-            OCall xsi.CaretSet
           .endif
         .endif
       .endif
@@ -1434,6 +1606,7 @@ Method EditorView.OnMouseWheel, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
       mov xbx, [xsi].pOwner
       OCall xbx::EditorDisplay.SetGuiLayout
       invoke RedrawWindow, [xbx].$Obj(EditorDisplay).hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
+      OCall xsi.CaretSet
     .endif
   .endif
 
@@ -1475,42 +1648,27 @@ Method EditorView.OnMouseHWheel, uses xsi, wParam:WPARAM, lParam:LPARAM
       ;Page scroll
       mov xax, [xsi].pOwner
       .if SDWORD ptr ecx < 0
-        OCall xsi.ScrollVisPageLeft, [xax].$Obj(EditorDisplay).ScrollPage.x
-        .if eax != 0
-          inc dNeedRedrawing
-          add [xsi].CaretLocation.dCharIndex, ecx
-          OCall xsi.CaretSet
-        .endif
+        OCall xsi.ScrollPageLeft, [xax].$Obj(EditorDisplay).ScrollPage.x
+        add dNeedRedrawing, eax
       .else
-        OCall xsi.ScrollVisPageRight, [xax].$Obj(EditorDisplay).ScrollPage.x
-        .if eax != 0
-          inc dNeedRedrawing
-          add [xsi].CaretLocation.dCharIndex, ecx
-          OCall xsi.CaretSet
-        .endif
+        OCall xsi.ScrollPageRight, [xax].$Obj(EditorDisplay).ScrollPage.x
+        add dNeedRedrawing, eax
       .endif
     .else
       ;Regular scroll = 120 px
       .if SDWORD ptr ecx < 0
-        OCall xsi.ScrollVisLineLeft
-        .if eax != 0
-          inc dNeedRedrawing
-          inc [xsi].CaretLocation.dCharIndex
-          OCall xsi.CaretSet
-        .endif
+        OCall xsi.ScrollLineLeft
+        add dNeedRedrawing, eax
       .else
-        OCall xsi.ScrollVisLineRight
-        .if eax != 0
-          inc dNeedRedrawing
-          dec [xsi].CaretLocation.dCharIndex
-          OCall xsi.CaretSet
-        .endif
+        OCall xsi.ScrollLineRight
+        add dNeedRedrawing, eax
       .endif
     .endif
 
     .if dNeedRedrawing != 0
       mov xax, [xsi].pOwner
       invoke RedrawWindow, [xax].$Obj(EditorDisplay).hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
+      OCall xsi.CaretSet
     .endif
   .endif
 
@@ -1536,7 +1694,7 @@ Method EditorView.OnPaint, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
   ;Loop setup
   mrm CodeLineRect.top, [xsi].TextRect.top, eax
-  add eax, [xsi].dTextLineHeight
+  add eax, [xdi].$Obj(EditorResources).dTextLineHeight
   mov CodeLineRect.bottom, eax
   m2m CodeLineRect.left, [xsi].TextRect.left, edx
   m2m CodeLineRect.right, [xsi].TextRect.right, edx
@@ -1554,7 +1712,7 @@ Method EditorView.OnPaint, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           mov eax, [xsi].TextRect.bottom
           .if CodeLineRect.top < eax
             mov CodeLineRect.bottom, eax
-            mov ecx, [xsi].dTextLineHeight
+            mov ecx, [xdi].$Obj(EditorResources).dTextLineHeight
             add CodeLineRect.top, ecx
             invoke FillRect, [xsi].hTextDC, addr CodeLineRect, [xdi].$Obj(EditorResources).EditorBG.hBrush
           .endif
@@ -1563,7 +1721,7 @@ Method EditorView.OnPaint, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         sub xbx, offset $Obj(EditorTextLine).Link             ;xbx -> EditorTextLine
         test [xbx].$Obj(EditorTextLine).dFlags, TLF_HIDDEN
       .until ZERO?
-      mov ecx, [xsi].dTextLineHeight
+      mov ecx, [xdi].$Obj(EditorResources).dTextLineHeight
       add CodeLineRect.top, ecx
       add CodeLineRect.bottom, ecx
       mov eax, [xsi].TextRect.bottom
@@ -1589,7 +1747,7 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method EditorView.OnRButtonDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
+Method EditorView.OnRButtonDown, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local Point:POINT, Index:POINT
 
   ANNOTATION use:wParam lParam
@@ -1666,7 +1824,7 @@ Method EditorView.OnSetFocus, uses xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov xcx, [xsi].pOwner
   mov xdx, [xcx].$Obj(EditorDisplay).pOwner
-  m2m [xdx].$Obj(Editor).hLastFocusedView, [xsi].hWnd, xax
+  mov [xdx].$Obj(Editor).pFocusedView, xsi
   OCall xsi.CaretNew
   OCall xsi.CaretSet
   OCall xsi.CaretShow
@@ -1708,7 +1866,7 @@ Method EditorView.ScrollCaretInViewLeft, uses xsi
   xor eax, eax                                          ;Return FALSE
   .if ecx < edx
     sub edx, ecx
-    OCall xsi.ScrollVisPageLeft, edx
+    OCall xsi.ScrollPageLeft, edx
   .endif
 MethodEnd
 
@@ -1727,7 +1885,7 @@ Method EditorView.ScrollCaretInViewRight, uses xsi
   xor eax, eax                                          ;Return FALSE
   .if edx >= ecx
     sub edx, ecx
-    OCall xsi.ScrollVisPageRight, edx
+    OCall xsi.ScrollPageRight, edx
   .endif
 MethodEnd
 
@@ -1754,13 +1912,13 @@ Method EditorView.ScrollVisLineDown, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     EditorView.ScrollVisLineLeft
+; Method:     EditorView.ScrollLineLeft
 ; Purpose:    Scroll one line left with saturation.
 ; Arguments:  None.
 ; Return:     eax = 1 if the View must be updated, otherwise 0.
 
-Method EditorView.ScrollVisLineLeft, uses xsi
-;  DbgText "EditorView.ScrollVisLineLeft"
+Method EditorView.ScrollLineLeft, uses xsi
+;  DbgText "EditorView.ScrollLineLeft"
   SetObject xsi
   xor eax, eax                                          ;Set return value to FALSE
   .if [xsi].d1stVisCharIndex != 0
@@ -1772,12 +1930,12 @@ Method EditorView.ScrollVisLineLeft, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     EditorView.ScrollVisLineRight
+; Method:     EditorView.ScrollLineRight
 ; Purpose:    Scroll one line right with saturation.
 ; Arguments:  None.
 ; Return:     eax = 1 if the View must be updated, otherwise 0.
 
-Method EditorView.ScrollVisLineRight, uses xsi
+Method EditorView.ScrollLineRight, uses xsi
   SetObject xsi
   mov xcx, [xsi].pOwner
   mov xdx, [xcx].$Obj(EditorDisplay).pOwner
@@ -1787,10 +1945,6 @@ Method EditorView.ScrollVisLineRight, uses xsi
   sub edx, 1                                            ;Let last char visible
   .if SDWORD ptr edx > [xsi].d1stVisCharIndex
     inc [xsi].d1stVisCharIndex
-    mov ecx, [xsi].CaretLocation.dCharIndex
-    .if ecx < [xsi].d1stVisCharIndex
-      OCall xsi.CaretHide
-    .endif 
     mov xcx, [xsi].pOwner
     invoke SetScrollPos, [xcx].$Obj(EditorDisplay).ScrollBarHorz.hWnd, SB_CTL, [xsi].d1stVisCharIndex, TRUE
     mov eax, 1
@@ -1819,6 +1973,76 @@ Method EditorView.ScrollVisLineUp, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     EditorView.ScrollPageLeft
+; Purpose:    Scroll one page left with saturation.
+; Arguments:  Arg1: Number of lines in a page. If -1 is passed, it scrolls to the leftmost position.
+; Return:     eax = 1 if the View must be updated, otherwise 0.
+;             ecx = Index delta.
+
+Method EditorView.ScrollPageLeft, uses xbx xsi, dPageSize:DWORD
+;  DbgText "EditorView.ScrollPageLeft"
+  xor eax, eax
+  xor ecx, ecx
+  ?mov edx, dPageSize
+  .if edx != 0
+    SetObject xsi
+    mov eax, [xsi].d1stVisCharIndex
+    .if eax != 0
+      .if edx != -1
+        sub eax, edx
+        .if SDWORD ptr eax < 0
+          xor eax, eax
+        .endif
+      .else
+        xor eax, eax
+      .endif
+      mov ebx, [xsi].d1stVisCharIndex
+      sub ebx, eax
+      mov [xsi].d1stVisCharIndex, eax
+      mov xax, [xsi].pOwner
+      invoke SetScrollPos, [xax].$Obj(EditorDisplay).ScrollBarHorz.hWnd, SB_CTL, [xsi].d1stVisCharIndex, TRUE
+      mov ecx, ebx
+      mov eax, 1
+    .endif
+  .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     EditorView.ScrollPageRight
+; Purpose:    Scroll one page right with saturation.
+; Arguments:  Arg1: Number of lines in a page.
+; Return:     eax = 1 if the View must be updated, otherwise 0.
+;             ecx = Index delta (signed).
+
+Method EditorView.ScrollPageRight, uses xbx xsi, dPageSize:DWORD
+;  DbgText "EditorView.ScrollPageRight"
+  xor eax, eax
+  xor ecx, ecx
+  ?mov edx, dPageSize
+  .if edx != 0
+    SetObject xsi
+    mov xcx, [xsi].pOwner
+    mov xbx, [xcx].$Obj(EditorDisplay).pOwner
+    .if edx != -1
+      mov eax, [xsi].d1stVisCharIndex
+      add eax, edx
+      .if SDWORD ptr eax > [xbx].$Obj(Editor).dMaxTextLineChrCount
+        mov eax, [xbx].$Obj(Editor).dMaxTextLineChrCount
+      .endif
+    .else
+      mov eax, [xbx].$Obj(Editor).dMaxTextLineChrCount
+    .endif
+    mov ebx, [xsi].d1stVisCharIndex
+    sub ebx, eax
+    mov [xsi].d1stVisCharIndex, eax
+    mov xax, [xsi].pOwner
+    invoke SetScrollPos, [xax].$Obj(EditorDisplay).ScrollBarHorz.hWnd, SB_CTL, [xsi].d1stVisCharIndex, TRUE
+    mov ecx, ebx
+    mov eax, 1
+  .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     EditorView.ScrollVisPageDown
 ; Purpose:    Scroll one page down with saturation.
 ; Arguments:  Arg1: Number of lines in a page.
@@ -1826,24 +2050,31 @@ MethodEnd
 ;             ecx = Number of scrolled visible lines.
 
 Method EditorView.ScrollVisPageDown, uses xbx xsi, dPageSize:DWORD
+  local dLineNumber:DWORD, dVisLineCount:DWORD
+
   SetObject xsi
   ?mov edx, dPageSize
   mov xax, [xsi].p1stVisLine
   GotoNextVisTextLine xax, edx, ecx, ebx
   .if xax == NULL
     ;Get last visible EditorTextLine
+    add ebx, [xsi].d1StVisLineCount
+    mov dVisLineCount, ebx
+    add ecx, [xsi].d1stVisLineNum
+    mov dLineNumber, ecx
+    
     mov xdx, [xsi].pOwner
     mov xcx, [xdx].$Obj(EditorDisplay).pOwner
     mov xax, [xcx].$Obj(Editor).TextLines.pLastMember
     sub xax, offset $Obj(EditorTextLine).Link
     .ifBitSet [xax].$Obj(EditorTextLine).dFlags, TLF_HIDDEN
-      GotoPrevVisTextLine xax
+      GotoPrevVisTextLine xax,, ecx, ebx
+      sub dVisLineCount, ebx
+      sub dLineNumber, ecx
     .endif
     ;Prepare transfer values
-    mov xcx, [xsi].pOwner
-    mov xdx, [xcx].$Obj(EditorDisplay).pOwner
-    mov ecx, [xdx].$Obj(Editor).dVisTextLineCount
-    mov edx, ecx
+    mov ecx, dLineNumber
+    mov edx, dVisLineCount
   .else
     ;Prepare transfer values
     add ecx, [xsi].d1stVisLineNum
@@ -1863,68 +2094,6 @@ Method EditorView.ScrollVisPageDown, uses xbx xsi, dPageSize:DWORD
   .else
     xor eax, eax
     xor ecx, ecx
-  .endif
-MethodEnd
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     EditorView.ScrollVisPageLeft
-; Purpose:    Scroll one page left with saturation.
-; Arguments:  Arg1: Number of lines in a page.
-; Return:     eax = 1 if the View must be updated, otherwise 0.
-;             ecx = Index delta.
-
-Method EditorView.ScrollVisPageLeft, uses xbx xsi, dPageSize:DWORD
-;  DbgText "EditorView.ScrollVisPageLeft"
-  xor eax, eax
-  .if dPageSize != 0
-    SetObject xsi
-    mov eax, [xsi].d1stVisCharIndex
-    .if eax != 0
-      sub eax, dPageSize
-      .if SDWORD ptr eax < 0
-        xor eax, eax
-      .endif
-      mov ebx, [xsi].d1stVisCharIndex
-      sub ebx, eax
-      mov [xsi].d1stVisCharIndex, eax
-      mov xax, [xsi].pOwner
-      invoke SetScrollPos, [xax].$Obj(EditorDisplay).ScrollBarHorz.hWnd, SB_CTL, [xsi].d1stVisCharIndex, TRUE
-      mov ecx, ebx
-      mov eax, 1
-    .endif
-  .endif
-MethodEnd
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     EditorView.ScrollVisPageRight
-; Purpose:    Scroll one page right with saturation.
-; Arguments:  Arg1: Number of lines in a page.
-; Return:     eax = 1 if the View must be updated, otherwise 0.
-;             ecx = Index delta (signed).
-
-Method EditorView.ScrollVisPageRight, uses xbx xsi, dPageSize:DWORD
-;  DbgText "EditorView.ScrollVisPageRight"
-  xor eax, eax
-  .if dPageSize != 0
-    SetObject xsi
-    mov xcx, [xsi].pOwner
-    mov xbx, [xcx].$Obj(EditorDisplay).pOwner
-
-    mov eax, [xsi].d1stVisCharIndex
-    add eax, dPageSize
-    .if SDWORD ptr eax > [xbx].$Obj(Editor).dMaxTextLineChrCount
-      mov eax, [xbx].$Obj(Editor).dMaxTextLineChrCount
-    .endif
-    mov ebx, [xsi].d1stVisCharIndex
-    sub ebx, eax
-    mov [xsi].d1stVisCharIndex, eax
-    .if eax > [xsi].CaretLocation.dCharIndex
-      OCall xsi.CaretHide
-    .endif
-   mov xax, [xsi].pOwner
-    invoke SetScrollPos, [xax].$Obj(EditorDisplay).ScrollBarHorz.hWnd, SB_CTL, [xsi].d1stVisCharIndex, TRUE
-    mov ecx, ebx
-    mov eax, 1
   .endif
 MethodEnd
 
@@ -1975,29 +2144,6 @@ Method EditorView.ScrollVisPageUp, uses xbx xsi, dPageSize:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     EditorView.SelectUpToCaretLocation
-; Purpose:    Select text up to the current CaretLocation.
-; Arguments:  None.
-; Return:     Nothing.
-
-Method EditorView.SelectUpToCaretLocation, uses xbx xsi
-;  DbgText "EditorView.SelectUpToCaretLocation"
-  SetObject xsi
-  mov xcx, [xsi].pOwner
-  mov xbx, [xcx].$Obj(EditorDisplay).pOwner
-  OCall xbx::Editor.SelectionResetLines
-
-  mov xax, [xsi].CaretLocation.pTextLine
-  mov [xbx].$Obj(Editor).SelectionLst.pTextLine, xax
-  mov edx, [xsi].CaretLocation.dCharIndex
-  mov [xbx].$Obj(Editor).SelectionLst.dCharIndex, edx
-  mov edx, [xsi].CaretLocation.dLineNumber
-  mov [xbx].$Obj(Editor).SelectionLst.dLineNumber, edx
-
-  OCall xbx::Editor.SelectionSet
-MethodEnd
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     EditorView.SelectBeginAtCaretLocation
 ; Purpose:    Set selection begin at caret location.
 ; Arguments:  None.
@@ -2025,13 +2171,36 @@ Method EditorView.SelectBeginAtCaretLocation, uses xbx xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     EditorView.SelectUpToCaretLocation
+; Purpose:    Select text up to the current CaretLocation.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method EditorView.SelectUpToCaretLocation, uses xbx xsi
+;  DbgText "EditorView.SelectUpToCaretLocation"
+  SetObject xsi
+  mov xcx, [xsi].pOwner
+  mov xbx, [xcx].$Obj(EditorDisplay).pOwner
+  OCall xbx::Editor.SelectionResetLines
+
+  mov xax, [xsi].CaretLocation.pTextLine
+  mov [xbx].$Obj(Editor).SelectionLst.pTextLine, xax
+  mov edx, [xsi].CaretLocation.dCharIndex
+  mov [xbx].$Obj(Editor).SelectionLst.dCharIndex, edx
+  mov edx, [xsi].CaretLocation.dLineNumber
+  mov [xbx].$Obj(Editor).SelectionLst.dLineNumber, edx
+
+  OCall xbx::Editor.SelectionSet
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     EditorView.SetGuiLayout
 ; Purpose:    Define the position an size of all GUI elements in the EditorView.
 ; Arguments:  None.
 ; Return:     Nothing.
 
 Method EditorView.SetGuiLayout, uses xbx xdi xsi
-  local ClientRect:RECT, sdLineNumber:SDWORD, dLineNumWidth:DWORD
+  local ClientRect:RECT, dLineNumWidth:DWORD
 
 ;  DbgText "EditorView.SetGuiLayout"
   SetObject xsi
@@ -2069,10 +2238,11 @@ Method EditorView.SetGuiLayout, uses xbx xdi xsi
     mov xax, [xsi].p1stVisLine
     mov edx, [xsi].TextRect.top
     mov ebx, [xsi].d1stVisLineNum
+    mov xdi, [xsi].pResources
     .while TRUE
       GotoNextVisTextLine xax,, ecx
       .break .if xax == NULL
-      add edx, [xsi].dTextLineHeight
+      add edx, [xdi].$Obj(EditorResources).dTextLineHeight
       .break .if edx >= [xsi].TextRect.bottom
       add ebx, ecx
     .endw
@@ -2136,7 +2306,7 @@ Method EditorView.SetGuiLayout, uses xbx xdi xsi
     xor edx, edx
     mov eax, [xsi].TextRect.bottom
     sub eax, [xsi].TextRect.top
-    div [xsi].dTextLineHeight
+    div [xdi].$Obj(EditorResources).dTextLineHeight
     mov [xsi].dLineMaxFullVis, eax
     .if edx != 0
       inc eax
@@ -2148,7 +2318,6 @@ Method EditorView.SetGuiLayout, uses xbx xdi xsi
     mov [xsi].dCharMaxPartVis, 0
     mov [xsi].dLineMaxPartVis, 0
   .endif
-  OCall xsi.CaretSet                                    ;Update Caret position in the view
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

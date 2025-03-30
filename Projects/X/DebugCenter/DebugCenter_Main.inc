@@ -939,11 +939,11 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .ifBitSet eax, TBSTATE_CHECKED
         BitClr eax, TBSTATE_CHECKED
         invoke SendMessage, [xdi].$Obj(Toolbar).hWnd, TB_SETSTATE, IDM_FILE_PIN, eax
-        invoke SetWindowPos, [xsi].hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE
+        invoke SetWindowPos, [xsi].hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE
       .else
         BitSet eax, TBSTATE_CHECKED
         invoke SendMessage, [xdi].$Obj(Toolbar).hWnd, TB_SETSTATE, IDM_FILE_PIN, eax
-        invoke SetWindowPos, [xsi].hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE
+        invoke SetWindowPos, [xsi].hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE or SWP_NOMOVE
       .endif
     .else
       .ifBitSet eax, TBSTATE_CHECKED

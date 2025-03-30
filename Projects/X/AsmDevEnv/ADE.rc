@@ -15,83 +15,83 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 
 // Icons ------------------------------------------------------------------------------------------
-ICON_APP              ICON DISCARDABLE "RES\\ADE.ico"
-ICON_APP_CHILD        ICON DISCARDABLE "ICO\Window_16x16_04.ico"
+ICON_APP                ICON DISCARDABLE "RES\\ADE.ico"
+ICON_APP_CHILD          ICON DISCARDABLE "ICO\Window_16x16_04.ico"
 
-ICON_FILE_NEW         ICON DISCARDABLE "ICO\New_16x16_04.ico"
-ICON_FILE_SETUP       ICON DISCARDABLE "ICO\Setup_16x16_04.ico"
-ICON_FILE_EXIT        ICON DISCARDABLE "ICO\Exit_16x16_04.ico"
-ICON_WINDOW_CASCADE   ICON DISCARDABLE "ICO\WndCascade_16x16_04.ico"
-ICON_WINDOW_TILE_HOR  ICON DISCARDABLE "ICO\WndTileHorz_16x16_04.ico"
-ICON_WINDOW_TILE_VER  ICON DISCARDABLE "ICO\WndTileVert_16x16_04.ico"
-ICON_WINDOW_ARRANGE   ICON DISCARDABLE "ICO\WndArrange_16x16_04.ico"
-ICON_WINDOW_CLOSEALL  ICON DISCARDABLE "ICO\CloseAll_16x16_04.ico"
-ICON_HELP_HELP        ICON DISCARDABLE "ICO\Help_Red_16x16_04.ico"
-ICON_HELP_ABOUT       ICON DISCARDABLE "ICO\Info_Blue_16x16_04.ico"
+ICON_APP_CHILD_BMP      ICON DISCARDABLE "ICO\Brush_16x16_04.ico"
+ICON_APP_CHILD_CHT      ICON DISCARDABLE "ICO\ChartXY_16x16_04.ico"
 
-ICON_FOLDER_OPEN      ICON DISCARDABLE "ICO\FolderOpen_16x16_04.ico"
-ICON_FOLDER_CLOSE     ICON DISCARDABLE "ICO\FolderClose_16x16_04.ico"
-ICON_ARROW_BLUE       ICON DISCARDABLE "ICO\\ArrowBlue_16x16_04.ico"
-ICON_ARROW_GREEN      ICON DISCARDABLE "ICO\\ArrowGreen_16x16_04.ico"
-ICON_ARROW_YELLOW     ICON DISCARDABLE "ICO\\ArrowYellow_16x16_04.ico"
+ICON_FILE_NEW           ICON DISCARDABLE "ICO\New_16x16_04.ico"
+ICON_FILE_OPEN          ICON DISCARDABLE "ICO\Open_16x16_04.ico"
+ICON_FILE_SAVE          ICON DISCARDABLE "ICO\Save_16x16_04.ico"
+ICON_FILE_SAVEAS        ICON DISCARDABLE "ICO\SaveAs_16x16_04.ico"
+ICON_FILE_SAVEALL       ICON DISCARDABLE "ICO\SaveAll_16x16_04.ico"
+ICON_FILE_CLOSE         ICON DISCARDABLE "ICO\Close_16x16_04.ico"
+ICON_FILE_CLOSEALL      ICON DISCARDABLE "ICO\CloseAll_16x16_04.ico"
+ICON_FILE_PAGESETUP     ICON DISCARDABLE "ICO\PageSetup_16x16_04.ico"
+ICON_FILE_PRINTERSETUP  ICON DISCARDABLE "ICO\PrinterSetup_16x16_04.ico"
+ICON_FILE_PRINT         ICON DISCARDABLE "ICO\Print_16x16_04.ico"
+ICON_FILE_PIN           ICON DISCARDABLE "ICO\Pin_16x16_04.ico"
+ICON_FILE_SETUP         ICON DISCARDABLE "ICO\Setup_16x16_04.ico"
+ICON_FILE_EXIT          ICON DISCARDABLE "ICO\Exit_16x16_04.ico"
 
-ICON_OPEN             ICON DISCARDABLE "ICO\Open_16x16_04.ico"
-ICON_SAVE             ICON DISCARDABLE "ICO\Save_16x16_04.ico"
-ICON_CLOSE            ICON DISCARDABLE "ICO\Close_16x16_04.ico"
+ICON_EDIT_CUT           ICON DISCARDABLE "ICO\Cut_16x16_04.ico"
+ICON_EDIT_COPY          ICON DISCARDABLE "ICO\Copy_16x16_04.ico"
+ICON_EDIT_PASTE         ICON DISCARDABLE "ICO\Paste_16x16_04.ico"
+ICON_EDIT_CLEAR         ICON DISCARDABLE "ICO\Erase_16x16_04.ico"
+ICON_EDIT_FIND          ICON DISCARDABLE "ICO\Search_16x16_04.ico"
 
-ICON_OK               ICON DISCARDABLE "ICO\OK_16x16_04.ico"
-ICON_CANCEL           ICON DISCARDABLE "ICO\Cancel_16x16_04.ico"
+ICON_WINDOW_CASCADE     ICON DISCARDABLE "ICO\WndCascade_16x16_04.ico"
+ICON_WINDOW_TILE_HOR    ICON DISCARDABLE "ICO\WndTileHorz_16x16_04.ico"
+ICON_WINDOW_TILE_VER    ICON DISCARDABLE "ICO\WndTileVert_16x16_04.ico"
+ICON_WINDOW_ARRANGE     ICON DISCARDABLE "ICO\WndArrange_16x16_04.ico"
+ICON_WINDOW_NEXT        ICON DISCARDABLE "ICO\Right_16x16_04.ico"
+ICON_WINDOW_PREV        ICON DISCARDABLE "ICO\Left_16x16_04.ico"
+ICON_WINDOW_ZOOMIN      ICON DISCARDABLE "ICO\Font_Larger_16x16_04.ico"
+ICON_WINDOW_ZOOMOUT     ICON DISCARDABLE "ICO\Font_Smaller_16x16_04.ico"
 
-ICON_CONTEXT_SAVE     ICON DISCARDABLE "ICO\Context_Save_16x16_04.ico"
-ICON_CONTEXT_LOAD     ICON DISCARDABLE "ICO\Context_Load_16x16_04.ico"
+ICON_HELP_HELP          ICON DISCARDABLE "ICO\Help_Red_16x16_04.ico"
+ICON_HELP_ABOUT         ICON DISCARDABLE "ICO\Info_Blue_16x16_04.ico"
+
+ICON_OPEN               ICON DISCARDABLE "ICO\Open_16x16_04.ico"
+ICON_SAVE               ICON DISCARDABLE "ICO\Save_16x16_04.ico"
+ICON_CLOSE              ICON DISCARDABLE "ICO\Close_16x16_04.ico"
+                        
+ICON_OK                 ICON DISCARDABLE "ICO\OK_16x16_04.ico"
+ICON_CANCEL             ICON DISCARDABLE "ICO\Cancel_16x16_04.ico"
+                        
+ICON_CONTEXT_SAVE       ICON DISCARDABLE "ICO\Context_Save_16x16_04.ico"
+ICON_CONTEXT_LOAD       ICON DISCARDABLE "ICO\Context_Load_16x16_04.ico"
+
+// Button icons
+ICON_BLOT               ICON DISCARDABLE "ICO\Blot_16x16_04.ico"
+ICON_PREVIEW            ICON DISCARDABLE "ICO\Refresh_16x16_04.ico"
+
+// DialogAboutEx icons
+ICON_LINK               ICON DISCARDABLE "ICO\Link_16x16_04.ico"
+ICON_MAIL               ICON DISCARDABLE "ICO\Mail_16x16_04.ico"
 
 
 // Cursors ----------------------------------------------------------------------------------------
-CURSOR_HAND           CURSOR DISCARDABLE "CUR\Hand.cur"           ;Used by DialogAboutEx
-CURSOR_SELECT         CURSOR DISCARDABLE "CUR\Select.cur"
-CURSOR_SPLITHOR       CURSOR DISCARDABLE "CUR\SplitHor.cur"
-CURSOR_SPLITVER       CURSOR DISCARDABLE "CUR\SplitVer.cur"
+CURSOR_HAND             CURSOR DISCARDABLE "CUR\Hand.cur"         ;Used by DialogAboutEx
+CURSOR_SELECT           CURSOR DISCARDABLE "CUR\Select.cur"
+CURSOR_SPLITHOR         CURSOR DISCARDABLE "CUR\SplitHor.cur"
+CURSOR_SPLITVER         CURSOR DISCARDABLE "CUR\SplitVer.cur"
 
-// Bitmaps ----------------------------------------------------------------------------------------
-BMP_BACKGROUND        BITMAP "BMP\WndBkgnd.bmp"
-BMP_MENUSIDEBAR_1     BITMAP "BMP\OA_Vert.bmp"
-BMP_IND_RED           BITMAP "Res\IndRed.bmp"
-BMP_IND_GREEN         BITMAP "Res\IndGreen.bmp"
-BMP_IND_YELLOW        BITMAP "Res\IndYellow.bmp"
+// Bitmaps -----------------------------------------------------------------------------------------
+BMP_BACKGROUND          BITMAP "BMP\WndBkgnd.bmp"
+BMP_MENUSIDEBAR         BITMAP "BMP\OA_Vert.bmp"
+BMP_IND_RED             BITMAP "Res\IndRed.bmp"
+BMP_IND_GREEN           BITMAP "Res\IndGreen.bmp"
+BMP_IND_YELLOW          BITMAP "Res\IndYellow.bmp"
 
 // PNG --------------------------------------------------------------------------------------------
-PNG_ADE               IMAGE  "Res\\ADE_1024x1024.png"
+PNG_ADE                 IMAGE  "Res\\ADE_1024x1024.png"
 
 // Dialogs ----------------------------------------------------------------------------------------
 #include "Res\ADE_AboutDlg.rc"
+#include "Res\ADE_FindDlg.rc"
 
-DIALOGSETUP DIALOGEX DISCARDABLE  0, 0, 200, 140
-STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | DS_CENTERMOUSE | WS_CAPTION | WS_SYSMENU | WS_POPUP
-EXSTYLE WS_EX_DLGMODALFRAME
-CAPTION "Application Setup"
-FONT 9, "Segoe UI"
-BEGIN
-  CONTROL "ICON_OK|&OK",         IDOK    , "IconButton", WS_TABSTOP | BS_DEFPUSHBUTTON, 140, 119, 50, 16
-  CONTROL "ICON_CANCEL|&Cancel", IDCANCEL, "IconButton", WS_TABSTOP | BS_PUSHBUTTON,    080, 119, 50, 16
-END
-
-SETUPTAB1 DIALOGEX DISCARDABLE 1, 13, 193, 88
-STYLE WS_CHILD
-FONT 9, "Segoe UI"
-BEGIN
-  GROUPBOX  "Group 1", -1, 3, 3, 185, 80
-  CONTROL   "", IDC_CONTROL, "STATIC", 0, 9, 15, 172, 62, WS_EX_CLIENTEDGE
-END
-
-SETUPTAB2 DIALOGEX DISCARDABLE 1, 13, 193, 88
-STYLE WS_CHILD
-FONT 9, "Segoe UI"
-BEGIN
-  AUTORADIOBUTTON   "Choice &1", IDC_CHOICE1, 9, 12, 40, 14, WS_GROUP
-  AUTORADIOBUTTON   "Choice &2", IDC_CHOICE2, 9, 24, 40, 14
-  AUTORADIOBUTTON   "Choice &3", IDC_CHOICE3, 9, 36, 40, 14
-  AUTORADIOBUTTON   "&None",     IDC_CHOICE4, 9, 48, 40, 14
-END
 
 // Menus ------------------------------------------------------------------------------------------
 
@@ -99,36 +99,31 @@ MDIMENUINIT MENUEX DISCARDABLE
 BEGIN
   POPUP "$00",          IDM_FILE,               MFT_STRING, MFS_ENABLED
   BEGIN
-    MENUITEM "*|SB1|BMP_MENUSIDEBAR_1", 0,      MFT_STRING, MFS_ENABLED
+    MENUITEM "*|SB1|BMP_MENUSIDEBAR", 0,        MFT_STRING, MFS_ENABLED
     MENUITEM "02$01",   IDM_FILE_NEW,           MFT_STRING, MFS_ENABLED
-    MENUITEM "02$02",   IDM_FILE_OPEN,          MFT_STRING, MFS_ENABLED
-    MENUITEM "-$04",    1000,                   MFT_STRING, MFS_ENABLED
-    MENUITEM "13$05",   IDM_FILE_SAVE_CTX,      MFT_STRING, MFS_ENABLED
-    MENUITEM "14$06",   IDM_FILE_LOAD_CTX,      MFT_STRING, MFS_ENABLED
-    MENUITEM "04$07",   IDM_FILE_SETUP,         MFT_STRING, MFS_ENABLED
-    MENUITEM "05$08",   IDM_FILE_EXIT,          MFT_STRING, MFS_ENABLED
-    MENUITEM "Break",   IDM_BREAK,              MFT_STRING, MFS_ENABLED
-  END
-  POPUP "$20",          IDM_EDIT,               MFT_STRING, MFS_ENABLED
-  BEGIN
-    MENUITEM "14$21",   IDM_EDIT_CUT,           MFT_STRING, MFS_ENABLED
-    MENUITEM "15$22",   IDM_EDIT_COPY,          MFT_STRING, MFS_ENABLED
-    MENUITEM "16$23",   IDM_EDIT_PASTE,         MFT_STRING, MFS_ENABLED
-    MENUITEM "17$24",   IDM_EDIT_CLEAR,         MFT_STRING, MFS_ENABLED
-    MENUITEM "$25",     IDM_EDIT_SELECTALL,     MFT_STRING, MFS_ENABLED
+    MENUITEM "03$02",   IDM_FILE_OPEN,          MFT_STRING, MFS_ENABLED
+    MENUITEM "-$08",    1000,                   MFT_STRING, MFS_ENABLED
+    MENUITEM "09$09",   IDM_FILE_PAGESETUP,     MFT_STRING, MFS_ENABLED
+    MENUITEM "10$10",   IDM_FILE_PRINTERSETUP,  MFT_STRING, MFS_ENABLED
+    MENUITEM "-$12",    1001,                   MFT_STRING, MFS_ENABLED
+    MENUITEM "12$13",   IDM_FILE_PIN,           MFT_STRING, MFS_ENABLED
+    MENUITEM "13$14",   IDM_FILE_SETUP,         MFT_STRING, MFS_ENABLED
     MENUITEM "-|",      1002,                   MFT_STRING, MFS_ENABLED
-    MENUITEM "20$26",   IDM_EDIT_FIND,          MFT_STRING, MFS_ENABLED
+    MENUITEM "14$15",   IDM_FILE_EXIT,          MFT_STRING, MFS_ENABLED
+    MENUITEM "|Break",  IDM_FILE_BREAK,         MFT_STRING, MFS_ENABLED
   END
   POPUP "$40",          IDM_LANGUAGE,           MFT_STRING, MFS_ENABLED
   BEGIN
     MENUITEM "o$41",    IDM_LANGUAGE_ENGLISH,   MFT_STRING, MFS_ENABLED | MFS_CHECKED
     MENUITEM "o$42",    IDM_LANGUAGE_GERMAN,    MFT_STRING, MFS_ENABLED
-    MENUITEM "o$43",    IDM_LANGUAGE_SPANISH,   MFT_STRING, MFS_ENABLED
+    MENUITEM "o$43",    IDM_LANGUAGE_ITALIAN,   MFT_STRING, MFS_ENABLED
+    MENUITEM "o$44",    IDM_LANGUAGE_RUSSIAN,   MFT_STRING, MFS_ENABLED
+    MENUITEM "o$45",    IDM_LANGUAGE_SPANISH,   MFT_STRING, MFS_ENABLED
   END
-  POPUP "$80",          IDM_HELP,               MFT_STRING, MFS_ENABLED
+  POPUP "$60",          IDM_HELP,               MFT_STRING, MFS_ENABLED
   BEGIN
-    MENUITEM "11$81",   IDM_HELP_HELP,          MFT_STRING, MFS_ENABLED
-    MENUITEM "12$82",   IDM_HELP_ABOUT,         MFT_STRING, MFS_ENABLED
+    MENUITEM "31$61",   IDM_HELP_HELP,          MFT_STRING, MFS_ENABLED
+    MENUITEM "32$62",   IDM_HELP_ABOUT,         MFT_STRING, MFS_ENABLED
   END
 END
 
@@ -136,67 +131,106 @@ MDIMENUCHILD MENUEX DISCARDABLE
 BEGIN
   POPUP "$00",          IDM_FILE,               MFT_STRING, MFS_ENABLED
   BEGIN
-    MENUITEM "*|SB1|BMP_MENUSIDEBAR_1", 0,      MFT_STRING, MFS_ENABLED
+    MENUITEM "*|SB1|BMP_MENUSIDEBAR", 0,        MFT_STRING, MFS_ENABLED
     MENUITEM "02$01",   IDM_FILE_NEW,           MFT_STRING, MFS_ENABLED
-    MENUITEM "02$02",   IDM_FILE_OPEN,          MFT_STRING, MFS_ENABLED
-    MENUITEM "Save All",IDM_FILE_SAVE_ALL,      MFT_STRING, MFS_ENABLED
-    MENUITEM "Save",    IDM_FILE_SAVE,          MFT_STRING, MFS_ENABLED
-    MENUITEM "Save As", IDM_FILE_SAVE_AS,       MFT_STRING, MFS_ENABLED
-    MENUITEM "03$04",   IDM_FILE_CLOSE,         MFT_STRING, MFS_ENABLED
-    MENUITEM "-$05",    1000,                   MFT_STRING, MFS_ENABLED
-    MENUITEM "13$06",   IDM_FILE_SAVE_CTX,      MFT_STRING, MFS_ENABLED
-    MENUITEM "14$07",   IDM_FILE_LOAD_CTX,      MFT_STRING, MFS_ENABLED
-    MENUITEM "04$08",   IDM_FILE_SETUP,         MFT_STRING, MFS_ENABLED
-    MENUITEM "05$09",   IDM_FILE_EXIT,          MFT_STRING, MFS_ENABLED
-    MENUITEM "Break",   IDM_BREAK,              MFT_STRING, MFS_ENABLED
+    MENUITEM "03$02",   IDM_FILE_OPEN,          MFT_STRING, MFS_ENABLED
+    MENUITEM "04$03",   IDM_FILE_SAVE,          MFT_STRING, MFS_ENABLED
+    MENUITEM "05$04",   IDM_FILE_SAVEAS,        MFT_STRING, MFS_ENABLED
+    MENUITEM "06$05",   IDM_FILE_SAVEALL,       MFT_STRING, MFS_ENABLED
+    MENUITEM "07$06",   IDM_FILE_CLOSE,         MFT_STRING, MFS_ENABLED
+    MENUITEM "08$07",   IDM_FILE_CLOSEALL,      MFT_STRING, MFS_ENABLED
+    MENUITEM "-$08",    1000,                   MFT_STRING, MFS_ENABLED
+    MENUITEM "09$09",   IDM_FILE_PAGESETUP,     MFT_STRING, MFS_ENABLED
+    MENUITEM "10$10",   IDM_FILE_PRINTERSETUP,  MFT_STRING, MFS_ENABLED
+    MENUITEM "11$11",   IDM_FILE_PRINT,         MFT_STRING, MFS_ENABLED
+    MENUITEM "-$12",    1001,                   MFT_STRING, MFS_ENABLED
+    MENUITEM "12$13",   IDM_FILE_PIN,           MFT_STRING, MFS_ENABLED
+    MENUITEM "13$14",   IDM_FILE_SETUP,         MFT_STRING, MFS_ENABLED
+    MENUITEM "-|",      1002,                   MFT_STRING, MFS_ENABLED
+    MENUITEM "14$15",   IDM_FILE_EXIT,          MFT_STRING, MFS_ENABLED
+    MENUITEM "|Break",  IDM_FILE_BREAK,         MFT_STRING, MFS_ENABLED
   END
   POPUP "$20",          IDM_EDIT,               MFT_STRING, MFS_ENABLED
   BEGIN
-    MENUITEM "14$21",   IDM_EDIT_CUT,           MFT_STRING, MFS_ENABLED
-    MENUITEM "15$22",   IDM_EDIT_COPY,          MFT_STRING, MFS_ENABLED
-    MENUITEM "16$23",   IDM_EDIT_PASTE,         MFT_STRING, MFS_ENABLED
-    MENUITEM "17$24",   IDM_EDIT_CLEAR,         MFT_STRING, MFS_ENABLED
+    MENUITEM "15$21",   IDM_EDIT_CUT,           MFT_STRING, MFS_ENABLED
+    MENUITEM "16$22",   IDM_EDIT_COPY,          MFT_STRING, MFS_ENABLED
+    MENUITEM "17$23",   IDM_EDIT_PASTE,         MFT_STRING, MFS_ENABLED
+    MENUITEM "18$24",   IDM_EDIT_DELETE,        MFT_STRING, MFS_ENABLED
     MENUITEM "$25",     IDM_EDIT_SELECTALL,     MFT_STRING, MFS_ENABLED
     MENUITEM "-|",      1002,                   MFT_STRING, MFS_ENABLED
-    MENUITEM "20$26",   IDM_EDIT_FIND,          MFT_STRING, MFS_ENABLED
+    MENUITEM "19$26",   IDM_EDIT_FIND,          MFT_STRING, MFS_ENABLED
   END
   POPUP "$40",          IDM_LANGUAGE,           MFT_STRING, MFS_ENABLED
   BEGIN
     MENUITEM "o$41",    IDM_LANGUAGE_ENGLISH,   MFT_STRING, MFS_ENABLED | MFS_CHECKED
     MENUITEM "o$42",    IDM_LANGUAGE_GERMAN,    MFT_STRING, MFS_ENABLED
-    MENUITEM "o$43",    IDM_LANGUAGE_SPANISH,   MFT_STRING, MFS_ENABLED
+    MENUITEM "o$43",    IDM_LANGUAGE_ITALIAN,   MFT_STRING, MFS_ENABLED
+    MENUITEM "o$44",    IDM_LANGUAGE_RUSSIAN,   MFT_STRING, MFS_ENABLED
+    MENUITEM "o$45",    IDM_LANGUAGE_SPANISH,   MFT_STRING, MFS_ENABLED
   END
-  POPUP "$60",          IDM_WINDOW,             MFT_STRING, MFS_ENABLED
+  POPUP "$50",          IDM_WINDOW,             MFT_STRING, MFS_ENABLED
   BEGIN
-    MENUITEM "06$61",   IDM_WINDOW_CASCADE,     MFT_STRING, MFS_ENABLED
-    MENUITEM "07$62",   IDM_WINDOW_TILE_HOR,    MFT_STRING, MFS_ENABLED
-    MENUITEM "08$63",   IDM_WINDOW_TILE_VER,    MFT_STRING, MFS_ENABLED
-    MENUITEM "09$64",   IDM_WINDOW_ARRANGE,     MFT_STRING, MFS_ENABLED
-    MENUITEM "10$65",   IDM_WINDOW_CLOSEALL,    MFT_STRING, MFS_ENABLED
+    MENUITEM "20$51",   IDM_WINDOW_CASCADE,     MFT_STRING, MFS_ENABLED
+    MENUITEM "21$52",   IDM_WINDOW_TILE_HOR,    MFT_STRING, MFS_ENABLED
+    MENUITEM "22$53",   IDM_WINDOW_TILE_VER,    MFT_STRING, MFS_ENABLED
+    MENUITEM "23$54",   IDM_WINDOW_ARRANGE,     MFT_STRING, MFS_ENABLED
+    MENUITEM "24$55",   IDM_WINDOW_NEXT,        MFT_STRING, MFS_ENABLED
+    MENUITEM "25$56",   IDM_WINDOW_PREV,        MFT_STRING, MFS_ENABLED
+    MENUITEM "-|",      1003,                   MFT_STRING, MFS_ENABLED
+    MENUITEM "26$57",   IDM_WINDOW_ZOOMIN,      MFT_STRING, MFS_ENABLED
+    MENUITEM "27$58",   IDM_WINDOW_ZOOMOUT,     MFT_STRING, MFS_ENABLED
   END
-  POPUP "$80",          IDM_HELP,               MFT_STRING, MFS_ENABLED
+  POPUP "$60",          IDM_HELP,               MFT_STRING, MFS_ENABLED
   BEGIN
-    MENUITEM "11$81",   IDM_HELP_HELP,          MFT_STRING, MFS_ENABLED
-    MENUITEM "12$82",   IDM_HELP_ABOUT,         MFT_STRING, MFS_ENABLED
+    MENUITEM "28$61",   IDM_HELP_HELP,          MFT_STRING, MFS_ENABLED
+    MENUITEM "29$62",   IDM_HELP_ABOUT,         MFT_STRING, MFS_ENABLED
   END
 END
 
+;CONTEXTMENU MENUEX DISCARDABLE
+;BEGIN
+;  POPUP "CONTEXT",      IDM_CONTEXT,            MFT_STRING, MFS_ENABLED
+;  BEGIN
+;    MENUITEM "14$21",   IDM_EDIT_CUT,           MFT_STRING, MFS_ENABLED
+;    MENUITEM "15$22",   IDM_EDIT_COPY,          MFT_STRING, MFS_ENABLED
+;    MENUITEM "16$23",   IDM_EDIT_PASTE,         MFT_STRING, MFS_ENABLED
+;    MENUITEM "17$24",   IDM_EDIT_CLEAR,         MFT_STRING, MFS_ENABLED
+;    MENUITEM "$25",     IDM_EDIT_SELECTALL,     MFT_STRING, MFS_ENABLED
+;    MENUITEM "-|",      1005,                   MFT_STRING, MFS_ENABLED
+;    MENUITEM "20$28",   IDM_EDIT_FIND,          MFT_STRING, MFS_ENABLED
+;  END
+;END
+// Stringtable -------------------------------------------------------------------------------------
 
-// Stringtable ------------------------------------------------------------------------------------
+#define IDLANG_ENGLISH  000
+#define IDLANG_GERMAN   200
+#define IDLANG_ITALIAN  400
+#define IDLANG_RUSSIAN  600
+#define IDLANG_SPANISH  800
 
-STRINGTABLE
-MOVEABLE PURE LOADONCALL DISCARDABLE
+#define ID_MDI_MORE     50009
+#define ID_MDI_LIST     50010
+
+
+STRINGTABLE MOVEABLE PURE LOADONCALL DISCARDABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_DEFAULT
 BEGIN
   IDLANG_ENGLISH + 00, "&File|File commands"
-  IDLANG_ENGLISH + 01, "&New~Ctrl+N|Creates a new window"
-  IDLANG_ENGLISH + 02, "&Open~Ctrl+O|Opens a file"
-  IDLANG_ENGLISH + 03, "&Save~Ctrl+S|Saves a file"
-  IDLANG_ENGLISH + 04, "&Close~Ctrl+F4|Closes the active window"
-  IDLANG_ENGLISH + 05, "Application"
-  IDLANG_ENGLISH + 06, "Store context|Stores the current application context"
-  IDLANG_ENGLISH + 07, "Load context|Loads an application context"
-  IDLANG_ENGLISH + 08, "S&etup...|Sets up application functionality"
-  IDLANG_ENGLISH + 09, "E&xit...~Ctrl+X|Exits application"
+  IDLANG_ENGLISH + 01, "&New...~Ctrl+O|Creates a new file"
+  IDLANG_ENGLISH + 02, "&Open...~Ctrl+O|Opens a file"
+  IDLANG_ENGLISH + 03, "&Save~Ctrl+S|Saves to file"
+  IDLANG_ENGLISH + 04, "Save &As...|Saves to a file specifying the name"
+  IDLANG_ENGLISH + 05, "Save A&ll...|Saves all open files"
+  IDLANG_ENGLISH + 06, "&Close~Ctrl+F4|Closes the active window"
+  IDLANG_ENGLISH + 07, "&Close All|Closes all open files"
+  IDLANG_ENGLISH + 08, "Print"
+  IDLANG_ENGLISH + 09, "Pa&ge Setup...|Configures the page to print"
+  IDLANG_ENGLISH + 10, "Prin&ter Setup...|Configures the printer"
+  IDLANG_ENGLISH + 11, "&Print|Prints the content of the active window"
+  IDLANG_ENGLISH + 12, "Application"
+  IDLANG_ENGLISH + 13, "Pi&n|Sets the application as topmost window"
+  IDLANG_ENGLISH + 14, "&Setup...|Configures the application"
+  IDLANG_ENGLISH + 15, "E&xit...~Alt+F4|Exits the application"
 
   IDLANG_ENGLISH + 20, "&Edit|Edit commands"
   IDLANG_ENGLISH + 21, "C&ut~Ctrl+X|Cuts the selection to the clipboard"
@@ -208,111 +242,545 @@ BEGIN
 
   IDLANG_ENGLISH + 40, "&Language|Language selection"
   IDLANG_ENGLISH + 41, "&English|English language"
-  IDLANG_ENGLISH + 42, "&Deutsch|Deutsche Sprache"
-  IDLANG_ENGLISH + 43, "&Espaï¿½ol|Idioma espaï¿½ol"
+  IDLANG_ENGLISH + 42, "&Deutsch|German language"
+  IDLANG_ENGLISH + 43, "&Italiano|Italian language"
+  IDLANG_ENGLISH + 44, L"\x0026\x0050\x0443\x0441\x0441\x043A\x0438\x0439|Russian language"
+  IDLANG_ENGLISH + 45, "E&spañol|Spanish language"
 
-  IDLANG_ENGLISH + 60, "&Window|Window commands"
-  IDLANG_ENGLISH + 61, "&Cascade~Shift+F5|Cascades all windows"
-  IDLANG_ENGLISH + 62, "&Tile horizontally|Tiles all windows horizontally"
-  IDLANG_ENGLISH + 63, "&Tile vertically~Shift+F4|Tiles all windows vertically"
-  IDLANG_ENGLISH + 64, "Arrange &icons|Arranges all window icons"
-  IDLANG_ENGLISH + 65, "Close &all|Closes all windows"
+  IDLANG_ENGLISH + 50, "&Window|Window commands"
+  IDLANG_ENGLISH + 51, "&Cascade~Shift+F5|Cascades all windows"
+  IDLANG_ENGLISH + 52, "Tile &horizontally|Tiles all windows horizontally"
+  IDLANG_ENGLISH + 53, "Tile &vertically~Shift+F4|Tiles all windows vertically"
+  IDLANG_ENGLISH + 54, "A&rrange icons|Arranges all window icons"
+  IDLANG_ENGLISH + 55, "&Next window~Ctrl+F6|Shows the next window"
+  IDLANG_ENGLISH + 56, "&Previous window~Ctrl+Shift+F6|Shows the previous window"
+  IDLANG_ENGLISH + 57, "Zoom &in~Ctrl+I|Increases the window output size"
+  IDLANG_ENGLISH + 58, "Zoom &out~Ctrl+O|Reduces the window output size"
 
-  IDLANG_ENGLISH + 80, "&Help|Invokes help"
-  IDLANG_ENGLISH + 81, "Application help~F1|Launches help system"
-  IDLANG_ENGLISH + 82, "&About...|Displays information about this application"
+  IDLANG_ENGLISH + 60, "&Help|Invokes help"
+  IDLANG_ENGLISH + 61, "Application help~F1|Launches help system"
+  IDLANG_ENGLISH + 62, "&About...|Displays information about this application"
+
+  IDLANG_ENGLISH + 80, "Open from file..."
+  IDLANG_ENGLISH + 81, "Save active window to a file"
+  IDLANG_ENGLISH + 82, "Save active window to file as..."
+  IDLANG_ENGLISH + 83, "Close active window"
+  IDLANG_ENGLISH + 84, "Print active window"
+  IDLANG_ENGLISH + 85, "Set Debug Center as topmost window"
+  IDLANG_ENGLISH + 86, "Cut the selection to the clipboard"
+  IDLANG_ENGLISH + 87, "Copy the selection to the clipboard"
+  IDLANG_ENGLISH + 88, "Paste the clipboard content"
+  IDLANG_ENGLISH + 89, "Clear the output of the active window"
+  IDLANG_ENGLISH + 90, "Clear the output of all windows"
+  IDLANG_ENGLISH + 91, "Find text in active window"
+  IDLANG_ENGLISH + 92, "Cascade all windows"
+  IDLANG_ENGLISH + 93, "Tile all windows horizontally"
+  IDLANG_ENGLISH + 94, "Tile all windows vertically"
+  IDLANG_ENGLISH + 95, "Arrange all window icons"
+  IDLANG_ENGLISH + 96, "Close all windows"
+  IDLANG_ENGLISH + 97, "Enlarges the content of the active window"
+  IDLANG_ENGLISH + 98, "Reduces the content of the active window"
+
+  IDLANG_ENGLISH + 100, "Debug Center exit"
+  IDLANG_ENGLISH + 101, "Are you sure you want to exit ?\nUnsaved data will be lost !"
+  IDLANG_ENGLISH + 102, "&Yes"
+  IDLANG_ENGLISH + 103, "&No"
+
+  IDLANG_ENGLISH + 104, "About this application"
+  IDLANG_ENGLISH + 105, "Designed with ObjAsm"
+  IDLANG_ENGLISH + 106, "Visit our Homepage"
+  IDLANG_ENGLISH + 107, "Send us an E-Mail to"
+
+  IDLANG_ENGLISH + 120, "Only one file will be loaded."
+  IDLANG_ENGLISH + 121, "Error reading the file."
+  IDLANG_ENGLISH + 122, "Error while saving to file."
+  IDLANG_ENGLISH + 123, "Unsupported file type."
+  IDLANG_ENGLISH + 124, "Printer doesn't support BitBlt functions."
+  IDLANG_ENGLISH + 125, "Failed to create a MDI child window."
+  IDLANG_ENGLISH + 126, "Not enought memory."
+  IDLANG_ENGLISH + 127, "Nothing to search for."
+  IDLANG_ENGLISH + 128, "No further hits found."
+
+  IDLANG_ENGLISH + 140, "Caret at line"
+  IDLANG_ENGLISH + 141, "position"
+  IDLANG_ENGLISH + 142, "Selection"
+  IDLANG_ENGLISH + 143, "character"
+  IDLANG_ENGLISH + 144, "characters"
+  IDLANG_ENGLISH + 145, "line"
+  IDLANG_ENGLISH + 146, "lines"
 
   IDLANG_ENGLISH + ID_MDI_MORE, "&More windows...|Select a window"
-  IDLANG_ENGLISH + ID_MDI_LIST, "Window list"
+  IDLANG_ENGLISH + ID_MDI_LIST, "Window List"
+END
 
-
+STRINGTABLE MOVEABLE PURE LOADONCALL DISCARDABLE
+LANGUAGE LANG_GERMAN, SUBLANG_DEFAULT
+BEGIN
   IDLANG_GERMAN  + 00, "&Datei|Dateibefehle"
-  IDLANG_GERMAN  + 01, "&Neu~Strg+N|Erzeugt ein neues Fenster"
-  IDLANG_GERMAN  + 02, "&ï¿½ffnen~Strg+O|ï¿½ffnet eine Datei"
-  IDLANG_GERMAN  + 03, "&Speichern~Strg+S|Speichert eine Datei"
-  IDLANG_GERMAN  + 04, "&Schliessen~Strg+F4|Schliesst das aktive Fenster"
-  IDLANG_GERMAN  + 05, "Anwendung"
-  IDLANG_GERMAN  + 06, "Speicher Umgebung|Speichert die aktuelle Umgebung"
-  IDLANG_GERMAN  + 07, "Lade Umgebung|Lï¿½d eine Umgebung"
-  IDLANG_GERMAN  + 08, "E&instellen...|Stellt die Anwendung ein"
-  IDLANG_GERMAN  + 09, "Bee&nden...~Strg+X|Endet die Anwendung"
+  IDLANG_GERMAN  + 01, "Öffne&n...~Strg+O|Öffnet eine Datei"
+  IDLANG_GERMAN  + 02, "&Speichern~Strg+S|Speichert eine Datei"
+  IDLANG_GERMAN  + 03, "Speichen &als...|Speichert eine Datein mit einem gegebenen Namen"
+  IDLANG_GERMAN  + 04, "S&chliessen~Strg+F4|Schliesst das aktive Fenster"
+  IDLANG_GERMAN  + 05, "Drucken"
+  IDLANG_GERMAN  + 06, "Sei&teneinstellungen...|Einstellungen der Druckerseite"
+  IDLANG_GERMAN  + 07, "Druc&kereinstellungen...|Einstellungen des Druckers"
+  IDLANG_GERMAN  + 08, "&Drucken|Druckt den Inhalt des aktiven Fensters"
+  IDLANG_GERMAN  + 09, "Anwendung"
+  IDLANG_GERMAN  + 10, "&Gesteckt|Setzt die Anwendung als oberstes Fenster"
+  IDLANG_GERMAN  + 11, "&Einstellungen...|Einstellungen der Anwendung"
+  IDLANG_GERMAN  + 12, "E&nde...~Alt+F4|Beendet die Anwendung"
 
+  IDLANG_GERMAN  + 20, "&Bearbeiten|Bearbeitungsbefehle"
+  IDLANG_GERMAN  + 21, "&Ausschneiden~Strg+X|Schneidet den Inhalt des aktiven Fensters aus"
+  IDLANG_GERMAN  + 22, "&Kopieren~Strg+C|Kopiert den Inhalt des aktiven Fensters"
+  IDLANG_GERMAN  + 23, "&Einfügen~Strg+V|Fügt in den Inhalt des aktiven Fensters ein"
+  IDLANG_GERMAN  + 24, "&Löschen~Del|Löscht im Inhalt des aktiven Fensters"
+  IDLANG_GERMAN  + 25, "Alle&s auswählen~Strg+A|Selektiert den ganzen Inhalt des aktiven Fensters"
+  IDLANG_GERMAN  + 26, "&Inhalt löschen~Strg+E|Löscht den Inhalt des aktiven Fensters"
+  IDLANG_GERMAN  + 27, "Alles lösc&hen~Strg+Umschalt+E|Löscht den Inhalt aller Fenster"
+  IDLANG_GERMAN  + 28, "&Text finden...~Strg+F|Sucht nach einen Text"
+  IDLANG_GERMAN  + 29, "Sende zum Rechner...|Sendet die Markierung zur Anwendung 'calc.exe'"
 
-  IDLANG_GERMAN  + 10, "&Sprache|Sprachenauswahl"
-  IDLANG_GERMAN  + 11, "&English|English language"
-  IDLANG_GERMAN  + 12, "&Deutsch|Deutsche Sprache"
-  IDLANG_GERMAN  + 13, "&Espaï¿½ol|Idioma espaï¿½ol"
+  IDLANG_GERMAN  + 40, "&Sprache|Sprachauswahl"
+  IDLANG_GERMAN  + 41, "&English|Englische Sprache"
+  IDLANG_GERMAN  + 42, "&Deutsch|Deutsche Sprache"
+  IDLANG_GERMAN  + 43, "&Italiano|Italienische Sprache"
+  IDLANG_GERMAN  + 44, L"\x0026\x0050\x0443\x0441\x0441\x043A\x0438\x0439|Russische Sprache"
+  IDLANG_GERMAN  + 45, "E&spañol|Spanische Sprache"
 
-  IDLANG_GERMAN  + 20, "Far&be|Farbenauswahl"
-  IDLANG_GERMAN  + 21, "&Schwarz|Druckt Text in schwarz"
-  IDLANG_GERMAN  + 22, "&Rot|Druckt Text in rot"
-  IDLANG_GERMAN  + 23, "&Grï¿½n|Druckt Text in grï¿½n"
-  IDLANG_GERMAN  + 24, "B&lau|Druckt Text in blau"
-  IDLANG_GERMAN  + 25, "&Weiss|Druckt Text in weiss"
+  IDLANG_GERMAN  + 50, "&Fenster|Fensterbefehle"
+  IDLANG_GERMAN  + 51, "Ü&berlappend~Umschalt+F5|Ordnet alle Fenster überlappend an"
+  IDLANG_GERMAN  + 52, "&Nebeneinander|Ordnent alle Fenster nebeneinander an"
+  IDLANG_GERMAN  + 53, "&Untereinander~Umschalt+F4|Ordnent alle Fenster untereinander an"
+  IDLANG_GERMAN  + 54, "&Symbole anordnen|Ordnet alle Symbole an"
+  IDLANG_GERMAN  + 55, "&Nächstes Fenster~Strg+F6|Zeigt das nächste Fenster an"
+  IDLANG_GERMAN  + 56, "&Vorheriges Fenster~Strg+Umschalt+F6|Zeigt das vorherige Fenster an"
+  IDLANG_GERMAN  + 57, "Ver&grössern~Strg+I|Vergrössert den Inhalt des aktiven Fensters"
+  IDLANG_GERMAN  + 58, "Ver&kleinern~Strg+O|Verkleinert den Inhalt des aktiven Fensters"
+  IDLANG_GERMAN  + 59, "&Alles schliessen~Strg+Umschalt+F4|Schliesst alle Fenster"
 
-  IDLANG_GERMAN  + 30, "&Fenster|Fensterbefehle"
-  IDLANG_GERMAN  + 31, "&ï¿½berlappend~Umschalt+F5|Ordnet alle Fenster ï¿½berlappend an"
-  IDLANG_GERMAN  + 32, "&Nebeneinander|Ordnet alle Fenster nebeneinander an"
-  IDLANG_GERMAN  + 33, "&Untereinender~Umschalt+F4|Ordnet alle Fenster untereinander an"
-  IDLANG_GERMAN  + 34, "&Ikonen anordnen|Ordnet alle Ikonen untereinander an"
-  IDLANG_GERMAN  + 35, "&Alle schliessen|Schliesst alle Fenster"
+  IDLANG_GERMAN  + 60, "&Hilfe|Hilfebefehle"
+  IDLANG_GERMAN  + 61, "&Anwendungshilfe~F1|Zeigt die Anwendungshile an"
+  IDLANG_GERMAN  + 62, "Ü&ber...|Zeigt Information über diese Anwendung an"
 
-  IDLANG_GERMAN  + 40, "&Hilfe|Helfebefehle"
-  IDLANG_GERMAN  + 41, "&Anwendungshilfe~F1|Startet das Hilfesystem"
-  IDLANG_GERMAN  + 42, "ï¿½&ber...|Zeigt Informationen ï¿½ber diese Anwendung an"
+  IDLANG_GERMAN  + 70, "Debug Center &wiederherstellen"
+  IDLANG_GERMAN  + 71, "Debug Center &beenden"
 
-  IDLANG_GERMAN + ID_MDI_MORE, "&Weitere Fenster...|Fenster auswï¿½hlen"
+  IDLANG_GERMAN  + 80, "Öffnet eine Datei..."
+  IDLANG_GERMAN  + 81, "Speichert eine Datei"
+  IDLANG_GERMAN  + 82, "Speichert eine Datein mit einem gegebenen Namen..."
+  IDLANG_GERMAN  + 83, "Schliesst das aktive Fenster"
+  IDLANG_GERMAN  + 84, "Druckt den Inhalt des aktiven Fensters"
+  IDLANG_GERMAN  + 85, "Setzt die Anwendung als oberstes Fenster"
+  IDLANG_GERMAN  + 86, "Schneidet den Inhalt des aktiven Fensters aus"
+  IDLANG_GERMAN  + 87, "Kopiert den Inhalt des aktiven Fensters"
+  IDLANG_GERMAN  + 88, "Fügt in den Inhalt des aktiven Fensters ein"
+  IDLANG_GERMAN  + 89, "Löscht den Inhalt des aktiven Fensters"
+  IDLANG_GERMAN  + 90, "Löscht den Inhalt aller Fenster"
+  IDLANG_GERMAN  + 91, "Sucht nach einen Text"
+  IDLANG_GERMAN  + 92, "Ordnet alle Fenster überlappend an"
+  IDLANG_GERMAN  + 93, "Ordnent alle Fenster nebeneinander an"
+  IDLANG_GERMAN  + 94, "Ordnent alle Fenster untereinander an"
+  IDLANG_GERMAN  + 95, "Ordnet alle Symbole an"
+  IDLANG_GERMAN  + 96, "Schliesst alle Fenster"
+  IDLANG_GERMAN  + 97, "Vergrössert den Inhalt des aktiven Fensters"
+  IDLANG_GERMAN  + 98, "Verkleinert den Inhalt des aktiven Fensters"
+
+  IDLANG_GERMAN  + 100, "Debug Center schliessen"
+  IDLANG_GERMAN  + 101, "Sind Sie sicher, dass Sie die Anwendung schliessen möchten ?\nNicht gespeicherte Daten werden verloren gehen !"
+  IDLANG_GERMAN  + 102, "&Ja"
+  IDLANG_GERMAN  + 103, "&Nein"
+
+  IDLANG_GERMAN  + 104, "Über diese Anwendung"
+  IDLANG_GERMAN  + 105, "Mit ObjAsm entwickelt"
+  IDLANG_GERMAN  + 106, "Besuchen Sie unsere Homepage"
+  IDLANG_GERMAN  + 107, "Senden Sie uns eine E-Mail an"
+
+  IDLANG_GERMAN  + 120, "Nur eine Datei wird geöffnet."
+  IDLANG_GERMAN  + 121, "Fehler beim Lesen der Datei."
+  IDLANG_GERMAN  + 122, "Fehler beim Speichern der Datei."
+  IDLANG_GERMAN  + 123, "Nicht unterstützter Dateityp."
+  IDLANG_GERMAN  + 124, "Printer doesn't support BitBlt functions."
+  IDLANG_GERMAN  + 125, "Der Drucker unterstützt keine BitBlt-Funktionen."
+  IDLANG_GERMAN  + 126, "Nicht genug Speicher."
+  IDLANG_GERMAN  + 127, "Es gibt nichts zu suchen."
+  IDLANG_GERMAN  + 128, "Keine weiteren Treffer gefunden."
+
+  IDLANG_GERMAN  + 140, "Cursor in Zeile"
+  IDLANG_GERMAN  + 141, "Position"
+  IDLANG_GERMAN  + 142, "Auswahl"
+  IDLANG_GERMAN  + 143, "Zeichen"
+  IDLANG_GERMAN  + 144, "Zeichen"
+  IDLANG_GERMAN  + 145, "Zeile"
+  IDLANG_GERMAN  + 146, "Zeilen"
+
+  IDLANG_GERMAN  + 150, "Bitmapgrösse"
+  IDLANG_GERMAN  + 151, "Pixel"
+
+  IDLANG_GERMAN  + 160, "Datenpunkte"
+
+  IDLANG_GERMAN  + 170, "Datei öffnen"
+  IDLANG_GERMAN  + 171, "Speichern als"
+
+  IDLANG_GERMAN + ID_MDI_MORE, "&Weitere Fenster...|Fenster auswählen"
   IDLANG_GERMAN + ID_MDI_LIST, "Fensterliste"
+END
 
+STRINGTABLE MOVEABLE PURE LOADONCALL DISCARDABLE
+LANGUAGE LANG_ITALIAN, SUBLANG_DEFAULT
+BEGIN
+  IDLANG_ITALIAN + 00, "&Archivio|Commandi d'archivio"
+  IDLANG_ITALIAN + 01, "&Aprire...~Ctrl+O|Apre un archivio"
+  IDLANG_ITALIAN + 02, "&Salvare~Ctrl+S|Salva a archivio"
+  IDLANG_ITALIAN + 03, "Salvare &come...|Salvare specificando il nome"
+  IDLANG_ITALIAN + 04, "&Chiudere~Ctrl+F4|Chiude la finestra attiva"
+  IDLANG_ITALIAN + 05, "Stampare"
+  IDLANG_ITALIAN + 06, "Organizzare Pa&gina...|Configura la pagina da stampare"
+  IDLANG_ITALIAN + 07, "Organizzare Stam&pante...|Configura la stampante"
+  IDLANG_ITALIAN + 08, "&Stampa|Stampa il contenuto della pagina attuale"
+  IDLANG_ITALIAN + 09, "Applicazione"
+  IDLANG_ITALIAN + 10, "Appuntare|Fissa l'applicazione come finestra superiore"
+  IDLANG_ITALIAN + 11, "&Organizzare...|Organizza l'applicazione"
+  IDLANG_ITALIAN + 12, "&Uscire...~Alt+F4|Esce dall' applicazione"
 
+  IDLANG_ITALIAN + 20, "&Editare|Commandi d'edizione"
+  IDLANG_ITALIAN + 21, "Taglia~Ctrl+X|Taglia la selezione allo clipboard"
+  IDLANG_ITALIAN + 22, "&Copia~Ctrl+C|Copia la selezione allo clipboard"
+  IDLANG_ITALIAN + 23, "&Incolla~Ctrl+V|Incolla il contenuto dello clipboard"
+  IDLANG_ITALIAN + 24, "&Cancella~Del|Cancella la selezione"
+  IDLANG_ITALIAN + 25, "&Seleziona tutto~Ctrl+A|Seleziona tutti il testo"
+  IDLANG_ITALIAN + 26, "&Cancella contenuto~Ctrl+E|Cancella il contenuto della finestra"
+  IDLANG_ITALIAN + 27, "Cancella &tutto~Ctrl+Shift+E|Cancella il contenuto di tutte le finestre"
+  IDLANG_ITALIAN + 28, "&Cerca testo...~Ctrl+F|Cerca la ocurrenza di un testo"
+  IDLANG_ITALIAN + 29, "Trasmettere al calcolatore...|Trasmette la selezione corrente a 'calc.exe'"
+
+  IDLANG_ITALIAN + 40, "&Linguaggio|Seleziona linguaggio"
+  IDLANG_ITALIAN + 41, "&English|Lingua inglese"
+  IDLANG_ITALIAN + 42, "&Deutsch|Lingua tedesca"
+  IDLANG_ITALIAN + 43, "&Italiano|Lingua italiana"
+  IDLANG_ITALIAN + 44, L"\x0026\x0050\x0443\x0441\x0441\x043A\x0438\x0439|Lingua russa"
+  IDLANG_ITALIAN + 45, "E&spañol|Lingu spagnola"
+
+  IDLANG_ITALIAN + 50, "&Finestra|Commandi di finestra"
+  IDLANG_ITALIAN + 51, "&Cascadare~Shift+F5|Cascada tutte le finestre"
+  IDLANG_ITALIAN + 52, "Tegola &orizzontale|Dispone le finestre a tegole orizzontali"
+  IDLANG_ITALIAN + 53, "Tegola &verticale~Shift+F4|Dispone le finestre a tegole verticali"
+  IDLANG_ITALIAN + 54, "Ordinare iconi|Ordina tutti gli iconi delle finestre"
+  IDLANG_ITALIAN + 55, "&Prossima finestra~Ctrl+F6|Visualizza la prossima finestra"
+  IDLANG_ITALIAN + 56, "Pre&via finestra~Ctrl+Shift+F6|Visualizza la prossima finestra"
+  IDLANG_ITALIAN + 57, "Zoom da &vicino~Ctrl+I|Aumenta la grandezza dell' uscita"
+  IDLANG_ITALIAN + 58, "Zoom da &lontano~Ctrl+O|Riduce la grandezza dell' uscita"
+  IDLANG_ITALIAN + 59, "Chiude tutto~Ctrl+Shift+F4|Chiude tutte le finestre"
+
+  IDLANG_ITALIAN + 60, "&Aiuto|Invoca aiuto"
+  IDLANG_ITALIAN + 61, "Aiuto dell' applicazione~F1|Attiva sistema d' aiuto"
+  IDLANG_ITALIAN + 62, "&Su...|Visualizza informazione su questa applicazione"
+
+  IDLANG_ITALIAN + 70, "&Restaurare Debug Center"
+  IDLANG_ITALIAN + 71, "&Uscire Debug Center"
+
+  IDLANG_ITALIAN + 80, "Apre un archivio..."
+  IDLANG_ITALIAN + 81, "Salva a archivio"
+  IDLANG_ITALIAN + 82, "Salvare specificando il nome..."
+  IDLANG_ITALIAN + 83, "Chiude la finestra attiva"
+  IDLANG_ITALIAN + 84, "Stampa il contenuto della pagina attuale"
+  IDLANG_ITALIAN + 85, "Fissa l'applicazione come finestra superiore"
+  IDLANG_ITALIAN + 86, "Taglia la selezione allo clipboard"
+  IDLANG_ITALIAN + 87, "Copia la selezione allo clipboard"
+  IDLANG_ITALIAN + 88, "Incolla il contenuto dello clipboard"
+  IDLANG_ITALIAN + 89, "Cancella il contenuto della finestra"
+  IDLANG_ITALIAN + 90, "Cancella il contenuto di tutte le finestre"
+  IDLANG_ITALIAN + 91, "Cerca la ocurrenza di un testo"
+  IDLANG_ITALIAN + 92, "Cascada tutte le finestre"
+  IDLANG_ITALIAN + 93, "Dispone le finestre a tegole orizzontali"
+  IDLANG_ITALIAN + 94, "Dispone le finestre a tegole verticali"
+  IDLANG_ITALIAN + 95, "Ordina tutti gli iconi delle finestre"
+  IDLANG_ITALIAN + 96, "Chiude tutte le finestre"
+  IDLANG_ITALIAN + 97, "Ingrandisce il contenuto della finestra attiva"
+  IDLANG_ITALIAN + 98, "Riduce il contenuto della finestra attiva"
+
+  IDLANG_ITALIAN + 100, "Debug Center uscita"
+  IDLANG_ITALIAN + 101, "Sei sicuro di voler uscire ?\nDati non salvati verranno persi !"
+  IDLANG_ITALIAN + 102, "&Si"
+  IDLANG_ITALIAN + 103, "&No"
+
+  IDLANG_ITALIAN + 104, "Su questa applicazione"
+  IDLANG_ITALIAN + 105, "Progettato con ObjAsm"
+  IDLANG_ITALIAN + 106, "Visita la nostra Homepage"
+  IDLANG_ITALIAN + 107, "Inviaci una E-Mail a"
+
+  IDLANG_ITALIAN + 120, "Verrà caricato solo un file."
+  IDLANG_ITALIAN + 121, "Errore nella lettura del file."
+  IDLANG_ITALIAN + 122, "Errore durante il salvataggio su file."
+  IDLANG_ITALIAN + 123, "Tipo di file non supportato."
+  IDLANG_ITALIAN + 124, "La stampante non supporta le funzioni BitBlt."
+  IDLANG_ITALIAN + 125, "Fallita la creazione di una finestra figlio MDI."
+  IDLANG_ITALIAN + 126, "Non c'è abbastanza memoria."
+  IDLANG_ITALIAN + 127, "Niente da cercare."
+  IDLANG_ITALIAN + 128, "Nessun altro riscontro trovato."
+
+  IDLANG_ITALIAN + 140, "Cursore alla linea"
+  IDLANG_ITALIAN + 141, "posizione"
+  IDLANG_ITALIAN + 142, "Selezione"
+  IDLANG_ITALIAN + 143, "carattere"
+  IDLANG_ITALIAN + 144, "caratteri"
+  IDLANG_ITALIAN + 145, "linea"
+  IDLANG_ITALIAN + 146, "linee"
+
+  IDLANG_ITALIAN + 150, "Dimensione bitmap"
+  IDLANG_ITALIAN + 151, "pixel"
+
+  IDLANG_ITALIAN + 170, "Aprire un file"
+  IDLANG_ITALIAN + 171, "Salva come"
+
+  IDLANG_ITALIAN + 160, "Punti di dati"
+
+  IDLANG_ITALIAN + ID_MDI_MORE, "&Più finestre...|Selezionare una finestra"
+  IDLANG_ITALIAN + ID_MDI_LIST, "Lista di finestre"
+END
+
+STRINGTABLE MOVEABLE PURE LOADONCALL DISCARDABLE
+// LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+BEGIN
+  IDLANG_RUSSIAN + 00, L"\x0026\x0424\x0430\x0439\x043B\x007C\x0424\x0430\x0439\x043B\x043E\x0432\x044B\x0435\x0020\x043A\x043E\x043C\x0430\x043D\x0434\x044B"
+  IDLANG_RUSSIAN + 01, L"\x0026\x041E\x0442\x043A\x0440\x044B\x0442\x044C\x002E\x002E\x002E~Ctrl+O\x007C\x041E\x0442\x043A\x0440\x044B\x0442\x044C\x0020\x0444\x0430\x0439\x043B"
+  IDLANG_RUSSIAN + 02, L"\x0026\x0421\x043E\x0445\x0440\x0430\x043D\x0438\x0442\x044C~Ctrl+S\x007C\x0421\x043E\x0445\x0440\x0430\x043D\x0438\x0442\x044C\x0020\x0444\x0430\x0439\x043B"
+  IDLANG_RUSSIAN + 03, L"\x0421\x043E\x0445\x0440\x0430\x043D\x0438\x0442\x044C\x0020\x0026\x043A\x0430\x043A\x002E\x002E\x002E\x007C\x0421\x043E\x0445\x0440\x0430\x043D\x0438\x0442\x044C\x0020\x0432\x0020\x0443\x043A\x0430\x0437\x0430\x043D\x043D\x044B\x0439\x0020\x0444\x0430\x0439\x043B"
+  IDLANG_RUSSIAN + 04, L"\x0417\x0430\x043A\x0440\x044B\x0442\x044C~Ctrl+F4\x007C\x0417\x0430\x043A\x0440\x044B\x0442\x044C\x0020\x0442\x0435\x043A\x0443\x0449\x0435\x0435\x0020\x043E\x043A\x043D\x043E"
+  IDLANG_RUSSIAN + 05, L"\x041F\x0435\x0447\x0430\x0442\x044C"
+  IDLANG_RUSSIAN + 06, L"\x0423\x0441\x0442\x0430\x043D\x043E\x0432\x043A\x0430\x0020\x0026\x0441\x0442\x0440\x0430\x043D\x0438\x0446\x002E\x002E\x002E\x007C\x041D\x0430\x0441\x0442\x0440\x043E\x0438\x0442\x044C\x0020\x0441\x0442\x0440\x0430\x043D\x0438\x0446\x0443\x0020\x0434\x043B\x044F\x0020\x043F\x0435\x0447\x0430\x0442\x0438"
+  IDLANG_RUSSIAN + 07, L"\x0423\x0441\x0442\x0430\x043D\x043E\x0432\x043A\x0430\x0020\x043F\x0026\x0440\x0438\x043D\x0442\x0435\x0440\x0430\x002E\x002E\x002E\x007C\x041D\x0430\x0441\x0442\x0440\x043E\x0438\x0442\x044C\x0020\x043F\x0440\x0438\x043D\x0442\x0435\x0440"
+  IDLANG_RUSSIAN + 08, L"\x0026\x041F\x0435\x0447\x0430\x0442\x0430\x0442\x044C\x007C\x0420\x0430\x0441\x043F\x0435\x0447\x0430\x0442\x0430\x0442\x044C\x0020\x0441\x043E\x0434\x0435\x0440\x0436\x0438\x043C\x043E\x0435\x0020\x0442\x0435\x043A\x0443\x0449\x0435\x0433\x043E\x0020\x043E\x043A\x043D\x0430"
+  IDLANG_RUSSIAN + 09, L"\x041F\x0440\x043E\x0433\x0440\x0430\x043C\x043C\x0430"
+  IDLANG_RUSSIAN + 10, L"\x0417\x0430\x0026\x043A\x0440\x0435\x043F\x0438\x0442\x044C\x007C\x0423\x0441\x0442\x0430\x043D\x043E\x0432\x0438\x0442\x044C\x0020\x043F\x0440\x043E\x0433\x0440\x0430\x043C\x043C\x0443\x0020\x043F\x043E\x0432\x0435\x0440\x0445\x0020\x043E\x0441\x0442\x0430\x043B\x044C\x043D\x044B\x0445\x0020\x043E\x043A\x043E\x043D"
+  IDLANG_RUSSIAN + 11, L"\x0026\x0423\x0441\x0442\x0430\x043D\x043E\x0432\x043A\x0430\x002E\x002E\x002E\x007C\x041D\x0430\x0441\x0442\x0440\x043E\x0438\x0442\x044C\x0020\x043F\x0440\x043E\x0433\x0440\x0430\x043C\x043C\x0443"
+  IDLANG_RUSSIAN + 12, L"\x0412\x044B\x0026\x0445\x043E\x0434\x002E\x002E\x002E~Alt+F4\x007C\x0417\x0430\x043A\x0440\x044B\x0442\x044C\x0020\x043F\x0440\x043E\x0433\x0440\x0430\x043C\x043C\x0443"
+
+  IDLANG_RUSSIAN + 20, L"\x0026\x0420\x0435\x0434\x0430\x043A\x0442\x0438\x0440\x043E\x0432\x0430\x0442\x044C\x007C\x041A\x043E\x043C\x0430\x043D\x0434\x044B\x0020\x0440\x0435\x0434\x0430\x043A\x0442\x0438\x0440\x043E\x0432\x0430\x043D\x0438\x044F"
+  IDLANG_RUSSIAN + 21, L"\x0412\x0026\x044B\x0440\x0435\x0437\x0430\x0442\x044C~Ctrl+X\x007C\x0412\x044B\x0440\x0435\x0437\x0430\x0442\x044C\x0020\x0432\x044B\x0431\x0440\x0430\x043D\x043D\x043E\x0435\x0020\x0432\x0020\x0431\x0443\x0444\x0435\x0440\x0020\x043E\x0431\x043C\x0435\x043D\x0430"
+  IDLANG_RUSSIAN + 22, L"\x0026\x041A\x043E\x043F\x0438\x0440\x043E\x0432\x0430\x0442\x044C~Ctrl+C\x007C\x0421\x043A\x043E\x043F\x0438\x0440\x043E\x0432\x0430\x0442\x044C\x0020\x0432\x044B\x0431\x0440\x0430\x043D\x043D\x043E\x0435\x0020\x0432\x0020\x0431\x0443\x0444\x0435\x0440\x0020\x043E\x0431\x043C\x0435\x043D\x0430"
+  IDLANG_RUSSIAN + 23, L"\x0026\x0412\x0441\x0442\x0430\x0432\x0438\x0442\x044C~Ctrl+V\x007C\x0412\x0441\x0442\x0430\x0432\x0438\x0442\x044C\x0020\x0441\x043E\x0434\x0435\x0440\x0436\x0438\x043C\x043E\x0435\x0020\x0431\x0443\x0444\x0435\x0440\x0430\x0020\x043E\x0431\x043C\x0435\x043D\x0430"
+  IDLANG_RUSSIAN + 24, L"\x0026\x0423\x0434\x0430\x043B\x0438\x0442\x044C~Del\x007C\x0423\x0434\x0430\x043B\x0438\x0442\x044C\x0020\x0432\x044B\x0431\x0440\x0430\x043D\x043D\x043E\x0435"
+  IDLANG_RUSSIAN + 25, L"\x0412\x044B\x0431\x0440\x0430\x0442\x044C\x0020\x0432\x0026\x0441\x0435~Ctrl+A\x007C\x0412\x044B\x0431\x0440\x0430\x0442\x044C\x0020\x0432\x0435\x0441\x044C\x0020\x0442\x0435\x043A\x0441\x0442"
+  IDLANG_RUSSIAN + 26, L"\x041E\x0026\x0447\x0438\x0441\x0442\x0438\x0442\x044C\x0020\x043F\x0440\x043E\x0442\x043E\x043A\x043E\x043B\x007C\x041E\x0447\x0438\x0441\x0442\x0438\x0442\x044C\x0020\x043F\x0440\x043E\x0442\x043E\x043A\x043E\x043B\x0020\x0440\x0430\x0431\x043E\x0442\x044B\x0020\x0430\x043A\x0442\x0438\x0432\x043D\x043E\x0433\x043E\x0020\x043E\x043A\x043D\x0430"
+  IDLANG_RUSSIAN + 27, L"\x041E\x0447\x0438\x0441\x0442\x0438\x0442\x044C\x0020\x0432\x0441\x0026\x0435\x0020\x043F\x0440\x043E\x0442\x043E\x043A\x043E\x043B\x044B\x007C\x041E\x0447\x0438\x0441\x0442\x0438\x0442\x044C\x0020\x043F\x0440\x043E\x0442\x043E\x043A\x043E\x043B\x044B\x0020\x0440\x0430\x0431\x043E\x0442\x044B\x0020\x0432\x0441\x0435\x0445\x0020\x0430\x043A\x0442\x0438\x0432\x043D\x044B\x0445\x0020\x043E\x043A\x043E\x043D"
+  IDLANG_RUSSIAN + 28, L"\x0026\x041D\x0430\x0439\x0442\x0438\x002E\x002E\x002E~Ctrl+F\x007C\x041D\x0430\x0439\x0442\x0438\x0020\x0442\x0435\x043A\x0441\x0442"
+  IDLANG_RUSSIAN + 29, L"\x0417\x0430\x0433\x0440\x0443\x0437\x0438\x0442\x044C\x0020\x0432\x0020\x043A\x0430\x043B\x044C\x043A\x0443\x043B\x044F\x0442\x043E\x0440\x002E\x002E\x002E\x007C\x0417\x0430\x0433\x0440\x0443\x0437\x0438\x0442\x044C\x0020\x0432\x044B\x0434\x0435\x043B\x0435\x043D\x043D\x044B\x0439\x0020\x0442\x0435\x043A\x0441\x0442\x0020\x0432\x0020\x0027\x0063\x0061\x006C\x0063\x002E\x0065\x0078\x0065\x0027"
+
+  IDLANG_RUSSIAN + 40, L"\x0026\x042F\x0437\x044B\x043A\x007C\x0412\x044B\x0431\x043E\x0440\x0020\x044F\x0437\x044B\x043A\x0430"
+  IDLANG_RUSSIAN + 41, "&English|" L"\x0410\x043D\x0433\x043B\x0438\x0439\x0441\x043A\x0438\x0439\x0020\x044F\x0437\x044B\x043A"
+  IDLANG_RUSSIAN + 42, "&Deutsch|" L"\x041D\x0435\x043C\x0435\x0446\x043A\x0438\x0439\x0020\x044F\x0437\x044B\x043A"
+  IDLANG_RUSSIAN + 43, "&Italiano|"L"\x0418\x0442\x0430\x043B\x044C\x044F\x043D\x0441\x043A\x0438\x0439\x0020\x044F\x0437\x044B\x043A"
+  IDLANG_RUSSIAN + 44, L"\x0026\x0050\x0443\x0441\x0441\x043A\x0438\x0439|" L"\x0420\x0443\x0441\x0441\x043A\x0438\x0439\x0020\x044F\x0437\x044B\x043A"
+  IDLANG_RUSSIAN + 45, "E&spañol|" L"\x0418\x0441\x043F\x0430\x043D\x0441\x043A\x0438\x0439\x0020\x044F\x0437\x044B\x043A"
+
+  IDLANG_RUSSIAN + 50, L"\x0026\x041E\x043A\x043D\x043E\x007C\x041A\x043E\x043C\x0430\x043D\x0434\x044B\x0020\x043E\x043A\x043E\x043D"
+  IDLANG_RUSSIAN + 51, L"\x0026\x041A\x0430\x0441\x043A\x0430\x0434~Shift+F5\x007C\x041A\x0430\x0441\x043A\x0430\x0434\x0438\x0440\x043E\x0432\x0430\x0442\x044C\x0020\x0432\x0441\x0435\x0020\x043E\x043A\x043D\x0430"
+  IDLANG_RUSSIAN + 52, L"\x041F\x0440\x0435\x0434\x0441\x0442\x0430\x0432\x0438\x0442\x044C\x0020\x0026\x0433\x043E\x0440\x0438\x0437\x043E\x043D\x0442\x0430\x043B\x044C\x043D\x043E\x007C\x041F\x0440\x0435\x0434\x0441\x0442\x0430\x0432\x0438\x0442\x044C\x0020\x0433\x043E\x0440\x0438\x0437\x043E\x043D\x0442\x0430\x043B\x044C\x043D\x043E\x0020\x0432\x0441\x0435\x0020\x043E\x043A\x043D\x0430"
+  IDLANG_RUSSIAN + 53, L"\x041F\x0440\x0435\x0434\x0441\x0442\x0430\x0432\x0438\x0442\x044C\x0020\x0026\x0432\x0435\x0440\x0442\x0438\x043A\x0430\x043B\x044C\x043D\x043E~Shift+F4\x007C\x041F\x0440\x0435\x0434\x0441\x0442\x0430\x0432\x0438\x0442\x044C\x0020\x0432\x0435\x0440\x0442\x0438\x043A\x0430\x043B\x044C\x043D\x043E\x0020\x0432\x0441\x0435\x0020\x043E\x043A\x043D\x0430"
+  IDLANG_RUSSIAN + 54, L"\x0420\x0430\x043D\x0026\x0436\x0438\x0440\x043E\x0432\x0430\x0442\x044C\x007C\x0420\x0430\x043D\x0436\x0438\x0440\x043E\x0432\x0430\x0442\x044C\x0020\x0432\x0441\x0435\x0020\x043E\x043A\x043E\x043D\x043D\x044B\x0435\x0020\x0437\x043D\x0430\x0447\x043A\x0438"
+  IDLANG_RUSSIAN + 55, L"\x0026\x0421\x043B\x0435\x0434\x0443\x044E\x0449\x0435\x0435\x0020\x043E\x043A\x043D\x043E~Ctrl+F6\x007C\x041F\x043E\x043A\x0430\x0437\x0430\x0442\x044C\x0020\x0441\x043B\x0435\x0434\x0443\x044E\x0449\x0435\x0435\x0020\x043E\x043A\x043D\x043E"
+  IDLANG_RUSSIAN + 56, L"\x0026\x041F\x0440\x0435\x0434\x044B\x0434\x0443\x0449\x0435\x0435\x0020\x043E\x043A\x043D\x043E~Ctrl+Shift+F6\x007C\x041F\x043E\x043A\x0430\x0437\x0430\x0442\x044C\x0020\x043F\x0440\x0435\x0434\x044B\x0434\x0443\x0449\x0435\x0435\x0020\x043E\x043A\x043D\x043E"
+  IDLANG_RUSSIAN + 57, L"\x0423\x0432\x0026\x0435\x043B\x0438\x0447\x0438\x0442\x044C\x0020\x0442\x0435\x043A\x0441\x0442\x007C\x0423\x0432\x0435\x043B\x0438\x0447\x0438\x0442\x044C\x0020\x0442\x0435\x043A\x0441\x0442\x0020\x043E\x043A\x043D\x0430"
+  IDLANG_RUSSIAN + 58, L"\x0423\x043C\x0435\x043D\x044C\x0448\x0026\x0438\x0442\x044C\x007C\x0423\x043C\x0435\x043D\x044C\x0448\x0438\x0442\x044C\x0020\x0442\x0435\x043A\x0441\x0442\x0020\x043E\x043A\x043D\x0430"
+  IDLANG_RUSSIAN + 59, L"\x0417\x0026\x0430\x043A\x0440\x044B\x0442\x044C\x0020\x0432\x0441\x0435~Ctrl+Shift+F4\x007C\x0417\x0430\x043A\x0440\x044B\x0442\x044C\x0020\x0432\x0441\x0435\x0020\x043E\x043A\x043D\x0430"
+
+  IDLANG_RUSSIAN + 60, L"\x0026\x041F\x043E\x043C\x043E\x0449\x044C\x007C\x0412\x044B\x0437\x043E\x0432\x0020\x0441\x0438\x0441\x0442\x0435\x043C\x044B\x0020\x043F\x043E\x043C\x043E\x0449\x0438"
+  IDLANG_RUSSIAN + 61, L"\x041F\x043E\x0026\x043C\x043E\x0449\x044C\x0020\x043F\x043E\x0020\x043F\x0440\x043E\x0433\x0440\x0430\x043C\x043C\x0435~F1\x007C\x0412\x044B\x0437\x043E\x0432\x0020\x0444\x0430\x0439\x043B\x0430\x0020\x043F\x043E\x0434\x0441\x043A\x0430\x0437\x043A\x0438"
+  IDLANG_RUSSIAN + 62, L"\x0026\x041E\x0020\x043F\x0440\x043E\x0433\x0440\x0430\x043C\x043C\x0435\x002E\x002E\x002E\x007C\x041E\x0442\x043E\x0431\x0440\x0430\x0437\x0438\x0442\x044C\x0020\x0438\x043D\x0444\x043E\x0440\x043C\x0430\x0446\x0438\x044E\x0020\x043E\x0020\x043F\x0440\x043E\x0433\x0440\x0430\x043C\x043C\x0435"
+
+  IDLANG_RUSSIAN + 70, L"\x0026\x0412\x043E\x0441\x0441\x0442\x0430\x043D\x043E\x0432\x0438\x0442\x044C\x0020\x0044\x0065\x0062\x0075\x0067\x0020\x0043\x0065\x006E\x0074\x0065\x0072"
+  IDLANG_RUSSIAN + 71, L"\x0026\x0417\x0430\x043A\x0440\x044B\x0442\x044C\x0020\x0044\x0065\x0062\x0075\x0067\x0020\x0043\x0065\x006E\x0074\x0065\x0072"
+
+  IDLANG_RUSSIAN + 80, L"\x0020\x041E\x0442\x043A\x0440\x044B\x0442\x044C\x0020\x0444\x0430\x0439\x043B\x002E\x002E\x002E\x0020"
+  IDLANG_RUSSIAN + 81, L"\x0020\x0421\x043E\x0445\x0440\x0430\x043D\x0438\x0442\x044C\x0020\x0444\x0430\x0439\x043B\x002E\x002E\x002E\x0020"
+  IDLANG_RUSSIAN + 82, L"\x0020\x0421\x043E\x0445\x0440\x0430\x043D\x0438\x0442\x044C\x0020\x0432\x0020\x0443\x043A\x0430\x0437\x0430\x043D\x043D\x044B\x0439\x0020\x0444\x0430\x0439\x043B\x002E\x002E\x002E\x0020"
+  IDLANG_RUSSIAN + 83, L"\x0020\x0417\x0430\x043A\x0440\x044B\x0442\x044C\x0020\x0442\x0435\x043A\x0443\x0449\x0435\x0435\x0020\x043E\x043A\x043D\x043E\x0020"
+  IDLANG_RUSSIAN + 84, L"\x0020\x0420\x0430\x0441\x043F\x0435\x0447\x0430\x0442\x0430\x0442\x044C\x0020\x0441\x043E\x0434\x0435\x0440\x0436\x0438\x043C\x043E\x0435\x0020\x0442\x0435\x043A\x0443\x0449\x0435\x0433\x043E\x0020\x043E\x043A\x043D\x0430\x0020"
+  IDLANG_RUSSIAN + 85, L"\x0020\x0423\x0441\x0442\x0430\x043D\x043E\x0432\x0438\x0442\x044C\x0020\x043F\x0440\x043E\x0433\x0440\x0430\x043C\x043C\x0443\x0020\x043F\x043E\x0432\x0435\x0440\x0445\x0020\x043E\x0441\x0442\x0430\x043B\x044C\x043D\x044B\x0445\x0020\x043E\x043A\x043E\x043D\x0020"
+  IDLANG_RUSSIAN + 86, L"\x0020\x0412\x044B\x0440\x0435\x0437\x0430\x0442\x044C\x0020\x0432\x044B\x0431\x0440\x0430\x043D\x043D\x043E\x0435\x0020\x0432\x0020\x0431\x0443\x0444\x0435\x0440\x0020\x043E\x0431\x043C\x0435\x043D\x0430\x0020"
+  IDLANG_RUSSIAN + 87, L"\x0020\x0421\x043A\x043E\x043F\x0438\x0440\x043E\x0432\x0430\x0442\x044C\x0020\x0432\x044B\x0431\x0440\x0430\x043D\x043D\x043E\x0435\x0020\x0432\x0020\x0431\x0443\x0444\x0435\x0440\x0020\x043E\x0431\x043C\x0435\x043D\x0430\x0020"
+  IDLANG_RUSSIAN + 88, L"\x0020\x0412\x0441\x0442\x0430\x0432\x0438\x0442\x044C\x0020\x0441\x043E\x0434\x0435\x0440\x0436\x0438\x043C\x043E\x0435\x0020\x0431\x0443\x0444\x0435\x0440\x0430\x0020\x043E\x0431\x043C\x0435\x043D\x0430\x0020"
+  IDLANG_RUSSIAN + 89, L"\x0020\x041E\x0447\x0438\x0441\x0442\x0438\x0442\x044C\x0020\x043F\x0440\x043E\x0442\x043E\x043A\x043E\x043B\x0020\x0440\x0430\x0431\x043E\x0442\x044B\x0020\x0430\x043A\x0442\x0438\x0432\x043D\x043E\x0433\x043E\x0020\x043E\x043A\x043D\x0430\x0020"
+  IDLANG_RUSSIAN + 90, L"\x041E\x0447\x0438\x0441\x0442\x0438\x0442\x044C\x0020\x043F\x0440\x043E\x0442\x043E\x043A\x043E\x043B\x044B\x0020\x0440\x0430\x0431\x043E\x0442\x044B\x0020\x0432\x0441\x0435\x0445\x0020\x0430\x043A\x0442\x0438\x0432\x043D\x044B\x0445\x0020\x043E\x043A\x043E\x043D"
+  IDLANG_RUSSIAN + 91, L"\x0020\x041D\x0430\x0439\x0442\x0438\x0020\x0442\x0435\x043A\x0441\x0442\x0020"
+  IDLANG_RUSSIAN + 92, L"\x0020\x041A\x0430\x0441\x043A\x0430\x0434\x0438\x0440\x043E\x0432\x0430\x0442\x044C\x0020\x0432\x0441\x0435\x0020\x043E\x043A\x043D\x0430\x0020"
+  IDLANG_RUSSIAN + 93, L"\x0020\x041F\x0440\x0435\x0434\x0441\x0442\x0430\x0432\x0438\x0442\x044C\x0020\x0433\x043E\x0440\x0438\x0437\x043E\x043D\x0442\x0430\x043B\x044C\x043D\x043E\x0020\x0432\x0441\x0435\x0020\x043E\x043A\x043D\x0430\x0020"
+  IDLANG_RUSSIAN + 94, L"\x0020\x041F\x0440\x0435\x0434\x0441\x0442\x0430\x0432\x0438\x0442\x044C\x0020\x0432\x0435\x0440\x0442\x0438\x043A\x0430\x043B\x044C\x043D\x043E\x0020\x0432\x0441\x0435\x0020\x043E\x043A\x043D\x0430\x0020"
+  IDLANG_RUSSIAN + 95, L"\x0020\x0420\x0430\x043D\x0436\x0438\x0440\x043E\x0432\x0430\x0442\x044C\x0020\x0432\x0441\x0435\x0020\x043E\x043A\x043E\x043D\x043D\x044B\x0435\x0020\x0437\x043D\x0430\x0447\x043A\x0438\x0020"
+  IDLANG_RUSSIAN + 96, L"\x0020\x0417\x0430\x043A\x0440\x044B\x0442\x044C\x0020\x0432\x0441\x0435\x0020\x043E\x043A\x043D\x0430\x0020"
+  IDLANG_RUSSIAN + 97, L"\x0020\x0423\x0432\x0435\x043B\x0438\x0447\x0438\x0442\x044C\x0020\x0442\x0435\x043A\x0441\x0442\x0020\x043E\x043A\x043D\x0430\x0020"
+  IDLANG_RUSSIAN + 98, L"\x0020\x0423\x043C\x0435\x043D\x044C\x0448\x0438\x0442\x044C\x0020\x0442\x0435\x043A\x0441\x0442\x0020\x043E\x043A\x043D\x0430\x0020"
+
+  IDLANG_RUSSIAN + 100, L"Debug Center \x0432\x044B\x0445\x043E\x0434"
+  IDLANG_RUSSIAN + 101, L"\x0412\x044B\x0020\x0434\x0435\x0439\x0441\x0442\x0432\x0438\x0442\x0435\x043B\x044C\x043D\x043E\x0020\x0445\x043E\x0442\x0438\x0442\x0435\x0020\x0432\x044B\x0439\x0442\x0438\x003F\x000D\x000A\x041D\x0435\x0441\x043E\x0445\x0440\x0430\x043D\x0435\x043D\x043D\x044B\x0435\x0020\x0434\x0430\x043D\x043D\x044B\x0435\x0020\x043E\x0442\x043B\x0430\x0434\x043A\x0438\x0020\x0431\x0443\x0434\x0443\x0442\x0020\x043F\x043E\x0442\x0435\x0440\x044F\x043D\x044B\x0020\x0021"
+  IDLANG_RUSSIAN + 102, L"\x0026\x0434\x0430"
+  IDLANG_RUSSIAN + 103, L"\x0026\x043D\x0435\x0442"
+
+  IDLANG_RUSSIAN + 104, L"\x041E\x0431\x0437\x0020\x04D4\x0442\x043E\x043C\x0020\x043F\x0440\x0438\x043B\x043E\x0436\x0435\x043D\x0438\x0438"
+  IDLANG_RUSSIAN + 105, L"\x0420\x0430\x0437\x0440\x0430\x0431\x043E\x0442\x0430\x043D\x043E\x0020\x0441\x0020\x043F\x043E\x043C\x043E\x0449\x044C\x044E ObjAsm"
+  IDLANG_RUSSIAN + 106, L"\x041F\x043E\x0441\x0435\x0442\x0438\x0442\x0435\x0020\x043D\x0430\x0448\x0020\x0441\x0430\x0439\x0442"
+  IDLANG_RUSSIAN + 107, L"\x041E\x0442\x043F\x0440\x0430\x0432\x044C\x0442\x0435\x0020\x043D\x0430\x043C\x0020\x043F\x0438\x0441\x044C\x043C\x043E\x0020\x043F\x043E\x0020\x0430\x0434\x0440\x0435\x0441\x0443"
+
+  IDLANG_RUSSIAN + 120, L"\x0443\x0434\x0435\x0442\x0420\x0037\x0430\x0433\x0440\x0443\x0436\x0435\x043D\x0420\x0042\x043E\x043B\x044C\x043A\x043E\x0420\x003E\x0434\x0438\x043D\x0420\x0044\x0430\x0439\x043B."
+  IDLANG_RUSSIAN + 121, L"\x001E\x0448\x0438\x0431\x043A\x0430\x0420\x003F\x0440\x0438\x0420\x0047\x0442\x0435\x043D\x0438\x0438\x0420\x0044\x0430\x0439\x043B\x0430."
+  IDLANG_RUSSIAN + 122, L"\x001E\x0448\x0438\x0431\x043A\x0430\x0420\x003F\x0440\x0438\x0420\x0041\x043E\x0445\x0440\x0430\x043D\x0435\x043D\x0438\x0438\x0420\x0032\x0420\x0044\x0430\x0439\x043B."
+  IDLANG_RUSSIAN + 123, L"\x001D\x0435\x043F\x043E\x0434\x0434\x0435\x0440\x0436\x0438\x0432\x0430\x0435\x043C\x044B\x0439\x0420\x0042\x0438\x043F\x0420\x0044\x0430\x0439\x043B\x0430."
+  IDLANG_RUSSIAN + 124, L"\x001F\x0440\x0438\x043D\x0442\x0435\x0440\x0420\x003D\x0435\x0420\x003F\x043E\x0434\x0434\x0435\x0440\x0436\x0438\x0432\x0430\x0435\x0442\x0420\x0044\x0443\x043D\x043A\x0446\x0438\x0438 BitBlt."
+  IDLANG_RUSSIAN + 125, L"\x001D\x0435\x0420\x0043\x0434\x0430\x043B\x043E\x0441\x044C\x0420\x0041\x043E\x0437\x0434\x0430\x0442\x044C\x0420\x0034\x043E\x0447\x0435\x0440\x043D\x0435\x0435\x0420\x003E\x043A\x043D\x043E MDI."
+  IDLANG_RUSSIAN + 126, L"\x001D\x0435\x0434\x043E\x0441\x0442\x0430\x0442\x043E\x0447\x043D\x043E\x0420\x003F\x0430\x043C\x044F\x0442\x0438."
+  IDLANG_RUSSIAN + 127, L"\x0018\x0441\x043A\x0430\x0442\x044C\x0420\x003D\x0435\x0447\x0435\x0433\x043E."
+  IDLANG_RUSSIAN + 128, L"\x0014\x0440\x0443\x0433\x0438\x0445\x0420\x0041\x043E\x0432\x043F\x0430\x0434\x0435\x043D\x0438\x0439\x0420\x003D\x0435\x0420\x003E\x0431\x043D\x0430\x0440\x0443\x0436\x0435\x043D\x043E."
+
+  IDLANG_RUSSIAN + 140, L"\x041A\x0430\x0440\x0435\x0442\x043A\x0430\x0020\x043D\x0430\x0020\x043B\x0438\x043D\x0438\x0438"
+  IDLANG_RUSSIAN + 141, L"\x043F\x043E\x0437\x0438\x0446\x0438\x044F"
+  IDLANG_RUSSIAN + 142, L"\x0412\x044B\x0431\x043E\x0440"
+  IDLANG_RUSSIAN + 143, L"\x0445\x0430\x0440\x0430\x043A\x0442\x0435\x0440"
+  IDLANG_RUSSIAN + 144, L"\x043F\x0435\x0440\x0441\x043E\x043D\x0430\x0436\x0438"
+  IDLANG_RUSSIAN + 145, L"\x043B\x0438\x043D\x0438\x044F"
+  IDLANG_RUSSIAN + 146, L"\x043B\x0438\x043D\x0438\x0438"
+
+  IDLANG_RUSSIAN + 150, L"\x0420\x0430\x0437\x043C\x0435\x0440\x0020\x0440\x0430\x0441\x0442\x0440\x0430\x003A\x0020"
+  IDLANG_RUSSIAN + 151, L"\x043F\x0438\x043A\x0441\x0435\x043B\x044C"
+
+  IDLANG_RUSSIAN + 160, L"\x0422\x043E\x0447\x043A\x0438\x0020\x0434\x0430\x043D\x043D\x044B\x0445\x003A\x0020"
+
+  IDLANG_RUSSIAN + 170, L"\x041E\x0442\x043A\x0440\x044B\x0442\x044C\x0020\x0444\x0430\x0439\x043B"
+  IDLANG_RUSSIAN + 171, L"\x0421\x043E\x0445\x0440\x0430\x043D\x0438\x0442\x044C\x0020\x043A\x0430\x043A"
+
+  IDLANG_RUSSIAN + ID_MDI_MORE, L"\x0026\x041F\x043E\x043A\x0430\x0437\x0430\x0442\x044C\x0020\x0435\x0449\x0435\x0020\x043E\x043A\x043D\x0430\x002E\x002E\x002E\x007C\x0412\x044B\x0431\x0440\x0430\x0442\x044C\x0020\x043E\x043A\x043D\x043E"
+  IDLANG_RUSSIAN + ID_MDI_LIST, L"\x0421\x043F\x0438\x0441\x043E\x043A\x0020\x043E\x043A\x043E\x043D"
+END
+
+STRINGTABLE MOVEABLE PURE LOADONCALL DISCARDABLE
+LANGUAGE LANG_SPANISH, SUBLANG_DEFAULT
+BEGIN
   IDLANG_SPANISH + 00, "&Archivo|Comandos de archivo"
-  IDLANG_SPANISH + 01, "&Nuevo~Ctrl+N|Crea una nueva ventana"
-  IDLANG_SPANISH + 02, "&Abrir~Ctrl+O|Abre un archivo"
-  IDLANG_SPANISH + 03, "&Guardar~Ctrl+S|Guarda un archivo"
-  IDLANG_SPANISH + 04, "&Cerrar~Ctrl+F4|Cierra la ventana seleccionada"
-  IDLANG_SPANISH + 05, "Aplicaciï¿½n"
-  IDLANG_SPANISH + 06, "Salvar contexto|Salva el contexto actual"
-  IDLANG_SPANISH + 07, "Cargar contexto|Carga un contexto"
-  IDLANG_SPANISH + 08, "A&justar...|Ajusta la aplicaciï¿½n"
-  IDLANG_SPANISH + 09, "&Finalizar...~Ctrl+X|Finaliza la aplicaciï¿½n"
+  IDLANG_SPANISH + 01, "&Abrir...~Ctrl+O|Abre un archivo"
+  IDLANG_SPANISH + 02, "&Salvar~Ctrl+S|Salva en un archivo"
+  IDLANG_SPANISH + 03, "Salvar &como...|Salva en un archivo con un nombre determinado"
+  IDLANG_SPANISH + 04, "&Cerrar~Ctrl+F4|Cierra la ventana activa"
+  IDLANG_SPANISH + 05, "Imprimir"
+  IDLANG_SPANISH + 06, "Configuración de la página...|Configura la página de impresión"
+  IDLANG_SPANISH + 07, "Configuración de la impresora...|Configura la impresora"
+  IDLANG_SPANISH + 08, "&Imprimir|Imprime el contenido de la ventana activa"
+  IDLANG_SPANISH + 09, "Aplicación"
+  IDLANG_SPANISH + 10, "Pi&nned|Fija la aplicación como ventana superior"
+  IDLANG_SPANISH + 11, "&Configuración...|Configura la aplicación"
+  IDLANG_SPANISH + 12, "Finalizar...~Alt+F4|Finaliza la aplicación"
 
-  IDLANG_SPANISH + 10, "&Idioma|Selecciï¿½n de idioma"
-  IDLANG_SPANISH + 11, "&English|English language"
-  IDLANG_SPANISH + 12, "&Deutsch|Deutsche Sprache"
-  IDLANG_SPANISH + 13, "&Espaï¿½ol|Idioma espaï¿½ol"
+  IDLANG_SPANISH + 20, "&Edición|Comandos de edición"
+  IDLANG_SPANISH + 21, "C&ortar~Ctrl+X|Recorta la selección en la ventana activa"
+  IDLANG_SPANISH + 22, "&Copiar~Ctrl+C|Copia la selección en la ventana activa"
+  IDLANG_SPANISH + 23, "&Pegar~Ctrl+V|Pega el contenido del portapapeles"
+  IDLANG_SPANISH + 24, "&Borrar~Del|Borra la selección de la ventana activa"
+  IDLANG_SPANISH + 25, "&Selecciona todo~Ctrl+A|Selecciona todo el contenido de la ventana activa"
+  IDLANG_SPANISH + 26, "&Borrar contenido~Ctrl+E|Borra todo el contenido de la ventana activa"
+  IDLANG_SPANISH + 27, "Borrar todo~Ctrl+Shift+E|Borra el contenido de todas las ventanas"
+  IDLANG_SPANISH + 28, "&Buscar texto...~Ctrl+F|Busca un texto deterninado"
+  IDLANG_SPANISH + 29, "Filtrar mensajes...~Ctrl+K|Filtra mensajes entrantes"
+  IDLANG_SPANISH + 30, "Envia a la calculadora...|Envia los datos seleccionados a la aplicación 'calc.exe'"
 
-  IDLANG_SPANISH + 20, "&Color|Selecciï¿½n de colores"
-  IDLANG_SPANISH + 21, "&Negro|Imprime el texto en negro"
-  IDLANG_SPANISH + 22, "&Rojo|Imprime el texto en rojo"
-  IDLANG_SPANISH + 23, "&Verde|Imprime el texto en verde"
-  IDLANG_SPANISH + 24, "&Azul|Imprime el texto en azul"
-  IDLANG_SPANISH + 25, "&Blanco|Imprime el texto en blanco"
+  IDLANG_SPANISH + 40, "&Idiomas|Selección de idiomas"
+  IDLANG_SPANISH + 41, "&English|Idioma inglés"
+  IDLANG_SPANISH + 42, "&Deutsch|Idioma alemán"
+  IDLANG_SPANISH + 43, "&Italiano|Idioma italiano"
+  IDLANG_SPANISH + 44, L"\x0026\x0050\x0443\x0441\x0441\x043A\x0438\x0439|Idioma ruso"
+  IDLANG_SPANISH + 45, "E&spañol|Idioma español"
 
-  IDLANG_SPANISH + 30, "&Ventanas|Comandos de ventana"
-  IDLANG_SPANISH + 31, "&Cascada~Shift+F5|Ordena todas las ventanas en cascada"
-  IDLANG_SPANISH + 32, "&Mosaico horizonatal|Ordena en forma de mosaico horizontal"
-  IDLANG_SPANISH + 33, "&Mosaico vertical~Shift+F4|Ordena en forma de mosaico vertical"
-  IDLANG_SPANISH + 34, "&Organizar iconos|Ordena todos los iconos"
-  IDLANG_SPANISH + 35, "Cerrar &todo|Cierra todas las ventanas"
+  IDLANG_SPANISH + 50, "&Ventanas|Comandos de ventanas"
+  IDLANG_SPANISH + 51, "Ordenar en cascada~Shift+F5|Ordena las ventanas en cascada"
+  IDLANG_SPANISH + 52, "Ordenar horzontalmente|Ordena las ventanas en forma horizontal"
+  IDLANG_SPANISH + 53, "Ordenar verticalmente~Shift+F4|Ordena las ventanas en forma vertical"
+  IDLANG_SPANISH + 54, "Ordenar iconos|Ordena los iconos"
+  IDLANG_SPANISH + 55, "&Próxima ventana~Ctrl+F6|Muestra la próxima ventana"
+  IDLANG_SPANISH + 56, "Pre&via ventana~Ctrl+Shift+F6|Muestra la ventana previa"
+  IDLANG_SPANISH + 57, "Agrandar~Ctrl+I|Agranda el contenido de la ventana activa"
+  IDLANG_SPANISH + 58, "Reducir~Ctrl+O|Reduce el contenido de la ventana activa"
+  IDLANG_SPANISH + 59, "Cerrar todo~Ctrl+Shift+F4|Cierra todas la ventanas"
 
-  IDLANG_SPANISH + 40, "&Ayuda|Comando de ayuda"
-  IDLANG_SPANISH + 41, "&Ayuda sobre la aplicaciï¿½n~F1|Ejecuta el sistema de ayuda"
-  IDLANG_SPANISH + 42, "&Sobre...|Muestra informaciï¿½n sobre la aplicaciï¿½n"
+  IDLANG_SPANISH + 60, "&Ayuda|Comandos de ayuda"
+  IDLANG_SPANISH + 61, "Ayuda~F1|Muestra ayuda sobre esta aplicación"
+  IDLANG_SPANISH + 62, "Acerca...|Muestra información sobre esta aplicación"
+
+  IDLANG_SPANISH + 70, "&Restaurar Debug Center"
+  IDLANG_SPANISH + 71, "&Finalizar Debug Center"
+
+  IDLANG_SPANISH + 80, "Abre un archivo..."
+  IDLANG_SPANISH + 81, "Salva en un archivo"
+  IDLANG_SPANISH + 82, "Salva en un archivo con un nombre determinado..."
+  IDLANG_SPANISH + 83, "Cierra la ventana activa"
+  IDLANG_SPANISH + 84, "Imprime el contenido de la ventana activa"
+  IDLANG_SPANISH + 85, "Fija la aplicación como ventana superior"
+  IDLANG_SPANISH + 86, "Recorta la selección en la ventana activa"
+  IDLANG_SPANISH + 87, "Copia la selección en la ventana activa"
+  IDLANG_SPANISH + 88, "Pega el contenido del portapapeles"
+  IDLANG_SPANISH + 89, "Borra todo el contenido de la ventana activa"
+  IDLANG_SPANISH + 90, "Borra el contenido de todas las ventanas"
+  IDLANG_SPANISH + 91, "Busca un texto deterninado"
+  IDLANG_SPANISH + 92, "Ordena las ventanas en cascada"
+  IDLANG_SPANISH + 93, "Ordena las ventanas en forma horizontal"
+  IDLANG_SPANISH + 94, "Ordena las ventanas en forma vertical"
+  IDLANG_SPANISH + 95, "Ordena los iconos"
+  IDLANG_SPANISH + 96, "Cierra todas la ventanas"
+  IDLANG_SPANISH + 97, "Amplía el contenido de la ventana activa"
+  IDLANG_SPANISH + 98, "Reduce el contenido de la ventana activa"
+
+  IDLANG_SPANISH + 100, "Debug Center salida"
+  IDLANG_SPANISH + 101, "Está Usted seguro que desea abandonar esta aplicación?\nLos datos no salvados se perderán !"
+  IDLANG_SPANISH + 102, "&Sí"
+  IDLANG_SPANISH + 103, "&No"
+
+  IDLANG_SPANISH + 104, "Acerca de esta aplicación"
+  IDLANG_SPANISH + 105, "Diseñado con ObjAsm"
+  IDLANG_SPANISH + 106, "Visite nuesta página Web"
+  IDLANG_SPANISH + 107, "Envíenos un E-Mail a"
+
+  IDLANG_SPANISH + 120, "Sólo se cargará un archivo."
+  IDLANG_SPANISH + 121, "Error al leer el archivo."
+  IDLANG_SPANISH + 122, "Error al guardar en el archivo."
+  IDLANG_SPANISH + 123, "Tipo de archivo no soportado."
+  IDLANG_SPANISH + 124, "La impresora no soporta las funciones BitBlt."
+  IDLANG_SPANISH + 125, "Fallo al crear una ventana MDI hija."
+  IDLANG_SPANISH + 126, "No hay suficiente memoria."
+  IDLANG_SPANISH + 127, "No hay nada que buscar."
+  IDLANG_SPANISH + 128, "No se han encontrado más resultados."
+
+  IDLANG_SPANISH + 140, "Cursor en línea"
+  IDLANG_SPANISH + 141, "posición"
+  IDLANG_SPANISH + 142, "Selección"
+  IDLANG_SPANISH + 143, "character"
+  IDLANG_SPANISH + 144, "characteres"
+  IDLANG_SPANISH + 145, "línea"
+  IDLANG_SPANISH + 146, "líneas"
+
+  IDLANG_SPANISH + 150, "Tamaño del Bitmap"
+  IDLANG_SPANISH + 151, "pixel"
+
+  IDLANG_SPANISH + 160, "Puntos de datos"
+
+  IDLANG_SPANISH + 170, "Abrir archivo"
+  IDLANG_SPANISH + 171, "Guardar como"
 
   IDLANG_SPANISH + ID_MDI_MORE, "&Otras ventanas...|Seleccione una ventana"
   IDLANG_SPANISH + ID_MDI_LIST, "Lista de ventanas"
-
 END
 
 
-// Accelerators -----------------------------------------------------------------------------------
+// Accelerators ------------------------------------------------------------------------------------
 
-MDIACCEL ACCELERATORS DISCARDABLE
+HOTKEYS ACCELERATORS DISCARDABLE
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 BEGIN
-  VK_F1, IDM_HELP_HELP,       VIRTKEY, NOINVERT
-  VK_F4, IDM_WINDOW_TILE_VER, VIRTKEY, SHIFT,   NOINVERT
-  VK_F5, IDM_WINDOW_CASCADE,  VIRTKEY, SHIFT,   NOINVERT
-  "n",   IDM_FILE_NEW,        VIRTKEY, CONTROL, NOINVERT
-  "o",   IDM_FILE_OPEN,       VIRTKEY, CONTROL, NOINVERT
-  "s",   IDM_FILE_SAVE,       VIRTKEY, CONTROL, NOINVERT
+  VK_F1,  IDM_HELP_HELP,       VIRTKEY, NOINVERT
+  VK_F4,  IDM_WINDOW_TILE_VER, VIRTKEY, SHIFT,   NOINVERT
+  VK_F5,  IDM_WINDOW_CASCADE,  VIRTKEY, SHIFT,   NOINVERT
+  "A",    IDM_EDIT_SELECTALL,  VIRTKEY, CONTROL, NOINVERT
+  "F",    IDM_EDIT_FIND,       VIRTKEY, CONTROL, NOINVERT
+  "I",    IDM_WINDOW_ZOOMIN,   VIRTKEY, CONTROL, NOINVERT
+  "O",    IDM_WINDOW_ZOOMOUT,  VIRTKEY, CONTROL, NOINVERT
+  VK_F4,  IDM_FILE_CLOSE,      VIRTKEY, CONTROL, NOINVERT
+  VK_F4,  IDM_FILE_CLOSEALL,   VIRTKEY, CONTROL, SHIFT, NOINVERT
+  VK_F6,  IDM_WINDOW_NEXT,     VIRTKEY, CONTROL, NOINVERT
+  VK_F6,  IDM_WINDOW_PREV,     VIRTKEY, CONTROL, SHIFT, NOINVERT
 END

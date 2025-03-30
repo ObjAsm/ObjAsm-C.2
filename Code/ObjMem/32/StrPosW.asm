@@ -12,7 +12,7 @@
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrPosW
-; Purpose:    Find the occurence of string 2 into string1.
+; Purpose:    Find the occurence of string2 into string1.
 ; Arguments:  Arg1: -> Source WIDE string.
 ;             Arg2: -> Searched WIDE string.
 ; Return:     eax -> string occurence or NULL if not found.

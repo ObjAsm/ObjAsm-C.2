@@ -12,7 +12,7 @@
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  StrPosA
-; Purpose:    Find the occurence of string 2 into string1.
+; Purpose:    Find the occurence of string2 into string1.
 ; Arguments:  Arg1: -> Source ANSI string.
 ;             Arg2: -> Searched ANSI string.
 ; Return:     rax -> String occurence or NULL if not found.

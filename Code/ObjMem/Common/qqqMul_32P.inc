@@ -14,9 +14,9 @@
 ; Purpose:    Multiply 2 signed/unsigned QWORDs.
 ;             (64 bit) Multiplicand multiplied by (64 bit) Multiplier = (64 bit) Product. 
 ; Arguments:  Arg1: Multiplicand low signed/unsigned word.
-;             Arg2 Multiplicand high signed/unsigned word.
-;             Arg3 Multiplier low signed/unsigned word.
-;             Arg4 Multiplier high signed/unsigned word.
+;             Arg2: Multiplicand high signed/unsigned word.
+;             Arg3: Multiplier low signed/unsigned word.
+;             Arg4: Multiplier high signed/unsigned word.
 ; Return:     edx:eax = Signed product.
 ; Note:       Both signed and unsigned routines are the same, since multiply's
 ;             work out the same in 2's complement.

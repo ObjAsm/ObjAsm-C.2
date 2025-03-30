@@ -23,7 +23,7 @@ StrLScanW proc uses rbx rdi pStringW:POINTER, wChar:CHRW
   mov rbx, rdx
   mov rdi, rcx
   invoke StrLengthW, rdi                                ;pStringW
-  test rax, rax                                         ;Lenght = 0 ?
+  test eax, eax                                         ;Lenght = 0 ?
   jz @F                                                 ;Return NULL
   mov rcx, rax                                          ;ecx (counter) = length
   mov ax, bx                                            ;Load wChar

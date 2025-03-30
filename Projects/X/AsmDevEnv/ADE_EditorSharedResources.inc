@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ACE_EditorSharedResources.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm Assembler Development Environment.
 ; ==================================================================================================
 

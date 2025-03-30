@@ -19,9 +19,9 @@ TypeArg equ <SDWORD>
 ; Purpose:    Multiply 2 signed QWORDs.
 ;             (64 bit) Multiplicand multiplied by (64 bit) Multiplier = (64 bit) Product.
 ; Arguments:  Arg1: Multiplicand low signed word.
-;             Arg2 Multiplicand high signed word.
-;             Arg3 Multiplier low signed word.
-;             Arg4 Multiplier high signed word.
+;             Arg2: Multiplicand high signed word.
+;             Arg3: Multiplier low signed word.
+;             Arg4: Multiplier high signed word.
 ; Return:     edx:eax = Signed product.
 ; Note:       Both signed and unsigned routines are the same, since multiply's
 ;             work out the same in 2's complement.

@@ -23,7 +23,7 @@ StrLScanA proc uses rbx rdi pStringA:POINTER, bChar:CHRA
   mov bl, dl
   mov rdi, rcx
   invoke StrLengthA, rcx                                ;pStringA
-  test rax, rax                                         ;Lenght = 0 ?
+  test eax, eax                                         ;Lenght = 0 ?
   jz @F                                                 ;Return NULL
   mov rcx, rax                                          ;rcx (counter) = length
   mov al, bl                                            ;Load bChar

@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ADE_EditorDisplay.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm Assembler Development Environment.
 ; ==================================================================================================
 
@@ -254,52 +254,52 @@ Method EditorDisplay.OnScrollHorz, uses xsi, wParam:WPARAM, lParam:LPARAM
     mov eax, ScrollInfo.nTrackPos
     .if edx < eax
       sub eax, edx
-      OCall [xsi].View::EditorView.ScrollVisPageRight, eax  ;Goto right eax lines with saturation
+      OCall [xsi].View::EditorView.ScrollPageRight, eax  ;Goto right eax lines with saturation
       .if eax != 0
         inc dNeedRedrawing
-        add [xsi].View.CaretLocation.dCharIndex, ecx
+;        add [xsi].View.CaretLocation.dCharIndex, ecx
         OCall [xsi].View::EditorView.CaretSet
       .endif
 
     .elseif edx > eax
       sub edx, eax
-      OCall [xsi].View::EditorView.ScrollVisPageLeft, edx   ;Goto left edx lines with saturation
+      OCall [xsi].View::EditorView.ScrollPageLeft, edx   ;Goto left edx lines with saturation
       .if eax != 0
         inc dNeedRedrawing
-        add [xsi].View.CaretLocation.dCharIndex, ecx
+;        add [xsi].View.CaretLocation.dCharIndex, ecx
         OCall [xsi].View::EditorView.CaretSet
       .endif
     .endif
 
   .elseif ax == SB_PAGELEFT
-    OCall [xsi].View::EditorView.ScrollVisPageLeft, [xsi].ScrollPage.x  ;Goto previous page with saturation
+    OCall [xsi].View::EditorView.ScrollPageLeft, [xsi].ScrollPage.x  ;Goto previous page with saturation
     .if eax != 0
       inc dNeedRedrawing
-      add [xsi].View.CaretLocation.dCharIndex, ecx
+;      add [xsi].View.CaretLocation.dCharIndex, ecx
       OCall [xsi].View::EditorView.CaretSet
     .endif
 
   .elseif ax == SB_PAGERIGHT
-    OCall [xsi].View::EditorView.ScrollVisPageRight, [xsi].ScrollPage.x ;Goto next page with saturation
+    OCall [xsi].View::EditorView.ScrollPageRight, [xsi].ScrollPage.x ;Goto next page with saturation
     .if eax != 0
       inc dNeedRedrawing
-      add [xsi].View.CaretLocation.dCharIndex, ecx
+;      add [xsi].View.CaretLocation.dCharIndex, ecx
       OCall [xsi].View::EditorView.CaretSet
     .endif
 
   .elseif ax == SB_LINELEFT
-    OCall [xsi].View::EditorView.ScrollVisLineLeft      ;Goto previous line with saturation
+    OCall [xsi].View::EditorView.ScrollLineLeft         ;Goto previous line with saturation
     .if eax != 0
       inc dNeedRedrawing
-      inc [xsi].View.CaretLocation.dCharIndex
+;      inc [xsi].View.CaretLocation.dCharIndex
       OCall [xsi].View::EditorView.CaretSet
     .endif
 
   .elseif ax == SB_LINERIGHT
-    OCall [xsi].View::EditorView.ScrollVisLineRight     ;Goto next line with saturation
+    OCall [xsi].View::EditorView.ScrollLineRight        ;Goto next line with saturation
     .if eax != 0
       inc dNeedRedrawing
-      dec [xsi].View.CaretLocation.dCharIndex
+;      dec [xsi].View.CaretLocation.dCharIndex
       OCall [xsi].View::EditorView.CaretSet
     .endif
   .endif
@@ -425,8 +425,11 @@ Method EditorDisplay.OnSetFocus,, wParam:WPARAM, lParam:LPARAM
 
 ;  DbgText "EditorDisplay.OnSetFocus"
   SetObject xcx
-  mov xax, [xcx].pOwner
-  invoke SetFocus, [xax].$Obj(Editor).hLastFocusedView
+  mov xdx, [xcx].pOwner
+  mov xax, [xdx].$Obj(Editor).pFocusedView
+  .if xax != NULL
+    invoke SetFocus, [xax].$Obj(EditorView).hWnd
+  .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

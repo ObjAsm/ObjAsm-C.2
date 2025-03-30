@@ -118,7 +118,7 @@ Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 
   .elseif ax == IDM_DIALOG
     New DLW::DialogModal
-    OCall DLW::DialogModal.Init, xsi, [xsi].hWnd, 1000
+    OCall DLW::DialogModal.Init, xsi, [xsi].hWnd, 2000
     c2m DLW.pDynamicLayout, offset DlgChildrenInfo, xcx
     OCall DLW::DialogModal.Show
     OCall DLW::DialogModal.Done

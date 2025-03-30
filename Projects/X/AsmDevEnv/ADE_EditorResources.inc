@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ACE_EditorResources.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm Assembler Development Environment.
 ; ==================================================================================================
 
@@ -12,7 +12,6 @@ ERF_REVERSE_MOUSE_WHEEL_HORZ  equ   BIT01     ;Reverse horizontal mouse wheel ro
 ERF_TAB_2_SPACES              equ   BIT02
 ERF_SHOW_ALIGN_LINES          equ   BIT03
 ERF_TAB_TO_SPACE              equ   BIT04
-
 
 
 ; ==================================================================================================
@@ -293,4 +292,53 @@ Method EditorResources.Init, uses xbx xdi xsi, pOwner:POINTER, pIniFileName:PSTR
   m2m [xsi].hBrushLineIndGreen, [xbx].$Obj(EditorSharedResources).hBrushLineIndGreen, xax
 
 ;  invoke ShowKeywords, addr [xsi].Keywords
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     EditorResources.Zoom
+; Purpose:    Manipulate the editor fonts to create the illusion of zooming in and out.
+; Arguments:  Arg1: ZoomFactor.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+ZoomFont macro DrawAttr
+  ;Compute the new Font PointSize
+  mov eax, &DrawAttr&.DRAW_ATTR.dInitPointSize
+  mul edi                                               ;edi = dZoomFactor
+  cdiv ZOOM_FACTOR_INIT
+  .if edx != &DrawAttr&.DRAW_ATTR.dCurrPointSize        ;Check if the PointSize has really changed
+    mov &DrawAttr&.DRAW_ATTR.dCurrPointSize, edx
+    ;Recreate  the font
+    invoke DeleteDrawAttrFont, addr &DrawAttr
+    invoke CreateDrawAttrFont, addr &DrawAttr
+  .endif
+endm
+
+Method EditorResources.Zoom, uses xbx xdi xsi, dZoomFactor:DWORD
+  SetObject xsi
+  mov edi, dZoomFactor
+  xor eax, eax
+  .if SDWORD ptr edi >= ZOOM_FACTOR_MIN && SDWORD ptr edi <= ZOOM_FACTOR_MAX ;Check bounds
+    mov [xsi].dZoomFactor, edi
+    
+    ;Update the fonts
+    ZoomFont [xsi].EditorTextRegular
+    ZoomFont [xsi].EditorTextSelect
+    ZoomFont [xsi].EditorTextHighlight
+    ZoomFont [xsi].EditorTextQuote
+    ZoomFont [xsi].EditorTextComment
+    ZoomFont [xsi].EditorTextNumber
+    ZoomFont [xsi].EditorTextOperator
+    ZoomFont [xsi].SelBarTextRegular
+    ZoomFont [xsi].SelBarTextSelect
+    .ColForEach [xsi].KeywordGroups
+      lea xbx, [xax].KEYWORDGROUP
+      ZoomFont [xbx]
+    .ColNext
+  
+    ;Compute the new line height
+    mov eax, [xsi].dCodeLineSpace
+    add eax, [xsi].EditorTextRegular.FontMetric.y
+    mov [xsi].dTextLineHeight, eax
+    mov eax, TRUE
+  .endif
 MethodEnd

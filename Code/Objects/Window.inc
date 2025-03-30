@@ -44,10 +44,10 @@
 
 
 ;Dynamic Layout flags
-DLF_LOAD_MIN_X      equ   BIT00   ;Load minimal width with template width
-DLF_LOAD_MIN_Y      equ   BIT01   ;Load minimal height with template height
-DLF_LOAD_MAX_X      equ   BIT02   ;Load maximal width with template width
-DLF_LOAD_MAX_Y      equ   BIT03   ;Load maximal height with template height
+DLF_LOAD_MIN_X      equ   BIT00   ;Load minimal width from template width
+DLF_LOAD_MIN_Y      equ   BIT01   ;Load minimal height from template height
+DLF_LOAD_MAX_X      equ   BIT02   ;Load maximal width from template width
+DLF_LOAD_MAX_Y      equ   BIT03   ;Load maximal height from template height
 
 DLF_LIMIT_MIN_X     equ   BIT04   ;Limit the minimal width
 DLF_LIMIT_MIN_Y     equ   BIT05   ;Limit the minimal height

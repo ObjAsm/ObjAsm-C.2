@@ -1,7 +1,7 @@
 ; ==================================================================================================
-; Title:      ADE_SetupDlg.inc
+; Title:      ADE_SetupDialog.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm Setup dialog implementation.
 ; ==================================================================================================
 
@@ -10,15 +10,13 @@
 ; SetupDlg implementation
 ; ==================================================================================================
 
-;##\
-
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     DialogSetup.CtlsGet
+; Method:     SetupDialog.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method SetupDlg.CtlsGet, uses xsi
+Method SetupDialog.CtlsGet, uses xsi
   SetObject xsi
   OCall [xsi].TabDialog1::Tab1.CtlsGet
   OCall [xsi].TabDialog2::Tab2.CtlsGet
@@ -26,25 +24,25 @@ Method SetupDlg.CtlsGet, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     SetupDlg.CtlsSet
+; Method:     SetupDialog.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
 ; Return:     eax = this procedure should return TRUE to direct Windows to set the keyboard focus to
 ;                   the control specified by hwndFocus. Otherwise, it should return FALSE to prevent
 ;                   Windows from setting the default keyboard focus.
 
-Method SetupDlg.CtlsSet
+Method SetupDialog.CtlsSet
   ;No controls to setup!
   mov eax, TRUE
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     SetupDlg.Done
-; Purpose:    Finalize the SetupDlg object.
+; Method:     SetupDialog.Done
+; Purpose:    Finalize the SetupDialog object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method SetupDlg.Done, uses xsi
+Method SetupDialog.Done, uses xsi
   SetObject xsi
   OCall [xsi].IconImageList::MaskedImageList.Done
   OCall [xsi].TabDialog1::Tab1.Done
@@ -53,13 +51,13 @@ Method SetupDlg.Done, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     SetupDlg.Init
-; Purpose:    Initialaize a SetupDlg object.
+; Method:     SetupDialog.Init
+; Purpose:    Initialaize a SetupDialog object.
 ; Arguments:  Arg1: -> Owner object.
 ;             Arg2: -> Parent window HANDLE.
 ; Return:     Nothing.
 
-Method SetupDlg.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND
+Method SetupDialog.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND
   SetObject xsi
   ACall xsi.Init, pOwner, hParent, $OfsCStr("DIALOGSETUP")
 
@@ -70,13 +68,15 @@ Method SetupDlg.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     SetupDlg.OnCommand
+; Method:     SetupDialog.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method SetupDlg.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method SetupDialog.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
+  ANNOTATION use:wParam lParam
+
   SetObject xsi
   LoWord(wParam)
   .if ax == IDOK
@@ -88,25 +88,27 @@ Method SetupDlg.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     SetupDlg.OnDestroy
+; Method:     SetupDialog.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     Nothing.
 
-Method SetupDlg.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method SetupDialog.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
+  ANNOTATION use:wParam lParam
+
   SetObject xsi
   invoke SetWindowLongPtr, [xsi].hWnd, DWLP_USER, NULL
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     SetupDlg.OnInitDialog
+; Method:     SetupDialog.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     eax = FALSE.
 
-Method SetupDlg.OnInitDialog, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method SetupDialog.OnInitDialog, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   lea xbx, [xsi].TabControl
   OCall xbx::TabCtrl.Init, xsi, [xsi].hWnd, addr [xsi].IconImageList, offset SetupTabCtrl
@@ -166,6 +168,8 @@ MethodEnd
 ; Return:     eax = Brush handle that Windows uses to paint the background of the static control.
 
 Method Tab1.OnCtlColorStatic, uses xsi, wParam:WPARAM, lParam:LPARAM
+  ANNOTATION use:wParam lParam
+
   SetObject xsi
   invoke GetDlgItem, [xsi].hWnd, IDC_CONTROL
   .if xax == lParam

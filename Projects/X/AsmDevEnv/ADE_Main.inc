@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ADE_Main.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm Assembler Development Environment.
 ; ==================================================================================================
 
@@ -13,22 +13,42 @@ TBSTYLE   equ   WS_CHILD or WS_VISIBLE or WS_CLIPCHILDREN or TBSTYLE_TOOLTIPS or
 
 SBSTYLE   equ   WS_CHILD or WS_VISIBLE or SBARS_TOOLTIPS or SBARS_SIZEGRIP
 
-STSTYLE equ WS_CHILD or WS_VISIBLE or WS_TABSTOP or TCS_TABS or TCS_FOCUSNEVER; or TCS_HOTTRACK
+STSTYLE   equ   WS_CHILD or WS_VISIBLE or WS_TABSTOP or TCS_TABS or TCS_FOCUSNEVER; or TCS_HOTTRACK
 
 .const
 ToolbarFile DEF_TOOLBAR {IDC_TOOLBARFILE, TBSTYLE, TBSTYLE_EX_MIXEDBUTTONS, \
-                         $OfsTStr("File operations"), {<0,0,0,0>}, 2}
-  TBBUTTON {IDB_FILE_NEW,   IDM_FILE_NEW,   TBSTATE_ENABLED, TBSTYLE_BUTTON}
-  TBBUTTON {IDB_FILE_CLOSE, IDM_FILE_CLOSE, TBSTATE_ENABLED, TBSTYLE_BUTTON}
+                         $OfsTStr("File operations"), {<0,0,0,0>}, 11}
+  TBBUTTON {IDB_FILE_NEW,         IDM_FILE_NEW,         TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_FILE_OPEN,        IDM_FILE_OPEN,        TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_FILE_SAVE,        IDM_FILE_SAVE,        TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_FILE_SAVEAS,      IDM_FILE_SAVEAS,      TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_FILE_SAVEALL,     IDM_FILE_SAVEALL,     TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_FILE_CLOSE,       IDM_FILE_CLOSE,       TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_FILE_CLOSEALL,    IDM_FILE_CLOSEALL,    TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {0,                    -1,                   TBSTATE_ENABLED, TBSTYLE_SEP}
+  TBBUTTON {IDB_FILE_PRINT,       IDM_FILE_PRINT,       TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {0,                    -2,                   TBSTATE_ENABLED, TBSTYLE_SEP}
+  TBBUTTON {IDB_FILE_PIN,         IDM_FILE_PIN,         TBSTATE_ENABLED, TBSTYLE_BUTTON or \
+                                                                         TBSTYLE_CHECK}
+
+ToolbarEdit DEF_TOOLBAR {IDC_TOOLBAREDIT, TBSTYLE, TBSTYLE_EX_MIXEDBUTTONS, \
+                         $OfsTStr("Edit operations"), {<0,0,0,0>}, 6}
+  TBBUTTON {IDB_EDIT_CUT,         IDM_EDIT_CUT,         TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_EDIT_COPY,        IDM_EDIT_COPY,        TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_EDIT_PASTE,       IDM_EDIT_PASTE,       TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_EDIT_DELETE,      IDM_EDIT_DELETE,      TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {0,                    -3,                   TBSTATE_ENABLED, TBSTYLE_SEP}
+  TBBUTTON {IDB_EDIT_FIND,        IDM_EDIT_FIND,        TBSTATE_ENABLED, TBSTYLE_BUTTON}
 
 ToolbarWindow DEF_TOOLBAR {IDC_TOOLBARWINDOW, TBSTYLE, TBSTYLE_EX_MIXEDBUTTONS, \
-                           $OfsTStr("Window operations"), {<0,0,0,0>}, 6}
-  TBBUTTON {IDB_WINDOW_CASCADE,  IDM_WINDOW_CASCADE,  TBSTATE_ENABLED, TBSTYLE_BUTTON}
-  TBBUTTON {IDB_WINDOW_TILE_HOR, IDM_WINDOW_TILE_HOR, TBSTATE_ENABLED, TBSTYLE_BUTTON}
-  TBBUTTON {IDB_WINDOW_TILE_VER, IDM_WINDOW_TILE_VER, TBSTATE_ENABLED, TBSTYLE_BUTTON}
-  TBBUTTON {IDB_WINDOW_ARRANGE,  IDM_WINDOW_ARRANGE,  TBSTATE_ENABLED, TBSTYLE_BUTTON}
-  TBBUTTON {IDB_WINDOW_ARRANGE,  -1                ,  TBSTATE_ENABLED, TBSTYLE_SEP}
-  TBBUTTON {IDB_WINDOW_CLOSEALL, IDM_WINDOW_CLOSEALL, TBSTATE_ENABLED, TBSTYLE_BUTTON}
+                           $OfsTStr("Window operations"), {<0,0,0,0>}, 7}
+  TBBUTTON {IDB_WINDOW_CASCADE,   IDM_WINDOW_CASCADE,   TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_WINDOW_TILE_HOR,  IDM_WINDOW_TILE_HOR,  TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_WINDOW_TILE_VER,  IDM_WINDOW_TILE_VER,  TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_WINDOW_ARRANGE,   IDM_WINDOW_ARRANGE,   TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {0,                    -4,                   TBSTATE_ENABLED, TBSTYLE_SEP}
+  TBBUTTON {IDB_WINDOW_ZOOMIN,    IDM_WINDOW_ZOOMIN,    TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_WINDOW_ZOOMOUT,   IDM_WINDOW_ZOOMOUT,   TBSTATE_ENABLED, TBSTYLE_BUTTON}
 
 AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SBSTYLE, 0, 4}
   DEF_STATUSBAR_PART {220, 100, 3, SBT_NOBORDERS, NULL}
@@ -43,8 +63,11 @@ CStr szEditorClassName,         "OAC_Editor"
 CStr szEditorDisplayClassName,  "OAC_EditorDisplay"
 CStr szEditorViewClassName,     "OAC_EditorView"
 
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+
 FONT_DEF struct
-  dPointSize        DWORD     ?
+  dInitPointSize    DWORD     ?
+  dCurrPointSize    DWORD     ?
   LogFont           LOGFONT   {}
 FONT_DEF ends
 PFONT_DEF typedef ptr FONT_DEF
@@ -159,6 +182,7 @@ ObjectEnd
 Object EditorResources, ADE_EditorResourcesID, Primer
   RedefineMethod    Done
   RedefineMethod    Init,                 POINTER, PSTRING, PSTRING, HDC, $ObjPtr(EditorSharedResources)
+  StaticMethod      Zoom,                 DWORD
 
   DefineVariable    dReqMainVersion,      DWORD,      1
   DefineVariable    dMinSubVersion,       DWORD,      0
@@ -183,12 +207,15 @@ Object EditorResources, ADE_EditorResourcesID, Primer
 
   ;Metrics:
   DefineVariable    dCodeLineSpace,       DWORD,      DefaultLineSpace  ;Vertical separation between lines
+  DefineVariable    dTextLineHeight,      DWORD,      12                 ;CodeFontMetric.Y + Linespacing
   DefineVariable    dTabWidth,            DWORD,      DefaultTabWidth   ;TAB in spaces
   DefineVariable    dLineFoldingWidth,    DWORD,      35                ;Width reserved for line folding management
   DefineVariable    dLineIndicatorWidth,  DWORD,      3                 ;Width reserved for line indication
   DefineVariable    dSelBarWidthMin,      DWORD,      60
   DefineVariable    ScrollBarMetric,      POINT,      {17,17}
   DefineVariable    CaretBmpOffset,       POINT,      {0,0} ;Offset to the logical caret, set by CaretNew
+  DefineVariable    dZoomFactor,          DWORD,      ZOOM_FACTOR_INIT
+  DefineVariable    dInitZoomFactor,      DWORD,      ZOOM_FACTOR_INIT  ;Temp storage
 
   Embed     KeywordGroups,      KeywordGroupCollection
   Embed     Keywords,           KeywordCollection
@@ -296,11 +323,11 @@ Object EditorView, ADE_EditorViewID, Window
   StaticMethod      CaretRefLocLoad,      PLOCATION
   StaticMethod      CaretSet
   StaticMethod      CaretShow
-  StaticMethod      ClipboardCopy
-  StaticMethod      ClipboardCut
-  StaticMethod      ClipboardPaste
+  StaticMethod      ClpBrdDelete
+  StaticMethod      ClpBrdCopy
+  StaticMethod      ClpBrdCut
+  StaticMethod      ClpBrdPaste
   StaticMethod      ClientPos2Index,      PPOINT, PPOINT
-  StaticMethod      ClientPos2Location,   PLOCATION, PPOINT
   StaticMethod      DrawSelectionBar
   RedefineMethod    Done
   StaticMethod      GetCodeData,          DWORD
@@ -311,16 +338,16 @@ Object EditorView, ADE_EditorViewID, Window
   RedefineMethod    OnSize,               WPARAM, LPARAM
   StaticMethod      ScrollCaretInViewLeft
   StaticMethod      ScrollCaretInViewRight
+  StaticMethod      ScrollLineLeft
+  StaticMethod      ScrollLineRight
+  StaticMethod      ScrollPageLeft,       DWORD
+  StaticMethod      ScrollPageRight,      DWORD
   StaticMethod      ScrollVisLineDown
-  StaticMethod      ScrollVisLineLeft
-  StaticMethod      ScrollVisLineRight
   StaticMethod      ScrollVisLineUp
   StaticMethod      ScrollVisPageDown,    DWORD
-  StaticMethod      ScrollVisPageLeft,    DWORD
-  StaticMethod      ScrollVisPageRight,   DWORD
   StaticMethod      ScrollVisPageUp,      DWORD
-  StaticMethod      SelectUpToCaretLocation
   StaticMethod      SelectBeginAtCaretLocation
+  StaticMethod      SelectUpToCaretLocation
   StaticMethod      SetGuiLayout
   StaticMethod      Startup
   StaticMethod      UpdateStatusPanel
@@ -331,6 +358,7 @@ Object EditorView, ADE_EditorViewID, Window
   ;Events
   StaticEvent       OnChar,               WM_CHAR
   StaticEvent       OnCreate,             WM_CREATE
+  StaticEvent       OnGesture,            WM_GESTURE
   StaticEvent       OnKeyDown,            WM_KEYDOWN
   StaticEvent       OnKillFocus,          WM_KILLFOCUS
   StaticEvent       OnLButtonDblClk,      WM_LBUTTONDBLCLK 
@@ -362,7 +390,6 @@ Object EditorView, ADE_EditorViewID, Window
   DefineVariable    hPrvTextBmp,          HBITMAP,    0       ;Original MemDC bitmap
 
   ;Metrics
-  DefineVariable    dTextLineHeight,      DWORD,      0       ;CodeFontMetric.Y + Linespacing
   DefineVariable    dSelBarWidth,         DWORD,      0
 
   ;UI elements
@@ -373,6 +400,10 @@ Object EditorView, ADE_EditorViewID, Window
   DefineVariable    dLineMaxFullVis,      DWORD,      0       ;Number of vert. fully shown lines
   DefineVariable    dLineMaxPartVis,      DWORD,      0       ;Number of vert. partially shown lines
 
+  ;Touch support
+  DefineVariable    dGestureZoomFirst,    DWORD,      0
+  DefineVariable    dGestureZoomLast,     DWORD,      0
+  DefineVariable    GesturePanPos,        POINT,      {}
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -412,11 +443,11 @@ Object EditorDisplay, ADE_EditorDisplayID, Window
   StaticMethod      SetupScrollBarVert
   StaticMethod      Startup
 
-  StaticEvent       OnCreate,             WM_CREATE
-  StaticEvent       OnScrollHorz,         WM_HSCROLL
-  StaticEvent       OnPaint,              WM_PAINT
-  StaticEvent       OnSetFocus,           WM_SETFOCUS
-  StaticEvent       OnScrollVert,         WM_VSCROLL
+  VirtualEvent      OnCreate,             WM_CREATE
+  VirtualEvent      OnScrollHorz,         WM_HSCROLL
+  VirtualEvent      OnPaint,              WM_PAINT
+  VirtualEvent      OnSetFocus,           WM_SETFOCUS
+  VirtualEvent      OnScrollVert,         WM_VSCROLL
 
   DefineVariable    pResources,           $ObjPtr(EditorResources), NULL
 
@@ -442,12 +473,18 @@ ObjectEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
 Object ChildWnd, ADE_ChildWndID, MdiChildWnd                  ;MDI child window.
+  VirtualAbstract   ClpBrdDelete
+  VirtualAbstract   ClpBrdCopy
+  VirtualAbstract   ClpBrdCut
+  VirtualAbstract   ClpBrdPaste
+  VirtualAbstract   ClpBrdSetBtns
   RedefineMethod    Done
   RedefineMethod    Init,                 POINTER             ;-> Owner
-  VirtualAbstract   ClipboardCopy
-  VirtualAbstract   ClipboardCut
-  VirtualAbstract   ClipboardPaste
+  VirtualAbstract   Print
   VirtualAbstract   Save
+  VirtualAbstract   UpdateStatusbar
+
+  VirtualEvent      OnMdiActivate,        WM_MDIACTIVATE
 
   DefineVariable    pFullFileName,        PSTRING,    NULL
 
@@ -486,23 +523,32 @@ ObjectEnd
 ;Caret Blink timeout: SPI_SETCARETTIMEOUT
 
 Object Editor, ADE_EditorID, ChildWnd
+  RedefineMethod    ClpBrdDelete
+  RedefineMethod    ClpBrdCopy
+  RedefineMethod    ClpBrdCut
+  RedefineMethod    ClpBrdPaste
+  RedefineMethod    ClpBrdSetBtns
   RedefineMethod    Done
-  StaticMethod      InformDeletionOf,     DWORD
-  StaticMethod      InformInsertionOf,    DWORD
+  VirtualMethod     FindFrom,             PSTRING, POINTER, POINTER
+  VirtualMethod     InformDeletionOf,     DWORD
+  VirtualMethod     InformInsertionOf,    DWORD
   RedefineMethod    Init,                 POINTER, $ObjPtr(EditorResources), PSTRING      ;-> Owner, -> FileName
-  StaticMethod      LineNew,              DWORD
+  VirtualMethod     LineNew,              DWORD
   RedefineMethod    Load,                 $ObjPtr(Stream), PDESER_INFO
-  StaticMethod      Open,                 PSTRING
+  VirtualMethod     Open,                 PSTRING
   RedefineMethod    OnSize,               WPARAM, LPARAM
+  RedefineMethod    Print
   RedefineMethod    Save
-  StaticMethod      SaveAs
-  StaticMethod      SelectionDelete
-  StaticMethod      SelectionResetAll                                  
-  StaticMethod      SelectionResetLines                             ;Reset selection on lines only
-  StaticMethod      SelectionSet
-  StaticMethod      SetDirty,             DWORD
+  VirtualMethod     SaveAs
+  VirtualMethod     SelectAll
+  VirtualMethod     SelectionDelete
+  VirtualMethod     SelectionResetAll                                  
+  VirtualMethod     SelectionResetLines                             ;Reset selection on lines only
+  VirtualMethod     SelectionSet
+  VirtualMethod     SetDirty,             DWORD
   StaticMethod      Startup
   RedefineMethod    Store,                $ObjPtr(Stream)
+  RedefineMethod    UpdateStatusbar
   RedefineMethod    WndProc,              DWORD, WPARAM, LPARAM
 
   DefineVariable    dFlags,               DWORD,      0
@@ -516,7 +562,7 @@ Object Editor, ADE_EditorID, ChildWnd
   DefineVariable    SelectionLst,         LOCATION,   {NULL, 0, 0}  ;Last selected location
   DefineVariable    SelectionRange,       SELRANGE,   {NULL, NULL}  ;-> LOCATION; Set by SelectionSet
   DefineVariable    dSelectionVisLineCnt, DWORD,      0             ;Set by SelectionSet
-  DefineVariable    hLastFocusedView,     HWND,       0
+  DefineVariable    pFocusedView,         $ObjPtr(EditorView),  NULL
 
   StaticEvent       OnClose,              WM_CLOSE
   StaticEvent       OnEnterSizeMove,      WM_ENTERSIZEMOVE
@@ -534,6 +580,7 @@ Object ClientWnd, ADE_ClientWndID, MdiClientWnd                 ;MDI client wind
   RedefineMethod    Init,                 POINTER               ;-> Owner
   RedefineMethod    Load,                 $ObjPtr(Stream), PDESER_INFO
   RedefineMethod    Store,                $ObjPtr(Stream)
+  StaticMethod      UpdateEditors
   RedefineMethod    WndProc,              DWORD, WPARAM, LPARAM
 
   StaticEvent       OnDropFiles,          WM_DROPFILES
@@ -547,6 +594,48 @@ Object ClientWnd, ADE_ClientWndID, MdiClientWnd                 ;MDI client wind
   ;Management
   DefineVariable    hLastFocusedWnd,      HANDLE,     0
   DefineVariable    dFlags,               DWORD,      0
+  
+ObjectEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+
+FDS_CURRENT_FILE    equ   0
+FDS_OPEN_FILES      equ   1
+FDS_PROJECT_FILES   equ   2
+FDS_ALL_FILES       equ   3
+
+FDO_MATCH_CASE      equ   BIT00 
+FDO_WHOLE_WORD      equ   BIT01
+FDO_IGNORE_SPACE    equ   BIT02
+FDO_USE_REGEX       equ   BIT04
+FDO_WRAP_AROUND     equ   BIT05 
+
+FDD_DOWN            equ   0 
+FDD_UP              equ   1
+FDD_ALL             equ   2
+
+Object FindDialog, , DialogModeless
+  RedefineMethod    CtlsGet
+  RedefineMethod    CtlsSet
+  StaticMethod      Find
+  StaticMethod      Replace
+  StaticMethod      ReplaceAll
+  StaticMethod      Help
+  RedefineMethod    Done
+  RedefineMethod    Init,               POINTER
+  RedefineMethod    OnCommand,          WPARAM, LPARAM
+  RedefineMethod    OnDestroy,          WPARAM, LPARAM
+  
+  Embed   FindStrings,      %StrCollection
+  Embed   ReplaceStrings,   %StrCollection
+  
+  DefineVariable  dScope,       DWORD,    FDS_CURRENT_FILE
+  DefineVariable  dOptions,     DWORD,    0
+  DefineVariable  dDirection,   DWORD,    FDD_DOWN
+  
+  DefineVariable  pFindString,  PSTRING,  NULL 
+  DefineVariable  dLineNumber,  DWORD,    1           ;Search Start
+  DefineVariable  dCharIndex,   DWORD,    0
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -555,10 +644,10 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   VirtualMethod     ChangeLanguage,       DWORD                 ;IDLANG_XXX
   RedefineMethod    Deserialize,          PDESER_INFO
   RedefineMethod    Done
-  VirtualMethod     EnableActions,        DWORD                 ;TRUE/FALSE
   RedefineMethod    Init
   RedefineMethod    Load,                 $ObjPtr(Stream), PDESER_INFO
   VirtualMethod     LoadContext,          PSTRING
+  StaticMethod      ManageGuiCmds,        DWORD
   RedefineMethod    OnSize,               WPARAM, LPARAM
   VirtualMethod     SaveContext,          PSTRING
   StaticMethod      Startup
@@ -572,24 +661,34 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   StaticEvent       OnEraseBkgnd,         WM_ERASEBKGND
 
   DefineVariable    dLangID,              DWORD,      IDLANG_ENGLISH
+  DefineVariable    hMenuInit,            HMENU,      0
   DefineVariable    hMenuChild,           HMENU,      0
   DefineVariable    hMenuChildWnd,        HMENU,      0
-  DefineVariable    hMenuInit,            HMENU,      0
+  DefineVariable    hMenuContextEditor,   HMENU,      0
   DefineVariable    dFlags,               DWORD,      0
   DefineVariable    pDirectory,           PSTRING,    NULL
+  
+  DefineVariable    PrintMargin,          RECT,       {}
+  DefineVariable    hDevMode,             HGLOBAL,    0
+  DefineVariable    hDevNames,            HGLOBAL,    0
 
+  ;UI elements
   Embed     IconImageList,          MaskedImageList
   Embed     RBar,                   Rebar
-  Embed     Status,                 Statusbar
+  Embed     SBar,                   Statusbar
   Embed     TbFile,                 Toolbar
+  Embed     TbEdit,                 Toolbar
   Embed     TbWindow,               Toolbar
   Embed     Menu,                   XMenu
-  Embed     PropWnd,                PropertiesWnd
   Embed     ProjWnd,                ProjectWnd
+  Embed     PropWnd,                PropertiesWnd
   Embed     SplitterVert,           Splitter
   Embed     SplitterHorz,           Splitter
   Embed     EditorSharedResources,  EditorSharedResources
   Embed     CodeEditorResources,    EditorResources
+  Embed     FindDlg,                FindDialog
+  
+  Embed     ProjFiles,              %StrCollection
 
 ObjectEnd
 
@@ -613,7 +712,7 @@ ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-Object SetupDlg,, DialogModal
+Object SetupDialog,, DialogModal
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
   RedefineMethod    Done
@@ -763,11 +862,12 @@ include ADE_EditorResources.inc
 include ADE_ClientWnd.inc
 include ADE_ChildWnd.inc
 include ADE_Editor.inc
-include ADE_SetupDlg.inc
+include ADE_SetupDialog.inc
 include ADE_KeywordGroupCollection.inc
 include ADE_KeywordCollection.inc
 include ADE_EditorDisplay.inc
 include ADE_EditorView_1.inc
 include ADE_EditorView_2.inc
 include ADE_EditorTextLine.inc
+include ADE_FindDialog.inc
 

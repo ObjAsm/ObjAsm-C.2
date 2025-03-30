@@ -111,12 +111,27 @@ Method ProjectWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
   lea xdi, [xsi].TView
   OCall xdi::TreeView.Init, xsi, [xsi].hWnd, xbx, offset ProjTreeView
-  OCall xdi::TreeView.NodeInsert, TVI_ROOT, TVI_FIRST, $OfsCStr("Project"), 3, 4
-  mov hRoot, xax
-  OCall xdi::TreeView.NodeInsert, hRoot, TVI_FIRST, $OfsCStr("File 1"), 5, 7
-  OCall xdi::TreeView.NodeInsert, hRoot, xax, $OfsCStr("File 2"), 5, 7
-  OCall xdi::TreeView.NodeInsert, hRoot, xax, $OfsCStr("Folder1"), 3, 4
-  mov hFolder1, xax
+
+  mov hRoot, $OCall(xdi::TreeView.NodeInsert, TVI_ROOT, TVI_FIRST, $OfsCStr("Solution 1"), 3, 4)
+;  OCall xdi::TreeView.NodeInsert, hRoot, TVI_FIRST, $OfsCStr("File 1"), 5, 7
+;  OCall xdi::TreeView.NodeInsert, hRoot, xax, $OfsCStr("File 2"), 5, 7
+
+  mov hFolder1, $OCall(xdi::TreeView.NodeInsert, hRoot, xax, $OfsCStr("Make"), 3, 4)
+  OCall xdi::TreeView.NodeInsert, hFolder1, TVI_FIRST, $OfsCStr("Resources.cmd"), 6, 7
+  OCall xdi::TreeView.NodeInsert, hFolder1, xax, $OfsCStr("DebugX86.cmd"), 6, 7
+  OCall xdi::TreeView.NodeInsert, hFolder1, xax, $OfsCStr("DebugX64.cmd"), 6, 7
+  OCall xdi::TreeView.NodeInsert, hFolder1, xax, $OfsCStr("ReleaseX86.cmd"), 6, 7
+  OCall xdi::TreeView.NodeInsert, hFolder1, xax, $OfsCStr("ReleaseX64.cmd"), 6, 7
+
+  mov hFolder1, $OCall(xdi::TreeView.NodeInsert, hRoot, xax, $OfsCStr("Assember"), 3, 4)
+  OCall xdi::TreeView.NodeInsert, hFolder1, TVI_FIRST, $OfsCStr("File 1"), 6, 7
+  OCall xdi::TreeView.NodeInsert, hFolder1, xax, $OfsCStr("File 2"), 6, 7
+
+  mov hFolder1, $OCall(xdi::TreeView.NodeInsert, hRoot, xax, $OfsCStr("Include"), 3, 4)
+  OCall xdi::TreeView.NodeInsert, hFolder1, TVI_FIRST, $OfsCStr("File 1"), 6, 7
+  OCall xdi::TreeView.NodeInsert, hFolder1, xax, $OfsCStr("File 2"), 6, 7
+
+  mov hFolder1, $OCall(xdi::TreeView.NodeInsert, hRoot, xax, $OfsCStr("Macros"), 3, 4)
   OCall xdi::TreeView.NodeInsert, hFolder1, TVI_FIRST, $OfsCStr("File 1"), 6, 7
   OCall xdi::TreeView.NodeInsert, hFolder1, xax, $OfsCStr("File 2"), 6, 7
 

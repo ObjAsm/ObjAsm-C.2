@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ADE_KeywordCollection.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm KeywordCollection object implementation.
 ; ==================================================================================================
 

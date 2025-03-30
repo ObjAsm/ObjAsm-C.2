@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      ADE_About.inc
 ; Author:     G. Friedrich
-; Version:    See ACE.asm
+; Version:    See ADE.asm
 ; Purpose:    ObjAsm Assembler Development Environment.
 ; ==================================================================================================
 
@@ -172,6 +172,8 @@ MethodEnd
 ; Return:     xax = Zero brush HANDLE.
 
 Method DialogAbout.OnCtlColorStatic, uses xsi, wParam:WPARAM, lParam:LPARAM
+  ANNOTATION use:wParam lParam
+
   SetObject xsi
   invoke GetStockObject, WHITE_BRUSH
 MethodEnd
