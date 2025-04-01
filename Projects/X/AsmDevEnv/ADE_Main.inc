@@ -557,6 +557,8 @@ Object Editor, ADE_EditorID, ChildWnd
   DefineVariable    dTotalLineCount,      DWORD,      0             ;Total count of TextLines
   DefineVariable    dVisTextLineCount,    DWORD,      0
   DefineVariable    dMaxTextLineChrCount, DWORD,      0
+  DefineVariable    pHilitedWord,         PSTRING,    NULL
+  DefineVariable    dHilitedLen,          DWORD,      0
 
   DefineVariable    SelectionFst,         LOCATION,   {NULL, 0, 0}  ;First selected location
   DefineVariable    SelectionLst,         LOCATION,   {NULL, 0, 0}  ;Last selected location

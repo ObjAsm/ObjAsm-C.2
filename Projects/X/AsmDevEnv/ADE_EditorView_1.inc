@@ -1083,7 +1083,7 @@ Method EditorView.OnLButtonDblClk, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARA
     movzx eax, CHR ptr [xcx + sizeof(CHR)*xdx]
     .break .if eax == 0
     GetCharType eax, ecx
-    .ifAnyBitSet ecx, CHR_BLANK or CHR_QUOTE or CHR_OPERATOR
+    .if !(ecx & CHR_WORD)
       .break
     .endif
     inc edx
@@ -1095,9 +1095,13 @@ Method EditorView.OnLButtonDblClk, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARA
   .while edx > 0
     mov xcx, [xbx].$Obj(EditorTextLine).pBuffer
     movzx eax, CHR ptr [xcx + sizeof(CHR)*xdx - sizeof(CHR)]
-    GetCharType eax, ecx
-    .ifBitSet ecx, CHR_BLANK or CHR_QUOTE or CHR_OPERATOR
+    .if eax == '.'
       .break
+    .else
+      GetCharType eax, ecx
+      .if !(ecx & CHR_WORD)
+        .break
+      .endif
     .endif
     dec edx
   .endw

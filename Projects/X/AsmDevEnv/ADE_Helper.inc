@@ -573,9 +573,11 @@ IsBinNumber proc uses xbx xsi pStart:PSTRING, dCount:DWORD
       inc ebx
     .until ebx == dCount
 
-    inc ebx
-    .if ebx == dCount && (edx == 'y' || edx == 'Y' || edx == 'b' || edx == 'B')
-      mov eax, TRUE
+    .if ebx != 0
+      inc ebx
+      .if ebx == dCount && (edx == 'y' || edx == 'Y' || edx == 'b' || edx == 'B')
+        mov eax, TRUE
+      .endif
     .endif
   .endif
 
@@ -608,12 +610,14 @@ IsDecNumber proc uses xbx xsi pStart:PSTRING, dCount:DWORD
       inc ebx
     .until ebx == dCount
 
-    .if ebx == dCount
-      mov eax, TRUE
-    .else
-      inc ebx
-      .if ebx == dCount && (edx == 'd' || edx == 'D' || edx == 't' || edx == 'T')
+    .if ebx != 0
+      .if ebx == dCount
         mov eax, TRUE
+      .else
+        inc ebx
+        .if ebx == dCount && (edx == 'd' || edx == 'D' || edx == 't' || edx == 'T')
+          mov eax, TRUE
+        .endif
       .endif
     .endif
   .endif
@@ -655,9 +659,11 @@ IsHexNumber proc uses xbx xsi pStart:PSTRING, dCount:DWORD
       inc ebx
     .until ebx == dCount
 
-    inc ebx
-    .if ebx == dCount && (edx == 'h' || edx == 'H')
-      mov eax, TRUE
+    .if ebx != 0
+      inc ebx
+      .if ebx == dCount && (edx == 'h' || edx == 'H')
+        mov eax, TRUE
+      .endif
     .endif
   .endif
 
@@ -691,9 +697,11 @@ IsOctNumber proc uses xbx xsi pStart:PSTRING, dCount:DWORD
       inc ebx
     .until ebx == dCount
 
-    inc ebx
-    .if ebx == dCount && (edx == 'o' || edx == 'O' || edx == 'q' || edx == 'Q')
-      mov eax, TRUE
+    .if ebx != 0
+      inc ebx
+      .if ebx == dCount && (edx == 'o' || edx == 'O' || edx == 'q' || edx == 'Q')
+        mov eax, TRUE
+      .endif
     .endif
   .endif
 

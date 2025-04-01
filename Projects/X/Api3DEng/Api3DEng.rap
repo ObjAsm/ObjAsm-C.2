@@ -186,7 +186,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=30
+MilestoneOnDateDate=1
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -403,6 +403,6 @@ AutoLoad=1,2,9,41,44
 20=
 15=
 [PTimer]
-PTimer=2291755034
+PTimer=2291757144
 [GroupExpand]
 GroupExpand=1,1,1,0,0,1,1,0

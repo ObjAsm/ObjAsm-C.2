@@ -134,7 +134,7 @@ CharTable label BYTE
   ;-
   db CHR_OPERATOR
   ;.
-  db CHR_ALPHA or CHR_OPERATOR
+  db CHR_OPERATOR                                       ;If it is the 1st char then it is an CHR_ALPHA
   ;/
   db CHR_OPERATOR
 
@@ -269,7 +269,6 @@ CharTable label BYTE
   db CHR_ALPHA
   ;o
   db CHR_ALPHA
-
   ;p
   db CHR_ALPHA
   ;q
@@ -565,7 +564,7 @@ Method EditorTextLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRE
                                               dMultilineCommentExitChar:DWORD
   local hDC:HDC, CalcRect:RECT, DrawRect:RECT, pWord:POINTER
   local pCKW:$ObjPtr(KeywordCollection), pCKG:$ObjPtr(KeywordGroupCollection)
-  local dInWord:DWORD, dQuoteChar:DWORD, dInMultilineComment:DWORD
+  local dInWord:DWORD, dQuoteChar:DWORD, dInComment:DWORD, dInMultilineComment:DWORD
   local CharWidth:DWORD, KW:KEYWORD, pDrawAttr:PDRAW_ATTR, dDontDraw:DWORD
   local dFirstCharIndex:DWORD, dLastCharIndex:DWORD, dSelEndIndex:DWORD
   local pEditorResources:$ObjPtr(EditorResources)
@@ -604,8 +603,9 @@ Method EditorTextLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRE
   m2z dInWord
   m2z dDontDraw
   m2z dQuoteChar
+  m2z dInComment
   m2z dInMultilineComment
-  .if dMultilineCommentExitChar != 0                    ;A previous line triggered the ML comment
+  .if dMultilineCommentExitChar != 0                    ;A previous line triggered the ML c_omment
     mov dInMultilineComment, TRUE
   .endif
 
@@ -634,14 +634,18 @@ Method EditorTextLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRE
     movzx eax, CHR ptr [xdi + sizeof(CHR)*xbx]          ;Fetch a char from buffer
     ;EOL handler
     .if eax == 0
-      call GetWordAttr                                  ;Analyse what we have so on
+      .if dInComment == FALSE
+        call GetWordAttr                                ;Analyse what we have so on
+      .else
+        call CheckHilitedText
+      .endif
       call DrawString                                   ;Draw it
       call DrawRestOfLine                               ;and fill the rest
       mov eax, dMultilineCommentExitChar
       ret
     .endif
 
-    ;Multiline comment handler
+    ;Multiline c_omment handler
     .if dInMultilineComment != FALSE
       mov xdx, pEditorResources
       lea xax, [xdx].$Obj(EditorResources).EditorTextComment
@@ -659,7 +663,7 @@ Method EditorTextLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRE
             .endif
           .endif
         .endif
-        .if dMultilineCommentExitChar == eax            ;End of comment detected
+        .if dMultilineCommentExitChar == eax            ;End of c_omment detected
       if TARGET_STR_TYPE eq STR_TYPE_ANSI
           mov ebx, [xsi].dLength                        ;Prepare fast exit
           add xbx, [xsi].pBuffer
@@ -673,7 +677,7 @@ Method EditorTextLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRE
       endif
           call DrawString                               ;Draw the rest of the line
           call DrawRestOfLine                           ;and fill the rest
-          xor eax, eax                                  ;Disable multiline comment
+          xor eax, eax                                  ;Disable multiline c_omment
           ret
         .endif
         inc ebx                                         ;Continue gattering chars
@@ -685,11 +689,43 @@ Method EditorTextLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRE
     .endif
 
     ;Get Char type from lookup CharTable
-    .if eax < CHAR_TABLE_ENTRIES
-      lea xcx, CharTable
-      movzx ecx, BYTE ptr [xcx + xax]                   ;Lookup char type
-    .else
-      mov ecx, CHR_WORD                                 ;All other characters are word chars
+    GetCharType eax, ecx
+
+    ;Comment handler
+    .if dInComment != FALSE                             ;We start with the c_omment loop, not the detection    
+      .if dInWord == FALSE                              ;Check first char of a word
+        .if (ecx & CHR_WORD) || (eax == '.')            ;If any bit set or the first char is a dot
+          mov xdx, pEditorResources
+          lea xax, [xdx].$Obj(EditorResources).EditorTextComment  ;Restore regular comment attr
+          mov pDrawAttr, xax
+          call DrawString                               ;Draw what we have so on
+          mov dInWord, TRUE
+        .endif
+      .else
+        .ifAllBitsClr ecx, CHR_WORD
+          ;Check for hilited text
+          call CheckHilitedText
+          call DrawString
+          mov xdx, pEditorResources
+          lea xax, [xdx].$Obj(EditorResources).EditorTextComment  ;Restore regular comment attr
+          mov pDrawAttr, xax
+          mov dInWord, FALSE
+        .endif
+      .endif
+      inc ebx
+      .continue
+    .endif
+
+    .if eax == ";"                                      ;C_omment detection code
+      call GetWordAttr                                  ;Analyse what we have so on
+      call DrawString                                   ;Draw it
+      mov dInComment, TRUE
+      mov dInWord, FALSE
+      mov xdx, pEditorResources
+      lea xax, [xdx].$Obj(EditorResources).EditorTextComment
+      mov pDrawAttr, xax
+      inc ebx
+      .continue
     .endif
 
     ;String handler
@@ -720,33 +756,9 @@ Method EditorTextLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRE
       .continue
     .endif
 
-    ;Comment handler
-    .if eax == ";"
-      call GetWordAttr                                  ;Analyse what we have so on
-      call DrawString                                   ;Draw it
-    if TARGET_STR_TYPE eq STR_TYPE_ANSI
-      mov ebx, [xsi].dLength                            ;Prepare fast exit
-      add xbx, [xsi].pBuffer
-      sub xbx, xdi                                      ;ebx = number of remaining chars in the line
-    else
-      mov ebx, [xsi].dLength                            ;Prepare fast exit
-      mov xax, xdi
-      sub xax, [xsi].pBuffer
-      shr eax, 1
-      sub ebx, eax                                      ;ebx = number of remaining chars in the line
-    endif
-      mov xdx, pEditorResources
-      lea xax, [xdx].$Obj(EditorResources).EditorTextComment
-      mov pDrawAttr, xax
-      call DrawString                                   ;Draw the rest of the line
-      call DrawRestOfLine                               ;and fill the rest
-      mov eax, dInMultilineComment
-      ret
-    .endif
-
     ;Default handler
-    .if dInWord == FALSE
-      .ifBitSet ecx, CHR_WORD                           ;If any bit set
+    .if dInWord == FALSE                                ;Check first char of a word
+      .if (ecx & CHR_WORD) || (eax == '.')              ;If any bit set or the first char is a dot
         mov xdx, pEditorResources
         lea xax, [xdx].$Obj(EditorResources).EditorTextRegular
         mov pDrawAttr, xax                              ;white space attr
@@ -758,7 +770,7 @@ Method EditorTextLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRE
       .endif
     .else
       .ifAllBitsClr ecx, CHR_WORD
-        ;Check if a multiline comment is started with the "comment" keyword
+        ;Check if a multiline c_omment is started with the "comment" keyword
         .if ebx == 7
           invoke StrCIComp, xdi, $OfsCStr("COMMENT"), ebx
           .if eax == 0
@@ -777,8 +789,27 @@ Method EditorTextLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRE
     inc ebx
   .until FALSE
 
+Subroutine CheckHilitedText
+  mov xcx, [xsi].pOwner
+  .if [xcx].$Obj(Editor).dHilitedLen == ebx
+    lea xax, [sizeof(CHR)*xbx]
+    invoke MemComp, [xcx].$Obj(Editor).pHilitedWord, xdi, eax
+    mov xdx, pEditorResources
+    .if eax == 0
+      lea xax, [xdx].$Obj(EditorResources).EditorTextHighlight
+    .else
+      lea xax, [xdx].$Obj(EditorResources).EditorTextComment
+    .endif
+    mov pDrawAttr, xax
+  .endif
+ExitSub
 
 Subroutine GetWordAttr
+  cmp ebx, 0
+  .if ZERO?
+    ExitSub
+  .endif
+  
   invoke IsDecNumber, xdi, ebx
   .if eax != FALSE
     mov xdx, pEditorResources
@@ -811,9 +842,23 @@ Subroutine GetWordAttr
     ExitSub
   .endif
 
-  ;Check for keywords
   mov KW.pString, xdi                                   ;Fill a KEYWORD structure
   mov KW.dLength, ebx
+
+  ;Check for hilited text
+  mov xcx, [xsi].pOwner
+  .if [xcx].$Obj(Editor).dHilitedLen == ebx
+    lea xax, [sizeof(CHR)*xbx]
+    invoke MemComp, [xcx].$Obj(Editor).pHilitedWord, xdi, eax
+    .if eax == 0
+      mov xdx, pEditorResources
+      lea xax, [xdx].$Obj(EditorResources).EditorTextHighlight
+      mov pDrawAttr, xax
+      ExitSub
+    .endif
+  .endif
+
+  ;Check for keywords
   OCall pCKW::KeywordCollection.Search, addr KW
   .if eax != FALSE
     ;It is a keyword
@@ -1261,4 +1306,3 @@ Method EditorTextLine.SetDirty, uses xsi
 
   OCall [xsi].pOwner::Editor.SetDirty, TRUE           ;Propagate the information
 MethodEnd
-

@@ -1019,6 +1019,8 @@ Method Editor.SelectionResetAll, uses xbx xsi
   mov [xsi].SelectionLst.dLineNumber, 0
   mov [xsi].dSelectionVisLineCnt, 0
 
+  mov [xsi].pHilitedWord, NULL
+  mov [xsi].dHilitedLen, 0
   OCall xsi.ClpBrdSetBtns
   mov eax, ebx
 MethodEnd
@@ -1129,7 +1131,7 @@ Method Editor.SelectionSet, uses xdi xbx xsi
         .ifBitClr [xax].$Obj(EditorTextLine).dFlags, TLF_HIDDEN
           inc [xsi].dSelectionVisLineCnt
         .endif
-       ;Make sure that ecx < edx, but only on the same EditorTextLine!
+        ;Make sure that ecx < edx, but only on the same EditorTextLine!
         mov ecx, [xcx].LOCATION.dCharIndex
         mov edx, [xdx].LOCATION.dCharIndex
         mov edi, [xax].$Obj(EditorTextLine).dLength
@@ -1140,7 +1142,35 @@ Method Editor.SelectionSet, uses xdi xbx xsi
         .endif
         mov [xax].$Obj(EditorTextLine).Selection.dBegIndex, ecx
         mov [xax].$Obj(EditorTextLine).Selection.dEndIndex, edx
-  
+        
+        ;Set/Reset pHilitedWord & dHilitedLen
+        mov [xsi].pHilitedWord, NULL
+        mov [xsi].dHilitedLen, 0
+        mov xbx, [xax].$Obj(EditorTextLine).pBuffer
+        mov edx, [xax].$Obj(EditorTextLine).Selection.dBegIndex
+        cmp edx, 0
+        lea xdi, [xbx + sizeof(CHR)*xdx]
+        jz @F
+        movzx ecx, CHR ptr [xdi - sizeof(CHR)]
+        GetCharType ecx, edx
+        .if !(edx & CHR_WORD)
+      @@:  
+          mov edx, [xax].$Obj(EditorTextLine).Selection.dEndIndex
+          cmp edx, [xax].$Obj(EditorTextLine).dLength
+          lea xbx, [xbx + sizeof(CHR)*xdx]
+          jz @F
+          movzx ecx, CHR ptr [xbx]
+          GetCharType ecx, edx
+          .if !(edx & CHR_WORD)
+      @@:
+            mov [xsi].pHilitedWord, xdi
+            sub xbx, xdi
+          if TARGET_STR_TYPE eq STR_TYPE_WIDE
+            shr ebx, 1
+          endif
+            mov [xsi].dHilitedLen, ebx
+          .endif
+        .endif
       .else
         ;Set the first line
         mov xax, [xcx].LOCATION.pTextLine
