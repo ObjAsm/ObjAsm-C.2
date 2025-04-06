@@ -50,7 +50,7 @@ Method ChildWnd.OnMdiActivate, uses xsi, wParam:WPARAM, lParam:LPARAM
   .if xax == [xsi].hWnd
     invoke GetObjectID, xsi
     mov xcx, [xsi].pOwner
-    OCall [xcx].$Obj(ClientWnd).pOwner::Application.ManageGuiCmds, eax
+    OCall [xcx].$Obj(ClientWnd).pOwner::Application.ManageGuiCmds, [xsi].hWnd
     OCall xsi.ClpBrdSetBtns
     OCall xsi.UpdateStatusbar
   .elseif xax == NULL                                   ;Last Child!

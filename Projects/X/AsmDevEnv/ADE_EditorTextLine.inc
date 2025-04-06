@@ -35,7 +35,7 @@ CHR_BIN                     equ   BIT05
 CHR_OCT                     equ   BIT06
 CHR_QUOTE                   equ   BIT07     ;Character starts or ends a string sequence ("')
 
-CHR_WORD                    equ   CHR_ALPHA + CHR_DEC
+CHR_WORD                    equ   CHR_ALPHA or CHR_DEC
 
 .const
 CharTable label BYTE
@@ -308,7 +308,7 @@ CHAR_TABLE_ENTRIES = ($ - offset CharTable)/sizeof(BYTE)
 ; EditorTextLine implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorTextLine.BufferResize
 ; Purpose:    Get more memory to allocate the char buffer.
 ; Arguments:  Arg1: New char capacity not including the ZTC.
@@ -361,7 +361,7 @@ Method EditorTextLine.BufferResize, uses xbx xsi, dNewCapacity:DWORD
           mov xdx, [xcx].$Obj(Editor).pOwner
           mov xax, [xdx].$Obj(ClientWnd).pOwner
           invoke MessageBox, [xax].$Obj(Application).hWnd, \
-                             $OfsCStr("Out of memory expanding a line"), addr szError, MB_OK or MB_ICONHAND
+                             $OfsCStr("Out of memory expanding a line."), addr cError, MB_OK or MB_ICONERROR
           xor eax, eax                                  ;Failed
         .else
           mov xax, [xsi].pBuffer                        ;If we recovered from failure
@@ -375,7 +375,7 @@ Method EditorTextLine.BufferResize, uses xbx xsi, dNewCapacity:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorTextLine.CharDelete
 ; Purpose:    Delete chars at a given position.
 ; Arguments:  Arg1: Position where to start deleting.
@@ -429,7 +429,7 @@ Method EditorTextLine.CharDelete, uses xbx xdi xsi, dDelIndex:DWORD, dCharCount:
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorTextLine.CharInsert
 ; Purpose:    Insert chars at a given position.
 ; Arguments:  Arg1: Position where to start to insert.
@@ -486,7 +486,7 @@ Method EditorTextLine.CharInsert, uses xbx xdi xsi, dInsIndex:DWORD, dCharCount:
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorTextLine.CharReplace
 ; Purpose:    Replace chars at a given position.
 ; Arguments:  Arg1: Position where to start to insert.
@@ -536,7 +536,7 @@ Method EditorTextLine.CharReplace, uses xsi, dRplIndex:DWORD, dCharCount:DWORD, 
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorTextLine.Done
 ; Purpose:    Finalize the EditorTextLine object.
 ; Arguments:  None.
@@ -548,7 +548,7 @@ Method EditorTextLine.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorTextLine.Draw
 ; Purpose:    Draw the content of a EditorTextLine.
 ; Arguments:  Arg1: -> EditorView.
@@ -1127,7 +1127,7 @@ if TARGET_BITNESS eq 64
   option stackbase:??StackBase
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorTextLine.Init
 ; Purpose:    Initialize the EditorTextLine object.
 ; Arguments:  Arg1: -> Owner object (Editor).
@@ -1139,7 +1139,7 @@ Method EditorTextLine.Init, uses xsi, pOwner:POINTER
   mov [xsi].dFlags, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorTextLine.LineBreak
 ; Purpose:    Break the line into 2 lines. The new line is inserted at the next position.
 ; Arguments:  Arg1: Position where to break the line.
@@ -1177,9 +1177,9 @@ Method EditorTextLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineNumbe
     .endif
 
     ;Housekeeping
-    mov eax, dLineNumber
-    inc eax
-    OCall xdi::Editor.InformInsertionOf, eax
+    mov edx, dLineNumber
+    inc edx
+    OCall xdi::Editor.InformInsertionOf, edx
     inc [xdi].$Obj(Editor).dTotalLineCount
     .ifBitClr [xsi].dFlags, TLF_HIDDEN
       inc [xdi].$Obj(Editor).dVisTextLineCount
@@ -1191,7 +1191,7 @@ Method EditorTextLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineNumbe
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorTextLine.LineDelete
 ; Purpose:    Remove this EditorTextLine instance from the Linked List.
 ; Arguments:  Arg1: Line number of the line to delete.
@@ -1231,7 +1231,7 @@ Method EditorTextLine.LineDelete, uses xbx xsi, dLineNumber:DWORD
   mov xax, xsi                                          ;Return pSelf
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorTextLine.LineJoinNext
 ; Purpose:    Join the current with the next EditorTextLine.
 ; Arguments:  Arg1: Line Number of this TextLine.
@@ -1252,9 +1252,9 @@ Method EditorTextLine.LineJoinNext, uses xbx xsi, dLineNumber:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorTextLine.LineJoinPrev
-; Purpose:    Join the current with the next EditorTextLine.
+; Purpose:    Join the current with the previous EditorTextLine.
 ; Arguments:  Arg1: Line Number of this TextLine.
 ; Return:     xax -> Deleted EditorTextLine or NULL if failed.
 ;             xcx -> Joined EditorTextLine or NULL if failed.
@@ -1268,15 +1268,16 @@ Method EditorTextLine.LineJoinPrev, uses xbx xdi xsi, dLineNumber:DWORD
   ;Goto previous EditorTextLine
   mov xax, [xsi].Link.pLinkBack                         ;Goto prev member
   .if xax != NULL
-    lea xbx, [xax - offset($Obj(EditorTextLine).Link)]
+    lea xbx, [xax - offset($Obj(EditorTextLine).Link)]  ;xbx -> prev EditorTextLine
     BitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_DIRTY_LINE_CURR
-    OCall xsi.CharInsert, 0, [xbx].$Obj(EditorTextLine).dLength, [xbx].$Obj(EditorTextLine).pBuffer
-    OCall xbx::EditorTextLine.LineDelete, dLineNumber
-    mov xcx, xsi
+    OCall xbx::EditorTextLine.CharInsert, [xbx].$Obj(EditorTextLine).dLength, [xsi].dLength, [xsi].pBuffer
+    OCall xsi.LineDelete, dLineNumber
+    mov xax, xsi
+    mov xcx, xbx
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorTextLine.SelectionReset
 ; Purpose:    Reset the selected text from this line.
 ; Arguments:  None.
@@ -1293,7 +1294,7 @@ Method EditorTextLine.SelectionReset
   BitClr [xcx].dFlags, TLF_EOL_MARKED
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorTextLine.SetDirty
 ; Purpose:    Set the dirty flag and inform its owner.
 ; Arguments:  None.
@@ -1305,4 +1306,23 @@ Method EditorTextLine.SetDirty, uses xsi
   BitClr [xsi].dFlags, TLF_SAVED_LINE_CURR
 
   OCall [xsi].pOwner::Editor.SetDirty, TRUE           ;Propagate the information
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     EditorTextLine.SpaceFill
+; Purpose:    Fill the at the buffer end n spaces.
+; Arguments:  Arg1: Number of spaces to fill up.
+; Return:     Nothing.
+
+Method EditorTextLine.SpaceFill, uses xbx xsi, dSpaceCount:DWORD
+  local cChar:CHR
+  
+  SetObject xsi
+  mov CHR ptr cChar, ' '
+  mov ebx, dSpaceCount
+  test ebx, ebx
+  .while !ZERO?
+    OCall xsi.CharInsert, [xsi].dLength, 1, addr cChar
+    dec ebx
+  .endw 
 MethodEnd

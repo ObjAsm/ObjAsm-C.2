@@ -13,6 +13,19 @@ ERF_TAB_2_SPACES              equ   BIT02
 ERF_SHOW_ALIGN_LINES          equ   BIT03
 ERF_TAB_TO_SPACE              equ   BIT04
 
+;Editor File Format
+EFF_UNKNOWN                   equ   0
+EFF_ANSI                      equ   1
+EFF_UTF8                      equ   3         ;Without BOM
+EFF_UTF8BOM                   equ   4         ;With BOM
+EFF_UTF16BOM                  equ   5         ;With BOM
+
+;Editor Line Termination
+ELT_CRLF                      equ   0         ;Windows
+ELT_LF                        equ   1         ;Unix
+ELT_CR                        equ   2         ;Macintosh
+ELT_NULL                      equ   3         ;
+
 
 ; ==================================================================================================
 ; EditorResources implementation
@@ -43,6 +56,7 @@ Method EditorResources.Done, uses xsi
   ;Destroy Keywords and Groups
   OCall [xsi].KeywordGroups::KeywordGroupCollection.Done
   OCall [xsi].Keywords::KeywordCollection.Done
+  OCall [xsi].FileFormats::FileFormatCollection.Done
 
   OCall [xsi].FoldingRules::DataCollection.Done
   OCall [xsi].AutocompleteRules::DataCollection.Done
@@ -74,11 +88,12 @@ Method EditorResources.Init, uses xbx xdi xsi, pOwner:POINTER, pIniFileName:PSTR
   invoke FileExist, addr cFileName
   mov dIniFilePresent, eax
   .if eax == FALSE
-    invoke MsgBox, 0, addr cWarnNoIni, addr cWarning, MB_ICONWARNING or MB_OK
+    invoke MsgBox, 0, addr cWarnNoIni, addr cWarning, MB_OK or MB_ICONWARNING
   .endif
 
   OCall [xsi].KeywordGroups::KeywordGroupCollection.Init, xsi, 20, 10, COL_MAX_CAPACITY
   OCall [xsi].Keywords::KeywordCollection.Init, xsi, 1500, 500, COL_MAX_CAPACITY
+  OCall [xsi].FileFormats::FileFormatCollection.Init, xsi, 10, 10, COL_MAX_CAPACITY
 
   OCall [xsi].FoldingRules::DataCollection.Init, xsi, 20, 10, COL_MAX_CAPACITY
   OCall [xsi].AutocompleteRules::DataCollection.Init, xsi, 20, 10, COL_MAX_CAPACITY
@@ -89,7 +104,7 @@ Method EditorResources.Init, uses xbx xdi xsi, pOwner:POINTER, pIniFileName:PSTR
     ;Check Version
     invoke GetVersionFromString, addr cItemBuffer
     .if eax != [xsi].dReqMainVersion || ecx < [xsi].dMinSubVersion
-      invoke MsgBox, 0, addr cWarnOldIni, addr cWarning, MB_ICONWARNING or MB_OK
+      invoke MsgBox, 0, addr cWarnOldIni, addr cWarning, MB_OK or MB_ICONWARNING
     .endif
   .endif
 
@@ -210,6 +225,19 @@ Method EditorResources.Init, uses xbx xdi xsi, pOwner:POINTER, pIniFileName:PSTR
     BitSet [xsi].dFlags, ERF_REVERSE_MOUSE_WHEEL_VERT
   .endif
 
+  mov [xsi].dLineTermination, ELT_CRLF
+  invoke GetPrivateProfileString, addr cSectionName, addr cLineTermination, addr cStrCRLF, \
+                      addr cItemBuffer, lengthof cItemBuffer, addr cFileName
+  invoke StrIComp, addr cItemBuffer, addr cStrLF
+  .if eax == 0
+    mov [xsi].dLineTermination, ELT_LF
+  .else
+    invoke StrIComp, addr cItemBuffer, addr cNULL
+    .if eax == 0
+      mov [xsi].dLineTermination, ELT_NULL
+    .endif
+  .endif
+
   ;Load Keywords and Groups
   lea xdi, cSectionName
   WriteF xdi, "¦ST Keywords", pSectionPrefix
@@ -271,6 +299,49 @@ Method EditorResources.Init, uses xbx xdi xsi, pOwner:POINTER, pIniFileName:PSTR
       .endif
     .endif
     inc dIndex
+  .endw
+
+  ;Load file formats
+  xor ebx, ebx
+  .while TRUE
+    inc ebx
+    lea xdi, cItemName
+    WriteF xdi, "FF¦UD", ebx
+    invoke GetPrivateProfileString, $OfsCStr("File Format"), addr cItemName, NULL, \
+                                    addr cItemBuffer, lengthof cItemBuffer, addr cFileName
+    .break .if eax == 0
+    invoke StrLScan, addr cItemBuffer, ','
+    xor edi, edi
+    .if xax != NULL
+      lea xdi, [xax + sizeof(CHR)]
+      m2z CHR ptr [xax]
+    .endif
+    .if xdi != NULL
+      DoesStringMatch? [xdi], <ANSI>
+      .if ZERO?
+        mov edi, EFF_ANSI
+      .else
+        DoesStringMatch? [xdi], <UTF8>
+        .if ZERO?
+          mov edi, EFF_UTF8
+        .else
+          DoesStringMatch? [xdi], <UTF8BOM>
+          .if ZERO?
+            mov edi, EFF_UTF8BOM
+          .else
+            DoesStringMatch? [xdi], <UTF16BOM>
+            .if ZERO?
+              mov edi, EFF_UTF16BOM
+            .else
+              mov edi, EFF_UNKNOWN
+            .endif
+          .endif
+        .endif
+      .endif
+    .endif
+    .if xdi != 0
+      OCall [xsi].FileFormats::FileFormatCollection.Insert, addr cItemBuffer, edi
+    .endif
   .endw
 
   ;Copy shared resource HANDLEs

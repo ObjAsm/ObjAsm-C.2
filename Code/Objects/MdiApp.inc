@@ -155,7 +155,7 @@ Method MdiApp.Run, uses xbx xdi xsi
       .else
         .break .if Msg.message == WM_QUIT
         .if [xsi].hActiveMlsDlg != 0
-          .continue .if $invoke(IsDialogMessage, [xsi].hActiveMlsDlg, xbx) != NULL
+          .continue .if $invoke(IsDialogMessage, [xsi].hActiveMlsDlg, xbx) != 0
         .endif
         invoke TranslateAccelerator, [xsi].hWnd, [xsi].hAccelerators, xbx
         .if eax == 0                                    ;No accelerator translated

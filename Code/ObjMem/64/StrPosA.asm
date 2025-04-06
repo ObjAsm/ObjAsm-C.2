@@ -35,7 +35,7 @@ StrPosA proc uses rbx rdi rsi pString1A:POINTER, pString2A:POINTER
   jb @@2
 
 @@1:
-  mov rsi, r10
+  mov rsi, r10                                          ;rsi -> pString2A
   lodsb
   repne scasb                                           ;Search for first character
   jne @@2                                               ;Not found => Exit

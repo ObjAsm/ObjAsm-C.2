@@ -16,7 +16,7 @@
 ; Arguments:  -> Item.
 ; Return:     Nothing.
 
-Method KeywordGroupCollection.DestroyItem, uses xdi, pItem:POINTER
+Method KeywordGroupCollection.DestroyItem, uses xdi, pItem:PKEYWORDGROUP
   mov xdi, pItem
   .if xdi != NULL
     invoke StrDispose, [xdi].KEYWORDGROUP.pDescription  ;Dispose description string

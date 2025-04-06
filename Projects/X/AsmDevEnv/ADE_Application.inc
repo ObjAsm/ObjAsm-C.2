@@ -76,15 +76,16 @@ Method Application.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
   mov tbbi.TBBUTTONINFO.cchText, lengthof cButtonText - 1
 
   lea xbx, [xsi].TbFile
-  SetButtonText IDM_FILE_NEW,         01
-  SetButtonText IDM_FILE_CLOSE,       02
-  SetButtonText IDM_FILE_CLOSEALL,    35
+  SetButtonText IDM_FILE_NEW,         80
+  SetButtonText IDM_FILE_OPEN,        81
+  SetButtonText IDM_FILE_CLOSE,       85
+  SetButtonText IDM_FILE_CLOSEALL,    86
 
   lea xbx, [xsi].TbWindow
-  SetButtonText IDM_WINDOW_CASCADE,   31
-  SetButtonText IDM_WINDOW_TILE_HOR,  32
-  SetButtonText IDM_WINDOW_TILE_VER,  33
-  SetButtonText IDM_WINDOW_ARRANGE,   34
+  SetButtonText IDM_WINDOW_CASCADE,   94
+  SetButtonText IDM_WINDOW_TILE_HOR,  95
+  SetButtonText IDM_WINDOW_TILE_VER,  96
+  SetButtonText IDM_WINDOW_ARRANGE,   97
 
   mov xdx, [xsi].pClientWnd
   mov xcx, [xdx].$Obj(ClientWnd).hWnd
@@ -156,11 +157,6 @@ MethodEnd
 align ALIGN_DATA
 DlgChildrenInfo label DL_HEADER
 DL_HEADER     {DLF_LOAD_MINMAX or DLF_LIMIT_MIN or DLF_LIMIT_MAX_Y or DLF_ADD_GRIPPER}
-DL_CHILD_INFO {{100, 000, 000, 000}}      ;Search button
-DL_CHILD_INFO {{100, 000, 000, 000}}      ;Replace button
-DL_CHILD_INFO {{100, 000, 000, 000}}      ;Replace All button
-DL_CHILD_INFO {{100, 100, 000, 000}}      ;Help button
-DL_CHILD_INFO {{100, 100, 000, 000}}      ;Cancel button
 DL_CHILD_INFO {{000, 000, 000, 000}}      ;Search Label
 DL_CHILD_INFO {{000, 000, 100, 000}}      ;Search Combo
 DL_CHILD_INFO {{000, 000, 000, 000}}      ;Replace Label
@@ -175,11 +171,16 @@ DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Match Case
 DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Whole Word
 DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Ignore Space
 DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Use RegEx
-DL_CHILD_INFO {{000, 000, 000, 100}}      ;Group Diection
+DL_CHILD_INFO {{000, 000, 000, 100}}      ;Group Direction
 DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button Down
 DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button Up
 DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button All
 DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Wrap around
+DL_CHILD_INFO {{100, 000, 000, 000}}      ;Search button
+DL_CHILD_INFO {{100, 000, 000, 000}}      ;Replace button
+DL_CHILD_INFO {{100, 000, 000, 000}}      ;Replace All button
+DL_CHILD_INFO {{100, 100, 000, 000}}      ;Help button
+DL_CHILD_INFO {{100, 100, 000, 000}}      ;Cancel button
 
 .code
 align ALIGN_CODE
@@ -322,6 +323,14 @@ Method Application.Init, uses xbx xdi xsi
 
   OCall [xsi].FindDlg::FindDialog.Init, xsi
   c2m [xsi].FindDlg.pDynamicLayout, offset DlgChildrenInfo, xcx
+  OCall [xsi].FindDlg::FindDialog.Show
+  invoke ShowWindow, [xsi].FindDlg.hWnd, SW_HIDE 
+  
+  lea xbx, [xsi].TbEdit
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_PASTE, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_DELETE, FALSE
 
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
   invoke UpdateWindow, [xsi].hWnd
@@ -395,125 +404,133 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Application.ManageGuiCmds
 ; Purpose:    Enable/Disable menu items and toolbar buttons.
-; Arguments:  Arg1: ObjectID activated, zero for none.
+; Arguments:  Arg1: Active focused window handle.
 ; Return:     Nothing.
 
-Method Application.ManageGuiCmds, uses xbx xsi, dObjID:DWORD
-  SetObject xsi
-  .if dObjID == ADE_EditorID ;----------------------------------------------
-    lea xbx, [xsi].TbFile
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVE, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEAS, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEALL, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSE, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSEALL, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, TRUE
-
-    lea xbx, [xsi].TbEdit
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, TRUE
-
-    lea xbx, [xsi].TbWindow
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_CASCADE, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_HOR, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_VER, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ARRANGE, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMIN, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMOUT, TRUE
-
-    mov xbx, $invoke(GetMenu, [xsi].hWnd)               ;Get the current menu
-    invoke EnableMenuItem, xbx, IDM_FILE_SAVE,          MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_FILE_SAVEAS,        MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_FILE_SAVEALL,       MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_FILE_CLOSE,         MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_FILE_CLOSEALL,      MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_FILE_PAGESETUP,     MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_FILE_PRINTERSETUP,  MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_FILE_PRINT,         MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL,     MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMIN,      MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMOUT,     MF_BYCOMMAND or MF_ENABLED
-
-    mov xbx, [xsi].hMenuContextEditor
-    invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL,     MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_ENABLED
-
-  .else
-    lea xbx, [xsi].TbFile
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVE, FALSE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEAS, FALSE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEALL, FALSE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSE, FALSE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSEALL, FALSE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, FALSE
-
-    lea xbx, [xsi].TbEdit
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, FALSE
-
-    lea xbx, [xsi].TbWindow
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_CASCADE, FALSE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_HOR, FALSE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_VER, FALSE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ARRANGE, FALSE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMIN, FALSE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMOUT, FALSE
-
-    mov xbx, $invoke(GetMenu, [xsi].hWnd)               ;Get the current menu
-    invoke EnableMenuItem, xbx, IDM_FILE_SAVE,          MF_BYCOMMAND or MF_DISABLED
-    invoke EnableMenuItem, xbx, IDM_FILE_SAVEAS,        MF_BYCOMMAND or MF_DISABLED
-    invoke EnableMenuItem, xbx, IDM_FILE_SAVEALL,       MF_BYCOMMAND or MF_DISABLED
-    invoke EnableMenuItem, xbx, IDM_FILE_CLOSE,         MF_BYCOMMAND or MF_DISABLED
-    invoke EnableMenuItem, xbx, IDM_FILE_CLOSEALL,      MF_BYCOMMAND or MF_DISABLED
-    invoke EnableMenuItem, xbx, IDM_FILE_PAGESETUP,     MF_BYCOMMAND or MF_DISABLED
-    invoke EnableMenuItem, xbx, IDM_FILE_PRINTERSETUP,  MF_BYCOMMAND or MF_DISABLED
-    invoke EnableMenuItem, xbx, IDM_FILE_PRINT,         MF_BYCOMMAND or MF_DISABLED
-    invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL,     MF_BYCOMMAND or MF_DISABLED
-    invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_DISABLED
-    invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMIN,      MF_BYCOMMAND or MF_DISABLED
-    invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMOUT,     MF_BYCOMMAND or MF_DISABLED
-
-    mov xbx, [xsi].hMenuContextEditor
-    invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL,     MF_BYCOMMAND or MF_DISABLED
-    invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_DISABLED
+CheckEditorDirty proc uses xdi hWnd:HWND, lParam:XWORD
+  invoke SendMessage, hWnd, WM_GETOBJECTINSTANCE, 0, 0
+  .if xax != NULL
+    mov xdi, xax
+    invoke GetObjectID, xax
+    .if eax == ADE_EditorID
+      .ifBitSet [xdi].$Obj(Editor).dFlags, EIF_DIRTY
+        mov xcx, lParam
+        mov DWORD ptr [xcx], TRUE
+        xor eax, eax
+        ret
+      .endif
+    .endif
   .endif
-MethodEnd
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  CBTProc
-; Purpose:    Customization procedure using SetWindowsHookEx.
-; Arguments:  Arg1: Hook code.
-;             Arg2: Depends on hook code. For HCBT_ACTIVATE, wParam = hWnd.
-;             Arg3: Depends on hook code. For HCBT_ACTIVATE, lParam -> CBTACTIVATESTRUCT.
-; Return:     eax = Zero if handled.
-
-CBTProc proc uses xbx dCode:DWORD, wParam:WPARAM, lParam:LPARAM
-  local cText[16]:CHR
-
-  .if dCode == HCBT_ACTIVATE
-    lea xbx, cText
-
-;    mov edx, $ObjTmpl(Application).dLanguage
-;    add edx, 102
-;    invoke LoadString, hInstance, edx, xbx, lengthof cText
-    invoke StrCopy, xbx, $OfsCStr("Yes")
-    invoke GetDlgItem, wParam, IDYES
-    invoke SetWindowText, xax, xbx
-
-;    mov edx, $ObjTmpl(Application).dLanguage
-;    add edx, 103
-;    invoke LoadString, hInstance, edx, xbx, lengthof cText
-    invoke StrCopy, xbx, $OfsCStr("No")
-    invoke GetDlgItem, wParam, IDNO
-    invoke SetWindowText, xax, xbx
-
-    invoke UnhookWindowsHookEx, hCBTProc
-
-    xor eax, eax
-  .else
-    invoke CallNextHookEx, hCBTProc, dCode, wParam, lParam
-  .endif
+  mov eax, TRUE
   ret
-CBTProc endp
+CheckEditorDirty endp
+
+Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
+  local dApplDirty:DWORD, dEditorDirty:DWORD
+  
+  SetObject xsi
+  invoke SendMessage, hActiveWnd, WM_GETOBJECTINSTANCE, 0, 0
+  .if xax != NULL
+    mov xdi, xax
+    invoke GetObjectID, xax
+    .if eax == ADE_EditorID ;----------------------------------------------
+      lea xbx, [xsi].TbFile
+      xor eax, eax
+      test [xdi].$Obj(Editor).dFlags, EIF_DIRTY
+      setnz al
+      mov dEditorDirty, eax
+      mov dApplDirty, eax
+      .if ZERO?
+        mov xcx, [xsi].pClientWnd
+        invoke EnumChildWindows, [xcx].$Obj(ClientWnd).hWnd, addr CheckEditorDirty, addr dApplDirty
+      .endif
+
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVE, dEditorDirty
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEAS, dEditorDirty
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEALL, dApplDirty
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSE, TRUE
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSEALL, TRUE
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, TRUE
+  
+      lea xbx, [xsi].TbEdit
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, TRUE
+  
+      lea xbx, [xsi].TbWindow
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_CASCADE, TRUE
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_HOR, TRUE
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_VER, TRUE
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ARRANGE, TRUE
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMIN, TRUE
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMOUT, TRUE
+  
+      mov xbx, $invoke(GetMenu, [xsi].hWnd)               ;Get the current menu
+      .if dEditorDirty == FALSE
+        mov edi, MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+      .else
+        mov edi, MF_BYCOMMAND or MF_ENABLED
+      .endif
+      invoke EnableMenuItem, xbx, IDM_FILE_SAVE,          edi
+      invoke EnableMenuItem, xbx, IDM_FILE_SAVEAS,        edi
+      .if dApplDirty == FALSE
+        mov edi, MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+      .else
+        mov edi, MF_BYCOMMAND or MF_ENABLED
+      .endif
+      invoke EnableMenuItem, xbx, IDM_FILE_SAVEALL,       edi
+      invoke EnableMenuItem, xbx, IDM_FILE_CLOSE,         MF_BYCOMMAND or MF_ENABLED
+      invoke EnableMenuItem, xbx, IDM_FILE_CLOSEALL,      MF_BYCOMMAND or MF_ENABLED
+      invoke EnableMenuItem, xbx, IDM_FILE_PAGESETUP,     MF_BYCOMMAND or MF_ENABLED
+      invoke EnableMenuItem, xbx, IDM_FILE_PRINTERSETUP,  MF_BYCOMMAND or MF_ENABLED
+      invoke EnableMenuItem, xbx, IDM_FILE_PRINT,         MF_BYCOMMAND or MF_ENABLED
+      invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL,     MF_BYCOMMAND or MF_ENABLED
+      invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_ENABLED
+      invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMIN,      MF_BYCOMMAND or MF_ENABLED
+      invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMOUT,     MF_BYCOMMAND or MF_ENABLED
+  
+      mov xbx, [xsi].hMenuContextEditor
+      invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL,     MF_BYCOMMAND or MF_ENABLED
+      invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_ENABLED
+      ExitMethod
+    .endif
+  .endif
+
+  lea xbx, [xsi].TbFile
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVE, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEAS, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_SAVEALL, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSE, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSEALL, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, FALSE
+
+  lea xbx, [xsi].TbEdit
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, FALSE
+
+  lea xbx, [xsi].TbWindow
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_CASCADE, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_HOR, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_VER, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ARRANGE, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMIN, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMOUT, FALSE
+
+  mov xbx, $invoke(GetMenu, [xsi].hWnd)               ;Get the current menu
+  invoke EnableMenuItem, xbx, IDM_FILE_SAVE,          MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_FILE_SAVEAS,        MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_FILE_SAVEALL,       MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_FILE_CLOSE,         MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_FILE_CLOSEALL,      MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_FILE_PAGESETUP,     MF_BYCOMMAND or MF_ENABLED
+  invoke EnableMenuItem, xbx, IDM_FILE_PRINTERSETUP,  MF_BYCOMMAND or MF_ENABLED
+  invoke EnableMenuItem, xbx, IDM_FILE_PRINT,         MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL,     MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMIN,      MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+  invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMOUT,     MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
+
+  mov xbx, [xsi].hMenuContextEditor
+  invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL,     MF_BYCOMMAND or MF_DISABLED
+  invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_DISABLED
+MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Application.OnClose
@@ -523,66 +540,40 @@ CBTProc endp
 ; Return:     eax = Zero if handled.
 
 align ALIGN_CODE
-AskDirtyEditor proc uses xbx xdi hWnd:HWND, lParam:XWORD
-  local cCaption[512]:CHR, cText[1024]:CHR
-
+CloseEditor proc uses xbx hWnd:HWND, lParam:XWORD
   invoke SendMessage, hWnd, WM_GETOBJECTINSTANCE, 0, 0
   .if xax != NULL
     mov xbx, xax
     invoke GetObjectID, xax
     .if eax == ADE_EditorID
-      .ifBitSet [xbx].$Obj(Editor).dFlags, EIF_DIRTY
-        ;MessageBox customization
-        invoke SetWindowsHookEx, WH_CBT, offset CBTProc, hInstance, $32($invoke(GetCurrentThreadId))
-        mov hCBTProc, xax
-        lea xdi, cText
-        .ifBitSet [xbx].$Obj(Editor).dFlags, EIF_NEW_FILE
-          WriteF xdi, "Save \´¦SU\´ changes?", [xbx].$Obj(Editor).pFullFileName
-        .else
-          WriteF xdi, "Save editor changes to\n¦SU ?", [xbx].$Obj(Editor).pFullFileName
-        .endif 
-        invoke MessageBox, hWnd, addr cText, $OfsCStr("Editor close"), MB_YESNOCANCEL or MB_ICONQUESTION
-        .if eax == IDNO
-          mov eax, TRUE                                 ;Continue enumeration
-          ret
-        .elseif eax == IDYES
-          .ifBitSet [xbx].$Obj(Editor).dFlags, EIF_NEW_FILE
-            OCall xbx::Editor.SaveAs
-          .else
-            OCall xbx::Editor.Save
-          .endif
-          mov eax, TRUE                                 ;Continue enumeration
-          ret
-        .else
-          mov xcx, lParam
+      OCall xbx::Editor.Save
+      .if eax == IDCANCEL
+        mov xcx, lParam
+        .if xcx != NULL
           mov DWORD ptr [xcx], TRUE
-          mov eax, FALSE                                ;Break enumeration
-          ret
         .endif
+        mov eax, FALSE                                  ;Stop enumeration
+        ret
       .endif
+      invoke DestroyWindow, [xbx].$Obj(Editor).hWnd
     .endif
   .endif
   mov eax, TRUE                                         ;Continue enumeration
   ret
-AskDirtyEditor endp
+CloseEditor endp
 
 Method Application.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local dMsg:DWORD, dCancel:DWORD
-  local cCaption[512]:CHR, cText[1024]:CHR
 
   ANNOTATION use:wParam lParam
 
   SetObject xsi
   mov dMsg, eax                                         ;Save windows message passed in eax
-  invoke GetKeyState, VK_CONTROL
+  mov dCancel, FALSE
   mov xbx, [xsi].pClientWnd
-  and ax, BIT15
-  .if ZERO? || dMsg != WM_CLOSE                         ;If CTRL pressed => close without asking
-    mov dCancel, FALSE
-    invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, offset AskDirtyEditor, addr dCancel
-    .if dCancel != FALSE
-      ExitMethod
-    .endif
+  invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, offset CloseEditor, addr dCancel
+  .if dCancel != FALSE
+    ExitMethod
   .endif
   invoke DefFrameProc, [xsi].hWnd, [xbx].$Obj(ClientWnd).hWnd, dMsg, wParam, lParam
 MethodEnd
@@ -601,10 +592,10 @@ SaveEditor proc uses xbx hWnd:HWND, lParam:XWORD
     mov xbx, xax
     invoke GetObjectID, xax
     .if eax == ADE_EditorID
-      .ifBitSet [xbx].$Obj(Editor).dFlags, EIF_NEW_FILE
-        OCall xbx::Editor.SaveAs
-      .else
-        OCall xbx::Editor.Save
+      OCall xbx::Editor.Save
+      .if eax == IDCANCEL
+        mov eax, FALSE                                  ;Stop enumeration
+        ret
       .endif
     .endif
   .endif
@@ -624,9 +615,12 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov xax, wParam
   mov xbx, [xsi].pClientWnd
   .if ax == IDM_FILE_NEW                                ;Create a child window
-    New Editor
-    .if xax != NULL
-      OCall xax::Editor.Init, [xsi].pClientWnd, addr [xsi].CodeEditorResources, NULL
+    mov xdi, $New(Editor)
+    .if xdi != NULL
+      OCall xdi::Editor.Init, [xsi].pClientWnd, addr [xsi].CodeEditorResources, NULL
+      .if eax == FALSE
+        Kill xdi
+      .endif
     .endif
     xor eax, eax
   .elseif ax == IDM_FILE_OPEN                           ;Open a file
@@ -656,6 +650,9 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           ICall pIShellItem::IShellItem.GetDisplayName, SIGDN_FILESYSPATH, addr pDisplayName
           mov xdi, $New(Editor)
           OCall xdi::Editor.Init, [xsi].pClientWnd, addr [xsi].CodeEditorResources, pDisplayName
+          .if eax == FALSE
+            Kill xdi
+          .endif
           ICall pIShellItem::IShellItem.Release
           inc ebx
         .endw
@@ -681,7 +678,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         .ifBitSet [xbx].$Obj(Editor).dFlags, EIF_NEW_FILE
           OCall xbx::Editor.SaveAs
         .else
-          OCall xbx::Editor.Save
+          OCall xbx::Editor.SaveTo, [xbx].$Obj(Editor).pFullFileName 
         .endif
       .endif
     .endif
@@ -698,7 +695,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .endif
     xor eax, eax
   .elseif ax == IDM_FILE_SAVEALL
-    invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, offset SaveEditor, 0
+    invoke EnumChildWindows, [xbx].$Obj(ClientWnd).hWnd, offset SaveEditor, NULL
     xor eax, eax
   .elseif (ax == IDM_FILE_CLOSE) || (ax == SC_CLOSE)    ;Close the active window
     mov hChildWnd, $invoke(SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0)
@@ -818,7 +815,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .endif
     xor eax, eax
   .elseif ax == IDM_EDIT_FIND
-    OCall [xsi].FindDlg::DialogModeless.Show
+    invoke ShowWindow, [xsi].FindDlg.hWnd, SW_SHOW
     xor eax, eax
 
   ;Messages for language selection

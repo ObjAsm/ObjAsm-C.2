@@ -71,7 +71,12 @@ DbgWndMsgTable \
 
   DOM {WM_COMPAREITEM,                    $OfsTStrA("WM_COMPAREITEM")}                    ;0039
 
+  DOM {03Ah,                              $OfsTStrA("WM_FULLSCREEN")}                     ;003A
+  DOM {03Bh,                              $OfsTStrA("WM_CLIENTSHUTDOWN")}                 ;003B
+  DOM {03Ch,                              $OfsTStrA("WM_DDEMLEVENT")}                     ;003C
   DOM {WM_GETOBJECT,                      $OfsTStrA("WM_GETOBJECT")}                      ;003D
+
+  DOM {03Fh,                              $OfsTStrA("WM_CALCSCROLL")}                     ;003F
 
   DOM {WM_COMPACTING,                     $OfsTStrA("WM_COMPACTING")}                     ;0041
   DOM {42h,                               $OfsTStrA("WM_OTHERWINDOWCREATED")}             ;0042
@@ -115,6 +120,7 @@ DbgWndMsgTable \
   DOM {93h,                               $OfsTStrA("WM_UAHINITMENU")}                    ;0093
   DOM {94h,                               $OfsTStrA("WM_UAHMEASUREMENUITEM")}             ;0094
   DOM {95h,                               $OfsTStrA("WM_UAHNCPAINTMENUPOPUP")}            ;0095
+  DOM {96h,                               $OfsTStrA("WM_UAHUPDATE")}                      ;0096
 
   DOM {WM_NCMOUSEMOVE,                    $OfsTStrA("WM_NCMOUSEMOVE")}                    ;00A0
   DOM {WM_NCLBUTTONDOWN,                  $OfsTStrA("WM_NCLBUTTONDOWN")}                  ;00A1
@@ -130,6 +136,8 @@ DbgWndMsgTable \
   DOM {WM_NCXBUTTONDOWN,                  $OfsTStrA("WM_NCXBUTTONDOWN")}                  ;00AB
   DOM {WM_NCXBUTTONUP,                    $OfsTStrA("WM_NCXBUTTONUP")}                    ;00AC
   DOM {WM_NCXBUTTONDBLCLK,                $OfsTStrA("WM_NCXBUTTONDBLCLK")}                ;00AD
+  DOM {0AEh,                              $OfsTStrA("WM_NCUAHDRAWCAPTION")}               ;00AE
+  DOM {0AFh,                              $OfsTStrA("WM_NCUAHDRAWFRAME")}                 ;00AF
 
   DOM {EM_GETSEL,                         $OfsTStrA("EM_GETSEL")}                         ;00B0
   DOM {EM_SETSEL,                         $OfsTStrA("EM_SETSEL")}                         ;00B1
@@ -169,6 +177,7 @@ DbgWndMsgTable \
   DOM {EM_CHARFROMPOS,                    $OfsTStrA("EM_CHARFROMPOS")}                    ;00D7
   DOM {EM_SETIMESTATUS,                   $OfsTStrA("EM_SETIMESTATUS")}                   ;00D8
   DOM {EM_GETIMESTATUS,                   $OfsTStrA("EM_GETIMESTATUS")}                   ;00D9
+  DOM {0DAh,                              $OfsTStrA("EM_MSGMAX")}                         ;00DA
 
   DOM {SBM_SETSCROLLINFO,                 $OfsTStrA("SBM_SETSCROLLINFO")}                 ;00E9
   DOM {SBM_GETSCROLLINFO,                 $OfsTStrA("SBM_GETSCROLLINFO")}                 ;00EA
@@ -199,6 +208,7 @@ DbgWndMsgTable \
   DOM {WM_VSCROLL,                        $OfsTStrA("WM_VSCROLL")}                        ;0115
   DOM {WM_INITMENU,                       $OfsTStrA("WM_INITMENU")}                       ;0116
   DOM {WM_INITMENUPOPUP,                  $OfsTStrA("WM_INITMENUPOPUP")}                  ;0117
+  DOM {0118h,                             $OfsTStrA("WM_SYSTIMER")}                       ;0118
   DOM {WM_GESTURE,                        $OfsTStrA("WM_GESTURE")}                        ;0119
   DOM {WM_GESTURENOTIFY,                  $OfsTStrA("WM_GESTURENOTIFY")}                  ;011A
 

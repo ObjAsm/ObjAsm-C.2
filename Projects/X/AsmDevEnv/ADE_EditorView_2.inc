@@ -30,7 +30,7 @@ Method EditorView.MoveCaretDown, uses xbx xdi xsi, dLineCount:DWORD
     .else
       cmp [xsi].sdCaretVisLineOffset, 0
     .endif
-  
+
     .if SIGN?                                           ;Top off view
       mov edx, [xsi].sdCaretVisLineOffset
       neg edx
@@ -90,7 +90,7 @@ Method EditorView.MoveCaretUp, uses xbx xdi xsi, dLineCount:DWORD
     .else
       cmp [xsi].sdCaretVisLineOffset, 0
     .endif
-  
+
     .if SIGN?                                           ;Top off view
       mov edx, [xsi].sdCaretVisLineOffset
       neg edx
@@ -135,11 +135,11 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method EditorView.OnChar, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method EditorView.OnChar, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local dNeedRedrawing:DWORD, RefLoc:LOCATION
 
   ANNOTATION use:wParam lParam
-  
+
 ;  DbgText "EditorView.OnChar"
   SetObject xsi
   mov xcx, [xsi].pOwner
@@ -151,16 +151,16 @@ Method EditorView.OnChar, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     OCall xsi.CaretRefLocSave, addr RefLoc              ;Calculate a caret reference position before deletion
     OCall xbx::Editor.SelectionDelete                   ;Do deletion
     OCall xsi.CaretRefLocLoad, addr RefLoc              ;Restore caret info
-    mov xax, [xsi].CaretLocation.pTextLine
-    .if xax != NULL
+    mov xdi, [xsi].CaretLocation.pTextLine
+    .if xdi != NULL
       mov edx, [xsi].CaretLocation.dCharIndex
       .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_OVERWRITE_MODE
-        OCall xax::EditorTextLine.CharInsert, edx, 1, addr wParam
+        OCall xdi::EditorTextLine.CharInsert, edx, 1, addr wParam
       .else
-        .if [xax].$Obj(EditorTextLine).dLength == edx
-          OCall xax::EditorTextLine.CharInsert, edx, 1, addr wParam
+        .if [xdi].$Obj(EditorTextLine).dLength == edx
+          OCall xdi::EditorTextLine.CharInsert, edx, 1, addr wParam
         .else
-          OCall xax::EditorTextLine.CharReplace, edx, 1, addr wParam
+          OCall xdi::EditorTextLine.CharReplace, edx, 1, addr wParam
         .endif
       .endif
       .if eax != 0
@@ -171,7 +171,7 @@ Method EditorView.OnChar, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
         inc dNeedRedrawing
       .endif
     .endif
-  
+
     .if dNeedRedrawing != 0
       mov xax, [xsi].pOwner
       invoke RedrawWindow, [xax].$Obj(EditorDisplay).hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
@@ -186,7 +186,9 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
+CreateExceptionHandler EditorView_OnKeyDown
+
+Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local dMenuKeyPressed:DWORD, dShiftKeyPressed:DWORD, dControlKeyPressed:DWORD
   local dLength:DWORD, dMaxIndex:DWORD, RefLoc:LOCATION
   local dNeedRedrawing:DWORD, dReturnValue:DWORD
@@ -194,6 +196,7 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   ANNOTATION use:wParam lParam
 
 ;  DbgText "EditorView.OnKeyDown"
+  .try EditorView_OnKeyDown
   SetObject xsi
   mov xcx, [xsi].pOwner
   mov xbx, [xcx].$Obj(EditorDisplay).pOwner             ;xbx -> Editor
@@ -239,10 +242,10 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .endif
 
   .elseif dControlKeyPressed != FALSE && wParam == 'V'
-    OCall xsi.CaretRefLocSave, addr RefLoc            ;Calculate a caret reference position before deletion
+;    OCall xsi.CaretRefLocSave, addr RefLoc            ;Calculate a caret reference position before deletion
     OCall xsi.ClpBrdPaste
     .if eax != FALSE
-      OCall xsi.CaretRefLocLoad, addr RefLoc          ;Restore caret info
+;      OCall xsi.CaretRefLocLoad, addr RefLoc          ;Restore caret info
       inc dNeedRedrawing
       OCall xsi.CaretSet
     .endif
@@ -453,8 +456,8 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       mov xax, [xsi].p1stVisLine
       mov [xsi].CaretLocation.pTextLine, xax
       mov [xsi].CaretLocation.dCharIndex, 0
-      mov [xsi].CaretLocation.dLineNumber, 1 
-      mov [xsi].sdCaretVisLineOffset, 0 
+      mov [xsi].CaretLocation.dLineNumber, 1
+      mov [xsi].sdCaretVisLineOffset, 0
       inc dNeedRedrawing
     .else
       mov xax, [xsi].CaretLocation.pTextLine
@@ -484,13 +487,13 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .endif
 
       .if edi < [xsi].d1stVisCharIndex
-        mov [xsi].d1stVisCharIndex, 0                   ;Adjust d1stVisCharIndex 
+        mov [xsi].d1stVisCharIndex, 0                   ;Adjust d1stVisCharIndex
         inc dNeedRedrawing
       .endif
       mov [xsi].CaretLocation.dCharIndex, edi
     .endif
     OCall xsi.CaretSet
-  
+
     .if dShiftKeyPressed != FALSE
       OCall xsi.SelectUpToCaretLocation
       inc dNeedRedrawing
@@ -510,8 +513,8 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       mov ecx, [xax].$Obj(EditorTextLine).dLength
       mov [xsi].CaretLocation.dCharIndex, ecx
       mov edx, [xsi].d1stVisLineNum
-      mov [xsi].CaretLocation.dLineNumber, edx  
-      mov [xsi].sdCaretVisLineOffset, 0    
+      mov [xsi].CaretLocation.dLineNumber, edx
+      mov [xsi].sdCaretVisLineOffset, 0
       inc dNeedRedrawing
     .else
       ;Search the last char in line
@@ -527,12 +530,12 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       sub ecx, [xsi].d1stVisCharIndex
       .if eax < ecx                                     ;Check if it is off view
         sub edx, eax
-        mov [xsi].d1stVisCharIndex, edx                 ;Adjust d1stVisCharIndex 
+        mov [xsi].d1stVisCharIndex, edx                 ;Adjust d1stVisCharIndex
         inc dNeedRedrawing
       .endif
     .endif
     OCall xsi.CaretSet
-  
+
     .if dShiftKeyPressed != FALSE
       OCall xsi.SelectUpToCaretLocation
       inc dNeedRedrawing
@@ -664,6 +667,7 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .if xax != NULL
         mov [xsi].CaretLocation.pTextLine, xax
         mov [xsi].CaretLocation.dCharIndex, 0
+        inc [xsi].CaretLocation.dLineNumber
         inc [xsi].sdCaretVisLineOffset
         OCall xsi.CaretSet
         inc dNeedRedrawing
@@ -689,5 +693,14 @@ Method EditorView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke RedrawWindow, [xax].$Obj(EditorDisplay).hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
   .endif
   mov eax, dReturnValue
+
+  .catch EditorView_OnKeyDown
+    DbgWarning "Exception in EditorView.OnChar"
+    invoke MessageBox, [xsi].hWnd, $OfsCStr("Exception in EditorView.OnChar"), addr cError, MB_OK or MB_ICONERROR
+  .endcatch EditorView_OnKeyDown
+if TARGET_BITNESS eq 64
+  .finally EditorView_OnKeyDown
+  .endfinally
+endif
 MethodEnd
 

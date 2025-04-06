@@ -710,24 +710,46 @@ IsOctNumber proc uses xbx xsi pStart:PSTRING, dCount:DWORD
 IsOctNumber endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  StrLFScanA
-; Purpose:    Scan for a LF char.
-; Arguments:  Arg1: -> String
+; Procedure:  StrScanCharA
+; Purpose:    Scan for a char.
+; Arguments:  Arg1: -> StringA
 ;             Arg2: Character count.
-; Return:     Xax -> CHR occurence.
+;             Arg3: Searched Char.
+; Return:     xax -> CHRA occurence.
 
 align ALIGN_CODE
-StrLFScanA proc uses rbx rdi pStringA:POINTER, dCount:DWORD
-  mov rdi, rcx
-  mov ecx, edx                                          ;rcx (counter) = length
-  mov al, LF                                            ;Search for LF
+StrScanCharA proc uses xdi pStringA:PSTRINGA, dCharCount:DWORD, bChar:CHRA
+  mov xdi, pStringA
+  mov ecx, dCharCount                                   ;rcx (counter) = length
+  mov al, bChar                                         ;Search for bCharA
   repne scasb
-  mov rax, NULL                                         ;Dont't change flags!
+  mov xax, NULL                                         ;Dont't change flags!
   jne @F
-  lea rax, [rdi - sizeof(CHRA)]
+  lea xax, [xdi - sizeof(CHRA)]
 @@:
   ret
-StrLFScanA endp
+StrScanCharA endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  StrScanCharW
+; Purpose:    Scan for a char.
+; Arguments:  Arg1: -> StringW
+;             Arg2: Character count.
+;             Arg3: Searched Char.
+; Return:     xax -> CHRW occurence.
+
+align ALIGN_CODE
+StrScanCharW proc uses xdi pStringW:PSTRINGW, dCharCount:DWORD, wChar:CHRW
+  mov xdi, pStringW
+  mov ecx, dCharCount                                   ;rcx (counter) = length
+  mov ax, wChar                                         ;Search for bCharA
+  repne scasw
+  mov xax, NULL                                         ;Dont't change flags!
+  jne @F
+  lea xax, [xdi - sizeof(CHRW)]
+@@:
+  ret
+StrScanCharW endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  ShowKeywords

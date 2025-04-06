@@ -24,7 +24,7 @@ Object WinApp, WinAppID, Window
   VirtualEvent      OnNcDestroy,      WM_NCDESTROY
 
   DefineVariable    pCommandLine,     PSTRING,    NULL
-  DefineVariable    hActiveMlsDlg,    HWND,       0     ;Active modeless dialog, can be only 1
+  DefineVariable    hActiveMlsDlg,    HWND,       0     ;Active modeless dialog, can be only one
   DefineVariable    hAccelerators,    HACCEL,     0
 ObjectEnd
 

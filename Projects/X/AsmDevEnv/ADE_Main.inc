@@ -59,7 +59,7 @@ AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SBSTYLE, 0, 4}
 SetupTabCtrl DEF_TABCONTROL {100, STSTYLE, 0, NULL, {<2,2,295,180>}}
 
 CStr szApplicationClassName,    "OAC_Application"
-CStr szEditorClassName,         "OAC_Editor"
+CStrW szEditorClassName,         "OAC_Editor"
 CStr szEditorDisplayClassName,  "OAC_EditorDisplay"
 CStr szEditorViewClassName,     "OAC_EditorView"
 
@@ -133,7 +133,7 @@ PKEYWORD typedef ptr KEYWORD
 ; Purpose:    Implement a collection of keyword groups.
 
 Object KeywordGroupCollection, ADE_KeywordGroupListID, DataCollection
-  RedefineMethod    DestroyItem,    POINTER
+  RedefineMethod    DestroyItem,        PKEYWORDGROUP
 ;  RedefineMethod    Insert,             PKEYWORDGROUP, DWORD, DWORD, PSTRING
 ObjectEnd
 
@@ -148,6 +148,26 @@ ObjectEnd
 Object KeywordCollection, ADE_KeywordListID, SortedDataCollection
   RedefineMethod    Compare,            PKEYWORD, PKEYWORD
   RedefineMethod    Insert,             PKEYWORDGROUP, DWORD, DWORD, PSTRING
+ObjectEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+
+FILEFORMAT struc
+  pExtension        PSTRINGW  ?
+  dFileFormat       DWORD     ?             ;EFF_XXX
+FILEFORMAT ends
+PFILEFORMAT typedef ptr FILEFORMAT
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Object:     FileFormatCollection
+; Purpose:    Implement a collection of FILEFORMAT entries.
+
+Object FileFormatCollection, ADE_FileFormatCollectionID, SortedDataCollection
+  RedefineMethod    Compare,            PSTRINGW, PSTRINGW
+  RedefineMethod    DestroyItem,        PFILEFORMAT
+  StaticMethod      GetFormat,          PSTRINGW
+  RedefineMethod    Insert,             PSTRING, DWORD
+  RedefineMethod    KeyOf,              PFILEFORMAT
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -173,6 +193,7 @@ Object EditorSharedResources, ADE_EditorSharedResourcesID, Primer
   DefineVariable    hBrushLineIndRed,     HBRUSH,     0
   DefineVariable    hBrushLineIndYellow,  HBRUSH,     0
   DefineVariable    hBrushLineIndGreen,   HBRUSH,     0
+  
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -216,6 +237,9 @@ Object EditorResources, ADE_EditorResourcesID, Primer
   DefineVariable    CaretBmpOffset,       POINT,      {0,0} ;Offset to the logical caret, set by CaretNew
   DefineVariable    dZoomFactor,          DWORD,      ZOOM_FACTOR_INIT
   DefineVariable    dInitZoomFactor,      DWORD,      ZOOM_FACTOR_INIT  ;Temp storage
+  DefineVariable    dLineTermination,     DWORD,      ELT_CRLF
+
+  Embed     FileFormats,        FileFormatCollection
 
   Embed     KeywordGroups,      KeywordGroupCollection
   Embed     Keywords,           KeywordCollection
@@ -259,6 +283,7 @@ Object EditorTextLine, ADE_EditorTextLineID, Primer
   StaticMethod      LineJoinPrev,         DWORD
   StaticMethod      SelectionReset
   StaticMethod      SetDirty
+  StaticMethod      SpaceFill,            DWORD
 
   DefineVariable    Link,                 LDLL_MEMBER,{NULL, NULL}
   DefineVariable    pBuffer,              POINTER,    NULL      ;Memory holding wide chars and an ending ZTC
@@ -487,6 +512,7 @@ Object ChildWnd, ADE_ChildWndID, MdiChildWnd                  ;MDI child window.
   VirtualEvent      OnMdiActivate,        WM_MDIACTIVATE
 
   DefineVariable    pFullFileName,        PSTRING,    NULL
+  DefineVariable    dFileFormat,          DWORD,      EFF_UNKNOWN
 
   Embed   Snapper,  Magnetism
 ObjectEnd
@@ -532,16 +558,18 @@ Object Editor, ADE_EditorID, ChildWnd
   VirtualMethod     FindFrom,             PSTRING, POINTER, POINTER
   VirtualMethod     InformDeletionOf,     DWORD
   VirtualMethod     InformInsertionOf,    DWORD
-  RedefineMethod    Init,                 POINTER, $ObjPtr(EditorResources), PSTRING      ;-> Owner, -> FileName
+  RedefineMethod    Init,                 POINTER, $ObjPtr(EditorResources), PSTRINGW
   VirtualMethod     LineNew,              DWORD
   RedefineMethod    Load,                 $ObjPtr(Stream), PDESER_INFO
-  VirtualMethod     Open,                 PSTRING
+  VirtualMethod     Open,                 PSTRINGW
   RedefineMethod    OnSize,               WPARAM, LPARAM
   RedefineMethod    Print
   RedefineMethod    Save
   VirtualMethod     SaveAs
+  VirtualMethod     SaveTo,               PSTRING
   VirtualMethod     SelectAll
   VirtualMethod     SelectionDelete
+  VirtualMethod     SelectionReplace,     PSTRING
   VirtualMethod     SelectionResetAll                                  
   VirtualMethod     SelectionResetLines                             ;Reset selection on lines only
   VirtualMethod     SelectionSet
@@ -619,12 +647,13 @@ FDD_ALL             equ   2
 Object FindDialog, , DialogModeless
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
-  StaticMethod      Find
-  StaticMethod      Replace
-  StaticMethod      ReplaceAll
+  StaticMethod      Find,               POINTER
+  StaticMethod      Replace,            POINTER
+  StaticMethod      ReplaceAll,         POINTER
   StaticMethod      Help
   RedefineMethod    Done
   RedefineMethod    Init,               POINTER
+  RedefineMethod    OnActivate,         WPARAM, LPARAM
   RedefineMethod    OnCommand,          WPARAM, LPARAM
   RedefineMethod    OnDestroy,          WPARAM, LPARAM
   
@@ -636,6 +665,7 @@ Object FindDialog, , DialogModeless
   DefineVariable  dDirection,   DWORD,    FDD_DOWN
   
   DefineVariable  pFindString,  PSTRING,  NULL 
+  DefineVariable  pReplString,  PSTRING,  NULL 
   DefineVariable  dLineNumber,  DWORD,    1           ;Search Start
   DefineVariable  dCharIndex,   DWORD,    0
 ObjectEnd
@@ -649,7 +679,7 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   RedefineMethod    Init
   RedefineMethod    Load,                 $ObjPtr(Stream), PDESER_INFO
   VirtualMethod     LoadContext,          PSTRING
-  StaticMethod      ManageGuiCmds,        DWORD
+  StaticMethod      ManageGuiCmds,        HWND
   RedefineMethod    OnSize,               WPARAM, LPARAM
   VirtualMethod     SaveContext,          PSTRING
   StaticMethod      Startup
@@ -867,6 +897,7 @@ include ADE_Editor.inc
 include ADE_SetupDialog.inc
 include ADE_KeywordGroupCollection.inc
 include ADE_KeywordCollection.inc
+include ADE_FileFormatCollection.inc
 include ADE_EditorDisplay.inc
 include ADE_EditorView_1.inc
 include ADE_EditorView_2.inc

@@ -63,7 +63,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method StrCollectionW.PutItem,, pStream:$ObjPtr(Stream), pString:PSTRINGW
-  OCall pStream::Stream.StrWriteW, pString
+;  OCall pStream::Stream.StrWriteW, pString
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

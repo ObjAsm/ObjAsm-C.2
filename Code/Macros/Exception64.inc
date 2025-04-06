@@ -144,3 +144,12 @@ endm
 .endfinally macro
 endm
 
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      CreateExceptionHandler
+; Purpose:    Dummy for compatibility with 64 bit.
+; Arguments:  Arg1: Name of the handler to be created.
+;             Arg2: Address of Unwind code.
+;             Arg3: List of exceptions codes to deal with.
+
+CreateExceptionHandler macro HandlerName:req, UnwindCodeLabel:=<>, xCodes:vararg
+endm

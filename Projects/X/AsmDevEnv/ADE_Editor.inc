@@ -100,7 +100,7 @@ MethodEnd
 
 Method Editor.ClpBrdPaste, uses xbx xsi
   SetObject xsi
-  invoke GetFocus                                       ;Get the Viewthat has the focus
+  invoke GetFocus                                       ;Get the View that has the focus
   .if xax != 0
     invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
     .if xax != NULL
@@ -200,16 +200,172 @@ MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Editor.FindFrom
-; Purpose:    Searches a string from a starting location.
+; Purpose:    Searches a string from a starting location. Select it and return the location.
 ; Arguments:  Arg1: -> Search string.
 ;             Arg2: -> Start line number.
 ;             Arg3: -> Start char index.
-;             Arg4: -> EditorView
-; Return:     Nothing.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+StrSearchW proc uses xdi xsi pLineStr:PSTRINGW, dLineLen:DWORD, pSrchStr:PSTRINGW, dSrchLen:DWORD
+  mov ecx, dLineLen
+  sub ecx, dSrchLen
+  js @@2
+  inc ecx                                               ;If lines are equally long, test at least 1 char
+
+@@1:
+  mov xdi, pLineStr
+  mov xsi, pSrchStr
+  lodsw
+  repne scasw                                           ;Search for first character
+  jne @@2                                               ;Not found => Exit
+
+  mov pLineStr, xdi
+  mov dLineLen, ecx
+  mov ecx, dSrchLen
+  dec ecx
+  repe cmpsw                                            ;Check for the rest of the string
+  mov ecx, dLineLen
+  jne @@1                                               ;Not equal => try next character
+  lea xax, [xdi - sizeof(CHRW)]                         ;Found, return position
+  jmp @@Exit
+
+@@2:
+  xor eax, eax
+@@Exit:
+  ret
+StrSearchW endp
+
+StrISearchW proc uses xbx xdi xsi pLineStr:PSTRINGW, dLineLen:DWORD, pSrchStr:PSTRINGW, dSrchLen:DWORD
+  mov ecx, dLineLen
+  sub ecx, dSrchLen
+  js @@3
+  inc ecx                                               ;If lines are equally long, test at least 1 char
+  dec dSrchLen
+
+  mov xdi, pLineStr
+  mov dLineLen, ecx
+@@1:
+  mov xsi, pSrchStr
+  mov xbx, xdi
+  lodsw
+  .if ax >= 'a' && ax <= 'z'
+    sub ax, 20h                                         ;Convert to uppercase
+  .endif
+  repne scasw                                           ;Search for first character
+  je @@2                                                ;Found => Check the rest
+  .if ax >= 'A' && ax <= 'Z'
+    add ax, 20h                                         ;Convert to lowercase
+    mov xdi, xbx
+    mov ecx, dLineLen
+    repne scasw                                         ;Search for first character
+    jne @@3
+  .endif
+
+@@2:
+  mov dLineLen, ecx 
+  invoke StrCICompW, xdi, xsi, dSrchLen
+  .if eax == 0
+    lea xax, [xdi - sizeof(CHRW)]                       ;Found, return position
+    jmp @@Exit
+  .endif
+  mov ecx, dLineLen
+  jmp @@1
+
+@@3:
+  xor eax, eax
+@@Exit:
+  ret
+StrISearchW endp
+
+;Method Editor.FindFrom, uses xbx xdi xsi, pSearchString:PSTRING, pLineNumber:POINTER, pCharIndex:POINTER
+;  local sdCaretVisLineOffset:SDWORD, dCurrLineNumber:DWORD, dTargLineNumber:DWORD
+;  local dRetVal:DWORD
+;
+;  SetObject xsi
+;  mov dRetVal, FALSE
+;  OCall xsi.SelectionResetAll
+;  mov dCurrLineNumber, 1
+;  mov xax, pLineNumber
+;  mov ecx, DWORD ptr [xax]
+;  mov dTargLineNumber, ecx
+;  xor ebx, ebx
+;  mov xax, [xsi].TextLines.pFirstMember
+;  .if xax != NULL
+;    sub xax, offset $Obj(EditorTextLine).Link
+;    mov sdCaretVisLineOffset, 0
+;    ;Goto the starting line number
+;    .while ecx != dCurrLineNumber
+;      mov xax, [xax].$Obj(EditorTextLine).Link.pLinkFwrd
+;      .break .if xax == NULL
+;      sub xax, offset $Obj(EditorTextLine).Link
+;      inc sdCaretVisLineOffset
+;      inc dCurrLineNumber
+;    .endw
+;    .if xax != NULL
+;      mov xdx, pCharIndex
+;      mov edi, DWORD ptr [xdx]
+;      .if edi > [xax].$Obj(EditorTextLine).dLength
+;        mov edi, [xax].$Obj(EditorTextLine).dLength
+;      .endif
+;      
+;      ;Start searching
+;      .while TRUE
+;        mov xbx, xax
+;        mov xdx, [xbx].$Obj(EditorTextLine).pBuffer
+;        lea xcx, [xdx + sizeof(CHR)*xdi]
+;        invoke StrPos, xcx, pSearchString
+;        .break .if xax != NULL
+;        mov xax, [xbx].$Obj(EditorTextLine).Link.pLinkFwrd
+;        .break .if xax == NULL
+;        sub xax, offset $Obj(EditorTextLine).Link
+;        inc sdCaretVisLineOffset
+;        inc dCurrLineNumber
+;        xor edi, edi
+;      .endw
+;      .if xax != NULL
+;        ;Select the match
+;        mov [xsi].SelectionFst.LOCATION.pTextLine, xbx
+;        mov [xsi].SelectionLst.LOCATION.pTextLine, xbx
+;        mov edx, dCurrLineNumber
+;        mov [xsi].SelectionFst.LOCATION.dLineNumber, edx
+;        mov [xsi].SelectionLst.LOCATION.dLineNumber, edx
+;        sub xax, [xbx].$Obj(EditorTextLine).pBuffer
+;        shr eax, 1
+;        mov [xsi].SelectionFst.LOCATION.dCharIndex, eax
+;        mov [xsi].SelectionLst.LOCATION.dCharIndex, eax
+;        invoke StrLength, pSearchString
+;        add [xsi].SelectionLst.LOCATION.dCharIndex, eax
+;        OCall xsi.SelectionSet
+;
+;        ;Update all EditorDisplays
+;        mov xax, [xsi].TextLines.pFirstMember
+;        sub xax, offset $Obj(EditorTextLine).Link
+;        mov xbx, [xsi].pFocusedView
+;        mov [xbx].$Obj(EditorView).p1stVisLine, xax
+;        mov [xbx].$Obj(EditorView).d1StVisLineCount, 0
+;        mov [xbx].$Obj(EditorView).d1stVisLineNum, 1
+;        OCall [xsi].pFocusedView::EditorView.ScrollVisPageDown, sdCaretVisLineOffset
+;        .ColForEach [xsi].EditorDisplays, ebx
+;          invoke RedrawWindow, [xax].$Obj(EditorDisplay).hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
+;        .ColNext
+;
+;        mov dRetVal, TRUE
+;      .endif
+;      
+;      ;Update start information
+;      mov xax, pLineNumber
+;      m2m DWORD ptr [xax], dCurrLineNumber, edx
+;      mov xdx, pCharIndex
+;      mov eax, [xsi].SelectionLst.LOCATION.dCharIndex
+;      mov DWORD ptr [xdx], eax
+;    .endif    
+;  .endif
+;  mov eax, dRetVal
+;MethodEnd
 
 Method Editor.FindFrom, uses xbx xdi xsi, pSearchString:PSTRING, pLineNumber:POINTER, pCharIndex:POINTER
   local sdCaretVisLineOffset:SDWORD, dCurrLineNumber:DWORD, dTargLineNumber:DWORD
-  local dRetVal:DWORD
+  local dRetVal:DWORD, dLen:DWORD
 
   SetObject xsi
   mov dRetVal, FALSE
@@ -237,12 +393,24 @@ Method Editor.FindFrom, uses xbx xdi xsi, pSearchString:PSTRING, pLineNumber:POI
       .if edi > [xax].$Obj(EditorTextLine).dLength
         mov edi, [xax].$Obj(EditorTextLine).dLength
       .endif
+      
+      ;Start searching
       .while TRUE
         mov xbx, xax
-        mov xdx, [xbx].$Obj(EditorTextLine).pBuffer
-        lea xcx, [xdx + sizeof(CHR)*xdi]
-        invoke StrPos, xcx, pSearchString
-        .break .if xax != NULL
+        mov dLen, $32($invoke(StrLength, pSearchString))
+        mov edx, [xbx].$Obj(EditorTextLine).dLength
+        sub edx, edi
+        mov xcx, [xbx].$Obj(EditorTextLine).pBuffer
+        lea xcx, [xcx + sizeof(CHR)*xdi]
+        invoke StrISearchW, xcx, edx, pSearchString, dLen
+;        .break .if xax != NULL
+        .if xax != NULL
+          mov ecx, dLen
+          inc ecx
+          movzx edx, CHR ptr [xax + xcx*sizeof(CHR)]
+          GetCharType edx, eax
+          .break .if !(eax & CHR_WORD)                      ;Found
+        .endif
         mov xax, [xbx].$Obj(EditorTextLine).Link.pLinkFwrd
         .break .if xax == NULL
         sub xax, offset $Obj(EditorTextLine).Link
@@ -251,19 +419,22 @@ Method Editor.FindFrom, uses xbx xdi xsi, pSearchString:PSTRING, pLineNumber:POI
         xor edi, edi
       .endw
       .if xax != NULL
+        ;Select the match
         mov [xsi].SelectionFst.LOCATION.pTextLine, xbx
         mov [xsi].SelectionLst.LOCATION.pTextLine, xbx
         mov edx, dCurrLineNumber
         mov [xsi].SelectionFst.LOCATION.dLineNumber, edx
         mov [xsi].SelectionLst.LOCATION.dLineNumber, edx
         sub xax, [xbx].$Obj(EditorTextLine).pBuffer
-        shr eax, 1
+        ;shr eax, 1
+        xor eax, eax
         mov [xsi].SelectionFst.LOCATION.dCharIndex, eax
         mov [xsi].SelectionLst.LOCATION.dCharIndex, eax
         invoke StrLength, pSearchString
         add [xsi].SelectionLst.LOCATION.dCharIndex, eax
         OCall xsi.SelectionSet
 
+        ;Update all EditorDisplays
         mov xax, [xsi].TextLines.pFirstMember
         sub xax, offset $Obj(EditorTextLine).Link
         mov xbx, [xsi].pFocusedView
@@ -274,8 +445,11 @@ Method Editor.FindFrom, uses xbx xdi xsi, pSearchString:PSTRING, pLineNumber:POI
         .ColForEach [xsi].EditorDisplays, ebx
           invoke RedrawWindow, [xax].$Obj(EditorDisplay).hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
         .ColNext
+
         mov dRetVal, TRUE
       .endif
+      
+      ;Update start information
       mov xax, pLineNumber
       m2m DWORD ptr [xax], dCurrLineNumber, edx
       mov xdx, pCharIndex
@@ -317,10 +491,10 @@ MethodEnd
 ; Purpose:    Initialize the Editor object.
 ; Arguments:  Arg1: -> Owner object.
 ;             Arg2: -> EditorResources.
-;             Arg2: -> FileName string.
-; Return:     Nothing.
+;             Arg2: -> WIDE FileName string.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorResources), pFileName:PSTRING
+Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorResources), pFileName:PSTRINGW
   local ClientRect:RECT, cBuffer[MAX_PATH]:CHR
 
   SetObject xsi
@@ -341,17 +515,20 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
 
     inc [xdi].$Obj(ClientWnd).dUnnamedCount
     lea xbx, cBuffer
-    WriteF xbx, "Unnamed ¦UD", [xdi].$Obj(ClientWnd).dUnnamedCount
+    WriteFW xbx, "Unnamed ¦UD", [xdi].$Obj(ClientWnd).dUnnamedCount
     lea xcx, cBuffer
   .else
     OCall xsi.Open, pFileName
+    .if eax == FALSE
+      ExitMethod
+    .endif
     mov xcx, pFileName
   .endif
-  mov [xsi].pFullFileName, $invoke(StrNew, xcx)
+  mov [xsi].pFullFileName, $invoke(StrNewW, xcx)
 
-  invoke CreateMDIWindow, offset szEditorClassName, [xsi].pFullFileName, 0, \
-                          CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, \
-                          [xdi].$Obj(ClientWnd).hWnd, hInstance, pSelf
+  invoke CreateMDIWindowW, offset szEditorClassName, [xsi].pFullFileName, 0, \
+                           CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, \
+                           [xdi].$Obj(ClientWnd).hWnd, hInstance, pSelf
   .if xax != NULL
     .if [xdi].$Obj(ClientWnd).dChildCount == 1          ;First child window ?
       mov xbx, [xdi].$Obj(ClientWnd).pOwner             ;xbx -> Application
@@ -359,12 +536,11 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
       invoke SendMessage, [xdi].$Obj(ClientWnd).hWnd, WM_MDISETMENU, \
                           [xbx].$Obj(Application).hMenuChild, \
                           [xbx].$Obj(Application).hMenuChildWnd
-      OCall xbx::Application.ManageGuiCmds, ADE_EditorID
+      OCall xbx::Application.ManageGuiCmds, [xsi].hWnd
       invoke DrawMenuBar, [xbx].$Obj(Application).hWnd  ;Redraw the new menu bar
-      OCall xbx::Application.ManageGuiCmds, ADE_EditorID
     .endif
 
-    OCall [xsi].EditorDisplays::Collection.Init, xsi, 2, 0, 2
+    OCall [xsi].EditorDisplays::Collection.Init, xsi, 2, 2, COL_MAX_CAPACITY
     invoke GetClientRect, [xsi].hWnd, addr ClientRect
 
     ;Create a EditorDisplay instance
@@ -380,16 +556,18 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
 
     invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
     invoke SetFocus, [xbx].$Obj(EditorDisplay).View.hWnd
+    mov eax, TRUE
   .else
     DbgApiError
-    invoke MessageBox, [xdi].$Obj(Application).hWnd, $OfsCStr("Window creation error"), \
-                       offset szError, MB_OK or MB_ICONERROR
+    invoke MessageBox, [xdi].$Obj(Application).hWnd, $OfsCStr("Editor creation error."), \
+                       addr cError, MB_OK or MB_ICONERROR
+    xor eax, eax
   .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Editor.LineNew
-; Purpose:    Create a new EditorTextLine.
+; Purpose:    Create a new EditorTextLine and adds it to the end.
 ; Arguments:  Arg1: Character buffer size not including the ZTC.
 ; Return:     xax -> EditorTextLine or NULL if failed.
 
@@ -425,7 +603,7 @@ Method Editor.Load, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER
 
   SetObject xsi
   mov xbx, pDeserInfo
-  ACall xsi.Load, pStream, pDeserInfo                 ;WinPrimer returns the previous hWnd
+  ACall xsi.Load, pStream, pDeserInfo                   ;WinPrimer returns the previous hWnd
   mov xdi, xax
 
   mov pCaption, $OCall(pStream::Stream.StrRead)
@@ -444,36 +622,16 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method Editor.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
-  local cCaption[512]:CHR, cText[1024]:CHR
-
   ANNOTATION use:wParam lParam
 
   SetObject xsi
 ;  DbgText "Editor.OnClose"
-  invoke GetKeyState, VK_CONTROL
-  and ax, BIT15
-  .if ZERO?                          ;If CTRL pressed => close without asking
-    .ifBitSet [xsi].dFlags, EIF_DIRTY
-;      mov edx, [xsi].dLanguage
-;      add edx, 100
-;      invoke LoadString, hInstance, edx, addr cCaption, lengthof cCaption
-;      mov edx, [xsi].dLanguage
-;      add edx, 101
-;      invoke LoadString, hInstance, edx, addr cText, lengthof cText
-      invoke StrCopy, addr cText, $OfsCStr("Are you sure ?")
-      invoke StrCopy, addr cCaption, $OfsCStr("Editor close")
-
-      ;MessageBox customization
-      invoke SetWindowsHookEx, WH_CBT, offset CBTProc, hInstance, $32($invoke(GetCurrentThreadId))
-      mov hCBTProc, xax
-      invoke MessageBox, [xsi].hWnd, addr cText, addr cCaption, MB_YESNO + MB_ICONQUESTION
-      .if eax == IDNO
-        xor eax, eax
-        ExitMethod
-      .endif
-    .endif
+  OCall xsi.Save
+  .if eax == IDCANCEL
+    xor eax, eax
+  .else
+    invoke DefMDIChildProc, [xsi].hWnd, WM_CLOSE, wParam, lParam
   .endif
-  invoke DefMDIChildProc, [xsi].hWnd, WM_CLOSE, wParam, lParam
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -545,7 +703,7 @@ Method Editor.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
 
 ;  DbgText "Editor.OnSize"
   SetObject xsi
-  .if wParam != SIZE_MINIMIZED && lParam != 0         ;x = 0 & y = 0
+  .if wParam != SIZE_MINIMIZED && lParam != 0           ;x = 0 & y = 0
     .if [xsi].EditorDisplays.dCount != 0
       PntS2Regs lParam
       mov ClientSize.x, eax
@@ -564,45 +722,146 @@ MethodEnd
 ; Arguments:  Arg1: -> FullFileName.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRING
-  local hFile:HANDLE, dFileSize:DWORD, dBytesRead:DWORD, pFileBuffer:POINTER
-  local dFileLineLength:DWORD, pFileLineBegin:POINTER
+Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
+  local hFile:HANDLE, dFileSize:DWORD, dBytesRead:DWORD, pFileBuffer:POINTER, pDataBegin:POINTER
+  local dFileLineLength:DWORD, pFileLineBegin:POINTER, dLineTermination:DWORD, dFileFormat:DWORD
+  local dResult:DWORD, cMessage[2048]:CHR
 
   SetObject xsi
+  mov dResult, FALSE
+  mov xbx, [xsi].pResources
+  m2m dLineTermination, [xbx].$Obj(EditorResources).dLineTermination, eax
+  OCall [xbx].$Obj(EditorResources).FileFormats::FileFormatCollection.GetFormat, pFullFileName
+  mov [xsi].dFileFormat, eax
+  mov dFileFormat, eax
   invoke LoadCursor, 0, IDC_WAIT
   invoke SetCursor, xax
-  invoke CreateFile, pFullFileName, GENERIC_READ, FILE_SHARE_READ or FILE_SHARE_WRITE, NULL, \
-                     OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0
+  invoke CreateFileW, pFullFileName, GENERIC_READ, FILE_SHARE_READ or FILE_SHARE_WRITE, NULL, \
+                      OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0
   .if xax != INVALID_HANDLE_VALUE
     mov hFile, xax
     invoke GetFileSize, hFile, NULL
-    inc eax                                             ;Add space for a ZTC
     mov dFileSize, eax
+    add eax, sizeof(CHRW)                               ;Add space for a (WIDE) ZTC
     MemAlloc xax
     .if xax != NULL
       mov pFileBuffer, xax
       invoke ReadFile, hFile, pFileBuffer, dFileSize, addr dBytesRead, NULL
       .if eax != FALSE
         mov xdi, pFileBuffer
-        mov eax, dFileSize
-        mov CHRA ptr [xax + xdi - sizeof(CHRA)], 0      ;Set ZTC
+        mov eax, dBytesRead
+        mov CHRW ptr [xdi + xax], 0                     ;Set WIDE ZTC at the end of the read data
+        
+        ;Check the BOM if present
+        mov pDataBegin, xdi
+        ;Check if a BOM for UTF-8 is present
+        .if dBytesRead >= 3 && WORD ptr [xdi] == 0BBEFh && BYTE ptr [xdi + sizeof(WORD)] == 0BFh
+          mov dFileFormat, EFF_UTF8BOM
+          add xdi, 3*sizeof(BYTE)
+          mov pDataBegin, xdi
+          sub dBytesRead, 3*sizeof(BYTE)
+
+        ;Check if a BOM for UTF-16 is present
+        .elseif dBytesRead >= 2 && WORD ptr [xdi] == 0FEFFh
+          mov dFileFormat, EFF_UTF16BOM
+          add xdi, sizeof(WORD)
+          mov pDataBegin, xdi
+          sub dBytesRead, sizeof(WORD)
+        
+        .else
+          .if dFileFormat == EFF_UNKNOWN
+            lea xbx, cMessage
+            WriteF xbx, "Unknown format for file\n\´¦SU\´ \:", pFullFileName
+            invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
+            jmp @@Exit
+          .elseif dFileFormat == EFF_UTF8BOM
+            lea xbx, cMessage
+            WriteF xbx, "Wrong or missing UTF-8 BOM in file\n\´¦SU\´ \:", pFullFileName
+            invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
+            jmp @@Exit
+          .elseif dFileFormat == EFF_UTF16BOM
+            lea xbx, cMessage
+            WriteF xbx, "Wrong or missing UTF-16 BOM in file\n\´¦SU\´ \:", pFullFileName
+            invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
+            jmp @@Exit
+          .endif
+        .endif
 
         .while TRUE
           ;Start searching for line ends
-          mov eax, dFileSize
-          sub xax, xdi
-          add xax, pFileBuffer
-          invoke StrLFScanA, xdi, eax
-          .break .if xax == NULL
+          ;Calc eax = scan remaining CHRs
+          mov ebx, dBytesRead
+          sub xbx, xdi
+          add xbx, pDataBegin
+          .break .if SIGN? || ZERO?                     ;All chars consumend
+
+          .if dFileFormat == EFF_UTF16BOM
+            shr ebx, 1
+            .if dLineTermination == ELT_NULL
+              invoke StrScanCharW, xdi, ebx, 0          ;Search for NULL
+            .elseif dLineTermination == ELT_LF
+              invoke StrScanCharW, xdi, ebx, LF         ;Search for LF
+            .elseif dLineTermination == ELT_CR
+              invoke StrScanCharW, xdi, ebx, CR         ;Search for CR
+            .else
+              invoke StrScanCharW, xdi, ebx, CR         ;Search for CR
+              .if xax != NULL
+                .if CHRW ptr [xax + sizeof(CHRW)] != LF ;Check if the next char is a LF
+                  mov dLineTermination, ELT_CR          ;Assume ELT_CR
+                .endif
+              .else
+                invoke StrScanCharW, xdi, ebx, LF       ;Search for LF
+                .if xax != NULL
+                  mov dLineTermination, ELT_LF          ;Assume ELT_LF
+                .endif
+              .endif
+            .endif
+          .else             
+            .if dLineTermination == ELT_NULL
+              invoke StrScanCharA, xdi, ebx, 0          ;Search for NULL
+            .elseif dLineTermination == ELT_LF
+              invoke StrScanCharA, xdi, ebx, LF         ;Search for LF
+            .elseif dLineTermination == ELT_CR
+              invoke StrScanCharA, xdi, ebx, CR         ;Search for CR
+            .else
+              invoke StrScanCharA, xdi, ebx, CR         ;Search for CR
+              .if xax != NULL
+                .if CHRA ptr [xax + sizeof(CHRA)] != LF ;Check if the next char is a LF
+                  mov dLineTermination, ELT_CR          ;Assume ELT_CR
+                .endif
+              .else
+                invoke StrScanCharA, xdi, ebx, LF       ;Search for LF
+                .if xax != NULL
+                  mov dLineTermination, ELT_LF          ;Assume ELT_LF
+                .endif
+              .endif
+            .endif
+          .endif
+          
           mov pFileLineBegin, xdi
-          .if xax > xdi && CHRA ptr [xax - sizeof(CHRA)] == CR
-            mov CHRA ptr [xax - sizeof(CHRA)], 0        ;Set ZTC
-            lea xdi, [xax + sizeof(CHRA)]               ;xdi -> next CHRA
+          .if xax == NULL
+            mov eax, dBytesRead
+            add xax, pDataBegin                         ;Point to last char (Buffer ZTC)
+          .endif
+
+          .if dFileFormat == EFF_UTF16BOM
+            .if dLineTermination == ELT_CRLF
+              mov DCHRW ptr [xax], 0                    ;Set double ZTC @ CR
+              lea xdi, [xax + 2*sizeof(CHRW)]           ;xdi -> Skip CRLF
+            .else
+              mov CHRW ptr [xax], 0                     ;Set ZTC
+              lea xdi, [xax + sizeof(CHRW)]             ;xdi -> next CHRA
+            .endif
             sub xax, pFileLineBegin
-            sub eax, sizeof(CHRA)                       ;Subtract LF from Length
+            shr eax, 1
           .else
-            mov CHRA ptr [xax], 0                       ;Set ZTC
-            lea xdi, [xax + sizeof(CHRA)]               ;xdi -> next CHRA
+            .if dLineTermination == ELT_CRLF
+              mov DCHRA ptr [xax], 0                    ;Set double ZTC @ CR
+              lea xdi, [xax + 2*sizeof(CHRA)]           ;xdi -> Skip LF
+            .else
+              mov CHRA ptr [xax], 0                     ;Set ZTC
+              lea xdi, [xax + sizeof(CHRA)]             ;xdi -> next CHRA
+            .endif
             sub xax, pFileLineBegin
           .endif
           mov dFileLineLength, eax                      ;Pessimistic value since UTF-8 chars are larger
@@ -613,12 +872,32 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRING
             .break
           .else
             mov xbx, xax
-            inc dFileLineLength                         ;Include ZTC
+            inc dFileLineLength                         ;Include ZTC in the FileBuffer
   if TARGET_STR_TYPE eq STR_TYPE_WIDE
-            invoke MultiByteToWideChar, CP_ACP, 0, pFileLineBegin, dFileLineLength, \
-                                        [xbx].$Obj(EditorTextLine).pBuffer, dFileLineLength
+            .if dFileFormat == EFF_ANSI
+              invoke MultiByteToWideChar, CP_ACP, 0, pFileLineBegin, dFileLineLength, \
+                                          [xbx].$Obj(EditorTextLine).pBuffer, dFileLineLength
+            .elseif dFileFormat == EFF_UTF16BOM
+              mov eax, dFileLineLength
+              add eax, eax
+              invoke MemClone, [xbx].$Obj(EditorTextLine).pBuffer, pFileLineBegin, eax
+              mov eax, dFileLineLength
+            .else                                       ;Default UTF8
+              invoke MultiByteToWideChar, CP_UTF8, 0, pFileLineBegin, dFileLineLength, \
+                                          [xbx].$Obj(EditorTextLine).pBuffer, dFileLineLength
+            .endif
   else
-            invoke MemClone, [xbx].$Obj(EditorTextLine).pBuffer, pFileLineBegin, dFileLineLength
+            .if dFileFormat == EFF_ANSI
+              invoke MemClone, [xbx].$Obj(EditorTextLine).pBuffer, pFileLineBegin, dFileLineLength
+              mov eax, dFileLineLength
+            .elseif dFileFormat == EFF_UTF16BOM
+              invoke WideCharToMultiByte, CP_ACP, 0, pFileLineBegin, dFileLineLength, \
+                                          [xbx].$Obj(EditorTextLine).pBuffer, \
+                                          [xbx].$Obj(EditorTextLine).dCharCapacity, NULL, NULL 
+            .else
+              invoke MemClone, [xbx].$Obj(EditorTextLine).pBuffer, pFileLineBegin, dFileLineLength
+              mov eax, dFileLineLength
+            .endif
   endif
             dec eax                                     ;Discard the ZTC from returned char count
             mov [xbx].$Obj(EditorTextLine).dLength, eax
@@ -628,14 +907,17 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRING
             inc [xsi].dVisTextLineCount
           .endif
         .endw
+        mov dResult, TRUE
 
       .endif
+@@Exit:
       MemFree pFileBuffer
     .else
       DbgText "Failed to allocate memory for file read operation"
     .endif
     invoke CloseHandle, hFile
   .endif
+  mov eax, dResult
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -781,73 +1063,84 @@ Method Editor.Print, uses xbx xdi xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  CBTProc
+; Purpose:    Customization procedure using SetWindowsHookEx.
+; Arguments:  Arg1: Hook code.
+;             Arg2: Depends on hook code. For HCBT_ACTIVATE, wParam = hWnd.
+;             Arg3: Depends on hook code. For HCBT_ACTIVATE, lParam -> CBTACTIVATESTRUCT.
+; Return:     eax = Zero if handled.
+
+CBTProc proc uses xbx dCode:DWORD, wParam:WPARAM, lParam:LPARAM
+  local cText[16]:CHR
+
+  .if dCode == HCBT_ACTIVATE
+    lea xbx, cText
+
+;    mov edx, $ObjTmpl(Application).dLanguage
+;    add edx, 102
+;    invoke LoadString, hInstance, edx, xbx, lengthof cText
+    invoke StrCopy, xbx, $OfsCStr("Yes")
+    invoke GetDlgItem, wParam, IDYES
+    invoke SetWindowText, xax, xbx
+
+;    mov edx, $ObjTmpl(Application).dLanguage
+;    add edx, 103
+;    invoke LoadString, hInstance, edx, xbx, lengthof cText
+    invoke StrCopy, xbx, $OfsCStr("No")
+    invoke GetDlgItem, wParam, IDNO
+    invoke SetWindowText, xax, xbx
+
+;    mov edx, $ObjTmpl(Application).dLanguage
+;    add edx, 104
+;    invoke LoadString, hInstance, edx, xbx, lengthof cText
+    invoke StrCopy, xbx, $OfsCStr("Cancel")
+    invoke GetDlgItem, wParam, IDCANCEL
+    invoke SetWindowText, xax, xbx
+
+    invoke UnhookWindowsHookEx, hCBTProc
+
+    xor eax, eax
+  .else
+    invoke CallNextHookEx, hCBTProc, dCode, wParam, lParam
+  .endif
+  ret
+CBTProc endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Editor.Save
 ; Purpose:    Save the editor content to a file.
 ; Arguments:  None.
-; Return:     eax = TRUE if succeeded, otherwise FALSE.
+; Return:     eax = IDYES, IDNO, IDCANCEL.
 
-Method Editor.Save, uses xbx xsi
-  local hFile:HANDLE, pMemBuffer:POINTER, dMemBufferSize:DWORD, dBytesWritten:DWORD, dResult:DWORD
+Method Editor.Save, uses xdi xsi
+  local cText[1024]:CHR, cEditorCaption[1024]:CHR
 
   SetObject xsi
   .ifBitSet [xsi].dFlags, EIF_DIRTY
-    mov dResult, FALSE
-    .if [xsi].pFullFileName != NULL
-      invoke CreateFile, [xsi].pFullFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, \
-                         CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
-      .if xax != INVALID_HANDLE_VALUE
-        mov hFile, xax
-        mov eax, [xsi].dMaxTextLineChrCount
-        add eax, 2
-        shl eax, 2                                        ;Max UTF-8 expansion (x4)
-        mov dMemBufferSize, eax
-        MemAlloc eax
-        .if xax != NULL
-          mov pMemBuffer, xax
-          mov xbx, [xsi].TextLines.pFirstMember
-      
-          ;Start looping
-          .while xbx != NULL
-            lea xbx, [xbx - offset $Obj(EditorTextLine).Link]
-            .ifBitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_DIRTY_LINE_PREV
-              BitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_SAVED_LINE_PREV
-            .endif
-            .ifBitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_DIRTY_LINE_CURR
-              BitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_SAVED_LINE_CURR
-            .endif
-            .ifBitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_DIRTY_LINE_NEXT
-              BitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_SAVED_LINE_NEXT
-            .endif
-            xor eax, eax
-            .if [xbx].$Obj(EditorTextLine).pBuffer != NULL
-              invoke WideCharToMultiByte, CP_ACP, 0, [xbx].$Obj(EditorTextLine).pBuffer, \
-                                          [xbx].$Obj(EditorTextLine).dLength, \
-                                          pMemBuffer, dMemBufferSize, NULL, NULL
-            .endif
-            mov xcx, pMemBuffer
-            mov DCHRA ptr [xcx + xax], LF*256 + CR      ;Add CRLF to the end   
-            add eax, 2                                  ;Add these 2 characters
-            invoke WriteFile, hFile, pMemBuffer, eax, addr dBytesWritten, NULL
-            mov xbx, [xbx].$Obj(EditorTextLine).Link.pLinkFwrd  ;Move to next EditorTextLine.Link
-          .endw
-          BitClr [xsi].dFlags, EIF_NEW_FILE or EIF_DIRTY
-          mov dResult, TRUE
-          MemFree pMemBuffer
-        .endif
-        invoke CloseHandle, hFile
+    ;MessageBox customization
+    invoke SetWindowsHookEx, WH_CBT, offset CBTProc, hInstance, $32($invoke(GetCurrentThreadId))
+    mov hCBTProc, xax
+    lea xdi, cText
+    .ifBitSet [xsi].dFlags, EIF_NEW_FILE
+      WriteF xdi, "Save \´¦SU\´ changes to a file?", [xsi].pFullFileName
+    .else
+      WriteF xdi, "Save changes to\n\´¦SU\´?", [xsi].pFullFileName
+    .endif 
+  @@:
+    invoke MessageBox, [xsi].hWnd, addr cText, $OfsCStr("Editor"), MB_YESNOCANCEL or MB_ICONQUESTION
+    .if eax == IDYES
+      .ifBitSet [xsi].dFlags, EIF_NEW_FILE
+        OCall xsi.SaveAs
+        cmp eax, FALSE
+        jz @B 
+      .else
+        OCall xsi.SaveTo, [xsi].pFullFileName
       .endif
-    .endif
-  
-    .if dResult != FALSE
-      ;Update all Views of this editor
-      .ColForEach [xsi].EditorDisplays, ebx
-        invoke RedrawWindow, [xax].$Obj(EditorDisplay).hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
-      .ColNext
+      mov eax, IDYES
     .endif
   .else
-    mov dResult, TRUE
+    mov eax, IDYES
   .endif
-  mov eax, dResult
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -856,9 +1149,10 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method Editor.SaveAs, uses xsi
+Method Editor.SaveAs, uses xbx xsi
   local dResult:DWORD, pIFileDialog2:POINTER
   local pIFSDlg:POINTER, pIShellItem:POINTER, pDisplayName:PSTRINGW
+  local cMessage[2048]:CHR
 
   SetObject xsi
   mov dResult, FALSE
@@ -879,21 +1173,177 @@ Method Editor.SaveAs, uses xsi
     .endif
 
     ICall pIFSDlg::IFileSaveDialog.Show, [xsi].hWnd
-    .if SUCCEEDED(eax)
+    .if SUCCEEDED(eax)                                    ;ERROR_CANCELLED (0x800704C7) if cancel button was pressed
       ICall pIFSDlg::IFileSaveDialog.GetResult, addr pIShellItem
       ICall pIShellItem::IShellItem.GetDisplayName, SIGDN_FILESYSPATH, addr pDisplayName
-      invoke StrReplaceW, addr [xsi].pFullFileName, pDisplayName
-      invoke CoTaskMemFree, pDisplayName
-      BitSet [xsi].dFlags, EIF_DIRTY                    ;Force save operation
-      OCall xsi.Save
-      .if eax != FALSE
-        mov dResult, TRUE
-        invoke SetWindowTextW, [xsi].hWnd, [xsi].pFullFileName
+      mov xax, [xsi].pResources
+      int 3
+      OCall [xax].$Obj(EditorResources).FileFormats::FileFormatCollection.GetFormat, pDisplayName
+      .if eax == EFF_UNKNOWN
+        lea xbx, cMessage
+        WriteF xbx, "Unknown format for file\n\´¦SU\´ \:\n\nChoose a known file extension.", pDisplayName 
+        invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
+      .else
+        mov [xsi].dFileFormat, eax
+        BitSet [xsi].dFlags, EIF_DIRTY                    ;Force save operation
+        OCall xsi.SaveTo, pDisplayName
+        .if eax != FALSE
+          mov dResult, TRUE
+          invoke SetWindowTextW, [xsi].hWnd, pDisplayName
+          invoke StrReplaceW, addr [xsi].pFullFileName, pDisplayName
+        .endif
       .endif
+      invoke CoTaskMemFree, pDisplayName
       ICall pIShellItem::IShellItem.Release
     .endif
     ICall pIFSDlg::IFileSaveDialog.Release
   .endif
+  mov eax, dResult
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Editor.SaveTo
+; Purpose:    Save the editor content to a given FileName.
+; Arguments:  Arg1: -> FullFileName.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method Editor.SaveTo, uses xbx xdi xsi, pFullFileName:PSTRING
+  local hFile:HANDLE, pMemBuffer:POINTER, dMemBufferSize:DWORD, dBytesWritten:DWORD, dResult:DWORD
+  local bBOM[4]:BYTE
+
+  SetObject xsi
+  .ifBitSet [xsi].dFlags, EIF_DIRTY
+    mov dResult, FALSE
+    lea xdi, dBytesWritten
+    .if pFullFileName != NULL
+      invoke CreateFileW, pFullFileName, GENERIC_WRITE, FILE_SHARE_READ, NULL, \
+                          CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0
+      .if xax != INVALID_HANDLE_VALUE
+        mov hFile, xax
+        
+        ;Write the BOM if required
+        .if [xsi].dFileFormat == EFF_UTF8BOM
+          mov DWORD ptr bBOM, 0BFBBEFh                    ;EF BB BF ...
+          invoke WriteFile, hFile, addr bBOM, 3, xdi, NULL
+        .elseif [xsi].dFileFormat == EFF_UTF16BOM
+          mov DWORD ptr bBOM, 0FEFFh                      ;FF FE ...
+          invoke WriteFile, hFile, addr bBOM, 2, xdi, NULL
+        .endif
+
+        ;Allocate line conversion buffer        
+        mov eax, [xsi].dMaxTextLineChrCount
+        shl eax, 2                                        ;Max UTF-8 expansion (x4)
+        mov dMemBufferSize, eax
+        MemAlloc eax
+        .if xax != NULL
+          mov pMemBuffer, xax
+          mov xbx, [xsi].TextLines.pFirstMember
+      
+          ;Start looping
+          .while xbx != NULL
+            lea xbx, [xbx - offset $Obj(EditorTextLine).Link]
+            .ifBitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_DIRTY_LINE_PREV
+              BitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_SAVED_LINE_PREV
+            .endif
+            .ifBitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_DIRTY_LINE_CURR
+              BitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_SAVED_LINE_CURR
+            .endif
+            .ifBitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_DIRTY_LINE_NEXT
+              BitSet [xbx].$Obj(EditorTextLine).dFlags, TLF_SAVED_LINE_NEXT
+            .endif
+
+            ;Write the line content
+            xor eax, eax
+            .if [xbx].$Obj(EditorTextLine).pBuffer != NULL
+    if TARGET_STR_TYPE eq STR_TYPE_WIDE
+              .if [xsi].dFileFormat == EFF_ANSI
+                invoke WideCharToMultiByte, CP_ACP, 0, [xbx].$Obj(EditorTextLine).pBuffer, \
+                                            [xbx].$Obj(EditorTextLine).dLength, \
+                                            pMemBuffer, dMemBufferSize, NULL, NULL
+                invoke WriteFile, hFile, pMemBuffer, eax, xdi, NULL
+              .elseif [xsi].dFileFormat == EFF_UTF16BOM
+                mov ecx, [xbx].$Obj(EditorTextLine).dLength
+                lea eax, [ecx * sizeof(CHR)]
+                invoke WriteFile, hFile, [xbx].$Obj(EditorTextLine).pBuffer, eax, xdi, NULL
+              .else
+                invoke WideCharToMultiByte, CP_UTF8, 0, [xbx].$Obj(EditorTextLine).pBuffer, \
+                                            [xbx].$Obj(EditorTextLine).dLength, \
+                                            pMemBuffer, dMemBufferSize, NULL, NULL
+                invoke WriteFile, hFile, pMemBuffer, eax, xdi, NULL
+              .endif
+    else
+              .if [xsi].dFileFormat == EFF_ANSI
+                invoke WriteFile, hFile, [xbx].$Obj(EditorTextLine).pBuffer, [xbx].$Obj(EditorTextLine).dLength, \
+                                  xdi, NULL
+              .elseif [xsi].dFileFormat == EFF_UTF16BOM
+                invoke MultiByteToWideChar, CP_ACP, 0, [xbx].$Obj(EditorTextLine).pBuffer, \
+                                            [xbx].$Obj(EditorTextLine).dLength, \
+                                            pMemBuffer, dMemBufferSize
+                invoke WriteFile, hFile, pMemBuffer, eax, xdi, NULL
+              .else
+                invoke WriteFile, hFile, [xbx].$Obj(EditorTextLine).pBuffer, [xbx].$Obj(EditorTextLine).dLength, \
+                                  xdi, NULL
+              .endif
+    endif
+            .endif
+
+            ;Write the line termination
+            mov xcx, [xsi].pResources
+            mov eax, [xcx].$Obj(EditorResources).dLineTermination
+            mov xcx, pMemBuffer
+            .if eax == ELT_LF
+              .if [xsi].dFileFormat == EFF_UTF16BOM
+                mov xcx, pMemBuffer
+                mov CHRW ptr [xcx], LF                 ;Add LF to the end   
+                invoke WriteFile, hFile, pMemBuffer, 2, xdi, NULL
+              .else
+                mov xcx, pMemBuffer
+                mov CHRA ptr [xcx], LF                 ;Add LF to the end   
+                invoke WriteFile, hFile, pMemBuffer, 1, xdi, NULL
+              .endif
+            .elseif eax == ELT_NULL
+              .if [xsi].dFileFormat == EFF_UTF16BOM
+                mov xcx, pMemBuffer
+                mov DCHRW ptr [xcx], 0                 ;Add NULL to the end   
+                invoke WriteFile, hFile, pMemBuffer, 2, xdi, NULL
+              .else
+                mov xcx, pMemBuffer
+                mov DCHRA ptr [xcx], 0                 ;Add NULL to the end   
+                invoke WriteFile, hFile, pMemBuffer, 1, xdi, NULL
+              .endif
+            .else
+              .if [xsi].dFileFormat == EFF_UTF16BOM
+                mov xcx, pMemBuffer
+                mov DCHRW ptr [xcx], LF*256*256 + CR    ;Add CRLF to the end   
+                invoke WriteFile, hFile, pMemBuffer, 4, xdi, NULL
+              .else
+                mov xcx, pMemBuffer
+                mov DCHRA ptr [xcx], LF*256 + CR        ;Add CRLF to the end   
+                invoke WriteFile, hFile, pMemBuffer, 2, xdi, NULL
+              .endif
+            .endif
+
+            mov xbx, [xbx].$Obj(EditorTextLine).Link.pLinkFwrd  ;Move to next EditorTextLine.Link
+          .endw
+          BitClr [xsi].dFlags, EIF_NEW_FILE or EIF_DIRTY
+          mov dResult, TRUE
+          MemFree pMemBuffer
+        .endif
+        invoke CloseHandle, hFile
+      .endif
+    .endif
+  
+    .if dResult != FALSE
+      ;Update all Views of this editor
+      .ColForEach [xsi].EditorDisplays, ebx
+        invoke RedrawWindow, [xax].$Obj(EditorDisplay).hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
+      .ColNext
+    .endif
+  .else
+    mov dResult, TRUE
+  .endif
+  mov xcx, [xsi].pOwner
+  OCall [xcx].$Obj(ClientWnd).pOwner::Application.ManageGuiCmds, [xsi].hWnd
   mov eax, dResult
 MethodEnd
 
@@ -996,6 +1446,33 @@ Method Editor.SelectionDelete, uses xbx xdi xsi
   .endif
   
   OCall xsi.ClpBrdSetBtns
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Editor.SelectionReplace
+; Purpose:    Replace the selection with a new text.
+; Arguments:  Arg1: -> New text.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method Editor.SelectionReplace, uses xbx xdi xsi, pReplString:PSTRING
+;  DbgText "Editor.SelectionReplace"
+  SetObject xsi
+
+  mov xax, [xsi].SelectionRange.pBegSelInfo
+  .if xax != NULL
+    mov edi, [xax].LOCATION.dCharIndex
+    mov xbx, [xax].LOCATION.pTextLine
+  
+    OCall xsi.SelectionDelete
+  
+    invoke StrLength, pReplString
+    OCall xbx::EditorTextLine.CharInsert, edi, eax, pReplString
+  
+    mov [xsi].pHilitedWord, NULL
+    mov [xsi].dHilitedLen, 0
+    OCall xsi.ClpBrdSetBtns
+    mov eax, TRUE
+  .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1212,13 +1689,15 @@ MethodEnd
 ; Arguments:  Arg1: TRUE to set the flag, otherwise FALSE.
 ; Return:     Nothing.
 
-Method Editor.SetDirty,, dAction:DWORD
-  SetObject xcx
+Method Editor.SetDirty, uses xsi, dAction:DWORD
+  SetObject xsi
   .if dAction == FALSE
-    BitClr [xcx].dFlags, EIF_DIRTY
+    BitClr [xsi].dFlags, EIF_DIRTY
   .else
-    BitSet [xcx].dFlags, EIF_DIRTY
+    BitSet [xsi].dFlags, EIF_DIRTY
   .endif
+  mov xcx, [xsi].pOwner
+  OCall [xcx].$Obj(ClientWnd).pOwner::Application.ManageGuiCmds, [xsi].hWnd
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -1242,7 +1721,7 @@ Method Editor.Startup
   m2z WC.hIconSm
   m2z WC.hCursor
 
-  invoke RegisterClassEx, addr WC
+  invoke RegisterClassExW, addr WC
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

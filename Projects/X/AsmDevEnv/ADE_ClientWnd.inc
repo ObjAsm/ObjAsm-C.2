@@ -94,49 +94,25 @@ MethodEnd
 ; Return:     eax = Zero.
 
 Method ClientWnd.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local pFileName:PSTRING;, cMsg[1024]:CHR
+  local pFileName:PSTRINGW
 
   ANNOTATION use:wParam lParam
 
   SetObject xsi
-  mov xbx, $invoke(DragQueryFile, wParam, -1, NULL, 0)
+  mov xbx, $invoke(DragQueryFileW, wParam, -1, NULL, 0)
   .while xbx > 0
     dec xbx
-    invoke DragQueryFile, wParam, ebx, NULL, 0
+    invoke DragQueryFileW, wParam, ebx, NULL, 0
     inc eax                                             ;Include ZTC
     mov edi, eax
-    mov pFileName, $invoke(StrAlloc, eax)
-    invoke DragQueryFile, wParam, ebx, xax, edi
-    mov xdi, $invoke(StrRScan, pFileName, '.')
-    .if xdi != NULL
-      .if $invoke(StrComp, xdi, offset cAsmExt) != 0
-        .if $invoke(StrComp, xdi, offset cIncExt) != 0
-          .if $invoke(StrComp, xdi, offset cResExt) != 0
-            .if $invoke(StrComp, xdi, offset cTxtExt) != 0
-              .if $invoke(StrComp, xdi, offset cIniExt) != 0
-                jmp @@Error
-              .endif
-            .endif
-          .endif
-        .endif
-      .endif
-      mov xdi, $New(Editor)
-      mov xax, [xsi].pOwner
-      OCall xdi::Editor.Init, xsi, addr [xax].$Obj(Application).CodeEditorResources, pFileName 
-    .else
-      jmp @@Error
+    mov pFileName, $invoke(StrAllocW, eax)
+    invoke DragQueryFileW, wParam, ebx, xax, edi
+    mov xdi, $New(Editor)
+    mov xax, [xsi].pOwner
+    OCall xdi::Editor.Init, xsi, addr [xax].$Obj(Application).CodeEditorResources, pFileName 
+    .if eax == FALSE
+      Kill xdi
     .endif
-    jmp @@OK
-
-  @@Error:
-    invoke MessageBox, [xsi].hWnd, $OfsCStr("Unknown file format"), \
-                       $OfsCStr("ADE"), MB_OK or MB_ICONEXCLAMATION
-;    mov edx, $ObjTmpl(Application).dLanguage
-;    add edx, 123
-;    invoke LoadString, hInstance, edx, addr cMsg, lengthof cMsg - 1
-;    invoke MessageBox, [xsi].hWnd, addr cMsg, \
-;                       offset szDebugCenter, MB_OK or MB_ICONEXCLAMATION
-  @@OK:
     invoke StrDispose, pFileName
   .endw
   invoke DragFinish, wParam

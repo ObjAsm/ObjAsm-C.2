@@ -388,8 +388,6 @@ Method EditorView.ClpBrdCopy, uses xbx xdi xsi
   mov dResult, FALSE
   invoke OpenClipboard, [xsi].hWnd
   .if eax != 0
-;    invoke EmptyClipboard
-
     ;Allocate memory to copy the the content passed to the clipboard
     ;Calc the required size
     mov xcx, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
@@ -479,17 +477,19 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 ; Link:       https://msdn.microsoft.com/en-us/library/windows/desktop/ms649016(v=vs.85).aspx#_win32_Copying_Information_to_the_Clipboard
-; Note:       CF_TEXT = Each line ends with a carriage return/linefeed (CR-LF) combination. 
-;             A null character signals the end of the data. Use this format for ANSI text.
+; Note:       CF_TEXT = Each line ends with a EOL marker.
+;             This marker varies depending on the source of the text. It can be a CR, LF or CRLF. 
+;             A copy operation from a Chrome-Webpase contains e.g. only LF. 
+;             A null character signals the end of the data.
 
 Method EditorView.ClpBrdPaste, uses xbx xdi xsi
-  local pTextLine:$ObjPtr(EditorTextLine), dResult:DWORD, RefLoc:LOCATION
-  local pGlobalMem:POINTER, dCharIndex:DWORD, dLineNumber:DWORD
+  local pTextLine:$ObjPtr(EditorTextLine), dResult:DWORD, RefLoc:LOCATION, dInsLineCount:DWORD
+  local pGlobalMem:POINTER, dCharIndex:DWORD, dLineNumber:DWORD, dBreakChar:DWORD, pLink:POINTER
 
 ;  DbgText "EditorView.ClpBrdPaste"
   SetObject xsi
   mov xcx, [xsi].pOwner
-  mov xbx, [xcx].$Obj(EditorDisplay).pOwner
+  mov xbx, [xcx].$Obj(EditorDisplay).pOwner             ;xbx -> Editor
   mov dResult, FALSE
   OCall xsi.CaretRefLocSave, addr RefLoc                ;Calculate a caret reference position before deletion
   OCall xbx::Editor.SelectionDelete
@@ -510,12 +510,14 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
             mrm dCharIndex, [xsi].CaretLocation.dCharIndex, ecx
             m2m dLineNumber, [xsi].CaretLocation.dLineNumber, edx
             m2m pTextLine, [xsi].CaretLocation.pTextLine, xax
+            mov dInsLineCount, 0
             .repeat
               movzx edx, CHR ptr [xdi + sizeof(CHR)*xbx];Read buffer character
               .break .if edx == 0                       ;ZTC = End of buffer?
-              .if edx != CR                             ;EOL (CRLF) reached? 
-                inc ebx                                 ;Next char
+              .if edx != CR && edx != LF                ;EOL (CR/LF/CRLF) reached?
+                inc ebx                                 ;No
               .else
+                mov dBreakChar, edx
                 OCall pTextLine::EditorTextLine.CharInsert, dCharIndex, ebx, xdi
                 mov edx, dCharIndex
                 add edx, ebx
@@ -523,11 +525,14 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
                 mov pTextLine, xax                      ;xax -> new splitted off line
   
                 ;Move to next line in the clipboard buffer
-                lea xdi, [xdi + sizeof(CHR)*xbx + 2*sizeof(CHR)]
+                lea xdi, [xdi + sizeof(CHR)*xbx + sizeof(CHR)]  ;Next char
+                .if dBreakChar == CR && CHR ptr [xdi] == LF
+                  add xdi, sizeof CHR                   ;CRLF case
+                .endif
                 
                 ;Increment other counters
+                inc dInsLineCount
                 inc dLineNumber
-                inc [xsi].sdCaretVisLineOffset
                 mov dCharIndex, 0
                 xor ebx, ebx
               .endif
@@ -537,14 +542,65 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
             .if ebx != 0
               OCall pTextLine::EditorTextLine.CharInsert, dCharIndex, ebx, xdi
               add dCharIndex, ebx
-              ;Increment other counters
             .endif
+
+            ;Scroll the view to show the last inserted line
+            ;OCall xsi.ScrollVisPageDown, dInsLineCount     ;sdCaretVisLineOffset did not change!
+            
+
           .else
+            ;Block mode insertion
+
+            ;Insert complete lines
+            mov xdi, xax
+            xor ebx, ebx                                ;ebx = char counter
+            mrm dCharIndex, [xsi].CaretLocation.dCharIndex, ecx
+            m2m dLineNumber, [xsi].CaretLocation.dLineNumber, edx
+            mov xax, [xsi].CaretLocation.pTextLine
+            add xax, offset $Obj(EditorTextLine).Link
+            mov pLink, xax
+            mov dInsLineCount, 0
+            .repeat
+              movzx edx, CHR ptr [xdi + sizeof(CHR)*xbx];Read buffer character
+              .break .if edx == 0                       ;ZTC = End of buffer?
+              .if edx != CR && edx != LF                ;EOL (CR/LF/CRLF) reached?
+                inc ebx                                 ;No
+              .else
+                mov dBreakChar, edx
+                .if pLink == NULL
+                  inc dInsLineCount
+                  mov edx, dCharIndex
+                  add edx, ebx
+                  mov xax, [xsi].pOwner
+                  OCall [xax].$Obj(EditorDisplay).pOwner::Editor.LineNew, edx
+                  .if xax == NULL
+                    ret
+                  .endif
+                  mov pTextLine, xax
+                  OCall pTextLine::EditorTextLine.SpaceFill, dCharIndex
+                .else
+                  mov xax, pLink
+                  sub xax, offset $Obj(EditorTextLine).Link
+                  mov pTextLine, xax
+                .endif
+                OCall pTextLine::EditorTextLine.CharInsert, dCharIndex, ebx, xdi
+                
+                ;Move to next line link
+                mov xax, pTextLine
+                mov xcx, [xax].$Obj(EditorTextLine).Link.pLinkFwrd
+                mov pLink, xcx
+  
+                ;Move to next line in the clipboard buffer
+                lea xdi, [xdi + sizeof(CHR)*xbx + sizeof(CHR)]  ;Next char
+                .if dBreakChar == CR && CHR ptr [xdi] == LF
+                  add xdi, sizeof CHR                   ;CRLF case
+                .endif
+                
+                xor ebx, ebx
+              .endif
+            .until FALSE
             
           .endif
-          m2m [xsi].CaretLocation.pTextLine, pTextLine, xax
-          m2m [xsi].CaretLocation.dLineNumber, dLineNumber, eax
-          m2m [xsi].CaretLocation.dCharIndex, dCharIndex, eax
 
           invoke GlobalUnlock, pGlobalMem
           mov dResult, TRUE

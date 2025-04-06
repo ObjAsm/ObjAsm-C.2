@@ -121,7 +121,7 @@ Method DialogModeless.Show, uses xsi
       DbgApiError
     .endif
   endif
-  invoke ShowWindow, xax, SW_SHOW
+;  invoke ShowWindow, xax, SW_SHOW
 MethodEnd
 
 endif

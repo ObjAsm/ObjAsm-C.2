@@ -204,7 +204,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=28
+MilestoneOnDateDate=5
 MilestoneOnDateTimeYear=2003
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=21
@@ -273,7 +273,7 @@ ProductVer4Range=0
 36=
 40=0,0,1167,599,26258
 39=0,0,0,0,2237
-38=0,0,0,0,5986
+38=0,0,0,0,2333
 42=0,0,0,0,1968
 41=0,0,0,0
 43=0,0,0,0,2495
@@ -297,7 +297,7 @@ ProductVer4Range=0
 57=0,0,1850,628,4628
 60=0,0,0,0,3191
 59=
-61=0,0,1910,628,171
+61=0,0,1910,628,21
 62=0,0,0,0,3275
 33=
 63=0,0,0,0,18860
@@ -320,16 +320,16 @@ ProductVer4Range=0
 0=724,30,
 
 [Find]
-1="OAT_App"
-2="szANNOTATION"
-3="CheckRegInSentence"
-4="DetourCreateCounted CoInitialize, 1, CoInitializeCount, <xApiResult == S_OK>, pRTCC_CoInitialization"
-5="pExternalEditor"
-6="ReadStr"
-7="szOAT_App"
-8="OnSetColor"
-9="hLinkPen"
-10="WM_CTLCOLORDLG"
+1="DIALOG_SETUP"
+2="OAT_App"
+3="szANNOTATION"
+4="CheckRegInSentence"
+5="DetourCreateCounted CoInitialize, 1, CoInitializeCount, <xApiResult == S_OK>, pRTCC_CoInitialization"
+6="pExternalEditor"
+7="ReadStr"
+8="szOAT_App"
+9="OnSetColor"
+10="hLinkPen"
 [Collapse]
 4=
 2=2128137,1413558528,2092959915,513
@@ -391,9 +391,9 @@ ProductVer4Range=0
 64=
 51=
 [AutoLoad]
-AutoLoad=1,2,3,56,48,7,41,44,38
+AutoLoad=48,7,13,61,38
 [PTimer]
-PTimer=2063105440
+PTimer=2066536893
 [GroupExpand]
 GroupExpand=1,1,0,1,1,1,1,0
 [RADebugBP]
