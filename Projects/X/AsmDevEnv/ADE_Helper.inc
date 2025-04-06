@@ -19,7 +19,7 @@ GetCharType macro CharReg32:req, TypeReg32:req
     ;Lookup char type
     movzx TypeReg32, BYTE ptr [$SubReg(TypeReg32, sizeof(XWORD)) + $SubReg(CharReg32, sizeof(XWORD))]
   .else
-    mov TypeReg32, CHR_WORD                               ;All other characters are word chars
+    mov TypeReg32, CHR_WORD                             ;All other characters are word chars
   .endif
 endm
 
@@ -32,63 +32,63 @@ endm
 ; Note:       xsi -> EditorView.
 
 LimitHorzIndex macro IndexX:req, IndexY:req
-  OCall xsi.VertIndex2TextLine, IndexY
+  OCall xsi.VertIndex2EditorLine, IndexY
   .if xax != NULL
-    mov edx, [xax].$Obj(EditorTextLine).dLength
+    mov edx, [xax].$Obj(EditorLine).dLength
     mov eax, IndexX
-    sub edx, [xsi].d1stVisCharIndex
+    sub edx, [xsi].FirstVisChar.dCharIndex
     cmp eax, edx
     cmova eax, edx
   .endif
 endm
 
 LimitVertIndex macro IndexY:req
-  ;Limit the y position to the last visible EditorTextLine
-  mov xax, [xsi].p1stVisLine
+  ;Limit the y position to the last visible EditorLine
+  mov xax, [xsi].FirstVisChar.pEditorLine
   xor edx, edx
-  .while xax != NULL                                ;Search the last visible EditorTextLine
+  .while xax != NULL                                    ;Search the last visible EditorLine
     mov xcx, xax
-    GotoNextVisTextLine xax
+    GotoNextVisEditorLine xax
     .break .if xax == NULL
     inc edx
   .endw
   mov eax, IndexY
   cmp eax, edx
-  cmova eax, edx                                    ;On exit xcx -> last visible line
+  cmova eax, edx                                        ;On exit xcx -> last visible line
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      GotoXXXVisLine
-; Purpose:    Return the EditorTextLine pointer of the prev/next visible line.
-; Arguments:  Arg1: -> Current EditorTextLine (Can not be NULL).
+; Purpose:    Return the EditorLine pointer of the prev/next visible line.
+; Arguments:  Arg1: -> Current EditorLine (Can not be NULL).
 ;             Arg2: (optional) Register containing the number of lines to skip. Can't be eax.
 ;             Arg3: (optional) Register returning the number of skipped lines. Can't be eax.
 ;             Arg4: (optional) Register returning the number of skipped visible lines. Can't be eax.
-; Return:     xax -> Prev/Next EditorTextLine or NULL if the count could not be reached.
+; Return:     xax -> Prev/Next EditorLine or NULL if the count could not be reached.
 ;             Arg3 = Number of lines skipped.
 ;             Arg4 = Number of visible lines skipped.
 
-GotoNextVisTextLine macro CurrTextLineReg:req, CounterReg, SkippedLinesReg, SkippedVisLinesReg
+GotoNextVisEditorLine macro CurrEditorLineReg:req, CounterReg, SkippedLinesReg, SkippedVisLinesReg
 ifnb <SkippedLinesReg>
   xor SkippedLinesReg, SkippedLinesReg
 endif
 ifnb <SkippedVisLinesReg>
   xor SkippedVisLinesReg, SkippedVisLinesReg
 endif
-ifdifi <CurrTextLineReg>, <xax>
-  mov xax, CurrTextLineReg
+ifdifi <CurrEditorLineReg>, <xax>
+  mov xax, CurrEditorLineReg
 endif
 ifnb <CounterReg>
   cmp CounterReg, 0
   jz @F
 endif
-  mov xax, [xax].$Obj(EditorTextLine).Link.pLinkFwrd
+  mov xax, [xax].$Obj(EditorLine).Link.pLinkFwrd
   .While xax != NULL
 ifnb <SkippedLinesReg>
     inc SkippedLinesReg
 endif
-    sub xax, offset $Obj(EditorTextLine).Link
-    .ifBitClr [xax].$Obj(EditorTextLine).dFlags, TLF_HIDDEN
+    sub xax, offset $Obj(EditorLine).Link
+    .ifBitClr [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
 ifnb <SkippedVisLinesReg>
       inc SkippedVisLinesReg
 endif
@@ -99,32 +99,32 @@ else
       .break .if ZERO?
 endif
     .endif
-    mov xax, [xax].$Obj(EditorTextLine).Link.pLinkFwrd
+    mov xax, [xax].$Obj(EditorLine).Link.pLinkFwrd
   .endw
 @@:
 endm
 
-GotoPrevVisTextLine macro CurrTextLineReg:req, CounterReg, SkippedLinesReg, SkippedVisLinesReg
+GotoPrevVisEditorLine macro CurrEditorLineReg:req, CounterReg, SkippedLinesReg, SkippedVisLinesReg
 ifnb <SkippedLinesReg>
   xor SkippedLinesReg, SkippedLinesReg
 endif
 ifnb <SkippedVisLinesReg>
   xor SkippedVisLinesReg, SkippedVisLinesReg
 endif
-ifdifi <CurrTextLineReg>, <xax>
-  mov xax, CurrTextLineReg
+ifdifi <CurrEditorLineReg>, <xax>
+  mov xax, CurrEditorLineReg
 endif
 ifnb <CounterReg>
   cmp CounterReg, 0
   jz @F
 endif
-  mov xax, [xax].$Obj(EditorTextLine).Link.pLinkBack
+  mov xax, [xax].$Obj(EditorLine).Link.pLinkBack
   .While xax != NULL
 ifnb <SkippedLinesReg>
     inc SkippedLinesReg
 endif
-    sub xax, offset $Obj(EditorTextLine).Link
-    .ifBitClr [xax].$Obj(EditorTextLine).dFlags, TLF_HIDDEN
+    sub xax, offset $Obj(EditorLine).Link
+    .ifBitClr [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
 ifnb <SkippedVisLinesReg>
       inc SkippedVisLinesReg
 endif
@@ -135,7 +135,7 @@ else
       .break .if ZERO?
 endif
     .endif
-    mov xax, [xax].$Obj(EditorTextLine).Link.pLinkBack
+    mov xax, [xax].$Obj(EditorLine).Link.pLinkBack
   .endw
 @@:
 endm
@@ -731,7 +731,7 @@ StrScanCharA proc uses xdi pStringA:PSTRINGA, dCharCount:DWORD, bChar:CHRA
 StrScanCharA endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  StrScanCharW
+; Procedure:  StrCScanCharW
 ; Purpose:    Scan for a char.
 ; Arguments:  Arg1: -> StringW
 ;             Arg2: Character count.
@@ -739,7 +739,7 @@ StrScanCharA endp
 ; Return:     xax -> CHRW occurence.
 
 align ALIGN_CODE
-StrScanCharW proc uses xdi pStringW:PSTRINGW, dCharCount:DWORD, wChar:CHRW
+StrCScanCharW proc uses xdi pStringW:PSTRINGW, dCharCount:DWORD, wChar:CHRW
   mov xdi, pStringW
   mov ecx, dCharCount                                   ;rcx (counter) = length
   mov ax, wChar                                         ;Search for bCharA
@@ -749,7 +749,7 @@ StrScanCharW proc uses xdi pStringW:PSTRINGW, dCharCount:DWORD, wChar:CHRW
   lea xax, [xdi - sizeof(CHRW)]
 @@:
   ret
-StrScanCharW endp
+StrCScanCharW endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  ShowKeywords
@@ -762,3 +762,202 @@ ShowKeywords proc uses xbx xdi pCKW:$ObjPtr(KeywordCollection)
   .ColNext
   ret
 ShowKeywords endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  StrCCPosW
+; Purpose:    Search for the first occurence of a given string (case sensitive).
+; Arguments:  Arg1: -> Search into string (Haystack).
+;             Arg2: Search into string length.
+;             Arg3: -> String to search for (Needle).
+;             Arg4: String to search for length.
+; Return:     xax -> Occurence or NULL if not found.
+
+align ALIGN_CODE
+StrCCPos proc uses xdi xsi pHaystackStr:PSTRINGW, dHaystackLen:DWORD, \
+                           pNeedleStr:PSTRINGW, dNeedleLen:DWORD
+  mov ecx, dHaystackLen
+  sub ecx, dNeedleLen
+  js @@2
+  mov xdi, pHaystackStr
+  inc ecx                                               ;If strings are = long, test at least 1 char
+
+@@1:
+  mov xsi, pNeedleStr
+  lodsc
+  repne scasc                                           ;Search for first character
+  jne @@2                                               ;Not found => Exit
+
+  mov pHaystackStr, xdi
+  mov dHaystackLen, ecx                                 ;Temp storage
+  mov ecx, dNeedleLen
+  dec ecx
+  repe cmpsc                                            ;Check for the rest of the string
+  mov ecx, dHaystackLen                                 ;Restore ecx
+  jne @@1                                               ;Not equal => try next character
+  mov ecx, dNeedleLen
+  neg xcx
+  lea xax, [xdi + xcx*sizeof(CHR)]                      ;Found, return position
+  jmp @@Exit
+
+@@2:
+  xor eax, eax
+@@Exit:
+  ret
+StrCCPos endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  StrCCIPosW
+; Purpose:    Search for the first occurence of a given string (case insensitive).
+; Arguments:  Arg1: -> Search into string (Haystack).
+;             Arg2: Search into string length.
+;             Arg3: -> String to search for (Needle).
+;             Arg4: String to search for length.
+; Return:     xax -> Occurence or NULL if not found.
+
+align ALIGN_CODE
+StrCCIPos proc uses xbx xdi xsi pHaystackStr:PSTRING, dHaystackLen:DWORD, \
+                                pNeedleStr:PSTRING, dNeedleLen:DWORD
+  mov ecx, dHaystackLen
+  sub ecx, dNeedleLen
+  js @@3
+  mov xdi, pHaystackStr
+  inc ecx                                               ;If strings are = long, test at least 1 char
+  dec dNeedleLen
+  mov dHaystackLen, ecx
+
+@@1:
+  mov xsi, pNeedleStr
+  mov xbx, xdi
+  lodsc
+  .if $SubReg(eax, sizeof(CHR)) >= 'a' && $SubReg(eax, sizeof(CHR)) <= 'z'
+    sub $SubReg(eax, sizeof(CHR)), 20h                  ;Convert to uppercase
+  .endif
+  repne scasc                                           ;Search for first character
+  je @@2                                                ;Found => Check the rest
+  .if $SubReg(eax, sizeof(CHR)) >= 'A' && $SubReg(eax, sizeof(CHR)) <= 'Z'
+    add $SubReg(eax, sizeof(CHR)), 20h                  ;Convert to lowercase
+    mov xdi, xbx
+    mov ecx, dHaystackLen
+    repne scasw                                         ;Search for first character
+    jne @@3
+  .endif
+
+@@2:
+  mov dHaystackLen, ecx 
+  invoke StrCIComp, xdi, xsi, dNeedleLen
+  .if eax == 0
+    lea xax, [xdi - sizeof(CHR)]                        ;Found, return position
+    jmp @@Exit
+  .endif
+  mov ecx, dHaystackLen
+  jmp @@1
+
+@@3:
+  xor eax, eax
+@@Exit:
+  ret
+StrCCIPos endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  StrRCCPosW
+; Purpose:    Reverse search for the first occurence of a given string (case sensitive).
+; Arguments:  Arg1: -> Search into string (Haystack).
+;             Arg2: Search into string length.
+;             Arg3: -> String to search for (Needle).
+;             Arg4: String to search for length.
+; Return:     xax -> Occurence or NULL if not found.
+
+align ALIGN_CODE
+StrRCCPos proc uses xdi xsi pHaystackStr:PSTRINGW, dHaystackLen:DWORD, \
+                            pNeedleStr:PSTRINGW, dNeedleLen:DWORD
+  mov ecx, dHaystackLen
+  sub ecx, dNeedleLen
+  js @@2
+  mov xax, pHaystackStr
+  lea xdi, [xax + xcx*sizeof(CHR)] 
+  inc ecx                                               ;If strings are = long, test at least 1 char
+
+@@1:
+  mov xsi, pNeedleStr
+  lodsc
+  std
+  repne scasc                                           ;Search for first character
+  cld
+  jne @@2                                               ;Not found => Exit
+
+  mov pHaystackStr, xdi
+  mov dHaystackLen, ecx                                 ;Temp storage
+  mov ecx, dNeedleLen
+  dec ecx
+  add xdi, 2*sizeof(CHR)
+  repe cmpsc                                            ;Check for the rest of the string
+  mov ecx, dHaystackLen                                 ;Restore ecx
+  jne @@1                                               ;Not equal => try next character
+  mov ecx, dNeedleLen
+  neg xcx
+  lea xax, [xdi + xcx*sizeof(CHR)]                      ;Found, return position
+  jmp @@Exit
+
+@@2:
+  xor eax, eax
+@@Exit:
+  ret
+StrRCCPos endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  StrCCIPosW
+; Purpose:    Reverse search for the first occurence of a given string (case insensitive).
+; Arguments:  Arg1: -> Search into string (Haystack).
+;             Arg2: Search into string length.
+;             Arg3: -> String to search for (Needle).
+;             Arg4: String to search for length.
+; Return:     xax -> Occurence or NULL if not found.
+
+align ALIGN_CODE
+StrRCCIPos proc uses xbx xdi xsi pHaystackStr:PSTRING, dHaystackLen:DWORD, \
+                                 pNeedleStr:PSTRING, dNeedleLen:DWORD
+  mov ecx, dHaystackLen
+  sub ecx, dNeedleLen
+  js @@3
+  mov xax, pHaystackStr
+  lea xdi, [xax + xcx*sizeof(CHR)] 
+  inc ecx                                               ;If strings are = long, test at least 1 char
+  dec dNeedleLen
+  mov dHaystackLen, ecx
+
+@@1:
+  mov xsi, pNeedleStr
+  mov xbx, xdi
+  lodsc
+  .if $SubReg(eax, sizeof(CHR)) >= 'a' && $SubReg(eax, sizeof(CHR)) <= 'z'
+    sub $SubReg(eax, sizeof(CHR)), 20h                  ;Convert to uppercase
+  .endif
+  std
+  repne scasc                                           ;Search for first character
+  cld
+  je @@2                                                ;Found => Check the rest
+  .if $SubReg(eax, sizeof(CHR)) >= 'A' && $SubReg(eax, sizeof(CHR)) <= 'Z'
+    add $SubReg(eax, sizeof(CHR)), 20h                  ;Convert to lowercase
+    mov xdi, xbx
+    mov ecx, dHaystackLen
+    repne scasw                                         ;Search for first character
+    jne @@3
+  .endif
+
+@@2:
+  mov dHaystackLen, ecx
+  lea xcx, [xdi + 2*sizeof(CHR)] 
+  invoke StrCIComp, xcx, xsi, dNeedleLen
+  .if eax == 0
+    lea xax, [xdi + sizeof(CHR)]                        ;Found, return position
+    jmp @@Exit
+  .endif
+  mov ecx, dHaystackLen
+  jmp @@1
+
+@@3:
+  xor eax, eax
+@@Exit:
+  ret
+StrRCCIPos endp
+

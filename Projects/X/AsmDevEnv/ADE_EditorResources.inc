@@ -409,7 +409,7 @@ Method EditorResources.Zoom, uses xbx xdi xsi, dZoomFactor:DWORD
     ;Compute the new line height
     mov eax, [xsi].dCodeLineSpace
     add eax, [xsi].EditorTextRegular.FontMetric.y
-    mov [xsi].dTextLineHeight, eax
+    mov [xsi].dLineHeight, eax
     mov eax, TRUE
   .endif
 MethodEnd

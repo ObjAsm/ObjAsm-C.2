@@ -4574,6 +4574,17 @@ else
 endif
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Macro:      cmpsc
+; Purpose:    Compile cmpsb or cmpsw according to TARGET_STR_TYPE.
+; Arguments:  None.
+
+if TARGET_STR_TYPE eq STR_TYPE_ANSI
+  cmpsc equ <cmpsb>
+else
+  cmpsc equ <cmpsw>
+endif
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      @Random
 ; Purpose:    Compile-time random number generator.
 ; Arguments:  Arg1: Range.

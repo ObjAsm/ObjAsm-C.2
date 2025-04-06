@@ -59,7 +59,7 @@ AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SBSTYLE, 0, 4}
 SetupTabCtrl DEF_TABCONTROL {100, STSTYLE, 0, NULL, {<2,2,295,180>}}
 
 CStr szApplicationClassName,    "OAC_Application"
-CStrW szEditorClassName,         "OAC_Editor"
+CStrW szEditorClassName,        "OAC_Editor"
 CStr szEditorDisplayClassName,  "OAC_EditorDisplay"
 CStr szEditorViewClassName,     "OAC_EditorView"
 
@@ -97,6 +97,13 @@ RANGE struct
   dEndIndex         DWORD     ?
 RANGE ends
 PRANGE typedef ptr RANGE
+
+CHOICES struct
+  dScope       DWORD  ?
+  dOptions     DWORD  ?
+  dDirection   DWORD  ?
+CHOICES ends
+PCHOICES typedef ptr CHOICES
 
 ;; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ;; Object:    ScrollBarV
@@ -146,15 +153,15 @@ ObjectEnd
 ;               ~  Word must be converted to the keyword case.
 
 Object KeywordCollection, ADE_KeywordListID, SortedDataCollection
-  RedefineMethod    Compare,            PKEYWORD, PKEYWORD
-  RedefineMethod    Insert,             PKEYWORDGROUP, DWORD, DWORD, PSTRING
+  RedefineMethod    Compare,              PKEYWORD, PKEYWORD
+  RedefineMethod    Insert,               PKEYWORDGROUP, DWORD, DWORD, PSTRING
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
 FILEFORMAT struc
   pExtension        PSTRINGW  ?
-  dFileFormat       DWORD     ?             ;EFF_XXX
+  dFileFormat       DWORD     ?           ;EFF_XXX
 FILEFORMAT ends
 PFILEFORMAT typedef ptr FILEFORMAT
 
@@ -163,11 +170,11 @@ PFILEFORMAT typedef ptr FILEFORMAT
 ; Purpose:    Implement a collection of FILEFORMAT entries.
 
 Object FileFormatCollection, ADE_FileFormatCollectionID, SortedDataCollection
-  RedefineMethod    Compare,            PSTRINGW, PSTRINGW
-  RedefineMethod    DestroyItem,        PFILEFORMAT
-  StaticMethod      GetFormat,          PSTRINGW
-  RedefineMethod    Insert,             PSTRING, DWORD
-  RedefineMethod    KeyOf,              PFILEFORMAT
+  RedefineMethod    Compare,              PSTRINGW, PSTRINGW
+  RedefineMethod    DestroyItem,          PFILEFORMAT
+  StaticMethod      GetFormat,            PSTRINGW
+  RedefineMethod    Insert,               PSTRING, DWORD
+  RedefineMethod    KeyOf,                PFILEFORMAT
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -193,7 +200,7 @@ Object EditorSharedResources, ADE_EditorSharedResourcesID, Primer
   DefineVariable    hBrushLineIndRed,     HBRUSH,     0
   DefineVariable    hBrushLineIndYellow,  HBRUSH,     0
   DefineVariable    hBrushLineIndGreen,   HBRUSH,     0
-  
+
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -228,7 +235,7 @@ Object EditorResources, ADE_EditorResourcesID, Primer
 
   ;Metrics:
   DefineVariable    dCodeLineSpace,       DWORD,      DefaultLineSpace  ;Vertical separation between lines
-  DefineVariable    dTextLineHeight,      DWORD,      12                 ;CodeFontMetric.Y + Linespacing
+  DefineVariable    dLineHeight,          DWORD,      12                ;CodeFontMetric.Y + Linespacing
   DefineVariable    dTabWidth,            DWORD,      DefaultTabWidth   ;TAB in spaces
   DefineVariable    dLineFoldingWidth,    DWORD,      35                ;Width reserved for line folding management
   DefineVariable    dLineIndicatorWidth,  DWORD,      3                 ;Width reserved for line indication
@@ -266,10 +273,10 @@ Object EditorResources, ADE_EditorResourcesID, Primer
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Object:     EditorTextLine
+; Object:     EditorLine
 ; Purpose:    Implement a text line for the Editor.
 
-Object EditorTextLine, ADE_EditorTextLineID, Primer
+Object EditorLine, ADE_EditorLineID, Primer
   StaticMethod      CharDelete,           DWORD, DWORD
   StaticMethod      CharInsert,           DWORD, DWORD, POINTER
   StaticMethod      CharReplace,          DWORD, DWORD, POINTER
@@ -298,7 +305,7 @@ ObjectEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
 LOCATION struct
-  pTextLine         $ObjPtr(EditorTextLine)   ?
+  pEditorLine       $ObjPtr(EditorLine)   ?
   dLineNumber       DWORD     ?
   dCharIndex        DWORD     ?
 LOCATION ends
@@ -321,13 +328,13 @@ PSELRANGE typedef ptr SELRANGE
 ;      |       |<> | dLineFoldingWidth
 ;      |       | <>| dLineIndicatorWidth
 ;       ———————————————————————————————————————————
-;      | 1)xxx | ¦ | EditorTextLine N |            |
+;      | 1)xxx | ¦ | Line N |                |
 ;      | xxxxx | ¦ |————————————————————————       |
-;      | xxxxx |[-]| EditorTextLine N+1     |      |
+;      | xxxxx |[-]| Line N+1         |      |
 ;      | xxxxx | ¦ |———————————————————————————    |  xxxxxxx = line numbers
-;      | xxxxx | ¦ | EditorTextLine N+2        |   |  1) Selection bar
+;      | xxxxx | ¦ | Line N+2            |   |  1) Selection bar
 ;      | xxxxx | ¦ |———————————————————————————    |
-;      | xxxxx | ¦-| EditorTextLine N+3    |       |
+;      | xxxxx | ¦-| Line N+3        |       |
 ;      | xxxxx | ¦ |———————————————————————        |
 ;      | xxxxx | ¦ |        ...                    |
 ;       ———————————————————————————————————————————
@@ -356,7 +363,7 @@ Object EditorView, ADE_EditorViewID, Window
   StaticMethod      DrawSelectionBar
   RedefineMethod    Done
   StaticMethod      GetCodeData,          DWORD
-  StaticMethod      GetLineNumber,        $ObjPtr(EditorTextLine)
+  StaticMethod      GetLineNumber,        $ObjPtr(EditorLine)
   RedefineMethod    Init,                 POINTER, PRECT, $ObjPtr(EditorResources)
   StaticMethod      MoveCaretDown,        DWORD
   StaticMethod      MoveCaretUp,          DWORD
@@ -376,7 +383,7 @@ Object EditorView, ADE_EditorViewID, Window
   StaticMethod      SetGuiLayout
   StaticMethod      Startup
   StaticMethod      UpdateStatusPanel
-  StaticMethod      VertIndex2TextLine,   DWORD
+  StaticMethod      VertIndex2EditorLine, DWORD
   StaticMethod      VertIndex2LineNumber, DWORD
   RedefineMethod    WndProc,              DWORD, WPARAM, LPARAM
 
@@ -386,7 +393,7 @@ Object EditorView, ADE_EditorViewID, Window
   StaticEvent       OnGesture,            WM_GESTURE
   StaticEvent       OnKeyDown,            WM_KEYDOWN
   StaticEvent       OnKillFocus,          WM_KILLFOCUS
-  StaticEvent       OnLButtonDblClk,      WM_LBUTTONDBLCLK 
+  StaticEvent       OnLButtonDblClk,      WM_LBUTTONDBLCLK
   StaticEvent       OnLButtonDown,        WM_LBUTTONDOWN
   StaticEvent       OnLButtonUp,          WM_LBUTTONUP
   StaticEvent       OnMouseMove,          WM_MOUSEMOVE
@@ -399,12 +406,10 @@ Object EditorView, ADE_EditorViewID, Window
 
   ;Management
   DefineVariable    dFlags,               DWORD,      0
-  DefineVariable    p1stVisLine,          $ObjPtr(EditorTextLine),  NULL  ;-> 1st visible EditorTextLine
-  DefineVariable    d1StVisLineCount,     DWORD,      0       ;Count of visible lines up to p1stVisLine
-  DefineVariable    d1stVisLineNum,       DWORD,      0       ;Line number of the first visible line
-  DefineVariable    d1stVisCharIndex,     DWORD,      0       ;Index into a EditorTextLine chr buffer
-  DefineVariable    CaretLocation,        LOCATION,   {NULL, 0, 0}  ;-> TextLine, Char Index
-  DefineVariable    sdCaretVisLineOffset, SDWORD,     0       ;Line Count Offset from p1stVisLine; (-) = before
+  DefineVariable    FirstVisChar,         LOCATION,   {NULL, 0, 0}  ;First visisble char in View
+  DefineVariable    dFirstVisLineCount,   DWORD,      0       ;Count of visible lines up to FirstVisChar.pEditorLine
+  DefineVariable    CaretLocation,        LOCATION,   {NULL, 0, 0}  ;-> EditorLine, LineNumber, CharIndex
+  DefineVariable    sdCaretVisLineOffset, SDWORD,     0       ;Line Count Offset from FirstVisChar.pEditorLine; (-) = before
   DefineVariable    sdLineNumberOffset,   SDWORD,     0
   DefineVariable    dLockedVertIndex,     DWORD,      -1      ;Persistant char index when moving the Caret vertically
   DefineVariable    pResources,           $ObjPtr(EditorResources), NULL
@@ -419,8 +424,8 @@ Object EditorView, ADE_EditorViewID, Window
 
   ;UI elements
   DefineVariable    SelBarRect,           RECT,       {0,0,0,0} ;Selectionbar
-  DefineVariable    TextRect,             RECT,       {0,0,0,0} ;RECT containing all visible TextLines
-  DefineVariable    dCharMaxFullVis,      DWORD,      0       ;Number of horiz. fully shown characters 
+  DefineVariable    TextRect,             RECT,       {0,0,0,0} ;RECT containing all visible Lines
+  DefineVariable    dCharMaxFullVis,      DWORD,      0       ;Number of horiz. fully shown characters
   DefineVariable    dCharMaxPartVis,      DWORD,      0       ;Number of horiz. partially shown characters
   DefineVariable    dLineMaxFullVis,      DWORD,      0       ;Number of vert. fully shown lines
   DefineVariable    dLineMaxPartVis,      DWORD,      0       ;Number of vert. partially shown lines
@@ -521,29 +526,29 @@ ObjectEnd
 
 ; Editor Layout:
 ; —————————————
-;                                             (NULL)
-;                                               ^
-;                                               |
-;                            EditorTextLine(0).Link <----
-;                                               ^|       |
-;                                               |V       |
+;                                                      (NULL)
+;                                                        ^
 ;                                                        |
-;                                               ...      |
-;                                                        |
-;                                               ^|       |
-;                                               |V       |   Editor.TextLines
-;  Editor.p1stVisLine ---->  EditorTextLine(M).Link       ---- FirstMember
-;                                               ^|        ---- LastMember
-;                                               |V       |
-;                                                        |
-;                                               ...      |
-;                                                        |
-;                                               ^|       |
-;                                               |V       |
-;                            EditorTextLine(N).Link <----
-;                                                |
-;                                                V
-;                                              (NULL)
+;                                         EditorLine(0).Link <----
+;                                                        ^|       |
+;                                                        |V       |
+;                                                                 |
+;                                                        ...      |
+;                                                                 |
+;                                                        ^|       |
+;                                                        |V       |    Editor.LinkedListHead
+;  Editor.FirstVisChar.pEditorLine ---->  EditorLine(M).Link       ---- FirstMember
+;                                                        ^|        ---- LastMember
+;                                                        |V       |
+;                                                                 |
+;                                                        ...      |
+;                                                                 |
+;                                                        ^|       |
+;                                                        |V       |
+;                                         EditorLine(N).Link <----
+;                                                         |
+;                                                         V
+;                                                       (NULL)
 
 
 ;Caret Blink timeout: SPI_SETCARETTIMEOUT
@@ -555,7 +560,7 @@ Object Editor, ADE_EditorID, ChildWnd
   RedefineMethod    ClpBrdPaste
   RedefineMethod    ClpBrdSetBtns
   RedefineMethod    Done
-  VirtualMethod     FindFrom,             PSTRING, POINTER, POINTER
+  VirtualMethod     FindStr,              PSTRING, PLOCATION, PLOCATION, PCHOICES
   VirtualMethod     InformDeletionOf,     DWORD
   VirtualMethod     InformInsertionOf,    DWORD
   RedefineMethod    Init,                 POINTER, $ObjPtr(EditorResources), PSTRINGW
@@ -570,7 +575,7 @@ Object Editor, ADE_EditorID, ChildWnd
   VirtualMethod     SelectAll
   VirtualMethod     SelectionDelete
   VirtualMethod     SelectionReplace,     PSTRING
-  VirtualMethod     SelectionResetAll                                  
+  VirtualMethod     SelectionResetAll
   VirtualMethod     SelectionResetLines                             ;Reset selection on lines only
   VirtualMethod     SelectionSet
   VirtualMethod     SetDirty,             DWORD
@@ -581,25 +586,27 @@ Object Editor, ADE_EditorID, ChildWnd
 
   DefineVariable    dFlags,               DWORD,      0
   DefineVariable    pResources,           $ObjPtr(EditorResources), NULL
-  DefineVariable    TextLines,            LDLL_CONTROL, {NULL, NULL}
-  DefineVariable    dTotalLineCount,      DWORD,      0             ;Total count of TextLines
-  DefineVariable    dVisTextLineCount,    DWORD,      0
-  DefineVariable    dMaxTextLineChrCount, DWORD,      0
+  DefineVariable    LinkedListHead,       LDLL_CONTROL, {NULL, NULL}
+  DefineVariable    dTotalLineCount,      DWORD,      0             ;Total count of Lines
+  DefineVariable    dVisLineCount,        DWORD,      0
+  DefineVariable    dMaxLineCharCount,    DWORD,      0
   DefineVariable    pHilitedWord,         PSTRING,    NULL
   DefineVariable    dHilitedLen,          DWORD,      0
 
+  ;Selection variables
   DefineVariable    SelectionFst,         LOCATION,   {NULL, 0, 0}  ;First selected location
   DefineVariable    SelectionLst,         LOCATION,   {NULL, 0, 0}  ;Last selected location
   DefineVariable    SelectionRange,       SELRANGE,   {NULL, NULL}  ;-> LOCATION; Set by SelectionSet
   DefineVariable    dSelectionVisLineCnt, DWORD,      0             ;Set by SelectionSet
-  DefineVariable    pFocusedView,         $ObjPtr(EditorView),  NULL
+
+  DefineVariable    pFocusedView,         $ObjPtr(EditorView), NULL
 
   StaticEvent       OnClose,              WM_CLOSE
   StaticEvent       OnEnterSizeMove,      WM_ENTERSIZEMOVE
   StaticEvent       OnExitSizeMove,       WM_EXITSIZEMOVE
   StaticEvent       OnSetFocus,           WM_SETFOCUS
 
-  Embed     EditorDisplays,       Collection
+  Embed     EditorDisplays,     Collection
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -624,7 +631,7 @@ Object ClientWnd, ADE_ClientWndID, MdiClientWnd                 ;MDI client wind
   ;Management
   DefineVariable    hLastFocusedWnd,      HANDLE,     0
   DefineVariable    dFlags,               DWORD,      0
-  
+
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -634,40 +641,39 @@ FDS_OPEN_FILES      equ   1
 FDS_PROJECT_FILES   equ   2
 FDS_ALL_FILES       equ   3
 
-FDO_MATCH_CASE      equ   BIT00 
+FDO_MATCH_CASE      equ   BIT00
 FDO_WHOLE_WORD      equ   BIT01
 FDO_IGNORE_SPACE    equ   BIT02
-FDO_USE_REGEX       equ   BIT04
-FDO_WRAP_AROUND     equ   BIT05 
+FDO_USE_REGEX       equ   BIT03
+FDO_WRAP_AROUND     equ   BIT04
 
-FDD_DOWN            equ   0 
+FDD_DOWN            equ   0
 FDD_UP              equ   1
 FDD_ALL             equ   2
 
 Object FindDialog, , DialogModeless
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
-  StaticMethod      Find,               POINTER
-  StaticMethod      Replace,            POINTER
-  StaticMethod      ReplaceAll,         POINTER
-  StaticMethod      Help
-  RedefineMethod    Done
-  RedefineMethod    Init,               POINTER
-  RedefineMethod    OnActivate,         WPARAM, LPARAM
-  RedefineMethod    OnCommand,          WPARAM, LPARAM
-  RedefineMethod    OnDestroy,          WPARAM, LPARAM
-  
-  Embed   FindStrings,      %StrCollection
-  Embed   ReplaceStrings,   %StrCollection
-  
-  DefineVariable  dScope,       DWORD,    FDS_CURRENT_FILE
-  DefineVariable  dOptions,     DWORD,    0
-  DefineVariable  dDirection,   DWORD,    FDD_DOWN
-  
-  DefineVariable  pFindString,  PSTRING,  NULL 
-  DefineVariable  pReplString,  PSTRING,  NULL 
-  DefineVariable  dLineNumber,  DWORD,    1           ;Search Start
-  DefineVariable  dCharIndex,   DWORD,    0
+  StaticMethod      Find,                 POINTER
+  StaticMethod      Replace,              POINTER
+  StaticMethod      ReplaceAll,           POINTER
+  StaticMethod      Help                  
+  RedefineMethod    Done                  
+  RedefineMethod    Init,                 POINTER
+  RedefineMethod    OnActivate,           WPARAM, LPARAM
+  RedefineMethod    OnCommand,            WPARAM, LPARAM
+  RedefineMethod    OnDestroy,            WPARAM, LPARAM
+
+  Embed     FindStrings,        %StrCollection
+  Embed     ReplaceStrings,     %StrCollection
+
+  DefineVariable    Choices,              CHOICES,  {FDS_CURRENT_FILE, 0, FDD_DOWN}
+                                          
+  DefineVariable    pFindStr,             PSTRING,  NULL
+  DefineVariable    pReplStr,             PSTRING,  NULL
+  DefineVariable    SrchBeg,              LOCATION, {}
+  DefineVariable    SrchEnd,              LOCATION, {}
+  DefineVariable    dSrchContinue,        DWORD,    FALSE
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -699,28 +705,28 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   DefineVariable    hMenuContextEditor,   HMENU,      0
   DefineVariable    dFlags,               DWORD,      0
   DefineVariable    pDirectory,           PSTRING,    NULL
-  
+
   DefineVariable    PrintMargin,          RECT,       {}
   DefineVariable    hDevMode,             HGLOBAL,    0
   DefineVariable    hDevNames,            HGLOBAL,    0
 
   ;UI elements
-  Embed     IconImageList,          MaskedImageList
-  Embed     RBar,                   Rebar
-  Embed     SBar,                   Statusbar
-  Embed     TbFile,                 Toolbar
-  Embed     TbEdit,                 Toolbar
-  Embed     TbWindow,               Toolbar
-  Embed     Menu,                   XMenu
-  Embed     ProjWnd,                ProjectWnd
-  Embed     PropWnd,                PropertiesWnd
-  Embed     SplitterVert,           Splitter
-  Embed     SplitterHorz,           Splitter
-  Embed     EditorSharedResources,  EditorSharedResources
-  Embed     CodeEditorResources,    EditorResources
-  Embed     FindDlg,                FindDialog
-  
-  Embed     ProjFiles,              %StrCollection
+  Embed     IconImageList,      MaskedImageList
+  Embed     RBar,               Rebar
+  Embed     SBar,               Statusbar
+  Embed     TbFile,             Toolbar
+  Embed     TbEdit,             Toolbar
+  Embed     TbWindow,           Toolbar
+  Embed     Menu,               XMenu
+  Embed     ProjWnd,            ProjectWnd
+  Embed     PropWnd,            PropertiesWnd
+  Embed     SplitterVert,       Splitter
+  Embed     SplitterHorz,       Splitter
+  Embed     SharedResources,    EditorSharedResources
+  Embed     CodeEditorResources,EditorResources
+  Embed     FindDlg,            FindDialog
+
+  Embed     ProjFiles,          %StrCollection
 
 ObjectEnd
 
@@ -748,10 +754,10 @@ Object SetupDialog,, DialogModal
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
   RedefineMethod    Done
-  RedefineMethod    Init,               POINTER, HWND
-  RedefineMethod    OnCommand,          WPARAM, LPARAM
-  RedefineMethod    OnDestroy,          WPARAM, LPARAM
-  RedefineMethod    OnInitDialog,       WPARAM, LPARAM
+  RedefineMethod    Init,                 POINTER, HWND
+  RedefineMethod    OnCommand,            WPARAM, LPARAM
+  RedefineMethod    OnDestroy,            WPARAM, LPARAM
+  RedefineMethod    OnInitDialog,         WPARAM, LPARAM
 
   Embed     TabControl,       TabCtrl
   Embed     TabDialog1,       Tab1
@@ -766,26 +772,26 @@ DbgEditorMembers macro InstanceReg, Dest
   DbgBin [InstanceReg].$Obj(Editor).dFlags,, Dest
   DbgHex [InstanceReg].$Obj(Editor).pResources,, Dest
   DbgDec [InstanceReg].$Obj(Editor).dTotalLineCount,, Dest
-  DbgDec [InstanceReg].$Obj(Editor).dVisTextLineCount,, Dest
-  DbgDec [InstanceReg].$Obj(Editor).dMaxTextLineChrCount,, Dest
+  DbgDec [InstanceReg].$Obj(Editor).dVisLineCount,, Dest
+  DbgDec [InstanceReg].$Obj(Editor).dMaxLineCharCount,, Dest
   DbgLine Dest
   DbgHex [InstanceReg].$Obj(Editor).SelectionRange.pBegSelInfo,, Dest
   DbgHex [InstanceReg].$Obj(Editor).SelectionRange.pEndSelInfo,, Dest
   lea xdi, [InstanceReg].$Obj(Editor).SelectionFst
   DbgHex xdi, "SelectionFst", Dest
-  DbgHex [InstanceReg].$Obj(Editor).SelectionFst.pTextLine,, Dest
-  mov xdi, [InstanceReg].$Obj(Editor).SelectionFst.pTextLine
+  DbgHex [InstanceReg].$Obj(Editor).SelectionFst.pEditorLine,, Dest
+  mov xdi, [InstanceReg].$Obj(Editor).SelectionFst.pEditorLine
   .if xdi != NULL
-    DbgStrW [xdi].$Obj(EditorTextLine).pBuffer,, Dest
+    DbgStrW [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
   DbgDec [InstanceReg].$Obj(Editor).SelectionFst.dCharIndex,, Dest
   DbgDec [InstanceReg].$Obj(Editor).SelectionFst.dLineNumber,, Dest
   lea xdi, [InstanceReg].$Obj(Editor).SelectionLst
   DbgHex xdi, "SelectionLst", Dest
-  DbgHex [InstanceReg].$Obj(Editor).SelectionLst.pTextLine,, Dest
-  mov xdi, [InstanceReg].$Obj(Editor).SelectionLst.pTextLine
+  DbgHex [InstanceReg].$Obj(Editor).SelectionLst.pEditorLine,, Dest
+  mov xdi, [InstanceReg].$Obj(Editor).SelectionLst.pEditorLine
   .if xdi != NULL
-    DbgStrW [xdi].$Obj(EditorTextLine).pBuffer,, Dest
+    DbgStrW [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
   DbgDec [InstanceReg].$Obj(Editor).SelectionLst.dCharIndex,, Dest
   DbgDec [InstanceReg].$Obj(Editor).SelectionLst.dLineNumber,, Dest
@@ -799,23 +805,23 @@ endm
 
 DbgEditorViewMembers macro InstanceReg, Dest
     DbgHex InstanceReg, "View Instance", Dest
-  DbgHex [InstanceReg].$Obj(EditorView).CaretLocation.pTextLine,, Dest
-  mov xdi, [InstanceReg].$Obj(EditorView).CaretLocation.pTextLine
+  DbgHex [InstanceReg].$Obj(EditorView).CaretLocation.pEditorLine,, Dest
+  mov xdi, [InstanceReg].$Obj(EditorView).CaretLocation.pEditorLine
   .if xdi != NULL
-    DbgStr [xdi].$Obj(EditorTextLine).pBuffer,, Dest
+    DbgStr [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
   DbgDec [InstanceReg].$Obj(EditorView).CaretLocation.dLineNumber,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).CaretLocation.dCharIndex,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).sdCaretVisLineOffset,, Dest
   DbgLine Dest
-  DbgHex [InstanceReg].$Obj(EditorView).p1stVisLine,, Dest
-  mov xdi, [InstanceReg].$Obj(EditorView).p1stVisLine
+  DbgHex [InstanceReg].$Obj(EditorView).FirstVisChar.pEditorLine,, Dest
+  mov xdi, [InstanceReg].$Obj(EditorView).FirstVisChar.pEditorLine
   .if xdi != NULL
-    DbgStr [xdi].$Obj(EditorTextLine).pBuffer,, Dest
+    DbgStr [xdi].$Obj(EditorLine).pBuffer,, Dest
   .endif
-  DbgDec [InstanceReg].$Obj(EditorView).d1StVisLineCount,, Dest
-  DbgDec [InstanceReg].$Obj(EditorView).d1stVisLineNum,, Dest
-  DbgDec [InstanceReg].$Obj(EditorView).d1stVisCharIndex,, Dest
+  DbgDec [InstanceReg].$Obj(EditorView).dFirstVisLineCount,, Dest
+  DbgDec [InstanceReg].$Obj(EditorView).FirstVisChar.dLineNumber,, Dest
+  DbgDec [InstanceReg].$Obj(EditorView).FirstVisChar.dCharIndex,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).dLockedVertIndex,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).dCharMaxFullVis,, Dest
   DbgDec [InstanceReg].$Obj(EditorView).dLineMaxFullVis,, Dest
@@ -862,23 +868,23 @@ DbgEditorView macro InstanceReg, InfoText, Dest
   endif
 endm
 
-DbgTextLine macro InstanceReg, InfoText, Dest
+DbgEditorLine macro InstanceReg, InfoText, Dest
   if DEBUGGING
     DbgSaveContext
     DbgClearTxt Dest
     DbgHex InstanceReg, "Instance", Dest
-    DbgHex [InstanceReg].$Obj(EditorTextLine).Link.pLinkFwrd,, Dest
-    DbgHex [InstanceReg].$Obj(EditorTextLine).Link.pLinkBack,, Dest
-    DbgHex [InstanceReg].$Obj(EditorTextLine).pBuffer,, Dest
-    DbgStrW [InstanceReg].$Obj(EditorTextLine).pBuffer,, Dest
-    DbgDec [InstanceReg].$Obj(EditorTextLine).dCharCapacity,, Dest
-    DbgDec [InstanceReg].$Obj(EditorTextLine).dLength,, Dest
-    DbgDec [InstanceReg].$Obj(EditorTextLine).Selection.dBegIndex,, Dest
-    DbgDec [InstanceReg].$Obj(EditorTextLine).Selection.dEndIndex,, Dest
-    DbgDec [InstanceReg].$Obj(EditorTextLine).dBookmark,, Dest
-    DbgBin [InstanceReg].$Obj(EditorTextLine).dFlags,, Dest
+    DbgHex [InstanceReg].$Obj(EditorLine).Link.pLinkFwrd,, Dest
+    DbgHex [InstanceReg].$Obj(EditorLine).Link.pLinkBack,, Dest
+    DbgHex [InstanceReg].$Obj(EditorLine).pBuffer,, Dest
+    DbgStrW [InstanceReg].$Obj(EditorLine).pBuffer,, Dest
+    DbgDec [InstanceReg].$Obj(EditorLine).dCharCapacity,, Dest
+    DbgDec [InstanceReg].$Obj(EditorLine).dLength,, Dest
+    DbgDec [InstanceReg].$Obj(EditorLine).Selection.dBegIndex,, Dest
+    DbgDec [InstanceReg].$Obj(EditorLine).Selection.dEndIndex,, Dest
+    DbgDec [InstanceReg].$Obj(EditorLine).dBookmark,, Dest
+    DbgBin [InstanceReg].$Obj(EditorLine).dFlags,, Dest
     DbgLine Dest
-    mov xbx, [InstanceReg].$Obj(EditorTextLine).pOwner
+    mov xbx, [InstanceReg].$Obj(EditorLine).pOwner
     DbgEditorMembers xbx, Dest
     DbgLoadContext
   endif
@@ -901,6 +907,6 @@ include ADE_FileFormatCollection.inc
 include ADE_EditorDisplay.inc
 include ADE_EditorView_1.inc
 include ADE_EditorView_2.inc
-include ADE_EditorTextLine.inc
+include ADE_EditorLine.inc
 include ADE_FindDialog.inc
 

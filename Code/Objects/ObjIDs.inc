@@ -433,7 +433,7 @@ ADE_ChildWndID                    equ     0000012202
 ADE_EditorID                      equ     0000012203
 ADE_EditorDisplayID               equ     0000012204
 ADE_EditorViewID                  equ     0000012205
-ADE_EditorTextLineID              equ     0000012206
+ADE_EditorLineID                  equ     0000012206
 ADE_KeywordGroupListID            equ     0000012207
 ADE_KeywordListID                 equ     0000012208
 ADE_FileFormatCollectionID        equ     0000012209

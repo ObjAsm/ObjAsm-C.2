@@ -125,7 +125,7 @@ Method Application.Done, uses xsi
   .endif
 
   ;Destroy resources
-  OCall [xsi].EditorSharedResources::EditorSharedResources.Done
+  OCall [xsi].SharedResources::EditorSharedResources.Done
   OCall [xsi].CodeEditorResources::EditorResources.Done
   
   OCall [xsi].IconImageList::MaskedImageList.Done
@@ -309,11 +309,11 @@ Method Application.Init, uses xbx xdi xsi
   mov xdi, [xax].$Obj(ClientWnd).hWnd
 
   ;Create Editor (shared)Resources
-  OCall [xsi].EditorSharedResources::EditorSharedResources.Init, xsi
+  OCall [xsi].SharedResources::EditorSharedResources.Init, xsi
   mov hDC, $invoke(GetWindowDC, [xsi].hWnd)
   OCall [xsi].CodeEditorResources::EditorResources.Init, xsi, \
                                       $OfsCStr("ADE_MASM.ini"), addr cEditorCodePrefix, \
-                                      hDC, addr [xsi].EditorSharedResources
+                                      hDC, addr [xsi].SharedResources
   invoke ReleaseDC, [xsi].hWnd, hDC
 
   ;Create and initialize XMenu
@@ -1175,4 +1175,3 @@ Method Application.Store, uses xsi, pStream:$ObjPtr(Stream)
   ;Store MDI client window object & MDI child window objects
   OCall pStream::Stream.Put, [xsi].pClientWnd
 MethodEnd
-

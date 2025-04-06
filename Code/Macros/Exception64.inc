@@ -79,7 +79,7 @@ SEG_EXCEP_DATA ends
 ; Arguments:  None.
 ; Return:     Nothing.
 
-.try macro
+.try macro HandlerName
   .code                                                 ;;Required to generate correct addresses
   @CatStr(<??TryBeg_>, %??ExceptNesting) = $
 endm
@@ -91,7 +91,7 @@ endm
 ; Return:     Nothing.
 ; Note:       This macro can be ommited.
 
-.catch macro
+.catch macro HandlerName
   .code                                                 ;;Required to generate correct addresses
   ??ExceptDecl = TRUE                                   ;;.catch was not omitted
   ??ExceptCounter = ??ExceptCounter + 1                 ;;Incremental number for unique labeling
@@ -106,7 +106,7 @@ endm
 ; Return:     Nothing.
 ; Note:       This macro can be ommited.
 
-.endcatch macro
+.endcatch macro HandlerName
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -116,7 +116,7 @@ endm
 ; Return:     Nothing.
 ; Note:       This macro must always be present!
 
-.finally macro
+.finally macro HandlerName
   .code                                                 ;;Required to generate correct addresses
   if ??ExceptDecl eq TRUE
     @CatStr(<??Finally_>, %??ExceptCounter):            ;;Define jump label
@@ -135,13 +135,13 @@ endm
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Macro:      .finally
+; Macro:      .endfinally
 ; Purpose:    32 bit compatibility macro.
 ; Arguments:  None.
 ; Return:     Nothing.
 ; Note:       This macro can be ommited.
 
-.endfinally macro
+.endfinally macro HandlerName
 endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
