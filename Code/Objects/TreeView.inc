@@ -86,7 +86,7 @@ MethodEnd
 ; Purpose:    Delete a node from the TreeView object.
 ; Arguments:  Arg1: Parent node handle.
 ;             Arg2: Handle of the node to delete.
-; Return:     eax = Node handle.
+; Return:     xax = Node handle.
 
 Method TreeView.NodeDelete,, hNode:HANDLE
     SetObject xcx
@@ -101,11 +101,11 @@ MethodEnd
 ;             Arg3: Node text pointer.
 ;             Arg4: Normal icon index.
 ;             Arg5: Selected icon index.
-; Return:     eax = Node handle.
+; Return:     xax = Node handle.
 
 Method TreeView.NodeInsert,, hNodeParent:HANDLE, hNodeAfter:HANDLE, pText:PSTRING, \
                              dImgNorIndex:DWORD, dImgSelIndex:DWORD
-    local TVI:TV_INSERTSTRUCT
+  local TVI:TV_INSERTSTRUCT
 
   SetObject xcx
   m2m TVI.hParent, hNodeParent, xax

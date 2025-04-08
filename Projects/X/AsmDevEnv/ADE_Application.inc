@@ -134,6 +134,7 @@ Method Application.Done, uses xsi
   OCall [xsi].TbFile::Toolbar.Done
   OCall [xsi].TbWindow::Toolbar.Done
   OCall [xsi].PropWnd::PropertiesWnd.Done
+  OCall [xsi].ProjWnd::ProjectWnd.Save
   OCall [xsi].ProjWnd::ProjectWnd.Done
   OCall [xsi].SplitterVert::Splitter.Done
   OCall [xsi].SplitterHorz::Splitter.Done
@@ -141,78 +142,11 @@ Method Application.Done, uses xsi
   
   OCall [xsi].FindDlg::DialogModeless.Done
 
+  invoke StrDispose, [xsi].pProjFileName
+  
   Destroy [xsi].pClientWnd
   ACall xsi.Done
 MethodEnd
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Procedure:  CenterWindowOnPrimaryDisplay
-; Purpose:    Calculate the coordinates of a window, based on its size, to center it on the 
-;             primary monitor.
-; Arguments:  Arg1: -> POINT containing on exit the position coordiantes of the window.
-;             Arg2: -> POINT containing on entry the size of the window and on exit the updated size.
-; Return:     Nothing.
-
-.data
-align ALIGN_DATA
-DlgChildrenInfo label DL_HEADER
-DL_HEADER     {DLF_LOAD_MINMAX or DLF_LIMIT_MIN or DLF_LIMIT_MAX_Y or DLF_ADD_GRIPPER}
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;Search Label
-DL_CHILD_INFO {{000, 000, 100, 000}}      ;Search Combo
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;Replace Label
-DL_CHILD_INFO {{000, 000, 100, 000}}      ;Replace Combo
-DL_CHILD_INFO {{000, 000, 000, 100}}      ;Group Scope
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button Curr File
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button Open Files
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button Proj Files
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button All Files
-DL_CHILD_INFO {{000, 000, 000, 100}}      ;Group Options
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Match Case
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Whole Word
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Ignore Space
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Use RegEx
-DL_CHILD_INFO {{000, 000, 000, 100}}      ;Group Direction
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button Down
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button Up
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;Radio button All
-DL_CHILD_INFO {{000, 000, 000, 000}}      ;Checkbox Wrap around
-DL_CHILD_INFO {{100, 000, 000, 000}}      ;Search button
-DL_CHILD_INFO {{100, 000, 000, 000}}      ;Replace button
-DL_CHILD_INFO {{100, 000, 000, 000}}      ;Replace All button
-DL_CHILD_INFO {{100, 100, 000, 000}}      ;Help button
-DL_CHILD_INFO {{100, 100, 000, 000}}      ;Cancel button
-
-.code
-align ALIGN_CODE
-CenterWindowOnPrimaryDisplay proc pWndPos:PPOINT, pWndSize:PPOINT
-  invoke GetSystemMetrics, SM_CXSCREEN
-  mov ecx, eax
-  mov xdx, pWndSize
-  sub eax, [xdx].POINT.x
-  .if SIGN?
-    mov [xdx].POINT.x, ecx
-    xor eax, eax
-  .else
-    shr eax, 1
-  .endif
-  mov xcx, pWndPos
-  mov [xcx].POINT.x, eax
-
-  invoke GetSystemMetrics, SM_CYSCREEN
-  mov ecx, eax
-  mov xdx, pWndSize
-  sub eax, [xdx].POINT.y
-  .if SIGN?
-    mov [xdx].POINT.y, ecx
-    xor eax, eax
-  .else
-    shr eax, 1
-  .endif
-  mov xcx, pWndPos
-  mov [xcx].POINT.y, eax
-
-  ret
-CenterWindowOnPrimaryDisplay endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Application.Init
@@ -284,7 +218,6 @@ Method Application.Init, uses xbx xdi xsi
   mov [xsi].hMenuChildWnd, $invoke(GetSubMenu, [xsi].hMenuChild, 3)
   mov [xsi].hMenuContextEditor, $invoke(LoadMenu, hInstance, $OfsCStr("CONTEXTMENU_EDITOR"))
 
-
 ;  ;Create the MDI Frame window in the center of the monitor
 ;  mov WndSize.x, 1600
 ;  mov WndSize.y, 800
@@ -311,9 +244,8 @@ Method Application.Init, uses xbx xdi xsi
   ;Create Editor (shared)Resources
   OCall [xsi].SharedResources::EditorSharedResources.Init, xsi
   mov hDC, $invoke(GetWindowDC, [xsi].hWnd)
-  OCall [xsi].CodeEditorResources::EditorResources.Init, xsi, \
-                                      $OfsCStr("ADE_MASM.ini"), addr cEditorCodePrefix, \
-                                      hDC, addr [xsi].SharedResources
+  OCall [xsi].CodeEditorResources::EditorResources.Init, xsi, $OfsCStr("ADE.ini"), \
+                       addr cEditorCodePrefix, hDC, addr [xsi].SharedResources
   invoke ReleaseDC, [xsi].hWnd, hDC
 
   ;Create and initialize XMenu
@@ -322,7 +254,6 @@ Method Application.Init, uses xbx xdi xsi
                                 addr [xsi].IconImageList, xbx, IDLANG_ENGLISH
 
   OCall [xsi].FindDlg::FindDialog.Init, xsi
-  c2m [xsi].FindDlg.pDynamicLayout, offset DlgChildrenInfo, xcx
   OCall [xsi].FindDlg::FindDialog.Show
   invoke ShowWindow, [xsi].FindDlg.hWnd, SW_HIDE 
   
@@ -922,13 +853,14 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
   ;Initialize project window
   OCall [xsi].ProjWnd::ProjectWnd.Init, xsi, [xsi].hWnd
+  OCall [xsi].ProjWnd::ProjectWnd.Open, $OfsCStr("MyProject.ini")
 
   ;Initialize properties window
   OCall [xsi].PropWnd::PropertiesWnd.Init, xsi, [xsi].hWnd
 
   ;Initialize splitters
   OCall [xsi].SplitterVert::Splitter.Init, xsi, [xsi].hWnd, SPT_FLAG_VERTICAL, 200, 30, 50
-  OCall [xsi].SplitterHorz::Splitter.Init, xsi, [xsi].hWnd, SPT_FLAG_HORIZONTAL, 200, 55, 75
+  OCall [xsi].SplitterHorz::Splitter.Init, xsi, [xsi].hWnd, SPT_FLAG_HORIZONTAL, 450, 55, 75
 
   ;Initialize statusbar
   OCall [xsi].SBar::Statusbar.Init, xsi, [xsi].hWnd, offset AppStatusbar

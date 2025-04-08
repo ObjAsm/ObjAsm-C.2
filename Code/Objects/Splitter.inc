@@ -712,11 +712,11 @@ Method Splitter.Startup
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:   	Splitter.Store
-; Purpose:  	Store the streamable instance in a stream object. Descendant objects should redefine
-;           	this method and store new members.
-; Arguments:	Arg1: -> Stream object.
-; Return:   	Nothing.
+; Method:     Splitter.Store
+; Purpose:    Store the streamable instance in a stream object. Descendant objects should redefine
+;             this method and store new members.
+; Arguments:  Arg1: -> Stream object.
+; Return:     Nothing.
 
 Method Splitter.Store, uses xsi, pStream:$ObjPtr(Stream)
   local WP:WINDOWPLACEMENT

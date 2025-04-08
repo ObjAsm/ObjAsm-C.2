@@ -88,7 +88,7 @@ Method EditorResources.Init, uses xbx xdi xsi, pOwner:POINTER, pIniFileName:PSTR
   invoke FileExist, addr cFileName
   mov dIniFilePresent, eax
   .if eax == FALSE
-    invoke MsgBox, 0, addr cWarnNoIni, addr cWarning, MB_OK or MB_ICONWARNING
+    invoke MsgBox, 0, addr cWarnNoConf, addr cWarning, MB_OK or MB_ICONWARNING
   .endif
 
   OCall [xsi].KeywordGroups::KeywordGroupCollection.Init, xsi, 20, 10, COL_MAX_CAPACITY
@@ -104,7 +104,7 @@ Method EditorResources.Init, uses xbx xdi xsi, pOwner:POINTER, pIniFileName:PSTR
     ;Check Version
     invoke GetVersionFromString, addr cItemBuffer
     .if eax != [xsi].dReqMainVersion || ecx < [xsi].dMinSubVersion
-      invoke MsgBox, 0, addr cWarnOldIni, addr cWarning, MB_OK or MB_ICONWARNING
+      invoke MsgBox, 0, addr cWarnOldConf, addr cWarning, MB_OK or MB_ICONWARNING
     .endif
   .endif
 

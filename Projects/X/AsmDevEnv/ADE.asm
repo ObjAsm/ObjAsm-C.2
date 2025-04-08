@@ -25,6 +25,7 @@
 ;   - Statusbar Information
 ;   - Ini-file configuration
 ;   - SEH protection
+;   - Find and Replace functionality
 ;   - 32 and 64 bit release versions
 ;   - Fast loading (~100MB/s) and rendering
 ;
@@ -90,6 +91,7 @@ DefGUID IID_IFileDialog2, %sIID_IFileDialog2
 ;Load or build the following objects
 MakeObjects Primer, Stream, DiskStream
 MakeObjects Collection, SortedCollection, DataCollection, SortedDataCollection, StrCollection
+MakeObjects Vector, XWordVector
 MakeObjects WinPrimer, Window, Dialog, DialogModal, DialogModeless
 MakeObjects SimpleImageList, MaskedImageList
 MakeObjects Button, IconButton, Hyperlink
@@ -101,7 +103,6 @@ MakeObjects WinApp, MdiApp
 ;MakeObjects COM_Primers
 
 include ADE_Globals.inc                                 ;Application globals
-include ADE_ProjectWnd.inc
 include ADE_PropertiesWnd.inc
 include ADE_Main.inc                                    ;Application object
 

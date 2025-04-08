@@ -525,6 +525,35 @@ GetFontDefFromString proc uses xbx xdi xsi pFontDef:PFONT_DEF, pString:PSTRING, 
 GetFontDefFromString endp
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  GetFileFromString
+; Purpose:    Allocate an load a FILE structure from a string.
+; Arguments:  Arg1: -> String.
+; Return:     xax -> FILE structure.
+;             edx: TV HANDLE index.
+
+align ALIGN_CODE
+GetFileFromString proc uses xbx xdi xsi pString:PSTRING
+  local dHandleIndex:DWORD
+
+  mov xbx, $MemAlloc(sizeof(FILE))
+  invoke GetIntegerFromString, pString, 0
+  mov dHandleIndex, eax
+  invoke GetIntegerFromString, addr [xcx + sizeof(CHR)], 0
+  mov [xbx].FILE.dFlags, eax
+  invoke GetStringFromString, addr [xcx + sizeof(CHR)]
+  mov xdi, xcx
+  invoke StrCNew, xax, edx
+  mov [xbx].FILE.pDisplayName, xax
+  invoke GetStringFromString, addr [xdi + sizeof CHR]
+  mov xdi, xcx
+  invoke StrCNew, xax, edx
+  mov [xbx].FILE.pFullFileName, xax
+  mov xax, xbx
+  mov edx, dHandleIndex
+  ret
+GetFileFromString endp
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Procedure:  GetVersionFromString
 ; Purpose:    Return the main and subversion numbers.
 ; Arguments:  Arg1: -> String, e.g. "1.0"
@@ -773,33 +802,32 @@ ShowKeywords endp
 ; Return:     xax -> Occurence or NULL if not found.
 
 align ALIGN_CODE
-StrCCPos proc uses xdi xsi pHaystackStr:PSTRINGW, dHaystackLen:DWORD, \
-                           pNeedleStr:PSTRINGW, dNeedleLen:DWORD
+StrCCPos proc uses xbx xdi xsi pHaystackStr:PSTRINGW, dHaystackLen:DWORD, \
+                               pNeedleStr:PSTRINGW, dNeedleLen:DWORD
   mov ecx, dHaystackLen
   sub ecx, dNeedleLen
-  js @@2
+  js @@NotFound
   mov xdi, pHaystackStr
   inc ecx                                               ;If strings are = long, test at least 1 char
 
-@@1:
-  mov xsi, pNeedleStr
-  lodsc
-  repne scasc                                           ;Search for first character
-  jne @@2                                               ;Not found => Exit
-
-  mov pHaystackStr, xdi
-  mov dHaystackLen, ecx                                 ;Temp storage
-  mov ecx, dNeedleLen
-  dec ecx
-  repe cmpsc                                            ;Check for the rest of the string
-  mov ecx, dHaystackLen                                 ;Restore ecx
-  jne @@1                                               ;Not equal => try next character
-  mov ecx, dNeedleLen
-  neg xcx
-  lea xax, [xdi + xcx*sizeof(CHR)]                      ;Found, return position
+  .repeat
+    mov xsi, pNeedleStr
+    lodsc
+    repne scasc                                         ;Search for first character
+    jne @@NotFound                                      ;Not found => Exit
+  
+    mov pHaystackStr, xdi                               ;Temp storage
+    mov ebx, ecx                                        ;Temp storage
+    mov ecx, dNeedleLen
+    dec ecx
+    repe cmpsc                                          ;Check for the rest of the string
+    mov ecx, ebx                                        ;Restore ecx
+    mov xdi, pHaystackStr                               ;Restore xdi
+  .until ZERO?                                          ;Not equal => try next character
+  lea xax, [xdi - sizeof(CHR)]                          ;Found, return position
   jmp @@Exit
 
-@@2:
+@@NotFound:
   xor eax, eax
 @@Exit:
   ret
@@ -819,40 +847,52 @@ StrCCIPos proc uses xbx xdi xsi pHaystackStr:PSTRING, dHaystackLen:DWORD, \
                                 pNeedleStr:PSTRING, dNeedleLen:DWORD
   mov ecx, dHaystackLen
   sub ecx, dNeedleLen
-  js @@3
+  js @@NotFound
   mov xdi, pHaystackStr
   inc ecx                                               ;If strings are = long, test at least 1 char
   dec dNeedleLen
-  mov dHaystackLen, ecx
+  mov dHaystackLen, ecx                                 ;Max length on the haystack we may test
+  mov xdx, pNeedleStr
+  mov $SubReg(eax, sizeof(CHR)), CHR ptr [xdx]
+  add pNeedleStr, sizeof(CHR)
 
-@@1:
-  mov xsi, pNeedleStr
-  mov xbx, xdi
-  lodsc
   .if $SubReg(eax, sizeof(CHR)) >= 'a' && $SubReg(eax, sizeof(CHR)) <= 'z'
     sub $SubReg(eax, sizeof(CHR)), 20h                  ;Convert to uppercase
   .endif
-  repne scasc                                           ;Search for first character
-  je @@2                                                ;Found => Check the rest
+  mov esi, eax
+  .while TRUE
+    repne scasc                                         ;Search for first character
+    .break .if !ZERO?                                   ;ZERO if the char was found
+    mov ebx, ecx
+    invoke StrCIComp, xdi, pNeedleStr, dNeedleLen       ;Compare the rest of the needle
+    .if eax == 0
+      lea xax, [xdi - sizeof(CHR)]                      ;Found, return position
+      jmp @@Exit
+    .endif
+    mov eax, esi
+    mov ecx, ebx
+  .endw
+  
   .if $SubReg(eax, sizeof(CHR)) >= 'A' && $SubReg(eax, sizeof(CHR)) <= 'Z'
     add $SubReg(eax, sizeof(CHR)), 20h                  ;Convert to lowercase
-    mov xdi, xbx
+    mov esi, eax
     mov ecx, dHaystackLen
-    repne scasw                                         ;Search for first character
-    jne @@3
+    mov xdi, pHaystackStr
+    .while TRUE
+      repne scasc                                       ;Search for first character
+      .break .if !ZERO?                                 ;ZERO if the char was found
+      mov ebx, ecx
+      invoke StrCIComp, xdi, pNeedleStr, dNeedleLen     ;Compare the rest of the needle
+      .if eax == 0
+        lea xax, [xdi - sizeof(CHR)]                    ;Found, return position
+        jmp @@Exit
+      .endif
+      mov eax, esi
+      mov ecx, ebx
+    .endw
   .endif
 
-@@2:
-  mov dHaystackLen, ecx 
-  invoke StrCIComp, xdi, xsi, dNeedleLen
-  .if eax == 0
-    lea xax, [xdi - sizeof(CHR)]                        ;Found, return position
-    jmp @@Exit
-  .endif
-  mov ecx, dHaystackLen
-  jmp @@1
-
-@@3:
+@@NotFound:
   xor eax, eax
 @@Exit:
   ret
@@ -868,37 +908,36 @@ StrCCIPos endp
 ; Return:     xax -> Occurence or NULL if not found.
 
 align ALIGN_CODE
-StrRCCPos proc uses xdi xsi pHaystackStr:PSTRINGW, dHaystackLen:DWORD, \
-                            pNeedleStr:PSTRINGW, dNeedleLen:DWORD
+StrRCCPos proc uses xbx xdi xsi pHaystackStr:PSTRINGW, dHaystackLen:DWORD, \
+                                pNeedleStr:PSTRINGW, dNeedleLen:DWORD
   mov ecx, dHaystackLen
   sub ecx, dNeedleLen
-  js @@2
+  js @@NotFound
   mov xax, pHaystackStr
   lea xdi, [xax + xcx*sizeof(CHR)] 
   inc ecx                                               ;If strings are = long, test at least 1 char
 
-@@1:
-  mov xsi, pNeedleStr
-  lodsc
-  std
-  repne scasc                                           ;Search for first character
-  cld
-  jne @@2                                               ;Not found => Exit
-
-  mov pHaystackStr, xdi
-  mov dHaystackLen, ecx                                 ;Temp storage
-  mov ecx, dNeedleLen
-  dec ecx
-  add xdi, 2*sizeof(CHR)
-  repe cmpsc                                            ;Check for the rest of the string
-  mov ecx, dHaystackLen                                 ;Restore ecx
-  jne @@1                                               ;Not equal => try next character
-  mov ecx, dNeedleLen
-  neg xcx
-  lea xax, [xdi + xcx*sizeof(CHR)]                      ;Found, return position
+  .repeat
+    mov xsi, pNeedleStr
+    lodsc
+    std
+    repne scasc                                         ;Search for first character
+    cld
+    jne @@NotFound                                      ;Not found => Exit
+  
+    mov pHaystackStr, xdi                               ;Temp storage
+    mov ebx, ecx                                        ;Temp storage
+    mov ecx, dNeedleLen
+    dec ecx
+    add xdi, 2*sizeof(CHR)
+    repe cmpsc                                          ;Check for the rest of the string
+    mov xdi, pHaystackStr                               ;Restore xdi
+    mov ecx, ebx                                        ;Restore ecx
+  .until ZERO?                                          ;Not equal => try next character
+  lea xax, [xdi + sizeof(CHR)]                          ;Found, return position
   jmp @@Exit
 
-@@2:
+@@NotFound:
   xor eax, eax
 @@Exit:
   ret
@@ -918,46 +957,98 @@ StrRCCIPos proc uses xbx xdi xsi pHaystackStr:PSTRING, dHaystackLen:DWORD, \
                                  pNeedleStr:PSTRING, dNeedleLen:DWORD
   mov ecx, dHaystackLen
   sub ecx, dNeedleLen
-  js @@3
+  js @@NotFound
   mov xax, pHaystackStr
-  lea xdi, [xax + xcx*sizeof(CHR)] 
+  lea xdi, [xax + xcx*sizeof(CHR)]
+  mov pHaystackStr, xdi
   inc ecx                                               ;If strings are = long, test at least 1 char
   dec dNeedleLen
   mov dHaystackLen, ecx
+  mov xdx, pNeedleStr
+  mov $SubReg(eax, sizeof(CHR)), CHR ptr [xdx]
+  add pNeedleStr, sizeof(CHR)
 
-@@1:
-  mov xsi, pNeedleStr
-  mov xbx, xdi
-  lodsc
   .if $SubReg(eax, sizeof(CHR)) >= 'a' && $SubReg(eax, sizeof(CHR)) <= 'z'
     sub $SubReg(eax, sizeof(CHR)), 20h                  ;Convert to uppercase
   .endif
-  std
-  repne scasc                                           ;Search for first character
-  cld
-  je @@2                                                ;Found => Check the rest
+  mov esi, eax
+  .while TRUE
+    std
+    repne scasc                                         ;Reverse search for first character|cmp & dec
+    cld
+    .break .if !ZERO?
+    mov ebx, ecx
+    invoke StrCIComp, addr [xdi + 2*sizeof(CHR)], pNeedleStr, dNeedleLen
+    .if eax == 0
+      lea xax, [xdi + sizeof(CHR)]                      ;Found, return position
+      jmp @@Exit
+    .endif
+    mov eax, esi
+    mov ecx, ebx
+  .endw
+
   .if $SubReg(eax, sizeof(CHR)) >= 'A' && $SubReg(eax, sizeof(CHR)) <= 'Z'
     add $SubReg(eax, sizeof(CHR)), 20h                  ;Convert to lowercase
-    mov xdi, xbx
+    mov esi, eax
     mov ecx, dHaystackLen
-    repne scasw                                         ;Search for first character
-    jne @@3
+    mov xdi, pHaystackStr
+    .while TRUE
+      std
+      repne scasc                                       ;Reverse search for first character|cmp & dec
+      cld
+      .break .if !ZERO?
+      mov ebx, ecx
+      invoke StrCIComp, addr [xdi + 2*sizeof(CHR)], pNeedleStr, dNeedleLen
+      .if eax == 0
+        lea xax, [xdi + sizeof(CHR)]                    ;Found, return position
+        jmp @@Exit
+      .endif
+      mov eax, esi
+      mov ecx, ebx
+    .endw
   .endif
 
-@@2:
-  mov dHaystackLen, ecx
-  lea xcx, [xdi + 2*sizeof(CHR)] 
-  invoke StrCIComp, xcx, xsi, dNeedleLen
-  .if eax == 0
-    lea xax, [xdi + sizeof(CHR)]                        ;Found, return position
-    jmp @@Exit
-  .endif
-  mov ecx, dHaystackLen
-  jmp @@1
-
-@@3:
+@@NotFound:
   xor eax, eax
 @@Exit:
   ret
 StrRCCIPos endp
 
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Procedure:  CenterWindowOnPrimaryDisplay
+; Purpose:    Calculate the coordinates of a window, based on its size, to center it on the 
+;             primary monitor.
+; Arguments:  Arg1: -> POINT containing on exit the position coordiantes of the window.
+;             Arg2: -> POINT containing on entry the size of the window and on exit the updated size.
+; Return:     Nothing.
+
+align ALIGN_CODE
+CenterWindowOnPrimaryDisplay proc pWndPos:PPOINT, pWndSize:PPOINT
+  invoke GetSystemMetrics, SM_CXSCREEN
+  mov ecx, eax
+  mov xdx, pWndSize
+  sub eax, [xdx].POINT.x
+  .if SIGN?
+    mov [xdx].POINT.x, ecx
+    xor eax, eax
+  .else
+    shr eax, 1
+  .endif
+  mov xcx, pWndPos
+  mov [xcx].POINT.x, eax
+
+  invoke GetSystemMetrics, SM_CYSCREEN
+  mov ecx, eax
+  mov xdx, pWndSize
+  sub eax, [xdx].POINT.y
+  .if SIGN?
+    mov [xdx].POINT.y, ecx
+    xor eax, eax
+  .else
+    shr eax, 1
+  .endif
+  mov xcx, pWndPos
+  mov [xcx].POINT.y, eax
+
+  ret
+CenterWindowOnPrimaryDisplay endp

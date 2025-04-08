@@ -174,11 +174,11 @@ Method FlipBox.Load, uses xbx xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_IN
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:   	FlipBox.Store
-; Purpose:  	Store the streamable instance in a stream object. Descendant objects should redefine
-;           	this method and store new members.
-; Arguments:	Arg1: -> Stream object.
-; Return:   	Nothing.
+; Method:     FlipBox.Store
+; Purpose:    Store the streamable instance in a stream object. Descendant objects should redefine
+;             this method and store new members.
+; Arguments:  Arg1: -> Stream object.
+; Return:     Nothing.
 
 Method FlipBox.Store, uses xsi, pStream:$ObjPtr(Stream)
   SetObject xsi

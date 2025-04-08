@@ -98,12 +98,23 @@ RANGE struct
 RANGE ends
 PRANGE typedef ptr RANGE
 
-CHOICES struct
-  dScope       DWORD  ?
-  dOptions     DWORD  ?
-  dDirection   DWORD  ?
-CHOICES ends
-PCHOICES typedef ptr CHOICES
+FINDDLGCHOICES struct
+  dScope        DWORD  ?
+  dOptions      DWORD  ?
+  dDirection    DWORD  ?
+FINDDLGCHOICES ends
+PFINDDLGCHOICES typedef ptr FINDDLGCHOICES
+
+FF_PROJECT  equ   BIT00
+FF_OPEN     equ   BIT01
+FF_CMD      equ   BIT02
+
+FILE struct
+  pDisplayName  PSTRING   ?
+  pFullFileName PSTRING   ?
+  dFlags        DWORD     ?
+FILE ends
+PFILE typedef ptr FILE
 
 ;; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ;; Object:    ScrollBarV
@@ -560,7 +571,7 @@ Object Editor, ADE_EditorID, ChildWnd
   RedefineMethod    ClpBrdPaste
   RedefineMethod    ClpBrdSetBtns
   RedefineMethod    Done
-  VirtualMethod     FindStr,              PSTRING, PLOCATION, PLOCATION, PCHOICES
+  VirtualMethod     FindStr,              PSTRING, PLOCATION, PLOCATION, PFINDDLGCHOICES
   VirtualMethod     InformDeletionOf,     DWORD
   VirtualMethod     InformInsertionOf,    DWORD
   RedefineMethod    Init,                 POINTER, $ObjPtr(EditorResources), PSTRINGW
@@ -635,6 +646,35 @@ Object ClientWnd, ADE_ClientWndID, MdiClientWnd                 ;MDI client wind
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Object:  ProjectWnd
+; Purpose: Implement a project window used as a control container on some apps.
+
+Object ProjectWnd,, Window
+  RedefineMethod    Done
+  RedefineMethod    Init,                 POINTER, HWND       ;-> Owner, Parent
+  StaticMethod      Open,                 PSTRING
+  StaticMethod      Save
+  StaticMethod      Startup
+
+  VirtualEvent      OnCreate,             WM_CREATE
+  VirtualEvent      OnPaint,              WM_PAINT
+
+  DefineVariable    dToolbarHeight,       DWORD,      0
+
+  DefineVariable    dReqMainVersion,      DWORD,      1
+  DefineVariable    dMinSubVersion,       DWORD,      0
+  DefineVariable    dFlags,               DWORD,      0
+
+  Embed     TBar,           Toolbar
+  Embed     TView,          TreeView
+  Embed     IconImageList,  MaskedImageList
+
+  Embed     Files,          DataCollection            ;of FILE structures §§§ 
+  Embed     TVHandles,      %XWordVector
+
+ObjectEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
 FDS_CURRENT_FILE    equ   0
 FDS_OPEN_FILES      equ   1
@@ -643,9 +683,7 @@ FDS_ALL_FILES       equ   3
 
 FDO_MATCH_CASE      equ   BIT00
 FDO_WHOLE_WORD      equ   BIT01
-FDO_IGNORE_SPACE    equ   BIT02
-FDO_USE_REGEX       equ   BIT03
-FDO_WRAP_AROUND     equ   BIT04
+FDO_USE_REGEX       equ   BIT02
 
 FDD_DOWN            equ   0
 FDD_UP              equ   1
@@ -657,23 +695,21 @@ Object FindDialog, , DialogModeless
   StaticMethod      Find,                 POINTER
   StaticMethod      Replace,              POINTER
   StaticMethod      ReplaceAll,           POINTER
-  StaticMethod      Help                  
-  RedefineMethod    Done                  
+  StaticMethod      Help
+  RedefineMethod    Done
   RedefineMethod    Init,                 POINTER
   RedefineMethod    OnActivate,           WPARAM, LPARAM
   RedefineMethod    OnCommand,            WPARAM, LPARAM
   RedefineMethod    OnDestroy,            WPARAM, LPARAM
 
   Embed     FindStrings,        %StrCollection
-  Embed     ReplaceStrings,     %StrCollection
+  Embed     ReplStrings,        %StrCollection
 
-  DefineVariable    Choices,              CHOICES,  {FDS_CURRENT_FILE, 0, FDD_DOWN}
-                                          
-  DefineVariable    pFindStr,             PSTRING,  NULL
-  DefineVariable    pReplStr,             PSTRING,  NULL
+  DefineVariable    Choices,              FINDDLGCHOICES,  {FDS_CURRENT_FILE, 0, FDD_DOWN}
+
   DefineVariable    SrchBeg,              LOCATION, {}
   DefineVariable    SrchEnd,              LOCATION, {}
-  DefineVariable    dSrchContinue,        DWORD,    FALSE
+  DefineVariable    dContinue,            DWORD,    FALSE
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -687,6 +723,8 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   VirtualMethod     LoadContext,          PSTRING
   StaticMethod      ManageGuiCmds,        HWND
   RedefineMethod    OnSize,               WPARAM, LPARAM
+  StaticMethod      ProjectOpen,          PSTRING
+;  StaticMethod      ProjectSave
   VirtualMethod     SaveContext,          PSTRING
   StaticMethod      Startup
   VirtualMethod     StatusbarHelp,        PSTRING               ;-> Help string
@@ -705,6 +743,7 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   DefineVariable    hMenuContextEditor,   HMENU,      0
   DefineVariable    dFlags,               DWORD,      0
   DefineVariable    pDirectory,           PSTRING,    NULL
+  DefineVariable    pProjFileName,        PSTRING,    NULL
 
   DefineVariable    PrintMargin,          RECT,       {}
   DefineVariable    hDevMode,             HGLOBAL,    0
@@ -725,8 +764,6 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   Embed     SharedResources,    EditorSharedResources
   Embed     CodeEditorResources,EditorResources
   Embed     FindDlg,            FindDialog
-
-  Embed     ProjFiles,          %StrCollection
 
 ObjectEnd
 
@@ -894,6 +931,7 @@ endm
 
 include ADE_Helper.inc
 include ADE_About.inc
+include ADE_ProjectWnd.inc
 include ADE_Application.inc
 include ADE_EditorSharedResources.inc
 include ADE_EditorResources.inc
@@ -909,4 +947,3 @@ include ADE_EditorView_1.inc
 include ADE_EditorView_2.inc
 include ADE_EditorLine.inc
 include ADE_FindDialog.inc
-

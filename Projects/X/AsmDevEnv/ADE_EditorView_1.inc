@@ -1207,9 +1207,10 @@ Method EditorView.OnLButtonDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov xcx, [xsi].pOwner
   mov xbx, [xcx].$Obj(EditorDisplay).pOwner             ;xbx -> Editor
-  mov xax, [xbx].$Obj(Editor).pOwner
-  mov xdx, [xax].$Obj(ClientWnd).pOwner
-  mov [xdx].$Obj(Application).FindDlg.dSrchContinue, FALSE    ;Restart the search
+
+;  mov xax, [xbx].$Obj(Editor).pOwner
+;  mov xdx, [xax].$Obj(ClientWnd).pOwner
+;  mov [xdx].$Obj(Application).FindDlg.dContinue, FALSE    ;Restart the search
 
   invoke SetFocus, [xsi].hWnd
   BitSet [xsi].dFlags, EVF_LBUTTON_DOWN                 ;Set flag
@@ -1842,11 +1843,11 @@ Method EditorView.OnRButtonDown, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:   	EditorView.OnSetCursor
-; Purpose:  	Event procedure for WM_SETCURSOR message.
-; Arguments:	Arg1: First message parameter.
-;           	Arg2: Second message parameter.
-; Return:   	eax = TRUE => further processing is halted.
+; Method:     EditorView.OnSetCursor
+; Purpose:    Event procedure for WM_SETCURSOR message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = TRUE => further processing is halted.
 
 Method EditorView.OnSetCursor, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local CursorPosition:POINT

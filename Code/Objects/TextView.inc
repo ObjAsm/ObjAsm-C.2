@@ -691,7 +691,7 @@ MethodEnd
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     Entries.DestroyItem
 ; Purpose:    Auxiliar function to release the string from the collection.
-; Arguments:  Arg1: -> hFont.
+; Arguments:  Arg1: -> TVENTRY.
 ; Return:     Nothing.
 
 Method Entries.DestroyItem,, pItem:POINTER

@@ -18,23 +18,40 @@ include ADE_Shared.inc
                           %TARGET_MODE_STR, <->, %BUILD_BITNESS, <!">)
 
 CStr cWarning,    "Warning Message"
-CStr cWarnNoIni,  "{PA20}", \
+CStr cWarnNoConf, "{PA20}", \
                   "[FI55]",\
                     "[B,H+6,C#FF4F4F]Warning{#21}[~]{P}", \
-                    "[H+2]No Ini-File found        [~]{P}", \
+                    "[H+2]No Configuration File found        [~]{P}", \
                     "[C#5F4FFF]", \
                       "[I]Using default values...[~]", \
                     "[~]", \
                   "[~]"
-CStr cWarnOldIni, "{PA20}", \
+CStr cWarnOldConf,"{PA20}", \
                   "[FI55]",\
                     "[B,H+6,C#FF4F4F]Warning{#21}[~]{P}", \
-                    "[H+2]Outdated Ini-File[~]{P}", \
+                    "[H+2]Outdated Configuration File[~]{P}", \
                     "[C#5F4FFF]", \
                       "[I]Using default values where required...[~]", \
                     "[~]", \
                   "[~]"
-                  
+
+CStr cWarnNoProj, "{PA20}", \
+                  "[FI55]",\
+                    "[B,H+6,C#FF4F4F]Warning{#21}[~]{P}", \
+                    "[H+2]No Project File found        [~]{P}", \
+                    "[C#5F4FFF]", \
+                      "[I]Using default values...[~]", \
+                    "[~]", \
+                  "[~]"
+CStr cWarnOldProj,"{PA20}", \
+                  "[FI55]",\
+                    "[B,H+6,C#FF4F4F]Warning{#21}[~]{P}", \
+                    "[H+2]Outdated Project File[~]{P}", \
+                    "[C#5F4FFF]", \
+                      "[I]Using default values where required...[~]", \
+                    "[~]", \
+                  "[~]"
+
 FONT_MONOSPACED         equ   BIT00
 EditorResourcesID       equ   0
 EditorSharedResourcesID equ   0
@@ -108,7 +125,7 @@ cDefaultEditorFontFace      textequ <cDefaultFontFace>
 DefaultEditorFontPointSize  equ   13
 DefaultEditorBG             equ   $RGB(000,000,000)
 DefaultEditorTextRegularFG  equ   $RGB(196,196,192)
-DefaultEditorTextRegularBG  equ   DefaultEditorBG 
+DefaultEditorTextRegularBG  equ   DefaultEditorBG
 DefaultEditorTextSelectFG   equ   DefaultEditorTextRegularFG
 DefaultEditorTextSelectBG   equ   $RGB(000,128,000)
 DefaultEditorTextHilightFG  equ   DefaultEditorTextRegularFG

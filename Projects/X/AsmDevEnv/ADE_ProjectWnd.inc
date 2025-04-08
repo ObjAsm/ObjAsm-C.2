@@ -16,31 +16,8 @@ IDM_PROJ_OPEN     equ   200
 IDM_PROJ_SAVE     equ   201
 IDM_PROJ_CLOSE    equ   202
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Object:  ProjectWnd
-; Purpose: Implement a project window used as a control container on some apps.
 
-Object ProjectWnd,, Window
-  RedefineMethod    Done
-  RedefineMethod    Init,           POINTER, HWND       ;-> Owner, Parent
-  StaticMethod      Startup
-
-  VirtualEvent      OnCreate,       WM_CREATE
-  VirtualEvent      OnPaint,        WM_PAINT
-
-  DefineVariable    dToolbarHeight, DWORD,    0
-
-  Embed     TBar,           Toolbar
-  Embed     TView,          TreeView
-  Embed     IconImageList,  MaskedImageList
-ObjectEnd
-
-
-; ==================================================================================================
-
-if IMPLEMENT
-
-PROJTVSTYLE   equ   TVS_HASBUTTONS or TVS_HASLINES or TVS_LINESATROOT
+PROJTVSTYLE   equ   TVS_HASBUTTONS or TVS_HASLINES or TVS_LINESATROOT or TVS_EDITLABELS or TVS_SHOWSELALWAYS or TVS_TRACKSELECT
 
 PROJTBSTYLE   equ   WS_CHILD or WS_VISIBLE or WS_CLIPCHILDREN or TBSTYLE_TOOLTIPS or \
                     CCS_NORESIZE or CCS_NODIVIDER or CCS_ADJUSTABLE or TBSTYLE_FLAT
@@ -68,6 +45,8 @@ Method ProjectWnd.Done, uses xsi
   OCall [xsi].IconImageList::MaskedImageList.Done
   OCall [xsi].TBar::Toolbar.Done
   OCall [xsi].TView::TreeView.Done
+  OCall [xsi].TVHandles::%XWordVector.Done
+  OCall [xsi].Files::DataCollection.Done
   ACall xsi.Done
 MethodEnd
 
@@ -81,10 +60,25 @@ MethodEnd
 Method ProjectWnd.Init, uses xsi, pOwner:POINTER, hParent:HWND
   SetObject xsi
   ACall xsi.Init, pOwner, NULL                          ;hWnd is set in WndProc
-  invoke CreateWindowEx, WS_EX_CLIENTEDGE, offset szProjectWnd, $OfsCStr("Project"), \
+  invoke CreateWindowEx, WS_EX_CLIENTEDGE, offset szProjectWnd, $OfsCStr("Project Manager"), \
                          WS_CHILD, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, \
                          hParent, 0, hInstance, xsi
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Files.DestroyItem
+; Purpose:    Auxiliar function to free FILE associated resources and the item itself.
+; Arguments:  Arg1: .
+; Return:     Nothing.
+
+Method Files.DestroyItem, uses xbx, pItem:POINTER
+  mov xbx, pItem
+  .if xbx != NULL
+    invoke StrDispose, [xbx].FILE.pDisplayName
+    invoke StrDispose, [xbx].FILE.pFullFileName
+    MemFree xbx
+  .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -105,41 +99,99 @@ Method ProjectWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CLOSE")
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FOLDER_CLOSE")
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FOLDER_OPEN")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_ARROW_BLUE")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_ARROW_GREEN")
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_ARROW_YELLOW")
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_CODE")
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_CMD")
 
   lea xdi, [xsi].TView
   OCall xdi::TreeView.Init, xsi, [xsi].hWnd, xbx, offset ProjTreeView
-
-  mov hRoot, $OCall(xdi::TreeView.NodeInsert, TVI_ROOT, TVI_FIRST, $OfsCStr("Solution 1"), 3, 4)
-;  OCall xdi::TreeView.NodeInsert, hRoot, TVI_FIRST, $OfsCStr("File 1"), 5, 7
-;  OCall xdi::TreeView.NodeInsert, hRoot, xax, $OfsCStr("File 2"), 5, 7
-
-  mov hFolder1, $OCall(xdi::TreeView.NodeInsert, hRoot, xax, $OfsCStr("Make"), 3, 4)
-  OCall xdi::TreeView.NodeInsert, hFolder1, TVI_FIRST, $OfsCStr("Resources.cmd"), 6, 7
-  OCall xdi::TreeView.NodeInsert, hFolder1, xax, $OfsCStr("DebugX86.cmd"), 6, 7
-  OCall xdi::TreeView.NodeInsert, hFolder1, xax, $OfsCStr("DebugX64.cmd"), 6, 7
-  OCall xdi::TreeView.NodeInsert, hFolder1, xax, $OfsCStr("ReleaseX86.cmd"), 6, 7
-  OCall xdi::TreeView.NodeInsert, hFolder1, xax, $OfsCStr("ReleaseX64.cmd"), 6, 7
-
-  mov hFolder1, $OCall(xdi::TreeView.NodeInsert, hRoot, xax, $OfsCStr("Assember"), 3, 4)
-  OCall xdi::TreeView.NodeInsert, hFolder1, TVI_FIRST, $OfsCStr("File 1"), 6, 7
-  OCall xdi::TreeView.NodeInsert, hFolder1, xax, $OfsCStr("File 2"), 6, 7
-
-  mov hFolder1, $OCall(xdi::TreeView.NodeInsert, hRoot, xax, $OfsCStr("Include"), 3, 4)
-  OCall xdi::TreeView.NodeInsert, hFolder1, TVI_FIRST, $OfsCStr("File 1"), 6, 7
-  OCall xdi::TreeView.NodeInsert, hFolder1, xax, $OfsCStr("File 2"), 6, 7
-
-  mov hFolder1, $OCall(xdi::TreeView.NodeInsert, hRoot, xax, $OfsCStr("Macros"), 3, 4)
-  OCall xdi::TreeView.NodeInsert, hFolder1, TVI_FIRST, $OfsCStr("File 1"), 6, 7
-  OCall xdi::TreeView.NodeInsert, hFolder1, xax, $OfsCStr("File 2"), 6, 7
-
-  lea xdi, [xsi].TBar
-  OCall xdi::Toolbar.Init, xsi, [xsi].hWnd, offset ProjToolbar, xbx, NULL, NULL
-  mov [xsi].dToolbarHeight, $32($OCall(xdi::Toolbar.GetHeight))
+  
+  OCall [xsi].TVHandles::%XWordVector.Init, xsi, 10, 10, $Obj(%XWordVector)_MaxCapacity
+  
+  OCall [xsi].Files::DataCollection.Init, xsi, 10, 10, COL_MAX_CAPACITY
+  Override [xsi].Files::DataCollection.DestroyItem, Files.DestroyItem
 
   invoke DefWindowProc, [xsi].hWnd, WM_CREATE, wParam, lParam
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     ProjectWnd.Open
+; Purpose:    Open the project configuration file.
+; Arguments:  Arg1: -> Ini-File Name.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method ProjectWnd.Open, uses xbx xdi xsi, pIniFileName:PSTRING
+  local pDescription:PSTRING, dIconIndex:DWORD, dIniFilePresent:DWORD, hProjNode:HANDLE
+  local cFileName[1024]:CHR, cSectionName[50]:CHR, cItemName[20]:CHR, cDefaultName[20]:CHR, cItemBuffer[4096]:CHR
+
+  SetObject xsi
+  invoke GetFullPathName, pIniFileName, lengthof cFileName - 1, addr cFileName, NULL
+  invoke FileExist, addr cFileName
+  mov dIniFilePresent, eax
+  .if eax == FALSE
+    invoke MsgBox, 0, addr cWarnNoProj, addr cWarning, MB_OK or MB_ICONWARNING
+  .endif
+
+  ;Load version and analyse
+  invoke GetPrivateProfileString, addr cIniSectIdentification, addr cVersion, NULL, \
+                      addr cItemBuffer, lengthof cItemBuffer, addr cFileName
+  .if dIniFilePresent != FALSE
+    ;Check Version
+    invoke GetVersionFromString, addr cItemBuffer
+    .if eax != [xsi].dReqMainVersion || ecx < [xsi].dMinSubVersion
+      invoke MsgBox, 0, addr cWarnOldProj, addr cWarning, MB_OK or MB_ICONWARNING
+    .endif
+  .endif
+
+  ;Load "project" root item
+  invoke GetPrivateProfileString, addr cIniSectIdentification, $OfsCStr("Name"), $OfsCStr("Solution"), \
+                      addr cItemBuffer, lengthof cItemBuffer, addr cFileName
+
+  OCall [xsi].TView::TreeView.NodeInsert, TVI_ROOT, TVI_FIRST, addr cItemBuffer, 3, 4
+  mov hProjNode, xax
+  DbgHex xax
+  OCall [xsi].TVHandles::%XWordVector.Insert, xax
+
+  ;Load "folder" children items
+  mov xdi, xax
+  xor ebx, ebx
+  .while TRUE
+    inc ebx
+    lea xdi, cItemName
+    WriteF xdi, "¦UD", ebx
+    lea xdi, cDefaultName
+    WriteF xdi, "Folder ¦UD", ebx
+    invoke GetPrivateProfileString, $OfsCStr("Folders"), addr cItemName, NULL, \
+                        addr cItemBuffer, lengthof cItemBuffer, addr cFileName
+    .break .if eax == 0
+    OCall [xsi].TView::TreeView.NodeInsert, hProjNode, xdi, addr cItemBuffer, 3, 4
+    mov xdi, xax
+    OCall [xsi].TVHandles::%XWordVector.Insert, xax
+  .endw
+  
+  ;Load "file" items
+  xor ebx, ebx
+  .while TRUE
+    inc ebx
+    lea xdi, cItemName
+    WriteF xdi, "¦UD", ebx
+    invoke GetPrivateProfileString, $OfsCStr("Files"), addr cItemName, NULL, \
+                        addr cItemBuffer, lengthof cItemBuffer, addr cFileName
+    .break .if eax == 0
+    invoke GetFileFromString, addr cItemBuffer
+    mov xdi, xax
+    OCall [xsi].TVHandles::%XWordVector.ItemAt, edx
+    mov dIconIndex, 5
+    .ifBitSet [xdi].FILE.dFlags, FF_CMD
+      mov dIconIndex, 6
+    .endif
+    OCall [xsi].TView::TreeView.NodeInsert, HANDLE ptr [xax], TVI_FIRST, [xdi].FILE.pDisplayName, dIconIndex, dIconIndex
+  .endw
+  
+  ;Expand all items
+  .VecForEach [xsi].TVHandles::%XWordVector, ebx
+    invoke SendMessage, [xsi].TView.hWnd, TVM_EXPAND, TVE_EXPAND, HANDLE ptr [xax]
+  .VecNext 
+  
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -176,6 +228,15 @@ Method ProjectWnd.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     ProjectWnd.Save
+; Purpose:    Save the project configuration file.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method ProjectWnd.Save, uses xsi
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     ProjectWnd.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -199,5 +260,3 @@ Method ProjectWnd.Startup
 
   invoke RegisterClassEx, addr WC
 MethodEnd
-
-endif

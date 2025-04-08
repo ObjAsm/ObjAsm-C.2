@@ -205,11 +205,11 @@ MethodEnd
 ; Arguments:  Arg1: -> Search string.
 ;             Arg2: -> Starting LOCATION.
 ;             Arg3: -> Ending LOCATION.
-;             Arg4: -> CHOICES.
+;             Arg4: -> FINDDLGCHOICES.
 ;             Arg5: -> SEARCHRESULT.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, pSrchEnd:PLOCATION, pChoices:PCHOICES
+Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, pSrchEnd:PLOCATION, pChoices:PFINDDLGCHOICES
   local sdVisLineScrollCount:SDWORD, dCurLineNumber:DWORD, dCurCharIndex:DWORD
   local dRetVal:DWORD, dSrchLength:DWORD
 
@@ -235,7 +235,7 @@ Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, p
     .while TRUE
       mov xbx, xax
 
-      .if [xdi].CHOICES.dDirection == FDD_DOWN || [xdi].CHOICES.dDirection == FDD_ALL
+      .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
         mov xcx, pSrchEnd
         .if xbx != [xcx].LOCATION.pEditorLine
           ;  ¦----¦ABCDEFGHIJK¦
@@ -268,20 +268,20 @@ Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, p
         .endif
       .endif
 
-      .if [xdi].CHOICES.dDirection == FDD_DOWN || [xdi].CHOICES.dDirection == FDD_ALL
-        .ifBitSet [xdi].CHOICES.dOptions, FDO_MATCH_CASE
+      .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
+        .ifBitSet [xdi].FINDDLGCHOICES.dOptions, FDO_MATCH_CASE
           invoke StrCCPos, xcx, edx, pSrchStr, dSrchLength
         .else
           invoke StrCCIPos, xcx, edx, pSrchStr, dSrchLength
         .endif
       .else
-        .ifBitSet [xdi].CHOICES.dOptions, FDO_MATCH_CASE
+        .ifBitSet [xdi].FINDDLGCHOICES.dOptions, FDO_MATCH_CASE
           invoke StrRCCPos, xcx, edx, pSrchStr, dSrchLength
         .else
           invoke StrRCCIPos, xcx, edx, pSrchStr, dSrchLength
         .endif
       .endif
-      .ifBitSet [xdi].CHOICES.dOptions, FDO_WHOLE_WORD
+      .ifBitSet [xdi].FINDDLGCHOICES.dOptions, FDO_WHOLE_WORD
         .if xax != NULL
           ;Check the end
           mov ecx, dSrchLength
@@ -302,7 +302,7 @@ Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, p
       .break .if xbx == [xcx].LOCATION.pEditorLine
 
       ;Move to next EditorLine
-      .if [xdi].CHOICES.dDirection == FDD_DOWN || [xdi].CHOICES.dDirection == FDD_ALL
+      .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
         mov xax, [xbx].$Obj(EditorLine).Link.pLinkFwrd
         .break .if xax == NULL
       .else
@@ -314,7 +314,7 @@ Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, p
       .ifBitClr [xbx].$Obj(EditorLine).dFlags, TLF_HIDDEN
         inc sdVisLineScrollCount
       .endif
-      .if [xdi].CHOICES.dDirection == FDD_DOWN || [xdi].CHOICES.dDirection == FDD_ALL
+      .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
         inc dCurLineNumber
         mov dCurCharIndex, 0
       .else
@@ -339,7 +339,7 @@ Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, p
       OCall xsi.SelectionSet
 
       ;Bring match in View
-      .if [xdi].CHOICES.dDirection == FDD_DOWN || [xdi].CHOICES.dDirection == FDD_ALL
+      .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
         mov xcx, [xsi].pFocusedView
         mov eax, [xcx].$Obj(EditorView).sdCaretVisLineOffset
         .if SDWORD ptr eax < 0
@@ -395,7 +395,7 @@ Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, p
       mov xax, pSrchBeg
       m2m [xax].LOCATION.pEditorLine, [xsi].SelectionFst.pEditorLine, xdx
       m2m [xax].LOCATION.dLineNumber, dCurLineNumber, edx
-      .if [xdi].CHOICES.dDirection == FDD_DOWN || [xdi].CHOICES.dDirection == FDD_ALL
+      .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
         mov ecx, [xsi].SelectionLst.dCharIndex
       .else
         mov ecx, [xsi].SelectionFst.dCharIndex
@@ -1127,7 +1127,6 @@ Method Editor.SaveAs, uses xbx xsi
       ICall pIFSDlg::IFileSaveDialog.GetResult, addr pIShellItem
       ICall pIShellItem::IShellItem.GetDisplayName, SIGDN_FILESYSPATH, addr pDisplayName
       mov xax, [xsi].pResources
-      int 3
       OCall [xax].$Obj(EditorResources).FileFormats::FileFormatCollection.GetFormat, pDisplayName
       .if eax == EFF_UNKNOWN
         lea xbx, cMessage

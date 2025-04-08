@@ -3395,7 +3395,7 @@ endm
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Macro:      IsInRange?
-; Purpose:    Check if a specified value is in the range [Base...Top].
+; Purpose:    Check if a specified value is in the range [Bot...Top].
 ; Arguments:  Arg1: Value (register)
 ;             Arg2: Bottom.
 ;             Arg3: Top.

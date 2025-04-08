@@ -78,10 +78,10 @@ Method ListView.CheckItem, uses xsi, dItemIndex:DWORD, dAction:DWORD
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:   	ListView.Done
-; Purpose:  	Finalize the ListView object.
-; Arguments:	None.
-; Return:   	Nothing.
+; Method:     ListView.Done
+; Purpose:    Finalize the ListView object.
+; Arguments:  None.
+; Return:     Nothing.
 
 Method ListView.Done, uses xsi
   SetObject xsi
