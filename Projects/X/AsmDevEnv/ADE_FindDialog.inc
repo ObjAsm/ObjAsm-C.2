@@ -259,24 +259,24 @@ Method FindDialog.Find, uses xbx xdi xsi, pChildWndObject:POINTER
           mov [xsi].SrchBeg.dLineNumber, 1
           mov [xsi].SrchBeg.dCharIndex, 0
           mov xcx, [xax].$Obj(Editor).pFocusedView
-          s2s [xcx].$Obj(EditorView).CaretLocation, [xsi].SrchBeg, xmm0, xmm1, xmm2, xmm3, xax
-          s2s [xcx].$Obj(EditorView).FirstVisChar, [xsi].SrchBeg, xmm0, xmm1, xmm2, xmm3, xax
+          s2s [xcx].$Obj(EditorView).CaretLocation, [xsi].SrchBeg, xmm0, xmm1, xmm2, xmm3, xdx
+          s2s [xcx].$Obj(EditorView).FirstVisChar, [xsi].SrchBeg, xmm0, xmm1, xmm2, xmm3, xdx
           mov [xcx].$Obj(EditorView).sdCaretVisLineOffset, 0
         .else
           .if [xax].$Obj(Editor).SelectionRange.pBegSelInfo != NULL
             .if [xsi].Choices.dDirection == FDD_DOWN
               ;Use the selection begin
               mov xcx, [xax].$Obj(Editor).SelectionRange.pBegSelInfo
-              s2s [xsi].SrchBeg, LOCATION ptr [xcx], xmm0, xmm1, xmm2, xmm3, xax
+              s2s [xsi].SrchBeg, LOCATION ptr [xcx], xmm0, xmm1, xmm2, xmm3, xdx
             .else
               ;Use the selection end
               mov xcx, [xax].$Obj(Editor).SelectionRange.pEndSelInfo
-              s2s [xsi].SrchBeg, LOCATION ptr [xcx], xmm0, xmm1, xmm2, xmm3, xax
+              s2s [xsi].SrchBeg, LOCATION ptr [xcx], xmm0, xmm1, xmm2, xmm3, xdx
             .endif
           .else
             ;Use the current caret location
             mov xcx, [xax].$Obj(Editor).pFocusedView
-            s2s [xsi].SrchBeg, [xcx].$Obj(EditorView).CaretLocation, xmm0, xmm1, xmm2, xmm3, xax
+            s2s [xsi].SrchBeg, [xcx].$Obj(EditorView).CaretLocation, xmm0, xmm1, xmm2, xmm3, xdx
           .endif
         .endif
   

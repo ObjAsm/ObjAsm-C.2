@@ -16,9 +16,9 @@ SBSTYLE   equ   WS_CHILD or WS_VISIBLE or SBARS_TOOLTIPS or SBARS_SIZEGRIP
 STSTYLE   equ   WS_CHILD or WS_VISIBLE or WS_TABSTOP or TCS_TABS or TCS_FOCUSNEVER; or TCS_HOTTRACK
 
 .const
-ToolbarFile DEF_TOOLBAR {IDC_TOOLBARFILE, TBSTYLE, TBSTYLE_EX_MIXEDBUTTONS, \
+ToolbarFile DEF_TOOLBAR {IDC_TOOLBARFILE, TBSTYLE, TBSTYLE_EX_MIXEDBUTTONS or TBSTYLE_EX_DRAWDDARROWS, \
                          $OfsTStr("File operations"), {<0,0,0,0>}, 11}
-  TBBUTTON {IDB_FILE_NEW,         IDM_FILE_NEW,         TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_FILE_NEW,         IDM_FILE_NEW,         TBSTATE_ENABLED, TBSTYLE_BUTTON or TBSTYLE_DROPDOWN}
   TBBUTTON {IDB_FILE_OPEN,        IDM_FILE_OPEN,        TBSTATE_ENABLED, TBSTYLE_BUTTON}
   TBBUTTON {IDB_FILE_SAVE,        IDM_FILE_SAVE,        TBSTATE_ENABLED, TBSTYLE_BUTTON}
   TBBUTTON {IDB_FILE_SAVEAS,      IDM_FILE_SAVEAS,      TBSTATE_ENABLED, TBSTYLE_BUTTON}
@@ -50,11 +50,12 @@ ToolbarWindow DEF_TOOLBAR {IDC_TOOLBARWINDOW, TBSTYLE, TBSTYLE_EX_MIXEDBUTTONS, 
   TBBUTTON {IDB_WINDOW_ZOOMIN,    IDM_WINDOW_ZOOMIN,    TBSTATE_ENABLED, TBSTYLE_BUTTON}
   TBBUTTON {IDB_WINDOW_ZOOMOUT,   IDM_WINDOW_ZOOMOUT,   TBSTATE_ENABLED, TBSTYLE_BUTTON}
 
-AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SBSTYLE, 0, 4}
-  DEF_STATUSBAR_PART {220, 100, 3, SBT_NOBORDERS, NULL}
+AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SBSTYLE, 0, 5}
+  DEF_STATUSBAR_PART {120, 100, 4, SBT_NOBORDERS, NULL}
   DEF_STATUSBAR_PART {120,  20, 1, SBT_SUNKEN,    NULL}
   DEF_STATUSBAR_PART {120,  -2, 0, SBT_SUNKEN,    NULL} ;Spring
-  DEF_STATUSBAR_PART {120, 100, 2, SBT_SUNKEN,    NULL}
+  DEF_STATUSBAR_PART {060,  20, 2, SBT_SUNKEN,    NULL}
+  DEF_STATUSBAR_PART {120,  20, 3, SBT_SUNKEN,    NULL}
 
 SetupTabCtrl DEF_TABCONTROL {100, STSTYLE, 0, NULL, {<2,2,295,180>}}
 
@@ -170,22 +171,24 @@ ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
 
-FILEFORMAT struc
+FILETYPE struc
   pExtension        PSTRINGW  ?
   dFileFormat       DWORD     ?           ;EFF_XXX
-FILEFORMAT ends
-PFILEFORMAT typedef ptr FILEFORMAT
+  dContentType      DWORD     ?           ;ECT_XXX
+FILETYPE ends
+PFILETYPE typedef ptr FILETYPE
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Object:     FileFormatCollection
-; Purpose:    Implement a collection of FILEFORMAT entries.
+; Object:     FileTypeCollection
+; Purpose:    Implement a collection of FILETYPE entries.
 
-Object FileFormatCollection, ADE_FileFormatCollectionID, SortedDataCollection
+Object FileTypeCollection, ADE_FileTypeCollectionID, SortedDataCollection
   RedefineMethod    Compare,              PSTRINGW, PSTRINGW
-  RedefineMethod    DestroyItem,          PFILEFORMAT
-  StaticMethod      GetFormat,            PSTRINGW
-  RedefineMethod    Insert,               PSTRING, DWORD
-  RedefineMethod    KeyOf,                PFILEFORMAT
+  RedefineMethod    DestroyItem,          PFILETYPE
+  StaticMethod      GetFileFormat,        PSTRINGW
+  StaticMethod      GetContentType,       PSTRINGW
+  RedefineMethod    Insert,               PSTRING, DWORD, DWORD
+  RedefineMethod    KeyOf,                PFILETYPE
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -219,12 +222,12 @@ ObjectEnd
 ; Purpose:    Editor resource manager
 
 Object EditorResources, ADE_EditorResourcesID, Primer
+  StaticMethod      ConfigLoad,           PSTRING, PSTRING, HDC
+  StaticMethod      ConfigSave
   RedefineMethod    Done
-  RedefineMethod    Init,                 POINTER, PSTRING, PSTRING, HDC, $ObjPtr(EditorSharedResources)
+  RedefineMethod    Init,                 POINTER, $ObjPtr(EditorSharedResources)
   StaticMethod      Zoom,                 DWORD
 
-  DefineVariable    dReqMainVersion,      DWORD,      1
-  DefineVariable    dMinSubVersion,       DWORD,      0
   DefineVariable    dFlags,               DWORD,      0
 
   ;Colors:
@@ -256,8 +259,6 @@ Object EditorResources, ADE_EditorResourcesID, Primer
   DefineVariable    dZoomFactor,          DWORD,      ZOOM_FACTOR_INIT
   DefineVariable    dInitZoomFactor,      DWORD,      ZOOM_FACTOR_INIT  ;Temp storage
   DefineVariable    dLineTermination,     DWORD,      ELT_CRLF
-
-  Embed     FileFormats,        FileFormatCollection
 
   Embed     KeywordGroups,      KeywordGroupCollection
   Embed     Keywords,           KeywordCollection
@@ -529,6 +530,7 @@ Object ChildWnd, ADE_ChildWndID, MdiChildWnd                  ;MDI child window.
 
   DefineVariable    pFullFileName,        PSTRING,    NULL
   DefineVariable    dFileFormat,          DWORD,      EFF_UNKNOWN
+  DefineVariable    dContentType,         DWORD,      ECT_TXT
 
   Embed   Snapper,  Magnetism
 ObjectEnd
@@ -650,10 +652,10 @@ ObjectEnd
 ; Purpose: Implement a project window used as a control container on some apps.
 
 Object ProjectWnd,, Window
+  StaticMethod      ConfigLoad,           PSTRING
+  StaticMethod      ConfigSave
   RedefineMethod    Done
   RedefineMethod    Init,                 POINTER, HWND       ;-> Owner, Parent
-  StaticMethod      Open,                 PSTRING
-  StaticMethod      Save
   StaticMethod      Startup
 
   VirtualEvent      OnCreate,             WM_CREATE
@@ -665,13 +667,12 @@ Object ProjectWnd,, Window
   DefineVariable    dMinSubVersion,       DWORD,      0
   DefineVariable    dFlags,               DWORD,      0
 
-  Embed     TBar,           Toolbar
-  Embed     TView,          TreeView
-  Embed     IconImageList,  MaskedImageList
+  Embed     TBar,               Toolbar
+  Embed     TView,              TreeView
+  Embed     IconImageList,      MaskedImageList
 
-  Embed     Files,          DataCollection            ;of FILE structures §§§ 
-  Embed     TVHandles,      %XWordVector
-
+  Embed     Files,              DataCollection            ;of FILE structures §§§ 
+  Embed     TVHandles,          %XWordVector
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -716,6 +717,8 @@ ObjectEnd
 
 Object Application, AsmDevEnvID, MdiApp                         ;MDI application.
   VirtualMethod     ChangeLanguage,       DWORD                 ;IDLANG_XXX
+  StaticMethod      ConfigLoad,           PSTRING
+  StaticMethod      ConfigSave
   RedefineMethod    Deserialize,          PDESER_INFO
   RedefineMethod    Done
   RedefineMethod    Init
@@ -735,7 +738,10 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   StaticEvent       OnCreate,             WM_CREATE
   StaticEvent       OnDestroy,            WM_DESTROY
   StaticEvent       OnEraseBkgnd,         WM_ERASEBKGND
+  StaticEvent       OnNotify,             WM_NOTIFY
 
+  DefineVariable    dReqMainVersion,      DWORD,      1
+  DefineVariable    dMinSubVersion,       DWORD,      0
   DefineVariable    dLangID,              DWORD,      IDLANG_ENGLISH
   DefineVariable    hMenuInit,            HMENU,      0
   DefineVariable    hMenuChild,           HMENU,      0
@@ -762,9 +768,12 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   Embed     SplitterVert,       Splitter
   Embed     SplitterHorz,       Splitter
   Embed     SharedResources,    EditorSharedResources
-  Embed     CodeEditorResources,EditorResources
+  Embed     AsmEditorResources, EditorResources
+  Embed     ResEditorResources, EditorResources
+  Embed     TxtEditorResources, EditorResources
   Embed     FindDlg,            FindDialog
 
+  Embed     FileTypes,          FileTypeCollection
 ObjectEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -941,7 +950,7 @@ include ADE_Editor.inc
 include ADE_SetupDialog.inc
 include ADE_KeywordGroupCollection.inc
 include ADE_KeywordCollection.inc
-include ADE_FileFormatCollection.inc
+include ADE_FileTypeCollection.inc
 include ADE_EditorDisplay.inc
 include ADE_EditorView_1.inc
 include ADE_EditorView_2.inc

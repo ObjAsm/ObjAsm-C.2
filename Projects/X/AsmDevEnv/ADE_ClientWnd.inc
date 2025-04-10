@@ -94,7 +94,7 @@ MethodEnd
 ; Return:     eax = Zero.
 
 Method ClientWnd.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local pFileName:PSTRINGW
+  local pFileName:PSTRINGW, pEditor:$ObjPtr(Editor)
 
   ANNOTATION use:wParam lParam
 
@@ -107,11 +107,19 @@ Method ClientWnd.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov edi, eax
     mov pFileName, $invoke(StrAllocW, eax)
     invoke DragQueryFileW, wParam, ebx, xax, edi
-    mov xdi, $New(Editor)
-    mov xax, [xsi].pOwner
-    OCall xdi::Editor.Init, xsi, addr [xax].$Obj(Application).CodeEditorResources, pFileName 
+    mov pEditor, $New(Editor)
+    mov xdi, [xsi].$Obj(ClientWnd).pOwner
+    OCall [xdi].$Obj(Application).FileTypes::FileTypeCollection.GetContentType, pFileName
+    .if eax == ECT_ASM
+      lea xax, [xdi].$Obj(Application).AsmEditorResources
+    .elseif eax == ECT_RES
+      lea xax, [xdi].$Obj(Application).ResEditorResources
+    .else
+      lea xax, [xdi].$Obj(Application).TxtEditorResources
+    .endif
+    OCall pEditor::Editor.Init, xsi, xax, pFileName 
     .if eax == FALSE
-      Kill xdi
+      Kill pEditor
     .endif
     invoke StrDispose, pFileName
   .endw

@@ -85,6 +85,8 @@ CStr cAlignLines,                 "AlignLines"
 CStr cRevHorzMouseWheelRot,       "ReverseHorzMouseWheelRotation"
 CStr cRevVertMouseWheelRot,       "ReverseVertMouseWheelRotation"
 CStr cLineTermination,            "LineTermination"
+CStr cIniSectGUI,                 "GUI"
+CStr cLanguage,                   "Language"
 
 CStr cDefaultFontFace,            "Lucida Console"
 CStr cMetricChar,                 "X"

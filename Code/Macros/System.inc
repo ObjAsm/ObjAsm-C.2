@@ -768,7 +768,7 @@ s2s macro Dst:req, Src:req, RegList:vararg
   $$DstStrucSize = type(Dst)
 
   ;*************************************************************************************************
-  ;$$RegCntMM = 0   ;Uncomment to skip MM regs for older CPUs that don't support vector instructions
+  $$RegCntMM = 0   ;Uncomment to skip MM regs for older CPUs that don't support vector instructions
   ;*************************************************************************************************
 
   if $$SrcStrucSize eq $$DstStrucSize

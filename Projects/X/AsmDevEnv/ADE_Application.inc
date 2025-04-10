@@ -76,16 +76,30 @@ Method Application.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
   mov tbbi.TBBUTTONINFO.cchText, lengthof cButtonText - 1
 
   lea xbx, [xsi].TbFile
-  SetButtonText IDM_FILE_NEW,         80
-  SetButtonText IDM_FILE_OPEN,        81
-  SetButtonText IDM_FILE_CLOSE,       85
-  SetButtonText IDM_FILE_CLOSEALL,    86
+  SetButtonText IDM_FILE_NEW,         01
+  SetButtonText IDM_FILE_OPEN,        02
+  SetButtonText IDM_FILE_SAVE,        03
+  SetButtonText IDM_FILE_SAVEAS,      04
+  SetButtonText IDM_FILE_SAVEALL,     05
+  SetButtonText IDM_FILE_CLOSE,       06
+  SetButtonText IDM_FILE_CLOSEALL,    07
+  SetButtonText IDM_FILE_PRINT,       11
+  SetButtonText IDM_FILE_PIN,         03
+
+  lea xbx, [xsi].TbEdit
+  SetButtonText IDM_EDIT_CUT,         21
+  SetButtonText IDM_EDIT_COPY,        22
+  SetButtonText IDM_EDIT_PASTE,       23
+  SetButtonText IDM_EDIT_DELETE,      24
+  SetButtonText IDM_EDIT_FIND,        26
 
   lea xbx, [xsi].TbWindow
-  SetButtonText IDM_WINDOW_CASCADE,   94
-  SetButtonText IDM_WINDOW_TILE_HOR,  95
-  SetButtonText IDM_WINDOW_TILE_VER,  96
-  SetButtonText IDM_WINDOW_ARRANGE,   97
+  SetButtonText IDM_WINDOW_CASCADE,   51
+  SetButtonText IDM_WINDOW_TILE_HOR,  52
+  SetButtonText IDM_WINDOW_TILE_VER,  53
+  SetButtonText IDM_WINDOW_ARRANGE,   54
+  SetButtonText IDM_WINDOW_ZOOMIN,    57
+  SetButtonText IDM_WINDOW_ZOOMOUT,   58
 
   mov xdx, [xsi].pClientWnd
   mov xcx, [xdx].$Obj(ClientWnd).hWnd
@@ -94,6 +108,145 @@ Method Application.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
     invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
     OCall xax::ChildWnd.UpdateStatusbar
   .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Application.ConfigLoad
+; Purpose:    Load the application configuration.
+; Arguments:  Arg1: -> Ini-File Name.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method Application.ConfigLoad, uses xbx xdi xsi, pIniFileName:PSTRING
+  local DrawAttr:DRAW_ATTR, FontDef:FONT_DEF, dIniFilePresent:DWORD
+  local pDescription:PSTRING, dIndex:DWORD, pGroup:PKEYWORDGROUP
+  local pLastChar:PCHR, dLength:DWORD, dFlags:DWORD, hDC:HDC
+  local cFullFileName[1024]:CHR, cSectionName[50]:CHR, cItemName[20]:CHR, cItemBuffer[4096]:CHR
+
+  SetObject xsi
+  invoke GetFullPathName, pIniFileName, lengthof cFullFileName - 1, addr cFullFileName, NULL
+  invoke FileExist, addr cFullFileName
+  mov dIniFilePresent, eax
+  .if eax == FALSE
+    invoke MsgBox, 0, addr cWarnNoConf, addr cWarning, MB_OK or MB_ICONWARNING
+  .endif
+
+  invoke GetPrivateProfileString, addr cIniSectIdentification, addr cVersion, NULL, \
+                      addr cItemBuffer, lengthof cItemBuffer, addr cFullFileName
+  .if dIniFilePresent != FALSE
+    ;Check Version
+    invoke GetVersionFromString, addr cItemBuffer
+    .if eax != [xsi].dReqMainVersion || ecx < [xsi].dMinSubVersion
+      invoke MsgBox, 0, addr cWarnOldConf, addr cWarning, MB_OK or MB_ICONWARNING
+    .endif
+  .endif
+
+  ;Load GUI language
+  invoke GetPrivateProfileString, addr cIniSectGUI, addr cLanguage, $OfsCStr("EN"), \
+                      addr cItemBuffer, lengthof cItemBuffer, addr cFullFileName
+  DoesStringMatch? cItemBuffer, <EN>
+  .if ZERO?
+    mov [xsi].dLangID, IDLANG_ENGLISH
+  .else
+    DoesStringMatch? cItemBuffer, <DE>
+    .if ZERO?
+      mov [xsi].dLangID, IDLANG_GERMAN
+    .else
+      DoesStringMatch? cItemBuffer, <IT>
+      .if ZERO?
+        mov [xsi].dLangID, IDLANG_ITALIAN
+      .else
+        DoesStringMatch? cItemBuffer, <RU>
+        .if ZERO?
+          mov [xsi].dLangID, IDLANG_RUSSIAN
+        .else
+          DoesStringMatch? cItemBuffer, <ES>
+          .if ZERO?
+            mov [xsi].dLangID, IDLANG_SPANISH
+          .endif
+        .endif
+      .endif
+    .endif
+  .endif
+
+  ;Load file types
+  mov dIndex, 0
+  .while TRUE
+    inc dIndex
+    lea xdi, cItemName
+    WriteF xdi, "FT¦UD", dIndex
+    invoke GetPrivateProfileString, $OfsCStr("File Types"), addr cItemName, NULL, \
+                                    addr cItemBuffer, lengthof cItemBuffer, addr cFullFileName
+    .break .if eax == 0
+    invoke StrLScan, addr cItemBuffer, ','
+    xor edi, edi
+    .if xax != NULL
+      lea xdi, [xax + sizeof(CHR)]
+      m2z CHR ptr [xax]
+    .endif
+    .if xdi != NULL
+      invoke StrLScan, xdi, ','
+      xor ebx, ebx
+      .if xax != NULL
+        lea xbx, [xax + sizeof(CHR)]
+        m2z CHR ptr [xax]
+      .endif
+      .if xbx != NULL
+        DoesStringMatch? [xdi], <ASM>
+        .if ZERO?
+          mov edi, ECT_ASM
+        .else
+          DoesStringMatch? [xdi], <RES>
+          .if ZERO?
+            mov edi, ECT_RES
+          .else
+            mov edi, ECT_TXT
+          .endif
+        .endif
+
+        DoesStringMatch? [xbx], <ANSI>
+        .if ZERO?
+          mov ebx, EFF_ANSI
+        .else
+          DoesStringMatch? [xbx], <UTF8>
+          .if ZERO?
+            mov ebx, EFF_UTF8
+          .else
+            DoesStringMatch? [xbx], <UTF8BOM>
+            .if ZERO?
+              mov ebx, EFF_UTF8BOM
+            .else
+              DoesStringMatch? [xbx], <UTF16BOM>
+              .if ZERO?
+                mov ebx, EFF_UTF16BOM
+              .else
+                mov ebx, EFF_UNKNOWN
+              .endif
+            .endif
+          .endif
+        .endif
+
+        OCall [xsi].FileTypes::FileTypeCollection.Insert, addr cItemBuffer, edi, ebx
+
+      .endif
+    .endif
+  .endw
+
+  ;Load Editor resources
+  mov hDC, $invoke(GetWindowDC, [xsi].hWnd)
+  OCall [xsi].AsmEditorResources::EditorResources.ConfigLoad, addr cFullFileName, $OfsCStr("ASM"), hDC
+  OCall [xsi].ResEditorResources::EditorResources.ConfigLoad, addr cFullFileName, $OfsCStr("RES"), hDC
+  OCall [xsi].TxtEditorResources::EditorResources.ConfigLoad, addr cFullFileName, $OfsCStr("TXT"), hDC
+  invoke ReleaseDC, [xsi].hWnd, hDC
+
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Application.ConfigSave
+; Purpose:    Save the application configuration.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method Application.ConfigSave
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -126,24 +279,28 @@ Method Application.Done, uses xsi
 
   ;Destroy resources
   OCall [xsi].SharedResources::EditorSharedResources.Done
-  OCall [xsi].CodeEditorResources::EditorResources.Done
-  
+  OCall [xsi].AsmEditorResources::EditorResources.Done
+  OCall [xsi].ResEditorResources::EditorResources.Done
+  OCall [xsi].TxtEditorResources::EditorResources.Done
+
+  OCall [xsi].FileTypes::FileTypeCollection.Done
+
   OCall [xsi].IconImageList::MaskedImageList.Done
   OCall [xsi].RBar::Rebar.Done
   OCall [xsi].SBar::Statusbar.Done
   OCall [xsi].TbFile::Toolbar.Done
   OCall [xsi].TbWindow::Toolbar.Done
   OCall [xsi].PropWnd::PropertiesWnd.Done
-  OCall [xsi].ProjWnd::ProjectWnd.Save
+  OCall [xsi].ProjWnd::ProjectWnd.ConfigSave
   OCall [xsi].ProjWnd::ProjectWnd.Done
   OCall [xsi].SplitterVert::Splitter.Done
   OCall [xsi].SplitterHorz::Splitter.Done
   OCall [xsi].Menu::XMenu.Done
-  
+
   OCall [xsi].FindDlg::DialogModeless.Done
 
   invoke StrDispose, [xsi].pProjFileName
-  
+
   Destroy [xsi].pClientWnd
   ACall xsi.Done
 MethodEnd
@@ -174,7 +331,7 @@ Method Application.Init, uses xbx xdi xsi
   OCall xbx::MaskedImageList.Init, xsi, 16, 16, 1
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APP")               ;00
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_APP_CHILD")         ;01
-                                                                                  
+
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_NEW")          ;02
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_OPEN")         ;03
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_SAVE")         ;04
@@ -188,7 +345,7 @@ Method Application.Init, uses xbx xdi xsi
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_PIN")          ;12
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_SETUP")        ;13
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_EXIT")         ;14
-                                                                                  
+
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_CUT")          ;15
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_COPY")         ;16
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_PASTE")        ;17
@@ -203,10 +360,10 @@ Method Application.Init, uses xbx xdi xsi
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_PREV")       ;25
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_ZOOMIN")     ;26
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_WINDOW_ZOOMOUT")    ;27
-                                                                                  
+
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_HELP_HELP")         ;28
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_HELP_ABOUT")        ;29
-                                                                                  
+
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CONTEXT_SAVE")      ;33
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CONTEXT_LOAD")      ;34
 
@@ -241,22 +398,27 @@ Method Application.Init, uses xbx xdi xsi
   mov xax, [xsi].pClientWnd
   mov xdi, [xax].$Obj(ClientWnd).hWnd
 
+  OCall [xsi].FileTypes::FileTypeCollection.Init, xsi, 10, 10, COL_MAX_CAPACITY
+
   ;Create Editor (shared)Resources
   OCall [xsi].SharedResources::EditorSharedResources.Init, xsi
-  mov hDC, $invoke(GetWindowDC, [xsi].hWnd)
-  OCall [xsi].CodeEditorResources::EditorResources.Init, xsi, $OfsCStr("ADE.ini"), \
-                       addr cEditorCodePrefix, hDC, addr [xsi].SharedResources
-  invoke ReleaseDC, [xsi].hWnd, hDC
+  OCall [xsi].AsmEditorResources::EditorResources.Init, xsi, addr [xsi].SharedResources
+  OCall [xsi].ResEditorResources::EditorResources.Init, xsi, addr [xsi].SharedResources
+  OCall [xsi].TxtEditorResources::EditorResources.Init, xsi, addr [xsi].SharedResources
+
+  OCall xsi.ConfigLoad, $OfsCStr("ADE.ini")
 
   ;Create and initialize XMenu
   mov xbx, $MethodAddr(Application.StatusbarHelp)
   OCall [xsi].Menu::XMenu.Init, xsi, [xsi].hWnd, xdi, [xsi].hMenuChildWnd, \
                                 addr [xsi].IconImageList, xbx, IDLANG_ENGLISH
 
+  OCall xsi.ChangeLanguage, [xsi].dLangID
+
   OCall [xsi].FindDlg::FindDialog.Init, xsi
   OCall [xsi].FindDlg::FindDialog.Show
-  invoke ShowWindow, [xsi].FindDlg.hWnd, SW_HIDE 
-  
+  invoke ShowWindow, [xsi].FindDlg.hWnd, SW_HIDE
+
   lea xbx, [xsi].TbEdit
   invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, FALSE
   invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, FALSE
@@ -358,7 +520,7 @@ CheckEditorDirty endp
 
 Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
   local dApplDirty:DWORD, dEditorDirty:DWORD
-  
+
   SetObject xsi
   invoke SendMessage, hActiveWnd, WM_GETOBJECTINSTANCE, 0, 0
   .if xax != NULL
@@ -382,10 +544,10 @@ Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
       invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSE, TRUE
       invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_CLOSEALL, TRUE
       invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, TRUE
-  
+
       lea xbx, [xsi].TbEdit
       invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, TRUE
-  
+
       lea xbx, [xsi].TbWindow
       invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_CASCADE, TRUE
       invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_TILE_HOR, TRUE
@@ -393,7 +555,7 @@ Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
       invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ARRANGE, TRUE
       invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMIN, TRUE
       invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_WINDOW_ZOOMOUT, TRUE
-  
+
       mov xbx, $invoke(GetMenu, [xsi].hWnd)               ;Get the current menu
       .if dEditorDirty == FALSE
         mov edi, MF_BYCOMMAND or MF_DISABLED or MF_GRAYED
@@ -417,7 +579,7 @@ Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
       invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_ENABLED
       invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMIN,      MF_BYCOMMAND or MF_ENABLED
       invoke EnableMenuItem, xbx, IDM_WINDOW_ZOOMOUT,     MF_BYCOMMAND or MF_ENABLED
-  
+
       mov xbx, [xsi].hMenuContextEditor
       invoke EnableMenuItem, xbx, IDM_EDIT_SELECTALL,     MF_BYCOMMAND or MF_ENABLED
       invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_ENABLED
@@ -545,10 +707,28 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov xax, wParam
   mov xbx, [xsi].pClientWnd
-  .if ax == IDM_FILE_NEW                                ;Create a child window
+  .if ax == IDM_FILE_NEW ||ax == IDM_NEW_MASM           ;Create a new MASM editor instance
     mov xdi, $New(Editor)
     .if xdi != NULL
-      OCall xdi::Editor.Init, [xsi].pClientWnd, addr [xsi].CodeEditorResources, NULL
+      OCall xdi::Editor.Init, [xsi].pClientWnd, addr [xsi].AsmEditorResources, NULL
+      .if eax == FALSE
+        Kill xdi
+      .endif
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_NEW_RESOURCE                        ;Create a new Resource editor instance
+    mov xdi, $New(Editor)
+    .if xdi != NULL
+      OCall xdi::Editor.Init, [xsi].pClientWnd, addr [xsi].ResEditorResources, NULL
+      .if eax == FALSE
+        Kill xdi
+      .endif
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_NEW_TEXT                            ;Create a new Text editor instance
+    mov xdi, $New(Editor)
+    .if xdi != NULL
+      OCall xdi::Editor.Init, [xsi].pClientWnd, addr [xsi].TxtEditorResources, NULL
       .if eax == FALSE
         Kill xdi
       .endif
@@ -580,7 +760,15 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           ICall pISIArr::IShellItemArray.GetItemAt, ebx, addr pIShellItem
           ICall pIShellItem::IShellItem.GetDisplayName, SIGDN_FILESYSPATH, addr pDisplayName
           mov xdi, $New(Editor)
-          OCall xdi::Editor.Init, [xsi].pClientWnd, addr [xsi].CodeEditorResources, pDisplayName
+          OCall [xsi].FileTypes::FileTypeCollection.GetContentType, pDisplayName
+          .if eax == ECT_ASM
+            lea xax, [xsi].AsmEditorResources
+          .elseif eax == ECT_RES
+            lea xax, [xsi].ResEditorResources
+          .else
+            lea xax, [xsi].TxtEditorResources
+          .endif
+          OCall xdi::Editor.Init, [xsi].pClientWnd, xax, pDisplayName
           .if eax == FALSE
             Kill xdi
           .endif
@@ -609,7 +797,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         .ifBitSet [xbx].$Obj(Editor).dFlags, EIF_NEW_FILE
           OCall xbx::Editor.SaveAs
         .else
-          OCall xbx::Editor.SaveTo, [xbx].$Obj(Editor).pFullFileName 
+          OCall xbx::Editor.SaveTo, [xbx].$Obj(Editor).pFullFileName
         .endif
       .endif
     .endif
@@ -692,7 +880,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .elseif ax == IDM_FILE_BREAK
     int 3
     xor eax, eax
-  
+
   .elseif ax == SC_RESTORE                              ;Restore the active window
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIRESTORE, xax, 0
@@ -788,7 +976,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           .endif
         .endif
       .endif
-    .endif 
+    .endif
     xor eax, eax
   .elseif ax == IDM_WINDOW_ZOOMOUT
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
@@ -806,9 +994,9 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           .endif
         .endif
       .endif
-    .endif 
+    .endif
     xor eax, eax
-  
+
   ;Messages for help menu
   .elseif ax == IDM_HELP_HELP
     invoke ExpandEnvironmentStrings, $OfsCStr("\Help\ObjAsm_Reference_Volume-I.pdf"), \
@@ -853,7 +1041,7 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
   ;Initialize project window
   OCall [xsi].ProjWnd::ProjectWnd.Init, xsi, [xsi].hWnd
-  OCall [xsi].ProjWnd::ProjectWnd.Open, $OfsCStr("MyProject.ini")
+  OCall [xsi].ProjWnd::ProjectWnd.ConfigLoad, $OfsCStr("MyProject.ini")
 
   ;Initialize properties window
   OCall [xsi].PropWnd::PropertiesWnd.Init, xsi, [xsi].hWnd
@@ -886,8 +1074,7 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   OCall [xsi].TbFile::Toolbar.GetWidth
   OCall [xsi].RBar::Rebar.InsertBand, [xsi].TbFile.hWnd, eax, ebx
 
-  ;Disable toolbar buttons
-  OCall xsi.ManageGuiCmds, 0
+  OCall xsi.ManageGuiCmds, 0                            ;Disable toolbar buttons
 
   xor eax, eax
 MethodEnd
@@ -927,6 +1114,48 @@ MethodEnd
 Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   ANNOTATION use:wParam lParam
 
+  mov eax, -1
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     Application.OnNotify
+; Purpose:    Event procedure for WM_NOTIFY message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = Non zero => we do the job.
+
+Method Application.OnNotify, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+  local BtnRect:RECT, hFileMenu:HMENU, hDropDownMenu:HMENU, TPM:TPMPARAMS
+
+  ANNOTATION use:wParam lParam
+
+;  DbgText "Application.OnNotify"
+  SetObject xsi
+  mov xbx, lParam
+  .if [xbx].NMHDR.code == TBN_DROPDOWN && [xbx].NMTOOLBAR.iItem == IDM_FILE_NEW
+    ;Get the coordinates of the button.
+    DbgDec [xbx].NMTOOLBAR.iItem
+    invoke SendMessage, [xbx].NMHDR.hwndFrom, TB_GETRECT, [xbx].NMTOOLBAR.iItem, addr BtnRect
+
+    ;Convert to screen coordinates.
+    invoke MapWindowPoints, [xbx].NMHDR.hwndFrom, HWND_DESKTOP, addr BtnRect, 2
+
+    ;Get the menu.
+    mov hFileMenu, $invoke(GetSubMenu, [xsi].hMenuInit, 0)
+    mov hDropDownMenu, $invoke(GetSubMenu, hFileMenu, 1)
+
+    ;Set up the pop-up menu.
+    ;In case the toolbar is too close to the bottom of the screen,
+    ;set rcExclude equal to the button rectangle and the menu will appear above
+    ;the button, and not below it.
+    mov TPM.cbSize, sizeof(TPM)
+    s2s TPM.rcExclude, BtnRect, xmm0, xmm1, xax, xcx
+
+    ;Show the menu and wait for input.
+    ;If the user selects an item, its WM_COMMAND is sent.
+    invoke TrackPopupMenuEx, hDropDownMenu, TPM_LEFTALIGN or TPM_LEFTBUTTON or TPM_VERTICAL, \
+                             BtnRect.left, BtnRect.bottom, [xsi].hWnd, addr TPM
+  .endif
   mov eax, -1
 MethodEnd
 

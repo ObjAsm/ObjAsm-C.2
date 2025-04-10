@@ -1,17 +1,17 @@
 ; ==================================================================================================
-; Title:      ADE_FileFormatCollection.inc
+; Title:      ADE_FileTypeCollection.inc
 ; Author:     G. Friedrich
 ; Version:    See ADE.asm
-; Purpose:    ObjAsm FileFormatCollection object implementation.
+; Purpose:    ObjAsm FileTypeCollection object implementation.
 ; ==================================================================================================
 
 
 ; ==================================================================================================
-; FileFormatCollection implementation
+; FileTypeCollection implementation
 ; ==================================================================================================
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:    FileFormatCollection.Compare
+; Method:    FileTypeCollection.Compare
 ; Purpose:   Compare the WIDE strings Key1 and Key2.
 ; Arguments: Arg1: -> First key.
 ;            Arg2: -> Second key.
@@ -19,69 +19,91 @@
 ;                     0   if Key1 = Key2
 ;                    (+)  if Key1 > Key2
 
-Method FileFormatCollection.Compare,, pCollKey:PSTRINGW, pTestKey:PSTRINGW
+Method FileTypeCollection.Compare,, pCollKey:PSTRINGW, pTestKey:PSTRINGW
   invoke StrICompW, pCollKey, pTestKey
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     FileFormatCollection.DestroyItem
+; Method:     FileTypeCollection.DestroyItem
 ; Purpose:    Auxiliar function to dispose a item from the collection. Don't call directly!
 ; Arguments:  -> Item.
 ; Return:     Nothing.
 
-Method FileFormatCollection.DestroyItem, uses xdi, pItem:PFILEFORMAT
+Method FileTypeCollection.DestroyItem, uses xdi, pItem:PFILETYPE
   mov xdi, pItem
   .if xdi != NULL
-    invoke StrDispose, [xdi].FILEFORMAT.pExtension      ;Dispose file extension string
+    invoke StrDispose, [xdi].FILETYPE.pExtension      ;Dispose file extension string
     MemFree xdi                                         ;Free data
   .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     FileFormatCollection.GetFormat
+; Method:     FileTypeCollection.GetFileFormat
 ; Purpose:    Return the stored file format for a FileName.
 ; Arguments:  Arg1: -> FileName
 ; Return:     eax: EFF_XXX.
 
-Method FileFormatCollection.GetFormat, uses xsi, pFileName:PSTRINGW
+Method FileTypeCollection.GetFileFormat, uses xsi, pFileName:PSTRINGW
   SetObject xsi
   invoke StrRScanW, pFileName, '.'
   .if xax != NULL
     lea xdx, [xax + sizeof(CHRW)]
-    OCall xsi::FileFormatCollection.Search, xdx 
+    OCall xsi::FileTypeCollection.Search, xdx 
     .if xax != FALSE
       mov eax, ecx
-      OCall xsi::FileFormatCollection.ItemAt, eax
-      mov eax, [xax].FILEFORMAT.dFileFormat
+      OCall xsi::FileTypeCollection.ItemAt, eax
+      mov eax, [xax].FILETYPE.dFileFormat
     .endif
   .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     FileFormatCollection.Insert
+; Method:     FileTypeCollection.GetContentType
+; Purpose:    Return the stored file type for a FileName.
+; Arguments:  Arg1: -> FileName
+; Return:     eax: ECT_XXX.
+
+Method FileTypeCollection.GetContentType, uses xsi, pFileName:PSTRINGW
+  SetObject xsi
+  invoke StrRScanW, pFileName, '.'
+  .if xax != NULL
+    lea xdx, [xax + sizeof(CHRW)]
+    OCall xsi::FileTypeCollection.Search, xdx 
+    .if xax != FALSE
+      mov eax, ecx
+      OCall xsi::FileTypeCollection.ItemAt, eax
+      mov eax, [xax].FILETYPE.dContentType
+    .endif
+  .endif
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     FileTypeCollection.Insert
 ; Purpose:    If the target item is not found in the sorted collection, it is inserted at the
 ;             correct index position. Calls Search to determine if the item exists, and if not,
 ;             where to insert it.
 ; Arguments:  Arg1: -> File extension string.
-;             Arg2: Associated file format.
+;             Arg2: Content type (FCT_XXXX).
+;             Arg3: File format (EFF_XXXX).
 ; Return:     xax -> Inserted item or NULL if the item was not inserted.
 
-Method FileFormatCollection.Insert, uses xbx xdi xsi, pExtension:PSTRING, dFileFormat:DWORD
+Method FileTypeCollection.Insert, uses xbx xdi xsi, pExtension:PSTRING, dContentType:DWORD, dFileFormat:DWORD
   SetObject xsi
-  MemAlloc sizeof(FILEFORMAT)
+  MemAlloc sizeof(FILETYPE)
   .if xax != NULL
     mov xbx, xax
   if TARGET_STR_TYPE eq STR_TYPE_ANSI
     invoke StrLengthA, pExtension
     lea edi, [eax*sizeof(CHRW)]
     invoke StrAllocW, eax
-    mov [xbx].FILEFORMAT.pExtension, xax
+    mov [xbx].FILETYPE.pExtension, xax
     invoke MultiByteToWideChar, CP_ACP, 0, pExtension, -1, xax, edi
   else
     invoke StrNewW, pExtension
-    mov [xbx].FILEFORMAT.pExtension, xax
+    mov [xbx].FILETYPE.pExtension, xax
   endif
-    m2m [xbx].FILEFORMAT.dFileFormat, dFileFormat, ecx
+    m2m [xbx].FILETYPE.dFileFormat, dFileFormat, ecx
+    m2m [xbx].FILETYPE.dContentType, dContentType, edx
     OCall xsi.KeyOf, xbx
     OCall xsi.Search, xax                                 ;Ret: eax = Found (TRUE/FALSE), ecx = Idx
     .if eax == FALSE                                      ;Found?
@@ -89,9 +111,9 @@ Method FileFormatCollection.Insert, uses xbx xdi xsi, pExtension:PSTRING, dFileF
       OCall xsi.InsertAt, edx, xbx
     .else
       DbgText "--- Duplicate Keyword ---"
-      DbgStrW [xbx].FILEFORMAT.pExtension
-      DbgDec [xbx].FILEFORMAT.dFileFormat
-      invoke StrDispose, [xbx].FILEFORMAT.pExtension
+      DbgStrW [xbx].FILETYPE.pExtension
+      DbgDec [xbx].FILETYPE.dFileFormat
+      invoke StrDispose, [xbx].FILETYPE.pExtension
       MemFree xbx
       xor eax, eax
     .endif
@@ -99,15 +121,15 @@ Method FileFormatCollection.Insert, uses xbx xdi xsi, pExtension:PSTRING, dFileF
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     FileFormatCollection.KeyOf
+; Method:     FileTypeCollection.KeyOf
 ; Purpose:    KeyOf is overridden in cases where the key of the item is not the item itself.
 ; Arguments:  Arg1: -> Item.
 ; Return:     eax = Given an item from the collection, KeyOf should return the corresponding key of
 ;                   the item. The default KeyOf simply returns Item.
 
-Method FileFormatCollection.KeyOf,, pItem:PFILEFORMAT
+Method FileTypeCollection.KeyOf,, pItem:PFILETYPE
   mov xcx, pItem
-  mov xax, [xcx].FILEFORMAT.pExtension
+  mov xax, [xcx].FILETYPE.pExtension
 MethodEnd
 
 

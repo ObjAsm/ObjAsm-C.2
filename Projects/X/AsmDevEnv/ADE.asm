@@ -31,9 +31,11 @@
 ;
 ; ==================================================================================================
 
+;Note: comment $$RegCntMM = 0 in system.inc 
+
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files and OS related objects
 ;Note: don't use ANSI_STRING 
 
 % include &MacPath&DlgTmpl.inc                          ;Dialog Template macros for XMenu

@@ -35,6 +35,95 @@ ProjToolbar DEF_TOOLBAR {101, PROJTBSTYLE, 0, NULL, {<0,0,0,0>}, 3}
 
 .code
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     ProjectWnd.ConfigLoad
+; Purpose:    Open the project configuration.
+; Arguments:  Arg1: -> Ini-File Name.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method ProjectWnd.ConfigLoad, uses xbx xdi xsi, pIniFileName:PSTRING
+  local pDescription:PSTRING, dIconIndex:DWORD, dIniFilePresent:DWORD, hProjNode:HANDLE
+  local cFileName[1024]:CHR, cSectionName[50]:CHR, cItemName[20]:CHR, cDefaultName[20]:CHR, cItemBuffer[4096]:CHR
+
+  SetObject xsi
+  invoke GetFullPathName, pIniFileName, lengthof cFileName - 1, addr cFileName, NULL
+  invoke FileExist, addr cFileName
+  mov dIniFilePresent, eax
+  .if eax == FALSE
+    invoke MsgBox, 0, addr cWarnNoProj, addr cWarning, MB_OK or MB_ICONWARNING
+  .endif
+
+  ;Load version and analyse
+  invoke GetPrivateProfileString, addr cIniSectIdentification, addr cVersion, NULL, \
+                      addr cItemBuffer, lengthof cItemBuffer, addr cFileName
+  .if dIniFilePresent != FALSE
+    ;Check Version
+    invoke GetVersionFromString, addr cItemBuffer
+    .if eax != [xsi].dReqMainVersion || ecx < [xsi].dMinSubVersion
+      invoke MsgBox, 0, addr cWarnOldProj, addr cWarning, MB_OK or MB_ICONWARNING
+    .endif
+  .endif
+
+  ;Load "project" root item
+  invoke GetPrivateProfileString, addr cIniSectIdentification, $OfsCStr("Name"), $OfsCStr("Solution"), \
+                      addr cItemBuffer, lengthof cItemBuffer, addr cFileName
+
+  OCall [xsi].TView::TreeView.NodeInsert, TVI_ROOT, TVI_FIRST, addr cItemBuffer, 3, 4
+  mov hProjNode, xax
+  OCall [xsi].TVHandles::%XWordVector.Insert, xax
+
+  ;Load "folder" children items
+  mov xdi, xax
+  xor ebx, ebx
+  .while TRUE
+    inc ebx
+    lea xdi, cItemName
+    WriteF xdi, "¦UD", ebx
+    lea xdi, cDefaultName
+    WriteF xdi, "Folder ¦UD", ebx
+    invoke GetPrivateProfileString, $OfsCStr("Folders"), addr cItemName, NULL, \
+                        addr cItemBuffer, lengthof cItemBuffer, addr cFileName
+    .break .if eax == 0
+    OCall [xsi].TView::TreeView.NodeInsert, hProjNode, xdi, addr cItemBuffer, 3, 4
+    mov xdi, xax
+    OCall [xsi].TVHandles::%XWordVector.Insert, xax
+  .endw
+  
+  ;Load "file" items
+  xor ebx, ebx
+  .while TRUE
+    inc ebx
+    lea xdi, cItemName
+    WriteF xdi, "¦UD", ebx
+    invoke GetPrivateProfileString, $OfsCStr("Files"), addr cItemName, NULL, \
+                        addr cItemBuffer, lengthof cItemBuffer, addr cFileName
+    .break .if eax == 0
+    invoke GetFileFromString, addr cItemBuffer
+    mov xdi, xax
+    OCall [xsi].TVHandles::%XWordVector.ItemAt, edx
+    mov dIconIndex, 5
+    .ifBitSet [xdi].FILE.dFlags, FF_CMD
+      mov dIconIndex, 6
+    .endif
+    OCall [xsi].TView::TreeView.NodeInsert, HANDLE ptr [xax], TVI_FIRST, [xdi].FILE.pDisplayName, dIconIndex, dIconIndex
+  .endw
+  
+  ;Expand all items
+  .VecForEach [xsi].TVHandles::%XWordVector, ebx
+    invoke SendMessage, [xsi].TView.hWnd, TVM_EXPAND, TVE_EXPAND, HANDLE ptr [xax]
+  .VecNext 
+  
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; Method:     ProjectWnd.ConfigSave
+; Purpose:    Save the project configuration.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method ProjectWnd.ConfigSave, uses xsi
+MethodEnd
+
+; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     ProjectWnd.Done
 ; Purpose:    Finalize the ProjectWnd object, freeing allocated resources.
 ; Arguments:  None.
@@ -114,87 +203,6 @@ Method ProjectWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ProjectWnd.Open
-; Purpose:    Open the project configuration file.
-; Arguments:  Arg1: -> Ini-File Name.
-; Return:     eax = TRUE if succeeded, otherwise FALSE.
-
-Method ProjectWnd.Open, uses xbx xdi xsi, pIniFileName:PSTRING
-  local pDescription:PSTRING, dIconIndex:DWORD, dIniFilePresent:DWORD, hProjNode:HANDLE
-  local cFileName[1024]:CHR, cSectionName[50]:CHR, cItemName[20]:CHR, cDefaultName[20]:CHR, cItemBuffer[4096]:CHR
-
-  SetObject xsi
-  invoke GetFullPathName, pIniFileName, lengthof cFileName - 1, addr cFileName, NULL
-  invoke FileExist, addr cFileName
-  mov dIniFilePresent, eax
-  .if eax == FALSE
-    invoke MsgBox, 0, addr cWarnNoProj, addr cWarning, MB_OK or MB_ICONWARNING
-  .endif
-
-  ;Load version and analyse
-  invoke GetPrivateProfileString, addr cIniSectIdentification, addr cVersion, NULL, \
-                      addr cItemBuffer, lengthof cItemBuffer, addr cFileName
-  .if dIniFilePresent != FALSE
-    ;Check Version
-    invoke GetVersionFromString, addr cItemBuffer
-    .if eax != [xsi].dReqMainVersion || ecx < [xsi].dMinSubVersion
-      invoke MsgBox, 0, addr cWarnOldProj, addr cWarning, MB_OK or MB_ICONWARNING
-    .endif
-  .endif
-
-  ;Load "project" root item
-  invoke GetPrivateProfileString, addr cIniSectIdentification, $OfsCStr("Name"), $OfsCStr("Solution"), \
-                      addr cItemBuffer, lengthof cItemBuffer, addr cFileName
-
-  OCall [xsi].TView::TreeView.NodeInsert, TVI_ROOT, TVI_FIRST, addr cItemBuffer, 3, 4
-  mov hProjNode, xax
-  DbgHex xax
-  OCall [xsi].TVHandles::%XWordVector.Insert, xax
-
-  ;Load "folder" children items
-  mov xdi, xax
-  xor ebx, ebx
-  .while TRUE
-    inc ebx
-    lea xdi, cItemName
-    WriteF xdi, "¦UD", ebx
-    lea xdi, cDefaultName
-    WriteF xdi, "Folder ¦UD", ebx
-    invoke GetPrivateProfileString, $OfsCStr("Folders"), addr cItemName, NULL, \
-                        addr cItemBuffer, lengthof cItemBuffer, addr cFileName
-    .break .if eax == 0
-    OCall [xsi].TView::TreeView.NodeInsert, hProjNode, xdi, addr cItemBuffer, 3, 4
-    mov xdi, xax
-    OCall [xsi].TVHandles::%XWordVector.Insert, xax
-  .endw
-  
-  ;Load "file" items
-  xor ebx, ebx
-  .while TRUE
-    inc ebx
-    lea xdi, cItemName
-    WriteF xdi, "¦UD", ebx
-    invoke GetPrivateProfileString, $OfsCStr("Files"), addr cItemName, NULL, \
-                        addr cItemBuffer, lengthof cItemBuffer, addr cFileName
-    .break .if eax == 0
-    invoke GetFileFromString, addr cItemBuffer
-    mov xdi, xax
-    OCall [xsi].TVHandles::%XWordVector.ItemAt, edx
-    mov dIconIndex, 5
-    .ifBitSet [xdi].FILE.dFlags, FF_CMD
-      mov dIconIndex, 6
-    .endif
-    OCall [xsi].TView::TreeView.NodeInsert, HANDLE ptr [xax], TVI_FIRST, [xdi].FILE.pDisplayName, dIconIndex, dIconIndex
-  .endw
-  
-  ;Expand all items
-  .VecForEach [xsi].TVHandles::%XWordVector, ebx
-    invoke SendMessage, [xsi].TView.hWnd, TVM_EXPAND, TVE_EXPAND, HANDLE ptr [xax]
-  .VecNext 
-  
-MethodEnd
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
 ; Method:     ProjectWnd.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -225,15 +233,6 @@ Method ProjectWnd.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
   invoke EndPaint, [xsi].hWnd, addr PS
   invoke DefWindowProc,[xsi].hWnd, WM_PAINT, wParam, lParam
-MethodEnd
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     ProjectWnd.Save
-; Purpose:    Save the project configuration file.
-; Arguments:  None.
-; Return:     eax = TRUE if succeeded, otherwise FALSE.
-
-Method ProjectWnd.Save, uses xsi
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

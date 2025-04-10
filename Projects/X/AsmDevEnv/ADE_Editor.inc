@@ -670,6 +670,7 @@ MethodEnd
 ; Purpose:    Open a code file.
 ; Arguments:  Arg1: -> FullFileName.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
+; Note:       Statusbar is updated when the new child window is activated. 
 
 Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
   local hFile:HANDLE, dFileSize:DWORD, dBytesRead:DWORD, pFileBuffer:POINTER, pDataBegin:POINTER
@@ -680,7 +681,11 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
   mov dResult, FALSE
   mov xbx, [xsi].pResources
   m2m dLineTermination, [xbx].$Obj(EditorResources).dLineTermination, eax
-  OCall [xbx].$Obj(EditorResources).FileFormats::FileFormatCollection.GetFormat, pFullFileName
+  mov xax, [xsi].pOwner
+  mov xdi, [xax].$Obj(ClientWnd).pOwner
+  OCall [xdi].$Obj(Application).FileTypes::FileTypeCollection.GetContentType, pFullFileName
+  mov [xsi].dContentType, eax
+  OCall [xdi].$Obj(Application).FileTypes::FileTypeCollection.GetFileFormat, pFullFileName
   mov [xsi].dFileFormat, eax
   mov dFileFormat, eax
   invoke LoadCursor, 0, IDC_WAIT
@@ -720,7 +725,7 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
         .else
           .if dFileFormat == EFF_UNKNOWN
             lea xbx, cMessage
-            WriteF xbx, "Unknown format for file\n\´¦SU\´ \:", pFullFileName
+            WriteF xbx, "Unknown information for file\n\´¦SU\´ \:", pFullFileName
             invoke MessageBox, [xsi].hWnd, addr cMessage, addr cError, MB_OK or MB_ICONERROR
             jmp @@Exit
           .elseif dFileFormat == EFF_UTF8BOM
@@ -1126,8 +1131,9 @@ Method Editor.SaveAs, uses xbx xsi
     .if SUCCEEDED(eax)                                  ;ERROR_CANCELLED (0x800704C7) if cancel button was pressed
       ICall pIFSDlg::IFileSaveDialog.GetResult, addr pIShellItem
       ICall pIShellItem::IShellItem.GetDisplayName, SIGDN_FILESYSPATH, addr pDisplayName
-      mov xax, [xsi].pResources
-      OCall [xax].$Obj(EditorResources).FileFormats::FileFormatCollection.GetFormat, pDisplayName
+      mov xcx, [xsi].pOwner                             ;ClientWnd
+      mov xax, [xcx].$Obj(ClientWnd).pOwner
+      OCall [xax].$Obj(Application).FileTypes::FileTypeCollection.GetFileFormat, pDisplayName
       .if eax == EFF_UNKNOWN
         lea xbx, cMessage
         WriteF xbx, "Unknown format for file\n\´¦SU\´ \:\n\nChoose a known file extension.", pDisplayName
@@ -1702,82 +1708,104 @@ MethodEnd
 ; Return:     Nothing.
 
 Method Editor.UpdateStatusbar, uses xbx xdi xsi
-  local dFirstCharIndex:DWORD, dLastCharIndex:DWORD, dSelCount:DWORD
-  local dLineNumberFirst:DWORD, dLineCharPos:DWORD, dFirstLineCharIndex:DWORD
-  local dLineCount:DWORD, cTextBuffer[1024]:CHR, wResText[1024]:CHRW
+  local cTextBuffer[1024]:CHR, wResText[1024]:CHRW
+  local pContentType:PSTRING, pFileFormat:PSTRING, pLineTermination:PSTRING
 
 ;  DbgText "DbgMdiChildTxt.UpdateStatusbar"
   SetObject xsi
-  mov xax, [xsi].pOwner
-  invoke SendMessage, [xax].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-  .if xax == [xsi].hWnd                                 ;Only if this window is the active one
-    mov xcx, [xsi].pOwner
-    mov xbx, [xcx].$Obj(ClientWnd).pOwner               ;xbx -> Application
+  mov xcx, [xsi].pOwner
+  mov xbx, [xcx].$Obj(ClientWnd).pOwner               ;xbx -> Application
 
-;    invoke SendMessage, [xsi].hEdit, EM_GETSEL, addr dFirstCharIndex, addr dLastCharIndex
-;    mov eax, dLastCharIndex
-;    sub eax, dFirstCharIndex
-;    mov dSelCount, eax
-;    invoke SendMessage, [xsi].hEdit, EM_LINEFROMCHAR, dFirstCharIndex, 0
-;    mov dLineNumberFirst, eax
-;    invoke SendMessage, [xsi].hEdit, EM_LINEFROMCHAR, dLastCharIndex, 0
-;    sub eax, dLineNumberFirst
-;    inc eax
-;    mov dLineCount, eax
-
-    .if dSelCount == 0
-      OCall [xbx].$Obj(Application).SBar::Statusbar.SetPartText, 2, NULL, SBT_SUNKEN
-    .else
-      lea xdi, cTextBuffer
-      mov edx, [xbx].$Obj(Application).dLangID
-      add edx, 142                                      ;"Selection"
-      invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
-      WriteF xdi, "¦SU: ", addr wResText
-      mov edx, [xbx].$Obj(Application).dLangID
-      .if dSelCount == 1
-        add edx, 143                                    ;"character"
-        invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
-        WriteF xdi, "1 ¦SU", addr wResText
-      .else
-        add edx, 144                                    ;"characters"
-        invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
-        WriteF xdi, "¦UD ¦SU", dSelCount, addr wResText
-      .endif
-      WriteF xdi, ", "
-      mov edx, [xbx].$Obj(Application).dLangID
-      .if dLineCount == 1
-        add edx, 145                                    ;"line"
-        invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
-        WriteF xdi, "1 ¦SU", addr wResText
-      .else
-        add edx, 146                                    ;"lines"
-        invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
-        WriteF xdi, "¦UD ¦SU", dLineCount, addr wResText
-      .endif
-      OCall [xbx].$Obj(Application).SBar::Statusbar.SetPartText, 2, addr cTextBuffer, SBT_SUNKEN
-    .endif
-
-;    lea xdi, cTextBuffer
-;    invoke GetWindowText, [xsi].hWnd, xdi, lengthof(cTextBuffer)
-;    lea xdi, [xdi + sizeof(CHR)*xax]
-;    invoke SendMessage, [xsi].hEdit, EM_LINEINDEX, dLineNumberFirst, 0
-;    mov dFirstLineCharIndex, eax
-;    mov ecx, dFirstCharIndex
-;    sub ecx, eax
-;    mov dLineCharPos, ecx
-;    mov edx, [xbx].$Obj(Application).dLanguage
-;    add edx, 140                                        ;"Caret at line"
-;    invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
-;    inc dLineNumberFirst                                ;First line index is 0 => 1
-;    WriteF xdi, ": ¦SU ¦UD, ", addr wResText, dLineNumberFirst
-;    mov edx, [xbx].$Obj(Application).dLanguage
-;    add edx, 141                                        ;"position"
-;    invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
-;    mov eax, dFirstLineCharIndex
-;    sub dFirstCharIndex, eax
-;    WriteF xdi, "¦SU ¦UD", addr wResText, dFirstCharIndex
-;    OCall [xbx].$Obj(Application).pStatusbar::Statusbar.SetPartText, 1, addr cTextBuffer, SBT_SUNKEN
+  lea xdi, cTextBuffer
+  mov eax, [xsi].dContentType
+  .if eax == ECT_ASM
+    c2m pContentType, $OfsCStr("MASM"), ecx
+  .elseif eax == ECT_RES
+    c2m pContentType, $OfsCStr("Resource"), ecx
+  .else
+    c2m pContentType, $OfsCStr("Text"), ecx
   .endif
+  WriteF xdi, "¦SU", pContentType  
+  OCall [xbx].$Obj(Application).SBar::Statusbar.SetPartText, 3, addr cTextBuffer, SBT_SUNKEN
+
+  lea xdi, cTextBuffer
+  mov eax, [xsi].dFileFormat
+  .if eax == EFF_ANSI
+    c2m pFileFormat, $OfsCStr("ANSI"), ecx
+  .elseif eax == EFF_UTF8
+    c2m pFileFormat, $OfsCStr("UTF-8"), ecx
+  .elseif eax == EFF_UTF8BOM
+    c2m pFileFormat, $OfsCStr("UTF-8 BOM"), ecx
+  .elseif eax == EFF_UTF16BOM
+    c2m pFileFormat, $OfsCStr("UTF-16 BOM"), ecx
+  .else
+    c2m pFileFormat, $OfsCStr("Unknown"), ecx
+  .endif
+  mov xcx, [xsi].pResources
+  mov eax, [xcx].$Obj(EditorResources).dLineTermination
+  .if eax == ELT_LF
+    c2m pLineTermination, $OfsCStr("LF"), ecx
+  .elseif eax == ELT_CR
+    c2m pLineTermination, $OfsCStr("CR"), ecx
+  .else
+    c2m pLineTermination, $OfsCStr("CR+LF"), ecx
+  .endif
+  WriteF xdi, "¦SU  ¦SU", pFileFormat, pLineTermination  
+  OCall [xbx].$Obj(Application).SBar::Statusbar.SetPartText, 4, addr cTextBuffer, SBT_SUNKEN
+
+;  .if dSelCount == 0
+;    OCall [xbx].$Obj(Application).SBar::Statusbar.SetPartText, 2, NULL, SBT_SUNKEN
+;  .else
+;    lea xdi, cTextBuffer
+;    mov edx, [xbx].$Obj(Application).dLangID
+;    add edx, 142                                      ;"Selection"
+;    invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+;    WriteF xdi, "¦SU: ", addr wResText
+;    mov edx, [xbx].$Obj(Application).dLangID
+;    .if dSelCount == 1
+;      add edx, 143                                    ;"character"
+;      invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+;      WriteF xdi, "1 ¦SU", addr wResText
+;    .else
+;      add edx, 144                                    ;"characters"
+;      invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+;      WriteF xdi, "¦UD ¦SU", dSelCount, addr wResText
+;    .endif
+;    WriteF xdi, ", "
+;    mov edx, [xbx].$Obj(Application).dLangID
+;    .if dLineCount == 1
+;      add edx, 145                                    ;"line"
+;      invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+;      WriteF xdi, "1 ¦SU", addr wResText
+;    .else
+;      add edx, 146                                    ;"lines"
+;      invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+;      WriteF xdi, "¦UD ¦SU", dLineCount, addr wResText
+;    .endif
+;    OCall [xbx].$Obj(Application).SBar::Statusbar.SetPartText, 2, addr cTextBuffer, SBT_SUNKEN
+;  .endif
+;
+;  lea xdi, cTextBuffer
+;  invoke GetWindowText, [xsi].hWnd, xdi, lengthof(cTextBuffer)
+;  lea xdi, [xdi + sizeof(CHR)*xax]
+;  invoke SendMessage, [xsi].hEdit, EM_LINEINDEX, dLineNumberFirst, 0
+;  mov dFirstLineCharIndex, eax
+;  mov ecx, dFirstCharIndex
+;  sub ecx, eax
+;  mov dLineCharPos, ecx
+;  mov edx, [xbx].$Obj(Application).dLanguage
+;  add edx, 140                                        ;"Caret at line"
+;  invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+;  inc dLineNumberFirst                                ;First line index is 0 => 1
+;  WriteF xdi, ": ¦SU ¦UD, ", addr wResText, dLineNumberFirst
+;  mov edx, [xbx].$Obj(Application).dLanguage
+;  add edx, 141                                        ;"position"
+;  invoke LoadStringW, hInstance, edx, addr wResText, lengthof wResText
+;  mov eax, dFirstLineCharIndex
+;  sub dFirstCharIndex, eax
+;  WriteF xdi, "¦SU ¦UD", addr wResText, dFirstCharIndex
+;  OCall [xbx].$Obj(Application).pStatusbar::Statusbar.SetPartText, 1, addr cTextBuffer, SBT_SUNKEN
+;  .endif
 MethodEnd
 
 ; ——————————————————————————————————————————————————————————————————————————————————————————————————

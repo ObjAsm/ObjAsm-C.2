@@ -16,10 +16,10 @@ VER_PRODUCTVERSION            equ       1,0,0,0
 VER_PRODUCTVERSION_STR        textequ   <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       78
-BUILD_DATE_STR                textequ   <2025-04-08>
+BUILD_NUMBER                  equ       87
+BUILD_DATE_STR                textequ   <2025-04-10>
 BUILD_BITNESS                 equ       64
-BUILD_MODE                    equ       DBG
+BUILD_MODE                    equ       RLS
 
 ;Menu IDs
 IDM_FILE                      equ       050
@@ -69,7 +69,11 @@ IDM_HELP                      equ       130
 IDM_HELP_HELP                 equ       131
 IDM_HELP_ABOUT                equ       132
 
-IDM_CONTEXT_EDITOR            equ       133
+IDM_NEW_MASM                  equ       140
+IDM_NEW_RESOURCE              equ       141
+IDM_NEW_TEXT                  equ       142
+
+IDM_CONTEXT_EDITOR            equ       150
 
 ;Dialog IDs 
 IDC_CONTROL                   equ       800

@@ -436,7 +436,7 @@ ADE_EditorViewID                  equ     0000012205
 ADE_EditorLineID                  equ     0000012206
 ADE_KeywordGroupListID            equ     0000012207
 ADE_KeywordListID                 equ     0000012208
-ADE_FileFormatCollectionID        equ     0000012209
+ADE_FileTypeCollectionID          equ     0000012209
 ADE_EditorSharedResourcesID       equ     0000012210
 ADE_EditorResourcesID             equ     0000012211
 ADE_ScrollBarVertID               equ     0000012212
