@@ -276,7 +276,7 @@ Method EditorView.CaretRefLocLoad, uses xbx xsi, pRefLoc:PLOCATION
   mov xax, [xdx].LOCATION.pEditorLine 
   .if xax == NULL
     mov xax, [xbx].$Obj(Editor).LinkedListHead.pFirstMember
-    sub xax, offset $Obj(EditorLine).Link
+    sub xax, offset $Obj(EditorLine).LineLink
     mov [xsi].sdCaretVisLineOffset, 0
   .else
     GotoNextVisEditorLine xax
@@ -400,10 +400,10 @@ Method EditorView.ClpBrdCopy, uses xbx xdi xsi
         add edx, [xax].$Obj(EditorLine).Selection.dEndIndex
         sub edx, [xax].$Obj(EditorLine).Selection.dBegIndex
         .break .if xax == xdi
-        mov xax, [xax].$Obj(EditorLine).Link.pLinkFwrd
+        mov xax, [xax].$Obj(EditorLine).LineLink.pLinkFwrd
         .break .if xax == NULL
         add edx, 2                                      ;CRLF
-        sub xax, offset $Obj(EditorLine).Link
+        sub xax, offset $Obj(EditorLine).LineLink
       .endw
       inc edx                                           ;Ending ZTC
   if sizeof(CHR) eq 2
@@ -430,9 +430,9 @@ Method EditorView.ClpBrdCopy, uses xbx xdi xsi
           invoke MemClone, xsi, xdx, eax
           add xsi, xax
           .break .if xbx == xdi
-          mov xbx, [xbx].$Obj(EditorLine).Link.pLinkFwrd
+          mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd
           .break .if xbx == NULL
-          sub xbx, offset $Obj(EditorLine).Link
+          sub xbx, offset $Obj(EditorLine).LineLink
           invoke MemClone, xsi, addr cCRLF, 2*sizeof(CHR)
           add xsi, 2*sizeof(CHR)
         .endw
@@ -557,7 +557,7 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
             mrm dCharIndex, [xsi].CaretLocation.dCharIndex, ecx
             m2m dLineNumber, [xsi].CaretLocation.dLineNumber, edx
             mov xax, [xsi].CaretLocation.pEditorLine
-            add xax, offset $Obj(EditorLine).Link
+            add xax, offset $Obj(EditorLine).LineLink
             mov pLink, xax
             mov dInsLineCount, 0
             .repeat
@@ -580,14 +580,14 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
                   OCall pEditorLine::EditorLine.SpaceFill, dCharIndex
                 .else
                   mov xax, pLink
-                  sub xax, offset $Obj(EditorLine).Link
+                  sub xax, offset $Obj(EditorLine).LineLink
                   mov pEditorLine, xax
                 .endif
                 OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi
                 
                 ;Move to next line link
                 mov xax, pEditorLine
-                mov xcx, [xax].$Obj(EditorLine).Link.pLinkFwrd
+                mov xcx, [xax].$Obj(EditorLine).LineLink.pLinkFwrd
                 mov pLink, xcx
   
                 ;Move to next line in the clipboard buffer
@@ -830,7 +830,7 @@ Method EditorView.GetCodeData, uses xbx xdi xsi, dFirstVisibleLineNumber:DWORD
   ;Start searching
   .while xbx != NULL
     inc edx
-    lea xax, [xbx - offset $Obj(EditorLine).Link]
+    lea xax, [xbx - offset $Obj(EditorLine).LineLink]
     .ifBitClr [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
       inc dTotalVisLineCount
     .endif
@@ -839,14 +839,14 @@ Method EditorView.GetCodeData, uses xbx xdi xsi, dFirstVisibleLineNumber:DWORD
       mov d1StVisLineNum, edx
       mov p1StVisLine, xax
     .endif
-    mov xbx, [xbx].LDLL_MEMBER.pLinkFwrd                  ;Move to next EditorLine.Link
+    mov xbx, [xbx].LDLL_MEMBER.pLinkFwrd                  ;Move to next EditorLine.LineLink
   .endw
   mov dTotalLineCount, edx
 
   .if dFirstVisLineCount == 0                             ;dFirstVisibleLineNumber is hidden
     mov xax, [xcx].$Obj(Editor).LinkedListHead.pFirstMember
     .if xax != NULL
-      lea xax, [xax - offset $Obj(EditorLine).Link]
+      lea xax, [xax - offset $Obj(EditorLine).LineLink]
       .ifBitSet [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
         GotoNextVisEditorLine xax
         mov dFirstVisLineCount, 1
@@ -914,7 +914,7 @@ Method EditorView.Init, uses xbx xdi xsi, pOwner:POINTER, pRect:PRECT, pResource
   mov xdx, pOwner
   mov xcx, [xdx].$Obj(EditorDisplay).pOwner
   mov xax, [xcx].$Obj(Editor).LinkedListHead.pFirstMember
-  sub xax, offset $Obj(EditorLine).Link
+  sub xax, offset $Obj(EditorLine).LineLink
   mov [xsi].FirstVisChar.pEditorLine, xax
 
   OCall xsi.GetCodeData, 1                              ;Get code data
@@ -1775,7 +1775,7 @@ Method EditorView.OnPaint, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       OCall xbx::EditorLine.Draw, xsi, addr CodeLineRect, dCommentExitChar
       mov dCommentExitChar, eax
       .repeat
-        mov xbx, [xbx].$Obj(EditorLine).Link.pLinkFwrd
+        mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd
         .if xbx == NULL
           mov eax, [xsi].TextRect.bottom
           .if CodeLineRect.top < eax
@@ -1786,7 +1786,7 @@ Method EditorView.OnPaint, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
           .endif
           jmp @@Done
         .endif
-        sub xbx, offset $Obj(EditorLine).Link             ;xbx -> EditorLine
+        sub xbx, offset $Obj(EditorLine).LineLink             ;xbx -> EditorLine
         test [xbx].$Obj(EditorLine).dFlags, TLF_HIDDEN
       .until ZERO?
       mov ecx, [xdi].$Obj(EditorResources).dLineHeight
@@ -2134,7 +2134,7 @@ Method EditorView.ScrollVisPageDown, uses xbx xsi, dPageSize:DWORD
     mov xdx, [xsi].pOwner
     mov xcx, [xdx].$Obj(EditorDisplay).pOwner
     mov xax, [xcx].$Obj(Editor).LinkedListHead.pLastMember
-    sub xax, offset $Obj(EditorLine).Link
+    sub xax, offset $Obj(EditorLine).LineLink
     .ifBitSet [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
       GotoPrevVisEditorLine xax,, ecx, ebx
       sub dVisLineCount, ebx
@@ -2181,7 +2181,7 @@ Method EditorView.ScrollVisPageUp, uses xbx xsi, dPageSize:DWORD
     mov xcx, [xsi].pOwner
     mov xdx, [xcx].$Obj(EditorDisplay).pOwner
     mov xax, [xdx].$Obj(Editor).LinkedListHead.pFirstMember
-    sub xax, offset $Obj(EditorLine).Link
+    sub xax, offset $Obj(EditorLine).LineLink
     .ifBitSet [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
       GotoNextVisEditorLine xax,, ecx, edx
     .else

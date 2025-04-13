@@ -17,7 +17,7 @@
 ;   - Line termination (CR, LF, CRLF, NULL)
 ;   - Save/SaveAs new style dialog
 ;   - Load new style dialog
-;   - Drag & Drop
+;   - Drag & Drop, It automatically detects the file content and selects the best template.
 ;   - Control Keys
 ;   - Search modeless dialog (Dynamic Layout)
 ;   - General menu languages (English, German, Italian, Russian, Spanish)
@@ -28,6 +28,12 @@
 ;   - Find and Replace functionality
 ;   - 32 and 64 bit release versions
 ;   - Fast loading (~100MB/s) and rendering
+;   - WM_QUERYENDSESSION logic 
+;   - File.New now has the option to select the editor template 
+;   - Same functionality for the "New" toolbar button using a drop down button.
+;   - Editor templates: MASM, Resource & Plain Text. Each template has its own settings in the ini file 
+;   - Information in the status bar what the application thinks it is editing 
+;   - Tooltips for the toolbars 
 ;
 ; ==================================================================================================
 

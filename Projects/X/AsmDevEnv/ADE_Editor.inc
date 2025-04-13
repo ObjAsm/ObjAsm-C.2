@@ -303,13 +303,13 @@ Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, p
 
       ;Move to next EditorLine
       .if [xdi].FINDDLGCHOICES.dDirection == FDD_DOWN || [xdi].FINDDLGCHOICES.dDirection == FDD_ALL
-        mov xax, [xbx].$Obj(EditorLine).Link.pLinkFwrd
+        mov xax, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd
         .break .if xax == NULL
       .else
-        mov xax, [xbx].$Obj(EditorLine).Link.pLinkBack
+        mov xax, [xbx].$Obj(EditorLine).LineLink.pLinkBack
         .break .if xax == NULL
       .endif
-      sub xax, offset $Obj(EditorLine).Link
+      sub xax, offset $Obj(EditorLine).LineLink
 
       .ifBitClr [xbx].$Obj(EditorLine).dFlags, TLF_HIDDEN
         inc sdVisLineScrollCount
@@ -456,7 +456,7 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
     ;Insert an empty line
     mov xbx, $New(EditorLine)
     lea xcx, [xsi].LinkedListHead
-    lea xdx, [xbx].$Obj(EditorLine).Link
+    lea xdx, [xbx].$Obj(EditorLine).LineLink
     LDLL_InsertLast xcx, xdx, xax
     OCall xbx::EditorLine.Init, xsi
     mov [xsi].dMaxLineCharCount, 0
@@ -526,7 +526,7 @@ Method Editor.LineNew, uses xbx xsi, dCharCapacity:DWORD
   .if xax != NULL
     mov xbx, xax
     lea xcx, [xsi].LinkedListHead
-    lea xdx, [xbx].$Obj(EditorLine).Link
+    lea xdx, [xbx].$Obj(EditorLine).LineLink
     LDLL_InsertLast xcx, xdx, xax
     OCall xbx::EditorLine.Init, xsi
     OCall xbx::EditorLine.BufferResize, dCharCapacity
@@ -1196,7 +1196,7 @@ Method Editor.SaveTo, uses xbx xdi xsi, pFullFileName:PSTRING
 
           ;Start looping
           .while xbx != NULL
-            lea xbx, [xbx - offset $Obj(EditorLine).Link]
+            lea xbx, [xbx - offset $Obj(EditorLine).LineLink]
             .ifBitSet [xbx].$Obj(EditorLine).dFlags, TLF_DIRTY_LINE_PREV
               BitSet [xbx].$Obj(EditorLine).dFlags, TLF_SAVED_LINE_PREV
             .endif
@@ -1278,7 +1278,7 @@ Method Editor.SaveTo, uses xbx xdi xsi, pFullFileName:PSTRING
               .endif
             .endif
 
-            mov xbx, [xbx].$Obj(EditorLine).Link.pLinkFwrd  ;Move to next EditorLine.Link
+            mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd  ;Move to next EditorLine.LineLink
           .endw
           BitClr [xsi].dFlags, EIF_NEW_FILE or EIF_DIRTY
           mov dResult, TRUE
@@ -1315,13 +1315,13 @@ Method Editor.SelectAll, uses xsi
   .ifBitClr [xsi].dFlags, EIF_BLOCK_MODE
     mov xcx, [xsi].LinkedListHead.pFirstMember
     .if xcx != NULL
-      lea xdx, [xcx - offset $Obj(EditorLine).Link]
+      lea xdx, [xcx - offset $Obj(EditorLine).LineLink]
       mov [xsi].SelectionFst.pEditorLine, xdx
       mov [xsi].SelectionFst.dCharIndex, 0
       mov [xsi].SelectionFst.dLineNumber, 1
 
       mov xcx, [xsi].LinkedListHead.pLastMember
-      lea xdx, [xcx - offset $Obj(EditorLine).Link]
+      lea xdx, [xcx - offset $Obj(EditorLine).LineLink]
       mov [xsi].SelectionLst.pEditorLine, xdx
       mov eax, [xdx].$Obj(EditorLine).dLength
       mov [xsi].SelectionLst.dCharIndex, eax
@@ -1373,7 +1373,7 @@ Method Editor.SelectionDelete, uses xbx xdi xsi
         .ifBitSet [xbx].$Obj(EditorLine).dFlags, TLF_EOL_MARKED
           .if eax == [xbx].$Obj(EditorLine).dLength
             ;Delete the line completely
-            m2m pNextMember, [xbx].$Obj(EditorLine).Link.pLinkFwrd, xax  ;Goto next member
+            m2m pNextMember, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd, xax  ;Goto next member
             OCall xbx::EditorLine.LineDelete, dLineNumber          ;§§ move into he Undo buffer
             jmp @F                                      ;Don't inc LineNumber
           .endif
@@ -1381,12 +1381,12 @@ Method Editor.SelectionDelete, uses xbx xdi xsi
       .endif
       OCall xbx::EditorLine.CharDelete, edx, eax
       OCall xbx::EditorLine.SelectionReset
-      m2m pNextMember, [xbx].$Obj(EditorLine).Link.pLinkFwrd, xax  ;Goto next member
+      m2m pNextMember, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd, xax  ;Goto next member
       inc dLineNumber
   @@:
       .break .if xbx == xdi
       mov xbx, pNextMember
-      sub xbx, offset $Obj(EditorLine).Link
+      sub xbx, offset $Obj(EditorLine).LineLink
     .endw
 
     ;Merge first and last lines if necessary
@@ -1479,9 +1479,9 @@ Method Editor.SelectionResetLines, uses xbx xdi xsi
       OCall xbx::EditorLine.SelectionReset
       add dNeedRedrawing, eax
       .break .if xbx == xdi
-      mov xbx, [xbx].$Obj(EditorLine).Link.pLinkFwrd    ;Goto next line
+      mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd    ;Goto next line
       .break .if xbx == NULL                            ;Just in case
-      sub xbx, offset $Obj(EditorLine).Link
+      sub xbx, offset $Obj(EditorLine).LineLink
     .endw
   .endif
 
@@ -1552,9 +1552,9 @@ Method Editor.SelectionSet, uses xdi xbx xsi
         mov [xax].$Obj(EditorLine).Selection.dBegIndex, ecx
         mov [xax].$Obj(EditorLine).Selection.dEndIndex, edx
         .break .if xax == xdi                           ;Last selected line reached
-        mov xax, [xax].$Obj(EditorLine).Link.pLinkFwrd
+        mov xax, [xax].$Obj(EditorLine).LineLink.pLinkFwrd
         .break .if xax == NULL
-        sub xax, offset $Obj(EditorLine).Link
+        sub xax, offset $Obj(EditorLine).LineLink
       .endw
     .else
       ;Insert/Overwrite mode selection
@@ -1575,10 +1575,11 @@ Method Editor.SelectionSet, uses xdi xbx xsi
         mov [xax].$Obj(EditorLine).Selection.dBegIndex, ecx
         mov [xax].$Obj(EditorLine).Selection.dEndIndex, edx
 
-        ;Set/Reset pHilitedWord & dHilitedLen
+        ;Reset pHilitedWord & dHilitedLen
         mov [xsi].pHilitedWord, NULL
         mov [xsi].dHilitedLen, 0
         mov xbx, [xax].$Obj(EditorLine).pBuffer
+        ;Check before the selection beginning for !CHR_WORD
         mov edx, [xax].$Obj(EditorLine).Selection.dBegIndex
         cmp edx, 0
         lea xdi, [xbx + sizeof(CHR)*xdx]
@@ -1587,6 +1588,7 @@ Method Editor.SelectionSet, uses xdi xbx xsi
         GetCharType ecx, edx
         .if !(edx & CHR_WORD)
       @@:
+          ;Check after the selection ending for !CHR_WORD
           mov edx, [xax].$Obj(EditorLine).Selection.dEndIndex
           cmp edx, [xax].$Obj(EditorLine).dLength
           lea xbx, [xbx + sizeof(CHR)*xdx]
@@ -1595,12 +1597,29 @@ Method Editor.SelectionSet, uses xdi xbx xsi
           GetCharType ecx, edx
           .if !(edx & CHR_WORD)
       @@:
+            ;Set pHilitedWord & dHilitedLen
             mov [xsi].pHilitedWord, xdi
             sub xbx, xdi
           if TARGET_STR_TYPE eq STR_TYPE_WIDE
             shr ebx, 1
           endif
             mov [xsi].dHilitedLen, ebx
+
+            ;Check the selection inside for all CHR_WORDs
+            test ebx, ebx
+            .while !ZERO?
+              movzx ecx, CHR ptr [xdi]
+              GetCharType ecx, edx
+              .break .if !(edx & CHR_WORD)
+              add xdi, sizeof CHR
+              dec ebx
+            .endw
+            
+            ;Reset pHilitedWord & dHilitedLen
+            .if ebx != 0
+              mov [xsi].pHilitedWord, NULL
+              mov [xsi].dHilitedLen, 0
+            .endif
           .endif
         .endif
       .else
@@ -1618,8 +1637,8 @@ Method Editor.SelectionSet, uses xdi xbx xsi
         .while xax != xdi
           mov xcx, xax
           ;Move to the next line
-          mov xax, [xax].$Obj(EditorLine).Link.pLinkFwrd
-          sub xax, offset $Obj(EditorLine).Link
+          mov xax, [xax].$Obj(EditorLine).LineLink.pLinkFwrd
+          sub xax, offset $Obj(EditorLine).LineLink
           .ifBitClr [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
             inc [xsi].dSelectionVisLineCnt
           .endif

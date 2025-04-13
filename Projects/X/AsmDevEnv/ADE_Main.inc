@@ -32,11 +32,20 @@ ToolbarFile DEF_TOOLBAR {IDC_TOOLBARFILE, TBSTYLE, TBSTYLE_EX_MIXEDBUTTONS or TB
                                                                          TBSTYLE_CHECK}
 
 ToolbarEdit DEF_TOOLBAR {IDC_TOOLBAREDIT, TBSTYLE, TBSTYLE_EX_MIXEDBUTTONS, \
-                         $OfsTStr("Edit operations"), {<0,0,0,0>}, 6}
+                         $OfsTStr("Edit operations"), {<0,0,0,0>}, 15}
   TBBUTTON {IDB_EDIT_CUT,         IDM_EDIT_CUT,         TBSTATE_ENABLED, TBSTYLE_BUTTON}
   TBBUTTON {IDB_EDIT_COPY,        IDM_EDIT_COPY,        TBSTATE_ENABLED, TBSTYLE_BUTTON}
   TBBUTTON {IDB_EDIT_PASTE,       IDM_EDIT_PASTE,       TBSTATE_ENABLED, TBSTYLE_BUTTON}
   TBBUTTON {IDB_EDIT_DELETE,      IDM_EDIT_DELETE,      TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {0,                    -3,                   TBSTATE_ENABLED, TBSTYLE_SEP}
+  TBBUTTON {IDB_EDIT_UNDO,        IDM_EDIT_UNDO,        TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_EDIT_REDO,        IDM_EDIT_REDO,        TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {0,                    -3,                   TBSTATE_ENABLED, TBSTYLE_SEP}
+  TBBUTTON {IDB_EDIT_INDENT,      IDM_EDIT_INDENT,      TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_EDIT_UNINDENT,    IDM_EDIT_UNINDENT,    TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {0,                    -3,                   TBSTATE_ENABLED, TBSTYLE_SEP}
+  TBBUTTON {IDB_EDIT_COMMENT,     IDM_EDIT_COMMENT,     TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_EDIT_UNCOMMENT,   IDM_EDIT_UNCOMMENT,   TBSTATE_ENABLED, TBSTYLE_BUTTON}
   TBBUTTON {0,                    -3,                   TBSTATE_ENABLED, TBSTYLE_SEP}
   TBBUTTON {IDB_EDIT_FIND,        IDM_EDIT_FIND,        TBSTATE_ENABLED, TBSTYLE_BUTTON}
 
@@ -300,11 +309,13 @@ Object EditorLine, ADE_EditorLineID, Primer
   StaticMethod      LineDelete,           DWORD
   StaticMethod      LineJoinNext,         DWORD
   StaticMethod      LineJoinPrev,         DWORD
+  StaticMethod      Redo
   StaticMethod      SelectionReset
   StaticMethod      SetDirty
   StaticMethod      SpaceFill,            DWORD
+  StaticMethod      Undo
 
-  DefineVariable    Link,                 LDLL_MEMBER,{NULL, NULL}
+  DefineVariable    LineLink,                 LDLL_MEMBER,{NULL, NULL}
   DefineVariable    pBuffer,              POINTER,    NULL      ;Memory holding wide chars and an ending ZTC
   DefineVariable    dCharCapacity,        DWORD,      0         ;In characters not including the ZTC
   DefineVariable    dLength,              DWORD,      0         ;In characters not including the ZTC
@@ -754,6 +765,8 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   DefineVariable    PrintMargin,          RECT,       {}
   DefineVariable    hDevMode,             HGLOBAL,    0
   DefineVariable    hDevNames,            HGLOBAL,    0
+  
+  DefineVariable    dNewDefault,          DWORD,      ECT_ASM
 
   ;UI elements
   Embed     IconImageList,      MaskedImageList
@@ -919,8 +932,8 @@ DbgEditorLine macro InstanceReg, InfoText, Dest
     DbgSaveContext
     DbgClearTxt Dest
     DbgHex InstanceReg, "Instance", Dest
-    DbgHex [InstanceReg].$Obj(EditorLine).Link.pLinkFwrd,, Dest
-    DbgHex [InstanceReg].$Obj(EditorLine).Link.pLinkBack,, Dest
+    DbgHex [InstanceReg].$Obj(EditorLine).LineLink.pLinkFwrd,, Dest
+    DbgHex [InstanceReg].$Obj(EditorLine).LineLink.pLinkBack,, Dest
     DbgHex [InstanceReg].$Obj(EditorLine).pBuffer,, Dest
     DbgStrW [InstanceReg].$Obj(EditorLine).pBuffer,, Dest
     DbgDec [InstanceReg].$Obj(EditorLine).dCharCapacity,, Dest
@@ -941,6 +954,7 @@ endm
 include ADE_Helper.inc
 include ADE_About.inc
 include ADE_ProjectWnd.inc
+include ADE_UndoRedo.inc
 include ADE_Application.inc
 include ADE_EditorSharedResources.inc
 include ADE_EditorResources.inc

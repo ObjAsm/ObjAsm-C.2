@@ -84,7 +84,7 @@ String szAboutMarkup, \
       "[~]", \
     "[~]"
 ExtendString \
-    "{TR 280}{TL 300}", \
+    "{TR 320}{TL 350}", \
     "[FI 0,H+1]{B}{LINE}{B}", \
       "{T}[F'Webdings',C#FF5F5F,H+7]{#F07E}[~]", \
       "  %s", \
@@ -116,16 +116,15 @@ Method DialogAbout.CtlsSet, uses xbx xsi
 
   SetObject xsi
   mov xax, [xsi].pOwner
-;  mov ebx, [xax].$Obj(Application).dLanguage
-;  invoke LoadString, hInstance, addr [ebx + 104], addr cAboutStr, lengthof(cAboutStr)
-;  invoke SendMessage, [xsi].hWnd, WM_SETTEXT, 0, addr cAboutStr
-;
-;  invoke LoadString, hInstance, addr [ebx + 105], addr cResStr1, lengthof(cResStr1)
-;  invoke LoadString, hInstance, addr [ebx + 106], addr cResStr2, lengthof(cResStr2)
-;  invoke LoadString, hInstance, addr [ebx + 107], addr cResStr3, lengthof(cResStr3)
+  mov ebx, [xax].$Obj(Application).dLangID
+  invoke LoadString, hInstance, addr [ebx + 104], addr cAboutStr, lengthof(cAboutStr)
+  invoke SendMessage, [xsi].hWnd, WM_SETTEXT, 0, addr cAboutStr
+
+  invoke LoadString, hInstance, addr [ebx + 105], addr cResStr1, lengthof(cResStr1)
+  invoke LoadString, hInstance, addr [ebx + 106], addr cResStr2, lengthof(cResStr2)
+  invoke LoadString, hInstance, addr [ebx + 107], addr cResStr3, lengthof(cResStr3)
   lea xbx, cAboutStr
-;  invoke wsprintf, xbx, offset szAboutMarkup, addr cResStr1, addr cResStr2, addr cResStr3
-  invoke wsprintf, xbx, offset szAboutMarkup, NULL, $OfsCStr("Visit our Homepage"), $OfsCStr("Send us an E-Mail")
+  invoke wsprintf, xbx, offset szAboutMarkup, addr cResStr1, addr cResStr2, addr cResStr3
 
   invoke GetClientRect, [xsi].hWnd, addr CRect
   sub CRect.bottom, 55

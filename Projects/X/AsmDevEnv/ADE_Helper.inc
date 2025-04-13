@@ -82,12 +82,12 @@ ifnb <CounterReg>
   cmp CounterReg, 0
   jz @F
 endif
-  mov xax, [xax].$Obj(EditorLine).Link.pLinkFwrd
+  mov xax, [xax].$Obj(EditorLine).LineLink.pLinkFwrd
   .While xax != NULL
 ifnb <SkippedLinesReg>
     inc SkippedLinesReg
 endif
-    sub xax, offset $Obj(EditorLine).Link
+    sub xax, offset $Obj(EditorLine).LineLink
     .ifBitClr [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
 ifnb <SkippedVisLinesReg>
       inc SkippedVisLinesReg
@@ -99,7 +99,7 @@ else
       .break .if ZERO?
 endif
     .endif
-    mov xax, [xax].$Obj(EditorLine).Link.pLinkFwrd
+    mov xax, [xax].$Obj(EditorLine).LineLink.pLinkFwrd
   .endw
 @@:
 endm
@@ -118,12 +118,12 @@ ifnb <CounterReg>
   cmp CounterReg, 0
   jz @F
 endif
-  mov xax, [xax].$Obj(EditorLine).Link.pLinkBack
+  mov xax, [xax].$Obj(EditorLine).LineLink.pLinkBack
   .While xax != NULL
 ifnb <SkippedLinesReg>
     inc SkippedLinesReg
 endif
-    sub xax, offset $Obj(EditorLine).Link
+    sub xax, offset $Obj(EditorLine).LineLink
     .ifBitClr [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
 ifnb <SkippedVisLinesReg>
       inc SkippedVisLinesReg
@@ -135,7 +135,7 @@ else
       .break .if ZERO?
 endif
     .endif
-    mov xax, [xax].$Obj(EditorLine).Link.pLinkBack
+    mov xax, [xax].$Obj(EditorLine).LineLink.pLinkBack
   .endw
 @@:
 endm

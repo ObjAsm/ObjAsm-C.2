@@ -168,6 +168,21 @@ Method Application.ConfigLoad, uses xbx xdi xsi, pIniFileName:PSTRING
     .endif
   .endif
 
+  ;Load default editor type for the new button
+  invoke GetPrivateProfileString, addr cIniSectGUI, $OfsCStr("NewDefault"), $OfsCStr("ASM"), \
+                      addr cItemBuffer, lengthof cItemBuffer, addr cFullFileName
+  DoesStringMatch? cItemBuffer, <RES>
+  .if ZERO?
+    mov [xsi].dNewDefault, ECT_RES
+  .else
+    DoesStringMatch? cItemBuffer, <TXT>
+    .if ZERO?
+      mov [xsi].dNewDefault, ECT_TXT
+    .else
+      mov [xsi].dNewDefault, ECT_ASM
+    .endif
+  .endif
+
   ;Load file types
   mov dIndex, 0
   .while TRUE
@@ -364,8 +379,17 @@ Method Application.Init, uses xbx xdi xsi
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_HELP_HELP")         ;28
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_HELP_ABOUT")        ;29
 
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CONTEXT_SAVE")      ;33
-  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CONTEXT_LOAD")      ;34
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_UNDO")         ;30
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_REDO")         ;31
+
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_INDENT")       ;32
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_UNINDENT")     ;33
+
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_COMMENT")      ;34
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_EDIT_UNCOMMENT")    ;35
+
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CONTEXT_SAVE")      ;36
+  OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_CONTEXT_LOAD")      ;37
 
   mov [xsi].hAccelerators, $invoke(LoadAccelerators, hInstance, $OfsCStr("HOTKEYS"))
 
@@ -707,7 +731,23 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   SetObject xsi
   mov xax, wParam
   mov xbx, [xsi].pClientWnd
-  .if ax == IDM_FILE_NEW ||ax == IDM_NEW_MASM           ;Create a new MASM editor instance
+  .if ax == IDM_FILE_NEW                              ;Create a new default editor instance
+    mov xdi, $New(Editor)
+    .if xdi != NULL
+      .if [xsi].dNewDefault == ECT_RES
+        lea xbx, [xsi].ResEditorResources
+      .elseif [xsi].dNewDefault == ECT_TXT
+        lea xbx, [xsi].TxtEditorResources
+      .else
+        lea xbx, [xsi].AsmEditorResources
+      .endif
+      OCall xdi::Editor.Init, [xsi].pClientWnd, xbx, NULL
+      .if eax == FALSE
+        Kill xdi
+      .endif
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_NEW_MASM                            ;Create a new MASM editor instance
     mov xdi, $New(Editor)
     .if xdi != NULL
       OCall xdi::Editor.Init, [xsi].pClientWnd, addr [xsi].AsmEditorResources, NULL

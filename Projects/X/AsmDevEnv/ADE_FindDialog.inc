@@ -254,7 +254,7 @@ Method FindDialog.Find, uses xbx xdi xsi, pChildWndObject:POINTER
         .if [xsi].Choices.dDirection == FDD_ALL
           ;Get the first editor line
           mov xdx, [xax].$Obj(Editor).LinkedListHead.pFirstMember
-          lea xcx, [xdx - offset $Obj(EditorLine).Link]   ;xax -> last EditorLine
+          lea xcx, [xdx - offset $Obj(EditorLine).LineLink]   ;xax -> last EditorLine
           mov [xsi].SrchBeg.pEditorLine, xcx
           mov [xsi].SrchBeg.dLineNumber, 1
           mov [xsi].SrchBeg.dCharIndex, 0
@@ -284,7 +284,7 @@ Method FindDialog.Find, uses xbx xdi xsi, pChildWndObject:POINTER
         .if [xsi].Choices.dDirection == FDD_DOWN || [xsi].Choices.dDirection == FDD_ALL  
           ;Get the last editor line
           mov xdx, [xax].$Obj(Editor).LinkedListHead.pLastMember
-          lea xax, [xdx - offset $Obj(EditorLine).Link]   ;xax -> last EditorLine
+          lea xax, [xdx - offset $Obj(EditorLine).LineLink]   ;xax -> last EditorLine
           mov [xsi].SrchEnd.pEditorLine, xax
           mov ecx, [xax].$Obj(EditorLine).dLength
           mov [xsi].SrchEnd.dCharIndex, ecx
@@ -292,7 +292,7 @@ Method FindDialog.Find, uses xbx xdi xsi, pChildWndObject:POINTER
         .else                                             ;[xsi].Choices.dDirection == FDD_UP
           ;Get the first editor line
           mov xdx, [xax].$Obj(Editor).LinkedListHead.pFirstMember
-          lea xax, [xdx - offset $Obj(EditorLine).Link]   ;xax -> last EditorLine
+          lea xax, [xdx - offset $Obj(EditorLine).LineLink]   ;xax -> last EditorLine
           mov [xsi].SrchEnd.pEditorLine, xax
           mov [xsi].SrchEnd.dCharIndex, 0
           mov [xsi].SrchEnd.dLineNumber, 1

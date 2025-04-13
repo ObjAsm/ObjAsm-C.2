@@ -16,8 +16,8 @@ VER_PRODUCTVERSION            equ       1,0,0,0
 VER_PRODUCTVERSION_STR        textequ   <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       87
-BUILD_DATE_STR                textequ   <2025-04-10>
+BUILD_NUMBER                  equ       123
+BUILD_DATE_STR                textequ   <2025-04-13>
 BUILD_BITNESS                 equ       64
 BUILD_MODE                    equ       RLS
 
@@ -40,13 +40,20 @@ IDM_FILE_SAVE_CTX             equ       064
 IDM_FILE_LOAD_CTX             equ       065
 IDM_FILE_BREAK                equ       066
 
-IDM_EDIT                      equ       070  
-IDM_EDIT_CUT                  equ       071
-IDM_EDIT_COPY                 equ       072
-IDM_EDIT_PASTE                equ       073
-IDM_EDIT_DELETE               equ       074
-IDM_EDIT_SELECTALL            equ       075
-IDM_EDIT_FIND                 equ       076
+IDM_EDIT                      equ       070
+IDM_EDIT_UNDO                 equ       071
+IDM_EDIT_REDO                 equ       072
+IDM_EDIT_DELHIST              equ       073
+IDM_EDIT_CUT                  equ       074
+IDM_EDIT_COPY                 equ       075
+IDM_EDIT_PASTE                equ       076
+IDM_EDIT_DELETE               equ       077
+IDM_EDIT_SELECTALL            equ       078
+IDM_EDIT_FIND                 equ       079
+IDM_EDIT_INDENT               equ       080
+IDM_EDIT_UNINDENT             equ       081
+IDM_EDIT_COMMENT              equ       082
+IDM_EDIT_UNCOMMENT            equ       083
 
 IDM_LANGUAGE                  equ       090
 IDM_LANGUAGE_ENGLISH          equ       091
@@ -102,11 +109,18 @@ IDB_FILE_PIN                  equ       012
 IDB_FILE_SETUP                equ       013
 IDB_FILE_EXIT                 equ       014
 
+IDB_EDIT_UNDO                 equ       030
+IDB_EDIT_REDO                 equ       031
 IDB_EDIT_CUT                  equ       015
 IDB_EDIT_COPY                 equ       016
 IDB_EDIT_PASTE                equ       017
 IDB_EDIT_DELETE               equ       018
 IDB_EDIT_FIND                 equ       019
+IDB_EDIT_INDENT               equ       032
+IDB_EDIT_UNINDENT             equ       033
+IDB_EDIT_COMMENT              equ       034
+IDB_EDIT_UNCOMMENT            equ       035
+
 
 IDB_WINDOW_CASCADE            equ       020
 IDB_WINDOW_TILE_HOR           equ       021

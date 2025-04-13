@@ -478,7 +478,19 @@ Method EditorLine.CharInsert, uses xbx xdi xsi, dInsIndex:DWORD, dCharCount:DWOR
       ;Copy the source characters
       invoke MemClone, xbx, pChars, edi
 
+;      ;Keep track of the change
+      MemAlloc sizeof(ACTION)
+      .if xax != NULL
+        mov xbx, xax
+        mov [xbx].ACTION.dAction, AAT_INSERTCHARS
+        m2m [xbx].ACTION.dBegin, dInsIndex, eax
+        m2m [xbx].ACTION.dCount, dCharCount, eax
+        invoke StrCNew, pChars, dCharCount
+        mov [xbx].ACTION.pChars, xax
+      .endif 
+
       ;Housekeeping
+      
       OCall xsi.SetDirty
 
       mov eax, dCharCount
@@ -1155,14 +1167,14 @@ Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineNumber:DW
   New EditorLine
   .if xax != NULL
     mov pNewEditorLine, xax
-    lea xbx, [xax].$Obj(EditorLine).Link
+    lea xbx, [xax].$Obj(EditorLine).LineLink
 
     ;Initialize the new EditorLine
     OCall pNewEditorLine::EditorLine.Init, [xsi].pOwner
 
     ;Insert the new EditorLine
     lea xcx, [xdi].$Obj(Editor).LinkedListHead
-    lea xdx, [xsi].$Obj(EditorLine).Link
+    lea xdx, [xsi].$Obj(EditorLine).LineLink
     LDLL_InsertAfter xcx, xdx, xbx, xax
 
     ;Copy broken off chars
@@ -1209,24 +1221,24 @@ Method EditorLine.LineDelete, uses xbx xsi, dLineNumber:DWORD
   OCall xsi.SetDirty
 
   ;Set Dirty marker on previous line
-  mov xax, [xsi].$Obj(EditorLine).Link.pLinkBack
+  mov xax, [xsi].$Obj(EditorLine).LineLink.pLinkBack
   .if xax != NULL
-    sub xax, offset $Obj(EditorLine).Link
+    sub xax, offset $Obj(EditorLine).LineLink
     BitSet [xax].$Obj(EditorLine).dFlags, TLF_DIRTY_LINE_NEXT
     BitClr [xax].$Obj(EditorLine).dFlags, TLF_SAVED_LINE_NEXT
   .endif
 
   ;Set Dirty marker on next line
-  mov xax, [xsi].$Obj(EditorLine).Link.pLinkFwrd
+  mov xax, [xsi].$Obj(EditorLine).LineLink.pLinkFwrd
   .if xax != NULL
-    sub xax, offset $Obj(EditorLine).Link
+    sub xax, offset $Obj(EditorLine).LineLink
     BitSet [xax].$Obj(EditorLine).dFlags, TLF_DIRTY_LINE_PREV
     BitClr [xax].$Obj(EditorLine).dFlags, TLF_SAVED_LINE_PREV
   .endif
 
   ;Do deletion
   lea xcx, [xbx].$Obj(Editor).LinkedListHead
-  lea xdx, [xsi].$Obj(EditorLine).Link
+  lea xdx, [xsi].$Obj(EditorLine).LineLink
   LDLL_Remove xcx, xdx, xbx, xax
   mov xax, xsi                                          ;Return pSelf
 MethodEnd
@@ -1242,9 +1254,9 @@ Method EditorLine.LineJoinNext, uses xbx xsi, dLineNumber:DWORD
   SetObject xsi
   ;Goto next EditorLine
   xor ecx, ecx
-  mov xax, [xsi].Link.pLinkFwrd                         ;Goto next member
+  mov xax, [xsi].LineLink.pLinkFwrd                         ;Goto next member
   .if xax != NULL
-    lea xbx, [xax - offset($Obj(EditorLine).Link)]
+    lea xbx, [xax - offset($Obj(EditorLine).LineLink)]
     OCall xsi.CharInsert, [xsi].dLength, [xbx].$Obj(EditorLine).dLength, [xbx].$Obj(EditorLine).pBuffer
     inc dLineNumber                                     ;Line number to be deleted
     OCall xbx::EditorLine.LineDelete, dLineNumber
@@ -1266,9 +1278,9 @@ Method EditorLine.LineJoinPrev, uses xbx xdi xsi, dLineNumber:DWORD
   mov xdi, [xdx].$Obj(EditorView).pOwner                ;xdi -> Editor
 
   ;Goto previous EditorLine
-  mov xax, [xsi].Link.pLinkBack                         ;Goto prev member
+  mov xax, [xsi].LineLink.pLinkBack                         ;Goto prev member
   .if xax != NULL
-    lea xbx, [xax - offset($Obj(EditorLine).Link)]  ;xbx -> prev EditorLine
+    lea xbx, [xax - offset($Obj(EditorLine).LineLink)]  ;xbx -> prev EditorLine
     BitSet [xbx].$Obj(EditorLine).dFlags, TLF_DIRTY_LINE_CURR
     OCall xbx::EditorLine.CharInsert, [xbx].$Obj(EditorLine).dLength, [xsi].dLength, [xsi].pBuffer
     OCall xsi.LineDelete, dLineNumber
@@ -1326,3 +1338,24 @@ Method EditorLine.SpaceFill, uses xbx xsi, dSpaceCount:DWORD
     dec ebx
   .endw 
 MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     EditorLine.Undo
+; Purpose:    Undo the last action.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method EditorLine.Undo, uses xsi
+  SetObject xsi
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     EditorLine.Redo
+; Purpose:    Restore the last undo action.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method EditorLine.Redo, uses xsi
+  SetObject xsi
+MethodEnd
+

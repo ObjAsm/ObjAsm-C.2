@@ -24,7 +24,7 @@ Method EditorView.MoveCaretDown, uses xbx xdi xsi, dLineCount:DWORD
     mov xcx, [xsi].pOwner
     mov xbx, [xcx].$Obj(EditorDisplay).pOwner           ;xbx -> Editor
     mov xax, [xbx].$Obj(Editor).LinkedListHead.pLastMember
-    sub xax, offset $Obj(EditorLine).Link
+    sub xax, offset $Obj(EditorLine).LineLink
     .if xax != [xsi].CaretLocation.pEditorLine            ;End of file?
       inc [xsi].sdCaretVisLineOffset
     .else
@@ -84,7 +84,7 @@ Method EditorView.MoveCaretUp, uses xbx xdi xsi, dLineCount:DWORD
     mov xcx, [xsi].pOwner
     mov xbx, [xcx].$Obj(EditorDisplay).pOwner           ;xbx -> Editor
     mov xax, [xbx].$Obj(Editor).LinkedListHead.pFirstMember
-    sub xax, offset $Obj(EditorLine).Link
+    sub xax, offset $Obj(EditorLine).LineLink
     .if xax != [xsi].CaretLocation.pEditorLine            ;Begin of file?
       dec [xsi].sdCaretVisLineOffset
     .else
@@ -302,7 +302,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
           OCall xsi.CaretSet
         .else
           mov xax, [xbx].$Obj(Editor).LinkedListHead.pFirstMember
-          sub xax, offset $Obj(EditorLine).Link
+          sub xax, offset $Obj(EditorLine).LineLink
           .if xax != [xsi].CaretLocation.pEditorLine
             OCall xsi.MoveCaretUp, 1
             add dNeedRedrawing, eax
@@ -371,7 +371,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
         .else
           BitSet [xax].$Obj(EditorLine).dFlags, TLF_EOL_MARKED   ;Mark previous line
           mov xax, [xbx].$Obj(Editor).LinkedListHead.pLastMember
-          sub xax, offset $Obj(EditorLine).Link
+          sub xax, offset $Obj(EditorLine).LineLink
           .if xax != [xsi].CaretLocation.pEditorLine
             OCall xsi.MoveCaretDown, 1
             add dNeedRedrawing, eax
@@ -553,7 +553,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
       ;Nothing selected => delete char at caret position
       ;Check if caret is at the line end => join lines
       mov xax, [xsi].CaretLocation.pEditorLine
-      mov xcx, [xax].$Obj(EditorLine).Link.pLinkFwrd
+      mov xcx, [xax].$Obj(EditorLine).LineLink.pLinkFwrd
       .if xcx != NULL
         mov ecx, [xsi].CaretLocation.dCharIndex
         .if ecx == [xax].$Obj(EditorLine).dLength
@@ -593,9 +593,9 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
       mov xax, [xsi].CaretLocation.pEditorLine
       mov ecx, [xsi].CaretLocation.dCharIndex
       .if ecx == 0
-        mov xcx, [xax].$Obj(EditorLine).Link.pLinkBack
+        mov xcx, [xax].$Obj(EditorLine).LineLink.pLinkBack
         .if xcx != NULL
-          sub xcx, offset $Obj(EditorLine).Link
+          sub xcx, offset $Obj(EditorLine).LineLink
           mov edi, [xcx].$Obj(EditorLine).dLength
           ;Join the 2 lines
           OCall xax::EditorLine.LineJoinPrev, [xsi].CaretLocation.dLineNumber   ;Can't fail
