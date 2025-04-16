@@ -55,7 +55,7 @@ BAR_OFFSET_MIN        equ   -1000
 BAR_OFFSET_MAX        equ   1000
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartBarTabSeries.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -140,7 +140,7 @@ Method ChartBarTabSeries.CtlsGet, uses xbx xdi xsi
   assume xdi:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartBarTabSeries.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -213,7 +213,7 @@ Method ChartBarTabSeries.CtlsSet, uses xbx xdi xsi
   assume xdi:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartBarTabSeries.Init
 ; Purpose:    Initialize the ChartBarTabSeries object.
 ; Arguments:  Arg1: -> Owner object.
@@ -235,7 +235,7 @@ Method ChartBarTabSeries.Init, uses xsi, pOwner:POINTER, hParent:HWND, pImageLis
   s2s [xsi].LocalSetup, [xcx].$Obj(ChartBarSeries).Setup, xax, xdx, xmm0, xmm1, xmm2
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartBarTabSeries.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -302,7 +302,7 @@ Method ChartBarTabSeries.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPAR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartBarTabSeries.OnCtlColorDlg
 ; Purpose:    Event procedure for WM_CTLCOLORDLG message.
 ; Arguments:  Arg1: First message parameter.
@@ -313,7 +313,7 @@ Method ChartBarTabSeries.OnCtlColorDlg,, wParam:WPARAM, lParam:LPARAM
   invoke GetStockObject, WHITE_BRUSH
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Edit Window Proc
 ; Purpose:    Alter the default processing to only allow digits 0-9 and minus sign.
 ; Arguments:  Arg1: Window HANDLE
@@ -353,7 +353,7 @@ SignedIntegerSubclassProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARA
   ret
 SignedIntegerSubclassProc endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartBarTabSeries.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -380,7 +380,7 @@ Method ChartBarTabSeries.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnInitDialog, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartBarTabSeries.Restore
 ; Purpose:    Restore original values.
 ; Arguments:  None.

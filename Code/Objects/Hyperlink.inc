@@ -16,15 +16,15 @@ DEF_HYPERLINK   textequ <DEF_BUTTON>
 PDEF_HYPERLINK  textequ <PDEF_BUTTON>
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Hyperlink
 ; Purpose:    Implement a thin wrapper around the GDI Hyperlink control.
 ; Layout:
 ;
 ;          Face
-;    —————————————————
+;    -----------------
 ;   | II |  Press Me  |
-;    —————————————————
+;    -----------------
 ;    Icon     Text
 ;
 ; Possible Caption text format:
@@ -85,7 +85,7 @@ HYPERLINK_TEXT_SEPARATION  equ   6
 
 CStr szHyperlinkClassName, "Hyperlink"
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.CreateUFont
 ; Purpose:    Create the underline font used to display the hyperlink.
 ; Arguments:  None.
@@ -103,7 +103,7 @@ Method Hyperlink.CreateUFont, uses xsi
   mov [xsi].hUFont, $invoke(CreateFontIndirect, addr LogFnt)  ;Create the undelined font
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.Done
 ; Purpose:    Finalize the Hyperlink object.
 ; Arguments:  None.
@@ -117,7 +117,7 @@ Method Hyperlink.Done, uses xsi
   ACall xsi.Done                                        ;Execute ancestor's Done destructor
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.Init
 ; Purpose:    Initialize the Hyperlink object.
 ; Arguments:  Arg1: -> Owner object.
@@ -139,7 +139,7 @@ Method Hyperlink.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PDE
   ACall xsi.Init, pOwner, xax                         ;Executes ancestor's Init constructor
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.Execute
 ; Purpose:    Execute the Hyperlink.
 ; Arguments:  None.
@@ -152,7 +152,7 @@ Method Hyperlink.Execute, uses xsi
   BitSet [xsi].dFlags, HLF_VISITED
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.GetArgs
 ; Purpose:    Extract the Icon, text and command from the caption string.
 ; Arguments:  None.
@@ -231,7 +231,7 @@ Method Hyperlink.GetArgs, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -267,7 +267,7 @@ Method Hyperlink.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -282,7 +282,7 @@ Method Hyperlink.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.OnGetColor
 ; Purpose:    Event procedure for BM_GETCOLOR message.
 ; Arguments:  Arg1: First message parameter = color index (0: Background, 1: Normal, 2: Visited).
@@ -300,7 +300,7 @@ Method Hyperlink.OnGetColor,, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.OnGetFont
 ; Purpose:    Event procedure for WM_GETFONT message.
 ; Arguments:  Arg1: First message parameter.
@@ -312,7 +312,7 @@ Method Hyperlink.OnGetFont,, wParam:WPARAM, lParam:LPARAM
   mov xax, [xcx].hFont
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.OnKeyDown
 ; Purpose:    Event procedure for WM_KEYDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -328,7 +328,7 @@ Method Hyperlink.OnKeyDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.OnLButtonDown
 ; Purpose:    Event procedure for WM_LBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -351,7 +351,7 @@ Method Hyperlink.OnLButtonDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.OnLButtonUp
 ; Purpose:    Event procedure for WM_LBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -377,7 +377,7 @@ Method Hyperlink.OnLButtonUp, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -456,7 +456,7 @@ Method Hyperlink.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.OnSetColor
 ; Purpose:    Event procedure for BM_SETCOLOR message.
 ; Arguments:  Arg1: First message parameter = color index (0: Background, 1: Normal, 2: Visited).
@@ -479,7 +479,7 @@ Method Hyperlink.OnSetColor, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.OnSetFont
 ; Purpose:    Event procedure for WM_SETFONT message.
 ; Arguments:  Arg1: First message parameter.
@@ -496,7 +496,7 @@ Method Hyperlink.OnSetFont, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.OnSetText
 ; Purpose:    Event procedure for WM_SETTEXT message.
 ; Arguments:  Arg1: First message parameter.
@@ -511,7 +511,7 @@ Method Hyperlink.OnSetText, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.Startup
 ; Purpose:    Register the Hyperlink window class with the operating system.
 ; Arguments:  None.
@@ -536,7 +536,7 @@ Method Hyperlink.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Hyperlink.WindowProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.

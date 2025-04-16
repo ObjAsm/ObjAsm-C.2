@@ -10,7 +10,7 @@
 
 ;WCTRL_RESOURCE      equ     BIT00
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     WinControl
 ; Purpose:    This object is the ancestor of all Windows control wrapper objects and implements
 ;             the basic methods, common for all descendant objects.
@@ -33,7 +33,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WinControl.Dispatch
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Window handle.
@@ -47,7 +47,7 @@ Method WinControl.Dispatch, uses xsi, hWnd:HWND, uMsg:DWORD, wParam:WPARAM, lPar
   DispatchEvent <CallWindowProc, [xsi].pPrevWndProc, hWnd>    ;xsi -> Object instance
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WinControl.GetHeight
 ; Purpose:    Return the control height in pixels.
 ; Arguments:  None.
@@ -62,7 +62,7 @@ Method WinControl.GetHeight
   sub eax, WndRect.top
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WinControl.GetWidth
 ; Purpose:    Return the control width in pixels.
 ; Arguments:  None.

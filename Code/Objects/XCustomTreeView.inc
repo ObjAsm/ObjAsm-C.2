@@ -20,7 +20,7 @@ XTVN_CUSTOM_DISP_INFO struc             ;Extend the XTVN_DISP_INFO structure
 XTVN_CUSTOM_DISP_INFO ends
 PXTVN_CUSTOM_DISP_INFO typedef ptr XTVN_CUSTOM_DISP_INFO
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  XCustomNode
 ; Purpose: Implement a customized XCustomNode object.
 
@@ -32,7 +32,7 @@ Object XCustomNode, 0, XTreeViewNode
 ObjectEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  XCustomTreeView
 ; Purpose: Implement a customized XCustomTreeView object.
 
@@ -62,7 +62,7 @@ CStr szXCTV_Class, "XCustomTreeView"
 
 ;##\
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    XCustomNode.CanDragMe
 ; Purpose:   Indicate if a drag operation can be started.
 ; Arguments: Arg1: Key flags (MK_CONTROL, MK_LBUTTON, MK_MBUTTON, MK_RBUTTON, MK_SHIFT).
@@ -72,7 +72,7 @@ Method XCustomNode.CanDragMe,, dKeyFlags:DWORD
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    XCustomNode.ContextPopup
 ; Purpose:   Display a context popup menu.
 ; Arguments: Arg1: X coord in screen coords.
@@ -88,7 +88,7 @@ Method XCustomNode.ContextPopup, uses xbx xdi, dXPos:DWORD, dYPos:DWORD
   invoke DestroyMenu, xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    XCustomNode.MouseHit
 ; Purpose:   Check if the mouse has clicked a hotspot and perform an action.
 ; Arguments: Arg1: button that triggered this action.
@@ -141,7 +141,7 @@ Method XCustomNode.MouseHit, uses xbx xdi xsi, dButton:DWORD, pPoint:PPOINT, \
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    XCustomNode.RenderContent
 ; Purpose:   Draw the content (icon + text) of the node.
 ; Arguments: Arg1: -> XTVN_CUSTOM_DISP_INFO
@@ -308,7 +308,7 @@ MethodEnd
 
 ;##\
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    XCustomTreeView.Drop
 ; Purpose:   Drop a node.
 ; Arguments: Arg1: -> Node to drop.
@@ -328,7 +328,7 @@ Method XCustomTreeView.Drop,, pNode:$ObjPtr(XCustomNode), pRefNode:$ObjPtr(XCust
   ACall Drop, pNode, pRefNode, dHowToDrop
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    XCustomTreeView.OnCommand
 ; Purpose:   Event handler for WM_COMMAND message.
 ; Arguments: Arg1: First message parameter.
@@ -341,7 +341,7 @@ Method XCustomTreeView.OnCommand,, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xax].$Obj(WinApp).hWnd, WM_COMMAND, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    XCustomTreeView.OnCreate
 ; Purpose:   Event handler for WM_CREATE message.
 ; Arguments: Arg1: First message parameter.
@@ -356,7 +356,7 @@ Method XCustomTreeView.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov [xsi].hIcon, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    XCustomTreeView.OnDestroy
 ; Purpose:   Event handler for WM_DESTROY message.
 ; Arguments: Arg1: First message parameter.
@@ -370,7 +370,7 @@ Method XCustomTreeView.OnDestroy,, wParam:WPARAM, lParam:LPARAM
   ACall OnDestroy, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    XCustomTreeView.WindowProc
 ; Purpose:   Processing of window messages.
 ; Arguments: Arg1: Message identifier.
@@ -405,7 +405,7 @@ Method XCustomTreeView.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPAR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    XCustomTreeView.Startup
 ; Purpose:   Register the XCustomTreeView window class with the operating system.
 ; Arguments: None.

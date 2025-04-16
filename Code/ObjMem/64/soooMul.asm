@@ -14,7 +14,7 @@
 ProcName textequ <soooMul>
 TypeArg equ <SQWORD>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  soooMul
 ; Purpose:    Multiply 2 signed OWORDs.
 ;             (128 bit) Multiplicand multiplied by (128 bit) Multiplier = (128 bit) Product.

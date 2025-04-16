@@ -13,7 +13,7 @@
 HMP_BUCKET_EMPTY      equ   0
 HMP_BUCKET_TOMBSTONE  equ   -1
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     HashMap
 ; Purpose:    Base object for HashMap descendants.
 ;             This object implements an Unordered Associative Container.
@@ -23,23 +23,23 @@ HMP_BUCKET_TOMBSTONE  equ   -1
 ;
 ;                              Buckets                               Items
 ;                             (POINTER)
-;                           ——————————————                —————————————————————————————
+;                           --------------                -----------------------------
 ;             pBuckets --> |  POINTER 1   | -----------> | Key | Value1 | Value2 | ... |
-;                          |——————————————|              |—————|————————|————————|—————|
+;                          |--------------|              |-----|--------|--------|-----|
 ;                          |    EMPTY     |       -----> | Key | Value1 | Value2 | ... |
-;                          |——————————————|      |       |—————|————————|————————|—————|
+;                          |--------------|      |       |-----|--------|--------|-----|
 ;                          |    EMPTY     |    --------> | Key | Value1 | Value2 | ... |
-;                          |——————————————|   |  |       |—————|————————|————————|—————|
+;                          |--------------|   |  |       |-----|--------|--------|-----|
 ;             Hash         |  POINTER 3   | --   |   --> | Key | Value1 | Value2 | ... |
-;              AND ---     |——————————————|      |  |     —————————————————————————————
+;              AND ---     |--------------|      |  |     -----------------------------
 ;             Mask    |    |  TOMBSTONE   |      |  |
-;            (index)  |    |——————————————|      |  |
+;            (index)  |    |--------------|      |  |
 ;                      --> |  POINTER 2   | -----   |
-;                          |——————————————|         |
+;                          |--------------|         |
 ;                          |  POINTER 4   | --------
-;                          |——————————————|
+;                          |--------------|
 ;                          |    EMPTY     |
-;                           ——————————————
+;                           --------------
 ;
 
 Object HashMap, HashMapID, Streamable
@@ -73,7 +73,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     HashMap.DeleteAll
 ; Purpose:    Remove all item POINTERs, setting all Buckets to HMP_BUCKET_EMPTY.
 ;             No memory is freed!
@@ -95,7 +95,7 @@ Method HashMap.DeleteAll
   m2z [xcx].dCollisionCount
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    HashMap.DestroyItem
 ; Purpose:   Auxiliary procedure to dispose a item in the collection. Don't call directly!
 ; Arguments: Arg1: -> Item.
@@ -107,7 +107,7 @@ Method HashMap.DestroyItem,, pItem:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     HashMap.Dispose
 ; Purpose:    Dispose an item.
 ; Arguments:  Arg1: -> Key. This argument should never be NULL.
@@ -123,7 +123,7 @@ Method HashMap.Dispose, uses xsi, pKey:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     HashMap.DisposeAll
 ; Purpose:    Dispose of all items in the collection.
 ; Arguments:  None.
@@ -148,7 +148,7 @@ Method HashMap.DisposeAll, uses xbx xdi xsi
   m2z [xsi].dCollisionCount
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     HashMap.Done
 ; Purpose:    Destructor method.
 ; Arguments:  Nothing.
@@ -163,7 +163,7 @@ Method HashMap.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     HashMap.Init
 ; Purpose:    Initialize the HashMap object.
 ; Arguments:  Arg1: -> Owner object.
@@ -194,7 +194,7 @@ Method HashMap.Init, uses xsi, pOwner:POINTER, dBucketCount:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     HashMap.Insert
 ; Purpose:    Insert a new Item.
 ; Arguments:  Arg1: -> Item.
@@ -230,7 +230,7 @@ Method HashMap.Insert, uses xsi, pItem:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     HashMap.Resize
 ; Purpose:    Resize the HashMap, allocating the necessary memory on the heap to hold
 ;             the Buckets table and rehash all items

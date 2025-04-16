@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrEndW
 ; Purpose:    Get the address of the zero character that terminates the string.
 ; Arguments:  Arg1: -> Source WIDE string.

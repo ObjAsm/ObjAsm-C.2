@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ParseW
 ; Purpose:    Extract a comma separated substring from a source string.
 ; Arguments:  Arg1: -> Destination buffer. Must be large enough to hold the WIDE substring.

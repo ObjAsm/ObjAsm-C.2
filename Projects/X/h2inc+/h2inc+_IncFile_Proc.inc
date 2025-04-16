@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrCompA
 ; Purpose:    Comparison routine for BStrA strings.
 ; Arguments:  Arg1: -> String 1.
@@ -27,7 +27,7 @@ BStrCompA proc uses xdi xsi pBStrA:PSTRINGA, pStrA:PSTRINGA
   ret
 BStrCompA endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetTypeSize
 ; Purpose:    Get the BYTE size of a given type.
 ; Arguments:  Arg1: -> Type
@@ -53,7 +53,7 @@ GetTypeSize proc pType:PSTRINGA
   ret
 GetTypeSize endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  InsertStrg, InsertAttr, InsertEqui
 ; Purpose:    Add an Item to a List.
 ; Arguments:  Arg1: -> List
@@ -131,7 +131,7 @@ InsertEqui proc pList:POINTER, pStr:PSTRINGA, dLength:DWORD, pStrEqui:PSTRINGA, 
   ret
 InsertEqui endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  InsertDefItem
 ; Purpose:    Add a prototype to a list.
 ; Arguments:  Arg1: -> Function Name.
@@ -164,7 +164,7 @@ InsertDefItem proc uses xdi xsi pFuncName:PSTRINGA, dParamBytes:DWORD
   ret
 InsertDefItem endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsLogOperator?
 ; Purpose:    Check if character in al/ax/eax is a logical operator (comparison & logical)
 ; Arguments:  al/ax/eax = character(s) to test.
@@ -203,7 +203,7 @@ IsLogOperator? proc dChars:DWORD
   ret
 IsLogOperator? endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsNumOperator?
 ; Purpose:    Check if character in al/ax/eax is a numeric operator (assignment & arithmetic).
 ; Arguments:  al/ax/eax = character(s) to test.
@@ -273,7 +273,7 @@ IsNumOperator? proc dChars:DWORD
   ret
 IsNumOperator? endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsReservedWord?
 ; Purpose:    Check if token is a reserved word.
 ; Arguments:  Arg1: -> token to check.
@@ -288,7 +288,7 @@ IsReservedWord? proc pToken:PTOKEN
   ret
 IsReservedWord? endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsMacro?
 ; Purpose:    Check if token is a macro.
 ; Arguments:  Arg1: -> token to check.
@@ -305,7 +305,7 @@ IsMacro? proc pToken:PTOKEN
   ret
 IsMacro? endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsEquate
 ; Purpose:    Check if token is an equate.
 ; Arguments:  Arg1: -> token to check.
@@ -322,7 +322,7 @@ IsEquate? proc pToken:PTOKEN
   ret
 IsEquate? endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsQualifier?
 ; Purpose:    Check if token is a qualifier.
 ; Arguments:  Arg1: -> token to check.
@@ -339,7 +339,7 @@ IsQualifier? proc pToken:PTOKEN
   ret
 IsQualifier? endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsString?
 ; Purpose:    Check if token is a string.
 ; Arguments:  Arg1: -> token to check.
@@ -366,7 +366,7 @@ IsString? proc pToken:PTOKEN
   ret
 IsString? endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsFunction?
 ; Purpose:    Determine if current item is a "function" declaration.
 ;             Required if keyword "struct" has been found in input stream.
@@ -403,7 +403,7 @@ IsFunction? proc
   ret
 IsFunction? endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsFunctionPtr?
 ; Purpose:    Determine if it is a "function" or "function ptr" declaration.
 ; Arguments:  None.
@@ -489,7 +489,7 @@ IsFunctionPtr? proc pToken:PTOKEN
   ret
 IsFunctionPtr? endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsUnionStruct?
 ; Purpose:    Check if token is "union" or "struct".
 ; Arguments:  Arg1: -> token.
@@ -506,7 +506,7 @@ IsUnionStruct? proc pToken:PTOKEN
   ret
 IsUnionStruct? endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  TranslateToken
 ; Purpose:    Translate tokens like "__export" or "__stdcall".
 ; Arguments:  Arg1: -> Token.
@@ -527,7 +527,7 @@ TranslateToken proc pToken:PTOKEN
   ret
 TranslateToken endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  TranslateReservedWord
 ; Purpose:    Check if token is a reserved name, if yes, add a "_" suffix
 ; Arguments:  Arg1: -> Token.
@@ -550,7 +550,7 @@ TranslateReservedWord proc pToken:PTOKEN, pTransBuffer:PSTRINGA
   ret
 TranslateReservedWord endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  TranslateStruct
 ; Purpose:    Translate known struct.
 ; Arguments:  Arg1: -> Token.
@@ -580,7 +580,7 @@ TranslateStruct proc uses xdi pToken:PTOKEN
   ret
 TranslateStruct endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  TranslateType
 ; Purpose:    Translate known type.
 ; Arguments:  Arg1: -> Token.
@@ -610,7 +610,7 @@ TranslateType proc uses xdi pToken:PTOKEN
   ret
 TranslateType endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  TranslateTypeQualifier
 ; Purpose:    Convert type qualifiers.
 ; Arguments:  Arg1: -> Type qualifier.
@@ -629,7 +629,7 @@ TranslateTypeQualifier proc pTypeQual:PTOKEN
   ret
 TranslateTypeQualifier endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  TranslateNumOperator
 ; Purpose:    Translate operator in #define lines.
 ; Arguments:  Arg1: -> Token.
@@ -670,7 +670,7 @@ TranslateNumOperator proc pToken:PTOKEN
   ret
 TranslateNumOperator endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  TranslateLogOperator
 ; Purpose:    Translate operator in #define lines.
 ; Arguments:  Arg1: -> Token.
@@ -711,7 +711,7 @@ TranslateLogOperator proc pToken:PTOKEN
   ret
 TranslateLogOperator endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ConvBasicTypeC
 ; Purpose:    Convert a basic "C" type to an "asm" type.
 ; Arguments:  Arg1: C type specifier (see CTS_xxx equates)
@@ -732,7 +732,7 @@ ConvBasicTypeC proc dTypeSpecC:DWORD
   ret
 ConvBasicTypeC endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DeleteSimpleParentheses
 ; Purpose:    Delete surrounding parentheses.
 ; Arguments:  None.
@@ -767,7 +767,7 @@ DeleteSimpleParentheses proc uses xsi
   ret
 DeleteSimpleParentheses endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SkipCasts
 ; Purpose:    Skip typecasts in preprocessor lines.
 ; Arguments:  None.
@@ -843,7 +843,7 @@ SkipCasts proc uses xdi
   ret
 SkipCasts endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SkipSimpleBraces
 ; Purpose:    Skip braces of '(' <number> ')' pattern.
 ; Arguments:  None.
@@ -864,7 +864,7 @@ SkipSimpleBraces proc
   ret
 SkipSimpleBraces endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SkipBraces
 ; Purpose:    Skip all tokens between braces.
 ; Arguments:  Arg1: opening brace.
@@ -887,7 +887,7 @@ SkipBraces proc uses xsi cOpenBrace:CHRA, cCloseBrace:CHRA
   ret
 SkipBraces endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetInterfaceName
 ; Purpose:    Get the name of an interface.
 ; Arguments:  Arg1: -> Source Name.
@@ -910,7 +910,7 @@ GetInterfaceName proc uses xdi xsi pName:PSTRINGA, pInterface:PSTRINGA
   ret
 GetInterfaceName endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SkipName
 ; Purpose:    Skip name of a struct/union.
 ; Arguments:  Arg1: -> Name.
@@ -935,7 +935,7 @@ SkipName proc pName:PSTRINGA, dFlags:DWORD
   ret
 SkipName endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SkipAnnotations
 ; Purpose:    Skip all comming annotations.
 ; Arguments:  Arg1: -> Token.
@@ -962,7 +962,7 @@ SkipAnnotations proc pToken:PTOKEN
   ret
 SkipAnnotations endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SkipMacros
 ; Purpose:    Skip all comming macros.
 ; Arguments:  Arg1: -> Token.
@@ -989,7 +989,7 @@ SkipMacros proc pToken:PTOKEN
   ret
 SkipMacros endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  If_ElIf
 ; Purpose:    Process "#if"/"#elif" lines.
 ; Arguments:  Arg1: PP conditional type: "#if" or "#elif".
@@ -1087,7 +1087,7 @@ If_ElIf proc uses xsi bCondType:DWORD
   ret
 If_ElIf endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Ifdef_Ifndef
 ; Purpose:    Process "#ifdef"/"#ifndef" lines.
 ; Arguments:  Arg1: PP conditional type: "#ifdef" or "#ifndef".
@@ -1168,7 +1168,7 @@ Ifdef_Ifndef proc uses xdi xsi bCondType:DWORD
   ret
 Ifdef_Ifndef endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  WriteStackList
 ; Purpose:    Writes tokens contained in a StackList to the output stream.
 ; Arguments:  Arg1: -> StackList.
@@ -1213,7 +1213,7 @@ WriteStackList proc uses xdi xsi pStackList:POINTER
   ret
 WriteStackList endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetCallConvString
 ; Purpose:    Return the correct calling convention.
 ; Arguments:  Arg1: -> CallConv qualifier (PTQ_xxx).
@@ -1237,7 +1237,7 @@ GetCallConvString proc dQualifiers:DWORD
   ret
 GetCallConvString endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetProtoQualifier
 ; Purpose:    Check proto qualifier (E.g. CALLBACK, WINAPI, WINGDIAPI, THEMEAPI, etc.).
 ; Arguments:  Arg1: -> Token.
@@ -1293,7 +1293,7 @@ GetProtoQualifier proc pToken:PTOKEN
   ret
 GetProtoQualifier endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetBlockName
 ; Purpose:    Find name of a struct/union, if any.
 ; Arguments:  Arg1: -> Buffer used when the name is a macro invocation.
@@ -1371,7 +1371,7 @@ GetBlockName proc uses xdi xsi pMacroNameBuffer:PSTRINGA
   ret
 GetBlockName endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ConvertNumber
 ; Purpose:    Converts number from C syntax to MASM syntax.
 ; Arguments:  xsi -> Input stream.
@@ -1494,7 +1494,7 @@ ConvertNumber proc uses xcx xdx
   ret
 ConvertNumber endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  AddEscStr
 ; Purpose:    Add some chars to the output stream.
 ; Arguments:  xsi -> Input stream.
@@ -1522,7 +1522,7 @@ AddEscStr proc
   ret
 AddEscStr endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure: GetStringLiteral
 ; Purpose:   String processing.
 ; Arguments: xsi -> Input stream.
@@ -1653,7 +1653,7 @@ GetStringLiteral proc uses xcx
   ret
 GetStringLiteral endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GotoClosingToken
 ; Purpose:    Move the input pointer to the ending token.
 ; Arguments:  Arg1: Opening token.
@@ -1683,7 +1683,7 @@ GotoClosingToken proc uses xsi cOpeningToken:CHRA, cClosingToken:CHRA
   ret
 GotoClosingToken endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure: GotoNextToken
 ; Purpose:   Move the input pointer to the token.
 ; Arguments: Arg1: Token.

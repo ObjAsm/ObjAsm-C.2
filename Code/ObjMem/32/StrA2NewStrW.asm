@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrA2NewStrW
 ; Purpose:    Create a new StringW with the content of a STRINGA.
 ; Arguments:  Arg1: -> STRINGA.

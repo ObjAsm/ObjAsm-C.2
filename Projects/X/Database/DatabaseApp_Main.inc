@@ -53,7 +53,7 @@ AppStatusbar DEF_STATUSBAR {IDC_APP_SBR, SBR_STYLE, 0, 2}
   DEF_STATUSBAR_PART {350, 200, 1, SBT_SUNKEN, NULL}
   DEF_STATUSBAR_PART {200,  -2, 0, SBT_SUNKEN, NULL}    ;Spring
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 CStr szApplicationClass, "OAC_DatabaseExplorer"
 
@@ -105,7 +105,7 @@ ObjectEnd
 
 ;include DatabaseApp_Checks.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
 ; Purpose:    Finalize the SDI application object.
 ; Arguments:  None.
@@ -121,7 +121,7 @@ Method Application.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the SDI application object.
 ; Arguments:  None.
@@ -244,7 +244,7 @@ Method Application.Init, uses xbx xsi
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -674,7 +674,7 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
@@ -692,7 +692,7 @@ Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -705,7 +705,7 @@ Method Application.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -717,7 +717,7 @@ Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DestroyAcceleratorTable, [xsi].hAccelerators
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -743,7 +743,7 @@ Method Application.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -764,7 +764,7 @@ Method Application.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                ;Return zero
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Pack
 ; Purpose:    Remove deleted records from database and update indexes.
 ; Arguments:  None.
@@ -891,7 +891,7 @@ Method Application.Pack, uses xbx xdi xsi
   MemFree pMemTasks
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.PackIndex
 ; Purpose:    Update index as part of the Pack process.
 ; Arguments:  Arg1: -> TaskStatus.
@@ -904,7 +904,7 @@ Method Application.PackIndex,, pStatus:PTaskStatus, pIndex:$ObjPtr(DB_Index), Un
   OCall pIndex::DB_Index.Reindex, pStatus
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.PackTable
 ; Purpose:    Remove deleted records from the table as part of the Pack process.
 ; Arguments:  Arg1: -> TaskStatus.
@@ -921,7 +921,7 @@ Method Application.PackTable, uses xbx xsi, pStatus:PTaskStatus, Unused1:XWORD, 
   mov [xsi].Table.Descriptor.bNdxOnDemand, bl
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
 ; Purpose:    Register the object class with the OS.
 ; Arguments:  None.
@@ -947,7 +947,7 @@ Method Application.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.UpdateMenu
 ; Purpose:   Enable or disable menu items according to the current database status.
 ; Arguments: None.
@@ -993,7 +993,7 @@ Method Application.UpdateMenu, uses xsi
   invoke DrawMenuBar, [xsi].hWnd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.UpdateStatusbar
 ; Purpose:   Update the info on the Statusbar.
 ; Arguments: None.

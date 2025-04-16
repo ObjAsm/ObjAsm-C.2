@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrMidW
 ; Purpose:    Extract a substring from a WIDE source string.
 ; Arguments:  Arg1: -> Destination WIDE character buffer.

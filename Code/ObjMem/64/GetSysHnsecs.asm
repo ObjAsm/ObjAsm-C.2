@@ -11,7 +11,7 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetSysHnsecs
 ; Purpose:    Get the hecto-nano-seconds count from system start.
 ; Arguments:  Arg1: -> hecto-nano-seconds

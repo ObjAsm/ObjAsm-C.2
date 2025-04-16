@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <StrCNewW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCNewW
 ; Purpose:    Allocate a new copy of the source WIDE string with length limitation.
 ;             If the pointer to the source string is NULL or points to an empty string, StrCNewW

@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     CRC_16
 ; Purpose:    Implement an object to calculate a 16 bit CRC value of a data stream.
 ; Link:       http://www.geocities.com/SiliconValley/Pines/8659/crc.htm
@@ -77,7 +77,7 @@ CRC16Tab dw     00000h, 01021h, 02042h, 03063h, 04084h, 050a5h, 060c6h, 070e7h
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     CRC_16.Calc
 ; Purpose:    Calculate a new CRC_16 value based on the new data block and the previous CRC_16.
 ; Arguments:  Arg1: -> New data block.
@@ -110,7 +110,7 @@ Method CRC_16.Calc, uses xbx xdi xsi, pBuffer:POINTER, dSize:DWORD
   not ax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     CRC_16.Reset
 ; Purpose:    Reset the previous CRC calculation.
 ; Arguments:  None.

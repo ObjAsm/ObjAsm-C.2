@@ -7,7 +7,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCNewA / StrCNewW / StrCNewA_UEFI / StrCNewW_UEFI
 ; Purpose:    Allocate a new copy of the source string with length limitation.
 ;             If the pointer to the source string is NULL or points to an empty string, StrCNew

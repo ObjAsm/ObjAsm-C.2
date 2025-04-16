@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 RDF_EDITOR_ENABLED    equ   BIT00
 RDF_APPEND_ENABLED    equ   BIT01
@@ -62,7 +62,7 @@ UBO_OPS_CONTROLS  equ   BIT00
 UBO_NAV_BUTTONS   equ   BIT01
 UDO_ALL           equ   UBO_OPS_CONTROLS or UBO_NAV_BUTTONS
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorDlg.CtlsEnable
 ; Purpose:    Enable or disable the dialog children controls.
 ; Arguments:  Arg1: Update options: UBO_ALL, UBO_OPS_CONTROLS, UBO_NAV_BUTTONS.
@@ -140,7 +140,7 @@ Method DB_RecordEditorDlg.CtlsEnable, uses xsi, dOptions:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorDlg.CtlsGet
 ; Purpose:    Read the controls in this dialog window.
 ; Arguments:  None.
@@ -156,7 +156,7 @@ Method DB_RecordEditorDlg.CtlsGet, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorDlg.CtlsSet
 ; Purpose:    Set the controls in this dialog window.
 ; Arguments:  None.
@@ -175,7 +175,7 @@ Method DB_RecordEditorDlg.CtlsSet, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorDlg.Done
 ; Purpose:    Finalize the DB_QueryDlg object.
 ; Arguments:  None.
@@ -187,7 +187,7 @@ Method DB_RecordEditorDlg.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorDlg.Init
 ; Purpose:    Initialize the DB_RecordEditorDlg object.
 ; Arguments:  Arg1: -> Owner object.
@@ -204,7 +204,7 @@ Method DB_RecordEditorDlg.Init,, pOwner:POINTER, hParent:HWND, \
   ACall xcx.Init, pOwner, hParent, IDD_RECORD_EDITOR
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorDlg.UpdateNdxsAndTable
 ; Purpose:    Update all used indexes.
 ; Arguments:  Arg1: -> Temporary DB_Record containing updated fields.
@@ -231,7 +231,7 @@ Method DB_RecordEditorDlg.InsertIndexes, uses xbx xdi xsi
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorDlg.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -433,7 +433,7 @@ Method DB_RecordEditorDlg.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorDlg.OnExitSizeMove
 ; Purpose:    Event procedure for WM_EXITSIZEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -446,7 +446,7 @@ Method DB_RecordEditorDlg.OnExitSizeMove, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xsi].hWnd, DM_REPOSITION, 0, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorDlg.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -552,7 +552,7 @@ Method DB_RecordEditorDlg.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:
   mov eax, TRUE                                         ;Let Windows set the default keyboard focus
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorDlg.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter. wParam = SIZE_xxx
@@ -578,7 +578,7 @@ Method DB_RecordEditorDlg.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorDlg.SwitchToSelectedIndex
 ; Purpose:    Updates the used index and build a new InfoStack.
 ; Arguments:  None.
@@ -600,7 +600,7 @@ Method DB_RecordEditorDlg.SwitchToSelectedIndex, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorDlg.UpdateNdxsAndTable
 ; Purpose:    Update all indexes and the current database record.
 ; Arguments:  Arg1: -> Temporary DB_Record containing the updated fields.
@@ -664,7 +664,7 @@ Method DB_RecordEditorDlg.UpdateNdxsAndTable, uses xbx xdi xsi, pTempRec:$ObjPtr
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorDlg.UpdateStatusbar
 ; Purpose:    Update relevant database information on the statusbar.
 ; Arguments:  None.

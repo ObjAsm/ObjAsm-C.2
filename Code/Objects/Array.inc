@@ -16,7 +16,7 @@ ARR_MEM_NO_ALLOC equ     BIT00     ;Don't allocate memory.
 ARR_MEM_ZERO     equ     BIT01     ;Initialize all memory with zeros.
 ARR_PRESERVE     equ     BIT02     ;Preserve data.
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:   Array
 ; Purpose:  Implementation of a multidimensional data storage. The stored data should not exceed a
 ;           a runtime predefined size.
@@ -52,7 +52,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Array.CalcMemReq
 ; Purpose:    Compute the memory requirement to store the array data.
 ; Arguments:  None.
@@ -75,7 +75,7 @@ Method Array.CalcMemReq, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Array.DimAppend
 ; Purpose:    Append a new dimension to the array object.
 ; Arguments:  Arg1: Dimension size (max. number of elements that fits in this dimension).
@@ -135,7 +135,7 @@ Method Array.DimAppend, uses xbx xsi, dDimSize:DWORD, dFlags:DWORD
   dec eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Array.DimResize
 ; Purpose:    Resize an existing dimension of an array object.
 ; Arguments:  Arg1: Dimension index [0..n-1].
@@ -203,7 +203,7 @@ Method Array.DimResize, uses xbx xdi xsi, dIndex:DWORD, dNewWidth:DWORD, dFlags:
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Array.Done
 ; Purpose:    Finalize the array object and frees allocated resources.
 ; Arguments:  None.
@@ -220,7 +220,7 @@ Method Array.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Array.Init
 ; Purpose:    Initialize the array object.
 ; Arguments:  Arg1: -> Owner object.
@@ -237,7 +237,7 @@ Method Array.Init,, pOwner:POINTER, dItemSize:DWORD
   ACall xcx.Init, pOwner
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Array.ItemAt
 ; Purpose:    Compute the pointer of an array item.
 ; Arguments:  Arg1..n: Indexes of the array item.
@@ -282,7 +282,7 @@ Method Array.ItemAt, uses xbx xdi xsi, dIndex:VARARG
   add xax, [xsi].pData
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Array.Load
 ; Purpose:    Load the array object's data from a stream.
 ; Arguments:  Arg1: -> Stream object.
@@ -304,7 +304,7 @@ Method Array.Load, uses xbx xsi, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.BinRead, [xsi].pData, ebx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Array.MemLoad
 ; Purpose:    Load the array object's data from memory.
 ; Arguments:  Arg1: -> Memory buffer.
@@ -316,7 +316,7 @@ Method Array.MemLoad, uses xsi, pBuffer:POINTER
   invoke MemClone, [xsi].pData, pBuffer, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Array.MemStore
 ; Purpose:    Store the array object's data to memory.
 ; Arguments:  Arg1: -> Memory buffer.
@@ -328,7 +328,7 @@ Method Array.MemStore, uses xsi, pBuffer:POINTER
   invoke MemClone, pBuffer, [xsi].pData, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Array.Store
 ; Purpose:    Store the array object's data to a stream.
 ; Arguments:  Arg1: -> Stream object.

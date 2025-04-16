@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <Base64EncodeW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Base64EncodeW
 ; Purpose:    Encode a data stream using the BASE32 algorithm. The output stream contains only
 ;             characters from the specified alphabet (BASE32_DEFAULT_ALPHABET, BASE32_URL_ALPHABET)

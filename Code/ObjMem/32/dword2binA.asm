@@ -14,7 +14,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 ProcName textequ <dword2binA>
 VALUE_TYPE textequ <DWORD>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  dword2binA
 ; Purpose:    Convert a DWORD to its binary ANSI string representation.
 ; Arguments:  Arg1: -> Destination buffer.

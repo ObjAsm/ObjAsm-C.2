@@ -16,7 +16,7 @@
 % include &IncPath&Windows\shlwapi.inc
 % include &IncPath&Windows\shlobj_core.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SetShellAssociationA / SetShellAssociationW
 ; Purpose:    Set association for a file extension.
 ; Arguments:  Arg1: TRUE = system wide association, FALSE = user account only.

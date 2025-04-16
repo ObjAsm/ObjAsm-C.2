@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrCopy
 ; Purpose:    Copy a BStr to a destination buffer.
 ; Arguments:  Arg1: Destrination BStr buffer.

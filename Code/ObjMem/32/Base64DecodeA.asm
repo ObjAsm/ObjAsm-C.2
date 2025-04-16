@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <Base64DecodeA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Base64DecodeA
 ; Purpose:    Decode a CHRA stream using the BASE64 algoritm.
 ; Arguments:  Arg1: -> Encoded CHRA data buffer.

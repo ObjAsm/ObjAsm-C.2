@@ -14,7 +14,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 ProcName textequ <qword2binA>
 VALUE_TYPE textequ <QWORD>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  qword2binA
 ; Purpose:    Convert a QWORD to its binary ANSI string representation.
 ; Arguments:  Arg1: -> Destination buffer.

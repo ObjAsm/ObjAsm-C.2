@@ -9,7 +9,7 @@
 
 externdef DbgColorError:DWORD
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgOutTextA_UEFI / DbgOutTextW_UEFI
 ; Purpose:    Send a string to the debug output device.
 ; Arguments:  Arg1: -> Zero terminated string.

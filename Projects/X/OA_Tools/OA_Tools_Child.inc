@@ -14,7 +14,7 @@ EDTSTYLE  equ   WS_CHILD or WS_VISIBLE or WS_BORDER or WS_TABSTOP or WS_VSCROLL 
 ;    EditIptor implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditIptor.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.
@@ -29,7 +29,7 @@ Method EditIptor.WndProc,, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
   OCall xax::EditIptor.Dispatch, pSelf, uMsg, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditIptor.OnRButtonDown
 ; Purpose:    Event procedure for WM_RBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -44,7 +44,7 @@ Method EditIptor.OnRButtonDown,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditIptor.OnRButtonUp
 ; Purpose:    Event procedure for WM_RBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -68,7 +68,7 @@ MethodEnd
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.AnalyseFile
 ; Purpose:    Gatter file information => line lengths.
 ; Arguments:  Arg1: -> FileName.
@@ -149,7 +149,7 @@ Method OAT_Child.AnalyseFile, uses xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.ClpBrdClear
 ; Purpose:    Delete the selection to the clipboard.
 ; Arguments:  None.
@@ -161,7 +161,7 @@ Method OAT_Child.ClpBrdClear
   OCall ClpBrdSetBtns
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.ClpBrdCopy
 ; Purpose:    Copy the selection to the clipboard.
 ; Arguments:  None.
@@ -173,7 +173,7 @@ Method OAT_Child.ClpBrdCopy
   OCall ClpBrdSetBtns
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.ClpBrdCut
 ; Purpose:    Cut the selection to the clipboard.
 ; Arguments:  None.
@@ -185,7 +185,7 @@ Method OAT_Child.ClpBrdCut
   OCall ClpBrdSetBtns
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.ClpBrdPaste
 ; Purpose:    Paste the selection to the clipboard.
 ; Arguments:  None.
@@ -197,7 +197,7 @@ Method OAT_Child.ClpBrdPaste
   OCall ClpBrdSetBtns
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.ClpBrdSetBtns
 ; Purpose:    Set the cut, copy & paste clipboard buttons.
 ; Arguments:  None.
@@ -255,7 +255,7 @@ Method OAT_Child.ClpBrdSetBtns, uses xbx xdi xsi
   invoke EnableMenuItem, $ObjTmpl(Application).hMenuChildContext, IDM_EDIT_PASTE, edi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.Done
 ; Purpose:    Finalize the OAT_Child object.
 ; Arguments:  None.
@@ -287,7 +287,7 @@ Method OAT_Child.Done, uses xbx xdi xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.Init
 ; Purpose:    Initialize the OAT_Child object.
 ; Arguments:  Arg1: -> Owner object.
@@ -342,7 +342,7 @@ Method OAT_Child.Init, uses xbx xdi xsi, pOwner:POINTER, pFileName:PSTRING, dFla
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -397,7 +397,7 @@ Method OAT_Child.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -408,7 +408,7 @@ Method OAT_Child.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -433,7 +433,7 @@ Method OAT_Child.OnNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefMDIChildProc, [xsi].hWnd, WM_NOTIFY, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -449,7 +449,7 @@ Method OAT_Child.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefMDIChildProc, [xsi].hWnd, WM_SIZE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.Run
 ; Purpose:    Perform all checks.
 ; Arguments:  None.
@@ -574,7 +574,7 @@ Method OAT_Child.Run, uses xbx xsi
   mov eax, -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.SelectAll
 ; Purpose:    Select the complete text in the RichEdit control.
 ; Arguments:  None.
@@ -585,7 +585,7 @@ Method OAT_Child.SelectAll
   invoke SendMessage, [xcx].hEdit, EM_SETSEL, 0, -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -610,7 +610,7 @@ Method OAT_Child.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.WriteA
 ; Purpose:    Output a given string.
 ; Arguments:  Arg1: -> ANSI string.
@@ -632,7 +632,7 @@ Method OAT_Child.WriteA, uses xsi, pStrA:PSTRINGA, Color:COLORREF, dEffects:DWOR
   invoke SendMessageA, [xsi].hEdit, EM_SCROLLCARET, 0, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.WriteW
 ; Purpose:    Output a given string.
 ; Arguments:  Arg1: -> WIDE string.
@@ -654,7 +654,7 @@ Method OAT_Child.WriteW, uses xsi, pStrW:PSTRINGW, Color:COLORREF, dEffects:DWOR
   invoke SendMessageW, [xsi].hEdit, EM_SCROLLCARET, 0, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.WriteLineNumber
 ; Purpose:    Output Linenumber as a comment.
 ; Arguments:  Arg1: Line Number (0-Base).
@@ -673,7 +673,7 @@ Method OAT_Child.WriteLineNumber, uses xbx xsi, dLineNumber:DWORD
   OCall xsi::OAT_Child.WriteA, $OfsCStrA(")", 13, 10), [xbx].$Obj(Application).Setup.Color.Information, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.WriteResStr
 ; Purpose:    Output a given string from file resource.
 ; Arguments:  Arg1: Resource ID.
@@ -695,7 +695,7 @@ Method OAT_Child.WriteResStr, uses xsi, dResStrID:DWORD, Color:COLORREF, dEffect
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.ZoomIn
 ; Purpose:    Increse the output size.
 ; Arguments:  None.
@@ -720,7 +720,7 @@ Method OAT_Child.ZoomIn, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.ZoomOut
 ; Purpose:    Decrese the output size.
 ; Arguments:  None.

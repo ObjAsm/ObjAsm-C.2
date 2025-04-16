@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  sqqqMul
 ; Purpose:    Multiply 2 signed QWORDs.
 ;             (64 bit) Multiplicand multiplied by (64 bit) Multiplier = (64 bit) Product.

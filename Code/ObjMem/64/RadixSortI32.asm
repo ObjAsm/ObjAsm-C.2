@@ -12,7 +12,7 @@
 
 % include &ObjMemPath&Common\RadixSort64.inc            ;Helper macros
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  RadixSortI32
 ; Purpose:    Ascending sort of an array of SDWORDs using a modified "4 passes radix sort" algorithm.
 ; Arguments:  Arg1: -> Array of SDWORDs.

@@ -9,7 +9,7 @@
 ; ==================================================================================================
 
 ; Links:
-; ——————
+; ------
 ;http://msdn.microsoft.com/en-us/library/3ks53324(VS.71).aspx     MSChart control reference
 ;http://groups.google.com/group/comp.os.ms-windows.programmer.win32/msg/09b3e44b5eca25a6
 ;ATL71.DLL is distributed with the free .NET Framework 1.1.
@@ -36,7 +36,7 @@ externdef IID_IOleObject:GUID
 externdef IID__DMSChart:GUID
 externdef IID__DMSChartEvents:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  MSChart
 ; Purpose: Implement a host object for MSChart OCX component.
 
@@ -53,7 +53,7 @@ Object MSChart, MSChartID, WinPrimer
   DefineVariable    dEventsCookie,    DWORD,    0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  IMSChartEvents
 ; Purpose: Implement a MSChart internally used interface.
 
@@ -167,7 +167,7 @@ if IMPLEMENT
 ;     MSChart implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MSChart.Done
 ; Purpose:    Finalize the Host object.
 ; Arguments:  None.
@@ -184,7 +184,7 @@ Method MSChart.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MSChart.Init
 ; Purpose:    Initialize the Host object and creates an Excel Application instance.
 ; Arguments:  Arg1: -> Owner.
@@ -262,7 +262,7 @@ MethodEnd
 ;     IMSChartEvents implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.OLEStartDrag
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: -> DataObject.
@@ -275,7 +275,7 @@ Method IMSChartEvents.OLEStartDrag, , pDataObject:ptr ptr DataObject, \
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.OLEGiveFeedback
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: -> Effect.
@@ -287,7 +287,7 @@ Method IMSChartEvents.OLEGiveFeedback, , pEffect:ptr SDWORD, pDefaultCursors:ptr
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.OLESetData
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: -> DataObject.
@@ -299,7 +299,7 @@ Method IMSChartEvents.OLESetData, , pDataObject:ptr ptr DataObject, pDataFormat:
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.OLECompleteDrag
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: -> Effect.
@@ -310,7 +310,7 @@ Method IMSChartEvents.OLECompleteDrag, , pEffect:ptr SDWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.OLEDragOver
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: -> DataObject.
@@ -326,7 +326,7 @@ Method IMSChartEvents.OLEDragOver, , pDataObject:ptr ptr DataObject, pEffect:ptr
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.OLEDragDrop
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: -> DataObject.
@@ -342,7 +342,7 @@ Method IMSChartEvents.OLEDragDrop, , pDataObject:ptr ptr DataObject, pEffect:ptr
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.ChartSelected
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Mouse flags.
@@ -354,7 +354,7 @@ Method IMSChartEvents.ChartSelected, , pMouseFlags:ptr SWORD, pCancel:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.TitleSelected
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Mouse flags.
@@ -366,7 +366,7 @@ Method IMSChartEvents.TitleSelected, , pMouseFlags:ptr SWORD, pCancel:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.FootnoteSelected
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Mouse flags.
@@ -378,7 +378,7 @@ Method IMSChartEvents.FootnoteSelected, , pMouseFlags:ptr SWORD, pCancel:ptr SWO
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.LegendSelected
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Mouse flags.
@@ -390,7 +390,7 @@ Method IMSChartEvents.LegendSelected, , pMouseFlags:ptr SWORD, pCancel:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.PlotSelected
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Mouse flags.
@@ -402,7 +402,7 @@ Method IMSChartEvents.PlotSelected, , pMouseFlags:ptr SWORD, pCancel:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.AxisSelected
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Axis ID.
@@ -417,7 +417,7 @@ Method IMSChartEvents.AxisSelected, , pAxisID:ptr SWORD, pAxisIndex:ptr SWORD, \
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.AxisLabelSelected
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Axis ID.
@@ -435,7 +435,7 @@ Method IMSChartEvents.AxisLabelSelected, , pAxisID:ptr SWORD, pAxisIndex:ptr SWO
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.AxisTitleSelected
 ; Purpose:    MSChart event handler.
 ; Purpose:    MSChart event handler.
@@ -451,7 +451,7 @@ Method IMSChartEvents.AxisTitleSelected, , pAxisID:ptr SWORD, pAxisIndex:ptr SWO
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.PointSelected
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Series.
@@ -466,7 +466,7 @@ Method IMSChartEvents.PointSelected, , pSeries:ptr SWORD, pDataPoint:ptr SWORD, 
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.PointLabelSelected
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Series.
@@ -481,7 +481,7 @@ Method IMSChartEvents.PointLabelSelected, , pSeries:ptr SWORD, pDataPoint:ptr SW
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.SeriesSelected
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Series.
@@ -494,7 +494,7 @@ Method IMSChartEvents.SeriesSelected, , pSeries:ptr SWORD, pMouseFlags:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.ChartActivated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Mouse flags.
@@ -506,7 +506,7 @@ Method IMSChartEvents.ChartActivated, , pMouseFlags:ptr SWORD, pCancel:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.TitleActivated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Mouse flags.
@@ -518,7 +518,7 @@ Method IMSChartEvents.TitleActivated, , pMouseFlags:ptr SWORD, pCancel:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.FootnoteActivated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Mouse flags.
@@ -530,7 +530,7 @@ Method IMSChartEvents.FootnoteActivated, , pMouseFlags:ptr SWORD, pCancel:ptr SW
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.LegendActivated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Mouse flags.
@@ -542,7 +542,7 @@ Method IMSChartEvents.LegendActivated, , pMouseFlags:ptr SWORD, pCancel:ptr SWOR
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.PlotActivated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Mouse flags.
@@ -554,7 +554,7 @@ Method IMSChartEvents.PlotActivated, , pMouseFlags:ptr SWORD, pCancel:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.AxisActivated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Axis ID.
@@ -569,7 +569,7 @@ Method IMSChartEvents.AxisActivated, , pAxisID:ptr SWORD, pAxisIndex:ptr SWORD, 
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.AxisLabelActivated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Axis ID.
@@ -587,7 +587,7 @@ Method IMSChartEvents.AxisLabelActivated, , pAxisID:ptr SWORD, pAxisIndex:ptr SW
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.AxisTitleActivated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Axis ID.
@@ -602,7 +602,7 @@ Method IMSChartEvents.AxisTitleActivated, , pAxisID:ptr SWORD, pAxisIndex:ptr SW
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.PointActivated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Series.
@@ -617,7 +617,7 @@ Method IMSChartEvents.PointActivated, , pSeries:ptr SWORD, pDataPoint:ptr SWORD,
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.PointLabelActivated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Series.
@@ -632,7 +632,7 @@ Method IMSChartEvents.PointLabelActivated, , pSeries:ptr SWORD, pDataPoint:ptr S
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.SeriesActivated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Series.
@@ -646,7 +646,7 @@ Method IMSChartEvents.SeriesActivated, , pSeries:ptr SWORD, pMouseFlags:ptr SWOR
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.AxisUpdated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Axis ID.
@@ -660,7 +660,7 @@ Method IMSChartEvents.AxisUpdated, , pAxisID:ptr SWORD, pAxisIndex:ptr SWORD, \
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.AxisLabelUpdated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Axis ID.
@@ -677,7 +677,7 @@ Method IMSChartEvents.AxisLabelUpdated, , pAxisID:ptr SWORD, pAxisIndex:ptr SWOR
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.AxisTitleUpdated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Axis ID.
@@ -691,7 +691,7 @@ Method IMSChartEvents.AxisTitleUpdated, , pAxisID:ptr SWORD, pAxisIndex:ptr SWOR
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.ChartUpdated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Update Flags.
@@ -702,7 +702,7 @@ Method IMSChartEvents.ChartUpdated, , pUpdateFlags:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.FootnoteUpdated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Update Flags.
@@ -713,7 +713,7 @@ Method IMSChartEvents.FootnoteUpdated, , pUpdateFlags:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.LegendUpdated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Update Flags.
@@ -724,7 +724,7 @@ Method IMSChartEvents.LegendUpdated, , pUpdateFlags:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.PlotUpdated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Update Flags.
@@ -735,7 +735,7 @@ Method IMSChartEvents.PlotUpdated, , pUpdateFlags:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.PointUpdated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Series.
@@ -749,7 +749,7 @@ Method IMSChartEvents.PointUpdated, , pSeries:ptr SWORD, pDataPoint:ptr SWORD, \
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.PointLabelUpdated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Series.
@@ -763,7 +763,7 @@ Method IMSChartEvents.PointLabelUpdated, , pSeries:ptr SWORD, pDataPoint:ptr SWO
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.SeriesUpdated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Series.
@@ -775,7 +775,7 @@ Method IMSChartEvents.SeriesUpdated, , pSeries:ptr SWORD, pUpdateFlags:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.TitleUpdated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Update Flags.
@@ -786,7 +786,7 @@ Method IMSChartEvents.TitleUpdated, , pUpdateFlags:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.DataUpdated
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Row.
@@ -804,7 +804,7 @@ Method IMSChartEvents.DataUpdated, , pRow:ptr SWORD, pColumn:ptr SWORD, pLabelRo
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.DonePainting
 ; Purpose:    MSChart event handler.
 ; Arguments:  None.
@@ -815,7 +815,7 @@ Method IMSChartEvents.DonePainting
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.Click
 ; Purpose:    MSChart event handler.
 ; Arguments:  None.
@@ -826,7 +826,7 @@ Method IMSChartEvents.Click
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.DblClick
 ; Purpose:    MSChart event handler.
 ; Arguments:  None.
@@ -837,7 +837,7 @@ Method IMSChartEvents.DblClick
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.KeyDown
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Key Code.
@@ -849,7 +849,7 @@ Method IMSChartEvents.KeyDown, , pKeyCode:ptr SWORD, pShift:SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.KeyPress
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Key Ascii.
@@ -860,7 +860,7 @@ Method IMSChartEvents.KeyPress, , pKeyAscii:ptr SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.KeyUp
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Key Code.
@@ -872,7 +872,7 @@ Method IMSChartEvents.KeyUp, , pKeyCode:ptr SWORD, pShift:SWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.MouseDown
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> pButton.
@@ -887,7 +887,7 @@ Method IMSChartEvents.MouseDown, , pButton:SWORD, pShift:SWORD, r4XPos:OLE_XPOS_
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.MouseMove
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> pButton.
@@ -902,7 +902,7 @@ Method IMSChartEvents.MouseMove, , pButton:SWORD, pShift:SWORD, r4XPos:OLE_XPOS_
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.MouseUp
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> pButton.

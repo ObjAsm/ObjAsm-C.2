@@ -12,7 +12,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCCatA
 ; Purpose:    Concatenate 2 ANSI strings with length limitation.
 ;             The destination string buffer should have at least enough room for the maximum number

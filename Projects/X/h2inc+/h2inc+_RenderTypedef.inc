@@ -8,7 +8,7 @@
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  RenderTypedef
 ; Purpose:    Typedef analysis and translation.
 ;             "typedef" occured in the header and triggered this proc.

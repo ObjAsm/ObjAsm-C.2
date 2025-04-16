@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCECatA
 ; Purpose:    Concatenate 2 ANSI strings with length limitation and return the ZTC address.
 ;             The destination string buffer should have at least enough room for the maximum

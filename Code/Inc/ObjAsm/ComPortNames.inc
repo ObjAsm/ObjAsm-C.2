@@ -18,7 +18,7 @@ PCOMPORT_INFO typedef ptr COMPORT_INFO
 
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetComPortNames
 ; Purpose:    Get connected COM Port names and friendly names.
 ; Arguments:  None.
@@ -93,7 +93,7 @@ GetComPortNames proc uses xbx xdi xsi
   ret
 GetComPortNames endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  FreeComPortNames
 ; Purpose:    Free memory allocated for COMPORT_INFO array
 ; Arguments:  Arg1 -> COMPORT_INFO array

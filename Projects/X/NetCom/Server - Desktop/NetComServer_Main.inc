@@ -37,7 +37,7 @@ if IMPLEMENT
 
 TimerID equ 5361783
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    NetComServer.Done
 ; Purpose:   Finalize the application object.
 ; Arguments: None.
@@ -50,7 +50,7 @@ Method NetComServer.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    NetComServer.Init
 ; Purpose:   Initalize the SDI application object.
 ; Arguments: None.
@@ -120,7 +120,7 @@ Method NetComServer.Init, uses xsi
   DbgLine
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    NetComServer.OnCommand
 ; Purpose:   Event procedure for WM_COMMAND message.
 ; Arguments: Arg1: First message parameter.
@@ -156,7 +156,7 @@ Method NetComServer.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    NetComServer.OnClose
 ; Purpose:   Event procedure for WM_CLOSE message.
 ; Arguments: Arg1: First message parameter.
@@ -174,7 +174,7 @@ Method NetComServer.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    NetComServer.OnTimer
 ; Purpose:   Event procedure for WM_TIMER message.
 ; Arguments: Arg1: First message parameter.
@@ -239,7 +239,7 @@ Method NetComServer.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    NetComServer.Startup
 ; Purpose:   Registers the object class with the OS.
 ; Arguments: None.

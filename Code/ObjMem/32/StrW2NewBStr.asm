@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrW2NewBStr
 ; Purpose:    Create a new BSTR with the content of a STRINGW.
 ; Arguments:  Arg1: -> STRINGW.

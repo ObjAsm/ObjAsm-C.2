@@ -12,7 +12,7 @@
 
 % include &IncPath&Windows\Psapi.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  FindModuleByAddrA
 ; Purpose:    Find the module name from an address on a WinNT system.
 ; Arguments:  Arg1: Address.

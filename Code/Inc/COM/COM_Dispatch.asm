@@ -12,7 +12,7 @@ LOCALE_SYSTEM_DEFAULT equ 800h
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ExecDispatch
 ; Purpose:    Perform a method call using the IDispatch interface. Variant arguments are
 ;             automatically created onto stack.
@@ -140,7 +140,7 @@ if TARGET_BITNESS eq 64
   option stackbase:??StackBase
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CallDispatch
 ; Purpose:    Perform a method call using the IDispatch interface. Variant arguments are passed as
 ;             procedure arguments. The caller has to assembe the variants.

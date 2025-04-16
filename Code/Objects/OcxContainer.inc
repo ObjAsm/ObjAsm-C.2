@@ -32,7 +32,7 @@ externdef CLSID_OCXCLIENTSITE:GUID
 
 SHAREFLAGS  equ   STGM_DIRECT or STGM_READWRITE or STGM_SHARE_EXCLUSIVE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:   OcxClientSite
 ; Purpose:  Implement COM ClientSite for OCX components.
 ;           An instance is created for each OcxControl and stored in a collection owned by the
@@ -98,7 +98,7 @@ Object OcxClientSite, OcxClientSiteID, Component
 ObjectEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:   OcxContainer
 ; Purpose:  Implement COM Container for OCX components.
 ; Links:    http://msdn.microsoft.com/en-us/library/ms686619(VS.85).aspx     Containers
@@ -111,60 +111,60 @@ ObjectEnd
 ;
 ;                    OCX Container                                        OCX Control
 ;                                                                             1..n
-;                                  ———                                                ———
+;                                  ---                                                ---
 ;                                 |   |                                              |   |
-;                                  ———                                                ———
+;                                  ---                                                ---
 ;                                   |                                                  |
-;      ————————————————————————————————————                        ———————————————————————————
+;      ------------------------------------                        ---------------------------
 ;     |                             |      |                      |                 IUnknown  |
 ;     |       OCX Client Site 1..n  |      |                      |                           |
-;     |       ———————————————————————————  |              ———     |                           |
-;     |     —|                  IUnknown | |             |   |————| IOleObject                |
-;     |   —| |                    Site   | |              ———     |                           |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | | IOleClientSite            |—|——|   |      |   |————| IOleInPlaceObject         |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | | IAdviseSink               |—|——|   |      |   |————| IOleInPlaceActiveObject   |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | | IOleInPlaceSite           |—|——|   |      |   |————| IOleControl               |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | | IOleControlSite           |—|——|   |      |   |————| IDataObject               |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | | IOleContainer             |—|——|   |      |   |————| IViewObject2              |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | | IDispatch                 |—|——|   |      |   |————| IDispatch                 |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | | ISimpleFrameSite          |—|——|   |      |   |————| IConnectionPointContainer |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | | IPropertyNotifySink       |—|——|   |      |   |————| IProvideClassInfo(2)      |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | | IErrorInfo                |—|——|   |      |   |————| ISpecifyPropertyPages     |
-;     |  | | |                           | |   ———        ———     |                           |
-;     |  | | |                           | |              ———     |                           |
-;     |  | | |                           | |             |   |————| IPersist...  (*)          |
-;     |  | | |                           | |              ———     |                           |
-;     |  | | '———————————————————————————' |              ———     |                           |
-;     |  | '————————————————————————————'  |             |   |————| IOleCache(2)              |
-;     |  '————————————————————————————'    |              ———     |                           |
-;     |                                    |              ———     |                           |
-;     |                                    |             |   |————| IExternalConnection       |
-;     '————————————————————————————————————'              ———     |                           |
-;                                                         ———     |                           |
-;                                                        |   |————| IRunnableObject           |
-;                                                         ———     |                           |
-;                                                         ———     |                           |
-;                                                        |   |————| IClassFactory2            |
-;                                                         ———     |                           |
+;     |       ---------------------------  |              ---     |                           |
+;     |     -|                  IUnknown | |             |   |----| IOleObject                |
+;     |   -| |                    Site   | |              ---     |                           |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | | IOleClientSite            |-|--|   |      |   |----| IOleInPlaceObject         |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | | IAdviseSink               |-|--|   |      |   |----| IOleInPlaceActiveObject   |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | | IOleInPlaceSite           |-|--|   |      |   |----| IOleControl               |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | | IOleControlSite           |-|--|   |      |   |----| IDataObject               |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | | IOleContainer             |-|--|   |      |   |----| IViewObject2              |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | | IDispatch                 |-|--|   |      |   |----| IDispatch                 |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | | ISimpleFrameSite          |-|--|   |      |   |----| IConnectionPointContainer |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | | IPropertyNotifySink       |-|--|   |      |   |----| IProvideClassInfo(2)      |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | | IErrorInfo                |-|--|   |      |   |----| ISpecifyPropertyPages     |
+;     |  | | |                           | |   ---        ---     |                           |
+;     |  | | |                           | |              ---     |                           |
+;     |  | | |                           | |             |   |----| IPersist...  (*)          |
+;     |  | | |                           | |              ---     |                           |
+;     |  | | '---------------------------' |              ---     |                           |
+;     |  | '----------------------------'  |             |   |----| IOleCache(2)              |
+;     |  '----------------------------'    |              ---     |                           |
+;     |                                    |              ---     |                           |
+;     |                                    |             |   |----| IExternalConnection       |
+;     '------------------------------------'              ---     |                           |
+;                                                         ---     |                           |
+;                                                        |   |----| IRunnableObject           |
+;                                                         ---     |                           |
+;                                                         ---     |                           |
+;                                                        |   |----| IClassFactory2            |
+;                                                         ---     |                           |
 ;                                                                 |                           |
-;                                                                 '———————————————————————————'
+;                                                                 '---------------------------'
 ;
 ;
 ; (*) Persistence Interfaces: IPersistStream, IPersistStreamInit, IPersistMemory, IPersistStorage,
@@ -174,16 +174,16 @@ ObjectEnd
 ;
 ;
 ; In-Place window model
-; —————————————————————
+; ---------------------
 ;
 ;             Frame
-;             ———————————————————————————————————————————————————————————
+;             -----------------------------------------------------------
 ;            |    Document                                               |
-;            |    —————————————————————————————————————————————————————  |
+;            |    -----------------------------------------------------  |
 ;            |   |    Parent                                           | |
-;            |   |    ———————————————————————————————————————————————  | |
+;            |   |    -----------------------------------------------  | |
 ;            |   |   |    In-Place Objects                           | | |
-;            |   |   |    —————————————————————————————————————————  | | |
+;            |   |   |    -----------------------------------------  | | |
 ;            |   |   |   |                                         | | | |
 ;            |   |   |   |                                         | | | |
 ;            |   |   |   |                                         | | | |
@@ -195,10 +195,10 @@ ObjectEnd
 ;            |   |   |   |                                         | | | |
 ;            |   |   |   |                                         | | | |
 ;            |   |   |   |                                         | | | |
-;            |   |   |   '—————————————————————————————————————————' | | |
-;            |   |   '———————————————————————————————————————————————' | |
-;            |   '—————————————————————————————————————————————————————' |
-;            '———————————————————————————————————————————————————————————'
+;            |   |   |   '-----------------------------------------' | | |
+;            |   |   '-----------------------------------------------' | |
+;            |   '-----------------------------------------------------' |
+;            '-----------------------------------------------------------'
 ;
 
 Object OcxContainer, OcxContainerID, Primer
@@ -261,7 +261,7 @@ DefGUID CLSID_OCXCLIENTSITE, <F85F32F6-8658-4074-8B3D-743FDA45EFE8>
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OcxClientSite.Connect
 ; Purpose:    Connect the control object to the container using the Site object. Called internally.
 ; Arguments:  None.
@@ -387,7 +387,7 @@ Method OcxClientSite.Connect, uses xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OcxClientSite.Disconnect
 ; Purpose:    Disconnect the control object from the container.
 ; Arguments:  None.
@@ -434,7 +434,7 @@ Method OcxClientSite.Disconnect, uses xsi
   ICall [xsi].pIUnknownSite::IUnknown.Release
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OcxClientSite.DoVerb
 ; Purpose:    Perform a verb specific command.
 ; Arguments:  Arg1: Verb command.
@@ -458,7 +458,7 @@ Method OcxClientSite.DoVerb, uses xbx xsi, dVerb:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OcxClientSite.Init
 ; Purpose:    Initialize the Control object.
 ; Arguments:  Arg1: -> Owner object (OcxContainer).
@@ -519,7 +519,7 @@ Method OcxClientSite.Init, uses xbx xsi, pOwner:POINTER
   xor eax, eax                                        ;eax = OBJ_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OcxClientSite.GetName
 ; Purpose:    Retrieve the name of the control (ANSI).
 ; Arguments:  None.
@@ -556,7 +556,7 @@ MethodEnd
 ;     OcxContainer implementation
 ; ==================================================================================================
 ;
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OcxContainer.CreateClientSite
 ; Purpose:    Create a new OcxClientSite used to connect to the control.
 ; Arguments:  None.
@@ -576,7 +576,7 @@ Method OcxContainer.CreateClientSite, uses xbx
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OcxContainer.CreateControl
 ; Purpose:    Create a new hosted control using CoCreateInstance.
 ; Arguments:  Arg1: -> Control class ID (GUID).
@@ -609,7 +609,7 @@ Method OcxContainer.CreateControl, uses xbx xsi, pCtrlClsID:REFGUID, dClsCtx:DWO
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OcxContainer.CreateControlEx
 ; Purpose:    Create a new hosted control using CoCreateInstanceEx.
 ; Arguments:  Arg1: -> Control class ID (GUID).
@@ -657,7 +657,7 @@ Method OcxContainer.CreateControlEx, uses xbx xsi, pCtrlClsID:REFGUID, dClsCtx:D
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OcxContainer.CreateControlLic
 ; Purpose:    Create a new hosted control using IClassFactory2.
 ; Arguments:  Arg1: -> Control class ID (GUID).
@@ -721,7 +721,7 @@ Method OcxContainer.CreateControlLic, uses xbx xsi, pCtrlClsID:REFGUID, dClsCtx:
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OcxContainer.DeleteControl
 ; Purpose:    Delete the currently hosted control.
 ; Arguments:  Arg1: -> OcxClientSite.
@@ -735,7 +735,7 @@ Method OcxContainer.DeleteControl,, pClientSite:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OcxContainer.Done
 ; Purpose:    Finalize the Host object.
 ; Arguments:  None.
@@ -759,7 +759,7 @@ Method OcxContainer.Done, uses xbx xdi xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OcxContainer.Init
 ; Purpose:    Initialize the OcxContainer object.
 ; Arguments:  Arg1: -> Owner.

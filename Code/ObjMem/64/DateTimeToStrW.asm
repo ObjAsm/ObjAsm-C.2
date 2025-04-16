@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <DateTimeToStrW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DateTimeToStrW
 ; Purpose:    Convert a PDTL_DATE and DTL_TIME to a formated string representation.
 ; Arguments:  Arg1: -> Destination WIDE Buffer

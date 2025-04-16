@@ -24,7 +24,7 @@ DEF_STHROBBER ends
 PDEF_STHROBBER typedef ptr DEF_STHROBBER
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  SpinningThrobber
 ; Purpose: Animated control that displays a rotating image to show a background activity.
 
@@ -50,7 +50,7 @@ CStr szSpinningThrobberClass, "OAC_SpinningThrobber"
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SpinningThrobber.Animate
 ; Purpose:    Show the animation.
 ; Arguments:  None.
@@ -187,7 +187,7 @@ Method SpinningThrobber.Animate
   .until FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SpinningThrobber.Dispose
 ; Purpose:    Free the allocated Bitmap.
 ; Arguments:  None.
@@ -201,7 +201,7 @@ Method SpinningThrobber.Dispose, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SpinningThrobber.Init
 ; Purpose:    Initialize the SpinningThrobber object.
 ; Arguments:  Arg1: -> Owner object.
@@ -236,7 +236,7 @@ Method SpinningThrobber.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefSt
   assume xbx:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SpinningThrobber.InitRes
 ; Purpose:    Initialize the SpinningThrobber object.
 ; Arguments:  Arg1: -> Owner object.
@@ -257,7 +257,7 @@ Method SpinningThrobber.InitRes, uses xsi, pOwner:POINTER, hWnd:HWND
   invoke ResumeThread, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SpinningThrobber.LoadBmpFromRes
 ; Purpose:    Load a bitmap from the resource section and add it to the spinner resources.
 ; Arguments   Arg1: -> Bitmap resource name.
@@ -274,7 +274,7 @@ Method SpinningThrobber.LoadBmpFromRes, uses xsi, pBmpName:PSTRING
   m2m [xsi].BmpSize.y, BMP.bmHeight, ecx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SpinningThrobber.LoadPngFromRes
 ; Purpose:    Load a PNG from the resource section and add it to the spinner resources.
 ; Arguments   Arg1: -> Image resource name. Must be of type IMAGE = 2110.
@@ -291,7 +291,7 @@ Method SpinningThrobber.LoadPngFromRes, uses xsi, pPngName:PSTRING
   m2m [xsi].BmpSize.y, BMP.bmHeight, ecx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SpinningThrobber.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -316,7 +316,7 @@ Method SpinningThrobber.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SpinningThrobber.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.

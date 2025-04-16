@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.MoveCaretDown
 ; Purpose:    Move the caret one line down.
 ; Arguments:  Arg1: Number of lines
@@ -23,7 +23,7 @@ Method EditorView.MoveCaretDown, uses xbx xdi xsi, dLineCount:DWORD
   .while !ZERO?
     mov xcx, [xsi].pOwner
     mov xbx, [xcx].$Obj(EditorDisplay).pOwner           ;xbx -> Editor
-    mov xax, [xbx].$Obj(Editor).LinkedListHead.pLastMember
+    mov xax, [xbx].$Obj(Editor).LinesHead.pLastMember
     sub xax, offset $Obj(EditorLine).LineLink
     .if xax != [xsi].CaretLocation.pEditorLine            ;End of file?
       inc [xsi].sdCaretVisLineOffset
@@ -66,7 +66,7 @@ Method EditorView.MoveCaretDown, uses xbx xdi xsi, dLineCount:DWORD
   mov eax, dNeedRedrawing
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.MoveCaretUp
 ; Purpose:    Move the caret one line up.
 ; Arguments:  Arg1: Number of lines
@@ -83,7 +83,7 @@ Method EditorView.MoveCaretUp, uses xbx xdi xsi, dLineCount:DWORD
   .while !ZERO?
     mov xcx, [xsi].pOwner
     mov xbx, [xcx].$Obj(EditorDisplay).pOwner           ;xbx -> Editor
-    mov xax, [xbx].$Obj(Editor).LinkedListHead.pFirstMember
+    mov xax, [xbx].$Obj(Editor).LinesHead.pFirstMember
     sub xax, offset $Obj(EditorLine).LineLink
     .if xax != [xsi].CaretLocation.pEditorLine            ;Begin of file?
       dec [xsi].sdCaretVisLineOffset
@@ -128,7 +128,7 @@ Method EditorView.MoveCaretUp, uses xbx xdi xsi, dLineCount:DWORD
   mov eax, dNeedRedrawing
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnChar
 ; Purpose:    Event procedure for WM_CHAR message.
 ; Arguments:  Arg1: First message parameter.
@@ -155,12 +155,12 @@ Method EditorView.OnChar, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     .if xdi != NULL
       mov edx, [xsi].CaretLocation.dCharIndex
       .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_OVERWRITE_MODE
-        OCall xdi::EditorLine.CharInsert, edx, 1, addr wParam
+        OCall xdi::EditorLine.CharInsert, edx, 1, addr wParam, TRUE
       .else
         .if [xdi].$Obj(EditorLine).dLength == edx
-          OCall xdi::EditorLine.CharInsert, edx, 1, addr wParam
+          OCall xdi::EditorLine.CharInsert, edx, 1, addr wParam, TRUE
         .else
-          OCall xdi::EditorLine.CharReplace, edx, 1, addr wParam
+          OCall xdi::EditorLine.CharReplace, edx, 1, addr wParam, TRUE
         .endif
       .endif
       .if eax != 0
@@ -179,7 +179,7 @@ Method EditorView.OnChar, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnKeyDown
 ; Purpose:    Event procedure for WM_KEYDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -250,6 +250,10 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
       OCall xsi.CaretSet
     .endif
 
+  .elseif dControlKeyPressed != FALSE && wParam == 'U'
+;    OCall [xax].ACTION.pEditorLine::EditorLine.Undo, xax
+    inc dNeedRedrawing
+
   .elseif wParam == VK_INSERT
     BitToggle [xbx].$Obj(Editor).dFlags, EIF_OVERWRITE_MODE
     OCall xsi.CaretDestroy
@@ -301,7 +305,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
           add dNeedRedrawing, eax
           OCall xsi.CaretSet
         .else
-          mov xax, [xbx].$Obj(Editor).LinkedListHead.pFirstMember
+          mov xax, [xbx].$Obj(Editor).LinesHead.pFirstMember
           sub xax, offset $Obj(EditorLine).LineLink
           .if xax != [xsi].CaretLocation.pEditorLine
             OCall xsi.MoveCaretUp, 1
@@ -370,7 +374,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
           OCall xsi.CaretSet
         .else
           BitSet [xax].$Obj(EditorLine).dFlags, TLF_EOL_MARKED   ;Mark previous line
-          mov xax, [xbx].$Obj(Editor).LinkedListHead.pLastMember
+          mov xax, [xbx].$Obj(Editor).LinesHead.pLastMember
           sub xax, offset $Obj(EditorLine).LineLink
           .if xax != [xsi].CaretLocation.pEditorLine
             OCall xsi.MoveCaretDown, 1
@@ -557,7 +561,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
       .if xcx != NULL
         mov ecx, [xsi].CaretLocation.dCharIndex
         .if ecx == [xax].$Obj(EditorLine).dLength
-          OCall xax::EditorLine.LineJoinNext, [xsi].CaretLocation.dLineNumber
+          OCall xax::EditorLine.LineJoinNext, [xsi].CaretLocation.dLineNumber, TRUE
         .else
           mov edx, [xsi].CaretLocation.dLineNumber
           mov [xbx].$Obj(Editor).SelectionFst.pEditorLine, xax
@@ -598,7 +602,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
           sub xcx, offset $Obj(EditorLine).LineLink
           mov edi, [xcx].$Obj(EditorLine).dLength
           ;Join the 2 lines
-          OCall xax::EditorLine.LineJoinPrev, [xsi].CaretLocation.dLineNumber   ;Can't fail
+          OCall xax::EditorLine.LineJoinPrev, [xsi].CaretLocation.dLineNumber, TRUE   ;Can't fail
 
           ;Move caret
           mov [xsi].CaretLocation.pEditorLine, xcx          ;xcx retunred from LineJoinPrev
@@ -643,12 +647,12 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
     .if xax != NULL
       mov edx, [xsi].CaretLocation.dCharIndex
       .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_OVERWRITE_MODE
-        OCall xax::EditorLine.CharInsert, edx, 2, $OfsCStr("  ")
+        OCall xax::EditorLine.CharInsert, edx, 2, $OfsCStr("  "), TRUE
       .else
         .if [xax].$Obj(EditorLine).dLength == edx
-          OCall xax::EditorLine.CharInsert, edx, 2, $OfsCStr("  ")
+          OCall xax::EditorLine.CharInsert, edx, 2, $OfsCStr("  "), TRUE
         .else
-          OCall xax::EditorLine.CharReplace, edx, 2, $OfsCStr("  ")
+          OCall xax::EditorLine.CharReplace, edx, 2, $OfsCStr("  "), TRUE
         .endif
       .endif
       .if eax != 0
@@ -663,7 +667,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
   .elseif wParam == VK_RETURN
     mov xax, [xsi].CaretLocation.pEditorLine
     .if xax != NULL
-      OCall xax::EditorLine.LineBreak, [xsi].CaretLocation.dCharIndex, [xsi].CaretLocation.dLineNumber
+      OCall xax::EditorLine.LineBreak, [xsi].CaretLocation.dCharIndex, [xsi].CaretLocation.dLineNumber, TRUE
       .if xax != NULL
         mov [xsi].CaretLocation.pEditorLine, xax
         mov [xsi].CaretLocation.dCharIndex, 0

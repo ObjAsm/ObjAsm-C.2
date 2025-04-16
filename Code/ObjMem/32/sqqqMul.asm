@@ -14,7 +14,7 @@
 ProcName textequ <sqqqMul>
 TypeArg equ <SDWORD>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  sqqqMul
 ; Purpose:    Multiply 2 signed QWORDs.
 ;             (64 bit) Multiplicand multiplied by (64 bit) Multiplier = (64 bit) Product.

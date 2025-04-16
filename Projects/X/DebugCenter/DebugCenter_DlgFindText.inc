@@ -5,7 +5,7 @@
 ; Purpose:    ObjAsm support of Find Text dialog objects.
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DialogFindText
 ; Purpose:    This object is a modeless dialog created from a template. It implements a text search
 ;             dialog.
@@ -64,7 +64,7 @@ CONTROL       "&Down", IDC_FTXT_FINDDOWNRADIO, "Button", BS_AUTORADIOBUTTON, 88,
 
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogFindText.CtlsGet
 ; Purpose:    Read the controls of the FindText dialog.
 ; Arguments:  None.
@@ -103,7 +103,7 @@ Method DialogFindText.CtlsGet, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogFindText.CtlsSet
 ; Purpose:    Setup the controls of the FindText dialog.
 ; Arguments:  None.
@@ -153,7 +153,7 @@ Method DialogFindText.CtlsSet, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogFindText.Done
 ; Purpose:    Finalize the DialogFindText dialog object.
 ; Arguments:  None.
@@ -167,7 +167,7 @@ Method DialogFindText.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogFindText.Init
 ; Purpose:    Initialize the DialogFindText dialog object.
 ; Arguments:  Arg1: -> Owner object.
@@ -186,7 +186,7 @@ Method DialogFindText.Init,, pOwner:POINTER, hParent:HWND, dLanguage:DWORD, pStr
   ACall Init, xdx, hParent, offset DIALOGFINDTEXT, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogFindText.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -273,7 +273,7 @@ Method DialogFindText.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogFindText.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.

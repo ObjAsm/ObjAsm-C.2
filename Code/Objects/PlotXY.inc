@@ -79,7 +79,7 @@ PLOT            equ     3
 ;https://docs.microsoft.com/de-de/cpp/c-runtime-library/format-specification-syntax-printf-and-wprintf-functions?view=vs-2019
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  PlotXY
 ; Purpose: This object draws a XY plot on a surface. It works using the DataBufferXY object, that
 ;          holds the information for each data line on the plot. 2 specialized dialogs,
@@ -114,7 +114,7 @@ Object PlotXY, PlotXYID, MsgInterceptor
   DefineVariable    MovedLastPoint,     POINT,          {}
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  DataBufferXY
 ; Purpose: Implement a PlotXY internally used data array buffer.
 
@@ -137,7 +137,7 @@ Object DataBufferXY, DataBufferXYID, Array
 ObjectEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 IDC_DSS_PREVIEW     equ     100
 IDC_DSS_COLORS      equ     101
@@ -179,7 +179,7 @@ Object DialogSetupScale,, DialogModal
 ObjectEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 IDC_SGC_PREVIEW     equ     100
 
@@ -213,7 +213,7 @@ CStr szPlotXYProp, "PlotXY"
 ;    Auxiliary procedures
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetFormatStr
 ; Purpose:    Generate a format string that must be destroyed after use.
 ; Arguments:  Number of digits.
@@ -242,7 +242,7 @@ GetFormatStr endp
 ;    PlotXY implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PlotXY.Calc
 ; Purpose:    Compute internal values of the plot.
 ; Arguments:  Arg1: Output device context.
@@ -498,7 +498,7 @@ Method PlotXY.Calc, uses xdi xbx xsi, hDC:HWND, pRect:PRECT
   fstp [xsi].PlotXYData.ScaleY.r4ScaleFactor
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PlotXY.CalcTicks
 ; Purpose:    Compute all relative to major and minor scale ticks.
 ; Arguments:  Arg1: -> Scale data.
@@ -611,7 +611,7 @@ Method PlotXY.CalcTicks, uses xbx, pScaleData:PSCALE_DATA
   assume xbx:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PlotXY.Done
 ; Purpose:    Finalize the PlotXY object.
 ; Arguments:  None.
@@ -642,7 +642,7 @@ Method PlotXY.Done, uses xbx xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PlotXY.Frame
 ; Purpose:    Display the plot frame.
 ; Arguments:  Arg1: Output device context.
@@ -1063,7 +1063,7 @@ Method PlotXY.Frame, uses xbx xdi xsi, hDC:HDC, bUseColor:BYTE
   assume xbx:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    PlotXY.Init
 ; Purpose:   Initialize the PlotXY object.
 ; Arguments: Arg1: -> Owner object.
@@ -1220,7 +1220,7 @@ Method PlotXY.Init, uses xbx xsi xdi, pOwner:POINTER, hWnd:HWND, pData:PPLOTXY_D
   invoke ReleaseDC, hWnd, hDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PlotXY.OnMouseMove
 ; Purpose:    Event procedure for WM_MOUSEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1331,7 +1331,7 @@ Method PlotXY.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PlotXY.OnLButtonDblClk
 ; Purpose:    Event procedure for WM_LBUTTONDBLCLK message.
 ; Arguments:  Arg1: First message parameter.
@@ -1372,7 +1372,7 @@ Method PlotXY.OnLButtonDblClk, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PlotXY.OnLButtonDown
 ; Purpose:    Event procedure for WM_LBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -1406,7 +1406,7 @@ Method PlotXY.OnLButtonDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PlotXY.OnLButtonUp
 ; Purpose:    Event procedure for WM_LBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -1419,7 +1419,7 @@ Method PlotXY.OnLButtonUp,, wParam:WPARAM, lParam:LPARAM
   invoke ReleaseCapture
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PlotXY.Plot
 ; Purpose:    Displays the plot data as a line.
 ; Arguments:  Arg1: Output device context.
@@ -1551,7 +1551,7 @@ Method PlotXY.Plot, uses xbx xdi xsi, hDC:HDC, bUseColor:BYTE
   invoke DeleteObject, hRgn
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PlotXY.Refresh
 ; Purpose:    Refresh the plot object.
 ; Arguments:  None.
@@ -1568,7 +1568,7 @@ Method PlotXY.Refresh, uses xsi
   invoke ReleaseDC, hWnd, hDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PlotXY.Show
 ; Purpose:    Draw the PlotXY object.
 ; Arguments:  Arg1: DC handle.
@@ -1597,7 +1597,7 @@ Method PlotXY.Show, uses xbx xsi, hDC:HDC, pRect:PRECT
   invoke DeleteDC, hMemDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PlotXY.WndProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.
@@ -1617,7 +1617,7 @@ MethodEnd
 ;    DataBufferXY implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataBufferXY.Done
 ; Purpose:    Finalize the DataBufferXY object.
 ; Arguments:  None.
@@ -1631,7 +1631,7 @@ Method DataBufferXY.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataBufferXY.Init
 ; Purpose:    Initialize the DataBufferXY object.
 ; Arguments:  Arg1: -> Owner object.
@@ -1645,7 +1645,7 @@ Method DataBufferXY.Init, uses xsi, pOwner:POINTER, dCapacity:DWORD, dDataSize:D
   OCall xsi.DimAppend, dCapacity, ARR_MEM_ZERO
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataBufferXY.Load
 ; Purpose:    Load buffer data from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -1667,7 +1667,7 @@ Method DataBufferXY.Load, uses xsi, pStream:$ObjPtr(Stream)
   ACall xsi.Load, pStream
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    DataBufferXY.Scan
 ; Purpose:   Scan the buffer data to find the min and max data. Min & Max indices are set.
 ; Arguments: Arg1: Index of first element.
@@ -1723,7 +1723,7 @@ Method DataBufferXY.Scan, uses xbx xdi xsi, dFirst:DWORD, dLast:DWORD
   mov [xsi].dMinIndex, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataBufferXY.Store
 ; Purpose:    Store buffer data to a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -1750,7 +1750,7 @@ MethodEnd
 ;    DialogSetupScale implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetupScale.CtlsGet
 ; Purpose:    Read the controls in this dialog window.
 ; Arguments:  None.
@@ -1848,7 +1848,7 @@ Method DialogSetupScale.CtlsGet, uses xbx xdi xsi
   assume xdi:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    DialogSetupScale.CtlsSet
 ; Purpose:   Set the controls in this dialog window.
 ; Arguments: None.
@@ -1970,7 +1970,7 @@ Method DialogSetupScale.CtlsSet, uses xbx xdi xsi
   assume xdi:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetupScale.Done
 ; Purpose:    Finalize a dialog.
 ; Arguments:  None.
@@ -1983,7 +1983,7 @@ Method DialogSetupScale.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetupScale.Init
 ; Purpose:    Initialaize the DialogSetupScale dialog object.
 ; Arguments:  Arg1: -> Owner object.
@@ -2001,7 +2001,7 @@ Method DialogSetupScale.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pScale
   mov [xsi].pPrevUnit, $invoke(StrNew, [xbx].SCALE_BASIC_DATA.pUnit)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetupScale.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
@@ -2013,7 +2013,7 @@ Method DialogSetupScale.OnClose,, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xcx].hWnd, WM_COMMAND, IDCANCEL, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetupScale.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -2077,7 +2077,7 @@ MethodEnd
 ;    DialogSetupColors implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetupColors.CtlsSet
 ; Purpose:    Set the controls in this dialog window.
 ; Arguments:  None.
@@ -2106,7 +2106,7 @@ Method DialogSetupColors.CtlsSet, uses xdi xsi
   assume xdi:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetupColors.CtlsGet
 ; Purpose:    Read the controls in this dialog window.
 ; Arguments:  None.
@@ -2119,7 +2119,7 @@ Method DialogSetupColors.CtlsGet
   invoke MemClone, xcx, addr [xdx].NewColors, sizeof COLOR_CONFIG   ;Return colors to XGraph
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetupColors.Init
 ; Purpose:    Initialaize the DialogSetupColors dialog object.
 ; Arguments:  Arg1: -> Owner object.
@@ -2130,7 +2130,7 @@ Method DialogSetupColors.Init,, pOwner:POINTER, hParent:HWND
   ACall Init, pOwner, hParent, $OfsCStr("DialogSetupGraph2dColors")
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetupColors.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
@@ -2142,7 +2142,7 @@ Method DialogSetupColors.OnClose,, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xcx].hWnd, WM_COMMAND, IDCANCEL, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetupColors.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.

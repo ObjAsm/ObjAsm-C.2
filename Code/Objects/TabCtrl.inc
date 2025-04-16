@@ -25,7 +25,7 @@ DEF_TABCONTROL struc
 DEF_TABCONTROL ends
 PDEF_TABCONTROL typedef ptr DEF_TABCONTROL
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     TabIptor
 ; Purpose:    TabIptor is a interceptor object used internally by the TabCtrl object.
 
@@ -35,7 +35,7 @@ Object TabIptor, , MsgInterceptor
   VirtualEvent      OnNotify,           WM_NOTIFY
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     TabCtrl
 ; Purpose:    TabCtrl is a thin wrapper around the SysTabControl32 GDI control.
 
@@ -60,7 +60,7 @@ CStr szTabCtlIptor, "TabCtlIptor"
 ;    TabCtrl implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TabCtrl.Done
 ; Purpose:    Finalize the TabCtrl object, freeing allocated memory.
 ; Arguments:  None.
@@ -73,7 +73,7 @@ Method TabCtrl.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TabCtrl.Init
 ; Purpose:    Initialize the TabCtrl object.
 ; Arguments:  Arg1: -> Owner object.
@@ -103,7 +103,7 @@ Method TabCtrl.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, \
   Subclass TabCtrl                                      ;Uses xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TabCtrl.Insert
 ; Purpose:    Add a window to the TabControl.
 ; Arguments:  Arg1: Index into the TabControl.
@@ -125,7 +125,7 @@ Method TabCtrl.Insert,, dIndex:DWORD, hWnd:HWND, pText:POINTER, dImageIndex:DWOR
   invoke SendMessage, [xcx].hWnd, TCM_INSERTITEM, dIndex, addr TCI
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TabCtrl.SetPadding
 ; Purpose:    Set horizontal and vertical padding.
 ; Arguments:  Arg1: Horizontal padding in pixel.
@@ -140,7 +140,7 @@ Method TabCtrl.SetPadding,, dHorzPadding:DWORD, dVertPadding:DWORD
   invoke SendMessage, [xcx].hWnd, TCM_SETPADDING , 0, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TabCtrl.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.
@@ -160,7 +160,7 @@ MethodEnd
 ;    TabIptor implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TabIptor.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -187,7 +187,7 @@ Method TabIptor.OnNotify, uses xbx xdi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TabIptor.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.

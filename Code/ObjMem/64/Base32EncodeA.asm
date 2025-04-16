@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <Base32EncodeA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Base32EncodeA
 ; Purpose:    Encode a data stream using the BASE32 algorithm. The output stream contains only
 ;             characters from the specified alphabet (BASE32_DEFAULT_ALPHABET, BASE32_URL_ALPHABET)

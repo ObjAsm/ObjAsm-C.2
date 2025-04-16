@@ -11,7 +11,7 @@
 ;    D3VectronCollection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  VectronCompare
 ; Purpose:    Compare the Vo vector of two D3Vectron structures.
 ; Arguments:  Arg1: -> First D3Vectron data structure.
@@ -42,7 +42,7 @@ VectronCompare proc pVectron1:PD3Vectron, pVectron2:PD3Vectron, xUnused:XWORD
   ret
 VectronCompare endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3VectronCollection.Append
 ; Purpose:    Load a D3Vectron data structure from a stream object.
 ; Arguments:  Arg1: -> D3Vector data structure.
@@ -62,7 +62,7 @@ Method D3VectronCollection.Append, uses xbx xsi, pVector:PD3Vector
   OCall xsi::D3VectronCollection.IndexOf, xax           ;Get item index
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3VectronCollection.GetItem
 ; Purpose:    Load a D3Vectron data structure from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -76,7 +76,7 @@ Method D3VectronCollection.GetItem, uses xbx, pStream:$ObjPtr(Stream), pDeserInf
   mov xax, xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3VectronCollection.PutItem
 ; Purpose:    Store a D3Vectron data structure in a stream object.
 ; Arguments:  Arg1: -> Stream object.

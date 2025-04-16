@@ -8,9 +8,9 @@
 
 ;
 ;          4 bytes     1 byte per character        1 byte
-;      ————————————————————————————————————————————————————————————————
+;      ----------------------------------------------------------------
 ;  ... | Byte Lenght | ANSI character array | Zero termination marker | ...
-;      ————————————————————————————————————————————————————————————————
+;      ----------------------------------------------------------------
 ;                    ^
 ;                    BStrA points here!
 
@@ -23,7 +23,7 @@
 ; $Ofs(C/T/D/J)BStrA:         Same as ($C/$T/$D/$J)BStr, but returns the symbolic string offset.
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      BStrA / ($)CBStrA / ($)TBStrA / ($)DBStrA / ($)JBStrA
 ; Purpose:    Place an BSTR string in the SEG_CONST, SEG_DATA or SEG_TEXT segment.
 ; Arguments:  Arg1: Reference name (optional).
@@ -185,7 +185,7 @@ $JBStr macro QuotedText:vararg
     exitm <??StrLocation + 4>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Ofs(C/T/D/J)BStrA
 ; Purpose:    Place an BSTR string in the SEG_CONST, SEG_TEXT, SEG_DATA segment.
 ; Arguments:  Arg1: Quoted string text.

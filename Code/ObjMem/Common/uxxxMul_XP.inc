@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  uooywordMul / uqqowordMul
 ; Purpose:    Calculate an extended precision unsigned multiplication, emulating the mul x86 instr.
 ; Arguments:  Arg1: Multiplicand unsigned low word.

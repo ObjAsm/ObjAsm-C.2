@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DataCollection
 ; Purpose:    DataCollection is a descendant of Collection. It implements a collection of data
 ;             structures instead of objects. To achieve this behaviour, the dynamic method
@@ -31,7 +31,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataCollection.DeserializeItem
 ; Purpose:    Convert a serialized data item back.
 ; Arguments:  Arg1: -> Item. This argument should never be NULL.
@@ -41,7 +41,7 @@ if IMPLEMENT
 Method DataCollection.DeserializeItem,, pItem:POINTER, pDeserInfo:PDESER_INFO
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataCollection.DestroyItem
 ; Purpose:    Auxiliar function to dispose a item from the collection. Don't call directly!
 ; Arguments:  -> Item.
@@ -53,7 +53,7 @@ Method DataCollection.DestroyItem,, pItem:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataCollection.GetItem
 ; Purpose:    Load an item from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -73,7 +73,7 @@ Method DataCollection.GetItem, uses xbx, pStream:$ObjPtr(Stream)
   mov xax, xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataCollection.PutItem
 ; Purpose:    Store an item of the collection in a stream object.
 ; Arguments:  Arg1: -> Stream.
@@ -89,7 +89,7 @@ Method DataCollection.PutItem,, pStream:$ObjPtr(Stream), pItem:POINTER
   OCall pStream::Stream.BinWrite, pItem, dSize
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataCollection.SerializeItem
 ; Purpose:    Serialize a data item.
 ; Arguments:  Arg1: -> Item. This argument should never be NULL.

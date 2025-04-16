@@ -10,7 +10,7 @@
 
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  dec2dwordA/dec2dwordW/dec2qwordA/dec2qwordW
 ; Purpose:    Convert a decimal string to a DWORD/QWORD.
 ; Arguments:  Arg1: -> Source string. Possible leading characters are " ", tab, "+" and "-",

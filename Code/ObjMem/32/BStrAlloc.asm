@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrAlloc
 ; Purpose:    Allocate space for a BStr with n characters. The length field is set to zero.
 ; Arguments:  Arg1: Character count, without the ZTC.

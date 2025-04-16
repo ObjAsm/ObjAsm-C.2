@@ -12,7 +12,7 @@ $OfsSze macro TextRef:req
 % exitm <offset TextRef, sizeof(TextRef)>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  FindFinalMember
 ; Purpose:    Used with Collection.LastThatNot to reset the MDT_FINAL flag.
 ; Arguments:  Arg1: -> Iterated MEMBERDATA.
@@ -39,7 +39,7 @@ FindFinalMember proc pMemberData:PMEMBERDATA, pSrcData:PMEMBERDATA, xDummy:XWORD
   ret
 FindFinalMember endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PropWnd.CreateLinkInfo
 ; Purpose:    Record a LINK_INFO in a DataCollection.
 ; Arguments:  Arg1: Action to execute when the link is invoked (LIA_xxx).
@@ -66,7 +66,7 @@ Method PropWnd.CreateLinkInfo, uses xsi, dAction:DWORD, pFileName:PSTRING, dPara
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PropWnd.Done
 ; Purpose:    Finalizes the PropWnd object and disposes the MDI child window.
 ; Arguments:  None.
@@ -96,7 +96,7 @@ Method PropWnd.Done, uses xbx xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PropWnd.Init
 ; Purpose:    Initalizes the PropWnd object.
 ; Arguments:  Arg1: -> Owner object (ClientWnd).
@@ -161,7 +161,7 @@ Method PropWnd.Init, uses xbx xdi xsi, pOwner:$ObjPtr(ClientWnd), pWndClassName:
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PropWnd.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
@@ -178,7 +178,7 @@ Method PropWnd.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PropWnd.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -199,7 +199,7 @@ Method PropWnd.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefMDIChildProc, [xsi].hWnd, WM_SIZE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PropWnd.ShowFileInfo
 ; Purpose:    Show file information.
 ; Arguments:  Arg1: -> Full path FileName.
@@ -264,7 +264,7 @@ Method PropWnd.ShowFileInfo, uses xbx xsi, pFileName:PSTRING, dShowLink:DWORD, d
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PropWnd.WriteString
 ; Purpose:    Show file information.
 ; Arguments:  Arg1: -> String.

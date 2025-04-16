@@ -11,7 +11,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  soooDivRem
 ; Purpose:    Divide 2 signed OWORDs.
 ;             (128 bit) Dividend divided by (128 bit) Divisor = (128 bit) Quotient. 

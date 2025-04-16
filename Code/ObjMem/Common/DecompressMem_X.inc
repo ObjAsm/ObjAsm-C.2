@@ -10,7 +10,7 @@
 
 % include &IncPath&Windows\compressapi.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DecompressMem
 ; Purpose:    Decompress memory that was previously compressed with one of the Cabinet compression
 ;             algorithms.

@@ -10,7 +10,7 @@
 
 externdef IID_IOleWindow:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object: 	  I_OcxCont_OleWindow
 ; Purpose:	  The IOleWindow interface provides methods that allow an application to obtain the
 ;         	  HANDLE to the various windows that participate in in-place activation, and also to
@@ -36,7 +36,7 @@ if IMPLEMENT
 ;     I_OcxCont_OleWindow implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleWindow.Init
 ; Purpose:    Initialize the I_OcxCont_OleWindow COM object.
 ; Arguments:  Arg1: -> Owner (Component object).
@@ -50,7 +50,7 @@ Method I_OcxCont_OleWindow.Init,, pOwner:POINTER, hWnd:HWND
   ACall xcx.Init, pOwner
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleWindow.GetWindow
 ; Purpose:    Retrieve a handle of one of the windows participating in in-place activation
 ;             (frame, document, parent, or in-place object window).
@@ -69,7 +69,7 @@ Method I_OcxCont_OleWindow.GetWindow,, pWndHandle:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleWindow.ContextSensitiveHelp
 ; Purpose:    Determine whether context-sensitive help mode should be entered during an in-place
 ;             activation session.

@@ -11,7 +11,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  WindowBackground
 ; Purpose: Implement an object that manages a collection of RECT structures that are used to draw
 ;          the window client area efficiently and without noticeable flicker.
@@ -40,7 +40,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WindowBackground.Init
 ; Purpose:    Constructor.
 ; Arguments:  Arg1: -> Owner.
@@ -54,7 +54,7 @@ Method WindowBackground.Init,, pOwner:POINTER, hWnd:HWND
   ACall xcx.Init, pOwner, 9, 8, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  _WB_ExcludeRect_
 ; Purpose:    ForEach interator procedure. It excludes a RECT from the collection, splitting
 ;             existing RECTs as needed.
@@ -63,15 +63,15 @@ MethodEnd
 ;             Arg3: -> WindowBackground instance.
 ; Return:     Nothing.
 ;
-;     ———————————————————
+;     -------------------
 ;    |         1         |        1: Top RECT
-;    |———————————————————|        2: Left RECT
+;    |-------------------|        2: Left RECT
 ;    |   |           |   |        3: Right RECT
 ;    | 2 |  ExcRect  | 3 |        4: Bottom RECT
 ;    |   |           |   |
-;    |———————————————————|        Note: Slitting is done in such a way that the new RECTs as
+;    |-------------------|        Note: Slitting is done in such a way that the new RECTs as
 ;    |         4         |              wide as possible => accelerate drawing
-;     ———————————————————
+;     -------------------
 
 
 _WB_ExcludeRect_ proc uses xbx, pSrcRect:PRECT, pExcRect:PRECT, pSelf:$ObjPtr(WindowBackground)
@@ -189,7 +189,7 @@ _WB_ExcludeRect_ proc uses xbx, pSrcRect:PRECT, pExcRect:PRECT, pSelf:$ObjPtr(Wi
   ret
 _WB_ExcludeRect_ endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WindowBackground.ExcludeRect
 ; Purpose:    Exclude RECT in client coords from the window client background.
 ; Arguments:  Arg1: -> RECT to exclude.
@@ -200,7 +200,7 @@ Method WindowBackground.ExcludeRect,, pRect:PRECT
   OCall pSelf::WindowBackground.ForEach, offset _WB_ExcludeRect_, pRect, pSelf
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WindowBackground.ExcludeChild
 ; Purpose:    Exclude the child window RECT from the window client background.
 ; Arguments:  Arg1: HANDLE of the Child window to exclude.
@@ -223,7 +223,7 @@ Method WindowBackground.ExcludeChild,, hExcWnd:HWND
   OCall pSelf::WindowBackground.ForEach, offset _WB_ExcludeRect_, addr ExcRect, pSelf
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  _WB_PaintRect_
 ; Purpose:    ForEach interator procedure. It fills a RECT using the passed brush.
 ; Arguments:  Arg1: -> RECT to fill.
@@ -236,7 +236,7 @@ _WB_PaintRect_ proc pRect:PRECT, hDC:HDC, hBrush:HBRUSH
   ret
 _WB_PaintRect_ endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WindowBackground.Paint
 ; Purpose:    Fill the RECT collection using the hDC and hBrush.
 ; Arguments:  Arg1: Device Context HANDLE.
@@ -248,7 +248,7 @@ Method WindowBackground.Paint,, hDC:HDC, hBrush:HBRUSH
   OCall pSelf::WindowBackground.ForEach, offset _WB_PaintRect_, hDC, hBrush
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  _WB_EnumChildren_
 ; Purpose:    EnumChildWindows callback procedure. It excludes a child window from window
 ;             client background,
@@ -262,7 +262,7 @@ _WB_EnumChildren_ proc hWnd:HWND, pSelf:$ObjPtr(WindowBackground)
   ret
 _WB_EnumChildren_ endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WindowBackground.Update
 ; Purpose:    Updates the internal data accorting to the current positions and sizes of all
 ;             child windows.

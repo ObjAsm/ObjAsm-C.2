@@ -12,9 +12,9 @@ BUTTONLITERALCHAR   equ    "|"    ;Literal marker character.
 BUTTONRESOURCECHAR  equ    "$"    ;Resource redirctor character.
 
 ;          Face
-;    —————————————————
+;    -----------------
 ;   | II |  Press Me  |
-;    —————————————————
+;    -----------------
 ;    Icon     Text
 
 ;BS_FLAT draws a flat button
@@ -22,7 +22,7 @@ BUTTONRESOURCECHAR  equ    "$"    ;Resource redirctor character.
 ;Icon button styles
 IBS_EX_HOOVER   equ     BIT20
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     IconButton
 ; Purpose:    Implement a button control that displays an icon on its surface.
 
@@ -44,7 +44,7 @@ if IMPLEMENT
 
 CStr szIconButton, "IconButton"
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IconButton.Init
 ; Purpose:    Initialize the IconButton object.
 ; Arguments:  Arg1: -> Owner object.
@@ -65,7 +65,7 @@ Method IconButton.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PD
   ACall xsi.Init, pOwner, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IconButton.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -114,7 +114,7 @@ Method IconButton.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IconButton.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -131,7 +131,7 @@ Method IconButton.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IconButton.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -268,7 +268,7 @@ Method IconButton.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IconButton.Startup
 ; Purpose:    Register the IconButton object with the OS.
 ; Arguments:  None.
@@ -293,7 +293,7 @@ Method IconButton.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IconButton.WindowProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.

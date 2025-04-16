@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object DB_NewTableDlg,, DialogModal
   VirtualMethod     CtlsEnable
@@ -29,7 +29,7 @@ ObjectEnd
 ;    DB_NewTableDlg implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_NewTableDlg.CtlsEnable
 ; Purpose:    Enables the controls if the input is valid.
 ; Arguments:  None.
@@ -47,7 +47,7 @@ Method DB_NewTableDlg.CtlsEnable, uses xsi
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_NewTableDlg.Init
 ; Purpose:    Initialize the DB_NewTableDlg object.
 ; Arguments:  Arg1: -> Owner object.
@@ -61,7 +61,7 @@ Method DB_NewTableDlg.Init,, pOwner:POINTER, hParent:HWND, pFileName:PSTRING
   ACall xcx.Init, pOwner, hParent, IDD_NEW_TABLE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_NewTableDlg.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -90,7 +90,7 @@ Method DB_NewTableDlg.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_NewTableDlg.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.

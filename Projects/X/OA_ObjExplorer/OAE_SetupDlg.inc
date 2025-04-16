@@ -14,7 +14,7 @@ SetCtrlText macro ControlID, TextID
   invoke SetDlgItemText, [xsi].hWnd, ControlID, xdi
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SetupDlg.CtlsGet
 ; Purpose:    Reads the setting of all controls.
 ; Arguments:  None.
@@ -40,7 +40,7 @@ Method SetupDlg.CtlsGet, uses xbx xdi xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SetupDlg.CtlsSet
 ; Purpose:    Sets the controls of the setup dialog.
 ; Arguments:  None.
@@ -80,7 +80,7 @@ Method SetupDlg.CtlsSet, uses xbx xdi xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SetupDlg.Init
 ; Purpose:    Initialaizes a dialog.
 ; Arguments:  Arg1: -> Owner object.
@@ -92,7 +92,7 @@ Method SetupDlg.Init,, pOwner:POINTER, hParentWnd:HANDLE
   ACall xcx.Init, pOwner, hParentWnd, IDD_SETUP_DLG
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SetupDlg.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -146,7 +146,7 @@ Method SetupDlg.OnCommand, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SetupDlg.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.

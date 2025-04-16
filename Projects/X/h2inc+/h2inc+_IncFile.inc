@@ -78,7 +78,7 @@ d3CharOps dd ">>=", "<<="
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.AddComment
 ; Purpose:    Store the comment for later output.
 ; Arguments:  Arg1: -> Comment string
@@ -94,7 +94,7 @@ Method IncFile.AddComment, uses xsi, pCommentText:PSTRINGA
   WriteFA xsi, ";¦SA", xdx 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.CreateDefFile
 ; Purpose:    Create a new .def file.
 ; Arguments:  Arg1: -> FileName.
@@ -155,7 +155,7 @@ Method IncFile.CreateDefFile, uses xbx xdi xsi, pFileName:PSTRINGW
   mov eax, Result
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.Done
 ; Purpose:    Destructor
 ; Arguments:  None.
@@ -184,7 +184,7 @@ Method IncFile.Done, uses xbx
   add [xcx].$Obj(Application).dTotalWarningCount, edx 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.JumpEndIfPP
 ; Purpose:    Return the next C token 
 ; Arguments:  None.
@@ -216,7 +216,7 @@ Method IncFile.JumpEndIfPP, uses xbx xdi
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.PeekNextTokenLogicC
 ; Purpose:    Return the next C token 
 ; Arguments:  None.
@@ -266,7 +266,7 @@ Method IncFile.PeekNextTokenLogicC, uses xbx xdi
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.GetNextToken
 ; Purpose:    Returns the next token from the input stream.
 ; Arguments:  None.
@@ -295,7 +295,7 @@ Method IncFile.GetNextToken, uses xbx xdi
   test xax, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.GetNextTokenC
 ; Purpose:    Return the next C token from input stream. Comments are handled automatically.
 ; Arguments:  None.
@@ -366,7 +366,7 @@ Method IncFile.GetNextTokenC, uses xbx xdi
   mov [xbx].bNewLine, FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.GetNextTokenPP
 ; Purpose:    Returns the next token from within a PP command. Comments are handled automatically.
 ; Arguments:  None.
@@ -406,7 +406,7 @@ Method IncFile.GetNextTokenPP, uses xbx xdi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.InputStatusLoad
 ; Purpose:    Load the input status from an INP_STAT structure.
 ; Arguments:  Arg1: -> INP_STAT structure.
@@ -447,7 +447,7 @@ Method IncFile.InputStatusLoad, uses xbx xdi xsi, pStatus:P_INP_STAT
   rep movsd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.InputStatusSave
 ; Purpose:    Save the input status in an INP_STAT structure.
 ; Arguments:  Arg1: -> INP_STAT structure.
@@ -488,7 +488,7 @@ Method IncFile.InputStatusSave, uses xbx xdi xsi, pStatus:P_INP_STAT
   rep movsd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.PeekNextTokenC
 ; Purpose:    Peek the next C token.
 ; Arguments:  None.
@@ -507,7 +507,7 @@ Method IncFile.PeekNextTokenC, uses xbx
   mov xax, pToken
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.Init
 ; Purpose:    Instance initialization.
 ; Arguments:  Arg1: -> Full Path and FileName of the h-file.
@@ -643,7 +643,7 @@ endif
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.ParseHeaderFile
 ; Purpose:    Tokenize the C header source, so that:
 ;              + Each token is an ASCII string.
@@ -722,7 +722,7 @@ Method IncFile.ParseHeaderFile, uses xbx xdi xsi
   mov CHRA ptr [xax], 0                                 ;Set ZTC at the end of the buffer
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.ParseHeaderLine
 ; Purpose:    Process a source text line
 ; Arguments:  Arg1: -> Text line into input buffer.
@@ -837,7 +837,7 @@ Method IncFile.ParseHeaderLine, uses xbx xdi xsi, pLine:PSTRINGA, bWeak:DWORD
   mov [xbx].pStmOutPos, xdi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.Render
 ; Purpose:    Start translation of header file into an MASM include file.
 ; Arguments:  None.
@@ -896,7 +896,7 @@ Method IncFile.Render, uses xbx xdi; xsi
   OCall [xbx].pOwner::Application.ShowInfo, VERBOSITY_DEAFENING, addr cMessage
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.Save
 ; Purpose:    Write output buffer to file.
 ; Arguments:  Arg1: -> Full Path and FileName of the inc-file.
@@ -979,7 +979,7 @@ Method IncFile.Save, uses xbx xdi xsi, pFullFileName:PSTRINGW
   mov eax, Result
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.SkipComments
 ; Purpose:    Skip comments "/* ... */" in a line
 ; Arguments:  Arg1: -> Line
@@ -1025,7 +1025,7 @@ Method IncFile.SkipComments, uses xbx xdi xsi, pLine:PSTRINGA
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.StmCopyRestOfPPLine
 ; Purpose:    copy rest of line to the output stream.
 ; Arguments:  None.
@@ -1044,7 +1044,7 @@ Method IncFile.StmCopyRestOfPPLine
   OCall pSelf::IncFile.StmWriteComment
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.StmSkipRestOfPPLine
 ; Purpose:    Skip the rest of line.
 ; Arguments:  None.
@@ -1055,7 +1055,7 @@ Method IncFile.StmSkipRestOfPPLine
   OCall pSelf::IncFile.StmWriteComment
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.StmDeleteLastSpace
 ; Purpose:    Deletes last space from output stream.
 ; Arguments:  None.
@@ -1070,7 +1070,7 @@ Method IncFile.StmDeleteLastSpace
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.StmWrite
 ; Purpose:    Write a string to the output stream. Indentation is implemented here.
 ; Arguments:  Arg1: -> Text.
@@ -1086,7 +1086,7 @@ Method IncFile.StmWrite, uses xbx, pText:PSTRINGA
   mov [xbx].pStmOutPos, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.StmWriteComment
 ; Purpose:    Writes the current comments to the output stream.
 ; Arguments:  None.
@@ -1103,7 +1103,7 @@ Method IncFile.StmWriteComment, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.StmWriteChar
 ; Purpose:    Write a character to the output stream.
 ; Arguments:  Arg1: ANSI Character.
@@ -1121,7 +1121,7 @@ Method IncFile.StmWriteChar, uses xbx, bChar:CHRA
   inc [xbx].pStmOutPos
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.StmWriteError
 ; Purpose:    Write an error line to the output stream.
 ; Arguments:  None.
@@ -1133,7 +1133,7 @@ Method IncFile.StmWriteError, uses xbx
   OCall xbx.StmWriteEoL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.StmWriteF
 ; Purpose:    Write a formated string to the output stream.
 ; Arguments:  Arg1: -> Format. Use %hs and %ls specifiers for ANSI and WIDE input args.
@@ -1150,7 +1150,7 @@ Method IncFile.StmWriteF, uses xbx, pFormat:PSTRINGA, Args:vararg
   add [xbx].pStmOutPos, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.StmWriteEoL
 ; Purpose:    Write a <CRLF> sequence (End of Line) to the output stream.
 ; Arguments:  None.
@@ -1164,7 +1164,7 @@ Method IncFile.StmWriteEoL, uses xbx
   mov [xbx].dStmOutEoL, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.StmWriteIndent
 ; Purpose:    Write code indentation
 ; Arguments:  None.
@@ -1184,7 +1184,7 @@ Method IncFile.StmWriteIndent, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.ShowError
 ; Purpose:    Shows an error condition.
 ; Arguments:  Arg1: -> Format WIDE String. Use %hs and %ls specifiers for ANSI and WIDE input args.
@@ -1202,7 +1202,7 @@ Method IncFile.ShowError, uses xbx xdi, pFormat:PSTRING, Args:vararg
   OCall [xbx].pOwner::Application.ShowError, addr cMessage
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.ShowInfo
 ; Purpose:    Shows an info message.
 ; Arguments:  Arg1: Verbosity Level [0..3].
@@ -1220,7 +1220,7 @@ Method IncFile.ShowInfo, uses xbx xdi, dVerbosityLevel:DWORD, pInfoFormat:PSTRIN
   OCall [xbx].pOwner::Application.ShowInfo, dVerbosityLevel, addr cMessage
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.ShowSysError
 ; Purpose:    Shows a system error condition.
 ; Arguments:  Arg1: -> Info String.
@@ -1250,7 +1250,7 @@ Method IncFile.ShowSysError, uses xbx xdi, pErrorMessage:PSTRING, dErrorCode:DWO
   OCall [xbx].pOwner::Application.ShowError, addr cMessage
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IncFile.ShowWarning
 ; Purpose:    Shows a warning condition.
 ; Arguments:  Arg1: Level [0..3].

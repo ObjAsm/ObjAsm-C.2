@@ -16,7 +16,7 @@
 SWS_STOPPED    equ    0
 SWS_RUNNING    equ    1
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     StopWatch
 ; Purpose:    This object is designed for performance monitoring purposes, measuring the elapsed
 ;             time between its Start and Stop method calls. Internally it uses the
@@ -64,7 +64,7 @@ endif
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     StopWatch.GetTime
 ; Purpose:    Return the elapsed time in the specified resolution as a QWORD.
 ; Arguments:  None.
@@ -86,7 +86,7 @@ Method StopWatch.GetTime
   endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     StopWatch.GetTimeStrA
 ; Purpose:    Return the elapsed time (see r8Resolution member).
 ; Arguments:  Arg1: -> Buffer where the ANSI string will be written (at least 20 bytes!).
@@ -101,7 +101,7 @@ Method StopWatch.GetTimeStrA,, pResult:PSTRINGA
   fUnload
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     StopWatch.GetTimeStrW
 ; Purpose:    Return the elapsed time (see r8Resolution member).
 ; Arguments:  Arg1: -> Buffer where the WIDE string will be written (at least 20 words!).
@@ -116,7 +116,7 @@ Method StopWatch.GetTimeStrW,, pResult:PSTRINGW
   fUnload
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     StopWatch.Init
 ; Purpose:    Initialize and calibrates the object.
 ; Arguments:  Arg1: -> Owner object.
@@ -155,7 +155,7 @@ Method StopWatch.Init, uses xbx xsi, pOwner:POINTER
   OCall xsi.Reset
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     StopWatch.Reset
 ; Purpose:    Reset the time count.
 ; Arguments:  None.
@@ -174,7 +174,7 @@ Method StopWatch.Reset
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     StopWatch.Start
 ; Purpose:    Start the time measuring.
 ; Arguments:  None.
@@ -196,7 +196,7 @@ Method StopWatch.Start
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     StopWatch.Stop
 ; Purpose:    Stop the time measuring.
 ; Arguments:  None.

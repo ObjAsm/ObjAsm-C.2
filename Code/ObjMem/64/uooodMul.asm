@@ -14,7 +14,7 @@
 ProcName textequ <uoooMul>
 TypeArg equ <QWORD>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  uoooMul
 ; Purpose:    Multiply 2 unsigned OWORDs.
 ;             (128 bit) Multiplicand multiplied by (128 bit) Multiplier = (128 bit) Product.

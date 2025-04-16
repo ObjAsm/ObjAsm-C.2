@@ -38,7 +38,7 @@ CloseEnumProc    proto :HWND, :LPARAM
 CStr szApplication,   "OAC_Application"                 ;Used by Startup and Shutdown
 CStr szChildWnd,      "OAC_Child"                       ;Used by Startup and Shutdown
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object ChildWnd, ChildWndID, MdiChildWnd                ;MDI child window.
   RedefineMethod    Done
@@ -53,7 +53,7 @@ Object ChildWnd, ChildWndID, MdiChildWnd                ;MDI child window.
   Embed     Chart,    ChartWnd
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object ClientWnd, ClientWndID, MdiClientWnd             ;MDI client window.
   RedefineMethod    Done
@@ -65,7 +65,7 @@ Object ClientWnd, ClientWndID, MdiClientWnd             ;MDI client window.
   DefineVariable    dChildCount,        DWORD,      0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object Application, ApplicationID, MdiApp               ;MDI application = Frame window.
   RedefineMethod    Done
@@ -102,7 +102,7 @@ ObjectEnd
 ; ==================================================================================================
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
 ; Purpose:    Finalize the SDI application object.
 ; Arguments:  None.
@@ -120,7 +120,7 @@ Method Application.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.EnableActions
 ; Purpose:    Enable or disable MDI child actions.
 ; Arguments:  Enable TRUE/FALSE.
@@ -137,7 +137,7 @@ Method Application.EnableActions, uses xsi, dAction:DWORD
   OCall [xsi].pToolbarWindow::Toolbar.BtnEnable, IDM_WINDOW_CLOSEALL, dAction
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.Init
 ; Purpose:   Initialize the SDI application object.
 ; Arguments: None.
@@ -203,7 +203,7 @@ Method Application.Init, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE and WM_QUERYENDSESSION message.
 ; Arguments:  Arg1: First message parameter.
@@ -229,7 +229,7 @@ Method Application.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -306,7 +306,7 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -342,7 +342,7 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -356,7 +356,7 @@ Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DestroyAcceleratorTable, [xsi].hAccelerators
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnKeyUp
 ; Purpose:    Event procedure for WM_KEYUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -372,7 +372,7 @@ Method Application.OnKeyUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefFrameProc, [xsi].hWnd, [xbx].$Obj(ClientWnd).hWnd, WM_KEYUP, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -415,7 +415,7 @@ Method Application.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return zero
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CloseEnumProc (Callback)
 ; Purpose:    Close all open child windows.
 ; Arguments:  Arg1: Child window handle.
@@ -431,7 +431,7 @@ CloseEnumProc proc hWnd:HWND, lParam:LPARAM
   ret
 CloseEnumProc endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.StatusbarHelp
 ; Purpose:    Display a help string on panel 0 of the statusbar.
 ; Arguments:  Arg1: -> Help string.
@@ -442,7 +442,7 @@ Method Application.StatusbarHelp,, pHelpStr:POINTER
   OCall [xax].pStatusbar::Statusbar.SetPartText, 0, pHelpStr, SBT_NOBORDERS
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -473,7 +473,7 @@ MethodEnd
 ;    ClientWnd implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.Done
 ; Purpose:    Finalize the ClientWnd object.
 ; Arguments:  None.
@@ -485,7 +485,7 @@ Method ClientWnd.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.Init
 ; Purpose:    Initialize the MdiClientWnd object.
 ; Arguments:  Arg1: -> Owner object.
@@ -501,7 +501,7 @@ Method ClientWnd.Init, uses xsi, pOwner:POINTER
   invoke DeleteObject, hBmp
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -529,7 +529,7 @@ MethodEnd
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChildWnd.Done
 ; Purpose:    Finalize the ChildWnd object.
 ; Arguments:  None.
@@ -552,7 +552,7 @@ Method ChildWnd.Done, uses xbx xdi xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChildWnd.Init
 ; Purpose:    Initialize the ChildWnd object.
 ; Arguments:  Arg1: -> Owner object.
@@ -587,7 +587,7 @@ Method ChildWnd.Init, uses xbx xdi xsi, pOwner:POINTER, pTitle:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChildWnd.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -758,7 +758,7 @@ Method ChildWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChildWnd.OnGetMinMaxInfo
 ; Purpose:    Event procedure for WM_GETMINMAXINFO message.
 ; Arguments:  Arg1: First message parameter.
@@ -774,7 +774,7 @@ Method ChildWnd.OnGetMinMaxInfo, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChildWnd.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -793,7 +793,7 @@ Method ChildWnd.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChildWnd.OnMouseWheel
 ; Purpose:    Event procedure for WM_MOUSEWHEEL message.
 ; Arguments:  Arg1: First message parameter.
@@ -807,7 +807,7 @@ Method ChildWnd.OnMouseWheel, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChildWnd.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.

@@ -12,7 +12,7 @@
 
 externdef HexCharTableA:CHRA
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  word2hexA
 ; Purpose:    Convert a WORD to its hexadecimal ANSI string representation.
 ; Arguments:  Arg1: -> Destination ANSI string buffer.

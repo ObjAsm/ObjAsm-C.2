@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <DateTimeToStrA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DateTimeToStrA
 ; Purpose:    Convert a PDTL_DATE and DTL_TIME to a formated string representation.
 ; Arguments:  Arg1: -> Destination ANSI Buffer

@@ -54,7 +54,7 @@ if IMPLEMENT
 
 ;##\
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     InfoNode.CanDragMe
 ; Purpose:    Indicates if a drag operation can be started.
 ; Arguments:  Arg1: Key flags (MK_CONTROL, MK_LBUTTON, MK_MBUTTON, MK_RBUTTON, MK_SHIFT).
@@ -64,7 +64,7 @@ Method InfoNode.CanDragMe,, dKeyFlags:DWORD
   xor eax, eax                                          ;eax = FALSE  (disallow dragging)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     InfoNode.FindNode
 ; Purpose:    Searches this node branch for the specified node name.
 ; Arguments:  Arg1: -> Node name.
@@ -91,7 +91,7 @@ Method InfoNode.FindNode, uses xsi, pName:PSTRINGA
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     InfoNode.RenderContent
 ; Purpose:    Draws the content (icon + text) of the node.
 ; Arguments:  Arg1: -> XTVN_TREE_DISP_INFO
@@ -232,7 +232,7 @@ MethodEnd
 
 CStr cInfoTreeClass, "OAC_InfoTree"
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     InfoTree.Init
 ; Purpose:    Initializes a InfoTree object.
 ; Arguments:  Arg1: -> Owner object.
@@ -254,7 +254,7 @@ Method InfoTree.Init, uses xbx xsi, pOwner:POINTER, hParentWnd:HANDLE, pDefStruc
   TCall xsi::WinPrimer.Init, pOwner, [xsi].hWnd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     InfoTree.FindNode
 ; Purpose:    Searches the tree for the specified node name.
 ; Arguments:  Arg1: -> Node name.
@@ -282,7 +282,7 @@ Method InfoTree.FindNode, uses xbx xsi, pName:PSTRINGA, dType:DWORD
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     InfoTree.OnCommand
 ; Purpose:    Event handler for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -295,7 +295,7 @@ Method InfoTree.OnCommand,, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xax].$Obj(MdiApp).hWnd, WM_COMMAND, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     InfoTree.OnCreate
 ; Purpose:    Event handler for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -312,7 +312,7 @@ Method InfoTree.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnCreate, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     InfoTree.OnDestroy
 ; Purpose:    Event handler for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -330,7 +330,7 @@ Method InfoTree.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnDestroy, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     InfoTree.OnLButtonDblClk
 ; Purpose:    Event handler for WM_LBUTTONDBLCLK message.
 ; Arguments:  Arg1: First message parameter.
@@ -357,7 +357,7 @@ Method InfoTree.OnLButtonDblClk, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     InfoTree.WindowProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.
@@ -392,7 +392,7 @@ Method InfoTree.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     InfoTree.Startup
 ; Purpose:    Registers the InfoTree object with the OS.
 ; Arguments:  None.

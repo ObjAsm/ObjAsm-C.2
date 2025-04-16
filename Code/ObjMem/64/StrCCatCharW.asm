@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCCatCharW
 ; Purpose:    Append a character to the end of a WIDE string with length limitation.
 ; Arguments:  Arg1: -> Destination WIDE character buffer.

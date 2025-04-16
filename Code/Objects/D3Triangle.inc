@@ -12,7 +12,7 @@
 
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Triangle.Colorize
 ; Purpose:    Change the color of a D3Triangle when it is iluminated with a D3Light.
 ; Arguments:  Arg1: -> D3Light object.
@@ -92,7 +92,7 @@ Method D3Triangle.Colorize, uses xbx xdi xsi, pLight:$ObjPtr(D3Light), Unused:XW
   fUnload
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Triangle.Clone
 ; Purpose:    Duplicate the Triangle and inserts it in the D3Object Triangle collection,
 ;             updating the Vectrons collection.
@@ -129,7 +129,7 @@ Method D3Triangle.Clone, uses xbx xdi xsi, pObject:POINTER, Unused:XWORD
   m2m [xcx].$Obj(D3Triangle).OutColor3, [xsi].OutColor3, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Triangle.Draw
 ; Purpose:    Draw a D3Triangle object on the D3Camara DC.
 ; Arguments:  Arg1: D3Camara DC HANDLE.
@@ -232,7 +232,7 @@ MethodEnd
 ;  invoke DeleteObject, $invoke(SelectObject, hDC, hPrevBrush)
 ;MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Triangle.Load
 ; Purpose:    Load and initializes the D3Triangle object from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -255,7 +255,7 @@ Method D3Triangle.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INF
   mov [xsi].OutColor3,     $32($OCall(pStream::Stream.BinRead32))
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Triangle.Store
 ; Purpose:    Store the D3Triangle object in a stream object.
 ; Arguments:  Arg1: -> Stream object.

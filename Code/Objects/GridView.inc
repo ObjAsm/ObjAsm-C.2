@@ -34,7 +34,7 @@ DEF_GRIDVIEW ends
 PDEF_GRIDVIEW typedef ptr DEF_GRIDVIEW
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     GridView
 ; Purpose:
 
@@ -123,7 +123,7 @@ PGV_CELL_DESCRIPTOR typedef ptr GV_CELL_DESCRIPTOR
 
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.Dispatch
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Window handle.
@@ -138,7 +138,7 @@ Method GridView.Dispatch, uses xsi, hWnd:HWND, uMsg:DWORD, wParam:WPARAM, lParam
   DispatchEvent <DefWindowProc, hWnd>                   ;xsi -> Object instance
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.Done
 ; Purpose:    Finalize the Button object.
 ; Arguments:  None.
@@ -168,7 +168,7 @@ Method GridView.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.Init
 ; Purpose:    Initialize the GridView object.
 ; Arguments:  Arg1: -> Owner object.
@@ -191,7 +191,7 @@ Method GridView.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PDEF
   ACall xsi.Init, pOwner, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.InitRes
 ; Purpose:    Initialize the GridView object from a resource.
 ; Arguments:  Arg1: GridView window handle.
@@ -209,7 +209,7 @@ Method GridView.InitRes, uses xsi, hWnd:HWND
   BitSet [xsi].dFlags, GVWF_RESOURCE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.OnButtonDown
 ; Purpose:    Event procedure for WM_XBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -237,7 +237,7 @@ Method GridView.OnButtonDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.OnButtonUp
 ; Purpose:    Event procedure for WM_XBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -265,7 +265,7 @@ Method GridView.OnButtonUp, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -326,7 +326,7 @@ Method GridView.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return zero to continue window creation
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -346,7 +346,7 @@ Method GridView.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.OnGetFont
 ; Purpose:    Event procedure for WM_GETFONT message.
 ; Arguments:  Arg1: First message parameter.
@@ -362,7 +362,7 @@ Method GridView.OnGetFont, uses xsi, wParam:WPARAM, lParam:LPARAM
 ;  .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -386,7 +386,7 @@ Method GridView.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.OnMouseMove
 ; Purpose:    Event procedure for WM_MOUSEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -417,7 +417,7 @@ Method GridView.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.OnNCDestroy
 ; Purpose:    Event procedure for WM_NCDESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -434,7 +434,7 @@ Method GridView.OnNCDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.OnSetFont
 ; Purpose:    Event procedure for WM_SETFONT message.
 ; Arguments:  Arg1: First message parameter.
@@ -458,7 +458,7 @@ Method GridView.OnSetFont, uses xsi, wParam:WPARAM, lParam:LPARAM
 ;  .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.OnSetText
 ; Purpose:    Event procedure for WM_SETTEXT message.
 ; Arguments:  Arg1: First message parameter.
@@ -471,7 +471,7 @@ Method GridView.OnSetText, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xsi].hWnd, WM_SETTEXT, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.Startup
 ; Purpose:    Register the GridView window class with the operating system.
 ; Arguments:  None.
@@ -496,7 +496,7 @@ Method GridView.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GridView.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.

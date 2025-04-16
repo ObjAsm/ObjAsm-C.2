@@ -14,7 +14,7 @@ MStrFree_X textequ <MemBlockFree_X>
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      MStrA / MStrW
 ; Purpose:    Build a MemBlock structure in the current segment.
 ; Arguments:  Arg1: (optional) MemBlock flags (MBF_xxx)
@@ -60,7 +60,7 @@ MStrW macro Flags:=<0>, MinFreeSize:=<0>, TextReference:req, QuotedText:vararg
   org $ + ??Size
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      (C|T|D)MStr(A|B|W) / $Ofs(C|T|D)MStr(A|B|W)
 ; Purpose:    Construct an MemBlock structure in any segment
 ; Arguments:  Arg1: (optional) MemBlock flags (MBF_xxx)
@@ -118,7 +118,7 @@ else
 endif
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 
 DMStrA macro MinFreeSize:req, TextReference:req, QuotedText:vararg
@@ -164,7 +164,7 @@ else
 endif
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 
 TMStrA macro MinFreeSize:req, TextReference:req, QuotedText:vararg
@@ -209,7 +209,7 @@ else
   $OfsTMStr textequ <$OfsTMStrW>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $MStr / $MStrInit
 ; Purpose:    Allocate an MStr on the stack.
 ; Arguments:  Arg1: Variable name
@@ -247,7 +247,7 @@ endif
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MStrNewFromMem
 ; Purpose:    Create a new dynamic MStr and copy the content pointed to by pMem to the payload.
 ; Arguments:  Arg1: Mininal payload size.
@@ -276,7 +276,7 @@ MStrNewFromMem_XT proc uses xbx xdi dMinSize:DWORD, pMem:POINTER, dMemSize:DWORD
   ret
 MStrNewFromMem_XT endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MStrNew
 ; Purpose:    Create a new dynamic MStr and copy the content from a source MStr.
 ; Arguments:  Arg1: Mininal payload size.
@@ -291,7 +291,7 @@ MStrNew_X proc dMinSize:DWORD, pSrcMStrPayload:PSTRING
   ret
 MStrNew_X endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MStrCat
 ; Purpose:    Concatenate 2 MStr's.
 ; Arguments:  Arg1: -> Destination MStr.
@@ -362,7 +362,7 @@ MStrCat_XT proc uses xbx xsi pDstMStrPayload:PSTRING, pSrcMStrPayload:PSTRING
   ret
 MStrCat_XT endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MStrCatChr
 ; Purpose:    Concatenate a char to a MStr.
 ; Arguments:  Arg1: -> Destination MStr.
@@ -385,7 +385,7 @@ MStrCatChr_XT proc pDstMStrPayload:PSTRING, Char:CHR
 MStrCatChr_XT endp
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MStrMid
 ; Purpose:    Extract a subMStr from an MStr.
 ; Arguments:  Arg1: -> Source MStr.
@@ -477,7 +477,7 @@ MStrMid_TX proc uses xbx xdi xsi pSrcMStrPayload:PSTRINGA, sdFromChar:SDWORD, dC
   ret
 MStrMid_TX endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MStrSize
 ; Purpose:    Get the payload byte size of a MStr.
 ; Arguments:  Arg1: -> Source MStr.
@@ -489,7 +489,7 @@ MStrSize proc pSrcMStrPayload:PSTRING
   ret
 MStrSize endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MStrLength
 ; Purpose:    Get the payload String length of a MStr.
 ; Arguments:  Arg1: -> Source MStr.
@@ -506,7 +506,7 @@ MStrLength_TX proc pSrcMStrPayload:PSTRING
   ret
 MStrLength_TX endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MStrRTrim
 ; Purpose:    Get the right trimmed MStr of a given MStr.
 ; Arguments:  Arg1: -> Source MStr.
@@ -539,7 +539,7 @@ endif
   ret
 MStrRTrim_TX endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MStrLTrim
 ; Purpose:    Get the left trimmed MStr of a given MStr.
 ; Arguments:  Arg1: -> Source MStr.
@@ -570,7 +570,7 @@ endif
   ret
 MStrLTrim_TX endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MStrTrim
 ; Purpose:    Get the left & right trimmed MStr of a given MStr.
 ; Arguments:  Arg1: -> Source MStr.

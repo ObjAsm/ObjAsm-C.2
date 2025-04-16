@@ -14,7 +14,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 externdef TwoDecDigitTableW:WORD
 ProcName textequ <sqword2decW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  sqword2decW
 ; Purpose:    Convert a signed SQWORD to its decimal WIDE string representation.
 ; Arguments:  Arg1: -> Destination WIDE string buffer.

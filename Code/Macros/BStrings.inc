@@ -11,9 +11,9 @@
 ; BSTR format as defined in the OLE 2.0 specification (MS ActiveX).
 ;
 ;          4 bytes      2 bytes per character             2 bytes
-;       ————————————————————————————————————————————————————————————————————
+;       --------------------------------------------------------------------
 ;  ... | Byte Lenght | UNICODE character array | Zero Termination Character | ...
-;       ————————————————————————————————————————————————————————————————————
+;       --------------------------------------------------------------------
 ;                    ^
 ;                    BSTR points here!
 
@@ -31,7 +31,7 @@
 ;       - The "Byte Lenght" prefix does NOT include the ZTC.
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      BString / ($)CBStr / ($)TBStr / ($)DBStr / ($)JBStr
 ; Purpose:    Place an BSTR string in the CONST, SEG_TEXT, _DATA or _TEXT segment.
 ; Arguments:  Arg1: Reference name (optional).
@@ -192,7 +192,7 @@ $JBStr macro QuotedText:vararg
   exitm <??StrLocation + 4>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Ofs(C/T/D/J)BStr
 ; Purpose:    Place an BSTR string in the CONST, SEG_TEXT, _DATA or _TEXT segment.
 ; Arguments:  Arg1: Quoted text.

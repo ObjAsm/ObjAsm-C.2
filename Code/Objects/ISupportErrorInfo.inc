@@ -12,7 +12,7 @@ externdef IID_ISupportErrorInfo:GUID      ;{DF0B3D60-548F-101B-8E65-08002B2BD119
 SetErrorFromID  proto :DWORD, :POINTER, :POINTER, :DWORD
 SetErrorFromStr proto :POINTER, :POINTER, :POINTER
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  ISupportErrorInfo
 ; Purpose: Implement the ISupportErrorInfo COM interface.
 
@@ -32,7 +32,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ISupportErrorInfo.Done
 ; Purpose:    Finalize the interface object.
 ; Arguments:  None.
@@ -45,7 +45,7 @@ Method ISupportErrorInfo.Done,
   ACall pSelf::ISupportErrorInfo.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ISupportErrorInfo.Init
 ; Purpose:    Initialize the interface object.
 ; Arguments:  Arg1: -> Owner object.
@@ -60,7 +60,7 @@ Method ISupportErrorInfo.Init, uses xbx, pOwner:POINTER
   ACall xcx.Init, pOwner
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ISupportErrorInfo.InterfaceSupportsErrorInfo
 ; Purpose:    Query if the interface identified with RefIID supports the IErrorInfo interface.
 ; Arguments:  Arg1: -> RefIID of the queried interface.
@@ -82,7 +82,7 @@ Method ISupportErrorInfo.InterfaceSupportsErrorInfo,, pRefIID:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ISupportErrorInfo.InsertIID
 ; Purpose:    Insert a GUID in the Collection.
 ; Arguments:  Arg1: -> GUID.
@@ -94,7 +94,7 @@ Method ISupportErrorInfo.InsertIID,, pRefIID:POINTER
    OCall [xcx].pSupportedIIDs::Collection.Insert, pRefIID
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:   SetErrorFromID
 ; Purpose:     Create an error object with the specified error information.
 ; Arguments:   Arg1: API error code, i.e. 87 => wrong parameter.
@@ -117,7 +117,7 @@ SetErrorFromID proc dErrID:DWORD, pSrcStr:POINTER, pIID:POINTER, dLCID:DWORD
   ret
 SetErrorFromID endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:   SetErrorFromStr
 ; Purpose:     Create an error object with the specified error information.
 ; Arguments:   Arg1: -> Error description UNICODE string.

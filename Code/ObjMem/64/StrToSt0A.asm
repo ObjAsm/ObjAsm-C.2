@@ -13,7 +13,7 @@
 .const
 dTen    DWORD    10
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrToSt0A
 ; Purpose:    Load an ANSI string representation of a floating point number into the st(0)
 ;             FPU register.

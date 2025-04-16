@@ -12,7 +12,7 @@
 
 externdef IID_IDispatch:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     IDispatch
 ; Purpose:    Implement the IDispatch COM interface.
 
@@ -36,7 +36,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDispatch.Init
 ; Purpose:    Initialize the IDispatch interface object.
 ; Arguments:  Arg1: -> Owner object.
@@ -74,7 +74,7 @@ Method IDispatch.Init, uses xsi, pOwner:POINTER, pDispInterface:POINTER, pTypeLi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDispatch.GetTypeInfoCount
 ; Purpose:    Retrieve the number of type information interfaces that an object provides, either
 ;             0 or 1.
@@ -96,7 +96,7 @@ Method IDispatch.GetTypeInfoCount,, pInfoCnt:POINTER
   xor eax, eax                                          ;Return S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDispatch.GetTypeInfo
 ; Purpose:    Retrieve the type information for an object.
 ; Arguments:  Arg1: TypeInfo Index.
@@ -134,7 +134,7 @@ Method IDispatch.GetTypeInfo,, dTypeInfoIndex:DWORD, dLCID:DWORD, ppTypeInfo:POI
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDispatch.GetIDsOfNames
 ; Purpose:    Map a single member name and an optional set of parameter names to a corresponding set
 ;             of integer dispatch identifiers (DISPIDs), which can then be used on subsequent calls
@@ -163,7 +163,7 @@ Method IDispatch.GetIDsOfNames,, pIID:POINTER, pNames:POINTER, dNameCnt:DWORD, d
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDispatch.Invoke
 ; Purpose:    Provide access to properties and methods exposed by an object.
 ; Arguments:  Arg1: Method Member ID.

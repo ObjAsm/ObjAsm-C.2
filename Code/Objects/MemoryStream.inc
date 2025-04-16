@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     MemoryStream
 ; Purpose:    Implements an "in memory" stream. 4GB max capacity.
 
@@ -49,7 +49,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.BinRead
 ; Purpose:    Reads a number of bytes from stream at the current position to a buffer.
 ; Arguments:  Arg1: -> Buffer.
@@ -76,7 +76,7 @@ Method MemoryStream.BinRead, uses xsi, pBuffer:POINTER, dCount:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.BinRead8
 ; Purpose:    Read a byte from stream at the current position, returns it in the ecx register and
 ;             advance the current position into the stream.
@@ -106,7 +106,7 @@ Method MemoryStream.BinRead8, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.BinRead16
 ; Purpose:    Read a word from stream at the current position, returns it in the ecx register and
 ;             advance the current position into the stream.
@@ -136,7 +136,7 @@ Method MemoryStream.BinRead16, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.BinRead32
 ; Purpose:    Read a DWORD from stream at the current position, returns it in the ecx register and
 ;             advance the current position into the stream.
@@ -166,7 +166,7 @@ Method MemoryStream.BinRead32, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.BinRead64
 ; Purpose:    Read a QWORD from stream at the current position, returns it in the ecx register and
 ;             advance the current position into the stream.
@@ -199,7 +199,7 @@ Method MemoryStream.BinRead64, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.BinWrite
 ; Purpose:    Write should write Count bytes from Buffer onto the stream and advance the
 ;             current position of the stream by Count bytes.
@@ -236,7 +236,7 @@ Method MemoryStream.BinWrite, uses xsi, pBuffer:POINTER, dCount:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.BinWrite8
 ; Purpose:    Write a byte value onto the stream and advance the current position into the stream.
 ; Arguments:  Arg1: Byte value.
@@ -273,7 +273,7 @@ Method MemoryStream.BinWrite8, uses xsi, bValue:BYTE
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.BinWrite16
 ; Purpose:    Write a word value onto the stream and advance the current position into the stream.
 ; Arguments:  Arg1: Word value.
@@ -310,7 +310,7 @@ Method MemoryStream.BinWrite16, uses xsi, wValue:WORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.BinWrite32
 ; Purpose:    Write a DWORD value onto the stream and advance the current position into the stream.
 ; Arguments:  Arg1: DWORD value.
@@ -347,7 +347,7 @@ Method MemoryStream.BinWrite32, uses xsi, dValue:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.BinWrite64
 ; Purpose:    Write a QWORD value onto the stream and advance the current position into the stream.
 ; Arguments:  Arg1: QWORD value.
@@ -388,7 +388,7 @@ Method MemoryStream.BinWrite64, uses xsi, qValue:QWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.BufferLoad
 ; Purpose:    Loads the stream content from a buffer.
 ; Arguments:  Arg1: -> Buffer.
@@ -415,7 +415,7 @@ Method MemoryStream.BufferLoad, uses xsi, pBuffer:POINTER, dSize:DWORD
   invoke MemClone, [xsi].pBuffer, pBuffer, dSize
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.BufferSave
 ; Purpose:    Saves the stream content to a buffer.
 ; Arguments:  Arg1: -> Buffer.
@@ -426,7 +426,7 @@ Method MemoryStream.BufferSave,, pBuffer:POINTER
   invoke MemClone, pBuffer, [xax].pBuffer, [xax].dCurrSize
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.Done
 ; Purpose:    Finalizes the object.
 ; Arguments:  None.
@@ -440,7 +440,7 @@ Method MemoryStream.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.FileLoad
 ; Purpose:    Recovers the stream object from file.
 ; Arguments:  Arg1: -> ANSI string containing the file name.
@@ -490,7 +490,7 @@ Method MemoryStream.FileLoad, uses xsi, pFileName:PSTRING
   invoke CloseHandle, hFile
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.FileSave
 ; Purpose:    Stores the stream object to file.
 ; Arguments:  Arg1: -> ANSI string containing the file name.
@@ -528,7 +528,7 @@ Method MemoryStream.FileSave, uses xsi, pFileName:PSTRING
   invoke CloseHandle, hFile
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.GetPos
 ; Purpose:    Returns the current position into the memory stream.
 ; Arguments:  None.
@@ -545,7 +545,7 @@ Method MemoryStream.GetPos
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.GetSize
 ; Purpose:    Returns the current file size of the stream.
 ; Arguments:  None.
@@ -562,7 +562,7 @@ Method MemoryStream.GetSize
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.Init
 ; Purpose:    Initializes the object.
 ; Arguments:  Arg1: -> Owner object.
@@ -584,7 +584,7 @@ Method MemoryStream.Init, uses xsi, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, 
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.Seek
 ; Purpose:    Seek sets the current position to NewPosition bytes from the start of the calling
 ;             stream. The start of a stream is position 0. HiPart of qNewPosition is ignored!
@@ -620,7 +620,7 @@ Method MemoryStream.Seek,, sqNewPosition:SQWORD, dMode
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.SetCapacity
 ; Purpose:    Creates a new buffer with a size of NewCapacity bytes on the heap and copies the
 ;             old Buffer content to the new one.
@@ -645,7 +645,7 @@ Method MemoryStream.SetCapacity, uses xsi, dNewLimit:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MemoryStream.Truncate
 ; Purpose:    Deletes all data on the calling stream from the current position to the end.
 ; Arguments:  None.

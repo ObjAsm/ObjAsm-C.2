@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GUID2BStr
 ; Purpose:    Convert a GUID to a BStr.
 ; Arguments:  Arg1: -> Destination BStr Buffer. It must hold at least 36 WIDE characters plus a ZTC.

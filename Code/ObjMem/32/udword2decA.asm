@@ -14,7 +14,7 @@
 
 externdef TwoDecDigitTableA:BYTE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  udword2decA
 ; Purpose:    Convert an unsigned DWORD to its decimal ANSI string representation.
 ; Arguments:  Arg1: -> Destination ANSI string buffer.

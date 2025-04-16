@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     TSortedVector
 ; Purpose:    TVector is an object template for a BYTE, WORD, DWORD, QWORD, REAL4 or REAL8 sorted
 ;             data item container.
@@ -74,7 +74,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TSortedVectorName.Compare
 ; Purpose:    Compare the two values.
 ; Arguments:  Arg1: Item 1.
@@ -124,7 +124,7 @@ if IMPLEMENT
   endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TSortedVectorName.Insert
 ; Purpose:    If the target item is not found in the sorted Vector, it is inserted at the
 ;             correct index position. It calls Search to determine if the item exists, and if not,
@@ -146,7 +146,7 @@ MethodEnd
   OCall xsi.InsertAt, edx, xItem
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TSortedVectorName.Load
 ; Purpose:    Load a sorted Vector from the stream object by first calling
 ;             Vector.Load. It then reads the Duplicates field.
@@ -167,7 +167,7 @@ MethodEnd
   endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TSortedVectorName.Search
 ; Purpose:    Search an item based on its key.
 ; Arguments:  Arg1: Item to be found.
@@ -214,7 +214,7 @@ MethodEnd
   mov eax, $LocReg(dFound)                              ;Return Found condition in eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TSortedVectorName.Store
 ; Purpose:    Store the sorted Vector and all its items on the stream object by calling
 ;             Vector.Store to write the Vector. It then writes the Duplicates
@@ -233,7 +233,7 @@ MethodEnd
   endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TSortedVectorName.Sort
 ; Purpose:    Resort the Vector in place, i.e. if the compare method was changed.
 ; Arguments:  None.

@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemUefi.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MemAlloc_UEFI
 ; Purpose:    Allocate a memory block.
 ; Arguments:  Arg1: Memory block attributes [0, MEM_INIT_ZERO].

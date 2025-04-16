@@ -126,7 +126,7 @@ POCTOWORD typedef OCTOWORD
 ;    Macro and procedure implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Static
 ; Purpose:    Allocate a variable in the Data segment
 ; Arguments:  Arg1: Name.
@@ -140,7 +140,7 @@ Static macro VarName:req, VarType:req, VarIni:=<?>
   .code
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      MemAlloc / $MemAlloc
 ; Purpose:    Allocate a memory block on global memory.
 ; Arguments:  Arg1: Memory block size. For Windows muust be less than 7FFF8h.
@@ -187,7 +187,7 @@ $MemAlloc macro MemSize, Flags:=<0>
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      MemReAlloc
 ; Purpose:    Reallocate a block of memory.
 ; Arguments:  Arg1: Memory POINTER obtained with MemAlloc/MemReAlloc.
@@ -227,7 +227,7 @@ $MemReAlloc macro MemPtr:req, MemSize:req, Flags:=<0>
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      MemFree
 ; Purpose:    Free a memory block previously allocated with MemAlloc or MemReAlloc.
 ; Arguments:  Arg1: -> allocated memory block.
@@ -278,7 +278,7 @@ MemFree macro MemPtr:req, Flags:=<0>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      MemCheck
 ; Purpose:    Validates a memory block on the process heap.
 ; Arguments:  Arg1: -> allocated memory block. If NULL, the whole heap is checked.
@@ -293,7 +293,7 @@ MemCheck macro MemPtr:=<NULL>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      (x)BitClear
 ; Purpose:    Reset a bit in a value.
 ; Arguments:  Arg1: Destination.
@@ -311,7 +311,7 @@ endm
 BitClr  equ <BitClear>
 xBitClr equ <xBitClear>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      (x)BitMask
 ; Purpose:    AND a bit in a value.
 ; Arguments:  Arg1: Destination.
@@ -329,7 +329,7 @@ endm
 BitMsk  equ <BitMask>
 xBitMsk equ <xBitMask>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      BitSet
 ; Purpose:    Set a bit in a value.
 ; Arguments:  Arg1: Destination.
@@ -344,7 +344,7 @@ xBitSet macro Val:req, Bit:req
   lock or Val, (Bit)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      (x)BitToggle
 ; Purpose:    Toggle a bit in a value.
 ; Arguments:  Arg1: Destination.
@@ -362,7 +362,7 @@ endm
 BitTog  equ <BitToggle>
 xBitTog equ <xBitToggle>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .ifBitSet
 ; Purpose:    Start a conditional clauses, that must be terminated with .endif.
 ;             Examine if any of the indicated bits are set.
@@ -376,7 +376,7 @@ endm
 
 .ifAnyBitSet equ <.ifBitSet>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .elseIfBitSet
 ; Purpose:    Continue a conditional clauses, that must be terminated with .endif.
 ;             Examine if any of the indicated bits are set.
@@ -390,7 +390,7 @@ endm
 
 .elseIfAnyBitSet equ <.elseIfBitSet>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .ifBitClr
 ; Purpose:    Start a coditional clauses, that must be terminated with .endif.
 ;             Examine if all of the indicated bits are not set.
@@ -404,7 +404,7 @@ endm
 
 .ifAllBitsClr equ <.ifBitClr>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .elseIfBitClr
 ; Purpose:    Start a coditional clauses, that must be terminated with .endif.
 ;             Examine if all of the indicated bits are not set.
@@ -418,7 +418,7 @@ endm
 
 .elseIfAllBitsClr equ <.elseIfBitClr>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      JmpIfBitSet
 ; Purpose:    Jump if a bit is set.
 ; Arguments:  Arg1: Bit holding variable.
@@ -430,7 +430,7 @@ JmpIfBitSet macro Var:req, Bit:req, Location:req
   jnz Location
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      JmpIfBitClr
 ; Purpose:    Jump if a bit is not set.
 ; Arguments:  Arg1: Bit holding variable.
@@ -442,7 +442,7 @@ JmpIfBitClr macro Var:req, Bit:req, Location:req
   jz Location
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CloneGuid
 ; Purpose:    Copy the content of a GUID from a location to another.
 ; Arguments:  Arg1: Destination GUID.
@@ -464,7 +464,7 @@ else
   endm
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ($)StackAlloc
 ; Purpose:    Reserve a chunk of memory from stack.
 ; Arguments:  Arg1: Requested memory size in bytes.
@@ -550,7 +550,7 @@ $StackAlloc macro AllocSize:req
 endm
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      StackFree
 ; Purpose:    Release the reserved stack space with StackAlloc.
 ; Arguments:  None.

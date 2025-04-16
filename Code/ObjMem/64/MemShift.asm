@@ -12,7 +12,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MemShift
 ; Purpose:    Copy a memory block from a source to a destination buffer.
 ;             Source and destination may overlap.

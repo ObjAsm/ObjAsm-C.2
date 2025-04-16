@@ -9,7 +9,7 @@
 ;               - First release.
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     SdiApp
 ; Purpose:    Implement a base object for Single Document Interface applications. It contains all
 ;             the needed support to build a running Windows application.
@@ -25,7 +25,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Method:     SdiApp.Init   - code sample-
 ;; Purpose:    Initialize the SDI application object.
 ;; Arguments:  None.
@@ -52,7 +52,7 @@ if IMPLEMENT
 ;  invoke UpdateWindow, [xsi].hWnd                       ;Update if necessary
 ;MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SdiApp.Run
 ; Purpose:    Launch the SDI application object starting the message loop.
 ; Arguments:  None.

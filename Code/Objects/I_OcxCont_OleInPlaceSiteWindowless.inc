@@ -10,7 +10,7 @@
 
 externdef IID_IOleInPlaceSiteWindowless:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     I_OcxCont_OleInPlaceSiteWindowless
 ; Purpose:    Extend the IOleInPlaceSiteEx interface. IOleInPlaceSiteWindowless works with
 ;             IOleInPlaceObjectWindowless which is implemented on the windowless object.
@@ -41,7 +41,7 @@ if IMPLEMENT
 ;     I_OcxCont_OleInPlaceSiteWindowless implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteWindowless.CanWindowlessActivate
 ; Purpose:    Inform an object if its container can support it as a windowless object that can be
 ;             in-place activated.
@@ -54,7 +54,7 @@ Method I_OcxCont_OleInPlaceSiteWindowless.CanWindowlessActivate
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteWindowless.GetCapture
 ; Purpose:    Enable an in-place active, windowless object to capture all mouse messages.
 ; Arguments:  None.
@@ -65,7 +65,7 @@ Method I_OcxCont_OleInPlaceSiteWindowless.GetCapture
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteWindowless.SetCapture
 ; Purpose:    Inform an object if its container can support it as a windowless object that can be
 ;             in-place activated.
@@ -78,7 +78,7 @@ Method I_OcxCont_OleInPlaceSiteWindowless.SetCapture,, fCapture:BOOL
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteWindowless.GetFocus
 ; Purpose:    Called by an in-place active, windowless object to determine whether it still has the
 ;             keyboard focus.
@@ -90,7 +90,7 @@ Method I_OcxCont_OleInPlaceSiteWindowless.GetFocus
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteWindowless.SetFocus
 ; Purpose:    Set the keyboard focus for a UI-active, windowless object.
 ; Arguments:  Arg1: If TRUE, the container should capture the mouse for the object. If FALSE, the
@@ -102,7 +102,7 @@ Method I_OcxCont_OleInPlaceSiteWindowless.SetFocus,, fCapture:BOOL
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteWindowless.GetDC
 ; Purpose:    Set the keyboard focus for a UI-active, windowless object.
 ; Arguments:  Arg1: -> rectangle that the object wants to redraw, in client coordinates of the
@@ -117,7 +117,7 @@ Method I_OcxCont_OleInPlaceSiteWindowless.GetDC,, pRect:POINTER, dFlags:DWORD, p
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteWindowless.ReleaseDC
 ; Purpose:    Release the device context previously obtained by a call to
 ;             IOleInPlaceSiteWindowless::GetDC.
@@ -129,7 +129,7 @@ Method I_OcxCont_OleInPlaceSiteWindowless.ReleaseDC,, hDC:HDC
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteWindowless.InvalidateRect
 ; Purpose:    Enable an object to invalidate a specified rectangle of its in-place image on
 ;             the screen.
@@ -145,7 +145,7 @@ Method I_OcxCont_OleInPlaceSiteWindowless.InvalidateRect,, pRect:POINTER, fErase
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteWindowless.InvalidateRgn
 ; Purpose:    Enable an object to invalidate a specified region of its in-place image on the screen.
 ; Arguments:  Arg1: The region to invalidate, in client coordinates of the containing window.
@@ -160,7 +160,7 @@ Method I_OcxCont_OleInPlaceSiteWindowless.InvalidateRgn,, hRgn:HANDLE, fErase:BO
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteWindowless.ScrollRect
 ; Purpose:    Enable an object to scroll an area within its in-place active image on the screen.
 ; Arguments:  Arg1: The amount to scroll the x-axis.
@@ -178,7 +178,7 @@ Method I_OcxCont_OleInPlaceSiteWindowless.ScrollRect,, sdX:SDWORD, sdY:SDWORD, \
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteWindowless.AdjustRect
 ; Purpose:    Adjust a specified rectangle if it is entirely or partially covered by overlapping,
 ;             opaque objects.
@@ -190,7 +190,7 @@ Method I_OcxCont_OleInPlaceSiteWindowless.AdjustRect,, pRect:POINTER
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteWindowless.OnDefWindowMessage
 ; Purpose:    Invoke the default processing for all messages passed to an object.
 ; Arguments:  Arg1: The identifier for the window message provided to the container by Windows.

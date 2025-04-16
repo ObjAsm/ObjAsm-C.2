@@ -17,7 +17,7 @@ externdef hInstance:HANDLE
 IDM_FIRSTCHILD equ 50000                                ;Must be larger than any other menu ID
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object MdiChildWnd, MdiChildWndID, Window               ;Child window of MdiApp.
   RedefineMethod    OnGetMinMaxInfo,WPARAM, LPARAM 
@@ -27,7 +27,7 @@ Object MdiChildWnd, MdiChildWndID, Window               ;Child window of MdiApp.
   VirtualEvent      OnNCDestroy,    WM_NCDESTROY
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object MdiClientWnd, MdiClientWndID, WinPrimer          ;Client window for MdiApp.
   VirtualMethod     Dispatch,       HWND, DWORD, WPARAM, LPARAM
@@ -39,7 +39,7 @@ Object MdiClientWnd, MdiClientWndID, WinPrimer          ;Client window for MdiAp
   DefineVariable    pPrevWndProc,   POINTER,    NULL
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:   MdiApp
 ; Purpose:  Implement a base object for Multiple Document Interface applications. It contains all
 ;           the needed support to build a running Windows application.
@@ -48,30 +48,30 @@ ObjectEnd
 ;           http://windowssdk.msdn.microsoft.com/en-us/library/ms632591.aspx
 ; Note:     Frame window handle is stored in hWnd.
 ;
-;         —————————————————————————————————————————————————————————
+;         ---------------------------------------------------------
 ;        | @ Application caption                            _ [] X |
-;        |—————————————————————————————————————————————————————————|
+;        |---------------------------------------------------------|
 ;        | File  Edit  ...  ...  Window  Help                     <------ Frame Window
-;        |—————————————————————————————————————————————————————————|      Main Menu
-;        | ————————  ————————————————————————————————————————————— |
+;        |---------------------------------------------------------|      Main Menu
+;        | --------  --------------------------------------------- |
 ;        ||        ||                                             ||
-;        || Other  ||   ——————————————————                        |<----- Client Window
-;        || Frame  ||  | Child Title    X |—                      ||
-;        || child  ||  |——————————————————| |—                    ||
-;        || Window ||  |                  | | |—                  ||<---- Frame Window
-;        ||        ||  |                  | | | |—                ||
+;        || Other  ||   ------------------                        |<----- Client Window
+;        || Frame  ||  | Child Title    X |-                      ||
+;        || child  ||  |------------------| |-                    ||
+;        || Window ||  |                  | | |-                  ||<---- Frame Window
+;        ||        ||  |                  | | | |-                ||
 ;        ||        ||  |                  | | | | |               ||
 ;        ||        ||  |                  | | | | |               ||
-;        ||        ||   ——————————————————  | | | |<-- MDI Child  ||
-;        ||        ||     ——————————————————  | | |     Windows   ||
-;        ||        ||       ——————————————————  | |               ||
-;        ||        ||         ——————————————————  |               ||
-;        ||        ||           ——————————————————                ||
+;        ||        ||   ------------------  | | | |<-- MDI Child  ||
+;        ||        ||     ------------------  | | |     Windows   ||
+;        ||        ||       ------------------  | |               ||
+;        ||        ||         ------------------  |               ||
+;        ||        ||           ------------------                ||
 ;        ||        ||                                             ||
-;        | ————————  ————————————————————————————————————————————— |
-;        |—————————————————————————————————————————————————————————|
+;        | --------  --------------------------------------------- |
+;        |---------------------------------------------------------|
 ;        | Statusbar (Child window of Frame Window)                |
-;         —————————————————————————————————————————————————————————
+;         ---------------------------------------------------------
 ;
 
 Object MdiApp, MdiAppID, WinApp
@@ -90,7 +90,7 @@ if IMPLEMENT
 ;    MdiApp implementation
 ; ==================================================================================================
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Method:     MdiApp.Done   - code sample-
 ;; Purpose:    Finalize the MDI application object.
 ;; Arguments:  None.
@@ -101,7 +101,7 @@ if IMPLEMENT
 ;  Destroy [xcx].pClientWnd
 ;MethodEnd
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Method:     MdiApp.Init   - code sample-
 ;; Purpose:    Initialize the MDI application object.
 ;; Arguments:  None.
@@ -129,7 +129,7 @@ if IMPLEMENT
 ;  invoke UpdateWindow, [xsi].hWnd
 ;MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MdiApp.Run
 ; Purpose:    Launch the MDI application object starting the message loop.
 ; Arguments:  None.
@@ -177,7 +177,7 @@ Method MdiApp.Run, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $PreLinesMdiFrameWndProc
 ; Purpose:    Pass an additional pre line to the DispatchEvent macro.
 
@@ -191,7 +191,7 @@ $PreLinesMdiFrameWndProc macro
   exitm <DefFrameProc, pSelf, xdx>                      ;;These are the first 3 args of DefFrameProc
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MdiApp.WndProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.
@@ -223,7 +223,7 @@ MethodEnd
 ;    MdiClientWnd implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MdiClientWnd.Dispatch
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Window handle.
@@ -237,7 +237,7 @@ Method MdiClientWnd.Dispatch, uses xsi, hWnd:HWND, uMsg:DWORD, wParam:WPARAM, lP
   DispatchEvent <CallWindowProc, [xsi].pPrevWndProc, hWnd>  ;xsi -> Object Instance
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MdiClientWnd.Init
 ; Purpose:    Initialize the MdiClientWnd object.
 ; Arguments:  Arg1: -> Owner object.
@@ -259,7 +259,7 @@ Method MdiClientWnd.Init, uses xbx xsi, pOwner:POINTER
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MdiClientWnd.OnNCDestroy
 ; Purpose:    Event procedure for WM_NCDESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -272,7 +272,7 @@ Method MdiClientWnd.OnNCDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MdiClientWnd.WindowProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.
@@ -293,7 +293,7 @@ MethodEnd
 ;    MdiChildWnd implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    MdiChildWnd.OnGetMinMaxInfo
 ; Purpose:   Event procedure for WM_GETMINMAXINFO message.
 ; Arguments: Arg1: First message parameter.
@@ -307,7 +307,7 @@ Method MdiChildWnd.OnGetMinMaxInfo, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefMDIChildProc, [xsi].hWnd, WM_GETMINMAXINFO, wParam, lParam 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MdiChildWnd.OnNCDestroy
 ; Purpose:    Event procedure for WM_NCDESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -322,7 +322,7 @@ Method MdiChildWnd.OnNCDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MdiChildWnd.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -336,7 +336,7 @@ Method MdiChildWnd.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefMDIChildProc, [xsi].hWnd, WM_SIZE, wParam, lParam 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MdiChildWnd.WindowProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.

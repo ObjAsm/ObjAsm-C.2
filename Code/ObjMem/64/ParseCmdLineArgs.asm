@@ -11,7 +11,7 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ParseCmdLineArgs
 ; Purpose:    Parse a WIDE command line string and return an array of PSTRINGW to the arguments,
 ;             along with a count of these arguments. Delimiters are white chars and CRLF.

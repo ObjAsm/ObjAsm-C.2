@@ -15,7 +15,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <StrUpperA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrUpperA
 ; Purpose:    Convert all ANSI string characters into uppercase.
 ; Arguments:  Arg1: -> Source ANSI string.

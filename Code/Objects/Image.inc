@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Image
 ; Purpose:    This object is able to load BMP, GIF, JPEG, ICO, WMF, EMF, PNG, XBM, ICO, TIFF
 ;             images from files and resources.
@@ -107,7 +107,7 @@ DefGUID IID_IImgCtx, %sIID_IImgCtx
 DefGUID CLSID_IImgCtx, %sCLSID_IImgCtx
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Image.AlphaDraw
 ; Purpose:    Blend the image on a device context using the alpha information.
 ; Arguments:  Arg1: DC HANDLE.
@@ -146,7 +146,7 @@ Method Image.AlphaDraw, uses xsi, hDC:HDC, dSrcAlpha:DWORD, pDstRect:PRECT
   mov eax, dReturn
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Image.AlphaStretch
 ; Purpose:    Blend the image on a device context using the alpha information.
 ; Arguments:  Arg1: DC HANDLE.
@@ -189,7 +189,7 @@ Method Image.AlphaStretch, uses xbx xsi, hDC:HDC, dSrcAlpha:DWORD, pDstRect:PREC
   mov eax, dReturn
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Image.AlphaTile
 ; Purpose:    Tile the image on a device context.
 ; Arguments:  Arg1: DC HANDLE.
@@ -241,7 +241,7 @@ Method Image.AlphaTile, uses xsi, hDC:HDC, dSrcAlpha:DWORD, pOrigin:PPOINT, pCli
   mov eax, dReturn
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Image.Done
 ; Purpose:    Free allocated resources.
 ; Arguments:  None.
@@ -253,7 +253,7 @@ Method Image.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Image.Draw
 ; Purpose:    Draw the image on a device context.
 ; Arguments:  Arg1: DC HANDLE.
@@ -283,7 +283,7 @@ Method Image.Draw,, hDC:HDC, pRect:PRECT
   mov eax, dReturn
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Image.GetCompatibleBmp
 ; Purpose:    Initialize the object
 ; Arguments:  Arg1: Device Context HANDLE.
@@ -310,7 +310,7 @@ Method Image.GetCompatibleBmp, uses xsi, hDC:HDC
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Callback for ImgCtx
 ; Purpose:    Notification callback. Is called only if the callback is set using IImgCtx.SetCallback
 ;             and a trigger condition is defined using IImgCtx.SelectChanges.
@@ -325,7 +325,7 @@ MethodEnd
 ;  ret
 ;ImgCtxCallback endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Image.Init
 ; Purpose:    Initialize the object
 ; Arguments:  Arg1: -> Owner object.
@@ -342,7 +342,7 @@ Method Image.Init, uses xsi, pOwner:POINTER
 ;  .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Image.LoadFromFileA
 ; Purpose:    Load the image from file.
 ; Arguments:  Arg1: -> ANSI file name.
@@ -379,7 +379,7 @@ Method Image.LoadFromFileA, uses xsi, pFileNameA:PSTRINGA
   mov eax, dReturn
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Image.LoadFromFileW
 ; Purpose:    Load the image from file.
 ; Arguments:  Arg1: -> WIDE file name.
@@ -415,7 +415,7 @@ Method Image.LoadFromFileW, uses xsi, pFileNameW:PSTRINGW
   mov eax, dReturn
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Image.LoadFromResA
 ; Purpose:    Load the image from resource.
 ; Arguments:  Arg1: -> ANSI resource name.
@@ -458,7 +458,7 @@ Method Image.LoadFromResA, uses xbx xsi, pResNameA:PSTRINGA
   mov eax, dReturn
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Image.LoadFromResW
 ; Purpose:    Load the image from resource.
 ; Arguments:  Arg1: -> WIDE resource name.
@@ -500,7 +500,7 @@ Method Image.LoadFromResW, uses xbx xsi, pResNameW:PSTRINGW
   mov eax, dReturn
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Image.Stretch
 ; Purpose:    Blit the image on a device context.
 ; Arguments:  Arg1: DC HANDLE.
@@ -538,7 +538,7 @@ Method Image.Stretch, uses xbx xsi, hDC:HDC, pDstRect:PRECT, pSrcRect:PRECT
   mov eax, dReturn
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Image.Tile
 ; Purpose:    Tile the image on a device context.
 ; Arguments:  Arg1: DC HANDLE.

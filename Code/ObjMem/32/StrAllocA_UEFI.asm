@@ -12,7 +12,7 @@
 
 ProcName textequ <StrAllocA_UEFI>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrAllocA_UEFI
 ; Purpose:    Allocate space for a string with n characters.
 ; Arguments:  Arg1: Character count without the ZTC.

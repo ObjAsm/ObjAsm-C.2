@@ -12,7 +12,7 @@
 
 % include &IncPath&Windows\Windows.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrDispose
 ; Purpose:    Free the memory allocated for the string using StrNew, StrCNew, StrLENew or
 ;             StrAlloc.

@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrW2StrA
 ; Purpose:    Convert a WIDE string into an ANSI string. WIDE characters are converted to BYTEs by
 ;             decimation of the high byte.

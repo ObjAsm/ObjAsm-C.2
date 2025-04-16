@@ -291,7 +291,7 @@ DB_MEMO_BLOCK struct 1
   bData               BYTE      0 dup (?)
 DB_MEMO_BLOCK ends
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DB_MemoBlock
 ; Purpose:    A database memo record is a set of large information. This object manages
 ;             a single record within the memo file.
@@ -310,7 +310,7 @@ Object DB_MemoBlock, DB_MemoBlockID, Primer
 ObjectEnd                                                   ;at the end of this object
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DB_MemoBlockCache
 ; Purpose:    A record cache is a in-memory managed memo block pool. Its purpose is to speedup the
 ;             record information access. This is implemented using an ageing scheme to write back
@@ -327,7 +327,7 @@ Object DB_MemoBlockCache, DB_MemoBlockCacheID, SortedCollection
 ObjectEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DB_Memo
 ; Purpose:    The database memo is an alternative storage for long field contents.
 ;             It works together with DB_MemoBlockCache.
@@ -353,7 +353,7 @@ Object DB_Memo, DB_MemoID, Primer
 ObjectEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DB_Record
 ; Purpose:    A database record is a set of heterogene but related information. This object manages
 ;             a single record within the database. The information contained in the record is
@@ -380,7 +380,7 @@ Object DB_Record, DB_RecordID, Primer
 ObjectEnd                                                   ;at the end of this object
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DB_RecordCache
 ; Purpose:    A record cache is a in-memory managed record pool. Its purpose is to speedup the
 ;             record information access. This is implemented using an ageing scheme to write back
@@ -400,7 +400,7 @@ Object DB_RecordCache, DB_RecordCacheID, SortedCollection
 ObjectEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DB_Field
 ; Purpose:    A database field is a specific place in a data record. This object manages all the
 ;             data that defines this storage place and how to handle it.
@@ -434,7 +434,7 @@ Object DB_Field, DB_FieldID, Primer
 ObjectEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DB_Table
 ; Purpose:    The database table is the central element of this implementation. It is build to be
 ;             compatible with dBase III file format that enables data loading by any modern database
@@ -469,7 +469,7 @@ Object DB_Table, DB_TableID, Primer
 ObjectEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     NdxMemBlock
 ; Purpose:    A index memory block is a way to keep index information in memory to spped up the
 ;             access to database records (see "Index introduction" in the above section).
@@ -491,7 +491,7 @@ Object NdxMemBlock, NdxMemBlockID, Primer
 ObjectEnd                                                   ;end of this object
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     NdxMemBlockCache
 ; Purpose:    A block cache is a in-memory managed block pool. Its purpose is to speedup the
 ;             block information access. This is implemented using an ageing scheme to write
@@ -516,7 +516,7 @@ Object NdxMemBlockCache, NdxBlockCacheID, SortedCollection
 ObjectEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DB_Index
 ; Purpose:    In database programs where most information is stored on disks, the time penalty for
 ;             accessing secondary storage can be significantly reduced by the proper choice of data
@@ -536,23 +536,23 @@ ObjectEnd
 ;               - RecNo and BlockNo values start from 1.
 ;
 ; Example:
-;                       +————————(LE 20)—— 20;33 ——(GT 33)——————————+             Root block
+;                       +--------(LE 20)-- 20;33 --(GT 33)----------+             Root block
 ;                       |                     |                     |
 ;                       |                     | (LE 33)             |
 ;                       |                     |                     |
-;                +——— 13;19 ——+       +——— 26;31 ———+        +——— 37;41 ———+      Non leaf blocks
+;                +--- 13;19 --+       +--- 26;31 ---+        +--- 37;41 ---+      Non leaf blocks
 ;                |       |    |       |       |     |        |       |     |
 ;                |       |    |       |       |     |        |       |     |
 ;              11;13  16;19  20     24;25  27;31  32;33    36;37  40;41  44;45    Leaf blocks
 ;
 ;
 ; Block layout:
-;                 +—————————————————+——————————————————+——————————————————+—————+————————————+
+;                 +-----------------+------------------+------------------+-----+------------+
 ; Leaf block:     | #Enties | Flags |    RecNo   | Key |    RecNo   | Key | ... |  LeafLink  |
-;                 +—————————————————+——————————————————+——————————————————+—————+————————————+
-;                 +—————————————————+——————————————————+——————————————————+—————+————————————+
+;                 +-----------------+------------------+------------------+-----+------------+
+;                 +-----------------+------------------+------------------+-----+------------+
 ; Non leaf block: | #Enties | Flags | LE_BlockNo | Key | LE_BlockNo | Key | ... | GT_BlockNo |
-;                 +—————————————————+——————————————————+——————————————————+—————+————————————+
+;                 +-----------------+------------------+------------------+-----+------------+
 
 Object DB_Index, DB_IndexID, Primer
   StaticMethod      AtBottom?
@@ -599,7 +599,7 @@ Object DB_Index, DB_IndexID, Primer
 ObjectEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  DB_Query
 ; Purpose: This object is designed to allow to query a DB_Table for an occurrence defined in filter
 ;          callback procedure. DB_Query has an internal table where the matching record numbers are
@@ -755,7 +755,7 @@ MemoGetBmp proto :$ObjPtr(DB_Memo), :DWORD
 
 MUT_FpuToChr8 textequ <MUT_FpuToChrA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 if IMPLEMENT
 

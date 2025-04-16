@@ -9,7 +9,7 @@
 
 % include &MacPath&QuadWord.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  HnsecsToTime
 ; Purpose:    Convert hecto-nano-seconds into DTL_TIME information.
 ; Arguments:  Arg1: -> DTL_TIME

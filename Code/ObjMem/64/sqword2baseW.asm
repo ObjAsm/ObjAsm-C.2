@@ -18,7 +18,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ProcName textequ <sqword2baseW>
 Signed equ TRUE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  sqword2baseW
 ; Purpose:    Convert a signed qword to a defined base.
 ; Arguments:  Arg1: -> Buffer

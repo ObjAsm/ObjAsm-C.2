@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     MsgInterceptor
 ; Purpose:    MsgInterceptor is an object designed to intercept messages send to a window.
 ;             To use it, its WndProc must be redefined to get the property used to store the object
@@ -34,7 +34,7 @@ if IMPLEMENT
 
 CStr szMsgIptorProp, "MsgIptor"
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MsgInterceptor.Dispatch
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Window handle.
@@ -49,7 +49,7 @@ Method MsgInterceptor.Dispatch, uses xsi, hWnd:HWND, uMsg:DWORD, wParam:WPARAM, 
   DispatchEvent <CallWindowProc, [xsi].pPrevWndProc, hWnd>        ;xsi -> Object Instance
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MsgInterceptor.Done
 ; Purpose:    Finalize MsgInterceptor object.
 ; Arguments:  None.
@@ -64,7 +64,7 @@ Method MsgInterceptor.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MsgInterceptor.Init
 ; Purpose:    Initialize MsgInterceptor object.
 ; Arguments:  Arg1: -> Owner object.
@@ -87,7 +87,7 @@ Method MsgInterceptor.Init, uses xsi, pOwner:POINTER, hWnd:HWND, pPropName:PSTRI
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MsgInterceptor.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.

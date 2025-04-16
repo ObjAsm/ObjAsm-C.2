@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SendChildrenMessage
 ; Purpose:    Callback procedure for EnumChildWindows that sends a message to a child window.
 ; Arguments:  Arg1: Child window HANDLE.

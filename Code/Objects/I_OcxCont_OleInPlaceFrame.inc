@@ -10,7 +10,7 @@
 
 externdef IID_IOleInPlaceFrame:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     I_OcxCont_OleInPlaceFrame
 ; Purpose:    Control the container's top-level frame window. This control involves allowing the
 ;             container to insert its menu group into the composite menu, install the composite menu
@@ -42,7 +42,7 @@ if IMPLEMENT
 ;     I_OcxCont_OleInPlaceFrame implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceFrame.GetBorder
 ; Purpose:    Retrieve the outer rectange for toolbars and controls while the object is active in
 ;             place.
@@ -63,7 +63,7 @@ Method I_OcxCont_OleInPlaceFrame.GetBorder,, pBorderRect:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceFrame.RequestBorderSpace
 ; Purpose:    Determine whether there is space available for tools to be installed around the
 ;             object's window frame while the object is active in place.
@@ -76,7 +76,7 @@ Method I_OcxCont_OleInPlaceFrame.RequestBorderSpace,, pBorderWidths:LPBORDERWIDT
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceFrame.SetBorderSpace
 ; Purpose:    Allocate space for the border requested in the call to
 ;             IOleInPlaceUIWindow::RequestBorderSpace.
@@ -108,7 +108,7 @@ Method I_OcxCont_OleInPlaceFrame.SetBorderSpace,, pBorderWidths:LPBORDERWIDTHS
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceFrame.SetActiveObject
 ; Purpose:    Provide a direct channel of communication between the object and each of the frame and
 ;             document windows.
@@ -126,7 +126,7 @@ Method I_OcxCont_OleInPlaceFrame.SetActiveObject,, pActiveObject:POINTER, pObjec
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceFrame.InsertMenus
 ; Purpose:    Enable the container to insert menu groups into the composite menu to be used during
 ;             the in-place session.
@@ -141,7 +141,7 @@ Method I_OcxCont_OleInPlaceFrame.InsertMenus,, hMenuShared:HANDLE, pMenuWidths:P
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceFrame.SetMenu
 ; Purpose:    Add a composite menu to the window frame containing the object being activated
 ;             in place.
@@ -158,7 +158,7 @@ Method I_OcxCont_OleInPlaceFrame.SetMenu,, hMenuShared:HANDLE, hOleMenu:HANDLE, 
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceFrame.RemoveMenus
 ; Purpose:    Remove a container's menu elements from the composite menu.
 ; Arguments:  Arg1: handle to the in-place composite menu that was constructed by calls to
@@ -170,7 +170,7 @@ Method I_OcxCont_OleInPlaceFrame.RemoveMenus,, hMenuShared:HANDLE
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceFrame.SetStatusText
 ; Purpose:    Set and displays status text about the in-place object in the container's frame
 ;             window status line.
@@ -182,7 +182,7 @@ Method I_OcxCont_OleInPlaceFrame.SetStatusText,, pStatusText:POINTER
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceFrame.EnableModeless
 ; Purpose:    Enable or disable a frame's modeless dialog boxes.
 ; Arguments:  Arg1: Specifies whether the modeless dialog box windows are to be enabled (TRUE)
@@ -194,7 +194,7 @@ Method I_OcxCont_OleInPlaceFrame.EnableModeless,, bEnable:BOOL
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceFrame.TranslateAccel
 ; Purpose:    Translate accelerator keystrokes intended for the container's frame while an object
 ;             is active in place.

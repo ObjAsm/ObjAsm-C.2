@@ -11,7 +11,7 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetFileLinesA
 ; Purpose:    Return an array of line ending offsets of an ANSI text file.
 ; Arguments:  Arg1: File HANDLE.

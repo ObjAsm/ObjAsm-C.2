@@ -14,7 +14,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ProcName textequ <byte2binW>
 VALUE_TYPE textequ <BYTE>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  byte2binW
 ; Purpose:    Convert a BYTE to its binary WIDE string representation.
 ; Arguments:  Arg1: -> Destination buffer.

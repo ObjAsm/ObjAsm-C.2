@@ -12,7 +12,7 @@
 
 ProcName textequ <soqqMul>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  soqqMul
 ; Purpose:    Multiply 2 signed OWORDs with extended precision.
 ;             (64 bit) Multiplicand multiplied by (64 bit) Multiplier = (128 bit) Product.

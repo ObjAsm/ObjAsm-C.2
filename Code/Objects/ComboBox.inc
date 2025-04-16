@@ -26,7 +26,7 @@ DEF_COMBOBOX ends
 PDEF_COMBOBOX typedef ptr DEF_COMBOBOX
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     ComboBox
 ; Purpose:    Implement a thin wrapper around the ComboBox GDI object.
 
@@ -41,7 +41,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ComboBox.Done
 ; Purpose:    Finalize the ComboBox object.
 ; Arguments:  None.
@@ -53,7 +53,7 @@ Method ComboBox.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ComboBox.Init
 ; Purpose:    Initialize the ComboBox object.
 ; Arguments:  Arg1: -> Owner object.
@@ -75,7 +75,7 @@ Method ComboBox.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PDEF
   Subclass ComboBox                             ;Uses xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ComboBox.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.

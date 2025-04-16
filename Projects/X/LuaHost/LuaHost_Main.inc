@@ -35,7 +35,7 @@ ObjectEnd
 ;    Host implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Host.ScriptInit
 ; Purpose:    Script custom initialization.
 ; Arguments:  Arg1: -> lua_State.
@@ -109,7 +109,7 @@ LHD_BTN_STOP    equ   BIT03
 LHD_RED_SCRIPT  equ   BIT04
 LHD_RED_OUTPUT  equ   BIT05
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.EnableControls
 ; Purpose:    Load a file into the memory block.
 ; Arguments:  Arg1: Enable flag [LHD_xxx...].
@@ -133,7 +133,7 @@ Method Application.EnableControls, uses xsi, dEnableMask:DWORD
   LHD_EnableControl RED_OUTPUT
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.FileLoad
 ; Purpose:    Load a file into the memory block.
 ; Arguments:  Arg1: -> FileName.
@@ -190,7 +190,7 @@ Method Application.FileLoad, uses xbx xsi, pFileName:PSTRING
   mov eax, ebx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.FileSave
 ; Purpose:    Write memory block into a file.
 ; Arguments:  Arg1: -> FileName.
@@ -235,7 +235,7 @@ Method Application.FileSave, uses xsi, pFileName:PSTRING, pMemBlock:POINTER, dMe
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the Dialog object.
 ; Arguments:  None.
@@ -247,7 +247,7 @@ Method Application.Init, uses xsi
   Override [xsi].Host::LuaHost.ScriptInit, Host.ScriptInit 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -376,7 +376,7 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -400,7 +400,7 @@ Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnDestroy, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnDropFiles
 ; Purpose:    Event procedure for WM_DROPFILES message.
 ; Arguments:  Arg1: First message parameter.
@@ -429,7 +429,7 @@ Method Application.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnFinished
 ; Purpose:    Event procedure for LHM_SCRIPT_FINISHED message.
 ; Arguments:  Arg1: First message parameter.
@@ -464,7 +464,7 @@ Method Application.OnFinished, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke SetFocus, [xsi].hWnd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -522,7 +522,7 @@ Method Application.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return FALSE to prevent Windows from
 MethodEnd                                               ;setting the default keyboard focus.
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.

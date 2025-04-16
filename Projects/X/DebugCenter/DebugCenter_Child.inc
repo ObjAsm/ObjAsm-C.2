@@ -36,7 +36,7 @@ ObjectEnd
 ;    DbgMdiChild implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChild.ClpBrdClear
 ; Purpose:    Delete the selection to the clipboard.
 ; Arguments:  None.
@@ -46,7 +46,7 @@ Method DbgMdiChild.ClpBrdClear
   OCall ClpBrdSetBtns
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChild.ClpBrdCopy
 ; Purpose:    Copy the selection to the clipboard.
 ; Arguments:  None.
@@ -56,7 +56,7 @@ Method DbgMdiChild.ClpBrdCopy
   OCall ClpBrdSetBtns
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChild.ClpBrdCut
 ; Purpose:    Cut the selection to the clipboard.
 ; Arguments:  None.
@@ -66,7 +66,7 @@ Method DbgMdiChild.ClpBrdCut
   OCall ClpBrdSetBtns
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChild.ClpBrdPaste
 ; Purpose:    Paste the clipboard content.
 ; Arguments:  None.
@@ -76,7 +76,7 @@ Method DbgMdiChild.ClpBrdPaste
   OCall ClpBrdSetBtns
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChild.Done
 ; Purpose:    Finalize the DbgMdiChild object.
 ; Arguments:  None.
@@ -108,7 +108,7 @@ Method DbgMdiChild.Done, uses xbx xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChild.OnMdiActivate
 ; Purpose:    Event procedure for WM_MDIACTIVATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -133,7 +133,7 @@ Method DbgMdiChild.OnMdiActivate, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefMDIChildProc, [xsi].hWnd, WM_MDIACTIVATE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChild.Open
 ; Purpose:    Store the specified file name.
 ; Arguments:  Arg1: -> Filename.
@@ -147,7 +147,7 @@ Method DbgMdiChild.Open, uses xsi, pFileName:PSTRING
   mov [xsi].pFileName, $invoke(StrNew, pFileName)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChild.Save
 ; Purpose:    Save to file.
 ; Arguments:  None.
@@ -163,7 +163,7 @@ Method DbgMdiChild.Save
   ACall Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChild.SaveAs
 ; Purpose:    Save the content to a selectable file.
 ; Arguments:  Arg1: -> Filter.
@@ -225,7 +225,7 @@ Method DbgMdiChild.SaveAs, uses xbx xsi, pFilter:PSTRING, pDefExt:PSTRING
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChild.SaveTo
 ; Purpose:    Save the specified file.
 ; Arguments:  Arg1: -> File path and name.

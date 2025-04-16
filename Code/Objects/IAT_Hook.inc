@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  IAT_Hook
 ; Purpose: Implements a was to hook the Import Address Table.
 ; Link:    http://www.assembly-journal.com/viewarticle.php?id=157&layout=abstract
@@ -28,7 +28,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    IAT_Hook.Done
 ; Purpose:   Finalizes the IAT_Hook object and restores the previous address in the IAT.
 ; Arguments: None.
@@ -57,7 +57,7 @@ Method IAT_Hook.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    IAT_Hook.Init
 ; Purpose:   Initializes the IAT_Hook object & redirects an imported procedure to a specified addr.
 ; Arguments: Arg1: -> Owner.

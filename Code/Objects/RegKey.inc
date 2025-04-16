@@ -69,7 +69,7 @@ MAX_VALUE_LENGTH                equ     32768
 
 EnumerateProc  typedef proto :POINTER
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:   RegKey
 ; Purpose:  Implement a thin wrapper around Windows registry keys.
 
@@ -115,7 +115,7 @@ $ObjMthd(ValueGetStrW)  textequ $ObjMthd(ValueGetStr)
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.Create
 ; Purpose:    Create a new or open an existing registry key.
 ; Arguments:  None.
@@ -134,7 +134,7 @@ Method RegKey.Create, uses xsi
   mov eax, Dispo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.Close
 ; Purpose:    Close a registry key.
 ; Arguments:  None.
@@ -155,7 +155,7 @@ Method RegKey.Close, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.Delete
 ; Purpose:    Delete an key from the registry. The key must be close!
 ; Arguments:  None.
@@ -170,7 +170,7 @@ Method RegKey.Delete, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.Done
 ; Purpose:    Finalize the RegKey object.
 ; Arguments:  None.
@@ -181,7 +181,7 @@ Method RegKey.Done
   ACall Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.EnumerateSubKeys
 ; Purpose:    Enumerate all subkeys of the opened RegKey.
 ; Arguments:  Arg1: -> Handler procedure.
@@ -204,7 +204,7 @@ Method RegKey.EnumerateSubKeys, uses xbx xsi, pProc:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.EnumerateValues
 ; Purpose:    Enumerate all values contained in the opened RegKey.
 ; Arguments:  Arg1: -> Handler procedure.
@@ -227,7 +227,7 @@ Method RegKey.EnumerateValues, uses xbx xsi, pProc:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.FileExport
 ; Purpose:    Export a registry key and all subkeys to a file.
 ; Arguments:  Arg1: -> File name.
@@ -242,7 +242,7 @@ Method RegKey.FileExport, uses xsi, pFileName:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.FileImport
 ; Purpose:    Import a registry key and all subkeys from a file.
 ; Arguments:  Arg1: -> Key name.
@@ -265,7 +265,7 @@ Method RegKey.FileImport, uses xsi, pKeyName:PSTRING, pFileName:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.Init
 ; Purpose:    Initialize the RegKey object.
 ; Arguments:  Arg1: -> Owner object.
@@ -281,7 +281,7 @@ Method RegKey.Init, uses xsi, pOwner:POINTER, pKeyName:PSTRING, hParentKey:HKEY
   invoke StrCCopy, addr [xsi].cKeyName, pKeyName, MAX_KEY_LENGTH - 1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.Open
 ; Purpose:    Open an existing registry key.
 ; Arguments:  None.
@@ -296,7 +296,7 @@ Method RegKey.Open, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.ValueDelete
 ; Purpose:    Delete a value from a registry Key. The key must be open!
 ; Arguments:  Arg1: -> Value name string.
@@ -311,7 +311,7 @@ Method RegKey.ValueDelete, uses xsi, pValueName:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.ValueGetDW
 ; Purpose:    Read a DWORD from registry key value.
 ; Arguments:  Arg1: -> Value name string.
@@ -331,7 +331,7 @@ Method RegKey.ValueGetDW, uses xsi, pValueName:PSTRING
   mov eax, dRetValue
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.ValueGetData
 ; Purpose:    Read binary data in any form from registry key value.
 ; Arguments:  Arg1: -> Data name string.
@@ -352,7 +352,7 @@ Method RegKey.ValueGetData, uses xsi, pValueName:PSTRING, pData:POINTER, dDataSi
   mov eax, dDataSize
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.ValueGetStr
 ; Purpose:    Read a string from registry key value.
 ; Arguments:  Arg1: -> String name string.
@@ -373,7 +373,7 @@ Method RegKey.ValueGetStr, uses xsi, pValueName:PSTRING, pBuffer:POINTER, dBufSi
   mov eax, dBufSize
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.ValueGetQW
 ; Purpose:    Read a QWORD from registry key value.
 ; Arguments:  Arg1: -> Value name string.
@@ -398,7 +398,7 @@ Method RegKey.ValueGetQW, uses xsi, pValueName:PSTRING
   endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.ValueSetDW
 ; Purpose:    Write a DWORD to the registry key value.
 ; Arguments:  Arg1: -> Value name string.
@@ -414,7 +414,7 @@ Method RegKey.ValueSetDW, uses xsi, pValueName:PSTRING, dValue:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.ValueSetData
 ; Purpose:    Write binary data in any form to the registry key value.
 ; Arguments:  Arg1: -> Data name string.
@@ -431,7 +431,7 @@ Method RegKey.ValueSetData, uses xsi, pValueName:PSTRING, pData:POINTER, dDataSi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.ValueSetStrA
 ; Purpose:    Write an ANSI string to the registry key value.
 ; Arguments:  Arg1: -> ANSI String name string.
@@ -451,7 +451,7 @@ Method RegKey.ValueSetStrA, uses xsi, pStrNameA:PSTRINGA, pStrA:PSTRINGA
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.ValueSetStrW
 ; Purpose:    Write a string to the registry key value.
 ; Arguments:  Arg1: -> String name string.
@@ -471,7 +471,7 @@ Method RegKey.ValueSetStrW, uses xsi, pStrNameW:PSTRINGW, pStrW:PSTRINGW
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegKey.ValueSetQW
 ; Purpose:    Write a QWORD to the registry key value.
 ; Arguments:  Arg1: -> Value name string.

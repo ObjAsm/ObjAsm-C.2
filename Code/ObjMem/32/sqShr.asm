@@ -11,7 +11,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  sqShr
 ; Purpose:    Shift right of a SQWORD.
 ; Arguments:  Arg1: QWORD in edx:eax.

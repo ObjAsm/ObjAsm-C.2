@@ -10,7 +10,7 @@
 
 externdef IID_IOleControlSite:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     I_OcxCont_AdviseSink
 ; Purpose:    Provides the methods that enable a site object to manage each embedded control within
 ;             a container. A site object provides IOleControlSite as well as other site interfaces
@@ -39,7 +39,7 @@ if IMPLEMENT
 ;     I_OcxCont_OleControlSite implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleControlSite.OnControlInfoChanged
 ; Purpose:    Informs the container that the control's CONTROLINFO structure has changed and that the
 ;             container should call the control's IOleControl::GetControlInfo for an update.
@@ -51,7 +51,7 @@ Method I_OcxCont_OleControlSite.OnControlInfoChanged
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleControlSite.LockInPlaceActive
 ; Purpose:    Indicates whether a control should remain in-place active. Calls to this method
 ;             typically nest an event to ensure that the object's activation state remains stable
@@ -66,7 +66,7 @@ Method I_OcxCont_OleControlSite.LockInPlaceActive,, bLock:BOOL
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleControlSite.GetExtendedControl
 ; Purpose:    Retrieves an IDispatch pointer to the extended control that the container uses to
 ;             wrap the real control.
@@ -82,7 +82,7 @@ Method I_OcxCont_OleControlSite.GetExtendedControl,, ppIDispatch:POINTER
   mov eax, E_NOTIMPL      ;The container does not implement extended controls.
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleControlSite.TransformCoords
 ; Purpose:    Converts coordinates expressed in HIMETRIC units (as is standard in OLE) to the units
 ;             specified by the container.
@@ -118,7 +118,7 @@ Method I_OcxCont_OleControlSite.TransformCoords,, pPtlHimetric:POINTER, pPtfCont
                         ;The container deals completely in HIMETRIC.
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleControlSite.TranslateAccel
 ; Purpose:    Passes a keystroke to the control site for processing.
 ; Arguments:  Arg1: -> MSG structure describing the keystroke to be processed.
@@ -131,7 +131,7 @@ Method I_OcxCont_OleControlSite.TranslateAccel,, pMsg:POINTER, dModifieres:DWORD
   mov eax, E_NOTIMPL    ;The container does not implement accelerator support.
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleControlSite.OnFocus
 ; Purpose:    Indicates whether the control managed by this client site has gained or lost the
 ;             focus.
@@ -144,7 +144,7 @@ Method I_OcxCont_OleControlSite.OnFocus,, dGotFocus:BOOL
   xor eax, eax                                        ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleControlSite.ShowPropertyFrame
 ; Purpose:    Instructs a container to display a property sheet for the ctrl embedded in this site.
 ; Arguments:  None.

@@ -15,7 +15,7 @@ CHILD_MSG struc
 CHILD_MSG ends
 PCHILD_MSG typedef ptr CHILD_MSG
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SendChildMessage
 ; Purpose:    Callback procedure for EnumChildWindows that sends a message to a child window.
 ; Arguments:  Arg1: Child window HANDLE.
@@ -32,7 +32,7 @@ SendChildMessage proc hWnd:HWND, lParam:PCHILD_MSG
   ret
 SendChildMessage endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SendChildrenMessage
 ; Purpose:    Send a message to all children of a parent window.
 ; Arguments:  Arg1: Parent window HANDLE. 

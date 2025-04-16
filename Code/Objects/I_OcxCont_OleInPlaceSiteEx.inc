@@ -10,7 +10,7 @@
 
 externdef IID_IOleInPlaceSiteEx:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     I_OcxCont_OleInPlaceFrame
 ; Purpose:    Provides an additional set of activation and deactivation notification methods that
 ;             enable an object to avoid unnecessary flashing on the screen when the object is
@@ -35,7 +35,7 @@ if IMPLEMENT
 ;     I_OcxCont_OleInPlaceSiteEx implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteEx.OnInPlaceActivateEx
 ; Purpose:    Called by the embedded object to determine whether it needs to redraw itself
 ;             upon activation.
@@ -60,7 +60,7 @@ Method I_OcxCont_OleInPlaceSiteEx.OnInPlaceActivateEx,, pfNoRedraw:POINTER, dFla
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteEx.OnInPlaceDeactivateEx
 ; Purpose:    Notifies the container if the object needs to be redrawn upon deactivation.
 ; Arguments:  Arg1: If TRUE, the container need not redraw the object after completing the
@@ -73,7 +73,7 @@ Method I_OcxCont_OleInPlaceSiteEx.OnInPlaceDeactivateEx,, fNoRedraw:BOOL
   ICall [xcx].$Obj(OcxClientSite).pIOleInPlaceSite::IOleInPlaceSite.OnInPlaceDeactivate
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSiteEx.RequestUIActivate
 ; Purpose:    Notifies the container that the object is about to enter the UI-active state.
 ; Arguments:  None.

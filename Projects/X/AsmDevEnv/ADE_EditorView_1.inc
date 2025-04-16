@@ -16,7 +16,7 @@ EVF_LBUTTON_DOWN            equ   BIT02
 ; EditorView implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.CaretAdjustHorz
 ; Purpose:    Correct caret horizontal position, e.g. after a vertical move.
 ; Arguments:  Arg1: -> Destination EditortextLine.
@@ -45,7 +45,7 @@ Method EditorView.CaretAdjustHorz, uses xsi, pDestEditorLine:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.CaretDestroy
 ; Purpose:    Hide the caret.
 ; Arguments:  None.
@@ -62,7 +62,7 @@ Method EditorView.CaretDestroy, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.CaretHide
 ; Purpose:    Removes the caret from screen.
 ; Arguments:  None.
@@ -81,7 +81,7 @@ Method EditorView.CaretHide, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.CaretMoveWordBeg
 ; Purpose:    Move the caret to the word begin.
 ; Arguments:  None.
@@ -133,7 +133,7 @@ Method EditorView.CaretMoveWordBeg, uses xbx xdi xsi
   setnz al
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.CaretMoveWordEnd
 ; Purpose:    Move the caret to the next word end.
 ; Arguments:  None.
@@ -184,7 +184,7 @@ Method EditorView.CaretMoveWordEnd, uses xbx xdi xsi
   setnz al
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.CaretNew
 ; Purpose:    Create a new caret. Doesn't destroy the previous caret!
 ; Arguments:  None.
@@ -223,7 +223,7 @@ Method EditorView.CaretNew, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.CaretRefLocSave
 ; Purpose:    Save a caret reference location that did not change when a selection is deleted.
 ; Arguments:  Arg1: -> Reference LOCATION.
@@ -248,7 +248,7 @@ Method EditorView.CaretRefLocSave, uses xbx xsi, pRefLoc:PLOCATION
   .endif
   GotoPrevVisEditorLine xax
   mov [xdx].LOCATION.pEditorLine, xax
-  
+
   .if xcx != NULL
     mov xax, [xcx].LOCATION.pEditorLine                   ;xcx -> begin selection, but not last selection, where the caret is
     .if xax != [xbx].$Obj(Editor).SelectionLst.pEditorLine;=> xax is the 1st location
@@ -259,9 +259,9 @@ Method EditorView.CaretRefLocSave, uses xbx xsi, pRefLoc:PLOCATION
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.CaretRefLocLoad
-; Purpose:    Set the caret after a deletion based on the reference LOCATION obtained with 
+; Purpose:    Set the caret after a deletion based on the reference LOCATION obtained with
 ;             CaretRefLocSave.
 ; Arguments:  Arg1: -> Reference LOCATION.
 ; Return:     Nothing.
@@ -273,9 +273,9 @@ Method EditorView.CaretRefLocLoad, uses xbx xsi, pRefLoc:PLOCATION
   mov xbx, [xcx].$Obj(EditorDisplay).pOwner             ;xbx -> Editor
 
   mov xdx, pRefLoc
-  mov xax, [xdx].LOCATION.pEditorLine 
+  mov xax, [xdx].LOCATION.pEditorLine
   .if xax == NULL
-    mov xax, [xbx].$Obj(Editor).LinkedListHead.pFirstMember
+    mov xax, [xbx].$Obj(Editor).LinesHead.pFirstMember
     sub xax, offset $Obj(EditorLine).LineLink
     mov [xsi].sdCaretVisLineOffset, 0
   .else
@@ -286,7 +286,7 @@ Method EditorView.CaretRefLocLoad, uses xbx xsi, pRefLoc:PLOCATION
   m2m [xsi].CaretLocation.dLineNumber, [xdx].LOCATION.dLineNumber, ecx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.CaretSet
 ; Purpose:    Set the caret at the position defined by LOCATION.
 ; Arguments:  None.
@@ -302,7 +302,7 @@ Method EditorView.CaretSet, uses xdi xsi
   mov xcx, [xsi].pOwner
   mov xdx, [xcx].$Obj(EditorDisplay).pOwner
   mov dRetValue, FALSE
-  .if [xdx].$Obj(Editor).LinkedListHead.pFirstMember != NULL
+  .if [xdx].$Obj(Editor).LinesHead.pFirstMember != NULL
     ;Calc caret horiontal position
     mov eax, [xsi].CaretLocation.dCharIndex
     sub eax, [xsi].FirstVisChar.dCharIndex
@@ -313,7 +313,7 @@ Method EditorView.CaretSet, uses xdi xsi
 
       ;Calc caret vertical position
       mov eax, [xsi].sdCaretVisLineOffset
-      cmp eax, 0 
+      cmp eax, 0
       .if !SIGN? && eax <= [xsi].dLineMaxPartVis
         mul [xdi].$Obj(EditorResources).dLineHeight
         mov CaretPosition.y, eax
@@ -335,7 +335,7 @@ Method EditorView.CaretSet, uses xdi xsi
   mov eax, dRetValue
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.CaretShow
 ; Purpose:    Show the caret.
 ; Arguments:  None.
@@ -354,7 +354,7 @@ Method EditorView.CaretShow, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ClpBrdDelete
 ; Purpose:    Clipboard delete opration.
 ; Arguments:  None.
@@ -372,7 +372,7 @@ Method EditorView.ClpBrdDelete, uses xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ClpBrdCopy
 ; Purpose:    Clipboard copy opration.
 ; Arguments:  None.
@@ -437,7 +437,7 @@ Method EditorView.ClpBrdCopy, uses xbx xdi xsi
           add xsi, 2*sizeof(CHR)
         .endw
         mov CHR ptr [xsi], 0
-        
+
         invoke GlobalUnlock, pGlobalMem
         invoke SetClipboardData, CF_UNICODETEXT, hBuffer
         .if xax != 0
@@ -450,7 +450,7 @@ Method EditorView.ClpBrdCopy, uses xbx xdi xsi
   mov eax, dResult
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ClpBrdCut
 ; Purpose:    Clipboard cut opration.
 ; Arguments:  None.
@@ -458,7 +458,7 @@ MethodEnd
 
 Method EditorView.ClpBrdCut, uses xsi
   local RefLoc:LOCATION
-  
+
 ;  DbgText "EditorView.ClpBrdCut"
   SetObject xsi
   OCall xsi.ClpBrdCopy
@@ -471,15 +471,15 @@ Method EditorView.ClpBrdCut, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ClpBrdPaste
 ; Purpose:    Clipboard paste opration.
 ; Arguments:  None.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 ; Link:       https://msdn.microsoft.com/en-us/library/windows/desktop/ms649016(v=vs.85).aspx#_win32_Copying_Information_to_the_Clipboard
 ; Note:       CF_TEXT = Each line ends with a EOL marker.
-;             This marker varies depending on the source of the text. It can be a CR, LF or CRLF. 
-;             A copy operation from a Chrome-Webpase contains e.g. only LF. 
+;             This marker varies depending on the source of the text. It can be a CR, LF or CRLF.
+;             A copy operation from a Chrome-Webpase contains e.g. only LF.
 ;             A null character signals the end of the data.
 
 Method EditorView.ClpBrdPaste, uses xbx xdi xsi
@@ -518,18 +518,18 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
                 inc ebx                                 ;No
               .else
                 mov dBreakChar, edx
-                OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi
+                OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, TRUE
                 mov edx, dCharIndex
                 add edx, ebx
-                OCall pEditorLine::EditorLine.LineBreak, edx, dLineNumber
+                OCall pEditorLine::EditorLine.LineBreak, edx, dLineNumber, TRUE
                 mov pEditorLine, xax                      ;xax -> new splitted off line
-  
+
                 ;Move to next line in the clipboard buffer
                 lea xdi, [xdi + sizeof(CHR)*xbx + sizeof(CHR)]  ;Next char
                 .if dBreakChar == CR && CHR ptr [xdi] == LF
                   add xdi, sizeof CHR                   ;CRLF case
                 .endif
-                
+
                 ;Increment other counters
                 inc dInsLineCount
                 inc dLineNumber
@@ -537,16 +537,16 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
                 xor ebx, ebx
               .endif
             .until FALSE
-            
+
             ;Paste the rest
             .if ebx != 0
-              OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi
+              OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, TRUE
               add dCharIndex, ebx
             .endif
 
             ;Scroll the view to show the last inserted line
             ;OCall xsi.ScrollVisPageDown, dInsLineCount     ;sdCaretVisLineOffset did not change!
-            
+
 
           .else
             ;Block mode insertion
@@ -572,7 +572,7 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
                   mov edx, dCharIndex
                   add edx, ebx
                   mov xax, [xsi].pOwner
-                  OCall [xax].$Obj(EditorDisplay).pOwner::Editor.LineNew, edx
+                  OCall [xax].$Obj(EditorDisplay).pOwner::Editor.LineNew, edx, TRUE
                   .if xax == NULL
                     ret
                   .endif
@@ -583,23 +583,23 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
                   sub xax, offset $Obj(EditorLine).LineLink
                   mov pEditorLine, xax
                 .endif
-                OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi
-                
+                OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, TRUE
+
                 ;Move to next line link
                 mov xax, pEditorLine
                 mov xcx, [xax].$Obj(EditorLine).LineLink.pLinkFwrd
                 mov pLink, xcx
-  
+
                 ;Move to next line in the clipboard buffer
                 lea xdi, [xdi + sizeof(CHR)*xbx + sizeof(CHR)]  ;Next char
                 .if dBreakChar == CR && CHR ptr [xdi] == LF
                   add xdi, sizeof CHR                   ;CRLF case
                 .endif
-                
+
                 xor ebx, ebx
               .endif
             .until FALSE
-            
+
           .endif
 
           invoke GlobalUnlock, pGlobalMem
@@ -612,7 +612,7 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
   mov dResult, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ClientPos2Index
 ; Purpose:    Convert cursor coords to caret indices.
 ; Arguments:  Arg1: -> POINT structure to store the X/Y indices. (0,0) is the upper left view corner.
@@ -661,7 +661,7 @@ Method EditorView.ClientPos2Index, uses xbx xdi xsi, pIndex:PPOINT, pClientPos:P
   mov [xdx].POINT.x, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.DrawSelectionBar
 ; Purpose:    Draw the complete Selctionbar.
 ; Arguments:  None.
@@ -670,7 +670,7 @@ MethodEnd
 Method EditorView.DrawSelectionBar, uses xbx xdi xsi
   local cLineMunberBuffer[SDWORD2DEC_MAX_CHARS]:CHR, hBrush:HBRUSH
   local LineNumberRect:RECT, LineFoldingRect:RECT
-  local PrevLineIndicatorRect:RECT, CurrLineIndicatorRect:RECT, NextLineIndicatorRect:RECT   
+  local PrevLineIndicatorRect:RECT, CurrLineIndicatorRect:RECT, NextLineIndicatorRect:RECT
 
 ;  DbgText "EditorView.DrawSelectionBar"
   SetObject xsi
@@ -788,7 +788,7 @@ Method EditorView.DrawSelectionBar, uses xbx xdi xsi
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.Done
 ; Purpose:    Finalize the EditorView object.
 ; Arguments:  None.
@@ -796,6 +796,7 @@ MethodEnd
 
 Method EditorView.Done, uses xsi
   SetObject xsi
+;  DbgText "EditorView.Done"
   invoke SelectObject, [xsi].hTextDC, [xsi].hPrvTextBmp ;xax = hTextBmp
   invoke DeleteObject, xax                              ;Delete memory bitmap
   invoke DeleteDC, [xsi].hTextDC                        ;Delete memory DC
@@ -803,7 +804,7 @@ Method EditorView.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.GetCodeData
 ; Purpose:    Gatter EditorLine code information.
 ; Arguments:  Arg1: 1st visible line number.
@@ -817,7 +818,7 @@ Method EditorView.GetCodeData, uses xbx xdi xsi, dFirstVisibleLineNumber:DWORD
   SetObject xsi
   mov xcx, [xsi].pOwner
   mov xdi, [xcx].$Obj(EditorDisplay).pOwner
-  mov xbx, [xdi].$Obj(Editor).LinkedListHead.pFirstMember
+  mov xbx, [xdi].$Obj(Editor).LinesHead.pFirstMember
 
   ;Reset counters
   xor edx, edx                                          ;LineNumber
@@ -844,7 +845,7 @@ Method EditorView.GetCodeData, uses xbx xdi xsi, dFirstVisibleLineNumber:DWORD
   mov dTotalLineCount, edx
 
   .if dFirstVisLineCount == 0                             ;dFirstVisibleLineNumber is hidden
-    mov xax, [xcx].$Obj(Editor).LinkedListHead.pFirstMember
+    mov xax, [xcx].$Obj(Editor).LinesHead.pFirstMember
     .if xax != NULL
       lea xax, [xax - offset $Obj(EditorLine).LineLink]
       .ifBitSet [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
@@ -863,7 +864,7 @@ Method EditorView.GetCodeData, uses xbx xdi xsi, dFirstVisibleLineNumber:DWORD
   m2m [xsi].FirstVisChar.dLineNumber, d1StVisLineNum, ecx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.GetLineNumber
 ; Purpose:    Get the Line number of a EditorLine in view.
 ; Arguments:  Arg1: -> EditorLine.
@@ -891,7 +892,7 @@ Method EditorView.GetLineNumber, uses xbx xsi, pEditorLine:$ObjPtr(EditorLine)
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.Init
 ; Purpose:    Initialize the EditorView object.
 ; Arguments:  Arg1: -> Owner object (EditorDisplay).
@@ -913,7 +914,7 @@ Method EditorView.Init, uses xbx xdi xsi, pOwner:POINTER, pRect:PRECT, pResource
   ;Set 1st visible line
   mov xdx, pOwner
   mov xcx, [xdx].$Obj(EditorDisplay).pOwner
-  mov xax, [xcx].$Obj(Editor).LinkedListHead.pFirstMember
+  mov xax, [xcx].$Obj(Editor).LinesHead.pFirstMember
   sub xax, offset $Obj(EditorLine).LineLink
   mov [xsi].FirstVisChar.pEditorLine, xax
 
@@ -929,7 +930,7 @@ Method EditorView.Init, uses xbx xdi xsi, pOwner:POINTER, pRect:PRECT, pResource
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL          ;Show the window
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -963,7 +964,7 @@ Method EditorView.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   mov [xdx].$Obj(Editor).SelectionFst.dLineNumber, 1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnGesture
 ; Purpose:    Event procedure for WM_GESTURE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1096,7 +1097,7 @@ Method EditorView.OnGesture, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnKillFocus
 ; Purpose:    Event procedure for WM_KILLFOCUS message.
 ; Arguments:  Arg1: First message parameter.
@@ -1114,7 +1115,7 @@ Method EditorView.OnKillFocus, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnLButtonDblClk
 ; Purpose:    Event procedure for WM_LBUTTONDBLCLK message.
 ; Arguments:  Arg1: First message parameter.
@@ -1175,7 +1176,7 @@ Method EditorView.OnLButtonDblClk, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARA
     mov [xsi].CaretLocation.dCharIndex, eax             ;Move caret to the selection end
 
     mov eax, [xsi].CaretLocation.dLineNumber
-    mov [xdi].$Obj(Editor).SelectionFst.dLineNumber, eax 
+    mov [xdi].$Obj(Editor).SelectionFst.dLineNumber, eax
     mov [xdi].$Obj(Editor).SelectionLst.dLineNumber, eax
 
     OCall xdi::Editor.SelectionSet
@@ -1191,7 +1192,7 @@ Method EditorView.OnLButtonDblClk, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARA
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnLButtonDown
 ; Purpose:    Event procedure for WM_LBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -1259,7 +1260,7 @@ Method EditorView.OnLButtonDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     OCall xsi.GetLineNumber, xdi
     mov [xsi].CaretLocation.dLineNumber, eax
     m2m [xsi].sdCaretVisLineOffset, Index.y, edx
-    
+
     .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_BLOCK_MODE
       .if SDWORD ptr Index.x < 0
         OCall xsi.ScrollCaretInViewLeft
@@ -1320,7 +1321,7 @@ Method EditorView.OnLButtonDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov [xsi].CaretLocation.dCharIndex, edx
     OCall xsi.GetLineNumber, xdi
     mov [xsi].CaretLocation.dLineNumber, eax
-    m2m [xsi].sdCaretVisLineOffset, Index.y, edx    
+    m2m [xsi].sdCaretVisLineOffset, Index.y, edx
 
     invoke SetCapture, [xsi].hWnd                       ;Clicked in the RectRect
     mov [xsi].dLockedVertIndex, -1                      ;Reset persistant x caret position
@@ -1336,7 +1337,7 @@ Method EditorView.OnLButtonDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnLButtonUp
 ; Purpose:    Event procedure for WM_LBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -1381,7 +1382,7 @@ Method EditorView.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
       OCall xsi.CaretHide
       jmp @@EOM
     .endif
-  
+
     ;In regular mode, limit the x position to the text length
     .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_BLOCK_MODE
       mov edx, [xax].$Obj(EditorLine).dLength
@@ -1391,12 +1392,12 @@ Method EditorView.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
       cmovg ecx, edx
       mov Index.x, ecx
     .endif
-    
+
     .if SDWORD ptr Index.x < 0
       mov Index.x,0
     .endif
     mov xdi, xax
-  
+
     ;At this point xdi -> current EditorLine, Index.x & Index.y are set
     mov [xsi].CaretLocation.pEditorLine, xdi
     mov edx, [xsi].FirstVisChar.dCharIndex
@@ -1405,7 +1406,7 @@ Method EditorView.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     OCall xsi.GetLineNumber, xdi
     mov [xsi].CaretLocation.dLineNumber, eax
     m2m [xsi].sdCaretVisLineOffset, Index.y, edx
-    
+
     .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_BLOCK_MODE
       .if SDWORD ptr Index.x < 0
         OCall xsi.ScrollCaretInViewLeft
@@ -1418,13 +1419,13 @@ Method EditorView.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   OCall xsi.CaretShow
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnMouseMove
 ; Purpose:    Event procedure for WM_MOUSEMOVE message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
 ; Return:     Nothing.
-; Note:       WM_MOUSEMOVE and WM_LBUTTONUP are fired when the Editor is maximized with the mouse.  
+; Note:       WM_MOUSEMOVE and WM_LBUTTONUP are fired when the Editor is maximized with the mouse.
 
 DoCursorPositionDelay macro Axis:req, Border:req
   ;Calculate the repost delay as e.g.:
@@ -1500,7 +1501,7 @@ Method EditorView.OnMouseMove, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     mov xcx, [xsi].pOwner
     mov xbx, [xcx].$Obj(EditorDisplay).pOwner
     mov dNeedRedrawing, 0
-  
+
     .ifBitSet wParam, MK_LBUTTON
       PntS2Pnt CursorPos1, lParam
       OCall xsi.ClientPos2Index, addr Index, addr CursorPos1    ;Indices can be negative!
@@ -1512,7 +1513,7 @@ Method EditorView.OnMouseMove, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .if SDWORD ptr Index.y < 0
         mov Index.y, 0
       .endif
-  
+
       OCall xsi.VertIndex2EditorLine, Index.y
       .if xax != NULL
         mov xdi, xax
@@ -1529,7 +1530,7 @@ Method EditorView.OnMouseMove, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
         OCall xbx::Editor.SelectionSet
         OCall xsi.CaretHide                               ;Hide the caret while selecting
         inc dNeedRedrawing
-  
+
         xor eax, eax
         ;Scroll the view horizontally to see the caret
         mov ecx, CursorPos1.x
@@ -1548,7 +1549,7 @@ Method EditorView.OnMouseMove, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 ;            SynthesizeMouseMove
           .endif
         .endif
-  
+
         ;Scroll vertically to show the caret
         mov ecx, CursorPos1.y
         .if SDWORD ptr ecx >= [xsi].TextRect.bottom
@@ -1566,7 +1567,7 @@ Method EditorView.OnMouseMove, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 ;            SynthesizeMouseMove
           .endif
         .endif
-  
+
         ;Update
         .if dNeedRedrawing != 0
           invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_INVALIDATE
@@ -1576,7 +1577,7 @@ Method EditorView.OnMouseMove, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnMouseWheel
 ; Purpose:    Event procedure for WM_MOUSEWHEEL message.
 ; Arguments:  Arg1: First message parameter.
@@ -1681,7 +1682,7 @@ Method EditorView.OnMouseWheel, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, 1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnMouseHWheel
 ; Purpose:    Event procedure for WM_MOUSEHWHEEL message.
 ; Arguments:  Arg1: First message parameter.
@@ -1743,7 +1744,7 @@ Method EditorView.OnMouseHWheel, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, 1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -1808,7 +1809,7 @@ Method EditorView.OnPaint, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;   hidden by BeginPaint
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnRButtonDown
 ; Purpose:    Event procedure for WM_LBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -1842,7 +1843,7 @@ Method EditorView.OnRButtonDown, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnSetCursor
 ; Purpose:    Event procedure for WM_SETCURSOR message.
 ; Arguments:  Arg1: First message parameter.
@@ -1878,7 +1879,7 @@ Method EditorView.OnSetCursor, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnSetFocus
 ; Purpose:    Event procedure for WM_SETFOCUS message.
 ; Arguments:  Arg1: First message parameter.
@@ -1899,7 +1900,7 @@ Method EditorView.OnSetFocus, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter. wParam = SIZE_xxx
@@ -1920,7 +1921,7 @@ Method EditorView.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ScrollCaretInViewLeft
 ; Purpose:    Adjust FirstVisChar.dCharIndex so that the caret becomes visible.
 ; Arguments:  None.
@@ -1938,7 +1939,7 @@ Method EditorView.ScrollCaretInViewLeft, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ScrollCaretInViewRight
 ; Purpose:    Adjust FirstVisChar.dCharIndex so that the caret becomes visible.
 ; Arguments:  None.
@@ -1957,7 +1958,7 @@ Method EditorView.ScrollCaretInViewRight, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ScrollVisLineDown
 ; Purpose:    Scroll one line down with saturation.
 ; Arguments:  None.
@@ -1979,7 +1980,7 @@ Method EditorView.ScrollVisLineDown, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ScrollLineLeft
 ; Purpose:    Scroll one line left with saturation.
 ; Arguments:  None.
@@ -1997,7 +1998,7 @@ Method EditorView.ScrollLineLeft, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ScrollLineRight
 ; Purpose:    Scroll one line right with saturation.
 ; Arguments:  None.
@@ -2019,7 +2020,7 @@ Method EditorView.ScrollLineRight, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ScrollVisLineUp
 ; Purpose:    Scroll one line up with saturation.
 ; Arguments:  None.
@@ -2040,7 +2041,7 @@ Method EditorView.ScrollVisLineUp, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ScrollPageLeft
 ; Purpose:    Scroll one page left with saturation.
 ; Arguments:  Arg1: Number of lines in a page. If -1 is passed, it scrolls to the leftmost position.
@@ -2075,7 +2076,7 @@ Method EditorView.ScrollPageLeft, uses xbx xsi, dPageSize:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ScrollPageRight
 ; Purpose:    Scroll one page right with saturation.
 ; Arguments:  Arg1: Number of lines in a page.
@@ -2110,7 +2111,7 @@ Method EditorView.ScrollPageRight, uses xbx xsi, dPageSize:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ScrollVisPageDown
 ; Purpose:    Scroll one page down with saturation.
 ; Arguments:  Arg1: Number of lines in a page.
@@ -2130,10 +2131,10 @@ Method EditorView.ScrollVisPageDown, uses xbx xsi, dPageSize:DWORD
     mov dVisLineCount, ebx
     add ecx, [xsi].FirstVisChar.dLineNumber
     mov dLineNumber, ecx
-    
+
     mov xdx, [xsi].pOwner
     mov xcx, [xdx].$Obj(EditorDisplay).pOwner
-    mov xax, [xcx].$Obj(Editor).LinkedListHead.pLastMember
+    mov xax, [xcx].$Obj(Editor).LinesHead.pLastMember
     sub xax, offset $Obj(EditorLine).LineLink
     .ifBitSet [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
       GotoPrevVisEditorLine xax,, ecx, ebx
@@ -2165,7 +2166,7 @@ Method EditorView.ScrollVisPageDown, uses xbx xsi, dPageSize:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.ScrollVisPageUp
 ; Purpose:    Scroll one page up with saturation.
 ; Arguments:  Arg1: Number of lines in a page.
@@ -2180,7 +2181,7 @@ Method EditorView.ScrollVisPageUp, uses xbx xsi, dPageSize:DWORD
   .if xax == NULL
     mov xcx, [xsi].pOwner
     mov xdx, [xcx].$Obj(EditorDisplay).pOwner
-    mov xax, [xdx].$Obj(Editor).LinkedListHead.pFirstMember
+    mov xax, [xdx].$Obj(Editor).LinesHead.pFirstMember
     sub xax, offset $Obj(EditorLine).LineLink
     .ifBitSet [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
       GotoNextVisEditorLine xax,, ecx, edx
@@ -2211,7 +2212,7 @@ Method EditorView.ScrollVisPageUp, uses xbx xsi, dPageSize:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.SelectBeginAtCaretLocation
 ; Purpose:    Set selection begin at caret location.
 ; Arguments:  None.
@@ -2238,7 +2239,7 @@ Method EditorView.SelectBeginAtCaretLocation, uses xbx xsi
   mov [xbx].$Obj(Editor).SelectionLst.dLineNumber, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.SelectUpToCaretLocation
 ; Purpose:    Select text up to the current CaretLocation.
 ; Arguments:  None.
@@ -2261,7 +2262,7 @@ Method EditorView.SelectUpToCaretLocation, uses xbx xsi
   OCall xbx::Editor.SelectionSet
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.SetGuiLayout
 ; Purpose:    Define the position an size of all GUI elements in the EditorView.
 ; Arguments:  None.
@@ -2388,7 +2389,7 @@ Method EditorView.SetGuiLayout, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.Startup
 ; Purpose:    Register the EditorView object with the OS.
 ; Arguments:  None.
@@ -2413,7 +2414,7 @@ Method EditorView.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.VertIndex2EditorLine
 ; Purpose:    Get the EditorLine object from the caret indices.
 ; Arguments:  Arg1: Vertical index.
@@ -2428,7 +2429,7 @@ Method EditorView.VertIndex2EditorLine, uses xsi, dVertIndex:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.VertIndex2LineNumber
 ; Purpose:    Get the EditorLine object from the caret indices.
 ; Arguments:  None.
@@ -2446,7 +2447,7 @@ Method EditorView.VertIndex2LineNumber, uses xsi, dVertIndex:DWORD
   add eax, ecx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.UpdateStatusPanel
 ; Purpose:    Update the status panel reflecting the most recent changes.
 ; Arguments:  None.
@@ -2458,7 +2459,7 @@ Method EditorView.UpdateStatusPanel, uses xsi
   invoke RedrawWindow, [xsi].hWnd, addr [xsi].StatusPanelRect, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.

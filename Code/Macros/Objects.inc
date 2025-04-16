@@ -1,7 +1,7 @@
 ; ==================================================================================================
 ; Title:      Objects.inc
 ; Author:     G. Friedrich
-; Version:    C.1.6
+; Version:    C.1.7
 ; Purpose:    ObjAsm object support using MASM compatible assembers (UASM, ASMC, JWASM, ML)
 ; Notes:      Version C.1.0, October 2017
 ;               - First release.
@@ -20,6 +20,8 @@
 ;               - Stack correction bug for vararg methods in 32 bit fixed.
 ;             Version C.1.6, February 2025
 ;               - SetObject corrected by HSE to support NameSapces.
+;             Version C.1.7, April 2025
+;               - Override bug for Virtual methods corrected.
 ; ==================================================================================================
 
 
@@ -28,13 +30,13 @@
 ;
 ;                    Object Metadata (OMD) #1                #2    ...    #n
 ;
-;   p1stOMD    ——>   POINTER to next OMD sibling      ——>    ...  ——> NULL = last OMD
+;   p1stOMD    -->   POINTER to next OMD sibling      -->    ...  --> NULL = last OMD
 ;                    sizeof(Object Template) (XWORD)         ...          ...
 ;                    Object Template (TPL_...)               ...          ...
 ;                    Object Dual Method Table (DMT)          ...          ...
 ;                    Object type ID (DWORD)                  ...          ...
 ;                    Ancestor type ID (DWORD)                ...          ...
-;   ——> ETT start:   # of following ??EVENT_ENTRY (QWORD)    ...          ...
+;   --> ETT start:   # of following ??EVENT_ENTRY (QWORD)    ...          ...
 ;  |    Event        ??EVENT_ENTRY #1                        ...          ...
 ;  |    Translation  ??EVENT_ENTRY #2                        ...          ...
 ;  |    Table        ??EVENT_ENTRY #3                        ...          ...
@@ -43,15 +45,15 @@
 ;  |  Object structures:
 ;  |  ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 ;  |  Object Template (TPL)
-;  |    (+00h) POINTER to the Dual Method Table (DMT) —————————
+;  |    (+00h) POINTER to the Dual Method Table (DMT) ---------
 ;  |    (+08h) Variables and dynamic methods                   |
 ;  |          ...                                              |
 ;  |  Dual Method Table (DMT)                                  |  Offset
 ;  |    (-20h) Virtual method 3     (...)                      |    -
 ;  |    (-18h) Virtual method 2     (...)                      |    |
 ;  |    (-10h) Virtual method 1     (Done destructor)          |    |  Virtual Method Table (VMT)
-;  '——— (-08h) POINTER to Event Translation Table (ETT)        |    |
-; ENTRY (+00h) Interface method 1   (QueryInterface method) <——'    0 Dual Method Table (DMT)
+;  '--- (-08h) POINTER to Event Translation Table (ETT)        |    |
+; ENTRY (+00h) Interface method 1   (QueryInterface method) <--'    0 Dual Method Table (DMT)
 ;       (+08h) Interface method 2   (AddRef method)                 |
 ;       (+10h) Interface method 3   (Release method)                |  Interface Method Table (IMT)
 ;              ...                                                  |      (= Vtbl - Microsoft)
@@ -124,7 +126,7 @@ endif
 ??MTDACCESS_PRIVATE     equ 2
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ObjNamespace
 ; Purpose:    Set the current object namespace.
 ; Arguments:  Arg1: Space name.
@@ -134,7 +136,7 @@ ObjNamespace macro SpcName:req
   ??ObjPfxOfs = @SizeStr(%??ObjPfx) + 1
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $ObjInst
 ; Purpose:    Return the mangled object name instance.
 ; Arguments:  Arg1: Object Expression     [Namespace:]ObjectName.
@@ -151,7 +153,7 @@ $ObjInst macro Expression:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $ObjMthd
 ; Purpose:    Return the mangled object method name.
 ; Arguments:  Arg1: Object name.
@@ -162,7 +164,7 @@ $ObjMthd macro MtdName:req
   exitm @CatStr(%??MtdPfx, MtdName)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Obj
 ; Purpose:    Return the mangled object name.
 ; Arguments:  Arg1: Object Expression    [Namespace:]ObjectName.
@@ -177,7 +179,7 @@ $Obj macro ObjExpr:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $ObjPtr
 ; Purpose:    Return the mangled object pointer name.
 ; Arguments:  Arg1: Object Expression: [Namespace:]ObjectName.
@@ -192,7 +194,7 @@ $ObjPtr macro ObjExpr:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $ObjTmpl
 ; Purpose:    Return the mangled object template name.
 ; Arguments:  Arg1: Object Expression: [Namespace:]ObjectName.
@@ -207,7 +209,7 @@ $ObjTmpl macro ObjExpr:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ExterndefMethod
 ; Purpose:    Declares an external defined method.
 ; Arguments:  Arg1: Method Expression: ObjectName.MethodName.
@@ -221,7 +223,7 @@ ExterndefMethod macro MtdExpr:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      BuildObjInherPath
 ; Purpose:    Helper macro to put in 1 symbol the whole interitance path starting from Primer to
 ;             the final object and viceversa.
@@ -247,7 +249,7 @@ BuildObjInherPath macro MglObjName:req, MglAncName:=<>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Object
 ; Purpose:    Start object definition. Here starts the magic!
 ; Arguments:  Arg1: Object Expression: Namespace:ObjectName.
@@ -344,7 +346,7 @@ Object macro ObjExpr:req, ObjTypeID:=<0>, AncExpr:=<>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ObjectEnd
 ; Purpose:    Terminate the declaration of an object and defines the following structures:
 ;               ObjectName:           Uninitialized object Template.
@@ -426,7 +428,7 @@ ObjectEnd macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Private
 ; Purpose:    Methods that follows this directive are defined with private scope.
 ; Arguments:  None.
@@ -435,7 +437,7 @@ Private macro
   ??MethodAccess = ??MTDACCESS_PRIVATE
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     PrivateEnd
 ; Purpose:   Methods that follows this directive are defined with public scope.
 ; Arguments: None.
@@ -444,7 +446,7 @@ PrivateEnd macro
   ??MethodAccess = ??MTDACCESS_PUBLIC
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      InterfaceAbstract
 ; Purpose:    Define a placeholder for an interface method that can be overridden.
 ;             Calling an abstract method without overriding it, causes an GPF-Error.
@@ -465,7 +467,7 @@ InterfaceAbstract macro MtdName:req, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      InterfaceMethod
 ; Purpose:    Define a method that is common to each instance of the object.
 ;             The implementation of the method must be placed in the code segment like:
@@ -487,7 +489,7 @@ InterfaceMethod macro MtdName:req, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      VirtualAbstract
 ; Purpose:    Define a placeholder for a virtual method that can be overridden.
 ;             Calling an abstract method without overriding it, causes a GPF-Error.
@@ -508,7 +510,7 @@ VirtualAbstract macro MtdName:req, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      VirtualMethod
 ; Purpose:    Define a method that is common to each instance of the object.
 ;             The implementation of the method must be placed in the code segment like:
@@ -530,7 +532,7 @@ VirtualMethod macro MtdName:req, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DynamicAbstract
 ; Purpose:    Define a placeholder for a dynamic method that can be overridden.
 ;             Calling an abstract method without overriding it, causes an GPF-Error.
@@ -551,7 +553,7 @@ DynamicAbstract macro MtdName:req, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DynamicMethod
 ; Purpose:    Define a method that is unique for each instance of the object.
 ;             The implementation of the method must be placed in the code Segment like:
@@ -573,7 +575,7 @@ DynamicMethod macro MtdName:req, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      StaticMethod
 ; Purpose:    Define a method that is common to each instance of the object and it is called
 ;             directly, avoiding the indirection over the DMT. This implements early binding.
@@ -621,7 +623,7 @@ StaticMethod macro MtdName:req, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      InlineMethod
 ; Purpose:    Define a method that is common to each instance of the object.
 ;             The implementation of the method must be placed in the code segment like:
@@ -657,7 +659,7 @@ InlineMethod macro MtdName:req, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      RedefineMethod
 ; Purpose:    Redefine a method (static, virtual, dynamic or interface) at compile-time.
 ; Arguments:  Arg1: Method Name to be redefined.
@@ -700,7 +702,7 @@ RedefineMethod macro MtdName:req, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ObsoleteMethod
 ; Purpose:    Invalidate a method definition (virtual or dynamic) at compile-time.
 ; Arguments:  Arg1: Method name to be erased.
@@ -715,7 +717,7 @@ ObsoleteMethod macro MtdName:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DefineEvent
 ; Purpose:    Helper macro to define an event. Don't called directly.
 ; Arguments:  Arg1: Mangled method name.
@@ -735,7 +737,7 @@ DefineEvent macro MglMtdName:req, EventIDs:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Event
 ; Purpose:    Define a method that responds to an event, like a Windows message.
 ; Arguments:  Arg1: Method name.
@@ -753,7 +755,7 @@ Event macro MtdName:req, EventIDs:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      IDispEvent
 ; Purpose:    Define a method that responds to the COM IDispatch.Invoke call.
 ; Arguments:  Arg1: Method name.
@@ -771,7 +773,7 @@ IDispEvent macro MtdName:req, DispID:req, Flags:=<DISPATCH_METHOD>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      StaticEvent
 ; Purpose:    This is a shortcut for StaticMethod and Event macros.
 ; Arguments:  Arg1: Method name.
@@ -784,7 +786,7 @@ StaticEvent macro MtdName:req, Events:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      VirtualEvent
 ; Purpose:    This is a shortcut for VirtualMethod and Event macros.
 ; Arguments:  Arg1: Method name.
@@ -797,7 +799,7 @@ VirtualEvent macro MtdName:req, Events:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      InterfaceEvent
 ; Purpose:    This is a shortcut for InterfaceMethod and Event macros.
 ; Arguments:  Arg1: Method name.
@@ -810,7 +812,7 @@ InterfaceEvent macro MtdName:req, Events:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DynamicEvent
 ; Purpose:    This is a shortcut for DynamicMethod and Event macros.
 ; Arguments:  Arg1: Method name.
@@ -823,7 +825,7 @@ DynamicEvent macro MtdName:req, Events:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DefineVariable
 ; Purpose:    Define a variable (Unique to each instance of the object).
 ; Arguments:  Arg1: Variable name.
@@ -846,7 +848,7 @@ DefineVariable macro VarName:req, VarType:=<DWORD>, VarInit:=<?>, VarInitMore:va
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      RedefineVariable
 ; Purpose:    Redefine a variables initial value.
 ; Arguments:  Arg1: Variable name.
@@ -861,7 +863,7 @@ RedefineVariable macro VarName:req, VarInit:=<?>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LoadObjects
 ; Purpose:    Load all object structures from a precompiled file (ObjectName.lib).
 ; Arguments:  Arg1: File name list (without extention) that contain the object data to load.
@@ -890,7 +892,7 @@ LoadObjects macro FileNameList:vararg
   IMPLEMENT = TRUE                                      ;;Restore defaults
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      MakeObjects
 ; Purpose:    Load all object data from a file.
 ; Arguments:  Arg1: File name list (without extention) that contain the object data to compile.
@@ -908,7 +910,7 @@ MakeObjects macro FileNameList:vararg
   IMPLEMENT = TRUE                                      ;;In case it was reseted
 endm
 ;
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      VirtualObjects
 ; Purpose:    Create the object data structures to reference an external object instance.
 ; Arguments:  Arg1: File name list (without extention) that contain the object data definitions.
@@ -927,7 +929,7 @@ VirtualObjects macro FileNameList:req
   MAKETEMPL = TRUE
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      PrototypeMethod
 ; Purpose:    Helper macro to perform the necessary method definitions for the compiler.
 ; Arguments:  Arg1: Mangled object name
@@ -968,7 +970,7 @@ PrototypeMethod macro MglObjName:req, MtdName:req, Args:vararg
   @CatStr(MglObjName, %??MtdPfx, MtdName, <_ArgCnt>) = $$ArgCount
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CountInterfaceMethods
 ; Purpose:    Helper macro that counts all interface methods belonging to an object.
 ; Arguments:  Arg1: Mangled object name.
@@ -982,7 +984,7 @@ CountInterfaceMethods macro MglObjName:req
   %exitm <$$Sum>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CreateOMList
 ; Purpose:    Helper macro to create a list of methods to override.
 ; Arguments:  Arg1: Mangled object name.
@@ -1002,7 +1004,7 @@ CreateOMList macro MglObjName:req
   %exitm <$$Sum>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CreateOVList
 ; Purpose:    Helper macro to create a list of variables to override.
 ; Arguments:  Arg1: Mangled object name.
@@ -1022,7 +1024,7 @@ CreateOVList macro MglObjName:req
   %exitm <$$Sum>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CreateInterfaceMethodTable
 ; Purpose:    Helper macro to create the structure of the interface method table of an object.
 ; Arguments:  Arg1: Mangled object name.
@@ -1056,7 +1058,7 @@ CreateInterfaceMethodTable macro MglObjName:req, Init:=<TRUE>
   endm
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CreateVirtualMethodTable
 ; Purpose:    Helper macro to create the structure of the virtual method table of an object.
 ; Arguments:  Arg1: Mangled object name.
@@ -1091,7 +1093,7 @@ CreateVirtualMethodTable macro MglObjName:req, Init:=<TRUE>
   endm
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CreateTemplate
 ; Purpose:    Helper macro that defines the following structures:
 ;               ??ObjectName_Init:     Initialized template.
@@ -1184,7 +1186,7 @@ CreateTemplate macro MglObjName:req
   .code
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CreateDynamicTemplate
 ; Purpose:    Helper macro to create the dynamic section of the object template.
 ; Arguments:  Arg1: Mangled object name.
@@ -1255,7 +1257,7 @@ CreateDynamicTemplate macro MglObjName:req, Init:=<TRUE>
   endm
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CreateEventList
 ; Purpose:    Helper macro to create the event list of an object.
 ; Arguments:  Arg1: Mangled object name.
@@ -1292,7 +1294,7 @@ CreateEventList macro MglObjName:req
   endm
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      GetMtdType
 ; Purpose:    Return method type.
 ; Arguments:  Arg1: Mangled object name.
@@ -1315,7 +1317,7 @@ GetMtdType macro MglObjName:req, MglMtdName:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $IsObsoleteMethod
 ; Purpose:    Check if a method of an object is obsolete or not.
 ; Arguments:  Arg1: Mangled object name.
@@ -1345,7 +1347,7 @@ $IsObsoleteMethod macro MglObjName:req, MglMtdName:req
   %exitm <$$Found>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $IsPrivateMethod
 ; Purpose:    Scan recursively in the inheritance path of a specified method to find out
 ;             if it is a private method.
@@ -1373,7 +1375,7 @@ $IsPrivateMethod macro MglObjName:req, MglMtdName:req
   %exitm <$$Found>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $MethodAddr
 ; Purpose:    Return a method address.
 ; Arguments:  Arg1: Expression of the form: "InsName::NameSpace:ObjName.MtdName"
@@ -1477,7 +1479,7 @@ $MethodAddr macro Expression:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      New / $New
 ; Purpose:    Create a new instance of an object copying the object template.
 ;             It is also suitable for object instances located on the stack using the LOCAL keyword.
@@ -1567,7 +1569,7 @@ $New macro Args:vararg
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Destroy
 ; Purpose:    Safely free the memory allocated for a particular object instance but calling first
 ;             its destructor method. If not specified, "Done" is assumed.
@@ -1596,7 +1598,7 @@ Destroy macro Expression:req, Args:vararg
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Kill
 ; Purpose:    Free the memory allocated for a particular object instance but calling first its
 ;             destructor method. If not specified, "Done" is assumed.
@@ -1690,7 +1692,7 @@ Kill macro Expression:req, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SetObject
 ; Purpose:    Assume a register to an object type.
 ; Arguments:  Arg1: Register, i.e.: rax, rbx, ...
@@ -1745,7 +1747,7 @@ SetObject macro Register:req, ObjName:=<>, pInstance
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SetOwner
 ; Purpose:    Link a register to an object owner object type and instance at compile-time.
 ; Arguments:  Arg1: Register, i.e.: rax, rbx, ...
@@ -1778,7 +1780,7 @@ SetOwner macro RegName:req, ObjName:req, pInstance:=<pSelf>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ReleaseObject
 ; Purpose:    Free the link between a register and an object at compile-time.
 ; Arguments:  Arg1: (Optional) Register, i.e.: rax, rbx, ...
@@ -1803,7 +1805,7 @@ ReleaseObject macro RegName
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Override
 ; Purpose:    Set a new method address in the dynamic-, virtual-, interfacetable.
 ; Arguments:  Arg1: Instance::Object.Method
@@ -1848,7 +1850,7 @@ Override macro DstExpression:req, SrcExpression:req
               endif
               mov xdx, POINTER ptr [xcx]                ;;Make DMT indirection
             endif
-            mrm ($$Txo ptr [xdx]).??MtdExpr, %$$OffsetText, xcx
+            mrm ($$Txo ptr [xdx]).??MtdExpr, $$OffsetText, xcx
           elseif ??MtdType eq ??MTDTYPE_VIRTUAL
             $$Txo textequ @CatStr(<??>, %??ObjExpr, <_VMT>)
             if type(??InsExpr) eq @WordSize
@@ -1868,15 +1870,14 @@ Override macro DstExpression:req, SrcExpression:req
               endif
               mov xdx, POINTER ptr [xcx]                ;;Make DMT indirection
             endif
-;            mrm ($$Txo ptr [xdx - sizeof($$Txo - @WordSize)].??MtdExpr), %$$OffsetText, xcx
-            mov xcx, %$$OffsetText
+            mrm ($$Txo ptr [xdx - sizeof($$Txo) - sizeof(POINTER)]).??MtdExpr, $$OffsetText, xcx
           elseif ??MtdType eq ??MTDTYPE_DYNAMIC
             if type(??InsExpr) eq @WordSize
               if (opattr ??InsExpr) and OAT_REGISTER    ;;Is ??InsExpr a register?
-                mrm (??ObjExpr ptr [??InsExpr]).??MtdExpr, %$$OffsetText, xdx
+                mrm (??ObjExpr ptr [??InsExpr]).??MtdExpr, $$OffsetText, xdx
               else
                 mov xdx, ??InsExpr
-                mrm (??ObjExpr ptr [xdx]).??MtdExpr, %$$OffsetText, xcx
+                mrm (??ObjExpr ptr [xdx]).??MtdExpr, $$OffsetText, xcx
               endif
             else
               $$Attributes = opattr(??InsExpr)
@@ -1886,7 +1887,7 @@ Override macro DstExpression:req, SrcExpression:req
               else
                 mov xdx, offset(??InsExpr)
               endif
-              mrm (??ObjExpr ptr [xdx]).??MtdExpr, %$$OffsetText, xcx
+              mrm (??ObjExpr ptr [xdx]).??MtdExpr, $$OffsetText, xcx
             endif
           elseif ??MtdType eq ??MTDTYPE_STATIC or ??MtdType eq ??MTDTYPE_INLINE
             @Err <Override Error: invalid method type DstExpression>
@@ -1904,7 +1905,7 @@ Override macro DstExpression:req, SrcExpression:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ObjectsInit
 ; Purpose:    Helper macro to initialize all object templates calling their Startup procedure.
 ;             No instance creation takes place.
@@ -1919,7 +1920,7 @@ ObjectsInit macro
   endm
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ObjectsDone
 ; Purpose:    Helper macro to finalize all object templates calling their Shutdown procedure.
 ; Arguments:  None.
@@ -1933,7 +1934,7 @@ ObjectsDone macro
   endm
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $MethodPrologue32
 ; Purpose:    Method prolog macro.
 ; Arguments:  Arg1: Procedure name
@@ -2032,7 +2033,7 @@ $MethodPrologue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserPa
   exitm %LocalBytes + ??ExtraBytes
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      MethodEpilogue32
 ; Purpose:    Helper macro that defines the method epilog.
 ; Arguments:  Arg1: Procedure name
@@ -2118,7 +2119,7 @@ MethodEpilogue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserPar
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $NoFramePrologue32
 ; Purpose:    Method prolog macro.
 ; Arguments:  Arg1: Procedure name
@@ -2180,7 +2181,7 @@ $NoFramePrologue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserP
   exitm <0>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      NoFrameEpilogue32
 ; Purpose:    Helper macro that defines the NOFRAME method epilog.
 ; Arguments:  Arg1: Procedure name
@@ -2239,7 +2240,7 @@ NoFrameEpilogue32 macro ProcName, Flags, ParamBytes, LocalBytes, RegList, UserPa
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Method
 ; Purpose:    Define an object method.
 ; Arguments:  Arg1: Object method name (ObjectName.MethodName).
@@ -2354,7 +2355,7 @@ Method macro Expression:req, MtdOpts:=<>, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      MethodEnd
 ; Purpose:    Terminate an object method.
 ; Arguments:  None.
@@ -2382,7 +2383,7 @@ MethodEnd macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Method
 ; Purpose:    Returns the mangled object template name.
 ; Arguments:  Arg1: ObjectName.MethodName
@@ -2408,7 +2409,7 @@ $Method macro Expression:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ExitMethod
 ; Purpose:    Terminate an object method.
 ; Arguments:  Arg1: Expression.
@@ -2445,7 +2446,7 @@ ExitMethod macro Expression
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Embed
 ; Purpose:    Embed a named object instance into the template of another object.
 ; Arguments:  Arg1: Instance name.
@@ -2472,7 +2473,7 @@ Embed macro InsName:req, ObjExpr:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $PushMethodArgs32
 ; Purpose:    Helper macro that pushes all method arguments.
 ; Arguments:  Arg1: Argument count.
@@ -2702,7 +2703,7 @@ $PushMethodArgs32 macro ArgCount:req, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $GetDeclaredParamCount
 ; Purpose:    Helper macro that returns the parameter count of a method definition inside "Object".
 ; Arguments:  Arg1: Mangled object name.
@@ -2719,7 +2720,7 @@ $GetDeclaredParamCount macro MglObjName, MglMtdName
   %exitm <$$Result>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $GetInstance32
 ; Purpose:    Helper macro for 32 bit that returns the instance pointer in a register.
 ; Arguments:  Arg1: Instance name.
@@ -2745,7 +2746,7 @@ $GetInstance32 macro InsName:req, Reg:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      GetInstance64
 ; Purpose:    Helper macro for 64 bit that returns the instance pointer in the rcx register.
 ; Arguments:  Arg1: Instance name.
@@ -2770,7 +2771,7 @@ GetInstance64 macro InsName:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SetVarargPassedParams
 ; Purpose:    Helper macro that sets the total parameter count (excluded pSelf) in the eax register.
 ; Arguments:  Arg1: Method arguments.
@@ -2787,7 +2788,7 @@ SetVarargPassedParams macro Args
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      MethodInvoke
 ; Purpose:    Helper macro that calls a method.
 ; Arguments:  Arg1: Invocation flag: TRUE = use the template, FALSE = use object instance.
@@ -2970,7 +2971,7 @@ MethodInvoke macro UseTPL, InsName:req, MglObjName:req, MglMtdName:req, Args:var
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      PreParseExpr
 ; Purpose:    Get the positions of the separators of an expression like:
 ;                 "InsName::Namespace:ObjName.MtdName"
@@ -3011,7 +3012,7 @@ PreParseExpr macro Expression:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $ParseMtdExpr
 ; Purpose:    Parse an input expression for address macros.
 ; Arguments:  Arg1: Expression of the form: "InsName::NameSpace:ObjName.MtdName"
@@ -3083,7 +3084,7 @@ $ParseMtdExpr macro Expression:req
   exitm <TRUE>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $ParseCallExpr
 ; Purpose:    Parse an input expression for ?Call macros.
 ; Arguments:  Arg1: Expression of the form: "InsName::NameSpace:ObjName.MtdName"
@@ -3185,7 +3186,7 @@ $ParseCallExpr macro Expression:req
   exitm <TRUE>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $ParseInstExpr
 ; Purpose:    Parse an input expression for some Debug macros.
 ; Arguments:  Arg1: Expression of the form: "InsName::NameSpace:ObjName.MtdName"
@@ -3227,7 +3228,7 @@ $ParseInstExpr macro Expression:req
   exitm <TRUE>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $ParseObjExpr
 ; Purpose:    Parse an input expression for Object macro.
 ; Arguments:  Arg1: Expression of the form: "NameSpace:ObjName"
@@ -3257,7 +3258,7 @@ $ParseObjExpr macro Expression:req
   exitm <TRUE>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      OCall / $OCall
 ; Purpose:    Call an object method.
 ; Arguments:  Arg1: "InsName::ObjName.MtdName" expression. See $ParseCallExpr.
@@ -3277,7 +3278,7 @@ $OCall macro Args:vararg
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ACall / $ACall
 ; Purpose:    Call the ancestor method of an object.
 ; Arguments:  Arg1: "InsName::ObjName.MtdName" expression. See $ParseCallExpr.
@@ -3298,7 +3299,7 @@ $ACall macro Args:vararg
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      TCall / $TCall
 ; Purpose:    Call a method using the address stored in the object template.
 ; Arguments:  Arg1: "InsName::ObjName.MtdName" expression. See $ParseCallExpr.
@@ -3318,7 +3319,7 @@ $TCall macro Args:vararg
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DCall / $DCall
 ; Purpose:    Call an object method directly like a normal procedure (like a static method).
 ; Arguments:  Arg1: "InsName::ObjName.MtdName" expression. See $ParseCallExpr.
@@ -3381,7 +3382,7 @@ $DCall macro Args:vararg
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $GetParamCount
 ; Purpose:    Helper macro counts parameters in Args list.
 ; Arguments:  Arg1: Method parameter list.
@@ -3394,7 +3395,7 @@ $GetParamCount macro Args:vararg
   %exitm <$$Sum>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     $GetImpIfc
 ; Purpose:   Get the implementing interface name.
 ; Arguments: Arg1: Interface name.
@@ -3414,7 +3415,7 @@ $GetImpIfc macro IName:req, MName:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     ICall / $ICall
 ; Purpose:   Interface method call.
 ; Arguments: Arg1: InstancePointer::InterfaceName.MethodName.
@@ -3500,7 +3501,7 @@ $ICall macro Args:vararg
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      AddErrMsg
 ; Purpose:    Add an error message and creates the necessary Object Error Tables.
 ; Arguments:  Arg1: Symbol name describing the error, e.g. OBJ_OUT_OF_MEMORY.
@@ -3528,7 +3529,7 @@ AddErrMsg macro SymName:req, Description:=<>, ErrID:=<>
   ERROR_BASE = ERROR_BASE + 1                           ;;Increment for next declaration
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LockObjectAccess / UnlockObjectAccess
 ; Purpose:    These macros perform object locking for multithreaded access. The threads of a single
 ;             process can use a ObjLock for mutual-exclusion synchronization. There is no guarantee
@@ -3590,7 +3591,7 @@ endm
 ;    cmovz ObjInst.ObjLock.dOwnerTheadID, 0              ;;If zero => reset ThreadID
 ;endm
 ;
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:      MethodEpilogue
 ;; Purpose:    Helper macro that defines the method epilog.
 ;; Arguments:  Arg1: Procedure name
@@ -3676,7 +3677,7 @@ endm
 ;  endif
 ;endm
 ;
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:      $StkGrdPrologue
 ;; Purpose:    Procedure Prolog macro.
 ;; Arguments:  Arg1: Procedure name.

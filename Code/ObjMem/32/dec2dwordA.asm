@@ -17,7 +17,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <dec2dwordA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  dec2dwordA
 ; Purpose:    Convert a decimal ANSI string to a DWORD.
 ; Arguments:  Arg1: -> Source ANSI string. Possible leading characters are " ", tab, "+" and "-",

@@ -12,7 +12,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrLRTrimA
 ; Purpose:    Trim blank and tab characters from the beginning and the end of an ANSI string.
 ; Arguments:  Arg1: -> Destination ANSI character buffer.

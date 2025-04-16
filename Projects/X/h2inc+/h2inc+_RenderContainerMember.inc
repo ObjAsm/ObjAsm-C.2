@@ -18,7 +18,7 @@
 ;} Point;
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  WriteContainerMember
 ; Purpose:    Write member to the output stream.
 ; Arguments:  Arg1: -> Member name.
@@ -84,7 +84,7 @@ WriteContainerMember proc pName:PTOKEN, pType:PTOKEN, pDupList:POINTER, dPtrCoun
   ret
 WriteContainerMember endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  RenderContainerMember
 ; Purpose:    Get a struct or union declaration of a single member.
 ; Arguments:  Arg1: -> First token after 'union {' or 'struct {'.

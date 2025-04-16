@@ -8,7 +8,7 @@
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  RenderEnumMember
 ; Purpose:    Render an enumerator declaration (member of an enumeration).
 ; Arguments:  Arg1: -> Token.

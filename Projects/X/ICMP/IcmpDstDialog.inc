@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DstDialog
 ; Purpose:    Modal Destination input dialog.
 
@@ -26,7 +26,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DstDialog.CtlsGet
 ; Purpose:    Do nothing at this stage. It has to be redefined to provide proper functionality.
 ; Arguments:  None.
@@ -61,7 +61,7 @@ Method DstDialog.CtlsGet, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DstDialog.CtlsSet
 ; Purpose:    Do nothing at this stage. It has to be redefined to provide proper functionality.
 ; Arguments:  None.
@@ -80,7 +80,7 @@ Method DstDialog.CtlsSet, uses xsi
   .endif 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DstDialog.Init
 ; Purpose:    Initialize the Dialog object.
 ; Arguments:  Arg1: -> Owner object.

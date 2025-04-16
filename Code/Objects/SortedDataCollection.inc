@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     SortedDataCollection
 ; Purpose:    SortedDataCollection is a descendant of SortedCollection. It implements a
 ;             collection of sorted data structures instead of objects.
@@ -26,7 +26,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedDataCollection.DeserializeItem
 ; Purpose:    Convert a serialized data item back.
 ; Arguments:  Arg1: -> Item.
@@ -36,7 +36,7 @@ if IMPLEMENT
 Method SortedDataCollection.DeserializeItem,, pItem:POINTER, pDeserInfo:PDESER_INFO
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedDataCollection.DestroyItem
 ; Purpose:    Auxiliar function to dispose a item from the collection. Don't call directly!
 ; Arguments:  Arg1: -> Item.
@@ -48,7 +48,7 @@ Method SortedDataCollection.DestroyItem,, pItem:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedDataCollection.GetItem
 ; Purpose:    Load an item from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -67,7 +67,7 @@ Method SortedDataCollection.GetItem, uses xbx xdi, pStream:$ObjPtr(Stream)
   mov xax, xdi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedDataCollection.PutItem
 ; Purpose:    Store an item of the collection in a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -83,7 +83,7 @@ Method SortedDataCollection.PutItem,, pStream:$ObjPtr(Stream), pItem:POINTER
   OCall pStream::Stream.BinWrite, pItem, dSize
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedDataCollection.SerializeItem
 ; Purpose:    Serialize a data item.
 ; Arguments:  Arg1: -> Item.

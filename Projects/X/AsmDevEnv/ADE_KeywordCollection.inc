@@ -10,7 +10,7 @@
 ; KeywordCollection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    KeywordCollection.Compare
 ; Purpose:   Compare the WIDE strings Key1 and Key2.
 ; Arguments: Arg1: -> First key.
@@ -76,7 +76,7 @@ Method KeywordCollection.Compare,, pCollKey:PKEYWORD, pTestKey:PKEYWORD
 ;  .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     KeywordCollection.Insert
 ; Purpose:    If the target item is not found in the sorted collection, it is inserted at the
 ;             correct index position. Calls Search to determine if the item exists, and if not,

@@ -14,7 +14,7 @@
 
 externdef HexCharTableW:CHRW
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  qword2hexW
 ; Purpose:    Convert a QWORD to its hexadecimal WIDE string representation.
 ; Arguments:  Arg1: -> Destination WIDE string buffer.

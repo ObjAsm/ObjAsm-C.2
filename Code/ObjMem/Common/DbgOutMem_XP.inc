@@ -14,7 +14,7 @@
 
 externdef DbgColorError:DWORD
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgOutMem / DbgOutMem_UEFI
 ; Purpose:    Output the content of a memory block.
 ; Arguments:  Arg1: -> Memory block.

@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Splash
 ; Purpose:    Implement a fade in / fade out splash window. 
 
@@ -43,7 +43,7 @@ DibSection DIBSECTION {};{0,100,200,800,1,32,0};,(sizeof BITMAPINFOHEADER, 100,2
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splash.Done
 ; Purpose:    Finalize the Splash object, freeing allocated resources.
 ; Arguments:  None.
@@ -64,7 +64,7 @@ Method Splash.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splash.Init
 ; Purpose:    Initialize the Splash object.
 ; Arguments:  Arg1: -> Owner object.
@@ -94,7 +94,7 @@ Method Splash.Init, uses xsi, pOwner:POINTER, hBmp:HBITMAP, dTranparentColor:DWO
   invoke SetEvent, [xsi].hEvent
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splash.FadeIn
 ; Purpose:    Start the fade in process.
 ; Arguments:  None.
@@ -106,7 +106,7 @@ Method Splash.FadeIn, uses xsi
   invoke ResumeThread, [xsi].hThread
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splash.FadeOut
 ; Purpose:    Start the fade out process.
 ; Arguments:  None.
@@ -117,7 +117,7 @@ Method Splash.FadeOut
   invoke SetEvent, [xcx].hEvent
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splash.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -135,7 +135,7 @@ Method Splash.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splash.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -160,7 +160,7 @@ Method Splash.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splash.Worker
 ; Purpose:    Worker thread called by Init method.
 ; Arguments:  None.

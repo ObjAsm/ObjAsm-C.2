@@ -78,7 +78,7 @@ include h2inc+_Globals.inc
 include h2inc+_List.inc
 include h2inc+_MemoryHeap.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:   IniFileReader
 ; Purpose:  Ini file reader.
 
@@ -92,7 +92,7 @@ Object IniFileReader, 0, Primer
   DefineVariable  pMemHeap,     $ObjPtr(MemoryHeap),    NULL
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:   IncFile
 ; Purpose:  Handle all actions to generate an .inc file.
 
@@ -173,7 +173,7 @@ Object IncFile,, Primer
 ObjectEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:   Application
 ; Purpose:  Main Application
 ; Notes:    - File and path names are handled using WIDE strings.

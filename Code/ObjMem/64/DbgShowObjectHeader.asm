@@ -12,7 +12,7 @@
 
 ProcName textequ <DbgShowObjectHeader>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgShowObjectHeader
 ; Purpose:    Output heading object information.
 ; Arguments:  Arg1: -> ANSI Object Name.

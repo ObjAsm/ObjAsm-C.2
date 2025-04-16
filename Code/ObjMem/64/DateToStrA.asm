@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <DateToStrA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DateToStrA
 ; Purpose:    Convert a DTL_DATE to a formated string representation.
 ; Arguments:  Arg1: -> Destination ANSI Buffer

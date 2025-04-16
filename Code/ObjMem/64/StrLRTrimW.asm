@@ -12,7 +12,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrLRTrimW
 ; Purpose:    Trim blank and tab characters from the beginning and the end of a WIDE string.
 ; Arguments:  Arg1: -> Destination WIDE character buffer.

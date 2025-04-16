@@ -11,7 +11,7 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgBuildCmdMsg
 ; Purpose:    Debug helper proc that builds a structure in memory to send a command to the
 ;             DebugCenter server.

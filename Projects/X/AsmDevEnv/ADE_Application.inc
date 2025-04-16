@@ -10,7 +10,7 @@
 ; Application implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ChangeLanguage
 ; Purpose:    Switch the application language.
 ; Arguments:  Arg1: Language ID.
@@ -87,11 +87,17 @@ Method Application.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
   SetButtonText IDM_FILE_PIN,         03
 
   lea xbx, [xsi].TbEdit
-  SetButtonText IDM_EDIT_CUT,         21
-  SetButtonText IDM_EDIT_COPY,        22
-  SetButtonText IDM_EDIT_PASTE,       23
-  SetButtonText IDM_EDIT_DELETE,      24
-  SetButtonText IDM_EDIT_FIND,        26
+  SetButtonText IDM_EDIT_UNDO,        21
+  SetButtonText IDM_EDIT_REDO,        22
+  SetButtonText IDM_EDIT_CUT,         24
+  SetButtonText IDM_EDIT_COPY,        25
+  SetButtonText IDM_EDIT_PASTE,       26
+  SetButtonText IDM_EDIT_DELETE,      27
+  SetButtonText IDM_EDIT_FIND,        29
+  SetButtonText IDM_EDIT_INDENT,      30
+  SetButtonText IDM_EDIT_OUTDENT,     31
+  SetButtonText IDM_EDIT_COMMENT,     32
+  SetButtonText IDM_EDIT_UNCOMMENT,   33
 
   lea xbx, [xsi].TbWindow
   SetButtonText IDM_WINDOW_CASCADE,   51
@@ -110,7 +116,7 @@ Method Application.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ConfigLoad
 ; Purpose:    Load the application configuration.
 ; Arguments:  Arg1: -> Ini-File Name.
@@ -255,7 +261,7 @@ Method Application.ConfigLoad, uses xbx xdi xsi, pIniFileName:PSTRING
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ConfigSave
 ; Purpose:    Save the application configuration.
 ; Arguments:  None.
@@ -264,7 +270,7 @@ MethodEnd
 Method Application.ConfigSave
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Deserialize
 ; Purpose:    Restore serialized members to its original values.
 ; Arguments:  Arg1: -> DESER_INFO.
@@ -276,7 +282,7 @@ Method Application.Deserialize, uses xsi, pDeserInfo:PDESER_INFO
   OCall [xsi].pClientWnd::ChildWnd.Deserialize, pDeserInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
 ; Purpose:    Finalize the application object. Objects associated with window controls are
 ;             destroyed by Windows automatically when WM_DESTROY is send.
@@ -320,7 +326,7 @@ Method Application.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the application object.
 ; Arguments:  None.
@@ -448,12 +454,19 @@ Method Application.Init, uses xbx xdi xsi
   invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, FALSE
   invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_PASTE, FALSE
   invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_DELETE, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_UNDO, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_REDO, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_INDENT, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_OUTDENT, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COMMENT, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_UNCOMMENT, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, FALSE
 
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
   invoke UpdateWindow, [xsi].hWnd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Load
 ; Purpose:    Load and initialize the streamable instance from a stream object. Descendant objects
 ;             should redefine this method and load new members.
@@ -491,7 +504,7 @@ Method Application.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_IN
 ;  invoke LockWindowUpdate, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.LoadContext
 ; Purpose:    Load the complete application context from a disk stream.
 ; Arguments:  Arg1: -> File name.
@@ -518,7 +531,7 @@ Method Application.LoadContext, uses xbx xdi xsi, pStreamName:PSTRING
 ;  OCall xdi::Stream.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ManageGuiCmds
 ; Purpose:    Enable/Disable menu items and toolbar buttons.
 ; Arguments:  Arg1: Active focused window handle.
@@ -570,6 +583,8 @@ Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
       invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, TRUE
 
       lea xbx, [xsi].TbEdit
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_UNDO, TRUE
+      invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_REDO, TRUE
       invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, TRUE
 
       lea xbx, [xsi].TbWindow
@@ -620,6 +635,8 @@ Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
   invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_FILE_PRINT, FALSE
 
   lea xbx, [xsi].TbEdit
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_UNDO, FALSE
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_REDO, FALSE
   invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_FIND, FALSE
 
   lea xbx, [xsi].TbWindow
@@ -649,7 +666,7 @@ Method Application.ManageGuiCmds, uses xbx xdi xsi, hActiveWnd:HWND
   invoke EnableMenuItem, xbx, IDM_EDIT_FIND,          MF_BYCOMMAND or MF_DISABLED
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE and WM_QUERYENDSESSION message.
 ; Arguments:  Arg1: First message parameter.
@@ -695,7 +712,7 @@ Method Application.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefFrameProc, [xsi].hWnd, [xbx].$Obj(ClientWnd).hWnd, dMsg, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -976,6 +993,21 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .elseif ax == IDM_EDIT_FIND
     invoke ShowWindow, [xsi].FindDlg.hWnd, SW_SHOW
     xor eax, eax
+  .elseif ax == IDM_EDIT_UNDO
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      OCall xax::Editor.Undo                          ;Polymorphic call
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_EDIT_REDO
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      OCall xax::Editor.Redo                          ;Polymorphic call
+    .endif
+    xor eax, eax
+
 
   ;Messages for language selection
   .elseif (ax >= IDM_LANGUAGE_ENGLISH) && (ax <= IDM_LANGUAGE_SPANISH)
@@ -1067,7 +1099,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1119,7 +1151,7 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -1144,7 +1176,7 @@ Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -1157,7 +1189,7 @@ Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -1199,7 +1231,7 @@ Method Application.OnNotify, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1283,7 +1315,7 @@ Method Application.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CloseEnumProc (Callback)
 ; Purpose:    Close all open child windows.
 ; Arguments:  Arg1: Child window handle.
@@ -1296,7 +1328,7 @@ CloseEnumProc proc hWnd:HWND, lParam:LPARAM
   ret
 CloseEnumProc endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -1321,7 +1353,7 @@ Method Application.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.StatusbarHelp
 ; Purpose:    Display a help string on panel 0 of the statusbar.
 ; Arguments:  Arg1: -> Help string.
@@ -1332,7 +1364,7 @@ Method Application.StatusbarHelp,, pHelpStr:PSTRING
   OCall [xcx].SBar::Statusbar.SetPartText, 0, pHelpStr, SBT_NOBORDERS
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.SaveContext
 ; Purpose:    Store the complete application context in a disk stream.
 ; Arguments:  Arg1: -> File name.
@@ -1350,7 +1382,7 @@ Method Application.SaveContext, uses xdi xsi, pStreamName:PSTRING
   OCall xdi::Stream.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Store
 ; Purpose:    Store the streamable instance in a stream object. Descendant objects should redefine
 ;             this method and store new members.

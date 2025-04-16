@@ -22,7 +22,7 @@ XLH_QI_APP    equ   3
 externdef IID_NULL:GUID
 externdef IID_IUnknown:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     ExcelHost
 ; Purpose:    Implement a Host object for Excel automation.
 
@@ -113,7 +113,7 @@ DefGUID IID_Application, %sIID__Application
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetChartSeries
 ; Purpose:    Return the Series interface of a specified Chart.
 ; Arguments:  Arg1: -> Chart interface.
@@ -153,7 +153,7 @@ Method ExcelHost.GetChartSeries,, pIXlChart:POINTER, dXlSeriesIndex:DWORD
   mov xax, pIXlSeries
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetChartSeriesAttr
 ; Purpose:    Set the properties of a specified Chart Series object.
 ; Arguments:  Arg1: -> ChartSeries interface.
@@ -204,7 +204,7 @@ Method ExcelHost.SetChartSeriesAttr,, pIXlSeries:POINTER, dXlStyle:DWORD, dXlSiz
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetChartSeriesData
 ; Purpose:    Set the data of a specified Chart Series object.
 ; Arguments:  Arg1: -> ChartSeries interface.
@@ -232,7 +232,7 @@ Method ExcelHost.SetChartSeriesData,, pIXlSeries:POINTER, pXlName:BSTR, \
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.CreateArray
 ; Purpose:    Create a bidimentional SafeArray.
 ; Arguments:  Arg1: X-dimension size.
@@ -253,7 +253,7 @@ Method ExcelHost.CreateArray,, dXlXSize:DWORD, dXlYSize:DWORD, pXlArray:POINTER
   mov [xcx].VARIANT.parray, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetBorder
 ; Purpose:    Return the Border interface of a specified object.
 ; Arguments:  Arg1: -> Object interface.
@@ -277,7 +277,7 @@ Method ExcelHost.GetBorder,, pIXlObject:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetBorderAttr
 ; Purpose:    Set the properties of a specified Border object.
 ; Arguments:  Arg1: -> Border interface.
@@ -308,7 +308,7 @@ Method ExcelHost.SetBorderAttr,, pIXlBorder:POINTER, dXlStyle:DWORD, dXlWeight:D
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetFont
 ; Purpose:    Return the Font interface of a specified object.
 ; Arguments:  Arg1: -> Object interface.
@@ -332,7 +332,7 @@ Method ExcelHost.GetFont,, pIXlObject:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetFontAttr
 ; Purpose:    Set font attributes
 ; Arguments:  Arg1: -> Font interface.
@@ -428,7 +428,7 @@ Method ExcelHost.SetFontAttr,, pIXlFont:POINTER, pXlName:BSTR, dXlStyle:DWORD, d
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetInterior
 ; Purpose:    Return the Interior interface of a specified object.
 ; Arguments:  Arg1: -> Object interface.
@@ -452,7 +452,7 @@ Method ExcelHost.GetInterior,, pIXlObject:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetInteriorAttr
 ; Purpose:    Set the properties of a specified Interior object.
 ; Arguments:  Arg1: -> Interior interface.
@@ -484,7 +484,7 @@ Method ExcelHost.SetInteriorAttr,, pIXlInterior:POINTER, dXlColor:DWORD, dXlPatt
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.CloseBook
 ; Purpose:    Close a specified Workbook.
 ; Arguments:  Arg1: -> Workbook interface.
@@ -520,7 +520,7 @@ Method ExcelHost.CloseBook, uses xbx, pIXlWorkbook:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.DeleteSheet
 ; Purpose:    Delete a specified Worksheet.
 ; Arguments:  Arg1: -> Worksheet interface.
@@ -549,7 +549,7 @@ Method ExcelHost.DeleteSheet, uses xbx, pIXlWorksheet:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.Done
 ; Purpose:    Finalize the ExcelHost object.
 ; Arguments:  None.
@@ -563,7 +563,7 @@ Method ExcelHost.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetBook
 ; Purpose:    Get an existing Workbook from the Excel Application.
 ; Arguments:  Arg1: Workbook index.
@@ -590,7 +590,7 @@ Method ExcelHost.GetBook, uses xbx, dIndex:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetCell
 ; Purpose:    Return the value from a specific Cell.
 ; Arguments:  Arg1: -> Range interface.
@@ -635,7 +635,7 @@ Method ExcelHost.GetCell, uses xbx, pIXlRange:POINTER, dXlRow:DWORD, dXlCol:DWOR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetRange
 ; Purpose:    Return a Range interface from a specified Worksheet.
 ; Arguments:  Arg1: -> WorkSheet interface.
@@ -677,7 +677,7 @@ Method ExcelHost.GetRange,, pIXlWorksheet:POINTER, pCellStr:BSTR
   mov xax, vRet.punkVal
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetSheet
 ; Purpose:    Return the Sheet interface from a specified Workbook.
 ; Arguments:  Arg1: -> Workbook interface.
@@ -715,7 +715,7 @@ Method ExcelHost.GetSheet,, pIXlWorkbook:POINTER, pName:BSTR
   mov xax, pIXlWorksheet
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetSheetName
 ; Purpose:    Return the name of a specified Worksheet.
 ; Arguments:  Arg1: -> Worksheet interface.
@@ -746,7 +746,7 @@ Method ExcelHost.GetSheetName,, pIXlWorksheet:POINTER
   mov xax, vRet.bstrVal
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.Init
 ; Purpose:    Initialize the ExcelHost object and create an Excel Application instance.
 ; Arguments:  Arg1: -> Owner object.
@@ -771,7 +771,7 @@ Method ExcelHost.Init, uses xsi, pOwner:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.NewBook
 ; Purpose:    Add a new Workbook to the Excel Application.
 ; Arguments:  None.
@@ -797,7 +797,7 @@ Method ExcelHost.NewBook, uses xbx
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.NewChart
 ; Purpose:    Create a new chart.
 ; Arguments:  Arg1: Chart type (xlXYScatterLinesNoMarkers, etc.).
@@ -843,7 +843,7 @@ Method ExcelHost.NewChart, uses xbx, dXlChartType:DWORD, dXlLocationType:DWORD, 
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.NewSheet
 ; Purpose:    Add a new Worksheet to a specified book.
 ; Arguments:  Arg1: -> Workbook interface.
@@ -897,7 +897,7 @@ Method ExcelHost.NewSheet,, pIXlWorkbook:POINTER, pName:BSTR
   mov xax, vRet.pdispVal
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.Open
 ; Purpose:    Open a Workbook from a file.
 ; Arguments:  Arg1: -> Filename.
@@ -946,7 +946,7 @@ Method ExcelHost.Open,, pXlFileName:BSTR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.PrintSheet
 ; Purpose:    Print the sheet onto the printer.
 ; Arguments:  Arg1: -> Sheet.
@@ -979,7 +979,7 @@ Method ExcelHost.PrintSheet,, pIXlWorksheet:POINTER, pPrinterName:BSTR
   COM_Dispatch pIXlWorksheet::_Worksheet._PrintOut, addr Args, addr vRet
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SaveAs
 ; Purpose:    Save a specified Workbook.
 ; Arguments:  Arg1: -> Workbook.
@@ -1033,7 +1033,7 @@ Method ExcelHost.SaveAs, uses xbx, pIXlWorkbook:POINTER, pFileName:BSTR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SelectRange
 ; Purpose:    Select a give range.
 ; Arguments:  Arg1: -> Range interface.
@@ -1051,7 +1051,7 @@ Method ExcelHost.SelectRange,, pIXlRange:POINTER
   movsx eax, vBool.boolVal
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetCalculation
 ; Purpose:    Sets Calculation property.
 ; Arguments:  Arg1: xlCalculationAutomatic, xlCalculationManual, xlCalculationSemiautomatic
@@ -1062,7 +1062,7 @@ Method ExcelHost.SetCalculation,, sdCalcMode:SDWORD
   ICall [xcx].pIExcelApp::_Application.put_Calculation, LOCALE_SYSTEM_DEFAULT, sdCalcMode
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetCell
 ; Purpose:    Write a string into a specific Cell.
 ; Arguments:  Arg1: Column.
@@ -1105,7 +1105,7 @@ Method ExcelHost.SetCell, uses xbx, pIXlRange:POINTER, dXlRow:DWORD, dXlCol:DWOR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetColumnWidth
 ; Purpose:    Set the column width of a specified column range.
 ; Arguments:  Arg1: -> Worksheet interface.
@@ -1154,7 +1154,7 @@ Method ExcelHost.SetColumnWidth, uses xbx, pIXlWorksheet:POINTER, pXlColStr:BSTR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetDisplayAlerts
 ; Purpose:    Sets DisplayAlerts.
 ; Arguments:  Arg1: TRUE/FALSE
@@ -1165,7 +1165,7 @@ Method ExcelHost.SetDisplayAlerts,, dSwitch:BOOL
   ICall [xcx].pIExcelApp::_Application.put_DisplayAlerts, LOCALE_SYSTEM_DEFAULT, dSwitch
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetScreenUpdating
 ; Purpose:    Sets ScreenUpdating.
 ; Arguments:  Arg1: TRUE/FALSE
@@ -1176,7 +1176,7 @@ Method ExcelHost.SetScreenUpdating,, dSwitch:BOOL
   ICall [xcx].pIExcelApp::_Application.put_ScreenUpdating, LOCALE_SYSTEM_DEFAULT, dSwitch
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetChartTitle
 ; Purpose:    Set the title of a chart.
 ; Arguments:  Arg1: -> Chart interface.
@@ -1212,7 +1212,7 @@ Method ExcelHost.GetChartTitle,, pIXlChart:POINTER
   mov xax, pIXlChartTitle
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.HasChartTitle
 ; Purpose:    Display or hides the chart title..
 ; Arguments:  Arg1: -> Chart interface.
@@ -1244,7 +1244,7 @@ Method ExcelHost.HasChartTitle, uses xbx, pIXlChart:POINTER, dXlShowFlag:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetChartTitleText
 ; Purpose:    Set the title of a chart.
 ; Arguments:  Arg1: -> ChartTitle interface.
@@ -1263,7 +1263,7 @@ Method ExcelHost.SetChartTitleText,, pIXlChartTitle:POINTER, pXlTitleText:BSTR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetChartAxis
 ; Purpose:    Return the Axis interface of a specified chart.
 ; Arguments:  Arg1: -> Chat interface.
@@ -1303,7 +1303,7 @@ Method ExcelHost.GetChartAxis,, pIXlChart:POINTER, dXlAxisType:DWORD, dXlAxisGro
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetChartAxisValues
 ; Purpose:    Set the Chat Axis attributes.
 ; Arguments:  Arg1: -> Axis interface.
@@ -1346,7 +1346,7 @@ Method ExcelHost.SetChartAxisValues,, pIXlAxis:POINTER, dXlMinAuto:DWORD, r8XlMi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetChartAxisTicks
 ; Purpose:    Set the Chat Axis attributes.
 ; Arguments:  Arg1: -> Axis interface.
@@ -1398,7 +1398,7 @@ Method ExcelHost.SetChartAxisTicks,, pIXlAxis:POINTER, \
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetChartAxisGridlines
 ; Purpose:    Set the Chat Axis attributes.
 ; Arguments:  Arg1: -> Axis interface.
@@ -1444,7 +1444,7 @@ Method ExcelHost.SetChartAxisGridlines,, pIXlAxis:POINTER, dXlGridLineType:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetChartAxisAttr
 ; Purpose:    Set the Chat Axis attributes.
 ; Arguments:  Arg1: -> Axis interface.
@@ -1476,7 +1476,7 @@ Method ExcelHost.SetChartAxisAttr,, pIXlAxis:POINTER, dXlScaleType:DWORD, dXlDis
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetChartLegend
 ; Purpose:    Return the legend interface of a chart.
 ; Arguments:  Arg1: -> Chart interface.
@@ -1512,7 +1512,7 @@ Method ExcelHost.GetChartLegend,, pIXlChart:POINTER
   mov xax, pIXlChartLegend
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetChartArea
 ; Purpose:    Return the ChartArea interface of a chart.
 ; Arguments:  Arg1: -> Chart interface.
@@ -1548,7 +1548,7 @@ Method ExcelHost.GetChartArea,, pIXlChart:POINTER
   mov xax, pIXlChartArea
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetChartPlotArea
 ; Purpose:    Return the PlotArea interface of a chart.
 ; Arguments:  Arg1: -> Chart interface.
@@ -1584,7 +1584,7 @@ Method ExcelHost.GetChartPlotArea,, pIXlChart:POINTER
   mov xax, pIXlPlotArea
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetChartData
 ; Purpose:    Create a new chart.
 ; Arguments:  Arg1: -> Chart interface.
@@ -1624,7 +1624,7 @@ Method ExcelHost.SetChartData, uses xbx, pIXlChart:POINTER, pIXlDataRange:POINTE
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetRangeBorder
 ; Purpose:    Return a border interface of a specified range.
 ; Arguments:  Arg1: -> Range.
@@ -1670,7 +1670,7 @@ Method ExcelHost.GetRangeBorder,, pIXlRange:POINTER, dXlLocation:DWORD
   mov xax, pIXlBorder
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.GetRangeArray
 ; Purpose:    Return a SafeArray of a specified range.
 ; Arguments:  Arg1: -> Range.
@@ -1696,7 +1696,7 @@ Method ExcelHost.GetRangeArray,, pIXlRange:POINTER, pXlArrayVariant:POINTER
   COM_Dispatch pIXlCurRange::Range.get_Value, addr vArg, pXlArrayVariant
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetRangeAlignHor
 ; Purpose:    Set a range horizontal alignment.
 ; Arguments:  Arg1: -> Range interface.
@@ -1728,7 +1728,7 @@ Method ExcelHost.SetRangeAlignHor, uses xbx, pIXlRange:POINTER, dXlAlignment:DWO
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetRowHeight
 ; Purpose:    Set the row height of a specified row range.
 ; Arguments:  Arg1: -> Worksheet interface.
@@ -1779,7 +1779,7 @@ Method ExcelHost.SetRowHeight, uses xbx, pIXlWorksheet:POINTER, pXlRowStr:BSTR, 
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetSavedFlag
 ; Purpose:    Set Workbook "Saved" internal flag, so Excel doesn't ask to save.
 ; Arguments:  Arg1: -> Workbook interface.
@@ -1811,7 +1811,7 @@ Method ExcelHost.SetSavedFlag, uses xbx, pIXlWorkbook:POINTER, dXlSaveFlag:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetSheetName
 ; Purpose:    Set the Worksheet name.
 ; Arguments:  Arg1: -> Worksheet interface.
@@ -1843,7 +1843,7 @@ Method ExcelHost.SetSheetName, uses xbx, pIXlWorksheet:POINTER, pXlName:BSTR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetRangeAlignVer
 ; Purpose:    Set a range vertical alignment.
 ; Arguments:  Arg1: -> Range interface.
@@ -1875,7 +1875,7 @@ Method ExcelHost.SetRangeAlignVer, uses xbx, pIXlRange:POINTER, dXlAlignment:DWO
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.SetVisible
 ; Purpose:    Toggle visibility of the Excel Application.
 ; Arguments:  Arg1: TRUE/FALSE.
@@ -1886,7 +1886,7 @@ Method ExcelHost.SetVisible,, dVisibility:DWORD
   ICall [xcx].pIExcelApp::_Application.put_Visible, LOCALE_SYSTEM_DEFAULT, dVisibility
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ExcelHost.Quit
 ; Purpose:    Quit Excel Application.
 ; Arguments:  None.

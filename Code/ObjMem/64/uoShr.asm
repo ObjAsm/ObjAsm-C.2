@@ -11,7 +11,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  uoShr
 ; Purpose:    Shift right of an unsigned OWORD.
 ; Arguments:  Arg1: OWORD in rdx:rax.

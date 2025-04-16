@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntPropWnd.Done
 ; Purpose:    Finalizes the IntPropWnd object and disposes the MDI child window.
 ; Arguments:  None.
@@ -22,7 +22,7 @@ Method IntPropWnd.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntPropWnd.Init
 ; Purpose:    Initalizes the IntPropWnd object.
 ; Arguments:  Arg1: -> Owner object (ClientWnd).
@@ -37,7 +37,7 @@ Method IntPropWnd.Init, uses xsi, pOwner:$ObjPtr(ClientWnd), pWndClassName:PSTRI
   ACall xsi.Init, pOwner, pWndClassName, pInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ShowIntMtd
 ; Purpose:    Emits HTML codes to render interface method member information.
 ; Arguments:  Arg1: -> MEMBERDATA.
@@ -123,7 +123,7 @@ ShowIntMtd proc uses xbx xdi xsi pMemberData:PMEMBERDATA, pSelf:$ObjPtr(IntPropW
   ret
 ShowIntMtd endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      OutputFileInfo
 ; Purpose:    Compares the current and the stored FileTime data and emits HTML codes to display it.
 ; Arguments:  Arg1: FileTimeVar.
@@ -190,7 +190,7 @@ OutputFileInfo macro FileTimeVar:req, Evaluate:=<0>           ;xbx must -> filen
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntPropWnd.Gather
 ; Purpose:    Collect all informations of this object.
 ; Arguments:  None.
@@ -201,7 +201,7 @@ Method IntPropWnd.Gather, uses xsi
   OCall xsi.GatherMethods, [xsi].pInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GatherIntMtds
 ; Purpose:    Recursion procedure used to collect interface method information.
 ; Arguments:  Arg1: -> INTMTDINFORMATION.
@@ -225,7 +225,7 @@ GatherIntMtds proc uses xbx xdi xsi pIntMtdInfo:PINTMTDINFORMATION, pInterfaceNa
   ret
 GatherIntMtds endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntPropWnd.GatherMethods
 ; Purpose:    Collect all method information of this object.
 ; Arguments:  Arg1: -> OBJECTINFORMATION.
@@ -257,7 +257,7 @@ Method IntPropWnd.GatherMethods, uses xsi, pInfo:PINTERFACEINFORMATION
                                          offset GatherIntMtds, [xax].INTERFACEINFORMATION.pName, xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntPropWnd.ShowInheritance
 ; Purpose:    Method that is called recursively to output an inheritance path.
 ; Arguments:  Arg1: -> INTERFACENFORMATION.
@@ -303,7 +303,7 @@ Method IntPropWnd.ShowInheritance, uses xbx xdi xsi, pInterfaceInfo:PINTERFACEIN
 ;  .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntPropWnd.Startup
 ; Purpose:    Registers the object with the OS.
 ; Arguments:  None.

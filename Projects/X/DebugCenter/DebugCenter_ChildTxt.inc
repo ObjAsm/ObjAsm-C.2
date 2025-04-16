@@ -16,7 +16,7 @@ CStr szPropREdtIptor,       "OAP_REdtIptor"
 
 CALC_KEY_TIMEOUT  equ   1000
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object REdtIptor, REDT_IPTOR_ID, MsgInterceptor
   VirtualMethod     OpenSciCalc
@@ -38,7 +38,7 @@ Object REdtIptor, REDT_IPTOR_ID, MsgInterceptor
   DefineVariable    pFindDialog,      $ObjPtr(DialogFindText), NULL
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object DbgMdiChildTxt, DBG_MDI_CHILD_TXT_ID, DbgMdiChild
   RedefineMethod    ClpBrdClear
@@ -74,7 +74,7 @@ ObjectEnd
 ; ==================================================================================================
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.ClpBrdClear
 ; Purpose:    Delete the selection to the clipboard.
 ; Arguments:  None.
@@ -93,7 +93,7 @@ Method DbgMdiChildTxt.ClpBrdClear, uses xsi
   ACall ClpBrdClear
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.ClpBrdCopy
 ; Purpose:    Copy the selection to the clipboard.
 ; Arguments:  None.
@@ -105,7 +105,7 @@ Method DbgMdiChildTxt.ClpBrdCopy
   ACall ClpBrdCopy
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.ClpBrdCut
 ; Purpose:    Cut the selection to the clipboard.
 ; Arguments:  None.
@@ -117,7 +117,7 @@ Method DbgMdiChildTxt.ClpBrdCut
   ACall ClpBrdCut
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.ClpBrdPaste
 ; Purpose:    Paste the selection to the clipboard.
 ; Arguments:  None.
@@ -129,7 +129,7 @@ Method DbgMdiChildTxt.ClpBrdPaste
   ACall ClpBrdPaste
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.ClpBrdSetBtns
 ; Purpose:    Set the cut, copy & paste clipboard buttons.
 ; Arguments:  None.
@@ -190,7 +190,7 @@ Method DbgMdiChildTxt.ClpBrdSetBtns, uses xbx xdi xsi
   invoke EnableMenuItem, $ObjTmpl(Application).hMenuContext, IDM_EDIT_PASTE, edi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.Done
 ; Purpose:    Finalize the DbgMdiChildTxt object.
 ; Arguments:  None.
@@ -202,7 +202,7 @@ Method DbgMdiChildTxt.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.Erase
 ; Purpose:    Erase the content of the window.
 ; Arguments:  None.
@@ -216,7 +216,7 @@ Method DbgMdiChildTxt.Erase, uses xsi
   OCall xsi.UpdateStatusbar
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgMdiChildTxt_WordBreak_Callback
 ; Purpose:    Callback proc to to break a line of text.
 ; Arguments:  Arg1: -> Wide character Buffer.
@@ -328,7 +328,7 @@ DbgMdiChildTxt_WordBreak_Callback proc uses xbx xsi pCharBuffer:POINTER, \
   ret
 DbgMdiChildTxt_WordBreak_Callback endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.Init
 ; Purpose:    Initialize the DbgMdiChildTxt object.
 ; Arguments:  Arg1: -> Owner object.
@@ -380,7 +380,7 @@ Method DbgMdiChildTxt.Init, uses xbx xdi xsi, pOwner:POINTER, pTitle:PSTRINGW, h
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -405,7 +405,7 @@ Method DbgMdiChildTxt.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.OnMdiActivate
 ; Purpose:    Event procedure for WM_MDIACTIVATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -433,7 +433,7 @@ Method DbgMdiChildTxt.OnMdiActivate, uses xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnMdiActivate, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -458,7 +458,7 @@ Method DbgMdiChildTxt.OnNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, 1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -476,7 +476,7 @@ Method DbgMdiChildTxt.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefMDIChildProc, [xsi].hWnd, WM_SIZE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.Open
 ; Purpose:    Load the content of a txt file.
 ; Arguments:  Arg1: -> File Name.
@@ -511,7 +511,7 @@ Method DbgMdiChildTxt.Open, uses xsi, pFileName:PSTRING
   ACall xsi.Open, pFileName                             ;Remenber this file name
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.Print
 ; Purpose:    Print the content of a TxtChild.
 ; Arguments:  None.
@@ -653,7 +653,7 @@ Method DbgMdiChildTxt.Print, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.SaveAs
 ; Purpose:    Save the content of the RichEdit control to a specified file.
 ; Arguments:  Arg1: Dummy value 1.
@@ -664,7 +664,7 @@ Method DbgMdiChildTxt.SaveAs,, pDummy1:PSTRING, pDummy2:PSTRING
   ACall SaveAs, offset szRtfFilter, offset szRtfExt
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.SaveTo
 ; Purpose:    Save the content of the RichEdit control to a specified file.
 ; Arguments:  Arg1: -> File path and name.
@@ -699,7 +699,7 @@ Method DbgMdiChildTxt.SaveTo, uses xsi, pFileName:PSTRING
   ACall xsi.SaveTo, pFileName                           ;Save FileName
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.SelectAll
 ; Purpose:    Select the complete text in the RichEdit control.
 ; Arguments:  None.
@@ -710,7 +710,7 @@ Method DbgMdiChildTxt.SelectAll
   invoke SendMessage, [xcx].hEdit, EM_SETSEL, 0, -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -735,7 +735,7 @@ Method DbgMdiChildTxt.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.UpdateStatusbar
 ; Purpose:    Draw new information on the Statusbar.
 ; Arguments:  None.
@@ -820,7 +820,7 @@ Method DbgMdiChildTxt.UpdateStatusbar, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.ZoomIn
 ; Purpose:    Increase the output size.
 ; Arguments:  None.
@@ -845,7 +845,7 @@ Method DbgMdiChildTxt.ZoomIn, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildTxt.ZoomOut
 ; Purpose:    Decrease the output size.
 ; Arguments:  None.
@@ -875,7 +875,7 @@ MethodEnd
 ;    REdtIptor implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     REdtIptor.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.
@@ -890,7 +890,7 @@ Method REdtIptor.WndProc,, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
   OCall xax::REdtIptor.Dispatch, pSelf, uMsg, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     REdtIptor.OnDropFiles
 ; Purpose:    Event procedure for WM_DROPFILES message.
 ; Arguments:  Arg1: First message parameter.
@@ -945,7 +945,7 @@ Method REdtIptor.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     REdtIptor.OnKeyDown
 ; Purpose:    Event procedure for WM_KEYDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -959,7 +959,7 @@ Method REdtIptor.OnKeyDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     REdtIptor.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -982,7 +982,7 @@ Method REdtIptor.OnNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_NOTIFY, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     REdtIptor.OnLButtonDown
 ; Purpose:    Event procedure for WM_LBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -996,7 +996,7 @@ Method REdtIptor.OnLButtonDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     REdtIptor.OnLButtonUp
 ; Purpose:    Event procedure for WM_LBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -1010,7 +1010,7 @@ Method REdtIptor.OnLButtonUp, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     REdtIptor.OnMouseMove
 ; Purpose:    Event procedure for WM_MOUSEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1026,7 +1026,7 @@ Method REdtIptor.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     REdtIptor.OnRButtonDown
 ; Purpose:    Event procedure for WM_RBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -1042,7 +1042,7 @@ Method REdtIptor.OnRButtonDown,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     REdtIptor.OnRButtonUp
 ; Purpose:    Event procedure for WM_RBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -1059,7 +1059,7 @@ Method REdtIptor.OnRButtonUp,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     REdtIptor.OpenSciCalc
 ; Purpose:    Open the "calculator.exe".
 ; Arguments:  None.
@@ -1182,7 +1182,7 @@ Method REdtIptor.OpenSciCalc, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     REdtIptor.SendToCalc
 ; Purpose:    Send the selected text to the Calc.exe application.
 ; Arguments:  None.

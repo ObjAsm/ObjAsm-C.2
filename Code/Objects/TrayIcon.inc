@@ -15,7 +15,7 @@ TiDef ends
 
 WM_SHELLNOTIFY    equ    WM_USER + 5
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  TrayIcon
 ; Purpose: Implement a thin wrapper around the TrayIcon GDI control.
 
@@ -36,7 +36,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TrayIcon.Change
 ; Purpose:    Update the TrayIcon with the new icon.
 ; Arguments:  Arg1: Icon HANDLE.
@@ -68,7 +68,7 @@ Method TrayIcon.Change,, hIcon:HICON, pTip:PSTRING
   invoke Shell_NotifyIcon, NIM_MODIFY, addr Note
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TrayIcon.Done
 ; Purpose:    Finalize the TrayIcon object.
 ; Arguments:  None.
@@ -80,7 +80,7 @@ Method TrayIcon.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TrayIcon.Hide
 ; Purpose:    Hide the TrayIcon.
 ; Arguments:  None.
@@ -96,7 +96,7 @@ Method TrayIcon.Hide
   invoke Shell_NotifyIcon, NIM_DELETE, addr Note
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TrayIcon.Init
 ; Purpose:    Initialize the TrayIcon object.
 ; Arguments:  Arg1: -> Owner object.
@@ -114,7 +114,7 @@ Method TrayIcon.Init,, pOwner:POINTER, hParent:HWND, pDef:POINTER
   ACall xcx.Init, pOwner, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TrayIcon.Show
 ; Purpose:    Display the TrayIcon.
 ; Arguments:  Arg1: Icon HANDLE.

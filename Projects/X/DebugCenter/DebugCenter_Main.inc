@@ -62,7 +62,7 @@ AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SBSTYLE, 0, 3}
 ;                   TF_HIDEMSGID:1=FALSE, TF_HIDETIME:1=FALSE, TF_HIDELNNR:1=FALSE
 ;##/
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object DbgMdiClient, DBG_MDI_CLIENT_ID, MdiClientWnd            ;MDI client window.
   RedefineMethod    Done
@@ -76,7 +76,7 @@ Object DbgMdiClient, DBG_MDI_CLIENT_ID, MdiClientWnd            ;MDI client wind
   DefineVariable    dChildCount,        DWORD,      0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object Application, DEBUG_CENTER_ID, MdiApp                     ;MDI application.
   VirtualMethod     ChangeLanguage,     DWORD                   ;IDLANG_XXX
@@ -129,7 +129,7 @@ Object Application, DEBUG_CENTER_ID, MdiApp                     ;MDI application
 
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 include DebugCenter_About.inc
 include DebugCenter_Child.inc           ;Ancestor
@@ -148,7 +148,7 @@ hCBTProc  HANDLE  ?
 ;    Application implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ChangeLanguage
 ; Purpose:    Switch the application language.
 ; Arguments:  Arg1: Language ID.
@@ -234,7 +234,7 @@ Method Application.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
 ; Purpose:    Finalize the MDI application object. Objects associated with window controls are
 ;             destroyed by Windows automatically when WM_DESTROY is send.
@@ -267,7 +267,7 @@ Method Application.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.EnableActions
 ; Purpose:    Enable or disable MDI child actions.
 ; Arguments:  Arg1: Enable TRUE/False.
@@ -284,7 +284,7 @@ Method Application.EnableActions, uses xsi, dAction:DWORD
   OCall [xsi].pToolbarWindow::Toolbar.BtnEnable, IDM_WINDOW_CLOSEALL, dAction
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the MDI application object.
 ; Arguments:  None.
@@ -521,7 +521,7 @@ Method Application.Init, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ManageOptions
 ; Purpose:    Manage menu and toolbar buttons.
 ; Arguments:  Arg1: ObjectID activated, zero for none.
@@ -698,7 +698,7 @@ Method Application.ManageOptions, uses xbx xdi xsi, dObjID:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CBTProc
 ; Purpose:    Customization procedure using SetWindowsHookEx.
 ; Arguments:  Arg1: Hook code.
@@ -733,7 +733,7 @@ CBTProc proc uses xbx dCode:DWORD, wParam:WPARAM, lParam:LPARAM
   ret
 CBTProc endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE (and WM_QUERYENDSESSION) message.
 ; Arguments:  Arg1: First message parameter.
@@ -772,7 +772,7 @@ Method Application.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefFrameProc, [xsi].hWnd, [xbx].$Obj(DbgMdiClient).hWnd, dMsg, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -1157,7 +1157,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCopyData
 ; Purpose:    Event procedure for WM_COPYDATA message.
 ; Arguments:  Arg1: First message parameter.
@@ -1630,7 +1630,7 @@ Method Application.OnCopyData, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1701,7 +1701,7 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -1748,7 +1748,7 @@ Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   Destroy pRegKey
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -1759,7 +1759,7 @@ Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, 1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -1826,7 +1826,7 @@ Method Application.OnNotify,, wParam:WPARAM, lParam:LPARAM
   assume xax:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnShellNotify
 ; Purpose:    Event procedure for WM_SHELLNOTIFY message.
 ; Arguments:  None.
@@ -1849,7 +1849,7 @@ Method Application.OnShellNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1902,7 +1902,7 @@ Method Application.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -1928,7 +1928,7 @@ Method Application.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.StatusbarHelp
 ; Purpose:    Display a help string on panel 0 of the statusbar.
 ; Arguments:  Arg1: -> Help string.
@@ -1945,7 +1945,7 @@ MethodEnd
 ;    DbgMdiClient implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiClient.Done
 ; Purpose:    Finalize the DbgMdiClient object.
 ; Arguments:  None.
@@ -1957,7 +1957,7 @@ Method DbgMdiClient.Done
   ACall Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiClient.Init
 ; Purpose:    Initialize the MdiClientWnd object.
 ; Arguments:  Arg1: -> Owner object.
@@ -1974,7 +1974,7 @@ Method DbgMdiClient.Init, uses xsi, pOwner:POINTER
   invoke DragAcceptFiles, [xsi].hWnd, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiClient.OnDropFiles
 ; Purpose:    Event procedure for WM_DROPFILES message.
 ; Arguments:  Arg1: First message parameter.
@@ -2027,7 +2027,7 @@ Method DbgMdiClient.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiClient.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -2038,7 +2038,7 @@ Method DbgMdiClient.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, 1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiClient.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.

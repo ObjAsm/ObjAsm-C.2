@@ -13,8 +13,8 @@
 ;Each member contains a pointer to the next and previous members.
 ;
 ;
-;                        ————————————————
-;                       |  ————————————  |
+;                        ----------------
+;                       |  ------------  |
 ;                       | |            | |
 ;                       | V            | |
 ;   FirstMember -> CDLL_MEMBER_0       | |
@@ -32,8 +32,8 @@
 ;                       | V            | |
 ;                  CDLL_MEMBER_N       | |
 ;                       ^ |            | |
-;                       |  ————————————  |
-;                        ————————————————
+;                       |  ------------  |
+;                        ----------------
 ;
 
 
@@ -54,7 +54,7 @@ PCDLL_CONTROL typedef ptr CDLL_CONTROL
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CDLL_InsertAfter
 ; Purpose:    Insert an object after another in the linked list.
 ; Arguments:  Arg1: -> Member to insert after.
@@ -69,7 +69,7 @@ CDLL_InsertAfter macro RefReg:req, NewReg:req, AuxReg:=<xdx>
   mov [AuxReg].CDLL_MEMBER.pLinkBack, NewReg
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CDLL_InsertBefore
 ; Purpose:    Insert an object before another in the linked list.
 ; Arguments:  Arg1: -> Member to insert before.
@@ -84,7 +84,7 @@ CDLL_InsertBefore macro RefReg:req, NewReg:req, AuxReg:=<xdx>
   mov [AuxReg].CDLL_MEMBER.pLinkFwrd, NewReg
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LinkedList_InsertFirst
 ; Purpose:    Insert a new member to the end of the Linked List.
 ; Arguments:  Arg1: -> Control structure or reference.
@@ -117,7 +117,7 @@ CDLL_InsertFirst macro CtlReg:req, NewReg:req, AuxReg1:=<xdx>, AuxReg2:=<>
   mov [CtlReg].pFirstMember, NewReg
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LinkedList_InsertLast
 ; Purpose:    Insert a new member to the end of the Linked List.
 ; Arguments:  Arg1: -> Control structure or reference.
@@ -152,7 +152,7 @@ endm
 
 CDLL_Append equ CDLL_InsertLast
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CDLL_Remove
 ; Purpose:    Remove a member from the linked list.
 ;             If the removed item is the first, the second takes its place.
@@ -176,7 +176,7 @@ CDLL_Remove macro CtlReg:req, RefReg:req, AuxReg1:=<xcx>, AuxReg2:=<xdx>
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CDLL_RemoveFirst
 ; Purpose:    Remove the first member from the linked list.
 ; Arguments:  Arg1: -> Control structure or reference.
@@ -195,7 +195,7 @@ CDLL_RemoveFirst macro CtlReg:req, AuxReg1:req, AuxReg2:req
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CDLL_RemoveLast
 ; Purpose:    Remove the last member from the linked list.
 ; Arguments:  Arg1: -> Control structure or reference.

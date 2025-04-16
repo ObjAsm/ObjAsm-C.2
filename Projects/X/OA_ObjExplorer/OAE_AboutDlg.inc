@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DialogAbout
 ; Purpose:    Generic modal about dialog. It shows a single text on a static control.
 ;             This dialog uses the DIALOGABOUT resurce which must be located in application resource
@@ -102,7 +102,7 @@ endif
 
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:       DialogAbout.CtlsSet
 ; Purpose:      Setup the controls of the About dialog.
 ; Arguments:    None.
@@ -137,7 +137,7 @@ Method DialogAbout.CtlsSet, uses xbx xsi
   OCall [xsi].TxtView::TextView.Init, xsi, [xsi].hWnd, addr TV_Def
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:       DialogAbout.Done
 ; Purpose:      Finalizes the dialog.
 ; Arguments:    None.
@@ -149,7 +149,7 @@ Method DialogAbout.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:       DialogAbout.Init
 ; Purpose:      Initialize the about dialog using the "DIALOGABOUT" dialog resource.
 ; Arguments:    Arg1: -> Owner object.
@@ -161,7 +161,7 @@ Method DialogAbout.Init,, pOwner:POINTER, hParent:HWND
   ACall xcx::DialogAbout.Init, pOwner, hParent, 1000
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogAbout.OnCtlColorStatic
 ; Purpose:    Event procedure for WM_CTLCOLORSTATIC message.
 ; Arguments:  Arg1: First message parameter.
@@ -173,7 +173,7 @@ Method DialogAbout.OnCtlColorStatic, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke GetStockObject, WHITE_BRUSH
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogAbout.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.

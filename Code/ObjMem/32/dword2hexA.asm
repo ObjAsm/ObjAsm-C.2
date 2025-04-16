@@ -12,7 +12,7 @@
 
 externdef HexCharTableA:BYTE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  dword2hexA
 ; Purpose:    Convert a DWORD to its hexadecimal ANSI string representation.
 ; Arguments:  Arg1: -> Destination buffer.

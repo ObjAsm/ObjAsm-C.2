@@ -14,7 +14,7 @@
 ProcName textequ <uqqqMul>
 TypeArg equ <DWORD>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  uqqqMul
 ; Purpose:    Multiply 2 unsigned QWORDs.
 ;             (64 bit) Multiplicand multiplied by (64 bit) Multiplier = (64 bit) Product.

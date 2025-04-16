@@ -13,7 +13,7 @@ TCR_RUNNING   equ   1
 
 TCR_LAG_REPS  equ   256     ;Must be a power of 2
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     TickCounter
 ; Purpose:    This object is designed for performance monitoring purposes, counting the number of
 ;             CPU ticks between its Start and Stop method calls. It uses the rdtsc instruction to
@@ -39,7 +39,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TickCounter.GetTicks
 ; Purpose:    Return the tick count.
 ; Arguments:  None.
@@ -56,7 +56,7 @@ Method TickCounter.GetTicks
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TickCounter.Init
 ; Purpose:    Initialize and calibrate the performance monitor.
 ; Arguments:  Arg1: -> Owner object.
@@ -91,7 +91,7 @@ Method TickCounter.Init, uses xbx xsi, pOwner:POINTER
   OCall xsi.Reset
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TickCounter.Reset
 ; Purpose:    Reset the performance monitor.
 ; Arguments:  None.
@@ -109,7 +109,7 @@ Method TickCounter.Reset
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TickCounter.Start
 ; Purpose:    Start the performance monitor.
 ; Arguments:  None.
@@ -138,7 +138,7 @@ Method TickCounter.Start, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TickCounter.Stop
 ; Purpose:    Stop the performance monitor.
 ; Arguments:  None.

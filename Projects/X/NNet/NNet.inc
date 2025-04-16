@@ -39,7 +39,7 @@ PNNT_INFO typedef ptr NNT_INFO
 
 
 ;        Neural Network
-;        ——————————————
+;        --------------
 ;
 ;         Hidden Layers                   Weight Matrix        Output Matrix
 ;
@@ -59,11 +59,11 @@ PNNT_INFO typedef ptr NNT_INFO
 ; Input                 Output                                                   3) xOutputLayerSkip
 ; Values                Values             ^  ^  ^  ^
 ;                                          |  |  |  |
-;                   Hidden Layer weights ————————'  '—— Output weights
+;                   Hidden Layer weights --------'  '-- Output weights
 
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 NNetID equ 48302
 
@@ -122,7 +122,7 @@ NNT_HEADER ends
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Method NNet.ShowWeights, uses xbx xdi xsi, dWindow:DWORD
   local cWindow[100]:CHR, cFloat[100]:CHR
@@ -142,7 +142,7 @@ Method NNet.ShowWeights, uses xbx xdi xsi, dWindow:DWORD
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NNet.BackPropagate
 ; Purpose:    Backpropagation process.
 ; Arguments:  None.
@@ -278,7 +278,7 @@ Method NNet.BackPropagate, uses xbx xdi xsi
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NNet.CalcOutputs
 ; Purpose:    Calculate output values.
 ; Arguments:  None.
@@ -362,7 +362,7 @@ Method NNet.CalcOutputs, uses xbx xdi xsi
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NNet.CalcOutputDeltas
 ; Purpose:    Calculate output delta values.
 ; Arguments:  Arg1: -> Output values.
@@ -397,7 +397,7 @@ Method NNet.CalcOutputDeltas, uses xbx xdi, pOutputs:POINTER
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NNet.Done
 ; Purpose:    Finalize the neural network.
 ; Arguments:  None.
@@ -417,7 +417,7 @@ Method NNet.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NNet.GetInfo
 ; Purpose:    Retievs information of the neural net.
 ; Arguments:  Arg1: Information type. NNT_INFO_xxx
@@ -468,7 +468,7 @@ Method NNet.GetInfo, uses xsi, dType:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NNet.Init
 ; Purpose:    Initialize the neural network.
 ; Arguments:  Arg1: -> Owner.
@@ -565,7 +565,7 @@ Method NNet.Init, uses xsi, pOwner:POINTER, pNNInfo:PNNT_INFO
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NNet.InitRandom
 ; Purpose:    Fill Weights array with random floats (-1 thru +1).
 ; Arguments:  None.
@@ -599,7 +599,7 @@ Method NNet.InitRandom, uses xbx xdi
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NNet.Load
 ; Purpose:    Lead the neural net from a stream.
 ; Arguments:  Arg1: Flags.
@@ -656,7 +656,7 @@ Method NNet.Load, uses xsi, dFlags:DWORD, Source:XWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NNet.Run
 ; Purpose:    Run the neural netword with a given set of input values.
 ; Arguments:  Arg1: -> Input values.
@@ -679,7 +679,7 @@ Method NNet.Run, uses xsi, pInputs:POINTER
   add xax, [xsi].pOutputArr
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NNet.Save
 ; Purpose:    Save the neural net on a stream.
 ; Arguments:  Arg1: Flags.
@@ -726,7 +726,7 @@ Method NNet.Save, uses xsi, dFlags:DWORD, Destination:XWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NNet.Train
 ; Purpose:    Train the neural network with a set of input and output values.
 ; Arguments:  Arg1: -> Input values.

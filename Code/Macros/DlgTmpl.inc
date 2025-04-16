@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      FlexArg
 ; Purpose:    Check the Arg parameter to determine if it is blank, contains NULL, a quoted text or
 ;             an ordinal value to generate a proper segment memory allocation.
@@ -34,7 +34,7 @@ FlexArg macro Arg
 endm
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DIALOGEX
 ; Purpose:    Create a DIALOGEX template structure.
 ; Arguments:  Structure arguments.
@@ -66,7 +66,7 @@ sName WORD 01h                                  ;Dialog version
       FlexArg sFont                             ;Font face
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CONTROL
 ; Purpose:    Create a control template structure.
 ; Arguments:  Structure arguments.
@@ -89,7 +89,7 @@ align 4
     WORD wExtra
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      PUSHBUTTON
 ; Purpose:    Create a PUSHBUTTON control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -103,7 +103,7 @@ PUSHBUTTON macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DEFPUSHBUTTON
 ; Purpose:    Create a DEFPUSHBUTTON control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -117,7 +117,7 @@ DEFPUSHBUTTON macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExSt
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      PUSHBOX
 ; Purpose:    Create a PUSHBOX control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -131,7 +131,7 @@ PUSHBOX macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, d
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      AUTO3STATE
 ; Purpose:    Create a AUTO3STATE control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -145,7 +145,7 @@ AUTO3STATE macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      STATE3
 ; Purpose:    Create a STATE3 control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -159,7 +159,7 @@ STATE3 macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dH
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      AUTOCHECKBOX
 ; Purpose:    Create a AUTOCHECKBOX control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -173,7 +173,7 @@ AUTOCHECKBOX macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExSty
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CHECKBOX
 ; Purpose:    Create a CHECKBOX control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -187,7 +187,7 @@ CHECKBOX macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, 
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      RADIOBUTTON
 ; Purpose:    Create a RADIOBUTTON control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -201,7 +201,7 @@ RADIOBUTTON macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyl
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      AUTORADIOBUTTON
 ; Purpose:    Create a AUTORADIOBUTTON control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -215,7 +215,7 @@ AUTORADIOBUTTON macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dEx
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      GROUPBOX
 ; Purpose:    Create a GROUPBOX control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -229,7 +229,7 @@ GROUPBOX macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, 
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LTEXT
 ; Purpose:    Create a LTEXT control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -243,7 +243,7 @@ LTEXT macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHe
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      RTEXT
 ; Purpose:    Create a RTEXT control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -257,7 +257,7 @@ RTEXT macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHe
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CTEXT
 ; Purpose:    Create a CTEXT control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -271,7 +271,7 @@ CTEXT macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHe
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      COMBOBOX
 ; Purpose:    Create a COMBOBOX control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -285,7 +285,7 @@ COMBOBOX macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, 
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LISTBOX
 ; Purpose:    Create a LISTBOX control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -299,7 +299,7 @@ LISTBOX macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, d
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      EDITTEXT
 ; Purpose:    Create a EDITTEXT control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -313,7 +313,7 @@ EDITTEXT macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, 
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SCROLLBAR
 ; Purpose:    Create a SCROLLBAR control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -327,7 +327,7 @@ SCROLLBAR macro dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ICON
 ; Purpose:    Create a ICON control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -341,7 +341,7 @@ ICON macro sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHel
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      TREEVIEW
 ; Purpose:    Create a TREEVIEW control template structure.
 ; Arguments:  dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -351,7 +351,7 @@ TREEVIEW macro dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID,
   CONTROL NULL, dCtlID, "SysTreeView32", dStyle, wXPos, wYPos, wWidth, wHeight, dExStyle, dHelpID, wExtra
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LISTVIEW
 ; Purpose:    Create a LISTVIEW control template structure.
 ; Arguments:  dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra
@@ -361,7 +361,7 @@ LISTVIEW macro dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID,
   CONTROL NULL, dCtlID, "SysListView32", dStyle, wXPos, wYPos, wWidth, wHeight, dExStyle, dHelpID, wExtra
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      HYPERLINK
 ; Purpose:    Create a HYPERLINK control template structure.
 ; Arguments:  sTitle, dCtlID, wXPos, wYPos, wWidth, wHeight, dStyle, dExStyle, dHelpID, wExtra

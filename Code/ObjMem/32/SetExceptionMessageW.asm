@@ -214,7 +214,7 @@ FinalExceptionHandlerW proc uses ebx edi esi pExceptInfo:ptr EXCEPTION_POINTERS
   ret
 FinalExceptionHandlerW endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure: SetExceptionMessageW
 ; Purpose:   Install a final exception handler that displays a messagebox showing detailed exception
 ;            information and a user text.

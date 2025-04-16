@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Gamma correction tables initialized with a Gamma value of 2.20.
 ; These tables can be reinitialized using the InitGammaTables method.
 
@@ -52,7 +52,7 @@ Gam2LinTable label BYTE
 PtoPxmProc  typedef proto :ptr RGBQUAD, :XWORD, :XWORD
 PPtoPxmProc typedef ptr PtoPxmProc 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Pixelmap
 ; Purpose:    Implement a Pixelmap object. Pixelmaps have a pixel color resolution of 8
 ;             bits per color channel and 8 bits for an alfa channel. Total color depth of 32 bits.
@@ -155,13 +155,13 @@ else
   echo <Warning: incompatible TARGET_STR_TYPE>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ;
 ;   Pixel format in memory (BGRA):                  Loaded into a register (ARGB):
 ;
-;   ——————————————————————————————                  ——————————————————————————————
+;   ------------------------------                  ------------------------------
 ;  | Blue | Green |  Red  | Alpha |       =>       | Alpha | Red |  Green  | Blue |
-;   ——————————————————————————————                  ——————————————————————————————
+;   ------------------------------                  ------------------------------
 ;
 
 
@@ -207,7 +207,7 @@ PXM_ADDR_CLAMP      equ   3
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;Some used constants
 PXM_MASK_0001             equ   0000000FFh
@@ -252,7 +252,7 @@ DefGUID IID_IPicture, %sIID_IPicture
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Purpose:    Compute the 100h complement of the value stored in al, storing the original value in
 ;             dDens1 and the complement in dDens2. Density values range from 1 to 256.
 
@@ -265,7 +265,7 @@ Pxm_Alpha_Densities macro Reg:req
   mov dDens2, Reg                                       ;Dens2 = Complement to dDens1
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Purpose:    Perform a component intensity multiplication using ARGB pixel nibbles.
 
 Pxm_Blend_ARGB macro Reg1:req, Reg2:req, Density:req
@@ -277,7 +277,7 @@ Pxm_Blend_ARGB macro Reg1:req, Reg2:req, Density:req
   imul Reg1, Density
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Purpose:    Perform the merging of partial ARGB blending operations.
 
 Pxm_BlendMerge_ARGB macro Reg1:req, Reg2:req, Reg3:req, Reg4:req
@@ -289,7 +289,7 @@ Pxm_BlendMerge_ARGB macro Reg1:req, Reg2:req, Reg3:req, Reg4:req
   or Reg1, Reg2
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Purpose:    Perform a component intensity multiplication using RGB pixel nibbles.
 ;             Alpha value is set to zero.
 
@@ -301,7 +301,7 @@ Pxm_PixelBlend_RGB macro Reg1:req, Reg2:req, Density:req
   imul Reg2, Density
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Purpose:    Perform the merging of partial RGB blending operations.
 ;             Alpha value is set to zero.
 
@@ -314,7 +314,7 @@ Pxm_PixelMerge_RGB macro Reg1:req, Reg2:req, Reg3:req, Reg4:req
   shr Reg1, 8
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Purpose:    Order the RECT arguments so that RECT.left <= RECT.right and RECT.top <= RECT.bottom.
 ; Uses:       eax, ecx
 
@@ -333,7 +333,7 @@ Pxm_FlipInvertedRect macro Rct:req
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Purpose:    Calculate the intersection of 2 RECTs (my replacement of the IntersectRect API).
 ; Uses:       eax, ecx
 
@@ -384,7 +384,7 @@ Pxm_ClipRect macro DstRct:req, SrcRct1:req, SrcRct2:req
   mov DstRct.bottom, eax
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Purpose:    Get address of a pixel in the Pixelmap.
 ; Uses:       xax
 
@@ -401,7 +401,7 @@ $Pxm_PixelAddr macro XPos:req, YPos:req, ObjReg:=<xsi>
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Purpose:    Get the bytes to reach the next line
 ; Uses:       eax
 
@@ -412,7 +412,7 @@ $Pxm_Bytes2Skip macro DimX:req, ObjReg:=<xsi>
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Purpose:    Transformation from destination to source space => DstRct/SrcPnt to SrcRct/DstPnt
 ; Uses:       eax, ecx, edx
 
@@ -436,11 +436,11 @@ Dst2SrcSpace macro Rct:req, Pnt:req
   mov Pnt.y, edx
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.BlendPixel
 ; Purpose:    Blend the ARGB value over another pixel.
 ; Arguments:  Arg1: X location.
@@ -488,7 +488,7 @@ Method Pixelmap.BlendPixel, uses xbx xdi xsi, dCoorX:DWORD, dCoorY:DWORD, dARGB:
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Pixelmap.BlendVirtualPixel
 ; Purpose:   Set an ARGB value of a given virtual pixel and perform a Gamma Correction on the
 ;            modified pixels. Alpha values of the background pixels are not changed.
@@ -726,7 +726,7 @@ Method Pixelmap.BlendVirtualPixel, uses xsi, r4CoorX:REAL4, r4CoorY:REAL4, dARGB
   fldcw wPrvFpuCtrl                                     ;Restore previous FPU control word
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.Clone
 ; Purpose:    Duplicate the Pixelmap object.
 ; Arguments:  None.
@@ -750,7 +750,7 @@ Method Pixelmap.Clone, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.CopyBmp
 ; Purpose:    Copy the pixels of a Bitmap (DDB or DIB) RECT to the destination on this Pixelmap.
 ; Arguments:  Arg1: Source DC HANDLE compatible to the DDB. Don't need to be selected.
@@ -869,7 +869,7 @@ Method Pixelmap.CopyBmp, uses xdi xsi, hDC:HDC, hBmp:HBITMAP, pSrcRct:PRECT, Dst
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.CopyDisplay
 ; Purpose:    Copy the pixels of a display RECT to the destination on this Pixelmap.
 ; Arguments:  Arg1: Source Display Device Context.
@@ -913,7 +913,7 @@ Method Pixelmap.CopyDisplay, uses xsi, hDispDC:HDC, pSrcRct:PRECT, DstPnt:POINT
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.CopyPixelmap
 ; Purpose:    Copy the pixels contained in a RECT of a source Pixelmap to the destination on this
 ;             Pixelmap.
@@ -997,7 +997,7 @@ Method Pixelmap.CopyPixelmap, uses xdi xsi, pSrcPxm:POINTER, pSrcRct:PRECT, DstP
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.CreateDDB
 ; Purpose:    Create a Device compatible Bitmap from the Pixelmap.
 ; Arguments:  Arg1: Device Context handle.
@@ -1011,7 +1011,7 @@ Method Pixelmap.CreateDDB, uses xsi, hDC:HDC
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.CreateDIB
 ; Purpose:    Create A Device Independant Bitmap (DIB) from the Pixelmap.
 ; Arguments:  None.
@@ -1034,7 +1034,7 @@ Method Pixelmap.CreateDIB
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Destructor: Pixelmap.Done
 ; Purpose:    Finalize the Pixelmap object.
 ; Arguments:  None.
@@ -1046,7 +1046,7 @@ Method Pixelmap.Done, uses xsi
   ACall xsi::Pixelmap.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.ForEachPixel
 ; Purpose:    Call ActionProc for each pixel in the Pixelmap.
 ; Arguments:  Arg1: -> Processing procedure.
@@ -1069,7 +1069,7 @@ Method Pixelmap.ForEachPixel, uses xbx xdi xsi, pActionProc:PPtoPxmProc, xArg1:X
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.GetPixel
 ; Purpose:    Return the ARGB value of a given pixel.
 ; Arguments:  Arg1: X location.
@@ -1099,7 +1099,7 @@ Method Pixelmap.GetPixel,, dCoorX:DWORD, dCoorY:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.GetVirtualComponent
 ; Purpose:    Return the color component of a virtual pixel.
 ; Arguments:  Arg1: X location (REAL4).
@@ -1107,13 +1107,13 @@ MethodEnd
 ;             Arg3: Color channel (PXM_CHANNEL_XXX).
 ; Return:     eax = Color component value [0..255].
 ;
-;       —————————————— X
+;       -------------- X
 ;       |  |  |  |  |
-;       |——|——|——|——|—
+;       |--|--|--|--|-
 ;       |  |00|10|  |
-;       |——|——|——|——|—
+;       |--|--|--|--|-
 ;       |  |01|11|  |
-;       |——|——|——|——|—
+;       |--|--|--|--|-
 ;       |  |  |  |  |
 ;       Y
 
@@ -1268,20 +1268,20 @@ Method Pixelmap.GetVirtualComponent, uses xbx xsi, r4CoorX:REAL4, r4CoorY:REAL4,
   fldcw wPrvFpuCtrl                                     ;Restore previous FPU control word
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.GetVirtualPixel
 ; Purpose:    Return the ARGB value of a given Virtual Pixel.
 ; Arguments:  Arg1: X location (REAL4).
 ;             Arg2: Y location (REAL4).
 ; Return:     eax = ARGB value.
 ;
-;       —————————————— X
+;       -------------- X
 ;       |  |  |  |  |
-;       |——|——|——|——|—
+;       |--|--|--|--|-
 ;       |  |00|10|  |
-;       |——|——|——|——|—
+;       |--|--|--|--|-
 ;       |  |01|11|  |
-;       |——|——|——|——|—
+;       |--|--|--|--|-
 ;       |  |  |  |  |
 ;       Y
 
@@ -1436,7 +1436,7 @@ Method Pixelmap.GetVirtualPixel, uses xbx xsi, r4CoorX:REAL4, r4CoorY:REAL4
   fldcw wPrvFpuCtrl                                     ;Restore previous FPU control word
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.Init
 ; Purpose:    Initialize the Pixelmap object.
 ; Arguments:  Arg1: -> Owner object.
@@ -1474,7 +1474,7 @@ Method Pixelmap.Init, uses xsi, pOwner:POINTER, dWidth:DWORD, dHeight:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.InitGammaTables
 ; Purpose:    Initialize 2 Gamma/Linear Space transformation tables. By default, all Pixelmap
 ;             instances share the same tables that are initialized with a Gamma value of 2.2.
@@ -1538,7 +1538,7 @@ Method Pixelmap.InitGammaTables, uses xsi, r4Gamma:REAL4
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.Load
 ; Purpose:    Load the Pixelmap from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -1556,7 +1556,7 @@ Method Pixelmap.Load, uses xsi, pStream:$ObjPtr(Stream), pOwner:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.LoadBmp
 ; Purpose:    Copy the pixels of a Bitmap (DDB or DIB) to this Pixelmap.
 ; Arguments:  Arg1: -> Owner object.
@@ -1580,7 +1580,7 @@ Method Pixelmap.LoadBmp, uses xsi, pOwner:POINTER, hDC:HDC, hBmp:HBITMAP
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.LoadFileA
 ; Purpose:    Load a Bitmap from a file.
 ; Arguments:  Arg1: -> ANSI File Name.
@@ -1667,7 +1667,7 @@ Method Pixelmap.LoadFileA, uses xbx xdi xsi, pFileName:PSTRINGA
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.LoadFileW
 ; Purpose:    Load a Bitmap from a file.
 ; Arguments:  Arg1: -> WIDE File Name.
@@ -1751,7 +1751,7 @@ Method Pixelmap.LoadFileW, uses xbx xdi xsi, pFileName:PSTRINGW
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.SaveFileA
 ; Purpose:    Save the Pixelmap to disk.
 ; Arguments:  Arg1: -> ANSI FileName
@@ -1802,7 +1802,7 @@ Method Pixelmap.SaveFileA, uses xsi, pFileName:PSTRINGA, dFileFormat:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.SaveFileW
 ; Purpose:    Save the Pixelmap to disk.
 ; Arguments:  Arg1: -> WIDE FileName
@@ -1853,7 +1853,7 @@ Method Pixelmap.SaveFileW, uses xsi, pFileName:PSTRINGW, dFileFormat:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.SetPixel
 ; Purpose:    Set the ARGB value of a given pixel.
 ; Arguments:  Arg1: X location.
@@ -1883,7 +1883,7 @@ Method Pixelmap.SetPixel,, dCoorX:DWORD, dCoorY:DWORD, dARGB:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.SetVirtualComponent
 ; Purpose:    Set a channel component of a given virtual pixel and perform a Gamma Correction on
 ;             the modified pixels. Alpha values of the background pixels are adjusted.
@@ -2137,7 +2137,7 @@ Method Pixelmap.SetVirtualComponent, uses xsi, r4CoorX:REAL4, r4CoorY:REAL4, dCh
   fldcw wPrvFpuCtrl                                     ;Restore previous FPU control word
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Pixelmap.SetVirtualPixel
 ; Purpose:   Set an ARGB value of a given virtual pixel and perform a Gamma Correction on the
 ;            modified pixels. Alpha values of the background pixels are adjusted.
@@ -2396,7 +2396,7 @@ Method Pixelmap.SetVirtualPixel, uses xsi, r4CoorX:REAL4, r4CoorY:REAL4, dARGB:D
   fldcw wPrvFpuCtrl                                     ;Restore previous FPU control word
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Pixelmap.Store
 ; Purpose:   Store the Pixelmap in a stream object.
 ; Arguments: Arg1: -> stream object.
@@ -2418,7 +2418,7 @@ MethodEnd
 ; Static methods
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Pixelmap.AlphaBlend
 ; Purpose:   Blend a source Pixelmap on a destination RECT
 ; Arguments: Arg1: -> Source Pixelmap.
@@ -2517,7 +2517,7 @@ Method Pixelmap.AlphaBlend, uses xbx xdi xsi, pSrcPxm:POINTER, pSrcRct:PRECT, Ds
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.Brightness
 ; Purpose:    Adjust the brightness of the source Pixelmap.
 ; Arguments:  Arg1: Luminicense value (0 = dark, 255 = bright)
@@ -2588,7 +2588,7 @@ Method Pixelmap.Brightness, uses xbx xdi xsi, dLum:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.Convolve3x3
 ; Purpose:    Perform a 3x3 pixel convolution on the source Pixelmap.
 ; Arguments:  Arg1: -> Source Pixelmap.
@@ -2599,15 +2599,15 @@ MethodEnd
 ; Link:       https://en.wikipedia.org/wiki/Kernel_(image_processing)
 ; Note:       Minimal size = 3x3
 ;
-;        ———————————————
+;        ---------------
 ;       | 1 |   2   | 3 |           1,3,7,9 Corners
-;       |———|———————|———|           2,4,6,8 bands
+;       |---|-------|---|           2,4,6,8 bands
 ;       |   |       |   |           5 inner rect
 ;       | 4 |   5   | 6 |           
 ;       |   |       |   |           
-;       |———|———————|———|
+;       |---|-------|---|
 ;       | 7 |   8   | 9 |
-;        ———————————————
+;        ---------------
 
 
 PXM_Conv_Eval macro Kapa:=<1>
@@ -2746,7 +2746,7 @@ Method Pixelmap.Convolve3x3, uses xbx xdi xsi, pSrcPxm:POINTER, pSrcRct:PRECT, D
     mov xdi, xax
     ReleaseObject
 
-;   ———— Top-Left Corner —————————————————————————————————————————————————————
+;   ---- Top-Left Corner -----------------------------------------------------
     mov xbx, pFilterData                                ;xbx -> filter data
     add xbx, 4*REAL4_SIZE
     mov xcx, xsi
@@ -2769,7 +2769,7 @@ Method Pixelmap.Convolve3x3, uses xbx xdi xsi, pSrcPxm:POINTER, pSrcRct:PRECT, D
 ;    mov xax, pSelf
 ;    DbgBmp [xax].$Obj(Pixelmap).hDIBSection, "Top-Left Corner"
 
-;   ———— Upper Band ——————————————————————————————————————————————————————————
+;   ---- Upper Band ----------------------------------------------------------
     ;Do convolution of upper band
     add xdi, RGBQUAD_SIZE
     mov xbx, pFilterData                                ;xbx -> filter data
@@ -2816,7 +2816,7 @@ Method Pixelmap.Convolve3x3, uses xbx xdi xsi, pSrcPxm:POINTER, pSrcRct:PRECT, D
 ;    mov xax, pSelf
 ;    DbgBmp [xax].$Obj(Pixelmap).hDIBSection, "Upper Band"
 
-;   ———— Top-Right Corner ————————————————————————————————————————————————————
+;   ---- Top-Right Corner ----------------------------------------------------
     mov xbx, pFilterFirstData                           ;Same as before
     add xFilterSkipY, RGBQUAD_SIZE
     mov xcx, xsi
@@ -2838,7 +2838,7 @@ Method Pixelmap.Convolve3x3, uses xbx xdi xsi, pSrcPxm:POINTER, pSrcRct:PRECT, D
 ;    mov xax, pSelf
 ;    DbgBmp [xax].$Obj(Pixelmap).hDIBSection, "Top-Right Corner"
     
-;   ———— Right Band ——————————————————————————————————————————————————————————
+;   ---- Right Band ----------------------------------------------------------
     m2m xSrcSkipY, xSrcByteWidth, xax
     mrm xDstSkipY, xDstByteWidth, xax
     add xdi, xax
@@ -2885,7 +2885,7 @@ Method Pixelmap.Convolve3x3, uses xbx xdi xsi, pSrcPxm:POINTER, pSrcRct:PRECT, D
     mov xax, pSelf
     DbgBmp [xax].$Obj(Pixelmap).hDIBSection, "Right Band"
 
-;   ———— Bottom-Right Corner —————————————————————————————————————————————————
+;   ---- Bottom-Right Corner -------------------------------------------------
     mov xbx, pFilterData                                ;xbx -> filter data
     mov xcx, xsi
     PXM_Conv_Eval 3                                     ;Evaluate color at (-1,-1)
@@ -2906,7 +2906,7 @@ Method Pixelmap.Convolve3x3, uses xbx xdi xsi, pSrcPxm:POINTER, pSrcRct:PRECT, D
 ;    mov xax, pSelf
 ;    DbgBmp [xax].$Obj(Pixelmap).hDIBSection, "Bottom-Right Corner"
 
-;   ———— Lower Band ——————————————————————————————————————————————————————————
+;   ---- Lower Band ----------------------------------------------------------
     sub xsi, 2*RGBQUAD_SIZE
     sub xdi, RGBQUAD_SIZE
  
@@ -2951,7 +2951,7 @@ Method Pixelmap.Convolve3x3, uses xbx xdi xsi, pSrcPxm:POINTER, pSrcRct:PRECT, D
     mov xax, pSelf
     DbgBmp [xax].$Obj(Pixelmap).hDIBSection, "Lower Band"
 
-;   ———— Bottom-Left Corner ——————————————————————————————————————————————————
+;   ---- Bottom-Left Corner --------------------------------------------------
     add xsi, 2*RGBQUAD_SIZE
     mov xbx, pFilterData                                ;xbx -> filter data
     add xbx, REAL4_SIZE
@@ -2974,7 +2974,7 @@ Method Pixelmap.Convolve3x3, uses xbx xdi xsi, pSrcPxm:POINTER, pSrcRct:PRECT, D
 ;    mov xax, pSelf
 ;    DbgBmp [xax].$Obj(Pixelmap).hDIBSection, "Bottom-Left Corner"
 
-;   ———— Left Band ———————————————————————————————————————————————————————————
+;   ---- Left Band -----------------------------------------------------------
     sub xsi, xFilterSkipY
     sub xsi, RGBQUAD_SIZE
     sub xdi, xFilterSkipY
@@ -3025,7 +3025,7 @@ Method Pixelmap.Convolve3x3, uses xbx xdi xsi, pSrcPxm:POINTER, pSrcRct:PRECT, D
 ;    mov xax, pSelf
 ;    DbgBmp [xax].$Obj(Pixelmap).hDIBSection, "Left Band"
 
-;   ———— Inner Rect ——————————————————————————————————————————————————————————
+;   ---- Inner Rect ----------------------------------------------------------
     ;Calc inner rect skip values
     add xsi, xSrcSkipY
     add xdi, xDstSkipY
@@ -3100,7 +3100,7 @@ Method Pixelmap.Convolve3x3, uses xbx xdi xsi, pSrcPxm:POINTER, pSrcRct:PRECT, D
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.DrawCircle
 ; Purpose:    Draw a Circle on the Pixelmap.
 ; Arguments:  Arg1: x coordinate of the center of the circle.
@@ -3157,7 +3157,7 @@ Method Pixelmap.DrawCircle, uses xsi, sdPosX:SDWORD, sdPosY:SDWORD, dRadius:SDWO
   .until FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.DrawLine
 ; Purpose:    Draw a line on the Pixelmap.
 ; Arguments:  Arg1: Start x coordinate.
@@ -3248,7 +3248,7 @@ Method Pixelmap.DrawLine, uses xsi, x0:SDWORD, y0:SDWORD, x1:SDWORD, y1:SDWORD, 
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      PxmDrawString
 ; Purpose:    Generate code for both string types.
 ; Arguments:  Arg1: <A> or <W>
@@ -3477,7 +3477,7 @@ PxmDrawString macro StrType:req
   invoke DeleteObject, hTempDIBSect
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.DrawStrA
 ; Purpose:    Print antialiased an string on the Pixelmap.
 ; Arguments:  Arg1: -> ANSI string.
@@ -3510,7 +3510,7 @@ Method Pixelmap.DrawStrA, uses xbx xdi xsi, pText:PSTRINGA, pt:POINT, dColor:DWO
   PxmDrawString <A>
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.DrawStrW
 ; Purpose:    Print antialiased an string on the Pixelmap.
 ; Arguments:  Arg1: -> WIDE string.
@@ -3543,7 +3543,7 @@ Method Pixelmap.DrawStrW, uses xbx xdi xsi, pText:PSTRINGW, pt:POINT, dColor:DWO
   PxmDrawString <W>
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.FillBkGnd
 ; Purpose:    Fill the Pixelmap with a given color. No alfablending is applied!
 ; Arguments:  Arg1: ARGB background color.
@@ -3561,7 +3561,7 @@ Method Pixelmap.FillBkGnd, uses xdi, dARGB:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.FillRect
 ; Purpose:    Fill a rectangular area of the Pixelmap with an ARGB value.
 ; Arguments:  Arg1: -> RECT to fill.
@@ -3647,7 +3647,7 @@ Method Pixelmap.FillRect, uses xbx xdi xsi, pDstRct:PRECT, dARGB:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.FillRectChannel
 ; Purpose:    Fill a c color channel of rectangular area of the Pixelmap with a given value.
 ; Arguments:  Arg1: -> RECT to fill.
@@ -3708,7 +3708,7 @@ Method Pixelmap.FillRectChannel, uses xsi, pDstRct:PRECT, dChannel:DWORD, dFillV
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.FillRectGradHor
 ; Purpose:    Fill a rect with an horizontal gradient. Alphablending is applied if necessary.
 ; Arguments:  Arg1: -> RECT to fill.
@@ -3883,7 +3883,7 @@ Method Pixelmap.FillRectGradHor, uses xbx xdi xsi, pDstRct:PRECT, dLftColor:DWOR
       .endw
       fUnload 8
 
-    ; ————————————————————————————————————————————————————
+    ; ----------------------------------------------------
 
     .else
       ;Solid colors
@@ -3946,7 +3946,7 @@ Method Pixelmap.FillRectGradHor, uses xbx xdi xsi, pDstRct:PRECT, dLftColor:DWOR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.FillRectGradVer
 ; Purpose:    Fill a rect with a vertical gradient. Alphablending is applied if necessary.
 ; Arguments:  Arg1: -> RECT to fill.
@@ -4115,7 +4115,7 @@ Method Pixelmap.FillRectGradVer, uses xbx xdi xsi, pDstRct:PRECT, dTopColor:DWOR
 
       fUnload 8
 
-    ; ————————————————————————————————————————————————————
+    ; ----------------------------------------------------
 
     .else
       ;Solid colors
@@ -4178,7 +4178,7 @@ Method Pixelmap.FillRectGradVer, uses xbx xdi xsi, pDstRct:PRECT, dTopColor:DWOR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.FlipRectHor
 ; Purpose:    Flip horizontally a rectangular area of the Pixelmap.
 ; Arguments:  Arg1: -> RECT to flip.
@@ -4245,7 +4245,7 @@ Method Pixelmap.FlipRectHor, uses xbx xdi xsi, pDstRct:PRECT
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.FlipRectVer
 ; Purpose:    Flip vertically a rectangular area of the Pixelmap.
 ; Arguments:  Arg1: -> RECT to flip.
@@ -4322,7 +4322,7 @@ Method Pixelmap.FlipRectVer, uses xbx xdi xsi, pDstRct:PRECT
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Pixelmap.Gray
 ; Purpose:   Transform the Pixelmap into a gray scale image.
 ; Arguments: Arg1: -> RECT to transform.
@@ -4392,7 +4392,7 @@ Method Pixelmap.Gray, uses xbx xdi xsi, pDstRct:PRECT
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.Litho
 ; Purpose:    Transform the Pixelmap into a lithographic image.
 ; Arguments:  Arg1: -> Destination RECT.
@@ -4484,7 +4484,7 @@ Method Pixelmap.Litho, uses xbx xdi xsi, pDstRct:PRECT, dThreshhold:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.Replace_ARGB_ARGB
 ; Purpose:    Replace an ARGB color with another.
 ; Arguments:  Arg1: -> Destination RECT.
@@ -4549,7 +4549,7 @@ Method Pixelmap.Replace_ARGB_ARGB, uses xbx xdi xsi, pDstRct:PRECT, dDstARGB:DWO
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.Replace_RGB_ARGB
 ; Purpose:    Replace a pixel that matchs the RGB colors with an ARGB color.
 ; Arguments:  Arg1: -> RECT where to applay the change.
@@ -4616,7 +4616,7 @@ Method Pixelmap.Replace_RGB_ARGB, uses xbx xdi xsi, pDstRct:PRECT, dDstARGB:DWOR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.Replace_RGB_RGB
 ; Purpose:    Replace all pixels with a given RGB value.
 ; Arguments:  Arg1: -> Destination RECT.
@@ -4687,7 +4687,7 @@ Method Pixelmap.Replace_RGB_RGB, uses xbx xdi xsi, pDstRct:PRECT, dDstRGB:DWORD,
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.Reset
 ; Purpose:    Free associated resources.
 ; Arguments:  None.
@@ -4704,7 +4704,7 @@ Method Pixelmap.Reset, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.SetAlphaMask
 ; Purpose:    Copy a channel of a given Pixelmap to the alfa channel.
 ; Arguments:  Arg1: -> Source Pixelmap.
@@ -4823,7 +4823,7 @@ Method Pixelmap.SetAlphaMask, uses xbx xdi xsi, pSrcPxm:POINTER, pSrcRct:PRECT, 
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.UV2XY
 ; Purpose:    Convert pixel coordinate from floating UV to floating XY.
 ; Arguments:  Arg1: -> output REAL4 coordinates, i.e. VEC2 (2 x REAL4).
@@ -4971,7 +4971,7 @@ MethodEnd
 ; Private methods
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.Gamma2Linear
 ; Purpose:    Convert from gamma to linear color space. Alpha value remains unchanged!
 ; Arguments:  Arg1: ARGB color.
@@ -4992,7 +4992,7 @@ Method Pixelmap.Gamma2Linear,, dARGB:DWORD
   or eax, ecx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Pixelmap.Linear2Gamma
 ; Purpose:    Convert from linear to gamma color space. Alpha value remains unchanged!
 ; Arguments:  Arg1: ARGB color.

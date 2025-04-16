@@ -16,7 +16,7 @@ IDM_PROP_OPEN   equ   200
 IDM_PROP_SAVE   equ   201
 IDM_PROP_CLOSE  equ   202
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:   ProjectWnd
 ; Purpose:  Implement a project window used as a control container on some apps.
 
@@ -74,7 +74,7 @@ PropComboBox DEF_COMBOBOX {100, PROPCBSTYLE, 0, NULL, {<0,0,0,0>}}
 
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PropertiesWnd.Done
 ; Purpose:    Finalize the PropertiesWnd object, freeing allocated resources.
 ; Arguments:  None.
@@ -89,7 +89,7 @@ Method PropertiesWnd.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PropertiesWnd.Init
 ; Purpose:    Initialize the PropertiesWnd object.
 ; Arguments:  Arg1: -> Owner object.
@@ -104,7 +104,7 @@ Method PropertiesWnd.Init, uses xsi, pOwner:POINTER, hParent:HWND
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PropertiesWnd.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -162,7 +162,7 @@ Method PropertiesWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xsi].hWnd, WM_CREATE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PropertiesWnd.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -201,7 +201,7 @@ Method PropertiesWnd.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc,[xsi].hWnd, WM_PAINT, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     PropertiesWnd.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.

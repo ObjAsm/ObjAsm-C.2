@@ -51,7 +51,7 @@ LSLL_CONTROL ends
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LSLL.InsertAfter
 ; Purpose:    Insert an object after another in the linked list.
 ; Arguments:  Arg1: -> Member to insert after.
@@ -63,7 +63,7 @@ LSLL_InsertAfter macro RefReg:req, NewReg:req, AuxReg:=<>
   mov [RefReg].LSLL_ITEM.pLinkFwrd, NewReg
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LSLL_RemoveAfter
 ; Purpose:    Remove a member from the linked list.
 ; Arguments:  Arg1: -> Member to remove after.
@@ -77,7 +77,7 @@ endm
 
 ??ListForEach_ID = 0
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .ListForEach
 ; Purpose:    Loop through all items of the collection.
 ; Arguments:  Arg1: First member of the list.
@@ -100,7 +100,7 @@ endm
     mov @CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID), xax
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .ListNext
 ; Purpose:    Move to the next list item.
 ; Arguments:  None

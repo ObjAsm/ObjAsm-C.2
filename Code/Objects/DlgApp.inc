@@ -11,7 +11,7 @@
 ;               - First release.
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DlgApp
 ; Purpose:    Implement a specialised WinApp object using a dialog as main window.
 
@@ -32,7 +32,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DlgApp.CtlsGet
 ; Purpose:    Do nothing at this stage. It has to be redefined to provide proper functionality.
 ; Arguments:  None.
@@ -41,7 +41,7 @@ if IMPLEMENT
 Method DlgApp.CtlsGet
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DlgApp.CtlsSet
 ; Purpose:    Do nothing at this stage. It has to be redefined to provide proper functionality.
 ; Arguments:  None.
@@ -50,7 +50,7 @@ MethodEnd
 Method DlgApp.CtlsSet
 MethodEnd
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Method:     DlgApp.Init   - code sample-
 ;; Purpose:    Initialize the dialog based application object.
 ;; Arguments:  None.
@@ -64,7 +64,7 @@ MethodEnd
 ;  invoke CreateDialogParam, hInstance, offset szDlgName, 0, $MethodAddr(DlgApp.WndProc), xsi
 ;MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DlgApp.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -80,7 +80,7 @@ Method DlgApp.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
   OCall xsi.CtlsSet
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DlgApp.Run
 ; Purpose:    Launch the dialog based application object starting the message loop.
 ; Arguments:  None.
@@ -122,7 +122,7 @@ Method DlgApp.Run, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DlgApp.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.

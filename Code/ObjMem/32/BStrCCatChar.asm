@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure: BStrCCatChar
 ; Purpose:   Append a WIDE character to a BStr with length limitation.
 ; Arguments: Arg1: -> Destination BStr.

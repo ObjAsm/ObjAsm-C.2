@@ -10,7 +10,7 @@
 ; EditorDisplay implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.DrawStatusPanel
 ; Purpose:    Draw the status panel.
 ; Arguments:  None.
@@ -55,7 +55,7 @@ Method EditorDisplay.DrawStatusPanel, uses xbx xdi xsi
   invoke SelectObject, [xsi].hPanelDC, hPrevFont
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.Done
 ; Purpose:    Finalize the EditorDisplay object.
 ; Arguments:  None.
@@ -63,13 +63,14 @@ MethodEnd
 
 Method EditorDisplay.Done, uses xsi
   SetObject xsi
+  OCall [xsi].View::EditorView.Done
   invoke SelectObject, [xsi].hPanelDC, [xsi].hPrvPanelBmp  ;xax = hTextBmp
   invoke DeleteObject, xax                              ;Delete memory bitmap
   invoke DeleteDC, [xsi].hPanelDC                       ;Delete memory DC
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.InformDeletionOf
 ; Purpose:    Inform that a specific lines was deleted.
 ; Arguments:  Arg1: Line number of Arg1.
@@ -78,16 +79,16 @@ MethodEnd
 Method EditorDisplay.InformDeletionOf, uses xsi, dLineNumber:DWORD
   SetObject xsi
   mov ecx, dLineNumber
-  .if ecx < [xsi].View.FirstVisChar.dLineNumber                   ;A line before the 1st vis line is to be deleted   
+  .if ecx < [xsi].View.FirstVisChar.dLineNumber                   ;A line before the 1st vis line is to be deleted
     dec [xsi].View.dFirstVisLineCount
     dec [xsi].View.FirstVisChar.dLineNumber
   .elseif ecx == [xsi].View.FirstVisChar.dLineNumber              ;The 1st vis line is to be deleted
-    mov xax, [xsi].View.FirstVisChar.pEditorLine 
+    mov xax, [xsi].View.FirstVisChar.pEditorLine
     GotoNextVisEditorLine xax,,, edx
     .if xax != NULL
       sub [xsi].View.dFirstVisLineCount, edx
     .else
-      mov xax, [xsi].View.FirstVisChar.pEditorLine 
+      mov xax, [xsi].View.FirstVisChar.pEditorLine
       GotoPrevVisEditorLine xax,,, edx
       .if xax != NULL
         sub [xsi].View.dFirstVisLineCount, edx
@@ -101,7 +102,7 @@ Method EditorDisplay.InformDeletionOf, uses xsi, dLineNumber:DWORD
 ;  DbgEditorDisplay xsi,, "EditorDisplay"
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.InformInsertionOf
 ; Purpose:    Inform that a specific lines was inserted.
 ; Arguments:  Arg1: Line number of Arg1.
@@ -110,14 +111,14 @@ MethodEnd
 Method EditorDisplay.InformInsertionOf, uses xsi, dLineNumber:DWORD
   SetObject xsi
   mov ecx, dLineNumber
-  .if ecx <= [xsi].View.FirstVisChar.dLineNumber                   ;A line before the 1st vis line is to be inserted   
+  .if ecx <= [xsi].View.FirstVisChar.dLineNumber                   ;A line before the 1st vis line is to be inserted
     inc [xsi].View.dFirstVisLineCount
     inc [xsi].View.FirstVisChar.dLineNumber
   .endif
 ;  DbgEditorDisplay xsi,, "EditorDisplay"
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.Init
 ; Purpose:    Initialize the EditorDisplay object.
 ; Arguments:  Arg1: -> Owner object (Editor).
@@ -144,7 +145,7 @@ Method EditorDisplay.Init, uses xbx xdi xsi, pOwner:POINTER, pRect:PRECT, pResou
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL          ;Show the window
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -193,7 +194,7 @@ Method EditorDisplay.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke ReleaseDC, [xsi].hWnd, hDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -228,7 +229,7 @@ Method EditorDisplay.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;   hidden by BeginPaint
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.OnScrollHorz
 ; Purpose:    Event procedure for WM_HSCROLL message.
 ; Arguments:  Arg1: First message parameter.
@@ -311,7 +312,7 @@ Method EditorDisplay.OnScrollHorz, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.OnScrollVert
 ; Purpose:    Event procedure for WM_VSCROLL message.
 ; Arguments:  Arg1: First message parameter.
@@ -393,7 +394,7 @@ Method EditorDisplay.OnScrollVert, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter. wParam = SIZE_xxx
@@ -413,7 +414,7 @@ Method EditorDisplay.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.OnSetFocus
 ; Purpose:    Event procedure for WM_SETFOCUS message.
 ; Arguments:  Arg1: First message parameter.
@@ -432,7 +433,7 @@ Method EditorDisplay.OnSetFocus,, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorView.SetGuiLayout
 ; Purpose:    Define the position an size of all GUI elements in the EditorView.
 ; Arguments:  None.
@@ -446,7 +447,7 @@ Method EditorDisplay.SetGuiLayout, uses xdi xsi
   mov xdi, [xsi].pResources
   invoke GetClientRect, [xsi].hWnd, addr ClientRect
 
-  ;Define the coords of the StatusPanel RECT 
+  ;Define the coords of the StatusPanel RECT
   mov [xsi].StatusPanelRect.left, 0
   mov eax, [xsi].View.dSelBarWidth
   mov [xsi].StatusPanelRect.right, eax
@@ -455,7 +456,7 @@ Method EditorDisplay.SetGuiLayout, uses xdi xsi
   sub eax, [xdi].$Obj(EditorResources).ScrollBarMetric.y
   mov [xsi].StatusPanelRect.top, eax
 
-  ;Define the coords of the Splitter RECT 
+  ;Define the coords of the Splitter RECT
   mov [xsi].SplitterRect.top, eax
   mov eax, ClientRect.bottom
   mov [xsi].SplitterRect.bottom, eax
@@ -492,14 +493,14 @@ Method EditorDisplay.SetGuiLayout, uses xdi xsi
   invoke MoveWindow, [xsi].ScrollBarVert.hWnd, \
                      ClientRect.right, ClientRect.top, \
                      [xdi].$Obj(EditorResources).ScrollBarMetric.x, ClientRect.bottom, FALSE
-  
+
   ;Position the EditorView using the modified ClientRect
   invoke MoveWindow, [xsi].View.hWnd, \
                      ClientRect.left, ClientRect.top, \
                      ClientRect.right, ClientRect.bottom, FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.SetupScrollBarHorz
 ; Purpose:    Configure the horizontal scrollbar.
 ; Arguments:  None.
@@ -537,7 +538,7 @@ Method EditorDisplay.SetupScrollBarHorz, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.SetupScrollBarVert
 ; Purpose:    Configure the vertical scrollbar.
 ; Arguments:  None.
@@ -573,7 +574,7 @@ Method EditorDisplay.SetupScrollBarVert, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.Startup
 ; Purpose:    Register the EditorDisplay object with the OS.
 ; Arguments:  None.
@@ -598,7 +599,7 @@ Method EditorDisplay.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorDisplay.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.
@@ -609,7 +610,7 @@ MethodEnd
 
 Method EditorDisplay.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
     ANNOTATION use:wParam
-    
+
 ;  DbgMessage uMsg, "EditorDisplay.WndProc"
   .if uMsg == WM_NCCREATE
     mov xax, lParam

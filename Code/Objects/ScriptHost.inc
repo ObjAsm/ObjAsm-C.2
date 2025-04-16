@@ -30,7 +30,7 @@ SHM_ENABLEMODELESS    equ   WM_USER + 12
 WSF_DEBUG             equ   BIT00
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:   ScriptHost
 ; Purpose:  Implement a host container object for MS-Script engine.
 ;
@@ -110,7 +110,7 @@ Object ScriptHost, ScriptHostID, Streamable
   DefineVariable    pIActiveScriptSiteDebug,  POINTER,    NULL
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  IActiveScriptSite
 ; Purpose: Implement a IActiveScriptSite COM interface.
 
@@ -133,7 +133,7 @@ Object IActiveScriptSite, IActiveScriptSiteID, IUnknown
   Embed     Components,     DataCollection
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  IActiveScriptSiteWindow
 ; Purpose: Implement a IActiveScriptSiteWindow COM interface.
 
@@ -146,7 +146,7 @@ Object IActiveScriptSiteWindow, IActiveScriptSiteWindowID, IUnknown
   DefineVariable    hWnd,       HANDLE,   0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  IActiveScriptSiteDebug
 ; Purpose: Implement a IActiveScriptSiteDebug COM interface.
 
@@ -166,7 +166,7 @@ Object IActiveScriptSiteDebug, IActiveScriptSiteDebugID, IUnknown
   DefineVariable    dCookie,                  DWORD,      0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  IScriptInterface
 ; Purpose: Implement a IScriptInterface COM interface.
 
@@ -190,7 +190,7 @@ PSCRIPTSIDE_ITEMINFO typedef ptr SCRIPTSIDE_ITEMINFO
 ;    IActiveScriptSite Implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ComponentCollection.DestroyItem
 ; Purpose:    Auxiliar function to dispose a item from the collection. Don't call directly!
 ; Arguments:  Arg1: -> Item.
@@ -207,7 +207,7 @@ Method ComponentCollection.DestroyItem,, pItem:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSite.Done
 ; Purpose:    Finalize the IActiveScriptSite object.
 ; Arguments:  None.
@@ -220,7 +220,7 @@ Method IActiveScriptSite.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSite.Init
 ; Purpose:    Set the owning object.
 ; Arguments:  Arg1: -> Owner object.
@@ -235,7 +235,7 @@ Method IActiveScriptSite.Init, uses xsi, pOwner:POINTER
   OCall [xsi].Components::DataCollection.Init, xsi, 10, 10, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSite.GetLCID
 ; Purpose:    Retrieve the locale identifier associated with the host's user interface.
 ; Arguments:  Arg1: -> LCID.
@@ -246,7 +246,7 @@ Method IActiveScriptSite.GetLCID,, pLCID:POINTER
   mov eax, E_NOTIMPL                  ;System-defined locale identifier should be used
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSite.GetItemInfo
 ; Purpose:    Allow the scripting engine to obtain information about an item added with the
 ;             IActiveScript::AddNamedItem method.
@@ -303,7 +303,7 @@ Method IActiveScriptSite.GetItemInfo, uses xsi, pItemName:POINTER, dReturnMask:D
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSite.GetDocVersionString
 ; Purpose:    Retrieve a host-defined string that uniquely identifies the current document version
 ;             from the host's point of view.
@@ -315,7 +315,7 @@ Method IActiveScriptSite.GetDocVersionString,, ppVersionString:POINTER
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSite.OnScriptTerminate
 ; Purpose:    Called when the script has completed execution.
 ; Arguments:  Arg1: -> Script result or NULL.
@@ -327,7 +327,7 @@ Method IActiveScriptSite.OnScriptTerminate,, pScriptResult:POINTER, pExceptionIn
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSite.OnStateChange
 ; Purpose:    Inform the host that the scripting engine has changed states.
 ; Arguments:  Arg1: Script State.
@@ -339,7 +339,7 @@ Method IActiveScriptSite.OnStateChange,, dScriptState:DWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSite.OnScriptError
 ; Purpose:    Inform the host that an execution error occurred while the engine was
 ;             running the script.
@@ -414,7 +414,7 @@ Method IActiveScriptSite.OnScriptError,, pIActiveScriptError:POINTER
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSite.OnEnterScript
 ; Purpose:    Inform the host that the scripting engine has begun executing the script code.
 ; Arguments:  None.
@@ -425,7 +425,7 @@ Method IActiveScriptSite.OnEnterScript
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSite.OnLeaveScript
 ; Purpose:    Inform the host that the scripting engine has returned from executing script code.
 ; Arguments:  None.
@@ -441,7 +441,7 @@ MethodEnd
 ;    IActiveScriptSiteWindow Implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSiteWindow.EnableModeless
 ; Purpose:    Cause the host to enable or disable its main window as well as any modeless dialog
 ;             boxes.
@@ -458,7 +458,7 @@ Method IActiveScriptSiteWindow.EnableModeless,, dEnable:DWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSiteWindow.GetWindow
 ; Purpose:    Retrieve the window handle that can act as the owner of a pop-up window that the
 ;             scripting engine must display.
@@ -485,7 +485,7 @@ MethodEnd
 ;    IActiveScriptSiteDebug Implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSiteDebug.GetDocumentContextFromPosition
 ; Purpose:    Used by the language engine to delegate IDebugCodeContext.GetSourceContext.
 ; Arguments:  Arg1: Source content as provided to ParseScriptText or AddScriptlet
@@ -512,7 +512,7 @@ Method IActiveScriptSiteDebug.GetDocumentContextFromPosition, uses xsi, dSourceC
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSiteDebug.GetApplication
 ; Purpose:    Return the debug application object associated with this script site.
 ; Arguments:  Arg1: -> Debug application object associated with the script site.
@@ -533,7 +533,7 @@ Method IActiveScriptSiteDebug.GetApplication, uses xsi, ppIDebugApplication:POIN
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSiteDebug.GetRootApplicationNode
 ; Purpose:    Get the application node under which script documents should be added.
 ; Arguments:  Arg1: -> The debug application node that holds script documents. Can be NULL.
@@ -553,7 +553,7 @@ Method IActiveScriptSiteDebug.GetRootApplicationNode,, ppRoot:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IActiveScriptSiteDebug.OnScriptErrorDebug
 ; Purpose:    Allow a smart host to determine how to handle run-time errors.
 ; Arguments:  Arg1: The run-time error that occurred.
@@ -583,7 +583,7 @@ MethodEnd
 ;    IScriptInterface implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IScriptInterface.Init
 ; Purpose:    Initialize the IScriptInterface interface object.
 ; Arguments:  Arg1: -> Owner object.
@@ -620,7 +620,7 @@ MethodEnd
 ;    ScriptHost implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ScriptHost.Done
 ; Purpose:    Finalize the Script engine object.
 ; Arguments:  None.
@@ -644,7 +644,7 @@ Method ScriptHost.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ScriptHost.Init
 ; Purpose:    Initialize the Script engine object. Now it is ready to recieve WM_xxx messages.
 ; Arguments:  Arg1: -> Owner Object.
@@ -676,7 +676,7 @@ Method ScriptHost.Init, uses xbx xsi, pOwner:POINTER, hWnd:HWND, pCLSID_Engine:R
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ScriptHost.Run
 ; Purpose:    Execute a specified script.
 ; Arguments:  None.
@@ -783,7 +783,7 @@ Method ScriptHost.Run, uses xbx xdi xsi
   m2z [xsi].dThreadID                                   ;Mark as terminated
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ScriptHost.OnAddComponent
 ; Purpose:    Add a new component to the script engine in response to a SHM_ADDCOMPONENT message.
 ; Arguments:  Arg1: -> Wide name of the object.
@@ -809,7 +809,7 @@ Method ScriptHost.OnAddComponent, uses xbx xsi, pName:PSTRINGW, pComponent:LPARA
                                             pName, SCRIPTITEM_ISVISIBLE; or SCRIPTITEM_NOCODE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ScriptHost.OnExecute
 ; Purpose:    Message Handler for SHM_EXECUTE.
 ; Arguments:  Arg1: -> WIDE string containing the script to execute.
@@ -846,7 +846,7 @@ Method ScriptHost.OnExecute, uses xbx xdi xsi, pScript:PSTRINGW, lParam:LPARAM
   invoke PostMessage, [xsi].hWnd, SHM_FINISHED, 0, 0    ;Inform we are ready
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ScriptHost.OnIdle
 ; Purpose:    Procedure called when the ScriptHost is idle.
 ; Arguments:  Arg1: Number of times OnIdle was called since the last processed message.

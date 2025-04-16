@@ -50,7 +50,7 @@ ObjectEnd
 ;    UIApplication implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     UIApplication.Init
 ; Purpose:    Initializes the object.
 ; Arguments:  Arg1: -> Owner.
@@ -75,7 +75,7 @@ Method UIApplication.Init, uses xbx xsi, pOwner:POINTER, hWnd:HWND, pRibbonResNa
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     UIApplication.Release
 ; Purpose:    Releases all framework interfaces.
 ; Arguments:  None.
@@ -97,7 +97,7 @@ MethodEnd
 ;    IUIApplication implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IUIApplication.OnViewChanged
 ; Purpose:    Called when the state of a View changes.
 ; Arguments:  Arg1: dViewID. The ID for the View. Only a value of 0 is valid.
@@ -136,7 +136,7 @@ Method IUIApplication.OnViewChanged,, dViewID:DWORD, dTypeID:DWORD, pView:POINTE
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IUIApplication.OnCreateUICommand
 ; Purpose:    Called for each Command specified in the Ribbon framework markup to bind the Command
 ;             to an IUICommandHandler.
@@ -162,7 +162,7 @@ Method IUIApplication.OnCreateUICommand, uses xbx xsi, dCommandID:DWORD, dTypeID
   mov eax, S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IUIApplication.OnDestroyUICommand
 ; Purpose:    Called for each Command specified in the Windows Ribbon framework markup when the
 ;             application window is destroyed.
@@ -181,7 +181,7 @@ MethodEnd
 ;    UICommandHandler implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     UICommandHandler.Init
 ; Purpose:    Initializes the object.
 ; Arguments:  Arg1: -> Owner.
@@ -207,7 +207,7 @@ MethodEnd
 ;    IUICommandHandler implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IUICommandHandler.Execute
 ; Purpose:    Responds to execute events on Commands bound to the Command handler.
 ; Arguments:  Arg1: dCommandID. The ID for the Command, which is specified in the markup res. file.
@@ -245,7 +245,7 @@ Method IUICommandHandler.Execute, uses xsi, dCommandID:DWORD, dVerb:DWORD, pKey:
   mov eax, S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IUICommandHandler.UpdateProperty
 ; Purpose:    Responds to property update requests from the Windows Ribbon framework.
 ; Arguments:  Arg1: dCommandID. The ID for the Command, which is specified in the markup res. file.

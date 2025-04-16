@@ -9,7 +9,7 @@
 
 externdef hDbgDev:HANDLE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgCloseDevice
 ; Purpose:    Close the connection to the output device.
 ; Arguments:  None.

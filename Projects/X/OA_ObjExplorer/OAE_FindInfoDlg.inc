@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindInfoDlg.CtlsSet
 ; Purpose:    Sets the controls of the dialog.
 ; Arguments:  None.
@@ -36,7 +36,7 @@ Method FindInfoDlg.CtlsSet, uses xbx xdi xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:   	FindInfoDlg.Init
 ; Purpose:  	Initializes a modeless dialog object.
 ; Arguments:	Arg1: -> Owner object.
@@ -53,7 +53,7 @@ Method FindInfoDlg.Init, uses xsi, pOwner:POINTER, hParent:HANDLE
                             $MethodAddr(FindInfoDlg.DlgProc), xsi   ;lParam passed WM_INITDIALOG
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindInfoDlg.OnActivate
 ; Purpose:    Event procedure for WM_ACTIVATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -77,7 +77,7 @@ Method FindInfoDlg.OnActivate,, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xcx].hWnd, WM_ACTIVATE, wParam, lParam    ;Perform default processing
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindInfoDlg.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -99,7 +99,7 @@ Method FindInfoDlg.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                 ;Return zero
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  InfoMatch
 ; Purpose:    Used to filter out non matching strings from the ListBox content.
 ; Arguments:  Arg1: -> INFORMATION.
@@ -117,7 +117,7 @@ InfoMatch proc pItem:PINFORMATION, pFilter:PSTRING, hListBox:HANDLE
   ret
 InfoMatch endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindInfoDlg.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.

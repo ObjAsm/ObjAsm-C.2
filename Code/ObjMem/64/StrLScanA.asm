@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrLScanA
 ; Purpose:    Scan for a character from the beginning of an ANSI string. 
 ; Arguments:  Arg1: -> Source ANSI string.

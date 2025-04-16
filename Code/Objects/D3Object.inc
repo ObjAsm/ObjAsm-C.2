@@ -10,7 +10,7 @@
 ;    D3Object implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Object.AddPoint
 ; Purpose:    Add a D3Point to the D3Object object.
 ; Arguments:  Arg1: -> D3Vector structure pointing to the point.
@@ -33,7 +33,7 @@ Method D3Object.AddPoint, uses xbx xsi, pVector:PD3Vector, dColor:DWORD
   mov [xbx].$Obj(D3Triangle).OutColor3, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Object.AddLine
 ; Purpose:    Add a D3Line to the D3Object object.
 ; Arguments:  Arg1: -> D3Vector structure pointing to the first point.
@@ -58,7 +58,7 @@ Method D3Object.AddLine, uses xbx xsi, pVector1:PD3Vector, pVector2:PD3Vector, d
   mov [xbx].$Obj(D3Triangle).OutColor3, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Object.AddObject
 ; Purpose:    Merge 2 D3Objects to one.
 ; Arguments:  Arg1: -> D3Object.
@@ -71,7 +71,7 @@ Method D3Object.AddObject, uses xsi, pObject:POINTER
   mov xax, xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Object.AddRectangle
 ; Purpose:    Add a rectangle to the D3Object object. (2 triangles)
 ; Arguments:  Arg1: -> D3Vector structure pointing to the first point.
@@ -113,7 +113,7 @@ Method D3Object.AddRectangle, uses xbx xdi xsi, pVector1:PD3Vector, pVector2:PD3
   mov [xdi].$Obj(D3Triangle).OutColor3, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Object.AddTriangle
 ; Purpose:    Add a D3Triangle to the D3Object object.
 ; Arguments:  Arg1: -> D3Vector structure pointing to the first point.
@@ -141,7 +141,7 @@ Method D3Object.AddTriangle, uses xbx xsi, pVector1:PD3Vector, pVector2:PD3Vecto
   mov [xbx].$Obj(D3Triangle).OutColor3, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Object.Deserialize
 ; Purpose:    Convert serialized members.
 ; Arguments:  Arg1: -> DESER_INFO.
@@ -155,7 +155,7 @@ Method D3Object.Deserialize, uses xsi, pDeserInfo:PDESER_INFO
   OCall [xsi].pVectrons::D3VectronCollection.Deserialize, pDeserInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Object.Done
 ; Purpose:    Finalize the D3Object object.
 ; Arguments:  None.
@@ -168,7 +168,7 @@ Method D3Object.Done, uses xsi
   ACall Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Object.InfoAddTriCount
 ; Purpose:    Add the number of triangles in this object to a given DWORD.
 ; Arguments:  Arg1: -> Acummulating count.
@@ -182,7 +182,7 @@ Method D3Object.InfoAddTriCount,, pCount:POINTER, Unused:XWORD
   add DWORD ptr [xdx], eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Object.Init
 ; Purpose:    Initialize the D3Object object.
 ; Arguments:  Arg1: -> Owner object.
@@ -197,7 +197,7 @@ Method D3Object.Init, uses xsi, pOwner:POINTER
   OCall [xsi].pVectrons::D3VectronCollection.Init, xsi, 100, 100, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Object.Load
 ; Purpose:    Load a D3Object from a Stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -212,7 +212,7 @@ Method D3Object.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   mov [xsi].dFlags, $32($OCall(pStream::Stream.BinRead32))
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Object.Move
 ; Purpose:    Move (rotates and displaces) the D3Object.
 ; Arguments:  Arg1: -> Rotation D3Vector structure.
@@ -275,7 +275,7 @@ Method D3Object.Move, uses xsi, pRotation:PD3Vector, pDisplacement:PD3Vector
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Object.Project
 ; Purpose:    Project a D3Object to a D3Camera.
 ; Arguments:  Arg1: -> D3Camera object.
@@ -443,7 +443,7 @@ Method D3Object.Project, uses xbx xdi xsi, pCamera:$ObjPtr(D3Camera), Unused:XWO
   OCall [xsi].pTriangles::Collection.ForEach, offset MakeTriData, addr TriDataInfo, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Object.Store
 ; Purpose:    Store a D3Object in a Stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -457,7 +457,7 @@ Method D3Object.Store, uses xsi, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.BinWrite32, [xsi].dFlags
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Object.Scale
 ; Purpose:    Scale a D3Object.
 ; Arguments:  Arg1: Factor.

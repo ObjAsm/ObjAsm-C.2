@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MemFillW
 ; Purpose:    Fill a memory block with a given word value.
 ;             Destination buffer must be at least as large as number of BYTEs to fill, otherwise a

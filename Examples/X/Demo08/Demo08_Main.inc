@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Application
 ; Purpose:    Main application dialog.
 
@@ -33,7 +33,7 @@ CStr Message, CRLF, "Hello", CRLF, CRLF, \
               "Press 'OK' or the close button to", CRLF, \
               "exit the application."
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.CtlsSet
 ; Purpose:    Set dialog controls.
 ; Arguments:  None.
@@ -44,7 +44,7 @@ Method Application.CtlsSet
   invoke SetDlgItemText, [xcx].hWnd, IDC_STC_MESSAGE, addr Message
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the application object.
 ; Arguments:  None.
@@ -56,7 +56,7 @@ Method Application.Init, uses xsi
   invoke CreateDialogParam, hInstance, IDD_DLG_MAIN, 0, $MethodAddr(DlgApp.WndProc), xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCtlColorStatic
 ; Purpose:    Event procedure for WM_CTLCOLORSTATIC message.
 ; Arguments:  Arg1: First message parameter.
@@ -75,7 +75,7 @@ Method Application.OnCtlColorStatic,, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.

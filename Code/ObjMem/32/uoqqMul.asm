@@ -12,7 +12,7 @@
 
 ProcName textequ <uoqqMul>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  uoqqMul
 ; Purpose:    Multiply 2 unsigned QWORDs with extended precision.
 ;             (64 bit) Multiplicand multiplied by (64 bit) Multiplier = (128 bit) Product. 

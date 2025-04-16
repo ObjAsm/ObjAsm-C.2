@@ -13,7 +13,7 @@
 SRC_TYPE equ <QWORD>
 ProcName textequ <CalcVarianceQW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CalcVarianceQW
 ; Purpose:    Calculate the MSE of an array of QWORDs.
 ; Arguments:  Arg1: -> Array of QWORDs.

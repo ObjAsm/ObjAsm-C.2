@@ -7,7 +7,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SLR_Calc_AB_DW / SLR_Calc_AB_QW / SLR_Calc_AB_R4 / SLR_Calc_AB_R8
 ; Purpose:    Calculate the Slope (A) and Intercept (B) values of the linear equation y = A*x + B
 ;             that minimize mean squared error (MSE).

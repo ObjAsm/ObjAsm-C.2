@@ -136,7 +136,7 @@ LPVERBDATA typedef ptr VERBDATA
 
 LPDISPPARAMS typedef ptr DISPPARAMS
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     SUCCEEDED
 ; Purpose:   Check if HRESULT indicates succeed condition.
 ; Arguments: Arg1: 32 bit register.
@@ -148,7 +148,7 @@ SUCCEEDED macro Arg
   exitm <!SIGN?>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     SUCCEEDED
 ; Purpose:   Check if HRESULT indicates failed condition.
 ; Arguments: Arg1: 32 bit register.
@@ -160,7 +160,7 @@ FAILED macro Arg
   exitm <SIGN?>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     SAFE_ADD_REF
 ; Purpose:   Check if the interface pointer is different from NULL and then increments the
 ;            reference count.
@@ -172,7 +172,7 @@ SAFE_ADD_REF macro InterfacePtr
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     SAFE_RELEASE
 ; Purpose:   Check if the interface pointer is different from NULL and then releases it.
 ; Arguments: Arg1: -> Interface.
@@ -183,7 +183,7 @@ SAFE_RELEASE macro InterfacePtr
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     RELEASE_AND_NULLIFY
 ; Purpose:   Release the interface set to NULL.
 ; Arguments: Arg1: -> Interface.
@@ -194,7 +194,7 @@ RELEASE_AND_NULLIFY macro InterfacePtr
   ICall xcx::IUnknown.Release
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     SAFE_RELEASE_AND_NULLIFY
 ; Purpose:   Check if the interface pointer is different from NULL and then releases it.
 ;            The pointer is set to NULL.
@@ -206,7 +206,7 @@ SAFE_RELEASE_AND_NULLIFY macro InterfacePtr
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     MAKE_HRESULT
 ; Purpose:   Build the HRESULT value from its compinents.
 ; Arguments: Arg1: Severity.
@@ -217,7 +217,7 @@ MAKE_HRESULT macro Sev, Fac, Code
   exitm <(Sev shl 31) or (Fac shl 16) or (Code)>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     ($)GuidComp
 ; Purpose:   Wrapper macro to check if 2 GUIDs are iqual.
 ; Arguments: Arg1: -> first GUID
@@ -232,7 +232,7 @@ $GuidComp macro pGUID1:req, pGUID2:req
   exitm <eax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     COM_INTERFACE_BEG
 ; Purpose:   Start the definition of an interface.
 ; Arguments: Arg1: Interface name.
@@ -259,7 +259,7 @@ COM_INTERFACE_BEG macro IfcName:req, AncName:=<>, sIID
   @CatStr(%??Interface, <_Inherit>) textequ $$sz1       ;;Remember the interface ancestor
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     COM_INTERFACE_END
 ; Purpose:   Terminate definition of an interface.
 ; Arguments: None.
@@ -269,7 +269,7 @@ COM_INTERFACE_END macro
   ??Interface ends
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     COM_MTD_STD
 ; Purpose:   Define a method in the interface definition.
 ; Arguments: Arg1: Method name.
@@ -280,7 +280,7 @@ COM_MTD_STD macro MtdName:req, Args:vararg
   @CatStr(<_>, MtdName) POINTER ?                     ;;Make an entry in the structure
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     COM_MTD_DSP
 ; Purpose:   Define a dispatchable method. It has no enty in the VMT.
 ; Arguments: Arg1: Method name.
@@ -329,7 +329,7 @@ COM_MTD_DSP macro MtdName:req, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     BeginMap
 ; Purpose:   Start a category map.
 ; Arguments: Arg1: Number of items.
@@ -338,7 +338,7 @@ BeginMap macro ItemCount:req
   exitm <DWORD ItemCount>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     MGUID
 ; Purpose:   Transform a formated GUID string to a GUID record.
 ;            Must be 36 bytes long, including dashes!
@@ -387,7 +387,7 @@ MGUID macro GUIDStr:req
   exitm <{$$GUID01, $$GUID02, $$GUID03, {$$GUID04, $$GUID05, $$GUID06, $$GUID07, $$GUID08, $$GUID09, $$GUID10, $$GUID11}}>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     DefGUID
 ; Purpose:   Define a symbol with a formated GUID string.
 ; Arguments: Arg1: GUID symbol.
@@ -402,7 +402,7 @@ DefGUID macro GUIDSymbol:req, GUIDStr:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     TypeMissing
 ; Purpose:   Set a varint to the missing state. Frequently used for optional parameters.
 ; Arguments: Arg1: Varint variables.

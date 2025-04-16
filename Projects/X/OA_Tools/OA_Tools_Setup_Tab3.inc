@@ -11,7 +11,7 @@
 ;    Tab3 implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab3.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -42,7 +42,7 @@ Method Tab3.CtlsGet, uses xbx xdi xsi
   mov [xdi].$Obj(Application).Setup.Color.LocWarning, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab3.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -77,7 +77,7 @@ Method Tab3.CtlsSet, uses xbx xdi xsi
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab3.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -111,7 +111,7 @@ Method Tab3.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return FALSE to prevent Windows from
 MethodEnd                                               ;  setting the default keyboard focus.
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab3.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -172,7 +172,7 @@ Method Tab3.OnCommand, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab3.OnCtlColorDlg
 ; Purpose:    Event procedure for WM_CTLCOLORDLG message.
 ; Arguments:  Arg1: First message parameter.

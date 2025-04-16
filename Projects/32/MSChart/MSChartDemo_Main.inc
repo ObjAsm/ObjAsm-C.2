@@ -48,7 +48,7 @@ if IMPLEMENT
 ;    IMSChartEvents redefinition
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IMSChartEvents.AxisLabelActivated2
 ; Purpose:    MSChart event handler.
 ; Arguments:  Arg1: [in] -> Axis ID.
@@ -76,7 +76,7 @@ Method IMSChartEvents.AxisLabelActivated2, uses xsi, pAxisID:ptr SWORD, pAxisInd
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Method:    IMSChartEvents.DblClick2
 ;; Purpose:   MSChart event handler.
 ;; Arguments: None.
@@ -103,7 +103,7 @@ MethodEnd
 ;    Application implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
 ; Purpose:    Finalize the SDI application object.
 ; Arguments:  None.
@@ -115,7 +115,7 @@ Method Application.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the SDI application object.
 ; Arguments:  None.
@@ -244,7 +244,7 @@ Method Application.Init, uses xbx xsi
   invoke UpdateWindow, [xsi].hWnd                       ;Update if necessary
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -280,7 +280,7 @@ Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
@@ -298,7 +298,7 @@ Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -318,7 +318,7 @@ Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -337,7 +337,7 @@ Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -353,7 +353,7 @@ Method Application.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke MoveWindow, [xsi].Chart.hWnd, 0, 0, eax, ebx, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
 ; Purpose:    Register the object class with the OS.
 ; Arguments:  None.
@@ -383,7 +383,7 @@ MethodEnd
 ;    MSChartAxisFormatDlg implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MSChartAxisFormatDlg.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -419,7 +419,7 @@ Method MSChartAxisFormatDlg.CtlsGet, uses xsi
   ICall [xcx].$Obj(MSChart).pIChart::_DMSChart.Refresh
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MSChartAxisFormatDlg.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -456,7 +456,7 @@ Method MSChartAxisFormatDlg.CtlsSet, uses xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MSChartAxisFormatDlg.Init
 ; Purpose:    Initialize a dialog.
 ; Arguments:  Arg1: -> MSChart object.
@@ -470,7 +470,7 @@ Method MSChartAxisFormatDlg.Init, uses xsi, pOwner:POINTER, dAxisID:DWORD
   ACall xsi.Init, xax, [xax].$Obj(MSChart).hWnd, 1000
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MSChartAxisFormatDlg.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -488,7 +488,7 @@ Method MSChartAxisFormatDlg.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MSChartAxisFormatDlg.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.

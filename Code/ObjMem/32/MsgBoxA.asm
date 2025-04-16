@@ -12,7 +12,7 @@ SysSetup OOP, Lib32, ANSI_STRING
 
 ProcName textequ <MsgBoxA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MsgBoxA
 ; Purpose:    Show a customized MessageBox.
 ; Arguments:  Arg1: Parent HANDLE.

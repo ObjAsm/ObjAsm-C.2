@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure: StrICompW
 ; Purpose:   Compare 2 WIDE strings without case sensitivity.
 ; Arguments: Arg1: -> Wide string 1.

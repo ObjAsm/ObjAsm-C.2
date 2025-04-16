@@ -36,7 +36,7 @@ PropListView DEF_LISTVIEW {101, PROPLVSTYLE, PROPLVEXSTYLE, NULL, {<5,5,420,257>
   LV_COLUMN {PROPCOLUMNFLAG, LVCFMT_LEFT, 60, offset szColTitle5, 0, 5}
   LV_COLUMN {PROPCOLUMNFLAG, LVCFMT_LEFT, 60, offset szColTitle6, 0, 6}
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object DB_QueryDlg,, DialogModal
   RedefineMethod    Done
@@ -55,7 +55,7 @@ ObjectEnd
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_QueryDlg.Done
 ; Purpose:    Finalize the DB_QueryDlg object.
 ; Arguments:  None.
@@ -67,7 +67,7 @@ Method DB_QueryDlg.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_QueryDlg.CtlsSet
 ; Purpose:    Set the controls in this dialog window.
 ; Arguments:  None.
@@ -90,7 +90,7 @@ Method DB_QueryDlg.CtlsSet, uses xsi
   OCall xsi.Refresh
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_QueryDlg.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -108,7 +108,7 @@ Method DB_QueryDlg.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_QueryDlg.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -142,7 +142,7 @@ Method DB_QueryDlg.OnNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_QueryDlg.Refresh
 ; Purpose:    Update the ListView content.
 ; Arguments:  None.

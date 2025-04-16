@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <dec2qwordA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  dec2qwordA
 ; Purpose:    Convert a decimal ANSI string to a QWORD.
 ; Arguments:  Arg1: -> Source ANSI string. Possible leading characters are " ", tab, "+" and "-",

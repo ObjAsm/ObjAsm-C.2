@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     CRC_32
 ; Purpose:    Implement an object to calculate a 32 bit CRC value of a data stream.
 ; Link:       http://www.geocities.com/SiliconValley/Pines/8659/crc.htm
@@ -29,7 +29,7 @@ POLYNOMIAL_WZIP     equ   004C11DB7h                    ;PKZip, Ethernet, PNG
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     CRC_32.Init
 ; Purpose:    Initialize the CRC_32 object filling a internal lookup table.
 ; Arguments:  Arg1: -> Owner object.
@@ -67,7 +67,7 @@ Method CRC_32.Init, uses xbx xdi xsi, pOwner:POINTER, dPolynomial:DWORD
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    CRC_32.Calc
 ; Purpose:   Calculate a new CRC_32 value based on the new data block and the previous CRC_32.
 ; Arguments: Arg1: -> New data block.
@@ -100,7 +100,7 @@ Method CRC_32.Calc, uses xbx xdi xsi, pBuffer:POINTER, dSize:DWORD
   not eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     CRC_32.Reset
 ; Purpose:    Reset the previous CRC calculation.
 ; Arguments:  None.

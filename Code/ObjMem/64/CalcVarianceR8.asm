@@ -13,7 +13,7 @@
 SRC_TYPE equ <REAL8>
 ProcName textequ <CalcVarianceR8>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CalcVarianceR8
 ; Purpose:    Calculate the MSE of an array of REAL8s.
 ; Arguments:  Arg1: -> Array of REAL8s.

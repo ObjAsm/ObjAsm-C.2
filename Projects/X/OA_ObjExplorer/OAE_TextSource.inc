@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:    TextSource
 ; Purpose:   Text reading managment.
 
@@ -35,7 +35,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextSource.Done
 ; Purpose:    Finalizes TextSource object.
 ; Arguments:  None.
@@ -51,7 +51,7 @@ Method TextSource.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextSource.Init
 ; Purpose:    (Constructor) Initializes TextSource object.
 ; Arguments:  Arg1: -> Owner object.
@@ -73,7 +73,7 @@ Method TextSource.Init, uses xsi, pOwner:POINTER, pFileName:PSTRING
   mov [xsi].pFileLines, xcx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextSource.GetPrevLine
 ; Purpose:    Retrieves a new line from the text source into the object line buffer.
 ; Arguments:  None.
@@ -121,7 +121,7 @@ Method TextSource.GetPrevLine, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextSource.GetNextArgument
 ; Purpose:    Retrieves the next word from the object line buffer after a comma.
 ; Arguments:  None.
@@ -137,7 +137,7 @@ Method TextSource.GetNextArgument, uses xsi
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextSource.GetNextLine
 ; Purpose:    Retrieves a new line from the text source into the object line buffer.
 ; Arguments:  None.
@@ -184,7 +184,7 @@ Method TextSource.GetNextLine, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextSource.GetNextWord
 ; Purpose:    Retrieves the next word from the object line buffer.
 ; Arguments:  None.
@@ -332,7 +332,7 @@ Method TextSource.GetNextWord, uses xbx xdi xsi
 ;  DbgDec [xsi].dLineNumber
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextSource.Reset
 ; Purpose:    Resets the stream position to zero.
 ; Arguments:  None.

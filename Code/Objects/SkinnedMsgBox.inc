@@ -10,7 +10,7 @@
 
 IDC_SMB_TEXT    equ     100
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  SkinnedMsgBox
 ; Purpose: Implement a skinned MessageBox dialog using the ElasticSkin engine.
 
@@ -48,7 +48,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedMsgBox.CtlsSet
 ; Purpose:    Set the controls of the SkinnedMsgBox dialog.
 ; Arguments:  None.
@@ -59,7 +59,7 @@ Method SkinnedMsgBox.CtlsSet, uses xsi
   invoke SetDlgItemText, [xsi].hWnd, IDC_SMB_TEXT, [xsi].pMessageText
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedMsgBox.Done
 ; Purpose:    Finalize the SkinnedMsgBox object
 ; Arguments:  None.
@@ -79,7 +79,7 @@ Method SkinnedMsgBox.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedMsgBox.DrawCaptionText
 ; Purpose:    Draw the caption.
 ; Arguments:  None.
@@ -107,7 +107,7 @@ Method SkinnedMsgBox.DrawCaptionText, uses xsi
   invoke ReleaseDC, [xsi].hWnd, hDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedMsgBox.Init
 ; Purpose:    Initialize the SkinnedMsgBox dialog.
 ; Arguments:  Arg1: -> Owner object.
@@ -142,7 +142,7 @@ Method SkinnedMsgBox.Init, uses xsi, pOwner:POINTER, hParent:HWND, \
   m2m [xsi].pGifResName, pGifName, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedMsgBox.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -155,7 +155,7 @@ Method SkinnedMsgBox.OnCommand,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;  fired the command
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedMsgBox.OnCtlColorStatic
 ; Purpose:    Event procedure for WM_CTLCOLORSTATIC message.
 ; Arguments:  Arg1: First message parameter.
@@ -168,7 +168,7 @@ Method SkinnedMsgBox.OnCtlColorStatic, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov xax, [xsi].hBkgndBrush                            ;Return background brush HANDLE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedMsgBox.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -228,7 +228,7 @@ Method SkinnedMsgBox.OnInitDialog, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return zero
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedMsgBox.OnNcActivate
 ; Purpose:    Event procedure for WM_NCACTIVATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -243,7 +243,7 @@ Method SkinnedMsgBox.OnNcActivate, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xsi].hWnd, WM_NCACTIVATE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedMsgBox.OnNcPaint
 ; Purpose:    Event procedure for WM_NCPAINT message.
 ; Arguments:  Arg1: First message parameter.

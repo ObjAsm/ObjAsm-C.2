@@ -10,7 +10,7 @@
 
 USE_OVERFLOW_FLAG equ 1
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Normalize
 ; Purpose:    Auxiliary procedure that normalizes a XWORD so that the highest order bit is 1.
 ; Arguments:  Arg1: Number unsigned low word.
@@ -64,7 +64,7 @@ endif
 Normalize endp
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  uyooDivRem / uoqqDivRem
 ; Purpose:    Calculate an unsigned extended precision division, emulating the div x86 instr.
 ;             (256/128 bit) Dividend divided by (128/64 bit) Divisor = (128/64 bit) Quotient. 

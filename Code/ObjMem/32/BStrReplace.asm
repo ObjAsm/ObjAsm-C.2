@@ -11,7 +11,7 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrReplace
 ; Purpose:    Dispose an existing BSTR and replace it with a new one.
 ; Arguments:  Arg1: -> BSTR to be replaced.

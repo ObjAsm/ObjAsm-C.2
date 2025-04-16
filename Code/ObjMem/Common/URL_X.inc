@@ -11,7 +11,7 @@
 
 externdef HexCharTableW:CHRW
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  UrlEscDecode
 ; Purpose:    Translate a wide string containig URL escape sequences to a plain wide string.
 ; Arguments:  Arg1: -> Input wide string.
@@ -93,7 +93,7 @@ align ALIGN_CODE
   ret
 UrlEscDecode endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  UrlEscEncode
 ; Purpose:    Translate a plain wide string to a wide string containig URL escape sequences.
 ; Arguments:  Arg1: -> Input wide string.
@@ -167,7 +167,7 @@ align ALIGN_CODE
   ret
 UrlEscEncode endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     UrlEscEncodeSize
 ; Purpose:    Calculates the requiered buffer size for UrlEscEncode method.
 ; Arguments:  Arg1: -> Input wide string.

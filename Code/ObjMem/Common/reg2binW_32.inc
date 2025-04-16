@@ -23,7 +23,7 @@ Set2BinCharsW macro Index
 endm
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  byte2binW, word2binW, dword2binW
 ; Purpose:    Convert a BYTE, WORD or DWORD to its binary WIDE string representation.
 ; Arguments:  Arg1: -> Destination buffer.

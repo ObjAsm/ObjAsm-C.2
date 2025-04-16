@@ -34,7 +34,7 @@ externdef szDbgCtrCls:CHRW
 externdef szDbgInvalidDevPtr:CHRW
 externdef szDbgRegKey:CHRW
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DGB_MSG_ID                equ   58ADF9ACh     ;Random number that identifies these debug messages
 DBG_MSG_HDR               equ   00
@@ -87,13 +87,13 @@ IDM_DEBUG_CENTER_RESTORE  equ   0F6CAh        ;Random number
 
 DBG_IP_PORT textequ <8080>                    ;Default value
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Info:
 ;   The message sent to the DebugCenter Server looks like:
 ;
-;      ————————————————————————————————————————————————————————————————————————
+;      ------------------------------------------------------------------------
 ;     | DBG_HEADER_INFO | Destination Window Name | DBG_XXX_INFO |   Payload   |
-;      ————————————————————————————————————————————————————————————————————————
+;      ------------------------------------------------------------------------
 ;       DBG_MSG_HDR                                 DBG_MSG_XXX
 
 
@@ -133,7 +133,7 @@ DBG_CHT_INFO struc 1
 DBG_CHT_INFO ends
 ;Additional data bytes may follow this structure
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DEBUG_CENTER_CLASS  textequ  <"OAC_DebugCenter">
 DEBUG_CENTER_REGKEY textequ  <"Software\DebugCenter">

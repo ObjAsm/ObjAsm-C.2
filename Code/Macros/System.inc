@@ -216,7 +216,7 @@ endif
 ;    Macro implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $ArgRev
 ; Purpose:    Return a reversed order version of a symbol list.
 ; Arguments:  Arg1: Symbol list.
@@ -235,7 +235,7 @@ $ArgRev macro ArgList:vararg
   exitm <$$RevList>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .Segxxx / .SegRestore
 ; Purpose:    Switches to another segment keeping track of the current segment, so that
 ;             .SegRestore can switch back (1 level only).
@@ -334,7 +334,7 @@ endm
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      PushAll
 ; Purpose:    Push recursively all arguments on stack.
 ; Arguments:  Arg1: List of arguments.
@@ -434,7 +434,7 @@ PushAll macro ArgList:vararg
   endm
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      PopAll
 ; Purpose:    Pop a list of arguments of the stack.
 ; Arguments:  Arg1: List of arguments.
@@ -446,7 +446,7 @@ PopAll macro ArgList:vararg
   endm
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      PushAllRev
 ; Purpose:    Push all arguments on stack in reverse order.
 ; Arguments:  Arg1: List of arguments.
@@ -456,7 +456,7 @@ PushAllRev macro ArgList:vararg
   PushAll $ArgRev(ArgList)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      PopAllRev
 ; Purpose:    Pop recursively all arguments on stack in reverse order.
 ; Arguments:  Arg1: List of arguments.
@@ -469,7 +469,7 @@ PopAllRev macro ArgList:vararg
   endm
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      c2m
 ; Purpose:    Move a constant value to a QWORD, DWORD, WORD or BYTE memory address.
 ; Arguments:  Arg1: destination memory symbol.
@@ -502,7 +502,7 @@ c2m macro DstMem:req, SrcCst:req, AuxReg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      m2m
 ; Purpose:    Move a QWORD, DWORD, WORD or BYTE value from a memory address to another.
 ;             Auxiliary register may not be used.
@@ -608,7 +608,7 @@ m2m macro DstMem:req, SrcMem:req, AuxReg
     endif
   endif
 endm
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      mrm
 ; Purpose:    Move a QWORD, DWORD, WORD or BYTE value from a memory address to another using
 ;             always the auxiliary register.
@@ -677,7 +677,7 @@ mrm macro DstMem:req, SrcMem:req, AuxReg:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      m2z
 ; Purpose:    Zero the content of a memory location.
 ; Arguments:  Arg1: Memory location.
@@ -688,7 +688,7 @@ m2z macro DstMem:req
   mov DstMem, 0
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      s2s
 ; Purpose:    Clone a structure to another structure of the same type.
 ; Arguments:  Arg1: Destination structure.
@@ -807,7 +807,7 @@ s2s macro Dst:req, Src:req, RegList:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      JumpOn
 ; Purpose:    Create a jump table and executes a jump to a label according the content of a
 ;             register.
@@ -843,7 +843,7 @@ JumpOn macro RegName:req, Labels:vararg
 @@:
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      FillStringA
 ; Purpose:    Fill an ANSI string with text using a series of mov DWORD/WORD/BYTE instructions.
 ;             It doesn't work with QWORDs.
@@ -878,7 +878,7 @@ FillStringA macro StrVar:req, Text:req
   ??StrSize = ??StrLen + 1
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      FillQuotedStringA
 ; Purpose:    Fill an ANSI quoted text using a series of mov DWORD/WORD/BYTE instructions.
 ;             It doesn't work with QWORDs.
@@ -913,7 +913,7 @@ FillQuotedStringA macro StrVar:req, QuotedText:vararg
   ??StrSize = ??StrLen + 1
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      FillStringB
 ; Purpose:    Fill a BSTR string with text using a series of mov DWORD/WORD/BYTE instructions.
 ;             It doesn't work with QWORDs.
@@ -945,7 +945,7 @@ FillStringB macro StrVar:req, Text:req
   ??StrSize = sizeof(WORD)*(??StrLen + 1) + sizeof(DWORD)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      FillStringW
 ; Purpose:    Fill a UNICODE string with text using a series of mov DWORD/WORD/BYTE
 ;             instructions.
@@ -975,7 +975,7 @@ FillStringW macro StrVar:req, Text:req
   ??StrSize = sizeof(WORD)*(??StrLen + 1)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      FillQuotedStringW
 ; Purpose:    Fill an WIDE quoted text using a series of mov DWORD/WORD/BYTE instructions.
 ;             It doesn't work with QWORDs.
@@ -1005,7 +1005,7 @@ FillQuotedStringW macro StrVar:req, QuotedText:vararg
   ??StrSize = sizeof(CHRW)*(??StrLen + 1)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
   FillString equ FillStringA
@@ -1017,7 +1017,7 @@ else
   .echo <FillString is undefined>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      FillTextA
 ; Purpose:    Fill memory with a sequence of ANSI characters using a series of mov DWORD/WORD/BYTE.
 ;             It doesn't work with QWORDs.
@@ -1050,7 +1050,7 @@ FillTextA macro StrVar:req, Text:req
   ??StrSize = ??StrLen
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      FillTextW
 ; Purpose:    Fill memory with a sequence of WIDE characters using a series of mov DWORD/WORD.
 ;             It doesn't work with QWORDs.
@@ -1078,7 +1078,7 @@ FillTextW macro StrVar:req, Text:req
   ??StrSize = sizeof(WORD)*??StrLen
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
   FillText equ FillTextA
@@ -1088,7 +1088,7 @@ else
   .echo <FillText is undefined>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DoesTextMatchA?
 ; Purpose:    Compare a sequence of ANSI characters with a given text using a series of
 ;             cmp DWORD/WORD/BYTE instructions.
@@ -1147,7 +1147,7 @@ $DoesTextMatchA? macro StrVar:req, Text:req
   exitm <ZERO?>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DoesTextMatchW?
 ; Purpose:    Compare a sequence of WIDE characters with a text using a series of
 ;             cmp DWORD/WORD instructions.
@@ -1196,7 +1196,7 @@ $DoesTextMatchW? macro StrVar:req, Text:req
   exitm <ZERO?>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
   DoesTextMatch? equ DoesTextMatchA?
@@ -1208,7 +1208,7 @@ else
   .echo <DoesTextMatch? is undefined>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DoesStringMatchA?
 ; Purpose:    Compare a string of ANSI characters with a text using a series of
 ;             cmp DWORD/WORD/BYTE instructions. The ZTC is included in the comparison.
@@ -1269,7 +1269,7 @@ $DoesStringMatchA? macro StrVar:req, Text:req
   exitm <ZERO?>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DoesStringMatchW?
 ; Purpose:    Compare a string of WIDE characters with a text using a series of
 ;             cmp DWORD/WORD instructions. The ZTC is included in the comparison.
@@ -1316,7 +1316,7 @@ $DoesStringMatchW? macro StrVar:req, Text:req
   exitm <ZERO?>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
   DoesStringMatch? equ DoesStringMatchA?
@@ -1328,7 +1328,7 @@ else
   .echo <DoesStringMatch? is undefined>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      WriteF
 ; Purpose:    Write a formated string to memory. If format includes format specifiers (subsequences
 ;             beginning with ¦), the additional arguments following format are formatted & inserted
@@ -2157,7 +2157,7 @@ WriteFW macro DstReg:req, Format:req, Args:vararg
   TARGET_STR_TYPE = $$TARGET_STR_TYPE
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      IsCharTypeA?
 ; Purpose:    Compare an ANSI character with a pedefined type of characters.
 ; Arguments:  Arg1: Character to be evaluated.
@@ -2220,7 +2220,7 @@ $IsCharTypeA? macro CHARA:req, CharType:req
   exitm <!ZERO?>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ($)Choose
 ; Purpose:    Choose returns a value from a list of choices based on an index value.
 ; Arguments:  Arg1: Index.
@@ -2308,7 +2308,7 @@ $ChooseAddr macro dArgs:vararg
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      (C/D)Real??
 ; Purpose:    Declare a named floating point value in the data/const memory segment.
 ; Arguments:  Arg1: Name of the floating point variable.
@@ -2356,7 +2356,7 @@ CReal10 macro Name, Value
   .SegRestore
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $CReal??
 ; Purpose:    Create in memory a REAL4 constant. Repeated declarations use the same memory location.
 ; Arguments:  Arg1: Value of the floating point variable.
@@ -2557,7 +2557,7 @@ $CReal10 macro Value
   exitm $$RealName
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $DReal??
 ; Purpose:    Declare a floating point variable as a vaiable.
 ; Arguments:  Arg1: Value of the floating point variable.
@@ -2584,7 +2584,7 @@ $DReal10 macro Value
   exitm <Name>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      sMax / $sMax
 ; Purpose:    Return the maximum of 2 signed values.
 ; Arguments:  Arg1: First signed word.
@@ -2616,7 +2616,7 @@ $sMax macro Var1:req, Var2:req, DstReg:=<xax>
   %exitm <$SubReg(DstReg, type(Var1))>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      sMin / $sMin
 ; Purpose:    Return the minimum of 2 signed values.
 ; Arguments:  Arg1: First signed word.
@@ -2648,7 +2648,7 @@ $sMin macro Var1:req, Var2:req, DstReg:=<xax>
   %exitm <$SubReg(DstReg, type(Var1))>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      uMax / $uMax
 ; Purpose:    Return the maximum of 2 values.
 ; Arguments:  Arg1: First word.
@@ -2680,7 +2680,7 @@ $uMax macro Var1:req, Var2:req, DstReg:=<xax>
   %exitm <$SubReg(DstReg, type(Var1))>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      uMin / $uMin
 ; Purpose:    Return the minimum of 2 values.
 ; Arguments:  Arg1: First value.
@@ -2712,7 +2712,7 @@ $uMin macro Var1:req, Var2:req, DstReg:=<xax>
   %exitm <$SubReg(DstReg, type(Var1))>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $uMini / uMini
 ; Purpose:    Return the smallest of 2 values.
 ; Arguments:  Arg1: Default rax = a, rcx = b
@@ -2736,7 +2736,7 @@ $uMini macro Reg1:=<xax>, Reg2:=<xcx>, AuxReg:=<xdx>
   exitm <Reg1>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $uMaxi / uMaxi
 ; Purpose:    Return the maximum of 2 values.
 ; Arguments:  Arg1: Default rax = a, rcx = b
@@ -2760,7 +2760,7 @@ $uMaxi macro Reg1:=<xax>, Reg2:=<xcx>, AuxReg:=<xdx>
   exitm <Reg1>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $sMaxi / sMaxi
 ; Purpose:    Return the maximum of 2 signed values.
 ; Arguments:  rax = a, rdx = b
@@ -2787,7 +2787,7 @@ $sMaxi macro Var1:req, Var2:req
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      uMiniMaxi
 ; Purpose:    Return the minimum and maximun of 2 values.
 ; Arguments:  Reg1, Reg2
@@ -2803,7 +2803,7 @@ uMiniMaxi macro Reg1:=<xax>, Reg2:=<xbx>, AuxReg1:=<xcx>, AuxReg2:=<xdx>
   sub Reg2, AuxReg1                                     ;;Reg2 = max(Reg1, Reg2)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      sMean / $sMean
 ; Purpose:    Compute (Reg1 + Reg2)/2 (signed values).
 ; Arguments:  Arg1: Reg1.
@@ -2834,7 +2834,7 @@ $sMean macro Reg1:=<xax>, Reg2:=<xcx>, AuxReg:=<xdx>
   exitm <Reg1>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LoadRegIfLessThan
 ; Purpose:    Compare Reg with a value and load it according to the result.
 ; Arguments:  Arg1: Register to be comparend.
@@ -2869,7 +2869,7 @@ LoadRegIfLessThan macro Reg:req, Than:req, Then:req, Otherwise:req, AuxReg:=<xdx
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      HiWord / $HiWord
 ; Purpose:    Retrieve the high WORD from a DWORD.
 ; Arguments:  Arg1: DWORD.
@@ -2890,7 +2890,7 @@ $HiWord macro Value, Reg:=<xax>
   exitm <Reg>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LoWord / $LoWord
 ; Purpose:    Retrieve the low WORD from a DWORD.
 ; Arguments:  Arg1: DWORD.
@@ -2908,7 +2908,7 @@ $LoWord macro Value, Reg:=<xax>
   exitm <Reg>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $addr
 ; Purpose:    Get the runtime address of the operand. Used in those cases where "addr" is not
 ;             allowed.
@@ -2920,7 +2920,7 @@ $addr macro Operand:req
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      PushArgsFor
 ; Purpose:    Push all arguments on stack in reverse order.
 ; Arguments:  Arg1: API name.
@@ -2938,7 +2938,7 @@ PushArgsFor macro ProcName:req, ArgList:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $RGB
 ; Purpose:    Calculate a RGB value of the specified R/G/B/Alpha arguments.
 ; Arguments:  Arg1: Red component.
@@ -2963,7 +2963,7 @@ $RGB macro bRed:req, bGreen:req, bBlue:req, bAlpha:=<0>
   exitm <256*(256*(256*bAlpha+bBlue)+bGreen)+bRed>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $BGR
 ; Purpose:    Calculate a RGB value of the specified B/G/R/Alpha arguments.
 ; Arguments:  Arg1: Blue component.
@@ -2988,7 +2988,7 @@ $BGR macro bBlue:req, bGreen:req, bRed:req, bAlpha:=<0>
   exitm <256*(256*(256*bAlpha+bRed)+bGreen)+bBlue>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      RGB2BGR
 ; Purpose:    Convert the color from RGB to BGR as it is usually stored in memory.
 ; Arguments:  Arg1: 32 bit register containeing the RGB/BRG color.
@@ -3002,7 +3002,7 @@ endm
 
 BGR2RGB equ RGB2BGR   ;This macro can also be used for the inverse conversion.
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Lower
 ; Purpose:    Convert a text symbol to lowercase.
 ; Arguments:  Arg1: String symbol.
@@ -3021,7 +3021,7 @@ $Lower macro SymTxt:req
   exitm $$LowerTxt
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Upper
 ; Purpose:    Convert a text symbol to uppercase.
 ; Arguments:  Arg1: Text symbol.
@@ -3040,7 +3040,7 @@ $Upper macro SymTxt:req
   exitm $$UpperTxt
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $IsFloat
 ; Purpose:    Check if a passed text is a floating point value.
 ; Arguments:  Arg1: Text representing a float.
@@ -3110,7 +3110,7 @@ $IsFloat macro Arg:req
   exitm <FALSE>
 endm
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:      f4push
 ;; Purpose:    Push a series of REAL4 values diretly onto stack.
 ;; Arguments:  Arg1: REAL4 values.
@@ -3123,7 +3123,7 @@ endm
 ;    endm
 ;endm
 ;
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:      f4mov
 ;; Purpose:    Perform a mov with a REAL4 value.
 ;; Arguments:  Arg1: move destination.
@@ -3135,7 +3135,7 @@ endm
 ;    REAL4 r4Value                                       ;;  the REAL4 value
 ;endm
 ;
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $invoke
 ; Purpose:    Accelerator macro that calls a procedure and returns its return value in eax.
 ; Arguments:  Arg1: Procedure name to be called.
@@ -3160,7 +3160,7 @@ endm
   exitm <eax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $call
 ; Purpose:    Call invocation that returns eax.
 ; Arguments:  Arg1: Procedure name.
@@ -3171,7 +3171,7 @@ $call macro Func:req
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $MakeWord
 ; Purpose:    Compute a WORD value.
 ; Arguments:  Arg1: High order BYTE.
@@ -3182,7 +3182,7 @@ $MakeWord macro bHigh:=<0>, bLow:=<0>
   exitm <((bHigh shl 8) or bLow)>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $MakeDWord
 ; Purpose:    Compute a DWORD value.
 ; Arguments:  Arg1: High order WORD.
@@ -3193,7 +3193,7 @@ $MakeDWord macro wHigh:=<0>, wLow:=<0>
   exitm <((wHigh shl 16) or wLow)>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      IsPositive
 ; Purpose:    Return TRUE if the signed integer argument is >= 0, otherwise FALSE.
 ; Arguments:  Arg1: SDWORD
@@ -3204,7 +3204,7 @@ IsPositive macro Arg:req
   shr Arg, 8*@WordSize - 1
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      IsNegative
 ; Purpose:    Return TRUE if the signed integer argument is < 0, otherwise FALSE.
 ; Arguments:  Arg1: SDWORD
@@ -3214,7 +3214,7 @@ IsNegative macro Arg:req
   shr Arg, 8*@WordSize - 1
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      MSB32
 ; Purpose:    Compute the most significant "1" bit in a DWORD.
 ; Arguments:  Arg1: Argument value in a register.
@@ -3239,7 +3239,7 @@ MSB32 macro Reg32:req, AuxReg:=<edx>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LSB32
 ; Purpose:    Compute the least significant "1" bit in a DWORD.
 ; Arguments:  Arg1: Argument value in a register.
@@ -3256,7 +3256,7 @@ LSB32 macro Reg32:req, AuxReg:=<edx>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      NLPo2
 ; Purpose:    Compute the Next Largest Power of 2 of a DWORD.
 ; Arguments:  Arg1: Argument value in a register.
@@ -3278,7 +3278,7 @@ NLPo2 macro Reg32:req, AuxReg:=<edx>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      PopulationCount32
 ; Purpose:    Count the number of "1"s in a DWORD.
 ; Arguments:  Arg1: Argument value in a register.
@@ -3312,7 +3312,7 @@ PopulationCount32 macro Reg32:req, AuxReg:=<edx>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      TZC32 Trailing Zero Count
 ; Purpose:    Count the number of trailing "0"s in a DWORD.
 ; Arguments:  Arg1: Argument value in a register.
@@ -3329,7 +3329,7 @@ TZC32 macro Reg32:req, AuxReg:=<edx>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ReverseBits32
 ; Purpose:    Reverse the bits in a DWORD.
 ; Arguments:  Arg1: Argument value in a register.
@@ -3375,7 +3375,7 @@ ReverseBits32 macro Reg32:req, AuxReg:=<edx>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ReverseBitsShort32
 ; Purpose:    Reverse the bits in a DWORD.
 ; Arguments:  Arg1: Input register value.
@@ -3393,7 +3393,7 @@ ReverseBitsShort32 macro Reg32In:req, Reg32Out:req
   ror Reg32Out, 1
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      IsInRange?
 ; Purpose:    Check if a specified value is in the range [Bot...Top].
 ; Arguments:  Arg1: Value (register)
@@ -3425,7 +3425,7 @@ $IsInRange? macro Arg:req, Bot:req, Top:req, AuxReg:=<xdx>
   exitm <ZERO?>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      IsNotBetween?
 ; Purpose:    Check if a specified value is in between the range [Bot...Top], excluding the limits.
 ; Arguments:  Arg1: Value (register)
@@ -3458,7 +3458,7 @@ $IsNotBetween? macro Arg:req, Bot:req, Top:req, AuxReg:=<xdx>
   exitm <ZERO?>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ClearLocals
 ; Purpose:    Clear all locals.
 ; Note:       Source from Edgar Harris (Donkey).
@@ -3475,7 +3475,7 @@ ClearLocals macro
   mov xdi, xdx                                          ;;Restore xdi
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ht
 ; Purpose:    Insert a hint BYTE (hint taken) for conditional jumps.
 ; Note:       Must be inserted immediately before the conditional jump.
@@ -3488,7 +3488,7 @@ ht macro
   db 3Eh
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      hnt
 ; Purpose:    Insert a hint BYTE (hint not taken) for conditional jumps.
 ; Note:       Must be inserted immediately before the conditional jump.
@@ -3497,7 +3497,7 @@ hnt macro
   db 2Eh
 endm
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:      PrologueEx/EpilogEx
 ;; Purpose:    Extended functionality for procedure Prolog and Epilog generation.
 ;; Arguments:  Arg1: ProcName contains the name of the procedure.
@@ -3650,7 +3650,7 @@ endm
 ;  endif
 ;endm
 ;
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:     StackProbe
 ;; Purpose:   Allow a procedure to safely use LOCAL variables with a total size of more than the
 ;;            PageSize, using an unrolled stack probing method.
@@ -3698,7 +3698,7 @@ endm
 ;  exitm %LocalBytes
 ;endm
 ;
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     _Pause_
 ; Purpose:   Emulate the pause instruction.
 ; Note:      http://siyobik.info/index.php?module=x86&id=232
@@ -3707,7 +3707,7 @@ _Pause_ macro
   db 0F3h, 090h
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      FillMemZero
 ; Purpose:    Fill a memory range with zeros.
 ; Arguments:  Arg1: Mem to be filled.
@@ -3735,7 +3735,7 @@ FillMemZero macro Var:req, ByteCount:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      FillMemByte
 ; Purpose:    Fill a memory range with a BYTE value.
 ; Arguments:  Arg1: Mem to be filled.
@@ -3760,7 +3760,7 @@ FillMemByte macro Var:req, ByteSize:req, ByteVal:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      FillMemWord
 ; Purpose:    Fill a memory range with a WORD value.
 ; Arguments:  Arg1: Mem to be filled.
@@ -3780,7 +3780,7 @@ FillMemWord macro Var:req, ByteSize:req, WordVal:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SaveFpuContext
 ; Purpose:    Save the FPU context that can be restored using LoadFpuContext. FPU is reinitialized.
 ; Arguments:  None.
@@ -3795,7 +3795,7 @@ SaveFpuContext macro FpuContext:= <>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LoadFpuContext
 ; Purpose:    Reload the FPU context that was stored using SaveFpuContext.
 ; Arguments:  None.
@@ -3810,7 +3810,7 @@ LoadFpuContext macro FpuContext:=<>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $SubWord
 ; Purpose:    Return a subword according to the requested size.
 ; Arguments:  Arg1: Word type (signed or unsigned).
@@ -3864,7 +3864,7 @@ $SubWord macro WordType:req, WordSize:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $SubReg
 ; Purpose:    Return a subregister according to the requested size.
 ; Arguments:  Arg1: Register name.
@@ -3918,7 +3918,7 @@ $SubReg macro Reg:req, RegSize:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $SubRegMM
 ; Purpose:    Return a mm subregister according to the requested size.
 ; Arguments:  Arg1: Register name.
@@ -3944,7 +3944,7 @@ $SubRegMM macro Reg:req, RegSize:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $ChrReg
 ; Purpose:    Return a subregister according to the CHR size.
 ; Arguments:  Arg1: Register name.
@@ -3958,7 +3958,7 @@ $ChrReg macro Reg:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $64, $32, $16, $8
 ; Purpose:    Return a subregister according to the destination size.
 ; Arguments:  Arg1: Register name.
@@ -3980,7 +3980,7 @@ $8 macro Reg:req
   %exitm <$SubReg(Reg, 1)>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      GetInterruptTicks
 ; Purpose:    Return the interrupt tick count since system start.
 ;             Interrupt ticks are triggered each 100 ns! The count is monotone.
@@ -4010,7 +4010,7 @@ GetInterruptTicks macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Log2
 ; Purpose:    Return the Log2 of a Number at compile time.
 ; Arguments:  Arg1: Input Number.
@@ -4029,7 +4029,7 @@ $Log2 macro Number:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      StackAlign
 ; Purpose:    Align down the stack to a specified boundary.
 ; Arguments:  Boundary in bytes.
@@ -4061,7 +4061,7 @@ else
   endm
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      StackRestore
 ; Purpose:    Restore the stack to the previous boundary.
 ; Arguments:  None.
@@ -4093,7 +4093,7 @@ else
   endm
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $CurSeg
 ; Purpose:    Returns the simplified current segment name.
 ; Arguments:  None.
@@ -4113,7 +4113,7 @@ $CurSeg  macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      EchoOpAttr
 ; Purpose:    Echo OpAttr value.
 ; Arguments:  None.
@@ -4176,7 +4176,7 @@ EchoOpAttr macro Value
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ANNOTATION
 ; Purpose:    Pass a hint to external tools.
 ; Arguments:  Hints, separated by commas.
@@ -4186,7 +4186,7 @@ endm
 ANNOTATION macro What:vararg
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $ToStr
 ; Purpose:    Used to echo a numeric symbol.
 ; Arguments:  Symbol name.
@@ -4196,7 +4196,7 @@ $ToStr macro Num
   exitm <Num>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $HexYY and variations
 ; Purpose:    Used to echo a numeric symbol in hexadecimal notation.
 ; Arguments:  Symbol name.
@@ -4234,7 +4234,7 @@ $Hex64Hi macro Num64
   exitm ??HexStr
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ?mov
 ; Purpose:    Compile mov instruction if TARGET_BITNESS = 32.
 ; Arguments:  Arg1: First mov.
@@ -4246,7 +4246,7 @@ if TARGET_BITNESS eq 32
 endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ??mov
 ; Purpose:    Compile mov instruction if TARGET_BITNESS = 64.
 ; Arguments:  Arg1: First mov.
@@ -4258,7 +4258,7 @@ endm
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LocReg
 ; Purpose:    Declares the use of a symbol as a register or as a local.
 ;             if TARGET_BITNESS eq 64, all occurences of the symbol are replaced by the register
@@ -4310,7 +4310,7 @@ LocReg macro ExpressionList:vararg
   endm
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $LocReg
 ; Purpose:    Replaces the Expression with the corresponding local or register.
 ; Arguments:  SymbolName declared with LocReg.
@@ -4331,7 +4331,7 @@ $LocReg macro SymbolName
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $LocReg32
 ; Purpose:    Replaces the Expression with the corresponding local or 32 bit register.
 ; Arguments:  SymbolName declared with LocReg.
@@ -4348,7 +4348,7 @@ $LocReg32 macro SymbolName
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ArgReg
 ; Purpose:    Declares the use of a symbol as a register or as an method argument argument.
 ;             If TARGET_BITNESS eq 64, all occurences of the symbol are replaced by the register
@@ -4387,7 +4387,7 @@ ArgReg macro ExpressionList:vararg
   endm
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $ArgReg
 ; Purpose:    Replaces the Expression with the corresponding argument or register.
 ; Arguments:  SymbolName.
@@ -4408,7 +4408,7 @@ $ArgReg macro SymbolName
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $ArgReg32
 ; Purpose:    Replaces the Expression with the corresponding argument or 32 bit register.
 ; Arguments:  SymbolName.
@@ -4425,7 +4425,7 @@ $ArgReg32 macro SymbolName
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      pushfx
 ; Purpose:    Compile pushfd or pushfq according to TARGET_BITNESS.
 ; Arguments:  None.
@@ -4436,7 +4436,7 @@ else
   pushfx equ <pushfq>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      popfx
 ; Purpose:    Compile popfd or popfq according to TARGET_BITNESS.
 ; Arguments:  None.
@@ -4447,7 +4447,7 @@ else
   popfx equ <popfq>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      pushaq
 ; Purpose:    Simile to pushad but for 64 bit. Order of pushed values equal to pushad.
 ; Arguments:  None.
@@ -4472,7 +4472,7 @@ pushaq macro
   push r15                                              ;; 0
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      popaq
 ; Purpose:    Simile to popaq but for 64 bit.
 ; Arguments:  None.
@@ -4496,7 +4496,7 @@ popaq macro
   pop rax
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      pushax
 ; Purpose:    Compile pushad or pushaq according to TARGET_BITNESS.
 ; Arguments:  None.
@@ -4507,7 +4507,7 @@ else
   pushax equ <pushaq>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      popax
 ; Purpose:    Compile popad or popaq according to TARGET_BITNESS.
 ; Arguments:  None.
@@ -4518,7 +4518,7 @@ else
   popax equ <popaq>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      stosx
 ; Purpose:    Compile stosd or stosq according to TARGET_BITNESS.
 ; Arguments:  None.
@@ -4529,7 +4529,7 @@ else
   stosx equ <stosq>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      stosc
 ; Purpose:    Compile stosb or stosw according to TARGET_STR_TYPE.
 ; Arguments:  None.
@@ -4540,7 +4540,7 @@ else
   stosc equ <stosw>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      movsc
 ; Purpose:    Compile movsb or movsw according to TARGET_STR_TYPE.
 ; Arguments:  None.
@@ -4551,7 +4551,7 @@ else
   movsc equ <movsw>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      scasc
 ; Purpose:    Compile scasb or scasw according to TARGET_STR_TYPE.
 ; Arguments:  None.
@@ -4562,7 +4562,7 @@ else
   scasc equ <scasw>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      lodsc
 ; Purpose:    Compile lodsb or lodsw according to TARGET_STR_TYPE.
 ; Arguments:  None.
@@ -4573,7 +4573,7 @@ else
   lodsc equ <lodsw>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      cmpsc
 ; Purpose:    Compile cmpsb or cmpsw according to TARGET_STR_TYPE.
 ; Arguments:  None.
@@ -4584,7 +4584,7 @@ else
   cmpsc equ <cmpsw>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      @Random
 ; Purpose:    Compile-time random number generator.
 ; Arguments:  Arg1: Range.
@@ -4599,7 +4599,7 @@ endif
   exitm %@CatStr(%(@RandSeed mod (Range)))
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      @Err
 ; Purpose:    Compile-time error generation.
 ; Arguments:  Arg1: Message
@@ -4610,7 +4610,7 @@ endm
 % .err Text
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      GetMemBSS
 ; Purpose:    Reserve a data block from the bss segment.
 ;             bss is equivalent to .data? and contains uninitialized static variables.
@@ -4641,7 +4641,7 @@ GetMemBSS macro DataSize:= <0>
   exitm <DataName>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Enum
 ; Purpose:    Implement the well known Enum C-functionality.
 ; Arguments:  Arg1: Enumeration start.
@@ -4656,7 +4656,7 @@ Enum macro Args, InitCount:=<0>
   endm
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Subroutine
 ; Purpose:    Implement a procedure into a procedure.
 ; Arguments:  Arg1: Subroutine name.
@@ -4673,7 +4673,7 @@ Subroutine macro SubName:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ExitSub
 ; Purpose:    Implement a return from a subroutine.
 ; Arguments:  None.

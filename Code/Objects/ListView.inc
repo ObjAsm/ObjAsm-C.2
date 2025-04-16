@@ -32,7 +32,7 @@ LVHDRFONTITALIC       equ     BIT01
 LVHDRFONTUNDERLINE    equ     BIT02
 LVHDRFONTSTRIKEOUT    equ     BIT03
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     ListView
 ; Purpose:    Implement a thin wrapper around the SysListView32 GDI control.
 
@@ -55,7 +55,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ListView.CheckItem
 ; Purpose:    Set the state of the items checkbox of the ListView control.
 ; Arguments:  Arg1: Item index.
@@ -77,7 +77,7 @@ Method ListView.CheckItem, uses xsi, dItemIndex:DWORD, dAction:DWORD
   invoke SendMessage, [xsi].hWnd, LVM_SETITEMSTATE, dItemIndex, addr LVI
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ListView.Done
 ; Purpose:    Finalize the ListView object.
 ; Arguments:  None.
@@ -92,7 +92,7 @@ Method ListView.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ListView.HeaderSetFontStyle
 ; Purpose:    Set the font style of the header of the ListView control.
 ; Arguments:  Arg1: Font style flags.
@@ -143,7 +143,7 @@ Method ListView.HeaderSetFontStyle, uses xsi, dFontStyle:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ListView.HeaderSetFlatStyle
 ; Purpose:    Set the flat style of the header of the ListView control.
 ; Arguments:  Arg1: TRUE/FALSE.
@@ -163,7 +163,7 @@ Method ListView.HeaderSetFlatStyle,, dFlatStyle:DWORD
   invoke SetWindowLongPtr, hHeader, GWL_STYLE, dStyle
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ListView.Init
 ; Purpose:    Initialize the ListView control.
 ; Arguments:  Arg1: -> Owner object.
@@ -197,7 +197,7 @@ Method ListView.Init, uses xbx xdi xsi, pOwner:POINTER, hParent:HWND, pDefStruc:
   Subclass ListView                                     ;Uses xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ListView.IsItemChecked
 ; Purpose:    Return the state of the items checkbox of the ListView control.
 ; Arguments:  Arg1: Item index.
@@ -213,7 +213,7 @@ Method ListView.IsItemChecked,, dItemIndex:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ListView.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -241,7 +241,7 @@ Method ListView.OnNotify, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ListView.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.

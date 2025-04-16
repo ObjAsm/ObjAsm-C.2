@@ -12,7 +12,7 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CreateCursorFromCompressedFileInRes
 ; Purpose:    Create a cursor from a compressed cursor file stored as RCDATA resource. 
 ;             Compression should be done using a Microsoft compression algorithm: XPRESS, XPRESS

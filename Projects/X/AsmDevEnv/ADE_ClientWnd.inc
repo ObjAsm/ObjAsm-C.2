@@ -10,7 +10,7 @@
 ; ClientWnd implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.Deserialize
 ; Purpose:    Restore serialized members to its original values.
 ; Arguments:  Arg1: -> DESER_INFO.
@@ -36,7 +36,7 @@ Method ClientWnd.Deserialize, uses xbx xsi, pDeserInfo:PDESER_INFO
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.Done
 ; Purpose:    Finalize the ClientWnd object.
 ; Arguments:  None.
@@ -44,10 +44,11 @@ MethodEnd
 
 Method ClientWnd.Done, uses xsi
   SetObject xsi
+  invoke DeleteObject, [xsi].hBackgroundBrush
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.Init
 ; Purpose:    Initialize the MdiCodeClientWnd object.
 ; Arguments:  Arg1: -> Owner object.
@@ -64,7 +65,7 @@ Method ClientWnd.Init, uses xsi, pOwner:POINTER
   invoke DragAcceptFiles, [xsi].hWnd, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.Load
 ; Purpose:    Load and initialize the ClientWnd instance from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -86,7 +87,7 @@ Method ClientWnd.Load, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDE
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.OnDropFiles
 ; Purpose:    Event procedure for WM_DROPFILES message.
 ; Arguments:  Arg1: First message parameter.
@@ -127,7 +128,7 @@ Method ClientWnd.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -140,7 +141,7 @@ Method ClientWnd.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, 1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -162,7 +163,7 @@ Method ClientWnd.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
                          WM_PAINT, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.Store
 ; Purpose:    Store ClientWnd instance in a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -190,7 +191,7 @@ Method ClientWnd.Store, uses xbx xsi, pStream:$ObjPtr(Stream)
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.UpdateEditors
 ; Purpose:    Update all open Editor instances.
 ; Arguments:  None.
@@ -230,7 +231,7 @@ Method ClientWnd.UpdateEditors, uses xsi
   invoke EnumChildWindows, [xsi].hWnd, offset UpdateEditor, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.WindowProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.

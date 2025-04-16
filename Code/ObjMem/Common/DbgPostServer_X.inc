@@ -16,7 +16,7 @@ INTERNET_PROTOCOL_VERSION   equ 4
 
 % include &IncPath&Windows\wininet.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgPostServer
 ; Purpose:    Send a POST request to the DebugCenter Server
 ; Arguments:  Arg1: -> Data.

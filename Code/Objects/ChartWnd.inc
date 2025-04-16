@@ -13,7 +13,7 @@
 ;    ChartWnd implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.Calc
 ; Purpose:    Compute internal values of a scale.
 ; Arguments:  Arg1: Output device context.
@@ -384,7 +384,7 @@ Method ChartWnd.Calc, uses xbx xdi xsi, hDC:HWND, pOutRect:PRECT
   invoke SelectObject, hDC, hPrevFont
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.CalcScaleDivs
 ; Purpose:    Compute major and minor scale divisions and scale decimal digits.
 ; Arguments:  Arg1: -> Scale data.
@@ -498,7 +498,7 @@ Method ChartWnd.CalcScaleDivs, uses xbx, pScaleData:PCHT_SCALE_DATA
   assume xbx:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.Dispatch
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Window handle.
@@ -513,7 +513,7 @@ Method ChartWnd.Dispatch, uses xsi, hWnd:HWND, uMsg:DWORD, wParam:WPARAM, lParam
   DispatchEvent <DefWindowProc, hWnd>                   ;xsi -> Object instance
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.Done
 ; Purpose:    Finalize the ChartWnd object.
 ; Arguments:  None.
@@ -550,7 +550,7 @@ Method ChartWnd.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.DrawFrame
 ; Purpose:    Draw the chart frame.
 ; Arguments:  Arg1: Output device context.
@@ -604,7 +604,7 @@ Method ChartWnd.DrawFrame, uses xdi xsi, hDC:HDC
   invoke DeleteObject, $invoke(SelectObject, hDC, hPrevPen)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.DrawScaleX
 ; Purpose:    Draw the chart X-Scale.
 ; Arguments:  Arg1: Output device context.
@@ -938,7 +938,7 @@ Method ChartWnd.DrawScaleX, uses xbx xdi xsi, hDC:HDC
   invoke SetBkMode, hDC, dPrevBkMode
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.DrawScaleY1
 ; Purpose:    Draw the chart Y1-Axis.
 ; Arguments:  Arg1: Output device context.
@@ -1201,7 +1201,7 @@ Method ChartWnd.DrawScaleY1, uses xbx xdi xsi, hDC:HDC
   invoke SetBkMode, hDC, dPrevBkMode
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.DrawScaleY2
 ; Purpose:    Draw the chart Y2-Axis.
 ; Arguments:  Arg1: Output device context.
@@ -1462,7 +1462,7 @@ Method ChartWnd.DrawScaleY2, uses xbx xdi xsi, hDC:HDC
   invoke SetBkMode, hDC, dPrevBkMode
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.Init
 ; Purpose:    Initialize the ChartWnd object.
 ; Arguments:  Arg1: -> Owner object.
@@ -1487,7 +1487,7 @@ Method ChartWnd.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PDEF
   ACall xsi.Init, pOwner, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.Load
 ; Purpose:    Load buffer data from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -1514,7 +1514,7 @@ Method ChartWnd.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   OCall [xsi].Data::Collection.Load, pStream, pDeserInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.OnButtonDblClk
 ; Purpose:    Event procedure for WM_LBUTTONDBLCLK and WM_RBUTTONDBLCLK messages.
 ; Arguments:  Arg1: First message parameter.
@@ -1618,7 +1618,7 @@ endif
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.OnButtonDown
 ; Purpose:    Event procedure for WM_LBUTTONDOWN and WM_RBUTTONDOWN messages.
 ; Arguments:  Arg1: First message parameter.
@@ -1659,7 +1659,7 @@ Method ChartWnd.OnButtonDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.OnButtonUp
 ; Purpose:    Event procedure for WM_LBUTTONUP and WM_RBUTTONUP messages.
 ; Arguments:  Arg1: First message parameter.
@@ -1680,7 +1680,7 @@ Method ChartWnd.OnButtonUp,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1745,7 +1745,7 @@ Method ChartWnd.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.OnGesture
 ; Purpose:    Event procedure for WM_GESTURE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1928,7 +1928,7 @@ Method ChartWnd.OnGesture, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.OnMouseMove
 ; Purpose:    Event procedure for WM_MOUSEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -2173,7 +2173,7 @@ Method ChartWnd.OnMouseMove, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.OnMouseWheel
 ; Purpose:    Event procedure for WM_MOUSEWHEEL message.
 ; Arguments:  Arg1: First message parameter.
@@ -2258,7 +2258,7 @@ Method ChartWnd.OnMouseWheel, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -2283,7 +2283,7 @@ Method ChartWnd.OnNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -2302,7 +2302,7 @@ Method ChartWnd.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.Refresh
 ; Purpose:    Refresh the plot object.
 ; Arguments:  None.
@@ -2318,7 +2318,7 @@ Method ChartWnd.Refresh, uses xsi
   invoke ReleaseDC, [xsi].hWnd, hDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.Show
 ; Purpose:    Draw the ChartWnd object.
 ; Arguments:  Arg1: DC handle.
@@ -2514,7 +2514,7 @@ Method ChartWnd.Show, uses xbx xdi xsi, hDC:HDC, pRect:PRECT
   invoke DeleteDC, xdi                                        ;Release memory DC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.ShowSetupDlg
 ; Purpose:    Displays the chart setup dialog.
 ; Arguments:  Arg1: Dialog popup X position on screen.
@@ -2534,7 +2534,7 @@ Method ChartWnd.ShowSetupDlg, uses xsi, sdPosX:SDWORD, sdPosY:SDWORD, sdSelEleme
   OCall SetupDlg::ChartSetup.Done
 MethodEnd
 endif
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.Store
 ; Purpose:    Store buffer data to a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -2561,7 +2561,7 @@ Method ChartWnd.Store, uses xsi, pStream:$ObjPtr(Stream)
   OCall [xsi].Data::Collection.Store, pStream
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -2586,7 +2586,7 @@ Method ChartWnd.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartWnd.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.

@@ -12,7 +12,7 @@
 
 externdef HexCharTableA:CHRA
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  qword2hexA
 ; Purpose:    Convert a QWORD to its hexadecimal ANSI string representation.
 ; Arguments:  Arg1: -> Destination ANSI string buffer.

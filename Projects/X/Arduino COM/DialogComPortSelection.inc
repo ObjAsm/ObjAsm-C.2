@@ -32,7 +32,7 @@ COMPORT_SETUP ends
 PCOMPORT_SETUP typedef ptr COMPORT_SETUP
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DialogComPortSelection
 ; Purpose:    Custom Setup dialog.
 
@@ -55,7 +55,7 @@ ObjectEnd
 ;    DialogComPortSelection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogComPortSelection.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -77,7 +77,7 @@ Method DialogComPortSelection.CtlsGet, uses xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogComPortSelection.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -120,7 +120,7 @@ Method DialogComPortSelection.CtlsSet, uses xbx xdi xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogComPortSelection.Done
 ; Purpose:    Finalize the DialogComPortSelection object.
 ; Arguments:  None.
@@ -132,7 +132,7 @@ Method DialogComPortSelection.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogComPortSelection.Init
 ; Purpose:    Initialaize a DialogComPortSelection object.
 ; Arguments:  Arg1: -> Owner object.
@@ -151,7 +151,7 @@ Method DialogComPortSelection.Init, uses xsi, pOwner:POINTER, hParent:HWND, \
   mov [xsi].dNameCount, ecx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogComPortSelection.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.

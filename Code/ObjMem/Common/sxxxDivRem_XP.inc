@@ -13,7 +13,7 @@ USE_OVERFLOW_FLAG equ 1
 DIV_SIGN  equ 1
 REM_SIGN  equ 2
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  syooDivRem / soqqDivRem
 ; Purpose:    Calculate a signed extended precision division, emulating the idiv x86 instr.
 ;             (256/128 bit) Dividend divided by (128/64 bit) Divisor = (128/64 bit) Quotient. 

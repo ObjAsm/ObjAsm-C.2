@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsHardwareFeaturePresent
 ; Purpose:    Check if a CPU hardware feature is present on the system.
 ; Arguments:  Arg1: CPUID feature ID.

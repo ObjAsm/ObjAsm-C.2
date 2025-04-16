@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Check1
 ; Purpose:    Perform a check on the Database. Count number of records using "skip +1".
 ; Arguments:  None.
@@ -60,7 +60,7 @@ Method Application.Check1, uses xbx xdi xsi r12
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Check2
 ; Purpose:    Perform a check on the Database. Loop through every record using seek and
 ;             verify the result.
@@ -117,7 +117,7 @@ Method Application.Check2, uses xbx xdi xsi
   xor eax, eax                                      ;eax = FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Check3
 ; Purpose:    Perform a check on the Database. Check if the index file is properly sorted.
 ; Arguments:  None.
@@ -168,7 +168,7 @@ Method Application.Check3, uses xbx xdi xsi r12 r13
   xor eax, eax                                      ;eax = FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Check4
 ; Purpose:    Perform a check on the Database. Delete each item from the index.
 ; Arguments:  None.
@@ -197,7 +197,7 @@ Method Application.Check4, uses xbx xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Check5
 ; Purpose:    Perform a check on the Database. Delete each item from the index.
 ; Arguments:  None.
@@ -240,7 +240,7 @@ Method Application.Check5, uses xbx xdi xsi
   xor eax, eax                                      ;eax = FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Check6
 ; Purpose:    Insert an all items of the database.
 ; Arguments:  None.
@@ -295,7 +295,7 @@ Method Application.Check6, uses xbx xdi xsi
   OCall [xsi].StatusBar::Statusbar.SetPartText, 2, $OfsCStr("Test failed"), SBT_SUNKEN
   xor eax, eax                                      ;eax = FALSE
 MethodEnd
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Check7
 ; Purpose:    Displays database objects.
 ; Arguments:  None.
@@ -320,7 +320,7 @@ Method Application.Check7, uses xbx xdi xsi
   xor eax, eax                                      ;eax = FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Check8
 ; Purpose:    Perform a check on the Database. Insert an item.
 ; Arguments:  None.
@@ -475,7 +475,7 @@ Method Application.Check8, uses xbx xdi xsi r12 r13 r14 r15
   xor eax, eax                                      ;eax = FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Check9
 ; Purpose:    Perform a check on the Database index.
 ; Arguments:  None.
@@ -519,7 +519,7 @@ Method Application.Check9, uses xbx xdi xsi
   xor eax, eax                                      ;eax = FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ListNDX
 ; Purpose:    Outputs the index blocks on DebugCenter.
 ; Arguments:  None.

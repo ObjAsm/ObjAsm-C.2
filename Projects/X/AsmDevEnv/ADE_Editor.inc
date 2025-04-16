@@ -18,7 +18,7 @@ EIF_CARET_LOCKED            equ   BIT04
 ; Editor implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.ClpBrdDelete
 ; Purpose:    Clipboard delete opration.
 ; Arguments:  None.
@@ -43,7 +43,7 @@ Method Editor.ClpBrdDelete, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.ClpBrdCopy
 ; Purpose:    Clipboard copy opration.
 ; Arguments:  None.
@@ -64,7 +64,7 @@ Method Editor.ClpBrdCopy, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.ClpBrdCut
 ; Purpose:    Clipboard cut opration.
 ; Arguments:  None.
@@ -89,7 +89,7 @@ Method Editor.ClpBrdCut, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.ClpBrdPaste
 ; Purpose:    Clipboard paste opration.
 ; Arguments:  None.
@@ -117,64 +117,7 @@ Method Editor.ClpBrdPaste, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
-; Method:     Editor.ClpBrdSetBtns
-; Purpose:    Set the cut, copy & paste clipboard buttons.
-; Arguments:  None.
-; Return:     Nothing.
-
-Method Editor.ClpBrdSetBtns, uses xbx xdi xsi
-  local hMenu:HMENU, dActivate:DWORD
-
-  SetObject xsi
-  mov xcx, [xsi].pOwner
-  mov xdi, [xcx].$Obj(ClientWnd).pOwner
-  mov hMenu, $invoke(GetMenu, [xdi].$Obj(Application).hWnd)   ;Get the current menu
-  .if [xsi].SelectionRange.pBegSelInfo == NULL || [xsi].SelectionRange.pEndSelInfo == NULL
-    lea xbx, [xdi].$Obj(Application).TbEdit
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, FALSE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, FALSE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_DELETE, FALSE
-    mov xbx, hMenu
-    invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_GRAYED
-    invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_GRAYED
-    invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_GRAYED
-    mov xbx, $ObjTmpl(Application).hMenuContextEditor
-    invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_GRAYED
-    invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_GRAYED
-    invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_GRAYED
-  .else
-    lea xbx, [xdi].$Obj(Application).TbEdit
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, TRUE
-    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_DELETE, TRUE
-    mov xbx, hMenu
-    invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_ENABLED
-    mov xbx, $ObjTmpl(Application).hMenuContextEditor
-    invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_ENABLED
-    invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_ENABLED
-  .endif
-
-  mov dActivate, TRUE
-  .if !$invoke(IsClipboardFormatAvailable, CF_TEXT)
-    dec dActivate
-  .endif
-
-  lea xbx, [xdi].$Obj(Application).TbEdit
-  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_PASTE, dActivate
-  .if dActivate
-    mov ebx, MF_BYCOMMAND or MF_ENABLED
-  .else
-    mov ebx, MF_BYCOMMAND or MF_GRAYED
-  .endif
-  invoke EnableMenuItem, hMenu, IDM_EDIT_PASTE, ebx
-  invoke EnableMenuItem, [xdi].$Obj(Application).hMenuContextEditor, IDM_EDIT_PASTE, ebx
-MethodEnd
-
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.Done
 ; Purpose:    Finalize the Editor object.
 ; Arguments:  None.
@@ -182,9 +125,21 @@ MethodEnd
 
 Method Editor.Done, uses xbx xdi xsi
   SetObject xsi
+
+  DbgText "Editor.Done"
+  ;Destroy all lines
+  mov xcx, [xsi].LinesHead.pFirstMember
+  .while xcx != NULL
+    sub xcx, offset $Obj(EditorLine).LineLink
+    mov xdi, [xcx].$Obj(EditorLine).LineLink.pLinkFwrd
+    Kill xcx::EditorLine.Done
+    mov xcx, xdi
+  .endw
+
+  ;Free resources
   mov xdi, [xsi].pOwner
   mov xbx, [xdi].$Obj(ClientWnd).pOwner
-
+  OCall [xsi].Actions::ActionCollection.Done
   OCall [xsi].Snapper::Magnetism.Done
   OCall [xsi].EditorDisplays::Collection.Done
   ACall xsi.Done
@@ -198,7 +153,7 @@ Method Editor.Done, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.FindStr
 ; Purpose:    Search a string from a starting location to an ending location.
 ;             Select it and update the stating location for the next search.
@@ -351,9 +306,9 @@ Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, p
           add sdVisLineScrollCount, eax
           mov eax, [xcx].$Obj(EditorView).dLineMaxFullVis
           dec eax
-          m2m [xcx].$Obj(EditorView).sdCaretVisLineOffset, eax 
+          m2m [xcx].$Obj(EditorView).sdCaretVisLineOffset, eax
         .endif
-        
+
         .if sdVisLineScrollCount < 0
           neg sdVisLineScrollCount
           OCall [xsi].pFocusedView::EditorView.ScrollVisPageUp, sdVisLineScrollCount
@@ -373,9 +328,9 @@ Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, p
           add sdVisLineScrollCount, eax
           mov eax, [xcx].$Obj(EditorView).dLineMaxFullVis
           dec eax
-          m2m [xcx].$Obj(EditorView).sdCaretVisLineOffset, eax 
+          m2m [xcx].$Obj(EditorView).sdCaretVisLineOffset, eax
         .endif
-        
+
         .if sdVisLineScrollCount < 0
           neg sdVisLineScrollCount
           OCall [xsi].pFocusedView::EditorView.ScrollVisPageUp, sdVisLineScrollCount
@@ -409,7 +364,7 @@ Method Editor.FindStr, uses xbx xdi xsi, pSrchStr:PSTRING, pSrchBeg:PLOCATION, p
   mov eax, dRetVal
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.InformDeletionOf
 ; Purpose:    Inform all Views that a specific lines was deleted.
 ; Arguments:  Arg1: Line number of Arg1.
@@ -422,7 +377,7 @@ Method Editor.InformDeletionOf, uses xbx xsi, dLineNumber:DWORD
   .ColNext
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.InformInsertionOf
 ; Purpose:    Inform all Views that a specific lines was inserted.
 ; Arguments:  Arg1: Line number of Arg1.
@@ -435,7 +390,7 @@ Method Editor.InformInsertionOf, uses xbx xsi, dLineNumber:DWORD
   .ColNext
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.Init
 ; Purpose:    Initialize the Editor object.
 ; Arguments:  Arg1: -> Owner object.
@@ -444,7 +399,7 @@ MethodEnd
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorResources), pFileName:PSTRINGW
-  local ClientRect:RECT, cBuffer[MAX_PATH]:CHR
+  local cBuffer[MAX_PATH]:CHR
 
   SetObject xsi
   ACall xsi.Init, pOwner                                ;hWnd is set in WndProc
@@ -455,7 +410,7 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
     BitSet [xsi].dFlags, EIF_NEW_FILE or EIF_DIRTY
     ;Insert an empty line
     mov xbx, $New(EditorLine)
-    lea xcx, [xsi].LinkedListHead
+    lea xcx, [xsi].LinesHead
     lea xdx, [xbx].$Obj(EditorLine).LineLink
     LDLL_InsertLast xcx, xdx, xax
     OCall xbx::EditorLine.Init, xsi
@@ -489,20 +444,6 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
       invoke DrawMenuBar, [xbx].$Obj(Application).hWnd  ;Redraw the new menu bar
     .endif
 
-    OCall [xsi].EditorDisplays::Collection.Init, xsi, 2, 2, COL_MAX_CAPACITY
-    invoke GetClientRect, [xsi].hWnd, addr ClientRect
-
-    ;Create a EditorDisplay instance
-    New EditorDisplay
-    .if xax != NULL
-      mov xbx, xax
-      OCall [xsi].EditorDisplays::Collection.Insert, xbx
-      OCall xbx::EditorDisplay.Init, xsi, addr ClientRect, [xsi].pResources
-    .endif
-
-    ;Install Magnetism
-    OCall [xsi].Snapper::Magnetism.Init, xsi, [xsi].hWnd, 10
-
     invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
     invoke SetFocus, [xbx].$Obj(EditorDisplay).View.hWnd
     mov eax, TRUE
@@ -514,32 +455,44 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.LineNew
 ; Purpose:    Create a new EditorLine and adds it to the end.
 ; Arguments:  Arg1: Character buffer size not including the ZTC.
+;             Arg2: Log ACTION flag.
 ; Return:     xax -> EditorLine or NULL if failed.
 
-Method Editor.LineNew, uses xbx xsi, dCharCapacity:DWORD
+Method Editor.LineNew, uses xbx xdi xsi, dCharCapacity:DWORD, dLogAction:DWORD
   SetObject xsi
   New EditorLine
   .if xax != NULL
-    mov xbx, xax
-    lea xcx, [xsi].LinkedListHead
-    lea xdx, [xbx].$Obj(EditorLine).LineLink
+    mov xdi, xax
+    lea xcx, [xsi].LinesHead
+    lea xdx, [xdi].$Obj(EditorLine).LineLink
     LDLL_InsertLast xcx, xdx, xax
-    OCall xbx::EditorLine.Init, xsi
-    OCall xbx::EditorLine.BufferResize, dCharCapacity
+    OCall xdi::EditorLine.Init, xsi
+    OCall xdi::EditorLine.BufferResize, dCharCapacity
     .if xax == NULL
-      Destroy xbx
+      Destroy xdi
       xor eax, eax
     .else
-      mov xax, xbx
+      ;Keep track of the change
+      .if dLogAction != FALSE
+        MemAlloc sizeof(ACTION)
+        .if xax != NULL
+          mov xbx, xax
+          mov [xbx].ACTION.pEditorLine, xdi
+          mov [xbx].ACTION.dAction, AAT_INSERTLINE
+          mov [xbx].ACTION.dLineNumber, 0
+        .endif
+        OCall [xsi].Actions::ActionCollection.Insert, xbx
+      .endif
+      mov xax, xdi
     .endif
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.Load
 ; Purpose:    Load and initialize the streamable instance from a stream object. Descendant objects
 ;             should redefine this method and load new members.
@@ -563,7 +516,98 @@ Method Editor.Load, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER
   invoke SetWindowPlacement, [xsi].hWnd, addr WP
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
+; Method:     Editor.ManageEditCmds
+; Purpose:    Set the state of the Edit related buttons and menu items like the
+;             cut, copy & paste clipboard buttons.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method Editor.ManageEditCmds, uses xbx xdi xsi
+  local hMenu:HMENU, dActivate:DWORD
+
+  SetObject xsi
+  mov xcx, [xsi].pOwner
+  mov xdi, [xcx].$Obj(ClientWnd).pOwner
+  mov hMenu, $invoke(GetMenu, [xdi].$Obj(Application).hWnd)   ;Get the current menu
+  .if [xsi].SelectionRange.pBegSelInfo == NULL || [xsi].SelectionRange.pEndSelInfo == NULL
+    lea xbx, [xdi].$Obj(Application).TbEdit
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_DELETE, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_INDENT, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_OUTDENT, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COMMENT, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_UNCOMMENT, FALSE
+    mov xbx, hMenu
+    invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_INDENT, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_OUTDENT, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_COMMENT, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_UNCOMMENT, MF_BYCOMMAND or MF_GRAYED
+    mov xbx, $ObjTmpl(Application).hMenuContextEditor
+    invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_GRAYED
+  .else
+    lea xbx, [xdi].$Obj(Application).TbEdit
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_CUT, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COPY, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_DELETE, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_INDENT, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_OUTDENT, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_COMMENT, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_UNCOMMENT, TRUE
+    mov xbx, hMenu
+    invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_INDENT, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_OUTDENT, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_COMMENT, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_UNCOMMENT, MF_BYCOMMAND or MF_ENABLED
+    mov xbx, $ObjTmpl(Application).hMenuContextEditor
+    invoke EnableMenuItem, xbx, IDM_EDIT_CUT, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_COPY, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_DELETE, MF_BYCOMMAND or MF_ENABLED
+  .endif
+
+  ;Paste command
+  mov dActivate, TRUE
+  .if !$invoke(IsClipboardFormatAvailable, CF_TEXT)
+    dec dActivate
+  .endif
+
+  lea xbx, [xdi].$Obj(Application).TbEdit
+  invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_PASTE, dActivate
+  .if dActivate
+    mov ebx, MF_BYCOMMAND or MF_ENABLED
+  .else
+    mov ebx, MF_BYCOMMAND or MF_GRAYED
+  .endif
+  invoke EnableMenuItem, hMenu, IDM_EDIT_PASTE, ebx
+  invoke EnableMenuItem, [xdi].$Obj(Application).hMenuContextEditor, IDM_EDIT_PASTE, ebx
+
+  .if [xsi].Actions.dCount == 0
+    lea xbx, [xdi].$Obj(Application).TbEdit
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_UNDO, FALSE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_REDO, FALSE
+    mov xbx, hMenu
+    invoke EnableMenuItem, xbx, IDM_EDIT_UNDO, MF_BYCOMMAND or MF_GRAYED
+    invoke EnableMenuItem, xbx, IDM_EDIT_REDO, MF_BYCOMMAND or MF_GRAYED
+  .else
+    lea xbx, [xdi].$Obj(Application).TbEdit
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_UNDO, TRUE
+    invoke SendMessage, [xbx].$Obj(Toolbar).hWnd, TB_ENABLEBUTTON, IDM_EDIT_REDO, TRUE
+    mov xbx, hMenu
+    invoke EnableMenuItem, xbx, IDM_EDIT_UNDO, MF_BYCOMMAND or MF_ENABLED
+    invoke EnableMenuItem, xbx, IDM_EDIT_REDO, MF_BYCOMMAND or MF_ENABLED
+  .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
@@ -583,7 +627,41 @@ Method Editor.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
+; Method:     Editor.OnClose
+; Purpose:    Event procedure for WM_CREATE message.
+; Arguments:  Arg1: First message parameter.
+;             Arg2: Second message parameter.
+; Return:     eax = Zero if handled.
+
+Method Editor.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
+  local ClientRect:RECT
+
+  ANNOTATION use:wParam lParam
+
+  SetObject xsi
+;  DbgText "Editor.OnCreate"
+
+  OCall [xsi].EditorDisplays::Collection.Init, xsi, 2, 2, COL_MAX_CAPACITY
+  invoke GetClientRect, [xsi].hWnd, addr ClientRect
+
+  ;Create a EditorDisplay instance
+  New EditorDisplay
+  .if xax != NULL
+    mov xbx, xax
+    OCall [xsi].EditorDisplays::Collection.Insert, xbx
+    OCall xbx::EditorDisplay.Init, xsi, addr ClientRect, [xsi].pResources
+  .endif
+
+  ;Install Magnetism
+  OCall [xsi].Snapper::Magnetism.Init, xsi, [xsi].hWnd, 10
+
+  OCall [xsi].Actions::ActionCollection.Init, xsi, 100, 100, COL_MAX_CAPACITY
+
+  invoke DefWindowProc, [xsi].hWnd, WM_CREATE, wParam, lParam
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.OnEnterSizeMove
 ; Purpose:    Event procedure for WM_ENTERSIZEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -601,7 +679,7 @@ Method Editor.OnEnterSizeMove, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.OnExitSizeMove
 ; Purpose:    Event procedure for WM_EXITSIZEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -619,7 +697,7 @@ Method Editor.OnExitSizeMove, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.OnSetFocus
 ; Purpose:    Event procedure for WM_SETFOCUS message.
 ; Arguments:  Arg1: First message parameter.
@@ -638,7 +716,7 @@ Method Editor.OnSetFocus,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter. wParam = SIZE_xxx
@@ -665,12 +743,12 @@ Method Editor.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefMDIChildProc, [xsi].hWnd, WM_SIZE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.Open
 ; Purpose:    Open a code file.
 ; Arguments:  Arg1: -> FullFileName.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
-; Note:       Statusbar is updated when the new child window is activated. 
+; Note:       Statusbar is updated when the new child window is activated.
 
 Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
   local hFile:HANDLE, dFileSize:DWORD, dBytesRead:DWORD, pFileBuffer:POINTER, pDataBegin:POINTER
@@ -821,7 +899,7 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
           .endif
           mov dFileLineLength, eax                      ;Pessimistic value since UTF-8 chars are larger
 
-          OCall xsi.LineNew, dFileLineLength            ;Not including the ZTC.
+          OCall xsi.LineNew, dFileLineLength, FALSE     ;Not including the ZTC.
           .if xax == NULL
             DbgText "Failed to allocate a new EditorLine"
             .break
@@ -875,7 +953,7 @@ Method Editor.Open, uses xbx xdi xsi, pFullFileName:PSTRINGW
   mov eax, dResult
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.Print
 ; Purpose:    Output the editor content to the printer.
 ; Arguments:  None.
@@ -1017,7 +1095,7 @@ Method Editor.Print, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CBTProc
 ; Purpose:    Customization procedure using SetWindowsHookEx.
 ; Arguments:  Arg1: Hook code.
@@ -1061,7 +1139,23 @@ CBTProc proc uses xbx dCode:DWORD, wParam:WPARAM, lParam:LPARAM
   ret
 CBTProc endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
+; Method:     EditorLine.Redo
+; Purpose:    Redo action.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method Editor.Redo, uses xsi
+  SetObject xsi
+  OCall [xsi].Actions::ActionCollection.GetRedoAction
+  .if xax != NULL
+    OCall [xax].ACTION.pEditorLine::EditorLine.Redo, xax
+    OCall xsi.ManageEditCmds
+    invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
+  .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.Save
 ; Purpose:    Save the editor content to a file.
 ; Arguments:  None.
@@ -1098,7 +1192,7 @@ Method Editor.Save, uses xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.SaveAs
 ; Purpose:    Save the editor content to a file.
 ; Arguments:  None.
@@ -1156,7 +1250,7 @@ Method Editor.SaveAs, uses xbx xsi
   mov eax, dResult
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.SaveTo
 ; Purpose:    Save the editor content to a given FileName.
 ; Arguments:  Arg1: -> FullFileName.
@@ -1192,7 +1286,7 @@ Method Editor.SaveTo, uses xbx xdi xsi, pFullFileName:PSTRING
         MemAlloc eax
         .if xax != NULL
           mov pMemBuffer, xax
-          mov xbx, [xsi].LinkedListHead.pFirstMember
+          mov xbx, [xsi].LinesHead.pFirstMember
 
           ;Start looping
           .while xbx != NULL
@@ -1289,10 +1383,7 @@ Method Editor.SaveTo, uses xbx xdi xsi, pFullFileName:PSTRING
     .endif
 
     .if dResult != FALSE
-      ;Update all Views of this editor
-      .ColForEach [xsi].EditorDisplays, ebx
-        invoke RedrawWindow, [xax].$Obj(EditorDisplay).hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
-      .ColNext
+      invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
     .endif
   .else
     mov dResult, TRUE
@@ -1302,7 +1393,7 @@ Method Editor.SaveTo, uses xbx xdi xsi, pFullFileName:PSTRING
   mov eax, dResult
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.SelectAll
 ; Purpose:    Select all lines.
 ; Arguments:  None.
@@ -1313,14 +1404,14 @@ Method Editor.SelectAll, uses xsi
   SetObject xsi
   xor eax, eax
   .ifBitClr [xsi].dFlags, EIF_BLOCK_MODE
-    mov xcx, [xsi].LinkedListHead.pFirstMember
+    mov xcx, [xsi].LinesHead.pFirstMember
     .if xcx != NULL
       lea xdx, [xcx - offset $Obj(EditorLine).LineLink]
       mov [xsi].SelectionFst.pEditorLine, xdx
       mov [xsi].SelectionFst.dCharIndex, 0
       mov [xsi].SelectionFst.dLineNumber, 1
 
-      mov xcx, [xsi].LinkedListHead.pLastMember
+      mov xcx, [xsi].LinesHead.pLastMember
       lea xdx, [xcx - offset $Obj(EditorLine).LineLink]
       mov [xsi].SelectionLst.pEditorLine, xdx
       mov eax, [xdx].$Obj(EditorLine).dLength
@@ -1334,7 +1425,7 @@ Method Editor.SelectAll, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.SelectionDelete
 ; Purpose:    Delete selection from all lines.
 ; Arguments:  None.
@@ -1374,12 +1465,12 @@ Method Editor.SelectionDelete, uses xbx xdi xsi
           .if eax == [xbx].$Obj(EditorLine).dLength
             ;Delete the line completely
             m2m pNextMember, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd, xax  ;Goto next member
-            OCall xbx::EditorLine.LineDelete, dLineNumber          ;§§ move into he Undo buffer
+            OCall xbx::EditorLine.LineDelete, dLineNumber, TRUE
             jmp @F                                      ;Don't inc LineNumber
           .endif
         .endif
       .endif
-      OCall xbx::EditorLine.CharDelete, edx, eax
+      OCall xbx::EditorLine.CharDelete, edx, eax, TRUE
       OCall xbx::EditorLine.SelectionReset
       m2m pNextMember, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd, xax  ;Goto next member
       inc dLineNumber
@@ -1392,7 +1483,7 @@ Method Editor.SelectionDelete, uses xbx xdi xsi
     ;Merge first and last lines if necessary
     .if dDoMerge != FALSE
       mov xbx, [xsi].SelectionRange.pBegSelInfo
-      OCall [xbx].LOCATION.pEditorLine::EditorLine.LineJoinNext, [xbx].LOCATION.dLineNumber
+      OCall [xbx].LOCATION.pEditorLine::EditorLine.LineJoinNext, [xbx].LOCATION.dLineNumber, TRUE
     .endif
 
     ;Cleanup
@@ -1400,10 +1491,10 @@ Method Editor.SelectionDelete, uses xbx xdi xsi
     mov [xsi].dSelectionVisLineCnt, 0
   .endif
 
-  OCall xsi.ClpBrdSetBtns
+  OCall xsi.ManageEditCmds
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.SelectionReplace
 ; Purpose:    Replace the selection with a new text.
 ; Arguments:  Arg1: -> New text.
@@ -1421,16 +1512,16 @@ Method Editor.SelectionReplace, uses xbx xdi xsi, pReplString:PSTRING
     OCall xsi.SelectionDelete
 
     invoke StrLength, pReplString
-    OCall xbx::EditorLine.CharInsert, edi, eax, pReplString
+    OCall xbx::EditorLine.CharInsert, edi, eax, pReplString, TRUE
 
     mov [xsi].pHilitedWord, NULL
     mov [xsi].dHilitedLen, 0
-    OCall xsi.ClpBrdSetBtns
+    OCall xsi.ManageEditCmds
     mov eax, TRUE
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.SelectionResetAll
 ; Purpose:    Reset selection from all EditorLines.
 ; Arguments:  None.
@@ -1453,11 +1544,11 @@ Method Editor.SelectionResetAll, uses xbx xsi
 
   mov [xsi].pHilitedWord, NULL
   mov [xsi].dHilitedLen, 0
-  OCall xsi.ClpBrdSetBtns
+  OCall xsi.ManageEditCmds
   mov eax, ebx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.SelectionResetLines
 ; Purpose:    Reset selection from all EditorLines.
 ; Arguments:  None.
@@ -1490,7 +1581,7 @@ Method Editor.SelectionResetLines, uses xbx xdi xsi
   setnz al
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.SelectionSet
 ; Purpose:    Arrange the selection parameters and set the selection of affected EditorLines.
 ; Arguments:  None.
@@ -1614,7 +1705,7 @@ Method Editor.SelectionSet, uses xdi xbx xsi
               add xdi, sizeof CHR
               dec ebx
             .endw
-            
+
             ;Reset pHilitedWord & dHilitedLen
             .if ebx != 0
               mov [xsi].pHilitedWord, NULL
@@ -1656,10 +1747,10 @@ Method Editor.SelectionSet, uses xdi xbx xsi
   .endif
 
 @@Exit:
-  OCall xsi.ClpBrdSetBtns
+  OCall xsi.ManageEditCmds
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorLine.SetDirty
 ; Purpose:    Set the dirty flag.
 ; Arguments:  Arg1: TRUE to set the flag, otherwise FALSE.
@@ -1676,7 +1767,7 @@ Method Editor.SetDirty, uses xsi, dAction:DWORD
   OCall [xcx].$Obj(ClientWnd).pOwner::Application.ManageGuiCmds, [xsi].hWnd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -1700,7 +1791,7 @@ Method Editor.Startup
   invoke RegisterClassExW, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.Store
 ; Purpose:    Store the streamable instance in a stream object. Descendant objects should redefine
 ;             this method and store new members.
@@ -1720,7 +1811,23 @@ Method Editor.Store, uses xsi, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.BinWrite, addr WP, sizeof WP
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
+; Method:     EditorLine.Undo
+; Purpose:    Undo action.
+; Arguments:  None.
+; Return:     Nothing.
+
+Method Editor.Undo, uses xsi
+  SetObject xsi
+  OCall [xsi].Actions::ActionCollection.GetUndoAction
+  .if xax != NULL
+    OCall [xax].ACTION.pEditorLine::EditorLine.Undo, xax
+    OCall xsi.ManageEditCmds
+    invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
+  .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.UpdateStatusbar
 ; Purpose:    Draw new information on the Statusbar.
 ; Arguments:  None.
@@ -1744,7 +1851,7 @@ Method Editor.UpdateStatusbar, uses xbx xdi xsi
   .else
     c2m pContentType, $OfsCStr("Text"), ecx
   .endif
-  WriteF xdi, "¦SU", pContentType  
+  WriteF xdi, "¦SU", pContentType
   OCall [xbx].$Obj(Application).SBar::Statusbar.SetPartText, 3, addr cTextBuffer, SBT_SUNKEN
 
   lea xdi, cTextBuffer
@@ -1769,7 +1876,7 @@ Method Editor.UpdateStatusbar, uses xbx xdi xsi
   .else
     c2m pLineTermination, $OfsCStr("CR+LF"), ecx
   .endif
-  WriteF xdi, "¦SU  ¦SU", pFileFormat, pLineTermination  
+  WriteF xdi, "¦SU  ¦SU", pFileFormat, pLineTermination
   OCall [xbx].$Obj(Application).SBar::Statusbar.SetPartText, 4, addr cTextBuffer, SBT_SUNKEN
 
 ;  .if dSelCount == 0
@@ -1827,7 +1934,7 @@ Method Editor.UpdateStatusbar, uses xbx xdi xsi
 ;  .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.

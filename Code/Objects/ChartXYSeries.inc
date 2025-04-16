@@ -12,7 +12,7 @@
 ;    ChartXYSeries implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartXYSeries.DrawMarkerAt
 ; Purpose:    Display a marker at a specific position.
 ; Arguments:  Arg1: Output device context.
@@ -375,7 +375,7 @@ Method ChartXYSeries.DrawMarkerAt, uses xbx xsi, hDC:HDC, sdPosX:SDWORD, sdPosY:
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartXYSeries.Draw
 ; Purpose:    Draw the series representation and create the InfoAreas.
 ; Arguments:  Arg1: hDC.
@@ -765,7 +765,7 @@ Method ChartXYSeries.Draw, uses xbx xdi xsi, hDC:HDC
   assume xdi:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartXYSeries.GetSetupDialogTab
 ; Purpose:    Creates a new Tab dialog for this series.
 ; Arguments:  Arg1: Parent window HANDLE.
@@ -782,7 +782,7 @@ Method ChartXYSeries.GetSetupDialogTab, uses xbx, hParent:HWND, pImageList:$ObjP
 MethodEnd
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartXYSeries.Load
 ; Purpose:    Load buffer data from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -794,7 +794,7 @@ Method ChartXYSeries.Load, uses xsi, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.BinRead, addr [xsi].Setup, sizeof(SeriesSetupXY)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartXYSeries.Store
 ; Purpose:    Store buffer data to a stream object.
 ; Arguments:  Arg1: -> Stream object.

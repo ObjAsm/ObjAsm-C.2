@@ -26,7 +26,7 @@
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComFile.BinRead
 ; Purpose:    Read some data from the file.
 ; Args:       Arg1: Bytes to read.
@@ -59,7 +59,7 @@ Method NetComFile.BinRead, uses xbx xsi, dLength:DWORD
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComFile.BinWrite
 ; Purpose:    Write some data to the file
 ; Args:       Arg1: -> User's data to be written.
@@ -100,7 +100,7 @@ Method NetComFile.BinWrite, uses xbx xdi xsi, pData:POINTER, dLength:DWORD
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComFile.Done
 ; Purpose:    Notify application that the object is redundant & release resources.
 ; Arguments:  None.
@@ -118,7 +118,7 @@ Method NetComFile.Done, uses xsi
   ACall Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComFile.DoRead
 ; Purpose:    Perform call to initiate Overlapped FileRead request.
 ; Arguments:  Arg1: -> IO_FILEJOB.
@@ -152,7 +152,7 @@ Method NetComFile.DoRead, uses xbx xsi, pIOFileJob:PIO_FILEJOB
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComFile.DoWrite
 ; Purpose:    Perform call to initiate Overlapped FileWrite request
 ; Arguments:  Arg1: -> IO_FILEJOB.
@@ -180,7 +180,7 @@ Method NetComFile.DoWrite, uses xbx xsi, pIOFileJob:PIO_FILEJOB
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComFile.GetProgress_Percentage
 ; Purpose:    Convert Progress QUADWORD into Percentage DWORD.
 ; Return:     eax = File transfer progress (integer percentage).
@@ -196,7 +196,7 @@ Method NetComFile.GetProgress_Percent, uses xbx xsi
   qqdiv
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComFile.Init
 ; Purpose:    Attempt to Open a File for Asynch IO
 ; Arguments:  Arg1: -> Owner Object.
@@ -256,7 +256,7 @@ Method NetComFile.Init, uses xsi, pOwner:POINTER, pstrPathName:POINTER, \
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComFile.OnRead
 ; Purpose:    Sink 'READ IO completion' events.
 ; Arguments:  Arg1: -> IO_FILEJOB.
@@ -287,7 +287,7 @@ Method NetComFile.OnRead, uses xsi, pIOFileJob:PIO_FILEJOB
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComFile.OnWrite
 ; Purpose:    Sink 'WRITE IO completion' events.
 ; Arguments:  Arg1: -> IO_FILEJOB.
@@ -309,7 +309,7 @@ Method NetComFile.OnWrite,uses xsi, pIOFileJob:PIO_FILEJOB
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComFile.ReadFile
 ; Purpose:    Read the entire contents of the file.
 ; Arguments:  None.
@@ -337,7 +337,7 @@ Method NetComFile.ReadFile, uses xsi
   .until FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComFile.SetFilePointer
 ; Purpose:    Set the internal FilePointer offset (used when queuing IO requests).
 ; Arguments:  Arg1: File pointer (64 bit).

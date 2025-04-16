@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macros:     xxx@Stacklist
 ; Purpose:    Memory list implemented like a stack. Total max capacity 1024 entries.
 
@@ -60,7 +60,7 @@ $GetItem@Stacklist macro pStackBase:req, dIndex:req, AuxReg1:=<xax>, AuxReg2:=<x
   exitm <XWORD ptr [AuxReg1 + AuxReg2]>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      WritePtr
 ; Purpose:    StmWrite multiple "ptr".
 
@@ -71,7 +71,7 @@ WritePtr macro
   .endw
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      IsStructure?
 ; Purpose:    Check if token is a structure name.
 ; Arguments:  Arg1: -> Token to be tested. Must be a Var or a non volatile register.
@@ -84,7 +84,7 @@ IsStructure? macro pToken:req
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      IsValidName?
 ; Purpose:    Check if token is a valid name.
 ; Arguments:  Arg1: -> Token to be tested.
@@ -103,7 +103,7 @@ IsValidName? macro pToken:req
 @@:
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      BasicTypeCScan
 ; Purpose:    Helper macro to identifiy basic C types. It sets dTypeCSpec using CTS_xxx.
 ; Arguments:  xax -> Current token.
@@ -231,7 +231,7 @@ BasicTypeCScan macro
 @@:                                                     ;Exit
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      IsIfLevelActive?
 ; Purpose:    Check if a given If-Level is active.
 ; Arguments:  Arg1: INP_STAT variable.
@@ -245,7 +245,7 @@ IsIfLevelActive? macro InpStat
   exitm <(dl != [xbx].$Obj(IncFile).bCondIfLevel || cl == ch)>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      IsPublicPrivateProtected?
 ; Purpose:    Check if token is 'private', 'public' or 'protected'.
 ; Arguments:  Arg1: -> Token.
@@ -263,7 +263,7 @@ IsPublicPrivateProtected? macro pToken
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      IncIfLevel
 ; Purpose:    Increment '#if' level.
 ; Arguments:  None.
@@ -281,7 +281,7 @@ IncIfLevel macro
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      IncElseLevel
 ; Purpose:    Increment '#else' level.
 ; Arguments:  None.
@@ -296,7 +296,7 @@ IncElseLevel macro
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DecIfLevel
 ; Purpose:    Decrement '#if' level.
 ; Arguments:  xbx -> IncFile.
@@ -310,7 +310,7 @@ DecIfLevel macro
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SkipPPLine
 ; Purpose:    Skip PP tokens until EOL.
 ; Arguments:  xbx -> IncFile.
@@ -322,7 +322,7 @@ SkipPPLine macro
   .until xax == NULL
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      StmOutLoad
 ; Purpose:    Restore the StmOut status from a local storage variable.
 ; Arguments:  Arg1: -> STMOUT_STAT.
@@ -335,7 +335,7 @@ StmOutLoad macro Var, RetReg:=<xax>
   mrm [xbx].$Obj(IncFile).pStmOutPos, Var.pStmOutPos, RetReg
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      StmOutSave
 ; Purpose:    Save the StmOut status on a local variable.
 ; Arguments:  -> STMOUT_STAT.

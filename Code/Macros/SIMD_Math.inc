@@ -10,7 +10,7 @@
 
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Vec4_SquareMagnitude_SSE
 ; Purpose:    Calculate the squared magnitude of a VEC4.
 ; Arguments:  Arg1: xmm register holding the VEC4.
@@ -27,7 +27,7 @@ Vec4_SquareMagnitude_SSE macro xSrcReg:req, xAuxReg:req
   addps xmm&xSrcReg, xmm&xAuxReg
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Vec4_Magnitude_SSE
 ; Purpose:    Calculate the magnitude of a VEC4.
 ; Arguments:  Arg1: xmm register holding the VEC4.
@@ -39,7 +39,7 @@ Vec4_Magnitude_SSE macro xSrcReg:req, xAuxReg:req
   sqrtps xmm&xSrcReg, xmm&xSrcReg                       ;;get the square root
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Vec4_Normalize_SSE
 ; Purpose:    Normalize a VEC4.
 ; Arguments:  Arg1: xmm register holding the VEC4.
@@ -54,7 +54,7 @@ Vec4_Normalize_SSE macro xSrcReg:req, xAuxReg1:req, xAuxReg2:req
   mulps xmm&xSrcReg, xmm&xAuxReg2
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Vec4_CrossProduct_SSE
 ; Purpose:    Calculate the cross product of 2 VEC4.
 ; Arguments:  Arg1: xmm register holding the first VEC4.
@@ -78,7 +78,7 @@ Vec4_CrossProduct_SSE macro xSrcReg1:req, xSrcReg2:req, xAuxReg1, xAuxReg2
   subps xmm&xSrcReg1, xmm&xAuxReg1                      ;;subtract the two resulting register vectors
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Vec4_DotProduct_SSE
 ; Purpose:    Calculate the dot product of 2 VEC4.
 ; Arguments:  Arg1: xmm register holding the first VEC4.
@@ -95,7 +95,7 @@ Vec4_DotProduct_SSE macro xSrcReg1:req, xSrcReg2:req, xAuxReg:req
   addps xmm&xSrcReg1, xmm&xAuxReg
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Mat44_Load_A_SSE
 ; Purpose:    Load a matrix from aligned memory to xmm registers.
 ; Arguments:  Arg1: -> MAT44.
@@ -108,7 +108,7 @@ Mat44_Load_A_SSE macro SrcReg, xReg1:req, xReg2:req, xReg3:req, xReg4:req
   movaps xmm&xReg4, [SrcReg + 030h]
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Mat44_Load_U_SSE
 ; Purpose:    Load a matrix from unaligned memory to xmm registers.
 ; Arguments:  Arg1: -> MAT44.
@@ -121,7 +121,7 @@ Mat44_Load_U_SSE macro SrcReg, xReg1:req, xReg2:req, xReg3:req, xReg4:req
   movups xmm&xReg4, [SrcReg + 030h]
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Mat44_Store_A_SSE
 ; Purpose:    Store a matrix from xmm registers to aligned memory.
 ; Arguments:  Arg1: -> MAT44.
@@ -134,7 +134,7 @@ Mat44_Store_A_SSE macro SrcReg, xReg1:req, xReg2:req, xReg3:req, xReg4:req
   movaps [SrcReg + 030h], xmm&xReg4
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Mat44_Store_U_SSE
 ; Purpose:    Store a matrix from xmm registers to unaligned memory.
 ; Arguments:  Arg1: -> MAT44.
@@ -147,7 +147,7 @@ Mat44_Store_U_SSE macro SrcReg, xReg1:req, xReg2:req, xReg3:req, xReg4:req
   movups [SrcReg + 030h], xmm&xReg4
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Mat44_Transpose_SSE
 ; Purpose:    Transpose the MAT44 loaded in xmm registers.
 ; Arguments:  Arg1..4: xmm registers holding the MAT44 columns.
@@ -172,7 +172,7 @@ Mat44_Transpose_SSE macro xReg1:req, xReg2:req, xReg3:req, xReg4:req, xRegAux:re
   punpcklqdq xmm&xReg3, xmm&xRegAux                     ;;xmm&xReg3:   d3 c3 b3 a3
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Mat44_Transpose_SSE_2
 ; Purpose:    Transpose the MAT44 loaded in xmm registers.
 ;             This code is somewhat slower as Mat44_Transpose_SSE but can be compiled with ML6.15
@@ -196,7 +196,7 @@ Mat44_Transpose_SSE_2 macro xReg1:req, xReg2:req, xReg3:req, xReg4:req, xRegAux1
   shufps xmm&xReg3, xmm&xRegAux2, 10001000b
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Mat44_Mult_Vec4_SSE
 ; Purpose:    Mutiplication of MAT44 by VEC4
 ; Arguments:  Arg1..4: xmm registers holding the MAT44 columns.
@@ -224,7 +224,7 @@ Mat44_Mult_Vec4_SSE macro xCol1, xCol2, xCol3, xCol4, xVec, xAux1, xAux2, xAux3
   addps xmm&xVec, xmm&xAux3
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Real8ToXmm
 ; Purpose:    Moves Real8 values to an xmm register
 ; Arguments:  Arg1: Real8 value

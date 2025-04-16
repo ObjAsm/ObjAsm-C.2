@@ -14,7 +14,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ProcName textequ <dword2binW>
 VALUE_TYPE textequ <DWORD>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  dword2binW
 ; Purpose:    Convert a DWORD to its binary WIDE string representation.
 ; Arguments:  Arg1: -> Destination buffer.

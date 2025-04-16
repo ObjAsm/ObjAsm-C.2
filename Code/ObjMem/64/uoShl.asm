@@ -13,7 +13,7 @@
 
 ProcName textequ <uoShl>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  uoShl
 ; Purpose:    Shift left of an unsigned OWORD (signed and unsigned procs are identical).
 ; Arguments:  Arg1: OWORD in rdx:rax.

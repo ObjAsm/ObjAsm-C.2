@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <TimeToStrW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  TimeToStrA
 ; Purpose:    Convert a DTL_TIME to a formated string representation.
 ; Arguments:  Arg1: -> Destination WIDE Buffer

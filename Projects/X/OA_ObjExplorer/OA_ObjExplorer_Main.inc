@@ -42,7 +42,7 @@ AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SB_STYLE, 0, 4}
   DEF_STATUSBAR_PART {120, 100, 2, SBT_SUNKEN,    NULL}
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object ClientWnd, OAE_ClientWndID, MdiClientWnd         ;MDI client window.
   RedefineMethod    Done
@@ -55,7 +55,7 @@ Object ClientWnd, OAE_ClientWndID, MdiClientWnd         ;MDI client window.
   DefineVariable    dChildCount,        DWORD,    0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object PropWnd, OAE_PropWndID, MdiChildWnd                  ;MDI base child window.
   VirtualMethod     CreateLinkInfo,     DWORD, PSTRING, DWORD
@@ -82,7 +82,7 @@ Object PropWnd, OAE_PropWndID, MdiChildWnd                  ;MDI base child wind
   Embed   LinkInfos,      DataCollection
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 CStr cIntPropClass, "OAC_IntPropWnd"                    ;Interface Property Window
 
@@ -98,7 +98,7 @@ Object IntPropWnd, OAE_IntPropWndID, PropWnd
   Embed     Methods,      DataCollection                ;Collection of MEMBERDATA structures
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 CStr cObjPropClass, "OAC_ObjPropWnd"
 
@@ -117,7 +117,7 @@ Object ObjPropWnd, OAE_ObjPropWndID, PropWnd            ;Object property Window
   Embed     Variables,    DataCollection                ;Collection of MEMBERDATA structures
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object FindInfoDlg,, Dialog                             ;This is a Modeless Dialog!
   RedefineMethod    CtlsSet
@@ -132,7 +132,7 @@ Object FindInfoDlg,, Dialog                             ;This is a Modeless Dial
   DefineVariable    hPrvActiveDlg,      HWND,     0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object SetupDlg,, DialogModal
   RedefineMethod    CtlsGet
@@ -142,7 +142,7 @@ Object SetupDlg,, DialogModal
   RedefineMethod    OnDestroy,          WPARAM, LPARAM
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 CloseEnumProc    proto :HANDLE, :LPARAM
 
@@ -200,7 +200,7 @@ Object Application, OAE_ApplicationID, MdiApp           ;MDI application.
 ObjectEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 .code
 
@@ -251,7 +251,7 @@ PROPERTIES_INFO struct
   pChild      $ObjPtr(ObjPropWnd) ?
 PROPERTIES_INFO ends
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      EnableContextMenuItem
 ; Purpose:    used to enable menu items.
 ; Arguments:  Arg1: menu command ID.
@@ -268,7 +268,7 @@ EnableContextMenuItem macro CMD:req, Index:req
   invoke EnableMenuItem, xdi, CMD, eax
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ChangeBtnLanguage
 ; Purpose:    Switch the toolbar button application language.
 ; Arguments:  Arg1: Language ID.
@@ -315,7 +315,7 @@ Method Application.ChangeBtnLanguage, uses xbx xdi xsi, dLangID:DWORD
   OCall [xsi].FindInfDlg::FindInfoDlg.CtlsSet
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ChangeLanguage
 ; Purpose:    Switches the application language.
 ; Arguments:  Arg1: Language ID.
@@ -358,7 +358,7 @@ Method Application.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
   OCall xsi.ChangeBtnLanguage, dLangID
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
 ; Purpose:    Finalizes the MDI application object. Objects associated with window controls are
 ;             destroyed by Windows automatically when WM_DESTROY is send.
@@ -393,7 +393,7 @@ Method Application.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.EnableActions
 ; Purpose:    Enables or disables MDI child actions.
 ; Arguments:  None.
@@ -423,7 +423,7 @@ Method Application.EnableActions, uses xbx xdi xsi
   OCall [xsi].TbWindow::Toolbar.BtnEnable, IDM_WIND_NEXT,     edi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.FindObjInfo
 ; Purpose:    Searches for an OBJECTINFORMATION with a matching object name.
 ; Arguments:  Arg1: -> Object name.
@@ -439,7 +439,7 @@ Method Application.FindObjInfo, uses xsi, pName:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.FindIntInfo
 ; Purpose:    Searches for an INTERFACEINFORMATION with a matching interface name.
 ; Arguments:  Arg1: -> Interface name.
@@ -455,7 +455,7 @@ Method Application.FindIntInfo, uses xsi, pName:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initalizes the SDI application object.
 ; Arguments:  None.
@@ -560,7 +560,7 @@ Method Application.Init, uses xbx xdi xsi
   OCall xsi.Refresh, REFRESH_ALL                        ;Load Object information from .stm file
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Navigate
 ; Purpose:    Navigates the InfoTree to the desired object.
 ; Arguments:  Arg1: -> Name.
@@ -594,7 +594,7 @@ Method Application.Navigate, uses xbx xsi, pName:PSTRING, dType:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE or WM_QUERYENDSESSION messages.
 ; Arguments:  Arg1: First message parameter.
@@ -628,7 +628,7 @@ Method Application.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefFrameProc, [xsi].hWnd, [xbx].$Obj(ClientWnd).hWnd, dMsg, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ChildSearch
 ; Purpose:    Used to locate a MDI child window using EnumChildWindows API.
 ; Arguments:  Arg1: Window handle.
@@ -661,7 +661,7 @@ ChildSearch proc uses xbx hWnd:HANDLE, lParam:LPARAM
   ret
 ChildSearch endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -851,7 +851,7 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -888,7 +888,7 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -912,7 +912,7 @@ Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -923,7 +923,7 @@ Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -967,7 +967,7 @@ Method Application.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1033,7 +1033,7 @@ Method Application.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CloseEnumProc (Callback)
 ; Purpose:    Close all open child windows using the EnumChildWindows API.
 ; Arguments:  Arg1: Child window handle.
@@ -1049,7 +1049,7 @@ CloseEnumProc proc hWnd:HANDLE, lParam:LPARAM
   ret
 CloseEnumProc endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ResetInfoFlags
 ; Purpose:    Resets the info flags INF_INVALID + INF_INTREE in a INFORMATION structure.
 ; Arguments:  Arg1: -> INFORMATION.
@@ -1063,7 +1063,7 @@ ResetInfoFlags proc pInfo:PINFORMATION, xDummy1:XWORD, xDummy2:XWORD
   ret
 ResetInfoFlags endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  AddObjectBranch
 ; Purpose:    Auxiliary procedure used by Application.Refresh.
 ; Arguments:  Arg1: -> OBJECTINFORMATION.
@@ -1104,7 +1104,7 @@ AddObjectBranch proc uses xbx xdi xsi, pInfo:POBJECTINFORMATION, pAncestorNode:$
   ret
 AddObjectBranch endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  AddBrokenObjects
 ; Purpose:    Auxiliary procedure used by Application.Refresh.
 ; Arguments:  Arg1: -> OBJECTINFORMATION.
@@ -1135,7 +1135,7 @@ AddBrokenObjects proc uses xbx xdi xsi pInfo:POBJECTINFORMATION, pSelf:$ObjPtr(A
   ret
 AddBrokenObjects endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  AddInterfaceBranch
 ; Purpose:    Auxiliary procedure used by Application.Refresh.
 ; Arguments:  Arg1: -> INTERFACEINFORMATION.
@@ -1178,7 +1178,7 @@ AddInterfaceBranch proc uses xbx xdi xsi, pInfo:PINTERFACEINFORMATION, \
   ret
 AddInterfaceBranch endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  AddInterfaceBranch
 ; Purpose:    Auxiliary procedure used by Application.Refresh.
 ; Arguments:  Arg1: -> INTERFACEINFORMATION.
@@ -1210,7 +1210,7 @@ AddBrokenInterfaces proc uses xbx xdi xsi pInfo:PINTERFACEINFORMATION, \
   ret
 AddBrokenInterfaces endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  RefreshMdiChild
 ; Purpose:    Used to refresh a MDI child window using EnumChildWindows API.
 ; Arguments:  Arg1: Window handle.
@@ -1248,7 +1248,7 @@ RefreshMdiChild proc uses xbx hWnd:HANDLE, lParam:LPARAM
   ret
 RefreshMdiChild endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Refresh
 ; Purpose:    Reloads the object information stream.
 ; Arguments:  Arg1: Refresh flags [REFRESH_TREE, REFRESH_CHILDREN, REFRESH_ALL]
@@ -1307,7 +1307,7 @@ Method Application.Refresh, uses xbx xsi, dFlags:DWORD
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.TreeDecimate
 ; Purpose:    Walk the tree leaves and remove them if they dont belong to the project.
 ; Arguments:  Arg1: -> InfoNode.
@@ -1337,7 +1337,7 @@ Method Application.TreeDecimate, uses xbx xdi xsi, pNode:$ObjPtr(InfoNode)
   mov eax, edi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
 ; Purpose:    Registers the object with the OS.
 ; Arguments:  None.
@@ -1362,7 +1362,7 @@ Method Application.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.StatusbarHelp
 ; Purpose:    Displays a help string on panel 0 of the statusbar.
 ; Arguments:  Arg1: -> Help string.
@@ -1381,7 +1381,7 @@ MethodEnd
 
 ;##\
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.Done
 ; Purpose:    Finalizes the ClientWnd object.
 ; Arguments:  None.
@@ -1393,7 +1393,7 @@ Method ClientWnd.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.Init
 ; Purpose:    Initalizes the MdiClientWnd object.
 ; Arguments:  Arg1: -> Owner object.
@@ -1409,7 +1409,7 @@ Method ClientWnd.Init, uses xsi, pOwner:POINTER
   invoke DeleteObject, hBmp
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -1420,7 +1420,7 @@ Method ClientWnd.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClientWnd.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.

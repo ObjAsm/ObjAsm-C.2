@@ -13,7 +13,7 @@
 SRC_TYPE textequ <DWORD>
 ProcName textequ <SLR_Calc_AB_DW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SLR_Calc_AB_DW
 ; Purpose:    Calculate the Slope (A) and Intercept (B) values of the linear equation y = A*x + B
 ;             that minimize mean squared error (MSE) of a DWORD array.

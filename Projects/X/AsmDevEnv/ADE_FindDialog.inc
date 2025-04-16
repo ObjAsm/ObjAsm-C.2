@@ -52,7 +52,7 @@ IDC_RBN_ALL                     equ 1023
 ;  invoke SetWindowText, [xsi].hWnd, xdi
 ;  SetCtrlText IDC_SETUP_VIEWER_GRP,   IDS_SETUP_VIEWER_GRP
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindDialog.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -136,7 +136,7 @@ Method FindDialog.CtlsGet, uses xbx xdi xsi
   mov [xsi].Choices.dDirection, ebx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindDialog.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -193,7 +193,7 @@ Method FindDialog.CtlsSet, uses xbx xdi xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindDialog.Done
 ; Purpose:    Finalize the FindDialog object.
 ; Arguments:  None.
@@ -206,7 +206,7 @@ Method FindDialog.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindDialog.Find
 ; Purpose:    Do the search operation
 ; Arguments:  Arg1: -> Active child window object.
@@ -253,7 +253,7 @@ Method FindDialog.Find, uses xbx xdi xsi, pChildWndObject:POINTER
         ;Set SrchBeg
         .if [xsi].Choices.dDirection == FDD_ALL
           ;Get the first editor line
-          mov xdx, [xax].$Obj(Editor).LinkedListHead.pFirstMember
+          mov xdx, [xax].$Obj(Editor).LinesHead.pFirstMember
           lea xcx, [xdx - offset $Obj(EditorLine).LineLink]   ;xax -> last EditorLine
           mov [xsi].SrchBeg.pEditorLine, xcx
           mov [xsi].SrchBeg.dLineNumber, 1
@@ -283,7 +283,7 @@ Method FindDialog.Find, uses xbx xdi xsi, pChildWndObject:POINTER
         ;Set SrchEnd
         .if [xsi].Choices.dDirection == FDD_DOWN || [xsi].Choices.dDirection == FDD_ALL  
           ;Get the last editor line
-          mov xdx, [xax].$Obj(Editor).LinkedListHead.pLastMember
+          mov xdx, [xax].$Obj(Editor).LinesHead.pLastMember
           lea xax, [xdx - offset $Obj(EditorLine).LineLink]   ;xax -> last EditorLine
           mov [xsi].SrchEnd.pEditorLine, xax
           mov ecx, [xax].$Obj(EditorLine).dLength
@@ -291,7 +291,7 @@ Method FindDialog.Find, uses xbx xdi xsi, pChildWndObject:POINTER
           mov [xsi].SrchEnd.dLineNumber, 0                ;Unknown
         .else                                             ;[xsi].Choices.dDirection == FDD_UP
           ;Get the first editor line
-          mov xdx, [xax].$Obj(Editor).LinkedListHead.pFirstMember
+          mov xdx, [xax].$Obj(Editor).LinesHead.pFirstMember
           lea xax, [xdx - offset $Obj(EditorLine).LineLink]   ;xax -> last EditorLine
           mov [xsi].SrchEnd.pEditorLine, xax
           mov [xsi].SrchEnd.dCharIndex, 0
@@ -323,7 +323,7 @@ Method FindDialog.Find, uses xbx xdi xsi, pChildWndObject:POINTER
   mov eax, dRet
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindDialog.Help
 ; Purpose:    Provide help for this dialog.
 ; Arguments:  None.
@@ -334,7 +334,7 @@ Method FindDialog.Help, uses xbx xsi
   invoke MessageBox, [xsi].hWnd, $OfsCStr("Help me please..."), $OfsCStr("Help"), MB_OK or MB_ICONINFORMATION
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindDialog.Init
 ; Purpose:    Initialaize a FindDialog object.
 ; Arguments:  Arg1: -> Owner object (Application).
@@ -379,7 +379,7 @@ Method FindDialog.Init, uses xbx xsi, pOwner:POINTER
   OCall [xsi].ReplStrings::%StrCollection.Init, xsi, 20, 20, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindDialog.OnActivate
 ; Purpose:    Event procedure for WM_ACTIVATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -435,7 +435,7 @@ Method FindDialog.OnActivate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindDialog.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -493,7 +493,7 @@ Method FindDialog.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindDialog.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -507,7 +507,7 @@ Method FindDialog.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke SetWindowLongPtr, [xsi].hWnd, DWLP_USER, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindDialog.Replace
 ; Purpose:    Replace the editor selection with the content of the replace combobox.
 ; Arguments:  Arg1: -> Active child window object.
@@ -557,7 +557,7 @@ Method FindDialog.Replace, uses xbx xsi, pChildWndObject:POINTER
   mov eax, dRet
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FindDialog.ReplaceAll
 ; Purpose:    Replace all occurrences with the content of the replace combobox.
 ; Arguments:  Arg1: -> Active child window object.

@@ -38,7 +38,7 @@ ObjectEnd
 ;    Application implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the Application application object.
 ; Arguments:  None.
@@ -62,7 +62,7 @@ Method Application.Init, uses xsi
   mov [xsi].hTimer, $invoke(SetTimer, [xsi].hWnd, TIMERID, 1000, NULL)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
@@ -86,7 +86,7 @@ Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnTimer
 ; Purpose:    Event procedure for WM_TIMER message.
 ; Arguments:  Arg1: First message parameter.
@@ -107,7 +107,7 @@ Method Application.OnTimer, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
   m2z [xsi].Fwks.dFrameCount
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
 ; Purpose:    Register the object class with the OS.
 ; Arguments:  None.

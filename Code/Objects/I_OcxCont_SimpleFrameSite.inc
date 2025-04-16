@@ -10,7 +10,7 @@
 
 externdef IID_ISimpleFrameSite:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     I_OcxCont_SimpleFrameSite
 ; Purpose:    Provide simple frame controls that act as simple containers for other nested controls.
 ;             Some controls merely contain other controls. In such cases, the simple control
@@ -40,7 +40,7 @@ if IMPLEMENT
 ;     I_OcxCont_SimpleFrameSite implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SimpleFrameSite.PreMessageFilter
 ; Purpose:    Provide a site with the opportunity to process a message that is received by a
 ;             control's own window before the control itself does any processing.
@@ -63,7 +63,7 @@ Method I_OcxCont_SimpleFrameSite.PreMessageFilter,, hWnd:HWND, dMsg:DWORD, \
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SimpleFrameSite.PostMessageFilter
 ; Purpose:    Send the simple frame site a message that is received by a control's own window after
 ;             the control has processed the message.

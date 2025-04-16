@@ -36,7 +36,7 @@
 ; ==================================================================================================
 
 ;Supported debugging macros:
-;———————————————————————————
+;---------------------------
 ;  - DbgClose, DbgCloseAll, DbgCloseTxt, DbgCloseBmp, DbgCloseCht
 ;  - DbgClear, DbgClearAll, DbgClearTxt, DbgClearBmp, DbgClearCht
 ;  - DbgLine, DbgLine2, DbgText, DbgTextF, DbgWarning
@@ -283,7 +283,7 @@ endif
 ;    Helper macros
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgSaveContext
 ; Purpose:    Save CPU & FPU registers & flags onto stack and aligns it. This way, all subsequent
 ;             invocations have an aligned stack and a cleared direction flag. Additionally, a
@@ -386,7 +386,7 @@ DbgSaveContext macro VarIsRef:=<FALSE>, Var
   endif                                                 ;; for the comming calls
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgLoadContext
 ; Purpose:    Load CPU & FPU registers & flags from stack and restores the original stack alignment.
 ; Arguments:  None.
@@ -413,7 +413,7 @@ DbgLoadContext macro
   popcontext assumes
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgSetDestWnd
 ; Purpose:    Set the global symbol ??DbgDstWnd.
 ; Arguments:  Arg1: Name of the child window of the Debug Center MDI target to which the information
@@ -435,7 +435,7 @@ DbgSetDestWnd macro DestWnd
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgShowSrcInfo
 ; Purpose:    Output source line info on the debug device.
 ; Arguments:  Arg1: Optional destination Window name.
@@ -461,7 +461,7 @@ DbgShowSrcInfo macro Dest:req
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgShowTxtInfo
 ; Purpose:    Output additional text info on the debug device.
 ; Arguments:  Arg1: Text.
@@ -475,7 +475,7 @@ DbgShowTxtInfo macro Text, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgOutHex
 ; Purpose:    Output a number in hexadecimal on the debug output device.
 ; Arguments:  Arg1: Text displayed before the value.
@@ -585,7 +585,7 @@ endm
 ;   String debugging macros
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgLine
 ; Purpose:    Draw a single line on the debug device.
 ; Arguments:  Arg1: Optional destination Window name.
@@ -614,7 +614,7 @@ DbgLine macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgLine2
 ; Purpose:    Draw a double line on the debug device.
 ; Arguments:  Arg1: Optional destination Window name.
@@ -643,7 +643,7 @@ DbgLine2 macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgText
 ; Purpose:    Output a text on the debug device.
 ; Arguments:  Arg1: Text.
@@ -667,7 +667,7 @@ DbgText macro Var, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgTextF
 ; Purpose:    Output formated a text on the debug device.
 ; Arguments:  Arg1: Optinal text color.
@@ -700,7 +700,7 @@ DbgTextF macro Color:=<DbgColorForeground>, Dest, Message:req, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgWarning
 ; Purpose:    Output a text on the debug device on red color.
 ; Arguments:  Arg1: Text.
@@ -726,7 +726,7 @@ endm
 ;   Window Management macros
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgBkgndTxt
 ; Purpose:    Set the text window background color.
 ; Arguments:  Arg1: New background color.
@@ -750,7 +750,7 @@ DbgBkgndTxt macro NewBackColor:=<DbgColorBackground>, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgBkgndBmp
 ; Purpose:    Set the bitmap window background color.
 ; Arguments:  Arg1: New background color.
@@ -774,7 +774,7 @@ DbgBkgndBmp macro NewBackColor:=<DbgColorBackground>, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgBkgnd
 ; Purpose:    Set the window background color.
 ; Arguments:  Arg1: New background color.
@@ -800,7 +800,7 @@ DbgBkgnd macro NewBackColor:=<DbgColorBackground>, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFlashWnd
 ; Purpose:    Flash the DebugCenter menu bar.
 ; Arguments:  Arg1: Flashing flags, e.g. FLASHW_CAPTION
@@ -822,7 +822,7 @@ DbgFlashWnd macro Flags, Reps
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFlashMenu
 ; Purpose:    Flash the DebugCenter menu bar.
 ; Arguments:  Arg1: Menu flash RGB color.
@@ -844,7 +844,7 @@ DbgFlashMenu macro MenuColor, Reps, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgTileHor
 ; Purpose:    Tile the output windows horizontally.
 ; Arguments:  None.
@@ -865,7 +865,7 @@ DbgTileHor macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgTileVer
 ; Purpose:    Tile the output windows vertically.
 ; Arguments:  None.
@@ -886,7 +886,7 @@ DbgTileVer macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCascade
 ; Purpose:    Arrange output windows in a cascade.
 ; Arguments:  None.
@@ -907,7 +907,7 @@ DbgCascade macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgArrange
 ; Purpose:    Arrange iconized output windows.
 ; Arguments:  None.
@@ -928,7 +928,7 @@ DbgArrange macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomInTxt
 ; Purpose:    Zoom In a specified text output window.
 ; Arguments:  Arg1: Destination Window name.
@@ -951,7 +951,7 @@ DbgZoomInTxt macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomInBmp
 ; Purpose:    Zoom In a specified bitmap output window.
 ; Arguments:  Arg1: Destination Window name.
@@ -974,7 +974,7 @@ DbgZoomInBmp macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomIn
 ; Purpose:    Zoom In specified output windows.
 ; Arguments:  Arg1: Destination Window name.
@@ -999,7 +999,7 @@ DbgZoomIn macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomOutTxt
 ; Purpose:    Zoom Out a specified text output window.
 ; Arguments:  Arg1: Destination Window name.
@@ -1022,7 +1022,7 @@ DbgZoomOutTxt macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomOutBmp
 ; Purpose:    Zoom Out a specified bitmap output window.
 ; Arguments:  Arg1: Destination Window name.
@@ -1045,7 +1045,7 @@ DbgZoomOutBmp macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgZoomOut
 ; Purpose:    Zoom Out specified output windows.
 ; Arguments:  Arg1: Destination Window name.
@@ -1070,7 +1070,7 @@ DbgZoomOut macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFrontTxt
 ; Purpose:    Bring a specified text output window to front.
 ; Arguments:  Arg1: Destination Window name.
@@ -1093,7 +1093,7 @@ DbgFrontTxt macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFrontBmp
 ; Purpose:    Bring a specified output bitmap window to front.
 ; Arguments:  Arg1: Destination Window name.
@@ -1116,7 +1116,7 @@ DbgFrontBmp macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFront
 ; Purpose:    Bring specified output windows to front.
 ; Arguments:  Arg1: Destination Window name.
@@ -1141,7 +1141,7 @@ DbgFront macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCloseWnd
 ; Purpose:    Close Debug Center.
 ; Arguments:  None.
@@ -1162,7 +1162,7 @@ DbgCloseWnd macro Arg:=<TRUE>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgPinWnd
 ; Purpose:    Set TOPMOST flag.
 ; Arguments:  Arg1: TRUE or FALSE.
@@ -1183,7 +1183,7 @@ DbgPinWnd macro Arg:=<TRUE>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFrontWnd
 ; Purpose:    Bring specified output windows to front.
 ; Arguments:  Arg1: Destination Window name.
@@ -1206,7 +1206,7 @@ DbgFrontWnd macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
   DbgWrite textequ <DbgWriteA>
@@ -1214,7 +1214,7 @@ else
   DbgWrite textequ <DbgWriteW>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgWriteA
 ; Purpose:    Output a string on the debug device.
 ; Arguments:  Arg1: -> ANSI String.
@@ -1234,7 +1234,7 @@ DbgWriteA macro Var, Color:=<DbgColorForeground>, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgWriteW
 ; Purpose:    Output a string on the debug device.
 ; Arguments:  Arg1: -> WIDE String.
@@ -1254,7 +1254,7 @@ DbgWriteW macro Var, Color:=<DbgColorForeground>, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgWriteF
 ; Purpose:    Output a string on the debug device.
 ; Arguments:  Arg1: Optinal text color.
@@ -1307,7 +1307,7 @@ DbgWriteF macro Color:=<DbgColorForeground>, Dest, Format, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
   DbgStr textequ <DbgStrA>
@@ -1315,7 +1315,7 @@ else
   DbgStr textequ <DbgStrW>
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgStrA
 ; Purpose:    Output a specified string on the debug device.
 ; Arguments:  Arg1: ANSI String.
@@ -1347,7 +1347,7 @@ DbgStrA macro Var:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgStrW
 ; Purpose:    Output a specified WIDE string on the debug device.
 ; Arguments:  Arg1: WIDE string.
@@ -1379,7 +1379,7 @@ DbgStrW macro Var:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgStrCA
 ; Purpose:    Output a limited ANSI string on the debug device.
 ; Arguments:  Arg1: ANSI string.
@@ -1413,7 +1413,7 @@ DbgStrCA macro Var:req, StrLen:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgStrCW
 ; Purpose:    Output a limited WIDE string on the debug device.
 ; Arguments:  Arg1: WIDE string.
@@ -1447,7 +1447,7 @@ DbgStrCW macro Var:req, StrLen:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 if TARGET_STR_TYPE eq STR_TYPE_ANSI
   DbgStrC textequ <DbgStrCA>
@@ -1460,7 +1460,7 @@ endif
 ;   Number debugging macros
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgHex
 ; Purpose:    Display a number in hexadecimal format on the debug device.
 ; Arguments:  Arg1: Number (register or symbol).
@@ -1480,7 +1480,7 @@ DbgHex macro Var:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgBin
 ; Purpose:    Output a number in binary format on the debug device.
 ; Arguments:  Arg1: Number (register or symbol). Max 32 bits.
@@ -1524,7 +1524,7 @@ DbgBin macro Var:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgDec
 ; Purpose:    Output a number in signed decimal format on the debug device.
 ; Arguments:  Arg1: Number (register or symbol).
@@ -1575,7 +1575,7 @@ DbgDec macro Var:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFloat
 ; Purpose:    Display a floating point number in decimal format on the debug device.
 ; Arguments:  Arg1: Floating point number (REAL4 or REAL8)
@@ -1617,7 +1617,7 @@ DbgFloat macro Var:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgGUID
 ; Purpose:    Output the a GUID on the debug device.
 ; Arguments:  Arg1: GUID.
@@ -1661,7 +1661,7 @@ DbgGUID macro Var:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgARGB
 ; Purpose:    Output the an ARGB color on the debug device.
 ; Arguments:  Arg1: ARGB DWORD color value.
@@ -1706,7 +1706,7 @@ endm
 ;   Bitmap debugging macros
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgBmp
 ; Purpose:    Output a specified bitmap on the debug device.
 ; Arguments:  Arg1: Bitmap HANDLE.
@@ -1738,7 +1738,7 @@ DbgBmp macro hBmp:req, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgBmpFromDC
 ; Purpose:    Output a specified bitmap on the debug device.
 ; Arguments:  Arg1: DC HANDLE.
@@ -1767,7 +1767,7 @@ endm
 ;   Memory debugging macros
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgMem
 ; Purpose:    Output a memory block on the debug device.
 ; Arguments:  Arg1: -> memory block.
@@ -1790,7 +1790,7 @@ DbgMem macro pData:req, DataSize:req, OutputFormat:=<DBG_MEM_NONE>, InfoText, De
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgGlobalMemUsage
 ; Purpose:    Display global memory usage on the debug window.
 ; Arguments:  Arg1: Additional information.
@@ -1837,7 +1837,7 @@ endm
 ;   Hardware debugging macros
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgFPU
 ; Purpose:    Output the content of the FPU registers on the debug device.
 ; Arguments:  Arg1: Additional information.
@@ -1856,7 +1856,7 @@ DbgFPU macro InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCpuFlags
 ; Purpose:    Output the content of the CPU Flags on the debug device.
 ; Arguments:  Arg1: Additional information.
@@ -1924,7 +1924,7 @@ endm
 ;   OS debugging macros
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgMessage
 ; Purpose:    Translate a windows message to a string and output it to the debug device.
 ; Arguments:  Arg1: Windows message.
@@ -1944,7 +1944,7 @@ DbgMessage macro Var:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgApiError
 ; Purpose:    Translate an API error to a string and output it to the debug device.
 ; Arguments:  Arg1: Additional information.
@@ -1964,7 +1964,7 @@ DbgApiError macro InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgComError
 ; Purpose:    Translate a COM error to a string and output it to the debug device.
 ; Arguments:  Arg1: COM error code.
@@ -1989,7 +1989,7 @@ endm
 ;   Object debugging macros
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgObject
 ; Purpose:    Output object variables to the debug device.
 ; Arguments:  Arg1: Instance::ClassName.
@@ -2106,7 +2106,7 @@ DbgObject macro Expression, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgVMT
 ; Purpose:    Output offsets contained in a VMT.
 ; Arguments:  Arg1: Instance::ClassName.
@@ -2155,7 +2155,7 @@ DbgVMT macro Expression, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgIMT
 ; Purpose:    Output offsets contained in a IMT.
 ; Arguments:  Arg1: Instance::ClassName.
@@ -2204,7 +2204,7 @@ DbgIMT macro Expression, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgTraceObject
 ; Purpose:    Start tracing of an object instance.
 ; Arguments:  Arg1: Instance POINTER.
@@ -2235,7 +2235,7 @@ DbgTraceObject macro IName:req
   endif
 endm
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:      DbgTraceShow
 ;; Purpose:    Display gattered trace information.
 ;; Arguments:  Arg1: Object name.
@@ -2396,7 +2396,7 @@ endm
 ;  MemFree xax
 ;endm
 ;
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgAttach
 ; Purpose:    Break execution and attaches the system debugger. If already loaded, nothing is done.
 ; Arguments:  None.
@@ -2413,7 +2413,7 @@ DbgAttach macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgBreak
 ; Purpose:    Break execution.
 ; Arguments:  None.
@@ -2424,7 +2424,7 @@ DbgBreak macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCloseAll
 ; Purpose:    Close all child windows of the Debug window.
 ; Arguments:  None.
@@ -2445,7 +2445,7 @@ DbgCloseAll macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgClose
 ; Purpose:    Close a specific child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
@@ -2471,7 +2471,7 @@ DbgClose macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCloseTxt
 ; Purpose:    Close specific text child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
@@ -2494,7 +2494,7 @@ DbgCloseTxt macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCloseBmp
 ; Purpose:    Close specific bitmap child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
@@ -2517,7 +2517,7 @@ DbgCloseBmp macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgCloseCht
 ; Purpose:    Close specific Chart child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
@@ -2540,7 +2540,7 @@ DbgCloseCht macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgClearAll
 ; Purpose:    Clear the content of all child windows of the Debug window.
 ; Arguments:  None.
@@ -2570,7 +2570,7 @@ DbgClearAll macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgClear
 ; Purpose:    Clear the content of a specific child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
@@ -2595,7 +2595,7 @@ DbgClear macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgClearTxt
 ; Purpose:    Clear the content of a specific text child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
@@ -2618,7 +2618,7 @@ DbgClearTxt macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgClearBmp
 ; Purpose:    Clear the content of a specific bitmap child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
@@ -2641,7 +2641,7 @@ DbgClearBmp macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgClearCht
 ; Purpose:    Clear the content of a specific chart child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
@@ -2664,7 +2664,7 @@ DbgClearCht macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgClearGph
 ; Purpose:    Clear the content of a specific Graphic child window of the Debug window.
 ; Arguments:  Arg1: Target Debug Window name.
@@ -2687,7 +2687,7 @@ DbgClearBmp macro Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Fix
 ; Purpose:    Reminder text echoed at compile time.
 ; Arguments:  Arg1: (optional) Text.
@@ -2696,7 +2696,7 @@ Fix macro Txt:=<Fix this later>
 % echo @CatStr(<Fix: >, %@FileCur, < (>, %@Line, <) - >, <&Txt>)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ASSERT
 ; Purpose:    Display a message if an argument value is FALSE.
 ; Arguments:  Arg1: Value.
@@ -2745,7 +2745,7 @@ endm
 ;   ResGuard macros
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ResGuard_Show
 ; Purpose:    Show the result of ResGuard system activity.
 ; Arguments:  None.
@@ -2766,7 +2766,7 @@ ResGuard_Show macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ResGuard_Start
 ; Purpose:    Start activity of the ResGuard system.
 ; Arguments:  None.
@@ -2787,7 +2787,7 @@ ResGuard_Start macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ResGuard_Stop
 ; Purpose:    Stop activity of the ResGuard system.
 ; Arguments:  None.
@@ -2808,7 +2808,7 @@ ResGuard_Stop macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgComponent
 ; Purpose:    Output Componet information on the debug device.
 ; Arguments:  Arg1: GUID.
@@ -2834,7 +2834,7 @@ DbgComponent macro Var:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgInterface
 ; Purpose:    Output Interface information on the debug device.
 ; Arguments:  Arg1: IID.
@@ -2867,7 +2867,7 @@ endm
 DbgPlane      equ DbgVec4
 DbgQuaternion equ DbgVec4
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgVec2
 ; Purpose:    Outputs the components of the D3DXVECTOR2 vector.
 ; Arguments:  Arg1: -> Vector2
@@ -2899,7 +2899,7 @@ DbgVec2 macro Var:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     DbgVec3
 ; Purpose:   Outputs the components of the D3DXVECTOR3 vector.
 ; Arguments: Arg1: -> Vector3
@@ -2932,7 +2932,7 @@ DbgVec3 macro Var:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     DbgVec4
 ; Purpose:   Outputs the components of the D3DXVECTOR4 vector.
 ; Arguments: Arg1: -> Vector4
@@ -2964,7 +2964,7 @@ DbgVec4 macro Var:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     DbgMemBlock
 ; Purpose:   Output MemBlock information and warn about unaligned payload.
 ; Arguments: Arg1: -> MemBlock.bPayload
@@ -3005,7 +3005,7 @@ DbgMemBlock macro Var:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     DbgMStr
 ; Purpose:   Output MemBlock / DbgMStr information and warn about unaligned payload.
 ; Arguments: Arg1: -> MemBlock.bPayload
@@ -3048,7 +3048,7 @@ DbgMStr macro Var:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgChtOption
 ; Purpose:    Set chart options on the debug device.
 ; Arguments:  Arg1: Option ID
@@ -3093,7 +3093,7 @@ DbgChtOption macro OptionID, Var, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgChtSeriesOption
 ; Purpose:    Set chart series options on the debug device.
 ; Arguments:  Arg1: Option ID
@@ -3123,7 +3123,7 @@ DbgChtSeriesOption macro OptionID, SeriesID, SeriesOption, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DbgChtSeriesAdd
 ; Purpose:    Add a new point to a chart series on the debug device.
 ; Arguments:  Arg1: Series ID

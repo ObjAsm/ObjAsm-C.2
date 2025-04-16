@@ -12,7 +12,7 @@
 
 externdef HexCharTableW:WORD
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Mem2HexW
 ; Purpose:    Convert the memory content into a hex WIDE string representation.
 ; Arguments:  Arg1: -> WIDE character buffer.

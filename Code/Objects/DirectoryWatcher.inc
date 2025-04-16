@@ -35,7 +35,7 @@ DIR_WATCHER_BUFFER_SIZE       equ   16384
 
 DWCALLBACK typedef proto :LPARAM, :DWORD, :PSTRINGW
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DirectoryWatcher
 ; Purpose:    This object monitors the subscribed changes in a directory and optionally its
 ;             subdirectories. It uses the ReadDirectoryChangesW API to cache all changes for later
@@ -76,7 +76,7 @@ if IMPLEMENT
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DirectoryWatcher.Done
 ; Purpose:    Finalize the DirectoryWatcher object.
 ; Arguments:  None.
@@ -96,7 +96,7 @@ Method DirectoryWatcher.Done, uses xsi
   invoke CloseHandle, [xsi].hWatcherThread
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DirectoryWatcher.Init
 ; Purpose:    Initialize the DirectoryWatcher object.
 ; Arguments:  Arg1: -> Owner.
@@ -166,7 +166,7 @@ Method DirectoryWatcher.Init, uses xsi, pOwner:POINTER, pDirectoryNameW:PSTRINGW
   mov eax, dRetValue
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DirectoryWatcher.ProcessChanges
 ; Purpose:    Process the detected directory changes.
 ; Arguments:  None.
@@ -224,7 +224,7 @@ Method DirectoryWatcher.ProcessChanges, uses xbx xdi xsi
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DirectoryWatcher.Run
 ; Purpose:    Start monitoring the directory for changes.
 ; Arguments:  None.

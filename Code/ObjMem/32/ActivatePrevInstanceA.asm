@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ActivatePrevInstanceA
 ; Purpose:    Activate a previously existing instance of an application.
 ; Arguments:  Arg1: -> ANSI application name.

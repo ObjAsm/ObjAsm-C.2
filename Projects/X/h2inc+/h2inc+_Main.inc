@@ -12,7 +12,7 @@
 ;    Application implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
 ; Purpose:    Finalize the Application object.
 ; Arguments:  None.
@@ -58,7 +58,7 @@ Method Application.Done, uses xbx xsi
 MethodEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.GetAppOptions
 ; Purpose:    Scan argument list for options.
 ; Arguments:  Arg1: -> WIDE argument list.
@@ -98,7 +98,7 @@ Method Application.GetAppOptions, uses xbx xdi xsi, pArgList:POINTER, dCount:DWO
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the SDI application object.
 ;             - Read profile file
@@ -390,7 +390,7 @@ Method Application.Init, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ProcessFile
 ; Purpose:    Process a single .h file
 ; Arguments:  Arg1: -> FileName.
@@ -634,7 +634,7 @@ endif
   mov eax, dResult
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ProcessFiles
 ; Purpose:    Process all .h files in the current path.
 ; Arguments:  Arg1: -> FileSpec (e.g. C:\MyHeaderfiles\*.h).
@@ -703,7 +703,7 @@ Method Application.ProcessFiles, uses xbx xdi xsi, pFileSpec:PSTRINGW
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Run
 ; Purpose:    Execute the application.
 ;             Loop through all header files, calling ProcessFile for each one.
@@ -724,7 +724,7 @@ Method Application.Run, uses xbx
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.ShowError
 ; Purpose:   Shows a error message.
 ; Arguments: Arg1: -> Error Message.
@@ -751,7 +751,7 @@ Method Application.ShowError, uses xbx xdi, pErrorMessage:PSTRING
   endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.ShowInfo
 ; Purpose:   Shows an info message.
 ; Arguments: Arg1: Verbosity Level [0..3].
@@ -777,7 +777,7 @@ Method Application.ShowInfo, uses xbx, dVerbosityLevel:DWORD, pInfoMessage:PSTRI
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.ShowQuestion
 ; Purpose:   Shows a question message and waits for an answer.
 ; Arguments: Arg1: -> Question message.
@@ -817,7 +817,7 @@ Method Application.ShowQuestion, uses xbx xdi, pQuestionText:PSTRING
   mov eax, edi                                          ;Restore result
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.ShowWarning
 ; Purpose:   Shows a warning message.
 ; Arguments: Arg1: Warning Level [0..3].

@@ -61,7 +61,7 @@ CALLER_INFO ends
 
 CDF_AGGREGATED  equ   BIT00                             ;Set if it is aggregated into another
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     CallData
 ; Purpose:    Store all relevant info about a specific API call, like the call stack and an system
 ;             identification like a HANDLE, ID, etc.
@@ -78,7 +78,7 @@ Object CallData,, Primer
   DefineVariable  CallStack,  CALLER_INFO,  CALLER_MAX_DEEP dup({0, 0})
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     RTC_Collection (RTC: Resource Type Call, RTCC: RTC Collection)
 ; Purpose:    Collection of CallData Objects aggregated by system resource type.
 ; Example:    For a resource of type Brush, CallData for CreateSolidBrush, CreateDIBPatternBrush,
@@ -108,7 +108,7 @@ ObjectEnd
 ;    CallData implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     CallData.Show
 ; Purpose:    Callback procedure to display the gattered call data on the "LeakReport" DebugCenter
 ;             child Window.
@@ -183,7 +183,7 @@ MethodEnd
 ;    RTC_Collection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RTC_Collection.Aggregate
 ; Purpose:    Mark identical calls and add up CallData.Reps.
 ; Arguments:  None.
@@ -230,7 +230,7 @@ Method RTC_Collection.Aggregate, uses xbx xdi xsi
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RTC_Collection.Deaggregate
 ; Purpose:    Reset marks and CallData.Reps.
 ; Arguments:  None.
@@ -249,7 +249,7 @@ Method RTC_Collection.Deaggregate, uses xsi
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RTC_Collection.Insert
 ; Purpose:    Insert item at the end of the collection.
 ; Arguments:  Arg1: -> CallData to store.
@@ -265,7 +265,7 @@ Method RTC_Collection.Insert, uses xsi, pCallData:$ObjPtr(CallData)
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RTC_Collection.Remove
 ; Purpose:    Remove CallData identified by xData1 and xData2 from the collection.
 ; Arguments:  Arg1: xData1
@@ -296,7 +296,7 @@ Method RTC_Collection.Remove, uses xsi, xData1:XWORD, xData2:XWORD
   ret
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      InvokeOriginalAPI
 ; Purpose:    Invoke the original API (before hooking), regarless of the target bittness.
 ; Arguments:  None.
@@ -324,7 +324,7 @@ InvokeOriginalAPI macro ApiName, ArgCount
   call [xax].$Obj(IAT_Hook).pEntry                      ;;Call original API
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      WalkTheStack
 ; Purpose:    StackWalk(64) bitness neutral substitute. Starting from Context returns the next stack
 ;             frame into Stack structure.
@@ -349,7 +349,7 @@ WalkTheStack macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      AnalyseStack
 ; Purpose:    Analize the stack starting from the current context.
 ; Arguments:  None.
@@ -403,7 +403,7 @@ AnalyseStack macro
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DefineHook
 ; Purpose:    Define the Hook pointer and do some administration stuff.
 ; Arguments:  Arg1: API name.
@@ -420,7 +420,7 @@ DefineHook macro ApiName:req, pRTC_Coll
   .code
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DetourCreate
 ; Purpose:    Create a standard detour procedure to intercept allocation APIs.
 ; Arguments:  Arg1: API name.
@@ -514,7 +514,7 @@ DetourCreate macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:re
   Dtr&ApiName& endp
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DetourDestroy
 ; Purpose:    Create a standard detour procedure to intercept deallocation APIs.
 ; Arguments:  Arg1: API name.
@@ -593,7 +593,7 @@ DetourDestroy macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCond:r
   Dtr&ApiName& endp
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DetourCreateNamed
 ; Purpose:    Create a standard detour procedure to intercept allocation named APIs.
 ; Arguments:  Arg1: API name.
@@ -663,7 +663,7 @@ DetourCreateNamed macro ApiName:req, ArgCount:req, CallIdentifier:req, SuccessCo
   Dtr&ApiName& endp
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DetourCreateCounted
 ; Purpose:    Create a counted detour procedure to intercept allocation APIs.
 ; Arguments:  Arg1: API name.
@@ -717,7 +717,7 @@ DetourCreateCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCon
   Dtr&ApiName& endp
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DetourDestroyCounted
 ; Purpose:    Create a counted detour procedure to intercept deallocation APIs.
 ; Arguments:  Arg1: API name.
@@ -780,7 +780,7 @@ DetourDestroyCounted macro ApiName:req, ArgCount:req, CounterName:req, SuccessCo
   Dtr&ApiName& endp
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      NewHook
 ; Purpose:    Create a new hook.
 ; Arguments:  Arg1: API procedure name.
@@ -800,7 +800,7 @@ NewHook macro ProcName:req, LibName:req
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      NewRTCC
 ; Purpose:    Create a new RTC_Collection.
 ; Arguments:  Arg1: Resource type name.
@@ -823,47 +823,47 @@ endm
 DetourCreate CreateJobObjectA, 2, 0, <xApiResult !!= NULL>, pRTCC_Job
 DetourCreate CreateJobObjectW, 2, 0, <xApiResult !!= NULL>, pRTCC_Job
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CreateTransactionA, 7, 0, <xApiResult !!= NULL>, pRTCC_Transaction
 DetourCreate CreateTransactionW, 7, 0, <xApiResult !!= NULL>, pRTCC_Transaction
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CreatePrivateNamespaceA, 3, 0, <xApiResult !!= NULL>, pRTCC_PrivateNamespace
 DetourCreate CreatePrivateNamespaceW, 3, 0, <xApiResult !!= NULL>, pRTCC_PrivateNamespace
 DetourDestroy ClosePrivateNamespace, 3, 3, <xApiResult !!= FALSE>, pRTCC_PrivateNamespace
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate HeapAlloc, 3, 0, <xApiResult !!= NULL>, pRTCC_HeapMemBlock
 DetourCreate HeapReAlloc, 4, 0, <xApiResult !!= NULL>, pRTCC_HeapMemBlock, 3
 DetourDestroy HeapFree, 3, 3, <xApiResult !!= FALSE>, pRTCC_HeapMemBlock
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate GlobalAlloc, 2, 0, <xApiResult !!= NULL>, pRTCC_GlobalMemBlock
 DetourCreate GlobalReAlloc, 3, 0, <xApiResult !!= NULL>, pRTCC_GlobalMemBlock, 1
 DetourDestroy GlobalFree, 1, 1, <xApiResult == NULL>, pRTCC_GlobalMemBlock
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate LocalAlloc, 2, 0, <xApiResult !!= NULL>, pRTCC_LocalMemBlock
 DetourCreate LocalReAlloc, 3, 0, <xApiResult !!= NULL>, pRTCC_LocalMemBlock, 1
 DetourDestroy LocalFree, 1, 1, <xApiResult == NULL>, pRTCC_LocalMemBlock
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CoTaskMemAlloc, 1, 0, <xApiResult !!= NULL>, pRTCC_CoTaskMemBlock
 DetourCreate CoTaskMemRealloc, 1, 0, <xApiResult !!= NULL>, pRTCC_CoTaskMemBlock, 1
 DetourDestroy CoTaskMemFree, 1, 1, <>, pRTCC_CoTaskMemBlock
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate VirtualAlloc, 4, 0, <xApiResult !!= NULL>, pRTCC_VirtualMemBlock
 DetourDestroy VirtualFree, 3, 1, <xApiResult !!= FALSE>, pRTCC_VirtualMemBlock
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate SysAllocString, 1, 0, <xApiResult !!= NULL>, pRTCC_SysString
 DetourCreate SysAllocStringLen, 2, 0, <xApiResult !!= NULL>, pRTCC_SysString
@@ -872,12 +872,12 @@ DetourCreate SysReAllocString, 2, 0, <xApiResult !!= FALSE>, pRTCC_SysString
 DetourCreate SysReAllocStringLen, 3, 0, <xApiResult !!= FALSE>, pRTCC_SysString
 DetourDestroy SysFreeString, 1, 1, <xApiResult !!= FALSE>, pRTCC_SysString
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate BeginPaint, 2, 2, <xApiResult !!= NULL>, pRTCC_PaintStruct
 DetourDestroy EndPaint, 2, 2, <xApiResult !!= FALSE>, pRTCC_PaintStruct
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CreatePen, 3, 0, <xApiResult !!= NULL>, pRTCC_Pen
 DetourCreate CreatePenIndirect, 1, 0, <xApiResult !!= NULL>, pRTCC_Pen
@@ -942,11 +942,11 @@ DetourCreate CreateHalftonePalette, 1, 0, <xApiResult !!= NULL>, pRTCC_Palette
 DetourCreate CreateColorSpaceA, 1, 0, <xApiResult !!= NULL>, pRTCC_ColorSpace
 DetourCreate CreateColorSpaceW, 1, 0, <xApiResult !!= NULL>, pRTCC_ColorSpace
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate GetStockObject, 1, 0, <xApiResult !!= NULL>, pRTCC_StockObject
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CreateDCA, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
 DetourCreate CreateDCW, 4, 0, <xApiResult !!= NULL>, pRTCC_DeviceContext
@@ -962,7 +962,7 @@ DetourDestroy DeleteObject, 1, 1, <xApiResult !!= FALSE>, pRTCC_Pen, pRTCC_Brush
                                                 pRTCC_ColorSpace, pRTCC_Image, pRTCC_StockObject, \
                                                 pRTCC_DeviceContext
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CreateCursor, 7, 0, <xApiResult !!= NULL>, pRTCC_Cursor
 DetourCreate CopyCursor, 1, 1, <>, pRTCC_Cursor
@@ -977,7 +977,7 @@ externdef pRTCC_Icon:$ObjPtr(RTC_Collection)
 ;DestroyCursor and DestroyIcon use the same API
 DetourDestroy DestroyCursor, 1, 1, <xApiResult !!= FALSE>, pRTCC_Cursor, pRTCC_Icon, pRTCC_Image
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CopyIcon, 1, 0, <xApiResult !!= NULL>, pRTCC_Icon
 DetourCreate CreateIcon, 7, 0, <xApiResult !!= NULL>, pRTCC_Icon
@@ -998,7 +998,7 @@ DetourCreate LoadIconWithScaleDown, 5, -5, <xApiResult == S_OK>, pRTCC_Icon
 DetourCreate ImageList_GetIcon, 3, 0, <xApiResult !!= NULL>, pRTCC_Icon
 DetourCreate GdipCreateHICONFromBitmap, 2, -2, <xApiResult == 0>, pRTCC_Icon
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DetourPrivateExtractIconsX
 ; Purpose:    Create a standard detour procedure to intercept allocation APIs.
 ; Arguments:  Arg1: API name.
@@ -1055,7 +1055,7 @@ DetourPrivateExtractIconsX macro ApiName:req
   Dtr&ApiName& endp
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourPrivateExtractIconsX PrivateExtractIconsA
 DetourPrivateExtractIconsX PrivateExtractIconsW
@@ -1063,7 +1063,7 @@ DetourPrivateExtractIconsX PrivateExtractIconsW
 ;DestroyCursor and DestroyIcon use the same API
 DetourDestroy DestroyIcon, 1, 1, <xApiResult !!= FALSE>, pRTCC_Icon, pRTCC_Cursor, pRTCC_Image
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CreateMenu, 0, 0, <xApiResult !!= NULL>, pRTCC_Menu
 DetourCreate CreatePopupMenu, 0, 0, <xApiResult !!= NULL>, pRTCC_Menu
@@ -1073,7 +1073,7 @@ DetourCreate LoadMenuIndirectA, 1, 0, <xApiResult !!= NULL>, pRTCC_Menu
 DetourCreate LoadMenuIndirectW, 1, 0, <xApiResult !!= NULL>, pRTCC_Menu
 DetourDestroy DestroyMenu, 1, 1, <xApiResult !!= FALSE>, pRTCC_Menu
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CloseMetaFile, 1, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
 DetourCreate CopyMetaFileA, 2, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
@@ -1084,7 +1084,7 @@ DetourCreate GetMetaFileA, 1, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
 DetourCreate GetMetaFileW, 1, 0, <xApiResult !!= NULL>, pRTCC_MetaFile
 DetourDestroy DeleteMetaFile, 1, 1, <xApiResult !!= FALSE>, pRTCC_MetaFile
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CloseEnhMetaFile, 1, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
 DetourCreate CopyEnhMetaFileA, 2, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
@@ -1095,7 +1095,7 @@ DetourCreate GetEnhMetaFileA, 1, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
 DetourCreate GetEnhMetaFileW, 1, 0, <xApiResult !!= NULL>, pRTCC_EnhMetaFile
 DetourDestroy DeleteEnhMetaFile, 1, 1, <xApiResult !!= FALSE>, pRTCC_EnhMetaFile
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CreateAcceleratorTableA, 2, 0, <xApiResult !!= NULL>, pRTCC_AccTable
 DetourCreate CreateAcceleratorTableW, 2, 0, <xApiResult !!= NULL>, pRTCC_AccTable
@@ -1105,7 +1105,7 @@ DetourCreate LoadAcceleratorsA, 2, 0, <xApiResult !!= NULL>, pRTCC_AccTable
 DetourCreate LoadAcceleratorsW, 2, 0, <xApiResult !!= NULL>, pRTCC_AccTable
 DetourDestroy DestroyAcceleratorTable, 1, 1, <xApiResult !!= FALSE>, pRTCC_AccTable
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CreateDesktopA, 6, 0, <xApiResult !!= NULL>, pRTCC_Desktop
 DetourCreate CreateDesktopW, 6, 0, <xApiResult !!= NULL>, pRTCC_Desktop
@@ -1113,7 +1113,7 @@ DetourCreate CreateDesktopExA, 8, 0, <xApiResult !!= NULL>, pRTCC_Desktop
 DetourCreate CreateDesktopExW, 8, 0, <xApiResult !!= NULL>, pRTCC_Desktop
 DetourDestroy CloseDesktop, 1, 1, <xApiResult !!= FALSE>, pRTCC_Desktop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CreateWindowStationA, 4, 0, <xApiResult !!= NULL>, pRTCC_WindowStation
 DetourCreate CreateWindowStationW, 4, 0, <xApiResult !!= NULL>, pRTCC_WindowStation
@@ -1121,7 +1121,7 @@ DetourCreate OpenWindowStationA, 3, 0, <xApiResult !!= NULL>, pRTCC_WindowStatio
 DetourCreate OpenWindowStationW, 3, 0, <xApiResult !!= NULL>, pRTCC_WindowStation
 DetourDestroy CloseWindowStation, 1, 1, <xApiResult !!= FALSE>, pRTCC_WindowStation
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CreateFileA, 7, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_File
 DetourCreate CreateFileW, 7, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_File
@@ -1242,7 +1242,7 @@ DetourDestroy CloseHandle, 1, 1, <xApiResult !!= FALSE>, \
                  pRTCC_Thread, pRTCC_Process, pRTCC_Job, \
                  pRTCC_DuplicateHandle
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreateNamed CreateWaitableTimerA, 3, 0, <xApiResult !!= NULL>, pRTCC_Timer
 DetourCreateNamed CreateWaitableTimerW, 3, 0, <xApiResult !!= NULL>, pRTCC_Timer
@@ -1324,24 +1324,24 @@ DtrKillTimer proc uses xbx xdi Arg1:XWORD, Arg2:XWORD
   ret
 DtrKillTimer endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate GetDC, 1, 0, <xApiResult !!= NULL>, pRTCC_DisplayDeviceContext
 DetourCreate GetDCEx, 3, 0, <xApiResult !!= NULL>, pRTCC_DisplayDeviceContext
 DetourCreate GetWindowDC, 1, 0, <xApiResult !!= NULL>, pRTCC_DisplayDeviceContext
 DetourDestroy ReleaseDC, 2, 2, <xApiResult !!= FALSE>, pRTCC_DisplayDeviceContext
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate GdipGetDC, 2, -2, <xApiResult !!= 0>, pRTCC_GdipDisplayDeviceContext
 DetourDestroy GdipReleaseDC, 2, 2, <xApiResult !!= 0>, pRTCC_GdipDisplayDeviceContext
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 DetourCreate LoadKeyboardLayoutA, 2, 0, <xApiResult !!= NULL>, pRTCC_KeyboardLayout
 DetourCreate LoadKeyboardLayoutW, 2, 0, <xApiResult !!= NULL>, pRTCC_KeyboardLayout
 DetourDestroy UnloadKeyboardLayout, 1, 1, <xApiResult !!= FALSE>, pRTCC_KeyboardLayout
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate LoadLibraryA, 1, 0, <xApiResult !!= NULL>, pRTCC_Library
 DetourCreate LoadLibraryW, 1, 0, <xApiResult !!= NULL>, pRTCC_Library
@@ -1349,7 +1349,7 @@ DetourCreate LoadLibraryExA, 3, 0, <xApiResult !!= NULL>, pRTCC_Library
 DetourCreate LoadLibraryExW, 3, 0, <xApiResult !!= NULL>, pRTCC_Library
 DetourDestroy FreeLibrary, 1, 1, <xApiResult !!= FALSE>, pRTCC_Library
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate OpenPrinterA, 3, -2, <xApiResult !!= NULL>, pRTCC_Printer
 DetourCreate OpenPrinterW, 3, -2, <xApiResult !!= NULL>, pRTCC_Printer
@@ -1359,7 +1359,7 @@ DetourCreate AddPrinterA, 3, 0, <xApiResult !!= NULL>, pRTCC_Printer
 DetourCreate AddPrinterW, 3, 0, <xApiResult !!= NULL>, pRTCC_Printer
 DetourDestroy ClosePrinter, 1, 1, <xApiResult !!= FALSE>, pRTCC_Printer
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate RegCreateKeyA, 3, -3, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
 DetourCreate RegCreateKeyW, 3, -3, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
@@ -1373,19 +1373,19 @@ DetourCreate RegOpenKeyTransactedA, 7, -5, <xApiResult == ERROR_SUCCESS>, pRTCC_
 DetourCreate RegOpenKeyTransactedW, 7, -5, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
 DetourDestroy RegCloseKey, 1, 1, <xApiResult == ERROR_SUCCESS>, pRTCC_RegKey
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate BeginUpdateResourceA, 2, 0, <xApiResult !!= NULL>, pRTCC_UpdateResource
 DetourCreate BeginUpdateResourceW, 2, 0, <xApiResult !!= NULL>, pRTCC_UpdateResource
 DetourDestroy EndUpdateResourceA, 2, 1, <xApiResult !!= FALSE>, pRTCC_UpdateResource
 DetourDestroy EndUpdateResourceW, 2, 1, <xApiResult !!= FALSE>, pRTCC_UpdateResource
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate CreateMailslotA, 4, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_Mailslot
 DetourCreate CreateMailslotW, 4, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_Mailslot
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate FindFirstFileA, 2, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
 DetourCreate FindFirstFileW, 2, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
@@ -1397,25 +1397,25 @@ DetourCreate FindFirstFileTransactedA, 7, 0, <xApiResult !!= INVALID_HANDLE_VALU
 DetourCreate FindFirstFileTransactedW, 7, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstFile
 DetourDestroy FindClose, 1, 1, <xApiResult !!= FALSE>, pRTCC_FindFirstFile
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate FindFirstChangeNotificationA, 3, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstChangeNotif
 DetourCreate FindFirstChangeNotificationW, 3, 0, <xApiResult !!= INVALID_HANDLE_VALUE>, pRTCC_FindFirstChangeNotif
 DetourDestroy FindCloseChangeNotification, 1, 1, <xApiResult !!= FALSE>, pRTCC_FindFirstFile
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate OpenEventLogA, 2, 0, <xApiResult !!= NULL>, pRTCC_EventLog
 DetourCreate OpenEventLogW, 2, 0, <xApiResult !!= NULL>, pRTCC_EventLog
 DetourDestroy CloseEventLog, 1, 1, <xApiResult !!= FALSE>, pRTCC_EventLog
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DetourCreate InitializeCriticalSection, 1, 1, <>, pRTCC_CriticalSection
 DetourCreate InitializeCriticalSectionAndSpinCount, 2, 1, <>, pRTCC_CriticalSection
 DetourDestroy DeleteCriticalSection, 1, 1, <>, pRTCC_CriticalSection
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 .data
 OleInitializeCount  DWORD  0
 
@@ -1423,7 +1423,7 @@ OleInitializeCount  DWORD  0
 DetourCreateCounted OleInitialize, 1, OleInitializeCount, <xApiResult == S_OK>, pRTCC_OleInitialization
 DetourDestroyCounted OleUninitialize, 0, OleInitializeCount, <>, pRTCC_OleInitialization
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 .data
 CoInitializeCount  DWORD  0
 
@@ -1434,7 +1434,7 @@ DetourDestroyCounted CoUninitialize, 0, CoInitializeCount, <>, pRTCC_CoInitializ
 
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure: DllDone
 ; Purpose:   RegGuard finalization and freeing of allocated resorces.
 ;            It restores the original APIs.
@@ -1450,7 +1450,7 @@ DllDone proc
   ret
 DllDone endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure: DllInit
 ; Purpose:   ResGuard initialization. It hooks the following APIs from the IAT.
 ; Arguments: None.
@@ -1830,7 +1830,7 @@ DllInit proc
   ret
 DllInit endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure: ResGuardInit (exported)
 ; Purpose:   Initialize monitoring and remembers where to stop the stack tracing.
 ; Arguments: None.
@@ -1846,7 +1846,7 @@ ResGuardInit proc
   ret
 ResGuardInit endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure: ResGuardShow (exported)
 ; Purpose:   Visualisation of resource usage.
 ; Arguments: Arg1: -> RTC_Collection.
@@ -1983,7 +1983,7 @@ ResGuardShow proc uses xbx xdi
   ret
 ResGuardShow endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure: ResGuardStart (exported)
 ; Purpose:   Begins resource monitoring.
 ; Arguments: None.
@@ -1994,7 +1994,7 @@ ResGuardStart proc
   ret
 ResGuardStart endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure: ResGuardStop (exported)
 ; Purpose:   End resource monitoring.
 ; Arguments: None.
@@ -2005,7 +2005,7 @@ ResGuardStop proc
   ret
 ResGuardStop endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure: start (exported)
 ; Purpose:   Entry procedure in the DLL (DllMain).
 ; Arguments: Arg1: Instance handle.

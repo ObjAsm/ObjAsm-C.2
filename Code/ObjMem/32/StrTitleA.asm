@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <StrTitleA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrTitleA
 ; Purpose:    Capitalize the first character of each word. The rest is converted to lowercase.
 ; Arguments:  Arg1: -> Source ANSI string.

@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <DbgBuildStrMsgA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgBuildStrMsgA
 ; Purpose:    Debug helper proc that builds a structure in memory to send an ANSI string to the
 ;             DebugCenter server.

@@ -51,7 +51,7 @@ SHTDN_REASON_VALID_BIT_MASK                 equ 0C0FFFFFFh
 
 externdef wSysStandby_SeShutdownPrivilege:WORD
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SysShutdown
 ; Purpose:    Shut down the system.
 ; Arguments:  Arg1: Shutdown type.

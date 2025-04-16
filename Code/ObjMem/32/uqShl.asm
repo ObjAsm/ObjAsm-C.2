@@ -13,7 +13,7 @@
 
 ProcName textequ <uqShl>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  uqShl
 ; Purpose:    Shift left of a signed QWORD (signed and unsigned procs are identical).
 ; Arguments:  Arg1: QWORD in edx:eax.

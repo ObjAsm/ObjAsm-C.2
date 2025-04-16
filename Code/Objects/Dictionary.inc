@@ -18,7 +18,7 @@ DIC_ITEM ends
 PDIC_ITEM typedef ptr DIC_ITEM
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Dictionary
 ; Purpose:    HashMap derived object. To resolve collisions, we use open addressing.
 ;             dBucketCount must always be a power of 2.
@@ -37,7 +37,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dictionary.Delete
 ; Purpose:    Delete an item from the Dictionary using a Key.
 ; Arguments:  Arg1: -> Key. This argument should never be NULL.
@@ -75,7 +75,7 @@ Method Dictionary.Delete, uses xbx xdi xsi, pKey:PSTRING
   mov POINTER ptr [xdx + sizeof(POINTER)*xbx], HMP_BUCKET_TOMBSTONE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dictionary.GetItemKey
 ; Purpose:    Return the pointer to the item key.
 ; Arguments:  Arg1: -> Item. This argument should never be NULL.
@@ -87,7 +87,7 @@ Method Dictionary.GetItemKey,, pItem:PDIC_ITEM
   mov xax, [xdx].DIC_ITEM.pKey
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dictionary.Hash
 ; Purpose:    Computs the hash value based on the item input data.
 ;             This is the "Fowler/Noll/Vo" or FNV hash.
@@ -179,7 +179,7 @@ L2:   ; Zero-byte found. Compute string length
   endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dictionary.OnCollision
 ; Purpose:    Internal collision handler. Since we are using open addressing, we will start probing
 ;             with a perturbation we get from the upper bits of the hash.
@@ -205,7 +205,7 @@ Method Dictionary.OnCollision, uses xsi, xHash:XWORD
          POINTER ptr [xdx + sizeof(POINTER)*xax] == HMP_BUCKET_TOMBSTONE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dictionary.Search
 ; Purpose:    Search in the Dictionary for a given Key.
 ; Arguments:  Arg1: -> Key

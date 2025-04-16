@@ -11,7 +11,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  uqqqDiv
 ; Purpose:    Divide 2 unsigned QWORDs.
 ;             (64 bit) Dividend divided by (64 bit) Divisor = (64 bit) Quotient. 

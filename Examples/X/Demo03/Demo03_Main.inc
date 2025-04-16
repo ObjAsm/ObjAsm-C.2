@@ -38,7 +38,7 @@ AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SB_STYLE, 0, 4}
 ;  DEF_STATUSBAR_PART {120,  20, 1, SBT_NOBORDERS or SBT_OWNERDRAW, NULL}
 ;  DEF_STATUSBAR_PART {120,  -2, 0, SBT_SUNKEN, NULL}         ;Spring
 ;  DEF_STATUSBAR_PART {120, 100, 2, SBT_SUNKEN, NULL}
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object Application, ApplicationID, SdiApp                ;Single Document Interface App.
   RedefineMethod    Done
@@ -65,7 +65,7 @@ Object Application, ApplicationID, SdiApp                ;Single Document Interf
 
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object ModelessDlg, , DialogModeless
   RedefineMethod    CtlsGet
@@ -81,7 +81,7 @@ ObjectEnd
 
 CStr szAppClassName, "OAC_Application"
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
 ; Purpose:    Finalize the SDI application object.
 ; Arguments:  None.
@@ -104,7 +104,7 @@ Method Application.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the SDI application object.
 ; Arguments:  None.
@@ -145,7 +145,7 @@ Method Application.Init, uses xbx xsi
   invoke UpdateWindow, [xsi].hWnd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
@@ -163,7 +163,7 @@ Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -225,7 +225,7 @@ Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -274,7 +274,7 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -296,7 +296,7 @@ Method Application.OnNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xsi].hWnd, WM_NOTIFY, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -329,7 +329,7 @@ Method Application.OnPaint, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -354,7 +354,7 @@ Method Application.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return zero
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
 ; Purpose:    Register the Application window class with the operating system.
 ; Arguments:  None.
@@ -386,7 +386,7 @@ MethodEnd
 ;    ModelessDlg implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ModelessDlg.CtlsGet
 ; Purpose:    Read the controls in the dialog.
 ; Arguments:  None.
@@ -400,7 +400,7 @@ Method ModelessDlg.CtlsGet
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ModelessDlg.CtlsSet
 ; Purpose:    Set the controls in the dialog.
 ; Arguments:  None.
@@ -412,7 +412,7 @@ Method ModelessDlg.CtlsSet, uses xsi
   invoke CheckDlgButton, [xsi].hWnd, IDC_CHECK1, BST_CHECKED
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ModelessDlg.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.

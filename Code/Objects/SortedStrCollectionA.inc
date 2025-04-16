@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     SortedStrCollectionA
 ; Purpose:    Implement a sorted ANSI string collection. It is descendant of SortedCollection
 ;             The Compare method is overridden to provide the conventional lexicographic ASCII
@@ -29,7 +29,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedStrCollectionA.Compare
 ; Purpose:    Compare the ANSI strings Key1 and Key2.
 ; Arguments:  Arg1: -> First string.
@@ -42,7 +42,7 @@ Method SortedStrCollectionA.Compare,, pKey1:PSTRINGA, pKey2:PSTRINGA
   invoke StrCompA, pKey1, pKey2
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedStrCollectionA.DeserializeItem
 ; Purpose:    Convert a serialized string item back.
 ; Arguments:  Arg1: -> Item.
@@ -52,7 +52,7 @@ MethodEnd
 Method SortedStrCollectionA.DeserializeItem,, pItem:PSTRINGA, pDeserInfo:PDESER_INFO
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedStrCollectionA.DestroyItem
 ; Purpose:    Remove the ANSI string item from the sorted collection and disposes it.
 ; Arguments:  Arg1: -> ANSI string.
@@ -62,7 +62,7 @@ Method SortedStrCollectionA.DestroyItem,, pItem:PSTRINGA
   invoke StrDisposeA, pItem
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedStrCollectionA.GetItem
 ; Purpose:    Read a string from the stream by calling Stream.ReadStr.
 ; Arguments:  Arg1: -> Stream object.
@@ -72,7 +72,7 @@ Method SortedStrCollectionA.GetItem,, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.StrRead
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedStrCollectionA.PutItem
 ; Purpose:    Write the ANSI string item on to the stream by calling Stream.WriteStr.
 ; Arguments:  Arg1: -> Stream object.
@@ -83,7 +83,7 @@ Method SortedStrCollectionA.PutItem,, pStream:$ObjPtr(Stream), pString:PSTRINGA
   OCall pStream::Stream.StrWriteA, pString
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedStrCollectionA.SerializeItem
 ; Purpose:    Serialize a string item.
 ; Arguments:  Arg1: -> Item.

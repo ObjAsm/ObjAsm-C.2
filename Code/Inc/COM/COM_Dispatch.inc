@@ -18,7 +18,7 @@ endif
 
 CallDispatch proto :POINTER, :DWORD, :WORD, :DWORD, :POINTER, :POINTER
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      GetMethodDispatchID
 ; Purpose:    Return the method ID of a specified interface.
 ; Arguments:  Arg1: Instance Pointer.
@@ -54,7 +54,7 @@ GetMethodDispatchID macro InterfacePointer:req, InterfaceName:req, MethodName:re
                                                        $$ArgLCID, $$ArgDest
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DEFINE_COM_MTD_DSP
 ; Purpose:    Define some equates to use a Dispatch interface.
 ; Arguments:  Arg1: Interface name.
@@ -86,7 +86,7 @@ DEFINE_COM_MTD_DSP macro IName, MName:req, DispID:req, MtdType:req, RetType, Arg
   DISPATCH_TYPE_&IName&_&MName& CatStr $$ReturnType, <,>, $$ArgTypes
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      COM_AutoDispatch
 ; Purpose:    Perform a COM method call using the Dispatch interface. Variant arguments are created
 ;             automatically onto stack.
@@ -116,7 +116,7 @@ COM_AutoDispatch macro Cast:req, Args:vararg
                        @CatStr(<DISPATCH_TYPE_>, %$$IName, <_>, %$$MName), Args
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      COM_Dispatch
 ; Purpose:    Perform a COM method call using the Dispatch interface. Varint arguments have to
 ;             be supplied.

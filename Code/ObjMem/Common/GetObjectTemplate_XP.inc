@@ -10,7 +10,7 @@
 
 externdef p1stOMD:POINTER
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetObjectTemplate
 ; Purpose:    Get the template address of an object type ID.
 ; Arguments:  Arg1: Object type ID.

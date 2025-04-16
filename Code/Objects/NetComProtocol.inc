@@ -16,7 +16,7 @@ if IMPLEMENT
 ;    NetComProtocol implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.Allocate
 ; Purpose:    Allocate a memory chunk for management data on a per Connection basis.
 ;             Additional related resources can be reserved here. The POINTER to the allocated memory
@@ -29,7 +29,7 @@ Method NetComProtocol.Allocate,, pConnection:$ObjPtr(NetComConnection)
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.AddToBlackList
 ; Purpose:    Add an address to the BlackList.
 ; Arguments:  Arg1: -> NETCOMADDR.
@@ -42,7 +42,7 @@ Method NetComProtocol.AddToBlackList,, pAddr:PNETCOMADDR
   OCall [xcx].BlackList::NetComAddrCollection.Insert, xdx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.Done
 ; Purpose:    Finalize this object.
 ; Arguments:  None.
@@ -55,7 +55,7 @@ Method NetComProtocol.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.Init
 ; Purpose:    Initialize this object.
 ; Arguments:  Arg1: -> Owner object.
@@ -70,7 +70,7 @@ Method NetComProtocol.Init, uses xsi, pOwner:POINTER, pServiceName:PSTRING
   OCall [xsi].BlackList::NetComAddrCollection.Init, xsi, 10, 10, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.IsDataComplete?
 ; Purpose:    A NetComConnection object will call this method to determine if we have received at
 ;             least one complete packet, given the rules of your Protocol. This is where your
@@ -91,7 +91,7 @@ Method NetComProtocol.IsDataComplete?,, pConnection:$ObjPtr(NetComConnection), \
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.IsBlackListed?
 ; Purpose:    Check if an address is in a List (DataCollection).
 ; Arguments:  Arg1: -> NETCOMADDR to be checked for.
@@ -105,7 +105,7 @@ Method NetComProtocol.IsBlackListed?,, pAddr:PNETCOMADDR
   OCall [xcx].BlackList::NetComAddrCollection.Search, xdx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.OnAccept
 ; Purpose:    An inbound connection 'accept' has completed.
 ; Arguments:  Arg1: -> NetComConnection.
@@ -116,7 +116,7 @@ Method NetComProtocol.OnAccept,, pConnection:$ObjPtr(NetComConnection)
   mov eax, PROT_CMD_ACCEPT_CONNECTION
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.OnClose
 ; Purpose:    A connection has, for whatever reason, been terminated.
 ;             You can override this, perhaps to release extra per connection resources.
@@ -127,7 +127,7 @@ Method NetComProtocol.OnClose,, pConnection:$ObjPtr(NetComConnection)
 ;  DbgHex pConnection, "NetComProtocol.OnClose", "&PROTOCOL_WND_NAME"
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.OnConnect
 ; Purpose:    An outbound connection attempt has completed.
 ; Arguments:  Arg1: -> NetComConnection.
@@ -137,7 +137,7 @@ Method NetComProtocol.OnConnect,, pConnection:$ObjPtr(NetComConnection)
 ;  DbgHex pConnection, "NetComProtocol.OnConnect", "&PROTOCOL_WND_NAME"
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.OnDisconnect
 ; Purpose:    An established connection has been disconnected.
 ; Arguments:  Arg1: -> NetComConnection.
@@ -149,7 +149,7 @@ Method NetComProtocol.OnDisconnect,, pConnection:$ObjPtr(NetComConnection)
   xBitSet [xdx].$Obj(NetComConnection).dFlags, NCC_DISCONNECTED
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.OnError
 ; Purpose:    Error notification handler.
 ; Arguments:  Arg1: -> NetComConnection.
@@ -200,7 +200,7 @@ Method NetComProtocol.OnError,, pConnection:$ObjPtr(NetComConnection), pIOSockJo
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.OnTimeout
 ; Purpose:    A connection timeout occurs.
 ; Arguments:  Arg1: -> NetComConnection.
@@ -211,7 +211,7 @@ Method NetComProtocol.OnTimeout,, pConnection:$ObjPtr(NetComConnection)
   mov eax, PROT_CMD_DISCONNECT
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.ProcessData
 ; Purpose:    A client has finished sending us data, now we have to do something with that data.
 ; Arguments:  Arg1: -> NetComConnection.
@@ -223,7 +223,7 @@ Method NetComProtocol.ProcessData,, pConnection:$ObjPtr(NetComConnection), dDeli
   mov eax, dDelimiterIndex
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComProtocol.Release
 ; Purpose:    Release the memory chunk allocated with Allocate. Additional resources must be freed
 ;             here.

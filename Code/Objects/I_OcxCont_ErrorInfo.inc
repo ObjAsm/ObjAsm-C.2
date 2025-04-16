@@ -10,7 +10,7 @@
 
 externdef IID_IErrorInfo:GUID           ;1CF2B120-547D-101B-8E65-08002B2BD119
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     I_OcxCont_ErrorInfo
 ; Purpose:    The IErrorInfointerface provides detailed contextual error information.
 ;             Mandatory if container supports dual interfaces.
@@ -33,7 +33,7 @@ if IMPLEMENT
 ;     I_OcxCont_ErrorInfo implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_ErrorInfo.GetGUID
 ; Purpose:    Returns the globally unique identifier (GUID) of the interface that defined the error.
 ; Arguments:  Arg1: -> GUID, or GUID_NULL, if the error was defined by the operating system.
@@ -44,7 +44,7 @@ Method I_OcxCont_ErrorInfo.GetGUID,, pGUID:REFGUID
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_ErrorInfo.GetSource
 ; Purpose:    Returns the language-dependent programmatic ID (ProgID) for the class or application
 ;             that raised the error.
@@ -56,7 +56,7 @@ Method I_OcxCont_ErrorInfo.GetSource,, pBstrSource:BSTR
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_ErrorInfo.GetDescription
 ; Purpose:    Returns a textual description of the error.
 ; Arguments:  Arg1: -> Brief string that describes the error.
@@ -67,7 +67,7 @@ Method I_OcxCont_ErrorInfo.GetDescription,, pBstrDescription:BSTR
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_ErrorInfo.GetHelpFile
 ; Purpose:    Returns the path of the Help file that describes the error.
 ; Arguments:  Arg1: -> String that contains the fully qualified path of the Help file.
@@ -78,7 +78,7 @@ Method I_OcxCont_ErrorInfo.GetHelpFile,, pBstrHelpFile:BSTR
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_ErrorInfo.GetHelpContext
 ; Purpose:    Returns the Help context identifier (ID) for the error.
 ; Arguments:  Arg1: -> Help context ID for the error.

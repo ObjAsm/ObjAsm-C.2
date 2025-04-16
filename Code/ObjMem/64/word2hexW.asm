@@ -12,7 +12,7 @@
 
 externdef HexCharTableW:CHRW
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  word2hexW
 ; Purpose:    Convert a WORD to its hexadecimal WIDE string representation.
 ; Arguments:  Arg1: -> Destination WIDE string buffer.

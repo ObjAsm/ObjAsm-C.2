@@ -10,7 +10,7 @@
 
 % include &IncPath&Windows\compressapi.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CompressMem
 ; Purpose:    Compress memory with one of the Cabinet compression algorithms. 
 ; Arguments:  Arg1: -> Uncompressed data.

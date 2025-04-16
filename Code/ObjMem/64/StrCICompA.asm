@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCICompA
 ; Purpose:    Compare 2 ANSI strings without case sensitivity and length limitation.
 ; Arguments:  Arg1: -> ANSI string 1.

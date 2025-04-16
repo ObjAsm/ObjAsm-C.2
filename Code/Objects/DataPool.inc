@@ -19,7 +19,7 @@ DPL_CONTROLDATA struc
 DPL_CONTROLDATA ends                    ;  Zero if there is no free item.
 P_DPL_CONTROLDATA typedef ptr DPL_CONTROLDATA
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DataPool
 ; Purpose:    This memory manager is a page based memory pool. It handles memory fragments (Items)
 ;             of the same size (dItemSize). Due to the linkage of unused items, you can quickly get
@@ -42,46 +42,46 @@ P_DPL_CONTROLDATA typedef ptr DPL_CONTROLDATA
 ;
 ;
 ;  SDLL_SENTINEL             Blob #1                               Blob #k             SDLL_SENTINEL
-;                      —=================—                   —=================—
-; [].pFirstItem  ———> ||  pNextItem      || ————— ... ————> ||  pNextItem      || ———> [].pFirstItem
-;                     ||—————————————————||                 ||—————————————————||
-; [].pLastItem   <——— ||  pPrevItem      || <———— ... ————— ||  pPrevItem      || <——— [].pLastItem
-;                     ||—————————————————||                 ||—————————————————||
+;                      -=================-                   -=================-
+; [].pFirstItem  ---> ||  pNextItem      || ----- ... ----> ||  pNextItem      || ---> [].pFirstItem
+;                     ||-----------------||                 ||-----------------||
+; [].pLastItem   <--- ||  pPrevItem      || <---- ... ----- ||  pPrevItem      || <--- [].pLastItem
+;                     ||-----------------||                 ||-----------------||
 ;                     ||  dUsedItemCount ||                 ||  dUsedItemCount ||
-;                     ||—————————————————||                 ||—————————————————||
-;                —————||  dFirstFreeItem ||            —————||  dFirstFreeItem ||
-;               |     ||—————————————————||           |     ||—————————————————||
+;                     ||-----------------||                 ||-----------------||
+;                -----||  dFirstFreeItem ||            -----||  dFirstFreeItem ||
+;               |     ||-----------------||           |     ||-----------------||
 ;               |     || (Padding bytes) ||           |     || (Padding bytes) ||
 ;               |     ||=================||           |     ||=================||
 ;               |     ||  Item 1         ||           |     ||  Item j+1       ||
-;               |     ||—————————————————||           |     ||—————————————————||
-;               |     ||  Item 2         ||           '————>||////  Free 4 ////|| (Zero)
-;               '————>||—————————————————||                 ||—————————————————||
-;             ————————||////  Free 1 ////||                 ||  Item n         ||    |
-;            |        ||—————————————————||                 ||—————————————————|| <——' dUsedSize
+;               |     ||-----------------||           |     ||-----------------||
+;               |     ||  Item 2         ||           '---->||////  Free 4 ////|| (Zero)
+;               '---->||-----------------||                 ||-----------------||
+;             --------||////  Free 1 ////||                 ||  Item n         ||    |
+;            |        ||-----------------||                 ||-----------------|| <--' dUsedSize
 ;            |        ||  Item 4         ||                 ||                 ||
-;            |   ————>||—————————————————||                 ||                 ||
+;            |   ---->||-----------------||                 ||                 ||
 ;            |  |     ||////  Free 2 ////|| (Zero)          ||                 ||
-;            |  |     ||—————————————————||                 ||                 ||
+;            |  |     ||-----------------||                 ||                 ||
 ;            |  |     ||  ...            ||                 ||                 ||
-;            |  |     ||—————————————————||                 ||                 ||
+;            |  |     ||-----------------||                 ||                 ||
 ;            |  |     ||  ...            ||                 ||                 ||
-;            '——|————>||—————————————————||                 ||                 ||
-;               '—————||////  Free 3 ////||                 ||                 ||
-;                     ||—————————————————||                 ||                 ||
+;            '--|---->||-----------------||                 ||                 ||
+;               '-----||////  Free 3 ////||                 ||                 ||
+;                     ||-----------------||                 ||                 ||
 ;                     ||  Item i         ||                 ||                 ||
-;                     ||—————————————————||                 ||                 ||
+;                     ||-----------------||                 ||                 ||
 ;                     ||  ...            ||                 ||                 ||
-;                     ||—————————————————||                 ||                 ||
+;                     ||-----------------||                 ||                 ||
 ;                     ||  ...            ||                 ||                 ||
-;                     ||—————————————————||                 ||                 ||
+;                     ||-----------------||                 ||                 ||
 ;                     ||  Item j         ||                 ||                 ||
-;                     |'—————————————————'|                 |'—————————————————'|
+;                     |'-----------------'|                 |'-----------------'|
 ;                     |                   |                 |                   |
 ;                     | (Wasted Commited  |                 | (Wasted Commited  |
 ;                     |       Memory)     |                 |       Memory)     |
 ;                     |                   |                 |                   |    |
-;                     '———————————————————'                 '———————————————————' <——' dAllocSize
+;                     '-------------------'                 '-------------------' <--' dAllocSize
 ;
 ;
 ; Notes:     - DataPool and all descendants are thread safe using the ObjAsm multithreading support.
@@ -120,7 +120,7 @@ if IMPLEMENT
 ;    DataPool implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataPool.Done
 ; Purpose:    Finalize the DataPool object, releasing allocated resources.
 ; Arguments:  None.
@@ -147,7 +147,7 @@ Method DataPool.Done, uses xbx xdi xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataPool.FreeItem
 ; Purpose:    Free a memory block.
 ; Arguments:  Arg1: -> Item.
@@ -196,7 +196,7 @@ Method DataPool.FreeItem, uses xbx xdi xsi, pItem:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataPool.Init
 ; Purpose:    Initialize the DataPool object. No allocation is done at this moment!
 ; Arguments:  Arg1: -> Owner object.
@@ -269,7 +269,7 @@ Method DataPool.Init, uses xsi, pOwner:POINTER, dItemSize:DWORD, dCapacity:DWORD
   endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataPool.Load
 ; Purpose:    Load object data from a stream.
 ; Arguments:  Arg1: -> Stream object.
@@ -295,7 +295,7 @@ Method DataPool.Load, uses xsi, pStream:$ObjPtr(Stream), pOwner:POINTER
   OCall xsi.LoadBlobs, pStream
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataPool.LoadBlobs
 ; Purpose:    Load blob data data from a stream.
 ; Arguments:  Arg1: -> Stream object.
@@ -355,7 +355,7 @@ Method DataPool.LoadBlobs, uses xbx xdi xsi, pStream:$ObjPtr(Stream)
   xor eax, eax                                          ;OBJ_OK = return success code
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataPool.LoadItem
 ; Purpose:    Load an Item from a stream.
 ; Arguments:  Arg1: -> Stream object.
@@ -369,7 +369,7 @@ Method DataPool.LoadItem,, pStream:$ObjPtr(Stream), pItem:POINTER
   mov eax, [xdx].$Obj(Stream).dErrorCode
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataPool.NewItem
 ; Purpose:    Return a pointer to a free memory item.
 ; Arguments:  None.
@@ -430,7 +430,7 @@ Method DataPool.NewItem, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataPool.Reset
 ; Purpose:    Restore initial state, releasing the complete allocated memory.
 ; Arguments:  None.
@@ -448,7 +448,7 @@ Method DataPool.Reset, uses xbx xdi xsi
   SDLL_Init xdi                                         ;Reset the list
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataPool.Store
 ; Purpose:    Store object data in a stream.
 ; Arguments:  Arg1: -> Stream object.
@@ -545,7 +545,7 @@ Method DataPool.Store, uses xbx xdi xsi, pStream:$ObjPtr(Stream)
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataPool.StoreItem
 ; Purpose:    Store item data in a stream.
 ; Arguments:  Arg1: -> Stream object.

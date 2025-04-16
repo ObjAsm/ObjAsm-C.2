@@ -15,7 +15,7 @@ WTT_TRANSLATION struct
 WTT_TRANSLATION ends
 PWTT_TRANSLATION typedef ptr WTT_TRANSLATION
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     WebTextTranslator
 ; Purpose:    This object is able to translate a text in any supported language using the free
 ;             Web translation service from GOOGLE.
@@ -63,7 +63,7 @@ WTT_DELIMITER_LIST label WTT_DELIMITERS
   WTT_DELIMITERS  {00, NULL,                00, NULL}
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WebTextTranslator.Compare
 ; Purpose:    Compare the WIDE strings Key1 and Key2.
 ; Arguments:  Arg1: -> First key.
@@ -76,7 +76,7 @@ Method WebTextTranslator.Compare,, pKey1:PSTRINGW, pKey2:PSTRINGW
   invoke StrCompW, pKey1, pKey2
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WebTextTranslator.DestroyItem
 ; Purpose:    Auxiliar function to dispose a item from the collection. Don't call directly!
 ; Arguments:  Arg1: -> Item.
@@ -92,7 +92,7 @@ Method WebTextTranslator.DestroyItem, uses xbx, pItem:PWTT_TRANSLATION
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WebTextTranslator.Done
 ; Purpose:    Finalizes the object.
 ; Arguments:  None.
@@ -115,7 +115,7 @@ Method WebTextTranslator.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WebTextTranslator.GetItem
 ; Purpose:    Read a string from the stream by calling Stream.ReadStr.
 ; Arguments:  Arg1: -> Stream object.
@@ -132,7 +132,7 @@ Method WebTextTranslator.GetItem, uses xbx, pStream:$ObjPtr(Stream)
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WebTextTranslator.PutItem
 ; Purpose:    Write the WIDE string item on to the Stream by calling Stream.WriteStrW.
 ; Arguments:  Arg1: -> Stream object.
@@ -148,7 +148,7 @@ Method WebTextTranslator.PutItem, uses xbx, pStream:$ObjPtr(Stream), pItem:PWTT_
   .endif 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WebTextTranslator.Init
 ; Purpose:    Initializes the object.
 ; Arguments:  Arg1: -> Owner.
@@ -183,7 +183,7 @@ Method WebTextTranslator.Init, uses xsi, pOwner:POINTER, pDstLang:PSTRING, pSrcL
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WebTextTranslator.KeyOf
 ; Purpose:    KeyOf is overridden in cases where the key of the item is not the item itself.
 ; Arguments:  Arg1: -> Item.
@@ -195,7 +195,7 @@ Method WebTextTranslator.KeyOf,, pItem:PWTT_TRANSLATION
   mov xax, [xdx].WTT_TRANSLATION.pText
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WebTextTranslator.Translate
 ; Purpose:    Translates a given text. For a better translation, a hint thext can be supplied, e.g.
 ;             a context keyword.

@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsPntInRect
 ; Purpose:    Check if a point is within a rect.
 ;             If rect.left = rect.right = 0, the point.x is considdered inside. Idem for y coord.

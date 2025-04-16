@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCScanA
 ; Purpose:    Scan from the beginning of ANSI string for a character with length limitation.
 ; Arguments:  Arg1: -> Source ANSI string.

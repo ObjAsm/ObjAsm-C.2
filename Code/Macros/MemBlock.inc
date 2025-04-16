@@ -11,9 +11,9 @@
 ; MemBlock layout:
 ;                                                              MemBlock points here!
 ;        Offset BYTEs    WORD     WORD      DWORD         DWORD    v
-;       ————————————————————————————————————————————————————————————————————————————————————
+;       ------------------------------------------------------------------------------------
 ;  ... |  Padding     | Offset | Flags |  BYTE Size  | BYTE Usage  | BYTE Payload           | ...
-;       ————————————————————————————————————————————————————————————————————————————————————
+;       ------------------------------------------------------------------------------------
 ;      ^                                                           ^
 ;      Heap Alignment 8/16                                         Alignment 4/8/16/32/...
 ;
@@ -54,7 +54,7 @@ HEAP_ALLOC_ALIGNMENT = TARGET_BITNESS/4
 MEMBLOCK_PAYLOAD_ALIGNMENT = 16                 ;SSE architecture, PARA alignment
 MEMBLOCK_PAYLOAD_GRANULARITY = 16*sizeof(CHR)   ;At least 128-bit for XMM register access
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MemBlockAlloc
 ; Purpose:    Allocate a MemBlock with a given payload size.
 ; Arguments:  Arg1: Min. payload size in BYTEs.
@@ -89,7 +89,7 @@ MemBlockAlloc_X proc uses xbx dMinPayloadSize:DWORD
   ret
 MemBlockAlloc_X endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MemBlockFree
 ; Purpose:    Deallocate an MemBlock.
 ; Arguments:  Arg1: -> MemBlock.bPayload.
@@ -110,7 +110,7 @@ MemBlockFree_X proc pMemBlockPayload:POINTER
   ret
 MemBlockFree_X endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MemBlockClone
 ; Purpose:    Clone a MemBlock.
 ; Arguments:  Arg1: -> MemBlock.bPayload.

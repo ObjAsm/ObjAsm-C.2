@@ -13,7 +13,7 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 TARGET_STR_AFFIX textequ <W>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrFillChr
 ; Purpose:    Fill a preallocated BSTR with a character.
 ; Arguments:  Arg1: -> String.

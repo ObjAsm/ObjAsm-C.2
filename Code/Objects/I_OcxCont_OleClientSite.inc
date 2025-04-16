@@ -10,7 +10,7 @@
 
 externdef IID_IOleClientSite:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     I_OcxCont_ErrorInfo
 ; Purpose:    Provides the primary means by which an embedded object obtains information about the
 ;             location and extent of its display site, its moniker, its user interface, and other
@@ -37,7 +37,7 @@ if IMPLEMENT
 ;     I_OcxCont_OleClientSite implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleClientSite.SaveObject
 ; Purpose:    Saves the embedded object associated with the client site. This function is
 ;             synchronous; by the time it returns, the save will be completed.
@@ -54,7 +54,7 @@ Method I_OcxCont_OleClientSite.SaveObject, uses xsi
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleClientSite.GetMoniker
 ; Purpose:    Retrieves a moniker for the object's client site.
 ;             An object can force the assignment of its own or its container's moniker by specifying
@@ -85,7 +85,7 @@ Method I_OcxCont_OleClientSite.GetMoniker,, dAssign:DWORD, dWhichMoniker:DWORD, 
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleClientSite.GetContainer
 ; Purpose:    Retrieves a pointer to the object's container.
 ; Arguments:  Arg1: Address of IOleContainer pointer variable that receives the interface pointer to
@@ -111,7 +111,7 @@ Method I_OcxCont_OleClientSite.GetContainer,, ppContainer:POINTER
   .endif
 MethodEnd
 
- ; ——————————————————————————————————————————————————————————————————————————————————————————————————
+ ; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleClientSite.ShowObject
 ; Purpose:    Asks a container to display its object to the user. This method ensures that the
 ;             container itself is visible and not minimized.
@@ -123,7 +123,7 @@ Method I_OcxCont_OleClientSite.ShowObject
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleClientSite.OnShowWindow
 ; Purpose:    Notifies a container when an embedded object's window is about to become visible or
 ;             invisible. This method does not apply to an object that is activated in place and
@@ -139,7 +139,7 @@ Method I_OcxCont_OleClientSite.OnShowWindow,, dShow:BOOL
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleClientSite.RequestNewObjectLayout
 ; Purpose:    Asks a container to resize the display site for embedded objects.
 ; Arguments:  None.

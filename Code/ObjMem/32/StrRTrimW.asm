@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <StrRTrimW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrRTrimW
 ; Purpose:    Trim blank characters from the end of a WIDE string.
 ; Arguments:  Arg1: -> Destination buffer.

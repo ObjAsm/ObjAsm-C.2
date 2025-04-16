@@ -157,7 +157,7 @@ TVP_WORD_ELLIPSIS   equ   BIT04           ;Not implemented
 TVDEFAULT_FONT_SIZE equ   10
 TVZOOM_BASE         equ   72
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     TextView
 ; Purpose:    Provide a control that displays formatted text using styles like font, color,
 ;             background, etc. and control commands using a MASM friendly markup string.
@@ -244,10 +244,10 @@ ObjectEnd
 
 ; Layout:
 ;
-;           ———————————————————————————————————————————————————————————————
+;           ---------------------------------------------------------------
 ;          |           /\  Top                                             |<--Extent
 ;          |           \/  Padding                                         |
-;          |     —————————————————————————————————————————————————————     |
+;          |     -----------------------------------------------------     |
 ;          |    |    <-------------- Line Length -------------------->|    |
 ;          |    |<-->Lorem ipsum dolor sit amet, consetetur sadipscing|<-------DrawExtent
 ;          |    |  ¦     <------------ Line Length ------------------>|    |
@@ -262,10 +262,10 @@ ObjectEnd
 ;          |    |                                                     |    |
 ;          |    |                                                     |    |
 ;          |    |                                                     |    |
-;          |     —————————————————————————————————————————————————————     |
+;          |     -----------------------------------------------------     |
 ;          |           /\ Bottom                                           |
 ;          |           \/ Padding                                          |
-;           ——————————————————————————————————————————————————————————————— 
+;           --------------------------------------------------------------- 
 ;
 ;
 ; Sizeing strategy (pseudo code):
@@ -676,7 +676,7 @@ TVTAG_OPTIONS label TVOTAG
 ;  ret
 ;DecodeGesture endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GdiObjects.DestroyItem
 ; Purpose:    Auxiliar function to release a GDI Object from the collection.
 ; Arguments:  Arg1: Object HANDLE.
@@ -688,7 +688,7 @@ Method GdiObjects.DestroyItem,, hObject:HANDLE
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Entries.DestroyItem
 ; Purpose:    Auxiliar function to release the string from the collection.
 ; Arguments:  Arg1: -> TVENTRY.
@@ -702,7 +702,7 @@ Method Entries.DestroyItem,, pItem:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TabStops.Compare
 ; Purpose:    Comparison of VTABSTOPs.
 ; Arguments:  Arg1: -> TVTABSTOP 1
@@ -716,7 +716,7 @@ Method TabStops.Compare,, pItem1:PVTABSTOP, pItem2:PVTABSTOP
   sub eax, [xcx].TVTABSTOP.dPosition
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.Calc
 ; Purpose:    Calulate internal values and the maximal extent used to render the markup text.
 ; Arguments:  None.
@@ -842,7 +842,7 @@ Method TextView.Calc, uses xbx xdi xsi
     m2z CurLinePos.x
     m2z dAdjacentTextItems
 
-    ;Get the metric of the current line ——————————————————————————————————————— 
+    ;Get the metric of the current line --------------------------------------- 
     .while TRUE
       mov edx, dCurEntryIdx
       .break .if edx >= [xsi].Entries.dCount
@@ -854,7 +854,7 @@ Method TextView.Calc, uses xbx xdi xsi
       jz @@EndHandler
       jmp POINTER ptr [xax].TVCTAG.pCalcHandler
 
-      ; ————————————————————————————————————————————————————————————— 
+      ; ------------------------------------------------------------- 
       ; Routines:   TVCH_xxx
       ; Purpose:    Handler for TextView Commands.
       ; Arguments:  xsi -> TextView
@@ -960,7 +960,7 @@ Method TextView.Calc, uses xbx xdi xsi
     TVCCH_DRAW::                                        ;Evaluated in Draw method
 
       ;##/
-      ; ————————————————————————————————————————————————————————————— 
+      ; ------------------------------------------------------------- 
 @@EndHandler:
 
       mov xcx, [xdi].TVENTRY.pStyle
@@ -1031,7 +1031,7 @@ Method TextView.Calc, uses xbx xdi xsi
       .endif
 
     .endw
-    ;End line metric analysis ————————————————————————————————————————————————— 
+    ;End line metric analysis ------------------------------------------------- 
 
     ;Update IdealDrawExtent.x
     .ifBitClr [xsi].dOptions, TVO_AUTO_LINEBREAK
@@ -1104,7 +1104,7 @@ Method TextView.Calc, uses xbx xdi xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.Dispatch
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Window handle.
@@ -1119,7 +1119,7 @@ Method TextView.Dispatch, uses xsi, hWnd:HWND, uMsg:DWORD, wParam:WPARAM, lParam
   DispatchEvent <DefWindowProc, hWnd>                   ;xsi -> Object instance
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.Done
 ; Purpose:    Finalize the Button object.
 ; Arguments:  None.
@@ -1131,7 +1131,7 @@ Method TextView.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.Draw
 ; Purpose:    Draw the parsed text onto the MemDC.
 ; Arguments:  None.
@@ -1317,7 +1317,7 @@ Method TextView.Draw, uses xbx xdi xsi
       jz @@EndHandler
       jmp POINTER ptr [xax].TVCTAG.pDrawHandler
 
-      ; ————————————————————————————————————————————————————————————— 
+      ; ------------------------------------------------------------- 
       ; Routines:   TVCH_xxx
       ; Purpose:    Handler for TextView Commands.
       ; Arguments:  xsi -> TextView
@@ -1387,7 +1387,7 @@ Method TextView.Draw, uses xbx xdi xsi
     TVCDH_TABR::
     TVCDH_TABCLR::
       ;##/
-      ; ————————————————————————————————————————————————————————————— 
+      ; ------------------------------------------------------------- 
 @@EndHandler:
 
       mov xbx, [xdi].TVENTRY.pStyle                    ;xbx -> TVSTYLE
@@ -1465,7 +1465,7 @@ Method TextView.Draw, uses xbx xdi xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.GetEntryFrom
 ; Purpose:    Return the TVENTRY under the mouse pointer.
 ; Arguments:  Arg1: -> Collection (ActiveAreas or InfoAreas)
@@ -1513,7 +1513,7 @@ Method TextView.GetEntryFrom, uses xbx xdi xsi, pCollection:$ObjPtr(XWCollection
   xor eax, eax                                          ;Return NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.Init
 ; Purpose:    Initialize the TextView object.
 ; Arguments:  Arg1: -> Owner object.
@@ -1536,7 +1536,7 @@ Method TextView.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PDEF
   ACall xsi.Init, pOwner, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnButtonDown
 ; Purpose:    Event procedure for WM_XBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -1568,7 +1568,7 @@ Method TextView.OnButtonDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnButtonUp
 ; Purpose:    Event procedure for WM_XBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -1598,7 +1598,7 @@ Method TextView.OnButtonUp, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -1620,7 +1620,7 @@ Method TextView.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xsi].hParent, eax, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1722,7 +1722,7 @@ Method TextView.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return zero to continue window creation
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnCtlColorStatic
 ; Purpose:    Event procedure for WM_CTLCOLORSTATIC message.
 ; Arguments:  Arg1: First message parameter.
@@ -1738,7 +1738,7 @@ Method TextView.OnCtlColorStatic, uses xsi, wParam:WPARAM, lParam:LPARAM
   OCall [xsi].GdiObjects::XWCollection.ItemAt, 1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnDestroy
 ; Purpose:    Event handler for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -1774,7 +1774,7 @@ Method TextView.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnGesture
 ; Purpose:    Event procedure for WM_GESTURE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1923,7 +1923,7 @@ Method TextView.OnGesture, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnGetFont
 ; Purpose:    Event procedure for WM_GETFONT message.
 ; Arguments:  Arg1: First message parameter.
@@ -1939,7 +1939,7 @@ Method TextView.OnGetFont, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnGetZoom
 ; Purpose:    Event procedure for EM_GETZOOM message.
 ; Arguments:  Arg1: First message parameter.
@@ -1955,7 +1955,7 @@ Method TextView.OnGetZoom, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov DWORD ptr [xcx], TVZOOM_BASE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnHScroll
 ; Purpose:    Event procedure for WM_HSCROLL message.
 ; Arguments:  Arg1: First message parameter.
@@ -2020,7 +2020,7 @@ Method TextView.OnHScroll, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnMouseMove
 ; Purpose:    Event procedure for WM_MOUSEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -2085,7 +2085,7 @@ Method TextView.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnMouseWheel
 ; Purpose:    Event procedure for WM_MOUSEWHEEL message.
 ; Arguments:  Arg1: First message parameter.
@@ -2140,7 +2140,7 @@ Method TextView.OnMouseWheel, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -2164,7 +2164,7 @@ Method TextView.OnNotify,, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -2240,7 +2240,7 @@ Method TextView.OnPaint, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnPrintClient
 ; Purpose:    Event procedure for WM_PRINTCLIENT message.
 ; Arguments:  Arg1: First message parameter.
@@ -2327,7 +2327,7 @@ Method TextView.OnPrintClient, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnSetFont
 ; Purpose:    Event procedure for WM_SETFONT message.
 ; Arguments:  Arg1: First message parameter.
@@ -2351,7 +2351,7 @@ Method TextView.OnSetFont, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnSetText
 ; Purpose:    Event procedure for WM_SETTEXT message.
 ; Arguments:  Arg1: First message parameter.
@@ -2372,7 +2372,7 @@ Method TextView.OnSetText, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnSettingChange
 ; Purpose:    Event procedure for WM_SETTINGCHANGE message.
 ; Arguments:  Arg1: First message parameter.
@@ -2392,7 +2392,7 @@ Method TextView.OnSettingChange, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnSetZoom
 ; Purpose:    Event procedure for EM_SETZOOM message.
 ; Arguments:  Arg1: First message parameter.
@@ -2410,7 +2410,7 @@ Method TextView.OnSetZoom, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -2564,7 +2564,7 @@ Method TextView.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnThemeChanged
 ; Purpose:    Event procedure for WM_THEMECHANGED message.
 ; Arguments:  Arg1: First message parameter.
@@ -2584,7 +2584,7 @@ Method TextView.OnThemeChanged, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.OnVScroll
 ; Purpose:    Event procedure for WM_VSCROLL message.
 ; Arguments:  Arg1: First message parameter.
@@ -2649,7 +2649,7 @@ Method TextView.OnVScroll, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.Parse
 ; Purpose:    Parse input markup text string using a state machine.
 ; Arguments:  None.
@@ -3672,7 +3672,7 @@ Method TextView.Parse, uses xdi xsi
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.Reset
 ; Purpose:    Reset all collections, freeing associated resources.
 ; Arguments:  None.
@@ -3692,7 +3692,7 @@ Method TextView.Reset, uses xsi
   invoke DeleteObject, [xsi].hCanvasBrush
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.SetExtent
 ; Purpose:    Defines the extent values accorting to the parsed information.
 ; Arguments:  None.
@@ -3750,7 +3750,7 @@ Method TextView.SetExtent, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.SetZoomFactor
 ; Purpose:    Set the zoom factor within min max limits.
 ; Arguments:  Arg1: New zoom factor candidate.
@@ -3769,7 +3769,7 @@ Method TextView.SetZoomFactor, uses xsi, dNewZoomFactor:DWORD
   mov [xsi].dDefaultFontSize, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.Startup
 ; Purpose:    Register the TextView window class with the operating system.
 ; Arguments:  None.
@@ -3795,7 +3795,7 @@ Method TextView.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.WidthToNextStop
 ; Purpose:    Return the next TVENTRY of type TVET_TEXT or TAB command.
 ; Arguments:  Arg1: Current TVENTRY index.
@@ -3828,7 +3828,7 @@ Method TextView.WidthToNextStop, uses xbx xdi xsi, dEntryIndex:DWORD
   mov eax, edi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TextView.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.
@@ -3875,7 +3875,7 @@ Method TextView.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedures: TVSH_xxx
 ; Purpose:    Handler for TextView TVSTYLE changes.
 ; Arguments:  Arg1: xsi -> TextView object.

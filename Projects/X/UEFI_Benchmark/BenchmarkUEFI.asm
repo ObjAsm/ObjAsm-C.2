@@ -23,7 +23,7 @@ SysSetup OOP, WIDE_STRING, UEFI64, DEBUG(CON)           ;Load OOP files and basi
 ;                 pTimes                                             pMinValues    pVariances  
 ;                   |                                                    |             |
 ;                   V              1        2     ... SIZE_OF_STAT       V             V
-;                ————————      —————————————————————————————————     ————————      ———————— 
+;                --------      ---------------------------------     --------      -------- 
 ;      1        | Ptr(0) | -> | Loop(0), Loop(0), ... , Loop(0) |    |  Min0  |    |  Var0  |
 ;      2        | Ptr(1) | -> | Loop(1), Loop(1), ... , Loop(1) |    |  Min1  |    |  Var1  |
 ;      3        | Ptr(2) | -> | Loop(2), Loop(2), ... , Loop(2) |    |  Min2  |    |  Var2  |
@@ -31,7 +31,7 @@ SysSetup OOP, WIDE_STRING, UEFI64, DEBUG(CON)           ;Load OOP files and basi
 ;      .        |   .    |    |    .        .               .   |    |   .    |    |   .    |
 ;      .        |   .    |    |    .        .               .   |    |   .    |    |   .    |
 ; BOUND_OF_LOOP | Ptr(N) | -> | Loop(N), Loop(N), ... , Loop(N) |    |  MinN  |    |  VarN  |
-;                ————————      —————————————————————————————————      ————————      ———————— 
+;                --------      ---------------------------------      --------      -------- 
 
 
 SIZE_OF_STAT  equ 10000
@@ -70,7 +70,7 @@ function_under_glass2 macro
   frstor FpuEnv
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  FillTimes
 ; Purpose:    Measure then runtime of the code to analyze. 2 nested loops are executed. 
 ;             The inner loop calls the code SIZE_OF_STAT times to have a static base. 
@@ -150,7 +150,7 @@ FillTimes endp
 
 include Paoloni2010.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  start
 ; Purpose:    UEFI entry point. 
 ; Arguments:  Arg1: Image handle.

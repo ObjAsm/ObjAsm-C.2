@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <Base64DecodeW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Base64DecodeW
 ; Purpose:    Decode a CHRW stream using the BASE64 algoritm.
 ; Arguments:  Arg1: -> Encoded CHRW data buffer.

@@ -78,7 +78,7 @@ REL_CTRLS_PER_LINE  equ   3
 ; DB_RecordEditorLine
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorLine.CtlsGet
 ; Purpose:    Get the content of the edit control of a field.
 ; Arguments:  Arg1: -> String buffer.
@@ -89,7 +89,7 @@ Method DB_RecordEditorLine.CtlsGet,, pString:PSTRING
   invoke GetWindowText, [xcx].hEdtRecord, pString, (LOCAL_BUFFER_SIZE/sizeof(CHR))
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorLine.CtlsMove
 ; Purpose:    Moves the controls of the line into the DB_RecordEditor control.
 ; Arguments:  Arg1: -> DB_RecordEditor.
@@ -121,7 +121,7 @@ Method DB_RecordEditorLine.CtlsMove, uses xbx xdi xsi, pControl:POINTER, pCtlPos
   assume xdi:NOTHING, xbx:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorLine.CtlsSet
 ; Purpose:    Set the content of the edit control of a field.
 ; Arguments:  Arg1: -> New string.
@@ -132,7 +132,7 @@ Method DB_RecordEditorLine.CtlsSet,, pStr:PSTRING
   invoke SetWindowText, [xcx].hEdtRecord, pStr
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorLine.Done
 ; Purpose:    Finalize the DB_RecordEditorLine object.
 ; Arguments:  None.
@@ -146,7 +146,7 @@ Method DB_RecordEditorLine.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorLine.Init
 ; Purpose:    Initialize the DB_RecordEditor object.
 ; Arguments:  Arg1: -> Collection
@@ -206,7 +206,7 @@ Method DB_RecordEditorLine.Init, uses xbx xdi xsi, pOwner:$ObjPtr(Collection), \
   assume xdi:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditorLine.ShowIndexed
 ; Purpose:    Show or hide the index RadioButton.
 ; Arguments:  Arg1: Flag.
@@ -231,7 +231,7 @@ MethodEnd
 
 CStr szDB_RecordEditorClass, "DB_RecordEditor"
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.CtlsEnable
 ; Purpose:    Enable or disable all edit controls.
 ; Arguments:  Arg1: TRUE or FALSE.
@@ -256,7 +256,7 @@ Method DB_RecordEditor.CtlsEnable, uses xbx xdi xsi, dAction:DWORD
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.CtlsGet
 ; Purpose:    Get the content of the editor controls and put it into the record fields.
 ; Arguments:  Arg1: -> DB_Record.
@@ -277,7 +277,7 @@ Method DB_RecordEditor.CtlsGet, uses xbx xdi xsi, pRecord:$ObjPtr(DB_Record)
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.CtlsInit
 ; Purpose:    Create and initialize the controls according to the DB_Table information
 ; Arguments:  Arg1: -> DB_Table.
@@ -349,7 +349,7 @@ Method DB_RecordEditor.CtlsInit, uses xbx xsi, pTable:$ObjPtr(DB_Table)
   invoke ReleaseDC, hParent, hDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.CtlsMove
 ; Purpose:    Reposition the controls according to the new origin.
 ; Arguments:  None
@@ -424,7 +424,7 @@ Method DB_RecordEditor.CtlsMove, uses xsi
   ClrWndStyleEx [xsi].hWnd, WS_EX_COMPOSITED
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.CtlsSet
 ; Purpose:    Set the editor controls with the content of the record fields.
 ; Arguments:  Arg1: -> DB_Record.
@@ -451,7 +451,7 @@ Method DB_RecordEditor.CtlsSet, uses xbx xdi xsi, pRecord:$ObjPtr(DB_Record)
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.Dispatch
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Window handle.
@@ -466,7 +466,7 @@ Method DB_RecordEditor.Dispatch, uses xsi, hWnd:HWND, uMsg:DWORD, wParam:WPARAM,
   DispatchEvent <DefWindowProc, hWnd>                   ;xsi -> Object instance
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.Done
 ; Purpose:    Finalize the DB_RecordEditor object.
 ; Arguments:  None.
@@ -478,7 +478,7 @@ Method DB_RecordEditor.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.GetSelectedIndex
 ; Purpose:    Get the current selected Index.
 ; Arguments:  None.
@@ -508,7 +508,7 @@ Method DB_RecordEditor.GetSelectedIndex, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.Init
 ; Purpose:    Initialize the DB_RecordEditor object.
 ; Arguments:  Arg1: -> Owner object.
@@ -532,7 +532,7 @@ Method DB_RecordEditor.Init, uses xsi, pOwner:POINTER, hParent:HWND
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.InitRes
 ; Purpose:    Initialize the Button object from a resource.
 ; Arguments:  Arg1: Button window handle.
@@ -545,7 +545,7 @@ Method DB_RecordEditor.InitRes,, hWnd:HWND
   mov [xcx].hWnd, xdx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -593,7 +593,7 @@ Method DB_RecordEditor.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -607,7 +607,7 @@ Method DB_RecordEditor.OnCreate,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -630,7 +630,7 @@ Method DB_RecordEditor.OnEraseBkgnd, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.OnMouseWheel
 ; Purpose:    Event procedure for WM_MOUSEWHEEL message.
 ; Arguments:  Arg1: First message parameter.
@@ -704,7 +704,7 @@ Method DB_RecordEditor.OnMouseWheel, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.OnScrollVert
 ; Purpose:    Event procedure for WM_VSCROLL message.
 ; Arguments:  Arg1: First message parameter.
@@ -781,7 +781,7 @@ Method DB_RecordEditor.OnScrollVert, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter. wParam = SIZE_xxx
@@ -833,7 +833,7 @@ Method DB_RecordEditor.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.ShowRadioButtons
 ; Purpose:    Shows or hides all RadioButtons.
 ; Arguments:  Arg1: TRUE or FALSE.
@@ -845,7 +845,7 @@ Method DB_RecordEditor.ShowRadioButtons, uses xsi, dShow:DWORD
   OCall [xsi].EditorLines::Collection.ForEach, $MethodAddr(DB_RecordEditorLine.ShowIndexed), dShow, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.Startup
 ; Purpose:    Register the DB_RecordEditor object with the OS.
 ; Arguments:  None.
@@ -871,7 +871,7 @@ Method DB_RecordEditor.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_RecordEditor.WindowProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.

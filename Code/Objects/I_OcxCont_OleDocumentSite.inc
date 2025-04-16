@@ -10,7 +10,7 @@
 
 externdef IID_IOleDocumentSite:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     I_OcxCont_OleDocumentSite
 ; Purpose:    Defines a mechanism for retrieving a service object; that is, an object that provides
 ;             custom support to other objects.
@@ -29,7 +29,7 @@ if IMPLEMENT
 ;     I_OcxCont_OleDocumentSite implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleDocumentSite.ActivateMe
 ; Purpose:    Asks a document site to activate the document making the call as a document object
 ;             rather than an in-place-active object and, optionally, specifies which view of the

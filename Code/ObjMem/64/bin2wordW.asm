@@ -14,7 +14,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ProcName textequ <bin2wordW>
 BIT_COUNT = 16
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  bin2wordW
 ; Purpose:    Conversion of an WIDE input string that contains a binary number in the form of a 
 ;             sequence of "0" and "1" into a WORD.

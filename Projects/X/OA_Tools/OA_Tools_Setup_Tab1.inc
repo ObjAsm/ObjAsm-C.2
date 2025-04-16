@@ -85,7 +85,7 @@ MyEnumFontFamExProc proc uses xbx xdi xsi, lpelfe:ptr LOGFONT, lpntme:ptr TEXTME
   ret
 MyEnumFontFamExProc endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -154,7 +154,7 @@ Method Tab1.CtlsGet, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -196,7 +196,7 @@ Method Tab1.CtlsSet, uses xbx xdi xsi
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -223,7 +223,7 @@ Method Tab1.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.OnCompareItem
 ; Purpose:    Event procedure for WM_COMPAREITEM message.
 ; Arguments:  Arg1: First message parameter.
@@ -241,7 +241,7 @@ Method Tab1.OnCompareItem,, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.OnCtlColorDlg
 ; Purpose:    Event procedure for WM_CTLCOLORDLG message.
 ; Arguments:  Arg1: First message parameter.
@@ -260,7 +260,7 @@ Method Tab1.OnCtlColorDlg,, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -284,7 +284,7 @@ Method Tab1.OnDestroy, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnDestroy, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.OnDrawItem
 ; Purpose:    Event procedure for WM_DRAWITEM message.
 ; Arguments:  Arg1: First message parameter.
@@ -334,7 +334,7 @@ Method Tab1.OnDrawItem, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -372,7 +372,7 @@ Method Tab1.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return FALSE to prevent Windows from
 MethodEnd                                               ;  setting the default keyboard focus.
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.OnMeasureItem
 ; Purpose:    Event procedure for WM_MEASUREITEM message.
 ; Arguments:  Arg1: First message parameter.

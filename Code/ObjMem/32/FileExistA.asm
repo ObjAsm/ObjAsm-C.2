@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <FileExistA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  FileExistA
 ; Purpose:    Check the existence of a file.
 ; Arguments:  Arg1: -> ANSI file name.

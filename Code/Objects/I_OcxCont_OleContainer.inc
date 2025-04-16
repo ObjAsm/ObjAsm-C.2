@@ -10,7 +10,7 @@
 
 externdef IID_IOleContainer:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     I_OcxCont_OleContainer
 ; Purpose:    Enumerate objects in a compound document or lock a container in the running state.
 ;             Container and object applications both implement this interface.
@@ -31,7 +31,7 @@ if IMPLEMENT
 ;     I_OcxCont_OleContainer implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleContainer.ParseDisplayName
 ; Purpose:    Parse the specified display name and creates a corresponding moniker.
 ; Arguments:  Arg1: -> bind context to be used in this binding operation. See IBindCtx.
@@ -50,7 +50,7 @@ Method I_OcxCont_OleContainer.ParseDisplayName,, pIBindCtx:POINTER, pDispName:BS
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleContainer.EnumObjects
 ; Purpose:    Enumerate the objects in the current container.
 ; Arguments:  Arg1: Specifies which objects in a container are to be enumerated, as defined in the
@@ -72,7 +72,7 @@ Method I_OcxCont_OleContainer.EnumObjects,, dFlags:DWORD, ppIEnumUnk:POINTER
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleContainer.LockContainer
 ; Purpose:    Keep the container for embedded objects running until explicitly released.
 ; Arguments:  Arg1: Indicates whether to lock (TRUE) or unlock (FALSE) a container.

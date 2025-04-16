@@ -68,7 +68,7 @@ SCAN_ON_START     equ     BIT00
 SCAN_ON_REQUEST   equ     BIT01
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:    FileCollection
 ; Purpose:   This collection holds all file references of the object database.
 
@@ -80,7 +80,7 @@ Object FilesCollection, OAE_FilesCollectionID, SortedCollection
   RedefineMethod    PutItem,        $ObjPtr(Stream), PFILEINFORMATION
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:    ObjInfoCollection
 ; Purpose:   This collection holds all object definitions found in the scanned files.
 
@@ -95,7 +95,7 @@ Object ObjInfoCollection, OAE_ObjInfoCollectionID, SortedCollection
   DefineVariable    pFilesColl,     $ObjPtr(FilesCollection),    NULL
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:    ObjMtdInfoCollection
 ; Purpose:   This collection holds all method definitions found in the scanned files.
 
@@ -108,7 +108,7 @@ Object ObjMtdInfoCollection, OAE_ObjMtdInfoCollectionID, Collection
   DefineVariable    pFilesColl,     $ObjPtr(FilesCollection),    NULL
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:    ObjVarInfoCollection
 ; Purpose:   This collection holds all variable definitions found in the scanned files.
 
@@ -121,7 +121,7 @@ Object ObjVarInfoCollection, OAE_ObjVarInfoCollectionID, Collection
   DefineVariable    pFilesColl,     $ObjPtr(FilesCollection),    NULL
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:    IntInfoCollection
 ; Purpose:   This collection holds all interface definitions found in the scanned files.
 
@@ -136,7 +136,7 @@ Object IntInfoCollection, OAE_IntInfoCollectionID, SortedCollection
   DefineVariable    pFilesColl,     $ObjPtr(FilesCollection),    NULL
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:    IntMtdInfoCollection
 ; Purpose:   This collection holds all interface method definitions found in the scanned files.
 
@@ -149,7 +149,7 @@ Object IntMtdInfoCollection, OAE_IntMtdInfoCollectionID, Collection
   DefineVariable    pFilesColl,     $ObjPtr(FilesCollection),    NULL
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:    ImpMtdInfoCollection
 ; Purpose:   This collection holds all implemented methods found in the scanned files.
 
@@ -171,7 +171,7 @@ if IMPLEMENT
 ;  FilesCollection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FilesCollection.Compare
 ; Purpose:    Compares the strings Key1 and Key2.
 ; Arguments:  Arg1: -> First key string.
@@ -184,7 +184,7 @@ Method FilesCollection.Compare,, pKeyStr1:PSTRING, pKeyStr2:PSTRING
   invoke StrIComp, pKeyStr1, pKeyStr2                   ;Without case!
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FilesCollection.DestroyItem
 ; Purpose:    Overridden method.
 ; Arguments:  Arg1: -> FILEINFORMATION.
@@ -196,7 +196,7 @@ Method FilesCollection.DestroyItem,, pItem:PFILEINFORMATION
   MemFree pItem
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FilesCollection.GetItem
 ; Purpose:    Loads an item from a stream object.
 ; Arguments:  Arg1: -> Stream.
@@ -211,7 +211,7 @@ Method FilesCollection.GetItem, uses xbx, pStream:$ObjPtr(Stream), pDeserInfo:PD
   mov xax, xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FilesCollection.KeyOf
 ; Purpose:    Overridden method.
 ; Arguments:  Arg1: -> FILEINFORMATION.
@@ -222,7 +222,7 @@ Method FilesCollection.KeyOf,, pItem:PFILEINFORMATION
   mov xax, [xcx].FILEINFORMATION.pFileName
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FilesCollection.PutItem
 ; Purpose:    Stores an item of the collection in a stream object.
 ; Arguments:  Arg1: -> Stream.
@@ -240,7 +240,7 @@ MethodEnd
 ;  ObjInfoCollection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjInfoCollection.Compare
 ; Purpose:    Compares the strings Key1 and Key2.
 ; Arguments:  Arg1: -> First key string.
@@ -253,7 +253,7 @@ Method ObjInfoCollection.Compare,, pKeyStr1:PSTRINGA, pKeyStr2:PSTRINGA
   invoke StrCompA, pKeyStr1, pKeyStr2
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjInfoCollection.DestroyItem
 ; Purpose:    Overridden method.
 ; Arguments:  Arg1: -> OBJECTINFORMATION.
@@ -272,7 +272,7 @@ Method ObjInfoCollection.DestroyItem, uses xbx xdi, pItem:POBJECTINFORMATION
   MemFree xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjInfoCollection.GetItem
 ; Purpose:    Loads an item from a stream object.
 ; Arguments:  Arg1: -> Stream.
@@ -309,7 +309,7 @@ Method ObjInfoCollection.GetItem, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pDe
   mov xax, xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjInfoCollection.KeyOf
 ; Purpose:    Overridden method.
 ; Arguments:  Arg1: -> Item.
@@ -320,7 +320,7 @@ Method ObjInfoCollection.KeyOf,, pItem:POBJECTINFORMATION
   mov xax, [xcx].OBJECTINFORMATION.pName                ;xax -> Object name
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjInfoCollection.Init
 ; Purpose:    (Constructor) Initializes the object.
 ; Arguments:  Arg1: -> Owner object.
@@ -336,7 +336,7 @@ Method ObjInfoCollection.Init,, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, pFil
   ACall xcx.Init, pOwner, dLimit, dDelta, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjInfoCollection.PutItem
 ; Purpose:    Stores an item of the collection in a stream object.
 ; Arguments:  Arg1: -> Stream.
@@ -365,7 +365,7 @@ MethodEnd
 ;  ObjMtdInfoCollection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjMtdInfoCollection.DestroyItem
 ; Purpose:    Overridden method.
 ; Arguments:  Arg1: -> OBJMTDINFORMATION.
@@ -385,7 +385,7 @@ Method ObjMtdInfoCollection.DestroyItem, uses xbx xdi, pItem:POBJMTDINFORMATION
   MemFree xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjMtdInfoCollection.GetItem
 ; Purpose:    Loads an item from a stream object.
 ; Arguments:  Arg1: -> Stream.
@@ -422,7 +422,7 @@ Method ObjMtdInfoCollection.GetItem, uses xbx xdi xsi, pStream:$ObjPtr(Stream), 
   mov xax, xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjMtdInfoCollection.Init
 ; Purpose:    (Constructor) Initializes the object.
 ; Arguments:  Arg1: -> Owner object.
@@ -438,7 +438,7 @@ Method ObjMtdInfoCollection.Init,, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, \
   ACall xcx.Init, pOwner, dLimit, dDelta, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjMtdInfoCollection.PutItem
 ; Purpose:    Stores an item of the collection in a stream object.
 ; Arguments:  Arg1: -> Stream.
@@ -468,7 +468,7 @@ MethodEnd
 ;  ObjVarInfoCollection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjVarInfoCollection.DestroyItem
 ; Purpose:    Overridden method.
 ; Arguments:  Arg1: -> OBJVARINFORMATION.
@@ -488,7 +488,7 @@ Method ObjVarInfoCollection.DestroyItem, uses xbx xdi, pItem:POBJVARINFORMATION
   MemFree xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjVarInfoCollection.GetItem
 ; Purpose:    Loads an item from a stream object.
 ; Arguments:  Arg1: -> Stream.
@@ -525,7 +525,7 @@ Method ObjVarInfoCollection.GetItem, uses xbx xdi xsi, pStream:$ObjPtr(Stream), 
   mov xax, xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjVarInfoCollection.Init
 ; Purpose:    (Constructor) Initializes the object.
 ; Arguments:  Arg1: -> Owner object.
@@ -541,7 +541,7 @@ Method ObjVarInfoCollection.Init,, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, \
   ACall xcx.Init, pOwner, dLimit, dDelta, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjVarInfoCollection.PutItem
 ; Purpose:    Stores an item of the collection in a stream object.
 ; Arguments:  Arg1: -> Stream.
@@ -571,7 +571,7 @@ MethodEnd
 ;  IntInfoCollection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntInfoCollection.Compare
 ; Purpose:    Compares the strings Key1 and Key2.
 ; Arguments:  Arg1: -> First key string.
@@ -584,7 +584,7 @@ Method IntInfoCollection.Compare,, pKeyStr1:PSTRINGA, pKeyStr2:PSTRINGA
   invoke StrCompA, pKeyStr1, pKeyStr2
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntInfoCollection.DestroyItem
 ; Purpose:    Overridden method.
 ; Arguments:  Arg1: -> INTERFACEINFORMATION.
@@ -603,7 +603,7 @@ Method IntInfoCollection.DestroyItem, uses xbx xdi, pItem:PINTERFACEINFORMATION
   MemFree xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntInfoCollection.GetItem
 ; Purpose:    Loads an item from a stream object.
 ; Arguments:  Arg1: -> Stream object containing an object.
@@ -639,7 +639,7 @@ Method IntInfoCollection.GetItem, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pDe
   mov xax, xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntInfoCollection.KeyOf
 ; Purpose:    Overridden method.
 ; Arguments:  Arg1: -> INTERFACEINFORMATION.
@@ -650,7 +650,7 @@ Method IntInfoCollection.KeyOf,, pItem:PINTERFACEINFORMATION
   mov xax, [xcx].INTERFACEINFORMATION.pName
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntInfoCollection.Init
 ; Purpose:    (Constructor) Initializes the object.
 ; Arguments:  Arg1: -> Owner object.
@@ -667,7 +667,7 @@ Method IntInfoCollection.Init,, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, \
   ACall xcx.Init, pOwner, dLimit, dDelta, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntInfoCollection.PutItem
 ; Purpose:    Stores an item of the collection in a stream object.
 ; Arguments:  Arg1: -> Stream.
@@ -696,7 +696,7 @@ MethodEnd
 ;  IntMtdInfoCollection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntMtdInfoCollection.DestroyItem
 ; Purpose:    Overridden method.
 ; Arguments:  Arg1: -> INTMTDINFORMATION.
@@ -716,7 +716,7 @@ Method IntMtdInfoCollection.DestroyItem, uses xbx xdi, pItem:PINTMTDINFORMATION
   MemFree xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntMtdInfoCollection.GetItem
 ; Purpose:    Loads an item from a stream object.
 ; Arguments:  Arg1: -> Stream object containing an object.
@@ -753,7 +753,7 @@ Method IntMtdInfoCollection.GetItem, uses xbx xdi xsi, pStream:$ObjPtr(Stream), 
   mov xax, xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntMtdInfoCollection.Init
 ; Purpose:    (Constructor) Initializes the object.
 ; Arguments:  Arg1: -> Owner object.
@@ -769,7 +769,7 @@ Method IntMtdInfoCollection.Init,, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, \
   ACall xcx.Init, pOwner, dLimit, dDelta, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IntMtdInfoCollection.PutItem
 ; Purpose:    Stores an item of the collection in a stream object.
 ; Arguments:  Arg1: -> Stream.
@@ -798,7 +798,7 @@ MethodEnd
 ;  ImpMtdInfoCollection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ImpMtdInfoCollection.DestroyItem
 ; Purpose:    Overridden method.
 ; Arguments:  Arg1: -> IMPMTDINFORMATION.
@@ -818,7 +818,7 @@ Method ImpMtdInfoCollection.DestroyItem, uses xbx xdi, pItem:PIMPMTDINFORMATION
   MemFree xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ImpMtdInfoCollection.GetItem
 ; Purpose:    Loads an item from a stream object.
 ; Arguments:  Arg1: -> Stream object containing an object.
@@ -855,7 +855,7 @@ Method ImpMtdInfoCollection.GetItem, uses xbx xdi xsi, pStream:$ObjPtr(Stream), 
   mov xax, xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ImpMtdInfoCollection.Init
 ; Purpose:    (Constructor) Initializes the object.
 ; Arguments:  Arg1: -> Owner object.
@@ -871,7 +871,7 @@ Method ImpMtdInfoCollection.Init,, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, \
   ACall xcx.Init, pOwner, dLimit, dDelta, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ImpMtdInfoCollection.PutItem
 ; Purpose:    Stores an item of the collection in a stream object.
 ; Arguments:  Arg1: -> Stream.

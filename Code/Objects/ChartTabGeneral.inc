@@ -26,7 +26,7 @@ IDC_CHT_GRL_COL_PLOT_BCKGND_BTN equ   5116
 IDC_CHT_GRL_HELP_TVC            equ   5120
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabGeneral.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -52,7 +52,7 @@ Method ChartTabGeneral.CtlsGet, uses xdi xsi
   assume xdi:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabGeneral.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -80,7 +80,7 @@ Method ChartTabGeneral.CtlsSet, uses xdi xsi
   assume xdi:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabGeneral.Init
 ; Purpose:    Initialize the ChartTabGeneral object.
 ; Arguments:  Arg1: -> Owner object.
@@ -98,7 +98,7 @@ Method ChartTabGeneral.Init, uses xbx xsi, pOwner:POINTER, pChartWnd:$ObjPtr(Cha
   s2s [xsi].LocalColors, [xbx].$Obj(ChartWnd).Colors, xax, xcx, xdx, xmm0, xmm1, xmm3
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabGeneral.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -167,7 +167,7 @@ Method ChartTabGeneral.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabGeneral.OnCtlColorDlg
 ; Purpose:    Event procedure for WM_CTLCOLORDLG message.
 ; Arguments:  Arg1: First message parameter.
@@ -186,7 +186,7 @@ Method ChartTabGeneral.OnCtlColorDlg,, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabGeneral.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -238,7 +238,7 @@ Method ChartTabGeneral.OnInitDialog, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnInitDialog, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabGeneral.Restore
 ; Purpose:    Restore original values.
 ; Arguments:  None.

@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <UefiGetErrStrA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  UefiGetErrStrA
 ; Purpose:    Return a description ANSI string from an UEFI error code.
 ; Arguments:  Arg1: UEFI error code.

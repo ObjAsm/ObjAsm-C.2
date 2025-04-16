@@ -49,7 +49,7 @@ xLSLL_Control ends
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      xLSLL.InsertAfter
 ; Purpose:    Insert an object after another in the linked list.
 ; Arguments:  Arg1: -> Member to insert after.
@@ -72,7 +72,7 @@ xLSLL_InsertAfter macro RefReg:req, NewReg:req, AuxReg:=<>
   dec [RefReg].xLSLL_Control.dLock
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      xLSLL_RemoveAfter
 ; Purpose:    Remove a member from the linked list.
 ; Arguments:  Arg1: -> Member to remove after.

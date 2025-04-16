@@ -11,7 +11,7 @@
 % include &ObjMemPath&Common\\UefiErrTable_T.inc
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  UefiGetErrStrA / UefiGetErrStrW 
 ; Purpose:    Return description string from a COM error code.
 ; Arguments:  Arg1: COM error code.

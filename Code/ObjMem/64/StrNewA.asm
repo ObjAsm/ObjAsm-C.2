@@ -12,7 +12,7 @@
 
 ProcName textequ <StrNewA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrNewA
 ; Purpose:    Allocate a new copy of the source string.
 ;             If the pointer to the source string is NULL, StrNew returns NULL and doesn't allocate

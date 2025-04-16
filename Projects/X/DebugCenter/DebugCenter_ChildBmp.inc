@@ -48,7 +48,7 @@ ObjectEnd
 ;    DbgMdiChildBmp implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.ClpBrdClear
 ; Purpose:    Delete the selection to the clipboard.
 ; Arguments:  None.
@@ -64,7 +64,7 @@ Method DbgMdiChildBmp.ClpBrdClear, uses xsi
   ACall xsi.ClpBrdClear
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.ClpBrdCopy
 ; Purpose:    Copy the selection to the clipboard.
 ; Arguments:  None.
@@ -88,7 +88,7 @@ Method DbgMdiChildBmp.ClpBrdCopy, uses xsi
   ACall xsi.ClpBrdCopy
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.ClpBrdCut
 ; Purpose:    Cut the selection to the clipboard.
 ; Arguments:  None.
@@ -116,7 +116,7 @@ Method DbgMdiChildBmp.ClpBrdCut, uses xsi
   OCall xsi.UpdateStatusbar
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.ClpBrdPaste
 ; Purpose:    Paste the selection to the clipboard.
 ; Arguments:  None.
@@ -142,7 +142,7 @@ Method DbgMdiChildBmp.ClpBrdPaste, uses xsi
   OCall xsi.UpdateStatusbar
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.ClpBrdSetBtns
 ; Purpose:    Set the cut, copy & paste clipboard buttons.
 ; Arguments:  None.
@@ -205,7 +205,7 @@ Method DbgMdiChildBmp.ClpBrdSetBtns, uses xbx xdi xsi
   invoke EnableMenuItem, $ObjTmpl(Application).hMenuContext, IDM_EDIT_PASTE, edi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.Done
 ; Purpose:    Finalize the DbgMdiChildBmp object.
 ; Arguments:  None.
@@ -219,7 +219,7 @@ Method DbgMdiChildBmp.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.Erase
 ; Purpose:    Erase the content of the window.
 ; Arguments:  None.
@@ -230,7 +230,7 @@ Method DbgMdiChildBmp.Erase
   OCall UpdateStatusbar
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.Init
 ; Purpose:    Initialize the DbgMdiChildBmp object.
 ; Arguments:  Arg1: -> Owner object.
@@ -276,7 +276,7 @@ Method DbgMdiChildBmp.Init, uses xbx xdi xsi, pOwner:POINTER, pTitle:PSTRING, dB
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -288,7 +288,7 @@ Method DbgMdiChildBmp.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   inc eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -416,7 +416,7 @@ Method DbgMdiChildBmp.OnPaint, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.OnHScroll
 ; Purpose:    Event procedure for WM_HSCROLL message.
 ; Arguments:  Arg1: First message parameter.
@@ -483,7 +483,7 @@ Method DbgMdiChildBmp.OnHScroll, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.OnVScroll
 ; Purpose:    Event procedure for WM_VSCROLL message.
 ; Arguments:  Arg1: First message parameter.
@@ -550,7 +550,7 @@ Method DbgMdiChildBmp.OnVScroll, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.OnRButtonDown
 ; Purpose:    Event procedure for WM_RBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -565,7 +565,7 @@ Method DbgMdiChildBmp.OnRButtonDown,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.OnRButtonUp
 ; Purpose:    Event procedure for WM_RBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -582,7 +582,7 @@ Method DbgMdiChildBmp.OnRButtonUp,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.OnMouseWheel
 ; Purpose:    Event procedure for WM_MOUSEWHEEL message.
 ; Arguments:  Arg1: First message parameter.
@@ -618,7 +618,7 @@ Method DbgMdiChildBmp.OnMouseWheel,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.OnKeyDown
 ; Purpose:    Event procedure for WM_KEYDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -661,7 +661,7 @@ Method DbgMdiChildBmp.OnKeyDown,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.Open
 ; Purpose:    Load the content of a txt file.
 ; Arguments:  Arg1: -> Filename.
@@ -722,7 +722,7 @@ Method DbgMdiChildBmp.Open, uses xbx xdi xsi, pFileName:PSTRING
   ACall xsi.Open, pFileName                             ;Remenber this file name
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.Print
 ; Purpose:    Print the content of a BmpChild.
 ; Arguments:  None.
@@ -820,7 +820,7 @@ Method DbgMdiChildBmp.Print, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.SaveAs
 ; Purpose:    Save the content of the RichEdit control to a specified file.
 ; Arguments:  Arg1: Dummy value 1.
@@ -831,7 +831,7 @@ Method DbgMdiChildBmp.SaveAs,, pDummy1:PSTRING, pDummy2:PSTRING
   ACall SaveAs, offset szBmpFilter, offset szBmpExt
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.SaveTo
 ; Purpose:    Save the content of the RichEdit control to a specified file.
 ; Arguments:  Arg1: -> File path and name.
@@ -857,7 +857,7 @@ Method DbgMdiChildBmp.SaveTo, uses xsi, pFileName:PSTRING
   ACall xsi.SaveTo, pFileName                           ;Save FileName
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.SetBitmap
 ; Purpose:    Allocate in local meory the recieved bitmap.
 ; Arguments:  Arg1: ->  DBG_BMP_INFO structure.
@@ -886,7 +886,7 @@ Method DbgMdiChildBmp.SetBitmap, uses xbx xdi xsi, pBmpInfo:POINTER
   invoke MemClone, xax, xdx, edi                        ;Copy BITMAPINFO + BMP data
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -911,7 +911,7 @@ Method DbgMdiChildBmp.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.UpdateStatusbar
 ; Purpose:    Draw new information on the Statusbar.
 ; Arguments:  None.
@@ -945,7 +945,7 @@ Method DbgMdiChildBmp.UpdateStatusbar, uses xbx xdi xsi
   OCall [xbx].$Obj(Application).pStatusbar::Statusbar.SetPartText, 2, NULL, SBT_SUNKEN
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.ZoomIn
 ; Purpose:    Increase the output size.
 ; Arguments:  None.
@@ -997,7 +997,7 @@ Method DbgMdiChildBmp.ZoomIn, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DbgMdiChildBmp.ZoomOut
 ; Purpose:    Decrease the output size.
 ; Arguments:  None.

@@ -127,7 +127,7 @@ align ALIGN_CODE
   ret
 ??SearchInDir endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  FindFile
 ; Purpose:    Search for a file in a list of paths.
 ; Arguments:  Arg1: -> File name.

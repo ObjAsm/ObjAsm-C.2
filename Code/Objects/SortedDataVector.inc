@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     SortedDataVector
 ; Purpose:    SortedDataVector is a sorted container whose Item capacity ist larger than a XWORD.
 ;             Vectors with a smaller item size have dedicated objects that implement specific code
@@ -52,7 +52,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedDataVector.Insert
 ; Purpose:    If the target item is not found in the sorted collection, it is inserted at the
 ;             correct index position. It calls Search to determine if the item exists, and if not,
@@ -73,7 +73,7 @@ Method SortedDataVector.Insert, uses xsi, pItem:POINTER
   OCall xsi.InsertAt, edx, pItem
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedDataVector.KeyOf
 ; Purpose:    KeyOf is overridden in cases where the key of the item is not the item itself.
 ; Arguments:  Arg1: -> Item.
@@ -84,7 +84,7 @@ Method SortedDataVector.KeyOf,, pItem:POINTER
   mov xax, pItem
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedDataVector.Load
 ; Purpose:    Load a sorted collection from the stream object by first calling
 ;             SortedDataVector.Load. It then reads the Duplicates field.
@@ -101,7 +101,7 @@ Method SortedDataVector.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDES
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedDataVector.Search
 ; Purpose:    Search an item based on its key.
 ; Arguments:  Arg1: Item key to seach for.
@@ -149,7 +149,7 @@ Method SortedDataVector.Search, uses xbx xdi xsi r12 r13, xKey:XWORD
   mov eax, $LocReg(dFound)                              ;Return Found condition in eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedDataVector.Store
 ; Purpose:    Store the sorted collection and all its items on the stream object by calling
 ;             SortedDataVector.Store to write the collection. It then writes the Duplicates
@@ -163,7 +163,7 @@ Method SortedDataVector.Store, uses xsi, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.BinWrite32, [xsi].dDuplicates
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedDataVector.Sort
 ; Purpose:    Resort the collection in place, i.e. if the compare method was changed.
 ; Arguments:  None.

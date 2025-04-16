@@ -12,7 +12,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Client.Done
 ; Purpose:    Finalize the OAT_Client object.
 ; Arguments:  None.
@@ -24,7 +24,7 @@ Method OAT_Client.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Client.Init
 ; Purpose:    Initialize the MdiClientWnd object.
 ; Arguments:  Arg1: -> Owner object.
@@ -41,7 +41,7 @@ Method OAT_Client.Init, uses xsi, pOwner:POINTER
   invoke DragAcceptFiles, [xsi].hWnd, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Client.OnDropFiles
 ; Purpose:    Event procedure for WM_DROPFILES message.
 ; Arguments:  Arg1: First message parameter.
@@ -62,7 +62,7 @@ Method OAT_Client.OnDropFiles, uses xbx, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Client.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -73,7 +73,7 @@ Method OAT_Client.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, 1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Client.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.

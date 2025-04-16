@@ -386,7 +386,7 @@ DbgWndMsgTableCount equ ($ - DbgWndMsgTable)/sizeof(DOM)
   DbgMsgBufferRes    CHRA   "Reserved message ("
   DbgMsgCodeRes      CHRA   "00000000h)", 0
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgOutMsg
 ; Purpose:    Identify a windows message with a string.
 ; Arguments:  Arg1: Windows message ID.

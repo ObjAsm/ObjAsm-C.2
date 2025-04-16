@@ -10,7 +10,7 @@
 
 PNMREBARCHEVRON typedef ptr NMREBARCHEVRON
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     RbIptor
 ; Purpose:    Implement message interceptor used internally by the Rebar object.
 
@@ -24,7 +24,7 @@ Object RbIptor, RbIptorID, MsgInterceptor
 
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Rebar
 ; Purpose:    Implement a thin wrapper around the ReBarWindow32 GDI control.
 ;             The Rebar object uses internally 2 other objects: RbIptor, derived from MsgInterceptor
@@ -51,7 +51,7 @@ Object Rebar, RebarID, WinControl                             ;Class "ReBarWindo
   DefineVariable    pMsgIptor,          $ObjPtr(RbIptor),  NULL
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     BandFrame
 ; Purpose:    Provide a Window frame when the toolbar contained in the Rebar control is detached,
 ;             dragging it away from the Rebar control.
@@ -88,7 +88,7 @@ RB_BORDERWIDTH      equ     05
 CStr szRbMsgIptorProp, "OAP_RbMsgIptor"
 CStr szBandFrameClass, "OAC_BandFrame"
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Rebar.ChevronMenu
 ; Purpose:    Draw a popup menu with the hidden toolbar buttons. XMenu must be active!
 ; Arguments:  Arg1: -> NMREBARCHEVRON.
@@ -178,7 +178,7 @@ Method Rebar.ChevronMenu, uses xbx xdi xsi, pNMREBARCHEVRON:PNMREBARCHEVRON
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Rebar.Done
 ; Purpose:    Finalize the Rebar object, freeing allocated resources.
 ; Arguments:  None.
@@ -191,7 +191,7 @@ Method Rebar.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Rebar.GetBandIndex
 ; Purpose:    Get the band number of a specified hWnd.
 ; Arguments:  Arg1: Band window handle.
@@ -219,7 +219,7 @@ Method Rebar.GetBandIndex, uses xbx xsi, hBandWnd:HWND
   mov eax, -1                                           ;No window found => return -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Rebar.Init
 ; Purpose:    Initialize the Rebar object.
 ; Arguments:  Arg1: -> Owner object.
@@ -251,7 +251,7 @@ Method Rebar.Init, uses xsi, pOwner:POINTER, hParent:HWND
   OCall xax::RbIptor.Init, xsi, hParent, offset szRbMsgIptorProp
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Rebar.InsertBand
 ; Purpose:    Insert a child band in the Rebar.
 ; Arguments:  Arg1: Inserted Child Window handle.
@@ -283,7 +283,7 @@ Method Rebar.InsertBand, uses xsi, hChild:HWND, dChildWidth:DWORD, dChildHeight:
   invoke SendMessage, [xsi].hWnd, RB_INSERTBAND, 0, addr RbInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Rebar.OnMouseMove
 ; Purpose:    Event procedure for WM_MOUSEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -354,7 +354,7 @@ Method Rebar.OnMouseMove, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Rebar.RemoveBand
 ; Purpose:    Remove a child object in the Rebar.
 ; Arguments:  Arg1: HANDLE of the object (WinControl) to remove.
@@ -367,7 +367,7 @@ Method Rebar.RemoveBand, uses xsi, dBandIndex:DWORD
   invoke SendMessage, [xsi].hWnd, RB_DELETEBAND, dBandIndex, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Rebar.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.
@@ -388,7 +388,7 @@ MethodEnd
 ;    RbIptor implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RbIptor.OnParentNotify
 ; Purpose:    Event procedure for WM_PARENTNOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -413,7 +413,7 @@ Method RbIptor.OnParentNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_PARENTNOTIFY, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RbIptor.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -460,7 +460,7 @@ Method RbIptor.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RbIptor.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.
@@ -481,7 +481,7 @@ MethodEnd
 ;    BandFrame implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     BandFrame.Init
 ; Purpose:    Initialize the control.
 ; Arguments:  Arg1: -> Owner object.
@@ -515,7 +515,7 @@ Method BandFrame.Init, uses xsi, pOwner:POINTER, hParent:HWND, pSrcRebar:POINTER
   m2m [xsi].hChildWnd, hChildWnd, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     BandFrame.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -526,7 +526,7 @@ Method BandFrame.OnDestroy,, wParam:WPARAM, lParam:LPARAM
   Kill pSelf
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     BandFrame.OnLButtonDown
 ; Purpose:    Event procedure for WM_NCLBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -546,7 +546,7 @@ Method BandFrame.OnNCLButtonDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     BandFrame.OnLButtonUp
 ; Purpose:    Event procedure for WM_LBUTTONDOWN and WM_NCLBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -562,7 +562,7 @@ Method BandFrame.OnLButtonUp, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     BandFrame.OnMouseMove
 ; Purpose:    Event procedure for WM_MOUSEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -618,7 +618,7 @@ Method BandFrame.OnMouseMove, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     BandFrame.Startup
 ; Purpose:    Register the BandFrame window class with the operating system.
 ; Arguments:  None.
@@ -643,7 +643,7 @@ Method BandFrame.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     BandFrame.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.

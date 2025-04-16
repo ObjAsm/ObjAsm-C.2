@@ -44,7 +44,7 @@ DEF_THROBBER ends
 PDEF_THROBBER typedef ptr DEF_THROBBER
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  Throbber
 ; Purpose: Control that shows an animation, like GIF but mit transparency.
 
@@ -83,7 +83,7 @@ TBR_STATUS_STOPPING   equ 3
 TBR_SCALE_START_END   equ 1.0
 TBR_SCALE_STOP_END    equ 0.0
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Throbber.Dispatch
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Window handle.
@@ -97,7 +97,7 @@ Method Throbber.Dispatch, uses xsi, hWnd:HWND, uMsg:DWORD, wParam:WPARAM, lParam
   DispatchEvent <DefWindowProc, hWnd>                   ;xsi -> Object instance
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Throbber.Done
 ; Purpose:    None.
 ; Return:     Nothing.
@@ -115,7 +115,7 @@ Method Throbber.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Throbber.Freeze
 ; Purpose:    Halt the animation, e.g. to make changes on the images (delete, add, etc.)
 ; Arguments:  None.
@@ -134,7 +134,7 @@ Method Throbber.Freeze, uses xbx xsi
   mov [xsi].dInterval, ebx                              ;Restore setting
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Throbber.Resume
 ; Purpose:    Resume animation after a freeze state.
 ; Arguments:  None.
@@ -145,7 +145,7 @@ Method Throbber.Resume
   BitClr [xcx].dFlags, TBR_FLAG_ANIMATION_THREAD_FREEZE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Throbber.Start
 ; Purpose:    Start spinning.
 ; Arguments:  Arg1: Interval between steps.
@@ -156,7 +156,7 @@ Method Throbber.Start
   mov [xcx].dStatus, TBR_STATUS_STARTING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Throbber.Stop
 ; Purpose:    Stop spinning.
 ; Arguments:  None.

@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <StrStartsWithW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrStartsWithW
 ; Purpose:    Compare the beginning of a string.
 ; Arguments:  Arg1: -> Analized string.

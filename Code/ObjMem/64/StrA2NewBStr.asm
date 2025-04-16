@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrA2NewBStr
 ; Purpose:    Create a new BSTR with the content of a STRINGA.
 ; Arguments:  Arg1: -> STRINGA.

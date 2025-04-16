@@ -10,7 +10,7 @@
 ; EditorSharedResources implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorSharedResources.Done
 ; Purpose:    Finalize the EditorSharedResources object.
 ; Arguments:  None.
@@ -20,8 +20,8 @@ Method EditorSharedResources.Done, uses xsi
   SetObject xsi
 
   ;Load cursors
-  invoke DeleteObject, [xsi].hCursorSelect
-  invoke DeleteObject, [xsi].hCursorHand
+  invoke DestroyCursor, [xsi].hCursorSelect
+  invoke DestroyCursor, [xsi].hCursorHand
 
   ;Delete bitmaps
   invoke DeleteObject, [xsi].hBmpStatusIndRed
@@ -36,7 +36,7 @@ Method EditorSharedResources.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorSharedResources.Init
 ; Purpose:    Initialize the EditorSharedResources object.
 ; Arguments:  Arg1: -> Owner object.

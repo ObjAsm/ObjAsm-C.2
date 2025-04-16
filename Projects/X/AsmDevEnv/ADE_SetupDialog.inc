@@ -10,7 +10,7 @@
 ; SetupDlg implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SetupDialog.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -23,7 +23,7 @@ Method SetupDialog.CtlsGet, uses xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SetupDialog.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -36,7 +36,7 @@ Method SetupDialog.CtlsSet
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SetupDialog.Done
 ; Purpose:    Finalize the SetupDialog object.
 ; Arguments:  None.
@@ -50,7 +50,7 @@ Method SetupDialog.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SetupDialog.Init
 ; Purpose:    Initialaize a SetupDialog object.
 ; Arguments:  Arg1: -> Owner object.
@@ -67,7 +67,7 @@ Method SetupDialog.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_SETUP")
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SetupDialog.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -87,7 +87,7 @@ Method SetupDialog.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SetupDialog.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -101,7 +101,7 @@ Method SetupDialog.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke SetWindowLongPtr, [xsi].hWnd, DWLP_USER, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SetupDialog.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -134,7 +134,7 @@ MethodEnd
 ;    Tab1 implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.Init
 ; Purpose:    Initialize the Tab1 object.
 ; Arguments:  Arg1: -> Owner object.
@@ -148,7 +148,7 @@ Method Tab1.Init, uses xsi, pOwner:POINTER, hParent:HWND, pTemplate:POINTER
   mov [xsi].hBackBrush, $invoke(CreateHatchBrush, HS_DIAGCROSS, $RGB(0, 0, 255))
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.Done
 ; Purpose:    Finalize the Tab1 object.
 ; Arguments:  None.
@@ -160,7 +160,7 @@ Method Tab1.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.OnCtlColorStatic
 ; Purpose:    Event procedure for WM_CTLCOLORSTATIC message.
 ; Arguments:  Arg1: First message parameter.
@@ -185,7 +185,7 @@ MethodEnd
 ;    Tab2 implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab2.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -211,7 +211,7 @@ Method Tab2.CtlsGet, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab2.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.

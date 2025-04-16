@@ -25,7 +25,7 @@ SPT_DEFAULT_LENGTH        equ     100       ;Startup default value
 
 SPT_NO_POSITION           equ     -1
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Splitter
 ; Purpose:    Implement a splitter window to divide the work area and resize easily contained frames
 ;             or windows. Dragging it, the size of the adjacent frames will be adjusted to the new
@@ -71,7 +71,7 @@ if IMPLEMENT
 
 CStr szSplitter, "Splitter"
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SetNewParent
 ; Purpose:    Helper procedure to switch the a new window parent.
 ; Arguments:  Arg1: Target window HANDLE.
@@ -92,7 +92,7 @@ SetNewParent proc hWnd:HWND, hNewParent:HWND
   ret
 SetNewParent endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splitter.Done
 ; Purpose:    Finalize the Splitter object.
 ; Arguments:  None.
@@ -105,7 +105,7 @@ Method Splitter.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splitter.Init
 ; Purpose:    Initialize the Splitter object.
 ; Arguments:  Arg1: -> Owner object.
@@ -162,7 +162,7 @@ Method Splitter.Init, uses xsi, pOwner:POINTER, hParent:HWND, dFlags:DWORD, \
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splitter.Load
 ; Purpose:    Load and initialize the Splitter instance from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -197,7 +197,7 @@ Method Splitter.Load, uses xbx xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_I
   invoke SetWindowPlacement, [xsi].hWnd, addr WP
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splitter.OnLButtonDown
 ; Purpose:    Event procedure for WM_LBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -246,7 +246,7 @@ Method Splitter.OnLButtonDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splitter.OnLButtonUp
 ; Purpose:    Event procedure for WM_LBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -302,7 +302,7 @@ Method Splitter.OnLButtonUp, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splitter.OnMouseHover
 ; Purpose:    Event procedure for WM_MOUSEHOVER message.
 ; Arguments:  Arg1: First message parameter.
@@ -374,7 +374,7 @@ Method Splitter.OnMouseHover, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splitter.OnMouseMove
 ; Purpose:    Event procedure for WM_MOUSEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -460,7 +460,7 @@ Method Splitter.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splitter.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -610,7 +610,7 @@ Method Splitter.OnNotify, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splitter.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -640,7 +640,7 @@ Method Splitter.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splitter.OnSetCursor
 ; Purpose:    Event procedure for WM_SETCURSOR message.
 ; Arguments:  Arg1: First message parameter.
@@ -664,7 +664,7 @@ Method Splitter.OnSetCursor,, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splitter.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -687,7 +687,7 @@ Method Splitter.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splitter.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -711,7 +711,7 @@ Method Splitter.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splitter.Store
 ; Purpose:    Store the streamable instance in a stream object. Descendant objects should redefine
 ;             this method and store new members.
@@ -740,7 +740,7 @@ Method Splitter.Store, uses xsi, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.BinWrite, addr WP, sizeof WP
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Splitter.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.

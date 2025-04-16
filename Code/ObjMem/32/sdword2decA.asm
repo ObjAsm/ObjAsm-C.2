@@ -15,7 +15,7 @@
 
 externdef TwoDecDigitTableA:BYTE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  sdword2decA
 ; Purpose:    Convert a signed DWORD to its decimal ANSI string representation.
 ; Arguments:  Arg1: -> Destination ANSI string buffer.

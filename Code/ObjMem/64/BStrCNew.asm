@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrCNew
 ; Purpose:    Allocate a new copy of the source BStr with length limitation.
 ;             If the pointer to the source string is NULL, BStrCNew returns NULL and doesn't

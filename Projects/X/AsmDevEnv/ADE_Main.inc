@@ -42,7 +42,7 @@ ToolbarEdit DEF_TOOLBAR {IDC_TOOLBAREDIT, TBSTYLE, TBSTYLE_EX_MIXEDBUTTONS, \
   TBBUTTON {IDB_EDIT_REDO,        IDM_EDIT_REDO,        TBSTATE_ENABLED, TBSTYLE_BUTTON}
   TBBUTTON {0,                    -3,                   TBSTATE_ENABLED, TBSTYLE_SEP}
   TBBUTTON {IDB_EDIT_INDENT,      IDM_EDIT_INDENT,      TBSTATE_ENABLED, TBSTYLE_BUTTON}
-  TBBUTTON {IDB_EDIT_UNINDENT,    IDM_EDIT_UNINDENT,    TBSTATE_ENABLED, TBSTYLE_BUTTON}
+  TBBUTTON {IDB_EDIT_OUTDENT,     IDM_EDIT_OUTDENT,     TBSTATE_ENABLED, TBSTYLE_BUTTON}
   TBBUTTON {0,                    -3,                   TBSTATE_ENABLED, TBSTYLE_SEP}
   TBBUTTON {IDB_EDIT_COMMENT,     IDM_EDIT_COMMENT,     TBSTATE_ENABLED, TBSTYLE_BUTTON}
   TBBUTTON {IDB_EDIT_UNCOMMENT,   IDM_EDIT_UNCOMMENT,   TBSTATE_ENABLED, TBSTYLE_BUTTON}
@@ -73,7 +73,7 @@ CStrW szEditorClassName,        "OAC_Editor"
 CStr szEditorDisplayClassName,  "OAC_EditorDisplay"
 CStr szEditorViewClassName,     "OAC_EditorView"
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 FONT_DEF struct
   dInitPointSize    DWORD     ?
@@ -126,7 +126,7 @@ FILE struct
 FILE ends
 PFILE typedef ptr FILE
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Object:    ScrollBarV
 ;; Purpose:   Customized drawing of the vertical ScrollBar.
 ;
@@ -135,7 +135,7 @@ PFILE typedef ptr FILE
 ;  VirtualEvent      OnSetScrollInfo,    SBM_SETSCROLLINFO
 ;ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 KEYWORDGROUP struc
                     DRAW_ATTR {}
@@ -156,7 +156,7 @@ KEYWORD struc
 KEYWORD ends
 PKEYWORD typedef ptr KEYWORD
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     KeywordGroupCollection
 ; Purpose:    Implement a collection of keyword groups.
 
@@ -165,7 +165,7 @@ Object KeywordGroupCollection, ADE_KeywordGroupListID, DataCollection
 ;  RedefineMethod    Insert,             PKEYWORDGROUP, DWORD, DWORD, PSTRING
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     KeywordCollection
 ; Purpose:    Implement a collection of UNICODE keywords and their properties.
 ;             KeywordCollections are a series of keywords preceeded by a flags (KEYWORD_FLAG) DWORD.
@@ -178,7 +178,7 @@ Object KeywordCollection, ADE_KeywordListID, SortedDataCollection
   RedefineMethod    Insert,               PKEYWORDGROUP, DWORD, DWORD, PSTRING
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 FILETYPE struc
   pExtension        PSTRINGW  ?
@@ -187,7 +187,7 @@ FILETYPE struc
 FILETYPE ends
 PFILETYPE typedef ptr FILETYPE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     FileTypeCollection
 ; Purpose:    Implement a collection of FILETYPE entries.
 
@@ -200,7 +200,7 @@ Object FileTypeCollection, ADE_FileTypeCollectionID, SortedDataCollection
   RedefineMethod    KeyOf,                PFILETYPE
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     EditorSharedResources
 ; Purpose:    Editor shared resource manager
 
@@ -226,7 +226,7 @@ Object EditorSharedResources, ADE_EditorSharedResourcesID, Primer
 
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     EditorResources
 ; Purpose:    Editor resource manager
 
@@ -293,29 +293,30 @@ Object EditorResources, ADE_EditorResourcesID, Primer
   DefineVariable    hBrushLineIndGreen,   HBRUSH,     0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     EditorLine
 ; Purpose:    Implement a text line for the Editor.
 
 Object EditorLine, ADE_EditorLineID, Primer
-  StaticMethod      CharDelete,           DWORD, DWORD
-  StaticMethod      CharInsert,           DWORD, DWORD, POINTER
-  StaticMethod      CharReplace,          DWORD, DWORD, POINTER
+  StaticMethod      CharDelete,           DWORD, DWORD, DWORD
+  StaticMethod      CharInsert,           DWORD, DWORD, POINTER, DWORD
+  StaticMethod      CharReplace,          DWORD, DWORD, POINTER, DWORD
   StaticMethod      BufferResize,         DWORD
   RedefineMethod    Done
   StaticMethod      Draw,                 POINTER, PRECT, DWORD
   RedefineMethod    Init,                 POINTER
-  StaticMethod      LineBreak,            DWORD, DWORD
-  StaticMethod      LineDelete,           DWORD
-  StaticMethod      LineJoinNext,         DWORD
-  StaticMethod      LineJoinPrev,         DWORD
-  StaticMethod      Redo
+  StaticMethod      LineBreak,            DWORD, DWORD, DWORD
+  StaticMethod      LineDelete,           DWORD, DWORD
+  StaticMethod      LineJoinNext,         DWORD, DWORD
+  StaticMethod      LineJoinPrev,         DWORD, DWORD
+  StaticMethod      LineReinsert,         DWORD, DWORD
+  StaticMethod      Redo,                 POINTER               ;PACTION
   StaticMethod      SelectionReset
   StaticMethod      SetDirty
   StaticMethod      SpaceFill,            DWORD
-  StaticMethod      Undo
+  StaticMethod      Undo,                 POINTER               ;PACTION
 
-  DefineVariable    LineLink,                 LDLL_MEMBER,{NULL, NULL}
+  DefineVariable    LineLink,             LDLL_MEMBER,{NULL, NULL}
   DefineVariable    pBuffer,              POINTER,    NULL      ;Memory holding wide chars and an ending ZTC
   DefineVariable    dCharCapacity,        DWORD,      0         ;In characters not including the ZTC
   DefineVariable    dLength,              DWORD,      0         ;In characters not including the ZTC
@@ -325,7 +326,7 @@ Object EditorLine, ADE_EditorLineID, Primer
   DefineVariable    dFlags,               DWORD,      0         ;TLF_xxx
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 LOCATION struct
   pEditorLine       $ObjPtr(EditorLine)   ?
@@ -340,27 +341,27 @@ SELRANGE struct                         ;Topological order
 SELRANGE ends
 PSELRANGE typedef ptr SELRANGE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  EditorView
 ; Purpose: Implement a view of the Editor.
 ;
 ; EditorView Layout:
-; —————————————————
+; -----------------
 ;
 ;      |<--------->| dSelBarWidth
 ;      |       |<> | dLineFoldingWidth
 ;      |       | <>| dLineIndicatorWidth
-;       ———————————————————————————————————————————
+;       -------------------------------------------
 ;      | 1)xxx | ¦ | Line N |                |
-;      | xxxxx | ¦ |————————————————————————       |
+;      | xxxxx | ¦ |------------------------       |
 ;      | xxxxx |[-]| Line N+1         |      |
-;      | xxxxx | ¦ |———————————————————————————    |  xxxxxxx = line numbers
+;      | xxxxx | ¦ |---------------------------    |  xxxxxxx = line numbers
 ;      | xxxxx | ¦ | Line N+2            |   |  1) Selection bar
-;      | xxxxx | ¦ |———————————————————————————    |
+;      | xxxxx | ¦ |---------------------------    |
 ;      | xxxxx | ¦-| Line N+3        |       |
-;      | xxxxx | ¦ |———————————————————————        |
+;      | xxxxx | ¦ |-----------------------        |
 ;      | xxxxx | ¦ |        ...                    |
-;       ———————————————————————————————————————————
+;       -------------------------------------------
 ;      |           |                       |   |   |
 ;      |SelBarWidth|<----- Line width ---->|   |   |
 ;      |<--------->|<------ Branch width ----->|   |
@@ -459,14 +460,14 @@ Object EditorView, ADE_EditorViewID, Window
   DefineVariable    GesturePanPos,        POINT,      {}
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  EditorDisplay
 ; Purpose: Implement a Display of the Editor.
 ;
 ; EditorDisplay Layout:
-; ————————————————————
+; --------------------
 ;
-;       ———————————————————————————————————————————
+;       -------------------------------------------
 ;      |                                        |V |
 ;      |                                        |e |
 ;      |   EditorView                           |r |
@@ -477,9 +478,9 @@ ObjectEnd
 ;      |                                        |B |
 ;      |                                        |a |
 ;      |                                        |r |
-;      |———————————————————————————————————————————|
+;      |-------------------------------------------|
 ;      |StatusPanel| Horizontal Scrollbar       |**| Splitter
-;       ———————————————————————————————————————————
+;       -------------------------------------------
 ;      |                                           |
 ;      |<----------- EditorDisplay width---------->|
 
@@ -523,14 +524,14 @@ Object EditorDisplay, ADE_EditorDisplayID, Window
 
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object ChildWnd, ADE_ChildWndID, MdiChildWnd                  ;MDI child window.
   VirtualAbstract   ClpBrdDelete
   VirtualAbstract   ClpBrdCopy
   VirtualAbstract   ClpBrdCut
   VirtualAbstract   ClpBrdPaste
-  VirtualAbstract   ClpBrdSetBtns
+  VirtualAbstract   ManageEditCmds
   RedefineMethod    Done
   RedefineMethod    Init,                 POINTER             ;-> Owner
   VirtualAbstract   Print
@@ -546,10 +547,47 @@ Object ChildWnd, ADE_ChildWndID, MdiChildWnd                  ;MDI child window.
   Embed   Snapper,  Magnetism
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
+
+AAT_DELETECHARS     equ   0
+AAT_DELETELINE      equ   1
+AAT_INSERTCHARS     equ   2
+AAT_INSERTLINE      equ   3
+
+ACTION struct
+  dAction     DWORD               ?
+  pEditorLine $ObjPtr(EditorLine) ?
+  union
+    struct                                ;Char delete of insert
+      dPosIndex   DWORD           ?
+      dChrCount   DWORD           ?
+      pChars      PSTRING         ?
+    ends
+    struct                                ;Line delete of insert
+      dLineNumber DWORD           ?
+    ends
+  ends
+ACTION ends
+PACTION typedef ptr ACTION
+
+; --------------------------------------------------------------------------------------------------
+; Object:     ActionCollection
+; Purpose:    Implement a DataCollection of ACTIONs.
+
+Object ActionCollection, ADE_ActionCollectionID, DataCollection
+  RedefineMethod    DestroyItem,        PACTION
+  RedefineMethod    Insert,             PACTION
+
+  StaticMethod      GetRedoAction
+  StaticMethod      GetUndoAction
+
+  DefineVariable    dActionIndex,       DWORD,    0
+ObjectEnd
+
+; --------------------------------------------------------------------------------------------------
 
 ; Editor Layout:
-; —————————————
+; -------------
 ;                                                      (NULL)
 ;                                                        ^
 ;                                                        |
@@ -560,7 +598,7 @@ ObjectEnd
 ;                                                        ...      |
 ;                                                                 |
 ;                                                        ^|       |
-;                                                        |V       |    Editor.LinkedListHead
+;                                                        |V       |    Editor.LinesHead
 ;  Editor.FirstVisChar.pEditorLine ---->  EditorLine(M).Link       ---- FirstMember
 ;                                                        ^|        ---- LastMember
 ;                                                        |V       |
@@ -582,17 +620,18 @@ Object Editor, ADE_EditorID, ChildWnd
   RedefineMethod    ClpBrdCopy
   RedefineMethod    ClpBrdCut
   RedefineMethod    ClpBrdPaste
-  RedefineMethod    ClpBrdSetBtns
   RedefineMethod    Done
   VirtualMethod     FindStr,              PSTRING, PLOCATION, PLOCATION, PFINDDLGCHOICES
   VirtualMethod     InformDeletionOf,     DWORD
   VirtualMethod     InformInsertionOf,    DWORD
   RedefineMethod    Init,                 POINTER, $ObjPtr(EditorResources), PSTRINGW
-  VirtualMethod     LineNew,              DWORD
+  VirtualMethod     LineNew,              DWORD, DWORD
   RedefineMethod    Load,                 $ObjPtr(Stream), PDESER_INFO
+  RedefineMethod    ManageEditCmds
   VirtualMethod     Open,                 PSTRINGW
   RedefineMethod    OnSize,               WPARAM, LPARAM
   RedefineMethod    Print
+  VirtualMethod     Redo
   RedefineMethod    Save
   VirtualMethod     SaveAs
   VirtualMethod     SaveTo,               PSTRING
@@ -605,12 +644,13 @@ Object Editor, ADE_EditorID, ChildWnd
   VirtualMethod     SetDirty,             DWORD
   StaticMethod      Startup
   RedefineMethod    Store,                $ObjPtr(Stream)
+  VirtualMethod     Undo
   RedefineMethod    UpdateStatusbar
   RedefineMethod    WndProc,              DWORD, WPARAM, LPARAM
 
   DefineVariable    dFlags,               DWORD,      0
   DefineVariable    pResources,           $ObjPtr(EditorResources), NULL
-  DefineVariable    LinkedListHead,       LDLL_CONTROL, {NULL, NULL}
+  DefineVariable    LinesHead,            LDLL_CONTROL, {NULL, NULL}
   DefineVariable    dTotalLineCount,      DWORD,      0             ;Total count of Lines
   DefineVariable    dVisLineCount,        DWORD,      0
   DefineVariable    dMaxLineCharCount,    DWORD,      0
@@ -626,14 +666,16 @@ Object Editor, ADE_EditorID, ChildWnd
   DefineVariable    pFocusedView,         $ObjPtr(EditorView), NULL
 
   StaticEvent       OnClose,              WM_CLOSE
+  StaticEvent       OnCreate,             WM_CREATE
   StaticEvent       OnEnterSizeMove,      WM_ENTERSIZEMOVE
   StaticEvent       OnExitSizeMove,       WM_EXITSIZEMOVE
   StaticEvent       OnSetFocus,           WM_SETFOCUS
 
   Embed     EditorDisplays,     Collection
+  Embed     Actions,            ActionCollection
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object ClientWnd, ADE_ClientWndID, MdiClientWnd                 ;MDI client window.
   RedefineMethod    Deserialize,          PDESER_INFO
@@ -658,7 +700,7 @@ Object ClientWnd, ADE_ClientWndID, MdiClientWnd                 ;MDI client wind
 
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  ProjectWnd
 ; Purpose: Implement a project window used as a control container on some apps.
 
@@ -682,11 +724,11 @@ Object ProjectWnd,, Window
   Embed     TView,              TreeView
   Embed     IconImageList,      MaskedImageList
 
-  Embed     Files,              DataCollection            ;of FILE structures §§§ 
+  Embed     Files,              DataCollection            ;of FILE structures §§§
   Embed     TVHandles,          %XWordVector
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 FDS_CURRENT_FILE    equ   0
 FDS_OPEN_FILES      equ   1
@@ -724,7 +766,7 @@ Object FindDialog, , DialogModeless
   DefineVariable    dContinue,            DWORD,    FALSE
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object Application, AsmDevEnvID, MdiApp                         ;MDI application.
   VirtualMethod     ChangeLanguage,       DWORD                 ;IDLANG_XXX
@@ -765,7 +807,7 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   DefineVariable    PrintMargin,          RECT,       {}
   DefineVariable    hDevMode,             HGLOBAL,    0
   DefineVariable    hDevNames,            HGLOBAL,    0
-  
+
   DefineVariable    dNewDefault,          DWORD,      ECT_ASM
 
   ;UI elements
@@ -789,7 +831,7 @@ Object Application, AsmDevEnvID, MdiApp                         ;MDI application
   Embed     FileTypes,          FileTypeCollection
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object Tab1,, DialogModeless
   RedefineMethod    Done
@@ -800,14 +842,14 @@ Object Tab1,, DialogModeless
   DefineVariable    hBackBrush,         HBRUSH,   0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object Tab2,, DialogModeless
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object SetupDialog,, DialogModal
   RedefineMethod    CtlsGet
@@ -824,7 +866,7 @@ Object SetupDialog,, DialogModal
   Embed     IconImageList,    MaskedImageList
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 DbgEditorMembers macro InstanceReg, Dest
   DbgHex InstanceReg, "Editor Instance", Dest
@@ -949,12 +991,11 @@ DbgEditorLine macro InstanceReg, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 include ADE_Helper.inc
 include ADE_About.inc
 include ADE_ProjectWnd.inc
-include ADE_UndoRedo.inc
 include ADE_Application.inc
 include ADE_EditorSharedResources.inc
 include ADE_EditorResources.inc
@@ -962,6 +1003,7 @@ include ADE_ClientWnd.inc
 include ADE_ChildWnd.inc
 include ADE_Editor.inc
 include ADE_SetupDialog.inc
+include ADE_ActionCollection.inc
 include ADE_KeywordGroupCollection.inc
 include ADE_KeywordCollection.inc
 include ADE_FileTypeCollection.inc

@@ -13,7 +13,7 @@
 externdef h2dw_Tbl1:BYTE
 externdef h2dw_Tbl2:BYTE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  hex2qwordA
 ; Purpose:    Load an ANSI string hexadecimal representation of a QWORD.
 ; Arguments:  Arg1: -> ANSI hexadecimal string with 16 characters.

@@ -12,7 +12,7 @@
 
 externdef HexCharTableA:CHRA
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Mem2HexA
 ; Purpose:    Convert the memory content into a hex ANSI string representation.
 ; Arguments:  Arg1: -> ANSI character buffer.

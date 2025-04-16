@@ -32,7 +32,7 @@ DplVctrLight1   D3Vector      { 0000.0,-5000.0,  000.0}       ;Light displacemen
 DplVector1      D3Vector      {  300.0,  250.0,  000.0}       ;Blue sphere initial position
 DplVector2      D3Vector      {  550.0,  250.0,  000.0}       ;Grey sphere initial position
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 CStr szApi3DEngApp, "OAC_Api3DEngApp"
 
@@ -106,7 +106,7 @@ ObjectEnd
 ;    Application implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Animate
 ; Purpose:    Animate the scene.
 ; Arguments:  Arg1: => TRUE, starts the animation, FALSE, stops it.
@@ -123,7 +123,7 @@ Method Application.Animate, uses xsi, dAction:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Draw
 ; Purpose:    Drawing thread procedure.
 ; Arguments:  None.
@@ -152,7 +152,7 @@ Method Application.Draw, uses xsi
   invoke timeEndPeriod, TIMER_RESOLUTION
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
 ; Purpose:    Finalize the SDI application object. Objects associated with window controls are
 ;             destroyed by Windows automatically when WM_DESTROY is send.
@@ -188,7 +188,7 @@ Method Application.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the SDI application object.
 ; Arguments:  None.
@@ -292,7 +292,7 @@ Method Application.Init, uses xbx xdi xsi
   invoke UpdateWindow, [xsi].hWnd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE and WM_QUERYENDSESSION message.
 ; Arguments:  Arg1: First message parameter.
@@ -310,7 +310,7 @@ Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -441,7 +441,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -455,7 +455,7 @@ Method Application.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -469,7 +469,7 @@ Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -480,7 +480,7 @@ Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, 1                            ;To avoid flicker, we take care of repainting the background
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnKeyDown
 ; Purpose:    Event procedure for WM_KEYDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -525,7 +525,7 @@ Method Application.OnKeyDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -568,7 +568,7 @@ Method Application.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return zero
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -607,7 +607,7 @@ Method Application.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return zero
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.MoveX
 ; Purpose:    ThreadProc for each Object to move.
 ; Arguments:  None.
@@ -670,7 +670,7 @@ Method Application.Move2, uses xsi
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.RotateCamera
 ; Purpose:    Rotate the scene camera.
 ; Arguments:  Direction.
@@ -696,7 +696,7 @@ Method Application.RotateCamera, uses xsi, dDirection:DWORD
   invoke RedrawWindow, [xsi].hWnd, 0, 0, RDW_ERASE or RDW_INVALIDATE or RDW_UPDATENOW
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.RotateSphere
 ; Purpose:    Rotate the big blue sphere.
 ; Arguments:  Arg1: Rotation axis.
@@ -744,7 +744,7 @@ Method Application.RotateSphere, uses xsi, dAxis:DWORD, dDirection:DWORD
   invoke RedrawWindow, [xsi].hWnd, 0, 0, RDW_ERASE or RDW_INVALIDATE or RDW_UPDATENOW
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.SceneWireDraw
 ; Purpose:    Draw the scene showing all triangles with wires.
 ; Arguments:  None
@@ -758,7 +758,7 @@ Method Application.SceneWireDraw, uses xsi
   mov [xsi].dSlow, FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -783,7 +783,7 @@ Method Application.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.StatusbarHelp
 ; Purpose:    Display a help string on panel 0 of the statusbar.
 ; Arguments:  Arg1: -> help string.

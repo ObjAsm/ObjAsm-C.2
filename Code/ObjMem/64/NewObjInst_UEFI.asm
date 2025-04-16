@@ -12,7 +12,7 @@
 
 ProcName textequ <NewObjInst_UEFI>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  NewObjInst_UEFI
 ; Purpose:    Create an object instance from an object ID.
 ; Arguments:  Arg1: Object ID.

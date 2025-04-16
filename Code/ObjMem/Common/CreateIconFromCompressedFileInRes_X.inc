@@ -11,7 +11,7 @@
 
 % include &ObjMemPath&Common\CursorIconStructs.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CreateIconFromCompressedFileInRes
 ; Purpose:    Create an icon from a compressed icon file stored as RCDATA resource. 
 ;             Compression should be done using a Microsoft compression algorithm: XPRESS, XPRESS

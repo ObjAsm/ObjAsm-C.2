@@ -19,7 +19,7 @@ WS_EX_LAYERED   equ   80000h
 LMA_ALPHA       equ   2
 LMA_COLORKEY    equ   1
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  WndFadeIn
 ; Purpose:    Fade in a window when WS_EX_LAYERED is set.
 ; Arguments:  Arg1: Window HANDLE.

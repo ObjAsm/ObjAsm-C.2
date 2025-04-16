@@ -36,7 +36,7 @@ RBT_COLOR_BLACK equ   $RGB(000,000,000)
 RBT_COLOR_GREEN equ   $RGB(000,000,255)
 RBT_COLOR_TEXT  equ   $RGB(170,170,170)
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Object:     RedBlackTree
 ; Purpose:    Implement a Red-Black binaray tree.
 ; Links:      http://www.cs.iupui.edu/~xkzou/teaching/CS580/Red-black_trees.ppt
@@ -75,25 +75,25 @@ RBT_COLOR_TEXT  equ   $RGB(170,170,170)
 ;                                     NULL
 ;                                      |
 ;                                      |
-;                                     覧・
+;                                     --・
 ;                                    | 4 |     Root Node (always black)
-;                                     覧・
+;                                     --・
 ;                                   /     \
 ;                                  /       \
 ;                                 /         \
 ;                           / ...             ... \
 ;             Parent Node  /                       \
 ;                         /                         \
-;                       覧・                        覧・
+;                       --・                        --・
 ;   Node with key = 2  | 2 |                       | 6 |
-;                       覧・                        覧・
+;                       --・                        --・
 ;                     /     \                     /     \
 ;         Left Node  /       \  Right Node       /       \
 ;                   /         \                 /         \
 ;                  /           \               /           \
-;                覧・          覧・          覧・          覧・
+;                --・          --・          --・          --・
 ;               | 1 |         | 3 |         | 5 |         | 7 |
-;                覧・          覧・          覧・          覧・
+;                --・          --・          --・          --・
 ;              /     \       /     \       /     \       /     \
 ;             /       \     /       \     /       \     /       \
 ;           NULL     NULL NULL     NULL NULL     NULL NULL     NULL    Leave Nodes (always black)
@@ -142,7 +142,7 @@ if IMPLEMENT
 ;  Utility macros and procedures
 ; ==================================================================================================
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  RedBlackTree_Show
 ; Purpose:    Debug procedure to display the tree structure.
 ; Arguments:  Arg1: Key offset into the object.
@@ -238,7 +238,7 @@ RedBlackTree_Show endp
 
 endif
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Macro:      RedBlackTree_GetMax
 ; Purpose:    Return the node with the biggest key.
 ; Arguments:  xax -> Start node.
@@ -253,7 +253,7 @@ RedBlackTree_GetMax macro
   .until FALSE
 endm
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Macro:      RedBlackTree_GetMin
 ; Purpose:    Return the node with the smallest key.
 ; Arguments:  xax -> Start node.
@@ -268,7 +268,7 @@ RedBlackTree_GetMin macro
   .until FALSE
 endm
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Macro:      RedBlackTree_RotateLeft
 ; Purpose:    Rotate the tree to the left around a specified node.
 ; Arguments:  Reg: -> Node.
@@ -304,7 +304,7 @@ RedBlackTree_RotateLeft macro Reg:req
   .endif
 endm
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Macro:      RedBlackTree_RotateRight
 ; Purpose:    Rotate the tree to the right around a specified node.
 ; Arguments:  Reg: -> Node.
@@ -341,7 +341,7 @@ RedBlackTree_RotateRight macro Reg:req
   .endif
 endm
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Macro:      RedBlackTree_TraverseInOrder
 ; Purpose:    Macro used to traverse the tree in order (ascending or descending) and invoke a
 ;             function or callback procedure in an iterator method.
@@ -435,7 +435,7 @@ endm
 ;  RedBlackTree implementation
 ; ==================================================================================================
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.Compare
 ; Purpose:    Compare 2 keys.
 ; Arguments:  Arg1: -> Object #1.
@@ -451,7 +451,7 @@ Method RedBlackTree.Compare,, pObject1:POINTER, pObject2:POINTER
   sub xax, pObject1
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.Delete
 ; Purpose:    Delete a node from the tree.
 ; Arguments:  Arg1: -> Object.
@@ -613,7 +613,7 @@ Method RedBlackTree.Delete, uses xbx xdi xsi, pObject:POINTER
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.DeleteAll
 ; Purpose:    Wipe the complete tree.
 ; Arguments:  None.
@@ -625,7 +625,7 @@ Method RedBlackTree.DeleteAll
   m2z [xcx].dCount
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.Dispose
 ; Purpose:    Remove an object from the tree and disposes it.
 ; Arguments:  Arg1: -> Object
@@ -637,7 +637,7 @@ Method RedBlackTree.Dispose,, pObject:POINTER
   Destroy xax                                           ;Safe operation
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.DisposeAll
 ; Purpose:    Wipe the complete tree and disposes all node hosting objects.
 ; Arguments:  None.
@@ -675,7 +675,7 @@ Method RedBlackTree.DisposeAll, uses xsi
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.Find
 ; Purpose:    Search for the first node containing the specified key.
 ; Arguments:  Arg1: -> Object with key data to find.
@@ -702,7 +702,7 @@ Method RedBlackTree.Find, uses xbx xsi, pObject:POINTER
   xor eax, eax                                        ;xax = NULL => not found!
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.FirstThat
 ; Purpose:    Search the first object that doesn't return FALSE in eax.
 ; Arguments:  Arg1: -> (static addr) Function that evaluates to TRUE or FALSE (return value in eax).
@@ -715,7 +715,7 @@ Method RedBlackTree.FirstThat, uses xbx xdi xsi, pCallAddr:POINTER, xArg1:XWORD,
   RedBlackTree_TraverseInOrder Left, Right, 1
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.FirstThatNot
 ; Purpose:    Search the first object that returns FALSE in eax.
 ; Arguments:  Arg1: -> (static addr) Function that evaluates to TRUE or FALSE (return value in eax).
@@ -728,7 +728,7 @@ Method RedBlackTree.FirstThatNot, uses xbx xdi xsi, pCallAddr:POINTER, xArg1:XWO
   RedBlackTree_TraverseInOrder Left, Right, 2
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.ForEach
 ; Purpose:    Traverse all nodes in the tree in ascending order.
 ; Arguments:  Arg1: -> Processing procedure (static address).
@@ -742,7 +742,7 @@ Method RedBlackTree.ForEach, uses xbx xdi xsi, pCallAddr:POINTER, xArg1:XWORD, x
   RedBlackTree_TraverseInOrder Left, Right, RBT_TEST_NONE
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.ForEachRev
 ; Purpose:    Traverse all objects in the tree in descending order.
 ; Arguments:  Arg1: -> Processing procedure (static address).
@@ -756,7 +756,7 @@ Method RedBlackTree.ForEachRev, uses xbx xdi xsi, pCallAddr:POINTER, xArg1:XWORD
   RedBlackTree_TraverseInOrder Right, Left, RBT_TEST_NONE
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.GetFirst
 ; Purpose:    Return the object with the smallest key.
 ; Arguments:  Nothing.
@@ -769,7 +769,7 @@ Method RedBlackTree.GetFirst
   sub xax, [xcx].xNodeOffset
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.GetLast
 ; Purpose:    Return the object with the largest key.
 ; Arguments:  Nothing.
@@ -782,7 +782,7 @@ Method RedBlackTree.GetLast
   sub xax, [xcx].xNodeOffset
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.GetNext
 ; Purpose:    Return the object with a key that is larger than the key of the specified object.
 ; Arguments:  Arg1: -> Object.
@@ -808,7 +808,7 @@ Method RedBlackTree.GetNext,, pObject:POINTER
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.GetPrev
 ; Purpose:    Return the object with a key that is smaller than the key of the specified object.
 ; Arguments:  Arg1: -> Object.
@@ -834,7 +834,7 @@ Method RedBlackTree.GetPrev,, pObject:POINTER
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.Init
 ; Purpose:    Initialize the RedBlackTree object.
 ; Arguments:  Arg1: -> Owner object.
@@ -849,7 +849,7 @@ Method RedBlackTree.Init,, pOwner:POINTER, xNodeOffset:XWORD
   ACall xcx.Init, pOwner
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.Insert
 ; Purpose:    Insert an object in the tree. The object must host an uninitialized node at the
 ;             specified offset used in the Init method.
@@ -962,7 +962,7 @@ Method RedBlackTree.Insert, uses xbx xdi xsi, pObject:POINTER
   mov xcx, pObject
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.LastThat
 ; Purpose:    Search the last object that doesn't return FALSE in eax.
 ; Arguments:  Arg1: -> (static addr) Function that evaluates to TRUE or FALSE (return value in eax).
@@ -975,7 +975,7 @@ Method RedBlackTree.LastThat, uses xbx xdi xsi, pCallAddr:POINTER, xArg1:XWORD, 
   RedBlackTree_TraverseInOrder Right, Left, RBT_TEST_TRUE
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.LastThatNot
 ; Purpose:    Search the first object that returns FALSE in eax.
 ; Arguments:  Arg1: -> (static addr) Function that evaluates to TRUE or FALSE (return value in eax).
@@ -988,7 +988,7 @@ Method RedBlackTree.LastThatNot, uses xbx xdi xsi, pCallAddr:POINTER, xArg1:XWOR
   RedBlackTree_TraverseInOrder Right, Left, RBT_TEST_FALSE
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.GetItem
 ; Purpose:    Load an item from a stream object.
 ; Arguments:  Arg1: -> Stream object containing an object.
@@ -998,7 +998,7 @@ Method RedBlackTree.GetItem,, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.Get, pSelf
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.PutItem
 ; Purpose:    Store an item of the RedBlackTree in a stream object.
 ; Arguments:  Arg1: -> Stream.
@@ -1011,7 +1011,7 @@ Method RedBlackTree.PutItem,, pStream:$ObjPtr(Stream), pItem:POINTER
   OCall pStream::Stream.Put, pItem
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.Load
 ; Purpose:    Load and initializes the RedBlackTree from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -1065,7 +1065,7 @@ Method RedBlackTree.Load, uses xbx xsi, pStream:$ObjPtr(Stream), pOwner:POINTER
   mov [xsi].pRootNode, xax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     RedBlackTree.Store
 ; Purpose:    Store the RedBlackTree in a stream object.
 ; Arguments:  Arg1: -> Stream object.

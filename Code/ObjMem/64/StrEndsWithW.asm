@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <StrEndsWithW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrEndsWithW
 ; Purpose:    Compare the ending of a string.
 ; Arguments:  Arg1: -> Analized string.

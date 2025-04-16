@@ -11,7 +11,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     WinApp
 ; Purpose:    WinApp is the base object for all SDI, MDI and Dialog descendant application objects.
 ;             It implements basic features like modeless dialog and idle processing.
@@ -32,7 +32,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WinApp.Init
 ; Purpose:    Initialize the WinApp object.
 ; Arguments:  None.
@@ -43,7 +43,7 @@ Method WinApp.Init
   ACall xcx.Init, NULL, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WinApp.OnIdle
 ; Purpose:    Procedure called when the application is idle.
 ; Arguments:  Arg1: Number of times OnIdle was called since the last processed message.
@@ -53,7 +53,7 @@ Method WinApp.OnIdle,, xCount:XWORD
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WinApp.OnNcDestroy
 ; Purpose:    Event procedure for WM_NCDESTROY message.
 ; Arguments:  Arg1: First message parameter.

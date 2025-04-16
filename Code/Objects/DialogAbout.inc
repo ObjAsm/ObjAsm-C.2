@@ -10,7 +10,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DialogAbout
 ; Purpose:    Generic modal about dialog. It shows a single text on a static control.
 ;             This dialog uses the DIALOGABOUT resurce which must be located in application resource
@@ -35,7 +35,7 @@ IDC_DAB_LINK    equ     103
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:       DialogAbout.CtlsSet
 ; Purpose:      Setup the controls of the About dialog.
 ; Arguments:    None.
@@ -48,7 +48,7 @@ Method DialogAbout.CtlsSet, uses xsi
   invoke SetDlgItemText, [xsi].hWnd, IDC_DAB_TEXT, [xsi].pText  ;Set static about text
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:       DialogAbout.Init
 ; Purpose:      Initialize the about dialog using the "DIALOGABOUT" dialog resource.
 ; Arguments:    Arg1: -> Owner object.
@@ -64,7 +64,7 @@ Method DialogAbout.Init,, pOwner:POINTER, hParent:HWND, hIcon:HICON, pText:PSTRI
   ACall xcx::DialogAbout.Init, pOwner, hParent, $OfsCStr("DIALOGABOUT")
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogAbout.OnCtlColorStatic
 ; Purpose:    Event procedure for WM_CTLCOLORSTATIC message.
 ; Arguments:  Arg1: First message parameter.

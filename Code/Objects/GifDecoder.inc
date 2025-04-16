@@ -12,7 +12,7 @@ GIF_IMAGEFORMAT_1BIT  equ   2           ;1-bit, monochrome
 GIF_IMAGEFORMAT_4BIT  equ   16          ;4-bit, 16-color
 GIF_IMAGEFORMAT_8BIT  equ   256         ;8-bit, 256-color
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     GifDecoder
 ; Purpose:    This object is a decoding engine for GIF files. It is used by the GifPlayer object.
 ;             The GIF (Graphics Interchange Format) is the Copyright property of CompuServe Inc.
@@ -71,7 +71,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GifDecoder_AddToTable
 ; Purpose:    Add an entry to the LZW Table.
 ;             The entry consists of a prefix and a suffix (size is calculated automatically).
@@ -138,7 +138,7 @@ GifDecoder_AddToTable proc uses xbx dPrefix:DWORD, dSuffix:DWORD
   assume xsi:NOTHING
 GifDecoder_AddToTable endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GifDecoder_LoadNextByte
 ; Purpose:    Load the currentbits entry with new bits.
 ; Arguments:  None.
@@ -186,7 +186,7 @@ GifDecoder_LoadNextByte proc
   assume xsi:NOTHING
 GifDecoder_LoadNextByte endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GifDecoder_OutputString
 ; Purpose:    Write the string of dCode to the output stream.
 ; Arguments:  Arg1: Code.
@@ -308,7 +308,7 @@ GifDecoder_OutputString proc uses xbx xdi dCode:DWORD
   assume xsi:NOTHING
 GifDecoder_OutputString endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GifDecoder_Reset
 ; Purpose:    Reinitialize the decoder (LZW table, etc).
 ; Arguments:  None.
@@ -362,7 +362,7 @@ GifDecoder_Reset proc
   assume xsi:NOTHING
 GifDecoder_Reset endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifDecoder.Decode
 ; Purpose:    Decode the Gif data.
 ; Arguments:  Arg1: -> Data stream.

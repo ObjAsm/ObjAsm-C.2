@@ -10,7 +10,7 @@
 ;    D3Scene implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.Clear
 ; Purpose:    Clear the content of all cameras.
 ; Arguments:  None.
@@ -21,7 +21,7 @@ Method D3Scene.Clear
   OCall [xcx].pCameras::Collection.ForEach, $MethodAddr(D3Camera.Clear), NULL, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.Colorize
 ; Purpose:    Compute the colors of all vertices.
 ; Arguments:  None.
@@ -32,7 +32,7 @@ Method D3Scene.Colorize
   OCall [xax].pLights::Collection.ForEach, $MethodAddr(D3Light.Colorize), [xax].pObjects, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.CreateBox
 ; Purpose:    Crete a centered box D3Object.
 ; Arguments:  Arg1: -> Real4 number containing the box width.
@@ -105,7 +105,7 @@ Method D3Scene.CreateBox, uses xdi xsi, pWidth:POINTER, pHeight:POINTER, pDepth:
   mov xax, xdi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.CreateGeoSphere
 ; Purpose:    Crete a centered sphere D3Object.
 ; Arguments:  Arg1: Number of meridians.
@@ -270,7 +270,7 @@ Method D3Scene.CreateGeoSphere, uses xbx xdi xsi, dMeridians:DWORD, dParallels:D
   mov xax, pSphere
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.Deserialize
 ; Purpose:    Convert serialized members.
 ; Arguments:  Arg1: -> DESER_INFO.
@@ -285,7 +285,7 @@ Method D3Scene.Deserialize, uses xsi, pDeserInfo:PDESER_INFO
   OCall [xsi].pLights::Collection.Deserialize, pDeserInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.DestroyCamera
 ; Purpose:    Destroy a D3Camera from the D3Scene object.
 ; Arguments:  Arg1: -> D3Camera object.
@@ -296,7 +296,7 @@ Method D3Scene.DestroyCamera,, pCamera:$ObjPtr(D3Camera)
   OCall [xcx].pCameras::Collection.Dispose, pCamera
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.DestroyLight
 ; Purpose:    Destroy a D3Light from the D3Scene object.
 ; Arguments:  Arg1: -> D3Light object.
@@ -307,7 +307,7 @@ Method D3Scene.DestroyLight,, pLight:$ObjPtr(D3Light)
   OCall [xcx].pLights::Collection.Dispose, pLight
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.DestroyObject
 ; Purpose:    Destroy a D3Object from the D3Scene object.
 ; Arguments:  Arg1: -> D3Light object.
@@ -318,7 +318,7 @@ Method D3Scene.DestroyObject,, pObject:$ObjPtr(D3Object)
   OCall [xcx].pObjects::Collection.Dispose, pObject
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.Done
 ; Purpose:    Finalize the D3Scene object.
 ; Arguments:  None.
@@ -332,7 +332,7 @@ Method D3Scene.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.InfoTriCount
 ; Purpose:    Compute the number of D3Triangles in the D3Scene.
 ; Arguments:  None.
@@ -349,7 +349,7 @@ Method D3Scene.InfoTriCount
   mov eax, dCount
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.Init
 ; Purpose:    Initialize the D3Scene object.
 ; Arguments:  Arg1: -> Owner object.
@@ -366,7 +366,7 @@ Method D3Scene.Init, uses xsi, pOwner:POINTER
   OCall [xsi].pObjects::Collection.Init, xsi, 1, 1, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.Load
 ; Purpose:    Load a D3Scene from a Stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -385,7 +385,7 @@ Method D3Scene.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   OCall xsi.Project
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.NewCamera
 ; Purpose:    Add a new D3Camera to the D3Scene object.
 ; Arguments:  None.
@@ -398,7 +398,7 @@ Method D3Scene.NewCamera, uses xbx xsi
   OCall [xsi].pCameras::Collection.Insert, xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.NewLight
 ; Purpose:    Add a new D3Light to the D3Scene object.
 ; Arguments:  None.
@@ -411,7 +411,7 @@ Method D3Scene.NewLight, uses xbx xsi
   OCall [xsi].pLights::Collection.Insert, xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.NewObject
 ; Purpose:    Add a new D3Object to the D3Scene object.
 ; Arguments:  None.
@@ -424,7 +424,7 @@ Method D3Scene.NewObject, uses xbx xsi
   OCall [xsi].pObjects::Collection.Insert, xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.Project
 ; Purpose:    Project all D3Objects in the D3Scene to all D3Cameras.
 ; Arguments:  None.
@@ -436,7 +436,7 @@ Method D3Scene.Project, uses xsi
   OCall [xsi].pLights::Collection.ForEach, $MethodAddr(D3Light.Colorize), [xsi].pCameras, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Scene.Store
 ; Purpose:    Store a D3Scene to a Stream object.
 ; Arguments:  Arg1: -> Stream object.

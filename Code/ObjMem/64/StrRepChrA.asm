@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <StrRepChrA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrRepChrA
 ; Purpose:    Create a new string filled with a given char.
 ; Arguments:  Arg1: Used character.

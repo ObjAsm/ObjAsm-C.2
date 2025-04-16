@@ -16,7 +16,7 @@ if IMPLEMENT
 ;    NetComIOMsgPool implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComIOMsgPool.FreeItem
 ; Purpose:    Release memory of a specified IOMsg.
 ; Arguments:  Arg1: -> IOMsg.
@@ -30,7 +30,7 @@ Method NetComIOMsgPool.FreeItem, uses xsi, pIOMsg:PIO_MSG
   UnlockObjectAccess [xsi].$Obj(NetComIOMsgPool)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComIOMsgPool.Init
 ; Purpose:    Initialize the NetComIOMsgPool object.
 ; Arguments:  Arg1: -> Owner object.
@@ -42,7 +42,7 @@ Method NetComIOMsgPool.Init,, pOwner:POINTER, dInitMsgCount:DWORD
   ACall xcx.Init, pOwner, sizeof IO_MSG, dInitMsgCount, @WordSize   ;We need an alignment of @WordSize
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComIOMsgPool.NewItem
 ; Purpose:    Allocate a new IOMsg from DataPool.
 ; Arguments:  Arg1: -> Owner object (NetComConnection).
@@ -64,7 +64,7 @@ Method NetComIOMsgPool.NewItem, uses xsi, pOwner:POINTER, sdMessage:SDWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComIOMsgPool.ResetIOMsg
 ; Purpose:    Reset an IOJob.
 ; Arguments:  Arg1: -> IOMsg.

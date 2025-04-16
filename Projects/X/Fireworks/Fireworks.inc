@@ -18,7 +18,7 @@ FWK_Mode  record  FWK_Unused:29 = 0,   \    ;Unused bits
                   FWK_EMode:1 = 0           ;Special effects
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Fireworks
 ; Purpose:    Implement a GDI based firework using MMX technology.
 
@@ -97,7 +97,7 @@ FireShellHeader ends
 externdef dRandomSeed:DWORD                 ;ObjMem32.lib
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Fireworks.Blur
 ; Purpose:    Blur MMX algo for 24bit color bitmaps.
 ; Arguments:  None.
@@ -188,7 +188,7 @@ Method Fireworks.Blur, uses xbx xdi xsi
   emms                                                  ;Free MMX registers for fp computations
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Fireworks.Done
 ; Purpose:    Finalize the Fireworks object.
 ; Arguments:  None.
@@ -217,7 +217,7 @@ Method Fireworks.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Fireworks.FireShellExpodeAG
 ; Purpose:    Explosion effect with Air and Gravity.
 ; Arguments:  Arg1: -> FireShell.
@@ -255,7 +255,7 @@ Method Fireworks.FireShellExpodeAG, uses xdi, pFireShell:POINTER
   mov eax, [xdi - sizeof FireShellHeader + sizeof(Spark)].FireShellHeader.dLife  ;Return life
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Fireworks.FireShellExpodeOS
 ; Purpose:    Explosion effect i Outer Space.
 ; Arguments:  Arg1: -> FireShell.
@@ -285,7 +285,7 @@ Method Fireworks.FireShellExpodeOS, uses xdi, pFireShell:POINTER
   mov eax, [xdi - sizeof FireShellHeader + sizeof(Spark)].FireShellHeader.dLife  ;Return life
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Fireworks.FireShellRecycle
 ; Purpose:    Recycle fire shell.
 ; Arguments:  Arg1: -> FireShell.
@@ -373,7 +373,7 @@ Method Fireworks.FireShellRecycle, uses xbx xdi xsi, pFireShell:POINTER, dx1:DWO
   fUnload 2
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Fireworks.FireShellRender
 ; Purpose:    Render a fire shell.
 ; Arguments:  Arg1: -> FireShell.
@@ -437,7 +437,7 @@ Method Fireworks.FireShellRender, uses xbx xdi xsi, pFireShell:POINTER, dColorIn
   .until CARRY?
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Fireworks.FireThread
 ; Purpose:    Fireworks generation thread.
 ; Arguments:  None.
@@ -529,7 +529,7 @@ Method Fireworks.FireThread, uses xbx xdi xsi
   invoke ExitThread, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Fireworks.Flash
 ; Purpose:    Perform a light flash on a specified position.
 ; Arguments:  Arg1: Light position x.
@@ -621,7 +621,7 @@ Method Fireworks.Flash, uses xbx xdi xsi, dx1:DWORD, dy1:DWORD, dLum:DWORD
   .until eax > dMy
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Fireworks.Init
 ; Purpose:    Initialize the Fireworks object.
 ; Arguments:  Arg1: -> Owner object.

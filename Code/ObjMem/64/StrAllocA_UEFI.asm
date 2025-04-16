@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <StrAllocA_UEFI>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrAllocA_UEFI
 ; Purpose:    Allocate space for a string with n characters.
 ; Arguments:  Arg1: Character count without the ZTC.

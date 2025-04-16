@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrSize
 ; Purpose:    Determine the size of a BStr including the ZTC + leading DWORD.
 ; Arguments:  Arg1: -> Source BStr.

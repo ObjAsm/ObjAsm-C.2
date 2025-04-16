@@ -59,7 +59,7 @@ CStrA bStdMethod,           "STDMETHOD"
 CStrA bDispMethod,          "DISPMETHOD"
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:    OA_ObjDB
 ; Purpose:   Object database engine.
 
@@ -103,7 +103,7 @@ if IMPLEMENT
 ;  OA_ObjDB
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OA_ObjDB.RemoveFileInfo
 ; Purpose:    Removes all entries in the info collections related to a specified FileName.
 ; Arguments:  Arg1: -> Filename.
@@ -197,7 +197,7 @@ Method OA_ObjDB.RemoveFileInfo, uses xbx xdi xsi, pFileName:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OA_ObjDB.Done
 ; Purpose:    Finalizes the object, freeing all allocated resources.
 ; Arguments:  None.
@@ -221,7 +221,7 @@ Method OA_ObjDB.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  RemoveUnusedInfo
 ; Purpose:    Remove unused structures from the Object database.
 ; Arguments:  Arg1: -> FILEINFORMATION
@@ -238,7 +238,7 @@ RemoveUnusedInfo proc pFileInfo:PFILEINFORMATION, pSelf:POINTER, xDummy:XWORD
   ret
 RemoveUnusedInfo endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OA_ObjDB.Init
 ; Purpose:    Initializes a OA_ObjDB object.
 ; Arguments:  Arg1: -> Owner object.
@@ -354,7 +354,7 @@ Method OA_ObjDB.Init, uses xbx xdi xsi, pOwner:POINTER, pIniFile:$ObjPtr(IniFile
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OA_ObjDB.Open
 ; Purpose:    Reads the DB content from a binary file.
 ; Arguments:  Arg1: -> File name.
@@ -395,7 +395,7 @@ Method OA_ObjDB.Open, uses xbx xdi xsi, pFileName:PSTRING
   OCall xbx::DiskStream.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OA_ObjDB.Save
 ; Purpose:    Saves the DB content to a binary file.
 ; Arguments:  Arg1: -> file name.
@@ -421,7 +421,7 @@ Method OA_ObjDB.Save, uses xbx xsi, pFileName:PSTRING
   OCall xbx::DiskStream.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  FindHelpLines
 ; Purpose:    Scans a file from a defined linenumber backwards looking for consecutive outcommented
 ;             lines.
@@ -491,7 +491,7 @@ FindHelpLines proc uses xbx xdi xsi pTextSrc:$ObjPtr(TextSource), pInfo:PINFORMA
   ret
 FindHelpLines endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OA_ObjDB.ScanFile
 ; Purpose:    Scans a file in the ObjAsm\Code\Objects directory for object information.
 ; Arguments:  Arg1: -> File name.
@@ -883,7 +883,7 @@ Method OA_ObjDB.ScanFile, uses xbx xdi xsi, pFileName:PSTRING, LastWriteTime:FIL
   mov xax, pFileInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OA_ObjDB.ScanDBFiles
 ; Purpose:    Checks all files in the FilesCollection.
 ; Arguments:  None.
@@ -930,7 +930,7 @@ Method OA_ObjDB.ScanDBFiles, uses xbx xdi xsi
   mov eax, dHasChanged
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OA_ObjDB.ScanDirFiles
 ; Purpose:    Checks all files of a specified folder.
 ; Arguments:  Arg1: -> Path.

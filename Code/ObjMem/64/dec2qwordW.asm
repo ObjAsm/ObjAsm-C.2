@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <dec2qwordW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  dec2qwordW
 ; Purpose:    Convert a decimal WIDE string to a QWORD.
 ; Arguments:  Arg1: -> Source WIDE string. Possible leading characters are " ", tab, "+" and "-",

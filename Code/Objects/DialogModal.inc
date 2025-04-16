@@ -10,7 +10,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DialogModal
 ; Purpose:    This object is a descendant of Dialog and implements a modal dialog using the
 ;             DialogBoxParam and EndDialog APIs.
@@ -27,7 +27,7 @@ if IMPLEMENT
 
 externdef hInstance:HANDLE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogModal.DestroyDialog
 ; Purpose:    Destroy a modal dialog.
 ; Arguments:  Arg1: Windows return value.
@@ -39,7 +39,7 @@ Method DialogModal.DestroyDialog, uses xsi, xArgument:XWORD
   invoke EndDialog, [xsi].hWnd, xArgument
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogModal.Show
 ; Purpose:    Show a modal dialog.
 ; Arguments:  None.

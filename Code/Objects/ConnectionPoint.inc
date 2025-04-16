@@ -11,7 +11,7 @@
 externdef IID_IConnectionPoint:GUID
 externdef IID_IEnumConnections:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  IConnectionPoint
 ; Purpose: Implementation of the IConnectionPoint COM interface used by the ConnectionPoint object.  
 
@@ -26,7 +26,7 @@ Object IConnectionPoint, IConnectionPointID, IUnknown
   RedefineVariable  pIID,                         offset IID_IConnectionPoint
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  ConnectionPoint
 ; Purpose: Implementation of the ConnectionPoint COM object.
 ;          This object is used to connect COM objects.
@@ -42,7 +42,7 @@ Object ConnectionPoint, ConnectionPointID, Component
   Embed             ConnectedInterfaces,      DataCollection
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  IEnumConnections
 ; Purpose: Implementation of the IEnumConnections COM interface used by the EnumConnections object.  
 
@@ -55,7 +55,7 @@ Object IEnumConnections, IEnumConnectionsID, IUnknown
   RedefineVariable  pIID,                     offset IID_IEnumConnections
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  EnumConnections
 ; Purpose: Implementation of the EnumConnections COM object.
 ;          This object is used to enumerate connections between COM objects.
@@ -78,7 +78,7 @@ if IMPLEMENT
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IConnectionPoint.GetConnectionInterface
 ; Purpose:    Return the IID of the outgoing interface managed by this connection point.
 ; Arguments:  Arg1: -> Variable that will hold the pIID.
@@ -97,7 +97,7 @@ Method IConnectionPoint.GetConnectionInterface,, pIID:REFIID
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IConnectionPoint.GetConnectionPointContainer
 ; Purpose:    Return the ConnectionPointContainer that owns this ConnectionPoint.
 ; Arguments:  Arg1: -> Return value.
@@ -117,7 +117,7 @@ Method IConnectionPoint.GetConnectionPointContainer,, ppCPContainer:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IConnectionPoint.Advise
 ; Purpose:    Establish a connection between the connection point object and the client's sink.
 ; Arguments:  Arg1: -> Unknown Interface.
@@ -158,7 +158,7 @@ Method IConnectionPoint.Advise, uses xbx xsi, pIUnknown:POINTER, pCookie:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IConnectionPoint.Unadvise
 ; Purpose:    Disconnect the previous connection established by IConnectionPoint.Advise.
 ; Arguments:  Arg1: Connection token (DWORD) previously returned from IConnectionPoint.Advise.
@@ -174,7 +174,7 @@ Method IConnectionPoint.Unadvise,, dPrvCookie:Dword
   xor eax, eax                                          ;Return S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IConnectionPoint.EnumConnections
 ; Purpose:    Create an enumerator object to iterate through the current connections for this
 ;             connection point.
@@ -203,7 +203,7 @@ MethodEnd
 ;    ConnectionPoint implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ConnectionPoint.Done
 ; Purpose:    Finalize the ConnectionPoint object.
 ; Arguments:  None.
@@ -222,7 +222,7 @@ Method ConnectionPoint.Done
   ACall Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ConnectionPoint.Init
 ; Purpose:    Initialize the ConnectionPoint object.
 ; Arguments:  Arg1: -> Owner object.
@@ -244,7 +244,7 @@ Method ConnectionPoint.Init, uses xsi, pOwner:POINTER, pSinkIID:REFIID
   OCall xax::IConnectionPoint.Init, xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ConnectionPoint.FireEvent
 ; Purpose:    Fire an Event for each active connection in this ConnectionPoint. It calls FireNow,
 ;             which has th be redefined to allow proper behaviour for each Sink Interface.
@@ -263,7 +263,7 @@ MethodEnd
 ;    IEnumConnections implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IEnumConnections.Next
 ; Purpose:    Enumerate the next requested IConnectionPoint pointers, returning them along with the
 ;             actual number of enumerated elements in pFetched. The enumerator calls
@@ -317,7 +317,7 @@ Method IEnumConnections.Next, uses xbx xdi xsi, dReqCount:DWORD, pBuffer:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IEnumConnections.Skip
 ; Purpose:    Increment the internal counter.
 ; Arguments:  Arg1: Increment value.
@@ -332,7 +332,7 @@ Method IEnumConnections.Skip,, dIncrement:DWORD
   xor eax, eax                                          ;Return S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IEnumConnections.Reset
 ; Purpose:    Reset the internal counter.
 ; Arguments:  None.
@@ -347,7 +347,7 @@ Method IEnumConnections.Reset
   xor eax, eax                                          ;Return S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IEnumConnections.Clone
 ; Purpose:    Make an exact duplicate of EnumConnections with all it's internal values.
 ; Arguments:  Arg1: -> IEnumConnections interface of the new object.
@@ -373,7 +373,7 @@ MethodEnd
 ;    EnumConnections implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EnumConnections.Init
 ; Purpose:    Initialize the EnumConnections object.
 ; Arguments:  Arg1: -> Owner ConnectionPoint object.

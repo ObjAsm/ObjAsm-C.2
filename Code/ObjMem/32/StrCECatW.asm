@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCECatW
 ; Purpose:    Concatenate 2 WIDE strings with length limitation and return the ending zero character
 ;             address. The destination string buffer should have at least enough room for the

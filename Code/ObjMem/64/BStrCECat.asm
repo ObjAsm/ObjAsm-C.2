@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrCECat
 ; Purpose:    Concatenate 2 BStrs with length limitation and return the the address of the ZTC.
 ;             The destination string buffer should have at least enough room for the maximum number

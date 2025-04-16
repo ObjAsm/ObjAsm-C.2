@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <ComGetErrStrA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ComGetErrStrA
 ; Purpose:    Return a description ANSI string from a COM error code.
 ; Arguments:  Arg1: COM error code.

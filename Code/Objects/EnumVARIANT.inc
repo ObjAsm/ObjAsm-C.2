@@ -9,7 +9,7 @@
 
 externdef IID_IEnumVARIANT:GUID      ;{00020404-0000-0000-C000-000000000046}
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     IEnumVARIANT
 ; Purpose:    Implements a COM IEnumVARIANT interface object.
 
@@ -24,7 +24,7 @@ Object IEnumVARIANT, IEnumVARIANTID, IUnknown
   ;dMethodID = FFFFFFFCh, Invoke Method [IDispatch.inc, 152]
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     EnumVARIANT
 ; Purpose:    Implements a COM EnumVARIANT object.
 
@@ -42,7 +42,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EnumVARIANT.Done
 ; Purpose:    Finalizes the EnumVARIANT object.
 ; Arguments:  None.
@@ -55,7 +55,7 @@ Method EnumVARIANT.Done
   DbgLine
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EnumVARIANT.Init
 ; Purpose:    Initializes the EnumVARIANT object.
 ; Arguments:  Arg1: -> Owner object.
@@ -73,7 +73,7 @@ Method EnumVARIANT.Init, uses xsi, pOwner:POINTER, dMaxIndex:DWORD
   DbgLine
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EnumVARIANT.Next
 ; Purpose:    Enumerates the next requested VARIANTs, returning them along with the
 ;             actual number of enumerated elements in pFetched. 
@@ -88,7 +88,7 @@ Method IEnumVARIANT.Next,,dCount:DWORD, pBuffer:POINTER, pFetched:POINTER
   DbgLine
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EnumVARIANT.Skip
 ; Purpose:    Increments the internal counter.
 ; Arguments:  Arg1: Increment value.
@@ -111,7 +111,7 @@ Method IEnumVARIANT.Skip,, dIncrement:DWORD
   DbgLine
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EnumVARIANT.Reset
 ; Purpose:    Resets the internal counter.
 ; Arguments:  None.
@@ -125,7 +125,7 @@ Method IEnumVARIANT.Reset
   DbgLine
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EnumVARIANT.Clone
 ; Purpose:    Makes an exact duplicate of EnumVARIANT with all it's internal values.
 ; Arguments:  Arg1: -> IEnumVARIANT interface of the new object.

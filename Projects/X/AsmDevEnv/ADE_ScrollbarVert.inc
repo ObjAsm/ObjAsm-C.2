@@ -12,7 +12,7 @@
 ; ScrollBarVert implementation 
 ; ==================================================================================================
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Method:    ScrollBarVert.OnSetScrollInfo
 ;; Purpose:   Event procedure for SBM_SETSCROLLINFO message.
 ;; Arguments: Arg1: First message parameter.
@@ -48,7 +48,7 @@
 ;    xor eax, eax
 ;MethodEnd
 ;
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Method:    ScrollBarVert.OnPaint
 ;; Purpose:   Event procedure for WM_PAINT message.
 ;; Arguments: Arg1: First message parameter.

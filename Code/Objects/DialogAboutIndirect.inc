@@ -10,7 +10,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DialogAboutIndirect
 ; Purpose:    Same functionality as DialogAbout, but using a memory template.
 ; Notes:      These object is destroyed by the OS when WM_DESTROY is received.
@@ -62,7 +62,7 @@ HYPERLINK       "ICON_LINK|Visit our Homepage|http://objasm.x10host.com/", \
                 IDC_DAB_LINK, 10,87,100,14, WS_TABSTOP
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogAboutIndirect.CtlsSet
 ; Purpose:    Setup the controls of the About dialog.
 ; Arguments:  None.
@@ -76,7 +76,7 @@ Method DialogAboutIndirect.CtlsSet, uses xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogAboutIndirect.Init
 ; Purpose:    Initialize the About dialog.
 ; Arguments:  Arg1: -> Owner object.
@@ -92,7 +92,7 @@ Method DialogAboutIndirect.Init,, pOwner:POINTER, hParent:HWND, hAppIcon:HICON, 
   ACall xcx.Init, pOwner, hParent, offset DIALOGABOUTINDIRECT
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogAboutIndirect.OnCtlColorStatic
 ; Purpose:    Event procedure for WM_CTLCOLORSTATIC message.
 ; Arguments:  Arg1: First message parameter.

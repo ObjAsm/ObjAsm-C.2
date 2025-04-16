@@ -15,7 +15,7 @@ IDC_DPW_TEXT2   equ     103
 
 MAXPASSWORDSIZE equ     32
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  DialogPassword
 ; Purpose: Implement a modal dialog to enter an access password.
 
@@ -37,7 +37,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogPassword.CtlsGet
 ; Purpose:    Read the typed password.
 ; Arguments:  None.
@@ -48,7 +48,7 @@ Method DialogPassword.CtlsGet, uses xsi
   invoke GetDlgItemText, [xsi].hWnd, IDC_DPW_EDIT, addr [xsi].cResponse, MAXPASSWORDSIZE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogPassword.CtlsSet
 ; Purpose:    Set the controls of the Password dialog.
 ; Arguments:  None.
@@ -74,7 +74,7 @@ Method DialogPassword.CtlsSet, uses xsi
   invoke SetFocus, $invoke(GetDlgItem, [xsi].hWnd, IDC_DPW_EDIT)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogPassword.Init
 ; Purpose:    Initialize a Password dialog.
 ; Arguments:  Arg1: -> Owner object.
@@ -90,7 +90,7 @@ Method DialogPassword.Init,, pOwner:POINTER, hParent:HWND, \
   ACall xcx.Init, pOwner, hParent, $OfsCStr("DIALOGPASSWORD")
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogPassword.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.

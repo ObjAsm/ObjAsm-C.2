@@ -48,7 +48,7 @@ MBX_DlgInfo ends
 MBX_CAPTION_HEADER       equ <MsgBoxData@>
 MBX_CAPTION_HEADER_CHARS = @SizeStr(%MBX_CAPTION_HEADER)
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MsgBoxA / MsgBoxW
 ; Purpose:    Show a customized MessageBox.
 ; Arguments:  Arg1: Parent HANDLE.
@@ -80,7 +80,7 @@ ProcName proc hParent:HANDLE, pText:POINTER, pCaption:POINTER, dFlags:DWORD
   ret
 ProcName endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MB_WndProc
 ; Purpose:    WndProc for the customized Messagebox.
 ; Arguments:  Arg1: Dialog HANDLE.
@@ -285,7 +285,7 @@ MBX_WndProc proc private uses xbx xdi xsi hDlg:HWND, uMsg:DWORD, wParam:WPARAM, 
   ret
 MBX_WndProc endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MB_HookProc
 ; Purpose:    Procedure used by the hook set by MsgBox.
 ; Arguments:  Arg1: Hook code.

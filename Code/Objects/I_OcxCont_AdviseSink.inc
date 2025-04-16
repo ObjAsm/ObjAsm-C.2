@@ -10,7 +10,7 @@
 
 externdef IID_IAdviseSink:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     I_OcxCont_AdviseSink
 ; Purpose:    Enable containers and other objects to receive notifications of data changes, view
 ;             changes and compound-document changes occurring in objects of interest. Container
@@ -37,7 +37,7 @@ if IMPLEMENT
 ;     I_OcxCont_AdviseSink implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_AdviseSink.OnDataChange
 ; Purpose:    Called by the server to notify a data object's currently registered advise sinks that
 ;             data in the object has changed.
@@ -52,7 +52,7 @@ Method I_OcxCont_AdviseSink.OnDataChange,, pFormatetc:POINTER, pStgmed:POINTER
     DbgText "I_OcxCont_AdviseSink.OnDataChange", "I_OcxCont_AdviseSink"
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_AdviseSink.OnViewChange
 ; Purpose:    Notify an object's registered advise sinks that its view has changed.
 ; Arguments:  Arg1: The aspect, or view, of the object. Contains a value taken from the DVASPECT enum
@@ -63,7 +63,7 @@ Method I_OcxCont_AdviseSink.OnViewChange,, dAspect:DWORD, dIndex:DWORD
     DbgText "I_OcxCont_AdviseSink.OnViewChange", "I_OcxCont_AdviseSink"
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_AdviseSink.OnRename
 ; Purpose:    Called by the server to notify all registered advisory sinks that the object has
 ;             been renamed.
@@ -74,7 +74,7 @@ Method I_OcxCont_AdviseSink.OnRename,, pIMoniker:POINTER
     DbgText "I_OcxCont_AdviseSink.OnRename", "I_OcxCont_AdviseSink"
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_AdviseSink.OnSave
 ; Purpose:    Called by the server to notify all registered advisory sinks that the object has
 ;             been saved.
@@ -85,7 +85,7 @@ Method I_OcxCont_AdviseSink.OnSave
     DbgText "I_OcxCont_AdviseSink.OnSave", "I_OcxCont_AdviseSink"
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_AdviseSink.OnClose
 ; Purpose:    Called by the server to notify all registered advisory sinks that the object has
 ;             changed from the running to the loaded state.

@@ -20,7 +20,7 @@ DISKSTREAM_INIT struc
 DISKSTREAM_INIT ends
 PDISKSTREAM_INIT typedef ptr DISKSTREAM_INIT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DiskStream
 ; Purpose:    Implement a specialised Stream descendant that uses unbuffered file access.
 ;             The constructor lets you create or open a disk file by specifying its name.
@@ -54,7 +54,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.BinRead
 ; Purpose:    Read a specified number of bytes from stream at the current position to a buffer and
 ;             advance the current position into the stream.
@@ -79,7 +79,7 @@ Method DiskStream.BinRead, uses xsi, pBuffer:POINTER, dCount:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.BinRead8
 ; Purpose:    Read a byte from stream at the current position, returns it in the ecx register and
 ;             advance the current position into the stream.
@@ -107,7 +107,7 @@ Method DiskStream.BinRead8, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.BinRead16
 ; Purpose:    Read a word from stream at the current position, returns it in the ecx register and
 ;             advance the current position into the stream.
@@ -135,7 +135,7 @@ Method DiskStream.BinRead16, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.BinRead32
 ; Purpose:    Read a DWORD from stream at the current position, returns it in the ecx register and
 ;             advance the current position into the stream.
@@ -163,7 +163,7 @@ Method DiskStream.BinRead32, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.BinRead64
 ; Purpose:    Read a QWORD from stream at the current position, returns it in the ecx register and
 ;             advance the current position into the stream.
@@ -194,7 +194,7 @@ Method DiskStream.BinRead64, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.BinWrite
 ; Purpose:    Write a specified number of bytes from buffer onto the stream and advance the
 ;             current position into the stream.
@@ -219,7 +219,7 @@ Method DiskStream.BinWrite, uses xsi, pBuffer:POINTER, dCount:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.BinWrite8
 ; Purpose:    Write a byte value onto the stream and advance the current position into the stream.
 ; Arguments:  Arg1: Byte value.
@@ -242,7 +242,7 @@ Method DiskStream.BinWrite8, uses xsi, bValue:BYTE
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.BinWrite16
 ; Purpose:    Write a word value onto the stream and advance the current position into the stream.
 ; Arguments:  Arg1: Word value.
@@ -265,7 +265,7 @@ Method DiskStream.BinWrite16, uses xsi, wValue:WORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.BinWrite32
 ; Purpose:    Write a DWORD value onto the stream and advance the current position into the stream.
 ; Arguments:  Arg1: DWORD value.
@@ -288,7 +288,7 @@ Method DiskStream.BinWrite32, uses xsi, dValue:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.BinWrite64
 ; Purpose:    Write a QWORD value onto the stream and advance the current position into the stream.
 ; Arguments:  Arg1: QWORD value.
@@ -311,7 +311,7 @@ Method DiskStream.BinWrite64, uses xsi, qValue:QWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.Done
 ; Purpose:    Finalize of DiskStream object.
 ; Arguments:  None.
@@ -326,7 +326,7 @@ Method DiskStream.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.Flush
 ; Purpose:    Do nothing.
 ; Arguments:  None.
@@ -335,7 +335,7 @@ MethodEnd
 Method DiskStream.Flush
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.GetPos
 ; Purpose:    Return the current position of the file POINTER into the stream.
 ; Arguments:  None.
@@ -355,7 +355,7 @@ Method DiskStream.GetPos
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.GetSize
 ; Purpose:    Return the current file size of the stream.
 ; Arguments:  None.
@@ -378,7 +378,7 @@ Method DiskStream.GetSize
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.Init
 ; Purpose:    Initialize DiskStream object.
 ; Arguments:  Arg1: -> Owner object.
@@ -422,7 +422,7 @@ Method DiskStream.Init, uses xsi, pOwner:POINTER, pFileName:PSTRING, dAccessMode
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.Seek
 ; Purpose:    Move file POINTER to a new position.
 ; Arguments:  Arg1: New 64 bit position.
@@ -438,7 +438,7 @@ Method DiskStream.Seek,, sqPosition:SQWORD, dSeekMode:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DiskStream.Truncate
 ; Purpose:    Truncate the stream at the current position.
 ; Arguments:  None.

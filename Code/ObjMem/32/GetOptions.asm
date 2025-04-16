@@ -11,7 +11,7 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetOptions
 ; Purpose:    Scan argument list for options.
 ; Arguments:  Arg1: -> Option definition table.

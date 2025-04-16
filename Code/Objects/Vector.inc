@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Vector
 ; Purpose:    Vector is a base object for descendants like DWordVector.
 
@@ -45,7 +45,7 @@ ObjectEnd
 
 ??VecForEach_ID = 0
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .VecForEach
 ; Purpose:    Loop through all items of the TVector.
 ; Arguments:  Arg1: TVector.
@@ -138,7 +138,7 @@ ObjectEnd
   endif
 endm                                                    ;;xax -> allocated object instance
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .VecForEachRev
 ; Purpose:    Loop through all items of the TVector in reverse order.
 ; Arguments:  Arg1: TVector.
@@ -232,7 +232,7 @@ endm                                                    ;;xax -> allocated objec
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .VecNext
 ; Purpose:    Move to the next TVector item.
 ; Arguments:  None
@@ -256,7 +256,7 @@ endm
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Vector.Load
 ; Purpose:    Load and initializes the Vector from a Stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -292,7 +292,7 @@ Method Vector.Load, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER
   OCall xsi.ErrorReport, NULL, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Vector.Store
 ; Purpose:    Store the collection in a stream object.
 ; Arguments:  Arg1: -> Stream object.

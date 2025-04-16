@@ -9,7 +9,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     XWCollection
 ; Purpose:    Implement collection of unique XWORDs instead of objects.
 
@@ -28,7 +28,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XWCollection.DeserializeItem
 ; Purpose:    Convert a serialized DWORD back.
 ; Arguments:  Arg1: Item.
@@ -38,7 +38,7 @@ if IMPLEMENT
 Method XWCollection.DeserializeItem,, xItem:XWORD, pDeserInfo:PDESER_INFO
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XWCollection.DestroyItem
 ; Purpose:    Auxiliary procedure. Don't call directly!
 ; Arguments:  Arg1: Item.
@@ -47,7 +47,7 @@ MethodEnd
 Method XWCollection.DestroyItem,, xItem:XWORD
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XWCollection.Insert
 ; Purpose:    Insert item at the end of the XWCollection.
 ; Arguments:  New XWORD.
@@ -68,7 +68,7 @@ Method XWCollection.Insert, uses xbx xsi, xItem:XWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XWCollection.Load
 ; Purpose:    Load and initializes the XWCollection from a stream object.
 ;             It bypasses the GetItem method
@@ -96,7 +96,7 @@ Method XWCollection.Load, uses xsi, pStream:$ObjPtr(Stream), pOwner:POINTER
   OCall pStream::Stream.BinRead, [xsi].pItems, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XWCollection.Store
 ; Purpose:    Store the XWCollection in a stream object bypassing the PutItem method.
 ; Arguments:  -> Stream object.
@@ -114,7 +114,7 @@ Method XWCollection.Store, uses xsi, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.BinWrite, [xsi].pItems, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XWCollection.SerializeItem
 ; Purpose:    Serialize a DWORD item.
 ; Arguments:  Arg1: Item.

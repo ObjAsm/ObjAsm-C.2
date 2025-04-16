@@ -11,7 +11,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  sqqqRem
 ; Purpose:    Calculate the remainder of the division of 2 signed QWORDs.
 ;             (64 bit) Dividend divided by (64 bit) Divisor => (64 bit) Remainder. 

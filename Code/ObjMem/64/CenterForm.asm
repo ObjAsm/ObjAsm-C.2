@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CenterForm
 ; Purpose:    Calculate the starting coordinate of a window based on the screen and the window size.
 ; Arguments:  Arg1: Window size in pixel.

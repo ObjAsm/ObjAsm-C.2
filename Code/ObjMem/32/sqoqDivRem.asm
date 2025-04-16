@@ -12,7 +12,7 @@
 
 ProcName textequ <sqoqDivRem>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  sqoqDivRem
 ; Purpose:    Calculate a signed extended precision division, emulating the idiv x86 instruction.
 ;             (128 bit) Dividend divided by (64 bit) Divisor = (64 bit) Quotient. 

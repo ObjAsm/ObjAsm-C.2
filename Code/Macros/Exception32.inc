@@ -67,7 +67,7 @@ EXCEPTION_PRIVILEGED_INSTRUCTION    equ    0C0000096H       ;Typically exception
 EXCEPTION_STACK_OVERFLOW            equ    0C00000FDH
 EXCEPTION_CONTROL_C_EXIT            equ    0C000013AH
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .try
 ; Purpose:    Instructions between this .try and the next .Catch or Finally will be protected.
 ; Arguments:  Arg1: Name of the XFRAME which will deal with exceptions.
@@ -87,7 +87,7 @@ EXCEPTION_CONTROL_C_EXIT            equ    0C000013AH
   popcontext assumes
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .catch
 ; Purpose:    The following instructions will be executed if an exception is raised.
 ; Arguments:  Arg1: Name of the Exception Handler which will deal with the exceptions.
@@ -120,7 +120,7 @@ endm
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .endcatch
 ; Purpose:    Follow immediately instructions guarded by a .catch.
 ; Arguments:  Name of the handler which will deal with exceptions.
@@ -135,7 +135,7 @@ endm
   popcontext assumes
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .finally
 ; Purpose:    Following instructions will run even if an exception which can be handled
 ;             by the exception handler is raised.
@@ -150,7 +150,7 @@ endm
 @@&ExceptionHandlerName&_SafePlace:
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .endfinally
 ; Purpose:    Follow immediately instructions guarded by a .finally.
 
@@ -162,7 +162,7 @@ endm
   popcontext assumes
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      xMsg
 ; Purpose:    Allow to define a message for an exception.
 ; Arguments:  Arg1: Name of the handler which will deal with exceptions.
@@ -202,7 +202,7 @@ xMsg macro MsgName:req, Text:req
   .code
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Throw
 ; Purpose:    Raise an exception.
 ; Arguments:  Arg1: Code of the exception to raise.
@@ -218,7 +218,7 @@ Throw macro ExceptionCode:req, msg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      InstallTLH
 ; Purpose:    Install a Top Level Handler.
 ; Arguments:  Arg1: -> Top Level handler to install.
@@ -231,7 +231,7 @@ InstallTLH macro pTLHandler:req, OldTLHandler:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      RestoreTLH
 ; Purpose:    Reinstall the old top level handler.
 ; Arguments:  var holding the pointer to the old handler.
@@ -240,7 +240,7 @@ RestoreTLH macro OldTLHandler:req
   invoke SetUnhandledExceptionFilter, OldTLHandler
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $GetExceptionCode
 ; Purpose:    Retrieve the Exception Code.
 ; Arguments:  None.
@@ -249,7 +249,7 @@ $GetExceptionCode macro
   exitm <[eax].EXCEPTION_RECORD.ExceptionCode>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $GetExceptionAddr
 ; Purpose:    Retrieve the Exception address.
 ; Arguments:  None.
@@ -258,7 +258,7 @@ $GetExceptionAddr macro
   exitm <[eax].EXCEPTION_RECORD.ExceptionAddress>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CreateExceptionHandler
 ; Purpose:    Create a handler which can deal with one or more exceptions.
 ; Arguments:  Arg1: Name of the handler to be created.
@@ -340,7 +340,7 @@ CreateExceptionHandler macro HandlerName:req, UnwindCodeLabel:=<>, xCodes:vararg
   &HandlerName&_Handler endp
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      TopLevelHandler
 ; Purpose:    Create a top level handler to deal with exceptions not catched.
 ; Arguments:  Arg1: Name of the top level handler to be created.

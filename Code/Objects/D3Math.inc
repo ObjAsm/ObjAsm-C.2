@@ -18,7 +18,7 @@ r4Half      equ         3F000000h                       ;Binary representation o
 r4One       equ         3F800000h                       ;Binary representation of REAL4 1.0
 r4Two       equ         40000000h                       ;Binary representation of REAL4 2.0
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 GetD3VectorFromTable macro Base:req, Index32:req, RegOut:=<xax>
   mov $SubReg(RegOut, 4), Index32
   shl RegOut, 2                                         ;;Size of D3Vector = 12 bytes
@@ -26,7 +26,7 @@ GetD3VectorFromTable macro Base:req, Index32:req, RegOut:=<xax>
   add RegOut, Base
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 Rotate macro X:req, Y:req, Z:req
   ?mov ecx, pVectron
   ?mov edx, xUseVo
@@ -52,25 +52,25 @@ Rotate macro X:req, Y:req, Z:req
   fstp [xax].D3Vector.Z         ;Ycos+Zsin|   cos   |   sin   |         |
   fstp [xax].D3Vector.Y         ;   cos   |   sin   |         |         |
 endm
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 RotateX proc pVectron:PD3Vectron, xUseVo:XWORD, xUnused:XWORD
   Rotate r4X, r4Y, r4Z
   ret
 RotateX endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 RotateY proc pVectron:PD3Vectron, xUseVo:XWORD, xUnused:XWORD
   Rotate r4Y, r4X, r4Z
   ret
 RotateY endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 RotateZ proc pVectron:PD3Vectron, xUseVo:XWORD, xUnused:XWORD
   Rotate r4Z, r4X, r4Y
   ret
 RotateZ endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 Translate proc pVectron:PD3Vectron, xUseVo:XWORD, xUnused:XWORD
   ?mov ecx, pVectron
   ?mov edx, xUseVo
@@ -92,14 +92,14 @@ Translate proc pVectron:PD3Vectron, xUseVo:XWORD, xUnused:XWORD
   ret
 Translate endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 MoveVo2Vt proc pVectron:PD3Vectron, xUnused1:XWORD, xUnused2:XWORD
   ?mov ecx, pVectron
   s2s [xcx].D3Vectron.Vt, [xcx].D3Vectron.Vo, xmm0, xmm1, xax, xdx
   ret
 MoveVo2Vt endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 VectorCrossVector proc pDstVector:PD3Vector, pSrcVector1:PD3Vector, pSrcVector2:PD3Vector
   ?mov ecx, pDstVector
   ?mov edx, pSrcVector1
@@ -128,7 +128,7 @@ VectorCrossVector proc pDstVector:PD3Vector, pSrcVector1:PD3Vector, pSrcVector2:
   ret
 VectorCrossVector endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 VectorDotVector proc pVector1:PD3Vector, pVector2:PD3Vector
   ?mov ecx, pVector1
   ?mov edx, pVector2
@@ -143,7 +143,7 @@ VectorDotVector proc pVector1:PD3Vector, pVector2:PD3Vector
   ret
 VectorDotVector endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 VectorCrossVectorDotVector proc pVector1:PD3Vector, pVector2:PD3Vector, pVector3:PD3Vector
   ?mov ecx, pVector1
   ?mov edx, pVector2
@@ -174,7 +174,7 @@ VectorCrossVectorDotVector proc pVector1:PD3Vector, pVector2:PD3Vector, pVector3
   ret
 VectorCrossVectorDotVector endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 VectorAddVector proc pDstVector:PD3Vector, pSrcVector1:PD3Vector, pSrcVector2:PD3Vector
   ?mov ecx, pDstVector
   ?mov edx, pSrcVector1
@@ -192,7 +192,7 @@ VectorAddVector proc pDstVector:PD3Vector, pSrcVector1:PD3Vector, pSrcVector2:PD
   ret
 VectorAddVector endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 VectorSubVector proc pDstVector:PD3Vector, pSrcVector1:PD3Vector, pSrcVector2:PD3Vector
   ?mov ecx, pDstVector
   ?mov edx, pSrcVector1
@@ -210,7 +210,7 @@ VectorSubVector proc pDstVector:PD3Vector, pSrcVector1:PD3Vector, pSrcVector2:PD
   ret
 VectorSubVector endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 VectorModulus proc pVector:PD3Vector
   ?mov ecx, pVector
   fld [xcx].D3Vector.r4X
@@ -225,7 +225,7 @@ VectorModulus proc pVector:PD3Vector
   ret
 VectorModulus endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 VectorScale proc pDstVector:PD3Vector, pSrcVector:PD3Vector, pFactor:PD3Vector
   ?mov ecx, pDstVector
   ?mov edx, pSrcVector
@@ -246,7 +246,7 @@ VectorScale proc pDstVector:PD3Vector, pSrcVector:PD3Vector, pFactor:PD3Vector
   ret
 VectorScale endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 VectorNormalize proc pDstVector:PD3Vector, pSrcVector:PD3Vector
   ?mov ecx, pDstVector
   ?mov edx, pSrcVector

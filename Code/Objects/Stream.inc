@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DesLUT
 ; Purpose:    Implement a deserialization lookup table.
 ; Notes:      - This object and all descendants are thread safe using the OA multithreading support.
@@ -76,7 +76,7 @@ DLT_MAX_CAPACITY  equ 0FFFFFFFFh / sizeof(DLT_ENTRY)
 DLT_MEM_PAGE      equ PAGESIZE / sizeof(DLT_ENTRY)
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Stream
 ; Purpose:    Stream is a base object providing polymorphic I/O to and from a storage device with
 ;             a maximum capacity of 2^64 bytes. You can create your own derived stream objects by
@@ -131,7 +131,7 @@ STM_CURRENT equ FILE_CURRENT
 STM_END     equ FILE_END
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Streamable
 ; Purpose:    Streamable is a base object with 4 methods that need a redefinition to extend their
 ;             functionality in descendant objects. This approach is useful to provide polymorphic
@@ -163,7 +163,7 @@ if IMPLEMENT
 PDesLUTProc  typedef proto :POINTER, :POINTER, :QWORD, :QWORD
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DesLUT.Done
 ; Purpose:    Delete and dispose all items in the collection.
 ; Arguments:  None.
@@ -179,7 +179,7 @@ Method DesLUT.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DesLUT.Init
 ; Purpose:    Initialize the collection with a limit (dLimit), an increasing step (dDelta)
 ;             and a maximum size (dMaxCapacity).
@@ -219,7 +219,7 @@ Method DesLUT.Init,, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, dMaxCapacity:DW
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DesLUT.Find
 ; Purpose:    Searches for a XWORD value.
 ; Arguments:  Arg1: Old item to search for.
@@ -245,7 +245,7 @@ Method DesLUT.Find,, xSearchItem:XWORD
   OCall pSelf::DesLUT.ErrorReport, NULL, DLT_ITEM_NOT_FOUND
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:       DesLUT.ForEach
 ; Purpose:      Call "pProc" for each item in the DesLUT.
 ; Arguments:    Arg1: -> Processing procedure (static address).
@@ -266,7 +266,7 @@ Method DesLUT.ForEach, uses xbx xdi xsi, pProc:POINTER, Arg1:XWORD, Arg2:XWORD
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DesLUT.Insert
 ; Purpose:    Insert item information in the lookup table. Only the owner of the item should insert
 ;             this information. Multiple entries containing the same info MUST be avoided. No
@@ -298,7 +298,7 @@ Method DesLUT.Insert, uses xsi, xOldItem:XWORD, xNewItem:XWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DesLUT.SetLimit
 ; Purpose:    Set the collection limit, allocating the necessary memory on the heap to hold
 ;             the item POINTER table.
@@ -357,7 +357,7 @@ MethodEnd
 ;  Stream
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Stream.CopyFrom
 ; Purpose:    Copy count bytes from the specified stream into the current stream and move the
 ;             current position by Count bytes. The operation is performed in data chuncks of max.
@@ -384,7 +384,7 @@ Method Stream.CopyFrom, uses xbx xdi xsi, pStream:POINTER, dCount:DWORD
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Stream.Get
 ; Purpose:    Read a streamable object from the stream. The object must have been
 ;             previously written to the stream by Put.
@@ -417,7 +417,7 @@ Method Stream.Get, uses xbx xsi, pDeserInfo:PDESER_INFO
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Stream.GetPreAlloc
 ; Purpose:    Read a streamable object from the stream into a preallocated memory buffer.
 ; Arguments:  Arg1: Address where the object instance will be loaded.
@@ -437,7 +437,7 @@ Method Stream.GetPreAlloc, uses xsi, pObject:POINTER, TypeID:DWORD, pDeserInfo:P
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Stream.Put
 ; Purpose:    Put a streamable object in a stream. First writes the object type ID.
 ; Arguments:  Arg1: -> Streamable object.
@@ -457,7 +457,7 @@ Method Stream.Put,, pStreamable:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Stream.StrRead
 ; Purpose:    Read a zero terminated string from the current position of the stream and allocate
 ;             it on the heap.
@@ -483,7 +483,7 @@ Method Stream.StrRead, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Stream.StrWriteA
 ; Purpose:    Write a zero terminated string to the stream at the current position.
 ; Arguments:  Arg1: -> Zero terminated ANSI string.
@@ -501,7 +501,7 @@ Method Stream.StrWriteA, uses xdi xsi, pStr:PSTRINGA
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Stream.StrWriteW
 ; Purpose:    Write a zero terminated string to the stream at the current position.
 ; Arguments:  Arg1: -> Zero terminated WIDE string.
@@ -524,7 +524,7 @@ MethodEnd
 ;  Streamable
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Streamable.Deserialize
 ; Purpose:    Convert serialized members.
 ; Arguments:  Arg1: -> DESER_INFO.
@@ -538,7 +538,7 @@ Method Streamable.Deserialize, uses xsi, pDeserInfo:PDESER_INFO
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Streamable.Load
 ; Purpose:    Load and initialize the streamable instance from a stream object. Descendant objects
 ;             must redefine this method to load new members.
@@ -565,7 +565,7 @@ Method Streamable.Load, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pDeserInfo:PD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Streamable.Serialize
 ; Purpose:    Get an unique identifier and store it in pSelf. In case of thread concurrency, an
 ;             atomic process warranties unique IDs. Descendant objects should redefine this method
@@ -576,7 +576,7 @@ MethodEnd
 Method Streamable.Serialize
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Streamable.Store
 ; Purpose:    Store the streamable instance in a stream object. Descendant objects should redefine
 ;             this method and store new members.

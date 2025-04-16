@@ -12,7 +12,7 @@
 
 % include &MacPath&Strings.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetExceptionStrW
 ; Purpose:    Translate an exception code to a WIDE string.
 ; Arguments:  Arg1: Exception code.

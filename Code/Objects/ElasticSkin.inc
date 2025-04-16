@@ -26,12 +26,12 @@ ELASTICSKIN_DATA struc                  ;Data loaded from resource.
 ELASTICSKIN_DATA ends
 PELASTICSKIN_DATA typedef ptr ELASTICSKIN_DATA
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:   ElasticSkin
 ; Purpose:  Implement a window skinning object.
 ;           It uses the following reginon layout:
 ;
-;    ———————————————————————————————————————————————————
+;    ---------------------------------------------------
 ;    |      ¦               2                ¦         |       1 Top Left corner
 ;    |   1  ¦--------------------------------¦    3    |       2 Top Horizontal filler
 ;    |      ¦               9                ¦         |       3 Top Right corner
@@ -45,7 +45,7 @@ PELASTICSKIN_DATA typedef ptr ELASTICSKIN_DATA
 ;    |          ¦                              ¦       |
 ;    |     7    ¦              6               ¦   5   |      Note: The whole surface is contained
 ;    |          ¦                              ¦       |            in the window client RECT.
-;    ———————————————————————————————————————————————————
+;    ---------------------------------------------------
 
 Object ElasticSkin, ElasticSkinID, MsgInterceptor
   RedefineMethod    Done
@@ -92,7 +92,7 @@ CStr szElasticSkinIptorProp, "ElasticSkinIptor"
 
 externdef hInstance:HANDLE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ElasticSkin.Done
 ; Purpose:    Finalize the ElasticSkin object.
 ; Arguments:  None.
@@ -117,7 +117,7 @@ Method ElasticSkin.Done, uses xsi
   invoke DeleteDC, [xsi].hSkinDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ElasticSkin.Init
 ; Purpose:    Initialize the ElasticSkin object.
 ; Arguments:  Arg1: -> Owner object.
@@ -184,7 +184,7 @@ Method ElasticSkin.Init, uses xbx xsi, pOwner:POINTER, hWnd:HWND, pSkinRes:POINT
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ElasticSkin.OnEraseBkgnd
 ; Purpose:    Processing of WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -202,7 +202,7 @@ Method ElasticSkin.OnEraseBkgnd, uses xsi, wParam:WPARAM, lParam:LPARAM
   inc eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ElasticSkin.OnGetMinMaxInfo
 ; Purpose:    Processing of WM_GETMINMAXINFO message.
 ; Arguments:  Arg1: First message parameter.
@@ -222,7 +222,7 @@ Method ElasticSkin.OnGetMinMaxInfo,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ElasticSkin.OnNcHitTest
 ; Purpose:    Processing of WM_NCHITTEST message.
 ; Arguments:  Arg1: First message parameter.
@@ -293,7 +293,7 @@ Method ElasticSkin.OnNcHitTest, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ElasticSkin.OnNcPaint
 ; Purpose:    Processing of WM_NCPAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -377,7 +377,7 @@ Method ElasticSkin.OnNcPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_NCPAINT, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ElasticSkin.SetWindowRegion
 ; Purpose:    Create and apply a region for the window based on the loaded bitmap.
 ; Arguments:  Arg1: Redraw flag.
@@ -560,7 +560,7 @@ Method ElasticSkin.SetWindowRegion, uses xbx xsi, dRedrawFlag:DWORD
   invoke SetWindowRgn, [xsi].hWnd, xbx, dRedrawFlag
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ElasticSkin.WndProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.

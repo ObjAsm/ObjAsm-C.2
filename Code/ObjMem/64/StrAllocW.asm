@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <StrAllocW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrAllocW
 ; Purpose:    Allocate space for a string with n characters.
 ; Arguments:  Arg1: Character count without the ZTC.

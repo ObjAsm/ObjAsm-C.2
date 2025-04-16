@@ -10,7 +10,7 @@
 ; FileTypeCollection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    FileTypeCollection.Compare
 ; Purpose:   Compare the WIDE strings Key1 and Key2.
 ; Arguments: Arg1: -> First key.
@@ -23,7 +23,7 @@ Method FileTypeCollection.Compare,, pCollKey:PSTRINGW, pTestKey:PSTRINGW
   invoke StrICompW, pCollKey, pTestKey
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FileTypeCollection.DestroyItem
 ; Purpose:    Auxiliar function to dispose a item from the collection. Don't call directly!
 ; Arguments:  -> Item.
@@ -37,7 +37,7 @@ Method FileTypeCollection.DestroyItem, uses xdi, pItem:PFILETYPE
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FileTypeCollection.GetFileFormat
 ; Purpose:    Return the stored file format for a FileName.
 ; Arguments:  Arg1: -> FileName
@@ -57,7 +57,7 @@ Method FileTypeCollection.GetFileFormat, uses xsi, pFileName:PSTRINGW
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FileTypeCollection.GetContentType
 ; Purpose:    Return the stored file type for a FileName.
 ; Arguments:  Arg1: -> FileName
@@ -77,7 +77,7 @@ Method FileTypeCollection.GetContentType, uses xsi, pFileName:PSTRINGW
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FileTypeCollection.Insert
 ; Purpose:    If the target item is not found in the sorted collection, it is inserted at the
 ;             correct index position. Calls Search to determine if the item exists, and if not,
@@ -120,7 +120,7 @@ Method FileTypeCollection.Insert, uses xbx xdi xsi, pExtension:PSTRING, dContent
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FileTypeCollection.KeyOf
 ; Purpose:    KeyOf is overridden in cases where the key of the item is not the item itself.
 ; Arguments:  Arg1: -> Item.

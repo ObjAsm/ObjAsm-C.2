@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object DB_SeekDlg,, DialogModal
   VirtualMethod     CtlsEnable
@@ -35,7 +35,7 @@ ObjectEnd
 ;    DB_SeekDlg implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_SeekDlg.CtlsEnable
 ; Purpose:    Set the enable state of the controls.
 ; Arguments:  None.
@@ -63,7 +63,7 @@ Method DB_SeekDlg.CtlsEnable, uses xdi xsi
   invoke EnableWindow, xax, edi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_SeekDlg.CtlsGet
 ; Purpose:    Read the controls in this dialog window.
 ; Arguments:  None.
@@ -96,7 +96,7 @@ Method DB_SeekDlg.CtlsGet, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_SeekDlg.CtlsSet
 ; Purpose:    Set the controls in this dialog window.
 ; Arguments:  None.
@@ -133,7 +133,7 @@ Method DB_SeekDlg.CtlsSet, uses xbx xdi xsi
   OCall xsi.UpdateStatusbar
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_SeekDlg.Done
 ; Purpose:    Finalize the DB_QueryDlg object.
 ; Arguments:  None.
@@ -145,7 +145,7 @@ Method DB_SeekDlg.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_SeekDlg.Init
 ; Purpose:    Initialaize a DB_SeekDlg object.
 ; Arguments:  Arg1: -> Owner object.
@@ -180,7 +180,7 @@ Method DB_SeekDlg.Init,, pOwner:POINTER, hParent:HWND, \
   ACall xcx.Init, pOwner, hParent, IDD_SEEK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_SeekDlg.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -347,7 +347,7 @@ Method DB_SeekDlg.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_SeekDlg.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -370,7 +370,7 @@ Method DB_SeekDlg.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
   OCall xsi.CtlsEnable
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    DB_SeekDlg.UpdateStatusbar
 ; Purpose:   Update the info on the Statusbar.
 ; Arguments: None.

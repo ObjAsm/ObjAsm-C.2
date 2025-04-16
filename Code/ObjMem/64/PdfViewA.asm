@@ -16,7 +16,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <PdfViewA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  PdfViewA
 ; Purpose:    Display a PDF document on a named destination.
 ; Arguments:  Arg1: Parent HANDLE.

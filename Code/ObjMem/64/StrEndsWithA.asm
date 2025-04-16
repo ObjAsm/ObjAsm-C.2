@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <StrEndsWithA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrEndsWithA
 ; Purpose:    Compare the ending of a string.
 ; Arguments:  Arg1: -> Analized string.

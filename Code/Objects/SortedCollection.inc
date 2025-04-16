@@ -11,7 +11,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     SortedCollection
 ; Purpose:    SortedCollection is a specialized Collection. It implements collections sorted by key
 ;             and by default without duplicates. Sorting is implied by a dynamic Compare
@@ -56,7 +56,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedCollection.Insert
 ; Purpose:    If the target item is not found in the sorted collection, it is inserted at the
 ;             correct index position. It calls Search to determine if the item exists, and if not,
@@ -77,7 +77,7 @@ Method SortedCollection.Insert, uses xsi, pItem:POINTER
   OCall xsi.InsertAt, edx, pItem
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedCollection.KeyOf
 ; Purpose:    KeyOf is overridden in cases where the key of the item is not the item itself.
 ; Arguments:  Arg1: -> Item.
@@ -88,7 +88,7 @@ Method SortedCollection.KeyOf,, pItem:POINTER
   mov xax, pItem
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedCollection.Load
 ; Purpose:    Load a sorted collection from the stream object by first calling
 ;             Collection.Load. It then reads the Duplicates field.
@@ -103,7 +103,7 @@ Method SortedCollection.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDES
   mov [xsi].dDuplicates, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedCollection.Search
 ; Purpose:    Search for an item by its key.
 ; Arguments:  Arg1: Item key to seach for.
@@ -149,7 +149,7 @@ Method SortedCollection.Search, uses xbx xdi xsi r12 r13, xKey:XWORD
   mov eax, $LocReg(dFound)                              ;Return Found condition in eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedCollection.Store
 ; Purpose:    Store the sorted collection and all its items on the stream object by calling
 ;             Collection.Store to write the collection. It then writes the Duplicates
@@ -163,7 +163,7 @@ Method SortedCollection.Store, uses xsi, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.BinWrite32, [xsi].dDuplicates
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedCollection.Sort
 ; Purpose:    Resort the collection in place, i.e. if the compare method was changed.
 ; Arguments:  None.

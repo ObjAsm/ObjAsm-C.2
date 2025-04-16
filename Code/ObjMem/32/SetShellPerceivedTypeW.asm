@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <SetShellPerceivedTypeW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SetShellPerceivedTypeW
 ; Purpose:    Set shell perception of a file type.
 ; Arguments:  Arg1: TRUE = system wide perseption, FALSE = user account only.

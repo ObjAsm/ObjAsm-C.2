@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     lua_RGB
 ; Purpose:    Return a decimal value from an rgb triplet.
 ; Arguments:  Arg1: -> lua_State
@@ -32,7 +32,7 @@ lua_RGB proc uses xbx pLuaState:ptr lua_State
   ret
 lua_RGB endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OutputClear
 ; Purpose:    Clear Output RichEdit control content.
 ; Arguments:  Arg1: -> lua_State
@@ -50,7 +50,7 @@ OutputClear proc uses xbx pLuaState:ptr lua_State
   ret
 OutputClear endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OutputSetBackColor
 ; Purpose:    Set the background color of the Output RichEdit control.
 ; Arguments:  Arg1: -> lua_State
@@ -66,7 +66,7 @@ OutputSetBackColor proc uses xbx pLuaState:ptr lua_State
   ret
 OutputSetBackColor endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OutputSetTextColor
 ; Purpose:    Set the text color of the Output RichEdit control.
 ; Arguments:  Arg1: -> lua_State
@@ -82,7 +82,7 @@ OutputSetTextColor proc uses xbx pLuaState:ptr lua_State
   ret
 OutputSetTextColor endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OutputSetFont
 ; Purpose:    Set the text font of the Output RichEdit control.
 ; Arguments:  Arg1: -> lua_State
@@ -114,7 +114,7 @@ OutputSetFont proc uses xbx xdi xsi pLuaState:ptr lua_State
   ret
 OutputSetFont endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OutputWrite
 ; Purpose:    Writes a string on the Output RichEdit control.
 ; Arguments:  Arg1: -> lua_State
@@ -134,7 +134,7 @@ OutputWrite proc uses xbx pLuaState:ptr lua_State
   ret
 OutputWrite endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OutputWriteLn
 ; Purpose:    Writes a string on the Output RichEdit control with a CRLF at the end.
 ; Arguments:  Arg1: -> lua_State

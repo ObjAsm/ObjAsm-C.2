@@ -12,7 +12,7 @@
 
 % include &ObjMemPath&Common\RadixSort32.inc          ;Helper macros
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  RadixSortF64
 ; Purpose:    Ascending sort of an array of double precision floats (REAL8) using a modified
 ;             "8 passes radix sort" algorithm.

@@ -12,7 +12,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  UTF8ToWide
 ; Purpose:    Convert an UTF8 byte stream to a WIDE (UTF16) string.
 ; Arguments:  Arg1: -> Destination WIDE buffer.

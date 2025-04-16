@@ -16,7 +16,7 @@
 ProcName textequ <DbgOutMem>
 BYTES_PER_LINE equ 16     ;Must be a multiple of 8
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgOutMem
 ; Purpose:    Output the content of a memory block.
 ; Arguments:  Arg1: -> Memory block.

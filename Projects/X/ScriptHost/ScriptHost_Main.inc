@@ -55,7 +55,7 @@ SHD_CTRL_STOP    equ   BIT03
 SHD_CTRL_SCRIPT  equ   BIT04
 SHD_CTRL_OUTPUT  equ   BIT05
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.EnableControls
 ; Purpose:    Load a file into the memory block.
 ; Arguments:  Arg1: Enable flag [SHD_xxx...].
@@ -107,7 +107,7 @@ Method Application.EnableControls, uses xsi, dEnable:DWORD
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.FileLoad
 ; Purpose:    Load a file into the memory block.
 ; Arguments:  Arg1: -> FileName.
@@ -164,7 +164,7 @@ Method Application.FileLoad, uses xbx xsi, pFileName:PSTRING
   mov eax, ebx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.FileSave
 ; Purpose:    Write memory block into a file.
 ; Arguments:  Arg1: -> FileName.
@@ -209,7 +209,7 @@ Method Application.FileSave, uses xsi, pFileName:PSTRING, pMemBlock:POINTER, dMe
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -319,7 +319,7 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -343,7 +343,7 @@ Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnDestroy, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnDropFiles
 ; Purpose:    Event procedure for WM_DROPFILES message.
 ; Arguments:  Arg1: First message parameter.
@@ -371,7 +371,7 @@ Method Application.OnDropFiles, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnEnableModeless
 ; Purpose:    Event procedure for SHM_ENABLEMODELESS message.
 ; Arguments:  Arg1: First message parameter.
@@ -382,7 +382,7 @@ Method Application.OnEnableModeless,, wParam:WPARAM, lParam:LPARAM
   DbgWarning "Application.OnEnableModeless"
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnError
 ; Purpose:    Event procedure for SHM_ERROR message.
 ; Arguments:  Arg1: First message parameter.
@@ -405,7 +405,7 @@ Method Application.OnError, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnFinished
 ; Purpose:    Event procedure for SHM_FINISHED message.
 ; Arguments:  Arg1: First message parameter.
@@ -419,7 +419,7 @@ Method Application.OnFinished,, wParam:WPARAM, lParam:LPARAM
                             SHD_CTRL_SCRIPT or SHD_CTRL_OUTPUT
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -480,7 +480,7 @@ Method Application.OnInitDialog, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return FALSE to prevent Windows from
 MethodEnd                                               ;setting the default keyboard focus.
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -587,7 +587,7 @@ MethodEnd
 ;    IScriptOutput implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IScriptOutput.Init
 ; Purpose:    Initialize the IScriptOutput interface object.
 ; Arguments:  Arg1: -> Owner object.
@@ -617,7 +617,7 @@ Method IScriptOutput.Init, uses xsi, pOwner:POINTER, pResIndexStr:PSTRINGW, pIID
   FillString [xsi].CFD.szFaceName, <Lucida Console>
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IScriptOutput.Clear
 ; Purpose:    Erase the application output window.
 ; Arguments:  None.
@@ -641,7 +641,7 @@ Method IScriptOutput.Clear, uses xsi
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IScriptOutput.Write
 ; Purpose:    Output some text on the application output window.
 ; Arguments:  Arg1: BSTR, text to output.
@@ -656,7 +656,7 @@ Method IScriptOutput.Write, uses xsi, pString:BSTR
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IScriptOutput.Color
 ; Purpose:    Set the text color of the output window.
 ; Arguments:  Arg1: RGB value.
@@ -669,7 +669,7 @@ Method IScriptOutput.Color,, dColor:DWORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IScriptOutput.Font
 ; Purpose:    Set the text font of the output window.
 ; Arguments:  Arg1: Font face BStr.

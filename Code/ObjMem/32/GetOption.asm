@@ -12,7 +12,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 % include &IncPath&Windows\shlwapi.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetOption
 ; Purpose:    Process a single option.
 ; Arguments:  Arg1: -> Option definition table.

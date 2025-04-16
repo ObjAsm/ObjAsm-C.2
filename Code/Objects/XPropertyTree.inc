@@ -83,18 +83,18 @@ Object XPT_ComboBox, XPT_ComboBoxID, WinControl
   DefineVariable    dState,             DWORD,        0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  XPropertyTree
 ; Purpose: Implement a Customized XTreeView and XTreeViewNode to show and edit properties.
 ;
 ; Features:
-; ————————
+; --------
 ; - Same as XTreeView.
 ; - Support for strings/32 bit integers/REAL4 floating point numbers/paths/files/colors and
 ;   customized input.
 ;
 ; Some rules:
-; ——————————
+; ----------
 ;  1. See XTreeView object rules (XTreeView.inc).
 ;  2. Each node (Category or Property) need to be created, initialized and finally inserted.
 ;       New XPT_PropertyNode, Init, pOwner, hIcon, "Description", dHeight, XTVNS_EXPANDED, \
@@ -153,7 +153,7 @@ Object XPropertyTree, XPropertyTreeID, XTreeView
   DefineVariable    pCBxCtrl,           $ObjPtr(XPT_ComboBox),  NULL  ;-> COMBOBOX control object
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  XPT_CategoryNode
 ; Purpose: Implement a grouping node of related properties.
 
@@ -172,22 +172,22 @@ Object XPT_CategoryNode, XPT_CategoryNodeID, XTreeViewNode
   DefineVariable    hFont,              HFONT,       0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  XPT_PropertyNode
 ; Purpose: Implement a property node.
 ;
 ; Node layout
-; ———————————
+; -----------
 ;                                           ContentRect(*)
-;   —————————————————————————————————————————————————————————————————
-;  |       ¦      ¦      ¦     ————————————————————————————————————— |
-;  |       ¦      ¦      ¦    | ——————————————————————————————————— ||
-;  |       ¦      ¦      ¦    ||      |         |            —————— ||
+;   -----------------------------------------------------------------
+;  |       ¦      ¦      ¦     ------------------------------------- |
+;  |       ¦      ¦      ¦    | ----------------------------------- ||
+;  |       ¦      ¦      ¦    ||      |         |            ------ ||
 ;  |       ¦      ¦     [-]---|| Icon | Caption | Text(**)  |Button|||
-;  |       ¦      ¦           ||      |         |            —————— ||
-;  |       ¦      ¦   Toggler | ——————————————————————————————————— ||
-;  |       ¦      ¦    Rect    ————————————————————————————————————— |
-;   —————————————————————————————————————————————————————————————————
+;  |       ¦      ¦           ||      |         |            ------ ||
+;  |       ¦      ¦   Toggler | ----------------------------------- ||
+;  |       ¦      ¦    Rect    ------------------------------------- |
+;   -----------------------------------------------------------------
 ;
 ; Note: (*) structures contained in XTVN_DISP_INFO
 ;       (**) Button is contained in Text
@@ -276,7 +276,7 @@ XPT_SYS_COLOR_TABLE_EN_END label XWORD
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_CategoryNode.Done
 ; Purpose:    Finalize the XPT_CategoryNode object and all childs in its branch.
 ; Arguments:  None.
@@ -294,7 +294,7 @@ Method XPT_CategoryNode.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_CategoryNode.Init
 ; Purpose:    Initialize a XPT_CategoryNode object.
 ; Arguments:  Arg1: -> Owner object, XTreeView.
@@ -324,7 +324,7 @@ Method XPT_CategoryNode.Init, uses xdi xsi, pOwner:POINTER, hIcon:HICON, pCaptio
   invoke ReleaseDC, [xdi].$Obj(XPropertyTree).hWnd, hDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_CategoryNode.CanDragMe
 ; Purpose:    Indicate if a drag operation can be started.
 ; Arguments:  Arg1: Key flags (MK_CONTROL, MK_LBUTTON, MK_MBUTTON, MK_RBUTTON, MK_SHIFT).
@@ -334,7 +334,7 @@ Method XPT_CategoryNode.CanDragMe,, dKeyFlags:DWORD
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_CategoryNode.MouseHit
 ; Purpose:    Check if the mouse has clicked a hotspot and perform an action.
 ; Arguments:  Arg1: button that triggered this action.
@@ -367,7 +367,7 @@ Method XPT_CategoryNode.MouseHit, uses xbx xsi, dButton:DWORD, pPoint:PPOINT, \
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_CategoryNode.MouseHitDbl
 ; Purpose:    Check if the mouse has double clicked a hotspot and perform an action. In this case,
 ;             the node is toggled.
@@ -388,7 +388,7 @@ Method XPT_CategoryNode.MouseHitDbl, uses xbx xsi, dButton:DWORD, pPoint:PPOINT,
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_CategoryNode.Render
 ; Purpose:    Draw the complete node.
 ; Arguments:  Arg1: -> XPTN_DISP_INFO.
@@ -402,7 +402,7 @@ Method XPT_CategoryNode.Render,, pDispInfo:PXPTN_DISP_INFO
   ACall xcx.Render, pDispInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_CategoryNode.RenderContent
 ; Purpose:    Draws the content (icon + caption) of the node.
 ; Arguments:  Arg1: -> XPTN_DISP_INFO
@@ -503,7 +503,7 @@ MethodEnd
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_PropertyNode.Done
 ; Purpose:    Finalize the XPT_PropertyNode object and all childs in its branch.
 ; Arguments:  None.
@@ -521,7 +521,7 @@ Method XPT_PropertyNode.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_PropertyNode.Init
 ; Purpose:    Initialize a XPT_PropertyNode object.
 ; Arguments:  Arg1: -> Owner object, XTreeView.
@@ -568,7 +568,7 @@ Method XPT_PropertyNode.Init, uses xdi xsi, pOwner:POINTER, hIcon:HICON, pCaptio
   invoke SelectObject, [xdi].hMemDC, hPrvFont
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_PropertyNode.CanDragMe
 ; Purpose:    Indicate if a drag operation can be started.
 ; Arguments:  Arg1: Key flags (MK_CONTROL, MK_LBUTTON, MK_MBUTTON, MK_RBUTTON, MK_SHIFT).
@@ -578,7 +578,7 @@ Method XPT_PropertyNode.CanDragMe,, dKeyFlags:DWORD
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_PropertyNode.MouseHit
 ; Purpose:    Check if the mouse has clicked a hotspot and perform an action.
 ; Arguments:  Arg1: button that triggered this action.
@@ -612,7 +612,7 @@ Method XPT_PropertyNode.MouseHit, uses xbx xsi, dButton:DWORD, pPoint:PPOINT, \
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_PropertyNode.MouseHitDbl
 ; Purpose:    Check if the mouse has double clicked a hotspot and perform an action.
 ; Arguments:  Arg1: Button that triggered this action.
@@ -967,7 +967,7 @@ Method XPT_PropertyNode.MouseHitDbl, uses xbx xdi xsi, dButton:DWORD, pPoint:PPO
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_PropertyNode.Render
 ; Purpose:    Draw the complete node.
 ; Arguments:  Arg1: -> XPTN_DISP_INFO.
@@ -1012,7 +1012,7 @@ Method XPT_PropertyNode.Render, uses xsi, pDispInfo:PXPTN_DISP_INFO
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_PropertyNode.RenderContent
 ; Purpose:    Draw the content (icon + caption + text) of the node.
 ; Arguments:  Arg1: -> XPTN_DISP_INFO
@@ -1381,7 +1381,7 @@ MethodEnd
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPropertyTree.Done
 ; Purpose:    Finalize the XPropertyTree object.
 ; Arguments:  None.
@@ -1396,7 +1396,7 @@ Method XPropertyTree.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPropertyTree.Draw
 ; Purpose:    Render all nodes in view on the back buffer.
 ; Arguments:  None.
@@ -1478,7 +1478,7 @@ Method XPropertyTree.Draw, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPropertyTree.Init
 ; Purpose:    Initialize a XTreeView object.
 ; Arguments:  Arg1: -> Owner object.
@@ -1500,7 +1500,7 @@ Method XPropertyTree.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPropertyTree.OnCreate
 ; Purpose:    Event handler for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1541,7 +1541,7 @@ Method XPropertyTree.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  XPT_BrowseFolderCallback
 ; Purpose:    Set the initial path for SHBrowseForFolder.
 ; Arguments:  Arg1: Window handle.
@@ -1557,7 +1557,7 @@ XPT_BrowseFolderCallback proc hWnd:HWND, Msg:DWORD, lParam:LPARAM, pData:POINTER
   ret
 XPT_BrowseFolderCallback endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    XPropertyTree.OnCommand
 ; Purpose:   Event handler for WM_COMMAND message.
 ; Arguments: Arg1: First message parameter.
@@ -1757,7 +1757,7 @@ Method XPropertyTree.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPropertyTree.OnDestroy
 ; Purpose:    Event handler for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -1784,7 +1784,7 @@ Method XPropertyTree.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPropertyTree.OnDrawItem
 ; Purpose:    Event handler for WM_DRAWITEM message.
 ; Arguments:  Arg1: First message parameter.
@@ -2053,7 +2053,7 @@ Method XPropertyTree.OnDrawItem, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPropertyTree.OnKeyDown
 ; Purpose:    Event handler for WM_KEYDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -2285,7 +2285,7 @@ Method XPropertyTree.OnKeyDown, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPropertyTree.OnMeasureItem
 ; Purpose:    Event handler for WM_MEASUREITEM message.
 ; Arguments:  Arg1: First message parameter.
@@ -2318,7 +2318,7 @@ Method XPropertyTree.OnMeasureItem, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPropertyTree.OnMouseWheel
 ; Purpose:    Event handler for WM_MOUSEWHEEL message.
 ; Arguments:  Arg1: First message parameter.
@@ -2336,7 +2336,7 @@ Method XPropertyTree.OnMouseWheel, uses xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnMouseWheel, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPropertyTree.OnSize
 ; Purpose:    Event handler for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -2352,7 +2352,7 @@ Method XPropertyTree.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnSize, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPropertyTree.OnVScroll
 ; Purpose:    Event handler for WM_VSCROLL message.
 ; Arguments:  Arg1: First message parameter.
@@ -2369,7 +2369,7 @@ Method XPropertyTree.OnVScroll, uses xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnVScroll, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPropertyTree.RenderBackground
 ; Purpose:    Draw the background of a specified rect.
 ; Arguments:  Arg1: -> RECT.
@@ -2384,7 +2384,7 @@ Method XPropertyTree.RenderBackground, uses xsi, pRect:PRECT
   invoke DeleteObject, hBrush
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPropertyTree.ShowScrollbars
 ; Purpose:    Show or hide the scrollbars and update the ClientSize member.
 ; Arguments:  None.
@@ -2408,7 +2408,7 @@ Method XPropertyTree.ShowScrollbars, uses xsi
   invoke ShowScrollBar, [xsi].hWnd, SB_HORZ, FALSE      ;Hide horizontal scrollbar
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPropertyTree.WindowProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.
@@ -2444,7 +2444,7 @@ Method XPropertyTree.WndProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    XPropertyTree.Startup
 ; Purpose:   Register the XPropertyTree object with the OS.
 ; Arguments: None.
@@ -2477,7 +2477,7 @@ MethodEnd
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_Edit.Done
 ; Purpose:    Finalize the XPT_Edit object.
 ; Arguments:  None.
@@ -2491,7 +2491,7 @@ Method XPT_Edit.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_Edit.Init
 ; Purpose:    Initialize the XPT_Edit object.
 ; Arguments:  Arg1: -> Owner object.
@@ -2511,7 +2511,7 @@ Method XPT_Edit.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PXPT
   Subclass XPT_Edit                                     ;uses xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_Edit.OnKeyDown
 ; Purpose:    Event handler for WM_KEYDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -2563,7 +2563,7 @@ Method XPT_Edit.OnKeyDown, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_Edit.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.
@@ -2585,7 +2585,7 @@ MethodEnd
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_Button.Done
 ; Purpose:    Finalize the XPT_Button object.
 ; Arguments:  None.
@@ -2599,7 +2599,7 @@ Method XPT_Button.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_Button.Init
 ; Purpose:    Initialize the XPT_Button object.
 ; Arguments:  Arg1: -> Owner object.
@@ -2619,7 +2619,7 @@ Method XPT_Button.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PX
   Subclass XPT_Button                                   ;Needs xsi -> XPT_Button
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_Button.OnKeyDown
 ; Purpose:    Event handler for WM_KEYDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -2639,7 +2639,7 @@ Method XPT_Button.OnKeyDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_Button.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.
@@ -2661,7 +2661,7 @@ MethodEnd
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_ComboBox.Done
 ; Purpose:    Finalize the XPT_ComboBox object.
 ; Arguments:  None.
@@ -2675,7 +2675,7 @@ Method XPT_ComboBox.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_ComboBox.Init
 ; Purpose:    Initialize the XPT_ComboBox object.
 ; Arguments:  Arg1: -> Owner object.
@@ -2696,7 +2696,7 @@ Method XPT_ComboBox.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:
   Subclass XPT_ComboBox                                 ;uses xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_ComboBox.OnKeyDown
 ; Purpose:    Event handler for WM_KEYDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -2717,7 +2717,7 @@ Method XPT_ComboBox.OnKeyDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XPT_ComboBox.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.

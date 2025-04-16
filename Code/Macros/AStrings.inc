@@ -18,7 +18,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      StringA / ($)CStrA / ($)DStrA / ($)JStrA
 ; Purpose:    Place an ANSI string in the CONST, _DATA or _TEXT segment.
 ; Arguments:  Arg1: Reference name (optional).
@@ -114,7 +114,7 @@ $JStrA macro QuotedText:vararg
   exitm <??StrLocation>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Ofs(C|T|D|J)StrA
 ; Purpose:    Place an ANSI string in the CONST, SEG_TEXT, _DATA or _TEXT segment
 ; Arguments:  Arg1: Quoted string text.

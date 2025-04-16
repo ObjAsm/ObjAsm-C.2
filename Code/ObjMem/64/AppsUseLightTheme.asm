@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 % include &IncPath&Windows\winreg.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  AppsUseLightTheme
 ; Purpose:    Checks whether the "Light mode" is activated for the applications.
 ; Arguments:  None.

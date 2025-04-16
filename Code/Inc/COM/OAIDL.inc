@@ -22,7 +22,7 @@ DISPID_UNKNOWN  equ -1
 MEMBERID_NIL    equ DISPID_UNKNOWN
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ;  IDispatch Data Types
 
 ;IMPLTYPEFLAG_FDEFAULT       equ    1H
@@ -39,7 +39,7 @@ MEMBERID_NIL    equ DISPID_UNKNOWN
 ;CHANGEKIND_CHANGEFAILED     equ    6H
 ;CHANGEKIND_MAX              equ    7H
 ;
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;CC_FASTCALL                 equ    0H
 ;CC_CDECL                    equ    1H
@@ -53,7 +53,7 @@ MEMBERID_NIL    equ DISPID_UNKNOWN
 ;CC_MPWPASCAL                equ    8H
 ;CC_MAX                      equ    9H
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;DECIMAL struc
 ;  Union
@@ -74,7 +74,7 @@ MEMBERID_NIL    equ DISPID_UNKNOWN
 ;DECIMAL ends
 ;LPDECIMAL typedef ptr DECIMAL
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;SAFEARRAYBOUND struc DWORD
 ;  cElements   DWORD     ?
@@ -92,7 +92,7 @@ MEMBERID_NIL    equ DISPID_UNKNOWN
 ;SAFEARRAY ends
 ;LPSAFEARRAY typedef ptr SAFEARRAY
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;VARIANT  struct
 ;  union
@@ -158,7 +158,7 @@ MEMBERID_NIL    equ DISPID_UNKNOWN
 ;VARIANT  ends
 ;LPVARIANT typedef ptr VARIANT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 LPTYPEDESC  typedef ptr TYPEDESC
 LPARRAYDESC typedef ptr ARRAYDESC
@@ -173,7 +173,7 @@ LPARRAYDESC typedef ptr ARRAYDESC
 ;TYPEDESC ends
 ;LPTYPEDESC typedef ptr TYPEDESC
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;ARRAYDESC struc
 ;  tdescElem   TYPEDESC  <>
@@ -182,7 +182,7 @@ LPARRAYDESC typedef ptr ARRAYDESC
 ;ARRAYDESC ends
 ;LPARRAYDESC typedef ptr ARRAYDESC
 ;
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;CUSTDATAITEM struc
 ;  guid          GUID      <>
@@ -190,7 +190,7 @@ LPARRAYDESC typedef ptr ARRAYDESC
 ;CUSTDATAITEM ends
 ;LPCUSTDATAITEM typedef ptr CUSTDATAITEM
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;CUSTDATA struc
 ;  cCustData   DWORD           ?
@@ -198,7 +198,7 @@ LPARRAYDESC typedef ptr ARRAYDESC
 ;CUSTDATA ends
 ;LPCUSTDATA typedef ptr CUSTDATA
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;PARAMDESCEX struc DWORD
 ;  cBytes          DWORD    ?
@@ -206,7 +206,7 @@ LPARRAYDESC typedef ptr ARRAYDESC
 ;PARAMDESCEX ends
 ;LPPARAMDESCEX typedef ptr PARAMDESCEX
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;PARAMDESC struc
 ;  pparamdescex    LPPARAMDESCEX ?
@@ -223,7 +223,7 @@ PARAMFLAG_FOPT              equ     10h
 PARAMFLAG_FHASDEFAULT       equ     20h
 PARAMFLAG_FHASCUSTDATA      equ     40h
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;IDLDESC struc
 ;  dwReserved  DWORD   ?
@@ -237,7 +237,7 @@ IDLFLAG_FOUT                equ     PARAMFLAG_FOUT
 IDLFLAG_FLCID               equ     PARAMFLAG_FLCID
 IDLFLAG_FRETVAL             equ     PARAMFLAG_FRETVAL
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;ELEMDESC struc
 ;  tdesc         TYPEDESC    <>
@@ -248,7 +248,7 @@ IDLFLAG_FRETVAL             equ     PARAMFLAG_FRETVAL
 ;ELEMDESC ends
 ;LPELEMDESC typedef ptr ELEMDESC
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;; *** FUNCKIND enum
 ;FUNC_VIRTUAL                equ     0h
@@ -308,7 +308,7 @@ FUNCFLAG_FIMMEDIATEBIND     equ     01000h
 ;FUNCDESC ends
 ;LPFUNCDESC typedef ptr FUNCDESC
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ; *** VARKIND enum
 VAR_PERINSTANCE             equ     0h
@@ -345,7 +345,7 @@ VARFLAG_FIMMEDIATEBIND      equ     01000h
 ;VARDESC ends
 ;LPVARDESC typedef ptr VARDESC
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 LIBFLAG_FRESTRICTED         equ     1h
 LIBFLAG_FCONTROL            equ     2h
@@ -353,14 +353,14 @@ LIBFLAG_FHIDDEN             equ     4h
 LIBFLAG_FHASDISKIMAGE       equ     8h
 ;LIBFLAGS typedef SWORD
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 SYS_WIN16                   equ     0h
 SYS_WIN32                   equ     1h
 SYS_MAC                     equ     2h
 ;SYSKIND typedef DWORD
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;TLIBATTR struc
 ;  guid          GUID        <>
@@ -372,7 +372,7 @@ SYS_MAC                     equ     2h
 ;TLIBATTR ends
 ;LPTLIBATTR typedef ptr TLIBATTR
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 TKIND_ENUM                  equ     0
 TKIND_RECORD                equ     1
@@ -421,7 +421,7 @@ TYPEFLAG_FREVERSEBIND       equ     2000h
 ;TYPEATTR ends
 ;LPTYPEATTR typedef ptr TYPEATTR
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;DISPPARAMS struc
 ;  rgvarg            LPVARIANT ?
@@ -431,7 +431,7 @@ TYPEFLAG_FREVERSEBIND       equ     2000h
 ;DISPPARAMS ends
 ;ptr DISPPARAMS typedef ptr DISPPARAMS
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 EXCEPINFO_fnDeferredFillInProto typedef proto stdcall :ptr EXCEPINFO
 EXCEPINFO_fnDeferredFillIn      typedef ptr EXCEPINFO_fnDeferredFillInProto
@@ -449,7 +449,7 @@ EXCEPINFO_fnDeferredFillIn      typedef ptr EXCEPINFO_fnDeferredFillInProto
 ;EXCEPINFO ends
 ;LPEXCEPINFO typedef ptr EXCEPINFO
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;PARAMDATA struc
 ;  szName      PVOID           ?
@@ -457,7 +457,7 @@ EXCEPINFO_fnDeferredFillIn      typedef ptr EXCEPINFO_fnDeferredFillInProto
 ;PARAMDATA ends
 ;LPPARAMDATA typedef ptr PARAMDATA
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;METHODDATA struc
 ;    szName    PVOID           ?
@@ -471,7 +471,7 @@ EXCEPINFO_fnDeferredFillIn      typedef ptr EXCEPINFO_fnDeferredFillInProto
 ;METHODDATA ends
 ;LPMETHODDATA typedef ptr METHODDATA
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;INTERFACEDATA struc
 ;    pmethdata  LPMETHODDATA   ?
@@ -479,7 +479,7 @@ EXCEPINFO_fnDeferredFillIn      typedef ptr EXCEPINFO_fnDeferredFillInProto
 ;INTERFACEDATA ends
 ;LPintERFACEDATA typedef ptr INTERFACEDATA
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ;  ITypeComp Data Types
 
 DESCKIND_NONE               equ     0h
@@ -490,7 +490,7 @@ DESCKIND_IMPLICITAPPOBJ     equ     4h
 DESCKIND_MAX                equ     5h
 ;DESCKIND typedef SDWORD
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ;BINDPTR union
 ;  lpfuncdesc      PVOID       ?
@@ -499,7 +499,7 @@ DESCKIND_MAX                equ     5h
 ;BINDPTR ends
 ;LPBINDPTR typedef ptr BINDPTR
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 REGKIND_DEFAULT             equ     0h
 REGKIND_REGISTER            equ     1h
@@ -554,7 +554,7 @@ VTS_PUI1            equ    4Fh          ;'BYTE*'
 
 VTS_NONE            equ    00h          ;used for members with 0 params
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     TypeMissing
 ; Purpose:   Set a varint to the missing state. Frequently used for optional parameters.
 ; Arguments: Arg1: Varint variables.

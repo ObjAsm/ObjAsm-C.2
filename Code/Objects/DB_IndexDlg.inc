@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object DB_IndexDlg,, DialogModal
   VirtualMethod     CtlsEnable
@@ -36,7 +36,7 @@ ObjectEnd
 ;    DB_IndexDlg implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_IndexDlg.CtlsEnable
 ; Purpose:    Enables the controls if the input is valid.
 ; Arguments:  None.
@@ -57,7 +57,7 @@ Method DB_IndexDlg.CtlsEnable, uses xsi
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_IndexDlg.Init
 ; Purpose:    Initialize the DB_IndexDlg object.
 ; Arguments:  Arg1: -> Owner object.
@@ -71,7 +71,7 @@ Method DB_IndexDlg.Init,, pOwner:POINTER, hParent:HWND, pTable:$ObjPtr(DB_Table)
   ACall xcx.Init, pOwner, hParent, IDD_INDEX
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_IndexDlg.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -221,7 +221,7 @@ Method DB_IndexDlg.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_IndexDlg.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -282,7 +282,7 @@ Method DB_IndexDlg.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, TRUE                                         ;Let Windows set the default keyboard focus
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_IndexDlg.RebuildIndex
 ; Purpose:    Table index rebuild.
 ; Arguments:  Arg1: -> TaskStatus.
@@ -330,7 +330,7 @@ Method DB_IndexDlg.RebuildIndex, uses xsi, pStatus:PTaskStatus, pField:$ObjPtr(D
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_IndexDlg.UpdateStatusbar
 ; Purpose:    Update relevant database information on the statusbar.
 ; Arguments:  None.

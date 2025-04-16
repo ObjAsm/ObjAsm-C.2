@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ParseA
 ; Purpose:    Extract a comma separated substring from a source string.
 ; Arguments:  Arg1: -> Destination buffer. Must be large enough to hold the ANSI substring.

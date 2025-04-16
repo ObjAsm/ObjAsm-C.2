@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrCECopy
 ; Purpose:    Copy the the source BStr with length limitation and return the address of the ZTC.
 ;             The destination buffer should hold the maximum number of characters + 1.

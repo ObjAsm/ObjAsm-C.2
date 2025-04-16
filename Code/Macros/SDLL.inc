@@ -53,7 +53,7 @@ PSDLL_SENTINEL typedef ptr SDLL_SENTINEL
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SDLL_Init
 ; Purpose:    Initialize the control structure.
 ; Arguments:  Arg1: Register -> Sentinel structure.
@@ -63,7 +63,7 @@ SDLL_Init macro CtlReg:req
   mov [CtlReg].SDLL_SENTINEL.pLastItem, CtlReg
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SDLL_InsertAfter
 ; Purpose:    Inserts an object after another in the linked list.
 ; Arguments:  Arg1: Register -> Member to insert after.
@@ -87,7 +87,7 @@ SDLL_InsertAfter macro RefReg:req, NewReg:req, AuxReg:=<>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SDLL_InsertBefore
 ; Purpose:    Insert an object before another in the linked list.
 ; Arguments:  Arg1: Register -> Member to insert before.
@@ -111,7 +111,7 @@ SDLL_InsertBefore macro RefReg:req, NewReg:req, AuxReg:=<>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macros:     LinkedList_InsertFirst
 ; Purpose:    Insert a new member to the end of the Linked List.
 ; Arguments:  Arg1: Register -> Sentinel structure.
@@ -120,7 +120,7 @@ endm
 
 SDLL_InsertFirst equ <SDLL_InsertAfter>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macros:     LinkedList_InsertLast
 ; Purpose:    Insert a new member to the end of the Linked List.
 ; Arguments:  Arg1: Register -> Sentinel structure.
@@ -131,7 +131,7 @@ SDLL_InsertLast equ <SDLL_InsertBefore>
 
 SDLL_Append equ <SDLL_InsertBefore>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SDLL_Remove
 ; Purpose:    Remove a member from the linked list.
 ; Arguments:  Arg1: Register -> Member to remove register or reference.
@@ -152,7 +152,7 @@ SDLL_Remove macro RefReg:req, AuxReg1:req, AuxReg2:=<>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SDLL_RemoveFirst
 ; Purpose:    Remove the first member from the linked list.
 ; Arguments:  Arg1: Register -> Sentinel structure.
@@ -165,7 +165,7 @@ SDLL_RemoveFirst macro SnlReg:req, AuxReg:req
   mov [AuxReg].SDLL_ITEM.pPrevItem, SnlReg
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SDLL_RemoveLast
 ; Purpose:    Remove the first member from the linked list.
 ; Arguments:  Arg1: Register -> Sentinel structure.
@@ -178,7 +178,7 @@ SDLL_RemoveLast macro SnlReg:req, AuxReg:req
   mov [AuxReg].SDLL_ITEM.pNextItem, SnlReg
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SDLL_GetFirst
 ; Purpose:    Return the first item in the list.
 ; Arguments:  Arg1: Register -> Sentinel structure.
@@ -191,7 +191,7 @@ SDLL_GetFirst macro SnlReg:req, RetReg:req
   cmp RetReg, SnlReg
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SDLL_GetLast
 ; Purpose:    Return the last item in the list.
 ; Arguments:  Arg1: Register -> Sentinel structure.
@@ -204,7 +204,7 @@ SDLL_GetLast macro SnlReg:req, RetReg:req
   cmp RetReg, SnlReg
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SDLL_GetNext
 ; Purpose:    Return the next item in the list.
 ; Arguments:  Arg1: Register -> Reference item.
@@ -223,7 +223,7 @@ SDLL_GetNext macro RefReg:req, SnlReg:req, RetReg:=<>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SDLL_GetPrev
 ; Purpose:    Return the previous item in the list.
 ; Arguments:  Arg1: Register -> Reference item.

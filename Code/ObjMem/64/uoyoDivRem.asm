@@ -12,7 +12,7 @@
 
 ProcName textequ <uoyoDivRem>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  uoyoDivRem
 ; Purpose:    Calculate a unsigned extended precision division, emulating the div x86 instruction.
 ;             (256 bit) Dividend divided by (128 bit) Divisor = (128 bit) Quotient. 

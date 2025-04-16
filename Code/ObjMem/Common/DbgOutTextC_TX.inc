@@ -9,7 +9,7 @@
 
 externdef DbgColorError:DWORD
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgOutTextCA/DbgOutTextCW
 ; Purpose:    Send a counted string to the debug output device.
 ; Arguments:  Arg1: -> Zero terminated string.

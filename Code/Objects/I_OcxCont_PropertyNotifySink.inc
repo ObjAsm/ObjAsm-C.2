@@ -10,7 +10,7 @@
 
 externdef IID_IPropertyNotifySink:GUID  ;9BFBBC02-EFF1-101A-84ED-00AA00341D07
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     I_OcxCont_PropertyNotifySink
 ; Purpose:    Objects that support properties, for example, through OLE Automation and the IDispatch
 ;             interface, may want to allow clients to be notified when certain properties change
@@ -34,7 +34,7 @@ if IMPLEMENT
 ;     I_OcxCont_PropertyNotifySink implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_PropertyNotifySink.OnChanged
 ; Purpose:    Notifies a sink that a bindable property has changed.
 ; Arguments:  Arg1: The dispatch identifier of the property that changed, or DISPID_UNKNOWN (-1) if
@@ -49,7 +49,7 @@ Method I_OcxCont_PropertyNotifySink.OnChanged,, wDispID:WORD
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_PropertyNotifySink.OnRequestEdit
 ; Purpose:    Notifies a sink that a requestedit property is about to change.
 ; Arguments:  Arg1: The dispatch identifier of the property that is about to change or

@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ComEventsUnadvice
 ; Purpose:    Notificate the Event source that pISource will NOT recieve Events any more.
 ; Arguments:  Arg1: -> Previous ConnectionPoint interface.

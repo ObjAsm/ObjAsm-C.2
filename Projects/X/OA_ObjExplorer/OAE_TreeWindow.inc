@@ -64,7 +64,7 @@ ProjToolbar DEF_TOOLBAR {101, PROJTBSTYLE, 0, NULL, {<0,0,0,0>}, 7}
                                                   TBSTYLE_BUTTON or TBSTYLE_CHECK}
 
 .code
-; —————————————————————————————————————————————————————————————————————————————————————————————————
+; -------------------------------------------------------------------------------------------------
 ; Method:    TreeWindow.Done
 ; Purpose:   Finalizes the TreeWindow object, freeing allocated resources.
 ; Arguments: None.
@@ -78,7 +78,7 @@ Method TreeWindow.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; —————————————————————————————————————————————————————————————————————————————————————————————————
+; -------------------------------------------------------------------------------------------------
 ; Method:    TreeWindow.Init
 ; Purpose:   Initalizes the TreeWindow object.
 ; Arguments: Arg1: -> Owner object.
@@ -99,7 +99,7 @@ Method TreeWindow.Init, uses xsi, pOwner:POINTER, hParent:HANDLE, pLanguage:POIN
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    TreeWindow.OnCommand
 ; Purpose:   Event procedure for WM_COMMAND message.
 ; Arguments: Arg1: First message parameter.
@@ -113,7 +113,7 @@ Method TreeWindow.OnCommand,, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xax].$Obj(WinPrimer).hWnd, WM_COMMAND, wParam, lParam
 MethodEnd
 
-; —————————————————————————————————————————————————————————————————————————————————————————————————
+; -------------------------------------------------------------------------------------------------
 ; Method:    TreeWindow.OnCreate
 ; Purpose:   Event procedure for WM_CREATE message.
 ; Arguments: Arg1: First message parameter.
@@ -138,7 +138,7 @@ Method TreeWindow.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    TreeWindow.OnNotify
 ; Purpose:   Event procedure for WM_NOTIFY message.
 ; Arguments: Arg1: First message parameter.
@@ -173,7 +173,7 @@ Method TreeWindow.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; —————————————————————————————————————————————————————————————————————————————————————————————————
+; -------------------------------------------------------------------------------------------------
 ; Method:    TreeWindow.OnSize
 ; Purpose:   Event procedure for WM_SIZE message.
 ; Arguments: Arg1: First message parameter.
@@ -199,7 +199,7 @@ Method TreeWindow.OnSize, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; —————————————————————————————————————————————————————————————————————————————————————————————————
+; -------------------------------------------------------------------------------------------------
 ; Method:    TreeWindow.Startup
 ; Purpose:   Registers the object with the OS.
 ; Arguments: None.

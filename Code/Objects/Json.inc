@@ -57,7 +57,7 @@ JSON_PROPERTY struc
   ends
 JSON_PROPERTY ends
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Json
 ; Purpose:    This object provides the functionality read and write information in JSON format.
 ; Notes:      - Numeric and Boolean values are recognized when reading, but not translated into
@@ -93,7 +93,7 @@ if IMPLEMENT
 
 externdef HexCharTableW:CHRW
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  JsonEscDecode
 ; Purpose:    Translate a wide string containig JSON escape sequences to a plain wide string.
 ; Arguments:  Arg1: -> Input WIDE string.
@@ -222,7 +222,7 @@ JsonEscDecode proc uses xbx xdi xsi pInputStr:PSTRINGW, pBuffer:PSTRINGW, dCharC
   ret
 JsonEscDecode endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  JsonEscEncode
 ; Purpose:    Translate a plain wide string to a wide string containig JSON escape sequences.
 ; Arguments:  Arg1: -> Input ANSI/WIDE string accoring to TARGET_STR_TYPE.
@@ -335,7 +335,7 @@ JsonEscEncode proc uses xbx xdi xsi pInputStr:PSTRING, pBuffer:PSTRINGW, dCharCo
   ret
 JsonEscEncode endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     JsonEscEncodeSize
 ; Purpose:    Calculates the requiered buffer size for JsonEscEncode method.
 ; Arguments:  Arg1: -> Input ANSI/WIDE string accoring to TARGET_STR_TYPE.
@@ -392,7 +392,7 @@ JsonEscEncodeSize proc uses xsi pInputStr:PSTRING
   ret
 JsonEscEncodeSize endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Json.AddArray
 ; Purpose:    Create a new JSON array.
 ; Arguments:  Arg1: -> Parent JSON_PROPERTY.
@@ -415,7 +415,7 @@ Method Json.AddArray, uses xbx xdi, pParent:PJSON_PROPERTY, pName:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Json.AddData
 ; Purpose:    Create a new JSON value.
 ; Arguments:  Arg1: -> Owner JSON_PROPERTY.
@@ -445,7 +445,7 @@ Method Json.AddData, uses xbx xdi,pParent:PJSON_PROPERTY, pName:PSTRING, dType:D
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Json.AddObject
 ; Purpose:    Create a new JSON object.
 ; Arguments:  Arg1: -> Owner JSON_PROPERTY.
@@ -468,7 +468,7 @@ Method Json.AddObject, uses xbx xdi, pParent:PJSON_PROPERTY, pName:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Json.Done
 ; Purpose:    Finalize the Json object.
 ; Arguments:  None.
@@ -487,7 +487,7 @@ Method Json.Done, uses xbx xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Json.DelProperty
 ; Purpose:    Deletes a Json Property.
 ; Arguments:  Arg1: -> JSON_PROPERTY.
@@ -520,7 +520,7 @@ Method Json.DelProperty, uses xbx xsi, pProperty:PJSON_PROPERTY
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Json.GetArrayItem
 ; Purpose:    Get an JSON_PROPERTY from an array at a specific index position.
 ; Arguments:  Arg1: -> Owner JSON_PROPERTY.
@@ -544,7 +544,7 @@ Method Json.GetArrayItem,, pParent:PJSON_PROPERTY, dIndex:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Json.GetPrevProperty
 ; Purpose:    Get the previous JSON_PROPERTY from a specific JSON_PROPERTY.
 ; Arguments:  Arg1: -> Starting JSON_PROPERTY.
@@ -560,7 +560,7 @@ Method Json.GetPrevProperty,, pProperty:PJSON_PROPERTY
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Json.GetNextProperty
 ; Purpose:    Get the next JSON_PROPERTY from a specific JSON_PROPERTY.
 ; Arguments:  Arg1: -> Starting JSON_PROPERTY.
@@ -576,7 +576,7 @@ Method Json.GetNextProperty,, pProperty:PJSON_PROPERTY
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Json.GetProperty
 ; Purpose:    Find the JSON_PROPERTY with a specific name.
 ; Arguments:  Arg1: -> Parent JSON_PROPERTY.
@@ -599,7 +599,7 @@ Method Json.GetProperty, uses xbx, pParent:PJSON_PROPERTY, pName:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Json.Read
 ; Purpose:    Read a JSON object from stream (also known as "Parse" operation).
 ; Arguments:  Arg1: -> Stream.
@@ -996,7 +996,7 @@ Method Json.Read, uses xbx xdi xsi, pStream:$ObjPtr(Stream)
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Json.Write
 ; Purpose:    Write a JSON object to stream (also known as Stringify).
 ; Arguments:  Arg1: -> Stream.
@@ -1010,7 +1010,7 @@ Method Json.Write,, pStream:$ObjPtr(Stream)
   OCall xcx::Json.WriteProperty, pStream, addr [xcx].RootProperty, addr dIndentation
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Json.WriteProperty
 ; Purpose:    Write a JSON object to stream (also known as Stringify).
 ; Arguments:  Arg1: -> Stream.

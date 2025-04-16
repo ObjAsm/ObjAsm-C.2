@@ -11,7 +11,7 @@
 MAG_SNAP_X  equ   BIT00
 MAG_SNAP_Y  equ   BIT01
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Magnetism
 ; Purpose:    Implement a magnetic snapping property for MDI child windows to stick them when
 ;             moveing or resizing while the SHIFT key is pressed. The windows snaps to any border
@@ -47,7 +47,7 @@ CStr szMagnetism, "Magnetism"
 ;    Auxiliary procedures
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Magnetism_AddMonitorRects
 ; Purpose:    Add monitor Rect and Workarea to Rect-Collection.
 ; Arguments:  Arg1: Monitor handle.
@@ -79,7 +79,7 @@ Magnetism_AddMonitorRects proc uses xbx xsi hMon:HANDLE, hMonDC:HDC, pMonRect:PO
   ret
 Magnetism_AddMonitorRects endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Magnetism_SnapXXX
 ; Purpose:    Compute XXX border distance to other borders stored in the Rect-Collection.
 ; Arguments:  Arg1: -> RECT structure.
@@ -153,7 +153,7 @@ Magnetism_SnapBottom endp
 
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Magnetism.Done
 ; Purpose:    Finalize the Magnetism object.
 ; Arguments:  None.
@@ -165,7 +165,7 @@ Method Magnetism.Done
   ACall Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Magnetism.Init
 ; Purpose:    Initialize the Magnetism object.
 ; Arguments:  Arg1: -> Owner object.
@@ -180,7 +180,7 @@ Method Magnetism.Init, uses xsi, pOwner:POINTER, hWnd:HWND, dIntensity:DWORD
   OCall [xsi].RectColl::DataCollection.Init, xsi, 10, 10, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Magnetism.OnEnterSizeMove
 ; Purpose:    Event procedure for WM_ENTERSIZEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -240,7 +240,7 @@ Method Magnetism.OnEnterSizeMove, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_ENTERSIZEMOVE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Magnetism.OnExitSizeMove
 ; Purpose:    Event procedure for WM_EXITSIZEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -253,7 +253,7 @@ Method Magnetism.OnExitSizeMove, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_EXITSIZEMOVE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Magnetism.OnMoving
 ; Purpose:    Event procedure for WM_MOVING message.
 ; Arguments:  Arg1: First message parameter.
@@ -289,7 +289,7 @@ Method Magnetism.OnMoving, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_MOVING, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Magnetism.OnSizing
 ; Purpose:    Event procedure for WM_SIZING message.
 ; Arguments:  Arg1: First message parameter.
@@ -345,7 +345,7 @@ Method Magnetism.OnSizing, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_SIZING, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Magnetism.WndProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.

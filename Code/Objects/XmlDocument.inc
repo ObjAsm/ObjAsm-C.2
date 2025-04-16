@@ -11,7 +11,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     XmlNode
 ; Purpose:    This object implements the W3C Document Object Model (DOM) Level 1 Core and the Core
 ;             DOM Level 2. The DOM is an in-memory (cache) tree representation of an XML document.
@@ -45,7 +45,7 @@ Object XmlNode, XmlNodeID, Primer
   DefineVariable  pNode,      PIXMLDOMElement,  NULL
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     XmlDocument
 ; Purpose:    This object represents an XML document. You can use XmlDocument to load and save
 ;             XML data. It also includes methods for node creation.
@@ -77,7 +77,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.AddChild
 ; Purpose:    Add a child node.
 ; Arguments:  Arg1: -> Node name.
@@ -103,7 +103,7 @@ Method XmlNode.AddChild, uses xsi, pNodeName:PSTRING
   mov xax, pChild
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.Done
 ; Purpose:    Finalizes the object.
 ; Arguments:  None.
@@ -116,7 +116,7 @@ Method XmlNode.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.GetAttribute
 ; Purpose:    Return a specific attribute by name.
 ; Arguments:  Arg1: -> Attribute name.
@@ -134,7 +134,7 @@ Method XmlNode.GetAttribute, uses xsi, Attribute:PSTRING
   mov xax, pStr
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.GetChildNode
 ; Purpose:    Return a node by index.
 ; Arguments:  Arg1: Index from 0..Count - 1
@@ -157,7 +157,7 @@ Method XmlNode.GetChildNode, uses xsi, dIndex:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.GetChildNodes
 ; Purpose:    Return a list object containing all nodes.
 ; Arguments:  None.
@@ -171,7 +171,7 @@ Method XmlNode.GetChildNodes
   mov xax, pChildNodes
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.GetChildNodesCount
 ; Purpose:    Return the number of child nodes.
 ; Arguments:  None.
@@ -187,7 +187,7 @@ Method XmlNode.GetChildNodesCount, uses xsi
   mov eax, dChildCount
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.GetFirstChild
 ; Purpose:    Return the first child node.
 ; Arguments:  None.
@@ -203,7 +203,7 @@ Method XmlNode.GetFirstChild, uses xsi
   mov xax, pElement
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.GetLastChild
 ; Purpose:    Return the last child node.
 ; Arguments:  None.
@@ -219,7 +219,7 @@ Method XmlNode.GetLastChild, uses xsi
   mov xax, pElement
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.GetName
 ; Purpose:    Return the name of the node.
 ; Arguments:  None.
@@ -235,7 +235,7 @@ Method XmlNode.GetName
   mov xax, pStr
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.GetParentNode
 ; Purpose:    Return the parent node
 ; Arguments:  None.
@@ -251,7 +251,7 @@ Method XmlNode.GetParentNode
   mov xax, pElement
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.GetText
 ; Purpose:    Return a text from the node.
 ; Arguments:  None.
@@ -267,7 +267,7 @@ Method XmlNode.GetText
   mov xax, pStr
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.GetType
 ; Purpose:    Return the type name of the node.
 ; Arguments:  None.
@@ -283,7 +283,7 @@ Method XmlNode.GetType
   mov xax, pStr
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.GetValue
 ; Purpose:    Return the value contained in the node.
 ; Arguments:  Arg1: -> VARIANT
@@ -294,7 +294,7 @@ Method XmlNode.GetValue,, pVar:ptr VARIANT
   ICall [xcx].pNode::IXMLDOMNode.get_nodeValue, pVar
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.GetXML
 ; Purpose:    Return the XML string from the node.
 ; Arguments:  None.
@@ -310,7 +310,7 @@ Method XmlNode.GetXML
   mov xax, pStr
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.HasAttribute
 ; Purpose:    Check if the node has a given attribute.
 ; Arguments:  Arg1: -> Attribute name.
@@ -331,7 +331,7 @@ Method XmlNode.HasAttribute, uses xsi, Attribute:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.HasChildNodes
 ; Purpose:    Check if the node has children nodes.
 ; Arguments:  None.
@@ -349,7 +349,7 @@ Method XmlNode.HasChildNodes
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.IsTextElement
 ; Purpose:    Check if the node element is of type "text".
 ; Arguments:  None.
@@ -385,7 +385,7 @@ Method XmlNode.IsTextElement, uses xsi
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.PrevSibling
 ; Purpose:    Return the previous sibling node.
 ; Arguments:  None.
@@ -401,7 +401,7 @@ Method XmlNode.PrevSibling
   mov xax, pElement
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.NextSibling
 ; Purpose:    Return the next sibling node.
 ; Arguments:  None.
@@ -417,7 +417,7 @@ Method XmlNode.NextSibling
   mov xax, pElement
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.SetAttribute
 ; Purpose:    Set an atribute of the node.
 ; Arguments:  Arg1: -> Attribute name string.
@@ -450,7 +450,7 @@ Method XmlNode.SetAttribute, uses xsi, Attribute:PSTRING, Value:PSTRING
   ICall pDocument::IXMLDOMDocument.Release
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.SetNode
 ; Purpose:    Assign an IXMLDOMElement to the node.
 ; Arguments:  Arg1: -> IXMLDOMElement
@@ -462,7 +462,7 @@ Method XmlNode.SetNode,, pNode:PIXMLDOMElement
   mov [xcx].pNode, xdx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.SetText
 ; Purpose:    Set a text value to the node.
 ; Arguments:  Arg1: -> Text string.
@@ -477,7 +477,7 @@ Method XmlNode.SetText, uses xsi, Value:PSTRING
   invoke BStrDispose, bstr
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlNode.SetValue
 ; Purpose:    Set a value to the node.
 ; Arguments:  Arg1: -> Value string
@@ -499,7 +499,7 @@ MethodEnd
 ;    XmlDocument implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlDocument.AddChild
 ; Purpose:    Add a new child node to the document.
 ; Arguments:  Arg1: -> Child node name.
@@ -514,7 +514,7 @@ Method XmlDocument.AddChild, uses xsi, pNodeName:PSTRING
   mov xax, pElement
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlDocument.AddChildToParent
 ; Purpose:    Add a new child node to a parent node.
 ; Arguments:  Arg1: -> Child node.
@@ -530,7 +530,7 @@ Method XmlDocument.AddChildToParent,, pChild:PIXMLDOMNode, pParent:PIXMLDOMNode
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlDocument.Clear
 ; Purpose:    Unload the XML information.
 ; Arguments:  None.
@@ -546,7 +546,7 @@ Method XmlDocument.Clear
   setz al
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlDocument.CreateElement
 ; Purpose:    Create a new element in the document.
 ; Arguments:  Arg1: -> Element name.
@@ -562,7 +562,7 @@ Method XmlDocument.CreateElement, uses xsi, ElementName:PSTRING
   mov xax, pChild
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlDocument.Done
 ; Purpose:    Finalizes the object
 ; Arguments:  None.
@@ -574,7 +574,7 @@ Method XmlDocument.Done, uses xsi
   ICall [xsi].pDocument::IXMLDOMDocument.Release
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlDocument.GetDocumentElement
 ; Purpose:    Returns the document element
 ; Arguments:  None.
@@ -588,7 +588,7 @@ Method XmlDocument.GetDocumentElement
   mov xax, pElement
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlDocument.GetXML
 ; Purpose:    Return the XML string from the document.
 ; Arguments:  None.
@@ -605,7 +605,7 @@ Method XmlDocument.GetXML
   mov xax, pStr
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlDocument.Init
 ; Purpose:    Initializes the object
 ; Arguments:  Arg1: -> Owner.
@@ -620,7 +620,7 @@ Method XmlDocument.Init, uses xsi, pOwner:POINTER
   ICall [xsi].pDocument::IXMLDOMDocument.put_async, VARIANT_FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlDocument.LoadFromFile
 ; Purpose:    Load XML data from a file.
 ; Arguments:  Arg1: -> File name.
@@ -664,7 +664,7 @@ Method XmlDocument.LoadFromFile, uses xsi, pFileName:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlDocument.LoadFromXML
 ; Purpose:    Load data from XML string.
 ; Arguments:  Arg1: -> XML data string.
@@ -683,7 +683,7 @@ Method XmlDocument.LoadFromXML, uses xsi, pXML:PSTRING
   setz al
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlDocument.SaveToFile
 ; Purpose:    Save document to a file.
 ; Arguments:  Arg1: -> File name.
@@ -699,7 +699,7 @@ Method XmlDocument.SaveToFile, uses xsi, pFileName:PSTRING
   ICall [xsi].pDocument::IXMLDOMDocument.save, var
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlDocument.SaveToXML
 ; Purpose:    Return a string containing the XML data.
 ; Arguments:  Arg1: -> Destination BSTR.
@@ -710,7 +710,7 @@ Method XmlDocument.SaveToXML,, pBstr:ptr BSTR
   ICall [xcx].pDocument::IXMLDOMDocument.get_xml, pBstr
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XmlDocument.SetXML
 ; Purpose:    Load the XML data string.
 ; Arguments:  Arg1: -> XML data string.

@@ -20,7 +20,7 @@ NextCharA macro
   rcl edx, 1                                            ;Pass the carry from prev operation
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  bin2qwordA
 ; Purpose:    Load an ANSI string binary representation of a QWORD.
 ; Arguments:  Arg1: -> ANSI binary string.

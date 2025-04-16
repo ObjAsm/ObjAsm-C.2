@@ -13,7 +13,7 @@
 % include &MacPath&Objects.inc
 % include &COMPath&COM.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ComPtrAssign
 ; Purpose:    First increment the reference count of the new interface and then release any
 ;             existing interface pointer.

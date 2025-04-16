@@ -30,7 +30,7 @@ if IMPLEMENT
 ;    NetComServerProtocol implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComServerProtocol.Allocate
 ; Purpose:    Allocates a memory chunk for management data on a per connection basis. Additional
 ;             related resources can be reserved here. The pointer to the allocated memory must be
@@ -51,7 +51,7 @@ Method NetComServerProtocol.Allocate,, pConnection:$ObjPtr(NetComConnection)
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComServerProtocol.IsDataComplete?
 ; Purpose:    A NetComConnection class will call this method to determine if we have received at
 ;             least one complete packet, given the rules of your Protocol. This is where your
@@ -102,7 +102,7 @@ Method NetComServerProtocol.IsDataComplete?, uses xbx xdi xsi, pConnection:$ObjP
   mov [xsi].SRVPROTDATA.pNextIOData, xbx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComServerProtocol.OnAccept
 ; Purpose:    An inbound connection 'accept' has completed.
 ; Arguments:  Arg1: -> NetComConnection.
@@ -137,7 +137,7 @@ Method NetComServerProtocol.OnAccept, uses xbx xsi, pConnection:$ObjPtr(NetComCo
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComServerProtocol.OnDisconnect
 ; Purpose:    An established connection has been disconnected.
 ; Arguments:  Arg1: -> NetComConnection.
@@ -151,7 +151,7 @@ Method NetComServerProtocol.OnDisconnect, uses xsi, pConnection:$ObjPtr(NetComCo
   BitSet [xdx].$Obj(NetComConnection).dFlags, NCC_FREE_MARKED
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComServerProtocol.ProcessData
 ; Purpose:    A client has finished sending us data, now we have to do something with that data.
 ; Arguments:  Arg1: -> NetComConnection.
@@ -167,7 +167,7 @@ Method NetComServerProtocol.ProcessData,, pConnection:$ObjPtr(NetComConnection),
   mov eax, dDelimiterIndex
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComServerProtocol.Release
 ; Purpose:    Releases the memory chunk allocated with Allocate. Additional resources must be freed
 ;             here.

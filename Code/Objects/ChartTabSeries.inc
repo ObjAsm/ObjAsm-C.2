@@ -14,7 +14,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabSeries.Done
 ; Purpose:    Finalize the ChartTabSeries object.
 ; Arguments:  None.
@@ -27,7 +27,7 @@ Method ChartTabSeries.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabSeries.Init
 ; Purpose:    Initialize the ChartTabSeries object.
 ; Arguments:  Arg1: -> Owner object.
@@ -41,7 +41,7 @@ Method ChartTabSeries.Init, uses xbx xsi, pOwner:POINTER
   mov [xsi].pLocalDescription, $invoke(StrNew, [xbx].$Obj(ChartSeries).pDescription)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabSeries.OnCtlColorDlg
 ; Purpose:    Event procedure for WM_CTLCOLORDLG message.
 ; Arguments:  Arg1: First message parameter.
@@ -60,7 +60,7 @@ Method ChartTabSeries.OnCtlColorDlg,, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabSeries.Restore
 ; Purpose:    Restore original values.
 ; Arguments:  None.

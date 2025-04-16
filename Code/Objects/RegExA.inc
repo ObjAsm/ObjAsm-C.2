@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     RegExA
 ; Purpose:    This object is a small wrapper around a Perl Compatible Regular Expression (PCRE).
 ; Note:       Exec returns an array of PCRE_OUTDATA structures. The first contains the global
@@ -43,7 +43,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExA.Done (Destructor)
 ; Purpose:    Finalize the RegExA object and frees allocated resources.
 ; Arguments:  None.
@@ -69,7 +69,7 @@ Method RegExA.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExA.Exec
 ; Purpose:    Perform a search for a pattern match on the subject string.
 ; Arguments:  Arg1: -> Subject string.
@@ -86,7 +86,7 @@ Method RegExA.Exec, uses xsi, pSubject:POINTER, dLength:DWORD, dStartOffset:DWOR
   mov [xsi].dMatchCount, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:   	RegExA.GetConfig
 ; Purpose:  	Return info about what features are configured.
 ; Arguments:	Arg1: What information is required.
@@ -97,7 +97,7 @@ Method RegExA.GetConfig,, dWhat:DWORD, pWhere:POINTER
   invoke pcre_config, dWhat, pWhere
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExA.GetInfo
 ; Purpose:    Returns info about the compiled pattern.
 ; Arguments:  Arg1: -> Extra data or NULL.
@@ -110,7 +110,7 @@ Method RegExA.GetInfo,, pExtraData:POINTER, dWhat:DWORD, pWhere:POINTER
   invoke pcre_fullinfo, [xcx].pPattern, pExtraData, dWhat, pWhere
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExA.Init (Constructor)
 ; Purpose:    Initialize the object calculating the pattern resulting from the input regular
 ;             expression.
@@ -138,7 +138,7 @@ Method RegExA.Init, uses xsi, pOwner:POINTER, pRegEx:PSTRINGA, dOptions:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExA.Load
 ; Purpose:    Load the array object's data from a stream.
 ; Arguments:  Arg1: -> Stream object.
@@ -191,7 +191,7 @@ Method RegExA.Load, uses xbx xsi, pStream:$ObjPtr(Stream)
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExA.SetOutCount
 ; Purpose:    Set the number of expected output structures in OutVector and allocates the necessary
 ;             memory to hold them.
@@ -241,7 +241,7 @@ Method RegExA.SetOutCount, uses xsi, dIndexCount:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExA.Store
 ; Purpose:    Store the array object's data to a stream.
 ; Arguments:  Arg1: -> Stream object.
@@ -264,7 +264,7 @@ Method RegExA.Store, uses xsi, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.BinWrite, [xsi].pExtra, [xsi].dExtraSize
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExA.Study
 ; Purpose:    Study a compiled pattern.
 ; Arguments:  Arg1: Option bits.

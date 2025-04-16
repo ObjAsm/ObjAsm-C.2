@@ -179,7 +179,7 @@ CHT_ID_PLOT       equ     -5
 
 externdef $ObjTmpl(Application):$Obj(WinApp)
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  ChartSeries
 ; Purpose: Implement a data series for plot usage.
 ; Note:    - Data must be floating point numbers (REAL4 or REAL8). See CHT_FLOAT.
@@ -210,7 +210,7 @@ Object ChartSeries, ChartSeriesID, Array
   DefineVariable    pDescription,       PSTRING,    NULL            ;-> Series description
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  ChartWnd
 ; Purpose: This object is the base for all flat chart descendants.
 ;          It works using the ChartSeries object, that holds the information for each data
@@ -278,7 +278,7 @@ Object ChartWnd, ChartWndID, Window
 ObjectEnd
 
 ifdef INCLUDE_CHART_SETUP_DIALOG
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     ChartTabGeneral
 ; Purpose:    Color Tab of ChartSetup.
 
@@ -296,7 +296,7 @@ Object ChartTabGeneral, , DialogModeless
   DefineVariable    pChartWnd,          $ObjPtr(ChartWnd),  NULL
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     ChartTabScale
 ; Purpose:    Scale Tab of ChartSetup.
 
@@ -317,7 +317,7 @@ Object ChartTabScale, , DialogModeless
   DefineVariable    LocalScaleData,     CHT_SCALE_BASIC_DATA, {}    ;Only basic data!
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     ChartTabSeries
 ; Purpose:    Series Tab of ChartSetup.
 
@@ -332,7 +332,7 @@ Object ChartTabSeries, , DialogModeless
   DefineVariable    pLocalDescription,  PSTRING,    NULL            ;-> Series description
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     ChartSetup
 ; Purpose:    Custom Setup dialog.
 

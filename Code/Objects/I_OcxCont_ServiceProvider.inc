@@ -10,7 +10,7 @@
 
 externdef IID_IServiceProvider:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     I_OcxCont_ServiceProvider
 ; Purpose:    Defines a mechanism for retrieving a service object; that is, an object that provides
 ;             custom support to other objects.
@@ -29,7 +29,7 @@ if IMPLEMENT
 ;     I_OcxCont_ServiceProvider implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_ServiceProvider.QueryService
 ; Purpose:    The IServiceProvider interface is a generic access mechanism to locate a GUID-
 ;             identified service that is provided through a control or any other object that the

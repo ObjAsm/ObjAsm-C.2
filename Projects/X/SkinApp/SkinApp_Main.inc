@@ -64,7 +64,7 @@ RgnBtnMaximize  DEF_REGIONBUTTON {IDC_BTNMAXIMIZE, 0, 0, 0, 0, $OfsTStr("BUTTON_
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.Done
 ; Purpose:   Finalize the SDI application object.
 ; Arguments: None.
@@ -83,7 +83,7 @@ Method Application.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.DrawButtons
 ; Purpose:   Draw the Close, Minimize and Maximize buttons.
 ; Arguments: None.
@@ -102,7 +102,7 @@ Method Application.DrawButtons, uses xsi
   invoke SetWindowPos, [xsi].BtnMaximize.hWnd, HWND_TOP, 38, 10, 0, 0, SWP_NOSIZE or SWP_NOCOPYBITS
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.DrawCaptionText
 ; Purpose:   Draw the application caption.
 ; Arguments: Active state.
@@ -141,7 +141,7 @@ Method Application.DrawCaptionText, uses xbx xsi
   invoke ReleaseDC, [xsi].hWnd, hDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.Init
 ; Purpose:   Initialize the SDI application object.
 ; Arguments: None.
@@ -184,7 +184,7 @@ Method Application.Init, uses xbx xsi
   invoke UpdateWindow, [xsi].hWnd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnActivateApp
 ; Purpose:   Event procedure for WM_ACTIVATEAPP message.
 ; Arguments: Arg1: First message parameter.
@@ -200,7 +200,7 @@ Method Application.OnActivateApp, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xsi].hWnd, WM_ACTIVATEAPP, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnClose
 ; Purpose:   Event procedure for WM_CLOSE message.
 ; Arguments: Arg1: First message parameter.
@@ -227,7 +227,7 @@ Method Application.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnCommand
 ; Purpose:   Event procedure for WM_COMMAND message.
 ; Arguments: Arg1: First message parameter.
@@ -267,7 +267,7 @@ Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnCreate
 ; Purpose:   Event procedure for WM_CREATE message.
 ; Arguments: Arg1: First message parameter.
@@ -282,7 +282,7 @@ Method Application.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnEnable
 ; Purpose:   Event procedure for WM_ENABLE message.
 ; Arguments: Arg1: First message parameter.
@@ -298,7 +298,7 @@ Method Application.OnEnable, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xsi].hWnd, WM_ENABLE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnNcActivate
 ; Purpose:   Event procedure for WM_NCACTIVATE message.
 ; Arguments: Arg1: First message parameter.
@@ -314,7 +314,7 @@ Method Application.OnNcActivate, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xsi].hWnd, WM_NCACTIVATE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnNcCreate
 ; Purpose:   Event procedure for WM_NCCREATE message.
 ; Arguments: Arg1: First message parameter.
@@ -328,7 +328,7 @@ Method Application.OnNcCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xsi].hWnd, WM_NCCREATE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnNcPaint
 ; Purpose:   Event procedure for WM_NCPAINT message.
 ; Arguments: Arg1: First message parameter.
@@ -342,7 +342,7 @@ Method Application.OnNcPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xsi].hWnd, WM_NCPAINT, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnPaint
 ; Purpose:   Event procedure for WM_PAINT message.
 ; Arguments: Arg1: First message parameter.
@@ -367,7 +367,7 @@ Method Application.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xsi].hWnd, WM_PAINT, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnRButtonUp
 ; Purpose:   Event procedure for WM_RBUTTONUP message.
 ; Arguments: Arg1: First message parameter.
@@ -389,7 +389,7 @@ Method Application.OnRButtonUp, uses xsi, wParam:WPARAM, lParam:LPARAM
                          Pnt.x, Pnt.y, 0, [xsi].hWnd, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.Startup
 ; Purpose:   Register the object class with the OS.
 ; Arguments: None.

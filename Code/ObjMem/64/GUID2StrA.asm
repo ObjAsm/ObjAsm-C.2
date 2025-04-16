@@ -11,7 +11,7 @@
 TARGET_STR_TYPE = STR_TYPE_ANSI
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GUID2StrA
 ; Purpose:    Convert a GUID to an ANSI string.
 ; Arguments:  Arg1: -> Destination ANSI string buffer.

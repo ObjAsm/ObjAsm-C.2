@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Random32
 ; Purpose:    Generate a random 32 bit number in a given range [0..Limit-1].
 ;             Park Miller random number algorithm. Written by Jaymeson Trudgen (NaN) and optimized

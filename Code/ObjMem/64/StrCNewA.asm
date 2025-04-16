@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <StrCNewA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCNewA
 ; Purpose:    Allocate a new copy of the source ANSI string with length limitation.
 ;             If the pointer to the source string is NULL or points to an empty string, StrCNewA

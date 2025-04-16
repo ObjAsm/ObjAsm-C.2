@@ -18,7 +18,7 @@ DEF_REGIONBUTTON struc
 DEF_REGIONBUTTON ends
 PDEF_REGIONBUTTON typedef ptr DEF_REGIONBUTTON
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:   RgnButton
 ; Purpose:  Implement a button object of irregular shape.
 
@@ -90,7 +90,7 @@ PRGNBTNRESDATA typedef ptr RGNBTNRESDATA
 CStr szRgnButton, "RgnButton"
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.Dispatch
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Window handle.
@@ -105,7 +105,7 @@ Method RgnButton.Dispatch, uses xsi, hWnd:HWND, uMsg:DWORD, wParam:WPARAM, lPara
   DispatchEvent <DefWindowProc, hWnd>                   ;xsi -> Object Instance
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.Done
 ; Purpose:    Finalize the RgnButton object.
 ; Arguments:  None.
@@ -117,7 +117,7 @@ Method RgnButton.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.Init
 ; Purpose:    Initialize the RgnButton object.
 ; Arguments:  Arg1: -> Owner object.
@@ -152,7 +152,7 @@ Method RgnButton.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PDE
   mov [xsi].hFont, $invoke(SendMessage, hParent, WM_GETFONT, 0, 0)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.InitRes
 ; Purpose:    Initialize the RgnButton object.
 ; Arguments:  Arg1: -> Owner object.
@@ -179,7 +179,7 @@ Method RgnButton.InitRes, uses xsi, hWnd:HWND
   invoke ReleaseDC, [xsi].hWnd, hDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -248,7 +248,7 @@ Method RgnButton.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Always continue the creation of the window
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -277,7 +277,7 @@ Method RgnButton.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.OnEnable
 ; Purpose:    Event procedure for WM_ENABLE message.
 ; Arguments:  Arg1: First message parameter.
@@ -296,7 +296,7 @@ Method RgnButton.OnEnable, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.OnGetDlgCode
 ; Purpose:    Event procedure for WM_GETDLGCODE message.
 ; Arguments:  Arg1: First message parameter.
@@ -313,7 +313,7 @@ Method RgnButton.OnGetDlgCode,, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.OnGetFont
 ; Purpose:    Event procedure for WM_GETFONT message. Return the current font handle.
 ; Arguments:  Arg1: First message parameter.
@@ -325,7 +325,7 @@ Method RgnButton.OnGetFont,, wParam:WPARAM, lParam:LPARAM
   mov xax, [xcx].hFont
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.OnMouseMove
 ; Purpose:    Event procedure for WM_MOUSEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -353,7 +353,7 @@ Method RgnButton.OnMouseMove, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.OnLButtonDown
 ; Purpose:    Event procedure for WM_LBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -371,7 +371,7 @@ Method RgnButton.OnLButtonDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.OnLButtonUp
 ; Purpose:    Event procedure for WM_LBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -398,7 +398,7 @@ Method RgnButton.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.OnNcDestroy
 ; Purpose:    Event procedure for WM_NCDESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -414,7 +414,7 @@ Method RgnButton.OnNcDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -487,7 +487,7 @@ Method RgnButton.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.OnSetFont
 ; Purpose:    Event procedure for WM_SETFONT message. Set the current font handle.
 ; Arguments:  Arg1: First message parameter.
@@ -499,7 +499,7 @@ Method RgnButton.OnSetFont,, wParam:WPARAM, lParam:LPARAM
   m2m [xcx].hFont, wParam, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.Startup
 ; Purpose:    Register the RgnButton window class with the operating system.
 ; Arguments:  None.
@@ -524,7 +524,7 @@ Method RgnButton.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RgnButton.WindowProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.

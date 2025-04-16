@@ -16,7 +16,7 @@ endif
 
 externdef IID_IUnknown:GUID
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Object:     IUnknown
 ; Purpose:    Implementation of the IUnknown COM interface used by a Component or derived object.
 
@@ -30,7 +30,7 @@ Object IUnknown, IUnknownID, Primer
   DefineVariable    dRefCount,        DWORD,        0   ;Reference counter
 ObjectEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Object:     IUnknownNoDelegate
 ; Purpose:    Implementation of the IUnknownNoDelegate COM interface used by a Component or derived
 ;             object.
@@ -41,58 +41,58 @@ Object IUnknownNoDelegate, IUnknownNoDelegateID, IUnknown
   RedefineMethod    Release
 ObjectEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Object:     Component
 ; Purpose:    Implementation of the Component COM object.
 ;             This object is the core of all COM objects. It holds all interfaces in a Collection
 ;             and implements a way to reuse other COM objects called aggregation, shown in the
 ;             following diagram:
 ;
-;                                                                覧・;                                                               |   |
-;                                                                覧・;                                                                 |
+;                                                                --・;                                                               |   |
+;                                                                --・;                                                                 |
 ;              Outer Component                                    |
-;              覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧慾覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+;              ---------------------------------------------------|------------------------------
 ;             |                                                   |                              |
-;             |                                      覧覧覧覧覧覧覧覧・      ・・・・・・・・・  |
+;             |                                      ----------------・      ・・・・・・・・・  |
 ;             |                                     |                 |     |                 |  |
 ;             |                                     |      Outer      |        Outer IUnknown    |
-;             |                                     |     IUnknown    |覧覧>|  Non Delegating |  |
+;             |                                     |     IUnknown    |---->|  Non Delegating |  |
 ;             |                                     |                 |                          |
 ;             |                                     |        I.RefCnt |     |     C.+A.RefCnt |  |
-;             |                                     '覧覧覧覧覧覧覧覧・      ・・・・・・・・・  |
+;             |                                     '----------------・      ・・・・・・・・・  |
 ;             |                                                                  /|\   /|\       |
 ;             |                                                                   |     |        |
-;             |                    覧・                aggr. redirection          |     |        |
-;             |                   |   |        覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧・     |        |
-;             |                    覧・       |                                         |        |
+;             |                    --・                aggr. redirection          |     |        |
+;             |                   |   |        ----------------------------------・     |        |
+;             |                    --・       |                                         |        |
 ;             |                     |         |                                         |        |
 ;             |    Inner Component  |         |                                         |        |
-;             |    覧覧覧覧覧覧覧覧慾覧覧覧覧慾覧覧覧覧覧覧覧覧覧覧覧覧覧・             |        |
+;             |    -----------------|---------|--------------------------・             |        |
 ;             |   |                 |         |                           |             |        |
-;             |   |    覧覧覧覧覧覧覧覧・     |      ・・・・・・・・・   |             |        |
+;             |   |    ----------------・     |      ・・・・・・・・・   |             |        |
 ;             |   |   |                 |     |     |                 |   |             |        |
 ;             |   |   |                 |     |           IUnknown        |             |        |
-;             |   |   |     IUnknown    |覧覧・・・>|  Non Delegating |   |             |        |
+;             |   |   |     IUnknown    |----・・・>|  Non Delegating |   |             |        |
 ;             |   |   |                 |                                 |             |        |
 ;             |   |   |        I.RefCnt |           |        C.RefCnt |   |             |        |
-;             |   |   '覧覧覧覧覧覧覧覧・            ・・・・・・・・・   |             |        |
+;             |   |   '----------------・            ・・・・・・・・・   |             |        |
 ;             |   |                                         /|\           |             |        |
 ;             |   |                                                       |             |        |
 ;             |   |  Aggregated Interface                    |            |             |        |
-;             |   |  覧  覧  覧  覧  覧  覧  覧  覧  覧  覧  覧  覧  覧   |             |        |
+;             |   |  --  --  --  --  --  --  --  --  --  --  --  --  --   |             |        |
 ;             |   | |                                        |         |  |             |        |
-;             |   | |   覧覧覧覧覧覧覧覧                               |  |             |        |
+;             |   | |   ----------------                               |  |             |        |
 ;             |   |    |                |                    |            |             |        |
-;     覧・    |   | |  |    IUnknown    |                          aggr. redirection    |        |
-;    |   |覧覧覧覧覧覧慾   Descendant   |覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧・        |
-;     覧・    |   | |  |                |                              |  |                      |
+;     --・    |   | |  |    IUnknown    |                          aggr. redirection    |        |
+;    |   |-------------|   Descendant   |----------------------------------------------・        |
+;     --・    |   | |  |                |                              |  |                      |
 ;             |   |    |       I.RefCnt |                                 |                      |
-;             |   | |  '覧覧覧覧覧覧覧覧'                              |  |                      |
+;             |   | |  '----------------'                              |  |                      |
 ;             |   | |                                                  |  |                      |
-;             |   |  覧  覧  覧  覧  覧  覧  覧  覧  覧  覧  覧  覧  覧   |                      |
-;             |   '覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧・                      |
+;             |   |  --  --  --  --  --  --  --  --  --  --  --  --  --   |                      |
+;             |   '------------------------------------------------------・                      |
 ;             |                                                                                  |
-;             '覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧'
+;             '----------------------------------------------------------------------------------'
 ;
 ; Note: The IUnknown interface passed when an aggregated component is created should be the
 ;       non delegating IUnknown interface of the outer component.
@@ -116,7 +116,7 @@ ObjectEnd
 ;   COM helpers
 ; ==================================================================================================
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  PrintRefCounters
 ; Purpose:    Output the a GUID on the debug device.
 ; Arguments:  ARG1: -> Interface.
@@ -231,7 +231,7 @@ if IMPLEMENT
 ;    IUnknown Implementation
 ; ==================================================================================================
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     IUnknown.QueryInterface
 ; Purpose:    Check if the requested interface is supported. If it is, a pointer to a pointer
 ;             to the interface is returned and the reference count is incremented
@@ -257,7 +257,7 @@ Method IUnknown.QueryInterface,, pReqIID:REFIID, ppInterface:POINTER
   endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     IUnknown.AddRef
 ; Purpose:    Increment the internal interface reference count.
 ; Arguments:  None.
@@ -280,7 +280,7 @@ Method IUnknown.AddRef, uses xsi
   endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     IUnknown.Release
 ; Purpose:    Decrement the internal interface reference count.
 ; Arguments:  None.
@@ -323,7 +323,7 @@ MethodEnd
 ;    IUnknownNoDelegate Implementation
 ; ==================================================================================================
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     IUnknownNoDelegate.QueryInterface
 ; Purpose:    Check if the requested interface is supported. If it is, a pointer to a pointer
 ;             to the interface is returned and the reference count is incremented
@@ -338,7 +338,7 @@ Method IUnknownNoDelegate.QueryInterface,, pReqIID:REFIID, ppInterface:POINTER
   OCall xax::Component.GetInterface, pReqIID, ppInterface
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     IUnknownNoDelegate.AddRef
 ; Purpose:    Increment the internal component reference count.
 ; Arguments:  None.
@@ -351,7 +351,7 @@ Method IUnknownNoDelegate.AddRef
   mov eax, [xcx].dRefCount                              ;Return component reference count (debug)
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     IUnknownNoDelegate.Release
 ; Purpose:    Decrement the internal component reference count.
 ; Arguments:  None.
@@ -380,7 +380,7 @@ AggregatedInterfaceData struc
 AggregatedInterfaceData ends
 PAggregatedInterfaceData typedef ptr AggregatedInterfaceData
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     Component.AggregateInterface
 ; Purpose:    Aggregate an interface of an inner component.
 ; Arguments:  Arg1: -> Non delegating IUnknown interface.
@@ -397,7 +397,7 @@ Method Component.AggregateInterface,, pIUnkND:POINTER, pIID:REFIID
   OCall [xcx].AggrInterfaces::Collection.Insert, xax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     Component.Done
 ; Purpose:    Finalize the COM object.
 ; Arguments:  None.
@@ -418,7 +418,7 @@ Method Component.Done, uses xsi
   ACall Done
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  (Iterator) IUnknown_CheckIID
 ; Purpose:    Check interface IID against a test IID.
 ; Arguments:  Arg1: -> Interface whose IID is used to to compare against.
@@ -470,7 +470,7 @@ else
 
 endif
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Procedure: (Iterator) IUnknown_CheckAggrIID
 ; Purpose:   Check aggredated interface IID againt a test IID.
 ; Arguments: Arg1: -> AggregatedInterfaceData structure.
@@ -523,7 +523,7 @@ else
 
 endif
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     Component.GetInterface
 ; Purpose:    Return a COM interface POINTER and increments dRefCount.
 ; Arguments:  Arg1: -> Requested interface ID.
@@ -560,7 +560,7 @@ Method Component.GetInterface, uses xsi, pReqIID:REFIID, ppInterface:POINTER
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     Component.Init
 ; Purpose:    Initialize the COM object.
 ; Arguments:  Arg1: -> Owner (Component object).

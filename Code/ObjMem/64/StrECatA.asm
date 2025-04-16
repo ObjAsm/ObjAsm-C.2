@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrECatA
 ; Purpose:    Append an ANSI string to another and return the address of the ending zero character.
 ;             StrCatA does not perform any length checking. The destination buffer must have room

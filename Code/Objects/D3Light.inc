@@ -10,7 +10,7 @@
 ;    D3Light implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Light.Colorize
 ; Purpose:    Colorize all D3Triangles facing the Camera with this D3Light.
 ; Arguments:  Arg1: -> D3Scene D3Objects collection.
@@ -20,7 +20,7 @@ Method D3Light.Colorize,, pCameras:$ObjPtr(Collection), Unused:XWORD
   OCall pCameras::Collection.ForEach, $MethodAddr(D3Camera.Colorize), pSelf, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Light.Load
 ; Purpose:    Load a D3Light from a Stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -36,7 +36,7 @@ Method D3Light.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   mov [xsi].dFlags, $32($OCall(pStream::Stream.BinRead32))
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Light.Move
 ; Purpose:    Move (displaces) the D3Light.
 ; Arguments:  Arg1: -> Displacement D3Vector structure.
@@ -47,7 +47,7 @@ Method D3Light.Move,, pDisplacement:POINTER
   invoke MemClone, addr [xcx].Origin, pDisplacement, sizeof(D3Vector)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Light.Store
 ; Purpose:    Store a D3Light in a Stream object.
 ; Arguments:  Arg1: -> Stream object.

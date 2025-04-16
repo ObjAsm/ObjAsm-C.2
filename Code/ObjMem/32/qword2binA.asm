@@ -32,7 +32,7 @@ Set4BinCharsA macro Index
   mov [ecx + 4*sizeof(CHRA)*Index], eax
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  qword2binA
 ; Purpose:    Convert a QWORD to its binary ANSI string representation.
 ; Arguments:  Arg1: -> Destination buffer.

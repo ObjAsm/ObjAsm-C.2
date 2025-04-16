@@ -11,7 +11,7 @@
 ;    Tab2 implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab2.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -39,7 +39,7 @@ Method Tab2.CtlsGet, uses xbx xdi xsi
   GetTool 9
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab2.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -71,7 +71,7 @@ Method Tab2.CtlsSet, uses xbx xdi xsi
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab2.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -122,7 +122,7 @@ Method Tab2.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab2.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -150,7 +150,7 @@ Method Tab2.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return FALSE to prevent Windows from
 MethodEnd                                               ;  setting the default keyboard focus.
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab2.OnCtlColorDlg
 ; Purpose:    Event procedure for WM_CTLCOLORDLG message.
 ; Arguments:  Arg1: First message parameter.

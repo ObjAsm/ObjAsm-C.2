@@ -9,7 +9,7 @@
 
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DecompressFileFromRes
 ; Purpose:    Load a compressed file stored as RCDATA resource and decompress it.
 ;             Compression should be done using a Microsoft compression algorithm: XPRESS, XPRESS

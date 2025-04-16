@@ -14,7 +14,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 ProcName textequ <bin2dwordA>
 BIT_COUNT = 32
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  bin2dwordA
 ; Purpose:    Conversion of an ANSI input string that contains a binary number in the form of a 
 ;             sequence of "0" and "1" into a DWORD.

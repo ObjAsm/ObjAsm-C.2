@@ -14,7 +14,7 @@
 
 
 ; Trigonometric approximation macros
-; ——————————————————————————————————
+; ----------------------------------
 ;
 ; All macros are designed to have a chance for reentrancy if you supply a local argument
 ; to store an intermediate result. If it is not supplied, a global variable is used!
@@ -36,7 +36,7 @@
 
 
 ; Square Root approximation macros
-; ————————————————————————————————
+; --------------------------------
 ;
 ; The RcpSqrt macro uses Newton's approximation algo in combination with the Quake3 first guess.
 ; The speed factor using 3 iterations varies from 1.35 to 2.2 times depending on the hardware
@@ -55,7 +55,7 @@ BitCosTable   REAL8    1024 dup (?)   ;4 quadrants
 
 qMathAux      DWORD    ?
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qMathInit
 ; Purpose:    Initialize internal trigonometric tables.
 ; Arguments:  Arg1: temporary DWORD value.
@@ -74,7 +74,7 @@ qMathInit macro Aux:=<qMathAux>
   .endw
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qSin
 ; Purpose:    Compute the sin of a bittian value.
 ; Arguments:  Arg1: Number of terms [1..3] used to compute the taylor series.
@@ -108,7 +108,7 @@ qSin macro Terms:=<3>, Aux:=<qMathAux>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qCos
 ; Purpose:    Compute the cos of a bittian value.
 ; Arguments:  Arg1: Number of terms [1..3] used to compute the taylor series.
@@ -142,7 +142,7 @@ qCos macro Terms:=<3>, Aux:=<qMathAux>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qSinCos
 ; Purpose:    Compute the sin and cos of a bittian value.
 ; Arguments:  Arg1: Number of terms [1..3] used to compute the taylor series.
@@ -189,7 +189,7 @@ qSinCos macro Terms:=<3>, Aux:=<qMathAux>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qCosSin
 ; Purpose:    Compute the cos and sin of a bittian value.
 ; Arguments:  Arg1: Number of terms [1..3] used to compute the taylor series.
@@ -236,7 +236,7 @@ qCosSin macro Terms:=<3>, Aux:=<qMathAux>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qRcpSqrt
 ; Purpose:    Compute the reciprocal sqrt of st(0) value.
 ; Arguments:  Arg1: Number of iterations [0..3]. -1 means using the fpu equivalent instructions.
@@ -280,7 +280,7 @@ qRcpSqrt macro Iterations:=<3>, Aux:=<qMathAux>   ;2.2 times faster than 1/fsqrt
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qSqrt
 ; Purpose:    Compute the sqrt of st(0) value.
 ; Arguments:  Arg1: Number of iterations [0..3]. -1 means using the fpu equivalent instructions.

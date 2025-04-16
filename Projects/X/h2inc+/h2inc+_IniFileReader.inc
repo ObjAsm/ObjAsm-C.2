@@ -16,7 +16,7 @@ IFR_SECTION_NOT_FOUND   equ   180004
 ;    IniFileReader implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IniFileReader.Done
 ; Purpose:    Finalizes the object.
 ; Arguments:  None.
@@ -30,7 +30,7 @@ Method IniFileReader.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IniFileReader.Init
 ; Purpose:    Initializes the object.
 ; Arguments:  Arg1: -> Owner.
@@ -85,7 +85,7 @@ Method IniFileReader.Init, uses xbx xdi xsi, pOwner:POINTER, pMemHeap:$ObjPtr(Me
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IniFileReader.LoadList
 ; Purpose:    Scans h2inc+.ini for a given section.
 ; Arguments:  Arg1: -> LIST_SETUP of that list.

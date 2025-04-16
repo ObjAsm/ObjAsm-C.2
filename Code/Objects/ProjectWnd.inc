@@ -16,7 +16,7 @@ IDM_PROJ_OPEN     equ   200
 IDM_PROJ_SAVE     equ   201
 IDM_PROJ_CLOSE    equ   202
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  ProjectWnd
 ; Purpose: Implement a project window used as a control container on some apps.
 
@@ -57,7 +57,7 @@ ProjToolbar DEF_TOOLBAR {101, PROJTBSTYLE, 0, NULL, {<0,0,0,0>}, 3}
 
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ProjectWnd.Done
 ; Purpose:    Finalize the ProjectWnd object, freeing allocated resources.
 ; Arguments:  None.
@@ -71,7 +71,7 @@ Method ProjectWnd.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ProjectWnd.Init
 ; Purpose:    Initialize the ProjectWnd object.
 ; Arguments:  Arg1: -> Owner object.
@@ -87,7 +87,7 @@ Method ProjectWnd.Init, uses xsi, pOwner:POINTER, hParent:HWND
   invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ProjectWnd.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -127,7 +127,7 @@ Method ProjectWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xsi].hWnd, WM_CREATE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ProjectWnd.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -160,7 +160,7 @@ Method ProjectWnd.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc,[xsi].hWnd, WM_PAINT, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ProjectWnd.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.

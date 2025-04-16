@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjPropWnd.CreateMarkupText
 ; Purpose:    Emits the HTML render code in a file located in the user temp folder.
 ; Arguments:  None.
@@ -154,7 +154,7 @@ Method ObjPropWnd.CreateMarkupText, uses xbx xdi xsi
   OCall [xsi].MarkupStream::MemoryStream.BinWrite, $OfsSze(MTXT_END)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjPropWnd.Done
 ; Purpose:    Finalizes the ObjPropWnd object and disposes the MDI child window.
 ; Arguments:  None.
@@ -171,7 +171,7 @@ Method ObjPropWnd.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjPropWnd.Init
 ; Purpose:    Initalizes the ObjPropWnd object.
 ; Arguments:  Arg1: -> Owner object (ClientWnd).
@@ -189,7 +189,7 @@ Method ObjPropWnd.Init, uses xsi, pOwner:$ObjPtr(ClientWnd), pWndClassName:PSTRI
   m2m [xsi].dShowRedefVars, $ObjTmpl(Application).dShowRedefVars, ecx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MatchObjectImpMethod
 ; Purpose:    Perform a match test.
 ; Arguments:  Arg1: -> IMPMTDINFORMATION.
@@ -207,7 +207,7 @@ MatchObjectImpMethod proc pImpMtdInfo:PIMPMTDINFORMATION, pObjectName:POINTER, p
   ret
 MatchObjectImpMethod endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ShowObjMtd
 ; Purpose:    Emits HTML codes to render object method member information.
 ; Arguments:  Arg1: -> MEMBERDATA.
@@ -384,7 +384,7 @@ ShowObjMtd proc uses xbx xdi xsi pMemberData:PMEMBERDATA, pSelf:$ObjPtr(ObjPropW
   ret
 ShowObjMtd endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ShowObjVar
 ; Purpose:    Emits HTML codes to render variable member information.
 ; Arguments:  Arg1: -> MEMBERDATA.
@@ -601,7 +601,7 @@ ShowObjVar proc uses xbx xdi xsi pMemberData:PMEMBERDATA, pSelf:$ObjPtr(ObjPropW
   ret
 ShowObjVar endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjPropWnd.Gather
 ; Purpose:    Collect all informations of this object.
 ; Arguments:  None.
@@ -613,7 +613,7 @@ Method ObjPropWnd.Gather, uses xsi
   OCall xsi.GatherVariables, [xsi].pInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GatherObjMtds
 ; Purpose:    Recursion procedure used to collect object method information.
 ; Arguments:  Arg1: -> OBJECTINFORMATION.
@@ -638,7 +638,7 @@ GatherObjMtds proc uses xbx xdi xsi pObjMtdInfo:POBJMTDINFORMATION, pObjName:PST
   ret
 GatherObjMtds endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjPropWnd.GatherMethods
 ; Purpose:    Collect all method information of this object.
 ; Arguments:  Arg1: -> OBJECTINFORMATION.
@@ -670,7 +670,7 @@ Method ObjPropWnd.GatherMethods, uses xsi, pInfo:POBJECTINFORMATION
                                             offset GatherObjMtds, [xax].OBJECTINFORMATION.pName, xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GatherObjVars
 ; Purpose:    Recursion procedure used to collect variable information.
 ; Arguments:  Arg1: -> OBJVARINFORMATION.
@@ -695,7 +695,7 @@ GatherObjVars proc uses xbx xdi xsi pObjVarInfo:POBJVARINFORMATION, pObjName:PST
   ret
 GatherObjVars endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjPropWnd.GatherVariables
 ; Purpose:    Collect all method information of this object.
 ; Arguments:  Arg1: -> OBJECTINFORMATION.
@@ -727,7 +727,7 @@ Method ObjPropWnd.GatherVariables, uses xsi, pInfo:POBJECTINFORMATION
                 offset GatherObjVars, [xax].OBJECTINFORMATION.pName, xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:   	ObjPropWnd.ShowInheritance
 ; Purpose:  	Method that is called recursively to output an inheritance path.
 ; Arguments:	Arg1: -> OBJECTINFORMATION.
@@ -765,7 +765,7 @@ Method ObjPropWnd.ShowInheritance, uses xbx xsi, pObjectInfo:POBJECTINFORMATION,
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjPropWnd.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -868,7 +868,7 @@ Method ObjPropWnd.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ObjPropWnd.Startup
 ; Purpose:    Registers the object with the OS.
 ; Arguments:  None.

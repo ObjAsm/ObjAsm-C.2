@@ -9,7 +9,7 @@
 
 % include &MacPath&ConstDiv.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  TimeToStrA / TimeToStrW
 ; Purpose:    Convert a DTL_TIME to a formated string representation.
 ; Arguments:  Arg1: -> Destination Buffer

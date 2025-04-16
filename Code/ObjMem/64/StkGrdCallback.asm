@@ -16,7 +16,7 @@ CStr StkGrdMessage, "The application may be unstable.", 10, 13,\
                     "Press 'No' to launch the debugger or ", 10, 13,\
                     "'Cancel' to abort the application."
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StkGrdCallback
 ; Purpose:    StackGuard notification callback procedure.
 ;             It is called when StackGuard is active and a stack overrun was detected.

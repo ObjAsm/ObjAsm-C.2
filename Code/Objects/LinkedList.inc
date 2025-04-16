@@ -19,7 +19,7 @@ LINKED_NODE struc
 LINKED_NODE ends
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     LinkedList
 ; Purpose:    Implement a Linear Doubly Linked List (LDLL) of nodes, that contains a POINTER to a
 ;             payload object.
@@ -73,7 +73,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LinkedList.Append
 ; Purpose:    Append a new object to the end of the Linked List.
 ; Arguments:  Arg1: -> object to add.
@@ -101,7 +101,7 @@ Method LinkedList.Append,, pObject:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LinkedList.Clear
 ; Purpose:    Destroy all stored objects and free all allocated resources.
 ; Arguments:  None.
@@ -122,7 +122,7 @@ Method LinkedList.Clear, uses xbx xsi
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LinkedList.Delete
 ; Purpose:    Remove an object from the linked list.
 ; Arguments:  Arg1: -> Object to remove.
@@ -172,7 +172,7 @@ Method LinkedList.Delete, uses xbx, pObject:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LinkedList.Dispose
 ; Purpose:    Dispose an object from the linked list.
 ; Arguments:  Arg1: -> Object to dispose.
@@ -183,7 +183,7 @@ Method LinkedList.Dispose,, pObject:POINTER
   Destroy xax                                           ;Safe dispose of linked Object
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LinkedList.Done
 ; Purpose:    Finalize the LinkedList object, destroy all stored objects and free all allocated
 ;             resources.
@@ -195,7 +195,7 @@ Method LinkedList.Done
   ACall Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LinkedList.GetFirst
 ; Purpose:    Return the first object in the chain.
 ; Arguments:  None.
@@ -212,7 +212,7 @@ Method LinkedList.GetFirst
   mov [xdx].pCurrentNode, xcx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LinkedList.GetLast
 ; Purpose:    Return the last object in the chain.
 ; Arguments:  None.
@@ -229,7 +229,7 @@ Method LinkedList.GetLast
   mov [xdx].pCurrentNode, xcx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LinkedList.GetNext
 ; Purpose:    Return the next object in the chain.
 ; Arguments:  None.
@@ -254,7 +254,7 @@ Method LinkedList.GetNext
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LinkedList.GetNodeByObject
 ; Purpose:    Return a pointer to the node that points to a specified object.
 ; Arguments:  Arg1: -> Object.
@@ -277,7 +277,7 @@ Method LinkedList.GetNodeByObject,, pObject:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LinkedList.GetNth
 ; Purpose:    Return the Nth object in the chain.
 ; Arguments:  Arg1: Index in the range [0.. Count-1]
@@ -302,7 +302,7 @@ Method LinkedList.GetNth,, dIndex:DWORD         ;dIndex = [0..Count-1]
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LinkedList.GetPrev
 ; Purpose:    Return the previous object in the chain.
 ; Arguments:  None.
@@ -328,7 +328,7 @@ Method LinkedList.GetPrev
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LinkedList.InsertAfter
 ; Purpose:    Insert an object after another in the linked list chain.
 ; Arguments:  Arg1: -> Object to insert after.

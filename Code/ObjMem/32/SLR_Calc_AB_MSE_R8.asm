@@ -13,7 +13,7 @@
 SRC_TYPE textequ <REAL8>
 ProcName textequ <SLR_Calc_AB_MSE_R8>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SLR_Calc_AB_MSE_R8
 ; Purpose:    Calculate the Slope (A) and Intercept (B) values of the linear equation y = A*x + B
 ;             that minimize mean squared error (MSE) and the MSE value of a REAL8 array.

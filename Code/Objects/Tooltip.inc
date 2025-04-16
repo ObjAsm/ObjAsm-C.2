@@ -13,7 +13,7 @@ TTF_TRACK        equ    0020h
 TTF_ABSOLUTE     equ    0080h
 TTF_TRANSPARENT  equ    0100h
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Tooltip
 ; Purpose:    Implement a thin wrapper around the Tooltips_class32 GDI control.
 ; Notes:      Due to some undocumented issues, the tooltip class (Tooltips_Class32) does not always
@@ -38,7 +38,7 @@ ObjectEnd
 if IMPLEMENT
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tooltip.AddRectTip
 ; Purpose:    Register a RECT structure with a Tooltip control.
 ; Arguments:  Arg1: -> RECT structure to be added.
@@ -60,7 +60,7 @@ Method Tooltip.AddRectTip, uses xsi, pRect:PRECT, dID:DWORD, pText:PSTRING
   invoke SendMessage, [xsi].hWnd, TTM_ADDTOOL, 0, addr TInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tooltip.AddWndTip
 ; Purpose:    Register a window with a Tooltip control.
 ; Arguments:  Arg1: Handle of the window to be added.
@@ -79,7 +79,7 @@ Method Tooltip.AddWndTip, uses xsi, hWnd:HWND, pText:PSTRING
   invoke SendMessage, [xsi].hWnd, TTM_ADDTOOL, 0, addr TInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tooltip.DelRectTip
 ; Purpose:    Unregister a RECT structure from a Tooltip control.
 ; Arguments:  Arg1: ID to identify the registerd tip.
@@ -97,7 +97,7 @@ Method Tooltip.DelRectTip, uses xsi, dID:DWORD
   invoke SendMessage, [xsi].hWnd, TTM_DELTOOL, 0, addr TInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tooltip.DelWndTip
 ; Purpose:    Unregister a window from a Tooltip control.
 ; Arguments:  Arg1: HANDLE of the window to be unregistered.
@@ -114,7 +114,7 @@ Method Tooltip.DelWndTip, uses xsi, hWnd:HWND
   invoke SendMessage, [xsi].hWnd, TTM_DELTOOL, 0, addr TInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tooltip.Done
 ; Purpose:    Finalize the Tooltip object.
 ; Arguments:  None.
@@ -126,7 +126,7 @@ Method Tooltip.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tooltip.Enable
 ; Purpose:    Enable or disable the Tooltip control.
 ; Arguments:  Arg1: TRUE = Enable / FALSE = Disable.
@@ -137,7 +137,7 @@ Method Tooltip.Enable,, dAction:DWORD
   invoke SendMessage, [xcx].hWnd, TTM_ACTIVATE, dAction, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tooltip.Init
 ; Purpose:    Initialize the Tooltip object.
 ; Arguments:  Arg1: -> Owner object.
@@ -156,7 +156,7 @@ Method Tooltip.Init, uses xsi, pOwner:POINTER, hParent:HWND
   Subclass Tooltip                                      ;Uses xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tooltip.SetDelayTime
 ; Purpose:    Set the delay times of a Tooltip control.
 ; Arguments:  Arg1: Flag indicating the type of delay time:
@@ -169,7 +169,7 @@ Method Tooltip.SetDelayTime,, dType:DWORD, dTime:DWORD
   invoke SendMessage, [xcx].hWnd, TTM_SETDELAYTIME, dType, dTime
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tooltip.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.

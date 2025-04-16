@@ -123,7 +123,7 @@ SEL_CTRLS_PER_LINE  equ   6                             ;Don't include UpDown co
 CTLID_FieldLength   equ   20000
 CTLID_FieldParam    equ   20001
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorLine.CtlsEnable
 ; Purpose:    Set the enable state of the controls and set the standard field values.
 ; Arguments:  Arg1: TRUE or FALSE
@@ -169,7 +169,7 @@ Method DB_StructEditorLine.CtlsEnable, uses xdi xsi, dState:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorLine.CtlsGet
 ; Purpose:    Get xActxxx values and put them in the xPrvxxx object members and in the DB_Field.
 ; Arguments:  Arg1: -> DB_Field.
@@ -223,7 +223,7 @@ Method DB_StructEditorLine.CtlsGet, uses xbx xdi xsi, pField:$ObjPtr(DB_Field)
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorLine.CtlsMove
 ; Purpose:    Moves the controls of the line into the DB_StructEditor control.
 ; Arguments:  Arg1: -> DB_StructEditor.
@@ -261,7 +261,7 @@ Method DB_StructEditorLine.CtlsMove, uses xbx xdi xsi, pControl:POINTER, pCtlPos
   assume xdi:NOTHING, xbx:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorLine.CtlsRead
 ; Purpose:    Read the content of the controls, vakudate them and put these values in the
 ;             xActxxx object members.
@@ -367,7 +367,7 @@ Method DB_StructEditorLine.CtlsRead, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorLine.CtlsSet
 ; Purpose:    Set the content of the controls and fill the "prv" members.
 ; Arguments:  Arg1: -> DB_Field.
@@ -432,7 +432,7 @@ Method DB_StructEditorLine.CtlsSet, uses xbx xdi xsi, pField:$ObjPtr(DB_Field), 
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorLine.CtlsSetDefaults
 ; Purpose:    Set the content of the controls and xPrvxxx members with default values.
 ; Arguments:  None.
@@ -468,7 +468,7 @@ Method DB_StructEditorLine.CtlsSetDefaults, uses xdi xsi
   OCall xsi.CtlsEnable, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorLine.CtlsSetStandards
 ; Purpose:    Set the controls with standard field values.
 ; Arguments:  None.
@@ -512,7 +512,7 @@ Method DB_StructEditorLine.CtlsSetStandards, uses xbx xdi xsi
   invoke SetWindowText, [xsi].hEdtFieldIndex, xdx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorLine.CheckChanges
 ; Purpose:    Verify if there are changes in the line and set the flags accordingly.
 ; Arguments:  None.
@@ -592,7 +592,7 @@ Method DB_StructEditorLine.CheckChanges, uses xbx xsi
   setnz al
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorLine.DisplayInfo
 ; Purpose:    Set the information icon on the left side of the editorline.
 ; Arguments:  None.
@@ -626,7 +626,7 @@ Method DB_StructEditorLine.DisplayInfo, uses xsi
   invoke SendMessage, [xsi].hStcInfo, STM_SETICON, xax, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorLine.Done
 ; Purpose:    Finalize the DB_StructEditorLine object.
 ; Arguments:  None.
@@ -645,7 +645,7 @@ Method DB_StructEditorLine.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorLine.Init
 ; Purpose:    Initialize the DB_StructEditor object.
 ; Arguments:  Arg1: -> DB_StructEditor
@@ -754,7 +754,7 @@ Method DB_StructEditorLine.Init, uses xbx xdi xsi, pOwner:$ObjPtr(Collection)
   invoke SendMessageA, [xsi].hCboFieldType, CB_SELECTSTRING, 0, addr cBuffer
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorLine.SetBuddy
 ; Purpose:    Link the UpDown controls to theier buddy controls.
 ; Arguments:  Arg1: None.
@@ -774,7 +774,7 @@ MethodEnd
 
 CStr szDB_StructEditorClass, "DB_StructEditor"
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.CtlsEnable
 ; Purpose:    Set the enable state of the controls.
 ; Arguments:  Arg1: TRUE or FALSE
@@ -790,7 +790,7 @@ Method DB_StructEditor.CtlsEnable, uses xbx xsi, dState:DWORD
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.CtlsGet
 ; Purpose:    Get the content of the editor controls and put it into the record fields.
 ; Arguments:  Arg1: -> DB_Record.
@@ -837,7 +837,7 @@ Method DB_StructEditor.CtlsGet, uses xbx xdi xsi, pTable:$ObjPtr(DB_Table)
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.CtlsInit
 ; Purpose:    Create and initialize the controls according to the DB_Table information
 ; Arguments:  None.
@@ -892,7 +892,7 @@ Method DB_StructEditor.CtlsInit, uses xbx xsi
   invoke ReleaseDC, hParent, hDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.CtlsMove
 ; Purpose:    Reposition the controls according to the new Origin.
 ; Arguments:  None
@@ -961,7 +961,7 @@ Method DB_StructEditor.CtlsMove, uses xsi
   ClrWndStyleEx [xsi].hWnd, WS_EX_COMPOSITED
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.CtlsRead
 ; Purpose:    Read the content of the editor controls and put it into the Actxxx members.
 ; Arguments:  None.
@@ -977,7 +977,7 @@ Method DB_StructEditor.CtlsRead, uses xbx xsi
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.CtlsSet
 ; Purpose:    Set the editor controls with the content of the table fields.
 ; Arguments:  Arg1: -> DB_Table.
@@ -1015,7 +1015,7 @@ Method DB_StructEditor.CtlsSet, uses xbx xdi xsi, pTable:$ObjPtr(DB_Table)
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.Dispatch
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Window handle.
@@ -1030,7 +1030,7 @@ Method DB_StructEditor.Dispatch, uses xsi, hWnd:HWND, uMsg:DWORD, wParam:WPARAM,
   DispatchEvent <DefWindowProc, hWnd>                   ;xsi -> Object instance
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.Done
 ; Purpose:    Finalize the DB_StructEditor object.
 ; Arguments:  None.
@@ -1049,7 +1049,7 @@ Method DB_StructEditor.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.Init
 ; Purpose:    Initialize the DB_StructEditor object.
 ; Arguments:  Arg1: -> Owner object.
@@ -1073,7 +1073,7 @@ Method DB_StructEditor.Init, uses xsi, pOwner:POINTER, hParent:HWND
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.InitRes
 ; Purpose:    Initialize the Button object from a resource.
 ; Arguments:  Arg1: Button window handle.
@@ -1086,7 +1086,7 @@ Method DB_StructEditor.InitRes,, hWnd:HWND
   mov [xcx].hWnd, xdx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -1125,7 +1125,7 @@ Method DB_StructEditor.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1139,7 +1139,7 @@ Method DB_StructEditor.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.OnEnable
 ; Purpose:    Event procedure for WM_ENABLE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1154,7 +1154,7 @@ Method DB_StructEditor.OnEnable,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -1177,7 +1177,7 @@ Method DB_StructEditor.OnEraseBkgnd, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.OnMouseWheel
 ; Purpose:    Event procedure for WM_MOUSEWHEEL message.
 ; Arguments:  Arg1: First message parameter.
@@ -1252,7 +1252,7 @@ Method DB_StructEditor.OnMouseWheel, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter. wParam = SIZE_xxx
@@ -1318,7 +1318,7 @@ Method DB_StructEditor.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.OnVScroll
 ; Purpose:    Event procedure for WM_VSCROLL message.
 ; Arguments:  Arg1: First message parameter.
@@ -1396,7 +1396,7 @@ Method DB_StructEditor.OnVScroll, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.Select
 ; Purpose:    Select a new DB_StructEditorLine. The previous is deselected.
 ; Arguments:  Arg1: -> DB_StructEditorLine.
@@ -1426,7 +1426,7 @@ Method DB_StructEditor.Select, uses xsi, pEditorLine:$ObjPtr(DB_StructEditorLine
   invoke SendMessage, xax, WM_COMMAND, IDC_STRUC_EDT, [xsi].hWnd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.Startup
 ; Purpose:    Register the DB_StructEditor object with the OS.
 ; Arguments:  None.
@@ -1452,7 +1452,7 @@ Method DB_StructEditor.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditor.WindowProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.

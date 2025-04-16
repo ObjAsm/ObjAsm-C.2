@@ -118,7 +118,7 @@ RegInfoJumpTable label POINTER
 POINTER offset RegInfoTable_2, offset RegInfoTable_3, offset RegInfoTable_4
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macros      Many
 ; Purpose:    Build blocks for analysis routines.
 
@@ -487,7 +487,7 @@ HandleComment macro
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetRegisterInfo
 ; Purpose:    Check if the PegName is a full word sized register.
 ; Arguments:  Arg1: -> Register name.
@@ -529,7 +529,7 @@ GetRegisterInfo proc pRegName:PSTRINGA, dRegLen:DWORD
   ret
 GetRegisterInfo endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CheckIfRegisterWasUsed
 ; Purpose:    verify if a register or any of its subregisters are present in the UsedRegNames
 ;             collection.
@@ -552,7 +552,7 @@ CheckIfRegisterWasUsed proc uses xbx pRegName:PSTRINGA, pUsedRegNames:$ObjPtr(So
   ret
 CheckIfRegisterWasUsed endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  OutputIfRegisterWasNotUsed
 ; Purpose:    Procedure to verify if a register or any of its subregisters are present
 ;             in the UsedRegNames collection. If they are not, then write the starting register
@@ -582,7 +582,7 @@ OutputIfRegisterWasNotUsed proc uses xbx pRegName:PSTRINGA, pOutput:PSTRINGA, \
   ret
 OutputIfRegisterWasNotUsed endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  OutputIfRegisterWasUsed
 ; Purpose:    Procedure to verify if a register or any of its subregisters are present
 ;             in the UsedRegNames collection. If they were, write them all to the output buffer.
@@ -609,7 +609,7 @@ OutputIfRegisterWasUsed proc uses xbx pRegName:PSTRINGA, pOutput:PSTRINGA, \
   ret
 OutputIfRegisterWasUsed endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  OutputIfRegisterWasNotPreservedButUsed
 ; Purpose:    Verify if a register was NOT preserved and if it or any of its subregisters were
 ;             used. If the were, output them all to the output buffer.
@@ -630,7 +630,7 @@ OutputIfRegisterWasNotPreservedButUsed proc pRegName:PSTRINGA, \
   ret
 OutputIfRegisterWasNotPreservedButUsed endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ShowVarName
 ; Purpose:    Callback procedure.
 ; Arguments:  Arg1: -> Variable name.
@@ -644,7 +644,7 @@ ShowVarName proc pVarName:PSTRINGA, pChild:$ObjPtr(OAT_Child), Color:RGBQUAD
   ret
 ShowVarName endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetNextWord
 ; Purpose:    Search for the next word in a specified sentence.
 ; Arguments:  Arg1: -> Sentence.
@@ -746,7 +746,7 @@ GetNextWord proc uses xbx pStart:PSTRINGA, dSkipStrings:DWORD
   ret
 GetNextWord endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.CheckMtdArg
 ; Purpose:    Verify the use object method arguments.
 ; Arguments:  None.
@@ -826,7 +826,7 @@ Method OAT_Child.CheckMtdArg, uses xbx xdi xsi
   mov eax, dFindings
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.CheckMtdLoc
 ; Purpose:    Verify the use of method local variables in the currently opened stream.
 ; Arguments:  None.
@@ -901,7 +901,7 @@ Method OAT_Child.CheckMtdLoc, uses xbx xdi xsi
   mov eax, dFindings
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.CheckMtdReg
 ; Purpose:    Verify the use and preservation of non volatile registers on object methods.
 ; Arguments:  None.
@@ -993,7 +993,7 @@ Method OAT_Child.CheckMtdReg, uses xbx xdi xsi
   mov eax, dFindings
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.CheckPrcArg
 ; Purpose:    Verify the use object procedure arguments.
 ; Arguments:  None.
@@ -1075,7 +1075,7 @@ Method OAT_Child.CheckPrcArg, uses xbx xdi xsi
   mov eax, dFindings
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:   	OAT_Child.CheckPrcLoc
 ; Purpose:  	Verify the use of procedure local variables in the currently opened stream.
 ; Arguments:	None.
@@ -1165,7 +1165,7 @@ Method OAT_Child.CheckPrcLoc, uses xbx xdi xsi
   mov eax, dFindings
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:   	OAT_Child.CheckPrcReg
 ; Purpose:  	Verify the use and preservation of non volatile registers on object methods.
 ; Arguments:	None.
@@ -1273,7 +1273,7 @@ Method OAT_Child.CheckPrcReg, uses xbx xdi xsi
   mov eax, dFindings
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Child.CheckMacArg
 ; Purpose:    Verify the use object procedure arguments.
 ; Arguments:  None.
@@ -1366,7 +1366,7 @@ Method OAT_Child.CheckMacArg, uses xbx xdi xsi
   mov eax, dFindings
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:   	OAT_Child.CheckMacLoc
 ; Purpose:  	Verify the use of procedure local variables in the currently opened stream.
 ; Arguments:	None.

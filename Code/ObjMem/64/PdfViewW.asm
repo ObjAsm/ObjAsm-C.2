@@ -16,7 +16,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <PdfViewW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  PdfViewW
 ; Purpose:    Display a PDF document on a named destination.
 ; Arguments:  Arg1: Parent HANDLE.

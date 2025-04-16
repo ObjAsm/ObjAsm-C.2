@@ -15,7 +15,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Quad
 ; Purpose:    Transform 2 DoubleWords into a QuadWord.
 ; Arguments:  Arg1: High order DoubleWord.
@@ -33,7 +33,7 @@ $Quad macro dWrd1:req, dWrd2:req
   exitm <edx:eax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qmov
 ; Purpose:    Move a QUADWORD.
 ; Arguments:  Arg1: Destination QUADWORD.
@@ -52,7 +52,7 @@ qmov macro qWrd1:req, qWrd2:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qdmov
 ; Purpose:    Move a DWORD to a QUADWORD.
 ; Arguments:  Arg1: Destination QUADWORD.
@@ -72,7 +72,7 @@ qdmov macro qWrd:req, dWrd:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qShiftL
 ; Purpose:    Shift a edx:eax left cx bits.
 ; Arguments:  Arg1: edx:eax = QWORD
@@ -90,7 +90,7 @@ qShiftL macro
   Done:
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:        qneg
 ; Purpose:      Negate edx:eax
 ; Arguments:    arg1: edx:eax = QWORD
@@ -101,7 +101,7 @@ qneg macro
   sbb edx, -1                                           ;;Increment high word if low word was 0.
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qdadd
 ; Purpose:    Add a DoubleWord to a QUADWORD (qWrd = qWrd + dWrd).
 ; Arguments:  Arg1: Destination QUADWORD.
@@ -125,7 +125,7 @@ qdadd macro qWrd:req, dWrd:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qqadd
 ; Purpose:    Add 2 QuadWords (qWrd1 = qWrd1 + qWrd2).
 ; Arguments:  Arg1: Destination QUADWORD.
@@ -150,7 +150,7 @@ qqadd macro qWrd1:req, qWrd2:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qdsub
 ; Purpose:    Subtract a DoubleWord from a QUADWORD (qWrd = qWrd - dWrd).
 ; Arguments:  Arg1: Destination QUADWORD.
@@ -174,7 +174,7 @@ qdsub macro qWrd:req, dWrd:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qqsub
 ; Purpose:    Subtract 2 QuadWords (qWrd1 = qWrd1 - qWrd2).
 ; Arguments:  Arg1: Destination QUADWORD.
@@ -199,7 +199,7 @@ qqsub macro qWrd1:req, qWrd2:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qdmul
 ; Purpose:    Multiply a QUADWORD by a DoubleWord.
 ; Arguments:  ecx:edx:eax = edx:eax * ebx.
@@ -218,7 +218,7 @@ qdmul macro
   adc ecx, 0
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qddiv
 ; Purpose:    Divide a QUADWORD by a DoubleWord. Uses ecx.
 ;             Output: edx:eax = quotient of division of dividend by divisor
@@ -243,7 +243,7 @@ qddiv macro
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      qqdiv
 ; Purpose:    Divide 2 unsigned QuadWords. Uses edi, esi.
 ;             Output:  edx:eax = quotient of division of dividend by divisor

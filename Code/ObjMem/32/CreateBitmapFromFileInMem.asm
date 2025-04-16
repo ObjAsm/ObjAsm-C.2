@@ -11,7 +11,7 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CreateBitmapFromFileInMem
 ; Purpose:    Create a bitmap from bitmap file data stored in memory.
 ; Arguments:  Arg1: -> Bitmap data as stored in a .bmp file:

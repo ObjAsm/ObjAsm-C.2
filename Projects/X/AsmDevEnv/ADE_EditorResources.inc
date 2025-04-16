@@ -36,7 +36,7 @@ ELT_NULL                      equ   3         ;
 ; EditorResources implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorResources.ConfigLoad
 ; Purpose:    Load configuration and create matching resources.
 ; Arguments:  Arg1: -> Ini-File Name.
@@ -249,7 +249,7 @@ Method EditorResources.ConfigLoad, uses xsi, pIniFullFileName:PSTRING, pSectionP
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorResources.ConfigSave
 ; Purpose:    Save configuration values.
 ; Arguments:  None.
@@ -258,7 +258,7 @@ MethodEnd
 Method EditorResources.ConfigSave
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorResources.Done
 ; Purpose:    Finalize the EditorResources object.
 ; Arguments:  None.
@@ -290,7 +290,7 @@ Method EditorResources.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorResources.Init
 ; Purpose:    Initialize the EditorResources object.
 ; Arguments:  Arg1: -> Owner object.
@@ -325,7 +325,7 @@ Method EditorResources.Init, uses xbx xdi xsi, pOwner:POINTER, pEditorSharedReso
   m2m [xsi].hBrushLineIndGreen, [xbx].$Obj(EditorSharedResources).hBrushLineIndGreen, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorResources.Zoom
 ; Purpose:    Manipulate the editor fonts to create the illusion of zooming in and out.
 ; Arguments:  Arg1: ZoomFactor.

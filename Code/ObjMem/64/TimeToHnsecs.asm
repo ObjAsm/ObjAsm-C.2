@@ -11,7 +11,7 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  TimeToHnsecs
 ; Purpose:    Convert DTL_TIME information into hecto-nano-seconds.
 ; Arguments:  Arg1: -> hnsecs or NULL

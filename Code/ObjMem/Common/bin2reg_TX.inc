@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  bin2byteA / bin2byteW up to bin2qwordA / bin2qwordW
 ; Purpose:    Conversion of an input string that contains a binary number in the form of a
 ;             sequence of "0" and "1" into a BYTE, WORD, DWORD or QWORD.

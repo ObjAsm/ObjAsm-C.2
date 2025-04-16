@@ -12,7 +12,7 @@
 
 ProcName textequ <soShl>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  soShl
 ; Purpose:    Shift left of a signed OWORD (signed and unsigned procs are identical).
 ; Arguments:  Arg1: SOWORD in rdx:rax.

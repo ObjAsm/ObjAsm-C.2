@@ -20,7 +20,7 @@ SeriesSetupBar struct
   dFillStyle         DWORD      ?
 SeriesSetupBar ends
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     ChartBarTabSeries
 ; Purpose:    Series Tab of ChartSetup.
 
@@ -37,7 +37,7 @@ Object ChartBarTabSeries, , ChartTabSeries
 ObjectEnd
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  ChartBarSeries
 ; Purpose: Implement a data series for plot usage.
 ; Note:    - Data must be floating point numbers (REAL4 or REAL8). See CHT_FLOAT.

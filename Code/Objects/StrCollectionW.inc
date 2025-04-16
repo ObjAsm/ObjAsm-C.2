@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     StrCollectionW
 ; Purpose:    Implement an ANSI string collection.
 
@@ -25,7 +25,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     StrCollectionW.DeserializeItem
 ; Purpose:    Convert a serialized string item back.
 ; Arguments:  Arg1: -> Item.
@@ -35,7 +35,7 @@ if IMPLEMENT
 Method StrCollectionW.DeserializeItem,, pItem:PSTRINGW, pDeserInfo:PDESER_INFO
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     StrCollectionW.DestroyItem
 ; Purpose:    Remove the WIDE string item from the collection and disposes it.
 ; Arguments:  Arg1: -> WIDE string.
@@ -45,7 +45,7 @@ Method StrCollectionW.DestroyItem,, pItem:PSTRINGW
   invoke StrDisposeW, pItem
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     StrCollectionW.GetItem
 ; Purpose:    Read a WIDE string from the stream by calling Stream.ReadStr.
 ; Arguments:  Arg1: -> Stream object.
@@ -55,7 +55,7 @@ Method StrCollectionW.GetItem,, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.StrReadW
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     StrCollectionW.PutItem
 ; Purpose:    Write the WIDE string item on to the Stream by calling Stream.WriteStrW.
 ; Arguments:  Arg1: -> Stream object.
@@ -66,7 +66,7 @@ Method StrCollectionW.PutItem,, pStream:$ObjPtr(Stream), pString:PSTRINGW
 ;  OCall pStream::Stream.StrWriteW, pString
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    StrCollectionW.SerializeItem
 ; Purpose:   Serialize a string item.
 ; Arguments: Arg1: -> Item.

@@ -56,7 +56,7 @@ WULine proc uses xbx pPXM:POINTER, r4Xi:REAL4, r4Yi:REAL4, r4Xd:REAL4, r4Yd:REAL
   ret
 WULine endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 WUCircle proc uses xbx pPXM:POINTER, r4Xc:REAL4, r4Yc:REAL4, r4R:REAL4, dColor:DWORD, dPoints:DWORD
   local r4X:REAL4, r4Y:REAL4, r4Inc:REAL4
@@ -91,7 +91,7 @@ WUCircle endp
 ;    Application implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.Done
 ; Purpose:   Release resources & finalize the application object.
 ; Arguments: None.
@@ -105,7 +105,7 @@ Method Application.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.Init
 ; Purpose:   Initialize the SDI application object.
 ; Arguments: None.
@@ -165,7 +165,7 @@ Method Application.Init, uses xsi
   invoke UpdateWindow, [xsi].hWnd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnCommand
 ; Purpose:   Event procedure for WM_COMMAND message.
 ; Arguments: Arg1: First message parameter.
@@ -201,7 +201,7 @@ Method Application.OnCommand, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnClose
 ; Purpose:   Event procedure for WM_CLOSE message.
 ; Arguments: Arg1: First message parameter.
@@ -219,7 +219,7 @@ Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnMouseMove
 ; Purpose:   Event procedure for WM_MOUSEMOVE message.
 ; Arguments: Arg1: First message parameter.
@@ -252,7 +252,7 @@ Method Application.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_UPDATENOW or RDW_INVALIDATE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnPaint
 ; Purpose:   Event procedure for WM_PAINT message.
 ; Arguments: Arg1: First message parameter.
@@ -272,7 +272,7 @@ Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.Startup
 ; Purpose:   Register the object class with the OS.
 ; Arguments: None.

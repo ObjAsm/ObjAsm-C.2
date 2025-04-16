@@ -21,7 +21,7 @@ ChartSetupTabCtrl DEF_TABCONTROL {100, STSTYLE, WS_EX_CONTROLPARENT, NULL, {<4,3
 IDD_CHT_SETUP               equ   5000
 IDC_CHT_SETUP_BTN_PREVIEW   equ   5001
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartSetup.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -48,7 +48,7 @@ Method ChartSetup.CtlsGet, uses xbx xdi xsi
   .ColNext
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartSetup.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -78,7 +78,7 @@ Method ChartSetup.CtlsSet, uses xbx xdi xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartSetup.Done
 ; Purpose:    Finalize the ChartSetup object.
 ; Arguments:  None.
@@ -95,7 +95,7 @@ Method ChartSetup.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartSetup.Init
 ; Purpose:    Initialaize a ChartSetup object.
 ; Arguments:  Arg1: -> Owner object (ChartWnd).
@@ -118,7 +118,7 @@ Method ChartSetup.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, sdSelElement
   OCall [xsi].TabSeriesColl::Collection.Init, xsi, 2, 1, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartSetup.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -148,7 +148,7 @@ Method ChartSetup.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartSetup.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -160,7 +160,7 @@ Method ChartSetup.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke SetWindowLongPtr, [xsi].hWnd, DWLP_USER, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartSetup.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -279,7 +279,7 @@ Method ChartSetup.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnInitDialog, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartSetup.Restore
 ; Purpose:    Restore original values.
 ; Arguments:  None.

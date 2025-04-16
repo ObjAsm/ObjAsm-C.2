@@ -1063,7 +1063,7 @@ SPFEI_ALL_SR_EVENTS           equ 001FFFFC00000000h or SPFEI_FLAGCHECK
 SPFEI_ALL_EVENTS              equ 0EFFFFFFFFFFFFFFFh
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:     SPFEI
 ; Purpose:   Create a QWORD in edx::eax that identifies the event interest.
 ; Arguments: Arg1: Interest flag.

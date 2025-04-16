@@ -12,7 +12,7 @@
 
 ProcName textequ <NewObjInst>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  NewObjInst
 ; Purpose:    Create an object instance from an object ID.
 ; Arguments:  Arg1: Object ID.

@@ -83,40 +83,40 @@ XTVN_DISP_INFO struc
 XTVN_DISP_INFO ends
 PXTVN_DISP_INFO typedef ptr XTVN_DISP_INFO
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Object:     XTreeViewNode
 ; Purpose:    Implement node of the XTreeView.
 ;
 ; Node layout:
-; 覧覧覧覧覧・;
+; ----------・;
 ;
 ;  |<------ Node indent ----->|<----- Node width ----->|
 ;  |                          |                        |
 ;  |                          |                        |
 ;
 ;
-;   覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧     覧覧覧覧覧・sdNodeTop
-;  |       ｦ      ｦ      ｦ     覧覧覧覧覧覧覧覧覧覧覧覧           |     /ｦ\
-;  |       ｦ      ｦ      ｦ    |  Con-   覧覧覧覧覧覧   |          |      ｦ
+;   --------------------------------------------------------------     ----------・sdNodeTop
+;  |       ｦ      ｦ      ｦ     ------------------------           |     /ｦ\
+;  |       ｦ      ｦ      ｦ    |  Con-   ------------   |          |      ｦ
 ;  |       ｦ      ｦ     [-]---|  tent  |  TextRect  |  |          |      Node height
-;  |       ｦ      ｦ   Toggler |  Rect   覧覧覧覧覧覧   |          |      ｦ
-;  |       ｦ      ｦ    Rect    覧覧覧覧覧覧覧覧覧覧覧覧           |     \ｦ/
-;  |       ｦ      ｦ             ｦ     覧覧覧覧覧覧覧覧覧覧覧      |    覧覧覧覧覧  sdNodeBot
+;  |       ｦ      ｦ   Toggler |  Rect   ------------   |          |      ｦ
+;  |       ｦ      ｦ    Rect    ------------------------           |     \ｦ/
+;  |       ｦ      ｦ             ｦ     ----------------------      |    ----------  sdNodeBot
 ;  |       ｦ      ｦ             ｦ    |                      |     |     /ｦ\
 ;  |       ｦ      ｦ             ｦ----|      First Child     |     |      ｦ
 ;  |       ｦ      ｦ             ｦ    |                      |     |      ｦ
-;  |       ｦ      ｦ             ｦ     覧覧覧覧覧覧覧覧覧覧覧      |      ｦ
-;  |       ｦ      ｦ             ｦ     覧覧覧覧覧覧覧覧覧覧覧覧覧  |      ｦ
+;  |       ｦ      ｦ             ｦ     ----------------------      |      ｦ
+;  |       ｦ      ｦ             ｦ     --------------------------  |      ｦ
 ;  |       ｦ      ｦ             ｦ    |                          | |      ｦ
 ;  |       ｦ      ｦ            [+]---|      Next Child          | |      Branch height
 ;  |       ｦ      ｦ             ｦ    |                          | |      ｦ
-;  |       ｦ      ｦ             ｦ     覧覧覧覧覧覧覧覧覧覧覧覧覧  |      ｦ
-;  |       ｦ      ｦ             ｦ     覧覧覧覧覧覧覧覧覧覧覧      |      ｦ
+;  |       ｦ      ｦ             ｦ     --------------------------  |      ｦ
+;  |       ｦ      ｦ             ｦ     ----------------------      |      ｦ
 ;  |       ｦ      ｦ             ｦ    |                      |     |      ｦ
 ;  |       ｦ      ｦ              ----|      Last Child      |     |      ｦ
 ;  |       ｦ      ｦ                  |                      |     |      ｦ
-;  |       ｦ      ｦ                   覧覧覧覧覧覧覧覧覧覧覧      |     \ｦ/
-;   覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧     覧覧・;
+;  |       ｦ      ｦ                   ----------------------      |     \ｦ/
+;   --------------------------------------------------------------     ----・;
 ;
 ;  |                                 |                          | |
 ;  |                                 |                          | |
@@ -161,12 +161,12 @@ Object XTreeViewNode, XTreeViewNodeID, Streamable
   DefineVariable    dBranchWidth,       DWORD,        0
 ObjectEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Object:     XTreeView
 ; Purpose:    Implement the XTreeView.
 ;
 ; Features:
-; 覧覧覧覧
+; --------
 ; Smooth scrolling.
 ; Customized drawing.
 ; Each node can have different heights.
@@ -183,7 +183,7 @@ ObjectEnd
 ; Flexible intelligent cursor management.
 ;
 ; Some rules:
-; 覧覧覧覧覧
+; ----------
 ; 1. The owner of all nodes is the XTreeView object.
 ; 2. The parent of a node is its hirarchical parent node in the tree.
 ; 3. Root nodes have NULL as parent.
@@ -195,7 +195,7 @@ ObjectEnd
 ;    the derived object.
 ;
 ; XTreeView public methods:
-; 覧覧覧覧覧覧覧覧覧覧覧覧
+; ------------------------
 ; Init / Done
 ; Insert / Remove / Dispose
 ; Select / Draw
@@ -313,7 +313,7 @@ ObjectEnd
 ; ==================================================================================================
 
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Macro:      XTV_BrowseBack
 ; Purpose:    Browse the TreeView back like pressing the up key.
 ; Arguments:  Arg1: -> starting node. Must be a register!
@@ -331,7 +331,7 @@ XTV_BrowseBack macro pNode:req
   .endif
 endm
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Macro:      XTV_BrowseFrwd
 ; Purpose:    Browse the TreeView forward like pressing the down key.
 ; Arguments:  Arg1: -> starting node. Must be a register!
@@ -353,7 +353,7 @@ XTV_BrowseFrwd macro pNode:req
   .endif
 endm
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Macro:      XTV_SimulateMouseMove
 ; Purpose:    Simulate a mouse movement.
 ; Arguments:  Arg1: initial value for the return value.
@@ -381,7 +381,7 @@ XTV_SimulateMouseMove macro InitialValue:req, Args:vararg
   ExitMethod                                            ;;Exit the metod here
 endm
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Macro:      XTV_GetBottomViewNode
 ; Purpose:    Return the node at the bottom of the view. If we don't reach the bottom of the view,
 ;             it returns NULL in the return register and in the optional register the last node.
@@ -405,7 +405,7 @@ XTV_GetBottomViewNode macro pXTVReg:req, RetReg:req, AuxReg32:req, LastNode:=<>
   .endw
 endm
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Macro:      XTV_GetBranchMaxWidth
 ; Purpose:    Return the width of a tree branch
 ; Arguments:  Arg1: first node in branch.
@@ -433,7 +433,7 @@ XTV_GetBranchMaxWidth macro pStartNode:req, pXTV:req    ;;-> first node in branc
   .endw
 endm
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Macro:      XTV_IsCollapsed
 ; Purpose:    Expression to check if a node is collapsed.
 ; Arguments:  Arg1: -> Node. Must be a register!
@@ -444,7 +444,7 @@ XTV_IsCollapsed macro pNode:req
          !!([pNode].$Obj(XTreeViewNode).dState & XTVNS_EXPANDED)>
 endm
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Macro:      XTV_IsExpanded
 ; Purpose:    Expression to check if a node is expanded.
 ; Arguments:  Arg1: -> Node. Must be a register!
@@ -455,7 +455,7 @@ XTV_IsExpanded macro pNode:req
          ([pNode].$Obj(XTreeViewNode).dState & XTVNS_EXPANDED)>
 endm
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Macro:      XTV_IsPointInRect
 ; Purpose:    Expression to check if a point is contained in a rectangle.
 ; Arguments:  Arg1: X coord.
@@ -498,7 +498,7 @@ XTV_LogFontText LOGFONT <0, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHA
 
 ;##\
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     DisplayInfoColl.DestroyItem
 ; Purpose:    Auxiliary procedure. Don't call directly!
 ; Arguments:  -> Item.
@@ -519,7 +519,7 @@ MethodEnd
 
 ;##\
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeViewNode.CanDragMe
 ; Purpose:    Indicate if a drag operation can be started.
 ; Arguments:  Arg1: Key flags (MK_CONTROL, MK_LBUTTON, MK_MBUTTON, MK_RBUTTON, MK_SHIFT).
@@ -529,7 +529,7 @@ Method XTreeViewNode.CanDragMe,, dKeyFlags:DWORD
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeViewNode.CanDropHere
 ; Purpose:    Inform how the node on arg1 can be inserted when dropped. Standard behaviour.
 ; Arguments:  Arg1: -> Node to be dropped.
@@ -605,7 +605,7 @@ Method XTreeViewNode.CanDropHere, uses xsi, pNode:$ObjPtr(XTreeViewNode), dKeyFl
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeViewNode.ContextPopup
 ; Purpose:    Placeholder for a context popup menu.
 ; Arguments:  Arg1: X coord in screen coords.
@@ -615,7 +615,7 @@ MethodEnd
 Method XTreeViewNode.ContextPopup,, dXPos:DWORD, dYPos:DWORD
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeViewNode.Done
 ; Purpose:    Finalize the XTreeViewNode object and all childs in its branch.
 ; Arguments:  None.
@@ -634,7 +634,7 @@ Method XTreeViewNode.Done, uses xbx xsi
   ACall xsi.Done
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeViewNode.Init
 ; Purpose:    Initialize a XTreeViewNode object.
 ; Arguments:  Arg1: -> Owner object, XTreeView.
@@ -651,7 +651,7 @@ Method XTreeViewNode.Init, uses xsi, pOwner:POINTER, dWidth:DWORD, dHeight:DWORD
   m2m [xsi].dState, dState, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeViewNode.MouseHit
 ; Purpose:    Check if the mouse has clicked a hotspot and perform an action.
 ; Arguments:  Arg1: button that triggered this action.
@@ -762,7 +762,7 @@ Method XTreeViewNode.MouseHit, uses xbx xdi xsi, dButton:DWORD, pPoint:PPOINT, \
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeViewNode.MouseHitDbl
 ; Purpose:    Check if the mouse has double clicked a hotspot and perform an action.
 ; Arguments:  Arg1: Button that triggered this action.
@@ -776,7 +776,7 @@ Method XTreeViewNode.MouseHitDbl,, dButton:DWORD, pPoint:PPOINT, \
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeViewNode.Render
 ; Purpose:    Draw the complete node.
 ; Arguments:  Arg1: -> XTVN_DISP_INFO.
@@ -823,7 +823,7 @@ Method XTreeViewNode.Render, uses xsi, pDispInfo:PXTVN_DISP_INFO
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeViewNode.RenderContent
 ; Purpose:    Draw the content of the node.
 ; Arguments:  Arg1: -> XTVN_DISP_INFO structure. If NULL, no action is performed.
@@ -874,7 +874,7 @@ Method XTreeViewNode.RenderContent, uses xbx xdi xsi, pDispInfo:PXTVN_DISP_INFO
     .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeViewNode.RenderText
 ; Purpose:    Draw the text content of the node.
 ; Arguments:  Arg1: -> XTVN_DISP_INFO. If NULL, no action is performed.
@@ -916,7 +916,7 @@ Method XTreeViewNode.RenderText, uses xbx xdi xsi, pDispInfo:PXTVN_DISP_INFO, pT
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeViewNode.RenderTreeStruc
 ; Purpose:    Draw the connection lines and toggler boxes ([+] or [-]).
 ; Arguments:  Arg1: -> XTVN_DISP_INFO. If NULL, no action is performed.
@@ -1067,7 +1067,7 @@ Method XTreeViewNode.RenderTreeStruc, uses xbx xdi xsi, pDispInfo:PXTVN_DISP_INF
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeViewNode.Toggle
 ; Purpose:    Expand or collapses this node.
 ; Arguments:  None.
@@ -1151,7 +1151,7 @@ MethodEnd
 
 ;##\
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  XTV_IsPointInContent
 ; Purpose:    Check if a point is contained in the ContentRect.
 ; Arguments:  Arg1: -> XTVN_DISP_INFO structure.
@@ -1174,7 +1174,7 @@ XTV_IsPointInContent proc pDispInfo:PXTVN_DISP_INFO, dPosX:DWORD, dPosY:DWORD
   ret
 XTV_IsPointInContent endp
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  XTV_IsPointInNode
 ; Purpose:    Check if a point is contained in the node band.
 ; Arguments:  Arg1: -> XTVN_DISP_INFO structure.
@@ -1193,7 +1193,7 @@ XTV_IsPointInNode proc pDispInfo:PXTVN_DISP_INFO, dPosY:DWORD
   ret
 XTV_IsPointInNode endp
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  XTV_IsPointInText
 ; Purpose:    Check if a point is contained in the TextRect.
 ; Arguments:  Arg1: -> XTVN_DISP_INFO structure.
@@ -1216,7 +1216,7 @@ XTV_IsPointInText proc pDispInfo:PXTVN_DISP_INFO, dPosX:DWORD, dPosY:DWORD
   ret
 XTV_IsPointInText endp
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.CanDropHere
 ; Purpose:    Inform how the node on arg1 can be dropped. Std behaviour.
 ; Arguments:  Arg1: -> Node.
@@ -1265,7 +1265,7 @@ Method XTreeView.CanDropHere,, pNode:$ObjPtr(XTreeViewNode), dKeyFlags:DWORD, dC
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.CreateBackBuffer
 ; Purpose:    Create a backbuffer and recalculates the DrawSize structure members.
 ; Arguments:  None.
@@ -1305,7 +1305,7 @@ Method XTreeView.CreateBackBuffer, uses xsi
   invoke ReleaseDC, [xsi].hWnd, hDC
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.Dispatch
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Window handle.
@@ -1320,7 +1320,7 @@ Method XTreeView.Dispatch, uses xsi, hWnd:HWND, uMsg:DWORD, wParam:WPARAM, lPara
   DispatchEvent <DefWindowProc, hWnd>                   ;xsi -> Object instance
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.Dispose
 ; Purpose:    Remove the node from the XTreeView and destroyes it with all its childs.
 ; Arguments:  Arg1: -> Node to dispose.
@@ -1334,7 +1334,7 @@ Method XTreeView.Dispose, uses xsi, pNode:$ObjPtr(XTreeViewNode)
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.Done
 ; Purpose:    Finalize the XTreeView object.
 ; Arguments:  None.
@@ -1355,7 +1355,7 @@ Method XTreeView.Done, uses xbx xsi
   ACall xsi.Done
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.Draw
 ; Purpose:    Render all nodes in view on the back buffer.
 ; Arguments:  None.
@@ -1464,7 +1464,7 @@ Method XTreeView.Draw, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.Drop
 ; Purpose:    Drop a node.
 ; Arguments:  Arg1: -> Node to drop.
@@ -1508,7 +1508,7 @@ Method XTreeView.Drop, uses xsi, pNode:$ObjPtr(XTreeViewNode), pRefNode:$ObjPtr(
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.Find1stVisibleNode
 ; Purpose:    Search for the first visible node in view, starting from the current visible node.
 ; Arguments:  Arg1: New total offset.
@@ -1517,27 +1517,27 @@ MethodEnd
 ;                                                        ｦ   ebx              ｦ
 ;                                                        ｦ                    ｦ
 ;        ｦ                                              \ｦ/                   ｦ Total Offset
-;        ｦ     覧覧覧覧覧覧覧覧覧覧覧覧   覧覧覧覧覧覧覧覧・                  ｦ
+;        ｦ     ------------------------   ----------------・                  ｦ
 ;        ｦ    |                        |                /ｦ\  First Offset     ｦ
 ;       [-]---|   First Visible Node   |                 ｦ                   \ｦ/
-;   覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧   覧覧覧覧覧覧覧覧覧覧覧覧覧覧
-;  |           覧覧覧覧覧覧覧覧覧覧覧覧           |     /ｦ\
-;  |            ｦ     覧覧覧覧覧覧覧覧覧覧覧      |      ｦ
+;   ----------------------------------------------   ----------------------------
+;  |           ------------------------           |     /ｦ\
+;  |            ｦ     ----------------------      |      ｦ
 ;  |            ｦ    |                      |     |      ｦ
 ;  |            ｦ----|                      |     |      ｦ
 ;  |            ｦ    |                      |     |      ｦ
-;  |            ｦ     覧覧覧覧覧覧覧覧覧覧覧      |      ｦ
-;  |            ｦ     覧覧覧覧覧覧覧覧覧覧覧覧覧  |      ｦ
+;  |            ｦ     ----------------------      |      ｦ
+;  |            ｦ     --------------------------  |      ｦ
 ;  |            ｦ    |                          | |      ｦ   Window height
 ;  |           [+]---|                          | |      ｦ
 ;  |            ｦ    |                          | |      ｦ
-;  |            ｦ     覧覧覧覧覧覧覧覧覧覧覧覧覧  |      ｦ
-;  |            ｦ     覧覧覧覧覧覧覧覧覧覧覧      |      ｦ          The first Visible Node has
+;  |            ｦ     --------------------------  |      ｦ
+;  |            ｦ     ----------------------      |      ｦ          The first Visible Node has
 ;  |            ｦ    |                      |     |      ｦ          at least one part shown in
 ;  |             ----|                      |     |      ｦ          XTreeView window
 ;  |                 |                      |     |      ｦ
-;  |                  覧覧覧覧覧覧覧覧覧覧覧      |     \ｦ/
-;   覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧    覧覧覧・
+;  |                  ----------------------      |     \ｦ/
+;   ----------------------------------------------    ------・
 
 Method XTreeView.Find1stVisibleNode, uses xbx xsi, dNewTotalOffset:DWORD
   SetObject xsi
@@ -1626,7 +1626,7 @@ Method XTreeView.Find1stVisibleNode, uses xbx xsi, dNewTotalOffset:DWORD
   OCall xsi.Set1stVisibleNode, xdx
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  XTV_IsNodeInDispData
 ; Purpose:    XWCollection.FirstThat callback proc to check if a node is in the collection.
 ; Arguments:  Arg1: -> DispData
@@ -1646,7 +1646,7 @@ XTV_IsNodeInDispData proc pDispData:PXTVN_DISP_INFO, pNode:$ObjPtr(XTreeViewNode
   ret
 XTV_IsNodeInDispData endp
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.GetDispInfo
 ; Purpose:    Return the XTVN_DISP_INFO structure associated to a XTreeViewNode that is in view.
 ; Arguments:  Arg1: -> XTreeViewNode
@@ -1668,7 +1668,7 @@ Method XTreeView.GetDispInfo,, pNode:$ObjPtr(XTreeViewNode)
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.GetMetrics
 ; Purpose:    Load all parameters that defines the window appearance.
 ; Arguments:  None
@@ -1681,7 +1681,7 @@ Method XTreeView.GetMetrics, uses xsi
   mov [xsi].ScrollbarMetric.y, $32($invoke(GetSystemMetrics, SM_CYHSCROLL))
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.Init
 ; Purpose:    Initialize a XTreeView object.
 ; Arguments:  Arg1: -> Owner object.
@@ -1706,7 +1706,7 @@ Method XTreeView.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PDE
   ACall xsi.Init, pOwner, [xsi].hWnd
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.InitRes
 ; Purpose:    Initialize the XTreeViewNode object from a resource.
 ; Arguments:  Arg1: Window HANDLE.
@@ -1719,7 +1719,7 @@ Method XTreeView.InitRes, uses xsi, hWnd:HWND
   ACall xsi.Init, NULL, xax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.Insert
 ; Purpose:    Insert a new node.
 ; Arguments:  Arg1: -> Node to insert.
@@ -1927,7 +1927,7 @@ Method XTreeView.Insert, uses xbx xdi xsi, pNode:$ObjPtr(XTreeViewNode), pRefNod
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.MoveInViewBottom
 ; Purpose:    Bring the specified node to the bottom of the current view.
 ; Arguments:  Arg1: -> Node to be moved.
@@ -1985,7 +1985,7 @@ Method XTreeView.MoveInViewBottom, uses xbx xdi xsi, pNode:$ObjPtr(XTreeViewNode
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.MoveInViewTop
 ; Purpose:    Bring the specified node on the top of the current view.
 ; Arguments:  Arg1: -> Node.
@@ -2031,7 +2031,7 @@ Method XTreeView.MoveInViewTop, uses xsi, pNode:$ObjPtr(XTreeViewNode)
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnButtonDblClk
 ; Purpose:    Handler of mouse double clicks.
 ; Arguments:  Arg1: Button that triggered this method.
@@ -2053,7 +2053,7 @@ Method XTreeView.OnButtonDblClk, uses xsi, dButton:DWORD, wParam:WPARAM, lParam:
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnButtonDown
 ; Purpose:    Handler of mouse button down.
 ; Arguments:  Arg1: Button that triggered this method.
@@ -2077,7 +2077,7 @@ Method XTreeView.OnButtonDown, uses xsi, dButton:DWORD, wParam:WPARAM, lParam:LP
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnButtonUp
 ; Purpose:    Handler of mouse button up.
 ; Arguments:  Arg1: Button that triggered this method.
@@ -2110,7 +2110,7 @@ Method XTreeView.OnButtonUp, uses xsi, dButton:DWORD, wParam:WPARAM, lParam:LPAR
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnCreate
 ; Purpose:    Event handler for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -2174,7 +2174,7 @@ Method XTreeView.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnEnable
 ; Purpose:    Event handler for WM_ENABLE message.
 ; Arguments:  Arg1: First message parameter.
@@ -2199,7 +2199,7 @@ Method XTreeView.OnEnable, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnDestroy
 ; Purpose:    Event handler for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -2247,7 +2247,7 @@ Method XTreeView.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnGetDlgCode
 ; Purpose:    Event handler for WM_GETDLGCODE message.
 ; Arguments:  Arg1: First message parameter.
@@ -2259,7 +2259,7 @@ Method XTreeView.OnGetDlgCode,, wParam:WPARAM, lParam:LPARAM
   mov eax, DLGC_WANTARROWS or DLGC_WANTCHARS
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnGetFont
 ; Purpose:    Event handler for WM_GETFONT message.
 ; Arguments:  Arg1: First message parameter.
@@ -2272,7 +2272,7 @@ Method XTreeView.OnGetFont,, wParam:WPARAM, lParam:LPARAM
   mov xax, [xcx].hFontText
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnHScroll
 ; Purpose:    Event handler for WM_HSCROLL message.
 ; Arguments:  Arg1: First message parameter.
@@ -2348,7 +2348,7 @@ Method XTreeView.OnHScroll, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnKeyDown
 ; Purpose:    Event handler for WM_KEYDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -2631,7 +2631,7 @@ Method XTreeView.OnKeyDown, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnKeyUp
 ; Purpose:    Event handler for WM_KEYUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -2665,7 +2665,7 @@ Method XTreeView.OnKeyUp, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnKillFocus
 ; Purpose:    Event handler for WM_KILLFOCUS message.
 ; Arguments:  Arg1: First message parameter.
@@ -2700,7 +2700,7 @@ Method XTreeView.OnKillFocus, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnLButtonDblClk
 ; Purpose:    Event handler for WM_LBUTTONDBLCLK message.
 ; Arguments:  Arg1: First message parameter.
@@ -2712,7 +2712,7 @@ Method XTreeView.OnLButtonDblClk,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnLButtonDown
 ; Purpose:    Event handler for WM_LBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -2724,7 +2724,7 @@ Method XTreeView.OnLButtonDown,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnLButtonUp
 ; Purpose:    Event handler for for WM_LBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -2736,7 +2736,7 @@ Method XTreeView.OnLButtonUp,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnMButtonDblClk
 ; Purpose:    Event handler for WM_MBUTTONDBLCLK message.
 ; Arguments:  Arg1: First message parameter.
@@ -2748,7 +2748,7 @@ Method XTreeView.OnMButtonDblClk,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnMButtonDown
 ; Purpose:    Event handler for WM_MBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -2760,7 +2760,7 @@ Method XTreeView.OnMButtonDown,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnMButtonUp
 ; Purpose:    Event handler for for WM_MBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -2772,7 +2772,7 @@ Method XTreeView.OnMButtonUp,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  XTV_EmitMouseMoveMsg
 ; Purpose:    Emit a WM_MOUSEMOVE message.
 ; Arguments:  Arg1: Destrination hWnd.
@@ -2791,7 +2791,7 @@ XTV_EmitMouseMoveMsg proc hWnd:HWND, wParam:WPARAM
   ret
 XTV_EmitMouseMoveMsg endp
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnMouseMove
 ; Purpose:    Event handler for WM_MOUSEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -2934,7 +2934,7 @@ Method XTreeView.OnMouseMove, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnMouseWheel
 ; Purpose:    Event handler for WM_MOUSEWHEEL message.
 ; Arguments:  Arg1: First message parameter.
@@ -3034,7 +3034,7 @@ Method XTreeView.OnMouseWheel, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnNcDestroy
 ; Purpose:    Event handler for WM_NCDESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -3051,7 +3051,7 @@ Method XTreeView.OnNcDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnNcHitTest
 ; Purpose:    Event handler for WM_NCHITTEST message.
 ; Arguments:  Arg1: First message parameter.
@@ -3065,7 +3065,7 @@ Method XTreeView.OnNcHitTest,, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xcx].hWnd, WM_NCHITTEST, wParam, lParam
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnPaint
 ; Purpose:    Event handler for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -3102,7 +3102,7 @@ Method XTreeView.OnPaint, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnPrintClient
 ; Purpose:    Event handler for WM_PRINTCLIENT message.
 ; Arguments:  Arg1: First message parameter.
@@ -3120,7 +3120,7 @@ Method XTreeView.OnPrintClient, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnRButtonDblClk
 ; Purpose:    Event handler for WM_RBUTTONDBLCLK message.
 ; Arguments:  Arg1: First message parameter.
@@ -3132,7 +3132,7 @@ Method XTreeView.OnRButtonDblClk,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnRButtonDown
 ; Purpose:    Event handler for WM_RBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -3144,7 +3144,7 @@ Method XTreeView.OnRButtonDown,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnRButtonUp
 ; Purpose:    Event handler for WM_RBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -3170,7 +3170,7 @@ Method XTreeView.OnRButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnSetFocus
 ; Purpose:    Event handler for WM_SETFOCUS message.
 ; Arguments:  Arg1: First message parameter.
@@ -3188,7 +3188,7 @@ Method XTreeView.OnSetFocus, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnSetFont
 ; Purpose:    Event handler for WM_SETFONT message.
 ; Arguments:  Arg1: First message parameter.
@@ -3207,7 +3207,7 @@ Method XTreeView.OnSetFont, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnSetRedraw
 ; Purpose:    Event handler for WM_SETREDRAW message.
 ; Arguments:  Arg1: First message parameter.
@@ -3225,7 +3225,7 @@ Method XTreeView.OnSetRedraw,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnSettingChange
 ; Purpose:    Event handler for WM_SETTINGCHANGE message.
 ; Arguments:  Arg1: First message parameter.
@@ -3242,7 +3242,7 @@ Method XTreeView.OnSettingChange, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnSize
 ; Purpose:    Event handler for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -3285,7 +3285,7 @@ Method XTreeView.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnSysColorChange
 ; Purpose:    Event handler for WM_SYSCOLORCHANGE message.
 ; Arguments:  Arg1: First message parameter.
@@ -3301,7 +3301,7 @@ Method XTreeView.OnSysColorChange, uses xsi, wParam:WPARAM, lParam:LPARAM
   OCall xsi.Draw
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.OnVScroll
 ; Purpose:    Event handler for WM_VSCROLL message.
 ; Arguments:  Arg1: First message parameter.
@@ -3378,7 +3378,7 @@ Method XTreeView.OnVScroll, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.Remove
 ; Purpose:    Remove an inserted node from the XTreeiew.
 ; Arguments:  Arg1: -> to the node to remove.
@@ -3496,7 +3496,7 @@ Method XTreeView.Remove, uses xbx xdi xsi, pNode:$ObjPtr(XTreeViewNode)
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.RenderBackground
 ; Purpose:    Draw the background of a specified rect.
 ; Arguments:  Arg1: -> RECT to fill.
@@ -3515,7 +3515,7 @@ Method XTreeView.RenderBackground, uses xbx xsi, pRect:PRECT
   invoke DeleteObject, xbx
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.Reset
 ; Purpose:    Remove the complete content of the tree.
 ; Arguments:  None.
@@ -3539,7 +3539,7 @@ Method XTreeView.Reset, uses xsi
   OCall xsi.Draw
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.Select
 ; Purpose:    Select a new node.
 ; Arguments:  Arg1: -> Node to be selected. NULL is allowed.
@@ -3563,7 +3563,7 @@ Method XTreeView.Select,, pNode:$ObjPtr(XTreeViewNode)
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.Set1stVisibleNode
 ; Purpose:    Set the first visible node and marks the path to it, resetting the prevoius.
 ;             NULL is allowed.
@@ -3585,7 +3585,7 @@ Method XTreeView.Set1stVisibleNode,, pNode:$ObjPtr(XTreeViewNode)
   .endw
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.SetDragCursor
 ; Purpose:    While dragging, set the cursor over a hottracked node.
 ; Arguments:  Arg1: Key flags (MK_CONTROL, MK_LBUTTON, MK_MBUTTON, MK_RBUTTON, MK_SHIFT).
@@ -3624,7 +3624,7 @@ Method XTreeView.SetDragCursor, uses xsi, dKeyFlags:DWORD, CursorPos:DWORD
   .endif
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.ShowScrollbars
 ; Purpose:    Show or hide the scrollbars and update the ClientSize member.
 ; Arguments:  None.
@@ -3670,7 +3670,7 @@ Method XTreeView.ShowScrollbars, uses xsi
   invoke ShowScrollBar, [xsi].hWnd, SB_HORZ, dHorzShow
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.Startup
 ; Purpose:    Register the XTreeView window class with the operating system.
 ; Arguments:  None.
@@ -3697,7 +3697,7 @@ Method XTreeView.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; 覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧覧
+; --------------------------------------------------------------------------------------------------
 ; Method:     XTreeView.WindowProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.

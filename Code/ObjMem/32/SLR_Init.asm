@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SLR_Init
 ; Purpose:    Calculate in advance the invariant coefficients of a Simple Linear Regression (X, X2, Q)
 ; Arguments:  Arg1: -> SLR_DATA structure.

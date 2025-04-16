@@ -12,7 +12,7 @@
 
 externdef HexCharTableW:BYTE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  dword2hexW
 ; Purpose:    Convert a DWORD to its hexadecimal WIDE string representation.
 ; Arguments:  Arg1: -> Destination buffer.

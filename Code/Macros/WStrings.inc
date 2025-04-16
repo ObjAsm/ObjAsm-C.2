@@ -34,7 +34,7 @@
 
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      StringW / ($)CStrW / ($)TStrW / ($)DStrW / ($)JStrW
 ; Purpose:    Place an WIDE string in the CONST, SEG_TEXT, _DATA or _TEXT segment.
 ; Arguments:  Arg1: Reference name (optional).
@@ -236,7 +236,7 @@ $JStrW macro QuotedText:vararg
   exitm <??StrLocation>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Ofs(C|T|D|J)WStr
 ; Purpose:    Place an WIDE string in the CONST, SEG_TEXT, _DATA or _TEXT segment.
 ; Arguments:  Arg1: Quoted text.
@@ -285,7 +285,7 @@ $OfsJStrW macro QuotedText:vararg
   exitm <offset(??StrLocation)>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 SURROGATE_MASK  equ     1111110000000000y               ;0FC00h
 SURROGATE_HIGH  equ     1101100000000000y               ;0D800h
@@ -294,7 +294,7 @@ UTF8_BOM        textequ <0EFh,0BBh,0BFh>
 UTF16BE_BOM     textequ <0FEh,0FFh>                     ;Big Endian
 UTF16LE_BOM     textequ <0FFh,0FEh>                     ;Little Endian  (used by Windows in memory)
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      IsSurrogateHigh
 ; Purpose:    Check if the WIDE char is a high surrogate.
 ; Arguments:  Arg1: Wide character.
@@ -305,7 +305,7 @@ IsSurrogateHigh macro CharReg:req
   cmp CharReg, SURROGATE_HIGH
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      IsSurrogateLow
 ; Purpose:    Check if the WIDE char is a low surrogate.
 ; Arguments:  Arg1: Wide character.

@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetWinVersion
 ; Purpose:    Get Windows true version numbers directly from NTDLL.
 ; Arguments:  Arg1: -> Major Version. Can be NULL.

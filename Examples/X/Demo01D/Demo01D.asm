@@ -46,7 +46,7 @@ start proc                                              ;Program entry point
   Destroy pShape_1                                      ;Invoke Triangle's Done and disposes it
   Destroy pDskStm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
   DbgLine
   mov pDskStm, $New(OA:DiskStream)
   OCall pDskStm::OA:DiskStream.Init, NULL, $OfsCStr("Data.stm"),0,0,NULL,0,0,0

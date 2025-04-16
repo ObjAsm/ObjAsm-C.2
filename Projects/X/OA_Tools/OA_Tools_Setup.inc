@@ -12,7 +12,7 @@ STSTYLE   equ   WS_CHILD or WS_VISIBLE or WS_TABSTOP or TCS_TABS or TCS_HOTTRACK
 .const
 SetupTabCtrl DEF_TABCONTROL {100, STSTYLE, WS_EX_CONTROLPARENT, NULL, {<4,3,268,200>}}
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Tab1
 ; Purpose:    Tab 1 (Main) of the Setup dialog.
 
@@ -32,7 +32,7 @@ Object Tab1, , DialogModeless
   DefineVariable    hComboBox,          HANDLE,     0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Tab2
 ; Purpose:    Tab 2 (Tools) of the Setup dialog.
 
@@ -46,7 +46,7 @@ Object Tab2, , DialogModeless
   VirtualEvent      OnCtlColorDlg,      WM_CTLCOLORDLG, WM_CTLCOLORSTATIC
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Tab3
 ; Purpose:    Tab 3 (Colors) of the Setup dialog.
 
@@ -60,7 +60,7 @@ Object Tab3, , DialogModeless
   VirtualEvent      OnCtlColorDlg,      WM_CTLCOLORDLG, WM_CTLCOLORSTATIC
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     OAT_Setup
 ; Purpose:    Custom Setup dialog.
 
@@ -115,7 +115,7 @@ include OA_Tools_Setup_Tab3.inc
 ;    OAT_Setup implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Setup.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -129,7 +129,7 @@ Method OAT_Setup.CtlsGet, uses xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Setup.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -145,7 +145,7 @@ Method OAT_Setup.CtlsSet, uses xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Setup.Done
 ; Purpose:    Finalize the OAT_Setup object.
 ; Arguments:  None.
@@ -160,7 +160,7 @@ Method OAT_Setup.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Setup.GetFileName
 ; Purpose:    Shows a OFN dialog and returns a single IShellItem pointer.
 ; Arguments:  None.
@@ -257,7 +257,7 @@ Method OAT_Setup.GetFileName, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Setup.Init
 ; Purpose:    Initialaize a OAT_Setup object.
 ; Arguments:  Arg1: -> Owner object.
@@ -276,7 +276,7 @@ Method OAT_Setup.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_BRUSH")
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Setup.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -293,7 +293,7 @@ Method OAT_Setup.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   OCall xsi.DestroyDialog, wParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Setup.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -305,7 +305,7 @@ Method OAT_Setup.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke SetWindowLongPtr, [xsi].hWnd, DWLP_USER, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_Setup.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.

@@ -10,7 +10,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     IcmpManager
 ; Purpose:    Implement "Ping" and "Trace" OS commands using the IcmpSendEcho API.
 
@@ -25,7 +25,7 @@ Object IcmpManager, 0, Primer
 ObjectEnd
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 if IMPLEMENT
 
@@ -64,7 +64,7 @@ HopInfo struc
   pHostName         PSTRINGA  ?
 HopInfo ends
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CheckSockError
 ; Purpose:    Helper macro to display an WSA error.
 ; Arguments:  Arg1: Text to display
@@ -105,7 +105,7 @@ CheckSockError macro WarningText:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $NetworkAddressIPv4
 ; Purpose:    Convert a string to an IPv4 network address (network byte order = big endian).
 ; Arguments:  Arg1: String (aaa.bbb.ccc.ddd).
@@ -124,7 +124,7 @@ $NetworkAddressIPv4 macro Address:req
   %exitm <$$Addr>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ;Checksum for ICMP is calculated in the same way as for
 ;IP header
 ;This code was taken from: http://www.netfor2.com/ipsum.htm
@@ -159,7 +159,7 @@ CalcChecksum proc uses xbx pBuffer:POINTER, dLen:DWORD
   ret
 CalcChecksum endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IcmpManager.Ping
 ; Purpose:    Send a Ping.
 ; Arguments:  None.
@@ -191,7 +191,7 @@ Method IcmpManager.Ping, uses xsi
   mov eax, RecvBuffer.RoundTripTime
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IcmpManager.Trace
 ; Purpose:    Trace possible routes (paths) and measuring transit delays of packets across an
 ;             Internet Protocol (IP) network.
@@ -254,7 +254,7 @@ Method IcmpManager.Trace, uses xbx xdi xsi
   invoke IcmpCloseHandle, hIcmp
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IcmpManager.SetDstFromIPv4
 ; Purpose:    Set the destination address from an IPv4 string.
 ; Arguments:  Arg1: -> String in the format xxx.xxx.xxx.xxx
@@ -271,7 +271,7 @@ Method IcmpManager.SetDstFromIPv4, uses xsi, pIpStr:PSTRINGA
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IcmpManager.SetDstFromURL
 ; Purpose:    Set the destination address from an URL string.
 ; Arguments:  Arg1: -> URL ANSI string (e.g. www.google.com).

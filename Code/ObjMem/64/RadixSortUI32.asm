@@ -12,7 +12,7 @@
 
 % include &ObjMemPath&Common\RadixSort64.inc            ;Helper macros
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  RadixSortUI32
 ; Purpose:    Ascending sort of an array of DWORDs using the "4 passes radix sort" algorithm.
 ; Arguments:  Arg1: -> Array of DWORDs.

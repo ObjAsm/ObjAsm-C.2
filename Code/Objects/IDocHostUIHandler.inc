@@ -34,7 +34,7 @@ CONTEXT_MENU_UNKNOWN        equ     6
 CONTEXT_MENU_VSCROLL        equ     10
 CONTEXT_MENU_HSCROLL        equ     11
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  IDocHostUIHandler
 ; Purpose: Implements IDocHostUIHandler interface.
 
@@ -69,7 +69,7 @@ if IMPLEMENT
 ;     IDocHostUIHandler implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler.ShowContextMenu
 ; Purpose:    Enables MSHTML to display a shortcut menu.
 ; Arguments:  Arg1: [in] A DWORD that specifies the identifier of the shortcut menu to be displayed.
@@ -103,7 +103,7 @@ Method IDocHostUIHandler.ShowContextMenu,, dwID:DWORD, pPoint:POINTER, pcmdtRese
   mov eax, [xcx].dShowContextMenu
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler.GetHostInfo
 ; Purpose:    Gets the UI capabilities of the application that is hosting MSHTML.
 ; Arguments:  Arg1: [in, out] -> DOCHOSTUIINFO structure that receives the host's UI capabilities.
@@ -114,7 +114,7 @@ Method IDocHostUIHandler.GetHostInfo,, pInfo:PDOCHOSTUIINFO
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler.ShowUI
 ; Purpose:    Enables the host to replace MSHTML menus and toolbars.
 ; Arguments:  Arg1: [in] A DWORD that receives a DOCHOSTUITYPE value that indicates the type of UI.
@@ -140,7 +140,7 @@ Method IDocHostUIHandler.ShowUI,, dwID:DWORD, pActiveObject:POINTER, pCommandTar
   mov eax, [xcx].dShowUI
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler.HideUI
 ; Purpose:    Enables the host to remove its menus and toolbars.
 ; Arguments:  None.
@@ -151,7 +151,7 @@ Method IDocHostUIHandler.HideUI
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler.UpdateUI
 ; Purpose:    Notifies the host that the command state has changed.
 ; Arguments:  None.
@@ -162,7 +162,7 @@ Method IDocHostUIHandler.UpdateUI
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler.EnableModeless
 ; Purpose:    Called by the MSHTML implementation of IOleInPlaceActiveObject::EnableModeless.
 ;             Also called when MSHTML displays a modal UI.
@@ -177,7 +177,7 @@ Method IDocHostUIHandler.EnableModeless,, fEnable:BOOL
     mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler.OnDocWindowActivate
 ; Purpose:    Called by the MSHTML implementation of IOleInPlaceActiveObject::OnDocWindowActivate.
 ; Arguments:  Arg1: [in] A BOOL value that indicates the state of the document window.
@@ -190,7 +190,7 @@ Method IDocHostUIHandler.OnDocWindowActivate,, fActivate:BOOL
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler.OnFrameWindowActivate
 ; Purpose:    Called by the MSHTML implementation of IOleInPlaceActiveObject::OnFrameWindowActivate.
 ; Arguments:  Arg1: [in] A BOOL value that indicates the state of the container's top-level frame
@@ -204,7 +204,7 @@ Method IDocHostUIHandler.OnFrameWindowActivate,, fActivate:BOOL
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler.ResizeBorder
 ; Purpose:    Called by the MSHTML implementation of IOleInPlaceActiveObject::ResizeBorder.
 ; Arguments:  Arg1: [in] A constant pointer to a RECT for the new outer rectangle of the border.
@@ -219,7 +219,7 @@ Method IDocHostUIHandler.ResizeBorder,, prcBorder:POINTER, pUIWindow:POINTER, fF
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler._TranslateAccelerator
 ; Purpose:    Called by MSHTML when IOleInPlaceActiveObject::TranslateAccelerator or
 ;             IOleControlSite::TranslateAccelerator is called.
@@ -233,7 +233,7 @@ Method IDocHostUIHandler.TranslateAccelerator,, lpMsg:POINTER, pguidCmdGroup:POI
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler.GetOptionKeyPath
 ; Purpose:    Gets a registry subkey path that overrides the default Internet Explorer registry
 ;             settings.
@@ -247,7 +247,7 @@ Method IDocHostUIHandler.GetOptionKeyPath,, pchKey:POINTER, dReserved:DWORD
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler.GetDropTarget
 ; Purpose:    Enables the host to supply an alternative IDropTarget interface.
 ; Arguments:  Arg1: [in] -> IDropTarget interface for the current drop target object supplied
@@ -261,7 +261,7 @@ Method IDocHostUIHandler.GetDropTarget,, pDropTarget:POINTER, ppDropTarget:POINT
   mov eax, E_NOTIMPL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler.GetExternal
 ; Purpose:    Gets the host's IDispatch interface.
 ; Arguments:  Arg1: [out] -> a variable that receives an IDispatch interface pointer for
@@ -283,7 +283,7 @@ Method IDocHostUIHandler.GetExternal, uses xsi, ppIDispatch:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler.TranslateUrl
 ; Purpose:    Enables the host to modify the URL to be loaded.
 ; Arguments:  Arg1: [in] Reserved. Must be set to NULL.
@@ -302,7 +302,7 @@ Method IDocHostUIHandler.TranslateUrl,, dwTranslate:DWORD, pchURLIn:POINTER, ppc
   mov eax, S_FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDocHostUIHandler.FilterDataObject
 ; Purpose:    Enables the host to replace the MSHTML data object.
 ; Arguments:  Arg1: [in] -> IDataObject interface supplied by MSHTML.

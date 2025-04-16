@@ -46,51 +46,51 @@
 
 
 ;                                   Object relationship
-;                                   ———————————————————
+;                                   -------------------
 ;
 ;
-;                         ———————————————————
-;          —————————————>|    Application    |<——————————
-;         |              |———————————————————|           |
+;                         -------------------
+;          ------------->|    Application    |<----------
+;         |              |-------------------|           |
 ;         |              |                   |           |
 ;         |              |                   |           |
 ;         |              |                   |           |
-;         |               ———————————————————            |
+;         |               -------------------            |
 ;         |                                              |
 ;         |                                              |
 ;         |          Server/Client                       |        Functionality
-;         |       ———————————————————                    |      ———————————————————
-;         |   ——>|   NetComEngine    |<————              |     |  NetComProtocol   |
-;         |  |   |———————————————————|     |             |     |———————————————————|
-;          ——|———| pOwner            |     |              —————| pOwner            |
+;         |       -------------------                    |      -------------------
+;         |   -->|   NetComEngine    |<----              |     |  NetComProtocol   |
+;         |  |   |-------------------|     |             |     |-------------------|
+;          --|---| pOwner            |     |              -----| pOwner            |
 ;            |   |                   |     |                   |                   |
 ;            |   |                   |     |                   |                   |
-;            |    ———————————————————      |                    ———————————————————
+;            |    -------------------      |                    -------------------
 ;            |                             |
-;            |                              ———————————————
+;            |                              ---------------
 ;            |                                             |
-;            |           ————————————————————              |    ———————————————————
-;            |       ——>|NetComConnectionPool|        ————————>|NetComIOSockJobPool|— — —
-;            |      |   |————————————————————|       |     |   |———————————————————|     |
-;             ——————|———| pOwner             |       |      ———| pOwner            |
-;                   |   |     pIOSockJobPool |———————          | dBufferSize       |     |
+;            |           --------------------              |    -------------------
+;            |       -->|NetComConnectionPool|        -------->|NetComIOSockJobPool|- - -
+;            |      |   |--------------------|       |     |   |-------------------|     |
+;             ------|---| pOwner             |       |      ---| pOwner            |
+;                   |   |     pIOSockJobPool |-------          | dBufferSize       |     |
 ;                   |   |                    |                 |                   |
-;                   |    ————————————————————                   ———————————————————      |
+;                   |    --------------------                   -------------------      |
 ;                   |
 ;                   |                                                                    |
 ;                   |
-;                   |           ———————————————————            ———————————————————       |
-;                   |          | NetComConnection  |< — — — — |  NetComIOSockJob  |< — —
-;                   |          |———————————————————||         |———————————————————||
-;                    ——————————| pOwner            |||        |                   |||
+;                   |           -------------------            -------------------       |
+;                   |          | NetComConnection  |< - - - - |  NetComIOSockJob  |< - -
+;                   |          |-------------------||         |-------------------||
+;                    ----------| pOwner            |||        |                   |||
 ;                              |                   |||        |                   ||||
 ;                              |                   |||        |                   |||||
-;                               ——————————————————— ||         ——————————————————— |||||
-;                                ——————————————————— |          ——————————————————— ||||
-;                                 ———————————————————            ——————————————————— |||
-;                                                                 ————————————————————||
-;                                                                  ——————————————————— |
-;                                                                   ———————————————————
+;                               ------------------- ||         ------------------- |||||
+;                                ------------------- |          ------------------- ||||
+;                                 -------------------            ------------------- |||
+;                                                                 --------------------||
+;                                                                  ------------------- |
+;                                                                   -------------------
 ;
 ;
 ; ==================================================================================================
@@ -261,7 +261,7 @@ else
 endif
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  NetComIOSockJobPool
 ; Purpose: Implement a DataPool of IOJobs. An IOSockJob is a memory chunk with a header structure
 ;          called IO_SOCKJOB followed by a data buffer.
@@ -277,7 +277,7 @@ Object NetComIOSockJobPool, NetComIOSockJobPoolID, DataPool
   DefineVariable  dCount,             DWORD,            0     ;Control value, can be omited
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  NetComConnection
 ; Purpose: Implement a NetCom connection.
 
@@ -333,7 +333,7 @@ Object NetComConnection, NetComConnectionID, Primer
   DefineVariable  CritSect,           CRITICAL_SECTION, {}
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  NetComConnectionPool
 ; Purpose: Implement a DataPool of NetComConnections.
 
@@ -346,7 +346,7 @@ Object NetComConnectionPool, NetComConnectionPoolID, DataPool
   DefineVariable  pIOSockJobPool,     $ObjPtr(NetComIOSockJobPool),  NULL
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  NetComAddrCollection
 ; Purpose: Implement an WinSockAddr collection.
 
@@ -356,7 +356,7 @@ Object NetComAddrCollection,, SortedDataCollection
   RedefineMethod  Insert,             POINTER
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  NetComProtocol
 ; Purpose: NetworkProtocol is a base object from which you can derive your own protocol and
 ;          application specific objects. You can imagine that this object sits inbetween the main
@@ -394,7 +394,7 @@ Object NetComProtocol, NetComProtocolID, Primer
   Embed BlackList, NetComAddrCollection         ;List of addresses that are not allowed to connect
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  NetComEngine
 ; Purpose: Implement the IOCP core of the NetComEngine.
 ; Note:    Connections are tracked in a linked list, since they may come from an attack!
@@ -473,7 +473,7 @@ CheckSockError macro QuotedWarningText:req, InfoText, Dest
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $NetworkAddressIPv4
 ; Purpose:    Convert a string to an IPv4 network address (network byte order = big endian).
 ; Arguments:  Arg1: String (aaa.bbb.ccc.ddd).
@@ -492,7 +492,7 @@ $NetworkAddressIPv4 macro Address:req
   %exitm <$$Addr>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $NetworkPort
 ; Purpose:    Convert a WORD to a network port (network byte order = big endian).
 ; Arguments:  Arg1: Port.

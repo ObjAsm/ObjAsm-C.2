@@ -16,7 +16,7 @@ if IMPLEMENT
 ;    NetComConnectionPool implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnectionPool.FreeItem
 ; Purpose:    Finalize the NetComConnectionPool object.
 ; Arguments:  Arg1: -> NetComConnection to free.
@@ -35,7 +35,7 @@ Method NetComConnectionPool.FreeItem, uses xsi, pConnection:$ObjPtr(NetComConnec
   UnlockObjectAccess [xsi].$Obj(NetComConnectionPool)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnectionPool.Init
 ; Purpose:    Initialize the NetComConnectionPool object.
 ; Arguments:  Arg1: -> Owner.
@@ -49,7 +49,7 @@ Method NetComConnectionPool.Init,, pOwner:POINTER, dMaxClients:DWORD, pIOSockJob
   ACall xcx.Init, pOwner, sizeof $Obj(NetComConnection), dMaxClients, 1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnectionPool.NewItem
 ; Purpose:    Create a new NetComConnection.
 ; Arguments:  None.

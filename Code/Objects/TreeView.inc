@@ -25,7 +25,7 @@ DEF_TREEVIEW struc
 DEF_TREEVIEW ends
 PDEF_TREEVIEW typedef ptr DEF_TREEVIEW
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     TreeView
 ; Purpose:    Implement a thin wrapper around the SysTreeView32 GDI control.
 
@@ -42,7 +42,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TreeView.Done
 ; Purpose:    Finalize the TreeView object.
 ; Arguments:  None.
@@ -54,7 +54,7 @@ Method TreeView.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TreeView.Init
 ; Purpose:    Initialize the TreeView control.
 ; Arguments:  Arg1: -> Owner object.
@@ -81,7 +81,7 @@ Method TreeView.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, \
   Subclass TreeView                                     ;Uses xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TreeView.NodeDelete
 ; Purpose:    Delete a node from the TreeView object.
 ; Arguments:  Arg1: Parent node handle.
@@ -93,7 +93,7 @@ Method TreeView.NodeDelete,, hNode:HANDLE
     invoke SendMessage, [xcx].hWnd, TVM_DELETEITEM, 0, hNode
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TreeView.NodeInsert
 ; Purpose:    Insert a new node in the TreeView object.
 ; Arguments:  Arg1: Parent node handle.
@@ -117,7 +117,7 @@ Method TreeView.NodeInsert,, hNodeParent:HANDLE, hNodeAfter:HANDLE, pText:PSTRIN
   invoke SendMessage, [xcx].hWnd, TVM_INSERTITEM, 0, addr TVI
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TreeView.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.

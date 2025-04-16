@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCPosW
 ; Purpose:    Scan for WIDE string2 into WIDE string1 with length limitation.
 ; Arguments:  Arg1: -> Source WIDE string.

@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <GetPrevInstanceA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetPrevInstanceA
 ; Purpose:    Return a HANDLE to a previously running instance of an application.
 ; Arguments:  Arg1: -> Any application ID ANSI name.

@@ -12,7 +12,7 @@
 
 % include &IncPath&Windows\uxtheme.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  AreVisualStylesEnabled
 ; Purpose:    Determine if there is an activated theme for the running application
 ; Arguments:  None.

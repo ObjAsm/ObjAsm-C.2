@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <GetPrevInstanceW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetPrevInstanceW
 ; Purpose:    Return a HANDLE to a previously running instance of an application.
 ; Arguments:  Arg1: -> Any application ID WIDE name.

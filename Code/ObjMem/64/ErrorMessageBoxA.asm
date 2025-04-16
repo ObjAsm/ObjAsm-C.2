@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ErrorMessageBoxA
 ; Purpose:    Show a messagebox containing an error string in the locale lenguage and an user string.
 ; Arguments:  Arg1: Messagebox parent window HANDLE.

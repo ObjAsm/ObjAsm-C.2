@@ -12,7 +12,7 @@
 
 % include &MacPath&Strings.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Err2StrW
 ; Purpose:    Translate a system error code to a WIDE string.
 ; Arguments:  Arg1: Error code.

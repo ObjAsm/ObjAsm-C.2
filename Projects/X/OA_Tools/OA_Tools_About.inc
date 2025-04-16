@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     OAT_About
 ; Purpose:    Custom about dialog.
 
@@ -32,7 +32,7 @@ ObjectEnd
 
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_About.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -113,7 +113,7 @@ Method OAT_About.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xsi].hStcImage, STM_SETIMAGE, IMAGE_BITMAP, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_About.Done
 ; Purpose:    Finalize the about object.
 ; Arguments:  None.
@@ -126,7 +126,7 @@ Method OAT_About.Done, uses xsi
   invoke DeleteObject, [xsi].hBmpApplication
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:       OAT_About.Init
 ; Purpose:      Initialize the about dialog using the "OAT_About" dialog resource.
 ; Arguments:    Arg1: -> Owner object.
@@ -138,7 +138,7 @@ Method OAT_About.Init,, pOwner:POINTER, hParent:HWND
   ACall xcx::OAT_About.Init, pOwner, hParent, IDD_DLG_ABOUT
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     OAT_About.OnCtlColorStatic
 ; Purpose:    Event procedure for WM_CTLCOLORSTATIC message.
 ; Arguments:  Arg1: First message parameter.

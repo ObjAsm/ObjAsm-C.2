@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  sqqqDiv
 ; Purpose:    Divide 2 signed QWORDs.
 ;             (64 bit) Dividend divided by (64 bit) Divisor = (64 bit) Quotient. 

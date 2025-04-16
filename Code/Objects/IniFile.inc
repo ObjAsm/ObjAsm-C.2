@@ -9,7 +9,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     IniFile
 ; Purpose:    This object is a thin wrapper around the GetPrivateProfileXXX and SetPrivateProfileXXX
 ;             APIs. It stores internaly the ini file name to facilitate subsequent calls.
@@ -37,7 +37,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IniFile.Done
 ; Purpose:    Finalize the IniFile object and release allocated resources.
 ; Arguments:  None.
@@ -49,7 +49,7 @@ Method IniFile.Done
   ACall Done                                            ;Ancestor disposal call
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IniFile.Init
 ; Purpose:    Initialize the IniFile object.
 ; Arguments:  Arg1: -> Owner object.
@@ -73,7 +73,7 @@ Method IniFile.Init, uses xbx xsi, pOwner:POINTER, pFileName:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IniFile.GetDWord
 ; Purpose:    Return the specified section/key DWORD.
 ; Arguments:  Arg1: -> Section name.
@@ -87,7 +87,7 @@ Method IniFile.GetDWord,, pSection:PSTRING, pKey:PSTRING, dDefault:DWORD
   invoke GetPrivateProfileInt, pSection, pKey, dDefault, [xax].pFileName
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IniFile.GetString
 ; Purpose:    Return the specified section/key string.
 ; Arguments:  Arg1: -> Section name.
@@ -107,7 +107,7 @@ Method IniFile.GetString, uses xsi, pSection:PSTRING, pKey:PSTRING, pDefault:PST
   invoke StrNew, xax                                    ;xax -> Created return string
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IniFile.GetStruc
 ; Purpose:    Return the specified section/key structure.
 ; Arguments:  Arg1: -> Section name.
@@ -126,7 +126,7 @@ Method IniFile.GetStruc, uses xsi, pSection:PSTRING, pKey:PSTRING, pStruc:POINTE
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IniFile.SetDWord
 ; Purpose:    Set the specified section/key DWORD.
 ; Arguments:  Arg1: -> Section name.
@@ -147,7 +147,7 @@ Method IniFile.SetDWord, uses xsi, pSection:PSTRING, pKey:PSTRING, dValue:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IniFile.SetString
 ; Purpose:    Set the specified section/key string.
 ; Arguments:  Arg1: -> Section name.
@@ -165,7 +165,7 @@ Method IniFile.SetString, uses xsi, pSection:PSTRING, pKey:PSTRING, pStr:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IniFile.SetStruc
 ; Purpose:    Set the specified section/key string.
 ; Arguments:  Arg1: -> Section name (ANSI string).

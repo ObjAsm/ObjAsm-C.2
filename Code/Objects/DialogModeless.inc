@@ -10,7 +10,7 @@
 
 DLGDESTROYED  equ   -1                            ;Notification code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DialogModeless
 ; Purpose:    This object provides the functionality of modeless dialogs.
 ;             It is prepared to work seamlessly with the ObjAsm application framework using one of
@@ -36,7 +36,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogModeless.DestroyDialog
 ; Purpose:    Destroy a modeless dialog
 ; Arguments:  Arg1: Windows return value.
@@ -48,7 +48,7 @@ Method DialogModeless.DestroyDialog, uses xsi, xArgument:XWORD
   invoke DestroyWindow, [xsi].hWnd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogModeless.Init
 ; Purpose:    Initialize the DialogModeless object.
 ; Arguments:  Arg1: -> Owner object.
@@ -63,7 +63,7 @@ Method DialogModeless.Init,, pOwner:POINTER, hParent:HWND, pTemplate:POINTER, pA
   ACall xcx.Init, pOwner, hParent, pTemplate
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogModeless.OnActivate
 ; Purpose:    Event procedure for WM_ACTIVATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -87,7 +87,7 @@ Method DialogModeless.OnActivate,, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xcx].hWnd, WM_ACTIVATE, wParam, lParam    ;Perform default processing
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogModeless.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -106,7 +106,7 @@ Method DialogModeless.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogModeless.Show
 ; Purpose:    Show the modeless dialog.
 ; Arguments:  None.

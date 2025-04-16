@@ -11,7 +11,7 @@
 externdef IID_IOleInPlaceSite:GUID
 externdef IID_IOleInPlaceObject:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     I_OcxCont_OleInPlaceSite
 ; Purpose:    Manage the interaction between the container and the object's in-place client site.
 ;             Recall that the client site is the display site for embedded objects, and provides
@@ -49,7 +49,7 @@ if IMPLEMENT
 ;     I_OcxCont_OleInPlaceSite implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSite.CanInPlaceActivate
 ; Purpose:    Determine whether the container can activate the object in place.
 ; Arguments:  None.
@@ -60,7 +60,7 @@ Method I_OcxCont_OleInPlaceSite.CanInPlaceActivate
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSite.OnInPlaceActivate
 ; Purpose:    Notify the container that one of its objects is being activated in place.
 ; Arguments:  None.
@@ -74,7 +74,7 @@ Method I_OcxCont_OleInPlaceSite.OnInPlaceActivate
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSite.OnUIActivate
 ; Purpose:    Notify the container that the object is about to be activated in place and that the
 ;             object is going to replace the container's main menu with an in-place composite menu.
@@ -86,7 +86,7 @@ Method I_OcxCont_OleInPlaceSite.OnUIActivate
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSite.GetWindowContext
 ; Purpose:    Enable an in-place object to retrieve the window interfaces that form the window
 ;             object hierarchy, and the position in the parent window where the object's in-place
@@ -141,7 +141,7 @@ Method I_OcxCont_OleInPlaceSite.GetWindowContext, uses xsi, ppFrame:POINTER, ppD
   xor eax, eax                                        ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSite.Scroll
 ; Purpose:    Instruct the container to scroll the view of the object by the specified number of px.
 ; Arguments:  Arg1: The number of pixels by which to scroll in the X and Y directions.
@@ -152,7 +152,7 @@ Method I_OcxCont_OleInPlaceSite.Scroll,, dScrollExtant:DWORD
   mov eax, S_FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSite.OnUIDeactivate
 ; Purpose:    Notify the container that it should reinstall its user interface and take focus,
 ;             and whether or not the object has an undoable state.
@@ -164,7 +164,7 @@ Method I_OcxCont_OleInPlaceSite.OnUIDeactivate,, bUndoable:BOOL
   xor eax, eax                                        ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSite.OnInPlaceDeactivate
 ; Purpose:    Notify the container that the object is no longer active in place.
 ; Arguments:  None.
@@ -177,7 +177,7 @@ Method I_OcxCont_OleInPlaceSite.OnInPlaceDeactivate
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSite.DiscardUndoState
 ; Purpose:    Instruct the container to discard its undo state. The container should not call
 ;             IOleInPlaceObject::ReActivateAndUndo.
@@ -189,7 +189,7 @@ Method I_OcxCont_OleInPlaceSite.DiscardUndoState
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSite.DeactivateAndUndo
 ; Purpose:    Deactivate the object, ends the in-place session, and reverts to the container's
 ;             saved undo state.
@@ -201,7 +201,7 @@ Method I_OcxCont_OleInPlaceSite.DeactivateAndUndo
   xor eax, eax                                          ;S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_OleInPlaceSite.OnPosRectChange
 ; Purpose:    Notify the container that the object extents have changed.
 ; Arguments:  Arg1: -> RECT structure that contains the position of the in-place object in the

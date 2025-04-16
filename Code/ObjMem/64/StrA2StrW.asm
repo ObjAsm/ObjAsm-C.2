@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrA2StrW
 ; Purpose:    Convert a ANSI string into a WIDE string.
 ; Arguments:  Arg1: -> Destination WIDE string buffer.

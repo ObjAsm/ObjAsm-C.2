@@ -11,7 +11,7 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetUtcHnsecs
 ; Purpose:    Get the UTC hecto-nano-seconds count.
 ; Arguments:  Arg1: -> hecto-nano-seconds

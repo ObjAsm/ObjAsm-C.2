@@ -54,7 +54,7 @@ LDLL_CONTROL ends
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LDLL_InsertAfter
 ; Purpose:    Insert an object after another in the linked list.
 ; Arguments:  Arg1: -> Control structure or reference.
@@ -74,7 +74,7 @@ LDLL_InsertAfter macro CtlReg:req, RefReg:req, NewReg:req, AuxReg:=<xdx>
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LDLL_InsertBefore
 ; Purpose:    Insert an object before another in the linked list.
 ; Arguments:  Arg1: -> Control structure or reference.
@@ -94,7 +94,7 @@ LDLL_InsertBefore macro CtlReg:req, RefReg:req, NewReg:req, AuxReg:=<xdx>
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LinkedList_InsertFirst
 ; Purpose:    Insert a new member to the end of the Linked List.
 ; Arguments:  Arg1: -> Control structure or reference.
@@ -114,7 +114,7 @@ LDLL_InsertFirst macro CtlReg:req, NewReg:req, AuxReg:=<xdx>
   mov [CtlReg].LDLL_CONTROL.pFirstMember, NewReg        ;;We just made a new first member
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LinkedList_InsertLast
 ; Purpose:    Insert a new member to the end of the Linked List.
 ; Arguments:  Arg1: -> Control structure or reference.
@@ -136,7 +136,7 @@ endm
 
 LDLL_Append equ LDLL_InsertLast
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LDLL_Remove
 ; Purpose:    Remove a member from the linked list.
 ; Arguments:  Arg1: -> Control structure or reference.
@@ -174,7 +174,7 @@ LDLL_Remove macro CtlReg:req, RefReg:req, AuxReg1:=<xcx>, AuxReg2:=<>
   @@:
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LDLL_RemoveFirst
 ; Purpose:    Remove the first member from the linked list.
 ; Arguments:  Arg1: -> Control structure or reference.
@@ -192,7 +192,7 @@ LDLL_RemoveFirst macro CtlReg:req, AuxReg1:req
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LDLL_RemoveLast
 ; Purpose:    Remove the last member from the linked list.
 ; Arguments:  Arg1: -> Control structure or reference.
@@ -213,7 +213,7 @@ endm
 
 ??ListForEach_ID = 0
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .ListForEach
 ; Purpose:    Loop through all items of the collection.
 ; Arguments:  Arg1: First member of the list.
@@ -236,7 +236,7 @@ endm
     mov @CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID), xax
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .ListNext
 ; Purpose:    Move to the next list item.
 ; Arguments:  None
@@ -253,7 +253,7 @@ endm
   ??ListForEach_ID = ??ListForEach_ID - 1
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .ListForEachRev
 ; Purpose:    Loop through all items of the List in reverse order.
 ; Arguments:  Arg1: Last member of the list.
@@ -276,7 +276,7 @@ endm
     mov @CatStr(<??ListForEach_Pointer_>, %??ListForEach_ID), xax
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .ListPrev
 ; Purpose:    Move to the next List item.
 ; Arguments:  None

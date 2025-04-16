@@ -14,7 +14,7 @@
 
 WM_GETOBJECTINSTANCE  equ   0BFFFh                       ;Last possible WM_APP message
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     WinPrimer
 ; Purpose:    Implement a base object for windows user interface descendant objects.
 
@@ -40,7 +40,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WinPrimer.Done
 ; Purpose:    Destroy the window.
 ; Arguments:  None
@@ -55,7 +55,7 @@ Method WinPrimer.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WinPrimer.Init
 ; Purpose:    Initialize the WinPrimer object.
 ; Arguments:  Arg1: -> Owner object.
@@ -68,7 +68,7 @@ Method WinPrimer.Init,, pOwner:POINTER, hWnd:HWND
   ACall xcx.Init, pOwner
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WinPrimer.Load
 ; Purpose:    Load and initialize the WinPrimer instance from a stream object. Descendant objects
 ;             should redefine this method and load new members.
@@ -82,7 +82,7 @@ Method WinPrimer.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   OCall pStream::Stream.BinReadX
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    WinPrimer.OnGetObjectInstance
 ; Purpose:   Event procedure for WM_GETINSATNCE message. Returns the object instance if the
 ;            hWnd is known, calling "SendMessage hWnd, WM_GETOBJECTINSTANCE, 0, 0".
@@ -94,7 +94,7 @@ Method WinPrimer.OnGetObjectInstance,, wParam:WPARAM, lParam:LPARAM
   mov xax, pSelf
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WinPrimer.OnPaletteChanged
 ; Purpose:    Event handler for WM_PALETTECHANGED message.
 ;             This message is sent by the OS to all top-level and overlapped windows after the
@@ -114,7 +114,7 @@ Method WinPrimer.OnPaletteChanged,, wParam:WPARAM, lParam:LPARAM
 ;  invoke SendChildrenMessage, [xcx].hWnd, WM_PALETTECHANGED, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WinPrimer.OnPaletteIsChanging
 ; Purpose:    Event handler for WM_PALETTEISCHANGING message.
 ;             The WM_PALETTEISCHANGING message informs applications that an application is going to
@@ -140,7 +140,7 @@ Method WinPrimer.OnPaletteIsChanging,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WinPrimer.OnSettingChange
 ; Purpose:    Event handler for WM_SETTINGCHANGE message (same as WM_WININICHANGE).
 ;             This message is sent to all top-level windows when the SystemParametersInfo function
@@ -156,7 +156,7 @@ Method WinPrimer.OnSettingChange,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WinPrimer.OnSysColorChange
 ; Purpose:    Event handler for WM_SYSCOLORCHANGE message.
 ;             This message is sent to all top-level windows when a change is made to a system color
@@ -172,7 +172,7 @@ Method WinPrimer.OnSysColorChange,, wParam:WPARAM, lParam:LPARAM
   invoke SendChildrenMessage, [xcx].hWnd, WM_SYSCOLORCHANGE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     WinPrimer.Store
 ; Purpose:    Store the WinPrimer instance in a stream object. Descendant objects should redefine
 ;             this method and store new members.

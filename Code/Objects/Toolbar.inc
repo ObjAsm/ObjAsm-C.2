@@ -26,7 +26,7 @@ DEF_TOOLBAR struc
 DEF_TOOLBAR ends
 PDEF_TOOLBAR typedef ptr DEF_TOOLBAR
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Toolbar
 ; Purpose:    Implement a thin wrapper around the ToolbarWindow32 GDI control.
 
@@ -48,7 +48,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Toolbar.Done
 ; Purpose:    Finalize the Toolbar object.
 ; Arguments:  None.
@@ -60,7 +60,7 @@ Method Toolbar.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Toolbar.BtnEnable
 ; Purpose:    Set the enable state of a Toolbar button.
 ; Arguments:  Arg1: Button ID.
@@ -72,7 +72,7 @@ Method Toolbar.BtnEnable,, dBtnID:DWORD, dAction:DWORD
   invoke SendMessage, [xcx].hWnd, TB_ENABLEBUTTON, dBtnID, dAction
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Toolbar.BtnHide
 ; Purpose:    Set the hide state of a Toolbar button.
 ; Arguments:  Arg1: Button ID.
@@ -84,7 +84,7 @@ Method Toolbar.BtnHide,, dBtnID:DWORD, dAction:DWORD
   invoke SendMessage, [xcx].hWnd, TB_HIDEBUTTON, dBtnID, dAction
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Toolbar.GetHeight
 ; Purpose:    Return the height of the Toolbar.
 ; Arguments:  None.
@@ -98,7 +98,7 @@ Method Toolbar.GetHeight
   mov eax, TBSize.y
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Toolbar.GetWidth
 ; Purpose:    Return the total width of the Toolbar.
 ; Arguments:  None.
@@ -112,7 +112,7 @@ Method Toolbar.GetWidth
   mov eax, TBSize.x
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Toolbar.Init
 ; Purpose:    Initialize the Toolbar control.
 ; Arguments:  Arg1: -> Owner object.
@@ -168,7 +168,7 @@ Method Toolbar.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PDEF_
   Subclass Toolbar                                      ;Uses xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Toolbar.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.

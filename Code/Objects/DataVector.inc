@@ -10,7 +10,7 @@
 
 PDataVecProc  typedef proto :POINTER, :XWORD, :XWORD      ;If required, return value stored in eax
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DataVector
 ; Purpose:    DataVector is an container whose Item capacity ist larger than a XWORD.
 ;             Vectors with a smaller item size have dedicated objects that implement specific code
@@ -53,7 +53,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.Delete
 ; Purpose:    Delete an Item from the Vector.
 ; Arguments:  Arg1: -> Item.
@@ -67,7 +67,7 @@ Method DataVector.Delete, uses xsi, pItem:POINTER
   OCall xsi.DeleteAt, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.DeleteAt
 ; Purpose:    Delete the Item(Index) from the Vector.
 ; Arguments:  Arg1: Index value.
@@ -121,7 +121,7 @@ Method DataVector.DeleteAt, uses xdi xsi, dIndex:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.DeleteAll
 ; Purpose:    Delete all Items.
 ; Arguments:  None.
@@ -132,7 +132,7 @@ Method DataVector.DeleteAll
   m2z [xcx].dCount
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.Done
 ; Purpose:    Delete and disposes of all the Items in the Vector.
 ; Arguments:  None.
@@ -147,7 +147,7 @@ Method DataVector.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.FirstThat
 ; Purpose:    Search the first Item that doesn't return FALSE in eax.
 ; Arguments:  Arg1: -> (static addr) Function that evaluates to TRUE or FALSE (return value in eax).
@@ -174,7 +174,7 @@ Method DataVector.FirstThat, uses xbx xdi xsi, pTestFunc:POINTER, xArg1:XWORD, x
   mov xax, xdi                                          ;xax -> Item
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.FirstThatNot
 ; Purpose:    Search the first Item that returns FALSE in eax.
 ; Arguments:  Arg1: -> (static addr) Function that evaluates to TRUE or FALSE (return value in eax).
@@ -200,7 +200,7 @@ Method DataVector.FirstThatNot, uses xbx xdi xsi, pTestFunc:POINTER, xArg1:XWORD
   mov xax, xdi                                          ;xax -> Item
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.ForEach
 ; Purpose:    Call Action for each Item in the Vector.
 ; Arguments:  Arg1: -> Processing procedure (static address).
@@ -221,7 +221,7 @@ Method DataVector.ForEach, uses xbx xdi xsi, pActionProc:POINTER, xArg1:XWORD, x
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.ForEachRev
 ; Purpose:    Call Action for each Item in the Vector in reverse order.
 ; Arguments:  Arg1: -> Processing procedure (static address).
@@ -245,7 +245,7 @@ Method DataVector.ForEachRev, uses xbx xdi xsi, pActionProc:POINTER, xArg1:XWORD
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.IndexOf
 ; Purpose:    Return the index of an Item in the Vector in the range [0..Count-1].
 ; Arguments:  Arg1: -> Item.
@@ -268,7 +268,7 @@ Method DataVector.IndexOf, uses xbx xdi xsi, pItem:POINTER
   mov eax, -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.Init
 ; Purpose:    Initialize the Vector with a limit (dLimit), an increasing step (dDelta)
 ;             and a maximum size (dMaxCapacity).
@@ -304,7 +304,7 @@ Method DataVector.Init, uses xsi, pOwner:POINTER, dItemSize:DWORD, \
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.Insert
 ; Purpose:    Insert xItem at the end of the Vector.
 ; Arguments:  Arg1: -> New Item.
@@ -358,7 +358,7 @@ Method DataVector.Insert, uses xdi xsi, pItem:POINTER
   xor eax, eax                                          ;Return FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.InsertAt
 ; Purpose:    Insert an Item at index position shifting the remaining xItems.
 ; Arguments:  Arg1: Index value [0..Count].
@@ -467,7 +467,7 @@ Method DataVector.InsertAt, uses xbx xdi xsi, dIndex:DWORD, pItem:POINTER
   xor eax, eax                                          ;Return NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.ItemAt
 ; Purpose:    Return a POINTER to an Item(Index).
 ; Arguments:  Arg1: Index in range [0..Count-1].
@@ -486,7 +486,7 @@ Method DataVector.ItemAt,, dIndex:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.LastThat
 ; Purpose:    Search the last Item that doesn't return FALSE in eax.
 ; Arguments:  Arg1: -> (static address) Function that evaluates to TRUE or FALSE (eax = return val).
@@ -519,7 +519,7 @@ Method DataVector.LastThat, uses xbx xdi xsi, pTestFunc:POINTER, xArg1:XWORD, xA
   mov xax, xsi                                          ;xax -> Item
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.LastThatNot
 ; Purpose:    Search the last Item that returns FALSE in eax.
 ; Arguments:  Arg1: -> (static address) Function that evaluates to TRUE or FALSE (eax = return val).
@@ -552,7 +552,7 @@ Method DataVector.LastThatNot, uses xbx xdi xsi, pTestFunc:POINTER, xArg1:XWORD,
   mov xax, xsi                                          ;xax -> Item
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.Load
 ; Purpose:    Load and initializes the Vector from a Stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -573,7 +573,7 @@ Method DataVector.Load, uses xbx xdi xsi, pStream:$ObjPtr(Stream), pDeserInfo:PD
   ret
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.PutAt
 ; Purpose:    Overwrite an Item at index position.
 ; Arguments:  Arg1: Index value.
@@ -619,7 +619,7 @@ Method DataVector.PutAt, uses xdi xsi, dIndex:DWORD, pItem:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.SetLimit
 ; Purpose:    Set the Vector limit, allocating the necessary memory on the process heap to hold
 ;             all Items.
@@ -683,7 +683,7 @@ Method DataVector.SetLimit, uses xbx xdi xsi, dNewLimit:DWORD
   mov eax, VEC_OUT_OF_MEMORY                            ;Return value
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataVector.Store
 ; Purpose:    Store the Vector in a Stream object.
 ; Arguments:  Arg1: -> Stream object.

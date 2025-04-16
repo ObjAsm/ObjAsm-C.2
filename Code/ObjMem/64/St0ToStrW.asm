@@ -14,7 +14,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 option stackbase:rbp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  St0ToStrW
 ; Purpose:    Create a WIDE string representation of the content of the st(0) FPU register.
 ; Arguments:  Arg1: -> Destination buffer.

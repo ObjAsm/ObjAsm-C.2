@@ -13,7 +13,7 @@
 externdef h2dw_Tbl1:BYTE
 externdef h2dw_Tbl2:BYTE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  hex2dwordW
 ; Purpose:    Load a WIDE string hexadecimal representation of a DWORD.
 ; Arguments:  Arg1: -> WIDE hex string with 8 characters.

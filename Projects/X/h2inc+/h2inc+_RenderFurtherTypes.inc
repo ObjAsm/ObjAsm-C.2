@@ -8,7 +8,7 @@
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  RenderFurtherTypes
 ; Purpose:    Check out if there come some pointer definitions behind.
 ; Arguments:  Arg1: -> Container Type.

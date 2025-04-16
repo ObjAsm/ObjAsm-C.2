@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  BStrECat
 ; Purpose:    Append a BStr to another and return the address of the ZTC.
 ;             BStrCat does not perform any length checking. The destination buffer must have room

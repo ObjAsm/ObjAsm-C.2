@@ -53,7 +53,7 @@ WIDTH_LEVEL_3   equ  WIDTH_LEVEL_1
 ;    Application implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
 ; Purpose:    Finalize the SDI application object.
 ; Arguments:  None.
@@ -65,7 +65,7 @@ Method Application.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the SDI application object.
 ; Arguments:  None.
@@ -95,7 +95,7 @@ Method Application.Init, uses xsi
 ;  OCall Dlg::DialogModal.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
@@ -113,7 +113,7 @@ Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -148,7 +148,7 @@ Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -235,7 +235,7 @@ Method Application.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnFocus
 ; Purpose:    Event procedure for WM_KILLFOCUS and WM_SETFOCUS messages.
 ; Arguments:  Arg1: First message parameter.
@@ -248,7 +248,7 @@ Method Application.OnFocus,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnMouseWheel
 ; Purpose:    Forward the message WM_MOUSEWHEEL to the focused window.
 ; Arguments:  Arg1: First message parameter.
@@ -260,7 +260,7 @@ Method Application.OnMouseWheel,, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xcx].XTV.hWnd, WM_MOUSEWHEEL, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -279,7 +279,7 @@ Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -297,7 +297,7 @@ Method Application.OnSize, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSettingChange
 ; Purpose:    Event handler for WM_SETTINGCHANGE message.
 ; Arguments:  Arg1: First message parameter.
@@ -310,7 +310,7 @@ Method Application.OnSettingChange,, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xcx].XTV.hWnd, WM_SETTINGCHANGE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSysColorChange
 ; Purpose:    Event handler for WM_SYSCOLORCHANGE message.
 ; Arguments:  Arg1: First message parameter.
@@ -323,7 +323,7 @@ Method Application.OnSysColorChange,, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xcx].XTV.hWnd, WM_SYSCOLORCHANGE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnKeyDown
 ; Purpose:    Forward this message.
 ; Arguments:  Arg1: First message parameter.
@@ -335,7 +335,7 @@ Method Application.OnKeyDown,, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xcx].XTV.hWnd, WM_KEYDOWN, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnKeyUp
 ; Purpose:    Forward this message.
 ; Arguments:  Arg1: First message parameter.
@@ -347,7 +347,7 @@ Method Application.OnKeyUp,, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xcx].XTV.hWnd, WM_KEYUP, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
 ; Purpose:    Register the object class with the OS.
 ; Arguments:  None.
@@ -372,7 +372,7 @@ Method Application.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.
@@ -413,7 +413,7 @@ MethodEnd
 ;;    TVDialog implementation
 ;; ==================================================================================================
 ;
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Method:     TVDialog.CtlsSet
 ;; Purpose:    Insert some nodes.
 ;; Arguments:  None.

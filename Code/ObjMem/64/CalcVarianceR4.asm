@@ -13,7 +13,7 @@
 SRC_TYPE equ <REAL4>
 ProcName textequ <CalcVarianceR4>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CalcVarianceR4
 ; Purpose:    Calculate the MSE of an array of REAL4s.
 ; Arguments:  Arg1: -> Array of REAL4s.

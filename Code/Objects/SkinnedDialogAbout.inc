@@ -10,7 +10,7 @@
 
 externdef szAboutText:CHR
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     SkinnedDialogAbout
 ; Purpose:    Implement a skinned about dialog using the ElasticSkin engine.
 
@@ -39,7 +39,7 @@ IDC_DAB_LINK    equ     103
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedDialogAbout.CtlsSet
 ; Purpose:    Set the controls of the About dialog.
 ; Arguments:  None.
@@ -57,7 +57,7 @@ Method SkinnedDialogAbout.CtlsSet, uses xsi
 ;  invoke SendMessage, xax, BM_SETCOLOR, HYPERLINK_BKGNDCOLOR, [xsi].Skin.SkinData.dClientBkgndColor
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedDialogAbout.Done
 ; Purpose:    Finalize the SkinnedDialogAbout object
 ; Arguments:  None.
@@ -70,7 +70,7 @@ Method SkinnedDialogAbout.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedDialogAbout.DrawCaptionText
 ; Purpose:    Draw the application caption.
 ; Arguments:  None.
@@ -104,7 +104,7 @@ Method SkinnedDialogAbout.DrawCaptionText, uses xsi
   invoke ReleaseDC, [xsi].hWnd, hDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedDialogAbout.OnCtlColorStatic
 ; Purpose:    Event procedure for WM_CTLCOLORSTATIC message.
 ; Arguments:  Arg1: First message parameter.
@@ -117,7 +117,7 @@ Method SkinnedDialogAbout.OnCtlColorStatic, uses xsi, wParam:WPARAM, lParam:LPAR
   invoke CreateSolidBrush, [xsi].Skin.SkinData.dClientBkgndColor  ;Return background brush handle
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedDialogAbout.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -148,7 +148,7 @@ Method SkinnedDialogAbout.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                              ;Return zero
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedDialogAbout.OnNcActivate
 ; Purpose:    Event procedure for WM_NCACTIVATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -162,7 +162,7 @@ Method SkinnedDialogAbout.OnNcActivate, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xsi].hWnd, WM_NCACTIVATE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SkinnedDialogAbout.OnNcPaint
 ; Purpose:    Event procedure for WM_NCPAINT message.
 ; Arguments:  Arg1: First message parameter.

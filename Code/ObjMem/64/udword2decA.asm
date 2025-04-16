@@ -14,7 +14,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 externdef TwoDecDigitTableA:BYTE
 ProcName textequ <udword2decA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  udword2decA
 ; Purpose:    Convert an unsigned DWORD to its decimal ANSI string representation.
 ; Arguments:  Arg1: -> Destination ANSI string buffer.

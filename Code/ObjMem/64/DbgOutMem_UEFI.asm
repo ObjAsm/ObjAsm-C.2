@@ -13,7 +13,7 @@
 ProcName textequ <DbgOutMem_UEFI>
 BYTES_PER_LINE equ 8      ;Must be a multiple of 8
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgOutMem_UEFI
 ; Purpose:    Output the content of a memory block.
 ; Arguments:  Arg1: -> Memory block.

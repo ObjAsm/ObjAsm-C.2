@@ -44,7 +44,7 @@ include NetComClient_Protocol.inc
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CaptureDesktopImage
 ; Purpose:    Return a memory block containing the image of the Desktop.
 ; Arguments:  None.
@@ -107,7 +107,7 @@ CaptureDesktopImage endp
 ;    NetComClient implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComClient.Done
 ; Purpose:
 ; Arguments:  None.
@@ -120,7 +120,7 @@ Method NetComClient.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComClient.Init
 ; Purpose:    Initalizes the SDI application object.
 ; Arguments:  None.
@@ -171,7 +171,7 @@ Method NetComClient.Init, uses xsi
   invoke SetTimer, [xsi].hWnd, 123, 100, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComClient.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -213,7 +213,7 @@ Method NetComClient.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComClient.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
@@ -231,7 +231,7 @@ Method NetComClient.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComClient.OnTimer
 ; Purpose:    Display status information on the window client area.
 ; Arguments:  Arg1: First message parameter.
@@ -296,7 +296,7 @@ Method NetComClient.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComClient.Startup
 ; Purpose:    Registers the object class with the OS.
 ; Arguments:  None.
@@ -326,7 +326,7 @@ MethodEnd
 ;    SendDlg implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:       SendDlg.CtlsGet
 ; Purpose:      Gets the controls in this dialog window.
 ; Arguments:    None.
@@ -360,7 +360,7 @@ Method SendDlg.CtlsGet, uses xsi
   inc eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SendDlg.CtlsSet
 ; Purpose:    Sets the controls in this dialog window.
 ; Arguments:  None.
@@ -379,7 +379,7 @@ Method SendDlg.CtlsSet, uses xsi
   invoke SetDlgItemText, [xsi].hWnd, IDC_EDT_PORT, $ObjTmpl(NetComClientProtocol).pServiceName
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SendDlg.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -393,7 +393,7 @@ Method SendDlg.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return zero
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SendDlg.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -436,7 +436,7 @@ Method SendDlg.OnCommand, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SendDlg.OnTimer
 ; Purpose:    Display status information on the window client area.
 ; Arguments:  Arg1: First message parameter.

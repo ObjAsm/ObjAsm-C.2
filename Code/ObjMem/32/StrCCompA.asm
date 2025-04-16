@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCCompA
 ; Purpose:    Compare 2 ANSI strings with case sensitivity up to a maximal number of characters.
 ; Arguments:  Arg1: -> ANSI string 1.

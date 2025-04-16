@@ -37,7 +37,7 @@ BAUDRATE_TABLE label POINTER
   BAUDRATE_ENTRY_COUNT = ($ - BAUDRATE_TABLE)/sizeof(BAUDRATE_ENTRY)
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogComSetup.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -70,7 +70,7 @@ Method DialogComSetup.CtlsGet, uses xbx xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogComSetup.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -109,7 +109,7 @@ Method DialogComSetup.CtlsSet, uses xbx xdi xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogComSetup.Done
 ; Purpose:    Finalize the DialogComSetup object.
 ; Arguments:  None.
@@ -121,7 +121,7 @@ Method DialogComSetup.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogComSetup.Init
 ; Purpose:    Initialaize a DialogComSetup object.
 ; Arguments:  Arg1: -> Owner object.
@@ -137,7 +137,7 @@ Method DialogComSetup.Init, uses xsi, pOwner:POINTER, hParent:HWND, pComSetup:PC
   mov [xsi].dNameCount, ecx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogComSetup.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.

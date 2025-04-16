@@ -9,7 +9,7 @@
 
 % include &IncPath&Windows\CommCtrl.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  LoadCommonControls
 ; Purpose:    Invoke InitCommonControls with a correctly filled input structure.
 ; Arguments:  Arg1: ICC_COOL_CLASSES, ICC_BAR_CLASSES, ICC_LISTVIEW_CLASSES, ICC_TAB_CLASSES,

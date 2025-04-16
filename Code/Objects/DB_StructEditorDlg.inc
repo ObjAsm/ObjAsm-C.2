@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 SDF_CTRL_EDITOR_ENABLED   equ   BIT00
 SDF_CTRL_APPEND_ENABLED   equ   BIT01
@@ -86,7 +86,7 @@ DL_CHILD_INFO {{100, 100, 000, 000}}    ;Cancel
 DL_CHILD_INFO {{000, 100, 100, 000}}    ;Statusbar
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.CtlsEnable
 ; Purpose:    Enable or disable the dialog children controls.
 ; Arguments:  None.
@@ -136,7 +136,7 @@ Method DB_StructEditorDlg.CtlsEnable, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.CtlsGet
 ; Purpose:    Read the controls in this dialog window.
 ; Arguments:  None.
@@ -147,7 +147,7 @@ Method DB_StructEditorDlg.CtlsGet
   OCall [xax].pStructEditor::DB_StructEditor.CtlsGet, [xax].pTable
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.CtlsSet
 ; Purpose:    Set the controls in this dialog window.
 ; Arguments:  None.
@@ -158,7 +158,7 @@ Method DB_StructEditorDlg.CtlsSet
   OCall [xax].pStructEditor::DB_StructEditor.CtlsSet, [xax].pTable
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.Done
 ; Purpose:    Finalize the DB_QueryDlg object.
 ; Arguments:  None.
@@ -170,7 +170,7 @@ Method DB_StructEditorDlg.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.Init
 ; Purpose:    Initialize the DB_StructEditorDlg object.
 ; Arguments:  Arg1: -> Owner object.
@@ -184,7 +184,7 @@ Method DB_StructEditorDlg.Init,, pOwner:POINTER, hParent:HWND, pTable:$ObjPtr(DB
   ACall xcx.Init, pOwner, hParent, IDD_STRUC_EDITOR
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.Mutate
 ; Purpose:    Start the mutation job.
 ; Arguments:  None.
@@ -626,7 +626,7 @@ Method DB_StructEditorDlg.Mutate, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.MutateData
 ; Purpose:    Table data mutation.
 ; Arguments:  Arg1: -> TaskStatus.
@@ -883,7 +883,7 @@ Method DB_StructEditorDlg.MutateData, uses xbx xdi xsi, pStatus:PTaskStatus, Arg
   MemFree pCopyBuffer
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -998,7 +998,7 @@ Method DB_StructEditorDlg.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPA
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.OnExitSizeMove
 ; Purpose:    Event procedure for WM_EXITSIZEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1011,7 +1011,7 @@ Method DB_StructEditorDlg.OnExitSizeMove, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke SendMessage, [xsi].hWnd, DM_REPOSITION, 0, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -1088,7 +1088,7 @@ Method DB_StructEditorDlg.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:
   mov eax, TRUE                                         ;Let Windows set the default keyboard focus
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter. wParam = SIZE_xxx
@@ -1114,7 +1114,7 @@ Method DB_StructEditorDlg.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.OnVScroll
 ; Purpose:    Event procedure for WM_VSCROLL message.
 ; Arguments:  Arg1: First message parameter.
@@ -1176,7 +1176,7 @@ Method DB_StructEditorDlg.OnVScroll, uses xbx xdi xsi, wParam:WPARAM, lParam:LPA
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.RebuildIndex
 ; Purpose:    Table index mutation.
 ; Arguments:  Arg1: -> TaskStatus.
@@ -1221,7 +1221,7 @@ Method DB_StructEditorDlg.RebuildIndex, uses xbx xsi, pStatus:PTaskStatus, \
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.ReopenIndex
 ; Purpose:    Table association of an existing index.
 ; Arguments:  Arg1: -> TaskStatus.
@@ -1259,7 +1259,7 @@ Method DB_StructEditorDlg.ReopenIndex, uses xbx xsi, pStatus:PTaskStatus, \
   m2m [xcx].$Obj(DB_StructEditorLine).pPrvFieldIndex, pIndex, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DB_StructEditorDlg.UpdateStatusbar
 ; Purpose:    Update relevant database information on the statusbar.
 ; Arguments:  None.

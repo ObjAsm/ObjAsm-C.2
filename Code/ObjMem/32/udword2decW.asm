@@ -14,7 +14,7 @@
 
 externdef TwoDecDigitTableW:WORD
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  udword2decW
 ; Purpose:    Convert an unsigned DWORD to its decimal WIDE string representation.
 ; Arguments:  Arg1: -> Destination WIDE string buffer.

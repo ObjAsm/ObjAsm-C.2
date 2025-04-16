@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     RegExW
 ; Purpose:    This object is a small wrapper around a Perl Compatible Regular Expression (PCRE).
 
@@ -41,7 +41,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExW.Done (Destructor)
 ; Purpose:    Finalize the RegExW object and frees allocated resources.
 ; Arguments:  None.
@@ -67,7 +67,7 @@ Method RegExW.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExW.Exec
 ; Purpose:    Perform a search for a pattern match on the subject string.
 ; Arguments:  Arg1: -> Subject string.
@@ -84,7 +84,7 @@ Method RegExW.Exec, uses xsi, pSubject:POINTER, dLength:DWORD, dStartOffset:DWOR
   mov [xsi].dMatchCount, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExW.GetConfig
 ; Purpose:    Return info about what features are configured.
 ; Arguments:  Arg1: What information is required.
@@ -95,7 +95,7 @@ Method RegExW.GetConfig,, dWhat:DWORD, pWhere:POINTER
   invoke pcre16_config, dWhat, pWhere
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExW.GetInfo
 ; Purpose:    Returns info about the compiled pattern.
 ; Arguments:  Arg1: -> Extra data or NULL.
@@ -108,7 +108,7 @@ Method RegExW.GetInfo,, pExtraData:POINTER, dWhat:DWORD, pWhere:POINTER
   invoke pcre16_fullinfo, [xcx].pPattern, pExtraData, dWhat, pWhere
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExW.Init (Constructor)
 ; Purpose:    Initialize the object calculating the pattern resulting from the input regular
 ;             expression.
@@ -136,7 +136,7 @@ Method RegExW.Init, uses xsi, pOwner:POINTER, pRegEx:PSTRINGA, dOptions:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExW.Load
 ; Purpose:    Load the array object's data from a stream.
 ; Arguments:  Arg1: -> Stream object.
@@ -189,7 +189,7 @@ Method RegExW.Load, uses xbx xsi, pStream:$ObjPtr(Stream)
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExW.SetOutCount
 ; Purpose:    Set the number of expected output structures in OutVector and allocates the necessary
 ;             memory to hold them.
@@ -239,7 +239,7 @@ Method RegExW.SetOutCount, uses xsi, dIndexCount:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExW.Store
 ; Purpose:    Store the array object's data to a stream.
 ; Arguments:  Arg1: -> Stream object.
@@ -262,7 +262,7 @@ Method RegExW.Store, uses xsi, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.BinWrite, [xsi].pExtra, [xsi].dExtraSize
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     RegExW.Study
 ; Purpose:    Study a compiled pattern.
 ; Arguments:  Arg1: Option bits.

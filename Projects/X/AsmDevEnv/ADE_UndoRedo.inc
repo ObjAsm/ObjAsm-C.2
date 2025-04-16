@@ -11,37 +11,20 @@
 ; ==================================================================================================
 
 AAT_DELETECHARS     equ   0
-AAT_DELETENEXTLINE  equ   1
+AAT_DELETELINE      equ   1
 AAT_INSERTCHARS     equ   2
-AAT_INSERTNEXTLINE  equ   3
-
-SEQUENCE struct
-  dSequenceID   DWORD           ?
-  SequenceLink  LDLL_MEMBER     {}
-  pEditor       $ObjPtr(Editor) ?
-  pEditorLine   $ObjPtr(EditorLine) ?
-SEQUENCE ends
-PSEQUENCE typedef ptr SEQUENCE
+AAT_INSERTLINE      equ   3
 
 ACTION struct
-  ActionLink    LDLL_MEMBER     {}
-  dAction       DWORD           ?
-  union
-    struct
-      dBegin    DWORD           ?
-      dCount    DWORD           ?
-      pChars    PSTRING         ?
-    ends
-    struct
-      pLineBefore $ObjPtr(EditorLine) ?
-      pLineAfter  $ObjPtr(EditorLine) ?
-    ends
-  ends
+  dAction     DWORD           ?
+  pEditorLine $ObjPtr(EditorLine) ?
+  dPosIndex   DWORD           ?
+  dChrCount   DWORD           ?
+  pChars      PSTRING         ?
 ACTION ends
 PACTION typedef ptr ACTION
 
-
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Method:     Application.Undo
 ;; Purpose:    Perform an Undo operation.
 ;; Arguments:  Arg1: .

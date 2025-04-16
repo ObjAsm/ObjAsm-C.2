@@ -36,7 +36,7 @@ ObjectEnd
 ;    FireworksApp implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    FireworksApp.Init
 ; Purpose:   Initalizes the FireworksApp application object.
 ; Arguments: None.
@@ -60,7 +60,7 @@ Method FireworksApp.Init, uses esi
     mov [esi].hTimer, $invoke(SetTimer, [esi].hWnd, TIMERID, 1000, NULL)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    FireworksApp.OnClose
 ; Purpose:   Event procedure for WM_CLOSE message.
 ; Arguments: Arg1: First message parameter.
@@ -84,7 +84,7 @@ Method FireworksApp.OnClose, uses esi, wParam:dword, lParam:dword
     .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    FireworksApp.OnTimer
 ; Purpose:   Event procedure for WM_TIMER message.
 ; Arguments: Arg1: First message parameter.
@@ -108,7 +108,7 @@ Method FireworksApp.OnTimer, uses edi esi, wParam:dword, lParam:dword
     and [edi].Fireworks.dFrameCount, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    FireworksApp.Startup
 ; Purpose:   Registers the object class with the OS.
 ; Arguments: None.

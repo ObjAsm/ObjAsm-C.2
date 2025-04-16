@@ -12,7 +12,7 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CompressMem
 ; Purpose:    Compress memory with one of the Cabinet compression algorithms. 
 ; Arguments:  Arg1: -> Uncompressed data.

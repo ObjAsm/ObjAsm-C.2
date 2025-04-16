@@ -14,7 +14,7 @@ TypeOpenProcessToken      typedef proto :HANDLE, :DWORD, :POINTER
 TypeLookupPrivilegeValueA typedef proto :POINTER, :POINTER, :POINTER
 TypeAdjustTokenPrivileges typedef proto :HANDLE, :DWORD, :POINTER, :DWORD, :POINTER, :POINTER
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SetPrivilegeTokenA
 ; Purpose:    Enable privilege tokens.
 ; Arguments:  Arg1: Process handle.

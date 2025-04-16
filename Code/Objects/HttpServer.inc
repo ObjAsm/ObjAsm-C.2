@@ -91,7 +91,7 @@ HSC_NETWORK_READ_TIMEOUT_ERROR           equ  598
 HSC_NETWORK_CONNECT_TIMEOUT_ERROR        equ  599
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     HttpServer
 ; Purpose:    This object provides the functionality of an HTTP server.
 
@@ -135,7 +135,7 @@ AddKnownHeader macro Response, HeaderId, pRawValA
   mov Response.Headers.KnownHeaders[HeaderId*sizeof(HTTP_KNOWN_HEADER)].RawValueLength, ax
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     HttpServer.AddURL
 ; Purpose:    Add a new URL that the server listens to.
 ; Arguments:  Arg1: -> URL (WIDE String)
@@ -150,7 +150,7 @@ Method HttpServer.AddURL, uses xsi, pURL:PSTRINGW
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     HttpServer.Done
 ; Purpose:    Finalize the server.
 ; Arguments:  Arg1: None.
@@ -179,7 +179,7 @@ Method HttpServer.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     HttpServer.Init
 ; Purpose:    Initialize the server.
 ; Arguments:  Arg1: -> Owner object.
@@ -193,7 +193,7 @@ Method HttpServer.Init, uses xsi, pOwner:POINTER
   OCall [xsi].UrlColl::XWCollection.Init, xsi, 10, 10, 0FFFFFFFFh
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     HttpServer.ReceiveRequests
 ; Purpose:    The function to receive a request. This function calls the corresponding function to
 ;             handle the response.
@@ -286,7 +286,7 @@ Method HttpServer.ReceiveRequests, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     HttpServer.Run
 ; Purpose:    Run the server.
 ; Arguments:  None.
@@ -301,7 +301,7 @@ Method HttpServer.Run, uses xsi
   invoke ResumeThread, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     HttpServer.SendResponse
 ; Purpose:    Send an HTTP response.
 ; Arguments:  Arg1: Request Queue HANDLE.
@@ -338,7 +338,7 @@ Method HttpServer.SendResponse, uses xsi, pRequest:PHTTP_REQUEST, wStatusCode:WO
                                NULL, addr dBytesSent, NULL, 0, NULL, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     HttpServer.SendPostResponse
 ; Purpose:    Send an HTTP Post response.
 ; Arguments:  Arg1: -> HTTP_REQUEST.

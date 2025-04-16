@@ -12,7 +12,7 @@
 
 % include &MacPath&Strings.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetExceptionStrA
 ; Purpose:    Translate an exception code to an ANSI string.
 ; Arguments:  Arg1: Exception code.

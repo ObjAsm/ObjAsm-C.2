@@ -27,7 +27,7 @@ IID_Application GUID {000020970h,00000h,00000h,{0C0h,000h,000h,000h,000h,000h,00
 
 .code
 
-; —————————————————————————————————————————————————————————————————————————————————————————————————
+; -------------------------------------------------------------------------------------------------
 ; Method:    WordHost.Done
 ; Purpose:   Finalizes the Host object.
 ; Arguments: None.
@@ -41,7 +41,7 @@ Method WordHost.Done, uses esi
     ACall esi.Done
 MethodEnd
 
-; —————————————————————————————————————————————————————————————————————————————————————————————————
+; -------------------------------------------------------------------------------------------------
 ; Method:    WordHost.Close
 ; Purpose:   Closes a specified document.
 ; Arguments: Arg1: -> Document Interface.
@@ -64,7 +64,7 @@ Method WordHost.Close,, pDocument:Pointer
     .endif                                       
 MethodEnd
 
-; —————————————————————————————————————————————————————————————————————————————————————————————————
+; -------------------------------------------------------------------------------------------------
 ; Method:    WordHost.Init
 ; Purpose:   Initializes the Host object and creates an Word Application instance.
 ; Arguments: -> Owner.
@@ -83,7 +83,7 @@ Method WordHost.Init, uses esi, pOwner:Pointer
     .endif
 MethodEnd
 
-; —————————————————————————————————————————————————————————————————————————————————————————————————
+; -------------------------------------------------------------------------------------------------
 ; Method:    WordHost.Open
 ; Purpose:   Opens a Workbook from a file.
 ; Arguments: Arg1: -> Filename.
@@ -128,7 +128,7 @@ Method WordHost.Open,, pFileName:BSTR, dReadOnly:dword, dIsVisible:dword
     mov eax, pDocument
 MethodEnd
 
-; —————————————————————————————————————————————————————————————————————————————————————————————————
+; -------------------------------------------------------------------------------------------------
 ; Method:    WordHost.SaveAs
 ; Purpose:   Saves a specified Workbook.
 ; Arguments: Arg1: -> Document Interface.
@@ -170,7 +170,7 @@ Method WordHost.SaveAs,, pDocument:Pointer, pNewFileName:BSTR, dFormat:dword
     .endif                                       
 MethodEnd
 
-; —————————————————————————————————————————————————————————————————————————————————————————————————
+; -------------------------------------------------------------------------------------------------
 ; Method:    WordHost.SetVisible
 ; Purpose:   Toggles visibility of the Word Application.
 ; Arguments: TRUE/FALSE.
@@ -181,7 +181,7 @@ Method WordHost.SetVisible,, dVisibility:dword
     ICall [ecx].pIWordApp::_Application.put_Visible, dVisibility
 MethodEnd
 
-; —————————————————————————————————————————————————————————————————————————————————————————————————
+; -------------------------------------------------------------------------------------------------
 ; Method:    WordHost.Quit
 ; Purpose:   Quits Word Application.
 ; Arguments: None

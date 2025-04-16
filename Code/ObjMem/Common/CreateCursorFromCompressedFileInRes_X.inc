@@ -12,7 +12,7 @@
 .code
 % include &ObjMemPath&Common\CursorIconStructs.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CreateCursorFromCompressedFileInRes
 ; Purpose:    Create an cursor from a compressed cursor file stored as RCDATA resource. 
 ;             Compression should be done using a Microsoft compression algorithm: XPRESS, XPRESS

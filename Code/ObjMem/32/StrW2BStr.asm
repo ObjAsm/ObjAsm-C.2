@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrW2BStr
 ; Purpose:    Convert a WIDE string into a BStr.
 ; Arguments:  Arg1: -> Destination BStr buffer = Buffer address + sizeof(DWORD).

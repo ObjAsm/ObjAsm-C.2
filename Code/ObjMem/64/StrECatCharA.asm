@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrECatCharA
 ; Purpose:    Append a character to an ANSI string and return the address of the ending zero.
 ;             StrECatCharA does not perform any length checking. The destination buffer must have

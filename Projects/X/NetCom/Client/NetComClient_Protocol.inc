@@ -23,7 +23,7 @@ if IMPLEMENT
 ;    NetComClientProtocol implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComClientProtocol.Init
 ; Purpose:    Initializes this object.
 ; Arguments:  Arg1: -> Owner object.
@@ -36,7 +36,7 @@ Method NetComClientProtocol.Init, uses xsi, pOwner:POINTER, pServiceName:PSTRING
   OCall [xsi].BlackList::NetComAddrCollection.Init, xsi, 10, 10, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComClientProtocol.OnClose
 ; Purpose:    A client session has, for whatever reason, been terminated.
 ;             You can override this, perhaps to release extra per client/task resources.
@@ -56,7 +56,7 @@ Method NetComClientProtocol.OnClose, uses xbx xsi, pConnection:$ObjPtr(NetComCon
   ACall xsi.OnClose, pConnection
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComClientProtocol.OnConnect
 ; Purpose:    An outbound connection attempt has completed. When you override this method in a
 ;             derived object, you should check the value of dError parameter to determine whether
@@ -78,7 +78,7 @@ Method NetComClientProtocol.OnConnect, uses xbx xsi, pConnection:$ObjPtr(NetComC
   ACall xsi.OnConnect, pConnection
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComClientProtocol.OnDisconnect
 ; Purpose:    An established connection has been disconnected.
 ; Arguments:  Arg1: -> NetComConnection.
@@ -97,7 +97,7 @@ Method NetComClientProtocol.OnDisconnect, uses xbx xsi, pConnection:$ObjPtr(NetC
   ACall xsi.OnDisconnect, pConnection
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComClientProtocol.OnError
 ; Purpose:    Error notification handler.
 ; Arguments:  Arg1: -> NetComConnection.

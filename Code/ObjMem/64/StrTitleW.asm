@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <StrTitleW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrTitleW
 ; Purpose:    Capitalize the first character of each word. The rest is converted to lowercase.
 ; Arguments:  Arg1: -> Source WIDE string.

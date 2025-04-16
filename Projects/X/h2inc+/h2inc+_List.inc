@@ -10,7 +10,7 @@
 LST_OUT_OF_MEMORY   equ 124554
 LST_OPEN_FILE_ERROR equ 125473
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     List
 ; Purpose:    Mantain a sorted list of items in the Memory Heap.
 
@@ -30,7 +30,7 @@ if IMPLEMENT
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     List.DestroyItem
 ; Purpose:    Remove previous functionality.
 ; Arguments:  Arg1: -> ANSI string.
@@ -39,7 +39,7 @@ if IMPLEMENT
 Method List.DestroyItem,, pItem:PSTRINGA
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     List.Init
 ; Purpose:    Initialize the List with a limit (dLimit), an increasing step (dDelta) and flags.
 ; Arguments:  Arg1: -> Owner object.
@@ -54,7 +54,7 @@ Method List.Init,, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, dFlags:DWORD
   m2m [xcx].dFlags, dFlags, eax
 MethodEnd
 ;
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     List.LoadFromFile
 ; Purpose:    Load list content from file.
 ; Arguments:  Arg1: -> WIDE Full File Name.
@@ -177,7 +177,7 @@ Method List.LoadFromFile, uses xbx xdi xsi, pFullFileName:PSTRINGW
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     List.SaveToFile
 ; Purpose:    Save list content to file.
 ; Arguments:  Arg1: -> WIDE Full FileName.

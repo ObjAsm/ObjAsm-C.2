@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     I_OcxCont_SiteDispatch
 ; Purpose:    If a control supports any ambient properties at all, it must at least respect the
 ;             values of the following ambient properties under the conditions stated in the
@@ -92,7 +92,7 @@ if IMPLEMENT
 ;     I_OcxCont_SiteDispatch implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      GetOcxContainer
 ; Purpose:    Helper macro.
 ; Arguments:  none.
@@ -104,7 +104,7 @@ GetOcxContainer macro
   mov xcx, [xdx].$Obj(OcxClientSite).pOwner           ;xcx -> OcxContainer
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      GetOcxInputParam
 ; Purpose:    Helper macro.
 ; Arguments:  none.
@@ -115,7 +115,7 @@ GetOcxInputParam macro
   mov xdx, [xax].DISPPARAMS.rgvarg
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      GetOcxRetValue
 ; Purpose:    Helper macro.
 ; Arguments:  VARIANT value type.
@@ -126,7 +126,7 @@ GetOcxRetValue macro ValueType:req
   mov [xdx].VARIANT.vt, ValueType
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.GetAmbientBackColor
 ; Purpose:    Return the ambient background color to the control.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -145,7 +145,7 @@ Method I_OcxCont_SiteDispatch.GetAmbientBackColor,, pParams:ptr DISPPARAMS, pRet
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.PutAmbientBackColor
 ; Purpose:    Set the ambient background color on the container site.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -164,7 +164,7 @@ Method I_OcxCont_SiteDispatch.PutAmbientBackColor,, pParams:ptr DISPPARAMS, pRet
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.GetAmbientFont
 ; Purpose:    Return the ambient font to the control.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -188,7 +188,7 @@ Method I_OcxCont_SiteDispatch.GetAmbientFont,, pParams:ptr DISPPARAMS, pRetVal:L
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.PutAmbientFont
 ; Purpose:    Set the ambient font on the container site.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -208,7 +208,7 @@ Method I_OcxCont_SiteDispatch.PutAmbientFont,, pParams:ptr DISPPARAMS, pRetVal:L
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.GetAmbientForeColor
 ; Purpose:    Return the ambient foreground color to the control.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -227,7 +227,7 @@ Method I_OcxCont_SiteDispatch.GetAmbientForeColor,, pParams:ptr DISPPARAMS, pRet
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.PutAmbientForeColor
 ; Purpose:    Set the ambient foreground color on the container site.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -246,7 +246,7 @@ Method I_OcxCont_SiteDispatch.PutAmbientForeColor,, pParams:ptr DISPPARAMS, pRet
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.GetAmbientLocaleID
 ; Purpose:    Return the ambient Local ID to the control.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -265,7 +265,7 @@ Method I_OcxCont_SiteDispatch.GetAmbientLocaleID,, pParams:ptr DISPPARAMS, pRetV
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.PutAmbientLocaleID
 ; Purpose:    Set the ambient Local ID on the container site.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -284,7 +284,7 @@ Method I_OcxCont_SiteDispatch.PutAmbientLocaleID,, pParams:ptr DISPPARAMS, pRetV
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.GetAmbientMessageReflect
 ; Purpose:    Return the ambient MessageReflect flag to the control.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -307,7 +307,7 @@ Method I_OcxCont_SiteDispatch.GetAmbientMessageReflect,, pParams:ptr DISPPARAMS,
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.PutAmbientMessageReflect
 ; Purpose:    Set the ambient MessageReflect flag on the container site.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -330,7 +330,7 @@ Method I_OcxCont_SiteDispatch.PutAmbientMessageReflect,, pParams:ptr DISPPARAMS,
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.GetAmbientUserMode
 ; Purpose:    Return the ambient user mode to the control.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -353,7 +353,7 @@ Method I_OcxCont_SiteDispatch.GetAmbientUserMode,, pParams:ptr DISPPARAMS, pRetV
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.PutAmbientUserMode
 ; Purpose:    Set the ambient user mode on the container site.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -376,7 +376,7 @@ Method I_OcxCont_SiteDispatch.PutAmbientUserMode,, pParams:ptr DISPPARAMS, pRetV
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.GetAmbientUIDead
 ; Purpose:    Return the ambient UIDead flag to the control.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -395,7 +395,7 @@ Method I_OcxCont_SiteDispatch.GetAmbientUIDead,, pParams:ptr DISPPARAMS, pRetVal
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.GetAmbientShowGrabhandles
 ; Purpose:    Return the ambient ShowGrabhandlesflag to the control.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -419,7 +419,7 @@ Method I_OcxCont_SiteDispatch.GetAmbientShowGrabhandles,, pParams:ptr DISPPARAMS
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.GetAmbientShowHatching
 ; Purpose:    Return the ambient ShowHatching flag to the control.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -442,7 +442,7 @@ Method I_OcxCont_SiteDispatch.GetAmbientShowHatching,, pParams:ptr DISPPARAMS, p
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.GetAmbientDisplayAsDefault
 ; Purpose:    Return the ambient DisplayAsDefault flag to the control.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -465,7 +465,7 @@ Method I_OcxCont_SiteDispatch.GetAmbientDisplayAsDefault,, pParams:ptr DISPPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.PutAmbientDisplayAsDefault
 ; Purpose:    Set the ambient DisplayAsDefault flag on the container site.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -488,7 +488,7 @@ Method I_OcxCont_SiteDispatch.PutAmbientDisplayAsDefault,, pParams:ptr DISPPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.GetAmbientRightToLeft
 ; Purpose:    Return the ambient RightToLeft flag to the control.
 ; Arguments:  Arg1: -> DISPPARAMS structure.
@@ -507,7 +507,7 @@ Method I_OcxCont_SiteDispatch.GetAmbientRightToLeft,, pParams:ptr DISPPARAMS, pR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     I_OcxCont_SiteDispatch.GetAmbientTopToBottom
 ; Purpose:    Return the ambient TopToBottom flag to the control.
 ; Arguments:  Arg1: -> DISPPARAMS structure.

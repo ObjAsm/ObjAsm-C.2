@@ -10,7 +10,7 @@
 
 GifPlayerState  record  GPS_Unused:6 = 0, GPS_Resource:1 = FALSE, GPS_FirstDraw:1 = TRUE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     GifPlayer
 ; Purpose:    This object is designed to play an animated GIF resource or file on a window. It uses
 ;             the GifDecoder object to restore the compressed picture binary data.
@@ -124,7 +124,7 @@ GifBinRead macro Var:req, VarSize:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifPlayer.BreakoutFrames
 ; Purpose:    Decode all frames in the data stream.
 ; Arguments:  Arg1: -> Data.
@@ -490,7 +490,7 @@ Method GifPlayer.BreakoutFrames, uses xbx xdi xsi, pData:POINTER, dDataSize:DWOR
   OCall Decoder::GifDecoder.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifPlayer.Dispatch
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Window handle.
@@ -504,7 +504,7 @@ Method GifPlayer.Dispatch, uses xsi, hWnd:HWND, uMsg:DWORD, wParam:WPARAM, lPara
   DispatchEvent <DefWindowProc, hWnd>                   ;xsi -> Object instance
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifPlayer.Done
 ; Purpose:    Finalize the GifPlayer object.
 ; Arguments:  None.
@@ -516,7 +516,7 @@ Method GifPlayer.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifPlayer.Init
 ; Purpose:    Initialize the GifPlayer object.
 ; Arguments:  Arg1: -> Owner object.
@@ -540,7 +540,7 @@ Method GifPlayer.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pResName:POIN
   mov [xsi].hWnd, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifPlayer.InitRes
 ; Purpose:    Initialize the GifPlayer object when called from a ressource.
 ; Arguments:  Arg1: Window HANDLE.
@@ -552,7 +552,7 @@ Method GifPlayer.InitRes,, hWnd:HWND
   ACall xcx.Init, NULL, hWnd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifPlayer.LoadResData
 ; Purpose:    Load GIF data from a "GIF" type resource.
 ; Arguments:  Arg1: Module instance handle where the resource is stored.
@@ -583,7 +583,7 @@ Method GifPlayer.LoadResData, uses xbx xdi xsi, hInst:HANDLE, pResName:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifPlayer.LoadFileData
 ; Purpose:    Load GIF data from a file.
 ; Arguments:  Arg1: -> File name.
@@ -633,7 +633,7 @@ Method GifPlayer.LoadFileData, uses xdi xsi, pFileName:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifPlayer.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -681,7 +681,7 @@ Method GifPlayer.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifPlayer.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -710,7 +710,7 @@ Method GifPlayer.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifPlayer.OnEnable
 ; Purpose:    Event procedure for WM_ENABLE message.
 ; Arguments:  Arg1: First message parameter.
@@ -732,7 +732,7 @@ Method GifPlayer.OnEnable, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xsi].hWnd, WM_ENABLE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifPlayer.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -763,7 +763,7 @@ Method GifPlayer.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifPlayer.OnTimer
 ; Purpose:    Event procedure for WM_TIMER message.
 ; Arguments:  Arg1: First message parameter.
@@ -832,7 +832,7 @@ Method GifPlayer.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifPlayer.Startup
 ; Purpose:    Register the GifPlayer window class with the operating system.
 ; Arguments:  None.
@@ -857,7 +857,7 @@ Method GifPlayer.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifPlayer.WindowProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.
@@ -898,7 +898,7 @@ MethodEnd
 ;    GifFrame implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     GifFrame.Done
 ; Purpose:    Finalize a GifFrame object and releases allocated resources.
 ; Arguments:  None.

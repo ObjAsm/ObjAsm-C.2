@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrRightA
 ; Purpose:    Copy the right n characters from the source string into the destination buffer.
 ; Arguments:  Arg1: -> Destination ANSI character buffer.

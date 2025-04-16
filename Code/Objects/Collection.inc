@@ -16,7 +16,7 @@ COL_MAX_CAPACITY  equ 0FFFFFFFFh/sizeof(POINTER)
 
 PColProc  typedef proto :POINTER, :XWORD, :XWORD        ;If required, return value stored in eax
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Collection
 ; Purpose:    Implement a collection of objects called items.
 ;             The concept of a Collection is more general than the traditional array or list. A
@@ -75,7 +75,7 @@ ObjectEnd
 
 ??ColForEach_ID = 0
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .ColForEach
 ; Purpose:    Loop through all items of the collection.
 ; Arguments:  Arg1: Collection. 
@@ -120,7 +120,7 @@ ObjectEnd
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .ColForEachRev
 ; Purpose:    Loop through all items of the collection in reverse order.
 ; Arguments:  Arg1: Collection.
@@ -158,7 +158,7 @@ endm
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .ColNext
 ; Purpose:    Move to the next collection item.
 ; Arguments:  None
@@ -180,7 +180,7 @@ endm
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.Delete
 ; Purpose:    Delete an item POINTER from the collection.
 ; Arguments:  Arg1: -> Item. This argument should never be NULL.
@@ -194,7 +194,7 @@ Method Collection.Delete, uses xsi, pItem:POINTER
   OCall xsi.DeleteAt, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.DeleteAt
 ; Purpose:    Delete the POINTER to Item(Index) from the collection.
 ; Arguments:  Arg1: Index value.
@@ -226,7 +226,7 @@ Method Collection.DeleteAt, uses xdi xsi, dIndex:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.DeleteAll
 ; Purpose:    Remove all item POINTERs.
 ; Arguments:  None.
@@ -237,7 +237,7 @@ Method Collection.DeleteAll
   m2z [xcx].dCount
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.Deserialize
 ; Purpose:    Restore serialized members.
 ; Arguments:  Arg1: -> DESER_INFO.
@@ -259,7 +259,7 @@ Method Collection.Deserialize, uses xbx xdi xsi, pDeserInfo:PDESER_INFO
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.DeserializeItem
 ; Purpose:    Convert a serialized item back.
 ; Arguments:  Arg1: -> Item. This argument should never be NULL.
@@ -273,7 +273,7 @@ Method Collection.DeserializeItem,, pItem:POINTER, pDeserInfo:PDESER_INFO
   OCall $ArgReg(pItem)::Streamable.Deserialize, $ArgReg(pDeserInfo)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Collection.DestroyItem
 ; Purpose:   Auxiliary procedure to dispose a item in the collection. Don't call directly!
 ; Arguments: Arg1: -> Item. This argument should never be NULL.
@@ -285,7 +285,7 @@ Method Collection.DestroyItem,, pItem:POINTER
   Destroy $ArgReg(pItem)                                ;Calls the universal destructor
 MethodEnd                                               ; and frees the object
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.Dispose
 ; Purpose:    Dispose an item.
 ; Arguments:  Arg1: -> Item. This argument should never be NULL.
@@ -299,7 +299,7 @@ Method Collection.Dispose, uses xsi, pItem:POINTER
   OCall xsi.DestroyItem, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.DisposeAll
 ; Purpose:    Dispose of all items in the collection.
 ; Arguments:  None.
@@ -318,7 +318,7 @@ Method Collection.DisposeAll, uses xbx xdi xsi
   m2z [xsi].dCount
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.DisposeAt
 ; Purpose:    Delete the POINTER to item(index) from the collection and then the item itself.
 ; Arguments:  Arg1: Index value.
@@ -332,7 +332,7 @@ Method Collection.DisposeAt, uses xsi, dIndex:DWORD
   OCall xsi.DestroyItem, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.Done
 ; Purpose:    Delete and disposes of all the items in the collection.
 ; Arguments:  None.
@@ -347,7 +347,7 @@ Method Collection.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.FirstThat
 ; Purpose:    Search the first item that doesn't return FALSE in eax.
 ; Arguments:  Arg1: -> (static addr) Function that evaluates to TRUE or FALSE (return value in eax).
@@ -377,7 +377,7 @@ Method Collection.FirstThat, uses xbx xdi xsi, pTestFunc:POINTER, xArg1:XWORD, x
   mov xax, [xsi]                                        ;xax -> Item
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.FirstThatNot
 ; Purpose:    Search the first item that returns FALSE in eax.
 ; Arguments:  Arg1: -> (static addr) Function that evaluates to TRUE or FALSE (return value in eax).
@@ -406,7 +406,7 @@ Method Collection.FirstThatNot, uses xbx xdi xsi, pTestFunc:POINTER, xArg1:XWORD
   mov xax, [xsi]                                        ;xax -> Item
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.ForEach
 ; Purpose:    Call Action for each item in the collection.
 ; Arguments:  Arg1: -> Processing procedure (static address).
@@ -430,7 +430,7 @@ Method Collection.ForEach, uses xbx xdi xsi, pActionProc:POINTER, xArg1:XWORD, x
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.ForEachRev
 ; Purpose:    Call Action for each item in the collection in reverse order.
 ; Arguments:  Arg1: -> Processing procedure (static address).
@@ -455,7 +455,7 @@ Method Collection.ForEachRev, uses xbx xdi xsi, pActionProc:POINTER, xArg1:XWORD
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.GetItem
 ; Purpose:    Load an item from a stream object.
 ; Arguments:  Arg1: -> Stream object containing an object.
@@ -468,7 +468,7 @@ Method Collection.GetItem,, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   OCall pStream::Stream.Get, $ArgReg(pDeserInfo)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.IndexOf
 ; Purpose:    Return the index of an item in the collection in the range [0..Count-1].
 ; Arguments:  Arg1: -> Item. This argument should never be NULL.
@@ -494,7 +494,7 @@ Method Collection.IndexOf, uses xdi, pItem:POINTER
   mov eax, -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.Init
 ; Purpose:    Initialize the collection with a limit (dLimit), an increasing step (dDelta)
 ;             and a maximum size (dMaxCapacity).
@@ -533,7 +533,7 @@ Method Collection.Init, uses xsi, pOwner:POINTER, dLimit:DWORD, dDelta:DWORD, dM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.Insert
 ; Purpose:    Insert item at the end of the collection.
 ; Arguments:  Arg1: -> New item. This argument should never be NULL.
@@ -561,7 +561,7 @@ Method Collection.Insert, uses xsi, pItem:POINTER
   xor eax, eax                                          ;Return NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.InsertAt
 ; Purpose:    Insert an item at index position shifting the remaining items.
 ; Arguments:  Arg1: Index value [0..Count].
@@ -609,7 +609,7 @@ Method Collection.InsertAt, uses xdi xsi, dIndex:DWORD, pItem:POINTER
   xor eax, eax                                          ;Return NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.ItemAt
 ; Purpose:    Return a POINTER to an item(Index).
 ; Arguments:  Arg1: Index in range [0..Count-1].
@@ -627,7 +627,7 @@ Method Collection.ItemAt,, dIndex:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.LastThat
 ; Purpose:    Search the last item that doesn't return FALSE in eax.
 ; Arguments:  Arg1: -> (static address) Function that evaluates to TRUE or FALSE (eax = return val).
@@ -657,7 +657,7 @@ Method Collection.LastThat, uses xbx xdi xsi, pTestFunc:POINTER, xArg1:XWORD, xA
   mov xax, [xsi]                                        ;xax -> Item
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.LastThatNot
 ; Purpose:    Search the last item that returns FALSE in eax.
 ; Arguments:  Arg1: -> (static address) Function that evaluates to TRUE or FALSE (eax = return val).
@@ -687,7 +687,7 @@ Method Collection.LastThatNot, uses xbx xdi xsi, pTestFunc:POINTER, xArg1:XWORD,
   mov xax, [xsi]                                        ;xax -> Item
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.Load
 ; Purpose:    Load and initializes the collection from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -732,7 +732,7 @@ Method Collection.Load, uses xbx xdi xsi r12, pStream:$ObjPtr(Stream), pDeserInf
   jb @@0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.PutAt
 ; Purpose:    Overwrite an item POINTER at index position.
 ; Arguments:  Arg1: Index value.
@@ -755,7 +755,7 @@ Method Collection.PutAt,, dIndex:DWORD, pItem:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.PutItem
 ; Purpose:    Store an item of the collection in a stream object.
 ; Arguments:  Arg1: -> Stream.
@@ -769,7 +769,7 @@ Method Collection.PutItem,, pStream:$ObjPtr(Stream), pItem:POINTER
   OCall $ArgReg(pStream)::Stream.Put, $ArgReg(pItem)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.Serialize
 ; Purpose:    Serialize members.
 ; Arguments:  None.
@@ -788,7 +788,7 @@ Method Collection.Serialize, uses xbx xdi xsi
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.SerializeItem
 ; Purpose:    Serialize an item.
 ; Arguments:  Arg1: -> Item. This argument should never be NULL.
@@ -801,7 +801,7 @@ Method Collection.SerializeItem,, pItem:POINTER
   OCall $ArgReg(pItem)::Streamable.Serialize
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.SetLimit
 ; Purpose:    Set the collection limit, allocating the necessary memory on the heap to hold
 ;             the item POINTER table.
@@ -864,7 +864,7 @@ Method Collection.SetLimit, uses xbx xdi xsi, dNewLimit:DWORD
   mov eax, COL_OUT_OF_MEMORY                            ;Return value
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Collection.Store
 ; Purpose:    Store the collection in a stream object.
 ; Arguments:  Arg1: -> Stream object.

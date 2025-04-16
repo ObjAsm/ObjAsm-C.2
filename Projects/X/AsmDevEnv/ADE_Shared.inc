@@ -16,10 +16,10 @@ VER_PRODUCTVERSION            equ       1,0,0,0
 VER_PRODUCTVERSION_STR        textequ   <1.0>
 
 ;Build information - updated automatically -
-BUILD_NUMBER                  equ       123
-BUILD_DATE_STR                textequ   <2025-04-13>
+BUILD_NUMBER                  equ       130
+BUILD_DATE_STR                textequ   <2025-04-16>
 BUILD_BITNESS                 equ       64
-BUILD_MODE                    equ       RLS
+BUILD_MODE                    equ       DBG
 
 ;Menu IDs
 IDM_FILE                      equ       050
@@ -51,7 +51,7 @@ IDM_EDIT_DELETE               equ       077
 IDM_EDIT_SELECTALL            equ       078
 IDM_EDIT_FIND                 equ       079
 IDM_EDIT_INDENT               equ       080
-IDM_EDIT_UNINDENT             equ       081
+IDM_EDIT_OUTDENT              equ       081
 IDM_EDIT_COMMENT              equ       082
 IDM_EDIT_UNCOMMENT            equ       083
 
@@ -89,8 +89,6 @@ IDC_CHOICE2                   equ       811
 IDC_CHOICE3                   equ       812
 IDC_CHOICE4                   equ       813
 
-IBS_EX_HOOVER                 equ       0x000100000
-
 ;Bitmap IDs
 IDB_APP                       equ       000
 IDB_APP_CHILD                 equ       001
@@ -117,7 +115,7 @@ IDB_EDIT_PASTE                equ       017
 IDB_EDIT_DELETE               equ       018
 IDB_EDIT_FIND                 equ       019
 IDB_EDIT_INDENT               equ       032
-IDB_EDIT_UNINDENT             equ       033
+IDB_EDIT_OUTDENT              equ       033
 IDB_EDIT_COMMENT              equ       034
 IDB_EDIT_UNCOMMENT            equ       035
 

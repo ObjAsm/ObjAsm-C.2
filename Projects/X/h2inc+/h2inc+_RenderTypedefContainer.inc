@@ -8,7 +8,7 @@
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  RenderTypedefContainer
 ; Purpose:    Parse Typedef of a structure or union.
 ; Arguments:  Arg1: -> ContainerType (structure or union).

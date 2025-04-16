@@ -140,7 +140,7 @@ R10_MAX equ <+1.189731495357231765e+4932>               ;07FFEFFFFFFFFFFFFFFFFh
 R10_MIN equ <-R10_MAX>                                  ;0FFFEFFFFFFFFFFFFFFFFh
 r10_NAN equ <07FF80000000000000000h>                    ;07FF80000000000000000h
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fildReg
 ; Purpose:    Load a CPU register containing an integer onto the FPU stack.
 ; Arguments:  Arg1: Register name.
@@ -170,7 +170,7 @@ fildReg macro RegName:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fistReg
 ; Purpose:    Store the integer part of the FPU st(0) register to a CPU register.
 ; Arguments:  Arg1: Register name.
@@ -199,7 +199,7 @@ fistReg macro RegName:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fistpReg
 ; Purpose:    Store the integer part of the FPU st(0) register to a CPU register & pops it.
 ; Arguments:  Arg1: Register name.
@@ -228,7 +228,7 @@ fistpReg macro RegName:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fldReg
 ; Purpose:    Load a CPU register containing a REAL4 onto the FPU stack.
 ; Arguments:  Arg1: Register name.
@@ -258,7 +258,7 @@ fldReg macro RegName:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fstReg
 ; Purpose:    Store the FPU st(0) register to a CPU register in REAL4 format.
 ; Arguments:  Arg1: Register name.
@@ -287,7 +287,7 @@ fstReg macro RegName:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fstpReg
 ; Purpose:    Store and pops the FPU st(0) register to a CPU register in REAL4 format.
 ; Arguments:  Arg1: Register name.
@@ -316,7 +316,7 @@ fstpReg macro RegName:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fSgn
 ; Purpose:    Compute the signum function of the content os st0.
 ; Arguments:  None.
@@ -338,7 +338,7 @@ fSgn macro
   add xsp, @WordSize                                    ;;Restore stack
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fCheckStatus
 ; Purpose:    Check the status word of the FPU to detect fp computation errors.
 ; Arguments:  Arg1: Status bit(s) to be checked.
@@ -352,7 +352,7 @@ fCheckStatus macro StatusBits:req
   pop xax                                               ;;Restore xax without changing flags!
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fGetFlags
 ; Purpose:    Set EFlags with FPU StatusWord flags.
 ; Arguments:  None.
@@ -362,14 +362,14 @@ endm
 fGetFlags macro
 
 ;               15                    8
-;               +———————————————————————+
-;       +—————— |  |C3|  |  |  |C2|C1|C0|   Coprocessor StatusWord register
-;       |       +———————————————————————+
+;               +-----------------------+
+;       +------ |  |C3|  |  |  |C2|C1|C0|   Coprocessor StatusWord register
+;       |       +-----------------------+
 ;       |
 ;       |         7                    0
-;       |       +———————————————————————+
-;       +—> ... |SF|ZF|??|AF|??|PF|01|CF|   Processor EFlags register
-;               +———————————————————————+
+;       |       +-----------------------+
+;       +-> ... |SF|ZF|??|AF|??|PF|01|CF|   Processor EFlags register
+;               +-----------------------+
 ;
 ;                           C3    C2    C0
 ;      If st(0) > source     0     0     0
@@ -382,7 +382,7 @@ fGetFlags macro
   sahf                                                  ;;Set EFlags
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fSetPrecision
 ; Purpose:    Set the precision bits in the control register.
 ; Arguments:  Arg1: Precision (REAL4, REAL8, REAL10).
@@ -407,7 +407,7 @@ fSetPrecision macro Precision:req
   add xsp, @WordSize                                    ;;Restore stack
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fMin
 ; Purpose:    Compare two floats, returns the smaller value on the FPU.
 ; Arguments:  Arg1: first value.
@@ -429,7 +429,7 @@ fMin macro val1:req, val2:req
 @@2:
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fMax
 ; Purpose:    Compare two floats, returns the larger on the FPU stack.
 ; Arguments:  Arg1: first value.
@@ -451,7 +451,7 @@ fMax macro val1:req, val2:req
 @@2:
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fAbsMin
 ; Purpose:    Compare two floats, returns the absolute smaller value on the FPU stack.
 ; Arguments:  Arg1: first value.
@@ -476,7 +476,7 @@ fAbsMin macro val1:req, val2:req
 @@2:
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fAbsMax
 ; Purpose:    Compare two floats, returns the absolute larger value on the FPU.
 ; Arguments:  Arg1: first value.
@@ -501,7 +501,7 @@ fAbsMax macro val1:req, val2:req
 @@2:
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fRnd
 ; Purpose:    Round the content of st0.
 ; Arguments:  None.
@@ -519,7 +519,7 @@ fRnd macro
   add xsp, 2*@WordSize                                  ;;Restore stack.
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fRndUp
 ; Purpose:    Round up the content of st0.
 ; Arguments:  None.
@@ -537,7 +537,7 @@ fRndUp macro
   add xsp, 2*@WordSize                                  ;;Restore stack.
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fRndDn
 ; Purpose:    Round down the content of st0.
 ; Arguments:  None.
@@ -555,7 +555,7 @@ fRndDn macro
   add xsp, 2*@WordSize                                  ;;Restore stack.
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fInt
 ; Purpose:    Calculate the integer part of the content of st0.
 ; Arguments:  None.
@@ -572,7 +572,7 @@ fInt macro
   add xsp, 2*@WordSize                                  ;;Restore stack. Don't use pop xax. We'll not destroy it.
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fFrac
 ; Purpose:    Calculate the fractional part of the content of st0.
 ; Arguments:  None.
@@ -585,7 +585,7 @@ fFrac macro
   fsubp st(1), st(0)                                    ;;Frac(x) = x - Int(x)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fRound
 ; Purpose:    Round the content of st0 to x decimals.
 ; Arguments:  Arg1: Decimals.
@@ -604,7 +604,7 @@ fRound macro Decimals:=<0>
   fdivrp st(1), st(0)                                   ;;Compute Number / 10^Decimals
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fExp2
 ; Purpose:    Compute 2^x = 2^st0.
 ; Arguments:  None.
@@ -637,7 +637,7 @@ fExp2_ macro                    ;;st0      st1      st2
   fscale                        ;;2^int(x) int(x)   frac(x)   Scale 1 by int(x)
   fstp st(1)                    ;;2^int(x) frac(x)  ?         Eliminate st0 and pop
 endm
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fExpN
 ; Purpose:    Compute st(0) = e^st0.
 ; Arguments:  None.
@@ -650,7 +650,7 @@ fExpN macro
   fExp2                                                 ;;Compute 2^(x*Log2(e)) = e^x
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fLogN
 ; Purpose:    Calculate the neperian logarithm of st0 and store it in st0.
 ; Arguments:  None.
@@ -663,7 +663,7 @@ fLogN macro
   fyl2x                                                 ;;Compute LogN(2)*Log2(st0)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fExpT
 ; Purpose:    Compute st0 = 10^st0.
 ; Arguments:  None.
@@ -676,7 +676,7 @@ fExpT macro
   fExp2                                                 ;;Compute 2^(x*Log2(10)) = 10^x
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fLogT
 ; Purpose:    Calculate the logarithm base 10 of st0 and sotres it in st0.
 ; Arguments:  None.
@@ -689,7 +689,7 @@ fLogT macro
   fyl2x                                                 ;;Compute Log10(2)*Log2(st0)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fPower
 ; Purpose:    Compute st0 = st0^st1 (x^y).
 ; Arguments:  None.
@@ -704,7 +704,7 @@ fPower macro
   fExp2                                                 ;;Comput2 2^(x*Log2(y)) = x^y
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fLog
 ; Purpose:    Calculate the logarithm base st1 of st0 and store the result in st0.
 ; Arguments:  None.
@@ -723,7 +723,7 @@ fLog macro
   fdivp st(1), st(0)                                    ;;Log2(st0) / log2(st1)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fFitTrigRange
 ; Purpose:    Reduce the value in st0 to fit in the range of trig. functions: |x| < 2^63.
 ; Arguments:  st0.
@@ -745,7 +745,7 @@ fFitTrigRange macro
   fstp st(1)                                            ;;Pop 2*Pi from stack
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fTan
 ; Purpose:    Calculate st0 = tan(st0).
 ; Arguments:  None.
@@ -757,7 +757,7 @@ fTan macro
   fstp st(0)                                            ;;Pop st(0) from stack
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fSec
 ; Purpose:    Calculate st0 = Sec(st0).
 ; Arguments:  None.
@@ -768,7 +768,7 @@ fSec macro
   fdivr $CReal4(+1.0)                                   ;;Computes 1 / cos(x)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fCsc
 ; Purpose:    Calculate st0 = Csc(st0).
 ; Arguments:  None.
@@ -779,7 +779,7 @@ fCsc macro
   fdivr $CReal4(+1.0)                                   ;;Computes 1 / sin(x)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fCot
 ; Purpose:    Calculate st0 = Cot(st0).
 ; Arguments:  None.
@@ -791,7 +791,7 @@ fCot macro
   fdivrp st(1), st(0)                                   ;;Computes 1 / tan(x)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fArcSin
 ; Purpose:    Calculate st0 = ArcSin(st0).
 ; Arguments:  None.
@@ -806,7 +806,7 @@ fArcSin macro
   fpatan
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fArcCos
 ; Purpose:    Calculate st0 = ArcCos(st0).
 ; Arguments:  None.
@@ -822,7 +822,7 @@ fArcCos macro
   fpatan
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fArcTan
 ; Purpose:    Calculate st0 = ArcTan(st0).
 ; Arguments:  None.
@@ -834,7 +834,7 @@ fArcTan macro
   fpatan
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fArcSec
 ; Purpose:    Calculate st0 = ArcSec(st0).
 ; Arguments:  None.
@@ -849,7 +849,7 @@ fArcSec macro
   fpatan
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fArcCsc
 ; Purpose:    Calculate st0 = ArcCsc(st0).
 ; Arguments:  None.
@@ -865,7 +865,7 @@ fArcCsc macro
   fpatan
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fArcCot
 ; Purpose:    Calculate st0 = ArcCot(st0).
 ; Arguments:  None.
@@ -878,7 +878,7 @@ fArcCot macro
   fpatan
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fSinh
 ; Purpose:    Calculate st0 = Sinh(st0).
 ; Arguments:  None.
@@ -893,7 +893,7 @@ fSinh macro
   fmul $CReal4(+0.5)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fCosh
 ; Purpose:    Calculate st0 = Cosh(st0).
 ; Arguments:  None.
@@ -908,7 +908,7 @@ fCosh macro
   fmul $CReal4(+0.5)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fTanh
 ; Purpose:    Calculate st0 = Tanh(st0).
 ; Arguments:  None.
@@ -925,7 +925,7 @@ fTanh macro
   fdivr
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fSech
 ; Purpose:    Calculate st0 = Sech(st0).
 ; Arguments:  None.
@@ -940,7 +940,7 @@ fSech macro
   fdivr $CReal4(+2.0)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fCsch
 ; Purpose:    Calculate st0 = Csch(st0).
 ; Arguments:  None.
@@ -955,7 +955,7 @@ fCsch macro
   fdivr $CReal4(+2.0)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fCoth
 ; Purpose:    Calculate st0 = Coth(st0).
 ; Arguments:  None.
@@ -972,7 +972,7 @@ fCoth macro
   fdiv
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fArcSinh
 ; Purpose:    Calculate st0 = ArcSinh(st0).
 ; Arguments:  None.
@@ -988,7 +988,7 @@ fArcSinh macro
   fLogN
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fArcCosh
 ; Purpose:    Calculate st0 = ArcCosh(st0).
 ; Arguments:  None.
@@ -1004,7 +1004,7 @@ fArcCosh macro
   fLogN
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fArcTanh
 ; Purpose:    Calculate st0 = ArcTanh(st0).
 ; Arguments:  None.
@@ -1020,7 +1020,7 @@ fArcTanh macro
   fmul $CReal4(+0.5)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fArcSech
 ; Purpose:    Calculate st0 = ArcSech(st0).
 ; Arguments:  None.
@@ -1037,7 +1037,7 @@ fArcSech macro
   fLogN
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fArcCsch
 ; Purpose:    Calculate st0 = ArcCsch(st0).
 ; Arguments:  None.
@@ -1054,7 +1054,7 @@ fArcCsch macro
   fLogN
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fArcCoth
 ; Purpose:    Calculate st0 = ArcCoth(st0).
 ; Arguments:  None.
@@ -1070,7 +1070,7 @@ fArcCoth macro
   fmul $CReal4(+0.5)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fUnload
 ; Purpose:    Unload several stack registers
 ; Arguments:  Number of FPU registers.
@@ -1082,7 +1082,7 @@ fUnload macro NoRegs:=<1>
   endm
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fstStrA
 ; Purpose:    Create a string representation of the content of the st0 FPU register.
 ; Arguments:  Arg1: -> destionation buffer (at best 20 bytes + padding bytes).
@@ -1097,7 +1097,7 @@ fstStr macro pDest:req, dPadding:=<0>, dDecimals:=<5>, dFlags:=<f_SCI>
   invoke St0ToStr, pDest, dPadding, dDecimals, dFlags
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fLdStrA
 ; Purpose:    Load a string representation of a floating point number into
 ;             the st0 FPU register.
@@ -1109,7 +1109,7 @@ fldStr macro pSource:req
   invoke StrToSt0, pSource
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fjg
 ; Purpose:    Jump to label if the result of the previous fcom instruction indicates greater.
 ; Arguments:  Arg1: Destination label.
@@ -1120,7 +1120,7 @@ fjg macro DestinationLabel:req
   ja DestinationLabel                                   ;;Conditional jump
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fjl
 ; Purpose:    Jump to label if the result of the previous fcom instruction indicates less.
 ; Arguments:  Arg1: Destination label.
@@ -1131,7 +1131,7 @@ fjl macro DestinationLabel:req
   jb DestinationLabel                                   ;;Conditional jump
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fje
 ; Purpose:    Jump to label if the result of the previous fcom instruction indicates equal.
 ; Arguments:  Arg1: Destination label.
@@ -1142,7 +1142,7 @@ fje macro DestinationLabel:req
   je DestinationLabel                                   ;;Conditional jump
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fjne
 ; Purpose:    Jump to label if the result of the previous fcom instruction indicates not equal.
 ; Arguments:  Arg1: Destination label.
@@ -1153,7 +1153,7 @@ fjne macro DestinationLabel:req
   jne DestinationLabel                                  ;;Conditional jump
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fjge
 ; Purpose:    Jump to label if the result of the previous fcom instruction indicates greater
 ;             or equal.
@@ -1165,7 +1165,7 @@ fjge macro DestinationLabel:req
   jae DestinationLabel                                  ;;Conditional jump
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fjle
 ; Purpose:    Jump to label if the result of the previous fcom instruction indicates less
 ;             or equal.
@@ -1177,7 +1177,7 @@ fjle macro DestinationLabel:req
   jbe DestinationLabel                                  ;;Conditional jump
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fjnc
 ; Purpose:    Jump to label if the result of the previous fcom instruction indicates that the
 ;             arguments are non-comparable.
@@ -1189,7 +1189,7 @@ fjnc macro DestinationLabel:req
   jp DestinationLabel                                   ;;Conditional jump
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      fcmp
 ; Purpose:    Fast way to compare REAL4 floats with sign using the CPU.
 ; Arguments:  Arg1: first comparand.
@@ -1262,7 +1262,7 @@ fcmp macro var1:req, var2:req
   cmp ??Reg1, ??Reg2
 endm
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:     fMod
 ;; Purpose:   Calculate "arg1 mod arg2" (arg1 % arg2).
 
@@ -1272,7 +1272,7 @@ fMod macro val1:req, val2:req
   fprem
 endm
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:     ($)fIsPositive
 ;; Purpose:   If val > 0 => TRUE, else => FALSE.
 
@@ -1287,7 +1287,7 @@ $fIsPositive macro val:req
   exitm <rax>
 endm
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:     ($)fIsNegative
 ;; Purpose:   If val < 0 => TRUE, else => FALSE.
 
@@ -1302,7 +1302,7 @@ $fIsNegative macro val:req
   exitm <xax>
 endm
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:     ($)fIsZero
 ;; Purpose:   If val = (+/-)0 => TRUE, else => FALSE.
 
@@ -1317,7 +1317,7 @@ $fIsZero macro val:req
   exitm <xax>
 endm
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:     ($)fIsLess
 ;; Purpose:   Alternative to fMin. Is float A less than float B, returns eax = TRUE/FALSE.
 
@@ -1335,7 +1335,7 @@ $fIsLess macro val1:req, val2:req
   exitm <xax>
 endm
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:     ($)fIsLessOrEqual
 ;; Purpose:   If A <= B then return TRUE, else return FALSE.
 
@@ -1353,7 +1353,7 @@ $fIsLessOrEqual macro val1:req, val2:req
   exitm <xax>
 endm
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:     ($)fIsGreater
 ;; Purpose:   Alternative to fMin. Is float A greater than float B, returns eax = TRUE/FALSE.
 
@@ -1371,7 +1371,7 @@ $fIsGreater macro val1:req, val2:req
   exitm <xax>
 endm
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:     ($)fIsGreaterOrEqual
 ;; Purpose:   If A >= B then return TRUE, else return FALSE.
 
@@ -1389,7 +1389,7 @@ $fIsGreaterOrEqual macro val1:req, val2:req
   exitm <xax>
 endm
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:     ($)fIsAbsLess
 ;; Purpose:   If |A| < |B| then return TRUE, else return FALSE.
 
@@ -1409,7 +1409,7 @@ $fIsAbsLess macro val1:req, val2:req
   exitm <xax>
 endm
 
-;; ——————————————————————————————————————————————————————————————————————————————————————————————————
+;; --------------------------------------------------------------------------------------------------
 ;; Macro:     ($)fIsAbsGreater
 ;; Purpose:   If |A| > |B| then return TRUE, else return FALSE.
 

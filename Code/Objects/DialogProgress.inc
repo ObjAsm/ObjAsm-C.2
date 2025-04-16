@@ -10,7 +10,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 TSF_THREAD_CANCEL   equ   BIT00     ;DialogProgress signals the thread should cancel the curr. task
 TSF_THREAD_ENDED    equ   BIT01     ;The thread signals it has ended
@@ -127,7 +127,7 @@ DIALOG_PROGRESS_TIMER_ID  equ   12793
 
 PTaskProc typedef proto :POINTER, :PTaskStatus, :XWORD, :XWORD
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  EdtStmCallback
 ; Purpose:    Read in the content of a RechEdit control.
 ; Arguments:  Arg1: -> RTF ANSI string.
@@ -150,7 +150,7 @@ EdtStmCallback proc pString:PSTRINGA, pBuffer:POINTER, dNumBytes:DWORD, pBytesTr
   ret
 EdtStmCallback endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogProgress.CtlsSet
 ; Purpose:    Set the controls in this dialog window.
 ; Arguments:  None.
@@ -173,7 +173,7 @@ Method DialogProgress.CtlsSet, uses xdi xsi
   invoke SendDlgItemMessage, [xsi].hWnd, IDC_PRG_PGB_OVERALL, PBM_SETRANGE32, 0, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogProgress.Done
 ; Purpose:    Finalize the DB_QueryDlg object.
 ; Arguments:  None.
@@ -185,7 +185,7 @@ Method DialogProgress.Done, uses xsi
   invoke CloseHandle, [xsi].hEvent
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogProgress.Init
 ; Purpose:    Initialaize a DialogProgress object.
 ; Arguments:  Arg1: -> Owner object.
@@ -205,7 +205,7 @@ Method DialogProgress.Init,, pOwner:POINTER, hParent:HWND, pTasks:POINTER
   ACall xcx.Init, pOwner, hParent, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogProgress.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -232,7 +232,7 @@ Method DialogProgress.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogProgress.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -285,7 +285,7 @@ Method DialogProgress.OnInitDialog, uses xbx xdi xsi, wParam:WPARAM, lParam:LPAR
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogProgress.OnCtlColorStatic
 ; Purpose:    Event procedure for WM_CTLCOLORSTATIC message.
 ; Arguments:  Arg1: First message parameter.
@@ -303,7 +303,7 @@ Method DialogProgress.OnCtlColorStatic, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogProgress.OnTimer
 ; Purpose:    Event procedure for WM_TIMER message.
 ; Arguments:  Arg1: First message parameter.
@@ -363,7 +363,7 @@ Method DialogProgress.OnTimer, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogProgress.Run
 ; Purpose:    Worker thread.
 ; Arguments:  None.

@@ -12,7 +12,7 @@
 
 % include &ObjMemPath&Common\RadixSort64.inc            ;Helper macros
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  RadixSortF32
 ; Purpose:    Ascending sort of an array of single precision floats (REAL4) using a modified
 ;             "4 passes radix sort" algorithm.

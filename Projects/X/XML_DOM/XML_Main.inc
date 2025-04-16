@@ -45,7 +45,7 @@ ObjectEnd
 ;    Application implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Clear
 ; Purpose:    Add a new item to the TreeView
 ; Arguments:  Arg1: Parent HTREEITEM.
@@ -64,7 +64,7 @@ Method Application.AddTreeViewNode, uses xsi, hParent:HTREEITEM, hAfter:HTREEITE
   invoke SendMessage, [xsi].hTreeView, TVM_INSERTITEM, 0, addr tvins
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Clear
 ; Purpose:    Reset WriteXmlDocument and ReadXmlDocument.
 ; Arguments:  None.
@@ -76,7 +76,7 @@ Method Application.Clear, uses xsi
   OCall [xsi].ReadXmlDocument::XmlDocument.Clear
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
 ; Purpose:    Finalizes the Application object.
 ; Arguments:  None.
@@ -88,7 +88,7 @@ Method Application.Done
   invoke CoUninitialize
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ExpandAllSubItemsFrom
 ; Purpose:    Expand all sub items starting from an item. E.g. the root item.
 ; Arguments:  Arg1: Starting HTREEITEM.
@@ -109,7 +109,7 @@ Method Application.ExpandAllSubItemsFrom, uses xsi, hStartItem:HTREEITEM
   mov xax, hStartItem
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the SDI application object.
 ; Arguments:  Arg1: -> Exeption.
@@ -120,7 +120,7 @@ Method Application.FinalExceptionHandler,, pException:POINTER
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the SDI application object.
 ; Arguments:  None.
@@ -156,7 +156,7 @@ Method Application.Init, uses xsi
   invoke UpdateWindow, [xsi].hWnd                       ;Update if necessary
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -191,7 +191,7 @@ Method Application.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -256,7 +256,7 @@ Method Application.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   OCall xsi.ExpandAllSubItemsFrom, [xsi].hRootItem
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE message.
 ; Arguments:  Arg1: First message parameter.
@@ -274,7 +274,7 @@ Method Application.OnClose, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -294,7 +294,7 @@ Method Application.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -311,7 +311,7 @@ Method Application.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnSize, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ParseXML
 ; Purpose:    Parse the XML node and create TV items that represent it.
 ; Arguments:  Arg1: -> XmlNode.
@@ -360,7 +360,7 @@ Method Application.ParseXML, uses xbx xsi, pInitNode:$ObjPtr(XmlNode), hParentIt
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
 ; Purpose:    Register the Application window class with the operating system.
 ; Arguments:  None.

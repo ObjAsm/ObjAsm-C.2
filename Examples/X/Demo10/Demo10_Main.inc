@@ -38,7 +38,7 @@ AppStatusbar DEF_STATUSBAR {IDC_STATUSBAR, SB_STYLE, 0, 4}
 
 SetupTabCtrl DEF_TABCONTROL {100, TC_STYLE, 0, NULL, {<2,2,295,180>}}
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object MyChildWnd, , MdiChildWnd                        ;MDI child window.
   RedefineMethod    Done
@@ -52,7 +52,7 @@ Object MyChildWnd, , MdiChildWnd                        ;MDI child window.
   DefineVariable    dColorIndex,        DWORD,      0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object MyClientWnd, ClientWndID, MdiClientWnd         ;MDI client window.
   RedefineMethod    Done
@@ -65,7 +65,7 @@ Object MyClientWnd, ClientWndID, MdiClientWnd         ;MDI client window.
   DefineVariable    dChildCount,        DWORD,      0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object Application, , MdiApp                            ;MDI application.
   VirtualMethod     ChangeBtnLanguage,  DWORD           ;IDLANG_XXX
@@ -101,7 +101,7 @@ Object Application, , MdiApp                            ;MDI application.
   Embed     SplitterHor,      Splitter
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object Tab1, , DialogModeless
   RedefineMethod    Done
@@ -112,14 +112,14 @@ Object Tab1, , DialogModeless
   DefineVariable    hBackBrush,         HBRUSH,   0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object Tab2, , DialogModeless
   RedefineMethod    CtlsGet
   RedefineMethod    CtlsSet
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object DialogSetup, , DialogModal
   RedefineMethod    CtlsGet
@@ -149,7 +149,7 @@ CStr szChildClassName, "OAC_Child"
 
 CloseEnumProc    proto :HWND, :LPARAM
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.DrawMenuBarBkgnd2
 ; Purpose:    Draw a MainBar menu background.
 ; Arguments:  Arg1: -> DRAWITEMSTRUCT.
@@ -190,7 +190,7 @@ Method XMenu.DrawMenuBarBkgnd2, uses xdi xsi, pDIS:PDRAWITEMSTRUCT
   invoke DeleteObject, hBrush
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ChangeBtnLanguage
 ; Purpose:    Switch the toolbar button application language.
 ; Arguments:  Arg1: Language ID.
@@ -237,7 +237,7 @@ Method Application.ChangeBtnLanguage, uses xbx xdi xsi, dLangID:DWORD
   SetButtonText IDM_WINDOW_CLOSEALL, 35
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ChangeLanguage
 ; Purpose:    Switch the application language.
 ; Arguments:  Arg1: Language ID.
@@ -280,7 +280,7 @@ Method Application.ChangeLanguage, uses xbx xdi xsi, dLangID:DWORD
   OCall xsi.ChangeBtnLanguage, dLangID
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
 ; Purpose:    Finalize the application object. Objects associated with window controls are
 ;             destroyed by Windows automatically when WM_DESTROY is send.
@@ -303,7 +303,7 @@ Method Application.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.EnableActions
 ; Purpose:    Enable or disable MDI child actions.
 ; Arguments:  Arg1: Enable TRUE/FALSE.
@@ -319,7 +319,7 @@ Method Application.EnableActions, uses xsi, dAction:DWORD
   OCall [xsi].TbWindow::Toolbar.BtnEnable, IDM_WINDOW_CLOSEALL, dAction
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the application object.
 ; Arguments:  None.
@@ -393,7 +393,7 @@ Method Application.Init, uses xbx xdi xsi
   invoke UpdateWindow, [xsi].hWnd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnClose
 ; Purpose:    Event procedure for WM_CLOSE and WM_QUERYENDSESSION message.
 ; Arguments:  Arg1: First message parameter.
@@ -420,7 +420,7 @@ Method Application.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -522,7 +522,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -568,7 +568,7 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -589,7 +589,7 @@ Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -600,7 +600,7 @@ Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -683,7 +683,7 @@ Method Application.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CloseEnumProc (Callback)
 ; Purpose:    Close all open child windows.
 ; Arguments:  Arg1: Child window handle.
@@ -696,7 +696,7 @@ CloseEnumProc proc hWnd:HWND, lParam:LPARAM
   ret
 CloseEnumProc endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -721,7 +721,7 @@ Method Application.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.StatusbarHelp
 ; Purpose:    Display a help string on panel 0 of the statusbar.
 ; Arguments:  Arg1: -> Help string.
@@ -740,7 +740,7 @@ MethodEnd
 
 ;##\
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MyClientWnd.Done
 ; Purpose:    Finalize the MyClientWnd object.
 ; Arguments:  None.
@@ -752,7 +752,7 @@ Method MyClientWnd.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MyClientWnd.Init
 ; Purpose:    Initialize the MdiClientWnd object.
 ; Arguments:  Arg1: -> Owner object.
@@ -768,7 +768,7 @@ Method MyClientWnd.Init, uses xsi, pOwner:POINTER
   invoke DeleteObject, hBmp
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MyClientWnd.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -779,7 +779,7 @@ Method MyClientWnd.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MyClientWnd.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -808,7 +808,7 @@ MethodEnd
 
 ;##\
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MyChildWnd.Done
 ; Purpose:    Finalize the MyChildWnd object.
 ; Arguments:  None.
@@ -831,7 +831,7 @@ Method MyChildWnd.Done, uses xbx xdi xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MyChildWnd.Init
 ; Purpose:    Initialize the MyChildWnd object.
 ; Arguments:  Arg1: -> Owner object.
@@ -865,7 +865,7 @@ Method MyChildWnd.Init, uses xbx xdi xsi, pOwner:POINTER, pTitle:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MyChildWnd.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -892,7 +892,7 @@ Method MyChildWnd.OnCommand, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MyChildWnd.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -926,7 +926,7 @@ Method MyChildWnd.OnPaint, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefWindowProc, [xsi].hWnd, WM_PAINT, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MyChildWnd.OnMdiActivate
 ; Purpose:    Event procedure for WM_MDIACTIVATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -950,7 +950,7 @@ Method MyChildWnd.OnMdiActivate, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefMDIChildProc, [xsi].hWnd, WM_MDIACTIVATE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MyChildWnd.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -982,7 +982,7 @@ MethodEnd
 ;    DialogSetup implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetup.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -995,7 +995,7 @@ Method DialogSetup.CtlsGet, uses xsi
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetup.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -1008,7 +1008,7 @@ Method DialogSetup.CtlsSet
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetup.Done
 ; Purpose:    Finalize the DialogSetup object.
 ; Arguments:  None.
@@ -1022,7 +1022,7 @@ Method DialogSetup.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetup.Init
 ; Purpose:    Initialaize a DialogSetup object.
 ; Arguments:  Arg1: -> Owner object.
@@ -1039,7 +1039,7 @@ Method DialogSetup.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND
   OCall xbx::MaskedImageList.IconLoadResource, $OfsCStr("ICON_FILE_SETUP")
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetup.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -1057,7 +1057,7 @@ Method DialogSetup.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetup.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -1069,7 +1069,7 @@ Method DialogSetup.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke SetWindowLongPtr, [xsi].hWnd, DWLP_USER, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogSetup.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -1102,7 +1102,7 @@ MethodEnd
 ;    Tab1 implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.Init
 ; Purpose:    Initialize the Tab1 object.
 ; Arguments:  Arg1: -> Owner object.
@@ -1116,7 +1116,7 @@ Method Tab1.Init, uses xsi, pOwner:POINTER, hParent:HWND, pTemplate:POINTER
   mov [xsi].hBackBrush, $invoke(CreateHatchBrush, HS_DIAGCROSS, $RGB(0, 0, 255))
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.Done
 ; Purpose:    Finalize the Tab1 object.
 ; Arguments:  None.
@@ -1128,7 +1128,7 @@ Method Tab1.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab1.OnCtlColorStatic
 ; Purpose:    Event procedure for WM_CTLCOLORSTATIC message.
 ; Arguments:  Arg1: First message parameter.
@@ -1151,7 +1151,7 @@ MethodEnd
 ;    Tab2 implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab2.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -1177,7 +1177,7 @@ Method Tab2.CtlsGet, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Tab2.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.

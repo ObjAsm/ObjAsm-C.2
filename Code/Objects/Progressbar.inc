@@ -27,7 +27,7 @@ DEF_PROGRESSBAR struc
 DEF_PROGRESSBAR ends
 PDEF_PROGRESSBAR typedef ptr DEF_PROGRESSBAR
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Progressbar
 ; Purpose:    Implement a thin object wrapper around of the msctls_progress32 GDI control.
 
@@ -49,7 +49,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Progressbar.Done
 ; Purpose:    Finalize the progressbar object.
 ; Arguments:  None.
@@ -61,7 +61,7 @@ Method Progressbar.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Progressbar.Increment
 ; Purpose:    Add increment to the actual position.
 ; Arguments:  Arg1: Increment value.
@@ -72,7 +72,7 @@ Method Progressbar.Increment,, dIncrement:DWORD
   invoke SendMessage, [xcx].hWnd, PBM_DELTAPOS, dIncrement, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Progressbar.Init
 ; Purpose:    Initialize the Progressbar object.
 ; Arguments:  Arg1: -> Owner object.
@@ -93,7 +93,7 @@ Method Progressbar.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:P
   assume xbx:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Progressbar.SetColorBack
 ; Purpose:    Set the background color.
 ; Arguments:  Arg1: RGB color value.
@@ -104,7 +104,7 @@ Method Progressbar.SetColorBack,, dColor:DWORD
   invoke SendMessage, [xcx].hWnd, PBM_SETBKCOLOR, 0, dColor
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Progressbar.SetColorFore
 ; Purpose:    Set the foreground color.
 ; Arguments:  Arg1: RGB color value.
@@ -115,7 +115,7 @@ Method Progressbar.SetColorFore,, dColor:DWORD
   invoke SendMessage, [xcx].hWnd, PBM_SETBARCOLOR, 0, dColor
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Progressbar.SetPos
 ; Purpose:    Set the current position of the progress bar.
 ; Arguments:  Arg1: Position within the imposted range.
@@ -126,7 +126,7 @@ Method Progressbar.SetPos,, dPos:DWORD
   invoke SendMessage, [xcx].hWnd, PBM_SETPOS, dPos, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Progressbar.SetRange
 ; Purpose:    Set the minimum and maximum range values.
 ; Arguments:  Arg1: Minumum.
@@ -138,7 +138,7 @@ Method Progressbar.SetRange,, dMin:DWORD, dMax:DWORD
   invoke SendMessage, [xcx].hWnd, PBM_SETRANGE32, dMin, dMax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Progressbar.SetStep
 ; Purpose:    Set the increment value.
 ; Arguments:  Arg1: Step value.
@@ -149,7 +149,7 @@ Method Progressbar.SetStep,, dStepWidth:DWORD
   invoke SendMessage, [xcx].hWnd, PBM_SETSTEP, dStepWidth, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Progressbar.Step
 ; Purpose:    Increment the progressbar a step width.
 ; Arguments:  None.
@@ -160,7 +160,7 @@ Method Progressbar.Step
   invoke SendMessage, [xcx].hWnd, PBM_STEPIT, 0, 0
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Progressbar.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.

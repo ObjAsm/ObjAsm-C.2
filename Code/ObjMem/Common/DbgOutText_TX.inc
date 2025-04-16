@@ -11,7 +11,7 @@
 
 externdef DbgColorError:DWORD
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgOutTextA / DbgOutTextW
 ; Purpose:    Send a string to the debug output device.
 ; Arguments:  Arg1: -> Zero terminated string.

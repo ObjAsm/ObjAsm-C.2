@@ -47,7 +47,7 @@ SCL_MJRDIV_MAX                  equ   20
 SCL_MNRDIV_MIN                  equ   0
 SCL_MNRDIV_MAX                  equ   10
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabScale.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -166,7 +166,7 @@ Method ChartTabScale.CtlsGet, uses xbx xdi xsi
   assume xdi:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabScale.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -259,7 +259,7 @@ Method ChartTabScale.CtlsSet, uses xbx xdi xsi
   assume xdi:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabScale.Done
 ; Purpose:    Finalize the ChartTabScale object.
 ; Arguments:  None.
@@ -272,7 +272,7 @@ Method ChartTabScale.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabScale.Init
 ; Purpose:    Initialize the ChartTabScale object.
 ; Arguments:  Arg1: -> Owner object.
@@ -295,7 +295,7 @@ Method ChartTabScale.Init, uses xbx xsi, pOwner:POINTER, pScaleData:PCHT_SCALE_D
   assume xbx:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabScale.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -320,7 +320,7 @@ Method ChartTabScale.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabScale.OnCtlColorDlg
 ; Purpose:    Event procedure for WM_CTLCOLORDLG message.
 ; Arguments:  Arg1: First message parameter.
@@ -339,7 +339,7 @@ Method ChartTabScale.OnCtlColorDlg,, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabScale.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -372,7 +372,7 @@ Method ChartTabScale.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnInitDialog, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartTabScale.Restore
 ; Purpose:    Restore original values.
 ; Arguments:  None.

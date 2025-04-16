@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrECatW
 ; Purpose:    Append a WIDE string to another and return the address of the ending zero character.
 ;             StrCatW does not perform any length checking. The destination buffer must have room

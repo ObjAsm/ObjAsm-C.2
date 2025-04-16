@@ -14,7 +14,7 @@
 % include &COMPath&COM.inc
 % include &IncPath&Windows\ocidl.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ComEventsUnadvice
 ; Purpose:    Notificate the Event source that pISource will NOT recieve Events any more.
 ; Arguments:  Arg1: -> Previous ConnectionPoint interface.

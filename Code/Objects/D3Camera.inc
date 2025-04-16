@@ -10,7 +10,7 @@
 ;    D3Camera implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Camera.Clear
 ; Purpose:    Clear the content of the camera.
 ; Arguments:  None.
@@ -21,7 +21,7 @@ Method D3Camera.Clear,, Unused1:XWORD, Unused2:XWORD
   OCall [xcx].pSortedTriData::SortedDataCollection.DisposeAll
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Camera.Colorize
 ; Purpose:    Change the color of a D3Object when it is iluminated with a D3Light.
 ; Arguments:  Arg1: -> D3Light object.
@@ -41,7 +41,7 @@ Method D3Camera.Colorize, uses xbx xsi, pLight:$ObjPtr(D3Light), Unused:XWORD
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Camera.Deserialize
 ; Purpose:    Convert serialized members.
 ; Arguments:  Arg1: -> DESER_INFO.
@@ -55,7 +55,7 @@ Method D3Camera.Deserialize, uses xsi, pDeserInfo:PDESER_INFO
   OCall [xsi].pObjectProjs::DataCollection.Deserialize, pDeserInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Camera.Done
 ; Purpose:    Finalize the camera object.
 ; Arguments:  None.
@@ -68,7 +68,7 @@ Method D3Camera.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Camera.Draw
 ; Purpose:    Draw the view of the D3Camera object to a DC.
 ; Arguments:  Arg1: DC handle.
@@ -96,7 +96,7 @@ Method D3Camera.Draw, uses xbx xdi xsi, hDC:HDC, dSlow:DWORD
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SortedTriData.Compare
 ; Purpose:    Compare 2 items from the collection.
 ; Arguments:  Arg1: -> First item.
@@ -114,7 +114,7 @@ Method SortedTriData.Compare,, pItem1:PTriData, pItem2:PTriData
   mov eax, dResult
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Camera.Init
 ; Purpose:    Initialize D3Camera object.
 ; Arguments:  Arg1: -> Owner object.
@@ -133,7 +133,7 @@ Method D3Camera.Init, uses xsi, pOwner:POINTER
   OCall [xsi].pObjectProjs::DataCollection.Init, xsi, 50, 50, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Camera.Load
 ; Purpose:    Load a D3Camera from a Stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -151,7 +151,7 @@ Method D3Camera.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   OCall pStream::Stream.BinRead, addr [xsi].VectronZ,     sizeof(D3Vectron)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Camera.Move
 ; Purpose:    Move the D3Camera.
 ; Arguments:  Arg1: -> Rotation D3Vector structure.
@@ -216,7 +216,7 @@ Method D3Camera.Move, uses xsi, pRotation:PD3Vector, pDisplacement:PD3Vector
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Camera.Project
 ; Purpose:    Project all D3Objects to this D3Camera.
 ; Arguments:  Arg1: -> D3Scene D3Objects collection.
@@ -226,7 +226,7 @@ Method D3Camera.Project,, pObjects:$ObjPtr(Collection), Unused:XWORD
   OCall pObjects::Collection.ForEach, $MethodAddr(D3Object.Project), pSelf, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     D3Camera.Store
 ; Purpose:    Store a D3Camera in a Stream object.
 ; Arguments:  Arg1: -> Stream object.

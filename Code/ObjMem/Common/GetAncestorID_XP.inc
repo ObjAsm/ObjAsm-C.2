@@ -10,7 +10,7 @@
 
 externdef p1stOMD:POINTER
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetAncestorID
 ; Purpose:    Retrieve the ancestor type ID of an object type ID.
 ; Arguments:  Arg1: -> Object class ID.

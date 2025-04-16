@@ -11,7 +11,7 @@
 externdef IID_IConnectionPointContainer:GUID
 externdef IID_IEnumConnectionPoints:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  IConnectionPointContainer
 ; Purpose: Implement the IConnectionPointContainer interface.
 
@@ -29,7 +29,7 @@ Object IConnectionPointContainer, IConnectionPointContainerID, IUnknown
   Embed             ConnectionPoints,       Collection
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  IEnumConnectionPoints
 ; Purpose: Implement the IEnumConnectionPoints interface.
 
@@ -43,7 +43,7 @@ Object IEnumConnectionPoints, IEnumConnectionPointsID, IUnknown
   RedefineVariable  pIID,                   offset IID_IEnumConnectionPoints
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  EnumConnectionPoints
 ; Purpose: Implement the EnumConnectionPoints COM object.
 
@@ -66,7 +66,7 @@ if IMPLEMENT
 
 externdef IID_IConnectionPoint:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IConnectionPointContainer.Done
 ; Purpose:    Finalize the IConnectionPointContainer interface object.
 ; Arguments:  None.
@@ -79,7 +79,7 @@ Method IConnectionPointContainer.Done
   ACall Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    IConnectionPointContainer.Init
 ; Purpose:   Initialize the IConnectionPointContainer interface object.
 ; Arguments: Arg1: -> Owner object.
@@ -92,7 +92,7 @@ Method IConnectionPointContainer.Init, uses xsi, pOwner:POINTER
   OCall [xsi].ConnectionPoints::Collection.Init, xsi, 1, 1, COL_MAX_CAPACITY
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IConnectionPointContainer.Insert
 ; Purpose:    Insert a new ConnectionPoint into the ConnectionPoints collection.
 ; Arguments:  Arg1: -> new ConnectionPoint.
@@ -104,7 +104,7 @@ Method IConnectionPointContainer.Insert,, pConnectionPoint:POINTER
   OCall [xcx].ConnectionPoints::Collection.Insert, pConnectionPoint
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IConnectionPointContainer.EnumConnectionPoints
 ; Purpose:    Create an enumerator object to iterate through all the connection points supported in
 ;             the connectable object, one connection point per outgoing IID.
@@ -124,7 +124,7 @@ Method IConnectionPointContainer.EnumConnectionPoints,, ppIEnum:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IConnectionPointContainer.FindConnectionPoint
 ; Purpose:    Return a pointer to the IConnectionPoint interface of a connection point for a
 ;             specified IID, if that IID describes a supported outgoing interface.
@@ -190,7 +190,7 @@ MethodEnd
 
 externdef IID_IConnectionPoint:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IEnumConnectionPoints.Next
 ; Purpose:    Enumerate the next requested IConnectionPoint pointers, returning them along with the
 ;             actual number of enumerated elements in pFetched. The enumerator calls
@@ -242,7 +242,7 @@ Method IEnumConnectionPoints.Next, uses xbx xdi xsi, dReqCount:DWORD, pBuffer:PO
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IEnumConnectionPoints.Skip
 ; Purpose:    Increment the internal counter.
 ; Arguments:  Arg1: Increment value.
@@ -257,7 +257,7 @@ Method IEnumConnectionPoints.Skip,, dIncrement:DWORD
   xor eax, eax                                          ;Return S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IEnumConnectionPoints.Reset
 ; Purpose:    Reset the internal counter.
 ; Arguments:  None.
@@ -272,7 +272,7 @@ Method IEnumConnectionPoints.Reset
   xor eax, eax                                          ;Return S_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IEnumConnectionPoints.Clone
 ; Purpose:    Make an exact duplicate of EnumConnectionPoints with all it's internal values.
 ; Arguments:  Arg1: -> IEnumConnectionPoints interface of the new object.
@@ -298,7 +298,7 @@ MethodEnd
 ;    EnumConnectionPoints implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     EnumConnectionPoints.Init
 ; Purpose:    Initialize the EnumConnectionPoints object.
 ; Arguments:  Arg1: -> Owner object.

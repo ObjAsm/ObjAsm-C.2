@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <TimeToStrA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  TimeToStrA
 ; Purpose:    Convert a DTL_TIME to a formated string representation.
 ; Arguments:  Arg1: -> Destination ANSI Buffer

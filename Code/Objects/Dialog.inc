@@ -13,7 +13,7 @@
 LMA_COLORKEY    equ   1
 LMA_ALPHA       equ   2
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Dialog
 ; Purpose:    This object provides all the functionality needed to create, show and destroy a
 ;             windows dialog. This class is the base for derived classes like DialogModal and
@@ -79,7 +79,7 @@ DlgChildLock endp
 OPTION PROLOGUE:PrologueDef
 OPTION EPILOGUE:EpilogueDef
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.CtlsGet
 ; Purpose:    Do nothing at this stage. It has to be redefined to provide proper functionality.
 ; Arguments:  None.
@@ -88,7 +88,7 @@ OPTION EPILOGUE:EpilogueDef
 Method Dialog.CtlsGet
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.CtlsInvalidate
 ; Purpose:    Invalidate a range of controls.
 ; Arguments:  Arg1: Low control ID limit.
@@ -104,7 +104,7 @@ Method Dialog.CtlsInvalidate,, dLowID:DWORD, dHighID:DWORD
   invoke EnumChildWindows, [xcx].hWnd, offset(DlgChildInvalidate), addr Limits
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.CtlsLock
 ; Purpose:    Lock or unlock the redrawing of a range of controls.
 ; Arguments:  Arg1: TRUE = controls locked => no redrawing, FALSE = unlocked => redrawing enabled.
@@ -123,7 +123,7 @@ Method Dialog.CtlsLock,, dLock:DWORD, dLowID:DWORD, dHighID:DWORD
   invoke EnumChildWindows, [xcx].hWnd, offset(DlgChildLock), addr Limits
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.CtlsSet
 ; Purpose:    Do nothing at this stage. It has to be redefined to provide proper functionality.
 ; Arguments:  None.
@@ -132,7 +132,7 @@ MethodEnd
 Method Dialog.CtlsSet
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.DestroyDialog
 ; Purpose:    Destroy a dialog.
 ; Arguments:  Arg1: Windows return value.
@@ -143,7 +143,7 @@ Method Dialog.DestroyDialog,, xArg:XWORD
   invoke WndFadeOut, [xcx].hWnd, 255, 0, 15, 20         ;FadeOut only if WS_EX_LAYERED was set
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.DlgProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.
@@ -169,7 +169,7 @@ Method Dialog.DlgProc, uses xsi, uMsg:DWORD, wParam:WPARAM, lParam:LPARAM
   DispatchEvent                                         ;xsi -> object instance
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.Init
 ; Purpose:    Initialize the Dialog object.
 ; Arguments:  Arg1: -> Owner object.
@@ -184,7 +184,7 @@ Method Dialog.Init,, pOwner:POINTER, hParent:HWND, pTemplate:POINTER
   ACall xcx.Init, pOwner, 0                             ;hWnd is not known at this moment
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -207,7 +207,7 @@ Method Dialog.OnCommand, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -220,7 +220,7 @@ Method Dialog.OnDestroy,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return zero
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -253,7 +253,7 @@ Method Dialog.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax                                          ;Return FALSE to prevent Windows from
 MethodEnd                                               ;  setting the default keyboard focus.
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Dialog.ShowAt
 ; Purpose:    Show a dialog at a specified position.
 ; Arguments:  Arg1: X position from screen top border.

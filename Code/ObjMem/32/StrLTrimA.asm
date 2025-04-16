@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrLTrimA
 ; Purpose:    Trim blank characters from the beginning of an ANSI string.
 ; Arguments:  Arg1: -> Destination ANSI character buffer.

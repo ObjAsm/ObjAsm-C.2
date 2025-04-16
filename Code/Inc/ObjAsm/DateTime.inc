@@ -110,7 +110,7 @@ TF_EUROPEAN         equ TF_HHMMSS or TF_TIMESEP_COLON
 TF_AMERICAN         equ TF_HHMMSS_PD or TF_TIMESEP_COLON
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SysTime2DateTime
 ; Purpose:    Convert a SYSTIME struct to a DTL_DATETIME rearranging the position of some members.
 ; Arguments:  Arg1: SYSTIME structure
@@ -123,7 +123,7 @@ SysTime2DateTime macro SysTime:req, Calendar:=<CAL_GREGORIAN>
   mov SysTime.wYear, Calendar
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SubTicks
 ; Purpose:    Subtract 2 Tick values.
 ; Arguments:  Arg1: Source variable 1 (minuend)
@@ -150,7 +150,7 @@ SubTicks macro SrcTicks1:req, SrcTicks2:req, DstTicks
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      AddTicks
 ; Purpose:    Add 2 Tick values.
 ; Arguments:  Arg1: Source variable 1
@@ -177,7 +177,7 @@ AddTicks macro SrcTicks1:req, SrcTicks2:req, DstTicks:req
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      PrependZeros
 ; Purpose:    Add enough "0" digits to complete DigitCount.
 ; Arguments:  Arg1: Value
@@ -213,7 +213,7 @@ PrependZeros macro Var, DigitCount
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      AddSeparator
 ; Purpose:    Add a separator
 ; Arguments:  Arg1: Character

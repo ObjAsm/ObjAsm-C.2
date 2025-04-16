@@ -46,7 +46,7 @@ XY_LINE_WIDTH_MAX    equ   10
 XY_MARKER_SIZE_MIN   equ   1
 XY_MARKER_SIZE_MAX   equ   50
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartXYTabSeries.CtlsGet
 ; Purpose:    Read the setting of all controls.
 ; Arguments:  None.
@@ -138,7 +138,7 @@ Method ChartXYTabSeries.CtlsGet, uses xbx xdi xsi
   assume xdi:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartXYTabSeries.CtlsSet
 ; Purpose:    Set the controls of the setup dialog.
 ; Arguments:  None.
@@ -221,7 +221,7 @@ Method ChartXYTabSeries.CtlsSet, uses xbx xdi xsi
   assume xdi:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartXYTabSeries.Init
 ; Purpose:    Initialize the ChartXYTabSeries object.
 ; Arguments:  Arg1: -> Owner object.
@@ -243,7 +243,7 @@ Method ChartXYTabSeries.Init, uses xsi, pOwner:POINTER, hParent:HWND, pImageList
   s2s [xsi].LocalSetup, [xcx].$Obj(ChartXYSeries).Setup, xax, xdx, xmm0, xmm1, xmm2
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartXYTabSeries.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -310,7 +310,7 @@ Method ChartXYTabSeries.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARA
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartXYTabSeries.OnCtlColorDlg
 ; Purpose:    Event procedure for WM_CTLCOLORDLG message.
 ; Arguments:  Arg1: First message parameter.
@@ -329,7 +329,7 @@ Method ChartXYTabSeries.OnCtlColorDlg,, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartXYTabSeries.OnInitDialog
 ; Purpose:    Event procedure for WM_INITDIALOG message.
 ; Arguments:  Arg1: First message parameter.
@@ -352,7 +352,7 @@ Method ChartXYTabSeries.OnInitDialog, uses xsi, wParam:WPARAM, lParam:LPARAM
   ACall xsi.OnInitDialog, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartXYTabSeries.Restore
 ; Purpose:    Restore original values.
 ; Arguments:  None.

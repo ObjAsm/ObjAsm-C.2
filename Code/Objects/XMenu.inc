@@ -29,7 +29,7 @@ MENU_TYPE_SIDEBAR     equ    6
 
 NO_IMAGE              equ    -1
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     XMdiMenu
 ; Purpose:    Implement the MDI menu items used by XMenu.
 ;             It is used to intercept some messages of the MDI client window to draw the child menu
@@ -44,7 +44,7 @@ Object XMdiMenu, XMdiMenuID, MsgInterceptor
   DefineVariable    hWindowMenu,        HMENU,      0                 ;Window menu HANDLE
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     XMenuSelectDlg
 ; Purpose:    Implement MDI selection modal dialog used by XMenu.
 
@@ -57,7 +57,7 @@ Object XMenuSelectDlg, XMenuSelectDlgID, DialogModalIndirect
   DefineVariable    hActiveWnd,         HWND,       0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     XMenuItem
 ; Purpose:    Implement a menu item used internally by the XMenu object.
 
@@ -78,7 +78,7 @@ Object XMenuItem, XMenuItemID, Primer
   DefineVariable    dHeight,            DWORD,      0                 ;Menu item height
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 MENU_CX_WIN             equ   13      ;Windows automatically adds this value to the width.
 MENU_CX_GAP             equ   1       ;Number of pixels between icon/button and text.
@@ -103,7 +103,7 @@ MENU_WINDOW_MORE        equ   50009   ;MDI menu item (...) that shows a dlgbox t
 HelpCallbackPto typedef proto :POINTER, :PSTRING        ;pSelf, pHelpStr
 PDRAWITEMSTRUCT typedef ptr DRAWITEMSTRUCT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     XMenu
 ; Purpose:    Implement a menu object with extended drawing capabilities.
 ;             The default drawing is a icon followed by the menu text and an optional shortcut.
@@ -242,7 +242,7 @@ CONTROL       NULL, XMENU_SELECTLISTBOX_ID, "ListBox", \
               2,2,246,226, WS_EX_STATICEDGE
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenuItem.Done
 ; Purpose:    Finalize XMenuItem object.
 ; Arguments:  None.
@@ -279,7 +279,7 @@ Method XMenuItem.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenuItem.Init
 ; Purpose:    Initialaize XMenu.
 ; Arguments:  Arg1: -> Owner object.
@@ -319,7 +319,7 @@ if DEBUGGING
   CStr cResStrNotFound, "Resource string not found"
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.ChangeLanguage
 ; Purpose:    Setup XMenu for a new language.
 ; Arguments:  Arg1: Main menu handle.
@@ -349,7 +349,7 @@ Method XMenu.ChangeLanguage, uses xsi, hMenu:HMENU, dLanguage:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.Convert
 ; Purpose:    Convert a menu to ownerdraw. For each menuitem a new XMenuItem is created and added to
 ;             an internal collection.
@@ -690,7 +690,7 @@ Method XMenu.Convert, uses xbx xdi xsi, hMenu:HMENU, dIsMenuBar:DWORD
   invoke ReleaseDC, [xsi].hWnd, hDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.Done
 ; Purpose:    Finalize XMenu object.
 ; Arguments:  None.
@@ -711,7 +711,7 @@ Method XMenu.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.DrawMenuBarBkgnd
 ; Purpose:    Draw a MenuBar menu background.
 ; Arguments:  Arg1: -> DRAWITEMSTRUCT.
@@ -741,7 +741,7 @@ Method XMenu.DrawMenuBarBkgnd, uses xdi xsi, pDIS:PDRAWITEMSTRUCT
   invoke DeleteObject, hBrush
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.DrawMenuBarIcon
 ; Purpose:    Draw a MenuBar menu icon.
 ; Arguments:  Arg1: -> DRAWITEMSTRUCT.
@@ -752,7 +752,7 @@ Method XMenu.DrawMenuBarIcon,, pDIS:PDRAWITEMSTRUCT
 ;  DbgText "XMenu.DrawMenuBarIcon"
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.DrawMenuBarText
 ; Purpose:    Draw a MenuBar menu text.
 ; Arguments:  Arg1: -> DRAWITEMSTRUCT.
@@ -816,7 +816,7 @@ Method XMenu.DrawMenuBarText, uses xbx xdi xsi, pDIS:PDRAWITEMSTRUCT
   invoke SetTextColor, [xdi].DRAWITEMSTRUCT.hDC, dPrevColor
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.DrawPopupBkgnd
 ; Purpose:    Draw a popup menu background.
 ; Arguments:  Arg1: -> DRAWITEMSTRUCT.
@@ -873,7 +873,7 @@ Method XMenu.DrawPopupBkgnd, uses xbx xdi xsi, pDIS:PDRAWITEMSTRUCT
   invoke DeleteObject, hBrush
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.DrawPopupCheck
 ; Purpose:    Draw a popup menu CheckButton using system icon.
 ; Arguments:  Arg1: -> DRAWITEMSTRUCT.
@@ -956,7 +956,7 @@ Method XMenu.DrawPopupCheck, uses xbx xdi xsi, pDIS:PDRAWITEMSTRUCT
   invoke DeleteObject, hBmpCheck
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.DrawPopupIcon
 ; Purpose:    Draw a popup menu icon using XMenu ImageList.
 ; Arguments:  Arg1: -> DRAWITEMSTRUCT.
@@ -1002,7 +1002,7 @@ Method XMenu.DrawPopupIcon, uses xbx xdi xsi, pDIS:PDRAWITEMSTRUCT
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.DrawPopupRadio
 ; Purpose:    Draw a popup menu radiobutton using system icon.
 ; Arguments:  Arg1: -> DRAWITEMSTRUCT.
@@ -1089,7 +1089,7 @@ Method XMenu.DrawPopupRadio, uses xbx xdi xsi, pDIS:PDRAWITEMSTRUCT
   invoke DeleteObject, hBmpRadioMask
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.DrawPopupSeparator
 ; Purpose:    Draw a popup menu separator line.
 ; Arguments:  Arg1: -> DRAWITEMSTRUCT.
@@ -1151,7 +1151,7 @@ Method XMenu.DrawPopupSeparator, uses xbx xdi xsi, pDIS:PDRAWITEMSTRUCT
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.DrawPopupText
 ; Purpose:    Draw a popup menu text.
 ; Arguments:  Arg1: -> DRAWITEMSTRUCT.
@@ -1230,7 +1230,7 @@ Method XMenu.DrawPopupText, uses xbx xdi xsi, pDIS:PDRAWITEMSTRUCT
   invoke SetTextColor, [xdi].DRAWITEMSTRUCT.hDC, dPrevColor
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.DrawSidebarBkgnd
 ; Purpose:    Draw a Sidebar background.
 ; Arguments:  Arg1: -> DRAWITEMSTRUCT.
@@ -1266,7 +1266,7 @@ Method XMenu.DrawSidebarBkgnd, uses xbx xdi xsi, pDIS:PDRAWITEMSTRUCT
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.DrawSidebarText
 ; Purpose:    Draw a Sidebar text.
 ; Arguments:  Arg1: -> DRAWITEMSTRUCT.
@@ -1276,7 +1276,7 @@ Method XMenu.DrawSidebarText,, pDIS:PDRAWITEMSTRUCT
 ;  DbgText "XMenu.DrawSidebarText"
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.FlashMenuBar
 ; Purpose:    Async flash the MenuBar to capture the users attention.
 ; Arguments:  Arg1: Flash color.
@@ -1326,7 +1326,7 @@ Method XMenu.FlashMenuBar, uses xbx xsi, BkColor:RGBQUAD, dRepetitions:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.Init
 ; Purpose:    Initialize XMenu object.
 ; Arguments:  Arg1: -> Owner object.
@@ -1367,7 +1367,7 @@ Method XMenu.Init, uses xsi, pOwner:POINTER, hWnd:HWND, \
   OCall xsi.Convert, [xsi].hMenu, TRUE                  ;Convert main menu
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.IsMenuBarSubMenu
 ; Purpose:    Determine if a specified menu handle corresponds to the main MenuBar.
 ; Arguments:  Arg1: SubMenu handle.
@@ -1388,7 +1388,7 @@ Method XMenu.IsMenuBarSubMenu, uses xbx, hSubMenu:HMENU
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -1432,7 +1432,7 @@ Method XMenu.OnCommand, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.OnDrawItem
 ; Purpose:    Event procedure for WM_DRAWITEM message.
 ; Arguments:  Arg1: First message parameter.
@@ -1482,7 +1482,7 @@ Method XMenu.OnDrawItem, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.OnInitMenuPopup
 ; Purpose:    Event procedure for WM_INITMENUPOPUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -1519,7 +1519,7 @@ Method XMenu.OnInitMenuPopup, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_INITMENUPOPUP, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.OnMeasureItem
 ; Purpose:    Event procedure for WM_MEASUREITEM message.
 ; Arguments:  Arg1: First message parameter.
@@ -1582,7 +1582,7 @@ Method XMenu.OnMeasureItem, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.OnMenuChar
 ; Purpose:    Event procedure for WM_MENUCHAR message.
 ; Arguments:  Arg1: First message parameter. LOWORD(wParam) = ASCII char, HIWORD(wParam)= menu flag
@@ -1647,7 +1647,7 @@ Method XMenu.OnMenuChar, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.OnMenuSelect
 ; Purpose:    Event procedure for WM_MENUSELECT message.
 ; Arguments:  Arg1: First message parameter.
@@ -1685,7 +1685,7 @@ Method XMenu.OnMenuSelect, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.OnSettingChange
 ; Purpose:    Event procedure for WM_SETTINGCHANGE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1703,7 +1703,7 @@ Method XMenu.OnSettingChange, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_SETTINGCHANGE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.OnSysColorChange
 ; Purpose:    Event procedure for WM_SYSCOLORCHANGE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1720,7 +1720,7 @@ Method XMenu.OnSysColorChange, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_SYSCOLORCHANGE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    XMenu.UpdateFonts
 ; Purpose:   Create or rebuilds the menu fonts.
 ; Arguments: Arg1: Main menu handle.
@@ -1767,7 +1767,7 @@ Method XMenu.UpdateFonts, uses xsi
   invoke ReleaseDC, [xsi].hWnd, hDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.SendHelp
 ; Purpose:    Invoke HelpCallback procedure.
 ; Arguments:  Arg1: -> Help string.
@@ -1780,7 +1780,7 @@ Method XMenu.SendHelp, uses xsi, pHelpStr:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.SetMenuBarBkColor
 ; Purpose:    Set the drawing background color of the menubar.
 ; Arguments:  Arg1: RGBQUAD.
@@ -1802,7 +1802,7 @@ Method XMenu.SetMenuBarBkColor, uses xsi, Color:RGBQUAD
   invoke DeleteObject, MenuInfo.hbrBack
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.WindowMenuCreate
 ; Purpose:    Convert a Window menu to ownerdraw.
 ; Arguments:  Arg1: Window menu handle.
@@ -1871,7 +1871,7 @@ Method XMenu.WindowMenuCreate, uses xbx xdi xsi, hMenu:HMENU
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.WindowMenuRemove
 ; Purpose:    Remove all child window items from a Window menu.
 ; Arguments:  Arg1: Window menu handle.
@@ -1909,7 +1909,7 @@ Method XMenu.WindowMenuRemove, uses xdi xsi, hMenu:HMENU
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenu.WndProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.
@@ -1931,7 +1931,7 @@ MethodEnd
 ;    XMdiMenu implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMdiMenu.Init
 ; Purpose:    Initialaize XMdiMenu.
 ; Arguments:  Arg1: -> Owner object.
@@ -1946,7 +1946,7 @@ Method XMdiMenu.Init,, pOwner:POINTER, hWnd:HWND, hWindowMenu:HMENU, pPropName:P
   ACall xcx.Init, pOwner, hWnd, pPropName
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMdiMenu.OnMdiSetMenu
 ; Purpose:    Event procedure for WM_MDISETMENU message.
 ; Arguments:  Arg1: First message parameter.
@@ -1968,7 +1968,7 @@ Method XMdiMenu.OnMdiSetMenu, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
   invoke CallWindowProc, [xsi].pPrevWndProc, [xsi].hWnd, WM_MDISETMENU, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMdiMenu.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.
@@ -1990,7 +1990,7 @@ MethodEnd
 ;    XMenuSelectDlg implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenuSelectDlg.CtlsGet
 ; Purpose:    Set the items in the listview.
 ; Arguments:  None.
@@ -2008,7 +2008,7 @@ Method XMenuSelectDlg.CtlsGet, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SelectDlgEnumProc (Callback)
 ; Purpose:    Select dialog fill procedure.
 ; Arguments:  Arg1: Child window handle.
@@ -2037,7 +2037,7 @@ SelectDlgEnumProc proc uses xsi hWnd:HWND, pSelf:$ObjPtr(XMenuSelectDlg)
   ret
 SelectDlgEnumProc endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenuSelectDlg.CtlsSet
 ; Purpose:    Read the selected item in the Listview.
 ; Arguments:  None.
@@ -2068,7 +2068,7 @@ Method XMenuSelectDlg.CtlsSet, uses xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     XMenuSelectDlg.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.

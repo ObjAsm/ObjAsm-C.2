@@ -86,7 +86,7 @@ DL_HEADER ends
 PDL_HEADER typedef ptr DL_HEADER
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  Window
 ; Purpose: Implement a base object for windows user interface descendant objects.
 ;          Object pointer is stored in the window GWL_USERDATA slot.
@@ -125,7 +125,7 @@ MoveChildWndInfo ends
 PMoveChildWndInfo typedef ptr MoveChildWndInfo
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Window.OnGetMinMaxInfo
 ; Purpose:   Event procedure for WM_GETMINMAXINFO message.
 ; Arguments: Arg1: First message parameter.
@@ -174,7 +174,7 @@ Method Window.OnGetMinMaxInfo, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Window.InitWindow
 ; Purpose:    Gatter children data and initialize internal structures.
 ; Return:     eax = Child count.
@@ -264,7 +264,7 @@ Method Window.InitWindow, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Window.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -367,7 +367,7 @@ Method Window.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Window.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.

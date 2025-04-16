@@ -115,7 +115,7 @@
 ; 27. Versioning is almost according to SemVer 2.0 (https://semver.org/)
 ;     Majors (packages) are identified using capital letters. 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ifdef __UASM__
   ASSEMBLER CatStr <U>, %__UASM__
@@ -127,7 +127,7 @@ else
   ASSEMBLER CatStr <M>, @Version
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SysSetup
 ; Purpose:    Load and configure standard modules.
 ; Arguments:  Support level: OOP, WIN32/WIN64, CON32/CON64, NUI32/NUI64, LIB32/LIB64.
@@ -611,7 +611,7 @@ SysSetup macro Arguments:vararg
   _ProcName_ textequ <>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SysInit
 ; Purpose:    Initialize the model and internal variables.
 ; Arguments:  Windows:
@@ -835,7 +835,7 @@ SysInit macro Arg1, Arg2
 
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SysDone
 ; Purpose:    Finalize the model.
 ; Arguments:  None.

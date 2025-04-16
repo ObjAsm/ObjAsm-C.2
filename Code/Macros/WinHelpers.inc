@@ -10,7 +10,7 @@
 
 ??P_EventHandler typedef proto :POINTER, :LPARAM, :WPARAM
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      DispatchEvent
 ; Purpose:    Search for a specified EventID in the "Event Translation Table". If found,
 ;             the matching method is called, otherwise the default proc is invoked.
@@ -80,7 +80,7 @@ DispatchEvent macro DefProc:=<>, uMsg:=<uMsg>, wParam:=<wParam>, lParam:=<lParam
 @@Exit:
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Subclass
 ; Purpose:    Subclass a system window.
 ; Arguments:  Arg1: Object name.
@@ -104,7 +104,7 @@ Subclass macro Expression:req, Index:=<0>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Unsubclass
 ; Purpose:    Unsubclass a system window.
 ; Arguments:  Arg1: Object name.
@@ -127,7 +127,7 @@ Unsubclass macro Expression:req, Index:=<0>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ($)GetSubclassingInst
 ; Purpose:    Return the instance POINTER of the object that subclassed a system window.
 ; Arguments:  Arg1: Object name.
@@ -154,7 +154,7 @@ $GetSubclassingInst macro Expression:req, hWnd:req, Index:=<0>
   exitm <xax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CloneRect
 ; Purpose:    Copy the coordinates from the source to the destination RECT.
 ; Arguments:  Arg1: Destination RECT structure.
@@ -170,7 +170,7 @@ CloneRect macro DstRct:req, SrcRct:req, AuxRegs:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      GrowRect
 ; Purpose:    Change the size of a RECT by a specified value.
 ; Arguments:  Arg1: RECT structure.
@@ -196,7 +196,7 @@ GrowRect macro Rect:req, dSX:=<0>, dSY:=<>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      MoveRect
 ; Purpose:    Move a RECT by a specified X/Y value.
 ; Arguments:  Arg1: -> RECT structure.
@@ -222,7 +222,7 @@ MoveRect macro Rect:req, dSX:req, dSY:=<>
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $MakePointS
 ; Purpose:    Return a POINTS structure (DWORD) containing the coordinates indicated in args.
 ; Arguments:  Arg1: X position.
@@ -233,7 +233,7 @@ $MakePointS macro XPos:req, YPos:req
   exitm <YPos*0FFFFh + XPos>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      EnableDlgControl
 ; Purpose:    Enable or disable a dialog control.
 ; Arguments:  Arg1: Dialog HANDLE.
@@ -246,7 +246,7 @@ EnableDlgControl macro hDlg:req, dCtrlID:req, dAction:=<TRUE>
   invoke EnableWindow, xax, dAction
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      EnableDlgCtrlNotif
 ; Purpose:    Enable the parent notification machanism of a dialog control, which was disabled
 ;             by default.
@@ -264,7 +264,7 @@ EnableDlgCtrlNotif macro hDlg:req, dCtrlID:req
   invoke SetWindowLongPtr, xcx, GWL_EXSTYLE, xax        ;;Restore modified ExStyle
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      PntS2Pnt
 ; Purpose:    Convert the POINTS contained in PntS into a POINT contained in Pnt.
 ; Arguments:  POINT, POINTS
@@ -293,7 +293,7 @@ PntS2Pnt macro Pnt:req, PntS:req
   mov Pnt.x, eax                                        ;;Pnt.x= width
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      PntS2Regs
 ; Purpose:    Convert the POINTS contained in PntS to DWORD values in the eax and ecx registers.
 ; Arguments:  POINTS, Reg32
@@ -320,7 +320,7 @@ PntS2Regs macro PntS:req, Reg32:=<ecx>
   cwde                                                  ;;eax = x
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Pnt2Reg32
 ; Purpose:    Convert a POINT to a Reg32.
 ; Arguments:  Arg1: Reg32.
@@ -332,7 +332,7 @@ Pnt2Reg32 macro Reg32:req, Pnt:req
   add Reg32, Pnt.x
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $MakeLangID
 ; Purpose:    Create a resource language ID.
 ; Arguments:  Arg1: Primary language.
@@ -347,7 +347,7 @@ $MakeLangID macro PL:req, SL:req
   exitm <&aOut>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $PrimaryLangID
 ; Purpose:    Return the primary language from a Language ID.
 ; Arguments:  Language ID.
@@ -361,7 +361,7 @@ $PrimaryLangID MACRO LangID:REQ
   exitm <&aOut>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $SubLangID
 ; Purpose:    Return the sublanguage from a Language ID.
 ; Arguments:  Language ID.
@@ -375,7 +375,7 @@ $SubLangID MACRO LangID:REQ
   exitm <&aOut>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Dlu2PixX
 ; Purpose:    Converts X Dialog Logic Units to pixel.
 ; Arguments:  Arg1: X DLU value.
@@ -397,7 +397,7 @@ $Dlu2PixX macro DluValX:req, DbuValX:req
   exitm <eax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Dlu2PixY
 ; Purpose:    Converts Y Dialog Logic Units to pixel.
 ; Arguments:  Arg1: Y DLU value.
@@ -419,7 +419,7 @@ $Dlu2PixY macro DluValY:req, DbuValY:req
   exitm <eax>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SetWndStyle
 ; Purpose:    Set the style flag of a window.
 ; Arguments:  Arg1: Style flag.
@@ -431,7 +431,7 @@ SetWndStyle macro hWnd:req, dStyle:req
   invoke SetWindowLongPtr, hWnd, GWL_STYLE, eax
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ClrWndStyle
 ; Purpose:    Clear the style flag of a window.
 ; Arguments:  Arg1: Style flag.
@@ -443,7 +443,7 @@ ClrWndStyle macro hWnd:req, dStyle:req
   invoke SetWindowLongPtr, hWnd, GWL_STYLE, eax
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SetWndStyleEx
 ; Purpose:    Set the extended style flag of a window.
 ; Arguments:  Arg1: Extended style flag.
@@ -455,7 +455,7 @@ SetWndStyleEx macro hWnd:req, dExStyle:req
   invoke SetWindowLongPtr, hWnd, GWL_EXSTYLE, eax
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ClrWndStyleEx
 ; Purpose:    Clear the extended style flag of a window.
 ; Arguments:  Arg1: Extenden style flag.

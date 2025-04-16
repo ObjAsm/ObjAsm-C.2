@@ -14,7 +14,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 externdef TwoDecDigitTableA:BYTE
 ProcName textequ <sdword2decA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  sdword2decA
 ; Purpose:    Convert a signed DWORD to its decimal ANSI string representation.
 ; Arguments:  Arg1: -> Destination ANSI string buffer.

@@ -28,7 +28,7 @@ Set8BinCharsA macro Index
 endm
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  byte2binA, word2binA, dword2binA, qword2binA
 ; Purpose:    Convert a BYTE, WORD, DWORD or QWORD to its binary ANSI string representation.
 ; Arguments:  Arg1: -> Destination buffer.

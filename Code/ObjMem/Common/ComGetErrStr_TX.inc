@@ -11,7 +11,7 @@
 % include &ObjMemPath&Common\\ComErrTable_T.inc
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ComGetErrStrA / ComGetErrStrW 
 ; Purpose:    Return description string from a COM error code.
 ; Arguments:  Arg1: COM error code.

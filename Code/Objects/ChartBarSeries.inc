@@ -12,7 +12,7 @@
 ;    ChartBarSeries implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartBarSeries.Draw
 ; Purpose:    Draw the series bar representation.
 ; Arguments:  Arg1: hDC.
@@ -152,7 +152,7 @@ Method ChartBarSeries.Draw, uses xbx xdi xsi, hDC:HDC
   assume xdi:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartBarSeries.GetSetupDialogTab
 ; Purpose:    Creates a new Tab dialog for this series.
 ; Arguments:  Arg1: Parent window HANDLE.
@@ -169,7 +169,7 @@ Method ChartBarSeries.GetSetupDialogTab, uses xbx, hParent:HWND, pImageList:$Obj
 MethodEnd
 endif
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartBarSeries.Load
 ; Purpose:    Load buffer data from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -181,7 +181,7 @@ Method ChartBarSeries.Load, uses xsi, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.BinRead, addr [xsi].Setup, sizeof(SeriesSetupBar)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    ChartBarSeries.Scan
 ; Purpose:   Scan the buffers X and Y data to find the min and max values => Min & Max indices are set.
 ; Arguments: Arg1: First element index, starting from 0 to dCapacity - 1.
@@ -269,7 +269,7 @@ Method ChartBarSeries.Scan, uses xbx xdi xsi, dFrom:DWORD, dCount:DWORD
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartBarSeries.Store
 ; Purpose:    Store buffer data to a stream object.
 ; Arguments:  Arg1: -> Stream object.

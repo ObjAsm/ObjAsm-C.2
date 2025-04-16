@@ -11,7 +11,7 @@
 SMO_OPENED_NEW        equ 1
 SMO_OPENED_EXISTING   equ 2
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     SharedMemoryObject
 ; Purpose:    Implement a fast way to communicate between processes.
 ; Links:      http://msdn.microsoft.com/en-us/library/aa366551(VS.85).aspx
@@ -34,7 +34,7 @@ if IMPLEMENT
 ;    SharedMemoryObject implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SharedMemoryObject.Done
 ; Purpose:    Finalize the SharedMemoryObject object.
 ; Arguments:  None.
@@ -47,7 +47,7 @@ Method SharedMemoryObject.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SharedMemoryObject.Init
 ; Purpose:    Initialize the SharedMemoryObject object and create a new SMO or open an
 ;             existing one.

@@ -16,7 +16,7 @@ if IMPLEMENT
 ;    NetComConnection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.QueueClose
 ; Purpose:    Mark a NetCom connection to close
 ; Arguments:  None.
@@ -28,7 +28,7 @@ Method NetComConnection.QueueClose
   xBitSet [xcx].dFlags, NCC_CLOSE_MARKED
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.Disconnect
 ; Purpose:    Disconnect writing and/or reading.
 ; Arguments:  Arg1: type = SD_SEND/SD_READ/SD_BOTH
@@ -48,7 +48,7 @@ Method NetComConnection.Disconnect, uses xsi, dType:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.Done
 ; Purpose:    Finalize the NetComConnection object.
 ; Arguments:  None.
@@ -67,7 +67,7 @@ Method NetComConnection.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.DoRead
 ; Purpose:    Perform an asynchronious read operation.
 ; Arguments:  Arg1: -> IOSockJob.
@@ -101,7 +101,7 @@ Method NetComConnection.DoRead, uses xbx xsi, pIOSockJob:PIO_SOCKJOB
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.DoWrite
 ; Purpose:    Perform an asynchronious write operation.
 ; Arguments:  Arg1: -> IO_SOCKJOB.
@@ -129,7 +129,7 @@ Method NetComConnection.DoWrite, uses xbx xsi, pIOSockJob:PIO_SOCKJOB
   xor eax, eax                                          ;  also if the read completed synchronously!
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.FreeIOJobs
 ; Purpose:    Free all gattered IOJobs.
 ; Arguments:  None.
@@ -160,7 +160,7 @@ Method NetComConnection.FreeIOJobs, uses xbx xdi xsi
   invoke LeaveCriticalSection, addr [xsi].CritSect 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.Init
 ; Purpose:    Initialize the NetComConnection object.
 ; Arguments:  Arg1: -> Owner object (NetComConnectionPool).
@@ -213,7 +213,7 @@ Method NetComConnection.Init, uses xsi, pOwner:POINTER, pProtocol:POINTER
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.OnAccept
 ; Purpose:    This method associates a newly accepted socket with the IOCP and queues an IOSockJob
 ;             of the "OPERATION_SOCK_READ" type.
@@ -289,7 +289,7 @@ Method NetComConnection.OnAccept, uses xbx xdi xsi, pIOSockJob:PIO_SOCKJOB
   DbgDec [xdi].$Obj(NetComEngine).IOJobs.dCount
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.OnClose
 ; Purpose:    Close a NetCom connection.
 ; Arguments:  None.
@@ -316,7 +316,7 @@ Method NetComConnection.OnClose, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.OnConnect
 ; Purpose:    A connect operation has finished.
 ; Arguments:  Arg1: -> IOSockJob.
@@ -335,7 +335,7 @@ Method NetComConnection.OnConnect, uses  xsi, pIOSockJob:PIO_SOCKJOB
   OCall xsi.QueueRead                                   ;Queue a read to recognize a remote 
 MethodEnd                                               ;  disconnect
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.OnError
 ; Purpose:    An error condition was fired. We have to decide what to do next.
 ; Arguments:  Arg1: -> IO_SOCKJOB.
@@ -467,7 +467,7 @@ Method NetComConnection.OnError, uses xbx xdi xsi, pIOSockJob:PIO_SOCKJOB, dErro
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.OnFree
 ; Purpose:    Free a NetCom connection.
 ; Arguments:  None.
@@ -480,7 +480,7 @@ Method NetComConnection.OnFree, uses xsi
   xBitSet [xsi].dFlags, NCC_FREED
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.OnRead
 ; Purpose:    A read operation has finished.
 ; Arguments:  Arg1: -> IO_SOCKJOB.
@@ -564,7 +564,7 @@ Method NetComConnection.OnRead, uses xbx xdi xsi, pIOSockJob:PIO_SOCKJOB
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.OnWrite
 ; Purpose:    A write operation has finished.
 ; Arguments:  Arg1: -> IO_SOCKJOB.
@@ -578,7 +578,7 @@ Method NetComConnection.OnWrite, uses xsi, pIOSockJob:PIO_SOCKJOB
   OCall [xcx].$Obj(NetComConnectionPool).pIOSockJobPool::NetComIOSockJobPool.FreeItem, pIOSockJob
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.QueueAccept
 ; Purpose:    Queue an accept IO_SOCKJOB.
 ; Arguments:  Arg1: -> LISTENER.
@@ -620,7 +620,7 @@ Method NetComConnection.QueueAccept, uses xdi xsi, pListener:PLISTENER, pProtoco
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.QueueConnect
 ; Purpose:    Queue a connect IO_SOCKJOB.
 ; Arguments:  Arg1: Remote host address.
@@ -687,7 +687,7 @@ Method NetComConnection.QueueConnect, uses xdi xsi, pRemoteHostAddr:PNETCOMADDR
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.QueueFree
 ; Purpose:    Mark a NetCom connection to free.
 ; Arguments:  None.
@@ -699,7 +699,7 @@ Method NetComConnection.QueueFree
   xBitSet [xcx].dFlags, NCC_FREE_MARKED
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.QueueRead
 ; Purpose:    Queue a read IO_SOCKJOB.
 ; Arguments:  None.
@@ -720,7 +720,7 @@ Method NetComConnection.QueueRead, uses xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComConnection.QueueWrite
 ; Purpose:    Copy the information pointed to by pData to the send buffers and queue a
 ;             write operation on each one.

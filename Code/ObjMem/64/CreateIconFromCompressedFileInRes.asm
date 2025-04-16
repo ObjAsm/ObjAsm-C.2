@@ -12,7 +12,7 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CreateIconFromCompressedFileInRes
 ; Purpose:    Create an icon from a compressed icon file stored as RCDATA resource. 
 ;             Compression should be done using a Microsoft compression algorithm: XPRESS, XPRESS

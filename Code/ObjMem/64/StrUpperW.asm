@@ -15,7 +15,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <StrUpperW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrUpperW
 ; Purpose:    Convert all WIDE string characters into uppercase.
 ; Arguments:  Arg1: -> Source WIDE string.

@@ -65,7 +65,7 @@ _LDR_DATA_TABLE_ENTRY_ struct 4
   HashLinks LIST_ENTRY {}
 _LDR_DATA_TABLE_ENTRY_ ends
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      GetDllBases
 ; Purpose:    Get NTDLL.dll and Kernel32.dll base addresses in memory and store them.
 ; Arguments:  Arg1: Storage variable name for the base address of NTDLL.dll.
@@ -95,7 +95,7 @@ endif
   SetDelta pBaseK32, xcx, xdx                           ;;xax is preserved
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      USE_API
 ; Purpose:    Define storage for the API information in the current segment.
 ; Arguments:  Arg1: API function name.
@@ -111,7 +111,7 @@ USE_API macro FuncName:req
   @CatStr(@SubStr(%FuncName, 7, $$Pos - 7), <_Addr>)   POINTER   NULL
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LoadApi
 ; Purpose:    If API address was not previously loaded, compute its address in the DLL image.
 ; Arguments:  Arg1: Library name.
@@ -134,7 +134,7 @@ LoadApi macro LibName:req, FuncName:req
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      Delta
 ; Purpose:    Compute relative offset to a given label (What).
 ; Arguments:  Arg1: Register to store the result.
@@ -147,7 +147,7 @@ Delta macro IntoReg:req, What:req
   sub IntoReg, $ - What - 1                             ;;Subtract relative offset to the object
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Delta
 ; Purpose:    Compute relative offset to a given label (What).
 ; Arguments:  Arg1: Register to store the result.
@@ -162,7 +162,7 @@ $Delta macro IntoReg:req, What:req
   exitm <IntoReg>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      SetDelta
 ; Purpose:    Uses the "Delta" macro to store a register to a code or data label, and is totally
 ;             relocatable.
@@ -181,7 +181,7 @@ SetDelta macro Where:req, What:req, AuxReg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      ApiRelCall
 ; Purpose:    This macro uses the "Delta" macro to perform relative calls on API functions via
 ;             function-pointers, which were previously stored at a given label using the
@@ -224,7 +224,7 @@ ApiRelCall macro FuncName:req, Args:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetProcAddr
 ; Purpose:    GetProcAddress replacement.
 ;             Parses the Export Address Table of a given DLL for a given API name.

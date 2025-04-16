@@ -61,7 +61,7 @@ XorShift128Plus proc
   ret
 XorShift128Plus endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Method RBT.Compare,, pDH1:POINTER, pDH2:POINTER
   ?mov xdx, pDH1
@@ -73,7 +73,7 @@ Method RBT.Compare,, pDH1:POINTER, pDH2:POINTER
   endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 ShowObject proc pObject:POINTER, Number:DWORD
   ?mov ecx, pObject
@@ -84,7 +84,7 @@ ShowObject proc pObject:POINTER, Number:DWORD
   ret
 ShowObject endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 TestObject proc pObject:POINTER
   ?mov ecx, pObject
@@ -97,7 +97,7 @@ TestObject proc pObject:POINTER
   ret
 TestObject endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataHost.Init
 ; Purpose:    Initializes the object.
 ; Arguments:  Arg1: -> Owner.
@@ -110,7 +110,7 @@ Method DataHost.Init,, pOwner:POINTER, dKey:DWORD
   ACall xcx.Init, pOwner
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataHost.Load
 ; Purpose:    Loads and initializes the collection from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -125,7 +125,7 @@ Method DataHost.Load, uses xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_INFO
   mov [xsi].dKey, $32($OCall(pStream::Stream.BinRead32))
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DataHost.Store
 ; Purpose:    Stores the collection in a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -139,7 +139,7 @@ Method DataHost.Store, uses xsi, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.BinWrite32, [xsi].dKey
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  Deserialize
 ; Purpose:    .
 ; Arguments:  Arg1: -> DesLUT object.
@@ -162,9 +162,9 @@ Deserialize endp
 
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Main code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 start proc uses xbx xdi xsi
   SysInit

@@ -15,7 +15,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <DbgOutTextCW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgOutTextCW
 ; Purpose:    Send a counted WIDE string to the debug output device.
 ; Arguments:  Arg1: -> Zero terminated WIDE string.

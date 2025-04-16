@@ -13,7 +13,7 @@
 SRC_TYPE equ <DWORD>
 ProcName textequ <CalcVarianceDW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CalcVarianceDW
 ; Purpose:    Calculate the MSE of an array of DWORDs.
 ; Arguments:  Arg1: -> Array of DWORDs.

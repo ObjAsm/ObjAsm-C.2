@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <FileExistW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  FileExistW
 ; Purpose:    Check the existence of a file.
 ; Arguments:  Arg1: -> WIDE file name.

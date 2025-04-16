@@ -6,7 +6,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      GetCharType
 ; Purpose:    Return the type (CHR_XXX) from a given character. 
 ; Arguments:  Arg1: Character in a 32 bit register.
@@ -23,7 +23,7 @@ GetCharType macro CharReg32:req, TypeReg32:req
   .endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      LimitXXXXIndex
 ; Purpose:    Limit the horizontal/vertical caret index to the end of line/last line.
 ; Arguments:  Arg1: Horizontal index.
@@ -57,7 +57,7 @@ LimitVertIndex macro IndexY:req
   cmova eax, edx                                        ;On exit xcx -> last visible line
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      GotoXXXVisLine
 ; Purpose:    Return the EditorLine pointer of the prev/next visible line.
 ; Arguments:  Arg1: -> Current EditorLine (Can not be NULL).
@@ -140,7 +140,7 @@ endif
 @@:
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetColorFromString
 ; Purpose:    Return a color value from current string pointer.
 ; Arguments:  Arg1: -> String.
@@ -222,7 +222,7 @@ GetColorFromString proc uses xbx xsi pString:PSTRING, dDefaultColor:DWORD
   ret
 GetColorFromString endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetStringFromString
 ; Purpose:    Return a string from current string pointer.
 ; Arguments:  Arg1: -> String.
@@ -286,7 +286,7 @@ GetStringFromString proc uses xsi pString:PSTRING
   ret
 GetStringFromString endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetIntegerFromString
 ; Purpose:    Return a string from current string pointer.
 ; Arguments:  Arg1: -> String.
@@ -307,7 +307,7 @@ GetIntegerFromString proc uses xsi pString:PSTRING, sdDefaultValue:SDWORD
   ret
 GetIntegerFromString endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetFgBgAttrFromString
 ; Purpose:    Load FGBG_ATTR from current string pointer.
 ; Arguments:  Arg1: -> String.
@@ -338,7 +338,7 @@ GetFgBgAttrFromString proc uses xbx xdi pString:PSTRING, pFgBgAttr:PFGBG_ATTR, \
   ret
 GetFgBgAttrFromString endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DeleteDrawAttrFont
 ; Purpose:    Delete the font contained in the DRAW_ATTR structure.
 ; Arguments:  Arg1: -> DRAW_ATTR.
@@ -351,7 +351,7 @@ DeleteDrawAttrFont proc uses xbx pDrawAttr:PDRAW_ATTR
   ret
 DeleteDrawAttrFont endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DeleteDrawAttrResources
 ; Purpose:    Delete the font and backgound brush contained in the in the DRAW_ATTR structure.
 ; Arguments:  Arg1: -> DRAW_ATTR.
@@ -365,7 +365,7 @@ DeleteDrawAttrResources proc uses xbx pDrawAttr:PDRAW_ATTR
   ret
 DeleteDrawAttrResources endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CreateDrawAttrFont
 ; Purpose:    Create the font specified in the DRAW_ATTR structure.
 ; Arguments:  Arg1: -> DRAW_ATTR.
@@ -400,7 +400,7 @@ CreateDrawAttrFont proc uses xdi xbx pDrawAttr:PDRAW_ATTR
   ret
 CreateDrawAttrFont endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CreateDrawAttrResources
 ; Purpose:    Create the font and background brush specified in the DRAW_ATTR structure.
 ; Arguments:  Arg1: DC HANDLE.
@@ -417,7 +417,7 @@ CreateDrawAttrResources proc uses xbx hDC:HDC, pDrawAttr:PDRAW_ATTR
   ret
 CreateDrawAttrResources endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetDrawAttrFromString
 ; Purpose:    Load DRAW_ATTR from current string pointer.
 ; Arguments:  Arg1: -> DRAW_ATTR.
@@ -473,7 +473,7 @@ GetDrawAttrFromString proc uses xbx xdi xsi pDrawAttr:PDRAW_ATTR, pString:PSTRIN
   ret
 GetDrawAttrFromString endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetFontDefFromString
 ; Purpose:    Load FONT_DEF from current string pointer.
 ; Arguments:  Arg1: -> FONT_DEF.
@@ -524,7 +524,7 @@ GetFontDefFromString proc uses xbx xdi xsi pFontDef:PFONT_DEF, pString:PSTRING, 
   ret
 GetFontDefFromString endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetFileFromString
 ; Purpose:    Allocate an load a FILE structure from a string.
 ; Arguments:  Arg1: -> String.
@@ -553,7 +553,7 @@ GetFileFromString proc uses xbx xdi xsi pString:PSTRING
   ret
 GetFileFromString endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetVersionFromString
 ; Purpose:    Return the main and subversion numbers.
 ; Arguments:  Arg1: -> String, e.g. "1.0"
@@ -576,7 +576,7 @@ GetVersionFromString proc uses xbx pString:PSTRING
   ret
 GetVersionFromString endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsBinNumber
 ; Purpose:    Check if the given string is a binaray number.
 ; Arguments:  Arg1: -> String
@@ -614,7 +614,7 @@ IsBinNumber proc uses xbx xsi pStart:PSTRING, dCount:DWORD
   ret
 IsBinNumber endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsDecNumber
 ; Purpose:    Check if the given string is a decimal number.
 ; Arguments:  Arg1: -> String
@@ -654,7 +654,7 @@ IsDecNumber proc uses xbx xsi pStart:PSTRING, dCount:DWORD
   ret
 IsDecNumber endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsHexNumber
 ; Purpose:    Check if the given string is a hexadecimal number.
 ; Arguments:  Arg1: -> String
@@ -700,7 +700,7 @@ IsHexNumber proc uses xbx xsi pStart:PSTRING, dCount:DWORD
   ret
 IsHexNumber endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  IsOctNumber
 ; Purpose:    Check if the given string is a octal number.
 ; Arguments:  Arg1: -> String
@@ -738,7 +738,7 @@ IsOctNumber proc uses xbx xsi pStart:PSTRING, dCount:DWORD
   ret
 IsOctNumber endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrScanCharA
 ; Purpose:    Scan for a char.
 ; Arguments:  Arg1: -> StringA
@@ -759,7 +759,7 @@ StrScanCharA proc uses xdi pStringA:PSTRINGA, dCharCount:DWORD, bChar:CHRA
   ret
 StrScanCharA endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCScanCharW
 ; Purpose:    Scan for a char.
 ; Arguments:  Arg1: -> StringW
@@ -780,7 +780,7 @@ StrCScanCharW proc uses xdi pStringW:PSTRINGW, dCharCount:DWORD, wChar:CHRW
   ret
 StrCScanCharW endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ShowKeywords
 
 align ALIGN_CODE
@@ -792,7 +792,7 @@ ShowKeywords proc uses xbx xdi pCKW:$ObjPtr(KeywordCollection)
   ret
 ShowKeywords endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCCPosW
 ; Purpose:    Search for the first occurence of a given string (case sensitive).
 ; Arguments:  Arg1: -> Search into string (Haystack).
@@ -833,7 +833,7 @@ StrCCPos proc uses xbx xdi xsi pHaystackStr:PSTRINGW, dHaystackLen:DWORD, \
   ret
 StrCCPos endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCCIPosW
 ; Purpose:    Search for the first occurence of a given string (case insensitive).
 ; Arguments:  Arg1: -> Search into string (Haystack).
@@ -898,7 +898,7 @@ StrCCIPos proc uses xbx xdi xsi pHaystackStr:PSTRING, dHaystackLen:DWORD, \
   ret
 StrCCIPos endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrRCCPosW
 ; Purpose:    Reverse search for the first occurence of a given string (case sensitive).
 ; Arguments:  Arg1: -> Search into string (Haystack).
@@ -943,7 +943,7 @@ StrRCCPos proc uses xbx xdi xsi pHaystackStr:PSTRINGW, dHaystackLen:DWORD, \
   ret
 StrRCCPos endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCCIPosW
 ; Purpose:    Reverse search for the first occurence of a given string (case insensitive).
 ; Arguments:  Arg1: -> Search into string (Haystack).
@@ -1014,7 +1014,7 @@ StrRCCIPos proc uses xbx xdi xsi pHaystackStr:PSTRING, dHaystackLen:DWORD, \
   ret
 StrRCCIPos endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CenterWindowOnPrimaryDisplay
 ; Purpose:    Calculate the coordinates of a window, based on its size, to center it on the 
 ;             primary monitor.

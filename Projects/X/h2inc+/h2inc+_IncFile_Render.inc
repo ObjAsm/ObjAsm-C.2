@@ -24,7 +24,7 @@ include h2inc+_RenderTypedefFunction.inc
 include h2inc+_RenderTypedefFuncPtr.inc
 include h2inc+_RenderTypedefEnum.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  RenderC
 ; Purpose:    Translate from C to MASM syntax.
 ;             The following types of C declarations are known:
@@ -321,7 +321,7 @@ RenderC proc uses xdi xsi
   ret
 RenderC endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  RenderPP
 ; Purpose:    Render PreProcessor lines.
 ; Arguments:  xbx -> IncFile.

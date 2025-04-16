@@ -19,7 +19,7 @@ else
 endif
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetFileLinesA
 ; Purpose:    Return an array of line ending offsets of an ANSI text file.
 ; Arguments:  Arg1: File HANDLE.

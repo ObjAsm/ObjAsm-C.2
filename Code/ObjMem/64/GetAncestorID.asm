@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetAncestorID
 ; Purpose:    Retrieve the ancestor type ID of an object type ID.
 ; Arguments:  Arg1: -> Object class ID.

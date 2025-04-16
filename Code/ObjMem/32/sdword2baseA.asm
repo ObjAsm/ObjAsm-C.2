@@ -18,7 +18,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 ProcName textequ <sdword2baseA>
 Signed equ TRUE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  sdword2baseA
 ; Purpose:    Convert a signed dword to a defined base.
 ; Arguments:  Arg1: -> Buffer

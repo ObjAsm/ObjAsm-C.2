@@ -11,7 +11,7 @@
 TARGET_STR_TYPE = STR_TYPE_WIDE
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Purpose:    Send a command to DebugCenter.
 ; Arguments:  Arg1: Command ID [BYTE].
 ;             Arg2: First parameter (DWORD).

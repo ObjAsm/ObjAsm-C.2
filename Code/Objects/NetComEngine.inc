@@ -16,7 +16,7 @@ if IMPLEMENT
 ;    ListenerCollection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ListenerCollection.DestroyItem
 ; Purpose:    Auxiliar function to dispose a listener from the collection. Don't call directly!
 ; Arguments:  Arg1: -> Listener.
@@ -47,7 +47,7 @@ MethodEnd
 ;    NetComEngine implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.ConnectionsClose
 ; Purpose:    Close all connections.
 ; Arguments:  None.
@@ -67,7 +67,7 @@ Method NetComEngine.ConnectionsClose, uses xbx xdi xsi
   UnlockObjectAccess [xsi].Connections
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.ConnectionsDisconnect
 ; Purpose:    Disconnect all connections.
 ; Arguments:  None.
@@ -87,7 +87,7 @@ Method NetComEngine.ConnectionsDisconnect, uses xbx xdi xsi
   UnlockObjectAccess [xsi].Connections
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.ConnectionsFree
 ; Purpose:    Free all connections.
 ; Arguments:  None.
@@ -107,7 +107,7 @@ Method NetComEngine.ConnectionsFree, uses xbx xdi xsi
   UnlockObjectAccess [xsi].Connections
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.ConnectTo
 ; Purpose:    Create a NetComConnection, and initiate a Connect attempt.
 ; Arguments:  Arg1: -> Protocol object.
@@ -129,7 +129,7 @@ Method NetComEngine.ConnectTo, uses xbx xsi, pProtocol:$ObjPtr(NetComProtocol), 
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.Done
 ; Purpose:    Finalize the NetComEngine object.
 ; Arguments:  None.
@@ -195,7 +195,7 @@ Method NetComEngine.Done, uses xbx xdi xsi
   DbgText "NetComEngine.Done"
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.Init
 ; Purpose:    Initialize internal collections, threads, IOCP etc.
 ; Arguments:  Arg1: -> Owner object.
@@ -292,7 +292,7 @@ Method NetComEngine.Init, uses xbx xsi, pOwner:POINTER, dAcceptorCount:DWORD, \
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.Listen
 ; Purpose:    Create a "Listener" and begin listening on a port (Service) using a protocol.
 ; Arguments:  Arg1: -> NetComProtocol.
@@ -378,7 +378,7 @@ Method NetComEngine.Listen, uses xbx xdi xsi, pProtocol:$ObjPtr(NetComProtocol)
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.FreeConnection
 ; Purpose:    Release a NetComConnection.
 ; Arguments:  Arg1: -> NetComConnection object.
@@ -390,7 +390,7 @@ Method NetComEngine.FreeConnection, uses xsi, pConnection:$ObjPtr(NetComConnecti
   OCall [xsi].Connections::NetComConnectionPool.FreeItem, pConnection
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.NewConnection
 ; Purpose:    Create a NetComConnection.
 ; Arguments:  Arg1: -> protocol object.
@@ -416,7 +416,7 @@ Method NetComEngine.NewConnection, uses xbx xsi, pProtocol:$ObjPtr(NetComProtoco
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.QueueAcceptor
 ; Purpose:    This method allocates a new NetComConnection and enqueues an accept IOSockJob
 ;             using the listener protocol.
@@ -437,7 +437,7 @@ Method NetComEngine.QueueAcceptor, uses xbx xsi, pListener:PLISTENER, \
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.Supervisor
 ; Purpose:    This thread is responsible making all administrative work on the engine.
 ; Arguments:  None.
@@ -554,7 +554,7 @@ Method NetComEngine.Supervisor, uses xbx xdi xsi
   OCall SW::StopWatch.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComEngine.Worker
 ; Purpose:    Here is the HEART AND SOUL of the NetComEngine.
 ;             This thread is responsible for waiting on IOCP completion notifications and passing

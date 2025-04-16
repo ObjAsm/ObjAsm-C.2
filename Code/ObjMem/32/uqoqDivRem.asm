@@ -12,7 +12,7 @@
 
 ProcName textequ <uqoqDivRem>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  uqoqDivRem
 ; Purpose:    Calculate an unsigned extended precision division, emulating the div x86 instrunction.
 ;             (128 bit) Dividend divided by (64 bit) Divisor = (64 bit) Quotient. 

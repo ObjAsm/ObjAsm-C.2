@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <StrReplaceW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrReplaceA
 ; Purpose:    Dispose an existing WIDE string and replace it with a new one.
 ; Arguments:  Arg1: -> String to be replaced.

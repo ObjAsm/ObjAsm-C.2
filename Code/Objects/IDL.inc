@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     IDL
 ; Purpose:    Implement ID Lists.
 ; Note:       OleInitialize should be called to initialize the OLE library.
@@ -36,7 +36,7 @@ if IMPLEMENT
 ;    IDL implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDL.Assign
 ; Purpose:    Assign a Shell PIDL to this object.
 ; Arguments:  Arg1: Shell PIDL.
@@ -50,7 +50,7 @@ Method IDL.Assign, uses xsi, pIDList:POINTER
     m2m [xsi].pIDList, pIDList, xdx                     ;Get the new one
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDL.Clone
 ; Purpose:    Make a copy of the current object.
 ; Arguments:  None.
@@ -81,7 +81,7 @@ Method IDL.Clone, uses xbx xdi xsi
     .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDL.Done
 ; Purpose:    Finalize the IDL object.
 ; Arguments:  None.
@@ -95,7 +95,7 @@ Method IDL.Done, uses xsi
     ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDL.GetPath
 ; Purpose:    Return an ANSI string. The caller should dispose this string using StrDispose.
 ; Arguments:  Arg1: -> Buffer with at least MAX_PATH bytes.
@@ -114,7 +114,7 @@ Method IDL.GetPath,, pBuffer:POINTER
     .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDL.GetSizeIDL
 ; Purpose:    Return the size of the IDL.
 ; Arguments:  None.
@@ -133,7 +133,7 @@ Method IDL.GetSizeIDL
     add eax, 2                                          ;Size of terminator SHITEMID
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDL.SetPath
 ; Purpose:    Set the PIDL that corresponds to a specified string path.
 ; Arguments:  Arg1: -> Path string.
@@ -161,7 +161,7 @@ Method IDL.SetPath, uses xsi, pPathString:POINTER
     .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IDL.SetSpecialFolder
 ; Purpose:    Set the folder IDL related CSIDL_XXX.
 ; Arguments:  Arg1: CSIDL_XXX

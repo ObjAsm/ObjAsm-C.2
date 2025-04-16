@@ -14,7 +14,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     TVector
 ; Purpose:    TVector is a container object template for BYTE, WORD, DWORD, QWORD, REAL4 or REAL8
 ;             items.
@@ -68,7 +68,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.Delete
 ; Purpose:    Delete an xItem from the Vector.
 ; Arguments:  Arg1: xItem.
@@ -82,7 +82,7 @@ if IMPLEMENT
   OCall xsi.DeleteAt, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.DeleteAt
 ; Purpose:    Delete the xItem(Index) from the Vector.
 ; Arguments:  Arg1: Index value.
@@ -138,7 +138,7 @@ MethodEnd
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.DeleteAll
 ; Purpose:    Delete all xItems.
 ; Arguments:  None.
@@ -149,7 +149,7 @@ MethodEnd
 % m2z [xcx].$Obj(TVectorName).dCount
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.Done
 ; Purpose:    Delete and disposes of all the xItems in the Vector.
 ; Arguments:  None.
@@ -164,7 +164,7 @@ MethodEnd
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.FirstThat
 ; Purpose:    Search the first xItem that doesn't return FALSE in eax.
 ; Arguments:  Arg1: -> (static addr) Function that evaluates to TRUE or FALSE (return value in eax).
@@ -194,7 +194,7 @@ MethodEnd
   mov xax, xsi                                          ;xax -> xItem
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.FirstThatNot
 ; Purpose:    Search the first xItem that returns FALSE in eax.
 ; Arguments:  Arg1: -> (static addr) Function that evaluates to TRUE or FALSE (return value in eax).
@@ -223,7 +223,7 @@ MethodEnd
   mov xax, xsi                                          ;xax -> xItem
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.ForEach
 ; Purpose:    Call Action for each xItem in the Vector.
 ; Arguments:  Arg1: -> Processing procedure (static address).
@@ -247,7 +247,7 @@ MethodEnd
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.ForEachRev
 ; Purpose:    Call Action for each xItem in the Vector in reverse order.
 ; Arguments:  Arg1: -> Processing procedure (static address).
@@ -272,7 +272,7 @@ MethodEnd
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.IndexOf
 ; Purpose:    Return the index of an xItem in the Vector in the range [0..Count-1].
 ; Arguments:  Arg1: xItem.
@@ -304,7 +304,7 @@ MethodEnd
   mov eax, -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.Init
 ; Purpose:    Initialize the Vector with a limit (dLimit), an increasing step (dDelta)
 ;             and a maximum size (dMaxCapacity).
@@ -343,7 +343,7 @@ MethodEnd
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.Insert
 ; Purpose:    Insert xItem at the end of the Vector.
 ; Arguments:  Arg1: New xItem.
@@ -372,7 +372,7 @@ MethodEnd
   xor eax, eax                                          ;Return FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.InsertAt
 ; Purpose:    Insert an xItem at index position shifting the remaining xItems.
 ; Arguments:  Arg1: Index value [0..Count].
@@ -453,7 +453,7 @@ MethodEnd
   xor eax, eax                                          ;Return NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.ItemAt
 ; Purpose:    Return a POINTER to an xItem(Index).
 ; Arguments:  Arg1: Index in range [0..Count-1].
@@ -471,7 +471,7 @@ MethodEnd
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.LastThat
 ; Purpose:    Search the last xItem that doesn't return FALSE in eax.
 ; Arguments:  Arg1: -> (static address) Function that evaluates to TRUE or FALSE (eax = return val).
@@ -501,7 +501,7 @@ MethodEnd
   mov xax, xsi                                          ;xax -> xItem
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.LastThatNot
 ; Purpose:    Search the last xItem that returns FALSE in eax.
 ; Arguments:  Arg1: -> (static address) Function that evaluates to TRUE or FALSE (eax = return val).
@@ -531,7 +531,7 @@ MethodEnd
   mov xax, xsi                                          ;xax -> xItem
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.Load
 ; Purpose:    Load and initializes the Vector from a Stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -550,7 +550,7 @@ MethodEnd
   ret
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.PutAt
 ; Purpose:    Overwrite an xItem at index position.
 ; Arguments:  Arg1: Index value.
@@ -572,7 +572,7 @@ MethodEnd
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.SetLimit
 ; Purpose:    Set the Vector limit, allocating the necessary memory on the process heap to hold
 ;             all xItems.
@@ -635,7 +635,7 @@ MethodEnd
   mov eax, VEC_OUT_OF_MEMORY                            ;Return value
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     TVectorName.Store
 ; Purpose:    Store the Vector in a Stream object.
 ; Arguments:  Arg1: -> Stream object.

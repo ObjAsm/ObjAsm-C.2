@@ -13,7 +13,7 @@
 
 externdef TwoDecDigitTableW:WORD
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  sdword2decW
 ; Purpose:    Convert a signed DWORD to its decimal WIDE string representation.
 ; Arguments:  Arg1: -> Destination WIDE string buffer.

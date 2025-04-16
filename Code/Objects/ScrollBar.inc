@@ -26,7 +26,7 @@ DEF_SCROLLBAR ends
 PDEF_SCROLLBAR typedef ptr DEF_SCROLLBAR
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     ScrollBar
 ; Purpose:    Implement a thin wrapper around the ScrollBar GDI object.
 
@@ -41,7 +41,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ScrollBar.Done
 ; Purpose:    Finalize the ScrollBar object.
 ; Arguments:  None.
@@ -53,7 +53,7 @@ Method ScrollBar.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ScrollBar.Init
 ; Purpose:    Initialize the ScrollBar object.
 ; Arguments:  Arg1: -> Owner object.
@@ -75,7 +75,7 @@ Method ScrollBar.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:PDE
   Subclass ScrollBar                                    ;Uses xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ScrollBar.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.

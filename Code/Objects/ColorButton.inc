@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  ColorButton
 ; Purpose: Implement a color selection button showing the selection on  its surface.
 
@@ -35,7 +35,7 @@ if IMPLEMENT
 
 CStr szColorButton, "ColorButton"
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ColorButton.Init
 ; Purpose:    Initialize the ColorButton object.
 ; Arguments:  Arg1: -> Owner object.
@@ -57,7 +57,7 @@ Method ColorButton.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStruc:P
   ACall xsi.Init, pOwner, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ColorButton.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -89,7 +89,7 @@ Method ColorButton.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ColorButton.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -104,7 +104,7 @@ Method ColorButton.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ColorButton.OnLButtonDown
 ; Purpose:    Event procedure for WM_LBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -127,7 +127,7 @@ Method ColorButton.OnLButtonDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ColorButton.OnLButtonUp
 ; Purpose:    Event procedure for WM_LBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -157,7 +157,7 @@ Method ColorButton.OnLButtonUp, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ColorButton.OnPaint
 ; Purpose:    Event procedure for WM_PAINT message.
 ; Arguments:  Arg1: First message parameter.
@@ -232,7 +232,7 @@ Method ColorButton.OnPaint, uses xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ColorButton.OnGetColor
 ; Purpose:    Event procedure for BM_GETCOLOR message.
 ; Arguments:  Arg1: First message parameter.
@@ -244,7 +244,7 @@ Method ColorButton.OnGetColor,, wParam:WPARAM, lParam:LPARAM
   mov eax, [xcx].Color
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ColorButton.OnSetColor
 ; Purpose:    Event procedure for BM_SETCOLOR message.
 ; Arguments:  Arg1: First message parameter.
@@ -258,7 +258,7 @@ Method ColorButton.OnSetColor,, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ColorButton.Startup
 ; Purpose:    Register the ColorButton object with the OS.
 ; Arguments:  None.
@@ -285,7 +285,7 @@ Method ColorButton.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ColorButton.WindowProc
 ; Purpose:    Processing of window messages.
 ; Arguments:  Arg1: Message identifier.

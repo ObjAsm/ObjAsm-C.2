@@ -40,7 +40,7 @@ DEF_BUTTON struc
 DEF_BUTTON ends
 PDEF_BUTTON typedef ptr DEF_BUTTON
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:   Button
 ; Purpose:  Implementation of a base object used as ancestor for objects like ColorButton, Hyperlink
 ;           or IconButton.
@@ -89,7 +89,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.Dispatch
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Window handle.
@@ -104,7 +104,7 @@ Method Button.Dispatch, uses xsi, hWnd:HWND, uMsg:DWORD, wParam:WPARAM, lParam:L
   DispatchEvent <DefWindowProc, hWnd>                   ;xsi -> Object instance
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.Done
 ; Purpose:    Finalize the Button object.
 ; Arguments:  None.
@@ -116,7 +116,7 @@ Method Button.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.InitRes
 ; Purpose:    Initialize the Button object from a resource.
 ; Arguments:  Arg1: Button window handle.
@@ -133,7 +133,7 @@ Method Button.InitRes, uses xsi, hWnd:HWND
   ACall xsi.Init, xax, hWnd
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnEnable
 ; Purpose:    Event procedure for WM_ENABLE message.
 ; Arguments:  Arg1: First message parameter.
@@ -153,7 +153,7 @@ Method Button.OnEnable, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnGetDlgCode
 ; Purpose:    Event procedure for WM_GETDLGCODE message.
 ; Arguments:  Arg1: First message parameter.
@@ -171,7 +171,7 @@ Method Button.OnGetDlgCode, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnGetFont
 ; Purpose:    Event procedure for WM_GETFONT message.
 ; Arguments:  Arg1: First message parameter.
@@ -184,7 +184,7 @@ Method Button.OnGetFont,, wParam:WPARAM, lParam:LPARAM
   invoke GetCurrentObject, [xcx].hMemDC, OBJ_FONT
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnGetText
 ; Purpose:    Event procedure for WM_GETTEXT message.
 ; Arguments:  Arg1: First message parameter.
@@ -205,7 +205,7 @@ Method Button.OnGetText,, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnKeyDown
 ; Purpose:    Event procedure for WM_KEYDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -225,7 +225,7 @@ Method Button.OnKeyDown, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnKillFocus
 ; Purpose:    Event procedure for WM_KILLFOCUS message.
 ; Arguments:  Arg1: First message parameter.
@@ -240,7 +240,7 @@ Method Button.OnKillFocus, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnLButtonDown
 ; Purpose:    Event procedure for WM_LBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -264,7 +264,7 @@ Method Button.OnLButtonDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnLButtonUp
 ; Purpose:    Event procedure for WM_LBUTTONUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -293,7 +293,7 @@ Method Button.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnMouseMove
 ; Purpose:    Event procedure for WM_MOUSEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -324,7 +324,7 @@ Method Button.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnUpdateUIState
 ; Purpose:    Event procedure for WM_UPDATEUISTATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -343,7 +343,7 @@ Method Button.OnUpdateUIState, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnNcDestroy
 ; Purpose:    Event procedure for WM_NCDESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -360,7 +360,7 @@ Method Button.OnNcDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnSetFont
 ; Purpose:    Event procedure for WM_SETFONT message.
 ; Arguments:  Arg1: First message parameter.
@@ -377,7 +377,7 @@ Method Button.OnSetFont, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnSetText
 ; Purpose:    Event procedure for WM_SETTEXT message.
 ; Arguments:  Arg1: First message parameter.
@@ -392,7 +392,7 @@ Method Button.OnSetText, uses xsi, wParam:WPARAM, lParam:LPARAM
   mov eax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Button.OnSetFocus
 ; Purpose:    Event procedure for WM_SETFOCUS message.
 ; Arguments:  Arg1: First message parameter.

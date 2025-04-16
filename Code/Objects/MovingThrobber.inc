@@ -53,7 +53,7 @@ DEF_MTHROBBER ends
 PDEF_MTHROBBER typedef ptr DEF_MTHROBBER
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  MovingThrobber
 ; Purpose: Animated control that displays previously loaded images in sequence, to show a backround
 ;          activity, like GIF but mit transparency.
@@ -82,7 +82,7 @@ CStr szMovingThrobberClass, "OAC_MovingThrobber"
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MovingThrobber.AddBmpFromRes
 ; Purpose:    Load a BMP images from the resource section.
 ; Arguments   Arg1: -> Bitmap resource name.
@@ -129,7 +129,7 @@ Method MovingThrobber.AddBmpFromRes, uses xsi, pBmpName:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MovingThrobber.AddBmpFromResList
 ; Purpose:    Load a series of BMP images from the resource section.
 ; Arguments   Arg1: -> PNG resource name pointer list.
@@ -191,7 +191,7 @@ Method MovingThrobber.AddBmpFromResList, uses xbx xdi xsi, pList:POINTER, dCount
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MovingThrobber.AddPngFromRes
 ; Purpose:    Load a PNG image from the resource section.
 ; Arguments   Arg1: -> PNG resource name.
@@ -279,7 +279,7 @@ Method MovingThrobber.AddPngFromRes, uses xsi, pPngName:PSTRING
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MovingThrobber.AddPngFromResList
 ; Purpose:    Load a series of PNG images from the resource section.
 ; Arguments   Arg1: -> PNG resource name pointer list.
@@ -381,7 +381,7 @@ Method MovingThrobber.AddPngFromResList, uses xbx xdi xsi, pList:POINTER, dListC
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MovingThrobber.Animate
 ; Purpose:    Show the animation.
 ; Arguments:  None.
@@ -530,7 +530,7 @@ Method MovingThrobber.Animate, uses xbx xsi
   .until FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MovingThrobber.Dispose
 ; Purpose:    Free all allocated Bitmaps.
 ; Arguments:  None.
@@ -552,7 +552,7 @@ Method MovingThrobber.Dispose, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MovingThrobber.Init
 ; Purpose:    Initialize the MovingThrobber object.
 ; Arguments:  Arg1: -> Owner object.
@@ -586,7 +586,7 @@ Method MovingThrobber.Init, uses xbx xsi, pOwner:POINTER, hParent:HWND, pDefStru
   assume xbx:NOTHING
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MovingThrobber.InitRes
 ; Purpose:    Initialize the MovingThrobber object.
 ; Arguments:  Arg1: -> Owner object.
@@ -606,7 +606,7 @@ Method MovingThrobber.InitRes, uses xsi, pOwner:POINTER, hWnd:HWND
   invoke ResumeThread, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MovingThrobber.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -631,7 +631,7 @@ Method MovingThrobber.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MovingThrobber.WindowProc
 ; Purpose:    Dispatching of window messages.
 ; Arguments:  Arg1: Message identifier.

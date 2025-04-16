@@ -12,7 +12,7 @@ externdef IID_IUnknown:GUID
 externdef IID_IClassFactory:GUID
 externdef dClassFactoryLocks:DWORD
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  IClassFactory
 ; Purpose: Implementation of the IClassFactory COM interface used by the ClassFactory object.
 
@@ -23,7 +23,7 @@ Object IClassFactory, IClassFactoryID, IUnknown
   RedefineVariable  pIID,             offset IID_IClassFactory
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  ClassFactory
 ; Purpose: Implementation of the ClassFactory COM object.
 ;          This object is used to create new instances of COM objects using its class ID (CLSID)
@@ -45,7 +45,7 @@ if IMPLEMENT
 ;    IClassFactory Implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IClassFactory.CreateInstance
 ; Purpose:    Create a new object instance.
 ; Arguments:  Arg1: -> Outer IUnknown.
@@ -92,7 +92,7 @@ Method IClassFactory.CreateInstance, uses xbx xdi xsi, pIUnkOuter:POINTER, pReqI
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IClassFactory.LockServer
 ; Purpose:    Used to hold the ClassFactory object from being destroyed.
 ; Arguments:  Arg1: TRUE to lock / FALSE to unlock.
@@ -118,7 +118,7 @@ MethodEnd
 ;    ClassFactory Implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClassFactory.Done
 ; Purpose:    Finalize the ClassFactory object.
 ; Arguments:  None.
@@ -131,7 +131,7 @@ Method ClassFactory.Done
   ACall xcx.Done                                        ;Here, the DLL reference count is
 MethodEnd                                               ;  decremented again
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ClassFactory.Init
 ; Purpose:    Initialize the COM object.
 ; Arguments:  Arg1: -> Owner object.

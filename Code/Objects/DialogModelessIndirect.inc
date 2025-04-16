@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     DialogModelessIndirect
 ; Purpose:    This object provides the functionality of modeless dialogs created from templates.
 ;             It is prepared to work seamlessly with the ObjAsm application framework using one of
@@ -29,7 +29,7 @@ if IMPLEMENT
 
 externdef hInstance:HANDLE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     DialogModelessIndirect.Show
 ; Purpose:    Show a modeless dialog.
 ; Arguments:  None.

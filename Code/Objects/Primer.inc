@@ -10,7 +10,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Primer
 ; Purpose:    This object is at the top of the inheritance tree and it defines the common properties
 ;             for all descendant objects in the ObjAsm object library.
@@ -33,7 +33,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Primer.Done
 ; Purpose:    Minimal "Done" method.
 ; Arguments:  None.
@@ -44,7 +44,7 @@ if IMPLEMENT
 Method Primer.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Primer.ErrorClear
 ; Purpose:    Call recursively ErrorClear until the instance that reported the error was reached.
 ;             All dErrorCode(s) and pErrorObject(s) members were zeroed/nulled.
@@ -62,7 +62,7 @@ Method Primer.ErrorClear, uses xsi
   mov [xsi].dErrorCode, OBJ_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Primer.ErrorReport
 ; Purpose:    Error handling method. Sets dErrorCode member and propagates the error invoking the
 ;             ErrorSet method of the owner object. If it can take a corrective action, it must reset
@@ -81,7 +81,7 @@ Method Primer.ErrorReport, uses xsi, pErrorCaller:POINTER, dErrorCode:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Primer.ErrorSet
 ; Purpose:    Set the error code and takes no further action.
 ; Arguments:  Arg1: Error code.
@@ -155,7 +155,7 @@ MethodEnd
 
 endif
 
-; —————————————————————————————————————————————————————————————————————————————————————————————————; Method:     Primer.Init
+; -------------------------------------------------------------------------------------------------; Method:     Primer.Init
 ; Purpose:    Set the owner of the object.
 ; Arguments:  Arg1: -> Owner object.
 ; Return:     Nothing.

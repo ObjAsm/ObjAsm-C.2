@@ -11,7 +11,7 @@
 
 IL_GrowFactor    equ    5
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     SimpleImageList
 ; Purpose:    Implement a thin wrapper around the ImageList GDI object.
 ;             An ImageList is a collection of same-sized images, each of which can be referred to by
@@ -39,7 +39,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SimpleImageList.Append
 ; Purpose:    Append an new image to the control. hBmp must be deleted (DeleteObject)
 ;             after SimpleImageList.Append.
@@ -51,7 +51,7 @@ Method SimpleImageList.Append,, hImage:HBITMAP
   invoke ImageList_Add, [xcx].hImageList, hImage, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SimpleImageList.Done
 ; Purpose:    Finalize the ImageList control.
 ; Arguments:  None.
@@ -62,7 +62,7 @@ Method SimpleImageList.Done
   invoke ImageList_Destroy, [xcx].hImageList
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SimpleImageList.Draw
 ; Purpose:    Draw an image on a DC at the specified coordinates.
 ; Arguments:  Arg1: Index of the image to draw.
@@ -76,7 +76,7 @@ Method SimpleImageList.Draw,, dIndex:DWORD, hDC:HDC, dPx:DWORD, dPy:DWORD
   invoke ImageList_Draw, [xcx].hImageList, dIndex, hDC, dPx, dPy, ILD_NORMAL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SimpleImageList.GetCount
 ; Purpose:    Return the number of images in the ImageList.
 ; Arguments:  None.
@@ -87,7 +87,7 @@ Method SimpleImageList.GetCount
   invoke ImageList_GetImageCount, [xcx].hImageList
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SimpleImageList.GetInfo
 ; Purpose:    Return information about an image in the InageList.
 ; Arguments:  Arg1: Image index.
@@ -99,7 +99,7 @@ Method SimpleImageList.GetInfo,, dIndex:DWORD, pInfo:POINTER
   invoke ImageList_GetImageInfo, [xcx].hImageList, dIndex, pInfo
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SimpleImageList.GetSize
 ; Purpose:    Return the height and width of the images in the list.
 ; Arguments:  Arg1: -> POINT structure.
@@ -112,7 +112,7 @@ Method SimpleImageList.GetSize,, pPoint:PPOINT
   invoke ImageList_GetIconSize, [xcx].hImageList, pPoint, xax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SimpleImageList.Init
 ; Purpose:    Initialize the object.
 ; Arguments:  Arg1: Image X size in pixels.
@@ -127,7 +127,7 @@ Method SimpleImageList.Init,, pOwner:POINTER, dSX:DWORD, dSY:DWORD, dInitCount:D
   ACall xcx.Init, pOwner
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SimpleImageList.Remove
 ; Purpose:    Remove an image from the control.
 ; Arguments:  Arg1: Index of the image that will be removed.
@@ -138,7 +138,7 @@ Method SimpleImageList.Remove,, dIndex:DWORD
   invoke ImageList_Remove, [xcx].hImageList, dIndex
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SimpleImageList.RemoveAll
 ; Purpose:    Remove all images from the control.
 ; Arguments:  None.
@@ -157,7 +157,7 @@ Method SimpleImageList.RemoveAll, uses xbx xsi
   jns @@1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     SimpleImageList.Replace
 ; Purpose:    Replace an image in the control. hImage must be deleted (DeleteObject)
 ;             after SimpleImageList.Replace.

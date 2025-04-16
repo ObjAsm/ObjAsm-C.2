@@ -16,7 +16,7 @@ if IMPLEMENT
 ;    NetComAddrCollection implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    NetComAddrCollection.Compare
 ; Purpose:   Compare 2 NETCOMADDR_ENTRYs
 ; Arguments: Arg1: -> First NETCOMADDR_ENTRY.
@@ -56,7 +56,7 @@ Method NetComAddrCollection.Compare,, pItem1:PNETCOMADDR_ENTRY, pItem2:PNETCOMAD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    NetComAddrCollection.Init
 ; Purpose:   Initialize the NetComAddrCollection object.
 ; Arguments: Arg1: -> Owner object.
@@ -73,7 +73,7 @@ Method NetComAddrCollection.Init, uses xsi, pOwner:POINTER, dLimit:DWORD, dDelta
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComAddrCollection.Insert
 ; Purpose:    Insert item at the end of the collection.
 ; Arguments:  Arg1: -> NETCOMADDR.

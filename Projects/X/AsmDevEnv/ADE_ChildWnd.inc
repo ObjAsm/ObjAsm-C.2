@@ -10,20 +10,21 @@
 ; ChildWnd implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChildWnd.Done
 ; Purpose:    Finalize the ChildWnd object.
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method ChildWnd.Done
-  SetObject xcx
-  mov xax, [xcx].pOwner
+Method ChildWnd.Done, uses xsi
+  SetObject xsi
+  mov xax, [xsi].pOwner
   dec [xax].$Obj(ClientWnd).dChildCount
-  ACall xcx.Done
+  invoke StrDispose, [xsi].pFullFileName
+  ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChildWnd.Init
 ; Purpose:    Initialize the ChildWnd object.
 ; Arguments:  Arg1: -> Owner object.
@@ -36,7 +37,7 @@ Method ChildWnd.Init,, pOwner:POINTER
   ACall xcx.Init, pOwner, NULL                          ;hWnd is set in WndProc
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChildWnd.OnMdiActivate
 ; Purpose:    Event procedure for WM_MDIACTIVATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -51,7 +52,7 @@ Method ChildWnd.OnMdiActivate, uses xsi, wParam:WPARAM, lParam:LPARAM
     invoke GetObjectID, xsi
     mov xcx, [xsi].pOwner
     OCall [xcx].$Obj(ClientWnd).pOwner::Application.ManageGuiCmds, [xsi].hWnd
-    OCall xsi.ClpBrdSetBtns
+    OCall xsi.ManageEditCmds
     OCall xsi.UpdateStatusbar
   .elseif xax == NULL                                   ;Last Child!
     mov xcx, [xsi].pOwner

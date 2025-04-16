@@ -35,7 +35,7 @@ DEF_FLIPBOX ends
 PDEF_FLIPBOX typedef ptr DEF_FLIPBOX
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     FlipBox
 ; Purpose:    Implement a FlipBox GDI object. Based on a subclassed ScrollBar.
 
@@ -60,7 +60,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FlipBox.CaptureMouse
 ; Purpose:    Sets the mouse capture.
 ; Arguments:  Arg1: Action = TRUE/FALSE.
@@ -75,7 +75,7 @@ Method FlipBox.CaptureMouse,, dAction:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FlipBox.Done
 ; Purpose:    Finalize the FlipBox object.
 ; Arguments:  None.
@@ -87,7 +87,7 @@ Method FlipBox.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FlipBox.EnableButton
 ; Purpose:    Enables or disables a button of the FlipBox.
 ; Arguments:  Arg1: Button flags (FBB_xxx).
@@ -113,7 +113,7 @@ Method FlipBox.EnableButton, uses xsi, dBtnState:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FlipBox.Init
 ; Purpose:    Initialize the FlipBox object.
 ; Arguments:  Arg1: -> Owner object.
@@ -151,7 +151,7 @@ Method FlipBox.Init, uses xbx xdi xsi, pOwner:POINTER, hParent:HWND, pDefStruc:P
   Subclass FlipBox                             ;Uses xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FlipBox.Load
 ; Purpose:    Load and initialize the Splitter instance from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -173,7 +173,7 @@ Method FlipBox.Load, uses xbx xsi, pStream:$ObjPtr(Stream), pDeserInfo:PDESER_IN
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FlipBox.Store
 ; Purpose:    Store the streamable instance in a stream object. Descendant objects should redefine
 ;             this method and store new members.
@@ -188,7 +188,7 @@ Method FlipBox.Store, uses xsi, pStream:$ObjPtr(Stream)
   OCall pStream::Stream.BinWriteX, [xsi].hParent
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FlipBox.OnLButtonDown
 ; Purpose:    Event procedure for WM_LBUTTONDOWN message.
 ; Arguments:  Arg1: First message parameter.
@@ -242,7 +242,7 @@ Method FlipBox.OnLButtonDown, uses xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FlipBox.OnMouseMove
 ; Purpose:    Event procedure for WM_MOUSEMOVE message.
 ; Arguments:  Arg1: First message parameter.
@@ -271,7 +271,7 @@ Method FlipBox.OnMouseMove, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     FlipBox.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.

@@ -434,13 +434,14 @@ ADE_EditorID                      equ     0000012203
 ADE_EditorDisplayID               equ     0000012204
 ADE_EditorViewID                  equ     0000012205
 ADE_EditorLineID                  equ     0000012206
-ADE_KeywordGroupListID            equ     0000012207
-ADE_KeywordListID                 equ     0000012208
-ADE_FileTypeCollectionID          equ     0000012209
-ADE_EditorSharedResourcesID       equ     0000012210
-ADE_EditorResourcesID             equ     0000012211
-ADE_ScrollBarVertID               equ     0000012212
-ADE_DialogAboutID                 equ     0000012213
+ADE_ActionCollectionID            equ     0000012207
+ADE_KeywordGroupListID            equ     0000012208
+ADE_KeywordListID                 equ     0000012209
+ADE_FileTypeCollectionID          equ     0000012210
+ADE_EditorSharedResourcesID       equ     0000012211
+ADE_EditorResourcesID             equ     0000012212
+ADE_ScrollBarVertID               equ     0000012213
+ADE_DialogAboutID                 equ     0000012214
 
 ;Database objects (DataBase.inc)
 DB_FieldID                        equ     0000012300

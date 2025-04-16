@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MemZero
 ; Purpose:    Fill a memory block with zeros. A bit faster than MemFillB.
 ;             The memory buffer must be at least as large as number of BYTEs to zero, otherwise a

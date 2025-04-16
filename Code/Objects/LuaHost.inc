@@ -11,7 +11,7 @@
 ;Lua Host Messages we use to communicate with the main application
 LHM_SCRIPT_FINISHED equ WM_USER + 10
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     LuaHost
 ; Purpose:    Implement a host container object for the Lua engine.
 ; Links:      https://www.lua.org/
@@ -43,7 +43,7 @@ LHF_SCRIPT_STOP     equ BIT00
 ;    LuaHost implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     lua_HookProc
 ; Purpose:    Control Lua instruction flow to implement a "Stop" function.
 ; Arguments:  Arg1: -> lua_State
@@ -64,7 +64,7 @@ lua_HookProc proc uses xbx pLuaState:ptr lua_State, plua_Debug:ptr lua_Debug
   ret
 lua_HookProc endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LuaHost.Done
 ; Purpose:    Finalize the Script engine object.
 ; Arguments:  None.
@@ -84,7 +84,7 @@ Method LuaHost.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LuaHost.Run
 ; Purpose:    Message Handler for LHM_SCRIPT_EXECUTE.
 ; Arguments:  None.
@@ -136,7 +136,7 @@ Method LuaHost.Run, uses xbx xsi
   mov eax, dRetVal                                      ; when terminated
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LuaHost.ScriptInit
 ; Purpose:    Script custom initialization.
 ; Arguments:  Arg1: -> lua_State.
@@ -147,7 +147,7 @@ Method LuaHost.ScriptInit,, plua_State:Plua_State
   mov eax, LUA_OK
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LuaHost.Start
 ; Purpose:    Start script execution.
 ; Arguments:  Arg1: -> ANSI string containing the script to execute.
@@ -166,7 +166,7 @@ Method LuaHost.Start, uses xsi, pScript:PSTRINGA
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     LuaHost.Stop
 ; Purpose:    Stop script execution.
 ; Arguments:  None.

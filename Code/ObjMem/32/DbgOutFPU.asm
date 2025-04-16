@@ -12,7 +12,7 @@
 
 ProcName textequ <DbgOutFPU>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DbgOutFPU
 ; Purpose:    Display the content of the FPU.
 ; Arguments:  Arg1: -> Destination Window WIDE name.

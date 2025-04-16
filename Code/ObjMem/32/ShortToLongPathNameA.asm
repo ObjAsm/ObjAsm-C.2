@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ShortToLongPathNameA
 ; Purpose:    Allocate a new ANSI string containing the long path of a short path string.
 ; Arguments:  Arg1: -> Short path ANSI string.

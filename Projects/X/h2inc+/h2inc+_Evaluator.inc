@@ -133,7 +133,7 @@ EvalKnownSymbolTable label POINTER
   EVAL_KNOWN_SYMBOL <$OfsCBStrA("1"),                     EGN_NUMBER, 1>
   POINTER NULL
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:  Evaluator
 ; Purpose: Implement an Evaluator using the 'Shunting Yard' algorithm.
 
@@ -152,7 +152,7 @@ ObjectEnd
 if IMPLEMENT
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Evaluator.Done
 ; Purpose:    Finalize the object.
 ; Arguments:  None.
@@ -178,7 +178,7 @@ Method Evaluator.Done, uses xsi
     .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Evaluator.Evaluate
 ; Purpose:    Evaluate the PreProcessor #if expression.
 ; Arguments:  None.
@@ -298,7 +298,7 @@ Method Evaluator.Evaluate, uses xdi xsi
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  EvlHandler_xxx
 ; Purpose:    Evaluate mathematical or logical expressions.
 ; Arguments:  xax -> EVAL_TOKEN.
@@ -1037,7 +1037,7 @@ EvalHandler_nop proc
     ret
 EvalHandler_nop endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Evaluator.GetNextEvalToken
 ; Purpose:    Get a new Token.
 ; Arguments:  None.

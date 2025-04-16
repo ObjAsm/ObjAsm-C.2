@@ -18,7 +18,7 @@ CStrA bLogic,  "F"
 
 .code
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CreateTempFile
 ; Purpose:    Create a temporary file.
 ; Arguments:  None.
@@ -44,7 +44,7 @@ CreateTempFile proc
   ret
 CreateTempFile endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  GetPhysicalSectorSize
 ; Purpose:    Obtain the physical sector size of a storage device.
 ; Arguments:  Arg1: -> Any path on the storage device.
@@ -84,7 +84,7 @@ GetPhysicalSectorSize proc pPath:PSTRING
   ret
 GetPhysicalSectorSize endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_GetStdFieldInfo
 ; Purpose:    Get information about standard field types, like the length of fix sized fields.
 ; Arguments:  Arg1: Field type.
@@ -155,7 +155,7 @@ DB_GetStdFieldInfo proc bType:BYTE
   ret
 DB_GetStdFieldInfo endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_StrToNum
 ; Purpose:    Type converstion routine from string to FDT_NUMBER format.
 ; Arguments:  Arg1: -> Destination buffer.
@@ -398,7 +398,7 @@ DB_StrToNum proc uses xbx xdi xsi pDstNum:PSTRINGA, pSrcStr:PSTRING, dNumLen:DWO
   ret
 DB_StrToNum endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_NumToStr
 ; Purpose:    Type converstion routine from DB_NUM format to string.
 ; Arguments:  Arg1: -> Destination string buffer.
@@ -430,7 +430,7 @@ DB_NumToStr proc uses xdi xsi pDstString:PSTRING, pSrcNumber:POINTER, dNumLen:DW
   ret
 DB_NumToStr endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_StrToDate
 ; Purpose:    Type converstion routine from string to FDT_DATE (YYYYMMDD).
 ; Arguments:  Arg1: -> Destination buffer (8 bytes).
@@ -548,7 +548,7 @@ DB_StrToDate proc uses xbx xdi xsi pDstDate:PSTRING, pSrcString:POINTER, bFormat
   ret
 DB_StrToDate endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_DateToStr
 ; Purpose:    Type converstion routine from FDT_DATE to string.
 ; Arguments:  Arg1: -> Destination string buffer.
@@ -735,7 +735,7 @@ DB_DateToStrW proc uses xbx xdi xsi pDstString:PSTRING, pSrcDate:POINTER, bForma
   ret
 DB_DateToStrW endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_DateToJDN
 ; Purpose:    Converstion routine from Gregorian date to Julian Date Number.
 ; Arguments:  Arg1: Year.
@@ -792,7 +792,7 @@ DB_DateToJDN proc uses xbx dYear:DWORD, dMonth:DWORD, dDay:DWORD
   ret
 DB_DateToJDN endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_JDNToDate
 ; Purpose:    Converstion routine from Julian Date Number to Gregorian date.
 ; Arguments:  Arg1: Julian Date Number.
@@ -861,7 +861,7 @@ DB_JDNToDate proc uses xbx xdi xsi dJDC:DWORD
   ret
 DB_JDNToDate endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_Real4ToStr
 ; Purpose:    Type converstion routine from FDT_REAL4 to string.
 ; Arguments:  Arg1: -> Destination string buffer.
@@ -883,7 +883,7 @@ DB_Real4ToStr proc pDstString:PSTRING, pSrcReal4:POINTER, dDecimals:DWORD
   ret
 DB_Real4ToStr endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_StrToReal4
 ; Purpose:    Type converstion routine from a string to FDT_REAL4.
 ; Arguments:  Arg1: -> Destination REAL4 buffer (4 bytes).
@@ -909,7 +909,7 @@ DB_StrToReal4 proc pDstReal4:POINTER, pSrcString:PSTRING
   ret
 DB_StrToReal4 endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_Real8ToStr
 ; Purpose:    Type converstion routine from FDT_REAL8 to string.
 ; Arguments:  Arg1: -> Destination string buffer.
@@ -931,7 +931,7 @@ DB_Real8ToStr proc pDstString:PSTRING, pSrcReal8:POINTER, dDecimals:BYTE
   ret
 DB_Real8ToStr endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_StrToReal8
 ; Purpose:    Type converstion routine from a string to FDT_REAL8.
 ; Arguments:  Arg1: -> Destination REAL8 buffer (8 bytes).
@@ -961,7 +961,7 @@ DB_StrToReal8 endp
 DB_Currency2Str textequ <DB_Real8ToStr>
 DB_Str2Currency textequ <DB_StrToReal8>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_Real10ToStr
 ; Purpose:    Type converstion routine from FDT_REAL10 to string.
 ; Arguments:  Arg1: -> Destination string buffer.
@@ -985,7 +985,7 @@ DB_Real10ToStr proc pDstString:PSTRING, pSrcReal10:POINTER, dDecimals:DWORD
   ret
 DB_Real10ToStr endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_StrToReal10
 ; Purpose:    Type converstion routine from a string to FDT_REAL10.
 ; Arguments:  Arg1: -> Destination REAL10 buffer (10 bytes).
@@ -1014,7 +1014,7 @@ DB_StrToReal10 proc pDstReal10:POINTER, pSrcString:PSTRING
   ret
 DB_StrToReal10 endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_LogicalToStr
 ; Purpose:    Type converstion routine from Logical to string.
 ; Arguments:  Arg1: -> Destination string buffer.
@@ -1038,7 +1038,7 @@ DB_LogicalToStr proc pDstString:PSTRING, pSrcLogical:POINTER
   ret
 DB_LogicalToStr endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_StrToLogical
 ; Purpose:    Type converstion routine from string to Logical.
 ; Arguments:  Arg1: -> Logical.
@@ -1099,7 +1099,7 @@ DB_StrToLogical proc uses xbx pDstLogical:PSTRING, pSrcString:PSTRING
   ret
 DB_StrToLogical endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_NowToTimestamp
 ; Purpose:    Stamp now UTC.
 ; Arguments:  Arg1: -> TimeStamp.
@@ -1143,7 +1143,7 @@ DB_NowToTimestamp proc uses xbx pTimeStamp:POINTER
   ret
 DB_NowToTimestamp endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_TimeToMS
 ; Purpose:    Compute the input time to miliseconds.
 ; Arguments:  Arg1: Hours.
@@ -1172,7 +1172,7 @@ DB_TimeToMS proc uses xbx dHours:DWORD, dMinutes:DWORD, dSeconds:DWORD, dMilliSe
   ret
 DB_TimeToMS endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DB_TimestampToStr
 ; Purpose:    Convert TimeStamp to string.
 ; Arguments:  Arg1: -> Destination string.
@@ -1215,7 +1215,7 @@ DB_TimestampToStr proc pDstString:PSTRING, pTimeStamp:POINTER
 DB_TimestampToStr endp
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MUT_xxx
 ; Purpose:    Field mutation procedures called from DB_StructEditorDlg.Mutate.
 ; Arguments:  Arg1: -> Output buffer.
@@ -1804,7 +1804,7 @@ MUT_FpuToBool proc pOut:POINTER, pIn:POINTER, pMutInfo:PFIELD_MUTATION
 MUT_FpuToBool endp
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MemoPutBmp
 ; Purpose:    Store a bitmap in the memo file.
 ; Arguments:  Arg1: -> DB_Memo.
@@ -1844,7 +1844,7 @@ MemoPutBmp proc uses xbx pMemo:$ObjPtr(DB_Memo), hBmp:HANDLE
   ret
 MemoPutBmp endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MemoGetBmp
 ; Purpose:    Retrieve a bitmap from memo file.
 ; Arguments:  Arg1: -> DB_Memo.

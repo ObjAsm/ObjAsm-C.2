@@ -34,14 +34,14 @@
 ;   - Editor templates: MASM, Resource & Plain Text. Each template has its own settings in the ini file 
 ;   - Information in the status bar what the application thinks it is editing 
 ;   - Tooltips for the toolbars 
-;
+; 
 ; ==================================================================================================
 
 ;Note: comment $$RegCntMM = 0 in system.inc 
 
 
 %include @Environ(OBJASM_PATH)\\Code\\Macros\\Model.inc ;Include & initialize standard modules
-SysSetup OOP, WIN64, WIDE_STRING;, DEBUG(WND, INFO);, ResGuard)  ;Load OOP files and OS related objects
+SysSetup OOP, WIN64, WIDE_STRING, DEBUG(WND, INFO, ResGuard)  ;Load OOP files and OS related objects
 ;Note: don't use ANSI_STRING 
 
 % include &MacPath&DlgTmpl.inc                          ;Dialog Template macros for XMenu
@@ -120,6 +120,7 @@ start proc SEH_FRAME                                    ;Program entry point
 
   ResGuard_Start
   invoke InitCommonControls  
+  invoke CoInitialize, NULL
 
   OCall $ObjTmpl(Application)::Application.Init         ;Initialize application
   OCall $ObjTmpl(Application)::Application.Run          ;Execute application

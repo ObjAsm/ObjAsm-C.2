@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrCECopyA
 ; Purpose:    Copy the the source ANSI string with length limitation and return the ZTC address.
 ;             The destination buffer should hold the maximum number of characters + 1.

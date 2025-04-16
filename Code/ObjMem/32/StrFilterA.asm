@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup32.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrFilterA
 ; Purpose:    Perform a case sensitive string match test using wildcards (* and ?).
 ; Arguments:  Arg1: -> Source ANSI string.

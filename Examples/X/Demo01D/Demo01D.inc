@@ -30,13 +30,13 @@ Object Shape, ShapeID, OA:Streamable            ;Start Shape definition, inherid
   DefineVariable    dHeight,    DWORD,    200   ;Set dHeight to 0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object Triangle, TriangleID, Shape              ;Start Triangle def., inherited from Shape
   RedefineMethod    GetArea                     ;Define shape's abstract method.
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object Rectangle, RectangleID, Shape            ;Start Rectangle def., inherited from Shape
   RedefineMethod    GetArea                     ;Define shape's abstract method.
@@ -50,7 +50,7 @@ ObjectEnd
 ;     Shape implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Shape.Init
 ; Purpose:    Set object variables.
 ; Arguments:  Arg1: Base.
@@ -65,7 +65,7 @@ Method Shape.Init,, dBase:DWORD, dHeight:DWORD
     OCall xcx.PrivateMtd                        ;Test the private method
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Shape.PrivateMtd
 ; Purpose:    Set object variables.
 ; Arguments:  Arg1: Base.
@@ -76,7 +76,7 @@ Method Shape.PrivateMtd
     DbgText "Method: Shape.Private"
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Shape.Load
 ; Purpose:    Load an object from a stream.
 ; Arguments:  Arg1: -> Stream
@@ -90,7 +90,7 @@ Method Shape.Load, uses xsi, pStream:$ObjPtr(OA:Stream), pOwner:POINTER
     OCall pStream::OA:Stream.BinRead, addr [xsi].dHeight, sizeof(DWORD)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Shape.Store
 ; Purpose:    Store an object into a stream.
 ; Arguments:  Arg1: -> Stream
@@ -108,7 +108,7 @@ MethodEnd
 ;     Triangle implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Triangle.GetArea
 ; Purpose:    Calculate the triangle area.
 ; Arguments:  None.
@@ -127,7 +127,7 @@ MethodEnd
 ;     Rectangle implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Rectangle.GetArea
 ; Purpose:    Calculate the rectangle area.
 ; Arguments:  None.
@@ -140,7 +140,7 @@ Method Rectangle.GetArea
     mul [xcx].dHeight                           ;Multiply by dHeight from instance data
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Rectangle.GetPerimeter
 ; Purpose:    Calculate the rectangle perimeter.
 ; Arguments:  None.
@@ -154,7 +154,7 @@ Method Rectangle.GetPerimeter
     shl eax, 1                                  ;eax = 2 * (Base + Height)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Rectangle.TestFunction
 ; Purpose:    By default, return TRUE.
 ; Arguments:  None.
@@ -165,7 +165,7 @@ Method Rectangle.TestFunction
     mov xax, TRUE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     IsQuad
 ; Purpose:    Check if the rectangle has equal sides.
 ; Arguments:  None.

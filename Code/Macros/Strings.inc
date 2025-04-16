@@ -59,7 +59,7 @@ CRLF  equ <13,10>
 % include &MacPath&WStrings.inc
 % include &MacPath&AStrings.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Esc
 ; Purpose:    Convert escape sequences to the corresponding character codes.
 ; Arguments:  Arg1: Text.
@@ -180,7 +180,7 @@ $Esc macro Text:req
 % exitm <$$CES_Text>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $QuotedText / $QuotedString
 ; Purpose:    Convert a sequence of quoted strings/numbers in a list of chars and numbers.
 ;             $QuotedString appends a zero to the end.
@@ -242,7 +242,7 @@ $QuotedString macro Text:vararg
 % exitm <$QuotedText(Text, 0)>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $RepChr
 ; Purpose:    Repeat a character N times.
 ; Arguments:  Arg1: Character to repeat
@@ -258,7 +258,7 @@ $RepChr macro Char:req, Count:req
   exitm @CatStr(<">, %$$Text, <">)
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 String macro StrName, QuotedText:vararg
   if TARGET_STR_TYPE eq STR_TYPE_WIDE
@@ -337,7 +337,7 @@ $JStr macro QuotedText:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $Ofs(C/T/D/J)Str
 ; Purpose:    Place an ANSI or UNICODE string in the CONST, SEG_TEXT, _DATA or _TEXT Segment.
 ; Arguments:  Arg1: Quoted string text.
@@ -375,7 +375,7 @@ $OfsJStr macro QuotedText:vararg
   endif
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $PCG_RndChr
 ; Purpose:    Return at assembly-time a randomly generated (PCG) character value.
 ; Arguments:  None.
@@ -405,7 +405,7 @@ $PCG_RndChr macro
   exitm <a>
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      $PCG_RndStr
 ; Purpose:    Return at assembly-time a randomly generated (PCG) string in const segment.
 ;             On each run of the macro, a new string is generated

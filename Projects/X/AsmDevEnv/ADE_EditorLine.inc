@@ -380,10 +380,11 @@ MethodEnd
 ; Purpose:    Delete chars at a given position.
 ; Arguments:  Arg1: Position where to start deleting.
 ;             Arg2: Number of chars to delete. May be more than the buffer lenght.
+;             Arg3: Log ACTION flag.
 ; Return:     eax = Number of deleted chars or 0 if failed.
 
-Method EditorLine.CharDelete, uses xbx xdi xsi, dDelIndex:DWORD, dCharCount:DWORD
-  local dMoveSize:DWORD
+Method EditorLine.CharDelete, uses xbx xdi xsi, dDelIndex:DWORD, dCharCount:DWORD, dLogAction:DWORD
+  local dMoveSize:DWORD, pChars:PSTRING
 
   SetObject xsi
   xor eax, eax
@@ -395,10 +396,49 @@ Method EditorLine.CharDelete, uses xbx xdi xsi, dDelIndex:DWORD, dCharCount:DWOR
     .if ecx > edx || dCharCount == -1
       ;Delete up to EOL
       mov xcx, [xsi].pBuffer
-      mov CHR ptr [xcx + sizeof(CHR)*xax], 0
+      lea xdx, [xcx + sizeof(CHR)*xax]
+      mov pChars, xdx
+      mov edi, [xsi].dLength
+      sub edi, eax
       mov [xsi].dLength, eax
+
+      ;Keep track of the change
+      .if dLogAction != FALSE
+        MemAlloc sizeof(ACTION)
+        .if xax != NULL
+          mov xbx, xax
+          mov [xbx].ACTION.pEditorLine, xsi
+          mov [xbx].ACTION.dAction, AAT_DELETECHARS
+          m2m [xbx].ACTION.dPosIndex, dDelIndex, eax
+          mov [xbx].ACTION.dChrCount, edi
+          mov [xbx].ACTION.pChars, $invoke(StrCNew, pChars, edi)
+        .endif
+        mov xcx, pChars
+        mov CHR ptr [xcx], 0
+        mov xdx, [xsi].pOwner
+        OCall [xdx].$Obj(Editor).Actions::ActionCollection.Insert, xbx
+      .endif
+
     .else
       ;Delete inside the buffer => move remaining chars
+      ;Keep track of the change
+      .if dLogAction != FALSE
+        MemAlloc sizeof(ACTION)
+        .if xax != NULL
+          mov xbx, xax
+          mov [xbx].ACTION.pEditorLine, xsi
+          mov [xbx].ACTION.dAction, AAT_DELETECHARS
+          m2m [xbx].ACTION.dPosIndex, dDelIndex, eax
+          m2m [xbx].ACTION.dChrCount, dCharCount, edx
+          mov ecx, dDelIndex
+          mov xax, [xsi].pBuffer
+          lea xcx, [xax + sizeof(CHR)*xcx]
+          mov [xbx].ACTION.pChars, $invoke(StrCNew, xcx, edx)
+        .endif
+        mov xdx, [xsi].pOwner 
+        OCall [xdx].$Obj(Editor).Actions::ActionCollection.Insert, xbx
+      .endif
+
       mov edx, [xsi].dLength
       sub edx, dDelIndex
       lea edx, [sizeof(CHR)*edx + sizeof(CHR)]          ;Include the ZTC
@@ -435,9 +475,10 @@ MethodEnd
 ; Arguments:  Arg1: Position where to start to insert.
 ;             Arg2: Number of chars to insert. -1 indicates to copy up the end of string.
 ;             Arg3: -> Chars to insert. If NULL, nothing is inserted.
+;             Arg4: Log ACTION flag.
 ; Return:     eax = Number of inserted chars or 0 if failed.
 
-Method EditorLine.CharInsert, uses xbx xdi xsi, dInsIndex:DWORD, dCharCount:DWORD, pChars:POINTER
+Method EditorLine.CharInsert, uses xbx xdi xsi, dInsIndex:DWORD, dCharCount:DWORD, pChars:POINTER, dLogAction:DWORD
   local dMoveSize:DWORD
 
   SetObject xsi
@@ -478,19 +519,22 @@ Method EditorLine.CharInsert, uses xbx xdi xsi, dInsIndex:DWORD, dCharCount:DWOR
       ;Copy the source characters
       invoke MemClone, xbx, pChars, edi
 
-;      ;Keep track of the change
-      MemAlloc sizeof(ACTION)
-      .if xax != NULL
-        mov xbx, xax
-        mov [xbx].ACTION.dAction, AAT_INSERTCHARS
-        m2m [xbx].ACTION.dBegin, dInsIndex, eax
-        m2m [xbx].ACTION.dCount, dCharCount, eax
-        invoke StrCNew, pChars, dCharCount
-        mov [xbx].ACTION.pChars, xax
-      .endif 
+      ;Keep track of the change
+      .if dLogAction != FALSE
+        MemAlloc sizeof(ACTION)
+        .if xax != NULL
+          mov xbx, xax
+          mov [xbx].ACTION.pEditorLine, xsi
+          mov [xbx].ACTION.dAction, AAT_INSERTCHARS
+          m2m [xbx].ACTION.dPosIndex, dInsIndex, eax
+          m2m [xbx].ACTION.dChrCount, dCharCount, eax
+          mov [xbx].ACTION.pChars, $invoke(StrCNew, pChars, dCharCount)
+        .endif
+        mov xdx, [xsi].pOwner 
+        OCall [xdx].$Obj(Editor).Actions::ActionCollection.Insert, xbx
+      .endif
 
       ;Housekeeping
-      
       OCall xsi.SetDirty
 
       mov eax, dCharCount
@@ -504,9 +548,10 @@ MethodEnd
 ; Arguments:  Arg1: Position where to start to insert.
 ;             Arg2: Number of chars to insert. -1 indicates to copy up the end of string.
 ;             Arg3: -> Chars to insert. If NULL, nothing is inserted.
+;             Arg4: Log ACTION flag.
 ; Return:     eax = Number of inserted chars or 0 if failed.
 
-Method EditorLine.CharReplace, uses xsi, dRplIndex:DWORD, dCharCount:DWORD, pChars:POINTER
+Method EditorLine.CharReplace, uses xsi, dRplIndex:DWORD, dCharCount:DWORD, pChars:POINTER, dLogAction:DWORD
   SetObject xsi
   mov eax, dCharCount
   xor eax, eax
@@ -525,6 +570,23 @@ Method EditorLine.CharReplace, uses xsi, dRplIndex:DWORD, dCharCount:DWORD, pCha
         OCall xsi.BufferResize, eax
       .endif
 
+      ;Keep track of the change
+      .if dLogAction != FALSE
+        ;Make a copy of the original chars
+        MemAlloc sizeof(ACTION)
+        .if xax != NULL
+          mov xbx, xax
+          mov [xbx].ACTION.pEditorLine, xsi
+          mov [xbx].ACTION.dAction, AAT_DELETECHARS
+          m2m [xbx].ACTION.dPosIndex, dRplIndex, edx
+          m2m [xbx].ACTION.dChrCount, dCharCount, ecx
+          mov xax, [xsi].pBuffer
+          mov [xbx].ACTION.pChars, $invoke(StrCNew, addr [xax + xdx*sizeof(CHR)], dCharCount)
+        .endif
+        mov xdx, [xsi].pOwner 
+        OCall [xdx].$Obj(Editor).Actions::ActionCollection.Insert, xbx
+      .endif
+
       ;Copy the source characters
       mov xax, [xsi].pBuffer
       mov edx, dRplIndex
@@ -538,6 +600,21 @@ Method EditorLine.CharReplace, uses xsi, dRplIndex:DWORD, dCharCount:DWORD, pCha
           add eax, eax
         endif
         invoke MemClone, xcx, pChars, eax
+      .endif
+
+      ;Keep track of the change
+      .if dLogAction != FALSE
+        MemAlloc sizeof(ACTION)
+        .if xax != NULL
+          mov xbx, xax
+          mov [xbx].ACTION.pEditorLine, xsi
+          mov [xbx].ACTION.dAction, AAT_INSERTCHARS
+          m2m [xbx].ACTION.dPosIndex, dRplIndex, eax
+          m2m [xbx].ACTION.dChrCount, dCharCount, eax
+          mov [xbx].ACTION.pChars, $invoke(StrCNew, pChars, dCharCount)
+        .endif
+        mov xdx, [xsi].pOwner 
+        OCall [xdx].$Obj(Editor).Actions::ActionCollection.Insert, xbx
       .endif
 
       ;Housekeeping
@@ -555,6 +632,7 @@ MethodEnd
 ; Return:     Nothing.
 
 Method EditorLine.Done, uses xsi
+;  DbgText "EditorLine.Done"
   SetObject xsi
   MemFree [xsi].pBuffer, MEM_SAFE_FREE
   ACall xsi.Done
@@ -569,7 +647,7 @@ MethodEnd
 ; Return:     eax = Character that exits a multiline Comment, otherwise zero.
 
 if TARGET_BITNESS eq 64
-  option stackbase:rbp                                  ;Required to use Subroutines
+  option stackbase:rbp                                  ;Required for the use of subroutines
 endif
 
 Method EditorLine.Draw, uses xbx xdi xsi, pEditorView:POINTER, pLineRect:PRECT, \
@@ -1156,9 +1234,10 @@ MethodEnd
 ; Purpose:    Break the line into 2 lines. The new line is inserted at the next position.
 ; Arguments:  Arg1: Position where to break the line.
 ;             Arg2: Line number of the line to break
+;             Arg3: Log ACTION flag.
 ; Return:     xax -> New inserted line or NULL if failed.
 
-Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineNumber:DWORD
+Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineNumber:DWORD, dLogAction:DWORD
   local pNewEditorLine:$ObjPtr(EditorLine)
 
   SetObject xsi
@@ -1173,9 +1252,24 @@ Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineNumber:DW
     OCall pNewEditorLine::EditorLine.Init, [xsi].pOwner
 
     ;Insert the new EditorLine
-    lea xcx, [xdi].$Obj(Editor).LinkedListHead
+    lea xcx, [xdi].$Obj(Editor).LinesHead
     lea xdx, [xsi].$Obj(EditorLine).LineLink
     LDLL_InsertAfter xcx, xdx, xbx, xax
+
+    ;Keep track of the change
+    .if dLogAction != FALSE
+      MemAlloc sizeof(ACTION)
+      .if xax != NULL
+        mov xbx, xax
+        m2m [xbx].ACTION.pEditorLine, pNewEditorLine, xax
+        mov [xbx].ACTION.dAction, AAT_INSERTLINE
+        mov edx, dLineNumber
+        inc edx
+        mov [xbx].ACTION.dLineNumber, edx
+      .endif
+      mov xdx, [xsi].pOwner 
+      OCall [xdx].$Obj(Editor).Actions::ActionCollection.Insert, xbx
+    .endif
 
     ;Copy broken off chars
     mov ecx, dBreakIndex
@@ -1184,8 +1278,8 @@ Method EditorLine.LineBreak, uses xbx xdi xsi, dBreakIndex:DWORD, dLineNumber:DW
     mov eax, [xsi].dLength
     .if SDWORD ptr ecx < eax
       sub eax, ecx
-      OCall pNewEditorLine::EditorLine.CharInsert, 0, eax, xbx
-      OCall xsi::EditorLine.CharDelete, dBreakIndex, -1
+      OCall pNewEditorLine::EditorLine.CharInsert, 0, eax, xbx, dLogAction
+      OCall xsi::EditorLine.CharDelete, dBreakIndex, -1, dLogAction
     .endif
 
     ;Housekeeping
@@ -1207,10 +1301,11 @@ MethodEnd
 ; Method:     EditorLine.LineDelete
 ; Purpose:    Remove this EditorLine instance from the Linked List.
 ; Arguments:  Arg1: Line number of the line to delete.
+;             Arg2: Log ACTION flag.
 ; Return:     xax -> Deleted EditorLine or NULL if failed.
 ; Note:       To destroy the EditorLine call Destroy the returned value.
 
-Method EditorLine.LineDelete, uses xbx xsi, dLineNumber:DWORD
+Method EditorLine.LineDelete, uses xbx xsi, dLineNumber:DWORD, dLogAction:DWORD
   SetObject xsi
   mov xbx, [xsi].pOwner                                 ;xbx -> Editor
   OCall xbx::Editor.InformDeletionOf, dLineNumber
@@ -1237,29 +1332,43 @@ Method EditorLine.LineDelete, uses xbx xsi, dLineNumber:DWORD
   .endif
 
   ;Do deletion
-  lea xcx, [xbx].$Obj(Editor).LinkedListHead
+  lea xcx, [xbx].$Obj(Editor).LinesHead
   lea xdx, [xsi].$Obj(EditorLine).LineLink
   LDLL_Remove xcx, xdx, xbx, xax
   mov xax, xsi                                          ;Return pSelf
+
+  ;Keep track of the change
+  .if dLogAction != FALSE
+    MemAlloc sizeof(ACTION)
+    .if xax != NULL
+      mov xbx, xax
+      mov [xbx].ACTION.pEditorLine, xsi
+      mov [xbx].ACTION.dAction, AAT_DELETELINE
+      m2m [xbx].ACTION.dLineNumber, dLineNumber, eax
+    .endif
+    mov xdx, [xsi].pOwner 
+    OCall [xdx].$Obj(Editor).Actions::ActionCollection.Insert, xbx
+  .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorLine.LineJoinNext
 ; Purpose:    Join the current with the next EditorLine.
 ; Arguments:  Arg1: Line Number of this EditorLine.
+;             Arg2: Log ACTION flag.
 ; Return:     xax -> Deleted EditorLine or NULL if failed.
 ;             xcx -> Joined EditorLine or NULL if failed.
 
-Method EditorLine.LineJoinNext, uses xbx xsi, dLineNumber:DWORD
+Method EditorLine.LineJoinNext, uses xbx xsi, dLineNumber:DWORD, dLogAction:DWORD
   SetObject xsi
   ;Goto next EditorLine
   xor ecx, ecx
-  mov xax, [xsi].LineLink.pLinkFwrd                         ;Goto next member
+  mov xax, [xsi].LineLink.pLinkFwrd                     ;Goto next member
   .if xax != NULL
-    lea xbx, [xax - offset($Obj(EditorLine).LineLink)]
-    OCall xsi.CharInsert, [xsi].dLength, [xbx].$Obj(EditorLine).dLength, [xbx].$Obj(EditorLine).pBuffer
+    lea xbx, [xax - offset($Obj(EditorLine).LineLink)]  ;xbx -> next EditorLine
+    OCall xsi.CharInsert, [xsi].dLength, [xbx].$Obj(EditorLine).dLength, [xbx].$Obj(EditorLine).pBuffer, dLogAction
     inc dLineNumber                                     ;Line number to be deleted
-    OCall xbx::EditorLine.LineDelete, dLineNumber
+    OCall xbx::EditorLine.LineDelete, dLineNumber, dLogAction
     mov xcx, xsi
   .endif
 MethodEnd
@@ -1268,24 +1377,77 @@ MethodEnd
 ; Method:     EditorLine.LineJoinPrev
 ; Purpose:    Join the current with the previous EditorLine.
 ; Arguments:  Arg1: Line Number of this EditorLine.
+;             Arg2: Log ACTION flag.
 ; Return:     xax -> Deleted EditorLine or NULL if failed.
 ;             xcx -> Joined EditorLine or NULL if failed.
 
-Method EditorLine.LineJoinPrev, uses xbx xdi xsi, dLineNumber:DWORD
+Method EditorLine.LineJoinPrev, uses xbx xdi xsi, dLineNumber:DWORD, dLogAction:DWORD
   SetObject xsi
   xor ecx, ecx
   mov xdx, [xsi].pOwner
   mov xdi, [xdx].$Obj(EditorView).pOwner                ;xdi -> Editor
 
   ;Goto previous EditorLine
-  mov xax, [xsi].LineLink.pLinkBack                         ;Goto prev member
+  mov xax, [xsi].LineLink.pLinkBack                     ;Goto prev member
   .if xax != NULL
     lea xbx, [xax - offset($Obj(EditorLine).LineLink)]  ;xbx -> prev EditorLine
     BitSet [xbx].$Obj(EditorLine).dFlags, TLF_DIRTY_LINE_CURR
-    OCall xbx::EditorLine.CharInsert, [xbx].$Obj(EditorLine).dLength, [xsi].dLength, [xsi].pBuffer
-    OCall xsi.LineDelete, dLineNumber
+    OCall xbx::EditorLine.CharInsert, [xbx].$Obj(EditorLine).dLength, [xsi].dLength, [xsi].pBuffer, dLogAction
+    OCall xsi.LineDelete, dLineNumber, dLogAction
     mov xax, xsi
     mov xcx, xbx
+  .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     EditorLine.LineReinsert
+; Purpose:    Reinsert an exiting line
+; Arguments:  Arg1: Line Number of this EditorLine.
+;             Arg2: Log ACTION flag.
+; Return:     Nothing.
+
+Method EditorLine.LineReinsert, uses xbx xsi, dLineNumber:DWORD, dLogAction:DWORD
+  SetObject xsi
+
+  mov xax, [xsi].LineLink.pLinkBack
+  mov xcx, [xsi].pOwner
+  lea xdx, [xcx].$Obj(Editor).LinesHead
+  lea xcx, [xsi].LineLink
+  .if xax != NULL
+    LDLL_InsertAfter xdx, xax, xcx, xbx
+  .else
+    mov xax, [xsi].LineLink.pLinkFwrd
+    .if xax != NULL
+      LDLL_InsertBefore xdx, xax, xcx, xbx
+    .else
+      LDLL_InsertFirst xdx, xax, xcx
+    .endif
+  .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     EditorLine.Redo
+; Purpose:    Restore the last undo action.
+; Arguments:  Arg1: -> ACTION
+; Return:     Nothing.
+
+Method EditorLine.Redo, uses xsi, pAction:POINTER
+  SetObject xsi
+  mov xax, pAction
+  .if [xax].ACTION.dAction == AAT_DELETECHARS
+    OCall xsi.CharDelete, [xax].ACTION.dPosIndex, [xax].ACTION.dChrCount, FALSE
+
+  .elseif [xax].ACTION.dAction == AAT_INSERTCHARS
+    OCall xsi.CharInsert, [xax].ACTION.dPosIndex, [xax].ACTION.dChrCount, [xax].ACTION.pChars, FALSE
+
+  .elseif [xax].ACTION.dAction == AAT_DELETELINE
+    OCall xsi.LineDelete, [xax].ACTION.dLineNumber, FALSE
+
+  .elseif [xax].ACTION.dAction == AAT_INSERTLINE
+    OCall xsi.LineReinsert, [xax].ACTION.dLineNumber, FALSE
+
+  .else
+    xor eax, eax
   .endif
 MethodEnd
 
@@ -1334,7 +1496,7 @@ Method EditorLine.SpaceFill, uses xbx xsi, dSpaceCount:DWORD
   mov ebx, dSpaceCount
   test ebx, ebx
   .while !ZERO?
-    OCall xsi.CharInsert, [xsi].dLength, 1, addr cChar
+    OCall xsi.CharInsert, [xsi].dLength, 1, addr cChar, TRUE
     dec ebx
   .endw 
 MethodEnd
@@ -1342,20 +1504,25 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     EditorLine.Undo
 ; Purpose:    Undo the last action.
-; Arguments:  None.
-; Return:     Nothing.
+; Arguments:  Arg1: -> ACTION
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method EditorLine.Undo, uses xsi
+Method EditorLine.Undo, uses xsi, pAction:POINTER
   SetObject xsi
+  mov xax, pAction
+  .if [xax].ACTION.dAction == AAT_DELETECHARS
+    OCall xsi.CharInsert, [xax].ACTION.dPosIndex, [xax].ACTION.dChrCount, [xax].ACTION.pChars, FALSE
+
+  .elseif [xax].ACTION.dAction == AAT_INSERTCHARS
+    OCall xsi.CharDelete, [xax].ACTION.dPosIndex, [xax].ACTION.dChrCount, FALSE
+
+  .elseif [xax].ACTION.dAction == AAT_DELETELINE
+    OCall xsi.LineReinsert, [xax].ACTION.dLineNumber, FALSE
+
+  .elseif [xax].ACTION.dAction == AAT_INSERTLINE
+    OCall xsi.LineDelete, [xax].ACTION.dLineNumber, FALSE
+
+  .else
+    xor eax, eax
+  .endif
 MethodEnd
-
-; --------------------------------------------------------------------------------------------------
-; Method:     EditorLine.Redo
-; Purpose:    Restore the last undo action.
-; Arguments:  None.
-; Return:     Nothing.
-
-Method EditorLine.Redo, uses xsi
-  SetObject xsi
-MethodEnd
-

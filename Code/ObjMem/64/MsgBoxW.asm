@@ -12,7 +12,7 @@ SysSetup OOP, Lib64, WIDE_STRING
 
 ProcName textequ <MsgBoxW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  MsgBoxW
 ; Purpose:    Show a customized MessageBox.
 ; Arguments:  Arg1: Parent HANDLE.

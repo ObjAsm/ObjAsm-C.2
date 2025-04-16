@@ -18,7 +18,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 ProcName textequ <uqword2baseA>
 Signed equ FALSE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  uqword2baseA
 ; Purpose:    Convert an unsigned qword to a defined base.
 ; Arguments:  Arg1: -> Buffer

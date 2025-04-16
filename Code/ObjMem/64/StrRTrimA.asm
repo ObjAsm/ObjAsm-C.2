@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <StrRTrimA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrRTrimA
 ; Purpose:    Trim blank characters from the end of an ANSI string.
 ; Arguments:  Arg1: -> Destination buffer.

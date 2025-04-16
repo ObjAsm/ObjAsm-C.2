@@ -16,7 +16,7 @@
 
 externdef IID_IConnectionPointContainer:GUID
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  ComEventsAdvice
 ; Purpose:    Notificate the Event source that pISink will recieve Events.
 ; Arguments:  Arg1: -> Any Source Object Interface.

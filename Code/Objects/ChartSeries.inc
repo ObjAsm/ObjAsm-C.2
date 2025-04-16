@@ -14,7 +14,7 @@
 ;    ChartSeries implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartSeries.Done
 ; Purpose:    Finalize the ChartSeries object.
 ; Arguments:  None.
@@ -27,7 +27,7 @@ Method ChartSeries.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartSeries.GetToolTipText
 ; Purpose:    Return a string inforation about data.
 ; Arguments:  Arg1: -> Destination buffer. Max 1024 chars.
@@ -61,7 +61,7 @@ Method ChartSeries.GetToolTipText, uses xbx xdi xsi, pBuffer:PSTRING, dDataIndex
                    addr cStrBufferX, xbx, addr cStrBufferY, xdi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartSeries.Init
 ; Purpose:    Initialize the ChartSeries object.
 ; Arguments:  Arg1: -> Owner object = ChartWnd.Data
@@ -76,7 +76,7 @@ Method ChartSeries.Init, uses xsi, pOwner:POINTER, dCapacity:DWORD
   OCall pOwner::Collection.Insert, xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartSeries.Load
 ; Purpose:    Load buffer data from a stream object.
 ; Arguments:  Arg1: -> Stream object.
@@ -93,7 +93,7 @@ Method ChartSeries.Load, uses xsi, pStream:$ObjPtr(Stream)
   mov [xsi].dDataMinXIndex, $32($OCall(pStream::Stream.BinRead32))
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    ChartSeries.Scan
 ; Purpose:   Scan the X & Y data to find the min and max values => Min & Max indices are set.
 ; Arguments: Arg1: First element index, starting from 0 to dCapacity - 1.
@@ -176,7 +176,7 @@ Method ChartSeries.Scan, uses xbx xdi xsi, dFrom:DWORD, dCount:DWORD
 
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ChartSeries.Store
 ; Purpose:    Store buffer data to a stream object.
 ; Arguments:  Arg1: -> Stream object.

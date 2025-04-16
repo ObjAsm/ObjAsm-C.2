@@ -24,7 +24,7 @@ Set2BinCharsW macro Index
   mov [ecx + 2*sizeof(CHRW)*Index], eax
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  qword2binW
 ; Purpose:    Convert a QWORD to its binary WIDE string representation.
 ; Arguments:  Arg1: -> Destination buffer.

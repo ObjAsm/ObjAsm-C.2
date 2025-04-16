@@ -9,7 +9,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     ConsoleApp
 ; Purpose:    ConsoleApp is the base object for all console descendant application objects.
 
@@ -36,7 +36,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ConsoleApp.Done
 ; Purpose:    Finalize the ConsoleApp object.
 ; Arguments:  None.
@@ -48,7 +48,7 @@ Method ConsoleApp.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ConsoleApp.GetChar
 ; Purpose:    This function returns when any console key is pressed (bKeyDown = 1).
 ;             A possible drawback is that all input event records are removed from
@@ -84,7 +84,7 @@ Method ConsoleApp.GetChar, uses xsi
   mov edx, DWORD ptr InpRec.Event_.KeyEvent.wVirtualKeyCode
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ConsoleApp.GetCharUC
 ; Purpose:    Get a character from the console input and convert it to uppercase.
 ; Arguments:  None.
@@ -98,7 +98,7 @@ Method ConsoleApp.GetCharUC, uses xbx xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ConsoleApp.Init
 ; Purpose:    Initialize the ConsoleApp object.
 ; Arguments:  Arg1: -> Owner.
@@ -116,7 +116,7 @@ Method ConsoleApp.Init, uses xsi, pOwner:POINTER
   mov [xsi].hOutput, $invoke(GetStdHandle, STD_OUTPUT_HANDLE)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ConsoleApp.Print
 ; Purpose:    Output a message on the console.
 ; Arguments:  Arg1: -> Message.
@@ -131,7 +131,7 @@ Method ConsoleApp.Print, uses xbx xsi, pMessage:PSTRING
   invoke WriteConsole, [xsi].hOutput, pMessage, eax, xbx, NULL
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ConsoleApp.PrintLn
 ; Purpose:    Output a message and a line break on the console.
 ; Arguments:  Arg1: -> Message.
@@ -147,7 +147,7 @@ Method ConsoleApp.PrintLn, uses xbx xsi, pMessage:PSTRING
   ;The console only accepts 'LF'. A 'CR' is shown as a space.
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ConsoleApp.SetCaption
 ; Purpose:    Set console caption text.
 ; Arguments:  Arg1: -> Text.
@@ -157,7 +157,7 @@ Method ConsoleApp.SetCaption,, pCaption:PSTRING
   invoke SetConsoleTitle, pCaption
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     ConsoleApp.SetColor
 ; Purpose:    Set the output foreground and background color.
 ; Arguments:  Arg1: Color setting.

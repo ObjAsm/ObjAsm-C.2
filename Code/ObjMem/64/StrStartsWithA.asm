@@ -14,7 +14,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 ProcName textequ <StrStartsWithA>
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrStartsWithA
 ; Purpose:    Compare the beginning of a string.
 ; Arguments:  Arg1: -> Analized string.

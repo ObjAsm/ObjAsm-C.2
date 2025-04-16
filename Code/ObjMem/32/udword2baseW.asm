@@ -18,7 +18,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 ProcName textequ <udword2baseW>
 Signed equ FALSE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  udword2baseW
 ; Purpose:    Convert an unsigned dword to a defined base.
 ; Arguments:  Arg1: -> Buffer

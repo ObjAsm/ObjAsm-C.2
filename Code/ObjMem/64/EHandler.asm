@@ -59,7 +59,7 @@ ExceptRecord          EXCEPTION_RECORD <>
 LSH_RetValue          QWORD ?                   ;Language Specific Handler, return value
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  EHandler
 ; Purpose:    ASM exception handler
 ; Arguments:  Arg1: -> Exception Record.

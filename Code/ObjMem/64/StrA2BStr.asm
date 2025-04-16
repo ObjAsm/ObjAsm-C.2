@@ -10,7 +10,7 @@
 % include @Environ(OBJASM_PATH)\\Code\\OA_Setup64.inc
 % include &ObjMemPath&ObjMemWin.cop
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrA2BStr
 ; Purpose:    Convert a ANSI string into a BStr.
 ; Arguments:  Arg1: -> Destination BStr buffer = Buffer address + sizeof(DWORD).

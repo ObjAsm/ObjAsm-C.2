@@ -20,7 +20,7 @@ NextCharW macro
   rcl edx, 1                                            ;Pass the carry from prev operation
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  bin2qwordW
 ; Purpose:    Compute a WIDE string binary representation of a QWORD.
 ; Arguments:  Arg1: -> WIDE binary string.

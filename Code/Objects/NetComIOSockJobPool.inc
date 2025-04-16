@@ -16,7 +16,7 @@ if IMPLEMENT
 ;    NetComIOSockJobPool implementation
 ; ==================================================================================================
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComIOSockJobPool.FreeItem
 ; Purpose:    Release memory of a specified IO_SOCKJOB.
 ; Arguments:  Arg1: -> IO_SOCKJOB.
@@ -30,7 +30,7 @@ Method NetComIOSockJobPool.FreeItem, uses xsi, pIOSockJob:PIO_SOCKJOB
   UnlockObjectAccess [xsi].$Obj(NetComIOSockJobPool)
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComIOSockJobPool.Init
 ; Purpose:    Initialize the NetComIOSockJobPool object.
 ; Arguments:  Arg1: -> Owner object.
@@ -45,7 +45,7 @@ Method NetComIOSockJobPool.Init,, pOwner:POINTER, dInitJobCount:DWORD, dBufferSi
   ACall xcx.Init, pOwner, eax, dInitJobCount, 1         ;We need an alignment of 1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComIOSockJobPool.NewItem
 ; Purpose:    Allocate a new IO_SOCKJOB from DataPool.
 ; Arguments:  Arg1: Operation type.
@@ -66,7 +66,7 @@ Method NetComIOSockJobPool.NewItem, uses xsi, wOperation:WORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     NetComIOSockJobPool.ResetIOJob
 ; Purpose:    Reset an IO_SOCKJOB.
 ; Arguments:  Arg1: -> IO_SOCKJOB.

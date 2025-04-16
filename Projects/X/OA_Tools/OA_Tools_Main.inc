@@ -107,7 +107,7 @@ OAT_SETUP struc
   Tool9             ToolData  {}
 OAT_SETUP ends
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object EditIptor, REDIT_IPTOR_ID, MsgInterceptor
   RedefineMethod    WndProc,            DWORD, WPARAM, LPARAM
@@ -116,7 +116,7 @@ Object EditIptor, REDIT_IPTOR_ID, MsgInterceptor
   VirtualEvent      OnRButtonUp,        WM_RBUTTONUP
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object OAT_Child, OAT_CHILD_ID, MdiChildWnd             ;MDI child window.
   VirtualMethod     AnalyseFile
@@ -165,7 +165,7 @@ Object OAT_Child, OAT_CHILD_ID, MdiChildWnd             ;MDI child window.
   Embed     LineLengths,      DataCollection
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object OAT_Client, OAT_CLIENT_ID, MdiClientWnd          ;MDI client window.
   RedefineMethod    Done
@@ -179,7 +179,7 @@ Object OAT_Client, OAT_CLIENT_ID, MdiClientWnd          ;MDI client window.
   DefineVariable    dChildCount,        DWORD,      0
 ObjectEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 
 Object Application, OAT_APP_ID, MdiApp                  ;MDI application.
   VirtualMethod     ChangeBtnLanguage,  DWORD           ;IDLANG_XXX
@@ -241,7 +241,7 @@ include OA_Tools_About.inc
 hCBTProc  HANDLE  ?
 
 .code
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CloseEnumProc (Callback)
 ; Purpose:    Close all open child windows.
 ; Arguments:  Arg1: Child window handle.
@@ -254,7 +254,7 @@ CloseEnumProc proc hWnd:HWND, lParam:LPARAM
   ret
 CloseEnumProc endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ChangeBtnLanguage
 ; Purpose:    Switch the toolbar button application language.
 ; Arguments:  Arg1: Language ID.
@@ -303,7 +303,7 @@ Method Application.ChangeBtnLanguage, uses xbx xdi xsi, dLanguage:DWORD
   SetButtonText IDM_ZOOM_OUT,      IDS_HINT_ZOOM_OUT
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ChangeMnuLanguage
 ; Purpose:    Set the language radiobutton on the menu.
 ; Arguments:  Arg1: Language ID.
@@ -321,7 +321,7 @@ Method Application.ChangeMnuLanguage, uses xdi xsi, dLanguage:DWORD
   invoke CheckMenuRadioItem, xax, IDM_LANG_ENGLISH, IDM_LANG_CHINESE, edi, MF_BYCOMMAND
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ChangeLanguage
 ; Purpose:    Switch the application language.
 ; Arguments:  Arg1: Language ID.
@@ -338,7 +338,7 @@ Method Application.ChangeLanguage, uses xsi, dLanguage:DWORD
   OCall [xsi].Menu::XMenu.ChangeLanguage, xax, dLanguage  ;Active menu is converted
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.CheckDroppedFiles
 ; Purpose:    Perform a check specified by the flags on the dropped files.
 ; Arguments:  Arg1: Flags: Checks to perform.
@@ -377,7 +377,7 @@ Method Application.CheckDroppedFiles, uses xbx xdi xsi, dFlags:DWORD
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.CheckSelectedFiles
 ; Purpose:    Select one or more files and perform a check specified by the flags.
 ; Arguments:  Arg1: Flags: Checks to perform.
@@ -482,7 +482,7 @@ Method Application.CheckSelectedFiles, uses xbx xdi xsi, dFlags:DWORD
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Done
 ; Purpose:    Finalize the application object. Objects associated with window controls are
 ;             destroyed by Windows automatically when WM_DESTROY is send.
@@ -506,7 +506,7 @@ Method Application.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.EnableActions
 ; Purpose:    Enable or disable MDI child actions.
 ; Arguments:  Arg1: Enable TRUE/FALSE.
@@ -551,7 +551,7 @@ Method Application.EnableActions, uses xbx xdi xsi, dAction:DWORD
   invoke EnableMenuItem, xdi, IDM_CHECK_AGAIN, ebx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Init
 ; Purpose:    Initialize the application object.
 ; Arguments:  None.
@@ -780,7 +780,7 @@ Method Application.Init, uses xbx xdi xsi
   OCall xsi.SetToolMenu
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ExecuteCommand
 ; Purpose:    Execute a Shell Command.
 ; Arguments:  Arg1: -> Command string.
@@ -841,7 +841,7 @@ Method Application.ExecuteCommand, uses xbx xsi, pCommand:PSTRING, pChild:$ObjPt
   mov eax, dExitCode
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.ExecuteChecks
 ; Purpose:    Execute the give commands.
 ; Arguments:  Arg1: -> File name.
@@ -864,7 +864,7 @@ Method Application.ExecuteChecks, uses xbx xsi, pFileName:PSTRING, dFlags:DWORD
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  CBTProc
 ; Purpose:    Customization procedure using SetWindowsHookEx.
 ; Arguments:  Arg1: Hook code.
@@ -899,7 +899,7 @@ CBTProc proc uses xbx dCode:DWORD, wParam:WPARAM, lParam:LPARAM
   ret
 CBTProc endp
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:    Application.OnClose
 ; Purpose:   Event procedure for WM_CLOSE (and WM_QUERYENDSESSION) message.
 ; Arguments: Arg1: First message parameter.
@@ -937,7 +937,7 @@ Method Application.OnClose, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefFrameProc, [xsi].hWnd, [xbx].$Obj(OAT_Client).hWnd, dMsg, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCommand
 ; Purpose:    Event procedure for WM_COMMAND message.
 ; Arguments:  Arg1: First message parameter.
@@ -1354,7 +1354,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnCreate
 ; Purpose:    Event procedure for WM_CREATE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1388,7 +1388,7 @@ Method Application.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnDestroy
 ; Purpose:    Event procedure for WM_DESTROY message.
 ; Arguments:  Arg1: First message parameter.
@@ -1498,7 +1498,7 @@ Method Application.OnDestroy, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnKeyUp
 ; Purpose:    Event procedure for WM_KEYUP message.
 ; Arguments:  Arg1: First message parameter.
@@ -1514,7 +1514,7 @@ Method Application.OnKeyUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   invoke DefFrameProc, [xsi].hWnd, [xbx].$Obj(OAT_Client).hWnd, WM_KEYUP, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnEraseBkgnd
 ; Purpose:    Event procedure for WM_ERASEBKGND message.
 ; Arguments:  Arg1: First message parameter.
@@ -1525,7 +1525,7 @@ Method Application.OnEraseBkgnd,, wParam:WPARAM, lParam:LPARAM
   mov eax, -1
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnNotify
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
@@ -1577,7 +1577,7 @@ Method Application.OnNotify, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   xor eax, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -1621,7 +1621,7 @@ Method Application.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.SetToolMenu
 ; Purpose:    Updates the Tool Menu.
 ; Arguments:  None.
@@ -1666,7 +1666,7 @@ Method Application.SetToolMenu, uses xbx xdi xsi
   OCall [xsi].Menu::XMenu.Convert, xbx, FALSE
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.Startup
 ; Purpose:    Register the object with the OS.
 ; Arguments:  None.
@@ -1691,7 +1691,7 @@ Method Application.Startup
   invoke RegisterClassEx, addr WC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Application.StatusbarHelp
 ; Purpose:    Display a help string on panel 0 of the statusbar.
 ; Arguments:  Arg1: -> Help string.

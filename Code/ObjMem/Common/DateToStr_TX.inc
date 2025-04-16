@@ -9,7 +9,7 @@
 
 % include &MacPath&ConstDiv.inc
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  DateToStrA / DateToStrW
 ; Purpose:    Convert a DTL_DATE to a formated string representation.
 ; Arguments:  Arg1: -> Destination Buffer

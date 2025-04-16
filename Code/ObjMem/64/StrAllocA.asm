@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_ANSI
 
 ProcName textequ <StrAllocA>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  StrAllocA
 ; Purpose:    Allocate space for a string with n characters.
 ; Arguments:  Arg1: Character count without the ZTC.

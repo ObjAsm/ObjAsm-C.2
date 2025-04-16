@@ -33,7 +33,7 @@ SB_GRIPWIDTH    equ    11h
 SBARS_TOOLTIPS  equ    800h
 LR_LOADREALSIZE equ    80h
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     Statusbar
 ; Purpose:    Implement a thin wrapper around the msctls_statusbar32 GDI control.
 
@@ -58,7 +58,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Statusbar.Done
 ; Purpose:    Finalize the Statusbar object, freeing allocated memory.
 ; Arguments:  None.
@@ -71,7 +71,7 @@ Method Statusbar.Done, uses xsi
   ACall xsi.Done
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Statusbar.GetPartParentRect
 ; Purpose:    Retrieve the relative bounding rectangle of a Part to the Statusbar control. It
 ;             supports a maximum of 256 parts.
@@ -97,7 +97,7 @@ Method Statusbar.GetPartParentRect, uses xsi, dID:DWORD, pRect:PRECT
   add [xcx].RECT.bottom, eax
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Statusbar.GetPartRect
 ; Purpose:    Retrieve the bounding rectangle of a Part in a Statusbar control.
 ; Arguments:  Arg1: Zero-based part index.
@@ -109,7 +109,7 @@ Method Statusbar.GetPartRect,, dID:DWORD, pRect:PRECT
   invoke SendMessage, [xcx].hWnd, SB_GETRECT, dID, pRect
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Statusbar.Init
 ; Purpose:    Initialize the Statusbar object.
 ; Arguments:  Arg1: -> Owner object.
@@ -146,7 +146,7 @@ Method Statusbar.Init, uses xbx xdi xsi, pOwner:POINTER, hParent:HWND, pDefStruc
   .endw
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Statusbar.SetPartText
 ; Purpose:    Set the text of a part of the Statusbar.
 ; Arguments:  Arg1: Zero-based part index.
@@ -173,7 +173,7 @@ Method Statusbar.SetPartText, uses xbx xsi, dID:DWORD, pText:PSTRING, dStyle:DWO
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Statusbar.SetPartIcon
 ; Purpose:    Set the icon of a part of the statusbar.
 ; Arguments:  Arg1: Zero-based part index.
@@ -185,7 +185,7 @@ Method Statusbar.SetPartIcon,, dID:DWORD, hIcon:HICON
   invoke SendMessage, [xcx].hWnd, SB_SETICON, dID, hIcon
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Statusbar.SetPartWidths
 ; Purpose:    Calculate the widths of all parts according to the definition structure and the total
 ;             statusbar width.
@@ -299,7 +299,7 @@ Method Statusbar.SetPartWidths, uses xbx xdi xsi
   .endif
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Statusbar.OnSize
 ; Purpose:    Event procedure for WM_SIZE message.
 ; Arguments:  Arg1: First message parameter.
@@ -313,7 +313,7 @@ Method Statusbar.OnSize, uses xsi, wParam:WPARAM, lParam:LPARAM
   invoke CallWindowProc, [xsi].pPrevWndProc, xdx, WM_SIZE, wParam, lParam
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     Statusbar.WndProc
 ; Purpose:    Processing of window messages. Before invoking it, the window must be subclassed.
 ; Arguments:  Arg1: Message identifier.

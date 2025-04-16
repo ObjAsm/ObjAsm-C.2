@@ -73,7 +73,7 @@ SEG_EXCEP_DATA ends
 ??ExceptCounter = 0
 ??ExceptDecl = FALSE
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .try
 ; Purpose:    Initialize a protected area.
 ; Arguments:  None.
@@ -84,7 +84,7 @@ SEG_EXCEP_DATA ends
   @CatStr(<??TryBeg_>, %??ExceptNesting) = $
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .catch
 ; Purpose:    Finalizes a protected area. The following code is executed in case of an exception.
 ; Arguments:  None.
@@ -99,7 +99,7 @@ endm
   @CatStr(<??TryEnd_>, %??ExceptNesting) = $
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .endcatch
 ; Purpose:    32 bit compatibility macro.
 ; Arguments:  None.
@@ -109,7 +109,7 @@ endm
 .endcatch macro HandlerName
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .finally
 ; Purpose:    The following code is always executed.
 ; Arguments:  None.
@@ -134,7 +134,7 @@ endm
   SEG_EXCEP_DATA ends
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      .endfinally
 ; Purpose:    32 bit compatibility macro.
 ; Arguments:  None.
@@ -144,7 +144,7 @@ endm
 .endfinally macro HandlerName
 endm
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Macro:      CreateExceptionHandler
 ; Purpose:    Dummy for compatibility with 64 bit.
 ; Arguments:  Arg1: Name of the handler to be created.

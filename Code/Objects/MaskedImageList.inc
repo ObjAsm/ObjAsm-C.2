@@ -8,7 +8,7 @@
 ; ==================================================================================================
 
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Object:     MaskedImageList
 ; Purpose:    Implement a thin wrapper around the ImageList GDI object with monochrome bitmap masks
 ;             used to draw images with transparency (icon style).
@@ -32,7 +32,7 @@ ObjectEnd
 
 if IMPLEMENT
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MaskedImageList.Append
 ; Purpose:    Append a new image to the ImageList. After calling this method, hBmp & hMask may
 ;             be deleted using the DeleteObject API.
@@ -45,7 +45,7 @@ Method MaskedImageList.Append,, hBmp:HBITMAP, hMask:HBITMAP
   invoke ImageList_Add, [xcx].hImageList, hBmp, hMask
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MaskedImageList.DrawEmbossed
 ; Purpose:    Draw an embossed image on a DC at the specified coordiantes.
 ; Arguments:  Arg1: Index of the image to draw.
@@ -91,7 +91,7 @@ Method MaskedImageList.DrawEmbossed, uses xsi, dIndex:DWORD, hDC:HDC, dPx:DWORD,
   invoke DeleteDC, hMemDC
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MaskedImageList.IconAppend
 ; Purpose:    Append a new icon to the ImageList. hIcon must not be deleted if loaded
 ;             with LoadIcon.
@@ -103,7 +103,7 @@ Method MaskedImageList.IconAppend,, hIcon:HICON
   invoke ImageList_ReplaceIcon, [xcx].hImageList, -1, hIcon
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MaskedImageList.IconCreate
 ; Purpose:    Create a new icon from the ImageList. The created icon must be deleted if no
 ;             longer needed.
@@ -116,7 +116,7 @@ Method MaskedImageList.IconCreate,, dIndex:DWORD, dFlags:DWORD
   invoke ImageList_GetIcon, [xcx].hImageList, dIndex, dFlags
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:     MaskedImageList.IconLoadResource
 ; Purpose:    Load a new icon from a resource.
 ; Arguments:  Arg1: -> Resource name.
@@ -132,7 +132,7 @@ Method MaskedImageList.IconLoadResource, uses xbx xsi, pResName:POINTER
   mov xax, xsi
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:   	MaskedImageList.Init
 ; Purpose:  	Initialize the ImageList control.
 ; Arguments:	Arg1: -> Owner object.
@@ -148,7 +148,7 @@ Method MaskedImageList.Init, uses xsi, pOwner:POINTER, dSX:DWORD, dSY:DWORD, dIn
   m2m [xsi].pOwner, pOwner, xcx
 MethodEnd
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Method:   	MaskedImageList.Replace
 ; Purpose:  	Replace an image in the control. hBmp & hMask must be deleted (DeleteObject)
 ;           	after MaskedImageList.Replace.

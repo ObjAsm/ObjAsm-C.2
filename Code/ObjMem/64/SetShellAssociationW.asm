@@ -13,7 +13,7 @@ TARGET_STR_TYPE = STR_TYPE_WIDE
 
 ProcName textequ <SetShellAssociationW>
 
-; ——————————————————————————————————————————————————————————————————————————————————————————————————
+; --------------------------------------------------------------------------------------------------
 ; Procedure:  SetShellAssociationW
 ; Purpose:    Set association for a file extension.
 ; Arguments:  Arg1: TRUE = system wide association, FALSE = user account only.
