@@ -360,14 +360,16 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method EditorView.ClpBrdDelete, uses xsi
+Method EditorView.ClpBrdDelete, uses xbx xsi
   local RefLoc:LOCATION
 
 ;  DbgText "EditorView.ClpBrdDelete"
   SetObject xsi
   OCall xsi.CaretRefLocSave, addr RefLoc                ;Calculate a caret reference position before deletion
   mov xcx, [xsi].pOwner
-  OCall [xcx].$Obj(EditorDisplay).pOwner::Editor.SelectionDelete
+  mov xbx, [xcx].$Obj(EditorDisplay).pOwner             ;xbx -> Editor
+  OCall [xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup
+  OCall xbx::Editor.SelectionDelete, eax
   OCall xsi.CaretRefLocLoad, addr RefLoc                ;Restore caret info
   mov eax, TRUE
 MethodEnd
@@ -456,7 +458,7 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method EditorView.ClpBrdCut, uses xsi
+Method EditorView.ClpBrdCut, uses xbx xsi
   local RefLoc:LOCATION
 
 ;  DbgText "EditorView.ClpBrdCut"
@@ -465,7 +467,9 @@ Method EditorView.ClpBrdCut, uses xsi
   .if eax != FALSE
     OCall xsi.CaretRefLocSave, addr RefLoc              ;Calculate a caret reference position before deletion
     mov xcx, [xsi].pOwner
-    OCall [xcx].$Obj(EditorDisplay).pOwner::Editor.SelectionDelete
+    mov xbx, [xcx].$Obj(EditorDisplay).pOwner             ;xbx -> Editor
+    OCall [xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup
+    OCall xbx::Editor.SelectionDelete, eax
     OCall xsi.CaretRefLocLoad, addr RefLoc              ;Restore caret info
     mov eax, TRUE
   .endif
@@ -484,15 +488,18 @@ MethodEnd
 
 Method EditorView.ClpBrdPaste, uses xbx xdi xsi
   local pEditorLine:$ObjPtr(EditorLine), dResult:DWORD, RefLoc:LOCATION, dInsLineCount:DWORD
-  local pGlobalMem:POINTER, dCharIndex:DWORD, dLineNumber:DWORD, dBreakChar:DWORD, pLink:POINTER
+  local pGlobalMem:POINTER, dCharIndex:DWORD, dLineNumber:DWORD, dBreakChar:DWORD, pLink:POINTER, dActionGroup:DWORD
 
 ;  DbgText "EditorView.ClpBrdPaste"
   SetObject xsi
   mov xcx, [xsi].pOwner
   mov xbx, [xcx].$Obj(EditorDisplay).pOwner             ;xbx -> Editor
   mov dResult, FALSE
+  OCall [xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup
+  mov dActionGroup, eax
+  
   OCall xsi.CaretRefLocSave, addr RefLoc                ;Calculate a caret reference position before deletion
-  OCall xbx::Editor.SelectionDelete
+  OCall xbx::Editor.SelectionDelete, dActionGroup
   OCall xsi.CaretRefLocLoad, addr RefLoc                ;Restore caret info
   invoke IsClipboardFormatAvailable, CF_TEXT + (CF_UNICODETEXT - CF_TEXT)*(sizeof(CHR) - sizeof(CHRA))
   .if eax != FALSE
@@ -518,10 +525,10 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
                 inc ebx                                 ;No
               .else
                 mov dBreakChar, edx
-                OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, TRUE
+                OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, dActionGroup
                 mov edx, dCharIndex
                 add edx, ebx
-                OCall pEditorLine::EditorLine.LineBreak, edx, dLineNumber, TRUE
+                OCall pEditorLine::EditorLine.LineBreak, edx, dLineNumber, dActionGroup
                 mov pEditorLine, xax                      ;xax -> new splitted off line
 
                 ;Move to next line in the clipboard buffer
@@ -540,7 +547,7 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
 
             ;Paste the rest
             .if ebx != 0
-              OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, TRUE
+              OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, dActionGroup
               add dCharIndex, ebx
             .endif
 
@@ -572,18 +579,18 @@ Method EditorView.ClpBrdPaste, uses xbx xdi xsi
                   mov edx, dCharIndex
                   add edx, ebx
                   mov xax, [xsi].pOwner
-                  OCall [xax].$Obj(EditorDisplay).pOwner::Editor.LineNew, edx, TRUE
+                  OCall [xax].$Obj(EditorDisplay).pOwner::Editor.LineNew, edx, dActionGroup
                   .if xax == NULL
                     ret
                   .endif
                   mov pEditorLine, xax
-                  OCall pEditorLine::EditorLine.SpaceFill, dCharIndex
+                  OCall pEditorLine::EditorLine.SpaceFill, dCharIndex, dActionGroup
                 .else
                   mov xax, pLink
                   sub xax, offset $Obj(EditorLine).LineLink
                   mov pEditorLine, xax
                 .endif
-                OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, TRUE
+                OCall pEditorLine::EditorLine.CharInsert, dCharIndex, ebx, xdi, dActionGroup
 
                 ;Move to next line link
                 mov xax, pEditorLine
@@ -1344,7 +1351,7 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     Nothing.
 
-Method EditorView.OnLButtonUp, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method EditorView.OnLButtonUp, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
 ;  local CursorPos:POINT, CaretLocation:LOCATION
   local Point:POINT, Index:POINT
 

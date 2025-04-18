@@ -313,7 +313,7 @@ Object EditorLine, ADE_EditorLineID, Primer
   StaticMethod      Redo,                 POINTER               ;PACTION
   StaticMethod      SelectionReset
   StaticMethod      SetDirty
-  StaticMethod      SpaceFill,            DWORD
+  StaticMethod      SpaceFill,            DWORD, DWORD
   StaticMethod      Undo,                 POINTER               ;PACTION
 
   DefineVariable    LineLink,             LDLL_MEMBER,{NULL, NULL}
@@ -556,14 +556,16 @@ AAT_INSERTLINE      equ   3
 
 ACTION struct
   dAction     DWORD               ?
+  dGroup      DWORD               ?
   pEditorLine $ObjPtr(EditorLine) ?
   union
-    struct                                ;Char delete of insert
+    struct                                ;Char delete or char insert
       dPosIndex   DWORD           ?
       dChrCount   DWORD           ?
       pChars      PSTRING         ?
+;      Selection   RANGE           {}
     ends
-    struct                                ;Line delete of insert
+    struct                                ;Line delete or line insert
       dLineNumber DWORD           ?
     ends
   ends
@@ -578,10 +580,13 @@ Object ActionCollection, ADE_ActionCollectionID, DataCollection
   RedefineMethod    DestroyItem,        PACTION
   RedefineMethod    Insert,             PACTION
 
-  StaticMethod      GetRedoAction
-  StaticMethod      GetUndoAction
+  StaticMethod      GetRedoAction,      DWORD
+  StaticMethod      GetUndoAction,      DWORD
+  StaticMethod      GetNewActionGroup
+  StaticMethod      ShowActions
 
-  DefineVariable    dActionIndex,       DWORD,    0
+  DefineVariable    dActionIndex,       DWORD,    0       ;Sort of stack pointer
+  DefineVariable    dActionGroup,       DWORD,    0       ;Grouping ID 
 ObjectEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -636,11 +641,15 @@ Object Editor, ADE_EditorID, ChildWnd
   VirtualMethod     SaveAs
   VirtualMethod     SaveTo,               PSTRING
   VirtualMethod     SelectAll
-  VirtualMethod     SelectionDelete
-  VirtualMethod     SelectionReplace,     PSTRING
+  VirtualMethod     SelectionComment
+  VirtualMethod     SelectionDelete,      DWORD
+  VirtualMethod     SelectionIndent
+  VirtualMethod     SelectionOutdent
+  VirtualMethod     SelectionReplace,     PSTRING, DWORD
   VirtualMethod     SelectionResetAll
   VirtualMethod     SelectionResetLines                             ;Reset selection on lines only
   VirtualMethod     SelectionSet
+  VirtualMethod     SelectionUncomment
   VirtualMethod     SetDirty,             DWORD
   StaticMethod      Startup
   RedefineMethod    Store,                $ObjPtr(Stream)

@@ -41,8 +41,8 @@ ProjToolbar DEF_TOOLBAR {101, PROJTBSTYLE, 0, NULL, {<0,0,0,0>}, 3}
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method ProjectWnd.ConfigLoad, uses xbx xdi xsi, pIniFileName:PSTRING
-  local pDescription:PSTRING, dIconIndex:DWORD, dIniFilePresent:DWORD, hProjNode:HANDLE
-  local cFileName[1024]:CHR, cSectionName[50]:CHR, cItemName[20]:CHR, cDefaultName[20]:CHR, cItemBuffer[4096]:CHR
+  local dIconIndex:DWORD, dIniFilePresent:DWORD, hProjNode:HANDLE
+  local cFileName[1024]:CHR, cItemName[20]:CHR, cDefaultName[20]:CHR, cItemBuffer[4096]:CHR
 
   SetObject xsi
   invoke GetFullPathName, pIniFileName, lengthof cFileName - 1, addr cFileName, NULL
@@ -122,6 +122,7 @@ MethodEnd
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method ProjectWnd.ConfigSave, uses xsi
+  SetObject xsi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -180,8 +181,6 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method ProjectWnd.OnCreate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local hRoot:HANDLE, hFolder1:HANDLE
-
   SetObject xsi
   lea xbx, [xsi].IconImageList
   OCall xbx::MaskedImageList.Init, xsi, 16, 16, 8

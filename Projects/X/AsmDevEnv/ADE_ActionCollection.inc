@@ -16,11 +16,17 @@
 ; Arguments:  -> Item (ACTION).
 ; Return:     Nothing.
 
-Method ActionCollection.DestroyItem, uses xdi, pItem:PACTION
+Method ActionCollection.DestroyItem, uses xdi xsi, pItem:PACTION
+  SetObject xsi
   mov xdi, pItem
   .if xdi != NULL
     .if [xdi].ACTION.dAction == AAT_DELETELINE
-      Destroy [xdi].ACTION.pEditorLine::EditorLine.Done
+      ;Check first if the ACTION was undone. That means the the EditorLine was in control
+      ;of the editor and has not to be disposed here.
+      OCall xsi.IndexOf, pItem
+      .if eax < [xsi].dActionIndex
+        Destroy [xdi].ACTION.pEditorLine::EditorLine.Done
+      .endif
     .endif
     .if [xdi].ACTION.dAction == AAT_DELETECHARS || [xdi].ACTION.dAction == AAT_INSERTCHARS 
       invoke StrDispose, [xdi].ACTION.pChars
@@ -32,34 +38,65 @@ MethodEnd
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ActionCollection.GetUndoAction
 ; Purpose:    Get the last undo ACTION.
-; Arguments:  None.
+; Arguments:  Arg1: ActionGroup.
 ; Return:     xax -> ACTION or NULL if failed.
 
-Method ActionCollection.GetUndoAction, uses xsi
+Method ActionCollection.GetUndoAction, uses xsi, dActionGroup:DWORD
   SetObject xsi
   mov eax, [xsi].dActionIndex
   .if eax != 0
     dec eax
     OCall xsi.ItemAt, eax
-    dec [xsi].dActionIndex
+    mov ecx, dActionGroup 
+    .if ecx == 0
+      dec [xsi].dActionIndex
+    .else
+      .if [xax].ACTION.dGroup == ecx
+        dec [xsi].dActionIndex
+      .else
+        xor eax, eax
+      .endif
+    .endif
   .endif
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
 ; Method:     ActionCollection.GetRedoAction
 ; Purpose:    Get the last redo ACTION.
-; Arguments:  None.
+; Arguments:  Arg1: ActionGroup.
 ; Return:     xax -> ACTION or NULL if failed.
 
-Method ActionCollection.GetRedoAction, uses xsi
+Method ActionCollection.GetRedoAction, uses xsi, dActionGroup:DWORD
   SetObject xsi
   mov eax, [xsi].dActionIndex
   .if eax != [xsi].dCount
     OCall xsi.ItemAt, eax
-    inc [xsi].dActionIndex
+    mov ecx, dActionGroup 
+    .if ecx == 0
+      inc [xsi].dActionIndex
+    .else
+      .if [xax].ACTION.dGroup == ecx
+        inc [xsi].dActionIndex
+      .else
+        xor eax, eax
+      .endif
+    .endif
   .else
     xor eax, eax
   .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     ActionCollection.GetNewActionGroup
+; Purpose:    Get a new ActionGroup ID.
+; Arguments:  None.
+; Return:     eax = ActionGroup ID.
+
+Method ActionCollection.GetNewActionGroup
+  SetObject xcx
+  mov eax, [xcx].dActionGroup
+  inc eax
+  mov [xcx].dActionGroup, eax
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
@@ -69,10 +106,14 @@ MethodEnd
 ; Return:     xax -> Inserted item or NULL if failed.
 
 Method ActionCollection.Insert, uses xbx xdi xsi, pItem:PACTION
+
+  mov xax, pItem
+  DbgDec [xax].ACTION.dGroup
+
   SetObject xsi
   mov ebx, [xsi].dCount
   .if ebx > [xsi].dActionIndex
-    ;Dispose all non necessary actions 
+    ;Dispose all now invalid redo actions 
     .while TRUE
       dec ebx
       OCall xsi.DisposeAt, ebx

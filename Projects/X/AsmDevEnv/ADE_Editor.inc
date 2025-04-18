@@ -126,7 +126,7 @@ MethodEnd
 Method Editor.Done, uses xbx xdi xsi
   SetObject xsi
 
-  DbgText "Editor.Done"
+;  DbgText "Editor.Done"
   ;Destroy all lines
   mov xcx, [xsi].LinesHead.pFirstMember
   .while xcx != NULL
@@ -445,7 +445,8 @@ Method Editor.Init, uses xbx xdi xsi, pOwner:POINTER, pResources:$ObjPtr(EditorR
     .endif
 
     invoke ShowWindow, [xsi].hWnd, SW_SHOWNORMAL
-    invoke SetFocus, [xbx].$Obj(EditorDisplay).View.hWnd
+    OCall [xsi].EditorDisplays::Collection.ItemAt, 0
+    invoke SetFocus, [xax].$Obj(EditorDisplay).View.hWnd
     mov eax, TRUE
   .else
     DbgApiError
@@ -459,10 +460,10 @@ MethodEnd
 ; Method:     Editor.LineNew
 ; Purpose:    Create a new EditorLine and adds it to the end.
 ; Arguments:  Arg1: Character buffer size not including the ZTC.
-;             Arg2: Log ACTION flag.
+;             Arg2: ActionGroup. If 0, no ACTION will be logged.
 ; Return:     xax -> EditorLine or NULL if failed.
 
-Method Editor.LineNew, uses xbx xdi xsi, dCharCapacity:DWORD, dLogAction:DWORD
+Method Editor.LineNew, uses xbx xdi xsi, dCharCapacity:DWORD, dActionGroup:DWORD
   SetObject xsi
   New EditorLine
   .if xax != NULL
@@ -477,11 +478,12 @@ Method Editor.LineNew, uses xbx xdi xsi, dCharCapacity:DWORD, dLogAction:DWORD
       xor eax, eax
     .else
       ;Keep track of the change
-      .if dLogAction != FALSE
+      .if dActionGroup != 0
         MemAlloc sizeof(ACTION)
         .if xax != NULL
           mov xbx, xax
           mov [xbx].ACTION.pEditorLine, xdi
+          m2m [xbx].ACTION.dGroup, dActionGroup, ecx
           mov [xbx].ACTION.dAction, AAT_INSERTLINE
           mov [xbx].ACTION.dLineNumber, 0
         .endif
@@ -634,7 +636,7 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method Editor.OnCreate, uses xsi, wParam:WPARAM, lParam:LPARAM
+Method Editor.OnCreate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local ClientRect:RECT
 
   ANNOTATION use:wParam lParam
@@ -1145,11 +1147,16 @@ CBTProc endp
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method Editor.Redo, uses xsi
+Method Editor.Redo, uses xbx xsi
   SetObject xsi
-  OCall [xsi].Actions::ActionCollection.GetRedoAction
+  OCall [xsi].Actions::ActionCollection.GetRedoAction, 0
   .if xax != NULL
-    OCall [xax].ACTION.pEditorLine::EditorLine.Redo, xax
+    mov ebx, [xax].ACTION.dGroup
+    .while TRUE
+      OCall [xax].ACTION.pEditorLine::EditorLine.Redo, xax
+      OCall [xsi].Actions::ActionCollection.GetRedoAction, ebx
+      .break .if xax == NULL
+    .endw
     OCall xsi.ManageEditCmds
     invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
   .endif
@@ -1162,7 +1169,7 @@ MethodEnd
 ; Return:     eax = IDYES, IDNO, IDCANCEL.
 
 Method Editor.Save, uses xdi xsi
-  local cText[1024]:CHR, cEditorCaption[1024]:CHR
+  local cText[1024]:CHR
 
   SetObject xsi
   .ifBitSet [xsi].dFlags, EIF_DIRTY
@@ -1426,12 +1433,44 @@ Method Editor.SelectAll, uses xsi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
+; Method:     Editor.SelectionComment
+; Purpose:    Comment the selected Lines.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method Editor.SelectionComment, uses xbx xdi xsi
+  local dActionGroup:DWORD
+
+;  DbgText "Editor.SelectionComment"
+  SetObject xsi
+  mov xax, [xsi].SelectionRange.pBegSelInfo
+  mov xcx, [xsi].SelectionRange.pEndSelInfo
+  .if xax != NULL && xcx != NULL
+    mov xbx, [xax].LOCATION.pEditorLine
+    mov xdi, [xcx].LOCATION.pEditorLine
+
+    ;Do the job
+    mov dActionGroup, $32($OCall([xsi].Actions::ActionCollection.GetNewActionGroup))
+    .while TRUE
+      OCall xbx::EditorLine.CharInsert, 0, 1, $OfsCStr(";"), dActionGroup
+      .break .if xbx == xdi
+      mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd  ;Goto next member
+      sub xbx, offset $Obj(EditorLine).LineLink
+    .endw
+    invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE
+    mov eax, TRUE
+  .else
+    xor eax, eax
+  .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.SelectionDelete
 ; Purpose:    Delete selection from all lines.
-; Arguments:  None.
+; Arguments:  Arg1: ActionGroup. If 0, no ACTION will be logged.
 ; Return:     Nothing.
 
-Method Editor.SelectionDelete, uses xbx xdi xsi
+Method Editor.SelectionDelete, uses xbx xdi xsi, dActionGroup:DWORD
   local dDoMerge:DWORD, pNextMember:POINTER, dLineNumber:DWORD
 
   SetObject xsi
@@ -1465,12 +1504,12 @@ Method Editor.SelectionDelete, uses xbx xdi xsi
           .if eax == [xbx].$Obj(EditorLine).dLength
             ;Delete the line completely
             m2m pNextMember, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd, xax  ;Goto next member
-            OCall xbx::EditorLine.LineDelete, dLineNumber, TRUE
+            OCall xbx::EditorLine.LineDelete, dLineNumber, dActionGroup
             jmp @F                                      ;Don't inc LineNumber
           .endif
         .endif
       .endif
-      OCall xbx::EditorLine.CharDelete, edx, eax, TRUE
+      OCall xbx::EditorLine.CharDelete, edx, eax, dActionGroup
       OCall xbx::EditorLine.SelectionReset
       m2m pNextMember, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd, xax  ;Goto next member
       inc dLineNumber
@@ -1483,7 +1522,7 @@ Method Editor.SelectionDelete, uses xbx xdi xsi
     ;Merge first and last lines if necessary
     .if dDoMerge != FALSE
       mov xbx, [xsi].SelectionRange.pBegSelInfo
-      OCall [xbx].LOCATION.pEditorLine::EditorLine.LineJoinNext, [xbx].LOCATION.dLineNumber, TRUE
+      OCall [xbx].LOCATION.pEditorLine::EditorLine.LineJoinNext, [xbx].LOCATION.dLineNumber, dActionGroup
     .endif
 
     ;Cleanup
@@ -1495,12 +1534,94 @@ Method Editor.SelectionDelete, uses xbx xdi xsi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
+; Method:     Editor.SelectionIndent
+; Purpose:    Indent the selected Lines.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method Editor.SelectionIndent, uses xbx xdi xsi
+  local dActionGroup:DWORD, pTabBuffer:POINTER, dTabWidth:DWORD
+
+;  DbgText "Editor.SelectionIndent"
+  SetObject xsi
+  mov xax, [xsi].SelectionRange.pBegSelInfo
+  mov xcx, [xsi].SelectionRange.pEndSelInfo
+  .if xax != NULL && xcx != NULL
+    mov xbx, [xax].LOCATION.pEditorLine
+    mov xdi, [xcx].LOCATION.pEditorLine
+
+    ;Do the job
+    mov dActionGroup, $32($OCall([xsi].Actions::ActionCollection.GetNewActionGroup))
+    mov xax, [xsi].pResources
+    m2m dTabWidth, [xax].$Obj(EditorResources).dTabWidth, ecx
+    invoke StrRepChr, ' ', dTabWidth
+    .if xax != NULL
+      mov pTabBuffer, xax
+      .while TRUE
+        OCall xbx::EditorLine.CharInsert, 0, dTabWidth, pTabBuffer, dActionGroup
+        .break .if xbx == xdi
+        mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd  ;Goto next member
+        sub xbx, offset $Obj(EditorLine).LineLink
+      .endw
+      invoke StrDispose, pTabBuffer
+      invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE
+      mov eax, TRUE
+    .endif
+  .else
+    xor eax, eax
+  .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
+; Method:     Editor.SelectionOutdent
+; Purpose:    OutIndent the selected Lines.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method Editor.SelectionOutdent, uses xbx xdi xsi
+  local dActionGroup:DWORD, pTabBuffer:POINTER, dTabWidth:DWORD
+
+;  DbgText "Editor.SelectionOutdent"
+  SetObject xsi
+  mov xax, [xsi].SelectionRange.pBegSelInfo
+  mov xcx, [xsi].SelectionRange.pEndSelInfo
+  .if xax != NULL && xcx != NULL
+    mov xbx, [xax].LOCATION.pEditorLine
+    mov xdi, [xcx].LOCATION.pEditorLine
+
+    ;Do the job
+    mov dActionGroup, $32($OCall([xsi].Actions::ActionCollection.GetNewActionGroup))
+    mov xax, [xsi].pResources
+    m2m dTabWidth, [xax].$Obj(EditorResources).dTabWidth, ecx
+    invoke StrRepChr, ' ', dTabWidth
+    .if xax != NULL
+      mov pTabBuffer, xax
+      .while TRUE
+        invoke StrCComp, [xbx].$Obj(EditorLine).pBuffer, pTabBuffer, dTabWidth
+        .if eax == 0 
+          OCall xbx::EditorLine.CharDelete, 0, dTabWidth, dActionGroup
+        .endif
+        .break .if xbx == xdi
+        mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd  ;Goto next member
+        sub xbx, offset $Obj(EditorLine).LineLink
+      .endw
+      invoke StrDispose, pTabBuffer
+      invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE
+      mov eax, TRUE
+    .endif
+  .else
+    xor eax, eax
+  .endif
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     Editor.SelectionReplace
 ; Purpose:    Replace the selection with a new text.
 ; Arguments:  Arg1: -> New text.
+;             Arg2: ActionGroup. If 0, no ACTION will be logged.
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
-Method Editor.SelectionReplace, uses xbx xdi xsi, pReplString:PSTRING
+Method Editor.SelectionReplace, uses xbx xdi xsi, pReplString:PSTRING, dActionGroup:DWORD
 ;  DbgText "Editor.SelectionReplace"
   SetObject xsi
 
@@ -1508,11 +1629,11 @@ Method Editor.SelectionReplace, uses xbx xdi xsi, pReplString:PSTRING
   .if xax != NULL
     mov edi, [xax].LOCATION.dCharIndex
     mov xbx, [xax].LOCATION.pEditorLine
-
-    OCall xsi.SelectionDelete
+    
+    OCall xsi.SelectionDelete, dActionGroup
 
     invoke StrLength, pReplString
-    OCall xbx::EditorLine.CharInsert, edi, eax, pReplString, TRUE
+    OCall xbx::EditorLine.CharInsert, edi, eax, pReplString, dActionGroup
 
     mov [xsi].pHilitedWord, NULL
     mov [xsi].dHilitedLen, 0
@@ -1751,6 +1872,42 @@ Method Editor.SelectionSet, uses xdi xbx xsi
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
+; Method:     Editor.SelectionUncomment
+; Purpose:    Uncomment the selected Lines.
+; Arguments:  None.
+; Return:     eax = TRUE if succeeded, otherwise FALSE.
+
+Method Editor.SelectionUncomment, uses xbx xdi xsi
+  local dActionGroup:DWORD
+
+;  DbgText "Editor.SelectionUncomment"
+  SetObject xsi
+  mov xax, [xsi].SelectionRange.pBegSelInfo
+  mov xcx, [xsi].SelectionRange.pEndSelInfo
+  .if xax != NULL && xcx != NULL
+    mov xbx, [xax].LOCATION.pEditorLine
+    mov xdi, [xcx].LOCATION.pEditorLine
+
+    ;Do the job
+    mov dActionGroup, $32($OCall([xsi].Actions::ActionCollection.GetNewActionGroup))
+    .while TRUE
+      mov xax, [xbx].$Obj(EditorLine).pBuffer
+      .if [xbx].$Obj(EditorLine).dLength != 0 && CHR ptr [xax] == ";"  
+        OCall xbx::EditorLine.CharDelete, 0, 1, dActionGroup
+      .endif
+      .break .if xbx == xdi
+      mov xbx, [xbx].$Obj(EditorLine).LineLink.pLinkFwrd  ;Goto next member
+      sub xbx, offset $Obj(EditorLine).LineLink
+    .endw
+    invoke RedrawWindow, [xsi].hWnd, NULL, NULL, RDW_UPDATENOW or RDW_INVALIDATE
+    mov eax, TRUE
+  .else
+    xor eax, eax
+  .endif
+
+MethodEnd
+
+; --------------------------------------------------------------------------------------------------
 ; Method:     EditorLine.SetDirty
 ; Purpose:    Set the dirty flag.
 ; Arguments:  Arg1: TRUE to set the flag, otherwise FALSE.
@@ -1817,11 +1974,16 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method Editor.Undo, uses xsi
+Method Editor.Undo, uses xbx xsi
   SetObject xsi
-  OCall [xsi].Actions::ActionCollection.GetUndoAction
+  OCall [xsi].Actions::ActionCollection.GetUndoAction, 0
   .if xax != NULL
-    OCall [xax].ACTION.pEditorLine::EditorLine.Undo, xax
+    mov ebx, [xax].ACTION.dGroup
+    .while TRUE
+      OCall [xax].ACTION.pEditorLine::EditorLine.Undo, xax
+      OCall [xsi].Actions::ActionCollection.GetUndoAction, ebx
+      .break .if xax == NULL
+    .endw
     OCall xsi.ManageEditCmds
     invoke RedrawWindow, [xsi].hWnd, NULL, 0, RDW_ALLCHILDREN or RDW_INVALIDATE
   .endif

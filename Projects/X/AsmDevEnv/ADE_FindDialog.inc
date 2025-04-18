@@ -144,7 +144,7 @@ MethodEnd
 ;                   the control specified by hwndFocus. Otherwise, it should return FALSE to prevent
 ;                   Windows from setting the default keyboard focus.
 
-Method FindDialog.CtlsSet, uses xbx xdi xsi
+Method FindDialog.CtlsSet, uses xbx xsi
   local hComboBox:HWND
 
 ;  DbgText "FindDialog.CtlsSet"
@@ -329,7 +329,7 @@ MethodEnd
 ; Arguments:  None.
 ; Return:     Nothing.
 
-Method FindDialog.Help, uses xbx xsi
+Method FindDialog.Help, uses xsi
   SetObject xsi
   invoke MessageBox, [xsi].hWnd, $OfsCStr("Help me please..."), $OfsCStr("Help"), MB_OK or MB_ICONINFORMATION
 MethodEnd
@@ -368,7 +368,7 @@ DL_CHILD_INFO {{100, 100, 000, 000}}      ;Help button
 DL_CHILD_INFO {{100, 100, 000, 000}}      ;Cancel button
 
 .code
-Method FindDialog.Init, uses xbx xsi, pOwner:POINTER
+Method FindDialog.Init, uses xsi, pOwner:POINTER
   SetObject xsi
   mov xax, pOwner
   ACall xsi.Init, pOwner, [xax].$Obj(MdiApp).hWnd, 2000, addr [xax].$Obj(MdiApp).hActiveMlsDlg
@@ -386,7 +386,7 @@ MethodEnd
 ;             Arg2: Second message parameter.
 ; Return:     eax = Zero if handled.
 
-Method FindDialog.OnActivate, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
+Method FindDialog.OnActivate, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local cBuffer[2024]:CHR, hComboBox:HWND
 
   ANNOTATION use:wParam lParam
@@ -534,7 +534,9 @@ Method FindDialog.Replace, uses xbx xsi, pChildWndObject:POINTER
   .if [xsi].Choices.dScope == FDS_CURRENT_FILE
     invoke GetObjectID, pChildWndObject
     .if eax == ADE_EditorID
-      OCall pChildWndObject::Editor.SelectionReplace, addr cReplStr
+      mov xcx, pChildWndObject
+      OCall [xcx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup
+      OCall pChildWndObject::Editor.SelectionReplace, addr cReplStr, eax
       .if eax == FALSE
         invoke MessageBox, [xsi].hWnd, $OfsCStr("Nothing selected."), $OfsCStr("Replace"), MB_OK or MB_ICONINFORMATION
       .else
@@ -543,7 +545,8 @@ Method FindDialog.Replace, uses xbx xsi, pChildWndObject:POINTER
       OCall xsi.Find, pChildWndObject
       mov dRet, eax
       .if eax == FALSE && dNeedUpdate != FALSE
-        invoke RedrawWindow, [xdi].$Obj(Editor).hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW or RDW_ALLCHILDREN
+        mov xcx, pChildWndObject
+        invoke RedrawWindow, [xcx].$Obj(Editor).hWnd, NULL, 0, RDW_INVALIDATE or RDW_UPDATENOW or RDW_ALLCHILDREN
       .endif
     .endif
 
@@ -564,7 +567,9 @@ MethodEnd
 ; Return:     eax = TRUE if succeeded, otherwise FALSE.
 
 Method FindDialog.ReplaceAll, uses xbx xdi xsi, pChildWndObject:POINTER
-  local cFindStr[2024]:CHR, cReplStr[2024]:CHR, hComboBox:HWND, hChildWnd:HWND, dReplCounter:DWORD
+  local cFindStr[2024]:CHR, cReplStr[2024]:CHR, hComboBox:HWND, dReplCounter:DWORD, dActionGroup:DWORD
+
+  ANNOTATION use:pChildWndObject
 
   SetObject xsi
   mov dReplCounter, FALSE
@@ -592,13 +597,18 @@ Method FindDialog.ReplaceAll, uses xbx xdi xsi, pChildWndObject:POINTER
   .if [xsi].Choices.dScope == FDS_CURRENT_FILE
     invoke GetObjectID, pChildWndObject
     .if eax == ADE_EditorID
+
+      mov xcx, pChildWndObject 
+      OCall [xcx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup
+      mov dActionGroup, eax
+
       mov eax, TRUE
       .if [xsi].dContinue == FALSE
         OCall xsi.Find, pChildWndObject
       .endif
 
       .While eax == TRUE
-        OCall pChildWndObject::Editor.SelectionReplace, addr cReplStr
+        OCall pChildWndObject::Editor.SelectionReplace, addr cReplStr, dActionGroup
         .if eax == FALSE
           invoke MessageBox, [xsi].hWnd, $OfsCStr("Replacement failed."), $OfsCStr("Replace all"), MB_OK or MB_ICONERROR
           .break

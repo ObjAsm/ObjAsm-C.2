@@ -44,8 +44,8 @@ ELT_NULL                      equ   3         ;
 ;             Arg3: hDC used to create resources.
 ; Return:     Nothing.
 
-Method EditorResources.ConfigLoad, uses xsi, pIniFullFileName:PSTRING, pSectionPrefix:PSTRING, hDC:HDC
-  local DrawAttr:DRAW_ATTR, FontDef:FONT_DEF, dIniFilePresent:DWORD
+Method EditorResources.ConfigLoad, uses xdi xsi, pIniFullFileName:PSTRING, pSectionPrefix:PSTRING, hDC:HDC
+  local DrawAttr:DRAW_ATTR, FontDef:FONT_DEF
   local pDescription:PSTRING, dIndex:DWORD, pGroup:PKEYWORDGROUP
   local pLastChar:PCHR, dLength:DWORD, dFlags:DWORD
   local cSectionName[50]:CHR, cItemName[20]:CHR, cItemBuffer[4096]:CHR
@@ -297,9 +297,10 @@ MethodEnd
 ;             Arg5: -> EditorSharedResources.
 ; Return:     Nothing.
 
-Method EditorResources.Init, uses xbx xdi xsi, pOwner:POINTER, pEditorSharedResources:$ObjPtr(EditorSharedResources)
+Method EditorResources.Init, uses xbx xsi, pOwner:POINTER, pEditorSharedResources:$ObjPtr(EditorSharedResources)
   SetObject xsi
 
+  ACall xsi.Init, pOwner
   OCall [xsi].KeywordGroups::KeywordGroupCollection.Init, xsi, 20, 10, COL_MAX_CAPACITY
   OCall [xsi].Keywords::KeywordCollection.Init, xsi, 1500, 500, COL_MAX_CAPACITY
 

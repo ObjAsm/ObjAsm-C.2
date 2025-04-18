@@ -335,7 +335,6 @@ MethodEnd
 Method Application.Init, uses xbx xdi xsi
 ;  local dWndPosX:DWORD, dWndPosY:DWORD, dWndWidth:DWORD, dWndHeight:DWORD, pSBHelp:POINTER
 ;  local hDC:HDC, WndRect:RECT, WndPos:POINT, WndSize:POINT
-  local hDC:HDC
 
   SetObject xsi
   ACall xsi.Init
@@ -938,6 +937,7 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     int 3
     xor eax, eax
 
+
   .elseif ax == SC_RESTORE                              ;Restore the active window
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIRESTORE, xax, 0
@@ -951,6 +951,13 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIMAXIMIZE, xax, 0
     xor eax, eax
 
+  .elseif ax == IDM_EDIT_COMMENT
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      OCall xax::Editor.SelectionComment
+    .endif
+    xor eax, eax
   .elseif ax == IDM_EDIT_COPY
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
     .if xax
@@ -965,18 +972,28 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       OCall xax::ChildWnd.ClpBrdCut                  ;Polymorphic call
     .endif
     xor eax, eax
-  .elseif ax == IDM_EDIT_PASTE
-    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
-    .if xax
-      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
-      OCall xax::ChildWnd.ClpBrdPaste                ;Polymorphic call
-    .endif
-    xor eax, eax
   .elseif ax == IDM_EDIT_DELETE
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
     .if xax
       invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
       OCall xax::ChildWnd.ClpBrdDelete                ;Polymorphic call
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_EDIT_FIND
+    invoke ShowWindow, [xsi].FindDlg.hWnd, SW_SHOW
+    xor eax, eax
+  .elseif ax == IDM_EDIT_INDENT
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      OCall xax::Editor.SelectionIndent
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_EDIT_PASTE
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      OCall xax::ChildWnd.ClpBrdPaste                ;Polymorphic call
     .endif
     xor eax, eax
   .elseif ax == IDM_EDIT_SELECTALL
@@ -990,8 +1007,19 @@ Method Application.OnCommand, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
       .endif
     .endif
     xor eax, eax
-  .elseif ax == IDM_EDIT_FIND
-    invoke ShowWindow, [xsi].FindDlg.hWnd, SW_SHOW
+  .elseif ax == IDM_EDIT_OUTDENT
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      OCall xax::Editor.SelectionOutdent
+    .endif
+    xor eax, eax
+  .elseif ax == IDM_EDIT_UNCOMMENT
+    invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0
+    .if xax
+      invoke SendMessage, xax, WM_GETOBJECTINSTANCE, 0, 0
+      OCall xax::Editor.SelectionUncomment
+    .endif
     xor eax, eax
   .elseif ax == IDM_EDIT_UNDO
     invoke SendMessage, [xbx].$Obj(ClientWnd).hWnd, WM_MDIGETACTIVE, 0, 0

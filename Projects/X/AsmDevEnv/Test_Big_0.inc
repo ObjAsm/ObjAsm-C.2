@@ -10,7 +10,7 @@ comment * -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
       http://www.masm32.com/board/index.php
 
-      WINDOWS.INC is copyright software licenced to the user by the
+      WINDOWS.INC is software licenced to the user by the
       MASM32 project. It is available completely free of any charges
       for any person to use for purposes including writing and selling
       commercial software but the file must not be included in any

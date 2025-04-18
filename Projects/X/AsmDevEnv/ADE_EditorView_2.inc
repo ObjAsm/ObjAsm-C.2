@@ -136,31 +136,33 @@ MethodEnd
 ; Return:     eax = Zero if handled.
 
 Method EditorView.OnChar, uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
-  local dNeedRedrawing:DWORD, RefLoc:LOCATION
+  local dNeedRedrawing:DWORD, RefLoc:LOCATION, dActionGroup:DWORD
 
   ANNOTATION use:wParam lParam
 
 ;  DbgText "EditorView.OnChar"
   SetObject xsi
   mov xcx, [xsi].pOwner
-  mov xbx, [xcx].$Obj(EditorDisplay).pOwner
+  mov xbx, [xcx].$Obj(EditorDisplay).pOwner             ;xbx -> Editor
 ;  DbgHex wParam
 
   mov dNeedRedrawing, 0
   .if wParam >= ' '                                     ;Ignore control characters
+    mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+
     OCall xsi.CaretRefLocSave, addr RefLoc              ;Calculate a caret reference position before deletion
-    OCall xbx::Editor.SelectionDelete                   ;Do deletion
+    OCall xbx::Editor.SelectionDelete, dActionGroup     ;Do deletion
     OCall xsi.CaretRefLocLoad, addr RefLoc              ;Restore caret info
     mov xdi, [xsi].CaretLocation.pEditorLine
     .if xdi != NULL
       mov edx, [xsi].CaretLocation.dCharIndex
       .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_OVERWRITE_MODE
-        OCall xdi::EditorLine.CharInsert, edx, 1, addr wParam, TRUE
+        OCall xdi::EditorLine.CharInsert, edx, 1, addr wParam, dActionGroup
       .else
         .if [xdi].$Obj(EditorLine).dLength == edx
-          OCall xdi::EditorLine.CharInsert, edx, 1, addr wParam, TRUE
+          OCall xdi::EditorLine.CharInsert, edx, 1, addr wParam, dActionGroup
         .else
-          OCall xdi::EditorLine.CharReplace, edx, 1, addr wParam, TRUE
+          OCall xdi::EditorLine.CharReplace, edx, 1, addr wParam, dActionGroup
         .endif
       .endif
       .if eax != 0
@@ -190,13 +192,13 @@ CreateExceptionHandler EditorView_OnKeyDown
 
 Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:LPARAM
   local dMenuKeyPressed:DWORD, dShiftKeyPressed:DWORD, dControlKeyPressed:DWORD
-  local dLength:DWORD, dMaxIndex:DWORD, RefLoc:LOCATION
+  local dLength:DWORD, dMaxIndex:DWORD, RefLoc:LOCATION, dActionGroup:DWORD
   local dNeedRedrawing:DWORD, dReturnValue:DWORD
 
   ANNOTATION use:wParam lParam
 
 ;  DbgText "EditorView.OnKeyDown"
-  .try EditorView_OnKeyDown
+;  .try EditorView_OnKeyDown
   SetObject xsi
   mov xcx, [xsi].pOwner
   mov xbx, [xcx].$Obj(EditorDisplay).pOwner             ;xbx -> Editor
@@ -223,8 +225,9 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
 
   .if wParam == VK_SCROLL ;<SCROLL LOCK>
     ;Do something special
-    mov xax, [xsi].pOwner
-    OCall [xax].$Obj(EditorDisplay).pOwner::Editor.SelectionDelete
+    OCall [xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup
+    mov xcx, [xsi].pOwner
+    OCall [xcx].$Obj(EditorDisplay).pOwner::Editor.SelectionDelete, eax
     .if eax != 0
       OCall xsi.CaretSet
     .endif
@@ -550,6 +553,8 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
     .endif
 
   .elseif wParam == VK_DELETE
+    mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
+
     ;Check Selection
     mov xcx, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
     mov xdx, [xbx].$Obj(Editor).SelectionRange.pEndSelInfo
@@ -561,7 +566,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
       .if xcx != NULL
         mov ecx, [xsi].CaretLocation.dCharIndex
         .if ecx == [xax].$Obj(EditorLine).dLength
-          OCall xax::EditorLine.LineJoinNext, [xsi].CaretLocation.dLineNumber, TRUE
+          OCall xax::EditorLine.LineJoinNext, [xsi].CaretLocation.dLineNumber, dActionGroup
         .else
           mov edx, [xsi].CaretLocation.dLineNumber
           mov [xbx].$Obj(Editor).SelectionFst.pEditorLine, xax
@@ -574,12 +579,12 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
 
           ;Do deletion; Caret does not move.
           OCall xbx::Editor.SelectionSet
-          OCall xbx::Editor.SelectionDelete
+          OCall xbx::Editor.SelectionDelete, dActionGroup
         .endif
       .endif
     .else
       OCall xsi.CaretRefLocSave, addr RefLoc            ;Calculate a caret reference position before deletion
-      OCall xbx::Editor.SelectionDelete                 ;Do deletion
+      OCall xbx::Editor.SelectionDelete, dActionGroup   ;Do deletion
       OCall xsi.CaretRefLocLoad, addr RefLoc            ;Restore caret info
     .endif
 
@@ -588,6 +593,8 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
     inc dNeedRedrawing
 
   .elseif wParam == VK_BACK
+    mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))    
+    
     ;Check Selection
     mov xcx, [xbx].$Obj(Editor).SelectionRange.pBegSelInfo
     mov xdx, [xbx].$Obj(Editor).SelectionRange.pEndSelInfo
@@ -602,7 +609,7 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
           sub xcx, offset $Obj(EditorLine).LineLink
           mov edi, [xcx].$Obj(EditorLine).dLength
           ;Join the 2 lines
-          OCall xax::EditorLine.LineJoinPrev, [xsi].CaretLocation.dLineNumber, TRUE   ;Can't fail
+          OCall [xsi].CaretLocation.pEditorLine::EditorLine.LineJoinPrev, [xsi].CaretLocation.dLineNumber, dActionGroup
 
           ;Move caret
           mov [xsi].CaretLocation.pEditorLine, xcx          ;xcx retunred from LineJoinPrev
@@ -622,14 +629,14 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
 
         ;Do deletion
         OCall xbx::Editor.SelectionSet
-        OCall xbx::Editor.SelectionDelete
+        OCall xbx::Editor.SelectionDelete, dActionGroup
 
         ;Move caret
         dec [xsi].CaretLocation.dCharIndex
       .endif
     .else
       OCall xsi.CaretRefLocSave, addr RefLoc            ;Calculate a caret reference position before deletion
-      OCall xbx::Editor.SelectionDelete                 ;Do deletion
+      OCall xbx::Editor.SelectionDelete, dActionGroup   ;Do deletion
       OCall xsi.CaretRefLocLoad, addr RefLoc            ;Restore caret info
     .endif
 
@@ -640,19 +647,20 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
   .elseif wParam == VK_TAB
 ;    .ifBitSet [???].$Obj(EditorResources).dFlags, ERF_TAB_TO_SPACE
 
+    mov dActionGroup, $32($OCall([xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup))
     OCall xsi.CaretRefLocSave, addr RefLoc              ;Calculate a caret reference position before deletion
-    OCall xbx::Editor.SelectionDelete                   ;Do deletion
+    OCall xbx::Editor.SelectionDelete, eax                   ;Do deletion
     OCall xsi.CaretRefLocLoad, addr RefLoc              ;Restore caret info
     mov xax, [xsi].CaretLocation.pEditorLine
     .if xax != NULL
       mov edx, [xsi].CaretLocation.dCharIndex
       .ifBitClr [xbx].$Obj(Editor).dFlags, EIF_OVERWRITE_MODE
-        OCall xax::EditorLine.CharInsert, edx, 2, $OfsCStr("  "), TRUE
+        OCall xax::EditorLine.CharInsert, edx, 2, $OfsCStr("  "), dActionGroup
       .else
         .if [xax].$Obj(EditorLine).dLength == edx
-          OCall xax::EditorLine.CharInsert, edx, 2, $OfsCStr("  "), TRUE
+          OCall xax::EditorLine.CharInsert, edx, 2, $OfsCStr("  "), dActionGroup
         .else
-          OCall xax::EditorLine.CharReplace, edx, 2, $OfsCStr("  "), TRUE
+          OCall xax::EditorLine.CharReplace, edx, 2, $OfsCStr("  "), dActionGroup
         .endif
       .endif
       .if eax != 0
@@ -667,7 +675,8 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
   .elseif wParam == VK_RETURN
     mov xax, [xsi].CaretLocation.pEditorLine
     .if xax != NULL
-      OCall xax::EditorLine.LineBreak, [xsi].CaretLocation.dCharIndex, [xsi].CaretLocation.dLineNumber, TRUE
+      OCall [xbx].$Obj(Editor).Actions::ActionCollection.GetNewActionGroup
+      OCall [xsi].CaretLocation.pEditorLine::EditorLine.LineBreak, [xsi].CaretLocation.dCharIndex, [xsi].CaretLocation.dLineNumber, eax
       .if xax != NULL
         mov [xsi].CaretLocation.pEditorLine, xax
         mov [xsi].CaretLocation.dCharIndex, 0
@@ -698,13 +707,13 @@ Method EditorView.OnKeyDown, SEH_FRAME uses xbx xdi xsi, wParam:WPARAM, lParam:L
   .endif
   mov eax, dReturnValue
 
-  .catch EditorView_OnKeyDown
-    DbgWarning "Exception in EditorView.OnChar"
-    invoke MessageBox, [xsi].hWnd, $OfsCStr("Exception in EditorView.OnChar"), addr cError, MB_OK or MB_ICONERROR
-  .endcatch EditorView_OnKeyDown
-if TARGET_BITNESS eq 64
-  .finally EditorView_OnKeyDown
-  .endfinally
-endif
+;  .catch EditorView_OnKeyDown
+;    DbgWarning "Exception in EditorView.OnChar"
+;    invoke MessageBox, [xsi].hWnd, $OfsCStr("Exception in EditorView.OnChar"), addr cError, MB_OK or MB_ICONERROR
+;  .endcatch EditorView_OnKeyDown
+;if TARGET_BITNESS eq 64
+;  .finally EditorView_OnKeyDown
+;  .endfinally
+;endif
 MethodEnd
 
