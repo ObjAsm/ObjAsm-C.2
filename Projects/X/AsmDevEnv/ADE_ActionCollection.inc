@@ -106,10 +106,6 @@ MethodEnd
 ; Return:     xax -> Inserted item or NULL if failed.
 
 Method ActionCollection.Insert, uses xbx xdi xsi, pItem:PACTION
-
-  mov xax, pItem
-  DbgDec [xax].ACTION.dGroup
-
   SetObject xsi
   mov ebx, [xsi].dCount
   .if ebx > [xsi].dActionIndex

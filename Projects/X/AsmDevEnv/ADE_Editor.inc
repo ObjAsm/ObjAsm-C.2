@@ -1850,6 +1850,7 @@ Method Editor.SelectionSet, uses xdi xbx xsi
           mov xcx, xax
           ;Move to the next line
           mov xax, [xax].$Obj(EditorLine).LineLink.pLinkFwrd
+          .break .if xax == NULL                        ;Just in case
           sub xax, offset $Obj(EditorLine).LineLink
           .ifBitClr [xax].$Obj(EditorLine).dFlags, TLF_HIDDEN
             inc [xsi].dSelectionVisLineCnt

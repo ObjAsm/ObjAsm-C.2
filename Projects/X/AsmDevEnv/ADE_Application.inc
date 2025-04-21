@@ -1222,7 +1222,7 @@ MethodEnd
 ; Purpose:    Event procedure for WM_NOTIFY message.
 ; Arguments:  Arg1: First message parameter.
 ;             Arg2: Second message parameter.
-; Return:     eax = Non zero => we do the job.
+; Return:     The return value is ignored except for notification messages that specify otherwise.
 
 Method Application.OnNotify, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
   local BtnRect:RECT, hFileMenu:HMENU, hDropDownMenu:HMENU, TPM:TPMPARAMS
@@ -1255,8 +1255,10 @@ Method Application.OnNotify, uses xbx xsi, wParam:WPARAM, lParam:LPARAM
     ;If the user selects an item, its WM_COMMAND is sent.
     invoke TrackPopupMenuEx, hDropDownMenu, TPM_LEFTALIGN or TPM_LEFTBUTTON or TPM_VERTICAL, \
                              BtnRect.left, BtnRect.bottom, [xsi].hWnd, addr TPM
+    mov eax, TBDDRET_DEFAULT                            ;The drop-down was handled.
+  .else
+    invoke DefWindowProc, [xsi].hWnd, WM_NOTIFY, wParam, lParam
   .endif
-  mov eax, -1
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------

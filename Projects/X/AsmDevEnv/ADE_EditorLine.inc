@@ -1461,6 +1461,10 @@ Method EditorLine.LineReinsert, uses xbx xsi, dLineNumber:DWORD, dActionGroup:DW
       LDLL_InsertFirst xdx, xax, xcx
     .endif
   .endif
+  OCall [xsi].pOwner::Editor.InformInsertionOf, dLineNumber
+  mov xcx, [xsi].pOwner
+  inc [xcx].$Obj(Editor).dTotalLineCount
+  inc [xcx].$Obj(Editor).dVisLineCount
 MethodEnd
 
 ; --------------------------------------------------------------------------------------------------
